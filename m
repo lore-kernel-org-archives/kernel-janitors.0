@@ -1,114 +1,101 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2B218BBB8
-	for <kernel-janitors@vger.kernel.org>; Tue, 17 Sep 2024 11:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943719443;
+	Tue, 17 Sep 2024 12:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726571716; cv=none; b=ur9yDX4BJ8otKVCOfI1VRMIAkG6ta/lK5a04yrWAZl772BiPd1iHnQRM5tsaw29cWRFsTe6lrTyJX5NeO7lWrf+b4604jRws0074Da/Z+b3gko0A39fptHGX7EewB3JTXXKx78CWV7lV2+QQYIO4U02725j+GSdIoBaUcyycuxI=
+	t=1726574941; cv=none; b=eIVkNq+JQWIxA/Ft+mfpJXU3O2aWPu8fBVNJ862XOmqWfmHUtcwJwyWUl+adB0kaguFMrAoXcyNwhucUVLe1kaRpY4es3Kkm4I/Dkg4ZVCdm5aMdMe/pvCZQvZC1Sv2iG4hyqBOjGCrt9gfAi9K+9rKhXhZsUPHRr7sqYc0CC4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726571716; c=relaxed/simple;
-	bh=CYAjQ4wdv7Y03goPVnrOZbsfz8xAVNVMuosK2YnJqOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RkJSrRmkuZS22GCBXurMk8YmWQU5dPelwscbPZLnalWqPV5jB5qee4BGUgj+n/dEs6WZRbsZzNPihyKcvJCImhBjDTX6MXasPDlrH9QIFlD76abp8vPMvPP6kXyijUAbUQmEuJAPw6uhity+Gjep5ECMAkKyS6Quh4D3gaqySyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b0H2AXF0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1726574941; c=relaxed/simple;
+	bh=m9P0g+OHRlEXXA1SYsQBasXPpwOp2IbtjhMPJlYpWkE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qoQ6PFQxhv+4nVnIFBrZW4KMivjnbvNtEcDPjkAez0ngACOr8aZbMQl7F6Spw/yt/4yYJhnUs3XEX3KKqL/Y3ZzOMRBT1AxOdDvCxAB+woso65CHTCS2w/EpYOnchTMT+yh7WhZfk5JluvDpeh/7Gczm1hDgQcsbFDIqkGjXXcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlFImtM4; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b0H2AXF0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726571711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MW8x678qT6AsCGLPgfGprRX5j+kTF2/8oGHXxDM/kNY=;
-	b=b0H2AXF0sonQE/z8z1g8ApM68waekaJ/A4XWGkiYqmcq9XLRus8pMv5KrNJ6vDS1A1U2DD
-	jPHACL3KASWnVOSXhpo1mxt24TcPtvnJzI9B8UVRUMqOpcBY+gA9R1Iin4a2VM4w7yaUOs
-	TR0ZpqHQf3GkgdfTuEOssp+r5+d7hPQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-659-DN7H0OJ3OjyDI1NLgbwZtg-1; Tue, 17 Sep 2024 07:15:10 -0400
-X-MC-Unique: DN7H0OJ3OjyDI1NLgbwZtg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42e611963c2so14077815e9.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 Sep 2024 04:15:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlFImtM4"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so24392435e9.3;
+        Tue, 17 Sep 2024 05:08:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726574938; x=1727179738; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pH+jWoS8flWyNkqg8Mnuurwbq9hALr+uwaafQVN/R5I=;
+        b=nlFImtM4ttlGQgx/ZaGKv25A0z2A9pAih5XlsQWcVtuONrXq7UQ7ZGLGVQwzHQnArR
+         4EP5xjuIzaEVjFHwteMVWcChEcOxcEgzhzDP2ghdX5+N/jsPQ/42Q7AeQPFmXrV62KS+
+         RTz17sJ6Gw3aVxuEUDUXZf0ZjyhSQ1ChKABHP6sysDMOlzdNwaCihfLYg60CfbCiL+8W
+         nl/g7KWW5HkWIzM5drfWgAfbSTB7r0EPQjbK8uUselb+VoUt1X+wujABIDP6ZgyAHwBA
+         Kn2kRbmJox6a1vwH2iPakQJWs+iQ5QPsCtUKHjlEULwEAABflFI3fSfghHBkC7HPYZMv
+         XJGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726571708; x=1727176508;
+        d=1e100.net; s=20230601; t=1726574938; x=1727179738;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MW8x678qT6AsCGLPgfGprRX5j+kTF2/8oGHXxDM/kNY=;
-        b=gSiUOv8fbSkozOyTFtSZDVvLwFk1HFXCuD2xDuYRztm7zMBzB0CgW+/qiYuwxQU8MZ
-         euSxZ9RL2Oi1VNExhO12LIdZE9Rf0LeRSAQlIpIUrF6uNgcjJUgIEQ8pWxpjPZ2a/xHM
-         M5DburkR/r2vrSJlAONHpnsWE9MZTd5AeDX2A1F67moJAy30qnsQ933HvdEH9D6gxyy6
-         P1UKvRD16TL45DrPgIWxbpawskDnxgtz7QXDUrdSDJCWBn23+O6OGD55i4TtMLyt5dWF
-         OA0y+4LsGFwiqE05hHNEiOvsizpm48+ueYwdLNFFHsJteavjaysRq1ytzuVcPzGsrD8p
-         AnKw==
-X-Gm-Message-State: AOJu0YwJgi8yA8z1PpIOx4MoK67jVvkGEuxH1Wxgh0Va/wK1QufyBIdF
-	kkrexQ/Sdy4uXDTqGnViyrdddaGFaZj9QOyXIJ+6d09kWN0/zorMU9a0hvaqgQkRnhCuukGPtZB
-	5+ETYLkdbilGeVk12hrslDR+hiEYH9aLsR4b+Z4PX7e2Vw8jtvM4MOAaO5yS5nNTjABBiI19WrA
-	==
-X-Received: by 2002:a05:600c:4ed1:b0:42c:aeaa:6aff with SMTP id 5b1f17b1804b1-42cdb54078dmr141256395e9.10.1726571708571;
-        Tue, 17 Sep 2024 04:15:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWah53YqgeAFPFiU9AClXZ/7GYiDqizPqjCjVuclqxZI582y3EwGlDFOfbQ2R5ux1g9w4d9A==
-X-Received: by 2002:a05:600c:4ed1:b0:42c:aeaa:6aff with SMTP id 5b1f17b1804b1-42cdb54078dmr141256035e9.10.1726571708075;
-        Tue, 17 Sep 2024 04:15:08 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b1949c3sm133660925e9.46.2024.09.17.04.15.07
+        bh=pH+jWoS8flWyNkqg8Mnuurwbq9hALr+uwaafQVN/R5I=;
+        b=In1wN/DVAgEzs4DeLUX9DZ5i2VPPuHW4QPfrEz34+N2Wr9OSNRJgEK887ELr+LB75D
+         vozpJ/mERv3q/ONeBG4/zh2VqDkKZeUXdY+GA/tfyNAC+EKwbZduEQpN8NcND2FAzjos
+         Yf3psoiKM0+IhtISatNhsf+DIz5z23aT+nkGL/Se/JC2b7jLm51nyr4a9b4yVmwO4Q9l
+         +C+vqX8Rywl+I9WZq2TsZ+iDlct0fAbSdn6mkye+1Da33s7mq4NIAMZw2A/0hHgeBaqb
+         goavEr5b+Jlz2Ado+NWxwvojHlyRVxxysiaQJbfeNfjGL5vyIXtwuxA3Vy3LKQ/6gue9
+         3jpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+be2IuMMlrMIIpxDWQpzIRPJnsOgDqb1IwXr5ZSmHvnIUNnr6ISCzHiTaaH5LpzvsAv6dKOh1Oth4xwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/5YPuZHyLlD6OcFhEd+ZAwrW/Y8HIK06+3/O6fir0BR9HVn7N
+	236GrWmJEDgSOLRubNodM0YtQJmiK/eKCSDQAMAGzJ0U3O4HVhxC
+X-Google-Smtp-Source: AGHT+IFoV/GynBdMrloJuKhB9PFQ2VToiezwKU/krQ84DC9QRRrz4ERZNzhlMoDWpSd71SLM4d6iOQ==
+X-Received: by 2002:a05:600c:1d24:b0:42c:bf79:78f7 with SMTP id 5b1f17b1804b1-42cdb591224mr138614105e9.32.1726574937547;
+        Tue, 17 Sep 2024 05:08:57 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42da22b8b65sm102132515e9.8.2024.09.17.05.08.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 04:15:07 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
+        Tue, 17 Sep 2024 05:08:56 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Dave Airlie <airlied@redhat.com>,
+	Ben Skeggs <bskeggs@redhat.com>,
+	dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry of the oa_tc6 header
-Date: Tue, 17 Sep 2024 13:15:03 +0200
-Message-ID: <20240917111503.104530-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.46.0
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/nouveau/gsp: remove extraneous ; after mutex
+Date: Tue, 17 Sep 2024 13:08:56 +0100
+Message-Id: <20240917120856.1877733-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+The mutex field has two following semicolons, replace this with just
+one semicolon.
 
-Commit aa58bec064ab ("net: ethernet: oa_tc6: implement register write
-operation") adds two new file entries to OPEN ALLIANCE 10BASE-T1S MACPHY
-SERIAL INTERFACE FRAMEWORK. One of the two entries mistakenly refers
-to drivers/include/linux/oa_tc6.h, whereas the intent is clearly to refer
-to include/linux/oa_tc6.h.
-
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference. Adjust the file entry to the intended location.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- MAINTAINERS | 2 +-
+ drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9a4fa88edcd3..23a9337bb97a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17317,8 +17317,8 @@ M:	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
- L:	netdev@vger.kernel.org
- S:	Maintained
- F:	Documentation/networking/oa-tc6-framework.rst
--F:	drivers/include/linux/oa_tc6.h
- F:	drivers/net/ethernet/oa_tc6.c
-+F:	include/linux/oa_tc6.h
+diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h
+index 9e6f39912368..a2055f2a014a 100644
+--- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h
++++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h
+@@ -210,7 +210,7 @@ struct nvkm_gsp {
+ 	} *rm;
  
- OPEN FIRMWARE AND FLATTENED DEVICE TREE
- M:	Rob Herring <robh@kernel.org>
+ 	struct {
+-		struct mutex mutex;;
++		struct mutex mutex;
+ 		struct idr idr;
+ 	} client_id;
+ 
 -- 
-2.46.0
+2.39.2
 
