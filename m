@@ -1,80 +1,108 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE271803E;
-	Tue, 17 Sep 2024 13:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F32D1B1D50;
+	Tue, 17 Sep 2024 15:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726580627; cv=none; b=gbl56SMsjqkWwqlLKa2j3it9P6B7xW/TUbaw1f38ozo8ALCBYlew2iFgNG03dxARGlmcDx7HThdcPq95PfoBhGSkaSyYcpaxZpM0Jzz5M9IfR/inowrI11N+69yh11997/c4oOsLPm3t2G1qagRqRzNUgV7EQ/z97Hqkk0CE7TI=
+	t=1726586059; cv=none; b=Z/oqOlVPUZfDxjIDeMpYTvn4T44iwW6fFFHx/d2n35qQo+veyXlGqo3aMF/TsDKUVz8acQWNgl08QTbMYE53QCCE9uQVIgYxPX/RBujKbM9641n305Sn3XYutfonVgarcwhxJl5hUKR75X+Id09965X5/SRVbw3Ix4W5XgDXSVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726580627; c=relaxed/simple;
-	bh=SoBcQwDaJ8+uNIdEyM8N9AClY8QjK48xnJ6xh4wKxV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mUkaxKIyWIPkw0+sETJ5urwzsRoRm0jYq11bRr7YEZXQ6dMwtM52HtBzzvkn9HSltTehDGWE7qwznV6TC4kEl7mUwZX/5DBgySjVHgGcqDgbJrLzi8gTd8SQXM6DeDVMOG+j4yQP9p+CjEyK0NeLq8oRXZpYsBYGAyRCAdcWj+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: Ev8gR9PBRICW+hm+IoZ1AQ==
-X-CSE-MsgGUID: MHAxnoUVSi++GlQCV+jLIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25375589"
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="25375589"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 06:43:46 -0700
-X-CSE-ConnectionGUID: 6+PbPi8IQgeclJgFKbhjMw==
-X-CSE-MsgGUID: BJTXdvH2TB+gxLoX/YyuMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="69411125"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 06:43:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sqYUJ-00000009pq4-335P;
-	Tue, 17 Sep 2024 16:43:27 +0300
-Date: Tue, 17 Sep 2024 16:43:27 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in INTEL MID PLATFORM
-Message-ID: <ZumHf28MVOWhH-Q7@smile.fi.intel.com>
-References: <20240917103955.102921-1-lukas.bulwahn@redhat.com>
+	s=arc-20240116; t=1726586059; c=relaxed/simple;
+	bh=Vus4cKi+4RnejRUM961LKGrzngkQ4YXNljqLwXqDJ7w=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=lKlHHoCHsE4P0LN3+u6Kja7fznTcHBluh+LJ8aYjV4S7wt9bjW0N7yYbIqIcDpb4NDKQJIPtUqvx01Td1dFNAuVDxZjOxTV524Aw03h5/v0yZDIp9yCIs6xpgfKLqxmx5xHADVgalEhua2UYio3fZvQ0hkDlkCmPBXo/5r2W8D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=EzJ/Iw/i; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZV8OtLK+; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="EzJ/Iw/i";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZV8OtLK+"
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 5F7AE1140134;
+	Tue, 17 Sep 2024 11:14:16 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 17 Sep 2024 11:14:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1726586056;
+	 x=1726672456; bh=beyjdL4g95K6xmn2DgR29PPiKOYO46zC790GUDP2bMI=; b=
+	EzJ/Iw/iX1G2DKzYUEBcJYDiKYM6FcgGHL5hL7G1AXo+Svugkdc8nZrhDMgjCZfs
+	tSNY0rMzFDOF/lI4zds1sP9oi5Ou2LlXvVhdA5PxlKxTCvP1YIMQ3B2shgWeOqRy
+	Yv/s/gzoAiSetMn+WPyT6HBskw9nv9aM3TQZuKaNocF+WHKPUIvESLVelJKtIPu4
+	HltkIA93qg32QHy3AgH5HESiR+eLonIsxMETTolmd2eIoMZdzDBaoqy6+xsSJiFd
+	q5uUUmjbQmlkqtJvcpG4EcbuNJLdmf/X6NDOF1HJJQdG82zdfgjEqe4Vormen5pz
+	6oBDxR80IirhgGr31QjLRg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726586056; x=
+	1726672456; bh=beyjdL4g95K6xmn2DgR29PPiKOYO46zC790GUDP2bMI=; b=Z
+	V8OtLK+rOH0o2fv2O68nrD936DoMysGf/1CuSfVrrM82scRp2zF+wqiqU9bd6HB8
+	wPzecyjJLmDUw1hdtvAdu+Ui8qCh/SZ4OSDOv1n6PUQ2BXPVpFQsiMCb4ggZoSk6
+	ws3+LCo20rw2V/HbAwGVg3U4ZuJIem7vaEmqI26KyJ7vHjijdp6lolQuaTIV5NmG
+	16E6p6hSP2pniIEWcXcNezWtxgCe7MZA1/Da3FNcHyUOUyiAHrAFN3MUVtGHl8D8
+	jHjxtyD6nfv8KciY5Ly7/lRs2eNegTxY8bNTY/61+PbVCPFm/VzkW6rKr21knRo5
+	148sxRvOuB7DMrZh9o9nA==
+X-ME-Sender: <xms:x5zpZpOX3CQJofqRYCbin5M6t5QfBYory8V8YdQgc-Zu0yzu7Nwylg>
+    <xme:x5zpZr-3lF933heCWuHQGuaSm_Zvt99TM3A8LSzjQVljV4bsXIdZpTLPl-60EqFjA
+    6OQ-AsgLxF_ksznlDk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudekjedgkeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhukhhmrgesuggvnhigrdguvgdprh
+    gtphhtthhopegrlhgvgigrnhguvghrrdhsvhgvrhgulhhinhesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehnihhkihhtrgdrshhhuhgsihhnsehmrghquhgvfhgvlhdrmhgvpdhrtg
+    hpthhtoheplhgsuhhlfigrhhhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehluhhk
+    rghsrdgsuhhlfigrhhhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehkvghrnhgvlh
+    dqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
+    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephh
+    hsfigvvghtvghnsehvihhsihhonhgvnhhgrhgrvhgvrhhsrdgtohhm
+X-ME-Proxy: <xmx:x5zpZoQu3Ew7UG_lPSGS7ewEwUbpiiM95J--eiNXUTp2HBi_EsIR9Q>
+    <xmx:x5zpZlvSHSplRVk7VpCuY2gYPAEPyjQR8ldBNGfFjn_t8R_Hy3cslA>
+    <xmx:x5zpZhcX2Muk7xGWuVPJv40-BhKDEIqKXZ-rRDwGTLyqz_lW0niyOQ>
+    <xmx:x5zpZh0b26ulg-Y3DYSsqwQAmRJkDMQpzPkQvjS3rMDE7gY0QW4s6Q>
+    <xmx:yJzpZruvJ0PTGKs7CpCSIZuhFIPGD2o19hDO8bUaTJWhnA2czWMFKEfo>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id B9CC02220073; Tue, 17 Sep 2024 11:14:15 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917103955.102921-1-lukas.bulwahn@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Date: Tue, 17 Sep 2024 15:13:14 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ "Alexander Sverdlin" <alexander.sverdlin@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Lukas Bulwahn" <lukas.bulwahn@redhat.com>,
+ "Lukas Bulwahn" <lbulwahn@redhat.com>, "Lukasz Majewski" <lukma@denx.de>,
+ "Hartley Sweeten" <hsweeten@visionengravers.com>
+Message-Id: <fb3f06ca-53c2-4ba7-aaa3-e8c1063373f8@app.fastmail.com>
+In-Reply-To: <e9367879f2305fba1029aee546160537894e848c.camel@maquefel.me>
+References: <20240913115021.58405-1-lukas.bulwahn@redhat.com>
+ <d125b5a5-8118-48ec-8af4-243a217170df@app.fastmail.com>
+ <e9367879f2305fba1029aee546160537894e848c.camel@maquefel.me>
+Subject: Re: [PATCH] MAINTAINERS: move BK3 machine support to CREDITS
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 17, 2024 at 12:39:55PM +0200, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 5f1cda51107f ("platform/x86: intel_scu_wdt: Move intel_scu_wdt.h to
-> x86 subfolder") moves intel-mid_wdt.h in ./include/linux/platform_data into
-> the x86 subdirectory, but misses to adjust the INTEL MID PLATFORM section,
-> which is referring to this file.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Adjust the file entry to this header file movement.
+On Tue, Sep 17, 2024, at 12:43, Nikita Shubin wrote:
+> Alexander, Arnd.
+>
+> Do you mind if i put myself to EP93X, right below Alexander in
+> MAINTAINERS list ?
 
-Ah, thanks!
-It was due to renase issue (initially the Intel MID MAINTAINERS patch was the last).
+No problem, please do that.
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+     Arnd
