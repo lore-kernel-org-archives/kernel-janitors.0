@@ -1,59 +1,61 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EB0EAD8;
-	Tue, 17 Sep 2024 16:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A478158DBA;
+	Tue, 17 Sep 2024 23:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726590045; cv=none; b=mNXRjIO4g88vBHVskyhTCp+uIspkLS+QDrmrd+Q328y7iRObivLLnYk6K5MFuAXzOLVFzMjjKE+NstRG9BwGJiYkmjQ65HuMsMO+BX5hGkeD+OA/O2I3Ua5mjYZUs7oBaBR0rpy4nVs+Ire7hnsCuUGWLmLZZJHXXi8fFLy5tqo=
+	t=1726615671; cv=none; b=DTN4Kq6Jm9l/7wZYGqw+LWQCl7AQwl2ZL1l6z4FovAaBSoIyMh+Rnjv55kfirJlP0EXRjlr/u1T0JrgbTy2WoA12l/MgApAA3CJbaQZSf9X4HuUqIn1GE/XleEcMjyWSUfKJxWb4+V7GChxrFIBycRandTnsFfgvQa1V+WQikMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726590045; c=relaxed/simple;
-	bh=yUig5GSW4JG8bHBEfj90dY/nd64XoMgE72xRv75LVz4=;
+	s=arc-20240116; t=1726615671; c=relaxed/simple;
+	bh=g/Pmz/qEI8/+jiFosDjqPR6jxKOpIH0jm0dHkxIFKUo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMd3GKUPiy7SJwTF0dzR20xDuEjmJUHTDUJR40w1d7cXDAo6ju+Qkc9zALlUeXh1ZvIrsiEmxHzjUy5IuKQfHSCiOl+Y+6bTv2nv81RTzDhET0E2JJobDbOZBbVrGCsB5Jv8jf1ESaqpeb/sTnOE1y6KR9QC4EA2Cf6K6ofhFno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=iXGBTWeV; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=rjhVfqFgwLlJbZvrXVo14itqDGyE3b+zc6xg8zkBipvK+MZ3V6sB/vz08Y66612IoRW/PEPTAVIg/wh/ZwgWNy7QUQ//IW1Oxx/8VreeekQleSsZ8PKWy3+rLV7I8czbfhq3MxTDupwaKld2oK3fXHKomdcGhtOm7UrNHLNA4ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JgZFPlT6; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="iXGBTWeV"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wIyhiO5mY4s5u6quFh1+QMn0GcxK4WQPQ9Ffj4BXjsE=; b=iXGBTWeVVEDpoXTnJ0PRfft94m
-	oMKPJOW4G4V3ofEMXZbDLWUUkFowabsHAMSBw9xNkAhJ+8l0B1JJaf5CIDhMBjIa3+1Uu2ziA9kcY
-	pV1cG8/zRF24VdzXX4sJR5vfLIDzyYTXNvsSHvRXiGxvFHrF2xBDYH93NElz1y+CRlcqUG168Bt+l
-	miyXZC2AcQOcgjyL4cSQcAGbhjYb6Nx13SHWI4uqXigPSye7BUZnYR9OGDVU321RiQB/kD2kMNRnw
-	OoJ96/Xis9FecSidd89zRv8Xr6/QcVf7Z1EUHzWesdUYFUwKZZssJTGLeOD8/GScBzi8JrDseLVRI
-	XzzMMWxw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57830)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sqawB-00076f-0H;
-	Tue, 17 Sep 2024 17:20:22 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sqaw6-00087j-2j;
-	Tue, 17 Sep 2024 17:20:18 +0100
-Date: Tue, 17 Sep 2024 17:20:18 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Peter Xu <peterx@redhat.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] arm/mm: fix typos
-Message-ID: <ZumsQuGrUkBjZyZq@shell.armlinux.org.uk>
-References: <20240909102907.9187-1-algonell@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JgZFPlT6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726615669; x=1758151669;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=g/Pmz/qEI8/+jiFosDjqPR6jxKOpIH0jm0dHkxIFKUo=;
+  b=JgZFPlT6CWveEHjZsPvLc270RCZmiTKn6BGbBI9K52qwUCfbnRWjtPwa
+   xyp5XUNB0pSYTJtTW28nR90SvNi/n+sK4escbhm0zxH/Y4RcuhUC+57Bn
+   9xbBesLd6bL8p88/V5zW5VIpZ9uyjPN494KUZEX+ShYp35hy/JgEomFtR
+   /d/hb50Q2rFcr6yl4B1Ekh4WIWEbJr9ZmJogopWgXObHKca29sBTMKNH5
+   mdCWTxVbNkLlnk3ZwqYPBoEhjh2O0Y5WecTrL1Ikgox192lTKoBlrWSxp
+   SUCFbK+mU+gYKwlTIO4J0EN2wv9Wsk171KKu1G0DO8cShhaI+jaCoBqju
+   g==;
+X-CSE-ConnectionGUID: AEFDbJxqSrukJuXVPcVg6g==
+X-CSE-MsgGUID: Kt9jWAqbSiWAmSVsE2xN+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="13564685"
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="13564685"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 16:27:49 -0700
+X-CSE-ConnectionGUID: g8bjz9r1SHau+a2kJmRXsQ==
+X-CSE-MsgGUID: f5WYcql2TvquIJ8/uTGtmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="69836022"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 17 Sep 2024 16:27:47 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sqhbl-000BhK-0T;
+	Tue, 17 Sep 2024 23:27:45 +0000
+Date: Wed, 18 Sep 2024 07:27:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: lib/mpi - Extend support for scope-based
+ resource management
+Message-ID: <202409180725.ZV8DCvII-lkp@intel.com>
+References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -62,26 +64,73 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909102907.9187-1-algonell@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
 
-On Mon, Sep 09, 2024 at 01:28:51PM +0300, Andrew Kreimer wrote:
-> Fix typos in comments.
-> 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Hi Markus,
 
-Not sure who's picking this up, but if the intention is for me, then
-please make sure it finds its way to the patch system. One way to do
-this is:
+kernel test robot noticed the following build errors:
 
-$ kvsn=$(git describe --abbrev=0 ...commit...)
-$ git send-email --cc=patches@armlinux.org.uk \
-	--add-header="KernelVersion: $kvsn" \
-	...
+[auto build test ERROR on herbert-crypto-2.6/master]
+[also build test ERROR on herbert-cryptodev-2.6/master linus/master v6.11 next-20240917]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks.
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/crypto-lib-mpi-Extend-support-for-scope-based-resource-management/20240917-173519
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git master
+patch link:    https://lore.kernel.org/r/bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc%40web.de
+patch subject: [PATCH] crypto: lib/mpi - Extend support for scope-based resource management
+config: i386-buildonly-randconfig-002-20240918 (https://download.01.org/0day-ci/archive/20240918/202409180725.ZV8DCvII-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240918/202409180725.ZV8DCvII-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409180725.ZV8DCvII-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from include/linux/irqflags.h:17,
+                    from arch/x86/include/asm/special_insns.h:10,
+                    from arch/x86/include/asm/processor.h:25,
+                    from arch/x86/include/asm/timex.h:5,
+                    from include/linux/timex.h:67,
+                    from include/linux/time32.h:13,
+                    from include/linux/time.h:60,
+                    from include/linux/stat.h:19,
+                    from include/linux/module.h:13,
+                    from crypto/dh.c:9:
+   include/linux/mpi.h: In function '__free_mpi_free':
+>> include/linux/mpi.h:49:48: error: 'T_' undeclared (first use in this function)
+      49 | DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
+         |                                                ^~
+   include/linux/cleanup.h:62:78: note: in definition of macro 'DEFINE_FREE'
+      62 |         static inline void __free_##_name(void *p) { _type _T = *(_type *)p; _free; }
+         |                                                                              ^~~~~
+   include/linux/mpi.h:49:48: note: each undeclared identifier is reported only once for each function it appears in
+      49 | DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
+         |                                                ^~
+   include/linux/cleanup.h:62:78: note: in definition of macro 'DEFINE_FREE'
+      62 |         static inline void __free_##_name(void *p) { _type _T = *(_type *)p; _free; }
+         |                                                                              ^~~~~
+>> include/linux/cleanup.h:62:60: warning: unused variable '_T' [-Wunused-variable]
+      62 |         static inline void __free_##_name(void *p) { _type _T = *(_type *)p; _free; }
+         |                                                            ^~
+   include/linux/mpi.h:49:1: note: in expansion of macro 'DEFINE_FREE'
+      49 | DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
+         | ^~~~~~~~~~~
+
+
+vim +/T_ +49 include/linux/mpi.h
+
+    45	
+    46	/*-- mpiutil.c --*/
+    47	MPI mpi_alloc(unsigned nlimbs);
+    48	void mpi_free(MPI a);
+  > 49	DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
+    50	
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
