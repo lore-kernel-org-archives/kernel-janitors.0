@@ -1,89 +1,80 @@
-Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE7D173355;
-	Tue, 17 Sep 2024 12:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE271803E;
+	Tue, 17 Sep 2024 13:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726577043; cv=none; b=c99PKhD6lPveVSdYsJsApXC/0yIALbd8qh/xyOAcKUoK0pNPaXuIwgFqJPiVK5Xwm/Z1gcXsirIzvD+Wa/TCaiaIfq7vRF69AZc0l+hxZM1AFK8jZCXDuh85SGaXyx3vPhmKIIcMkacB80i9ludH+OZn2xUPyvMTrf3pFdhd18c=
+	t=1726580627; cv=none; b=gbl56SMsjqkWwqlLKa2j3it9P6B7xW/TUbaw1f38ozo8ALCBYlew2iFgNG03dxARGlmcDx7HThdcPq95PfoBhGSkaSyYcpaxZpM0Jzz5M9IfR/inowrI11N+69yh11997/c4oOsLPm3t2G1qagRqRzNUgV7EQ/z97Hqkk0CE7TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726577043; c=relaxed/simple;
-	bh=jdfEh4dxPG5xskOJFTHgFWFO6196Eo2IN8fhtjLmngI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YaODG5ElBRAGv656waKkm6w1VxKe4y/HDN4K9+alFS0isIrh0lpM+zCyHa6NHcJ6a7ws3JWJo7fUxhWKJ9RO2Q2zs/9te2suCcpK1frPfboxZreV5BuK06YdV+0uRxgdx8n8uZKCnWWAhmkBmCq9T60XxX1I9KjlX1nsziaYBY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=XvlPB5oJ; arc=none smtp.client-ip=178.154.239.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="XvlPB5oJ"
-Received: from mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net [IPv6:2a02:6b8:c08:1699:0:640:fad2:0])
-	by forward502b.mail.yandex.net (Yandex) with ESMTPS id 222295F578;
-	Tue, 17 Sep 2024 15:43:49 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id lhLgoF7XxGk0-ijibTgbJ;
-	Tue, 17 Sep 2024 15:43:48 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1726577028; bh=jdfEh4dxPG5xskOJFTHgFWFO6196Eo2IN8fhtjLmngI=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=XvlPB5oJN08xt3z3LONt4eoNiUdXSVQIHRVhVryoGM2niMfc8Gq4NcW4z60ol1hJU
-	 5cWn4qIHOpnhXo8amEt6Ra5PbxFzh2fvBuOdMHDK6iVrGbx5UmvMPeR6BQh5/rfgIi
-	 h+VaYF6KMToGfBzn+Oe3DgaZo7IWn3MIJaN3RLKA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-63.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <e9367879f2305fba1029aee546160537894e848c.camel@maquefel.me>
-Subject: Re: [PATCH] MAINTAINERS: move BK3 machine support to CREDITS
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Arnd Bergmann <arnd@arndb.de>, Alexander Sverdlin
-	 <alexander.sverdlin@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@redhat.com>, Lukas Bulwahn <lbulwahn@redhat.com>,
- Lukasz Majewski <lukma@denx.de>, Hartley Sweeten
- <hsweeten@visionengravers.com>
-Date: Tue, 17 Sep 2024 15:43:47 +0300
-In-Reply-To: <d125b5a5-8118-48ec-8af4-243a217170df@app.fastmail.com>
-References: <20240913115021.58405-1-lukas.bulwahn@redhat.com>
-	 <d125b5a5-8118-48ec-8af4-243a217170df@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1726580627; c=relaxed/simple;
+	bh=SoBcQwDaJ8+uNIdEyM8N9AClY8QjK48xnJ6xh4wKxV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mUkaxKIyWIPkw0+sETJ5urwzsRoRm0jYq11bRr7YEZXQ6dMwtM52HtBzzvkn9HSltTehDGWE7qwznV6TC4kEl7mUwZX/5DBgySjVHgGcqDgbJrLzi8gTd8SQXM6DeDVMOG+j4yQP9p+CjEyK0NeLq8oRXZpYsBYGAyRCAdcWj+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: Ev8gR9PBRICW+hm+IoZ1AQ==
+X-CSE-MsgGUID: MHAxnoUVSi++GlQCV+jLIQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25375589"
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="25375589"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 06:43:46 -0700
+X-CSE-ConnectionGUID: 6+PbPi8IQgeclJgFKbhjMw==
+X-CSE-MsgGUID: BJTXdvH2TB+gxLoX/YyuMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="69411125"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 06:43:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1sqYUJ-00000009pq4-335P;
+	Tue, 17 Sep 2024 16:43:27 +0300
+Date: Tue, 17 Sep 2024 16:43:27 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in INTEL MID PLATFORM
+Message-ID: <ZumHf28MVOWhH-Q7@smile.fi.intel.com>
+References: <20240917103955.102921-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917103955.102921-1-lukas.bulwahn@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Alexander, Arnd.
+On Tue, Sep 17, 2024 at 12:39:55PM +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 5f1cda51107f ("platform/x86: intel_scu_wdt: Move intel_scu_wdt.h to
+> x86 subfolder") moves intel-mid_wdt.h in ./include/linux/platform_data into
+> the x86 subdirectory, but misses to adjust the INTEL MID PLATFORM section,
+> which is referring to this file.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> Adjust the file entry to this header file movement.
 
-Do you mind if i put myself to EP93X, right below Alexander in
-MAINTAINERS list ?
+Ah, thanks!
+It was due to renase issue (initially the Intel MID MAINTAINERS patch was the last).
 
-On Fri, 2024-09-13 at 12:24 +0000, Arnd Bergmann wrote:
-> On Fri, Sep 13, 2024, at 11:50, Lukas Bulwahn wrote:
-> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> >=20
-> > Commit 3e0bae7f35c9 ("ARM: ep93xx: delete all boardfiles") removes
-> > ts72xx.c, but misses to adjust the ARM/CIRRUS LOGIC BK3 MACHINE
-> > SUPPORT
-> > section, which is referring to this file. Hence,
-> > ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about a
-> > broken
-> > reference.
-> >=20
-> > As the corresponding file of this section is gone, remove the whole
-> > section
-> > and note this previous contribution in the CREDITS instead.
-> >=20
-> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> > ---
-> > Arnd, please pick this quick administration fix on top of the
-> > commit
-> > above. Thanks.
->=20
-> The machine should still work as before, I think we should
-> instead adapt the path to point to
->=20
-> F: arch/arm/boot/dts/cirrus/ep93xx-bk3.dts
-> F: arch/arm/boot/dts/cirrus/ep93xx-ts7250.dts
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Arnd
+FWIW,
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
