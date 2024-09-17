@@ -1,112 +1,111 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E201315DBD5;
-	Tue, 17 Sep 2024 09:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F500165F16
+	for <kernel-janitors@vger.kernel.org>; Tue, 17 Sep 2024 10:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726565623; cv=none; b=jkJl2i+54mBbPS7ZonTwvtSSeSybtIN/ID75WGiOBaTToE23o00GnAB/o6h2j5Wh1Q07E7F8kkSFUgY86PIFi/WG6e+3ogP9ML8E+/2nUA87inpsaISCzsrkKOa9Yg39gr4cRE9h7l6DLb6uxWn/UDdhi9UfiwSZedQvCpV44Fg=
+	t=1726569608; cv=none; b=IzUcJctaISK0bITbiHmBkjT32Ik+NjAyoxWHCtowS0BMJM7Xl+3G6Bl+a+UZVHc3c7apk3WRAEahbsFOWJODeK6QBljlxB2xmbRxOZg+ZY3OLAy3/DpKMlZk24elbYyqgix9z/YPGbkv0N+UP3KUOyz0f+h9BUdAyjXi0Hgre4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726565623; c=relaxed/simple;
-	bh=hac2hUFaa/gebLVtfJwTY0SuulzszxQKQH0AilZ+XKk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=TyDLaifcpA6Y1knhCBVyLll8PLeif/IPmzSAgz72kIfAkBTUeW7rJOnAXjzVRMP/JfNnti7cvovSXYgHmfPH5XClOh4QSDzPoplT8HnPIe1m4O3lGsO3wNI2njqmRLB9tN95DYpe7StuGPnnIzlaI1HDfvTWUbW6aQkwZ0sDNbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BeoH2Iy6; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1726569608; c=relaxed/simple;
+	bh=0LMBN520YvnGOafFgvhLjT6qIlZcWSGFYJKW35052PE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AV0OszifFi6UrYfn0GmEBPPxSE8JakDe0qKzF27ZgwITZJym+YpHI4el3UO88bd3Tppgffs0xdDYKq3c3pH2MKAyNpMUzBtDMkeF7O/1qDGYVwrmuYmO5W7nuWZbL7T8VQeQgJAK4U76ef0LZ95czY7kZAcRTp5YX2TRfnY44DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mk1yY+Ur; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BeoH2Iy6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726565606; x=1727170406; i=markus.elfring@web.de;
-	bh=BQCXTN8kKkd1kkGO9NF/p4jvWGCDLj4NS40vm1F4hUo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BeoH2Iy6DdIU4GndjNZnbkIeq2YNj+TbY72vkBctTYkViWyETfm032YkQg4aDjm/
-	 dnHEB91Vdg7GgM0aXN8k+BRJCmbj5a82Y8mGIrFcUTCCAuyY/9EavMWuXPqUyzB1Z
-	 VRFy4o/bQaqKlG224rPYsAm+oZoqV6f8cOzpwp2X/azvLAyweYX74sXkWinE+9isF
-	 vj1T1c/Rkx8a5j2FtJcaRUHlqdBx8K8boeFkHucGEmdAQOa3WQ+aBna4wVJwA+cCM
-	 KaDXKfOpDdK/aEEVf46RtVBTaZD3asU51rYbyc5r2w6X8hGlNDrIxg3PpcXZxqhFa
-	 gFibUQDQN2Kp8A/f+A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzin-1sYYC72tIP-00XdyW; Tue, 17
- Sep 2024 11:33:26 +0200
-Message-ID: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
-Date: Tue, 17 Sep 2024 11:33:14 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mk1yY+Ur"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726569606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=K8NsOdWTBNIM1qx9lP6F4iSdy29rXjvavRpAqXtZKsU=;
+	b=Mk1yY+UrlVMhFFAVFGel8B1+I4njXxSkc3i3O1vQX+cfbxerh6nPNIVGGiCZrhJKQ3jJ1s
+	zjskjNMFf2ZB431jpt5C/IVywPcmLQWZNU+naozx/2wjtUvrQD/wgPy/aXxvZl4gXjFN3n
+	qw94YLx6ce9/Lv8BxNkVcj00oZD24+Q=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-110-c8TSoiniN3uo-_cLTz6sWA-1; Tue, 17 Sep 2024 06:40:04 -0400
+X-MC-Unique: c8TSoiniN3uo-_cLTz6sWA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3780c8d689bso2385533f8f.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 17 Sep 2024 03:40:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726569603; x=1727174403;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K8NsOdWTBNIM1qx9lP6F4iSdy29rXjvavRpAqXtZKsU=;
+        b=V7mvLUHoeIzaiVPT5vg069HLcYJgxVeRGs/hT0tTKqz6rB6t30hAgwngfEb5nVeS+l
+         mIYWTPiBk6Z9EUbD6gtbFPPZe5M0GFZfGBoqixZSqrzY9B6zmtUx7gvsn3RdUTs9jhKY
+         YnxTBN/OdZOTW81mejYltIGDmHKaGrwqUhN7c+w93/aM7jV362KhdgPWReDD6YLNM9J0
+         Zq5yZgRu0XXiqsRQxRTK3imNhRB4Xjv+Sl36dPOnuKZ+hyW7+Yp12VlBKKgNVi2H42fP
+         1POQkBuqS1mlHKgI5S83jjoD85aUT/qQiDT5vv1r9fx5+Rx6WHDfkiZTB2UTrfmoyIc4
+         xajw==
+X-Gm-Message-State: AOJu0Yy5HgYBlGpmpjGDllQ/D5vEYgT7HPfTL2ru2IFwaIa+RsDJvWGK
+	dXcHjSOIRW7VUPr+pkb3E6h4SZUOFKxuKMXoavJEsQYhtjNKbj3UcC8mqmi4cQ6M1jfW1EPagwg
+	/+Gepva6HZJ/pf195HPRSZ9l/dpKZ0KjCEzhrwQ05oxpfhfkemPeQwZZtDaLmAJRLXA==
+X-Received: by 2002:a5d:6892:0:b0:368:785f:b78e with SMTP id ffacd0b85a97d-378c2cfc259mr10196601f8f.13.1726569603381;
+        Tue, 17 Sep 2024 03:40:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHa4UI97Csxn3j4pYvJYFP/Fr/uiCCt79JPc4rAJ1fBKy2utflgkB7c4Go4SgMPtMwX0FZF9A==
+X-Received: by 2002:a5d:6892:0:b0:368:785f:b78e with SMTP id ffacd0b85a97d-378c2cfc259mr10196573f8f.13.1726569602833;
+        Tue, 17 Sep 2024 03:40:02 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780007dsm9183869f8f.82.2024.09.17.03.40.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2024 03:40:02 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Andy Shevchenko <andy@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in INTEL MID PLATFORM
+Date: Tue, 17 Sep 2024 12:39:55 +0200
+Message-ID: <20240917103955.102921-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] crypto: lib/mpi - Extend support for scope-based resource
- management
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nL+dVkroubRqlrEYG8b1wBZgrLvmUOOGbIjc8yycZpxoJGL7txJ
- yJLhnXrJOfhNzXjkjDx0dOMp9rCMBlSW+UyLuseJhCHYJtOROYuX05EpirMYRhVpQBpuONv
- yiqNw9Xqay4zM+1t0x23t3HAMkWkqpHpe7O+kMv7h9/xbfDMIcXsB2US/vCYC0gmTUXj53u
- im/6olLOPOVb/VSqJa+rg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:kry6FD/SrT0=;M8vir+4w+5TsOFOlWwr5t5mOHsE
- xYwAJEZBe+83b20qSxUCsq1VdlMDdcNKVeJN1+tPmBvjqAq37VOSfPbn+ncF808CBFqaNbB99
- 7v/D5sdb6zU7bw4ZH7pfIBK3+k/U5PlN7aCYXngiRHGZwCP6AHWKX4diP9DItMJ685b4K9LXa
- /QmURvgfEIUJJt8oKf7f1aT5/9wVTndD7qa3f4dYdVvGUn8IrOIDP6LDsBH2vNpnrVq81uB1P
- VvSy61A8B/L7gkyuHkKAAr60Giuk/QF9+IM2ZvjHcYJoqKniVp5FgbbRcNOF1TI8TwiMhuEqP
- pbCbN2p1brdGmutyHsbmSMwfEytJnekaNPIr2Z0FeIm+0G1P5XOafD9QuldXADVYz/ZAUgmAR
- 43ykwMUljolsPUaX7fr4+9CkgrXwNHgu43FLvNV1GAeRx+j0p+0UjjvqvkdUi7v1TBld7NBnR
- DjJu5BDq3dH+4bqmvvr5vcC8dVoMq+WPBXsZEbFmqc1WQliUC29mZL4qX1uxWckBUog0rzuUE
- 2jtjbR3BhnQGb9pT+4R+ka3obPBmcSHT9rgwt/mKxTq5hdxxUW7Qs4cSMOlwmZLyNbgXmQdxJ
- Y6S3M2kZg6c4jZ5ud1BsLC6Jej0U8TkDUs0wH6d24+uqLO3tj3IvcSbHTTdA+etyfNsUsmVI3
- ljsZ6KMSF9LkPSxUCgSO2Oz73J0AROskgn7vvA6KMdluwSxivi5kZFJOGM0ghRwX9M89CnELP
- j1bWDw1ppr7O70TWGx5Dyt/Z84mfWk93VBaQ9Rpa49cmfNFJBfdZJSkPSXG3wCtPBqtbsmpQE
- xCdY1bnSLOvV7/Lcam9gU/NA==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 17 Sep 2024 11:20:29 +0200
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Scope-based resource management became supported for some
-programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
-See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
-Introduce __cleanup() based infrastructure").
+Commit 5f1cda51107f ("platform/x86: intel_scu_wdt: Move intel_scu_wdt.h to
+x86 subfolder") moves intel-mid_wdt.h in ./include/linux/platform_data into
+the x86 subdirectory, but misses to adjust the INTEL MID PLATFORM section,
+which is referring to this file.
 
-Thus add a macro call so that the attribute =E2=80=9C__free(mpi_free)=E2=
-=80=9D can be
-applied accordingly.
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- include/linux/mpi.h | 4 ++++
- 1 file changed, 4 insertions(+)
+Adjust the file entry to this header file movement.
 
-diff --git a/include/linux/mpi.h b/include/linux/mpi.h
-index 47be46f36435..47db8fa5fcc8 100644
-=2D-- a/include/linux/mpi.h
-+++ b/include/linux/mpi.h
-@@ -19,6 +19,8 @@
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- #include <linux/types.h>
- #include <linux/scatterlist.h>
-+#include <linux/cleanup.h>
-+#include <linux/err.h>
-
- #define BYTES_PER_MPI_LIMB	(BITS_PER_LONG / 8)
- #define BITS_PER_MPI_LIMB	BITS_PER_LONG
-@@ -44,6 +46,8 @@ typedef struct gcry_mpi *MPI;
- /*-- mpiutil.c --*/
- MPI mpi_alloc(unsigned nlimbs);
- void mpi_free(MPI a);
-+DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
-+
- int mpi_resize(MPI a, unsigned nlimbs);
-
- MPI mpi_copy(MPI a);
-=2D-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4c4116045664..9a4fa88edcd3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11646,7 +11646,7 @@ F:	drivers/platform/x86/intel_scu_*
+ F:	drivers/staging/media/atomisp/
+ F:	drivers/watchdog/intel-mid_wdt.c
+ F:	include/linux/mfd/intel_soc_pmic_mrfld.h
+-F:	include/linux/platform_data/intel-mid_wdt.h
++F:	include/linux/platform_data/x86/intel-mid_wdt.h
+ F:	include/linux/platform_data/x86/intel_scu_ipc.h
+ 
+ INTEL P-Unit IPC DRIVER
+-- 
 2.46.0
 
