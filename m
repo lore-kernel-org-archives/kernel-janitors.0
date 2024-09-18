@@ -1,116 +1,178 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D164428;
-	Wed, 18 Sep 2024 00:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACE0189BA0;
+	Wed, 18 Sep 2024 08:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726620772; cv=none; b=hWpDAf63hePXObzIcpWZS0HtdZ8thzBWd+awdALo7U8+RuXEgf9r6mzn0IszUGD8e8sm74tPECxCJz6m+ostYiwXeuAYAiJ1WS2mSCbG+eLsDbRD6Btcg1t12kcfusWwhboq5Al2WFg1PqGEz7Tv+FrEwkEFAnAjwqMZMzTa9Uk=
+	t=1726647189; cv=none; b=abbJ+cOKPsipZqfOWj1eZeBV1YJFVPTxEvBWwuEoHCo2CHGicYE63L2niq95OGjwlWFpFnHBB7bn9DJ9+st2NglaslmGMnoblUmDSmiWI6yczji3yqf+rKjL+KBz9Vuc/BtOimqS/FsAfIU4fnDDUfditC+X3xA7Ze7rDssUwXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726620772; c=relaxed/simple;
-	bh=Viy7M+d8DmzMY2Qjb2WpfLhBST+9UAOUykc41pF/uIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ONGSiRT1X8hYB5j8Zl2mc65v29+A/yE5fKC5XCWM61V2K9/rzXux09U1lQ/F4QWyinEronnPUJF+rxT9V8k27ciHl+ahQhYc6r67IFACygpZo19DKAs1XuRvlpbFVCHRrwqiWrnYKn2iMAupBmO62WDFms90sdE4ZLlBCEFt0e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AiKNXNhk; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1726647189; c=relaxed/simple;
+	bh=ykfMzlPUMMa0Z7Gq1bunkKZMbdyybMY1mZyrStzwaw4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=LphIPG5LFYJiT3Y+itvxXoMYDELZZ+DeDCh3Vr3qGYCCxo9XEWHT6BIueaun1Pg+z3Qg0m1lAXoXoYE1HuqgcNW26HhHFptQWoPFTJ68GhRWnffTKMFTrNJBwnp9qRLQink6dYmxBKf2mNeuXqKLqmOQTOqQPpKUaoNq2/grhHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ckuC0Om9; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AiKNXNhk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726620771; x=1758156771;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Viy7M+d8DmzMY2Qjb2WpfLhBST+9UAOUykc41pF/uIE=;
-  b=AiKNXNhkiqNXPDeRkzE9yEEasdABD1abWnSmhoOCnqu0GnltDenuYCo0
-   SsFxSZXrb9j23TynuytsH/UBmC+0SUWQbiw2y0lo0dSZQYlPxLcbUqbpF
-   ZPDuDfYNUYgqs29EsF9pOFSI4/9lRBS4Si4Z8zLeA54LZFQIMhz+2L6XG
-   90cJ1WPYXPeLwc1vqoPbMcvuMfO75Lqd8ilKWHmQ+7wIS4GZKlgc1X+Xj
-   xNjWdUd5cQzwHBeMtNCCM931XUb5djHAcIPQCUXHvrVlz1mNMDrYcUMxY
-   QmU74c66SGgfSaNZqMgqbhYaSyVXH/TVOrJyd0Hl7FlLLf+DJwLP4gllC
-   w==;
-X-CSE-ConnectionGUID: ALWPpigZRDGbm5pQspnF6g==
-X-CSE-MsgGUID: J434PIu+TZiNPtaPbcKlwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25394134"
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="25394134"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 17:52:51 -0700
-X-CSE-ConnectionGUID: C32OqAMbSkiGpokrp+zf6Q==
-X-CSE-MsgGUID: +rzghz59RZSuP0iJ91MN5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="92678630"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 17 Sep 2024 17:52:49 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sqiw2-000BkA-2Z;
-	Wed, 18 Sep 2024 00:52:46 +0000
-Date: Wed, 18 Sep 2024 08:52:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: lib/mpi - Extend support for scope-based
- resource management
-Message-ID: <202409180851.4taVWgfI-lkp@intel.com>
-References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ckuC0Om9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726647163; x=1727251963; i=markus.elfring@web.de;
+	bh=kInQ//rPSsqlgcK7FpGZP43VvDdx4dvgsVxHv3VH3nI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ckuC0Om92SIu+UHVBmv0FIG+p2lPJY37ZtpYU6/TF8VabNiMYID6V2d6PoOP49Yv
+	 hyiZKldZckMoa5Zz8eECGaMEBgwECB9kzeYssSmB912p7Pf8CIne30bdzdkCIdoKl
+	 SZ8ADiEVc4ZRrXaa0nG1u1tzGJAjFkQaaEHdoH7Zkn2VbFsYeSgwKDr8oRuZzLv+S
+	 3Sb3T+0cdZS+qma0CV9RR/vISMHaTeOqzI6wcpSNBIbiEYvFrL2kbND+ul+0S9rxz
+	 wueje130/Hj9j0uweR7R2Wb/1OIZ02hLXn4pfzXr/W5hc4X1IMGKpupCwOT/XBHKQ
+	 IVVI4hBJe6hK1TXOoQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mfc8y-1sJhy70VPE-00ixjw; Wed, 18
+ Sep 2024 10:12:43 +0200
+Message-ID: <d1f1eb7f-1de7-4d73-a7d0-00cc1eac3d5d@web.de>
+Date: Wed, 18 Sep 2024 10:12:14 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
+User-Agent: Mozilla Thunderbird
+To: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ kernel-janitors@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Faith Ekstrand <faith.ekstrand@collabora.com>,
+ Francois Dugast <francois.dugast@intel.com>,
+ Jani Nikula <jani.nikula@intel.com>,
+ =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Matt Roper <matthew.d.roper@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Nirmoy Das <nirmoy.das@intel.com>,
+ Philippe Lecluse <philippe.lecluse@intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm/xe/query: Refactor copy_to_user() usage in four functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1KMy0yAdh4GMhkxbk+tvy/qZLdxiPwbW85tozVJiNzbZLOB1351
+ y1EfCORR2QuAvKPUa3Uu4Ky2IV+rP4QYTjXAWmNPfRbFlIwWIc00b9COnmrgieUmd6iIzpC
+ fdVGkt7xuob2v19OTCBJk5tqpLbZ5+ESSPbTb+cnm9KVR2HlxH3Y4UZ4bb14+s3XPmzZAnM
+ bJiYIpXwLw0AGvmQ6xqjQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mr+sK1Kvv0Q=;TWQfCzjh0yjiyT5cJLK1+Oj1u3v
+ dXTfDQggGDJfrvpK2pY7OBiGx+Xux+scjcqkAFHmbvRfW/+//rno/UCiYTVDCJ9WxVz3EF7I3
+ fQ2PFV4VgTvr9gkW3q83We0dkBQ1zvnU1o110qtWEjsvHRy7h7uA1nFP+Xo9CfuUefbrwuCT0
+ WdulMAy4IIoETB9dUnzgA0S2gpvVT8jNCzkm8yz1oSZxmBLx1a5LznByJpW+mcsK/47Z181sl
+ Hd8Sq6AmG1L/VgLg98oFh204tqmTn4eE8PbNb8d59fFUaGWr2U1PTz+dEv6Z7XZ1x1uY4xVZE
+ WslD4da9QagicmTTrAS44yHzmIG+tATnuFXgyCyW2GWuoq8RBHYxgPH7F31jS2zICTaVQge6X
+ hUbdEgJQ5NYRDW3qA7+CSnmm4BUYHf1mShwG2oR1NGae1UAhSeUSQ2F0nL+QFDbrfzLlARTjW
+ 2yn9y9xdjQJkFX37oehc6UKArgxmVg3RFsfoYiS35sX2H/a75NjAaqC8z0z5KT58NpRQvbQHN
+ t5dG5QYn6veLuwu42vQVGZ2pYB95nzDxVdcEe5QL7WPtyWjYcqe3diaKIARppGWbEFGBkImPL
+ 7wOd/FDULHDc2Wk0Fid9SxcnToQH9pvfMBGWz3Sr3K46v5xbs5ChQCtkbh5ONjJFGJDKHtMWs
+ Jx0NiR18sXnotG7RrRxvNNds9m4t2o5Jls6Mv8IgUR3SRqD1hZYVB5fk3Dt+aN+X2MxmxW7mY
+ zNhnctiU0cPC2JJJvtf3mYaKeWkWvjAHnj5y6S4crqtUnI2XwuIwIIPBr56YVKSwxZRzoMlcb
+ iQARlY43W2pNq031OQGlTs8w==
 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2024 09:43:07 +0200
 
-kernel test robot noticed the following build errors:
+Assign return values from copy_to_user() calls to additional local variabl=
+es
+so that four kfree() calls and return statements can be omitted accordingl=
+y.
 
-[auto build test ERROR on herbert-crypto-2.6/master]
-[also build test ERROR on herbert-cryptodev-2.6/master linus/master v6.11 next-20240917]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This issue was transformed by using the Coccinelle software.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/crypto-lib-mpi-Extend-support-for-scope-based-resource-management/20240917-173519
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git master
-patch link:    https://lore.kernel.org/r/bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc%40web.de
-patch subject: [PATCH] crypto: lib/mpi - Extend support for scope-based resource management
-config: i386-buildonly-randconfig-001-20240918 (https://download.01.org/0day-ci/archive/20240918/202409180851.4taVWgfI-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240918/202409180851.4taVWgfI-lkp@intel.com/reproduce)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/xe/xe_query.c | 32 ++++++++++++--------------------
+ 1 file changed, 12 insertions(+), 20 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409180851.4taVWgfI-lkp@intel.com/
+diff --git a/drivers/gpu/drm/xe/xe_query.c b/drivers/gpu/drm/xe/xe_query.c
+index 5246a4a2740e..6195e720176d 100644
+=2D-- a/drivers/gpu/drm/xe/xe_query.c
++++ b/drivers/gpu/drm/xe/xe_query.c
+@@ -220,13 +220,11 @@ static int query_engines(struct xe_device *xe,
 
-All errors (new ones prefixed by >>):
+ 	engines->num_engines =3D i;
 
-   In file included from crypto/dh.c:14:
->> include/linux/mpi.h:49:48: error: use of undeclared identifier 'T_'
-      49 | DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
-         |                                                ^
-   include/linux/mpi.h:49:62: error: use of undeclared identifier 'T_'
-      49 | DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
-         |                                                              ^
-   2 errors generated.
+-	if (copy_to_user(query_ptr, engines, size)) {
++	{
++		unsigned long ctu =3D copy_to_user(query_ptr, engines, size);
+ 		kfree(engines);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
+ 	}
+-	kfree(engines);
+-
+-	return 0;
+ }
 
+ static size_t calc_mem_regions_size(struct xe_device *xe)
+@@ -344,13 +342,11 @@ static int query_config(struct xe_device *xe, struct=
+ drm_xe_device_query *query)
+ 	config->info[DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY] =3D
+ 		xe_exec_queue_device_get_max_priority(xe);
 
-vim +/T_ +49 include/linux/mpi.h
+-	if (copy_to_user(query_ptr, config, size)) {
++	{
++		unsigned long ctu =3D copy_to_user(query_ptr, config, size);
+ 		kfree(config);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
+ 	}
+-	kfree(config);
+-
+-	return 0;
+ }
 
-    45	
-    46	/*-- mpiutil.c --*/
-    47	MPI mpi_alloc(unsigned nlimbs);
-    48	void mpi_free(MPI a);
-  > 49	DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
-    50	
+ static int query_gt_list(struct xe_device *xe, struct drm_xe_device_query=
+ *query)
+@@ -414,13 +410,11 @@ static int query_gt_list(struct xe_device *xe, struc=
+t drm_xe_device_query *query
+ 			REG_FIELD_GET(GMD_ID_REVID, gt->info.gmdid);
+ 	}
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-	if (copy_to_user(query_ptr, gt_list, size)) {
++	{
++		unsigned long ctu =3D copy_to_user(query_ptr, gt_list, size);
+ 		kfree(gt_list);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
+ 	}
+-	kfree(gt_list);
+-
+-	return 0;
+ }
+
+ static int query_hwconfig(struct xe_device *xe,
+@@ -444,13 +438,11 @@ static int query_hwconfig(struct xe_device *xe,
+
+ 	xe_guc_hwconfig_copy(&gt->uc.guc, hwconfig);
+
+-	if (copy_to_user(query_ptr, hwconfig, size)) {
++	{
++		unsigned long ctu =3D copy_to_user(query_ptr, hwconfig, size);
+ 		kfree(hwconfig);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
+ 	}
+-	kfree(hwconfig);
+-
+-	return 0;
+ }
+
+ static size_t calc_topo_query_size(struct xe_device *xe)
+=2D-
+2.46.0
+
