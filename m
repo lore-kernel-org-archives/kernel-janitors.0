@@ -1,66 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE37CA2D;
-	Wed, 18 Sep 2024 17:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863B33D76;
+	Wed, 18 Sep 2024 18:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726679286; cv=none; b=D+MQajM74Kh1CJKeED9pP3DvytguzHFKmQqeI6oPF3A9NLsRsAH4xcQEAnBDTGJIOpWkRCXs3oqptSepezVob4a9Gg1UszAWPQZM6te0S2YsxUz8Bvpjprfl1TMXv7LKlS3lmDbjBl05WAmQ4gIDdTAYvCkpeQ+Xe/iblknWeiY=
+	t=1726684368; cv=none; b=fPRY+AdHL/ULjGi5F/jTDZUVpnTJSA5C9eVO8gNOhskvVcFp+DbG7+HOXJKvkKfgvJpQ+HuNaqYSsOwg70bSfnPyB7xeYJZ9D2ugjn6g7WQJurnlyytHnxSGYCdMNYXF8xxi8DE6xWWpct02PwxkjADxjbhwN+6NbPmjYkpudKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726679286; c=relaxed/simple;
-	bh=DPziPLKzDdbmRMPxT3R1WxheB5wFFJjSGfR2eBNoZEo=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=S3wQFhi8euehbhcnS612FZDwQa4HdeS4JjhDzmSXBhUhEanPK+7i3F8nFOyPZ8rr6Ah2JbOGDGmWhzdxXCxSsk314bIXz87ydj/k+rEDbF1LAUQxchoWH8C0VJpf0gPWpW+8c4Ehu80+6gKHvUp/HfLXY4KKEOAQ8rgHoUDMAvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bORxtch+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726684368; c=relaxed/simple;
+	bh=YJkeuTsxBPiyvTUP/blR4RkykjAI4i8ZteKtKxrLGL4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GwJffbmur15BzEV5+uYUiLDTjje70JTGOGJWos1oz1gvCPOrAPgkmdS/qSGaWTiwI3NZnj2HXr9HaBKR4epbEkt5azDDwy+RmZRCxLJNj4nein4qTfRaxvrrGYrRQrZNGXXXw7YQ2Y3uArXoTJt8OxtqrT/aE6l47ZsTSrezL9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nqOveIaX; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bORxtch+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2971EC4CEC2;
-	Wed, 18 Sep 2024 17:08:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726679285;
-	bh=DPziPLKzDdbmRMPxT3R1WxheB5wFFJjSGfR2eBNoZEo=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=bORxtch+rcHih8RJb0w/K3hG5sh1rx7+6efTEwoIT4sBOJNtvs5kP2HmWygpuPSDN
-	 akLiEoiFaXCKivKqsgql/QkQw9KJWsh8vtsw0lYHpGjC7YZXlhzQ38+EI9kvZw0EMp
-	 zq9/h4sKzIzunJ8Bu2VtI2sx5XVOOhcBDAJBf6Eu9tdVaHWxRabOM1VJ3XwQKt9xo5
-	 bdR3QyuJ0jxuL6AfjPn9P+B9HNAxqNpGjcURCY3uREXetGRhQESz6DIMlT9kIblyMN
-	 PiPLeWMfhCOSBJnbuRo3uICWHxLes/YvbJlzIofdLacvAkuh/P18KIHyVCCxbnKN+a
-	 GMGonaoqFeeiQ==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nqOveIaX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726684348; x=1727289148; i=markus.elfring@web.de;
+	bh=O9DaIs4hHxakPCjTXFbcAKjoZvONlDT+AZcVxmGqFGM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=nqOveIaXitWWy/I6XyvWDpfx/cQ5x0BeLn/Jh5wbt4ChBKTTjPl4JxrQJ7m4lpwN
+	 8pYFSyAZuN6RsZ3uFjUt6SxkVbZ9CF8CA9jYf8SuKvQMX2bMZjuzEc4vazzraGaBp
+	 LLAvxJ+7VkVcsldA3gHOo4XPsZPt8nGOYuC1+0mztIL+JZIUkeVkNveO2B9GL/Yt0
+	 fbaqTmzA+5EPKT5Ft+fuCQXJfg9Mh/QGLu/ZJ5l+syfn7WhQNu9FUnGuUMKNNvDfL
+	 GSpEWHn2wtdZoGjRTNAONxcZ7GOGvTUxJulMSE4E1bVrhY13ldcf0tTBpAheUWthF
+	 s61m0K0bGTLmQ3E9WQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwNW-1sITfh34y6-00q8iX; Wed, 18
+ Sep 2024 20:32:28 +0200
+Message-ID: <089721e7-367a-477d-a4b7-a712244bb5d3@web.de>
+Date: Wed, 18 Sep 2024 20:32:26 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: ath6kl: fix typos
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240913094818.14456-1-algonell@gmail.com>
-References: <20240913094818.14456-1-algonell@gmail.com>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrew Kreimer <algonell@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172667928257.4089263.8301674737892934391.kvalo@kernel.org>
-Date: Wed, 18 Sep 2024 17:08:03 +0000 (UTC)
+User-Agent: Mozilla Thunderbird
+To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Christian Brauner <brauner@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jeff Layton <jlayton@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] ibmasmfs: Use common error handling code in
+ command_file_read()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RtVSD5Q086KPJxetmZJImkzST/1+WdkD9aPjnQeRvmEt7sP7UqN
+ QEd6kYM+QNo2iaJUHUzJyDoRVb7ke+yfpUX1EsCPYmTjJ6xbiNXdxtndXYj3eg5uD4NYdOs
+ ow2pwxC3KUnE6E9ZGM0x2GkSh5n+9xm1V+s7vK1NN9HFwatvHt0qyPsiNAsFA16WN8wGQhm
+ W3Ruf6xW8cto0XKGfKOaw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XDSV6qVQiyg=;zWScRs4z2W87b0lQ95IZPo4Mibx
+ +IyLnF8FXlSb0MwXFis1b8US7mWpUEeHvjS4XvLYnmGVkmUoetA90GJpBgPYDcN3C4fov0b89
+ wqGH69RCuzcuME9SlVUGlEGgGTbva/ugQ93yHB5YxKiXmaiI7uTtAGMDiXZgsvGNFN53n+dNu
+ I2aDWwMf6lLlrp5Jy65U7ICf1Yw6SKs4+Oa0m7Y3mqrs4gTePPDdr2bqHBYSecSc+QjQgsNDe
+ OTKofHqoe5wF/U2HH4bDCwz7e7drWUtKoMU7dpaZRt37XiU8M/wOKZG+j4uATMdCg7ORx3/x6
+ +7vccvUG4eKWTiEeJWWMLTWnqm7rNcLld/xXldclWw0SzEzPIGYfblSynIGNOUCQj+RLYIz0f
+ MU6CMjDI6l3YQJhF7RYefXrqdIJY8WyYGiOIeJpcWuph/PjgxAEduzXPAwV9h3wPWDRs/MjIk
+ eJ7clV29Ubw9MZtBA2mJzBpJ7MlcupFy5AbneQF+kIsZgVRWm3Dk7CobvZ9/qJ++UylIDRgAf
+ RYReWV1izkZI4EcHRRTU+oHazxKHCBNm2JtDl4a8oCPdBJKxgbWagVp5VcHbssGTV99//8IGL
+ kSDpr4GoJiEgQjjHu1HIcukYy0JNm5ly1VUWYYWQufdlczEYSRuYWE1fiwbojlVN0+Ml5jB1U
+ vzza4MwrRJtRZyavSUll7q1IkN/a/CWFHlel8zpmqKxluhf7nEMq3PMh+gmAsHE9DRl+ZPFi2
+ 4juWhjrTMcSr7SCERohjQ+OExbyFQUz0tQ1WzTcSO7AdZVliaKNtKSNvqN77yQ35Htlr3AXZS
+ mw2He5C5iCWs2Gmi9KU9nr8g==
 
-Andrew Kreimer <algonell@gmail.com> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2024 19:50:27 +0200
 
-> Fix typos in comments.
-> 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Add a label so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-Changed the title to:
+This issue was detected by using the Coccinelle software.
 
-wifi: ath6kl: fix typos in struct wmi_rssi_threshold_params_cmd and wmi_snr_threshold_params_cmd comments
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/misc/ibmasm/ibmasmfs.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240913094818.14456-1-algonell@gmail.com/
+diff --git a/drivers/misc/ibmasm/ibmasmfs.c b/drivers/misc/ibmasm/ibmasmfs=
+.c
+index c44de892a61e..93b69f473452 100644
+=2D-- a/drivers/misc/ibmasm/ibmasmfs.c
++++ b/drivers/misc/ibmasm/ibmasmfs.c
+@@ -280,14 +280,15 @@ static ssize_t command_file_read(struct file *file, =
+char __user *buf, size_t cou
+ 	spin_unlock_irqrestore(&command_data->sp->lock, flags);
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-https://docs.kernel.org/process/submitting-patches.html
+ 	if (cmd->status !=3D IBMASM_CMD_COMPLETE) {
+-		command_put(cmd);
+-		return -EIO;
++		len =3D -EIO;
++		goto put_command;
+ 	}
+ 	len =3D min(count, cmd->buffer_size);
+ 	if (copy_to_user(buf, cmd->buffer, len)) {
+-		command_put(cmd);
+-		return -EFAULT;
++		len =3D -EFAULT;
++		goto put_command;
+ 	}
++put_command:
+ 	command_put(cmd);
+
+ 	return len;
+=2D-
+2.46.0
 
