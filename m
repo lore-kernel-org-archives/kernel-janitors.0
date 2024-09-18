@@ -1,103 +1,132 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503EF16EBE6;
-	Wed, 18 Sep 2024 08:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C57B176AAA;
+	Wed, 18 Sep 2024 09:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726647346; cv=none; b=cKkoT6UDCIEhykxLVEWy6Jx7SJ0EpEDVExTuJIjGwwJsjANpNB+xwPHsOEaHvCB6guCWSXCvjNYAztBgl+ML/2V1GV7rXXo2RMYlekTfAnLQcCyO2MaSJwkZOEQpMLCoY7E/oKSn/w28KYg0MxooZBjODGppzywjWZ3S3z+s0cM=
+	t=1726651604; cv=none; b=UIKyJc271fCsp0bAo12jiNbHbIKGikaKSXZoWUq9eEZ/8nElDfr43ksMq8K5n4tkegxdX0ciKBh1dS1i6qsGKVbyC6T9CXro8L1WqeE8q1ouvIAaGHBjtkaBATMAl8Id/55bp6UwevXYxrG01ToF5kp2DeSwglNqx1di96UPeBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726647346; c=relaxed/simple;
-	bh=Kzo8b+TZLqNDogxgMb68Bo3cCLBcxdlVO4KJ9JC7hQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D2awqqWx6Z2fYdeYBJaAcYh4L3KWkyqYd6j7Vf4FswpwKdUjpjwVkyN/TEj7LrHplJsB4UiQKCvzBb2KEkFfrIaBP/253DOMDsC7ydHPSK+4jYS3F3Iwg3B9Q3tMRjgOOW/1I8ynBLEm7qdSF9l75iRwmQOK0lQisZ3wMQyx0I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N2TeTkw5; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1726651604; c=relaxed/simple;
+	bh=x0h55I41PNY0qDvUesT4sPVlbRExPV+X974LHXAdHVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dNR4YNUeBq3BnD4lvanBJbcMNEHQEz9nwLr9TGmTSZ6Ot/lUHM6+zcnjV/Znnw1ODUqCg5i+i1pB5/7FCEBMdboywQ7ErVtyyt41aI055OuDndjeeOq9O02NOsYCazI3bp7OtbmoEcMn4hUlUT2eJ1st9PFkNuxaA9My5t+hrTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZdayU9uP; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2TeTkw5"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so33572975e9.3;
-        Wed, 18 Sep 2024 01:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726647342; x=1727252142; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MUqpXgukV+FJuGJlcWmdbDCHxe/zm7v0A0anm8W8rdE=;
-        b=N2TeTkw50V5gUGF7yKWeQJ4OSa93kPAmPA0fNrXmlEi7Np7/ZIDjhqK7GHmRpshzGi
-         MZJLDDbo/ZzFFZpCCZ1JOE6AMN+S0LGVsOUVXP5f46ftLdEeuFVRDjea9u/wGVtQNLOF
-         gmdXGjq2nT5wJweUaNgNOGKRSLgmGX5XpNktoxvmDRUOeAUbU92ltpAlxLTCTQOrDhCd
-         se8Qp+7XRLDHeWZhPV1L8zvi2Kjnp+qtf41s30hh3Jqv/AUq9csbJIqVm9aERNSa3XuR
-         yeSnhVXomJ/BC2cJbr8m97SuEU8hGXIyd9CfjnHQ+FqbyZd9Mc6eCd2HteMtgT53QvKY
-         L8gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726647342; x=1727252142;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MUqpXgukV+FJuGJlcWmdbDCHxe/zm7v0A0anm8W8rdE=;
-        b=wl9Qx3MZ58RvRsplY5ez6Ivlb5upUZ4G2vxbH0WM/2YzvArVx1AesYsFIO0hySk7iY
-         aSxjBpXjN66LryX273tm36E7QQbPtqWloWq55bmDSRkEKacXT8RFAcdtMrtJicxDGd4F
-         8meek2yC7yHizL4wE2HfjmYjNcrqsYhrMCMda8SkzGe06OjCDaJYJHCVvN7a5a8GN0jb
-         p84sFK1SlSr/Yl4xBjBaEFCOfqL2Y3hUdbSExDggVg6SVj8rClfvUG9VEILtIxjeWkWC
-         KACrzaNLQvr5MHBkg/6/aLPjCP93oPj+hyBxZghxsJ2W/R6SiZAMO2wzCEquA2mZGhl0
-         95mA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrE3pp+VdpU4mxdxXvJaEplZvRj4B6GTAvKEhjHuN5ByqNlFpTM1AD6grc3bYowXsPRG2dWqjOUAu4c24Vd+I=@vger.kernel.org, AJvYcCWqjSWkGjv7+frPKCl7wCrwu8XY22e0FTy/VAI3oamJ7T0TYC6cabQBX35vRS+r13109Eh0NzmPdQfEf697@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqCFli61wFHJP1qH4EpuM36xkUvGI504XbH1jhF2/3adSxMpb7
-	I9TQxylZ5pUREJ3RiYU93TZPisrdcBaSZ8gm08h+hrC1WpsYwFVQ
-X-Google-Smtp-Source: AGHT+IGZFrkHUV62HWPhcbsvRzlB/ExZe3kGZ7exewjzbxEdqS/NngJrWdTIiDbd+uDCdUVLC0tKqw==
-X-Received: by 2002:a05:600c:3b8e:b0:42c:b377:3f76 with SMTP id 5b1f17b1804b1-42cdb54e68fmr171130285e9.17.1726647342105;
-        Wed, 18 Sep 2024 01:15:42 -0700 (PDT)
-Received: from void.void ([37.46.46.21])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e72e4c5esm11759450f8f.2.2024.09.18.01.15.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 01:15:41 -0700 (PDT)
-Date: Wed, 18 Sep 2024 11:15:39 +0300
-From: Andrew Kreimer <algonell@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Peter Xu <peterx@redhat.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] arm/mm: fix typos
-Message-ID: <ZuqMK21Xty1Cj07a@void.void>
-References: <20240909102907.9187-1-algonell@gmail.com>
- <ZumsQuGrUkBjZyZq@shell.armlinux.org.uk>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZdayU9uP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726651585; x=1727256385; i=markus.elfring@web.de;
+	bh=oaWtkwikAuynprJNBCi62SYkTgrh5zdNvX/3WKywahg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ZdayU9uPzcaIm/7F/y36INOdINnLEkDfzL5/saKtu2oFrR26GHqBETC4wE60TnVe
+	 5N3z6h9pE16ZYJ/y+7bAlAzWFowobxUJ0FLA6EFr5yAQRypm1rsmTnDOSV5fD7S1+
+	 kbqlhDO7UsGuNFGk2EBSGNlYCQdKgtCYCrt7WlVQ2GCxlYDMu9xnOnoJaK77kXEb8
+	 AHTFPhZzwG/2vueFhkGmJet5Aa5fNUya+Gr/DQe5N0LZfvfRxcuaUi2ZoK+VNEIhH
+	 BZbnxDwotJmRct+3nGIX/vtIQNa1vaYxcJJCWWKqJ4xe0CWOwPrTiIrxYTmhor7Kv
+	 vjMy/vSF2gFjGjMkNw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MVrft-1sRvgi1D53-00P9PJ; Wed, 18
+ Sep 2024 11:26:25 +0200
+Message-ID: <91d10516-4ba9-4fe0-8f63-86205cc4f88c@web.de>
+Date: Wed, 18 Sep 2024 11:26:23 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZumsQuGrUkBjZyZq@shell.armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] crypto: lib/mpi - Extend support for scope-based resource
+ management
+To: kernel-janitors@vger.kernel.org, Herbert Xu
+ <herbert@gondor.apana.org.au>, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>,
+ oe-kbuild-all@lists.linux.dev
+References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
+ <202409180725.ZV8DCvII-lkp@intel.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <202409180725.ZV8DCvII-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:w8K01psw/6Gru/Y1WqJRRjwAZyt+jNHKMO2RQjE8uDrl01kka6N
+ e2IbNXddfvZS2TJof0kwVdyODU5Uzh97pxMiuwxEYcnlUkc5mtRpBFjBklx0eJ6kgTXuE5e
+ QQGTL1/T0iTtEwxbWxaSOppKwJjSm7KhOJ35UzHlEYKA/ZqJATtRLM9DMzK3N+cWYcjPoIu
+ h0q+3H56Kj/SHgoEU50LA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PGXNLjEUkC4=;0zSB/KTqBWrmjT6XLVpJxRdD8IX
+ OonJyQdOk746tt6zxAd2b+BtLihM0MJI9VZkcOWovW21gM0lc9ylZ/mtygObRlITLxjFUmlie
+ 1E8i+S6npk2yZgsKm0a4FzE44CH7KoZmtC5i8dARiX8zRLpiM4n7Q9astuz9vNMKtFsmYd40g
+ 7ZP5MO/5vIyu4JNvCUc0lTnAd0JwwMOJeolrU1qWGqxMMKCrvFVa18XxoAyF/sLKzxS5o9XiH
+ WZ7phRvO53NTskY56HVAV5JZ6BHMuKPRlu/a0D78Uec//g7TVoBGuBqxzHC5UtpBZ6seIyOVJ
+ KlBXttu0Isq1/P2Z08pGrc0xwkJVm5JrQ1uWu3bOQaBU3j5VH86SMdCdJEj+g0EiXPeTreZoA
+ x9kHqll5pDjsGK34/d20mOKUAeR7gt2daQKdDYnlVIEZ0c7wPUnvQIfJ5iDN0vSp3RbiIaWWU
+ KC7BYXgcdyX50LlTcpoBM0LdpbJyJKaZq/nTH883k1TMSzoNAenvYk+kl0lt57NnbJipghKSR
+ bDKM+By8GrC3k0oNSWMcigs/tdv1CizrIsEM9MKsFkib9S3IDRUG92uay6LzgdK3GzOB8AHOY
+ VgLsW4vRr/8GhKyHiuRgq77Td0kXtgZIa8t/TniNJrv7Tdk7G0KU6U5FJObLq66oEF1aBIxlj
+ UBuj7KbzhhyImu3CGcNDB6blyunLcMecjVNhxY0Hy3zSeho2h6bXNE6D/iXjtrB+XeNW9JK6R
+ VxaKIKJ9aFauPXtz47vUqEDWT37nHWuhY3YkluMyN6q3xAGqsgvtMHxAzteF2kFBXdcJCtzQq
+ e/nBdZJM5dL5MR3ZASYIDsYw==
 
-On Tue, Sep 17, 2024 at 05:20:18PM +0100, Russell King (Oracle) wrote:
-> On Mon, Sep 09, 2024 at 01:28:51PM +0300, Andrew Kreimer wrote:
-> > Fix typos in comments.
-> > 
-> > Reported-by: Matthew Wilcox <willy@infradead.org>
-> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> 
-> Not sure who's picking this up, but if the intention is for me, then
-> please make sure it finds its way to the patch system. One way to do
-> this is:
-> 
-> $ kvsn=$(git describe --abbrev=0 ...commit...)
-> $ git send-email --cc=patches@armlinux.org.uk \
-> 	--add-header="KernelVersion: $kvsn" \
-> 	...
-> 
-> Thanks.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2024 11:06:35 +0200
 
-Noted.
-> -- 
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Scope-based resource management became supported for some
+programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
+See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
+Introduce __cleanup() based infrastructure").
+
+Thus add a macro call so that the attribute =E2=80=9C__free(mpi_free)=E2=
+=80=9D can be
+applied accordingly.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+V2:
+The kernel build service pointed out that the proposed identifier =E2=80=
+=9CT_=E2=80=9D
+was not recognised by the compiler.
+Thus reserved identifiers need still be applied also at such a place inste=
+ad
+so far.
+I became curious under which circumstances corresponding development conce=
+rns
+will be reconsidered any more.
+
+
+ include/linux/mpi.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/linux/mpi.h b/include/linux/mpi.h
+index 47be46f36435..6fbcb88ce296 100644
+=2D-- a/include/linux/mpi.h
++++ b/include/linux/mpi.h
+@@ -19,6 +19,8 @@
+
+ #include <linux/types.h>
+ #include <linux/scatterlist.h>
++#include <linux/cleanup.h>
++#include <linux/err.h>
+
+ #define BYTES_PER_MPI_LIMB	(BITS_PER_LONG / 8)
+ #define BITS_PER_MPI_LIMB	BITS_PER_LONG
+@@ -44,6 +46,8 @@ typedef struct gcry_mpi *MPI;
+ /*-- mpiutil.c --*/
+ MPI mpi_alloc(unsigned nlimbs);
+ void mpi_free(MPI a);
++DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(_T)) mpi_free(_T))
++
+ int mpi_resize(MPI a, unsigned nlimbs);
+
+ MPI mpi_copy(MPI a);
+=2D-
+2.46.0
+
