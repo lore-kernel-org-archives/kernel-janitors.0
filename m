@@ -1,115 +1,95 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863B33D76;
-	Wed, 18 Sep 2024 18:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D671C9848;
+	Wed, 18 Sep 2024 19:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726684368; cv=none; b=fPRY+AdHL/ULjGi5F/jTDZUVpnTJSA5C9eVO8gNOhskvVcFp+DbG7+HOXJKvkKfgvJpQ+HuNaqYSsOwg70bSfnPyB7xeYJZ9D2ugjn6g7WQJurnlyytHnxSGYCdMNYXF8xxi8DE6xWWpct02PwxkjADxjbhwN+6NbPmjYkpudKE=
+	t=1726686580; cv=none; b=OsDnfX40d/OD0v3nc156LkvX/3zJZefKXHMmVlqEqHLIPT+0WHSv+lOtCcopdSISCI9k9vf+LI9srz8+uq0AT79nIacHpruSrZu6tMvLlydPct0jaNe0XvZyMbc+vM8SO+c5NtXerb8X1hSeMRd2CKZvJHQloRTYQK+DEjjoNG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726684368; c=relaxed/simple;
-	bh=YJkeuTsxBPiyvTUP/blR4RkykjAI4i8ZteKtKxrLGL4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GwJffbmur15BzEV5+uYUiLDTjje70JTGOGJWos1oz1gvCPOrAPgkmdS/qSGaWTiwI3NZnj2HXr9HaBKR4epbEkt5azDDwy+RmZRCxLJNj4nein4qTfRaxvrrGYrRQrZNGXXXw7YQ2Y3uArXoTJt8OxtqrT/aE6l47ZsTSrezL9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nqOveIaX; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1726686580; c=relaxed/simple;
+	bh=QPpFx0Q3zKnneD2ii8FC7UChFgp+otrhwFBO4M1w0U8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GrByxp7iHkdSXlIEvF2Xebm9XqVi6JHsuF4sXPygiYm8eJ8rp/b7Q3li/bxHcMmEUxmzBPjbcmlRWgl6NNIcSPUFcDa93OSPX6kHmod6YK2H3NdfomymxvUDO5W8U4O4g7Zgb7FabNoXL09NietnfxcGZMZWdy0Yc49zMV93pgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sj02ZxUN; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nqOveIaX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726684348; x=1727289148; i=markus.elfring@web.de;
-	bh=O9DaIs4hHxakPCjTXFbcAKjoZvONlDT+AZcVxmGqFGM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=nqOveIaXitWWy/I6XyvWDpfx/cQ5x0BeLn/Jh5wbt4ChBKTTjPl4JxrQJ7m4lpwN
-	 8pYFSyAZuN6RsZ3uFjUt6SxkVbZ9CF8CA9jYf8SuKvQMX2bMZjuzEc4vazzraGaBp
-	 LLAvxJ+7VkVcsldA3gHOo4XPsZPt8nGOYuC1+0mztIL+JZIUkeVkNveO2B9GL/Yt0
-	 fbaqTmzA+5EPKT5Ft+fuCQXJfg9Mh/QGLu/ZJ5l+syfn7WhQNu9FUnGuUMKNNvDfL
-	 GSpEWHn2wtdZoGjRTNAONxcZ7GOGvTUxJulMSE4E1bVrhY13ldcf0tTBpAheUWthF
-	 s61m0K0bGTLmQ3E9WQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwNW-1sITfh34y6-00q8iX; Wed, 18
- Sep 2024 20:32:28 +0200
-Message-ID: <089721e7-367a-477d-a4b7-a712244bb5d3@web.de>
-Date: Wed, 18 Sep 2024 20:32:26 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sj02ZxUN"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5365a9574b6so47775e87.1;
+        Wed, 18 Sep 2024 12:09:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726686576; x=1727291376; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iVtVjN7ESleHAw6Xqn4v8byziIaTNLaTeqcfWiwPJ1Q=;
+        b=Sj02ZxUNdW0Rl82JOCNaiSx/cNXaokvjf2dYYoLVh8wNrqJBDi79r39J+nheuhWLYW
+         /DQ9YmI1FbepihCLZ/LoOwmy4Dc638gCsbB0nVgoo95NG/JivizmSMF0bTW05IeFp6cA
+         eq2Bx1CrThZeqrxIIVI91rOtK8LJIQK1Q+FUr/bQZaLjwIX9krGgzh6Yz/cg/YnkQYvY
+         phiiXhvV4fVtliOUaoDAS/WF2K6QvhV/LQy52+Mhp4OS/dKIA26ZPCUb0Cdx9eUV57NN
+         OOrD2Sg8m7HHomxmlAM3Qs3KwfxBx0GEPgC71QcFjQn2C2UMZkl3r+BlhESmbCBmjFDh
+         +Gww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726686576; x=1727291376;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iVtVjN7ESleHAw6Xqn4v8byziIaTNLaTeqcfWiwPJ1Q=;
+        b=qZZw9x1cG6o/xuPdBYDha9meVF7smgjIJMtM+qsnw4mEEoFNs8VGVjL280KOHTgIz3
+         Od9cwHyNdTxt0e+kEyudnVQrxrEsRymKkKvc+BOaEPrsCqIusf+s6gPcxEZ2fx7aTLzJ
+         0x5Yce0ZIkqFxp8CUfsJE1ulSQ+CNkVce+xx+ZrsVGvHBcwbNeIMDHNPTs4tcNmZgIxV
+         OjUBbT3P2t2VFBKhM2wY/eymjNM8UoA+6niKJ2/cUqljOzXe1ea4OxDQwmy2jKUqFsmI
+         vIOVGyglglUnK0Sf3J6jgCHUOEPp/wmj/iKXfg4G+SUCHftZ0V4nT8TxFdW0rucxrdDn
+         GLBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWedwAtIWCAyJfS1EjLMcbt8SZpLTQmaE2XgVeJCG4rLuBUh8TgTfKXCOuml30AY1ZXRTTETuIgQ/wZvWNrfow=@vger.kernel.org, AJvYcCWqnezn7G54mL8gy/FgGkuUlYnoLbR2FNJXGxhvqmHLvaxcYFecWpd+GzEux2e8vs0dRdW0LIkABiccr1aRt5Q=@vger.kernel.org, AJvYcCX4Hi5jiTn32didp/XP7pxuIVW5Efqzx1ryfnwqafpYU48av0FMm/QspCxZ8jmbLSKS4QSJcXrJHiBVEqaQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk0lXasxGeSSMAOAs/ULdKYEagPm4FmXj9Leuvn9Rn3ErhStQf
+	dp7s9JDcljTfLuDbmS8F0Ymxh1ykGPmeYRJ2vTX8VoV7q4MovyZl
+X-Google-Smtp-Source: AGHT+IH4UUvSM6UbmwH34UJUS7NKgR1HZ30Q5WoW8wpvn/NMYyaAkRUvTTcGy8eMHUJH3StbRfSFaw==
+X-Received: by 2002:a05:6512:238b:b0:52e:932d:88ab with SMTP id 2adb3069b0e04-5367fee25a8mr15659135e87.23.1726686576008;
+        Wed, 18 Sep 2024 12:09:36 -0700 (PDT)
+Received: from void.void ([37.46.46.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061330d48sm621347066b.207.2024.09.18.12.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 12:09:35 -0700 (PDT)
+Date: Wed, 18 Sep 2024 22:09:32 +0300
+From: Andrew Kreimer <algonell@gmail.com>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Loic Poulain <loic.poulain@linaro.org>, wcn36xx@lists.infradead.org,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] wifi: wcn36xx: fix a typo
+Message-ID: <ZuslbC6xlP_fUFfi@void.void>
+References: <20240913094319.13718-1-algonell@gmail.com>
+ <172667909414.4089263.7060582994040911136.kvalo@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Christian Brauner <brauner@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jeff Layton <jlayton@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ibmasmfs: Use common error handling code in
- command_file_read()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RtVSD5Q086KPJxetmZJImkzST/1+WdkD9aPjnQeRvmEt7sP7UqN
- QEd6kYM+QNo2iaJUHUzJyDoRVb7ke+yfpUX1EsCPYmTjJ6xbiNXdxtndXYj3eg5uD4NYdOs
- ow2pwxC3KUnE6E9ZGM0x2GkSh5n+9xm1V+s7vK1NN9HFwatvHt0qyPsiNAsFA16WN8wGQhm
- W3Ruf6xW8cto0XKGfKOaw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XDSV6qVQiyg=;zWScRs4z2W87b0lQ95IZPo4Mibx
- +IyLnF8FXlSb0MwXFis1b8US7mWpUEeHvjS4XvLYnmGVkmUoetA90GJpBgPYDcN3C4fov0b89
- wqGH69RCuzcuME9SlVUGlEGgGTbva/ugQ93yHB5YxKiXmaiI7uTtAGMDiXZgsvGNFN53n+dNu
- I2aDWwMf6lLlrp5Jy65U7ICf1Yw6SKs4+Oa0m7Y3mqrs4gTePPDdr2bqHBYSecSc+QjQgsNDe
- OTKofHqoe5wF/U2HH4bDCwz7e7drWUtKoMU7dpaZRt37XiU8M/wOKZG+j4uATMdCg7ORx3/x6
- +7vccvUG4eKWTiEeJWWMLTWnqm7rNcLld/xXldclWw0SzEzPIGYfblSynIGNOUCQj+RLYIz0f
- MU6CMjDI6l3YQJhF7RYefXrqdIJY8WyYGiOIeJpcWuph/PjgxAEduzXPAwV9h3wPWDRs/MjIk
- eJ7clV29Ubw9MZtBA2mJzBpJ7MlcupFy5AbneQF+kIsZgVRWm3Dk7CobvZ9/qJ++UylIDRgAf
- RYReWV1izkZI4EcHRRTU+oHazxKHCBNm2JtDl4a8oCPdBJKxgbWagVp5VcHbssGTV99//8IGL
- kSDpr4GoJiEgQjjHu1HIcukYy0JNm5ly1VUWYYWQufdlczEYSRuYWE1fiwbojlVN0+Ml5jB1U
- vzza4MwrRJtRZyavSUll7q1IkN/a/CWFHlel8zpmqKxluhf7nEMq3PMh+gmAsHE9DRl+ZPFi2
- 4juWhjrTMcSr7SCERohjQ+OExbyFQUz0tQ1WzTcSO7AdZVliaKNtKSNvqN77yQ35Htlr3AXZS
- mw2He5C5iCWs2Gmi9KU9nr8g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172667909414.4089263.7060582994040911136.kvalo@kernel.org>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2024 19:50:27 +0200
+On Wed, Sep 18, 2024 at 05:04:55PM +0000, Kalle Valo wrote:
+> Andrew Kreimer <algonell@gmail.com> wrote:
+> 
+> > Fix a typo in comments.
+> > 
+> > Reported-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> > Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> 
+> The subject should be unique so in the pending branch I changed it to:
+> 
+Thank you.
 
-Add a label so that a bit of exception handling can be better reused
-at the end of this function implementation.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/misc/ibmasm/ibmasmfs.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/misc/ibmasm/ibmasmfs.c b/drivers/misc/ibmasm/ibmasmfs=
-.c
-index c44de892a61e..93b69f473452 100644
-=2D-- a/drivers/misc/ibmasm/ibmasmfs.c
-+++ b/drivers/misc/ibmasm/ibmasmfs.c
-@@ -280,14 +280,15 @@ static ssize_t command_file_read(struct file *file, =
-char __user *buf, size_t cou
- 	spin_unlock_irqrestore(&command_data->sp->lock, flags);
-
- 	if (cmd->status !=3D IBMASM_CMD_COMPLETE) {
--		command_put(cmd);
--		return -EIO;
-+		len =3D -EIO;
-+		goto put_command;
- 	}
- 	len =3D min(count, cmd->buffer_size);
- 	if (copy_to_user(buf, cmd->buffer, len)) {
--		command_put(cmd);
--		return -EFAULT;
-+		len =3D -EFAULT;
-+		goto put_command;
- 	}
-+put_command:
- 	command_put(cmd);
-
- 	return len;
-=2D-
-2.46.0
-
+> wifi: wcn36xx: fix a typo in struct wcn36xx_sta documentation
+> 
+> -- 
+> https://patchwork.kernel.org/project/linux-wireless/patch/20240913094319.13718-1-algonell@gmail.com/
+> 
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> https://docs.kernel.org/process/submitting-patches.html
+> 
