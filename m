@@ -1,175 +1,121 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD3517A59B;
-	Wed, 18 Sep 2024 09:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFC31304BA;
+	Wed, 18 Sep 2024 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726651796; cv=none; b=nHoQ6MnJPPaippa86JgrmXq5ULSvLZJC7Dx4f64QdM3i2f5SSAZPrx9qMlNNFG5r4tL/dPJGUM8R3mtGLAh1TBfd9T/XTol8cJ1fJbnp/r6vxfQZKAfClN0VLVcQrZypmyDcOeb3KQxTGjd5xqR0/gY2w7czsV23OuRu2iZrBJ8=
+	t=1726652373; cv=none; b=q7RTLC5mKpqIDV79KRPxJs7cT+IsA7H4avexHPLTdzeH3dQWzNg2TEvGICQtHqcfpxlbb517DxghVlCSSem7lkWCEcURzdzlQdqEpf3ZThNgv5rMxiqomcqRzeZPxN1T8Sd5BATh6qlM8Mj4sGHnUzAs/b01xMMrcFtBe1KpsWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726651796; c=relaxed/simple;
-	bh=JeafycqQxEl4VvkrF3w8mPrUTJJvNEmTotRgPXPeDCE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=io4EdOj8gkGkkgEdzSfAgzk5mBkK+cVkbU8yfFPNPbMQSYNBMxBfY6kRD9BDblERte3/+2tyaIRhyUKOdhL2XL6XU2HeuQs/uq3cj5gIApdUtB/nVdyOEGbTqtjLnfAwUsQNPurhkCx3HKNArGZuLbrX0tmMZI9CVNbpQuLI1XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y10UaXby; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1726652373; c=relaxed/simple;
+	bh=gRsj4YrkwdhMx1zvHLlAX+RXJ2gkdco/wH3IXTlwkK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L9RqlBEna0cb2fqSg35HPBTqTKdWakWwJWsEhCCcrYCh9UsBIIxKDjfaFDduSaIBaSKVMro1WP7mzyq8E6t6lJK3sxtLQC8O+0N9b7BlqwxRBwhbLujnVeS4t8QJnc7poVoN2vST2IYjxG40dg/GfgTU68ogZybXj85x1QbsDhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bSj9lUF4; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y10UaXby"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726651794; x=1758187794;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=JeafycqQxEl4VvkrF3w8mPrUTJJvNEmTotRgPXPeDCE=;
-  b=Y10UaXbycaXdeUDje2mw2DacnLUEtMNikBBO3jXj4l+jNPngCRhkHRRN
-   4+O5PK4eQ+iTciZ/xrr2EiPsFcVXcxyj8nasLt/FOoCVT9TZptwc1kpw7
-   WBVV7us3ZrGbJy94kYMqXWNsg4zEotJWSJiuSgma6FWxgj5915Z5H15ns
-   N0KaziV4AObjtPlVYug2O1QdR4M4O6k4U+N/ZdH+SkTSLTV8gmm0cbczS
-   NNZIS8SUzd/k7oTE9RqLbZRZDQgPMkCcqntAdZ4v43u8jpjHUMuDZTxn5
-   tMargWTURi6+1exUvcOpLNzgakIN7FR2c684Hr4FVTlou8x6EkHxHlKvZ
-   A==;
-X-CSE-ConnectionGUID: ZucXK3GeS1at4vQ0pnEUGA==
-X-CSE-MsgGUID: qzgFCnzARDeAEROkTxjCEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="43024080"
-X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="43024080"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 02:29:54 -0700
-X-CSE-ConnectionGUID: M6XzF8VwRy+CDitQq/cZrw==
-X-CSE-MsgGUID: clrNjX+sRay4U6eosKHC+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="70272235"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.202])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 02:29:46 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, Daniel
- Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@gmail.com>, Faith
- Ekstrand <faith.ekstrand@collabora.com>, Francois Dugast
- <francois.dugast@intel.com>, =?utf-8?Q?Jos=C3=A9?= Roberto de Souza
- <jose.souza@intel.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Matt Roper
- <matthew.d.roper@intel.com>, Matthew Brost <matthew.brost@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Maxime Ripard
- <mripard@kernel.org>, Nirmoy Das <nirmoy.das@intel.com>, Philippe Lecluse
- <philippe.lecluse@intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Simona Vetter <simona@ffwll.ch>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
- <thomas.hellstrom@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/xe/query: Refactor copy_to_user() usage in four
- functions
-In-Reply-To: <d1f1eb7f-1de7-4d73-a7d0-00cc1eac3d5d@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <d1f1eb7f-1de7-4d73-a7d0-00cc1eac3d5d@web.de>
-Date: Wed, 18 Sep 2024 12:29:42 +0300
-Message-ID: <87plp1b989.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bSj9lUF4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726652341; x=1727257141; i=markus.elfring@web.de;
+	bh=ryEsDHPLtBndKjOllvUbBdBogtS9EuS9iEH04QnZOw4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=bSj9lUF4AoSwexF9Mvpvb70mSt3BsmDf2w+sAdmHsr/1ocF2pWPPjdOjlEtKSUy7
+	 IDEtDXylMk5ARaBcKx06bcduLcYmwLsTxb22zFI5d/kfWHMg5sXHlhV6mOL5gE1tx
+	 RW1r071EMSQwoDBaS91QucrqP90Dt2khRzTVzYkZRoIUnsUTYOXTVWIAuwOZd8ppV
+	 c+DhDTIFj1wVTWlHDh0U4dbrGnDk01A1EboEozX1iRdOv0UccLH891X5lPEW6tkDa
+	 O5doYTNHR7Q6hJmuDgvChCevQKJ0Xrvx1TYEMV5G5dHtE21ogUNzA4RwLXJW35Cn3
+	 fdWcCYozEha67V6L4A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLAVa-1sYm4F1Nj8-00XN26; Wed, 18
+ Sep 2024 11:39:01 +0200
+Message-ID: <4eef2944-9ce7-4126-bf09-3e4afcc52dbf@web.de>
+Date: Wed, 18 Sep 2024 11:38:57 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/xe/query: Refactor copy_to_user() usage in four
+ functions
+To: Jani Nikula <jani.nikula@intel.com>, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Faith Ekstrand <faith.ekstrand@collabora.com>,
+ Francois Dugast <francois.dugast@intel.com>,
+ =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Matt Roper <matthew.d.roper@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Maxime Ripard <mripard@kernel.org>, Nirmoy Das <nirmoy.das@intel.com>,
+ Philippe Lecluse <philippe.lecluse@intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Simona Vetter <simona@ffwll.ch>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <d1f1eb7f-1de7-4d73-a7d0-00cc1eac3d5d@web.de>
+ <87plp1b989.fsf@intel.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <87plp1b989.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tP4z8gat/ogxMxUw7ZhKbdxBkZUFAX10K7GLmI6NQYyBVdXQIgu
+ NgktDNeUEyrDSWL5lhqYOoCycQMUF8a2S4pHH3p2DlqisSC/XxwhGSJjkddtZSeaIr7CE6Z
+ UDoMcJDsoUx8oPQwmHZL/nGPjNFbK7smbtCMLOHydAzRjwugJIY1igTzHOG/8dVK4Pt3Vs3
+ zv6ugvY4WUClBiyJtzwwA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8akf+dFK2/0=;giGbhwRF45vuMwQLyirVIC9BFIa
+ 5N/ELhOQde0TLBo+l1dQPKoqJAy/SYbZKKK6Q06wM8Fa39DNv4/HeatJv/R9EWNUsCZnmOHdf
+ eoMUeif8Z0OxUTXT/Hs6cnU9wBwtTSowLBdgztZN7spkJzFG2JOYMC5ohlC0WRBJJRPq6tuXy
+ VuFR4IDnFCfVnT5vbj1EH9w9uR9HH2NDdfO2s6kbHaofYwaLoBxvNhKneJOhKqzZV8M0Fqhcl
+ qnKr18Hc6jlSMvBw0aKYKG7e7Ag5uE7PdEiFqL9l/6v4bV7NvRqpTQa5z1mFUO9pjE/kg9Zn0
+ g+sikyeljAnSurIx7PZmKq69gwpSQNuMOqdokNl4aC/UMqTT2ijri7PPnJN5xmkrl7N+etAQ5
+ gMpv5w0OSHOfNIYpzLLvtzRGDnWZBD3lBNNaDJ/HAGXpKxUVNzMevj2pVgCtn68A7JpCuDw4g
+ /9P8Wa3PEpTD1dwDJhOJusvuwUkruTAdg6evlfoUSnJqcdPqPyaYITESv4ZaIOT9f/mbpQO8Z
+ s3CS2xVJox2dVBX138RwOgwZYrtoxR66NDJaXd0EuyFG+u5vWBw6gK1AXh27ADC9/CAs/1gzM
+ vjpgUzZWwiAUnG5FlAwRuNxCixtzEqh6LnuiDZeJ8ym3DP1VS/aMFRYmik6iJwsoviuQgq7QM
+ uCvQo6dlZUmLUCO5o2zjXZCefmuXJRnrpzfBhPwABm5N8aG1e86RtccftXBUpyoEc0D3kUpTP
+ iT7+01tezJyDqV0OgGTxX1U7UkPVRPID/HPVtIzZEc2AE7670Fqf7NA42eDjTTqEQaNGG0KY1
+ zWy2UNDBMhL/l7/krjj8pY9A==
 
-On Wed, 18 Sep 2024, Markus Elfring <Markus.Elfring@web.de> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 18 Sep 2024 09:43:07 +0200
+>> Assign return values from copy_to_user() calls to additional local vari=
+ables
+>> so that four kfree() calls and return statements can be omitted accordi=
+ngly.
+=E2=80=A6
+>> +++ b/drivers/gpu/drm/xe/xe_query.c
+>> @@ -220,13 +220,11 @@ static int query_engines(struct xe_device *xe,
+>>
+>>  	engines->num_engines =3D i;
+>>
+>> -	if (copy_to_user(query_ptr, engines, size)) {
+>> +	{
 >
-> Assign return values from copy_to_user() calls to additional local variables
-> so that four kfree() calls and return statements can be omitted accordingly.
->
-> This issue was transformed by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/gpu/drm/xe/xe_query.c | 32 ++++++++++++--------------------
->  1 file changed, 12 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/gpu/drm/xe/xe_query.c b/drivers/gpu/drm/xe/xe_query.c
-> index 5246a4a2740e..6195e720176d 100644
-> --- a/drivers/gpu/drm/xe/xe_query.c
-> +++ b/drivers/gpu/drm/xe/xe_query.c
-> @@ -220,13 +220,11 @@ static int query_engines(struct xe_device *xe,
->
->  	engines->num_engines = i;
->
-> -	if (copy_to_user(query_ptr, engines, size)) {
-> +	{
+> Please don't leave blocks like this behind when you remove the if.
+=E2=80=A6
+>> +		unsigned long ctu =3D copy_to_user(query_ptr, engines, size);
+>>  		kfree(engines);
+>> -		return -EFAULT;
+>> +		return ctu ? -EFAULT : 0;
+>>  	}
+>> -	kfree(engines);
+>> -
+>> -	return 0;
+>>  }
+=E2=80=A6
 
-Please don't leave blocks like this behind when you remove the if.
+Would you tolerate the shown variable definition without the proposed
+compound statement?
 
-BR,
-Jani.
-
-> +		unsigned long ctu = copy_to_user(query_ptr, engines, size);
->  		kfree(engines);
-> -		return -EFAULT;
-> +		return ctu ? -EFAULT : 0;
->  	}
-> -	kfree(engines);
-> -
-> -	return 0;
->  }
->
->  static size_t calc_mem_regions_size(struct xe_device *xe)
-> @@ -344,13 +342,11 @@ static int query_config(struct xe_device *xe, struct drm_xe_device_query *query)
->  	config->info[DRM_XE_QUERY_CONFIG_MAX_EXEC_QUEUE_PRIORITY] =
->  		xe_exec_queue_device_get_max_priority(xe);
->
-> -	if (copy_to_user(query_ptr, config, size)) {
-> +	{
-> +		unsigned long ctu = copy_to_user(query_ptr, config, size);
->  		kfree(config);
-> -		return -EFAULT;
-> +		return ctu ? -EFAULT : 0;
->  	}
-> -	kfree(config);
-> -
-> -	return 0;
->  }
->
->  static int query_gt_list(struct xe_device *xe, struct drm_xe_device_query *query)
-> @@ -414,13 +410,11 @@ static int query_gt_list(struct xe_device *xe, struct drm_xe_device_query *query
->  			REG_FIELD_GET(GMD_ID_REVID, gt->info.gmdid);
->  	}
->
-> -	if (copy_to_user(query_ptr, gt_list, size)) {
-> +	{
-> +		unsigned long ctu = copy_to_user(query_ptr, gt_list, size);
->  		kfree(gt_list);
-> -		return -EFAULT;
-> +		return ctu ? -EFAULT : 0;
->  	}
-> -	kfree(gt_list);
-> -
-> -	return 0;
->  }
->
->  static int query_hwconfig(struct xe_device *xe,
-> @@ -444,13 +438,11 @@ static int query_hwconfig(struct xe_device *xe,
->
->  	xe_guc_hwconfig_copy(&gt->uc.guc, hwconfig);
->
-> -	if (copy_to_user(query_ptr, hwconfig, size)) {
-> +	{
-> +		unsigned long ctu = copy_to_user(query_ptr, hwconfig, size);
->  		kfree(hwconfig);
-> -		return -EFAULT;
-> +		return ctu ? -EFAULT : 0;
->  	}
-> -	kfree(hwconfig);
-> -
-> -	return 0;
->  }
->
->  static size_t calc_topo_query_size(struct xe_device *xe)
-> --
-> 2.46.0
->
-
--- 
-Jani Nikula, Intel
+Regards,
+Markus
