@@ -1,60 +1,61 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A478158DBA;
-	Tue, 17 Sep 2024 23:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D164428;
+	Wed, 18 Sep 2024 00:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726615671; cv=none; b=DTN4Kq6Jm9l/7wZYGqw+LWQCl7AQwl2ZL1l6z4FovAaBSoIyMh+Rnjv55kfirJlP0EXRjlr/u1T0JrgbTy2WoA12l/MgApAA3CJbaQZSf9X4HuUqIn1GE/XleEcMjyWSUfKJxWb4+V7GChxrFIBycRandTnsFfgvQa1V+WQikMA=
+	t=1726620772; cv=none; b=hWpDAf63hePXObzIcpWZS0HtdZ8thzBWd+awdALo7U8+RuXEgf9r6mzn0IszUGD8e8sm74tPECxCJz6m+ostYiwXeuAYAiJ1WS2mSCbG+eLsDbRD6Btcg1t12kcfusWwhboq5Al2WFg1PqGEz7Tv+FrEwkEFAnAjwqMZMzTa9Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726615671; c=relaxed/simple;
-	bh=g/Pmz/qEI8/+jiFosDjqPR6jxKOpIH0jm0dHkxIFKUo=;
+	s=arc-20240116; t=1726620772; c=relaxed/simple;
+	bh=Viy7M+d8DmzMY2Qjb2WpfLhBST+9UAOUykc41pF/uIE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjhVfqFgwLlJbZvrXVo14itqDGyE3b+zc6xg8zkBipvK+MZ3V6sB/vz08Y66612IoRW/PEPTAVIg/wh/ZwgWNy7QUQ//IW1Oxx/8VreeekQleSsZ8PKWy3+rLV7I8czbfhq3MxTDupwaKld2oK3fXHKomdcGhtOm7UrNHLNA4ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JgZFPlT6; arc=none smtp.client-ip=192.198.163.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=ONGSiRT1X8hYB5j8Zl2mc65v29+A/yE5fKC5XCWM61V2K9/rzXux09U1lQ/F4QWyinEronnPUJF+rxT9V8k27ciHl+ahQhYc6r67IFACygpZo19DKAs1XuRvlpbFVCHRrwqiWrnYKn2iMAupBmO62WDFms90sdE4ZLlBCEFt0e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AiKNXNhk; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JgZFPlT6"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AiKNXNhk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726615669; x=1758151669;
+  t=1726620771; x=1758156771;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=g/Pmz/qEI8/+jiFosDjqPR6jxKOpIH0jm0dHkxIFKUo=;
-  b=JgZFPlT6CWveEHjZsPvLc270RCZmiTKn6BGbBI9K52qwUCfbnRWjtPwa
-   xyp5XUNB0pSYTJtTW28nR90SvNi/n+sK4escbhm0zxH/Y4RcuhUC+57Bn
-   9xbBesLd6bL8p88/V5zW5VIpZ9uyjPN494KUZEX+ShYp35hy/JgEomFtR
-   /d/hb50Q2rFcr6yl4B1Ekh4WIWEbJr9ZmJogopWgXObHKca29sBTMKNH5
-   mdCWTxVbNkLlnk3ZwqYPBoEhjh2O0Y5WecTrL1Ikgox192lTKoBlrWSxp
-   SUCFbK+mU+gYKwlTIO4J0EN2wv9Wsk171KKu1G0DO8cShhaI+jaCoBqju
-   g==;
-X-CSE-ConnectionGUID: AEFDbJxqSrukJuXVPcVg6g==
-X-CSE-MsgGUID: Kt9jWAqbSiWAmSVsE2xN+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="13564685"
+  bh=Viy7M+d8DmzMY2Qjb2WpfLhBST+9UAOUykc41pF/uIE=;
+  b=AiKNXNhkiqNXPDeRkzE9yEEasdABD1abWnSmhoOCnqu0GnltDenuYCo0
+   SsFxSZXrb9j23TynuytsH/UBmC+0SUWQbiw2y0lo0dSZQYlPxLcbUqbpF
+   ZPDuDfYNUYgqs29EsF9pOFSI4/9lRBS4Si4Z8zLeA54LZFQIMhz+2L6XG
+   90cJ1WPYXPeLwc1vqoPbMcvuMfO75Lqd8ilKWHmQ+7wIS4GZKlgc1X+Xj
+   xNjWdUd5cQzwHBeMtNCCM931XUb5djHAcIPQCUXHvrVlz1mNMDrYcUMxY
+   QmU74c66SGgfSaNZqMgqbhYaSyVXH/TVOrJyd0Hl7FlLLf+DJwLP4gllC
+   w==;
+X-CSE-ConnectionGUID: ALWPpigZRDGbm5pQspnF6g==
+X-CSE-MsgGUID: J434PIu+TZiNPtaPbcKlwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25394134"
 X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="13564685"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 16:27:49 -0700
-X-CSE-ConnectionGUID: g8bjz9r1SHau+a2kJmRXsQ==
-X-CSE-MsgGUID: f5WYcql2TvquIJ8/uTGtmw==
+   d="scan'208";a="25394134"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 17:52:51 -0700
+X-CSE-ConnectionGUID: C32OqAMbSkiGpokrp+zf6Q==
+X-CSE-MsgGUID: +rzghz59RZSuP0iJ91MN5A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="69836022"
+   d="scan'208";a="92678630"
 Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 17 Sep 2024 16:27:47 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 17 Sep 2024 17:52:49 -0700
 Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sqhbl-000BhK-0T;
-	Tue, 17 Sep 2024 23:27:45 +0000
-Date: Wed, 18 Sep 2024 07:27:43 +0800
+	id 1sqiw2-000BkA-2Z;
+	Wed, 18 Sep 2024 00:52:46 +0000
+Date: Wed, 18 Sep 2024 08:52:12 +0800
 From: kernel test robot <lkp@intel.com>
 To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
 	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH] crypto: lib/mpi - Extend support for scope-based
  resource management
-Message-ID: <202409180725.ZV8DCvII-lkp@intel.com>
+Message-ID: <202409180851.4taVWgfI-lkp@intel.com>
 References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -80,46 +81,25 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/crypto-lib
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git master
 patch link:    https://lore.kernel.org/r/bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc%40web.de
 patch subject: [PATCH] crypto: lib/mpi - Extend support for scope-based resource management
-config: i386-buildonly-randconfig-002-20240918 (https://download.01.org/0day-ci/archive/20240918/202409180725.ZV8DCvII-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240918/202409180725.ZV8DCvII-lkp@intel.com/reproduce)
+config: i386-buildonly-randconfig-001-20240918 (https://download.01.org/0day-ci/archive/20240918/202409180851.4taVWgfI-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240918/202409180851.4taVWgfI-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409180725.ZV8DCvII-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409180851.4taVWgfI-lkp@intel.com/
 
-All error/warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
-   In file included from include/linux/irqflags.h:17,
-                    from arch/x86/include/asm/special_insns.h:10,
-                    from arch/x86/include/asm/processor.h:25,
-                    from arch/x86/include/asm/timex.h:5,
-                    from include/linux/timex.h:67,
-                    from include/linux/time32.h:13,
-                    from include/linux/time.h:60,
-                    from include/linux/stat.h:19,
-                    from include/linux/module.h:13,
-                    from crypto/dh.c:9:
-   include/linux/mpi.h: In function '__free_mpi_free':
->> include/linux/mpi.h:49:48: error: 'T_' undeclared (first use in this function)
+   In file included from crypto/dh.c:14:
+>> include/linux/mpi.h:49:48: error: use of undeclared identifier 'T_'
       49 | DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
-         |                                                ^~
-   include/linux/cleanup.h:62:78: note: in definition of macro 'DEFINE_FREE'
-      62 |         static inline void __free_##_name(void *p) { _type _T = *(_type *)p; _free; }
-         |                                                                              ^~~~~
-   include/linux/mpi.h:49:48: note: each undeclared identifier is reported only once for each function it appears in
+         |                                                ^
+   include/linux/mpi.h:49:62: error: use of undeclared identifier 'T_'
       49 | DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
-         |                                                ^~
-   include/linux/cleanup.h:62:78: note: in definition of macro 'DEFINE_FREE'
-      62 |         static inline void __free_##_name(void *p) { _type _T = *(_type *)p; _free; }
-         |                                                                              ^~~~~
->> include/linux/cleanup.h:62:60: warning: unused variable '_T' [-Wunused-variable]
-      62 |         static inline void __free_##_name(void *p) { _type _T = *(_type *)p; _free; }
-         |                                                            ^~
-   include/linux/mpi.h:49:1: note: in expansion of macro 'DEFINE_FREE'
-      49 | DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(T_)) mpi_free(T_))
-         | ^~~~~~~~~~~
+         |                                                              ^
+   2 errors generated.
 
 
 vim +/T_ +49 include/linux/mpi.h
