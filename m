@@ -1,103 +1,304 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050C338FA1
-	for <kernel-janitors@vger.kernel.org>; Thu, 19 Sep 2024 19:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7E0524C4;
+	Thu, 19 Sep 2024 19:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726774767; cv=none; b=QaZBu/wqpWETRMzyOUvm38LCmcRpNmKY3JBO6LXtwde12ujyM0hoq8gGxziUteYcmJPvNpcSDXX5/7up0C5vt9aBcQ6x0ZYPe4RTG95UBNBlXgal0PK3f3MbfaCDpAhcAoTI5YSGtVk4gv5kDu97y9J95N9xK0unLxQFV49TaDo=
+	t=1726775455; cv=none; b=K+uYjR4Soe5FETzTTWcBtdWBY5Cs0/kzAKKHKa9NkyYhYOUuRfPyNw5GMe2t9Dy6+ig+IBwMSnGKcGJUTv354DyrSGjmlAn70cSIwoIiczgUnOE0KJUGRItPnfKr3Y4PBael7gNwiJSJNRb53h4llqNdqCw8GDOGfIKKGW74FnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726774767; c=relaxed/simple;
-	bh=fof4Y+XqAIEawmDZiNjGYccb4vYXEW3pxTGZwYqjodc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dzmLFC9Cqi+VsfkdyGNB3VVlmrVzIGdMoy4pG6ndFw3AufAzJyPYSI7uIocuMkfjZJLEoNycMtKO2JBW7ZMiOZQmWEyABzeY6NBvkC1ZKoiTfz9HOp8L4Pl517X7ajM2poUTWX+3wOqLb2juanITXaXzLcGfpirmgy0SwmvNhaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BW3ZihHQ; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1726775455; c=relaxed/simple;
+	bh=es2tH5HR85ULg+VhL6Z13FNEk4ZnaR7pE1WXubqilL0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=HetRX56u3YsozJ4h0nTyhONrXi12Cim8DUSILfKdMY1Dzez5LHoXTizCiPsY6m2saHsg/kXa/Wt8YC7cLLxt8EOT/oLdotEwTH9lJ7mahUKgErZxw3AB4d13JpxU6m+IdT+93RPWftR4Hzf1LkH9PEPG/xfyFk/c64Jqtda8Wmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RO9kC8ys; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BW3ZihHQ"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so176422566b.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 19 Sep 2024 12:39:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726774763; x=1727379563; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W7DLrUqqQ4L4ci5VnJmW7hDeRDd57P0ACw668zHYYqg=;
-        b=BW3ZihHQVyhgyRPxhILVRVsjkSI5rqeYl6iDkgXipNfyLE3B1Lvow+xh00k9du/1UI
-         NL1nt0ILIkLN0I2SWbLfcFw2R5sMsmV0nW0p5n0kPNvDqe8KxIJktm5DWoxV9vbcbmki
-         UeB/x9HGboOzDVz+w8FddXb8hbldwgpfh3OGt0UQo/4Lx309rXIoshV82vL7KR6VXkGq
-         pQ864xa3z6pMX6wbKgn+XQZA5w9M9Af6DG3HYSVdly+FVui3pmpKh0V7z2xVpPKwTr6u
-         6qss0myJTOfEFWrOwOmQgHrFY49CgQisVKOdd5TOnCv/MuLY1Ka2UzfrvTNIdV/V44C8
-         TmYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726774763; x=1727379563;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W7DLrUqqQ4L4ci5VnJmW7hDeRDd57P0ACw668zHYYqg=;
-        b=MU1lCJRf4EAjnBBb/lT7dOSb1lLbjm55q+AGFmuZNXqPfCAlmXbx89WYfSJtD6gNza
-         cubpT31LIUAhPqXUXzDvkWV+OC9GtQFvXlCP7vElitHmT/vDzyIOo5IizvnIJ9EjI50X
-         mG1ZBN+WW4B5uRQJC0icMfm8wjaph+DPCu4UNOtOBBbXwvrt3wu3w72FHI45nUUtXHTx
-         FzIWR944+6HmiahWrBWHgPNJYDLzPKrWh8r8ZnW10i230lPvWzaMz/ij9T3a791E9DKs
-         cmKGuvYZ9df0+Y3GDEFR9IbtMUzP37zHDxqwEUK2gDdxTlDwnNq9Gd6k3y5efZVaY02y
-         Ed3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVm02oOGaOVGi+h5FYU2D2nkbewDzpGnQMeMqgAdSfFbQz7DuF9xl4VoHlLNL+GhDI0lDtHfwz+6EHq4/cHDYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNoUW3rBfyTYQmaR39DSK836eoRlBPj98VeI80yGhtasnLLHYc
-	UTYy6FDW9nI5Eo3LphTXisVBNodKwRB8Xsj/vEV387FJS1IidUCZ8mnQo3L1Qhmy03y3yVFs7Ex
-	47UimklkgL+NjaVkTZ6NU6D/x/ojqWc0CLQ+7GQ==
-X-Google-Smtp-Source: AGHT+IHFssq6SEY8xmjw8fzlMOVLwF7nUAg01vJG44H7tx5slPYYutozOjG4yTxIRsVA+zkzobhXmI1ODIc37gj+aQs=
-X-Received: by 2002:a17:907:c897:b0:a86:8f7b:9f19 with SMTP id
- a640c23a62f3a-a90d50eec19mr23301766b.52.1726774763253; Thu, 19 Sep 2024
- 12:39:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RO9kC8ys"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726775420; x=1727380220; i=markus.elfring@web.de;
+	bh=vVgLztpRxZMJV1LNxTel/o3SB6yp+N77eZ3BONwPVYI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=RO9kC8yssHLYJm3wdAJQE76SlT/0P7uZB4JMaDqWUTcZOFyWGG4OeCeC7wRB40wS
+	 Khq7G3rWQBL4m7YOk8Bgjku0SpM99RanmtQJPvjz0QxA0EmxIkPXTk9Uex0Y8J/3c
+	 BCP8hZOmvG9ZIax3OoI9h58zwYlRYyFcf8/g1MBr4/614zfdUXQsdoNfOrFY+8ayO
+	 Gaxf4Pkum+5xMQqnbKTd7ouDn6iI4kW6UiNXsUtNuMFAyQ/xrsVbZFgKZR6EWTnTS
+	 EYfjH1BWFMfzaa9SNfWjwJmUrneSzNSNRcXhLgFIaQ/6dmsemv59FEhcfxEr8mScl
+	 YlfZbRaU08OBYVczpg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFrxl-1skZ7r21ol-002yBe; Thu, 19
+ Sep 2024 21:50:20 +0200
+Message-ID: <7c98349a-bfa5-409b-847e-ed8439e80afd@web.de>
+Date: Thu, 19 Sep 2024 21:50:13 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3f3660af-4ea0-4a89-b3b7-58de7b16d7a5@stanley.mountain>
-In-Reply-To: <3f3660af-4ea0-4a89-b3b7-58de7b16d7a5@stanley.mountain>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Fri, 20 Sep 2024 01:09:11 +0530
-Message-ID: <CAKohpo=x6CvzwcJjYscV6qTdj=K3qECjwNj-EV5L4n8O+-WoTw@mail.gmail.com>
-Subject: Re: [PATCH] OPP: fix error code in dev_pm_opp_set_config()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Himanshu Madhani <himanshu.madhani@qlogic.com>,
+ Jakub Kicinski <kuba@kernel.org>, Manish Chopra <manishc@marvell.com>,
+ Paolo Abeni <pabeni@redhat.com>, Shahed Shaikh <shshaikh@marvell.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Manish Chopra <manish.chopra@qlogic.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] qlcnic: Use common error handling code in four functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3jABXlty3BYOJnBWTdWUwXhQnKEO+rrzvq7Mn/F/JwQOyYeIAzt
+ kfvg5+qyzPTWNrGue3BZgqbs+R1K3vHzslvj0pbAULnkL3XpEk/hkuhGUGMSvNHiRGn35JC
+ VMtbpQI2hrx26AlWr/l6/fos30dJ+Plwzmuu5lxVBYU/FfBGVWyndw6XdUCthXO3tW7nkqc
+ q/goHY8dYp0thSHjCX0zQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:08z6dr4bPrs=;dMAySk9U+BbPwRvsn3RzvGxYeiN
+ v64L34CZtUp9/SdebX0Z21Nw5stzVznBkUXFbibNh5Yqh+09NouHuSoc2qELGn4auI5Z3xTyW
+ 0d2Gy1hDqzCW9WTVwD+O/bivjpBVHeOVP9Cmn+dc6cfkFUwAFXG6d/wxUFHSW22dx9VJhDUHa
+ Trrkg6oMrlFeZC8/FLMVBwRX9qPgxtaW7AAGopXmUuWv79PPzY1IDDuYMyrFnoxXj28+AGXCC
+ 1y9XNHG0LBKt2PyITuc8v1CnGyjQUblms3n/cJ/NUVaNlG2/0wO3OgF5sTj+b/U5MRvb6Mw7k
+ +IlFzuW0vtXOxTQ8uXahXODCM2/9Fe1WDx7bwsXRDwAiJTIaisrh3PveNUKt79n5slQKsrt4I
+ O47mM0viyZWMXhyPMaIIEetZomkOLKEJt4BuDrF4NRFvhPrxm2CfZ5SlbOljrAWoLNVZhBWZY
+ 3OXB466LiJ4Nyrmt5azsOL01spgLpOYcn1fzJ6RtC8KbjpdUfnv1KC9n2gYmrJes19YybUaW1
+ mG2ZTWputWnjaTWlkTgu/I1b2u6zltm8q4ROnFCEVLj9BzAyndf/AZT1XyipmrSEWZPe8/AHF
+ JkVYk6dOD2IH1Bxw17TD1biElGvHuAPn7QNMyhLG+iyMM9XZBZgfuq9P7xI7+lTQX2/QYWE5V
+ E+Y0hgUrWduASaUuqaRx84bEPe1Jg887nUjmosVAvta7w1HWOQkh0PIxhcPwV9Nj/urQnpGPG
+ Kczj3IVcaSr7sONreLEjzxuRV+vV16TZAFcXXbpdVjanTdROv0l+NDzThyBlYsxqXQkc7vfdC
+ ESnOEd+3LdCtg2BNzfp/s/hA==
 
-On Mon, 16 Sept 2024 at 19:37, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> This is an error path so set the error code.  Smatch complains about the
-> current code:
->
->     drivers/opp/core.c:2660 dev_pm_opp_set_config()
->     error: uninitialized symbol 'ret'.
->
-> Fixes: e37440e7e2c2 ("OPP: Call dev_pm_opp_set_opp() for required OPPs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/opp/core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 494f8860220d..3aa18737470f 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -2630,8 +2630,10 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
->
->         /* Attach genpds */
->         if (config->genpd_names) {
-> -               if (config->required_devs)
-> +               if (config->required_devs) {
-> +                       ret = -EINVAL;
->                         goto err;
-> +               }
->
->                 ret = _opp_attach_genpd(opp_table, dev, config->genpd_names,
->                                         config->virt_devs);
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 19 Sep 2024 21:30:45 +0200
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Add jump targets so that a bit of exception handling can be better reused
+at the end of four function implementations.
 
-(Ulf should be picking this patch for now)
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ .../ethernet/qlogic/qlcnic/qlcnic_83xx_init.c | 12 +--
+ .../net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c | 86 ++++++++-----------
+ 2 files changed, 42 insertions(+), 56 deletions(-)
+
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c b/drive=
+rs/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
+index b733374b4dc5..a8eaf10d9158 100644
+=2D-- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
+@@ -1333,17 +1333,13 @@ static int qlcnic_83xx_copy_bootloader(struct qlcn=
+ic_adapter *adapter)
+
+ 	ret =3D qlcnic_83xx_lockless_flash_read32(adapter, src, p_cache,
+ 						size / sizeof(u32));
+-	if (ret) {
+-		vfree(p_cache);
+-		return ret;
+-	}
++	if (ret)
++		goto free_cache;
++
+ 	/* 16 byte write to MS memory */
+ 	ret =3D qlcnic_ms_mem_write128(adapter, dest, (u32 *)p_cache,
+ 				     size / 16);
+-	if (ret) {
+-		vfree(p_cache);
+-		return ret;
+-	}
++free_cache:
+ 	vfree(p_cache);
+
+ 	return ret;
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c b/drivers/n=
+et/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
+index 74125188beb8..da1a6e68daf9 100644
+=2D-- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
+@@ -959,8 +959,8 @@ static ssize_t qlcnic_83xx_sysfs_flash_read_handler(st=
+ruct file *filp,
+ 	if (!p_read_buf)
+ 		return -ENOMEM;
+ 	if (qlcnic_83xx_lock_flash(adapter) !=3D 0) {
+-		kfree(p_read_buf);
+-		return -EIO;
++		ret =3D -EIO;
++		goto free_read_buf;
+ 	}
+
+ 	ret =3D qlcnic_83xx_lockless_flash_read32(adapter, offset, p_read_buf,
+@@ -968,8 +968,7 @@ static ssize_t qlcnic_83xx_sysfs_flash_read_handler(st=
+ruct file *filp,
+
+ 	if (ret) {
+ 		qlcnic_83xx_unlock_flash(adapter);
+-		kfree(p_read_buf);
+-		return ret;
++		goto free_read_buf;
+ 	}
+
+ 	qlcnic_83xx_unlock_flash(adapter);
+@@ -978,6 +977,10 @@ static ssize_t qlcnic_83xx_sysfs_flash_read_handler(s=
+truct file *filp,
+ 	kfree(p_read_buf);
+
+ 	return size;
++
++free_read_buf:
++	kfree(p_read_buf);
++	return ret;
+ }
+
+ static int qlcnic_83xx_sysfs_flash_bulk_write(struct qlcnic_adapter *adap=
+ter,
+@@ -996,18 +999,13 @@ static int qlcnic_83xx_sysfs_flash_bulk_write(struct=
+ qlcnic_adapter *adapter,
+ 	memcpy(p_cache, buf, size);
+ 	p_src =3D p_cache;
+
+-	if (qlcnic_83xx_lock_flash(adapter) !=3D 0) {
+-		kfree(p_cache);
+-		return -EIO;
+-	}
++	if (qlcnic_83xx_lock_flash(adapter))
++		goto free_cache;
+
+ 	if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
+ 		ret =3D qlcnic_83xx_enable_flash_write(adapter);
+-		if (ret) {
+-			kfree(p_cache);
+-			qlcnic_83xx_unlock_flash(adapter);
+-			return -EIO;
+-		}
++		if (ret)
++			goto unlock_adapter;
+ 	}
+
+ 	for (i =3D 0; i < count / QLC_83XX_FLASH_WRITE_MAX; i++) {
+@@ -1018,16 +1016,11 @@ static int qlcnic_83xx_sysfs_flash_bulk_write(stru=
+ct qlcnic_adapter *adapter,
+ 		if (ret) {
+ 			if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
+ 				ret =3D qlcnic_83xx_disable_flash_write(adapter);
+-				if (ret) {
+-					kfree(p_cache);
+-					qlcnic_83xx_unlock_flash(adapter);
+-					return -EIO;
+-				}
++				if (ret)
++					goto unlock_adapter;
+ 			}
+
+-			kfree(p_cache);
+-			qlcnic_83xx_unlock_flash(adapter);
+-			return -EIO;
++			goto unlock_adapter;
+ 		}
+
+ 		p_src =3D p_src + sizeof(u32)*QLC_83XX_FLASH_WRITE_MAX;
+@@ -1036,17 +1029,20 @@ static int qlcnic_83xx_sysfs_flash_bulk_write(stru=
+ct qlcnic_adapter *adapter,
+
+ 	if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
+ 		ret =3D qlcnic_83xx_disable_flash_write(adapter);
+-		if (ret) {
+-			kfree(p_cache);
+-			qlcnic_83xx_unlock_flash(adapter);
+-			return -EIO;
+-		}
++		if (ret)
++			goto unlock_adapter;
+ 	}
+
+ 	kfree(p_cache);
+ 	qlcnic_83xx_unlock_flash(adapter);
+
+ 	return 0;
++
++unlock_adapter:
++	qlcnic_83xx_unlock_flash(adapter);
++free_cache:
++	kfree(p_cache);
++	return -EIO;
+ }
+
+ static int qlcnic_83xx_sysfs_flash_write(struct qlcnic_adapter *adapter,
+@@ -1064,18 +1060,13 @@ static int qlcnic_83xx_sysfs_flash_write(struct ql=
+cnic_adapter *adapter,
+ 	p_src =3D p_cache;
+ 	count =3D size / sizeof(u32);
+
+-	if (qlcnic_83xx_lock_flash(adapter) !=3D 0) {
+-		kfree(p_cache);
+-		return -EIO;
+-	}
++	if (qlcnic_83xx_lock_flash(adapter))
++		goto free_cache;
+
+ 	if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
+ 		ret =3D qlcnic_83xx_enable_flash_write(adapter);
+-		if (ret) {
+-			kfree(p_cache);
+-			qlcnic_83xx_unlock_flash(adapter);
+-			return -EIO;
+-		}
++		if (ret)
++			goto unlock_adapter;
+ 	}
+
+ 	for (i =3D 0; i < count; i++) {
+@@ -1083,15 +1074,11 @@ static int qlcnic_83xx_sysfs_flash_write(struct ql=
+cnic_adapter *adapter,
+ 		if (ret) {
+ 			if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
+ 				ret =3D qlcnic_83xx_disable_flash_write(adapter);
+-				if (ret) {
+-					kfree(p_cache);
+-					qlcnic_83xx_unlock_flash(adapter);
+-					return -EIO;
+-				}
++				if (ret)
++					goto unlock_adapter;
+ 			}
+-			kfree(p_cache);
+-			qlcnic_83xx_unlock_flash(adapter);
+-			return -EIO;
++
++			goto unlock_adapter;
+ 		}
+
+ 		p_src =3D p_src + sizeof(u32);
+@@ -1100,17 +1087,20 @@ static int qlcnic_83xx_sysfs_flash_write(struct ql=
+cnic_adapter *adapter,
+
+ 	if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
+ 		ret =3D qlcnic_83xx_disable_flash_write(adapter);
+-		if (ret) {
+-			kfree(p_cache);
+-			qlcnic_83xx_unlock_flash(adapter);
+-			return -EIO;
+-		}
++		if (ret)
++			goto unlock_adapter;
+ 	}
+
+ 	kfree(p_cache);
+ 	qlcnic_83xx_unlock_flash(adapter);
+
+ 	return 0;
++
++unlock_adapter:
++	qlcnic_83xx_unlock_flash(adapter);
++free_cache:
++	kfree(p_cache);
++	return -EIO;
+ }
+
+ static ssize_t qlcnic_83xx_sysfs_flash_write_handler(struct file *filp,
+=2D-
+2.46.0
+
