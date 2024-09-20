@@ -1,131 +1,130 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A048313A26F;
-	Fri, 20 Sep 2024 09:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B464013E020
+	for <kernel-janitors@vger.kernel.org>; Fri, 20 Sep 2024 11:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726824230; cv=none; b=e1dog91ezygIKGaxsCRzE6x5rPORLLyEuI0tJsYKOlLj3lBpTHkznNAYe7FsFt4/U9ZfE+R/BA7qBlkHDCz/tsAoAdjOAShDDwn8x53IWSYsygCO531UWvaxZHMxUHaiCmf36LAACsVDT42aqwnWC6f3ePxnMhuM0PQ911MRA7A=
+	t=1726830608; cv=none; b=OxGhsk30nG70g3/kg+DXW5JM87qNYKTyaRNYtvZeiaxPxcy/67TyPXR5J0bZNqsiqPh+RaaQK1WmFuDNNNV1MQWWfYX0pqAqkK0Ouc+uyoZhoIPZKBexcwfS3WPfB6PLvH389cuG7lLKe5BQA/qT8cRdYMWKH3qC67he5JurldQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726824230; c=relaxed/simple;
-	bh=z7EK3Y+jI+Y9vSsJ8RV5RD3d8BgZdIrppSI6/TWCLPM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nV4do8dwy5v/OuwdGYTLXre/duXB7Gj+8Iwxq1QEbHJZw/VK4WmEzLtOV/og9DMDqBgacMnk1sqD2gInVcWC/FBMmE3+T3adnXeCVie9NVSETAoPqHO4kXIWd73Ja2AatviMbyEafHylYYI/TCESnCTMKfhBteqQVIE11sFT+aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h06ZOlvD; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1726830608; c=relaxed/simple;
+	bh=SP8iz223UYOSo5BzrpVFkVxPNjsWT3Y4xNAfrH2OA8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eDysdoauGR9fPM0fjwlCJAzUWjC/4HRkvxivPHGIsNAHpN+mTbAR+q7MhEkAj0wuip9za5orn6KCLrew6cdwUVR3rcGEqD05jWLkDxM/FAFDkueNFKKJXUX7YaEYXBwkBDfS8L+btnoRcGzfzctblOonyvkeIYngIL/nTuXgr/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kDfdLhjd; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h06ZOlvD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726824180; x=1727428980; i=markus.elfring@web.de;
-	bh=0nNySQPv5JuvvUtnUvrue6tL+e8BSoi+EfKgAvmGzsI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=h06ZOlvDpqKN9GEI6OZpQjV7HDyzb5JY+L8OmetS07KvIwK9pAHfbbwoGhxrKbJ/
-	 rPQjrVS4OHjhlr4+k/tE5JRtWNfe1E0I0jMQKArNXNrVfj4uN0XgZ3mc+Gzu7lnfZ
-	 OsjzaoFrXN8EPZ6ihqadVZ5jks6slmtCkxyyds5arz6+ra8U1lu70zeRJATPbPnzN
-	 6Zgtbm1i90EXfP3gbnKJZAv4/LVkdr00ncgm9G7IaZJZuMm2N9Q4IIMjmjyOYEK2R
-	 7tqsKlxeKSG4KrQiLYpKtfjFmIp0y54l+S2FnCF4EuuT1VSusLMO+W28qXMZQxUbx
-	 xMy8sShQwWNMajJ3PQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M91Po-1svP4E05Sw-009s7C; Fri, 20
- Sep 2024 11:23:00 +0200
-Message-ID: <2e6f6f8f-89de-4b75-a0af-3a55bc046ab7@web.de>
-Date: Fri, 20 Sep 2024 11:22:47 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kDfdLhjd"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so27725161fa.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 20 Sep 2024 04:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726830605; x=1727435405; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5EHjGRXCWgZwp1krkmlisCOVeWPEKWd2TIUOSRIDt8I=;
+        b=kDfdLhjdBeOydgV97U6nK5UAgSczZtr7yRru4NBKNrF6QwqmYVduDpJwyIQ+FPo3AO
+         9uIr95jJCMAa4OETbEt8/g7g3aoxigVNKYiB+xp214OMOjURWy9D5C2KqtJO9dOLtbyH
+         yfweLpkd4nRIXHz7ZjtxzO8EOGKh0+zXYXwYw03BAlFbS1dba5WnD/JNWcwyFLsuW3zp
+         Rr4sFS93+2Z8sFpaJBn4fM+ClwbLtRFgSJAGsJ3y2H2WpHh5gAKZgHkJUA93TQrqBOYM
+         vjcP4OZGnWoIe+SkMtmnuB9U3DkFhTGeMnQdjfRWMe9IWFxbG1QHwg3ZTNjYGjpOBOMu
+         kUBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726830605; x=1727435405;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5EHjGRXCWgZwp1krkmlisCOVeWPEKWd2TIUOSRIDt8I=;
+        b=pp2l2ZLdOvpWPw8rfZM1GmCmNCs9Lt0dleLBmeTxvWzxN0UbB3/a1Yh8KGS9pJ3+L8
+         gQiM+OMcCnoKowlmUH0INyBHCD/x4XXtn5MN4C0Aq69/yRXhqRldRCbsCyWJPADpRTJO
+         9/5BbAFCT6VPQAmEa0Le5PaUhsCdcc3oHN2X1q5elVzizBv9SCb104qiB9ObotYr5bIi
+         RaB64W4RUi26TDYKVeEi4VR8pQUtlEmPPrGctXsF4GU2zFFPVpK0PoEufvS6sWStvcCr
+         WMlh+Mc5sRv7Z904Ht/uCEhccblzI7P9Tjzz0k1TMKWyagETFSC8/6TVU7sCylPiNvqN
+         qHIw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5G8JeNnzm0OwvzyiDWyzlRayp8Ks9u6HW6nUFfBN0pkRj1apwYhS+A4IZviFkX42XDsduaMrR8GLikLGzcqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+xjta9ppwPkWwTUypbzHjVUcVMzZAh/Yock+EHJI8oExM9lyw
+	C6LnYZlgz3KDY9+rPnJ8hiwOw75IgKU2X/OTAHScTE3EeK+nj6Kjl5Gi2shAUqs=
+X-Google-Smtp-Source: AGHT+IFNGKP6ElDwKV6SnNuyGO0cfMJ44eZrIuCs6c8/FaQcThhnYhR3j4iMkCX5GmVhPiPCfnOd3A==
+X-Received: by 2002:a05:6512:39c4:b0:536:a4f1:d214 with SMTP id 2adb3069b0e04-536ac2e705bmr2027275e87.19.1726830604714;
+        Fri, 20 Sep 2024 04:10:04 -0700 (PDT)
+Received: from localhost ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096762sm835762266b.37.2024.09.20.04.10.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 04:10:03 -0700 (PDT)
+Date: Fri, 20 Sep 2024 14:10:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <dai.ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] nfsd: prevent integer overflow in
+ decode_cb_compound4res()
+Message-ID: <183154d2-cb65-4161-a737-394aba9c1d43@suswa.mountain>
+References: <ed14a180-56c8-40f2-acf7-26a787eb3769@suswa.mountain>
+ <C185CD71-0AF6-4D83-AEE5-F8C87EEDE86B@oracle.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Andy Chiu <andy.chiu@sifive.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Michal Simek <michal.simek@amd.com>, Paolo Abeni <pabeni@redhat.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Sean Anderson <sean.anderson@linux.dev>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] net: xilinx: axienet: Reduce scopes for two resources in
- axienet_probe()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4TFXBdP/6ppeVrRdSDKHEfkmbT/q5U55VcdfqXXjsKvxrj4eEXo
- kWDIihbCgMzIicmxVfxxuPDNbibnklTw5H1Edwnskbp+uC26PMd2wLBHC0OGkH7DwBywFtP
- qkgYT70FOAuv8iuoDnW11YwXEkxTyYoKFbr09y49dapy2qmvBhXhAjCmH//nZ7zly4HwR6F
- /gojlhYsSlRIDhCNxIZmg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:X7tOIUn4bU0=;1LorCimN8vn4JkCAiX8UOd23rws
- M7+uwCuqghvLX2Zht/5EmNBL7lr7ER9Ln6No0Vl/MsJzya5DAkH+fo/MI89ysAvFrgzdN17uW
- LOo4adbutwdio3PWz8jOj0tu31p7o8egRZpcV7bL1c/ZOpPX/yQZASUMjhBTckIUJai05gzTq
- ZMw1fALTx1A5f9/Ws7XaiZoSUrHaZdtZ1t+9VK52hM3Sf1oEeT1T9EO4LKi+Xa5olaZMV+y9d
- ugDbAYCZudQK8DJvYUvVJH1qjorB3c7c6qqGpVv9p2FmAmjIEl1JkEsyV9/Hsjeln0Jvb4dwT
- aLezLOBQUsMxtc79/Z+aNFGz37T2417RZS0K321PV7JUp9QBPIAA5CncP+/DeJ0CvEfHXw5NS
- Cr4L9pOtcT7ToPojiG8HelAKwP7YiJ7Al4Phgl09hKrhJzYKeKZt7rYmrT/rYMjBoiJckd03D
- qXr3Avikvqis+4I0yW1dooPbYtwO63kj2jPZIkKIkUKswRbb8LKcrA4QhvYd3iIjoN5hms9/u
- LMOhRwCNS2lvJoMHoM1NEzlFiGkuIdjsBANKVcxEtHI0RwNTlbV6ZncZ2I+ZM3avlhzTT0kEE
- YSBtF3bxs7X5ikPO8zolWmKF/hn2vq4S6ZJeFE3/FdsRvLrIMewfxUlKIoYXp7S9eK7iVRiZJ
- 2NOALEMHg70q7/C7R20ewptkeRo47D0ouZ/VUvd+Dcb3PNARZudgzNYLR4Nq3fa2QibpUpP6Y
- 6nqbmSirpQ7weoELnfEmlIdbpGCX0DbKc4zkgMnzz1WPfHYhg/UEjXuLC0KkTXrA3ugMhWGFP
- NdTt2n41GhI+XgvbZglbELzA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <C185CD71-0AF6-4D83-AEE5-F8C87EEDE86B@oracle.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Sep 2024 11:08:10 +0200
+On Thu, Sep 19, 2024 at 02:02:19PM +0000, Chuck Lever III wrote:
+> 
+> 
+> > On Sep 19, 2024, at 1:12 AM, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > 
+> > If "length" is >= U32_MAX - 3 then the "length + 4" addition can result
+> > in an integer overflow.  The impact of this bug is not totally clear to
+> > me, but it's safer to not allow the integer overflow.
+> > 
+> > Check that "length" is valid right away before doing any math.
+> > 
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > v2: Check that "len" is valid instead of just checking for integer
+> >    overflows.
+> > 
+> > fs/nfsd/nfs4callback.c | 2 ++
+> > 1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+> > index 43b8320c8255..0f5b7b6fba74 100644
+> > --- a/fs/nfsd/nfs4callback.c
+> > +++ b/fs/nfsd/nfs4callback.c
+> > @@ -317,6 +317,8 @@ static int decode_cb_compound4res(struct xdr_stream *xdr,
+> > hdr->status = be32_to_cpup(p++);
+> > /* Ignore the tag */
+> > length = be32_to_cpup(p++);
+> > + if (unlikely(length > xdr->buf->len))
+> > + goto out_overflow;
+> > p = xdr_inline_decode(xdr, length + 4);
+> > if (unlikely(p == NULL))
+> > goto out_overflow;
+> > -- 
+> > 2.34.1
+> > 
+> 
+> Hi Dan, I've already gone with
+> 
+> https://lore.kernel.org/linux-nfs/172658972371.2454.15715383792386404543.stgit@oracle-102.chuck.lever.oracle.com.nfsv4.dev/T/#u
+> 
+> Let me know if that doesn't make sense.
 
-The calls =E2=80=9Cdma_release_channel(tx_chan)=E2=80=9D and =E2=80=9Cof_n=
-ode_put(np)=E2=80=9D
-were immediately used after return value checks in this
-function implementation.
-Thus use such function calls only once instead directly before the checks.
+Oh, sorry, I got mixed up which things were patched.  That looks good.
+The truth is I always prefer when people give me a reported by tag so I
+don't have to write a v2 patch.  It just saves a back and forth.
+Thanks!
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/n=
-et/ethernet/xilinx/xilinx_axienet_main.c
-index ea7d7c03f48e..e3d9801ad17e 100644
-=2D-- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -2806,13 +2806,12 @@ static int axienet_probe(struct platform_device *p=
-dev)
- 		cfg.reset =3D 1;
- 		/* As name says VDMA but it has support for DMA channel reset */
- 		ret =3D xilinx_vdma_channel_set_config(tx_chan, &cfg);
-+		dma_release_channel(tx_chan);
- 		if (ret < 0) {
- 			dev_err(&pdev->dev, "Reset channel failed\n");
--			dma_release_channel(tx_chan);
- 			goto cleanup_clk;
- 		}
-
--		dma_release_channel(tx_chan);
- 		lp->use_dmaengine =3D 1;
- 	}
-
-@@ -2860,12 +2859,12 @@ static int axienet_probe(struct platform_device *p=
-dev)
- 			goto cleanup_mdio;
- 		}
- 		lp->pcs_phy =3D of_mdio_find_device(np);
-+		of_node_put(np);
- 		if (!lp->pcs_phy) {
- 			ret =3D -EPROBE_DEFER;
--			of_node_put(np);
- 			goto cleanup_mdio;
- 		}
--		of_node_put(np);
-+
- 		lp->pcs.ops =3D &axienet_pcs_ops;
- 		lp->pcs.neg_mode =3D true;
- 		lp->pcs.poll =3D true;
-=2D-
-2.46.0
+regards,
+dan carpenter
 
