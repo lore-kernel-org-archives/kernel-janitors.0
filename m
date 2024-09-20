@@ -1,130 +1,503 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B464013E020
-	for <kernel-janitors@vger.kernel.org>; Fri, 20 Sep 2024 11:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447D717A5BE;
+	Fri, 20 Sep 2024 20:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726830608; cv=none; b=OxGhsk30nG70g3/kg+DXW5JM87qNYKTyaRNYtvZeiaxPxcy/67TyPXR5J0bZNqsiqPh+RaaQK1WmFuDNNNV1MQWWfYX0pqAqkK0Ouc+uyoZhoIPZKBexcwfS3WPfB6PLvH389cuG7lLKe5BQA/qT8cRdYMWKH3qC67he5JurldQ=
+	t=1726863957; cv=none; b=V/JZThEGrmnTcN9g3RKZD5TWXkJpG2Ke0Jl0q9uNhaOwmE87veZkWsCLlQZYe8du3Tm4DKHQy+l4TtzWvXJ0Z6a5Py1KfOXc+u7qm6EkuuBNVfpzEqOFya3PyaIjjc8CFYmec/tyB53l2Bc3xUu5mnAUhCjAdQ7FQJt32qfWkqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726830608; c=relaxed/simple;
-	bh=SP8iz223UYOSo5BzrpVFkVxPNjsWT3Y4xNAfrH2OA8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eDysdoauGR9fPM0fjwlCJAzUWjC/4HRkvxivPHGIsNAHpN+mTbAR+q7MhEkAj0wuip9za5orn6KCLrew6cdwUVR3rcGEqD05jWLkDxM/FAFDkueNFKKJXUX7YaEYXBwkBDfS8L+btnoRcGzfzctblOonyvkeIYngIL/nTuXgr/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kDfdLhjd; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1726863957; c=relaxed/simple;
+	bh=wdxl7L9ab6N6pMLE7KC4xJz+RoZj2ag/Gqszly5vPwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i58+Pad5xV93GXX82UOA+yjvECTgJKhyhFFn1KkJr5FVfVb2j6zogQmDSIr6HycB8daTjOINvmBp8nRIw2uPBPlirRNS6Nhkkdv5h4LkPimNS4ql2QRoG2aL31wZw7OI/m3NUs6E8bM3na+mAFTo+EiAxKO/iicSYTlWDxDL/wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JjaRMJ2P; arc=none smtp.client-ip=80.12.242.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kDfdLhjd"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so27725161fa.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 20 Sep 2024 04:10:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726830605; x=1727435405; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5EHjGRXCWgZwp1krkmlisCOVeWPEKWd2TIUOSRIDt8I=;
-        b=kDfdLhjdBeOydgV97U6nK5UAgSczZtr7yRru4NBKNrF6QwqmYVduDpJwyIQ+FPo3AO
-         9uIr95jJCMAa4OETbEt8/g7g3aoxigVNKYiB+xp214OMOjURWy9D5C2KqtJO9dOLtbyH
-         yfweLpkd4nRIXHz7ZjtxzO8EOGKh0+zXYXwYw03BAlFbS1dba5WnD/JNWcwyFLsuW3zp
-         Rr4sFS93+2Z8sFpaJBn4fM+ClwbLtRFgSJAGsJ3y2H2WpHh5gAKZgHkJUA93TQrqBOYM
-         vjcP4OZGnWoIe+SkMtmnuB9U3DkFhTGeMnQdjfRWMe9IWFxbG1QHwg3ZTNjYGjpOBOMu
-         kUBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726830605; x=1727435405;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5EHjGRXCWgZwp1krkmlisCOVeWPEKWd2TIUOSRIDt8I=;
-        b=pp2l2ZLdOvpWPw8rfZM1GmCmNCs9Lt0dleLBmeTxvWzxN0UbB3/a1Yh8KGS9pJ3+L8
-         gQiM+OMcCnoKowlmUH0INyBHCD/x4XXtn5MN4C0Aq69/yRXhqRldRCbsCyWJPADpRTJO
-         9/5BbAFCT6VPQAmEa0Le5PaUhsCdcc3oHN2X1q5elVzizBv9SCb104qiB9ObotYr5bIi
-         RaB64W4RUi26TDYKVeEi4VR8pQUtlEmPPrGctXsF4GU2zFFPVpK0PoEufvS6sWStvcCr
-         WMlh+Mc5sRv7Z904Ht/uCEhccblzI7P9Tjzz0k1TMKWyagETFSC8/6TVU7sCylPiNvqN
-         qHIw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5G8JeNnzm0OwvzyiDWyzlRayp8Ks9u6HW6nUFfBN0pkRj1apwYhS+A4IZviFkX42XDsduaMrR8GLikLGzcqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+xjta9ppwPkWwTUypbzHjVUcVMzZAh/Yock+EHJI8oExM9lyw
-	C6LnYZlgz3KDY9+rPnJ8hiwOw75IgKU2X/OTAHScTE3EeK+nj6Kjl5Gi2shAUqs=
-X-Google-Smtp-Source: AGHT+IFNGKP6ElDwKV6SnNuyGO0cfMJ44eZrIuCs6c8/FaQcThhnYhR3j4iMkCX5GmVhPiPCfnOd3A==
-X-Received: by 2002:a05:6512:39c4:b0:536:a4f1:d214 with SMTP id 2adb3069b0e04-536ac2e705bmr2027275e87.19.1726830604714;
-        Fri, 20 Sep 2024 04:10:04 -0700 (PDT)
-Received: from localhost ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096762sm835762266b.37.2024.09.20.04.10.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 04:10:03 -0700 (PDT)
-Date: Fri, 20 Sep 2024 14:10:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <dai.ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] nfsd: prevent integer overflow in
- decode_cb_compound4res()
-Message-ID: <183154d2-cb65-4161-a737-394aba9c1d43@suswa.mountain>
-References: <ed14a180-56c8-40f2-acf7-26a787eb3769@suswa.mountain>
- <C185CD71-0AF6-4D83-AEE5-F8C87EEDE86B@oracle.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JjaRMJ2P"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id rkCEsAP4R8upxrkCEsK3V6; Fri, 20 Sep 2024 22:25:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726863945;
+	bh=soylroJMGBRTvCSChB7Q0b3qXpOF2F9XAqnaurhKvjk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=JjaRMJ2PScHVbxdpQ0qY15DrqanQFw2CfDhgdpwSl1YL9eQ33X/z0yYI0YvcrkFcf
+	 sjUl7thsTXrYEu51ho/3677yCeGNlKwRoOWbmuEmHvf874AX0TAsgCEaaV8Zybl8gn
+	 aKOf7NJI8usc5F5klFVsComJygjp/X3iDqdozks0AJ42HNqL2slQJDSILA9ddtDIRo
+	 I63D7v12XDcHRTnR+tZgqj0xYZWGbu5X1YLHuzAJ+4gCIN8UvUz62bL+HK31+GkzVQ
+	 ICY42LgjhSpDdZH1nG5aLepX2SbSwh9xwfe2k16ZxN2B1/Vn8TPp2ThoFV/W8JSfXL
+	 TMrT+G10OQnjQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 20 Sep 2024 22:25:45 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH] clk: sunxi-ng: Constify struct ccu_reset_map
+Date: Fri, 20 Sep 2024 22:25:24 +0200
+Message-ID: <44745f27034fa670605cd16966a39b7fe88fe5a6.1726863905.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <C185CD71-0AF6-4D83-AEE5-F8C87EEDE86B@oracle.com>
 
-On Thu, Sep 19, 2024 at 02:02:19PM +0000, Chuck Lever III wrote:
-> 
-> 
-> > On Sep 19, 2024, at 1:12 AM, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > 
-> > If "length" is >= U32_MAX - 3 then the "length + 4" addition can result
-> > in an integer overflow.  The impact of this bug is not totally clear to
-> > me, but it's safer to not allow the integer overflow.
-> > 
-> > Check that "length" is valid right away before doing any math.
-> > 
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > v2: Check that "len" is valid instead of just checking for integer
-> >    overflows.
-> > 
-> > fs/nfsd/nfs4callback.c | 2 ++
-> > 1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-> > index 43b8320c8255..0f5b7b6fba74 100644
-> > --- a/fs/nfsd/nfs4callback.c
-> > +++ b/fs/nfsd/nfs4callback.c
-> > @@ -317,6 +317,8 @@ static int decode_cb_compound4res(struct xdr_stream *xdr,
-> > hdr->status = be32_to_cpup(p++);
-> > /* Ignore the tag */
-> > length = be32_to_cpup(p++);
-> > + if (unlikely(length > xdr->buf->len))
-> > + goto out_overflow;
-> > p = xdr_inline_decode(xdr, length + 4);
-> > if (unlikely(p == NULL))
-> > goto out_overflow;
-> > -- 
-> > 2.34.1
-> > 
-> 
-> Hi Dan, I've already gone with
-> 
-> https://lore.kernel.org/linux-nfs/172658972371.2454.15715383792386404543.stgit@oracle-102.chuck.lever.oracle.com.nfsv4.dev/T/#u
-> 
-> Let me know if that doesn't make sense.
+'struct ccu_reset_map' are not modified in these drivers.
 
-Oh, sorry, I got mixed up which things were patched.  That looks good.
-The truth is I always prefer when people give me a reported by tag so I
-don't have to write a v2 patch.  It just saves a back and forth.
-Thanks!
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-regards,
-dan carpenter
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   1533	   2224	      0	   3757	    ead	drivers/clk/sunxi-ng/ccu-sun20i-d1-r.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   1597	   2160	      0	   3757	    ead	drivers/clk/sunxi-ng/ccu-sun20i-d1-r.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c   | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun20i-d1.c     | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a100.c   | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c    | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 4 ++--
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c     | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun5i.c         | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c     | 8 ++++----
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 4 ++--
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 6 +++---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c     | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 4 ++--
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c  | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c | 2 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c     | 2 +-
+ drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 2 +-
+ drivers/clk/sunxi-ng/ccu_common.h        | 2 +-
+ drivers/clk/sunxi-ng/ccu_reset.h         | 2 +-
+ 25 files changed, 33 insertions(+), 33 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
+index de36e21d3eaf..4084714adb15 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
+@@ -91,7 +91,7 @@ static struct clk_hw_onecell_data sun20i_d1_r_hw_clks = {
+ 	},
+ };
+ 
+-static struct ccu_reset_map sun20i_d1_r_ccu_resets[] = {
++static const struct ccu_reset_map sun20i_d1_r_ccu_resets[] = {
+ 	[RST_BUS_R_TIMER]	= { 0x11c, BIT(16) },
+ 	[RST_BUS_R_TWD]		= { 0x12c, BIT(16) },
+ 	[RST_BUS_R_PPU]		= { 0x1ac, BIT(16) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
+index 9b5cfac2ee70..9633d4506891 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
++++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
+@@ -1232,7 +1232,7 @@ static struct clk_hw_onecell_data sun20i_d1_hw_clks = {
+ 	},
+ };
+ 
+-static struct ccu_reset_map sun20i_d1_ccu_resets[] = {
++static const struct ccu_reset_map sun20i_d1_ccu_resets[] = {
+ 	[RST_MBUS]		= { 0x540, BIT(30) },
+ 	[RST_BUS_DE]		= { 0x60c, BIT(16) },
+ 	[RST_BUS_DI]		= { 0x62c, BIT(16) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+index d1a1683baff4..54c794c50828 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
++++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
+@@ -1382,7 +1382,7 @@ static struct clk_hw_onecell_data sun7i_a20_hw_clks = {
+ 	.num	= CLK_NUMBER_SUN7I,
+ };
+ 
+-static struct ccu_reset_map sunxi_a10_a20_ccu_resets[] = {
++static const struct ccu_reset_map sunxi_a10_a20_ccu_resets[] = {
+ 	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
+ 	[RST_USB_PHY2]		= { 0x0cc, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
+index 2c791761a646..cdd9721f9e7d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
+@@ -166,7 +166,7 @@ static struct clk_hw_onecell_data sun50i_a100_r_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun50i_a100_r_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_a100_r_ccu_resets[] = {
+ 	[RST_R_APB1_TIMER]	=  { 0x11c, BIT(16) },
+ 	[RST_R_APB1_BUS_PWM]	=  { 0x13c, BIT(16) },
+ 	[RST_R_APB1_PPU]	=  { 0x17c, BIT(16) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
+index bbaa82978716..1b6a49bc7184 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
+@@ -1061,7 +1061,7 @@ static struct clk_hw_onecell_data sun50i_a100_hw_clks = {
+ 	.num = CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun50i_a100_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_a100_ccu_resets[] = {
+ 	[RST_MBUS]		= { 0x540, BIT(30) },
+ 
+ 	[RST_BUS_DE]		= { 0x60c, BIT(16) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index c255dba2c96d..82d7dcbca1cc 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -858,7 +858,7 @@ static struct clk_hw_onecell_data sun50i_a64_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun50i_a64_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_a64_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
+ 	[RST_USB_HSIC]		=  { 0x0cc, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+index c72815841111..d0ce2779c550 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
+@@ -179,7 +179,7 @@ static struct clk_hw_onecell_data sun50i_h616_r_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
+ 	[RST_R_APB1_TIMER]	=  { 0x11c, BIT(16) },
+ 	[RST_R_APB1_TWD]	=  { 0x12c, BIT(16) },
+ 	[RST_R_APB1_PWM]	=  { 0x13c, BIT(16) },
+@@ -190,7 +190,7 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
+ 	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
+ };
+ 
+-static struct ccu_reset_map sun50i_h616_r_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_h616_r_ccu_resets[] = {
+ 	[RST_R_APB1_TWD]	=  { 0x12c, BIT(16) },
+ 	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
+ 	[RST_R_APB2_RSB]	=  { 0x1bc, BIT(16) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index a20b621ad8f1..bd6fc3df911d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -1076,7 +1076,7 @@ static struct clk_hw_onecell_data sun50i_h6_hw_clks = {
+ 	.num = CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun50i_h6_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_h6_ccu_resets[] = {
+ 	[RST_MBUS]		= { 0x540, BIT(30) },
+ 
+ 	[RST_BUS_DE]		= { 0x60c, BIT(16) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+index 84e406ddf9d1..af1c4f7c3f95 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+@@ -990,7 +990,7 @@ static struct clk_hw_onecell_data sun50i_h616_hw_clks = {
+ 	.num = CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun50i_h616_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_h616_ccu_resets[] = {
+ 	[RST_MBUS]		= { 0x540, BIT(30) },
+ 
+ 	[RST_BUS_DE]		= { 0x60c, BIT(16) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c b/drivers/clk/sunxi-ng/ccu-sun5i.c
+index 1f4bc0e773a7..c9bf1fdb8a8a 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun5i.c
++++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
+@@ -731,7 +731,7 @@ static struct clk_hw_onecell_data sun5i_a10s_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun5i_a10s_ccu_resets[] = {
++static const struct ccu_reset_map sun5i_a10s_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index e8b8d2dd7f2c..c2ad1209633e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -1146,7 +1146,7 @@ static struct clk_hw_onecell_data sun6i_a31_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun6i_a31_ccu_resets[] = {
++static const struct ccu_reset_map sun6i_a31_ccu_resets[] = {
+ 	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
+ 	[RST_USB_PHY2]		= { 0x0cc, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+index 6c2a08f722a8..9433dbac038e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+@@ -668,7 +668,7 @@ static struct clk_hw_onecell_data sun8i_a23_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun8i_a23_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_a23_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
+ 	[RST_USB_HSIC]		=  { 0x0cc, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 5e0bc08a9ce3..1ffc5ab9bc3c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -712,7 +712,7 @@ static struct clk_hw_onecell_data sun8i_a33_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun8i_a33_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_a33_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
+ 	[RST_USB_HSIC]		=  { 0x0cc, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+index cb4c6b16c467..a51fb2c10c94 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
+@@ -797,7 +797,7 @@ static struct clk_hw_onecell_data sun8i_a83t_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun8i_a83t_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_a83t_ccu_resets[] = {
+ 	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
+ 	[RST_USB_HSIC]		= { 0x0cc, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+index 7683ea08d8e3..a742f83746d1 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -146,7 +146,7 @@ static struct clk_hw_onecell_data sun50i_a64_de2_hw_clks = {
+ 	.num	= CLK_NUMBER_WITH_ROT,
+ };
+ 
+-static struct ccu_reset_map sun8i_a83t_de2_resets[] = {
++static const struct ccu_reset_map sun8i_a83t_de2_resets[] = {
+ 	[RST_MIXER0]	= { 0x08, BIT(0) },
+ 	/*
+ 	 * Mixer1 reset line is shared with wb, so only RST_WB is
+@@ -156,7 +156,7 @@ static struct ccu_reset_map sun8i_a83t_de2_resets[] = {
+ 	[RST_ROT]	= { 0x08, BIT(3) },
+ };
+ 
+-static struct ccu_reset_map sun8i_h3_de2_resets[] = {
++static const struct ccu_reset_map sun8i_h3_de2_resets[] = {
+ 	[RST_MIXER0]	= { 0x08, BIT(0) },
+ 	/*
+ 	 * Mixer1 reset line is shared with wb, so only RST_WB is
+@@ -166,14 +166,14 @@ static struct ccu_reset_map sun8i_h3_de2_resets[] = {
+ 	[RST_WB]	= { 0x08, BIT(2) },
+ };
+ 
+-static struct ccu_reset_map sun50i_a64_de2_resets[] = {
++static const struct ccu_reset_map sun50i_a64_de2_resets[] = {
+ 	[RST_MIXER0]	= { 0x08, BIT(0) },
+ 	[RST_MIXER1]	= { 0x08, BIT(1) },
+ 	[RST_WB]	= { 0x08, BIT(2) },
+ 	[RST_ROT]	= { 0x08, BIT(3) },
+ };
+ 
+-static struct ccu_reset_map sun50i_h5_de2_resets[] = {
++static const struct ccu_reset_map sun50i_h5_de2_resets[] = {
+ 	[RST_MIXER0]	= { 0x08, BIT(0) },
+ 	[RST_MIXER1]	= { 0x08, BIT(1) },
+ 	[RST_WB]	= { 0x08, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+index 13e57db2f8d5..74da5d27af72 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+@@ -876,7 +876,7 @@ static struct clk_hw_onecell_data sun50i_h5_hw_clks = {
+ 	.num	= CLK_NUMBER_H5,
+ };
+ 
+-static struct ccu_reset_map sun8i_h3_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_h3_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
+ 	[RST_USB_PHY2]		=  { 0x0cc, BIT(2) },
+@@ -939,7 +939,7 @@ static struct ccu_reset_map sun8i_h3_ccu_resets[] = {
+ 	[RST_BUS_SCR0]		=  { 0x2d8, BIT(20) },
+ };
+ 
+-static struct ccu_reset_map sun50i_h5_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_h5_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
+ 	[RST_USB_PHY2]		=  { 0x0cc, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+index da6569334d68..2b3e094a32cb 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+@@ -178,7 +178,7 @@ static struct clk_hw_onecell_data sun50i_a64_r_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun8i_a83t_r_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_a83t_r_ccu_resets[] = {
+ 	[RST_APB0_IR]		=  { 0xb0, BIT(1) },
+ 	[RST_APB0_TIMER]	=  { 0xb0, BIT(2) },
+ 	[RST_APB0_RSB]		=  { 0xb0, BIT(3) },
+@@ -186,14 +186,14 @@ static struct ccu_reset_map sun8i_a83t_r_ccu_resets[] = {
+ 	[RST_APB0_I2C]		=  { 0xb0, BIT(6) },
+ };
+ 
+-static struct ccu_reset_map sun8i_h3_r_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_h3_r_ccu_resets[] = {
+ 	[RST_APB0_IR]		=  { 0xb0, BIT(1) },
+ 	[RST_APB0_TIMER]	=  { 0xb0, BIT(2) },
+ 	[RST_APB0_UART]		=  { 0xb0, BIT(4) },
+ 	[RST_APB0_I2C]		=  { 0xb0, BIT(6) },
+ };
+ 
+-static struct ccu_reset_map sun50i_a64_r_ccu_resets[] = {
++static const struct ccu_reset_map sun50i_a64_r_ccu_resets[] = {
+ 	[RST_APB0_IR]		=  { 0xb0, BIT(1) },
+ 	[RST_APB0_TIMER]	=  { 0xb0, BIT(2) },
+ 	[RST_APB0_RSB]		=  { 0xb0, BIT(3) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 2f51ceab8016..a374aeeca3f4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -1162,7 +1162,7 @@ static struct clk_hw_onecell_data sun8i_r40_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun8i_r40_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_r40_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
+ 	[RST_USB_PHY2]		=  { 0x0cc, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index d24c0d8dfee4..00d04f7ad94d 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -644,7 +644,7 @@ static struct clk_hw_onecell_data sun8i_v3_hw_clks = {
+ 	.num	= CLK_I2S0 + 1,
+ };
+ 
+-static struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 
+ 	[RST_MBUS]		=  { 0x0fc, BIT(31) },
+@@ -679,7 +679,7 @@ static struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
+ 	[RST_BUS_UART2]		=  { 0x2d8, BIT(18) },
+ };
+ 
+-static struct ccu_reset_map sun8i_v3_ccu_resets[] = {
++static const struct ccu_reset_map sun8i_v3_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 
+ 	[RST_MBUS]		=  { 0x0fc, BIT(31) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
+index 0975ac58949f..d561c15f5122 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
+@@ -177,7 +177,7 @@ static struct clk_hw_onecell_data sun9i_a80_de_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun9i_a80_de_resets[] = {
++static const struct ccu_reset_map sun9i_a80_de_resets[] = {
+ 	[RST_FE0]	= { 0x0c, BIT(0) },
+ 	[RST_FE1]	= { 0x0c, BIT(1) },
+ 	[RST_FE2]	= { 0x0c, BIT(2) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+index e5527c8cc64f..9e2b8d47fc54 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
+@@ -68,7 +68,7 @@ static struct clk_hw_onecell_data sun9i_a80_usb_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun9i_a80_usb_resets[] = {
++static const struct ccu_reset_map sun9i_a80_usb_resets[] = {
+ 	[RST_USB0_HCI]		= { 0x0, BIT(17) },
+ 	[RST_USB1_HCI]		= { 0x0, BIT(18) },
+ 	[RST_USB2_HCI]		= { 0x0, BIT(19) },
+diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+index 756dd8fca6b0..5da9a16b4ec7 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
++++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
+@@ -1108,7 +1108,7 @@ static struct clk_hw_onecell_data sun9i_a80_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map sun9i_a80_ccu_resets[] = {
++static const struct ccu_reset_map sun9i_a80_ccu_resets[] = {
+ 	/* AHB0 reset controls */
+ 	[RST_BUS_FD]		= { 0x5a0, BIT(0) },
+ 	[RST_BUS_VE]		= { 0x5a0, BIT(1) },
+diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+index 52f1a04269f8..fb37c0fc4fde 100644
+--- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
++++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+@@ -477,7 +477,7 @@ static struct clk_hw_onecell_data suniv_hw_clks = {
+ 	.num	= CLK_NUMBER,
+ };
+ 
+-static struct ccu_reset_map suniv_ccu_resets[] = {
++static const struct ccu_reset_map suniv_ccu_resets[] = {
+ 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
+ 
+ 	[RST_BUS_DMA]		=  { 0x2c0, BIT(6) },
+diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
+index 329734f8cf42..dd330426a6e5 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.h
++++ b/drivers/clk/sunxi-ng/ccu_common.h
+@@ -50,7 +50,7 @@ struct sunxi_ccu_desc {
+ 
+ 	struct clk_hw_onecell_data	*hw_clks;
+ 
+-	struct ccu_reset_map		*resets;
++	const struct ccu_reset_map	*resets;
+ 	unsigned long			num_resets;
+ };
+ 
+diff --git a/drivers/clk/sunxi-ng/ccu_reset.h b/drivers/clk/sunxi-ng/ccu_reset.h
+index e9b973cae4af..941276a8ec2e 100644
+--- a/drivers/clk/sunxi-ng/ccu_reset.h
++++ b/drivers/clk/sunxi-ng/ccu_reset.h
+@@ -17,7 +17,7 @@ struct ccu_reset_map {
+ 
+ struct ccu_reset {
+ 	void __iomem			*base;
+-	struct ccu_reset_map		*reset_map;
++	const struct ccu_reset_map	*reset_map;
+ 	spinlock_t			*lock;
+ 
+ 	struct reset_controller_dev	rcdev;
+-- 
+2.46.1
 
