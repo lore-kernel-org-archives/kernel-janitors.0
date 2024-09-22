@@ -1,116 +1,78 @@
-Received: from msa.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B0133C8;
-	Sun, 22 Sep 2024 13:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC4826AED;
+	Sun, 22 Sep 2024 16:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727011978; cv=none; b=IXC4Mq1d1vVq4C6iWyxWGRXVRpmzMiVtnSurW4neZUAX4xkbzpe+mFQ0X2vrrKlMkBABRJTP4ZW5Fb58CRXm/1HLxLPGUzp0XQs30gsV+SrjTaGduKNwKk7cOPMggr7vfGGsXYuU6GqfTWUV2ibiSXVNllgvT0KFCQKD0hGJ8xA=
+	t=1727024204; cv=none; b=Km8cXPrx/EP0v7wpE1+tRX8ALzo0uKAChWdQM0TG5lsfPTwQv+66PsHvRl61JN3t5cyNJzaIMF+0Zd/ZqzSmcojJJpG9pSX1T2LnVW7HhIjX543gTqG9O/4V5u0hsdFhyFDQ4XyIwEnEyd8FsASRtcnW/ApVOHqvJLUBXbVKaHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727011978; c=relaxed/simple;
-	bh=BTV39BvXRe4Q9dyZ3cZlJKkTC0yCvDORysy/TuW5/F0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UAD7f2oVc3HHQL1u8Ev95h7ogNlB9cqJbKEW7ht/qstqMgyH7iVJKI5sGWYmBQEAr/RuAimU1hyv4sFjVgB+Ge3yaTESRxg83mp9S+i4uhOyeJmb1mb5nXJq1SHTihUaVcewlyP+L/UAkGCEF0iJM+0rCC5NTPT0N7nKurWoqJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AWLyKwlc; arc=none smtp.client-ip=80.12.242.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1727024204; c=relaxed/simple;
+	bh=IzUiiBWxKOEoxrsutv2RysTy/iP/OHwPa08dPre7tQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qq3cWWlQX8LsfIiJJD+Y3MA6F5hJOHgoeUC3AwWchHSdeh3rn5olcDmKXOV0NcNCRaTN0g71geHFENi8welwtl5itVLJh7kooMwfNkmqOqx8FvSiKDc3KjZPMwBRRQSjQeWlkVZrFs34PAm6PaeXUdIallCE2wnThBTgM2WKxKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4YgRILk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AWLyKwlc"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id sMhhsOPMb4kQdsMhhsijmG; Sun, 22 Sep 2024 15:32:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727011966;
-	bh=Hc/5GzsW1xJcs7UHU11bj3aGOVWyL/D2rlrdgJ388GI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=AWLyKwlc59jv1UaqhedceGg+naKRi28GSP7099eWcgOQWDHBzuIGGTd/5US/Q+Bfk
-	 2iFafxavDiKYAoAEH+flZp4OEL2MMJBji7Usu2wX5iE2nLLZjniahuOfO/8j6bA2y1
-	 wmchyReHFD5lG2tAaftnctzcoAH9cykMnRWchCszmCv60mCcRkpbg17efgYY4xi7Ct
-	 VwoF7asjv82lZdow5/9QRrNoLedn2bHWsJOBuMlV8peUsdMhCH8p3tgjSmS3H2noWu
-	 YxEf5Qywo/EpMjqQ4ogjW9B65ECuLDovssUx1AJAEhsCf/VCH10TtQO3X+VSYLd0Mh
-	 o81FVaUu2CZzg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 22 Sep 2024 15:32:46 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <053af1f0-546e-416b-b8bc-22837e908ae0@wanadoo.fr>
-Date: Sun, 22 Sep 2024 15:32:44 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4YgRILk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12AE3C4CEC3;
+	Sun, 22 Sep 2024 16:56:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727024203;
+	bh=IzUiiBWxKOEoxrsutv2RysTy/iP/OHwPa08dPre7tQ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q4YgRILk12OshWT6BnrLKMqHDUe3Lx64bSH519hGw6a7t7JDwI4sg7P8a1NX1tN93
+	 bzCjrvaFzvobs/I+k+DScvkFIyCobfOCXWEyUyFNGWL0pTdexv2hO//0YNqjnUUfEN
+	 UVCt/QCY9w0IIxsBpkhZkT0Z45S06+4BrPACZ4tJVBKFeAhn8l8i52LDeuAanK+X+d
+	 xT30buhmoOFV+SoPTGjtA5NKA/kut0lO721Fet6CB35nKA7UgrLdxBrVIuCYZZ+Noz
+	 SQPXAartD/M4n8gNubeSeSdsjCXvMIClxRL8v7YXUeGFnliuWsoENwgovMXFCsdx4n
+	 B63hxDr1g2sxg==
+Date: Sun, 22 Sep 2024 17:56:38 +0100
+From: Simon Horman <horms@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Himanshu Madhani <himanshu.madhani@qlogic.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Manish Chopra <manishc@marvell.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shahed Shaikh <shshaikh@marvell.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	Manish Chopra <manish.chopra@qlogic.com>
+Subject: Re: [PATCH] qlcnic: Use common error handling code in four functions
+Message-ID: <20240922165638.GB3426578@kernel.org>
+References: <7c98349a-bfa5-409b-847e-ed8439e80afd@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bus: ts-nbus: Fix an error handling path in
- ts_nbus_probe()
-To: Linus Walleij <linus.walleij@linaro.org>,
- Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
- Arnd Bergmann <arnd@arndb.de>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Sean Young <sean@mess.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <6c887c85434edb17d2217c5198c48018dfa97923.1710606677.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6c887c85434edb17d2217c5198c48018dfa97923.1710606677.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c98349a-bfa5-409b-847e-ed8439e80afd@web.de>
 
-Le 16/03/2024 à 17:31, Christophe JAILLET a écrit :
-> If of_platform_populate() fails, we must shutdown the FPGA, as already done
-> in the remove function.
+On Thu, Sep 19, 2024 at 09:50:13PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 19 Sep 2024 21:30:45 +0200
 > 
-> Fixes: 5b143d2a6ede ("bus: add driver for the Technologic Systems NBUS")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
+> Add jump targets so that a bit of exception handling can be better reused
+> at the end of four function implementations.
 > 
-> This patch is speculative and based on the output of one of my scripts that
-> tries to spot calls in .remove function that are not also in the error
-> handling path of the probe. I'm not familiar with the pwm_ API.
+> This issue was detected by using the Coccinelle software.
 > 
-> I don't think that the locking in the remove function is needed here.
-> 
-> Review with care.
-> ---
->   drivers/bus/ts-nbus.c | 12 +++++++++---
->   1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/bus/ts-nbus.c b/drivers/bus/ts-nbus.c
-> index baf22a82c47a..fa1bb9b78446 100644
-> --- a/drivers/bus/ts-nbus.c
-> +++ b/drivers/bus/ts-nbus.c
-> @@ -309,13 +309,19 @@ static int ts_nbus_probe(struct platform_device *pdev)
->   	dev_set_drvdata(dev, ts_nbus);
->   
->   	ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
-> -	if (ret < 0)
-> -		return dev_err_probe(dev, ret,
-> -				     "failed to populate platform devices on bus\n");
-> +	if (ret < 0) {
-> +		dev_err_probe(dev, ret,
-> +			      "failed to populate platform devices on bus\n");
-> +		goto err_disable_pwm;
-> +	}
->   
->   	dev_info(dev, "initialized\n");
->   
->   	return 0;
-> +
-> +err_disable_pwm:
-> +	pwm_disable(ts_nbus->pwm);
-> +	return ret;
->   }
->   
->   static void ts_nbus_remove(struct platform_device *pdev)
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Hi,
+Hi Markus,
 
-Polite reminder.
+This is an old driver, that doesn't appear to have been under active
+development for quite some time. Unless there is a way to exercise these
+changes I don't think that clean-ups of this nature are worth the risk of
+regressions they might introduce.
 
-I sent this patch a few months ago, but it never got any feed-back.
+If we can see bugs in error paths, let's fix them.
+Else, let's leave them be.
 
-Adding Uwe and Sean who touched this file in the last months.
-
-CJ
+-- 
+pw-bot: rejected
