@@ -1,106 +1,109 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11B31974FA;
-	Mon, 23 Sep 2024 12:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CD512CDB6;
+	Mon, 23 Sep 2024 15:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727094365; cv=none; b=MBsU+NB0N3FWTKTfQHE9ru73k0gNrn2bvQEaD3HZgONmd+RI8wANi1Tqg465/M1llC6yMUk30ewTKp2aSwUHekfVk5zQBgk9S1vdV3SdGVl8INzlZ/IPHSqu5K95Q763HhJ1LtkoUtcR6NuxmVmwQO0LBRJW53+I6Fpm+yezmWc=
+	t=1727104677; cv=none; b=itucB6irYMcpQHHMUOvmstBPZrw3CQLTlCJDhAPKIvl23+R3+jRZg4yY0zajaIepsXjYvSMRX+9hqPWVM8LGQR4TTOO4RYNB1XlpB67QsDXRNv5Oq4VTMD25J9mnlf8wjLkG9QcFgpo11o/b101LrxpnGGm39uborFMDoZzua0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727094365; c=relaxed/simple;
-	bh=thO8VxYyImI2w80Ebuc+yVZ/26dy78mwPgP8fx3duWk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=j46ugJllgt7mwztOkfpj5RQXz2CBGiajCXExGR/vCYsK7UxL4AeSsFgiWo4colNTHgOSrE2GfSE6eCSzkkKDgbH00leAt6lhKKKzSKmUzzdWUwUwSHYVH6Jo1JG33VYLiEOOPfkWnPSxumBfZDkDr4BwCISSlGFOrNS1LNexNTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cSdABqor; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727104677; c=relaxed/simple;
+	bh=yG8AvyiyRP5u3+5MM4OvFIqzHE1uXD8tmtbV+ly49xI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=QuQO8CP6M5Ia0vWNk6WaxRE3PjQE0RQgFzE3liuV90cVfbRFmQO8SJoBfdKCsINeGjccrrs5o+AQkCR6qBf4vwGjrbsbtfDiggg0s15yX41dFk2DAi4rKgWBIWhRN0sWLVo8JDly/pxDp0xlvzKFd8JXi9VmUIMoyjSBGhixA6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AQf8hGkT; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cSdABqor"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7aa086b077so562319766b.0;
-        Mon, 23 Sep 2024 05:26:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727094362; x=1727699162; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jwuvqk2hbesNOUF+iNF8ZM1z2+Ejv+9It9RNoru66Uo=;
-        b=cSdABqorAEuS6XjZRNvNfbLUJUksUs8iVwQPRvdsJhu14q0g/hW3qyYsd+24CtPglC
-         1O3YTLQDgGSvdiaa/vuIEp78EhgcvKgGEOzpmrawMeFJGQLv/koSFmHSiyaUwtx+HYV0
-         t3ONWLhE9HoDZCZ+BNkj6Kp+lOxWDSSyXFSFTrm0ddPmKxUBi3Irrel7ic8uOhw+oNUa
-         5qZiLwndMckOtN/WyMBxkQYo9XW+zghA8p+KRnc+8NtD20ig9SDfGlwMiASVcAH+TNmK
-         d9ZD7nN+cyZxQmNnGS9b4dRgSTaIjc5qi+JWVkfNuF0Xdr64t3p0hIaBMvrzocvjaw3l
-         SZcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727094362; x=1727699162;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jwuvqk2hbesNOUF+iNF8ZM1z2+Ejv+9It9RNoru66Uo=;
-        b=XEBnxDDZaMo//AHmh9d5jvhn3stTvqvOMscSiWF9C0cvcgi0YepKkuXxx9SMjp91wz
-         WhTsifeN1b67MLxgKcuQAldJYe6SetaGhfshAye4Kd75jdIAD3ws0IVZx/PHFXG3tdOA
-         X92GzUVGBpnFIgfTMvW26XDN9EXEzjo/db2tPzES0KPsByR72xJJeHiCEhSO5BZBmMl3
-         /9wrZLpUF0A4ooBzdIZF422keS+xXQ2RRkD1FEa2nZHVSmafJ59X5fvOdpvvlmcDDaV1
-         394l6xeE+FfI4jHxyfB61AEJHddct+XvaKZUzo+8Vgk3Q2AY4UhQHRz2zJgcfDrtggev
-         Gt3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVPUfRNg7zD3El8IUxuysUnJ59g8qLQaocJA8D4H3sXnPKPu/bAxVkc2BFJ3NZk6yLvs1aeSJVv@vger.kernel.org, AJvYcCVoiXlxVCBPYgNghwz/UBNLrQe8vvMjWOAfjIWBDQPhR5LZC+/CRwB9bHzZd/pep/O8L8KnYvqfMPc3/Rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoB6LHEl+x0RNAoFN7o3j8e2/yYhPaMKu0OZhIKnLEXUSSgFsq
-	dkjGFqeq0bwUB4u3BGKGVrbr4NyDuQSnuxz2awoTRBnaGnQqcx9sEbxbyT4S
-X-Google-Smtp-Source: AGHT+IHzOxGWgS4dSxMN2FQb39/d+5oUhTTL14UvFAX0MomqmfsHtiyL6nrH5PKtJ0BG80q5d6Wugg==
-X-Received: by 2002:a17:907:d2d3:b0:a8d:4f8e:f669 with SMTP id a640c23a62f3a-a90d4fdf439mr1117254266b.2.1727094361886;
-        Mon, 23 Sep 2024 05:26:01 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b3833sm1217175866b.128.2024.09.23.05.26.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 05:26:01 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Potnuri Bharat Teja <bharat@chelsio.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] cxgb4: clip_tbl: Fix spelling mistake "wont" -> "won't"
-Date: Mon, 23 Sep 2024 13:26:00 +0100
-Message-Id: <20240923122600.838346-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AQf8hGkT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727104662; x=1727709462; i=markus.elfring@web.de;
+	bh=xAMBgY9rGgoaR+LD1HXkmIq4mkMiYynQ4+4OcyBbevg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AQf8hGkTPAS57uNusN0UdsplvH8Ns1k2oVLI18xlPtYjBNwmJvKCHSNAyy4RFraQ
+	 hYHcuFM2/uXFbbgyzBNqmScS+20mij4QAb+sM9KGS6C8kzdJ3dKJtCO6lqkkmDoze
+	 4CEgwVMzXM9+ZW0e/1x2QVsXSlYVzCxQjlIBEA1iPN2LylZmgd3GkFqqkV8ubl01b
+	 fLDUye+kKu4U/Jctnlq5SRWPOtHb09E7WylpvXyyS62qwIA2apcTgZd7MrxvillmR
+	 c/l7crDolFZ8X3NAEtFhbLffR/qRhYxxhlXYFRa2r5SoRQv+WR8KuqoRc/302l7Uy
+	 mEkJop0NJW1XHayQwA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMGyK-1scrrM0I46-00Vnsi; Mon, 23
+ Sep 2024 17:17:42 +0200
+Message-ID: <d4e3550f-3c50-41f8-a6ed-dd689b2ae868@web.de>
+Date: Mon, 23 Sep 2024 17:17:29 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: nvdimm@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Vishal Verma <vishal.l.verma@intel.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] nvdimm: Call nvdimm_put_key(key) only once in
+ nvdimm_key_revalidate()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VF7p49MuxkY8KK/+835nqEHjxWIxBGdrEo9OwVO8q9EfY1AobB0
+ eR0SX6rDij5Bina2F/ag/P+2aJHpKgvF/TJbQpMMr+ek87nEr3t9sBN5xtK93zCM2umtoLP
+ Lr7btV85YkCrVRX0UuwiOHDXiHS4PZKbvNzk/CI5ewTrKw5UU8h4z3VHQbqGFhijK3G+YwA
+ FzOJRXwvRqhdY6EN+b4mQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dXDkJNmOHFk=;DwZwlhMCkHMjeJSd6Nj1edmkDaB
+ XzlhPaSccn5BvMvjpgSEi/sqJYHzNP72Boz8YDKxCyhKCt6NV59iUyTleRavQKSo6pxIzBlU5
+ Jw4AZScblxOxHp190JcC4nz9IaMyJu8MwrXvXICaHRA2hIo+n4q7+23FAfGQAJFWPcqp7PO0n
+ ZdK+t9l749WVgzVTka/kmVb6tb3vzC2vf8OlUPYcv7fCCLS4Z6o0aIs4zE/2qJdwwpeXALhMz
+ 76mkXSfMp/Dm5EB0Un4JdsmlUJ9AKN19U3YcmLL3f+mDl0NmIb05AbR+iQKmA6Bz8PgLg+AbP
+ khjCHaFffkmY8UWfaJ/S+L1uNthnlMr8EEMouvZBwjwzlBLtFqTezR2mX9gxQnFihosfH6Qth
+ nGVwO6cNip547uOsuOnP6G5I2xlIKNTcpWcVAWvVFih0QlZ4RwzvRibKiHzwlkM90ahHEjtpX
+ +RBm/4ITGLHQ4GfzjNqFwwcdXcVIxjpUu2095lcZRbUyFGm+jGVzuhwrB5fPIAsu71OH4aWc5
+ buOCOWCyBpJIJ5aiEbJ5F66YmSxtUJ01kz4D7XIsG+fOk8+mY+3mx0Cp+l5YxlvLouw2D7SaS
+ PUWupHdl7Fm7s3kOg/LeIt+ek/kmjlFFr9/Q/1flFSnINGiq3bZaQzapKyCjPgyntCTbvRZwh
+ jnKk0izoLIKU/VYVK51VxAogciVVuwaUphgVtpzqRO5Fceu7Gk5VYAcxbgLAKWxWxZB55c47Y
+ kRog/IxAB6Yru2Z7LWgu1YpwyI9PrBFAOgcoWx7OoJShtJ5w20vSjVsVI6+7wwna67Gk0p0G6
+ 8iq6AMing5sbBeIDaPmEAwTw==
 
-There are spelling mistakes in dev_err and dev_info messages. Fix them.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Sep 2024 17:05:39 +0200
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/chelsio/cxgb4/clip_tbl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+A nvdimm_put_key(key) call was immediately used after a return code
+check for a change_key() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/clip_tbl.c b/drivers/net/ethernet/chelsio/cxgb4/clip_tbl.c
-index 163efab27e9b..5060d3998889 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/clip_tbl.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/clip_tbl.c
-@@ -120,7 +120,7 @@ int cxgb4_clip_get(const struct net_device *dev, const u32 *lip, u8 v6)
- 				write_unlock_bh(&ctbl->lock);
- 				dev_err(adap->pdev_dev,
- 					"CLIP FW cmd failed with error %d, "
--					"Connections using %pI6c wont be "
-+					"Connections using %pI6c won't be "
- 					"offloaded",
- 					ret, ce->addr6.sin6_addr.s6_addr);
- 				return ret;
-@@ -133,7 +133,7 @@ int cxgb4_clip_get(const struct net_device *dev, const u32 *lip, u8 v6)
- 	} else {
- 		write_unlock_bh(&ctbl->lock);
- 		dev_info(adap->pdev_dev, "CLIP table overflow, "
--			 "Connections using %pI6c wont be offloaded",
-+			 "Connections using %pI6c won't be offloaded",
- 			 (void *)lip);
- 		return -ENOMEM;
- 	}
--- 
-2.39.2
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/nvdimm/security.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/nvdimm/security.c b/drivers/nvdimm/security.c
+index a03e3c45f297..83c30980307c 100644
+=2D-- a/drivers/nvdimm/security.c
++++ b/drivers/nvdimm/security.c
+@@ -152,12 +152,10 @@ static int nvdimm_key_revalidate(struct nvdimm *nvdi=
+mm)
+ 	 * verify that the key is good.
+ 	 */
+ 	rc =3D nvdimm->sec.ops->change_key(nvdimm, data, data, NVDIMM_USER);
+-	if (rc < 0) {
+-		nvdimm_put_key(key);
++	nvdimm_put_key(key);
++	if (rc < 0)
+ 		return rc;
+-	}
+
+-	nvdimm_put_key(key);
+ 	nvdimm->sec.flags =3D nvdimm_security_flags(nvdimm, NVDIMM_USER);
+ 	return 0;
+ }
+=2D-
+2.46.1
 
