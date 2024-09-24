@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD3A19E98A;
-	Tue, 24 Sep 2024 11:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA6B17ADE9;
+	Tue, 24 Sep 2024 11:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727175645; cv=none; b=Lv0WiftMOWahKGLCIMA4YG4HxMTQZCVfNtt5xJdeCmLsPC7TcRy/bYOhXBB55fdCXbI6/XsyiLQf5NK4x9EmhzjuLB62MKyeoLNks/Vr24mZKqogCLS2pIWv8cqedWQnR5kffN+3tU4LBodWqzsOF6mPo8jKB6k100Zgq7TPxho=
+	t=1727177714; cv=none; b=qMJ1dp5dX+oDRnJExcSS+EiMLsCLloCBl6usFU7iKzP+D2gZzi7/tt1dFASv0VRvWY9bHyjtQatj4QE8jp3i48m1367wNJ88LwARKU7IHsqDfABawEtNuYcDj6DywODR1aX7lQfaGZusJxgD3vz6DKrEUyp4S9Pe6ZlEEgy+5mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727175645; c=relaxed/simple;
-	bh=fKljBB8vjhbKVE8igCkY1BV6u8AAnWAYArgPU7cDWtU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=EEyVog39HED2tySglI99keE0NWkoi1FNRuOtsfTNyqr7Y4OU/gYSOO3l9WAGVmd0uXGLHwO9S723odmxJozCtICfXcERsDazZgi5Zr9d9Uwk2mwTWepserPaaK2f7jCXF1tvXt8NTlzHdS7V378f2yHsRaUjGL3rQLrVhltt9BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DNY0fCI6; arc=none smtp.client-ip=212.227.15.14
+	s=arc-20240116; t=1727177714; c=relaxed/simple;
+	bh=dz/SludDC2pUK4X7YSuOpt9ecp3pGUsyl248hHckQec=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JBUpBa/3xLMv8Bq3opr5kHBhyto2v6MdSj9q/LK6c97DXsHC23kxUWbfaM2yO7zfpnDf+FMGmzJ5sn7+o3WpEToapNVW2hhWHSm4YPeIYHWIL/oLp1vMXFRdi+XMrOs0RyunDzXUzqjJawtbfBAyteBh5A69L/XOsUSVcmcADHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hYqDPRjj; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DNY0fCI6"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hYqDPRjj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727175618; x=1727780418; i=markus.elfring@web.de;
-	bh=SHN5rcl8R4Y8nZWRTekdD4lrRJs2FAipZesYRLL973g=;
+	s=s29768273; t=1727177686; x=1727782486; i=markus.elfring@web.de;
+	bh=qnJoj23YlAnI/8ta3vC+QQ5dYZyF2XfNfXgGjgBnawE=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=DNY0fCI659T5NOuhLT+oynS8TejA4KPrOhRvmDnQS8T/1izL/zzoOFo3y2kTmevd
-	 FeeNlLY0bm4RSwf+3jqgorSs+zybC9yGcoluSyJgzS574vUr1qxmErxSNSv+U2wVO
-	 g2p2uxClthvZ/gvHbI7grUEWy4R6rQcvNvwD917oYJPqubigWGcA2GMBPeANUusZH
-	 OzwwvzUPkruy+WoLMeHhNCAQcjMlfhCrZRFc9VkHEzkTyRF/V+icu/Zgo2ybmMKjR
-	 a7qdfIYgPPnpDEWkwD+j8jS0TJ0/8Jgs3KwHrexO50ZBR8X/xLqAzU7Kg/Ls/ygqV
-	 nwE7qcj/tbw/uz0xTQ==
+	b=hYqDPRjjiO+n4HqUV+4+bTwNECR/EUp/+aqZJggZ61LMHbBUCjaaSN59TNRKJeEK
+	 MQCsznIXLmUEkA6ZsYbAQ/0hFOIpS3JWDJfgmuhDx3jt483zYtP2igJ6kQCluhmkR
+	 Q7GqyFqw4Lt+y/f/lbAkzua50HUc2J/smqQLmqLFeXiHFIGdcHoBGawd5JPxNMaVk
+	 H3gmYAB9o9BUEQr5bTuNSqc5hDOEehtd+fNxNRlY2hozTeU45bPqDjwrZxgGkKaiW
+	 rGCRq5blESrAQ0WJMSHwtzj+v67T+2QZcbmTg6kPT+ErHWk5PtKw+BiGn8KP7n6RR
+	 xKwA4BVGqH3dgWimDg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzTLI-1rxljO3gcC-00wm8V; Tue, 24
- Sep 2024 13:00:18 +0200
-Message-ID: <d3eb142b-eabf-4176-8a5c-0d589060abe8@web.de>
-Date: Tue, 24 Sep 2024 13:00:16 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjBVh-1sGiih1iGD-00dqHG; Tue, 24
+ Sep 2024 13:34:46 +0200
+Message-ID: <f9d7a026-a67a-4164-80f4-578b1fbf71ac@web.de>
+Date: Tue, 24 Sep 2024 13:34:45 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,92 +41,72 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-pm@vger.kernel.org,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+To: kernel-janitors@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] power: supply: 88pm860x: Use common error handling code in
- set_charging_fsm()
+Subject: [PATCH] regulator: Call of_node_put() only once in
+ rzg2l_usb_vbus_regulator_probe()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xQU91hY0DNMzmdfuXSOeB2c157fJz2tP7gHn2+en5sEXrrNbvt7
- CUW4iK9J3b8FL7kVmYE4/kAx1Lq5csZQ4ISr0As7OujHnK6g3C4JUCHmDPP6x8MH74QtAWg
- kJn2hQGYDdGjtMJ/1yIAo0BjzeXq42ykOlObPP3HxFidwoWKmlGYJteOGyVkb6KGDYUwIUD
- oQMKY4QsJ7YyiXSVk8cBA==
+X-Provags-ID: V03:K1:mVjUISKgkQLPmyTzZOx6rE9jdjtSGH222JbkjvyMEtZ5f24wXY6
+ 75H08/RGE1N7fu9frCv0JxxJpelXRg2fb7xANUKhd4XLWt3yP8CjQveD4JkmsfX3xaXlVXj
+ wVWX7DozmkNieO/kjSZ6sYX0y398Y2eYvA/lUrroU1ANNKZqMQcuAzlxmZbOhPruRiqD4T5
+ qgF//XSw6briuBiNM/zhw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6eELnGGIuME=;lvUhYnwOwRjIibRR771y8JFFRFt
- wRyZsJdLHemhL850fGX8qnbHgBJ3ctPiO8yFrDgY/C3yDcYyEyip/jPMX4lhmeHDY43wFFTpb
- swn11OoYKWgwdMf1SX2dYsyPj4gm0UT9qWx8Y4ogxny7r4qg0gkEO63x6yKiM144YuAzrTJGg
- CNRwGWsAmACcNGTv+0T8y0eGOcmUO+YZK1O91A0AdHmLJB8ESmqxTRvhoSbWUCkfkYzFOVOcV
- f0oyjzj+XXOGu29YPBoMusXjLF8kjSopvjN6wMq3PVm+P6qn0Gid7Wvb3d3yioIKic5utZXV5
- mb++z9Ypnu11zUJnmDfoXw3bnRJ2SJ8vK+Fx2K8shcGqNe9wm/TLYhjicjb8n2dHsmf6SwH6L
- 5wc2N01kTerFl03NhCijiuxhgPGBhryr/wR1ZOeB68Iurt1invNhlegewWJ0y9/a98YxcR4xt
- QGy0LuVEjVqeXZipeGN7pZLqmZJpGucVHtRQiVk+Zw2cVSOcxXW2U17VOWJuCcxNr2WQ8yr1D
- lehxSGNkuecEmEKxYMFcKjzH3C5GvDYeOq8CSNZ/eiveBXcmoyYR1eRkR3Cn+Rrb2KeabxRNh
- IQ+f5VZ4YmT5Usp27e03zJPbGcGQdL/Xzt8RZGWgv4OWgp/7nx2U0bUcRHR2qayfSPlABmJzN
- 9HsChAZC7IdszDnTzYZWI+2hTiIRj0ogQLPs0mjJ+vxREnqx9TNdlOE4fsV26DVuEr981zsZm
- +tORg2vXfMB8L5TCP6PWuP32o3kjtlcSZPzc1vXRa0fQPhPnkdyA3eoKt/fn/UBTy9pmCFOAW
- aVBV0SfIECIKWQmAh1J1jqpQ==
+UI-OutboundReport: notjunk:1;M01:P0:e+unhALJO8s=;gAjz+6V2Is0hI7cWCScgWqSOyQm
+ 3EG/kXIARbHE58KeC4y39SHuZUd8iue1Mlw07HxXDjIlxiBFj+F3JR1KE2pMqYnZ/0UCTijSi
+ 4yPKIl1M9Hxn757+Q4jJJ6Fakb79mLdoinlgipExIVqFwC/8hhHCu1jEvw2tdCOGXu9BjAxtf
+ YGMiH/kb/d4WOc1VX2K5ir35iMRDBGcJ0oYdrCqlLJhFclnB48ta/wHwhNmwLnaTzo5Vfonlb
+ HCFdxLa+9ss/JMHzD5xwoiDiKF1NsdKyGAA9AnpT1Qf2w7yrAs6O/00hWavoS8J77L57s/vok
+ 2vG/jhxlM+hva2jizJnicFhWPyY25ubjdHKSYSL1rZXbNl2VEROE2fGBdGQI95uOkNHLdpU7y
+ 0uE2GskH6jPUizeaFOsxyQhRLhYwwYOWVMJj3W13DV2F+4vF6tCzJse0BL2RuKapKZ4pH4aa5
+ /JYQd0EoHecK1FKHfhyibjdNTl5rRhIZ1gtltBorGoDKpVsYObYBiFUXo5rWf74NBJL5yxcCA
+ ZzFe6BfcKzY0FZIWDalZu+rtQ6r4HRmOngFEq3Muwa3ThaJBIUearFDbVDF9/RZ7+s0yq8buh
+ ZjmRT0XwE6pNm7hFIuvWlRQOGEDPWX4BSIClSxvVhGyN8G913GtHxGCAM/Lc9dQ5Ov/wGw7DO
+ NculDzc6yD0f/p7wLVV2DR23JXTzzoTwog5+eifx4QC3FaCjnhtIOu+3ZnaJzXBuaPhQXzGW9
+ ITZaZ/3CG1b4EjK5SDdmgX8JN1OYZiLYFstk/tySWRBDdVnsxqn15k4D8E5InKK3JXwi1OQt7
+ iQ4uUiz8wGUUu1O+KIk4e0bA==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Sep 2024 12:50:09 +0200
+Date: Tue, 24 Sep 2024 13:21:52 +0200
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function implementation.
+An of_node_put(config.of_node) call was immediately used after a pointer
+check for a devm_regulator_register() call in this function implementation=
+.
+Thus call such a function only once instead directly before the check.
 
-This issue was detected by using the Coccinelle software.
+This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/power/supply/88pm860x_charger.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/regulator/renesas-usb-vbus-regulator.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/power/supply/88pm860x_charger.c b/drivers/power/suppl=
-y/88pm860x_charger.c
-index 2b9fcb7e71d7..4fdf62a7245e 100644
-=2D-- a/drivers/power/supply/88pm860x_charger.c
-+++ b/drivers/power/supply/88pm860x_charger.c
-@@ -295,17 +295,15 @@ static int set_charging_fsm(struct pm860x_charger_in=
-fo *info)
- 		return -EINVAL;
- 	ret =3D power_supply_get_property(psy, POWER_SUPPLY_PROP_VOLTAGE_NOW,
- 			&data);
--	if (ret) {
--		power_supply_put(psy);
--		return ret;
+diff --git a/drivers/regulator/renesas-usb-vbus-regulator.c b/drivers/regu=
+lator/renesas-usb-vbus-regulator.c
+index 4eceb6b54497..dec7cac5e8d5 100644
+=2D-- a/drivers/regulator/renesas-usb-vbus-regulator.c
++++ b/drivers/regulator/renesas-usb-vbus-regulator.c
+@@ -49,13 +49,10 @@ static int rzg2l_usb_vbus_regulator_probe(struct platf=
+orm_device *pdev)
+ 		return dev_err_probe(dev, -ENODEV, "regulator node not found\n");
+
+ 	rdev =3D devm_regulator_register(dev, &rzg2l_usb_vbus_rdesc, &config);
+-	if (IS_ERR(rdev)) {
+-		of_node_put(config.of_node);
++	of_node_put(config.of_node);
++	if (IS_ERR(rdev))
+ 		return dev_err_probe(dev, PTR_ERR(rdev),
+ 				     "not able to register vbus regulator\n");
 -	}
-+	if (ret)
-+		goto put_supply;
-+
- 	vbatt =3D data.intval / 1000;
-
- 	ret =3D power_supply_get_property(psy, POWER_SUPPLY_PROP_PRESENT, &data)=
-;
--	if (ret) {
--		power_supply_put(psy);
--		return ret;
--	}
-+	if (ret)
-+		goto put_supply;
-+
- 	power_supply_put(psy);
-
- 	mutex_lock(&info->lock);
-@@ -391,6 +389,10 @@ static int set_charging_fsm(struct pm860x_charger_inf=
-o *info)
- 	mutex_unlock(&info->lock);
+-
+-	of_node_put(config.of_node);
 
  	return 0;
-+
-+put_supply:
-+	power_supply_put(psy);
-+	return ret;
  }
-
- static irqreturn_t pm860x_charger_handler(int irq, void *data)
 =2D-
 2.46.1
 
