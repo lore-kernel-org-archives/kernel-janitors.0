@@ -1,111 +1,96 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31C7198830;
-	Mon, 23 Sep 2024 20:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB8314B976;
+	Tue, 24 Sep 2024 08:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727121886; cv=none; b=LCIbJttbYFspZ1cHDDx1GOK1clwYZnISZy3r5kTx9w0cui/8UTaOzCes3TkNJXmF5iLh0VYfUOgkAt42TJPmvT8bphH23DE3eSc8VQSe23gi/0JOYMlkgMr+aNvh1rW+VU4vwzgf5laWiLVLMiyMuoFfrnF9OTiGaSPwaqikppI=
+	t=1727165151; cv=none; b=XNIXc9HKepF2fF3IgwWG+87LIPAIBcFW4PPYeIxaP40K4X2t0iW8LXyXX8AC7woRf3M7yHBfHhBV7LPC6BhL7pnMIfzLHD7fs1kQOmmHzlwWehq0HthXm4mgdL/LLWw+U+p2rcuw95wl86SBNOckN5ZbBQDpNhLGEhy+YpTszWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727121886; c=relaxed/simple;
-	bh=ZRHI1Hfm5ZxEGbRNykHoz7TMiTcy3t8/wOqhuSAbZRo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=mX1XsNA6w9NJ47xVxFQvBVpyIZ1tl+V9wP2I+JZuYWkkEtPvpd28mlQwgVwdpESAM+31v1t6CjOicFCmYA8Pn2K3sktz8fNJizS1r0PnCsgHLjjJi2sf6BjRMgbbnXa2dt18Jve6aiWOuyJGq7KJNmLkmeBsKNgNWEP5nL1Mh7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ALfZhqoX; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727165151; c=relaxed/simple;
+	bh=5zsObshMpMfoJLP7jECD2dauQjS0zZ4Y8OlE5VP8hS0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JWF3EpGAgkI5rOEa4NpmHnf5iiqC5rOASEF3b4NqyK6KqlExgC6pHk8sELYlcMfnJ+w+gnnUfQ3ik7+IDuBmtTsvp1FSy04/AbMs9i2RVbU4X/5R/CNn+KkVIoAqfRJCnB7DFBhya8+zKgmVbPrI9nd8jRRZPVS1eNTgdyeOGX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kWm9uYnB; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ALfZhqoX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727121868; x=1727726668; i=markus.elfring@web.de;
-	bh=NyPHHbZJt1HoUZRiEgs1U+YNuccocLd01ZpmSfeY5RU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ALfZhqoXZdWlkpwUpO5jd2zyGQb+kNmoSM0mkPaOdNDq2iuvGbuK5QTga4edS5E8
-	 Kg3jSgBtoQjw7LuDeaqmhnHHzZgFPhG9SYaS/WbsoSDozJnjR7fSC+CQCJf+zFV1l
-	 xZrf6wYXO3BgCT4QsM8N6USMjWlL3lbMeVJWGXOz75+QohgVtEX5sCxSefRondXMq
-	 +d+LB8pFz6RqrPoL0AHnpUrVdsujj1CYPHr6nSykLE/wug12joHUhs8ZsZlfvS6f1
-	 CQKj0yFUSOkqJLhpcJrPgb411p6L7Fn61eVDy0TWPGa7/TG4cMrS3igOCbvUreSQF
-	 wZub1XcmgNE20xezCQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzCA5-1rxiTA3moF-011JJo; Mon, 23
- Sep 2024 22:04:28 +0200
-Message-ID: <86154518-3338-4370-8fa2-80a8b0e10302@web.de>
-Date: Mon, 23 Sep 2024 22:04:25 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kWm9uYnB"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so5517610e87.2;
+        Tue, 24 Sep 2024 01:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727165148; x=1727769948; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WFEgdy5x1Q+gNOoht1LGV0PYNn7MEyvwRB+P2Wr5bAU=;
+        b=kWm9uYnBkTpQ+2jzl5BYYRLjNQO94xDIBNE/FlxQPZOB2B5DG3dS0GTcgE04GPB4m/
+         S0HYVH52AAESGxtc0QKHkPhbcOIfwT8nC11nMKzZv0+ze+2+7MT1/CHPjYW5UBX4l7iq
+         vPcyLv4rk1LFdb1LHfGcxEibupFhtzT2Q9WGyOAFX3WDtChWFBOAXw4VmoSehDyszah3
+         +BlDyn1Qb3Y6pCjUQaiA7kxfqVHKBKhrsL+8fjBgz2v0CaXhLMUQODUGolhw/QZ4ojOy
+         Fzy5obpdzdMD1CJD+OyZYZO/5W8xTY5L+Oh42zdwPEBD1vFtUbiL5LBu0DOZiIlD6UvO
+         TbNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727165148; x=1727769948;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WFEgdy5x1Q+gNOoht1LGV0PYNn7MEyvwRB+P2Wr5bAU=;
+        b=VPQ0p0mpYMc6jN/iHvPWfiwMOvf9F3JDwV1LZ3KU7/Fqxpzv0qF//9V1qNQJVTH+Kq
+         fcc8kZm9SsPYAb/77h4O+oIhxQCe7jZAt5LcdGP/KTDBnv8X9voEUD6yLxeEEiKyt5CQ
+         +veXOxkYRzfeDUofYvY+hyGIwqSfQh4VTXFEXejx21MDP0YGyyZ0tN4SVVoARXy95/li
+         akUqPPXYD8DnfL736j+nQ5LC3qx/61K37c6hb/pju4kcUg5nkhdjqZDPyLq8VrJc+aZZ
+         xvNLgCl5KX5dbSF85O/WTo/UFPga/srPrOJCZaPDZO9r8cmhP2CZ45veFXHRWKbvtLCj
+         NR+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU7IePTPQnS1+v4ECeDoe3Rgx3yu+VFMqSIo7m6WxmYSn5Grj3kUJgpM6Vi6fewYMEYK7kFxvcY@vger.kernel.org, AJvYcCVpT5a8f2bmvDVjLC9FEU32zsniSSnTYtcXU+4ie4uNA6t1o/IdbgvKEfl4WH9lERoLEdyHzjh04L3v5c0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKFPkhwIfLLzFthqQommtaZZDtjp/qsCYLaQFv5J1YVrMbfOTW
+	THHCbrnfiBdTO4RC7L4LZcjZ0VHC22WNTFGnHtBFxEMASFDXFnw4
+X-Google-Smtp-Source: AGHT+IHaaffPihesHXDDIhPOCmnuPxUs7ZPQJR7bmJwvOeL6xQDUhJ+/EaOmhuWY9aQ+2kWy4Le35A==
+X-Received: by 2002:a05:6512:124e:b0:530:b76c:65df with SMTP id 2adb3069b0e04-536ac2f4e55mr7752421e87.35.1727165147853;
+        Tue, 24 Sep 2024 01:05:47 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf48bfddsm505740a12.12.2024.09.24.01.05.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 01:05:46 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Eric Dumazet <edumazet@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] tcp: Fix spelling mistake "emtpy" -> "empty"
+Date: Tue, 24 Sep 2024 09:05:45 +0100
+Message-Id: <20240924080545.1324962-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
- JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] phy: tegra: xusb: Call of_node_put(np) only once in
- tegra_xusb_padctl_get()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LQwlz/kX37ShGSCKg+wsmk/jy5QFekqlLkEoDC2C3n6lj3Xnjou
- EKLG8jhPmkzaNK6J1fBYRRP2X8vZRqDaqi1zmYYs8ZZ2MEgAulmeSdRNWk5lvG8AsmTrC3T
- UCoTud7osP8h12SZaYl0Ax9F/oV5aglHwebeGfcbwhSrM4GgPT3BktKUM+q/85IaViOwGoc
- 0sRPGahvH3/apimupIhAw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:84K41IAe/FY=;YAwjXj4z+47HErv9+7gsXYuIAeD
- t6AOlRx8gIajBq8ny9tmzZK+aOdvJ8ryl+ZG10e7bal6lnpQ2hbEVN43V9sBNmyq0ZwRQ2Hxu
- uQjpeabO/dfDJ3QVlYbOr7mEdqMf2XY43PHtZxgP1xEjT5lIRb0IE0zjz4feFjP5boM7wmV8/
- R5hkbq3aHAhqOS0y/lsrmpn28c+LrUgH/ax8FEi2l3XHhkz42cELWmWBqZxBl91iNPcxFHqcO
- X/xXMvtX1B1XtuaPKV8RJtFTKBJ4JmKz6fsyzJu0MH/c+IySif5VTx4xb+gfAa3PvvDzhHgIJ
- Y53G9PPu4Fkrbgw6INVkYYRYRwOuc47Lx4TwJQvrekDANIvsmtsGajD9PdawRb7arDyp7z0/w
- 8XOtNOwiRLpRFfDpwweNYIYw4lb8R79+Akm88jUYqr3Jh3BExNJTvAhL6dZBCLvVMBEK5EcWK
- etSijjq38HgHi7RALk2tZe5CiBB93oseCnBL86k1iK3X9sZgXfNYOtuIm2PLRFHxS/Dee+r8h
- PcNkoe88uJZQMeHpPqb32N3fZ8KRFdxvWuz3Smk82EMBLtBO1ogtJGD5vkO/2LVGbXAo+FyYc
- JadDEQfGuaOqhn6NPz6/1aAVnfWfsBiLFsPHHPiRDvSuk39mAYnx4x8xjU8E+2kFp06m5eyeC
- +8WtQgiI4nuNW5ojF8fTLQvBYsjMke2N6yeQdT7OtsIjL93zli2bNUnsD8z+knNhTgAym5iqU
- s799SR+SA3RkEkmq0BPqNRLNYh2+8yyKcHdJ3CjGk8qGndnfC5wOAR6PErNrfZ2Gt7N/gJpMz
- NYs+q6GJJb8VIFwfIRvbUOfQ==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 23 Sep 2024 21:56:35 +0200
+There is a spelling mistake in a WARN_ONCE message. Fix it.
 
-An of_node_put(np) call was immediately used after a pointer check
-for a of_find_device_by_node() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ include/net/tcp.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/phy/tegra/xusb.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index cfdb54b6070a..1a912ed52416 100644
-=2D-- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -1345,12 +1345,9 @@ struct tegra_xusb_padctl *tegra_xusb_padctl_get(str=
-uct device *dev)
- 	 * only ever be one per SoC that would be a little overkill.
- 	 */
- 	pdev =3D of_find_device_by_node(np);
--	if (!pdev) {
--		of_node_put(np);
--		return ERR_PTR(-ENODEV);
--	}
--
- 	of_node_put(np);
-+	if (!pdev)
-+		return ERR_PTR(-ENODEV);
-
- 	padctl =3D platform_get_drvdata(pdev);
- 	if (!padctl) {
-=2D-
-2.46.1
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index d1948d357dad..739a9fb83d0c 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -2442,7 +2442,7 @@ static inline s64 tcp_rto_delta_us(const struct sock *sk)
+ 		return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
+ 	} else {
+ 		WARN_ONCE(1,
+-			"rtx queue emtpy: "
++			"rtx queue empty: "
+ 			"out:%u sacked:%u lost:%u retrans:%u "
+ 			"tlp_high_seq:%u sk_state:%u ca_state:%u "
+ 			"advmss:%u mss_cache:%u pmtu:%u\n",
+-- 
+2.39.2
 
