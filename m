@@ -1,106 +1,151 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88021130E58;
-	Tue, 24 Sep 2024 19:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930F984E11
+	for <kernel-janitors@vger.kernel.org>; Tue, 24 Sep 2024 19:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727206437; cv=none; b=Jt7kxLiGUlw61SX/onErzl2T2GdMmk52pOFb0Ss/WjM2Hu14rrm51Vkzo13/F4pXds4HoAXyKaxWCnfNmBfwgokhdLJhnIMg7P+ZgC0Q7JC5+Gwo0qkSpc7AYTY2TKIJZGrB7bQPw0iSm6JLfXNx8NvbdCVXA9jA9nra/3cjVEU=
+	t=1727207389; cv=none; b=aKGKJrNz4EpfiFMefFqzazWAFkf4QfWvVQW7xPb9biSaXMyaM6NLyow9a4XvWPBU6+9ksFY7eeAIsri1q8pL8eeYk3SQJwaeCMTHYBRBJWU7+mcwAdkTZyNzKWiz0qg1dRu3hVmT7PGfL4eK2G5sNX39ulnsBJmFIXAb0QTJwAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727206437; c=relaxed/simple;
-	bh=Q0JDOq8sfmCgEEs+y7IEKG8FXSr9YVUvlCC1FtysQ6Q=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OFCvbDwywIezwNrEZA3OAB4FegikiocMHDvbYS3l6FFvSjra5PeOoluQJN51rQydNgGNQTZR/OeldyN77ivLy2UzhxmE3jY0s0NZX1ST5Gp84SfJ3yWVBBo2e80Dd2v7MJ/HcYa+cCxEuZ9zJstZtRR8owO4Jdpv8sQQzSssjJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=c/wieX23; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727207389; c=relaxed/simple;
+	bh=yqpJS+KhJYLxK6OoVvTSrnYnrYtRpSyQL6/IbvXFFHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dv4eeCGpHoR2w89ep8+Shkyc050BN3/8lRV0Vr0PEuQznah5vWtnqjcI9tPLrl44Kcci0w8MT3PbX0lgJqVGYB4X17zHktTiW7bQ6N1xhpYg/cxkhQwRzBj1Vejw9yvSpYENZB0luUcSSy9QuFAvqeFBqUt9Ei40e0l/NJ/p+us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UtN0fbRT; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="c/wieX23"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727206431; x=1727811231; i=markus.elfring@web.de;
-	bh=spba1qkATSAImggeaQkIEJnBCpW0mRm6T5bLfdk8GQA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=c/wieX23gGJellPP0E8aBxQG14jBKj6NR/xJez0Try+6AvAk54r9A7GeGUutgdkE
-	 uHVm+AEHLubRz3n4/Y+z9CuEg0NIijhHa2cDj1QEtBVeBYPHK7sCfYkXpy8phkey/
-	 1R2g74XWJxoDahOEChUhxzoISTLBvLAN86/ZFESYoVFZi9ppFYCIh+2vH4kvxGFer
-	 Bg9J7Q1jFNg/BLelZ1RZXqxUm1wjdWQ24Fxb+G0xj1rhzuyi29G51b+WlgxOxNpkU
-	 PPTSpM0auPux2Zk+0qIQoWP2Rs5+M7rHpwibEntfZtrsZviplbw7YLuxF7257Aodt
-	 TQKAo6v9dvAWBycPtQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuF8x-1s5cbi3Txd-016GE2; Tue, 24
- Sep 2024 21:33:51 +0200
-Message-ID: <d6037759-4dc8-4cc7-922f-95739761d068@web.de>
-Date: Tue, 24 Sep 2024 21:33:49 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UtN0fbRT"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f75e5f3debso53936661fa.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Sep 2024 12:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727207386; x=1727812186; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k/dGUOExCYI9ma3C9NHHq3S03j3KfaoxW6Zsr+oPoic=;
+        b=UtN0fbRTlH03LIBPrLzsuVvoNkIGyeD3M0//9LwiXNnjSQEMYlSWaEkS0jcwb3ddEO
+         scgysvZSADl7T7zbMcb7dooZV0rP6fRmHwIOQwh2H/dHG9uUVIOAED1dkRS4ecploMd4
+         YORs50IeBGZ/1UWDskwrgFKZL/5TKUjEc2sfECJDGIpWT5Fn19Ur7URc5A1v02rPy3Y6
+         6/2Ys5UPDp5LzISS/bEASz+WoXc+vgKSk92BvGwd4pmXa+mqf/g+frOk7UEXJFxEzaEb
+         AsCozV+gCusEuet0tCqpE8odxYzN2HyGmQHtYmgSdZfCk2D4MTcjKeNF/4Oi5SpfHz3y
+         dB1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727207386; x=1727812186;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k/dGUOExCYI9ma3C9NHHq3S03j3KfaoxW6Zsr+oPoic=;
+        b=sADwEhKrh4XcquhWMk3qpccwd8T5r5FSxjE4TZUgfZULXho0XiuwLKX+Jb/DJAxKgf
+         4MDnu7VotjS4IzoiU1cyI70vphEvQvZIiYXL5aq/Mm5hOKjIi3hp67e1a247M4eiRRAC
+         xYHq8qsmQhDsD8P0pc9ehAK5Hy2hTJSZyccsL8thfOkq81dHqap4Ku6NoHrb+Q9NaYC4
+         w9rw3oGrSMuWpzNxarUBLPky+KWSrVK/mmrIQ1zJwAvvuXqR9jany8Yd7pmZfrl6/t6e
+         g/IVwk4cimQObwNgPFuscMGN0HJWP7TI+1DNXur5lhrPsi22me7fkC9xUbIDr7zrkrAY
+         cSHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvnmkKEbxNPoNiYrexBdmmn/4w4SWYOuThzhrK6t4IYtcoDMKuEFDzfX7fxSxl7aeEex0m7QOda7lt5JwdX2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDjSY1TjskINKJ2uhGrpBqo2/OmCse2q3p6rQDtCn4n0GD6s/C
+	1ciRUOq+21OQxsuzkObDhICr/VXCTaE7LZoGpGTRzryIcpQYT7elQ1f1ljzgStM=
+X-Google-Smtp-Source: AGHT+IF9Vrp5F23MjW0sqPHOc45CN/oE/KimpqLNFA5AlE9guRs5rUgE0mmPmEVD0LZgx4xD8k2FRg==
+X-Received: by 2002:a2e:130a:0:b0:2f7:53b8:ca57 with SMTP id 38308e7fff4ca-2f915ff565bmr2545221fa.19.1727207385621;
+        Tue, 24 Sep 2024 12:49:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d282fcabsm3133401fa.23.2024.09.24.12.49.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2024 12:49:44 -0700 (PDT)
+Date: Tue, 24 Sep 2024 22:49:41 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Sibi Sankar <sibis@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>
+Subject: Re: [PATCH] remoteproc: qcom: q6v5-mss: Use common error handling
+ code in q6v5_mpss_load()
+Message-ID: <tn4kxsouzpgimregroywzzvi3sjib7pvnpcnkcvccer5b7woxk@yzaqjwjxeyki>
+References: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-wireless@vger.kernel.org, =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ssb: Call ssb_bus_may_powerdown(bus) only once in
- ssb_bus_register()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:a63b5Hroecg4Cd0LUV5K1X2EO8x/ydyVfXOr0v5Uq3f16956k2K
- xiV2c4QnFJSCweVbE5KMZVPLqhLEvtFyxNufEun2vJCB2czFytyxUxWsl3D9IrS6RX9MhMc
- QhgeJ93VHwG81O5mMhckea7gqCckIQe9vva3xZduZ6wSm7yXmpcubt23XJsDllXM4D2QD3K
- 5mo0ha096WC49/XZdYTkQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gre6E0Na5Yk=;gBunWeUjMxDdpvJNkgQR6kTevXM
- xZKrQ42nW+ZIVX+hDh+03vorky8TyGQRM/jSF+H1Ky9sEODEyyQix5cSqGiQbKVo8SBQ5l3ch
- 9zatbLqrPiJVC2ypQnWhS1ZjSn4qIbbKhbZ7gaq+UXsBjWG4fpZWnpYOPJps/awghWPm6krez
- 83Mt/PNgeHfFzm5Qd39tsvl4wTL4iEnDQyFDrgoFI+b7nt3gSU+d+Bjyf6n/BqhdfRlPI3Hao
- BzhYla6pdALsgZD+Ss/fEjZUUovIJDP9OWSOxt2qoPDihp5lYs078rGX54KLD13g6rFzbGTOx
- MLhSgcVAl1A8OyTu8A8/Q1lbob7MEZq+dDzJYvE66lIXZmg4QX5x1TFp+XJb9vlXrkGd4xrPN
- YZGMVvH2j54WVLXQL2ECnz64TMDcs4AybZtCON2lIC92tYlJ5EbZMzPOJlwD4veEWaqYQp0ff
- XpyGF3bM0zITm5E1n3QAcl8fsHYtYNXcz3zWXNI2YjrI4cB+KXoL0eyxPdKDRXatwu1iv3NcZ
- /+VET5QTSuDzsR6qnDPw+mr3v3Dwvi1byv/J0wxSZfARgO1oaqdQIM1T3rW7AjOIYEsKJFVYW
- ohcP+Isl+eRjD7trW4WPPTzGnJBsgvA2u9SMsGtmiL7HJUiT/5xu4M/zZ3tPibO8pQ7Cysn8v
- FdGR/3FzcCFxbY8VPEblY/V44EH0W3IR8xGAcI7CMyahYvLH8zXSVhYF+IfRWSIgy44CPckct
- G+HoKiFhfwGfOOC/mjmZRY0lqF2eE8G+B+xvJmehPbLrg+2A6bB0Gjxdb7dR6o0q0+qD9zLkC
- EkxjyoqqChrEJXTCPCShEmlQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Sep 2024 21:24:13 +0200
+On Tue, Sep 24, 2024 at 04:08:11PM GMT, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 24 Sep 2024 15:55:06 +0200
+> 
+> Add jump targets so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 2a42215ce8e0..b398ae3083a1 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -1451,9 +1451,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  				dev_err(qproc->dev,
+>  					"failed to load segment %d from truncated file %s\n",
+>  					i, fw_name);
+> -				ret = -EINVAL;
 
-A ssb_bus_may_powerdown(bus) call was immediately used after a return valu=
-e
-check for a ssb_fetch_invariants() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+Please keep error assignment where it is. It is much cleaner to read it
+this way, rather than checking the error-handling basement.
 
-This issue was transformed by using the Coccinelle software.
+> -				memunmap(ptr);
+> -				goto release_firmware;
+> +				goto e_inval_unmap;
+>  			}
+> 
+>  			memcpy(ptr, fw->data + phdr->p_offset, phdr->p_filesz);
+> @@ -1464,18 +1462,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  							ptr, phdr->p_filesz);
+>  			if (ret) {
+>  				dev_err(qproc->dev, "failed to load %s\n", fw_name);
+> -				memunmap(ptr);
+> -				goto release_firmware;
+> +				goto unmap_mem;
+>  			}
+> 
+>  			if (seg_fw->size != phdr->p_filesz) {
+>  				dev_err(qproc->dev,
+>  					"failed to load segment %d from truncated file %s\n",
+>  					i, fw_name);
+> -				ret = -EINVAL;
+>  				release_firmware(seg_fw);
+> -				memunmap(ptr);
+> -				goto release_firmware;
+> +				goto e_inval_unmap;
+>  			}
+> 
+>  			release_firmware(seg_fw);
+> @@ -1528,6 +1523,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
+>  	kfree(fw_name);
+> 
+>  	return ret < 0 ? ret : 0;
+> +
+> +e_inval_unmap:
+> +	ret = -EINVAL;
+> +unmap_mem:
+> +	memunmap(ptr);
+> +	goto release_firmware;
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/ssb/main.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Ugh. No. ptr should be a variable that is declared inside the loop.
+Calling memunmap outside of the for loop is incorrect. And goto just
+complicates things by adding non-linearity.
 
-diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
-index aa6165e3db4a..458858b5472e 100644
-=2D-- a/drivers/ssb/main.c
-+++ b/drivers/ssb/main.c
-@@ -663,11 +663,9 @@ ssb_bus_register(struct ssb_bus *bus,
- 	ssb_extif_init(&bus->extif);
- 	ssb_mipscore_init(&bus->mipscore);
- 	err =3D ssb_fetch_invariants(bus, get_invariants);
--	if (err) {
--		ssb_bus_may_powerdown(bus);
--		goto err_pcmcia_exit;
--	}
- 	ssb_bus_may_powerdown(bus);
-+	if (err)
-+		goto err_pcmcia_exit;
+>  }
+> 
+>  static void qcom_q6v5_dump_segment(struct rproc *rproc,
+> --
+> 2.46.1
+> 
 
- 	/* Queue it for attach.
- 	 * See the comment at the ssb_is_early_boot definition.
-=2D-
-2.46.1
-
+-- 
+With best wishes
+Dmitry
