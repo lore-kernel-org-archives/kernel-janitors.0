@@ -1,118 +1,85 @@
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA7914F9F7;
-	Tue, 24 Sep 2024 08:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6451531F2;
+	Tue, 24 Sep 2024 08:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727167728; cv=none; b=CNVqFx4fL5VNEoweAQ4t3P9iuK9le+VUkDMx7ONd4XdlyYkbVNJeVjW1HeZm+g3FkM84uK4Qr19pRcHyvEcGsCKC002HitOcRGPVtHMAUVPqVb4tNKevODuEtmKU12ARJgfp0GBrRkM5sfCWlg126OWNukXfuLhtN8QF2gcubeU=
+	t=1727168150; cv=none; b=D99RrQakD3BDEc6LmLVqXlQGoyX5hlpZiZP0QM92OFIGYdHu9jD0FIqfj3QyhSSQPhJIrUn/uegLpu6WgcrXzCs2YQMe5dsri891TFPHFkFK51aoPECeE0ZFZOgowKVVsV5ahhq1IOjenTMk2oLd92FmIOhMGQhyl8HWez1D4E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727167728; c=relaxed/simple;
-	bh=zVJobRRTjJLonVyWmiQz99joek8BeSKrvLZMrfkzx8Y=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=RpLB9k6uEv/Y56jENdV+b6ermHbl8MAOmKUxGXXD904yfthQBZ6xW92ExZTdkPme9IFmTSuT56EGfVg28MvprcTLVQuKum2KnOlwaxIxeBZsYGyhgHzPHbxyOM1qI10OpEVsL82likXQRGh2qoT/EpRrgzOenG2xtJo943SKXlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=oZ5rsC3Y; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pzO6SAQL; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1727168150; c=relaxed/simple;
+	bh=bATSXFqL6T8do1lhg0d9NOdryJRWHAJDdTkrl1QEg0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MRagLfwZfBbocoVueae8wjLEvNtHiHgllfYNSBij7MjWnb3PJCWg8LYZCAlmBD3AaHltK/q3PZpkdIosrMqbxt12oS9XKjiLYa8rhXhmS1sj4nGNyLQ5M5B6F/5QFzRFpRjhYGfyYdGvJrOdK1ZeN5/CIvC1abS3B8BpX7WQ6vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFJqQoqb; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="oZ5rsC3Y";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pzO6SAQL"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id C66521380483;
-	Tue, 24 Sep 2024 04:48:43 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Tue, 24 Sep 2024 04:48:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727167723;
-	 x=1727254123; bh=/9zXmS3wPiJTATpAzorp9hGCMi2EF9/SUS7XOxwY7GA=; b=
-	oZ5rsC3YY+VyhDeedBb8A9CKeqOEzsqLvmL+bpxri0wBFEfKcOkUF950Yt0FaPHz
-	wRKnsCd1i5yBrbFfpPGM5YpUktU5T6MvJmzkXuhwpIvIU9iCtWcuumz9Uvfb4cVL
-	xFlZU0LFqvouZYao7twVDGHp2df+7DG2KUe8O4gAx5K/k8Cc8DlIksG3TPuiyGv1
-	2pSpoVSX4vlrj6kaiwjkjrxC6DKasF8NuDuUOnKjRhE1oyXATQYOPU4bj19i1vid
-	YTmi6dDQaIYWqoXwt6JT0Lvnj5Aujzwj3dcnJkisO2SpdQRmsAB1fQLCCjo/R0jQ
-	QZbkBX6WIouf9jf+O75/rQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727167723; x=
-	1727254123; bh=/9zXmS3wPiJTATpAzorp9hGCMi2EF9/SUS7XOxwY7GA=; b=p
-	zO6SAQLtbXcv0zhW36ZW6mzE/1f3S18B4z+RlXvQGl5O6h/gA7sNpCy1zEw9XTEt
-	IvRHvBHevHv0+LZ2b28LtifxOiX+m/9G3SukLFDJcubUNtyCesqYpt/4bSsytBPR
-	EguQGWjQlfodTgQ4xfgWBXRNdSAhmB2Mxy913CoeIalio5lBz5tyoC7osehx8Il7
-	DrDs4wUqaTmezCfSicAJUrNaRqieqTq7pZxMA8R9Nd2hgeYIwgZtu6p4wuOh7RCM
-	8YlzJkCYBO4jIeZR6P4CXj/MquObWv9A3JkQ2P8ywRVN4lCs2pleKgmkB1npFxbX
-	VbfdkhPnDLcTa+Wvk2GAA==
-X-ME-Sender: <xms:63zyZjlY9KqfNaIAoRPGzrDPaO40BzBU5tMd53DyKwJrAFTx_OqBTg>
-    <xme:63zyZm3izlu-aydK9fVpDMDVRV5014fdmERHDNe0KiPhoNGWgSvQFvlxBDIg9BK28
-    FN-gq0G-Co8f5sNFpI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddtvddgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehirhgvnhhitgdrrhgrjhhnvggvsh
-    hhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhhiugdrvgdrsghogiesihhnthgv
-    lhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhord
-    horhhgpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgv
-    lhdrtghomhdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtg
-    hpthhtoheplhgsuhhlfigrhhhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehluhhk
-    rghsrdgsuhhlfigrhhhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehkvghrnhgvlh
-    dqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
-    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:63zyZpquYDAa9BkMv1RRRNWg7wenxsKzTkph2m1TyIB2Lt6i4FbXNQ>
-    <xmx:63zyZrkf5DyidqkyR99_2o8iQIPcmlxY_p1UCNBRb1Rz6SA597oW6w>
-    <xmx:63zyZh18ccqS7ijM0A9E0xPu-8gWPOLnn2BnGGYw1HoMhVGIdHmZiw>
-    <xmx:63zyZquCdjnoZMqmHsbaiJPeCvURC6nJ7ExV9Amesag9sPVU3DxZaw>
-    <xmx:63zyZrygFBtqZNuD5q-O8Uk4skkCzFMDS6s4xCBGhFMmpMv01UvmCCme>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0C7F82220071; Tue, 24 Sep 2024 04:48:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFJqQoqb"
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-82d24e18dfcso264223939f.3;
+        Tue, 24 Sep 2024 01:55:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727168148; x=1727772948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bATSXFqL6T8do1lhg0d9NOdryJRWHAJDdTkrl1QEg0o=;
+        b=iFJqQoqb1Pk712vZBPmLHaTd08lb1pJwjy1qsZaloTa8/ILjpZlrQ1kem20IYGZKHP
+         RNkyvPL3/CTCewII6FqbSVTjMyOyb6le2udSnvx/eQy4xpGEumLGLdj+l3xnPahWTlcX
+         uEyY3PNEtad3T1l6xYxPeKwqDv/zTnUUl471hs2Zx/bwd29sYUTHAwCI8VBcbM1WSwMD
+         x3F6hqJ/THUvtGO4xNWNFpEeZQ406YvjUMpTq2GNycX744wEWYc/K9ITVNz1b1fwHJwT
+         6Whk9w/J4suEqDnDP9tBrhPNQKOPy77T3ozNazv5Dsort90dMPleHJs29pv2uAJTy12g
+         LMxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727168148; x=1727772948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bATSXFqL6T8do1lhg0d9NOdryJRWHAJDdTkrl1QEg0o=;
+        b=YHv5ajxm6dWvH5ztAhQtRg8vWUFRL+FXJm7BhyJCfgntoPpbZ7h6EjWaGDW924+g6x
+         oMXR79a7s1+xhVGvDHjxJWfANDR0STjLbW2HAMxsKyiV8IVv3ENuBbZsVOEdNnyKNWi6
+         b+lwRT1t/mTOzL0TSTWA+ZkP7fpAhJI1rF/QTbDDtweFI/itoWIWb0/1lAbpymH2cDMy
+         9X+Uqlx9bOVxLJ9R+agoSGv8dTHF5fLeOdxApH/jTWk6NRaAI/c8lWkGyG3iNvzHoIZF
+         CLr+9T6ivp2RXEGRbPyVEM3zYmA14JJ9qVA70isupQQXgEDE5BY7i7hajbJZnDL4MLgw
+         xjyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVFzQ/iKx4BWVuMmUyChsEAqONwI4zeMe0Yj/+XqE2+ugBgjw3GR7cr8tPAZPsWsLTpCBaHxXiL2v7+zgrpRE=@vger.kernel.org, AJvYcCXN5u1WmKnLzaILOQtfSYW951q7uVF/+wHmV9P7JNO63QT9s4gxC2aK6+q7bnMMgtiT8oYTGgcQ@vger.kernel.org, AJvYcCXPzx/s7nuFIKBLu1s1bw/ZkRWRuGJeiH8DqB5WzE8QFCMuwT/WUleBtsrrMYlbs9seMl+8K3DS6XFKOuY+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWf3QleqMp9Xv9s5D4vlZPImVSYAiuaC40q4ugP8M1oD2kquuL
+	YnWSjsqeuje7spgup2kTpP7vRsK3VvJltjTKX+pBlZ26NUqYJm83Rvefhqu8DZqHnhT4ckG6GAu
+	sPIsRVwK5yeLKCccAhxczIY6RH8k=
+X-Google-Smtp-Source: AGHT+IFTZ4WucGv/zeWWzd3zcbMqcM7PdSjpemuDh/UaeOWaU6wHkbwQ3vV2E8UvE0tdUBJLN2bWoTZxWramU4cXD24=
+X-Received: by 2002:a05:6e02:1521:b0:3a0:8d8a:47c with SMTP id
+ e9e14a558f8ab-3a0c8cd7f8amr134979285ab.14.1727168147785; Tue, 24 Sep 2024
+ 01:55:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 24 Sep 2024 08:48:22 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lukas Bulwahn" <lbulwahn@redhat.com>,
- "Rajneesh Bhardwaj" <irenic.rajneesh@gmail.com>,
- "David E Box" <david.e.box@intel.com>, "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "Daniel Lezcano" <daniel.lezcano@linaro.org>,
- platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Lukas Bulwahn" <lukas.bulwahn@redhat.com>
-Message-Id: <9c97f947-a652-412d-825f-58f6b3304349@app.fastmail.com>
-In-Reply-To: <20240924084056.48447-1-lukas.bulwahn@redhat.com>
-References: <20240924084056.48447-1-lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] platform/x86:intel/pmc: fix IS_ENABLED() check
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240924080545.1324962-1-colin.i.king@gmail.com>
+In-Reply-To: <20240924080545.1324962-1-colin.i.king@gmail.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Tue, 24 Sep 2024 16:55:11 +0800
+Message-ID: <CAL+tcoBmccFW1VVPQhG4=aLx8XwqAv=oR+VELBr3Zuwc=6BGfQ@mail.gmail.com>
+Subject: Re: [PATCH][next] tcp: Fix spelling mistake "emtpy" -> "empty"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024, at 08:40, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Tue, Sep 24, 2024 at 4:06=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
 >
-> Commit d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with
-> pmtimer turned off") accidentally slips in some CONFIG_CONFIG_X86_PM_TIMER
-> (note the duplicated CONFIG prefix) in the IS_ENABLED() check.
+> There is a spelling mistake in a WARN_ONCE message. Fix it.
 >
-> Fortunately, ./scripts/checkkconfigsymbols.py notices this accident. Fix up
-> the IS_ENABLED() check with the intended config name.
->
-> Fixes: d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with 
-> pmtimer turned off")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Thanks for fixing my typo!
+Is it supposed to be landed in net git? See the link below:
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=
+=3Dc8770db2d544
 
-Acked-by; Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
+
+Thanks.
