@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCDE3FB8B;
-	Tue, 24 Sep 2024 17:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E424A49641;
+	Tue, 24 Sep 2024 18:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727199041; cv=none; b=qJ5FAdql7NdFZJZQug3kPB1eM/whuZ2+r3kL35ZuLSyKsYA+xvK+PG/jZIcbJaXI7kci+rEslg5RxTSpBviVuENVtBPPJF2rjnUQYg6DMBUHyTaBWGlsKxxVax9+DXMRTLisayewuPLMJ88Qi7AFAvvdR6fLT0PHFEcAsMeQpkI=
+	t=1727201322; cv=none; b=JEMZGibP/zQy2nqvGydu2C+MtyXdZiH3D9W7+FNanSE2qGBjRNGv7tMTlkSjEFFBTTmkDohjfNK7Bnx69BqOAamnSWHlSuyv1pghU9ApSTa0839Xse3Ks5dZFyV2k7QZM6eVOqv9GzzeMxMJ4fgfd2QyYRltaJrSyfih4VWeQMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727199041; c=relaxed/simple;
-	bh=RO2ZB2mAtNaAGzdO4HuTNrORlxBQ6Qaq39Q0YnDNI8g=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Y91jwSBGvYp/aj/DmAHdvRlvqkJs+HUCIaEQipF8C8MvvGbf41SN92Nj6f/hzh2fFXZOD501tFvMtNzc/YVh5ozp5NW80q4gWErftRJIRcmAGsvJtJVhnPwO7xo3OmbJpfZAkWW84F3VaLVN7NRBcAJN1G0wc8Ia5msv1UNHAYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wf9v91rx; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1727201322; c=relaxed/simple;
+	bh=wPdDTvV/h91f3Lc+ckjUN4AuGHK+sw1cbD1YcA+w0LU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fmApG+FHIbWxRZ8PnDWkOJk9Z0YVP0Exwxeki9AYzJr4aJiyfEbYXRJEEcrRWGchYcHQsWUc4BiKIj3wUEpm2EtXNzAP3XoS2yrqjsjwro6wQkghoWZ9OqZhFj6JkR06uWXQoETJ61mN6ruHbrRqgk2af03mAM2L3ZJUe7Py60k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dIQ49qPd; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wf9v91rx"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dIQ49qPd"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727199026; x=1727803826; i=markus.elfring@web.de;
-	bh=4mfwioSqNz1uaXMGzI6rNjNw0tbkP090IrnGZupCa+E=;
+	s=s29768273; t=1727201299; x=1727806099; i=markus.elfring@web.de;
+	bh=tb3KCJ7UtG4RaoStvN8TpIKynQN8TtiZMldU1UU/2uc=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=wf9v91rxSNdGDLLl0AMKUiQ2QTdlc0kreAk4pcwAJEI8/2P1Inb6NVHtJgK3FKRY
-	 ZqDpLujR9i5PHPDsjaP5ZzaBBsSQsuAHXHAdeP+bzdAwvDJBOcRH33ZHDZYd3kAD1
-	 hjbXBT8y1AnhU8WjbZ6gZRDzA2dSrQqLevk5TBPiyKbIBMI1AmIgL4EUDKyK1eGAw
-	 64eeWjZIwKF13bVvFDheeDPk85wKI4IAbvtdPHn+Ncv8aGGVnU0LEyUHG+II3O3jz
-	 N/jocAYaqYwcI4On540TNX9NJu7g1tHUD7utwPxoGHikXgSbLKyAUgG5erJ18ZGAN
-	 QSYwdkrYrnHhw6NKvQ==
+	b=dIQ49qPdXiGGwS8BcWZzXMBgBmyPX8DxtkXO7j3X/B9OV83o0gASjKTG9YiEj2UH
+	 MWKtWvahbOS6PePwO0nN7ceD/SgAzriTrtCtSV9Wrv9o7pZsdhtNQAWD7pzBtNHL1
+	 l70vmLwL+q6JYVypVExC2YedZzlZDbun6gOdrpjVNaywlKXvz/jtywTX/TerAi8J6
+	 eYJwWXfa774mSDWA2UQGbr0OKpPncAEwta67aBE0sHH1ycVgp1WhzzVuf4iBwTORR
+	 7UGLE8HwZlwp7pLbV+JbdnF1FPvtsppoZrSVVA2yO2Ge3P15d3cmfqR2wkKjIkd9t
+	 4fmW5nMGGn/QIMmHzw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6JxT-1rrNal11nV-00u6Yf; Tue, 24
- Sep 2024 19:30:26 +0200
-Message-ID: <641ff33c-3687-42d7-933c-484bf3ab595c@web.de>
-Date: Tue, 24 Sep 2024 19:30:23 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MP3CA-1saYm71l2i-00T3fP; Tue, 24
+ Sep 2024 20:08:19 +0200
+Message-ID: <884f0a5d-e6d3-47dc-8a9e-201bb86b271f@web.de>
+Date: Tue, 24 Sep 2024 20:08:15 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,42 +41,41 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Wen Yang <yellowriver2010@hotmail.com>
+To: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Roger Lu <roger.lu@mediatek.com>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] soc: amlogic: canvas: Call of_node_put(canvas_node) only once
- in meson_canvas_get()
+Subject: [PATCH] soc: mediatek: mtk-svs: Call of_node_put(np) only once in
+ svs_get_subsys_device()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:x907D9MwWHI2ckPDKuTvoYE0b+ZRZLxcbFnLePj3PC5GDLUoMSX
- HAq3QNdlAW+3i9H6I4tKBVcL6YDhd7GIIUQnuCAQKS0beJTnJaR9mOvDpACUzOnikB7xgYt
- Q0WRJ1Ku5YzaUmo1K5sHlLKZpTkYmYqYwn8GPTzxJdtpYZ8uvM30En5LHOoCkFkawFwY2dw
- iVlWGxBMj9diT6t+/SVaQ==
+X-Provags-ID: V03:K1:EG8pZS8okf7sA8Mkc7K62W2aLChHa5ZpPf6CfVkaDFvCwxohSu+
+ zYb+1rHF+6cQPZ1oCupOCYZN9HPbD510gkzzjjrMt7XpghBiVpqyNNPOMrrnXmO3OmH2193
+ 7Hp4rYOeomZz5gO4PaChonxRPGKf5BBxo/0nW/epQvhCm537Ng1Qpss0EltYSI1Sa4JhwkJ
+ L3NPCpxMnstcZDfv1XSrQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XNVQTf+Rhd4=;diLSSIvOa9yn75IMCCgotgIqeDN
- 5UqB54P61CPlc4r5ZZALfsxLQ9chaxX+dwTR1WTOAFNXh+y/SUo8ULH6yaourTyWoTcediPiq
- q6MN/SCAsYuBTdX2G47lH16lzp/RQHArzsGrOK66aI5saP2EUAwYYbs0+MBgo3c0GnuYkaEA+
- 64Slj4/QB6Pl2Uoj0cWI4ND/14ydb3lPbmbPeM3UHNhxTV9K6TT65cLJMg4ujBZNyiVQCAupX
- tjLA5MlKbGVdjXy+EuQjULmlIZOcyEJQJzkdDCpaBqi6MqsFlL82fJlHK56B2AQi8Dm8VmR8z
- hQwHrWQRTtMWB8QPLzS+a15UXga9t02UlNV6EXtrzmuhe5jc0P7VWIRhqRmenNwcCNxfw/LOS
- fiG+farVjti1/5BjRBjZhAqAXvIBzT3VMiKCRJsHY6FJRQg8noCVn6gjHWwOMHU6H1OH9abZs
- MaJqt+EPVGf8t+2LCoEqmGvUv0KSEy6IobcpxJomIFnxaOG55x9o2esoWRGhlLN0N3j7zBww3
- pJMKVP+9xAlxLnWf+tYDArAqNzY/h8Um7B5FCX8cvcOs9bIJo/Gq6u6T/1WKX4dzop0CVs7Pp
- jbusyx0g7ISGAruO+fW0A6y9S37ZZFZuhEfgPSjlIZtKtbJ0WJX7Psx+aJ5fQUuuxzeFvDObG
- UMJwNGsWOptfJbz48D93wNjLuWXXIY5YadWAX/On+RBueRtnAo51z4HqWVRHWz9x7/J423xw2
- Rz25EUi4WtluiuRGyXmmdbw1CkkCoQwLw6VBmRGN4wxh8JtaPvc+fMPtycWPo/de0SnFliZ4O
- 3d0n2XtwJIteF3/+LHFIZHUA==
+UI-OutboundReport: notjunk:1;M01:P0:w/gSIH+UxEQ=;AxxBLvTjcfLw8tPDXdVfU6WnMQc
+ WfTrgtp44ZqQUbExVQmLfQE1utxF3sgWyetgAwWF9JVmcGpu6a/Vi93645Lde5kL5hrkCf8KO
+ b0e2VwszaT2JiQ3wwlxLG5Xuiy9NhPD9dl/TFQoZwRei9ZZatF451hqqwsxFOshYlScMTMD39
+ EoO//7nZvAWX1if//Jh+KI7eC7m0i+soWbSI0/aYNnA2O7Uwch8SPVSs/haOj9YAJ13QaJhsj
+ AQ4w+OEDGgyjwWAcJTMW+7VZTOUZaet4VmmljRJ7jBZ1W5pb3ADvCoNG0JHnRzyez/3d//6rf
+ +ewmUwW4yZsgaLt5YJwYNqG7Arzo0p5snAbTeTao8COjE+9Q7iPGAUGDb+QxUQczGflVKf8pm
+ kZmoU/0vGdP8tbqJlk0NmV8XPb5ytonAuITyTugwSdrxSVx7b+pd/66dr3ncHSnFa/zzgOXvh
+ 9h9+13sDYKoQZgEJBvXwNIhj5tYeaf4xJ6gsfxg1OTsu3ccSv7DkPi8st6ixdUFRx5FeaKEi7
+ Uf2wx5NSP82TPbkSK7Bq8sZNzWfl1VixByGsGi5kCuB23CEjQbjfZfkoL/icdAs3BtMbRmoxr
+ yiq0dSDWUQcJ5J103j7n+2qW5lhEA11VmqwGti4CI2WMkVPZ7Rkf7NbnSSyiXRFqKNWRCgEok
+ HwNlwVogkfPPf4KI+m1NEmIH0PdJZrlvfbq82mjRcSR8ebqVIbueYwqFeUQjDDJGNO1FwSKad
+ igf+xXKn+SOkFAdTTKH4QDPjV5F0WGU4p/wN/DRC03W4RDqTy+4FVnwMWSP9/u8IJwvEChhG7
+ KRiJgS6KwGGiNpzDqYCNGisQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Sep 2024 19:01:58 +0200
+Date: Tue, 24 Sep 2024 20:00:09 +0200
 
-An of_node_put(canvas_node) call was immediately used after a pointer chec=
-k
+An of_node_put(np) call was immediately used after a pointer check
 for a of_find_device_by_node() call in this function implementation.
 Thus call such a function only once instead directly before the check.
 
@@ -84,30 +83,31 @@ This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/soc/amlogic/meson-canvas.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/soc/mediatek/mtk-svs.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/soc/amlogic/meson-canvas.c b/drivers/soc/amlogic/meso=
-n-canvas.c
-index b6e06c4d2117..245157053ed3 100644
-=2D-- a/drivers/soc/amlogic/meson-canvas.c
-+++ b/drivers/soc/amlogic/meson-canvas.c
-@@ -60,12 +60,9 @@ struct meson_canvas *meson_canvas_get(struct device *de=
-v)
- 		return ERR_PTR(-ENODEV);
+diff --git a/drivers/soc/mediatek/mtk-svs.c b/drivers/soc/mediatek/mtk-svs=
+.c
+index 9a91298c1253..7c349a94b45c 100644
+=2D-- a/drivers/soc/mediatek/mtk-svs.c
++++ b/drivers/soc/mediatek/mtk-svs.c
+@@ -2133,14 +2133,12 @@ static struct device *svs_get_subsys_device(struct=
+ svs_platform *svsp,
+ 	}
 
- 	canvas_pdev =3D of_find_device_by_node(canvas_node);
--	if (!canvas_pdev) {
--		of_node_put(canvas_node);
--		return ERR_PTR(-EPROBE_DEFER);
--	}
+ 	pdev =3D of_find_device_by_node(np);
++	of_node_put(np);
+ 	if (!pdev) {
+-		of_node_put(np);
+ 		dev_err(svsp->dev, "cannot find pdev by %s\n", node_name);
+ 		return ERR_PTR(-ENXIO);
+ 	}
+
+-	of_node_put(np);
 -
- 	of_node_put(canvas_node);
-+	if (!canvas_pdev)
-+		return ERR_PTR(-EPROBE_DEFER);
+ 	return &pdev->dev;
+ }
 
- 	/*
- 	 * If priv is NULL, it's probably because the canvas hasn't
 =2D-
 2.46.1
 
