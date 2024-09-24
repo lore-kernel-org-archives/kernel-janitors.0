@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3997D1B85D6;
-	Tue, 24 Sep 2024 16:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCDE3FB8B;
+	Tue, 24 Sep 2024 17:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727194702; cv=none; b=UB5fUi4Q3kYRq1x77y+kv9U4thc5tfJQbUYCY+fS0VEWADRXozzMb3CvIKUTddAvapTfuGMeLd94iOqVw5vIl4NGkjH6QRucEVraAfVr0khQzbeNIt9YkXvFuTsb5l8qUfYrbqAxBpnvmko2FvgzQ3/uSQDwhSxvSJfeaZxxPU0=
+	t=1727199041; cv=none; b=qJ5FAdql7NdFZJZQug3kPB1eM/whuZ2+r3kL35ZuLSyKsYA+xvK+PG/jZIcbJaXI7kci+rEslg5RxTSpBviVuENVtBPPJF2rjnUQYg6DMBUHyTaBWGlsKxxVax9+DXMRTLisayewuPLMJ88Qi7AFAvvdR6fLT0PHFEcAsMeQpkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727194702; c=relaxed/simple;
-	bh=PT0lyLWCzDMg6e0IygWA/ME0OBNzsZloIN855opPfks=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ZF6qPswznI+V0G9gHQKI6SllSNY2WGdYgxSpk2LmEv2r41dZfUXLh/cLeapWf4NLYrnAxV0+Ba2kbOQebyCHynbjvFrldCP6+pC1PymKJO1m6DXUxG3yJwximD847aeK5U8JUX01jhAgXbW+8VccN5wrTniO8UKtAEcJLT27F0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=q2M6gTvx; arc=none smtp.client-ip=217.72.192.78
+	s=arc-20240116; t=1727199041; c=relaxed/simple;
+	bh=RO2ZB2mAtNaAGzdO4HuTNrORlxBQ6Qaq39Q0YnDNI8g=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Y91jwSBGvYp/aj/DmAHdvRlvqkJs+HUCIaEQipF8C8MvvGbf41SN92Nj6f/hzh2fFXZOD501tFvMtNzc/YVh5ozp5NW80q4gWErftRJIRcmAGsvJtJVhnPwO7xo3OmbJpfZAkWW84F3VaLVN7NRBcAJN1G0wc8Ia5msv1UNHAYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wf9v91rx; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="q2M6gTvx"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wf9v91rx"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727194690; x=1727799490; i=markus.elfring@web.de;
-	bh=ef1H5okpnW0lEveexTopGosOnwOLDCpTvbhsBXFDoPo=;
+	s=s29768273; t=1727199026; x=1727803826; i=markus.elfring@web.de;
+	bh=4mfwioSqNz1uaXMGzI6rNjNw0tbkP090IrnGZupCa+E=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=q2M6gTvxITcDmRxd7UG1Ym9WqeMC42JZrCamYcv0S1rP6InEhKDFISUxwhU8H/Zf
-	 KlMOvXxuF5je+DTQkVH0Zl2PFO5Hisgyql7VkTk9rj5brnpfwAJh6Td67xrW8dcTJ
-	 VZoW6xSgYi9LIWLTwfCWNbYg9kdhHBVwhIOezTcyKoQqi4jQ/KSS7CLObUP3rNw5f
-	 Pkd7jU6CUX3Kkoz7+fbjuLFEkDtXpKREkxTG4eqIQleZGYl9beaqIkozfuz/ldOzf
-	 Kwg9f/JUdzs4bJRcce2llUh+dAGMaZcsFuGm0aICkn7JARhPW+EX5zzihQUG5lfWR
-	 YFLkSX1mB/rN0YSM8g==
+	b=wf9v91rxSNdGDLLl0AMKUiQ2QTdlc0kreAk4pcwAJEI8/2P1Inb6NVHtJgK3FKRY
+	 ZqDpLujR9i5PHPDsjaP5ZzaBBsSQsuAHXHAdeP+bzdAwvDJBOcRH33ZHDZYd3kAD1
+	 hjbXBT8y1AnhU8WjbZ6gZRDzA2dSrQqLevk5TBPiyKbIBMI1AmIgL4EUDKyK1eGAw
+	 64eeWjZIwKF13bVvFDheeDPk85wKI4IAbvtdPHn+Ncv8aGGVnU0LEyUHG+II3O3jz
+	 N/jocAYaqYwcI4On540TNX9NJu7g1tHUD7utwPxoGHikXgSbLKyAUgG5erJ18ZGAN
+	 QSYwdkrYrnHhw6NKvQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MfKxV-1sHLaM3S9L-00f75B; Tue, 24
- Sep 2024 18:18:09 +0200
-Message-ID: <e549c508-b3a2-4cba-b5ec-1a113286981c@web.de>
-Date: Tue, 24 Sep 2024 18:18:05 +0200
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6JxT-1rrNal11nV-00u6Yf; Tue, 24
+ Sep 2024 19:30:26 +0200
+Message-ID: <641ff33c-3687-42d7-933c-484bf3ab595c@web.de>
+Date: Tue, 24 Sep 2024 19:30:23 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,115 +41,73 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-s390@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
- Harald Freudenberger <freude@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Holger Dengler <dengler@linux.ibm.com>,
- Ingo Franzki <ifranzki@linux.ibm.com>, Jules Irenge <jbi.octave@gmail.com>,
- Sven Schnelle <svens@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+To: linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Wen Yang <yellowriver2010@hotmail.com>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] s390/pkey: Use common error handling code in
- pkey_ioctl_kblob2protk3()
+Subject: [PATCH] soc: amlogic: canvas: Call of_node_put(canvas_node) only once
+ in meson_canvas_get()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:T9V2NY01eZ6b4e5LqzatdtR82eOcCFSV8v2LsfcIyRcNRDocfnz
- uaEvDaZbck9c24GSHLEUHrlTFogCuS6uo+oXoEJmoi2Tp86x0G1IloBJu6hDpzIsfHYlwPB
- VfqW8LhpxG4FDL+8yNTPW/cX1Satf6A1Gnf0PhVra6S1KhbOrye5P3TLyVnxaMfKWNgqlql
- XFJnGOZU1YuGIRSEfA8VQ==
+X-Provags-ID: V03:K1:x907D9MwWHI2ckPDKuTvoYE0b+ZRZLxcbFnLePj3PC5GDLUoMSX
+ HAq3QNdlAW+3i9H6I4tKBVcL6YDhd7GIIUQnuCAQKS0beJTnJaR9mOvDpACUzOnikB7xgYt
+ Q0WRJ1Ku5YzaUmo1K5sHlLKZpTkYmYqYwn8GPTzxJdtpYZ8uvM30En5LHOoCkFkawFwY2dw
+ iVlWGxBMj9diT6t+/SVaQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cmVKnXCKAxU=;9DDYlYrgOp0KuzBLnmUU9MTYX+j
- xcFYwSTGjkGYmCAvDKlvmCXVTCKJlWt/PInZ73bFs8ihnCT4GOnPDpaUEv2Q7cqg/4We0lXnh
- t/V3Mg4rA1j+8YQiYgxYPAUSVWgPubu3ytOWSTvnM/3Tu46/if6zGag5uuRqbOte/Qh/vR7SW
- 9c3sXYTvkaSTDlvsmgZW49Y54Ll0rHWjExtEXhpVa+v0rdxKz/pcT+Ggu1oBG7/ZqFqQu36B5
- YWcAKvOYRpjT1D91GnwXoORvqHnkHzyp/6yrnPq007CA0el4FWw+hxSVpNqdOq9+CNyDQMftv
- QsNKQN1Ku6VML0rqULQGiZspmr+sNl0YgW5XFhoM4nHcQPhkqM5yEpFxb+CE/TBp8hJX3hlxa
- sm6iduXpLP+Io3is5bsej2atvKVQZxVArrlyCIAlmN/HkurRoIbmZAo972QW6AKojYoRnYcg7
- /+nbAetOCtEcoF6snzS7nAwBzZMuQyiTPxqhuSea08VeIJlX7GLkkVCIzZfeNCLvddVeYZuLU
- hlupVE1Aima2HsA5AdiBVtyiI8xQW7ftvTupq5TbDinR6H5SP0YpXEDg6GsldKNRUFacqCBTi
- dETGifs/mGaVKaxdEG6b7DeCWdBIEeSU1WwiQzvhA53nlaSFp3S6+dLn/E/PfN66GSAXTkjFO
- SSZ+Bxl1qQjiiKsRB54P+W+YCpkNVRJo4XlwgeccTXIK7+oEg+On1Cmy1Xi3a9EERU5YactoY
- kijGR3ME7m9eqrIHRofgQuRvQdprkfGH+NzLA0C8byM9dphqrPILJkzjHq7T0JMD5/m26edh8
- ibvokzNBOJBY3XKQeZNMyfYg==
+UI-OutboundReport: notjunk:1;M01:P0:XNVQTf+Rhd4=;diLSSIvOa9yn75IMCCgotgIqeDN
+ 5UqB54P61CPlc4r5ZZALfsxLQ9chaxX+dwTR1WTOAFNXh+y/SUo8ULH6yaourTyWoTcediPiq
+ q6MN/SCAsYuBTdX2G47lH16lzp/RQHArzsGrOK66aI5saP2EUAwYYbs0+MBgo3c0GnuYkaEA+
+ 64Slj4/QB6Pl2Uoj0cWI4ND/14ydb3lPbmbPeM3UHNhxTV9K6TT65cLJMg4ujBZNyiVQCAupX
+ tjLA5MlKbGVdjXy+EuQjULmlIZOcyEJQJzkdDCpaBqi6MqsFlL82fJlHK56B2AQi8Dm8VmR8z
+ hQwHrWQRTtMWB8QPLzS+a15UXga9t02UlNV6EXtrzmuhe5jc0P7VWIRhqRmenNwcCNxfw/LOS
+ fiG+farVjti1/5BjRBjZhAqAXvIBzT3VMiKCRJsHY6FJRQg8noCVn6gjHWwOMHU6H1OH9abZs
+ MaJqt+EPVGf8t+2LCoEqmGvUv0KSEy6IobcpxJomIFnxaOG55x9o2esoWRGhlLN0N3j7zBww3
+ pJMKVP+9xAlxLnWf+tYDArAqNzY/h8Um7B5FCX8cvcOs9bIJo/Gq6u6T/1WKX4dzop0CVs7Pp
+ jbusyx0g7ISGAruO+fW0A6y9S37ZZFZuhEfgPSjlIZtKtbJ0WJX7Psx+aJ5fQUuuxzeFvDObG
+ UMJwNGsWOptfJbz48D93wNjLuWXXIY5YadWAX/On+RBueRtnAo51z4HqWVRHWz9x7/J423xw2
+ Rz25EUi4WtluiuRGyXmmdbw1CkkCoQwLw6VBmRGN4wxh8JtaPvc+fMPtycWPo/de0SnFliZ4O
+ 3d0n2XtwJIteF3/+LHFIZHUA==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Sep 2024 18:04:56 +0200
+Date: Tue, 24 Sep 2024 19:01:58 +0200
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of this function implementation.
+An of_node_put(canvas_node) call was immediately used after a pointer chec=
+k
+for a of_find_device_by_node() call in this function implementation.
+Thus call such a function only once instead directly before the check.
+
+This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/s390/crypto/pkey_api.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
+ drivers/soc/amlogic/meson-canvas.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/s390/crypto/pkey_api.c b/drivers/s390/crypto/pkey_api=
-.c
-index c20251e00cf9..78be7a633bf1 100644
-=2D-- a/drivers/s390/crypto/pkey_api.c
-+++ b/drivers/s390/crypto/pkey_api.c
-@@ -668,32 +668,31 @@ static int pkey_ioctl_kblob2protk3(struct pkey_kblob=
-2pkey3 __user *utp)
- 		return PTR_ERR(apqns);
- 	kkey =3D _copy_key_from_user(ktp.key, ktp.keylen);
- 	if (IS_ERR(kkey)) {
--		kfree(apqns);
--		return PTR_ERR(kkey);
-+		rc =3D PTR_ERR(kkey);
-+		goto free_apqns;
- 	}
- 	protkey =3D kmalloc(protkeylen, GFP_KERNEL);
- 	if (!protkey) {
--		kfree(apqns);
- 		kfree_sensitive(kkey);
--		return -ENOMEM;
-+		rc =3D -ENOMEM;
-+		goto free_apqns;
- 	}
- 	rc =3D key2protkey(apqns, ktp.apqn_entries, kkey, ktp.keylen,
- 			 protkey, &protkeylen, &ktp.pkeytype);
- 	pr_debug("key2protkey()=3D%d\n", rc);
- 	kfree(apqns);
- 	kfree_sensitive(kkey);
--	if (rc) {
--		kfree_sensitive(protkey);
--		return rc;
+diff --git a/drivers/soc/amlogic/meson-canvas.c b/drivers/soc/amlogic/meso=
+n-canvas.c
+index b6e06c4d2117..245157053ed3 100644
+=2D-- a/drivers/soc/amlogic/meson-canvas.c
++++ b/drivers/soc/amlogic/meson-canvas.c
+@@ -60,12 +60,9 @@ struct meson_canvas *meson_canvas_get(struct device *de=
+v)
+ 		return ERR_PTR(-ENODEV);
+
+ 	canvas_pdev =3D of_find_device_by_node(canvas_node);
+-	if (!canvas_pdev) {
+-		of_node_put(canvas_node);
+-		return ERR_PTR(-EPROBE_DEFER);
 -	}
-+	if (rc)
-+		goto free_protkey;
-+
- 	if (ktp.pkey && ktp.pkeylen) {
- 		if (protkeylen > ktp.pkeylen) {
--			kfree_sensitive(protkey);
--			return -EINVAL;
-+			rc =3D -EINVAL;
-+			goto free_protkey;
- 		}
- 		if (copy_to_user(ktp.pkey, protkey, protkeylen)) {
--			kfree_sensitive(protkey);
--			return -EFAULT;
-+			rc =3D -EFAULT;
-+			goto free_protkey;
- 		}
- 	}
- 	kfree_sensitive(protkey);
-@@ -702,6 +701,14 @@ static int pkey_ioctl_kblob2protk3(struct pkey_kblob2=
-pkey3 __user *utp)
- 		return -EFAULT;
+-
+ 	of_node_put(canvas_node);
++	if (!canvas_pdev)
++		return ERR_PTR(-EPROBE_DEFER);
 
- 	return 0;
-+
-+free_apqns:
-+	kfree(apqns);
-+	return rc;
-+
-+free_protkey:
-+	kfree_sensitive(protkey);
-+	return rc;
- }
-
- static long pkey_unlocked_ioctl(struct file *filp, unsigned int cmd,
+ 	/*
+ 	 * If priv is NULL, it's probably because the canvas hasn't
 =2D-
 2.46.1
 
