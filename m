@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6B81D5ADA;
-	Wed, 25 Sep 2024 18:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BD91D5AD8;
+	Wed, 25 Sep 2024 19:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727290121; cv=none; b=f9RMasBmmyJ9hPv9O2IehM/e1/C//FioX61lUjtellrb0DW3QLI8G5GBnO1mwGh/5anXTvooHhCkCDnArP/nrMlZtdc2hS8zGzBoB1zw077Qe7GZNyskN7CzHIeSKK803DAkun8llBH0nIkEZhPC8HZGM6CIivyNBGd1bfUk3SU=
+	t=1727292111; cv=none; b=DVBNr8R/X7zdjD1pqghxaEjlK8yh5/yB6WHrSYjxemseP1mZ68X0TtwJ6AcXvVIt4eKjBXDgSGQma78agoAXbJhfStvRyKt9RN99+m5LlAuJAGZSn99LODpFYixxzOgcpN7CBx4V9ryS4p2zdn8EPapQ/Jjo/i3vncpI8FAFbCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727290121; c=relaxed/simple;
-	bh=jMhjVfvZLjGqRNxw9cBGJYC7ifL43Ba+hC+CnyxNfuE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=U0Y/sMr24n3U1cy0X/QV9eJSXteGRcdZ8Egeh78jobkoVziZ1GBokUyYzbf3FLcPSYk9YYLEb3b0BcAuX4r/7VEEKewln5N/sVhoup2A69NUQNAdGGh1QBBi3wvMvnIrf4jpv1I1tpQGL8pemPSBuTCWPs8UilBPv4+saUVaFVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bRfptpRU; arc=none smtp.client-ip=217.72.192.78
+	s=arc-20240116; t=1727292111; c=relaxed/simple;
+	bh=Ypreh1oxUP+JRwlej/SlPeKxbGQugv2lZ9JltWkx9Ag=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=C9RK+vemncy7RbtZ1zWRAfHpM+mtuMFoej+rDvfKuWIPBG+CQSrKnOYklbSeqseYWP8MvHOSFrkK8V7hqNop803uXzGfganACYTeL3LhfCZaN7zVqZ4C/p5cqFrExwkl77T17w59SM48FsrUulA8JaqGVwEU9zTV9Ds7ZbRYpIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qgDo3kvg; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bRfptpRU"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qgDo3kvg"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727290105; x=1727894905; i=markus.elfring@web.de;
-	bh=qx0y+0iMm8Vy886r+f9TGXkls2G/OXF7kOvsMB3+Bdo=;
+	s=s29768273; t=1727292088; x=1727896888; i=markus.elfring@web.de;
+	bh=QHNX63lCaLZ/kXhP2texHGN8N85qJtveop2RVq8AI7I=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=bRfptpRUyJ1w+ElJQWvO6ggfliy+DQW4jGSKtAmW1fP5eTtsXRLoHomPBQfoMXkW
-	 rFT9mx0k8zCAdGSBfc/i+Fv5hXzD+KL96J3ieG1uqN+ip2qzQNCR2JsMVqmkxothG
-	 t/jWYjM8SzAInAIFQskVHbsLhL5wWaq+WXdUHniC24/+6H8ki1dUlearYAEZgdu4s
-	 nSsOa9fCVxwn7DZcp+421NSsY2HMzxW0sPzWqZ6paEIktxLCEc1nXxMV8jP+rNYWc
-	 hSLqyhOvZyruuudbxtIDpMeMYN2ywaop7PEBpsfYqmVhFQ7B4iYsU0JZWPeudGo3b
-	 tDOJ7lFgN/0xllWjiw==
+	b=qgDo3kvgxd6JoorMWhogb5BWzn14bz66PiULQ01b4URQSEbd4A/EQMceGfhUq/gz
+	 dA9wVhSme2wEIIjqkLY1t8hhkSqA7/8/FgdiBY4+aaBwasRHpjdCpbVKp6TDSeQHC
+	 USjLmb5PXbNEshDnpjsNX17TM2B1sxIgNyhT/FsCUMnhh7pIiC+aI5SfNAnMi9ePp
+	 HsE4VutlbI92BEa5/FkObcYtTmzIM6QKrt67TJFqBqagi6SYgD/ELKvFhzqcYAatV
+	 1yNEyGUL8FG1502U7kMVZgxFBzdUneBR7QitVo9bzd/GCJKgrIkHoJwu5y0cfNCbd
+	 /V2xBy18uDi+PW0GRg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N5UkC-1rsMPT33rm-014Q3m; Wed, 25
- Sep 2024 20:48:25 +0200
-Message-ID: <79b2f48a-f6a1-4bfc-9a8d-cb09777f2a07@web.de>
-Date: Wed, 25 Sep 2024 20:48:16 +0200
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Md6y1-1sLIt90JoR-00cwQb; Wed, 25
+ Sep 2024 21:21:28 +0200
+Message-ID: <f7a08897-94cb-4776-9aee-c6ca9fbfd750@web.de>
+Date: Wed, 25 Sep 2024 21:21:24 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,72 +41,74 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: virtualization@lists.linux.dev, kvm@vger.kernel.org,
- netdev@vger.kernel.org, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Jason Wang <jasowang@redhat.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Tiwei Bie <tiwei.bie@intel.com>
+To: linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Helge Deller <deller@gmx.de>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Dave Airlie <airlied@gmail.com>, Rob Clark <robdclark@gmail.com>,
+ Tomi Valkeinen <tomi.valkeinen@ti.com>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] vhost-vdpa: Refactor copy_to_user() usage in
- vhost_vdpa_get_config()
+Subject: [PATCH] fbdev: omapfb: Call of_node_put(ep) only once in
+ omapdss_of_find_source_for_first_ep()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/phGV6N0PUyBlMsQeCSeKOPPmhlGqN9nXc0mxv7yjcnuWrwUH4L
- 1boxhYFB0mHJDozJTOXmLmHvmqWkZpdpEbxEY0EX+Fcoh+Auo9eLOJu3kysxUs3W5q6DvDY
- P8Q0VcI5//nEnv8ObA+CwRhtNmDsTIHjnDc/Fc4PCCTNrFeYBrmeVpu89PKuxNmzrmerqGj
- 0NmS2tJQLr5Wy7TqDwXvA==
+X-Provags-ID: V03:K1:dzJ70/kJLcxL9FAxDYaOrZmzj704bHO3oone/Czyk1TwcQAw8Yl
+ oU5ypyH2oM0z6egJVnks77aicbk15U6Mrt6MrR1rnoAY1B2ws3YLwzJ7+qMZmluVbXcYkZK
+ u+EMvcyKRbHTUqgs1GO07oJXqn+/D/8w6GW9UUYMI7X1wstm2f8Ifc5onWxR7e34hBHb1II
+ SM4ibtZlXo+JVpMaXgVhQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Y7kPbUeelH8=;wyGh388/qDHG8adEMepDBdcU/Ms
- 7S1PCPAdgFaKvhnWbnjQZGoXljvCdCCExNQyEQhTxyoYXP8vdszN/UgqcY/J6GlcGzhyI0QrW
- 8P2HG8a19w9A3HqM/rufZoSfITCAHYP5oVf8w6Ejmm0kyEFuaA31tsU0MuvOIoTyHo0Lm4Hm/
- fOL2qXgTjM3ezQ6S4lgvR717O/nM9eRyerq7QfDp6qIt4zWOr0tgayv4OdoiQ/sYwMZLvWiFs
- qsTAO4UIcmD71KarGwl2XIGvKm6chPSJUgaDh28bFxDWFMqEWYs9hdvkTtliC3+G/hBh+aE2P
- dL2E6OpiXR78OPH+6g2NVQ6IzzOq+z+VkpLxpKhqn2lchivWHBqxjqujlOR7QuBaabScljImy
- UMYVK8gD32QUe0alBrni3weRMYN905yPdu1PZ79HSiLW1oSt/tx0mK9/dP51fAXmJdvADlRan
- YmxcI062AQpy0BwW6YYPU7fiSJ9qL1/GbpTX4UI517bBVcKvhsgH9c9rXFVicLdV6R9RmdxBP
- fiTgSCQAJUIWb/B6e0pTufD0Us6sJfc9vuQcHRYGY0Bm8LIkM/wtfkRECF3VC6RxN71i5BeD9
- 6lJlixru8VFHTFO+vU2hRb1Epa+0g/JeqTjJwYHPBZSAceWcYszvqpIz1/tMwY6zQTn+R2Emv
- /jXFi7/rwXn7OhKUrWf9xf2FSItokwNug+Aj4Dy61ZdtAnxb0BA26PZ4dyOcvaR7UwqsYPHPP
- 2D5YwdXn3LEudm6hjoeMk0o71TTbFVnFAW9dTja6bQ0cInHrsx3T9RsTXnDT6wiajUz8XGR93
- jjnuG0uRjnRpAoJvHa7loPMg==
+UI-OutboundReport: notjunk:1;M01:P0:IPFWIpla35Q=;WHNFDcpnYse4+Ze6/DwHcs21ita
+ KL7TJqCB7pWQfnLD27cSG413OHCcI+I7yIDyqUKymq9CSi7aYTQD5sogqt3++A6tFwamHJiPs
+ WIK8YXoELhPNJzfgUF7oi1igyZXGOy29PPdi9r7E1EJagU3ICcWwCRtDwhbc07GAj0uOD11XK
+ 1icmfXm/zlQ0Gt8Hqz417iMUyka6WQGZSo19H5vnBvnG5LeRECwKdIvUPAlAQ+Cuyr93WFnnE
+ uXpDHSK+WxIElu/Q2op6UkpcR8xLzsuROcMI2bzh0JMQ3U7lQ2KPaU8qN8PuygPIORjGXa1ar
+ xVgE+DQRHPeOdX0r5no1Qa//ziHWZrc0XVKy7f8d8KH3lAGtNA2kHb/zIx0VnIfnJToiiXFIa
+ MHdlqHiC5pI/6JY9rAC0K12LxN18l6bC8a7xvn1CsiQsZvk1TKBItdiKhi5wc2Phfk4E+1wr6
+ pLxxeEkwE01yDk/WlmKnt8yh3smn86KTQtQMh+qN796moVrU8bWn462K5/61Jf0mpGAHAD9i4
+ KlvReM/2ZFOSiBg0sJq7KPDdy4wZy2tVMZg3NgdXmkt79GL2+ixpKo3TvVPgbf8Ql15cdNZ+J
+ 3wE1AE1//BE1o3ZN75ugCobH6b33V7a22jrlx9IboEyupLTB4521TrBUAS5Igj9aIJ92UxzG6
+ 1g8EkFs2puhV+EupIt+rSElC67HRDZoHaLW+8gpN5EtIjZB6SeL6yIFKAMICMtNfWXE0YInVr
+ oGt1IFKaIej1GbXc1aPZDt+I8kmkTJhoo75Pr4OOxsXGc/nDs+78mGR6SG/kH9/YEs1d7D1bw
+ oMLeNgCNdqtLsQ+b2jiTOe3Q==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Sep 2024 20:36:35 +0200
+Date: Wed, 25 Sep 2024 21:12:36 +0200
 
-Assign the return value from a copy_to_user() call to an additional
-local variable so that a kvfree() call and return statement can be
-omitted accordingly.
+An of_node_put(ep) call was immediately used after a pointer check
+for a of_graph_get_remote_port() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-This issue was detected by using the Coccinelle software.
+This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/vhost/vdpa.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/omap2/omapfb/dss/dss-of.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-index 5a49b5a6d496..ca69527a822c 100644
-=2D-- a/drivers/vhost/vdpa.c
-+++ b/drivers/vhost/vdpa.c
-@@ -370,13 +370,11 @@ static long vhost_vdpa_get_config(struct vhost_vdpa =
-*v,
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/dss-of.c b/drivers/video=
+/fbdev/omap2/omapfb/dss/dss-of.c
+index 4040e247e026..d5a43b3bf45e 100644
+=2D-- a/drivers/video/fbdev/omap2/omapfb/dss/dss-of.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/dss-of.c
+@@ -129,12 +129,9 @@ omapdss_of_find_source_for_first_ep(struct device_nod=
+e *node)
+ 		return ERR_PTR(-EINVAL);
 
- 	vdpa_get_config(vdpa, config.off, buf, config.len);
-
--	if (copy_to_user(c->buf, buf, config.len)) {
-+	{
-+		unsigned long ctu =3D copy_to_user(c->buf, buf, config.len);
- 		kvfree(buf);
--		return -EFAULT;
-+		return ctu ? -EFAULT : 0;
- 	}
+ 	src_port =3D of_graph_get_remote_port(ep);
+-	if (!src_port) {
+-		of_node_put(ep);
+-		return ERR_PTR(-EINVAL);
+-	}
 -
--	kvfree(buf);
--	return 0;
- }
+ 	of_node_put(ep);
++	if (!src_port)
++		return ERR_PTR(-EINVAL);
 
- static long vhost_vdpa_set_config(struct vhost_vdpa *v,
+ 	src =3D omap_dss_find_output_by_port_node(src_port);
+
 =2D-
 2.46.1
 
