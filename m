@@ -1,151 +1,101 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930F984E11
-	for <kernel-janitors@vger.kernel.org>; Tue, 24 Sep 2024 19:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D647525634;
+	Wed, 25 Sep 2024 07:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727207389; cv=none; b=aKGKJrNz4EpfiFMefFqzazWAFkf4QfWvVQW7xPb9biSaXMyaM6NLyow9a4XvWPBU6+9ksFY7eeAIsri1q8pL8eeYk3SQJwaeCMTHYBRBJWU7+mcwAdkTZyNzKWiz0qg1dRu3hVmT7PGfL4eK2G5sNX39ulnsBJmFIXAb0QTJwAk=
+	t=1727250400; cv=none; b=h/dJKXdzBRHzfOmxwKaVZohhPr7C6gWINvQjebleqTWlCS5KDsDVfe+pWdMNjodYV9Tx4WefaqivXU5702P+5PIIwi7PLq9m8AstZrGvJAmXiiD0lfvL2H6lzr85utrAj2qDffHE/GlpevHlggYjxzFGxm/hOZGG4ca2syo5Xbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727207389; c=relaxed/simple;
-	bh=yqpJS+KhJYLxK6OoVvTSrnYnrYtRpSyQL6/IbvXFFHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dv4eeCGpHoR2w89ep8+Shkyc050BN3/8lRV0Vr0PEuQznah5vWtnqjcI9tPLrl44Kcci0w8MT3PbX0lgJqVGYB4X17zHktTiW7bQ6N1xhpYg/cxkhQwRzBj1Vejw9yvSpYENZB0luUcSSy9QuFAvqeFBqUt9Ei40e0l/NJ/p+us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UtN0fbRT; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727250400; c=relaxed/simple;
+	bh=sZD07Nz3JTxtQk22kFbo0BTn2I8r91GWAyKTpZgpZRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XLwsooz6lFRUH1CPTD/qehp+ObMr/5kC+7GvON2EIfw7Wula+WwdFFxVHO4ZcA/EPWvMFOrzr85YXpx3zDnplcjde3e1wpVv742Mu1FRuYdS1sf+yS0i9OXJ5++8VgYKuYSh03FEjCcZQYGMtMGA2Y6Qg1bC9WI2TzHp/BD5Ho8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B3CXqL1Z; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UtN0fbRT"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f75e5f3debso53936661fa.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 24 Sep 2024 12:49:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727207386; x=1727812186; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k/dGUOExCYI9ma3C9NHHq3S03j3KfaoxW6Zsr+oPoic=;
-        b=UtN0fbRTlH03LIBPrLzsuVvoNkIGyeD3M0//9LwiXNnjSQEMYlSWaEkS0jcwb3ddEO
-         scgysvZSADl7T7zbMcb7dooZV0rP6fRmHwIOQwh2H/dHG9uUVIOAED1dkRS4ecploMd4
-         YORs50IeBGZ/1UWDskwrgFKZL/5TKUjEc2sfECJDGIpWT5Fn19Ur7URc5A1v02rPy3Y6
-         6/2Ys5UPDp5LzISS/bEASz+WoXc+vgKSk92BvGwd4pmXa+mqf/g+frOk7UEXJFxEzaEb
-         AsCozV+gCusEuet0tCqpE8odxYzN2HyGmQHtYmgSdZfCk2D4MTcjKeNF/4Oi5SpfHz3y
-         dB1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727207386; x=1727812186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k/dGUOExCYI9ma3C9NHHq3S03j3KfaoxW6Zsr+oPoic=;
-        b=sADwEhKrh4XcquhWMk3qpccwd8T5r5FSxjE4TZUgfZULXho0XiuwLKX+Jb/DJAxKgf
-         4MDnu7VotjS4IzoiU1cyI70vphEvQvZIiYXL5aq/Mm5hOKjIi3hp67e1a247M4eiRRAC
-         xYHq8qsmQhDsD8P0pc9ehAK5Hy2hTJSZyccsL8thfOkq81dHqap4Ku6NoHrb+Q9NaYC4
-         w9rw3oGrSMuWpzNxarUBLPky+KWSrVK/mmrIQ1zJwAvvuXqR9jany8Yd7pmZfrl6/t6e
-         g/IVwk4cimQObwNgPFuscMGN0HJWP7TI+1DNXur5lhrPsi22me7fkC9xUbIDr7zrkrAY
-         cSHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvnmkKEbxNPoNiYrexBdmmn/4w4SWYOuThzhrK6t4IYtcoDMKuEFDzfX7fxSxl7aeEex0m7QOda7lt5JwdX2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDjSY1TjskINKJ2uhGrpBqo2/OmCse2q3p6rQDtCn4n0GD6s/C
-	1ciRUOq+21OQxsuzkObDhICr/VXCTaE7LZoGpGTRzryIcpQYT7elQ1f1ljzgStM=
-X-Google-Smtp-Source: AGHT+IF9Vrp5F23MjW0sqPHOc45CN/oE/KimpqLNFA5AlE9guRs5rUgE0mmPmEVD0LZgx4xD8k2FRg==
-X-Received: by 2002:a2e:130a:0:b0:2f7:53b8:ca57 with SMTP id 38308e7fff4ca-2f915ff565bmr2545221fa.19.1727207385621;
-        Tue, 24 Sep 2024 12:49:45 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d282fcabsm3133401fa.23.2024.09.24.12.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2024 12:49:44 -0700 (PDT)
-Date: Tue, 24 Sep 2024 22:49:41 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Sibi Sankar <sibis@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: Re: [PATCH] remoteproc: qcom: q6v5-mss: Use common error handling
- code in q6v5_mpss_load()
-Message-ID: <tn4kxsouzpgimregroywzzvi3sjib7pvnpcnkcvccer5b7woxk@yzaqjwjxeyki>
-References: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B3CXqL1Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727250396;
+	bh=sZD07Nz3JTxtQk22kFbo0BTn2I8r91GWAyKTpZgpZRw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B3CXqL1Z4AgfpkGPaS6OxowMLRHD6RlxBEzgKBUrW2KagsdEi9Nw5hdzrkoJBVSYT
+	 t6Wf3RTe2zyvX6taQmtQNS5amemwzdRilfwuwT1U8sDLeCMyIG0/DwUjTBqphL0tWj
+	 JbE23qjZkxnNBI2jeFnspzfs8uLubXLoXnmt6XEuwGBWym5qubk00jWwpB2nX8vHwv
+	 8hrSNyiQcA746tgvgKoqXfl1F07ycRmrKHNhWL8rQId97ZWlahvDidL2x4lFJu+4/e
+	 ZBvTq12zVS5mHqsG6OP/XcMIlxn6KFd+5UPHeiqL8zRdjPV+web/+EBmk4Agp1fZOa
+	 6MYPDJN10IoQw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 503D517E1034;
+	Wed, 25 Sep 2024 09:46:36 +0200 (CEST)
+Message-ID: <32e9ec0e-5ba6-4653-adf7-ccd0af7d58a9@collabora.com>
+Date: Wed, 25 Sep 2024 09:46:35 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bea9842e-6910-4452-8f90-cb7482f3e76f@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: mediatek: mtk-svs: Call of_node_put(np) only once in
+ svs_get_subsys_device()
+To: Markus Elfring <Markus.Elfring@web.de>,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Kevin Hilman <khilman@baylibre.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Roger Lu <roger.lu@mediatek.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <884f0a5d-e6d3-47dc-8a9e-201bb86b271f@web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <884f0a5d-e6d3-47dc-8a9e-201bb86b271f@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 24, 2024 at 04:08:11PM GMT, Markus Elfring wrote:
+Il 24/09/24 20:08, Markus Elfring ha scritto:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Sep 2024 15:55:06 +0200
+> Date: Tue, 24 Sep 2024 20:00:09 +0200
 > 
-> Add jump targets so that a bit of exception handling can be better reused
-> at the end of this function implementation.
+> An of_node_put(np) call was immediately used after a pointer check
+> for a of_find_device_by_node() call in this function implementation.
+> Thus call such a function only once instead directly before the check.
+> 
+> This issue was transformed by using the Coccinelle software.
 > 
 > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
 > ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
+>   drivers/soc/mediatek/mtk-svs.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 2a42215ce8e0..b398ae3083a1 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -1451,9 +1451,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  				dev_err(qproc->dev,
->  					"failed to load segment %d from truncated file %s\n",
->  					i, fw_name);
-> -				ret = -EINVAL;
-
-Please keep error assignment where it is. It is much cleaner to read it
-this way, rather than checking the error-handling basement.
-
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto e_inval_unmap;
->  			}
+> diff --git a/drivers/soc/mediatek/mtk-svs.c b/drivers/soc/mediatek/mtk-svs.c
+> index 9a91298c1253..7c349a94b45c 100644
+> --- a/drivers/soc/mediatek/mtk-svs.c
+> +++ b/drivers/soc/mediatek/mtk-svs.c
+> @@ -2133,14 +2133,12 @@ static struct device *svs_get_subsys_device(struct svs_platform *svsp,
+>   	}
 > 
->  			memcpy(ptr, fw->data + phdr->p_offset, phdr->p_filesz);
-> @@ -1464,18 +1462,15 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  							ptr, phdr->p_filesz);
->  			if (ret) {
->  				dev_err(qproc->dev, "failed to load %s\n", fw_name);
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto unmap_mem;
->  			}
+>   	pdev = of_find_device_by_node(np);
+> +	of_node_put(np);
+>   	if (!pdev) {
+> -		of_node_put(np);
+>   		dev_err(svsp->dev, "cannot find pdev by %s\n", node_name);
+>   		return ERR_PTR(-ENXIO);
+>   	}
 > 
->  			if (seg_fw->size != phdr->p_filesz) {
->  				dev_err(qproc->dev,
->  					"failed to load segment %d from truncated file %s\n",
->  					i, fw_name);
-> -				ret = -EINVAL;
->  				release_firmware(seg_fw);
-> -				memunmap(ptr);
-> -				goto release_firmware;
-> +				goto e_inval_unmap;
->  			}
+> -	of_node_put(np);
+> -
+>   	return &pdev->dev;
+>   }
 > 
->  			release_firmware(seg_fw);
-> @@ -1528,6 +1523,12 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->  	kfree(fw_name);
-> 
->  	return ret < 0 ? ret : 0;
-> +
-> +e_inval_unmap:
-> +	ret = -EINVAL;
-> +unmap_mem:
-> +	memunmap(ptr);
-> +	goto release_firmware;
-
-Ugh. No. ptr should be a variable that is declared inside the loop.
-Calling memunmap outside of the for loop is incorrect. And goto just
-complicates things by adding non-linearity.
-
->  }
-> 
->  static void qcom_q6v5_dump_segment(struct rproc *rproc,
 > --
 > 2.46.1
 > 
 
--- 
-With best wishes
-Dmitry
