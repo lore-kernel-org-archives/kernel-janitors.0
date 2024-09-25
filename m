@@ -1,110 +1,75 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C149C145B26;
-	Wed, 25 Sep 2024 19:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8925F1534EC;
+	Wed, 25 Sep 2024 20:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727294077; cv=none; b=VkOPWqLbjYwyrqzCYlDbwPh9RAW9QHKTZAqKCRJnOEw0NuX16Brr15jFpT3CrU2GvEEBSyOKTeAmlhlkQ2WU85+uctNyTJs6oMVLPUWTykktf+mJbv70vDn1xZ5vug9GwEDg0uUXQ2AjMn5FhoJUXhPyXbx19qxE6885tNxqYhA=
+	t=1727297410; cv=none; b=r2D+sED9sSeQfavQEU8x9IO8paV1ngHOnYzm2YPXyO6IpJX2iTmtZvwkSozFvXUIReRZuTMh5kbFL57IShD0XFEGMO+XySUrUoKsjNLjQEH9ebpPH8D2pmdGpF2CZUwGIegPw1g1BL8GecKEf8c/M0tUM+cm6TYYTMxnh5hEl7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727294077; c=relaxed/simple;
-	bh=MHYemQ4iLJxEt+SBHZ8DDhtdDBmysgd2m8HWLVTbcLk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nrRnRTBxZ83ZmJGp/mPeZ72lYSoKmqtlexdVw2cB2+htMWNDcJ31OJC3BFQJ3gywcH2k1LMgCyQfo1Toy0+KxWcZU8IhMqENgK5RLVoY+81qzRwd6YEjVW1EvS7Vc6hTayD2R9tQZooOZN7ZJ5EFn97nULLcV0Y/x13UIxm1xdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WZlV1OKt; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727297410; c=relaxed/simple;
+	bh=GLEGXW/IRreMuP+Ewe2MM2lF19EhyviiE352szWHvaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hm3YfGuPf8UQORwkuh4WTlmcxumXif6Hdo2cYVBBHJi1FC+2dbtxfuG/gP6FBKZbQIzwP5h3ttSjS0DUkoPgrOpEPNp5N21ezEtehjMRaK0DECzmf5kqSyUMqg8yZNtrcbkFRSXf5+cNFBZUQZg7bjlYNAFy2JI867JbosDxVAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KkDNER+0; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WZlV1OKt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727294064; x=1727898864; i=markus.elfring@web.de;
-	bh=oZFXgGZpN35Zb33XWrmn6Py5ABUqGOrhRxGCArCoPsQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=WZlV1OKt8vJe+eWHvXmXian3WVMAsLdis6oc6rAYeAgIWdG1xCuyf/SAQXqtr+s/
-	 F4iFc60CGfBiPHosuHxSLBDaLHDOGOGEprWdxfMmboMVoM5FPs0u8Hp5qeTghNMPY
-	 R+Nf2MkmArRMvOpV3DJ50ipKgzQmaNhdNcr4cbeNO4rUyAE77MhWz8wxaYaDR/ceu
-	 8/cEWChONkGNknDF6nHfzoYkTkxHehp2HG6nt1nZIsaBYjQlUA9ClogqPKQkBRQyM
-	 bLuYFYGZTThnJRGB2HMq4B5fmq/HmzJtZQkB80xGY+ikmLnRHnWPjJBs25c5NrpsV
-	 Rf9xT56OR6RACRguCg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRW6Z-1sWg9a3le1-00P9Iy; Wed, 25
- Sep 2024 21:54:23 +0200
-Message-ID: <cf895072-43cf-412c-bced-8268498ad13e@web.de>
-Date: Wed, 25 Sep 2024 21:54:18 +0200
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KkDNER+0"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9Fw6nSSCpgyFPlJKUOs3JFoolcvYhoNhkTP59zcOyUg=; b=KkDNER+0neATPShnr3UWEAMMfc
+	EUgLliRk49wD+jn7X3Mm0nrgEBxGYQCk1K6fi3UN0XOQjC0dvC1R466n6Nbs7j4GjabOkxvSOw8qC
+	X5RprFLMo6NGy1TjcTYJty2SJ5jiF+RyZkzOX8jyChUozIxu3TiBFc9udU7GVyYN+jlW+xiodAhJ3
+	Aq5fi9rteygETWNqwOk8PvCHRgkQTvKt1GHzbOkXjGJHDiiCWu/5e8lbcKVy2DsaO+YZBEKHk/UVH
+	JgCWh7EKohG++4t/SyQpgiraYfRBU5/tfwiUE4MFcJvqWrY50jstTrRbZCGsHY5VRq8ItjuGdpeG1
+	1Q5Lti9Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1stYxZ-0000000FVTV-3oxD;
+	Wed, 25 Sep 2024 20:50:05 +0000
+Date: Wed, 25 Sep 2024 21:50:05 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: virtualization@lists.linux.dev, kvm@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Tiwei Bie <tiwei.bie@intel.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] vhost-vdpa: Refactor copy_to_user() usage in
+ vhost_vdpa_get_config()
+Message-ID: <20240925205005.GL3550746@ZenIV>
+References: <79b2f48a-f6a1-4bfc-9a8d-cb09777f2a07@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- Jan Kara <jack@suse.cz>, Matthew Bobrowski <mbobrowski@mbobrowski.org>,
- Ritesh Harjani <riteshh@linux.ibm.com>, Theodore Ts'o <tytso@mit.edu>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ext4: Call ext4_journal_stop(handle) only once in
- ext4_dio_write_iter()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:N+Rv56bpzb01vFl7kAaSa0ilOzgrnXCwdreS4Meu1k9Ls8DgELx
- MRrsN3KmVbKDIU1FGMitIJoC6nM7t5Cdr3Xe3JT7EVTSwhqeTY/eIrQeRHM7IAHgfd0cQYG
- raRYCIU8166o9UUv/CgiRSEd4ie0/wvJPMudeQFymHzQDQdxmxARo66K05VK4vPhKCXPJYH
- kAQNXGMA/1iQSWYJFNCfA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:kajW8eoXXRI=;WidS8QTOOMrNRr758M3ooy1P6F4
- G2wZH3SQPlqT4Zh9CLES7uKaC9L2A+lOQA5qk8+ZVvIUUyowkYISsZE9ElJaJRt5pXJM3zB2m
- ETcP2gOzySNsH0D4ej490l04gwHtLQDuz8RL8gQ6LVHqshEzVLvlQGdRoRO1q2QpQyA42CLr6
- Jx0dwCDU7Hv8TvC8qZKTF9yXSx/ZJSLJTowF0aGsFQlrlAZ1sF/5hrtqyo9bkTXvWXmDJ/z9j
- vm7eNtgrgfVI5wD02XN/FGiiAwszZIr4wGSpA26iY/5fA59qalsTZAZDQruC0ucdfdzc/ws1a
- AH8hgETGYm4XYN4dmng3q3eZyOmdf1FMsn39LGO6nCafv2fWviUUkP5MVvGtZz8ux8zITjid9
- AOO9yijvkwk+bEbqt5Bj8+0gkOdhqhejfvjITsVy7HOBGqtiC/6xPpRJR+pORFzrMudI4Of/7
- Arn74bZOLYvprIgq156zOz/jjh7zBLkAaJT+tvfBrj9focTJvakUbUx/3GS36F3wRsvtPW+oD
- pui4BX7rfw/rPjxLOuOsAJ3cI9Goik8DcyRlocERetQvGwI8PzTXIo0+kg+i7YVp1AOEVZg8y
- 5cWxVhOO8TASr97fF/FfAAKYP1SLC47sMkeh3GFRhmSrlBNLgSHw+EW8gRQcprqpBrQENHlRO
- jqrmFd83wv2pdU3P3wEiqcf1T/1Y2wWLpgSKWUGcE4C1keyo8twcAjppq6QevHMn5XlL6hnin
- XHEkMeAQZg/c7h4hOePQ+Ymsvc7BFmBrisBIXQrQ/GvsAcS1C5Q898EFpiEleHL8AtbVqc60r
- epB0pNSSbwdPI/a7sCbY1guA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79b2f48a-f6a1-4bfc-9a8d-cb09777f2a07@web.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Sep 2024 21:47:39 +0200
+On Wed, Sep 25, 2024 at 08:48:16PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 25 Sep 2024 20:36:35 +0200
+> 
+> Assign the return value from a copy_to_user() call to an additional
+> local variable so that a kvfree() call and return statement can be
+> omitted accordingly.
 
-An ext4_journal_stop(handle) call was immediately used after a return valu=
-e
-check for a ext4_orphan_add() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+Ugly and unidiomatic.
 
-This issue was transformed by using the Coccinelle software.
+> This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/ext4/file.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+What issue?
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index f14aed14b9cf..23005f1345a8 100644
-=2D-- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -564,12 +564,9 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb=
-, struct iov_iter *from)
- 		}
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
- 		ret =3D ext4_orphan_add(handle, inode);
--		if (ret) {
--			ext4_journal_stop(handle);
--			goto out;
--		}
--
- 		ext4_journal_stop(handle);
-+		if (ret)
-+			goto out;
- 	}
-
- 	if (ilock_shared && !unwritten)
-=2D-
-2.46.1
-
+Nevermind (and I really need more coffee, seeing that I'd missed the
+obvious indicator of garbage and failed to hit delete)...
