@@ -1,96 +1,94 @@
-Received: from bues.ch (bues.ch [80.190.117.144])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ACF4644E;
-	Wed, 25 Sep 2024 17:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.190.117.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5AA28F0;
+	Wed, 25 Sep 2024 17:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727284230; cv=none; b=imQk77dQ+ctFymzQ6+J/mNbJfrmYih74TxtzBxTzv38nCPecaVgmrH4i1SMhiGGKk3r3kfULm26kG+BLRkP81G983+6STjCq/rzVOyYDBd8toBUZOWY4Yvxk4Hh3Mg7s80+zkYZEODZsi42c4a/Y8Z07LzMLUWnlyQDzLTX60gs=
+	t=1727285491; cv=none; b=YlXf1p9hRZ5VcgjAA7bhettWCBcMjKfWXIj3HHFYEUbpTGYUUiRI2S28yZoNJZJmCv+vnc+vN3IpW94LFpMOukzuoAKx/rD3w68Sde6IYo+UGDbvYYqhTOqgT2lGkf3wtKSK3mpqU+LUYBCTqIg3YCN+aUj1WhMLENxRVqu4J+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727284230; c=relaxed/simple;
-	bh=TOCt44VkqdV5ypGeTN0RwLGvfKEJvT3VeOGAWd3GSgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BMIAyRDHoeyd2rdAvttVSpCy8Jf3FhIbvVkOKmlJlorPIFyeOX5s84YpEkSTGP9We7WMb/EftnB4E2FGNFa5i7kUqI6muEtbOxQ6yeWmD71hf9KRQO8hVStd0J3SeT94E1kKOZyoMNFbFPbi3+99JhIcb7I5CHHBGvwfC98lquo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch; spf=pass smtp.mailfrom=bues.ch; arc=none smtp.client-ip=80.190.117.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bues.ch
-Received: by bues.ch with esmtpsa (Exim 4.96)
-	(envelope-from <m@bues.ch>)
-	id 1stUrv-000900-0j;
-	Wed, 25 Sep 2024 18:27:58 +0200
-Date: Wed, 25 Sep 2024 18:27:39 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-wireless@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ssb: Call ssb_bus_may_powerdown(bus) only once in
- ssb_bus_register()
-Message-ID: <20240925182739.5c9ca063@barney>
-In-Reply-To: <d6037759-4dc8-4cc7-922f-95739761d068@web.de>
-References: <d6037759-4dc8-4cc7-922f-95739761d068@web.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727285491; c=relaxed/simple;
+	bh=rGQkSpdq0qrZpkr5gjjKCECjESAYk4AF9OzJ9Z8h/hA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Bd1ZlBhz5AFhnQ8FhPskbLrGtLUhOcAbz1uUF98Lv7EK2fcsIFxWi87P9/ivoL2K+QlflO0/Q/tNtvl3B8AuOKKq+C2Pdqpgph2b2z6Mg6GjfPgT36w43fFX5cw9KzNEERMano6/Gs4dEB4Md4yQkliUZGUVndjy4mxlZndnJow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GZTtTwK0; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GZTtTwK0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727285471; x=1727890271; i=markus.elfring@web.de;
+	bh=207BIIINoQhtIpwZzzJgEApvnp6eKuNSLHH5ebki+cE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GZTtTwK08IUdhz2CPXB2HZeSRtuQFvewf3KxHC38oi8tOxwBUEQNGUazEU6Gb0K4
+	 YfuzloxRusv4XcD3Z7ouMKrJM5eyr69n3HkCs67EoXEJZp37noZRrJ/Slszoa6Tlq
+	 SErRh/LCVrvNH6BnHjvB93TY+6dXT0YMP0VB6Jryk0sVk9LEgFLNixYIOyOtw1Wi1
+	 2mqRdkKpROR/PipWTrN15f8T0r/z+HuK2hOWSOSLNIlb6zdyE0gIN4P0ThIAHhH+u
+	 8JPSVOdOTdHSeqZvFcEDwfM97YLCVB/QkZgty88qgGnrbfiSlC9bpVZVRGKWBYWE8
+	 rN/J3Qr2ps/qjnvhDg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MZB01-1sOyPn3re5-00QTQ5; Wed, 25
+ Sep 2024 19:31:10 +0200
+Message-ID: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+Date: Wed, 25 Sep 2024 19:31:04 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/aNddZWZt3dx.2k1eFLmMqqG";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-
---Sig_/aNddZWZt3dx.2k1eFLmMqqG
+User-Agent: Mozilla Thunderbird
+To: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Haotien Hsu <haotienh@nvidia.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Utkarsh Patel <utkarsh.h.patel@intel.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Wolfram Sang <wsa@the-dreams.de>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code in two
+ functions
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TFAqIEFqOpdD0fBdHiffephnUl82Q8HRfVswmzf7M217X0UULud
+ 2HzryejYHDe/OGLyl/c221b7ZktCfbKUTckYsjgLtJw/79xXnISh+1Hh25ejQvn83Kvw0qG
+ PfXKad+z8tNLE4KL37OGgfR6/hbx/FS2jo8kprMS9P2CEZ37bPrdMSuC783dYSI/iRnzqor
+ KRK2T5Yog5hzx0318allg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:pKmsBhDT8VY=;6gyJXxnvADJxpgd9bY90hCU8lEi
+ 5oTzzPxn3lPBy8HIPpIjkkgPvMsNzhqUIyG3dadc4xSEgLW6oevIpzYtRoPwJouOXrIcCN0Wo
+ qAgrZj2OMUA5snPxEpT42z7vY/dhlbcQBOk5gsrxrc9CbAO9SZMIdi4YQFTfJUk2GDCvuWDO/
+ L3VcBFm/q03oALpqdtENbKVZQsIN7pfPRS157VnosBQT9lc83yQmHa0unREEJF7qrA0IZHl1w
+ MHSEs8r+yDel6862QAh7XL9YOtKSq8M1JMecRDSyJDuVlF9ly9OdWtatZev/oKUJEM9rYiYJv
+ bWWAOS4IHGOudF9Pk8tAyC8xQ602MuYhvuQTW6rtxvAE70kFCMnINUSuULXwARytUfUNyphkx
+ lFW1vCMZwxvez307OoIIaf45XLVgWCy6w3LhFEaeLI6CbgezWhWwZndTmu5nnxLvfEOqvnYmY
+ aOfYce8ZOnOHr5doTSGkMklykxuZo/tuAbEB+G/8Dmq+Bw6P14z8H7KHzK3Ir2H6ycuIRXg85
+ FMyq/+L49yLpeCtJH8owJKVshbbDKyXIiIzPEanVe87xjUSwJWqOEBeyElj+IoTblSf6DXP3I
+ dFsuRD7opvLolNaFHerpLa7ar3n/GGNRXSw/g0VPt/zaAfUYTfiCi5yUO85lSdHgdnVn+ATAD
+ FEOGTcuvyg1VDBTgYfjPxVWGSkDSLvZVq+yJPTEyhKI3IbNVx9SaCNCZgyXvykFZYFBODKbzM
+ VSEWioxFVxiAvgWC9sU+swhNVmmjdM0JhjABCuYO1NabmdPp9KTaVX2WTpfMrnJiC8gBJmRxG
+ atwfIMmsY80f9+oRX1m5i6OA==
 
-On Tue, 24 Sep 2024 21:33:49 +0200
-Markus Elfring <Markus.Elfring@web.de> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Sep 2024 19:19:01 +0200
 
-> diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
-> index aa6165e3db4a..458858b5472e 100644
-> --- a/drivers/ssb/main.c
-> +++ b/drivers/ssb/main.c
-> @@ -663,11 +663,9 @@ ssb_bus_register(struct ssb_bus *bus,
->  	ssb_extif_init(&bus->extif);
->  	ssb_mipscore_init(&bus->mipscore);
->  	err =3D ssb_fetch_invariants(bus, get_invariants);
-> -	if (err) {
-> -		ssb_bus_may_powerdown(bus);
-> -		goto err_pcmcia_exit;
-> -	}
->  	ssb_bus_may_powerdown(bus);
-> +	if (err)
-> +		goto err_pcmcia_exit;
->=20
->  	/* Queue it for attach.
->  	 * See the comment at the ssb_is_early_boot definition.
+A few update suggestions were taken into account
+from static source code analysis.
 
+Markus Elfring (2):
+  Use common code in ccg_write()
+  Use common code in ccg_read()
 
-Acked-by: Michael B=C3=BCsch <m@bues.ch>
+ drivers/usb/typec/ucsi/ucsi_ccg.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
+=2D-
+2.46.1
 
---=20
-Michael B=C3=BCsch
-https://bues.ch/
-
---Sig_/aNddZWZt3dx.2k1eFLmMqqG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAmb0OfsACgkQ9TK+HZCN
-iw4kQxAAtBtUTH+OXL//YvxKvG+B5e5GGj4AyXa8p2xzp9pmx4dV5/Vqgcjf2yUb
-AKkUy9Ox+YCGQspqm0LXTyyY9QPvEZlIa0SonUVuXLXvtWMs+BUjGAK8Sy2KG5Bn
-mXDKpYNVyGjT0KUgN5Y9/F8pDC1NTklIi4V4wK5LYUddDCwCW1nw2Oi6waAWCv05
-XtGYszGIw45F1VI8HscuRYjyzHsMXEubDAnO7WorQZpIBtqwZ8zT+a6x0RmkXYRW
-t6oZV5j6tqSa8uIU3p00MygF1yJIrGEkMAIWJW/JDLtpr3MKc5rGeml097WLq9PA
-etp9H5dUB0JwqlJK5/suRT1eLzhOa8qG9HfuY9wqU8CL7TNG6Ofo9xjFNpfOQlrW
-Sz1kb5DJEdg91UYgOZFlI0J2447F7diolLVDgpO/eaCZs1HDLCDqkr2fva8QBKCO
-vslCcvWA4+8FzyEZox3QR6KfirbStG58XMGRLkTUiR7haW3IC9dXQancrnqPwih1
-ARwDMBT4J35WRSyhaNCYfjCBhS25R04/EEByEx64Tj1UVGU70GBoSeclGynwiQ/5
-fRoOw8yPb4PzUq88LCVE8t0B8SzXa3YBU876Q05LIZ8HZPqsTU5i20B12AsQRMMl
-FKA8On5aef0MAGhQSuquZDgey91+G9jqvC4ygeVsVXLG2QVmlns=
-=dBdW
------END PGP SIGNATURE-----
-
---Sig_/aNddZWZt3dx.2k1eFLmMqqG--
