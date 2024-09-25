@@ -1,40 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501851D5AC0;
-	Wed, 25 Sep 2024 17:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6B81D5ADA;
+	Wed, 25 Sep 2024 18:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727285643; cv=none; b=bgg/tE5I4BGKS1pwHz2sllghNWXnmb296XGw2ct/0Yvj6IgCnw7KfdISVkt0kOwlPRPfQKfnxuX7A9uxYTlzWT2ZVtqEHIJPptbhc6XtfAdtTswNY1WAGKgqu3tGcL9bSaw7fkPicgK3vbWkw8d6DukdF1ZwUCLXnV0rcqb4qBY=
+	t=1727290121; cv=none; b=f9RMasBmmyJ9hPv9O2IehM/e1/C//FioX61lUjtellrb0DW3QLI8G5GBnO1mwGh/5anXTvooHhCkCDnArP/nrMlZtdc2hS8zGzBoB1zw077Qe7GZNyskN7CzHIeSKK803DAkun8llBH0nIkEZhPC8HZGM6CIivyNBGd1bfUk3SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727285643; c=relaxed/simple;
-	bh=4/NEIAsBtB7blCG4wuSJkRPHzgJJT3t+tm/XzE92nXg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Lsi+x/TsOy294pdz7rmgZqydVeW4ejwpS9ALNO4lXjq2ZQo+TfO4tlKI1G/742DFQlb/oTz3tTy0FeO2v1Wx0mN8Nx+6fO13jhSoocNdTuAR8bjxDUOW95+qv0YDrqauZCEitisZkOsPo5RAmYYIEexcSTYJPslChWFd5XkrMTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=xCZF/620; arc=none smtp.client-ip=212.227.15.14
+	s=arc-20240116; t=1727290121; c=relaxed/simple;
+	bh=jMhjVfvZLjGqRNxw9cBGJYC7ifL43Ba+hC+CnyxNfuE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=U0Y/sMr24n3U1cy0X/QV9eJSXteGRcdZ8Egeh78jobkoVziZ1GBokUyYzbf3FLcPSYk9YYLEb3b0BcAuX4r/7VEEKewln5N/sVhoup2A69NUQNAdGGh1QBBi3wvMvnIrf4jpv1I1tpQGL8pemPSBuTCWPs8UilBPv4+saUVaFVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bRfptpRU; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="xCZF/620"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bRfptpRU"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727285629; x=1727890429; i=markus.elfring@web.de;
-	bh=Ncba3K1JtxujF8pca90omffguLowNeWnysl8nMmFl3c=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	s=s29768273; t=1727290105; x=1727894905; i=markus.elfring@web.de;
+	bh=qx0y+0iMm8Vy886r+f9TGXkls2G/OXF7kOvsMB3+Bdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=xCZF/620fc4fEot+ULALOvhqAkDQZSJTP7uknZnnq7J68A0xsRm0fW6if9SC0apW
-	 V3aoi870KiaPuJg9dAS+8MJVQ+RGUF4RvWy75xNYj4iInPKNuy6nPaCTFnPXjf6ZA
-	 5SikgAlBzr02scTMQLM/eGkERQsiQKcHXE9JMqQD3yihDp6HBDkHJjhP4lvdmcGuQ
-	 WmRCW4fZL2hrKpeXcCSA2KyQGVHIsW1funj1T1Bb/TIjnZ9jmE77Vlo6VBWl547ZG
-	 Jwdyge7AckuIsywPjcIY4IpDpGes6Iamohia4ZlMYXqdY/HDHZSJmOOgdro5MB67B
-	 A4YU1/AS5bR8zQMDAA==
+	b=bRfptpRUyJ1w+ElJQWvO6ggfliy+DQW4jGSKtAmW1fP5eTtsXRLoHomPBQfoMXkW
+	 rFT9mx0k8zCAdGSBfc/i+Fv5hXzD+KL96J3ieG1uqN+ip2qzQNCR2JsMVqmkxothG
+	 t/jWYjM8SzAInAIFQskVHbsLhL5wWaq+WXdUHniC24/+6H8ki1dUlearYAEZgdu4s
+	 nSsOa9fCVxwn7DZcp+421NSsY2HMzxW0sPzWqZ6paEIktxLCEc1nXxMV8jP+rNYWc
+	 hSLqyhOvZyruuudbxtIDpMeMYN2ywaop7PEBpsfYqmVhFQ7B4iYsU0JZWPeudGo3b
+	 tDOJ7lFgN/0xllWjiw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30dV-1rvOFc0j0v-012ma3; Wed, 25
- Sep 2024 19:33:49 +0200
-Message-ID: <a4087943-ee25-4e05-80c4-02a77196848b@web.de>
-Date: Wed, 25 Sep 2024 19:33:47 +0200
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N5UkC-1rsMPT33rm-014Q3m; Wed, 25
+ Sep 2024 20:48:25 +0200
+Message-ID: <79b2f48a-f6a1-4bfc-9a8d-cb09777f2a07@web.de>
+Date: Wed, 25 Sep 2024 20:48:16 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,80 +41,72 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/2] usb: typec: ucsi: ccg: Use common code in ccg_read()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Haotien Hsu <haotienh@nvidia.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Utkarsh Patel <utkarsh.h.patel@intel.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Wolfram Sang <wsa@the-dreams.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+To: virtualization@lists.linux.dev, kvm@vger.kernel.org,
+ netdev@vger.kernel.org, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Tiwei Bie <tiwei.bie@intel.com>
 Content-Language: en-GB
-In-Reply-To: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] vhost-vdpa: Refactor copy_to_user() usage in
+ vhost_vdpa_get_config()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SsNe3ae79w4xuRU/j0Q+YcQzcKuXPrio8gkoBUw9g0TxFTtZ6Lb
- rZoT2n2dS1CHwTok3vGHwiPETf1xplcXlfwSG4bYSYMHj0lgBowKWMKB3Iuu2QcnTDbomAG
- 7o2nFC6fHxRMgTqYnpjKoU22hFm1DCsJMF79vVqI7Pf2mOoc7gRgSc3/uT6xkssxLbTNdwk
- EXYN0ES3O2n4ye65YID3g==
+X-Provags-ID: V03:K1:/phGV6N0PUyBlMsQeCSeKOPPmhlGqN9nXc0mxv7yjcnuWrwUH4L
+ 1boxhYFB0mHJDozJTOXmLmHvmqWkZpdpEbxEY0EX+Fcoh+Auo9eLOJu3kysxUs3W5q6DvDY
+ P8Q0VcI5//nEnv8ObA+CwRhtNmDsTIHjnDc/Fc4PCCTNrFeYBrmeVpu89PKuxNmzrmerqGj
+ 0NmS2tJQLr5Wy7TqDwXvA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LLjNEI7QT00=;SyukQnnyxKKbHKL5rqOs3YFLnLN
- vYuobNYilTJr95eChQ32Oyz1D7CtDGSZOZ2Oc87msTlM9vywRIMmuhSwSXKrR6nhHC0XTOGf0
- IJ5aeF/zC8nDGosILKxZFnR8dqUSRVXikJ8kL8GujNKcMnrLmkWirbsFkKqYFcuVtyIJYKMdD
- IF+RiC7bsZvdsOKJfuCmW7gWi2o82Qtp70yOE7kEtRTS+Cx9hNXDdgNUponoGPld1tgn+oNDh
- 3Naeb5TifBSVtm5FFr6nLPeBoeYcqEEZrWXTKDNMllN6uPnlmmefr/gxFvjLSjixJEGTOMYrf
- mE2hAVtLsDia/m21IhuCx19jdQVFeGeAorx+6G4V2Y69J4YefeXYWuG5p/De+ZV+0SLWEtyhO
- fuye036+oOn2TM/11hV29yz73lJ7SjXT0jBhmnHUjgRzzK3EpQk7VXZ9JP4cSK5+ssuWYaNkW
- zLPB/UH+ILf4xSV7l743pTXQn+91MYrbH/lT01/ZKLE20OyRAVOTp+dd+HOHH89TxqEebQ4HA
- HSIB38ETeAzBboNO4AwdmKkLTU7dzQpwhVwcGEQADc1c/zzlYo3jrau0xHoPTJjYivsTxUGlM
- S2yM5r17ai6dm8BSK13N1KnJQbZ/IwB+wN2cP5DZDA7cjTD/4cBZohGCDcA5eyDe+yHjA/44Z
- 6zMRbeonGpcbB1aY4jO/Tqdli6sU60gS/p9qfdA7oMhT2lMETWbtqBvf3CLymq+PN3iScaVWa
- 1mASUeORGph3CTnEkWbqpaftmqAk7e8CzBIvMHYOulr0d7UYWRgPPp0AqYA+tXkLzyXCMW02j
- PFyKoVk10sA9QwAVKv2wgktA==
+UI-OutboundReport: notjunk:1;M01:P0:Y7kPbUeelH8=;wyGh388/qDHG8adEMepDBdcU/Ms
+ 7S1PCPAdgFaKvhnWbnjQZGoXljvCdCCExNQyEQhTxyoYXP8vdszN/UgqcY/J6GlcGzhyI0QrW
+ 8P2HG8a19w9A3HqM/rufZoSfITCAHYP5oVf8w6Ejmm0kyEFuaA31tsU0MuvOIoTyHo0Lm4Hm/
+ fOL2qXgTjM3ezQ6S4lgvR717O/nM9eRyerq7QfDp6qIt4zWOr0tgayv4OdoiQ/sYwMZLvWiFs
+ qsTAO4UIcmD71KarGwl2XIGvKm6chPSJUgaDh28bFxDWFMqEWYs9hdvkTtliC3+G/hBh+aE2P
+ dL2E6OpiXR78OPH+6g2NVQ6IzzOq+z+VkpLxpKhqn2lchivWHBqxjqujlOR7QuBaabScljImy
+ UMYVK8gD32QUe0alBrni3weRMYN905yPdu1PZ79HSiLW1oSt/tx0mK9/dP51fAXmJdvADlRan
+ YmxcI062AQpy0BwW6YYPU7fiSJ9qL1/GbpTX4UI517bBVcKvhsgH9c9rXFVicLdV6R9RmdxBP
+ fiTgSCQAJUIWb/B6e0pTufD0Us6sJfc9vuQcHRYGY0Bm8LIkM/wtfkRECF3VC6RxN71i5BeD9
+ 6lJlixru8VFHTFO+vU2hRb1Epa+0g/JeqTjJwYHPBZSAceWcYszvqpIz1/tMwY6zQTn+R2Emv
+ /jXFi7/rwXn7OhKUrWf9xf2FSItokwNug+Aj4Dy61ZdtAnxb0BA26PZ4dyOcvaR7UwqsYPHPP
+ 2D5YwdXn3LEudm6hjoeMk0o71TTbFVnFAW9dTja6bQ0cInHrsx3T9RsTXnDT6wiajUz8XGR93
+ jjnuG0uRjnRpAoJvHa7loPMg==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Sep 2024 19:08:07 +0200
+Date: Wed, 25 Sep 2024 20:36:35 +0200
 
-Add a label so that two statements can be better reused at the end of
-this function implementation.
+Assign the return value from a copy_to_user() call to an additional
+local variable so that a kvfree() call and return statement can be
+omitted accordingly.
+
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/usb/typec/ucsi/ucsi_ccg.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/vhost/vdpa.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/uc=
-si_ccg.c
-index ed075a403d87..e3850c42583e 100644
-=2D-- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-+++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-@@ -269,15 +269,16 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8=
- *data, u32 len)
- 		status =3D i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
- 		if (status < 0) {
- 			dev_err(uc->dev, "i2c_transfer failed %d\n", status);
--			pm_runtime_put_sync(uc->dev);
--			return status;
-+			goto put_sync;
- 		}
- 		rab +=3D rlen;
- 		rem_len -=3D rlen;
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index 5a49b5a6d496..ca69527a822c 100644
+=2D-- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -370,13 +370,11 @@ static long vhost_vdpa_get_config(struct vhost_vdpa =
+*v,
+
+ 	vdpa_get_config(vdpa, config.off, buf, config.len);
+
+-	if (copy_to_user(c->buf, buf, config.len)) {
++	{
++		unsigned long ctu =3D copy_to_user(c->buf, buf, config.len);
+ 		kvfree(buf);
+-		return -EFAULT;
++		return ctu ? -EFAULT : 0;
  	}
-
-+	status =3D 0;
-+put_sync:
- 	pm_runtime_put_sync(uc->dev);
+-
+-	kvfree(buf);
 -	return 0;
-+	return status;
  }
 
- static int ccg_write(struct ucsi_ccg *uc, u16 rab, const u8 *data, u32 le=
-n)
+ static long vhost_vdpa_set_config(struct vhost_vdpa *v,
 =2D-
 2.46.1
 
