@@ -1,49 +1,69 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8925F1534EC;
-	Wed, 25 Sep 2024 20:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7EA14A635
+	for <kernel-janitors@vger.kernel.org>; Wed, 25 Sep 2024 21:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727297410; cv=none; b=r2D+sED9sSeQfavQEU8x9IO8paV1ngHOnYzm2YPXyO6IpJX2iTmtZvwkSozFvXUIReRZuTMh5kbFL57IShD0XFEGMO+XySUrUoKsjNLjQEH9ebpPH8D2pmdGpF2CZUwGIegPw1g1BL8GecKEf8c/M0tUM+cm6TYYTMxnh5hEl7Y=
+	t=1727299592; cv=none; b=lfTip+Yf4Jkj/Jg7MU/n+2wraPaVmvuquswBp4aFuuUUsWtTpL3EKV70k2oGCdA46g4Iwd5Ca1+0qGF5pzJ6KlX4ET0bly83DQrDh5mIi1GU137sKKxxU1Nn75/ahSJRaq89nAG1mz5hg+kdOEyyGfzySo8aLCJAQHlS+UNKG9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727297410; c=relaxed/simple;
-	bh=GLEGXW/IRreMuP+Ewe2MM2lF19EhyviiE352szWHvaE=;
+	s=arc-20240116; t=1727299592; c=relaxed/simple;
+	bh=zaF/Dm1tDIioJLLUoaqqYW8eTsn35uabr/Gky5vZDuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hm3YfGuPf8UQORwkuh4WTlmcxumXif6Hdo2cYVBBHJi1FC+2dbtxfuG/gP6FBKZbQIzwP5h3ttSjS0DUkoPgrOpEPNp5N21ezEtehjMRaK0DECzmf5kqSyUMqg8yZNtrcbkFRSXf5+cNFBZUQZg7bjlYNAFy2JI867JbosDxVAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KkDNER+0; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=oLyzpwhlPcpAEJ+1AX+kZSRdS5oxzdQsZBx4/4Pk6M9sji/a9REPEuLGx4qjbWffeo/hiK/v+mayUiNTlCMhfQ8XMHD6GMEomOXdoJjOLydIMFYXxnARCOObkUS03KySNjYihx3U4uV3ILAYd8r7TQM4f/KW8Sjga7kSD1WcF9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IYDBYT3Q; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KkDNER+0"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9Fw6nSSCpgyFPlJKUOs3JFoolcvYhoNhkTP59zcOyUg=; b=KkDNER+0neATPShnr3UWEAMMfc
-	EUgLliRk49wD+jn7X3Mm0nrgEBxGYQCk1K6fi3UN0XOQjC0dvC1R466n6Nbs7j4GjabOkxvSOw8qC
-	X5RprFLMo6NGy1TjcTYJty2SJ5jiF+RyZkzOX8jyChUozIxu3TiBFc9udU7GVyYN+jlW+xiodAhJ3
-	Aq5fi9rteygETWNqwOk8PvCHRgkQTvKt1GHzbOkXjGJHDiiCWu/5e8lbcKVy2DsaO+YZBEKHk/UVH
-	JgCWh7EKohG++4t/SyQpgiraYfRBU5/tfwiUE4MFcJvqWrY50jstTrRbZCGsHY5VRq8ItjuGdpeG1
-	1Q5Lti9Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1stYxZ-0000000FVTV-3oxD;
-	Wed, 25 Sep 2024 20:50:05 +0000
-Date: Wed, 25 Sep 2024 21:50:05 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IYDBYT3Q"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f758f84dfbso2996561fa.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Sep 2024 14:26:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727299589; x=1727904389; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TOYkNpvty++FfWXgNtcgpq0qmRgQhoDIUQ1gLZ+9OCs=;
+        b=IYDBYT3QZccc47c255acGbPbeCeA+UsAO4OW/go653zzSD55oGeNex13I0DxH0uDfM
+         W2tvCFIbrJJBP67oW2g32v0uXJCO83eazpjL0ki6HK8Mt5ZjhECjtRS5o8/aPgT2rYet
+         um6fiquUnnVUQEyyy5/GQe62VYRoaD6PI3pJwLih+CsbLacVzGr5nxyGY89di9q3Aw5C
+         pD2zMHDSBZJ2SiYhBxjOmfTQTMUYCO4G6GoQd8gG05+iuGT7VdhAVX1xwP6JVsC03Bh5
+         squw75JwzPOSJszDX1WqAcg5AmLCm56Rt93pXxSFJzwogwkvScDQZqdYGy/3nfFdsguX
+         2tfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727299589; x=1727904389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TOYkNpvty++FfWXgNtcgpq0qmRgQhoDIUQ1gLZ+9OCs=;
+        b=wYpJFbHDuxrj4KHrLyt7HLx4XHZXnVxVjURlg0pQXs73mAG3Z5VJhKeTJZUD1CZIjv
+         7G0J7Uopgn/hweZepPd5AvEQ70TeqdhGE2TYgPBNMvdfNpMu7xhN0c65F8noBeQwuYtb
+         7YzaAkdrynPCPkn792pQQv0iEdOwKSET8pWb96pL+y4F7bi3SlAp3oMNR+EMEzOr3VPV
+         PYqd7n4HjhlH4Zn6fkDerFcyvy1SlLoLhfLw4brasXXTWuKk9tRxGFuZ4FLEKTqaGDRx
+         ZKYvVGSBjkMr0MmBCIBFawnFeXJ00bwucXdE9FPefeYxCTgBkpTnXBwfCslpXgAHoqv6
+         FSXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRqVH8sTaYQ2RHtt/CZPlUAFFfL4t87uM0kjvNRjJ4w9e7hquUXNS3cGsRG0dfgaL5ruT/tny0GmuuQYryWco=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj3iGFJvwhZrBUQStMvAQJgX0TNVNQ/ZLqOWBtMbF7SuqyRdxm
+	qcD+KFvoz1wmTovWeTaH713lPE3X9kbqbPviYjvl4rsWhOWVuvt3ix4NoSjKZyo=
+X-Google-Smtp-Source: AGHT+IEmV7veckkGCnJaS53c+RIOeWgYMFU3i3KFTcPwIhFLJpfjINi6uUsM/Jg8x2BKOpYRIDVosw==
+X-Received: by 2002:a05:651c:50f:b0:2f7:939f:a47f with SMTP id 38308e7fff4ca-2f915fdbbe0mr29744371fa.11.1727299588616;
+        Wed, 25 Sep 2024 14:26:28 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f8d289b61fsm6086821fa.111.2024.09.25.14.26.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 14:26:27 -0700 (PDT)
+Date: Thu, 26 Sep 2024 00:26:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Markus Elfring <Markus.Elfring@web.de>
-Cc: virtualization@lists.linux.dev, kvm@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Tiwei Bie <tiwei.bie@intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
+Cc: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Haotien Hsu <haotienh@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Utkarsh Patel <utkarsh.h.patel@intel.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, 
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vhost-vdpa: Refactor copy_to_user() usage in
- vhost_vdpa_get_config()
-Message-ID: <20240925205005.GL3550746@ZenIV>
-References: <79b2f48a-f6a1-4bfc-9a8d-cb09777f2a07@web.de>
+Subject: Re: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code
+ in two functions
+Message-ID: <jjsbnitbajdw7dc4plkbb55ezl2cdbnrfws7hnoigbzasvdzua@puhrwwlu4lvv>
+References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,24 +72,26 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79b2f48a-f6a1-4bfc-9a8d-cb09777f2a07@web.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
 
-On Wed, Sep 25, 2024 at 08:48:16PM +0200, Markus Elfring wrote:
+On Wed, Sep 25, 2024 at 07:31:04PM GMT, Markus Elfring wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 25 Sep 2024 20:36:35 +0200
+> Date: Wed, 25 Sep 2024 19:19:01 +0200
 > 
-> Assign the return value from a copy_to_user() call to an additional
-> local variable so that a kvfree() call and return statement can be
-> omitted accordingly.
+> A few update suggestions were taken into account
+> from static source code analysis.
+> 
+> Markus Elfring (2):
+>   Use common code in ccg_write()
+>   Use common code in ccg_read()
+> 
+>  drivers/usb/typec/ucsi/ucsi_ccg.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 
-Ugly and unidiomatic.
+For the series:
 
-> This issue was detected by using the Coccinelle software.
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-What issue?
-
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Nevermind (and I really need more coffee, seeing that I'd missed the
-obvious indicator of garbage and failed to hit delete)...
+-- 
+With best wishes
+Dmitry
