@@ -1,39 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5AA28F0;
-	Wed, 25 Sep 2024 17:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058B712E71;
+	Wed, 25 Sep 2024 17:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727285491; cv=none; b=YlXf1p9hRZ5VcgjAA7bhettWCBcMjKfWXIj3HHFYEUbpTGYUUiRI2S28yZoNJZJmCv+vnc+vN3IpW94LFpMOukzuoAKx/rD3w68Sde6IYo+UGDbvYYqhTOqgT2lGkf3wtKSK3mpqU+LUYBCTqIg3YCN+aUj1WhMLENxRVqu4J+M=
+	t=1727285571; cv=none; b=jqbxOPgFLSh0dsnPxfC+711JdizcVXsV4pQ8yocTDlGrpO50zbwzRf42uTvdfUsIDTYi3+SQ73K7Mv7NpttvwKp95CxCMAtVTYQuOfKZMC7CWJbIHvfKxWAFts+aeutXwU1iYrZv3XZRH1EYZnlpyEugGadog72Ploy86tKXsC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727285491; c=relaxed/simple;
-	bh=rGQkSpdq0qrZpkr5gjjKCECjESAYk4AF9OzJ9Z8h/hA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Bd1ZlBhz5AFhnQ8FhPskbLrGtLUhOcAbz1uUF98Lv7EK2fcsIFxWi87P9/ivoL2K+QlflO0/Q/tNtvl3B8AuOKKq+C2Pdqpgph2b2z6Mg6GjfPgT36w43fFX5cw9KzNEERMano6/Gs4dEB4Md4yQkliUZGUVndjy4mxlZndnJow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GZTtTwK0; arc=none smtp.client-ip=212.227.15.4
+	s=arc-20240116; t=1727285571; c=relaxed/simple;
+	bh=e740feuL2tObzG4lWI+nWxD4GvdBQTkreTYN1D1Sphc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qyfdsAiXJ0tUYZ4j/a7wWROdbdEC5UAtoIEEnL6KJpZT3ikHqRdMEacPIXu3NGfRsDEcMBQmU9rGtwmaMfQo+3fljv8wEwoP0RqIQh6ckONe67PElpiawH7XV843iaRwljSFE0DvdsN5hf3CJYj4j3s+dn5hw1ZrTVoRkmJkBkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Fq251lVT; arc=none smtp.client-ip=212.227.15.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GZTtTwK0"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Fq251lVT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727285471; x=1727890271; i=markus.elfring@web.de;
-	bh=207BIIINoQhtIpwZzzJgEApvnp6eKuNSLHH5ebki+cE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
+	s=s29768273; t=1727285554; x=1727890354; i=markus.elfring@web.de;
+	bh=eFB3Ldx/KWMS5UjoX9kHPfNx7iFSTxjpoJqpFKbcd5M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=GZTtTwK08IUdhz2CPXB2HZeSRtuQFvewf3KxHC38oi8tOxwBUEQNGUazEU6Gb0K4
-	 YfuzloxRusv4XcD3Z7ouMKrJM5eyr69n3HkCs67EoXEJZp37noZRrJ/Slszoa6Tlq
-	 SErRh/LCVrvNH6BnHjvB93TY+6dXT0YMP0VB6Jryk0sVk9LEgFLNixYIOyOtw1Wi1
-	 2mqRdkKpROR/PipWTrN15f8T0r/z+HuK2hOWSOSLNIlb6zdyE0gIN4P0ThIAHhH+u
-	 8JPSVOdOTdHSeqZvFcEDwfM97YLCVB/QkZgty88qgGnrbfiSlC9bpVZVRGKWBYWE8
-	 rN/J3Qr2ps/qjnvhDg==
+	b=Fq251lVTbYzER3E+YygByzuy56H74TNfG2P369lFjmnap7LX719JBW+WayVNgugy
+	 vwOkWQ4bYP9cG7mv72Z4QH813A4/jQP5bLIEULzY+kW9JewAph5qtUoDrB8Mt81AO
+	 FzmmCy/PwIKzZtv78g+2ZJrthuBxBrv3ewZEI3rrEWpzg09yiRFvC9hP2ZZEuso+i
+	 KrRtlXW8+sl0X+AjSDhY76Qx+tGZ0LVTV1y3c3yUBrs/vlGored6A/f3wkZsBeAVq
+	 INq9I7we7SJMoizGW5z7W27kIfc8Pj7zCygsDxAAIl/XuKGOqpqHvcDWPrRObQtDe
+	 J1XLgK1n3mWJHMQarQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MZB01-1sOyPn3re5-00QTQ5; Wed, 25
- Sep 2024 19:31:10 +0200
-Message-ID: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
-Date: Wed, 25 Sep 2024 19:31:04 +0200
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mrfou-1s6D5C1Mcm-00nAO9; Wed, 25
+ Sep 2024 19:32:34 +0200
+Message-ID: <983e8bde-513c-4053-b33e-06a1b10eef87@web.de>
+Date: Wed, 25 Sep 2024 19:32:32 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,6 +42,8 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: [PATCH 1/2] usb: typec: ucsi: ccg: Use common code in ccg_write()
+From: Markus Elfring <Markus.Elfring@web.de>
 To: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>,
  Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
@@ -50,45 +53,69 @@ To: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>,
  Utkarsh Patel <utkarsh.h.patel@intel.com>,
  =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
  Wolfram Sang <wsa@the-dreams.de>
-Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code in two
- functions
+References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+Content-Language: en-GB
+In-Reply-To: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TFAqIEFqOpdD0fBdHiffephnUl82Q8HRfVswmzf7M217X0UULud
- 2HzryejYHDe/OGLyl/c221b7ZktCfbKUTckYsjgLtJw/79xXnISh+1Hh25ejQvn83Kvw0qG
- PfXKad+z8tNLE4KL37OGgfR6/hbx/FS2jo8kprMS9P2CEZ37bPrdMSuC783dYSI/iRnzqor
- KRK2T5Yog5hzx0318allg==
+X-Provags-ID: V03:K1:IS6aRcqyCh4ShCkWylyOYBJFLKIHIsPmw51lV+PVy2VffuHddwz
+ 9DfuAXkv/mZs+P5r168V1HOr5HgfWNyaqlh1c+wP1/geHJ35qPgfCG7VAoKYUettkZNDEPb
+ rX1iMf/vc9nL4taL91b5GwJ8CB6j3TXU12kNUiwIhc4/jHqPThGozGjdGfr+939yeMmEVWb
+ wy2/eCqrRmcoItRMQojpw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pKmsBhDT8VY=;6gyJXxnvADJxpgd9bY90hCU8lEi
- 5oTzzPxn3lPBy8HIPpIjkkgPvMsNzhqUIyG3dadc4xSEgLW6oevIpzYtRoPwJouOXrIcCN0Wo
- qAgrZj2OMUA5snPxEpT42z7vY/dhlbcQBOk5gsrxrc9CbAO9SZMIdi4YQFTfJUk2GDCvuWDO/
- L3VcBFm/q03oALpqdtENbKVZQsIN7pfPRS157VnosBQT9lc83yQmHa0unREEJF7qrA0IZHl1w
- MHSEs8r+yDel6862QAh7XL9YOtKSq8M1JMecRDSyJDuVlF9ly9OdWtatZev/oKUJEM9rYiYJv
- bWWAOS4IHGOudF9Pk8tAyC8xQ602MuYhvuQTW6rtxvAE70kFCMnINUSuULXwARytUfUNyphkx
- lFW1vCMZwxvez307OoIIaf45XLVgWCy6w3LhFEaeLI6CbgezWhWwZndTmu5nnxLvfEOqvnYmY
- aOfYce8ZOnOHr5doTSGkMklykxuZo/tuAbEB+G/8Dmq+Bw6P14z8H7KHzK3Ir2H6ycuIRXg85
- FMyq/+L49yLpeCtJH8owJKVshbbDKyXIiIzPEanVe87xjUSwJWqOEBeyElj+IoTblSf6DXP3I
- dFsuRD7opvLolNaFHerpLa7ar3n/GGNRXSw/g0VPt/zaAfUYTfiCi5yUO85lSdHgdnVn+ATAD
- FEOGTcuvyg1VDBTgYfjPxVWGSkDSLvZVq+yJPTEyhKI3IbNVx9SaCNCZgyXvykFZYFBODKbzM
- VSEWioxFVxiAvgWC9sU+swhNVmmjdM0JhjABCuYO1NabmdPp9KTaVX2WTpfMrnJiC8gBJmRxG
- atwfIMmsY80f9+oRX1m5i6OA==
+UI-OutboundReport: notjunk:1;M01:P0:eo/eXcNSpAs=;0Z8ZaXSpKKLNG4DTj6kFFrSzBPk
+ d6Qq1wrRM2zCMQAWCwaX4fiT8mYiY+EYrO0Pj/4zLOfdDBoXsDJzA7eEVf724es49RyTho4+u
+ NOQBrV0qvKYd469NrIQZTnDuddNm73Wa37kUQrAbfOlo/j/iTS90rsBsBRJMNCVfVCm+Ldsux
+ thzzYN2tQoR1lvpgJEuxdO0/sRQ3822TlfZOfNa9TEjo3S0uYGDP7YoJAJaW2UGeyZ2iixT2r
+ acWDTXsS1mwtCyQYj00fmcyDDJybQ6q+qpDVSsUw15UFcrK3XsGSbMAXAXiHgLMoPPOYLKbyT
+ j6iuw7QQXiCAS/guV0YIJQ0tz0IXVE7+JVuLzDMllS+m6ZR9lFAzJyL3tc3OK1oc2sg2fjKhO
+ G3cw6WTCxb+bSouc7LJt93Yj5R7dFguLNtcuF+n1CbstGNqy99gVb4WZxkc4cH61mnKuK3HH9
+ l2bvsbsBx1NWn72xAx1Ux+rx/IPq/8gye5HnZSEcqalfR5Jgqbo3yXhvJkIKqKd8nfnkiWQM7
+ 2B3i1JDjJAF37yPmhxioMUb5b1Irk9UzzphqUr7tfvBCZlUoNct919KoZGnnlto0ex6VTZLvu
+ 0d7V8D8K1cAfw0DLY3w7T1j+76QWPd17TJMZYZlfliIZs6C1WnZ3jyeTb7E7zt1I6VURGck8/
+ BCP14+fzflYjJRGhhb5stawpVSH4cOl+twtIhcowrbQhb60++6jmIOQBE0dLc918pPfCZrxA5
+ rj9ef9sea869Xzkpdh+fLu2+qO/ZSJEwi4ztFu18ajlNbwRosTEtFI+fRwtiLjkFwgRh7pz73
+ McMwiu2JxsADQU3ab3tjLPXg==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 25 Sep 2024 19:19:01 +0200
+Date: Wed, 25 Sep 2024 19:00:23 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+Add a label so that three statements can be better reused at the end of
+this function implementation.
 
-Markus Elfring (2):
-  Use common code in ccg_write()
-  Use common code in ccg_read()
+This issue was detected by using the Coccinelle software.
 
- drivers/usb/typec/ucsi/ucsi_ccg.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/usb/typec/ucsi/ucsi_ccg.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/uc=
+si_ccg.c
+index b3ec799fc873..ed075a403d87 100644
+=2D-- a/drivers/usb/typec/ucsi/ucsi_ccg.c
++++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+@@ -306,14 +306,14 @@ static int ccg_write(struct ucsi_ccg *uc, u16 rab, c=
+onst u8 *data, u32 len)
+ 	status =3D i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+ 	if (status < 0) {
+ 		dev_err(uc->dev, "i2c_transfer failed %d\n", status);
+-		pm_runtime_put_sync(uc->dev);
+-		kfree(buf);
+-		return status;
++		goto put_sync;
+ 	}
+
++	status =3D 0;
++put_sync:
+ 	pm_runtime_put_sync(uc->dev);
+ 	kfree(buf);
+-	return 0;
++	return status;
+ }
+
+ static int ccg_op_region_update(struct ucsi_ccg *uc, u32 cci)
 =2D-
 2.46.1
 
