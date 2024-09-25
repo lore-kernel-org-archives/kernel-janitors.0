@@ -1,126 +1,136 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDCF15B104;
-	Wed, 25 Sep 2024 08:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8691912D20D;
+	Wed, 25 Sep 2024 09:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727253907; cv=none; b=cxNgKabUJXRRv+UPA6g5kSy8XPd4wc13SNBY4cEA8r/XDNDN23ANeYFX8/QO1mgsXBhRxf70BqfP8pLIF4pKnGDpRqRkSFbuIojSqtul2Wkos12ts2xzwhFYCZpN+cwok+IxMq9O27cT2iQcyDcmOQb5yhUEpGaTE3jOStH5AQE=
+	t=1727256061; cv=none; b=MizN46IHdj8QONzSzfZ+QcL6c5aM9kiOx9MWg5QrpAWGd7V5j27lwDI9lE2T86mD2VHcKGYPzlX6nH8V5XpKuDvCLEVUsIUL0srVuDg0HOoWaveRXkdUM0HCatqlnJ38rH5jMStaR/UNYfZ1eWWlyosCpl6hng1qA+VO/tBinec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727253907; c=relaxed/simple;
-	bh=u49MkBsrEVyat/nSqnmiVuo+lAAzaF2zEZQwaCaUPJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+QHKvz7/iVEMYqQidUYcN8WO6DfHLAn03//Wu8otV3BDh3dWkRauYNoUahTew8fk2fpl2mpxqO61LhqudW4szYefcIFfALV3qtm2eCFCpxuh1NyCh2QrqX8zbrs4V0tD9eEKUFMSRxk58cCiqcgRw+xQWW0LtgRLRJ+hDziwrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mNr6MoI6; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1727256061; c=relaxed/simple;
+	bh=GLQEmzeUldeqJOnrn+jDS/3SSB31p2bx6CA57ceNekQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B2urC2nwo6N68J7oXhS0Jx+c+BN5UNQSq4IgxdXDOuYi+KbF76UV3BEkmzqJM9Fgppz11vvZON4wepdCZKHp73yxNqwN01yuqE8K5okj9TMSOA89CL8w33bLwOtZpTrmkNsU1nKCEDau3ifnAOArRmqDkVmN+rV/5GtnTKAZnkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=M2gohpQ9; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mNr6MoI6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727253906; x=1758789906;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=u49MkBsrEVyat/nSqnmiVuo+lAAzaF2zEZQwaCaUPJk=;
-  b=mNr6MoI6ndplyIc3/XRfJRjxEmWZw3GwkAhP7PlU+vZXDaA8lJTGE5Ol
-   HtUBzzog/KBy3ArEQmgsFmVl3YPRD8c1byAolxwfGJh6/BhlQCZy6o1/X
-   ALBubL6FNWhsHGDZIS4Rvq3kAzkfm64rEZ0XGoXfLzfuxmzPC8ifqBaa0
-   ORJTUl5rhRHHhCQVnwNnKoeM6fmiUeLmT1+qy+JC6JqXTDsVmEi7VhnqK
-   eiKRWzgJ+naw8YL2Mx0kvbGqIsD+jeGvrzJQY7kovvVQj9xYPurc3eAx0
-   +Iz/0OYEpoUTHTsKsOYs6OxskgTP5W6pemGGDBg6zGcSE+DWpIgFTTkH9
-   Q==;
-X-CSE-ConnectionGUID: PsGGAUxcRIuGWTcCtYcUPw==
-X-CSE-MsgGUID: 2/+czE6uRnevD0sLNJEmLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11205"; a="13913785"
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="13913785"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 01:45:05 -0700
-X-CSE-ConnectionGUID: UGcvfzunQtyjTha5afLKig==
-X-CSE-MsgGUID: 16rf9qmjTzq/BZmK4YHtCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,256,1719903600"; 
-   d="scan'208";a="76630188"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 25 Sep 2024 01:45:03 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id C5E86565; Wed, 25 Sep 2024 11:45:01 +0300 (EEST)
-Date: Wed, 25 Sep 2024 11:45:01 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-usb@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] thunderbolt: Use common error handling code in
- update_property_block()
-Message-ID: <20240925084501.GY275077@black.fi.intel.com>
-References: <26b7f215-4f83-413c-9dab-737d790053c0@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="M2gohpQ9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727256047; x=1727860847; i=markus.elfring@web.de;
+	bh=7ZO+rGRPfnEu18KWtOxv2/SZkBWPjem0XQOtV7a7B9o=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=M2gohpQ9bsI9CUDg2CmANwZAgK4JVnjYE+BlKgVXYQB1vtGTJqR1cpw1BtihkiQ0
+	 8blO33L1fwb5s+SCeoJ5D+rKi8hT7lG0/IJOAEajXXVMVHy7/zpoWDRkHOPwrvsgc
+	 RjSVWkuxP7ymtRAhLK1ASkvdWUW78SpgKk2xgm04AMHG2E1Rj/3ij4TAqZpZLmqw+
+	 4f3xcazW+ZgpIudwqFrQG0uc8dj3Qz4bX6eCgOiOx5sVFVbI07bfrsabmO8x0xfCs
+	 Q9FTIdH9zPiyZ8fPTdBmJuTYFpobFbC093BNJrN37CRdAk64UBcPG4ASVDPCJa3iT
+	 ZEpwSDfuLWnWgZ+UGQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0qvH-1rymwU2PQr-00yR2z; Wed, 25
+ Sep 2024 11:20:47 +0200
+Message-ID: <a0c37886-cf9e-4c4c-8ff2-db8735f97cb6@web.de>
+Date: Wed, 25 Sep 2024 11:20:45 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <26b7f215-4f83-413c-9dab-737d790053c0@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thunderbolt: Use common error handling code in
+ update_property_block()
+To: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ linux-usb@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <26b7f215-4f83-413c-9dab-737d790053c0@web.de>
+ <20240925084501.GY275077@black.fi.intel.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240925084501.GY275077@black.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:P5fqCf6lKoodLOQZ9aQjp2tjE3Yh/CkbUfe/mCjFl/F5a38FP+A
+ JNzb+ThD7wqavebxnAcd6lhxKQpWCzH1ceAyLWlAhLMX/krkxhIkp4ql/Dkh2BnUXU/2s2b
+ zNaHeAFjO5B3DXJ28Anb0HINN+HF+vK2UI/StZl/YvoVHW3WfX4VZCO7OqOnD8sLIOjxBJ4
+ W+8Pus8Wm8ueXHstEzPLA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:DxkKWm1Qn50=;ebEqWwT7nrovll8rugEu7BG6AD3
+ BLQm4U8eM5FUaZvnPiviwbQy5bVw8UKas5ynCLgfjUD5GNrAd59yguTlohNsp0kIbv4LAD40O
+ dJGYf0hH7O22MxiYkAKfkA8vCBj2FujeR8PQENRa+kgpA1dGRcnZpwwhpHbgxi1iRi1GLtwK3
+ Qqie36x/YKrGunwd7H9B1ze1kOprpJAa1B3NooSGN82Tly75k02XxHUcZ/QYtC3OQtKkz2BTd
+ vI0IbLWSa+UObqcwJim/XPWhIZiPBKbMD2En+BQM2I1AvKRHC0IqRV/G/8z1GNa/+Jz1cOut/
+ 0t+eG+q0Y89fGaiiRE6Wflqxyq10k0fnittEazj3jTV5wrs5A58Xqiep/jnUTXxTA75MSkCWV
+ Ef+P0NBNsgICWalh4S6EdwMc2F7D9jFNRsUnsuBmX+uhSEVUSorktVqO4MqSn+8XvVvNH3vnX
+ BLY860Y2JQ3w08+dryOz/psyDnOzOjt44vGhOIwT0br2fnYaxGokt7rEkeYiUu5p41VebetsY
+ E8SWEUqEAuUoyxqz3ZeIyTDuxo9whECXIKbkXHZsIkOCBuKMxBYo2zlTHJ4gPy7oa5l7Pzg+Z
+ pYi/YmthehJbUwTeELtbOM7P6oiOCx25PYUvQUWlJX3M6LN7r+fg7RUNEef/r766LgB3R7SS9
+ bLoXfg2VMboKkwKrtGCuSb3bDpKHsKGZVQBqFjpG+ZraPlXLCdmYe1U55mIJxrhiqgGWY9gZP
+ vCeBCXbSmAvYPUxaIfBRRZQCaOlPho7GsNQKR/kI+5702ghNgVUKCmAtjpbnB3YoKCaD0LchL
+ 9UblA+Ffk7AS4rbFnqo7lZgA==
 
-On Wed, Sep 25, 2024 at 10:10:38AM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 25 Sep 2024 09:39:16 +0200
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/thunderbolt/xdomain.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
-> index 11a50c86a1e4..8e3cf95ca99c 100644
-> --- a/drivers/thunderbolt/xdomain.c
-> +++ b/drivers/thunderbolt/xdomain.c
-> @@ -670,23 +670,19 @@ static void update_property_block(struct tb_xdomain *xd)
->  		ret = tb_property_format_dir(dir, NULL, 0);
->  		if (ret < 0) {
->  			dev_warn(&xd->dev, "local property block creation failed\n");
-> -			tb_property_free_dir(dir);
-> -			goto out_unlock;
-> +			goto out_free_dir;
->  		}
-> 
->  		block_len = ret;
->  		block = kcalloc(block_len, sizeof(*block), GFP_KERNEL);
-> -		if (!block) {
-> -			tb_property_free_dir(dir);
-> -			goto out_unlock;
-> -		}
-> +		if (!block)
-> +			goto out_free_dir;
-> 
->  		ret = tb_property_format_dir(dir, block, block_len);
->  		if (ret) {
->  			dev_warn(&xd->dev, "property block generation failed\n");
-> -			tb_property_free_dir(dir);
->  			kfree(block);
-> -			goto out_unlock;
-> +			goto out_free_dir;
->  		}
-> 
->  		tb_property_free_dir(dir);
-> @@ -701,6 +697,11 @@ static void update_property_block(struct tb_xdomain *xd)
->  out_unlock:
->  	mutex_unlock(&xd->lock);
->  	mutex_unlock(&xdomain_lock);
-> +	return;
-> +
-> +out_free_dir:
-> +	tb_property_free_dir(dir);
-> +	goto out_unlock;
+>> Add a jump target so that a bit of exception handling can be better reu=
+sed
+>> at the end of this function implementation.
+=E2=80=A6
+>> +++ b/drivers/thunderbolt/xdomain.c
+>> @@ -670,23 +670,19 @@ static void update_property_block(struct tb_xdoma=
+in *xd)
+>>  		ret =3D tb_property_format_dir(dir, NULL, 0);
+>>  		if (ret < 0) {
+>>  			dev_warn(&xd->dev, "local property block creation failed\n");
+>> -			tb_property_free_dir(dir);
+>> -			goto out_unlock;
+>> +			goto out_free_dir;
+>>  		}
+>>
+>>  		block_len =3D ret;
+>>  		block =3D kcalloc(block_len, sizeof(*block), GFP_KERNEL);
+>> -		if (!block) {
+>> -			tb_property_free_dir(dir);
+>> -			goto out_unlock;
+>> -		}
+>> +		if (!block)
+>> +			goto out_free_dir;
+>>
+>>  		ret =3D tb_property_format_dir(dir, block, block_len);
+>>  		if (ret) {
+>>  			dev_warn(&xd->dev, "property block generation failed\n");
+>> -			tb_property_free_dir(dir);
+>>  			kfree(block);
+>> -			goto out_unlock;
+>> +			goto out_free_dir;
+>>  		}
+>>
+>>  		tb_property_free_dir(dir);
+>> @@ -701,6 +697,11 @@ static void update_property_block(struct tb_xdomai=
+n *xd)
+>>  out_unlock:
+>>  	mutex_unlock(&xd->lock);
+>>  	mutex_unlock(&xdomain_lock);
+>> +	return;
+>> +
+>> +out_free_dir:
+>> +	tb_property_free_dir(dir);
+>> +	goto out_unlock;
+>
+> No way, this kind of spaghetti is really hard to follow.
 
-No way, this kind of spaghetti is really hard to follow.
+Under which circumstances would you follow advice more from the section
+=E2=80=9C7) Centralized exiting of functions=E2=80=9D (according to a well=
+-known information source)?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.11#n526
+
+How do you think about to increase the application of scope-based resource=
+ management?
+
+Regards,
+Markus
