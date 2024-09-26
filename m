@@ -1,70 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from msa.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E96114B086;
-	Thu, 26 Sep 2024 15:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA4C1534E6;
+	Thu, 26 Sep 2024 18:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727365905; cv=none; b=TFiZc5YcWAh9LjrTALEHMvLV/v/keJaioPI9ZKsxy7nHWWLA/58MEEJ3gBdmxkZxfna2stAyrZj5mwX6AhLMWc9rjj6vMU9rgP0SPFPWkK2eOsSpADziD0kS8puzjEhNFaXznmkcvnUuH7eWWKwIHAYOL2qgxdlU559QJc1QWRI=
+	t=1727375648; cv=none; b=OYIUEvV+hFqgtrV0qLxnnLPJvUUlI1Vn0RiSazqQlf9ORajuDmMZDnUQZTuEiJ1LAWx9XzfeJ/C+0b4zjtI+38KplxJQg+MaojDneEtMEUrkr59zqPL2wILiVewafEJzFIT/DgvHKDE7jcgJmMacOTUg87CoOylkY4PumPx4mgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727365905; c=relaxed/simple;
-	bh=/zmH17S5Vfm0yDytaFwUjhdEpjDpunAgDGO95mzmn78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I9mPRNf/zeKy+AB87CUct64stczqnafLyMnHZzeLCNAbaNp2A5bwsqlYEEf33dC7BSfaI4C38QWNuVzvGih6dJIlX2NdXnGsPXk1RoyqrH1rlQn4ff1e4CFasXnMTEnCXgWrJOEw17fSrIQeVpu/9b3Gqun5eXHw7AuzwBHdN/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvQCl6FS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727375648; c=relaxed/simple;
+	bh=3iuHCMpCaY/5WFrJneLSrvAgOGDV6yGyGWwA8luU3GI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NubtrGF1sQM1N3vwrf+EUrg8PRKm/v/eBB2zxceTiMIclKzvruKWMJAZGS0JyrOaOUSTFjisic9d9BdXbD3sGqDjv01w2e4WFwfFbOosCAxgj0tvG7wmfd3r1/5yAWJx7Nwp16j3gCeEZaC1/R3Aj12L0zjgT5Im9CBW1f3Oisk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KuodYhZL; arc=none smtp.client-ip=80.12.242.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvQCl6FS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38176C4CECD;
-	Thu, 26 Sep 2024 15:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727365904;
-	bh=/zmH17S5Vfm0yDytaFwUjhdEpjDpunAgDGO95mzmn78=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QvQCl6FSrEpR+YD4IdpGNf5jOLSpCK692o5EO2AREFk5LGAmlfF+8M8Kb14Byd1D7
-	 eMKg2sCrIvIBGKVnhfrcXTY6+VGHZEsF3c6SgI7wA3P4af0i6Qxim6Sm2m1Qgmm2IC
-	 MpidG1X6ef2cQoViHH5w6OG08jZk1TDAdSQwfA9fL+aq0dMChmFjzzJHygigIjOOPx
-	 Z1WG75ndQjbX7QAcXgwv6fEC+T7QYujEr0hfkcP/LuL20QP5AQIW2Wk834EIPUW7eR
-	 WamG+oq40/tuDpYkpDnicKs9qlPKM6vMk6mfjqmeGbM2hFxp2i9rBxb8d3k0GHl7gK
-	 N0vg7GEl4vBHw==
-Date: Thu, 26 Sep 2024 16:51:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Roger Quadros <rogerq@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Julien Panis <jpanis@baylibre.com>,
-	Chintan Vankar <c-vankar@ti.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Grygorii Strashko <grygorii.strashko@ti.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
- cleanup code
-Message-ID: <20240926155139.GG4029621@kernel.org>
-References: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KuodYhZL"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ttJMsN3PhfghUttJMstZV4; Thu, 26 Sep 2024 20:33:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727375637;
+	bh=3QlM06zztQktN3NIJ4DxdnB67HniBEmCvi/NMR3NrVA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=KuodYhZLbK4ZwM/vRiKVcRr+eCUZHWcwycWMRPW63AFa5JtMzyAhZ9aOCFOpkvq9A
+	 Z3PCZBnRBd5eLqYNbVvCCcUfSBjq0Y8xjfe6JIUqxl2PJjs8IJOqd2lsBNN2wiNAdN
+	 7KgSUgrYFEhT/8eyy9bkLTQXVUiZP46KifQwWNMtS0KVQyZmoGIwty/mQVVQ7G4OXM
+	 7z/WfWuuj9haGD92O2WG4Rb8uB4/fsMqD2QnTRE6ClNg97AggiRis54/Ty0I8YTKSZ
+	 OoaHlyz5fZ4+86NlJr6hUj0sv6GjNQtsdBGuQPiBOr70cIP6C5ooN0Xz4GxPel+C6E
+	 u5ZKrk24ih9yA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 26 Sep 2024 20:33:57 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Georgi Djakov <djakov@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] interconnect: Remove a useless kfree_const() usage
+Date: Thu, 26 Sep 2024 20:33:49 +0200
+Message-ID: <06630f9ec3e153d0e7773b8d97a17e7c53e0d606.1727375615.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 26, 2024 at 12:50:45PM +0300, Dan Carpenter wrote:
-> This error handling has a typo.  It should i++ instead of i--.  In the
-> original code the error handling will loop until it crashes.
-> 
-> Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+"path->name" is allocated in of_icc_get_by_index() using kasprintf(), so
+there is no point in using kfree_const() to free it.
 
-Hi Dan,
+Switch to the more standard kfree() to free this.
 
-Unfortunately this patch didn't apply cleanly to net
-which throws our CI off. So, unfortunately, I think it needs to
-be rebased and reposted (after the 24h grace period).
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
+This is not a bug fix.
+kfree_const() works fine here, but is useless. It is equivalent to kfree().
+
+Before commit 1597d453289b3 ("interconnect: Add of_icc_get_by_index()
+helper function"), using kfree_const() was needed.
+
+For the records, this patch is a clean-up effort related to discussions at:
+  - https://lore.kernel.org/all/ZvHurCYlCoi1ZTCX@skv.local/
+  - https://lore.kernel.org/all/20240924050937.697118-1-senozhatsky@chromium.org/
+---
+ drivers/interconnect/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+index 7e9b996b47c8..8a993283da82 100644
+--- a/drivers/interconnect/core.c
++++ b/drivers/interconnect/core.c
+@@ -808,7 +808,7 @@ void icc_put(struct icc_path *path)
+ 	mutex_unlock(&icc_bw_lock);
+ 	mutex_unlock(&icc_lock);
+ 
+-	kfree_const(path->name);
++	kfree(path->name);
+ 	kfree(path);
+ }
+ EXPORT_SYMBOL_GPL(icc_put);
 -- 
-pw-bot: changes-requested
+2.46.1
+
