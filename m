@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F525258;
-	Thu, 26 Sep 2024 13:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3339149634;
+	Thu, 26 Sep 2024 14:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727357461; cv=none; b=A9LQYsqFczkuborGNzHaxfjHYwT7Jew0q+wP3EzaFU30d6XFG+neQmvWRi2xs2PvUe+RGosTsSSMzCA4Nkg37TVPzHcHIod4CMNWWim1GQPJiMIJdFtslELMbhEkF4Ca1Dc3NWIViETkNtIqTygYshDapw/rY1FQpm6m9DC0/so=
+	t=1727361076; cv=none; b=Ny/38HPv3fM5RPkDXl8HQF/TEHH3H2qYguX4JSVN9se/7CjaRwXRGILsDhBeonFAGZFoP42RN1FcXjWAMQgYQdjLf//82g8aRgzO1BZCX54Sj2NTe4rPc+cfIT/gvszYBIInyVMat5JZ7AXX8O8B0hpHgnl2sfRRIFUytHrkpEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727357461; c=relaxed/simple;
-	bh=8D2Y6WGTjAXKFg4Ac21d/3s/libBT4mfFHN/VTNVv18=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=A5jzMhxol18xtc0ASYoLsz+UVumrSmUkTScqqyUe961fxu4nSTIFcx+WZSM4FJwRgkPE7SArb1fwCfcCXxM/h6+cuoj6mXkfcpfhzPhOeFOpHvdaqpuGPZxsG8xe9lZCBEo4JjzcfGi7ujnHqrN6IjJBpXOSI4ULYsocjE5a/20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wQiSklLO; arc=none smtp.client-ip=212.227.17.12
+	s=arc-20240116; t=1727361076; c=relaxed/simple;
+	bh=Sabgc5v/So0A5uVMnvea8Vcf726GDpsoTHPYwvZEF10=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OIkzBUrXBKpUIHTq5TllxA86YhFVilcKQVYlj/ekK5fxEqWaKzcR+tO1SKE51pJkh5LsGJdtRvcTrMaamz8rETnvRd3WdcyVePrMWrc+SIRKc4QlUhEhjj07YB4jmkiYgTf4OBG4q4nTeaTWTtkS8r+8yt2cDtBypn200LvmAlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=u1geOgDp; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wQiSklLO"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u1geOgDp"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727357425; x=1727962225; i=markus.elfring@web.de;
-	bh=nOEM71AyOr4nfT0t970wYpqeIO6G8tPBN1vASVmd/So=;
+	s=s29768273; t=1727361062; x=1727965862; i=markus.elfring@web.de;
+	bh=ZJwusmbK4oS5wuQQMMPIHNFuAFmP9yk4XXtmG/UEE+0=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=wQiSklLOVXr8Hhip5gGtQB5tfKog6OWPZcSiPPtHF9r6GPzBZY1SMLD+vLJEGqzj
-	 RPO3f0hS/B2YDL9OKYmoFf+VtsL7ryyEI0h7egqkrCcVkGGVCcXEQ7E261ZqSV51K
-	 f2pRiD0K4sYqBmKGo5Of7HSwl1FiQcNs3UAffgUA4cYEy6tLDw22v6Cs+YQJWYyj2
-	 I09a6WgeN43MNqveOkbBo5bGCE5CIEe3arjovykekSxQDDu9CuJv0P53cTNv2hXE9
-	 JUqPXUASJQaCeaioRqAOwbK9LLP3riOMKxuWjJPd2Tx5l0rD/W/s916dywIMlb80F
-	 JNwfrxrOONfqwsSPCQ==
+	b=u1geOgDpbmsLpnIOWkwaQ3NDuZoUuoYFUIp5xGhRSJLZfFuTqeZdjDV0oRdpgcgM
+	 mEX+ifQ0ezdVZYLUcyh/MjfttpqnyRrV6V8OB9VzwxXuXV/pRPf/4+Qa1+jdRR1yP
+	 Js1fVmbka3yVqMHhWYwx1muUDCNSN7FTuFgij80Lz4bWTWS8SlFJ8m4wzeVmTkzEw
+	 lFZQyJQ628wZoPaATC7cnC1CAg1kOfXjfhNNx1whO30kP3nl03K3biQT4bXusw2dM
+	 YuNQYZnJeHbpEKtQKCM4IiZWtGjKl5i6wX8nR9ihNEzZO+GrPmE0pm434nSXbgMhb
+	 byEc7aNtWnJyYU29hg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MiuSs-1sFH9h3Oom-00hy5l; Thu, 26
- Sep 2024 15:30:25 +0200
-Message-ID: <6c4afcdc-fa86-4f0a-a6c1-ec8265190fd0@web.de>
-Date: Thu, 26 Sep 2024 15:30:12 +0200
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MREzO-1sWeN02tV6-00OsAf; Thu, 26
+ Sep 2024 16:31:02 +0200
+Message-ID: <8dd92d0e-ea93-438b-938b-e966f6039ed0@web.de>
+Date: Thu, 26 Sep 2024 16:31:01 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,79 +41,69 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+To: linux-trace-kernel@vger.kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Steven Rostedt <rostedt@goodmis.org>
 Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Barret Rhoden <brho@google.com>,
- Ben Segall <bsegall@google.com>, David Vernet <void@manifault.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
- Josh Don <joshdon@google.com>, Juri Lelli <juri.lelli@redhat.com>,
- Hao Luo <haoluo@google.com>, Mel Gorman <mgorman@suse.de>,
- Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
- Tejun Heo <tj@kernel.org>, Valentin Schneider <vschneid@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrea Righi <andrea.righi@canonical.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] sched_ext: Call put_task_struct() only once in
- scx_ops_enable()
+Subject: [PATCH] tracing/fprobe: Call trace_probe_log_set_index(0) only once
+ in __trace_fprobe_create()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:N1c6y1Yj0TUu9WDWBqn0PyHHTgWKUGD/64HdV190odsvuWqhLT+
- 2/KlR2ZLWL0NXSd6WNesSyL1dUdmY0EqYaj1eanwdoeXkvtrdT7kgYDWsq4SUyEHjXJu8Oi
- S99b/FufIRXf+mqYvqpMC19/GsTeIk6O2+U16B7uCC2H6nkqueRVAQqui9JaNHJ6KGO3GSs
- +aHDeQCH8/R33qBV9Sg0g==
+X-Provags-ID: V03:K1:PRkxs00Gtyqm4oEEhKyNnCEpTncC0rnKKNlhLe40FU/wwSK7BDG
+ HxEMagkc46Smvl0Tx3ykh6bajxDxjksEUf5RyQAV4LhLlCi0iphPN7wKljeKipgb4tUI+iE
+ P3sx++nWFpVxGb3nXQecWY+2Xd7+BiPWTxGIDj2+K5AIAQ8Hw03Oo2hiF/yVmQ0EWgGzJOw
+ gQj2HrtTN44h2JigX5DmQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:R8or0bQMyog=;w7RC1hpJ5ZaVX2dTD0fS7EjxMSt
- YjV2w71YTe/vA8fl2RP5LnW+Iwk3DIkdku0Q7JzzO6lCy9rtO0eu6XK6LsXhH9YK4VwKVeF0c
- bh/HhNbm2Opc6wiS6HBUe1MxOtXeMFQgog8/VJiF0WCBk2lrJvD+Fy0/+kk+Io3cwyzDQJZyK
- dkiR8s0GDBUzy5N28gyKM2EFlebGuza8kbzv5ma1xPPG3PS0STVJPh5t61GUZi7l6FYdtgGuc
- m6HSbGY97bwDbsQcm+YjNBB8qFqSPObvTPN1P9tP7mF33/ZjTHpnvWGwplEVr4dNAA5CVbO/s
- nYbSWBAvUqx3wkFZKJXG+qrWJ6rJTcyL6DRDPfrbeZ53PsGRR4cIPtkGLNLMexw62mdPtmtK1
- kVdEUvtEHz8lejEy4je9OFCFBnArS+CSfsvCFFKwrVb3H+9paEid74z+6vhycMsnW2vv1IrwN
- PV1y4/aJjCX5LQR/WfvjgvyDYJcQwaIX9OoRja3n71+186WKyMMT0jLkquSD3U4cOWUk0+wKA
- 2tbqGstvbw7XCz3UxVnRsCDGm7RTBfFTQatW3TL3t5/8A5m7salpRG8zKrAgI/XNR2E9umDlV
- AB7YaRbpgbj5UnFa9L3gggaGQdYaehUdQP4vChjd78P30qSB+T+ma9aKKgdrNIS/Bl6sWVkIg
- DOlOYHyFnroSIBdJQAslNg48q2+m9kgE7DAf1JGod91bWaw9TVIkh3lnOgW3UAwah/PeJF3a9
- 5ylQ4I6Korbpgfuc/an6M7xJsNWbN8X2RqBillsTiOjYAtQULgLmPQ7cvwuzScJ17rTKu2CSW
- NF/YQi1b7w6mTNU7jO4vcbpw==
+UI-OutboundReport: notjunk:1;M01:P0:QqUJ//M8LFc=;9uFhqoq52RpnuEhNefxoBivKYze
+ ehRCFt7llLSmAhurP7LamBQtoNympR7LyIWqwBpTPXu9gHrdTffAA30UXk7gIDyVqD/7dPYZK
+ dgB22f1leT9heH6bk4TbnV9tY22M3MLxOelnTn06YTyEVCQ5gI4lSd4ex8bIACSivrvsaHJs3
+ zm/YUBSKzW4VXGGgysgOowEIh6ZJuz+py0MeSamWdPIYszzo1rM6rlFN4ekm63RoLAPJ6NPDT
+ YIPbPeKl31KGGgPTXnJ1CMZmdbn8xoV46GJCZxICGIO8RB++m/SHNbBEVI8LM0divIb7y/bfL
+ EjW7FYbe9x5f+KH04IHs/QrGoJJLNYf4oj95ZtneUJcze0tS1C/ks+bMTSlHNmilxaf6yyPYu
+ ALXDfITdWetLUibATdZQro5Xtfc8HLvWFjROBmijAfSc0wjO6hfB/8B8+GlXVGU4w8ZCbXjDQ
+ Crna3IliW9vLdPfVfYKzZDSA+CQ6ZIlPrBq0HCaXqUGcdKarZO0X951Zip0IvlWlrnjhcx8le
+ NtEB8w8JtLAxItWsmD6XBBhSgXheZOwIjz5AOmH8yTzb9XiKSmYQhm97V84zWWUt1aLtXxAD4
+ kU2/y7+qAKDdukCTYawPCItQsR2u46ShOhSNY8tPgzdH5trUfu5uBs7v+VrxiVcXeGHNmlOSo
+ YpxFN+6ykPMPPaf1jZc1CeBpsWJn7RMXygpXHH0Q82fWa/nQ5owlKELMIjhUe+XKJjqk8wKH8
+ HOQPoHak+bhsnnn34zHDav10CCwJGMT5/aBTzgoBYc39vHZa03InLn7PhhWL0gxKe6pi0IHS6
+ 3lP1tlKvbpkUXJ7YMBNVC3DQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Sep 2024 14:51:07 +0200
+Date: Thu, 26 Sep 2024 16:22:32 +0200
 
-A put_task_struct() call was immediately used after a return value check
-for a scx_ops_init_task() call in this function implementation.
+A trace_probe_log_set_index(0) call was immediately used after a condition
+check in this function implementation.
 Thus call such a function only once instead directly before the check.
 
-This issue was detected by using the Coccinelle software.
+This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- kernel/sched/ext.c | 3 +--
+ kernel/trace/trace_fprobe.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 9ee5a9a261cc..4b89ea20e355 100644
-=2D-- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5091,8 +5091,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops,=
- struct bpf_link *link)
- 		spin_unlock_irq(&scx_tasks_lock);
+diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+index 62e6a8f4aae9..752d1f163258 100644
+=2D-- a/kernel/trace/trace_fprobe.c
++++ b/kernel/trace/trace_fprobe.c
+@@ -1047,13 +1047,12 @@ static int __trace_fprobe_create(int argc, const c=
+har *argv[])
+ 	if (ret < 0)
+ 		goto parse_error;
 
- 		ret =3D scx_ops_init_task(p, task_group(p), false);
-+		put_task_struct(p);
- 		if (ret) {
--			put_task_struct(p);
- 			spin_lock_irq(&scx_tasks_lock);
- 			scx_task_iter_exit(&sti);
- 			spin_unlock_irq(&scx_tasks_lock);
-@@ -5101,7 +5101,6 @@ static int scx_ops_enable(struct sched_ext_ops *ops,=
- struct bpf_link *link)
- 			goto err_disable_unlock_all;
- 		}
-
--		put_task_struct(p);
- 		spin_lock_irq(&scx_tasks_lock);
++	trace_probe_log_set_index(0);
+ 	if (!is_return && maxactive) {
+-		trace_probe_log_set_index(0);
+ 		trace_probe_log_err(1, BAD_MAXACT_TYPE);
+ 		goto parse_error;
  	}
- 	scx_task_iter_exit(&sti);
+
+-	trace_probe_log_set_index(0);
+ 	if (event) {
+ 		ret =3D traceprobe_parse_event_name(&event, &group, gbuf,
+ 						  event - argv[0]);
 =2D-
 2.46.1
 
