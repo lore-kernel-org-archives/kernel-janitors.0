@@ -1,112 +1,102 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDA0189509;
-	Thu, 26 Sep 2024 09:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C539B1A727E
+	for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 09:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727344192; cv=none; b=A59tmrbJ99552l4ZdNlVprUAn4EGnaKtML22z+5NvOeC7/b9MppYQCNqSL7wI8yNbxMzVh6ffY4q3KNMEUanvvh6zOnzp0BE07y+k1CeTaA8cu5xPkCsvFNffyA+OMFx9/R9/pylsLB8NHiCDT3yKkrgE+jX9YXIraJDuNUW3Xo=
+	t=1727344253; cv=none; b=Mi7/nd9baNzZUZpkNfI+EfM8YEH3ID7gzZ/mCIJdukHNSybCW9YXCWiLa2PtZNqvSOoRqZZlAHmRAigYyJaKXRIbdURgwsrnN+68EafofpkfJs321nL5Ss9264R/Mk4nrbgdD6ZXPZikd9oU9yrtqD5pcDSF3sAXZBYIRTBA32A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727344192; c=relaxed/simple;
-	bh=ZXk2C/znJ57eFHaI30r3/vprd1gjSx/o8+kq+MZi0a4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Dd4OHRbFRgX/JZp45XXb3L+LF7t5PxzzinCiNvdh95iAZCJGkvGJjVR/F5RvVPr9EOCtHnkPPi+Xe15GfPm1PgLMfusUX32QtDm7MZGUbvAOhIwBqyQDcCoj/AASmGVaUlGjON4StErrAsl1DMJgM2P2rlAcyZA+NPMSWVsPn7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FGZIcpoX; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727344253; c=relaxed/simple;
+	bh=3cvkulumzJ6UdUrBeMHHDpezKdFQ0Akz+kdIuBNYxXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uUz8lue9SPs8+T38dF3O0+oQZeLIHMB8K4WJt0GDUcn1rLRLUzsaDA9gXByv/bar0DCoK/30+rATDwKRRmEO6nm5GU+X+tHPfJLXii7uCkij6ibxuwPiCcA/4jCm2qZAeUKGQT+YPTrSeibCIxH89IlU23TQhKJFyyfy94q9SpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qxd8tN66; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FGZIcpoX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727344167; x=1727948967; i=markus.elfring@web.de;
-	bh=hOHEk4EFX3thBPSJCG19L99hsawAOI1Zr0gYqbm9Nic=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FGZIcpoXoUGEtfGzoOtlaYHO7fZUwVlz/pLNnKQ7weLPEztJMWHJ8OI54pSz7J5l
-	 YrF2La1+2ZfH4esWu98SkIQ4v573j1IZXrLY0Oqy6UzU2vkY9NsGItab5Ojxhnl0Q
-	 1zdvI7ehFBhqf7HP8YD0dA98DzzhXIbhrf1x3ZETos2iDWaIdLkLvIRKykKTVAxX1
-	 CIeJuwGMrfD/RT8jtUXgSFCGm+/KooVayCKnGUSd10Z+gr0SDQ/ehy2QfL34jG/zB
-	 mHCnuxB8nH/cwIW83ru0stcFd33qkQOUqimY5zhoF+TJaj/acfHli+N3IpW0W4ml1
-	 G5SYFVW0fSnd0E0gCQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZB07-1sOjsF3o37-00XYKK; Thu, 26
- Sep 2024 11:49:26 +0200
-Message-ID: <c5bd9bb7-2636-4c48-9623-4c93ded3469c@web.de>
-Date: Thu, 26 Sep 2024 11:49:26 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qxd8tN66"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cafda818aso7409355e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 02:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727344250; x=1727949050; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AiyN9NWxSHbtdh7dFvLb4E3Ssa1wgf9JiJ/fTzuLzmA=;
+        b=Qxd8tN665nGhssp3zI9X6VQUF3IPVNAevegGHtgXdeuCgnS9J9UfFsIr3JFIGBYAN+
+         PMMnGDiiSAGwxELvN8wBSrtSuQVSI10SfpUZuUOScylPLCCC8tEx1KR3QPyRv5Wq0e0E
+         XkLaqyCJazOTKyYvyCEz+a/hJT1F7Up9Tdw/6t+l2Q5YCQnYkevyf6wEOVdhSJhvVbZe
+         QCcOKGw5hdjRTt+Iiv0kICiFKyQpTMBkqhs2sIMhsJniqOq2w0nPzuHLKfnJhBZR3Jk5
+         QC/8XRvST/3vykfmVD2TWp7X4KN8ixehRmFEdnf+kv5qhTqwfnkeLtEmFRDnopk//KHO
+         HxHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727344250; x=1727949050;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AiyN9NWxSHbtdh7dFvLb4E3Ssa1wgf9JiJ/fTzuLzmA=;
+        b=I6+wK68Z2F+JV12O3JEDfCiN3NldORpHpl2XQo0CuoDquDHrrkpyl4ZQ7wMv42GZgm
+         QsFFuUDG9g1PEoOvDvGwsxtnH4NLbwjCusOqnNdm3A0qTtXfqc3cY22nvzhHmgs1pA3F
+         0p8eQA/zQ1jD8/yx9Wd4vPwrw1jDFLgTmEsX++5jubhM1Fm7FO5ip/wyHc+pKn5WNsEt
+         leA5XzH6f/o+0VfI3n95nm3Ga0duYKGNKSnkfMz8AwLr1Ca9996716K3SIEDa58IsmUX
+         cWjmOq9xNUzomrwGK8Xx73bbu1a6CjfNMiNnfydSfyLRdkbedFPseqk+gNdj8L3YMS/0
+         Fb2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUXPj/l184NFgUesZrdqv9Eh0wfdXDiEazj9RHaVifRyzuHnVI57KOEbFMQWW8pfLJZQbbUqGDpFw9lCPF91Xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw3iqSxsgh5GvlkFg1oG4yEvLFa4otozByfZM3HGzNxDlnm7zo
+	uGS1fgFTAWpLIa0u/V5y2L9xgTqekU7CSZyIIn1S7+v/q5N2PvxMZFj/nuiSQ68=
+X-Google-Smtp-Source: AGHT+IFCLIBXqKbOosYLGD7dpaW2Fa6+GR8VForuOcP/Zs87zlTaweE53g2UooMLElMqWLL8yLKfjg==
+X-Received: by 2002:a05:600c:548e:b0:42c:b95c:65b7 with SMTP id 5b1f17b1804b1-42e9610c908mr41002805e9.8.1727344250067;
+        Thu, 26 Sep 2024 02:50:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddb85sm42060725e9.2.2024.09.26.02.50.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 02:50:49 -0700 (PDT)
+Date: Thu, 26 Sep 2024 12:50:45 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Julien Panis <jpanis@baylibre.com>,
+	Chintan Vankar <c-vankar@ti.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
+ cleanup code
+Message-ID: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 1/2] ubifs: Call iput(xino) only once in ubifs_purge_xattrs()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-mtd@lists.infradead.org, Richard Weinberger <richard@nod.at>,
- Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <ff787fb9-a9fc-4798-8460-3ec310e6cd9f@web.de>
-Content-Language: en-GB
-In-Reply-To: <ff787fb9-a9fc-4798-8460-3ec310e6cd9f@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vpgE/5iekYk8NTAf200bwBBju3y0tsqloprET8oIqGfXy4pqgUL
- bJ0+s97WyUsUZ3nqZigCX/KhxuvygeHpwP7LZjgJfP/4LSxzb9o4eLQ1iGyjEEtVl46f4ip
- p0YbjfKRQ2jKcUK1+hZ40UrwbVMtBfu40hey0OG0S09S3jCer6RlH0olF2k3W2qruN0Ka+M
- TviNhZ8ird73w+DmJtOzw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nCr9OlfvGMk=;9o41UjHyQrjeEH0YURHJa9Mz5B5
- dsoXKaw5azo1TlXWdX428deCnw4hRn+xuOYo5eOsnVu27j0nw3ZpJs3jNb2irDm+avn7IaXxA
- mffaKO+ZbZVQc3I2rw+9J7SjIUhtd/aPOKOKipKjLEcd9m38n3bKIqYtnYcKEzqNBw9cMzo98
- qmNMV5JczdXht2+XG2KShmngs9I/r/GWbxWXf7eU+2xWdw373bYvsliwpIBW4FmEZWsZc6gyK
- DcgJNInxupKcmwWCaC4lk1V9bEMIFvBF+GhzGdOVxo3CjgZP1iSO19iP3IRAUOVomUb+WNhnw
- z+qlLQRoqwXLttI6x550eVTZcj24u2GzRBJPdEn7bT1o98D32Z8YpgtTkjpc8JOt19vmK4krT
- S3MsyGJd2jOpVMPQu+LJSZTUegE5HwRoGv4bsqm4rVIIWgD98gwXEQdr5GArY1FGMPZzhCLYY
- D33cxvFyWTBx0mkRMvfJl2NHCRZe7TZhhKX7l3QTWgnK8iQqPRtrQADLyu4ssBGzLngaq4rBU
- YA/2bNCght74+R0Sl9MlrgH8UIuUq6p2aHctdHSb2owBzouYF1TldSmIMMBn+t6nPzYGYPFYm
- fIwNa+P31mksksBOQu57SoaNlEwnDA2AGQUHj/NzvWZP11aQzIWzLvkEFjoCvvVvqEO1jb3Ci
- Cid1BW7mda8DCALepzZ9hI0BSnH7MTQsZZgAS/I8SV0l4L3Bv2UG7pHGYpbcfNZMGBS3ZBZFj
- SE9ZISG8Pu2uZPSCSPgiTBMwJPsfb577i4CAOQg1s0+EDqfqE3IHBRliv+OquAVrQ+OguI4gC
- SuVK8bwpQWZPgdUbF3tuNJYQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Sep 2024 11:05:29 +0200
+This error handling has a typo.  It should i++ instead of i--.  In the
+original code the error handling will loop until it crashes.
 
-An iput(xino) call was immediately used after a return value check
-for a remove_xattr() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/ethernet/ti/am65-cpsw-nuss.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/ubifs/xattr.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
-index f734588b224a..7757959e9f09 100644
-=2D-- a/fs/ubifs/xattr.c
-+++ b/fs/ubifs/xattr.c
-@@ -541,16 +541,14 @@ int ubifs_purge_xattrs(struct inode *host)
-
- 		clear_nlink(xino);
- 		err =3D remove_xattr(c, host, xino, &nm);
-+		iput(xino);
- 		if (err) {
- 			kfree(pxent);
- 			kfree(xent);
--			iput(xino);
- 			ubifs_err(c, "cannot remove xattr, error %d", err);
- 			goto out_err;
- 		}
-
--		iput(xino);
--
- 		kfree(pxent);
- 		pxent =3D xent;
- 		key_read(c, &xent->key, &key);
-=2D-
-2.46.1
+diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+index cbe99017cbfa..d253727b160f 100644
+--- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
++++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+@@ -763,7 +763,7 @@ static int am65_cpsw_nuss_common_open(struct am65_cpsw_common *common)
+	k3_udma_glue_disable_rx_chn(rx_chn->rx_chn);
+ 
+ fail_rx:
+-	for (i = 0; i < common->rx_ch_num_flows; i--)
++	for (i = 0; i < common->rx_ch_num_flows; i++)
+ 		k3_udma_glue_reset_rx_chn(rx_chn->rx_chn, i, &rx_chn->flows[i],
+ 					  am65_cpsw_nuss_rx_cleanup, 0);
+ 
+-- 
+2.45.2
 
