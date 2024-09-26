@@ -1,178 +1,108 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3651925A5;
-	Thu, 26 Sep 2024 07:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7821A704B;
+	Thu, 26 Sep 2024 08:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727337345; cv=none; b=iL/S615Jh6B2CWPeWG5VBlSBNCNLWN7BZFrf7tnSazq9/02E9sHacfD+fUqtZqAz7xGlg+tkP+MxyNzewXkmDPp49NsFocg+A6uNHQWrLLBTREWegDEbQiJMrTF85hu+7mT/PF6UGXqfBG80fxYjhousS0WiK+AAk5APYDQzuHs=
+	t=1727338857; cv=none; b=nJdHB4Y103F+7XUf2EpiOGnpxNeZ1s0gXYQzoKsnCchg2q1hibW3CJFgxOPTo1/hvrNqv3c+5yginmfs4cTzaDe2M6jDOdAFyjRVm8LMJV6OPXyzJINHPUZyjCrGbIWILcj+2F+VGKK2E4A40BKa30FxQvsBGW7Q4a3kZ2rhaUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727337345; c=relaxed/simple;
-	bh=CoPFVAh+iM/jV+NO9XwQ5+mtWkk6T8HZv+jemjMjxNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iSTn4Kfis2XULeDCyu+HTtQH8gb16lYcvoui5TIk0nN5IND+L8JjFaXzi0FKZSgSES3oKZkdzjzGjtCrHFIquvIVKpX5Q83sQ9o0IvprC9IkovLO6VZxRlti1cWt899oOGFAkor7lNnmq2F4DYiWJep7XlzXSDgwN8Vg5F3w+2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dpx7Jckg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gACMJ7yA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=m03piI0X; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TeRo0D/l; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1727338857; c=relaxed/simple;
+	bh=DDb8C4BtA74QmAAeFYR18zjm0Ie12PG4cmEwax1hWiU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jPwo8MrNcXTePa//P3azonKN2EPgSwnUt4gV+tnO63QkBETRTo8D5/OP91OmaaJHjXU0N9oL20oRqrt/J45gr8faCS9MI1BKNmw6BNTqenum3BCXxvL53v4IRTkYSVogEjRs5CrfpzvSU4ML3KQbt+K2ESwX0nN6Vww7v94OvQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qMNIH1KY; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dpx7Jckg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gACMJ7yA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="m03piI0X";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TeRo0D/l"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F0F0721B38;
-	Thu, 26 Sep 2024 07:55:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727337335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VXAGy78NSXOUNt0RGY9b5Z0UPCygJpEgJEPKtTj124w=;
-	b=dpx7JckgNSl5f9xjEPSfEUba4+aCxn5O6c4iGGGmW3FZ2kPlW8yscvpSqrLvGEFQbT5RD1
-	MjIzhg+jTI7ejhEMO2hh5H/5ItzLchR2wn0lxJGV5//1QjlUtlWG/u/EwXBCuYnGjT8TnW
-	3c3xAW/589mMkcPX12IcU7gqidzVCwM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727337335;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VXAGy78NSXOUNt0RGY9b5Z0UPCygJpEgJEPKtTj124w=;
-	b=gACMJ7yAhG4bAV8ofDMAR6Fjl3rXPi2jXF3CFELPNqom5m/5e2wG0YbI/IcX9RFqIZXAKD
-	vk0uEgpRW6Pnx1Ag==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=m03piI0X;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="TeRo0D/l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727337334; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VXAGy78NSXOUNt0RGY9b5Z0UPCygJpEgJEPKtTj124w=;
-	b=m03piI0Xq8YRFhVJtcIWUJM301kMdPx33hhyd5bi/SB7O9mwNybrwaHiw1GU4gIbQhiciV
-	5DeCAuRZOxweSN0DlciRlRP8EaLlUIYoNkhmxYew+db1iQxGOH4YvB/Z/u2eQtvh6ilV1I
-	2R4mgJZzSShX1CysMJQMCKrdC3aPrQU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727337334;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VXAGy78NSXOUNt0RGY9b5Z0UPCygJpEgJEPKtTj124w=;
-	b=TeRo0D/l/AEYWs3ZKQKUsVMOfpy1idAVCXhqloXeQ/qkhweKspqVK5S7RLdk7Sr8VtBoJc
-	sCJ0rR9GV5znwLBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E614C13793;
-	Thu, 26 Sep 2024 07:55:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zp4lOHYT9WY2fwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 26 Sep 2024 07:55:34 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8EF1EA0881; Thu, 26 Sep 2024 09:55:34 +0200 (CEST)
-Date: Thu, 26 Sep 2024 09:55:34 +0200
-From: Jan Kara <jack@suse.cz>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-	Ritesh Harjani <riteshh@linux.ibm.com>,
-	Theodore Ts'o <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ext4: Call ext4_journal_stop(handle) only once in
- ext4_dio_write_iter()
-Message-ID: <20240926075534.s3bzoqcpyd6u7zhx@quack3>
-References: <cf895072-43cf-412c-bced-8268498ad13e@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qMNIH1KY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727338835; x=1727943635; i=markus.elfring@web.de;
+	bh=sB6yRJmW44vEhF2xRcb8ZnnullLqQ80g/LRUvvWZUBI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qMNIH1KYHG4V1vMq2T5N5iZJZ5T9lVw3VZiGEFENegvVz2QjRlad1CbDtqDsP4Uj
+	 rcAZ0SOUnPPvv8/K20XlA+GfR4gelgcPsvwqUTy06Iwl9yqrPI+LiNmCq1Aaq8HVB
+	 +XWNMOIzah7rFcLkEu8bdBE38b5DeDS44ixHmPGYDekbw41gfof7yZnutyMoPKSr6
+	 u0IcKspa10DAtNP6xoVqYzOJjcJsKstAcNiHIf7IEOKMxC8sEk4TL5KICNZbngLPa
+	 yDFJpA37wqS31XwgIhr2OuJEhMGw6H35aYJZlQu6T+Lc/hl+NxfjcytF44ZkX6eHq
+	 /UfUlxGqo0cK9+PSQQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBRn-1sEt8g3Lt7-00hh4G; Thu, 26
+ Sep 2024 10:20:35 +0200
+Message-ID: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+Date: Thu, 26 Sep 2024 10:20:34 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf895072-43cf-412c-bced-8268498ad13e@web.de>
-X-Rspamd-Queue-Id: F0F0721B38
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[web.de];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[web.de];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,suse.cz:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+User-Agent: Mozilla Thunderbird
+To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Joel Granados <j.granados@samsung.com>, Kees Cook <kees@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O2kMMIfoFcVsourDbG7GiTIPrn1lHkbfbdxpYI2Z95rvexXu6jo
+ A5EfaFwEeN13eC+KfCcuhXKPGkvyJH7xHixhBFHoE0aXTE+Rx9HaO6vj5+HS/w/QqhaDeaP
+ 5eTmV/90y8PQgKPXTMNi86Kssr5cr4e9NeqslS3UQbla8EjduvGMfXMRWYzjD6E/kemsdqG
+ pj2iki9WUimK8CXzzB0+Q==
 X-Spam-Flag: NO
-X-Spam-Level: 
+UI-OutboundReport: notjunk:1;M01:P0:9YxArM8zdCI=;hfdzJK4Klm1i6lAuyUUQoOXp45f
+ nLrhDEPkFOPR4RWLTV6hruoiE81rOLem0Z1vfYOzcmPyK71ncngCxHj//tU4Akn6y6s6/E9I5
+ RiQMaSNJTiNEwgwwVmdyyPJfZJlwCv9lWOMvRUEz0G3E9LWaiZD6BrNnYnJADSTDZzuvlTySH
+ FYkHaVGSe7e1Evy+HN6JBYIleh/rTQX4fAY9LAXGRKZoYTt3zjnAjeOVXFuP5krI7oGFnRMrC
+ yJVhJR7XB2FoUwo/FXFKjQx/WNuIG4NtArDqG4LD6X8qAOVfZGrxf+x8U43sYFtFh1ZBzbVt7
+ 4D+OmWot0c4Od60kIRDCwSx3dTv4uZKHnX/2+g1gpwVkxk1PdaCelViCEe6S772GBKbkRA7Z7
+ +T856hSX2aXM/mS+kT6PZzcgl35swtmK9LiFnjDItlvhGZgWbB39dymT880x2L2yvMXn2TMrK
+ I0YbwoOiqat583O2f4vVrVoFU0wxjmrkVoK5a/vC2RxdMtVEicN87WPu5hBjxbDm6uDWGthdx
+ P3VUtgnmsdQhrUmXXqMHqeBQpugoh6d48EzSHt17Si9BX9e3HaX2y10/hg0Z+DlZkuOymbe8N
+ f0aCEV0EWjnCQ6L3etwetN3MzRv9gB0jlIO5BtgujrXIaN9qSQI9d0cMTvEZox0chGcLAs9yh
+ cfhzNB+0XsQBxxTu+bt55zyPmiqOuQzc4x/nJv3mdBlVBedTDboeI3cJIC/cdUzX9Up3uMkoS
+ cHa0BHiINvtCVXimk9Dv3Xb2czJ4iR64iElqwfJFjtyYZg9VDN857dgf95nwDzMy7BBR1zm9l
+ Hr06K9n8pwuIJfpHwURNChbQ==
 
-On Wed 25-09-24 21:54:18, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 25 Sep 2024 21:47:39 +0200
-> 
-> An ext4_journal_stop(handle) call was immediately used after a return value
-> check for a ext4_orphan_add() call in this function implementation.
-> Thus call such a function only once instead directly before the check.
-> 
-> This issue was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Sep 2024 10:10:33 +0200
 
-Looks good. Feel free to add:
+A dput(child) call was immediately used after an error pointer check
+for a d_splice_alias() call in this function implementation.
+Thus call such a function instead directly before the check.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+This issue was transformed by using the Coccinelle software.
 
-								Honza
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/proc/proc_sysctl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> ---
->  fs/ext4/file.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index f14aed14b9cf..23005f1345a8 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -564,12 +564,9 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		}
-> 
->  		ret = ext4_orphan_add(handle, inode);
-> -		if (ret) {
-> -			ext4_journal_stop(handle);
-> -			goto out;
-> -		}
-> -
->  		ext4_journal_stop(handle);
-> +		if (ret)
-> +			goto out;
->  	}
-> 
->  	if (ilock_shared && !unwritten)
-> --
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index d11ebc055ce0..97547de58218 100644
+=2D-- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
+ 			res =3D d_splice_alias(inode, child);
+ 			d_lookup_done(child);
+ 			if (unlikely(res)) {
+-				if (IS_ERR(res)) {
+-					dput(child);
+-					return false;
+-				}
+ 				dput(child);
++
++				if (IS_ERR(res))
++					return false;
++
+ 				child =3D res;
+ 			}
+ 		}
+=2D-
+2.46.1
+
