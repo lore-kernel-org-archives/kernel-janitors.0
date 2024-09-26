@@ -1,66 +1,48 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B3D14A4DE;
-	Thu, 26 Sep 2024 14:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E96114B086;
+	Thu, 26 Sep 2024 15:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727362470; cv=none; b=OmLwyjZ29A+KmUGN5dDN/ATaTQRr40ethmVY0Qp5azkzYZecdBOjTyM+QsaS2sM2tpCRN4AzJTRAVDF/2eOBzYfQj1WQBggec+rThmq3g9IlEYcZFF8aDV/birNb7k+pV20yWCvdZ3ZTtAYASUFKe7E6lYz9jAq+MgZPBgKc3PU=
+	t=1727365905; cv=none; b=TFiZc5YcWAh9LjrTALEHMvLV/v/keJaioPI9ZKsxy7nHWWLA/58MEEJ3gBdmxkZxfna2stAyrZj5mwX6AhLMWc9rjj6vMU9rgP0SPFPWkK2eOsSpADziD0kS8puzjEhNFaXznmkcvnUuH7eWWKwIHAYOL2qgxdlU559QJc1QWRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727362470; c=relaxed/simple;
-	bh=L9YXN0t4DVD7+YRuHu7wlstt9F9d+8MVDMPVhMv6YAU=;
+	s=arc-20240116; t=1727365905; c=relaxed/simple;
+	bh=/zmH17S5Vfm0yDytaFwUjhdEpjDpunAgDGO95mzmn78=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdeTcM/i2hxcuQzn5FKW+DHL3vClYNC+SNJIgzynno6RF3aIPy2HWp77T5Epb5zFgNauONxqsjOScyA0T3/Utjnry9aj93oN2S8IWrN2DSHI0gXliMz4xiepM2bp1vMHGRaJpS9wkRycKG39uBCCbzb5FnIkcSCUwc6c4V6Gdz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S0O4G30X; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=I9mPRNf/zeKy+AB87CUct64stczqnafLyMnHZzeLCNAbaNp2A5bwsqlYEEf33dC7BSfaI4C38QWNuVzvGih6dJIlX2NdXnGsPXk1RoyqrH1rlQn4ff1e4CFasXnMTEnCXgWrJOEw17fSrIQeVpu/9b3Gqun5eXHw7AuzwBHdN/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvQCl6FS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S0O4G30X"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727362469; x=1758898469;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L9YXN0t4DVD7+YRuHu7wlstt9F9d+8MVDMPVhMv6YAU=;
-  b=S0O4G30XSDgVCyUZ6ohV+OI/8vDJR3fMYaWY0dSFypgZUeX5end9tqH4
-   bVwFjdr+Xqx8fvjNILo2NdkYoSaQCa1/g65AWqu/UupjAtvCacRtmOC+a
-   huN+Id+9M3dB77quNa8sX8hakHDyHDT9nIGRZsC+bUFIrj7N7B2KvsaEB
-   8ABczvuPJ0Vxk24LD+/In09/kXk1PCAwH2JGKEraGD26DqM9PGxcVWu8l
-   SO78v0wT95HS4o395ELaGtGLZLyHo28ccJQO3StZTZnngFs7yWCKTO5PT
-   L3AKM5kVUgzSzXi8OeLXWN5DuApIMH25m/O7GZ0/JYsp+VUeV21YHcP+M
-   Q==;
-X-CSE-ConnectionGUID: iJ7aefA9TRCS5A+IhpCJtg==
-X-CSE-MsgGUID: tNRoVz7+S8WwoGJ7+IG5Tg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26559941"
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="26559941"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:54:28 -0700
-X-CSE-ConnectionGUID: S9dH61F+Rxqmf8L46Jo1TA==
-X-CSE-MsgGUID: wQjBT8iEQvqtG8Fo58927g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
-   d="scan'208";a="77016166"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa003.jf.intel.com with SMTP; 26 Sep 2024 07:54:24 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 26 Sep 2024 17:54:22 +0300
-Date: Thu, 26 Sep 2024 17:54:22 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Haotien Hsu <haotienh@nvidia.com>,
-	Utkarsh Patel <utkarsh.h.patel@intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Wolfram Sang <wsa@the-dreams.de>,
-	LKML <linux-kernel@vger.kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvQCl6FS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38176C4CECD;
+	Thu, 26 Sep 2024 15:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727365904;
+	bh=/zmH17S5Vfm0yDytaFwUjhdEpjDpunAgDGO95mzmn78=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QvQCl6FSrEpR+YD4IdpGNf5jOLSpCK692o5EO2AREFk5LGAmlfF+8M8Kb14Byd1D7
+	 eMKg2sCrIvIBGKVnhfrcXTY6+VGHZEsF3c6SgI7wA3P4af0i6Qxim6Sm2m1Qgmm2IC
+	 MpidG1X6ef2cQoViHH5w6OG08jZk1TDAdSQwfA9fL+aq0dMChmFjzzJHygigIjOOPx
+	 Z1WG75ndQjbX7QAcXgwv6fEC+T7QYujEr0hfkcP/LuL20QP5AQIW2Wk834EIPUW7eR
+	 WamG+oq40/tuDpYkpDnicKs9qlPKM6vMk6mfjqmeGbM2hFxp2i9rBxb8d3k0GHl7gK
+	 N0vg7GEl4vBHw==
+Date: Thu, 26 Sep 2024 16:51:39 +0100
+From: Simon Horman <horms@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Roger Quadros <rogerq@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Julien Panis <jpanis@baylibre.com>,
+	Chintan Vankar <c-vankar@ti.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] usb: typec: ucsi: ccg: Use common code in ccg_read()
-Message-ID: <ZvV1nqnbJMfTpgwI@kuha.fi.intel.com>
-References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
- <a4087943-ee25-4e05-80c4-02a77196848b@web.de>
+Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
+ cleanup code
+Message-ID: <20240926155139.GG4029621@kernel.org>
+References: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,49 +51,20 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a4087943-ee25-4e05-80c4-02a77196848b@web.de>
+In-Reply-To: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
 
-On Wed, Sep 25, 2024 at 07:33:47PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 25 Sep 2024 19:08:07 +0200
+On Thu, Sep 26, 2024 at 12:50:45PM +0300, Dan Carpenter wrote:
+> This error handling has a typo.  It should i++ instead of i--.  In the
+> original code the error handling will loop until it crashes.
 > 
-> Add a label so that two statements can be better reused at the end of
-> this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Hi Dan,
 
-> ---
->  drivers/usb/typec/ucsi/ucsi_ccg.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> index ed075a403d87..e3850c42583e 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> @@ -269,15 +269,16 @@ static int ccg_read(struct ucsi_ccg *uc, u16 rab, u8 *data, u32 len)
->  		status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
->  		if (status < 0) {
->  			dev_err(uc->dev, "i2c_transfer failed %d\n", status);
-> -			pm_runtime_put_sync(uc->dev);
-> -			return status;
-> +			goto put_sync;
->  		}
->  		rab += rlen;
->  		rem_len -= rlen;
->  	}
-> 
-> +	status = 0;
-> +put_sync:
->  	pm_runtime_put_sync(uc->dev);
-> -	return 0;
-> +	return status;
->  }
-> 
->  static int ccg_write(struct ucsi_ccg *uc, u16 rab, const u8 *data, u32 len)
-> --
-> 2.46.1
+Unfortunately this patch didn't apply cleanly to net
+which throws our CI off. So, unfortunately, I think it needs to
+be rebased and reposted (after the 24h grace period).
 
 -- 
-heikki
+pw-bot: changes-requested
