@@ -1,172 +1,95 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060DA1684A1;
-	Thu, 26 Sep 2024 01:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DE6175D47;
+	Thu, 26 Sep 2024 03:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727315572; cv=none; b=cJZEOBfe6HMrec1FAvwTh9LDhFZkxJCUxn+pJrIjjC5ZiVMpjrdCU7C5sB04AFo1lnrk/htSJAgZO8qV0tVRL1ariaQu++OUsrcGMIZ2qNkcKk1081h1YB9v4P+ObMDxtDTV3EgLpa7LxsqYp+LlVp+UP3k7giXtUoKD5k6WHNk=
+	t=1727322315; cv=none; b=i7tPOE9qo6YioXqjamInRW72VGIxjIsHy1LNWzcmJuLUCJRxF/oLW9qD2bpO/3CUTL0/g4q94jvbRg17ayxCdhJ07EH69tf5UEvKCQmPxJqihqvl6aFv6HrdhCdVmvx5fGY10GHhAeSTtXGZo47LRBioUwC/dW/B8KzbjNViuhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727315572; c=relaxed/simple;
-	bh=MobofQEzC8dRo1cojab5fJxNwAfwEILkvkDNv3fGzuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LND9sYK3dJPhfZA8F1goFbM5Z7mxEeoT7KEkoV8b94aJEGbgOKYNRSowTcbb2Kj8mdV6I7r3ZH5WqMJe+IFaWMN1gHeCdEiLoqr4LDb5GUmKfx6ZLQfla22LI6MWRZ+2IIqt70n++wDMA4Hl4Khw40AyD6nKsEbZ/XT7TuC9isY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I9mozbNF; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I9mozbNF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727315570; x=1758851570;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MobofQEzC8dRo1cojab5fJxNwAfwEILkvkDNv3fGzuQ=;
-  b=I9mozbNFiUJFDI78SH6SSSEnn99JQWGGEMUPX7Es+OW8cvlUNbQ6Hktu
-   mPGMhrmRW1kEokli5+3jVgKNzfcVZp6jAli/rNVTRef0qo5USdzPNUBU3
-   ti8RjL+V5fWtdv5OnskCqI0foOo6cFXqiZHe5plgNJH90GiynwPxYBUoL
-   DoRFHwGFX3uPg3Lzr22wGF814cFwr9UpC5vJ1ZYeGmWUS5eIh08NiBfcU
-   2Ri4t+LZ4a1U80NkWvfzyLfji4wWhST0tcAYGl1+hkiCWi6mKWlJyHfMX
-   +IMtfB3Z/cxEf1DkhVvWOEt68qznT38RZW5vFSusB/HZdQqv79+QlFSFW
-   g==;
-X-CSE-ConnectionGUID: 1vfozYSLQ3eWMafRA2UO2Q==
-X-CSE-MsgGUID: MiNKAX1eQt+JT1IqLTaMXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11206"; a="26518043"
-X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
-   d="scan'208";a="26518043"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2024 18:52:50 -0700
-X-CSE-ConnectionGUID: bRS9d/eLT6Gaz/RuY1wobA==
-X-CSE-MsgGUID: YCWhNJfnQQKYiczHLwlnNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,259,1719903600"; 
-   d="scan'208";a="71635267"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 25 Sep 2024 18:52:46 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1stdgS-000K7X-1n;
-	Thu, 26 Sep 2024 01:52:44 +0000
-Date: Thu, 26 Sep 2024 09:52:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] thunderbolt: Use common error handling code in
- update_property_block()
-Message-ID: <202409260928.qBlg2dBU-lkp@intel.com>
-References: <26b7f215-4f83-413c-9dab-737d790053c0@web.de>
+	s=arc-20240116; t=1727322315; c=relaxed/simple;
+	bh=qz6oqaoHU+fyLcNZCRF12W4BQn20rRcxUh15w77YX74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CBUT+31Vjo+dcUH9dLCm10n1GdVtiHrebq7ijMlbND7xtlfcJRpwDtWmh7Fe1GCTWemVDAZIXKx7MBCHZxHqwLvI50boZUs6aknScXesFDJxTrD8Yt9xB5YHadV6K0r/jyZyzKqYN5vtFbFutRA2z3Bo49MA7W3oB07nBJ6SYgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XDfXH1Sy2z1HK1B;
+	Thu, 26 Sep 2024 11:41:19 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7252F1400D5;
+	Thu, 26 Sep 2024 11:45:10 +0800 (CST)
+Received: from [10.174.179.80] (10.174.179.80) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 26 Sep 2024 11:45:09 +0800
+Message-ID: <c9819809-c159-400a-9031-7ecdff3092fc@huawei.com>
+Date: Thu, 26 Sep 2024 11:45:08 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26b7f215-4f83-413c-9dab-737d790053c0@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: Call ext4_journal_stop(handle) only once in
+ ext4_dio_write_iter()
+To: Markus Elfring <Markus.Elfring@web.de>, <linux-ext4@vger.kernel.org>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>, Matthew
+ Bobrowski <mbobrowski@mbobrowski.org>, Ritesh Harjani
+	<riteshh@linux.ibm.com>, Theodore Ts'o <tytso@mit.edu>
+CC: LKML <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <cf895072-43cf-412c-bced-8268498ad13e@web.de>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huawei.com>
+In-Reply-To: <cf895072-43cf-412c-bced-8268498ad13e@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-Hi Markus,
+On 2024/9/26 3:54, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 25 Sep 2024 21:47:39 +0200
+> 
+> An ext4_journal_stop(handle) call was immediately used after a return value
+> check for a ext4_orphan_add() call in this function implementation.
+> Thus call such a function only once instead directly before the check.
+> 
+> This issue was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-kernel test robot noticed the following build errors:
+Looks good to me.
 
-[auto build test ERROR on westeri-thunderbolt/next]
-[also build test ERROR on linus/master v6.11 next-20240925]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/thunderbolt-Use-common-error-handling-code-in-update_property_block/20240925-161308
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt.git next
-patch link:    https://lore.kernel.org/r/26b7f215-4f83-413c-9dab-737d790053c0%40web.de
-patch subject: [PATCH] thunderbolt: Use common error handling code in update_property_block()
-config: x86_64-randconfig-001-20240926 (https://download.01.org/0day-ci/archive/20240926/202409260928.qBlg2dBU-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240926/202409260928.qBlg2dBU-lkp@intel.com/reproduce)
+> ---
+>  fs/ext4/file.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index f14aed14b9cf..23005f1345a8 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -564,12 +564,9 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		}
+> 
+>  		ret = ext4_orphan_add(handle, inode);
+> -		if (ret) {
+> -			ext4_journal_stop(handle);
+> -			goto out;
+> -		}
+> -
+>  		ext4_journal_stop(handle);
+> +		if (ret)
+> +			goto out;
+>  	}
+> 
+>  	if (ilock_shared && !unwritten)
+> --
+> 2.46.1
+> 
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409260928.qBlg2dBU-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/thunderbolt/xdomain.c:703:23: error: use of undeclared identifier 'dir'
-     703 |         tb_property_free_dir(dir);
-         |                              ^
-   1 error generated.
-
-
-vim +/dir +703 drivers/thunderbolt/xdomain.c
-
-   645	
-   646	static void update_property_block(struct tb_xdomain *xd)
-   647	{
-   648		mutex_lock(&xdomain_lock);
-   649		mutex_lock(&xd->lock);
-   650		/*
-   651		 * If the local property block is not up-to-date, rebuild it now
-   652		 * based on the global property template.
-   653		 */
-   654		if (!xd->local_property_block ||
-   655		    xd->local_property_block_gen < xdomain_property_block_gen) {
-   656			struct tb_property_dir *dir;
-   657			int ret, block_len;
-   658			u32 *block;
-   659	
-   660			dir = tb_property_copy_dir(xdomain_property_dir);
-   661			if (!dir) {
-   662				dev_warn(&xd->dev, "failed to copy properties\n");
-   663				goto out_unlock;
-   664			}
-   665	
-   666			/* Fill in non-static properties now */
-   667			tb_property_add_text(dir, "deviceid", utsname()->nodename);
-   668			tb_property_add_immediate(dir, "maxhopid", xd->local_max_hopid);
-   669	
-   670			ret = tb_property_format_dir(dir, NULL, 0);
-   671			if (ret < 0) {
-   672				dev_warn(&xd->dev, "local property block creation failed\n");
-   673				goto out_free_dir;
-   674			}
-   675	
-   676			block_len = ret;
-   677			block = kcalloc(block_len, sizeof(*block), GFP_KERNEL);
-   678			if (!block)
-   679				goto out_free_dir;
-   680	
-   681			ret = tb_property_format_dir(dir, block, block_len);
-   682			if (ret) {
-   683				dev_warn(&xd->dev, "property block generation failed\n");
-   684				kfree(block);
-   685				goto out_free_dir;
-   686			}
-   687	
-   688			tb_property_free_dir(dir);
-   689			/* Release the previous block */
-   690			kfree(xd->local_property_block);
-   691			/* Assign new one */
-   692			xd->local_property_block = block;
-   693			xd->local_property_block_len = block_len;
-   694			xd->local_property_block_gen = xdomain_property_block_gen;
-   695		}
-   696	
-   697	out_unlock:
-   698		mutex_unlock(&xd->lock);
-   699		mutex_unlock(&xdomain_lock);
-   700		return;
-   701	
-   702	out_free_dir:
- > 703		tb_property_free_dir(dir);
-   704		goto out_unlock;
-   705	}
-   706	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
