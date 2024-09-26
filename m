@@ -1,65 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D76914B94F;
-	Thu, 26 Sep 2024 12:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0E5156875;
+	Thu, 26 Sep 2024 12:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353510; cv=none; b=ltZjDO+P1RMsJ23tkdCXkEV2jK6qJ1gDglYW3OE7dCllRfpEB1P6uWBMehTCAawmDSopp9jz5Q80bAOgkMMeWQ4D+kbEC/CzYvU5wg9KodxyHfP3rifEwBYVal0OL4VZxjHMpFTffevsmc3XWnnzIQNFlVx1FelBQxQReCBJFbM=
+	t=1727353659; cv=none; b=JXg0JoQrRWDf5Mu6L6nqBGfubdXm4xnK4U/QuCv1ZYkGA5UOs/sdG8FIKQeOtr19NDmHfW4Qqk7jJV8Rxd6bi30FhMs9GeNWqZKpReffZFu/ZA/Y3/06qhAnN7hteGUZph1armYsKNiE3cT1L5vsrq9ImhzbFZQuyhYmiu2zW8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353510; c=relaxed/simple;
-	bh=FnqH38wRAkVp3EZR3XksgSm/cQELxvlbKSkl27m+g20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rrI0NnIqohl5V5jJwyEHcjK/BmOic3dA8Xin8vEVFFWBDesgpNc/rSUzpXVCOYHDxVxFWiN1UAhhS9B8cCQtPZFSHe9X8pWDEQvY3/Gu0IQfhGrd3WpPVL7/4CIHEhUQk9DtjMlR64ade4499xMCG++IvRIFYfMKPjqCMnNPeVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRoqJKeq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727353659; c=relaxed/simple;
+	bh=YnO8jzSwusUqP5MrbcUGwNCHwAl9f2jDtgahK2k07Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ix62nOlOlrm35B1drG98JzFyK5exgMfx0J2WPmGTWe5+hwAedDZEaUf2Wdc1Ax7Iz1eyUQ5XNWg6dleB7+ipJWH1E45kJ0OwL6tVDZfNjvppj+uwWjIR9WBFgHtThCIuzEGLoc+V//ciGWjSb4QlQ0MMLpsIFGrrbDQKWyXSjWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ifVOkBFs; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRoqJKeq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A596EC4CEC5;
-	Thu, 26 Sep 2024 12:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727353509;
-	bh=FnqH38wRAkVp3EZR3XksgSm/cQELxvlbKSkl27m+g20=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KRoqJKeqZQKGjYxZGqI+vXuvVmUsFs/uWMQSD4pgi6db0n9u2XseKMBWB3qcwNAZ0
-	 iY8Eb+72VLdlsYSNbPPS5pMY3Wfh35+MU0bdqVN3njTHi22TYwn4dh/BXpWiykq6++
-	 39z6hC8sayZlfcdcD+ZkA10oYlBXGIKSGDnGxk16N1K67PXTvRcIAII0f/BVdP/1Bh
-	 Ew3kiL9yFjLwbKm7jxOFf+9/Q9IQ+1Vr0ZMkCOBUAoXXy5J38VGsUHTr9wocW8rQCA
-	 1USiosNVW9COTIIARgdc+VKRPCEvl0eWAIWsf+Yy+oxan9YmABPyoG1Xb2DQslMS/F
-	 VL/abInkJlKxA==
-Message-ID: <e314597a-a779-473d-a406-b233efad2e23@kernel.org>
-Date: Thu, 26 Sep 2024 15:25:03 +0300
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ifVOkBFs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727353658; x=1758889658;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YnO8jzSwusUqP5MrbcUGwNCHwAl9f2jDtgahK2k07Qs=;
+  b=ifVOkBFsHWWuvGt5xPGGmfR+z+fp/VdDFltHVrqice1W402H0cj0c/Yk
+   MXXxiiZ3dlc0/mmecO/pEGC6nZhLCw8kbvrssTV3FYFTL3mLRLL4yg4Ud
+   kMqlkHhwOzNgpkcpW3kMVfWNDVsVJ+u1TyxdTgNUdSMjG1hHGOKESTQu6
+   hfixUJJEKDKjVoiQrCgAxvXBjIHj5JZfkyHmv+/puMSUTyNd1uv7hWFgP
+   Mu1v1ofl4UDrE/2P3kbCl7D3NFyCoNspCq4uXACvBl6kndoUpFIcGRfsL
+   aQYQwIWkczkoC6HE58CtpUY/j2vpKht/ermHMzdgvA5nSe5AIi8JZgucw
+   A==;
+X-CSE-ConnectionGUID: RWCEJQ/6Rmql6rmVW3R4tw==
+X-CSE-MsgGUID: 7+nQZ3xEQMKfzAt8WU0kaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="26309735"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="26309735"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:27:37 -0700
+X-CSE-ConnectionGUID: DdVHgut6RUqt5LdzA9CnAQ==
+X-CSE-MsgGUID: obOfpQMVTlSJ1ji0jd+aqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="76907851"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 05:27:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1stnal-0000000DC2k-1uEh;
+	Thu, 26 Sep 2024 15:27:31 +0300
+Date: Thu, 26 Sep 2024 15:27:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org,
+	Ajay Gupta <ajayg@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Haotien Hsu <haotienh@nvidia.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Utkarsh Patel <utkarsh.h.patel@intel.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code
+ in two functions
+Message-ID: <ZvVTMyn9VtuT-tIr@smile.fi.intel.com>
+References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+ <jjsbnitbajdw7dc4plkbb55ezl2cdbnrfws7hnoigbzasvdzua@puhrwwlu4lvv>
+ <ZvVPlInCFajkeFy9@smile.fi.intel.com>
+ <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
- cleanup code
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Julien Panis <jpanis@baylibre.com>,
- Chintan Vankar <c-vankar@ti.com>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- Grygorii Strashko <grygorii.strashko@ti.com>, Simon Horman
- <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Sep 26, 2024 at 02:20:19PM +0200, Dmitry Baryshkov wrote:
+> On Thu, 26 Sept 2024 at 14:12, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Thu, Sep 26, 2024 at 12:26:24AM +0300, Dmitry Baryshkov wrote:
 
+...
 
-On 26/09/2024 12:50, Dan Carpenter wrote:
-> This error handling has a typo.  It should i++ instead of i--.  In the
-> original code the error handling will loop until it crashes.
+> > but in any case the thing is that kfree()
+> > probably can be done using __free(). Then PM runtime handled differently.
 > 
-> Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> That's a separate cleanup in my opinion.
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+Yes and for that we do not need an intermediate change, right?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
