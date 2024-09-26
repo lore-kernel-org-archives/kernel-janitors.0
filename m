@@ -1,99 +1,114 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1934A33C5
-	for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 12:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFB63D97A
+	for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 12:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727353916; cv=none; b=gb/sMQbzni76CRN6eTA82RpgusT6h1+EAyUGjWmiImYAJwLTIhz8XdoC+jY1na3ozgGLYNgdHURedcGZx6MDy1K698AmWksrP6OyYzrzalp+I/mesGDu/sLZoyQfA+8a4Uz9Fy43Y4nyKlU1PN+FAlStYoS7CZE0t0t+dXYOwXM=
+	t=1727355318; cv=none; b=qcx7MikOD5MEXyTZesTIuGnL91wBYxQPpP+dl81AMWJEBQNF8fuhLKCtd+DDCeKyGvMdKD3cDXW8imsSTbIZcW/q+zag+104cGim5TwJ3Vnkv0RE26UVCABaR7+dizsBH4rbqyco4XHMnqLwUVDGgzMowEKXLugeDMViOWkt2HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727353916; c=relaxed/simple;
-	bh=mCthW15WhI930vnar/bIOU0gxyKjH6j4NSrfELJCAek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bkmR8S+593s31u2HkQ0ZzI2fka/Tiny593hXsW25S/SGhEt6fvEkiliiUJEHyJQHwtDw6JArigc8Fs20mXE5fYVWb5JdM137n1lI2IgLHp1n71B0Vl7W9r8p0D7CrxljLstH7n5RFoPLaye50H9Pe9Ii1QHE2W5SW4H0QPeIU9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X07yFnFM; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727355318; c=relaxed/simple;
+	bh=DQpzIFRv2X+ZRDlASS8Vf6j+iX6bv1wZx21j0KMV81c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XOJ7vsOi1jWYBbSgvwTec2f5gslMbkqnjzpyHtCs3NkvNWkzqnhb+UGBfVOIIB0bBOEUQLkEdsnejh5ogtgj/+0Ft+GI6GiH93QFmu+RgGHojpI6U7nKW3hMZ0H9UjbsMS1+ow5A4BpeB8qOSPZ2z+IYhVQV9cUMo9dQkJ6Ou0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eY9QPDlL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X07yFnFM"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e25d6342837so171836276.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 05:31:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727353914; x=1727958714; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4a3QtXEUpHAVm+ZK+N+HQKk1DStI8szpt5V5LT2xTA=;
-        b=X07yFnFM8BDYit6JK+glG5G2FA41NQG4MERPLj6TAg2taTUmfOMQeCWoEDmy2p8WdM
-         f3L0qw1d8MVrUdmJ+nuCXV3QqX/M2wsAIFZFiH/M2fEZtAwOMXQ0GDuVa+OwavmA2vZm
-         PKdsfk7vVLBKgitTl/klBomW3MuJZ5re2YjWEqDPjjWmtcLQf+YkwKGUJnJ4AecUsbTT
-         kIqL1GDBBNkaUsAkOh6cHyua2CO6h4lLVcvxnh/B2TA+rwnJvyFqXqcILhuXTeawnN5C
-         sWh/OSsZN5f5+CzPMC/RUFS+nIcxx498qPnRA3uPZep97XfcOsb9xVqcNkY1KE0ltBI3
-         RBbQ==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eY9QPDlL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727355315;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pLZMSHP2cc3IT88lpSxgsA3n5ydL69p15Njb5n67I/A=;
+	b=eY9QPDlLWylvqS6EsWGYKM+wzr1woGiFn6OtGWTMf5cQoh7NrPN7MYHaXrawNZ9s1894tH
+	E08jpErNIqWVOMx9Djfb0iuTa2u97qJiNiAj3KgTscLxqdvqpsC70hEgjopGwV8S06VkwB
+	6PRjfr5Dvce5n61Ygt/6Av7/FGwRBBg=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-477-WqmGBD61Nzius6D0GsfCrg-1; Thu, 26 Sep 2024 08:55:14 -0400
+X-MC-Unique: WqmGBD61Nzius6D0GsfCrg-1
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e03b3f48c65so1314079276.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 05:55:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727353914; x=1727958714;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1727355314; x=1727960114;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=u4a3QtXEUpHAVm+ZK+N+HQKk1DStI8szpt5V5LT2xTA=;
-        b=pBAc0Ff9uVRbbMzy/ux7qv8UhnpWT2R2Wq/1/FdLOxboyUCZC7wAcnK7b7JXmUWi04
-         z9RMvt1LrgwBMCo2ogKh5LlSlC3ewrkqsVRckFvnP2ViWyr8QvnxGjVGWw0j7ZEI/Y13
-         NFxUMhGF1aaQe3dZiej2dK5GtjTkn0ElANWdLNr/6cqjafIrioZDelJ6pUJ47S6aL9DF
-         IbTlT+fKG1LY8/KAv54XMuI1MUHzQUn+DxNSVAW+sTtDgRb55x+k8SupwhnfhTSNJ2vv
-         XaRS72WbGUm7BZWF0tpbNsO17arAen8b0jyiboVM2sH1NgHsjNbOglmBWv+ovfq3rLBo
-         aw6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUTEoxWeiAAnlEwp8AkO/HfXG2uO3/6wiEsgK6JfDw630zW8/b65tihL9aJw39Ma+ezL3wnx36+xQpSelLK8AQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg+C+8Izztv8+pIkCMM5o9c1pI0dcMsMzZsZUmoF0M/U392PsY
-	mOLrXoQmglg9fXPYhuJY0/VTu1Qh5aphJkH6sWJWOUVrFwBl/q8zp0Ck8/AxuGWs/QcfM7y09xH
-	vrMXARbwBWkPx6e5Kp+A86Cu4kjuDhanVLY7huA==
-X-Google-Smtp-Source: AGHT+IE29PkpeUSyt7nuSyGgj69wjdmICcREmjZKRDgH/DNSmFafaP1zk2QtLSNTp6vj8RrxGQTq1KdSdrzDhYgGe2Q=
-X-Received: by 2002:a05:690c:6789:b0:6db:d5e8:d612 with SMTP id
- 00721157ae682-6e21d86349amr48398477b3.23.1727353914042; Thu, 26 Sep 2024
- 05:31:54 -0700 (PDT)
+        bh=pLZMSHP2cc3IT88lpSxgsA3n5ydL69p15Njb5n67I/A=;
+        b=MnPA9NIVqPQxyVycF41lQKPZW1fOJ02WeGVMQKq8WhqESmLbCFRiD03amG/BqkHK3s
+         AtuzokENUSs9tymBNFDqXMS35UBsVnoQ4r4ekCTKHzsiPFRkV5xVOYFa5qahGy7EVeao
+         swanFwv+VaIerMREvdLyS++FK9PnNNP6VOWNcBunU4D6MX36lp6yS953WzeBmTvFFpm6
+         0xepr9ez8oMtvWlIXD9LF2be7rWiG8+C2rjbbNqdGLhaTeShP9GCC15JuqRs1Gm/Ibby
+         dKWIcKgf4husZITtj2asNy4f+W11+Mg/bdGXx1QxJ59WoUHhGo7wHA22kwvBol+25pb9
+         IAcg==
+X-Gm-Message-State: AOJu0Yw6F2rtOK/3trXfSD/LWGPFDeO/96L3yQ2JEQsDmgNhXRxvsHvZ
+	HF6ky8mW/D/4gGp7T1mchdntq2M7wbvp50fjwMdCRz+chvKB3IZhHfR6INLfJ62OmAsFMB5PBPj
+	VPtlaBQra2kB4oWgZbhy2qII4TlZ5zCvCm5nF6LDBVDEPwQTNJD8aGCb8hOdqan9GfA==
+X-Received: by 2002:a05:6902:1b8d:b0:e25:c961:8bce with SMTP id 3f1490d57ef6-e25c9618d57mr2467503276.30.1727355313962;
+        Thu, 26 Sep 2024 05:55:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFG5ELDaKDmWytABuul86IvEV6NZ0mV6LTYIjO2keZp9W38l4fv8LRN273INdoNj35LCV73dw==
+X-Received: by 2002:a05:6902:1b8d:b0:e25:c961:8bce with SMTP id 3f1490d57ef6-e25c9618d57mr2467479276.30.1727355313616;
+        Thu, 26 Sep 2024 05:55:13 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b526a0bf6sm25561021cf.88.2024.09.26.05.55.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 05:55:13 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] irqchip: Remove obsolete config ARM_GIC_V3_ITS_PCI
+Date: Thu, 26 Sep 2024 14:55:02 +0200
+Message-ID: <20240926125502.363364-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b890361e-e99b-43da-8571-7478b5eab475@web.de> <jjsbnitbajdw7dc4plkbb55ezl2cdbnrfws7hnoigbzasvdzua@puhrwwlu4lvv>
- <ZvVPlInCFajkeFy9@smile.fi.intel.com> <CAA8EJpo0Q0Wn-GzqmPeNFfG_Hr-o8E7F_VuO47EbxKx=0OQhyQ@mail.gmail.com>
- <ZvVTMyn9VtuT-tIr@smile.fi.intel.com>
-In-Reply-To: <ZvVTMyn9VtuT-tIr@smile.fi.intel.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 26 Sep 2024 14:31:42 +0200
-Message-ID: <CAA8EJpoqm_n-WrQq+77wStCxVMU1ysQthStReK3kS3MaMaYSUA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] usb: typec: ucsi: ccg: Adjustments for common code in
- two functions
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-usb@vger.kernel.org, 
-	Ajay Gupta <ajayg@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Haotien Hsu <haotienh@nvidia.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Utkarsh Patel <utkarsh.h.patel@intel.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Wolfram Sang <wsa@the-dreams.de>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 26 Sept 2024 at 14:27, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Sep 26, 2024 at 02:20:19PM +0200, Dmitry Baryshkov wrote:
-> > On Thu, 26 Sept 2024 at 14:12, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Thu, Sep 26, 2024 at 12:26:24AM +0300, Dmitry Baryshkov wrote:
->
-> ...
->
-> > > but in any case the thing is that kfree()
-> > > probably can be done using __free(). Then PM runtime handled differently.
-> >
-> > That's a separate cleanup in my opinion.
->
-> Yes and for that we do not need an intermediate change, right?
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-I don't have a strong opinion here (and I don't feel a strong need to
-move existing code into using cleanup.h just for the sake of it).
+Commit b5712bf89b4b ("irqchip/gic-v3-its: Provide MSI parent for
+PCI/MSI[-X]") moves the functionality of irq-gic-v3-its-pci-msi.c into
+irq-gic-v3-its-msi-parent.c, and drops the former file.
 
+With that, the config option ARM_GIC_V3_ITS_PCI is obsolete, but the
+definition of that config is not removed in the commit above.
+
+Remove this obsolete config ARM_GIC_V3_ITS_PCI.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ drivers/irqchip/Kconfig | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 341cd9ca5a05..d82bcab233a1 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -45,13 +45,6 @@ config ARM_GIC_V3_ITS
+ 	select IRQ_MSI_LIB
+ 	default ARM_GIC_V3
+ 
+-config ARM_GIC_V3_ITS_PCI
+-	bool
+-	depends on ARM_GIC_V3_ITS
+-	depends on PCI
+-	depends on PCI_MSI
+-	default ARM_GIC_V3_ITS
+-
+ config ARM_GIC_V3_ITS_FSL_MC
+ 	bool
+ 	depends on ARM_GIC_V3_ITS
 -- 
-With best wishes
-Dmitry
+2.46.1
+
