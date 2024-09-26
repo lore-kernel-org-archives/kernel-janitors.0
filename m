@@ -1,109 +1,118 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3339149634;
-	Thu, 26 Sep 2024 14:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275014085D;
+	Thu, 26 Sep 2024 14:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727361076; cv=none; b=Ny/38HPv3fM5RPkDXl8HQF/TEHH3H2qYguX4JSVN9se/7CjaRwXRGILsDhBeonFAGZFoP42RN1FcXjWAMQgYQdjLf//82g8aRgzO1BZCX54Sj2NTe4rPc+cfIT/gvszYBIInyVMat5JZ7AXX8O8B0hpHgnl2sfRRIFUytHrkpEU=
+	t=1727362431; cv=none; b=hQ1jGtGjznwid2V4o2D3/OwRSwNlXY/GJ4TR5phUrXyvNKt8SCnvhpb9iOAohbuwY11F9lFqL9FuXAa0QkBEE3oii7F9zk5a2ORbV9FhXVt/2BcbbYj+8O8PJ3fR2SO3/zlMlFdlOehonX3nrEfPXMOOKQbPGerKBqvg+uFwBd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727361076; c=relaxed/simple;
-	bh=Sabgc5v/So0A5uVMnvea8Vcf726GDpsoTHPYwvZEF10=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OIkzBUrXBKpUIHTq5TllxA86YhFVilcKQVYlj/ekK5fxEqWaKzcR+tO1SKE51pJkh5LsGJdtRvcTrMaamz8rETnvRd3WdcyVePrMWrc+SIRKc4QlUhEhjj07YB4jmkiYgTf4OBG4q4nTeaTWTtkS8r+8yt2cDtBypn200LvmAlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=u1geOgDp; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727362431; c=relaxed/simple;
+	bh=XtruzNw/WcaM8w7TPDqDyCX+r4bbPswhk/xGZfsC/BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Biq/d+nVPO5J56QZcMGh7k4HTh++XPwmf+w4kaPGT5ZhuZiEiPMIe7uyNWyrFCxRPywSW0wxeNDhM+cTBiOZdI+sMkAyZqTFepATj9b16Epp8ItW/6QwXFuKD5wv3TlTiOXUfOjQu/CkQK2Euz9+lZX4OHcspdGUe1R+CjCAS7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O2IL8Zqj; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u1geOgDp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727361062; x=1727965862; i=markus.elfring@web.de;
-	bh=ZJwusmbK4oS5wuQQMMPIHNFuAFmP9yk4XXtmG/UEE+0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=u1geOgDpbmsLpnIOWkwaQ3NDuZoUuoYFUIp5xGhRSJLZfFuTqeZdjDV0oRdpgcgM
-	 mEX+ifQ0ezdVZYLUcyh/MjfttpqnyRrV6V8OB9VzwxXuXV/pRPf/4+Qa1+jdRR1yP
-	 Js1fVmbka3yVqMHhWYwx1muUDCNSN7FTuFgij80Lz4bWTWS8SlFJ8m4wzeVmTkzEw
-	 lFZQyJQ628wZoPaATC7cnC1CAg1kOfXjfhNNx1whO30kP3nl03K3biQT4bXusw2dM
-	 YuNQYZnJeHbpEKtQKCM4IiZWtGjKl5i6wX8nR9ihNEzZO+GrPmE0pm434nSXbgMhb
-	 byEc7aNtWnJyYU29hg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MREzO-1sWeN02tV6-00OsAf; Thu, 26
- Sep 2024 16:31:02 +0200
-Message-ID: <8dd92d0e-ea93-438b-938b-e966f6039ed0@web.de>
-Date: Thu, 26 Sep 2024 16:31:01 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O2IL8Zqj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727362430; x=1758898430;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XtruzNw/WcaM8w7TPDqDyCX+r4bbPswhk/xGZfsC/BY=;
+  b=O2IL8Zqj60aQgIoozfw93anMT5jGFCRIntTWbEGH+6s5D0F9gyfG1569
+   3LIDv/s39tU7jttIWTtfZi48/qHqh9f4CDOCsCzfrq1VudcG4Q47XOPtb
+   PzGnJVwyVpNTFaoyYXm/fVaWKxI/GWPAeWCLPekCmCGDr0lxdMGYj71Al
+   0nfgjVMN2Oh4dK0iC6wYdJdbt5PKna+ktCRlxQQYsx6Pi/d3vX2fvKhPd
+   Ptwy3+JC1GzvxQ8kEYZOKSdTSYDMrrn1oTn3DrTnr7GiM5elAgQvZB23l
+   bCtVjBXrhA32aAmlHntfEq3BPd2oCn9tT2kCPq/v+eNGAokxnGQd9GBEN
+   A==;
+X-CSE-ConnectionGUID: T4xN9fQbRgGR9ykX3u06+g==
+X-CSE-MsgGUID: A7iMAc9jTzyECLLq9QqgnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11207"; a="37133823"
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="37133823"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2024 07:53:49 -0700
+X-CSE-ConnectionGUID: 08tJRF8tRtSIaChfgOSgjQ==
+X-CSE-MsgGUID: S6kjXJtCSOmOpRttyAzDCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,155,1725346800"; 
+   d="scan'208";a="72626084"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa007.jf.intel.com with SMTP; 26 Sep 2024 07:53:45 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 26 Sep 2024 17:53:44 +0300
+Date: Thu, 26 Sep 2024 17:53:44 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-usb@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Haotien Hsu <haotienh@nvidia.com>,
+	Utkarsh Patel <utkarsh.h.patel@intel.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] usb: typec: ucsi: ccg: Use common code in ccg_write()
+Message-ID: <ZvV1eBoM95w3mT8A@kuha.fi.intel.com>
+References: <b890361e-e99b-43da-8571-7478b5eab475@web.de>
+ <983e8bde-513c-4053-b33e-06a1b10eef87@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-trace-kernel@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] tracing/fprobe: Call trace_probe_log_set_index(0) only once
- in __trace_fprobe_create()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PRkxs00Gtyqm4oEEhKyNnCEpTncC0rnKKNlhLe40FU/wwSK7BDG
- HxEMagkc46Smvl0Tx3ykh6bajxDxjksEUf5RyQAV4LhLlCi0iphPN7wKljeKipgb4tUI+iE
- P3sx++nWFpVxGb3nXQecWY+2Xd7+BiPWTxGIDj2+K5AIAQ8Hw03Oo2hiF/yVmQ0EWgGzJOw
- gQj2HrtTN44h2JigX5DmQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:QqUJ//M8LFc=;9uFhqoq52RpnuEhNefxoBivKYze
- ehRCFt7llLSmAhurP7LamBQtoNympR7LyIWqwBpTPXu9gHrdTffAA30UXk7gIDyVqD/7dPYZK
- dgB22f1leT9heH6bk4TbnV9tY22M3MLxOelnTn06YTyEVCQ5gI4lSd4ex8bIACSivrvsaHJs3
- zm/YUBSKzW4VXGGgysgOowEIh6ZJuz+py0MeSamWdPIYszzo1rM6rlFN4ekm63RoLAPJ6NPDT
- YIPbPeKl31KGGgPTXnJ1CMZmdbn8xoV46GJCZxICGIO8RB++m/SHNbBEVI8LM0divIb7y/bfL
- EjW7FYbe9x5f+KH04IHs/QrGoJJLNYf4oj95ZtneUJcze0tS1C/ks+bMTSlHNmilxaf6yyPYu
- ALXDfITdWetLUibATdZQro5Xtfc8HLvWFjROBmijAfSc0wjO6hfB/8B8+GlXVGU4w8ZCbXjDQ
- Crna3IliW9vLdPfVfYKzZDSA+CQ6ZIlPrBq0HCaXqUGcdKarZO0X951Zip0IvlWlrnjhcx8le
- NtEB8w8JtLAxItWsmD6XBBhSgXheZOwIjz5AOmH8yTzb9XiKSmYQhm97V84zWWUt1aLtXxAD4
- kU2/y7+qAKDdukCTYawPCItQsR2u46ShOhSNY8tPgzdH5trUfu5uBs7v+VrxiVcXeGHNmlOSo
- YpxFN+6ykPMPPaf1jZc1CeBpsWJn7RMXygpXHH0Q82fWa/nQ5owlKELMIjhUe+XKJjqk8wKH8
- HOQPoHak+bhsnnn34zHDav10CCwJGMT5/aBTzgoBYc39vHZa03InLn7PhhWL0gxKe6pi0IHS6
- 3lP1tlKvbpkUXJ7YMBNVC3DQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <983e8bde-513c-4053-b33e-06a1b10eef87@web.de>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 26 Sep 2024 16:22:32 +0200
+On Wed, Sep 25, 2024 at 07:32:32PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 25 Sep 2024 19:00:23 +0200
+> 
+> Add a label so that three statements can be better reused at the end of
+> this function implementation.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-A trace_probe_log_set_index(0) call was immediately used after a condition
-check in this function implementation.
-Thus call such a function only once instead directly before the check.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-This issue was transformed by using the Coccinelle software.
+> ---
+>  drivers/usb/typec/ucsi/ucsi_ccg.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> index b3ec799fc873..ed075a403d87 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> @@ -306,14 +306,14 @@ static int ccg_write(struct ucsi_ccg *uc, u16 rab, const u8 *data, u32 len)
+>  	status = i2c_transfer(client->adapter, msgs, ARRAY_SIZE(msgs));
+>  	if (status < 0) {
+>  		dev_err(uc->dev, "i2c_transfer failed %d\n", status);
+> -		pm_runtime_put_sync(uc->dev);
+> -		kfree(buf);
+> -		return status;
+> +		goto put_sync;
+>  	}
+> 
+> +	status = 0;
+> +put_sync:
+>  	pm_runtime_put_sync(uc->dev);
+>  	kfree(buf);
+> -	return 0;
+> +	return status;
+>  }
+> 
+>  static int ccg_op_region_update(struct ucsi_ccg *uc, u32 cci)
+> --
+> 2.46.1
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- kernel/trace/trace_fprobe.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index 62e6a8f4aae9..752d1f163258 100644
-=2D-- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -1047,13 +1047,12 @@ static int __trace_fprobe_create(int argc, const c=
-har *argv[])
- 	if (ret < 0)
- 		goto parse_error;
-
-+	trace_probe_log_set_index(0);
- 	if (!is_return && maxactive) {
--		trace_probe_log_set_index(0);
- 		trace_probe_log_err(1, BAD_MAXACT_TYPE);
- 		goto parse_error;
- 	}
-
--	trace_probe_log_set_index(0);
- 	if (event) {
- 		ret =3D traceprobe_parse_event_name(&event, &group, gbuf,
- 						  event - argv[0]);
-=2D-
-2.46.1
-
+-- 
+heikki
