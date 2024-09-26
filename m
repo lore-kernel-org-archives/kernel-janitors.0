@@ -1,90 +1,103 @@
-Received: from msa.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA4C1534E6;
-	Thu, 26 Sep 2024 18:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA8417CA0A
+	for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 20:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727375648; cv=none; b=OYIUEvV+hFqgtrV0qLxnnLPJvUUlI1Vn0RiSazqQlf9ORajuDmMZDnUQZTuEiJ1LAWx9XzfeJ/C+0b4zjtI+38KplxJQg+MaojDneEtMEUrkr59zqPL2wILiVewafEJzFIT/DgvHKDE7jcgJmMacOTUg87CoOylkY4PumPx4mgc=
+	t=1727381656; cv=none; b=Ug0ygnyfh/9KodQaUUatgxlUdb8hPT0SHjCrDG7n1GRGNvKsb611aL3nwXzDXY1/QV+9lJyoDYXgHvINUhWXLJTM6nETE+jWwDbB+M8SUQk/zOz0+1weCThXd9BYYzgYrC/ucGFMywplZ7kCS3ZufG5irtPKaGjpF8RPrdJY2cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727375648; c=relaxed/simple;
-	bh=3iuHCMpCaY/5WFrJneLSrvAgOGDV6yGyGWwA8luU3GI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NubtrGF1sQM1N3vwrf+EUrg8PRKm/v/eBB2zxceTiMIclKzvruKWMJAZGS0JyrOaOUSTFjisic9d9BdXbD3sGqDjv01w2e4WFwfFbOosCAxgj0tvG7wmfd3r1/5yAWJx7Nwp16j3gCeEZaC1/R3Aj12L0zjgT5Im9CBW1f3Oisk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KuodYhZL; arc=none smtp.client-ip=80.12.242.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1727381656; c=relaxed/simple;
+	bh=SywJ6IY4/ZKra54DmIZi64FJeAqVuZ29u2cS0EvQAT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nuxTCZOSfc3QMXDFDENzKitGtAPoKDE0rdamj40mz4O9cp2gOSv5wLRu6hcpmeK2rZClQbuQYg7ymO7lJkZXEWStmgdTqMQyACSf69onpPyZVyIFHvLfFZVPsYbO1s3jyrwWmd4Wa6J47nVoMngmW7c3/2vPLnXCWToA0ZUeg/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h/6Ib0Zv; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KuodYhZL"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ttJMsN3PhfghUttJMstZV4; Thu, 26 Sep 2024 20:33:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727375637;
-	bh=3QlM06zztQktN3NIJ4DxdnB67HniBEmCvi/NMR3NrVA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=KuodYhZLbK4ZwM/vRiKVcRr+eCUZHWcwycWMRPW63AFa5JtMzyAhZ9aOCFOpkvq9A
-	 Z3PCZBnRBd5eLqYNbVvCCcUfSBjq0Y8xjfe6JIUqxl2PJjs8IJOqd2lsBNN2wiNAdN
-	 7KgSUgrYFEhT/8eyy9bkLTQXVUiZP46KifQwWNMtS0KVQyZmoGIwty/mQVVQ7G4OXM
-	 7z/WfWuuj9haGD92O2WG4Rb8uB4/fsMqD2QnTRE6ClNg97AggiRis54/Ty0I8YTKSZ
-	 OoaHlyz5fZ4+86NlJr6hUj0sv6GjNQtsdBGuQPiBOr70cIP6C5ooN0Xz4GxPel+C6E
-	 u5ZKrk24ih9yA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 26 Sep 2024 20:33:57 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Georgi Djakov <djakov@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] interconnect: Remove a useless kfree_const() usage
-Date: Thu, 26 Sep 2024 20:33:49 +0200
-Message-ID: <06630f9ec3e153d0e7773b8d97a17e7c53e0d606.1727375615.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h/6Ib0Zv"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cbc22e1c4so11673685e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 13:14:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727381652; x=1727986452; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=adNp+ex0aTTFAqiWEedrw/mOZftL/ye5N6g7vAI0S0g=;
+        b=h/6Ib0Zv1Qywp9YTBqrFaOk7L2Qcd9IMpfc5FotB22f+1oRgnYJ/j/DtPcdlSqup+3
+         ygN71C1KgfZtMLp6bLNIlYG1Pb/Ds0gsGjyHKgCbxQj7d/Z+JgK+Uz0+FAE8OHpwm/p6
+         sMojjiOsU+XvfNC7NLr2b/9ZudJVMTxUQ+ZqIeQUigo2f1jSpY4AanF7oyo69Bj+Q6tX
+         cOBZoqzbXEl7FALaQ0MQn60KmdDenZMb+NggDpQuHmjKjLFGPkWY7/DchaYRJ9x+AgkL
+         JOuTTiQ8pq+8EHhkO5lfGmSVtyNAx+W853wtoJm78bqELph437Kigw0N7uu2WHOHCV7a
+         p00g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727381652; x=1727986452;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=adNp+ex0aTTFAqiWEedrw/mOZftL/ye5N6g7vAI0S0g=;
+        b=Dt78UhgB/hMbkzqgWXqZe7QFG2YGhvQGdMzaZpYRfpNCNhxVgR315mSs/Beqxj6K/F
+         nNC6/7ryjwVdBabpDB+8jeH9M1CJGcIdf5+Be2vEw946CXuRmjZ9U/dxwBOlMF9LVg0S
+         OpBg2KyLbmw9PdUqKmwYgMvQLfK8IJleQduVaiOnjnSRrnui2a+0XvTkZmV3JdkfWrS4
+         9AjOOz5+A996coAO6BQVAJbdL7KaeCff33Az/H3ULY3rxcwrdaZ87YMx+O+xvtAaeaxy
+         UuHec+BF9wNofNRiDo8qNDRu+i28AqymrvfMNQWvQMQh4pwXyMK76r/4rEo1rWS22BlB
+         f5+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVCAqxtdDbxiNiwAqttcpsTtZNyMcKUC3RDbdRI7TK84NY7vXqxwi3hZb5m1KERDQ9PO97MybJZI34COfqjQyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRJVXnCT9bbCi8uIyYjFEmz+PyWHeLnJnoVmBlRS5b3QLa6jSX
+	7XV3P/BN9V2T+E9x39lIt4MLgh4LWWMptaNLRBan01Ei6Qg5qRBew4Vn61hUqO4=
+X-Google-Smtp-Source: AGHT+IHAVUKzMTH3MGv+LwYbAamyJU3xln7iWwZfpcoO7AqGhQqz3MkJaGIrNcTuk0zibF2YaiT2bw==
+X-Received: by 2002:a05:600c:3b04:b0:425:5ec3:570b with SMTP id 5b1f17b1804b1-42f58497da0mr3800515e9.35.1727381652444;
+        Thu, 26 Sep 2024 13:14:12 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dec19bsm8350185e9.26.2024.09.26.13.14.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 13:14:11 -0700 (PDT)
+Date: Thu, 26 Sep 2024 23:14:07 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Roger Quadros <rogerq@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Julien Panis <jpanis@baylibre.com>,
+	Chintan Vankar <c-vankar@ti.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Grygorii Strashko <grygorii.strashko@ti.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: ti: am65-cpsw: Fix forever loop in
+ cleanup code
+Message-ID: <5ed2cd4e-cb50-4a21-93e2-8ba8d627f20a@stanley.mountain>
+References: <ae659b4e-a306-48ca-ac3c-110d64af5981@stanley.mountain>
+ <20240926155139.GG4029621@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926155139.GG4029621@kernel.org>
 
-"path->name" is allocated in of_icc_get_by_index() using kasprintf(), so
-there is no point in using kfree_const() to free it.
+On Thu, Sep 26, 2024 at 04:51:39PM +0100, Simon Horman wrote:
+> On Thu, Sep 26, 2024 at 12:50:45PM +0300, Dan Carpenter wrote:
+> > This error handling has a typo.  It should i++ instead of i--.  In the
+> > original code the error handling will loop until it crashes.
+> > 
+> > Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> Hi Dan,
+> 
+> Unfortunately this patch didn't apply cleanly to net
+> which throws our CI off. So, unfortunately, I think it needs to
+> be rebased and reposted (after the 24h grace period).
 
-Switch to the more standard kfree() to free this.
+It's not a matter of rebasing...  I guess I accidentally deleted a space
+character at the start of the first line of the diff?  Weird.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
+Anyway, I'll resend.
 
-This is not a bug fix.
-kfree_const() works fine here, but is useless. It is equivalent to kfree().
-
-Before commit 1597d453289b3 ("interconnect: Add of_icc_get_by_index()
-helper function"), using kfree_const() was needed.
-
-For the records, this patch is a clean-up effort related to discussions at:
-  - https://lore.kernel.org/all/ZvHurCYlCoi1ZTCX@skv.local/
-  - https://lore.kernel.org/all/20240924050937.697118-1-senozhatsky@chromium.org/
----
- drivers/interconnect/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 7e9b996b47c8..8a993283da82 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -808,7 +808,7 @@ void icc_put(struct icc_path *path)
- 	mutex_unlock(&icc_bw_lock);
- 	mutex_unlock(&icc_lock);
- 
--	kfree_const(path->name);
-+	kfree(path->name);
- 	kfree(path);
- }
- EXPORT_SYMBOL_GPL(icc_put);
--- 
-2.46.1
+regards,
+dan carpenter
 
