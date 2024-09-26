@@ -1,114 +1,119 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFB63D97A
-	for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 12:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F525258;
+	Thu, 26 Sep 2024 13:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727355318; cv=none; b=qcx7MikOD5MEXyTZesTIuGnL91wBYxQPpP+dl81AMWJEBQNF8fuhLKCtd+DDCeKyGvMdKD3cDXW8imsSTbIZcW/q+zag+104cGim5TwJ3Vnkv0RE26UVCABaR7+dizsBH4rbqyco4XHMnqLwUVDGgzMowEKXLugeDMViOWkt2HM=
+	t=1727357461; cv=none; b=A9LQYsqFczkuborGNzHaxfjHYwT7Jew0q+wP3EzaFU30d6XFG+neQmvWRi2xs2PvUe+RGosTsSSMzCA4Nkg37TVPzHcHIod4CMNWWim1GQPJiMIJdFtslELMbhEkF4Ca1Dc3NWIViETkNtIqTygYshDapw/rY1FQpm6m9DC0/so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727355318; c=relaxed/simple;
-	bh=DQpzIFRv2X+ZRDlASS8Vf6j+iX6bv1wZx21j0KMV81c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XOJ7vsOi1jWYBbSgvwTec2f5gslMbkqnjzpyHtCs3NkvNWkzqnhb+UGBfVOIIB0bBOEUQLkEdsnejh5ogtgj/+0Ft+GI6GiH93QFmu+RgGHojpI6U7nKW3hMZ0H9UjbsMS1+ow5A4BpeB8qOSPZ2z+IYhVQV9cUMo9dQkJ6Ou0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eY9QPDlL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1727357461; c=relaxed/simple;
+	bh=8D2Y6WGTjAXKFg4Ac21d/3s/libBT4mfFHN/VTNVv18=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=A5jzMhxol18xtc0ASYoLsz+UVumrSmUkTScqqyUe961fxu4nSTIFcx+WZSM4FJwRgkPE7SArb1fwCfcCXxM/h6+cuoj6mXkfcpfhzPhOeFOpHvdaqpuGPZxsG8xe9lZCBEo4JjzcfGi7ujnHqrN6IjJBpXOSI4ULYsocjE5a/20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wQiSklLO; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eY9QPDlL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727355315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=pLZMSHP2cc3IT88lpSxgsA3n5ydL69p15Njb5n67I/A=;
-	b=eY9QPDlLWylvqS6EsWGYKM+wzr1woGiFn6OtGWTMf5cQoh7NrPN7MYHaXrawNZ9s1894tH
-	E08jpErNIqWVOMx9Djfb0iuTa2u97qJiNiAj3KgTscLxqdvqpsC70hEgjopGwV8S06VkwB
-	6PRjfr5Dvce5n61Ygt/6Av7/FGwRBBg=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-477-WqmGBD61Nzius6D0GsfCrg-1; Thu, 26 Sep 2024 08:55:14 -0400
-X-MC-Unique: WqmGBD61Nzius6D0GsfCrg-1
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e03b3f48c65so1314079276.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Sep 2024 05:55:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727355314; x=1727960114;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pLZMSHP2cc3IT88lpSxgsA3n5ydL69p15Njb5n67I/A=;
-        b=MnPA9NIVqPQxyVycF41lQKPZW1fOJ02WeGVMQKq8WhqESmLbCFRiD03amG/BqkHK3s
-         AtuzokENUSs9tymBNFDqXMS35UBsVnoQ4r4ekCTKHzsiPFRkV5xVOYFa5qahGy7EVeao
-         swanFwv+VaIerMREvdLyS++FK9PnNNP6VOWNcBunU4D6MX36lp6yS953WzeBmTvFFpm6
-         0xepr9ez8oMtvWlIXD9LF2be7rWiG8+C2rjbbNqdGLhaTeShP9GCC15JuqRs1Gm/Ibby
-         dKWIcKgf4husZITtj2asNy4f+W11+Mg/bdGXx1QxJ59WoUHhGo7wHA22kwvBol+25pb9
-         IAcg==
-X-Gm-Message-State: AOJu0Yw6F2rtOK/3trXfSD/LWGPFDeO/96L3yQ2JEQsDmgNhXRxvsHvZ
-	HF6ky8mW/D/4gGp7T1mchdntq2M7wbvp50fjwMdCRz+chvKB3IZhHfR6INLfJ62OmAsFMB5PBPj
-	VPtlaBQra2kB4oWgZbhy2qII4TlZ5zCvCm5nF6LDBVDEPwQTNJD8aGCb8hOdqan9GfA==
-X-Received: by 2002:a05:6902:1b8d:b0:e25:c961:8bce with SMTP id 3f1490d57ef6-e25c9618d57mr2467503276.30.1727355313962;
-        Thu, 26 Sep 2024 05:55:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFG5ELDaKDmWytABuul86IvEV6NZ0mV6LTYIjO2keZp9W38l4fv8LRN273INdoNj35LCV73dw==
-X-Received: by 2002:a05:6902:1b8d:b0:e25:c961:8bce with SMTP id 3f1490d57ef6-e25c9618d57mr2467479276.30.1727355313616;
-        Thu, 26 Sep 2024 05:55:13 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b526a0bf6sm25561021cf.88.2024.09.26.05.55.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 05:55:13 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] irqchip: Remove obsolete config ARM_GIC_V3_ITS_PCI
-Date: Thu, 26 Sep 2024 14:55:02 +0200
-Message-ID: <20240926125502.363364-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.46.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wQiSklLO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727357425; x=1727962225; i=markus.elfring@web.de;
+	bh=nOEM71AyOr4nfT0t970wYpqeIO6G8tPBN1vASVmd/So=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wQiSklLOVXr8Hhip5gGtQB5tfKog6OWPZcSiPPtHF9r6GPzBZY1SMLD+vLJEGqzj
+	 RPO3f0hS/B2YDL9OKYmoFf+VtsL7ryyEI0h7egqkrCcVkGGVCcXEQ7E261ZqSV51K
+	 f2pRiD0K4sYqBmKGo5Of7HSwl1FiQcNs3UAffgUA4cYEy6tLDw22v6Cs+YQJWYyj2
+	 I09a6WgeN43MNqveOkbBo5bGCE5CIEe3arjovykekSxQDDu9CuJv0P53cTNv2hXE9
+	 JUqPXUASJQaCeaioRqAOwbK9LLP3riOMKxuWjJPd2Tx5l0rD/W/s916dywIMlb80F
+	 JNwfrxrOONfqwsSPCQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MiuSs-1sFH9h3Oom-00hy5l; Thu, 26
+ Sep 2024 15:30:25 +0200
+Message-ID: <6c4afcdc-fa86-4f0a-a6c1-ec8265190fd0@web.de>
+Date: Thu, 26 Sep 2024 15:30:12 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: kernel-janitors@vger.kernel.org, Barret Rhoden <brho@google.com>,
+ Ben Segall <bsegall@google.com>, David Vernet <void@manifault.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Josh Don <joshdon@google.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Hao Luo <haoluo@google.com>, Mel Gorman <mgorman@suse.de>,
+ Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Tejun Heo <tj@kernel.org>, Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andrea Righi <andrea.righi@canonical.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] sched_ext: Call put_task_struct() only once in
+ scx_ops_enable()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:N1c6y1Yj0TUu9WDWBqn0PyHHTgWKUGD/64HdV190odsvuWqhLT+
+ 2/KlR2ZLWL0NXSd6WNesSyL1dUdmY0EqYaj1eanwdoeXkvtrdT7kgYDWsq4SUyEHjXJu8Oi
+ S99b/FufIRXf+mqYvqpMC19/GsTeIk6O2+U16B7uCC2H6nkqueRVAQqui9JaNHJ6KGO3GSs
+ +aHDeQCH8/R33qBV9Sg0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:R8or0bQMyog=;w7RC1hpJ5ZaVX2dTD0fS7EjxMSt
+ YjV2w71YTe/vA8fl2RP5LnW+Iwk3DIkdku0Q7JzzO6lCy9rtO0eu6XK6LsXhH9YK4VwKVeF0c
+ bh/HhNbm2Opc6wiS6HBUe1MxOtXeMFQgog8/VJiF0WCBk2lrJvD+Fy0/+kk+Io3cwyzDQJZyK
+ dkiR8s0GDBUzy5N28gyKM2EFlebGuza8kbzv5ma1xPPG3PS0STVJPh5t61GUZi7l6FYdtgGuc
+ m6HSbGY97bwDbsQcm+YjNBB8qFqSPObvTPN1P9tP7mF33/ZjTHpnvWGwplEVr4dNAA5CVbO/s
+ nYbSWBAvUqx3wkFZKJXG+qrWJ6rJTcyL6DRDPfrbeZ53PsGRR4cIPtkGLNLMexw62mdPtmtK1
+ kVdEUvtEHz8lejEy4je9OFCFBnArS+CSfsvCFFKwrVb3H+9paEid74z+6vhycMsnW2vv1IrwN
+ PV1y4/aJjCX5LQR/WfvjgvyDYJcQwaIX9OoRja3n71+186WKyMMT0jLkquSD3U4cOWUk0+wKA
+ 2tbqGstvbw7XCz3UxVnRsCDGm7RTBfFTQatW3TL3t5/8A5m7salpRG8zKrAgI/XNR2E9umDlV
+ AB7YaRbpgbj5UnFa9L3gggaGQdYaehUdQP4vChjd78P30qSB+T+ma9aKKgdrNIS/Bl6sWVkIg
+ DOlOYHyFnroSIBdJQAslNg48q2+m9kgE7DAf1JGod91bWaw9TVIkh3lnOgW3UAwah/PeJF3a9
+ 5ylQ4I6Korbpgfuc/an6M7xJsNWbN8X2RqBillsTiOjYAtQULgLmPQ7cvwuzScJ17rTKu2CSW
+ NF/YQi1b7w6mTNU7jO4vcbpw==
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 26 Sep 2024 14:51:07 +0200
 
-Commit b5712bf89b4b ("irqchip/gic-v3-its: Provide MSI parent for
-PCI/MSI[-X]") moves the functionality of irq-gic-v3-its-pci-msi.c into
-irq-gic-v3-its-msi-parent.c, and drops the former file.
+A put_task_struct() call was immediately used after a return value check
+for a scx_ops_init_task() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-With that, the config option ARM_GIC_V3_ITS_PCI is obsolete, but the
-definition of that config is not removed in the commit above.
+This issue was detected by using the Coccinelle software.
 
-Remove this obsolete config ARM_GIC_V3_ITS_PCI.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ kernel/sched/ext.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- drivers/irqchip/Kconfig | 7 -------
- 1 file changed, 7 deletions(-)
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 9ee5a9a261cc..4b89ea20e355 100644
+=2D-- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5091,8 +5091,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops,=
+ struct bpf_link *link)
+ 		spin_unlock_irq(&scx_tasks_lock);
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 341cd9ca5a05..d82bcab233a1 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -45,13 +45,6 @@ config ARM_GIC_V3_ITS
- 	select IRQ_MSI_LIB
- 	default ARM_GIC_V3
- 
--config ARM_GIC_V3_ITS_PCI
--	bool
--	depends on ARM_GIC_V3_ITS
--	depends on PCI
--	depends on PCI_MSI
--	default ARM_GIC_V3_ITS
--
- config ARM_GIC_V3_ITS_FSL_MC
- 	bool
- 	depends on ARM_GIC_V3_ITS
--- 
+ 		ret =3D scx_ops_init_task(p, task_group(p), false);
++		put_task_struct(p);
+ 		if (ret) {
+-			put_task_struct(p);
+ 			spin_lock_irq(&scx_tasks_lock);
+ 			scx_task_iter_exit(&sti);
+ 			spin_unlock_irq(&scx_tasks_lock);
+@@ -5101,7 +5101,6 @@ static int scx_ops_enable(struct sched_ext_ops *ops,=
+ struct bpf_link *link)
+ 			goto err_disable_unlock_all;
+ 		}
+
+-		put_task_struct(p);
+ 		spin_lock_irq(&scx_tasks_lock);
+ 	}
+ 	scx_task_iter_exit(&sti);
+=2D-
 2.46.1
 
