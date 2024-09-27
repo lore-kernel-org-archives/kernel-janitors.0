@@ -1,74 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639D8189531;
-	Fri, 27 Sep 2024 11:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC6F1E4AE;
+	Fri, 27 Sep 2024 16:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727437828; cv=none; b=Yx2ZSrxaiElBCt8aLseN0CGfxQRMGxifvKm25E6yDc7gNxBk0F/pztSDMjXsOVvDmaS/KaBeSxO4JbtY7gDkB5s0M3gSMrmndytZKImCQtEDBDEQ+OPg9B2TMrhZko5NeEFxFe7ENzkhFI5LSCT9kyhXSaRrjY56j5OS1KNK6gs=
+	t=1727453828; cv=none; b=ZUMBUjj5rk5TNMuEl7wy3zQhnFSIgmoC7WlIzq2/GN076HpHwWF5m06iqDQPcgkiB/DVvzbFksWArkQPjgcglx9lBbXymK1tTAUMaj/d+HW/L3zzf0LspYv/pC9cw4Hfrfbp/+YCCTQdsqr5Y+eJ/DNcYPBceT6CfzhBw7DU0oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727437828; c=relaxed/simple;
-	bh=KdGagpRwJuOzcrw418uFm+UN9AfgfRkcfS3S0xSZpms=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=BMhI06ZTgQhzAvv7T+3BKDEmrovMdSj8vzGs0IrF/gJAq7bqjoPEs26h7SM7O/Zmaf+/SU8Wf2q/W6Yywxhgo/O6OSQCMf3e3eeyfe+w0cxeMCeaxAKx9IrvDBAOndfjJHyq1YBc6mU2CMXPi44wWxSJtCRheUHB0kaFhRlU7Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BF6Tr3zo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727453828; c=relaxed/simple;
+	bh=Vm0nFv5pTtfM4Kg9IRi5F8nbyeaxRpuRYrhTeo+bloE=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=KLRJhs6LIZ4+j93cAXXaVBLRwhL5ihvKoMMrZpcTSFhKU91JF31rq+edWZtuUfLn/vtGAfteqNcATK/A4AWMjLxATcihIaXl9FUBrkt/ZLVc35bLVVEbHAuf7BFRhS2wmtNlhmVzI9htP8KTBGaUPQ8reH5xBmQJ+upolamdhX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ciI0Ozww; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BF6Tr3zo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1495C4CEC4;
-	Fri, 27 Sep 2024 11:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727437827;
-	bh=KdGagpRwJuOzcrw418uFm+UN9AfgfRkcfS3S0xSZpms=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=BF6Tr3zomTUP0+EmmicGg8/puZd5wtKh0IvMg0c2WiYUlWoINGHe+tFyH+Jvvqvu/
-	 YzphCfiaon0QyiYN8isL0T4VOhUeXxMM4hf3dUBFKYns9p8Pkb+Iz5LwoS+XItXtmX
-	 9kSJP/A6z27OTQYlXwC8zTRuw0I0rCL78YSMO4CQ74jE7Y31akBbiyrJXAok2YIQjP
-	 /3LpKjg22msqr7TSiuBbO9zVl6zbHQ2jCNahh6EdrscExfgZPONqE3fEHKASo69o7O
-	 EbhAdtKsRqzGuNPMdK8W0J5cqP8tQqIwBrJVToaRTVuWoQaDtepXeQ76gGAp6BRGFF
-	 PDDIiVLZiryWg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AEAE83809A80;
-	Fri, 27 Sep 2024 11:50:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ciI0Ozww"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71788bfe60eso1901830b3a.1;
+        Fri, 27 Sep 2024 09:17:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727453827; x=1728058627; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L+yddGmNvvninROrZh27GX7gU63fOouPWzZAESW4FuI=;
+        b=ciI0Ozww1Y62ozJB56Jl5fH+jfryZKTvpDh866uFMS6xazrk9Lw95oWaCkLwiOANi4
+         au/tMGFZcLwndjVeLP2cWnU62vOOzmEYICwbrdK5VHu2iGBJ99pFAApR5IogTg0s+w+g
+         UA6S1vrLC4mXYlYDPxrgsIPZQvHzh+gMyRkrDUoLFiNZRnsIVy6UHhheTZ3c4dVpwQUz
+         K9s/rCXpOP+dIRq5gmjtSwaxT5MD9aN0MGoGwLLfOMdJgm0AHN6++HCW5pUdxOxAF/Dm
+         VS53xljy0JJUEdg+HXngC8yCYcetuYSEk/Xekoi3tdxwRJe8oZKHmEiCCZR5vubIba/E
+         88LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727453827; x=1728058627;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L+yddGmNvvninROrZh27GX7gU63fOouPWzZAESW4FuI=;
+        b=p2+fR89cj6pu6QPIYVGU8lTW67C9YdWhaorO3vDXXOPHaxGN+5j50wvYN+Du8ZG3wN
+         dgrlZrjzxfm2RfkiikPqhboi0zeGdGBHP7g4RVLFmsv2QBQuef+JPmUO00chKvGvqlrS
+         kYPLIxUO83DVRWWxLYf4yhmH5Z48sVt/h6ha2Jvq/opbBFeJeyAh/pKRoJWPJQSpZ9CW
+         u+Dhfda76766lH5o76WSvx1NVVb4/agNf6v02DNtjuNOWP/UlQOqilJ6vKM/327GNWKV
+         +IFkhcSet9dMiafSWY/Lto5AzmXL+pEveNlODvihRDWjU1Nhtnz25dh/CJ9HA54HVGlG
+         3pAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuBwfpxxuyVTkXarw/C2rYLN/0R9ySFvkIMpVkfR/bTfsuUPCOI9WGdeCzHnGdNb742XOHrKPmFW1l59c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU++HWJymYNSt4uxOfqcU85ESNgr5PZk6WOBLrRtzTMcLvHC2g
+	eW9eWprr/1w8mN48For/bQ54UZQIFkMH4XsStlfb1cqqyyemyLB4
+X-Google-Smtp-Source: AGHT+IGozEALnQx1Er7SBfzGwW2QDie8jNd5SkYPMBx3yNF2xMOdfceVDjor2c9KEZXwlrpTM7HORA==
+X-Received: by 2002:a05:6a00:17a9:b0:70d:2fb5:f996 with SMTP id d2e1a72fcca58-71b25f451e7mr5943442b3a.11.1727453826683;
+        Fri, 27 Sep 2024 09:17:06 -0700 (PDT)
+Received: from dw-tp ([171.76.86.51])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26515f1asm1766740b3a.135.2024.09.27.09.17.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 09:17:05 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Scott Wood <oss@buserror.net>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] powerpc: remove dead config options for MPC85xx platform support
+In-Reply-To: <20240927095203.392365-1-lukas.bulwahn@redhat.com>
+Date: Fri, 27 Sep 2024 21:23:45 +0530
+Message-ID: <87frplay9i.fsf@gmail.com>
+References: <20240927095203.392365-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] cxgb4: clip_tbl: Fix spelling mistake "wont" -> "won't"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172743783052.1932325.9031970962313552253.git-patchwork-notify@kernel.org>
-Date: Fri, 27 Sep 2024 11:50:30 +0000
-References: <20240923122600.838346-1-colin.i.king@gmail.com>
-In-Reply-To: <20240923122600.838346-1-colin.i.king@gmail.com>
-To: Colin King (gmail) <colin.i.king@gmail.com>
-Cc: bharat@chelsio.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+Lukas Bulwahn <lbulwahn@redhat.com> writes:
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> Commit 384e338a9187 ("powerpc: drop MPC8540_ADS and MPC8560_ADS platform
+> support") and commit b751ed04bc5e ("powerpc: drop MPC85xx_CDS platform
+> support") removes the platform support for MPC8540_ADS, MPC8560_ADS and
+> MPC85xx_CDS in the source tree, but misses to remove the config options in
+> the Kconfig file. Hence, these three config options are without any effect
+> since then.
+>
+> Drop these three dead config options.
+>
 
-On Mon, 23 Sep 2024 13:26:00 +0100 you wrote:
-> There are spelling mistakes in dev_err and dev_info messages. Fix them.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Indeed these looks to be dead config remaining.
+
+> Fixes: 384e338a9187 ("powerpc: drop MPC8540_ADS and MPC8560_ADS platform support")
+> Fixes: b751ed04bc5e ("powerpc: drop MPC85xx_CDS platform support")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > ---
->  drivers/net/ethernet/chelsio/cxgb4/clip_tbl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/powerpc/platforms/85xx/Kconfig | 21 ---------------------
+>  1 file changed, 21 deletions(-)
 
-Here is the summary with links:
-  - [next] cxgb4: clip_tbl: Fix spelling mistake "wont" -> "won't"
-    https://git.kernel.org/netdev/net-next/c/c824deb1a897
+I couldn't find any relevant reference of MPC8540_ADS, MPC8560_ADS or MPC85xx_CDS
+after this patch
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+So please feel free to add - 
 
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
+>
+> diff --git a/arch/powerpc/platforms/85xx/Kconfig b/arch/powerpc/platforms/85xx/Kconfig
+> index 9315a3b69d6d..604c1b4b6d45 100644
+> --- a/arch/powerpc/platforms/85xx/Kconfig
+> +++ b/arch/powerpc/platforms/85xx/Kconfig
+> @@ -40,27 +40,6 @@ config BSC9132_QDS
+>  	  and dual StarCore SC3850 DSP cores.
+>  	  Manufacturer : Freescale Semiconductor, Inc
+>  
+> -config MPC8540_ADS
+> -	bool "Freescale MPC8540 ADS"
+> -	select DEFAULT_UIMAGE
+> -	help
+> -	  This option enables support for the MPC 8540 ADS board
+> -
+> -config MPC8560_ADS
+> -	bool "Freescale MPC8560 ADS"
+> -	select DEFAULT_UIMAGE
+> -	select CPM2
+> -	help
+> -	  This option enables support for the MPC 8560 ADS board
+> -
+> -config MPC85xx_CDS
+> -	bool "Freescale MPC85xx CDS"
+> -	select DEFAULT_UIMAGE
+> -	select PPC_I8259
+> -	select HAVE_RAPIDIO
+> -	help
+> -	  This option enables support for the MPC85xx CDS board
+> -
+>  config MPC85xx_MDS
+>  	bool "Freescale MPC8568 MDS / MPC8569 MDS / P1021 MDS"
+>  	select DEFAULT_UIMAGE
+> -- 
+> 2.46.1
