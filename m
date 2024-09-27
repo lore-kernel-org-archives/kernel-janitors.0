@@ -1,75 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859C046B8;
-	Fri, 27 Sep 2024 20:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1031C2DCB;
+	Fri, 27 Sep 2024 20:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727467880; cv=none; b=GKua0JvpL6LUTtyaED8CfYElf7kfJUCT5eJLMwqrTzU4+cSUlQmMy/CkVUEmW1gGOKJNsDZMyTWATiulAfCu9edISTxcOsrwXj675sSxDwY0j/6MkBSfVZByOY7CMuhkJfgXc64eq1Y2/Kx6ePmLXMI5J0JFqYlviDFARozIUns=
+	t=1727469633; cv=none; b=kHvkXHtUGT9eW0DB+SxzgrcqpBV248TZ7xxqRWd0m8ShraomcN7hRcg1c5t+BDWFqBzJ91ZnIV5fXyHq0fIwiMmdEGmOWEHc0xfhZDZm2Eqi+4K9OSqB6VuB72455xqs7bo2PVCPjgftqfxOpp+KvSwguZBIHKj1Qj7i/Qu5tis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727467880; c=relaxed/simple;
-	bh=SQXHlvTS63B99udjXhHwAkvdfEHNlbOoiwLEXWXnaAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=siXdQvwxmQq+yYxCcPVvMEC4gO8dWjlgmpDwSdhiJIP4Grhka1iwq6y7JmJveuDWUNP3WXaQevP7c54QROl5j0mzUwgnaE6+T63o7uMKW5alVTqp7hMCJk4umOqafI3nUxXZNKFhnVl4CldC1/Q0F9mz7fQ3Os2oT8Mu8yDRhFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhTUq8S2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727469633; c=relaxed/simple;
+	bh=+sz5urEjsCgvciVxUL0yOMi9V7oh/+8lIblrjzzcBeI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=WBkUmFb8mcgap8JEwsSc2zle0Bc9iAFQDqJN0W6jfqqpJcziuR+cakdXRbqsh4TU53NyWMVodhuiyWMiMYNFc2uVxIrNDLk5geRqMaPycoXnvbOKnEHSp2jgyJg9UJe0yv16ONB8SrvER8xTiQqJxeuoA2N31l3Vp4uMBKSa720=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aFjLtcB9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhTUq8S2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB7F8C4CEC4;
-	Fri, 27 Sep 2024 20:11:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aFjLtcB9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1099AC4CEC4;
+	Fri, 27 Sep 2024 20:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727467879;
-	bh=SQXHlvTS63B99udjXhHwAkvdfEHNlbOoiwLEXWXnaAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KhTUq8S22+5QfTK3w3cD2cR6wu0+E5NkgUtDRnWG/OPXmXn1X89jfIWPyubveVzO6
-	 dYanIaI2cpG/eLMukQtAnbelTWeXN/CNgr9IIvciuD8Tl76FD/fk8oExmByULWRApx
-	 OErOjeQS1zfsdBhg/NnRb3GwHb/toGUDxGH+WFSIH6ZqudGOqlynUx9TttrDMQ/gmc
-	 kkgCwTPMyezHE+65dV4qJ76ZTEk7ZSehdctIGBb6ebUC/CMBniBiv8mT/nboiymq8G
-	 K9dMW16oTe1DjPeVX0kaNrhw6GAnvsLH1b67mIG0RLqlZC4iHHzoJvZCAYtvb1w3I4
-	 Z1SeL0xvQ5Bng==
-Date: Fri, 27 Sep 2024 10:11:18 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, Barret Rhoden <brho@google.com>,
-	Ben Segall <bsegall@google.com>, David Vernet <void@manifault.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Josh Don <joshdon@google.com>,
-	Juri Lelli <juri.lelli@redhat.com>, Hao Luo <haoluo@google.com>,
-	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Andrea Righi <andrea.righi@canonical.com>
-Subject: Re: [PATCH] sched_ext: Call put_task_struct() only once in
- scx_ops_enable()
-Message-ID: <ZvcRZt4foaB1IjTT@slm.duckdns.org>
-References: <6c4afcdc-fa86-4f0a-a6c1-ec8265190fd0@web.de>
+	s=k20201202; t=1727469631;
+	bh=+sz5urEjsCgvciVxUL0yOMi9V7oh/+8lIblrjzzcBeI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=aFjLtcB9F2M/mRNR0AVDVHeUTsVq+tjkLQRYWzzi2S8rONwir4//k4KtRoRYzAuiK
+	 UtYK+oC9/p5dIrFwRL20VxOV5j6xfI79Fs4Sa8cGApv43ULpkxb4a1YOsHu/TYd5hA
+	 vfWijENaMmfvemIOU0JxzlglNhP0bWZwsIJvsYteFyR7nIMvDuOwYOnTtTLut3+PtX
+	 7enY/++/UuYPOV1YFU0aP9EsDiqMtIjX9SKHefQrRuHEqjq3PxErKD6vXs/qydhAOz
+	 rQ7z5PK2i2bQh/W5dZJ2ijcqZ+RLrVJiZMYsH2W/hRKY8X6M5PC87JDCngw7wrkvne
+	 RIBtr2lKj4OcA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE2A3809A80;
+	Fri, 27 Sep 2024 20:40:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c4afcdc-fa86-4f0a-a6c1-ec8265190fd0@web.de>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] bpf: Call kfree(obj) only once in free_one()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172746963350.2077014.13816010989127648487.git-patchwork-notify@kernel.org>
+Date: Fri, 27 Sep 2024 20:40:33 +0000
+References: <08987123-668c-40f3-a8ee-c3038d94f069@web.de>
+In-Reply-To: <08987123-668c-40f3-a8ee-c3038d94f069@web.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: bpf@vger.kernel.org, andrii@kernel.org, ast@kernel.org,
+ daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+ houtao1@huawei.com, jolsa@kernel.org, john.fastabend@gmail.com,
+ kpsingh@kernel.org, martin.lau@linux.dev, song@kernel.org, sdf@fomichev.me,
+ yonghong.song@linux.dev, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Thu, Sep 26, 2024 at 03:30:12PM +0200, Markus Elfring wrote:
+Hello:
+
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Thu, 26 Sep 2024 13:45:18 +0200 you wrote:
 > From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 26 Sep 2024 14:51:07 +0200
+> Date: Thu, 26 Sep 2024 13:30:42 +0200
 > 
-> A put_task_struct() call was immediately used after a return value check
-> for a scx_ops_init_task() call in this function implementation.
-> Thus call such a function only once instead directly before the check.
+> A kfree() call is always used at the end of this function implementation.
+> Thus specify such a function call only once instead of duplicating it
+> in a previous if branch.
 > 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> [...]
 
-This no longer applies after 9753358a6a2b ("sched_ext: Fix SCX_TASK_INIT ->
-SCX_TASK_READY transitions in scx_ops_enable()").
+Here is the summary with links:
+  - bpf: Call kfree(obj) only once in free_one()
+    https://git.kernel.org/bpf/bpf-next/c/b295d70db5e1
 
-Thanks.
-
+You are awesome, thank you!
 -- 
-tejun
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
