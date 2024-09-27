@@ -1,95 +1,106 @@
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BE41B07AF;
-	Thu, 26 Sep 2024 23:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACB615C137;
+	Fri, 27 Sep 2024 06:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727392898; cv=none; b=Tj2pgJpHSSdeFO4LNKckCyI+NXa9VAweOZd8U//zTogDmroYQdLoXuud0nzoWtqQ9jcsXV7MZoKDPUAend8Xs6Aa8eqDVyicFjQ99XBX0B6aciVrNB7qntRHhECvcJgBJ6bw3pBInl2mLFBoYC2Hlqn45IDemUhHlQNAdL7xgMc=
+	t=1727417436; cv=none; b=MbbTZUNydBsYCTcIBnveh17YKM0inOe8FGMbecZdjhIY3BMo6+bahFHcB/fGqgEQJOEnMecCO9D7GG+fWskIphfWXXQN3giOh9lp1TFArrtMdABjy2KUEy6t37T3ltIwKVYjTlUyxcyV/oYxumH5xzubbOAYEIjJpTn+29S+38Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727392898; c=relaxed/simple;
-	bh=iVsFIGn0iXjuhuu6kaEr4e2KKsQ/k7xOHLW0xF+DNoQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O24C9T31RrA13a4d9URm4PG/yzb87cxhBrIuDF0YHNCB8kxxo6ID0mWezJ/NmeqZBJiQHAR0jlklWvJr2vX2juYuyapDyeDv+xTwGa6a/FkLJdQye56WJfSNQi/eHT/HC7NzgCWBMoHOaJCjvfn8m8l678N3iUQHPenigEetbK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FzC6TM8L; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727417436; c=relaxed/simple;
+	bh=IjqcBz1lFA+GDXgttQfm02z6EyN6mOcAxH8+wysJdkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D11Vf+u2H7seim1jGi5lsGiYL62dKC+IggfMa7X0wLwFEF5JWnuMWZXbdqzflrtOKI3Rr9+0waDQLgXLbuwdWvgvtJAmmupHO5cLPdvMgB4kgrhohS618GUU3w6UqsPYP1dioy5IqLFTHxha1Fq5QAwXwrtNShn3DU9jtzKVIAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WT/V27EB; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzC6TM8L"
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-6e7b121be30so1036893a12.1;
-        Thu, 26 Sep 2024 16:21:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727392896; x=1727997696; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iVsFIGn0iXjuhuu6kaEr4e2KKsQ/k7xOHLW0xF+DNoQ=;
-        b=FzC6TM8LLwn4CdPWw2tO+7aQYZB4mFEQsuhk2od7S6kH7FEyuHe0C2wxIpmUyRaVIR
-         snAvYSK57h4B50Pf1g0dRMlvazgfEq1x9SV6wwYkNXyk50XrG8ls7WvPbFdn39zJPMnr
-         +yaOGSg+8rnPV5qqeDdHDb3EbLsWSnoNj2IqqeXI9i1GbIaKB0Y9Zb+T/5gOiYfe1uEd
-         QnZnylBPeYKj6YSoMcNOwsCEMCywmA6W6Hkm9dXkClazuCeMj9F83jrLUSX5YPvBfzOx
-         Ku2aBQoemTzIscNR2g6Hwc+hJVAIZs2WxItac5mi9eDEkJP/vI8LMWzyk17PPFs+RW3l
-         zBkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727392896; x=1727997696;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iVsFIGn0iXjuhuu6kaEr4e2KKsQ/k7xOHLW0xF+DNoQ=;
-        b=updaED6TLYxww0EDMo4LPCtmTUPYKGa1u8DgHb3a4FOHm5GJ8Yh5cX4wGqIEe0ASP8
-         dOCMxx0SPe/tusZndfag+uqi66fr4dn1RQDZ1y8eumdhBZQBwryX3HCAus90ImDcpRGI
-         MD4kg/FyuhH353KUDNUXveBXG9pFVQteFfQR2iyx1+p5myQTn/WheDKCWN+vqIW3SoxD
-         0IYGYOO73kKVodO8v9htXzaLmsacDBCa8R+CjqYpcy/EAUQieYzN/gCHShiBFUduTive
-         IzFAp4oaX3VwLO8ZxQadrwWjl6wiE4PS278jliVYMHKBl1ayXKs06T9hvc4nFYaUXsAk
-         qQqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU42QuaEn7iZKLRZ4D7kZ6O9HYez9oxXGomFEtYctVJoQeZOEP7W6g4zZVCXp8+Yr6nlxvW9y2tE+gwMeVcX6Z@vger.kernel.org, AJvYcCWX2vhdEaftkjTgXMXqgZKBwK7gCIBl/MieJ/VMZVLUbDPjZV5T0HEusqWqXmUGQm5pZG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtYowEBvgojsKaWbAiRJOd9SYmbQXGzd7nJ0ZZhy7UdpJtZWlu
-	Hx0g6XYR9lM+jMlX2gAkwyI+YWSzgJ1XZ70oTPP4wBTvHAYQByx0
-X-Google-Smtp-Source: AGHT+IGupSm+6I7yushU64/Yc/nfwmCMy41lUbNw0Kw60E5UuJZjLwHpBijQmmEnuYIVntfWBGZTrA==
-X-Received: by 2002:a17:90a:1f44:b0:2d8:ad96:6ef4 with SMTP id 98e67ed59e1d1-2e0b8ea5e9emr1395059a91.28.1727392895941;
-        Thu, 26 Sep 2024 16:21:35 -0700 (PDT)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e16f67esm4131242a91.12.2024.09.26.16.21.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2024 16:21:35 -0700 (PDT)
-Message-ID: <d594f27e7782b318b8eb90fef202d4cfdce59da4.camel@gmail.com>
-Subject: Re: [PATCH] bpf: Call kfree(obj) only once in free_one()
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>, bpf@vger.kernel.org, Andrii
- Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Hao Luo <haoluo@google.com>, Hou Tao
- <houtao1@huawei.com>,  Jiri Olsa <jolsa@kernel.org>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,  Martin KaFai
- Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Stanislav Fomichev
- <sdf@fomichev.me>,  Yonghong Song <yonghong.song@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Date: Thu, 26 Sep 2024 16:21:30 -0700
-In-Reply-To: <08987123-668c-40f3-a8ee-c3038d94f069@web.de>
-References: <08987123-668c-40f3-a8ee-c3038d94f069@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WT/V27EB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727417407; x=1728022207; i=markus.elfring@web.de;
+	bh=IjqcBz1lFA+GDXgttQfm02z6EyN6mOcAxH8+wysJdkE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WT/V27EBvGO4G52F2o9MoWjT/djQNOL6dEShWhPEi1te3jN6MbVgbrkxMQY056dU
+	 sK4ZRFdaIuwvBHKqeCGqj0zBqQpgWG0T8mQKOXpRTsotHHWpL/54teg7XtBuwRF4C
+	 Yd2SW0TziKh1x8hOaljyxzzy1Lezrwh1bGecV5LkeyFOCX/DM2qhrvwdV5ph/Ipuo
+	 0X0RvI8AGtEho2HX8T9swd/n/2JdIz1n99KR99899LACgZ7bPEHPFruC7uHcOclUn
+	 V36c14g7SwtFcKKM7k3yZHJTnnOL4F4hNnAaUxKwfBMd7VEXJprgAeiXC2aweYWKG
+	 gk0mryDnFyXdAuq7TQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MxHUC-1s19Ed2sw4-00zDbU; Fri, 27
+ Sep 2024 08:10:07 +0200
+Message-ID: <22c231f2-c28e-4083-8e62-590a8c2d8844@web.de>
+Date: Fri, 27 Sep 2024 08:09:41 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v4 3/9] platform/x86: asus-armoury: move existing tunings to
+ asus-armoury module
+To: Luke Jones <luke@ljones.dev>, platform-driver-x86@vger.kernel.org,
+ linux-input@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jiri Kosina <jikos@kernel.org>, Mario Limonciello <superm1@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20240926092952.1284435-4-luke@ljones.dev>
+ <08320b8e-a71b-4055-9fdf-1df76530ec1a@web.de>
+ <f3b059cd-0045-435e-9bb9-467bb9cb0cc1@app.fastmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <f3b059cd-0045-435e-9bb9-467bb9cb0cc1@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xPCTGw/vuU+Sz513CCQtxrzm50Mg9OQvFEGR0xIBKsIP2+XWu05
+ Q8AU59kqYhYSVkitt/3jI2DxoxxDBCpC5pJymMZ/+GnYRdaiZfLC4BIkd0shM3dbiUqwCU1
+ QwisBqS34txvATes5KQfU7ncbtdXTTquIvmr0XoKtW4Hu2XG1tu185OGMnX05FFfA+Y5MY/
+ jxz+0ekFKelrVrRsx5zhw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8Argxaapvd8=;SphmisfGAr/mcjEOoupEjGZrRy4
+ VvPd6tEljDHbkYeclfU0yYTf6ZZwAar+36V4wghPlAA3YNfTjYvwWE8GRYgXKXOGcx4R+2tKK
+ AxTKzuYPKI2K+wGJrRnE69VG9IM0s5vbScolWfCVpqPDq+iMwncUAN1UzT4mie+LQVDJNIybl
+ gS8JuDtgrQZ5e2Gu73wmH/yTdSjeEIKh22lNAiMvg3/jJTX9wMIDantGfwsWJIVy6FdoegNYZ
+ 2yUAC5hiGt1dVAEjqYeaCVqkAFSQIZRiQJh7ZEFOXRB6BFbHPYN7FWbXMonpB8FseXCjBnPv5
+ uVIdP0fqxzQrqlYRNTepnVamLtPs+KbUb0oA7iHyzcAhE+dBb5zZTKySuBj2QqrkiD1QfGw/7
+ 9VMMoYgxc9tk6mhvLtJgoj9Zirin1tJJInbUl7uUZ+jW7MLtpMt5rgsrc32AHrO++ksbCzlcV
+ bpQCX+yf1XGBshZ9KPj/mITmCvpB1OIQM3ll/5ZUA2hO52DqqcoGNM/jWumDtSabrNb/F2s+I
+ vhvInSon92Zur75JcLFn8Pec+cT1cdBzVvxJUikxZV3qlyegdQnZmRizb6wTzjk+3GTzT2QvG
+ VNbZRKHVHKGG5RlyAPhakB8JsW5PWxZTBWkV/9NiwRYwjdMbVrKl6l/R6mtRSpW6VK/dXesQe
+ k2EZEdxFn8kIB6iqdg/6KHnBw22VZph6F03U6wec3J+8UHHadJiOptxyxjPWkM736bpE+GtTG
+ vPBPubuekA6g8esb2jfkb5gBs7Xl6mtsbscaNkg/MShzRl7B6LheaddEu4C2Ts6+dJF8HOR9Y
+ zeRAAwZfh1nmnanDDgy9N4Rg==
 
-On Thu, 2024-09-26 at 13:45 +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 26 Sep 2024 13:30:42 +0200
->=20
-> A kfree() call is always used at the end of this function implementation.
-> Thus specify such a function call only once instead of duplicating it
-> in a previous if branch.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
+>> =E2=80=A6
+>>> +++ b/drivers/platform/x86/asus-armoury.h
+>>> @@ -0,0 +1,146 @@
+>> =E2=80=A6
+>>> +#ifndef _ASUS_BIOSCFG_H_
+>>> +#define _ASUS_BIOSCFG_H_
+>> =E2=80=A6
+>>
+>> I suggest to omit leading underscores from such identifiers.
+>> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+o=
+r+define+a+reserved+identifier
+=E2=80=A6
+> the link is C standard, not kernel C right?
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Advice is offered in such a direction.
 
-[...]
 
+> Pretty much everything I look at in the kernel seems to use the leading =
+underscores.
+
+How much would you like to care for standard compliance concerns
+together with your software developments?
+
+Regards,
+Markus
