@@ -1,71 +1,70 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B91A19DFB5
-	for <kernel-janitors@vger.kernel.org>; Sat, 28 Sep 2024 10:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95C519E972
+	for <kernel-janitors@vger.kernel.org>; Sat, 28 Sep 2024 10:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727517938; cv=none; b=ErE4OQyQnvo9kUPBRLycZ1EVLpPK8/zM9YykwAaB5TUQguIBH9mEDWer+UA/WW67AtRWUezlNeT+g0x83lU4Rig3IAL8U17MkGEuXYyGlk2xlzYwJWVFV/3bgZd/5f9eitYtIDFiQJDIz945Ua+rGIVb9Q5l/E9ZAC2DsvxLKD8=
+	t=1727517947; cv=none; b=aTXYwSQYi6pBbXKGjU4T62CRjorxK310bDL+LFLrLsgJXW0vpkM8d0P023iuAjL8a5TS4D7LK1WszhxU8NDM/qfuF/cxZij3p1sF+uWHCP7G3Ijzu1NNuaGe8mtD0mZ814762IJ1DYpnpbbM1sFbiR+7KCK+ZqBbkoOQl0I365g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727517938; c=relaxed/simple;
-	bh=nysf4iZQmwHqPE9b3am1r0Q+jJLgASIeYoXVo9KcmOc=;
+	s=arc-20240116; t=1727517947; c=relaxed/simple;
+	bh=Fhj/2WAgRX6TZNq4s+b672pG6RSzJbtSTQ4lNixnLGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=vAkpPC2COZ3S8TOEmThMVJp8UZPQML7kVLV92eHc/AEILe9PLGBLgV5ekcDvTAYZfsOe7ADKE/nqZd/0wy6hj8XglPcCyVjU8IErdWrFvBGn1VxfQfQW+S2+VLI2p7SIjhpvV12AmwdYmV7UDs5pQ7E3LGkSHcPYRAPlBgF04+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EFIZs3W1; arc=none smtp.client-ip=209.85.128.50
+	 Content-Disposition; b=qqekhVPlO5c/1uzOAfFDw1DpHJIvRE2jR5wCzwzNf5ck2RZIHYHsEhoMRqJmj7diOIgovSJVkoE5+7Z79TGokYfE4llHcL9EyhVhg+47/F8y+QRViF/c8pldjxT9blFC+DK95HnxQAY18LxKpwReJhMb+l58SNSZTZPQJthwUPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o3HdzhXn; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EFIZs3W1"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so17730495e9.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 28 Sep 2024 03:05:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o3HdzhXn"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb1758e41so22337985e9.1
+        for <kernel-janitors@vger.kernel.org>; Sat, 28 Sep 2024 03:05:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727517933; x=1728122733; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727517944; x=1728122744; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=x0UkuD3GuJbEJOo86vgUIxaJ+Z37a87v7S3JRkIjSIg=;
-        b=EFIZs3W1+t49WVMXmO0Qhi+izUpOTnAODaFO8STl6XOaV7aCALjiZ9/w2H0zRipd51
-         YjUqKkmBY5z3xVDYudIcT2eBaZ6VWzTCsaWcqxvlRyIADJKdFD/V85R2kwTpleTIONnO
-         /uKwuqyPOuDsr0QaOM+zssyB7SZFfA+9zZrvMAC3BqN4IreNvMzr8Ody6K1C/J0I81P7
-         RYZotmAKzcs7x0QovjYNHHNuPzDHfGVLVxjSSYTH7P7XRIe0veGMwphX2i95S3F7JcJE
-         rlRhiPGWnRg6vXbQIiAjQqpiMQyM3ALeVsSFvnWad2WdEjZQd9qUmNTn7/byaZANduhq
-         YdrA==
+        bh=wFXnq8tjuGE++NF0IRFhg8u5PXx+L4dCmmjvPjHBwaI=;
+        b=o3HdzhXnPH1LpR51MzYDBAiJA6/5cRm2VJR/v0v9YpbfHcaf6GES4L9riF64ru572b
+         2lmmjUDWPxwnCZEnmu85tpo/RqFuCAaSacVyONl9evKLdHRoVePv3W/nP1NwrBaaFNms
+         ghxXQfuTQiqKUySMbJRaKW13XzY3dT55VU5PQttiNJsKgp43Tqo7Hxoo0KECndUQARSH
+         uty3cxnnanyT886dRCask47aVrONdQRItwj0C3jyHDlrDWCncSMdxAckPQHsLHzTV5RZ
+         zOsJls1LNOKNQ2VY4zJYye6PttLoSx64abd3vsBjl6wHmbVljkH/Zsy/en1t3CIkZ4MO
+         K+4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727517933; x=1728122733;
+        d=1e100.net; s=20230601; t=1727517944; x=1728122744;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x0UkuD3GuJbEJOo86vgUIxaJ+Z37a87v7S3JRkIjSIg=;
-        b=kZ47XLu5pFvRHdSFkzEjLc6NZAVaOKuki/aEGrn3xYkAiaK/o8lTysiwS1p4q8NOCJ
-         9/n1zpdzSwhexiFkFHze9NAVWQqMNEZ/mjfGVn8oBlyhxFcJ1nz+dtMxn/4nmTM7TBaS
-         XMH08CrQYfQ7rc8itqrUVjTyr+4te3mJbSxJqXjadw2dgOMcRDjvd9UazSHSlJ/dWFXt
-         8v3sqzU8PyzT6416fdC/kCL0seQP6M8ZPIXyXtNWvD1IWCWNrE09FF6iIaSJibu4V7X+
-         Zuu2AZc1ikVasI8xmXwe87pwabDkSpBWGR36E42OsqNU3QHPi6X9ZeMnMcHuiJKwsjmI
-         avnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFbLfbafF8ifFHhWBfxb+ad9DeEi+ILBGYpX0mMoCXljDE7DMlmI7Y1PE51666djdf0GrFJLmwa/qznwOkuNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9TQYsE/iyEUlSR9ecT3V+w49HNGfovkqCs0iPL4+PKIDg3U0l
-	T+DgSgxJOscACb/KEEAVQWfTy+QZmpk3gshsgBr1PPPc2t6+cwxkOk1b1C85pEE=
-X-Google-Smtp-Source: AGHT+IHAOnv7oc28ECrLbwz3MYtI2XlwEqYRbMn63MqyesZiRUO48orsjcjBjVWP4TAofwPjbOtNpQ==
-X-Received: by 2002:a05:600c:1d08:b0:42c:b697:a62c with SMTP id 5b1f17b1804b1-42f521ce1a4mr63796565e9.5.1727517933542;
-        Sat, 28 Sep 2024 03:05:33 -0700 (PDT)
+        bh=wFXnq8tjuGE++NF0IRFhg8u5PXx+L4dCmmjvPjHBwaI=;
+        b=LJkt1D7S56TkPej2gKybhEmXtgsxUSKQpub7GoHYPRzL3lebSKS+6GtP2i6G6QDCtI
+         MKLGYvXtNQmXpnffb6TZEQ3n3yMbxFLEMMikxGTaRT02rIXEw3sSeNtwDh5nUIblQCHc
+         lLQcJOzJTxcTbJ/orOA2QDGVDN1gfqYd9FP+Afq6yCAa3RHufps15pWpvPqupt2bur1T
+         3/oouFEX0XXhLfY8GB+EqrFnnJKNODU8ki9tu/XzA1jFphUwZKayNTTlJ9BFydWD8qFc
+         8mDdxTXCgYy5znLz4bbgdTch1gIK/BZ0E4azhOEP5EQUYDM9QIg0jXmKjIfJlwXAJPTH
+         /heQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdXAZi1BZS7IfMo49NCknT+2mS9uMhcaQlgj+mq6nRqVu6OB/YRyf3LpbtnkjkM7UEfSdPa16BNvp1p1q9+FE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWAWgdKiG45GFJ5dJM1DVSRYdk83kuIMMjXVrFfHH+0a9SKjsH
+	AlAVjTqNw/B5SU93Pr88YJkdgwqqOIn4tTt/c4tP8E0VafrJJnoBKjD7G1cKne4=
+X-Google-Smtp-Source: AGHT+IHZBI2SeNYmPuzbzS4OIpWMwP4GQ7Yg15aONo1+6wQnhIL+THchIfM5hb67RF96jt8tGxyVRA==
+X-Received: by 2002:a05:600c:4f8f:b0:426:6a53:e54f with SMTP id 5b1f17b1804b1-42f5849101emr43200315e9.33.1727517943974;
+        Sat, 28 Sep 2024 03:05:43 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd575e322sm4431080f8f.110.2024.09.28.03.05.31
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e90274aa0sm77268275e9.0.2024.09.28.03.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 03:05:33 -0700 (PDT)
-Date: Sat, 28 Sep 2024 13:05:08 +0300
+        Sat, 28 Sep 2024 03:05:43 -0700 (PDT)
+Date: Sat, 28 Sep 2024 13:05:01 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+To: Jie Wang <jie.wang@intel.com>
+Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S. Miller" <davem@davemloft.net>,
 	Damian Muszynski <damian.muszynski@intel.com>,
 	Tero Kristo <tero.kristo@linux.intel.com>,
-	Jie Wang <jie.wang@intel.com>,
 	Shashank Gupta <shashank.gupta@intel.com>,
 	Lucas Segarra Fernandez <lucas.segarra.fernandez@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Adam Guerin <adam.guerin@intel.com>, qat-linux@intel.com,
+	Dong Xie <dong.xie@intel.com>, qat-linux@intel.com,
 	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] crypto: qat - (qat_4xxx) fix off by one in uof_get_name()
-Message-ID: <cca43549-7715-44ba-a1c0-61dd027ed3b5@stanley.mountain>
+Subject: [PATCH] crypto: qat - (qat_420xx) fix off by one in uof_get_name()
+Message-ID: <796ecd7c-54ad-4bec-b748-3e156cc0a1aa@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,20 +75,21 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The fw_objs[] array has "num_objs" elements so the > needs to be >= to
-prevent an out of bounds read.
+This is called from uof_get_name_420xx() where "num_objs" is the
+ARRAY_SIZE() of fw_objs[].  The > needs to be >= to prevent an out of
+bounds access.
 
-Fixes: 10484c647af6 ("crypto: qat - refactor fw config logic for 4xxx")
+Fixes: fcf60f4bcf54 ("crypto: qat - add support for 420xx devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/crypto/intel/qat/qat_4xxx/adf_4xxx_hw_data.c | 2 +-
+ drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/intel/qat/qat_4xxx/adf_4xxx_hw_data.c b/drivers/crypto/intel/qat/qat_4xxx/adf_4xxx_hw_data.c
-index 9fd7ec53b9f3..bbd92c017c28 100644
---- a/drivers/crypto/intel/qat/qat_4xxx/adf_4xxx_hw_data.c
-+++ b/drivers/crypto/intel/qat/qat_4xxx/adf_4xxx_hw_data.c
-@@ -334,7 +334,7 @@ static const char *uof_get_name(struct adf_accel_dev *accel_dev, u32 obj_num,
+diff --git a/drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c b/drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c
+index 78f0ea49254d..9faef33e54bd 100644
+--- a/drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c
++++ b/drivers/crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c
+@@ -375,7 +375,7 @@ static const char *uof_get_name(struct adf_accel_dev *accel_dev, u32 obj_num,
  	else
  		id = -EINVAL;
  
