@@ -1,125 +1,92 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3853D96D;
-	Sun, 29 Sep 2024 10:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBC714375C;
+	Sun, 29 Sep 2024 21:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727606748; cv=none; b=m8H/v1Ricj7zT9bceO81lk/Um7vxU+kyekifb2GTs+4/IA2ND92SN5tl3pBRfFghF9AXr3jjD3L7/q8N4Cqn9SLIlVNdeuth/5sNmB5EuVhRBa5t6AwLOMl+cSbo/Xw4x8dF2k3mLA72N/Hc7QrwDxjWPJ7b0oWG/QLfKdpXbRo=
+	t=1727646295; cv=none; b=u6xmQvj1k/OKPb+3L2sfFsspOAtyY16BFKVU9r/8JcwyYCLobFQOGGUKCSeKq3de6dX982GQKkCFyISrwvB2zMWzOntDOxEfdp6dtiTKzGy3N1xQTxUBuJ9sP19gAX+IHNXceBN6POAIzqn7ybainRGbyVUMFouCArQQCh0ucW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727606748; c=relaxed/simple;
-	bh=oT1ANVqVZY6yidoI9iifW1Q4EWCH/e1GEFnjgmZjsaE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=rGQ3Ykxagcz9q3qLaOYWiX4wdWhimoA90RFRs8gNRWkigj01rLhr3llkizx/bDFnMpp5vA42iXpwIfRf2hC7MSt3sbDa4U663aqkTc1j/ZTxvecbkPysxlzwgadWgXgwV+xQVKPDOINVTOJ5S/bR2AacZkFv+6ZwcrR56lyVx7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Csb5vJ1y; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727646295; c=relaxed/simple;
+	bh=q8jPUs9sDrC76GpeR3+6wZiIJol7AI1mGAI3q0C3Q7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IfI7nFHRmQPtuIm1yQOrTfVmwUVsmghBWbiX5Y5zISnyPhG7THIoYQ+10f2W1F8unHehhg3mtWYmV3ip/Efm+bqJmvPn5D/lBJo9XNe+ZyEhCPEIjPomIJwZwcakz9H6b90BvxurgjbqgMmKaNMnb7CT2SovUzFE8Tmd0POA63E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bFPhXa2c; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Csb5vJ1y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727606728; x=1728211528; i=markus.elfring@web.de;
-	bh=rJ6rDvlfFJ1ctzo4nqUW3IW0EJwgP8g7q/slxShq0es=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Csb5vJ1yg8qx5MAdSRIv74gYHuQhyeOMpWOLqJ6XwFy1F8Z3H/hj4vZXMXxLJzyJ
-	 AN+v3f5i/wVJZcYabbTqHpycocB15RILRBIlCXN4q0O/KBgwzKo8EPGWJFypA1bwq
-	 9qmNXro+6iNPq9cyQNMcX1XzNOfKefe+bujHhaGgUNR6y+P/JYf53yEoG1cBQil3O
-	 facFVqdphGm6ZSBSn1Dg6Cjs1Ja/AU3TdyhNsgjFrxVqtjJwDdwp70U79YbdNj6Ap
-	 6lvnQURQ7zDFQIsaqgZejOzh6zC2fF2jGHu10n0bru/gTxdBTQWGxqN3waLE1e+m7
-	 iHS5g6SiFAwERsKdqw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mq182-1s98Dt3j8c-00nhvY; Sun, 29
- Sep 2024 12:45:27 +0200
-Message-ID: <b050730e-ac7d-401b-8210-82453d05b0e5@web.de>
-Date: Sun, 29 Sep 2024 12:45:27 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bFPhXa2c"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id uzzOsWpetUr3muzzOsoFGG; Sun, 29 Sep 2024 21:53:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727639638;
+	bh=mnfjPfodqDw5EgjVHclvMeONT3nDh9xuYN3QzGdkxtM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=bFPhXa2cn+9H9Hxm/lauaUgMA+xMIR4+9UiBbHItciK4dpQ7OPyq2ERYDgoKODNBt
+	 LNsbBzCedHkcj2vPr6F56bYlpBvoHPRLyhjiKRBfHUvzsO8Sl/XTpMQ1vKvFXScSGc
+	 3U8N6RPxrhPoQHjupH62N7gXyPQMgeg2qaTWtB5qTXBLBaHOfwB4g4b+Sn7HT7EU7M
+	 DQdHf0bucNXPlYaFZImbCzib7y9h1UJ/8IYs/rCE4nf4Kv4Hi3vqhKidEG0D735XnV
+	 nXevBZ2ZnRBI0tE6UeHDT1kQClGzN1TS6auAqInsPOuOkGgaLii6bnXRGiFmz8ecHi
+	 93aF4Et4tFdqA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 29 Sep 2024 21:53:58 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-wireless@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] wifi: mt76: mt7915: Fix an error handling path in mt7915_add_interface()
+Date: Sun, 29 Sep 2024 21:53:40 +0200
+Message-ID: <b9d8fbfc19360bfe60b9cea1cb0f735ab3b4bc26.1727639596.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Philipp Zabel <p.zabel@pengutronix.de>, kernel@pengutronix.de,
- linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
-Subject: Re: [PATCH] reset: Further simplify locking with guard()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qByEn6/jtm2IiGM28XvLyFij2fSLYXnBdowk5hkhQuzXMCVF3Ul
- E6VdfOnu7R/87cgiSfH0PnHPjizyXRedKETivgodbSweNvuNEHQu1Wf4J5F/Dp3Laoe/HDe
- eB+kY0D1BfMBnWplAxhlWrVkKHfjGLBM0ruTe3aaVy7vzVL4Xxlret27AH8m9YZnONEmG4s
- lpheKnTH1Mm5iA9Q/4Shg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SuThyrY8vZM=;Ta9wdDyjbK+W5dWl6j7Ws/mqV2p
- uSPrqgpD+/Gk3taKmmnk7I2DUDUmEaqrZxiujomqeMjjEDzydQtv5LwkOgBUgq4oH84ApbGaX
- QpdEac1b3SEX9eyywRZy+j03T+tXoLhcuy+Ju15m2nbI+IFLkoE8aar3Mfm8DL1Ulu5duNUUg
- FlvrSdw2RkMbq47h3sroVjuitcdGFU3gYuBBXtcc4cVdnjtZexzHhjWAsrHvmCQJL5qNBqdYX
- Qb+MG3ugHS0Nal1AJpD97V+cAjtYiQtyUlm1tJaNUaYQjXu9Dwa4BqWMZFXe8KHFiiOFLH6e1
- XPlH39iylOCKhpRKCvHOeTWN2KG7SrA2TzuBJWfjXCdThWLmNVMobFJa72OrGkAxIa0b4xoWo
- exb7OsFM+F21/Hv3ExxZu9LgIQ2mOHSopkjwd970nU65OadmaqRTFFtkKJLd4l6gqN9j0rfXT
- 0TCi6QqjG4hXmLXLbFXKTUx0ajz1WTJ+YJkkapGqscUfk5oP/52+YTe7TT+OwgP+qB1GBWOfS
- 3jRx7ByMMatyBHZ/pVQlT1zwcfVAlYFTMcVC5LV2CvZiQHGczsYTwV2P39efBhi08yWLNlwBh
- 35wTUriys0Hj7BG/8tsI9UtCQWuGDODlX4cOztd1y3SA0CRppvloEXVSky7SZO2kis61J5ouS
- x/dLJI9eCeWUvZSIEKgp5658ANQQjxckFh0yr5ka0Gz7THeWRVTrlpMMc1cgmDUwgNmmF4av3
- L3do1zVqJuLiZpzLFor8mV++GISnAZ4fDu8qketTmkyXWP4KUXVJKo9RTtW0w7X3nfXHnzUYl
- NQYbrKVp6OyzNtBueqp4FSog==
+Content-Transfer-Encoding: 8bit
 
-> Use guard(mutex) to automatically unlock mutexes when going out of
-> scope. Simplify error paths by removing a goto and manual mutex
-> unlocking in multiple places.
-=E2=80=A6
-> +++ b/drivers/reset/core.c
-=E2=80=A6
-@@ -1041,29 +1036,27 @@ __of_reset_control_get(struct device_node *node, c=
-onst char *id, int index,
- 		}
- 	}
+If mt76_wcid_alloc() fails, the "mt76.mutex" mutex needs to be released as
+done in the other error handling path of mt7915_add_interface().
 
--	mutex_lock(&reset_list_mutex);
-+	guard(mutex)(&reset_list_mutex);
- 	rcdev =3D __reset_find_rcdev(&args, gpio_fallback);
-=E2=80=A6
- 	rstc =3D __reset_control_get_internal(rcdev, rstc_id, shared, acquired);
+Fixes: f3049b88b2b3 ("wifi: mt76: mt7915: allocate vif wcid in the same range as stations")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/net/wireless/mediatek/mt76/mt7915/main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
--out_unlock:
--	mutex_unlock(&reset_list_mutex);
- out_put:
- 	of_node_put(args.np);
-=E2=80=A6
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/main.c b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
+index d75e8dea1fbd..bea8b77b1b92 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7915/main.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
+@@ -246,8 +246,10 @@ static int mt7915_add_interface(struct ieee80211_hw *hw,
+ 	phy->omac_mask |= BIT_ULL(mvif->mt76.omac_idx);
+ 
+ 	idx = mt76_wcid_alloc(dev->mt76.wcid_mask, mt7915_wtbl_size(dev));
+-	if (idx < 0)
+-		return -ENOSPC;
++	if (idx < 0) {
++		ret = -ENOSPC;
++		goto out;
++	}
+ 
+ 	INIT_LIST_HEAD(&mvif->sta.rc_list);
+ 	INIT_LIST_HEAD(&mvif->sta.wcid.poll_list);
+-- 
+2.46.2
 
-Would you like to preserve the same lock scope (which ended before this fu=
-nction call)?
-
-
-@@ -1098,7 +1091,7 @@ __reset_control_get_from_lookup(struct device *dev, =
-const char *con_id,
- 	const char *dev_id =3D dev_name(dev);
- 	struct reset_control *rstc =3D NULL;
-
--	mutex_lock(&reset_lookup_mutex);
-+	guard(mutex)(&reset_lookup_mutex);
-
- 	list_for_each_entry(lookup, &reset_lookup_list, list) {
-=E2=80=A6
- 			break;
- 		}
- 	}
-
--	mutex_unlock(&reset_lookup_mutex);
--
- 	if (!rstc)
- 		return optional ? NULL : ERR_PTR(-ENOENT);
-=E2=80=A6
-
-Would you really like to increase the lock scope here?
-
-Regards,
-Markus
