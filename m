@@ -1,46 +1,44 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF5A191F8D;
-	Mon, 30 Sep 2024 11:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0CF19066D;
+	Mon, 30 Sep 2024 11:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695311; cv=none; b=DvBhEY8XDmSq12GngvebVc087qFtJJHdl3h3bmk0nYU0D6X+qg0bRjFQbhFqfykj3BlaTE5x5vH6URLV55khNZkZgbiRnUiKO817OxHjDralaGAOb/66oAnV11IUnTjPKyyJpMCcK1oqfxx076ofhJGty7Um19TPnmNSxY2RB5A=
+	t=1727695311; cv=none; b=c3jtD3RMDXu7GP+WT4oL9bzU4NMU4R/cgrIn2me+zmAD6g8peUNifSasiJD4ofuy4JJCSEj38nb5R3ZiyhbSH07D9/1B5C9REwV65EzYn0ESsDNSjVj4Y5+wJ32ykLfRQGoCwlo1Pwpvln8bEVhthpE/cczetcnFTBMdXyHj+HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727695311; c=relaxed/simple;
-	bh=PgwIMygjWOyNNQQhqkAx39w3297DqiDCBEhTHKUEBpo=;
+	bh=KeNXRa8R4YN81APmKpZQjZTJsDHnGimynVRNK+omai8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A9sq9N9TiyAqsQs8aGzmAGm27PCY5xta4T8d1d/K/v9s9jm/JrFpvm43SanYyQ6IabiKbvJhcmDWHdaJ5F9EfeEvG1bgjcvTbh8JxUnD+fEkjYliUrlOqQGc/NH5v6XnPtyZ5BlXJkRFBHBZk6suRNk8nTSL2FyfrSXbkO8GBFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=s06oSpFg; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=kKEMxi1Z6pmK5BEb3dfLd3oRh4nYxdWRm/OtkV2b1feyKVCy2wCNoW71h2R4tmDUkafNW5ym4i+cYHDCWHJVEw66vIiwXNp6bbfrPFMK7gUKxsccDBssVMyqUb/682jKQxVGkvd+kxsmOie07eDqsW2FDQZYWnVpbhFuD50EHXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=AzYlmFBG; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="s06oSpFg"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="AzYlmFBG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=tiAMZdHfzRRadEJUpeFbdHkU5NVv6AAREPGmWLFa9N8=;
-  b=s06oSpFgNGj4vEEvBslzvjOKYQsmgjcckUHnAXT0NQdiYMYLFkYqyLKf
-   GIj0BnZ4kI2kL8qj2nuqgVAZUbMdVmTG0ceim4mOrZKYqF/Dvm+x+n11e
-   /1Y0OhDC2c3e2uNvX0jyHlKwa1N6HD6/W9OfIhrQDKI1XoM8vqiZNT4SE
-   c=;
+  bh=F1UZMtv5RWVGxdEQDN6gfxV9iWtaNrOlhgcnx8yrpEk=;
+  b=AzYlmFBGFhwoVWnRvk3iv2HO529RrqgfwByAFqvN/b2VMMqlxKZu7/EJ
+   uyMBvumNrvriUSuSxdBktgelLVq6fYFZkkqIRmasZEF8sG2MmzAffcP7r
+   sO3A0ds6/h+uSnn2IHGYpCqwWA3AAbSB/6WZCwKD32Us3aVbECNi6Cvpx
+   A=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956887"
+   d="scan'208";a="185956884"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:27 +0200
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:26 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: "David S. Miller" <davem@davemloft.net>
+To: Tomas Winkler <tomas.winkler@intel.com>
 Cc: kernel-janitors@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 16/35] net: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:02 +0200
-Message-Id: <20240930112121.95324-17-Julia.Lawall@inria.fr>
+Subject: [PATCH 13/35] mei: bus: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:20:59 +0200
+Message-Id: <20240930112121.95324-14-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -60,21 +58,21 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- net/socket.c |    2 +-
+ drivers/misc/mei/bus.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/socket.c b/net/socket.c
-index 601ad74930ef..f4ac3939fbb0 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -235,8 +235,8 @@ static const struct net_proto_family __rcu *net_families[NPROTO] __read_mostly;
- /**
-  *	move_addr_to_kernel	-	copy a socket address into kernel space
-  *	@uaddr: Address in user space
-- *	@kaddr: Address in kernel space
-  *	@ulen: Length in user space
-+ *	@kaddr: Address in kernel space
+diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
+index 5576146ab13b..718ec5d81d94 100644
+--- a/drivers/misc/mei/bus.c
++++ b/drivers/misc/mei/bus.c
+@@ -145,8 +145,8 @@ ssize_t __mei_cl_send_timeout(struct mei_cl *cl, const u8 *buf, size_t length, u
+  * @cl: host client
+  * @buf: buffer to receive
+  * @length: buffer length
+- * @mode: io mode
+  * @vtag: virtual tag
++ * @mode: io mode
+  * @timeout: recv timeout, 0 for infinite timeout
   *
-  *	The address is copied into kernel space. If the provided address is
-  *	too long an error code of -EINVAL is returned. If the copy gives
+  * Return: read size in bytes of < 0 on error
 
