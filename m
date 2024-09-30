@@ -1,171 +1,93 @@
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D5115C13A;
-	Mon, 30 Sep 2024 07:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD2C15D5D9;
+	Mon, 30 Sep 2024 07:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727682214; cv=none; b=RpLo8Y1BWVfR1pVyUuUDtx4mLpCgCgcvD4xG/+349/GmZSNx/tZs/N0UqFRY1xFTd8DfPLSB0Wx7NObYgrYXAX1Ye1U5v9nDyJRUET/vRpZGuA/8fmtkWlLascGUHd5Sv304/YPTZj+hFsFHqJWrR9zr0sMwk8O99+hJKD3ISN4=
+	t=1727682462; cv=none; b=Bzx+j7DLWfyvmbt8BlS3W+4FT4WvHUbE03TDN3M+1Q17ttpq3ul8Xzm/nmJ2V/kMN6vSmGnARi9+oZLvDwHZoxcsY7CxWGwScZW/aN7vs9MzmS6n+sfmoPjGO/9oIH6AozhRFDAgc9rUmOiAgDJP5RCABLFHoue9ObUkANGKPjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727682214; c=relaxed/simple;
-	bh=9JP1YXLm1fI562pg8E/zs94XKuWw/JrEhziHBFR0omk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c0UGZL3EphjTOlf2AdTtPLUHTMclTqFXsXvzdGSJ4fHGgjMtTtLiSUBbHbY0fROPKdOSEoxdP9q08wapWn+tuPiOsZgmgzRkHc88Q74+EXjVmk2F7E9GGecWUT1nlPHNcwgV5VpbL+rOOVPNVHPOgDejibKhQJdbVe7NQpJzJ/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=yB8lRDFK; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
+	s=arc-20240116; t=1727682462; c=relaxed/simple;
+	bh=7+9y/YEvw4UDGlVzBtxyqJLKBBBLQZUqxCTaLtPG7hw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LyORu7IyqEeKjshBTiWFEI/zUy2hSUttvO7d1rzFPkI3V/FfNHfOZiBfvhpoOnQvi4knxwKefzqFR6xEvTX3MP8ZJGzFe5BgvOE2fOTHxLVPEZo1Zx53PCko343izfOd1kxV6S3BYSpOEu02VgNoCWrbZKGwQtW5uZQ/Uuh7tkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ikwdea5a; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="yB8lRDFK"
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 7FB6F411F;
-	Mon, 30 Sep 2024 09:35:33 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 7FB6F411F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1727681733; bh=PFC8KMsPMRhmf+d1qYDzAf3QsCpwsLMFyEZT9wvMNiA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=yB8lRDFKWj2sB8KXzSckxji2dlq8uHIgB6k/wM+KMsdOs03ajUmgXz5JkqOrs/Oc9
-	 aG+8B2sSXKBXORdTPxLcwdmsExQcsdUK/MetDOQb/k3ld3S0lDXNJ8aSnzc7QcpX8Z
-	 7OvK8VgYTW+FvWXQuJBFAe5viD/ob+X6LDZanOk4=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Mon, 30 Sep 2024 09:35:26 +0200 (CEST)
-Message-ID: <22ea267f-2326-4128-a182-a4e90d4cfb68@perex.cz>
-Date: Mon, 30 Sep 2024 09:35:25 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ikwdea5a"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso625553866b.3;
+        Mon, 30 Sep 2024 00:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727682459; x=1728287259; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6wBOsog2pNLFaAr2Ohs9pRufolHG0ydUCAFQ0oauNMA=;
+        b=Ikwdea5aa3H+xdeZjBWMB+LQMN/YlR60FmKoNvsnZi01ofcoOxMG5Xto0FEfQT0mN5
+         8hyecdPpA4dpv9Oz3UJx1IeHogl/rpTsYFgYv48UTsA14CYGZlNLVaXj6nK7t5wyCd1G
+         a6/eR1K47G7De3SftF9/l/lZyuNNMNsNhxV8kyri7y8LRvv1SSX0PJo832WbbbkJzcwm
+         hs2JXpE2X8sZ5pC1V30yFiKgGhw55YBisQAC6/UsgzW6JybObWr8ynY0wkrOkL//nOWQ
+         1sG4birPRxzoXVlH7OOQah7tjQ9fkzzNdRNW2NUCpvY04K9/1v1tH18FfJByq07nTwrD
+         zCnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727682459; x=1728287259;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6wBOsog2pNLFaAr2Ohs9pRufolHG0ydUCAFQ0oauNMA=;
+        b=SsQI9qg9wq9i0WRRgXi/ptz1B5IJY8EEjspsp4wK7vrlr43vJKO5i7Sti6TCxJqS0K
+         9T3oQJo+qJ75b9PneYg4iJC3CtZbLxrhs4HSqZKJSI1n5Ms0taPIQEC7cQZTSdK+Pyr1
+         EthoIa1EIwrp2EvM5RFHueKHeTabsAP1eIVphkRg005sKc2u4fg6P6MCy+nvCdE6JPSX
+         PG750gbQeYcY6h0+7cI1xAJd+ll3825VR9umsDUoFsJFEO1aNOd4jf2g1E6n9zdcQB7n
+         PDogt1He1Ok5KU/+ODJryGaGhYfjitHbv3jMdeBJmaualEsimE/uNzBbQvacizbff97x
+         XSlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiWQFk+4AIC5aMNms4Xn967xdqr3QQcRXtvah0rkFxjTW0YMUDx9Rx/GGFHx8poFfuQxqP/OdUrENXZ50=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgkgO0iZ1CnGtKNN5Pj2uOzm4PEVvYLD+Sx7oFaIlJkCf9dNWw
+	peV4oTTSjg3v6kq9nsIaTLitH445fNEHljtG2uQzchfZNW/D8AjV
+X-Google-Smtp-Source: AGHT+IHvYQbigb/QRK6V+ONj5aAjIvinXBGALvI67jbRItfRisdRVhwtw867ztfqn9QsHI5wEDri4g==
+X-Received: by 2002:a17:906:4fcb:b0:a8d:5d28:8e0d with SMTP id a640c23a62f3a-a93c4a84fe1mr1171992666b.45.1727682458400;
+        Mon, 30 Sep 2024 00:47:38 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2998cb2sm484428766b.197.2024.09.30.00.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 00:47:37 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	=?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] lib/math: Fix spelling mistake "bsae" -> "base"
+Date: Mon, 30 Sep 2024 08:47:36 +0100
+Message-Id: <20240930074736.48878-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: silence integer wrapping warning
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <5457e8c1-01ff-4dd9-b49c-15b817f65ee7@stanley.mountain>
-Content-Language: en-US
-From: Jaroslav Kysela <perex@perex.cz>
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <5457e8c1-01ff-4dd9-b49c-15b817f65ee7@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 30. 09. 24 9:19, Dan Carpenter wrote:
-> This patch doesn't change runtime at all, it's just for kernel hardening.
-> 
-> The "count" here comes from the user and on 32bit systems, it leads to
-> integer wrapping when we pass it to compute_user_elem_size():
-> 
-> 	alloc_size = compute_user_elem_size(private_size, count);
-> 
-> However, the integer over is harmless because later "count" is checked
-> when we pass it to snd_ctl_new():
-> 
-> 	err = snd_ctl_new(&kctl, count, access, file);
-> 
-> These days as part of kernel hardening we're trying to avoid integer
-> overflows when they affect size_t type.  So to avoid the integer overflow
-> copy the check from snd_ctl_new() and do it at the start of the
-> snd_ctl_elem_add() function as well.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> I'm going to write a blog about this which explains the kernel hardening
-> proposal in more detail.
-> 
-> The problem is that integer overflows are really hard to analyze
-> because the integer overflow itself is harmless.  The harmful thing comes
-> later.  Not only are integer overflows harmless, but many of them are
-> done deliberately.
-> 
-> So what we're doing is we're saying that size_t types should not overflow.
-> This eliminates many deliberate integer overflows handling time values for
-> example.  We're also ignoring deliberate idiomatic integer overflows such
-> as if (a + b < a) {.
-> 
-> We're going to detect these integer overflows using static analysis and at
-> runtime using UBSan and Syzbot.
-> 
-> The other thing, actually, is the we're planning to only work on 64bit
-> systems for now so if you want to ignore this patch then that's fine.  There
-> are a lot more (like 10x more) integer overflows on 32bit systems but most
-> people are on 64bit.  So it's less work and more impact to focus on 64bit
-> at first.
-> 
->   sound/core/control.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/sound/core/control.c b/sound/core/control.c
-> index 4f55f64c42e1..82b9d14f4ee3 100644
-> --- a/sound/core/control.c
-> +++ b/sound/core/control.c
-> @@ -1641,6 +1641,8 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
->   	count = info->owner;
->   	if (count == 0)
->   		count = 1;
-> +	if (count > MAX_CONTROL_COUNT)
-> +		return -EINVAL;
->   
->   	/* Arrange access permissions if needed. */
->   	access = info->access;
+There is a spelling mistake in a literal string. Fix it.
 
-It looks safe and this check is already in snd_ctl_new(). Perhaps, it may be 
-clever to add a direct comment to the code about purpose of this extra 
-(double) check.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ lib/math/tests/int_log_kunit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Jaroslav Kysela <perex@perex.cz>
-
-
-				Jaroslav
-
+diff --git a/lib/math/tests/int_log_kunit.c b/lib/math/tests/int_log_kunit.c
+index 737d2c00615a..d750a1df37c1 100644
+--- a/lib/math/tests/int_log_kunit.c
++++ b/lib/math/tests/int_log_kunit.c
+@@ -24,7 +24,7 @@ static const struct test_case_params intlog2_params[] = {
+ 
+ static const struct test_case_params intlog10_params[] = {
+ 	{0, 0, "Log base 10 of 0"},
+-	{1, 0, "Log bsae 10 of 1"},
++	{1, 0, "Log base 10 of 1"},
+ 	{6, 13055203, "Log base 10 of 6"},
+ 	{10, 16777225, "Log base 10 of 10"},
+ 	{100, 33554450, "Log base 10 of 100"},
 -- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+2.39.5
 
