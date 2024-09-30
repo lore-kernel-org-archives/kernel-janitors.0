@@ -1,127 +1,107 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C302821105;
-	Mon, 30 Sep 2024 11:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393B355E48;
+	Mon, 30 Sep 2024 11:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727696310; cv=none; b=TSotjbeJ+++UGmZGT/JfQ3d95KHHosJIgzWtaTWUx60jPDzxjcSOEJLGTPLwtsy0Xo59HT37VWUeQj0oUvWuoHrR0Z7mCKGTkbQ730drW8mhWoA1vBPNEBFpRopn1W6eiipe7K+c0qMhvONsiLs/dIayqfFHJstE4R5XaXvwlsU=
+	t=1727697501; cv=none; b=WRYM5hMlMwxpA2yPRaqJVx2S/yIyqfo/IsO5wyDZAODaBzIUcSbUauE/iaQfqTWUOPiM67HO35HkdcTCgoH8/AAx+lhZVexNkFY06pEYrmctlCqZL4vQN6NedUBhCIDuX58p50iw3kL/DI3/iC33hCSowFCnsmQXxALFyOp3saI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727696310; c=relaxed/simple;
-	bh=5AP7+g3pw/sCKTbVq24dDWwV0w0McSjRvsXu0z6VziY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lCRyxFCdSPjQ/XLSeTH931vo5AMjnUBtMpEiHgkFpdCuJ1FvTC+cOKuBs/qI5n49NlshyG8qLWtGuuvui4x+sDE8EytjMU3w098oCAG3ztLOhdEMVXu5YhoBNITJD15CJCzOkPslyqy1RfMHKdD80Wqy1pOURurtsmXaC7fINtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=uATNerqt; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="uATNerqt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=nhq8/UPreno8caLcXe4CSQDb5B0HGw0ef8Ii7H+AOns=;
-  b=uATNerqtbMuhMDz3jvGZ7blwoQ6xty8ok7dX0EA6QjFkHpi/p7829+C0
-   5XU/J5iEhvFrpkcpzn+jpyDke3Ax5/CI8sD90g24LHmCUKLWUE3mZMcom
-   uFcuGhvkNuSV9mbPMq58iK5OjyTrH+AVAK51hnXz6GP6/GjTJ4QkR5aDU
-   I=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="97769838"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:38:20 +0200
-Date: Mon, 30 Sep 2024 13:38:19 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
-cc: Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, 
-    Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
-    dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 29/35] drivers/gpu/drm: Reorganize kerneldoc parameter
- names
-In-Reply-To: <ea6868b2-ea0e-42ad-8351-c02553691b74@amd.com>
-Message-ID: <a15de05b-131f-503b-b8b5-62c4c69b87a4@inria.fr>
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-30-Julia.Lawall@inria.fr> <ea6868b2-ea0e-42ad-8351-c02553691b74@amd.com>
+	s=arc-20240116; t=1727697501; c=relaxed/simple;
+	bh=+XTe8ZTlz5bzJaoos5E98LKB5gpf/X+7byEsfZ41vpw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mGn0Xrb4wD7PBJuxshwb//n4YLZYaXTIUAH33fR/92evR6swX3MCIrCZnQmNfzi3lHv+2k3xII/YFLPexO0G7LiiuvcZUWIklbIJ6iAwDcsygefiQSYhte8r+/4Jg05aP6AVXrJ+MdDXfE9kp41XIMM5GhlghSZ2VElB5/kyOXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso4201072276.0;
+        Mon, 30 Sep 2024 04:58:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727697497; x=1728302297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GBhQUD2ivI1lM/FdIQwroSXOb0UcPWeoSjL72i76dRc=;
+        b=takSN60eCGnrXFSOB/DYqpWXhW8E2b6kIGVjCE3rajz49jZTGXVuh+/ZXCKfEJ+sU0
+         IZdafVvzxrGmW38hQHdd8g2kPilbNLnZkdeKpcDWa/unvmkMM9vzpzCrnFdPYEmUKv1k
+         u6glfVKzuM689accT2QyBJlDoSgcnzn7aYkKZzt2tfB/ZlCnqJfHdGZ+LitZZiyXpJUQ
+         wkG9O2jdQfFLi4QvVydOM7hxwCAV4vv3oOB7f6eX5lXSaNjoTzTCRpHYGQFqUfIiHHcQ
+         kqkqUBpkYzvngIsd3+c++y/HreMSkZYcx4nsbuAW3kjyYv68e/yYcCKmXxvu4SVleoGn
+         UudQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgATIWTiZYhBBQztJf2utsnVc2xQZ/A6DkjeL74Dtb/vMUeWsdvnDeZrqZn9sK19Ja+EIOt2vczQZsMQSn@vger.kernel.org, AJvYcCXmXLEIOf3JwY2L3NOOsyl+ZRyWqUyqE/oUPEA2znMpPh6QX2+esM6wljQSgGyXb+4vvQkdMkokRydyBo2EbIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0bi7p2xNLdTCqFJWu0Ow1sVsdLkMjP5W6eBzww3jptb/DpxPE
+	f9NatTzRAmI3YzkGRLK/MWRqM9NtcoBGNqBAwNzKm6sPtID6aSaoHM76MYzP
+X-Google-Smtp-Source: AGHT+IEcb5rufu7wXIRzswL0FrKr1+fqdB+Zf+2a+KZc1r6tQRsSlDzSZeLONVwa944c9As2oGcd8A==
+X-Received: by 2002:a05:6902:2289:b0:e26:183:92c2 with SMTP id 3f1490d57ef6-e2604b7ef8dmr9089832276.27.1727697496945;
+        Mon, 30 Sep 2024 04:58:16 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e3ef9e2esm2276103276.8.2024.09.30.04.58.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 04:58:16 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6db836c6bd7so39926807b3.3;
+        Mon, 30 Sep 2024 04:58:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVI/M5PLLCHT87gXD8xPT3QxSujU+jDDmYmOo5L8HPIvMQ/gAT2HOyKKz6fWSlq/7XA4NdsyxPEsIBlidly@vger.kernel.org, AJvYcCXLos2K/3OlyghQu9RXu/d5VTWMtmoQ3Vj//dEc6cMDUB7HrLvHxiDbvspVI2hL0OZs9MZD8CBIIdMZPN8Kj9A=@vger.kernel.org
+X-Received: by 2002:a05:690c:4243:b0:63b:f919:2e89 with SMTP id
+ 00721157ae682-6e24750a977mr72447177b3.2.1727697495763; Mon, 30 Sep 2024
+ 04:58:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1881777891-1727696300=:3991"
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-12-Julia.Lawall@inria.fr>
+In-Reply-To: <20240930112121.95324-12-Julia.Lawall@inria.fr>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Sep 2024 13:58:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW=y_yx8qxmNZUV9ALxW_ZcMpEgXYirnHr70SHGYnWTRA@mail.gmail.com>
+Message-ID: <CAMuHMdW=y_yx8qxmNZUV9ALxW_ZcMpEgXYirnHr70SHGYnWTRA@mail.gmail.com>
+Subject: Re: [PATCH 11/35] powerpc/ps3: Reorganize kerneldoc parameter names
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Geoff Levand <geoff@infradead.org>, kernel-janitors@vger.kernel.org, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1881777891-1727696300=:3991
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-
-
-On Mon, 30 Sep 2024, Christian König wrote:
-
-> Am 30.09.24 um 13:21 schrieb Julia Lawall:
-> > Reorganize kerneldoc parameter names to match the parameter
-> > order in the function header.
+On Mon, Sep 30, 2024 at 1:24=E2=80=AFPM Julia Lawall <Julia.Lawall@inria.fr=
+> wrote:
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
 >
-> Please split that up by driver, apart from that looks good to me.
+> Problems identified using Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Thanks for the feedback.  I will wait a bit for any other feedback and the
-resend.
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-julia
+> --- a/arch/powerpc/platforms/ps3/repository.c
+> +++ b/arch/powerpc/platforms/ps3/repository.c
+> @@ -940,7 +940,7 @@ int __init ps3_repository_read_vuart_sysmgr_port(unsi=
+gned int *port)
+>
+>  /**
+>    * ps3_repository_read_boot_dat_info - Get address and size of cell_ext=
+_os_area.
+> -  * address: lpar address of cell_ext_os_area
+> +  * @lpar_addr: lpar address of cell_ext_os_area
+>    * @size: size of cell_ext_os_area
+>    */
 
->
-> Christian.
->
-> >
-> > Problems identified using Coccinelle.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> >
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c |    2 +-
-> >   drivers/gpu/drm/radeon/radeon_ib.c     |    2 +-
-> >   2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> > b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> > index 6005280f5f38..ad4fdd4d4d82 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-> > @@ -2773,11 +2773,11 @@ int amdgpu_vm_ioctl(struct drm_device *dev, void
-> > *data, struct drm_file *filp)
-> >    * amdgpu_vm_handle_fault - graceful handling of VM faults.
-> >    * @adev: amdgpu device pointer
-> >    * @pasid: PASID of the VM
-> > - * @ts: Timestamp of the fault
-> >    * @vmid: VMID, only used for GFX 9.4.3.
-> >    * @node_id: Node_id received in IH cookie. Only applicable for
-> >    *           GFX 9.4.3.
-> >    * @addr: Address of the fault
-> > + * @ts: Timestamp of the fault
-> >    * @write_fault: true is write fault, false is read fault
-> >    *
-> >    * Try to gracefully handle a VM fault. Return true if the fault was
-> > handled and
-> > diff --git a/drivers/gpu/drm/radeon/radeon_ib.c
-> > b/drivers/gpu/drm/radeon/radeon_ib.c
-> > index 1aa41cc3f991..8611a27dfb3d 100644
-> > --- a/drivers/gpu/drm/radeon/radeon_ib.c
-> > +++ b/drivers/gpu/drm/radeon/radeon_ib.c
-> > @@ -49,8 +49,8 @@ static void radeon_debugfs_sa_init(struct radeon_device
-> > *rdev);
-> >    *
-> >    * @rdev: radeon_device pointer
-> >    * @ring: ring index the IB is associated with
-> > - * @vm: requested vm
-> >    * @ib: IB object returned
-> > + * @vm: requested vm
-> >    * @size: requested IB size
-> >    *
-> >    * Request an IB (all asics).  IBs are allocated using the
-> >
->
->
---8323329-1881777891-1727696300=:3991--
+Not really a reordering, but good to have it ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
