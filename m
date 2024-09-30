@@ -1,94 +1,136 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C75118EFE1;
-	Mon, 30 Sep 2024 12:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E03848E;
+	Mon, 30 Sep 2024 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727700736; cv=none; b=LuBC6jua1t5/Dgh/LYisEcuSVO74OPp7SAx1k7Sx77BaUJMe4t15KlDWr7t6e1PDwqc+W74L7j/WkkSiyg0fDu6nLbJimXj42lkqj3xAZT8q/9SStC9lmEOC6HCg+lLbWdyx4Q+k8LKLLBJHvt/tFetyy9wjwNEitXm/ZvbTnGQ=
+	t=1727704920; cv=none; b=k4msPbp64HUYAvjnW4AzDgsxH1bNbJOGZdQflz1j/5pjgx4dLWPo2Zpr3jkEtKh4KEzWmovVGgGATRuN4TBh7psyuPWyJS2r90wzPObtLLD3o+5DHaqkVqjTIUF7Y2PdKbhoR6NiwbMNvPHifnqryG8FvS3mwZeFlRBG/fHuZbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727700736; c=relaxed/simple;
-	bh=KXWDpFrAIhachM2EMwPDXtL0tFet7X4Ku8wgw9+P3y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpqE5oInwbagfdFGH5pmwBdX9ytA2qqd/2SUrOfD2ANwB03b49AX20nvX/rJOQ82xP8d96CjP+YhOiDx72dtFicL0pXSmKctdf3I3djHGgvs3ttu0M0kEEX2sFGKZA1QAKMlVDt+Fy+nnQplZaA5js2f8jdU6acxALwFvSQ2cJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eX0ojKVc; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727704920; c=relaxed/simple;
+	bh=G6LzdqOokS23LP1VY338tGcBvZCN/ylAvCaZppvKVcg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ruPt9uIDyA5y+kM0cD90g0rJSX1qFY8A7n9YEkzt++aAz13PjISw8K+UI/jg/5lZM7gNCb7TzEOTEFGvY2F/IcwMhCynK88emV7k3F3Pev0F+N0dBAEQkqTK4bXKTqR2oCb+T4FNoDLsOnuhn/CAIfLqzATyGUShiRViUo8zR3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p3ho+n9d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eEO/mOn/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p3ho+n9d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eEO/mOn/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eX0ojKVc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727700705; x=1728305505; i=markus.elfring@web.de;
-	bh=KXWDpFrAIhachM2EMwPDXtL0tFet7X4Ku8wgw9+P3y4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=eX0ojKVctUoGhhukf8ccA6EtfnMcphjBOrNC6sxdX5lRCDk6bzv2X/teIngs7Qdw
-	 DE2N/yKAtOSV5oSoeljkJ+HKM5FRdLyFxcolTqveujxuHUgS+i0ntQ0MiowC0mwZI
-	 85vDDHE0gNc1NAsk0o+pwsjDO0sL9ghkcPWT4/cBZsd7ADAyLJ4ydUDbiLQYCMTcz
-	 xYCpOMT14XnrZvxYHdyUojyWNHEuC86zm8sKbHu92spqkS+AqUaDO9cxiA4kCb0G1
-	 7J7N/bOID8yN68nNj9FnIvqNKewIkun5YvCbNBo6WELUxPF+EkyG9RCtDK1F5R6xp
-	 GGD6sNCY4f9daWLOGg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MT7aV-1sTZRW0fWB-00StZN; Mon, 30
- Sep 2024 14:51:45 +0200
-Message-ID: <3f4228f2-3ad5-4491-8236-6a7fbc5274ff@web.de>
-Date: Mon, 30 Sep 2024 14:51:43 +0200
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p3ho+n9d";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eEO/mOn/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p3ho+n9d";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eEO/mOn/"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ABFDA21A64;
+	Mon, 30 Sep 2024 14:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727704916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBtmLH9COnq4AhxoZndZCXmFIPw/Tb/FqVdz+ETVuio=;
+	b=p3ho+n9d13D5Br2KKpvA3EE7+DtUE9NO+R0DafHbl4xW1Al59cC8ZqBiPsBw5R4sZWS/yn
+	Q3Jx+mT6tG3XMQPOEmXjmSxPSe7O0tj6s7c0NIih5b+QprdlxOl35mdU+aVMRlHrk0RmZI
+	RaH0+GzznvF3ShIUKvu5W0tx+MiQwYI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727704916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBtmLH9COnq4AhxoZndZCXmFIPw/Tb/FqVdz+ETVuio=;
+	b=eEO/mOn/QlUxT7GsQu87oQRKNZ9XwiDI9OjzZ40nZhhaQknq4oiDvPmyAa1LEvCLvAi9V4
+	WUmFj9dP1aeqSyAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=p3ho+n9d;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="eEO/mOn/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727704916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBtmLH9COnq4AhxoZndZCXmFIPw/Tb/FqVdz+ETVuio=;
+	b=p3ho+n9d13D5Br2KKpvA3EE7+DtUE9NO+R0DafHbl4xW1Al59cC8ZqBiPsBw5R4sZWS/yn
+	Q3Jx+mT6tG3XMQPOEmXjmSxPSe7O0tj6s7c0NIih5b+QprdlxOl35mdU+aVMRlHrk0RmZI
+	RaH0+GzznvF3ShIUKvu5W0tx+MiQwYI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727704916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBtmLH9COnq4AhxoZndZCXmFIPw/Tb/FqVdz+ETVuio=;
+	b=eEO/mOn/QlUxT7GsQu87oQRKNZ9XwiDI9OjzZ40nZhhaQknq4oiDvPmyAa1LEvCLvAi9V4
+	WUmFj9dP1aeqSyAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7AC7D13A8B;
+	Mon, 30 Sep 2024 14:01:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AbmXHFSv+mYYCQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 30 Sep 2024 14:01:56 +0000
+Date: Mon, 30 Sep 2024 16:02:49 +0200
+Message-ID: <87ed51grxy.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	kernel-janitors@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/35] ALSA: Reorganize kerneldoc parameter names
+In-Reply-To: <20240930112121.95324-5-Julia.Lawall@inria.fr>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
+	<20240930112121.95324-5-Julia.Lawall@inria.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] cleanup: make scoped_guard() to be return-friendly
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
- =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@intel.com>,
- Simon Horman <horms@kernel.org>, Tony Nguyen <anthony.l.nguyen@intel.com>,
- Peter Zijlstra <peterz@infradead.org>
-References: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
- <21be0ed9-7b72-42fb-a2fb-b655a7ebc072@web.de>
- <34d2f916-3551-4b75-b87a-9d413662369b@intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <34d2f916-3551-4b75-b87a-9d413662369b@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kAxrK46s8Wcx8kQGjxB1JNRJToJMJxN4A2l42eOMuO4XWZv2p+0
- abDsr+S8U/ZrPYMkqQVuKJa7qfyU9Rosw6Ug3XyivMVNBnOhs4uipe/e6uuyLyoLPl2AhlB
- ZzpgId0/Rr0BqfxvhgQisQRXIaipG4A+9afB9IYZVGj5/CjiJ5jEWTQ6JxHw04FH2wfNu1K
- rTNWhKtSV2ZasmaLiLSNw==
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: ABFDA21A64
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[inria.fr:email,suse.de:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pgE1M2bA76s=;zenY1a8l/x+gQ+Pvwa4rnufisuH
- BBwUyCoA9lDJlBQYER7Xtpb6kfkl72B6emyZRfwD/I5BvbeyMQp5vW6HqKqi89EPHXSwxmRRq
- RYDUSGyoJ2f7ibdZrNNLICa586I0d1qsgg30h13F54m/t4K0S1Z+CBVNhL0hvBeWnnmEcfbA6
- ratQzQG1/HnoC/GAA3RTKHIB0QAo3giRURA/iCh9pjifEzaQd4fcz1CJiNZ8fGGewa3oyF7lL
- 9UahG6/FO7jGoS+KrqSrjmBKacUmqhlUHZhp3UogPIyDFHy4jrYFP5ftY4SopgvKgKSdG3DEF
- FhLSVh5Z9TrLi/pEzDRPjEXnvPACbgS0HsvkOb036mXr0nhXDT3KMa5+pxR4bBCSOrLOlNGGT
- LZRFUyVx15ZQvEeM6U9b8W6ecKMz/sl35nmqhOxu1YXlePlKNy8i7LcV1XQ1Ce71IQO0PBhNS
- 9V0L6fIrI1QHCLfAfsdPALZx5gZ2HuqD0nyu4b6wkYuwjBDFONl2CaJmjjmYijdD2XFqZ2W5w
- nx/pXjEjJ7YME4ZjmyzsFmueG4cJJ2OH2D1AcOsk+jy0z3X583PNaRB60ZrAXr986IedrHIGO
- uR8teT5rNT7ER6cyAU4NxoSj1C7/RRpNVvADyoyHtxrRyNATNb+7qYZFXO2Ou8chStMYyZjgo
- WQ9xjAjhmG0hOTc5tE8R3UIfX7J7XRUT1Mya0DBI+uh5It8oyg/yx7VIocFs3Z5VFoGpDAQEM
- b16ihtYH5aYiCWLH3aW8PWT/yFHdlJsQMlhYRDVOvlw9za0mM6M2gAWr4SfAnr725yPPBfXvn
- MhuwBvZdC/kpXmQinRxCNzNA==
+X-Spam-Level: 
 
->> * Would you ever like to avoid reserved identifiers in such source code=
-?
->> =C2=A0 https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+de=
-clare+or+define+a+reserved+identifier
->
-> we already don't care about this guideline (see __guard_ptr())
+On Mon, 30 Sep 2024 13:20:50 +0200,
+Julia Lawall wrote:
+> 
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
+> 
+> Problems identified using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Please take another look at name conventions.
-How do you think about to avoid that this software depends on undefined be=
-haviour?
+Applied now.  Thanks.
 
-Regards,
-Markus
+
+Takashi
