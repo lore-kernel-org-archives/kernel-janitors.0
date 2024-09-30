@@ -1,43 +1,44 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B73B19925D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36081991DF;
 	Mon, 30 Sep 2024 11:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695319; cv=none; b=OkB142PUu8O150fBDQGeDJEtmQ08iWj8lX7ekKgcJe+kGhR3bX/oLMP1PFHcEMUrtg6lOJFA1zOELHRbO5RD63L14t3S6gqZ6t37cnIKhSfxyJ8p9unBPuDOpk9X0JsvI/i2gcx0ScdoN2kdoUjZAtLevQAKKzfN5XBV4ZUxEF0=
+	t=1727695319; cv=none; b=UCHiuAWwCR/rmALUNYNmOMmrLN21NjdTA740M2xGdEy4x2EF1RPUkqoP0mKr2KBji09y/l72ySTkijD25hNiQGBOwjZQQTW/eerZ9i80ckgE3NEFaoxK3WOYoKEc7BdT4zziPtILS1ZDBhdeey07t06qC18ABxDFY4D27hM9E7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727695319; c=relaxed/simple;
-	bh=cQVGGq5xQOiRJgIv8/0eVuPLYc+ntYYQOa3eK7PlFn8=;
+	bh=32q/o2EUFA3kk2dbZ1cTMlvN1W8FoiLvPGRQaAXwDoM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rfMqdmOvYarbOsY2FwufSY6eKp8o3LB0s80l82PR7Uc0PtRcR3c7Zd5WEj5MHpEcyNmp5q95wnEiDOerTeKymyRbMPa6gehAL/00gdaYaBkKu4x6a7Mtxx4wZ0qiOVLDvZObrZ4eWxKjWvc9JWxkccE4K9KwLwU7b/qR3b4EuPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=ZdwSKBn5; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=it0ZGAxNec0izycy/9XL2E60ccOn4o3nMREBd19hRmikkHFV26wBiEsVxwKPkFmqokc4nS+LLyzc6wn6OBt6+Jqp10ZxfTGFSIRT3ghzvu1agZmXidCA9halouJnrhXJNAoGvYrI+gQWfbFX6NUcXLMBBU+/6Z+nLk+lCVd2QA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=j5APBtir; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="ZdwSKBn5"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="j5APBtir"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=UVwqg9pSLhRbnrHgL5k+5dBK/PrMq/KHM37Icoezd/0=;
-  b=ZdwSKBn5snaHNt5KRSYKxd2+0XuNlbB5QiNmgqtZyqBSloro/wGyWGHc
-   8UHHvnowXQA8HP9/if4H9vdzCXibWmWMdEhz9b/wBaSGCQR5gAqfhygnY
-   aNy2yEIUS9yv55H+EWtZfK+5LFcVsnv/TrGNqJMAtmezbsu1La+qswK1B
-   U=;
+  bh=dwY73jovIycI8YIH5O4i/nKlVbHmx1WK6SnTLQ4cHEc=;
+  b=j5APBtirCEuBhXc4HfSqNIlPNTQzfPFntH4kXuDUPkGCBHDfVPGP2VX0
+   Sz9/y4ltd+41bAMwQ7QnQvyvJOZNxEIN6CVSshfuROGoCwPEU3C1OmjAP
+   GdE1G00ACnJtwbHDQpmXA8bBC0EMOqrG+Z9BT/6xkTu80Jc9n1pkbT1jW
+   k=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956913"
+   d="scan'208";a="185956912"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:28 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Paul Moore <paul@paul-moore.com>
 Cc: kernel-janitors@vger.kernel.org,
-	alsa-devel@alsa-project.org,
+	Eric Paris <eparis@redhat.com>,
+	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 31/35] slimbus: messaging: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:17 +0200
-Message-Id: <20240930112121.95324-32-Julia.Lawall@inria.fr>
+Subject: [PATCH 30/35] audit: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:21:16 +0200
+Message-Id: <20240930112121.95324-31-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -57,21 +58,21 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/slimbus/messaging.c |    2 +-
+ kernel/audit.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/slimbus/messaging.c b/drivers/slimbus/messaging.c
-index 242570a5e565..e7aa9bd4b44b 100644
---- a/drivers/slimbus/messaging.c
-+++ b/drivers/slimbus/messaging.c
-@@ -13,8 +13,8 @@
+diff --git a/kernel/audit.c b/kernel/audit.c
+index 1edaa4846a47..53e3bddcc327 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -2102,8 +2102,8 @@ bool audit_string_contains_control(const char *string, size_t len)
+ /**
+  * audit_log_n_untrustedstring - log a string that may contain random characters
+  * @ab: audit_buffer
+- * @len: length of string (not including trailing null)
+  * @string: string to be logged
++ * @len: length of string (not including trailing null)
   *
-  * @ctrl: Controller handle
-  * @reply: Reply received from the device
-- * @len: Length of the reply
-  * @tid: Transaction ID received with which framework can associate reply.
-+ * @len: Length of the reply
-  *
-  * Called by controller to inform framework about the response received.
-  * This helps in making the API asynchronous, and controller-driver doesn't need
+  * This code will escape a string that is passed to it if the string
+  * contains a control character, unprintable character, double quote mark,
 
