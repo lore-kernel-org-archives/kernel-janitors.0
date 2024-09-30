@@ -1,115 +1,127 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862DD47A5C;
-	Mon, 30 Sep 2024 11:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C302821105;
+	Mon, 30 Sep 2024 11:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695846; cv=none; b=QI0i/CCsQvjNPnKuQbO0CCdldZy9uNOsoomA5DeKW6tSPDy0K/LolC67BoKtE2rpaw6tUlA+z5LGimZ8Ce2eaF23OpRhC5VsKppLyKH18HUE5N0kBNa1ehzJRqUZMNBXNPTsY3d0rwd9oJw/T+eFAOtJgPul35AtX5rAMHq5mS8=
+	t=1727696310; cv=none; b=TSotjbeJ+++UGmZGT/JfQ3d95KHHosJIgzWtaTWUx60jPDzxjcSOEJLGTPLwtsy0Xo59HT37VWUeQj0oUvWuoHrR0Z7mCKGTkbQ730drW8mhWoA1vBPNEBFpRopn1W6eiipe7K+c0qMhvONsiLs/dIayqfFHJstE4R5XaXvwlsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695846; c=relaxed/simple;
-	bh=Rnp3oAKnt7uQbKWYYpMvDD5p8/BQvPa2EK6O4FygSKE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=HI7Gzh5xW7wzNSzF90yW+YGXmjsuFzXhlbQ639cJIrSnhzIAPBMI1Vvo4aHI2R/Hk01pH81cATkCw0bqP92OX5gwHM29biqUcLpX3IxTcEzeLgyPtR+F4Z/oTwDT2n8Le/HTiPm66P6NL3B9ixoSAOjPzItbidqX8hLC9ZWd3dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RnLbFZfO; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727696310; c=relaxed/simple;
+	bh=5AP7+g3pw/sCKTbVq24dDWwV0w0McSjRvsXu0z6VziY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=lCRyxFCdSPjQ/XLSeTH931vo5AMjnUBtMpEiHgkFpdCuJ1FvTC+cOKuBs/qI5n49NlshyG8qLWtGuuvui4x+sDE8EytjMU3w098oCAG3ztLOhdEMVXu5YhoBNITJD15CJCzOkPslyqy1RfMHKdD80Wqy1pOURurtsmXaC7fINtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=uATNerqt; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RnLbFZfO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727695821; x=1728300621; i=markus.elfring@web.de;
-	bh=d0XcTI11xyggZuAJX6mDg2btd5Go79CL4rZ3yZncCLA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=RnLbFZfOPGtjXVL2FZys7WrLyvVMsOAW6gZVFKGSn8x5+B5WMeyAStTN4pj2JdKk
-	 17ZmLWx7MbKyos00D30akxGp+5Gd2XC8LXrNgyXAewYL5GHFc7ZeUHVBCIXLDaupC
-	 1CDi90jxwOzgr7+pQyJKE365uWFAAvoZWCsxQUS4j2jyN1X95a9cbOXEo13arSlgt
-	 A7T1BHa1BVs/FuHQ8nmDyzbjvuYZ4NN4/vUBigOjpcq8VbyovcMAmlFpNA3XMPMtx
-	 Qa5wkrsvVDa9GsrbHCLsOLHZar+Rsd+VPDvG66pVMDOEyvqFtFKH7urzogddMZUvB
-	 uLUBDmcEumoemIIJ+g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwNW-1sMS1D2Bcs-00fj54; Mon, 30
- Sep 2024 13:30:21 +0200
-Message-ID: <21be0ed9-7b72-42fb-a2fb-b655a7ebc072@web.de>
-Date: Mon, 30 Sep 2024 13:30:16 +0200
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="uATNerqt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=nhq8/UPreno8caLcXe4CSQDb5B0HGw0ef8Ii7H+AOns=;
+  b=uATNerqtbMuhMDz3jvGZ7blwoQ6xty8ok7dX0EA6QjFkHpi/p7829+C0
+   5XU/J5iEhvFrpkcpzn+jpyDke3Ax5/CI8sD90g24LHmCUKLWUE3mZMcom
+   uFcuGhvkNuSV9mbPMq58iK5OjyTrH+AVAK51hnXz6GP6/GjTJ4QkR5aDU
+   I=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
+   d="scan'208";a="97769838"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:38:20 +0200
+Date: Mon, 30 Sep 2024 13:38:19 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>
+cc: Alex Deucher <alexander.deucher@amd.com>, kernel-janitors@vger.kernel.org, 
+    Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
+    Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+    dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 29/35] drivers/gpu/drm: Reorganize kerneldoc parameter
+ names
+In-Reply-To: <ea6868b2-ea0e-42ad-8351-c02553691b74@amd.com>
+Message-ID: <a15de05b-131f-503b-b8b5-62c4c69b87a4@inria.fr>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-30-Julia.Lawall@inria.fr> <ea6868b2-ea0e-42ad-8351-c02553691b74@amd.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com,
- =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@intel.com>,
- Simon Horman <horms@kernel.org>, Tony Nguyen <anthony.l.nguyen@intel.com>
-References: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
-Subject: Re: [RFC PATCH] cleanup: make scoped_guard() to be return-friendly
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
+Content-Type: multipart/mixed; boundary="8323329-1881777891-1727696300=:3991"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1881777891-1727696300=:3991
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xzvixUKgOXfBCXt699GIb0+mo0u9g1Dvr1cAFr3gmI/VDPsUyBJ
- ZmN5hIryhXzOoDV3nzFt/bUkN1dqfHJNOAy7H+eJ//XMCfSxK3WT+iqYmc3KB+iyBiNaPpA
- 9ypaq8r9UvtJ+cGQ/43MswXBwANsINZ3XzTjjWE0yAPZSoiMil0iviJvaRJ7RLW1R9LYyfE
- WGj9dUpN1MpiotC3FdJGg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iPuPNAsv3as=;TenYwlrRc2lIEk5NSrZcVPiCITS
- 3MKDynz/FL0WS64moCRGyYTQVwf5nbIFDxR/56/7EG5RABpMUDxdaUJ0RCJ3Qas52jf+aNyry
- sMJHTkWq7ZAk5ELLW+cZSV+upXtbsCtNA+c36QG6wszjkiC4/3kqEuMOZrswkyBwFFUvGX9QT
- CYY4DZF9FfhfeGbEBO9NHIxN/uE2rW7OWMVNPjEBxuZb7XfFqzFadrGjtq2N0sbFFxBHfEMUW
- EBpu+NmR0bAUJmyMC44g8zZwq1Y/coFTydyv1v1ZFSa3wITK9cgBviDJexrDH1ERjxd7Lqyh+
- NTNIzYcpxT+5e61HIcryj9kuUdDLxO6hbaEbr4a3pEc9N9JuogrxZkleZt+RJc0wAWYGBROHR
- OOIUAunbcU9/Kc7gh+dNXc5EYcvRto8ARIz6pVdg3qwVTbHZLaH1o3u+5N02tgvcZD7IasXDc
- nH91nIeLG9qJVjA+8OthmGnx7/z/ReWIg9ypQ5v5jJ6T0pUUiNLdIJQrYiDfUhjgYHgzfDkX0
- s1+SbK7NHhLWfwxzshJlSmD5xL0Gc+WdB8qu75D6/8aYg2cU/YhutZLimfTHeOxv93DJ5S6oK
- VV5epPeEgLuwS/kBd0iuW37NcFTiCGEPsYIo5zV269cgNWOSCZ6qJTraI3rEQ2ZZNOQxMMiHU
- E6jXzYD1X4u2ZgvBbxC0AhSB4wJe9PnycFPCP+pyvflJABt4+SO11acOrgap6BK6IL6QKAF5C
- IEuEoaYLUYptVWDXycu2DQse5k44wGP21UIK8Qy4RLf6qRjlUaljHOr7+O+Qy6tkpZQZi8QSN
- dP4gTf7T50sK6HBY8FBZ0yGA==
+Content-Transfer-Encoding: 8BIT
 
-=E2=80=A6
-> Current scoped_guard() implementation does not support that,
-> due to compiler complaining:
-=E2=80=A6
-> +++ b/include/linux/cleanup.h
-> @@ -168,9 +168,16 @@ static inline class_##_name##_t class_##_name##ext#=
-#_constructor(_init_args) \
+
+
+On Mon, 30 Sep 2024, Christian König wrote:
+
+> Am 30.09.24 um 13:21 schrieb Julia Lawall:
+> > Reorganize kerneldoc parameter names to match the parameter
+> > order in the function header.
 >
->  #define __guard_ptr(_name) class_##_name##_lock_ptr
+> Please split that up by driver, apart from that looks good to me.
+
+Thanks for the feedback.  I will wait a bit for any other feedback and the
+resend.
+
+julia
+
 >
-> -#define scoped_guard(_name, args...)					\
-> -	for (CLASS(_name, scope)(args),					\
-> -	     *done =3D NULL; __guard_ptr(_name)(&scope) && !done; done =3D (vo=
-id *)1)
-> +#define scoped_guard(_name, args...)	\
-> +	__scoped_guard_labeled(__UNIQUE_ID(label), _name, args)
-> +
-> +#define __scoped_guard_labeled(_label, _name, args...)	\
-> +	if (0)						\
-> +		_label: ;				\
-> +	else						\
-> +		for (CLASS(_name, scope)(args);		\
-> +		     __guard_ptr(_name)(&scope), 1;	\
-> +		     ({ goto _label; }))
+> Christian.
 >
->  #define scoped_cond_guard(_name, _fail, args...) \
->  	for (CLASS(_name, scope)(args), \
-
-* How do you think about to define such macros before their use?
-
-* Would you ever like to avoid reserved identifiers in such source code?
-  https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or=
-+define+a+reserved+identifier
-
-
-Regards,
-Markus
+> >
+> > Problems identified using Coccinelle.
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> >
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c |    2 +-
+> >   drivers/gpu/drm/radeon/radeon_ib.c     |    2 +-
+> >   2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> > b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> > index 6005280f5f38..ad4fdd4d4d82 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+> > @@ -2773,11 +2773,11 @@ int amdgpu_vm_ioctl(struct drm_device *dev, void
+> > *data, struct drm_file *filp)
+> >    * amdgpu_vm_handle_fault - graceful handling of VM faults.
+> >    * @adev: amdgpu device pointer
+> >    * @pasid: PASID of the VM
+> > - * @ts: Timestamp of the fault
+> >    * @vmid: VMID, only used for GFX 9.4.3.
+> >    * @node_id: Node_id received in IH cookie. Only applicable for
+> >    *           GFX 9.4.3.
+> >    * @addr: Address of the fault
+> > + * @ts: Timestamp of the fault
+> >    * @write_fault: true is write fault, false is read fault
+> >    *
+> >    * Try to gracefully handle a VM fault. Return true if the fault was
+> > handled and
+> > diff --git a/drivers/gpu/drm/radeon/radeon_ib.c
+> > b/drivers/gpu/drm/radeon/radeon_ib.c
+> > index 1aa41cc3f991..8611a27dfb3d 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_ib.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_ib.c
+> > @@ -49,8 +49,8 @@ static void radeon_debugfs_sa_init(struct radeon_device
+> > *rdev);
+> >    *
+> >    * @rdev: radeon_device pointer
+> >    * @ring: ring index the IB is associated with
+> > - * @vm: requested vm
+> >    * @ib: IB object returned
+> > + * @vm: requested vm
+> >    * @size: requested IB size
+> >    *
+> >    * Request an IB (all asics).  IBs are allocated using the
+> >
+>
+>
+--8323329-1881777891-1727696300=:3991--
