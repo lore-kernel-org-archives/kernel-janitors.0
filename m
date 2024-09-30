@@ -1,48 +1,43 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E248D1991DD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B73B19925D;
 	Mon, 30 Sep 2024 11:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695319; cv=none; b=H7JeF+I7+abZQFwamz4gIQ+75os9lh39UulihGhT+qYykguL114ETNhCLGYWnMMVHzyyAkC2KpU9MOwJkDniZ/YDRklVJdlHzB8u0PzmHLU3SeXeZXjFFoMZE8mr8O5C/PLzpbRZAmw9VtAVtWZZNNvWkuuOygM2+glQ+vRMhJU=
+	t=1727695319; cv=none; b=OkB142PUu8O150fBDQGeDJEtmQ08iWj8lX7ekKgcJe+kGhR3bX/oLMP1PFHcEMUrtg6lOJFA1zOELHRbO5RD63L14t3S6gqZ6t37cnIKhSfxyJ8p9unBPuDOpk9X0JsvI/i2gcx0ScdoN2kdoUjZAtLevQAKKzfN5XBV4ZUxEF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727695319; c=relaxed/simple;
-	bh=EHU2iMOgANqGUPZJ3Ro5pssOmIbIe3s/GjjnRdeP9x4=;
+	bh=cQVGGq5xQOiRJgIv8/0eVuPLYc+ntYYQOa3eK7PlFn8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kLpIqPoxk9CdH2ASTAKMNZL5j3qJMvQlK99qIiYMa8MBdr+J6fmXmFlN3UpvwAPivSxyJLwEwNYO2Yvc4M93NQe0JliJRwfIjkyYT5WiR1YAomoWFn4EFxiTEEn39goiHYzTwwd3/TCrLjIbJbNLYWlg6le9cbuivVsM3TqbT3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Hsrz8pTW; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=rfMqdmOvYarbOsY2FwufSY6eKp8o3LB0s80l82PR7Uc0PtRcR3c7Zd5WEj5MHpEcyNmp5q95wnEiDOerTeKymyRbMPa6gehAL/00gdaYaBkKu4x6a7Mtxx4wZ0qiOVLDvZObrZ4eWxKjWvc9JWxkccE4K9KwLwU7b/qR3b4EuPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=ZdwSKBn5; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Hsrz8pTW"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="ZdwSKBn5"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=5wdreZebx+hIO6b8UfY5M+z6lqJsf400rN74nypioAc=;
-  b=Hsrz8pTWfcdNzv0+3GMzM3AMEtjhgim/041sggmI8xlBA9h5Ax8l1xOv
-   9XzgANw4gEAMNoZ1eaUCUgxLU3y2wB37FPzbI0VOFRwDV8V2ehYRiu2OR
-   WjVmNHTF+diHPu0LQ/3qcOkEmR6o3Q7vF3j0XmzxV343BjTn5bi1Kza4i
-   Q=;
+  bh=UVwqg9pSLhRbnrHgL5k+5dBK/PrMq/KHM37Icoezd/0=;
+  b=ZdwSKBn5snaHNt5KRSYKxd2+0XuNlbB5QiNmgqtZyqBSloro/wGyWGHc
+   8UHHvnowXQA8HP9/if4H9vdzCXibWmWMdEhz9b/wBaSGCQR5gAqfhygnY
+   aNy2yEIUS9yv55H+EWtZfK+5LFcVsnv/TrGNqJMAtmezbsu1La+qswK1B
+   U=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956909"
+   d="scan'208";a="185956913"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:28 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Alex Deucher <alexander.deucher@amd.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: kernel-janitors@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	alsa-devel@alsa-project.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 29/35] drivers/gpu/drm: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:15 +0200
-Message-Id: <20240930112121.95324-30-Julia.Lawall@inria.fr>
+Subject: [PATCH 31/35] slimbus: messaging: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:21:17 +0200
+Message-Id: <20240930112121.95324-32-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -62,39 +57,21 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c |    2 +-
- drivers/gpu/drm/radeon/radeon_ib.c     |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/slimbus/messaging.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-index 6005280f5f38..ad4fdd4d4d82 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-@@ -2773,11 +2773,11 @@ int amdgpu_vm_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
-  * amdgpu_vm_handle_fault - graceful handling of VM faults.
-  * @adev: amdgpu device pointer
-  * @pasid: PASID of the VM
-- * @ts: Timestamp of the fault
-  * @vmid: VMID, only used for GFX 9.4.3.
-  * @node_id: Node_id received in IH cookie. Only applicable for
-  *           GFX 9.4.3.
-  * @addr: Address of the fault
-+ * @ts: Timestamp of the fault
-  * @write_fault: true is write fault, false is read fault
+diff --git a/drivers/slimbus/messaging.c b/drivers/slimbus/messaging.c
+index 242570a5e565..e7aa9bd4b44b 100644
+--- a/drivers/slimbus/messaging.c
++++ b/drivers/slimbus/messaging.c
+@@ -13,8 +13,8 @@
   *
-  * Try to gracefully handle a VM fault. Return true if the fault was handled and
-diff --git a/drivers/gpu/drm/radeon/radeon_ib.c b/drivers/gpu/drm/radeon/radeon_ib.c
-index 1aa41cc3f991..8611a27dfb3d 100644
---- a/drivers/gpu/drm/radeon/radeon_ib.c
-+++ b/drivers/gpu/drm/radeon/radeon_ib.c
-@@ -49,8 +49,8 @@ static void radeon_debugfs_sa_init(struct radeon_device *rdev);
+  * @ctrl: Controller handle
+  * @reply: Reply received from the device
+- * @len: Length of the reply
+  * @tid: Transaction ID received with which framework can associate reply.
++ * @len: Length of the reply
   *
-  * @rdev: radeon_device pointer
-  * @ring: ring index the IB is associated with
-- * @vm: requested vm
-  * @ib: IB object returned
-+ * @vm: requested vm
-  * @size: requested IB size
-  *
-  * Request an IB (all asics).  IBs are allocated using the
+  * Called by controller to inform framework about the response received.
+  * This helps in making the API asynchronous, and controller-driver doesn't need
 
