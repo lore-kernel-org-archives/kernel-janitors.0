@@ -1,49 +1,43 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C9B19ABA3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9893419AD48;
 	Mon, 30 Sep 2024 11:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695321; cv=none; b=Ps8Fruo1eOmsnRVm8VL3ssz04y6CXbxvWy1H5mT5BfloMyywuosV4TYojYpvmSfbalSUBoqD2PQEjPUU45Le2edymkKK7+8Kzqb86eikQEIJddGBY6MxE3xmOVcBVH+bRJmXq6RHsSgB9lbG6SdhKfYPSuIqPYNBjKlZNUOnWk4=
+	t=1727695321; cv=none; b=txWMNFBcB8LjUkVhU5UUnstGIA8M65nOQMOsTmlCVELTILVtfeB5KisqD2EhXDlCweduuQhlhcW9gsDnDPNvsTidTbgtCvq78F9xzpSrWmoi/CIxItwkv2fboF0mq1p4zJth0Q5BZnczE2BrI3KNa46uL8lzczixv2dJNxmzqck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727695321; c=relaxed/simple;
-	bh=PmT9O/+7fwVt790lDpgSQowywQ0NFr1wjwDGR8wZGuk=;
+	bh=y4Fv0VWY+4DUiOjz1qFmeBkzY7jm9zBsjVvNAcdXg/o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gNSw4GZjN//espLkOl2P9K5LzfAy5jdb4SYJKAEKr8mAS8+1RzpTSXnj1jOh3cjqf9XqPYaKmHfoljBGn2IPDINuZetksRV1xgGVjtPZnHuuiRoILYvCgx3aMl3bdiXA5bC3KsF4/h33vZJBekSOb2mJGtTyV++WbF/emQSKPww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=fI/8/wTg; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=qfr3rhNPN5cmASqb3hbKz2iPzeC9ewhgTx2cC/EwuQL54JQsPHc9e3JWcYbGe17UCdAQGq7TmfLM4kI8BWmWNTEGyxhdkBkRZVpF1V6lZjkS7ANINoO8MRXREJhD26da3LbPVe0iaXZgzbiDjqfXOnLKopZ966HzBJgqj2T6hUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=MoEqerLu; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="fI/8/wTg"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="MoEqerLu"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=RF4M5sp1M89dXG5TKYPlc4/p+FQQxzTT+AquUnods1A=;
-  b=fI/8/wTgbpT6vBh1PM5rYudE7uS62YQ4nXCzxZ/NVCKH6UlVWUjRLhd/
-   Bkublc0NZ60/cyxnlT9W0CSfRCb3cGxqKBP883vvCKW56EZWRXJBNPCW4
-   zD4qjLQF8omsa0jpyKF6ldnQaUYgMaCkmO/y/uxSocAqLGd01dy0PVNoJ
-   M=;
+  bh=ut1+ptJ8TzcKK5t9S/5Zs5GMEyTuiMMbV+IznpAOFB0=;
+  b=MoEqerLujxxvJZQl7UVZrdHBnoCaZPSXnxs41y+xNEDp3XNCm8BiKbUV
+   xfM8Z+wELLVoZlY7CHmqXjjTXkNwN5gyH4w5GD35Uxm/1X5VU/3lFXO7B
+   +WNnvSJFe24i88tvVyhtK1XUYT7V+4DeA8Xml/iJbh1nrya5iDTolJdQu
+   g=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956915"
+   d="scan'208";a="185956917"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:28 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>
+To: Ian Abbott <abbotti@mev.co.uk>
 Cc: kernel-janitors@vger.kernel.org,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
+	H Hartley Sweeten <hsweeten@visionengravers.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 33/35] drivers/net/ethernet/intel: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:19 +0200
-Message-Id: <20240930112121.95324-34-Julia.Lawall@inria.fr>
+Subject: [PATCH 35/35] comedi: comedi_8254: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:21:21 +0200
+Message-Id: <20240930112121.95324-36-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -63,97 +57,21 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/net/ethernet/intel/e1000/e1000_hw.c     |    2 +-
- drivers/net/ethernet/intel/i40e/i40e_common.c   |    7 +++----
- drivers/net/ethernet/intel/ice/ice_common.c     |    2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_common.c |    2 +-
- 4 files changed, 6 insertions(+), 7 deletions(-)
+ drivers/comedi/drivers/comedi_8254.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_hw.c b/drivers/net/ethernet/intel/e1000/e1000_hw.c
-index f9328f2e669f..1b7e78018b8f 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_hw.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_hw.c
-@@ -3839,8 +3839,8 @@ static s32 e1000_spi_eeprom_ready(struct e1000_hw *hw)
-  * e1000_read_eeprom - Reads a 16 bit word from the EEPROM.
-  * @hw: Struct containing variables accessed by shared code
-  * @offset: offset of  word in the EEPROM to read
-- * @data: word read from the EEPROM
-  * @words: number of words to read
-+ * @data: word read from the EEPROM
+diff --git a/drivers/comedi/drivers/comedi_8254.c b/drivers/comedi/drivers/comedi_8254.c
+index 6beca2a6d66e..c62122b536bb 100644
+--- a/drivers/comedi/drivers/comedi_8254.c
++++ b/drivers/comedi/drivers/comedi_8254.c
+@@ -317,8 +317,8 @@ EXPORT_SYMBOL_GPL(comedi_8254_set_mode);
+  * comedi_8254_load - program the mode and initial count of a counter
+  * @i8254:	comedi_8254 struct for the timer
+  * @counter:	the counter number
+- * @mode:	the I8254_MODEx and I8254_BCD|I8254_BINARY
+  * @val:	the initial value
++ * @mode:	the I8254_MODEx and I8254_BCD|I8254_BINARY
   */
- s32 e1000_read_eeprom(struct e1000_hw *hw, u16 offset, u16 words, u16 *data)
- {
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_common.c b/drivers/net/ethernet/intel/i40e/i40e_common.c
-index e8031f1a9b4f..f2d342ffc6d6 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_common.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_common.c
-@@ -1045,9 +1045,9 @@ void i40e_led_set(struct i40e_hw *hw, u32 mode, bool blink)
- /**
-  * i40e_aq_get_phy_capabilities
-  * @hw: pointer to the hw struct
-- * @abilities: structure for PHY capabilities to be filled
-  * @qualified_modules: report Qualified Modules
-  * @report_init: report init capabilities (active are default)
-+ * @abilities: structure for PHY capabilities to be filled
-  * @cmd_details: pointer to command details structure or NULL
-  *
-  * Returns the various PHY abilities supported on the Port.
-@@ -1948,7 +1948,6 @@ int i40e_aq_get_switch_config(struct i40e_hw *hw,
-  * i40e_aq_set_switch_config
-  * @hw: pointer to the hardware structure
-  * @flags: bit flag values to set
-- * @mode: cloud filter mode
-  * @valid_flags: which bit flags to set
-  * @mode: cloud filter mode
-  * @cmd_details: pointer to command details structure or NULL
-@@ -2534,9 +2533,9 @@ int i40e_aq_add_mirrorrule(struct i40e_hw *hw, u16 sw_seid,
-  * @hw: pointer to the hw struct
-  * @sw_seid: Switch SEID (to which rule refers)
-  * @rule_type: Rule Type (ingress/egress/VLAN)
-- * @count: length of the list
-  * @rule_id: Rule ID that is returned in the receive desc as part of
-  *		add_mirrorrule.
-+ * @count: length of the list
-  * @mr_list: list of mirrored VLAN IDs to be removed
-  * @cmd_details: pointer to command details structure or NULL
-  * @rules_used: Number of rules used in internal switch
-@@ -3444,8 +3443,8 @@ int i40e_aq_start_lldp(struct i40e_hw *hw, bool persist,
- /**
-  * i40e_aq_set_dcb_parameters
-  * @hw: pointer to the hw struct
-- * @cmd_details: pointer to command details structure or NULL
-  * @dcb_enable: True if DCB configuration needs to be applied
-+ * @cmd_details: pointer to command details structure or NULL
-  *
-  **/
- int
-diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
-index 009716a12a26..8a61e13eca1d 100644
---- a/drivers/net/ethernet/intel/ice/ice_common.c
-+++ b/drivers/net/ethernet/intel/ice/ice_common.c
-@@ -5301,8 +5301,8 @@ ice_aq_get_output_pin_cfg(struct ice_hw *hw, u8 output_idx, u8 *flags,
-  * @hw: pointer to the HW struct
-  * @dpll_num: DPLL index
-  * @ref_state: Reference clock state
-- * @config: current DPLL config
-  * @dpll_state: current DPLL state
-+ * @config: current DPLL config
-  * @phase_offset: Phase offset in ns
-  * @eec_mode: EEC_mode
-  *
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-index 3be1bfb16498..f6559b1d1433 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_common.c
-@@ -2635,9 +2635,9 @@ void ixgbe_release_swfw_sync(struct ixgbe_hw *hw, u32 mask)
- /**
-  * prot_autoc_read_generic - Hides MAC differences needed for AUTOC read
-  * @hw: pointer to hardware structure
-- * @reg_val: Value we read from AUTOC
-  * @locked: bool to indicate whether the SW/FW lock should be taken.  Never
-  *	    true in this the generic case.
-+ * @reg_val: Value we read from AUTOC
-  *
-  * The default case requires no protection so just to the register read.
-  **/
+ int comedi_8254_load(struct comedi_8254 *i8254, unsigned int counter,
+ 		     unsigned int val, unsigned int mode)
 
