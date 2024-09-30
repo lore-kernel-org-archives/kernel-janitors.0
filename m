@@ -1,112 +1,119 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A92194AD6
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Sep 2024 15:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4F2191F8A;
+	Mon, 30 Sep 2024 15:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727710027; cv=none; b=k3979FjKV8VarnlTg8VbtF8eNC7IeELcYhfMkdgD1j8+HaIaGCoMSul0XiVGPdn4XsfC2Prv3JgnopOPj7WbNwbnfUmCjY71y4WAjuJ/+HAy8bLma/pD793ApQy+qPxtYC4GX32vP+4oNGHEVTh9v5Lt7UUnbR4dfvjpZbpw7hU=
+	t=1727711488; cv=none; b=aLfW4Q/lZazZVcJh9WDnsuPNl+gZopX0BJOOnHPoMF6QViSv2AsHZuJ40MH6/UPYiSVDxB/ZrCljWZz8vEuEkF4XslVhQajV1dwV1Vx5OCDekGmqlF9LwpPUJimzh7oM2rE2mY3D5U24cq8fhPpgOWwvQysfDVZxiUt64S1HXOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727710027; c=relaxed/simple;
-	bh=uaCv37xmX/Ty+Ewl3LTIpNSRFKq50QIRpf8eVC1h8fs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=L/hsJF43mpIg9djqwF9OjBCX1u5ztJX/RxGbPhYJoJpqIxW/d/v7uFBDak+rztSuSqZWaHUoICjztCX2dyHBMYJ8G4pTO0M2msWKnYAWk2zBI/fBSA5AWPe0LWgSUP3v+QPkrPcwgcDTMx5SrqCwab4TBbYHglY+NP69DKSWGNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svIId-0002aI-IW; Mon, 30 Sep 2024 17:26:59 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svIIc-002f72-Vp; Mon, 30 Sep 2024 17:26:58 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svIIc-000DNW-2y;
-	Mon, 30 Sep 2024 17:26:58 +0200
-Message-ID: <9ebdbbdd938ceaa4e58d4cc26e2187fecf5856b8.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: Further simplify locking with guard()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Markus Elfring <Markus.Elfring@web.de>, kernel@pengutronix.de, 
-	linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski
-	 <krzysztof.kozlowski@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Date: Mon, 30 Sep 2024 17:26:58 +0200
-In-Reply-To: <b050730e-ac7d-401b-8210-82453d05b0e5@web.de>
-References: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
-	 <b050730e-ac7d-401b-8210-82453d05b0e5@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727711488; c=relaxed/simple;
+	bh=x3/NYRhqdZ25w1cWCnf65Jb3aFSFAFZ/91FdfDZ1weU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SRkY8dPYExsykyTSqha9KYb/oXS+57nlrKFwbmPIHBL9By+HUkgCB+jL9S2ay7sOzWSC5snJC35kX+SGgWhydjP8LynH0vxMdWk2SkwRpgbx7ralGf40tRF2ALzuw7Ga8WBXfZsbcA5jEt8jmLEmm+YsTKSMAJng4WkjEUa3jwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ye+nBW+b; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ye+nBW+b"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2db6e80555dso957044a91.0;
+        Mon, 30 Sep 2024 08:51:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727711487; x=1728316287; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WATU2LUL4m9jJ4Aa98MIDs6l2qLx+EWO4m8F+EIqLxk=;
+        b=Ye+nBW+bQF+xhAhuhAj6Gumfs42csHfoNPUaAvVBtZaF+8YQ0SgIjL7k939wfE89OG
+         ldgqKXVhcJMroYyUrDQwUsav9neEAR8MYwPBXRYkn1RKfPrgLkSGuIvwwWUQKFxwjeVm
+         wMc3bcgQZ9+Pasv01SEJO3aj5MzuWTwKD9dn+wmSMGYkgSo8DPwm+00qFCFkbg2KxP4g
+         8e8EDKf/yo0ZMEqVdzQAzB58Vh4qBPXjO973LbQUfZg4eCGshWVVLWNXIA26Quv0ubxa
+         DpwpNc/N0vK5yxXSoh29lb78y5K9jkpvGp+/I6QEGSJSUbC0YfaVOPMWWn67H4vvTGQU
+         e3Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727711487; x=1728316287;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WATU2LUL4m9jJ4Aa98MIDs6l2qLx+EWO4m8F+EIqLxk=;
+        b=MRCbsIiVElKMwQ5rpcls/i/ll+GDU/rfWiTXdWp++nu7PmIriJcC8oRqynqbi5kCap
+         3Lgi5oC+2MKsRmXMHNP+Vh+JazVTDtwWlGsFaxg79wm5KcCk4jAQMfbLYTthM3qqAsur
+         ql4e/UpYe7TRU3z42FcwzFBKdhG8X8Qzl5QJhVD3UI57h3NHGo913ZxNsVvtNob8aHTs
+         0+eN1AhBd4N8o52wyZQpeBz6l0pwcYb1E2oEGlTqFaw7QhLa8OOTIeIUSnaGutCjYTzM
+         qmm4z3GvxR1qix3eaZvZJByeXSCAkWcqWCXDyV0vK2RJWqGb9aAMduAVpsJKtWHEh4Gz
+         Qe7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVUGIsEJEY0kclUm2T7Da1n5J5IMy9Ak1t4ygne3b7MIVhMoU6O3QvXobReTQ2uJ3bZQ67Me5BIvF/j5vLMduk=@vger.kernel.org, AJvYcCW7GUfHVElBEZxjvnl0f+d90MYZCaWNkMWvdo6Wzi605lKSPmDkCEVGqN88mHgx9jXMntKVQ5H1CMlThs4P@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfyjVLVmdUQveaR1OvaLr50S+Bo4b5iyHze3pnl3iZUwjXFrb1
+	ZIpXHjHZhCl6Hdr2xJhaSbSN/ltoaKj8PYB3rWSWs8fKl46WqdoBHON0b1yxHwk/nC4Ge/MwPlg
+	f2sLQ0TTzx+9Fjc6wD0EDX+9ZFCA=
+X-Google-Smtp-Source: AGHT+IFy3pRmWmgHWpHGv0hrtSuJlpDkTjLMGNYiRP85LAIbiklgXtlTBb98vvOc2vKFgYVr4pAxxQk/8QByQ4oMpcQ=
+X-Received: by 2002:a17:90a:e548:b0:2e0:8c23:fe5a with SMTP id
+ 98e67ed59e1d1-2e0e6e9902amr4399944a91.3.1727711486757; Mon, 30 Sep 2024
+ 08:51:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-26-Julia.Lawall@inria.fr>
+ <feb19089-a7ee-4a39-be8b-bf9e380b17b7@amd.com>
+In-Reply-To: <feb19089-a7ee-4a39-be8b-bf9e380b17b7@amd.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 30 Sep 2024 11:51:15 -0400
+Message-ID: <CADnq5_Pv1YOo2SNajhJvfRFKK=Yf1a4=4ufFteP2_n3jFA45Yg@mail.gmail.com>
+Subject: Re: [PATCH 25/35] drm/amd/display: Reorganize kerneldoc parameter names
+To: Harry Wentland <harry.wentland@amd.com>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>, kernel-janitors@vger.kernel.org, 
+	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On So, 2024-09-29 at 12:45 +0200, Markus Elfring wrote:
-> > Use guard(mutex) to automatically unlock mutexes when going out of
-> > scope. Simplify error paths by removing a goto and manual mutex
-> > unlocking in multiple places.
-> =E2=80=A6
-> > +++ b/drivers/reset/core.c
-> =E2=80=A6
-> @@ -1041,29 +1036,27 @@ __of_reset_control_get(struct device_node
-> *node, const char *id, int index,
-> =C2=A0		}
-> =C2=A0	}
->=20
-> -	mutex_lock(&reset_list_mutex);
-> +	guard(mutex)(&reset_list_mutex);
-> =C2=A0	rcdev =3D __reset_find_rcdev(&args, gpio_fallback);
-> =E2=80=A6
-> =C2=A0	rstc =3D __reset_control_get_internal(rcdev, rstc_id, shared,
-> acquired);
->=20
-> -out_unlock:
-> -	mutex_unlock(&reset_list_mutex);
-> =C2=A0out_put:
-> =C2=A0	of_node_put(args.np);
-> =E2=80=A6
->=20
-> Would you like to preserve the same lock scope (which ended before
-> this function call)?
+Applied.  Thanks!
 
-Thank you for pointing this out. Yes, and this should have alerted me
-to the issue with goto out_put from before the locked region.
-
-> @@ -1098,7 +1091,7 @@ __reset_control_get_from_lookup(struct device
-> *dev, const char *con_id,
-> =C2=A0	const char *dev_id =3D dev_name(dev);
-> =C2=A0	struct reset_control *rstc =3D NULL;
->=20
-> -	mutex_lock(&reset_lookup_mutex);
-> +	guard(mutex)(&reset_lookup_mutex);
->=20
-> =C2=A0	list_for_each_entry(lookup, &reset_lookup_list, list) {
-> =E2=80=A6
-> =C2=A0			break;
-> =C2=A0		}
-> =C2=A0	}
->=20
-> -	mutex_unlock(&reset_lookup_mutex);
-> -
-> =C2=A0	if (!rstc)
-> =C2=A0		return optional ? NULL : ERR_PTR(-ENOENT);
-> =E2=80=A6
->=20
-> Would you really like to increase the lock scope here?
-
-I don't think this would have been a problem.
-
-regards
-Philipp
+On Mon, Sep 30, 2024 at 10:49=E2=80=AFAM Harry Wentland <harry.wentland@amd=
+.com> wrote:
+>
+>
+>
+> On 2024-09-30 07:21, Julia Lawall wrote:
+> > Reorganize kerneldoc parameter names to match the parameter
+> > order in the function header.
+> >
+> > Problems identified using Coccinelle.
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> >
+> > ---
+> >  drivers/gpu/drm/amd/display/dc/core/dc.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+>
+> Harry
+>
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm=
+/amd/display/dc/core/dc.c
+> > index 5c39390ecbd5..417fe508c57f 100644
+> > --- a/drivers/gpu/drm/amd/display/dc/core/dc.c
+> > +++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+> > @@ -621,8 +621,8 @@ dc_stream_forward_crc_window(struct dc_stream_state=
+ *stream,
+> >   * dc_stream_configure_crc() - Configure CRC capture for the given str=
+eam.
+> >   * @dc: DC Object
+> >   * @stream: The stream to configure CRC on.
+> > - * @enable: Enable CRC if true, disable otherwise.
+> >   * @crc_window: CRC window (x/y start/end) information
+> > + * @enable: Enable CRC if true, disable otherwise.
+> >   * @continuous: Capture CRC on every frame if true. Otherwise, only ca=
+pture
+> >   *              once.
+> >   *
+> >
+>
