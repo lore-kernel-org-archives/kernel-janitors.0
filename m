@@ -1,92 +1,131 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBC714375C;
-	Sun, 29 Sep 2024 21:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FD415099C
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Sep 2024 07:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727646295; cv=none; b=u6xmQvj1k/OKPb+3L2sfFsspOAtyY16BFKVU9r/8JcwyYCLobFQOGGUKCSeKq3de6dX982GQKkCFyISrwvB2zMWzOntDOxEfdp6dtiTKzGy3N1xQTxUBuJ9sP19gAX+IHNXceBN6POAIzqn7ybainRGbyVUMFouCArQQCh0ucW4=
+	t=1727680806; cv=none; b=SqBfPuBSTCCQ+JLcnQeqLC/pwxBrOyv1YapM7OcupPmeFQAqFp2Br0DA+s7dvylrATrM780ETjvzYaAWV5TaPDcCBYlrd8tAHaEGDnrWWfm+fH1CpIyOXvfQG93kGiO7axgdhfRFPDaQ+Gpe6d05TApibZT4LejMfJS9knkN8uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727646295; c=relaxed/simple;
-	bh=q8jPUs9sDrC76GpeR3+6wZiIJol7AI1mGAI3q0C3Q7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IfI7nFHRmQPtuIm1yQOrTfVmwUVsmghBWbiX5Y5zISnyPhG7THIoYQ+10f2W1F8unHehhg3mtWYmV3ip/Efm+bqJmvPn5D/lBJo9XNe+ZyEhCPEIjPomIJwZwcakz9H6b90BvxurgjbqgMmKaNMnb7CT2SovUzFE8Tmd0POA63E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bFPhXa2c; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1727680806; c=relaxed/simple;
+	bh=kOS97WzXTFsa3idOVPtmyemN/Qc70yCZwBWtU2dhk5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YicIGZDVhnnzntB4ZIVBJgR1tgpFA8ot2dLxOrP1++H2lK9UbnjLAgijNfzdCLv58ma9zU2oexGkeNxToeWRrVBj6gAbLk5PrSWahDUauz21zuGj1HAaCKlZ10TDAz2B1Sg6tqdOIENnUPhlJFXWKRZ57rJx0cXIeiuSHPDOCaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IbRFuqF6; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bFPhXa2c"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id uzzOsWpetUr3muzzOsoFGG; Sun, 29 Sep 2024 21:53:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727639638;
-	bh=mnfjPfodqDw5EgjVHclvMeONT3nDh9xuYN3QzGdkxtM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=bFPhXa2cn+9H9Hxm/lauaUgMA+xMIR4+9UiBbHItciK4dpQ7OPyq2ERYDgoKODNBt
-	 LNsbBzCedHkcj2vPr6F56bYlpBvoHPRLyhjiKRBfHUvzsO8Sl/XTpMQ1vKvFXScSGc
-	 3U8N6RPxrhPoQHjupH62N7gXyPQMgeg2qaTWtB5qTXBLBaHOfwB4g4b+Sn7HT7EU7M
-	 DQdHf0bucNXPlYaFZImbCzib7y9h1UJ/8IYs/rCE4nf4Kv4Hi3vqhKidEG0D735XnV
-	 nXevBZ2ZnRBI0tE6UeHDT1kQClGzN1TS6auAqInsPOuOkGgaLii6bnXRGiFmz8ecHi
-	 93aF4Et4tFdqA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 29 Sep 2024 21:53:58 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Felix Fietkau <nbd@nbd.name>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] wifi: mt76: mt7915: Fix an error handling path in mt7915_add_interface()
-Date: Sun, 29 Sep 2024 21:53:40 +0200
-Message-ID: <b9d8fbfc19360bfe60b9cea1cb0f735ab3b4bc26.1727639596.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IbRFuqF6"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c881aa669fso4038626a12.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Sep 2024 00:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727680803; x=1728285603; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rw9AwEY0T+uAx5ZrPxcoQOhNORL8BhV39Pg+ejN3+4E=;
+        b=IbRFuqF6Fi1N3vZJhyi7LjyOXe1ns9z4XwP3jyCuowFxIMnsJVtEcq5MzrXR8EBLJH
+         k5yyvBBhH3ufdWcpaluzR2gJ8hyI4ixHojQ77sJxzeNNYMB3U+1OziKacQUgGeNVEwzw
+         DJv9Txhv6qBlMxZMmC47gqVObgs9VJTSpVTKtN/ZTQhqDlacJGYPF9e1pl3LA7YkpLDO
+         LL79V6oiNGg3RQAad2xWSLxgZrecfvwMJCs7L5Mdq2aPoSqNL6yDtR45GzgA+jbLBoCO
+         qMnLfb78RQJrWqGxq78gnWk/7ZeWMpAVgG1Xbww68XCDReZT1iECA5w0XEG00KJR5Rxa
+         +5/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727680803; x=1728285603;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rw9AwEY0T+uAx5ZrPxcoQOhNORL8BhV39Pg+ejN3+4E=;
+        b=RIdjd+JUz5fYoqoy3xAnEO9bs101XFeJpPVk4UYH3Pb1L2aj+6iAyGTpBsEGMtGiGn
+         n5hqE/rG5SLnjg7uGxDbBybA/S4PSm2YzTK6aISUrtcv2LHayERh4LcvL6VNwkIAN1QR
+         rQnDnsoQ6AFvr/X8iKE6GX1X09yvYGlQ8rishRmQ2BoLhQyWHxDGQVsOot8PHX8reR4Y
+         cznndxyA/2FK8CiH2/ZfTPcuZfEozOFCMBirSxvgqDZuckDdkrdR2tGS2C5xUiQFLTTQ
+         2P3rDQhQBTalKh2iR075Y3hvVD/MSyZ5Z8pQo6Ne0k63z5EgHLSDpSrUf3vmslvmhVZJ
+         e6yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsMq5epw5wqg50MILsG5GFmTXBr57FOvvWM7i7igyJjXnhGuHseZqLCndI4yBwMn173U/UaGr5cmbbddjwO6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhZzJPh8c7m2UA/vEAYAgwSZ1xcQXRd9pHudE28wdp158FNueI
+	kR+DMt4R07LwD0JrW4yTQdfIrXkc0vJlDG8PNSzVcxBsOhgHDr4aaaNDRUYE4Zs=
+X-Google-Smtp-Source: AGHT+IHYaPJJh3KX8S6fFpqMVHlak7RZvjvr9EdBT5FS3XHOzEltMKI+ZrX1CjMVa4wfhdIBR+NPuA==
+X-Received: by 2002:a17:906:f59b:b0:a83:94bd:d913 with SMTP id a640c23a62f3a-a93c48e80d3mr1275629166b.10.1727680803327;
+        Mon, 30 Sep 2024 00:20:03 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2947a7asm483458266b.103.2024.09.30.00.20.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 00:20:02 -0700 (PDT)
+Date: Mon, 30 Sep 2024 10:19:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] ALSA: silence integer wrapping warning
+Message-ID: <5457e8c1-01ff-4dd9-b49c-15b817f65ee7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-If mt76_wcid_alloc() fails, the "mt76.mutex" mutex needs to be released as
-done in the other error handling path of mt7915_add_interface().
+This patch doesn't change runtime at all, it's just for kernel hardening.
 
-Fixes: f3049b88b2b3 ("wifi: mt76: mt7915: allocate vif wcid in the same range as stations")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The "count" here comes from the user and on 32bit systems, it leads to
+integer wrapping when we pass it to compute_user_elem_size():
+
+	alloc_size = compute_user_elem_size(private_size, count);
+
+However, the integer over is harmless because later "count" is checked
+when we pass it to snd_ctl_new():
+
+	err = snd_ctl_new(&kctl, count, access, file);
+
+These days as part of kernel hardening we're trying to avoid integer
+overflows when they affect size_t type.  So to avoid the integer overflow
+copy the check from snd_ctl_new() and do it at the start of the
+snd_ctl_elem_add() function as well.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Compile tested only
----
- drivers/net/wireless/mediatek/mt76/mt7915/main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I'm going to write a blog about this which explains the kernel hardening
+proposal in more detail.
 
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7915/main.c b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-index d75e8dea1fbd..bea8b77b1b92 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-@@ -246,8 +246,10 @@ static int mt7915_add_interface(struct ieee80211_hw *hw,
- 	phy->omac_mask |= BIT_ULL(mvif->mt76.omac_idx);
+The problem is that integer overflows are really hard to analyze
+because the integer overflow itself is harmless.  The harmful thing comes
+later.  Not only are integer overflows harmless, but many of them are
+done deliberately.
+
+So what we're doing is we're saying that size_t types should not overflow.
+This eliminates many deliberate integer overflows handling time values for
+example.  We're also ignoring deliberate idiomatic integer overflows such
+as if (a + b < a) {.
+
+We're going to detect these integer overflows using static analysis and at
+runtime using UBSan and Syzbot.
+
+The other thing, actually, is the we're planning to only work on 64bit
+systems for now so if you want to ignore this patch then that's fine.  There
+are a lot more (like 10x more) integer overflows on 32bit systems but most
+people are on 64bit.  So it's less work and more impact to focus on 64bit
+at first.
+
+ sound/core/control.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/sound/core/control.c b/sound/core/control.c
+index 4f55f64c42e1..82b9d14f4ee3 100644
+--- a/sound/core/control.c
++++ b/sound/core/control.c
+@@ -1641,6 +1641,8 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
+ 	count = info->owner;
+ 	if (count == 0)
+ 		count = 1;
++	if (count > MAX_CONTROL_COUNT)
++		return -EINVAL;
  
- 	idx = mt76_wcid_alloc(dev->mt76.wcid_mask, mt7915_wtbl_size(dev));
--	if (idx < 0)
--		return -ENOSPC;
-+	if (idx < 0) {
-+		ret = -ENOSPC;
-+		goto out;
-+	}
- 
- 	INIT_LIST_HEAD(&mvif->sta.rc_list);
- 	INIT_LIST_HEAD(&mvif->sta.wcid.poll_list);
+ 	/* Arrange access permissions if needed. */
+ 	access = info->access;
 -- 
-2.46.2
+2.45.2
 
