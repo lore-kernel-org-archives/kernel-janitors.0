@@ -1,132 +1,112 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD83519006F;
-	Mon, 30 Sep 2024 15:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A92194AD6
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Sep 2024 15:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727709934; cv=none; b=U26Wou7U+1i0lAdI6EaIiLdccvnQf/rG6Bu14BwLJAFvEda/href3HZC7lazELSTatmvqS8XOGlS8MV8ZCeesfQDvaioyOjKCTcjZaZuddUDFSGxtoLIXYrJ86328QcAp7d5km/ZqNFotdO4zYoGgFUGfWKE3O0WPwL64MBRSvM=
+	t=1727710027; cv=none; b=k3979FjKV8VarnlTg8VbtF8eNC7IeELcYhfMkdgD1j8+HaIaGCoMSul0XiVGPdn4XsfC2Prv3JgnopOPj7WbNwbnfUmCjY71y4WAjuJ/+HAy8bLma/pD793ApQy+qPxtYC4GX32vP+4oNGHEVTh9v5Lt7UUnbR4dfvjpZbpw7hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727709934; c=relaxed/simple;
-	bh=QIWA3CtPARE1TVKzVdzvVJBaCMrSEUZOvGpojT4S1r8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=QnConwWO3IyCDWl9/k5WP/oIquTeApy3oMyKlLYlYs2kQNtGWvcRUt0Vq/0KdgZ/kEGr60Rhr70fD+61Git20DX6thpAzm4TCdDOfX/D4A3tOMieLHUncPiMtOyiDffqCc9K/iDLQxOu522cs+8ccmlDmm6lNhpjIYDn9gQbmN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=D9nf8rqP; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="D9nf8rqP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727709911; x=1728314711; i=markus.elfring@web.de;
-	bh=AAM+B+gNQ0hlXXtpzDjUjbyQ0PnbzFY6sOmzc8cNHGo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=D9nf8rqPcgntXbzy8uOjP6TXIaeCSTf9Gy7ZkNbTDyx6u5K9lSG+1MR1O0cs4ggV
-	 mPnli+oE3aW7EQ7D3sVdBhkOt+Tir/U0OdUAHIwIQTG8DHcGSML0dsdX6Lk0OQ27R
-	 JzREDIIHsrKx23iYpyR1fkHBdbqZB/2OnNC7wOx0vQG0Jw3W6I8CmAghqFHLg7fnp
-	 Ucs66yyDCvSnKwUSpNLyqVlA78r6vVNSuISU5Xkao3k/PS9yPHpE2tVlFVs/200VD
-	 m151gY1Lu4Lh5uISF4Re1RswKTJgt566GANdPmEXFz4mDpkP6WeZQBjKd+XtFky2i
-	 48K6q/nxIMCebS6NIQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MPrPT-1sYy1c1Z7T-00NPtJ; Mon, 30
- Sep 2024 17:25:11 +0200
-Message-ID: <0d45776f-264f-427c-964e-65be8955aafe@web.de>
-Date: Mon, 30 Sep 2024 17:25:05 +0200
+	s=arc-20240116; t=1727710027; c=relaxed/simple;
+	bh=uaCv37xmX/Ty+Ewl3LTIpNSRFKq50QIRpf8eVC1h8fs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=L/hsJF43mpIg9djqwF9OjBCX1u5ztJX/RxGbPhYJoJpqIxW/d/v7uFBDak+rztSuSqZWaHUoICjztCX2dyHBMYJ8G4pTO0M2msWKnYAWk2zBI/fBSA5AWPe0LWgSUP3v+QPkrPcwgcDTMx5SrqCwab4TBbYHglY+NP69DKSWGNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svIId-0002aI-IW; Mon, 30 Sep 2024 17:26:59 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svIIc-002f72-Vp; Mon, 30 Sep 2024 17:26:58 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svIIc-000DNW-2y;
+	Mon, 30 Sep 2024 17:26:58 +0200
+Message-ID: <9ebdbbdd938ceaa4e58d4cc26e2187fecf5856b8.camel@pengutronix.de>
+Subject: Re: [PATCH] reset: Further simplify locking with guard()
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Markus Elfring <Markus.Elfring@web.de>, kernel@pengutronix.de, 
+	linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski
+	 <krzysztof.kozlowski@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Date: Mon, 30 Sep 2024 17:26:58 +0200
+In-Reply-To: <b050730e-ac7d-401b-8210-82453d05b0e5@web.de>
+References: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
+	 <b050730e-ac7d-401b-8210-82453d05b0e5@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zichen Xie <zichenxie0106@gmail.com>, kernel-janitors@vger.kernel.org,
- Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham
- <myungjoo.ham@samsung.com>, Stanley Chang <stanley_chang@realtek.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Zijie Zhao <zzjas98@gmail.com>,
- Chenyuan Yang <chenyuan0y@gmail.com>
-References: <20240929223813.21164-1-zichenxie0106@gmail.com>
-Subject: Re: [PATCH] Fix possible NULL Pointer Dereference in
- 'extcon_rtk_type_c_probe'
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240929223813.21164-1-zichenxie0106@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gaog0yNgbY2kks87KME/Is+FbVilFpXPOdTEY41nftoimjHPy7n
- iQQxm5w0yOtA4Tn68f+yv38m/sp/6wv50rTn4M7fZmo4tc+o+tAgYFVWgFJaZE7SwvBPv9+
- isj5zJKzZrD3c5xgQ0Gr/2QFdPOXIaORT2zSmq3Ogx/PBs1N5kIuHYlQTwo4oRTq+LCCwmg
- se+n/wlqi623mJJT2tUKA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:uQHQlLC+O08=;KshXiFIAJC1mf5Q1FzKJaFB9yuq
- d3KsgOjjOj+vIXKqNTx/bC/M724qgwxiYp7WaCQixRBmyWFHsj8qPRMUu5RlmzXzcVTUBN/Nn
- TY7LzFqx9yYBGofUfbnYPrF3fPDtiUmf5tUHb1OvcatRR3bJGN7tR/HXGS7YtQTNqns/KALJt
- aR68PN5migZ1ya4eTDilQzaHLcfSlg4gTaW3VKvxgUrkTD1jAc/ht8Ky3Z+TbpEa7yI6f3J0c
- 8ruxk+F3Pf/0JpKmKPcGPLFFFkJOAk4W/qR7yv56Oh5/TwMWroJnn/eyMPryUu8Tewy1fTYlH
- 7zuAuXzQwVPG7SuTuTA98EzxZkm4ojyIgOGDfvPae23iPxF/kmI615ADUat/m8QYfBMU7215v
- YPhvTprfq6Aq3Hns/3VGN+BzepCongo6QLlVro+R6ebGFvxBUahpBswn0nNj6wTiLjPTkeOZE
- Dv9tuBoU3vCTDmgSCsNggP7ldiTL5Q98+Y/2FKrAsS6KXiMmtpBoTDomhAFPh+XaWsIm48mfU
- +bETe6V885+oYArjd0e/BqWPj+BDLOoFYlUeZkvtJ8u56Kpmbm/pg/vbc2NtPGh8zSXoeY8Vn
- rnVzj96LFDOWg1o9sbys+UlVnycoZCcUdSGkceXuzdDC12kgEVh0poBRbSKz+5KPwD5IBamaV
- nBMpqDv/qnBTlCMz6u+Xn+/qUy2CGPwYMKITCYPaUPFp0HmaIDQvgcKmwfHrzyS5EK+0+4O8l
- 6Zm/AoFTy3LyzA9JqzTfdiQM8YTO9XtN0HJiteKgj6HNQgSE3TAWGoD4D0Vc7KcgO/j/JVlyj
- BxARl3e6MOX8rHnuW+egjj5g==
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 
-> A 'devm_kzalloc' in 'extcon_rtk_type_c_probe' could possibly return null=
- pointer.
-> Add a null check for the returned pointer.
+On So, 2024-09-29 at 12:45 +0200, Markus Elfring wrote:
+> > Use guard(mutex) to automatically unlock mutexes when going out of
+> > scope. Simplify error paths by removing a goto and manual mutex
+> > unlocking in multiple places.
+> =E2=80=A6
+> > +++ b/drivers/reset/core.c
+> =E2=80=A6
+> @@ -1041,29 +1036,27 @@ __of_reset_control_get(struct device_node
+> *node, const char *id, int index,
+> =C2=A0		}
+> =C2=A0	}
+>=20
+> -	mutex_lock(&reset_list_mutex);
+> +	guard(mutex)(&reset_list_mutex);
+> =C2=A0	rcdev =3D __reset_find_rcdev(&args, gpio_fallback);
+> =E2=80=A6
+> =C2=A0	rstc =3D __reset_control_get_internal(rcdev, rstc_id, shared,
+> acquired);
+>=20
+> -out_unlock:
+> -	mutex_unlock(&reset_list_mutex);
+> =C2=A0out_put:
+> =C2=A0	of_node_put(args.np);
+> =E2=80=A6
+>=20
+> Would you like to preserve the same lock scope (which ended before
+> this function call)?
 
-How do you think about a wording variant like the following?
+Thank you for pointing this out. Yes, and this should have alerted me
+to the issue with goto out_put from before the locked region.
 
-  A devm_kzalloc() call can fail in this function implementation.
-  Thus add a null pointer check and corresponding exception handling
-  for the data structure member =E2=80=9Ctype_c_cfg=E2=80=9D.
+> @@ -1098,7 +1091,7 @@ __reset_control_get_from_lookup(struct device
+> *dev, const char *con_id,
+> =C2=A0	const char *dev_id =3D dev_name(dev);
+> =C2=A0	struct reset_control *rstc =3D NULL;
+>=20
+> -	mutex_lock(&reset_lookup_mutex);
+> +	guard(mutex)(&reset_lookup_mutex);
+>=20
+> =C2=A0	list_for_each_entry(lookup, &reset_lookup_list, list) {
+> =E2=80=A6
+> =C2=A0			break;
+> =C2=A0		}
+> =C2=A0	}
+>=20
+> -	mutex_unlock(&reset_lookup_mutex);
+> -
+> =C2=A0	if (!rstc)
+> =C2=A0		return optional ? NULL : ERR_PTR(-ENOENT);
+> =E2=80=A6
+>=20
+> Would you really like to increase the lock scope here?
 
+I don't think this would have been a problem.
 
-=E2=80=A6
-> Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
-> Reported-by: Zichen Xie <zichenxie0106@gmail.com>
-=E2=80=A6
-
-How good does such a tag combination fit together for the same person?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11#n525
-
-
-Can a subject like =E2=80=9C[PATCH] extcon: realtek: Prevent null pointer =
-dereference in extcon_rtk_type_c_probe()=E2=80=9D
-be more appropriate?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11#n613
-
-
-=E2=80=A6
-> +++ b/drivers/extcon/extcon-rtk-type-c.c
-> @@ -1371,6 +1371,12 @@ static int extcon_rtk_type_c_probe(struct platfor=
-m_device *pdev)
->
->  	type_c->type_c_cfg =3D devm_kzalloc(dev, sizeof(*type_c_cfg), GFP_KERN=
-EL);
->
-> +	if (!type_c->type_c_cfg) {
-> +		dev_err(dev, "Failed to allocate memory for type_c_cfg!\n");
-> +		ret =3D -ENOMEM;
-> +		goto err;
-> +	}
-> +
->  	memcpy(type_c->type_c_cfg, type_c_cfg, sizeof(*type_c_cfg));
-=E2=80=A6
-
-
-I suggest to omit an extra error message here.
-
-
-By the way:
-Would you become interested to add a jump target for the statement =E2=80=
-=9Cret =3D -EINVAL;=E2=80=9D
-(in two other if branches)?
-
-Regards,
-Markus
+regards
+Philipp
