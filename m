@@ -1,93 +1,168 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD2C15D5D9;
-	Mon, 30 Sep 2024 07:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D4546444;
+	Mon, 30 Sep 2024 07:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727682462; cv=none; b=Bzx+j7DLWfyvmbt8BlS3W+4FT4WvHUbE03TDN3M+1Q17ttpq3ul8Xzm/nmJ2V/kMN6vSmGnARi9+oZLvDwHZoxcsY7CxWGwScZW/aN7vs9MzmS6n+sfmoPjGO/9oIH6AozhRFDAgc9rUmOiAgDJP5RCABLFHoue9ObUkANGKPjY=
+	t=1727682539; cv=none; b=jSeBKmXJseqJHOW2F5qhbIF5RdD9HpWhWGjUqGYoJcFpiMznFXvg33zHDdS9D/XvLck6TfaihJPP/QRgHybYH5NZEeSaHcujuKT2EnEw3aLgavOQZnYzLcDyukbPDW2/MxgEDTu7KDEYLj3xFOzKB1fMkMJw5BI+QJ+26zxlXKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727682462; c=relaxed/simple;
-	bh=7+9y/YEvw4UDGlVzBtxyqJLKBBBLQZUqxCTaLtPG7hw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LyORu7IyqEeKjshBTiWFEI/zUy2hSUttvO7d1rzFPkI3V/FfNHfOZiBfvhpoOnQvi4knxwKefzqFR6xEvTX3MP8ZJGzFe5BgvOE2fOTHxLVPEZo1Zx53PCko343izfOd1kxV6S3BYSpOEu02VgNoCWrbZKGwQtW5uZQ/Uuh7tkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ikwdea5a; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727682539; c=relaxed/simple;
+	bh=zvzbxn+mDopH60Mg8MZIR09IClL8g+7ALytdl8oKYhA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qNhd0rnEZSMMb4zbrwlpAEThUWLTKmUMY019CxS9OShg8p1AbrySwzDV3lOVA3iK6/b/v6bGbwXn/g7qzdEsbP0TO274wzmQZFTT0lMceHTRG2R3PQCjnwpIYx+vQuY9X3WEcw9/SpNWS7QAq4/8VEcxGDlgCFJMQXH+FsOz2L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SFxsZCR1; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ikwdea5a"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso625553866b.3;
-        Mon, 30 Sep 2024 00:47:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727682459; x=1728287259; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6wBOsog2pNLFaAr2Ohs9pRufolHG0ydUCAFQ0oauNMA=;
-        b=Ikwdea5aa3H+xdeZjBWMB+LQMN/YlR60FmKoNvsnZi01ofcoOxMG5Xto0FEfQT0mN5
-         8hyecdPpA4dpv9Oz3UJx1IeHogl/rpTsYFgYv48UTsA14CYGZlNLVaXj6nK7t5wyCd1G
-         a6/eR1K47G7De3SftF9/l/lZyuNNMNsNhxV8kyri7y8LRvv1SSX0PJo832WbbbkJzcwm
-         hs2JXpE2X8sZ5pC1V30yFiKgGhw55YBisQAC6/UsgzW6JybObWr8ynY0wkrOkL//nOWQ
-         1sG4birPRxzoXVlH7OOQah7tjQ9fkzzNdRNW2NUCpvY04K9/1v1tH18FfJByq07nTwrD
-         zCnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727682459; x=1728287259;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6wBOsog2pNLFaAr2Ohs9pRufolHG0ydUCAFQ0oauNMA=;
-        b=SsQI9qg9wq9i0WRRgXi/ptz1B5IJY8EEjspsp4wK7vrlr43vJKO5i7Sti6TCxJqS0K
-         9T3oQJo+qJ75b9PneYg4iJC3CtZbLxrhs4HSqZKJSI1n5Ms0taPIQEC7cQZTSdK+Pyr1
-         EthoIa1EIwrp2EvM5RFHueKHeTabsAP1eIVphkRg005sKc2u4fg6P6MCy+nvCdE6JPSX
-         PG750gbQeYcY6h0+7cI1xAJd+ll3825VR9umsDUoFsJFEO1aNOd4jf2g1E6n9zdcQB7n
-         PDogt1He1Ok5KU/+ODJryGaGhYfjitHbv3jMdeBJmaualEsimE/uNzBbQvacizbff97x
-         XSlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiWQFk+4AIC5aMNms4Xn967xdqr3QQcRXtvah0rkFxjTW0YMUDx9Rx/GGFHx8poFfuQxqP/OdUrENXZ50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgkgO0iZ1CnGtKNN5Pj2uOzm4PEVvYLD+Sx7oFaIlJkCf9dNWw
-	peV4oTTSjg3v6kq9nsIaTLitH445fNEHljtG2uQzchfZNW/D8AjV
-X-Google-Smtp-Source: AGHT+IHvYQbigb/QRK6V+ONj5aAjIvinXBGALvI67jbRItfRisdRVhwtw867ztfqn9QsHI5wEDri4g==
-X-Received: by 2002:a17:906:4fcb:b0:a8d:5d28:8e0d with SMTP id a640c23a62f3a-a93c4a84fe1mr1171992666b.45.1727682458400;
-        Mon, 30 Sep 2024 00:47:38 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2998cb2sm484428766b.197.2024.09.30.00.47.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 00:47:37 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	=?UTF-8?q?Bruno=20Sobreira=20Fran=C3=A7a?= <brunofrancadevsec@gmail.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] lib/math: Fix spelling mistake "bsae" -> "base"
-Date: Mon, 30 Sep 2024 08:47:36 +0100
-Message-Id: <20240930074736.48878-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SFxsZCR1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727682538; x=1759218538;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=zvzbxn+mDopH60Mg8MZIR09IClL8g+7ALytdl8oKYhA=;
+  b=SFxsZCR15Pd1BydibTuQVB48JNwGQjasDY5/luddq6+hq60Tfua+WkyU
+   GhjetdiNeoU3j/oH1Oh+MsL/9XLEz/y7vJpEsFkZJZu7/MgQdb6Tuossm
+   QMwnbyYUIB2ognLkBqzITphW7Q7UuSb9cd3yoPlvcej+zvbCs+4DLvZl/
+   VFl2fWv+DcxbTLB2h+X1TMuFtoNVfkLY3W4k38yKF9xWqaebHZnrgrgTR
+   juFIodYny8x4q6uz9Px2m+hnbFiGR1SXPc2mfpN9C0P21J/ODvnBRiygZ
+   0kIvEtzrcdj2UPtrxVV/7VueYOlm/xRX/VROTrplBjrLvCmrplCgEKWDa
+   g==;
+X-CSE-ConnectionGUID: 0Cc1FeVyQNWdZ5VGh4NjXw==
+X-CSE-MsgGUID: phFkhAEERdKiy0fqPQws6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="52169359"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="52169359"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 00:48:57 -0700
+X-CSE-ConnectionGUID: O4A1Vo/LSOKMYlzFkVkL/g==
+X-CSE-MsgGUID: 7hVfw1pkS5e4+GPyCYIeGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="78172226"
+Received: from mklonows-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.93])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 00:48:53 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/i915/backlight: Remove a useless kstrdup_const()
+In-Reply-To: <3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr>
+Date: Mon, 30 Sep 2024 10:48:40 +0300
+Message-ID: <875xqdy42v.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-There is a spelling mistake in a literal string. Fix it.
+On Sat, 28 Sep 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> "name" is allocated and freed in intel_backlight_device_register().
+> The initial allocation just duplicates "intel_backlight".
+>
+> Later, if a device with this name has already been registered, another
+> dynamically generated one is allocated using kasprintf().
+>
+> So at the end of the function, when "name" is freed, it can point either to
+> the initial static literal "intel_backlight" or to the kasprintf()'ed one.
+>
+> So kfree_const() is used.
+>
+> However, when built as a module, kstrdup_const() and kfree_const() don't
+> work as one would expect and are just plain kstrdup() and kfree().
+>
+>
+> Slightly change the logic and introduce a new variable to hold the
+> address returned by kasprintf() should it be used.
+>
+> This saves a memory allocation/free and avoids these _const functions,
+> which names can be confusing when used with code built as module.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- lib/math/tests/int_log_kunit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Okay, I'd rather revert your earlier commit 379b63e7e682
+("drm/i915/display: Save a few bytes of memory in
+intel_backlight_device_register()") than add this.
 
-diff --git a/lib/math/tests/int_log_kunit.c b/lib/math/tests/int_log_kunit.c
-index 737d2c00615a..d750a1df37c1 100644
---- a/lib/math/tests/int_log_kunit.c
-+++ b/lib/math/tests/int_log_kunit.c
-@@ -24,7 +24,7 @@ static const struct test_case_params intlog2_params[] = {
- 
- static const struct test_case_params intlog10_params[] = {
- 	{0, 0, "Log base 10 of 0"},
--	{1, 0, "Log bsae 10 of 1"},
-+	{1, 0, "Log base 10 of 1"},
- 	{6, 13055203, "Log base 10 of 6"},
- 	{10, 16777225, "Log base 10 of 10"},
- 	{100, 33554450, "Log base 10 of 100"},
+The code simplicity is much more important than saving a few bytes.
+
+BR,
+Jani.
+
+
+
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+>
+> For the records, this patch is a clean-up effort related to discussions at:
+>   - https://lore.kernel.org/all/ZvHurCYlCoi1ZTCX@skv.local/
+>   - https://lore.kernel.org/all/20240924050937.697118-1-senozhatsky@chromium.org/
+> ---
+>  drivers/gpu/drm/i915/display/intel_backlight.c | 17 +++++++----------
+>  1 file changed, 7 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
+> index 9e05745d797d..bf7686aa044f 100644
+> --- a/drivers/gpu/drm/i915/display/intel_backlight.c
+> +++ b/drivers/gpu/drm/i915/display/intel_backlight.c
+> @@ -914,9 +914,9 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  {
+>  	struct drm_i915_private *i915 = to_i915(connector->base.dev);
+>  	struct intel_panel *panel = &connector->panel;
+> +	const char *name, *new_name = NULL;
+>  	struct backlight_properties props;
+>  	struct backlight_device *bd;
+> -	const char *name;
+>  	int ret = 0;
+>  
+>  	if (WARN_ON(panel->backlight.device))
+> @@ -949,10 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  	else
+>  		props.power = BACKLIGHT_POWER_OFF;
+>  
+> -	name = kstrdup_const("intel_backlight", GFP_KERNEL);
+> -	if (!name)
+> -		return -ENOMEM;
+> -
+> +	name = "intel_backlight";
+>  	bd = backlight_device_get_by_name(name);
+>  	if (bd) {
+>  		put_device(&bd->dev);
+> @@ -963,11 +960,11 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  		 * compatibility. Use unique names for subsequent backlight devices as a
+>  		 * fallback when the default name already exists.
+>  		 */
+> -		kfree_const(name);
+> -		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
+> -				 i915->drm.primary->index, connector->base.name);
+> -		if (!name)
+> +		new_name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
+> +				     i915->drm.primary->index, connector->base.name);
+> +		if (!new_name)
+>  			return -ENOMEM;
+> +		name = new_name;
+>  	}
+>  	bd = backlight_device_register(name, connector->base.kdev, connector,
+>  				       &intel_backlight_device_ops, &props);
+> @@ -987,7 +984,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  		    connector->base.base.id, connector->base.name, name);
+>  
+>  out:
+> -	kfree_const(name);
+> +	kfree(new_name);
+>  
+>  	return ret;
+>  }
+
 -- 
-2.39.5
-
+Jani Nikula, Intel
