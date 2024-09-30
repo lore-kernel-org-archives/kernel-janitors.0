@@ -1,107 +1,78 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393B355E48;
-	Mon, 30 Sep 2024 11:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC04191473;
+	Mon, 30 Sep 2024 12:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697501; cv=none; b=WRYM5hMlMwxpA2yPRaqJVx2S/yIyqfo/IsO5wyDZAODaBzIUcSbUauE/iaQfqTWUOPiM67HO35HkdcTCgoH8/AAx+lhZVexNkFY06pEYrmctlCqZL4vQN6NedUBhCIDuX58p50iw3kL/DI3/iC33hCSowFCnsmQXxALFyOp3saI=
+	t=1727698206; cv=none; b=d4FG7C3NpM8HaNH3SuSfNcuoFK9T94st9/1sO0inLOonbbTJ+DdUQHs3KHqliFK3VFnvjjOV2jWOdRJTKv2hLWHJ1Yz386kEw2NESUrExWwr7+lM3uaUNxE8q7xxeSmnkZSslgJ7PylWCqCgE3eG2AdDaeGYxqJy60AwDZJ21aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697501; c=relaxed/simple;
-	bh=+XTe8ZTlz5bzJaoos5E98LKB5gpf/X+7byEsfZ41vpw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mGn0Xrb4wD7PBJuxshwb//n4YLZYaXTIUAH33fR/92evR6swX3MCIrCZnQmNfzi3lHv+2k3xII/YFLPexO0G7LiiuvcZUWIklbIJ6iAwDcsygefiQSYhte8r+/4Jg05aP6AVXrJ+MdDXfE9kp41XIMM5GhlghSZ2VElB5/kyOXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso4201072276.0;
-        Mon, 30 Sep 2024 04:58:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697497; x=1728302297;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GBhQUD2ivI1lM/FdIQwroSXOb0UcPWeoSjL72i76dRc=;
-        b=takSN60eCGnrXFSOB/DYqpWXhW8E2b6kIGVjCE3rajz49jZTGXVuh+/ZXCKfEJ+sU0
-         IZdafVvzxrGmW38hQHdd8g2kPilbNLnZkdeKpcDWa/unvmkMM9vzpzCrnFdPYEmUKv1k
-         u6glfVKzuM689accT2QyBJlDoSgcnzn7aYkKZzt2tfB/ZlCnqJfHdGZ+LitZZiyXpJUQ
-         wkG9O2jdQfFLi4QvVydOM7hxwCAV4vv3oOB7f6eX5lXSaNjoTzTCRpHYGQFqUfIiHHcQ
-         kqkqUBpkYzvngIsd3+c++y/HreMSkZYcx4nsbuAW3kjyYv68e/yYcCKmXxvu4SVleoGn
-         UudQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgATIWTiZYhBBQztJf2utsnVc2xQZ/A6DkjeL74Dtb/vMUeWsdvnDeZrqZn9sK19Ja+EIOt2vczQZsMQSn@vger.kernel.org, AJvYcCXmXLEIOf3JwY2L3NOOsyl+ZRyWqUyqE/oUPEA2znMpPh6QX2+esM6wljQSgGyXb+4vvQkdMkokRydyBo2EbIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0bi7p2xNLdTCqFJWu0Ow1sVsdLkMjP5W6eBzww3jptb/DpxPE
-	f9NatTzRAmI3YzkGRLK/MWRqM9NtcoBGNqBAwNzKm6sPtID6aSaoHM76MYzP
-X-Google-Smtp-Source: AGHT+IEcb5rufu7wXIRzswL0FrKr1+fqdB+Zf+2a+KZc1r6tQRsSlDzSZeLONVwa944c9As2oGcd8A==
-X-Received: by 2002:a05:6902:2289:b0:e26:183:92c2 with SMTP id 3f1490d57ef6-e2604b7ef8dmr9089832276.27.1727697496945;
-        Mon, 30 Sep 2024 04:58:16 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e3ef9e2esm2276103276.8.2024.09.30.04.58.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 04:58:16 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6db836c6bd7so39926807b3.3;
-        Mon, 30 Sep 2024 04:58:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVI/M5PLLCHT87gXD8xPT3QxSujU+jDDmYmOo5L8HPIvMQ/gAT2HOyKKz6fWSlq/7XA4NdsyxPEsIBlidly@vger.kernel.org, AJvYcCXLos2K/3OlyghQu9RXu/d5VTWMtmoQ3Vj//dEc6cMDUB7HrLvHxiDbvspVI2hL0OZs9MZD8CBIIdMZPN8Kj9A=@vger.kernel.org
-X-Received: by 2002:a05:690c:4243:b0:63b:f919:2e89 with SMTP id
- 00721157ae682-6e24750a977mr72447177b3.2.1727697495763; Mon, 30 Sep 2024
- 04:58:15 -0700 (PDT)
+	s=arc-20240116; t=1727698206; c=relaxed/simple;
+	bh=bCr2jzrz9425tbOMb2k3hNmIpw62+BDOoCUJbWT6eBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W9IHAFEkQIEw6SZi0dLjTaJf+PyXZP2zc3Dx/I/B4iHTzAizSZ8SM5XEWYUAkZMxMTsVQoJ2MiGNBs8KaRDAfcIARoNyUdDItdgaZJ657PZQNq3FHJtba2bw7T7hhT7sCuk4b7hHRaQN9xkBQZdzHquRI3LL9kJx2X/RIdnvREM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHMI/Q98; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHMI/Q98"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134ACC4CEC7;
+	Mon, 30 Sep 2024 12:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727698205;
+	bh=bCr2jzrz9425tbOMb2k3hNmIpw62+BDOoCUJbWT6eBk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GHMI/Q98ONkPO+WOEfj07iO+SINuE50eXzgTuVUU3mYksjvGTknNxqz9YYy9Wc09j
+	 Z7Gja9UOU5B2jTr9QIAKVDeKucdjJlJkYrnKbLPHnCmgZMAjQ+3uewPKCXBZaBJkX2
+	 ikLxouw+diNe+FXTrYPVJMH84lE86FKjyxBNSDX3XxgFxiHwYntmtPuHXqLa1qH7fd
+	 c4CduoXOa/7FQMmO1ryN6f35eQIBz40lX01cGqSl25KOwcFLZ2IZJg4QSiad5e95u5
+	 AM5XaEaTNP/mwGVneYbbxJmeZf8mO3ZOjZdXZibU60F2lNPgksnZ6ZCwM5Wka4jdhf
+	 4OS/ugcegS95A==
+From: Christian Brauner <brauner@kernel.org>
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: (subset) [PATCH 08/35] fs: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 14:09:58 +0200
+Message-ID: <20240930-lesebrille-bankgeheimnis-00a2b1def47f@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240930112121.95324-9-Julia.Lawall@inria.fr>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-9-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-12-Julia.Lawall@inria.fr>
-In-Reply-To: <20240930112121.95324-12-Julia.Lawall@inria.fr>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 30 Sep 2024 13:58:03 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW=y_yx8qxmNZUV9ALxW_ZcMpEgXYirnHr70SHGYnWTRA@mail.gmail.com>
-Message-ID: <CAMuHMdW=y_yx8qxmNZUV9ALxW_ZcMpEgXYirnHr70SHGYnWTRA@mail.gmail.com>
-Subject: Re: [PATCH 11/35] powerpc/ps3: Reorganize kerneldoc parameter names
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Geoff Levand <geoff@infradead.org>, kernel-janitors@vger.kernel.org, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=962; i=brauner@kernel.org; h=from:subject:message-id; bh=bCr2jzrz9425tbOMb2k3hNmIpw62+BDOoCUJbWT6eBk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9mip+5cpSNZN/8W9azk/ofMr3uGnpkVleEfZ+QpFbJ 5hPvSl5oqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiCt0M/5R7WZ9vSss6vzab Ra1G5NOkew+TBIzLIwMaPqXcqb6euZDhv3Pvm1W1Da1BGj5fjnMf3PDTv7GfS+JjiaproZ4bb9B kTgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 1:24=E2=80=AFPM Julia Lawall <Julia.Lawall@inria.fr=
-> wrote:
+On Mon, 30 Sep 2024 13:20:54 +0200, Julia Lawall wrote:
 > Reorganize kerneldoc parameter names to match the parameter
 > order in the function header.
->
+> 
 > Problems identified using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-> --- a/arch/powerpc/platforms/ps3/repository.c
-> +++ b/arch/powerpc/platforms/ps3/repository.c
-> @@ -940,7 +940,7 @@ int __init ps3_repository_read_vuart_sysmgr_port(unsi=
-gned int *port)
->
->  /**
->    * ps3_repository_read_boot_dat_info - Get address and size of cell_ext=
-_os_area.
-> -  * address: lpar address of cell_ext_os_area
-> +  * @lpar_addr: lpar address of cell_ext_os_area
->    * @size: size of cell_ext_os_area
->    */
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Not really a reordering, but good to have it ;-)
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Gr{oetje,eeting}s,
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-                        Geert
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+[08/35] fs: Reorganize kerneldoc parameter names
+        https://git.kernel.org/vfs/vfs/c/513f3387a9f3
