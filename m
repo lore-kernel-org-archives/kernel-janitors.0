@@ -1,45 +1,46 @@
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B51917CE;
-	Mon, 30 Sep 2024 11:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177A418EFC9;
+	Mon, 30 Sep 2024 11:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695310; cv=none; b=rszASwdtbEsAbInpBXZLHfeo7cRRU4rC3NTQMMjj9P0D6pvKau0rCb04XxY4g5y65uf3pio/7cknPlFjkUtj2m9zkYCcru8eCsNJtVcIia8PSvfT86kc/OMGit8dVcxda9VS4sUFJkMUEh8n6YHHJkhf6YZOP9ALZew+M2CLMhg=
+	t=1727695311; cv=none; b=MmwR3paAncPNBnhVJj7vGcHvE6W/diRM5yBpN/ZqR2zy/lr7KyQbh3ATeJUOVQBM4sKHk+ugcPe4gZKi/PNQgKcoV2ut+bbudwNLp2AgeTtq2Rpl6PbTxITMFQmoVg1ei5ToVTVj9No6m4koxyAtprkTwh3L9zU06jg9MfFKyWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695310; c=relaxed/simple;
-	bh=xNCCKhkH5T4nEuciH0Wx5E5MCm4jd9UEmtVF0z4WlU8=;
+	s=arc-20240116; t=1727695311; c=relaxed/simple;
+	bh=tuE2Da4z2t/+tCz+SmNxdVPgCvfDimpR2ppsoJ+MyMc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hjXiM6ujR2D1Iew/x7aZMB4HwITNYURe/6S3uC2tiQl8eZQz7aeDyCAnjdR75P8gECA9gfSNnVlIW9ZLunWwJw30rMVmQAM5QL1ZlkgXlYVGtHViFDlMr4JjIuigdDLZPnTk8ovGw4lMmJwY1HQ6iouYepxWlaYgPZxWXWX9Fx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=m+BZf78l; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=RytfaT209pjojtuQV19wGas/gcsZe+mhK2HXlFSdItsAnnIma8w7i3YP0SiFoGLJG7I7vuSZ4d4Xj6Z9XWSIrZfqf9cfGhRI7ArYkvZrBvvGa8CVpilxeKtJY5bpuxO5qv4/pXfFlGGvTjYqqgU7+/5NHpRZmjPtQmttUJxTjPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=D92IekYt; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="m+BZf78l"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="D92IekYt"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=CTfrBTHtE2N5e4XS3bQTDf0+jRY2b4e2Jn7IEE+c/y0=;
-  b=m+BZf78lNsIY/Duy6QRs5HJ6/KjWLAtPrWPKL6uqjvGBz78G8TpwNVyS
-   4Sgz9Ts5DcGXdIDfsVHopy+IhrzTZTEKwxoUFEzQvj4QjIifNluaeDZVV
-   gul8UUTnlTW+feA7lWLMIBbViHxvDVjZnDnK7GmOnChT/hJEaOdMXqyWY
-   Q=;
+  bh=nyVJ0vMCjCV702KmxvH+Ho117GiwdtzCNKNDXngnBZE=;
+  b=D92IekYt3BLgXbUetq6phF8FQ/uwXsEz3sNkDdhPJyIBGG5qm7aRXeXO
+   7j7590MUgJCu8vI0ltdx3bah1E8wZLUboPqjumoduFA6bHpkfDRUs6jtW
+   bKMKQ5ojyGtMgEWU5xcUebnuMk5OCd98+f5flcVDOvcjbss+K+4YsoQMe
+   k=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956885"
+   d="scan'208";a="185956888"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:26 +0200
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:27 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Lee Jones <lee@kernel.org>
 Cc: kernel-janitors@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	maple-tree@lists.infradead.org,
-	linux-mm@kvack.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 14/35] maple_tree: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:00 +0200
-Message-Id: <20240930112121.95324-15-Julia.Lawall@inria.fr>
+Subject: [PATCH 17/35] mfd: atmel-smc: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:21:03 +0200
+Message-Id: <20240930112121.95324-18-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -59,22 +60,31 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- lib/maple_tree.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/atmel-smc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 37abf0fe380b..b7f59c40530e 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -4327,9 +4327,9 @@ static inline void *mas_insert(struct ma_state *mas, void *entry)
-  * mas_alloc_cyclic() - Internal call to find somewhere to store an entry
-  * @mas: The maple state.
-  * @startp: Pointer to ID.
-+ * @entry: The entry to store.
-  * @range_lo: Lower bound of range to search.
-  * @range_hi: Upper bound of range to search.
-- * @entry: The entry to store.
-  * @next: Pointer to next ID to allocate.
-  * @gfp: The GFP_FLAGS to use for allocations.
+diff --git a/drivers/mfd/atmel-smc.c b/drivers/mfd/atmel-smc.c
+index e560066e5885..4628ca14e766 100644
+--- a/drivers/mfd/atmel-smc.c
++++ b/drivers/mfd/atmel-smc.c
+@@ -255,8 +255,8 @@ EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_apply);
+ /**
+  * atmel_hsmc_cs_conf_apply - apply an SMC CS conf
+  * @regmap: the HSMC regmap
+- * @cs: the CS id
+  * @layout: the layout of registers
++ * @cs: the CS id
+  * @conf: the SMC CS conf to apply
   *
+  * Applies an SMC CS configuration.
+@@ -296,8 +296,8 @@ EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_get);
+ /**
+  * atmel_hsmc_cs_conf_get - retrieve the current SMC CS conf
+  * @regmap: the HSMC regmap
+- * @cs: the CS id
+  * @layout: the layout of registers
++ * @cs: the CS id
+  * @conf: the SMC CS conf object to store the current conf
+  *
+  * Retrieve the SMC CS configuration.
 
