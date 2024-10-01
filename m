@@ -1,41 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BACA1E4AF;
-	Tue,  1 Oct 2024 05:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFC5199253;
+	Tue,  1 Oct 2024 07:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727760673; cv=none; b=YKiL+5bDpSkx8eQhoiL7qLORQVHmIRCNFBfMErcIwKCrlk8mL+xW9+Vu0IsM2vFC2PXZ7GIC1eS+IH3wxpjbv8kjgOB34LoeYyRsGF58HgGTznqpibak+fELyCnt858hQlENg+VQsKvF7mtbEQv3oxYk9AoU7uPmKpQvIvU7rgE=
+	t=1727769270; cv=none; b=Mccdb+XvZKgXy7KlCuneCUgYNpSSUZpQjW9OZ1ui6DtpDFvbPpKUz5bkhrBIFJRzDgeswFLu6YGoxq0ptNzBD6wSaDFVQPUkj+B/V33rWE5UJXgyxqAhg2HrtL40mYjpKCEsFzccPa7CC2kFq3zU+bGe5XV8DNcEPfEmgb7ohHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727760673; c=relaxed/simple;
-	bh=pYLmbx+FZ19JAmCuhauZhS8caR5bjElCrRyacFRuTZE=;
+	s=arc-20240116; t=1727769270; c=relaxed/simple;
+	bh=5ZET3p3zVrRIMFCDf6Lv+QwoHRWZt3Lu5WSpJmGz8ig=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z9XTcm6ZxVpSDARNbLA2QXPXFDfdk7yivBy0tOQuYdo/iob4rIlO/7xPAIjw2JnPa6Bh5wuHy6fmTepg/2OuQWWe9tEt0cHL2RYn+M1N+AH9eKXrXS8QLd7TrtgcQOtqxGs8sf3/5LrZVJ194UXVxY5OztmA+vzztFHof/tvDPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=F8oVzqD7; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=Ezjw65AyTXDW40iQ4C5krYj0lP2qkWI72pYo715337j9oVKSb0MMgVkKA9G4tvsw90lzLUkSYGocxBFyhaJrhF1ZLCzpxFY13VjrIrgyIm5ugW40HwzKJbO8oKHUYe3JjSvgqC/BZTfpnCAinCoOva0Nmt9KL/PiwACrFqyBDXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=otXwunuT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="F8oVzqD7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727760651; x=1728365451; i=markus.elfring@web.de;
-	bh=5SVpNw6LD0acUoexvZiZsitCIQP0KLv0wyMBSNr47Fg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=F8oVzqD7EfCUMrB7dkey47zVAIqMss5Ejxdq/sGN5jd74ZF0v+MnFj+IYu6pAfnZ
-	 46nqZSwG0SBTzYGKPQiiavPouZ79xHLzFMN5iF0v05kd5kqyB+2TzjxfBnvhtw5y4
-	 euMQEfjzF/olmxDKFTZeJwAiczDDmEQh3/opvdx+EFDxZSEgJwwaEOIq2kgPyFwml
-	 rnjX4w7I4q6Fyf1pfJ18pbJpU0ggcapxX+LEKh/YBlQnZjkwDa0xWIK1TdEaOKQup
-	 tNyfsi2mzwTNbigwmoADVPrjwK0spvUo8ihIvK6j7a61APiFxYLwEGbz3yync8xJu
-	 bvcoEZ/C1qhB4UduXg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLifk-1sdycV0qh6-00JJN4; Tue, 01
- Oct 2024 07:30:51 +0200
-Message-ID: <7f11f983-236d-4d7c-bc69-87301ac0b2a3@web.de>
-Date: Tue, 1 Oct 2024 07:30:42 +0200
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="otXwunuT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727769267;
+	bh=5ZET3p3zVrRIMFCDf6Lv+QwoHRWZt3Lu5WSpJmGz8ig=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=otXwunuT1IegLikwxC0vMY3+wyvoMJuEKtQyMTT11BZPbOCOdiQjUJagKlUN6cQFq
+	 j2prA5Fcpx6SJ1zrfCcVr/IoAAs/ckdHFzt1UftpbS7B2St8ceKyrSM79gph/qR3Go
+	 nJgD/24Uz8gZOw2ZWmq/GdPT5BSrYTnuurDp5TB7S+I0L8UcOVeqyKF/EAYnLf8Lse
+	 FPWRExN20Q7kPscV+SdC9eY7l8rEhNCiz6wwF/DxbTmXG6oLQOoRRyd26HLIQifejC
+	 SrwE2Xbh6Fi/FInNlX5ismRjNkAY3zAvLX6lPNrYCNwKN9u2E2G7LVzQO7MQfU3LFx
+	 20lBp+O15L+qQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C58F017E0E01;
+	Tue,  1 Oct 2024 09:54:26 +0200 (CEST)
+Message-ID: <b414e84d-0b1c-4ae9-8172-dfb33448a513@collabora.com>
+Date: Tue, 1 Oct 2024 09:54:26 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,61 +42,36 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Fix possible NULL Pointer Dereference in
- 'asoc_qcom_lpass_cpu_platform_probe'
-To: Mark Brown <broonie@kernel.org>, Zichen Xie <zichenxie0106@gmail.com>,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Rohit kumar
- <quic_rohkumar@quicinc.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Takashi Iwai <tiwai@suse.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Zijie Zhao <zzjas98@gmail.com>, Chenyuan Yang <chenyuan0y@gmail.com>
-References: <20240930011521.26283-1-zichenxie0106@gmail.com>
- <30cfc980-3b38-4e98-a753-b149746cf93c@web.de>
- <75ec53cc-ffd7-484a-8c98-d02fdc6aa847@sirena.org.uk>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <75ec53cc-ffd7-484a-8c98-d02fdc6aa847@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OaubN+eYUNjylaKQ/D2otwSvuV/kB4bgjSB+K3vAi7RoNvezolV
- 0du0+nHRqpEmTgtKi7jz3UISoSmgipkn5JkMDrCsWZrv3uvKiDwFQfPVkRae24QksUc+cb3
- J97ngquscjf05f4LdLR6LgSvnGNIubqCmxitJ5TrWKnsReF1ufo2ss6rrl7nlbojJyfGzGZ
- gURtLpgA/VGuZdWsXqTKQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:D2gBaV02g3E=;ERENqldbR/mx9bAa1rmUkNOi9Bv
- Zhq/l7zmANIeF0+hts0OLKfQtfUiQB+wEKugsNMTdeanuTCUjNu587LmPH0JLDGSDJbD8e4Dx
- OIuFI3o1ipjrp9d2/Jb7LpIKHrXpo6KgxlXrbC1wN31JA1K/w+a8oUlVp5fFqkcZNM0PEthjW
- wjUEYULz91vLroamqITINv9P7u+D0AdtK0b9jj8Nnjr9+SR+gtwDiKbnHtyet8qhY1ZcNqYBX
- D7JOywUlGZ7iP3DKkd3+j39dJAuHlE6VdtZHjGF7+uwiHUyymB0u9Tj5zc+mwA4owWyCCCNpS
- N7o053kO0L4FtScR97ZL84M+loIq/8cIs0yL8Ze7mnb3GZhjj6639vhjIPzXFUnqpt+7Ekjqk
- 1gwCZJPYjmu6GjcQIWJch+gHp0/yIY9tAxMQxtTiIamH7tgRgR34KnGwA6KqmZuPfNnDQPvfs
- 9lb3xGcy6jjHXl9qECgbTr1TrYT9vApccKA2+hsiaquO9yzzIDZ4ObqdIVyXiURtlvANgxhM+
- yiQg57q8I8R8LQWboZmNxoP8MCbQ4plDNGfC9uTjeI0DBoMIKjJMTqheh6cskIONG+vgCXmzg
- zrPauJvoJonT7m9CtC0Q8vdNzi2EWK8F87oLFmOtTuj+jaxDwxooywXRM9Yv82xlJuB0Ltjrm
- 52N5ZWvSK8F8BJ3LFOj7QJuPYOOUJxK4aRxw+BZLL7UREEi35SZ6dkIfHPsIyuBShWt4GW1oM
- Jcp3GTRaoW7aZmOlDWCsYUDLB0hE+BU56i3qsuDmOLxm/3iavNh3tNPAh42PEWZhFfH5EMlyJ
- 6PGfIHn7/nFPUAGp4YuPBfSQ==
+Subject: Re: [PATCH] clk: mediatek: drop two dead config options
+To: Lukas Bulwahn <lbulwahn@redhat.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->> How do you think about a wording variant like the following?
->
->>   The result from a call of the function =E2=80=9Cdevm_kzalloc=E2=80=9D=
- was passed to
->>   a subsequent function call without checking for a null pointer before
->>   (according to a memory allocation failure).
->>   Thus return directly after a failed devm_kzalloc() call.
->
-> Feel free to ignore Markus, he has a long history of sending
-> unhelpful review comments and continues to ignore repeated requests
-> to stop.
+Il 27/09/24 11:22, Lukas Bulwahn ha scritto:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow
+> module build") adds a number of new COMMON_CLK_MT8195_* config options.
+> Among those, the config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC have no reference in the source tree and are not
+> used in the Makefile to include a specific file.
+> 
+> Drop the dead config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC.
+> 
+> Fixes: 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow module build")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-30 non-merge commits were published with related subjects so far.
-Can you get a more constructive view from parts of public software develop=
-ment history?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/log/?h=
-=3Dv6.12-rc1&qt=3Dgrep&q=3DReturn+directly+after+a+failed
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Regards,
-Markus
+
