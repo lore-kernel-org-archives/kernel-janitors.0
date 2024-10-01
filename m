@@ -1,100 +1,74 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B490E18DF76
-	for <kernel-janitors@vger.kernel.org>; Tue,  1 Oct 2024 09:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF40185B6B;
+	Tue,  1 Oct 2024 10:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727775010; cv=none; b=TxuwxHQetKJvJXOtJIMtLOWKAHPuL98r7hE4gnOBR+C9IL6MaL2iSI0fFpPGSAWaPkThQyklJIZsjk2++kcDHj8do3q0JgbUDkKHhGPPmBgLFn6cjGnXzucebc/XhqZ+AItrInkgRKQhc7ALshcRxUvKnAbm1xLTABUAtGqZxi4=
+	t=1727778627; cv=none; b=lHjZEpUIQmp9V+lC+H8PKAR7EsPHzj28IvsKM5DSReNX01yaLNzfBGz/LYqoKzm7OM9yuCU/aY/As6Z3viIO+3sXuk7fHRaUB4m6Lh3ztGdaWiAuCAIpf/bUaJEiZTAM3pDWm1c2MWYLAXTRzmGxDRkk+BlulOrfD54xBcfrpCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727775010; c=relaxed/simple;
-	bh=zUdt3Y3iP7rYP0vvrA+vU/N/qU+YuF1X1kDjHOS4VYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fqUfh0xKj/cQb95L+redBGmPdOCJIQMr+/qj+uUsGaycBXMSfl92ZOeF22j4u84QNcxMiH4VNmgqh8jScRkHP1Qg4Rnj7T0hyxHtOpTtxn6f40QjXfg4QIXeOnIxCZdmVrdIzr6iI6sSjpZrBTLu1CCteSyO0bRLyTBWKMuILjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fyM34THt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1727778627; c=relaxed/simple;
+	bh=nHGqmcLHEk6oi5LeJ8nhA2+DOtq9we8Ttm4xBE0580U=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=fut56EfkaouKgQ87/RlolTrhs90yPGWkj8+f2u+0CyRn8hW28zXOjUyDRvAKQCtmDPYgcGyTQYuxIyO48FcbKjmF0/A8anLnSjTY8Afk1ROggfsPTTo4yxWyzOTqO3lllkarMvGHdRzzEQ0mpM++yhnPW4ymi0PL+tYre9bCHLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaAPQ+LK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fyM34THt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727775007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+x1a+GyDQ15EY7q1rmBJO7Brfiu2xmcThN9CzntVvKw=;
-	b=fyM34THt/wYrCB8S6qCxF4WawDAcnS7tZLmyuJ2l7sHqVnyHIIqf2/m+szRFHdA1sneKI1
-	yHgNHU0ONkEEzKFUE3kgs6kcjUy5X47VDtPi0eWhSHl5tYFyeei3mmivXnYgrtjS5WY9Jz
-	Q1UDxoiv2qve/GpNrPcVYdfiLRt4PsI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-59-_uJRCihGNF6DAaXjvPOy9w-1; Tue, 01 Oct 2024 05:30:06 -0400
-X-MC-Unique: _uJRCihGNF6DAaXjvPOy9w-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37cdbe8a6e8so1540665f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 01 Oct 2024 02:30:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727775005; x=1728379805;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+x1a+GyDQ15EY7q1rmBJO7Brfiu2xmcThN9CzntVvKw=;
-        b=Fbz7mihdh2HAICfa9PLq6jT0yDBDWpEsumB2KZ+5162JP5F8c555FYV92/+qW1Sn9B
-         ZHchAwqJaquaLNPWc6PidaT3O+kqfKU+JcojYOB7VfKgpgsoDR/pZsPFyiK3evC3n1sr
-         bTr1xxu+aTkQi4T+3exfTauVjfsSy8RszsiYTRF1I1lq7rZ0d1bQ4BUuAjV8W4o4bHAW
-         x/My2OaB4RtekPl50B5QbaF6KZnvVNmXb2CiefZ56sHkih1gXINiJCUrA4EUQz+fvrXp
-         2fFba4r0HJs4biNy6cArPJz9t1wqQiYqapez5fUY6IX6GTGDvBALVj3uUnIg5inqXXP7
-         nj6Q==
-X-Gm-Message-State: AOJu0YxToqEJWLsdACAnPc2NjkbjKyx+XGLj/HBvwXexdArMRJ6K6Gov
-	CfK9h16XYkfgXlh8N6b4SvhtyxjOVWYTQNL+LWB3gKOYTCVJIEqAutWFPs2Bs7k44InsCwldg93
-	ylrt6uNN8UI4+sLalEpIfjfNk6b3AtmzLSu7eAfcPvfwg68v9Bnn+2TWyOfnFVMyOcd5xo/a2CS
-	md
-X-Received: by 2002:a5d:414e:0:b0:37c:d20e:37c with SMTP id ffacd0b85a97d-37cd5aec5dbmr8713045f8f.36.1727775005379;
-        Tue, 01 Oct 2024 02:30:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFwbiZsH84hyENEzuORxWsK74YrRF3pjgnznljoAbtEaBi2LBM3rD+RHdsw3d41YOD2xBg1Cg==
-X-Received: by 2002:a5d:414e:0:b0:37c:d20e:37c with SMTP id ffacd0b85a97d-37cd5aec5dbmr8713027f8f.36.1727775004950;
-        Tue, 01 Oct 2024 02:30:04 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c? ([2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd565e767sm11367738f8f.38.2024.10.01.02.30.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 02:30:04 -0700 (PDT)
-Message-ID: <cbed8e5a-2dd4-400f-80e4-307d0cef8f70@redhat.com>
-Date: Tue, 1 Oct 2024 11:30:03 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaAPQ+LK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A57C4CECD;
+	Tue,  1 Oct 2024 10:30:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727778627;
+	bh=nHGqmcLHEk6oi5LeJ8nhA2+DOtq9we8Ttm4xBE0580U=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DaAPQ+LKKMvDWJ8JJIdG50VnZv3yNDOLKdyfZSxZD4BnlPb/4qHzp/ynIZwHgNxmA
+	 F7XNkbXtdtK9PStD3Y/xGLWEZOs1I6tBs63C35ygiD+Ib8WzV7FtbkprRRE9fMOAzd
+	 wzD8KheGNlU5dil4QRqVsjZYHu30YR4BCkypnc4uF3cDfVEFyy4FWA1ZsOeERCPJk6
+	 Ht92HdgCtwdlhZw4CXcMB2eXQ/XlLON6nENS/SKZoJ/acKATWS3EKBe0sqi2beGElq
+	 8hQLoBCYxdhJzTM4MFxCwRz8G1glGC17sV82wWNI+JGmzqhjcOqR0jEQeIPMt9vCa7
+	 bTRZlFMUZkdiA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F28380DBF7;
+	Tue,  1 Oct 2024 10:30:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/35] bnxt_en: Reorganize kerneldoc parameter names
-To: Julia Lawall <Julia.Lawall@inria.fr>,
- Michael Chan <michael.chan@broadcom.com>
-Cc: kernel-janitors@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
- <20240930112121.95324-4-Julia.Lawall@inria.fr>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240930112121.95324-4-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] tcp: Fix spelling mistake "emtpy" -> "empty"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172777863026.301407.17090502668083389.git-patchwork-notify@kernel.org>
+Date: Tue, 01 Oct 2024 10:30:30 +0000
+References: <20240924080545.1324962-1-colin.i.king@gmail.com>
+In-Reply-To: <20240924080545.1324962-1-colin.i.king@gmail.com>
+To: Colin King (gmail) <colin.i.king@gmail.com>
+Cc: edumazet@google.com, davem@davemloft.net, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-On 9/30/24 13:20, Julia Lawall wrote:
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
+On Tue, 24 Sep 2024 09:05:45 +0100 you wrote:
+> There is a spelling mistake in a WARN_ONCE message. Fix it.
 > 
-> Problems identified using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  include/net/tcp.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-As mentioned elsewhere, please split-up the series by sub-system and 
-driver, it will make maintainers life easier,
+Here is the summary with links:
+  - [next] tcp: Fix spelling mistake "emtpy" -> "empty"
+    https://git.kernel.org/netdev/net-next/c/44badc908f2c
 
-Thanks!
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Paolo
 
