@@ -1,108 +1,109 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453601CC171;
-	Tue,  1 Oct 2024 19:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F2E1CEAC3
+	for <kernel-janitors@vger.kernel.org>; Tue,  1 Oct 2024 23:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727809738; cv=none; b=Fwrwn3DeblI67CT5trkmBV0opmD2zX2NRVDnYxg6qyG8DOoji+wzm7Uy4yTR6B86PnbTLIndX19T2SlXAOu0xUisGpk5hfEAYygOHbT6f/dPdRHpWyGex/OMbDvRlalxe0ybiN6n2XTGI+6bblVPRtHSXJrGsdn6AzAL2ZRoyl8=
+	t=1727825595; cv=none; b=XQspeMAlruAbva2Xw+smPSzRmcyvUEL8/4cKCCG0y9opBH22SZEOhyFGE1Z9FtPNWB2wgg9NgwIkw1Dplbt5YNAY3gOpZeyk70OfMquZI8LSr2XCAmogUY//OcO0epWx6fh28DfbSGaPc5wGbjXNQoD3ilzf4Rljp1Fo+BJ2aZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727809738; c=relaxed/simple;
-	bh=dB4On//ws+f9uBfpQgVACgt7KNNwxeozsBW/1z57Nv4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=mApaIc7UwhDRmMqHhcq/P5JUMwyy2saT6OyUioDuQtehI1P1O3jeBwtBxvWDvLn6VU2tb7jFCPJtYB7GKPEusd7h71XEPgbcK8VVGDeL1/LrG5C1OLJ6HkvD9XTnEnKRQgQX94dyKXMYHFaLUZrsH9Un/BdABhbc45lurBp9vFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=olDNwP65; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727825595; c=relaxed/simple;
+	bh=UsT54fmI8CdBIwP9723yQfC/u5N0lQNbGULTor+sqf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j4wEavnmSWFRuFYI8dVmFwgNMMSBl9s5xHjiGZYy7a/50sAQlhw3Ri1ZcRa8eEPqyd+CKka8kBBLPlAoboKsY57j+mi/2BIPf50ky04e/6mMTaG5x6OKkI5CVJWbMWlEvBu2+EAuQ/HcQHgHZV9YkrytC67zWS5gPDsZb+tr2zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HfLMWihO; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="olDNwP65"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727809709; x=1728414509; i=markus.elfring@web.de;
-	bh=ZT6HLXkmgq+nzP9SCRx/NsEmzXMd1CrD2QiOlaZlfZ8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=olDNwP65/FZusddYbtaUBU0+8MUuW6O7d7khSOq2B90rT6LAYS6ZB1BWWXG+UMwa
-	 Q91hZAVBTHUHq9UkVXQ74K4fGeuD5vaZ5/HZeEPJJBhrf+9iNAyb8M2sSdzspwrQL
-	 Pj4sulk/ktfvfQYCzSb8FlgNkJIdxtsf/1EjmqrM+ks9epoyWzw216Ue4GpgB4ThT
-	 UW3NfSqLzvl2jzW0/aKrfnX8vucJGzYRJQtsHrBIHatrYdPO6jnRd2ul5EOJl5nEM
-	 1Bivs9OQnBj/i0z/aW8YUnJJWP6bbnE1mgj0+yAw5inKMm8WPITUkZ11y62FDJPid
-	 NMT4GNYnMk6Ms9LywQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mvspv-1s4iVO33Fn-00rHBS; Tue, 01
- Oct 2024 21:08:29 +0200
-Message-ID: <7966ab38-711a-4c46-b3c8-ac8ce34b2949@web.de>
-Date: Tue, 1 Oct 2024 21:08:12 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HfLMWihO"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e25d405f255so5291415276.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 01 Oct 2024 16:33:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727825593; x=1728430393; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=a+iYkZq+iPYxvfl8T236DGt51ZM6/khmDSEwZJd75PA=;
+        b=HfLMWihOcLRZTVDe0cvhgjE/j10iD4cv3EN3AMzJrK39v8zU0mKojZQxDioH3p6v9n
+         7Ei/UV1iPUrAAX9DT2jYfEjGcdLhjVTNKwKSvgRu/QUs6zvRoJYZqHKv8ffcT/LIU4Om
+         Lw6HENgj0d+QJSQwfi9T96HtmId9eX2/94p23m3lYG0dMpt1kDxupKbRCZugc2XjQuuM
+         5JqSU59Gg1w4+9OOQZJ1cfna/ngh1GsrrcPCiLUOwNgAaWuUgyDxamA67b1W1mjn2wqz
+         czSlF6YyXLV9HuRlgBFSLBhLlXalo0hc30uzPNUM7boqDGpVLu8OXTcDEJBEx9ageeEn
+         9Wwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727825593; x=1728430393;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a+iYkZq+iPYxvfl8T236DGt51ZM6/khmDSEwZJd75PA=;
+        b=KKbMezMV87g9wNF5NtxqtjSYg0tKRkZh1rwbMu4HTxki4PQV/bfNVg8iPmvJZUfE3v
+         QMZc02HxslJp2Y3RRGLBHMI5ZncaWFpduFYh7GTAi33I7mE+57C3n6AjjHVtfkJqFKbP
+         SbjEyeCGKk3PFFtn8p+jnM9ySfBuZwxKwK96un2O16ZUtsju4KdM62jSg/vlVlNWss29
+         qBvafUonnWlFp42IPebybI0zCMOXsQ86rVgbENPQ+4gRWCQYHrWg800BqR8T2NpKYwQq
+         B21/vFvh3azrwcRe9RO3aGTy4JcqN2jjfhcZVGyel/l+dMT3Dxv2KgWR3YlHQH+nBrcU
+         TznA==
+X-Forwarded-Encrypted: i=1; AJvYcCUszVWNzA1DSSpqhio3Cet7ofHoS2RbdaGSvah5gBsLQ2eXkYb8pmlf6i4x4nUfT06W6zMYKcMHnRnqksvkqNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7sVVSWHPeLC/KPKSLXjbnFCY5diVZ01z+R8hIIGmTLm+Pfxys
+	VZ7SEuUERpbf0Cfbx+2WQOA03cPHygq+LU3w9b1xrFex0Ot54K7CPd01h6eSGYqstIL7LSG27kz
+	Egs6mcygl4e+E7GUDE58HPCSJ5TwO16YpOpvRNg==
+X-Google-Smtp-Source: AGHT+IGlQk6Wy4Pl3cVwIcZh6+8USnAEqDwhrOdOkfctDiC/uDN6CWaRfdqiyEtKTbeKtfvYLZFZut29QuK5LjGg7PY=
+X-Received: by 2002:a05:6902:2202:b0:e1d:af44:46b5 with SMTP id
+ 3f1490d57ef6-e2638382ec1mr1166673276.2.1727825592680; Tue, 01 Oct 2024
+ 16:33:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- linux-mediatek@lists.infradead.org, linux-wireless@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Felix Fietkau <nbd@nbd.name>, Kalle Valo <kvalo@kernel.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Ryder Lee
- <ryder.lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <b9d8fbfc19360bfe60b9cea1cb0f735ab3b4bc26.1727639596.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] wifi: mt76: mt7915: Fix an error handling path in
- mt7915_add_interface()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <b9d8fbfc19360bfe60b9cea1cb0f735ab3b4bc26.1727639596.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kRjPILfqORU/QkD6eWvK+eGlmHGidSKMW4n6WRbwxP2AD2MR8iO
- qpj2u2/8ejEcSS5yVoMaskLs4AQ8RyMALHmxbAuS27m9AUcp26kjlw1YO3GWF5AlDWAwuzh
- HBP9YkpG85If3uMzljPcFs3QrZ4StYsGwjpPaiOmtIu5qcZFMzaoUfbBX9VfnlPkV0uJl+I
- BssmxKUFm2OwBOaJYDZNA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:e62IPgDwXCE=;Pum2sJBK9wwiOEgW3Kak8Cmjhv8
- vqTcy8otb+EI4UDJDOOY/jefVnoCxRO7izxHBx11aE9UI1iijpfBEOfyYuYWj6h025vsB6NoU
- NRFitCZpUYNNN+Yj8ViTI3NR4+skseZsyTnij7wkwRADOeAvWmfgGscjmWf8IzGljAvBpBqUw
- fOuVxolq1QQmIYusFll/TGSpcpPhKSy/EuWmYwNjfGYnQvQk8Bhf6KJOLjLB6FHzuBCVlnccG
- gtvd3iL9oyu978Kxy+K070YflRuTeMZqMj2TRKwt7JlrSuRgJSlpHVZkbkc67Cw5tzu2IKs0z
- wFAm0gvarTsDNxGAFhk08GeVrKBa4Hr8505iCl+FL7uN8rUuXS/WbmjPd6/DQFzZTDhs2J+Pw
- iC3TNRTDvy675/abOOa/fuaWDcVZtTU6LyDXWuHM58NzTn4kc2Bx7jzh0i2M7Cf2xK+ws0Uem
- doZSyuCntUuodte6uF/mbYdg8NEROANMGJgAp+jk1xrt4KxXAuOv1S7FXEQyet6cm6aIGVsgq
- dzAat2B3QXOM1oLFcrkrUcBfbr3zUmwDUfbiZhPd2KrI0GCDjHZgiLrn59d1FCVbE5A4/PKOM
- ibxoMLks3vMyEvY4NDSEm89PO+W6pVTwsYpN3PdMiZBfGAJ8iRENflyuViZ2/gCwxjbhUoTvU
- 59mouZe62VNf795O6Y8Gs+b6SQDV4Tg3vBetvztXNa9YqAVv8yrM++PUwOJoxEtW6/OihM2jn
- 1fvRQQVQbLwRfOLxm8IJkyArE3xyX6roK9tiEVEXoNh3W0NE57xjJwQ1LoSX8ur5tsjH8pzT5
- /HDbJfbtqz0YZzP7Fj+Udmdg==
+References: <3f3660af-4ea0-4a89-b3b7-58de7b16d7a5@stanley.mountain>
+In-Reply-To: <3f3660af-4ea0-4a89-b3b7-58de7b16d7a5@stanley.mountain>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 2 Oct 2024 01:32:36 +0200
+Message-ID: <CAPDyKFpBEJi6m+V_xVogcAAiJjqbAH+=xQGAYizy=+1BKddQpQ@mail.gmail.com>
+Subject: Re: [PATCH] OPP: fix error code in dev_pm_opp_set_config()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Viresh Kumar <vireshk@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> If mt76_wcid_alloc() fails, the "mt76.mutex" mutex needs to be released =
-as
-> done in the other error handling path of mt7915_add_interface().
-
-                                   paths?
-
-
-=E2=80=A6
-> +++ b/drivers/net/wireless/mediatek/mt76/mt7915/main.c
-> @@ -246,8 +246,10 @@ static int mt7915_add_interface(struct ieee80211_hw=
- *hw,
->  	phy->omac_mask |=3D BIT_ULL(mvif->mt76.omac_idx);
+On Mon, 16 Sept 2024 at 16:07, Dan Carpenter <dan.carpenter@linaro.org> wrote:
 >
->  	idx =3D mt76_wcid_alloc(dev->mt76.wcid_mask, mt7915_wtbl_size(dev));
-> -	if (idx < 0)
-> -		return -ENOSPC;
-> +	if (idx < 0) {
-> +		ret =3D -ENOSPC;
-> +		goto out;
-> +	}
-=E2=80=A6
+> This is an error path so set the error code.  Smatch complains about the
+> current code:
+>
+>     drivers/opp/core.c:2660 dev_pm_opp_set_config()
+>     error: uninitialized symbol 'ret'.
+>
+> Fixes: e37440e7e2c2 ("OPP: Call dev_pm_opp_set_opp() for required OPPs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Would you dare to support another jump target for this assignment statemen=
-t?
+Applied for fixes and by adding a stable-tag, thanks!
 
-Regards,
-Markus
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/opp/core.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 494f8860220d..3aa18737470f 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -2630,8 +2630,10 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
+>
+>         /* Attach genpds */
+>         if (config->genpd_names) {
+> -               if (config->required_devs)
+> +               if (config->required_devs) {
+> +                       ret = -EINVAL;
+>                         goto err;
+> +               }
+>
+>                 ret = _opp_attach_genpd(opp_table, dev, config->genpd_names,
+>                                         config->virt_devs);
+> --
+> 2.45.2
+>
