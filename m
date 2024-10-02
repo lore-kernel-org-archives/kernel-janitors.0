@@ -1,77 +1,85 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F69D198837;
-	Wed,  2 Oct 2024 09:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C701E7654
+	for <kernel-janitors@vger.kernel.org>; Wed,  2 Oct 2024 10:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727860090; cv=none; b=hiW8oBo0J8BbObpnasB8mYXzFwoMnVrXiFhJ+e3tHwdqWXiynjY4ikvkz+CibU3Prn0buX86Ud75zdtrxd6pgh29um9P3jcU7b9jtgocawFQXLbDDrW2ZT31e2LWegNOyzeeCWFTDGjAiylCHAYXyDdh42xavrb/tTNST7HG7xY=
+	t=1727865969; cv=none; b=m1O8SFqi+tQtJOV7hgM7NGTPj4BX6x56MPjFV+D0uh1G9uJa742RnVIOECkW5oGAToDpjXRosBKWdNh9PmoQSUvrkmlz42HbiT4E0i4Wm3h7hB4ht7GEZ2nfE5LGD1SwRS/TWrvubVSCpRDCrbJzVWTqXtYmL0Bdovob7a1rDdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727860090; c=relaxed/simple;
-	bh=xDp1JK58nUfRoZvz+p7cWfD1b2oACtv8V73s3B0gqUg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=cfaAQAZv0iUVfhoFINK+7qElwaM5R9S2pr4tzto3BQu3xDerfEOmFNpGhRzYeNcmy4mvrAa5zpQnAMgtXiJAcdjusyljxNF7APFQHuyK15gC57i/qlgJIhbyDyJcq783fud7W+djFsqBYqMgMLL4w48AbeqTOCFhVBkgXbjqBr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SEWDuUzW; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1727865969; c=relaxed/simple;
+	bh=j1jipKhBpX/FlRTd/1TIChevsQmJqofboK5tmbX95yc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GeBduZ9nDwr/EyrzEpn9C8Nu2WeANR4O6tE9tx6mBi9+tEhk3Z26V+rCe5OEMdwBnDQ0amL1c2UOD7iC/yBTlUmLrtYXHWFtbuebs4zGrernwawBDbAhxzgHcPfilQRcmJJWhpxHOGT8cum6ABjx5b1k2GqyKDznUEpsNNW2Kkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zxS7cprL; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SEWDuUzW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727860086;
-	bh=xDp1JK58nUfRoZvz+p7cWfD1b2oACtv8V73s3B0gqUg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=SEWDuUzW+7Htmb1dgddN/5562jZUFZCNCMiQ/DuI3FvRdVgPfNMOiMC5EqzvuBcRT
-	 aePwaJlzmowAZ2YHWDjat4qODZu56GzpfKqe12YCSnxJsgfP0Zvm+CvgX/4TB/RgdW
-	 Ki9dNrly2103hLaZNAhqDP8ZNg2FGfrtunT9NwHf1HC6uJ7FqzQRR5tJ3kvLoWJdhM
-	 J+zjDFiDACloN62wxDGDHDv/JZoMivxZoKUn77WNzXiLTCNUksBkCUp9gqWb01Dqpy
-	 3mYI1AKhwmpCbWjxCXK2rLWVYfmzPG2dcTx+NebRME+vQc8bxFxuhw9S5YZxr6qp0l
-	 YN9VOyTtIqbog==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3FC9E17E1131;
-	Wed,  2 Oct 2024 11:08:06 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-mediatek@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@baylibre.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, Roger Lu <roger.lu@mediatek.com>, 
- Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <884f0a5d-e6d3-47dc-8a9e-201bb86b271f@web.de>
-References: <884f0a5d-e6d3-47dc-8a9e-201bb86b271f@web.de>
-Subject: Re: [PATCH] soc: mediatek: mtk-svs: Call of_node_put(np) only once
- in svs_get_subsys_device()
-Message-Id: <172786008620.33539.9448473097115032514.b4-ty@collabora.com>
-Date: Wed, 02 Oct 2024 11:08:06 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zxS7cprL"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so80409355e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 02 Oct 2024 03:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727865965; x=1728470765; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fk5hvgS0hGjJuo5sxC+sNtdExW//wukSgwsI+Pq5YRU=;
+        b=zxS7cprLvBQqL3tgqg7e0S+2wKvbGTQEfS9z9nNGe2Tc3IizJEbNAEnVNV1BlQhLSz
+         RzcYh04yDi87YUbNQrQdgPB/hN3BYsIlQdX0270iJXOAO3+DTIkRHEC5VrVKAaZfcSnl
+         ZeHwu8vVY1abgPLG0XT2rpOdiK+x8PlmiLJKONsdnjBDBg7gC6H3AApIkigiBxg1sLZX
+         q3rxSdJWExV4PaR7hOqY8bjdNpB/2BQ6IhyFM/1EEeNyOPeCPJSmOByi60JatiPKt+24
+         vZXCHgG0j4F2I/I8S9uW87H8AqH98d2luVrGd0sP5gmFmDQFibnI4Av8Mumkl7zd/2re
+         ohbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727865965; x=1728470765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fk5hvgS0hGjJuo5sxC+sNtdExW//wukSgwsI+Pq5YRU=;
+        b=QMdS7c0gX/K+Z9GFxltWJz9Q+FGO1VwXcwan7TWPDS+4+qaq0myuDgAYUItWlL0cqN
+         /7N6xI5TivY8qheQsH0nb/QLEmewtGLgu2S5T5faTvQkkPOqG9L4I8VidKJ/0rgp54FC
+         36SU5go5NLfIWnU2Xt/bv3eUBfJzL15q9wjnspdw8JKq2UAJKBYh7h8gQ+/xwTOVyND6
+         iC7oZzxmo5tDsNLU0+hvGXRqf27RoAV+RJwule2NIhkbNuEg9Szw/nEvQX5kx2VW8w8j
+         ABpHHktN65h7z3gRTcf1V9G32AnZy5EdlBBDk/Ly12yoqxLnwQe4IXrS++4ptx8y4O8c
+         O9zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnUyY1nLclZMW1mTvzId/1BtD3VewgLOu11InQwJ9ACpYNLXbeh4DyLjttpV9DMFB9W+biix/zyg1UT4p6mVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrEVEBoQCgy0LtUQD6avC2Q5+3vtz/vxZae91+oZRH2o4w3kAg
+	iQpDJsqLiqdSfyyiYwKPKgvYK00MyQud0ytiHKcHxbp3fch11R8OKPoqudJRiyk=
+X-Google-Smtp-Source: AGHT+IF/EJDPE+HOPHXbRDSTkeiUO+hzHFC+iz5emuBJaiUOpXAfIJKgswRfUyuHfngLDtPziZdOUA==
+X-Received: by 2002:adf:ec08:0:b0:37c:d1fb:82f4 with SMTP id ffacd0b85a97d-37cfba0a6cbmr2320172f8f.36.1727865965374;
+        Wed, 02 Oct 2024 03:46:05 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7a00bcb0sm15117345e9.43.2024.10.02.03.45.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 03:45:55 -0700 (PDT)
+Date: Wed, 2 Oct 2024 13:45:43 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] blk_iocost: remove some dupicate irq disable/enables
+Message-ID: <7962c626-87d3-4c6e-8fac-16653cd2868d@stanley.mountain>
+References: <d6cc543a-e354-4500-b47b-aa7f9afa30de@stanley.mountain>
+ <Zv0MtvYFTHlff_zT@infradead.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv0MtvYFTHlff_zT@infradead.org>
 
-On Tue, 24 Sep 2024 20:08:15 +0200, Markus Elfring wrote:
-> An of_node_put(np) call was immediately used after a pointer check
-> for a of_find_device_by_node() call in this function implementation.
-> Thus call such a function only once instead directly before the check.
+On Wed, Oct 02, 2024 at 02:04:54AM -0700, Christoph Hellwig wrote:
+> s/dupicate/duplicate/ in the subject.
 > 
-> This issue was transformed by using the Coccinelle software.
+> Otherwise looks good:
 > 
-> 
-> [...]
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Applied to v6.12-next/soc, thanks!
+Thanks.  Let me fix that typo quickly in a v2.
 
-[1/1] soc: mediatek: mtk-svs: Call of_node_put(np) only once in svs_get_subsys_device()
-      https://git.kernel.org/mediatek/c/1ee71494
-
-Cheers,
-Angelo
-
-
+regards,
+dan carpenter
