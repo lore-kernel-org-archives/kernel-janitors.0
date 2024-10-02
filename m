@@ -1,73 +1,58 @@
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596E7194AFE;
-	Wed,  2 Oct 2024 08:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13182198826;
+	Wed,  2 Oct 2024 09:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727858643; cv=none; b=rEi8muBDsBKVFFrtLHuTZ4oqWSYSpMAx7q0QcM+tWqVJXf0YCG+6tH6qVx7m5CPJbZoF+h/ykPqoKegAzidBHoRUbjIeFG20ZiT7IWazlzi7UoJUU2SaasDmSH3DRJ1TnyM3BoY/5CGX4jpi3qkaPofKmP4Aqk5n0awwgohFWv8=
+	t=1727859897; cv=none; b=GQ0a2Y57zMZ4Bmsa8vvO0T+H225zlZy/KgcLjtnR4mikebnDsHO3bVcUFNVnpz+jsnI65ZgVHCF7KZZfs1K7+SfO+W20CA09GUTlz0qRh8V5l3xA9TrVKZBOJUzReb1AIbPs6dhZK+lUdN+hhDGpTctQfLOlSfkFc8yvEnOpeyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727858643; c=relaxed/simple;
-	bh=sDpyKiU8Qfa6DrTGwTNk2wW672bu/eZPkI3C8jHVb88=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IQ8/4NZZENN4XRls9ubWEJhBQbuzN4nXA1Kv1Q7z4GU3tjzG7Hi0lH9me8muaFnN7KEfVcSzxFoNYNcQ/+Ep6fcLXguzORnPlQpTNiQqFFVJaZVisecrHkCf7rCspw4DrWF+UhZz7erCTGv4ucciR3N3jS2OBJo4pAbUBqYwwcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=f/Zgjf5R; arc=none smtp.client-ip=90.155.92.199
+	s=arc-20240116; t=1727859897; c=relaxed/simple;
+	bh=3L7o9w3ZnQ/XValc0MmlvvaVYAa1ifTnz4Mj6awX2tU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXET3tQJBv3rJGk4oE2J6s8UwerI+s93I1A9RReC1AwgfTa+81tW7L3hCmsWcbRr99gLdoLGjwkj+hc4vsHAmlVijY4mNB7ex9OE9VhY7LVQlFryDWo7kB/y13sySrjbJCPOzZe/aGAcqBF8oxwpnFQoo0+ix5lE6myufUDDggM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=086sgpH4; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f/Zgjf5R"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="086sgpH4"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=lhqO2EAoh9srUVDLjcw/2nKmOK9gCG7XO5Nvej37gPw=; b=f/Zgjf5RnTOySPu5gxxSei8x9b
-	xuX7HGMpFydbwLHelO2M/qiYIGMPiWn1f7jdW7axVPcemAN2v9vWFssRMdgqqWT3Rxp6ptm4s22ne
-	CHY9HAIy67cFZ4VTwmEJ79yL0ypI2pzjRErLeYNQggIu8YBnGfnUKnxtEJoODdW8wIy7BfOtgiopo
-	+CBZWVl1Bla6x4g4jp+MFcaCiCj3TT7TqB/wMEt03Sv6jGmeOwGrnMnmLcIDkQZRwotKGlsJvtB9X
-	uV0c6ME/b/75zUpfTnKQdTPwgX1nxKs1R2fpzJifzOzc1z81hzKSYnKypvrAXcR2m5YDkObdxJ2up
-	/6cKj0Kg==;
-Received: from fpd2fa7e2a.ap.nuro.jp ([210.250.126.42] helo=[192.168.1.8])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1svuxj-00000003Rxb-2GVV;
-	Wed, 02 Oct 2024 08:44:00 +0000
-Message-ID: <691d9583-708e-4c7f-9b6f-664c069f9acb@infradead.org>
-Date: Wed, 2 Oct 2024 17:43:53 +0900
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3L7o9w3ZnQ/XValc0MmlvvaVYAa1ifTnz4Mj6awX2tU=; b=086sgpH45lqOLGq/hnIvGnN6a5
+	J4oQei/b7/CZsaDjr/iLeRaDTxxAmdct5jVhVAUgDrwWmrTeHVn4r2czFL8a+y0zMf9DxYj+zo3Qv
+	iByYQNSUAXBZn7BhmrgTsF4Upy/foXeNL0BBJvAZM2GDBfdOBfZWRV5UCdPEnMBf2dJLU4DeOs1Bt
+	mkHj0wnLfEdPkxUye8BUjxG5GDYKyXJpP9tOm5a9U+7RvKnfC0V93kCxvE4Je4SwP7oW4PT0AVdL/
+	DrDvnJpGUJSlLxizKqkQQgezsnMM3oPsrDOcLu3WbKOJT76Tkmk9Z6SLVQbZY0yrp9VIwQg2XOkoc
+	jo9Itq2g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1svvHy-00000005GJH-189J;
+	Wed, 02 Oct 2024 09:04:54 +0000
+Date: Wed, 2 Oct 2024 02:04:54 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] blk_iocost: remove some dupicate irq disable/enables
+Message-ID: <Zv0MtvYFTHlff_zT@infradead.org>
+References: <d6cc543a-e354-4500-b47b-aa7f9afa30de@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/35] powerpc/ps3: Reorganize kerneldoc parameter names
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
- <20240930112121.95324-12-Julia.Lawall@inria.fr>
-Content-Language: en-US
-From: Geoff Levand <geoff@infradead.org>
-In-Reply-To: <20240930112121.95324-12-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6cc543a-e354-4500-b47b-aa7f9afa30de@stanley.mountain>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 9/30/24 20:20, Julia Lawall wrote:
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
-> 
-> Problems identified using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  arch/powerpc/platforms/ps3/interrupt.c  |    2 +-
->  arch/powerpc/platforms/ps3/repository.c |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+s/dupicate/duplicate/ in the subject.
 
-Looks good. Thanks for your fixes.
+Otherwise looks good:
 
-Acked-by: Geoff Levand <geoff@infradead.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
