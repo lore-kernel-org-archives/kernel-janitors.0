@@ -1,109 +1,100 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F2E1CEAC3
-	for <kernel-janitors@vger.kernel.org>; Tue,  1 Oct 2024 23:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E124BD517;
+	Wed,  2 Oct 2024 07:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727825595; cv=none; b=XQspeMAlruAbva2Xw+smPSzRmcyvUEL8/4cKCCG0y9opBH22SZEOhyFGE1Z9FtPNWB2wgg9NgwIkw1Dplbt5YNAY3gOpZeyk70OfMquZI8LSr2XCAmogUY//OcO0epWx6fh28DfbSGaPc5wGbjXNQoD3ilzf4Rljp1Fo+BJ2aZA=
+	t=1727855348; cv=none; b=RiwN5ePTYwgJ+ZxrVF4brf95CEywAVJWwHoiGXS41f5mZ0O1trfeKPkwhbJsqbKDhfPsDie88n9UkcYXuNjdcruScnlLkOCBVHeIDqpEElnYgM4hvESR7wZ/1SU+lIL0u/xbBCL2HU/iBYazP9vL7r0y0zmX4cJQZVn8N2q0cX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727825595; c=relaxed/simple;
-	bh=UsT54fmI8CdBIwP9723yQfC/u5N0lQNbGULTor+sqf8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j4wEavnmSWFRuFYI8dVmFwgNMMSBl9s5xHjiGZYy7a/50sAQlhw3Ri1ZcRa8eEPqyd+CKka8kBBLPlAoboKsY57j+mi/2BIPf50ky04e/6mMTaG5x6OKkI5CVJWbMWlEvBu2+EAuQ/HcQHgHZV9YkrytC67zWS5gPDsZb+tr2zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HfLMWihO; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727855348; c=relaxed/simple;
+	bh=B/dmr0tgHo+ZlE1/5AGRHjazMBxQbcDlxWSnGPnh+M4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qrunHGFiQl8YxtmyLoWBCejvwIfQxIIbS30f35G/XFIsqOrSxavax4T/YHma+6FSx9U7VT8gnsLojcjoi3wrEoMeVr6RwC8X6YCJQBq0Gq+EzLZA236xrd0stvmQIplTHrMMHmHQ94su2kC0/VQnNrEvjeXwyW1c2gOzDOnEGO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdIGbY/i; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HfLMWihO"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e25d405f255so5291415276.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 01 Oct 2024 16:33:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdIGbY/i"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a98f6f777f1so97738366b.2;
+        Wed, 02 Oct 2024 00:49:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727825593; x=1728430393; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a+iYkZq+iPYxvfl8T236DGt51ZM6/khmDSEwZJd75PA=;
-        b=HfLMWihOcLRZTVDe0cvhgjE/j10iD4cv3EN3AMzJrK39v8zU0mKojZQxDioH3p6v9n
-         7Ei/UV1iPUrAAX9DT2jYfEjGcdLhjVTNKwKSvgRu/QUs6zvRoJYZqHKv8ffcT/LIU4Om
-         Lw6HENgj0d+QJSQwfi9T96HtmId9eX2/94p23m3lYG0dMpt1kDxupKbRCZugc2XjQuuM
-         5JqSU59Gg1w4+9OOQZJ1cfna/ngh1GsrrcPCiLUOwNgAaWuUgyDxamA67b1W1mjn2wqz
-         czSlF6YyXLV9HuRlgBFSLBhLlXalo0hc30uzPNUM7boqDGpVLu8OXTcDEJBEx9ageeEn
-         9Wwg==
+        d=gmail.com; s=20230601; t=1727855345; x=1728460145; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sE33RK9i6Dr1qCPzfRCLBr1LX2ZDnRlOdHfUf2FKHc=;
+        b=QdIGbY/iqsTHPDGI5gSnv7VWk5l/3sEebghQEuKCjnAGyJVxJ7nRsDbA0wrVVYYbdY
+         mbUi3FDELC8ge5qulxEzToc3uoX0J52zx36f/vvqEVQaLT+TFIJCzizKX2+8dxgl/3xn
+         a9i/4i/dzipUwl43wNly7lPVJPY1qYmjYOZmhtfFDQFkIJl9JCe/HPrxGqIk41fXjPxE
+         vxHWMWjQc0Q55XS5uBFQuapH0/jqqhyv+nlMN42yNWYpFvziyVb6ZS1LG1V+JP+FIzwT
+         ziWKBfoXvAG+stIFE8DbhJz75Rtfkaxu8t0gf+egnnjzbZNfwAp2ytDhd2tXj/8PyUwF
+         5psA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727825593; x=1728430393;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1727855345; x=1728460145;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a+iYkZq+iPYxvfl8T236DGt51ZM6/khmDSEwZJd75PA=;
-        b=KKbMezMV87g9wNF5NtxqtjSYg0tKRkZh1rwbMu4HTxki4PQV/bfNVg8iPmvJZUfE3v
-         QMZc02HxslJp2Y3RRGLBHMI5ZncaWFpduFYh7GTAi33I7mE+57C3n6AjjHVtfkJqFKbP
-         SbjEyeCGKk3PFFtn8p+jnM9ySfBuZwxKwK96un2O16ZUtsju4KdM62jSg/vlVlNWss29
-         qBvafUonnWlFp42IPebybI0zCMOXsQ86rVgbENPQ+4gRWCQYHrWg800BqR8T2NpKYwQq
-         B21/vFvh3azrwcRe9RO3aGTy4JcqN2jjfhcZVGyel/l+dMT3Dxv2KgWR3YlHQH+nBrcU
-         TznA==
-X-Forwarded-Encrypted: i=1; AJvYcCUszVWNzA1DSSpqhio3Cet7ofHoS2RbdaGSvah5gBsLQ2eXkYb8pmlf6i4x4nUfT06W6zMYKcMHnRnqksvkqNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7sVVSWHPeLC/KPKSLXjbnFCY5diVZ01z+R8hIIGmTLm+Pfxys
-	VZ7SEuUERpbf0Cfbx+2WQOA03cPHygq+LU3w9b1xrFex0Ot54K7CPd01h6eSGYqstIL7LSG27kz
-	Egs6mcygl4e+E7GUDE58HPCSJ5TwO16YpOpvRNg==
-X-Google-Smtp-Source: AGHT+IGlQk6Wy4Pl3cVwIcZh6+8USnAEqDwhrOdOkfctDiC/uDN6CWaRfdqiyEtKTbeKtfvYLZFZut29QuK5LjGg7PY=
-X-Received: by 2002:a05:6902:2202:b0:e1d:af44:46b5 with SMTP id
- 3f1490d57ef6-e2638382ec1mr1166673276.2.1727825592680; Tue, 01 Oct 2024
- 16:33:12 -0700 (PDT)
+        bh=1sE33RK9i6Dr1qCPzfRCLBr1LX2ZDnRlOdHfUf2FKHc=;
+        b=TKHTOF/rPvOwdWOsTVZvTAbt7UPrknBv4wSR/Y1SX/agvAnv0IKaQR8bJROFg2X2lJ
+         All9qLo+sNR3jmd6b/dh68Gf1HZkTkQVgfyHqd8p+WktRJCL+pMyyFxJAwatOqAR0Prl
+         d/ZAN6gGsmhe4Vgu3B2y48iELs8+ygWvM2Iluhy3GNQV103lCP3ECQ20mBVfL4GbcaJS
+         gWGjSPJNry98ZuLULj6075Foe3Jpr/bc3lYGsPaoexlp/oBTrzUMDuV5Q/seQpM1hXwe
+         BBif7HfVnMJIaQYiUWaTdufMDZokXHG8IsH5rQqt+TF9B6yjm/Po8YpMCN/wY+QxgLuB
+         DGyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyCDVexv8GHr+gUvscIdX/mRT0GJHOm/OikhNLJrK3+dWL89pMjM4UDMZpcw2H00T2Auk/e5zhzf6AEIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH7+CvJg5CJL60dtRm4kRGjFb9JSl9qAqBp1pSLkGW7rqOSaFJ
+	cWwN1+UfE3X9ZzwyqGdvFMYkskRlbNbE/yfp6FW/wmUUpFY5cx+E
+X-Google-Smtp-Source: AGHT+IF1OGVlHVCOZY7ncJbcAHiJ3yHF47hZOCjc40mcpPrCwCrw9KqUsqhkQw283ZrsikK00WvzJg==
+X-Received: by 2002:a17:907:705:b0:a86:ac91:a571 with SMTP id a640c23a62f3a-a98f83875afmr216654066b.56.1727855344841;
+        Wed, 02 Oct 2024 00:49:04 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2999076sm824885166b.218.2024.10.02.00.49.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 00:49:04 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/i915/display: Fix spelling mistake "Uncomressed" -> "Uncompressed"
+Date: Wed,  2 Oct 2024 08:49:03 +0100
+Message-Id: <20241002074903.833232-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3f3660af-4ea0-4a89-b3b7-58de7b16d7a5@stanley.mountain>
-In-Reply-To: <3f3660af-4ea0-4a89-b3b7-58de7b16d7a5@stanley.mountain>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 2 Oct 2024 01:32:36 +0200
-Message-ID: <CAPDyKFpBEJi6m+V_xVogcAAiJjqbAH+=xQGAYizy=+1BKddQpQ@mail.gmail.com>
-Subject: Re: [PATCH] OPP: fix error code in dev_pm_opp_set_config()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Viresh Kumar <vireshk@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 16 Sept 2024 at 16:07, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> This is an error path so set the error code.  Smatch complains about the
-> current code:
->
->     drivers/opp/core.c:2660 dev_pm_opp_set_config()
->     error: uninitialized symbol 'ret'.
->
-> Fixes: e37440e7e2c2 ("OPP: Call dev_pm_opp_set_opp() for required OPPs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+There is a spelling mistake in a drm_WARN message. Fix it.
 
-Applied for fixes and by adding a stable-tag, thanks!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/i915/display/intel_display.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
+index 74311bb9d290..a5057ee4cbe5 100644
+--- a/drivers/gpu/drm/i915/display/intel_display.c
++++ b/drivers/gpu/drm/i915/display/intel_display.c
+@@ -3811,7 +3811,7 @@ static void enabled_joiner_pipes(struct drm_i915_private *dev_priv,
+ 		 secondary_ultrajoiner_pipes);
+ 
+ 	drm_WARN(display->drm, (uncompressed_joiner_pipes & bigjoiner_pipes) != 0,
+-		 "Uncomressed joiner pipes(%#x) and bigjoiner pipes(%#x) can't intersect\n",
++		 "Uncompressed joiner pipes(%#x) and bigjoiner pipes(%#x) can't intersect\n",
+ 		 uncompressed_joiner_pipes, bigjoiner_pipes);
+ 
+ 	drm_WARN(display->drm, secondary_bigjoiner_pipes !=
+-- 
+2.39.5
 
-
-> ---
->  drivers/opp/core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 494f8860220d..3aa18737470f 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -2630,8 +2630,10 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config)
->
->         /* Attach genpds */
->         if (config->genpd_names) {
-> -               if (config->required_devs)
-> +               if (config->required_devs) {
-> +                       ret = -EINVAL;
->                         goto err;
-> +               }
->
->                 ret = _opp_attach_genpd(opp_table, dev, config->genpd_names,
->                                         config->virt_devs);
-> --
-> 2.45.2
->
