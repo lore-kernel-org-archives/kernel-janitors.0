@@ -1,109 +1,91 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B7A1C9B91;
-	Wed,  2 Oct 2024 17:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417EB18052;
+	Wed,  2 Oct 2024 17:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727889783; cv=none; b=dejdgHjPoxSmhbpLFuUFuA7rSxE4/9GqI5cagd9kN1aSqn5KnwdzgdIaz2dvLX9geS5FP37/Ned5kGxDdeu7FnQBa/8iFf3TYNqKEJh8LbcxL2La4sAd3nhqImW3Lg0hqEXAzsve56krJV1yQoboAf3nAogEyJ4JRBiBog3iIbI=
+	t=1727891339; cv=none; b=RdWuPiwz0AYnYHgdZdmn9lpilS26FUJpfiFokbUOISiEP/vkE2r4NsKmKpxr7fgLsQ+zdlbxrDSbrZmxJx9m2Gl0BQQ4uO617KguIhaA1jC+oNoP6ir4xmXjTn1IKz8hKnzZcETlrmYcLCd73BLYX5mLHEGqqI4jDpi3CabqztI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727889783; c=relaxed/simple;
-	bh=bkAQNVWdL7EltIgNXeU2wim48SVOzGi5QGtZVsmY1NQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oha3YguGbqyAuZaWZqhk+rV43GjqOkVnVygXfQ4amPqP3Vd6xAwAxhc36TS6tdi5/2CMe1ZqpDbsIoMrHHEEbYB7h5N3PuKO2Ji1hLhm7tFmvFk2b1sHfGo3qPyqQZXJt/K/hU/NyIYUnD4N3jcspYxwZEdUk5w76tIVSMn2CpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cwbHe7AU; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727891339; c=relaxed/simple;
+	bh=DinzFEMHGAFY7kxCmwW6Pz2NOsyaASUqK0ar0tpl0ao=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=mJj4uNrM1sUEvlGrDDlG9slv+wh9ZXCXdB5uczHsff0s+CH0yghJohILxqW9DPjfhzdfSrnUdg3bQCiuNOZvJR2bHpftlat/0uVpRnjTaOgYBEAMFycmtss46S8aH0/xBt1khkMi6K6zcZ76SIFN1X9FLW/VkX3CgSroaeGezh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pQQYn6OG; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwbHe7AU"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so1134414466b.0;
-        Wed, 02 Oct 2024 10:23:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727889779; x=1728494579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FrtYZnJmhnzVc3g3gqJpSVt6lMuSvSPEflszJlzR0nM=;
-        b=cwbHe7AUajy6c8zHg7Yu/zcrOOIV1u+qTKlLylh/APv9Y/vukYSU5CaMGgjTZJLS/c
-         oXD2ZUsE/5K9+ZIvaxYFZ/+OUDykdi+zYr5eBjdN8E9B0DwqaXB9pO5+uxitYh8216ey
-         RYccnMZ7KkJMxY5GW5+he9VC52rnhUW39O4pvwPP7LAgqMhDMRcqsFf+ePJCZ2BBwyM3
-         xGXFkU+tV0oOCB5j8our6FI7kIHLkirzeML13Lfof1sobNZpXtGiHlHBNrfKaa6dgaYC
-         T5hU7FKC92nLati5qGtUlXORMLbCoWBS/Rhdrwr3/mT3lY7cdRcAURQ3pJC3QSN/tGna
-         DdTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727889779; x=1728494579;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FrtYZnJmhnzVc3g3gqJpSVt6lMuSvSPEflszJlzR0nM=;
-        b=XJB5AMLTKQ9ePeSdxv9bfTWy+vG94sQxw1J/D3eqN00nOtlF8lXu8xcmwfdBBp/7Kw
-         uS0XbILFAfv/9Ql1n51Mg4yMA7avmM/1h1RKx/e5SPydd/4J9zQ6KaqlcrFYaTA9DZnP
-         oiNqqVZ7EqbWdMIHYePqY9rl36CgaO/TrpDOosGenuFh8hXUm6CBD5/z1Kd2i6UgyBS/
-         Wj6dd/ViVwJRdCF9Wx7vMG9SR4AlzLi1w9Z8D9LLDayj1oyPxvc4bWK6up/xO60tovrL
-         eNKfXyxXGLzKN6iiqH0nQq1HTqZlsqiRJ73ULpjgkjbd4Z4rGQhYB9EKtyldSsbkH0hI
-         7wfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVn0rQAf3wiLigtMPHwOoIxLL5wgCyT6mBbtEAMMlGiTDBI+DMzctZgU1GrlU4xpu4q6l8o+5exu1/qiu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9Q72Olvuv/tvCajvdmvjuNB+xjXhNnMzewba0dKuCp9knRrfH
-	Euf+GiXYtdpm5iNpWZG0l99q+dojqWbTdGeeyqMl9OKHQhYpNMb/
-X-Google-Smtp-Source: AGHT+IFGrsopjTclFGJVXmRNx7rFlw56ClSxMQyHigziZsbEMOUUTrVwOrOTfgup+dPCSfeklGxdgQ==
-X-Received: by 2002:a17:907:1c24:b0:a8d:51a7:d5ec with SMTP id a640c23a62f3a-a98f821ca1emr383865366b.13.1727889779427;
-        Wed, 02 Oct 2024 10:22:59 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c58fbsm889697266b.56.2024.10.02.10.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 10:22:58 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mtd: cfi_cmdset_0002: remove redundant assignment to variable ret
-Date: Wed,  2 Oct 2024 18:22:58 +0100
-Message-Id: <20241002172258.958113-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pQQYn6OG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727891316; x=1728496116; i=markus.elfring@web.de;
+	bh=UdzyMxMYg7gx67lxGGSAjs4dqNY3Sz+XDV+9GjFT7pc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=pQQYn6OGZW05p4YIhZwMwfiW2GaOI18myisuc4VIZkKXwG5ZbDb7EkwErVKUSfdv
+	 KJJ3D7wy3XfAYRe1Pz6stQ/yshwg4gsRYtdXtskYwNsW9RzmdYmHwVL1ZWsi6v8kB
+	 qrT1Cy+DEQI9OePiFW63A2VpJ0mrUMGje/AchxEbKeAIWf9ndlrbM5jvs4o9uijaW
+	 +teeZh2nk2QKeay8nohEbsrX0RiYzKzStnhvp4KGeBi2xcWQc9ckfs03HtTuPRRqZ
+	 HuGzlM/GfsJqWqa7Hz439vrOWkxVdVBZMnQBRcGj3wftX/1jjlzWU5nn2jmYDxVlt
+	 qlPGjZ6duwOc301+RA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mc1ZT-1sJhF50gzX-00bw47; Wed, 02
+ Oct 2024 19:48:36 +0200
+Message-ID: <ac69dd2e-b4e4-4f70-b6c4-476b92160270@web.de>
+Date: Wed, 2 Oct 2024 19:48:28 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] ARM: mvebu: Adjustments for common code in two functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4/g1cd+1Y+6AxLFJ7Ock4iHC+jweghLSS3bi3+RXZKer5tb1sIj
+ ui7heuFGHq5rlcgcSVmiNe4xqZey2308uSe4fyQQ5o4lryDFz+RkqXgmTa/2CyEFkguACF3
+ 0AJbVmCVIhx/k34CIk43eSDs0V9jP0pRYu2GHGsKXabjVydVmpm7en92+dI1FbyBNLi49+x
+ tSjSYS51N7CkZ0U8sAF1w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8brjOrdve00=;rPNprnmRAmHAy8nJldST3i18u94
+ QcnD7f58Uh2FcAHPJ/3ulWY9ZSO7014kXvV86kgyZjDq/r7wrzEMn6PGvQAvVJk/vW2J5mWN3
+ KRlfjUO+ELt1KGBvDjd3OdqjMomP0q5iijmblWZLZjMUequhQnN618NKRJnOVHxXYyYutdgoL
+ pDux3qEhR1ji8BaJnGEl+g6UrT2tpk/g4JymH4xhzIyjqGOPaork40v8+lsLIjlI/sZt8fcmm
+ uqUKyrFBUcL6aNej1X0/3KkKc8TcOoivsdQtwjqOoOTYhxI0yMRQlrJ5LR9hYdE5CId2LSviS
+ nf4Fybz0j4xOkO5Lnw0KkbHi/doDwDAE5uvjjJ5Rve+0Qw19Lxht6MwgFJLrgvV5lQn9QDsm9
+ ieeBkkDyswOeLPCpUJ9GnF86oKpr3VZAsGnLtpRH7N3U7Qk38U5XhOSDmjFQs4rm0w7ZkNEb+
+ +aQJMBfWoIOxV/5M5Yno2YeR8/8IColHX02IYw/yil9+6hbbGcAIXp4n5TnktHhUrhdqfisdE
+ 257ITkX8HRYj+g11I0yFnNjNWQtajux7h9bzdlbNJPwBhuZoh8MLEWzKGsBY0whJXLNzbSu6T
+ Bxw/sjb7e9g24jibT3hDDAA/roTcNUelERB+NmqWoNVCF8Kv9MJdd1exaPoKKYyd4UoAj+Yic
+ RdZMxc3y01sysXHKJ+UtdaYunel1Aud+ubBSR6XP6yEie2HsTWDUQyzTv4J6KzFT+rhvtX2RY
+ RJIP44TyqXCG4cNn6VMQzv6kpzNmZvsxfESLJyawavNbMrpT7J8j4uuoa2LBeKFovHdVWRkQf
+ T9v6FqptqqZ1rJEXc7Dw3dbQ==
 
-Variable ret is being assigned a value that is never read, the following
-goto statement jumps to a statement that assigns ret a return from the
-call to function do_write_oneword_once. The assignment is redundant
-and can be removed.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 2 Oct 2024 19:32:23 +0200
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/mtd/chips/cfi_cmdset_0002.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+A few update suggestions were taken into account
+from static source code analysis.
 
-diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
-index 9f2223d3e8e1..7c91429a670b 100644
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -1775,18 +1775,16 @@ static int __xipram do_write_oneword_retry(struct map_info *map,
-  retry:
- 	ret = do_write_oneword_once(map, chip, adr, datum, mode, cfi);
- 	if (ret) {
- 		/* reset on all failures. */
- 		map_write(map, CMD(0xF0), chip->start);
- 		/* FIXME - should have reset delay before continuing */
- 
--		if (++retry_cnt <= MAX_RETRIES) {
--			ret = 0;
-+		if (++retry_cnt <= MAX_RETRIES)
- 			goto retry;
--		}
- 	}
- 	xip_enable(map, chip, adr);
- 
- 	return ret;
- }
- 
- static int __xipram do_write_oneword(struct map_info *map, struct flchip *chip,
--- 
-2.39.5
+Markus Elfring (2):
+  Call of_node_put(cpu_config_np) only once in armada_370_coherency_init()
+  Use common of_node_put() code in mvebu_pm_suspend_init()
+
+ arch/arm/mach-mvebu/coherency.c |  7 ++-----
+ arch/arm/mach-mvebu/pm.c        | 21 +++++++++++----------
+ 2 files changed, 13 insertions(+), 15 deletions(-)
+
+=2D-
+2.46.1
 
