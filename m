@@ -1,114 +1,120 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35C9212F0F;
-	Wed,  2 Oct 2024 20:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47423216A1D;
+	Wed,  2 Oct 2024 20:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727899380; cv=none; b=fPIME8SOZ/YppFCw7/iYjm2YvIWs/DwwDfXDruw0nE2glpSLfWuA2FUVnVQGrf387KRdGpSX1pv5oOJIXlYlOZt1D/vTLFQ3OYjn1i+2QKw9eX9MthsGUBcCpckO/CmSoDV7NyO9d2lSS7Jw7oZw00WYxttz55y8tbeGAHn+Rsg=
+	t=1727899734; cv=none; b=qQCrlPnLAxqsLp4LXR4rqGaz+H7e9J2EeLAOXDDtkbKiLD0MkgMBg6kLm2tp+ukRVFCNZwUlIx0MFTp7G/ssVdswbaV8kd5kQxi+CdyPxb+dy1HMfQF3jXaU/rX+x7Bht6JqOp6YmqaVjvV4kkK+MgRZq5KMgDHqanXfU6UdiLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727899380; c=relaxed/simple;
-	bh=nXmCThrNmuZQUi4BDS/SIg3d9HpKhnM0LoHaEUGa64M=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=m5N3zGcFIShnzj+sVpwqRfd2QxAV14S2q4JSQIIs6i3aQOgsoqgAfNOcBYmO3YRcX3W2LLWVB1Esf/oDIvP9Kr+dbHpFQwqktAV/Sp5hq9l3oTqMekhLi9mKylzOTF/HByOSyoecU4yTb2/2iqiDDQJtJYPPw22eHhhpEE7AAFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vJh3uWvY; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727899734; c=relaxed/simple;
+	bh=vz46hAmWpG5YlUYcSCarIwa9teQKaxayVj5G8KNqlRo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HKHZfT9vplG3IYlkWGZnefjbzXaAEIPbUahSfBSkMW3Tk2xB2aRqZ0uNFWPXvZsWxKXvFH7Q2X2/MOwUjwpc0SzshKe2BCJnJElFzQJhl5GRB6Ka7tJi0iOH+Dtsdb1kuKgZlb9FEQ60+jh2iD5JN651XdYEWKp8O3pF8Kv+jNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ScOrOzi9; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vJh3uWvY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727899342; x=1728504142; i=markus.elfring@web.de;
-	bh=yk/JBSOBkQ1LKGKPJgjsG+d2d+2WBIGfUs3k8xorprg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vJh3uWvY+YI4HwG+Oop6AdrCMM/hC36uMebPO+Z/0+2j5obO0oaV+VEoEEypGxf4
-	 K1fHJNZB1pF5m+rwMUANcpzvZawtGsRapzTV5BeDm1GHH0L20GjyMFb5IQJpD2S03
-	 vonCVDWDDLjwHNicMTKwFzxihVTegFmexgJmAJViy+cjnrev6fcwSjmGqXaB+8PTE
-	 nIJ/yWtaXmcFZm6GX9Xy5y2E+5u3LDtECmCtnwoQ/i7dM3tlb3SFND9dDnJXjY4hz
-	 z0VSvqHX10a/tkGG2I38nDCNnedG0GjHCfIMigr9uWlolXcpU/93UgwlPUITgPZV9
-	 2E/+iBVuRq+glIY7HA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mav6t-1sKpr33AIV-00d27Y; Wed, 02
- Oct 2024 22:02:22 +0200
-Message-ID: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
-Date: Wed, 2 Oct 2024 22:02:20 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScOrOzi9"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so1106805e9.1;
+        Wed, 02 Oct 2024 13:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727899731; x=1728504531; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hxnZLWasoXEFToT3v/SC94iiLBjMSWRh3PeDY/tsPKQ=;
+        b=ScOrOzi9Mm71ArVJ5/754JFL2TDPN2eyY9tMoqyybRfDEHqhx1n/D41p7Zu2FDG4kZ
+         T2Q9s6PXQlcgTWHXbJDMvJy5VwJABo+fXLhyWYDFJ1nB8iShWqggIaTQl6jGVP/f+pJr
+         GzB49D378Jh8elkZC0W7ymQkh7ienJm6/0d09uZVOxwSFmgTyLaAKTkBffRyPZgWLOkw
+         sLiJPpZM0rhW2ecrtt4TK9IvvZiuhsdjIVT/0Q4dwo2Ukrm7J5aKbXRpCylKodTGbQKf
+         Ck2C2bBsFIssE4wCt9hV66FxyZZYbZNp3S66Vyk2GN2whuQI1rK3+etdQV5qOB7hUi+k
+         +9YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727899731; x=1728504531;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hxnZLWasoXEFToT3v/SC94iiLBjMSWRh3PeDY/tsPKQ=;
+        b=GbdePVZcVyJbu5NTGXj6uGB36RjJROCn+jKyUtkviwkdw5hXtwdDQjGBDgCHb49/KV
+         qEzvFg/XxI3qcWDJTslH4cvKHEKv6cJLSjD30tN4cq5xuqLFuBfl97TMuyU6oYGgrNIk
+         chRF9YCm0/N+fmzb9+3N0vnCdA6ku6nMGYUs9QmwqviQpZAa0f+QRtXkrNMH2xRrG2+z
+         YmdNB8S1APtEDvBvyfOoJbb43btYtEofvFPs9DdqlPa9k9SrZwPOlTj286P+aIqq6Du5
+         rsXw5H4M6mCXo07/sI0foqLCBrbcQMGXdcYBeDz20Uq7wWX9nTyRHQocN7VbcdznJKuI
+         6uoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIvuNsX1/coxv4vA1rv9GikQpJlWc668DqpfwpHHnHpJNhODum7qhbqeyRzPjmK12aQZj0N6gdNmj89A==@vger.kernel.org, AJvYcCV31FC0ElLlJmQjX4d2BtvdybyX/hPVMpN6G8QEDHVaeO018Ft5f1Ge1yzUgNljBVGCTj4uJwpxL9mFPbNC@vger.kernel.org, AJvYcCVHu6jOq7gIFbynP3p5KZeQyt/V8foidrViemI5phXsNEMUSBpjtpPXOmGZ8hbR3YRlH2KIhz8CycHnnSY+SN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXEVdDzSDtsIseiSpLtTddRJdUlBikb9421K3ls47/gcvRML0x
+	lZ8tPOOY29DYrKI3kS/wSrwy7DnB64j1EnJHXB3xvk7L8Yi5NKOI
+X-Google-Smtp-Source: AGHT+IFgZsIkiwvcQcdxhWGuOwo3EX/o3oFREL30NYWJAmnmWI4NukS+lsvENJabe0gnVRXhfdDW1A==
+X-Received: by 2002:a05:600c:4686:b0:42c:b6e4:e3aa with SMTP id 5b1f17b1804b1-42f777b0c38mr30491615e9.5.1727899731212;
+        Wed, 02 Oct 2024 13:08:51 -0700 (PDT)
+Received: from void.void ([141.226.9.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7a02f174sm27934655e9.44.2024.10.02.13.08.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 13:08:50 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH net-next v2] net/mlx5: Fix typos
+Date: Wed,  2 Oct 2024 23:08:38 +0300
+Message-Id: <20241002200838.7316-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linuxppc-dev@lists.ozlabs.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jani Nikula <jani.nikula@intel.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Naveen N Rao <naveen@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>, Paul Mackerras <paulus@samba.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] powermac: Call of_node_put(bk_node) only once in
- pmac_has_backlight_type()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hKihFzh+xQoapC4KB1f813ixscEmHDPGUzMwuYAGUbLDglss0wb
- aW1DRTpfjmTzAnntPjK4MUjjYybAkBJsvTKYbf4BiOL1MIfuY+vOQC4V8VuMjXrM8OeMu7K
- /YnNfHSJaBVEQSyddEI15nrtpuVaNLW+IpzMvcjtsNH1IUPdyxetpjcQGjAD2/ohTb28UrV
- S2d7mD6JlNhWOuly+q0nA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:i5Qz6h6TJGI=;vi/+cqtGm3/O6HJzmQA8MyVuEcJ
- gnYaMhZqJzvwOLwF+Y8odsmfGi0zMGEJ+jIV430l1sse3ntrvjGfQ1YoXDGZ3ybIIjyG+Jwf0
- tapsJNQqHFFFJTXztb+oYwXm9ifnmxd2qp1BlS1ROvH1TxlIjgn2/V6gvBFgkXIGh7o/Wi1bN
- nTjvwAIxlDdzk2ll0V246EHCEtOyYJdzXBcUbHEhiCST+2gymhY6tDq9UAsXWspBHy0AjPixQ
- GNnIoStVgXi3jhbMEDPIZcWgbCytgVAI8qGC6gU9N5lRkdA9gwne4uHM9LV1yxPSM2888jfui
- 13Nig+mIFTBu4IlJLFKM8JommUTVPguflFHjDZwJRIQZmegta25NJT8MsHFWTe1h+UK6AoLn2
- jKGwkEeKcQl0tlPUqJZnUxex2V9FvSGhe8DSgOMyYzCo7rfteczvgeYCyNOySr3wVcst9B9zf
- Ta29slZPO+tYiGGJpzd1tbY78cE8IX8i0zZrsM5wCtEmMZoRwtBeXhhPlE3NCFKXAGDClQ45s
- XJvCzRffCS6lxzwz8PnKZzyAfHy42uj+jY0mYm9ylFH2GVl5wTF2KWKk7RLrgNFxnbYHt75KU
- PFxXp2GZqYabtgKIRHjYRz3D2mOcyWH/71R7VZoEB0lmzejIbrX2iiln5TDar9HXA3rLPZtBF
- asQdpVbd0CB5xwzeKsooemCRBkk6dQ3y1bGGwmuG8gFsmozG5KTR4uvVHoFjxhnWupdV2X9ue
- 0pqh760jpB4Ls1+VuoUT1jwcg02jQlP+K0ed9GtcywbuoST3JBILwUY9Ckrv+iOg3qmxV7lW0
- ux5vDQ19KuZHrPIPMMkOZsDA==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 2 Oct 2024 21:50:27 +0200
+Fix typos in comments.
 
-An of_node_put(bk_node) call was immediately used after a pointer check
-for an of_get_property() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+v2:
+  - A repost, there is no range-diff.
+v1: https://lore.kernel.org/netdev/20240915114225.99680-1-algonell@gmail.com/
 
-This issue was transformed by using the Coccinelle software.
+ drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c | 2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/main.c         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- arch/powerpc/platforms/powermac/backlight.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/arch/powerpc/platforms/powermac/backlight.c b/arch/powerpc/pl=
-atforms/powermac/backlight.c
-index 12bc01353bd3..d3666595a62e 100644
-=2D-- a/arch/powerpc/platforms/powermac/backlight.c
-+++ b/arch/powerpc/platforms/powermac/backlight.c
-@@ -61,11 +61,9 @@ int pmac_has_backlight_type(const char *type)
- 	if (bk_node) {
- 		const char *prop =3D of_get_property(bk_node,
- 				"backlight-control", NULL);
--		if (prop && strncmp(prop, type, strlen(type)) =3D=3D 0) {
--			of_node_put(bk_node);
--			return 1;
--		}
- 		of_node_put(bk_node);
-+		if (prop && strncmp(prop, type, strlen(type)) =3D=3D 0)
-+			return 1;
- 	}
-
- 	return 0;
-=2D-
-2.46.1
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
+index 1477db7f5307..4336ac98d85d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/irq_affinity.c
+@@ -80,7 +80,7 @@ irq_pool_request_irq(struct mlx5_irq_pool *pool, struct irq_affinity_desc *af_de
+  * isn't subset of req_mask, so we will skip it. irq1_mask is subset of req_mask,
+  * we don't skip it.
+  * If pool is sf_ctrl_pool, then all IRQs have the same mask, so any IRQ will
+- * fit. And since mask is subset of itself, we will pass the first if bellow.
++ * fit. And since mask is subset of itself, we will pass the first if below.
+  */
+ static struct mlx5_irq *
+ irq_pool_find_least_loaded(struct mlx5_irq_pool *pool, const struct cpumask *req_mask)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index 220a9ac75c8b..82911ea10ff8 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -1664,7 +1664,7 @@ void mlx5_unload_one(struct mlx5_core_dev *dev, bool suspend)
+ 	devl_unlock(devlink);
+ }
+ 
+-/* In case of light probe, we don't need a full query of hca_caps, but only the bellow caps.
++/* In case of light probe, we don't need a full query of hca_caps, but only the below caps.
+  * A full query of hca_caps will be done when the device will reload.
+  */
+ static int mlx5_query_hca_caps_light(struct mlx5_core_dev *dev)
+-- 
+2.39.5
 
