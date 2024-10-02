@@ -1,93 +1,77 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8C3745F4;
-	Wed,  2 Oct 2024 21:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A46221E4E;
+	Wed,  2 Oct 2024 21:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904371; cv=none; b=kpOeMpIoKJf1pXRCUvareAbATf+oMngHGFitoUtKpINcrocScHHhBh2Nj7Vc4Z6L0XnVar7bYP9h8tVIUS58v2frHpmRuEa2YJDkmaZStEMvI+Rb4+3PhI2deFszhy9F7bxtw0bLpoMsepe7IPWq4ZKCzB3dgeYgMLRDQxl3ViE=
+	t=1727904482; cv=none; b=EbtB4on6TeAkwspMqxFsjwxkPiV3SHO/pZffHa24w9/kF/qAwkBc5Go47/C032R2TIJLxHd1NAh2MCNUT3rhhX8ci2KIMe2/pRRU5nL1CsrgF9x01pVSpBxTwWZZ2mDWwi5FoCrUVxyrkeC8r3grr9hPP+Je1zPtppt5WZc1kM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904371; c=relaxed/simple;
-	bh=WIwETBohO3aK9eE6zcNFUPL5J+2Bzg5RoaeesKmYV9s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wu3580FylWOA79f+9iug2gqkP5sgPsFrJ51yIHbSGa3212Vh728zx0ByrLPR/3lQC/gp52SeSAgf8RkXro8pd+yyzLny1zGj43zHXP2eC/yYEt78OmNdvlza1xMK6E1J+b8ZlTMC+tRXBZbkx+lutC9YEoZPMj6i9T+OnbHXXFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m6hBmE0k; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727904482; c=relaxed/simple;
+	bh=zs6gKrHbBNwdhRQTvo6Z5b0hCuUiP9uhriiml0z0JTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jmChn5Mq+2ClXbhQIrLfk5EehNpUStDYg1gjczQmLh+X2eLVitVzzNdXIkPh8pRVpH6ubHuPaz1shu7iRtUHhUeD/jlhc/AUEdr4ZIiNfYhTogP47E7WqIi0wOH/+MFfY0G/hCusoDP76J8je0MXSGhnOWyV75DS29lKPq5YQu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GY12d9iQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m6hBmE0k"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37cca239886so163194f8f.2;
-        Wed, 02 Oct 2024 14:26:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727904368; x=1728509168; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AOcvVNK2WrdfDj49WbWGeh8ACZyxjrA10kZzplCrF5s=;
-        b=m6hBmE0kJkmSMjiyFG4s+iFZeX7g1Yu0/XaKWyZb3A5i/s+rxFki782AfwGmtdefdU
-         ZmJCOqMwGMf7I+6AGLIKCbLjzfxa5Mu3YfnHKzglNKtmnbrOtTHUNI6XTBtWuCKIEvnI
-         jrq/97w2py4cF/QFnFjCWzk+d2BACYlHWm5TcDHH5+qi8XswIyEH9dFQOBpfjsvJ1wUM
-         Xny9BSMRcweiNCP6uPuRhrvHXaG4INTkTK0/nGqe2eo76zI2EDpnM0UhumnliB60/fLe
-         fGTHMgbLgv/O2LQuZVZbQQxQEEq/rw6fXUJ29yH8iY/nVikDzYiQf/2EjMpFiOyq2JE+
-         Ujzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727904368; x=1728509168;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AOcvVNK2WrdfDj49WbWGeh8ACZyxjrA10kZzplCrF5s=;
-        b=dLr1gAfnOtMhCI26jJR6Y6xCKItR9Lm3IdCdM2xslkyHaYtMXRtkHt2kJr8uu3haQP
-         GdI9PygqN3IfMdqLJfjXjTrnDi6yD639hDv5ctgSkTzcA8qqsVM0MKKSnJBf1asET1ZH
-         NcivfJAPH0x3QBP+o9eDgwn8yqpf86LfKFuGQ+B85bUaCisD3x66OaFDhmYNlhImiXO7
-         yIF5WRil4NgKlNTUJZC9v0ZRyN3zrpElkMi6Pn7GBUSaI5j2EvkP4L98oSDVIA+4v6Nm
-         Ca87YW2HkAR+Ug6k1Nl6FFnURKJZG98yN/T49xERFl4czqqEZ3mBLYpW7ZbzqqzgUZuC
-         4vLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlfKZF5R6e0EyGNGwucZCP05uthUF9XOnIuU3zvn7RNGSqU5IenaIv0D2G9fmy3eD/sC4AJxvza1yZD+Vj@vger.kernel.org, AJvYcCWsjbTjQZuXtiP1haY/9ik42qdNWmH16LfemAl9iS+1SAYiMaOcva9hk45vnmi/wwD2layP3iMLaIs4bS3qocc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfjRCG3bzqd07iFRMky7VZk5voEccJ8NBpuvqW9C669Z4luzZT
-	RkpzFCS7FPi1OAZgFXcE4F1f9AnMrzVoVm0RKCWOOIAvZcZ3ikUqu8Ra0HUX
-X-Google-Smtp-Source: AGHT+IGX4piJLhOGfOs086Byo34hoHy5E/XyRszjATF6s//1hp1I6WKzQZuu6BRm6QZ7TLDIn84myw==
-X-Received: by 2002:adf:fc50:0:b0:37c:cd3e:6fdf with SMTP id ffacd0b85a97d-37cfba0a496mr2794089f8f.42.1727904367703;
-        Wed, 02 Oct 2024 14:26:07 -0700 (PDT)
-Received: from void.void ([141.226.9.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e645fsm14638998f8f.59.2024.10.02.14.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 14:26:07 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] media: platform: fix a typo
-Date: Thu,  3 Oct 2024 00:26:02 +0300
-Message-Id: <20241002212602.11601-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GY12d9iQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E2BC4CEDF;
+	Wed,  2 Oct 2024 21:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727904481;
+	bh=zs6gKrHbBNwdhRQTvo6Z5b0hCuUiP9uhriiml0z0JTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GY12d9iQlu2/+qtxOwlVMDSQINY8dQIDh7CpTZoJf4iVqNgj1v0+nCuJx9dO9cGp1
+	 0MEgTWYfL+cF/OzjecimxdvMdKD1PYdDWgvv37oLdSrPMrZllfTROibkTgV6y31x4o
+	 UIcHXGCISD0qpol/Z/F+meXwyo5bflPT9jD5adspiG/IBnqrJzq4vokmsUMNcGBmna
+	 iXbIaSBsKTdo4z6r39Nmgo2X9k62P29thAnENXRDdGkS5ilCnRhsHpsIX3cCV04luY
+	 xAfHmEDirgICnWCwAKQoj+NZS97cQLRnY0FU7/rbRNymaKGMlR4gRCyx4nr3Q885NF
+	 8paFQT1Ss+Z1g==
+Date: Wed, 2 Oct 2024 14:28:00 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: fix a typo
+Message-ID: <20241002212800.GF21853@frogsfrogsfrogs>
+References: <20241002211948.10919-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002211948.10919-1-algonell@gmail.com>
 
-Fix a typo in comments.
+On Thu, Oct 03, 2024 at 12:19:48AM +0300, Andrew Kreimer wrote:
+> Fix a typo in comments.
+> 
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- drivers/media/platform/ti/omap/omap_voutdef.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-diff --git a/drivers/media/platform/ti/omap/omap_voutdef.h b/drivers/media/platform/ti/omap/omap_voutdef.h
-index b586193341d2..159e5e670d91 100644
---- a/drivers/media/platform/ti/omap/omap_voutdef.h
-+++ b/drivers/media/platform/ti/omap/omap_voutdef.h
-@@ -48,7 +48,7 @@
- #define VRFB_TX_TIMEOUT         1000
- #define VRFB_NUM_BUFS		4
- 
--/* Max buffer size tobe allocated during init */
-+/* Max buffer size to be allocated during init */
- #define OMAP_VOUT_MAX_BUF_SIZE (VID_MAX_WIDTH*VID_MAX_HEIGHT*4)
- 
- enum dma_channel_state {
--- 
-2.39.5
+--D
 
+> ---
+>  fs/xfs/xfs_log_recover.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
+> index ec766b4bc853..a13bf53fea49 100644
+> --- a/fs/xfs/xfs_log_recover.c
+> +++ b/fs/xfs/xfs_log_recover.c
+> @@ -1849,7 +1849,7 @@ xlog_find_item_ops(
+>   *	   from the transaction. However, we can't do that until after we've
+>   *	   replayed all the other items because they may be dependent on the
+>   *	   cancelled buffer and replaying the cancelled buffer can remove it
+> - *	   form the cancelled buffer table. Hence they have tobe done last.
+> + *	   form the cancelled buffer table. Hence they have to be done last.
+>   *
+>   *	3. Inode allocation buffers must be replayed before inode items that
+>   *	   read the buffer and replay changes into it. For filesystems using the
+> -- 
+> 2.39.5
+> 
+> 
