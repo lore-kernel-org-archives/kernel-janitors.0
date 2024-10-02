@@ -1,115 +1,90 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC861D043E;
-	Wed,  2 Oct 2024 15:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121A91D151F;
+	Wed,  2 Oct 2024 15:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727882562; cv=none; b=H0jgnVtNpxBUpZ2sC4j+WEMmq7VcwcLsDkWPGbtc9QzxNuF08NA1ppZxus0I/Vw7a4z+Mi1E2Cg2SjGqSLzxQ6wTuLqu8jl0IOpYfFN7Q6raMhgX/ZUOATl5mAehtZF6PoDOF57O6bdon1ieZ8pqyJNGeAgkZBe1qp1a9Ilh1TI=
+	t=1727884097; cv=none; b=VkfXMJ7IaDgyGZlIwkj+VfLnVmDGZBoQV02O4tsLMWKipvVYZBdNb4dVU1joOLzVlN9bqzPvSRYHHtlTLfPc+iB3DsQwAqEwp4QjA45ucretlAbQ6qFKSJbBpOsCK7ZwKW7Hbf0rDag49rs+Iuw89cVJAThKpU1CnXAi64PDQeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727882562; c=relaxed/simple;
-	bh=KWlEYMnNtViJ6HKjG866GxkIvqI1RzsaLptCzFPZh5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=doZVVP6bQ/Ffe6hVpX5ABH7eHmWVmeCk2pzJsZdzu3GZRSLTW4IAxG45kAqyCRtCV6+pzXOAs5iR6HDUtaVB460dfAWCAsIeErlO28Igj76jppYtCCAyRte5crMpkA3d1ag/dvCxZKMS5E4rP2/yWqfMEE6jgK9LhK5Kg0nr/Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMRKLQdr; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1727884097; c=relaxed/simple;
+	bh=DOSGnvLndaQWvSvy8Wng9RxZHlHRJS5gAkm5ih4Ualk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSxW9ODSqme8jkg0WsuVgFa2INagCsELdzIJ1+QPcsRWu9kQJJFBtL61K9JGvscsXq+Otm6pBbTwv9FG3Cvs6EgzDwpzpa51JtLc1TlOWawrqxsuHo8lGiwsO39UDGbS9yaA+fXfL6Qnf50XLDeos4ofBgvdjRNLqc+ygPUd15A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L177WDs5; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMRKLQdr"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b58f2e1f4so30497405ad.2;
-        Wed, 02 Oct 2024 08:22:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L177WDs5"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso54547925e9.1;
+        Wed, 02 Oct 2024 08:48:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727882560; x=1728487360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCayeGfa66KPfvOFkBt9XeMoES9Vo9lnbpSOjOMdTpM=;
-        b=CMRKLQdrhmlcq/9UbFp8SidU/AFjmmvnXvKhTD/8rAOGpjwz3utAl2emOFGa/vjHvp
-         jKaoAqDMslsY0V1/1Xaw3D2TBDmSVVnX6eNcfrtTkN3KdLZh5dspoGxMDa9gmfYHLpz5
-         zzSuAJv+523wJlYV3lMH0suTW53Jnvr82luonB4pajQeLYqJYxtRzcqVDCLKKaDXDpoW
-         KNV+lyqp/0ZLqUBiGPzZlzVk8JZN5dnCxdVrR1OFP/KjQsnJv8omywdTV50cXA24EEVs
-         yUJfSBVGxJGBI57w1JBTQbqlWzUEpZlX4RPgi1j1axAz0cF5g5safvpT2TOAX5eokjUU
-         1S9Q==
+        d=gmail.com; s=20230601; t=1727884094; x=1728488894; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=otCikT8NLkr+o7//xyaZx0+pIP+DAzBS0pRoHFmSGnI=;
+        b=L177WDs551r7vAj827NWizARFvLmx2SIgcMwT/n7X1DrXKKqWEN3CyHKlriPYLDLf5
+         3B+Qs1AJSJoKtjwKUq0ZGF4AJyTF4OUdUEenj4bhdkOLxqUrNr1RCdkLbblIOipEoDKa
+         pGzpbgPIU7N5BvZybF+hou1vu2NjVyRr8gwaZKSv355hQkZ3K/3BA1vFYvsvkLHYBOkX
+         6G6DTypEW1d7clZFaoCiaN9vYvNJ5HkCBCibc2H/dV/37gBZGjAZCNVcKckAFkbr5wba
+         KbDBI7NGHYwm5qJLNY/zvUh45ATdohy5jSZAOEi6Q1Zdk0klOnMpek2+05O1Zk86mdyI
+         YUUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727882560; x=1728487360;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yCayeGfa66KPfvOFkBt9XeMoES9Vo9lnbpSOjOMdTpM=;
-        b=G/mFfJp4MGZxWOVslXoYa33/0H4+jkTwkQAcND+KXmCplv1JysnZIGIfYptbK1LRPD
-         PS2qdS4A1eH+spCoRn3Ra9OGNBysEE9uKrzWEL9haHHacVLWw6obMBunrGjhrhclId4t
-         ocylZ/D0g1Jvv6ShTuateAMdRtsYIMyH39W0nI31Dl+QHpMlnQYhvjD08THezfuigCl3
-         i/M54jd7tzi54JSMKYQYFipyqocsTdODxqlWKDxjQrzYNLqL0MDXgqvKE6x2YSU6u9zv
-         RftWByYL2KCXcKuSbSjFUQqSeHs1DJiWwNy5g/RibtMDzInTDHysAUDD0veRMu4UMKgZ
-         xCVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsa5CcVqoBz4Q/u34PevSGRTJnuTqBiAYnrPcpEDbpI8ga6w9stFrlvxIfoI9uugB/TrsMdI32CnKYZ+Ho@vger.kernel.org, AJvYcCXttnqVxwtAaY8sn4bHJrOCIggQ66YV7xUhHNJk48OTXxNJKvftlSopl/TLUQMd/LOVYNA1OiDm3AYfAhMHipI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8SnSc45w9SnlddlGqEhzi3ZH9+B3xVzLNF3ENJx4RXh2+NYnH
-	7VHRXROHRFMjIs6ef6gpLWaa4I3WT39yYcxilDJ/OMe4D/sNocmcEc0lK8s/sAk=
-X-Google-Smtp-Source: AGHT+IG28XenyFsSVCePdboImwZXQeB74YLNXdYnCNB42mDfYmdAkWnjCzgCbAZUPT2H21F8waxHFw==
-X-Received: by 2002:a17:902:d50c:b0:205:4721:19c with SMTP id d9443c01a7336-20bc5a5d0f6mr53403585ad.37.1727882559553;
-        Wed, 02 Oct 2024 08:22:39 -0700 (PDT)
-Received: from Hridesh-ArchLinux.domain.name ([59.92.201.169])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e63a62sm84747065ad.289.2024.10.02.08.22.36
+        d=1e100.net; s=20230601; t=1727884094; x=1728488894;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=otCikT8NLkr+o7//xyaZx0+pIP+DAzBS0pRoHFmSGnI=;
+        b=HXHup/MrbdgEfuGZYw6k65863wUtPLdvAMNbYXP/5GtlTK49WLbAz1jpwOb1gZzWGw
+         0xboq+Xi5Ka4C/vJa69c5g1eRf8EmTLvx9NbJnJwKfAylKaO1Ipc1pwRF995IjIKUITF
+         CUXDicga9ArTBnQIH+6iJN8aYdia6b2u0wMQyYEQotpC5rA+QRwUQdDaHug1LWQ9H3Sk
+         helx0BWAVFniNdZAg4ekK6grptQEbOUlDvyP9OoG9kldnvkWTSYygtojr034oVYlJcx8
+         bt6jUNhADGbkm5ekI2b3Tis9wx+TIw3bM5Bl2hKa53eftP3eIFpGNPJbrgeiIcBoQLvf
+         eSkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1izRMEuFr+JxZ5WnANERzbI/hVDb/pvUE8mjIcvOeAlAsRxBb1S82vbnj3pD5cINcb9c5T6os@vger.kernel.org, AJvYcCVOv9PnPS01oD2TfmRsOAmXnlTtpkvvYFrYqIpgEpIZpI1X0LHpSYVMAmNYXAHOgmM9/pbxsCyCc0ErikD5YQE=@vger.kernel.org, AJvYcCWEsyb7R68qHrCqqvC64YXRD8CX5G3t12PEXdxu3z+Q+cA8Sd7GUg3u2w0p3UvofebZEpJBXDtIOGJoVQ==@vger.kernel.org, AJvYcCXCnrApKFiLV6OYJUSsBO11l1NmqI0OXs8Tlpkpz12Y67Mr/zGchUS27wCnXarrKaBREKtGHw3RcaRU4i5Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3xh5/Dsl9qtzD0Rqar/+AG0plvtjFcZbxMfJxogEIvN9Vxvny
+	ccRggCTrtnWmpKz26LTsHZ+0H7BS/E4xz1och4/cdDfBd1692y1K
+X-Google-Smtp-Source: AGHT+IGFmLAHIyp6PKfxD7hKDrPBwsfVE1H+xFInjYaedHXn48kn9ymEH60zvft4xr6oEkXDO6gQ0w==
+X-Received: by 2002:a05:600c:1d26:b0:42c:bae0:f05b with SMTP id 5b1f17b1804b1-42f777b0b18mr27867415e9.1.1727884094011;
+        Wed, 02 Oct 2024 08:48:14 -0700 (PDT)
+Received: from void.void ([141.226.9.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79fc9032sm21706145e9.25.2024.10.02.08.48.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 08:22:39 -0700 (PDT)
-From: Hridesh MG <hridesh699@gmail.com>
-To: linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Cc: Hridesh MG <hridesh699@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: [PATCH v2] staging: media: fix spelling mistakes
-Date: Wed,  2 Oct 2024 20:52:30 +0530
-Message-ID: <20241002152231.8828-1-hridesh699@gmail.com>
-X-Mailer: git-send-email 2.46.1
+        Wed, 02 Oct 2024 08:48:13 -0700 (PDT)
+Date: Wed, 2 Oct 2024 18:48:10 +0300
+From: Andrew Kreimer <algonell@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] net/mlx5: Fix typos
+Message-ID: <Zv1rOgyJj4rx4nUf@void.void>
+References: <20240915114225.99680-1-algonell@gmail.com>
+ <20241002134811.GI1310185@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241002134811.GI1310185@kernel.org>
 
-Fix three minor spelling/grammar issues:
-	chunck -> chunk
-	procotol -> protocol
-	follow -> following
-
-Signed-off-by: Hridesh MG <hridesh699@gmail.com>
----
-Changelog
-	v1 -> v2: Move the changes from meta notes to commit
-	message.
----
- drivers/staging/media/ipu3/ipu3-css-params.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/media/ipu3/ipu3-css-params.c b/drivers/staging/media/ipu3/ipu3-css-params.c
-index 34f574b0b521..af4205f4b038 100644
---- a/drivers/staging/media/ipu3/ipu3-css-params.c
-+++ b/drivers/staging/media/ipu3/ipu3-css-params.c
-@@ -639,7 +639,7 @@ static int imgu_css_osys_calc_frame_and_stripe_params(
- 				/*
- 				 * FW workaround for a HW bug: if the first
- 				 * chroma pixel is generated exactly at the end
--				 * of chunck scaler HW may not output the pixel
-+				 * of chunk scaler HW may not output the pixel
- 				 * for downscale factors smaller than 1.5
- 				 * (timing issue).
- 				 */
-@@ -1416,7 +1416,7 @@ imgu_css_shd_ops_calc(struct imgu_abi_shd_intra_frame_operations_data *ops,
- }
- 
- /*
-- * The follow handshake procotol is the same for AF, AWB and AWB FR.
-+ * The following handshake protocol is the same for AF, AWB and AWB FR.
-  *
-  * for n sets of meta-data, the flow is:
-  * --> init
--- 
-2.46.1
-
+On Wed, Oct 02, 2024 at 02:48:11PM +0100, Simon Horman wrote:
+> On Sun, Sep 15, 2024 at 02:42:25PM +0300, Andrew Kreimer wrote:
+> > Fix typos in comments.
+> > 
+> > Reported-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> 
+> In the meantime, net-next has reopened, so could you consider reposting
+> your patch. If you do so please mark it as v2 or repost of something like
+> that. And please include the target tree, net-next, in the subject.
+> 
+Thank you, on it.
