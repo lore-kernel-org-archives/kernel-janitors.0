@@ -1,93 +1,98 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0490B1D0940
-	for <kernel-janitors@vger.kernel.org>; Wed,  2 Oct 2024 15:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA1E1CF2B6;
+	Wed,  2 Oct 2024 16:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727884418; cv=none; b=SQrVIpJMnz0RYi9iinoAa34xrYfORI+dUOTY/7tZDmLbEGaZ04R0xifvNPiyY1QdL7O7YBMzd4mUFqC9379rNPYVMrCQ9AgXJziqWPSKOUi7TnLreRhfsSfMepMPx4KJOg+T5wasz1RXNmTYqxDboJUc8aPRWKtOCIvVCYf23jw=
+	t=1727886418; cv=none; b=rlCeUDjUz73kf4diitI0XgNuwagp+9z7ZFPsTQv49G9VBc1ritT63IkXpKByeILrHSq9uCXzHN60FGs0Ey2XgwaWRuf7uhxoa3esJ4MNpWoCH8riZDeBu/vLizUV8Gwm0YXV9gm4i+KqRt5+9dJOQXCB+7+LalVhGlbbGWpVreI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727884418; c=relaxed/simple;
-	bh=sdxpKH9V4c5yfJjsw3qgNvWJOgyXW68pU2J1QpqbmCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GkOToruQH939GfsHV/fHz7aG0CuWDtxOeIyjRaCsyo04OpBQ3VnRynmCpucMc0GUEfHwNsYlo0+4DnZRcXzr26u4xTasoPnylKyWar6OrBqozQYwirV067Khon3isuRMkd2DrJ1ps7OwJXiUMsmyX/UAZB4yw7I3IuLAbprg/sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tKLQ7PTM; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727886418; c=relaxed/simple;
+	bh=lMVHe8SRVDClb2Na8aSZ48nsQgW9ULWJPaBreNnxRIU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=K8IraYFuJra5Q/RYpb+f1z3inCMCH3whN+89SaoWFKhZ8dV44s04hVW+OVPkRy4mXNJBDYNCs3yv50lzqH5aqYVGi79dA8rV0vt9E6BXmu6Wx1a5AK/12CvUvm7BXy96Y2WR8T6zGBelXhQdAlNxXGsrt5SltMgQsMZ1NniW/W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0DHXdJS; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKLQ7PTM"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so31497275e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 02 Oct 2024 08:53:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0DHXdJS"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398f3be400so4797085e87.0;
+        Wed, 02 Oct 2024 09:26:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727884415; x=1728489215; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MdHSrW/ChJntpJXVDEopdglyYp7fbBJgyKHsyD0baf4=;
-        b=tKLQ7PTMOzs6RQwnnu2CknlyaMsxc1GOig5/p8ywjUGH7oE3WIFixrzD2JSi5bvvyK
-         SnDnSO5V1XFWSZ7Q4+TP3Aq3aDQm+nL2NJfqzufi0wONDMh29Qa0FNFk+yPPkK+DmGpb
-         lfc4HoIqlJjT4n8EWUNL4WQjUCufWWo66ZuF84IgNkjUzLIjiPvCqV98sgfYuHWNsS5O
-         sOO4JqL9/4hvebEzlMKlFBgxPiYnkXB9ZKCzVnAdh0Ig3Bti3y81DlYbMewHsgqDAJVC
-         23rSKcIUURDGr5xkOCFYhED+nJbCWabb+KWBK6co7mzaBazBRqr5xQqH5MkDzCYnxLFy
-         p3dw==
+        d=gmail.com; s=20230601; t=1727886415; x=1728491215; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C/ijsoZNLuIwPR396i1gI0b/SFMI/hxV4hjgGBBm/0E=;
+        b=b0DHXdJSbffMITKaPPDReryAPog4DbvfFWWSrMl8GGCnHjGOEBRgC47+WnHVEML0Q8
+         syCBtLnPaLUa3X1Bd7x5I5+ymSVTJAE5oKFza/Aw1veLt0L1DG/8W2oDShhiLmMlG/ZS
+         esCCALA9MsjcQf7amp1Bx+Ld6MOaWcYNOYaXrvb8lFKw+h8wL5UMaWaAupgaridp642U
+         8sGaxNotaOigkXSPndjb1GR2w0YeJK9+ciC3C/+PC9Qgc07Gc/YoT4yfmE3kSDstcwtf
+         QAZrVuOVHmAe4NyPINIwR+hD42pFAwRIdyHLBfyvo6+Orcpp/aqsYNNU+HB/LfAtKNYE
+         HJCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727884415; x=1728489215;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MdHSrW/ChJntpJXVDEopdglyYp7fbBJgyKHsyD0baf4=;
-        b=q18kbfZFGTFcKjPwCH/zPFsFB7pXyE6iqBQgduOe4L7woqiALWsaD8G5OYC4mJdAwf
-         1wPPkosrGhMRakoeA5zH/sEZRf5zx5PGwa+MTC22JCUX86zGhF0tc+IZ/v7bietIeUVC
-         ZgCMXb8llz1yoStg1B6UKywFMUUDufHKjlvG/a3jA20e8GgT0/BeK5BdemnrwWRfKCEF
-         ULBD6cgKYCQ6HEkSJe9JRtv3FQbAUlRcYc4GXcj2kdSflSNvoer1DS8Bt6oOg663NBIY
-         IkKe5FEsHYdX/QtoIcfCGedeAqjL/Eoxbljm/j9HYlRdDQH2IQRuLsKKG09vLv3Tw3HY
-         C+vA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZHD1cYu1UcJoIxsUVqd/dknj0NAVP1wqTe2b+F23geOub51RlsQSwQ/KEQUJ3IxSADIU3Rd0WrKT3DHJJS8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNHLcAXvEUEgczluT9zxcVQRujkgHThYP6ORsc2aSsKjMXRTA6
-	KoxeXKozUMVUPgM5E7rZFeJXAujFyD5X0mlXlbMTeHPIym+2pcmAmDPC/2DA0BQ=
-X-Google-Smtp-Source: AGHT+IErKLNJPzyffjAz6YIrrKSomVc/nej9Sz/s59zloqG0Mzrd8SoXK+sB4+dGv+nZ3cX0x1Gm+A==
-X-Received: by 2002:a05:600c:358e:b0:42c:df54:18ec with SMTP id 5b1f17b1804b1-42f777ee3f9mr24259735e9.28.1727884415231;
-        Wed, 02 Oct 2024 08:53:35 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79c67c5csm22433425e9.0.2024.10.02.08.53.32
+        d=1e100.net; s=20230601; t=1727886415; x=1728491215;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C/ijsoZNLuIwPR396i1gI0b/SFMI/hxV4hjgGBBm/0E=;
+        b=Bv1XroE2/JT86fPKEHz8nFPiByCaapXk1scKVqS33WwiHwRBATnHfZ79ti3KJlQ4Ys
+         YQbAGk0fD3rsz6CgaE4A3uzsQ8EPkvJg7krgGXdPSgdQlKTwxCljxU8R8chweQV8tZsr
+         tBsh+TOOy+5DWSCzqhWDPCE+utqWnU8zuQHl9S0Ou74iOqRomTd2s++53ZmFtbndz44V
+         0WgGnHN5JpBgTwPbshqeuPcd3Z/ukbeZdtEW2/r2cpH7ecTlAmtc4trzAgOO//pdtaaw
+         /U5NIKIFtYH83MKuJlXRxqAYan4HGq83HC3c5TpN0iVFFLyscyWg5l9L3sCv+lpXvcnj
+         XOjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUfEZaoTkwC0XqIoeJHngKnphPPjfj4oSV1VSPKMKEK8COv0uG7n7V9tpn7xQc5sao5zd+bFkE9fVdeKY=@vger.kernel.org, AJvYcCUmDUaoSjZNelGAVUt3QATTn0un5hN67Y2DEpy1oKJ3dKZBNipsfnBp0aW+VBis2Rkg8ftzkas/he66@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/e6bLSNYQMXUZK0SRJGxqeyk99lmAFXjrV22KfOAXEcjM/R1Y
+	KDOrubaPeG3BEVFAt0Nz70wP12kvJgZPijPuZVtqQKeytTOFi9StiNNJCPkS
+X-Google-Smtp-Source: AGHT+IG53Q5adwH4aJi6SxeF1eNCQIgtCWq4rnbahNuAMDGzVZbnr+JtUG2IwgTSDGYNMJ0suHgVTA==
+X-Received: by 2002:a05:6512:402a:b0:536:9f72:c427 with SMTP id 2adb3069b0e04-539a0685057mr2157450e87.28.1727886414725;
+        Wed, 02 Oct 2024 09:26:54 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2947afesm887305666b.120.2024.10.02.09.26.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 08:53:32 -0700 (PDT)
-Date: Wed, 2 Oct 2024 18:53:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Hridesh MG <hridesh699@gmail.com>
-Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v2] staging: media: fix spelling mistakes
-Message-ID: <8c62e5ce-3c01-4c1f-b8e0-1c6a0164670c@stanley.mountain>
-References: <20241002152231.8828-1-hridesh699@gmail.com>
+        Wed, 02 Oct 2024 09:26:53 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] spi: spi-ti-qspi: remove redundant assignment to variable ret
+Date: Wed,  2 Oct 2024 17:26:52 +0100
+Message-Id: <20241002162652.957102-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002152231.8828-1-hridesh699@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 02, 2024 at 08:52:30PM +0530, Hridesh MG wrote:
-> Fix three minor spelling/grammar issues:
-> 	chunck -> chunk
-> 	procotol -> protocol
-> 	follow -> following
-> 
-> Signed-off-by: Hridesh MG <hridesh699@gmail.com>
-> ---
+Variable ret is being assigned a value but it is never read, instead
+the variable is being reassigned later in the exit path via label
+no_dma. Remove the redundant assignment.
 
-Thanks!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/spi/spi-ti-qspi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
+diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
+index 0b8f496c6bf4..dfd4a7948c03 100644
+--- a/drivers/spi/spi-ti-qspi.c
++++ b/drivers/spi/spi-ti-qspi.c
+@@ -861,11 +861,10 @@ static int ti_qspi_probe(struct platform_device *pdev)
+ 	qspi->rx_chan = dma_request_chan_by_mask(&mask);
+ 	if (IS_ERR(qspi->rx_chan)) {
+ 		dev_err(qspi->dev,
+ 			"No Rx DMA available, trying mmap mode\n");
+ 		qspi->rx_chan = NULL;
+-		ret = 0;
+ 		goto no_dma;
+ 	}
+ 	qspi->rx_bb_addr = dma_alloc_coherent(qspi->dev,
+ 					      QSPI_DMA_BUFFER_SIZE,
+ 					      &qspi->rx_bb_dma_addr,
+-- 
+2.39.5
 
