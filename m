@@ -1,106 +1,98 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8098F58;
-	Wed,  2 Oct 2024 18:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600411D1E86
+	for <kernel-janitors@vger.kernel.org>; Wed,  2 Oct 2024 18:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727892058; cv=none; b=rCTdTr4xfd3FVFlXRtWpJEog9xvJr5azBqrgacJ+549HLfF9BrBk+am3TxN7bqzPghBD4kEINSxH71Czxb+QR05o753uhvGyLaykdr/3BHoXA83eCgrOdRvjhfPcacN3QxO4neLsJJrmvVyod+dYUvnYCw215mgE7TcoetHCoFY=
+	t=1727892645; cv=none; b=VqITHcgUhZ1m6BXhw8KSBuwaTeiWzFj3ucgYupKtt8VyRAWk+usl+LMf47Am0JutnvoSswKqvT+CQnNWd3eQKc42LtTfe7xSAEnK1//OVELIgzEWfwHQfdF94JRKr3MeiVYzm3BvKnkdgDOlE4d6ZjpWd04/aV+Zf5+kBIvEfX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727892058; c=relaxed/simple;
-	bh=6OWlhiXuR3BFbgvgEVWzI6gNhS+CBy/WySP03BDQUV8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eGt9ma4bim7NxmkEgBYgIadciphDDWlBu3qg7uFE0vSH4OfX7agWanwckJ1vY1nFUNIkgygBE4IZECwZyNsI+Y4Fld5g4K5Yml2eLna8ulyutGPqop3b9iQ4I6ZediuUiYXgdQs/iX927S+gh7ZXdseg2hwcgryeWY+6Wbb0ydI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlVgLaV6; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727892645; c=relaxed/simple;
+	bh=DK2MUVdAtluMDn/IwETewEanduQqhHxMYakPpg2sRc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pK7cKPg2SIsaWZd7R9TLKHDS8ZcgXjSgyeWXAX5RwON2235IqZaS66zZZnCqFEHVFthoj3fWiahYEvh82M9sQodp9NKsSAJjiYQuhRwPpKKdi71MdM2a91zothOQKZmhd08dnkLtxjvHQyQL8CPWTsh/g05Of1qe4aX4myS3ee4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QBkhD/0b; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlVgLaV6"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7c3d8105646so543a12.2;
-        Wed, 02 Oct 2024 11:00:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBkhD/0b"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cbc22e1c4so169105e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 02 Oct 2024 11:10:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727892057; x=1728496857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=imJjW8yqZloPW7ErJu1+QaojNgJ9/UlT96yk1OWI5NU=;
-        b=IlVgLaV6aYOJNvgj89dop8rBu/GiszB+D5J1F7jMIQFaB41AC+F7r4I5jwtqg6P1zU
-         p1YfbQiQI3PpFvLdfgrMwaxi7Esf9FAe07GtkOKSJZFWRVztcX+xXfddpQVJ33QNwcEm
-         2VBB/ONnFH6d3q1RMTCwDrU4t/gOnxRU476cLKDrCbqlm32RWHhvvEI15nUp162hurH+
-         JT41Nnf8NcsijWXiBoEO+QRUIjMokRSmGptGJkpwDS5SlyuWuKbxdfsh/NfKQEybSL9/
-         b9PtuL8dKPWRsDjPAYJn/bnrN4QULr+oQZCkNRs9NKVRn2ViS5ivpoJW78AQ2Kz20nY2
-         WOJQ==
+        d=linaro.org; s=google; t=1727892642; x=1728497442; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aGG8QMel29fIDf2AnAxKpn/d8hnp2TmaHrAszFN82PE=;
+        b=QBkhD/0bHd6wPrT0PPMh6ixOMyQJHb7CoaCfFFXFhHZueDdjLow9Jm+AalUtT1tPMS
+         j5WUj/X+Cliq5zbPLdZRpryDQCmDpek7CFzroQsoaO7c2gj1nQ8e2fSKuXqVS1+l0xMl
+         VCdN2PYBTbum0CEr7FvG/9iQZnh1SbPqAv4tdLnxo0rece6MX4Tu81HlWKEYpUiN7BdF
+         IXCpgcD/6gbsJZQ80tfV55rg51TepV2VsM2Lxv7NrzRYFioKtSYGH/zioYgAsQ9WjIRQ
+         Ge+IrGpybmhU4MQcSkGCFr6Cqbh0AgbrLoRISW9z/hAri1uPVSaFsYu2oZoWzfCtV+uG
+         azXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727892057; x=1728496857;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=imJjW8yqZloPW7ErJu1+QaojNgJ9/UlT96yk1OWI5NU=;
-        b=mEKaeDQzto3Hs64gnDuS5lHRoOI0QApg8iSs2i0crKqhcdevm2LQVReXXbc6psAgcP
-         EnIGEiRnLqnLv4IH7E7iF0RUcTzMZDc8OXLm1Ic0QqXhG9VQB5t5vNYO5nV7FaZmgHT8
-         Zo4GcPhz9wAONgfnk7Fz1P5qgmZjxDV5LssazvIqR0CvhRPj6urVY7czM2wBJlRnQLES
-         115MKb3UC+t3OSRxYG7OeWcfKea+qn79/5KQBAFKMEyxLv1J3VU+E9AIUtjY6POixhN/
-         s07pYDCpSMOP0mOAIDY9IxA5DlG2e5crKhCcEb1gzykXK5omn+zaleaSJjrP9wooy/Z3
-         M6UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWz+wjBkIgLEDsZG9pjrkmOObrIWB+Stq4zhrcD9PKoodAgyV/dgw81lgYMsYnGvCTAO3/eXfP9Oa2hNG99@vger.kernel.org, AJvYcCXBc77hqQ4y/PAYm1UMqzeuhGcvvF+dDvr1QRmXBE0aVgCIiQpFP9bxsQeEVZ1Vpjo0UUqmkkEf+NScPK6vMsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtBu88qz+cctdsmoZ6NsmvGan3KZcvhj1m2/AcdWRyT5F9YMhd
-	/jAfjrnfQNQuzT+8kWT015Cj10xXYtH7v0MIFvNWJ56IqG8gEcnUOHlf+PAi19Ck/Wp8eYIEYT4
-	BnOPwvVP/9Wduw9O6JnrRrdjZa5s=
-X-Google-Smtp-Source: AGHT+IGM1BBSTPaBWzZ+dU1AkNdC/OtZ992uJcIy5FsghKxwDdRZWRkiIYsmnyX3u8X5rIpO3wuz6QVKj/9j4kTt2K0=
-X-Received: by 2002:a17:902:d50a:b0:20b:a5a5:deaa with SMTP id
- d9443c01a7336-20bc59eb0ffmr23041765ad.8.1727892056526; Wed, 02 Oct 2024
- 11:00:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727892642; x=1728497442;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aGG8QMel29fIDf2AnAxKpn/d8hnp2TmaHrAszFN82PE=;
+        b=g/kXulHQ4n64qppUWMlofvsWTz8L5Gt8WcegwLSdqqVlGywkPn1HpiUcbx1RA9FxV8
+         eTlOq2pv5RCxZ6XpFsKfEC+SAW6kb8DnHoDr6+PXTh34f3aBLox5gwmp1tOnSo66LXId
+         4BVYkZmoSAlKxaSPi8tbVMI7XpoOdGLUiAr5thsvLBaZzXtESUUYDTlyzDsiQXB/lLa4
+         Fh8Kmc5V7CBYlo6mqHo2JSfgulICqDrmCmpDBbyL2JP2ENNfJZmE3hIay2dOkRnZu3zr
+         CHT/k1hGXxDufna1gXFTgsM7pt847g5jioc8aOMIynxTZbEolkrhNcbzMt5mM6uci4m4
+         uvJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDSCu4yYF35EODnoHcmVS1kpi5pPayb0wokI3ZKtSZ2QU9pXXg1Atjhe7tqeT4gnD8SrFGCiIOZ03Gb/wPDL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN9cwd83hxv38CVq7pGvxnP0464RfvZS9qQVi3qVDAQiBTdc7w
+	lbHA/5XD3S2JXFkWH79fqXnY41sQ7PfEiFaJgRKb4Dadg/R7QIUvhK1GlNwM0ck=
+X-Google-Smtp-Source: AGHT+IG4L90gOtT2GIPiJck56b9/qGOnFxKwX8Omp1g3PHVDmm594jaN0gFUKmmSK7OJWNmzkks2bQ==
+X-Received: by 2002:a7b:c384:0:b0:42b:a7c7:5667 with SMTP id 5b1f17b1804b1-42f778f2bc8mr31431265e9.25.1727892641539;
+        Wed, 02 Oct 2024 11:10:41 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7728b382sm19659855e9.1.2024.10.02.11.10.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 11:10:40 -0700 (PDT)
+Date: Wed, 2 Oct 2024 21:10:36 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
+Message-ID: <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
+References: <Zv0kudA9xyGdaA4g@stanley.mountain>
+ <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002075124.833394-1-colin.i.king@gmail.com>
-In-Reply-To: <20241002075124.833394-1-colin.i.king@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 2 Oct 2024 14:00:45 -0400
-Message-ID: <CADnq5_PxfOeX2xWr9FzbOSkbUa_jewCPx=SngO2PQeL1kHikXA@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amdgpu: Fix spelling mistake "initializtion" -> "initialization"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hawking Zhang <Hawking.Zhang@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
 
-Applied.  Thanks!
+On Wed, Oct 02, 2024 at 01:49:48PM -0400, Waiman Long wrote:
+> > -	spin_unlock_irq(&ioc->lock);
+> > +	spin_unlock(&ioc->lock);
+> >   	return 0;
+> >   }
+> 
+> I would suggest adding a "lockdep_assert_irqs_disabled()" call before
+> spin_lock() to confirm that irq is indeed disabled just in case the callers
+> are changed in the future.
 
-On Wed, Oct 2, 2024 at 3:51=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
-om> wrote:
->
-> There is a spelling mistake in a dev_err message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c b/drivers/gpu/drm/a=
-md/amdgpu/amdgpu_xgmi.c
-> index b17e63c98a99..733e69e90c5a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
-> @@ -1533,7 +1533,7 @@ static void amdgpu_xgmi_reset_on_init_work(struct w=
-ork_struct *work)
->                 r =3D amdgpu_ras_init_badpage_info(tmp_adev);
->                 if (r && r !=3D -EHWPOISON)
->                         dev_err(tmp_adev->dev,
-> -                               "error during bad page data initializtion=
-");
-> +                               "error during bad page data initializatio=
-n");
->         }
->  }
->
-> --
-> 2.39.5
->
+It's really hard to predict future bugs.  I doubt we'll add new callers.
+Outputting this information to a struct seq_file *sf is pretty specific.
+
+If there were a bug related to this, then wouldn't it be caught by lockdep?
+
+The other idea is that we could catch bugs like this using static analysis.
+Like every time we take the &ioc->lock, either IRQs should already be disabled
+or we disable it ourselves.  I could write a Smatch check like this.
+
+KTODO: add Smatch check to ensure IRQs are disabled for &ioc->lock
+
+regards,
+dan carpenter
