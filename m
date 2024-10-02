@@ -1,97 +1,105 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7911D0BAC;
-	Wed,  2 Oct 2024 16:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE39E1B2522;
+	Wed,  2 Oct 2024 16:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727887023; cv=none; b=erIYYY7hxrPTvriJ4hTV1ZJ3a4xPrA1CSSl6etl6V9mXJvlnc7wF9IM9L1/pg/+yvWRDRHjioP0KCJHzTxpkGeLSmuWpzaoLVG5S9N67G0Vrq4AqC+sJtP7MBHrGcJboZoZu8Py0jyjF12MlU5/xHvsCvsD0pR26+oHkmo8pxvA=
+	t=1727887487; cv=none; b=CxDv0iFavctF5xZhP5eWLBXzXABobob67ftnugi9arkwnakNniBdW6aFmy1EwdlFYXqz1eMaOPgbRDmd8xIb0dAJomMYA9Qw0ZmbQFjrG+ndiCSnAT7BdFpX9zTpzobEBDS+MDUffxf1tZBdAp1Y1rtuFFV+jO4XahVcZI3PmOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727887023; c=relaxed/simple;
-	bh=gZ+q/3HylspRYHbKmPaYACg8f9jvXAWZjcMBF0rvSgY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LSguo0fv+v7cOmlw1n3aW5P/pFXIbMidAujIfFbLMr5hHLORhWx4muOpCNmdQyR56jOIAeOX0pxJClI+dWYtIrwM58d8blD9ZyOLMODsTDheWQFARI37TPVDx3MocZdY4CVoxpKMi0DVyDbG8LDyJ47f4buHDHX5hTTmdBrKOBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyDKsuU3; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727887487; c=relaxed/simple;
+	bh=vYfZYr6xFuL0EtXZy1BqPdBhzlc0mgtVp8xf+RVooQE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eQwjpge8+PYJcnsm6cUOdhjRba+O1Thb/Hru1gP9tK3ksgwoUegxljCiEys3Xtnxx8PQPlgicFUPXaYm40J6HbG7Tw8gHiR74WrxYHGFYZY3lKsn+xJx9tJmkM/PEHQn2eh3rMtUF7fCcRNbyVOAPO8wg04Rl4CVBGJ5zf4EwuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Nk1uVEjx; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyDKsuU3"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so199855966b.1;
-        Wed, 02 Oct 2024 09:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727887020; x=1728491820; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M//UTXHbbwHEyllHRvBBcjCOBe3Q9AMtd7PVYn/rLSA=;
-        b=UyDKsuU3Y5rN2pNhJcXEqQCj+RJcbHyCpc4SoOAoP425FXCaEPqAlm5gF4U2EH2BLQ
-         7RBgpDmI0a2ycw82rlizZ9YDCh/1Xk11BhjtJAg6EBjT7cXHpdgiKHcGa9ReqClGc1Cd
-         6Bb/3XxndoHcTSc5yNE60D6l2btbZgdvnkU2L3abrpeXuq075dmn1LBvwNo5WhH9CSNV
-         ZJN9mxakal5wm67e2FxCrDTyUppsAAUIAaaDAJULsjQW6Ysx0KDUowKyYe9l6Q/QxT2n
-         53aCdQrBO36qcipyit4wPZqHWcNZO7tKrMtTg6s/aPahkJKoEOrE46QpeKL/wIfwFcoT
-         9HqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727887020; x=1728491820;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M//UTXHbbwHEyllHRvBBcjCOBe3Q9AMtd7PVYn/rLSA=;
-        b=lxw15qk8Pi8c+lUY4/eec5/VOSCUOeMtQrn+Cl2ODT4XScuvPLL2rSxbK7gtsz7hX3
-         9dtKt+HZjCJJif99bUAjgxuWjYQkz1IJPHbFDbWiXoU8T9CxQzRBP+XDmmsoiQg8JCLp
-         6lECGiVLHm+bG3u4qtmBWZkTak9OZda3PW7APxfOfBFmrZU1PSkes7Vg73pIo6GFNR1i
-         bxNVnEmLiu8Gc1bkQZuHPpd3V/TQlxfL1WugBRIjSLPOL8F6dPijOmsvtk8MiFHRgqRb
-         juuyk6VPz/rFQt7zvIwX96LRQEVCTbcpaYVHpEgnsx9qODVg3mvMiU7+1CPBFqi7nx/B
-         YqEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHHW5gW6jTKAl4DC0vAO4lMxvWOMZNUrt2p68TlUZ4hAanErryospvZfPJvWM72Wyv78x878y1NySUkA==@vger.kernel.org, AJvYcCXRKYH/RrQ9QFXI5a8icafgcUoKySGcPTFOHuiQXSbHxvYnSu8xZqj/DFvOxUSEBBxB/38+NuGNWVsXDXwa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9BEMTla8ynKCpe3mMhHrWuZId5ytFiYE6CKnJd1oNUFx6/O6o
-	e/wWNNtIlWBnwkCfEBHe7+gL9rU+l8IHBSr6EU3+WGCoXrU3OgPS
-X-Google-Smtp-Source: AGHT+IHBcFRRxzd4mOSBn67X69FSjlLZbwG/9D/EpYe89SBBXsXefSNHA21Yb/Lu9bSq50i3Fp0Sfg==
-X-Received: by 2002:a17:907:2d8c:b0:a93:bc27:de24 with SMTP id a640c23a62f3a-a990a03483cmr28137866b.1.1727887020060;
-        Wed, 02 Oct 2024 09:37:00 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bcf9sm886934466b.186.2024.10.02.09.36.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 09:36:59 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] btrfs: remove redundant assignment to pointer node
-Date: Wed,  2 Oct 2024 17:36:58 +0100
-Message-Id: <20241002163658.957316-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Nk1uVEjx"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id w2RossPGwzmbmw2RosTOhn; Wed, 02 Oct 2024 18:43:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727887415;
+	bh=WiQ9rEm/MZNLKkSTulKn+at0cQ54EY5swCihzKM4b7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Nk1uVEjxNTz97srXuWkEodHCeQDwJawSXbdJvq5E/vPJTLAYPRquOSfnBP7DgGfKu
+	 Q+bNgdy0tcgJ4C691IEakEnP/Y0h2zGS967JAbTHRgaVjqH5YkvughNSgJwDs6Prpg
+	 xe+h5LhyU2SFgv/thSpC3VTQhGlbKPkrq2wvM/GhGlIS4f7qJwhgb1aRBPDDeQGCwu
+	 jBFZsUmP8sbCggKvqXDRa4POJt5uEZqUzzrjwtPJfoWtqrNUxRu7zf7sOKFM8A5/vc
+	 lWokM0gjw65+gRqxNHZNh6uq3ybg2nGvgzwos/Xg9RdZqhr3TCt1mU/XEg15vC8mZe
+	 JDVFKeqRkXQmg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 02 Oct 2024 18:43:35 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <86f6269f-e367-4192-ab71-5d82b1c88309@wanadoo.fr>
+Date: Wed, 2 Oct 2024 18:43:32 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/i915/backlight: Remove a useless kstrdup_const()
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr>
+ <875xqdy42v.fsf@intel.com> <3c793f42-6cd1-40e7-a3f2-556b6e5b4094@wanadoo.fr>
+ <87cykiu3hk.fsf@intel.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <87cykiu3hk.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The pointer node is being assigned a value that is never read, the
-jump back to label 'again' re-assigns node to the return value from
-the call to  btrfs_get_delayed_node. The assignment is redundant
-and can be removed.
+Le 02/10/2024 à 13:51, Jani Nikula a écrit :
+> On Tue, 01 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+>> Le 30/09/2024 à 09:48, Jani Nikula a écrit :
+>>> On Sat, 28 Sep 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+>>>> "name" is allocated and freed in intel_backlight_device_register().
+>>>> The initial allocation just duplicates "intel_backlight".
+>>>>
+>>>> Later, if a device with this name has already been registered, another
+>>>> dynamically generated one is allocated using kasprintf().
+>>>>
+>>>> So at the end of the function, when "name" is freed, it can point either to
+>>>> the initial static literal "intel_backlight" or to the kasprintf()'ed one.
+>>>>
+>>>> So kfree_const() is used.
+>>>>
+>>>> However, when built as a module, kstrdup_const() and kfree_const() don't
+>>>> work as one would expect and are just plain kstrdup() and kfree().
+>>>>
+>>>>
+>>>> Slightly change the logic and introduce a new variable to hold the
+>>>> address returned by kasprintf() should it be used.
+>>>>
+>>>> This saves a memory allocation/free and avoids these _const functions,
+>>>> which names can be confusing when used with code built as module.
+>>>
+>>> Okay, I'd rather revert your earlier commit 379b63e7e682
+>>> ("drm/i915/display: Save a few bytes of memory in
+>>> intel_backlight_device_register()") than add this.
+>>
+>> Hi,
+>>
+>> that works for me. Thanks and sorry for the noise.
+> 
+> Will you send the revert?
+> 
+> BR,
+> Jani.
+> 
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/btrfs/delayed-inode.c | 1 -
- 1 file changed, 1 deletion(-)
+Will do.
 
-diff --git a/fs/btrfs/delayed-inode.c b/fs/btrfs/delayed-inode.c
-index 508bdbae29a0..4d37ed88c856 100644
---- a/fs/btrfs/delayed-inode.c
-+++ b/fs/btrfs/delayed-inode.c
-@@ -154,7 +154,6 @@ static struct btrfs_delayed_node *btrfs_get_or_create_delayed_node(
- 		/* Somebody inserted it, go back and read it. */
- 		xa_unlock(&root->delayed_nodes);
- 		kmem_cache_free(delayed_node_cache, node);
--		node = NULL;
- 		goto again;
- 	}
- 	ptr = __xa_store(&root->delayed_nodes, ino, node, GFP_ATOMIC);
--- 
-2.39.5
-
+CJ
