@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72551D1314;
-	Wed,  2 Oct 2024 17:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EBEDF60;
+	Wed,  2 Oct 2024 17:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727891423; cv=none; b=ouDwOtQPDsmLYPMmTWgH5NtzxHWm2vuC4ttrtiqH5KJxGsyMPQ5ehltJ/FrCLtwYsuWRtgE3imgYjuuBzDRe1huB3g9zctiN+IpdBpGlIIMqrvrCxL8tmhMjlQlwvCLMf783Kr2Iw3rAZALe8MO/YWIrTXXvyeYV0Xl4Ly8IzRI=
+	t=1727891550; cv=none; b=ckaszaGVYslh3yZHkSTf+4SnHVi0yqaW5eh6Gs8bKIuy3BTJIU/HTvZHY33GxtARDePcF0G+KtH/1u6zhsVBoRxlISj8HSoC2+h3sd5zjvmiit5pTT87n7IreYwbr/P4N4qH1YFElVqqIeXfuKDsxgiOdCbQRnTo5NSeiUVL3cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727891423; c=relaxed/simple;
-	bh=47fatvpcnYWQ4M+zQ3HnMj664dAgSz2QCPinIDp+9TI=;
+	s=arc-20240116; t=1727891550; c=relaxed/simple;
+	bh=uTrw4SrryNvn6InxsyxZL+gbuPKxZ97X5bZokEw/nlc=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Cz/Dzw2eoAPUIv+Y4g0GgfqW4SPFrR4rDCe6niNBKFpKnbxi2FaWOe/AF/qjkZjFFL/MnSt8LCovAiN/GdVPaWUpniBVpvLd2B+HYgHHfYQtmaRKTJhfXBqn5bo5fHsCLxDh9k6xHsLLb9H3HSJSl8IlVHLV+6FsZDDzb3rHzFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=u/iYR7hM; arc=none smtp.client-ip=212.227.15.3
+	 In-Reply-To:Content-Type; b=J6o9sXnRE8H320ysId3ShoP4PZ4HFGXTvGZBUzKceiGPQYLgYwKMOHu81Ya+oUg3CqQkAvwgmbD8fKYXsAaMNlR70v+KnjNyw0PIjsGb6Z63Dm55d6Tb/NigEgNEHpgQu+7OH96lHbx4rMItJK/RhAShljJRJ6hvJzpY0UXWFY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LWaYsaNM; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u/iYR7hM"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LWaYsaNM"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727891404; x=1728496204; i=markus.elfring@web.de;
-	bh=9+tbIUnTt4a/8am5hF5w0MAc7rkV/fOrFs8cjHSvbYI=;
+	s=s29768273; t=1727891539; x=1728496339; i=markus.elfring@web.de;
+	bh=/4htlgmNOIpnL3ZWdVP9cxfcz3ccpDwRCvCU43T8BnQ=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
 	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=u/iYR7hMMebxvoYwiF1L95igZc507p5BErhiYs2j8q7Bq/tep83NiNhZjhBE2Dy4
-	 klTxiSQBkFB8wQRVZXCrblDcHMuiZneC1O+dlCPtQpftaG16eE8tOUOdMz2W+5uvx
-	 q3vEr3DuejOcLL0oX1Ilk4O9sA5M73xHv3zXZHSEGzkz0/AnXQgeEE1VTgDvJOGAY
-	 EgJBp4lnCTKVyrDJCT4qIBj1gmncFdps6YJ965SYKHvd3RdBqY/SgJeivwoSIpQsE
-	 VeDiNr5JNxY4rn9lFcmQTFg3/40h5aGjA2eQFe1OoCY/zQYFNge1q1G9XlYcXfXqk
-	 wBv5vagR1Tl5CrjLPw==
+	b=LWaYsaNMcq4jZ1s+0EhhdiC3aoPFZhM6GA+Rg8FDDwQewqK7vV/DLMKg+GhPrMPW
+	 F0lL5ZamNqbN3ceKIfB9tmxXt7vEeEYPibquiRpEZ/UUsDZ55BX9YKd65o2r2oOYw
+	 diAVJRgcqmT2ZTZJxKaSBOrSItl3IonZe3bsCHEqRzKYxN02V3zLvztH6jN5pvyiM
+	 dBYBdY0HuQ9IisQ+hTPKeQrXXR4lGwdG+yq2cYSIKNpji1TioYV8LA8HN7sQoUVNy
+	 hJhERebgFXvrDlBWickeMY7AdyDrWbXjh0jLbyPtSn4kRl4BzA7CiClcA97wtheLq
+	 HoWG2Oob+C3m+dIQIg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9cLR-1rqf4D11Wv-014yJT; Wed, 02
- Oct 2024 19:50:04 +0200
-Message-ID: <c8377398-8835-4e73-a253-03f61928974a@web.de>
-Date: Wed, 2 Oct 2024 19:50:03 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyNwm-1rxVJX2IVY-00y7gA; Wed, 02
+ Oct 2024 19:52:19 +0200
+Message-ID: <49260a2e-a510-4d44-8644-38863abb16c1@web.de>
+Date: Wed, 2 Oct 2024 19:52:18 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,8 +42,8 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 1/2] ARM: mvebu: Call of_node_put(cpu_config_np) only once in
- armada_370_coherency_init()
+Subject: [PATCH 2/2] ARM: mvebu: Use common of_node_put() code in
+ mvebu_pm_suspend_init()
 From: Markus Elfring <Markus.Elfring@web.de>
 To: linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
  Gregory Clement <gregory.clement@bootlin.com>,
@@ -57,60 +57,90 @@ Content-Language: en-GB
 In-Reply-To: <ac69dd2e-b4e4-4f70-b6c4-476b92160270@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:m5vIIPSZoADKCbGY2A8GWNnm1j2VylPZVBy3RyMdeOdMcdDjJLo
- usJ4gCliqMBVSJ/JPUjtozGDs6qBWhn3NTAPzgwAi7Uv/oIVw9RDauKt+TMq2lDYjpnW82G
- WRpMn8f6wEeN+UVsGbzIv0Wohn74Dn23Z6JRAWpQCxdptvEQDykIRJuA3LiJ8wo2DrF503z
- xMOVwsRMUFzdCFLO1R79Q==
+X-Provags-ID: V03:K1:p+/V3X4CFavE4EJSJaE3cOy/xoxIKY5G8O/fQp76zs5y1tvRTSo
+ HUK0lzD3KoNgKrmrRqX9P/T1g0wlcTP+Hgx1+S4DpbbRdDU+ECiVM045amWciyUxr00DOU1
+ Kvu4NajWFCqCwMr5L06zx9BIz0zHIk/uRnHM1ooEWQR6Bg/I4V1QD7vIa8/yjpGE4ZUmJZc
+ gqqtP9psxjHMcNTREyxkA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8v19PMwUCp4=;GH3azTOGEsKURqrbj1flHC8B34l
- ljxGUGDp5l4Cr97RI8oTtEsN0Wcvq9NGlvpzLtQco6aBMSuLJVcYyZtPeev9HiAoyMbENBbq+
- cqV5b/PWPZ7zgrjTv/zA9RDQybBi3+Cn8bi09mDuOo6J0FPcaIEEDHcM+u0JvW7oZZF/FTrL5
- +XJWnOYADaHeBFj8IQbDYEZBNEmmYJzl541mGFSaElJZy3twyt/dQ5Oaf7gJ7+CqMerUZbdkI
- CvLFYrqu4Fl4+4fd7qJx27D2T6DENjbw8E+1URtpCvoIahu1jVzI9IENuLmDcYyMT2Gaa1U7F
- fIEGQRHjmgiDZpaP9DNctsFivV/zydVSlO0WECTS4ySQAKpc8ORZpsZCW40lGa/A6cita63/N
- yCbqCS7g6b1y9wm4smU45HK23x5sMqqfqLMY0S1q6GE2/BfuSnjo0kEZuo1Yj9GAaFunVw7Co
- VWuXAMYu+H4K9Yh2nJzz7JH9riNCdsiU3lSJVcmTr6PMCJwEgnjlc5z1slmEr5BBb7wkjYLul
- 4DgQpJHYTRIlaI/q9ZpZPKGxT5PhVRy0uemaZpLZqVnWXRTLAkVZ2Yz4Li7kxH3D1CBwZ8QOX
- cjMNtf6Bpmb+A/EeP1H8SyjUYjbRHU6+hmuH4wy4241mzfowVv/2zIL/860H43PG7L0mygjME
- 8MHfcjyh8v4+8r9v4+jP2qxKtBdzy9q2MAsAEgUb59WNlCmPuxfu4v6IFvcnq/74l51S9TvDJ
- E+/+Vt2/pD6KgFfBFxespkZnx2t2AArT98lNLmj21CUMT5BSdLoZzcOU+pmRqThYzNcUo5WFj
- MaPekFFEjqkd7NGLtVdYZ02w==
+UI-OutboundReport: notjunk:1;M01:P0:7BtfUe1FrO8=;JBK5f6N/sPChrYT8tkbRCoIH6wW
+ yPGl2ZrnA6ZPV5OQei2w2xG91JMJK5AE1uscDRcit3prmUbyQ10s/olPLZI13MkJXD7w3nUkH
+ yaA8xNa9D6aIptjnx0OnRCtdKyC+K+F0+u9AcDkQbINk545rrbmcWufLMFQhOCF1sC7dSwckJ
+ fNf+ndSig0hmJWS992xNX0WCPHlMoCBKRbvtyGDdSvnXB0rsXmDMCE/vm6U6eIQFbnzN1faC4
+ pzFU53X/g4OB8xiQVqJ5f6sZ8GEx50WqkJoD/kgWvYaxf0XRJ+hrgWIqFPJdrSr6pUywpW4fi
+ qdSO/oWFMIGpk6EU1rHqC+P6yhpAfOsOmIN7MHM4NJ6T7/MMjbzoLE3iZOebY85mikrM/xO0Z
+ 9H/hvHhLjcmY/6DpHXCDDpRYo9nMk0hVJ3CxqVDWFFj/cl+W62HUucLqHvbEJ8M+4P2moq4Xm
+ 33ZFa8kQ1X8jqHJ7HQSFEV5sUU8KxULh50ZvZubLsjqxthZeZi5E2IGrWj0XtcjKfpC7Ia948
+ 1B4fyrjc9mUUQbKBWyKD4q4xSj9na/5Gveu2e7d55TSeD/8AbWgBE5SDxafY7tEZ0Tbr/yYgk
+ S096WHL2gDfc2J+sICSmojo5KMhu+pdW5Ku7YAsr8pkZVKHKn52Leba2wiEgBm9NtSwgIMURo
+ QpdegMvR7wja9gAPnrcZ6qsxZtDlS0t/Mk6BXm5gsaympm+uhkc1gOM4Nt00oPw05yA+dw4fl
+ DP7NDOL/rC+RBQHrDvV6r13ZOqMm5Bvz6ZHpqLtSGT4c2Hr5PGgIdv8SiO/HAkw0vZrgt8eq+
+ sQkYA2IkQYWJ+j2//YxOGJVQ==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 2 Oct 2024 19:02:28 +0200
+Date: Wed, 2 Oct 2024 19:15:09 +0200
 
-An of_node_put(cpu_config_np) call was immediately used after a null
-pointer check for an of_iomap() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+Add a local variable =E2=80=9Crc=E2=80=9D and a label so that a bit of exc=
+eption handling
+can be better reused at the end of this function implementation.
 
-This issue was transformed by using the Coccinelle software.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- arch/arm/mach-mvebu/coherency.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/arm/mach-mvebu/pm.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/mach-mvebu/coherency.c b/arch/arm/mach-mvebu/coheren=
-cy.c
-index a6b621ff0b87..262410ccc4bd 100644
-=2D-- a/arch/arm/mach-mvebu/coherency.c
-+++ b/arch/arm/mach-mvebu/coherency.c
-@@ -137,12 +137,9 @@ static void __init armada_370_coherency_init(struct d=
-evice_node *np)
- 		goto exit;
+diff --git a/arch/arm/mach-mvebu/pm.c b/arch/arm/mach-mvebu/pm.c
+index b149d9b77505..cd85f2c56836 100644
+=2D-- a/arch/arm/mach-mvebu/pm.c
++++ b/arch/arm/mach-mvebu/pm.c
+@@ -235,6 +235,7 @@ int __init mvebu_pm_suspend_init(void (*board_pm_enter=
+)(void __iomem *sdram_reg,
+ {
+ 	struct device_node *np;
+ 	struct resource res;
++	int rc;
 
- 	cpu_config_base =3D of_iomap(cpu_config_np, 0);
--	if (!cpu_config_base) {
--		of_node_put(cpu_config_np);
--		goto exit;
--	}
+ 	np =3D of_find_compatible_node(NULL, NULL,
+ 				     "marvell,armada-xp-sdram-controller");
+@@ -242,26 +243,26 @@ int __init mvebu_pm_suspend_init(void (*board_pm_ent=
+er)(void __iomem *sdram_reg,
+ 		return -ENODEV;
+
+ 	if (of_address_to_resource(np, 0, &res)) {
+-		of_node_put(np);
+-		return -ENODEV;
++		rc =3D -ENODEV;
++		goto put_node;
+ 	}
+
+ 	if (!request_mem_region(res.start, resource_size(&res),
+ 				np->full_name)) {
+-		of_node_put(np);
+-		return -EBUSY;
++		rc =3D -EBUSY;
++		goto put_node;
+ 	}
+
+ 	sdram_ctrl =3D ioremap(res.start, resource_size(&res));
+ 	if (!sdram_ctrl) {
+ 		release_mem_region(res.start, resource_size(&res));
+-		of_node_put(np);
+-		return -ENOMEM;
++		rc =3D -ENOMEM;
++		goto put_node;
+ 	}
+
+-	of_node_put(np);
 -
- 	of_node_put(cpu_config_np);
-+	if (!cpu_config_base)
-+		goto exit;
-
- 	cpuhp_setup_state_nocalls(CPUHP_AP_ARM_MVEBU_COHERENCY,
- 				  "arm/mvebu/coherency:starting",
+ 	mvebu_board_pm_enter =3D board_pm_enter;
+-
+-	return 0;
++	rc =3D 0;
++put_node:
++	of_node_put(np);
++	return rc;
+ }
 =2D-
 2.46.1
 
