@@ -1,146 +1,106 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EBEDF60;
-	Wed,  2 Oct 2024 17:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8098F58;
+	Wed,  2 Oct 2024 18:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727891550; cv=none; b=ckaszaGVYslh3yZHkSTf+4SnHVi0yqaW5eh6Gs8bKIuy3BTJIU/HTvZHY33GxtARDePcF0G+KtH/1u6zhsVBoRxlISj8HSoC2+h3sd5zjvmiit5pTT87n7IreYwbr/P4N4qH1YFElVqqIeXfuKDsxgiOdCbQRnTo5NSeiUVL3cQ=
+	t=1727892058; cv=none; b=rCTdTr4xfd3FVFlXRtWpJEog9xvJr5azBqrgacJ+549HLfF9BrBk+am3TxN7bqzPghBD4kEINSxH71Czxb+QR05o753uhvGyLaykdr/3BHoXA83eCgrOdRvjhfPcacN3QxO4neLsJJrmvVyod+dYUvnYCw215mgE7TcoetHCoFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727891550; c=relaxed/simple;
-	bh=uTrw4SrryNvn6InxsyxZL+gbuPKxZ97X5bZokEw/nlc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=J6o9sXnRE8H320ysId3ShoP4PZ4HFGXTvGZBUzKceiGPQYLgYwKMOHu81Ya+oUg3CqQkAvwgmbD8fKYXsAaMNlR70v+KnjNyw0PIjsGb6Z63Dm55d6Tb/NigEgNEHpgQu+7OH96lHbx4rMItJK/RhAShljJRJ6hvJzpY0UXWFY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LWaYsaNM; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727892058; c=relaxed/simple;
+	bh=6OWlhiXuR3BFbgvgEVWzI6gNhS+CBy/WySP03BDQUV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eGt9ma4bim7NxmkEgBYgIadciphDDWlBu3qg7uFE0vSH4OfX7agWanwckJ1vY1nFUNIkgygBE4IZECwZyNsI+Y4Fld5g4K5Yml2eLna8ulyutGPqop3b9iQ4I6ZediuUiYXgdQs/iX927S+gh7ZXdseg2hwcgryeWY+6Wbb0ydI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlVgLaV6; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LWaYsaNM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727891539; x=1728496339; i=markus.elfring@web.de;
-	bh=/4htlgmNOIpnL3ZWdVP9cxfcz3ccpDwRCvCU43T8BnQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LWaYsaNMcq4jZ1s+0EhhdiC3aoPFZhM6GA+Rg8FDDwQewqK7vV/DLMKg+GhPrMPW
-	 F0lL5ZamNqbN3ceKIfB9tmxXt7vEeEYPibquiRpEZ/UUsDZ55BX9YKd65o2r2oOYw
-	 diAVJRgcqmT2ZTZJxKaSBOrSItl3IonZe3bsCHEqRzKYxN02V3zLvztH6jN5pvyiM
-	 dBYBdY0HuQ9IisQ+hTPKeQrXXR4lGwdG+yq2cYSIKNpji1TioYV8LA8HN7sQoUVNy
-	 hJhERebgFXvrDlBWickeMY7AdyDrWbXjh0jLbyPtSn4kRl4BzA7CiClcA97wtheLq
-	 HoWG2Oob+C3m+dIQIg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyNwm-1rxVJX2IVY-00y7gA; Wed, 02
- Oct 2024 19:52:19 +0200
-Message-ID: <49260a2e-a510-4d44-8644-38863abb16c1@web.de>
-Date: Wed, 2 Oct 2024 19:52:18 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlVgLaV6"
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7c3d8105646so543a12.2;
+        Wed, 02 Oct 2024 11:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727892057; x=1728496857; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=imJjW8yqZloPW7ErJu1+QaojNgJ9/UlT96yk1OWI5NU=;
+        b=IlVgLaV6aYOJNvgj89dop8rBu/GiszB+D5J1F7jMIQFaB41AC+F7r4I5jwtqg6P1zU
+         p1YfbQiQI3PpFvLdfgrMwaxi7Esf9FAe07GtkOKSJZFWRVztcX+xXfddpQVJ33QNwcEm
+         2VBB/ONnFH6d3q1RMTCwDrU4t/gOnxRU476cLKDrCbqlm32RWHhvvEI15nUp162hurH+
+         JT41Nnf8NcsijWXiBoEO+QRUIjMokRSmGptGJkpwDS5SlyuWuKbxdfsh/NfKQEybSL9/
+         b9PtuL8dKPWRsDjPAYJn/bnrN4QULr+oQZCkNRs9NKVRn2ViS5ivpoJW78AQ2Kz20nY2
+         WOJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727892057; x=1728496857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=imJjW8yqZloPW7ErJu1+QaojNgJ9/UlT96yk1OWI5NU=;
+        b=mEKaeDQzto3Hs64gnDuS5lHRoOI0QApg8iSs2i0crKqhcdevm2LQVReXXbc6psAgcP
+         EnIGEiRnLqnLv4IH7E7iF0RUcTzMZDc8OXLm1Ic0QqXhG9VQB5t5vNYO5nV7FaZmgHT8
+         Zo4GcPhz9wAONgfnk7Fz1P5qgmZjxDV5LssazvIqR0CvhRPj6urVY7czM2wBJlRnQLES
+         115MKb3UC+t3OSRxYG7OeWcfKea+qn79/5KQBAFKMEyxLv1J3VU+E9AIUtjY6POixhN/
+         s07pYDCpSMOP0mOAIDY9IxA5DlG2e5crKhCcEb1gzykXK5omn+zaleaSJjrP9wooy/Z3
+         M6UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz+wjBkIgLEDsZG9pjrkmOObrIWB+Stq4zhrcD9PKoodAgyV/dgw81lgYMsYnGvCTAO3/eXfP9Oa2hNG99@vger.kernel.org, AJvYcCXBc77hqQ4y/PAYm1UMqzeuhGcvvF+dDvr1QRmXBE0aVgCIiQpFP9bxsQeEVZ1Vpjo0UUqmkkEf+NScPK6vMsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtBu88qz+cctdsmoZ6NsmvGan3KZcvhj1m2/AcdWRyT5F9YMhd
+	/jAfjrnfQNQuzT+8kWT015Cj10xXYtH7v0MIFvNWJ56IqG8gEcnUOHlf+PAi19Ck/Wp8eYIEYT4
+	BnOPwvVP/9Wduw9O6JnrRrdjZa5s=
+X-Google-Smtp-Source: AGHT+IGM1BBSTPaBWzZ+dU1AkNdC/OtZ992uJcIy5FsghKxwDdRZWRkiIYsmnyX3u8X5rIpO3wuz6QVKj/9j4kTt2K0=
+X-Received: by 2002:a17:902:d50a:b0:20b:a5a5:deaa with SMTP id
+ d9443c01a7336-20bc59eb0ffmr23041765ad.8.1727892056526; Wed, 02 Oct 2024
+ 11:00:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/2] ARM: mvebu: Use common of_node_put() code in
- mvebu_pm_suspend_init()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Russell King <linux@armlinux.org.uk>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <ac69dd2e-b4e4-4f70-b6c4-476b92160270@web.de>
-Content-Language: en-GB
-In-Reply-To: <ac69dd2e-b4e4-4f70-b6c4-476b92160270@web.de>
-Content-Type: text/plain; charset=UTF-8
+References: <20241002075124.833394-1-colin.i.king@gmail.com>
+In-Reply-To: <20241002075124.833394-1-colin.i.king@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 2 Oct 2024 14:00:45 -0400
+Message-ID: <CADnq5_PxfOeX2xWr9FzbOSkbUa_jewCPx=SngO2PQeL1kHikXA@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amdgpu: Fix spelling mistake "initializtion" -> "initialization"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hawking Zhang <Hawking.Zhang@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:p+/V3X4CFavE4EJSJaE3cOy/xoxIKY5G8O/fQp76zs5y1tvRTSo
- HUK0lzD3KoNgKrmrRqX9P/T1g0wlcTP+Hgx1+S4DpbbRdDU+ECiVM045amWciyUxr00DOU1
- Kvu4NajWFCqCwMr5L06zx9BIz0zHIk/uRnHM1ooEWQR6Bg/I4V1QD7vIa8/yjpGE4ZUmJZc
- gqqtP9psxjHMcNTREyxkA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7BtfUe1FrO8=;JBK5f6N/sPChrYT8tkbRCoIH6wW
- yPGl2ZrnA6ZPV5OQei2w2xG91JMJK5AE1uscDRcit3prmUbyQ10s/olPLZI13MkJXD7w3nUkH
- yaA8xNa9D6aIptjnx0OnRCtdKyC+K+F0+u9AcDkQbINk545rrbmcWufLMFQhOCF1sC7dSwckJ
- fNf+ndSig0hmJWS992xNX0WCPHlMoCBKRbvtyGDdSvnXB0rsXmDMCE/vm6U6eIQFbnzN1faC4
- pzFU53X/g4OB8xiQVqJ5f6sZ8GEx50WqkJoD/kgWvYaxf0XRJ+hrgWIqFPJdrSr6pUywpW4fi
- qdSO/oWFMIGpk6EU1rHqC+P6yhpAfOsOmIN7MHM4NJ6T7/MMjbzoLE3iZOebY85mikrM/xO0Z
- 9H/hvHhLjcmY/6DpHXCDDpRYo9nMk0hVJ3CxqVDWFFj/cl+W62HUucLqHvbEJ8M+4P2moq4Xm
- 33ZFa8kQ1X8jqHJ7HQSFEV5sUU8KxULh50ZvZubLsjqxthZeZi5E2IGrWj0XtcjKfpC7Ia948
- 1B4fyrjc9mUUQbKBWyKD4q4xSj9na/5Gveu2e7d55TSeD/8AbWgBE5SDxafY7tEZ0Tbr/yYgk
- S096WHL2gDfc2J+sICSmojo5KMhu+pdW5Ku7YAsr8pkZVKHKn52Leba2wiEgBm9NtSwgIMURo
- QpdegMvR7wja9gAPnrcZ6qsxZtDlS0t/Mk6BXm5gsaympm+uhkc1gOM4Nt00oPw05yA+dw4fl
- DP7NDOL/rC+RBQHrDvV6r13ZOqMm5Bvz6ZHpqLtSGT4c2Hr5PGgIdv8SiO/HAkw0vZrgt8eq+
- sQkYA2IkQYWJ+j2//YxOGJVQ==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 2 Oct 2024 19:15:09 +0200
+Applied.  Thanks!
 
-Add a local variable =E2=80=9Crc=E2=80=9D and a label so that a bit of exc=
-eption handling
-can be better reused at the end of this function implementation.
-
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- arch/arm/mach-mvebu/pm.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/mach-mvebu/pm.c b/arch/arm/mach-mvebu/pm.c
-index b149d9b77505..cd85f2c56836 100644
-=2D-- a/arch/arm/mach-mvebu/pm.c
-+++ b/arch/arm/mach-mvebu/pm.c
-@@ -235,6 +235,7 @@ int __init mvebu_pm_suspend_init(void (*board_pm_enter=
-)(void __iomem *sdram_reg,
- {
- 	struct device_node *np;
- 	struct resource res;
-+	int rc;
-
- 	np =3D of_find_compatible_node(NULL, NULL,
- 				     "marvell,armada-xp-sdram-controller");
-@@ -242,26 +243,26 @@ int __init mvebu_pm_suspend_init(void (*board_pm_ent=
-er)(void __iomem *sdram_reg,
- 		return -ENODEV;
-
- 	if (of_address_to_resource(np, 0, &res)) {
--		of_node_put(np);
--		return -ENODEV;
-+		rc =3D -ENODEV;
-+		goto put_node;
- 	}
-
- 	if (!request_mem_region(res.start, resource_size(&res),
- 				np->full_name)) {
--		of_node_put(np);
--		return -EBUSY;
-+		rc =3D -EBUSY;
-+		goto put_node;
- 	}
-
- 	sdram_ctrl =3D ioremap(res.start, resource_size(&res));
- 	if (!sdram_ctrl) {
- 		release_mem_region(res.start, resource_size(&res));
--		of_node_put(np);
--		return -ENOMEM;
-+		rc =3D -ENOMEM;
-+		goto put_node;
- 	}
-
--	of_node_put(np);
--
- 	mvebu_board_pm_enter =3D board_pm_enter;
--
--	return 0;
-+	rc =3D 0;
-+put_node:
-+	of_node_put(np);
-+	return rc;
- }
-=2D-
-2.46.1
-
+On Wed, Oct 2, 2024 at 3:51=E2=80=AFAM Colin Ian King <colin.i.king@gmail.c=
+om> wrote:
+>
+> There is a spelling mistake in a dev_err message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c b/drivers/gpu/drm/a=
+md/amdgpu/amdgpu_xgmi.c
+> index b17e63c98a99..733e69e90c5a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+> @@ -1533,7 +1533,7 @@ static void amdgpu_xgmi_reset_on_init_work(struct w=
+ork_struct *work)
+>                 r =3D amdgpu_ras_init_badpage_info(tmp_adev);
+>                 if (r && r !=3D -EHWPOISON)
+>                         dev_err(tmp_adev->dev,
+> -                               "error during bad page data initializtion=
+");
+> +                               "error during bad page data initializatio=
+n");
+>         }
+>  }
+>
+> --
+> 2.39.5
+>
