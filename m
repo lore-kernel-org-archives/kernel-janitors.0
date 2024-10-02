@@ -1,108 +1,94 @@
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E39216A21;
-	Wed,  2 Oct 2024 20:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B280119412A;
+	Wed,  2 Oct 2024 21:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727901836; cv=none; b=ooEBhasjUa6+dM+RcuCqCPiLg2Nf9nUbLIYzT60MQJycdjIWaHiYnNn285vtPdn1qj2LPjGCK2NTYX+LcV/dDlu6/awPHa91YnVLVy6BTcRJ17+ndPfVAlxDSnto0XOfwi0Kt0akNJ/VDwEzURkcSqqoa3fpyMmmJI2EYKKCj6A=
+	t=1727903997; cv=none; b=IXWbT4/X8A0bhyPFTi51KmR5d1VyCckNVkGTXV/qC4FDbsi6Qm5hMTnhQyCw8Ci6mlTD0w/7l0xFtJHVCymmiLdzdnvyQ9i5clItrW+mLXyL790EZXAHkqFF/uqlys8Tm81GlITQolWcsA0mQObdlGNUskrxXvtL8F8IevhsfUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727901836; c=relaxed/simple;
-	bh=m9vi7Rrk3MHL0f0AikwyN1ORuM9yo2gPb/hvXNpSH0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cYwZHEQnZs8hbtOsPGLi6MCu9ud2lMXA+z/aaZ+6SxhT1Y7Jl1d0wae40+MVMXb8U2gppijL4Voh3UpGKGNv78l8HKv6XUj0DJF8Pesyd0OXM2smExXtpi0RQ35DBjF9eg++HLqHJ4fsHN3FJmBdZl7LgxoI/FFa+qXSPsZNlZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XJmxH1JjTz9sPd;
-	Wed,  2 Oct 2024 22:43:47 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id qISjOr7O0dDK; Wed,  2 Oct 2024 22:43:47 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XJmxH07Ckz9rvV;
-	Wed,  2 Oct 2024 22:43:47 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DDF428B766;
-	Wed,  2 Oct 2024 22:43:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id SWDakdAXHTTF; Wed,  2 Oct 2024 22:43:46 +0200 (CEST)
-Received: from [192.168.233.87] (PO16952.IDSI0.si.c-s.fr [192.168.233.87])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6D9C18B763;
-	Wed,  2 Oct 2024 22:43:46 +0200 (CEST)
-Message-ID: <d9bdc1b6-ea7e-47aa-80aa-02ae649abf72@csgroup.eu>
-Date: Wed, 2 Oct 2024 22:43:46 +0200
+	s=arc-20240116; t=1727903997; c=relaxed/simple;
+	bh=I9FXEKAJnEUkwtjfQbtGO0IypUxqf7hYkkFFJRhHZ8g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DHj7EX0SZvMMygRRYbjZn/tx2KjiIVYxqCuO7/nhkz7Ub5xRQ/wA3Xvj5PrqFRRenFYTL6k7dovfXNM/ez0WJkvQcs/9qNqEXe/mpjQcZ//qXUj1pVazXgUpUgQpbTqLdwrygV/5gTOizEk3OBIaSt7KqyUgtPM75/mTtC8bKcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=in4LBz2K; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="in4LBz2K"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so1878175e9.1;
+        Wed, 02 Oct 2024 14:19:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727903994; x=1728508794; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OAiYB3ipSAdMMFVVXVLuGAfh+tfJPdeakBwHtHt6Yng=;
+        b=in4LBz2Kx4go/sR8iBQc9FxJzDAYPsQZv4wBo+oVEHF96ixnNANHM70vDadT3Z8Slj
+         i40wqhNOmKDkwEnQLi03lXAzT1wcN64ZarC5EgMd7u4jTYGGtDF7PXsCezXrSKCxTW11
+         050tAESwknCPU/MBtpldI0NnW+yGL4NKvj9QLNNXMDsro7Hgv30xyqsh2r37pKq5WcnQ
+         leMaUcroOlMZIpOnullM6P1Kq7lMs0dzbFWeST4bSPUN/359Zslkd6DWseGsxjVef/2J
+         zQbg/zUrAvXLV4eW8Qyu+KrvEHu5o3MZlVX1sKD4WyXB7rvwJ/Uj6fn6USKOzlXnCoUI
+         fqTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727903994; x=1728508794;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OAiYB3ipSAdMMFVVXVLuGAfh+tfJPdeakBwHtHt6Yng=;
+        b=roeMURNSZ1qs5xssSCXJMJeODo9Azcu7hr7k93+4uY6EeuN5BY5cKcqSYPzL0w9fR7
+         C5mHvybXNGmO6emS6z1GCyoP0Oy0yV5B4yRgos374A1+JtKW/zP2kbLIJV8m0uUMMJWp
+         3EQh8nosfQGIUGW8y6buX3WPexJbSOhOUTDPd0MHVq02CODWMtSsACXDYuCRvR/mjV1L
+         gNiB7NFX1H70Hb9jPO0LhblGDYItvW8MuC3k9ifiTeIgptafZijbeuVVJdeMUNz2K0Q8
+         f16OXoKOjeZNVluypYnDQQ7VsEmosswrKjly2Ao9wTaFQ++MfAlxXO7czV8V8qquF0Oo
+         t1wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvJQcMt9H7sF2uq/Un5ki6oLl9BQDUsLAPGZ5ozw97sSkl2QCGPh7b72Z4i0MQisORYr0Yrvvj6FEL53fF@vger.kernel.org, AJvYcCX6JDIq3oU4Eq+i5FRmAxvHWq83srMnlBeY7iy8N233NgFS9wGRFA2zAvmppHtHFMQJnprL4gAY2+Smb5+NxVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxgL+AjPjsVurv5LUytDpH8prxrR+CtCf7tpMx1YPZUYtjcmE2
+	oHWc1U5w1VI0hoWeyX1s8EW7ose/+xFXlchiip6ueZZwVgkSnfiWQI6bFTmG
+X-Google-Smtp-Source: AGHT+IExqBMO1lJwmh3Wmyt8AYCkoXZ+kkIA+Ye9yKgnlOPmiqFdKuhjwIbcfzYIPTeCRpJPGWnQ3g==
+X-Received: by 2002:adf:f284:0:b0:374:c40d:d437 with SMTP id ffacd0b85a97d-37cfb8ce57amr3044644f8f.15.1727903993732;
+        Wed, 02 Oct 2024 14:19:53 -0700 (PDT)
+Received: from void.void ([141.226.9.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd57423afsm14745383f8f.90.2024.10.02.14.19.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 14:19:53 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J . Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] xfs: fix a typo
+Date: Thu,  3 Oct 2024 00:19:48 +0300
+Message-Id: <20241002211948.10919-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powermac: Call of_node_put(bk_node) only once in
- pmac_has_backlight_type()
-To: Markus Elfring <Markus.Elfring@web.de>, linuxppc-dev@lists.ozlabs.org,
- Jani Nikula <jani.nikula@intel.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Naveen N Rao <naveen@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>, Paul Mackerras <paulus@samba.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Fix a typo in comments.
 
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ fs/xfs/xfs_log_recover.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Le 02/10/2024 à 22:02, Markus Elfring a écrit :
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 2 Oct 2024 21:50:27 +0200
-> 
-> An of_node_put(bk_node) call was immediately used after a pointer check
-> for an of_get_property() call in this function implementation.
-> Thus call such a function only once instead directly before the check.
+diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
+index ec766b4bc853..a13bf53fea49 100644
+--- a/fs/xfs/xfs_log_recover.c
++++ b/fs/xfs/xfs_log_recover.c
+@@ -1849,7 +1849,7 @@ xlog_find_item_ops(
+  *	   from the transaction. However, we can't do that until after we've
+  *	   replayed all the other items because they may be dependent on the
+  *	   cancelled buffer and replaying the cancelled buffer can remove it
+- *	   form the cancelled buffer table. Hence they have tobe done last.
++ *	   form the cancelled buffer table. Hence they have to be done last.
+  *
+  *	3. Inode allocation buffers must be replayed before inode items that
+  *	   read the buffer and replay changes into it. For filesystems using the
+-- 
+2.39.5
 
-It seems pointless to perform a put immediately after a get. Shouldn't 
-of_find_property() be used instead ? And then of_property_read_string() 
-would probably be better.
-
-Maybe you can even use of_property_match_string().
-
-> 
-> This issue was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   arch/powerpc/platforms/powermac/backlight.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/powermac/backlight.c b/arch/powerpc/platforms/powermac/backlight.c
-> index 12bc01353bd3..d3666595a62e 100644
-> --- a/arch/powerpc/platforms/powermac/backlight.c
-> +++ b/arch/powerpc/platforms/powermac/backlight.c
-> @@ -61,11 +61,9 @@ int pmac_has_backlight_type(const char *type)
->   	if (bk_node) {
->   		const char *prop = of_get_property(bk_node,
->   				"backlight-control", NULL);
-> -		if (prop && strncmp(prop, type, strlen(type)) == 0) {
-> -			of_node_put(bk_node);
-> -			return 1;
-> -		}
->   		of_node_put(bk_node);
-> +		if (prop && strncmp(prop, type, strlen(type)) == 0)
-> +			return 1;
->   	}
-> 
->   	return 0;
-> --
-> 2.46.1
-> 
