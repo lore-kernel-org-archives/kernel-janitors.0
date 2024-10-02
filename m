@@ -1,105 +1,100 @@
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE39E1B2522;
-	Wed,  2 Oct 2024 16:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BB515D1;
+	Wed,  2 Oct 2024 16:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727887487; cv=none; b=CxDv0iFavctF5xZhP5eWLBXzXABobob67ftnugi9arkwnakNniBdW6aFmy1EwdlFYXqz1eMaOPgbRDmd8xIb0dAJomMYA9Qw0ZmbQFjrG+ndiCSnAT7BdFpX9zTpzobEBDS+MDUffxf1tZBdAp1Y1rtuFFV+jO4XahVcZI3PmOY=
+	t=1727888014; cv=none; b=cSjjOhNk/EmdLeirn2bCB6iouyDkLcJMbBnqxyx2Wcuk8ln0jPXAtxOwD+Vbgd9doLt4NQPqG2POBmqjKMS5BxP9Jz4+y7Yq8oHlT/jXGCJdgQ43nzsqj1cNj2au/SLfSFbKHFd8d83D+XOtye/VfJjRsWyZJNmX6I9b13tlmKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727887487; c=relaxed/simple;
-	bh=vYfZYr6xFuL0EtXZy1BqPdBhzlc0mgtVp8xf+RVooQE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eQwjpge8+PYJcnsm6cUOdhjRba+O1Thb/Hru1gP9tK3ksgwoUegxljCiEys3Xtnxx8PQPlgicFUPXaYm40J6HbG7Tw8gHiR74WrxYHGFYZY3lKsn+xJx9tJmkM/PEHQn2eh3rMtUF7fCcRNbyVOAPO8wg04Rl4CVBGJ5zf4EwuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Nk1uVEjx; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1727888014; c=relaxed/simple;
+	bh=BcgGB9Mu79kqx8kgObPk+2zkwZYijkuMbFweANzJ1Wc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hmjLdlAHjs6QdTYGSuR+5kXHDnj5d3I8UDGvkB37mUW0ke8wEyt0jNlpyu7qqkZQ95Glss7EN/gLN4J/iUtJKWdVbR8QExrd33qh+ofQX1ayB9U4Rh6RK0OHphbZ7ZOP/f69kUtufBKi8uVtevpRzuNBabB7vAeIhZCnBKwzb6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUic4v89; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Nk1uVEjx"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id w2RossPGwzmbmw2RosTOhn; Wed, 02 Oct 2024 18:43:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727887415;
-	bh=WiQ9rEm/MZNLKkSTulKn+at0cQ54EY5swCihzKM4b7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Nk1uVEjxNTz97srXuWkEodHCeQDwJawSXbdJvq5E/vPJTLAYPRquOSfnBP7DgGfKu
-	 Q+bNgdy0tcgJ4C691IEakEnP/Y0h2zGS967JAbTHRgaVjqH5YkvughNSgJwDs6Prpg
-	 xe+h5LhyU2SFgv/thSpC3VTQhGlbKPkrq2wvM/GhGlIS4f7qJwhgb1aRBPDDeQGCwu
-	 jBFZsUmP8sbCggKvqXDRa4POJt5uEZqUzzrjwtPJfoWtqrNUxRu7zf7sOKFM8A5/vc
-	 lWokM0gjw65+gRqxNHZNh6uq3ybg2nGvgzwos/Xg9RdZqhr3TCt1mU/XEg15vC8mZe
-	 JDVFKeqRkXQmg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 02 Oct 2024 18:43:35 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <86f6269f-e367-4192-ab71-5d82b1c88309@wanadoo.fr>
-Date: Wed, 2 Oct 2024 18:43:32 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUic4v89"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a90188ae58eso884282066b.1;
+        Wed, 02 Oct 2024 09:53:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727888011; x=1728492811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0VBP9L6F3kRYSxlOYYCVWtu5TEnhbSkBif2w66bb7SE=;
+        b=HUic4v89kBeV6CxA0kx2pXndDFIQhsWufSVCr72fFNBUcjQarr14cJutre4FCaZ74v
+         61lFaO5mbbv27jb1dEBnHI62i2b0LrJ3GHOY9kjdgsnSQS8K8fTB/8QUW0Mu8jhN+6+J
+         gbVBYtJw938Ak0RV3Dz4kohqKZkcWkS6Oqq1iHy84Fl7qHGC/B3apSuyWHe9L5h/EVrh
+         TQyI432w27ezROuHSBE2gjBf4E9cmEfWR1bc1Wpb1vagwNp9gczT3P0+Y0pdd1fZS8WI
+         1u3eJEto3ay6ZYTMpWkHs+x5joQvUJPQaudITkc6byOf/SzrJMRF8ULmvsQRl/MPn+Ag
+         aMyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727888011; x=1728492811;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0VBP9L6F3kRYSxlOYYCVWtu5TEnhbSkBif2w66bb7SE=;
+        b=dLRW4FRs+1xQVg7DfKR5r8d758BoCW3uuMeuMXls4R1K5HlXuGzMv7uYS0We5+aGpq
+         UH4e6noysT1SBnu80DnU4Epv1pEV0/BiKz9DqQUGFeTOpf6R+4B6Z5UWLIo1OUaCDQBT
+         zRUbP3rt57/VKou64UO9NPLZU5nXXraZrMZs1N+vG0QgLCadGcuOEkP8Uevxs96KT7xo
+         /SaePJt34pnWUPtWMkVpJvUlJANkfiYuX2vino5uF1Lqx32raXTrvJgkCoSlRTHNWlFN
+         XGoVCruSnr+4qWfQK2tEsJj7o1Y0RC+CpYSIzN2inZ0XP/gB8rl4b12L8HgHkt/+6Jcj
+         HP8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJIhHHAr90nbLixVmzL+kKRg7fjjQYcABOGizDoLq8hb4IXY9IwU0TInXCL4zBnwC6S0UHC8SzTcQRBOc=@vger.kernel.org, AJvYcCXQcYbvTJ4yhA4pYVZseoBBoKG8MC9BhsX/bhgb9DSoZdFXtIiX0SO9wRRb53RbE1o4J4WHZxA5PrZq5W4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXRndZBMDyEyr/w8mpOlJVoTtz4HVCdJgwRgtj6IMk+bGqXRK2
+	1s+7ROFIZvNIu+msSMorq33rAIHVUBjHtK3AVTFGeAnLs9UuSXwc
+X-Google-Smtp-Source: AGHT+IE5L14UooItLU+oI/ihR4h2cOWQj5WEt47yXXGonebmU9T3ngYR1dUSxAI9w1XtsT0irJrdtw==
+X-Received: by 2002:a17:907:743:b0:a86:8f8f:4761 with SMTP id a640c23a62f3a-a98f8234520mr334256966b.25.1727888011242;
+        Wed, 02 Oct 2024 09:53:31 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bc6fsm879674066b.184.2024.10.02.09.53.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2024 09:53:30 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: i2c: ds90ub960: Fix missing return check on ub960_rxport_read call
+Date: Wed,  2 Oct 2024 17:53:29 +0100
+Message-Id: <20241002165329.957739-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/i915/backlight: Remove a useless kstrdup_const()
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-References: <3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr>
- <875xqdy42v.fsf@intel.com> <3c793f42-6cd1-40e7-a3f2-556b6e5b4094@wanadoo.fr>
- <87cykiu3hk.fsf@intel.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <87cykiu3hk.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Le 02/10/2024 à 13:51, Jani Nikula a écrit :
-> On Tue, 01 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
->> Le 30/09/2024 à 09:48, Jani Nikula a écrit :
->>> On Sat, 28 Sep 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
->>>> "name" is allocated and freed in intel_backlight_device_register().
->>>> The initial allocation just duplicates "intel_backlight".
->>>>
->>>> Later, if a device with this name has already been registered, another
->>>> dynamically generated one is allocated using kasprintf().
->>>>
->>>> So at the end of the function, when "name" is freed, it can point either to
->>>> the initial static literal "intel_backlight" or to the kasprintf()'ed one.
->>>>
->>>> So kfree_const() is used.
->>>>
->>>> However, when built as a module, kstrdup_const() and kfree_const() don't
->>>> work as one would expect and are just plain kstrdup() and kfree().
->>>>
->>>>
->>>> Slightly change the logic and introduce a new variable to hold the
->>>> address returned by kasprintf() should it be used.
->>>>
->>>> This saves a memory allocation/free and avoids these _const functions,
->>>> which names can be confusing when used with code built as module.
->>>
->>> Okay, I'd rather revert your earlier commit 379b63e7e682
->>> ("drm/i915/display: Save a few bytes of memory in
->>> intel_backlight_device_register()") than add this.
->>
->> Hi,
->>
->> that works for me. Thanks and sorry for the noise.
-> 
-> Will you send the revert?
-> 
-> BR,
-> Jani.
-> 
-> 
+The function ub960_rxport_read is being called and afterwards ret is
+being checked for any failures, however ret is not being assigned to
+the return of the function call. Fix this by assigning ret to the
+return of the call which appears to be missing.
 
-Will do.
+Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/media/i2c/ds90ub960.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-CJ
+diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+index ffe5f25f8647..58424d8f72af 100644
+--- a/drivers/media/i2c/ds90ub960.c
++++ b/drivers/media/i2c/ds90ub960.c
+@@ -1286,7 +1286,7 @@ static int ub960_rxport_get_strobe_pos(struct ub960_data *priv,
+ 
+ 	clk_delay += v & UB960_IR_RX_ANA_STROBE_SET_CLK_DELAY_MASK;
+ 
+-	ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
++	ret = ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.39.5
+
