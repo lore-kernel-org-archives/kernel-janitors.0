@@ -1,124 +1,114 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAED1E766E
-	for <kernel-janitors@vger.kernel.org>; Wed,  2 Oct 2024 10:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC4916F84F;
+	Wed,  2 Oct 2024 11:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727866058; cv=none; b=s/QuKr6lfZAI3KTOWBtz5Ggm1m/3MgxOywykPTraQX3B1dsqIm1j6q3Q9RFnpl4GlfqdVOMOagtREIOs5+v0MRLAxnvZ2w7igdmNdqnIggVu5lRzB8AotGJ5I8ubWzbXVSBZLwdXX6rknKVl6v8OvuNj/erd9UXIZSyDKSPux24=
+	t=1727869920; cv=none; b=r3sUIizE7DMAauRFuEeZ6E0Po1ySRRYFfMkwZ9be96gQ0tbLgHzrbMJrW/e8bM20F6b1ImLAv29ugzE+V+4nOdqmOVA4t4L1l0czPSyieUwBpSrzwdzv3o8hsfn93qqmys2YTus652fH8x3rjnypfjx/fvmUbrr3Fne0SWPmBBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727866058; c=relaxed/simple;
-	bh=5KapHuvavI4Se4rczWiyFO1qFaxo3pXSlIcqLuWKHaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p8QxRlGamk0LUyGaFV99T9tQzXDnf9zYUV2ptTkMF6Kjm2ULc24b6bV9su0yW6FCRdfUbQAawN5l+t4dSu8yY7aoBifo0Q5wpkPcKFst/DfyEYpJHQ7xpjUWyXqPkR3lGDh5GYXOhxRU2CC0eUzKRhgcd54pPGEcIaVdooco8BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w2TK15m2; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727869920; c=relaxed/simple;
+	bh=gBJSjm8Db5ChqVbRHc3AT32deIpUrD8cF2ddm3npVBo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IGmk42mZOFr8mXtdpoBz/l7spl4EONU2EUtcFVIqgYR45M45LRr+nbZ6F4KKImih/cetc5cVa58ROsUCqXeb8vYqPhkG0JwxWkKXaU4SX8QSWsvgTQDwul5jVbyeTFm1pEpKNvYioPgoGOpni+fXzZce1YT+/ijbWh2nLzDUJXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=De8iypiH; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w2TK15m2"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37cfff59d04so249183f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 02 Oct 2024 03:47:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727866055; x=1728470855; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sHmSQBGzytntPfgJ8o5KGntZ1Opu2hYPtLIGWQovKwk=;
-        b=w2TK15m2qt0E0Pez+5UTB+LsQLt8KolG8zX4S32941BpKTm3xWgJiOmo65cHj7AVQA
-         Egvg4d2n39ckWAwHcW2HFZDtaNddJNsDhBdNK0Gyj7E0ebA6J4VX3c1aTFi4FX+sOQ6Z
-         2QJWgspJPdn1gSpMpQGNDbS1CiQQpZS0oPpGQMm6CWYCNZefUjkXSns4W2OSh3ckanKX
-         TAfZoL+Sx8tCiJn7RZMQu6Tt3OVjWNvR6/0RAu1qnnxi4o7M1b5ksdPuVLhL9VB+qKAP
-         dMEZ8/JAtIhGf/TAdybCaeNJE8WUWF3u3K7RnGYs5B3KunuVdL/+fq9j0M2azfm2t2Dx
-         Ksaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727866055; x=1728470855;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sHmSQBGzytntPfgJ8o5KGntZ1Opu2hYPtLIGWQovKwk=;
-        b=qkhlT3WztSGuTD07UFbq112UxUsqCPLntexbrekxoWL+HoGdoMMfbbhv5eePQj7vBy
-         8Fcm6xXoD/7t5el0vSSv3FEzf8qfx7y3ZQRjpVpjEbiaAKYqAmh+3rIlqg5hn0NtXQXj
-         gWrJ7v7NHcSrFq96sjZOKypN8PLrXuaqhZUoB/UvYwtXak2iRr4Y2QrOQtwZJas5kvwa
-         OjWmoQ6/YISiAbekGsTMM7Hcg+xS1O/6JBnEPwrYCy4rloe6NzUOCRTYGUAa9eK4pFtm
-         CqBy1mbIbOHJcSd8mVNbYKYp0fyNhe3B6g4BzAcsnseLK+tU7piqyVGOmacgBqy4od73
-         36rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPmZedcjEPyaRaAH1dN+uSOcbHVR7NegE9WBIUVCpBepWfU034dcTYibAj1d+RnZj26QrrwvikZ99CmYuFWzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyBQVTNtSVtS05RN6rhfZ44QFwj/Dxk5uIygOxtiW99IupJ2tT
-	UQ0swD7SFd216DqN9Io5BcR/4zC0HlerAEl9Ri6ceHE2pf/m4vEzTi8hUjyejH8=
-X-Google-Smtp-Source: AGHT+IE6eEPaGebslyh86mbGsKbp5uSQnqGRvMhcY+lsSPSSBCOC5HgUEH6R7dOJhN4Pc/2QFlEnIA==
-X-Received: by 2002:adf:cd05:0:b0:374:bd00:d1e with SMTP id ffacd0b85a97d-37cf289c624mr3980887f8f.3.1727866055377;
-        Wed, 02 Oct 2024 03:47:35 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f79db1de9sm15343485e9.5.2024.10.02.03.47.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2024 03:47:28 -0700 (PDT)
-Date: Wed, 2 Oct 2024 13:47:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yu Kuai <yukuai3@huawei.com>
-Cc: Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
-	Jens Axboe <axboe@kernel.dk>, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-Message-ID: <Zv0kudA9xyGdaA4g@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="De8iypiH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727869918; x=1759405918;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=gBJSjm8Db5ChqVbRHc3AT32deIpUrD8cF2ddm3npVBo=;
+  b=De8iypiHVa6sjROcjOiCXdSJKVWBzAttl1S3v0SqmNR0Ga0C2eKuAltz
+   j/MU7Yh20zgdg9x7IA/3ayrIG7AoEoVk2P49eFVGl4N8321FiA5RrSKre
+   sP2f//vufWEiikvdeSlHDptZDixqJDalVmSZi9ScBEaqKv8fZ/24NpiTv
+   KRTif1auJo8Dbr8kvMw4wMuLkeqDKtA1thJdi8c9TD70MD8CHsKmMkohy
+   9d0LfbgR/L8QodYa15bpiN5vjBVDxYyGjNF2AV13Of23An875oztm79Js
+   73Y0GD+cPj22Eu3Quo4iNJGhxBt1zxG+csHB8zqAlarqcvV7+gKlvTfgs
+   w==;
+X-CSE-ConnectionGUID: GYPMA+kKTLyE5qR0lETDGQ==
+X-CSE-MsgGUID: 4UROsYVDTySYgZ5XB34TXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27183776"
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="27183776"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 04:51:57 -0700
+X-CSE-ConnectionGUID: /nWU2SiwQfmHzvSdPW9YxQ==
+X-CSE-MsgGUID: TkUQETggSUKh9cmze5nP7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,171,1725346800"; 
+   d="scan'208";a="78507107"
+Received: from lbogdanm-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.49])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2024 04:51:54 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/i915/backlight: Remove a useless kstrdup_const()
+In-Reply-To: <3c793f42-6cd1-40e7-a3f2-556b6e5b4094@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr>
+ <875xqdy42v.fsf@intel.com>
+ <3c793f42-6cd1-40e7-a3f2-556b6e5b4094@wanadoo.fr>
+Date: Wed, 02 Oct 2024 14:51:51 +0300
+Message-ID: <87cykiu3hk.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-These are called from blkcg_print_blkgs() which already disables IRQs so
-disabling it again is wrong.  It means that IRQs will be enabled slightly
-earlier than intended, however, so far as I can see, this bug is harmless.
+On Tue, 01 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wro=
+te:
+> Le 30/09/2024 =C3=A0 09:48, Jani Nikula a =C3=A9crit=C2=A0:
+>> On Sat, 28 Sep 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> =
+wrote:
+>>> "name" is allocated and freed in intel_backlight_device_register().
+>>> The initial allocation just duplicates "intel_backlight".
+>>>
+>>> Later, if a device with this name has already been registered, another
+>>> dynamically generated one is allocated using kasprintf().
+>>>
+>>> So at the end of the function, when "name" is freed, it can point eithe=
+r to
+>>> the initial static literal "intel_backlight" or to the kasprintf()'ed o=
+ne.
+>>>
+>>> So kfree_const() is used.
+>>>
+>>> However, when built as a module, kstrdup_const() and kfree_const() don't
+>>> work as one would expect and are just plain kstrdup() and kfree().
+>>>
+>>>
+>>> Slightly change the logic and introduce a new variable to hold the
+>>> address returned by kasprintf() should it be used.
+>>>
+>>> This saves a memory allocation/free and avoids these _const functions,
+>>> which names can be confusing when used with code built as module.
+>>=20
+>> Okay, I'd rather revert your earlier commit 379b63e7e682
+>> ("drm/i915/display: Save a few bytes of memory in
+>> intel_backlight_device_register()") than add this.
+>
+> Hi,
+>
+> that works for me. Thanks and sorry for the noise.
 
-Fixes: 35198e323001 ("blk-iocost: read params inside lock in sysfs apis")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
-v2: Fix typo in the subject
+Will you send the revert?
 
- block/blk-iocost.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+BR,
+Jani.
 
-diff --git a/block/blk-iocost.c b/block/blk-iocost.c
-index 9dc9323f84ac..384aa15e8260 100644
---- a/block/blk-iocost.c
-+++ b/block/blk-iocost.c
-@@ -3166,7 +3166,7 @@ static u64 ioc_qos_prfill(struct seq_file *sf, struct blkg_policy_data *pd,
- 	if (!dname)
- 		return 0;
- 
--	spin_lock_irq(&ioc->lock);
-+	spin_lock(&ioc->lock);
- 	seq_printf(sf, "%s enable=%d ctrl=%s rpct=%u.%02u rlat=%u wpct=%u.%02u wlat=%u min=%u.%02u max=%u.%02u\n",
- 		   dname, ioc->enabled, ioc->user_qos_params ? "user" : "auto",
- 		   ioc->params.qos[QOS_RPPM] / 10000,
-@@ -3179,7 +3179,7 @@ static u64 ioc_qos_prfill(struct seq_file *sf, struct blkg_policy_data *pd,
- 		   ioc->params.qos[QOS_MIN] % 10000 / 100,
- 		   ioc->params.qos[QOS_MAX] / 10000,
- 		   ioc->params.qos[QOS_MAX] % 10000 / 100);
--	spin_unlock_irq(&ioc->lock);
-+	spin_unlock(&ioc->lock);
- 	return 0;
- }
- 
-@@ -3366,14 +3366,14 @@ static u64 ioc_cost_model_prfill(struct seq_file *sf,
- 	if (!dname)
- 		return 0;
- 
--	spin_lock_irq(&ioc->lock);
-+	spin_lock(&ioc->lock);
- 	seq_printf(sf, "%s ctrl=%s model=linear "
- 		   "rbps=%llu rseqiops=%llu rrandiops=%llu "
- 		   "wbps=%llu wseqiops=%llu wrandiops=%llu\n",
- 		   dname, ioc->user_cost_model ? "user" : "auto",
- 		   u[I_LCOEF_RBPS], u[I_LCOEF_RSEQIOPS], u[I_LCOEF_RRANDIOPS],
- 		   u[I_LCOEF_WBPS], u[I_LCOEF_WSEQIOPS], u[I_LCOEF_WRANDIOPS]);
--	spin_unlock_irq(&ioc->lock);
-+	spin_unlock(&ioc->lock);
- 	return 0;
- }
- 
--- 
-2.45.2
+
+--=20
+Jani Nikula, Intel
