@@ -1,48 +1,39 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9262141B6
-	for <kernel-janitors@vger.kernel.org>; Wed,  2 Oct 2024 18:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35C9212F0F;
+	Wed,  2 Oct 2024 20:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727894468; cv=none; b=uq/Rfc7iFFTXGiD/n0dG3yjBQl7uvZriUjzux00sBmIKhX2PBBjwD+6uuldOJkqLAHHsD5CaErzYEbw0yK38pfsuc3JgSilkV16clNILoR8hgp6NvRXT18IW+GvgF5qDCQ8CHyimLSA7ak+rknUEMMhnmDEIGuzSYmnisXgOvDk=
+	t=1727899380; cv=none; b=fPIME8SOZ/YppFCw7/iYjm2YvIWs/DwwDfXDruw0nE2glpSLfWuA2FUVnVQGrf387KRdGpSX1pv5oOJIXlYlOZt1D/vTLFQ3OYjn1i+2QKw9eX9MthsGUBcCpckO/CmSoDV7NyO9d2lSS7Jw7oZw00WYxttz55y8tbeGAHn+Rsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727894468; c=relaxed/simple;
-	bh=bpOJuwowU5pcBj4CeZ4iNAwG25deYeg+BobQloU177g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gJzxSUUKXeLBsZt4ui1C6bqWXc62C13PmdhP80rvYBX7yIon9PjPBRAcrQ3yVDHzR7/6zu4WIuiEvUt8vivf4yLA3BupDUfk4WOqCLCaINPbazQy4ZKOC3YPNpWeUTCUier8r8/2cUz/gnuB+l4NCkPfS93D0nOJadAmGC/4AdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U9sR/nv9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1727899380; c=relaxed/simple;
+	bh=nXmCThrNmuZQUi4BDS/SIg3d9HpKhnM0LoHaEUGa64M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=m5N3zGcFIShnzj+sVpwqRfd2QxAV14S2q4JSQIIs6i3aQOgsoqgAfNOcBYmO3YRcX3W2LLWVB1Esf/oDIvP9Kr+dbHpFQwqktAV/Sp5hq9l3oTqMekhLi9mKylzOTF/HByOSyoecU4yTb2/2iqiDDQJtJYPPw22eHhhpEE7AAFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vJh3uWvY; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U9sR/nv9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727894465;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HTuzt7MudVm/im7bgwfdRJU7jZDhH0Q0EoPoVe+9Wnc=;
-	b=U9sR/nv9ZouuKiet6OGkShwAjGrZuUFfwRs/rFl6r4SiA7cIk99KQpitfhC7qLmjwkiVax
-	Gx4UJKW6tXBd8ilFylt7uKuTVdyoLbhLbjEO3xTR/yK4Suj0wphdNqAykZBQ3nv1fcrnfx
-	MR/kOU9GVIJOnR14N2E+lKL9/FQ5srQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-569-Pfv_BZlHOpa4KH7Pm4HH-w-1; Wed,
- 02 Oct 2024 14:40:57 -0400
-X-MC-Unique: Pfv_BZlHOpa4KH7Pm4HH-w-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5BDB21955F44;
-	Wed,  2 Oct 2024 18:40:55 +0000 (UTC)
-Received: from [10.2.16.89] (unknown [10.2.16.89])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 45C3619560A2;
-	Wed,  2 Oct 2024 18:40:53 +0000 (UTC)
-Message-ID: <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
-Date: Wed, 2 Oct 2024 14:40:52 -0400
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vJh3uWvY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727899342; x=1728504142; i=markus.elfring@web.de;
+	bh=yk/JBSOBkQ1LKGKPJgjsG+d2d+2WBIGfUs3k8xorprg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=vJh3uWvY+YI4HwG+Oop6AdrCMM/hC36uMebPO+Z/0+2j5obO0oaV+VEoEEypGxf4
+	 K1fHJNZB1pF5m+rwMUANcpzvZawtGsRapzTV5BeDm1GHH0L20GjyMFb5IQJpD2S03
+	 vonCVDWDDLjwHNicMTKwFzxihVTegFmexgJmAJViy+cjnrev6fcwSjmGqXaB+8PTE
+	 nIJ/yWtaXmcFZm6GX9Xy5y2E+5u3LDtECmCtnwoQ/i7dM3tlb3SFND9dDnJXjY4hz
+	 z0VSvqHX10a/tkGG2I38nDCNnedG0GjHCfIMigr9uWlolXcpU/93UgwlPUITgPZV9
+	 2E/+iBVuRq+glIY7HA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mav6t-1sKpr33AIV-00d27Y; Wed, 02
+ Oct 2024 22:02:22 +0200
+Message-ID: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
+Date: Wed, 2 Oct 2024 22:02:20 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,48 +41,74 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
- Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>
-References: <Zv0kudA9xyGdaA4g@stanley.mountain>
- <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
- <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+To: linuxppc-dev@lists.ozlabs.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Jani Nikula <jani.nikula@intel.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Naveen N Rao <naveen@kernel.org>,
+ Nicholas Piggin <npiggin@gmail.com>, Paul Mackerras <paulus@samba.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] powermac: Call of_node_put(bk_node) only once in
+ pmac_has_backlight_type()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hKihFzh+xQoapC4KB1f813ixscEmHDPGUzMwuYAGUbLDglss0wb
+ aW1DRTpfjmTzAnntPjK4MUjjYybAkBJsvTKYbf4BiOL1MIfuY+vOQC4V8VuMjXrM8OeMu7K
+ /YnNfHSJaBVEQSyddEI15nrtpuVaNLW+IpzMvcjtsNH1IUPdyxetpjcQGjAD2/ohTb28UrV
+ S2d7mD6JlNhWOuly+q0nA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:i5Qz6h6TJGI=;vi/+cqtGm3/O6HJzmQA8MyVuEcJ
+ gnYaMhZqJzvwOLwF+Y8odsmfGi0zMGEJ+jIV430l1sse3ntrvjGfQ1YoXDGZ3ybIIjyG+Jwf0
+ tapsJNQqHFFFJTXztb+oYwXm9ifnmxd2qp1BlS1ROvH1TxlIjgn2/V6gvBFgkXIGh7o/Wi1bN
+ nTjvwAIxlDdzk2ll0V246EHCEtOyYJdzXBcUbHEhiCST+2gymhY6tDq9UAsXWspBHy0AjPixQ
+ GNnIoStVgXi3jhbMEDPIZcWgbCytgVAI8qGC6gU9N5lRkdA9gwne4uHM9LV1yxPSM2888jfui
+ 13Nig+mIFTBu4IlJLFKM8JommUTVPguflFHjDZwJRIQZmegta25NJT8MsHFWTe1h+UK6AoLn2
+ jKGwkEeKcQl0tlPUqJZnUxex2V9FvSGhe8DSgOMyYzCo7rfteczvgeYCyNOySr3wVcst9B9zf
+ Ta29slZPO+tYiGGJpzd1tbY78cE8IX8i0zZrsM5wCtEmMZoRwtBeXhhPlE3NCFKXAGDClQ45s
+ XJvCzRffCS6lxzwz8PnKZzyAfHy42uj+jY0mYm9ylFH2GVl5wTF2KWKk7RLrgNFxnbYHt75KU
+ PFxXp2GZqYabtgKIRHjYRz3D2mOcyWH/71R7VZoEB0lmzejIbrX2iiln5TDar9HXA3rLPZtBF
+ asQdpVbd0CB5xwzeKsooemCRBkk6dQ3y1bGGwmuG8gFsmozG5KTR4uvVHoFjxhnWupdV2X9ue
+ 0pqh760jpB4Ls1+VuoUT1jwcg02jQlP+K0ed9GtcywbuoST3JBILwUY9Ckrv+iOg3qmxV7lW0
+ ux5vDQ19KuZHrPIPMMkOZsDA==
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 2 Oct 2024 21:50:27 +0200
 
-On 10/2/24 14:10, Dan Carpenter wrote:
-> On Wed, Oct 02, 2024 at 01:49:48PM -0400, Waiman Long wrote:
->>> -	spin_unlock_irq(&ioc->lock);
->>> +	spin_unlock(&ioc->lock);
->>>    	return 0;
->>>    }
->> I would suggest adding a "lockdep_assert_irqs_disabled()" call before
->> spin_lock() to confirm that irq is indeed disabled just in case the callers
->> are changed in the future.
-> It's really hard to predict future bugs.  I doubt we'll add new callers.
-> Outputting this information to a struct seq_file *sf is pretty specific.
->
-> If there were a bug related to this, then wouldn't it be caught by lockdep?
->
-> The other idea is that we could catch bugs like this using static analysis.
-> Like every time we take the &ioc->lock, either IRQs should already be disabled
-> or we disable it ourselves.  I could write a Smatch check like this.
->
-> KTODO: add Smatch check to ensure IRQs are disabled for &ioc->lock
+An of_node_put(bk_node) call was immediately used after a pointer check
+for an of_get_property() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-This is just a suggestion and it is fine if you don't think it is 
-necessary. The call can also serve as a comment that irq should have 
-been disabled at this point.
+This issue was transformed by using the Coccinelle software.
 
-Cheers,
-Longman
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ arch/powerpc/platforms/powermac/backlight.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/powerpc/platforms/powermac/backlight.c b/arch/powerpc/pl=
+atforms/powermac/backlight.c
+index 12bc01353bd3..d3666595a62e 100644
+=2D-- a/arch/powerpc/platforms/powermac/backlight.c
++++ b/arch/powerpc/platforms/powermac/backlight.c
+@@ -61,11 +61,9 @@ int pmac_has_backlight_type(const char *type)
+ 	if (bk_node) {
+ 		const char *prop =3D of_get_property(bk_node,
+ 				"backlight-control", NULL);
+-		if (prop && strncmp(prop, type, strlen(type)) =3D=3D 0) {
+-			of_node_put(bk_node);
+-			return 1;
+-		}
+ 		of_node_put(bk_node);
++		if (prop && strncmp(prop, type, strlen(type)) =3D=3D 0)
++			return 1;
+ 	}
+
+ 	return 0;
+=2D-
+2.46.1
 
