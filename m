@@ -1,170 +1,82 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507D013A27D
-	for <kernel-janitors@vger.kernel.org>; Thu,  3 Oct 2024 08:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9204AEF5;
+	Thu,  3 Oct 2024 08:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727943238; cv=none; b=OodGwebAz3h4Xwjn60yLcUmZX9eXRgGrn7q31EmwINZk3O1kRKUdDNPjiipgjMeFn3RLwMN9BHAKGnGUAUrhnfpXQKUn/QbuMBDWQWcFWHFDaKqDBqlkOyAUvaBGmXXeY9K5s+4NexaY8VKYkNKbDv5D0pnEC9XQW+C8auVCt4w=
+	t=1727944214; cv=none; b=KUebA3RvDp2u/0VZ9rQ5Ct/EMVtKkczEEzG7+RH4Hp0WSUVfbZRXXIjvd11NYL9qezsUp4WCt8eGyNo42JQwtXyNUDTLLqDsT5ni5eqKBIE++hVhUk01+Zgv2/0nA9tdqHy97I5EKDMsYBU8/08ZulhgUJbbK/yYDmEQuVcvLDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727943238; c=relaxed/simple;
-	bh=bgNfJP5ScgD8g8oQm3xInRzpGZ5/VfV2y0R/GXAyWmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f0ADu/IFOQTO9OHoSaeRoXvC8AMbTqkFXxXV/mZQW3btVj4LMOyXQM8Bi/mgFQ9ceeb4ywdgANU03fwh93pIn4sMBeWQwJrTllkKsPw6gLQB3okCP/ip4sqIYLaqDsqbOTmCiglB7bG0sLWIyqJCkW+5TQP0VlVu15NV/jWMmiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GFB9DcKi; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1727944214; c=relaxed/simple;
+	bh=C4YjVWwucQlnFc3Bdyk1mQx7bTga0KsdWJhPjx/3d+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNYoQi7YFkRDWChbDN0TMXmZEk5hh1BxPdA1olb4JT1g6TIWwKqlo0PfRCuKRzLskX/0meuqJ+gucUZoNP0qtp/xrGuCzEjFNR2ytJOWvQ1/hy7TsjjCrfzw4EnwId2gRPbFe3SJMZemQjrCmJUZ5yYhhXnuq+7PmrXTXWbucVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z3mY8x/Z; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GFB9DcKi"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fabfc06de3so6735071fa.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Oct 2024 01:13:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3mY8x/Z"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37cd0b5515fso417630f8f.2;
+        Thu, 03 Oct 2024 01:30:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727943234; x=1728548034; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bgNfJP5ScgD8g8oQm3xInRzpGZ5/VfV2y0R/GXAyWmQ=;
-        b=GFB9DcKi1uchZ9bgXHAEXy1wxjHyXobDabIQTWn+hYY1CCAIGL+YIWqa3fnITTi8PE
-         fIhu6XedT+VbgEDWgIyZcsQv6Jd8g4PNhzxehOasDKefmqMdOmXzDmJk1fZZnUvsb5db
-         2ZFlTvBNr2M3aS0hQvpmlcGOZgIfZK+Is3yko=
+        d=gmail.com; s=20230601; t=1727944211; x=1728549011; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KgYlSRPdGNueMfiTMqgmWS1pTsWnaZpjKo5fJ+jS3mg=;
+        b=Z3mY8x/Zr1Qt1o7oX3krQqfq/+J0dTxKLzlEoFw5BSlyhsCXY8PGJmudEVcOGUsgY1
+         YCGvTT1MEDR08hIeYfefb81u3NbraqtHl+QkyrWQ0PlMhVkgB+0uEovm6q0/zDzTVIVx
+         sIj9Lz+xaLE8sa8nd7A2DFu8JAQlSFMInvgJ/rm4i5aukpErCJvGtl0Kn0aFa3w21YpK
+         M/X+PmGMtLh43JIpDrKjNYOFFrZ7CJuex9A8xd6PCQ00yvhAg9VAdOTfNlQYJXdGf4wi
+         yitHwyrYc1318/YetOKSuHdn3ftzMUy88wzM83jSlbyviKRw1Dyr+7dyCPKYNQUQHc0l
+         hiQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727943234; x=1728548034;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bgNfJP5ScgD8g8oQm3xInRzpGZ5/VfV2y0R/GXAyWmQ=;
-        b=q0hdO0TJoiL3N2XFRxr3j+iW8azVEea8KGJ56caAjBIjxlP+f7ElO4JGm3rLizns/5
-         G0QkAbY6d6FBcMOSklKaLKWIhIP/XidizB205o11INFSOxpmT/afvFJTbSGFmeCLcUsd
-         JGu+edMmvD4pbHSOxTrySVEomJQyD2xkv3zqOLJ3BGNhf4IO5k7UbRSrtfNkPqvyu95S
-         xo4IEuZ9bTnGQMhvf/1GEIoC2Ep1c/XvZycCaxdkSqkgasKHzKyLZBYdQg9ea8e/P/3k
-         WQAKzjVf/8NGWXRho3tKn/BhHwdCpTznmyt2ukkCPEWI9+U01ns5Hxz/BdJ3v/MzMnOn
-         Aobg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/idzcbNSWBQhVxpFuApV/Mx0giRkS/jAljjC2MlSxALwXywSh0Vq48S4miFbCQ5hT5QLKFbkdnKbmDUntH6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJLfQgHh6Law698DZJWslxbos9HdyBBcK9nvXzHU/VaYYRy75W
-	xI+PhsGzDI3B+bjjdmOpAiORMxolccrv2/MrNqptCYvdjf3TKETGPgUUY3iLqksID90nR/1YxNt
-	Y69mc8flVTFNA5cBF5HKbgqCAZ+uyCdccaM2d
-X-Google-Smtp-Source: AGHT+IF4yfX1GuUz1c4s+2ZQRbPj/jtK79yigEwQpJ/r9w9Wf7KLJVOGvXgM8gGKcRt8b3kBvKVkQXlw31PyXadETNc=
-X-Received: by 2002:a2e:870a:0:b0:2f7:6519:9a01 with SMTP id
- 38308e7fff4ca-2fae105ca8cmr31756781fa.24.1727943234436; Thu, 03 Oct 2024
- 01:13:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727944211; x=1728549011;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KgYlSRPdGNueMfiTMqgmWS1pTsWnaZpjKo5fJ+jS3mg=;
+        b=FCBfE9nFPaq25fXZVnQTZffw5fbtuzn/6yp7248bj23IPx3rMBI/GwNVr0OJ+FSPUE
+         3bVRN11QOL0KyfnmvFV5JRvdEm6HT4isQip04YIptpPNHrDwWvPd26oOA+rDXTOn2kAU
+         9IJiRpBxp6PWUVMfWieahHi4Rot0lDVnmXGTLS5YOp5uZ7fzrUZxhJahdwiWkvB5KGRu
+         lqndvzSRtVizUb7KPSJxg4IQeysRKoGhumhsLvSdG8LGS7yrYJyxqGdFNPUbo3k6ny8Y
+         yAXtuVVRoGqOMoYcZHjSvzAG4SqwCZHZXlLru9OPPG92U1w4OPZnbI/Dday0yNaZ9F+0
+         kl/A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2i2sHRcNmX7zwgvlbY6fNSym2dk/5qZ7OtySxPIIA6Eg4d09zYsI2LuPqNK2f72XcopI9BtuYWflu@vger.kernel.org, AJvYcCUx0TIpPBo0if8zWrQJ9s4f6kU9i1wWS1aWCxlkxiQ1PzUjetFoM2g/kSkLEV5sbGAkxf2Yk7lLjH02gA0g@vger.kernel.org, AJvYcCXfzqH8ElxQGIFTCn35W4RIDixauE53MCr7FJb9glcX7WyNybxqwBeFrcxNJQq4EsBQOTo+8u9sIBkieEQcrK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJEwOyaXGCUewSyFPSXOI1ZGQUky9YAySyaJ53fBJNrszmcpCD
+	p0s4amisPSsD5g/OzzKIeVgZ0uHRbn4/FvRMg+15NSqUnlmwFbP7cOQ5FzAI
+X-Google-Smtp-Source: AGHT+IF8npkmOhbojp5KXFi8cInd8zqhM4R+86JiZ/fJ268SNIVJdHBDzgQCRAJIvhOjCnLqlbpAug==
+X-Received: by 2002:adf:fc49:0:b0:37c:c9b9:3732 with SMTP id ffacd0b85a97d-37cfb8b58d9mr3700396f8f.21.1727944210905;
+        Thu, 03 Oct 2024 01:30:10 -0700 (PDT)
+Received: from void.void ([31.210.180.79])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d081f70b1sm735887f8f.22.2024.10.03.01.30.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 01:30:10 -0700 (PDT)
+Date: Thu, 3 Oct 2024 11:30:07 +0300
+From: Andrew Kreimer <algonell@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: fix a typo
+Message-ID: <Zv5WD6z0uHtcS6wd@void.void>
+References: <20241002211948.10919-1-algonell@gmail.com>
+ <1fe2c97a-fbb3-42bd-941a-c2538eefab0a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002200838.7316-1-algonell@gmail.com>
-In-Reply-To: <20241002200838.7316-1-algonell@gmail.com>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Thu, 3 Oct 2024 13:43:41 +0530
-Message-ID: <CAH-L+nN9yF0KTLnappKcrEetQcHT1+UH7ju04V7pPiqA2uZ-jQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net/mlx5: Fix typos
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000b4c72806238e224f"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1fe2c97a-fbb3-42bd-941a-c2538eefab0a@stanley.mountain>
 
---000000000000b4c72806238e224f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 03, 2024 at 08:59:42AM +0300, Dan Carpenter wrote:
+> On Thu, Oct 03, 2024 at 12:19:48AM +0300, Andrew Kreimer wrote:
+> > Fix a typo in comments.
+> > 
+> 
+> Could you explain what the typos are in the commit message so that we can spot
+> it more easily?  It saves a little review time.
 
-On Thu, Oct 3, 2024 at 1:39=E2=80=AFAM Andrew Kreimer <algonell@gmail.com> =
-wrote:
->
-> Fix typos in comments.
->
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-
-LGTM,
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-
---=20
-Regards,
-Kalesh A P
-
---000000000000b4c72806238e224f
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIF3Xpehe2ILfM7awts7LzlNmCSGFOlH7YXeqQVL/aY7PMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAwMzA4MTM1NFowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBkF3sq3+Nt
-gjT+fiKppaQcsYQn9D9n/FGCgeWAp6oiiHU0AAkhy84GDCVCscIaYIP1DL3W6bPl9+HuKOdkDn5B
-7wBIZcO6eHUbDAzK64HBXAhWve/8YbYAnhOPltISTcZzrYVY6fzWVrfF5bI4xpcjScYgSvlnp8Ut
-w9XaF9vYhzuNBgvXrwAvHwqO2Utag1tg3DfOuJrPeph4SrnG7Icoduipvq2NELxuO0d8TPpn9vgr
-ij5v3k31hg3Bia3jknBLIygbp8k2k9IqEeiDaL5Q+GvqqVv9N2kiMu/3zsWsCgIE8iXMYPwxmF8Z
-fb8bEUyBM8h0w8T3QDMp0Ufn3FrU
---000000000000b4c72806238e224f--
+Noted, thank you.
