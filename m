@@ -1,41 +1,41 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37A71A4E77;
-	Thu,  3 Oct 2024 16:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC661A7050;
+	Thu,  3 Oct 2024 16:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727971261; cv=none; b=I7gDF29ExkC1rM/QC/j6vukEBut1jjKG3ofikt/KvYHLNfogEPDrHFzh5N5A5g+YPrJDER9QEJ2OFkepPok+C5vYOznpL773nNxmaObn6kNj2d87QZskPhjfz2QWKEeruhkNuq9+/4400NPbMfC00wkiKZjMa9Lctpm51XVRW5Y=
+	t=1727971715; cv=none; b=iLn3aIH1VSm0NBTKUebsCw7xFGngUOXdnVPE0JR0Zfliw50twyz9sEGlj9VWg+X7+dfGHVz6QuaOPTEAqrXRF8xktGV7F+bfgI+cvTooIlWF0FKJ+4q4ZU4jsP/YUyGghQyr21ruZNSkoejhqcLjxg3MB2DNiBTbgwoo9ZYz0eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727971261; c=relaxed/simple;
-	bh=US268CN7C8u8I8vi+t39s6ixvSRPzyOJbZ9UOyWWhUA=;
+	s=arc-20240116; t=1727971715; c=relaxed/simple;
+	bh=r3CvogXyotkFfUTVwyvgKHy5mDAvqaZDvSX9/pr1Ftg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WLuIaNQEobM73kR09Q0nrAlehjg3if8CLoASzbJ2NZcV89vWYJL/m8fXBmk2uEq/q2ZAW4bwY+4UUJ8SMt9VP4nLiqdv673zDPCms+cF10LdM08R8me92lAt5+ejT5nsmyD2TVKxbdIFleYK5G0pxrB1vFph+xS3hOESPL8bxbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MGtF0T7W; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MGtF0T7W"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727971223; x=1728576023; i=markus.elfring@web.de;
-	bh=mgi1PA9iSNuOGfuY2GvmlRhWbak0YrTiX689gvSw+fo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=MGtF0T7WLniRYu2vrmZhSVNZLiNqyYqmj+nNdxvf1AjAFzIt2aa6zMHe+GcKa+xj
-	 F247iC+VdeUjaH1LUUpyeOOGuCh0utCcCQvM47zUUIMjITHIhO4mb00QpMVXOxjrD
-	 gbwQiKzpCtO8M4M4P/k0W2AUQApU0bSTPPkWF81/+vwSSZENln/HCuk3oLp/iOd0/
-	 HbjzMXr47RCXMZbi4r0omLK0ygdHdsmsRUdE5ZY6O2ya2UdIVkHTFmkIUDsY01gCs
-	 2U4KBD2MDVDI8y7gHi6WxouWdt9PYOxZgWBUWQrRJTYzQeRlCK1yvnnGXKWu0mK3i
-	 3el0ftrdZKmnLgyigw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Myf3v-1ry4KI0tbB-00wE6x; Thu, 03
- Oct 2024 18:00:23 +0200
-Message-ID: <c7844c93-1cc5-4d10-8385-8756a5406c16@web.de>
-Date: Thu, 3 Oct 2024 18:00:21 +0200
+	 In-Reply-To:Content-Type; b=kbKcGc+m/IFFd6RBX8B4kJlTmy+pwEIRuqluk8B+sZ4AAEfErzIcuXmtJ2t5bdaIXAR1kBdYBQBd6Z6CVmSJtl1pQM8K8KaZmpza220L7nbw24ApFnMEGZgd4IpZV17mbLq1oB8p38Fu7yfIpvqyi1AXCDoIbMDOxS6iZ2WG+Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XKGnC4DHvz9sPd;
+	Thu,  3 Oct 2024 18:08:31 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id vGOblWKlMNCc; Thu,  3 Oct 2024 18:08:31 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XKGnC3Qphz9rvV;
+	Thu,  3 Oct 2024 18:08:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5F7EE8B77A;
+	Thu,  3 Oct 2024 18:08:31 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id m8Cmdue2PRME; Thu,  3 Oct 2024 18:08:31 +0200 (CEST)
+Received: from [192.168.232.46] (unknown [192.168.232.46])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C1E108B770;
+	Thu,  3 Oct 2024 18:08:30 +0200 (CEST)
+Message-ID: <e843b3f9-2214-4945-bc07-68fe935551a5@csgroup.eu>
+Date: Thu, 3 Oct 2024 18:08:30 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,61 +43,55 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
- warning
-To: Andy Shevchenko <andriy.shevchenko@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
- =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Tony Nguyen <anthony.l.nguyen@intel.com>
-References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
- <63de96f1-bd25-4433-bb7b-80021429af99@web.de>
- <Zv6RqeKBaeqEWcGO@smile.fi.intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Zv6RqeKBaeqEWcGO@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:S/T1X299wtUxa7pi41Mplw3q1ZNcg+4TUXsquBhiQxPHy/qrgcc
- tPz0bDFKZLZhCLyHxntMWYbCdf6CAXlutSBJLIQ1EFAEmmuqfoilE+FWkSC7Ud1nsTJn9km
- 8wPxqjQ+L/jI746B/lNFQ2FY5mabp7ncctqrJZTmKSS2o1qh+kVzp+Alo1c4Kj93+bUOf2B
- OwogGPo7OL3Ed0y9cqXDg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:J7MJisWnq58=;MzSjKpS9joyZnLLpnb4Iyi5ZmJy
- k3zs7FxiSw5tTfQcXPK0zoL59OBAjsa5IdKXXfYLQ0vLJIkz7yQGb8IRtLfRZF4biM9nqA6TQ
- NQRI7JkiLN7o4d0wk84veOQXHzBv24Dyx6Yp57CjPbwNotLU+3ewKAsSQvGmqd+dl/EcdXvwN
- XZtcGAZDCI0BtE0WCUzGGr0oxQk3Xlh7mRG8crDp7OedLRRA/FG4exM0I4DUg6M5lVhNmUql6
- RNWqF5W0ltCByVDL8D2uG1nf/PMUkOdHmaSkCp5kwirDa2JrxCWfKBz6Hinp8/XlOICCR7rHg
- 2e4VFr2PP0DFw3T2aw9Uzt2XrS5EKyLptZpEhwXoMyi8RDvdKGeePrRCCf11GuClZvPveapyM
- K/3zNK4LzPk8+yfKUAL/4tQK9LhJ9XlL22HoZnyrAAk/bNRtupiyI4Y+1ldr9bl8khE9Du+TD
- FLln+Q29Aua5xoauZcmyssO8+X4YtoCcOb0aa6gEK40fIguCyrUAJdujxFdxae59NwV8dTqFm
- 0befEyvPyIYWgu2Odxg7ULboNZOyTYcoajjODpWNh2d5NcWVKsSe0bG/hLpe9h6T4MvBGCOq/
- RjQ1TCQeNYtC2LJGaIqR8p9Z2CZd22yjzz8t7AnZVBcOniBZMX4Ca6zrogR/3dXCRxaxjqFOD
- zkoq3Pb8IypWjzyVVQRRgulzaKWZ0V1vo+LaE20Ekva7XM7WRW5ICb4cpitTqpN20eopoTbF7
- 3Z9/4KoEGBdihapjGjHRxN4OGMAD0PGeLzvQU2jvCUIXpF8UsSY9HbdonFTsvlNIJMejs2aw1
- HjoPXeiWekcbRXdMO8GvggBw==
+Subject: Re: [PATCH v2 1/4] powerpc/4xx: Fix exception handling in
+ ppc4xx_pciex_port_setup_hose()
+To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Josh Boyer <jwboyer@linux.vnet.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Stefan Roese <sr@denx.de>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <72a7bfe2-6051-01b0-6c51-a0f8cc0c93a5@web.de>
+ <ecda8227-d89a-9c23-06b7-54f9d974af5e@web.de>
+ <e68a714b-32f2-de9f-066e-99a3f51a264f@web.de>
+ <8edc93c8-b146-4507-8336-0709b2596cb9@csgroup.eu>
+ <66655a11-888b-4c50-8e57-06552b82f922@web.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <66655a11-888b-4c50-8e57-06552b82f922@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> =E2=80=A6
->
->>>  "__" prefix added to internal macros;
->
-> =E2=80=A6
->
->> Would you get into the mood to reconsider the usage of leading undersco=
-res
->> any more for selected identifiers?
->> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+o=
-r+define+a+reserved+identifier
->
-> The mentioned URL doesn't cover the special cases like the kernels of th=
-e
-> operating systems or other quite low level code.
-Can such a view be clarified further according to available information?
 
-Regards,
-Markus
+
+Le 03/10/2024 à 17:47, Markus Elfring a écrit :
+> …
+>> Looks like you have messed up your patches,
+> 
+> There were special communication settings involved which hindered desirable
+> data processing for known information systems.
+
+Don't know what you mean.
+
+> 
+> 
+>> there is no much we can do it seems:
+>>
+>> $ b4 shazam e68a714b-32f2-de9f-066e-99a3f51a264f@web.de
+> 
+> Please take another look also at published information according to further
+> mailing list archive interfaces.
+
+Another look to what ?
+
+It seems like several patches were posted with the same Message-Id 
+and/or with an unrelated In-Reply-To:
+
+b4 is lost and cannot apply your series, it applies the patch at 
+https://lore.kernel.org/all/82aebf6c-47ac-9d17-2d11-6245f582338e@web.de/
+
+You may consider fixing and resending the series as an independant series.
+
+Christophe
