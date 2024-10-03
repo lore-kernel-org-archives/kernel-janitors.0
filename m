@@ -1,193 +1,113 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DD817579
-	for <kernel-janitors@vger.kernel.org>; Thu,  3 Oct 2024 12:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5508626AD4;
+	Thu,  3 Oct 2024 12:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727956996; cv=none; b=fdNHmb2ccefhELfYR2+R/+XEE0M7zkYKVUqsBcIi/sbfYIu14wnBHVVAGlm43Rzbw63+IRYlkrLmPs/GEb2zWtCJiarP8k/HL5JSSvhiqQz8bqZc6fvhS8/HrZEngxH5CG18h/iKWOaHezQgwajMVz6mE/zs9K/tH5TwJJngxjE=
+	t=1727957828; cv=none; b=A5v4JWYjUAeqc+1U5xue+0Hi2QTU6/0KUAOP6SXRkQXPxyU/rr2aYrcQ5F9OM3R1ubxC0+HufWj4eK6CpYb3UOrTntRl3ZBbGQRnjPnZ9KEgv02oS9SdEg72+rffO4QDp4KyW5zdP+DOP+N9/wBCqGhI4xF4s38Lq4+EnY6/Ar8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727956996; c=relaxed/simple;
-	bh=S9nYYA+ft7bnmvLPV9Xq5fVP9Vx11DcFu5nTQcirfjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XelHdio8XDFNjZvIMw+2myDPtsJrgu4Jaf4eoBBlYVezmEGb60wAaYONiis9ghNvXL57aRDrR+TwFBgML4aKwTwUoP2BIWr0yEoJBngkvRJH0RZ6Fc+g5o67khayAxyaO0VD7rXxLsvflIvXIIm/DdxzG7A5DTlCH0qndCytnks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RK1ltBCO; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727957828; c=relaxed/simple;
+	bh=VHnPe5JjctwpcQPgOWdjDqYJq+XTnXQdChzTsAkuj3k=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=clrLgVPwoOHtP4n1iuP1nqAa20MwIxBKL4z3960ZhLI17eQPDHuLCxJAJnsSi0A3CH+05mcL3DZ3dZFKcxlhMFRQCESbMqtEWIkfZWP6LFpuPH0e5sc5LQfBcDUkL34Fc0PN+zGj/QQfDYw88YOOX53P0sethGVnHe+mdZYdJBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KWZzfa79; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RK1ltBCO"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37ce14ab7eeso782596f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Oct 2024 05:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727956993; x=1728561793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h0v3FxexH6o+k9zGs10MnvBoywhJ9dhmJJLFKjWBKLg=;
-        b=RK1ltBCOKpMasL75F9bp60IhGt1HlAKoGHIWabpeiJBbvBAcg7lmIl6llxCWao9+qi
-         kBBmAGqWd4qwbZiQAw6Ez4UkqYZaN0vL4jDTr/gHx8SVzyVIzW6Eja2icEkrXko1szz7
-         XAKaWjrZzd6WwuJu79bjrkLGquBmaFK1Qf6Z7rTSRUb0D0e4vlNwWITrQCofPwx4TY1j
-         0yrpH8m+BNkm0UsL5X3+gHJu0xsHZb7AQtFomLgk5bp1GCofFoGGZI9p875zlBqf5tF+
-         UHS+GFJVoTK1LIZ4WmowAyEG1G5ZJ5AmEUbQCxaon5cwGKLKYDDj/kVBMicjNCyJFye4
-         VcCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727956993; x=1728561793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h0v3FxexH6o+k9zGs10MnvBoywhJ9dhmJJLFKjWBKLg=;
-        b=KTjNRuTTfWA+syRIb+aY7K+Ic0cOyU4nkQsLIin/SZk1CIO/PXC+YxL/yYpUgyUi5C
-         Mo6PfLFoKnQWal+tP9IYMS1UrTxPUl4/OFbEFQYX3E3nWzQEZh7CDNkRjtOX1etFPcng
-         AIO1jxa7mpVmxcUby1jmQ1cmGqKiYtgIs3EiVyX6PDPN7wWjsDWIGvN738YLYfwsjSze
-         u0v1WBYusokgDq30dh2F2uF1jxb4MDHYYnM1nXRtnsQk90G1AQ3qPgZKPg1c/Jqd88Ls
-         1tvMmO/hghZICUNEbDdqdAhtDPfrfU5nTr8FfRY5X/7agRI8Jusllqmge2/dhJHTWT+U
-         Ua1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXPXfoj+paIeRHcBmpy+hLJNjF+98JTZSA0TYJY/12FuzDSKKHIyRG/+ME/DAK951an1gWLoZaBiRdRFbl2ZV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEwx84hGA4Gpcdq9KtFOSuZqOVN9xkCfxVBKKav6jgN46ux+9D
-	IjNHOPTJBAuAlzNBPJl9vcNTeJ7lUAxqt+waUGZvaXl9P/vyeuQ08QW2HvZ2xKw=
-X-Google-Smtp-Source: AGHT+IFdfQ8pVihlgtJc1iFCJTfVxzLCRaEka3dk4gA6mpMaHt4xXmFAwc1bV33dk9fxjbTpGaNSTw==
-X-Received: by 2002:a5d:47c4:0:b0:374:c6af:1658 with SMTP id ffacd0b85a97d-37cfb8b5503mr6603502f8f.1.1727956992907;
-        Thu, 03 Oct 2024 05:03:12 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f7727f72fsm50006655e9.1.2024.10.03.05.03.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 05:03:12 -0700 (PDT)
-Date: Thu, 3 Oct 2024 15:03:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-Message-ID: <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
-References: <Zv0kudA9xyGdaA4g@stanley.mountain>
- <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
- <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
- <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KWZzfa79"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727957813; x=1728562613; i=markus.elfring@web.de;
+	bh=8I/IVOJ3HUxRhKc3coTrKl5H6hLLRD2Cqq329HCmAMs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KWZzfa79eoJusIj+SI02HZcVeTsQJT9lKNItBaG/W8Vi+sIU7ovmNWmrFYpT8EIr
+	 cnS9DdnFlAnHueEKFhExQVQb2q5rCSQygyY6KRH5EXubAZ96RVfpn/v3ZLpih4tnj
+	 M5cI3LwKpTFar9d87YBvstLNL8B/40Or4OBEKOdPhzXKxIDHYjdKUuMRpw9ohoJyj
+	 DiEPCHixJFoihspZpsbMyH9oru0TAUPBhcm4hWqOffgd4yZxN+Z631eExsPaIPL+p
+	 CmGhFGYHpEfFtJlfHWeCBAOgOak7uSzxM2TXgkBUf/XKzh4YKdkwQa7y4SmCeKh1+
+	 TLXZeOkALx3MU22Zpw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30ZN-1rtfqa21KX-017WxI; Thu, 03
+ Oct 2024 14:16:53 +0200
+Message-ID: <591377f6-1926-49df-a1cf-6b621244a710@web.de>
+Date: Thu, 3 Oct 2024 14:16:49 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
+User-Agent: Mozilla Thunderbird
+To: dri-devel@lists.freedesktop.org,
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+ David Airlie <airlied@gmail.com>, Edmund Dea <edmund.j.dea@intel.com>,
+ Sam Ravnborg <sam@ravnborg.org>, Simona Vetter <simona@ffwll.ch>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Daniel Vetter <daniel@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm/kmb: Use common error handling code in kmb_probe()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uL7MhWR5SiXR/kMcs5RsR9sj6LDYN4Fz+J3FqEkdyXxpptsRV/k
+ yEplJlOq2a87hAxfwzsdXCYks0r7GprGgrE8LKeN2ac00TT3K4Xb24JIWXGMGwxU+rO1kY8
+ RktrRdwTIRReqCWfWTXIUv3m+rkgnfSWFBQ3eIqVZH9TT1JVI0WpT0M3C6DvIpnMrPjrgy9
+ A8KUQeBFDKcolJpJ9i3ew==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:KCtrGQQkKZY=;TF5WihV4S6I79F9YfEj54MYbYD8
+ /RLaOqfTbpetzSRjLm8ka1Nc07LDwgTcIwpvBPO78qziCXUU0uU03lBRTq1ZGH00U1BHcQp03
+ e+dErfyCqI8wi/FLK8LXkY6Mns12agpqnoe5umMwCCxpjqKnX11VUVed7ZfR6pLUrtj4le+kC
+ qNzhdTe7T+RoXRTgIBwH9yQ5IJxpvEYpaiMHvufpmaVoStHvokb4NTwCBhT9j84x1iwoDkbk9
+ rJU50rq0JADFt5o++4V4xRB4B/6SVig9uke6atfdbMKALanjxkULgk6fASIg5hCwqR341ah8t
+ bbqO3iSz6mNBj9bLcOEhE1ePrn0VvpOE4JK6q20uSYD7gPGM5kPJEclbLJAjOTikPeRxf+Olj
+ IZSzx2Vnwg5Azt+f34NBg+DtVKK8wc0VEtC4Zn9KTkhvkDbWZCHogplMxVp0Ik2hT8gQsnyMJ
+ MSMESOE9PqPf3WhTzqrhniDtQ1LNNjdo06Fr6+z+fDwwOvUfjJ1QH/JrOBr+y+F6U0zDlTJOx
+ jy0QHmEy2jXLu/9sLI0XLPyMnOul7SctuRLEb6y4K64kVuselECpu9ilJAhyo75MnIA1J6o7n
+ lU0as8A+bgKiDRdLDgBhzTC3O+6+BD+eiZpyN7LxQ1CYMkEw1P/BIO711x5Ut31O+Uz6eyCUD
+ 3kwDiN7uKHDzt7MZbu+mPRu/CvZfFSou7ecEzaaoX0luGiE0cKjiaGi4qrAzZwn1912pKt/V6
+ wmTEF7oOvevlYv1E7x35Jqe/kjUlc+eZkww/BWMoJfqr+gKMe/MGiC613JdqeYUgR42Qol+Ot
+ Hwj3+60mYDVkHQGxTV0qnYcQ==
 
-On Wed, Oct 02, 2024 at 02:40:52PM -0400, Waiman Long wrote:
-> 
-> On 10/2/24 14:10, Dan Carpenter wrote:
-> > On Wed, Oct 02, 2024 at 01:49:48PM -0400, Waiman Long wrote:
-> > > > -	spin_unlock_irq(&ioc->lock);
-> > > > +	spin_unlock(&ioc->lock);
-> > > >    	return 0;
-> > > >    }
-> > > I would suggest adding a "lockdep_assert_irqs_disabled()" call before
-> > > spin_lock() to confirm that irq is indeed disabled just in case the callers
-> > > are changed in the future.
-> > It's really hard to predict future bugs.  I doubt we'll add new callers.
-> > Outputting this information to a struct seq_file *sf is pretty specific.
-> > 
-> > If there were a bug related to this, then wouldn't it be caught by lockdep?
-> > 
-> > The other idea is that we could catch bugs like this using static analysis.
-> > Like every time we take the &ioc->lock, either IRQs should already be disabled
-> > or we disable it ourselves.  I could write a Smatch check like this.
-> > 
-> > KTODO: add Smatch check to ensure IRQs are disabled for &ioc->lock
-> 
-> This is just a suggestion and it is fine if you don't think it is necessary.
-> The call can also serve as a comment that irq should have been disabled at
-> this point.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Oct 2024 13:20:05 +0200
 
-I mean it's good to think about preventing future bugs.  I just feel like when
-it comes to adding asserts probably that's more useful when there are a lot of
-call paths.  Meanwhile if we add a static checker rule then we're probably going
-to find bugs.  Boom, maybe I've found one already?:
+Add a label so that a bit of exception handling can be better reused
+in a subsequent if branch of this function implementation.
 
-block/blk-iocost.c:3144 ioc_weight_write() warn: expected irq_disable for '&iocg->ioc->lock'
+This issue was detected by using the Coccinelle software.
 
-block/blk-iocost.c
-  3090  static ssize_t ioc_weight_write(struct kernfs_open_file *of, char *buf,
-  3091                                  size_t nbytes, loff_t off)
-  3092  {
-  3093          struct blkcg *blkcg = css_to_blkcg(of_css(of));
-  3094          struct ioc_cgrp *iocc = blkcg_to_iocc(blkcg);
-  3095          struct blkg_conf_ctx ctx;
-  3096          struct ioc_now now;
-  3097          struct ioc_gq *iocg;
-  3098          u32 v;
-  3099          int ret;
-  3100  
-  3101          if (!strchr(buf, ':')) {
-  3102                  struct blkcg_gq *blkg;
-  3103  
-  3104                  if (!sscanf(buf, "default %u", &v) && !sscanf(buf, "%u", &v))
-  3105                          return -EINVAL;
-  3106  
-  3107                  if (v < CGROUP_WEIGHT_MIN || v > CGROUP_WEIGHT_MAX)
-  3108                          return -EINVAL;
-  3109  
-  3110                  spin_lock_irq(&blkcg->lock);
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/kmb/kmb_drv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Here we disable IRQs.
+diff --git a/drivers/gpu/drm/kmb/kmb_drv.c b/drivers/gpu/drm/kmb/kmb_drv.c
+index 169b83987ce2..2680afa684a2 100644
+=2D-- a/drivers/gpu/drm/kmb/kmb_drv.c
++++ b/drivers/gpu/drm/kmb/kmb_drv.c
+@@ -498,16 +498,16 @@ static int kmb_probe(struct platform_device *pdev)
+ 	}
+ 	dsi_node =3D of_graph_get_remote_port_parent(dsi_in);
+ 	if (!dsi_node) {
+-		of_node_put(dsi_in);
+ 		DRM_ERROR("Failed to get dsi node from DT\n");
+-		return -EINVAL;
++		goto err_put_dsi_in;
+ 	}
 
-  3111                  iocc->dfl_weight = v * WEIGHT_ONE;
-  3112                  hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
-  3113                          struct ioc_gq *iocg = blkg_to_iocg(blkg);
-  3114  
-  3115                          if (iocg) {
-  3116                                  spin_lock(&iocg->ioc->lock);
+ 	dsi_pdev =3D of_find_device_by_node(dsi_node);
+ 	if (!dsi_pdev) {
+-		of_node_put(dsi_in);
+ 		of_node_put(dsi_node);
+ 		DRM_ERROR("Failed to get dsi platform device\n");
++err_put_dsi_in:
++		of_node_put(dsi_in);
+ 		return -EINVAL;
+ 	}
 
-So this is fine.
+=2D-
+2.46.1
 
-  3117                                  ioc_now(iocg->ioc, &now);
-  3118                                  weight_updated(iocg, &now);
-  3119                                  spin_unlock(&iocg->ioc->lock);
-  3120                          }
-  3121                  }
-  3122                  spin_unlock_irq(&blkcg->lock);
-  3123  
-  3124                  return nbytes;
-  3125          }
-  3126  
-  3127          blkg_conf_init(&ctx, buf);
-  3128  
-  3129          ret = blkg_conf_prep(blkcg, &blkcg_policy_iocost, &ctx);
-  3130          if (ret)
-  3131                  goto err;
-  3132  
-  3133          iocg = blkg_to_iocg(ctx.blkg);
-  3134  
-  3135          if (!strncmp(ctx.body, "default", 7)) {
-  3136                  v = 0;
-  3137          } else {
-  3138                  if (!sscanf(ctx.body, "%u", &v))
-  3139                          goto einval;
-  3140                  if (v < CGROUP_WEIGHT_MIN || v > CGROUP_WEIGHT_MAX)
-  3141                          goto einval;
-  3142          }
-  3143  
-  3144          spin_lock(&iocg->ioc->lock);
-
-But why is this not spin_lock_irq()?  I haven't analyzed this so maybe it's
-fine.
-
-  3145          iocg->cfg_weight = v * WEIGHT_ONE;
-  3146          ioc_now(iocg->ioc, &now);
-  3147          weight_updated(iocg, &now);
-  3148          spin_unlock(&iocg->ioc->lock);
-  3149  
-  3150          blkg_conf_exit(&ctx);
-  3151          return nbytes;
-  3152  
-  3153  einval:
-  3154          ret = -EINVAL;
-  3155  err:
-  3156          blkg_conf_exit(&ctx);
-  3157          return ret;
-  3158  }
-
-regards,
-dan carpenter
