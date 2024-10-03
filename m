@@ -1,77 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A46221E4E;
-	Wed,  2 Oct 2024 21:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5CA1BC20;
+	Thu,  3 Oct 2024 00:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727904482; cv=none; b=EbtB4on6TeAkwspMqxFsjwxkPiV3SHO/pZffHa24w9/kF/qAwkBc5Go47/C032R2TIJLxHd1NAh2MCNUT3rhhX8ci2KIMe2/pRRU5nL1CsrgF9x01pVSpBxTwWZZ2mDWwi5FoCrUVxyrkeC8r3grr9hPP+Je1zPtppt5WZc1kM8=
+	t=1727916039; cv=none; b=r/YCom15JqJpRKLvoVpJ268TIAWVsBhcsU6autgUjU6S6L0oHcap3/Wx4LOgosaXvTDloxKw4/ZxBrcyg0G8NcdSEektOGq46G43k7GhnDyi7TFFD/YqlSzwqDACAwHpdPeNNFVBPzwvndru0LBoOZyxKfTfVuP+d+LNCGw791I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727904482; c=relaxed/simple;
-	bh=zs6gKrHbBNwdhRQTvo6Z5b0hCuUiP9uhriiml0z0JTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jmChn5Mq+2ClXbhQIrLfk5EehNpUStDYg1gjczQmLh+X2eLVitVzzNdXIkPh8pRVpH6ubHuPaz1shu7iRtUHhUeD/jlhc/AUEdr4ZIiNfYhTogP47E7WqIi0wOH/+MFfY0G/hCusoDP76J8je0MXSGhnOWyV75DS29lKPq5YQu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GY12d9iQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727916039; c=relaxed/simple;
+	bh=ubg2yzOpxd3KbR42Fu2Dz5a5+IIwMbOTk1Uo9RExvh4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=BdArlfrgZ/kJ4SB3isO6I4XOZzNXP7H7zvKzsJK9b1W17SeNqaRIBNbSUUQLsdLZJ9zMEyL37DXqRPUni4tdTFfy8S+QVXaQQg59Hodp6JQsIbYjjm73qr2ZQaMcenaIrd10SBKoZV9JWga2Rlwts98ARWfSwiVPwqeCtew2saU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhhO6Hbd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GY12d9iQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E2BC4CEDF;
-	Wed,  2 Oct 2024 21:28:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhhO6Hbd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C8AC4CEC2;
+	Thu,  3 Oct 2024 00:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727904481;
-	bh=zs6gKrHbBNwdhRQTvo6Z5b0hCuUiP9uhriiml0z0JTw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GY12d9iQlu2/+qtxOwlVMDSQINY8dQIDh7CpTZoJf4iVqNgj1v0+nCuJx9dO9cGp1
-	 0MEgTWYfL+cF/OzjecimxdvMdKD1PYdDWgvv37oLdSrPMrZllfTROibkTgV6y31x4o
-	 UIcHXGCISD0qpol/Z/F+meXwyo5bflPT9jD5adspiG/IBnqrJzq4vokmsUMNcGBmna
-	 iXbIaSBsKTdo4z6r39Nmgo2X9k62P29thAnENXRDdGkS5ilCnRhsHpsIX3cCV04luY
-	 xAfHmEDirgICnWCwAKQoj+NZS97cQLRnY0FU7/rbRNymaKGMlR4gRCyx4nr3Q885NF
-	 8paFQT1Ss+Z1g==
-Date: Wed, 2 Oct 2024 14:28:00 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: fix a typo
-Message-ID: <20241002212800.GF21853@frogsfrogsfrogs>
-References: <20241002211948.10919-1-algonell@gmail.com>
+	s=k20201202; t=1727916039;
+	bh=ubg2yzOpxd3KbR42Fu2Dz5a5+IIwMbOTk1Uo9RExvh4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=bhhO6HbdYNICD4NL9SIRiKDXs/lTl3IAlHrPK1KaF4PBsKfphVhPKgF0FkA77Axjr
+	 SMdrhc9z9KwTdy39Xz1eCcwhhl6IXSNx9a67XVt6QX3zTIFvtRneuaP2/lB9LoGRGz
+	 6W5pOznGwOVCcy6mIcP1B0ASTkU/uVSzsVYHM95xc8JCdFBkczYVPjmgvQQ4ax7FtD
+	 ufX4NMuQ8AhTe8OsNnQ9PlBw6EPjQul9YZL8sJ1dm8zursRnFDWxGdcEJOPgXHWREC
+	 JX95Z4tLABxOkyYFrg8jAe8Hk/oBnRRslCm66bx8cKhwiEgE63/hypc6334IJ2qtwY
+	 s4yq27v5KNBnQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF08380DBD1;
+	Thu,  3 Oct 2024 00:40:43 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241002211948.10919-1-algonell@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net] net: ethernet: ti: am65-cpsw: Fix forever loop in
+ cleanup code
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172791604250.1387504.10478445061671408891.git-patchwork-notify@kernel.org>
+Date: Thu, 03 Oct 2024 00:40:42 +0000
+References: <8e7960cc-415d-48d7-99ce-f623022ec7b5@stanley.mountain>
+In-Reply-To: <8e7960cc-415d-48d7-99ce-f623022ec7b5@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: rogerq@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, jpanis@baylibre.com,
+ alexander.sverdlin@siemens.com, grygorii.strashko@ti.com, c-vankar@ti.com,
+ horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-On Thu, Oct 03, 2024 at 12:19:48AM +0300, Andrew Kreimer wrote:
-> Fix a typo in comments.
-> 
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+Hello:
 
-Looks good,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
---D
+On Sat, 28 Sep 2024 13:04:01 +0300 you wrote:
+> This error handling has a typo.  It should i++ instead of i--.  In the
+> original code the error handling will loop until it crashes.
+> 
+> Fixes: da70d184a8c3 ("net: ethernet: ti: am65-cpsw: Introduce multi queue Rx")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> 
+> [...]
 
-> ---
->  fs/xfs/xfs_log_recover.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
-> index ec766b4bc853..a13bf53fea49 100644
-> --- a/fs/xfs/xfs_log_recover.c
-> +++ b/fs/xfs/xfs_log_recover.c
-> @@ -1849,7 +1849,7 @@ xlog_find_item_ops(
->   *	   from the transaction. However, we can't do that until after we've
->   *	   replayed all the other items because they may be dependent on the
->   *	   cancelled buffer and replaying the cancelled buffer can remove it
-> - *	   form the cancelled buffer table. Hence they have tobe done last.
-> + *	   form the cancelled buffer table. Hence they have to be done last.
->   *
->   *	3. Inode allocation buffers must be replayed before inode items that
->   *	   read the buffer and replay changes into it. For filesystems using the
-> -- 
-> 2.39.5
-> 
-> 
+Here is the summary with links:
+  - [v2,net] net: ethernet: ti: am65-cpsw: Fix forever loop in cleanup code
+    https://git.kernel.org/netdev/net/c/3c97fe4f9fbc
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
