@@ -1,148 +1,107 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB2B1A01BC;
-	Thu,  3 Oct 2024 15:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2058919B3EC;
+	Thu,  3 Oct 2024 15:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727968436; cv=none; b=MEIRz/tQX3fvldXGCUcnoZCS5ubeRHiwURAjj5gQQgM/3fdhltSe7bwaUHt79B1+QQf/OJzN7ZAlwMp6kIrZrLgd4G6YieRRkTrKzE38SBWPs0op3APT86XZdTRR+D78jboxZo/eo4fSCeK75PZ3xOrXrUivMzDAwvoYJJFs9M4=
+	t=1727970463; cv=none; b=WVIaFltOzj1cxZjdY6kQESG14e1riRzgSYuH5y/MfEGnzgLtJXbnxZRVV/ycyOfg+UWzPlY57heM4kZcjM2YEiJzG5/VFd3JVtBUrR2IxdFPmdvdBH+s+6x4CBQX8iNnUNXpIA/ZcaAKwTridC8NsG98UFyJhE+gpIAcgEJ3o14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727968436; c=relaxed/simple;
-	bh=f/vMsRMQF4DP5vs+pa5InfZpJ0GIZVb4L2/Q82hBRzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UH0/PTnGGS976237lBxSRZ+vCEfFKgjc84y/hYKRDLMasFHBTHhrcYZzXMevZ6YJbsUoB6MIt6o2kTy7x87GjXKdn2hsln65qxLR4Zws0kdg4INJEbo/atYBClBLI32xMAnA5+GTleDz7yvIjLRq2aJJCrTUNcKEcbkyFT8+ps4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VOIUspi6; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1727970463; c=relaxed/simple;
+	bh=6YtWEy943w6XN6R2AHNa0OznWZOmWncdEFICHNQpfYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZyMJnOwbTiQUFRspC2lCtH7fBNTCtIC2xKFxN1N0sozM5I77y9kfH9n1ZQ5zvW1RpXZ0Bqxt4VFkhc/CTuEYZUCVGaI7Ma+qMzSzrVSvs7x3hZKSHy1M/1tUAiUGVgwmVSk41RMCJ+Yl411237PbbxF1iSGwLA7jhr8mgV+/3VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=uRKwIq89; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VOIUspi6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727968434; x=1759504434;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f/vMsRMQF4DP5vs+pa5InfZpJ0GIZVb4L2/Q82hBRzE=;
-  b=VOIUspi6ug6jX9/ZHdq1bOKJNuDLxoUgnayqiu6aSJZT5rnPX64Tx+Ee
-   AhJk4Hc58rAa4VakI9BwExw2vxaIBYjKMgmfSweZyjoM73BM2J+pVEYkh
-   wgESnhbfhWq6SEirN3Bgr5g9gcTt17G/QTnyZv9/4f/y5wLmwcqynxLZu
-   bcfpJC9Pxf/YZbuyfYdwa8aTSDc+KKY45hrJ6qks4KUzjYtJxqAJxEDLs
-   CxIJOkg47hUo7tviwyXi/Uow/QDNG2qRG2823LrufVWMmn0QKOJQ7DCUV
-   HlsOiy/SvuW84dUWtFxkmXBkkuc1hxY5A/7QPBSz9D84ilCOf9yV3U5Co
-   w==;
-X-CSE-ConnectionGUID: 9RFU3jicTYalhtr2yfTJYw==
-X-CSE-MsgGUID: R9KjX12yQrWtl3925/yZmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="27297995"
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="27297995"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 08:13:53 -0700
-X-CSE-ConnectionGUID: g1yVx1EeS0yqLvTQckaNTQ==
-X-CSE-MsgGUID: ce2dxXTVSruPny3mMWSgcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
-   d="scan'208";a="74488618"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 08:13:51 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 80E4411F855;
-	Thu,  3 Oct 2024 18:13:48 +0300 (EEST)
-Date: Thu, 3 Oct 2024 15:13:48 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] media: i2c: ds90ub960: Fix missing return check on
- ub960_rxport_read call
-Message-ID: <Zv60rJo_ucdxHQk3@kekkonen.localdomain>
-References: <20241002165329.957739-1-colin.i.king@gmail.com>
- <Zv40EQSR__JDN_0M@kekkonen.localdomain>
- <f1e973fd-9933-49ed-8f9c-71b8283e6fb8@ideasonboard.com>
- <Zv6Z6P0cjYCkyJh9@kekkonen.localdomain>
- <ea1c37b3-0430-4bce-9228-5d761ff94425@ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="uRKwIq89"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727970445; x=1728575245; i=markus.elfring@web.de;
+	bh=6YtWEy943w6XN6R2AHNa0OznWZOmWncdEFICHNQpfYU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=uRKwIq89YSdIDUSSN6xXQU2nxgDwzu+GmR2DgpocW/h55ZNLZnSWP9uBlEFhQnPs
+	 9L6jHYFdPAFZp9magrXVsE3kkyBVu2IkLUt1R559o0aP/pMcbyDfG2006txOwD5wb
+	 wACAJtxuxztRUk/CZiNLcjh8W7OWCsvvmVRZF3w1Zuv5SyyNGQtTsQfkbfLHcdCOq
+	 6osE6+vaBsOjhy6nIwdMNWbdlhoDDbOuuCk7TAoiICbE/1RxKkDIXpL1TWVbK2Gkk
+	 Cv8xmq8/Ucthxov1RL07qgsmCc2y11DzZQ5ivRa4VxF3MKw2NBHxDyK5K4GRjJKnR
+	 CMakiobT8kqbkFynog==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MS13Z-1sTXja2faV-00QQXB; Thu, 03
+ Oct 2024 17:47:25 +0200
+Message-ID: <66655a11-888b-4c50-8e57-06552b82f922@web.de>
+Date: Thu, 3 Oct 2024 17:47:06 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea1c37b3-0430-4bce-9228-5d761ff94425@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] powerpc/4xx: Fix exception handling in
+ ppc4xx_pciex_port_setup_hose()
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Josh Boyer <jwboyer@linux.vnet.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Stefan Roese <sr@denx.de>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <72a7bfe2-6051-01b0-6c51-a0f8cc0c93a5@web.de>
+ <ecda8227-d89a-9c23-06b7-54f9d974af5e@web.de>
+ <e68a714b-32f2-de9f-066e-99a3f51a264f@web.de>
+ <8edc93c8-b146-4507-8336-0709b2596cb9@csgroup.eu>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <8edc93c8-b146-4507-8336-0709b2596cb9@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7MPgs994GP7PFwTjO44hqBW56mTWsQeui4bBMdSxXLvJc+I18VO
+ s3LsKLJlB0WoxgwzjZ3tpXnNToRVLOajOQJrK5FHuToJD9iwBaTwB3/EYIyHLfak5541MD4
+ z+J/lsV1Ae+bTBuAk96TDFTiscjOfyOrECsQUkwKqq8FY+kMmfdCeB0a1TdZ+DpOjv0/T3O
+ ehS3hOXBDffyRnAy/y4yw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:GJwRiYMBY8M=;LW10UzlCbGnHFde9E838MAi2OIL
+ wSC/ml98zkbeD4DWod8gSxUewZX3IEkJ5aExpsgM3RjbNjXc1PEtBUvuv7gOczmmdtqArMJAZ
+ 3czz0b56geNY56a8I6Pde7f9u0Lpz2ByxceN4jElHLmdKCDkPuTXACBmPZQVvxG3vJmPB42ZM
+ nHPrJLCvnp2qz8H1swUjXdHY93ft1ten354QN1DeyeDzxOM9XvarY9sc2mTJedPK9C78yOROL
+ svdUlaxvCGJ/o1nf06qMfLEc4SaYgG/AlmzFTpYk3WYiPmEekwyuIydN6t6+ujd7h5SL12DxD
+ 0yeUZifEA7Z3Au8tXix2iIh/PPo6YpM3O4P3nx00is0Lgmvv9TKxBRa/D+R5ai736S4KiN/GA
+ 7CQb89+v6OvVXWnxF+xUTliWQMD/VHtlD6EPcOaA3Hb35mWZigPOP1sTZNVawgdiqNX/ENM0N
+ ALQw/4ri9OPoQhi42TzkJXUHlaLBOfGbCuBebLKqoqq1b2XQZL79tZPDQf6ZBOKStk7epP1XZ
+ OvxsdVQzRv2GoSZL3pWUYHvYL84eFkme/bjS8oH/H/9UOttoeKaME+rZEn1geQ2thpRIUl7tt
+ we0NIepxreeXWJA1xyOId/kD0mFoKnWvaicqFYXAAkYkvHPND7Nze62E5lfEzQRmTfT6dhl93
+ Of8/rbbkxHPsBpXT9l4TzcwVnMPrJpxu3cDL+iFvbW/YNjJzUPXQ/jeJHYizZlAX+fhA486x3
+ ePgbTSI7opOvpCjqhWv+IY4f+TvpzNiqh7owCEn+4FTfl8lNDApOHpTKaoUfAsYVNZNiagFyH
+ pF/EzXXeriqSBJZ3hj8VYbjw==
 
-Moi,
+=E2=80=A6
+> Looks like you have messed up your patches,
 
-On Thu, Oct 03, 2024 at 04:33:54PM +0300, Tomi Valkeinen wrote:
-> On 03/10/2024 16:19, Sakari Ailus wrote:
-> > Moi,
-> > 
-> > On Thu, Oct 03, 2024 at 03:52:17PM +0300, Tomi Valkeinen wrote:
-> > > Hi,
-> > > 
-> > > On 03/10/2024 09:05, Sakari Ailus wrote:
-> > > > Hi Colin,
-> > > > 
-> > > > On Wed, Oct 02, 2024 at 05:53:29PM +0100, Colin Ian King wrote:
-> > > > > The function ub960_rxport_read is being called and afterwards ret is
-> > > > > being checked for any failures, however ret is not being assigned to
-> > > > > the return of the function call. Fix this by assigning ret to the
-> > > > > return of the call which appears to be missing.
-> > > > > 
-> > > > > Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
-> > > > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > > > > ---
-> > > > >    drivers/media/i2c/ds90ub960.c | 2 +-
-> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-> > > > > index ffe5f25f8647..58424d8f72af 100644
-> > > > > --- a/drivers/media/i2c/ds90ub960.c
-> > > > > +++ b/drivers/media/i2c/ds90ub960.c
-> > > > > @@ -1286,7 +1286,7 @@ static int ub960_rxport_get_strobe_pos(struct ub960_data *priv,
-> > > > >    	clk_delay += v & UB960_IR_RX_ANA_STROBE_SET_CLK_DELAY_MASK;
-> > > > > -	ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
-> > > > > +	ret = ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
-> > > > >    	if (ret)
-> > > > >    		return ret;
-> > > > 
-> > > > There seems to be a similar issues all around the driver. It'd be good to
-> > > > fix them at the same time.
-> > > 
-> > > With similar issues, do you mean the code not checking the return value at
-> > > all for i2c reads and writes?
-> > > 
-> > > In this particular case the code already checks the return value, but
-> > > setting the return value was missing. With a quick browse, I didn't see
-> > > other like this.
-> > 
-> > See e.g. ub960_clear_rx_errors(), ub960_log_status(),
-> > ub960_rxport_set_strobe_pos() and ub960_rxport_set_strobe_range.
-> 
-> Right, those don't check the return value. So they're not the same as the
-> one fixed in this patch.
-> 
-> I'm not arguing against adding error checks, but that's a big work and I
-> think this patch is a different kind of fix which should be applied whether
-> the additional error checks are added or not.
+There were special communication settings involved which hindered desirabl=
+e
+data processing for known information systems.
 
-How much of work that is really? It seems trivial, albeit there are a
-number of locations that need to be fixed.
 
-I'm fine with applying this but it'd be nice to add at least a FIXME:
-comment to the code while at it.
+> there is no much we can do it seems:
+>
+> $ b4 shazam e68a714b-32f2-de9f-066e-99a3f51a264f@web.de
 
-> 
-> Also, while still not arguing against adding the checks, it looks quite
-> common to not check the returns values. E.g. it's not just a few errors I
-> see if I add __must_check to cci functions.
+Please take another look also at published information according to furthe=
+r
+mailing list archive interfaces.
 
-I haven't seen this being as widespread in pretty much any other (upstream)
-driver.
+Example:
+[PATCH v2 0/4] powerpc/4xx: Adjustments for four function implementations
+https://lore.kernel.org/cocci/ecda8227-d89a-9c23-06b7-54f9d974af5e@web.de/
+https://sympa.inria.fr/sympa/arc/cocci/2023-03/msg00079.html
 
--- 
-Terveisin,
 
-Sakari Ailus
+Regards,
+Markus
