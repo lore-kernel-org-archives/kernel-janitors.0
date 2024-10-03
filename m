@@ -1,33 +1,59 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76F815887C;
-	Thu,  3 Oct 2024 12:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39E02BAFC
+	for <kernel-janitors@vger.kernel.org>; Thu,  3 Oct 2024 13:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727959943; cv=none; b=Og3x/aZzNMEt4XvfPbXMbnP45kwRhBWIqeV9Z9PqRftsGic/RXROGk5QqH0TlcZ/71VFoGFh2h56zkUXMSueggZR0KFY6Eq+wV+kUNvRKqemmjOXm/4IF4X/AgQmtUntRwP23NkVukmpbFEFmr7J/BKllahFz4gMC2GNh4H6Lo4=
+	t=1727961689; cv=none; b=ZSfuplOOon+85OOF+iNRbZwShk7UnGjpz1h/UNcKI+chLErl2/cwY456aIfKqMxV4KGOnm6BC5M4HI+eOYqd+jR8aAuTI9UQFovbu2p+lv1sw8nHVLM+zmDB9UkXmtHZK0IQD0qQHFmj/JUM9SlyUdFePLLnHZuO2jRm815J8e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727959943; c=relaxed/simple;
-	bh=4knKYED/oywMoN7hlRNnINKXfu8IgMO0L32nhK4LAy0=;
+	s=arc-20240116; t=1727961689; c=relaxed/simple;
+	bh=Z9XgoL99teLoFoNiHQ/T7CPkBXrpsvXcREZF6sRxZW4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YfV0aXXBerk4FOEOMRTLxG8sRtzhVJHDg2mIz5UAeOSekXyiToZheZWYsQeKpiWH4PmN/Y46HEoREh6y0RMtRhTilDUD0WsKwydux2be7brPlsJ6tjVGXtPrhF/Qdca6sfaQ0Lge6U/nb+BxOI0tGehyPLZ1Kls74Ss2RwbjACU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RXvYM9sI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 In-Reply-To:Content-Type; b=BmQrKCD5BpkAsg5e4NkuYriO/KykKqDbGdBtC5G556pDU2ce2MiUL9mZv414OQSOPJ9E03Y5eMu6rMd0RFP54xi7ymJbKWCrIPW6Pw8TjS4cEadhsJThY+7P3BaV3Cf2PYaTnWoKTY8TC+Ts/QKvEFOmHu7z+sJWvXY0hwwUFxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KuvmOa3x; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RXvYM9sI"
-Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B73B718D;
-	Thu,  3 Oct 2024 14:50:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727959847;
-	bh=4knKYED/oywMoN7hlRNnINKXfu8IgMO0L32nhK4LAy0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RXvYM9sINhxb46cR/6i5KMMygOw6mQrUy2n2ihGXUWOcq/SIK9QjIkManDVyHfUl2
-	 L+chHMt+TPmIjtxahhwMQhrkNH9EUkhiwQyQY0jeMW0OrnxC7dYOSD487VCxPABJ3R
-	 cbo14nGSSDbVHr4GlhgbHDm9i4SKjTghmogi50wY=
-Message-ID: <f1e973fd-9933-49ed-8f9c-71b8283e6fb8@ideasonboard.com>
-Date: Thu, 3 Oct 2024 15:52:17 +0300
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KuvmOa3x"
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-8323b555a6aso61303639f.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Oct 2024 06:21:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1727961687; x=1728566487; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eULbr4TsoYa61/A8JOQXACnDP0XDqLP86c5gLY8rbmg=;
+        b=KuvmOa3xE23DvQqNzwQdvTvE5UhT8Hy6VUFmYTpwJghzgzoaJrBwB/tYraSIFIHWyt
+         mADm1kMG7XwSax9hL7oYBhGdYm1XoO6htVT2oKF38jyOEMrfp8RESfeIWwLbhRR7jF6+
+         8Z6akxnNGCrQw0/uvENuU9yNjxQoJmkN2mojbt79L95DHTd28xtx51Y55pp1VMN4XvDu
+         G5yyvDmbDiffzSu6bDnXIFaRb7G5lKsPbEmhZD1Vy3UqssnW6rHc0raptuxb2bD7TP2J
+         GKAxMr4g34QbCk54YS0wYRgjcY8ay+LpIH2xOyFHGHAA/cEZfUTro9WEfLJcpA/ZzVd8
+         Hx3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727961687; x=1728566487;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eULbr4TsoYa61/A8JOQXACnDP0XDqLP86c5gLY8rbmg=;
+        b=C0cLyrpnATL35CJEu4Lyq7Tvhl18uwk6PYsYrQjNMCo9sQeOYFhNKD7sFmEJ2v2H0x
+         JEHHuPeMBEMkJ738zJCFyXPw7UmEbhtZavy2vH9DJMrHGaehr14jGI+R47dx3fmFfulS
+         BlRrAE1/NKgkt25k8WufRfbHCH7ipwCtQ8W0+Sxs+0dK+LYaqWmS9sfb28L5ISl2jbjY
+         l2Pc5KAY5cOzjUipccU1IvpVZpHyvH5AJDKotPTTqsH+tH+DIZWjLVf+R4km5VAq3vbQ
+         S2+0PUhIv+oLm6illve7bfIZAdFe5qYt8qc8TBgKGsMiFrVbqBIxj8sXUeYsS27rtC2+
+         dRMw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1PU2VDuLpXE8szF2n40dQ2ibD8xRkjDQKB4URyJ90x/Egxz8I0GnwomxlQ2l8moXDIQVw6XVnwCEGaEYvMAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2LtJ+rCAWn4tD0Mr9cb3uGBr1d0StcQ0nNytmAoUNmu+BYl0/
+	XtJ3BwlkqY+a0Xk7OKG36v+QJexu1AmOZGIVoTxa2TX2r0w1MUZ3JmpTKCQurMs=
+X-Google-Smtp-Source: AGHT+IFjlNg/Smwj4Ff8kYKTAbnsTGM3VJQtCnUDqYyE6RIcRzBsFaxmzd9qPRCnay5mniXJok6JvQ==
+X-Received: by 2002:a05:6602:6409:b0:82b:42f:41d5 with SMTP id ca18e2360f4ac-834d84c3930mr696767539f.16.1727961686848;
+        Thu, 03 Oct 2024 06:21:26 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4db55a63db7sm268802173.119.2024.10.03.06.21.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Oct 2024 06:21:26 -0700 (PDT)
+Message-ID: <fe7ce685-f7e3-4963-a0d3-b992354ea1d8@kernel.dk>
+Date: Thu, 3 Oct 2024 07:21:25 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -35,105 +61,57 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] media: i2c: ds90ub960: Fix missing return check on
- ub960_rxport_read call
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Colin Ian King <colin.i.king@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241002165329.957739-1-colin.i.king@gmail.com>
- <Zv40EQSR__JDN_0M@kekkonen.localdomain>
+Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
+To: Dan Carpenter <dan.carpenter@linaro.org>, Waiman Long <longman@redhat.com>
+Cc: Yu Kuai <yukuai3@huawei.com>, Tejun Heo <tj@kernel.org>,
+ Josef Bacik <josef@toxicpanda.com>, cgroups@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+References: <Zv0kudA9xyGdaA4g@stanley.mountain>
+ <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
+ <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
+ <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
+ <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <Zv40EQSR__JDN_0M@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 03/10/2024 09:05, Sakari Ailus wrote:
-> Hi Colin,
+On 10/3/24 6:03 AM, Dan Carpenter wrote:
+>   3117                                  ioc_now(iocg->ioc, &now);
+>   3118                                  weight_updated(iocg, &now);
+>   3119                                  spin_unlock(&iocg->ioc->lock);
+>   3120                          }
+>   3121                  }
+>   3122                  spin_unlock_irq(&blkcg->lock);
+>   3123  
+>   3124                  return nbytes;
+>   3125          }
+>   3126  
+>   3127          blkg_conf_init(&ctx, buf);
+>   3128  
+>   3129          ret = blkg_conf_prep(blkcg, &blkcg_policy_iocost, &ctx);
+>   3130          if (ret)
+>   3131                  goto err;
+>   3132  
+>   3133          iocg = blkg_to_iocg(ctx.blkg);
+>   3134  
+>   3135          if (!strncmp(ctx.body, "default", 7)) {
+>   3136                  v = 0;
+>   3137          } else {
+>   3138                  if (!sscanf(ctx.body, "%u", &v))
+>   3139                          goto einval;
+>   3140                  if (v < CGROUP_WEIGHT_MIN || v > CGROUP_WEIGHT_MAX)
+>   3141                          goto einval;
+>   3142          }
+>   3143  
+>   3144          spin_lock(&iocg->ioc->lock);
 > 
-> On Wed, Oct 02, 2024 at 05:53:29PM +0100, Colin Ian King wrote:
->> The function ub960_rxport_read is being called and afterwards ret is
->> being checked for any failures, however ret is not being assigned to
->> the return of the function call. Fix this by assigning ret to the
->> return of the call which appears to be missing.
->>
->> Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->> ---
->>   drivers/media/i2c/ds90ub960.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
->> index ffe5f25f8647..58424d8f72af 100644
->> --- a/drivers/media/i2c/ds90ub960.c
->> +++ b/drivers/media/i2c/ds90ub960.c
->> @@ -1286,7 +1286,7 @@ static int ub960_rxport_get_strobe_pos(struct ub960_data *priv,
->>   
->>   	clk_delay += v & UB960_IR_RX_ANA_STROBE_SET_CLK_DELAY_MASK;
->>   
->> -	ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
->> +	ret = ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
->>   	if (ret)
->>   		return ret;
->>   
-> 
-> There seems to be a similar issues all around the driver. It'd be good to
-> fix them at the same time.
+> But why is this not spin_lock_irq()?  I haven't analyzed this so maybe it's
+> fine.
 
-With similar issues, do you mean the code not checking the return value 
-at all for i2c reads and writes?
+That's a bug.
 
-In this particular case the code already checks the return value, but 
-setting the return value was missing. With a quick browse, I didn't see 
-other like this.
-
-  Tomi
-
+-- 
+Jens Axboe
