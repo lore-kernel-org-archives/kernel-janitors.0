@@ -1,253 +1,102 @@
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3658B1AB506;
-	Thu,  3 Oct 2024 21:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B048748D;
+	Thu,  3 Oct 2024 21:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727989329; cv=none; b=nxvSdAGc99D5EEK42Msr2tieYZhXlyoXodZaf7013ht5mEM0smeCwIahxEWgyZ+lydSmpO+PDPS/E5qYmFfwatlOEMbayR9Kk+0d8M3u1CIQtBM6mxYvkqOEm3YwlBrhwig46Vao4MvFvXkJrVP8l0zN51XXj0Z8fJsA4ljQ8zo=
+	t=1727990531; cv=none; b=FO+Vz8Khi0D+XhBE60jZXFqbIiL3XqZOfgNUk3Jk8jbqt5+wORjXRSVWxR7THbXbSlOvCtixvW69phmYjypkQKBmnWztw2Nuukc+KZW4mS4uDKJIQNNEJG7yMw2WFl+HZoNKyQVEYwjqN1nAebF7aG+shm13lBYoGBjdNxVEpu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727989329; c=relaxed/simple;
-	bh=g2Vg99EtDvGFad5M4/I4iscOcKXkxjUIMn9GFpy9Kk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mnWwHDQ/PZPZUNTZPoQWl+yHHCwDjQ1ErL4EUrpyDKAH7ogExFQSieFOmiy49E9SCbwivmkpvPXUyGg0gG/hYT1L7EDMENF9WEfK98TEXaOHxf5iT3tUyHkc25PFgFcgYq1f1rq1OeXP+eIbL4LH3CtaDHuErSWI+8/hJFckbaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XKPHp4GKtz9sPd;
-	Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id WAgclfL1Jj8E; Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XKPHp3F8Kz9rvV;
-	Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5F3C38B77A;
-	Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id C9MyDAEoZ6Bd; Thu,  3 Oct 2024 23:01:58 +0200 (CEST)
-Received: from [192.168.232.49] (PO19490.IDSI0.si.c-s.fr [192.168.232.49])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F2AF98B770;
-	Thu,  3 Oct 2024 23:01:57 +0200 (CEST)
-Message-ID: <9dfb5d24-f05c-4a67-b86c-7f157f633fb9@csgroup.eu>
-Date: Thu, 3 Oct 2024 23:01:57 +0200
+	s=arc-20240116; t=1727990531; c=relaxed/simple;
+	bh=myhzGuyZHVPOOzMuS6ujT2baNB9f6+kd036ZBWUO22w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTX+R8tFm4Iwppk+SyphxuOSzpNO0wpAJR4bgmdHr83l1KIx1EGZhCe1pk9J+WcZTfvRQLlf5AYO6tz+38/y8iS7Yox6SIyQ9sDCIG1ASLVa5MbuPTz29GYhgm/Zj4kAj2fGZsSUqbCaLJMd3etWlCL3mkGnTpwpfBy6avuVUOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0I1mRUr; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0I1mRUr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A20A5C4CEC5;
+	Thu,  3 Oct 2024 21:22:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727990530;
+	bh=myhzGuyZHVPOOzMuS6ujT2baNB9f6+kd036ZBWUO22w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I0I1mRUrF5WQkvwsAwVjK9ucFIwj5abD5OgkBMlmN2ZR9Bh/8XJmH57i8lhGObRmZ
+	 8jpYcPk9QY9ueQxrG91roKLdbr4KmbuVUKqGFa7m+qxwCS7Bhq6X4S/ZtvUQ4VN+aE
+	 4nLTSPEfDBL6c39CxmVNRLEZNauzDtpI1EQQw7Fy5HLJNs3Y25EqgWYK4bT1nGTtWN
+	 JdOd4u/351RIawkJii/27WI91Hr1O73Tg53NJQn8qacOwyGHahaGErmgMuP7UeDch4
+	 ZTTHr3WMx69jM6xzIKRAxHzvGvJ5VB+ZGjNwxZKGDQL9jspF9IuC/BI8IEbjWEFp0+
+	 HiFVa10GeHE1g==
+Date: Thu, 3 Oct 2024 11:22:09 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Waiman Long <longman@redhat.com>, Yu Kuai <yukuai3@huawei.com>,
+	Josef Bacik <josef@toxicpanda.com>, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
+Message-ID: <Zv8LAaeuJQkvscWF@slm.duckdns.org>
+References: <Zv0kudA9xyGdaA4g@stanley.mountain>
+ <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
+ <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
+ <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
+ <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
+ <fe7ce685-f7e3-4963-a0d3-b992354ea1d8@kernel.dk>
+ <68f3e5f8-895e-416b-88cf-284a263bd954@stanley.mountain>
+ <c26e5b36-d369-4353-a5a8-9c9b381ce239@kernel.dk>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] powerpc/pseries: Do not pass an error pointer to
- of_node_put() in pSeries_reconfig_add_node()
-To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>,
- Nathan Lynch <nathanl@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
- Paul Moore <paul@paul-moore.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de> <871qln8quw.fsf@linux.ibm.com>
- <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de> <87v8iz75ck.fsf@linux.ibm.com>
- <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de> <87pm9377qt.fsf@linux.ibm.com>
- <afb528f2-5960-d107-c3ba-42a3356ffc65@web.de>
- <d4bcde15-b4f1-0e98-9072-3153d1bd21bc@web.de>
- <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
- <434320e1-2a30-4362-9212-ca17cdde8b31@web.de>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <434320e1-2a30-4362-9212-ca17cdde8b31@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c26e5b36-d369-4353-a5a8-9c9b381ce239@kernel.dk>
 
+Hello,
 
-
-Le 03/10/2024 à 19:05, Markus Elfring a écrit :
->> Date: Tue, 21 Mar 2023 10:30:23 +0100
->>
->> It can be determined in the implementation of the function
->> “pSeries_reconfig_add_node” that an error code would occasionally
->> be provided by a call of a function like pseries_of_derive_parent().
->> This error indication was passed to an of_node_put() call according to
->> an attempt for exception handling so far.
-> …
+On Thu, Oct 03, 2024 at 08:38:48AM -0600, Jens Axboe wrote:
+...
+> >>>   3144          spin_lock(&iocg->ioc->lock);
+> >>>
+> >>> But why is this not spin_lock_irq()?  I haven't analyzed this so maybe it's
+> >>> fine.
+> >>
+> >> That's a bug.
+> >>
+> > 
+> > I could obviously write this patch but I feel stupid writing the
+> > commit message. My level of understanding is Monkey See Monkey do.
+> > Could you take care of this?
 > 
-> I was notified also about the following adjustment.
+> Sure - or let's add Tejun who knows this code better. Ah he's already
+> added. Tejun?
+
+Yeah, that should be spin_lock_irq() for consistency but at the same time it
+doesn't look like anything is actually grabbing that lock (or blkcg->lock
+nesting outside of it) from an IRQ context, so no actual deadlock scenario
+exists and lockdep doesn't trigger.
+
+> > So somewhere we're taking a lock in the IRQ handler and this can lead
+> > to a deadlock? I thought this would have been caught by lockdep?
 > 
-> …
->   * linuxppc-dev: [resent,v2,1/2] powerpc/pseries: Do not pass an error pointer to of_node_put() in pSeries_reconfig_add_node()
->       - https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fpatchwork.ozlabs.org%2Fproject%2Flinuxppc-dev%2Fpatch%2Ff5ac19db-c7d5-9a94-aa37-9bb448fe665f%40web.de%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cab19d1c85de343f5474908dce3cd8c02%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638635719164841772%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=8b7APXbglDf13PvZ4nVh5Z92bEft2RBqU3LfKsUETOI%3D&reserved=0
->       - for: Linux PPC development
->      was: New
->      now: Changes Requested
-> …
-> 
-> It seems that I can not see so far why this status update happened
-> for any reasons.
-> Will further clarifications become helpful here?
+> It's nested inside blkcg->lock which is IRQ safe, that is enough. But
+> doing a quick scan of the file, the usage is definitely (widly)
+> inconsistent. Most times ioc->lock is grabbed disabling interrupts, but
 
-Sorry I forgot to send the email. It is the same kind of problem as the 
-other series: Message IDs and/or In-Reply-To headers are messed up and 
-b4 ends up applying an unrelated patch instead of applying the series as 
-you can see below:
+Hmm... the only place I see is the one Dan pointed out.
 
-$ b4 shazam f5ac19db-c7d5-9a94-aa37-9bb448fe665f@web.de
+> there are also uses that doesn't disable interrupts, coming from things
+> like seq_file show paths which certainly look like they need it. lockdep
+> should certainly warn about this, only explanation I have is that nobody
+> bothered to do that :-)
 
-Grabbing thread from 
-lore.kernel.org/all/f5ac19db-c7d5-9a94-aa37-9bb448fe665f@web.de/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 128 messages in the thread
-WARNING: duplicate messages found at index 1
-    Subject 1: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-    Subject 2: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-    Subject 1: powerpc/pseries: Fix exception handling in 
-pSeries_reconfig_add_node()
-    Subject 2: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-   2 is not a reply... assume additional patch
-Assuming new revision: v3 ([PATCH] ipvs: Fix exception handling in two 
-functions)
-Assuming new revision: v4 ([PATCH] selftests: cgroup: Fix exception 
-handling in test_memcg_oom_group_score_events())
-Assuming new revision: v5 ([Nouveau] [PATCH] drm/nouveau: Add a jump 
-label in nouveau_gem_ioctl_pushbuf())
-Assuming new revision: v6 ([PATCH] mm/mempolicy: Fix exception handling 
-in shared_policy_replace())
-Assuming new revision: v7 ([PATCH] firmware: ti_sci: Fix exception 
-handling in ti_sci_probe())
-Assuming new revision: v8 ([PATCH] remoteproc: imx_dsp_rproc: Improve 
-exception handling in imx_dsp_rproc_mbox_alloc())
-Assuming new revision: v9 ([PATCH] spi: atmel: Improve exception 
-handling in atmel_spi_configure_dma())
-Assuming new revision: v10 ([cocci] [PATCH] btrfs: Fix exception 
-handling in relocating_repair_kthread())
-Assuming new revision: v11 ([cocci] [PATCH] ufs: Fix exception handling 
-in ufs_fill_super())
-Assuming new revision: v12 ([cocci] [PATCH] perf cputopo: Improve 
-exception handling in build_cpu_topology())
-Assuming new revision: v13 ([cocci] [PATCH] perf pmu: Improve exception 
-handling in pmu_lookup())
-Assuming new revision: v14 ([cocci] [PATCH] selftests/bpf: Improve 
-exception handling in rbtree_add_and_remove())
-Assuming new revision: v15 ([cocci] [PATCH resent] btrfs: Fix exception 
-handling in relocating_repair_kthread())
-Assuming new revision: v16 ([cocci] [PATCH resent] ufs: Fix exception 
-handling in ufs_fill_super())
-Assuming new revision: v17 ([cocci] [PATCH resent] perf cputopo: Improve 
-exception handling in build_cpu_topology())
-WARNING: duplicate messages found at index 1
-    Subject 1: scsi: message: fusion: Return directly after input data 
-validation failed in four functions
-    Subject 2: powerpc/pseries: Fix exception handling in 
-pSeries_reconfig_add_node()
-   2 is a reply... replacing existing: powerpc/pseries: Fix exception 
-handling in pSeries_reconfig_add_node()
-WARNING: duplicate messages found at index 1
-    Subject 1: md/raid1: Fix exception handling in setup_conf()
-    Subject 2: scsi: message: fusion: Return directly after input data 
-validation failed in four functions
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-    Subject 1: md/raid10: Fix exception handling in setup_conf()
-    Subject 2: scsi: message: fusion: Return directly after input data 
-validation failed in four functions
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: irqchip/gic-v4: Fix exception handling in 
-its_alloc_vcpu_irqs()
-    Subject 2: md/raid1: Fix exception handling in setup_conf()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-    Subject 1: irqchip/gic-v4: Fix exception handling in 
-its_alloc_vcpu_sgis()
-    Subject 2: md/raid1: Fix exception handling in setup_conf()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: powerpc/4xx: Fix exception handling in 
-ppc4xx_pciex_port_setup_hose()
-    Subject 2: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-    Subject 1: powerpc/4xx: Fix exception handling in 
-ppc4xx_probe_pcix_bridge()
-    Subject 2: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 3
-    Subject 1: powerpc/4xx: Fix exception handling in 
-ppc4xx_probe_pci_bridge()
-    Subject 2: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 4
-    Subject 1: powerpc/4xx: Delete unnecessary variable initialisations 
-in four functions
-    Subject 2: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: selinux: Improve exception handling in security_get_bools()
-    Subject 2: irqchip/gic-v4: Fix exception handling in 
-its_alloc_vcpu_irqs()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: selinux: Adjust implementation of security_get_bools()
-    Subject 2: powerpc/4xx: Fix exception handling in 
-ppc4xx_pciex_port_setup_hose()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: IB/uverbs: Improve exception handling in create_qp()
-    Subject 2: selinux: Improve exception handling in security_get_bools()
-   2 is a reply... replacing existing: selinux: Improve exception 
-handling in security_get_bools()
-WARNING: duplicate messages found at index 2
-    Subject 1: IB/uverbs: Delete a duplicate check in create_qp()
-    Subject 2: irqchip/gic-v4: Fix exception handling in 
-its_alloc_vcpu_irqs()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: powerpc/4xx: Fix exception handling in 
-ppc4xx_pciex_port_setup_hose()
-    Subject 2: IB/uverbs: Improve exception handling in create_qp()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-    Subject 1: powerpc/4xx: Fix exception handling in 
-ppc4xx_probe_pcix_bridge()
-    Subject 2: IB/uverbs: Improve exception handling in create_qp()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 3
-    Subject 1: powerpc/4xx: Fix exception handling in 
-ppc4xx_probe_pci_bridge()
-    Subject 2: IB/uverbs: Improve exception handling in create_qp()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 4
-    Subject 1: powerpc/4xx: Delete unnecessary variable initialisations 
-in four functions
-    Subject 2: IB/uverbs: Improve exception handling in create_qp()
-   2 is not a reply... assume additional patch
-Looking for additional code-review trailers on lore.kernel.org
-Will use the latest revision: v17
-You can pick other revisions using the -vN flag
-Checking attestation on all messages, may take a moment...
----
-   ✗ [PATCH] perf cputopo: Improve exception handling in 
-build_cpu_topology()
-   ---
-   ✗ BADSIG: DKIM/web.de
-   ✓ Signed: DKIM/inria.fr (From: Markus.Elfring@web.de)
----
-Total patches: 1
----
-Application de  perf cputopo: Improve exception handling in 
-build_cpu_topology()
+The locks are intended to be IRQ-safe but it looks like they don't need to
+be at least for now. I'll send a patch to update the ioc_weight_write()
+pair.
 
+Thanks.
+
+-- 
+tejun
