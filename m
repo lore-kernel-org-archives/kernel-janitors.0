@@ -1,70 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E13B6A33F;
-	Thu,  3 Oct 2024 21:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1012B1C174B;
+	Thu,  3 Oct 2024 21:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727991047; cv=none; b=Bm5cRSTm7o2QtxmkYJ3yqYY96bzIrUmj61RhDwZKV9eC9EbfB9eCnPhFQ/gP4M5YcQKb6jatHQz0iUlCYDoCUAXcmaTb0gjSfJDx2cJMlKXN3nYwrQIvsnk/0zRU+fKvVc4CIJK8lrGvLn1ORJx80YC6fpi2Uh/hUr085oGUL2E=
+	t=1727992527; cv=none; b=MXBXW100QnOXeIcIA/5aisRit5LM0F9Kz9ZsNnt0GpNbBomzjhfvKrA7cGnnHnCIXsIjWMokR9UmhjC5WaoqqJDLnVa8UhCQipE3rL4FkBtO4RnEMlvLehPs90xtfnElkG7vDZRqgyeaCU4Ozki2GXPvm0RpGP8f0/wW0wmn+gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727991047; c=relaxed/simple;
-	bh=kakrEADgGfwb+crJK1f9BO1JQPIodE1JT+klBW1nQDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c1/y69359IAP2xquJj8jCJnWbGlOEtWHDwobUMD6boCQwxThU+uida0d0I0OZz2aJvWIFh8YQWhG7Zq6Zh0w56kwjOwzaCL02bMgeiSlSSScZJgV55vJM6pZya7uFbuAqZ6JprI1Zx4ir+qAX4GdaM6ivwibksk3wqm+77W6Ufg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syMmYGBc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727992527; c=relaxed/simple;
+	bh=xOjdTn+0KHxGvPQv4VL8wLsownOXdNAg1fw1fwx8JjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FTvLM0VhRMO+DZMX8lokKTS9C93hJAbnY8NrjarQDXpSAp/SYRSxlz18d8WaHOW8VGMw0J02JjHfmsnrNlOaS5wL0doWfL0wb5Vi9AcVcYmtHocWlMQy4bmMJXrg6CYylFH87RGjOrwoVoFejtu/9xZkhoX5TGQEhISnrcyF10g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGyNj7l3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syMmYGBc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 860DAC4CEC5;
-	Thu,  3 Oct 2024 21:30:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGyNj7l3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB67DC4CEC5;
+	Thu,  3 Oct 2024 21:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727991045;
-	bh=kakrEADgGfwb+crJK1f9BO1JQPIodE1JT+klBW1nQDQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=syMmYGBc8278Fi5fZMuGoSb0+QSDyVF5vklFfXHH0+RwIEfjyK5N9uCe9AtXAL+kJ
-	 JdQiRl+BNbjALIP3HDXbMyVcsesYxyD3CFJo9OTEVLQJsOLCACI8Ji9ichvhcosv9W
-	 emH/RNR/I0G2xm3K40KT0QgNb6YsmQvnO2/kn+D3nwgKWTDy6owiCqtivQPavIDbar
-	 my9qLJAIUyoG4f/oSBajUE8ZA3ZPnXaAaVz9PO7T1eVjFKB3FmtGfPh08YRkJE4LEs
-	 iGZN2vRi41/YWiVUaXmCDkDyEnfchATmgOaxftzM7Byt/KXCn5a/DL5iWG+XBNrfKV
-	 VAhpdfF9k29AQ==
-Date: Thu, 3 Oct 2024 11:30:44 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Waiman Long <longman@redhat.com>, Yu Kuai <yukuai3@huawei.com>,
-	Josef Bacik <josef@toxicpanda.com>, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2] blk_iocost: remove some duplicate irq disable/enables
-Message-ID: <Zv8NBM4mOVoMoBQS@slm.duckdns.org>
-References: <Zv0kudA9xyGdaA4g@stanley.mountain>
- <0a8fe25b-9b72-496d-b1fc-e8f773151e0a@redhat.com>
- <925f3337-cf9b-4dc1-87ea-f1e63168fbc4@stanley.mountain>
- <df1cc7cb-bac6-4ec2-b148-0260654cc59a@redhat.com>
- <3083c357-9684-45d3-a9c7-2cd2912275a1@stanley.mountain>
- <fe7ce685-f7e3-4963-a0d3-b992354ea1d8@kernel.dk>
- <68f3e5f8-895e-416b-88cf-284a263bd954@stanley.mountain>
- <c26e5b36-d369-4353-a5a8-9c9b381ce239@kernel.dk>
- <Zv8LAaeuJQkvscWF@slm.duckdns.org>
+	s=k20201202; t=1727992526;
+	bh=xOjdTn+0KHxGvPQv4VL8wLsownOXdNAg1fw1fwx8JjI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DGyNj7l3Z5piZ/alfc6qwx1jeOwz0ISpn/6LF81xH7qlgh4I3MPwSWTnt8wrM9FJs
+	 jBYLccNjffKy18r4GP9nXdCrZsjTYXaD0/6U42PWQWrt8nI1hXVJZ8Uf3rsG3Y9LgX
+	 HEh0gMH76Qa9ihuw0ffMoLsWYM2SD6JU5HVKPmJ37rnIk916HyOfBqM8tqO5k3qFmg
+	 egLyOkVY298GGyRtTNXge4+EKMSLGLGnZEW3XKjOKKpcYT7z80mCRVmF1kP9sKrfmC
+	 vMZAETHke116oUvn8SdgmLdPOvJvSrsboibyq3HQPsnGXmPJK9bBCb5vKchuVmz4Zx
+	 g2sMiU5hUJPvQ==
+Message-ID: <a581ba08-11c1-4d0a-aa0e-0650b698355d@kernel.org>
+Date: Thu, 3 Oct 2024 23:55:22 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zv8LAaeuJQkvscWF@slm.duckdns.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drm/nouveau/gsp: remove extraneous ; after mutex
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Dave Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org,
+ nouveau@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240917120856.1877733-1-colin.i.king@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20240917120856.1877733-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 03, 2024 at 11:22:09AM -1000, Tejun Heo wrote:
-> Yeah, that should be spin_lock_irq() for consistency but at the same time it
-> doesn't look like anything is actually grabbing that lock (or blkcg->lock
-> nesting outside of it) from an IRQ context, so no actual deadlock scenario
-> exists and lockdep doesn't trigger.
+On 9/17/24 2:08 PM, Colin Ian King wrote:
+> The mutex field has two following semicolons, replace this with just
+> one semicolon.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Oh, wait, it's not that. blkg_conf_prep() implies queue_lock, so the IRQ is
-disabled around it and adding _irq will trigger lockdep.
+Applied to drm-misc-fixes, thanks!
 
-Thanks.
+> ---
+>   drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h
+> index 9e6f39912368..a2055f2a014a 100644
+> --- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h
+> +++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/gsp.h
+> @@ -210,7 +210,7 @@ struct nvkm_gsp {
+>   	} *rm;
+>   
+>   	struct {
+> -		struct mutex mutex;;
+> +		struct mutex mutex;
+>   		struct idr idr;
+>   	} client_id;
+>   
 
--- 
-tejun
