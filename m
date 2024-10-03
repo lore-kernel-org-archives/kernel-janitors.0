@@ -1,41 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E1916BE1C;
-	Thu,  3 Oct 2024 12:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E279E10A1E;
+	Thu,  3 Oct 2024 12:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727958931; cv=none; b=OiKf7YZoQnGFxeRL8mb9a0Z+kFEFKaWyngpRnR7PtBy4dVBlbBivbwgLDx2xQUy5zstz0Rwuy+BhVsOYvbtHNYAxC7ZufNA4w7yJAi2HHvTu6dBFWJ1WO8LK5uu8g5sZFBhdw+9JwbmZ28acMQjIEE6dSr8Anb+HXahxOZLpBCk=
+	t=1727959334; cv=none; b=VBC8zHA+zjkwU+BKz3/fBr3p4/FFKhY1LTgX8U3sNh0cGj0ad8rEIuzVQakJ4mPXJzuyrdy4v54geQflPIF067pRKsxO/DVnZoTpgKMfPz7phHSWVF8laa/BuHafbPgyfQmh84lJPYRSSZaok4Nbv4CZ4np88HN8xBjM/JCysxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727958931; c=relaxed/simple;
-	bh=dX1lwuTM4JZA3FMlV7WmqyFSLpT7WpN5NQHhwim0jS0=;
+	s=arc-20240116; t=1727959334; c=relaxed/simple;
+	bh=0nTsVWhCE4btm0gdShL2sklZl/tXeqQ2UWo5d6eB7jk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ONW0XfPX/lZTnGxj89HIzyqVd+6YC0UDPxSdWLJq4vWpUA5/EOKt306ByfVlGN+h7nLR8mkm+VMjU5VWf1LyZ4+LFHAPQXWrnQ9O4sMUhSSR/krZZt8k+ii+uwSQ2QNBjRfSfn6HPHyA8mVOjrp/jqDdoxAoH8sgym2hRv7rDDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hAYLZlAc; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hAYLZlAc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727958899; x=1728563699; i=markus.elfring@web.de;
-	bh=ohU9x5TH8lUQ31sJJDJLdGFIGYcmJHHEVJBKIgyLxY4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=hAYLZlAc+DTcOatjRclOUCHn+HtQC7o59q+pG4PFrE+MTb48eIV70os56fUEVCeo
-	 OTZUNWC9ugIGRUVe6Y/uSL2FTRfhAqMtOaUT5ZFkyF3eWUM+Dev8bNDsousq4LaIW
-	 uNjHK3lJcA2T1zvwXsZluDRak327TxPH3uNf0WBRockBChyodyLVg18i5E/RVAFOb
-	 4wKIKgwHSc6w4eO64tbMpMgk4idQjSuR1kdJOcJXJegvggyPJ78SuMvsFhI/CeM/7
-	 iTEH7nCunQlbJi6WEUhgLOJ8A6TtJ1AXbZoU4VPbaCJdypMIwp0kOAwtIy2FXaTul
-	 3Zt8U+rm/8YXMdnFQw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6b8s-1roSdB1ORS-016L6b; Thu, 03
- Oct 2024 14:34:59 +0200
-Message-ID: <63de96f1-bd25-4433-bb7b-80021429af99@web.de>
-Date: Thu, 3 Oct 2024 14:34:57 +0200
+	 In-Reply-To:Content-Type; b=rYpmwvxwMMNrsXBbYBrqpuaXKhyWxy3ypqr8jtDFDtnLb1SkQARibkjj6hODT9lSn53OD0VRda/RiaCojty33j1W4mt5qCsr61XFMF9Rf8bl8pkEXABapPmXRXzjWT3QIlahztLg2S94n2B365kM74dmUeNCTfUoyWxJ8ZlWNO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XKBC53lcyz9sPd;
+	Thu,  3 Oct 2024 14:42:09 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id UcCvYNjCI1ht; Thu,  3 Oct 2024 14:42:09 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XKBC41yX2z9rvV;
+	Thu,  3 Oct 2024 14:42:08 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 32AFF8B779;
+	Thu,  3 Oct 2024 14:42:08 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id T3yUggJN7IQO; Thu,  3 Oct 2024 14:42:08 +0200 (CEST)
+Received: from [192.168.232.22] (PO26607.IDSI0.si.c-s.fr [192.168.232.22])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C16C08B770;
+	Thu,  3 Oct 2024 14:42:07 +0200 (CEST)
+Message-ID: <8edc93c8-b146-4507-8336-0709b2596cb9@csgroup.eu>
+Date: Thu, 3 Oct 2024 14:42:07 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,55 +43,262 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
- warning
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com,
- Andy Shevchenko <andriy.shevchenko@intel.com>,
- =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Tony Nguyen <anthony.l.nguyen@intel.com>
-References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:trfPFBdDsORavmVVDpe+GGEgbMqWbbj5yZ54NKl24Zf+f68ghe4
- rFG0KKBU1v+UJcDDLM/GxfcoM3Mkmz+GI0zhdTds8aO8pZ8st1m1pOjBYW81ltxcHCCntKH
- t9vPlhCvztcV9fWIpUveKi04d5gV3XHNeGmQA6013ZovurH3l3AkMrLjZZjUNDgBwmXzY1u
- yM8yw1GbozFcLqhwfhjgw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:e9IbK/kx6WI=;0RuvU8aVTjpbufjy28RAWIj5yox
- T1IinAPN41Iwhd5Qfcnc1ow42eWJ8ynPJfJ909PK9HkgUK7iv9+579Zbx4uNXRELS0bdVNzZ8
- eqKlDBbSDtb92RatedC+eZDajd+bl6EoIDayL5MQEF8CoEAb/vBK8AzaKD+1r/BFAkc3jEoIj
- qtaeDCI8zWJnZQnqqFaExHI7m1GzIJeBh8JPiE5RBP3zru65fDTSebpAdwdhY4DktsUJCEN7c
- xnjj12TsfaOcOtke8u+xzlqv3CaQGdturpJ25v/o2DcvM94mdjZ1MRJj8MGLpQ4SlQcNo5FX8
- nLSc8GHUwjQEhWNeuOk0/2Jy86iGHK1V2yWm5gvAF9xwaLgAySAobW1jNG/XBNj8pKKl/vc8M
- t39OyPGidgry7wyCbx+5SBOX7vx8dhDHad3U4yaFD2I15RxUlL8EbAfLkOJmTlkgPzDWupUy2
- rc4kBO0kuIHp0mQdYBbchnPom+BjlG3fRNTVgJEePUeG4sjMWmqI5QmCZL3xEgmZtfcoYsYrn
- Bbtlt8X6o7UqLZ/ilLIsyrfCdSMS0te8Y/gTImE0ApQhimb0s3KbUDuH75REwqUNW274F9koP
- koo2r5i/6QGwLnun7yQLbzOEZEuCb5K5l5akln3On7H+0CBo+C678LwdjY8AQSPW8e6egf/Zi
- YOPjqfxSLH3pkLLVexKIDrjhtLMtIEUtz02Uif5hBA2zaovRmh7sxJTQwL82KxKqgHTN3KZWX
- ryIwtvTpHzVSXQ3ZqkY1Rjlx8GG8nQaOu6LBFdwTH9/oCoDx+F/GqkR4O1IOMGj1RZBXTpQjv
- O2eDACIF5BbxyLyKN/gBgAJg==
+Subject: Re: [PATCH v2 1/4] powerpc/4xx: Fix exception handling in
+ ppc4xx_pciex_port_setup_hose()
+To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Josh Boyer <jwboyer@linux.vnet.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Stefan Roese <sr@denx.de>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <72a7bfe2-6051-01b0-6c51-a0f8cc0c93a5@web.de>
+ <ecda8227-d89a-9c23-06b7-54f9d974af5e@web.de>
+ <e68a714b-32f2-de9f-066e-99a3f51a264f@web.de>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <e68a714b-32f2-de9f-066e-99a3f51a264f@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> PATCH v1:
-> changes thanks to Dmitry Torokhov:
->  better writeup in commit msg;
->  "__" prefix added to internal macros;
-=E2=80=A6
 
-Would you get into the mood to reconsider the usage of leading underscores
-any more for selected identifiers?
-https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
-efine+a+reserved+identifier
 
-Regards,
-Markus
+Le 25/03/2023 à 16:36, Markus Elfring a écrit :
+> Date: Thu, 16 Mar 2023 19:00:57 +0100
+> 
+> The label “fail” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “ppc4xx_pciex_port_setup_hose”
+> that it was determined already that the corresponding variable contained
+> a null pointer (because of a failed function call in three cases).
+> 
+> 1. Thus return directly after a call of the function “pcibios_alloc_controller” failed.
+> 
+> 2. Use more appropriate labels instead.
+> 
+> 3. Reorder jump targets at the end.
+> 
+> 4. Delete two questionable checks.
+> 
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: a2d2e1ec07a80946cbe812dc8c73291cad8214b2 ("[POWERPC] 4xx: PLB to PCI Express support")
+> Fixes: 80daac3f86d4f5aafc9d3e79addb90fa118244e2 ("[POWERPC] 4xx: Add endpoint support to 4xx PCIe driver")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Looks like you have messed up your patches, there is no much we can do 
+it seems:
+
+$ b4 shazam e68a714b-32f2-de9f-066e-99a3f51a264f@web.de
+
+$ LANG= b4 --no-stdin shazam e68a714b-32f2-de9f-066e-99a3f51a264f@web.de
+Grabbing thread from 
+lore.kernel.org/all/e68a714b-32f2-de9f-066e-99a3f51a264f@web.de/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Analyzing 123 messages in the thread
+WARNING: duplicate messages found at index 1
+    Subject 1: btrfs: Fix exception handling in relocating_repair_kthread()
+    Subject 2: powerpc/4xx: Fix exception handling in 
+ppc4xx_pciex_port_setup_hose()
+   2 is not a reply... assume additional patch
+Assuming new revision: v3 ([cocci] [PATCH] ufs: Fix exception handling 
+in ufs_fill_super())
+Assuming new revision: v4 ([cocci] [PATCH] perf cputopo: Improve 
+exception handling in build_cpu_topology())
+Assuming new revision: v5 ([cocci] [PATCH] perf pmu: Improve exception 
+handling in pmu_lookup())
+Assuming new revision: v6 ([cocci] [PATCH] selftests/bpf: Improve 
+exception handling in rbtree_add_and_remove())
+Assuming new revision: v7 ([cocci] [PATCH resent] btrfs: Fix exception 
+handling in relocating_repair_kthread())
+Assuming new revision: v8 ([cocci] [PATCH resent] ufs: Fix exception 
+handling in ufs_fill_super())
+Assuming new revision: v9 ([cocci] [PATCH resent] perf cputopo: Improve 
+exception handling in build_cpu_topology())
+WARNING: duplicate messages found at index 1
+    Subject 1: scsi: message: fusion: Return directly after input data 
+validation failed in four functions
+    Subject 2: btrfs: Fix exception handling in relocating_repair_kthread()
+   2 is a reply... replacing existing: btrfs: Fix exception handling in 
+relocating_repair_kthread()
+WARNING: duplicate messages found at index 2
+    Subject 1: scsi: message: fusion: Delete a redundant pointer check 
+in four functions
+    Subject 2: powerpc/4xx: Fix exception handling in 
+ppc4xx_pciex_port_setup_hose()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 3
+    Subject 1: scsi: message: fusion: Delete an unnecessary variable 
+initialisation in four functions
+    Subject 2: powerpc/4xx: Fix exception handling in 
+ppc4xx_pciex_port_setup_hose()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: md/raid1: Fix exception handling in setup_conf()
+    Subject 2: scsi: message: fusion: Return directly after input data 
+validation failed in four functions
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+    Subject 1: md/raid10: Fix exception handling in setup_conf()
+    Subject 2: scsi: message: fusion: Return directly after input data 
+validation failed in four functions
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: irqchip/gic-v4: Fix exception handling in 
+its_alloc_vcpu_irqs()
+    Subject 2: md/raid1: Fix exception handling in setup_conf()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+    Subject 1: irqchip/gic-v4: Fix exception handling in 
+its_alloc_vcpu_sgis()
+    Subject 2: md/raid1: Fix exception handling in setup_conf()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: selinux: Improve exception handling in security_get_bools()
+    Subject 2: irqchip/gic-v4: Fix exception handling in 
+its_alloc_vcpu_irqs()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: selinux: Adjust implementation of security_get_bools()
+    Subject 2: powerpc/4xx: Fix exception handling in 
+ppc4xx_pciex_port_setup_hose()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: IB/uverbs: Improve exception handling in create_qp()
+    Subject 2: selinux: Improve exception handling in security_get_bools()
+   2 is a reply... replacing existing: selinux: Improve exception 
+handling in security_get_bools()
+WARNING: duplicate messages found at index 2
+    Subject 1: IB/uverbs: Delete a duplicate check in create_qp()
+    Subject 2: irqchip/gic-v4: Fix exception handling in 
+its_alloc_vcpu_irqs()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: powerpc/pseries: Fix exception handling in 
+pSeries_reconfig_add_node()
+    Subject 2: IB/uverbs: Improve exception handling in create_qp()
+   2 is not a reply... assume additional patch
+Assuming new revision: v10 ([PATCH] ipvs: Fix exception handling in two 
+functions)
+Assuming new revision: v11 ([PATCH] selftests: cgroup: Fix exception 
+handling in test_memcg_oom_group_score_events())
+Assuming new revision: v12 ([Nouveau] [PATCH] drm/nouveau: Add a jump 
+label in nouveau_gem_ioctl_pushbuf())
+Assuming new revision: v13 ([PATCH] mm/mempolicy: Fix exception handling 
+in shared_policy_replace())
+Assuming new revision: v14 ([PATCH] firmware: ti_sci: Fix exception 
+handling in ti_sci_probe())
+Assuming new revision: v15 ([PATCH] remoteproc: imx_dsp_rproc: Improve 
+exception handling in imx_dsp_rproc_mbox_alloc())
+Assuming new revision: v16 ([PATCH] spi: atmel: Improve exception 
+handling in atmel_spi_configure_dma())
+WARNING: duplicate messages found at index 1
+    Subject 1: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+    Subject 2: selinux: Adjust implementation of security_get_bools()
+   2 is a reply... replacing existing: selinux: Adjust implementation of 
+security_get_bools()
+WARNING: duplicate messages found at index 2
+    Subject 1: powerpc/pseries: Fix exception handling in 
+pSeries_reconfig_add_node()
+    Subject 2: powerpc/4xx: Fix exception handling in 
+ppc4xx_pciex_port_setup_hose()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 1
+    Subject 1: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+    Subject 2: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+   2 is not a reply... assume additional patch
+WARNING: duplicate messages found at index 2
+    Subject 1: powerpc/pseries: Fix exception handling in 
+pSeries_reconfig_add_node()
+    Subject 2: powerpc/pseries: Do not pass an error pointer to 
+of_node_put() in pSeries_reconfig_add_node()
+   2 is not a reply... assume additional patch
+Will use the latest revision: v16
+You can pick other revisions using the -vN flag
+Checking attestation on all messages, may take a moment...
+---
+   ✗ [PATCH] spi: atmel: Improve exception handling in 
+atmel_spi_configure_dma()
+   ---
+   ✗ BADSIG: DKIM/web.de
+   ✓ Signed: DKIM/lists.infradead.org (From: Markus.Elfring@web.de)
+---
+Total patches: 1
+---
+Applying: spi: atmel: Improve exception handling in 
+atmel_spi_configure_dma()
+
+
+
+> ---
+>   arch/powerpc/platforms/4xx/pci.c | 19 ++++++++++---------
+>   1 file changed, 10 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/4xx/pci.c b/arch/powerpc/platforms/4xx/pci.c
+> index ca5dd7a5842a..7336c7039b10 100644
+> --- a/arch/powerpc/platforms/4xx/pci.c
+> +++ b/arch/powerpc/platforms/4xx/pci.c
+> @@ -1930,7 +1930,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
+>   	/* Allocate the host controller data structure */
+>   	hose = pcibios_alloc_controller(port->node);
+>   	if (!hose)
+> -		goto fail;
+> +		return;
+> 
+>   	/* We stick the port number in "indirect_type" so the config space
+>   	 * ops can retrieve the port data structure easily
+> @@ -1962,7 +1962,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
+>   		if (cfg_data == NULL) {
+>   			printk(KERN_ERR "%pOF: Can't map external config space !",
+>   			       port->node);
+> -			goto fail;
+> +			goto free_controller;
+>   		}
+>   		hose->cfg_data = cfg_data;
+>   	}
+> @@ -1974,7 +1974,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
+>   	if (mbase == NULL) {
+>   		printk(KERN_ERR "%pOF: Can't map internal config space !",
+>   		       port->node);
+> -		goto fail;
+> +		goto recheck_cfg_data;
+>   	}
+>   	hose->cfg_addr = mbase;
+> 
+> @@ -2007,7 +2007,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
+> 
+>   	/* Parse inbound mapping resources */
+>   	if (ppc4xx_parse_dma_ranges(hose, mbase, &dma_window) != 0)
+> -		goto fail;
+> +		goto unmap_io_mbase;
+> 
+>   	/* Configure outbound ranges POMs */
+>   	ppc4xx_configure_pciex_POMs(port, hose, mbase);
+> @@ -2064,13 +2064,14 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
+>   	}
+> 
+>   	return;
+> - fail:
+> -	if (hose)
+> -		pcibios_free_controller(hose);
+> +
+> +unmap_io_mbase:
+> +	iounmap(mbase);
+> +recheck_cfg_data:
+>   	if (cfg_data)
+>   		iounmap(cfg_data);
+> -	if (mbase)
+> -		iounmap(mbase);
+> +free_controller:
+> +	pcibios_free_controller(hose);
+>   }
+> 
+>   static void __init ppc4xx_probe_pciex_bridge(struct device_node *np)
+> --
+> 2.40.0
+> 
