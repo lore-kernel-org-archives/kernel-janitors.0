@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D2A4964D;
-	Thu,  3 Oct 2024 09:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03251B969;
+	Thu,  3 Oct 2024 10:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727946932; cv=none; b=KjCzYCS/uCEQNa3I5Qdj3S+/STgZp6aJ3dRdUqvphVLTBxAX1domIhRPIuOr9cyvo00NKPy9BLA7BJufRRl9wwhCveSDYsYLAiw+Ps8WPsgckxjJ/fefJ8Kl/7KWQfCNB4HIirH9YvaXqJIoG/bHvIXUs0ATWm4zkNfToxYnHIo=
+	t=1727951208; cv=none; b=JH8aeE5jIgVRuW7dW0AOvRzOKSNZHul0vvyJiXRNFyg9YutLPZfkmnrGvBeYRDj7tMFAYq8Ble1JlI86Qx5fywafPf49Y8BdLj23SgjfG1fOzbc5HQwtZZlmgFIZeWe6ntZiIP7umdoaohU2GkbHVv5bNXmHIZ+3JjPsJNNHFx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727946932; c=relaxed/simple;
-	bh=T9H1KMDW70Adce/wHpy4xVCVjuWFRo8miSFkI/PSAmI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fr7BjkssnLyoTvHha2SNJxACuGctiEGTHo5f9SPe21XQI/4nziGxZRxOJ2SHD5Fb7Cm0DdaXdh7ZEXZqfWNfbs7IsxvN9S5262+N6tF6hdVGzrcQqGSaMLYl2frXXqwxbTddKZbytg+1EJVbmLoCCmUOHzMMDvMeq5h0hkNANes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tH9j27wM; arc=none smtp.client-ip=212.227.15.4
+	s=arc-20240116; t=1727951208; c=relaxed/simple;
+	bh=xUg5L1FsC7hlElkj9d3y+8S9WZWsnv60Vz5r2Gf41gY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=e+NjfzCt9iKqI4/+RBXiyxxim79dhua/7ngGBnpmd1tvj+tdt+piol8yR2mgDU26VF03Xije+y1r3qcP9y6idS+oGHBU5rKcK8WiNhZK+K+cGkJsyXFCUwdMXzJ4CjCDLRpXRj8i/P+UWSuxNkCqIm0U58e76aFTJmv/LgThjLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IktCPAQR; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tH9j27wM"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IktCPAQR"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727946919; x=1728551719; i=markus.elfring@web.de;
-	bh=QfbQUxKe0kMlzpB+5J+6ovEC3y8cAE+iV9PdhEGYHZI=;
+	s=s29768273; t=1727951189; x=1728555989; i=markus.elfring@web.de;
+	bh=R2w453dMi5AaWXjIawX5EavqkP9cJY1Odqr//4eqXac=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=tH9j27wMd94YY1ZnP8ZhakZ8+E4QEQUopKc3En9IPnhq5xlEKvWEPFS/828Nush1
-	 MtSO9VZyhBkiAnPMft+GByzQ1V2k8JBrqEktBOD4Oalg6cuq7TzwoHP3bh/9zmkwh
-	 xwWczehYSbHc+pQTaBaJtMIwwlnANHd8fnmQQZHDrt/vmVDFLS6kQ40ipJXsj8Cc3
-	 v8/nNb1SYJ1qRTQS4/reahadcVtluA018RFyEomRjMKhEOjmi1p4Ga4xCvcVYlWus
-	 SSIjuV+qdweYmKMDXsGqfGF4YXuzfbad8ccDnvgjA93myY4fYBSqHvFk2PQ/UThIY
-	 7DBafCBWgMtriCiqqQ==
+	b=IktCPAQRUigFhHRRfTJT43DygSGfWlZz8RcxX8MkRSn5tYmuzyCR6t/MhZ7ZBD8R
+	 g5kXQn7c9l/VD1iY4tXxAIAABIO4IpFSTAxYI5Oav0OXQn6Zb3Te6Dwk9qpegfbcX
+	 8/wLtVl0Odzi97pvm4fGLuoJY0Pu0P0M4nh55x7HC1GXRINQeKvVelV14KrzAxyCW
+	 W6bN98W2dkkg5wctrUH2eP5Ws3DHAwRWRFMtc4jf/OFg0k874DlyoufmhLhk8XzaW
+	 YPJbsESV0TzI6PV4tLnhRGLZrRBT+2l593L4XwwD7VWhX4T1GPclEr8oegSpRlMdH
+	 oZ+lu3PRrTWiMoLASg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MxHUC-1ryzDL31OS-00zDWa; Thu, 03
- Oct 2024 11:15:19 +0200
-Message-ID: <0f103384-376c-41f0-a35c-8ad98327d6cb@web.de>
-Date: Thu, 3 Oct 2024 11:15:18 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MrOhn-1s8css2eTX-00mtTg; Thu, 03
+ Oct 2024 12:26:29 +0200
+Message-ID: <4f999e1b-9c10-453c-b68b-1495861d425c@web.de>
+Date: Thu, 3 Oct 2024 12:26:25 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,72 +41,72 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-pm@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>
+To: dmaengine@vger.kernel.org, Amit Vadhavana <av2082000@gmail.com>,
+ Anatolij Gustschin <agust@denx.de>, Dan Williams <dan.j.williams@intel.com>,
+ Dave Jiang <dave.jiang@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+ Kees Cook <kees@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Yuri Tikhonov <yur@emcraft.com>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] PM / devfreq: event: Call of_node_put() only once in
- devfreq_event_get_edev_by_phandle()
+Subject: [PATCH] dmaengine: ppc4xx: Call of_node_put(np) only once in
+ ppc440spe_adma_setup_irqs()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8uzWcBcb8tBnnghI0zA3+tXn8pmj4OiNVjA4c/rNoXb/vlp797P
- 1M0zU39GleC8AevZ+HLCvvP5QW2kP5YUg08WADNDWX6IUezn6gGOIbGH6P+6D4T5OSfSrCu
- uolAGO7JLWYS3o/9Z8smRnm6qxphQ6Ge4uAGc73TVkwHSsEYWlkWYwwUUF5cBtPuw9YnR6t
- 1Qc+eid5V+OXz7GLN/lbg==
+X-Provags-ID: V03:K1:wF4pxVDcuHj1rmCiDeCDgSESgdi1hQR/00hO6L5B7vWXltKu8Ju
+ 3+8DL33chZt3s7kkuClGOY+ADWoOhYVf/+9JM7wUjuRrIzIQkC7RPbju9lbt4JCzAkCZBEn
+ 0oFMeXQtqCHZQTN/4BdReyzZCJ2a1qXYe+JiSstIlcygWpGURG8PJnmTo1hxa+QWCFHB3LT
+ rXce0KgNoBy0YCgFeZUeg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PhU3V0Zhrj4=;RzUjTWaD3GzZ+1G0MzL9bbw/kAg
- bS/jUIG6BXH4vAt33629r4RwW3VdgKtHTdDds/eDOxynvtZ4I22KDOeaHQ+3sxlbZqEvt5LpY
- E3GKBwPOFEd//OFhPsXDO1/oaWLuScjaxhzVxa91ULf/vdsMPYHT4gUrDIxTvJm2xsAbk8IK3
- pFSWLN9j9CSkRdPwu0mTsZiAG+aiQUd10DJLEGC2yWhKPJExPK5XJP6IcmWrxhHwjSqWXgvB0
- wr3Av9TWnVihOIazlRuvRQoOZXS0tR23JONtbMInv8Kd4XXRdS9q3/QsiFUAbbRdOs7VDtGWi
- q0Ce+xLEMo6lXnJmRZi49lH9d6VZtB29bssQBaAA/WAQGa8XuTY3A7OFUFA2ArWkfv/6hFsmk
- 0Ww0D2HHiLla/hSFl2D6+jpHu3wwGR3HK7Qz1OqQJBdp/MlOngz0pBY4o5313B6FZZNsf7r+i
- ZzRLAdqi5I/zKq6m1Mx0OBVwXNVHaCnACpCv3MlVRYGLJK4fouQQoKjTLHjIgvlV/QcK5ql4o
- 5jTdSlQF/N4Mi6AHdBDZlb2mIXo98RXtIJfkVEM1PCDSGm8sqKStgbH9E4VssXLQcHZA7Y129
- HPKmILTPTXJi77XoS4p7vew4e9qjCUyhMTBUw7Zb1Sks8VZYLgHC8fi9lXA2+j3kqPCjciock
- YzZ1AGEdVA8xrrJs1i2wNCJzHguUUQ8PoywmSmZp41jLYIQvyKASC14yx4hMV+PoJvs226jQj
- e7/RDR+bbx7Phc59XICIlr+DnrjGtelApU/6qNauZVykOn2NozfhYTC+Pn0m7PGde11IachhG
- 2o/Jb4W/U2nO3Zq3qaIIsbAA==
+UI-OutboundReport: notjunk:1;M01:P0:jcLQ3ddXnSo=;pUvB0QAL1Ny3FZXliuLFWZn02dk
+ llZNIw/09EpEExfh2fjfp+MBLRag/lHKutoIr5EhcanUqixG4DPp+f9cfQRXvOz0vENaQZZOZ
+ ax9SEpxKRltqcjQUU0goyoXMVHHlMXjC0MMPoMypUWbTape20Tt7foTOIQ5/YYu6chp9JSc16
+ NwUVV7TPiVuDrv2etfohp7sUDB31Ej1hJshaNHXwSW7ZShbL31iqCCh1m0/PqDdJtO8tff6gg
+ GvNwhHWCWc9aXiyJMi4KpOeOXqy8TEmJ/bmWsbpqXbGatVkZ24xU1jafKo/nLCgckidrFEYGQ
+ 0NlyV+PFPjJfiR6miYuATjI80HO3hLLTM8xlfqmGDjTTC45Vi8V4MqEOLZk7I3qRRcqLebabw
+ 2pZZiJNIaoJ9Od/U/fslatWLxbs+1/hdqL37xnOV40g3ISwtmvcJH+m3tdnt5drNwkwtc4Fwg
+ V386FWLaJmAbv63D5ExDfNTtXnyXq9rTAlRktJG8x5VpeVIS0gHSZhprj9ABVTVGn5+8A8XZk
+ Dk0PsBbXU4PP9vB2IsGVsx9CIDM9GSdKBsrBVHU/DyZwGH2O71B99L19oOX4aDp6qh6LbMbzc
+ 9DQpC5PD1YEAI/YRf7uA2PtxQ5u/y2facHi7BMKkNr0FZXTWMaXOGZeJnP9OmLsdhsKl7iQJ/
+ 1MiM+VD7u4cJvSY28g5GFCOMyfjggsKnT/TzwjV1Obi/AjA7CKlWc4HICiNabOookqnuBwsHT
+ bOSKLJwEyIramp+9gKbRwsx8L14e9Eg+1DzzrLZfNV0Kdy00I6XOiyEIGIsa24Yi9GJNhCvIj
+ NQDGTr1+P1hRff4Hc6xVY5AA==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 3 Oct 2024 11:01:30 +0200
+Date: Thu, 3 Oct 2024 11:40:06 +0200
 
-An of_node_put(node) call was immediately used after a null pointer check
-for the local variable =E2=80=9Cedev=E2=80=9D at the end of this function =
-implementation.
+An of_node_put(np) call was immediately used after a null pointer check
+for an of_iomap() call in this function implementation.
 Thus call such a function only once instead directly before the check.
 
 This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/devfreq/devfreq-event.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/dma/ppc4xx/adma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-eve=
-nt.c
-index 3ebac2496679..70219099c604 100644
-=2D-- a/drivers/devfreq/devfreq-event.c
-+++ b/drivers/devfreq/devfreq-event.c
-@@ -244,13 +244,9 @@ struct devfreq_event_dev *devfreq_event_get_edev_by_p=
-handle(struct device *dev,
- 	edev =3D NULL;
- out:
- 	mutex_unlock(&devfreq_event_list_lock);
--
--	if (!edev) {
--		of_node_put(node);
--		return ERR_PTR(-ENODEV);
--	}
--
- 	of_node_put(node);
-+	if (!edev)
-+		return ERR_PTR(-ENODEV);
-
- 	return edev;
- }
+diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
+index 7b78759ac734..25d5ec028d68 100644
+=2D-- a/drivers/dma/ppc4xx/adma.c
++++ b/drivers/dma/ppc4xx/adma.c
+@@ -3938,13 +3938,13 @@ static int ppc440spe_adma_setup_irqs(struct ppc440=
+spe_adma_device *adev,
+ 			goto err_req2;
+ 		}
+ 		adev->i2o_reg =3D of_iomap(np, 0);
++		of_node_put(np);
+ 		if (!adev->i2o_reg) {
+ 			pr_err("%s: failed to map I2O registers\n", __func__);
+-			of_node_put(np);
+ 			ret =3D -EINVAL;
+ 			goto err_req2;
+ 		}
+-		of_node_put(np);
++
+ 		/* Unmask 'CS FIFO Attention' interrupts and
+ 		 * enable generating interrupts on errors
+ 		 */
 =2D-
 2.46.1
 
