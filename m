@@ -1,41 +1,40 @@
 Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39276186E3D;
-	Thu,  3 Oct 2024 16:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B28A433C1;
+	Thu,  3 Oct 2024 17:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727973511; cv=none; b=grobGn00aLdCCjFgyN4TSB71fTSHLnArEJXYln8Bt0FlBRV7WHjoY0XqkruoEk9vHHHJ8O/68J3S+246KYyPD6UXwWQLjYVtqVxkdXCS5WEUpvdRf5UH5CCEtgxKaMmW4au3fEc6CMb9mHoxMMZZfIZJzLE27haK6ApvGs48NdI=
+	t=1727975136; cv=none; b=R/BdZsJ5v4i2zEu57TmL7g3GdHdGKFAmP70Ww6RUi+ZV12zcMG8E6RnnUYwankKuOY9HMCcn6gGcz7TV7HKC0NW9QcTh1vtrBeJ3Xs8RfyL6Tdms4ikxMfQlgxunixzPTmXf2cuclq0PyTd5ihKoylvYXYWEp9gJtABVhj77Xs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727973511; c=relaxed/simple;
-	bh=F+1z7U/n6yl7iV1NAosWW0C7oJG63omhcZcSrRfRnkQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CbpF3doDV/+HDcWh7eYQwPlHDB2q5HJllI11nX0IWiqWx6wD1AVGzdhWQSLFDyGLxaspTzEeoBnHCdQCOktNDubL6F6VcChRqKBNgZpjmv+BEAJyhWDE82UUhG3G0m9agCsHWfTY5asNnpYI+MNf2ubg3vimk0sno6sGqGX9BgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PlYLC98A; arc=none smtp.client-ip=217.72.192.78
+	s=arc-20240116; t=1727975136; c=relaxed/simple;
+	bh=1UVcQEoUaLBLHGw7elSGxR6RHDiLIqlA5Ci00ESzSjc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JbD77A+J6yY9qI1GkrxhmncrRBgCqd2+zbH5YdnzohrnkpeCdRUWqG60MhCAIcfQvXIET/8FjfGOUlttCk3fvIs/DWXZq5zXt4ssZEFZ8BChyECXNYmFYP+bP/XESWbMdL8BK4Vx5IapQmwyv9D2VEqjzXP5GNYP2qEtk57INYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BI3RaFUO; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PlYLC98A"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BI3RaFUO"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727973496; x=1728578296; i=markus.elfring@web.de;
-	bh=F+1z7U/n6yl7iV1NAosWW0C7oJG63omhcZcSrRfRnkQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=PlYLC98AgZWVQVABWHy0FwIo+UGIBQwvDWsb+JfI7bk/h2YmOmobUScKXBBvDyNk
-	 AZVtxYssUmOret2w4oRvUW+es+aLuDUkCJbx0J+WaONFn8YkO4lQIyYb+24yzst7Q
-	 5MzMGqCR/+KpGvzVvk3yD6uUDuG+b1OxLgYFGmKJApkjjZxR41O8fL0/Wd3FudXvN
-	 VWJg1i883VelK0XpdDQgEdWZBHDPhD6UjzOC0rdxQ+kZdUFvhVmBKnejstxBffAgG
-	 6zIw5AN2ehQdIefD+33Vsf93wh4E+wLhFHwJahoFo6A1b/3NCpOKxQrMgpMLWXz6K
-	 RSR2OkZJG0jnDbtt4w==
+	s=s29768273; t=1727975111; x=1728579911; i=markus.elfring@web.de;
+	bh=x1aRqowk+avzQDXULHwlYV3N6dqI2bTShLMMxvbXA68=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BI3RaFUO/IqVYSLIno2H+VgC6jRTGjRmvO6ARpvkaeM9bjGR7UaJ+cyudJiy/paW
+	 SShRUCuF6za+2AiFLI6lVnpynfYCOXFXqTWcjjt7fFefj/HC/winOHm8gYeyejcNN
+	 zep2PkPh2WYZ3TCEvTz9rAc3vK5rTllKtNDjXO1CUUSnbBNBtdzPnw+HR5gNCyRD2
+	 yH2AErWcst71WingjBzq0LapmAha0LG4cBgLdfgq5fUlTQ9FtxwVnwfRpvI7mQIgi
+	 yZC5IK52zBbs484UzS3E20fbAPULj0apH7OqA5yiGqdOAOiJQ+C6ZCGACWp/XGEwZ
+	 ShT/jDC8FEPzfbNKXg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M76XN-1soRPz0pDj-005cKX; Thu, 03
- Oct 2024 18:38:16 +0200
-Message-ID: <28632df9-0ea6-4fda-a83a-5ff7c23f97c6@web.de>
-Date: Thu, 3 Oct 2024 18:38:08 +0200
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJnrX-1sco2x49gP-00ID8K; Thu, 03
+ Oct 2024 19:05:11 +0200
+Message-ID: <434320e1-2a30-4362-9212-ca17cdde8b31@web.de>
+Date: Thu, 3 Oct 2024 19:05:08 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,85 +42,69 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] powerpc/4xx: Fix exception handling in
- ppc4xx_pciex_port_setup_hose()
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Josh Boyer <jwboyer@linux.vnet.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Stefan Roese <sr@denx.de>
+Subject: Re: [PATCH v2 1/2] powerpc/pseries: Do not pass an error pointer to
+ of_node_put() in pSeries_reconfig_add_node()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nathan Lynch <nathanl@linux.ibm.com>,
+ Nicholas Piggin <npiggin@gmail.com>, Paul Moore <paul@paul-moore.com>
 Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
 References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <72a7bfe2-6051-01b0-6c51-a0f8cc0c93a5@web.de>
- <ecda8227-d89a-9c23-06b7-54f9d974af5e@web.de>
- <e68a714b-32f2-de9f-066e-99a3f51a264f@web.de>
- <8edc93c8-b146-4507-8336-0709b2596cb9@csgroup.eu>
- <66655a11-888b-4c50-8e57-06552b82f922@web.de>
- <e843b3f9-2214-4945-bc07-68fe935551a5@csgroup.eu>
+ <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de> <871qln8quw.fsf@linux.ibm.com>
+ <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de> <87v8iz75ck.fsf@linux.ibm.com>
+ <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de> <87pm9377qt.fsf@linux.ibm.com>
+ <afb528f2-5960-d107-c3ba-42a3356ffc65@web.de>
+ <d4bcde15-b4f1-0e98-9072-3153d1bd21bc@web.de>
+ <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
 Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <e843b3f9-2214-4945-bc07-68fe935551a5@csgroup.eu>
+In-Reply-To: <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RPueEfq7odGfIrQtPnI4m0PJ39ogJF2r0KLnd9Jt8NBOXvCvNQD
- v9sYqSOgYyLAwLzY2q2dSHG8z80OZGDse0kNGxc1wzRMAUQ4wpdl//k5KQVKKu8leMVdWUs
- AmUA9QW8FfX5I1VBApoGncX4nDU7bY0ldHefJ9WnIH7cFLDmtpmQ/2LgKvUqjUaDKG414PD
- 3tRzt6aoGOCZK8T9lKkTQ==
+X-Provags-ID: V03:K1:l3pgyZOI07Bh3dnf7Bb4Ey6oOw4CTctWcTQzVYrYpobYkMHHXRn
+ OPk51Q8pvjKkh1GXivyDLMXfVDWgV17SXTn7dpTpoMJKyR5B9MPUpKdLhFHDwMw8X8qTCY/
+ MpN6c2xOvsHPMUhN+ZeRQBCKXhtupcUjNvgF5A5UqRZRi7WsV5o26c+nIi+Rs4CrKnwe0r+
+ 5GUf7Wh3YrZvtuVgD4Hgw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JRKwEzXiVis=;rdSJHpinRPkxWnJHAGkZih/o0Do
- u/ArAjqkNbmv6kJMsjKj5drJblyzplTX04aRt4ebLVw50c0Oq3G6bfCAQ+3k1xb8AxPI/uLtl
- t8P9NbAOBeEew2jgo1YDAH1GjY4dF9n97YdNwi6/pVbmktpmHcIRM637lYzkt5/ydqdiQkIPB
- YlitfDzb64y3lptIErz2EHLx2Bs05Le89OTJrwn//+v9LFMq8Lx5Nv2PFUCWohHtoWeFIw+NW
- 94dAsTkpRXA7ErHpX09COHjvxhWibtajQx3BviS/Cv5qoffz6MDd+r5PuzF83COcihSHfY72N
- ilc6Us1N0OIj0lIGWPvyTQXDTKnUI0ld1kt0U9T3MJ1ZJdW+PaWK0qQMKi85JlYOh7OfuBXJt
- RsaTL0aML/aX1lzkkAlrE++ybPSze97N9RJLG345Gk3gYUUQ++xnGIXikh9dtbkgSI/afQBVa
- Nq8cWzVD5TWCKa2+pSHp9pQQC5PKZlxZnxZIKxrRu2KUzVp3punbQw4xkfpvY8QEnzPbtygBg
- lzcb3rebeX0cWwn78YhShkA3/GqB1suWE1dGqQByVpPK2dHYDUyzPFttgY8SgL0ckUXu2A5Y8
- UpAF4ZBnxO8GwRMugza9FTMh/pq3brmTj49T+rd4kwquQr7w48YLOyOdUbz6jiufez527lDb6
- zWZfgYG1SAPSh61+b4Gevs7BddoC1VY74X1HMZxLPExmd7JDRasFBxJIfQxYTwtDxveuu2f2E
- D9RF2YJCX7faYhQmz4noX4Ycojok2G8hldUiNnOOMzvzLYc2hwZqX51hQrFZlJEus8nVhBq3p
- dowqb4xaL9WcqRhkKWRkey6Q==
+UI-OutboundReport: notjunk:1;M01:P0:H1JxztHArQo=;cU/Cb9YdbVJnqdRJnvh/1yWlVIo
+ FGsQCXXnJYaq1CgPuH5q2GZ+CEH611VtAZDvcnNaGLpYX5BAgU4/XAHIGBlD/nTs+SKQg71Ez
+ OqRQzxJYKJQgHvBjH/Z3o/sbKrzHDdmuYxN2uclk4dh6P+Jbe/MRnSqDS+MIl9WYxEv/jicPY
+ 1b2dUSlzSK0eKhi+sgXZo9KRzMsNPW+qBmWJam+j9YiRegdxCFUbfXcYdNhK/tDWO1IL3+jqy
+ nBYxZRnoPVlchx9XTqwMsdaZYe8l/AgKKocM1pMgMSuRmm58aosPDTFYVsufYGzywLcfZliC0
+ 3hE/79L+d227eg3CTeVTOtM8jBn0rVNPi7PP9dnEzC6or/Glmcj+XM9GI41j5wa9sxcbrg0c6
+ lGSFR1BDbgrt2/hdpzqcC3WjkI6vWr7RwClPiGauzR4cczbL0e3fop8rCFfywcqDIJGkvxhXR
+ HY1MS/npuLYQx3WGJ9ffLQXU+COEPhJY72h9c+PXAgywK/94sl6ixVNdjM21TSKjBojX1HNk+
+ DNDyc0aTgcDPS9Es0t0e+ublIE6/Yu9+v04wYA0YydWiIBFpCCF/QQDk16KtCGoky/vjMSxS5
+ rSMpHM5W8Zg6tUgI5+imto0tftAzfI7VtYpz3cu/N86DzcbS2Ck5gTdhC2QhHkMoR12wxpAhT
+ 6sCMn3+R0HBf9Jn6d+YPSY9H4cJ2VVkDCGyX9ARdlrnB6TkaqIhiWoinZUGYEXL3H8SJgArqf
+ xkum2OQsKay1suUH7SACttEn9BJIMJyw2iwJw1kz0ZBhc+rKR3Pghhl3e8Qgv/SoLiSp5sEhT
+ bbNhhBUhEWjGPwtEl3UmwuBw==
 
->>> Looks like you have messed up your patches,
->>
->> There were special communication settings involved which hindered desir=
-able
->> data processing for known information systems.
+> Date: Tue, 21 Mar 2023 10:30:23 +0100
 >
-> Don't know what you mean.
+> It can be determined in the implementation of the function
+> =E2=80=9CpSeries_reconfig_add_node=E2=80=9D that an error code would occ=
+asionally
+> be provided by a call of a function like pseries_of_derive_parent().
+> This error indication was passed to an of_node_put() call according to
+> an attempt for exception handling so far.
+=E2=80=A6
 
-My email address was blocked in selected Linux mailing lists for a while.
+I was notified also about the following adjustment.
 
+=E2=80=A6
+ * linuxppc-dev: [resent,v2,1/2] powerpc/pseries: Do not pass an error poi=
+nter to of_node_put() in pSeries_reconfig_add_node()
+     - http://patchwork.ozlabs.org/project/linuxppc-dev/patch/f5ac19db-c7d=
+5-9a94-aa37-9bb448fe665f@web.de/
+     - for: Linux PPC development
+    was: New
+    now: Changes Requested
+=E2=80=A6
 
->>> there is no much we can do it seems:
->>>
->>> $ b4 shazam e68a714b-32f2-de9f-066e-99a3f51a264f@web.de
->>
->> Please take another look also at published information according to fur=
-ther
->> mailing list archive interfaces.
->
-> Another look to what ?
->
-> It seems like several patches were posted with the same Message-Id and/o=
-r with an unrelated In-Reply-To:
->
-> b4 is lost and cannot apply your series, it applies the patch at https:/=
-/lore.kernel.org/all/82aebf6c-47ac-9d17-2d11-6245f582338e@web.de/
->
-> You may consider fixing and resending the series as an independant serie=
-s.
-It seems that another information system did not get confused with publish=
-ed data.
-
-Example:
-[v2,1/4] powerpc/4xx: Fix exception handling in ppc4xx_pciex_port_setup_ho=
-se()
-https://patchwork.ozlabs.org/project/linuxppc-dev/patch/e68a714b-32f2-de9f=
--066e-99a3f51a264f@web.de/
-
-Can we benefit any more from such information already?
+It seems that I can not see so far why this status update happened
+for any reasons.
+Will further clarifications become helpful here?
 
 Regards,
 Markus
