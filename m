@@ -1,83 +1,113 @@
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EABD1AB507;
-	Thu,  3 Oct 2024 18:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9819A1A7040;
+	Thu,  3 Oct 2024 18:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727978569; cv=none; b=qHBlwM10DJeVPf5dJuyXV+uXV6vHTZu2Oq5/maO/bat77MNDKxew8vx2IrHClhbzSa0diBU0cKRUSnTxyCXZUvAIKYz3myotc8NZuRyhnjvWY/JPZ+2BpbJAX0CPIXwSz+wUJDNZ2PjXbe9gsuXYsU37W2qe5YBhCLVDnYPDa6M=
+	t=1727978739; cv=none; b=LccYhkosVzSQggjDO31cW/vBZvzTiWw5ube+li+XDDmJGES+VbhiWnBG8seRc2Dt/FP8z17U12zwjYK04UKhI6pqyW1nCcTKgpTF++5O2ebynjsthEI//Nn1pmjjSfY966Y4DepR3UKex1QVsN439W9drbyb2L9sFvkoEoGiJoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727978569; c=relaxed/simple;
-	bh=BwQl95qn8NQHVnbYBOg3nyDaq+TN5ZnTOOCyjX7yN3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CmNcph9J+naspNMDPF7iJdbrieugjFFvbVM4gA9SqQK9c+VDF5U8j/9rW6UCwV82Rsfcxk366gDG7cAGSPaJ2VNIUrf28LAgW5ShEidFbgI6vYyuiQpxDCp1Qoqo9Jm0xwffHxjkbtekY6DCT3Zf1mCDP6850gnoWg1HrPYNiEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=K2zfvg0i; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1727978739; c=relaxed/simple;
+	bh=NS7kXQUKxlrTfeb+LWgoodsEtPxJoaNeIkvDx3vZ6b4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=UPtnzgrTITaCBxVe1TdnKCNDtz77NDoB6bPIbroY+zoIM/ihTgOTDHd5huyqpjELO+Go2i1Y05g6AxhlzgeRVH/WZHL2bU/vLLU+/MOgg4zKVsJC5UE5wKyn73gsiYcf7ZJxlS1IwZHvY3puoRoXZ9wRLITLXndOjzwyw+QkIEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Yj0A2XYQ; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="K2zfvg0i"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wQ1HsjqreQ2lWwQ1Hs9Yfl; Thu, 03 Oct 2024 19:53:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727978025;
-	bh=BD85zUf1cnOXS4ei1Z72y4kXkRVVXUgHE87cq6s1DA0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=K2zfvg0iyqieGGioeJQw1CQ6c2xARmb/fILtfGpLXxRq2FP/GptyJ7GbCpN3xc0Mo
-	 ihOf7kTg0pnZ9JcziMh5uB+qkF2Ev8WbHnnCoMDo7udKzj2Qw3Pixku2melLuC8HTu
-	 ExnYbqJz5eQOEWYLB/szY9OsIDpuOAlKjlxNcKcdmr5JpVqAXZ0WY1ubdYaAxYkcaJ
-	 NdQG5eyQlHdSdP7m1E+g/lA2obglXBJfQmdKeppjyTOLZqnmDwDTyTYSQ8OXpEznGJ
-	 xy5d40WWeAT4lL9RZKjXp5i5o+yyTiQC3WNg5aUDOroOGJudTrJ9V/Xs1ZveeKl/9f
-	 WeCZb69sGkHxg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 03 Oct 2024 19:53:45 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Julien Massot <julien.massot@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org
-Subject: [PATCH] media: i2c: vgxy61: Fix an error handling path in vgxy61_detect()
-Date: Thu,  3 Oct 2024 19:53:15 +0200
-Message-ID: <666ac169157f0af1c2e1d47926b68870cb39d587.1727977974.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Yj0A2XYQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727978728; x=1728583528; i=markus.elfring@web.de;
+	bh=sXYDfNxNXvlLEtQjQyqH5jtoLuiiUVmTvTAFLF5cYH4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Yj0A2XYQGXuhXxxN9faAUpkh7h8aqrJAdmqh6yy53MopmHhzb770NWpRh4QXN6lP
+	 YmR7bzEDIGEHiuKI08BCvW7CdhxgkUfuqBP8SbTY4wDpiXt2TN1HZKVIc1s+tWBTd
+	 +SUX6HdzgAQ6tOGEl+8xMGEd+rTvcdacmHyxljEFH4r/Nv17Y6g8AzAAOrdFYs7HT
+	 Lew3vxMKgZ4gh+08D/Hq8AqDoJ+18Qa46h2lxn1R1kSAptzYfNId7lMmtV1Ovswjx
+	 YvWLZBm7Rk8JQZGiBk1fWY+Lx4gzSexLaJn6xiZaKb1H5ITDwaWP+25woNieR3fmL
+	 kDIvehaqHhKWxb2jzA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MaHWx-1sQkA90WnN-00Xucq; Thu, 03
+ Oct 2024 20:05:28 +0200
+Message-ID: <504bb76d-d8ee-4332-ab3d-ad6b2482c29c@web.de>
+Date: Thu, 3 Oct 2024 20:05:27 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ David Airlie <airlied@gmail.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona@ffwll.ch>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm: rcar-du: Reduce of_node_put(cmm) calls in
+ rcar_du_cmm_init()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GzLe1BNnQpGneYCLWGjV3Sn3P+BLxsHJpEIfsLxgOab82VnS6Vz
+ QkzMxzHjENmdN1thEhr8VdufpeTW6LgLWN2gGtzn/CXg8YisrdRUyUhQZgtw11eWMymAABU
+ l1llAqcyVO+MRL+E9G0rU3tAGYUJvWNrV3CFkeLLu6LGhqxB+JjJuLiTwL2dEXOjp0jJ/SS
+ YOhb1AaIZPbXcPKypO5/g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:SWAexnI8TKo=;MdJndK/inRWqYpfmqoqzxcuKWTH
+ nPRDm+jzUy0JgiXlqXtt6qLdwa5gkXWX9WPO5/axyidQp36+w5JXEX2cHrqcgze+VJ0GSxOcQ
+ jAQ5nc5NZBVfVc2cQXZ6f4gAuSl/3EFT1f3SbiomB6DQ4p16H9aSBPGDhG+kdnUJAbaHAT3/x
+ RGBBxzveg0ob9At1ri5zOB1z+W+hXuKk1Jj9G/y5/Hv/TR7xe2DHf9wcU7NzkHbgNwEktXjDu
+ PsEvE79oSwU8QOoqsJ8Ab6G4ne8HzlaLS6sLsqFRpzQU6DZnYXPeAHOadZA0ClrurAi7so373
+ RNZafHzoFfn34DKDUGvAP/JbpoJjjK+tpQwrWTTgJ0lX0L2UEGVxbc+UM4cbPIlU+jTn52rBJ
+ d/pT0H19YjI/OyTJqYiGaVEilFVIHexODiI6gnpVd9XxFwCGNNitvu4ScQjqWnePw9A0ONFJr
+ KfLLbaEZh4DoGKBCftfpiYISpuyYY7zrX4F9iId9Y35UgryxRtS6GnOx97bS+ucT1yhAeE7tp
+ /nXVPQL7fjDl+NGbU7fTpRcKu2ltZL3dcreA73D4Yt2K/lLYY2NcvqbxqiuVHwyMlXIPRuf6l
+ Wnian0RZFHwboHKfX4IYF3flBhVFWwLaH4Vad2SpJyEB0UPrgXAP70f4jbDh3Y1br3Wgk4UrA
+ G97Ji9xN5Mdn88WO/c60R1xsG4VZJaN1kOoXzy6RaK1Yw6QJUithrkdaYwM49eXqWuqN3ghsR
+ daH3RuWdx9hHmzWmQaljdr8HU2dBhsqla72uQM+p++8rzbzf60un6s3oXzS7aYfJdqFk2pcVe
+ eBYbYtgrWHyKoinqZ1i2qtog==
 
-If cci_read() fails, 'st' is set to 0 in cci_read(), so we return success,
-instead of the expected error code.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Oct 2024 19:56:29 +0200
 
-Fix it and return the expected error.
+An of_node_put(cmm) call was immediately used after a null pointer check
+for an of_find_device_by_node() call in this function implementation.
+Thus call such a function instead directly before the check.
 
-Fixes: 9a6d7f2ba2b9 ("media: i2c: st-vgxy61: Convert to CCI register access helpers")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/media/i2c/vgxy61.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This issue was transformed by using the Coccinelle software.
 
-diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
-index 30378e962016..8034e21051be 100644
---- a/drivers/media/i2c/vgxy61.c
-+++ b/drivers/media/i2c/vgxy61.c
-@@ -1617,7 +1617,7 @@ static int vgxy61_detect(struct vgxy61_dev *sensor)
- 
- 	ret = cci_read(sensor->regmap, VGXY61_REG_NVM, &st, NULL);
- 	if (ret < 0)
--		return st;
-+		return ret;
- 	if (st != VGXY61_NVM_OK)
- 		dev_warn(&client->dev, "Bad nvm state got %u\n", (u8)st);
- 
--- 
-2.46.2
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c b/drivers/gpu/d=
+rm/renesas/rcar-du/rcar_du_kms.c
+index 70d8ad065bfa..a854b2b085f9 100644
+=2D-- a/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/renesas/rcar-du/rcar_du_kms.c
+@@ -792,14 +792,12 @@ static int rcar_du_cmm_init(struct rcar_du_device *r=
+cdu)
+ 		}
+
+ 		pdev =3D of_find_device_by_node(cmm);
++		of_node_put(cmm);
+ 		if (!pdev) {
+ 			dev_err(rcdu->dev, "No device found for CMM%u\n", i);
+-			of_node_put(cmm);
+ 			return -EINVAL;
+ 		}
+
+-		of_node_put(cmm);
+-
+ 		/*
+ 		 * -ENODEV is used to report that the CMM config option is
+ 		 * disabled: return 0 and let the DU continue probing.
+=2D-
+2.46.1
 
