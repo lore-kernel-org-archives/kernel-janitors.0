@@ -1,91 +1,110 @@
-Received: from msa.smtpout.orange.fr (msa-215.smtpout.orange.fr [193.252.23.215])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39C11A76CF;
-	Thu,  3 Oct 2024 19:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.215
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859B217BA3;
+	Thu,  3 Oct 2024 19:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727984059; cv=none; b=o4rqntPRGKWSqwobIIO/EkKsRCWOzGv70qsMLkySCS25nkCcYLlE9p2ct4soxMqD8+j0hjW0/wZWtMrdEUBStb9VzHDAqkpa9qTp4onJilhVqe7k76MQPI3PvxICx52hcv2EDDGUXtJhU5ru44Aw5DTe1RmZoUGx7SbfDsWvGLE=
+	t=1727984797; cv=none; b=uTsR5aW4FXb/0bqLYufPZST3y3M0w2fV5n9nI1N8Ucy+8NAjiX0OESh/zEJofU2zDp5eUcLKkpp7xMu5QxCmZjHHmh+ySaFfnDsivB/Kl1I1uPpGKKthdAXtDHItVweDfArIxvmZr5bYPaS1ULmT0v9+1uRXIgnTR1Q0rprEBqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727984059; c=relaxed/simple;
-	bh=WyZWEWlhds0xrBVDq7MOYOUjniUReyXJlQLd/zaY5tE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ugoZ7BoOl2NpuLmkazhiK0X6HEsXxuM2S8OLtkhkyt6zXgz3K5uIHPIo1ztLEqmNe0PFZmKiXcnvdwsJxmCwGeYRJnHCBHImdn48hQnizvRAqdlVodJZzDE7E+tniRIlqJwu6oO71eUXjP+kHr69dgJNYwPyjADGlrlbuTjmeSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nU6efexJ; arc=none smtp.client-ip=193.252.23.215
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1727984797; c=relaxed/simple;
+	bh=TxNq7yKENx0RQYMf6U6CxOgo/kf/71+/J4musxwjxSk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=t3mr4AJ1OOzdszYxpz+d28xpdv6d3GNdKEv0/AUuejkRkAhhkflRDU6d73cofiVoNoG4R5zV2swPEhqqKCB/ntLMR2eCK5kqVygX75+0Gw1V7dMbger7nCRzSaUFxwrYzpUSrfmfkBJFtTIw0n6Mz5wmagVVjLgaBIXoojj95Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IKudsbmm; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nU6efexJ"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wRaPsP5U3vjJewRaQsN4s2; Thu, 03 Oct 2024 21:34:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727984047;
-	bh=2SDPvfeI4Lzg8Uj2ZPpyRvlMXWAOYBlC3P/o4uoQmrY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=nU6efexJ2AzkRnAdtD4BvewOlLJBUkfpSsJpWrc+misqdWwPWs8ZEOMrxMZ6/jwqr
-	 E/wuAgK2Tu985JV2ummHBR+zWsXPnz84ADc9O/ZEngzDnwkDuSm9tWsGaTxoFtAeO8
-	 7O4pW6NB2VHzxUdNHeWDeJHFVPAi321xpNXQexkg0J9PZMiVXQa5eyPr1pOEGC0/Rd
-	 SkkJFtsq0RLTKjdzMHlMz2Vv1IJq8Qa67W7r/dLilY23+VwqtE4B3cpNhb43d3IgXR
-	 s0HoI/eZi6HlyeU7RKgifP8ZiQ0lKdPYBzcYAuS24s1UhtWx4cV7ELjyd/c+6TzN7v
-	 kODvm3gRFZJGg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 03 Oct 2024 21:34:07 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org
-Subject: [PATCH] ALSA: gus: Fix some error handling paths related to get_bpos() usage
-Date: Thu,  3 Oct 2024 21:34:01 +0200
-Message-ID: <d9ca841edad697154afa97c73a5d7a14919330d9.1727984008.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IKudsbmm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727984774; x=1728589574; i=markus.elfring@web.de;
+	bh=qipckro8MFXQMfGeASx2ZE5o/HlRn/yLZ/gSQctrKHA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=IKudsbmmvYhm/VOAVoopRoImnUezHkZ5IXOHZJNEeT7399KFUXGd68wNct/IRgyP
+	 6pWglNhShfsW+BpZHevVF6hZUKSW+hM54NVGH0odTAB0vnsCCNvwkPtLHVFHxpFHf
+	 n9q8bjOiO0UNft+HMSigcAuEp5qo3YUwIL2hRWtCRWnqMi4CmXNDLxNRVANnVo8er
+	 hc0D6MLR50lcL8ThQdydKg9WEqRlNO+iIudnwj8ooMAEZ6uhFXv+a7X3N9FpIeEit
+	 9cZV8L5SaQxQol8Ix9WixKYTn4u/yJYysWAv8GQoXl3G2hUVw5Fzn0Rv5iIZxcJnK
+	 OWwqfbRCMrIubXQcbw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N0Igv-1rzeQT2GRT-00xw47; Thu, 03
+ Oct 2024 21:46:14 +0200
+Message-ID: <e3b1fa29-71ff-4f40-a265-9ebdcc6d50f9@web.de>
+Date: Thu, 3 Oct 2024 21:46:12 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-media@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Tim Harvey <tharvey@gateworks.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] media: i2c: tda1997x: Call of_node_put(ep) only once in
+ tda1997x_parse_dt()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qeoEpUkKh4u7pXj9k0DQkbVyzYCjn9jtnD5gMrPRjs18O/9eY6A
+ 4N2xhIp10JSw3BnD7qQ1nH3l+Rmm+edjPIIAcqNcCUD8YLzlo2epUXAHAa3SXS3pjHHYVeZ
+ w2BuWu8NqiOn0CoTmAbaG32GWnV28k7o1kjlRNXjlkdPaD4SscVzIqNXXFOWWbbrgoLVBbs
+ +NwzGy2k0VndktAQzjeGw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ipiIdAq5gUA=;Z5JmRxrIC5eqAQvnufcwBWKQUJX
+ 4rxjENFTwSJEtbPXPq4IChNu1yzDc/mDVuclUM/3WWvLpPvhvZ3pcvC63tw1/DIiasWfZvnY1
+ 7Dmab2xseVSu9IFuY83RTiN39kK34L4wVjg0Hj5fnIW3ZrVw021NZlID0UG4oNPzq3Tps8Q5u
+ fKDP+K+akhdfoIjVV8XzbwCvwSJGWLo/gEx5KeYhgxN6SqPANUYgJ92H7tZ1VEOkNjki1CPYr
+ /6bduv031ELnwt56PUKUY6axlw2dvPHhRuxoG91GthuOkY0lZ1DTT2ozyUQYLNaGWmEHDbiDx
+ gXu2FELh8siJcWjqPKddGULW9R3mrmQYb6BQOI1B2Fm3p1Z+6VxA5HmC6f4y6sllkIA/fos62
+ 4nL1WcbUzfYyWrBrEwSr5Q6A4Vym1xYZakogpsivO8gSRBOHr6vCx/OiK86O2ioQ7K5uJeIPc
+ EZfu9Yx6DPC1uyNqd+TSx2A0xmO+Kh0nFGCt9WbtrFjhF9bjtlGCp9Qgrkvc8QTVIycSMnIjC
+ se00OL1y7MmDujgWX8ENk3EMfDyKJHhLXuczvmuYK2w+4Yh5zRtM5YncgLNN++ksjcRgFeO4b
+ Zs6hUW5cmTxRED1Gt2bcfIazCZ4hguJrfgJZ7XTQhZnbGDSOy4jogAQxdGLYR3+go0411kACO
+ ebAxxIYjIXswS62OD1vGZDKLEL5zdsHMDKDjeaRfaYOevRpsjO4NAoo2aRpsqa3Jl850t3VUf
+ EO+46jsURtx+kBPP475e2Dpsc+rr6KkqqfbDBIb7sdX/0+QwNUNyH/A1WUalNYIWnyHHjUlu5
+ 3bxVPoAK2eHnvwrjG5FKQw1g==
 
-If get_bpos() fails, it is likely that the corresponding error code should
-be returned.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 3 Oct 2024 21:38:45 +0200
 
-Fixes: a6970bb1dd99 ("ALSA: gus: Convert to the new PCM ops")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is speculative. Review with care.
----
- sound/isa/gus/gus_pcm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+An of_node_put(ep) call was immediately used after a return value check
+for a v4l2_fwnode_endpoint_parse() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-diff --git a/sound/isa/gus/gus_pcm.c b/sound/isa/gus/gus_pcm.c
-index bcbcaa924c12..16f9bbb43a54 100644
---- a/sound/isa/gus/gus_pcm.c
-+++ b/sound/isa/gus/gus_pcm.c
-@@ -364,7 +364,7 @@ static int snd_gf1_pcm_playback_copy(struct snd_pcm_substream *substream,
- 
- 	bpos = get_bpos(pcmp, voice, pos, len);
- 	if (bpos < 0)
--		return pos;
-+		return bpos;
- 	if (copy_from_iter(runtime->dma_area + bpos, len, src) != len)
- 		return -EFAULT;
- 	return playback_copy_ack(substream, bpos, len);
-@@ -381,7 +381,7 @@ static int snd_gf1_pcm_playback_silence(struct snd_pcm_substream *substream,
- 	
- 	bpos = get_bpos(pcmp, voice, pos, len);
- 	if (bpos < 0)
--		return pos;
-+		return bpos;
- 	snd_pcm_format_set_silence(runtime->format, runtime->dma_area + bpos,
- 				   bytes_to_samples(runtime, count));
- 	return playback_copy_ack(substream, bpos, len);
--- 
-2.46.2
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/media/i2c/tda1997x.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/i2c/tda1997x.c b/drivers/media/i2c/tda1997x.c
+index 3b7e5ff5b010..959590afc80f 100644
+=2D-- a/drivers/media/i2c/tda1997x.c
++++ b/drivers/media/i2c/tda1997x.c
+@@ -2315,11 +2315,10 @@ static int tda1997x_parse_dt(struct tda1997x_state=
+ *state)
+ 		return -EINVAL;
+
+ 	ret =3D v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
+-	if (ret) {
+-		of_node_put(ep);
+-		return ret;
+-	}
+ 	of_node_put(ep);
++	if (ret)
++		return ret;
++
+ 	pdata->vidout_bus_type =3D bus_cfg.bus_type;
+
+ 	/* polarity of HS/VS/DE */
+=2D-
+2.46.1
 
