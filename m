@@ -1,53 +1,49 @@
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+Received: from msa.smtpout.orange.fr (msa-215.smtpout.orange.fr [193.252.23.215])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC1E1A76CF;
-	Thu,  3 Oct 2024 19:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39C11A76CF;
+	Thu,  3 Oct 2024 19:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.215
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727983933; cv=none; b=FRQ6rp3wXevSwdn+X95VR4ojkk6yTDK+ZSuiov/Foaa5Fbln5VjJykaEYjb7qS3Vhrzfgw1cFB6WNtlPtBIkTMJuBfGaxSc2cpcoYZueVonkk8VldTl7PgnrD7+m4qeesZbrfXmjBHSodjSeajR6ELe4xlhjMA8Y5MJNKeDXkjU=
+	t=1727984059; cv=none; b=o4rqntPRGKWSqwobIIO/EkKsRCWOzGv70qsMLkySCS25nkCcYLlE9p2ct4soxMqD8+j0hjW0/wZWtMrdEUBStb9VzHDAqkpa9qTp4onJilhVqe7k76MQPI3PvxICx52hcv2EDDGUXtJhU5ru44Aw5DTe1RmZoUGx7SbfDsWvGLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727983933; c=relaxed/simple;
-	bh=d5iKgHRJaHd1qOIZNZ6AtOmvXTo3H3/Cvogev0/hzIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ELlZJgm1O0ivAYF/gKmHcDpH75eKJ/nFCeKM+mNfWpK4rppcdtxlHEpxMCnvm42te5hL8IL+s/2facnZfgIFfR5xpAQofCpJGX56uA38bd1oVJA7a5UardIDRANMaDCRpE3WnVLqbdGBCm/20fYr9KPUb972gvpHrf4CwMbZIFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=q7OTvF1l; arc=none smtp.client-ip=193.252.23.217
+	s=arc-20240116; t=1727984059; c=relaxed/simple;
+	bh=WyZWEWlhds0xrBVDq7MOYOUjniUReyXJlQLd/zaY5tE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ugoZ7BoOl2NpuLmkazhiK0X6HEsXxuM2S8OLtkhkyt6zXgz3K5uIHPIo1ztLEqmNe0PFZmKiXcnvdwsJxmCwGeYRJnHCBHImdn48hQnizvRAqdlVodJZzDE7E+tniRIlqJwu6oO71eUXjP+kHr69dgJNYwPyjADGlrlbuTjmeSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nU6efexJ; arc=none smtp.client-ip=193.252.23.215
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="q7OTvF1l"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nU6efexJ"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id wPq8swhqS7qAjwPq8sLNUA; Thu, 03 Oct 2024 19:42:16 +0200
+	id wRaPsP5U3vjJewRaQsN4s2; Thu, 03 Oct 2024 21:34:07 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727977336;
-	bh=LhnrapA1svnmlMx7xGYpTi5BLYj0TEUzRvNk0AItb2s=;
+	s=t20230301; t=1727984047;
+	bh=2SDPvfeI4Lzg8Uj2ZPpyRvlMXWAOYBlC3P/o4uoQmrY=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=q7OTvF1l62ehUvp8N5YxrlB6RCO6AOPpdfa7wRMrXMlm93JNTsppGGLP9A8sHnIb+
-	 TBo21exNKKTSnk8bsTG/tEfJxIs86mw/w4CCW/8LczKq5xPprFXZj0ntGDHZ4UB7Gz
-	 hxGNQrO9HY1sIqTZrMGrCJRkRQBxCsv0BpNr8CPPbPGHe5lg+ZFyVcuJ4W+qgz4SAv
-	 4pWMJa/9P9xHm4cJfbSecW6SFoZJ7z8uyUrBwyBa5K3DIH5pCgaUWTLOJk/Qne7SA/
-	 l2MSKn7Q7681nyR0gSt51hlH2iXFI5ttMw7DiuM0UUKSzwjxzbbhzefjPOtVVSO06c
-	 ghuSldIi556sQ==
+	b=nU6efexJ2AzkRnAdtD4BvewOlLJBUkfpSsJpWrc+misqdWwPWs8ZEOMrxMZ6/jwqr
+	 E/wuAgK2Tu985JV2ummHBR+zWsXPnz84ADc9O/ZEngzDnwkDuSm9tWsGaTxoFtAeO8
+	 7O4pW6NB2VHzxUdNHeWDeJHFVPAi321xpNXQexkg0J9PZMiVXQa5eyPr1pOEGC0/Rd
+	 SkkJFtsq0RLTKjdzMHlMz2Vv1IJq8Qa67W7r/dLilY23+VwqtE4B3cpNhb43d3IgXR
+	 s0HoI/eZi6HlyeU7RKgifP8ZiQ0lKdPYBzcYAuS24s1UhtWx4cV7ELjyd/c+6TzN7v
+	 kODvm3gRFZJGg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 03 Oct 2024 19:42:16 +0200
+X-ME-Date: Thu, 03 Oct 2024 21:34:07 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/i915/display: Remove kstrdup_const() and kfree_const() usage
-Date: Thu,  3 Oct 2024 19:41:08 +0200
-Message-ID: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
+	Takashi Iwai <tiwai@suse.de>,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] ALSA: gus: Fix some error handling paths related to get_bpos() usage
+Date: Thu,  3 Oct 2024 21:34:01 +0200
+Message-ID: <d9ca841edad697154afa97c73a5d7a14919330d9.1727984008.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,54 +53,39 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-kstrdup_const() and kfree_const() can be confusing in code built as a
-module. In such a case, it does not do what one could expect from the name
-of the functions.
+If get_bpos() fails, it is likely that the corresponding error code should
+be returned.
 
-The code is not wrong by itself, but in such a case, it is equivalent to
-kstrdup() and kfree().
-
-So, keep thinks simple and straightforward.
-
-This reverts commit 379b63e7e682 ("drm/i915/display: Save a few bytes of
-memory in intel_backlight_device_register()")
-
+Fixes: a6970bb1dd99 ("ALSA: gus: Convert to the new PCM ops")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This patch is speculative. Review with care.
+---
+ sound/isa/gus/gus_pcm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
-index 9e05745d797d..3f81a726cc7d 100644
---- a/drivers/gpu/drm/i915/display/intel_backlight.c
-+++ b/drivers/gpu/drm/i915/display/intel_backlight.c
-@@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
- 	else
- 		props.power = BACKLIGHT_POWER_OFF;
+diff --git a/sound/isa/gus/gus_pcm.c b/sound/isa/gus/gus_pcm.c
+index bcbcaa924c12..16f9bbb43a54 100644
+--- a/sound/isa/gus/gus_pcm.c
++++ b/sound/isa/gus/gus_pcm.c
+@@ -364,7 +364,7 @@ static int snd_gf1_pcm_playback_copy(struct snd_pcm_substream *substream,
  
--	name = kstrdup_const("intel_backlight", GFP_KERNEL);
-+	name = kstrdup("intel_backlight", GFP_KERNEL);
- 	if (!name)
- 		return -ENOMEM;
- 
-@@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
- 		 * compatibility. Use unique names for subsequent backlight devices as a
- 		 * fallback when the default name already exists.
- 		 */
--		kfree_const(name);
-+		kfree(name);
- 		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
- 				 i915->drm.primary->index, connector->base.name);
- 		if (!name)
-@@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
- 		    connector->base.base.id, connector->base.name, name);
- 
- out:
--	kfree_const(name);
-+	kfree(name);
- 
- 	return ret;
- }
+ 	bpos = get_bpos(pcmp, voice, pos, len);
+ 	if (bpos < 0)
+-		return pos;
++		return bpos;
+ 	if (copy_from_iter(runtime->dma_area + bpos, len, src) != len)
+ 		return -EFAULT;
+ 	return playback_copy_ack(substream, bpos, len);
+@@ -381,7 +381,7 @@ static int snd_gf1_pcm_playback_silence(struct snd_pcm_substream *substream,
+ 	
+ 	bpos = get_bpos(pcmp, voice, pos, len);
+ 	if (bpos < 0)
+-		return pos;
++		return bpos;
+ 	snd_pcm_format_set_silence(runtime->format, runtime->dma_area + bpos,
+ 				   bytes_to_samples(runtime, count));
+ 	return playback_copy_ack(substream, bpos, len);
 -- 
 2.46.2
 
