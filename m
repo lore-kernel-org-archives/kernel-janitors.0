@@ -1,304 +1,98 @@
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E279E10A1E;
-	Thu,  3 Oct 2024 12:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10C81865EB;
+	Thu,  3 Oct 2024 12:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727959334; cv=none; b=VBC8zHA+zjkwU+BKz3/fBr3p4/FFKhY1LTgX8U3sNh0cGj0ad8rEIuzVQakJ4mPXJzuyrdy4v54geQflPIF067pRKsxO/DVnZoTpgKMfPz7phHSWVF8laa/BuHafbPgyfQmh84lJPYRSSZaok4Nbv4CZ4np88HN8xBjM/JCysxI=
+	t=1727959474; cv=none; b=MqHNEQkSYQ3/hFa+Cx0SZCi9c8hmQjoolZINsXZnfurcZFR0lHERIo5HL5pWBYi9ger9n185nup4Bj7TS00y3X2QXwMC6WY3ZINlvu/nWVoq/EaKbomJgcPBpd+XzgDIsPv+6cHTZKogdmttRTyF77Uw/zKGuJ6qGgPDZbw5c9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727959334; c=relaxed/simple;
-	bh=0nTsVWhCE4btm0gdShL2sklZl/tXeqQ2UWo5d6eB7jk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rYpmwvxwMMNrsXBbYBrqpuaXKhyWxy3ypqr8jtDFDtnLb1SkQARibkjj6hODT9lSn53OD0VRda/RiaCojty33j1W4mt5qCsr61XFMF9Rf8bl8pkEXABapPmXRXzjWT3QIlahztLg2S94n2B365kM74dmUeNCTfUoyWxJ8ZlWNO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XKBC53lcyz9sPd;
-	Thu,  3 Oct 2024 14:42:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id UcCvYNjCI1ht; Thu,  3 Oct 2024 14:42:09 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XKBC41yX2z9rvV;
-	Thu,  3 Oct 2024 14:42:08 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 32AFF8B779;
-	Thu,  3 Oct 2024 14:42:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id T3yUggJN7IQO; Thu,  3 Oct 2024 14:42:08 +0200 (CEST)
-Received: from [192.168.232.22] (PO26607.IDSI0.si.c-s.fr [192.168.232.22])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C16C08B770;
-	Thu,  3 Oct 2024 14:42:07 +0200 (CEST)
-Message-ID: <8edc93c8-b146-4507-8336-0709b2596cb9@csgroup.eu>
-Date: Thu, 3 Oct 2024 14:42:07 +0200
+	s=arc-20240116; t=1727959474; c=relaxed/simple;
+	bh=hHTa+rAtpAcTiJMT8p5Ir1owNRAx0NVTTC2N/UvQ84w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V2I8dnRG3KezvGYnBd+ZYuMtzPw2oQvsLMhUYJg7EpBXFpDGRAeKjt9Hu98+GOZ2GeeCLy6n97+2FRlK4W6Z9ZIFBXgnpodRxAVKYhpPSP7EAvz0gBBHm/r42pzIAizFpJ7QZPv048jJIC1PyW08t3u31hRt8tmnJbe/w9MzlCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJyRPNKj; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJyRPNKj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727959473; x=1759495473;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=hHTa+rAtpAcTiJMT8p5Ir1owNRAx0NVTTC2N/UvQ84w=;
+  b=UJyRPNKjTN6FaGoDdpT78Q1GN5+2DPJ8fwiFWqc6UrE8IW/sWZII0Myy
+   lebryQaRB2CB8NYVhZ1ve/w+83wFnpu7WVKporeG3P5QEpFnN5HBKwKN+
+   3w5HImzjFhSl1n6H2GAVNxXsA5SITqG2sb9gXvGdhvLFYrBGt440C8DZA
+   AfcO1xnIie3hL6GNUeCxOTDj4tfzp7fZ0w2/sbcdQW7UfNCQrC7JcuFxG
+   SdTQMy57vA6qwKvmk8/X54ucoRG7LDayxCGvKfujSpcy/fhXOjMZBytiE
+   Z2OQdOcDJgdU0wBJ7nVa4RZhfhouhoWgBrNgBvykEdD7STTWgL7cPlxC5
+   w==;
+X-CSE-ConnectionGUID: /DV/iRS6S9ehfgOcemb3+Q==
+X-CSE-MsgGUID: 5+BT3gW6QxGW/5LVH0i/gQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="30942401"
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="30942401"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 05:44:32 -0700
+X-CSE-ConnectionGUID: Q5AXRh74TPe3cU+bbYtg6g==
+X-CSE-MsgGUID: 7z03l8egQGuAXjBaMdi1/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,174,1725346800"; 
+   d="scan'208";a="74589434"
+Received: from unknown (HELO smile.fi.intel.com) ([10.237.72.154])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 05:44:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1swLBy-0000000G92y-0g4l;
+	Thu, 03 Oct 2024 15:44:26 +0300
+Date: Thu, 3 Oct 2024 15:44:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Subject: Re: [PATCH v1] cleanup: adjust scoped_guard() to avoid potential
+ warning
+Message-ID: <Zv6RqeKBaeqEWcGO@smile.fi.intel.com>
+References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
+ <63de96f1-bd25-4433-bb7b-80021429af99@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] powerpc/4xx: Fix exception handling in
- ppc4xx_pciex_port_setup_hose()
-To: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org,
- Benjamin Herrenschmidt <benh@kernel.crashing.org>,
- Josh Boyer <jwboyer@linux.vnet.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Stefan Roese <sr@denx.de>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <72a7bfe2-6051-01b0-6c51-a0f8cc0c93a5@web.de>
- <ecda8227-d89a-9c23-06b7-54f9d974af5e@web.de>
- <e68a714b-32f2-de9f-066e-99a3f51a264f@web.de>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <e68a714b-32f2-de9f-066e-99a3f51a264f@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <63de96f1-bd25-4433-bb7b-80021429af99@web.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Thu, Oct 03, 2024 at 02:34:57PM +0200, Markus Elfring wrote:
+
+…
+
+> >  "__" prefix added to internal macros;
+
+…
+
+> Would you get into the mood to reconsider the usage of leading underscores
+> any more for selected identifiers?
+> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+define+a+reserved+identifier
+
+The mentioned URL doesn't cover the special cases like the kernels of the
+operating systems or other quite low level code.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-Le 25/03/2023 à 16:36, Markus Elfring a écrit :
-> Date: Thu, 16 Mar 2023 19:00:57 +0100
-> 
-> The label “fail” was used to jump to another pointer check despite of
-> the detail in the implementation of the function “ppc4xx_pciex_port_setup_hose”
-> that it was determined already that the corresponding variable contained
-> a null pointer (because of a failed function call in three cases).
-> 
-> 1. Thus return directly after a call of the function “pcibios_alloc_controller” failed.
-> 
-> 2. Use more appropriate labels instead.
-> 
-> 3. Reorder jump targets at the end.
-> 
-> 4. Delete two questionable checks.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: a2d2e1ec07a80946cbe812dc8c73291cad8214b2 ("[POWERPC] 4xx: PLB to PCI Express support")
-> Fixes: 80daac3f86d4f5aafc9d3e79addb90fa118244e2 ("[POWERPC] 4xx: Add endpoint support to 4xx PCIe driver")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Looks like you have messed up your patches, there is no much we can do 
-it seems:
-
-$ b4 shazam e68a714b-32f2-de9f-066e-99a3f51a264f@web.de
-
-$ LANG= b4 --no-stdin shazam e68a714b-32f2-de9f-066e-99a3f51a264f@web.de
-Grabbing thread from 
-lore.kernel.org/all/e68a714b-32f2-de9f-066e-99a3f51a264f@web.de/t.mbox.gz
-Checking for newer revisions
-Grabbing search results from lore.kernel.org
-Analyzing 123 messages in the thread
-WARNING: duplicate messages found at index 1
-    Subject 1: btrfs: Fix exception handling in relocating_repair_kthread()
-    Subject 2: powerpc/4xx: Fix exception handling in 
-ppc4xx_pciex_port_setup_hose()
-   2 is not a reply... assume additional patch
-Assuming new revision: v3 ([cocci] [PATCH] ufs: Fix exception handling 
-in ufs_fill_super())
-Assuming new revision: v4 ([cocci] [PATCH] perf cputopo: Improve 
-exception handling in build_cpu_topology())
-Assuming new revision: v5 ([cocci] [PATCH] perf pmu: Improve exception 
-handling in pmu_lookup())
-Assuming new revision: v6 ([cocci] [PATCH] selftests/bpf: Improve 
-exception handling in rbtree_add_and_remove())
-Assuming new revision: v7 ([cocci] [PATCH resent] btrfs: Fix exception 
-handling in relocating_repair_kthread())
-Assuming new revision: v8 ([cocci] [PATCH resent] ufs: Fix exception 
-handling in ufs_fill_super())
-Assuming new revision: v9 ([cocci] [PATCH resent] perf cputopo: Improve 
-exception handling in build_cpu_topology())
-WARNING: duplicate messages found at index 1
-    Subject 1: scsi: message: fusion: Return directly after input data 
-validation failed in four functions
-    Subject 2: btrfs: Fix exception handling in relocating_repair_kthread()
-   2 is a reply... replacing existing: btrfs: Fix exception handling in 
-relocating_repair_kthread()
-WARNING: duplicate messages found at index 2
-    Subject 1: scsi: message: fusion: Delete a redundant pointer check 
-in four functions
-    Subject 2: powerpc/4xx: Fix exception handling in 
-ppc4xx_pciex_port_setup_hose()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 3
-    Subject 1: scsi: message: fusion: Delete an unnecessary variable 
-initialisation in four functions
-    Subject 2: powerpc/4xx: Fix exception handling in 
-ppc4xx_pciex_port_setup_hose()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: md/raid1: Fix exception handling in setup_conf()
-    Subject 2: scsi: message: fusion: Return directly after input data 
-validation failed in four functions
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-    Subject 1: md/raid10: Fix exception handling in setup_conf()
-    Subject 2: scsi: message: fusion: Return directly after input data 
-validation failed in four functions
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: irqchip/gic-v4: Fix exception handling in 
-its_alloc_vcpu_irqs()
-    Subject 2: md/raid1: Fix exception handling in setup_conf()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-    Subject 1: irqchip/gic-v4: Fix exception handling in 
-its_alloc_vcpu_sgis()
-    Subject 2: md/raid1: Fix exception handling in setup_conf()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: selinux: Improve exception handling in security_get_bools()
-    Subject 2: irqchip/gic-v4: Fix exception handling in 
-its_alloc_vcpu_irqs()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: selinux: Adjust implementation of security_get_bools()
-    Subject 2: powerpc/4xx: Fix exception handling in 
-ppc4xx_pciex_port_setup_hose()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: IB/uverbs: Improve exception handling in create_qp()
-    Subject 2: selinux: Improve exception handling in security_get_bools()
-   2 is a reply... replacing existing: selinux: Improve exception 
-handling in security_get_bools()
-WARNING: duplicate messages found at index 2
-    Subject 1: IB/uverbs: Delete a duplicate check in create_qp()
-    Subject 2: irqchip/gic-v4: Fix exception handling in 
-its_alloc_vcpu_irqs()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: powerpc/pseries: Fix exception handling in 
-pSeries_reconfig_add_node()
-    Subject 2: IB/uverbs: Improve exception handling in create_qp()
-   2 is not a reply... assume additional patch
-Assuming new revision: v10 ([PATCH] ipvs: Fix exception handling in two 
-functions)
-Assuming new revision: v11 ([PATCH] selftests: cgroup: Fix exception 
-handling in test_memcg_oom_group_score_events())
-Assuming new revision: v12 ([Nouveau] [PATCH] drm/nouveau: Add a jump 
-label in nouveau_gem_ioctl_pushbuf())
-Assuming new revision: v13 ([PATCH] mm/mempolicy: Fix exception handling 
-in shared_policy_replace())
-Assuming new revision: v14 ([PATCH] firmware: ti_sci: Fix exception 
-handling in ti_sci_probe())
-Assuming new revision: v15 ([PATCH] remoteproc: imx_dsp_rproc: Improve 
-exception handling in imx_dsp_rproc_mbox_alloc())
-Assuming new revision: v16 ([PATCH] spi: atmel: Improve exception 
-handling in atmel_spi_configure_dma())
-WARNING: duplicate messages found at index 1
-    Subject 1: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-    Subject 2: selinux: Adjust implementation of security_get_bools()
-   2 is a reply... replacing existing: selinux: Adjust implementation of 
-security_get_bools()
-WARNING: duplicate messages found at index 2
-    Subject 1: powerpc/pseries: Fix exception handling in 
-pSeries_reconfig_add_node()
-    Subject 2: powerpc/4xx: Fix exception handling in 
-ppc4xx_pciex_port_setup_hose()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 1
-    Subject 1: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-    Subject 2: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-   2 is not a reply... assume additional patch
-WARNING: duplicate messages found at index 2
-    Subject 1: powerpc/pseries: Fix exception handling in 
-pSeries_reconfig_add_node()
-    Subject 2: powerpc/pseries: Do not pass an error pointer to 
-of_node_put() in pSeries_reconfig_add_node()
-   2 is not a reply... assume additional patch
-Will use the latest revision: v16
-You can pick other revisions using the -vN flag
-Checking attestation on all messages, may take a moment...
----
-   ✗ [PATCH] spi: atmel: Improve exception handling in 
-atmel_spi_configure_dma()
-   ---
-   ✗ BADSIG: DKIM/web.de
-   ✓ Signed: DKIM/lists.infradead.org (From: Markus.Elfring@web.de)
----
-Total patches: 1
----
-Applying: spi: atmel: Improve exception handling in 
-atmel_spi_configure_dma()
-
-
-
-> ---
->   arch/powerpc/platforms/4xx/pci.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/4xx/pci.c b/arch/powerpc/platforms/4xx/pci.c
-> index ca5dd7a5842a..7336c7039b10 100644
-> --- a/arch/powerpc/platforms/4xx/pci.c
-> +++ b/arch/powerpc/platforms/4xx/pci.c
-> @@ -1930,7 +1930,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
->   	/* Allocate the host controller data structure */
->   	hose = pcibios_alloc_controller(port->node);
->   	if (!hose)
-> -		goto fail;
-> +		return;
-> 
->   	/* We stick the port number in "indirect_type" so the config space
->   	 * ops can retrieve the port data structure easily
-> @@ -1962,7 +1962,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
->   		if (cfg_data == NULL) {
->   			printk(KERN_ERR "%pOF: Can't map external config space !",
->   			       port->node);
-> -			goto fail;
-> +			goto free_controller;
->   		}
->   		hose->cfg_data = cfg_data;
->   	}
-> @@ -1974,7 +1974,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
->   	if (mbase == NULL) {
->   		printk(KERN_ERR "%pOF: Can't map internal config space !",
->   		       port->node);
-> -		goto fail;
-> +		goto recheck_cfg_data;
->   	}
->   	hose->cfg_addr = mbase;
-> 
-> @@ -2007,7 +2007,7 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
-> 
->   	/* Parse inbound mapping resources */
->   	if (ppc4xx_parse_dma_ranges(hose, mbase, &dma_window) != 0)
-> -		goto fail;
-> +		goto unmap_io_mbase;
-> 
->   	/* Configure outbound ranges POMs */
->   	ppc4xx_configure_pciex_POMs(port, hose, mbase);
-> @@ -2064,13 +2064,14 @@ static void __init ppc4xx_pciex_port_setup_hose(struct ppc4xx_pciex_port *port)
->   	}
-> 
->   	return;
-> - fail:
-> -	if (hose)
-> -		pcibios_free_controller(hose);
-> +
-> +unmap_io_mbase:
-> +	iounmap(mbase);
-> +recheck_cfg_data:
->   	if (cfg_data)
->   		iounmap(cfg_data);
-> -	if (mbase)
-> -		iounmap(mbase);
-> +free_controller:
-> +	pcibios_free_controller(hose);
->   }
-> 
->   static void __init ppc4xx_probe_pciex_bridge(struct device_node *np)
-> --
-> 2.40.0
-> 
