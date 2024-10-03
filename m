@@ -1,110 +1,83 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B28A433C1;
-	Thu,  3 Oct 2024 17:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF5A2747B;
+	Thu,  3 Oct 2024 17:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727975136; cv=none; b=R/BdZsJ5v4i2zEu57TmL7g3GdHdGKFAmP70Ww6RUi+ZV12zcMG8E6RnnUYwankKuOY9HMCcn6gGcz7TV7HKC0NW9QcTh1vtrBeJ3Xs8RfyL6Tdms4ikxMfQlgxunixzPTmXf2cuclq0PyTd5ihKoylvYXYWEp9gJtABVhj77Xs0=
+	t=1727975255; cv=none; b=rKtJN6X3o83auJhjoVLtYReE9o1hDlb186+7DVw5x8k+3GPp5Hclm0lFRR4u6wjlj94igEP3LEy7OdanbON1p2YqfkBP0uCQ1hyYCqGQBRAqxEqLQS9nsKaZR8APxjl5Is+0PDW2B/kVKzhruotgWCeFymAwWPIMkdF4e+2wLik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727975136; c=relaxed/simple;
-	bh=1UVcQEoUaLBLHGw7elSGxR6RHDiLIqlA5Ci00ESzSjc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JbD77A+J6yY9qI1GkrxhmncrRBgCqd2+zbH5YdnzohrnkpeCdRUWqG60MhCAIcfQvXIET/8FjfGOUlttCk3fvIs/DWXZq5zXt4ssZEFZ8BChyECXNYmFYP+bP/XESWbMdL8BK4Vx5IapQmwyv9D2VEqjzXP5GNYP2qEtk57INYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BI3RaFUO; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1727975255; c=relaxed/simple;
+	bh=dkfu7OpedYFMW4blTd8tKYx1+2gfV7GpFrrUeC40tik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bed1QWaQD9v3AXPpwjmzrQPkCQVcf2vRLbw0byT+UgX4PGT8e9KShCQKGLfCrZ2RHI+5Q5t6koZPOzFjsXUS4I7/OJHtrXpXqSXvVgbRCQntfQ6BCA3pd2EUuJsr3BCQ9xO2GkU/579zHL6tXFmvfnb5ZZ3kbCoVtKBp1zxAUSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PpMdRYKR; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BI3RaFUO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727975111; x=1728579911; i=markus.elfring@web.de;
-	bh=x1aRqowk+avzQDXULHwlYV3N6dqI2bTShLMMxvbXA68=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BI3RaFUO/IqVYSLIno2H+VgC6jRTGjRmvO6ARpvkaeM9bjGR7UaJ+cyudJiy/paW
-	 SShRUCuF6za+2AiFLI6lVnpynfYCOXFXqTWcjjt7fFefj/HC/winOHm8gYeyejcNN
-	 zep2PkPh2WYZ3TCEvTz9rAc3vK5rTllKtNDjXO1CUUSnbBNBtdzPnw+HR5gNCyRD2
-	 yH2AErWcst71WingjBzq0LapmAha0LG4cBgLdfgq5fUlTQ9FtxwVnwfRpvI7mQIgi
-	 yZC5IK52zBbs484UzS3E20fbAPULj0apH7OqA5yiGqdOAOiJQ+C6ZCGACWp/XGEwZ
-	 ShT/jDC8FEPzfbNKXg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.87.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MJnrX-1sco2x49gP-00ID8K; Thu, 03
- Oct 2024 19:05:11 +0200
-Message-ID: <434320e1-2a30-4362-9212-ca17cdde8b31@web.de>
-Date: Thu, 3 Oct 2024 19:05:08 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpMdRYKR"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20b78ee6298so7549505ad.2;
+        Thu, 03 Oct 2024 10:07:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727975254; x=1728580054; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dkfu7OpedYFMW4blTd8tKYx1+2gfV7GpFrrUeC40tik=;
+        b=PpMdRYKRklciDe6KMX91lXTILtYql0gqadH5w+A/qPCQvZhWVfcAjyfMwjMySJq2Ka
+         fNqCFrySUQHRaxnVVw6q+fAIV6yRAPh1h4lCXXTmQxzUF44LBVKBCCMQrWm4r+sAu6ny
+         3+fjeBzWfvHEB4pJJ+qpg9NogNTIpnNvlJQju3V1wLDJcIivleRME7Z+my2qEQjlzYQ+
+         Hjni0Q6m1K+Q3Bzg9kCqG4J7jNZn1nV/RBfdmI4VFW4FKHjUKb47lO+bKOndsHsftQo4
+         7tz98GFaEkhmPNz2Q2LbqdrwIIJrTf05pf3V9qM1crrO9HzLuOHQfmwgbJWbYh5WiYpE
+         3WWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727975254; x=1728580054;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dkfu7OpedYFMW4blTd8tKYx1+2gfV7GpFrrUeC40tik=;
+        b=ntwRemNjpuIRWmlEClry1lRsJsXuqH4AYPGzuI+GlA0vKy2ROWxBemmCctpMhS60FL
+         U7yLE0DfBRhcJNQ+t1fJ7lchBWXB//vUfWl+eif2uRbm7p5oxuZoCsiSPRQDZdjeERCT
+         ZUWkWKPunx2fg3zw5JLzP2BrCuksKcmTCWB1pAa5e1dPznv2D5BYSoGubhTVI+qjJR1b
+         TzedgXc7Vy+z6bEG1GQcE9RaAIzgvD3CW33mfmW1TlP1Duao2YwkhsSUtGpScZqcBQCB
+         rlaGF564ltFcuYKFwMrGCDyxM842JkNpxf7dhJuWH0cb0ICy7A4nqhz1EiDxj9r91/kR
+         NCkw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX7gklky82i4CVccyMy/t7p9xk2X6G22SbJKSEPBdm/kbs7CK7LSBgGy8AsT56guk0H4ktVoGoZ381B2M=@vger.kernel.org, AJvYcCUb98QqSce+uhpe/YrFU4fedhfXLCK76hT5az9ldeBtWvchlQaDg7YwOjCzlk2kwflUOeUM4rb44QLGSmpt@vger.kernel.org, AJvYcCWiKm2OldPQ3wBpoufdEeRuLYMDZCJ0wnWExrO7VTLUpFuiz+E4JmZHVWh9naPiWzOPwg5TNTtviK62Axnx2UU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzovEbPDeCZCdgKzopA6m1K4Xp+Vrh6WBl/HVKOBlsjN4SeD//U
+	8rvCfgGSd1lo5ZSlLxNhVa+VNU/QA89kAfwhUXn6HVGbZZHSjYgz
+X-Google-Smtp-Source: AGHT+IH+lcuitFr2y68/zPm6sfKZoMgOMMWy0G+pLPaWzpY6VYabxGZJbcedKcdXA6Lu5Ya866DR4w==
+X-Received: by 2002:a17:903:1c6:b0:206:9519:1821 with SMTP id d9443c01a7336-20bc5a0a184mr110302725ad.14.1727975253702;
+        Thu, 03 Oct 2024 10:07:33 -0700 (PDT)
+Received: from Hridesh-ArchLinux ([175.184.253.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20beead252esm11348835ad.43.2024.10.03.10.07.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 10:07:33 -0700 (PDT)
+Date: Thu, 3 Oct 2024 22:37:26 +0530
+From: Hridesh MG <hridesh699@gmail.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v2] staging: media: fix spelling mistakes
+Message-ID: <hd3n62efwrurrjrp7annnwufgiggmmszjmrqaryibf67dt53sr@mazbztoqrkdi>
+References: <20241002152231.8828-1-hridesh699@gmail.com>
+ <2163bf83-dd55-4f79-b0ea-834fa7b1f561@xs4all.nl>
+ <Zv5XsJd965xdNI3j@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] powerpc/pseries: Do not pass an error pointer to
- of_node_put() in pSeries_reconfig_add_node()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Michael Ellerman <mpe@ellerman.id.au>, Nathan Lynch <nathanl@linux.ibm.com>,
- Nicholas Piggin <npiggin@gmail.com>, Paul Moore <paul@paul-moore.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de> <871qln8quw.fsf@linux.ibm.com>
- <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de> <87v8iz75ck.fsf@linux.ibm.com>
- <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de> <87pm9377qt.fsf@linux.ibm.com>
- <afb528f2-5960-d107-c3ba-42a3356ffc65@web.de>
- <d4bcde15-b4f1-0e98-9072-3153d1bd21bc@web.de>
- <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
-Content-Language: en-GB
-In-Reply-To: <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:l3pgyZOI07Bh3dnf7Bb4Ey6oOw4CTctWcTQzVYrYpobYkMHHXRn
- OPk51Q8pvjKkh1GXivyDLMXfVDWgV17SXTn7dpTpoMJKyR5B9MPUpKdLhFHDwMw8X8qTCY/
- MpN6c2xOvsHPMUhN+ZeRQBCKXhtupcUjNvgF5A5UqRZRi7WsV5o26c+nIi+Rs4CrKnwe0r+
- 5GUf7Wh3YrZvtuVgD4Hgw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:H1JxztHArQo=;cU/Cb9YdbVJnqdRJnvh/1yWlVIo
- FGsQCXXnJYaq1CgPuH5q2GZ+CEH611VtAZDvcnNaGLpYX5BAgU4/XAHIGBlD/nTs+SKQg71Ez
- OqRQzxJYKJQgHvBjH/Z3o/sbKrzHDdmuYxN2uclk4dh6P+Jbe/MRnSqDS+MIl9WYxEv/jicPY
- 1b2dUSlzSK0eKhi+sgXZo9KRzMsNPW+qBmWJam+j9YiRegdxCFUbfXcYdNhK/tDWO1IL3+jqy
- nBYxZRnoPVlchx9XTqwMsdaZYe8l/AgKKocM1pMgMSuRmm58aosPDTFYVsufYGzywLcfZliC0
- 3hE/79L+d227eg3CTeVTOtM8jBn0rVNPi7PP9dnEzC6or/Glmcj+XM9GI41j5wa9sxcbrg0c6
- lGSFR1BDbgrt2/hdpzqcC3WjkI6vWr7RwClPiGauzR4cczbL0e3fop8rCFfywcqDIJGkvxhXR
- HY1MS/npuLYQx3WGJ9ffLQXU+COEPhJY72h9c+PXAgywK/94sl6ixVNdjM21TSKjBojX1HNk+
- DNDyc0aTgcDPS9Es0t0e+ublIE6/Yu9+v04wYA0YydWiIBFpCCF/QQDk16KtCGoky/vjMSxS5
- rSMpHM5W8Zg6tUgI5+imto0tftAzfI7VtYpz3cu/N86DzcbS2Ck5gTdhC2QhHkMoR12wxpAhT
- 6sCMn3+R0HBf9Jn6d+YPSY9H4cJ2VVkDCGyX9ARdlrnB6TkaqIhiWoinZUGYEXL3H8SJgArqf
- xkum2OQsKay1suUH7SACttEn9BJIMJyw2iwJw1kz0ZBhc+rKR3Pghhl3e8Qgv/SoLiSp5sEhT
- bbNhhBUhEWjGPwtEl3UmwuBw==
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Zv5XsJd965xdNI3j@kekkonen.localdomain>
 
-> Date: Tue, 21 Mar 2023 10:30:23 +0100
+On 24/10/03 08:37AM, Sakari Ailus wrote:
+>I can fix that while applying, no need for v3...
 >
-> It can be determined in the implementation of the function
-> =E2=80=9CpSeries_reconfig_add_node=E2=80=9D that an error code would occ=
-asionally
-> be provided by a call of a function like pseries_of_derive_parent().
-> This error indication was passed to an of_node_put() call according to
-> an attempt for exception handling so far.
-=E2=80=A6
+>Hridesh: it's a good idea to check which subject prefix is used for a
+>driver in the commit log, too.
 
-I was notified also about the following adjustment.
-
-=E2=80=A6
- * linuxppc-dev: [resent,v2,1/2] powerpc/pseries: Do not pass an error poi=
-nter to of_node_put() in pSeries_reconfig_add_node()
-     - http://patchwork.ozlabs.org/project/linuxppc-dev/patch/f5ac19db-c7d=
-5-9a94-aa37-9bb448fe665f@web.de/
-     - for: Linux PPC development
-    was: New
-    now: Changes Requested
-=E2=80=A6
-
-It seems that I can not see so far why this status update happened
-for any reasons.
-Will further clarifications become helpful here?
-
-Regards,
-Markus
+Will do, thanks!
