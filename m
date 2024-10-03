@@ -1,65 +1,66 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D19013E41A;
-	Thu,  3 Oct 2024 08:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B8813B280;
+	Thu,  3 Oct 2024 08:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727944492; cv=none; b=g1ABFSBpUkfuwt9qchRPxwhIm+6hmQL+rjKUr5Ln3mVj5dTZr8L4AJlrQYCAVbWVfrmgw4oYwTbiyYG/BYuB8SvydTtL6AkveecARx8ObEl8fTzQFvct/0b6XxhMN22E6wYiei0i0s1fhbjfPeaQTgLVc349ByxxkrNmGxqe/F8=
+	t=1727944633; cv=none; b=deJqmtQGWJAuDg+nY7I+GaXauvE52U6rVSHwVIOWm8eo3sVJFBg0ZIqCCem6DU13cxJfDmOao5zF1RIWE6B19tlJhJdSZBFwkjvmb0Qos+pxcjeUEzVJaIdqRe2c60b03xNn9k5NDOOGX4vU/l4Mm22VbCVTlYq6huZVt0Ik21Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727944492; c=relaxed/simple;
-	bh=depoTSniyt2pHdizgX8h/eGS3wMTqVguZQ59oJuJrtM=;
+	s=arc-20240116; t=1727944633; c=relaxed/simple;
+	bh=/J1Mq3LUjuws8ZS8jbgSSX0fkiVGHMXLXkitxD54E9E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDTxiKbYh0ATqpsHzGwVufA9mKo4RLR6MLe+q6kYm1eZJIGcs6S0P3kDSw/UphyQ1dYp7gIrRG5dE3CWJ9B+Rz9jdy3+MXGU/MGPF1W/WeSrXn6SwG4DcpAuBYKqhUy8jqaw/0hDEYlZdg760HqC+9JV0Q88IG3urloaqgznrOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMrzzQTR; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4VgFNtSjlZUFZszgfgknvnBHrn1yyhToeYcL0iZCcRBbgeg8XlBqpfY0tjolHs8aoA1MdUPiTyyo7hVrTs9ceYzHYsgXHAQrnm+Ws74mxmnvBSKE0xuCcc0cBAHx8VRRLx8bVxjU3xGZX2kchuxh/dBtqlo6qVhuHhOI69W9Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WFoqQpwc; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMrzzQTR"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so8977445e9.0;
-        Thu, 03 Oct 2024 01:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727944489; x=1728549289; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jga7af/0yZ1Zr0GRHjyr4J7ThGzd+ei050RU+9Ps6i0=;
-        b=OMrzzQTRsJygvDvplrapQJTAIqixS1s9dWPLsonKLrlBCRxcjxLt2Iw0dKw9jstn64
-         MbPidUoSXz32cUQQJe2SAmnGuXRKZ+IeICQuAtJkj/vx68YSKiZylbm9lk180ynlZk3w
-         ku+tOWzlLN2N58Ie9SO5Q7/4JyRnze9QaUf8X0ap50OnvFjNqNOy1k2zZ+2CYshU+3rr
-         0sZQqbjYKgL0BvYY6SQgUqm8k25E2w7nqyWsSKvaEphGwerWMoHxK1eZCSVuA6QJOuKq
-         jVHJfscUdtieI3D9pl/NL8SwINNdEk3VJbdOf66zmgNqHwJoSITXe0k+lw13xCB7tFUf
-         jmVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727944489; x=1728549289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jga7af/0yZ1Zr0GRHjyr4J7ThGzd+ei050RU+9Ps6i0=;
-        b=nEH6B2rTKe0NpIrqbMzxcb0aKqn+KOaOQ9bkTIeNsct6fCfFTpKtgy807OaPGSadun
-         7kYBfyTSxeukuJbcDL6y4JXvkn90SsVixQEHr8+Ip6pjFrDsn04KK4DPDzxBLv+5lCvz
-         JPo9DCB6lzTBaix77lTXHLMpaVq2+KCxaJcNtMGksvkU5x2tLou4plFL4zbtxM1Ra/1S
-         rr6IW1BFy+g/UbHdzlGHr0I4vrP9hGCANBytEgqjfzK6H7Bf/5jCyNRLGBq0T2afNI8V
-         XOpJ1+io/az6oQ5l1jhTFxiF3mReK4R0mkJ1Z6sUvab2JMm49CiWvMHnkrqN3WE6ul7T
-         rReA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdnq4VdTwA3C6ZoZENv/pnhXCUrUTU2k+QrE5HlWSh+ub1Vv+Pmh2KgV6Ep5GXfz+4/Me8Oy3EDOuVOxU=@vger.kernel.org, AJvYcCVpmlzPUE1dD2eME8I/oGESbpR/fivXEGTNczsl3wJbZhcoh7mJg0rfTtcVsPdUeC34ecexa/fpV8urtweTzTA=@vger.kernel.org, AJvYcCXzJ8ApIICugrpyUsjjIAMAb/qvwTBuEwxbv2eNmbsEbvLmm3BTzTkZIcNL9i8722BdCaWoOLqyCrjaV88Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHeJ4Mf4YpSJJnHh0TAmhD61tS/2KKbs3T9VvVF1PZ7tJ0JDRW
-	OTHEeRH6M2AXGJj2iXQ1kunU4p7Sbv2JwBrONAU8ViVOuooYQsww
-X-Google-Smtp-Source: AGHT+IH9D1jOIH/eLsK3Qc/Fd3oWjoALCAQTCBMk6aKstilIJwBvujp0TgRR71DtaXfi+IqRKuyxjQ==
-X-Received: by 2002:adf:f285:0:b0:37c:cfbb:d357 with SMTP id ffacd0b85a97d-37cfb9d3385mr5283900f8f.30.1727944488501;
-        Thu, 03 Oct 2024 01:34:48 -0700 (PDT)
-Received: from void.void ([31.210.180.79])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d08245020sm744140f8f.53.2024.10.03.01.34.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Oct 2024 01:34:48 -0700 (PDT)
-Date: Thu, 3 Oct 2024 11:34:45 +0300
-From: Andrew Kreimer <algonell@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WFoqQpwc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727944631; x=1759480631;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/J1Mq3LUjuws8ZS8jbgSSX0fkiVGHMXLXkitxD54E9E=;
+  b=WFoqQpwcWZMDGlyzXtxzCwZXhkQB5btPBTVby9Bj32ynCzqo63iZ0Gzg
+   mPmXbJV72ZHjFKO8CmsDr+Wv8Qk/YpCwNlEwfwwgRnJ7MmUcx2kaT1TOx
+   McOePYjvWanF4p4/+0f5icaW8CEeuOvNoJBlGy7D6IsjgCNlU5/NObdjo
+   5fVmpKXW024IRYHIamaJY3zMsN6vRMXr33XOL5pKiTnTa8k1XK+Hq8jaP
+   0NzeNYdrYQpDmdUAksZWWpi3EX2Fou0d3f0DCUYOZ0zg8vSkfhmAeBqb7
+   trhhtIt3yEXy+p3JwgqIBmTHDyTpoE3cqpOh1ePd6HXlZB8DPUBKAfGR5
+   g==;
+X-CSE-ConnectionGUID: cY01qer1TmGavdyeU+10Yw==
+X-CSE-MsgGUID: zalWWt5/Q/yTx42/GdX9ng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11213"; a="44656914"
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="44656914"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 01:37:10 -0700
+X-CSE-ConnectionGUID: p3hrlGxKRUqxgl9a8avMSQ==
+X-CSE-MsgGUID: gwEo7SiZTui3zH9FbnOqQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,173,1725346800"; 
+   d="scan'208";a="73865629"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2024 01:37:07 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id A97FB11F83B;
+	Thu,  3 Oct 2024 11:37:04 +0300 (EEST)
+Date: Thu, 3 Oct 2024 08:37:04 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: platform: fix a typo
-Message-ID: <Zv5XJXR3BVjy4dZ7@void.void>
-References: <20241002212602.11601-1-algonell@gmail.com>
- <c6b148d6-a6e5-458c-97ed-28b64eb7b238@xs4all.nl>
+Cc: Hridesh MG <hridesh699@gmail.com>, linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v2] staging: media: fix spelling mistakes
+Message-ID: <Zv5XsJd965xdNI3j@kekkonen.localdomain>
+References: <20241002152231.8828-1-hridesh699@gmail.com>
+ <2163bf83-dd55-4f79-b0ea-834fa7b1f561@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,19 +69,29 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c6b148d6-a6e5-458c-97ed-28b64eb7b238@xs4all.nl>
+In-Reply-To: <2163bf83-dd55-4f79-b0ea-834fa7b1f561@xs4all.nl>
 
-On Thu, Oct 03, 2024 at 08:50:09AM +0200, Hans Verkuil wrote:
-> Hi Andrew,
+On Thu, Oct 03, 2024 at 08:52:02AM +0200, Hans Verkuil wrote:
+> On 02/10/2024 17:22, Hridesh MG wrote:
+> > Fix three minor spelling/grammar issues:
+> > 	chunck -> chunk
+> > 	procotol -> protocol
+> > 	follow -> following
+> > 
+> > Signed-off-by: Hridesh MG <hridesh699@gmail.com>
 > 
-> Please always include the driver name in the subject:
+> Please always include the driver name in the Subject:
 > 
-> media: platform: ti: omap: fix a typo
+> staging: media: ipu3:
 > 
-> That way whoever maintains the driver will trigger on this patch.
-> 
-> Regards,
-> 
-> 	Hans
+> That way the ipu3 maintainer will notice the patch.
 
-Noted, thank you.
+Well I was cc'd. ;)
+
+I can fix that while applying, no need for v3...
+
+Hridesh: it's a good idea to check which subject prefix is used for a
+driver in the commit log, too.
+
+-- 
+Sakari Ailus
