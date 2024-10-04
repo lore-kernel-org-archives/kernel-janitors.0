@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBA92139C6;
-	Fri,  4 Oct 2024 13:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81A91AA7A1;
+	Fri,  4 Oct 2024 14:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728050236; cv=none; b=OE8mp12gCC6SPZhx2P1ID2Ii7yhEX/Oo6WHJviSijuoCr6CEwwVwTrmttAJPbwQgdQNEYUn8UNNaPq4rmUGIIjZBRdAsUmdw0cYJNU2Uc6HvYvwWTZzA5YHuWGNMdWyEp3Oc+KAU6J06cnVq4vUFlYIUh+2O4szfCey+kUJRAwo=
+	t=1728053258; cv=none; b=YExXaq/2sMQVOXQemQpBj0FLG6yiegLbMsB3mIBMMSMwAxJA8cwABzgCpsAM/ReYNeHva1AKdR+U4LLhBDHcAtZOZeGaf72A52cu49rSIHpPkKBhUTEBH+13GYFWWShFzg2nxlzuTgPX/zXl2L6kD1Mag6/DEZAJ/66qQQdcgJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728050236; c=relaxed/simple;
-	bh=7Hwq9uEJINWh6lbq0eDSkjI/LwWpxKdFjo1dFmCmg70=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Lh0oChPKuqovZUeT+au20NctxE5QzgTBIAYLCV6uhwAS6bw7UnMz57YnHjNJnD7hSJbfx/Q+mMV0RDknzDlAeItcYkLfQxiW11Q0MgMYFQtCIicqSaT2PDNZeSqX8t0XDvP3Y8z+jkqQaV7gCqCVb1FqxWZH9ID/rFkplpUWVCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=COdlk9UB; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1728053258; c=relaxed/simple;
+	bh=u++hyLoQ/i3dNqBZq/LmKb+AfeZrtTSxIHJd/ivLDYg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fmid/jfS33ioqSCVe7nJiwF97VIe1Ngigl9sG2eKtqCLqk89oxBVQlRDdtTF6ygLRyKNTZoCo46Xuc4HmuYGnjf9AUVjB6tWFDVF+pZ2SDkwnyIrHIDB709G68HJCPpXBAIfZ4QMK3ywqrQa4GuTI/5K056fkcutKOiub0uOUh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mcMrYBGj; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="COdlk9UB"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mcMrYBGj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728050209; x=1728655009; i=markus.elfring@web.de;
-	bh=l5sBalEVeHVqU+tztsDZkdHezcT8/Y4LuI15YAud/Os=;
+	s=s29768273; t=1728053227; x=1728658027; i=markus.elfring@web.de;
+	bh=A+dNUIVHyB/x/Bc3YYhMlKwmGkB5MZJLY2b4rGCcbMY=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=COdlk9UBKuCaUvN8clv+FF4S1THVbAJVqWB2QPda56DLfiExkrEEV3YXwSBlszS8
-	 cyvkQjedLlpKoTRmW5jNCcuYvapidFV3QR63Ie6xHybvmVh61mHIjkP6oGgAPZYVt
-	 9c9x9KuTBrgITV4twZSTlEsZzwLIowJVSDnkIlCgKngpdsJ3KBjkRoH4706QriDe5
-	 CrePkqpy4471HXcIzvv+q5vzvbIymU4ay7aWsLDMtITNc4VVtwudGk1pHSUNL6+99
-	 1ACB5JD3eSIKk9ySyUJgBkkCshQk7Evi8cly/P0cbISptAlAzi76DCah5i1JG8TD3
-	 SzfFny4QSQkyCRbIxQ==
+	b=mcMrYBGjC1JW9gGVVlzcs9en17zQRE1GeHjgVb1ez42IX4uRdm6mR3WKtTtOocxC
+	 NAl2tjIos7jrn/A8ilCCuNdL9g62uYLZbk+VK8/l8lmzMOsY/VECZ03OKyy9g/EML
+	 UIyQwAmzbqsMYFK+BBd4T717vps89iHugmfOjphE3aEUMSa9AwczOGzTNF7jNJO0w
+	 aLB0MxXZ1x+7a/4wYU28dtVXGcxRqVIFNOrXZtVfCzoqGY5JhkaK77r00nNmvcEA5
+	 26/6cE9r86UbQRoqi39u0ZWw9FpcPW8EZelcDReC1aCTxoEXRBRllx0vcwVBtgYkp
+	 9Yt6DNJBXiPQM82whA==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MKuKF-1sbU7g1DCv-00JJaN; Fri, 04
- Oct 2024 15:56:49 +0200
-Message-ID: <5d8222c5-d564-4e27-9a85-ec4a526e84f8@web.de>
-Date: Fri, 4 Oct 2024 15:56:40 +0200
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpTxm-1s6ppW3uCC-00n7Tq; Fri, 04
+ Oct 2024 16:47:06 +0200
+Message-ID: <95773471-a94d-4c10-b678-2b5b702f3bed@web.de>
+Date: Fri, 4 Oct 2024 16:47:04 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,71 +41,94 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Patrice Chotard <patrice.chotard@foss.st.com>,
- Peter Griffin <peter.griffin@linaro.org>
+To: linux-mtd@lists.infradead.org, Miaoqian Lin <linmq006@gmail.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <rafal@milecki.pl>, Richard Weinberger <richard@nod.at>,
+ Vignesh Raghavendra <vigneshr@ti.com>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] media: c8sectpfe: Call of_node_put(i2c_bus) only once in
- c8sectpfe_probe()
+Subject: [PATCH] mtd: parsers: ofpart: Use common of_node_put() code in
+ bcm4908_partitions_fw_offset()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+QCmwZmgCaEV2v9LZCjjGJaghSVTSAFn4GQRGdBCM9HPGmzrnAE
- Lcb0ITz5R+EmIIdpN813CxVRkg9rEs4rJj5QfVKUDzyVC0xUoeTpb5ZUmPFowDwCD86gcQN
- 3D+EVcUyEqJ1jyRRdS9PmFc6wvHSUAQjGc2K1KSm9HFjwekFdsQxZqBjMvd4DZn9mew7iOX
- tuPcpy+p7rU5mGdoyxx9g==
+X-Provags-ID: V03:K1:ZJrZ7bEjaQWkla2jPU6YmskI8FAKk84owvqvM1zNu3EahBADPmf
+ zTI+iIwKmZiEqJ7ILxO6eHqIGXPWilGF8TedOvMfXVB8c2+CrnD4TSZzA+jlRKe8Rd6h6Lh
+ JTqn3Xa/RZ4zIKAYi+k1Dmm97Q3IjaSH20bAis/Q7MJ+jHqusR75cJR7SKfw7i969evC/QM
+ MN3gXEOs4/3XW4QK2V8Ow==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:29mHHnh0jhA=;z6wggkJyybQu1vD86KEzN9mdlr8
- XjiZLv7SDj+hTW2IAtItSG0mfxETpxsAF/fPdld+Lnv/Kr7Gdp340FB7Q/Co9oUYRNmgvZndJ
- WhWZq8ICA5j+QUrXL1Qm5AMV82ETLRV7aZ9SRNrm4tcQ3CqcmVT8KM2aqky+3VuG2mhbwa1mj
- d9BxiVsmTyzGrUoam8ZbwFIBaFRuOuz+TP4BZu0ERcEAZWpwhr0V4DTTr+JJPl6kDdpueGmb2
- 2B3Fmb0Rcb3CoNg7FegMIROggaKA5HybxuPryDiz2d+d6W6sGUMBQAdGtHXCL1sLu6VYRhshU
- G8xjxkOjJILfCNP6u6uIE1HZRjNZP7sLV4WbKEIL/ahrrxRRG05YLi/zKA/W4VRDC/gGf7B3k
- uGdYm/JOF3a36aUYzUCaWvnmnLncr8SUl4UIze9OPSYan8ZL1C3sSoik63Hi82/IMxAkyM+LB
- laPtlpzek5cm23EZ+3A/FfjqSuTbUaDrovRgWLydEXFrocKHOp8YBXRcG5YNlHb6MW/nZmxju
- yDvK7YyPV8BSX4szIs9sgh5aDbszp66CohurHr4BZV507rwlVJtqg3aRTYHDH8wQdjqxENdoX
- XpdDQr2wugfyCHIQChrUJFSdBG90tBzukuZH37+2g+Mh3iAUE++MVUG43J/bzMNhfgufX7/Jy
- d/3sZJxObfIL07opdp1mNivSu7Jo8jiq05PQunXjaNr9LHe8AjHQmB8fDIOGVUw8AyK8tFkin
- jbrbWHP/ceV24LF+P6nWU5e2LgDBkyJop6oJ0gsOaByJ2uSvI+vKMnVit5TnDuqXbir+tzorf
- aWhhbgXbpWa4szLljX4G17ng==
+UI-OutboundReport: notjunk:1;M01:P0:rjK11Ig61CU=;MkiouDE4DQx5/nv4efR61E1S2jp
+ h3OJurh9lHmuyWciEzL+phrJ1tO2EmEIvRDuA8lOgMNhOzWlH3VdVsP5trjfPfR/9mghlFwjg
+ NABrkFvif99kcXhZMxS66XtRygcKny/l4Zrd+gUE33Lb100hzE9ZER3rU7VWqz9DOeYxLL9J4
+ EevLcy880+cRNvr56WmldJmhPMS/C2iAwToHOs4tE96NLr+r9xWYLfLIRZp2doWa6YrUbLaoq
+ MFW60QW7gWf15IG2nZOICwHIkazn2EhhzVheA1xXXxPu7OxLZH8nsbYEHV0A9atryEX2IV26s
+ wJO4uL9M+xcl5P/jar6n8WlCiLYMpxQl4/+t2Uy4ZbeDaEh/tlW8/HwYztjMMcX/lD9u+gRM5
+ vw1WGcbZ/+whMBbSJgp+gt0xeA+qGDnmy/OjVJ2gMTqbBjiiNSCvdPNh05RJbJei4MxaQkocX
+ FNJvl/Am8FNvX0JiGyOHtEajv1+I8lCzzZXZHQiBupxboir6pmufqh+EGxLQQMx0SawXaDBF9
+ P7UPKfVpmNhNPVD/Oxdxvme9j0fF0PbJ7YPlTbaIbeh8o7zVBxJax+7RQ8YVGaAh/Mhep1sgw
+ +fHfzyrNLVsrqtQwm9Q1t/Ky2KkjzrBdyMbSu9av93MkK8OGZTD3XFh6vcTcl4340t2W4wg12
+ uC29sfKfzbL2ZTi3wmK4zxKXjbhhjtc9HKJnzAonhqJ+N18wkTj0leR2M/SsnaMY1ccU6EtDH
+ QIj3Ix1YjgFESaMn88Zsjb2xiXvHGECaGFjBtXt8etgojli/LDD2p885zbYvbDzJvNaaCbP+X
+ jjlezHFmXLGpJ/bejoB5Jcgw==
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 4 Oct 2024 15:50:15 +0200
+Date: Fri, 4 Oct 2024 16:30:52 +0200
 
-An of_node_put(i2c_bus) call was immediately used after a pointer check
-for an of_find_i2c_adapter_by_node() call in this function implementation.
-Thus call such a function only once instead directly before the check.
+Enlarge the scope for the local variable =E2=80=9Cerr=E2=80=9D and add a l=
+abel
+so that a bit of exception handling can be better reused at the end of
+this function implementation.
 
-This issue was transformed by using the Coccinelle software.
+This issue was detected by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mtd/parsers/ofpart_bcm4908.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c b/dr=
-ivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-index 67d3d6e50d2e..ed3a107965cc 100644
-=2D-- a/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-+++ b/drivers/media/platform/st/sti/c8sectpfe/c8sectpfe-core.c
-@@ -797,13 +797,12 @@ static int c8sectpfe_probe(struct platform_device *p=
-dev)
- 		}
- 		tsin->i2c_adapter =3D
- 			of_find_i2c_adapter_by_node(i2c_bus);
-+		of_node_put(i2c_bus);
- 		if (!tsin->i2c_adapter) {
- 			dev_err(&pdev->dev, "No i2c adapter found\n");
--			of_node_put(i2c_bus);
- 			ret =3D -ENODEV;
- 			goto err_node_put;
- 		}
--		of_node_put(i2c_bus);
+diff --git a/drivers/mtd/parsers/ofpart_bcm4908.c b/drivers/mtd/parsers/of=
+part_bcm4908.c
+index bb072a0940e4..f9caf4a44b4c 100644
+=2D-- a/drivers/mtd/parsers/ofpart_bcm4908.c
++++ b/drivers/mtd/parsers/ofpart_bcm4908.c
+@@ -19,6 +19,7 @@ static long long bcm4908_partitions_fw_offset(void)
+ 	struct device_node *root;
+ 	struct property *prop;
+ 	const char *s;
++	int err;
 
- 		/* Acquire reset GPIO and activate it */
- 		tsin->rst_gpio =3D devm_fwnode_gpiod_get(dev,
+ 	root =3D of_find_node_by_path("/");
+ 	if (!root)
+@@ -27,7 +28,6 @@ static long long bcm4908_partitions_fw_offset(void)
+ 	of_property_for_each_string(root, "brcm_blparms", prop, s) {
+ 		size_t len =3D strlen(BLPARAMS_FW_OFFSET);
+ 		unsigned long offset;
+-		int err;
+
+ 		if (strncmp(s, BLPARAMS_FW_OFFSET, len) || s[len] !=3D '=3D')
+ 			continue;
+@@ -35,16 +35,17 @@ static long long bcm4908_partitions_fw_offset(void)
+ 		err =3D kstrtoul(s + len + 1, 0, &offset);
+ 		if (err) {
+ 			pr_err("failed to parse %s\n", s + len + 1);
+-			of_node_put(root);
+-			return err;
++			goto put_node;
+ 		}
+
+ 		of_node_put(root);
+ 		return offset << 10;
+ 	}
+
++	err =3D -ENOENT;
++put_node:
+ 	of_node_put(root);
+-	return -ENOENT;
++	return err;
+ }
+
+ int bcm4908_partitions_post_parse(struct mtd_info *mtd, struct mtd_partit=
+ion *parts, int nr_parts)
 =2D-
 2.46.1
 
