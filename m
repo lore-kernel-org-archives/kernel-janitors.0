@@ -1,83 +1,92 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989AD231CA4
-	for <kernel-janitors@vger.kernel.org>; Fri,  4 Oct 2024 21:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2EC143C7E
+	for <kernel-janitors@vger.kernel.org>; Fri,  4 Oct 2024 21:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728075767; cv=none; b=l9Jvj+sUI/90UIZ0jpShEZs3wINWjrF+a6/IzrlW7owmuVaeSQlq4W/cnew31OaoaTTdDk11PCpuUOKOwuGD0R+gt/3Il+AIiRrHoVeUsiRfWugEnUMAyxkt3QOQ3FrXqz0BjsP4zrLoOg/wxsHiv2Ed5WAwb3tMb0M/9wkWo7E=
+	t=1728077897; cv=none; b=YZGyMS0zweubbvz0QY+j/fxnV69k0wcqJ6Hczl3Ws7TDfxqteLlVGPCMQrK1pj90PhaFzzu0LuZlFlrMcWZSKL8zcu7rNCDF4JQSYJobqiR8Nis5Eq6X45HJf5LQk+/o1b9q9liEx/zFpnoWqzSyy7DknD3/bW0BGxpxrj8gs8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728075767; c=relaxed/simple;
-	bh=Z0fJUiXSWKF0/oClww5nKjc/i6T4KrfOP1RoDUDQPuw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=T+ytqOgJKDolzi/qGYCmRYhyAe1eoTSvc+eE/zFamnQFm/RZOKqeDKcKZbj2vKwIsQVmRZB9QjQR5kDo+4gflvIKfJo9wwvXoZyjokFvbvZQuNG7K1XsvN5sgvkCo4FEVG0a33KeGuYqCqKwIzEvuvusp+IFdW+58RA7u4X1Wxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=z1EAhie9; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1728077897; c=relaxed/simple;
+	bh=xL6oYs7txqJE5TKT/Uno4YPofgUAfebhf5IadXGF0yc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=av8CTjW2QpsXtCYzvnkcdKTY9OhwkJ8YJYn59n330Ffsn4CJsCnHNQUdAQ/3hDEdjmFSVHd4o8Rkc7jVMIUM/UnM4w+udPtnNdfDyS+nVfOmGgQ5yLttosFuhpGAT8CF4PT/Rn3baS9PPKoFT5op9UpgJBaLgEM4TagcmviDD1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WUlDdGX6; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="z1EAhie9"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20b01da232aso21186915ad.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 04 Oct 2024 14:02:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WUlDdGX6"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71dae4fc4c9so2244388b3a.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 04 Oct 2024 14:38:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728075765; x=1728680565; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z0fJUiXSWKF0/oClww5nKjc/i6T4KrfOP1RoDUDQPuw=;
-        b=z1EAhie9MGLkjxXXM7AhbkKvyCIRHeO/QJwco3IMNMyAjnzVcJ42lr2A8HWHhqJCIA
-         L0bXETTLb6eYku5IFpN1vecJX+TrQEComrj+OR8Pdxg6gdXmnJxZyITQJvFKDcX8z+++
-         hMhzhec2/UcuLbtWurrtCX4+/o8C1BrKpMQcYiQ3vZoRd7wS6JCP+stuQx7DWttaC7lh
-         Tfhv7EjE7bQTZ5r3OMrpGQNnFyNMdUeU8ZPpUy+qQ13agq5i4VDE70bkQ85gMiJpCaRq
-         4MGaRm5pji561LcCwiYbY9HbEwto+h4veBWOeZsqrN0gPvr67QuMC+DBIBUMTctPrfFE
-         no8w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728077895; x=1728682695; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8gYgjsDPjP7HrNwnpk8YBK3/LqbS1xGGqsLZX+Agvmc=;
+        b=WUlDdGX6+XcJE/mP5jK/wmuYy024E6vuUU9wzY30uH/94+FtS5lxNwkfRXGjbnue+4
+         Kfwak8DMVu4dOOdqItc/6WfiQmgzZpKFSDPck3n5/4EmUaylGNyAnSNmidwIL6SCihXW
+         B/7OPjiBdRj6kiiDbDjE4viJ1tSR+wHvkZRPTok8DAUyuHY7mYrloCEGnx0TUn0P7Kfr
+         NtYZ0FGCodfTmxwyM2bIsIIJoyZtNcrxBxjqmvJabvmq/+lD5Zg4w9dAq1itAiexWDV0
+         ExeEdI7D4VLLUjAguTQlhs1M0E9303mSGAzH9KlPvKDhDLUjPNwuTQXVzKUo8n0q+cpE
+         DQ5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728075765; x=1728680565;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z0fJUiXSWKF0/oClww5nKjc/i6T4KrfOP1RoDUDQPuw=;
-        b=vD+EG974kxcefCLBPgXYTgnU6Vsmn6NEcSXr8hGQyuaDzHGYYc9eNqt7fF/xK1IyDK
-         apDIgW4bh6j3SWxmKQIvfQBCAQ4kE9lHzpjPwP7aEYhPTTLjWUf37BZRQlB+j9HTFJYd
-         JWYX5ddMUEUC/oY0SLDayiAnOsiQYAdr+nRw+HLTK3iH/U9cM1mryMrDAEuzBdQaeG5+
-         w6eLiZmDAfWGDoBUBLNuvrnHpMhY9QWu+wx68x0V3vk9wcIGdPI0pXYiKkcnxFJKFgkn
-         LcOtC2eueGD83uGdvlrYaLpQCVmF64agaV8FzkFzy/rwDbloFFvwqly2Lleao4z1l5u4
-         VqOQ==
-X-Gm-Message-State: AOJu0Yzl7N2nm72V489tgNPWaybqcHGoolYaX/muf38tCFfocLa1ENDW
-	XR3f3g9yfR3DSyINFePVWO5xcYvRH0n3lJ6JraapI2t8Vyokc1Tm7CRmJlRC6Ew=
-X-Google-Smtp-Source: AGHT+IFDNzDiJhD0c97txDHvcsLQ1YdPdzVbr7H3zXAo1awU2N/Zgy5I/d7MVIKR+rnQSS0tJO808A==
-X-Received: by 2002:a17:903:230b:b0:207:1845:bc48 with SMTP id d9443c01a7336-20bff589deemr57720895ad.30.1728075765165;
-        Fri, 04 Oct 2024 14:02:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728077895; x=1728682695;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8gYgjsDPjP7HrNwnpk8YBK3/LqbS1xGGqsLZX+Agvmc=;
+        b=H+JuhWVHTAESspPgcHkvunDUnm4/V7klDJW+NpaIV1icbv4Qf5XfH3qWtKUYnFzJIG
+         dF3uZ/WMa6M1nAQ4PmQP+8L+CikfTsfYZgxzNdJaDMSGpV+r32kJ1gL0OynEEUeEPOKx
+         2zTJgaTbLYEMTvcLqnsw4T44rdtdNHPzPmChGFPavQE6OZ3Tjiaxfw69XkR/gY4U4NKE
+         TT4h4oz16pEFjwYkHJlipl9XwphZ/IrwOh/GaUxFi8r4Mdlf1dR2C08Qw4X1QM1Bp41W
+         NhBm3J73j3g9erF06Xsl6gVCFbT12Q7hrFIrfR5l/pBx3nPpNIET6B2B2PJBaAXdMbR+
+         wahg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGNqbnDjKRUSLInePJR0UuX962A9CDYVOr7L5flUgH9j8U2aQFCKOE/3RLORuOjytfrByiOYTAVEfa9G5Gjuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVWc3qkgPSxv1o1XqSsCmXoKf+ywPws+Jk+GHmJ2B5y9VkyHvw
+	t7/h31xP4V3WoJw3Bt2B2XKbJYoxWKRAO/0463FRtYRUzrfauKwjhevuoJA42NM=
+X-Google-Smtp-Source: AGHT+IH3L/srL/M09LlQZunlLjeQulGlZd5i2/4jd/ZSLaq2ZBDuaJvJcMPXaGd40sqB8zTBbVklhA==
+X-Received: by 2002:a05:6a00:1ad3:b0:717:839c:6822 with SMTP id d2e1a72fcca58-71de245154dmr6642242b3a.17.1728077895176;
+        Fri, 04 Oct 2024 14:38:15 -0700 (PDT)
 Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c13930b92sm2677745ad.128.2024.10.04.14.02.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d46312sm327900b3a.121.2024.10.04.14.38.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 14:02:44 -0700 (PDT)
+        Fri, 04 Oct 2024 14:38:14 -0700 (PDT)
 From: Kevin Hilman <khilman@baylibre.com>
-To: Julia Lawall <Julia.Lawall@inria.fr>, Paul Walmsley <paul@pwsan.com>
-Cc: kernel-janitors@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>,
- Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>,
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/35] ARM: OMAP2/3: PRM: Reorganize kerneldoc parameter
- names
-In-Reply-To: <20240930112121.95324-2-Julia.Lawall@inria.fr>
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
- <20240930112121.95324-2-Julia.Lawall@inria.fr>
-Date: Fri, 04 Oct 2024 14:02:44 -0700
-Message-ID: <7h7cank2dn.fsf@baylibre.com>
+To: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
+ "Rafael J . Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Andrew Kreimer <algonell@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ Matthew Wilcox <willy@infradead.org>
+In-Reply-To: <20240913093713.12376-1-algonell@gmail.com>
+References: <20240913093713.12376-1-algonell@gmail.com>
+Subject: Re: [PATCH] thermal/ti-soc-thermal: Fix typos
+Message-Id: <172807789446.805985.12207310389436873259.b4-ty@baylibre.com>
+Date: Fri, 04 Oct 2024 14:38:14 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cb14d
 
-Julia Lawall <Julia.Lawall@inria.fr> writes:
 
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
->
-> Problems identified using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On Fri, 13 Sep 2024 12:37:05 +0300, Andrew Kreimer wrote:
+> Fix typos in comments.
+> 
+> 
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Applied, thanks!
+
+[1/1] thermal/ti-soc-thermal: Fix typos
+      commit: d8ee46b226ace0110f82233ba4c06ff1742ae443
+
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
+
