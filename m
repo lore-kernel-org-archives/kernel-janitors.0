@@ -1,131 +1,136 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6874B69D2B;
-	Fri,  4 Oct 2024 07:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EAC1448DF;
+	Fri,  4 Oct 2024 09:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728026656; cv=none; b=QBg0FwufFc3CenE/eDcTdjughRZbPXkl6SO7hsUilM9Qe5ziBI7P3Fm0jlhcwyasKGhD3dBngFRMuZFgD2mujZUZSLK2xM1mBf+hnRXdxEDPC8UPXyX44PKGijxrg5M96pEoPpihv2KxKJ0yGOWjKCPHdKGEGhNI+ZTuuVY43J0=
+	t=1728034525; cv=none; b=g8ldRVPEuOyU9E+dEQpT0imar6goCv8qIDpy2sT1bzPv7XPkLRogn6EQhHZM2GajwQ7H8+Fy/77SA47vdkxBXkR/sbWRHO341kRGIl/bA/z3lkJNzp5m4iqq5UnyPJrdd2C9O7gUDFoslPq5nQBiMRSbePk4NpDtrXRemQKtbMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728026656; c=relaxed/simple;
-	bh=I+g3k1LDrBFuIHfv//C/9Lzybu9R4yvEHlNDT3V4Kig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qoiF3Cr5CRnwiAhRUT7b/rScrG5uI76c4FvorVWZBW19iQA5hA0Mu+fm52QLWcfERl9jUOgbCng4a+USTG7C03ZQiF4UtWFNKBheYUAfvdMrnTxHAyDabTEEdk9FotkJDG3N+vaedBIFkMSAir2EuRdehN/QRORIRfXxDP84MDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MdHuP54l; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1728034525; c=relaxed/simple;
+	bh=UQxt7P3rJbVv3nJmizgjQW+tNdKSX/yyh7YNv4PHuRA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mAk3GccknT4TG+S9R6xu0HDx7R7nZdZ4A3zBedU/5pykQy8v3w1hzeApO83+zcToPN9oIxKYwAd0Sp2I9d8shpH1GS+5gxwKc0lSMkfSzKsnRdt+i1Vy2QPSYCYFubk39W0jk4c+MC8B/cXH2hmscQDGo3Wmct9i04GzQy590CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UUdMGzcF; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MdHuP54l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728026634; x=1728631434; i=markus.elfring@web.de;
-	bh=I+g3k1LDrBFuIHfv//C/9Lzybu9R4yvEHlNDT3V4Kig=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=MdHuP54lv3a+OhlbtVKyguI622KLMrLcXACTk3I5ImxNCgpn7C/+ClWWa4lXLCfm
-	 DS+ixFnFvgC6VkWYDJNLfdnlcIHZQY7aLSe+1Zx7M2Mvk1x0D0yJSpzOfommg2fk5
-	 Xv5fuaKn1nkndHVhrYw8Y5ZJGK4Y9ao6eOWmM3hptIZSgdfu94Mtu7NcKNAW2cgCD
-	 f7DMm51IbkBYh8KhohJ9ge9O1U68qa31Ud8HQp1FHTASnMm6wbc6Qgcs5MjPZtEY+
-	 LGwF1e0zhc8dNpoM/vMUDXR0iZe1rRviNZrqhdacNDX1vgh0fXnmZeTf6YUWpOsHT
-	 kAGgnpxzHB6e2EueYg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBRn-1sHV9w3j41-00hh4H; Fri, 04
- Oct 2024 09:23:53 +0200
-Message-ID: <6d4240ab-b432-4753-bb6e-de0697f8db69@web.de>
-Date: Fri, 4 Oct 2024 09:23:45 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UUdMGzcF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728034523; x=1759570523;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=UQxt7P3rJbVv3nJmizgjQW+tNdKSX/yyh7YNv4PHuRA=;
+  b=UUdMGzcFGYIGJvLKDaE7IW47dpA/quS7NN9jLGRVzP+zTptl3gOcAyoR
+   wX8FD8xD2Z0p1pOhnxF6lTGDxBaze5UpeSl4mUwGG+5DRimEVzLbIJQ3J
+   5SbHW/n7J5mxfH9iL0C4aAXWvnIkv3u59CrlTjGd+zBInrOgxK9ZEOtIb
+   ybu2wB4D+/c01ZCndakH7XYR6LIs8is3chsEa+uQIgzi+8e24174MEoJl
+   sgGJGvM6NlEvEhtSOww/uXXNKqGyGzVH+Ze5pqRriGu/20gB5OC6j4KJf
+   IDuEUz4Z2CLrxv2CSUBXNgWhxQcQdm6Zj6sFegUytmH2C5VRjEfu9aM2w
+   w==;
+X-CSE-ConnectionGUID: zIyDAzPlQw+Iz/sjVYXZpw==
+X-CSE-MsgGUID: DXda5GW+RseFdYjwX8I9ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11214"; a="26719593"
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="26719593"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 02:35:21 -0700
+X-CSE-ConnectionGUID: 9qP1XI4tTc6Zuy+qvAB0Ig==
+X-CSE-MsgGUID: KQ5uu+XfSyipBbo8HVA2ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,177,1725346800"; 
+   d="scan'208";a="79493790"
+Received: from dneilan-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.89])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2024 02:35:17 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/i915/display: Remove kstrdup_const() and
+ kfree_const() usage
+In-Reply-To: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <f82be2ee3ac7d18dd9982b5368a88a5bf2aeb777.1727977199.git.christophe.jaillet@wanadoo.fr>
+Date: Fri, 04 Oct 2024 12:35:13 +0300
+Message-ID: <87h69srz1q.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 1/2] powerpc/pseries: Do not pass an error pointer to
- of_node_put() in pSeries_reconfig_add_node()
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Michael Ellerman <mpe@ellerman.id.au>, Nathan Lynch <nathanl@linux.ibm.com>,
- Nicholas Piggin <npiggin@gmail.com>, Paul Moore <paul@paul-moore.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <0981dc33-95d0-4a1b-51d9-168907da99e6@web.de> <871qln8quw.fsf@linux.ibm.com>
- <a01643fd-1e4a-1183-2fa6-000465bc81f3@web.de> <87v8iz75ck.fsf@linux.ibm.com>
- <2f5a00f6-f3fb-9f00-676a-acdcbef90c6c@web.de> <87pm9377qt.fsf@linux.ibm.com>
- <afb528f2-5960-d107-c3ba-42a3356ffc65@web.de>
- <d4bcde15-b4f1-0e98-9072-3153d1bd21bc@web.de>
- <8949eefb-30d3-3c51-4f03-4a3c6f1b15dc@web.de>
- <434320e1-2a30-4362-9212-ca17cdde8b31@web.de>
- <9dfb5d24-f05c-4a67-b86c-7f157f633fb9@csgroup.eu>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <9dfb5d24-f05c-4a67-b86c-7f157f633fb9@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cOf4DD9kuzKnBYdmw6NcXUSvbOP9sAzC9p5qTgB+bGyU7sJcs63
- QiMSjOujc9hiccxuIXqHaRZLnUJsdU6ykSuv5ytZ74uWVnAwPLBYyOJj343c2VT8S9Y0Boy
- XMoKO/CvstmKZrD+uYN54Gmjsaz8CDNnDLudkSsQM48q6FB0olfOotKL0kJ4ATs/IEkIw2o
- VX191Yqz9Pq2ESV7BohcA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xq5kUmhz/C0=;EHOq5dN2pU7VW7prVUe4HmKd3Cq
- WLbiil794B2VtL6Mj2+aYkkps5TLz5oe9JuvauRVC7zo6qYK1hV9ewjbsWOG5b/71DpyvyEQZ
- mxBuM3EVRmETUQA0s5kbw0ZQDAiuc9UsFZDdeuhgBrXvvsqHEGd+bp4kfYFo9NUFbDSomgmxY
- iRrzj0NtmeK/RDAt5RTzbjluRTs9p07JbKDlZnNIDSxF3iOoWQBtf9pE5CA8plRhd/7hArg8T
- z1j/i7tAxmG7bphOpkGUNNBKdpN2L+7J20HqKyWViEA2gBmFE4CgfiLck9oXGiHKpTnzBNVd4
- T84cR/1xcTKFSre4h2XsGc7Ydlrff2HGkHP0BYF5FlkzBbpa66o1lz8RYL9gxeESqrydxu/zn
- l+UJOLSsh5p4CwV6SE4oaGKvDu1bBmqEiavyk9SFhyTmSdbQOLkOOMHCvLPLeA+Mz49SHVIHH
- WLSJwZiq/5yUTkWGRGGVF7XTqRY8E6jy5/w2kp9OEgml6qocLQrSfzQFddhvw0FRNZOFU2rA3
- kbUwf1B7V/+eUOWUz7Hi6gDtJ5NDSYWPCIuX8K+See+yELI6IgIXfsuZhI6i/W4VWkUejq9VO
- ZA3uB0yZcoY6lrKl7IbAk5XU/mCFgxoLp7HchSXaYP01Tpjsz0zoAYCLSrQr4IjNWLfVlnUfa
- SUk7aMQP80QMm9PsMe4WekAVGp7K/KhEbiprpwK1kUAdMJyq8igQZYtf+y1KVpHXCdKvCtjCw
- nvR7ys0XpEkE+BcJzhi3pe9+Hw24QUK3l+JMU90GNbPgOt/OjnUbDRrZcfrL3VJXktIIyTKIH
- 5XUwx5vxocfmzbbHfssHf65g==
+Content-Type: text/plain
 
->> I was notified also about the following adjustment.
->>
->> =E2=80=A6
->> =C2=A0 * linuxppc-dev: [resent,v2,1/2] powerpc/pseries: Do not pass an =
-error pointer to of_node_put() in pSeries_reconfig_add_node()
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - https://eur01.safelinks.protection.out=
-look.com/?url=3Dhttp%3A%2F%2Fpatchwork.ozlabs.org%2Fproject%2Flinuxppc-dev=
-%2Fpatch%2Ff5ac19db-c7d5-9a94-aa37-9bb448fe665f%40web.de%2F&data=3D05%7C02=
-%7Cchristophe.leroy%40csgroup.eu%7Cab19d1c85de343f5474908dce3cd8c02%7C8b87=
-af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638635719164841772%7CUnknown%7CTWFp=
-bGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D=
-%7C0%7C%7C%7C&sdata=3D8b7APXbglDf13PvZ4nVh5Z92bEft2RBqU3LfKsUETOI%3D&reser=
-ved=3D0
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - for: Linux PPC development
->> =C2=A0=C2=A0=C2=A0=C2=A0 was: New
->> =C2=A0=C2=A0=C2=A0=C2=A0 now: Changes Requested
->> =E2=80=A6
->>
->> It seems that I can not see so far why this status update happened
->> for any reasons.
->> Will further clarifications become helpful here?
+On Thu, 03 Oct 2024, Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> kstrdup_const() and kfree_const() can be confusing in code built as a
+> module. In such a case, it does not do what one could expect from the name
+> of the functions.
 >
-> Sorry I forgot to send the email. It is the same kind of problem as the =
-other series: Message IDs and/or In-Reply-To headers are messed up
-
-Three mailing list archive interfaces can present a mostly consistent view=
- for
-the involved message threads, can't they?
-
-
-> and b4 ends up applying an unrelated patch instead of applying the serie=
-s as you can see below:
+> The code is not wrong by itself, but in such a case, it is equivalent to
+> kstrdup() and kfree().
 >
-> $ b4 shazam f5ac19db-c7d5-9a94-aa37-9bb448fe665f@web.de
-=E2=80=A6
+> So, keep thinks simple and straightforward.
+>
+> This reverts commit 379b63e7e682 ("drm/i915/display: Save a few bytes of
+> memory in intel_backlight_device_register()")
 
-This development tool is also still evolving.
-Are you looking for corresponding software extensions?
-https://b4.docs.kernel.org/en/latest/#getting-help
+Sorry, I guess I'm confused here. Or I just didn't read the commit
+message to [1] properly. Or both.
 
-How do you think about to start with the desired cover letter from the pro=
-vided patch series
-for another integration attempt?
+So the whole point of [1] was that the _const versions can be confusing
+if i915 is builtin? But not wrong?
 
-Regards,
-Markus
+BR,
+Jani.
+
+
+[1] https://lore.kernel.org/r/3b3d3af8739e3016f3f80df0aa85b3c06230a385.1727533674.git.christophe.jaillet@wanadoo.fr
+
+
+
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/gpu/drm/i915/display/intel_backlight.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_backlight.c b/drivers/gpu/drm/i915/display/intel_backlight.c
+> index 9e05745d797d..3f81a726cc7d 100644
+> --- a/drivers/gpu/drm/i915/display/intel_backlight.c
+> +++ b/drivers/gpu/drm/i915/display/intel_backlight.c
+> @@ -949,7 +949,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  	else
+>  		props.power = BACKLIGHT_POWER_OFF;
+>  
+> -	name = kstrdup_const("intel_backlight", GFP_KERNEL);
+> +	name = kstrdup("intel_backlight", GFP_KERNEL);
+>  	if (!name)
+>  		return -ENOMEM;
+>  
+> @@ -963,7 +963,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  		 * compatibility. Use unique names for subsequent backlight devices as a
+>  		 * fallback when the default name already exists.
+>  		 */
+> -		kfree_const(name);
+> +		kfree(name);
+>  		name = kasprintf(GFP_KERNEL, "card%d-%s-backlight",
+>  				 i915->drm.primary->index, connector->base.name);
+>  		if (!name)
+> @@ -987,7 +987,7 @@ int intel_backlight_device_register(struct intel_connector *connector)
+>  		    connector->base.base.id, connector->base.name, name);
+>  
+>  out:
+> -	kfree_const(name);
+> +	kfree(name);
+>  
+>  	return ret;
+>  }
+
+-- 
+Jani Nikula, Intel
