@@ -1,92 +1,79 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2EC143C7E
-	for <kernel-janitors@vger.kernel.org>; Fri,  4 Oct 2024 21:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D694C1547EF;
+	Fri,  4 Oct 2024 23:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728077897; cv=none; b=YZGyMS0zweubbvz0QY+j/fxnV69k0wcqJ6Hczl3Ws7TDfxqteLlVGPCMQrK1pj90PhaFzzu0LuZlFlrMcWZSKL8zcu7rNCDF4JQSYJobqiR8Nis5Eq6X45HJf5LQk+/o1b9q9liEx/zFpnoWqzSyy7DknD3/bW0BGxpxrj8gs8E=
+	t=1728084629; cv=none; b=EYahDfGK0kW1KKrvpvfOQdhRQLlBVM6oSr1WJF917x2o9MTm4oZS7kjgGkyVbWhJVRaY/9WJqB068xqidSRzUJ1dig3n/XLJdjIl0py3NY8PUOj3utfyB1/Ee6ylKCD1F1oCFdKHrc22ko/JTwTi7FYPxRW2DnvKj1pIp3eCWO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728077897; c=relaxed/simple;
-	bh=xL6oYs7txqJE5TKT/Uno4YPofgUAfebhf5IadXGF0yc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=av8CTjW2QpsXtCYzvnkcdKTY9OhwkJ8YJYn59n330Ffsn4CJsCnHNQUdAQ/3hDEdjmFSVHd4o8Rkc7jVMIUM/UnM4w+udPtnNdfDyS+nVfOmGgQ5yLttosFuhpGAT8CF4PT/Rn3baS9PPKoFT5op9UpgJBaLgEM4TagcmviDD1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WUlDdGX6; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1728084629; c=relaxed/simple;
+	bh=QxilV3vFIpq1GHgcQvTKzlGRakJ71ff10YnPrmwAq28=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=kuu6uB+dZ2VjbZCI4EAOZAmW/2BbdFUy9YiBPzlhldScDdZYryYUJIhQYACaAMkDsuGIvSTYa8Duzi1Ny66kmNECU1wKIsoaMzpGRmdLtWGtDvy1U7l6JTgO1QT0Khn7D8pto3ru3EEkaqMu20fkjFWMaTlbY7eK4DGWpQLYuIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cN7SMprf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WUlDdGX6"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71dae4fc4c9so2244388b3a.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 04 Oct 2024 14:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728077895; x=1728682695; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8gYgjsDPjP7HrNwnpk8YBK3/LqbS1xGGqsLZX+Agvmc=;
-        b=WUlDdGX6+XcJE/mP5jK/wmuYy024E6vuUU9wzY30uH/94+FtS5lxNwkfRXGjbnue+4
-         Kfwak8DMVu4dOOdqItc/6WfiQmgzZpKFSDPck3n5/4EmUaylGNyAnSNmidwIL6SCihXW
-         B/7OPjiBdRj6kiiDbDjE4viJ1tSR+wHvkZRPTok8DAUyuHY7mYrloCEGnx0TUn0P7Kfr
-         NtYZ0FGCodfTmxwyM2bIsIIJoyZtNcrxBxjqmvJabvmq/+lD5Zg4w9dAq1itAiexWDV0
-         ExeEdI7D4VLLUjAguTQlhs1M0E9303mSGAzH9KlPvKDhDLUjPNwuTQXVzKUo8n0q+cpE
-         DQ5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728077895; x=1728682695;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8gYgjsDPjP7HrNwnpk8YBK3/LqbS1xGGqsLZX+Agvmc=;
-        b=H+JuhWVHTAESspPgcHkvunDUnm4/V7klDJW+NpaIV1icbv4Qf5XfH3qWtKUYnFzJIG
-         dF3uZ/WMa6M1nAQ4PmQP+8L+CikfTsfYZgxzNdJaDMSGpV+r32kJ1gL0OynEEUeEPOKx
-         2zTJgaTbLYEMTvcLqnsw4T44rdtdNHPzPmChGFPavQE6OZ3Tjiaxfw69XkR/gY4U4NKE
-         TT4h4oz16pEFjwYkHJlipl9XwphZ/IrwOh/GaUxFi8r4Mdlf1dR2C08Qw4X1QM1Bp41W
-         NhBm3J73j3g9erF06Xsl6gVCFbT12Q7hrFIrfR5l/pBx3nPpNIET6B2B2PJBaAXdMbR+
-         wahg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGNqbnDjKRUSLInePJR0UuX962A9CDYVOr7L5flUgH9j8U2aQFCKOE/3RLORuOjytfrByiOYTAVEfa9G5Gjuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVWc3qkgPSxv1o1XqSsCmXoKf+ywPws+Jk+GHmJ2B5y9VkyHvw
-	t7/h31xP4V3WoJw3Bt2B2XKbJYoxWKRAO/0463FRtYRUzrfauKwjhevuoJA42NM=
-X-Google-Smtp-Source: AGHT+IH3L/srL/M09LlQZunlLjeQulGlZd5i2/4jd/ZSLaq2ZBDuaJvJcMPXaGd40sqB8zTBbVklhA==
-X-Received: by 2002:a05:6a00:1ad3:b0:717:839c:6822 with SMTP id d2e1a72fcca58-71de245154dmr6642242b3a.17.1728077895176;
-        Fri, 04 Oct 2024 14:38:15 -0700 (PDT)
-Received: from localhost ([71.212.170.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d46312sm327900b3a.121.2024.10.04.14.38.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 14:38:14 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>, 
- "Rafael J . Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Andrew Kreimer <algonell@gmail.com>
-Cc: linux-pm@vger.kernel.org, linux-omap@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- Matthew Wilcox <willy@infradead.org>
-In-Reply-To: <20240913093713.12376-1-algonell@gmail.com>
-References: <20240913093713.12376-1-algonell@gmail.com>
-Subject: Re: [PATCH] thermal/ti-soc-thermal: Fix typos
-Message-Id: <172807789446.805985.12207310389436873259.b4-ty@baylibre.com>
-Date: Fri, 04 Oct 2024 14:38:14 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cN7SMprf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E526C4CEC6;
+	Fri,  4 Oct 2024 23:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728084629;
+	bh=QxilV3vFIpq1GHgcQvTKzlGRakJ71ff10YnPrmwAq28=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=cN7SMprffBrsgv1uOrSkOd7CYPFKtJocwQl9ew6eVRecCppxRkn1qmsKpt62jPN7m
+	 xf4TY8Ez0mtarwqS8pBvWKjuU9m7yZngUev3QiGepHEbcUIDvGvBr67a7C0TuvzDZ9
+	 l/77qHhLjqX3ADV8cRSzexhPrrMDBc8gyQ96stkuzrNPAL1H0izCySUU9w/sNFVJ3x
+	 BF6X3PhxKG6Dq2avxD120PpDgnip04+LUh2L2Z3waW6xkftJw2cvguRz/vzoslSfix
+	 P1qduYFKjgJ5izIpm55H6/2jihoXgVzr4jr/mdrrkPNUDAuH7/7jO+C9Z2+7IePIsC
+	 NEYTGo2OWJwjA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3425639F76FF;
+	Fri,  4 Oct 2024 23:30:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cb14d
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: phy: bcm84881: Fix some error handling paths
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172808463301.2774988.13283178558641908865.git-patchwork-notify@kernel.org>
+Date: Fri, 04 Oct 2024 23:30:33 +0000
+References: <3e1755b0c40340d00e089d6adae5bca2f8c79e53.1727982168.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <3e1755b0c40340d00e089d6adae5bca2f8c79e53.1727982168.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+ andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ f.fainelli@gmail.com, netdev@vger.kernel.org
 
+Hello:
 
-On Fri, 13 Sep 2024 12:37:05 +0300, Andrew Kreimer wrote:
-> Fix typos in comments.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Thu,  3 Oct 2024 21:03:21 +0200 you wrote:
+> If phy_read_mmd() fails, the error code stored in 'bmsr' should be returned
+> instead of 'val' which is likely to be 0.
 > 
+> Fixes: 75f4d8d10e01 ("net: phy: add Broadcom BCM84881 PHY driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is speculative.
 > 
+> [...]
 
-Applied, thanks!
+Here is the summary with links:
+  - [net] net: phy: bcm84881: Fix some error handling paths
+    https://git.kernel.org/netdev/net/c/9234a2549cb6
 
-[1/1] thermal/ti-soc-thermal: Fix typos
-      commit: d8ee46b226ace0110f82233ba4c06ff1742ae443
-
-Best regards,
+You are awesome, thank you!
 -- 
-Kevin Hilman <khilman@baylibre.com>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
