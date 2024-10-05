@@ -1,41 +1,64 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1666231C95;
-	Sat,  5 Oct 2024 06:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E8D7F6
+	for <kernel-janitors@vger.kernel.org>; Sat,  5 Oct 2024 13:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728109677; cv=none; b=c+bycBFkTinhonCtVCu/lPn5C9OEpCfEglB1YlwOYDsx0NobCBQAexAuljbvWjRhdml+qBR5LJo96e8WHk+cO3DUbDY54R6XWD9KztCuFN0oge5GglQMAw3sw/gG0EsM6HIPuoQTPGRGwbhQKRsDvMSjW9sKfy53dwj9tReFGXU=
+	t=1728134170; cv=none; b=WB064yOspcig2bvtK5CW8XISGPqqk+iJwOCeqXRk14ZYdCyucveq/Nwafv6YgheRydi/MUAWf88qI9GTGfMd5lWhyDEF20BISDMkNck81PZpDSqzLYCrpk+uufHfaz8VewsWRzBGH0UIZN+ZD8H5eQOYOHO10qrtXLgYhVZUJHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728109677; c=relaxed/simple;
-	bh=x0h55I41PNY0qDvUesT4sPVlbRExPV+X974LHXAdHVE=;
+	s=arc-20240116; t=1728134170; c=relaxed/simple;
+	bh=SnCouw/0CAfr+j4atpTs6tFU262mQXs1o9AF4aVWNIo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ogc24cJmwqO2BCv6DB1TyZvi+n4FdAnlJRrTT8glIGOLmetG8bZEk/8/0iYUdJdfUsc3iNoa213EZU0qdzSd/s9ny8ghVbqT5zVuepmpwgjgqJFMpCg0jeXLk+eyl8jmpoCBg0wBuk8qbxJJIFSCOzcpH1nDzkqpZpSbKiNmoyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=s1qpVqwy; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=stzfSwLGf7OojWkjWZOC8vZlGSMVNsmuZEUzSyG7AC/6iRMWN8voiEwneZcqVvXJ5d5NC9gY/U1YvO1g/2aPxxrRGPuNRIAocSMpd28ct+UgYS6NnrVmqc7eLNJxJgBp7YfYuTbfdgoXhpS1yOhXUaz1NnGtex9btLRaAsBLP2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dYLI82jO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="s1qpVqwy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728109649; x=1728714449; i=markus.elfring@web.de;
-	bh=oaWtkwikAuynprJNBCi62SYkTgrh5zdNvX/3WKywahg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=s1qpVqwytoHVAnIvLwiBn+u3aZMZaH4jo2pd+djxxbcirWWH1qEeiMFXrjzJlCPP
-	 YpOYGyCMEQkwmiiV3ekyH7cWjjBKc3Vfx8NAG7EGryev0Q8mZ/+Pes30gAcI2nMmc
-	 Z5DBEbAO3xBUB3kmLKOitobXfldgDme58/RWRVpF1lNNHj9tsZQmlAwNKZbymDUcM
-	 VjH6uBLWhnIzhq78wRTJFd3NljzgE7oGWcPEpX60lDoi2aQ/+cym8UFoblp6Yc5Lz
-	 awnr+qbwvJOZJsVQ677LT9e2JDpluZvnCX+tHPvBi2OxvOBCrqrKeUmw3uKx8QuZ3
-	 2DzB0cpzV7wyahd3tw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1McZjb-1tZaw80UGr-00b7WH; Sat, 05
- Oct 2024 08:27:29 +0200
-Message-ID: <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
-Date: Sat, 5 Oct 2024 08:27:03 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dYLI82jO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728134167;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NtXWlJU5HafQ0O79u3ZV8qo7ew1Goc3SkHZ1tqX1xb0=;
+	b=dYLI82jOQcziQ/YISSuliT2GbcFo1AgKOYlb/yJhS02vlJs6pcfvRt80FOcYZOFO+12UN+
+	9REQECMmFnOrz6ccWoG32sAGNDK1/78nxOT9EDetoCVoLny1Ti4my07ylRWSdjKjjiO+h1
+	2jrhapT7zE/yMe1oxkhE4UnA/HxEEcY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-632-c71QJftaOkG34wAxWdCCLw-1; Sat, 05 Oct 2024 09:16:05 -0400
+X-MC-Unique: c71QJftaOkG34wAxWdCCLw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37cd4acb55aso2345071f8f.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 05 Oct 2024 06:16:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728134165; x=1728738965;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NtXWlJU5HafQ0O79u3ZV8qo7ew1Goc3SkHZ1tqX1xb0=;
+        b=tfSgRq/6f5b3LyeKAA/0vDn8yefl3klKChxve2kIN99t/uRWZ6JSxJ5cNnpGavE2dt
+         U9xbK/zuK1cfM9zmwTgf0obB+IrxmWXhNY5/wj1kdzMZ3F0+12DZFyVusP5ubFdIBCpQ
+         z61F6X0TRbqnrSpteD3IBNw5CM2IiylolmpbxtD7NaIP+EmAYjNMxkF0J4XVptkurjJR
+         scwQatPJ9M3xNAY4Ogoomh68H5cjEYF4XcqgFp6FnZMpYUZpvnM11/n+bgdhQmhlDIon
+         rLmObIguVE+UhcA5xH9kf1Vb+g3mUHuzBVAe2ZpsyefhEyRq32d4y9S44OOBjiGygmsi
+         rE7g==
+X-Gm-Message-State: AOJu0YwUz2W+qoH7/QrNQ7WtdRl1oYqv8sGRtxvr7j6t20orHQ04hkDB
+	ARQ2oelKON8tt28CNaA0eUPj9BHgNfqW4pZPPboeCTjkmCtQ3RjfJRkbITzf9Bcvz9DbMlXPb9B
+	wOI+RKVJpotwcrID1DPNMkIaZb0CFMszrieGdJT0KNvgYborqAQtMoYN6P3pq1yuDeg==
+X-Received: by 2002:a05:6000:400d:b0:37c:cea2:826f with SMTP id ffacd0b85a97d-37d0e6ea949mr6837615f8f.2.1728134164626;
+        Sat, 05 Oct 2024 06:16:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFHIVFOTI5XI6jlg/ZTrlk/dkgYkJ/jdRmq2oxhmffIjVYZZkCgnpltydn6NVaGkYR5Aejtig==
+X-Received: by 2002:a05:6000:400d:b0:37c:cea2:826f with SMTP id ffacd0b85a97d-37d0e6ea949mr6837593f8f.2.1728134164290;
+        Sat, 05 Oct 2024 06:16:04 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e784666sm131559566b.100.2024.10.05.06.16.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 05 Oct 2024 06:16:03 -0700 (PDT)
+Message-ID: <a2170a4a-d994-4729-9ade-aa20de4fefa1@redhat.com>
+Date: Sat, 5 Oct 2024 15:16:02 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,93 +66,95 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2 RESEND] crypto: lib/mpi - Extend support for scope-based
- resource management
-To: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>,
- oe-kbuild-all@lists.linux.dev
-References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
- <202409180725.ZV8DCvII-lkp@intel.com>
- <91d10516-4ba9-4fe0-8f63-86205cc4f88c@web.de>
- <ZwDPp4bU1J5uEgQe@gondor.apana.org.au>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZwDPp4bU1J5uEgQe@gondor.apana.org.au>
+Subject: Re: [PATCH] platform/x86:intel/pmc: fix IS_ENABLED() check
+To: Lukas Bulwahn <lbulwahn@redhat.com>,
+ Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+ David E Box <david.e.box@intel.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20240924084056.48447-1-lukas.bulwahn@redhat.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240924084056.48447-1-lukas.bulwahn@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Vz8dvAyu28sIa72hBnFoF1iAvwwE2yEdeFxwWxqLcai4hwNNPwy
- JrnFOsdYZdtnmpgtXtvvUfYFCzqIHlkVp5rp339y+Uyy4zTzzZUWbOog2mqzqnQRQgPyRiD
- Q7lol7OWL0TypiE5N1zTClECTOWOuxj7Optc+/gosKNPHKqSCez91djVrHzb4ogS07IGwH5
- 4kSCtLoEY1ZgRUYcv1NiQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BG0zRRWy3as=;ZICGDu7In9yCc7MPNJpZ+qnHbQA
- Tf1caEWng+bVO8dkReRZR0c1KHfe+3trRszQsNjl2eoDbR6fGYnxJ6Y91h97DP6vRM74yg5qE
- qSqCrxnh7MTXdpr4fvPxRPYpEuDi3M57h7ukdKFF5jziotAaawOtRwn4OohfGutdjCiElZhc2
- 7PHQ72ecOTqyXDLV3yGWKanbwGmXw44bFbd/P47Jsi68+i+j0Y/RRO5jC7r9+cyrnFUKJovld
- 0xhmGJV5IsrZNDGvRYTfJF+UFHypQfi7cJfl6c5ATChknjUulQ2CaHSMuRl9LLen0Pz4QIHw3
- bg1DOzMDW5fvoxLYU7PJQaTaNuGJBknfX1FHCWsYKT6+eBc3z04UBLgxYl+uxWC9OwXSwu+GE
- ewfr/ejxXqBReoW9qJUbKxTO3OjaNrVNEiEF3cEht3WuZibrE08jDnKV/05As5A/YJnQUJyuf
- G32hN9EYg3j5ZG8LSEkKUzuIjIa0gEJ6BEhhOSI0PPQRLfRRomRV8sHExOKfuX0f7P+AEQHTj
- Yvd+qD0N2HhEpDXPcDJkbH7hIk0QJyGeTZCMIyQstCZLWLznTQeSVMMmSgkxsVFIC+unaWxzC
- V0l0ITi0zBPLk2cui3lfRSlC8gTnzj01FYrBg6B9HJfbrxJ9d2/IrN9ofsEP/yge0yCr12/gb
- wHCkpkGRRhL5VCas/qSqOGMwNF1B3hin2H196Q9QTLSkTlLUlV0Ft2QU05mmhJg4OyMkNIZ/J
- ZjrVbayP2GNRNX/ERKYTFKwGxQgHOHLy8kqBZ2sNSiPOPNaH+sw5+E6LzweEExVwdEqPVjKfb
- ZKGaBvWXvK0byGMFima4aSI5U7PRb2+oSu8ki7g+bbOYY=
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2024 11:06:35 +0200
+Hi,
 
-Scope-based resource management became supported for some
-programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
-See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
-Introduce __cleanup() based infrastructure").
+Lukas, thank you for your patch.
 
-Thus add a macro call so that the attribute =E2=80=9C__free(mpi_free)=E2=
-=80=9D can be
-applied accordingly.
+On 24-Sep-24 10:40 AM, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with
+> pmtimer turned off") accidentally slips in some CONFIG_CONFIG_X86_PM_TIMER
+> (note the duplicated CONFIG prefix) in the IS_ENABLED() check.
+> 
+> Fortunately, ./scripts/checkkconfigsymbols.py notices this accident. Fix up
+> the IS_ENABLED() check with the intended config name.
+> 
+> Fixes: d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with pmtimer turned off")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
+I see that d7a87891e2f5 ("platform/x86:intel/pmc: fix build
+regression with pmtimer turned off") does not exist in
+Torvald's tree yet.
 
-V2:
-The kernel build service pointed out that the proposed identifier =E2=80=
-=9CT_=E2=80=9D
-was not recognised by the compiler.
-Thus reserved identifiers need still be applied also at such a place inste=
-ad
-so far.
-I became curious under which circumstances corresponding development conce=
-rns
-will be reconsidered any more.
+This comes from http://git.linaro.org/people/daniel.lezcano/linux.git/log/?h=timers/drivers/next
+
+Daniel, I appreciate you picking this up, but now that everything
+has been merged together again in v6.12-rc1 I would prefer to
+handle any further changes limited to drivers/platform/x86/intel/
+through the pdx86 tree.
+
+Also since this is a build fix it really should be send as a fix
+fro the 6.12 cycle.
+
+Daniel judging by the timers/drivers/next branch name I guess these
+are not fixes targeting 6.12, right ?
+
+In that case can you please drop d7a87891e2f5 ("platform/x86:intel/pmc:
+fix build regression with pmtimer turned off") ?  Then I'll pick that
+up and squash in this typo fix.
+
+Or if you do plan to send things out as fixes to Linus, then please
+add this patch too.
+
+Regards,
+
+Hans
 
 
- include/linux/mpi.h | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/mpi.h b/include/linux/mpi.h
-index 47be46f36435..6fbcb88ce296 100644
-=2D-- a/include/linux/mpi.h
-+++ b/include/linux/mpi.h
-@@ -19,6 +19,8 @@
 
- #include <linux/types.h>
- #include <linux/scatterlist.h>
-+#include <linux/cleanup.h>
-+#include <linux/err.h>
 
- #define BYTES_PER_MPI_LIMB	(BITS_PER_LONG / 8)
- #define BITS_PER_MPI_LIMB	BITS_PER_LONG
-@@ -44,6 +46,8 @@ typedef struct gcry_mpi *MPI;
- /*-- mpiutil.c --*/
- MPI mpi_alloc(unsigned nlimbs);
- void mpi_free(MPI a);
-+DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(_T)) mpi_free(_T))
-+
- int mpi_resize(MPI a, unsigned nlimbs);
-
- MPI mpi_copy(MPI a);
-=2D-
-2.46.0
+> ---
+>  drivers/platform/x86/intel/pmc/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+> index 0431a599ba26..4387b5103701 100644
+> --- a/drivers/platform/x86/intel/pmc/core.c
+> +++ b/drivers/platform/x86/intel/pmc/core.c
+> @@ -1546,7 +1546,7 @@ static int pmc_core_probe(struct platform_device *pdev)
+>  			       pmc_core_adjust_slp_s0_step(primary_pmc, 1));
+>  
+>  	map = primary_pmc->map;
+> -	if (IS_ENABLED(CONFIG_CONFIG_X86_PM_TIMER) &&
+> +	if (IS_ENABLED(CONFIG_X86_PM_TIMER) &&
+>  	    map->acpi_pm_tmr_ctl_offset)
+>  		acpi_pmtmr_register_suspend_resume_callback(pmc_core_acpi_pm_timer_suspend_resume,
+>  							 pmcdev);
+> @@ -1563,7 +1563,7 @@ static void pmc_core_remove(struct platform_device *pdev)
+>  	const struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+>  	const struct pmc_reg_map *map = pmc->map;
+>  
+> -	if (IS_ENABLED(CONFIG_CONFIG_X86_PM_TIMER) &&
+> +	if (IS_ENABLED(CONFIG_X86_PM_TIMER) &&
+>  	    map->acpi_pm_tmr_ctl_offset)
+>  		acpi_pmtmr_unregister_suspend_resume_callback();
+>  
 
