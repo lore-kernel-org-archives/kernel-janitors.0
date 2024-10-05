@@ -1,79 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D694C1547EF;
-	Fri,  4 Oct 2024 23:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E634085D;
+	Sat,  5 Oct 2024 05:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728084629; cv=none; b=EYahDfGK0kW1KKrvpvfOQdhRQLlBVM6oSr1WJF917x2o9MTm4oZS7kjgGkyVbWhJVRaY/9WJqB068xqidSRzUJ1dig3n/XLJdjIl0py3NY8PUOj3utfyB1/Ee6ylKCD1F1oCFdKHrc22ko/JTwTi7FYPxRW2DnvKj1pIp3eCWO4=
+	t=1728106324; cv=none; b=V9LhhOTdZus2c1Q29SX8N2VJ4ovvcywWnW8GgMwc2TWKzAhp/Bkfm2sFUap92RRsopU1YDE+YOGJr2wVN1sZTn4YtxFcVLPVqG5NTVD3a9pXTvbQC9dfSSn6tlnOg4R5S70mMAkYyGYueTnXTOlHSwWEtZZOEbxKIV7Vwp5/etU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728084629; c=relaxed/simple;
-	bh=QxilV3vFIpq1GHgcQvTKzlGRakJ71ff10YnPrmwAq28=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=kuu6uB+dZ2VjbZCI4EAOZAmW/2BbdFUy9YiBPzlhldScDdZYryYUJIhQYACaAMkDsuGIvSTYa8Duzi1Ny66kmNECU1wKIsoaMzpGRmdLtWGtDvy1U7l6JTgO1QT0Khn7D8pto3ru3EEkaqMu20fkjFWMaTlbY7eK4DGWpQLYuIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cN7SMprf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728106324; c=relaxed/simple;
+	bh=/NjnvWP50ak7RDdpDyrL7mk1KcXJcGuksMwjQx3L6F0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRbFrcRaskw7loAVCY7xrPMnO7TnGngbBbaFLpSPMptba54NeunMILt4ZHpQF3MI+Y+OcUXF+jQ3kCtGqFVczW/JQ26OybDnuD14ePTqYJSx2AjXlqbaVg4CwE5x5fTUakiIrQyPMb0SmcABEp3HggJq2vhZcZsvshqRjA44FCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=DwCol7qg; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cN7SMprf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E526C4CEC6;
-	Fri,  4 Oct 2024 23:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728084629;
-	bh=QxilV3vFIpq1GHgcQvTKzlGRakJ71ff10YnPrmwAq28=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cN7SMprffBrsgv1uOrSkOd7CYPFKtJocwQl9ew6eVRecCppxRkn1qmsKpt62jPN7m
-	 xf4TY8Ez0mtarwqS8pBvWKjuU9m7yZngUev3QiGepHEbcUIDvGvBr67a7C0TuvzDZ9
-	 l/77qHhLjqX3ADV8cRSzexhPrrMDBc8gyQ96stkuzrNPAL1H0izCySUU9w/sNFVJ3x
-	 BF6X3PhxKG6Dq2avxD120PpDgnip04+LUh2L2Z3waW6xkftJw2cvguRz/vzoslSfix
-	 P1qduYFKjgJ5izIpm55H6/2jihoXgVzr4jr/mdrrkPNUDAuH7/7jO+C9Z2+7IePIsC
-	 NEYTGo2OWJwjA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3425639F76FF;
-	Fri,  4 Oct 2024 23:30:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="DwCol7qg"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=BdxwkcWtARqhLRBb5Hx4g5CZ23Wm0CyPyT25I6IwC5U=; b=DwCol7qgV3Jt7pG6LmZOEyAsUV
+	QNYiFD28ZRSKO6VnBGIhb9P1oz3zOfWULovELtWMY8PYRn3AA4cl5mIoNhJS8yf75xGNLIhg/Xmmi
+	u1/Rt5AT+sGqITDyS1Hk6HAJxKK7NP+iGZE0o7QgHmR30mwlyiHwIwZg6GCB2112O2delMkaaggn9
+	30I0ffjDnA9lICFz24VloayI9szX+VvKV+bT7gUHin2eP6rPCeDAC6JvYt5FVPSGOQajsOstIFTZO
+	z52O4U3oXOvVduENZipfoANL/p8mlIuuQPAJofy7mNRp1j1XJ3652G0IZT5bI2iPaABMcRf6lVKsH
+	EmDeAQPA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1swxEX-0071W9-17;
+	Sat, 05 Oct 2024 13:31:52 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 05 Oct 2024 13:31:50 +0800
+Date: Sat, 5 Oct 2024 13:31:50 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 1/2] crypto: caam: Fix the pointer passed to
+ caam_qi_shutdown()
+Message-ID: <ZwDPRsqCIphpCiHP@gondor.apana.org.au>
+References: <c76ff86fe3ec40776646f4e5ebd5f0900ca48b37.1726395689.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: phy: bcm84881: Fix some error handling paths
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172808463301.2774988.13283178558641908865.git-patchwork-notify@kernel.org>
-Date: Fri, 04 Oct 2024 23:30:33 +0000
-References: <3e1755b0c40340d00e089d6adae5bca2f8c79e53.1727982168.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <3e1755b0c40340d00e089d6adae5bca2f8c79e53.1727982168.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
- andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- f.fainelli@gmail.com, netdev@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c76ff86fe3ec40776646f4e5ebd5f0900ca48b37.1726395689.git.christophe.jaillet@wanadoo.fr>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu,  3 Oct 2024 21:03:21 +0200 you wrote:
-> If phy_read_mmd() fails, the error code stored in 'bmsr' should be returned
-> instead of 'val' which is likely to be 0.
+On Sun, Sep 15, 2024 at 12:22:12PM +0200, Christophe JAILLET wrote:
+> The type of the last parameter given to devm_add_action_or_reset() is
+> "struct caam_drv_private *", but in caam_qi_shutdown(), it is casted to
+> "struct device *".
 > 
-> Fixes: 75f4d8d10e01 ("net: phy: add Broadcom BCM84881 PHY driver")
+> Pass the correct parameter to devm_add_action_or_reset() so that the
+> resources are released as expected.
+> 
+> Fixes: f414de2e2fff ("crypto: caam - use devres to de-initialize QI")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> This patch is speculative.
-> 
-> [...]
+> This patch is speculative review with care.
+> ---
+>  drivers/crypto/caam/qi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here is the summary with links:
-  - [net] net: phy: bcm84881: Fix some error handling paths
-    https://git.kernel.org/netdev/net/c/9234a2549cb6
-
-You are awesome, thank you!
+All applied.  Thanks.
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
