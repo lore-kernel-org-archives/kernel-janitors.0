@@ -1,84 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02C7A31;
-	Sat,  5 Oct 2024 18:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6F879CD;
+	Sun,  6 Oct 2024 01:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728151598; cv=none; b=PvHrmHGZmp6wuno6qSXr06I/Yg6EUOYgDmvJPgeS53Qg9p3H6MXIYlwPB4yw688/5+cDxMkxXH+tqf8Fha4+NVtfZaqiTXviCvIzHfMnwi9sjvTL7IhtHg4M+6HcdYEupsW0K5Z7jPdEamgmWzK2Wse3VlpOwhPKlNvjLcdHWVY=
+	t=1728179746; cv=none; b=LP318No42i0OaqiwKWZMISmKiFXkbwrQCUbJs1F8sfV9Mal+phTOyTebVl2hYn2rvyMB4tpP0RYJAM6NCMNKeuwZovG3k46+qD4Rz9eMVExPMSx1ONhvSx3lXcsDygfv4T7L2wxuQYM9in9YX63v960FPHoizN6I3ePzcuc4QuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728151598; c=relaxed/simple;
-	bh=6x6Pwu8q6e4S/hIMCuynP0QiDuN8x+ThpPL/EAlwWwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A0f1h1BSg8WV0ICEmWvIz3FDLJtaRo3Gl48VofpCB888dYpxItTDnHzlUVy6rcVfhS391e4h/mvcLPAh36VAWgQOn22F9NZe/pYMQgEVQywFZ5h8Y9tWMXKEyfaaRqkkZzggjBftc8LjiTNnG5hWDJdjK2AwUp9txXuMflZG4N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpC/wNG2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728179746; c=relaxed/simple;
+	bh=/4L+Waftv30hJTd8pHAaY7MDs2ik61gNjRPrwI78SK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rs7lWhEgKgtboQkS2yenDkRykYlGFQt5/01n7rhw//hm4PIJrYSZUlKwMb+vZeNZDTa3js21Fwb/g+uKo35QzwZLlbztusZr4Vraiqu8FlrJYeYh115nJjXRIkJ9wQXj6ANLcLYLRoU7HWqQHDlzJ0N7RuTLao5d6zNmxNH+oyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHJhnSlc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpC/wNG2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB8CC4CED2;
-	Sat,  5 Oct 2024 18:06:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHJhnSlc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442DCC4CEC2;
+	Sun,  6 Oct 2024 01:55:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728151597;
-	bh=6x6Pwu8q6e4S/hIMCuynP0QiDuN8x+ThpPL/EAlwWwc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lpC/wNG2RNc/Q0hzdDWTdKYQfCvy+0amdeNOMdK1dezAZ35cKMBmetj2SBMSlu7tT
-	 aUmsFm1zhSJdZ9MuSFxFNe8QEraXQfGNnQLdFrrtXxEOGBZ1cM5VV/FLJZmuyhvw5s
-	 RhvepMeTok80KRXKuNcb2BoTguCIoiGLYVRYJQmnfkYnUBIzHLIb4piQ/wXDnxkMOH
-	 nbi4g7vmW2hkBn//8Mqb5H+BUq2cH+XFgDlmqczayNmPKbg3OGWi22UaQcB4pw1sLx
-	 lJ+HwL4pLY/CIv5YKJHISlQivAGqqDTrXB2yTGb1bYI+UDugb9BEV5oisPG9iAHsZf
-	 ++3iSJoa2NEWQ==
-Date: Sat, 5 Oct 2024 19:06:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: hid-sensors: Fix an error handling path in
- _hid_sensor_set_report_latency()
-Message-ID: <20241005190620.5f8633a9@jic23-huawei>
-In-Reply-To: <c50640665f091a04086e5092cf50f73f2055107a.1727980825.git.christophe.jaillet@wanadoo.fr>
-References: <c50640665f091a04086e5092cf50f73f2055107a.1727980825.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1728179745;
+	bh=/4L+Waftv30hJTd8pHAaY7MDs2ik61gNjRPrwI78SK4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bHJhnSlcDypCxKXc9/0e8sSwcsPUcNs5OrzLmNK372VoYuGepvQT+MeJe7gZxz24S
+	 Td8OetlGIX6VQqxeo+oLpBwCwYCr2xh0kr7HWG2dWxJwS9C9I5+F0Ozm3XgnvgOi6R
+	 eyo7cMIiqgZ5im6lRwsEC9egd6IBXTkhxhVOAfSeJ6SqQ1OAUWk36taYJoiLw9dpJ9
+	 1TD2kMI24gaTyunNoaEycYfyV8WJ6EL2ZaaiP5SsbbYsVWCcKHV7TrlwKb7lUEYqTY
+	 l48kzmdHzTLb/dBfgaSN3gUHXAeR3ENezjiB4lZZ+5JAICFVxSM/ycZNnlcwg/pUoP
+	 0Njb/XOnUh7ew==
+From: Bjorn Andersson <andersson@kernel.org>
+To: linux-gpio@vger.kernel.org,
+	Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org,
+	audit@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-usb@vger.kernel.org,
+	linux-mm@kvack.org,
+	maple-tree@lists.infradead.org,
+	alsa-devel@alsa-project.org,
+	Sanyog Kale <sanyog.r.kale@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	dccp@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>,
+	drbd-dev@lists.linbit.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org,
+	nvdimm@lists.linux.dev,
+	linux-leds@vger.kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	tipc-discussion@lists.sourceforge.net,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-wireless@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org
+Subject: Re: (subset) [PATCH 00/35] Reorganize kerneldoc parameter names
+Date: Sat,  5 Oct 2024 20:55:35 -0500
+Message-ID: <172817973322.398361.12931602917664759173.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu,  3 Oct 2024 20:41:12 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> If hid_sensor_set_report_latency() fails, the error code should be returned
-> instead of a value likely to be interpreted as 'success'.
+On Mon, 30 Sep 2024 13:20:46 +0200, Julia Lawall wrote:
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
 > 
-> Fixes: 138bc7969c24 ("iio: hid-sensor-hub: Implement batch mode")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is speculative.
+> The misordered cases were identified using the following
+> Coccinelle semantic patch:
 > 
-> The code just *looks* wrong to me. No strong opinion, if it is done on
-> purpose or not.
-Agreed it smells :)  But I'd like more eyes on this before I take the fix
-as maybe there is something subtle going on.
-
-J
-> ---
->  drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> // <smpl>
+> @initialize:ocaml@
+> @@
 > 
-> diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> index ad8910e6ad59..abb09fefc792 100644
-> --- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> +++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
-> @@ -32,7 +32,7 @@ static ssize_t _hid_sensor_set_report_latency(struct device *dev,
->  	latency = integer * 1000 + fract / 1000;
->  	ret = hid_sensor_set_report_latency(attrb, latency);
->  	if (ret < 0)
-> -		return len;
-> +		return ret;
->  
->  	attrb->latency_ms = hid_sensor_get_report_latency(attrb);
->  
+> [...]
 
+Applied, thanks!
+
+[24/35] soc: qcom: qmi: Reorganize kerneldoc parameter names
+        commit: eea73fa08e69fec9cdc915592022bec6a9ac8ad7
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
