@@ -1,110 +1,100 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F871D8E1D;
-	Mon,  7 Oct 2024 15:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F6B1D95B3;
+	Mon,  7 Oct 2024 15:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728315498; cv=none; b=LQwKfIHQXGUtJLlvLJ7hsSbhDZwhrUF5TUm8frF+Tj/Qt5ZLpX6tuo3O46qf+dY2ihoCfrWstfW6hciYzy2gdkWD7sKGmaPhzD1IVWHKZRO+k6UzbZYNG3mpMAiQymmxxMv09tAkHEMz6+JMcOV9eXS5MaPO+6Thw+WibAH25XQ=
+	t=1728315910; cv=none; b=QWJOMOnWu7Rqs5WsIrgv4eQ2zODbnrdtuF0vhhmlx7lHCDl5Y/2ebBVu0IdKFDiEMpzyvhZo+00HCibXtSd2DLao6PZSF+CpXj1VgskKWimbPiQtj/SUvZEvCE4sjvaF2HYtnSOZ7CGBHqB+a6FKXER5E4M5Ywm38DH9zm9m+Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728315498; c=relaxed/simple;
-	bh=/NfcI8nWjzkLuCgH0CbeT/uXDcCgjG0KSPH2q98N29Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uythLdQ9JOj5F6jPajE7WrASpLsCOUoiRnoF1DTjkwlSdIGea3ywMjjzD28ZjZbeIYD7xH27fkGR/92eqYq0ibCi2HQMHPw8roxiYZ9467NUy8r2nc77UymMlROsuUxPYVAqZhypaN8JfUKnoHlVj1dtZ6+rMECnXhsKnws31q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQhnJhmo; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728315910; c=relaxed/simple;
+	bh=pdY49v+4fS4cdD0PwxaqWdkKTtbiEkF5VlMpD72D/o8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dytEJyS+jQyA5CU1g+cpjkOOv2BeRLT8wJutNs5qrJB1wnbsCjtelVzhYvECwzbctSwIh9PruDfEfA8QAe5szjoU4LikXikKnPD2HOoh9saVznoYzUpcoHoXoeX5weCgRQI9omwrJg1C+0zt/6o1N+h6xrEA4if6EqVFje9HWYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMHBplOO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQhnJhmo"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2faccccbca7so38405091fa.2;
-        Mon, 07 Oct 2024 08:38:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728315495; x=1728920295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ygq16Q5Bxyqojdl5nXMAWjtB5mU7RJB2IzsdM/iUgnM=;
-        b=AQhnJhmo5AB4nvtrX4m3FqQXDpDWyIr86cJZRM9grjVhYHcNnVqMJmVpLhPyNFrt6G
-         iS2++/1R0WnND5iBit4pAhl1orkUr8jE/UfqvQUZvEyqK8kFskjf/EOMgf8YOJiDEvPS
-         2Cem55U5ymaOuJoIdIy17Dxmz+tSIAms4nJrnscBmWXdQGME+Wim4OttYLhDUWgf14GI
-         cPUOWcwTsCMB/1S8Dj4sZqAkJC0HqrkqCvQYW9bDiywLpXFW2rd5r9v2k6ZKyPh95afg
-         OjxQMJB3FPCjM5hZiToolXdG7QdDywSVXx7hjEWwwVXMHZBPL5rMsUYEgMOP8M4IMQhI
-         LRxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728315495; x=1728920295;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ygq16Q5Bxyqojdl5nXMAWjtB5mU7RJB2IzsdM/iUgnM=;
-        b=puoHntXdFI95J57/TG4GytHny5EUcNAiLWtRzyN4V+nhyeNnTpRLZcIDUck1MWx//9
-         oQwsNJhaXrbmRoBTf6XjzbpMP51TEb39lRPAudxb0yAMBzCvMbSn0XG1EYrUzFWoDYb8
-         S3FmMGkmc/qz4MTBmlX4TjjxFYdTfpsfnWpBAnXC5dthh94cYwvrLrFzSGw2QSebTUQQ
-         8p7hkRZ0Ik1GBfIwnwBI+g+bDAGOL+B+t0A7Ru5Y6/dnrmgfB5H1/87IMVutSNnKN3L9
-         XXyQEdOzSJExlGkdhf0Q4FuPAQF4V0sPQbjnBlRZl1jmGPg9QtkRa6gtzA9Sw/XqhjCF
-         YIHA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+ytLPVfNRQmA8hbsB481RcXA4xCbZ731pCWTOfooUKeeoDJI0NJhnl3vS8fbKAwSCTu5N37hm3jDX@vger.kernel.org, AJvYcCWScs6Hk6bdhGAaIP8bWv0LYkRA49s6CS/+p75Bv3ZPqZjtmB+U1i4MOMkIw4x9Y48rnz47N4HTDyJsB3qG@vger.kernel.org
-X-Gm-Message-State: AOJu0YylGFB7i3FP7WRSjFR8wj5otM76ZpAHGneQXFwWIJpvsNZNVHMh
-	DY/7Cs408fdGIkzHPm11UpGtVHFvIBaEVMv/ak5HhZNwnCbUoqUgt9yTBP+W
-X-Google-Smtp-Source: AGHT+IGpOsbD/YdAeMFiZrjbHGFYrB8KG6icb2u841+DQSmpmriv8TPQqU3mw6w9e+2FtZyPQKPxvw==
-X-Received: by 2002:a05:651c:19a2:b0:2fa:f5f1:2542 with SMTP id 38308e7fff4ca-2faf5f12921mr45040131fa.12.1728315495071;
-        Mon, 07 Oct 2024 08:38:15 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e05f3bf0sm3285990a12.88.2024.10.07.08.38.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 08:38:13 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] smb: client: remove deadcode check on ret < 0
-Date: Mon,  7 Oct 2024 16:38:12 +0100
-Message-Id: <20241007153812.1204605-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMHBplOO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7DCC4CEC6;
+	Mon,  7 Oct 2024 15:45:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728315909;
+	bh=pdY49v+4fS4cdD0PwxaqWdkKTtbiEkF5VlMpD72D/o8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EMHBplOOQSyDsy88RYdl6IgDj9tJMiCzOV1iM77Kf8V6UQ0S6PDXRN8kr2Tz4s66k
+	 4sygnQwabHDnVePga89lmOi23kh2gK2m/cBVtVDn/dQJhSPnDw7UQHeYxR+52eM8uY
+	 cd4BdwyKxWhCfV7s0CQaIIZq2V994PjNbQRxDHO+Y3waJJFGMQFnDFjHx6c/9MwcU0
+	 Et2x8h2ye8axf0sYxF8RNTXkTEAH42el4Nz7XVkZvUh9cIUbLF7fLpsuAN3S3Krrsi
+	 QIR6GuVsoUmtMKe3OV0i/CFhLEHyBpTV7oMjEpxIgk6IMyJu0yNASXM3pZZJufjhb8
+	 oGD8DUxx3VEhA==
+Date: Mon, 7 Oct 2024 16:45:05 +0100
+From: Simon Horman <horms@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lennart Franzen <lennart@lfdomain.com>,
+	Alexandru Tachici <alexandru.tachici@analog.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error
+ handling path in adin1110_read_fifo()
+Message-ID: <20241007154505.GG32733@kernel.org>
+References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
+ <20241004113735.GF1310185@kernel.org>
+ <2669052d-752f-416a-9d5e-a03848f30904@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2669052d-752f-416a-9d5e-a03848f30904@wanadoo.fr>
 
-The variable ret is assigned zero and never changed in function
-collect_samle, hence the check for ret < 0 is always false. Fix
-this by removing ret and the check on ret since these are redundant.
+On Fri, Oct 04, 2024 at 03:15:39PM +0200, Christophe JAILLET wrote:
+> Le 04/10/2024 à 13:37, Simon Horman a écrit :
+> > On Thu, Oct 03, 2024 at 08:53:15PM +0200, Christophe JAILLET wrote:
+> > > If 'frame_size' is too small or if 'round_len' is an error code, it is
+> > > likely that an error code should be returned to the caller.
+> > > 
+> > > Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
+> > > 'success' is returned.
+> > 
+> > Hi Christophe,
+> > 
+> > I think we can say "'ret' will be 0".
+> 
+> Agreed.
+> 
+> 	ret = adin1110_read_reg()
+> 	--> spi_sync_transfer()
+> 	--> spi_sync()
+> 
+> which explicitly documents "zero on success, else a negative error code."
+> 
+> > At least that is what my brief investigation tells me.
+> > 
+> > > 
+> > > Return -EINVAL instead.
+> > 
+> 
+> If the patch is considered as correct, can you confirm that -EINVAL is the
+> correct error code to use? If not, which one would be preferred?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/smb/client/compress.c | 4 ----
- 1 file changed, 4 deletions(-)
+-EINVAL seems reasonable to me.
 
-diff --git a/fs/smb/client/compress.c b/fs/smb/client/compress.c
-index 63b5a55b7a57..766b4de13da7 100644
---- a/fs/smb/client/compress.c
-+++ b/fs/smb/client/compress.c
-@@ -166,7 +166,6 @@ static int collect_sample(const struct iov_iter *iter, ssize_t max, u8 *sample)
- 	loff_t start = iter->xarray_start + iter->iov_offset;
- 	pgoff_t last, index = start / PAGE_SIZE;
- 	size_t len, off, foff;
--	ssize_t ret = 0;
- 	void *p;
- 	int s = 0;
- 
-@@ -193,9 +192,6 @@ static int collect_sample(const struct iov_iter *iter, ssize_t max, u8 *sample)
- 				memcpy(&sample[s], p, len2);
- 				kunmap_local(p);
- 
--				if (ret < 0)
--					return ret;
--
- 				s += len2;
- 
- 				if (len2 < SZ_2K || s >= max - SZ_2K)
--- 
-2.39.5
+> > Please include some information on how this was found and tested.
+> > e.g.
+> > 
+> > Found by inspection / Found using widget-ng.
+> 
+> I would say: found by luck! :)
+> 
+> The explanation below will be of no help in the commit message and won't be
+> added. I just give you all the gory details because you asked for it ;-)
+> 
+> (and after reading bellow, you can call me crazy!)
 
+:)
