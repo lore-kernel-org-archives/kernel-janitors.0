@@ -1,76 +1,75 @@
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D681DC721;
-	Mon,  7 Oct 2024 17:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAAA1DD87E;
+	Mon,  7 Oct 2024 17:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320845; cv=none; b=FL8uESq3U0cfsqjpF6u0sf8GPSTGBBX+lCkE2+lLhJ+tnS/OqTYX5v2LHC6+wCbirJsfbafWnnBwDJ8b1GCUsrWoa4REr6zJ27azz7OGF64feGoFFAc6hMugggpgVp7gAHeC3G3W78jz7SLOFrN+80DVHae7l2vyZxNBrr6Y2SA=
+	t=1728322542; cv=none; b=eSygIv4vffS4ce++07plIMiUg0vZQ0qDcyCuxtY37chpXECOsjavzTBEfFxvNGAsFyQf6q4SmpFVOUtuLfCg03iBiHVRxo4terdg2L6w0kE39ei7F0LGlTI2rwOjlUBrQrPj4DsJVBQ+HfTLm+X4TR1dbFFMLA3S7vkNs+NKqOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320845; c=relaxed/simple;
-	bh=OgKd8s6EFJ2msOFVt10PHZsFWvUTkWBcj8TgWznSyhQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Re2y330KvYWGIxdq88+JJvuxsbAx7/2bjSRj/k13jOtjretYqVU2SEMrpLlqz/EOzsf3T8MKuPNb95HjQNyt/OMigKTiXx2iLHkwQigluvAtpW5D6u/hODdT/O8WtEOjwMzneGXhMaJMp6A9UU4rrkhtqDqUb78GH2wRLeySDeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Sx/M9Q+p; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+	s=arc-20240116; t=1728322542; c=relaxed/simple;
+	bh=TCWLKXSMmQLpHRkuXuVAjdohV9ZCCcra1KbpoSv8YUk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=me3GarTPFunlVIWJPUpsCD9GhW3+yPtcebS6HbS7VlTnW9U6ETvzP9z2hsMLLB8cDh2oWN87jV7nweZc2nngUNwL+rlPwddxIKlnJUTkUkpotOijBLiClfi5oggK8ZOqJaTsnOc5DgsW2rLRV+2EXPB8xbnW/Pc2X9kybOHsP0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Z+BHnXhQ; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Sx/M9Q+p"
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2300742C0D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728320843; bh=oJU7EABAt2KsVj2EIm8/2tYtzj/bx+DV1mQWP+T51B8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Sx/M9Q+pDv1G925eerwGf+0GY4leEAn58FlhLPvoZhAC0UDRF4WFz2RikOL15obHg
-	 lFv2jdZbFmQkQ7+3qeqNvkU3aIvIOCCvQYSpPrLrm7W9zzp82+LnVtzv1e0vgc8Xip
-	 2HzSnDU/D4Jhr5sJ7zhiymki9VQQTpRD4PU5yaC555C3Fx3GgbdfaGPm9XNCkGUc07
-	 DRhzNPlEGkwF+jpxmD64J9orjOKbR30OP203UEV/olmnHALQgukTZy14KT/X3Bhweo
-	 oJBLSOQSXa4aKTn0v5hsI9HyLRviZ+8IZSTe0D98IA45CdvVfos9Ngk6wDCczUvgtP
-	 3rkKZPF5Wz8BA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 2300742C0D;
-	Mon,  7 Oct 2024 17:07:23 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew
- Kreimer <algonell@gmail.com>
-Subject: Re: [PATCH] docs: backporting: fix a typo
-In-Reply-To: <20241002212150.11159-1-algonell@gmail.com>
-References: <20241002212150.11159-1-algonell@gmail.com>
-Date: Mon, 07 Oct 2024 11:07:22 -0600
-Message-ID: <87msjfkfjp.fsf@trenco.lwn.net>
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Z+BHnXhQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=H52L6Hswt7VoY0HC5GsmdTlLRT/trxE3qhmJl0tTzxU=;
+  b=Z+BHnXhQONfXO9+HQyYq0jh8gfaPMCmaX44YX1Tkzu7KnWnmeY5RRUAB
+   MtNf4eQmyPsohqlnW7sT5Pgcq//xfuvOp0EcS7OfvjB8r43uvxF6pWA6M
+   tjk+vGM3CBlVkEtGl5xgBTFxmxxnz4OyPYi/wIkP37keMi6HWlZrkRHtz
+   g=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,184,1725314400"; 
+   d="scan'208";a="98447216"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 19:35:31 +0200
+Date: Mon, 7 Oct 2024 19:35:31 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Simon Horman <horms@kernel.org>
+cc: Jakub Kicinski <kuba@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+    Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+    Lennart Franzen <lennart@lfdomain.com>, 
+    Alexandru Tachici <alexandru.tachici@analog.com>, 
+    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+    netdev@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error handling
+ path in adin1110_read_fifo()
+In-Reply-To: <20241007154600.GH32733@kernel.org>
+Message-ID: <78da956-955d-adbf-cf21-6c56d1d7853@inria.fr>
+References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr> <63dbd539-2f94-4b68-ab4e-c49e7b9d2ddd@stanley.mountain> <20241004110952.545402d0@kernel.org> <20241007154600.GH32733@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-Andrew Kreimer <algonell@gmail.com> writes:
 
-> Fix a typo in documentation.
+
+On Mon, 7 Oct 2024, Simon Horman wrote:
+
+> On Fri, Oct 04, 2024 at 11:09:52AM -0700, Jakub Kicinski wrote:
+> > On Fri, 4 Oct 2024 14:47:22 +0300 Dan Carpenter wrote:
+> > > It's a pity that deliberately doing a "return ret;" when ret is zero is so
+> > > common.  Someone explained to me that it was "done deliberately to express that
+> > > we were propagating the success from frob_whatever()".  No no no!
+> >
+> > FWIW I pitched to Linus that we should have a err_t of some sort for
+> > int variables which must never be returned with value of 0.
+> > He wasn't impressed, but I still think it would be useful :)
 >
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> ---
->  Documentation/process/backporting.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/process/backporting.rst b/Documentation/process/backporting.rst
-> index a71480fcf3b4..18e41e76ecba 100644
-> --- a/Documentation/process/backporting.rst
-> +++ b/Documentation/process/backporting.rst
-> @@ -74,7 +74,7 @@ your source tree. Don't forget to cherry-pick with ``-x`` if you want a
->  written record of where the patch came from!
->  
->  Note that if you are submitting a patch for stable, the format is
-> -slightly different; the first line after the subject line needs tobe
-> +slightly different; the first line after the subject line needs to be
->  either::
+> FWIIW, I think something like that would be quite nice.
 
-Applied, thanks.
+Likewise.
 
-jon
+julia
