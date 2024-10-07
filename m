@@ -1,200 +1,232 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34841DE2D6;
-	Mon,  7 Oct 2024 19:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728329427; cv=fail; b=bHtpYKf2Idrkc4X5URCJJM280zLP1iWexI/hE3IVoCz4l/AiZniqyYxvjuVi87IHLOut0cJbBsS21/4Om5z1NGpsMwP0+naW37tYimUivbQ28XUr0xA+4g5wZqsG90e6OH+M06cTypEIU5yatHMigVVcNk/PKT8owvdRceT6I5A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728329427; c=relaxed/simple;
-	bh=E6yN5KY5ft8d24Re3pT2WpXCW/584Q5jLQLHus0R8s0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kd8XCGTzWyuv7hexe5ZiizVp9+tAEsoP8HIiW7n4cGYU7CPT99jyNUJ7qILn/YX5k6wh+EQ1hS5rhid/7ytLeVHjuBohBIB8BZqpmeBw4uTEw320I2uM3irec6y2XnGNI5Dfessi/NV7g6BXWZRWkjPb9gDUtVW2tA0SDWhnXQw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jKaKpawp; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9661A1DE3DF;
+	Mon,  7 Oct 2024 20:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728332128; cv=none; b=lrm5oZxxspDTvPBkNLhCqvWncoCk2r4IS9E2sA6wvB6bnjRQVTboG84+x2CTrbqrgOTyGva8w0ty51Po4Kfw6Qb4Tww5rCQb8C6uiNORzh5naAbTgObSTGedT7Y7Xj87e08H40hJ3yQL8pGZVVXFObsbBfqARVGBelny/ciGerQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728332128; c=relaxed/simple;
+	bh=uXXLiDym//Su7DapNxeeVL4TATEb1Ml2wN+VLT2nah0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mDpebUrIBoLam9SXX2ojmDlo91gj53+HF85Sg8DUDKV+WWRasJfTX7xQ7Sirx7Oztyi02ta2pO4hqwiREshlMa7lKy+eQPMxNfbmKKXpWEJMmOgd+P5vVzR3CX7/hAS4Vms6Fy+QrkQqE27b1fj7p4ms5SO/MCaeXzBWN5+m12A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0tCVMGq; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jKaKpawp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728329425; x=1759865425;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=E6yN5KY5ft8d24Re3pT2WpXCW/584Q5jLQLHus0R8s0=;
-  b=jKaKpawp65dkuj5Qi7tRhR0OUbgzSi/qmh2pHrYTzkWQ0+8fgrELP1MB
-   etBHico0Gq+1fV3MHBx4GIukrai+j5s5HddY7dae691CIn38HAcpxkRQa
-   n57cObbZohYPl5uINquM02mJ1xTmn9/ofQLjI3wDNwbYomWdwyqavzX+H
-   dPXS4du+zI+9ZoNzUgBFBl7XEY8Nh8vLpJtI20N77F3De2zz/lYV1LNo/
-   xuyfQAI0/t7zghB22PQHhuqr6SgnZorvkMJlTIrgEVxfjBojnAd8Nw/t3
-   gi3/eGyr6K4c2dY2I8to0e6HsPYO7sx3UTGYPkpdRrEHFiv6ezxR9MXL0
-   A==;
-X-CSE-ConnectionGUID: pYaSLSw3R5aTyV1mQgZwXQ==
-X-CSE-MsgGUID: j0ofGjfSRzusW4NQ/UEUyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11218"; a="15114992"
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="15114992"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2024 12:30:25 -0700
-X-CSE-ConnectionGUID: szbcD/kmTQm5DXXOQQhTgw==
-X-CSE-MsgGUID: BI2aFBZoSFuAFwLrGjdzkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,184,1725346800"; 
-   d="scan'208";a="80545648"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Oct 2024 12:30:25 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 7 Oct 2024 12:30:24 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 7 Oct 2024 12:30:24 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.45) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 7 Oct 2024 12:30:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZdJEgRTQelJcUwG30cXJuRJKlIPN0ZUXEZco1Uhysbw3AeqINDCxqjPbLnRJ/QcybZsaq90S6UmLIfRX2LRpgez0BlcwsNixxSx+iJtGeEa0UL0mjZ072r+uo0RF+0XYliOlY301XpLI6DhO4+urubDqROxu4UL8r35nbRR2AgRDt0r3sAqiMpSmx7H1e2UsGgz68ulhCwyvYnHaTtMr+Bzhu7ZxruHM1rF+AjtBdGdebfzCOBz5TRXhetIpTRAZ6oMDFyVaanISi09BRUD6f/qClz/dDWusEefbBXM4+h0XFp/PuzPav8tPU0OK2bSLITVYZLjscLhbagit95zacQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rGaBbczGkUkcCwsk6ttHb67/yWG6i0eIcbXkZd0/pag=;
- b=IBwlKEo0ucj+xXSO3oNh9QzIaKHrol1X3di4UxOrxioQhlxvJMNklVgQOMyDUxP3rW3rTIebPRHDmQD3ldCiWPE7xms3jYEJa/newdbbs1zbJreT7zol4Je3rM+ULJxPa1eRCU3GyfH5PD0SygUzzZmU18f5f7Lc/3ZV0/TK0b/LduyjUKEqAO40xgof6DY+cYrMv14S4o0lIWu6dzNSoaYRSbZYxHiohTgzRpxcXC0dj+o3WiUbk3oLJdddWNUtIkoMtw13w5MvJcXQTOw0dGEQeKu5DzPgetV75z4Kx9EkwlSmo4GF1shS+dHWruZko+fBWoyj7EP02IaGk5SVxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB2854.namprd11.prod.outlook.com (2603:10b6:a02:c9::12)
- by SA0PR11MB4527.namprd11.prod.outlook.com (2603:10b6:806:72::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.22; Mon, 7 Oct
- 2024 19:30:22 +0000
-Received: from BYAPR11MB2854.namprd11.prod.outlook.com
- ([fe80::8a98:4745:7147:ed42]) by BYAPR11MB2854.namprd11.prod.outlook.com
- ([fe80::8a98:4745:7147:ed42%5]) with mapi id 15.20.8026.020; Mon, 7 Oct 2024
- 19:30:22 +0000
-Date: Mon, 7 Oct 2024 15:30:18 -0400
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: "Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>
-CC: Colin Ian King <colin.i.king@gmail.com>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	<intel-gfx@lists.freedesktop.org>, <intel-xe@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <kernel-janitors@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] drm/i915/display: Fix spelling mistake
- "Uncomressed" -> "Uncompressed"
-Message-ID: <ZwQ2ykjAnDr6kER2@intel.com>
-References: <20241002074903.833232-1-colin.i.king@gmail.com>
- <37201309-7143-4c28-93d5-f74ff9022190@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <37201309-7143-4c28-93d5-f74ff9022190@intel.com>
-X-ClientProxiedBy: MW3PR05CA0008.namprd05.prod.outlook.com
- (2603:10b6:303:2b::13) To BYAPR11MB2854.namprd11.prod.outlook.com
- (2603:10b6:a02:c9::12)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0tCVMGq"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71dec222033so407338b3a.0;
+        Mon, 07 Oct 2024 13:15:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728332126; x=1728936926; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/YHv0hLVYq1dcKj/diNkMtcnNwK486L9AFDQ3ZNLXR4=;
+        b=m0tCVMGqfekKbmySTvgk70dMUcosXzn7UI9VEnkHgTmYQSCHU8WYrEqTjl/em2UjVn
+         8t/tQS9YpZPQis6atHK9e1svm61pac42QxvCKXrp1jdr7wucJ3A0ljPrpwzOYNObcNdY
+         PoFS0Tyv7OVEJ3W7tDMcRrq42ICLmUaUebNmneL1Ja2Tr/bFt2gqgJhSqSu83KSRHrCk
+         /mvXXPajj8WetI2d+WsEMakQyqZGMDbltL3OubDQBu1+JesVnSjTRSbtg2gysfmdJcu9
+         ltMCcX6/2qRh6FpaVS/l4dDoejLxr/hjJp7UEQPoJS5fHB5HcgfQ3NvS8zTi1uL0rffR
+         gfqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728332126; x=1728936926;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/YHv0hLVYq1dcKj/diNkMtcnNwK486L9AFDQ3ZNLXR4=;
+        b=vo7BkQ3HTzpHW8r2tCdXLt+j+B1podZqbZjOKJC/HhEqACdkXoBaFtrB7C/g3iSAv7
+         hEbZCLeG4PK2HKyicmviwEvbG6cSWkswEbTHlPn3QmiJZhsBvbWhN4ZqX1DZg1AKqILt
+         COA6uuexNUot3OnBBVk/wXXmJYbORUXdmCSqwc7F5VQ+1pQd067+zXH9g81ri1nxMMDN
+         Z/LJ98bttbHQC93QDwe7H1TwII0C941HfgRkr3ml2JKLQFoioswSTYg1OH+3PK0oqQXI
+         I3hnHronZLkWMED/mHyrwOqtDLIUd90JWB5SDRzPOdY3m8oTVT5XUCMFd39Ri3JdjViM
+         k02Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU5/gsLPo87CsKHoaaYFK2685A1NEo059A31hsqyXL+vi2PBV7clmaEINHTlnHOf2YAGTHLbfhTUjiCxk6U2sI=@vger.kernel.org, AJvYcCVDIrgI4HsLKsVgB3jv0+NYORstIHWtlAOs15uuB3ycESQWAeVdpBVH0eUlWQCCzpO/MY47cbzRTI68IBN5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2k32PW0NKKsvpc71OPz78LrqfPYlKXlH2NT98TOG/NRBvPBEL
+	5hvEN7rAuGjw4RJAeqvtiuHn3IZDSk+CZNSELopZnOhOUqRPCzxb6a0f6ejcvygjDXBx8hcak25
+	9t4YWZTtcqNGpn+gN1WRyy463+Ag=
+X-Google-Smtp-Source: AGHT+IHjMf3LXP66gIOmGF8p4Gj8fIsIPI6txWxEQuL5nG4n0NfZGxRRa4iDDr1CQAt1l8/myd1hIH329QOQV8xQDF4=
+X-Received: by 2002:a05:6a21:998c:b0:1cf:5471:bbe1 with SMTP id
+ adf61e73a8af0-1d6dfabb7dbmr8854856637.8.1728332125789; Mon, 07 Oct 2024
+ 13:15:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB2854:EE_|SA0PR11MB4527:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47fd190b-0896-4e68-8c96-08dce7067c7b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?1UZAUoZMGWuSTm46qVji3Awc4NGg1HrKe2A8tu1gvLcxOAIPxjO8Nyql5wLF?=
- =?us-ascii?Q?xOnTPGTtJlxX7h9zWYl1Uh54LxeRBeC5KD/UuzoOSg7n2j2txhE+fdsUSiru?=
- =?us-ascii?Q?Wqs+Ji40h1pe9nH6ogvzIgnquamH/oP46jfQyxr0KHtDM69OeuiFS/1OLL7o?=
- =?us-ascii?Q?OnJqAziXAG4sgREgvcUr4NeWbJQ3M+6+ZdUWo1z75Lcc9C0NBizfn56ocft0?=
- =?us-ascii?Q?pGlZMZZaBSFNr7WmU8oHlrxHK/Np94PP/gAiLJSf1vfOneuJ5cMhtg0PSV+p?=
- =?us-ascii?Q?DRSsZiGFTiso1DNkpVdgQQ7td9iKnOQZd4rz3Yc8oL8An9ppn5DeeC/qU9uZ?=
- =?us-ascii?Q?i9ozCpp2dW1uf39TKyKDs1kX7i0ac2eL+xDZrMhomNDke7YpnJNp6Dd1yBGS?=
- =?us-ascii?Q?BFBddGTi/AD3Wslh9FtsXy1UJZ3Y0Ljv39EPhxQTfAES4yX7rnkv/yHenjRD?=
- =?us-ascii?Q?iDchKLBhwbve1SkJ0QSV6/cFpggUcEtZVPvPqIBb0OQflI5ZtaZPjDpPYMix?=
- =?us-ascii?Q?/YOrYc7ThEAj8oUNzi/TJn2Wj71SzOs2BxH3CObTDXfnc9Wl6aobd2XkMDn+?=
- =?us-ascii?Q?UT4t1q2zJR6zOFrAdgEohoUX5HPQaBgfHok4Bq6PuAtgRIWuJhodaYr8Fl/P?=
- =?us-ascii?Q?mjp9rBn0xqBHKsCYLR6gWnWMzcdq983rfsWC86retTnJShwp+pmdF8s23HPH?=
- =?us-ascii?Q?pcWX6r5PGzG6chDUTwJypICZQBtycGDR0Ib43N+j0Ict5PIJrEVrtcSoPohe?=
- =?us-ascii?Q?Gja39G3vzPtTVU8zbS56MpGLj1AtW2ttNNgR42+Ec6Dx1l3Jqc55A/hTZ6UR?=
- =?us-ascii?Q?GLHE627jTI2n+77M103QVs5uCAaREEWWPN+Ie8CtUa9TTWqiR98BXZYvTXbh?=
- =?us-ascii?Q?7ya3MqUp2FCT6KgOPDh25WYaK/kZzxrPUGz8PrulXBHZlDzBsRGW+LmGJBKS?=
- =?us-ascii?Q?Lf/S5bYvhF9wyWsDKfLRs3hV+HQMrJ5Bvk+UX7GBZ5cpYbQM9y6x9KlmBg5n?=
- =?us-ascii?Q?bL7X+8S/mRRqq0ujfYLeLOFfcwHUwsvoaszHmB4Q+B9D6vXi5Q4sGp34pigo?=
- =?us-ascii?Q?Pk6RUjqFiIN8UKd1qAxkhTdmGFqlRNFox8QwHiBeZ5KPBu3JyWkcnu3GtXsc?=
- =?us-ascii?Q?li5kU4+HVJoQN4Bb6XeES1YgcPmMHXij9YbGGJ+CYF+sTo7crvvm6NrFy13l?=
- =?us-ascii?Q?7epJCkb3Q5piROoF+MGMCgwquZs14bbtdF+E+kySWXRRVFhxLja80gGqFzKw?=
- =?us-ascii?Q?x5rMy8xBtpq8gK3kP2PN8OdAqCWScLIAMoez63eyBw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2854.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Qvh3BE2Xmdfv/QCeG0UUhNDNSMf2sBsWIixO2ocljV3wnn4emp0PnQvPLuOz?=
- =?us-ascii?Q?JkK4d6V7dcSM4IAsZ1Nayp0qFMLBSgxpfCFB7ihwcdikv9RWX90GxmkdFH9b?=
- =?us-ascii?Q?N6RTkNTrT+SZyGUxSvhV2AkbB+CR0veGnyPnxioW//VZDYBj5UPznbpWqK6j?=
- =?us-ascii?Q?kGJ6YL8pXVlcg1bSWbUvnZTsB1moB7fqejVxmQHgDuFH2UIykVqLNFnBp7Vg?=
- =?us-ascii?Q?7Sgm2j/Nu2/p2drckGnlE3yjt72shbVrjVMuDbt0CebvlL9tYaFbUZTmSShn?=
- =?us-ascii?Q?oa7nVrFdz622gtRuLTxlF4/pUu3S+D5adiQkMRMWtB+7Lf3qfvhYIgu+Qj3Y?=
- =?us-ascii?Q?Da0MiyEhj11q7lZpynynUjoZsWzpVUKKNoovyatkJjKpbhoRAYR7joXcbsH+?=
- =?us-ascii?Q?yyIOw4RzlMdW3IhQVvfixyduPl852CJsWDnjM+K7IN42ONFV5lKOjyNuo1iD?=
- =?us-ascii?Q?lJ9QPdLiIPe/pRzueT7Tv8QAHDYBP7d6+73l7YtWhNjqn2laDJQ4lRgx4XY3?=
- =?us-ascii?Q?ERTSbPqyHEKpElDjLq+ePYIYJJpJzPN0UBcms6MXgATPZT536SYJuotPyw8Q?=
- =?us-ascii?Q?bCazTmZHIp1TK6rMeXMg9gLDpSyrs/8fKF1VXpkVawQ2yv0fbtNS9x7RI98V?=
- =?us-ascii?Q?WQ2InzqOSvn49JbhxU6hN7iEnGI7U2shs9y3ty9aX7P3jpHUV7ICn/bEWebg?=
- =?us-ascii?Q?nZvdNPyYWiFaGs/IC5sH+goy9opaRuEAfuWimqo3G6VBzROEVB0BpwW7VWaD?=
- =?us-ascii?Q?2vlzlt11gWPpvommu8ex1jL2OjdJw2/j+DpOoXRB9rRknKZX0+5reC6UdZLW?=
- =?us-ascii?Q?S661hGk6pv7WGlkezlon49GNxUiHN+ubyc5RQWm1jL0FN44F2Lwi4Q4MzRnQ?=
- =?us-ascii?Q?fvvt4oDHAolEAnHLE5UOH6h6uJcbMpaGHpKQDxJilXyfc5vKzGs+Z2Qms5he?=
- =?us-ascii?Q?cWfpE/48XExANOxyyLFU0iOfO3Vzqjsjp8iO60jQvugz5darIiwcqdU6qDQL?=
- =?us-ascii?Q?6CSkNUDKPHdxLvd/inI9MBIMlMLCLgtHEaVbywO6j3SAzfG6vgt168lP91eT?=
- =?us-ascii?Q?/Z9NU1/2uGTfIXPXGcnkk7po9eutM9CWl3/NrPnzKvSJWFkTodN6VgyeWvNH?=
- =?us-ascii?Q?yQWBYt9CrRJGzbICbGwMbpcJYultW0PtzPDSh62LUAABWjbJ3DrAlyFZcEJZ?=
- =?us-ascii?Q?2qK5gMXB8y9x5E/mv3SMYXFxZjNQJXpwYGZUMf+g7OVEYqXqIlPleTk8+Rtp?=
- =?us-ascii?Q?ltvkxtKGYDlgUVOTjQUW+G5QWhRmYMvkvBL9T14zPFHAeb3L0q/v7ny3YcrK?=
- =?us-ascii?Q?kWvtecoQlhARMEY3Alj8nPX079EKAyK/QJ7zDOUYwrtkzt64iG2BOtggYWNS?=
- =?us-ascii?Q?ozmAuTU9vYTuNU2qH/4248Mi3PVTSINfuvGpPngNWM/ThQRYxOcqK5BYq4ow?=
- =?us-ascii?Q?i3rjTOt68ebiWkUUvikUWL1SwJKgWmBvIMgIRnrMuCV6D+u40yiAcNWdXmrX?=
- =?us-ascii?Q?2XZhuDKhj0CiaAw0ATfdmFihbfYYd9IFX71tMoat9jcxMHPQv9TEfd5v61KH?=
- =?us-ascii?Q?UJC1910ypi7mGRYpKeJO25E3QMcuurIkbnzy7CEN8x+O7tOFZ7hi9Tm0It+U?=
- =?us-ascii?Q?aA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47fd190b-0896-4e68-8c96-08dce7067c7b
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2854.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2024 19:30:22.6356
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CqAw3388erTpfcLG8Bs5ObyEOmqqrnn9XWLxJ9KEh3KbbvtNGLDxxKBKvogCX5XdhDPhDtJXHXWx8BVedab50g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4527
-X-OriginatorOrg: intel.com
+References: <20241006112752.6594-1-algonell@gmail.com>
+In-Reply-To: <20241006112752.6594-1-algonell@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 7 Oct 2024 16:15:14 -0400
+Message-ID: <CADnq5_PxeCVT=26Sqa7L6bOciG3_a1jDBruyTGLD09QEy1880Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: fix typos
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 02, 2024 at 01:32:29PM +0530, Nautiyal, Ankit K wrote:
-> 
-> On 10/2/2024 1:19 PM, Colin Ian King wrote:
-> > There is a spelling mistake in a drm_WARN message. Fix it.
-> > 
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Reviewed-by: Ankit Nautiyal <ankit.k.nautiyal@intel.com>
+Applied.  Thanks!
 
-pushed, thanks
-
-> > ---
-> >   drivers/gpu/drm/i915/display/intel_display.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
-> > index 74311bb9d290..a5057ee4cbe5 100644
-> > --- a/drivers/gpu/drm/i915/display/intel_display.c
-> > +++ b/drivers/gpu/drm/i915/display/intel_display.c
-> > @@ -3811,7 +3811,7 @@ static void enabled_joiner_pipes(struct drm_i915_private *dev_priv,
-> >   		 secondary_ultrajoiner_pipes);
-> >   	drm_WARN(display->drm, (uncompressed_joiner_pipes & bigjoiner_pipes) != 0,
-> > -		 "Uncomressed joiner pipes(%#x) and bigjoiner pipes(%#x) can't intersect\n",
-> > +		 "Uncompressed joiner pipes(%#x) and bigjoiner pipes(%#x) can't intersect\n",
-> >   		 uncompressed_joiner_pipes, bigjoiner_pipes);
-> >   	drm_WARN(display->drm, secondary_bigjoiner_pipes !=
+On Sun, Oct 6, 2024 at 7:28=E2=80=AFAM Andrew Kreimer <algonell@gmail.com> =
+wrote:
+>
+> Fix typos in comments: "wether -> whether".
+>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c | 4 ++--
+>  drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c | 4 ++--
+>  drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c | 2 +-
+>  drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c  | 4 ++--
+>  drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c  | 2 +-
+>  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c  | 2 +-
+>  6 files changed, 9 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd=
+/amdgpu/gfx_v10_0.c
+> index c544ea2aea6e..87247055a666 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+> @@ -6374,7 +6374,7 @@ static int gfx_v10_0_cp_gfx_resume(struct amdgpu_de=
+vice *adev)
+>         WREG32_SOC15(GC, 0, mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
+>         WREG32_SOC15(GC, 0, mmCP_RB0_WPTR_HI, upper_32_bits(ring->wptr));
+>
+> -       /* set the wb address wether it's enabled or not */
+> +       /* set the wb address whether it's enabled or not */
+>         rptr_addr =3D ring->rptr_gpu_addr;
+>         WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr))=
+;
+>         WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_add=
+r) &
+> @@ -6412,7 +6412,7 @@ static int gfx_v10_0_cp_gfx_resume(struct amdgpu_de=
+vice *adev)
+>                 ring->wptr =3D 0;
+>                 WREG32_SOC15(GC, 0, mmCP_RB1_WPTR, lower_32_bits(ring->wp=
+tr));
+>                 WREG32_SOC15(GC, 0, mmCP_RB1_WPTR_HI, upper_32_bits(ring-=
+>wptr));
+> -               /* Set the wb address wether it's enabled or not */
+> +               /* Set the wb address whether it's enabled or not */
+>                 rptr_addr =3D ring->rptr_gpu_addr;
+>                 WREG32_SOC15(GC, 0, mmCP_RB1_RPTR_ADDR, lower_32_bits(rpt=
+r_addr));
+>                 WREG32_SOC15(GC, 0, mmCP_RB1_RPTR_ADDR_HI, upper_32_bits(=
+rptr_addr) &
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/amd=
+/amdgpu/gfx_v11_0.c
+> index a0f80cc993cf..cf741fc61300 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+> @@ -3557,7 +3557,7 @@ static int gfx_v11_0_cp_gfx_resume(struct amdgpu_de=
+vice *adev)
+>         WREG32_SOC15(GC, 0, regCP_RB0_WPTR, lower_32_bits(ring->wptr));
+>         WREG32_SOC15(GC, 0, regCP_RB0_WPTR_HI, upper_32_bits(ring->wptr))=
+;
+>
+> -       /* set the wb address wether it's enabled or not */
+> +       /* set the wb address whether it's enabled or not */
+>         rptr_addr =3D ring->rptr_gpu_addr;
+>         WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr)=
+);
+>         WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_ad=
+dr) &
+> @@ -3595,7 +3595,7 @@ static int gfx_v11_0_cp_gfx_resume(struct amdgpu_de=
+vice *adev)
+>                 ring->wptr =3D 0;
+>                 WREG32_SOC15(GC, 0, regCP_RB1_WPTR, lower_32_bits(ring->w=
+ptr));
+>                 WREG32_SOC15(GC, 0, regCP_RB1_WPTR_HI, upper_32_bits(ring=
+->wptr));
+> -               /* Set the wb address wether it's enabled or not */
+> +               /* Set the wb address whether it's enabled or not */
+>                 rptr_addr =3D ring->rptr_gpu_addr;
+>                 WREG32_SOC15(GC, 0, regCP_RB1_RPTR_ADDR, lower_32_bits(rp=
+tr_addr));
+>                 WREG32_SOC15(GC, 0, regCP_RB1_RPTR_ADDR_HI, upper_32_bits=
+(rptr_addr) &
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c b/drivers/gpu/drm/amd=
+/amdgpu/gfx_v12_0.c
+> index 63e1a2803503..b5281f45e1ea 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
+> @@ -2601,7 +2601,7 @@ static int gfx_v12_0_cp_gfx_resume(struct amdgpu_de=
+vice *adev)
+>         WREG32_SOC15(GC, 0, regCP_RB0_WPTR, lower_32_bits(ring->wptr));
+>         WREG32_SOC15(GC, 0, regCP_RB0_WPTR_HI, upper_32_bits(ring->wptr))=
+;
+>
+> -       /* set the wb address wether it's enabled or not */
+> +       /* set the wb address whether it's enabled or not */
+>         rptr_addr =3D ring->rptr_gpu_addr;
+>         WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr)=
+);
+>         WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_ad=
+dr) &
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/=
+amdgpu/gfx_v7_0.c
+> index 990e7de8da25..ee9ad38e12cd 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
+> @@ -2559,7 +2559,7 @@ static int gfx_v7_0_cp_gfx_resume(struct amdgpu_dev=
+ice *adev)
+>         ring->wptr =3D 0;
+>         WREG32(mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
+>
+> -       /* set the wb address wether it's enabled or not */
+> +       /* set the wb address whether it's enabled or not */
+>         rptr_addr =3D ring->rptr_gpu_addr;
+>         WREG32(mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
+>         WREG32(mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) & 0xFF);
+> @@ -2876,7 +2876,7 @@ static void gfx_v7_0_mqd_init(struct amdgpu_device =
+*adev,
+>         mqd->cp_hqd_pq_wptr_poll_addr_lo =3D wb_gpu_addr & 0xfffffffc;
+>         mqd->cp_hqd_pq_wptr_poll_addr_hi =3D upper_32_bits(wb_gpu_addr) &=
+ 0xffff;
+>
+> -       /* set the wb address wether it's enabled or not */
+> +       /* set the wb address whether it's enabled or not */
+>         wb_gpu_addr =3D ring->rptr_gpu_addr;
+>         mqd->cp_hqd_pq_rptr_report_addr_lo =3D wb_gpu_addr & 0xfffffffc;
+>         mqd->cp_hqd_pq_rptr_report_addr_hi =3D
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/=
+amdgpu/gfx_v8_0.c
+> index 6864219987e9..9d1672664c7d 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> @@ -4260,7 +4260,7 @@ static int gfx_v8_0_cp_gfx_resume(struct amdgpu_dev=
+ice *adev)
+>         ring->wptr =3D 0;
+>         WREG32(mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
+>
+> -       /* set the wb address wether it's enabled or not */
+> +       /* set the wb address whether it's enabled or not */
+>         rptr_addr =3D ring->rptr_gpu_addr;
+>         WREG32(mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
+>         WREG32(mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) & 0xFF);
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/=
+amdgpu/gfx_v9_0.c
+> index 99334afb7aae..979774cd2585 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+> @@ -3357,7 +3357,7 @@ static int gfx_v9_0_cp_gfx_resume(struct amdgpu_dev=
+ice *adev)
+>         WREG32_SOC15(GC, 0, mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
+>         WREG32_SOC15(GC, 0, mmCP_RB0_WPTR_HI, upper_32_bits(ring->wptr));
+>
+> -       /* set the wb address wether it's enabled or not */
+> +       /* set the wb address whether it's enabled or not */
+>         rptr_addr =3D ring->rptr_gpu_addr;
+>         WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr))=
+;
+>         WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_add=
+r) & CP_RB_RPTR_ADDR_HI__RB_RPTR_ADDR_HI_MASK);
+> --
+> 2.39.5
+>
