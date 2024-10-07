@@ -1,232 +1,78 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9661A1DE3DF;
-	Mon,  7 Oct 2024 20:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D069B193082;
+	Mon,  7 Oct 2024 23:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728332128; cv=none; b=lrm5oZxxspDTvPBkNLhCqvWncoCk2r4IS9E2sA6wvB6bnjRQVTboG84+x2CTrbqrgOTyGva8w0ty51Po4Kfw6Qb4Tww5rCQb8C6uiNORzh5naAbTgObSTGedT7Y7Xj87e08H40hJ3yQL8pGZVVXFObsbBfqARVGBelny/ciGerQ=
+	t=1728344433; cv=none; b=KxVaAhObwN+elM1LsYdbeaR6dVb5viXwnOvadfYTUYtIsylvqaiqJgKTJHa0nJryHcyPGN5Ib9HtfHFypnWMP5WyowDh50AN/VbKuvPTF5Soa/g8G8bHlP4VIH7HA8Z26Ub19Xr1l0K9MkunsdPHuxfkPocGTd+1z1O1FE5P0lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728332128; c=relaxed/simple;
-	bh=uXXLiDym//Su7DapNxeeVL4TATEb1Ml2wN+VLT2nah0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mDpebUrIBoLam9SXX2ojmDlo91gj53+HF85Sg8DUDKV+WWRasJfTX7xQ7Sirx7Oztyi02ta2pO4hqwiREshlMa7lKy+eQPMxNfbmKKXpWEJMmOgd+P5vVzR3CX7/hAS4Vms6Fy+QrkQqE27b1fj7p4ms5SO/MCaeXzBWN5+m12A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m0tCVMGq; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728344433; c=relaxed/simple;
+	bh=AMUryrUKiXz7jRRCPj8fNp4soR5GyS63WzFfoFg6l5U=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=SLIt3Nr9b7B6134FXjMSfNvJc3reSzklFwWTI7J4Cg6Wkb3iJPBGLEiyEVIXjogJCCcfLokcB2ad6P5WTaI3usZ8VgYBdPIV8sRgse+9uPTEpBTHaoV1J25johS+5MdSCcKbi91sVf0jWx7EZ03mHniVlKVXTkrm3rzaYUvJc9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DV4p0uHp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m0tCVMGq"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71dec222033so407338b3a.0;
-        Mon, 07 Oct 2024 13:15:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728332126; x=1728936926; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/YHv0hLVYq1dcKj/diNkMtcnNwK486L9AFDQ3ZNLXR4=;
-        b=m0tCVMGqfekKbmySTvgk70dMUcosXzn7UI9VEnkHgTmYQSCHU8WYrEqTjl/em2UjVn
-         8t/tQS9YpZPQis6atHK9e1svm61pac42QxvCKXrp1jdr7wucJ3A0ljPrpwzOYNObcNdY
-         PoFS0Tyv7OVEJ3W7tDMcRrq42ICLmUaUebNmneL1Ja2Tr/bFt2gqgJhSqSu83KSRHrCk
-         /mvXXPajj8WetI2d+WsEMakQyqZGMDbltL3OubDQBu1+JesVnSjTRSbtg2gysfmdJcu9
-         ltMCcX6/2qRh6FpaVS/l4dDoejLxr/hjJp7UEQPoJS5fHB5HcgfQ3NvS8zTi1uL0rffR
-         gfqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728332126; x=1728936926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/YHv0hLVYq1dcKj/diNkMtcnNwK486L9AFDQ3ZNLXR4=;
-        b=vo7BkQ3HTzpHW8r2tCdXLt+j+B1podZqbZjOKJC/HhEqACdkXoBaFtrB7C/g3iSAv7
-         hEbZCLeG4PK2HKyicmviwEvbG6cSWkswEbTHlPn3QmiJZhsBvbWhN4ZqX1DZg1AKqILt
-         COA6uuexNUot3OnBBVk/wXXmJYbORUXdmCSqwc7F5VQ+1pQd067+zXH9g81ri1nxMMDN
-         Z/LJ98bttbHQC93QDwe7H1TwII0C941HfgRkr3ml2JKLQFoioswSTYg1OH+3PK0oqQXI
-         I3hnHronZLkWMED/mHyrwOqtDLIUd90JWB5SDRzPOdY3m8oTVT5XUCMFd39Ri3JdjViM
-         k02Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU5/gsLPo87CsKHoaaYFK2685A1NEo059A31hsqyXL+vi2PBV7clmaEINHTlnHOf2YAGTHLbfhTUjiCxk6U2sI=@vger.kernel.org, AJvYcCVDIrgI4HsLKsVgB3jv0+NYORstIHWtlAOs15uuB3ycESQWAeVdpBVH0eUlWQCCzpO/MY47cbzRTI68IBN5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2k32PW0NKKsvpc71OPz78LrqfPYlKXlH2NT98TOG/NRBvPBEL
-	5hvEN7rAuGjw4RJAeqvtiuHn3IZDSk+CZNSELopZnOhOUqRPCzxb6a0f6ejcvygjDXBx8hcak25
-	9t4YWZTtcqNGpn+gN1WRyy463+Ag=
-X-Google-Smtp-Source: AGHT+IHjMf3LXP66gIOmGF8p4Gj8fIsIPI6txWxEQuL5nG4n0NfZGxRRa4iDDr1CQAt1l8/myd1hIH329QOQV8xQDF4=
-X-Received: by 2002:a05:6a21:998c:b0:1cf:5471:bbe1 with SMTP id
- adf61e73a8af0-1d6dfabb7dbmr8854856637.8.1728332125789; Mon, 07 Oct 2024
- 13:15:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DV4p0uHp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0F2C4CEC6;
+	Mon,  7 Oct 2024 23:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728344433;
+	bh=AMUryrUKiXz7jRRCPj8fNp4soR5GyS63WzFfoFg6l5U=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DV4p0uHpv1fRof3Ju93U028CIuMu/W8zpcP/QFdolXJ4V1uJT6CStQ27oa2IYlzjF
+	 V3qQMpvxyLwlT2bINJmGJho6YSGwilTx3VJ7EcBvjg8NmOM0XTSVvbvFn74yPQW9hS
+	 CeSfiMi5rCMqoEp+E+GTYM1Z6TFZCk4OCez6l+LNGtodsbyUIJqRZtmM8gYdYIQhrV
+	 ZgO+XH+sbw6KZ7apvS+kBralr09+dRV9ejuXL+0wVn9UAgf/afmwzE7dvtcc2bT5la
+	 CFaxTUME2ApOYkR2UkFEKT4bmATb1P6BzZ5nZGWkMD4DaQUyRtzxJApCQd9s3l2kek
+	 R1S0/beLHhqOA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE9B3803262;
+	Mon,  7 Oct 2024 23:40:38 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006112752.6594-1-algonell@gmail.com>
-In-Reply-To: <20241006112752.6594-1-algonell@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 7 Oct 2024 16:15:14 -0400
-Message-ID: <CADnq5_PxeCVT=26Sqa7L6bOciG3_a1jDBruyTGLD09QEy1880Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: fix typos
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] mlxsw: spectrum_acl_flex_keys: Constify struct
+ mlxsw_afk_element_inst
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172834443748.18821.2044156392058705252.git-patchwork-notify@kernel.org>
+Date: Mon, 07 Oct 2024 23:40:37 +0000
+References: <8ccfc7bfb2365dcee5b03c81ebe061a927d6da2e.1727541677.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8ccfc7bfb2365dcee5b03c81ebe061a927d6da2e.1727541677.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: idosch@nvidia.com, petrm@nvidia.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ netdev@vger.kernel.org
 
-Applied.  Thanks!
+Hello:
 
-On Sun, Oct 6, 2024 at 7:28=E2=80=AFAM Andrew Kreimer <algonell@gmail.com> =
-wrote:
->
-> Fix typos in comments: "wether -> whether".
->
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c | 4 ++--
->  drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c | 4 ++--
->  drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c | 2 +-
->  drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c  | 4 ++--
->  drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c  | 2 +-
->  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c  | 2 +-
->  6 files changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd=
-/amdgpu/gfx_v10_0.c
-> index c544ea2aea6e..87247055a666 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
-> @@ -6374,7 +6374,7 @@ static int gfx_v10_0_cp_gfx_resume(struct amdgpu_de=
-vice *adev)
->         WREG32_SOC15(GC, 0, mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
->         WREG32_SOC15(GC, 0, mmCP_RB0_WPTR_HI, upper_32_bits(ring->wptr));
->
-> -       /* set the wb address wether it's enabled or not */
-> +       /* set the wb address whether it's enabled or not */
->         rptr_addr =3D ring->rptr_gpu_addr;
->         WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr))=
-;
->         WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_add=
-r) &
-> @@ -6412,7 +6412,7 @@ static int gfx_v10_0_cp_gfx_resume(struct amdgpu_de=
-vice *adev)
->                 ring->wptr =3D 0;
->                 WREG32_SOC15(GC, 0, mmCP_RB1_WPTR, lower_32_bits(ring->wp=
-tr));
->                 WREG32_SOC15(GC, 0, mmCP_RB1_WPTR_HI, upper_32_bits(ring-=
->wptr));
-> -               /* Set the wb address wether it's enabled or not */
-> +               /* Set the wb address whether it's enabled or not */
->                 rptr_addr =3D ring->rptr_gpu_addr;
->                 WREG32_SOC15(GC, 0, mmCP_RB1_RPTR_ADDR, lower_32_bits(rpt=
-r_addr));
->                 WREG32_SOC15(GC, 0, mmCP_RB1_RPTR_ADDR_HI, upper_32_bits(=
-rptr_addr) &
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/amd=
-/amdgpu/gfx_v11_0.c
-> index a0f80cc993cf..cf741fc61300 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-> @@ -3557,7 +3557,7 @@ static int gfx_v11_0_cp_gfx_resume(struct amdgpu_de=
-vice *adev)
->         WREG32_SOC15(GC, 0, regCP_RB0_WPTR, lower_32_bits(ring->wptr));
->         WREG32_SOC15(GC, 0, regCP_RB0_WPTR_HI, upper_32_bits(ring->wptr))=
-;
->
-> -       /* set the wb address wether it's enabled or not */
-> +       /* set the wb address whether it's enabled or not */
->         rptr_addr =3D ring->rptr_gpu_addr;
->         WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr)=
-);
->         WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_ad=
-dr) &
-> @@ -3595,7 +3595,7 @@ static int gfx_v11_0_cp_gfx_resume(struct amdgpu_de=
-vice *adev)
->                 ring->wptr =3D 0;
->                 WREG32_SOC15(GC, 0, regCP_RB1_WPTR, lower_32_bits(ring->w=
-ptr));
->                 WREG32_SOC15(GC, 0, regCP_RB1_WPTR_HI, upper_32_bits(ring=
-->wptr));
-> -               /* Set the wb address wether it's enabled or not */
-> +               /* Set the wb address whether it's enabled or not */
->                 rptr_addr =3D ring->rptr_gpu_addr;
->                 WREG32_SOC15(GC, 0, regCP_RB1_RPTR_ADDR, lower_32_bits(rp=
-tr_addr));
->                 WREG32_SOC15(GC, 0, regCP_RB1_RPTR_ADDR_HI, upper_32_bits=
-(rptr_addr) &
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c b/drivers/gpu/drm/amd=
-/amdgpu/gfx_v12_0.c
-> index 63e1a2803503..b5281f45e1ea 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v12_0.c
-> @@ -2601,7 +2601,7 @@ static int gfx_v12_0_cp_gfx_resume(struct amdgpu_de=
-vice *adev)
->         WREG32_SOC15(GC, 0, regCP_RB0_WPTR, lower_32_bits(ring->wptr));
->         WREG32_SOC15(GC, 0, regCP_RB0_WPTR_HI, upper_32_bits(ring->wptr))=
-;
->
-> -       /* set the wb address wether it's enabled or not */
-> +       /* set the wb address whether it's enabled or not */
->         rptr_addr =3D ring->rptr_gpu_addr;
->         WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr)=
-);
->         WREG32_SOC15(GC, 0, regCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_ad=
-dr) &
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c b/drivers/gpu/drm/amd/=
-amdgpu/gfx_v7_0.c
-> index 990e7de8da25..ee9ad38e12cd 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v7_0.c
-> @@ -2559,7 +2559,7 @@ static int gfx_v7_0_cp_gfx_resume(struct amdgpu_dev=
-ice *adev)
->         ring->wptr =3D 0;
->         WREG32(mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
->
-> -       /* set the wb address wether it's enabled or not */
-> +       /* set the wb address whether it's enabled or not */
->         rptr_addr =3D ring->rptr_gpu_addr;
->         WREG32(mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
->         WREG32(mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) & 0xFF);
-> @@ -2876,7 +2876,7 @@ static void gfx_v7_0_mqd_init(struct amdgpu_device =
-*adev,
->         mqd->cp_hqd_pq_wptr_poll_addr_lo =3D wb_gpu_addr & 0xfffffffc;
->         mqd->cp_hqd_pq_wptr_poll_addr_hi =3D upper_32_bits(wb_gpu_addr) &=
- 0xffff;
->
-> -       /* set the wb address wether it's enabled or not */
-> +       /* set the wb address whether it's enabled or not */
->         wb_gpu_addr =3D ring->rptr_gpu_addr;
->         mqd->cp_hqd_pq_rptr_report_addr_lo =3D wb_gpu_addr & 0xfffffffc;
->         mqd->cp_hqd_pq_rptr_report_addr_hi =3D
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/=
-amdgpu/gfx_v8_0.c
-> index 6864219987e9..9d1672664c7d 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-> @@ -4260,7 +4260,7 @@ static int gfx_v8_0_cp_gfx_resume(struct amdgpu_dev=
-ice *adev)
->         ring->wptr =3D 0;
->         WREG32(mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
->
-> -       /* set the wb address wether it's enabled or not */
-> +       /* set the wb address whether it's enabled or not */
->         rptr_addr =3D ring->rptr_gpu_addr;
->         WREG32(mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr));
->         WREG32(mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_addr) & 0xFF);
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/=
-amdgpu/gfx_v9_0.c
-> index 99334afb7aae..979774cd2585 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> @@ -3357,7 +3357,7 @@ static int gfx_v9_0_cp_gfx_resume(struct amdgpu_dev=
-ice *adev)
->         WREG32_SOC15(GC, 0, mmCP_RB0_WPTR, lower_32_bits(ring->wptr));
->         WREG32_SOC15(GC, 0, mmCP_RB0_WPTR_HI, upper_32_bits(ring->wptr));
->
-> -       /* set the wb address wether it's enabled or not */
-> +       /* set the wb address whether it's enabled or not */
->         rptr_addr =3D ring->rptr_gpu_addr;
->         WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR, lower_32_bits(rptr_addr))=
-;
->         WREG32_SOC15(GC, 0, mmCP_RB0_RPTR_ADDR_HI, upper_32_bits(rptr_add=
-r) & CP_RB_RPTR_ADDR_HI__RB_RPTR_ADDR_HI_MASK);
-> --
-> 2.39.5
->
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri,  4 Oct 2024 07:26:05 +0200 you wrote:
+> 'struct mlxsw_afk_element_inst' are not modified in these drivers.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increases overall security.
+> 
+> Update a few functions and struct mlxsw_afk_block accordingly.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next] mlxsw: spectrum_acl_flex_keys: Constify struct mlxsw_afk_element_inst
+    https://git.kernel.org/netdev/net-next/c/bec2a32145d5
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
