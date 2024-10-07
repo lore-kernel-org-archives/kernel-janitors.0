@@ -1,41 +1,50 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E62E189F45;
-	Mon,  7 Oct 2024 10:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FA31D2785;
+	Mon,  7 Oct 2024 12:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728298057; cv=none; b=EpgxFaU5tEvD9BSYNN8OM/Lm3qI4x7vfyQVv87Hhp9TBPbbHIvO/3q2jXnJA+8DnTPche+mmDNecX94qH4aTNwb/WyC63jFEq5IOE+q1LbOErZivV/t70lcrE9rboGZ3hnAkUGJDxilPIcus71d9j3pCc9oKZeejpGL5nLWuLFc=
+	t=1728304881; cv=none; b=QWaio821UNZYQ2SIqZ0Jut2hRMQTNlQq3UDY1vlNCbaxG1ZaoMifWdtHV+JeWw1ue2lZPcwzHMm2/gpOR2mQA4SJ5Ox0Xys8qc+AGLmUm34QBn32G1kUWKdTkhXSyS8QD+E3n8d19zWgQRwSxt10cbGJWVa6GaPcNTtBtUTVdTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728298057; c=relaxed/simple;
-	bh=T4rVdt7fcZiMlQMxDbv2/yloGN/2xnjJVah8iklo5Qg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bi+oIVenaMk88/bxUtZcFIibxuXW0PYs/3nXAHOJVAr+GxTahK0DUyszx+s/uvvHTqk7oJRldpVKfRyBXCtTWWQ4tMExS53+YExs00iCXbrMkJUJ3A2ZnYutq3Fe1rDZ9x2kC3+7NO64WGJGBmjjXXmbRQ7B93fdGLrub53wxSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ei1hjgVK; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1728304881; c=relaxed/simple;
+	bh=PVq36IESnKw/X3bf3UpaGBcKE2tXoKWFgdQEXARI4bI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fkU47ylPGD7xV28efi6WQpdMFbyxF4qFn83v1tRi6sUjakswrBDOcqBvDB+foh0Mtp1pjCUyTaLPrWBCjkrTJYR4GfxqNQUfcNFSfrC2JJlWpuq6EpKNSDGKfhCfAx7jTNITgpJM44fUnWGeVNW4c7KheWQJtebrU9IxEAId1i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=DTCrIOnA; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ei1hjgVK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728298017; x=1728902817; i=markus.elfring@web.de;
-	bh=T4rVdt7fcZiMlQMxDbv2/yloGN/2xnjJVah8iklo5Qg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Ei1hjgVKdDnus0cZhlbu542K/e2NmOvEiW5vjvC6OHaGDOtFzeRtZAEKMWVxRyGW
-	 WYnPY2/jeZSUQX+2z56gsnFz/q2zQyd5m+grdvuzRXACT8xe/oThzbWqnbEFF22UK
-	 dUeRKqcKg+X+GHj/W4X6p5gDlDXNi2fI6WANyWCCxXBEk/SJSJglx6XUnMaW6bkqN
-	 q6AbcMkDOQNMb5tiO/or8f00A6XPA1NCb1+GxZkCpIN2LGd5TNzcfvHUlP8HipaQV
-	 x18+Sr7O2jQ5eoJpNMGNVLrbzmV5ZKsikAO9HZctngAsLZ6FKag+rNdbagNh8XIvX
-	 Lb/UKudPZ8MyEreByQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3m9J-1swwJm0Ru7-003bcf; Mon, 07
- Oct 2024 12:46:57 +0200
-Message-ID: <f5296465-b160-4cb7-9a19-7cabd100e7a1@web.de>
-Date: Mon, 7 Oct 2024 12:46:55 +0200
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="DTCrIOnA"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 497BPTlL022185;
+	Mon, 7 Oct 2024 14:40:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	o5R6EmDj13EYvGXoR7n55gK22/+2Cz7sf7mbsQlwMfU=; b=DTCrIOnAgidUQ5DS
+	Fbo49eAV/6/eiy3ChBOXqHakNLQ2oH//W2BrmDUYJCzHzLhRYAPtvVKUPONhDfE2
+	rL8nmEHrNoBspUv3f9PdA4is4M3yOI+dDBH9AUhQ/sRxUqml3uYoIKXqc6NA/zbv
+	mNK8m7FDHGHtLYcpmn+RJ23FC8silVme9YB3QtPIa5g6em/PMM+1U5Ru42hLy3QN
+	AT5u23H6bZArnJY47P0Qy77gKdx4bf+yGfIERe0ZgLuP7clhnnR2BwQHm6JPlVuP
+	ddyOIlO/xHPvyUK65XDiF2Aub6bka2DUBDwD3OPazNvqe6nT+0NVnEIdkXXsdAfi
+	d10gkQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423gdmdvbn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 07 Oct 2024 14:40:52 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0566F4009A;
+	Mon,  7 Oct 2024 14:39:28 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 041E72764E1;
+	Mon,  7 Oct 2024 14:37:11 +0200 (CEST)
+Received: from [10.130.72.241] (10.130.72.241) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 7 Oct
+ 2024 14:37:10 +0200
+Message-ID: <c00e8977-ee68-489f-89b1-5ba78bb238df@foss.st.com>
+Date: Mon, 7 Oct 2024 14:36:57 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,62 +52,63 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: cleanup: adjust scoped_guard() to avoid potential warning
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@intel.com>,
- =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Tony Nguyen <anthony.l.nguyen@intel.com>
-References: <20241003113906.750116-1-przemyslaw.kitszel@intel.com>
- <63de96f1-bd25-4433-bb7b-80021429af99@web.de>
- <Zv6RqeKBaeqEWcGO@smile.fi.intel.com>
- <c7844c93-1cc5-4d10-8385-8756a5406c16@web.de>
- <ac59684b-37fc-4e47-b496-e6f9bac87b8c@intel.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ac59684b-37fc-4e47-b496-e6f9bac87b8c@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZZiKSbmFNoiK+6VFDwjwkd1Y9TYsd8yg+Bxp0KLxVPWuTvoJ8rl
- vx7Fgl8eQG0cozX+0cnOBtJ+j1AAGkICN33X2ZkLq7T2oB4NRyPIQ4nM2QEFTsuG6PX94KV
- pi6Psxwj0Kp1ZdsISsZAHCDFOAd6OPAHDWlZAoco02gZ0/bIT0H8xaZELsxq1JEvcAdCpoX
- +hig84hT/H7gRaEtwd/pQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Lxew3tJEJdI=;65y2aPgwxFUVZXS29CJmiVrFvNB
- fA4ALIdA4TOKV3+rLNQM0ttEsgDjLCOpajxI6fKrDyYxZmdsu4bD0iUjWCDbTuzQdmJDEGEeP
- CFrUzCKnEI9a7HuHwJVzJkbSErs7WA8ocQ83TTKNND9XDh/P6g3mqrXzaBg/IkkFcpHKpB5d8
- x+xWYpFHNYBDjtP8+cGKzzP+zZomp1DyHIB2fxije67LVdMs7OyYI6CEh1inh0Y2kNh/xbAyB
- IweB0KTjqPn8su3Y1el+izHOakxTivDe1LDQvR7eNnu/Rr5PS0yp+7YVnYjHa9sgzdJpcqvEH
- 5YFvnVu5OpnoE+hn85MuHp6LJxPO1vtnfYOqM3LoQED3ovKZklgo9Lb6aKRnCt+9KyTKSRNEh
- wODHp95szFOGijZWrYjTIHAc6kSJ44Iw/HzlL+IHOHMzLos3LkUC+GchklKLzEKzWbaXmfeoQ
- OmkNCcbfJcSEX4Hqs9YmDTOZEil+2L9SXiK02VQMmlS3zEtVXahav3EnarGvLIBJ9/Y1UnLUL
- h9eOfvNS/yYq5MvtJjQcTsBbCLLqVaxd1TixECwyTPce0ryI4xU47e7zNv8xNzCsonxH3gYUx
- 3Fm6YIfyEIX3HhQbrr3uggzo8ceiriXXCdzKvoo7U2DvbWctlSXKR3Tia/D+OiHx97CjzORtr
- QrsHTv5JjCi8KIJDnkRyhDZaLc3vrqHVC5vNwKC6ww23872nIILrinx8u5e1bmRbMItt4NpvD
- GrkYXh18XeG91Ph6wHau7fm/VQ4et7bnzvnONKngJPxje/h35BNQ+hy/bfbO2YLe2ul9qDoQH
- Qvjg1hloQk/nwt/Fld/l/Llg==
+Subject: Re: [PATCH] media: i2c: vgxy61: Fix an error handling path in
+ vgxy61_detect()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Sylvain Petinot
+	<sylvain.petinot@foss.st.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Julien Massot
+	<julien.massot@collabora.com>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-media@vger.kernel.org>
+References: <666ac169157f0af1c2e1d47926b68870cb39d587.1727977974.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+In-Reply-To: <666ac169157f0af1c2e1d47926b68870cb39d587.1727977974.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
->>>> Would you get into the mood to reconsider the usage of leading unders=
-cores
->>>> any more for selected identifiers?
->>>> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare=
-+or+define+a+reserved+identifier
->>>
->>> The mentioned URL doesn't cover the special cases like the kernels of =
-the
->>> operating systems or other quite low level code.
->> Can such a view be clarified further according to available information=
-?
-=E2=80=A6
-> could you please update CMU SEI wiki to be relevant for kernel drivers
-> development, so future generations of C bureaucrats would not be fooled?
+Hi Christophe,
 
-How do you disagree to mentioned technical aspects?
+Thank you for your patch.
 
+On 10/3/24 19:53, Christophe JAILLET wrote:
+> If cci_read() fails, 'st' is set to 0 in cci_read(), so we return success,
+> instead of the expected error code.
+> 
+> Fix it and return the expected error.
+> 
+> Fixes: 9a6d7f2ba2b9 ("media: i2c: st-vgxy61: Convert to CCI register access helpers")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Reviewed-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
+
+> ---
+>  drivers/media/i2c/vgxy61.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/vgxy61.c b/drivers/media/i2c/vgxy61.c
+> index 30378e962016..8034e21051be 100644
+> --- a/drivers/media/i2c/vgxy61.c
+> +++ b/drivers/media/i2c/vgxy61.c
+> @@ -1617,7 +1617,7 @@ static int vgxy61_detect(struct vgxy61_dev *sensor)
+>  
+>  	ret = cci_read(sensor->regmap, VGXY61_REG_NVM, &st, NULL);
+>  	if (ret < 0)
+> -		return st;
+> +		return ret;
+>  	if (st != VGXY61_NVM_OK)
+>  		dev_warn(&client->dev, "Bad nvm state got %u\n", (u8)st);
+>  
+
+-- 
 Regards,
-Markus
+
+Benjamin
