@@ -1,70 +1,68 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B6C21265E
-	for <kernel-janitors@vger.kernel.org>; Tue,  8 Oct 2024 18:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F64238DD6;
+	Tue,  8 Oct 2024 20:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728412099; cv=none; b=k1qOOAPjHucvjQZ/xZG1o9W7Tk9T5olmIfUMJo+K3d8oOlmtJR0HRfEuSQg1udt8EAYFRMzi+FmmL3hWA8WtLZF3STCsaLJFvmLzezRrEm/65e0eVjusjmVhGkhM46T04MMyE/9k5VuUBM6VUXOViZEpEPstE8MSygLxBmRjIF8=
+	t=1728417746; cv=none; b=XnZ8GUmHQfB9wZhIN03KB7n7quy50H1Zd6twTmkUVMEu0ZT61Si5ZosCKqSW6//FJaU0brsRGvp+Ie1eG3XTHvftGI8WmiQGjwcQ6qS089FeSzIs9LT9Z0vz+FtPgsnOmlbnEW1yaKICXBJ64i8+J3oGcHtK9LAHaiOr7rYHwBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728412099; c=relaxed/simple;
-	bh=KRIMSaQJxsJnrkquxy6hhD3S/qPAyWsH44gpf2J/73g=;
+	s=arc-20240116; t=1728417746; c=relaxed/simple;
+	bh=mwnu9JDu0/QJ39vaeqgzPRoqn/uQOdBvX8cshH9rI2M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUY/FqtW5d/BR3rqyMGEovXvSrt9zd+yez31E3n+igzIIFKYT/yeWfRyS125xEy9TO6pGHbPP1n8Aqv37iAMh8jtkJbadJd5n3A+AfYmM6HSBxkDwz6+9L7jOGhix+U28k/uzIkQDapDKGQyxp1FuzWyqCS8YHeaHG1Cw4rJRU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfWrTHoM; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1cIcYBCVNp+r5958RzSWAtJhnMaiL5euuPCKQL5pMVioAfzAKJmSrJQfUO+/nVOgA0zSrCyJn09aeVYiT0aPRQcVCNb+KSJhjVGS4i/ECavHN/HZ+tMCE8xMs/wjbKDP0+2kwoHE0THApl+GH01VNEjRNUD+yG2eIQHyk3R5hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rN+E6v8u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfWrTHoM"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d2e81e110so511839f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Oct 2024 11:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728412096; x=1729016896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vj4U5NZezle5klngEkutB57b0MoLORIo7RbzeKMhINk=;
-        b=cfWrTHoMgyQleQgKBDSITavn2krx/9iImZENtnOLbvISt+U/EcDA5zod9AXfNFGwXL
-         Eq66dFMV7VbHNKuSG4an/R8gEN54nBgD2FyPo8QF8puHrwB0xaq5jplhdq+KVZJdth11
-         Qz+jX2qC9rtFjoWjAkv/PTa0RXYZaBrd/HyRRGUvYgvCvPZOxygvZ+qOD02db9UExUU0
-         qzKyL5VO27u/O/Ge+BrpDSPvXI3OyD9ZfyepS0GeEqcELjU2vAdGpUdx19p2JEXTOupf
-         APzI8+CAX1aSIw+ggQG6OVZMBPa7E+UZOvjjP4DM/lac5JGnEkFD3MNE+WROYVwvBleu
-         7EDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728412096; x=1729016896;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vj4U5NZezle5klngEkutB57b0MoLORIo7RbzeKMhINk=;
-        b=G33qOIDFW7oqILw/4BZHR4jhrzCRcUChEncaCdaaai+J2lBq8BNMvH+ihvccrgrGug
-         LO9coPuLeSBQVDvYRyIueU0zigH/J6FLlLt9Ntpwbg3akL5VrqtjX4N2knIU8gp/gx5r
-         7wYhV9xsmixx8NrVWK/xaFL9xSG1tSsALsXixwpY64lsxcoaxxmi2ibt9bbpiAtZuG2j
-         DTUjDwORfLJ6zJJTz4zJk2c2uJzPsyOH/jrI/46gdcQU9o2rLcIwdgWeDzMqWRaJf7Qe
-         HQRfZLnit/hSUC4DP1kczKjVKas52DDtggVd22w6PlEv97WKqFGAlLDT6B8LpYagyNbo
-         61+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUNwEETzZdRQW+ir5XIgC0cWxOs+PtRf8QTAik+VOzABchyoIt2eKxY/49zGEMy41V6zC/icgV9tKJFUWfIkN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRYCbLMoLlBWhcnbUG2h9cSnydFzJrer9MLcScvFx1hr/FVHZQ
-	Z7p9T0l7nOWkD38bFyJlA2mtf4oKtyvSDl+W5YBlF6h3zfO/XZMIEAf4EHaLCJE=
-X-Google-Smtp-Source: AGHT+IF28xrCjVDMGy24eCmaDxnDHGfA069+feSTET3yVX4pIr2vsTYPGgc9aCT6y84BOEZg8lwf4Q==
-X-Received: by 2002:a05:6000:400b:b0:378:89be:1825 with SMTP id ffacd0b85a97d-37d0e8f4bcemr11804315f8f.49.1728412096232;
-        Tue, 08 Oct 2024 11:28:16 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691b725sm8578482f8f.46.2024.10.08.11.28.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 11:28:15 -0700 (PDT)
-Date: Tue, 8 Oct 2024 21:28:07 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Oder Chiou <oder_chiou@realtek.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Jack Yu <jack.yu@realtek.com>, linux-sound@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ASoC: rt-sdw-common: Fix bit-wise or'ing of values
- into uninitialized variable ret
-Message-ID: <84edfcd4-02f3-4cd0-90d8-eb5f3cdabec5@stanley.mountain>
-References: <20241008164707.203792-1-colin.i.king@gmail.com>
- <ZwVmCNAVSOgqT6Qd@finisterre.sirena.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rN+E6v8u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF43C4CEC7;
+	Tue,  8 Oct 2024 20:02:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728417745;
+	bh=mwnu9JDu0/QJ39vaeqgzPRoqn/uQOdBvX8cshH9rI2M=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=rN+E6v8uF4ioUNKLIm91KJY7WajT816xax0xLKmMg82r/VdNKxRi2SuPyaYp5mvMp
+	 3iEUmIoUxBqAzw3S+3xHFwxDjNUXJ1ms4vvTgy40qSQdbS1e5YsXgihqx/FlfH41CR
+	 B5yXHM1xV2RQDH8pdQ+oYSffGAkWue72wxmp8FzHSdYe8F0+gQDgEtxtt3iMaFayap
+	 QQgLNNDuCW4krxkjKxBJa5Jy1wKnBCXJ8lwHOvYQ4u/HYgc6yow8XGPEF6rU7+hsiS
+	 Kkfhf7h/1UX7Uoiu1m8M2TLxAcmXcKHBMcjwCNjgHqioPraMS1As8rwzYnC/B4K15R
+	 l1T7CHnBap8VA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 56F9BCE0DD1; Tue,  8 Oct 2024 13:02:25 -0700 (PDT)
+Date: Tue, 8 Oct 2024 13:02:25 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Uladzislau Rezki <urezki@gmail.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
+	linux-trace-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
+	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
+	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <acf7a96b-facb-469b-8079-edbec7770780@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
+ <ZnFT1Czb8oRb0SE7@pc636>
+ <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
+ <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
+ <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
+ <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz>
+ <ZnVInAV8BXhgAjP_@pc636>
+ <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz>
+ <b3d9710a-805e-4e37-8295-b5ec1133d15c@paulmck-laptop>
+ <37807ec7-d521-4f01-bcfc-a32650d5de25@suse.cz>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,28 +71,43 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwVmCNAVSOgqT6Qd@finisterre.sirena.org.uk>
+In-Reply-To: <37807ec7-d521-4f01-bcfc-a32650d5de25@suse.cz>
 
-On Tue, Oct 08, 2024 at 06:04:08PM +0100, Mark Brown wrote:
-> On Tue, Oct 08, 2024 at 05:47:07PM +0100, Colin Ian King wrote:
-> > There are a handful of bit-wise or'ing of values into the uninitialized
-> > variable ret resulting in garbage results. Fix this by ininitializing
-> > ret to zero.
+On Tue, Oct 08, 2024 at 06:41:12PM +0200, Vlastimil Babka wrote:
+> On 7/24/24 15:53, Paul E. McKenney wrote:
+> > On Mon, Jul 15, 2024 at 10:39:38PM +0200, Vlastimil Babka wrote:
+> >> On 6/21/24 11:32 AM, Uladzislau Rezki wrote:
+> >> > On Wed, Jun 19, 2024 at 11:28:13AM +0200, Vlastimil Babka wrote:
+> >> > One question. Maybe it is already late but it is better to ask rather than not.
+> >> > 
+> >> > What do you think if we have a small discussion about it on the LPC 2024 as a
+> >> > topic? It might be it is already late or a schedule is set by now. Or we fix
+> >> > it by a conference time.
+> >> > 
+> >> > Just a thought.
+> >> 
+> >> Sorry for the late reply. The MM MC turned out to be so packed I didn't even
+> >> propose a slab topic. We could discuss in hallway track or a BOF, but
+> >> hopefully if the current direction taken by my RFC brings no unexpected
+> >> surprise, and the necessary RCU barrier side is also feasible, this will be
+> >> settled by time of plumbers.
+> > 
+> > That would be even better!
+> > 
+> > 							Thanx, Paul
 > 
-> I'm very disappinted in the compiler for not noticing this :(
+> Hah, so it was close but my hope was fulfilled in the end!
 
-We disabled GCC's uninitialized variable check years ago before we enabled
--Werror.  Clang does catch this.
+Nice, and thank you!!!
 
-  CC      sound/soc/codecs/rt-sdw-common.o
-sound/soc/codecs/rt-sdw-common.c:119:3: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
-                ret |= SND_JACK_BTN_2;
-                ^~~
-sound/soc/codecs/rt-sdw-common.c:111:9: note: initialize the variable 'ret' to silence this warning
-        int ret;
-               ^
-                = 0
+							Thanx, Paul
 
-regards,
-dan carpenter
-
+> commit bdf56c7580d267a123cc71ca0f2459c797b76fde
+> Merge: efdfcd40ad5e ecc4d6af979b
+> Author: Linus Torvalds <torvalds@linux-foundation.org>
+> Date:   Wed Sep 18 08:53:53 2024 +0200
+> 
+>     Merge tag 'slab-for-6.12' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab
+> 
+> So that was at 8:53 Vienna time, and Plumbers started at 10:00...
