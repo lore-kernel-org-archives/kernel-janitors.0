@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D069B193082;
-	Mon,  7 Oct 2024 23:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F7F161;
+	Tue,  8 Oct 2024 00:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728344433; cv=none; b=KxVaAhObwN+elM1LsYdbeaR6dVb5viXwnOvadfYTUYtIsylvqaiqJgKTJHa0nJryHcyPGN5Ib9HtfHFypnWMP5WyowDh50AN/VbKuvPTF5Soa/g8G8bHlP4VIH7HA8Z26Ub19Xr1l0K9MkunsdPHuxfkPocGTd+1z1O1FE5P0lE=
+	t=1728346222; cv=none; b=kWDXt70JmcmFaBtYy8j94h1pz90FEHstfUAuKOif50viysLjpHV9Rj+AAZgmrFrc41nL9QmlgW8APMj/f7EOLJIEMpO5l4RLXHv+k/tEuQC2gAS7rLv+TLK05jHMyxJ5Nhxmb6LfWf56wtUlHg0VO5/Ha2LP56E0852csuujxuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728344433; c=relaxed/simple;
-	bh=AMUryrUKiXz7jRRCPj8fNp4soR5GyS63WzFfoFg6l5U=;
+	s=arc-20240116; t=1728346222; c=relaxed/simple;
+	bh=b63IQ4s+fB8dm+DXtt4cfpDH5Bvp1G9Z8Iy6UTu075E=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SLIt3Nr9b7B6134FXjMSfNvJc3reSzklFwWTI7J4Cg6Wkb3iJPBGLEiyEVIXjogJCCcfLokcB2ad6P5WTaI3usZ8VgYBdPIV8sRgse+9uPTEpBTHaoV1J25johS+5MdSCcKbi91sVf0jWx7EZ03mHniVlKVXTkrm3rzaYUvJc9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DV4p0uHp; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=N1MZ4zuuGTV9Ip/KnO1jswLxTrC98Ooa3zpuEGKEnUuzd+0Ycr6qfSoZcFZwdJx/Tn/+hM94e6J4DU5yBW+ZFUOYMsmBli5LOhVpxD8Am3ExC3KQjYsCoEK2QPLA1r8q/0rnE84VC12uZS+RPUyaErCoZBengp26/fTvUIfWM6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lo5LyUsH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DV4p0uHp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F0F2C4CEC6;
-	Mon,  7 Oct 2024 23:40:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lo5LyUsH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC7A2C4CEC6;
+	Tue,  8 Oct 2024 00:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728344433;
-	bh=AMUryrUKiXz7jRRCPj8fNp4soR5GyS63WzFfoFg6l5U=;
+	s=k20201202; t=1728346221;
+	bh=b63IQ4s+fB8dm+DXtt4cfpDH5Bvp1G9Z8Iy6UTu075E=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DV4p0uHpv1fRof3Ju93U028CIuMu/W8zpcP/QFdolXJ4V1uJT6CStQ27oa2IYlzjF
-	 V3qQMpvxyLwlT2bINJmGJho6YSGwilTx3VJ7EcBvjg8NmOM0XTSVvbvFn74yPQW9hS
-	 CeSfiMi5rCMqoEp+E+GTYM1Z6TFZCk4OCez6l+LNGtodsbyUIJqRZtmM8gYdYIQhrV
-	 ZgO+XH+sbw6KZ7apvS+kBralr09+dRV9ejuXL+0wVn9UAgf/afmwzE7dvtcc2bT5la
-	 CFaxTUME2ApOYkR2UkFEKT4bmATb1P6BzZ5nZGWkMD4DaQUyRtzxJApCQd9s3l2kek
-	 R1S0/beLHhqOA==
+	b=lo5LyUsHejX7iDckt6apclTXgRIRq3Cy8hkulbHMP6Fs4exTswv/zd9tUAZ+V7Pxf
+	 75hVobVY9T5g5WkYfYtjc3VySssRw4nDkJ9wxSN64n89DIzxSztpBkTXzG/JpVGAdA
+	 55Sl7NdbeCV2ih7XU1f7MofRHt5pCpMrMpCoqZtbEfdIBTbExDn1FrPlBc69XPxjin
+	 MdsbGYAzVf8ZLGulgPB4YRJsGJJO9btIAkVYXq7L0I2CDdyDtcsaUvo4Hzz6/PnLel
+	 xj+kKLSG6UjwihOiWhJYaNeHwUgr5xxb68/UMe194hlvm43k9zG7+X4SQOXCQjVnKi
+	 C692NfQDpDG6w==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE9B3803262;
-	Mon,  7 Oct 2024 23:40:38 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D153803262;
+	Tue,  8 Oct 2024 00:10:27 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -37,38 +37,39 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] mlxsw: spectrum_acl_flex_keys: Constify struct
- mlxsw_afk_element_inst
+Subject: Re: [PATCH net] net: ethernet: adi: adin1110: Fix some error handling
+ path in adin1110_read_fifo()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172834443748.18821.2044156392058705252.git-patchwork-notify@kernel.org>
-Date: Mon, 07 Oct 2024 23:40:37 +0000
-References: <8ccfc7bfb2365dcee5b03c81ebe061a927d6da2e.1727541677.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <8ccfc7bfb2365dcee5b03c81ebe061a927d6da2e.1727541677.git.christophe.jaillet@wanadoo.fr>
+ <172834622606.25280.14865735835274867551.git-patchwork-notify@kernel.org>
+Date: Tue, 08 Oct 2024 00:10:26 +0000
+References: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <8ff73b40f50d8fa994a454911b66adebce8da266.1727981562.git.christophe.jaillet@wanadoo.fr>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: idosch@nvidia.com, petrm@nvidia.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, lennart@lfdomain.com, alexandru.tachici@analog.com,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
  netdev@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  4 Oct 2024 07:26:05 +0200 you wrote:
-> 'struct mlxsw_afk_element_inst' are not modified in these drivers.
+On Thu,  3 Oct 2024 20:53:15 +0200 you wrote:
+> If 'frame_size' is too small or if 'round_len' is an error code, it is
+> likely that an error code should be returned to the caller.
 > 
-> Constifying these structures moves some data to a read-only section, so
-> increases overall security.
+> Actually, 'ret' is likely to be 0, so if one of these sanity checks fails,
+> 'success' is returned.
 > 
-> Update a few functions and struct mlxsw_afk_block accordingly.
+> Return -EINVAL instead.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] mlxsw: spectrum_acl_flex_keys: Constify struct mlxsw_afk_element_inst
-    https://git.kernel.org/netdev/net-next/c/bec2a32145d5
+  - [net] net: ethernet: adi: adin1110: Fix some error handling path in adin1110_read_fifo()
+    https://git.kernel.org/netdev/net/c/83211ae16405
 
 You are awesome, thank you!
 -- 
