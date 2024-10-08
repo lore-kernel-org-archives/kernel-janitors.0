@@ -1,82 +1,95 @@
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8051C75F8;
-	Tue,  8 Oct 2024 08:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F8F165F08;
+	Tue,  8 Oct 2024 12:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728375498; cv=none; b=hgmMyiMNddF5BaKKV/qG9KsFQsre8o4WQ45bE63YCHLjxgnQG8oSxNh3r05DXIHQZYEQEK9yTSTCzRhKuJMhZ6U0fF8meKT/MTapQHKl/eZCpOIkJ3ld5uO+nV6cQ/YTiWHnVMhQ80y/ZLkb6zOj5gWiWpkh55ZVx/qjSaBcIlM=
+	t=1728389779; cv=none; b=CaTdvMRiYlF82FNHbrKDpsp35dGzFHvrd5Z9qkUgfTTQGudQaXjUDTkC8fRiPnTQ0Wnn/IC5NK5jhSrjYia/idx6VlGQD+V6Bh3j48BSrHBDs6yjBaP/wn6VrAI+shOqt8SEs/9C3biRBmPQ3iYhT+qV6/tEjUZ0SeC9MOA2Hm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728375498; c=relaxed/simple;
-	bh=HctsgoqJDn+IuwddPANtJvOXiIBXG26hIJ1CVhcWMbs=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WNw1HcakoZJzi1VIUNMF+GgX1FKiW1DQj0EbhL5yk8segwJ3ICRow4oYzQGHXzGFc1eejmIeQ7o0KuSagsEkDHJ4D4YU6PxaKSpjgj71I0xZu66d6CaYcsHfkjxMpiPdv5IzS4cOlIXkHYUcWxAoPaVZogRFOiNCv9yV7i4DWGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XN84z68wWz2Dcwg;
-	Tue,  8 Oct 2024 16:17:07 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id AF25A14013B;
-	Tue,  8 Oct 2024 16:18:11 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 8 Oct 2024 16:18:10 +0800
-Subject: Re: [PATCH 28/35] UBI: Reorganize kerneldoc parameter names
-To: Julia Lawall <Julia.Lawall@inria.fr>, Richard Weinberger <richard@nod.at>
-CC: <kernel-janitors@vger.kernel.org>, Miquel Raynal
-	<miquel.raynal@bootlin.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
- <20240930112121.95324-29-Julia.Lawall@inria.fr>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <372fa7f2-908d-194c-e773-37ea0951238a@huawei.com>
-Date: Tue, 8 Oct 2024 16:18:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1728389779; c=relaxed/simple;
+	bh=482txqLeNk4mvFzvk4g/P2lAkRhMgkWocQURd6tD8n0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lh0aldQ7vlWGbnjUsxVQCjp4vVtcrIx+PiEgGpd6NQuHAerUFmv69vCL0Ky/CtQxc1UE9vslvpMk6d7lr+Lsdm0axgVCSA2jucojAMM9u7CPeOOwY2VZyGPvuP6hY3TJOjtahMzxs2c6XqHAjrjOeb5Et7trebwNULzv0c6HDxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ARnOfYI7; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARnOfYI7"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4305724c12eso1362195e9.1;
+        Tue, 08 Oct 2024 05:16:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728389776; x=1728994576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ujHJys7fYYHhgOPFU3KJvztMDKT72417+uhQQSgyc0A=;
+        b=ARnOfYI714JRqzfr9Z16lUtFLiptybvIVejkbAHaw0PBLUAiz+oi4al3i6skQ1QEH/
+         9sNWuxItiPfsfE0IaFCZtfyUCnK9feB8aCfQe5Td4fTQDDLBdsQQu5ynDduo9klWY+64
+         OHO5YlolzdpMc3gErv0Gxsvzg5x9fGECXGEdo3wN/YRzdVAGBDRtr1+wxQS/0OOdZtwI
+         B4odusEU8DHSilSQuWEAH78H3glB6iGAkb0Y1OkXFZMJWVe25jJKM5jDsh4bwA7n/V0U
+         al1h3w20bT6B5FxR7RDrU7XhQBFLqA06b6ZTkficR87RqmuC4FKN+Lrk/yR2SDVDOof1
+         9ojw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728389776; x=1728994576;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ujHJys7fYYHhgOPFU3KJvztMDKT72417+uhQQSgyc0A=;
+        b=PQsEQ8KJ1Hd938GUnZWaun1YLSJ/OCeCMqi6QpRjBnAFppllrKfkxqLcZK/UFwX21O
+         oIYfL7kEIX6hYLaLVPiB1AiNFUdRWoONoikTyR3kI5u6nKrux+RyQnD+WTk0sdWLq1FH
+         Zk+qjNw/TvRpS57lvbGPUUy8oyjA1WAFDXZEG/EraQ/HIMgogzpOlSG2JhbLLxF9xc5G
+         tTXZm0P+aWmQi2gsxGYQ4BlccRG/6t9PgSQIlx8rIlSYbJmwH8CZGrmi42TdVKvY2zTS
+         f7nVnN54K99wNaHWp2vFRleCUucTbN4cNABw7iMZTB7EBqeTK95ZQEMKnwF0PQvG18yZ
+         MIWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ968XGJt0eCy7Nbfzii10CcR0rGakutF0ScXql/ciFNKbOkMXVSW/Ep4jdCJBxvSt5xJ/Qp/vx//PjMob@vger.kernel.org, AJvYcCVOXOgSpYZRc1SsHw3SzdSdjjt8yJpEuP9MOs7Q9d5Cnteo4XTLIo44MvpIt5zvjT+PjurmqDIaRuJaa5KZ9l0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTw9ynXfUJz3o9tSUq5ga7qE9KxytKk/FnCj1iSu1F/P5Rc5pe
+	esedNp4vS9SzP0ft/TqntQUEOYmb/hQmL6MLCcn7KHzzWs6ON4cd
+X-Google-Smtp-Source: AGHT+IEv+ImaEr/7cVbGXKPVcQrSmyebPdbvDU8yXA6EccSbt6HXdkbJ5FGHhqxWKDPTk19+eVnqxw==
+X-Received: by 2002:a05:600c:4e4f:b0:426:6f27:379a with SMTP id 5b1f17b1804b1-42f85ab3aa4mr99520195e9.13.1728389775550;
+        Tue, 08 Oct 2024 05:16:15 -0700 (PDT)
+Received: from void.void ([141.226.169.59])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d16920be2sm8009851f8f.60.2024.10.08.05.16.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 05:16:15 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] fs/inode: Fix a typo
+Date: Tue,  8 Oct 2024 15:16:02 +0300
+Message-Id: <20241008121602.16778-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240930112121.95324-29-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000013.china.huawei.com (7.193.23.81)
 
-ÔÚ 2024/9/30 19:21, Julia Lawall Ð´µÀ:
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
-> 
-> Problems identified using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->   drivers/mtd/ubi/eba.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+Fix a typo in comments: wether v-> whether.
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> 
-> diff --git a/drivers/mtd/ubi/eba.c b/drivers/mtd/ubi/eba.c
-> index c7ba7a15c9f7..efce5bf41ef6 100644
-> --- a/drivers/mtd/ubi/eba.c
-> +++ b/drivers/mtd/ubi/eba.c
-> @@ -731,8 +731,8 @@ int ubi_eba_read_leb(struct ubi_device *ubi, struct ubi_volume *vol, int lnum,
->    * ubi_eba_read_leb_sg - read data into a scatter gather list.
->    * @ubi: UBI device description object
->    * @vol: volume description object
-> - * @lnum: logical eraseblock number
->    * @sgl: UBI scatter gather list to store the read data
-> + * @lnum: logical eraseblock number
->    * @offset: offset from where to read
->    * @len: how many bytes to read
->    * @check: data CRC check flag
-> 
-> .
-> 
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ fs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 3bd8eba6c51b..d37fe8ddb646 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2878,7 +2878,7 @@ EXPORT_SYMBOL(inode_set_ctime_current);
+  * @inode:	inode to check
+  * @vfsgid:	the new/current vfsgid of @inode
+  *
+- * Check wether @vfsgid is in the caller's group list or if the caller is
++ * Check whether @vfsgid is in the caller's group list or if the caller is
+  * privileged with CAP_FSETID over @inode. This can be used to determine
+  * whether the setgid bit can be kept or must be dropped.
+  *
+-- 
+2.39.5
 
