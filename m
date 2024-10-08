@@ -1,113 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F64238DD6;
-	Tue,  8 Oct 2024 20:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86941E1A27
+	for <kernel-janitors@vger.kernel.org>; Tue,  8 Oct 2024 20:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728417746; cv=none; b=XnZ8GUmHQfB9wZhIN03KB7n7quy50H1Zd6twTmkUVMEu0ZT61Si5ZosCKqSW6//FJaU0brsRGvp+Ie1eG3XTHvftGI8WmiQGjwcQ6qS089FeSzIs9LT9Z0vz+FtPgsnOmlbnEW1yaKICXBJ64i8+J3oGcHtK9LAHaiOr7rYHwBM=
+	t=1728420908; cv=none; b=rbfk1Lls88nWXcr8ibjQxW0k7TwXHxdXcn5GvVvF7TCJ5CVQY+HGP3gr2eU4BZl/BXxWjlBIAnnOL8G7Jt9kOmwyIsbce9QRgEvcLY1L1xCFwWv3dKOglkKYm2S6rnRhSZjiTGkytduf6tCr/0EFk4lUMluRUw41LYgj9ZQXyc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728417746; c=relaxed/simple;
-	bh=mwnu9JDu0/QJ39vaeqgzPRoqn/uQOdBvX8cshH9rI2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q1cIcYBCVNp+r5958RzSWAtJhnMaiL5euuPCKQL5pMVioAfzAKJmSrJQfUO+/nVOgA0zSrCyJn09aeVYiT0aPRQcVCNb+KSJhjVGS4i/ECavHN/HZ+tMCE8xMs/wjbKDP0+2kwoHE0THApl+GH01VNEjRNUD+yG2eIQHyk3R5hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rN+E6v8u; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728420908; c=relaxed/simple;
+	bh=4wQNIu4/Ua8YXW4f38TGr99Bjm+K/ywUOAGfzRyvGLI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RHmBMZCujTsl8SnCdQI8zp+ylH8OfAVUlyjKKiiZqDqYMwtZNtov/1y7zZOdXeFHJB/qGTv/wb1Ebr3TlsVFYTSiINu89YGJ4/s4aqBQbT/+xFQbRsIY6FIn3Zbmix3brAkSgFNaQuSJdw/p1/8goDVk+XzS9JhRyTVPbDuVNK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np; spf=none smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=u8W271SW reason="signature verification failed"; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rN+E6v8u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF43C4CEC7;
-	Tue,  8 Oct 2024 20:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728417745;
-	bh=mwnu9JDu0/QJ39vaeqgzPRoqn/uQOdBvX8cshH9rI2M=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=rN+E6v8uF4ioUNKLIm91KJY7WajT816xax0xLKmMg82r/VdNKxRi2SuPyaYp5mvMp
-	 3iEUmIoUxBqAzw3S+3xHFwxDjNUXJ1ms4vvTgy40qSQdbS1e5YsXgihqx/FlfH41CR
-	 B5yXHM1xV2RQDH8pdQ+oYSffGAkWue72wxmp8FzHSdYe8F0+gQDgEtxtt3iMaFayap
-	 QQgLNNDuCW4krxkjKxBJa5Jy1wKnBCXJ8lwHOvYQ4u/HYgc6yow8XGPEF6rU7+hsiS
-	 Kkfhf7h/1UX7Uoiu1m8M2TLxAcmXcKHBMcjwCNjgHqioPraMS1As8rwzYnC/B4K15R
-	 l1T7CHnBap8VA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 56F9BCE0DD1; Tue,  8 Oct 2024 13:02:25 -0700 (PDT)
-Date: Tue, 8 Oct 2024 13:02:25 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, bridge@lists.linux.dev,
-	linux-trace-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	kvm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org,
-	wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org,
-	ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	kasan-dev <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <acf7a96b-facb-469b-8079-edbec7770780@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz>
- <ZnFT1Czb8oRb0SE7@pc636>
- <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop>
- <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz>
- <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
- <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz>
- <ZnVInAV8BXhgAjP_@pc636>
- <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz>
- <b3d9710a-805e-4e37-8295-b5ec1133d15c@paulmck-laptop>
- <37807ec7-d521-4f01-bcfc-a32650d5de25@suse.cz>
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="u8W271SW"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b9b35c7c7so43673195ad.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 08 Oct 2024 13:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc.com.np; s=everest; t=1728420906; x=1729025706; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0tFkED+mY089YHzAtW+B1O+++Bw0Z0pfmZQ8b1ZguYk=;
+        b=u8W271SWslxF5yJIdFPrKRECVQJYttiICI7y/A1ZM9Yrd30i1CHntKDCKeHV5w4IOq
+         53E0B7snG9e/8WQ4iZt7lBMqIekPgXIASr+u4ON1LSV56jv8h8+9buwmVSpRrxTVuK1k
+         Kkn4MD82rIpqWOF2NIkqM+sV6I8YpVN6Ulx72tpjXkOHPxdySxPCwPrfm60YeyS2ML6H
+         on3vcQ2tmDPwro0u0JBL6MJpW7ktgrF7MqFxFjz7xMxgoIVI0g6tRKWCfUYEC0uEu9El
+         wLNtaaMtCjZzHjjZp1+IbON6FFi2qHA6AInivWe6X/DBqlnai/juxvKRJ0qZbixKtS2t
+         Om+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728420906; x=1729025706;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0tFkED+mY089YHzAtW+B1O+++Bw0Z0pfmZQ8b1ZguYk=;
+        b=QtF/+2bpIja1k27rM/BUVDuQElFAzuU/blG6UVqPJbHGk1a8tOrdMTbi090ZIPcdB7
+         L6/7TwD6v/YiIqk5BxDLa23b2i7s3WV/uQDZmr5apGo7Hvp/jqg5c5Jvsv4ddJIfU7V2
+         SXnPM7HFDjltNaJ/rT1ewH4LIcHFQCRXg8Yd3JkHoCCCB6BN8i2a0rDiSPz77VF9zNcO
+         Wd/ty67nc2C0yLY7N/fOXBxmdEweLvJdoxsThnB1VzkXh7UAOaphlXTYPq219XrBJH5n
+         ln9cDaRpZCG9ZvmVxwCXIxPOerLZ9kOOwTS9dgc1xqUMdjpV6K50RL9jvU91vqp9a1Nk
+         Invg==
+X-Forwarded-Encrypted: i=1; AJvYcCWunxbTL9C4uvAJYimrYfi0nBJEPMZ/vzpdhmnlbjDTyHmhYBIBY1HFEffUK/RQ/24jAb0x6aSieVAY7bbpTd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLJ+S2+Eme6QB0LJQxRPW7Tuplejql9debsH0IkgvfvAKdQuL/
+	ysUjBRKO6Bz8TmSeRnABRIHfIHB8VPPdbOLTa+TsiAMkAaC2zOXR8d0rW+kLyW/JPpd8XgOAyT/
+	pTYGztw8+
+X-Google-Smtp-Source: AGHT+IG5QtndTuvxUc4EQsIUMZuzUEKCOMQYR+xtaqDBDhzPRGHOGMjKNeFwj/pDDHDOMAis6O/BGw==
+X-Received: by 2002:a17:902:c411:b0:20b:9f8c:e9de with SMTP id d9443c01a7336-20c6376dfefmr4938325ad.13.1728420906131;
+        Tue, 08 Oct 2024 13:55:06 -0700 (PDT)
+Received: from localhost.localdomain ([132.178.207.21])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20c13986787sm59611735ad.242.2024.10.08.13.55.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 13:55:05 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/xe/guc: Fix deference after check
+Date: Tue,  8 Oct 2024 14:53:48 -0600
+Message-ID: <20241008205352.4480-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37807ec7-d521-4f01-bcfc-a32650d5de25@suse.cz>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 08, 2024 at 06:41:12PM +0200, Vlastimil Babka wrote:
-> On 7/24/24 15:53, Paul E. McKenney wrote:
-> > On Mon, Jul 15, 2024 at 10:39:38PM +0200, Vlastimil Babka wrote:
-> >> On 6/21/24 11:32 AM, Uladzislau Rezki wrote:
-> >> > On Wed, Jun 19, 2024 at 11:28:13AM +0200, Vlastimil Babka wrote:
-> >> > One question. Maybe it is already late but it is better to ask rather than not.
-> >> > 
-> >> > What do you think if we have a small discussion about it on the LPC 2024 as a
-> >> > topic? It might be it is already late or a schedule is set by now. Or we fix
-> >> > it by a conference time.
-> >> > 
-> >> > Just a thought.
-> >> 
-> >> Sorry for the late reply. The MM MC turned out to be so packed I didn't even
-> >> propose a slab topic. We could discuss in hallway track or a BOF, but
-> >> hopefully if the current direction taken by my RFC brings no unexpected
-> >> surprise, and the necessary RCU barrier side is also feasible, this will be
-> >> settled by time of plumbers.
-> > 
-> > That would be even better!
-> > 
-> > 							Thanx, Paul
-> 
-> Hah, so it was close but my hope was fulfilled in the end!
+The `if (!snapshot->copy)` evaluates to True only when `snapshot->copy`
+is Null. Thus, derefrencing `snapshot->copy` inside this if block is
+equivalent to Null pointer derefrencing.
+The `if` condition is now changed to evaluate to true only when
+`snapshot->copy` is not Null.
+This issue was reported by Coverity Scan.
 
-Nice, and thank you!!!
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+ drivers/gpu/drm/xe/xe_guc_log.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-							Thanx, Paul
+diff --git a/drivers/gpu/drm/xe/xe_guc_log.c b/drivers/gpu/drm/xe/xe_guc_log.c
+index 7fbc56cceaba..4e1a5e8ba1e3 100644
+--- a/drivers/gpu/drm/xe/xe_guc_log.c
++++ b/drivers/gpu/drm/xe/xe_guc_log.c
+@@ -122,7 +122,7 @@ void xe_guc_log_snapshot_free(struct xe_guc_log_snapshot *snapshot)
+ 	if (!snapshot)
+ 		return;
+ 
+-	if (!snapshot->copy) {
++	if (snapshot->copy) {
+ 		for (i = 0; i < snapshot->num_chunks; i++)
+ 			kfree(snapshot->copy[i]);
+ 		kfree(snapshot->copy);
+-- 
+2.43.0
 
-> commit bdf56c7580d267a123cc71ca0f2459c797b76fde
-> Merge: efdfcd40ad5e ecc4d6af979b
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Wed Sep 18 08:53:53 2024 +0200
-> 
->     Merge tag 'slab-for-6.12' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab
-> 
-> So that was at 8:53 Vienna time, and Plumbers started at 10:00...
