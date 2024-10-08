@@ -1,74 +1,69 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86941E1A27
-	for <kernel-janitors@vger.kernel.org>; Tue,  8 Oct 2024 20:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05AA18C910
+	for <kernel-janitors@vger.kernel.org>; Tue,  8 Oct 2024 23:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728420908; cv=none; b=rbfk1Lls88nWXcr8ibjQxW0k7TwXHxdXcn5GvVvF7TCJ5CVQY+HGP3gr2eU4BZl/BXxWjlBIAnnOL8G7Jt9kOmwyIsbce9QRgEvcLY1L1xCFwWv3dKOglkKYm2S6rnRhSZjiTGkytduf6tCr/0EFk4lUMluRUw41LYgj9ZQXyc8=
+	t=1728431141; cv=none; b=Xr4EjcqOITq8GDtpKHNbrvN6ZTrF4NVyf7g7CaatjrIw2PsF31NzM4UixX7mioTSwDrXAGsJ3wWtOT5KjLWoSASpfr5oUW+CjT+j7bGCtcunYgJXj1/uLFVsq3wE15NYaHOcWwd0C5Uj7YTQhxatdZ05vgiWPfTp09YHEznUlXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728420908; c=relaxed/simple;
-	bh=4wQNIu4/Ua8YXW4f38TGr99Bjm+K/ywUOAGfzRyvGLI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RHmBMZCujTsl8SnCdQI8zp+ylH8OfAVUlyjKKiiZqDqYMwtZNtov/1y7zZOdXeFHJB/qGTv/wb1Ebr3TlsVFYTSiINu89YGJ4/s4aqBQbT/+xFQbRsIY6FIn3Zbmix3brAkSgFNaQuSJdw/p1/8goDVk+XzS9JhRyTVPbDuVNK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np; spf=none smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=u8W271SW reason="signature verification failed"; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1728431141; c=relaxed/simple;
+	bh=bCZmzTMm1fduflRwYohg+qsNUnboVQ3kGZV0ddcyoDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QBqmnRWomJbAR2IIhBxWzFyxfksoO3lkfrVweJfTbU5jZv8K1b0yanvxYzx4OGoQT+eDLxgI7zBiqaufbwE010eDycmJRdeJSZjH0cBW/3lvGxlBlBuIL/NWT5pSn+GuKn6mKxJKUxIXW1ugmkdsyW1DnUFVlNGrQvOScKVvePM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np; spf=none smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=NKpWF6O1 reason="signature verification failed"; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="u8W271SW"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b9b35c7c7so43673195ad.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 08 Oct 2024 13:55:06 -0700 (PDT)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="NKpWF6O1"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e050190ddso1973261b3a.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 08 Oct 2024 16:45:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc.com.np; s=everest; t=1728420906; x=1729025706; darn=vger.kernel.org;
+        d=everestkc.com.np; s=everest; t=1728431139; x=1729035939; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0tFkED+mY089YHzAtW+B1O+++Bw0Z0pfmZQ8b1ZguYk=;
-        b=u8W271SWslxF5yJIdFPrKRECVQJYttiICI7y/A1ZM9Yrd30i1CHntKDCKeHV5w4IOq
-         53E0B7snG9e/8WQ4iZt7lBMqIekPgXIASr+u4ON1LSV56jv8h8+9buwmVSpRrxTVuK1k
-         Kkn4MD82rIpqWOF2NIkqM+sV6I8YpVN6Ulx72tpjXkOHPxdySxPCwPrfm60YeyS2ML6H
-         on3vcQ2tmDPwro0u0JBL6MJpW7ktgrF7MqFxFjz7xMxgoIVI0g6tRKWCfUYEC0uEu9El
-         wLNtaaMtCjZzHjjZp1+IbON6FFi2qHA6AInivWe6X/DBqlnai/juxvKRJ0qZbixKtS2t
-         Om+g==
+        bh=F6zDPvO9jWfZI0VBRyJNJETUDrhSoVwHfhfz7RdGzrU=;
+        b=NKpWF6O1weanghbV5QMXLgYhFpAPAEgH+PvRsxvJk9fbMlK6yWB7khgLxJcCn3B5js
+         WwlezYs0uD1gvPpuckKlq3kx6YOGayp6jidua0xPvFoKPwFwy5zGmyxIng9jyxiTiXD7
+         tsZAaW+BqYmfPzwsw4U9zJsEgOoX9cfcbpMopoIFP0CGpLZYTGqlH0Hzk/oaEgSCFaJG
+         kP4M57Tc7HkwBltRkQEyFf+j5fN7tW+oZzFWxSDolI41zFg5oIxFqHdbw3AeeRpOgIvp
+         dtCiVZCltOeYq2u2ib3RB0xJjZFlls7pnREjfZ06g9PtUjcJNR8YKqPp+FtY3LTPTPxA
+         DVIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728420906; x=1729025706;
+        d=1e100.net; s=20230601; t=1728431139; x=1729035939;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0tFkED+mY089YHzAtW+B1O+++Bw0Z0pfmZQ8b1ZguYk=;
-        b=QtF/+2bpIja1k27rM/BUVDuQElFAzuU/blG6UVqPJbHGk1a8tOrdMTbi090ZIPcdB7
-         L6/7TwD6v/YiIqk5BxDLa23b2i7s3WV/uQDZmr5apGo7Hvp/jqg5c5Jvsv4ddJIfU7V2
-         SXnPM7HFDjltNaJ/rT1ewH4LIcHFQCRXg8Yd3JkHoCCCB6BN8i2a0rDiSPz77VF9zNcO
-         Wd/ty67nc2C0yLY7N/fOXBxmdEweLvJdoxsThnB1VzkXh7UAOaphlXTYPq219XrBJH5n
-         ln9cDaRpZCG9ZvmVxwCXIxPOerLZ9kOOwTS9dgc1xqUMdjpV6K50RL9jvU91vqp9a1Nk
-         Invg==
-X-Forwarded-Encrypted: i=1; AJvYcCWunxbTL9C4uvAJYimrYfi0nBJEPMZ/vzpdhmnlbjDTyHmhYBIBY1HFEffUK/RQ/24jAb0x6aSieVAY7bbpTd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLJ+S2+Eme6QB0LJQxRPW7Tuplejql9debsH0IkgvfvAKdQuL/
-	ysUjBRKO6Bz8TmSeRnABRIHfIHB8VPPdbOLTa+TsiAMkAaC2zOXR8d0rW+kLyW/JPpd8XgOAyT/
-	pTYGztw8+
-X-Google-Smtp-Source: AGHT+IG5QtndTuvxUc4EQsIUMZuzUEKCOMQYR+xtaqDBDhzPRGHOGMjKNeFwj/pDDHDOMAis6O/BGw==
-X-Received: by 2002:a17:902:c411:b0:20b:9f8c:e9de with SMTP id d9443c01a7336-20c6376dfefmr4938325ad.13.1728420906131;
-        Tue, 08 Oct 2024 13:55:06 -0700 (PDT)
-Received: from localhost.localdomain ([132.178.207.21])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20c13986787sm59611735ad.242.2024.10.08.13.55.03
+        bh=F6zDPvO9jWfZI0VBRyJNJETUDrhSoVwHfhfz7RdGzrU=;
+        b=cvS4VhzUcmVajIwql29B3KvhX61Hfzf0MHKAXFD7VVEeeTRCXJfGQOarPUcGWWI5lT
+         Ll3gf3iI7CphaW8UzheB3PVUHw/ckcPXZbCvTvF65RHqmuFDmgLtZuifgiimxR8zGNhR
+         b9gH/dIlhjsGvw27q3d1KmRoDCTfI5YGVCHIqQBNxUj1xpYjMlCWchwLmTRoVpVL+9PV
+         8y4gDxKK3BMiW5I3yoViZOVw4igZubGJh8NRE4EtRhccT4nsJu7jCmtIeFPAQfTk1+Io
+         YLpHq7PuyV6kqUN+3p4lL3tlGmYa286Bn503uDRI06tX172TJBAH0YeWDgdEirhKhz2o
+         NtjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQGmNqW0N8H/TEG7PeWn2Gl9Ue0KulC+B0OJgg/8/GGpW5MT66pjZ1Q7I1EoGtlUpU5GQf4gZOdjcW30GlitM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzETgvCbxPaNDhejzZmRQZ5SgfwF2i9m7J1bGKM55+cGX5x6uOb
+	GbQtOgwtk9tRVRzTE3O/FwcyxXFqw+04HmtFtdYp3Kb0Wo+IjdaHTFOUeXo21eU=
+X-Google-Smtp-Source: AGHT+IHk9+tlA16Su1ssevBPWt5oHpt2DeyaQ9HKDjWn0d/+7kP5lBTgDq9UsaTWDOpbj8k3ntKUZw==
+X-Received: by 2002:a05:6a00:2eaa:b0:71e:bcf:454e with SMTP id d2e1a72fcca58-71e1db67325mr922826b3a.1.1728431139159;
+        Tue, 08 Oct 2024 16:45:39 -0700 (PDT)
+Received: from localhost.localdomain ([81.17.122.223])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71df0d7d06dsm6634651b3a.204.2024.10.08.16.45.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2024 13:55:05 -0700 (PDT)
+        Tue, 08 Oct 2024 16:45:38 -0700 (PDT)
 From: "Everest K.C." <everestkc@everestkc.com.np>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
+To: oder_chiou@realtek.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
 Cc: "Everest K.C." <everestkc@everestkc.com.np>,
 	skhan@linuxfoundation.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/xe/guc: Fix deference after check
-Date: Tue,  8 Oct 2024 14:53:48 -0600
-Message-ID: <20241008205352.4480-1-everestkc@everestkc.com.np>
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH-next V2] ASoC: rt721-sdca: Clean logically deadcode in rt721-sdca.c
+Date: Tue,  8 Oct 2024 17:44:20 -0600
+Message-ID: <20241008234422.5274-1-everestkc@everestkc.com.np>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -78,31 +73,40 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The `if (!snapshot->copy)` evaluates to True only when `snapshot->copy`
-is Null. Thus, derefrencing `snapshot->copy` inside this if block is
-equivalent to Null pointer derefrencing.
-The `if` condition is now changed to evaluate to true only when
-`snapshot->copy` is not Null.
-This issue was reported by Coverity Scan.
+As the same condition was checked in inner and outer if
+statements. The code never reaches the inner else statement.
+
+This issue was reported by Coverity Scan with CID = 1600271.
 
 Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
 ---
- drivers/gpu/drm/xe/xe_guc_log.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V1 -> V2: - Updated the patch prefix to PATCH-next
+	  - Added how the issue was discovered 
 
-diff --git a/drivers/gpu/drm/xe/xe_guc_log.c b/drivers/gpu/drm/xe/xe_guc_log.c
-index 7fbc56cceaba..4e1a5e8ba1e3 100644
---- a/drivers/gpu/drm/xe/xe_guc_log.c
-+++ b/drivers/gpu/drm/xe/xe_guc_log.c
-@@ -122,7 +122,7 @@ void xe_guc_log_snapshot_free(struct xe_guc_log_snapshot *snapshot)
- 	if (!snapshot)
- 		return;
+ sound/soc/codecs/rt721-sdca.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/sound/soc/codecs/rt721-sdca.c b/sound/soc/codecs/rt721-sdca.c
+index 36056cb7a3ca..4fd26e490610 100644
+--- a/sound/soc/codecs/rt721-sdca.c
++++ b/sound/soc/codecs/rt721-sdca.c
+@@ -611,13 +611,9 @@ static int rt721_sdca_dmic_set_gain_get(struct snd_kcontrol *kcontrol,
  
--	if (!snapshot->copy) {
-+	if (snapshot->copy) {
- 		for (i = 0; i < snapshot->num_chunks; i++)
- 			kfree(snapshot->copy[i]);
- 		kfree(snapshot->copy);
+ 		if (!adc_vol_flag) /* boost gain */
+ 			ctl = regvalue / boost_step;
+-		else { /* ADC gain */
+-			if (adc_vol_flag)
+-				ctl = p->max - (((vol_max - regvalue) & 0xffff) / interval_offset);
+-			else
+-				ctl = p->max - (((0 - regvalue) & 0xffff) / interval_offset);
+-		}
+-
++		else /* ADC gain */
++			ctl = p->max - (((vol_max - regvalue) & 0xffff) / interval_offset);
++
+ 		ucontrol->value.integer.value[i] = ctl;
+ 	}
+ 
 -- 
 2.43.0
 
