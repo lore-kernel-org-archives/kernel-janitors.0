@@ -1,66 +1,73 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A151E3780;
-	Wed,  9 Oct 2024 15:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C441E2302;
+	Wed,  9 Oct 2024 16:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728488923; cv=none; b=enzViyR6HA+8eTBQF4BGhRODauj2yI2M1UbNePFptVOnF8BGmo+JNVOg2x6BqKCzM56pOqXaNIoiqOCT+sbDRMBF9TKlC3B5QawZX+5+P42nUVp+WkMEl8sFgDVYLoFe63KsZdD2ShCzwmUn1kA+e0e+bnnxqXr0oqkKH5sGivw=
+	t=1728489916; cv=none; b=aL95RU7f6RItgIoajdwTGgBOiaS9SIAcZTgS0XcyI2OnyZjF7MaTCqhyajKUJD+fMN1bFQl5IdPfaZqZQAJqxHw8Rq32WLAHV9kmx2KvoSStaZC+PzZ3r5x46oJWB5BwSOqqcY7KMDg/eP5j2nyg/jvCpN4YsdW7crda25WMyR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728488923; c=relaxed/simple;
-	bh=BvhB3fFal6qIRjoErM+X0ss56drVoTZm5GFWQ3iOHXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rAEg1sXTqshIqZuD/bE5EpBURouujJLyPu7o3hBu2oIiDGlpglgagJ2iemVReBAOcGz6cGIPE0Ep2kahf2ByamRNU3jWMOmbCMVG9zIZo7YrLlZqzHXU849Wao2w5j096X2z9FtDqwfrpreAChrPe54NXvsX1NQLa1Rcdovibp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8sfelsA; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1728489916; c=relaxed/simple;
+	bh=lG+fHK2MinwMYosaibHFebeA2lfmTZOvRzS/e5kBX48=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DpvGxrQ90nki3uGAGRI8Jjq1dQavE46YjPaknNFi8y+TN3u7oiz/P26JHl0OXdyv0dii/rX5yYnnpLbjNNMl9TxqwDt23USUIG88Q6Tqb/KIeUpVi16sU3d6Qf48WgYweib8tHrN1YsYx47/gjFerb40YyfBKjzskWlgMZpe+tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aw+Mse5c; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8sfelsA"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99415adecaso189796766b.0;
-        Wed, 09 Oct 2024 08:48:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aw+Mse5c"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fac3f20f1dso77035421fa.3;
+        Wed, 09 Oct 2024 09:05:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728488920; x=1729093720; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728489913; x=1729094713; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpoA7U68G9HQgUGPUrZ+1IXl+YXLZClnFOv3Pi/HKVw=;
-        b=C8sfelsAF+4JMZ8guudARms2CDIU5ITZ4WbfXiUcCEX5qbzENLDHiy9cRd+Yhqof7m
-         qERZGuDLcWxQLoA2P58cK2b7NNwqUpBqmJo34gTWMdKFHmmDTnWZf2coMnyLocWv7r7s
-         cRbpgQEhdDvXzJJSWRxWz2xLerqJK52xDRsV4JQkG9svrh1Smvpq18BNpvwuNnZy+waX
-         MJJMfpx3i/BsJa3u9vFEXUbGFxf97dO/FQMlb8TVyzMN7CrOkTPBrPVEoXPAqnipwoLP
-         s4L9EccR6H3yhA5iI/jERw07LSZOaIuAtNpW0RFom8E1EJcKaXbC2ub7ZNQZS7UtO9+a
-         00mQ==
+        bh=IIa5sZ1sQN4F9/EAh7jCAPDk1gS2+mafy4s61EUtTUw=;
+        b=Aw+Mse5ceP6KDi59UaahG9QJuXawevoi2alr/vBtvvXarY2hyi3kk0vQ2F+lyKXPPx
+         geb0iurX/WFxceGlAkcDO5iVzWDqb3Lp5Qs2FI0PaeNfd5BAv2B197W/t4fUlGg/BDSH
+         qY/bo7TqKjOLuki2FWJCE5Ap4Xrkz4YeMfwBI9jFMH5EDckr/5AHtIbAfa2M96hfRgen
+         SiS3eWhaqJMKZl0PvyBU5DLSxnPyLu1gXmvkZIupQ000EPA7R5Op0WlWZ9mNPWKupP4r
+         g3uaSMitzCgRFHz4TDjeD4ek95Q3Igfg0mgvvK+R2NsFVXonj7FCCFds1Il25P+lj4ob
+         BIwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728488920; x=1729093720;
+        d=1e100.net; s=20230601; t=1728489913; x=1729094713;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gpoA7U68G9HQgUGPUrZ+1IXl+YXLZClnFOv3Pi/HKVw=;
-        b=AT6V8xS1rzqUPhGEo/Ob0VQ0DrgVpKgNctO7IN01WsIKTKwwePas3kS3UU8ru5XBsG
-         lZ4ie9mISNP4T237ADsyONpgtwwh6v4bu+nDKufYOipSzGsPEBxdlwI7U4qCqZpH+3JP
-         In3MpwPQJg0wrJ8yUeHTqAvYwVhXftX3QEhaPELl+jpQp6GZDBDSzXCESeVAJk5wz5qf
-         fxaK9xfWJti4YT4/R9QeI1ct84yb5kvZZNvuETdvTmJhW1n5o1uY4GzKsrUxyyeHqJ+p
-         SonTYaYZKEQ9K3h/FybG6PomKPx/ov8zzMhkPnPiY1r6IuGaYtC9ln9X5+JW1m/Tiobo
-         mDMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSeDyqy5nW2IZSnqxxzbQkrfCJsEYUVR/xZOdnqucDtplrUncjXGTBF+SXBClS8iYfWzcdMTszP7m7ew==@vger.kernel.org, AJvYcCXGDtbGZu5e/LsFCiu9Zay4sGGQMXd8wo89BmkeEtK5RItoU+ap1y/MSlNe9zl1kQPuzCPmOvHrnz5Bifk0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFTXkjPb4juGP1/0ixi5utsUSL3/uuwYLn7ZenHuTbx0IAJxC5
-	2jGySh+JR8jcrY1J7f0EvDv4uVAyY0mxM4JDk8Jk9Nz+NJ85rRL7
-X-Google-Smtp-Source: AGHT+IHWOO9nOZunGvkay9i7X+SSjj74oEgJnI0FqGywprSGNAjDKmfmkGDdTyOfIJpukNiscRSlgA==
-X-Received: by 2002:a17:907:8f16:b0:a99:4e74:52aa with SMTP id a640c23a62f3a-a99a113b8f5mr5893266b.33.1728488919530;
-        Wed, 09 Oct 2024 08:48:39 -0700 (PDT)
+        bh=IIa5sZ1sQN4F9/EAh7jCAPDk1gS2+mafy4s61EUtTUw=;
+        b=PDAFPntueK2xYOMFEYQJb4USrqPb6jI9/M4rA43kS+NbN6g4h59TeNvW5f/BvOAa3/
+         85+9But9AuTULkNaNflEQzWMrtLcHB/zejUdY64af0eS9rpiOLbo31IQdXhcdfNmRgsH
+         STV1nQH3i51uxzuChijW+Qb3NncUKxea/6Gom9kPga0qmMrd3e6QsnCwtdcp1rNtC7uo
+         2rh4CaJNSQrZgY+B/fydnWsXgRgoL8cZ9BFWNm5VFuYB9xUoMbojSP0t1pLUv2Ncmc2k
+         1nS6PjJIhZZJOf+S58+pZsYO31rY/JzQr4w7KIYuRoitw3xdG+iBM2TSONWCW7wEcy63
+         r4xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXAGYx2es6Sy5gsJkojiHgtTaGjX9/rqUAc2RoZDp1F5YBw1fkeB8FO6hCNt3Kf949UXzSf+XvcWHUetSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfUQ1uqcQbwXoBOZ41MgR17BOSu/HLYj6Pj5YKW5EWtlPk3ABu
+	VQwQ5y10FJncGahMDEXcvqHPFxhKZsWTEjmZHnBrgQs5zPRp/9uN
+X-Google-Smtp-Source: AGHT+IHIlkFtmtsRJ++tKxL+GXbAqdTfJNdHb/CKldkqVa2DzJdvODeH4o865Vxvc5KYCgRQ2o8PaA==
+X-Received: by 2002:a2e:8e6f:0:b0:2fa:bb5d:db67 with SMTP id 38308e7fff4ca-2fb187aeb2emr16410001fa.32.1728489912522;
+        Wed, 09 Oct 2024 09:05:12 -0700 (PDT)
 Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a993a0b33ffsm623897366b.69.2024.10.09.08.48.38
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8e0598947sm5582859a12.11.2024.10.09.09.05.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 08:48:38 -0700 (PDT)
+        Wed, 09 Oct 2024 09:05:11 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Helge Deller <deller@gmx.de>,
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Julia Filipchuk <julia.filipchuk@intel.com>,
+	John Harrison <John.C.Harrison@Intel.com>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] fbdev: clps711x-fb: remove redundant call to unregister_framebuffer
-Date: Wed,  9 Oct 2024 16:48:37 +0100
-Message-Id: <20241009154837.371757-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/xe/guc: Fix inverted logic on snapshot->copy check
+Date: Wed,  9 Oct 2024 17:05:10 +0100
+Message-Id: <20241009160510.372195-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -71,29 +78,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Currently the call to unregister_framebuffer is unreachable code because
-the previous statement returns from the function. The call is redundant
-and can be removed.
+Currently the check to see if snapshot->copy has been allocated is
+inverted and ends up dereferencing snapshot->copy when free'ing
+objects in the array when it is null or not free'ing the objects
+when snapshot->copy is allocated. Fix this by using the correct
+non-null pointer check logic.
 
-Fixes: 36462ac19308 ("fbdev: clps711x-fb: Replace check_fb in favor of struct fb_info.lcd_dev")
+Fixes: d8ce1a977226 ("drm/xe/guc: Use a two stage dump for GuC logs and add more info")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/video/fbdev/clps711x-fb.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/xe/xe_guc_log.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
-index 5e61a349a4ab..c350340fb7b9 100644
---- a/drivers/video/fbdev/clps711x-fb.c
-+++ b/drivers/video/fbdev/clps711x-fb.c
-@@ -332,8 +332,6 @@ static int clps711x_fb_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/xe/xe_guc_log.c b/drivers/gpu/drm/xe/xe_guc_log.c
+index 93921f04153f..cc70f448d879 100644
+--- a/drivers/gpu/drm/xe/xe_guc_log.c
++++ b/drivers/gpu/drm/xe/xe_guc_log.c
+@@ -122,7 +122,7 @@ void xe_guc_log_snapshot_free(struct xe_guc_log_snapshot *snapshot)
+ 	if (!snapshot)
+ 		return;
  
- 	return 0;
- 
--	unregister_framebuffer(info);
--
- out_fb_dealloc_cmap:
- 	regmap_update_bits(cfb->syscon, SYSCON_OFFSET, SYSCON1_LCDEN, 0);
- 	fb_dealloc_cmap(&info->cmap);
+-	if (!snapshot->copy) {
++	if (snapshot->copy) {
+ 		for (i = 0; i < snapshot->num_chunks; i++)
+ 			kfree(snapshot->copy[i]);
+ 		kfree(snapshot->copy);
 -- 
 2.39.5
 
