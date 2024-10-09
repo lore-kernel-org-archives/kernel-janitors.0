@@ -1,89 +1,101 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABC438DD3;
-	Wed,  9 Oct 2024 04:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BF413A409;
+	Wed,  9 Oct 2024 08:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728449330; cv=none; b=jWiTJoSGRkKaeMCunsmFQs5RtuTkvN1plhY4w/Cd1+MWMbb2POI0SkPtRSdd1eYdOj14T5HZmFW9qwKpo3rUNH86Xpq4iYpaku6tRHI/xhmCJSIxPlJTIFBOHwVPs7nFl0RDUaCswQrTSXyZUlLR4KFMntAkg46A2h0LDh7Qbj4=
+	t=1728460848; cv=none; b=oBz/HO25k07bnN1Uc0VHQ+INka4Sau/Y/2hSKUpkMkfPoXh2OGG+AHvn9MRfWg9xsKujDnZIrxI78+8pmZ63Y3WueEHsMnmkM82MzJI3y9d75P+Cl1Ohlvtf5c9mFWfnQ3I1U6LFyh0hnf7dEg9YlYYYco3p+/C+b5eaVD0sy4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728449330; c=relaxed/simple;
-	bh=yFK4ktE6kLrFlQGaWot3ZmVU8EcL7gA5Ck2suiHl4OA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EXfdtZHPqy3jIgCwNaqK0yAKyHKL/z5JQRwvxy+/C3xnSVSlL1RQduLCcMSf53ZfGvAAi0rvMI3Pt5Sh2YjARoxbqU1QtSzB9fPnmtbvlML3lVzystfJ3h7budtxxa7/TKLIG8UizdGQv+J7y50BmqkLlmfymG6hm1XIl8X+JtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=h75XvDhq; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+	s=arc-20240116; t=1728460848; c=relaxed/simple;
+	bh=X5Dfbqv7Nkw22/0CScbgBIGsF0hB+LEpROaW0FgeghM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aZeTr9X1uDl68aKjPBntuhuU1M38k0wmkR7Ovf4I7fJLrEhKgKxlTIx1AFdxWdRDIbuuyaA9V6EYevyEIFV9HDJ+9F2dO1eCv2wJw++6PF4z1aYRDhlWHfW91KnqUZHDqpr+TVf7KQkSrGSg47rTltoSVQYxolO28ZyqEUZRyxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BPsRv5Eq; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="h75XvDhq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1728449323;
-	bh=uMgzHaq2PtarSf76t5H+hReShTblmOAvj1JQqJCeCbE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=h75XvDhqBZJCnvzjFqZfVOueIrPpfavGyVgtKj2u9a4OeIBCKTJ1gCp1xj0+BlxwN
-	 ppV3gFWMmkaE9WJADlMOSdGAzC0EvDtwYpNRMM+/Uqw2uaYzZiQ1j0H6zaNYFa7ja4
-	 dFSXpdOx5zt6SD0+PtNop/4heFxNFFFqrgbDiMlocS7AQBran98c25ltHeeI7EUbQx
-	 Rnwim5/UJ1n0vAHHQC3H/OIvDpTyPFbZst1zF0GzvUyU+DPAurJn0cD4tiUWcNe19d
-	 4VilVP5dJ5O+i5DjI9DDI+nKbp/Zdp1ePAKAM0MDxxr+BlEChLl6sd04rR7PGV6/ks
-	 TQvSqrdO6kvyw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XNgQ21zPlz4wnr;
-	Wed,  9 Oct 2024 15:48:42 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Markus Elfring
- <Markus.Elfring@web.de>, linuxppc-dev@lists.ozlabs.org, Jani Nikula
- <jani.nikula@intel.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Naveen
- N Rao <naveen@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, Paul
- Mackerras <paulus@samba.org>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] powermac: Call of_node_put(bk_node) only once in
- pmac_has_backlight_type()
-In-Reply-To: <d9bdc1b6-ea7e-47aa-80aa-02ae649abf72@csgroup.eu>
-References: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
- <d9bdc1b6-ea7e-47aa-80aa-02ae649abf72@csgroup.eu>
-Date: Wed, 09 Oct 2024 15:48:42 +1100
-Message-ID: <87cyk97ufp.fsf@mail.lhotse>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BPsRv5Eq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728460848; x=1759996848;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=X5Dfbqv7Nkw22/0CScbgBIGsF0hB+LEpROaW0FgeghM=;
+  b=BPsRv5Eqf8dQGGT3gi/zHeWfwfeB6FWlOSg7KK86zoh7tkrcEY+nQMiB
+   oL9WP7DmfiGpTy3/hvDOE1kHSAylTn/5RrlDvK92GwrXUhpnZiv8L85DI
+   FZdTjo+rUGGn7XncYSBDM90oHXlqFIAIGei+aj2R8NYwajxJvB15aIEv/
+   p/q95O7bb6d1aSRfDz9hQg4uvVMg2SxIHimrCboYK/p460urMWhQ6nKq3
+   ygg0f8rR71PwT7z0k+aaI/5xOOB1Of/Xfpm86Q5b9GVgMzMHhAPGJru7D
+   DQN/Bndeb4r2OgGBLanCDfRcpiCWp2gPw3vUbUsaTW4jHKxD3aZzmHmiz
+   g==;
+X-CSE-ConnectionGUID: P4QTZUUGT5WkkdGFA1V/kA==
+X-CSE-MsgGUID: qGz7ZnZXR/eaBlMCrAJiAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11219"; a="27694024"
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="27694024"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 01:00:47 -0700
+X-CSE-ConnectionGUID: K98xMOjVSFOEkwHLmsYsCA==
+X-CSE-MsgGUID: OR7jKexLTJuREao8BW2T6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,189,1725346800"; 
+   d="scan'208";a="76989952"
+Received: from yarbov-mobl2.ger.corp.intel.com (HELO [10.245.131.59]) ([10.245.131.59])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 01:00:41 -0700
+Message-ID: <a156ef31-2614-41c9-9df6-acd6d2fcf6cb@linux.intel.com>
+Date: Wed, 9 Oct 2024 10:00:36 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/xe/guc: Fix deference after check
+To: "Everest K.C." <everestkc@everestkc.com.np>, lucas.demarchi@intel.com,
+ thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch
+Cc: skhan@linuxfoundation.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241008205352.4480-1-everestkc@everestkc.com.np>
+Content-Language: en-US
+From: Nirmoy Das <nirmoy.das@linux.intel.com>
+In-Reply-To: <20241008205352.4480-1-everestkc@everestkc.com.np>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Christophe Leroy <christophe.leroy@csgroup.eu> writes:
-> Le 02/10/2024 =C3=A0 22:02, Markus Elfring a =C3=A9crit=C2=A0:
->> From: Markus Elfring <elfring@users.sourceforge.net>
->> Date: Wed, 2 Oct 2024 21:50:27 +0200
->>=20
->> An of_node_put(bk_node) call was immediately used after a pointer check
->> for an of_get_property() call in this function implementation.
->> Thus call such a function only once instead directly before the check.
+
+On 10/8/2024 10:53 PM, Everest K.C. wrote:
+> The `if (!snapshot->copy)` evaluates to True only when `snapshot->copy`
+> is Null. Thus, derefrencing `snapshot->copy` inside this if block is
+> equivalent to Null pointer derefrencing.
+> The `if` condition is now changed to evaluate to true only when
+> `snapshot->copy` is not Null.
+> This issue was reported by Coverity Scan.
 >
-> It seems pointless to perform a put immediately after a get. Shouldn't=20
-> of_find_property() be used instead ? And then of_property_read_string()=20
-> would probably be better.
+> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+
+Fixes: d8ce1a977226 ("drm/xe/guc: Use a two stage dump for GuC logs and add more info")
+
+Reviewed-by: Nirmoy Das <nirmoy.das@intel.com>
+
+> ---
+>  drivers/gpu/drm/xe/xe_guc_log.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Maybe you can even use of_property_match_string().
-
-Yes that would clean it up nicely I think, eg:
-
-int pmac_has_backlight_type(const char *type)
-{
-        struct device_node* bk_node =3D of_find_node_by_name(NULL, "backlig=
-ht");
-        int i;
-
-        i =3D of_property_match_string(bk_node, "backlight-control", type);
-        of_node_put(bk_node);
-
-        return i >=3D 0;
-}
-
-cheers
+> diff --git a/drivers/gpu/drm/xe/xe_guc_log.c b/drivers/gpu/drm/xe/xe_guc_log.c
+> index 7fbc56cceaba..4e1a5e8ba1e3 100644
+> --- a/drivers/gpu/drm/xe/xe_guc_log.c
+> +++ b/drivers/gpu/drm/xe/xe_guc_log.c
+> @@ -122,7 +122,7 @@ void xe_guc_log_snapshot_free(struct xe_guc_log_snapshot *snapshot)
+>  	if (!snapshot)
+>  		return;
+>  
+> -	if (!snapshot->copy) {
+> +	if (snapshot->copy) {
+>  		for (i = 0; i < snapshot->num_chunks; i++)
+>  			kfree(snapshot->copy[i]);
+>  		kfree(snapshot->copy);
