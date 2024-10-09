@@ -1,143 +1,64 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E995B189520
-	for <kernel-janitors@vger.kernel.org>; Wed,  9 Oct 2024 22:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AE8169397;
+	Wed,  9 Oct 2024 23:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728514554; cv=none; b=YBQlmLpqXyoxu8Yb59aYaZGKbJs2/x24nAhY3gmRX63/z4lPRI477/4ZNceRgmt2vA34C/yT4ggtPrSwpL5NTtK8/7MulB44AQiNnOFJAw9F5VnKLeTP01d1v2SMAPOmCeG4Xiu6Uz82g+5YNtr2hqkNk75Gr3L6/TQ4pDej+tI=
+	t=1728516189; cv=none; b=TSOTOHff1MgSzl8pfMZCtHl/LV5cM+wLgkIV+B+hTY9cscXzWFrbC4Z7Uc2ey4OvMalhjCFehEP4a25hvdOVUUVgS0BCo4L56bdsh6L/E1tfDN0FxbTwKJIthesCcDyKud+PIf8l/jyTSwV9aRLtDl7VNmBvE1W5wB0sGa4KC0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728514554; c=relaxed/simple;
-	bh=AUJNhG7KnF+SDM956MpOWKoMCV2LSGWUVaFR34G207g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hEwlAF/2gcyZWsfN5bNalG4NT5VphfLLvlLOs/rKFz4umMzo2/hc4dOjJDMIELOj7cxgTLWOn2B5UjedeuhJvGVfwlMIFuX0lWfdyoAd4I6fhOsM4LkwU1kLH1kNWcfdtS4FhHlLjywLfBZGJ0M9OwAESzkyRoDLrb6imVdb6I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=mrX8tqnn reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+	s=arc-20240116; t=1728516189; c=relaxed/simple;
+	bh=60OTD2MYzHbySQtVtLI9W8x5SUpoFaHcLB1gvcDRzsI=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=U6ChtMO0s9HCD+HImHhOWqJOVNhgIQgLu62DI58trwE+3aHw79ETI+sEoZX7e0Au9A/uTfWVGgh8BvDjRUIqfPjLIJK/8irJUoZhSbV+Vu+ObCgKPC5pwQpOgRJrpdsFCTbWPYfG/FhyjDHH3eZeFYU+Qc8MbImD1cBd773QXog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glHVVIm+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="mrX8tqnn"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a995ec65c35so48733266b.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 15:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc.com.np; s=everest; t=1728514551; x=1729119351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NZxtWindWdmYZkbk16VKmv4bmuYeMmGKg/IHKj1/uO4=;
-        b=mrX8tqnn2HRwzSiIYGNAocje1qx67sEGqTOxh9+A6w3xui5n5aIXmBz7civzoO17za
-         XxsFt0ZFqBIvcFk4dLhOprYAkD4kXYpYctBmBlzdX3ie92Pin4vcluyCNjLluwzzojx1
-         Kpwzc8Ijz6iYIAAj4hwxPgUB7QhkFlm+Ift/bqSa8tBoXHvr8ln6aFC5SMIGN2SZ7Tpk
-         W89RXXP2ms0yHpG60igWZomxpOXUlXpICZ92do2MRA7gYfFJ3lG2SBE5NL0whBV/DmFa
-         8/LUitZMdQ6rLf2tdVxwe3i4s9L6KHSB0FOEUuuA+O9jCh0f60sjhtGDRjISsJPYy+jt
-         FTBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728514551; x=1729119351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NZxtWindWdmYZkbk16VKmv4bmuYeMmGKg/IHKj1/uO4=;
-        b=SRPAoYMREr4hJxSiDD9THBDuQOtzeBpvEtG1Eg62N+40MC78h/LY3uOGRsnzjY3Dbn
-         a8Jl0eJZW4HRySm0H/5J/wsVt6Yjc+2oGwhqOkukGkQkdPwJCCJJ05tTnTVxQflwfR1S
-         Rwxe2ZzN6/iWQULJBYY0s1xE/fYD99sEy4oR/FeAG7tw7KyEZXZkK+qYkGSdYphuiWTJ
-         yd1E40MFmXX1h/umpopLBRpt+u7XzfIz70AsKS6qcTnFEWHBgUNABjvySuwS58aOp4iJ
-         vg3aa+fmBFsV5k70/9bA2RkENLKXIODWHBlteZug9V+bv8AOaHSvoiZ939EL9zmfXxPN
-         rMdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVK94anV3zXi9WCw5es5DnDzSZZJb1By6XExdOV5cbUvKXky8lRA6JWCEnEDpNNVhzbUKBqqzL5T5zvcncBSgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7Q6kBpPhKCu8VrLindge8hstu7EMwtKCjUKybFbGx87v2nKQv
-	q/XniPOVSMLWNNeVTPnPHR84cSTQsIzjBwjEcUPpycaYIdFsWri0IdIJaCjoB0z18xqOi/MhZJw
-	cHzy27FufhjvD99M2D63MdDWSfaSDkqrMCBfi4kwSFZY8I6UWLAbq4ZXs
-X-Google-Smtp-Source: AGHT+IErK5BiUbQpFUrai1ZKMne4uA9ddnkg7UDa8SOTq5SCOiRsU8zf6aXwvU1D4dqAuvZdY/C/itsiX9lTSsAgLNY=
-X-Received: by 2002:a17:907:1c08:b0:a8a:cc5a:7f30 with SMTP id
- a640c23a62f3a-a99a1119ad5mr101276766b.25.1728514551223; Wed, 09 Oct 2024
- 15:55:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glHVVIm+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A5D3C4CEC3;
+	Wed,  9 Oct 2024 23:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728516188;
+	bh=60OTD2MYzHbySQtVtLI9W8x5SUpoFaHcLB1gvcDRzsI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=glHVVIm+v5m1Mo48+bDF583js/Yh11lgt/F3vjMAhGAdUExGqhHslSe4HoCoqDd3K
+	 O4OZDd8bHshGgG+HdBvmHsDo23Q7NffX2FNkrH0l3/Q12nZnQwGBJk5X+H22AzUl2n
+	 p12cQNAp53ZUL5ABDG7toWNyyeSfNYQa+FbSeengoRFIVvsDeaWk2H6+DDEnU4e5JL
+	 f0sXW9NLonyh0VKGprfNZ9LeIdniKAQSjkS5/z6SsKADGXLdTYaRCuENzPVHtwBc8p
+	 q6Q68Nz9ZimcebK1oM6gTRjAw8NBqm30EKS+OMMf2zOKwQrYBJ1oLjjwbPqggARnAI
+	 LAKJe18SNn/8A==
+Message-ID: <1b9e1d9fb4f803dcbed9abb75e56a0dd.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009200528.36343-1-everestkc@everestkc.com.np>
- <263ceb04-f909-45d8-b9b2-5de86617ea25@stanley.mountain> <439cb2078a8eefa782bc8da4a77bb8ac43725ba4.camel@kernel.org>
-In-Reply-To: <439cb2078a8eefa782bc8da4a77bb8ac43725ba4.camel@kernel.org>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Wed, 9 Oct 2024 16:55:39 -0600
-Message-ID: <CAEO-vhECze1oN89+Pj0A8bMDZbCzHzLkRb+2F2aw+tcxAevuAg@mail.gmail.com>
-Subject: Re: [PATCH][next] fs: Fix uninitialized scalar variable now
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+References: <20240927092232.386511-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] clk: mediatek: drop two dead config options
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, Lukas Bulwahn <lbulwahn@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date: Wed, 09 Oct 2024 16:23:06 -0700
+User-Agent: alot/0.10
 
-On Wed, Oct 9, 2024 at 4:40=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wro=
-te:
->
-> On Wed, 2024-10-09 at 23:45 +0300, Dan Carpenter wrote:
-> > On Wed, Oct 09, 2024 at 02:05:25PM -0600, Everest K.C. wrote:
-> > > Variable `now` is declared without initialization. The variable
-> > > could be accessed inside the if-else statements following the
-> > > variable declaration, before it has been initialized.
-> > >
-> > > This patch initializes the variable to
-> > > `inode_set_ctime_current(inode)` by default.
-> > >
-> > > This issue was reported by Coverity Scan.
-> > >
-> > > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> >
-> > Fixes: d8d11298e8a1 ("fs: handle delegated timestamps in setattr_copy_m=
-gtime")
-> >
-> > Maybe the WARN_ON_ONCE() should be updated to check ATTR_ATIME as well?
-> >
-> > regards,
-> > dan carpenter
-> >
-> > > ---
-> > >  fs/attr.c | 4 +---
-> > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > >
-> > > diff --git a/fs/attr.c b/fs/attr.c
-> > > index c614b954bda5..77523af2e62d 100644
-> > > --- a/fs/attr.c
-> > > +++ b/fs/attr.c
-> > > @@ -284,7 +284,7 @@ EXPORT_SYMBOL(inode_newsize_ok);
-> > >  static void setattr_copy_mgtime(struct inode *inode, const struct ia=
-ttr *attr)
-> > >  {
-> > >     unsigned int ia_valid =3D attr->ia_valid;
-> > > -   struct timespec64 now;
-> > > +   struct timespec64 now =3D inode_set_ctime_current(inode);
-> > >
-> > >     if (ia_valid & ATTR_CTIME) {
-> > >             /*
-> > > @@ -293,8 +293,6 @@ static void setattr_copy_mgtime(struct inode *ino=
-de, const struct iattr *attr)
-> > >              */
-> > >             if (ia_valid & ATTR_DELEG)
-> > >                     now =3D inode_set_ctime_deleg(inode, attr->ia_cti=
-me);
-> > > -           else
-> > > -                   now =3D inode_set_ctime_current(inode);
-> > >     } else {
-> > >             /* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be =
-either. */
-> > >             WARN_ON_ONCE(ia_valid & ATTR_MTIME);
-> > > --
-> > > 2.43.0
-> > >
->
-> This doesn't look correct. inode_set_ctime_current will update the time
-> to the current time and then inode_set_ctime_deleg() won't work
-> properly if the time being set is earlier than that.
-Yes. I get it now.
-> I proposed a different fix earlier today which should be correct:
->
-> https://lore.kernel.org/linux-fsdevel/20241009-mgtime-v1-1-383b9e0481b5@k=
-ernel.org/
-> Thanks,
-> --
-> Jeff Layton <jlayton@kernel.org>
-Thanks,
-Everest K.C.
+Quoting Lukas Bulwahn (2024-09-27 02:22:32)
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow
+> module build") adds a number of new COMMON_CLK_MT8195_* config options.
+> Among those, the config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC have no reference in the source tree and are not
+> used in the Makefile to include a specific file.
+>=20
+> Drop the dead config options COMMON_CLK_MT8195_AUDSYS and
+> COMMON_CLK_MT8195_MSDC.
+>=20
+> Fixes: 0f471d31e5e8 ("clk: mediatek: Split MT8195 clock drivers and allow=
+ module build")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+
+Applied to clk-next
