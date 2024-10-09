@@ -1,131 +1,121 @@
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AC71714A4
-	for <kernel-janitors@vger.kernel.org>; Wed,  9 Oct 2024 20:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321B6178CC5
+	for <kernel-janitors@vger.kernel.org>; Wed,  9 Oct 2024 20:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728506287; cv=none; b=cuQH7a1pkuo3G7RYK21R/9S7eB5JEm2KKQU7vJSeMwSH1C5aJrs8vMo/3gkNLa/1i6/3ztxmj8/3QJY4SOWWsoKwYr0qDQkXMZOvyScgSO+IizFOWPBV6YO84IkIoVwbRIrMTsa5+mt84j4/J4GzaGBvGihnA/Z+ZCWBnKVDiUU=
+	t=1728506709; cv=none; b=Mt5LhbzMikELCK5NXA2gH/hJTg62KTirbZoc6LuBPr4dyBZz0jvccHaJfhyoUJ8GXVMO3eubnkdRoJeUviQ39QTC1jVBC72wCGpqNZrQW1v4ASgYlO7Po1nISH02LxGN9ioPqSxIQe31xHCXbdZB5lH6Sy2fD4kYWqc51LguheI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728506287; c=relaxed/simple;
-	bh=VxHJPPsb+ZJ9+ae9Pskv+JQEKeSJAaM0oYQXXJy26bw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0EqSWy9/YNbktBTGBMcr8gUIOVUpn3qr8j1tjjK1bDE//49zTPmDucfyWw13hOfWogFfZnirW4jD790c75TiQ8q+S63ivvojhlMeDRpwIgvt4HT5PKp1ASDYTyC+ObXCnjCDhPFOdmMaVqPyT9w9RP+M8yyrF1tBeUNz0EcJWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UpMHZsvG; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1728506709; c=relaxed/simple;
+	bh=nYfwcpUZdYjL0pSQsLCQsnTPhCrsZbtNDAclhh7uAlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9iCLl6jwkTF38E2yktEi4B2brJD4jFPcHNRsMFSCWzf5c+4m+E2jmV+FYmLUNQHAjI9MhyByt6NpUd1KMwSZumd1lI3l+OlZ7nv8yUS4aBjX2FvJHEGPelF/UCharWzGMKQoe8Iymxa8QN34cHFdQq09u0xPmOLyS0mGrtWuoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CA0DUhOA; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UpMHZsvG"
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-82ce1cd202cso9401839f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 13:38:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CA0DUhOA"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5399675e14cso189493e87.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 13:45:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728506285; x=1729111085; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4DQPDh/uckhA/EGGdJpkXIlABXFgh9zV11RflwXvPLE=;
-        b=UpMHZsvGHTcLOD1mOrg8DrU3ZnH/hIf1oA059n1ED6lIaS4BfkEJkOL0MTlWuvkN0Z
-         CegNBpf5pKHdR0U96D2F4vdAEcPHpeDWVuogZ/od89AQbOB0WCOd7qmj7WVPAhZ6YM3e
-         FzqWv8t/UnuBtz4ruH/FHtt760shq+SkXJjPY=
+        d=linaro.org; s=google; t=1728506706; x=1729111506; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ta9iSL75PsN6aTymrbgB+q4HfOgRpGxi4PmyF2v6vbQ=;
+        b=CA0DUhOAYPkYbyJBh7lNPOw3xA39W0oiOzUZP1IhVzBGm59TXIEWFZHjqdtetS/Gp6
+         XdVuCyUXA6OLvLn3KLh8qkJ/Rs5dhHY4Lvpw88zBMTRIXj0GTCrSOAHB7kLIILyjH/TT
+         Bc4v0RUKGMrXweGr2SiOEVPL9alVXHpitlzevHawX8UpDeEaXFv46pWNFmP+3flUXRuN
+         bsUmmw7Nsw2iyyg7zcFBXrAVALZbYwCGcKUTvssnnUxk2yV0EfNPk1uLLrL0lSHaYgZf
+         XNG/6q5bzqznm4wwxN4Pk3ymaTj6rbelImEYFz3NhBCl7cbFWa0kJTMhL8iesewOp6Y7
+         ZMvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728506285; x=1729111085;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4DQPDh/uckhA/EGGdJpkXIlABXFgh9zV11RflwXvPLE=;
-        b=Emt+w8RypK40IdhoqkkTfwXdirClv1JCqfzdZ4ADcFDGC29VuU88Mo5+vX6hGN00qM
-         AHu84ciR0EmyytL/Z4QwwPahlm6lLeitcbcAHreIOKrynIMSrl8HYc7jVy5ufSjNc/Vh
-         tkNTTKdE78X6IPiILNKZEstnaKrJ89BiJc9wYT2UfvYdk6MD/XgSzzq2vBNB+f3ZfB+s
-         p/G3lRgoyr0M5IhtGikmnGOolZM/M7V97VciwR4uUT2qjsFjaPmijQJRO8wx4vO0NtrH
-         hvAvtHmwW3na0nfg3zYI+vkcIUtZ2fBo9ESwwfoFmGcu1PtefOzYeCbsyIoL40Bya/RV
-         Bscg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqQt4WWbRqLQ+izObEzVdpxgWPY6ztkRkD9ewyOZDPLVQN8+GBzZUtY7lPyDcCNOltgG/6NY9igSihIG3lx2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxBHaQ852KUdu2f8kcZxDBEhzL3XcEa704LQcbno6GlgZIZTC2
-	2ppf+VSBxpTFbOHXD6r0KSx9OQyEdvkfXZNOltvN/WnNoyisgUqjdP3GBu/0JE4o5C8W90vFSrn
-	L
-X-Google-Smtp-Source: AGHT+IHTRmKs8xmn9OxeJmZEPasYJ8w2PdZycqNwlC2YZjRUHamwbqoDiDYGTDYUbehhmQ/friutCQ==
-X-Received: by 2002:a05:6602:1595:b0:82c:bdec:1c0e with SMTP id ca18e2360f4ac-8353d378d0cmr378969839f.2.1728506285092;
-        Wed, 09 Oct 2024 13:38:05 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dba8eed509sm179634173.80.2024.10.09.13.38.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Oct 2024 13:38:04 -0700 (PDT)
-Message-ID: <018e525e-809c-4c69-a948-a1278af1ff2d@linuxfoundation.org>
-Date: Wed, 9 Oct 2024 14:38:03 -0600
+        d=1e100.net; s=20230601; t=1728506706; x=1729111506;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ta9iSL75PsN6aTymrbgB+q4HfOgRpGxi4PmyF2v6vbQ=;
+        b=TcShd1Apc3SVaUJQYGTIaNuUt+2f7DAaH1SONJXgXNoR6xUaTz+ooMsJHi+tlUJ6cP
+         AceZyeWyO4AiIK8hbb/o8SJ/3EUjbOnbDPFPveeRWpfKCJN9P6sNTOdoVWOytActZX2G
+         /8mRLpKnJF350hWkgJyR+UZYwoVwdM7nlQOGLIJMgU+2kWU6bUayHwOJ4DFdFN6Lm/Ts
+         49Uf0DAD8v4edPj5ovWZ1HsHUATJ53Q1WERaOvOgiZdat15X1/vt6VzSlnF+ofP4XX/7
+         4z/8cCaTho2WIaBoEl8XaWY8EGGEmEj604fQhCxRTLePZPr5QxGNUP3j/nQdI4J0XyJr
+         mtpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXp3OEB9gB4oGoAOh2KWQvKzi2veIQM+Ecp+5XC4vY4dz3RI3rvROaqRvwx9bH0KkXKHZaF50QBc0fKB0haU8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlSiyQi8GohHwcbMJNH/98RA7OA/xbG8Pv0ThGWLnXTjpBqkOk
+	b9OHScBj7071nLUG42SN5GBjjyjYN9BM6LhhrX2FZcfHGIQKV25B/hM2fVW8gTg=
+X-Google-Smtp-Source: AGHT+IHAOMpRwEYJiHDMI8w8bMB34NUeQt076rTlzeHhr88PtHM4vDWcgfzfmZ8rkVIsUWadQsA5Og==
+X-Received: by 2002:a05:6512:ac4:b0:52c:dfa0:dca0 with SMTP id 2adb3069b0e04-539c495b90bmr2596983e87.43.1728506706141;
+        Wed, 09 Oct 2024 13:45:06 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4894a647sm266411f8f.16.2024.10.09.13.45.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 13:45:05 -0700 (PDT)
+Date: Wed, 9 Oct 2024 23:45:01 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Everest K.C." <everestkc@everestkc.com.np>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	skhan@linuxfoundation.org, linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] fs: Fix uninitialized scalar variable now
+Message-ID: <263ceb04-f909-45d8-b9b2-5de86617ea25@stanley.mountain>
+References: <20241009200528.36343-1-everestkc@everestkc.com.np>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] fs: Fix uninitialized scalar variable now
-To: "Everest K.C." <everestkc@everestkc.com.np>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241009200528.36343-1-everestkc@everestkc.com.np>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20241009200528.36343-1-everestkc@everestkc.com.np>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 10/9/24 14:05, Everest K.C. wrote:
+On Wed, Oct 09, 2024 at 02:05:25PM -0600, Everest K.C. wrote:
 > Variable `now` is declared without initialization. The variable
 > could be accessed inside the if-else statements following the
 > variable declaration, before it has been initialized.
-
-It could be, but it isn't. I am not sure if this change is needed.
 > 
 > This patch initializes the variable to
 > `inode_set_ctime_current(inode)` by default.
-
-Instead of "This patch initializes", change it to "Initialize ..."
-Do refer to submitting patches document for information on how
-to write change logs.
-
 > 
 > This issue was reported by Coverity Scan.
-
-Include the the error/report from Coverity.
-
 > 
 > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+
+Fixes: d8d11298e8a1 ("fs: handle delegated timestamps in setattr_copy_mgtime")
+
+Maybe the WARN_ON_ONCE() should be updated to check ATTR_ATIME as well?
+
+regards,
+dan carpenter
+
 > ---
->   fs/attr.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
+>  fs/attr.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
 > diff --git a/fs/attr.c b/fs/attr.c
 > index c614b954bda5..77523af2e62d 100644
 > --- a/fs/attr.c
 > +++ b/fs/attr.c
 > @@ -284,7 +284,7 @@ EXPORT_SYMBOL(inode_newsize_ok);
->   static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
->   {
->   	unsigned int ia_valid = attr->ia_valid;
+>  static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
+>  {
+>  	unsigned int ia_valid = attr->ia_valid;
 > -	struct timespec64 now;
 > +	struct timespec64 now = inode_set_ctime_current(inode);
->   
->   	if (ia_valid & ATTR_CTIME) {
->   		/*
+>  
+>  	if (ia_valid & ATTR_CTIME) {
+>  		/*
 > @@ -293,8 +293,6 @@ static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
->   		 */
->   		if (ia_valid & ATTR_DELEG)
->   			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
+>  		 */
+>  		if (ia_valid & ATTR_DELEG)
+>  			now = inode_set_ctime_deleg(inode, attr->ia_ctime);
 > -		else
 > -			now = inode_set_ctime_current(inode);
-
-The code is clear and easy to read the way it is since it handles both cases
-and does appropriate initialization.
-
-
->   	} else {
->   		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
->   		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
-
-I will leave it up to the maintainers to decide whether to take
-this change or not.
-
-thanks,
--- Shuah
+>  	} else {
+>  		/* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be either. */
+>  		WARN_ON_ONCE(ia_valid & ATTR_MTIME);
+> -- 
+> 2.43.0
+> 
