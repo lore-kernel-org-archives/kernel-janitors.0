@@ -1,126 +1,93 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from msa.smtpout.orange.fr (msa-216.smtpout.orange.fr [193.252.23.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0641F17C22F
-	for <kernel-janitors@vger.kernel.org>; Wed,  9 Oct 2024 20:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD49C178CC5
+	for <kernel-janitors@vger.kernel.org>; Wed,  9 Oct 2024 20:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728507010; cv=none; b=NPD+9cY7BTLa5yVfyxJ45iepWW49CkZ6g9xTQoKKgypC/yBj6oaGjULgEVuizfImAHmJso/OLnDgQ+rCYywvdY3hrN2jm/cjyyqVC6PBTP6d2iPAOfD//Pm0cD4NwOr5ZtQWsKxfj26ldTIXD0dThqfOicgH/LQ8hjwUTThJLw4=
+	t=1728507207; cv=none; b=lMF4HjCfDHJFCDCVPucMNi4spRWRll8pGrFddYfgRzUby6/cEk1CJQHc7rYMdbuE5g3+Az7OQLPvUeBE1hrWG77/pSVd8Hmi1Qhlgjr8zIyM2PO9rEQGCvKVbhcUyk/8vYKO1vNN8i9V4JwtKVLMrLTc3JKBoFTxhCY1bsgVbFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728507010; c=relaxed/simple;
-	bh=2lp3Ln00mpRryNRxq60rNEzUatPpphR1j8+PG29glH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pVJLUX3FCWeotrMlrrvHIbdsTCI3cTnlg3EdIB4TVgf2l5ityJaxpEKvf5wNJHItDRh7uWbLd053LfBazLqBqJPLU2a3RQCGN7nZqedPtYDtYai7A1LKmGw/WOXv+XLhu/ofAKaMggEbEgqsRI+vYtTedpsvTUcCu9dkTfy47PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=dHgUG1cC reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+	s=arc-20240116; t=1728507207; c=relaxed/simple;
+	bh=cm4hzRUJo2yX56GidV3TeMZXjhelTRy83ajD48PXCtk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XcE3dKvbIhEv0KhiwCuKBw94YQKD1P30W5f+WmrJ2WsDfd2+bn+yvFsh1AbopkG83C75xjHGdH7H0NSng/RtDjiEBX58YAi1EA8vnMaTPXFmPXZlWrBsl+bIhJMtRLi87N3I44SRT+fX+obSworNOyR0pzEZcyRdeWky184l/aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VtZYzH/k; arc=none smtp.client-ip=193.252.23.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="dHgUG1cC"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9963e47b69so35836566b.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 13:50:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc.com.np; s=everest; t=1728507007; x=1729111807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U6AlyAiK8jIW99PS/mbC0CEBkjDKR+IRpZZi78iD0gY=;
-        b=dHgUG1cCtxyhl5WPezwYmpRgMJoch+nVlDK7dP+u6OZkUyYq4tgwlrcai408TKkIQw
-         xy8n1xd/DodlskwdqkNPipWLM2TUhMQXhg8IwHIGeFoU02s4fFbFYKg1UiJVjNWUNRZ7
-         rLT8zqiKZiDSyLPWTnvMV5BNnECBi45RLKF7fboNL143ztCq57MO48HR1J5LBt1Fu2q8
-         +JdIl02Dbt/Yes36LINdvBosPbWkWnxb1Onnlrh0OzkitNBzRS6kdb6ujUAY2TM8KAdG
-         ntt6nUAe0l9D1juRubF/yJIWBA06zumBbGWKFbRC4p3YzoRlMEZ0gHHG19VDoRIQGnfZ
-         X4kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728507007; x=1729111807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U6AlyAiK8jIW99PS/mbC0CEBkjDKR+IRpZZi78iD0gY=;
-        b=fA5qidJbwRgyOWzNrhpsj3ExCsBAMqYsBzh+CbDJIjPrf/qGiH8/d4hdhrQ2e9c1hD
-         lHlc1lSIZPs2LX8HRt0n6CXJahjlbseNJahReMSC+g7yNRAjvVKbeH37NEoIyOQ23bp8
-         EhmfoS1i5l2WF3pYXaH8db6ggFnXzDQ5TMdfUPZqlEM8/tw/Tj+DOLuMDJrpXsqAOwzt
-         Feu4xWNO1UHdS2Aj/eRGHEtMoZPW0nwDzNiHPeYbE6UIcqzI/CVLxmQsFWGgTgqC7oap
-         hi6UuYN0zr5+EtI84xGqKZ2l0txSESy8aA5yvyz3kSoSil0DKkn0k0HRZ50JiTHxT7f7
-         hs8w==
-X-Forwarded-Encrypted: i=1; AJvYcCX0XM1Ypd8rFgycd3l4fiIXezGDz/JAoz13+HuHtYPD8syiN2wPXmT/9DqgDviTukaSEcA0UzV8eqG0d8zCIaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9K+O62oyVWQVy23/Vnt69HzK1zzbTcbsHPMQcuG8pSF/fOJwW
-	w/71VK3vOTGdVAkuGrPF6XtpPKN+D4uLGmh7npfcAKMHj+WP3xKd92zh2sOwNuXXFo+ZtWhYI58
-	AUd8kOerM5xBDqO6XwnNzYqONbQ62FtsxVkhntw==
-X-Google-Smtp-Source: AGHT+IHZQ//C/LT9bz4MtZcmxJW5GzbBzoSV9zKUThFSFKoiavT+2C93cS1UjaGvXK3AnSkDwkQ7q5RXVs+r0/IWRVo=
-X-Received: by 2002:a17:907:7ba9:b0:a99:442e:34ac with SMTP id
- a640c23a62f3a-a999e8c9f03mr127272866b.40.1728507007259; Wed, 09 Oct 2024
- 13:50:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VtZYzH/k"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ydgIsdEnS6TFnydgIsgFcl; Wed, 09 Oct 2024 22:53:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728507195;
+	bh=dSXhwlffwVEEgQQdtZSnHKoCCDh7Esjjv1zZwlIWnlQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=VtZYzH/ktUnAkVuvP2/dZkf5o6rdN6molzRWGUcM1I06J/sjbDZy3q4zRSEQd1hGF
+	 Jo44hjLaqqVm3HZHGj8xbrpoYiRm0WIoglg0SjgVWGVAHWYmu5+hfNE7MVa27Q11ga
+	 YWviuFyoO60x2e5iOMrMVysUT42fNari0voD8pTOshG6IN2uF5b8h6tciPRAeilotu
+	 6cWHUCOvMzGh9SRALWzRIjUvseyxyowbQZi5PwGXHJvDaMVKTDnOehA/mv+kcnjwrf
+	 BFAuobpZvFm4YaXXk/i3KjSepdB60Kh1tKvVQrnPdviq9zlxvECxWB6f07Skl8pZfI
+	 Bzry3ETglCjOA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 09 Oct 2024 22:53:15 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Jens Wiklander <jens.wiklander@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 1/2] rpmb: Remove usage of the deprecated ida_simple_xx() API
+Date: Wed,  9 Oct 2024 22:53:05 +0200
+Message-ID: <df8bfbe2a603c596566a4f967e37d10d208bbc3f.1728507153.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009184951.4991-1-everestkc@everestkc.com.np> <07d9eb6e-87d3-4428-aaa4-8721a6844404@stanley.mountain>
-In-Reply-To: <07d9eb6e-87d3-4428-aaa4-8721a6844404@stanley.mountain>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Wed, 9 Oct 2024 14:49:55 -0600
-Message-ID: <CAEO-vhEGtBX1sb3MYm18+MBGEgrFfNpzatBT46kcN9_Wh=NFMQ@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/xe/guc: Fix dereference before Null check
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, 
-	rodrigo.vivi@intel.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	skhan@linuxfoundation.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 9, 2024 at 2:35=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> On Wed, Oct 09, 2024 at 12:49:49PM -0600, Everest K.C. wrote:
-> > The pointer list->list was derefrenced before the Null check
-> > resulting in possibility of Null pointer derefrencing.
-> > This patch moves the Null check outside the for loop, so that
-> > the check is performed before the derefrencing.
-> >
-> > This issue was reported by Coverity Scan.
-> >
-> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
->
-> You need to add a Fixes tag.
-Will add it and send a V2.
-> > ---
-> >  drivers/gpu/drm/xe/xe_guc_capture.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/x=
-e_guc_capture.c
-> > index 41262bda20ed..de63c622747d 100644
-> > --- a/drivers/gpu/drm/xe/xe_guc_capture.c
-> > +++ b/drivers/gpu/drm/xe/xe_guc_capture.c
-> > @@ -1537,13 +1537,13 @@ read_reg_to_node(struct xe_hw_engine *hwe, cons=
-t struct __guc_mmio_reg_descr_gro
-> >       if (!regs)
-> >               return;
-> >
-> > +     if (!list->list)
-> > +             return;
->
-> Could you merge this with the other sanity checks at the start of the fun=
-ction.
->
-> -       if (!list || list->num_regs =3D=3D 0)
-> +       if (!list || !list->list || list->num_regs =3D=3D 0)
-That looks better. Will do that in V2 and send it.
-> The list->list pointer can't actually be NULL.  It comes from
-> guc_capture_get_one_list(), so if the reglists[i].list pointer is NULL it
-> returns NULL.  However, obviously checking for NULL after a dereference i=
-s not
-> the correct so it's worth fixing and probably deserves a Fixes tag.  Alth=
-ough it
-> doesn't affect runtime, adding a Fixes tag helps backporters know they ca=
-n
-> automatically ignore this one because the commit it's fixing is very rece=
-nt.
->
-> regards,
-> dan carpenter
->
+ida_alloc() and ida_free() should be preferred to the deprecated
+ida_simple_get() and ida_simple_remove().
+
+This is less verbose.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+The ida_simple_get()/ida_simple_remove() API was close to be removed (see
+[1]). A usage has been re-introduced with this new driver :(
+
+[1]: https://lore.kernel.org/all/cover.1722853349.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/misc/rpmb-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/rpmb-core.c b/drivers/misc/rpmb-core.c
+index bc68cde1a8bf..ad1b5c1a37fa 100644
+--- a/drivers/misc/rpmb-core.c
++++ b/drivers/misc/rpmb-core.c
+@@ -64,7 +64,7 @@ static void rpmb_dev_release(struct device *dev)
+ 	struct rpmb_dev *rdev = to_rpmb_dev(dev);
+ 
+ 	mutex_lock(&rpmb_mutex);
+-	ida_simple_remove(&rpmb_ida, rdev->id);
++	ida_free(&rpmb_ida, rdev->id);
+ 	mutex_unlock(&rpmb_mutex);
+ 	kfree(rdev->descr.dev_id);
+ 	kfree(rdev);
+@@ -176,7 +176,7 @@ struct rpmb_dev *rpmb_dev_register(struct device *dev,
+ 	}
+ 
+ 	mutex_lock(&rpmb_mutex);
+-	ret = ida_simple_get(&rpmb_ida, 0, 0, GFP_KERNEL);
++	ret = ida_alloc(&rpmb_ida, GFP_KERNEL);
+ 	mutex_unlock(&rpmb_mutex);
+ 	if (ret < 0)
+ 		goto err_free_dev_id;
+-- 
+2.46.2
+
