@@ -1,229 +1,543 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF771311AC;
-	Wed,  9 Oct 2024 16:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728491602; cv=fail; b=sOnXa7q1R8x0ImIoZU1AprUDHg6hQCrJY9YFBKmFKlaOVo6eE0bymMz9iOKsufUT5+V1Q6B7zO4rZHrNmNPnu3Jk0Q+KXucKNLXbVGcMpHY+5j6RGRdNt4wvwtVn2tGcXqeEGQnL3ilVvNquarArmdytP5w3wLFcTpKArqE089k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728491602; c=relaxed/simple;
-	bh=MKaVmjNIZ6RHBWLtJ1kvfdmUbDiC8KqeCczNL+Kb4HA=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZCYm/7NDkW+kotp5YS8oaJqFAG3q6fT9BfaNNdX3B9bJ8gdMlEbEoRBo3UOi+i+D9gB6/u6F8yNWaKwznIq8UjUQa46JkYIQhbeXbPzVNrDPs3U0Yu4/BXl90UeljwzWpmjT5ScndaUWq9En8qnt9Fcn2QFtiCV3GFkgfdCQTv4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fjr7MVX0; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC5C19D89D;
+	Wed,  9 Oct 2024 17:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728493753; cv=none; b=nj4ZP6F/26QrN/P+8VgWOCsf3TjsDn5htW7AO6acnhvFCCz0cXsKwKgYUG7d0VoN23mWe7PwUZlqiy/frc4WcVkROJfsKAj+IQ2G5UwilKUhCXtKUVjth4F1KIrDhTDOMMlhmzFjA/oVbFr74tFlRu8QMrM+Xit3xhe66yKTzUk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728493753; c=relaxed/simple;
+	bh=kgixgc+a7mFRlSrMz54ba+jdRY71a0kwT1CdseV36pg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=txycXv40q7mYLGdQQNS5IlDIy1Tr7RzdS3/T/+na3onZ1fpmkG7pnF7ckN1wjN5sfTyUmxJBYcegz0sPAOQpIZxYkf/ETRspwpBRBs+2A8TnEBiJAEN5HOcO7iys8HFn1dWUYKybcAOVNQUru1QhHXxNbVSbGbduRJxJLK1Vo5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=P2PqLt2R; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fjr7MVX0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728491600; x=1760027600;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=MKaVmjNIZ6RHBWLtJ1kvfdmUbDiC8KqeCczNL+Kb4HA=;
-  b=fjr7MVX0DTiTnGKJB9u5ETjQC6f1HuXfIaQRu3bPu/uMDjxWUJxL7Tyz
-   DgOAYg5iVs6UZMgSR9Vst+quYR9YbF4j7nAXPVJ2RzMcyoBBDOfy9LEBd
-   Y9Hu9KpSpflDzEOXLE5waMS8p4iVxQ7Fe6Vv+Emo6wZrmi2WQvZLZzXnC
-   AJvyY3H7/TG4dXbmk4vfTIf/dH4IZEXlG4cAJeMzpzg+nxLOjz2xO73Hs
-   csSSk8WpqSls3i2AL570J+xKqaAbJbNXt1srIdlw5qZz0BrHLx56N/y4p
-   jLGza4LmZ+8/nuMD70B7Wcs29NlZ4fCTM7PnJCV3YK0/h+PVhdRDVoLlq
-   g==;
-X-CSE-ConnectionGUID: cwhvGSiBTn2nguKBxNMmlw==
-X-CSE-MsgGUID: pUPM86POS0ezfdAvAh7z9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="53211805"
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="53211805"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 09:33:05 -0700
-X-CSE-ConnectionGUID: RCMrSNcLRfKulmWHYZIdbg==
-X-CSE-MsgGUID: 9Lnukj7yS9KqtEhsc5tNoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,190,1725346800"; 
-   d="scan'208";a="76775925"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Oct 2024 09:33:05 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 9 Oct 2024 09:33:04 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 9 Oct 2024 09:33:04 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 9 Oct 2024 09:33:04 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 9 Oct 2024 09:33:03 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sMgWZ5a1DG+GAZmSTzEWVpoBtqpvQa22xQ+0yNitDrqbZezhi/0ONfYXXvxWmHtfUkH1zyWSzTQgY737q1oMcngDcAzCl5mnej+BgPD073MfZdXF9YXXEhHsO6TrUPvJn5G8oAlrX7ZNUQQH98YCDsHczjS+Obb+wYRemGFMQnI8ilCKPQIuyp5cs8IznmupwiD1Pwh2eVN2uxnxzimHWz2O/co5nP9pQlZpBZXqZ8Ci/4KMZkqsh7UCB/EbXhWDd6b7xJCpG+lljUHigJ7DcZznCS3+Gwqm+qVoyO3l0UI7MfD6f9ut2yi+/blx9m0rBSanlAVm0KS4tL6sKdFKqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7mszenVbSDh31krTGCYslZTT/r+rKH3E3VPasdLhwI4=;
- b=HLtJmpcHJemtIN1NRIIfqeb6IEBPzV/4nQEBMSINBRoLGIUqBBuEoMmy+j3+LwusS7cmDliI5OR4fp4wgA1f7zmSRBscGQ01Tn/QC875qClYylS0ANu5U94F+2b3D93pOgxkqto2gHKq5XnmT8cwQff1VXtY/hDK1vSJjf2V5ZUMLy7WU6D9n56KvwKtTuFu0PBBSKga1h2Q0o7Z70LKZTohBF/V91gnKK8vcsndIHhuSN86W9uQGs7DcWEPiVi05S4s3O6MCiQKVnR2UtY3hHz0t+EHqZ8JEsvUbtKssqQN3GAzp+tmjkUPVPHxPUdo2MOD4F/lBqBs0JtsLPhgAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8441.namprd11.prod.outlook.com (2603:10b6:610:1bc::12)
- by PH0PR11MB5928.namprd11.prod.outlook.com (2603:10b6:510:144::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Wed, 9 Oct
- 2024 16:32:51 +0000
-Received: from CH3PR11MB8441.namprd11.prod.outlook.com
- ([fe80::bc66:f083:da56:8550]) by CH3PR11MB8441.namprd11.prod.outlook.com
- ([fe80::bc66:f083:da56:8550%3]) with mapi id 15.20.8048.013; Wed, 9 Oct 2024
- 16:32:51 +0000
-Message-ID: <7feb0520-0cd3-46fc-8b44-a78d1c3a65bf@intel.com>
-Date: Wed, 9 Oct 2024 09:32:46 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/xe/guc: Fix inverted logic on snapshot->copy
- check
-To: Colin Ian King <colin.i.king@gmail.com>, Lucas De Marchi
-	<lucas.demarchi@intel.com>, =?UTF-8?Q?Thomas_Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Julia Filipchuk
-	<julia.filipchuk@intel.com>, <intel-xe@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241009160510.372195-1-colin.i.king@gmail.com>
-Content-Language: en-GB
-From: John Harrison <john.c.harrison@intel.com>
-In-Reply-To: <20241009160510.372195-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW3PR06CA0029.namprd06.prod.outlook.com
- (2603:10b6:303:2a::34) To CH3PR11MB8441.namprd11.prod.outlook.com
- (2603:10b6:610:1bc::12)
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="P2PqLt2R"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Ei5tc3PfylWx64diDodItk/7guQ0rWtWfXKiWLfUtgQ=;
+  b=P2PqLt2RJ+Vn9j341bwlMFTU0FcgGXEDMFVS+UK6LZzeDKmKGXto1w8j
+   K/UPWGc5Oo6GHXmTdg8fStaJMC/k3hx+pSQdL8w3lyFTdpS8OkkG5zDEG
+   Y7Pccq9IONrVVfDA82M2vhDcH9SREB3ieHiHQ3R+Ik67CNB3LEXQoDFz1
+   4=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,190,1725314400"; 
+   d="scan'208";a="98667983"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 19:08:59 +0200
+Date: Wed, 9 Oct 2024 19:08:58 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+cc: Vlastimil Babka <vbabka@suse.cz>, Uladzislau Rezki <urezki@gmail.com>, 
+    "Jason A. Donenfeld" <Jason@zx2c4.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Julia Lawall <Julia.Lawall@inria.fr>, linux-block@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org, bridge@lists.linux.dev, 
+    linux-trace-kernel@vger.kernel.org, 
+    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, kvm@vger.kernel.org, 
+    linuxppc-dev@lists.ozlabs.org, 
+    "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+    Christophe Leroy <christophe.leroy@csgroup.eu>, 
+    Nicholas Piggin <npiggin@gmail.com>, netdev@vger.kernel.org, 
+    wireguard@lists.zx2c4.com, linux-kernel@vger.kernel.org, 
+    ecryptfs@vger.kernel.org, Neil Brown <neilb@suse.de>, 
+    Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+    Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org, 
+    linux-can@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>, 
+    netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+    kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 00/14] replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+In-Reply-To: <acf7a96b-facb-469b-8079-edbec7770780@paulmck-laptop>
+Message-ID: <2ae9cb0-b16e-58a-693b-7cd927657946@inria.fr>
+References: <36c60acd-543e-48c5-8bd2-6ed509972d28@suse.cz> <ZnFT1Czb8oRb0SE7@pc636> <5c8b2883-962f-431f-b2d3-3632755de3b0@paulmck-laptop> <9967fdfa-e649-456d-a0cb-b4c4bf7f9d68@suse.cz> <6dad6e9f-e0ca-4446-be9c-1be25b2536dd@paulmck-laptop>
+ <4cba4a48-902b-4fb6-895c-c8e6b64e0d5f@suse.cz> <ZnVInAV8BXhgAjP_@pc636> <df0716ac-c995-498c-83ee-b8c25302f9ed@suse.cz> <b3d9710a-805e-4e37-8295-b5ec1133d15c@paulmck-laptop> <37807ec7-d521-4f01-bcfc-a32650d5de25@suse.cz>
+ <acf7a96b-facb-469b-8079-edbec7770780@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8441:EE_|PH0PR11MB5928:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32c71f58-1222-4bc6-b139-08dce88004d3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VWRRejRNVlhiQjJzMkErenJZSFppTTVkVjZ5YU5yZ2tOQlFtelBRRThYWnN2?=
- =?utf-8?B?T21vZ2p3RDJkNVVUZnZwa3BSV1VlYkF6bEYzL3h5OUNSb2l1RTJUMEw3VSs3?=
- =?utf-8?B?YUVjTzFRd1Z3Yi94Qy9oQ0dVUTE5QjI2YmJwZnZZVlUvb3hCZVRIT3lVWm0x?=
- =?utf-8?B?Q254NXMwMDVuZlpJaFZ2aDVPenozV2krYmtCU1pFUkFYRVhEakpDc0w3MnZn?=
- =?utf-8?B?dUo2cjJEYTg5YzVTa3pGMVh3Y2IxU0I0a0pMbEE1NlpGMnhweWRlbVV2THdT?=
- =?utf-8?B?TXVPdnVUSUhGcDhySHJWUnpQY3VEQ0VuSE4xV3RSK1VBWXRNc1dqN2d4N2x6?=
- =?utf-8?B?a2RzK1pVQUEvL1dJNCttYlNpRjIrVlNLQUViOUcvWXFZek8xOHk5amg2amVp?=
- =?utf-8?B?N0tsb09mWVdHZU5jdkRKMVhhazMxbWR5clBoMmJicVRxc2taSWpHNk5NUkRv?=
- =?utf-8?B?dis3R2hLT2FqZE1hZTRPZFpHeExVSUpKRGgyMXZoWTlBMWZNTklrOElKS3Br?=
- =?utf-8?B?Y1R4cHBVdTV1ejQwT1VBdW5GdU1oT2RHcmlnNTJYd0tsYXZmQ051MmNtblBZ?=
- =?utf-8?B?V1FENVNOaXBhaVNBRVFtb29vcEtVd20rMkxJWXZWaFBwWlpQYzUxRDFrWk5P?=
- =?utf-8?B?UmMzRDFJNWVGTDJKaHZ4cVNXbGErUXdNamVkbTYyOFdIZWR5NnhKdEFMTTNS?=
- =?utf-8?B?SVVhUmt5UWVOY01LbmNNTmJGWnBQTzg1ZG5pSzZ2cGFDMk44YmxvcEsxU1Ur?=
- =?utf-8?B?NjJ0NWIxMFZ5MVByUlo0NFIwYnZvci93WVdkTm1WUUxPa0xVMHkyYk9MYUtB?=
- =?utf-8?B?Qjh5MldSMmNpRjJ2TXBhRzBBVGRqaVhoeUtKSWltSXVvN1FZNFNXcmJxTmNh?=
- =?utf-8?B?bmlCUkdDWjhBZDJIcUVjS21iODY4dWVjRTNYd2ljdEQvcjRBcDdtcUhUTlE1?=
- =?utf-8?B?b25zM29Md2dYUy9OanlSQlZwY1pXM0RRd0xjcS9iUHJjWDJHY0FJWmFLOFcw?=
- =?utf-8?B?Vmx0Y1g3Zlc3T25KdncrYktVM2Y0RDQ4SVZBc09QandmcTk3QzBENWs4aHM3?=
- =?utf-8?B?b3I1RWhHd0s4cWVuM1RwSm1xVkxwWkUyR1ozRERFTTYvRkUxNUFKU2o2RXd3?=
- =?utf-8?B?UXYwbHYxRTVaTVV2cWNoNCtab1g3K0c4Zk4yVUJpOUhRTlVGUUI0czhrZ09s?=
- =?utf-8?B?WUV0YlZFb3FHUE8xZmcwTGRGcjN0T0JUUjRvM281eDZ2RFRtRjNQUlovdk5L?=
- =?utf-8?B?dDBCQjBRSUVzckpBak1INEtVNFp2T284cWpFemNDSC95L2pGNm9nS1lSMDNQ?=
- =?utf-8?B?RmdMQmhocWdLcUtiWTc0ejBmNHZ0OThpRDhhc3VHRk81YWw1NkZVUFhFYlU2?=
- =?utf-8?B?TmxMakZjYUVTaWR5RkxLK1FXUFovQ2NrQ1VKOWl4eDg5a2NNZWc3QnlOMUZ4?=
- =?utf-8?B?MGVNd05kdUdkbjNCek9YeGFOcWc0N1JXRElwNkJQR1VieWQ4OTZod1YzNk1B?=
- =?utf-8?B?Q2JHUnhZeWZ2RGRxaDUxL01ScVpJNFJiZ29JQ1ZOL1VqdXlSRk1MaWxKenJE?=
- =?utf-8?B?c1BadENKSk45cEkxVkpsVHIwZ1NJM3JGS0creG95NHZQM3dEMW16TXhDdU1G?=
- =?utf-8?B?UG00ZlU0OGlJSVlxekg0QktVd0pzWm9LMWlOYjhRa1ZjdkdybjBGS2Z6aHNs?=
- =?utf-8?B?OWZobXU4d2dKbG9STFkyTk5UaFhaaENtWHN3bksxL282WWR6RnE0b3ZDWG5M?=
- =?utf-8?Q?AcRASM4SEhQYcI8MjYafN+qluYglUZgyX4jfAJ0?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8441.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QTUwcmp2aTB6S2JoNmhiUkh3MTYybTFYSUVTS2FMM3RJYXBrNnBtdnhGMFhJ?=
- =?utf-8?B?QS93VThzWERiWXlPbjBDQTg1QkVBQVNBdE5tSjlRSSswRGYwQkFnOGMvWnpH?=
- =?utf-8?B?VzhmMDhkVUNwWEpmRlFkOTFCcEFiSGx6ZWlMaEpZdzBVL3RWanYzcXJUUFRO?=
- =?utf-8?B?b1BoL3ludE9FYlIvemtqNHFobytIckV4RmE5dHNPbCtXWWl6TXBWZU8zbTR3?=
- =?utf-8?B?TFNyL09FNHB5VHkrYVhFVG42RkFTZTNXZU5nYm1pdk5oc3RlTnJ2QjlBWjZy?=
- =?utf-8?B?WklyZDlVSkUwaVlBWm1ycVZqUTRmcWZYdDNvcENHRzlVbVhsVXk0RWErMlV3?=
- =?utf-8?B?OFFRbHlsZGlOcWZkeEFES3dydlBBY2dTSXlNajhRclRaWG9lU25zZWxDV3JG?=
- =?utf-8?B?dUJvQStCLy91TzhWK2h3SUFsaXBoK09iMVMvMkhTL0ZoeDVTdUIxbmpNQVdJ?=
- =?utf-8?B?ZkdYWDRiMkdjeFB3ejVuclBGUHVKY2pKdkV0VU9ranQwV1E1Q2htay9WZHlu?=
- =?utf-8?B?YnBncld6b3oxY21kdmpUSVBWK1c3Mm5sVUZ0Um94a3ZpNGJYSXpjNlNtblN0?=
- =?utf-8?B?YXYvT3liRzlMWkE0dnc1dkFEQ3EzampEMDRRUDBqRmRVU2hwdFI1ck5LSGxS?=
- =?utf-8?B?cDlsZHIwamhOYmtFWUtUUmVyMUZMN1hnZHNhYWZtOHZTL3d3eFZ6K2hKMWxI?=
- =?utf-8?B?bFJtUXg0THpDMWJ5ajVKdFVPeVZib25BbmR5M2FmYk5LOXdwT2dveVljUVEz?=
- =?utf-8?B?OFRUTFFCbXFweUg4cWUzSDRrQlJLMlN1K2U2MTY2TFlmMmRrOG9KMktyV1lH?=
- =?utf-8?B?RkUxMFhzLzhPcTQ4bElnenQwcTMxWUVCUENudkZGZkd5QzR0ZnZXT3dUZ0Uz?=
- =?utf-8?B?Z0pEMjVWUkUvTXZBb2dXcmZmQzZUbFNST1p5ZkVSbU1OTGZpWFJwbUh6Lzdz?=
- =?utf-8?B?c1hnVjBJYkJKWHpmTHZtT3ZyTlNoM3pzaytiL2FITTBnMVRXVWtvbTUvQkN6?=
- =?utf-8?B?Z0t4a3VmaWhnOUdyQitvT3hNcGx6cGtVKzRoZ2FSVkJOOUxnbnk2YzJ3K01H?=
- =?utf-8?B?bGNSekZlWjI5MTE3UkFpQlFVT3RvYmdGM2hIRDQwRFBJdjhEaGdrak9vaVFs?=
- =?utf-8?B?N3A0YmIrZ045SXhnWS8rNXFBRVJjbFFJVVEzRDMwZE9HRkxlWW9Ld1pWaDhX?=
- =?utf-8?B?cjNMQWEwWnlxY3FmZWFsQy9DaWwrNlRWL0ltWSs1NkxOcGRxWEVMdmdRT3Jk?=
- =?utf-8?B?T0tPWmszNjArVW00dWI3cWJqQ3dMaGVSdzBVZVFod3NySUF1bXl3MmJiUy9W?=
- =?utf-8?B?U0JtaW5GSnBHM2tLV3BGNy93YXZISUdNVmNnclpIZHM1akF2WWJFb3daNUwx?=
- =?utf-8?B?KzRSVUFBU1pDZ08vU1ArTHVxZVgrY1VERHNkU291NDgrdDNETm8ya2NHNmdy?=
- =?utf-8?B?Y1JlNlVnTVlJVDUwb2d1ZkxIaTk1cC9TNFhLVFVMMjR5TXJzcmIwQ3A1TC95?=
- =?utf-8?B?dWc0aXhHS0JNTm95UTZnQ1EvR3hKeTNST20wWEQrUHNwNkc1RzJ0MDQxL2RB?=
- =?utf-8?B?Ymd2cXB1eFh0UVR3Tm5DY0dUTzY3M2VqYTh4L0ZVbDlkRzNSNVJkRWRZcnhD?=
- =?utf-8?B?emxxb1hyVmhzN0FHb3Qxd0JjWUxaa3p1OUZtQWdYOEsvYnVnWFVqb2VDRE1D?=
- =?utf-8?B?SHl1VGxnMTFWSGFkcVpZMEFZOU8valRXNjR6bTFqTDg3Wm8wbVBHekFjT2I1?=
- =?utf-8?B?K3VRdzRhZFprOEt5Sk1MYkw1TkZpN0h1SmNKZ2MxVjJFTmlUaTJtckgvSGxD?=
- =?utf-8?B?anBQbkpxMTlveVo3TS8vK2NZa2R5OHQwWGhiYWxZT3k0c0ZTblZ3YTZhTXJV?=
- =?utf-8?B?ZDRIQ3Uyb2VLM2lCZHhORmFLajR6aC9NVE9mOE92WkRjWCt5bUdYRmxtZmxU?=
- =?utf-8?B?MEg5MDYyMjZNcEI5bjZsNWZWZEZJVVJUUkNCUDk1OERacU1heVJCbS9QM3hB?=
- =?utf-8?B?UFJReVVkTC95S1EyZ1NlVGU3U09BdDJBYWRkT1M0K3ZKNWZJdm5sSUdqR1Zt?=
- =?utf-8?B?b2ZDTnl5clJOZnJSTktLRzJOM25TNnQ2VFJpYnpMRFVSVmRpSjJuN3F5M1JC?=
- =?utf-8?B?VVYyYXM5K2FwVXJqeTlZL1FrYkZqcHkvRWs1Y1pDeE1xQXhwbms2WGcxRjAv?=
- =?utf-8?B?amc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32c71f58-1222-4bc6-b139-08dce88004d3
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8441.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2024 16:32:51.5941
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jJ7f0PqGA103e6eyNkLmGB1CHV0UFemjiK2QfSj+9L8pC2I/h6fovbOPevQiChiH5jhkfJX/3NG0GqFqCUsmzkas3LOPy0D3n9j+8akXzY0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5928
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
 
-On 10/9/2024 09:05, Colin Ian King wrote:
-> Currently the check to see if snapshot->copy has been allocated is
-> inverted and ends up dereferencing snapshot->copy when free'ing
-> objects in the array when it is null or not free'ing the objects
-> when snapshot->copy is allocated. Fix this by using the correct
-> non-null pointer check logic.
->
-> Fixes: d8ce1a977226 ("drm/xe/guc: Use a two stage dump for GuC logs and add more info")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-Reviewed-by: John Harrison <John.C.Harrison@Intel.com>
+Hello,
 
-Thanks for the fix.
+I have rerun the semantic patch that removes call_rcu calls in cases where
+the callback function just does some pointer arithmetic and calls
+kmem_cache_free.  Let me know if this looks ok, and if so, I can make a
+more formal patch submission.
 
-> ---
->   drivers/gpu/drm/xe/xe_guc_log.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/xe/xe_guc_log.c b/drivers/gpu/drm/xe/xe_guc_log.c
-> index 93921f04153f..cc70f448d879 100644
-> --- a/drivers/gpu/drm/xe/xe_guc_log.c
-> +++ b/drivers/gpu/drm/xe/xe_guc_log.c
-> @@ -122,7 +122,7 @@ void xe_guc_log_snapshot_free(struct xe_guc_log_snapshot *snapshot)
->   	if (!snapshot)
->   		return;
->   
-> -	if (!snapshot->copy) {
-> +	if (snapshot->copy) {
->   		for (i = 0; i < snapshot->num_chunks; i++)
->   			kfree(snapshot->copy[i]);
->   		kfree(snapshot->copy);
+This is against:
 
+commit 75b607fab38d149f232f01eae5e6392b394dd659 (HEAD -> master, origin/master, origin/HEAD)
+Merge: 5b7c893ed5ed e0ed52154e86
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue Oct 8 12:54:04 2024 -0700
+
+    Merge tag 'sched_ext-for-6.12-rc2-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext
+
+
+julia
+
+diff -u -p a/arch/powerpc/kvm/book3s_mmu_hpte.c b/arch/powerpc/kvm/book3s_mmu_hpte.c
+--- a/arch/powerpc/kvm/book3s_mmu_hpte.c
++++ b/arch/powerpc/kvm/book3s_mmu_hpte.c
+@@ -92,12 +92,6 @@ void kvmppc_mmu_hpte_cache_map(struct kv
+ 	spin_unlock(&vcpu3s->mmu_lock);
+ }
+
+-static void free_pte_rcu(struct rcu_head *head)
+-{
+-	struct hpte_cache *pte = container_of(head, struct hpte_cache, rcu_head);
+-	kmem_cache_free(hpte_cache, pte);
+-}
+-
+ static void invalidate_pte(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
+ {
+ 	struct kvmppc_vcpu_book3s *vcpu3s = to_book3s(vcpu);
+@@ -126,7 +120,7 @@ static void invalidate_pte(struct kvm_vc
+
+ 	spin_unlock(&vcpu3s->mmu_lock);
+
+-	call_rcu(&pte->rcu_head, free_pte_rcu);
++	kfree_rcu(pte, rcu_head);
+ }
+
+ static void kvmppc_mmu_pte_flush_all(struct kvm_vcpu *vcpu)
+diff -u -p a/block/blk-ioc.c b/block/blk-ioc.c
+--- a/block/blk-ioc.c
++++ b/block/blk-ioc.c
+@@ -32,13 +32,6 @@ static void get_io_context(struct io_con
+ 	atomic_long_inc(&ioc->refcount);
+ }
+
+-static void icq_free_icq_rcu(struct rcu_head *head)
+-{
+-	struct io_cq *icq = container_of(head, struct io_cq, __rcu_head);
+-
+-	kmem_cache_free(icq->__rcu_icq_cache, icq);
+-}
+-
+ /*
+  * Exit an icq. Called with ioc locked for blk-mq, and with both ioc
+  * and queue locked for legacy.
+@@ -102,7 +95,7 @@ static void ioc_destroy_icq(struct io_cq
+ 	 */
+ 	icq->__rcu_icq_cache = et->icq_cache;
+ 	icq->flags |= ICQ_DESTROYED;
+-	call_rcu(&icq->__rcu_head, icq_free_icq_rcu);
++	kfree_rcu(icq, __rcu_head);
+ }
+
+ /*
+diff -u -p a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
+--- a/drivers/net/wireguard/allowedips.c
++++ b/drivers/net/wireguard/allowedips.c
+@@ -48,11 +48,6 @@ static void push_rcu(struct allowedips_n
+ 	}
+ }
+
+-static void node_free_rcu(struct rcu_head *rcu)
+-{
+-	kmem_cache_free(node_cache, container_of(rcu, struct allowedips_node, rcu));
+-}
+-
+ static void root_free_rcu(struct rcu_head *rcu)
+ {
+ 	struct allowedips_node *node, *stack[MAX_ALLOWEDIPS_DEPTH] = {
+@@ -330,13 +325,13 @@ void wg_allowedips_remove_by_peer(struct
+ 			child = rcu_dereference_protected(
+ 					parent->bit[!(node->parent_bit_packed & 1)],
+ 					lockdep_is_held(lock));
+-		call_rcu(&node->rcu, node_free_rcu);
++		kfree_rcu(node, rcu);
+ 		if (!free_parent)
+ 			continue;
+ 		if (child)
+ 			child->parent_bit_packed = parent->parent_bit_packed;
+ 		*(struct allowedips_node **)(parent->parent_bit_packed & ~3UL) = child;
+-		call_rcu(&parent->rcu, node_free_rcu);
++		kfree_rcu(parent, rcu);
+ 	}
+ }
+
+diff -u -p a/fs/ecryptfs/dentry.c b/fs/ecryptfs/dentry.c
+--- a/fs/ecryptfs/dentry.c
++++ b/fs/ecryptfs/dentry.c
+@@ -51,12 +51,6 @@ static int ecryptfs_d_revalidate(struct
+
+ struct kmem_cache *ecryptfs_dentry_info_cache;
+
+-static void ecryptfs_dentry_free_rcu(struct rcu_head *head)
+-{
+-	kmem_cache_free(ecryptfs_dentry_info_cache,
+-		container_of(head, struct ecryptfs_dentry_info, rcu));
+-}
+-
+ /**
+  * ecryptfs_d_release
+  * @dentry: The ecryptfs dentry
+@@ -68,7 +62,7 @@ static void ecryptfs_d_release(struct de
+ 	struct ecryptfs_dentry_info *p = dentry->d_fsdata;
+ 	if (p) {
+ 		path_put(&p->lower_path);
+-		call_rcu(&p->rcu, ecryptfs_dentry_free_rcu);
++		kfree_rcu(p, rcu);
+ 	}
+ }
+
+diff -u -p a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -572,13 +572,6 @@ opaque_hashval(const void *ptr, int nbyt
+ 	return x;
+ }
+
+-static void nfsd4_free_file_rcu(struct rcu_head *rcu)
+-{
+-	struct nfs4_file *fp = container_of(rcu, struct nfs4_file, fi_rcu);
+-
+-	kmem_cache_free(file_slab, fp);
+-}
+-
+ void
+ put_nfs4_file(struct nfs4_file *fi)
+ {
+@@ -586,7 +579,7 @@ put_nfs4_file(struct nfs4_file *fi)
+ 		nfsd4_file_hash_remove(fi);
+ 		WARN_ON_ONCE(!list_empty(&fi->fi_clnt_odstate));
+ 		WARN_ON_ONCE(!list_empty(&fi->fi_delegations));
+-		call_rcu(&fi->fi_rcu, nfsd4_free_file_rcu);
++		kfree_rcu(fi, fi_rcu);
+ 	}
+ }
+
+diff -u -p a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -413,18 +413,11 @@ static struct k_itimer * alloc_posix_tim
+ 	return tmr;
+ }
+
+-static void k_itimer_rcu_free(struct rcu_head *head)
+-{
+-	struct k_itimer *tmr = container_of(head, struct k_itimer, rcu);
+-
+-	kmem_cache_free(posix_timers_cache, tmr);
+-}
+-
+ static void posix_timer_free(struct k_itimer *tmr)
+ {
+ 	put_pid(tmr->it_pid);
+ 	sigqueue_free(tmr->sigq);
+-	call_rcu(&tmr->rcu, k_itimer_rcu_free);
++	kfree_rcu(tmr, rcu);
+ }
+
+ static void posix_timer_unhash_and_free(struct k_itimer *tmr)
+diff -u -p a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+--- a/net/batman-adv/translation-table.c
++++ b/net/batman-adv/translation-table.c
+@@ -408,19 +408,6 @@ static void batadv_tt_global_size_dec(st
+ }
+
+ /**
+- * batadv_tt_orig_list_entry_free_rcu() - free the orig_entry
+- * @rcu: rcu pointer of the orig_entry
+- */
+-static void batadv_tt_orig_list_entry_free_rcu(struct rcu_head *rcu)
+-{
+-	struct batadv_tt_orig_list_entry *orig_entry;
+-
+-	orig_entry = container_of(rcu, struct batadv_tt_orig_list_entry, rcu);
+-
+-	kmem_cache_free(batadv_tt_orig_cache, orig_entry);
+-}
+-
+-/**
+  * batadv_tt_orig_list_entry_release() - release tt orig entry from lists and
+  *  queue for free after rcu grace period
+  * @ref: kref pointer of the tt orig entry
+@@ -433,7 +420,7 @@ static void batadv_tt_orig_list_entry_re
+ 				  refcount);
+
+ 	batadv_orig_node_put(orig_entry->orig_node);
+-	call_rcu(&orig_entry->rcu, batadv_tt_orig_list_entry_free_rcu);
++	kfree_rcu(orig_entry, rcu);
+ }
+
+ /**
+diff -u -p a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+--- a/net/bridge/br_fdb.c
++++ b/net/bridge/br_fdb.c
+@@ -73,13 +73,6 @@ static inline int has_expired(const stru
+ 	       time_before_eq(fdb->updated + hold_time(br), jiffies);
+ }
+
+-static void fdb_rcu_free(struct rcu_head *head)
+-{
+-	struct net_bridge_fdb_entry *ent
+-		= container_of(head, struct net_bridge_fdb_entry, rcu);
+-	kmem_cache_free(br_fdb_cache, ent);
+-}
+-
+ static int fdb_to_nud(const struct net_bridge *br,
+ 		      const struct net_bridge_fdb_entry *fdb)
+ {
+@@ -329,7 +322,7 @@ static void fdb_delete(struct net_bridge
+ 	if (test_and_clear_bit(BR_FDB_DYNAMIC_LEARNED, &f->flags))
+ 		atomic_dec(&br->fdb_n_learned);
+ 	fdb_notify(br, f, RTM_DELNEIGH, swdev_notify);
+-	call_rcu(&f->rcu, fdb_rcu_free);
++	kfree_rcu(f, rcu);
+ }
+
+ /* Delete a local entry if no other port had the same address.
+diff -u -p a/net/can/gw.c b/net/can/gw.c
+--- a/net/can/gw.c
++++ b/net/can/gw.c
+@@ -577,13 +577,6 @@ static inline void cgw_unregister_filter
+ 			  gwj->ccgw.filter.can_mask, can_can_gw_rcv, gwj);
+ }
+
+-static void cgw_job_free_rcu(struct rcu_head *rcu_head)
+-{
+-	struct cgw_job *gwj = container_of(rcu_head, struct cgw_job, rcu);
+-
+-	kmem_cache_free(cgw_cache, gwj);
+-}
+-
+ static int cgw_notifier(struct notifier_block *nb,
+ 			unsigned long msg, void *ptr)
+ {
+@@ -603,7 +596,7 @@ static int cgw_notifier(struct notifier_
+ 			if (gwj->src.dev == dev || gwj->dst.dev == dev) {
+ 				hlist_del(&gwj->list);
+ 				cgw_unregister_filter(net, gwj);
+-				call_rcu(&gwj->rcu, cgw_job_free_rcu);
++				kfree_rcu(gwj, rcu);
+ 			}
+ 		}
+ 	}
+@@ -1168,7 +1161,7 @@ static void cgw_remove_all_jobs(struct n
+ 	hlist_for_each_entry_safe(gwj, nx, &net->can.cgw_list, list) {
+ 		hlist_del(&gwj->list);
+ 		cgw_unregister_filter(net, gwj);
+-		call_rcu(&gwj->rcu, cgw_job_free_rcu);
++		kfree_rcu(gwj, rcu);
+ 	}
+ }
+
+@@ -1236,7 +1229,7 @@ static int cgw_remove_job(struct sk_buff
+
+ 		hlist_del(&gwj->list);
+ 		cgw_unregister_filter(net, gwj);
+-		call_rcu(&gwj->rcu, cgw_job_free_rcu);
++		kfree_rcu(gwj, rcu);
+ 		err = 0;
+ 		break;
+ 	}
+diff -u -p a/net/ipv4/fib_trie.c b/net/ipv4/fib_trie.c
+--- a/net/ipv4/fib_trie.c
++++ b/net/ipv4/fib_trie.c
+@@ -292,15 +292,9 @@ static const int inflate_threshold = 50;
+ static const int halve_threshold_root = 15;
+ static const int inflate_threshold_root = 30;
+
+-static void __alias_free_mem(struct rcu_head *head)
+-{
+-	struct fib_alias *fa = container_of(head, struct fib_alias, rcu);
+-	kmem_cache_free(fn_alias_kmem, fa);
+-}
+-
+ static inline void alias_free_mem_rcu(struct fib_alias *fa)
+ {
+-	call_rcu(&fa->rcu, __alias_free_mem);
++	kfree_rcu(fa, rcu);
+ }
+
+ #define TNODE_VMALLOC_MAX \
+diff -u -p a/net/ipv4/inetpeer.c b/net/ipv4/inetpeer.c
+--- a/net/ipv4/inetpeer.c
++++ b/net/ipv4/inetpeer.c
+@@ -128,11 +128,6 @@ static struct inet_peer *lookup(const st
+ 	return NULL;
+ }
+
+-static void inetpeer_free_rcu(struct rcu_head *head)
+-{
+-	kmem_cache_free(peer_cachep, container_of(head, struct inet_peer, rcu));
+-}
+-
+ /* perform garbage collect on all items stacked during a lookup */
+ static void inet_peer_gc(struct inet_peer_base *base,
+ 			 struct inet_peer *gc_stack[],
+@@ -168,7 +163,7 @@ static void inet_peer_gc(struct inet_pee
+ 		if (p) {
+ 			rb_erase(&p->rb_node, &base->rb_root);
+ 			base->total--;
+-			call_rcu(&p->rcu, inetpeer_free_rcu);
++			kfree_rcu(p, rcu);
+ 		}
+ 	}
+ }
+@@ -242,7 +237,7 @@ void inet_putpeer(struct inet_peer *p)
+ 	WRITE_ONCE(p->dtime, (__u32)jiffies);
+
+ 	if (refcount_dec_and_test(&p->refcnt))
+-		call_rcu(&p->rcu, inetpeer_free_rcu);
++		kfree_rcu(p, rcu);
+ }
+ EXPORT_SYMBOL_GPL(inet_putpeer);
+
+diff -u -p a/net/ipv6/ip6_fib.c b/net/ipv6/ip6_fib.c
+--- a/net/ipv6/ip6_fib.c
++++ b/net/ipv6/ip6_fib.c
+@@ -198,16 +198,9 @@ static void node_free_immediate(struct n
+ 	net->ipv6.rt6_stats->fib_nodes--;
+ }
+
+-static void node_free_rcu(struct rcu_head *head)
+-{
+-	struct fib6_node *fn = container_of(head, struct fib6_node, rcu);
+-
+-	kmem_cache_free(fib6_node_kmem, fn);
+-}
+-
+ static void node_free(struct net *net, struct fib6_node *fn)
+ {
+-	call_rcu(&fn->rcu, node_free_rcu);
++	kfree_rcu(fn, rcu);
+ 	net->ipv6.rt6_stats->fib_nodes--;
+ }
+
+diff -u -p a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -178,12 +178,6 @@ __be32 xfrm6_tunnel_alloc_spi(struct net
+ }
+ EXPORT_SYMBOL(xfrm6_tunnel_alloc_spi);
+
+-static void x6spi_destroy_rcu(struct rcu_head *head)
+-{
+-	kmem_cache_free(xfrm6_tunnel_spi_kmem,
+-			container_of(head, struct xfrm6_tunnel_spi, rcu_head));
+-}
+-
+ static void xfrm6_tunnel_free_spi(struct net *net, xfrm_address_t *saddr)
+ {
+ 	struct xfrm6_tunnel_net *xfrm6_tn = xfrm6_tunnel_pernet(net);
+@@ -200,7 +194,7 @@ static void xfrm6_tunnel_free_spi(struct
+ 			if (refcount_dec_and_test(&x6spi->refcnt)) {
+ 				hlist_del_rcu(&x6spi->list_byaddr);
+ 				hlist_del_rcu(&x6spi->list_byspi);
+-				call_rcu(&x6spi->rcu_head, x6spi_destroy_rcu);
++				kfree_rcu(x6spi, rcu_head);
+ 				break;
+ 			}
+ 		}
+diff -u -p a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -1584,14 +1584,6 @@ static int kcm_ioctl(struct socket *sock
+ 	return err;
+ }
+
+-static void free_mux(struct rcu_head *rcu)
+-{
+-	struct kcm_mux *mux = container_of(rcu,
+-	    struct kcm_mux, rcu);
+-
+-	kmem_cache_free(kcm_muxp, mux);
+-}
+-
+ static void release_mux(struct kcm_mux *mux)
+ {
+ 	struct kcm_net *knet = mux->knet;
+@@ -1619,7 +1611,7 @@ static void release_mux(struct kcm_mux *
+ 	knet->count--;
+ 	mutex_unlock(&knet->mutex);
+
+-	call_rcu(&mux->rcu, free_mux);
++	kfree_rcu(mux, rcu);
+ }
+
+ static void kcm_done(struct kcm_sock *kcm)
+diff -u -p a/net/netfilter/nf_conncount.c b/net/netfilter/nf_conncount.c
+--- a/net/netfilter/nf_conncount.c
++++ b/net/netfilter/nf_conncount.c
+@@ -275,14 +275,6 @@ bool nf_conncount_gc_list(struct net *ne
+ }
+ EXPORT_SYMBOL_GPL(nf_conncount_gc_list);
+
+-static void __tree_nodes_free(struct rcu_head *h)
+-{
+-	struct nf_conncount_rb *rbconn;
+-
+-	rbconn = container_of(h, struct nf_conncount_rb, rcu_head);
+-	kmem_cache_free(conncount_rb_cachep, rbconn);
+-}
+-
+ /* caller must hold tree nf_conncount_locks[] lock */
+ static void tree_nodes_free(struct rb_root *root,
+ 			    struct nf_conncount_rb *gc_nodes[],
+@@ -295,7 +287,7 @@ static void tree_nodes_free(struct rb_ro
+ 		spin_lock(&rbconn->list.list_lock);
+ 		if (!rbconn->list.count) {
+ 			rb_erase(&rbconn->node, root);
+-			call_rcu(&rbconn->rcu_head, __tree_nodes_free);
++			kfree_rcu(rbconn, rcu_head);
+ 		}
+ 		spin_unlock(&rbconn->list.list_lock);
+ 	}
+diff -u -p a/net/netfilter/nf_conntrack_expect.c b/net/netfilter/nf_conntrack_expect.c
+--- a/net/netfilter/nf_conntrack_expect.c
++++ b/net/netfilter/nf_conntrack_expect.c
+@@ -367,18 +367,10 @@ void nf_ct_expect_init(struct nf_conntra
+ }
+ EXPORT_SYMBOL_GPL(nf_ct_expect_init);
+
+-static void nf_ct_expect_free_rcu(struct rcu_head *head)
+-{
+-	struct nf_conntrack_expect *exp;
+-
+-	exp = container_of(head, struct nf_conntrack_expect, rcu);
+-	kmem_cache_free(nf_ct_expect_cachep, exp);
+-}
+-
+ void nf_ct_expect_put(struct nf_conntrack_expect *exp)
+ {
+ 	if (refcount_dec_and_test(&exp->use))
+-		call_rcu(&exp->rcu, nf_ct_expect_free_rcu);
++		kfree_rcu(exp, rcu);
+ }
+ EXPORT_SYMBOL_GPL(nf_ct_expect_put);
+
+diff -u -p a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
+--- a/net/netfilter/xt_hashlimit.c
++++ b/net/netfilter/xt_hashlimit.c
+@@ -256,18 +256,11 @@ dsthash_alloc_init(struct xt_hashlimit_h
+ 	return ent;
+ }
+
+-static void dsthash_free_rcu(struct rcu_head *head)
+-{
+-	struct dsthash_ent *ent = container_of(head, struct dsthash_ent, rcu);
+-
+-	kmem_cache_free(hashlimit_cachep, ent);
+-}
+-
+ static inline void
+ dsthash_free(struct xt_hashlimit_htable *ht, struct dsthash_ent *ent)
+ {
+ 	hlist_del_rcu(&ent->node);
+-	call_rcu(&ent->rcu, dsthash_free_rcu);
++	kfree_rcu(ent, rcu);
+ 	ht->count--;
+ }
+ static void htable_gc(struct work_struct *work);
