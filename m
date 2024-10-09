@@ -1,125 +1,141 @@
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE69418990C
-	for <kernel-janitors@vger.kernel.org>; Wed,  9 Oct 2024 21:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B686E192D83
+	for <kernel-janitors@vger.kernel.org>; Wed,  9 Oct 2024 21:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728510043; cv=none; b=qP6KOp5NAFIW5+zL6swbIeEsriUAAerkC91zAeWNHjNx9n7KP58Set+Lz36PfLQyjeq/1dxoq8coOPSGmC/CSYzUdb67+TCF1i1lUHoGVrnkbeDXgpKSGjGT8sk+hxbfe5e4xPKH2JnzLXsbXAiNRarzVCvUb2slmJTyvJ/C/i8=
+	t=1728510433; cv=none; b=NiZzX6zO9LOejCk7GZFCtBvy0kZnoxXtZvxVjYz+0t20BlyAsbEVRtqqRMs3E7kSqo7vJ0eCyGiRie8fB5ImT0904EPIXgadeQuM3eEdoHrzEs081MwcMrJlTNRrpMi92CUCuAxE1Qt4+SiMcXq6dBL+EMcls98/AQnFSYKtftg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728510043; c=relaxed/simple;
-	bh=xmvB2RyLMa1YACntjup38BYSkXAwWiROYL+k31jpxMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IW1o8BnoNY6MSFXfbXvsRRPvvplAPJdzyvi3ge7YO6Wtd+oVgtlz4rpSpNsW6plEbVT29K8Cqp5wOYhJjA3oprhbmUi93jJFZu8oNxXaE42hIE3ZA8wrR7/XC6MhbnzkL7VT3aCr0BuSE0xaRSNsqzik5UHegbZMCxVYH0lndbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=CYeG1kgd reason="signature verification failed"; arc=none smtp.client-ip=209.85.210.194
+	s=arc-20240116; t=1728510433; c=relaxed/simple;
+	bh=WRSEJpRqVGEx1p+7xonbAfeXiywHBYSCQGtICtTvn0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gjj4K03yVxtqUAp0oivMVwuPY/VF9XVDrrgOMNmCi2rOdvBVyZZ0yyhpFi0AcckzOl69140t72+VStDd7l47hfrScuUca8I2S/URgKmmUNBsJP439ddB63kt1bcLmj3DLmOVBSV7J00lf53UhhmXhvSWPYQ4RToTGvB1PdaqULI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=fail (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b=VJfR5l6d reason="signature verification failed"; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="CYeG1kgd"
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-71df67c67fcso210589b3a.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 14:40:41 -0700 (PDT)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=everestkc.com.np header.i=@everestkc.com.np header.b="VJfR5l6d"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9968114422so35617866b.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 14:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc.com.np; s=everest; t=1728510040; x=1729114840; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/X1R7jziJAUOGlYud471jpMxA58653P4VmVwYBUwEFw=;
-        b=CYeG1kgdf8GRNQR8kYmQfa5/uue5Xr0JKv+hRstFMEX8uBUNLIPwRreRKr+CCoKmo+
-         s8D7SJ83zOVn5cBss7/CdCdDhX1GAvbPolhEHEx+pTmZVaOKJJkrz+T3co7ATx+NOlGh
-         dEqi9s+DdB40rS5J2VORmBXcgORSvoPr1Bokp6MYBJDY4KdZfUN7VoEAFQwFIIkZYOfP
-         ABLu8oqvvFKoEqVG+AJuoPlONiQ4pJGBHVpFpuNfuvJJtfCsrWjFN5BWsrQewNTdzT34
-         ssDO76ZASnoHgLur1b4KEWz9lyiouuZrKN7bJSFNPx/UnLyFU46rrNd6xq9wp9zCm+4I
-         l66w==
+        d=everestkc.com.np; s=everest; t=1728510430; x=1729115230; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jNY7/3aGEch2q8J1pUCbG8jb+yZy5FZa1A6L2jUg/rI=;
+        b=VJfR5l6dtd9a/+JQt3YSOHQmUJKnatyiYlKK/SpEsJ+WUaD3I1DfHcZ81yosCdx/6/
+         LK1MI9LX+vZGsXAIL5JDJbj7sOe1CXbr5nk+GQGbF+nisFeDobhWY28+AZcC5cEdh7C9
+         floUWkv/R3XMzKGWiVQcfziqZ0//RhycRsCJYuMtqHC0ALrDpd2cWtgTCAAxoGa7iq1R
+         zA+AFZt7VvnpvHIB4ZvIKJc94hh2v1cYgI3b3tPishACbnjJSJtTXgQ14RnYtPVqNOPl
+         MjyRWUd8AjgicLnVx+0GdB3ztC4Csg+mmgrVRtMO8MsM1mvUH5W+T8eLpf8GkS810jg3
+         LvUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728510040; x=1729114840;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/X1R7jziJAUOGlYud471jpMxA58653P4VmVwYBUwEFw=;
-        b=e+0SLuix+RribvpxCTN0rNhOES3RZWscxxFTqCiNimnx/Onv8bgbH+iYf+VsQqjggd
-         lKbg32DyUsdw9VulObsTpN387yv2F3NU1UjyzI6olAhrwl9E44DPDI1vzpXpEcZ6OT/3
-         3yiOWA00TXXZ28C1rcBEhoRUQacI/XAUNtNik2hCY0nI2IxZPtgKDTCfpYdxAgVtvr8t
-         gfCUHzhX2RF3ZaCUG46sRnO1HQ3ng+HScalFBWtf5jIyVbW70zr6VBwGSKP/bL0QdnzA
-         +HmyiAMiyPOT5YFEGXeADlPvT1mUp5iLyQpWuFmXJvKd0/+fDddcLKlw8+M9ulJoJ6MC
-         MIsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCBN8EnfSWUW7Gwy1dq4MHKAwS2k9nkrsdmiQgqodWO9BUVNdQx36g1PmXa+S/Sog0iRhdU7dl3zfasnr7tcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwowYgjrEx66L0zuJBlPnGmkp5yJ6kdluIkPOcd6UK9l81k8EdU
-	EL54cjdCkxLL5BGxZHjN9yu7KlqAhICFfPi4E/A/oJZQiRFfSW45Sk6fpAeYmBQ=
-X-Google-Smtp-Source: AGHT+IEVjxb8q3sxQHY7BRbeLePk3SvJC2jHMCY+loRxISySa+TSK3hZmXPkiAMN30Y1g+VBgiK0xw==
-X-Received: by 2002:a05:6a00:2394:b0:71e:1b6d:5a94 with SMTP id d2e1a72fcca58-71e1db64896mr6487949b3a.5.1728510040550;
-        Wed, 09 Oct 2024 14:40:40 -0700 (PDT)
-Received: from localhost.localdomain ([81.17.122.158])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71e03288a37sm5717000b3a.155.2024.10.09.14.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 14:40:40 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2] drm/xe/guc: Fix dereference before Null check
-Date: Wed,  9 Oct 2024 15:39:20 -0600
-Message-ID: <20241009213922.37962-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1728510430; x=1729115230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jNY7/3aGEch2q8J1pUCbG8jb+yZy5FZa1A6L2jUg/rI=;
+        b=OeEm8XizTYLT68NQy4wSYmNHxCCCEza35RuYPfmTrOBcaVPWO7hu7tjw83u4owQqZQ
+         qXxiC4FyTlRbgSP7wkbZ/mck238/yggy59Bv5xbO55c51Gq6EkkQZoyqXOSWJmm5IGh7
+         ASkK/38KbB4bUFoi8mlSRIMM/tHze+5yLMq9PnJ4FjvwR1oe1l6hmyj+sWxR+2jujEV0
+         LmQtDct4MYqyf07JIE81pzg/9rzaStDSlK5U+kh0NpZdldMpy0uyhJ3zDyDZe2GTaHZq
+         43MQuMxyKA313clhuImrkkAvoQlaXw+ofqBbQrMwVFwWb/54Kc/XXPg3EMMfXnk5T4tP
+         1Pfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiaKBaIhrxH54zjmV2RoutXVdSBjY1fTXuxhtqCQvzjt2DsxgbagWbX6tKznGS+edndzczFdLdOGn9j45ZY8U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgQyDXQXw2OoVSpIJ7/khXDBJIxx/7QvokQqyQRShI+zCdfv0l
+	KZPLcL3gj0nSPaqckIpen8kKJQ2SEPIJHoKRjeFzCCmrpq4AV1QlTWElddDVIzgDZ8ydHVIOhej
+	NIwjvN6Fw7zxBH00J8EsBlfcZVjgSVFudsTBMIQ==
+X-Google-Smtp-Source: AGHT+IE0zrBekMp0OzxByMeyrTa/R8Zyl4m1iSYWvDd5iqQvPvAHYK8tkB354xAtc2sJTVb+vxYrRLAQYa1UDXMGTC8=
+X-Received: by 2002:a17:907:7d8d:b0:a99:497f:317 with SMTP id
+ a640c23a62f3a-a999e8f7daemr122394266b.62.1728510430088; Wed, 09 Oct 2024
+ 14:47:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241009200528.36343-1-everestkc@everestkc.com.np> <018e525e-809c-4c69-a948-a1278af1ff2d@linuxfoundation.org>
+In-Reply-To: <018e525e-809c-4c69-a948-a1278af1ff2d@linuxfoundation.org>
+From: "Everest K.C." <everestkc@everestkc.com.np>
+Date: Wed, 9 Oct 2024 15:46:58 -0600
+Message-ID: <CAEO-vhGcPRQxzZBjDZZA4GZoWwcaOjgK85tUydvr9t7CtD-HGw@mail.gmail.com>
+Subject: Re: [PATCH][next] fs: Fix uninitialized scalar variable now
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pointer list->list is derefrenced before the Null check.
-Fix this by moving the Null check outside the for loop, so that
-the check is performed before the derefrencing.
+On Wed, Oct 9, 2024 at 2:38=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.or=
+g> wrote:
+>
+> On 10/9/24 14:05, Everest K.C. wrote:
+> > Variable `now` is declared without initialization. The variable
+> > could be accessed inside the if-else statements following the
+> > variable declaration, before it has been initialized.
+>
+> It could be, but it isn't. I am not sure if this change is needed.
+If you look at the full code then,  if  `ia_valid & ATTR_CTIME`
+evaluates to False then now is never initialized.
 
-This issue was reported by Coverity Scan.
-https://scan7.scan.coverity.com/#/project-view/51525/11354
-?selectedIssue=1600335
-
-Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
-
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
----
-V1 -> V2: - Combined the `!list->list` check in preexisting if statement
-	  - Added Fixes tag 
-	  - Added the link to the Coverity Scan report 
-
- drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
-index 41262bda20ed..947c3a6d0e5a 100644
---- a/drivers/gpu/drm/xe/xe_guc_capture.c
-+++ b/drivers/gpu/drm/xe/xe_guc_capture.c
-@@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
- {
- 	int i;
- 
--	if (!list || list->num_regs == 0)
-+	if (!list || !list->list || list->num_regs == 0)
- 		return;
- 
- 	if (!regs)
-@@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
- 		struct __guc_mmio_reg_descr desc = list->list[i];
- 		u32 value;
- 
--		if (!list->list)
--			return;
--
- 		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
- 			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
- 		} else {
--- 
-2.43.0
-
+> > This patch initializes the variable to
+> > `inode_set_ctime_current(inode)` by default.
+>
+> Instead of "This patch initializes", change it to "Initialize ..."
+> Do refer to submitting patches document for information on how
+> to write change logs.
+Will do that and send V2.
+> >
+> > This issue was reported by Coverity Scan.
+>
+> Include the the error/report from Coverity.
+Will do that and send V2.
+> >
+> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> > ---
+> >   fs/attr.c | 4 +---
+> >   1 file changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/fs/attr.c b/fs/attr.c
+> > index c614b954bda5..77523af2e62d 100644
+> > --- a/fs/attr.c
+> > +++ b/fs/attr.c
+> > @@ -284,7 +284,7 @@ EXPORT_SYMBOL(inode_newsize_ok);
+> >   static void setattr_copy_mgtime(struct inode *inode, const struct iat=
+tr *attr)
+> >   {
+> >       unsigned int ia_valid =3D attr->ia_valid;
+> > -     struct timespec64 now;
+> > +     struct timespec64 now =3D inode_set_ctime_current(inode);
+> >
+> >       if (ia_valid & ATTR_CTIME) {
+> >               /*
+> > @@ -293,8 +293,6 @@ static void setattr_copy_mgtime(struct inode *inode=
+, const struct iattr *attr)
+> >                */
+> >               if (ia_valid & ATTR_DELEG)
+> >                       now =3D inode_set_ctime_deleg(inode, attr->ia_cti=
+me);
+> > -             else
+> > -                     now =3D inode_set_ctime_current(inode);
+>
+> The code is clear and easy to read the way it is since it handles both ca=
+ses
+> and does appropriate initialization.
+Yes, I agree, but if we initialize now to the current time during its
+declaration then the else
+condition won't be necessary.
+>
+> >       } else {
+> >               /* If ATTR_CTIME isn't set, then ATTR_MTIME shouldn't be =
+either. */
+> >               WARN_ON_ONCE(ia_valid & ATTR_MTIME);
+>
+> I will leave it up to the maintainers to decide whether to take
+> this change or not.
+>
+> thanks,
+> -- Shuah
