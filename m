@@ -1,118 +1,107 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350E61C7B84;
-	Thu, 10 Oct 2024 12:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751761C6F76;
+	Thu, 10 Oct 2024 13:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728565079; cv=none; b=KuD0QHnNQAIWLcMBWvynUx2afT95auqUxJdwWLrgXj9g1Gj8cmWtpuGkV8Xx9xEmMUcWoCuQF5BIN9brmbrRnTU0jFMIL7iFahipA7CBMPUJ+hYASVUR0uT8Z1Ntf75DK0zDJlblJAihmA5ZLKrfONwi8ZhilaORk5Bqye+Xz9o=
+	t=1728565889; cv=none; b=b6WmyI3xDIgEqDFiAD/FfPElOcmgpu08kjQKx9TQM+MnkcJ+4f7XsQZgKvDyDUk8j5F7TQoJ82EavXvmUfpambtPYIHrOU4ydaWEQ5abM3vPUl0aKYmwWgdpwlEqTFdzZxV8cGcwYYYMKzxpRnrtIk16KhHn/nCPA8wLlIUIkD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728565079; c=relaxed/simple;
-	bh=T3JPdNWgqvuOuTKAeftYpFlj5uZXKBpVl1V80k/cnn0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JvoF98S9I2lxLbejYXvWyKO3ctAsFkhlifSxpX7H2HHLQVmN+q7mTA6vTvlZPOkbu/GQR1lYi9+7P9iC3RWaWQTyGd5uBF2sXha52vuCiSVEBcyXOzzGApOwjb9OZqxSBRwU2zndvSc4B07rtpzhJbNCVk8Z1ZiDXvLqE9U7Kt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W3/Z4rw+; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1728565889; c=relaxed/simple;
+	bh=IglgbHRjhUSfOQlT92qpAWChlpTrkPBOSqCNLG6Lse8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rK+3kFpC+9R8r08OWmtTmIOKTYCjl8czm6MZf3XOCR46BEZ5iIycXGJk17dCmVayo94Bx94brQKtGRiCm5gLd5Vf5o4j7fIzYt5IBEaGPviW9l7E3q8rUi1sppYLNrZ1VFZnLVBlMLPIeMcIIIVy7M+9C56YOAC7pnmlSiWL53M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5inw+6+; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W3/Z4rw+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728565078; x=1760101078;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=T3JPdNWgqvuOuTKAeftYpFlj5uZXKBpVl1V80k/cnn0=;
-  b=W3/Z4rw+Q2aRXy1hgMxV2I3gI/mPPSjT5vDP1MQf7pLn16Z50HweTCoP
-   BpjfmeUgmDuKVTYBSsmR6LsaXC6P+QrFPnNgRQ6gsk0p+otU4ADLARt1K
-   N58OVl+g20CUXJRxeGR5NHDmpA8KrKXuzaupOgWBv7YXv/pR2q8cAPfss
-   HjBOwsoOQpg1MUFY8dqDCpVhCzu5P5LDQ1iXKt2/DENpn39qzV+5dooEd
-   1zbg/1nNrEm5erYDZ+9uJ9PbqI5wWhfdIiIMN5VCeUijv/EFVZH4e/y0V
-   +FENhcjd10VXvWCN9sTy+Pw/EZa6zlPaL1eLVraYHZnJjNaQHl3p8pKCL
-   g==;
-X-CSE-ConnectionGUID: bVsi51XvQeaVP/lQ5XjKtA==
-X-CSE-MsgGUID: ewG099Q2RGOdGRWPKYAV/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31617171"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="31617171"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 05:57:57 -0700
-X-CSE-ConnectionGUID: 7jc+Nv4dRmuik6D1op2Ydg==
-X-CSE-MsgGUID: BvLH9yeESWelwBLj91QW5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="114049337"
-Received: from oandoniu-mobl3.ger.corp.intel.com (HELO [10.245.244.227]) ([10.245.244.227])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 05:57:55 -0700
-Message-ID: <648981da5fcf3118b10932eabc07b74c99bf53f4.camel@linux.intel.com>
-Subject: Re: [PATCH][next] drm/xe/guc: Fix inverted logic on snapshot->copy
- check
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: John Harrison <john.c.harrison@intel.com>, Colin Ian King
- <colin.i.king@gmail.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Julia Filipchuk
- <julia.filipchuk@intel.com>, intel-xe@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 10 Oct 2024 14:57:52 +0200
-In-Reply-To: <7feb0520-0cd3-46fc-8b44-a78d1c3a65bf@intel.com>
-References: <20241009160510.372195-1-colin.i.king@gmail.com>
-	 <7feb0520-0cd3-46fc-8b44-a78d1c3a65bf@intel.com>
-Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
- keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5inw+6+"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5399041167cso1424490e87.0;
+        Thu, 10 Oct 2024 06:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728565884; x=1729170684; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=b82Aus5yQF7fu+hcCctT8VXV2Zx7u+Vxmum8cj0Haxg=;
+        b=d5inw+6+6cFzR6a5OfCt40m9FE19ieAsy1mtMUFv5CRFb3GFAoi7GIpn6uoVZlrIX+
+         md+bkSfgN3H9PEzedLisKUBCpUTyWZuUpaguS29teli6C59NBR1//24hyyCMcGrf21we
+         GX7DvEuom84nOPc3P9kmzZZDEpFWokqV+qmlri0pVKybCRD5qtowvHFgcA2fufjZKf7B
+         WnBKATpB8mtzy7e+nwIk5lEe+5mLSxFD5ycgXQnXfe2XqUDQjVdtlU1lOyAEVFDyEBrw
+         8RA7dOPTpoC1c0BorH8NOtvOEhpdVogAQvtj71zdfIljn1AB/rM2q95SNPGGWQXcTZrb
+         x0vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728565884; x=1729170684;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b82Aus5yQF7fu+hcCctT8VXV2Zx7u+Vxmum8cj0Haxg=;
+        b=ElOVA3eKpAwSMrZKkYgyh2FPPg66l1q84J1rzBlwUAOtr5OI5XF9KaNPPRjQsaYdYv
+         wdRHhVThpeKW2DDOni17ohEzTLir2GhOD+mbTpqBkVtEUZHmnpjNZiMUB8SOvm6VpX/P
+         KAzvTnz9HBx6lp+J+bHUkLozFeS7W+e7tyC0SKxtwgL+IcIK0K5CLMZzjx82Yv+m5TW7
+         tiZxAzeUc1jdmDIjS6TBeR6Obi2nf7nPplSO/gmjI/tvcNgcJz0oSz07OJzPzaZREju9
+         D/NBQJL0bYEobOwG9+sf3U8oHn5ymNu+KFyrYo/Zn9fGedNv1En8wJeZl5yuV7YGKVA4
+         Or4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUKuMc2nWTzN7oXRexzM3IXh76I4IIGa6M5PtcrVzOVbkbciWnt6MbbnePQlfdGTwMHWxmdHTX+5xEDvog=@vger.kernel.org, AJvYcCVmXvHffKL92Pke+y5/Nv/rK7F1CtxYUlzcjcmfR9lruYU/uhQiCmvV5Ly4NHBqfmKA/Ml0XwfY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvWrcJ/36ATb1noBwZTu1gVNgxLFBpoH05vDoUVoIq5khWPlsv
+	DGU6Wte9gh4Pr2TkP4NuktDBtFFctzTBCT3pZKJS2Q7V6qxfE9xz
+X-Google-Smtp-Source: AGHT+IGn++pLa76YEUOfxNoXXWxoqjBWGOBOrgK7W3R7P75fXxwvpyYZWqGPdPwFUhfwJIfCRkwTxA==
+X-Received: by 2002:a05:6512:280a:b0:539:9fbb:4331 with SMTP id 2adb3069b0e04-539c4967f41mr5717675e87.54.1728565884237;
+        Thu, 10 Oct 2024 06:11:24 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ede920sm87476966b.8.2024.10.10.06.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 06:11:23 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Jerin Jacob <jerinj@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Naveen Mamindlapalli <naveenm@marvell.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] octeontx2-af: Fix potential integer overflow on shift of a int
+Date: Thu, 10 Oct 2024 14:11:22 +0100
+Message-Id: <20241010131122.751744-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-10-09 at 09:32 -0700, John Harrison wrote:
-> On 10/9/2024 09:05, Colin Ian King wrote:
-> > Currently the check to see if snapshot->copy has been allocated is
-> > inverted and ends up dereferencing snapshot->copy when free'ing
-> > objects in the array when it is null or not free'ing the objects
-> > when snapshot->copy is allocated. Fix this by using the correct
-> > non-null pointer check logic.
-> >=20
-> > Fixes: d8ce1a977226 ("drm/xe/guc: Use a two stage dump for GuC logs
-> > and add more info")
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> Reviewed-by: John Harrison <John.C.Harrison@Intel.com>
->=20
-> Thanks for the fix.
+The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
+arithmetic and then assigned to a 64 bit unsigned integer. In the case
+where the shift is 32 or more this can lead to an overflow. Avoid this
+by shifting using the BIT_ULL macro instead.
 
-Pushed to drm-xe-next. Thanks.
+Fixes: 019aba04f08c ("octeontx2-af: Modify SMQ flush sequence to drop packets")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-/Thomas
-
-
-
->=20
-> > ---
-> > =C2=A0 drivers/gpu/drm/xe/xe_guc_log.c | 2 +-
-> > =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/xe/xe_guc_log.c
-> > b/drivers/gpu/drm/xe/xe_guc_log.c
-> > index 93921f04153f..cc70f448d879 100644
-> > --- a/drivers/gpu/drm/xe/xe_guc_log.c
-> > +++ b/drivers/gpu/drm/xe/xe_guc_log.c
-> > @@ -122,7 +122,7 @@ void xe_guc_log_snapshot_free(struct
-> > xe_guc_log_snapshot *snapshot)
-> > =C2=A0=C2=A0	if (!snapshot)
-> > =C2=A0=C2=A0		return;
-> > =C2=A0=20
-> > -	if (!snapshot->copy) {
-> > +	if (snapshot->copy) {
-> > =C2=A0=C2=A0		for (i =3D 0; i < snapshot->num_chunks; i++)
-> > =C2=A0=C2=A0			kfree(snapshot->copy[i]);
-> > =C2=A0=C2=A0		kfree(snapshot->copy);
->=20
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+index 82832a24fbd8..28f917a37acf 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
+@@ -2411,7 +2411,7 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
+ 				 NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link));
+ 		if (!(cfg & BIT_ULL(12)))
+ 			continue;
+-		bmap |= (1 << i);
++		bmap |= BIT_ULL(i);
+ 		cfg &= ~BIT_ULL(12);
+ 		rvu_write64(rvu, blkaddr,
+ 			    NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link), cfg);
+-- 
+2.39.5
 
