@@ -1,96 +1,80 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257D819EED3
-	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 06:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201891BF322;
+	Thu, 10 Oct 2024 08:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728543264; cv=none; b=SZjKTWOZvtqJi/srhWD+r/uZOwJBuSIimsDVOwOa0/KaHWWZkd3T0VzBQcasUxPs8zohj2f90FMt00DAVOdVdpCFsfEzEbdpQ8ddRgUF1rWF0rQKEh2IQ/m/SkBHt6ZAPKEw+h5J37kAYxQ3dQJXk2O0ehwItyPFaCKRaBl3hgo=
+	t=1728549659; cv=none; b=nmDlQsrFU/hd3Mi9kPN7RcUHCfr8L31XfwutZc/zaNfZ70aAp4D9TjiZ4SCoKn32JgegxgE33+WjdvWNytMrUXiiBtKPj7PRLhrjzvyW4Y3EHcbUDg/WlXilOWsO4vMuD9KC2HMrsap+lYXExQSxiVaqnh3jcvMf9BqvGq3Q3lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728543264; c=relaxed/simple;
-	bh=0ms1chKdEWxTq/IFCWt6Vhx8aIoVGjaB7A8yNhqcslg=;
+	s=arc-20240116; t=1728549659; c=relaxed/simple;
+	bh=90vxXsx2oRvzxGDopEo5+qSMo0jQCscmJyIdkiKViog=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZBUzfAJcHQLMH/DbJfDHIeVfSkebUoDy1GATTqzMsCi+hz5Avn8tY9ao+ngExrS8I17sbLwT2Z3ybxCJkYMwHBV0QGD3vPv3B5KiXhOJFTb3ey4tJgMwteDA6Ia9Wn+p3yo0zPPX861sKV5K+4+wx1PL82Hu9H8eWsNey5Rv0UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mR6Lwqxu; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImuM4rJmGScE3ip+cwOn2MNP/4HRlnMIU8V7IMEmwtemTAg3DIPvClcSCZHDteI8kbgm0Ve6UFzVfsyw/gEqHKxgOOuv5tw4P3PtAGAlYGB0CJi6prRn+nLxuyQn/esyW+ZZT/OBQ4882oy5gyDxBRkf5FQNm7WdDjDnBIVp/z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=L9P38nIn; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mR6Lwqxu"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43115b31366so4424375e9.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 23:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728543261; x=1729148061; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4m5R0JtPpfaojQZL3OlH+ec0WCCRm/TpTjzYrE2iFl4=;
-        b=mR6Lwqxu+ZJdXt40L763SSOqyzsfdRXHR1yYcnv8/87p7EW7yoxV1OQBjBOMfVgZYE
-         fqwmJNHK+UW1dl6S8eBLXtXGRHqBXtFcLXqd00y2zU2To0vgmVdyaKCePo9NlyEk39py
-         xkCtB2Efuo+uwdpNU666DUoiu2IlorucMQ2mFjUJrQS72z5eTlNgrR5EEZiO+HrOgPh6
-         VjtiMyrctU5efucXWll38HH9MOwrrKeBxRh75ZWtOhCsVYZhEBsAvQK+U8m3w6PRzVOI
-         F/8HhAv5O1A5DKEyWHRSPuZQDEMRtIQyXBTmUvYbfyKuwgKPpoEaeaNrB0Myv3HyS3Td
-         kYRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728543261; x=1729148061;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4m5R0JtPpfaojQZL3OlH+ec0WCCRm/TpTjzYrE2iFl4=;
-        b=GBaEtFlGhXaP6+1FprNby0ZXYn1cerzNHLvJ8pMHatrJGgJP0AngL+q0/bo7BViPSr
-         8GwjX09P9/k0sASNhzokDk2QWRt6GO5skQY1rGOU0zbsNeTnB2HSjKJKCnKK0Jmxtbw/
-         HXaEazskBPuQBfx5cXGRkOx122boyHXwx3ds2cqy9pDZJ4ajBy5YBupNdW7W3zdP6eUH
-         zKSKZuj3vEJg8ds3bnMTAbUdx2oUKw021iYqvszRjAJnkNvKZ+rh10frKxF1cUkGVA9R
-         mx3vCUJIdxpIJxe4UKCDchra2K9sUS12XtL1rHH1bfIMZRX6ukNcEck6ddmb2VMSyqz+
-         DGQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYWNcrS3NFSMKxNTi01I3t3EVacpDalSfaTBjeypHM0Fo5ZmoF7DiWINdIwGSmpkRFy55k4i6UjPeFG27Q8w0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0fkg8nFrAa9dH6FStL7elNEdQuluz2NAfGkLxY9uiruKCZs2x
-	eaqh5PjaqPYWY804IU39wO8vEb7w+/NQmunujFPKepf8LN8UUsgZeynHY7W7riY=
-X-Google-Smtp-Source: AGHT+IHT9IlJQF0bRhontqJBDQWsf+MVObv5bUTBsaOIzFmxsVdQfGzrmTIzPD0VfNHeePPUMsSx3Q==
-X-Received: by 2002:a05:600c:358d:b0:42c:b9c8:2bb0 with SMTP id 5b1f17b1804b1-430ccf03b0amr37644685e9.4.1728543261409;
-        Wed, 09 Oct 2024 23:54:21 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b9190dfsm640951f8f.116.2024.10.09.23.54.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 23:54:20 -0700 (PDT)
-Date: Thu, 10 Oct 2024 09:54:17 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, skhan@linuxfoundation.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] drm/xe/guc: Fix dereference before NULL check
-Message-ID: <1a5407c4-3b0f-48a1-940a-cc6b3ff3fb12@stanley.mountain>
-References: <20241010064636.3970-1-everestkc@everestkc.com.np>
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="L9P38nIn"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=KNFeZPwsXdKsBcX3uUpDInf5sJ7Tv8OC8VcZMT67wdg=; b=L9P38nInvsOEuUuWw+wmWovqCz
+	n271/H9ri/SK2ZXCtBZ1gDRCJWrwB26TUaXewjNnxyBJlOJun5g6QE0pkOdAxCDy0o96Lz1KbCTHH
+	Q7kBWmMpI12hM61325TJ1AcjqOYjvzJN2pDFAmXVQ1UxRef+WhWEkBYsqgaXUe/SVLESn5NDEohRF
+	yNpBgRWqROzSfxmCKkKNZ8kmN5lB94UH3Jzl7609esyFPgJdvwF3eFKw42t82p8iEH8/8fq0yXlLs
+	qF1PhqprHj/WVdS9Qz2wUr1pOH40NJvjBOyxGbhJmE6orkJ8VMNgQhNbCYGhNPr51c3eyq+y37H9U
+	akPSIyUA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1syoZ0-008HQ1-1t;
+	Thu, 10 Oct 2024 16:40:41 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 10 Oct 2024 16:40:40 +0800
+Date: Thu, 10 Oct 2024 16:40:40 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 RESEND] crypto: lib/mpi - Extend support for
+ scope-based resource management
+Message-ID: <ZweTCO8cFtP_pvOu@gondor.apana.org.au>
+References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
+ <202409180725.ZV8DCvII-lkp@intel.com>
+ <91d10516-4ba9-4fe0-8f63-86205cc4f88c@web.de>
+ <ZwDPp4bU1J5uEgQe@gondor.apana.org.au>
+ <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241010064636.3970-1-everestkc@everestkc.com.np>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
 
-On Thu, Oct 10, 2024 at 12:46:34AM -0600, Everest K.C. wrote:
-> The pointer list->list is dereferenced before the NULL check.
-> Fix this by moving the NULL check outside the for loop, so that
-> the check is performed before the dereferencing.
-> The list->list pointer cannot be NULL so this has no effect on runtime.
-> It's just a correctness issue.
+On Sat, Oct 05, 2024 at 08:27:03AM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Sep 2024 11:06:35 +0200
 > 
-> This issue was reported by Coverity Scan.
-> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
+> Scope-based resource management became supported for some
+> programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
+> See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
+> Introduce __cleanup() based infrastructure").
 > 
-> Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
+> Thus add a macro call so that the attribute “__free(mpi_free)” can be
+> applied accordingly.
 
-Perfect!  Thanks.
+So where are the users of this?
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
