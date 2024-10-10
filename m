@@ -1,74 +1,40 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751761C6F76;
-	Thu, 10 Oct 2024 13:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3141C2457;
+	Thu, 10 Oct 2024 13:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728565889; cv=none; b=b6WmyI3xDIgEqDFiAD/FfPElOcmgpu08kjQKx9TQM+MnkcJ+4f7XsQZgKvDyDUk8j5F7TQoJ82EavXvmUfpambtPYIHrOU4ydaWEQ5abM3vPUl0aKYmwWgdpwlEqTFdzZxV8cGcwYYYMKzxpRnrtIk16KhHn/nCPA8wLlIUIkD4=
+	t=1728566776; cv=none; b=kf2HmOKE9N/0oDSFQV8OmS8c5d+BLaTjcB+D2sIah90KAbwjUv60Aj9KbM9K+k2KOtLQi5Pgt9h2NidHob1WcXTp2TUuR2apYhItq6s4Wx58+qkcUtdQnnBtbBvJA6Mfk+cuNJsZ8pYiGFlcGO+OB7O0GjBj5pfyZhNOIBm7mJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728565889; c=relaxed/simple;
-	bh=IglgbHRjhUSfOQlT92qpAWChlpTrkPBOSqCNLG6Lse8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=rK+3kFpC+9R8r08OWmtTmIOKTYCjl8czm6MZf3XOCR46BEZ5iIycXGJk17dCmVayo94Bx94brQKtGRiCm5gLd5Vf5o4j7fIzYt5IBEaGPviW9l7E3q8rUi1sppYLNrZ1VFZnLVBlMLPIeMcIIIVy7M+9C56YOAC7pnmlSiWL53M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5inw+6+; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728566776; c=relaxed/simple;
+	bh=lbwvQcbDJsKhSQNGTExP3AgqlRBNb9vOza2lfHEioag=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OkFO2zFWkQYYBtqA2OMkU9nZc4qwD9ixNdxv6jEvRRL6WFHBU1vbdmurcFvGyfDEbeK24xZhythZvNOVlraii+zGjbqIfR2oTkShI+R+vJtUuCg2lleJPPoa3OgcNwGbZSFeMz4ipgwZBLYAyTxPjeptmII9vpxl2zqTJyC1Q6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=uZWzoPcT; arc=none smtp.client-ip=212.227.17.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5inw+6+"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5399041167cso1424490e87.0;
-        Thu, 10 Oct 2024 06:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728565884; x=1729170684; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b82Aus5yQF7fu+hcCctT8VXV2Zx7u+Vxmum8cj0Haxg=;
-        b=d5inw+6+6cFzR6a5OfCt40m9FE19ieAsy1mtMUFv5CRFb3GFAoi7GIpn6uoVZlrIX+
-         md+bkSfgN3H9PEzedLisKUBCpUTyWZuUpaguS29teli6C59NBR1//24hyyCMcGrf21we
-         GX7DvEuom84nOPc3P9kmzZZDEpFWokqV+qmlri0pVKybCRD5qtowvHFgcA2fufjZKf7B
-         WnBKATpB8mtzy7e+nwIk5lEe+5mLSxFD5ycgXQnXfe2XqUDQjVdtlU1lOyAEVFDyEBrw
-         8RA7dOPTpoC1c0BorH8NOtvOEhpdVogAQvtj71zdfIljn1AB/rM2q95SNPGGWQXcTZrb
-         x0vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728565884; x=1729170684;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b82Aus5yQF7fu+hcCctT8VXV2Zx7u+Vxmum8cj0Haxg=;
-        b=ElOVA3eKpAwSMrZKkYgyh2FPPg66l1q84J1rzBlwUAOtr5OI5XF9KaNPPRjQsaYdYv
-         wdRHhVThpeKW2DDOni17ohEzTLir2GhOD+mbTpqBkVtEUZHmnpjNZiMUB8SOvm6VpX/P
-         KAzvTnz9HBx6lp+J+bHUkLozFeS7W+e7tyC0SKxtwgL+IcIK0K5CLMZzjx82Yv+m5TW7
-         tiZxAzeUc1jdmDIjS6TBeR6Obi2nf7nPplSO/gmjI/tvcNgcJz0oSz07OJzPzaZREju9
-         D/NBQJL0bYEobOwG9+sf3U8oHn5ymNu+KFyrYo/Zn9fGedNv1En8wJeZl5yuV7YGKVA4
-         Or4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKuMc2nWTzN7oXRexzM3IXh76I4IIGa6M5PtcrVzOVbkbciWnt6MbbnePQlfdGTwMHWxmdHTX+5xEDvog=@vger.kernel.org, AJvYcCVmXvHffKL92Pke+y5/Nv/rK7F1CtxYUlzcjcmfR9lruYU/uhQiCmvV5Ly4NHBqfmKA/Ml0XwfY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvWrcJ/36ATb1noBwZTu1gVNgxLFBpoH05vDoUVoIq5khWPlsv
-	DGU6Wte9gh4Pr2TkP4NuktDBtFFctzTBCT3pZKJS2Q7V6qxfE9xz
-X-Google-Smtp-Source: AGHT+IGn++pLa76YEUOfxNoXXWxoqjBWGOBOrgK7W3R7P75fXxwvpyYZWqGPdPwFUhfwJIfCRkwTxA==
-X-Received: by 2002:a05:6512:280a:b0:539:9fbb:4331 with SMTP id 2adb3069b0e04-539c4967f41mr5717675e87.54.1728565884237;
-        Thu, 10 Oct 2024 06:11:24 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ede920sm87476966b.8.2024.10.10.06.11.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:11:23 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	hariprasad <hkelam@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Naveen Mamindlapalli <naveenm@marvell.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] octeontx2-af: Fix potential integer overflow on shift of a int
-Date: Thu, 10 Oct 2024 14:11:22 +0100
-Message-Id: <20241010131122.751744-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="uZWzoPcT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1728566756; x=1729171556; i=christian@heusel.eu;
+	bh=ZxURnu2H08+OwhwYM8XDXAevNHVNRfjBtJfTgxY1KTE=;
+	h=X-UI-Sender-Class:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=uZWzoPcTBHAfk9YSOiUcDlX6xi0XjA8l4OeW55GJ9kLRSrKjK8KczW6GKqssGDGe
+	 tVFhBt/eSKIbht8g9tbUwsmVs+v4VE2Wxs43ooYQCt7PpQef1cr2zWS2OzUEiDoQG
+	 B+Hoy509WbrB80SJNlTA7NNFAnDP2ReXOcNIpsD7/HUoo6dE864Yvasqxz084AmbS
+	 QVnPwjIhCIR1ILfFdk+o2gKaaR8WilRqRB+4DuwUZcJpqU32gbE66JKCyp7RQHRb7
+	 Q+I6dq8OEGeZIczRx1JTEaCdcUOPTsq/5XD5IF8zGtpTFCCeUpmwg7U4hPLmH7FsQ
+	 1L+VVMH4HYFhTOilcg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from meterpeter.localdomain ([141.70.80.5]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1McHQA-1tZ3LE1H1I-00hv8U; Thu, 10 Oct 2024 15:25:56 +0200
+From: Christian Heusel <christian@heusel.eu>
+Date: Thu, 10 Oct 2024 15:25:25 +0200
+Subject: [PATCH] btrfs: send: cleanup unneeded variable in changed_verity
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,32 +42,75 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <20241010-btrfs-return-cleanup-v1-1-3d7a7649530a@heusel.eu>
+X-B4-Tracking: v=1; b=H4sIAMTVB2cC/x3MywqDMBBG4VeRWXcg8YLgq5QunPhHBySViZaC+
+ O4Gl9/inJMyTJFpqE4y/DTrNxX4V0VhGdMM1qmYale33nnHslvMbNgPSxxWjOnYuOshIrFrgoB
+ Kuhmi/p/t+3NdN9jTLiRmAAAA
+X-Change-ID: 20241010-btrfs-return-cleanup-57ebbbf53cbe
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ Christian Heusel <christian@heusel.eu>
+X-Mailer: b4 0.14.2
+X-Provags-ID: V03:K1:R8mcuuc5g1POkw3nnpQce73yHBzZvE9EWy3hyp94uMZ3roLAFoY
+ QkgcBft29CvN8qYcioCfNjG3Ln7f3Jrxc+4y153V34WpTRBS/leG064qC5hxi00pb64i9k2
+ sNpjxIva+GrgMKuFoPpHtqVGYRjJS48/3MHLZxPzEg7V5P7fCq/qsKO3UycINR7yYI6uVqj
+ A2Og/M15tKU43Z37TUJJw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZctUuu1v6GU=;w9OCmNNfC0Meonbhc8waVyhUy/X
+ K9Hxcxl4hzt3VHjmp85SsbMac8Jq/5V81GlIKC5eIGWoVJKWrHQfNgfmi6Xod3pRkk45RmnVC
+ Lg2vyvsv24WXS14ArfpP+IgHqGra0+8pnpbEgAlD8pttNUOk/CWszk/NaVlcCDLSg/HPhF6ff
+ ZWWL5Pf2Z5LJ5vANrqxH/aXuoC+5l8+pF+P1exkxGrkFiAqyStx1X0uttft2Rbd5S7smXDa3g
+ 2D/thhdVdAnfEGi+Bgx97Klmj5VZZztORrMojcxGfPqyTzPsM8GGHwhOTZ0y/yR94zqNispg7
+ rWED8VR5ajBB7dsJCV5x6+DN4cIr7hj/tyOzSMWAjj0uqf+ytAsF3RbbDJ8mluGotJIeiZ2rK
+ RwZI5G4zx2p9vQzTwR6jVjDWRLayGucFreDl4PN+8FxVBztcZNxD7IdPWsjlMjBq7GkiPNL+D
+ JxQlKfYmZEz+gddyyg6ZMr1l3kQ6733vxK2dDtigOeb+AAWkFWCa3/K4tvFPKLbHQ+PXVmoRV
+ ZKdnep0+1BOsvqLAINQmlwCyZqmXhBZba10HJSeGEOh7BGh19AQ0yWKiXTEGTY9VpMyX+v4YT
+ GhmMd9aF5DnGeWadVGsIJu9qaMD1jLvIVdeVae+DKI30cd2UZVZep5PYE1JqvxBD1EgaLqe16
+ XUfSAnLp3kPTuwait+mT4+6xISw99821mlz+i339u04kGQZjPNTQBJ6i6mCAbDQB1nZZkjiMo
+ JwZrBfzehThD/8VF9sTgSzPVe5wpR71qA==
 
-The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
-arithmetic and then assigned to a 64 bit unsigned integer. In the case
-where the shift is 32 or more this can lead to an overflow. Avoid this
-by shifting using the BIT_ULL macro instead.
+As all changed_ functions need to return something, just return 0
+directly here, as the verity status is passed via the context.
 
-Fixes: 019aba04f08c ("octeontx2-af: Modify SMQ flush sequence to drop packets")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Suggested-by: David Sterba <dsterba@suse.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410092305.WbyqspH8-lkp@in=
+tel.com/
+Signed-off-by: Christian Heusel <christian@heusel.eu>
+=2D--
+ fs/btrfs/send.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-index 82832a24fbd8..28f917a37acf 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-@@ -2411,7 +2411,7 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
- 				 NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link));
- 		if (!(cfg & BIT_ULL(12)))
- 			continue;
--		bmap |= (1 << i);
-+		bmap |= BIT_ULL(i);
- 		cfg &= ~BIT_ULL(12);
- 		rvu_write64(rvu, blkaddr,
- 			    NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link), cfg);
--- 
-2.39.5
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 7f48ba6c1c77a0862932bdeffdf7b350267ca544..3f7e100a63cd5e444f8cd76c24=
+114a5855a86e61 100644
+=2D-- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -7167,13 +7167,11 @@ static int changed_extent(struct send_ctx *sctx,
+
+ static int changed_verity(struct send_ctx *sctx, enum btrfs_compare_tree_=
+result result)
+ {
+-	int ret =3D 0;
+-
+ 	if (!sctx->cur_inode_new_gen && !sctx->cur_inode_deleted) {
+ 		if (result =3D=3D BTRFS_COMPARE_TREE_NEW)
+ 			sctx->cur_inode_needs_verity =3D true;
+ 	}
+-	return ret;
++	return 0;
+ }
+
+ static int dir_changed(struct send_ctx *sctx, u64 dir)
+
+=2D--
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241010-btrfs-return-cleanup-57ebbbf53cbe
+
+Best regards,
+=2D-
+Christian Heusel <christian@heusel.eu>
 
