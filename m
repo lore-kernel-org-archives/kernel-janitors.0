@@ -1,45 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605181C8FDB;
-	Thu, 10 Oct 2024 13:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2491BBBFC;
+	Thu, 10 Oct 2024 13:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567827; cv=none; b=sj3KZeQ6QRS//BpDBa2caH+ncpVFv+cUfYM80+C5BhxFpFBa5xUHylRD1M7IjNs3eZ3tKEv4MOOnQ9DXWS55ibM4jDBTozWHGrs3+GCuIc7gOEM4WBXlEPLIpSCebRkmVAuaU12TRVkk0ECV4FHtQjUxCt2v+0i/UPPAW6OO00o=
+	t=1728567971; cv=none; b=bGeJc3+FBklhR9089PTBjTsdrKPr45ijP68Wb+DK6iISJfDfjPlrefCVH2p1zBUtnaOKb0arhOq3TY4cBJ9bg34rgEboHUEidgA5E6+zPPD1w17Hw7obSrRVZHeqg8LzruXeOC1Sb0QsuCO3a3Buqh/4vPE7lxZYkIuoa4zP0Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567827; c=relaxed/simple;
-	bh=T9lcuZlL1IcqpWqmvcegkFiFS3QjoOhVBciZ3l8fVBk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BKsi4grjGH1nKuQCmh9rLXwuckRRulx00PqY5fiDGagHd+JmP7kPlWk1Pbsgd/VAcuNQuERhrur965Q2izr+ZUL48HRFUCojlwEtGOcSgFY96MWxpzfz9mXwluY0TerbUH27iRsSjn4RDKiLG7NsWhwxzK9zMD18u4sPBRpG9v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouiLWSVU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728567971; c=relaxed/simple;
+	bh=/Yfo5ib81mCzDEetfWG2fGvlxICAnTuqgqaS76MyLMs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I9DmodrO6u8lDvgvmEjU7CrE4L2M6sV6+yvBSfvN89oOkeJUmxdQn0QBjOLeVRrmf2xovfxBHtrooi3Q9FYeV5XvYqpoXIhV8jMrRDemd7fL3XD5ktaSYujI6BFgE7MBx4pk3fMS3vPGJ0p4LPNy/d1fxam7JyqQ1YyTmw1sIBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=L3wyaQsc; arc=none smtp.client-ip=212.227.126.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouiLWSVU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 632F9C4CEC5;
-	Thu, 10 Oct 2024 13:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728567825;
-	bh=T9lcuZlL1IcqpWqmvcegkFiFS3QjoOhVBciZ3l8fVBk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ouiLWSVUxqY5F6ZvN8UHcJcrT8UTGUvjSD9NXVUvROglGTTi0XglcHU+HlRQtAcUt
-	 8JxKGS0cO4YZ/CXHKaTEmxJuhupAqP5K4CEue1ub9QtlT2ePVoBIZBdmgdc7Wp3xlb
-	 7gvXcbwkH+G+7ldc+OofMf11y4By8Pa29iFF0IlUEDE7vBwF4dq+8X68EOb00GVmoG
-	 mO4tTUCXK5lCtTRwNX5EG9l/OSDKQ1fostQ8KpVKwcqDmDLQPCum1fDtqQ9tyl2smK
-	 5O2QKXILr3UFaeFpsoYceT0gHJV/9YwM/eZLxmrqMWwRNTxvCcGuMVwgTylU1UWo1Q
-	 YO3TC0PWROOgQ==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>
-Cc: kernel-janitors@vger.kernel.org, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240930112121.95324-18-Julia.Lawall@inria.fr>
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
- <20240930112121.95324-18-Julia.Lawall@inria.fr>
-Subject: Re: (subset) [PATCH 17/35] mfd: atmel-smc: Reorganize kerneldoc
- parameter names
-Message-Id: <172856782414.2579482.191569046766660261.b4-ty@kernel.org>
-Date: Thu, 10 Oct 2024 14:43:44 +0100
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="L3wyaQsc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1728567960; x=1729172760; i=christian@heusel.eu;
+	bh=YbVdfUKx0Gkw45c8+fCEZ4ungIa0Xfesdo4ntJ7H6hc=;
+	h=X-UI-Sender-Class:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=L3wyaQsc5y9d2T0MD6vpOywFJEW0gQHj5+iI2W/VURDt4LKhdEo8w+6teCHe3rfC
+	 AP8W9rv3azP4KzT6Xqhd5siJzGXxgeP/S3js0t/c0YX6oW9TMmiiS6WPTH8vGA8eJ
+	 Q36FPKtnUAOWThKgTuQF1HfiphCcWvJMhQzrOMjmdURySXnNt18M4Ou9DCzPcgiTh
+	 4I8wKHVAz5qWgyeb25tpqRpUdMFEX6rYvxSavgXTL/EA/u1Up5Dy0Yaz5tBHxpzyt
+	 ExqRDi2gAxk985Fq2OXJZjxSfcUXLVbgt+IHyvEL3EBj95/hJya4HT5GF4+nhS1VO
+	 vy07xo5zrIGFn918mg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from meterpeter.localdomain ([141.70.80.5]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MuDHR-1tqJF30yK5-00wwUj; Thu, 10 Oct 2024 15:32:28 +0200
+From: Christian Heusel <christian@heusel.eu>
+Date: Thu, 10 Oct 2024 15:32:11 +0200
+Subject: [PATCH] ASoC: amd: yc: Add quirk for ASUS Vivobook S15 M3502RA
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,22 +42,76 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <20241010-bugzilla-219345-asus-vivobook-v1-1-3bb24834e2c3@heusel.eu>
+X-B4-Tracking: v=1; b=H4sIAFrXB2cC/x3MwQqDMAwA0F+RnA00tUX0V4aHdkYXJnY0WMbEf
+ 1/x+C7vBOUsrDA2J2QuopL2CmobeL7CvjLKXA3WWEeGDMZj/cm2BbQ0dM5j0EOxSEkxpTf62XP
+ XE/fReajHJ/Mi3/t/TNf1B3THhzNvAAAA
+X-Change-ID: 20241010-bugzilla-219345-asus-vivobook-5d5e371e7b45
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ Christian Heusel <christian@heusel.eu>
+X-Mailer: b4 0.14.2
+X-Provags-ID: V03:K1:iU3xu8NdBoyFUyQgV6ZckZHRRD9EnPZXOBoJybeKasiLsQuVisx
+ 9QTP3BmxEU08Nxt5810R+2dthTP3lfwDHRMer+HuPHQsbMr02zrWi5rsrnNODtqVL5wWnwa
+ ERSNUYq0am4guSn/41J+yknpB3dOxF8RF2t/h/jHjuIdF85XAwUIv2xar959YH3cdyModNO
+ jggwN3XZGepKgG0hIxSEw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:GNlUAwnDLdQ=;TmveZfhALw/AYfBGb9UOdHt31Iw
+ lDsic/JoHqzVItF8AbflzIB8kwPNSP7cR1qCZepwNujDG1Y/XQxuNrKCvutt6imOCmsDo9Om9
+ UDnYFHXs2I458drxia8tbZ5kf2mVBjvfY5m0UrB055NtCyQkFyQWOdPXIEqh292SPH8FE8AcY
+ VGNiELJm1aA5vbIW3CG/m0J5/KVuqqCq3txDUHCnv8x1ID+Ic6I9tklPB4dJfWals1wNeNPqk
+ rMv6hTOue/NiqS40GrqDNtTH1uGKPhPD+xnUypp/0Y+sVXidA+sBProg1xq+1cBJOWh2YeJX8
+ dgEmOYBShKZ5wqxp7yU/gVVQETV8Yl4ePy4AA1SQBxZPJCcbfbYYH12HZ4tMbHc15TpfIIYOR
+ 8Gi7gHuuTLTA8yj0zJxMR9fHYiWzY/QdWGmVjNsIIG2joJGRgmzptDp7oixqJReLX3BgSxeeT
+ 4LkCCpYKr5l9nul0MVE3cQT3BrwmZOlBaYR7vl8Xy8KmdvEn63MYbBLkBuLnsKeoVoVJ1Yypl
+ G2MI9ZjYB2zPDQVDwSVVjQsdqQANTn8bAhlZxBGb/7SNbjknJXAC9myV0PplVt+AdGpYTrMY/
+ frzxogcLWnT6SHelI/rZ0kaab0AShMtpfu/drGLcAivd2KZedcITpQ5c4q3NYTVlR6MvnLqxE
+ sloDA/5fe85ca9TdPCqPMb13wdYLmAmigirZrhPYL7PBrhfhWc0pjC/pXzTLJOkDFyfYz1tB0
+ cniN78WlFoJAs8kSndPKRAIMPPnVC53Gw==
 
-On Mon, 30 Sep 2024 13:21:03 +0200, Julia Lawall wrote:
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
-> 
-> Problems identified using Coccinelle.
-> 
-> 
+As reported the builtin microphone doesn't work on the ASUS Vivobook
+model S15 OLED M3502RA. Therefore add a quirk for it to make it work.
 
-Applied, thanks!
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D219345
+Signed-off-by: Christian Heusel <christian@heusel.eu>
+=2D--
+Note that I do not have the relevant hardware since I'm sending in this
+quirk at the request of someone else.
 
-[17/35] mfd: atmel-smc: Reorganize kerneldoc parameter names
-        commit: dfa6ab41d9d939135e96c4496d044ca4052cc813
+Also does this change need a "Fixes: ..." tag?
+=2D--
+ sound/soc/amd/yc/acp6x-mach.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---
-Lee Jones [李琼斯]
+diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
+index 06349bf0b65874321e1c54afcff50417cdc9248c..e353542dcf636b5e38db89af53=
+2a73c55e29de51 100644
+=2D-- a/sound/soc/amd/yc/acp6x-mach.c
++++ b/sound/soc/amd/yc/acp6x-mach.c
+@@ -339,6 +339,13 @@ static const struct dmi_system_id yc_acp_quirk_table[=
+] =3D {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "M7600RE"),
+ 		}
+ 	},
++	{
++		.driver_data =3D &acp6x_card,
++		.matches =3D {
++			DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "M3502RA"),
++		}
++	},
+ 	{
+ 		.driver_data =3D &acp6x_card,
+ 		.matches =3D {
+
+=2D--
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241010-bugzilla-219345-asus-vivobook-5d5e371e7b45
+
+Best regards,
+=2D-
+Christian Heusel <christian@heusel.eu>
 
