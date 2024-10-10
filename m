@@ -1,113 +1,114 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A76E1CF7B8;
-	Thu, 10 Oct 2024 20:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E0519A2A3
+	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 21:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728593577; cv=none; b=dX+cP7um/5ra1atvqc6SRT3m9L2SeM528GW18MomLXBDBrbK8I9JxPbDfhN0al6jkye3atmkeOOh7L8/onpEZW8tlEuM/o5Z8mWVAYkZvl+DT8T1YCPaGD+oJAfvP1M4laMxt213L87MYUGoY6o+ZW1VpsyDZyHaFz6844+iwe8=
+	t=1728597081; cv=none; b=kwQ/v3Vlw4LU9gFZkHSxYLiEix73aScsBg4Imoa9a85kIb6Tkp/YycYC5v0Kg47YiTbzK+++zhsiQIDiaKU8LrK0nOJFfodp5fnS0MI8i5rZJWGsRrulERtxBfMGhd+smivO+c2+Ygq0sFZJ/x787wIVhY00WKQL1CBx+bcZN4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728593577; c=relaxed/simple;
-	bh=etEDntW0X/md7gzZZSsscb2sy5hgRhbqVNrPnRO1MkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L0/SqCCgSBXrn7IWwpOa/C82x8bqMt9T0cMnzN8EnVt7icX5RMsveVGe3cGgdgHaSInWN11Daj9/22OgFGDksGjSO4Ud2DVvHEg+hngivAVROFmDG0cKVvfSir4HeJ0tfVwOQ4ZP4SpTsUbv4lrv4maEG+YHOPqM9MAnDfSBoGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NagXoIPD; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1728597081; c=relaxed/simple;
+	bh=PwwXkCJnspDRZTjE+IzvY3hxePY5F0YKt/vsvQ06YnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDjehFsdduFSo6lc9XZi25v7zGVrlR42VNlkPKvGl5JDV+gIp/eh1yIe9fQAmXq6p9QOtr4zpjsOCp1s5fLGKsThycmaIpkJz1bxrhonpI+D1svDPe/Gp3Y7v2YdtoUAnWZAwykxh1PP86tTmFS2Cm0JQy+/aYh/rlRU9so9xvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=G1tNDY1r; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NagXoIPD"
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AJthn1001702;
-	Thu, 10 Oct 2024 20:52:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2023-11-20; bh=wLyIh6+9gn3e4xbPSOwVBCRNfUEr4
-	1UaG6ybaOHaEqI=; b=NagXoIPDGGQhvlyp1LT5AFFKHu9sR6f7PrAt5gm7LY/lc
-	VjnPM4ZoEqSZ8JwzHhMvEoUAl9VJweQ39OpIDbSKR26LbFH7iyZQcWpwoDw2pzlP
-	yfK2ZBs1/SHLOMDnVEGRnOHHiYKNUpGbHhjgtS8Hsz+g5RFiVAuVTGD550U3wAJe
-	3ErxbGLHlGaVu1kz3DfbOq6NX5cbb7Hvtt1WkCK793HafO1f1QJg4SrPqufELOIn
-	MfBZkFdBMohhSdEO9WcXhC6mjAqzQChibo73Kf/X4QhBUMi0TZ3iLRrLdSKBRdyW
-	PauC08k8DgomkB23F1n+yUGLrverIoTNaWvDJvoKg==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 423063upts-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 20:52:44 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49AKqJHd027694;
-	Thu, 10 Oct 2024 20:52:43 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 422uwakw24-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 20:52:43 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49AKqg7i023518;
-	Thu, 10 Oct 2024 20:52:42 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 422uwakw0j-1;
-	Thu, 10 Oct 2024 20:52:42 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: christophe.jaillet@wanadoo.fr, Jacky Huang <ychuang3@nuvoton.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com,
-        stable@vger.kernel.org
-Subject: [PATCH] pinctrl: nuvoton: fix a double free in ma35_pinctrl_dt_node_to_map_func()
-Date: Thu, 10 Oct 2024 13:52:37 -0700
-Message-ID: <20241010205237.1245318-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="G1tNDY1r"
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-8378942ef8aso8368339f.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 14:51:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1728597078; x=1729201878; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uh29BSYlRHYdLt2ocxo/fMoIUs4a5eCJ/P6zRKs85Io=;
+        b=G1tNDY1rh8f9Dmv0bmfFaB0A+k8V3Rl1F54XTBKguT0QVbqJuLjMlajyj1KKj5ahHZ
+         vSc9+W5InJ6wSNjoCk1yvin/tAn6XT1UbLAFfsRPKu4hS/BNJXp1vt0eo8cNyu1bBhsV
+         g98BiZxulhQCd4hst14vSY0Po29G9rJClaZ0o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728597078; x=1729201878;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uh29BSYlRHYdLt2ocxo/fMoIUs4a5eCJ/P6zRKs85Io=;
+        b=rAT+mel+JXUixGjvxVv0pP5YVzMrgXlIvqGh5w47m2GBDeh9vIbaCjMqLGYgAeZOfC
+         b79MzPKaP1igFrPp0b5NkpoYj/LdU1DXsLB3WloijrJpps8alJnRfgT5msiDwJdgtRkY
+         0UiGWdLR121EFU/l/3nEME3G0oNhu5YGRvSdUhtldN0VqmCozyafqCIwvLSGuqQl+YEb
+         EWhB3+P224WJ8sn8BloZl+4eKpuaIR5czzDRkM8tfHkt/Bu5Cxoc6jDQWDq1OGDkadOc
+         E4oA0bLAq2iFUR+cNsszjGSrPZKquv4DR+1UzUz8dhT9guA9eiJhaTOyhpUtgPECyjwz
+         +cog==
+X-Forwarded-Encrypted: i=1; AJvYcCX5BSe19KS2PU/oOiCi/6vV7VS2Sr9A0xaNyo1nC4VGbXDLnqryyv52yyH5FbZYv0lwxwiEhvF2K9+BFmb2hsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc4DoXmEwlqhLpYmHQOXREbY4kRfOpyHRu9xxtbe2eeqmsEtsa
+	ZVWDUsET6AgZGDuFs6fKExEOWGEKPGpmn8di5rNIDqvmR0qTi1yUtHPj2bjjL1M=
+X-Google-Smtp-Source: AGHT+IGiDgwEJY1ZMq6egYLmaOYSKlkRouWLFZDSNPsrPR3YOwgzGFrvb5pu1BOry26y2sZLkG8dPA==
+X-Received: by 2002:a92:c544:0:b0:3a0:4e2b:9ab9 with SMTP id e9e14a558f8ab-3a3b5f7a9b9mr3132295ab.5.1728597078374;
+        Thu, 10 Oct 2024 14:51:18 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3afdae1a7sm4331785ab.1.2024.10.10.14.51.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 14:51:17 -0700 (PDT)
+Message-ID: <2d048360-64b8-4af8-a5a5-3b69c5d3247d@linuxfoundation.org>
+Date: Thu, 10 Oct 2024 15:51:16 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_15,2024-10-10_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410100137
-X-Proofpoint-ORIG-GUID: RLLLelALefeX2SGF4qW2m8rwk2iQWf2e
-X-Proofpoint-GUID: RLLLelALefeX2SGF4qW2m8rwk2iQWf2e
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] mm/execmem: Remove logically deadcode in execmem.c
+To: "Everest K.C." <everestkc@everestkc.com.np>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241010181102.5522-1-everestkc@everestkc.com.np>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241010181102.5522-1-everestkc@everestkc.com.np>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-'new_map' is allocated using devm_* which takes care of freeing the
-allocated data on device removal, call to
+On 10/10/24 12:10, Everest K.C. wrote:
+> NULL check of variable `area` within the `mas_for_each` loop is
+> unnecessary, as the varialbe `area` can never be NULL. So, the
+> `continue` statement inside the if block is never reached.
+> 
+> Remove the if block that performs the NULL check.
+> 
+> This was reported by Coverity Scan:
+> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600362
+> 
+> Fixes: d44c3485820e ("execmem: add support for cache of large ROX pages")
+> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> ---
+>   mm/execmem.c | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/mm/execmem.c b/mm/execmem.c
+> index 9c6ff9687860..97706d8ed720 100644
+> --- a/mm/execmem.c
+> +++ b/mm/execmem.c
+> @@ -75,9 +75,6 @@ static void execmem_cache_clean(struct work_struct *work)
+>   	mas_for_each(&mas, area, ULONG_MAX) {
+>   		size_t size;
+>   
+> -		if (!area)
+> -			continue;
+> -
 
-	.dt_free_map = pinconf_generic_dt_free_map
+This more of a question than comment:
+mas_for_each() says:
+Note: may return the zero entry.
 
-double frees the map as pinconf_generic_dt_free_map() calls
-pinctrl_utils_free_map().
+Does that mean mas_range_len() can be zero? Does that
+need to be handled?
 
-Fix this by using kcalloc() instead of auto-managed devm_kcalloc().
 
-Cc: stable@vger.kernel.org
-Fixes: f805e356313b ("pinctrl: nuvoton: Add ma35d1 pinctrl and GPIO driver")
-Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis and reading code, only compile tested.
-Added the stable tag as the commit in Fixes is also in 6.11.y
----
- drivers/pinctrl/nuvoton/pinctrl-ma35.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>   		size = mas_range_len(&mas);
+>   
+>   		if (IS_ALIGNED(size, PMD_SIZE) &&
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-ma35.c b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-index 1fa00a23534a..59c4e7c6cdde 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-ma35.c
-@@ -218,7 +218,7 @@ static int ma35_pinctrl_dt_node_to_map_func(struct pinctrl_dev *pctldev,
- 	}
- 
- 	map_num += grp->npins;
--	new_map = devm_kcalloc(pctldev->dev, map_num, sizeof(*new_map), GFP_KERNEL);
-+	new_map = kcalloc(map_num, sizeof(*new_map), GFP_KERNEL);
- 	if (!new_map)
- 		return -ENOMEM;
- 
--- 
-2.39.3
 
+thanks,
+-- Shuah
