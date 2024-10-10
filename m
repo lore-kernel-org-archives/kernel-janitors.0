@@ -1,119 +1,129 @@
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BBB1CB324
-	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 15:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A4A1CDFA4;
+	Thu, 10 Oct 2024 15:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728572940; cv=none; b=ra6mmXK/6wBKHimuBwMksTXg53UKxEWqu/VzoC/vIX3V2dCli2/Tc46g7DnuojgTkKXyiaPG98E/QdC4LXWse4cpSAb0PBeIP9uiGKXoVmd6s49MBlDcDIw2juoY96/7TJ+OFiJ2pRCmajjX3pyQKb68Q28HQvx+L+VWqdRNZlo=
+	t=1728574335; cv=none; b=pc5jN0kqtOjcH0Dk5qzVsE9yqefeZvRa+qsym9aS+JqAKP5GpoUs/2bWI6uONy7cbo/P0EWmCi3UhSWhChdBuhzlPcsx+WtWZr7SfUlnrHUSuX4N18yTO/8YpTd69ECLbQh+efP8csYUT9zAbKTbg5heZr+t+urQwReZZjcTGSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728572940; c=relaxed/simple;
-	bh=re8B3h/H8vFcHw1pRsstqY/4kJcouThAZOKm6C5wvDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O1fyzvwohBXQaiOPTMxYvHoiTROqyHAVZLcG+2NaXQyDzRRjlG2NZewJDeQQRfZyHBRhEG3K1Q1nEBd3ObDFk+Y+JtneHuQCKkcjCSsCfDIj6T39nLwEEgcUKFOoniVGTgMx3eddYJt2W9ZBweuL93mnh2tUwhC66MqAAjWwFds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ux03A54M; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1728574335; c=relaxed/simple;
+	bh=8FG78Yx/NmL46NnAHhIiOuyBrOox9hs38DDYe3tcfQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t9q/DgEcgyu5BrzIMKk920vPPMjjAQdJ1wyUFJKk8ZKu4GlKGD2I4GqCX5xfPI4jmyVbbXMaAyxABzqRHJtuaYB3txaILvGzjun5njL1fQKCcsahR3p3SzVxBk1/4LQPrZsiqNAW7NrZT5x8DmsCd5+mJTLOb+NMte+MNu9Bgjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Bncb/jbf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jWYOwQpu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Bncb/jbf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jWYOwQpu; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ux03A54M"
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a3aeb19ea2so2993175ab.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 08:08:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728572937; x=1729177737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1OeAK/S0DDD0sB2cslV1aKUTfEhLWliOpkHnue8Kakw=;
-        b=Ux03A54MufDQlntI2F9Rdo9s/4tWYJATjI6Tw9wNtxzwy4BALWMusSNp59FvUpnBLQ
-         2X0kHv6ZWVCFxEfioDg55gbA1+WA/+6F9l0PjY252HLB5eTeMRBwZFtqeHFqmji/O9Mg
-         PCg0QmFRZ5VAoXXm9vnSWzxBkbzzKsKwHurTs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728572937; x=1729177737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1OeAK/S0DDD0sB2cslV1aKUTfEhLWliOpkHnue8Kakw=;
-        b=e6aFjWD0R3soQ9GoEGGHXND4nfIc5BkEbKwDJoP7oneXQrnWNF1HnQX7QWkkLZ59v+
-         EID1S2xQEJfGbK6lgZXpfdyVAur2lOHR+Ra7SfvfH2/TxD61bK3VCoNvtbTPHwfvEbnT
-         KWzHbbTDq/punT65g8Lyi14OWSq9R/UfIP39rfYbCtYziCG2UCJnh2jC7PdB0BUHiwQi
-         l+u5DwTM+1+gvCta1bleEaxZLAWYF/Un56r0YUwlRGTOcv9aci09E2ZeSc2Lydz9MotP
-         Cp8F5jO2VxBLNQ569lUNW/nTPnIB/nIS18ttbzIFVrnyhBuwH++mQdYYih3stVJQ2QgA
-         6W3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIOFG3HewkEA0E2QR8aqvW4UeO6VgRnvnhdwEnMtphv1pO66gD3i/22Tjv7P3e05Nzat6Z1VJbmoBCq9tiEcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziGJIfNkp7n//09t3UcQXWEiXHwGeCUxxl503iR1lGcHXTfg38
-	7sTHE9RbN7gYkn8UF+faGELy81QEjUmiAJ/gs02MYRqWmVgv4ECI5d8s+RhztzH5tMkzRj2ozOJ
-	x
-X-Google-Smtp-Source: AGHT+IF/YFch+FuI6hF1QYufR1Nw3E8maa4x6ZomIfSTsL5GK4U6VyY878xnwVPnu1VbxY9IMgvlNQ==
-X-Received: by 2002:a05:6e02:1445:b0:3a0:985b:ddb4 with SMTP id e9e14a558f8ab-3a397cd8b87mr55731195ab.2.1728572936492;
-        Thu, 10 Oct 2024 08:08:56 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3afdb3444sm3040575ab.34.2024.10.10.08.08.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 08:08:55 -0700 (PDT)
-Message-ID: <e44527e8-b7c6-4712-97a6-d54f02ad2dc9@linuxfoundation.org>
-Date: Thu, 10 Oct 2024 09:08:54 -0600
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Bncb/jbf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jWYOwQpu";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Bncb/jbf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jWYOwQpu"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 97F4E1FB3D;
+	Thu, 10 Oct 2024 15:32:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728574331;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U1I8+AOgW2GARi6yGqEpCqcjrkgV0fcTQjlxCH5DBo0=;
+	b=Bncb/jbfJjPrn7S8Ou1m14/OGJxEZO1X6pUr+L0IsWV80Jh4peHR443tKLpS0GIcTGAXvK
+	PLKJyA2wlXjNIq2ab+fQgPLt5wv9NfvE2fufcjd3uxVC1wMK4yMwMHBAGDT1AbPnxJLt18
+	dUQuxtAQPOMNx+u23RBK6KW9Uahhim8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728574331;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U1I8+AOgW2GARi6yGqEpCqcjrkgV0fcTQjlxCH5DBo0=;
+	b=jWYOwQpuDPLP1CDMenLnJnDxMTJkMEeGE+15wLZOL2RyeuY8AAboNdH1KdxJYYaE8WYLkN
+	RBaGSwV1Z1/3AqBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728574331;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U1I8+AOgW2GARi6yGqEpCqcjrkgV0fcTQjlxCH5DBo0=;
+	b=Bncb/jbfJjPrn7S8Ou1m14/OGJxEZO1X6pUr+L0IsWV80Jh4peHR443tKLpS0GIcTGAXvK
+	PLKJyA2wlXjNIq2ab+fQgPLt5wv9NfvE2fufcjd3uxVC1wMK4yMwMHBAGDT1AbPnxJLt18
+	dUQuxtAQPOMNx+u23RBK6KW9Uahhim8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728574331;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U1I8+AOgW2GARi6yGqEpCqcjrkgV0fcTQjlxCH5DBo0=;
+	b=jWYOwQpuDPLP1CDMenLnJnDxMTJkMEeGE+15wLZOL2RyeuY8AAboNdH1KdxJYYaE8WYLkN
+	RBaGSwV1Z1/3AqBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 797C413A6E;
+	Thu, 10 Oct 2024 15:32:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id s0B0HXvzB2etfAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 10 Oct 2024 15:32:11 +0000
+Date: Thu, 10 Oct 2024 17:32:06 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Christian Heusel <christian@heusel.eu>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] btrfs: send: cleanup unneeded variable in changed_verity
+Message-ID: <20241010153206.GQ1609@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20241010-btrfs-return-cleanup-v1-1-3d7a7649530a@heusel.eu>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-next V2] ASoC: rt721-sdca: Clean logically deadcode in
- rt721-sdca.c
-To: "Everest K.C." <everestkc@everestkc.com.np>, oder_chiou@realtek.com,
- lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241008234422.5274-1-everestkc@everestkc.com.np>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241008234422.5274-1-everestkc@everestkc.com.np>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010-btrfs-return-cleanup-v1-1-3d7a7649530a@heusel.eu>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.991];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 10/8/24 17:44, Everest K.C. wrote:
-> As the same condition was checked in inner and outer if
-> statements. The code never reaches the inner else statement.
+On Thu, Oct 10, 2024 at 03:25:25PM +0200, Christian Heusel wrote:
+> As all changed_ functions need to return something, just return 0
+> directly here, as the verity status is passed via the context.
 > 
-> This issue was reported by Coverity Scan with CID = 1600271.
-> 
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
-> V1 -> V2: - Updated the patch prefix to PATCH-next
-> 	  - Added how the issue was discovered
-> 
->   sound/soc/codecs/rt721-sdca.c | 10 +++-------
->   1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/rt721-sdca.c b/sound/soc/codecs/rt721-sdca.c
-> index 36056cb7a3ca..4fd26e490610 100644
-> --- a/sound/soc/codecs/rt721-sdca.c
-> +++ b/sound/soc/codecs/rt721-sdca.c
-> @@ -611,13 +611,9 @@ static int rt721_sdca_dmic_set_gain_get(struct snd_kcontrol *kcontrol,
->   
->   		if (!adc_vol_flag) /* boost gain */
->   			ctl = regvalue / boost_step;
-> -		else { /* ADC gain */
-> -			if (adc_vol_flag)
-> -				ctl = p->max - (((vol_max - regvalue) & 0xffff) / interval_offset);
-> -			else
-> -				ctl = p->max - (((0 - regvalue) & 0xffff) / interval_offset);
-> -		}
-> -
-> +		else /* ADC gain */
-> +			ctl = p->max - (((vol_max - regvalue) & 0xffff) / interval_offset);
-> +
->   		ucontrol->value.integer.value[i] = ctl;
->   	}
->   
+> Suggested-by: David Sterba <dsterba@suse.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202410092305.WbyqspH8-lkp@intel.com/
+> Signed-off-by: Christian Heusel <christian@heusel.eu>
 
-
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-
-As mentioned in my review for v1 of this patch, the exact same problem
-exists in sound/soc/codecs/rt722-sdca.c as well, in case you want to send
-patch to fix that one.
-
-thanks,
--- Shuah
+Thank you, added to for-next.
