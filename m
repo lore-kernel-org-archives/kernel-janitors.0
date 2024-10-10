@@ -1,103 +1,114 @@
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878611CDA3C
-	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 18:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2CE4A15;
+	Thu, 10 Oct 2024 18:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583973; cv=none; b=UPA5OQ5t8EnfIyERAV0D26a9PdLHrmwhNfcpI+5BsDDgEQmkx6+dBkofRxUfaf+zQbH3X5pSF8WQ3pZpW+knMC2XXrlb511/Kvaa4iSwj9VE+TK4Khtq7OgI9NN7vEgzsSrnxPn/bWum3C1pLjNDb/7QLENYevgZWS7/0LLAzuA=
+	t=1728584322; cv=none; b=UlNgq76hw7DySvvxVCv+igBGev15jP4U826LYjbNbCPH2/FMkj7ekNTT2V0qxguzEc+WLO6aNwdwNHgP04mfoEHqdg9XCXZpvRYU8Aa+NL3XjxBYTtYwN7/0PBiTCwyaqfExX/W9clyF7KymAaxaZPrKnVvbLOn6rMocQ2ieUp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583973; c=relaxed/simple;
-	bh=ldQLIidAq3XSrv1H+wr586pudMJ5rZs4x1TZh0YPAbA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U+7ul0SHEsgbhVcaJsi7aPzvkocyaP2J/aZCJ3g2ghDK55n9cgHJaiosj9fsDvNdRnuHOVQz3jpfnfseZfws//5pu/16wpvl3xQweywMutnWoFjppOiykie+mb9W7BmTP/l43tV7CwYt/y/BbXSKBKxYsUTvPPwTta5Yx+84yLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=w58brkkt; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+	s=arc-20240116; t=1728584322; c=relaxed/simple;
+	bh=tgZQ4s8ceb4szMBJodEy/aL4HGRWnU41wemrxVirK70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YWaW0/X/CCI7SSNsIQoNsdbFDR3GVo+qiWG/MhRO+DtkyH31yPsRX2kM9aJK+6mFENS0ahQQAHaOCsMd75cwHNgrEB4CmMYNjtAdzGX6B7lGOsBe7MI7K8fliLwurZqUDMTtlx9LOF6Pff9/L5zP9zl7W/3PZTOl9gFZfn8Kn/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WP1mZtQK; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="w58brkkt"
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20b8be13cb1so13264175ad.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 11:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728583972; x=1729188772; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j2Ikuhi33gkCIoLfXtInuXs32ry1GdG7/p1R2O08x7Q=;
-        b=w58brkktEhQWz7RcTWZhy1WH5wJe4yF91xIA7/dJrpcQQmmojdotyIkx1WCicFuToe
-         T+8O3Fsdd7ItNEV/ALx8afey2WUL4pGPLTFkZ+WdrtxeBZovCF5CyY21qykNTywKZEuH
-         3vHYT1nulYDJ3Xfx/3+IfKgx2nhNo+PNS42fpyW4L366a0KCv0izhlK9i2zRco9ZixYC
-         Ijix4lxrRbC8oLgoxwu2tuJq6BbNt3/fgTceEkCenpSprLLTxZY5JAHSspwmzbNDITak
-         5B+x5R/C9ix065RfRoWDnimbNCNaKuiO0PS6LzLNlzK4e/jaySNcE7ALy+qAy0/46r56
-         OvBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728583972; x=1729188772;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j2Ikuhi33gkCIoLfXtInuXs32ry1GdG7/p1R2O08x7Q=;
-        b=uszlMx+6Z6KzoJ8gcsNSXhMJGUGbS1xAwDex6V4EO6iXt/a7d/1VI6q5+tnoFOLg7u
-         sF+3Vs5pw/QSZHfhQmQn/a152kNKK0qG9fDsOi2yYZvCBbu2/ZW1MUQlvht39+ph5Ud5
-         UpR4Xra8aWsY5/9OuWZmJzhIINqsaqJsND1wqusZgOmLYyhS9bmJfP1s3zadQXKXOeBI
-         i5KmIsJ8GOFWmWbPnLiGJIDOoNW5QmoWAeYH92vxp5YG75PLfSLTIOXkVfcfXrX0LF6y
-         4pmzAsrPrG5kMG7WsB7oQTMX/wyul5ruIJeclua8O0BdGCRCAKSkFT/HumWeCnrri/Le
-         DIVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTIZPxdUM6muf4gEaGvpLlo+CGHwNPAHqD1AbLxA4iEybKyNe//f1dAvOmmXCssSHMVxKHRyDw4CXzmLbTF4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMxlmzUh74crwe3EMR3f60rl9IsUPho5zQrKit7Qkr91oee6VC
-	ODquc7tapdG1BzuVryn4vgnQnvI0PVYbokC+Mlwhr3qf2h1bP/pvOKFdghPCpLY=
-X-Google-Smtp-Source: AGHT+IGrb5VGtSEu9KmvvevlzQDjJSErZq0lhnojNnBzr72kJlQ7bv63piP0wdViZzr+N15omjEafw==
-X-Received: by 2002:a17:903:244e:b0:20c:5b98:8cd7 with SMTP id d9443c01a7336-20c637f84aemr120365205ad.38.1728583971732;
-        Thu, 10 Oct 2024 11:12:51 -0700 (PDT)
-Received: from localhost.localdomain ([81.17.122.16])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ea448e468asm1306575a12.4.2024.10.10.11.12.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 11:12:50 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: akpm@linux-foundation.org
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	linux-mm@kvack.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mm/execmem: Remove logically deadcode in execmem.c
-Date: Thu, 10 Oct 2024 12:10:58 -0600
-Message-ID: <20241010181102.5522-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WP1mZtQK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728584298; x=1729189098; i=markus.elfring@web.de;
+	bh=+eu8CANFZAzZ0HdPiYagsaWK/CoxSGXipiAOszYTXG0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=WP1mZtQKRb2+qa6dEJR4S4sYW4/fhZsRofdL6wH9sxz9/FR2qiU75Q6LXQ2y7TUT
+	 tltrcdbXEEy2iLKIAWzZakVHXgHYYKFgCMwm3zO6WZZjX9I3cO34rRq4/GYGVIjfh
+	 JlV1jxP8VPDhRdGKu5mZr1QsA93SX0Xo6aOOcCfuZx9pRj2KUU4usN6Att3K3roIN
+	 gZ0FnS2Lslyp7/x0UO2maD7K1Vhe5sFBR4QOHJXwBAV2ndUQFW+iecCmGh9HP6RWk
+	 39vLLmn116HYapCDvppOuJ2lv2qt2LwF1F5JUMidRE/uNz2GASFO2wd8JIdp246F/
+	 tQ3+pZeR0//3mpwpqw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuVKK-1tqVtg0SUE-00tSy2; Thu, 10
+ Oct 2024 20:18:18 +0200
+Message-ID: <fb7b687e-cca7-4888-8041-bdace6946a37@web.de>
+Date: Thu, 10 Oct 2024 20:18:16 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] irqchip/renesas-rzg2l: Fix missing put_device
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ linux-renesas-soc@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, Chris Paterson
+ <Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Marc Zyngier <maz@kernel.org>
+References: <20241010164155.808931-1-fabrizio.castro.jz@renesas.com>
+ <2e9bf925-8fcd-4e0b-bc3b-996fffc84681@web.de>
+ <CAMuHMdWURj8YzXKbt74KqgEX5fc1ivg_4ctMxUy3QdJGipLuZA@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAMuHMdWURj8YzXKbt74KqgEX5fc1ivg_4ctMxUy3QdJGipLuZA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:28yzoQPmGP4FHa6GOXNEcCsPJuJt2ZVJYXEmPJNZDR2DA6wfw3h
+ o2ZknYUpu1uxQxPE3sNvXpG+UoUelRQ8Td0RUQba4T+lmZEg0mJK/Gwh+FJj+S6RZM12yEI
+ uxAVFjwpOKVWD721+GpyAm982TShZHbP8yxTSSZjFWTGYljpzbpofLqie99BNhaDldCdTNz
+ uszdYzGGXowRzXT8I00WQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XlfypRD/Hy4=;W7RhW9m3uzHT6LhhGuPWZdsS5fi
+ D3sFTv8TtNnQ9YZASa8C7G8QDomUUglMedVSbN4kwmjBdeIcVcujMzOUh5nOwGD00mfWsj8d1
+ qQFidQLMDOjBFaXXC2RD/wJYOuOMPmkyGzcXV/bgoe8Wzerx75zCZw1yCNjnxdAgWnocmYy9D
+ b04j8qz5pSKaUKspvjQQA69aYsp7K8pf1eGKLfpJOn3Eq4dqh56mbMQ8kLotwyYZt7hvaqfJm
+ OBqNSNFkVyFtr6t9wkRi29rPsUj6twkH6QGr58ReyEzqSlC0vVy8HMswjB5BnsUlLPhbOmGju
+ atcijpYCs39bPPD0yVK+qxpykgbMB/xr7y2O9Pp4P1evTF6/hadSXwxIgslW+THtsp8cFmDFR
+ 3bo5IROkyXG8D+LRW5ynh/G7vZeNw6s7RwBip/tTdIizQKXdsMqnr7saAPAJwwl/8ScrkvWhW
+ o1d4j8ooNuHdshf7s9WvlSvHAEm0aog101C7t887WLmNqs+6Za5e3WibT0fzDNLv+eZAFkbZi
+ 9AXZu+4ruTHtQYItCdPAjMXB1U9JlC84rr++WYuT0tavDup7VPa03OV0yENfHCnJ0IqWzIhbS
+ pFsSCd6ZG1vqBj5JAUWLZ5L6wb3NICVon+gMjH7zTJSI93Rz5aY2hbBnqC93sd+QWuuNMlCx2
+ 5Qyd55n2Juzja1Cdy0vNY86F17knCyvcZEX1HcuuyeQuzQecisaRqJ8pwmF6O91Z/bHyNNNg1
+ Hb0wNxg7XxW0ooONcC5FWNCC/i2172vu05EbP8u8Td7Uv/8vuDENonpa6SOPFldPQRu0Gor2l
+ bbQLnClagWqLMtoUmRHOEfBA==
 
-NULL check of variable `area` within the `mas_for_each` loop is
-unnecessary, as the varialbe `area` can never be NULL. So, the
-`continue` statement inside the if block is never reached.
+>>> rzg2l_irqc_common_init calls of_find_device_by_node, but the
+>>> corresponding put_device call is missing.
+>>>
+>>> Make sure we call put_device when failing.
+>>>
+>>> "make coccicheck" will complain about a missing put_device before
+>>> successfully returning from rzg2l_irqc_common_init, however, that's
+>>> a false positive.
+>>>
+>>> Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller dr=
+iver")
+>>
+>> Might the application of scope-based resource management become more
+>> interesting accordingly?
+>
+> No, as explained in the comments:
+>
+>>> +       /*
+>>> +        * coccicheck complains about a missing put_device call before=
+ returning, but it's a false
+>>> +        * positive. We still need &pdev->dev after successfully retur=
+ning from this function.
+>>> +        */
 
-Remove the if block that performs the NULL check.
+Please reconsider the applicability of mentioned programming interfaces on=
+ce more
+(as an evolving software design alternative for goto chains).
+https://elixir.bootlin.com/linux/v6.12-rc2/source/include/linux/device.h#L=
+1239
 
-This was reported by Coverity Scan:
-https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600362
-
-Fixes: d44c3485820e ("execmem: add support for cache of large ROX pages")
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
----
- mm/execmem.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/mm/execmem.c b/mm/execmem.c
-index 9c6ff9687860..97706d8ed720 100644
---- a/mm/execmem.c
-+++ b/mm/execmem.c
-@@ -75,9 +75,6 @@ static void execmem_cache_clean(struct work_struct *work)
- 	mas_for_each(&mas, area, ULONG_MAX) {
- 		size_t size;
- 
--		if (!area)
--			continue;
--
- 		size = mas_range_len(&mas);
- 
- 		if (IS_ALIGNED(size, PMD_SIZE) &&
--- 
-2.43.0
-
+Regards,
+Markus
