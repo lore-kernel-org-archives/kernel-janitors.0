@@ -1,95 +1,121 @@
-Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998E819ABC2;
-	Thu, 10 Oct 2024 17:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD261CEAA6;
+	Thu, 10 Oct 2024 17:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728580652; cv=none; b=e6nZiMZjghU6Ivjm2dtrP6aBiZKCY0+GT1injh62ZzFqVwMFwtourNxopkJFJxFi96Jpcz2dMAbOI8pdUzR+QX8zBYGDUmQW2RDc9JdRy4CjkcrZXt5MeljuE1UhvnrrzjRlYdP2cC2RrX1htf8aIFjvu6NgQF0w76CKuLxlw/0=
+	t=1728582632; cv=none; b=T+ttgQmrMmeAn/Z6MdFaDxBXi88Bkh19IV6EVwUhFOeqKQ75XYdpmir/KJ+0tbcE82XHxPAKGxa6TIOb0ZD7FYZH1AsC/2a0IeVZ0Of3n0N86LDmcyIsTKv484goKTIMKA4UzoJcSoxlwKkAsk+pSBdNdys4BFMy/gNIuQgWaC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728580652; c=relaxed/simple;
-	bh=ppW1GFtiN2nQpgHWFXJsKPPhgKIDkMmMWYGQiJQXcVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KisBiNXrDbCwFrnQidEcSXW4Hp00Ru5Lxrl/QtBGNSmEC3pFBQ6NBM51fCw2YgZJ/szbV1iBE1HotTpeRXVB76gdOW/hVxRLFOtu6cMPeu+bNTyPEg637ctWioEgpqAdQDrHrYblPk09VyWFmyfPhgo4LVrAwP6mmkK8cOhTX+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TwiMtLdY; arc=none smtp.client-ip=80.12.242.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1728582632; c=relaxed/simple;
+	bh=xsHdyUJogwWtEbbTNwx1Iy9nsDjG8JJvO4lc/VxzJDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QQbDMbkN9CRGkkMA4FF8USMQVKEXl9YzPNHnU+D4Qiwe79fydxkSpHg1TJnQ1ODs0DqLEU7V+ugpcMPwr034oiijCQFlmNPilq39QIK+els2MHR38QYOCm/OZfCd9d/lHni3uPod0o8aas0wbOqGKm9q/FEZiSwkQceVrbHuE9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r5IMkH7K; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TwiMtLdY"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ywmts79NqjJK0ywmusP47Q; Thu, 10 Oct 2024 19:17:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1728580641;
-	bh=mCHkK1JJeeVwZX5C2Lk1lJdZRVPDG5DAsI59DVUCJl0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=TwiMtLdYMb26pymQ7efv//qDELeAiOi+QrRFLVf+DP/ssaG4LFsowd5D0pjJ+sfyz
-	 FxsxcT2TisKTnPutqDknHI3fxwAATteqg/uPt7zKg6rVEIK39ThwJaL8NVPB5hUeNa
-	 DrSKvhFnuKaJ3RRhQ9uEJJST6donc/z+7YcdKueLr4WLxO3SDozhCUDdQjQk4ZzRFt
-	 haZVrzD6zY8dbxbpDYx0YXtQVjoe0PFTUq1NnO4gu/8ZIy5FwtNf2HyL8RMLRXX7n/
-	 VMHBVdwkPilYFJgBHnGmfqWTabxzFX94CNAff3p751pTX8es6Kw6Jp/GsmQczauca/
-	 ZqO6hZeoQtagw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 10 Oct 2024 19:17:21 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <41acfc55-9741-4cef-9254-f9e4be4da956@wanadoo.fr>
-Date: Thu, 10 Oct 2024 19:17:19 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r5IMkH7K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B5DC4CEC6;
+	Thu, 10 Oct 2024 17:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728582631;
+	bh=xsHdyUJogwWtEbbTNwx1Iy9nsDjG8JJvO4lc/VxzJDM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r5IMkH7KWM5Xl3hCXpxlOHe01c/eWII5kvstSXQVk5UwsNKsChE/TIu4cE8X9a0mR
+	 G5tps9qRq/pIa6fEBNoaJHn2VKe++F30YV+Ij0EX8K3OcX6tfjWyjMjM/B1zZX6Caf
+	 qzS814IbUCivXTYWR4HTb7+wOaAzqGCBVyZijZllL5GzmNYSfd5spH/5oSt5tduhmN
+	 WYTHAxUR0kF8pZXidWaqbCXExaHMUPkWURLb/38gXHpER2LZz54qt8ETHhTBSvugaG
+	 FrfUHvI0SPVlHf5v/tz8UHm6i+sI8dqBWp65qSK+GPnEQ/jvaI7PcBVpf92bl7eIhs
+	 O/ZAYAAB3dnhg==
+Date: Thu, 10 Oct 2024 18:50:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Christophe JAILLET  <christophe.jaillet@wanadoo.fr>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio: hid-sensors: Fix an error handling path in
+ _hid_sensor_set_report_latency()
+Message-ID: <20241010185017.0163a5b8@jic23-huawei>
+In-Reply-To: <f099a9e8e0651a8599d09a5c98f2f960f0bb3d61.camel@linux.intel.com>
+References: <c50640665f091a04086e5092cf50f73f2055107a.1727980825.git.christophe.jaillet@wanadoo.fr>
+	<20241005190620.5f8633a9@jic23-huawei>
+	<f099a9e8e0651a8599d09a5c98f2f960f0bb3d61.camel@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: sophgo: fix double free in
- cv1800_pctrl_dt_node_to_map()
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
- error27@gmail.com
-References: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Le 10/10/2024 à 13:18, Harshit Mogalapalli a écrit :
-> 'map' is allocated using devm_* which takes care of freeing the allocated
-> data, but in error paths there is a call to pinctrl_utils_free_map()
-> which also does kfree(map) which leads to a double free.
-> 
-> Use kcalloc() instead of devm_kcalloc() as freeing is manually handled.
-> 
-> Fixes: a29d8e93e710 ("pinctrl: sophgo: add support for CV1800B SoC")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
-> This is based on static analysis with smatch, only compile tested.
-> ---
->   drivers/pinctrl/sophgo/pinctrl-cv18xx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-> index d18fc5aa84f7..57f2674e75d6 100644
-> --- a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-> +++ b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-> @@ -221,7 +221,7 @@ static int cv1800_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
->   	if (!grpnames)
->   		return -ENOMEM;
->   
-> -	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
-> +	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
->   	if (!map)
->   		return -ENOMEM;
->   
+On Tue, 08 Oct 2024 10:21:50 -0700
+srinivas pandruvada <srinivas.pandruvada@linux.intel.com> wrote:
 
-Hi,
+> On Sat, 2024-10-05 at 19:06 +0100, Jonathan Cameron wrote:
+> > On Thu,=C2=A0 3 Oct 2024 20:41:12 +0200
+> > Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+> >  =20
+> > > If hid_sensor_set_report_latency() fails, the error code should be
+> > > returned
+> > > instead of a value likely to be interpreted as 'success'.
+> > >=20
+> > > Fixes: 138bc7969c24 ("iio: hid-sensor-hub: Implement batch mode")
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > > This patch is speculative.
+> > >=20
+> > > The code just *looks* wrong to me. No strong opinion, if it is done
+> > > on
+> > > purpose or not. =20
+> > Agreed it smells :)=C2=A0 But I'd like more eyes on this before I take =
+the
+> > fix
+> > as maybe there is something subtle going on.
+> >  =20
+> The original HID sensor spec HUTRR39 didn't have this property (usage
+> ID 0x31B). This was added by update "HUTRR59" to support batch mode to
+> improve power.=C2=A0
+> This attribute will not be present on non batch mode supported system
+> and on supported system this attribute writes will not fail unless some
+> hardware error.
+>=20
+> Returning error is fine.
+>=20
+>     Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+>=20
+> Thanks,
+> Srinivas
+>=20
+Thanks and applied to the fixes-togreg branch of iio.git + marked
+for stable.
 
-drivers/pinctrl/nuvoton/pinctrl-ma35.c seems to have the same issue.
+Jonathan
 
-CJ
-
+>=20
+>=20
+>=20
+>=20
+> > J =20
+> > > ---
+> > > =C2=A0drivers/iio/common/hid-sensors/hid-sensor-trigger.c | 2 +-
+> > > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> > > b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> > > index ad8910e6ad59..abb09fefc792 100644
+> > > --- a/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> > > +++ b/drivers/iio/common/hid-sensors/hid-sensor-trigger.c
+> > > @@ -32,7 +32,7 @@ static ssize_t
+> > > _hid_sensor_set_report_latency(struct device *dev,
+> > > =C2=A0	latency =3D integer * 1000 + fract / 1000;
+> > > =C2=A0	ret =3D hid_sensor_set_report_latency(attrb, latency);
+> > > =C2=A0	if (ret < 0)
+> > > -		return len;
+> > > +		return ret;
+> > > =C2=A0
+> > > =C2=A0	attrb->latency_ms =3D hid_sensor_get_report_latency(attrb);
+> > > =C2=A0 =20
+> >  =20
+>=20
 
