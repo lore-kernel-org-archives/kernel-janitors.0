@@ -1,208 +1,99 @@
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2045.outbound.protection.outlook.com [40.107.102.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327BB1BD008;
-	Thu, 10 Oct 2024 13:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567051; cv=fail; b=XphAMtCp20ZOUVhtHVdKK/9irJTpZugF2gSCL8A2tuvFOZNlmmeevr0HugsweFnGR5tySXYRydfq7akWlm47nONxY7Kw6KDjP2Y2spMEkU1DeIj26hOV4qT+W/Qs2u0rkfWDPrwpnT4h0gxR28NZhRc9iol8sZDsKdcz0zb0KtM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567051; c=relaxed/simple;
-	bh=o8AzQh9jibWS9c/kOaU2MoilFwUOQKXwu/J3TIiH800=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lw0U6L/ovSm4V1nyOdF7SigmFGUMT7zVJXmEi5SSj9iyvgHh/MBKp+0VzcY4LrmaP1J3SWyecbif2n1sGB+HJ3Y4IsY7fu/2uH3VKTQdaPY6Nobig4vyTNtB4m2OfN3B8TVyxLGlZmB2eyRJ+of163eQIF0WWujseNzKA1161k4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xPmcEznn; arc=fail smtp.client-ip=40.107.102.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xPmcEznn"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PZuLHU/b+IZGXYRzP+M1zWMt5+Md/mBetqJ1fBmGXXp34YsS8SLAXNycRdLYVxKSIX0eK2JUJv1o3EodsQNoRNwy1SKooxEAGzV4/UhNTxByFQQzy17PFUS7/HIZvWPH1Iotfe2D68Evx9UY2B21NVv0meqHSsLVoFJ4trln7/eR33UFNjvcNMKzmNBNptVFXzhDJ7RUI7xTaN078567SW1ehoZ9kEppyqkVMzeHMnHgXdVNmJC99Ev1t1qk+ItJ0VezY7ATR8Y5s7DEkFUYoHCPYG3O7JAqXK0Wtsy+c862WAT3Pw+k6wJH3RlCfebhLgb0VgygvoZJNuzYnn+LpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O0/DMiHsFvm4Nsi5ObybOhlPWLWoq31fWwZSptsGQM0=;
- b=UGZ0jqoC893Em1jlpKkh+zvwifMqjMbxrnCPIIjbKb4c3LtU6DimPqjnMe6+0xFcTxicLG4F8bqsCcsF0rN9qHobghVACMlWdZKpx01GhqXTCQd7xq/TUIRn77oF/ECTZjQb0/cs2wxismTxKFDA9o+GqYDUL7avApAVuqkQygyIskO/wTI3mrxQIYjBrWneH+VyR9EY7e9rG2uRNccMdn97GTYnKxYCaj822NAKOaK7NMMc859NRhdlyJsY2rfqA6ZY9HZSw55aCGuvWM+RlegpHYIqa/Ukbl0qJyAhlocLqnmOKIPOaYoI5ERPDyz4r7QTLLzxyxNRigxMIt0pWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O0/DMiHsFvm4Nsi5ObybOhlPWLWoq31fWwZSptsGQM0=;
- b=xPmcEznnf16eVDeHqdgFJ2DeUj4Bx74xs32cVxBVvgeDdD8nhOv/E0cqH/w82ZNHd3xn92szbP9rgFTm6osibvDms42Qp4duzkIEd3nhPstGUc/WbppGsVsJidTmqf/Y9srFwZLXIr7nXtcxFmX7MPdeoXj+cChn7VQs4lypXos=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SA1PR12MB9246.namprd12.prod.outlook.com (2603:10b6:806:3ac::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
- 2024 13:30:44 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
- 13:30:44 +0000
-Message-ID: <a975f84c-f74b-4825-8111-0c883cc709e0@amd.com>
-Date: Thu, 10 Oct 2024 15:30:34 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/amdgpu: Fix potential integer overflow on shift
- of a int
-To: Colin Ian King <colin.i.king@gmail.com>,
- Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Leo Liu <leo.liu@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org,
- Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241010112204.636188-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20241010112204.636188-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0395.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cf::19) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E4C1BC9EE;
+	Thu, 10 Oct 2024 13:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728567456; cv=none; b=aLt4WniN5Ruhsmal9/hIklZeSvOEm31s+0gGtr7hOL/OZhl0EwGfl6ykELx3TjJVX8HH0Pw9Z8NpawSc85ENDc+tk8hwkKjJxU1+NApUbJMizqyb9i95AJ8xCBMi6F6OhwQ+24dT2VF5iHwGGQqVpex8YgaSd0M6E4+VSPCqDnQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728567456; c=relaxed/simple;
+	bh=SIKjiEYlDDDOqLRf8TeBLmmvdWfnUp8Y2f7+7Cs8lGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d4DLj5ZDXxGa/ekisfu9PrDZH1cwPb5+ionA4javngn5y8iIOPOwTnVH0E/byx+ab00ZFBLaU6kah1cAAkrONB2CpZhPth/9LeoT0GKXyY2ZsiQ1owqCOMe4/32wu2I4d+aMyUiiHsJH10yIEtEBPeGckxSgZX8GTT8NzWxQqPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539885dd4bcso1246077e87.0;
+        Thu, 10 Oct 2024 06:37:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728567452; x=1729172252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZzwzKkCp6jPszo6ZyDDEvEEJi7wd/je50oKdYYshjiU=;
+        b=cnD5/3xkP4d93Uudyvc9IVJodBzVtp/xwEsb73MdELH8T/qWM3ja46Vj6FR2TzgBu2
+         vTFDM31MOoebJYydp9u4B1rK+mUhxmi7ucw6A1bw/4TUon60/oDfinWQF2tf7aAv+YzH
+         egNaVHd+j7ippJIKVEu7F75orFkhez1x3U4qvVnz6CdLxuhw7OkdVeJ341OIu8Pf336r
+         e6/2Z0decytz+UoawLfvAzu5kj6VMPRe3h4I7ObX5zloSEq4cKW7vLeVJoRiEp8O5qPI
+         pt89s/5kJbyd5vCDtfShL4YpYqy1ZccMbV+kSRIW7beTaB73LnJ6RAsgq1ef9LffFTi5
+         D66g==
+X-Forwarded-Encrypted: i=1; AJvYcCVVcjBTI54+mrfHO/BmaCdQ5bXspDad0gcSITHaWgaMQV03cUwE+o0/Vq22QOjZ3NVqM5AFloUnHjLLJzee@vger.kernel.org, AJvYcCXsFaliWiYWecl9n+ZTXP8QEy2Lgvr8IiSoX/OjYAryKpSjqsS+2nvXT6hQgx+4V2r6J1hlNq9iQRpCMmPrtJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1Mv/2UCdGKy3w1WeWosH7l4u2Mb5H8N4Vt+p7tBHwfyu7SdOK
+	l1JfLy2i9r+eF/2MZUxUaLM/qJN5ffdTtIvNRWN9lXCbKTw94/xtcytNVMgY
+X-Google-Smtp-Source: AGHT+IEcoh2RQaSNRbeOOEMIpz6chBIsW5POZgHXcJIevZqUWxi1khYXg/UiWN/+93yD3ZacmtUVfQ==
+X-Received: by 2002:a05:6512:3054:b0:539:8ad5:5093 with SMTP id 2adb3069b0e04-539c48e4746mr3735271e87.35.1728567451633;
+        Thu, 10 Oct 2024 06:37:31 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb9053c2sm255644e87.282.2024.10.10.06.37.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 06:37:30 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso10028321fa.3;
+        Thu, 10 Oct 2024 06:37:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVfvcykOVSZeZYzHxNTZtyf4O9hP5sY88sQV/0t8D4yWfkHtIqvj6N8vmFXuFBOAedTRSVG/ljTAmEqMQ1g3Ms=@vger.kernel.org, AJvYcCVkfL2cB8MpP6P5FHGXuCS3kAw3L91sdX1OGX1+po+1fQIDxGnjWW50Pt0PgOD3SGyucNyjmtx8HYANNbcU@vger.kernel.org
+X-Received: by 2002:a2e:f19:0:b0:2fa:c57a:3b1c with SMTP id
+ 38308e7fff4ca-2fb1873eca8mr32339161fa.17.1728567450394; Thu, 10 Oct 2024
+ 06:37:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA1PR12MB9246:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55b2bc8e-89b3-43ce-8ae9-08dce92fbe1e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QTJzcGZTTkN2N1FqMS95dWxwR3FxUmw2dUlrVmVKak5aV3gzVWJuOWo1RUEz?=
- =?utf-8?B?RmRLdnBubElLTGlvbnhTTTZsbkJRczlDWlhoQ0MrZHMzK1FKOVBtbTdpOEdr?=
- =?utf-8?B?Q3JzRHlENGkrSEFXSmplTnR6eHE5YlFGUEFLaHEweHlwNkRIR2lxMFpZbEx5?=
- =?utf-8?B?L041ajJtS2ZxL2NqRGxhWWJRRHNzbW1ZaGUxZjZjTXFTa0JwbE5JZDQ3ZFZ4?=
- =?utf-8?B?dldickFUdWdDbEFRb1pGTys3SlVQRTQ3VGxCdUxCUGZOek5QaE85MFNNcy9O?=
- =?utf-8?B?anQ3VE1FTjNuZkpueWE4MG4rYXpMdDFvUmgydnkwTFBZd1c4dGVDcCtkbDhm?=
- =?utf-8?B?SVFyb1p5aC94R2ZJeUJ1SmRPeVhxa2xoQ2xUdlVrSlgyQVRqYnRzVXpNQWhw?=
- =?utf-8?B?TVlBQ2x2SS9OVEVWYVZtWktMYXAwcE9OVWVHT1VrWDBERGlicC9HcERmQVph?=
- =?utf-8?B?bVQxanI2aGtZSXVPQkpHU3ZvVVdEbm43Yy9nYXA0Ykw2U0NkVXJlRWtOOHE1?=
- =?utf-8?B?M09lMTVsN0hwYUxidUVoanNRalRpSThxbVRlMzlaODZzRjlGZkw0NHJNeW0x?=
- =?utf-8?B?ck40UU5XL09BQkdVRDMwRFFQMDc5QVF4VDYvcVE2ZlRMU04xNTRHNEorUTAz?=
- =?utf-8?B?Q215WE9tbjdjRDlkbWx1RllOSGduT0pibVJpazFQazZKYm5jQXRPbXFiWXBu?=
- =?utf-8?B?U3BySGhSd1BnRHdiNVN4YzdncnM1Mm45Z0doMURMNTVQR0I4a1JNTG1jRFI0?=
- =?utf-8?B?d3lYZVRVMWVqd1lvaERWazRCRUh3S3hpUjR5ZExDZWR4VUhUQWVOV1h1NXh3?=
- =?utf-8?B?ZHRvU3l2dllSdDBmOWVYSHJRRm4xeUE5dENGK29MNWhTNFk0WDFEd2lId0dz?=
- =?utf-8?B?WVBtd2J5Z3dlc0J2d0hRdmlod3Q1eXN6SzZOQVlBY2creE1qZFYrOUxTWG1P?=
- =?utf-8?B?S09JMzRmTUUrSnpOdkF0UWZpK1lzcG9FcHJoWHBiQkQ1dmRlWG9hR3hxTzkv?=
- =?utf-8?B?TEJ1RUovcFAvYWl0UHpxWGxRRFp5SlBFZ0JpTko3ODczU1BrVkZ2citpMjhH?=
- =?utf-8?B?NGpyWWY0UjYwZi9pZFNBdHk5Vm4xOWNHclVpRU83UDZObDN2VVZHZExMVGpI?=
- =?utf-8?B?Qk50UTcrUlZ4SUh5S3ZHMUQyOGtEeUwveVo5Q1pEOHpnM1h5TDdBYW5DOXJ0?=
- =?utf-8?B?clJrSmVFUVllQnZJdWsweEF0RzA1amF5R3lMK2xaSUNwVGs5MmY1NEJjeVFR?=
- =?utf-8?B?MWpmUlBDQUIwU24yUWpWK0RpRjFBN2JUQUliZmh4cmNhdFVlUlFzRkt3enl3?=
- =?utf-8?B?UEpIb3E5RGpaQVl5K3RFeTlSR2xnZStWaG41N0ozQ1ZScXo0QTlibFpNSTNh?=
- =?utf-8?B?UmovRlUvNFFoN0FvZmdzdis1ZkRkMFRkK082UUxZeEhHYS9lR2p3Q2xVTFJE?=
- =?utf-8?B?aXA1OWpjaDlmL0tIdVpFWWRnYnZDdXZPTzJiWW5GRlJKcUFvR0lxQVdZckcv?=
- =?utf-8?B?MTk4QjVTWXQ4c25sTlljU0o2WDJ6cDVobXFmczlOMENKdDJmMUYwWHR2SnBn?=
- =?utf-8?B?V0JsU0VEWEVVbVBqV3czWXVzVEJEaTl2ZE0vcmM1RnZTUEU2NEtXUzB4amJn?=
- =?utf-8?B?dERPQzV6RXkzbUMwTUFoaWdsTGE4U1BiSUNXa0NTRmxid2lRZVZWZVlVODV4?=
- =?utf-8?B?TmdWcEpkR1hXMG52cUk0WThCc2hLZU9ub2FrOW9INVNKZHd4Y0FDTVRRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TnNRZGNsbWRnaE9zNzBiWUhIanZsTTVGMFhuL0JEK0VtT3VWT2FOa3QyYVVN?=
- =?utf-8?B?OHQxODVabjJscThXeFpWcG11eXVpY05Nbm9ydHZuTUJkeUxtM1hUemY4MHNQ?=
- =?utf-8?B?YjBPMXNpZUp5bTdvTWhLcFJqbVBoMUpMZ1NnTUhXdDBOaDBpNEgvQnFsbWM5?=
- =?utf-8?B?TEdRQVdqWDM0anZuUDJOSFpoNDZqM3JIRUV1czdGM0NvOTY4eklxR0FRQjBT?=
- =?utf-8?B?UlMrN2g0dGNMazlsN01sMnYvaUpOMU5XNTJtY0FMZUM0SURoanhnNDJIa2wv?=
- =?utf-8?B?Snl3N0RDZ3kzZy9IOTF6Wk8zbllFUVhwOEw2NG1rUzhONlhpdHBvRVJTcjkr?=
- =?utf-8?B?SDhlajZEKzR5eEhxV2Vtd05MYnI3RlgvRU96ZHFqSENqSXdaNTExdjNrSUht?=
- =?utf-8?B?YVRtQUdDcVhBdGhWTUZlMHROWk81Z3g2em1uQ0Fzb25NVGJOcUg4YkVPR2x3?=
- =?utf-8?B?aXV4UjVqZWJzVTJzb0ZqUEpmaHpqV2JYRjFkWlpBV2ZmU0J6dmg2aStGM3Uv?=
- =?utf-8?B?NmUrRTdjNUlpYTNyRGdHU3ByZ2FMbjkrZDJlQXBSREhrZDU1MVBFQ25LUDZw?=
- =?utf-8?B?cm1IOHJCbEs1VFptR0RpclgzSmV3RnpOdWhvajQ2NnBOTW53MmE2SDlMZWZj?=
- =?utf-8?B?ZGczS2Fxb1lXQ2dlOWJpVzhCZ2YxRmlpQWNKL2hKOHo1cHFCWXBiWHVZNmhU?=
- =?utf-8?B?eGlzZCszNGhpR1hzVWs4akhFTlEzNWJYRTNmeC8zblZtc2hsMEpxZjFtRDdD?=
- =?utf-8?B?MFkxQmxHUTlSdyt2dHViUWdZb0lEajJMZnY2ai81bDJnYkFEbXRrMEIyNVVC?=
- =?utf-8?B?S04xeVBzNU8xd0QrZEp2OFFPVXVZRklNZWRwMnR4cndSSnF5SjcvVGdINXU4?=
- =?utf-8?B?N1EyeXBiazA4YTdiV0FDUWhTZVRPRjZ2U1BTdGxyOW84a3R4MDM2MWlPaGNS?=
- =?utf-8?B?QU5hRkpEYlB3US9hRTZ0MFdSUWNSQ2FxckhpSU9SWnBia0RIMGVEeExwTVRh?=
- =?utf-8?B?c29BNU5vVE1qcHBnQVlUWWttVWFJVzU0SGI3bFF0bEx5b0pBMGk3ZUZ5eURG?=
- =?utf-8?B?M3dKVVBaK3ovN0RDalBqK1hoY25YcmcvNHlxUFE5SDlQQXJrWnJnL3pnbXRt?=
- =?utf-8?B?d1RnWEl5NzdlR2VwdTJldHpNT01vYTdCZG1KSjA2TWw4ZVowZG5TWGdOM1g3?=
- =?utf-8?B?U0FCRWJURkdpaExiaFhuVFlzYnkyM3l5cFUyOUFJSFdycmNpaU5nckVwbFp1?=
- =?utf-8?B?MjRHV2hNY1RsL1lmTWVudVRPNTZVaGR1S3U4Tmt3WldJWHFMWERNYzl3NlUv?=
- =?utf-8?B?T0VzYjVMSml5RERqOEo0TDFGaCttVmVoTW1SSk5xQTV2Y1JWbzUva3A5Zndx?=
- =?utf-8?B?b3dpNTlLQWc2Q3JTSzVHUGRIZ3Z1dHlkNHI4bEZDZVFpZG91bWtiVmJPNlVp?=
- =?utf-8?B?eEJJUExwdGZ3RW1DNUJmcmgvMFRKSFVoekVlbXBtNnNQd0RwYnJkMWl6bk4x?=
- =?utf-8?B?eXU1Y241QzFGa2JJR3YxcEZNMjVxZzhON21iZ21oYnViRnhCYjcrR2paNnFm?=
- =?utf-8?B?eDk0Q2ZvRHJyemt5SUU1QzdubE5WY0V5VElQazR0OHd6MVk5ZXptQ1dXNDBG?=
- =?utf-8?B?SXZydEY0a0RueE1Qamo2UENuaWtYUTAzVkpUNmdhQVU5TEcyRzhUZEQxNlRp?=
- =?utf-8?B?M1JQWHo3ZkFjT0RSeXd4T2lyUFE0ZlVRclJJbk0vWG9keGxCZXRWM3c3V05r?=
- =?utf-8?B?Tk1pV1o2ZXoyRnBXdEttTkJ3SGxUVHNFOW9Zdk9hbkZjbUQ3ajB3SmNOTW51?=
- =?utf-8?B?Ynd4MFR0KzQ1MU9LdFowOXRhTXNCa1hQTEk1bHFoSlJ0UTI1a0pWOTViRFhM?=
- =?utf-8?B?OWt1WElYZkNIR0ZjaHZNSStvdFhXM0xGdUttcWxBWE1KeGJPZG1pVUN3SXhY?=
- =?utf-8?B?Z0pqdG9xVEpxbUhsQmRYM3lsc2pQMkk3aWRWR1JCLzFvNEZKRFdXaGI1aytM?=
- =?utf-8?B?cHAzcjZFNnRyUmloWVc2UlJOWWxucTFxMHdPTXY3djhFTEJ2MENGaFpxY3Av?=
- =?utf-8?B?OU94MnZOM0tPbVpDbjBpeXFyTFlKcE9vU2xIR0hrclFMUjVPTTR5SG4rZjF3?=
- =?utf-8?Q?wg1agra4GEtWWtJnV5WDiIrlF?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55b2bc8e-89b3-43ce-8ae9-08dce92fbe1e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 13:30:44.5033
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: skBATaU5wFeimebryiATcn6w3waWYPUaa87PL2zg1MbaK1EpywLdG83+s76OORGV
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9246
+References: <20241010091355.8271-1-algonell@gmail.com>
+In-Reply-To: <20241010091355.8271-1-algonell@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 10 Oct 2024 22:37:16 +0900
+X-Gmail-Original-Message-ID: <CAGb2v64=WSCyKVyMtUv1d_WoLLnJjEx4WzC3mmF2uB+6O+0oZQ@mail.gmail.com>
+Message-ID: <CAGb2v64=WSCyKVyMtUv1d_WoLLnJjEx4WzC3mmF2uB+6O+0oZQ@mail.gmail.com>
+Subject: Re: [PATCH] phy: sun4i-usb: Fix a typo
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 10.10.24 um 13:22 schrieb Colin Ian King:
-> The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
-> arithmetic and then assigned to and operated upon using a 64 bit unsigned
-> integer. In the case where the shift is 32 or more this can lead to an
-> overflow. Avoid this by shifting using the BIT_ULL macro instead.
-
-Advait Dhamorikar already came up with a similar patch which also cleans 
-up some other occasions.
-
-Regards,
-Christian.
-
+On Thu, Oct 10, 2024 at 6:14=E2=80=AFPM Andrew Kreimer <algonell@gmail.com>=
+ wrote:
 >
-> Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fix a typo in comments: wether -> whether.
+>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+
+Acked-by: Chen-Yu Tsai <wens@csie.org>
+
 > ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+>  include/linux/phy/phy-sun4i-usb.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> index 95e2796919fc..136a0c8d8c7a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> @@ -357,14 +357,14 @@ static int amdgpu_debugfs_jpeg_sched_mask_set(void *data, u64 val)
->   	if (!adev)
->   		return -ENODEV;
->   
-> -	mask = (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
-> +	mask = (BIT_ULL(adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
->   	if ((val & mask) == 0)
->   		return -EINVAL;
->   
->   	for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
->   		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
->   			ring = &adev->jpeg.inst[i].ring_dec[j];
-> -			if (val & (1 << ((i * adev->jpeg.num_jpeg_rings) + j)))
-> +			if (val & BIT_ULL((i * adev->jpeg.num_jpeg_rings) + j))
->   				ring->sched.ready = true;
->   			else
->   				ring->sched.ready = false;
-> @@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void *data, u64 *val)
->   		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
->   			ring = &adev->jpeg.inst[i].ring_dec[j];
->   			if (ring->sched.ready)
-> -				mask |= 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
-> +				mask |= BIT_ULL((i * adev->jpeg.num_jpeg_rings) + j);
->   		}
->   	}
->   	*val = mask;
-
+> diff --git a/include/linux/phy/phy-sun4i-usb.h b/include/linux/phy/phy-su=
+n4i-usb.h
+> index 91eb755ee73b..f3e7b13608e4 100644
+> --- a/include/linux/phy/phy-sun4i-usb.h
+> +++ b/include/linux/phy/phy-sun4i-usb.h
+> @@ -11,7 +11,7 @@
+>  /**
+>   * sun4i_usb_phy_set_squelch_detect() - Enable/disable squelch detect
+>   * @phy: reference to a sun4i usb phy
+> - * @enabled: wether to enable or disable squelch detect
+> + * @enabled: whether to enable or disable squelch detect
+>   */
+>  void sun4i_usb_phy_set_squelch_detect(struct phy *phy, bool enabled);
+>
+> --
+> 2.39.5
+>
