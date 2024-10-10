@@ -1,120 +1,105 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB1333CD2;
-	Thu, 10 Oct 2024 11:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4408EF9CB;
+	Thu, 10 Oct 2024 11:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728559329; cv=none; b=ckK8+gGX1GK8HHBSF/FRBestU3QD1Q7voaJdBHEHGBr4RqWlPBTG678dkKeGG1+4uTVb7UHbwopcsBvL2b6OF6LuCvgVLR8ArN7HmpDyTH2voyjleBWkGYgzHb+OJ+qpEmuT9A9N6tMDsiB5MEfz8mdI2SZryVRTmHgc4tqK2L4=
+	t=1728559498; cv=none; b=InQCUQURrZJXy2KopfSLwNiiMGblaTDM2DJRM0l0CyqwgCNx3NwGn5Q2bb6+oQP1HiqSQZfHabSclAK/4fyQ4lt7NHQfHthsiNVM1rjTSnfJ451Ce/aOm+WhTGwwWAf+3Bd/G1B+fWGQLjEO7Tc3sYVLdTpbXhucqxnw+KfcU/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728559329; c=relaxed/simple;
-	bh=xBOiaZ6QpT8eVqruUMXNPd/eR72qjUQHCYtEiemiRCw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=P+Lnz2516vOmX01vq5kIU2BNoTA2WaY1x4sVfDs6CzGhmXm7mIH7Uaw+bI+SLxGi9u/3T4FI8w1wJQjl/Trl0fhb4L0huqK4sJch9yrPpIhA/UrhCLU4zX6+UXbIASFHF9Epxk+Oe8xg3QmFlCWsojqLdR1CkLE0HyoRwy3f/Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktta9DT/; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728559498; c=relaxed/simple;
+	bh=ywceDmzYQKH28KRgkOB9nGjXZGaXYWHDTS1DHsIk3Xk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IUuLrkdglHhx44mApQ+EQFXIKRBLA8kVLdD9+H5nnVY0EFblvRJ+e40vmW4us2EYqIwLbufF7EWcvY70Bo4saly8+aC8AfZUQPLYZFWK7z33uesqXuj+3/ij+uB959dIg9EAQBlcEhGa+vndDrh1DE+o647jvVIS4gMPjnChG+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lJU3XipM; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktta9DT/"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c883459b19so862645a12.2;
-        Thu, 10 Oct 2024 04:22:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728559326; x=1729164126; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JckSSufIviovUZkUcMEHSF3a41RUVzp568xffw5Iahs=;
-        b=ktta9DT/XQk7fTlA3UjAg470IcLLuwX4dG+Sea6MoKkItpXMiS3e6mh84z6mPQBhlG
-         LGTZR8sTstn/qUNUhc0ZTD8/emjhdr86Me3PHLzwzwVvRXIURzgZIRrQQB60GI0Xg5Pg
-         LxQIu40l0ZUgzE+AuxGhlcbJHgV221l1Dz/+NTbsYfCHikU94kbjfaSQ7o169exn4/ux
-         ndgz3fhoJZBm+cA141R3PEowDL/AkvSJwJLW9zRrrz9iDPiFyTR5kMJj7W1ZmziIkJz2
-         wrdSQQnILBtAfHZwnMhklFFECQ8mxlueL8SwoR3yD0V8aqopMOQcwigkeSWH2/Hgcp35
-         0jNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728559326; x=1729164126;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JckSSufIviovUZkUcMEHSF3a41RUVzp568xffw5Iahs=;
-        b=ghNW7qHVHmYtU+gXA5FzZJ4wBY7cIsRw+ijzZb8c/NjwtbLs4SgX73Vruhfo17dv82
-         5bHGZ1zYr/rWAZLW9dnnBSGr6VWnapUYAImeAD5eoRTkvtJi1UxSq1BGxr/8W3wDac3Q
-         OZe1SfRmfGSo4RwEOXBapbLKo5ayZ3jpAdGK3Uj/4G8T1SiH3f08PP/ZOBjxTyqRyobC
-         JcDR90GVlJgCoPtf6bzrLP3wiQN7ZDqj9lB4siJrptzCU9bLySqbGyLf6ebrUOQD0PrM
-         53rnjm951UVbtDFosschId1Yx2NSj50bUsZhPBNabljqH2ilwP/628Fn0+uuGzeWI5i/
-         uMoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ1m27wUytHF6lUQss+H3GSyDnTqEwe/r+wvDAHo4GJDyuQ3L+o9QelS+7vw3H8ztj/DHlxyfSNPsauZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi1Ie5pwmXlCvqSx1kcL4lwJi1qZ44SdZYKPKd/lNmAlEMzVkq
-	qx515IQneLZyxDd+R2+3eLIauEi2fxyGg26AGKTka9Y9eN2qPDXheTQuIpnD
-X-Google-Smtp-Source: AGHT+IE9jQYtbc132fpV9cXJCTAdP6bxnOpxNEz+fnN/RwAvvgCjaaXajnFV2/oUWVMdVi2FqZHy0g==
-X-Received: by 2002:a05:6402:548a:b0:5c8:9f3d:d906 with SMTP id 4fb4d7f45d1cf-5c91d5bd0b8mr3492737a12.18.1728559325850;
-        Thu, 10 Oct 2024 04:22:05 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c9370d22fesm640154a12.19.2024.10.10.04.22.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 04:22:05 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Leo Liu <leo.liu@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdgpu: Fix potential integer overflow on shift of a int
-Date: Thu, 10 Oct 2024 12:22:04 +0100
-Message-Id: <20241010112204.636188-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lJU3XipM"
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABMduX002819;
+	Thu, 10 Oct 2024 11:24:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=+Lt5TvzGhT9DI465dwqRMgLKs/FyG
+	03acJyUMNDMqLk=; b=lJU3XipMDhMxFK5PrptopagRJT+BsXO2p/dV/UFKndEuX
+	4UN88zW7V9u3npraMwVgr7ngRDdoX7al+rFEUbdlZ4hTz6U7l3sdhItAL6OxHtrc
+	ITAXFxGohb+5jqMV6l895TwZVnd7l2SZyuI3TyTUHOmuIYyv75s9u/smTWyaz3N0
+	qV+LFe/BgNeFzitlHwMmY3R/90rXnqUTX7hqMV3A726aXu88A1cbV8Yjqsn2IfpA
+	DsG9qFw76Vw39ryyf6E7xFeFMZ1gYeHTn26xAZ6F7AvnYaw3gDHNHOLVUqfALiQ/
+	kjFXlI8Fuw35sLzxPDPFTYv9LKUUMMBQV/i59v6SA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42306ejh49-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 11:24:49 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABCS2V011625;
+	Thu, 10 Oct 2024 11:24:48 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uwg6x7p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Oct 2024 11:24:48 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49ABOl9C031014;
+	Thu, 10 Oct 2024 11:24:47 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 422uwg6x6y-1;
+	Thu, 10 Oct 2024 11:24:47 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Chen Wang <unicorn_wang@outlook.com>,
+        Inochi Amaoto <inochiama@outlook.com>,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com
+Subject: [PATCH] pinctrl: sophgo: fix double free in cv1800_pctrl_dt_node_to_map()
+Date: Thu, 10 Oct 2024 04:18:18 -0700
+Message-ID: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-10_08,2024-10-09_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ spamscore=0 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2410100075
+X-Proofpoint-GUID: sbJPztGdrITMqyNO9QML_0_1Qb3O_iJw
+X-Proofpoint-ORIG-GUID: sbJPztGdrITMqyNO9QML_0_1Qb3O_iJw
 
-The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
-arithmetic and then assigned to and operated upon using a 64 bit unsigned
-integer. In the case where the shift is 32 or more this can lead to an
-overflow. Avoid this by shifting using the BIT_ULL macro instead.
+'map' is allocated using devm_* which takes care of freeing the allocated
+data, but in error paths there is a call to pinctrl_utils_free_map()
+which also does kfree(map) which leads to a double free.
 
-Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Use kcalloc() instead of devm_kcalloc() as freeing is manually handled.
+
+Fixes: a29d8e93e710 ("pinctrl: sophgo: add support for CV1800B SoC")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+This is based on static analysis with smatch, only compile tested.
+---
+ drivers/pinctrl/sophgo/pinctrl-cv18xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-index 95e2796919fc..136a0c8d8c7a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-@@ -357,14 +357,14 @@ static int amdgpu_debugfs_jpeg_sched_mask_set(void *data, u64 val)
- 	if (!adev)
- 		return -ENODEV;
+diff --git a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+index d18fc5aa84f7..57f2674e75d6 100644
+--- a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
++++ b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+@@ -221,7 +221,7 @@ static int cv1800_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	if (!grpnames)
+ 		return -ENOMEM;
  
--	mask = (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
-+	mask = (BIT_ULL(adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
- 	if ((val & mask) == 0)
- 		return -EINVAL;
+-	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
++	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
+ 	if (!map)
+ 		return -ENOMEM;
  
- 	for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
- 		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
- 			ring = &adev->jpeg.inst[i].ring_dec[j];
--			if (val & (1 << ((i * adev->jpeg.num_jpeg_rings) + j)))
-+			if (val & BIT_ULL((i * adev->jpeg.num_jpeg_rings) + j))
- 				ring->sched.ready = true;
- 			else
- 				ring->sched.ready = false;
-@@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void *data, u64 *val)
- 		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
- 			ring = &adev->jpeg.inst[i].ring_dec[j];
- 			if (ring->sched.ready)
--				mask |= 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
-+				mask |= BIT_ULL((i * adev->jpeg.num_jpeg_rings) + j);
- 		}
- 	}
- 	*val = mask;
 -- 
-2.39.5
+2.39.3
 
