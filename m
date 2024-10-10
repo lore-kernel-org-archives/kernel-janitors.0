@@ -1,114 +1,95 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from msa.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE47E558B7;
-	Thu, 10 Oct 2024 17:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998E819ABC2;
+	Thu, 10 Oct 2024 17:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728580121; cv=none; b=dOgVW+BvGWQpNMJ4FHiD6B2RBUhu4ql2jdXWTmQ/zHlj/JSplnywnfbVbMmAbNP3L53aiHhgI19dcLbCGhRUHERY4gQfz1C+vMqohgBLGWwYd42+/RWgSChAsR7fS6GCVkWQDnt9nFkix9sMSUVm87Hmpy5eqiaigfWE7dvMie4=
+	t=1728580652; cv=none; b=e6nZiMZjghU6Ivjm2dtrP6aBiZKCY0+GT1injh62ZzFqVwMFwtourNxopkJFJxFi96Jpcz2dMAbOI8pdUzR+QX8zBYGDUmQW2RDc9JdRy4CjkcrZXt5MeljuE1UhvnrrzjRlYdP2cC2RrX1htf8aIFjvu6NgQF0w76CKuLxlw/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728580121; c=relaxed/simple;
-	bh=83B4gZkVqCXDhd2KE4907JanoMHqwxtUvcT7A8gpdb0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=d/qZoBqW//x39Xee+FqZQYdpdbEm/47q5L5VqW79LFSwMowL9r510YL2WHwDsOp72iNwl3ur+/jpttAaJuej812TUsyobBPC4SmaEsD0yCsJcBGp4P7qdi1hVwzH4DACgf9FvJWc91r8Odrus8vdebU59JzcQg9fjGMBsgnl7ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tb5MxYUY; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728580652; c=relaxed/simple;
+	bh=ppW1GFtiN2nQpgHWFXJsKPPhgKIDkMmMWYGQiJQXcVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KisBiNXrDbCwFrnQidEcSXW4Hp00Ru5Lxrl/QtBGNSmEC3pFBQ6NBM51fCw2YgZJ/szbV1iBE1HotTpeRXVB76gdOW/hVxRLFOtu6cMPeu+bNTyPEg637ctWioEgpqAdQDrHrYblPk09VyWFmyfPhgo4LVrAwP6mmkK8cOhTX+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TwiMtLdY; arc=none smtp.client-ip=80.12.242.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tb5MxYUY"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a83562f9be9so147105666b.0;
-        Thu, 10 Oct 2024 10:08:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728580117; x=1729184917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s76fMrgrCCIITG8O3wMeuaoCvQZMM5iJlgV4Fc1nwC8=;
-        b=Tb5MxYUYNPm/FA9PFIJ+cu0FpzF1Pxms5Y+ZPdu/jVQpWqMssCaoqibsdObdnVWq13
-         UGi3mMIJn8pboFMrUyUxiN5iyX16bB/RHfELOmsproWidi9IrlOpR+iZhWN0T3qjKocJ
-         +IfNGuVESkPYTwDAVPgUc3wHwyR35bCRFQLOzUumwhYcucgmv1Vv8xUlmhtWsU6jEV7G
-         c9wEzd1K7XNiWjj0HlaFwNqUcyptYOAJK5EMdZ5BBvnJSiYn6NsOo1sIYaL9AMN6OK6T
-         EJdM7YY3rxGyw0OYjroT3u2+JdjBgU0zmMzxS6Gal8mhrIuIlqcztBCoo4w2Mbj4ODXH
-         qJTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728580117; x=1729184917;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s76fMrgrCCIITG8O3wMeuaoCvQZMM5iJlgV4Fc1nwC8=;
-        b=VrCmixAIvL2/HUpGEocOW43Wm0hqoM3Ocvu7lrxjzGbFj1cl2dyWD82mx7B9E2LGvt
-         k95Jke5GGmzPDTqzg6JpfuuROA0hHEWks4+v+vQ3nqF1LUlpKQxCJdP7Fy3nC3l8yw7t
-         3D1pRXut80MWvGamiSJB2nQ9tYKbkcOR2+RDaul9/0mzXX2lkP7SVAimshvw3ALJ8Oib
-         WffUpDHNVoIluhxUJJJ8JE5smDx66AWqSZ3ed9Kj/RBk5R+2k6a2fxux2z11b9UCHKHr
-         xPH7BaGJtsbjsdxG58Dlz5iHpt5v/+OYWcZ6lPoE6p6vmIukY2TnkRKII9P8R69uGQT+
-         c/7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWcojQPazGAeWC/PnSbFt/OoldCRFHdf7er9tgxTJzdw8fnM0EuAUgELmYgNuDfp88MliTPo8Fv59U731vI@vger.kernel.org, AJvYcCX5WcUYMpf3ACjwkaE7FVCASqDOI1sX62kRYGBR2QqaD+P8kLJvfkJL3Rg6LQ1H6LtaMXxDuY8Ldr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsCooSH0ECIH0yc7bHCsXVwiLzXtSeXE9FTFsOvs9XrxpmqxJB
-	kP7qui8zbqY+UoR/n+aqn7aJqPRBx9xKDYDJihijs0KQh32BLoneamE+H2Ns
-X-Google-Smtp-Source: AGHT+IFRAFYFiDsvs3uzupt4RvuE9SDRKJN+vCOE/lzAdDHhgG8lE7FdHSD9DckCx52z3Io+q3thFg==
-X-Received: by 2002:a17:906:d555:b0:a8b:6ee7:ba28 with SMTP id a640c23a62f3a-a99b7672bacmr5533366b.1.1728580116669;
-        Thu, 10 Oct 2024 10:08:36 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f35f4fsm114421966b.88.2024.10.10.10.08.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 10:08:36 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: pressure: rohm-bm1390: Remove redundant if statement
-Date: Thu, 10 Oct 2024 18:08:35 +0100
-Message-Id: <20241010170835.772764-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TwiMtLdY"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ywmts79NqjJK0ywmusP47Q; Thu, 10 Oct 2024 19:17:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728580641;
+	bh=mCHkK1JJeeVwZX5C2Lk1lJdZRVPDG5DAsI59DVUCJl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=TwiMtLdYMb26pymQ7efv//qDELeAiOi+QrRFLVf+DP/ssaG4LFsowd5D0pjJ+sfyz
+	 FxsxcT2TisKTnPutqDknHI3fxwAATteqg/uPt7zKg6rVEIK39ThwJaL8NVPB5hUeNa
+	 DrSKvhFnuKaJ3RRhQ9uEJJST6donc/z+7YcdKueLr4WLxO3SDozhCUDdQjQk4ZzRFt
+	 haZVrzD6zY8dbxbpDYx0YXtQVjoe0PFTUq1NnO4gu/8ZIy5FwtNf2HyL8RMLRXX7n/
+	 VMHBVdwkPilYFJgBHnGmfqWTabxzFX94CNAff3p751pTX8es6Kw6Jp/GsmQczauca/
+	 ZqO6hZeoQtagw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 10 Oct 2024 19:17:21 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <41acfc55-9741-4cef-9254-f9e4be4da956@wanadoo.fr>
+Date: Thu, 10 Oct 2024 19:17:19 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: sophgo: fix double free in
+ cv1800_pctrl_dt_node_to_map()
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+ error27@gmail.com
+References: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Colin Ian King <colin.i.king@intel.com>
+Le 10/10/2024 à 13:18, Harshit Mogalapalli a écrit :
+> 'map' is allocated using devm_* which takes care of freeing the allocated
+> data, but in error paths there is a call to pinctrl_utils_free_map()
+> which also does kfree(map) which leads to a double free.
+> 
+> Use kcalloc() instead of devm_kcalloc() as freeing is manually handled.
+> 
+> Fixes: a29d8e93e710 ("pinctrl: sophgo: add support for CV1800B SoC")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+> This is based on static analysis with smatch, only compile tested.
+> ---
+>   drivers/pinctrl/sophgo/pinctrl-cv18xx.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+> index d18fc5aa84f7..57f2674e75d6 100644
+> --- a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+> +++ b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+> @@ -221,7 +221,7 @@ static int cv1800_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>   	if (!grpnames)
+>   		return -ENOMEM;
+>   
+> -	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
+> +	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
+>   	if (!map)
+>   		return -ENOMEM;
+>   
 
-There is a check on non-zero ret that is redundant because the
-same check is being performed in a previous if statement and
-also before that. The check is not required, remove it.
+Hi,
 
-Signed-off-by: Colin Ian King <colin.i.king@intel.com>
----
- drivers/iio/pressure/rohm-bm1390.c | 3 ---
- 1 file changed, 3 deletions(-)
+drivers/pinctrl/nuvoton/pinctrl-ma35.c seems to have the same issue.
 
-diff --git a/drivers/iio/pressure/rohm-bm1390.c b/drivers/iio/pressure/rohm-bm1390.c
-index ccaa07a569c9..f24d9f927681 100644
---- a/drivers/iio/pressure/rohm-bm1390.c
-+++ b/drivers/iio/pressure/rohm-bm1390.c
-@@ -410,23 +410,20 @@ static int __bm1390_fifo_flush(struct iio_dev *idev, unsigned int samples,
- 	if (ret)
- 		return ret;
- 
- 	if (test_bit(BM1390_CHAN_TEMP, idev->active_scan_mask)) {
- 		ret = regmap_bulk_read(data->regmap, BM1390_REG_TEMP_HI, &temp,
- 				       sizeof(temp));
- 		if (ret)
- 			return ret;
- 	}
- 
--	if (ret)
--		return ret;
--
- 	for (i = 0; i < smp_lvl; i++) {
- 		buffer[i].temp = temp;
- 		iio_push_to_buffers(idev, &buffer[i]);
- 	}
- 
- 	return smp_lvl;
- }
- 
- static int bm1390_fifo_flush(struct iio_dev *idev, unsigned int samples)
- {
--- 
-2.39.5
+CJ
+
 
