@@ -1,114 +1,110 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2CE4A15;
-	Thu, 10 Oct 2024 18:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6216138396;
+	Thu, 10 Oct 2024 18:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584322; cv=none; b=UlNgq76hw7DySvvxVCv+igBGev15jP4U826LYjbNbCPH2/FMkj7ekNTT2V0qxguzEc+WLO6aNwdwNHgP04mfoEHqdg9XCXZpvRYU8Aa+NL3XjxBYTtYwN7/0PBiTCwyaqfExX/W9clyF7KymAaxaZPrKnVvbLOn6rMocQ2ieUp0=
+	t=1728584438; cv=none; b=WEZ0Wh2FJfqgs4JTY/CGoWVYFCpgCeG/ApZM6xLr+5i0hEKB9k5VIIbhOaNh6tUZbuO13rpuRL+qo9IUhA9JmMm/qw/OKYXokZlRfoY6k0f17DtxuiTMXHykH62hgZGG6P5HLEEPQ/X/JRUo3K50L3oi28BUiV37W+c5rjh9Bjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584322; c=relaxed/simple;
-	bh=tgZQ4s8ceb4szMBJodEy/aL4HGRWnU41wemrxVirK70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YWaW0/X/CCI7SSNsIQoNsdbFDR3GVo+qiWG/MhRO+DtkyH31yPsRX2kM9aJK+6mFENS0ahQQAHaOCsMd75cwHNgrEB4CmMYNjtAdzGX6B7lGOsBe7MI7K8fliLwurZqUDMTtlx9LOF6Pff9/L5zP9zl7W/3PZTOl9gFZfn8Kn/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WP1mZtQK; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1728584438; c=relaxed/simple;
+	bh=AQ0kR/CdHYq7xnw3rsJ9i4pLf5dT9pWRk+1pMPO0hlU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=AItMX/I+YXdBODtL4FpmcgcE10s4IpB+8CJJyvNB6yiAMLjPhSyrBPLCFzhnSHdakNBVNfWKaIvMvC1YJkrKD+pzHkEc/zJVWKdIE6uUyVGVwEHsaMlJIUE4zFLvZ++Igxpx1+D/HKKwWae+tYBDMaejank2TLkNG3Bb7HlPUxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRCplQ8k; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WP1mZtQK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728584298; x=1729189098; i=markus.elfring@web.de;
-	bh=+eu8CANFZAzZ0HdPiYagsaWK/CoxSGXipiAOszYTXG0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WP1mZtQKRb2+qa6dEJR4S4sYW4/fhZsRofdL6wH9sxz9/FR2qiU75Q6LXQ2y7TUT
-	 tltrcdbXEEy2iLKIAWzZakVHXgHYYKFgCMwm3zO6WZZjX9I3cO34rRq4/GYGVIjfh
-	 JlV1jxP8VPDhRdGKu5mZr1QsA93SX0Xo6aOOcCfuZx9pRj2KUU4usN6Att3K3roIN
-	 gZ0FnS2Lslyp7/x0UO2maD7K1Vhe5sFBR4QOHJXwBAV2ndUQFW+iecCmGh9HP6RWk
-	 39vLLmn116HYapCDvppOuJ2lv2qt2LwF1F5JUMidRE/uNz2GASFO2wd8JIdp246F/
-	 tQ3+pZeR0//3mpwpqw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuVKK-1tqVtg0SUE-00tSy2; Thu, 10
- Oct 2024 20:18:18 +0200
-Message-ID: <fb7b687e-cca7-4888-8041-bdace6946a37@web.de>
-Date: Thu, 10 Oct 2024 20:18:16 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRCplQ8k"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso13440971fa.3;
+        Thu, 10 Oct 2024 11:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728584434; x=1729189234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnAkawjZqfeZ7VH0Jg0DFYz+xjlN8xdngDCa0VPoccA=;
+        b=VRCplQ8k7YwEpfTNDE+xC+RQnOCZsCmg8d8yC2VdXn4NmgiluXSyVXbjvYVWAinwRS
+         0EStBxN9M4lDYbzqLeWf/NnYBxOl8Cjvin0+Jx7ooIvSkjXaoQC8C6DnZi/pzi/pJY5f
+         Rk2WgyP5snJi1sjGsEXSR3vkZc43fWM2Pi0z6CmhT3zggsXzAE3EWuwW6Ma4MKoDPOxB
+         PVNLCzCVnuAbpQgVl25MKgNgtDG7hXHG8CTbtlqYuDzy5s/SALXyzHzlpwuyKRP/XSgO
+         uEzxgyFvt9eQeHxeZQx6scK1BkN0pkAb5zApRwsTCiUku+/y/OQmyH4Xskna/IznIRWZ
+         ci2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728584434; x=1729189234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AnAkawjZqfeZ7VH0Jg0DFYz+xjlN8xdngDCa0VPoccA=;
+        b=YWvwk5LIpD2Qi8UkiFGvg22XIgWVOHRzwZlqlSO4BOib6s1vamQylgRDgiSuiRrVFi
+         srMI0Lc39PT0Vb8vSBwCOeernBcMdIamKaGSLcA8kFQyDUOB4E2rvPSHBhfJcVPC6IIu
+         i56gpzY4bwFMwqH170crfUxkYceHL91i2Xt0Ef+fUf1tJCrG5NbWBjZI+pCkZ/NcAnf1
+         eoBvB1m+B5Hpun47tSZLPWeFPR8ImU68n+8Rmhe12odsWjaM0NfHf4xh0T2iEl2SwP2V
+         9lpzBGeAPFHxCNyEMGPGE/N0RLAjjAB43WXKzPEz4nkZx6lneWBRy3Tfto8QP9r33s7x
+         DCHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbKEJP8dvCkehpwXKRXScmmurx/QMI04Xc1764J/wPhDNY0gMkooarwbiJS1/Sk8ua32mKtkUfSEpKW8I=@vger.kernel.org, AJvYcCXzXvg2jILYxZyDKHe9vKr7CoT+Hi/PcDylrR7Nng82ncq6IlzpzkUBdc+OlmnuhsAVYyxJGQTYTb5pvU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYT0XgQWNQdSQLc1I08tNnRppIIhzLsgEfJV1BCrtAYjBGOmyl
+	Oi6jovp6kg4BW+neAIbqOzTlA+/FVvUe6XdsL6FNHSt/Y49xrn8+oyiiw0zW
+X-Google-Smtp-Source: AGHT+IGfi0DarAWtv5MybSL1H7WiCZ+sBqFN5puLs0NY6kQSdyj0bxg7ojxxdV7ITOUPdk+lSwn9/g==
+X-Received: by 2002:a05:651c:548:b0:2f3:f4e2:869c with SMTP id 38308e7fff4ca-2fb188105e7mr42531671fa.44.1728584434204;
+        Thu, 10 Oct 2024 11:20:34 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937153032sm1096641a12.53.2024.10.10.11.20.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 11:20:33 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Ryan Lee <ryans.lee@analog.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: max98388: Fix missing increment of variable slot_found
+Date: Thu, 10 Oct 2024 19:20:32 +0100
+Message-Id: <20241010182032.776280-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] irqchip/renesas-rzg2l: Fix missing put_device
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- linux-renesas-soc@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
- Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org, Chris Paterson
- <Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Marc Zyngier <maz@kernel.org>
-References: <20241010164155.808931-1-fabrizio.castro.jz@renesas.com>
- <2e9bf925-8fcd-4e0b-bc3b-996fffc84681@web.de>
- <CAMuHMdWURj8YzXKbt74KqgEX5fc1ivg_4ctMxUy3QdJGipLuZA@mail.gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAMuHMdWURj8YzXKbt74KqgEX5fc1ivg_4ctMxUy3QdJGipLuZA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:28yzoQPmGP4FHa6GOXNEcCsPJuJt2ZVJYXEmPJNZDR2DA6wfw3h
- o2ZknYUpu1uxQxPE3sNvXpG+UoUelRQ8Td0RUQba4T+lmZEg0mJK/Gwh+FJj+S6RZM12yEI
- uxAVFjwpOKVWD721+GpyAm982TShZHbP8yxTSSZjFWTGYljpzbpofLqie99BNhaDldCdTNz
- uszdYzGGXowRzXT8I00WQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XlfypRD/Hy4=;W7RhW9m3uzHT6LhhGuPWZdsS5fi
- D3sFTv8TtNnQ9YZASa8C7G8QDomUUglMedVSbN4kwmjBdeIcVcujMzOUh5nOwGD00mfWsj8d1
- qQFidQLMDOjBFaXXC2RD/wJYOuOMPmkyGzcXV/bgoe8Wzerx75zCZw1yCNjnxdAgWnocmYy9D
- b04j8qz5pSKaUKspvjQQA69aYsp7K8pf1eGKLfpJOn3Eq4dqh56mbMQ8kLotwyYZt7hvaqfJm
- OBqNSNFkVyFtr6t9wkRi29rPsUj6twkH6QGr58ReyEzqSlC0vVy8HMswjB5BnsUlLPhbOmGju
- atcijpYCs39bPPD0yVK+qxpykgbMB/xr7y2O9Pp4P1evTF6/hadSXwxIgslW+THtsp8cFmDFR
- 3bo5IROkyXG8D+LRW5ynh/G7vZeNw6s7RwBip/tTdIizQKXdsMqnr7saAPAJwwl/8ScrkvWhW
- o1d4j8ooNuHdshf7s9WvlSvHAEm0aog101C7t887WLmNqs+6Za5e3WibT0fzDNLv+eZAFkbZi
- 9AXZu+4ruTHtQYItCdPAjMXB1U9JlC84rr++WYuT0tavDup7VPa03OV0yENfHCnJ0IqWzIhbS
- pFsSCd6ZG1vqBj5JAUWLZ5L6wb3NICVon+gMjH7zTJSI93Rz5aY2hbBnqC93sd+QWuuNMlCx2
- 5Qyd55n2Juzja1Cdy0vNY86F17knCyvcZEX1HcuuyeQuzQecisaRqJ8pwmF6O91Z/bHyNNNg1
- Hb0wNxg7XxW0ooONcC5FWNCC/i2172vu05EbP8u8Td7Uv/8vuDENonpa6SOPFldPQRu0Gor2l
- bbQLnClagWqLMtoUmRHOEfBA==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->>> rzg2l_irqc_common_init calls of_find_device_by_node, but the
->>> corresponding put_device call is missing.
->>>
->>> Make sure we call put_device when failing.
->>>
->>> "make coccicheck" will complain about a missing put_device before
->>> successfully returning from rzg2l_irqc_common_init, however, that's
->>> a false positive.
->>>
->>> Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller dr=
-iver")
->>
->> Might the application of scope-based resource management become more
->> interesting accordingly?
->
-> No, as explained in the comments:
->
->>> +       /*
->>> +        * coccicheck complains about a missing put_device call before=
- returning, but it's a false
->>> +        * positive. We still need &pdev->dev after successfully retur=
-ning from this function.
->>> +        */
+The variable slot_found is being initialized to zero and inside
+a for-loop is being checked if it's reached MAX_NUM_CH, however,
+this is currently impossible since slot_found is never changed.
+In a previous loop a similar coding pattern is used and slot_found
+is being incremented. It appears the increment of slot_found is
+missing from the loop, so fix the code by adding in the increment.
 
-Please reconsider the applicability of mentioned programming interfaces on=
-ce more
-(as an evolving software design alternative for goto chains).
-https://elixir.bootlin.com/linux/v6.12-rc2/source/include/linux/device.h#L=
-1239
+Fixes: 6a8e1d46f062 ("ASoC: max98388: add amplifier driver")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/max98388.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regards,
-Markus
+diff --git a/sound/soc/codecs/max98388.c b/sound/soc/codecs/max98388.c
+index b847d7c59ec0..99986090b4a6 100644
+--- a/sound/soc/codecs/max98388.c
++++ b/sound/soc/codecs/max98388.c
+@@ -759,14 +759,15 @@ static int max98388_dai_tdm_slot(struct snd_soc_dai *dai,
+ 	slot_found = 0;
+ 	mask = tx_mask;
+ 	for (cnt = 0 ; cnt < MAX_NUM_SLOTS ; cnt++, mask >>= 1) {
+ 		if (mask & 0x1) {
+ 			addr = MAX98388_R2044_PCM_TX_CTRL1 + (cnt / 8);
+ 			bits = cnt % 8;
+ 			regmap_update_bits(max98388->regmap, addr, bits, bits);
++			slot_found++;
+ 			if (slot_found >= MAX_NUM_CH)
+ 				break;
+ 		}
+ 	}
+ 
+ 	return 0;
+ }
+-- 
+2.39.5
+
