@@ -1,114 +1,150 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7393193070
-	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 06:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B090E3D6B;
+	Thu, 10 Oct 2024 06:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728541704; cv=none; b=joYkIUr1y4apuRn/EIycN2g5m/iei31lhTaOlGEJej7/YgfUFNa924zju100kaGmPDdYMrnifbXgcK2VbBYmBnpzASpMrYHfTQ/E7JMdemxhimZ/WRTTpye+xHrjv8mX/NZF3CU62ExKqUKAzv84/WZajiN6F8BppVVvq7tytrY=
+	t=1728542064; cv=none; b=FN1BKbyf5VfQS2kzFwNk8sfQFtG275/j6VObG9n78gB5iULSrBRo7PepyEoZKDynvg4CXV8EtMn5vhcFWV36WrLWBW/0HqciXACOFAytwe6y5O3l8xwZM4sWRGIlwxzRCFkoW77b0TMZ9+alAL7EXp2uuTBGAoYrdy87KycKdEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728541704; c=relaxed/simple;
-	bh=TX/KMkh7o4UkhoOhtTta+lrKV8s0uQ0QAOmvx3zs5sI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=deH7DCH/ob5RxVsV2c6mAgN4jvR+sal/5A+x2yZnG0EJT1rA4Bv5brRWbZ721qE9tkZFP8t0UmM2ZnfExGNkZu1bJaWDIYV4JROrvqHdyaVpsyQp9sdjFYJdzPKpEtGbSunSYdGk8bfTSUlaq9/qdGV3p63rX1FQLDZOanjDAJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HUD3kwcV; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728542064; c=relaxed/simple;
+	bh=n9KdWSYtOkDPUZ8+WHXTWzm0R5vDqUZAPIbwPNsnWTA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=TtFj2ZnI3HWszl4UsuNF22661DQiV/UkOUVp14Ly7Qlm6GNccZbozj8yin9nw+dDpbirQGPdCS2eE2N6KO5kodxC6NGcquAkARF5PMs+w9j8493vUobj2/fO6J4ZTURZJpyUHTAAO9fCSiPYKLHTcFumq5udCcyjwn40KPS8Ons=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aKUf0B/s; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HUD3kwcV"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb806623eso4538675e9.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 23:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728541701; x=1729146501; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w9dxwcXVFs3vnkTzThkLKa7FVga4fnERpw3hSn0gAas=;
-        b=HUD3kwcVDvjvfS8BlyO1eum7N7rTX3H8zMZSeqzbMVkM420VG/BAy1LMhKkKthgZQw
-         czgDb2x+RvPmcXNGLlljd2ZiVtkOhM7JLKm3/8t5OahSh0Vg5X3oOQND7UDzlXGyvO44
-         UysW0JHeE/lQkU7tJ6e9HDY8lvQFiXHuKuwhK89vldFuFh0COuqqz+U7+gS8DNnuqKG6
-         MUg+igBtj5giWdsKnBF7RbVk+8ma6jYYuLZZs73VIAH8H4i2SGsAScW717STorWYSsgY
-         WUSidnNlZICTbq9miYEGLsjGSQv8ls4TsxvPvZEWcSbuHN4JVEtEVHKi8UIzCzHbYrS3
-         OY5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728541701; x=1729146501;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w9dxwcXVFs3vnkTzThkLKa7FVga4fnERpw3hSn0gAas=;
-        b=WW1YoGg6EgJO9XBBL84sBylMlG7bBaep2p3CU7lMn/9BaLznFj+8Ekwqebq02BCNzb
-         N6EsRm2r1Qj4g6c8rvGybpuxvWIX44kxeMrUD9w+Ojv+LpDn1o6hLR6xoIHOxCvso4bI
-         vP5png6xchmscrSKDdPgEY3R2Nyvmb2XM6Dm8Fk+EYKENTGK+ZbOfzA9mc1A+uoglOm4
-         ax4O8h6bkO7WS8CScfKj1i2uRCXXTIFQi8z/3OMJFrO5VdN8PLpeVSiqYP+pBH7f4Eq0
-         wMJtxvIvaROZf9awAkyc8mjmbBwSBhNnSyy7mO2Mruw6B7kURRXXZPCoIv/Cfmn4C6Xl
-         KvuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvzHGS4rrgNhnLX0DS/p1S93Guwf+lYXGppeO+gxeTNIZFO8gPx6f1s+iGC0dALdZLoz2TLD82G3XGSacJQYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw50oed7B1zMgY//WXKWt/tOyS4KWcBRybTdsjV16xedt2ZdHCp
-	ed9yjaAxk2jLlCMX1cuCHaSr7t74U1KMgrHV7bQElgRhyxl5K5fyPFJIDnqoSKw=
-X-Google-Smtp-Source: AGHT+IHC0o9tqFtiDG4GnzxZXvNF3ZFqzwHj0uJ1SCAz4Q/E8H+XfyWulVcSrjl1hk3YLD9AEqhUwA==
-X-Received: by 2002:a05:600c:3b9f:b0:42c:bd4d:e8ba with SMTP id 5b1f17b1804b1-430ccf0928fmr41157205e9.8.1728541701026;
-        Wed, 09 Oct 2024 23:28:21 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182d7ca3sm6172505e9.2.2024.10.09.23.28.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2024 23:28:20 -0700 (PDT)
-Date: Thu, 10 Oct 2024 09:28:16 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, skhan@linuxfoundation.org,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] drm/xe/guc: Fix dereference before Null check
-Message-ID: <c2a9c4ad-ce50-42ab-8dac-65914e188cac@stanley.mountain>
-References: <20241009213922.37962-1-everestkc@everestkc.com.np>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aKUf0B/s"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728542028; x=1729146828; i=markus.elfring@web.de;
+	bh=qUNkm5MuOxf6IBBgFwcWmJvYdFILddjvzkOVjLt32J4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aKUf0B/s/s1c0xxdCZZxrFjr8kti99z1b8uoZEx73Bv1VPxMvI8+uptDNUqD3Ark
+	 0beqcQLnO0E/NpB6m6eP0CpC8WCr1joQyQTNeRt0wqxaOuTkFxUJ/1KzNDhYcd/S9
+	 aIXBRtu3ow3Vta8xWSwP5NUb+mHuuKw/Q1Df1zqbaBtyqKVvBbLBUfhzpb8FNueHQ
+	 F5kujdJUhelUDIG0rJtSiRj5zmgofTPp/SPYfXkVOIpp5256tzThjFhe5cYT4dbiA
+	 ABF5rI7j0X2KKxgedE5CPZqn0KbAUzTMXM6/Cj062ZgB3LH2LDYwBCzbwErhcPXSP
+	 anBKuW6VNg9L0/WO6A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2Phc-1szLEr3wLe-001VZe; Thu, 10
+ Oct 2024 08:33:48 +0200
+Message-ID: <89844cfc-f349-4515-a683-572c09c4143a@web.de>
+Date: Thu, 10 Oct 2024 08:33:36 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009213922.37962-1-everestkc@everestkc.com.np>
+User-Agent: Mozilla Thunderbird
+To: linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Drew Fustini <drew@pdp7.com>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] pinctrl: th1520: Use common error handling code in
+ th1520_pinctrl_dt_node_to_map()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:HQ3BmE4H7byNJFSJkDiLtddpR/WLhnzeHaqc10HnvkaLhIYcKbt
+ PanD5avtKht7V5P+L4T0o5BgKdtS9h/UY1i5qKLeOviAjeEFVnHVa+JsMqx730y4+KN836c
+ fKxtvv221YlGZ9DlHTlZs5/GMfdxd71INGdnzuft+mqRc/JYLRxzcbwVZ+bCpTbG+mjdZ8r
+ f64HhqLxit/i4H0zqkVkg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+ttVb/jb5AI=;Wd/VkN8iGadL+vAUjxOjIlAciuD
+ pyXE69ogDJSKGwJPDM0J6nd2zWXVyKrws0ilG2rhqWXUPMv5cRQCuzro2Mc6/9e6X8YqPPmyQ
+ f2hYGO6LxVlmPojplG66BS3QRZapoTmraluDKv5YjjQIh5Qsrug9e01Ckskcl6+ScHSsNL9+d
+ hQXjkJswt9iZnl8v2k+NSSrS831WGUxQ7EvjdkT0sXJKPBG70aC94SxOPCGM4nOzq+FUSMpv/
+ ni2oSqlgXCBxnLc4z8ikvUsQQlD/D1QVOAWUiQ2IZyFwmalXRrizgHKmPOWtaBDtFM5XvglIh
+ b+KRN1azZCmYEavMI3MObikm2yP/Y0yPDAyjgf7VwG6i/I4TGW82vyNgkj7HCj0dUSK88Sx43
+ mWpuLLGbGmV4NBWFEmgNdxbTnJP38c3NU9bFTWH6+WNZGtn95JFX/vodVckM8C6i5QRoeKtWp
+ lnPdvNTqL9VRhTKwZY4+5JaG/JvjmVUfN4sPQv4yAmg8Ymenf7WzvvRMG6fdcgvg7WABWlfyp
+ XJ0y9B9J9tcByuzCO//HiRB1TYg5Cy76Evqe1YhUicplz75zcyMlSzb3hH/IBYCpQrYYkzXlj
+ ANLXjA2cb0N5y1YUB/7OORDPTUiYnXmN8Y2k5f0LOjSupMhNfG1exjnHZk4VQnBT/P0EX/AQX
+ YeCJLmD3qYdb6LG3xCk1UgBz806QEe4c6aEg4g27Gmbsj3bGfQv8edqIAOesiN4vkxXNYmOSi
+ SonEpufsE2w31dS6y2EtuOuTHplNcNFpt2B4Fv919LgwJm2PbLWjhuyaDuCaNbt1nY0IHdwWN
+ WvyuOLORsTlBn1ijy3gT7qrg==
 
-On Wed, Oct 09, 2024 at 03:39:20PM -0600, Everest K.C. wrote:
-> The pointer list->list is derefrenced before the Null check.
-> Fix this by moving the Null check outside the for loop, so that
-> the check is performed before the derefrencing.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 10 Oct 2024 08:22:14 +0200
 
-Please, mention the effect on runtime if it's not totally obvious.  In this case,
-someone reading the commit message would think that it leads to a NULL
-dereference but actually the pointer can't be NULL as I explained so there is
-no effect on run time.  Say something like:
-"The list->list pointer cannot be NULL so this has no effect on runtime.  It's
-just a correctness issue."
+Add jump targets so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-Change Null to NULL so people don't think it's Java.  ;)  Also dereferencing
-has a typo.  s/derefrencing/dereferencing/.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/pinctrl/pinctrl-th1520.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
+diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th=
+1520.c
+index c8d2ee6defa7..8556dd6b881e 100644
+=2D-- a/drivers/pinctrl/pinctrl-th1520.c
++++ b/drivers/pinctrl/pinctrl-th1520.c
+@@ -464,23 +464,18 @@ static int th1520_pinctrl_dt_node_to_map(struct pinc=
+trl_dev *pctldev,
+ 			if (!muxtype) {
+ 				dev_err(thp->pctl->dev, "%pOFn.%pOFn: unknown function '%s'\n",
+ 					np, child, funcname);
+-				ret =3D -EINVAL;
+-				goto free_configs;
++				goto e_inval;
+ 			}
 
-> This issue was reported by Coverity Scan.
-> https://scan7.scan.coverity.com/#/project-view/51525/11354
-> ?selectedIssue=1600335
+ 			funcname =3D devm_kasprintf(thp->pctl->dev, GFP_KERNEL, "%pOFn.%pOFn",
+ 						  np, child);
+-			if (!funcname) {
+-				ret =3D -ENOMEM;
+-				goto free_configs;
+-			}
++			if (!funcname)
++				goto e_nomem;
 
-Don't line break URLs like this.  Just go over the 72-74 character limit.
+ 			npins =3D of_property_count_strings(child, "pins");
+ 			pgnames =3D devm_kcalloc(thp->pctl->dev, npins, sizeof(*pgnames), GFP_=
+KERNEL);
+-			if (!pgnames) {
+-				ret =3D -ENOMEM;
+-				goto free_configs;
+-			}
++			if (!pgnames)
++				goto e_nomem;
+ 		} else {
+ 			funcname =3D NULL;
+ 		}
+@@ -497,8 +492,7 @@ static int th1520_pinctrl_dt_node_to_map(struct pinctr=
+l_dev *pctldev,
+ 				nmaps =3D rollback;
+ 				dev_err(thp->pctl->dev, "%pOFn.%pOFn: unknown pin '%s'\n",
+ 					np, child, pinname);
+-				ret =3D -EINVAL;
+-				goto free_configs;
++				goto e_inval;
+ 			}
 
-> 
-> Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
-> 
+ 			if (nconfigs) {
+@@ -531,6 +525,12 @@ static int th1520_pinctrl_dt_node_to_map(struct pinct=
+rl_dev *pctldev,
+ 	*num_maps =3D nmaps;
+ 	return 0;
 
-Remove the blank line after Fixes.
-
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
-
-Otherwise, it looks good.
-
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
++e_nomem:
++	ret =3D -ENOMEM;
++	goto free_configs;
++
++e_inval:
++	ret =3D -EINVAL;
+ free_configs:
+ 	kfree(configs);
+ free_map:
+=2D-
+2.46.1
 
