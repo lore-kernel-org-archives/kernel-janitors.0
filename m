@@ -1,101 +1,99 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEEF1BFDF7;
-	Thu, 10 Oct 2024 09:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD771BBBFC;
+	Thu, 10 Oct 2024 09:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728551451; cv=none; b=BcgeO29ktZswRrLTa2ZXQkLD9bnwdhtCo91RbPNDZuWeZTBFiTud6SuLhAwOvDvRmg39PaMgFVtRJ5GBA+migxXsCGb8isT/xFys3Bs6Alg/pMbIvXtAVS5Oa0+dAxVqtCneaPYc2RcPz7fx/FEk2CyzNvlWwIVgKTfbcfb5Ifw=
+	t=1728551658; cv=none; b=GIh9PtP+dXWjviGAVfIDvzlMu9DQNayvLsNZQFNfO0E0GlRizRjFAunVkne6jR3Zi070dWSwiIkarT10wyEH1GfLoUlPbeKl3tRJTgmBp6qnokbO+eQYzOQX2VsDoexZ426Vljqf4uooNv3W+E2QpWxxqws6mbyQ5smdsItJE7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728551451; c=relaxed/simple;
-	bh=07x78Sg1amxalMRiVKpv9RyTwRr1zMKzZxbI/cyJf18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L0b1ZfaUD7yY9YJqkkIJnD1RSm254wenuMwXrfyZinqsKFfCwZO1QHsqEb+P5HRYDEcqoUO17YR111iFYTOZZkE6HTst2909eGeNTMvbIrV8ZDow8oEFt5kuYbuUmjw2LXYxIEbMSb817FxxZCidqrTIrn0+yziOREVjoHgG0bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IJupk2Kg; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1728551658; c=relaxed/simple;
+	bh=7B20H6vzZwQe2Z6A8FZLKo4P5HOumDTuAH51dHchgrc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bqRv5aUGHrha3f2uOwW04jnVAze56Wy2qkM0LZMjC77EXiBUyy5qaoy4BLMk2p9mNjJaSMOEe/xZ+gYazImHLcqbDvrEFC2xWD22qLYK2gNunssAA8rSWnlMmHTEzXjND0mXuxThDGnIwQezPMPlrGOQtzHD5z2u9xplpcsXEF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OlhbXJRY; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IJupk2Kg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728551432; x=1729156232; i=markus.elfring@web.de;
-	bh=07x78Sg1amxalMRiVKpv9RyTwRr1zMKzZxbI/cyJf18=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=IJupk2KgLk98gJ0eIxIQ4gk89gymoyZ2JK40dq8FePmNOAKAG1ZWNoy+KB4F2b2A
-	 XwquA/zJfIEbId4EWdgP+GmL424jT/n27cN9XxhD9lU/iSlJv8xA+Mf/fy8oiJjw4
-	 fySkqrBYgvtD+kq16mwj2+htT2nm6YFAtyLlH6djYzbwtiiCLV533zQ0uNBbqaieX
-	 dtoVNYjOnpZVbSfln4bnit1CaoWKSkgjvtqyUvUoAN+WYkzC6KTpIf4/00s1421FO
-	 cnqhfX3cNVHosG04ZTUUbTmA7x9GCBM5on0wo4pGlBUodDPe30iWfnmvwZ2vOtVos
-	 SzBjyOl9nCcyj0kHug==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MxYbD-1tvqxl0F6f-00xKlj; Thu, 10
- Oct 2024 11:10:32 +0200
-Message-ID: <1df1df73-e741-4ebe-9514-8466b4b276e8@web.de>
-Date: Thu, 10 Oct 2024 11:10:30 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlhbXJRY"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5389917ef34so720714e87.2;
+        Thu, 10 Oct 2024 02:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728551655; x=1729156455; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iS1oowt3gWPxEnT3I7D8ZHwjyqV0wJkTaD5F8v/SXSs=;
+        b=OlhbXJRYg3CzEnwzoLXccBedyD1Xs+hyPE0+7616uQbT0+pzGAKfEmu2j1RY1Cn7bA
+         CXsIURzlvNaMOtEwh4GA8FzW4obP7fH484a2fETCvVxGDqH12fY/It89y74nIS/h6E+7
+         o0bQ9SEPmPs2YEZcrv+VyMXVmHQUcG0ZXuUE6pLLIDT9XyiyZU4m4aHz6w2cMZy48+nI
+         C77KuosHqF8ai4kzNTlF1sBHjYN/pk3deuEcQeq6n/GuMR46VA68wf+fFtXmTXpJIQH3
+         GXhW0jfHSvyDaWkfWXc42lhlvHQuM40iEO9jHIi2Ip6VAuHPFy82hvS11+6YVaXtkCHg
+         bHuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728551655; x=1729156455;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iS1oowt3gWPxEnT3I7D8ZHwjyqV0wJkTaD5F8v/SXSs=;
+        b=PpBkd4wzljO0XYkAEuDy46v6QQAFOxM/1xH5735VX2f2W2meWSymWF9qVlZcsXu7ig
+         tYAfnpIczPiNaN8jTIRWi+3/uBO3jrrotb2EAX2XXQ48SGRjPMXQ7cv4FSATyeb6oxwp
+         sK8CKwIH8035bo/HQsvu8woMtsygQUlSAG4KsDw1eE0eMkJxiOQriFh2ADlodVGPwdQw
+         TS4UcvtVUNtkaEWYNFlMb3K586KAZMbdU1xQcoal1tXm4wQhNyVMAX9zoWvuzqEwoCJ6
+         QVMyOfuytmxpduM7+c3p1g7SBbsqHyVOI7ocwv4qyyu85p8lSxxsVv5frMjVShemkhUJ
+         Cvcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcQOKIjNYsnsMUy3swU2Ys71j+YgIKCnTT/hbrfYypmvM2k7TWtl74N+0uDwG2hfaHPGmFL2AikOPKcAvPHDI=@vger.kernel.org, AJvYcCWE+iF9BNb8O6P/HQu7KpNzo4pLX4ZMLwR8V9+P+fAe29v19bzy/1qKz4JfXcJcMY0PU9iUP2DD2xOgBxSI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1JsX3maBwv+DiM6Q5vLl5CEM2CQCcFvjBIDdUZgC4ahqJYKhw
+	3Vwn46U2CZkl6KWtJhGKHevtdt2Cixbg4SiNXkNa2flAcrpsdlMO
+X-Google-Smtp-Source: AGHT+IEabdPS/80LwHHvN4O9JjXcErRt0X3jKi/SEPXwMmL1sjvbwwX0uamKQJdfuWuquTPkH2rYfw==
+X-Received: by 2002:a05:6512:104d:b0:535:6cde:5c4d with SMTP id 2adb3069b0e04-539c48926bamr3578673e87.3.1728551654907;
+        Thu, 10 Oct 2024 02:14:14 -0700 (PDT)
+Received: from void.void ([94.230.83.74])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d748f0a5sm42337895e9.48.2024.10.10.02.14.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 02:14:14 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] phy: sun4i-usb: Fix a typo
+Date: Thu, 10 Oct 2024 12:13:55 +0300
+Message-Id: <20241010091355.8271-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] crypto: lib/mpi - Extend support for scope-based resource
- management
-To: Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel test robot <lkp@intel.com>,
- oe-kbuild-all@lists.linux.dev
-References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
- <202409180725.ZV8DCvII-lkp@intel.com>
- <91d10516-4ba9-4fe0-8f63-86205cc4f88c@web.de>
- <ZwDPp4bU1J5uEgQe@gondor.apana.org.au>
- <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
- <ZweTCO8cFtP_pvOu@gondor.apana.org.au>
- <4aef34ca-4665-4e92-8ce8-8a8a2fb472c9@web.de>
- <ZweXlC7G8rEK9rB7@gondor.apana.org.au>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZweXlC7G8rEK9rB7@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:95Ta7s8qYi4mGs53r1PV8Gfa3Lxp61fGKOWaCTgnyTxoqll4vBd
- 6cjxlpuXklwiOXmqZy9hH2CWR+n6WRUah5IDnKiGhaFV6Nvd93qQOJAtmTRISs7Y3ChlLu2
- WETHu12d+aITHuLbkPvm3lKzPfIQLgC5S32EkFVCFA7L2T89J3OV9Sp+qnNC6GQjY6NPx2B
- +nT8hoc1j1tnwHbfDsEJw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2NCzZm+tM24=;hohcUvjS/CGjznp4tKpsRsApGQJ
- vrXNV7XHyseqJE6wk1hBB8yzUQXHmE5xAzaGLDW5Zk9TNleQbOrb7FiU1+sxhJ7W2sRLxVs5l
- krxXAjhvHBbeS6zBN/y+yLmtqffD3C4/bH1GTElryIHQZEivk98AzqZw5S8uJsoh5ZUHivhqf
- D9Re3H2zuHMu6P3Rt+NqysCbq9/Tnb6M20Lc7gGMMzhjrsSralqqQ1123Cu+eWeifYot7rq3G
- UlUkdd+DfMK2SxW1mgJLzkAD1Gb26TfjGqFjIoo0N1gxBH2fFhbdWm1rBs0VT9jVS1jnrGPp1
- /QRs9CUEwjIozhwB73zgTjB95D/3iMKYGS+ATK9lA3xzJyDBDFjTO/SKmuaTJGc0Po2HiCbRS
- EB8z7JbzZ7Ntc11jAcGQ1E5zG0Yz586hFD0XJ94t6G2/y4Cf0I2D+4Wbzha8CWo7bO2XzMdrn
- eG4hy/oVXbdlIWNxFKujiOQmXkl/wn9zKj5U/zPQXsLAnv7o+FsHrLEhyVdiyat0MknjNVsGc
- Jzbhx7ZAce3w/jRWqp/pssRKp4iQyeQ7CZxrThFjBdsIMQ0ylvWLzfENl7fqN+xE/7UUhpHkC
- 5uhK5SRXZ8vry/rvVbxFygyIotDeeMa65PvkPaKfTdgTi+25zAZESNuut+byRp8PETYnepAib
- XWG4U8NV9gtudY325+AyhoxFxG9EJMvAMLkWpcve5X/08PWJnEJzaF8jEKKTI6rkShymBfq3l
- I4HCYddACpHIdgVYkHOr2PCPkrxUO6ZuKIm3Kd9K7/2EehY0Bj5nlYn1Dc2pKZo+UeJrhJBHx
- snJh5fnhe1a7DvafZQGTM0Qw==
+Content-Transfer-Encoding: 8bit
 
->> Do you find the proposed software extension generally reasonable?
->>
->> Can any more source code places benefit from such a programming interfa=
-ce adjustment?
->> https://elixir.bootlin.com/linux/v6.12-rc2/A/ident/mpi_free
->
-> Please submit actual patches using this.
-I would appreciate more positive indications according to scope-based reso=
-urce management
-extensions before.
-I hope that change resistance/acceptance can be clarified already.
+Fix a typo in comments: wether -> whether.
 
-Would there be a need to make the activation of discussed special macro ca=
-lls
-depend on other constraints?
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ include/linux/phy/phy-sun4i-usb.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/include/linux/phy/phy-sun4i-usb.h b/include/linux/phy/phy-sun4i-usb.h
+index 91eb755ee73b..f3e7b13608e4 100644
+--- a/include/linux/phy/phy-sun4i-usb.h
++++ b/include/linux/phy/phy-sun4i-usb.h
+@@ -11,7 +11,7 @@
+ /**
+  * sun4i_usb_phy_set_squelch_detect() - Enable/disable squelch detect
+  * @phy: reference to a sun4i usb phy
+- * @enabled: wether to enable or disable squelch detect
++ * @enabled: whether to enable or disable squelch detect
+  */
+ void sun4i_usb_phy_set_squelch_detect(struct phy *phy, bool enabled);
+ 
+-- 
+2.39.5
+
