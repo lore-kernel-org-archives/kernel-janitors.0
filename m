@@ -1,96 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24251CDA3C;
-	Thu, 10 Oct 2024 18:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878611CDA3C
+	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 18:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583625; cv=none; b=tSOFox4ZUbOl1if6Ke0LIy2m8ka8CNBGObnzhfRpSE1tQ8xCB4z/Ew31KRa6sLwlcUNuQ1BxLc+qK8buhmRTVJY+OBhY7gof0mbl/S3hkPstEA1fUg4PgPxp2SmnrUBBlTx0e+LYzFv/94Rr1TECirC6MynmwXafehYHxaTFk8Y=
+	t=1728583973; cv=none; b=UPA5OQ5t8EnfIyERAV0D26a9PdLHrmwhNfcpI+5BsDDgEQmkx6+dBkofRxUfaf+zQbH3X5pSF8WQ3pZpW+knMC2XXrlb511/Kvaa4iSwj9VE+TK4Khtq7OgI9NN7vEgzsSrnxPn/bWum3C1pLjNDb/7QLENYevgZWS7/0LLAzuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583625; c=relaxed/simple;
-	bh=qi9cRgk9TG4eDsZavzMdDrDeFNNE5/scEdIKsvd2LLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZOaPz91fQrigtLEy6wFVISNtPcvZmUUWjSLJMMfvMPm/iBGyNGObD5u0EOVWPJUhGjkfOEbyT5yvYfeVqxrktNVjaH3BJ35b8iYRGBnBFcAd32CZu/rFF7K9aETLhdxj1UBCjrIf+b8OQEp6tKNwkrroj7n4j6SPlQRCSeb8msw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V853lio1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728583973; c=relaxed/simple;
+	bh=ldQLIidAq3XSrv1H+wr586pudMJ5rZs4x1TZh0YPAbA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U+7ul0SHEsgbhVcaJsi7aPzvkocyaP2J/aZCJ3g2ghDK55n9cgHJaiosj9fsDvNdRnuHOVQz3jpfnfseZfws//5pu/16wpvl3xQweywMutnWoFjppOiykie+mb9W7BmTP/l43tV7CwYt/y/BbXSKBKxYsUTvPPwTta5Yx+84yLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=w58brkkt; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V853lio1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AEFEC4CEC5;
-	Thu, 10 Oct 2024 18:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728583625;
-	bh=qi9cRgk9TG4eDsZavzMdDrDeFNNE5/scEdIKsvd2LLU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V853lio1j4AI7YKKUdTPooIZaUvwqwCq3sepX3dystFv7k7ETsGpOrdD+vZ0df2WR
-	 KQMDzKEXYBc6vkRA1W/V7qEOmhU9JviOg82onsANvzLTlsgumZXh9bUPCjm4SHTdgJ
-	 G92X1XwBLnRsSiNNsns5kw9muLOX6/skgQa4KDzaOHtpcybk/lLZMosQZsuYuTzbJA
-	 rDIT/jFi+KKzCy5WLtGorsu+wVZUSQGN74Oq5SaKDNW2YMctQf83kTGd3oZa4IqpHW
-	 /C1P88c9RvAX0ppKVAdBnAS3DhbqJ1Mucemkv/4W7fJ3epMUve3It+2BS4uO9txbDi
-	 RfMeoGOJmvpyA==
-Date: Thu, 10 Oct 2024 19:07:00 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: pressure: rohm-bm1390: Remove redundant if
- statement
-Message-ID: <20241010190700.5466107f@jic23-huawei>
-In-Reply-To: <20241010170835.772764-1-colin.i.king@gmail.com>
-References: <20241010170835.772764-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="w58brkkt"
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20b8be13cb1so13264175ad.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 11:12:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728583972; x=1729188772; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j2Ikuhi33gkCIoLfXtInuXs32ry1GdG7/p1R2O08x7Q=;
+        b=w58brkktEhQWz7RcTWZhy1WH5wJe4yF91xIA7/dJrpcQQmmojdotyIkx1WCicFuToe
+         T+8O3Fsdd7ItNEV/ALx8afey2WUL4pGPLTFkZ+WdrtxeBZovCF5CyY21qykNTywKZEuH
+         3vHYT1nulYDJ3Xfx/3+IfKgx2nhNo+PNS42fpyW4L366a0KCv0izhlK9i2zRco9ZixYC
+         Ijix4lxrRbC8oLgoxwu2tuJq6BbNt3/fgTceEkCenpSprLLTxZY5JAHSspwmzbNDITak
+         5B+x5R/C9ix065RfRoWDnimbNCNaKuiO0PS6LzLNlzK4e/jaySNcE7ALy+qAy0/46r56
+         OvBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728583972; x=1729188772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j2Ikuhi33gkCIoLfXtInuXs32ry1GdG7/p1R2O08x7Q=;
+        b=uszlMx+6Z6KzoJ8gcsNSXhMJGUGbS1xAwDex6V4EO6iXt/a7d/1VI6q5+tnoFOLg7u
+         sF+3Vs5pw/QSZHfhQmQn/a152kNKK0qG9fDsOi2yYZvCBbu2/ZW1MUQlvht39+ph5Ud5
+         UpR4Xra8aWsY5/9OuWZmJzhIINqsaqJsND1wqusZgOmLYyhS9bmJfP1s3zadQXKXOeBI
+         i5KmIsJ8GOFWmWbPnLiGJIDOoNW5QmoWAeYH92vxp5YG75PLfSLTIOXkVfcfXrX0LF6y
+         4pmzAsrPrG5kMG7WsB7oQTMX/wyul5ruIJeclua8O0BdGCRCAKSkFT/HumWeCnrri/Le
+         DIVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTIZPxdUM6muf4gEaGvpLlo+CGHwNPAHqD1AbLxA4iEybKyNe//f1dAvOmmXCssSHMVxKHRyDw4CXzmLbTF4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMxlmzUh74crwe3EMR3f60rl9IsUPho5zQrKit7Qkr91oee6VC
+	ODquc7tapdG1BzuVryn4vgnQnvI0PVYbokC+Mlwhr3qf2h1bP/pvOKFdghPCpLY=
+X-Google-Smtp-Source: AGHT+IGrb5VGtSEu9KmvvevlzQDjJSErZq0lhnojNnBzr72kJlQ7bv63piP0wdViZzr+N15omjEafw==
+X-Received: by 2002:a17:903:244e:b0:20c:5b98:8cd7 with SMTP id d9443c01a7336-20c637f84aemr120365205ad.38.1728583971732;
+        Thu, 10 Oct 2024 11:12:51 -0700 (PDT)
+Received: from localhost.localdomain ([81.17.122.16])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ea448e468asm1306575a12.4.2024.10.10.11.12.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 11:12:50 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: akpm@linux-foundation.org
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	linux-mm@kvack.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mm/execmem: Remove logically deadcode in execmem.c
+Date: Thu, 10 Oct 2024 12:10:58 -0600
+Message-ID: <20241010181102.5522-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Oct 2024 18:08:35 +0100
-Colin Ian King <colin.i.king@gmail.com> wrote:
+NULL check of variable `area` within the `mas_for_each` loop is
+unnecessary, as the varialbe `area` can never be NULL. So, the
+`continue` statement inside the if block is never reached.
 
-> From: Colin Ian King <colin.i.king@intel.com>
-> 
-> There is a check on non-zero ret that is redundant because the
-> same check is being performed in a previous if statement and
-> also before that. The check is not required, remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@intel.com>
-Applied.  Thanks,
+Remove the if block that performs the NULL check.
 
-Jonathan
+This was reported by Coverity Scan:
+https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600362
 
-> ---
->  drivers/iio/pressure/rohm-bm1390.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/rohm-bm1390.c b/drivers/iio/pressure/rohm-bm1390.c
-> index ccaa07a569c9..f24d9f927681 100644
-> --- a/drivers/iio/pressure/rohm-bm1390.c
-> +++ b/drivers/iio/pressure/rohm-bm1390.c
-> @@ -410,23 +410,20 @@ static int __bm1390_fifo_flush(struct iio_dev *idev, unsigned int samples,
->  	if (ret)
->  		return ret;
->  
->  	if (test_bit(BM1390_CHAN_TEMP, idev->active_scan_mask)) {
->  		ret = regmap_bulk_read(data->regmap, BM1390_REG_TEMP_HI, &temp,
->  				       sizeof(temp));
->  		if (ret)
->  			return ret;
->  	}
->  
-> -	if (ret)
-> -		return ret;
-> -
->  	for (i = 0; i < smp_lvl; i++) {
->  		buffer[i].temp = temp;
->  		iio_push_to_buffers(idev, &buffer[i]);
->  	}
->  
->  	return smp_lvl;
->  }
->  
->  static int bm1390_fifo_flush(struct iio_dev *idev, unsigned int samples)
->  {
+Fixes: d44c3485820e ("execmem: add support for cache of large ROX pages")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+ mm/execmem.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/mm/execmem.c b/mm/execmem.c
+index 9c6ff9687860..97706d8ed720 100644
+--- a/mm/execmem.c
++++ b/mm/execmem.c
+@@ -75,9 +75,6 @@ static void execmem_cache_clean(struct work_struct *work)
+ 	mas_for_each(&mas, area, ULONG_MAX) {
+ 		size_t size;
+ 
+-		if (!area)
+-			continue;
+-
+ 		size = mas_range_len(&mas);
+ 
+ 		if (IS_ALIGNED(size, PMD_SIZE) &&
+-- 
+2.43.0
 
