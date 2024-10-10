@@ -1,123 +1,130 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDE81A3BDE
-	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 06:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4117118BBB0
+	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 06:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728542068; cv=none; b=doQtl8P6lpRj+S9hSswYdGlMHACblqxNXD4TU+LJQlmdkkuTYQai5AiSl7/urntYT2m5aGCOV5sthIBhiQG0V58OQqDrNv7J3IredEp41JOna43HiHyrzJOi+VZ4pmYMgd/qt73Gx0xgV6EglvOyOtAsamFMLjJGjm7lCdHKcOY=
+	t=1728542870; cv=none; b=GM8DaUo1QtLBlKi6BCSuj1PDkod9gfhywgf2hbP3FKJPwhg3PDkhe4ECjxj5Rh98WprvF6d0ghWcg9slsMXCu1vWaw9bjLH05CfBg35Naic3K8rbz5E/NA1NvCowfeFBspJ2RY6h7LtRKe2c0VP+jYxWX2WX3ZMZcoemmD8WuyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728542068; c=relaxed/simple;
-	bh=n/KuTEfj55Z44mJgo3UkAHO6y9JAvXHdzzaiDTWIq0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GToxdIvTl+vBpPmTQ4iaeC8TfXq9pJmAZr88N4fAsrtvmuiyapGfBArUWNMN5+5FTfpA3P7lvsXFTGtDYxPs0oPQ0au6QM3I/RdLPOUPZ8lprKuNtGKYcJzQg1PlUK9LKk4YQNvCm8L4sxD+H8Mj7mT008UpgeOcLqQIeTwszM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=YWW+H6xU; arc=none smtp.client-ip=209.85.208.52
+	s=arc-20240116; t=1728542870; c=relaxed/simple;
+	bh=tHKOmblPX8wWLhgLOo8CPqJ8M9jXDYJnSLJvl7GpjB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OuhXXdpbj88f7jZIsbA9wLueWzZcr1MyH2+MwQ49nPIF0q9CPoVw7MJeexYlhW9gzPhQSLP7SCgSvdNjWWmVA/cx2UJ8kO7kOh5mDqT/KYTGa+O11i38r624mFPvEgNkrz0pAiF3votH9f1APvb/+kfY0gi4hrj3XdIUYwZa9OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=KX+mdnG/; arc=none smtp.client-ip=209.85.215.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="YWW+H6xU"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c8784e3bc8so658379a12.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 23:34:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="KX+mdnG/"
+Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso335011a12.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 09 Oct 2024 23:47:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728542065; x=1729146865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zNbQgNGz4ln13V+1AJHezmBRqD3GeJjDxhy0+sxFIyA=;
-        b=YWW+H6xUZVgJuaP9y7bkdIGhDV7SxJpwLLbMcg3tT8br5MPhijqwPSJDAIkm8yFMTM
-         zy64lgeAJ5K2uKAePT3Dplmo6Pc/rUDRnKn7tz7M1O/ke1xim1zbfMQSLIEt0jlqumoc
-         xqlNDqEYlWtwmGdCvxIl7Tz3972Wk94o5eYh3i1hWukPNm12+QItFAT75Xny76TwU4dk
-         Wv29Plk41SAHQ6uWBwxtPUa7x1Zp74c54HYXerVezZvyxXv+zVgrKBUlalXMwPwmRSnv
-         ANCzXxNMK8H9mB4ETTVrfq9geH3ypZgxFOJRquPk/jSVF78QS26iqrvWMiogt8m+lZD1
-         PUBw==
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728542868; x=1729147668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=33F/qO1jWhb/z9QZCc7vqOINV1AdFFbOfnQtd2l6oAE=;
+        b=KX+mdnG/8CIwLKgktALcD0tDiWXvnXzAKc07336uK5oSDFhHaKIJrTuyR5AP/ZaM8X
+         9bUB7C4JBAFdaqTlQj523C0cDOf/9HV/p6zgAdktzQi0WpzRd8GCde5rWOIOBAc9EcwL
+         zCx9p2hgLXdNic3yHe1ads1+r7oHfrPmSSXXus+rp8u8gtNG3fPX/qrRcE835R4b45do
+         t52ek7LJL/b6DKDv0ngWzzROZq4svWo4owazQnVitlAgmWQzMcT14nnI4QOHKFqwX2Ur
+         DdYcGWgJ1cR7rv97mrayxT3cSmD1n0qpwp1eqWj+CxBSpRtnO99wL64/bxH7mA8YOyVR
+         TvTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728542065; x=1729146865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zNbQgNGz4ln13V+1AJHezmBRqD3GeJjDxhy0+sxFIyA=;
-        b=o6o00dsszOUNH9ZCAK2zywVXiua/pD/Fz+XP67MgvyGt+DsGz2qYFPkk9PPTYJ7nVq
-         FdVN8bUPoBTDI2/q10gu4QRB3A7kw3IvltNCUO7EXpDoSi1Bdr9aHKxOj4YcNiN4X22z
-         rOLaQd0VmNqii573dwNkILKGXIBuUmZAavx+lTaOO752ejkfz7Z/pDerHnp5RcAU2LIX
-         uAI70VRvb00axfdegpz6hrygiH3MobchdW/2EQmvZrz6/hwWOu3cmblHMN6KHcwe99rX
-         uj2Dl5sW83VPcRUwnp7GeleFAKZR9bbLU7kgPSIq81gc2y4hmXf7TTQJ6irjGBl+FX5F
-         GbwA==
-X-Forwarded-Encrypted: i=1; AJvYcCULpT2lZUvXiYAxDpMEmCINR5KEcXMFHqFQ0B3wBpXAReOBmEO1Widy9I9I7N/p+CxSbv4WAb96SgsH0LCZf6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDETeaQ91NJapxt66OnGGt+IhH0tz8wnO4U099owqeqzB0+Qan
-	QTKwRjKgHAYEr02ccxWaqQDIETc4Zdup0GZItQt6sdUwHtpS1rJgUSu3BWEcpi+fQIhMfr6BmDO
-	Sht3zzsBDLorbc+IuPM7RSz4BD6IGuTiG1u2+zQ==
-X-Google-Smtp-Source: AGHT+IEFirfdNC1tkJJSNx+yCF2buHjstu4V7B995CFeHueDWDw1iSohi1NTD6YhOveJe2g1G3rj+p3QJlhlIWL6tk0=
-X-Received: by 2002:a17:907:6d11:b0:a99:4136:895f with SMTP id
- a640c23a62f3a-a999e8cd43bmr218826866b.41.1728542064655; Wed, 09 Oct 2024
- 23:34:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728542868; x=1729147668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=33F/qO1jWhb/z9QZCc7vqOINV1AdFFbOfnQtd2l6oAE=;
+        b=A7owDk/ybTPprYbVI4a6wTCMBq/Zrq95AY9TEPUFAU1ZHLL8r7B5IZeaTNzAUKFHOv
+         4MLEiTKp7oYOTIPMI0DTZ6zRViNXcceUkfz7Ws0kHXG9GfNnZcS38TUVTPqgKmI7g/C1
+         oFQuN6uQbllgdX24SmZSzEU+/C/17kX/Sa8d1eiFfNicj/WdrgBV64AZCBTxObV3V1lQ
+         llvvYO/fuyvIFfVyh+PmFEpwXLJuEbxJNajSMsNfL6HLHlTIvStTC9DS4S30CqDSxdEW
+         TnGK5S9ygnow5GPwS5S6hCJhSatWPvbfE+EUlMAFg1caSx78Jox11ZJ7cEKZeXG/1bt8
+         WwIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYlItbXHomHh6Cz6AxBeobeDtW6WT5pYWyOsL/9o0A34PSr7iFw2F7v0fTX4EzSetlJKORuU/8jsEDz1l9rs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3LjCntpEPeG2lOVpNY+ob5b2LEZ1cmSprrI5hUjrLDKLc13wh
+	RO3mD4I8c+Zr6o2D2wi27TKZHUHPES821/K1TEvlVg5rVrEZcP6lDVVyY9/senM=
+X-Google-Smtp-Source: AGHT+IEgUc4JwOQEFIr4+Uu9TrvsM9ik9NQZ6rVUYqg5KibEvwonxSBx64smuK3WsnJ9Ka0B0r8fYA==
+X-Received: by 2002:a05:6a21:1583:b0:1d7:11af:6a with SMTP id adf61e73a8af0-1d8a3c4be3amr7324895637.37.1728542868540;
+        Wed, 09 Oct 2024 23:47:48 -0700 (PDT)
+Received: from localhost.localdomain ([132.178.238.28])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71e2aa93dd2sm424402b3a.119.2024.10.09.23.47.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 23:47:48 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3] drm/xe/guc: Fix dereference before NULL check
+Date: Thu, 10 Oct 2024 00:46:34 -0600
+Message-ID: <20241010064636.3970-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009213922.37962-1-everestkc@everestkc.com.np> <c2a9c4ad-ce50-42ab-8dac-65914e188cac@stanley.mountain>
-In-Reply-To: <c2a9c4ad-ce50-42ab-8dac-65914e188cac@stanley.mountain>
-From: "Everest K.C." <everestkc@everestkc.com.np>
-Date: Thu, 10 Oct 2024 00:34:13 -0600
-Message-ID: <CAEO-vhG01xvKvJ_e5Rbkn6WRQho8gauLBQw9Wd_VQj2Lyw8fyg@mail.gmail.com>
-Subject: Re: [PATCH V2] drm/xe/guc: Fix dereference before Null check
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, 
-	rodrigo.vivi@intel.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	skhan@linuxfoundation.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 10, 2024 at 12:28=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
->
-> On Wed, Oct 09, 2024 at 03:39:20PM -0600, Everest K.C. wrote:
-> > The pointer list->list is derefrenced before the Null check.
-> > Fix this by moving the Null check outside the for loop, so that
-> > the check is performed before the derefrencing.
-> >
->
-> Please, mention the effect on runtime if it's not totally obvious.  In th=
-is case,
-> someone reading the commit message would think that it leads to a NULL
-> dereference but actually the pointer can't be NULL as I explained so ther=
-e is
-> no effect on run time.  Say something like:
-> "The list->list pointer cannot be NULL so this has no effect on runtime. =
- It's
-> just a correctness issue."
->
-> Change Null to NULL so people don't think it's Java.  ;)  Also dereferenc=
-ing
-> has a typo.  s/derefrencing/dereferencing/.
->
->
-> > This issue was reported by Coverity Scan.
-> > https://scan7.scan.coverity.com/#/project-view/51525/11354
-> > ?selectedIssue=3D1600335
->
-> Don't line break URLs like this.  Just go over the 72-74 character limit.
->
-> >
-> > Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
-> >
->
-> Remove the blank line after Fixes.
->
-> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> > ---
->
-> Otherwise, it looks good.
-Will incorporate your feedback and will send a V3.
-Thank you for taking time to review it.
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
->
-> regards,
-> dan carpenter
->
-Thanks,
-Everest K.C.
+The pointer list->list is dereferenced before the NULL check.
+Fix this by moving the NULL check outside the for loop, so that
+the check is performed before the dereferencing.
+The list->list pointer cannot be NULL so this has no effect on runtime.
+It's just a correctness issue.
+
+This issue was reported by Coverity Scan.
+https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
+
+Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+V2 -> V3: - Changed Null to NULL in the changelog
+          - Corrected typo in the changelong
+          - Added more description to the changelong
+	  - Fixed the link for Coverity Report
+	  - Removed the space after the Fixes tag
+V1 -> V2: - Combined the `!list->list` check in preexisting if statement
+	  - Added Fixes tag 
+	  - Added the link to the Coverity Scan report 
+
+ drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
+index 41262bda20ed..947c3a6d0e5a 100644
+--- a/drivers/gpu/drm/xe/xe_guc_capture.c
++++ b/drivers/gpu/drm/xe/xe_guc_capture.c
+@@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+ {
+ 	int i;
+ 
+-	if (!list || list->num_regs == 0)
++	if (!list || !list->list || list->num_regs == 0)
+ 		return;
+ 
+ 	if (!regs)
+@@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+ 		struct __guc_mmio_reg_descr desc = list->list[i];
+ 		u32 value;
+ 
+-		if (!list->list)
+-			return;
+-
+ 		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
+ 			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
+ 		} else {
+-- 
+2.43.0
+
