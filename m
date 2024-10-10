@@ -1,105 +1,118 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4408EF9CB;
-	Thu, 10 Oct 2024 11:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350E61C7B84;
+	Thu, 10 Oct 2024 12:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728559498; cv=none; b=InQCUQURrZJXy2KopfSLwNiiMGblaTDM2DJRM0l0CyqwgCNx3NwGn5Q2bb6+oQP1HiqSQZfHabSclAK/4fyQ4lt7NHQfHthsiNVM1rjTSnfJ451Ce/aOm+WhTGwwWAf+3Bd/G1B+fWGQLjEO7Tc3sYVLdTpbXhucqxnw+KfcU/U=
+	t=1728565079; cv=none; b=KuD0QHnNQAIWLcMBWvynUx2afT95auqUxJdwWLrgXj9g1Gj8cmWtpuGkV8Xx9xEmMUcWoCuQF5BIN9brmbrRnTU0jFMIL7iFahipA7CBMPUJ+hYASVUR0uT8Z1Ntf75DK0zDJlblJAihmA5ZLKrfONwi8ZhilaORk5Bqye+Xz9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728559498; c=relaxed/simple;
-	bh=ywceDmzYQKH28KRgkOB9nGjXZGaXYWHDTS1DHsIk3Xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IUuLrkdglHhx44mApQ+EQFXIKRBLA8kVLdD9+H5nnVY0EFblvRJ+e40vmW4us2EYqIwLbufF7EWcvY70Bo4saly8+aC8AfZUQPLYZFWK7z33uesqXuj+3/ij+uB959dIg9EAQBlcEhGa+vndDrh1DE+o647jvVIS4gMPjnChG+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lJU3XipM; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1728565079; c=relaxed/simple;
+	bh=T3JPdNWgqvuOuTKAeftYpFlj5uZXKBpVl1V80k/cnn0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JvoF98S9I2lxLbejYXvWyKO3ctAsFkhlifSxpX7H2HHLQVmN+q7mTA6vTvlZPOkbu/GQR1lYi9+7P9iC3RWaWQTyGd5uBF2sXha52vuCiSVEBcyXOzzGApOwjb9OZqxSBRwU2zndvSc4B07rtpzhJbNCVk8Z1ZiDXvLqE9U7Kt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W3/Z4rw+; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lJU3XipM"
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABMduX002819;
-	Thu, 10 Oct 2024 11:24:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2023-11-20; bh=+Lt5TvzGhT9DI465dwqRMgLKs/FyG
-	03acJyUMNDMqLk=; b=lJU3XipMDhMxFK5PrptopagRJT+BsXO2p/dV/UFKndEuX
-	4UN88zW7V9u3npraMwVgr7ngRDdoX7al+rFEUbdlZ4hTz6U7l3sdhItAL6OxHtrc
-	ITAXFxGohb+5jqMV6l895TwZVnd7l2SZyuI3TyTUHOmuIYyv75s9u/smTWyaz3N0
-	qV+LFe/BgNeFzitlHwMmY3R/90rXnqUTX7hqMV3A726aXu88A1cbV8Yjqsn2IfpA
-	DsG9qFw76Vw39ryyf6E7xFeFMZ1gYeHTn26xAZ6F7AvnYaw3gDHNHOLVUqfALiQ/
-	kjFXlI8Fuw35sLzxPDPFTYv9LKUUMMBQV/i59v6SA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42306ejh49-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 11:24:49 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49ABCS2V011625;
-	Thu, 10 Oct 2024 11:24:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 422uwg6x7p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 11:24:48 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49ABOl9C031014;
-	Thu, 10 Oct 2024 11:24:47 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 422uwg6x6y-1;
-	Thu, 10 Oct 2024 11:24:47 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-        Chen Wang <unicorn_wang@outlook.com>,
-        Inochi Amaoto <inochiama@outlook.com>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-Subject: [PATCH] pinctrl: sophgo: fix double free in cv1800_pctrl_dt_node_to_map()
-Date: Thu, 10 Oct 2024 04:18:18 -0700
-Message-ID: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W3/Z4rw+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728565078; x=1760101078;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=T3JPdNWgqvuOuTKAeftYpFlj5uZXKBpVl1V80k/cnn0=;
+  b=W3/Z4rw+Q2aRXy1hgMxV2I3gI/mPPSjT5vDP1MQf7pLn16Z50HweTCoP
+   BpjfmeUgmDuKVTYBSsmR6LsaXC6P+QrFPnNgRQ6gsk0p+otU4ADLARt1K
+   N58OVl+g20CUXJRxeGR5NHDmpA8KrKXuzaupOgWBv7YXv/pR2q8cAPfss
+   HjBOwsoOQpg1MUFY8dqDCpVhCzu5P5LDQ1iXKt2/DENpn39qzV+5dooEd
+   1zbg/1nNrEm5erYDZ+9uJ9PbqI5wWhfdIiIMN5VCeUijv/EFVZH4e/y0V
+   +FENhcjd10VXvWCN9sTy+Pw/EZa6zlPaL1eLVraYHZnJjNaQHl3p8pKCL
+   g==;
+X-CSE-ConnectionGUID: bVsi51XvQeaVP/lQ5XjKtA==
+X-CSE-MsgGUID: ewG099Q2RGOdGRWPKYAV/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31617171"
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="31617171"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 05:57:57 -0700
+X-CSE-ConnectionGUID: 7jc+Nv4dRmuik6D1op2Ydg==
+X-CSE-MsgGUID: BvLH9yeESWelwBLj91QW5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
+   d="scan'208";a="114049337"
+Received: from oandoniu-mobl3.ger.corp.intel.com (HELO [10.245.244.227]) ([10.245.244.227])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 05:57:55 -0700
+Message-ID: <648981da5fcf3118b10932eabc07b74c99bf53f4.camel@linux.intel.com>
+Subject: Re: [PATCH][next] drm/xe/guc: Fix inverted logic on snapshot->copy
+ check
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: John Harrison <john.c.harrison@intel.com>, Colin Ian King
+ <colin.i.king@gmail.com>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Julia Filipchuk
+ <julia.filipchuk@intel.com>, intel-xe@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 10 Oct 2024 14:57:52 +0200
+In-Reply-To: <7feb0520-0cd3-46fc-8b44-a78d1c3a65bf@intel.com>
+References: <20241009160510.372195-1-colin.i.king@gmail.com>
+	 <7feb0520-0cd3-46fc-8b44-a78d1c3a65bf@intel.com>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-10_08,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410100075
-X-Proofpoint-GUID: sbJPztGdrITMqyNO9QML_0_1Qb3O_iJw
-X-Proofpoint-ORIG-GUID: sbJPztGdrITMqyNO9QML_0_1Qb3O_iJw
 
-'map' is allocated using devm_* which takes care of freeing the allocated
-data, but in error paths there is a call to pinctrl_utils_free_map()
-which also does kfree(map) which leads to a double free.
+On Wed, 2024-10-09 at 09:32 -0700, John Harrison wrote:
+> On 10/9/2024 09:05, Colin Ian King wrote:
+> > Currently the check to see if snapshot->copy has been allocated is
+> > inverted and ends up dereferencing snapshot->copy when free'ing
+> > objects in the array when it is null or not free'ing the objects
+> > when snapshot->copy is allocated. Fix this by using the correct
+> > non-null pointer check logic.
+> >=20
+> > Fixes: d8ce1a977226 ("drm/xe/guc: Use a two stage dump for GuC logs
+> > and add more info")
+> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Reviewed-by: John Harrison <John.C.Harrison@Intel.com>
+>=20
+> Thanks for the fix.
 
-Use kcalloc() instead of devm_kcalloc() as freeing is manually handled.
+Pushed to drm-xe-next. Thanks.
 
-Fixes: a29d8e93e710 ("pinctrl: sophgo: add support for CV1800B SoC")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is based on static analysis with smatch, only compile tested.
----
- drivers/pinctrl/sophgo/pinctrl-cv18xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+/Thomas
 
-diff --git a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-index d18fc5aa84f7..57f2674e75d6 100644
---- a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-+++ b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
-@@ -221,7 +221,7 @@ static int cv1800_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	if (!grpnames)
- 		return -ENOMEM;
- 
--	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
-+	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
- 	if (!map)
- 		return -ENOMEM;
- 
--- 
-2.39.3
+
+
+>=20
+> > ---
+> > =C2=A0 drivers/gpu/drm/xe/xe_guc_log.c | 2 +-
+> > =C2=A0 1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/xe/xe_guc_log.c
+> > b/drivers/gpu/drm/xe/xe_guc_log.c
+> > index 93921f04153f..cc70f448d879 100644
+> > --- a/drivers/gpu/drm/xe/xe_guc_log.c
+> > +++ b/drivers/gpu/drm/xe/xe_guc_log.c
+> > @@ -122,7 +122,7 @@ void xe_guc_log_snapshot_free(struct
+> > xe_guc_log_snapshot *snapshot)
+> > =C2=A0=C2=A0	if (!snapshot)
+> > =C2=A0=C2=A0		return;
+> > =C2=A0=20
+> > -	if (!snapshot->copy) {
+> > +	if (snapshot->copy) {
+> > =C2=A0=C2=A0		for (i =3D 0; i < snapshot->num_chunks; i++)
+> > =C2=A0=C2=A0			kfree(snapshot->copy[i]);
+> > =C2=A0=C2=A0		kfree(snapshot->copy);
+>=20
 
