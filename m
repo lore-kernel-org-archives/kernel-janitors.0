@@ -1,82 +1,154 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847BB19B3CB;
-	Thu, 10 Oct 2024 19:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9951A1CCEDF;
+	Thu, 10 Oct 2024 20:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728590068; cv=none; b=surGdjtxLfrXWJdE79c/KCHL4hQcD/tKyBCERkeygPca2x6aX9WsiEBzyqd3tTzYz8jBdFZE6XG49iN5TkuAjbTzElyJ64uPB+KNhYc89LgeL9JdcU8MU/UIpJq+i1DxKoWvXH5jQf7rhBlzDLhxm9crZ+vNx9Bx7bfNSWTq62g=
+	t=1728592355; cv=none; b=kEYWucQsGSk5ZaGPvJSF+cvr0BUhs0paW1GcZv8/WqyDNnqVcYtvU8uNkCBRjz6R1iU9pMRdnC2FkEBXU2soirYHaY9sIfMJCMDHwQ3RoCmm1H4HYx8VcT2ZrzRzJ2fyL0FVExYdyiDfmOY01RVyn9ciaOXNgDpCfgdIBxH3bh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728590068; c=relaxed/simple;
-	bh=Mp+NSHuQ3PaW2Ut+1wNtbzV8zGtQDEkTebMOTQDXOrI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YIfo7mtM1N2jbzaSO7iuFNmV5qYVNyCc3UhHtU9ei8N4A9dwF+zUI6ZACJ+rGz4H4pOREq9Nln/PJw8Yr/GSyEIMjUr/IY/FAOmr1TM5yx9rWt9j0WYmCmGFuDz6EgeBV4MbJpXWOlWZAR1gflp2IyRoYXOUKJQ2w8/AFdcmp6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=KV/XNnqj; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1728592355; c=relaxed/simple;
+	bh=3CGxP2qN6YVYFEjezTAaN5IgNYLK7qN98hoW+HQJYGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AjvIrp2DYr1rueS1uFI5GTX8uMXz3Tfa91TgXxFpO8A+WlUpFziCNDChXyFvGMn/o2EKqj5qQ5jFPEJheTRgmATDSFVRtgTPNBGSDQN12keOsu2T5kuMCz16rMonM0Z/fzEQdz9PJlC2q6qhPKS4ejof42QH9ufy7fGEwfR/olY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jptT0D+f; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="KV/XNnqj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=jXk5N6BqpmRr9oTzuzv1AOIztPQsWeFIkvJ+kq0iaUg=;
-  b=KV/XNnqjtAF1i6hGzxFDIkPwYbo4ovPr+cUw9ioiS3K76Nby/N9JQVSx
-   4o2MoGyw9dOxzUaBtp9l/9n0iV/b+D5j7LZNaZdi84MUi4JgOs++hfR8W
-   4UmTuUYj3M+eyZunWOULYd6kYjBFRZ4/jlERfZBQWTDYf7xRMgj90lsdf
-   M=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.11,194,1725314400"; 
-   d="scan'208";a="98793900"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 21:54:15 +0200
-Date: Thu, 10 Oct 2024 21:54:14 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Steven Rostedt <rostedt@goodmis.org>
-cc: kernel-janitors@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-    linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 21/35] ring-buffer: Reorganize kerneldoc parameter
- names
-In-Reply-To: <20241010153653.1809bca9@gandalf.local.home>
-Message-ID: <alpine.DEB.2.22.394.2410102153540.3363@hadrien>
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-22-Julia.Lawall@inria.fr> <20240930111431.258b72d1@gandalf.local.home> <20241010153653.1809bca9@gandalf.local.home>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jptT0D+f"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id yzpfsmaeQKZwWyzpfsd0g9; Thu, 10 Oct 2024 22:32:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728592344;
+	bh=toazOp+FeqwFOgTVRmgDHxm9wBZ5QCQUUtICBR3zZlg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=jptT0D+fIZM4qTdCVDJDm1s3zfNrGTSbRT64abfZ2FmKdZyhqwdDMF+B4IvOejfX2
+	 xFADYq85rwV2NSUoc7/zF4EZX7VTpVUWPaSJFW2wzV4UQbkSLlygfparQpLmnf8nnr
+	 kzk3jfU+y1750ELoiMlI3d7n5Fmiq9KJKcNHOwpgCzahzXv7upL2xXp8lOQZ9RN4hF
+	 YWtryh96Mz2hNeM1x1/jVYezL1KM8SGV4HiF8KivnwCJI+i4IbdQf0aPNj7v/5OhmM
+	 GcE1umDXbjWTgsOyWQ1BJoQEwR9GVG9ZdAxG2Zq2Ew1v0B/Mpm0VnLyRf8GrMsH7GX
+	 NPEloBniuOgoA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 10 Oct 2024 22:32:24 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <de04ad2d-7203-4308-9bd2-74051546bb37@wanadoo.fr>
+Date: Thu, 10 Oct 2024 22:32:23 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: sophgo: fix double free in
+ cv1800_pctrl_dt_node_to_map()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, error27@gmail.com
+References: <20241010111830.3474719-1-harshit.m.mogalapalli@oracle.com>
+ <41acfc55-9741-4cef-9254-f9e4be4da956@wanadoo.fr>
+ <aac19faa-fd95-4c6a-9a41-e4f03f8e1733@stanley.mountain>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <aac19faa-fd95-4c6a-9a41-e4f03f8e1733@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Le 10/10/2024 à 20:33, Dan Carpenter a écrit :
+> On Thu, Oct 10, 2024 at 07:17:19PM +0200, Christophe JAILLET wrote:
+>> Le 10/10/2024 à 13:18, Harshit Mogalapalli a écrit :
+>>> 'map' is allocated using devm_* which takes care of freeing the allocated
+>>> data, but in error paths there is a call to pinctrl_utils_free_map()
+>>> which also does kfree(map) which leads to a double free.
+>>>
+>>> Use kcalloc() instead of devm_kcalloc() as freeing is manually handled.
+>>>
+>>> Fixes: a29d8e93e710 ("pinctrl: sophgo: add support for CV1800B SoC")
+>>> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+>>> ---
+>>> This is based on static analysis with smatch, only compile tested.
+>>> ---
+>>>    drivers/pinctrl/sophgo/pinctrl-cv18xx.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+>>> index d18fc5aa84f7..57f2674e75d6 100644
+>>> --- a/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+>>> +++ b/drivers/pinctrl/sophgo/pinctrl-cv18xx.c
+>>> @@ -221,7 +221,7 @@ static int cv1800_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>>>    	if (!grpnames)
+>>>    		return -ENOMEM;
+>>> -	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
+>>> +	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
+>>>    	if (!map)
+>>>    		return -ENOMEM;
+>>
+>> Hi,
+>>
+>> drivers/pinctrl/nuvoton/pinctrl-ma35.c seems to have the same issue.
+>>
+> 
+> Yep.  That one is too complicated for Smatch to find.  In this case, the kfree()
+> happened in the cleanup so it was in the same function.
+> 
+> regards,
+> dan carpenter
+> 
+> 
+
+
+For the records, I spotted the other case with coccinelle:
+
+@ok1@
+identifier X, fct;
+@@
+
+struct pinctrl_ops X = {
+	.dt_node_to_map = fct,
+	.dt_free_map = pinconf_generic_dt_free_map,
+};
+
+@test1 depends on ok1@
+identifier fct = ok1.fct;
+identifier fct2 =~ "devm";
+expression x =~ "map";
+@@
+
+int fct(...)
+{
+	...
+*	x = fct2(...);
+	...
+}
 
 
 
-On Thu, 10 Oct 2024, Steven Rostedt wrote:
 
-> On Mon, 30 Sep 2024 11:14:31 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> > On Mon, 30 Sep 2024 13:21:07 +0200
-> > Julia Lawall <Julia.Lawall@inria.fr> wrote:
-> >
-> > > Reorganize kerneldoc parameter names to match the parameter
-> > > order in the function header.
-> > >
-> > > Problems identified using Coccinelle.
-> > >
-> > > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> >
-> > Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
->
-> This is part of a series, but do you want me to take it through my tree, or
-> is this going though another tree?
+@ok2@
+identifier X, fct;
+@@
 
-Please take it.  Thanks.
+struct pinctrl_ops X = {
+	.dt_node_to_map = fct,
+	.dt_free_map = pinctrl_utils_free_map,
+};
 
-julia
+@test2 depends on ok2@
+identifier fct = ok2.fct;
+identifier fct2 =~ "devm";
+expression x =~ "map";
+@@
 
->
-> -- Steve
->
+int fct(...)
+{
+	...
+*	x = fct2(...);
+	...
+}
+
+CJ
