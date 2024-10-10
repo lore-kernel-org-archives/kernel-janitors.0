@@ -1,110 +1,98 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6216138396;
-	Thu, 10 Oct 2024 18:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E7D1FAC3A
+	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 18:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584438; cv=none; b=WEZ0Wh2FJfqgs4JTY/CGoWVYFCpgCeG/ApZM6xLr+5i0hEKB9k5VIIbhOaNh6tUZbuO13rpuRL+qo9IUhA9JmMm/qw/OKYXokZlRfoY6k0f17DtxuiTMXHykH62hgZGG6P5HLEEPQ/X/JRUo3K50L3oi28BUiV37W+c5rjh9Bjk=
+	t=1728584756; cv=none; b=cK8nL32KlsE3yGkq/TyFZNnmlKqwKpPxD+qiGh6PMPea5dgQ7+WHmzUnOWXPoqyKP/hgHc6KGdfAw+225wb2BR+GH81GnBlM3uM4tN3RbxO20a58sh6H7EHXsbWaaWQrVZsPAdKlNiN9sjpumhFWsRyJMQpJJAFARS9KpP8KsYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584438; c=relaxed/simple;
-	bh=AQ0kR/CdHYq7xnw3rsJ9i4pLf5dT9pWRk+1pMPO0hlU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=AItMX/I+YXdBODtL4FpmcgcE10s4IpB+8CJJyvNB6yiAMLjPhSyrBPLCFzhnSHdakNBVNfWKaIvMvC1YJkrKD+pzHkEc/zJVWKdIE6uUyVGVwEHsaMlJIUE4zFLvZ++Igxpx1+D/HKKwWae+tYBDMaejank2TLkNG3Bb7HlPUxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRCplQ8k; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728584756; c=relaxed/simple;
+	bh=WjZnkR+Hp1Z+sTURaerUVo9hnHxey+gpfAsg0efFelE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CeHvXtMPDzcxMrRaq9A7parGWRblF9CWUvfiqcF9Pc+taUGEyUVLmv9KGH1Tf5NmSt3D7lpIcC6tmEk9D7MD/px+j3hhcgfTK9ew9DajPc2K6peLMm5RTLJgkQeE75wXN2eBdjRtwedK0MHazmR2Dku8PXLSb5TkdwFDeZsPq+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VOoOEMaq; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRCplQ8k"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso13440971fa.3;
-        Thu, 10 Oct 2024 11:20:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VOoOEMaq"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43117917eb9so8782395e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 11:25:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728584434; x=1729189234; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AnAkawjZqfeZ7VH0Jg0DFYz+xjlN8xdngDCa0VPoccA=;
-        b=VRCplQ8k7YwEpfTNDE+xC+RQnOCZsCmg8d8yC2VdXn4NmgiluXSyVXbjvYVWAinwRS
-         0EStBxN9M4lDYbzqLeWf/NnYBxOl8Cjvin0+Jx7ooIvSkjXaoQC8C6DnZi/pzi/pJY5f
-         Rk2WgyP5snJi1sjGsEXSR3vkZc43fWM2Pi0z6CmhT3zggsXzAE3EWuwW6Ma4MKoDPOxB
-         PVNLCzCVnuAbpQgVl25MKgNgtDG7hXHG8CTbtlqYuDzy5s/SALXyzHzlpwuyKRP/XSgO
-         uEzxgyFvt9eQeHxeZQx6scK1BkN0pkAb5zApRwsTCiUku+/y/OQmyH4Xskna/IznIRWZ
-         ci2Q==
+        d=linaro.org; s=google; t=1728584752; x=1729189552; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MmVxF6On3Xud0fELRG4PtMnUkfzrftmDE77HKJT1fqI=;
+        b=VOoOEMaqekrzuh5tyhYzdIjoNad0OqMFw9WIrtkBwmmvMLplzSR1AJjqRyVzDrgnW/
+         Rrwa9MKIMLQvARiyEyrsoM8RDDR/HJecg7ruic+fRjjPO0FlAj3fwSIeJATlWmlIXcSn
+         UVzckPPYK08hDuN86C9lUl0qs/88N3kYVsoq6KXrO1KdI01mfaI+jiXmz6cK/+Dz+8iZ
+         IQssypRolci7ISNT6LbiNRQjfQgeCO+FsPTv2Lnc6dROe0R0+1xoybXyDhM55ur/V6eq
+         lWeXq2sjQ0mROyq2JFZCiY2yGSVV8ghHiNtw02u5KDP3sDEuoUz9tNdJYm8kswOjZ/vQ
+         8uRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728584434; x=1729189234;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AnAkawjZqfeZ7VH0Jg0DFYz+xjlN8xdngDCa0VPoccA=;
-        b=YWvwk5LIpD2Qi8UkiFGvg22XIgWVOHRzwZlqlSO4BOib6s1vamQylgRDgiSuiRrVFi
-         srMI0Lc39PT0Vb8vSBwCOeernBcMdIamKaGSLcA8kFQyDUOB4E2rvPSHBhfJcVPC6IIu
-         i56gpzY4bwFMwqH170crfUxkYceHL91i2Xt0Ef+fUf1tJCrG5NbWBjZI+pCkZ/NcAnf1
-         eoBvB1m+B5Hpun47tSZLPWeFPR8ImU68n+8Rmhe12odsWjaM0NfHf4xh0T2iEl2SwP2V
-         9lpzBGeAPFHxCNyEMGPGE/N0RLAjjAB43WXKzPEz4nkZx6lneWBRy3Tfto8QP9r33s7x
-         DCHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbKEJP8dvCkehpwXKRXScmmurx/QMI04Xc1764J/wPhDNY0gMkooarwbiJS1/Sk8ua32mKtkUfSEpKW8I=@vger.kernel.org, AJvYcCXzXvg2jILYxZyDKHe9vKr7CoT+Hi/PcDylrR7Nng82ncq6IlzpzkUBdc+OlmnuhsAVYyxJGQTYTb5pvU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYT0XgQWNQdSQLc1I08tNnRppIIhzLsgEfJV1BCrtAYjBGOmyl
-	Oi6jovp6kg4BW+neAIbqOzTlA+/FVvUe6XdsL6FNHSt/Y49xrn8+oyiiw0zW
-X-Google-Smtp-Source: AGHT+IGfi0DarAWtv5MybSL1H7WiCZ+sBqFN5puLs0NY6kQSdyj0bxg7ojxxdV7ITOUPdk+lSwn9/g==
-X-Received: by 2002:a05:651c:548:b0:2f3:f4e2:869c with SMTP id 38308e7fff4ca-2fb188105e7mr42531671fa.44.1728584434204;
-        Thu, 10 Oct 2024 11:20:34 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937153032sm1096641a12.53.2024.10.10.11.20.33
+        d=1e100.net; s=20230601; t=1728584752; x=1729189552;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MmVxF6On3Xud0fELRG4PtMnUkfzrftmDE77HKJT1fqI=;
+        b=Fo5EBtk9z+HV77PehW5+vzbD/VcSnfopVRiq4etSHEt1dWmfn8dZL/XKD3I27LrEEP
+         p3yC3qxqcQDUczwYkygrXyaD0G2EAGltO4+HqM8kUBqMIFkJo9iREReY7YriLgC6PYzI
+         1Erp5h6T6u5+cv+W8gvMHs1snj+AIMigoLMZr7iAFE1uQFfMxSAsFnzNNI2TtUc81r8M
+         w7LoFPFNsb5LPM0Vav2W+/FbmwYCJlxQSNt4cRNi/Y8Vpc5RPlu+fK4fhcc8iBqk1TMN
+         leR6hSdBx9bAc5NiB5vSUrwWclyGbMZpcwy1EEKtKd9dJO4VrIUC3V3j9IcDMeUQ/dH8
+         3/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXT/gvMNLvO0vhDsHMcQU4tQ0romDa9tQBPsD2zqs2qc2Xei7lZrBdwOOn400QW/T/qEYd56R9NjEaFEJ/AZj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlk2obFBvKTL8Lw5YtOJ95VTkF87bGSIZF6jS9DjU5ie8xOOCG
+	Ib0HFGiHQWxbggJkvWssR8DLmcaGWionZcnH8ZGhN590HeNcpylCCatn9qL9nwY=
+X-Google-Smtp-Source: AGHT+IHIY6JDhq5wDjFxcjfx2P1BtEHVyGYjVK9PHPhnpKcVYhsRIOHISEEsl5hFzPaSbEhyokkZWw==
+X-Received: by 2002:a5d:6645:0:b0:37d:4e03:ff86 with SMTP id ffacd0b85a97d-37d55313314mr31978f8f.49.1728584752146;
+        Thu, 10 Oct 2024 11:25:52 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8ab6sm2113414f8f.10.2024.10.10.11.25.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 11:20:33 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Ryan Lee <ryans.lee@analog.com>,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: max98388: Fix missing increment of variable slot_found
-Date: Thu, 10 Oct 2024 19:20:32 +0100
-Message-Id: <20241010182032.776280-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Thu, 10 Oct 2024 11:25:51 -0700 (PDT)
+Date: Thu, 10 Oct 2024 21:25:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Sunil Goutham <sgoutham@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Naveen Mamindlapalli <naveenm@marvell.com>, netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next][V2] octeontx2-af: Fix potential integer overflows
+ on integer shifts
+Message-ID: <91b7c990-1d8e-45d1-8f31-309301226811@stanley.mountain>
+References: <20241010154519.768785-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010154519.768785-1-colin.i.king@gmail.com>
 
-The variable slot_found is being initialized to zero and inside
-a for-loop is being checked if it's reached MAX_NUM_CH, however,
-this is currently impossible since slot_found is never changed.
-In a previous loop a similar coding pattern is used and slot_found
-is being incremented. It appears the increment of slot_found is
-missing from the loop, so fix the code by adding in the increment.
+On Thu, Oct 10, 2024 at 04:45:19PM +0100, Colin Ian King wrote:
+> The left shift int 32 bit integer constants 1 is evaluated using 32 bit
+> arithmetic and then assigned to a 64 bit unsigned integer. In the case
+> where the shift is 32 or more this can lead to an overflow. Avoid this
+> by shifting using the BIT_ULL macro instead.
+> 
+> Fixes: 019aba04f08c ("octeontx2-af: Modify SMQ flush sequence to drop packets")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+> 
+> V2: Fix both (1 << i) shifts, thanks to Dan Carpenter for spotting the
+>     second shift that I overlooked in the first patch.
 
-Fixes: 6a8e1d46f062 ("ASoC: max98388: add amplifier driver")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/codecs/max98388.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/sound/soc/codecs/max98388.c b/sound/soc/codecs/max98388.c
-index b847d7c59ec0..99986090b4a6 100644
---- a/sound/soc/codecs/max98388.c
-+++ b/sound/soc/codecs/max98388.c
-@@ -759,14 +759,15 @@ static int max98388_dai_tdm_slot(struct snd_soc_dai *dai,
- 	slot_found = 0;
- 	mask = tx_mask;
- 	for (cnt = 0 ; cnt < MAX_NUM_SLOTS ; cnt++, mask >>= 1) {
- 		if (mask & 0x1) {
- 			addr = MAX98388_R2044_PCM_TX_CTRL1 + (cnt / 8);
- 			bits = cnt % 8;
- 			regmap_update_bits(max98388->regmap, addr, bits, bits);
-+			slot_found++;
- 			if (slot_found >= MAX_NUM_CH)
- 				break;
- 		}
- 	}
- 
- 	return 0;
- }
--- 
-2.39.5
+regards,
+dan carpenter
 
