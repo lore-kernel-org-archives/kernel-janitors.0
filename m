@@ -1,134 +1,114 @@
-Received: from mail-oi1-f194.google.com (mail-oi1-f194.google.com [209.85.167.194])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F497199252
-	for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 16:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE47E558B7;
+	Thu, 10 Oct 2024 17:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728579564; cv=none; b=JlVH+DoJrW+fIGLbOG36tYjM/SKbIU5i26fI5dErPAaALQKK7yQ6FwqUDdK2vaIHF6uP1XmQGNnLuLrcTGhhJ2SX1Wk8PmeqfjaJXN6xPEyppaPx7hpHuzCksXD1B+w+f23DVnByG5O+ckdtPAGgHPiQ6dLyspC0LSNPlHmQS6s=
+	t=1728580121; cv=none; b=dOgVW+BvGWQpNMJ4FHiD6B2RBUhu4ql2jdXWTmQ/zHlj/JSplnywnfbVbMmAbNP3L53aiHhgI19dcLbCGhRUHERY4gQfz1C+vMqohgBLGWwYd42+/RWgSChAsR7fS6GCVkWQDnt9nFkix9sMSUVm87Hmpy5eqiaigfWE7dvMie4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728579564; c=relaxed/simple;
-	bh=KWHcT982DYDGFB/gQdzNCBlUMvMAGFMVeTv80N7sStc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qRWp9qTrkaNe+LXrJaxz7hCc29C9FBiXV/UhAYU+rUTOs5yMV9co1gGhLP7M7jCGuuocOCRPS9s3cPpSvW3kaxI4UeSsKcgPMDy4cDv+zuQCXXuIhMiZWke6qkfwtRP9OO2npb6ChdwNVJBvUml4wwCbhuWORo4GNIFdxmZthjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=A0ZHSi2e; arc=none smtp.client-ip=209.85.167.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+	s=arc-20240116; t=1728580121; c=relaxed/simple;
+	bh=83B4gZkVqCXDhd2KE4907JanoMHqwxtUvcT7A8gpdb0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=d/qZoBqW//x39Xee+FqZQYdpdbEm/47q5L5VqW79LFSwMowL9r510YL2WHwDsOp72iNwl3ur+/jpttAaJuej812TUsyobBPC4SmaEsD0yCsJcBGp4P7qdi1hVwzH4DACgf9FvJWc91r8Odrus8vdebU59JzcQg9fjGMBsgnl7ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tb5MxYUY; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="A0ZHSi2e"
-Received: by mail-oi1-f194.google.com with SMTP id 5614622812f47-3e3e5c4a01cso666619b6e.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Oct 2024 09:59:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tb5MxYUY"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a83562f9be9so147105666b.0;
+        Thu, 10 Oct 2024 10:08:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728579561; x=1729184361; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728580117; x=1729184917; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2O3NkkjIemIsAieDahgo6WCW7UZHnrJROVrMuNKxroU=;
-        b=A0ZHSi2eomUHDZDBHFDgyLnWpi6w3N2EL5sO2MZGntL6E0WB7nZASMQFOtxG18TdhA
-         79987QvIPfux23qRM2mkoNKEymFMAO5gCXEeNmFisevD+0RvbwA/YI44q0i563t0a3XQ
-         IrX0KEp4Wpol6QCWwol816pQOb89mmKugMqGriW9IO3htLMdwsM/pM35po5p2HIApcma
-         yj6pozKfeUrna1MctJ9OhbKhlouGFT8Hb7uFiZspvcL1eEeRq+HBNJFNv+r0FwuSPJK4
-         orHe6orGg/7b7g8le+PmawxX1pJeVe9PMZzKwAH4NK/XvE2Dh5Dl44+4zioefiyEp6oj
-         naSQ==
+        bh=s76fMrgrCCIITG8O3wMeuaoCvQZMM5iJlgV4Fc1nwC8=;
+        b=Tb5MxYUYNPm/FA9PFIJ+cu0FpzF1Pxms5Y+ZPdu/jVQpWqMssCaoqibsdObdnVWq13
+         UGi3mMIJn8pboFMrUyUxiN5iyX16bB/RHfELOmsproWidi9IrlOpR+iZhWN0T3qjKocJ
+         +IfNGuVESkPYTwDAVPgUc3wHwyR35bCRFQLOzUumwhYcucgmv1Vv8xUlmhtWsU6jEV7G
+         c9wEzd1K7XNiWjj0HlaFwNqUcyptYOAJK5EMdZ5BBvnJSiYn6NsOo1sIYaL9AMN6OK6T
+         EJdM7YY3rxGyw0OYjroT3u2+JdjBgU0zmMzxS6Gal8mhrIuIlqcztBCoo4w2Mbj4ODXH
+         qJTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728579561; x=1729184361;
+        d=1e100.net; s=20230601; t=1728580117; x=1729184917;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2O3NkkjIemIsAieDahgo6WCW7UZHnrJROVrMuNKxroU=;
-        b=T+oJ/ODC31hQhmsNxv0MRN36OcJBPhfrr5F9o/BVhiWhmUTfgLNC5LcUUtHqkTHZLL
-         FtLC+43b29l3u45UeHK4YOtbg/38Yrku5g/1AbSBO2uZo9t4PY337+d8/oY6sPLaxZMl
-         3NiN9g0XaIDQv8D4Rps5hVz0GOvZE4DoANrwviFPGxKzDXCKDP72B0250duVB5Z9DmfB
-         ANgG2pRaYRZb18NpOf3HOwW1zjpP9J/djMfhZC+wAfksN2+Bqx1YMbEPvzUsXzVE2V3m
-         rjkjgM8O8Q2oi74CsVgSnv4wX4gbQsWHfxMxvBJbm4XG69V2AwF+7kJ0Qr1M2RQBcLaO
-         G2Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVwT1Ejs9VcXP9ylCbvB63uLOWYtHiyTu9HTLqpNQQ4R5lbWNCpcCfKh27lHqEwcEZKX8OPKBjuVqI6AIp1hAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcEJDyG2YlZcUem9GxTFn3djNt9vDVCNAgMbU/70IKI8+Ld/lM
-	/iVc5jEtdXJsruaLRNtuL7Asd1+PRY9Wdc6L0KXt99bqMxL+glDcjZwYkCIJjBM=
-X-Google-Smtp-Source: AGHT+IEQECyAfbtTxECBBfSegcXyiHPvb+HbTmNxdnj/9M9cty89n8mvsWrqwn4N/Jko0Uax4nMEPA==
-X-Received: by 2002:a05:6808:19a0:b0:3e3:9ba8:5af0 with SMTP id 5614622812f47-3e3e66cc39dmr4801528b6e.22.1728579561189;
-        Thu, 10 Oct 2024 09:59:21 -0700 (PDT)
-Received: from localhost.localdomain ([81.17.122.16])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ea449688e3sm1238289a12.87.2024.10.10.09.59.12
+        bh=s76fMrgrCCIITG8O3wMeuaoCvQZMM5iJlgV4Fc1nwC8=;
+        b=VrCmixAIvL2/HUpGEocOW43Wm0hqoM3Ocvu7lrxjzGbFj1cl2dyWD82mx7B9E2LGvt
+         k95Jke5GGmzPDTqzg6JpfuuROA0hHEWks4+v+vQ3nqF1LUlpKQxCJdP7Fy3nC3l8yw7t
+         3D1pRXut80MWvGamiSJB2nQ9tYKbkcOR2+RDaul9/0mzXX2lkP7SVAimshvw3ALJ8Oib
+         WffUpDHNVoIluhxUJJJ8JE5smDx66AWqSZ3ed9Kj/RBk5R+2k6a2fxux2z11b9UCHKHr
+         xPH7BaGJtsbjsdxG58Dlz5iHpt5v/+OYWcZ6lPoE6p6vmIukY2TnkRKII9P8R69uGQT+
+         c/7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWcojQPazGAeWC/PnSbFt/OoldCRFHdf7er9tgxTJzdw8fnM0EuAUgELmYgNuDfp88MliTPo8Fv59U731vI@vger.kernel.org, AJvYcCX5WcUYMpf3ACjwkaE7FVCASqDOI1sX62kRYGBR2QqaD+P8kLJvfkJL3Rg6LQ1H6LtaMXxDuY8Ldr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsCooSH0ECIH0yc7bHCsXVwiLzXtSeXE9FTFsOvs9XrxpmqxJB
+	kP7qui8zbqY+UoR/n+aqn7aJqPRBx9xKDYDJihijs0KQh32BLoneamE+H2Ns
+X-Google-Smtp-Source: AGHT+IFRAFYFiDsvs3uzupt4RvuE9SDRKJN+vCOE/lzAdDHhgG8lE7FdHSD9DckCx52z3Io+q3thFg==
+X-Received: by 2002:a17:906:d555:b0:a8b:6ee7:ba28 with SMTP id a640c23a62f3a-a99b7672bacmr5533366b.1.1728580116669;
+        Thu, 10 Oct 2024 10:08:36 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f35f4fsm114421966b.88.2024.10.10.10.08.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 09:59:20 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	michal.wajdeczko@intel.com,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	kernel-janitors@vger.kernel.org,
+        Thu, 10 Oct 2024 10:08:36 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	linux-iio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH V4] drm/xe/guc: Fix dereference before NULL check
-Date: Thu, 10 Oct 2024 10:57:59 -0600
-Message-ID: <20241010165801.3913-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH][next] iio: pressure: rohm-bm1390: Remove redundant if statement
+Date: Thu, 10 Oct 2024 18:08:35 +0100
+Message-Id: <20241010170835.772764-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The pointer list->list is dereferenced before the NULL check.
-Fix this by moving the NULL check outside the for loop, so that
-the check is performed before the dereferencing.
-The list->list pointer cannot be NULL so this has no effect on runtime.
-It's just a correctness issue.
+From: Colin Ian King <colin.i.king@intel.com>
 
-This issue was reported by Coverity Scan.
-https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
+There is a check on non-zero ret that is redundant because the
+same check is being performed in a previous if statement and
+also before that. The check is not required, remove it.
 
-Fixes: 0f1fdf559225 ("drm/xe/guc: Save manual engine capture into capture list")
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@intel.com>
 ---
-V3 -> V4: - Corrected the Fixes tag
-          - Added Reviewed-by tag
-V2 -> V3: - Changed Null to NULL in the changelog
-          - Corrected typo in the changelong
-          - Added more description to the changelong
-	  - Fixed the link for Coverity Report
-	  - Removed the space after the Fixes tag
-V1 -> V2: - Combined the `!list->list` check in preexisting if statement
-	  - Added Fixes tag 
-	  - Added the link to the Coverity Scan report 
+ drivers/iio/pressure/rohm-bm1390.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
- drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
-index 41262bda20ed..947c3a6d0e5a 100644
---- a/drivers/gpu/drm/xe/xe_guc_capture.c
-+++ b/drivers/gpu/drm/xe/xe_guc_capture.c
-@@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
- {
- 	int i;
+diff --git a/drivers/iio/pressure/rohm-bm1390.c b/drivers/iio/pressure/rohm-bm1390.c
+index ccaa07a569c9..f24d9f927681 100644
+--- a/drivers/iio/pressure/rohm-bm1390.c
++++ b/drivers/iio/pressure/rohm-bm1390.c
+@@ -410,23 +410,20 @@ static int __bm1390_fifo_flush(struct iio_dev *idev, unsigned int samples,
+ 	if (ret)
+ 		return ret;
  
--	if (!list || list->num_regs == 0)
-+	if (!list || !list->list || list->num_regs == 0)
- 		return;
+ 	if (test_bit(BM1390_CHAN_TEMP, idev->active_scan_mask)) {
+ 		ret = regmap_bulk_read(data->regmap, BM1390_REG_TEMP_HI, &temp,
+ 				       sizeof(temp));
+ 		if (ret)
+ 			return ret;
+ 	}
  
- 	if (!regs)
-@@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
- 		struct __guc_mmio_reg_descr desc = list->list[i];
- 		u32 value;
- 
--		if (!list->list)
--			return;
+-	if (ret)
+-		return ret;
 -
- 		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
- 			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
- 		} else {
+ 	for (i = 0; i < smp_lvl; i++) {
+ 		buffer[i].temp = temp;
+ 		iio_push_to_buffers(idev, &buffer[i]);
+ 	}
+ 
+ 	return smp_lvl;
+ }
+ 
+ static int bm1390_fifo_flush(struct iio_dev *idev, unsigned int samples)
+ {
 -- 
-2.43.0
+2.39.5
 
