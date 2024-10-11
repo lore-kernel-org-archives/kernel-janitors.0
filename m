@@ -1,41 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDBA215F50;
-	Fri, 11 Oct 2024 11:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4711CF291;
+	Fri, 11 Oct 2024 13:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728644807; cv=none; b=Dt8ydOrxtU6rgXEOZbFrHbZXO7ve33cjVE3+Vh4TlxGzPq1YdPA+bHATnDvXzPfyCsTlX5B/GhPc5bOuZsrSPjvpQNyXu48jWdvow1qEKppUUItqYYuAdE85O3yGAuEdKZGkUn22TeXLLjFqys9+lgeaN91IuO9TW4G1hP9Lkdw=
+	t=1728653476; cv=none; b=YMXT9AUqErYBEM09qymrtdk6ixwc7qqTVi5pmayI7FgzIMxiVTgDxmwTPhPVBdsEd9nXesH1ed29De1DLd/c9SB0FwjCt6NH/zHcv0HIvSw2oDrB+i3A4A7AKG8TT8cLk2Wm/KvnuSCmkO5cLIRj5kNcIYkC2yMgv03zLpq/p94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728644807; c=relaxed/simple;
-	bh=OoZeLIah3I01QLkusQPlIZ7O+7pRRC5P3mA7NRcwM+c=;
+	s=arc-20240116; t=1728653476; c=relaxed/simple;
+	bh=Pa1bnUZ2CsvnT/l+Tzbsrx1EiuynpO91L6NglyA8Kcg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fzfuq8ymzaq3QsUrehlK4iLB/grFRbMyksDjJa/qA1Pux3TBwgJGrj4+grx8q5jB9O9OpH6z5hbt3FMdxDpK/3mK6BUmRT29sRG3rPUU6QoHM4a2LHuyBhLgFzRcQM7geJ3XGbyReTlMmycUwzQhCqaz9egDMA1ln0kFqGLVuYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UmrGb5mb; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=n5Kdxaxs7AWxT6j9ICdMB5Ao80s1Rc3V39/KRZ5VNQNJp5pBSqAwnbu+xz9347rVc8m/MK88N6R13fGOXy5QYMbMcVVClR7NNKM4e3q2TbGFB+Kf4XXUWt+UMriH73ycwdDGzJQX6s4xc2JZFg3icG/v1/ue4sJz39VLQJi9+KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=odJokxhC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UmrGb5mb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6BB0C4CECC;
-	Fri, 11 Oct 2024 11:06:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="odJokxhC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF59BC4CEC3;
+	Fri, 11 Oct 2024 13:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728644805;
-	bh=OoZeLIah3I01QLkusQPlIZ7O+7pRRC5P3mA7NRcwM+c=;
+	s=k20201202; t=1728653476;
+	bh=Pa1bnUZ2CsvnT/l+Tzbsrx1EiuynpO91L6NglyA8Kcg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UmrGb5mbPwmt2uFQWta7DbRxN4gV6UvL0HQQXI6fPMFP+RlCTOlDSDYhU+weKIXtz
-	 SvrybybvohJ95KPRoMiRYfyG6VD+YVNPisGiNakF1WmcQjwSDtfdvkTnVXo7SvN/41
-	 p/ve2rfPenx5cPoZ3h/RO/GA8sUvsjWixlSR5V5ZdNdwKnrkDwMR5r9NbjCkHgpYOl
-	 SC7xS1IKQsaV1fPJr6Tu+YlhRpizf1wTpU4TLDQ7TSoRSrmT6WElVSHtyqgoBZJz1f
-	 XHRB8njMKJR8eOQWeoeDCbjHWUNveke60eQFYzQx0IaBtkUZQ6tnqHBFC2IeR/hF+M
-	 PFGOR2UYA9dFg==
+	b=odJokxhC9afN+z10xjOTfvmRifnYMyRUqAtM0cEQTOObnLV5JamAgtizPzE7J2LQm
+	 akUf3ZvNQxGtRhcPvQC+M42zcdESCVacnPWuMVkprDMlndKSGVpvuJkrrR0cZDhsZF
+	 vY7yU40EAp/wzwckwApectD1Xz9HHfDVlZ7Y1hqOmBOCKUHOjl5CGUmkQhY2HoTzqI
+	 ZbfhojOQQvZPq7zy3jEMdFUCD/HNkd2BuL+uXxBHzvdd8QSf8ANx/eUkvbWUfXefyn
+	 3NxvlgYqXaFbsAGhJvDml7MACVDcze3PvUSYjIELqfVexY5rIYErjh+qfXT8lknfB6
+	 kdeoMHE8eputg==
 From: Mark Brown <broonie@kernel.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Christian Heusel <christian@heusel.eu>
-Cc: Thorsten Leemhuis <linux@leemhuis.info>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <20241010-bugzilla-219345-asus-vivobook-v1-1-3bb24834e2c3@heusel.eu>
-References: <20241010-bugzilla-219345-asus-vivobook-v1-1-3bb24834e2c3@heusel.eu>
-Subject: Re: [PATCH] ASoC: amd: yc: Add quirk for ASUS Vivobook S15 M3502RA
-Message-Id: <172864480352.3868579.17081032898194754716.b4-ty@kernel.org>
-Date: Fri, 11 Oct 2024 12:06:43 +0100
+ Takashi Iwai <tiwai@suse.com>, Ryan Lee <ryans.lee@analog.com>, 
+ linux-sound@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241010182032.776280-1-colin.i.king@gmail.com>
+References: <20241010182032.776280-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: max98388: Fix missing increment of
+ variable slot_found
+Message-Id: <172865347434.3898502.5695068809742521783.b4-ty@kernel.org>
+Date: Fri, 11 Oct 2024 14:31:14 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,11 +47,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Thu, 10 Oct 2024 15:32:11 +0200, Christian Heusel wrote:
-> As reported the builtin microphone doesn't work on the ASUS Vivobook
-> model S15 OLED M3502RA. Therefore add a quirk for it to make it work.
+On Thu, 10 Oct 2024 19:20:32 +0100, Colin Ian King wrote:
+> The variable slot_found is being initialized to zero and inside
+> a for-loop is being checked if it's reached MAX_NUM_CH, however,
+> this is currently impossible since slot_found is never changed.
+> In a previous loop a similar coding pattern is used and slot_found
+> is being incremented. It appears the increment of slot_found is
+> missing from the loop, so fix the code by adding in the increment.
 > 
-> 
+> [...]
 
 Applied to
 
@@ -58,8 +63,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: amd: yc: Add quirk for ASUS Vivobook S15 M3502RA
-      commit: 182fff3a2aafe4e7f3717a0be9df2fe2ed1a77de
+[1/1] ASoC: max98388: Fix missing increment of variable slot_found
+      commit: ca2803fadfd239abf155ef4a563b22a9507ee4b2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
