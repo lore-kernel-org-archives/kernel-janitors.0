@@ -1,68 +1,63 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DD41D096B
-	for <kernel-janitors@vger.kernel.org>; Fri, 11 Oct 2024 19:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB011D0E3F
+	for <kernel-janitors@vger.kernel.org>; Fri, 11 Oct 2024 19:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675758; cv=none; b=kpbegtjDO4bvm7QA12djGzmO4I5cgBGyWxKlElgMaJBwciUQe1Pmx3i7IyHM3N+wW03k6LT538vxmQj667TO8EKkpEEITrSUGDxNcMYfQfVLMtKllkIqXOyxQ1EOu5noRew+ohHXGzoCGCgyiYM7J7v79EFOGuy/s9B2g4JIUDM=
+	t=1728675768; cv=none; b=NZztxWIHrLocG+18CaEeHiIOJBjsvAaw2Nx3n6cWu39AhzdEilX6IUSH7q4UJIgmy3NlFZfFVNgJLUdtrbLPGtQCIz+xlo1KBsQ/6y5bnLMLb1QYAgyudvnXoiiQwkTDuk1M5LyNdQAUczugBnQ4Epa6hEML6jsTCrcz1jbX9Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675758; c=relaxed/simple;
-	bh=B7kyYckFT/0DJHm3tDLiNH9WM3QNDHo1rocCSnEz2WI=;
+	s=arc-20240116; t=1728675768; c=relaxed/simple;
+	bh=85s3yh7C9E4AhHzzxYnfMTj0KjOdGEaz607yZpREXA8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bOGekwPFMrgSWeLxgQRP4+Ban9Tf4iXXL5EWVmM3rc7AKsZHOHRf19ESUO9xwwaTS8PH9c/jbhY6UPn/qSXfirKwXQXGvDpsOrlMcEbTkUoIwft3e5mJ9WiRvgRc2p1YX2ENxI2sRh07T2tqpvugNUV8YqD8Irifq4Ps0k1o+/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dxXQKG8H; arc=none smtp.client-ip=209.85.128.42
+	 Content-Disposition; b=SwFKJ74zDqThr0OxNQoOH0zTiefQYsbvog9PiUjFGl7NO2KV20eDISka6ijTIyEk33uUCf9XMwt2oU4FzGBvrdC2t2crVtoLqUIha5JkF8DsYmSJBl7EQ4SNrPKpGznn40/ZQFyFqOTxs707DDe2p7+lNBfUx5Nnm9+nYV02E6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pXAWbZD5; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dxXQKG8H"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4311ae6426aso13092915e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 11 Oct 2024 12:42:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pXAWbZD5"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4ec26709so1293242f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 11 Oct 2024 12:42:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728675754; x=1729280554; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728675765; x=1729280565; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9H6rXUaUQHjyd2VSgKGDs+alotbQnC2p5Cn69HNYv04=;
-        b=dxXQKG8HU1bwH2NhuFz0fSNyTBshOiaztF4OgaX2/Q00YcMPR1PzeWdw/JS8p9FXhH
-         d0YgEDWluhg6g5YzuKRbyEW+eD4aAyy66GAllToPKCU1CKgJ8eiYjeavghxRXjZGYsM3
-         xPJVsAzUQAW3RT+HRZh3tUCTor9VZ++Y5w77Jw07DMJNjimB1TkZ+DzvXNQNOwJMkbAC
-         3npLKYuQgPU41l9HO2s3/Fe+Q+EzKTOAjtl/NRLRgzBHCDjsLABCnEq/WOIFEDGWkFqp
-         A9FL+A4Vm18YYaSHazL6/su5MovelE7fWctiFGdAk1K7G+rQYmGX4vJW1I1E2k/EkcrP
-         /MAQ==
+        bh=XZGq6pr3z7F64KN+AVciDpV1SQYlsTgST6RCikrEM7Q=;
+        b=pXAWbZD5Zy9AQvz0OWfCrOA1Pg70LfNpIVG7SlrcsuIvfzticU5ql4yJltui17mLLS
+         5lHieZNmU0iuuJEuLJeM8u6KG7dIpr7V8ZcFkgGQr9oWlRxllbZCAggBatHSGUdtk1vU
+         TWrAI7/lwyIg0t3FbdB44O7bJP3+tn6X3FY09ltK7qr6HnVGpvv6FbGs5Lk7pt4nWWup
+         saH9hdmzYfXfgng6Xd36ungNq8vOLLmN+2s7dJ4MKm6podLGbzBULHKIxrAKUdSq1y9V
+         2XlhE485zi4afEXM3yThjyoruebi2R9LCVyBIqOPXeUcN2CZB1AN1frUKepexwBz8SN0
+         EvpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728675754; x=1729280554;
+        d=1e100.net; s=20230601; t=1728675765; x=1729280565;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9H6rXUaUQHjyd2VSgKGDs+alotbQnC2p5Cn69HNYv04=;
-        b=N5s9zmv0cpScuhMlTJe89bburcLBn+6l5pi4Qgx1CT+LDCqmjSz+T4ZIZDHiaVCCh0
-         gt1b3che/6s7HCVZb5lvC4ko29/+K5ZnKkWQi/9EbDg5AP8f5U4pZIqWj3+NMb+WUewu
-         WtR8d9FcS0h9Kloe9Q2ofQkrn72Qiw2L924rWyrlY+IrrSpzFMG/UVTToZJJxVGrIWGC
-         HvDb/zNY9Wnmlk2o1mSa665a+Ju7HFKouL1jjmG1g/neX1fea7oTJTJSW0dPeZJ6kxsZ
-         L4xxOOUhXta+wg8OSb0i4nsx6okraveCLnLuokG0HN6m+plMe6AFPiY56gwD8ecgDPRn
-         W2iA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcgRT39Rn/f0Y2dreCcntkMZ7eagdroN3HcA8oSry0lUKaVil1r05yLx2Uo8EbOEWGhxowLJPWe2k2ndBqhCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6XtHDA3eydsVYvTrYZohkBI5ul6RCvbuXaXcTBs1fGYIvFaXP
-	33jMfMIvqTDStIVJjQFkJvhh9dsMyiYLCUezNovEN+I1UwcU4owQnLNSIZMFEhg=
-X-Google-Smtp-Source: AGHT+IFPVVvRgJhwZiV6j4xkCfdUzrR6DGnGMYo8fZws+use+5kUvfYFQjYHJ8OsNnHP8FEbLNe+OA==
-X-Received: by 2002:a5d:4d4a:0:b0:37d:4527:ba1c with SMTP id ffacd0b85a97d-37d5531a0a2mr2327244f8f.49.1728675753903;
-        Fri, 11 Oct 2024 12:42:33 -0700 (PDT)
+        bh=XZGq6pr3z7F64KN+AVciDpV1SQYlsTgST6RCikrEM7Q=;
+        b=Fga/PiYu3sAG0PYWh0N5t+F/KPVZRryhllx2X6NSjSJzBKah82s0ju2OCN7ZVFSRJR
+         a5ITi0LSku97HKclAVOzbmVWWHSJRj3rFfF/YlHXANkHlWWeXQL0jJUcIqvmwyRI0QdI
+         8UUNtN2mgkPJ4W1wuOZfTRSuwbpmY9D2x+7pXehSGA9Ghmr+AY/2SNOvYBWXDKSpTHBz
+         cENpapLAfSpByoly0KJN8u10WL05+2XDlOr6Jn+twHCx5AvWbE6h9A/2s/JzsK9EeM9g
+         R9gNS5HN/O4lzr+Rw9yo3jU7eNotXO+++Gx79jRuS+EQnpRiszj6AOiGQZN0u7/Sd9h2
+         KNbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMWRHd5RtH1qIudQ667XdBda5b8ereTTWgFKiqJizNf9WKLbquc59hHdhF2V+LYKmcFfVU1A5XDMMKQEkkoqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxab48SNx+LcAfF74NNtpmTMpvRzDVE9cC5+ufIF99Nuuvpf/FU
+	4JZI8VJn/kWPhCFrnz0l4xkjXIVd7x/CnYCNAHrTvXlkZxhyVMf+IE0SLp2V0DbZMNJKqqAOg8i
+	7
+X-Google-Smtp-Source: AGHT+IFCNrJOiSqG/e7LBD2Xkmk4NY0UPLW2yMbv5jbu0JLA6sQvg79ITZPssZ7JeTNGLfi8yMk+Pg==
+X-Received: by 2002:adf:f2cc:0:b0:37d:4517:acbb with SMTP id ffacd0b85a97d-37d551d5265mr2770332f8f.17.1728675765355;
+        Fri, 11 Oct 2024 12:42:45 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa79sm4686059f8f.72.2024.10.11.12.42.32
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd555sm4585466f8f.28.2024.10.11.12.42.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:42:33 -0700 (PDT)
-Date: Fri, 11 Oct 2024 22:42:28 +0300
+        Fri, 11 Oct 2024 12:42:44 -0700 (PDT)
+Date: Fri, 11 Oct 2024 22:42:41 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Helge Deller <deller@gmx.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Sekhar Nori <nsekhar@ti.com>,
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+To: David Howells <dhowells@redhat.com>
+Cc: Marc Dionne <marc.dionne@auristor.com>, linux-afs@lists.infradead.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] fbdev/da8xx-fb: unlock on error paths in suspend/resume
-Message-ID: <37842441-e372-40e9-b0f5-cf69defc2db5@stanley.mountain>
+Subject: [PATCH] afs: Cleanup on error in afs_proc_addr_prefs_write()
+Message-ID: <12f261b0-c44b-49ac-a5a1-9a2a18f987f4@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,42 +68,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Add a missing console_unlock() in the suspend and resume functions on
-the error paths.
+Call kfree(preflist) and drop the inode lock before returning the error
+code.
 
-Fixes: 611097d5daea ("fbdev: da8xx: add support for a regulator")
+Fixes: f94f70d39cc2 ("afs: Provide a way to configure address priorities")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/video/fbdev/da8xx-fb.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/afs/addr_prefs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-fb.c
-index fad1e13c6332..66ff8456b231 100644
---- a/drivers/video/fbdev/da8xx-fb.c
-+++ b/drivers/video/fbdev/da8xx-fb.c
-@@ -1610,8 +1610,10 @@ static int fb_suspend(struct device *dev)
- 	console_lock();
- 	if (par->lcd_supply) {
- 		ret = regulator_disable(par->lcd_supply);
--		if (ret)
-+		if (ret) {
-+			console_unlock();
- 			return ret;
+diff --git a/fs/afs/addr_prefs.c b/fs/afs/addr_prefs.c
+index a189ff8a5034..c0384201b8fe 100644
+--- a/fs/afs/addr_prefs.c
++++ b/fs/afs/addr_prefs.c
+@@ -413,8 +413,10 @@ int afs_proc_addr_prefs_write(struct file *file, char *buf, size_t size)
+ 
+ 	do {
+ 		argc = afs_split_string(&buf, argv, ARRAY_SIZE(argv));
+-		if (argc < 0)
+-			return argc;
++		if (argc < 0) {
++			ret = argc;
++			goto done;
 +		}
- 	}
- 
- 	fb_set_suspend(info, 1);
-@@ -1636,8 +1638,10 @@ static int fb_resume(struct device *dev)
- 
- 		if (par->lcd_supply) {
- 			ret = regulator_enable(par->lcd_supply);
--			if (ret)
-+			if (ret) {
-+				console_unlock();
- 				return ret;
-+			}
- 		}
- 	}
+ 		if (argc < 2)
+ 			goto inval;
  
 -- 
 2.45.2
