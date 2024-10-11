@@ -1,155 +1,115 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875AD1BBBC6;
-	Fri, 11 Oct 2024 18:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DD41D096B
+	for <kernel-janitors@vger.kernel.org>; Fri, 11 Oct 2024 19:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728672534; cv=none; b=arVpZ2IRJINCPaosA5teqQDWDdcprgUrYKwRPkKpJZKf5A/xePLa0F1tHS78qiD8bVx6xSwetKrXdJ+h46b/Mpz5xRKHDPKC/vXLx8LJc1cGDxku37KkCT3QG4LyLdU04330oMMURWMjhqo50XjY5SH4KiJGRpuwohGfBhg3tJ0=
+	t=1728675758; cv=none; b=kpbegtjDO4bvm7QA12djGzmO4I5cgBGyWxKlElgMaJBwciUQe1Pmx3i7IyHM3N+wW03k6LT538vxmQj667TO8EKkpEEITrSUGDxNcMYfQfVLMtKllkIqXOyxQ1EOu5noRew+ohHXGzoCGCgyiYM7J7v79EFOGuy/s9B2g4JIUDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728672534; c=relaxed/simple;
-	bh=BRBJ69O5Y+OJjvKHG16LKBpIN3vxBrGnZi4bliNQR70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDtnT185U/VZb0+Nm2tatcokTZlxGPgWLKp9VcsWj23MfNHriF0TrAtsf2XuIAFv0v4a4RDcu90pYjEQcs0puMJrjTTWYc818Ei3MeiHH3eeFjpaU2jJ/hBeY96MGF5yJCDkltwIFvOAE7BCwD+sNMR4+CI5/F0ELfV1C1SlewE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iccmNrmz; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1728675758; c=relaxed/simple;
+	bh=B7kyYckFT/0DJHm3tDLiNH9WM3QNDHo1rocCSnEz2WI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bOGekwPFMrgSWeLxgQRP4+Ban9Tf4iXXL5EWVmM3rc7AKsZHOHRf19ESUO9xwwaTS8PH9c/jbhY6UPn/qSXfirKwXQXGvDpsOrlMcEbTkUoIwft3e5mJ9WiRvgRc2p1YX2ENxI2sRh07T2tqpvugNUV8YqD8Irifq4Ps0k1o+/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dxXQKG8H; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iccmNrmz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728672500; x=1729277300; i=markus.elfring@web.de;
-	bh=fOk+qxQUaR15C1SG3z4GSWnIHZDQPtizqqUOb7X8qk4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=iccmNrmzWiw+S1pqVV60kuERmH78gvbX8a1d4CZI40q4RuwJ3MoUqhzADwKHqa3U
-	 0XApOmGbd/7w1ijd7SiIdSlwYEinyIVLWiWM17lPtSOME7b/JIGvj4zcs+AYXogSS
-	 oaV2Fsx/XOJG039L1rPpAGsaHMMDcE1RpNSkp3uA7ZfzfcLoBd9OIzE70xi7vrH46
-	 qGCUuw3As2DWxtHPiPXT/FhsgVsi5gi9pZYzp/VmpQKtd8+bNhqysJhC+cw2m2T4f
-	 CCb8E1EEZSycU3f53xVPcQUSWSWezESfZgbVQn4US2ekIK/dW1aL2NVfVaQCnWDFF
-	 n5ISZyW2LoFwlbXH9g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMY1N-1tIEyp1M87-00KASn; Fri, 11
- Oct 2024 20:48:20 +0200
-Message-ID: <663a37fe-ffc4-4826-b8ba-bcefdb0e7992@web.de>
-Date: Fri, 11 Oct 2024 20:48:18 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dxXQKG8H"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4311ae6426aso13092915e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 11 Oct 2024 12:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728675754; x=1729280554; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9H6rXUaUQHjyd2VSgKGDs+alotbQnC2p5Cn69HNYv04=;
+        b=dxXQKG8HU1bwH2NhuFz0fSNyTBshOiaztF4OgaX2/Q00YcMPR1PzeWdw/JS8p9FXhH
+         d0YgEDWluhg6g5YzuKRbyEW+eD4aAyy66GAllToPKCU1CKgJ8eiYjeavghxRXjZGYsM3
+         xPJVsAzUQAW3RT+HRZh3tUCTor9VZ++Y5w77Jw07DMJNjimB1TkZ+DzvXNQNOwJMkbAC
+         3npLKYuQgPU41l9HO2s3/Fe+Q+EzKTOAjtl/NRLRgzBHCDjsLABCnEq/WOIFEDGWkFqp
+         A9FL+A4Vm18YYaSHazL6/su5MovelE7fWctiFGdAk1K7G+rQYmGX4vJW1I1E2k/EkcrP
+         /MAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728675754; x=1729280554;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9H6rXUaUQHjyd2VSgKGDs+alotbQnC2p5Cn69HNYv04=;
+        b=N5s9zmv0cpScuhMlTJe89bburcLBn+6l5pi4Qgx1CT+LDCqmjSz+T4ZIZDHiaVCCh0
+         gt1b3che/6s7HCVZb5lvC4ko29/+K5ZnKkWQi/9EbDg5AP8f5U4pZIqWj3+NMb+WUewu
+         WtR8d9FcS0h9Kloe9Q2ofQkrn72Qiw2L924rWyrlY+IrrSpzFMG/UVTToZJJxVGrIWGC
+         HvDb/zNY9Wnmlk2o1mSa665a+Ju7HFKouL1jjmG1g/neX1fea7oTJTJSW0dPeZJ6kxsZ
+         L4xxOOUhXta+wg8OSb0i4nsx6okraveCLnLuokG0HN6m+plMe6AFPiY56gwD8ecgDPRn
+         W2iA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcgRT39Rn/f0Y2dreCcntkMZ7eagdroN3HcA8oSry0lUKaVil1r05yLx2Uo8EbOEWGhxowLJPWe2k2ndBqhCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6XtHDA3eydsVYvTrYZohkBI5ul6RCvbuXaXcTBs1fGYIvFaXP
+	33jMfMIvqTDStIVJjQFkJvhh9dsMyiYLCUezNovEN+I1UwcU4owQnLNSIZMFEhg=
+X-Google-Smtp-Source: AGHT+IFPVVvRgJhwZiV6j4xkCfdUzrR6DGnGMYo8fZws+use+5kUvfYFQjYHJ8OsNnHP8FEbLNe+OA==
+X-Received: by 2002:a5d:4d4a:0:b0:37d:4527:ba1c with SMTP id ffacd0b85a97d-37d5531a0a2mr2327244f8f.49.1728675753903;
+        Fri, 11 Oct 2024 12:42:33 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa79sm4686059f8f.72.2024.10.11.12.42.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 12:42:33 -0700 (PDT)
+Date: Fri, 11 Oct 2024 22:42:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Helge Deller <deller@gmx.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] fbdev/da8xx-fb: unlock on error paths in suspend/resume
+Message-ID: <37842441-e372-40e9-b0f5-cf69defc2db5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] irqchip/renesas-rzg2l: Fix missing put_device
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Paterson <Chris.Paterson2@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Marc Zyngier <maz@kernel.org>
-References: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5vxS5q9WmasTB24MvXKgHDn01i9eCxrPjt3xBpM6u0jstKy1yHx
- Rt2Vp77a5jHb4IoEqgaDGz8OVl9NEB/zi5phpgybZg7HRvVWR0hMSqMKL1JYOtHLq72drjR
- miPjqmoehn60aIv4877oz4DFn2/k9r9key1ydCPsurmaxTl7fB5mFatOmkjWjsWjYZ4eXhY
- a4MDh+0bwPmBVJhxiK2uA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xEg2pFie58Q=;bVOhJyu9dK2DnQ3etXm0gqj8os6
- 8HR7iNmq4qxjyLV74HaaKDugYxoPm2PYXHBnInGbVweyKgL7Jca9VJnzNyhvc6a9GO6vWTuYN
- Zsd8yTpGpDPad8Q9NPI8bdxupCkThQPUQp9GD7k2jpYKJsZFLZ4+uvw9GGY38aTvky2mwMO+u
- BSxrSjaVF2IhylUnyuV8DjjkjKvq84xnC03tvA7Isq2D2b4aHuA/hZrZWTLfmuKd7cPmB5u2o
- jMoxY/PFXbyF38hDHF1JFK20gxQjiS+hqpT9/XDrZDYqm0quggylWHABR8uDS+/RF4v9KqC7I
- iMmDafcBOO4d9+BUpi0LWft7GqU2eoh+dCDrH9Q7gd3U2mKnssI/s8/Daj7FFSAdxMItwUoix
- ZnFxChB9POdw7h2s0eloA4YBERTzGYmX36OwW/u2VoVZYkzjsV5bkjT/DtH/4NJdFdGh/2JIm
- KKxS1CpJagE0LG1sutV2vMtQoBdersoyZDDc5bN8FM81zL7IRZvJRSZMgdGOeeDeoUEUrZxJa
- kWLvn9SkR1iI8p5wK++Zc0ncwSERxYT5gvhe/G9Op0Tzy7IJ//UJ8mlDLsAehkmcYjBrfEwCh
- WHT4QZc2oqOghtpja2azPmlOeZ/1dXjqYhMkB+pwzS3HbXv6fvKQWh+2uZjiT8rdyhyAb4Dcb
- XGNIV9wySUf7qzaBrd7DwAOXpu+BcdDYuDFC7tXP97KHSKjuM9OClDZ/jKt9Uv34PBfbGLgKJ
- AE7+UhSJZP0lF74/4mHRKyp6wuugIVjDzfN2/AE59AKyxha3otxWV+cxtnexqf+JDHK5tf1Ht
- VhBbDWgSMclBifuvTKYicxqg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-> rzg2l_irqc_common_init calls of_find_device_by_node, but the
-> corresponding put_device call is missing.
+Add a missing console_unlock() in the suspend and resume functions on
+the error paths.
 
-How do you think about to append parentheses to function names
-(so that they can be distinguished a bit easier from other identifiers)?
+Fixes: 611097d5daea ("fbdev: da8xx: add support for a regulator")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/video/fbdev/da8xx-fb.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-fb.c
+index fad1e13c6332..66ff8456b231 100644
+--- a/drivers/video/fbdev/da8xx-fb.c
++++ b/drivers/video/fbdev/da8xx-fb.c
+@@ -1610,8 +1610,10 @@ static int fb_suspend(struct device *dev)
+ 	console_lock();
+ 	if (par->lcd_supply) {
+ 		ret = regulator_disable(par->lcd_supply);
+-		if (ret)
++		if (ret) {
++			console_unlock();
+ 			return ret;
++		}
+ 	}
+ 
+ 	fb_set_suspend(info, 1);
+@@ -1636,8 +1638,10 @@ static int fb_resume(struct device *dev)
+ 
+ 		if (par->lcd_supply) {
+ 			ret = regulator_enable(par->lcd_supply);
+-			if (ret)
++			if (ret) {
++				console_unlock();
+ 				return ret;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.45.2
 
-> Make use of the cleanup interfaces from cleanup.h to call into
-> __free_put_device (which in turn calls into put_device) when
-
-Can it help to influence the understanding of this programming
-interface by mentioning the usage of a special attribute?
-
-
-> leaving function rzg2l_irqc_common_init and variable "dev" goes
-> out of scope.
->
-> Mind that we don't want to "put" "dev" when rzg2l_irqc_common_init
-> completes successfully, therefore assign NULL to "dev" to prevent
-> __free_put_device from calling into put_device within the successful
-> path.
-
-Will further software design options become applicable here?
-
-Can any pointer type be used for the return value
-(instead of the data type =E2=80=9Cint=E2=80=9D)?
-
-
-> "make coccicheck" will still complain about missing put_device calls,
-> but those are false positives now.
-
-Would you like to discuss any adjustment possibilities for this
-development tool?
-
-
-=E2=80=A6
-> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-> @@ -8,6 +8,7 @@
->   */
->
->  #include <linux/bitfield.h>
-> +#include <linux/cleanup.h>
-=E2=80=A6
-
-This header file would usually be included by an other inclusion statement=
- already,
-wouldn't it?
-https://elixir.bootlin.com/linux/v6.12-rc2/source/include/linux/device.h#L=
-33
-
-
-=E2=80=A6
-> @@ -530,12 +531,12 @@ static int rzg2l_irqc_parse_interrupts(struct rzg2=
-l_irqc_priv *priv,
->  static int rzg2l_irqc_common_init(struct device_node *node, struct devi=
-ce_node *parent,
->  				  const struct irq_chip *irq_chip)
->  {
-> +	struct platform_device *pdev =3D of_find_device_by_node(node);
-> +	struct device *dev __free(put_device) =3D pdev ? &pdev->dev : NULL;
->  	struct irq_domain *irq_domain, *parent_domain;
-> -	struct platform_device *pdev;
->  	struct reset_control *resetn;
->  	int ret;
->
-> -	pdev =3D of_find_device_by_node(node);
->  	if (!pdev)
->  		return -ENODEV;
-=E2=80=A6
-
-Would you dare to reduce the scopes for any local variables here?
-https://refactoring.com/catalog/reduceScopeOfVariable.html
-
-Regards,
-Markus
