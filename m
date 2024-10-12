@@ -1,122 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE562153801;
-	Sat, 12 Oct 2024 10:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A544194A6F;
+	Sat, 12 Oct 2024 14:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728730291; cv=none; b=EfNZ69jCBFrgzqhjDw83bbi8tJYNErEXf61rVCvB47U7vXcEFvq3DliCFgVq16g3dY4B49v4B5inJRgBvWo9XR4oWEOUdM1u7L0PF+ASZYMx4A8gCsPF0gFhJNAlx9tHxlIt+Lqtel/p3T6fNWyfdQtdRnQLJrqPVeqYl/1eop0=
+	t=1728742449; cv=none; b=mewTq1Tz7WRzpZIsYkvEfB8On8A8yRQUfDmTArrVj/tKqZ/6SCkitaUr3bkAUJtW7lxCUpEPe9C8LjEc8ySlGNQv5LiHVnf+bw+ztTo3P+j3qLM1w8nj1Tjcbi/R7ntxZTHU2v6/ZwrMFiVOvvCucQ+P7YtNDpaD4ezU9K5LFAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728730291; c=relaxed/simple;
-	bh=cWkgJyHchFqQkQzMAty5VXFu0OvWDcKpssWdpuQVmlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uH/mz6ghRyA4wsWk1RDAXB8wm5Aw41gSDNz7q6B9zfpDrvoi77YkXWdH8+eQC4QivNB0UzdLybYx4rdvKOWEoSfa9OdoZCpNYASM5CYkFOzWkSGxseGRZwHRjTFRXEesGRaP4jBE2KzjcFhU814VX6Lf+ypSzXCTR9ZB3bmIkl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9qg3qSx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728742449; c=relaxed/simple;
+	bh=QpvuA0tXrIusrPG8LAQQ4pQs4s+4SgLc+0UwE7FI/E4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XjNJ8oG9OWH2XNNtiU38P64aaAtsxYGqVRaZjUvaQsvbUZWBY9UjJiMl+L3p72C6xkX3RYkIMTzJ9fgu7Ry0wGR8fhau+QdoB+h1apOs41D0k3R1TpTQoftnfI/rA8OMDiNz+1lHiOdM7dQ+uiwsY+SnRk03ke5VZjNS4vlI5Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUI9uz9A; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9qg3qSx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6AA7C4CEC6;
-	Sat, 12 Oct 2024 10:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728730291;
-	bh=cWkgJyHchFqQkQzMAty5VXFu0OvWDcKpssWdpuQVmlk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m9qg3qSxqZu+Ez3HFM+bg1WbTdOuzqgPXL6xSLLH7WXmPp74fQ+Bgo4JDNEDal+DU
-	 +v0wh8owWsB0aJsIREvvsF2oCzTEuMP61WoU72qRnh+eWlsX9p41+kx7PMrgEa0Ouq
-	 b9stQKrznha8WmoIBdcliua87Bz1Cg/B46Ch2vRkMtyOLBgoxHv4Zmy4S4R7orNTEu
-	 y/b+2V81W/4RWczgFqNlTvEU4ihQfDn0EbaFWVi20cVdmvaZ3lcoCXHWNcX9Y9xKdv
-	 4C+74mlE8vySg8SkdHv4mTL8DbXIZKFX2vP33IXRdKsw0LdspvvI9aBSIXZWgOT9jL
-	 Gic6VY5ZL5XJQ==
-Date: Sat, 12 Oct 2024 11:51:21 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Julia Lawall <julia.lawall@inria.fr>, Su Hui <suhui@nfschina.com>,
- jagathjog1996@gmail.com, lars@metafoo.de, nathan@kernel.org,
- ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
- benato.denis96@gmail.com, Jonathan.Cameron@huawei.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] iio: bmi323: mark bmi323_ext_reg_savestate as maybe
- unused
-Message-ID: <20241012115121.037be954@jic23-huawei>
-In-Reply-To: <e210f9c6-9070-4b6d-b938-9a35b7a16380@gmail.com>
-References: <20241012083701.2189663-1-suhui@nfschina.com>
-	<alpine.DEB.2.22.394.2410121110540.8471@hadrien>
-	<e210f9c6-9070-4b6d-b938-9a35b7a16380@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUI9uz9A"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so57141466b.0;
+        Sat, 12 Oct 2024 07:14:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728742446; x=1729347246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tuv25M7qfPhkVq2rdwgDLlN4egguVJCUL8w07O0WP/s=;
+        b=EUI9uz9ADpFJFSXU/7S7jtFxWrW6Qr6A/ZEpAPBFhBu1lHYO7uU7/pgHYtsMB1Kuqm
+         xtCt60gHoRkAWTlljsRlarw8M4DclZNnvD3GHJn/kalSaq7PeGlmxhSLrm3+bnDMDvfL
+         t3iePG41SPsKoDCgGx+UhNX9U0uK7yMtLl7W5zZTIuR1+Coh/n3A92Mq6xIoSMylzT+4
+         bZUuOyiW9NEACvpbyI7B1isF6TF69Tt+ao4FZ/3+Bm5CwkU6hu9qUg0IoEKgSAuUPCf+
+         NGRkBaGyRAvon9K1ziy7ya8j3EmlR3wH84fBBGceOFIEvpmmcLsElD5ahtFpef55iP9j
+         nthw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728742446; x=1729347246;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tuv25M7qfPhkVq2rdwgDLlN4egguVJCUL8w07O0WP/s=;
+        b=dEfN5EcJ84TyX83lr7idJEwsmpHpfStpnG3Fr60Vv17DOIMWE6Hpyys1IkF+CHrJBI
+         kA98esudSXHL0DyRijNgGQHC6rRAARkoGcMrSf9Ab2PiAy+agx1IJK/MAyRCirqi15aV
+         qQqWIpVhJTJBAAKgteUQyuF1Kxl4FNFrO0pHtbneZ8QRgR5W0DNHHHxDU76atmzfhz9v
+         FLscVXuFiA2Zj5/VnPmMH/0ORfa0XCEVOkqVzRaJVLzI7EV7LCP3kcJeBePBI6EhgFPy
+         q7zruv3HWssR+h9Deu/+diEwoGIt8mKuy4XblPqy3GoO35srIxtGy+5EZ0DITfg/N9lM
+         u+0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUekEjmcikQH+TjBs8dY9HCrDeTeswdEZzooW6jx4XYEzykX9etYYvBqtDOs0VbQFcfGDaDnO4JDYWXfVM=@vger.kernel.org, AJvYcCUfdmNMsm+fKO8BCdrydUAjwAjLioVJL56O/K7uqBTpCO5m6CD/S3VuxfWx7ZuyRPfpc50ju2brvaOm/Q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxwaw4cINNmpE4Kx7bklVO8f7MMnWcp3ZuolURuZ2OeNZ5QtZk
+	hJmjq85fQ8LzIjYTk0KvDiU4yLjAB2Qg0aqKMX5Oqj5H35vB9nqP
+X-Google-Smtp-Source: AGHT+IG0B8W6nRGV5gDheoL2qJhnCrgP/hIARfPGbcFt0uINpwOjZ3efVzmhEbB+wWW7eVXLEVLSMg==
+X-Received: by 2002:a17:907:7ea1:b0:a8d:250a:52a8 with SMTP id a640c23a62f3a-a99b93a8506mr426443966b.3.1728742446066;
+        Sat, 12 Oct 2024 07:14:06 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99fa0cc7d4sm12707566b.104.2024.10.12.07.14.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Oct 2024 07:14:04 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH] media: atomisp: remove redundant re-checking of err
+Date: Sat, 12 Oct 2024 15:14:03 +0100
+Message-Id: <20241012141403.1558513-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 12 Oct 2024 12:08:39 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+The check to see if err is non-zero is always false because err has
+been previously checked on whenever err has been assigned in previous
+code paths. The check is redundant and can be removed.
 
-> On 12/10/2024 11:11, Julia Lawall wrote:
-> > 
-> > 
-> > On Sat, 12 Oct 2024, Su Hui wrote:
-> >   
-> >> When running 'make CC=clang drivers/iio/imu/bmi323/bmi323_core.o', there
-> >> is a clang warning as follows:
-> >>
-> >> drivers/iio/imu/bmi323/bmi323_core.c:133:27: error:
-> >> variable 'bmi323_ext_reg_savestate' is not needed and will not be emitted
-> >> [-Werror,-Wunneeded-internal-declaration]
-> >>   133 | static const unsigned int bmi323_ext_reg_savestate[] = {
-> >>       |                           ^~~~~~~~~~~~~~~~~~~~~~~~
-> >> 1 error generated.
-> >>
-> >> Mark bmi323_ext_reg_savestate as __maybe_unused to silent this warning.  
-> > 
-> > Why might it be unused?
-> > 
-> > julia
-> >   
-> >>
-> >> Fixes: 16531118ba63 ("iio: bmi323: peripheral in lowest power state on suspend")
-> >> Signed-off-by: Su Hui <suhui@nfschina.com>
-> >> ---
-> >>  drivers/iio/imu/bmi323/bmi323_core.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/iio/imu/bmi323/bmi323_core.c b/drivers/iio/imu/bmi323/bmi323_core.c
-> >> index beda8d2de53f..1167984809c5 100644
-> >> --- a/drivers/iio/imu/bmi323/bmi323_core.c
-> >> +++ b/drivers/iio/imu/bmi323/bmi323_core.c
-> >> @@ -130,7 +130,7 @@ static const unsigned int bmi323_reg_savestate[] = {
-> >>  	BMI323_FIFO_CONF_REG
-> >>  };
-> >>
-> >> -static const unsigned int bmi323_ext_reg_savestate[] = {
-> >> +static const unsigned int bmi323_ext_reg_savestate[] __maybe_unused = {
-> >>  	BMI323_GEN_SET1_REG,
-> >>  	BMI323_TAP1_REG,
-> >>  	BMI323_TAP2_REG,
-> >> --
-> >> 2.30.2
-> >>
-> >>
-> >>  
-> >   
-> 
-> This issue has already been found and discussed here:
-> 
-> https://lore.kernel.org/linux-iio/AS8PR02MB10217F8B5827B69E6438488679C762@AS8PR02MB10217.eurprd02.prod.outlook.com/
-> 
-> where I got lectured by Nathan Chancellor about such warnings.
-> 
-> The fix was not marking the array as unused, because it should have been
-> used. The proper fix can be found in iio/fixes-togreg.
-> 
-> Best regards,
-> Javier Carrasco
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/staging/media/atomisp/pci/sh_css.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Busy week so I haven't gotten a pull request out yet. Should send one with this
-fix later this weekend.
-
-Jonathan
+diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
+index ca97ea082cf4..7cee4dc35427 100644
+--- a/drivers/staging/media/atomisp/pci/sh_css.c
++++ b/drivers/staging/media/atomisp/pci/sh_css.c
+@@ -6308,9 +6308,6 @@ load_yuvpp_binaries(struct ia_css_pipe *pipe)
+ 		}
+ 	}
+ 
+-	if (err)
+-		goto ERR;
+-
+ ERR:
+ 	if (need_scaler)
+ 		ia_css_pipe_destroy_cas_scaler_desc(&cas_scaler_descr);
+-- 
+2.39.5
 
