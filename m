@@ -1,66 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCF21B969;
-	Sat, 12 Oct 2024 17:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9D0ECF;
+	Sat, 12 Oct 2024 19:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728755443; cv=none; b=ludUMbenGDKYwKnVuw6jB6POP34dbMvnWwqlFstlY8cWzCcpddTH4ezn6wJqF+hvc95QWee0SteNzYKc8EFfB74tvhSjctVMdR1xG6z9KOra5oIPaX8az4IVk+oO9IPzxjlzO+jaKFvWydM4eWbIrdPXmPvRII3SbQJAiOTqxC8=
+	t=1728762841; cv=none; b=bm6OVOoFEEeMH8zoQroubzeoguBMBtUZdZCMaQUE+gGyjMLYXcp9QchSdzsJhLN0zjzRNM/HrtKtEDOzTOhtvjNegITOKL9BvCgNTAFGbCwFQdthbtF+ZeVpQvbm2W1fEqdqm807eGYIZtDTMnTGbhzFh+BIposoTNN5cN1rnA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728755443; c=relaxed/simple;
-	bh=IrGrdRYv8ot8a1VdA94PIoD/MYZEgPGcLz0JZgh4aWI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=un8BYtB8nxFvb0dhktQeHhyBlS3MkwBSuS7hMo3FMWPfnaSSJfm+QMsMWorzricQCI31rGu2WCZb98+B2zaupuhGXR2t+wnNeloPErJzQC2h5Ev1OidxZpsLIEmTAhZ3o0Y754WTyPnFBPfUrw9huh6BTiRYfI6Gv4zCvS4dgpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNuw7kMF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728762841; c=relaxed/simple;
+	bh=o6csu3VpNTqjOnFk3FhyX8sbhAdr7OqCT1L0mIOHgUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NV1FUhjT7yQAuuoZ38Eh6p+7NtIS11j0vPSIadRXTe1JafUp3913dcQeIJXxG8pw/veaEVddwWlQZqLyJLOTM6xnPy9HwDBQ7kaHLqfPOpjG0sv023DaHqQrWC7auLeyhMwPYrLDTjV87OYS7GWfOq26C4heDnWicq83z3UTBWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RVMttrgv; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNuw7kMF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7971C4CEC6;
-	Sat, 12 Oct 2024 17:50:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728755442;
-	bh=IrGrdRYv8ot8a1VdA94PIoD/MYZEgPGcLz0JZgh4aWI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=cNuw7kMF5i+IXjEudpdcQl84hpakGHv9yFK0fFIbT4mnDELCrgfcb0zFsdj9GP+PO
-	 B94zZ7Uqi3NPpcyttfo309rKRKnv/2NQh9A0WSGJFgeRx4E9JUSulP1mtZ+87P2vGs
-	 G2u5vlkv+t9rw+NByEdzqdYZLULTID1USBSLWp2KbIIENdcd2Jb8qk4Dp6pVu/YSl9
-	 7S0NbL6qOgxbK2bGktUAPSapgDCYPo2cqgDyFyorCUuyiGIEEVdtNOXXRn13ivTxtm
-	 so5k+o4drBBcIUoWTNa/uAqxV5EoWS0vyipDG8VAZDjY2y+R/+ONDt376RPBjmofN2
-	 UfaEgzHHaXO0Q==
-From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Andrew Kreimer <algonell@gmail.com>
-Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20241010091355.8271-1-algonell@gmail.com>
-References: <20241010091355.8271-1-algonell@gmail.com>
-Subject: Re: [PATCH] phy: sun4i-usb: Fix a typo
-Message-Id: <172875543924.55946.332622987727413836.b4-ty@kernel.org>
-Date: Sat, 12 Oct 2024 23:20:39 +0530
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RVMttrgv"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ziBRslTt0WNPKziBSsJ3zj; Sat, 12 Oct 2024 21:53:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728762830;
+	bh=OjcGSSzZ5IYQEwwSTMZge8saiTVS9V3eUZeqwqwJl04=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=RVMttrgvLoem8hG6LL91YqWYRhFJZUHKcKr8rjC5Lwpo17FxieqrlCT/FRd50B/D6
+	 AsBZ2E/bArbUe0x4W52agKT8/OFKXwo3bUURhuKlNiw4dTxgR4dTnQtZlUPe4OdNSW
+	 23qax4bISe/Tgy2OxzyOk1A+0fe4GmSZwzY+Q1IUvzWmhQjE9GJcgfUUr0/MjFdJOk
+	 oteYBWbPQXp9pyvUlLVPSBA0Lsrfb0t6wjR45Npss/r5NpXaQv0HQUSI1RR2GbH1Zj
+	 T312209wrstkoYXzQopapmNub/wrnOdhV5cgBsiXANuh2Y/CP7oL3oD5awuAcx3Rx2
+	 nhHLYDrKxD0nA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 12 Oct 2024 21:53:50 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH] PCI: cpqphp: Remove an unused field in struct ctrl_dbg
+Date: Sat, 12 Oct 2024 21:53:42 +0200
+Message-ID: <551d0cdaabcf69fcd09a565475c428e09c61e1a3.1728762751.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
+'ctrl' is unused, remove it to save a few bytes when the structure is
+allocated.
 
-On Thu, 10 Oct 2024 12:13:55 +0300, Andrew Kreimer wrote:
-> Fix a typo in comments: wether -> whether.
-> 
-> 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/pci/hotplug/cpqphp_sysfs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Applied, thanks!
-
-[1/1] phy: sun4i-usb: Fix a typo
-      commit: 11dad94b50263bbe87d015041c77be61c8c44161
-
-Best regards,
+diff --git a/drivers/pci/hotplug/cpqphp_sysfs.c b/drivers/pci/hotplug/cpqphp_sysfs.c
+index fed1360ee9b1..6143ebf71f21 100644
+--- a/drivers/pci/hotplug/cpqphp_sysfs.c
++++ b/drivers/pci/hotplug/cpqphp_sysfs.c
+@@ -123,7 +123,6 @@ static int spew_debug_info(struct controller *ctrl, char *data, int size)
+ struct ctrl_dbg {
+ 	int size;
+ 	char *data;
+-	struct controller *ctrl;
+ };
+ 
+ #define MAX_OUTPUT	(4*PAGE_SIZE)
 -- 
-~Vinod
-
+2.47.0
 
