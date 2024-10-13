@@ -1,131 +1,104 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D61231CA8
-	for <kernel-janitors@vger.kernel.org>; Sun, 13 Oct 2024 13:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B06A3E499;
+	Sun, 13 Oct 2024 20:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728826876; cv=none; b=fi8jTOyFJdNxDHu76xi5Ir5IPKgoL1WcadatBz/b/Aa8VsL+ElkUFTVhrt1l//JRD984TNGi6lKbjDfpYzxzZ2D/BvGVUDhDOVaNzdAXSwPNRbivrZFrJqqhIsCkT4VqyK04xjcrYqB7a55+ls8iGCrg9XIy3iqYDUdM1COX8pM=
+	t=1728850688; cv=none; b=FselFT3JHsJ8hvvYJJCuyhckJjC77mS+nLxJdPZALFhJmg+x2k8YQl2YkRKK3k9bKCx0laWoPC7u9vhH4C3Ftpgd/Vyq3YDdpZ4XGDraHALROFmwE1GC7Qa+OzV5NoMa5CfT2jFkMpeNwstaA9566w5gSmGH5hHG7NEjeak/RWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728826876; c=relaxed/simple;
-	bh=BSsnnOfdhmDaVaOr5JfKQ4veB20AKY2gMhI35W1IDcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3DENJDkUCVHqaC5lNxMN0dWKjp/dgboCC4xFPEmnsCO4PJvr3JgQ8ju3V17LG1SUhH3+h5UyY0KrPqVohySFYH/XFYpjF5we1QhUiId6/5PYrf6LVxcE9+OB+OGOZe5v6ZitwYuQo2B+NdtbvI7eOcdZVKob5+G33/sva4Hd1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=opCJ1633; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728850688; c=relaxed/simple;
+	bh=UNde1Ns/wgw684Xp1FDQfaVu7Kt0BWagRFH8YHbgeu4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=suBIqJEhm3KvJKmJs+cxPf09O0ji2d0ck3cn3AccJY9tmC+MP+zUKh5qvwk6Bgn8nL9GYMHFfHbGCjR00oJGO9/GXCo/gb6RRYbCHaTCSaoExyfCZxJ6r6oJOLdCPV4Qq5T1DVPjHQfmXvoYka3CqyUxGtVK+kYfdxqtdm9x+XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=FMhEhdep; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="opCJ1633"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so6598050a12.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 13 Oct 2024 06:41:14 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="FMhEhdep"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728826873; x=1729431673; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aDIoBQ9YvQk/WPHiA1xukRw9F4LXWDJBsa2YUNZUMcA=;
-        b=opCJ1633q1U/FPqoRXlGcHR4J3kVEHTakkdwaWB1HefjDe+11fTZ5r4KoLpMmF0bX2
-         hjcGI8GcJxPO/k8/5lPJL0zRqNRV8Qsola6L3umnvAKhQqj/8P3BKUqPdpOCvE2XKyMF
-         SInGpL4UAULJFLhu89wUMmtMOBrEN+VbcOVlg6j1Djya/SpzIvDQVwc0WZw0dlZXgxIS
-         shXMi0PVfODQWYkFcU3DWAfi7FUA+5hz+1FD5If9lD2B6TM4b8Y/i2yT9wt7TW6fqXI5
-         wIjsPT0c8KS4O/8uX8hRom+04nhDVFeCm3iEeI7WfsNXvkNU6kImLZ1IS9/GgQ4mEQy9
-         z5Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728826873; x=1729431673;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aDIoBQ9YvQk/WPHiA1xukRw9F4LXWDJBsa2YUNZUMcA=;
-        b=pubzhw3ICEEKm0xb2DgZ4x4mqCBEfIbW27mqNCkkdwG4D2ab098kFU7HzDe74GuqVS
-         AGaUPb3j8puj6iNnn25oHISZ9Xg0GuIS9FuvtjaO1EkDh4leVhbvq/fC+0kfnkjFN9S+
-         O3QpR3TGVibjvQdLMti5BPV9kuBTzF6BCyC7sL3Aj6WKpuWWwrgkDTH7Iwn9y1R/DXur
-         +LDiWNF/S6FNrlpdSRLkfp5vBw5CeGbqkn+d9x+CuVIdkr6yYPIEfT8N1NNuHdF6LPqZ
-         3pidDxBcOaT7pW1Flo3gk3Q4HT8v1+4o6nPNy7wdePEfyhsMJEBlTJfoso5vcp36HQAS
-         CBAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3T20aAp6ziMAEoH6sGZi9PLnpM+4x65Mo3Qa4wxhiFkB/bkDycGZlRAZizd015O8wqDHCnSdKzzoA1rXf0mc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlX2yF9QpacXTfEjvq3lbHZGbYAYrlwE2O5YKm20SJLqeZ3zrK
-	xDZ8/tc2Y2yZRyaElsIUZIRz70B2g2+WxihIrzni4ee/umDdkaczhyNph1m3sJc=
-X-Google-Smtp-Source: AGHT+IFwr5789q2rbkowSIKm0Pi3d3HKo85MzqqbcL5zX+y8/Sv/FkZN0o1+dV1o6r6DNh6wikURkg==
-X-Received: by 2002:a05:6402:2688:b0:5c8:88f2:adf6 with SMTP id 4fb4d7f45d1cf-5c94754c124mr7916665a12.13.1728826872833;
-        Sun, 13 Oct 2024 06:41:12 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c9370d273fsm3931876a12.16.2024.10.13.06.41.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 06:41:12 -0700 (PDT)
-Date: Sun, 13 Oct 2024 16:41:08 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linuxppc-dev@lists.ozlabs.org,
-	Jani Nikula <jani.nikula@intel.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Naveen N Rao <naveen@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Paul Mackerras <paulus@samba.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] powermac: Use of_property_match_string() in
- pmac_has_backlight_type()
-Message-ID: <e50907a9-6df7-4cbf-97a6-47acd5d8ce01@stanley.mountain>
-References: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de>
- <d9bdc1b6-ea7e-47aa-80aa-02ae649abf72@csgroup.eu>
- <ede25e03-7a14-4787-ae1b-4fc9290add5a@web.de>
- <c629e544-f768-4063-bd2c-f72382bdf69b@csgroup.eu>
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=f56yuDs1RrZPsFGiT1se8rmNN2beKZ0tdUTQFaCxX9o=;
+  b=FMhEhdepWYT8ih5/hSuqLaee7V7T+XkNGs9UTGtrrNUAmIJeaMSNNdA6
+   jkee02w8FZsJgZeHUHjYvPdtRzaIirUNA0GWhFKsVlqDMCzC9jB5YZdrv
+   KAouigWnAJYA9EecdQ3cK883AOyYBDj5kT/olPhh87wybJip8LzaUOzK2
+   M=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,201,1725314400"; 
+   d="scan'208";a="98968276"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:17:58 +0200
+From: Julia Lawall <Julia.Lawall@inria.fr>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: kernel-janitors@vger.kernel.org,
+	vbabka@suse.cz,
+	paulmck@kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	wireguard@lists.zx2c4.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 01/17] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Date: Sun, 13 Oct 2024 22:16:48 +0200
+Message-Id: <20241013201704.49576-2-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c629e544-f768-4063-bd2c-f72382bdf69b@csgroup.eu>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 11, 2024 at 06:25:45PM +0200, Christophe Leroy wrote:
-> > diff --git a/arch/powerpc/platforms/powermac/backlight.c b/arch/powerpc/platforms/powermac/backlight.c
-> > index 12bc01353bd3..79741370c40c 100644
-> > --- a/arch/powerpc/platforms/powermac/backlight.c
-> > +++ b/arch/powerpc/platforms/powermac/backlight.c
-> > @@ -57,18 +57,10 @@ struct backlight_device *pmac_backlight;
-> >   int pmac_has_backlight_type(const char *type)
-> >   {
-> >   	struct device_node* bk_node = of_find_node_by_name(NULL, "backlight");
-> > +	int i = of_property_match_string(bk_node, "backlight-control", type);
-> > 
-> > -	if (bk_node) {
-> > -		const char *prop = of_get_property(bk_node,
-> > -				"backlight-control", NULL);
-> > -		if (prop && strncmp(prop, type, strlen(type)) == 0) {
-> > -			of_node_put(bk_node);
-> > -			return 1;
-> > -		}
-> > -		of_node_put(bk_node);
-> > -	}
-> > -
-> > -	return 0;
-> > +	of_node_put(bk_node);
-> > +	return i >= 0;
-> 
-> Could have been:
-> 
-> 	return !IS_ERR_VALUE(i);
-> 
+Since SLOB was removed and since
+commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+it is not necessary to use call_rcu when the callback only performs
+kmem_cache_free. Use kfree_rcu() directly.
 
-IS_ERR_VALUE() macro should only be used when you're dealing with memory
-addresses.  What I mean is there places in mm/ where we pass addresses as
-unsigned long values instead of pointers.  For example, get_unmapped_area()
-returns unsigned long.  The IS_ERR_VALUE() macro is necessary for that.
+The changes were made using Coccinelle.
 
-For regular error codes, we can just check for negatives.  we don't have do
-anything fancy.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-Of course, you can find counter examples, like msm_iommu_attach_dev() or
-st_fdma_of_xlate().  <small joke>But in those cases, it's done to deliberately
-to ensure that the code will never accidentally get built on 64bit systems.
-</small joke>
+---
+ drivers/net/wireguard/allowedips.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
+index 4b8528206cc8..175b1ca4f66f 100644
+--- a/drivers/net/wireguard/allowedips.c
++++ b/drivers/net/wireguard/allowedips.c
+@@ -48,11 +48,6 @@ static void push_rcu(struct allowedips_node **stack,
+ 	}
+ }
+ 
+-static void node_free_rcu(struct rcu_head *rcu)
+-{
+-	kmem_cache_free(node_cache, container_of(rcu, struct allowedips_node, rcu));
+-}
+-
+ static void root_free_rcu(struct rcu_head *rcu)
+ {
+ 	struct allowedips_node *node, *stack[MAX_ALLOWEDIPS_DEPTH] = {
+@@ -330,13 +325,13 @@ void wg_allowedips_remove_by_peer(struct allowedips *table,
+ 			child = rcu_dereference_protected(
+ 					parent->bit[!(node->parent_bit_packed & 1)],
+ 					lockdep_is_held(lock));
+-		call_rcu(&node->rcu, node_free_rcu);
++		kfree_rcu(node, rcu);
+ 		if (!free_parent)
+ 			continue;
+ 		if (child)
+ 			child->parent_bit_packed = parent->parent_bit_packed;
+ 		*(struct allowedips_node **)(parent->parent_bit_packed & ~3UL) = child;
+-		call_rcu(&parent->rcu, node_free_rcu);
++		kfree_rcu(parent, rcu);
+ 	}
+ }
+ 
 
