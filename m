@@ -1,115 +1,165 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8027A13C3D5;
-	Mon, 14 Oct 2024 18:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21990231C94;
+	Mon, 14 Oct 2024 20:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728929060; cv=none; b=dpz27abRrLqlArhsRS+0oRmAfeAZapQAVE36VHGgJRl4y03nRJ/ZFhxmYtom60UwIXpCKpe/eGQuMbGtIMrBoVP5nVBxym17VZq5CnhOk1BpFJ/SnhP88XsnJPnj9Z9hVAmtV4VbsTC9EKzddta51KlYBERk/Bqr0kx9np6Ld1c=
+	t=1728937762; cv=none; b=tNft9clRzcctuQsDn/W/23+tA9for6jUedHEGhVwg7NnDcchbRonlZOBoEP7Uhlp2ORtaFck9yhfsJW+XHz+QBTZ4N5JBVNBxPLRDBof1dMfgq4lbFpB6hjyQEWteV43y4H8WBLqQzTd2WiTc7M06F4Ffzktm2Q5c6L4/NrDKKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728929060; c=relaxed/simple;
-	bh=pgIvhX6DWi2lVx8GQBAGHBczkT4Q44P+FeEZFYw/8XI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nvl7myjtZP9MThuLDSAOfnZx5BXqPFVmfTpmyjN5j6Pu7p8aoNMlP/VTmyCQ2WggiNTHrSVy+doXLka95TN9Fq3rxP5ONoUPybRLhO6UaxgPMSTlNNYKl9s4FJ7n3Ykxb9Kx30CydrrTvNxl3hp4LJqFjQnwzXAY4efLN5d1sL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsliI3Ta; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728937762; c=relaxed/simple;
+	bh=XaDIO2IuND1/j9idtykS1sX9MRhoJ+szidhKrSx3ems=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UCaIh/Q3qZU8ixF2+TAKskc/ctdosHzbwXN/VLQVDsNSNNWqGOnmKWhgraS/e+5K2abTDQTOuMQA7RT9UcjmM+/Zmpr8olxoIqvygTntK9VFYkNfBom7i5XxMLjauN+SoiIdb4yvLijLpQ8wVsymWgQ8Ll7+wPx0vkhFxzC+HUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ryKw7AOS; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsliI3Ta"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea3e367ae6so448686a12.1;
-        Mon, 14 Oct 2024 11:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728929059; x=1729533859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bvhwh3gLG6gcnOHuIbpfqhWVaibVg9c2c2Ldevdyqjw=;
-        b=XsliI3TaFgV1kvK3Rs/2Og8CJr3NLT0Y4jOhO9kAKHa3fJH8Lb+Cxi2epo+7NmFzOA
-         WVf/gkVoblPUGsB/5AHI4BojsuKZthMe34yKYkN+y71lAj59RNxvO7hJldC40egYZrEU
-         FYkSBJB6ukRJxzndMINA4WQS0KKOsPSWA/8WEs/5/v/zAtZHCJJzmdtnpOPiBcbZ5tka
-         G6GracXY07vF8LvCt0jzbR1W37DL8U04JwJSVeA6wMv80HtK5DAj/IeehUkjAss6USNE
-         r6b822BYQSIBWEc3nST6yQvG8dS5njf2y/PTOvlcWivtuvXUZ9eCnUEklbq26ql1QFH3
-         /tPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728929059; x=1729533859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bvhwh3gLG6gcnOHuIbpfqhWVaibVg9c2c2Ldevdyqjw=;
-        b=orii51HglYovEHZoah9TmEavz1Vwk6r9oLwAVfyLDzJSZfbNsEqNQ/huo8KQjq+88l
-         zTn+USHDzF94hrS5TUYIpegiwbNVFlxLAx3n9nezTxcNTFp9cmPqebW3LUvViHftkimO
-         f8FUq7dHOa5zLPzxQs4Vdpd8+efpSeGG0fL8kAQrpwwt56wgsTT6IgtH9wdqDUd9sjlL
-         JR5cB/l6DBVCuzLQql27T2kvWeUgQ8xD226NMmdR9yas5hH98vpGRnQessQtRfqJdOfF
-         H/UEx5RcdcoKxPmaDma/Ifh4NaYpl14hl7ZqiPyqoL3jLEdjFHVt2R6Si5VuPtnl4M/X
-         EDfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEQhcukePVPfPGSshsaBKW/G7bErOTTjxfvspmW6cQAah6Z1rKQsmAkISSZJmi6kPF/ejZxhxj1QEmjhQSaDw=@vger.kernel.org, AJvYcCXNn1dtPsj5CW1pa810ajdqNEe/Aa054Vn6AAmn6Nyt92DfR7nz87EhbdtOr2/tAU29/yaOnct62VhTfMLv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw83RX+QBb3M7FpLTAnZjEsRIeNTe3C+jv8iSGIov76mVHuf33z
-	QfvJJYXJ/P74cSj7sJWegdRG88QrJZbGhxd8aJKCDOb1OYQZP0hD4Hj10kPXymGPheIfjdj+Ote
-	RAqPKlcd1bZmomedYflJC8IVP0P0=
-X-Google-Smtp-Source: AGHT+IGQSiVAhq5p2Nni7Nqi5xdR7AQXxhYJRI8o2X32oWs0TAqQmtICSbeIENaqYKnuwO6PNosi2vKWXoxwvpo5zSg=
-X-Received: by 2002:a17:90b:318:b0:2e2:a70a:f107 with SMTP id
- 98e67ed59e1d1-2e2f0a11479mr6745183a91.1.1728929058628; Mon, 14 Oct 2024
- 11:04:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ryKw7AOS"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 0RA7t2ZE7WNPK0RA7tHNhp; Mon, 14 Oct 2024 21:55:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728935735;
+	bh=hD0vo8WyvWoRZVSSpg8GQUmRbzOmqsIeAIrHbUQl8aQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ryKw7AOSpn/wl0TBFALbQKCMzujsKExflrgTqF7ZEXTsrRCAQTl5s4ZqIibRF7uah
+	 C9ngNMq+wfQW+1s2zt15bLZH3gZTh1JlqP3ZCnt+KrY5GIkPX2tQPcBniGngQ2xVrf
+	 /dIu/+1+I61yHh8GDcg0Yd6doVt4Wr7sgk9aV5O5/Fii2hjCyQ+IZ33M7vDxlcnNmU
+	 fKvcRscxKLhS10cDzWqFKcgI5/Yxuzk4Udx2CB+YB2+Q3DQAvkylsBVp5BVs4haXFU
+	 6yS/MXpVKXIGyhXIb/xFcfz1uFte4pUs43gcsK4lQ+nmwQdYWgYHbHipK24aYeJkPp
+	 A2XVNxVOQngYg==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 14 Oct 2024 21:55:35 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	qat-linux@intel.com,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH] crypto: qat - Constify struct pm_status_row
+Date: Mon, 14 Oct 2024 21:55:17 +0200
+Message-ID: <ab26d264baec1f3233e832c0c2fa723e3be21a04.1728935687.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f3cf409f-2b04-444f-88f0-9b4cfe290667@stanley.mountain> <a1acb975-c29e-4c90-b7a9-5f50478ab946@amd.com>
-In-Reply-To: <a1acb975-c29e-4c90-b7a9-5f50478ab946@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 14 Oct 2024 14:04:06 -0400
-Message-ID: <CADnq5_M-Ccu8cN-aSx=Xu3+mSCx7HV1H8JftJk277u7qvCLXvw@mail.gmail.com>
-Subject: Re: [PATCH next] drm/amdgpu: Fix off by one in current_memory_partition_show()
-To: "Lazar, Lijo" <lijo.lazar@amd.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hawking Zhang <Hawking.Zhang@amd.com>, Yunxiang Li <Yunxiang.Li@amd.com>, 
-	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Applied.  Thanks!
+'struct pm_status_row' are not modified in this driver.
 
-Alex
+Constifying this structure moves some data to a read-only section, so
+increases overall security.
 
-On Thu, Oct 10, 2024 at 11:18=E2=80=AFPM Lazar, Lijo <lijo.lazar@amd.com> w=
-rote:
->
->
->
-> On 10/11/2024 12:05 AM, Dan Carpenter wrote:
-> > The >=3D ARRAY_SIZE() should be > ARRAY_SIZE() to prevent an out of
-> > bounds read.
-> >
-> > Fixes: 012be6f22c01 ("drm/amdgpu: Add sysfs interfaces for NPS mode")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->
-> Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
->
-> Thanks,
-> Lijo
->
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_gmc.c
-> > index ddf716d27f3a..75c9291ac3eb 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
-> > @@ -1199,7 +1199,7 @@ static ssize_t current_memory_partition_show(
-> >       enum amdgpu_memory_partition mode;
-> >
-> >       mode =3D adev->gmc.gmc_funcs->query_mem_partition_mode(adev);
-> > -     if ((mode > ARRAY_SIZE(nps_desc)) ||
-> > +     if ((mode >=3D ARRAY_SIZE(nps_desc)) ||
-> >           (BIT(mode) & AMDGPU_ALL_NPS_MASK) !=3D BIT(mode))
-> >               return sysfs_emit(buf, "UNKNOWN\n");
-> >
+Update the prototype of some functions accordingly.
+
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   4400	   1059	      0	   5459	   1553	drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   5216	    243	      0	   5459	   1553	drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ .../intel/qat/qat_common/adf_gen4_pm_debugfs.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c b/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
+index ee0b5079de3e..2e4095c4c12c 100644
+--- a/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
++++ b/drivers/crypto/intel/qat/qat_common/adf_gen4_pm_debugfs.c
+@@ -42,13 +42,13 @@ struct pm_status_row {
+ 	const char *key;
+ };
+ 
+-static struct pm_status_row pm_fuse_rows[] = {
++static const struct pm_status_row pm_fuse_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(fusectl0, ENABLE_PM),
+ 	PM_INFO_REGSET_ENTRY(fusectl0, ENABLE_PM_IDLE),
+ 	PM_INFO_REGSET_ENTRY(fusectl0, ENABLE_DEEP_PM_IDLE),
+ };
+ 
+-static struct pm_status_row pm_info_rows[] = {
++static const struct pm_status_row pm_info_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(pm.status, CPM_PM_STATE),
+ 	PM_INFO_REGSET_ENTRY(pm.status, PENDING_WP),
+ 	PM_INFO_REGSET_ENTRY(pm.status, CURRENT_WP),
+@@ -59,7 +59,7 @@ static struct pm_status_row pm_info_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(pm.main, THR_VALUE),
+ };
+ 
+-static struct pm_status_row pm_ssm_rows[] = {
++static const struct pm_status_row pm_ssm_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(ssm.pm_enable, SSM_PM_ENABLE),
+ 	PM_INFO_REGSET_ENTRY32(ssm.active_constraint, ACTIVE_CONSTRAINT),
+ 	PM_INFO_REGSET_ENTRY(ssm.pm_domain_status, DOMAIN_POWER_GATED),
+@@ -83,7 +83,7 @@ static struct pm_status_row pm_ssm_rows[] = {
+ 	PM_INFO_REGSET_ENTRY(ssm.pm_managed_status, WCP_MANAGED_COUNT),
+ };
+ 
+-static struct pm_status_row pm_log_rows[] = {
++static const struct pm_status_row pm_log_rows[] = {
+ 	PM_INFO_REGSET_ENTRY32(event_counters.host_msg, HOST_MSG_EVENT_COUNT),
+ 	PM_INFO_REGSET_ENTRY32(event_counters.sys_pm, SYS_PM_EVENT_COUNT),
+ 	PM_INFO_REGSET_ENTRY32(event_counters.local_ssm, SSM_EVENT_COUNT),
+@@ -91,7 +91,7 @@ static struct pm_status_row pm_log_rows[] = {
+ 	PM_INFO_REGSET_ENTRY32(event_counters.unknown, UNKNOWN_EVENT_COUNT),
+ };
+ 
+-static struct pm_status_row pm_event_rows[ICP_QAT_NUMBER_OF_PM_EVENTS] = {
++static const struct pm_status_row pm_event_rows[ICP_QAT_NUMBER_OF_PM_EVENTS] = {
+ 	PM_INFO_REGSET_ENTRY32(event_log[0], EVENT0),
+ 	PM_INFO_REGSET_ENTRY32(event_log[1], EVENT1),
+ 	PM_INFO_REGSET_ENTRY32(event_log[2], EVENT2),
+@@ -102,14 +102,14 @@ static struct pm_status_row pm_event_rows[ICP_QAT_NUMBER_OF_PM_EVENTS] = {
+ 	PM_INFO_REGSET_ENTRY32(event_log[7], EVENT7),
+ };
+ 
+-static struct pm_status_row pm_csrs_rows[] = {
++static const struct pm_status_row pm_csrs_rows[] = {
+ 	PM_INFO_REGSET_ENTRY32(pm.fw_init, CPM_PM_FW_INIT),
+ 	PM_INFO_REGSET_ENTRY32(pm.status, CPM_PM_STATUS),
+ 	PM_INFO_REGSET_ENTRY32(pm.main, CPM_PM_MASTER_FW),
+ 	PM_INFO_REGSET_ENTRY32(pm.pwrreq, CPM_PM_PWRREQ),
+ };
+ 
+-static int pm_scnprint_table(char *buff, struct pm_status_row *table,
++static int pm_scnprint_table(char *buff, const struct pm_status_row *table,
+ 			     u32 *pm_info_regs, size_t buff_size, int table_len,
+ 			     bool lowercase)
+ {
+@@ -131,7 +131,7 @@ static int pm_scnprint_table(char *buff, struct pm_status_row *table,
+ 	return wr;
+ }
+ 
+-static int pm_scnprint_table_upper_keys(char *buff, struct pm_status_row *table,
++static int pm_scnprint_table_upper_keys(char *buff, const struct pm_status_row *table,
+ 					u32 *pm_info_regs, size_t buff_size,
+ 					int table_len)
+ {
+@@ -139,7 +139,7 @@ static int pm_scnprint_table_upper_keys(char *buff, struct pm_status_row *table,
+ 				 table_len, false);
+ }
+ 
+-static int pm_scnprint_table_lower_keys(char *buff, struct pm_status_row *table,
++static int pm_scnprint_table_lower_keys(char *buff, const struct pm_status_row *table,
+ 					u32 *pm_info_regs, size_t buff_size,
+ 					int table_len)
+ {
+-- 
+2.47.0
+
