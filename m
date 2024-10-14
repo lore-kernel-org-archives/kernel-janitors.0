@@ -1,99 +1,132 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F9619E806;
-	Mon, 14 Oct 2024 13:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9781A76C4;
+	Mon, 14 Oct 2024 13:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911127; cv=none; b=G3fDGKOlL77Yg59j6fWvOsCbuFNdUVDOGWiLEMj91gsj2+/nBQr43cqyN5gW+noljNfTpoA37zflyYTrOAEN8E0FPbWLvBcPRxxFJUiwlHmWCN5QS4i5tolFsMRwheN4yNSLc088CBCqemqsADnqM8SseSXNzIBJfTwm7qzA5ao=
+	t=1728911507; cv=none; b=BjtK8x41Y9GPFerIN0GdQ4HbdPOi5Oi3ppDXff7Oia8/41wLKLixn9U+6K6iIRY6fzJim6BpKdtm0xwiXmbTw/FAqLSTBxN0XodRolcTFzgFKT+cqFh3oG3x0TN7XEfiWqzMAaa4CajhuDHQTN3kTrdMXC6aSopOx0pibq3E+iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911127; c=relaxed/simple;
-	bh=93N03/0SIwI63TSvRRAPpFrLfV4l6YcIuAmY4AQe9aw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CPQhdmdthzPUaktwQNL6kZH+7CrXMjHDiQeB0c8j+kPcejOSPY1H3goHdrys6UTnJ7WLmIMW0NzFor03u11X/bAg4B/9+g52pqOUsz9eliADjY3fC0I0e39ZESF5s0YQ62Sn0Amsf7Cwri/rHUhD9JXYGBx699UDhE2zLTJ0YAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QG1px/Cf; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728911507; c=relaxed/simple;
+	bh=5yU4dRg8eWV7Fgu5/bN7jBjpK68MkobODeODS6fxwYM=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=J515l60RMLe8nhLrp7hSANhGnaMEK685oI/cTIM0YoJNyyMt8hYIVTsA1kpLTZWR758RPhX3uhlBFLLZtWCF6JZYdEzXZ3k0aeAvlBC/LNoAAairv7vyAJN3jLhgHiftfc4egxxIbf4kWiBHvlm5LWM30JP0AHT1lwU10Bsj01U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RsqfMZQ9; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QG1px/Cf"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4311e470fdaso27974525e9.3;
-        Mon, 14 Oct 2024 06:05:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728911124; x=1729515924; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZGlh0BgvTZR8tIX7xtvnBBKKfSil7mION4lorOOPKtI=;
-        b=QG1px/CfGzL+IV/pncXhQ+CsLggLRiXkY84cSbEY+rmxS1cILAn9npU3CpYrVFEDQ8
-         cY45jPyxZfFJ+DtV86jWoE0b/YGE+H6qKmAxYLNKgh/y1HuHIOj9xzo1AO0C0yFrK7vB
-         AjRIBEw0x2ZQjD5B9XeyQUFS3dM5HXsddb8lLZIqKtdlleyg2wBpdbQ/ff5I+gQbhH+n
-         Eu7w+uGtSBFTFwLTI3A63Uf9naNtHNznbXew5dYfCym7oZVBZUaLJqIt9k9wOHfYWLhs
-         ySCw87wjnMaRqixrKIn4F55ymsh66NCywuKOFXhBnLXTU7jZvvTuOg63Jg0xwV8VZsMi
-         IifQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728911124; x=1729515924;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZGlh0BgvTZR8tIX7xtvnBBKKfSil7mION4lorOOPKtI=;
-        b=ZaKakG9sB7T5w1g6B2SGUd5bhJrgB1hGHWEkbP7pTwBqPXYLizSS3i/tRrLzhUa/3a
-         SEOeK/QKEK+o12/a41b5IpaZa7mkQlbkoHGb8G/yCh6ZOBs8YHm0asODjtC6L0xrlvRo
-         86ZD/lu6PPse72Yje0LtPDYn3zTMO5Pyr5dV9broWpCQPQxnxWjPSie5TpDxwcphA6Oy
-         ++IUVLF4U2xR49gPogNcYx73C4wbdPuRNabfNjLQZVvde+J60tGOOIEFcIr5QvgnLssl
-         0BUAvcs4o7hHeHW3ML1OnxblG1GQ3Fvwbo4Wfaf7mK1WehUeV6HKs8D4VS2xSbL+gF3l
-         qnNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbSeqxxEKB5OJjmzgQizqfXXpsi/t8dwY9LwDzOiuqii8ZAB0bP9GEONqSpaKjduYebONZxXwvLGvTRAII@vger.kernel.org, AJvYcCXg/UafdJDsoil9zm/KUannIdTQVj5vQ9JsR/3r07bXWJ3hEvSK1hWEJbagD5TCs0L/ifC9++LDrI1Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPHqsKMrRu7DFeMdgAUkis5OLES7EYiGdQOobWgJp8aHn/XVy7
-	855aoAdNovC7MoLdxpkyVn598p7GlroODdb399YnSAppA/5hrJqdk1P0zA==
-X-Google-Smtp-Source: AGHT+IEw0JzL9xW52CWdKReVPk7XaqJtW2zlmIH169YR4ezzpMVjef4ADH7DzHGMB2cI0N4U2/hHuA==
-X-Received: by 2002:a05:600c:138a:b0:42c:b74c:d8c3 with SMTP id 5b1f17b1804b1-4311df5c5b0mr113874325e9.32.1728911123845;
-        Mon, 14 Oct 2024 06:05:23 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa3bsm11367193f8f.78.2024.10.14.06.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 06:05:22 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ACPI: pfr_telemetry: remove redundant error check on ret
-Date: Mon, 14 Oct 2024 14:05:22 +0100
-Message-Id: <20241014130522.1986428-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RsqfMZQ9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728911450; x=1729516250; i=markus.elfring@web.de;
+	bh=TfCLl53lB42+HRnDMfXfFuOecGZa7W9eJj72/YGIQ90=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RsqfMZQ9Q+piDeHZsRcFUz3vDcgukjqoWXoDiTWFgKUxTOc9IPe2aCGni6qXn7sp
+	 cWrWorf72z2G6j8w2Tb4TUOIB4mjb13kkPjpGGcQreoyMbHBe0gldDx8qm+J2d2fX
+	 if4LMXB2Q1UeFTSnlBQ8hxMq9sc03DBN9jFRiYvYa8/2bA9rSkL3qzPeGGgr941bq
+	 eAxgsqZGQDpmYGKSLCCCVEGJfxVfA3vTLVUbGWTGpamLNUau6zGj3hBIXji0aq4TR
+	 ebvHDjkaUsvf1+JsHWeAmltdZcS4bcVAiv8KnleMRXbGfrdgJYQd979y7eS7t91RX
+	 soazwx1zCzQFXrVzjQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [94.31.82.95] ([94.31.82.95]) by web-mail.web.de
+ (3c-app-webde-bs22.server.lan [172.19.170.22]) (via HTTP); Mon, 14 Oct 2024
+ 15:10:50 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Message-ID: <trinity-a5696b99-bf11-4ae3-8b00-20db116f86e4-1728911450361@3c-app-webde-bs22>
+From: Markus Elfring <Markus.Elfring@web.de>
+To: Kevin Chen <kevin_chen@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, kernel-janitors@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, BMC-SW <BMC-SW@aspeedtech.com>
+Subject: RE: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX
+ INTC
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 14 Oct 2024 15:10:50 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
+References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
+ <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
+ <PSAPR06MB4949904D1FA95DBD3EF5288A89792@PSAPR06MB4949.apcprd06.prod.outlook.com>
+ <0b995a34-28c4-4ba6-8ad2-e8413c6a63f5@web.de>
+ <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:ovMgIH1q08E5i7Y9d9W6SUygzJNgl2aH+f4oZ4d1KfDWxtS1ZMfItM3wjo2ZYndBhaV9q
+ sVsLTIFgAYVRuSGipm1FsubPyMzqvHvSteb4G59YcNgWaH80fuZ+UuXRhPLk821rLkBWIHkW30Ba
+ VuUDtM44h0UWnxTNZYXbFpGTgDzjWiAqxxZewwynGk07TGaZ4vBcMMMseNsjk6+009ifsSk1T9Ls
+ iLk4yLDwTV9z52eLXfrkRI8yHmF15qSC360cl5/tXmjX9eSQZSPkWuhDfWfFwGqJltTJCXY+R1n6
+ Lg=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8QIWZabSQls=;BMNnAN1dJoT/6h4uy684oy1oyg8
+ jrr4wBj+qthZ8l5y3dGE0as9BdePavt6FDWiZKGS3Yr049y/u0M/KiuShJ0T2cDVVKUbEU+zi
+ Xl5t6BmSc61xxFU9MdSfNICci4xBwBccugddklaAsddcr2R3CaPDxnBIpwjEWt5IfsippsbXo
+ XMQaT2aeUTUeH2NJ5ahSYKQX1XzAFtPT0DyrpMFZAjD8NFCi+sCScDnS0oML6SJTWh16r3N2a
+ lQCcJ4e64lhGQl6xQqMsgOjXMwKNzw9+LfRRKWICv5jIIjTGFFqGhqd9rDxGnzAkM9h92Z3QY
+ h4VyosDzY+iyf62bvzV266k7Bkor4XhdmG4dZcQ8gACuyDklooc/yxqrASQHtxvNzRhkwu13G
+ ysI0HF4gNIOlqkpZNj5S1PwDPHh4MvNPnASCcbC2PhdZ0uuN1W/pdlCyzVZYGTkGLHroGyX4X
+ uZ4z5OOD+0sJBjzda777h/6WDufB+Bn9wLlSt9mdaEFpZEgh/mo6L3G42b3hGW6V/t+7i9PiK
+ XKPA6/hyqPvPB6nzz4/zsXGBfl/Vf1AGY73RIL9/qBTKRL14OCkz3CZ2tQg+llzPA29N+jzBt
+ 0wFLFE2HXPBjU7gi4SxYZuvg/HhrprBjX1rKExITz/nYgz2FUw9Q+1KrsbdzWNdudmOy/Nsy9
+ fcK81NPE/cadP3hS6Ihiu0Md3pwMkaexbVlfkxeHmA==
 
-The variable ret is initialized to zero and a littler later in
-the PFRT_LOG_IOC_GET_INFO case of a switch statement is being checked
-for negative error value. Since ret has not been re-assigned since
-the initialization ret can never be less than zero so the check is
-redundant and can be removed. Remove it.
+> > I propose to move selected variable definitions into corresponding comp=
+ound
+> > statements (by using extra curly brackets)=2E
+> > https://refactoring=2Ecom/catalog/reduceScopeOfVariable=2Ehtml
+> OK=2E I moved these two local variables into scoped_guard=2E
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/acpi/pfr_telemetry.c | 3 ---
- 1 file changed, 3 deletions(-)
+Will development interests grow for further refactorings?
 
-diff --git a/drivers/acpi/pfr_telemetry.c b/drivers/acpi/pfr_telemetry.c
-index 998264a7333d..a32798787ed9 100644
---- a/drivers/acpi/pfr_telemetry.c
-+++ b/drivers/acpi/pfr_telemetry.c
-@@ -272,9 +272,6 @@ static long pfrt_log_ioctl(struct file *file, unsigned int cmd, unsigned long ar
- 
- 	case PFRT_LOG_IOC_GET_INFO:
- 		info.log_level = get_pfrt_log_level(pfrt_log_dev);
--		if (ret < 0)
--			return ret;
--
- 		info.log_type = pfrt_log_dev->info.log_type;
- 		info.log_revid = pfrt_log_dev->info.log_revid;
- 		if (copy_to_user(p, &info, sizeof(info)))
--- 
-2.39.5
 
+> +static void aspeed_intc_ic_irq_handler(struct irq_desc *desc)
+> +{
+> +       struct aspeed_intc_ic *intc_ic =3D irq_desc_get_handler_data(des=
+c);
+
+Another update candidate (for scope reduction)?
+
+
+> +
+> +       guard(chained_irq)(desc);
+
+Using another macro call =E2=80=9Cscoped_guard(=E2=80=A6) { =E2=80=A6 }=E2=
+=80=9D?
+
+
+> +       scoped_guard(raw_spinlock, &intc_ic->gic_lock) {
+
+Would you like to reconsider the proposed macro mixture once more?
+
+
+> +               unsigned long bit, status;
+=E2=80=A6
+
+=E2=80=A6
+> +++ b/include/linux/irqchip/chained_irq=2Eh
+> @@ -38,4 +38,6 @@ static inline void chained_irq_exit(struct irq_chip *c=
+hip,
+>                 chip->irq_unmask(&desc->irq_data);
+>  }
+>=20
+> +DEFINE_GUARD(chained_irq, struct irq_desc *, chained_irq_exit((_T->irq_=
+data=2Echip), (_T)),
+> +            chained_irq_enter((_T->irq_data=2Echip), (_T)))
+
+Would you like to add a #include directive in this header file accordingly=
+?
+
+Regards,
+Markus
