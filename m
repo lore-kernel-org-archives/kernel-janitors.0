@@ -1,204 +1,134 @@
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3284714601C;
-	Mon, 14 Oct 2024 07:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057B514037F
+	for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 07:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728890007; cv=none; b=bGZTiFmrEllWazbOK099mTNwClKGLhhe9EAy3g32EbJjq05wq51c87yZpXcN9i00YzYlD+GEK8WCqsLkY3tNkvd+OhTJOMZQekUf8VcAV3hedYsN2olsPyJkt6f+2OAb+Vk3WtJSDWC2893UAejctO0/jQjwCsHlSlJZ5hGwf+k=
+	t=1728890205; cv=none; b=rrYAD7JN6NH2Q4EtfzRjD08eyfkJaoE8ADyCSpSux4eVSnrssGSGe0WrTmZAS/1Giz3twFew+uMfeNPzbHGl/OniH2UD3vwOS6YewsGtRVIn6UrAUq49c0IKGo5KAzMD0ONfKsqotPOhYR1r/l1kq+scTX/yWCSNbYJkws+1jQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728890007; c=relaxed/simple;
-	bh=zgxvLRR3w3kjqFDgWGHDCjUaqXkNWkNYk3LGPt7EkZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jXlZ52MIsYQGOfWBCkOLIqh9/VJqLoLXg6jEV3fyUbMlt9c4WSJ3tYDMJdZGHH81yR0a3l8SuPOlKK/gWtxPtFH3qHBBS2sEQylh6J9jS66V3Ok7IxYT64qs1Oxqaju96njo54uqywuI3CF90DTc4uMkmA71Gz7XzZlGWKBVMuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=Xe54NCsc; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+	s=arc-20240116; t=1728890205; c=relaxed/simple;
+	bh=DK+CIo8QEgh56+OiXd7YthWbLGWDz1jv9VxIzy0DvgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ijj9ElmiGiwc5yvrQOtzJtyrqFv7nPUaN2cJ1DcSqEiLUUsSLKtNuZsCgx/3he6YaASk03x6Lb3OwaZHVXoOHV5ny+GhuUYRXvrLOsyln1ii22Jdw/evWRfIUWoIWu+A5FKpZacAPt5EEvxvJS42y/S1/xlalVTM5o1eepJ4R2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=KFXCDXYS; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="Xe54NCsc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1728889420;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=httTAT48fu+3mO0g6dqX16B/PSb/AZaAB5kFQ49ZHpw=;
-	b=Xe54NCscJgu36LAoRk5nICKys82aNg3+GsjFGnInFdAafoHCnhLMlKiQlH9O9rDNupMsmm
-	/gCyhwOm/RbFmKrvS8PEkAkjJHf6xiJMhZO9BSLdAZ/l8T36cBzyTFNdE+PqZhdfV+RWWB
-	5M1lZzm3KwY8vIO/cfRIt4BhpcJeJdI=
-From: Sven Eckelmann <sven@narfation.org>
-To: Julia Lawall <Julia.Lawall@inria.fr>, vbabka@suse.cz,
- linus.luessing@c0d3.blue
-Cc: Marek Lindner <mareklindner@neomailbox.ch>,
- kernel-janitors@vger.kernel.org, paulmck@kernel.org,
- Simon Wunderlich <sw@simonwunderlich.de>, Antonio Quartulli <a@unstable.cc>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 06/17] batman-adv: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Date: Mon, 14 Oct 2024 09:03:30 +0200
-Message-ID: <6091264.lOV4Wx5bFT@ripper>
-In-Reply-To: <20241013201704.49576-7-Julia.Lawall@inria.fr>
-References:
- <20241013201704.49576-1-Julia.Lawall@inria.fr>
- <20241013201704.49576-7-Julia.Lawall@inria.fr>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="KFXCDXYS"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e4b7409fso1750934e87.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 00:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728890202; x=1729495002; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cYrGaKIzbaXW4/HOHDYKu2NdNnaNeNcKNsI65YJRIJQ=;
+        b=KFXCDXYS7QeXEasuF8NXdw+o7eUKnyhJDpFkTeXTkCYHWulklYdcRklMPUKOrysn+l
+         7LTOMglMbHB3wFyll3Dl2Z6bSDqjeUS9Y1URpXLvQQEHuu9CE8VYU2zTbtuhBtt84oVw
+         f8SpT3xqodBPIGvsGHIdG21ouVzIdnNvd2RTNFyIRk/bEBTTwRO1WvMxxld5jOx5MAJ5
+         tkSh0cK8+aRqEm0pnYodYQVWan1BirobvpJia20UupD+4O/yosxEZq/FsbKG46rmopN4
+         ltp+zqNd9QHbvKXFDcEqPFHgNztW8XJ5+3M83YoyxnvmbU/WH0PowOWhdgwtDSU/lBiO
+         Nfvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728890202; x=1729495002;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cYrGaKIzbaXW4/HOHDYKu2NdNnaNeNcKNsI65YJRIJQ=;
+        b=ID+ePubiYXTJyU2hlG4j3I6XWZ1oOVuDDLBDI356ekBEqR+wBw8NX3/jXbX2bhjcB3
+         PfaoS13bN3Xus5C8544MqPqXyE3899ZeMoEtoYCoCA/d2lTRRB1fp7pzzRjPOtsmWCw3
+         w7XOxjeoB3cpFPD5EkoEgLVEtOKfXUcWR+z76lShkQSN7v33ra1ROYIJawRM4lh3lOXL
+         qGVyUkMd+/3X7KLDTy4ygOj2rMZj5+Hbj5ktJlYukhg9wTNI+F6Rth7hHiMiFhALdFc6
+         Zy8FJH+s13vZnDwRit4gZZ2JFm5MFMnHhNcqRTSL0/OM/wxiejPbjlFYheC0ZMR4GSqQ
+         lEyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVi5SiaQuJUOrwHieH8TKhfTqMGRQJCAdiYckE1EatXXkecjUIsMiK8XCZgxloX6SE2NfGAVuQctvVW/kl7yDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG6gTj0CHaILdnWg/6HBW/Xhs2zDYH4WcL9PAJgdpeQ7dZ3Sp+
+	JYmG3TY9h++QGS1ORq8M8uxYp5GNYEFUObEPn5D1GPqznGS2KfoPp9KTexJ7ngvjsGv2HS3YQ/F
+	hISgl/NJhLmMMw4RGMXs0JECCMsAXbVWdE/BJmg==
+X-Google-Smtp-Source: AGHT+IGPExr/iGdzqGOOs1sdsdXchDfXIqGllV+yq5qtcgDH+8WKLL/qB4Dnxru8GItrut/gJbXsTIfYoiaKcgAvmrE=
+X-Received: by 2002:a05:6512:3d87:b0:539:eec0:20de with SMTP id
+ 2adb3069b0e04-539eec02255mr1155970e87.10.1728890201974; Mon, 14 Oct 2024
+ 00:16:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4957463.31r3eYUQgx";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+References: <37842441-e372-40e9-b0f5-cf69defc2db5@stanley.mountain> <CAMRc=MdFYTtosq53tDFaPSBn11V3P36DOX8xsxRqFhu5iPwUcw@mail.gmail.com>
+In-Reply-To: <CAMRc=MdFYTtosq53tDFaPSBn11V3P36DOX8xsxRqFhu5iPwUcw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 14 Oct 2024 09:16:31 +0200
+Message-ID: <CAMRc=Mdsb-93m5X6q6qJUmaomJGdBAOWqSFBY0y7z8KsQ3NA6A@mail.gmail.com>
+Subject: Re: [PATCH] fbdev/da8xx-fb: unlock on error paths in suspend/resume
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Helge Deller <deller@gmx.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Sekhar Nori <nsekhar@ti.com>, linux-fbdev@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
---nextPart4957463.31r3eYUQgx
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Sven Eckelmann <sven@narfation.org>
-Date: Mon, 14 Oct 2024 09:03:30 +0200
-Message-ID: <6091264.lOV4Wx5bFT@ripper>
-In-Reply-To: <20241013201704.49576-7-Julia.Lawall@inria.fr>
-MIME-Version: 1.0
+On Mon, Oct 14, 2024 at 9:06=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+>
+> On Fri, Oct 11, 2024 at 9:42=E2=80=AFPM Dan Carpenter <dan.carpenter@lina=
+ro.org> wrote:
+> >
+> > Add a missing console_unlock() in the suspend and resume functions on
+> > the error paths.
+> >
+> > Fixes: 611097d5daea ("fbdev: da8xx: add support for a regulator")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/video/fbdev/da8xx-fb.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx=
+-fb.c
+> > index fad1e13c6332..66ff8456b231 100644
+> > --- a/drivers/video/fbdev/da8xx-fb.c
+> > +++ b/drivers/video/fbdev/da8xx-fb.c
+> > @@ -1610,8 +1610,10 @@ static int fb_suspend(struct device *dev)
+> >         console_lock();
+> >         if (par->lcd_supply) {
+> >                 ret =3D regulator_disable(par->lcd_supply);
+> > -               if (ret)
+> > +               if (ret) {
+> > +                       console_unlock();
+> >                         return ret;
+> > +               }
+> >         }
+> >
+> >         fb_set_suspend(info, 1);
+> > @@ -1636,8 +1638,10 @@ static int fb_resume(struct device *dev)
+> >
+> >                 if (par->lcd_supply) {
+> >                         ret =3D regulator_enable(par->lcd_supply);
+> > -                       if (ret)
+> > +                       if (ret) {
+> > +                               console_unlock();
+> >                                 return ret;
+> > +                       }
+> >                 }
+> >         }
+> >
+> > --
+> > 2.45.2
+> >
+>
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Sunday, 13 October 2024 22:16:53 CEST Julia Lawall wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
-> 
-> The changes were made using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> 
-> ---
->  net/batman-adv/translation-table.c |   47 ++-----------------------------------
->  1 file changed, 3 insertions(+), 44 deletions(-)
+I technically still maintain this platform so I took a second look and
+seeing this[1] made me realize that this driver is no longer used on
+any board. The platform data structure is not defined anywhere and
+there's no OF compatible list.
 
+This patch can be dropped and I'll send one removing this driver from
+the kernel.
 
-This was tried and we noticed that it is not safe [1]. So, I would get 
-confirmation that commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() 
-from kmem_cache_destroy()") is fixing the problem which we had at that time. 
-The commit message sounds like it but I just want to be sure.
+Bartosz
 
-Kind regards,
-	Sven
-
-[1] https://lore.kernel.org/r/20240612133357.2596-1-linus.luessing@c0d3.blue
-
-> 
-> diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-> index 2243cec18ecc..b21ff3c36b07 100644
-> --- a/net/batman-adv/translation-table.c
-> +++ b/net/batman-adv/translation-table.c
-> @@ -208,20 +208,6 @@ batadv_tt_global_hash_find(struct batadv_priv *bat_priv, const u8 *addr,
->  	return tt_global_entry;
->  }
->  
-> -/**
-> - * batadv_tt_local_entry_free_rcu() - free the tt_local_entry
-> - * @rcu: rcu pointer of the tt_local_entry
-> - */
-> -static void batadv_tt_local_entry_free_rcu(struct rcu_head *rcu)
-> -{
-> -	struct batadv_tt_local_entry *tt_local_entry;
-> -
-> -	tt_local_entry = container_of(rcu, struct batadv_tt_local_entry,
-> -				      common.rcu);
-> -
-> -	kmem_cache_free(batadv_tl_cache, tt_local_entry);
-> -}
-> -
->  /**
->   * batadv_tt_local_entry_release() - release tt_local_entry from lists and queue
->   *  for free after rcu grace period
-> @@ -236,7 +222,7 @@ static void batadv_tt_local_entry_release(struct kref *ref)
->  
->  	batadv_softif_vlan_put(tt_local_entry->vlan);
->  
-> -	call_rcu(&tt_local_entry->common.rcu, batadv_tt_local_entry_free_rcu);
-> +	kfree_rcu(tt_local_entry, common.rcu);
->  }
->  
->  /**
-> @@ -254,20 +240,6 @@ batadv_tt_local_entry_put(struct batadv_tt_local_entry *tt_local_entry)
->  		 batadv_tt_local_entry_release);
->  }
->  
-> -/**
-> - * batadv_tt_global_entry_free_rcu() - free the tt_global_entry
-> - * @rcu: rcu pointer of the tt_global_entry
-> - */
-> -static void batadv_tt_global_entry_free_rcu(struct rcu_head *rcu)
-> -{
-> -	struct batadv_tt_global_entry *tt_global_entry;
-> -
-> -	tt_global_entry = container_of(rcu, struct batadv_tt_global_entry,
-> -				       common.rcu);
-> -
-> -	kmem_cache_free(batadv_tg_cache, tt_global_entry);
-> -}
-> -
->  /**
->   * batadv_tt_global_entry_release() - release tt_global_entry from lists and
->   *  queue for free after rcu grace period
-> @@ -282,7 +254,7 @@ void batadv_tt_global_entry_release(struct kref *ref)
->  
->  	batadv_tt_global_del_orig_list(tt_global_entry);
->  
-> -	call_rcu(&tt_global_entry->common.rcu, batadv_tt_global_entry_free_rcu);
-> +	kfree_rcu(tt_global_entry, common.rcu);
->  }
->  
->  /**
-> @@ -407,19 +379,6 @@ static void batadv_tt_global_size_dec(struct batadv_orig_node *orig_node,
->  	batadv_tt_global_size_mod(orig_node, vid, -1);
->  }
->  
-> -/**
-> - * batadv_tt_orig_list_entry_free_rcu() - free the orig_entry
-> - * @rcu: rcu pointer of the orig_entry
-> - */
-> -static void batadv_tt_orig_list_entry_free_rcu(struct rcu_head *rcu)
-> -{
-> -	struct batadv_tt_orig_list_entry *orig_entry;
-> -
-> -	orig_entry = container_of(rcu, struct batadv_tt_orig_list_entry, rcu);
-> -
-> -	kmem_cache_free(batadv_tt_orig_cache, orig_entry);
-> -}
-> -
->  /**
->   * batadv_tt_orig_list_entry_release() - release tt orig entry from lists and
->   *  queue for free after rcu grace period
-> @@ -433,7 +392,7 @@ static void batadv_tt_orig_list_entry_release(struct kref *ref)
->  				  refcount);
->  
->  	batadv_orig_node_put(orig_entry->orig_node);
-> -	call_rcu(&orig_entry->rcu, batadv_tt_orig_list_entry_free_rcu);
-> +	kfree_rcu(orig_entry, rcu);
->  }
->  
->  /**
-> 
-> 
-
-
---nextPart4957463.31r3eYUQgx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCZwzCQwAKCRBND3cr0xT1
-y7i+AQDVLdYz744YITcGjxNtokduQbc/TMXye8cDpvnUIRqeswEA3w/Kg7zDNvz2
-rI43KEYfCJOuJv0+vY4mZmhJob37RQw=
-=/WZq
------END PGP SIGNATURE-----
-
---nextPart4957463.31r3eYUQgx--
-
-
-
+[1] https://elixir.bootlin.com/linux/v6.11.3/source/drivers/video/fbdev/da8=
+xx-fb.c#L1340
