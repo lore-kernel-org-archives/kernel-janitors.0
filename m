@@ -1,119 +1,99 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950CC1A7ADE
-	for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 12:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F9619E806;
+	Mon, 14 Oct 2024 13:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728910426; cv=none; b=rDokeBgwvq8xS6uOcjNpfGgxW5qFXEQHPBAMzrDZwEKF1Fy6/sjD89TKDUAwg6c8xm7gHJnE/dyrSAD2jmzEpLmGvjHW80jJZXIrvS0wNaL2LNGzRhzzO2ISSqIUdGj2lvPoKobyDZTmOa8KGddJMvYa8osHMpgk8V0ZCeFZSg8=
+	t=1728911127; cv=none; b=G3fDGKOlL77Yg59j6fWvOsCbuFNdUVDOGWiLEMj91gsj2+/nBQr43cqyN5gW+noljNfTpoA37zflyYTrOAEN8E0FPbWLvBcPRxxFJUiwlHmWCN5QS4i5tolFsMRwheN4yNSLc088CBCqemqsADnqM8SseSXNzIBJfTwm7qzA5ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728910426; c=relaxed/simple;
-	bh=+pcu92eMqg+NHXSehZfy3gPTkISBMTAQR/PVez1N+qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFWZ43UdC6dDQMT2V40qkIyA+6AehzuY26asacsnb8uGHredm1LnbkLy+D+J8Y1LJPRQ7yTkIYejo4Kut0aetnlRm3ITQwIPntlE87XFtVgMAuAN1YaT9PsSHSgNnl4fC3eu/cUSk8U0veuG2Eg1rzdEOHl47U3DeHPAW46j4xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U7avgCd2; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728911127; c=relaxed/simple;
+	bh=93N03/0SIwI63TSvRRAPpFrLfV4l6YcIuAmY4AQe9aw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CPQhdmdthzPUaktwQNL6kZH+7CrXMjHDiQeB0c8j+kPcejOSPY1H3goHdrys6UTnJ7WLmIMW0NzFor03u11X/bAg4B/9+g52pqOUsz9eliADjY3fC0I0e39ZESF5s0YQ62Sn0Amsf7Cwri/rHUhD9JXYGBx699UDhE2zLTJ0YAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QG1px/Cf; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U7avgCd2"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a994ecf79e7so668263466b.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 05:53:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QG1px/Cf"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4311e470fdaso27974525e9.3;
+        Mon, 14 Oct 2024 06:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728910423; x=1729515223; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SyCHsuV/E8d70gfcK9ip53tgwN234YxCxe5zH8xLMPY=;
-        b=U7avgCd2Kq1XxkEYlk4PupuY4CHxpsGoPm4vKOF28tPALoNUKrgikVf5GGJ+wx5Nef
-         QtEA7ezPL+11HILyzfSu04/bPDphbjGhGLO6sBINBPdulB5rxnC9/Lt5xX3TDAIr/G3R
-         3b0iYAfgibyIYxkfJHDz21fztzlUeniDmMkTY8VOw6LYxRmAw2BcGMTFGtIFaSyW80TX
-         dqmg9VM/kliZkHjzW7mVfzpbsr9DVNDS5flwgBNMGrkgxlTCnjZxe7FJ+GmO5W0ynO3n
-         Kt1UmcV6GzF/zgslKdCfTpf5+0wzHlLcYlcKTCWZu7XOHIEwqIKnMqQbHyA2qTRb58cO
-         RWoQ==
+        d=gmail.com; s=20230601; t=1728911124; x=1729515924; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGlh0BgvTZR8tIX7xtvnBBKKfSil7mION4lorOOPKtI=;
+        b=QG1px/CfGzL+IV/pncXhQ+CsLggLRiXkY84cSbEY+rmxS1cILAn9npU3CpYrVFEDQ8
+         cY45jPyxZfFJ+DtV86jWoE0b/YGE+H6qKmAxYLNKgh/y1HuHIOj9xzo1AO0C0yFrK7vB
+         AjRIBEw0x2ZQjD5B9XeyQUFS3dM5HXsddb8lLZIqKtdlleyg2wBpdbQ/ff5I+gQbhH+n
+         Eu7w+uGtSBFTFwLTI3A63Uf9naNtHNznbXew5dYfCym7oZVBZUaLJqIt9k9wOHfYWLhs
+         ySCw87wjnMaRqixrKIn4F55ymsh66NCywuKOFXhBnLXTU7jZvvTuOg63Jg0xwV8VZsMi
+         IifQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728910423; x=1729515223;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SyCHsuV/E8d70gfcK9ip53tgwN234YxCxe5zH8xLMPY=;
-        b=GgWTKn+3KowmkpRrYklb/agpd0ADi6hgRCK61p0oQLBNZxv6ih2dOR1TbG5n0FP+27
-         0OYQVnHJkriDr6TIkTe+eEuzHTBMR8fR+RBa3vi6Zj4H0zYPC1EQH0jImUHNfNuibr97
-         mteR5iBnLs+wMWiU8hH91lnZo5+YD1tEWxDycMDat82UzW4bkbYwD7n0RHhcLORXRcb2
-         WIjQP1ax4eVlzn4X7246Po1OojPHRdyDz0hzG7kJFzUNyQ1pJcuRrt8WS+noF6w8krSb
-         EAET6Frgt4KZVbAxLqe6FoqBtgKDIqLCSQGWmltFAseRW+v86oaqcv8Jp96EKrxuLVgN
-         Lnbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCtCYOlgR4ApLu5CLulOyzbWk1HPfZNre72ucUpGaXndkv71OR7UYGFLMeklS1J9/gGs8Fx+9/ht1MkUbYUlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ6mBa78mUcD8brAvvtKU0y0TZBLNWSm71ihcP4bJSZ0JE1vCR
-	vm33gTFsyOSybzYgmc6SqBR37yEO/IfxJJrdyqnNAVYxNafpWKlLyUIFZxAogu0=
-X-Google-Smtp-Source: AGHT+IHqHcsA+FZtp+v7kI5pgeIQE8uQgQTumNO5wX6KZkk6/bkHGwus6vrXYrx9c73EQIuXhgDQGA==
-X-Received: by 2002:a17:906:c14c:b0:a99:6163:d4f8 with SMTP id a640c23a62f3a-a99b966b148mr1069583166b.58.1728910422787;
-        Mon, 14 Oct 2024 05:53:42 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f375db53sm303654866b.113.2024.10.14.05.53.41
+        d=1e100.net; s=20230601; t=1728911124; x=1729515924;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZGlh0BgvTZR8tIX7xtvnBBKKfSil7mION4lorOOPKtI=;
+        b=ZaKakG9sB7T5w1g6B2SGUd5bhJrgB1hGHWEkbP7pTwBqPXYLizSS3i/tRrLzhUa/3a
+         SEOeK/QKEK+o12/a41b5IpaZa7mkQlbkoHGb8G/yCh6ZOBs8YHm0asODjtC6L0xrlvRo
+         86ZD/lu6PPse72Yje0LtPDYn3zTMO5Pyr5dV9broWpCQPQxnxWjPSie5TpDxwcphA6Oy
+         ++IUVLF4U2xR49gPogNcYx73C4wbdPuRNabfNjLQZVvde+J60tGOOIEFcIr5QvgnLssl
+         0BUAvcs4o7hHeHW3ML1OnxblG1GQ3Fvwbo4Wfaf7mK1WehUeV6HKs8D4VS2xSbL+gF3l
+         qnNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbSeqxxEKB5OJjmzgQizqfXXpsi/t8dwY9LwDzOiuqii8ZAB0bP9GEONqSpaKjduYebONZxXwvLGvTRAII@vger.kernel.org, AJvYcCXg/UafdJDsoil9zm/KUannIdTQVj5vQ9JsR/3r07bXWJ3hEvSK1hWEJbagD5TCs0L/ifC9++LDrI1Q@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPHqsKMrRu7DFeMdgAUkis5OLES7EYiGdQOobWgJp8aHn/XVy7
+	855aoAdNovC7MoLdxpkyVn598p7GlroODdb399YnSAppA/5hrJqdk1P0zA==
+X-Google-Smtp-Source: AGHT+IEw0JzL9xW52CWdKReVPk7XaqJtW2zlmIH169YR4ezzpMVjef4ADH7DzHGMB2cI0N4U2/hHuA==
+X-Received: by 2002:a05:600c:138a:b0:42c:b74c:d8c3 with SMTP id 5b1f17b1804b1-4311df5c5b0mr113874325e9.32.1728911123845;
+        Mon, 14 Oct 2024 06:05:23 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa3bsm11367193f8f.78.2024.10.14.06.05.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 05:53:42 -0700 (PDT)
-Date: Mon, 14 Oct 2024 15:53:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com,
-	sprasad@microsoft.com, stfrench@microsoft.com, tom@talpey.com,
-	bharathsm@microsoft.com, nathan@kernel.org, ndesaulniers@google.com,
-	morbo@google.com, justinstitt@google.com,
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] smb: client: fix possible double free in smb2_set_ea()
-Message-ID: <8bd0fae3-82fe-41c4-a4e8-3c28aa2b1826@stanley.mountain>
-References: <20241014113416.2280986-1-suhui@nfschina.com>
+        Mon, 14 Oct 2024 06:05:22 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ACPI: pfr_telemetry: remove redundant error check on ret
+Date: Mon, 14 Oct 2024 14:05:22 +0100
+Message-Id: <20241014130522.1986428-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241014113416.2280986-1-suhui@nfschina.com>
 
-On Mon, Oct 14, 2024 at 07:34:17PM +0800, Su Hui wrote:
-> Clang static checker(scan-build) warning：
-> fs/smb/client/smb2ops.c:1304:2: Attempt to free released memory.
->  1304 |         kfree(ea);
->       |         ^~~~~~~~~
-> 
-> There is a double free in such case:
-> 'ea is initialized to NULL' -> 'first successful memory allocation for
-> ea' -> 'something failed, goto sea_exit' -> 'first memory release for ea'
-> -> 'goto replay_again' -> 'second goto sea_exit before allocate memory
-> for ea' -> 'second memory release for ea resulted in double free'.
-> 
-> Assign NULL value to 'ea' after 'kfree(ea)', it can fix this double free
-> problem.
-> 
-> Fixes: 4f1fffa23769 ("cifs: commands that are retried should have replay flag set")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  fs/smb/client/smb2ops.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 6b385fce3f2a..5b42b352b703 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -1302,6 +1302,7 @@ smb2_set_ea(const unsigned int xid, struct cifs_tcon *tcon,
->  
->   sea_exit:
->  	kfree(ea);
-> +	ea = NULL;
+The variable ret is initialized to zero and a littler later in
+the PFRT_LOG_IOC_GET_INFO case of a switch statement is being checked
+for negative error value. Since ret has not been re-assigned since
+the initialization ret can never be less than zero so the check is
+redundant and can be removed. Remove it.
 
-That's very clever.  But I think that it would be better to do the "ea = NULL"
-near to the replay_again label.  There are some lines where we re-initialize
-resp_buftype[], utf16_path and vars etc.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/acpi/pfr_telemetry.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-	ea = NULL;
-	resp_buftype[0] = resp_buftype[1] = resp_buftype[2] = CIFS_NO_BUFFER;
-
-regards,
-dan carpenter
+diff --git a/drivers/acpi/pfr_telemetry.c b/drivers/acpi/pfr_telemetry.c
+index 998264a7333d..a32798787ed9 100644
+--- a/drivers/acpi/pfr_telemetry.c
++++ b/drivers/acpi/pfr_telemetry.c
+@@ -272,9 +272,6 @@ static long pfrt_log_ioctl(struct file *file, unsigned int cmd, unsigned long ar
+ 
+ 	case PFRT_LOG_IOC_GET_INFO:
+ 		info.log_level = get_pfrt_log_level(pfrt_log_dev);
+-		if (ret < 0)
+-			return ret;
+-
+ 		info.log_type = pfrt_log_dev->info.log_type;
+ 		info.log_revid = pfrt_log_dev->info.log_revid;
+ 		if (copy_to_user(p, &info, sizeof(info)))
+-- 
+2.39.5
 
