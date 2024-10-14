@@ -1,86 +1,138 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D944B1AAE08
-	for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 14:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABD0219FC;
+	Mon, 14 Oct 2024 16:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916139; cv=none; b=GI5xAOjCyouCKZZmsH6S44zmcm8DFFmD04F99dx6MTfdJQklbXtmuFxnBOdyxy25WH5jRsv2ivMN4PttbIWUT5czaO2gVTtByms+EBd4Pz3+XDrMfRDaIPFdYgBIMtw8MZR8z1AcMIphv8swCdjAeoRbcIJrKy0kVup6fH6FDk0=
+	t=1728924848; cv=none; b=VX23u1F5fjwL7sOR/wkfAgoH0Y1y8Oy5WEAJRm5j1F92u2mbdLiIjFHWsswn/iPqvxx2bSYozikylaDVOAExJk4Zzdcv3d/j3cEEBxjD7PiNamObxYNsb94xdu/3DAzF3ZG0HRXM/JxtdJbSkfzvVNrLB/lwr75Mqgz378aaALI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916139; c=relaxed/simple;
-	bh=1rB7p9FU51p3IzLrmdkUyjlzmEnmhxPq0Edr78fwNtw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7IMVfJfEA41RPgQhoZjxun/ymyyBtyfEijpbqmYS0bxaaYDllNKQftTMG4uYKYl5bocP9ED9ZjVPhGq1Ry5A7I1ylf45rBK7j+9tO7HK+NuN2205IHvC1HWOkBviQODd/vpQRJbvbaonIBrGLnbhI44Lf/hmRtVo5ARGXYkR68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gALPSt20; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728924848; c=relaxed/simple;
+	bh=GntukN9gDRPXTmeisyP74y7z6LltSrTz9S/wFMtlwio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XjVbT5vgqXVESKDlT9EpON9eVomiw+OP6FERMKtnTsXCiqckH1X1hUSBDXiML+Zk714IquShxT3Q2HEEHWqAo3Lur2Mr/jxaHk4Zv1TdkYwUeHplk1/r4iJBYZpRqgfMPAz3Z/LMCVyc+jvtK85k089ZNc+S3CRnGw8Mqv8WOHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ll45HdTj; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gALPSt20"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9932aa108cso653819466b.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 07:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728916136; x=1729520936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V6ZPaCJu1TDjZj63KvPFdyuvQg3nHFta6L0bbhS5g2M=;
-        b=gALPSt207Ld/o7WdJXPRnoMzFesr2jZ7D7PsMSIxMwt4hbojJcdLt8frQMJXG+pmuN
-         pMM6QAhTy65XsWP2opjE5R0Gw4j5a3GcmAG+6bA/hK8Kt0XuHz21byLovz2YwYO/Q2nl
-         QpPQm3IRpwNat2t5Jrpx75l5jYxk4cBwmcXTY0+tefNBH4Dy4IunWkc/rIKQoXU4BHFb
-         uVZK9SY2HLsb9ETZCwNIZniisxrWDPLEDv2CkjhhxHCat1W0JsJxY9VFkMGD/Sqk0vk/
-         NpcXIwu1qXJd2VX/cPfEVfm3DFbSdfI+fbEH+nIt/2gvXlmGXoiXbndE1/EhDaTY5mPN
-         0g1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728916136; x=1729520936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V6ZPaCJu1TDjZj63KvPFdyuvQg3nHFta6L0bbhS5g2M=;
-        b=ai/T7W/fMyJYP81a4MKiWsd//Wv2zoKM34I4OSFvVVkU42bR9rSbl0ZkmTe/iv/dw7
-         hSDBodmyYF+ZNZ3BTYC6LP2VOqUpTINxrNezAFWLcdCYXYfull9zc/O/BBBs9ZHrGeRJ
-         uX7rMM4lyvSSVuq3uIOXFMw8pnWVd/Nn6mTlmhUz0PzhxbH62cCOLj1aixi5+8wlWxJc
-         z5S8qk1oRgTRTKhQW8wpvBb1pWBtUkHY/JeZoisd5TS7m/CqkxXn4FPe4ODY6NWjNDhm
-         t1/iMOw0wZ7yyv1pfF6D0BE5LUUcofW1uH6mgatfJJBnGiaBUirBMQO4Cyi25YhzgDaP
-         lWWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNgQXspaQ4JUAH/ReUNj6Fn0vpR66AmGVkTIkR9wydhmw7dRQ1mHvN2uYrwlZOiKaCoDifjlZ/30n9px/OBFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnhByMdFX4wRtVdjAXkW5y8qwreM3te2zFyV10vWLd9L2hF2xX
-	sSnBN0komFJRWMEfxO4yYsVX1UVT7XnS5bvQYDVkGS0OfRV9kvY4O349vgYHvs7gXTNiFuhT2p4
-	J
-X-Google-Smtp-Source: AGHT+IHmoNpZi7zdehXxeLP0EbUl7/f5MePWgVGlpdBpa3XYSfa15rl4TqJWVgT6lNMi8CisSrXVpQ==
-X-Received: by 2002:a17:906:c14c:b0:a99:53cf:26bc with SMTP id a640c23a62f3a-a99b96b0c3emr1153930966b.44.1728916136180;
-        Mon, 14 Oct 2024 07:28:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a0a19757fsm202726866b.69.2024.10.14.07.28.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 07:28:55 -0700 (PDT)
-Date: Mon, 14 Oct 2024 17:28:51 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christian Heusel <christian@heusel.eu>
-Cc: Andrew Mbugua <andrewmbugua388@gmail.com>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Removal of unnecessary cast
-Message-ID: <23018e93-bafe-4af9-bb25-dde6041f353d@stanley.mountain>
-References: <20241014112207.688877-1-andrewmbugua388@gmail.com>
- <e7781a9f-3ab0-4916-b6e7-2c92dabe97ba@heusel.eu>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ll45HdTj"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 0OKTtumRlRLhW0OKTtCfyc; Mon, 14 Oct 2024 18:53:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1728924838;
+	bh=MydJomuv8sawsgTL1H5vUNKrxRzEp6ayRw6BKpwqesU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Ll45HdTjdazn0SaQ7Jrwbynx8z7LxGGku73zp3xfrLj6HzQhH3RvPAE+f/rulwEUh
+	 cvl7VEepgwkXaNY0QmeoAAtp1MYBdUs3/zgdyhM7zYOsvfzauyDOF33gATFJcIakVH
+	 5QfwmL3br1NplNdo6V8gW+pj4KdAzUFgZ2pB3ymRSEIKrUsKqB0NwuQiHtIR7/Uvlf
+	 WJt2HlWpn63Rr1nLIvyMo80LSrel/JVsb9DQp0BPCX7h0G8fk7RMA8WsWi4yRyVK25
+	 D9/2qYNhucQA3BEpV/pHVCW99/VTKpHGX1VituO07JaEHMgYe8nIlFxztNsURGEvfE
+	 5g1a0zFAJlPWw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 14 Oct 2024 18:53:58 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <1c421f69-7bad-4251-94dd-2ebde618be3c@wanadoo.fr>
+Date: Mon, 14 Oct 2024 18:53:56 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7781a9f-3ab0-4916-b6e7-2c92dabe97ba@heusel.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] rpmb: Remove usage of the deprecated ida_simple_xx()
+ API
+To: Jens Wiklander <jens.wiklander@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <df8bfbe2a603c596566a4f967e37d10d208bbc3f.1728507153.git.christophe.jaillet@wanadoo.fr>
+ <CAHUa44GU=SR9MgBaXJi1yEbvg5Bb73FV4n8erGhN4s_qioKNCw@mail.gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAHUa44GU=SR9MgBaXJi1yEbvg5Bb73FV4n8erGhN4s_qioKNCw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Yes, and the subject needs to be fixed as well.  This is networking and they
-have specific rules.  You'd need to put net-next in the subject since it's not
-a bugfix.
+Le 14/10/2024 à 12:38, Jens Wiklander a écrit :
+> On Wed, Oct 9, 2024 at 10:53 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>>
+>> ida_alloc() and ida_free() should be preferred to the deprecated
+>> ida_simple_get() and ida_simple_remove().
+>>
+>> This is less verbose.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> The ida_simple_get()/ida_simple_remove() API was close to be removed (see
+>> [1]). A usage has been re-introduced with this new driver :(
+>>
+>> [1]: https://lore.kernel.org/all/cover.1722853349.git.christophe.jaillet@wanadoo.fr/
+> 
+> I'm picking up this for v6.13. I guess your patch set now depends on
+> this patch. I can ack the patch instead and let you include it in your
+> patch set if it's more convenient. Please let me know what you prefer
+> to avoid potential conflicts.
 
-[PATCH net-next] net/xen-netback: remove unnecessary cast
+Greg has already picked both patches in char-misc-testing. [1], [2].
 
-Also when you resend, include all the people from ./scripts/get_maintainer.pl.
-You may as well not count it as a v2 because no one how matters will see this
-version of the patch and calling it a v2 will only be confusing.
+Let it flow from his trees.
 
-regards,
-dan carpenter
+I'll wait the next cycle to resend my serie [3] or char-misc could take 
+it as well. Both solution are fine with me.
+
+
+Greg, if you prefer the later, I can resend the serie if more convenient 
+to you.
+
+CJ
+
+
+[1]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/commit/?h=char-misc-testing&id=dfc881abca4247dcf453ce206f05fe09b51be158
+
+[2]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/commit/?h=char-misc-testing&id=3b0889f95789aa90b0f1a6921d5d6b151f2e53ae
+
+[3]: 
+https://lore.kernel.org/all/cover.1722853349.git.christophe.jaillet@wanadoo.fr/
+
+> 
+> Thanks,
+> Jens
+> 
+>> ---
+>>   drivers/misc/rpmb-core.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/misc/rpmb-core.c b/drivers/misc/rpmb-core.c
+>> index bc68cde1a8bf..ad1b5c1a37fa 100644
+>> --- a/drivers/misc/rpmb-core.c
+>> +++ b/drivers/misc/rpmb-core.c
+>> @@ -64,7 +64,7 @@ static void rpmb_dev_release(struct device *dev)
+>>          struct rpmb_dev *rdev = to_rpmb_dev(dev);
+>>
+>>          mutex_lock(&rpmb_mutex);
+>> -       ida_simple_remove(&rpmb_ida, rdev->id);
+>> +       ida_free(&rpmb_ida, rdev->id);
+>>          mutex_unlock(&rpmb_mutex);
+>>          kfree(rdev->descr.dev_id);
+>>          kfree(rdev);
+>> @@ -176,7 +176,7 @@ struct rpmb_dev *rpmb_dev_register(struct device *dev,
+>>          }
+>>
+>>          mutex_lock(&rpmb_mutex);
+>> -       ret = ida_simple_get(&rpmb_ida, 0, 0, GFP_KERNEL);
+>> +       ret = ida_alloc(&rpmb_ida, GFP_KERNEL);
+>>          mutex_unlock(&rpmb_mutex);
+>>          if (ret < 0)
+>>                  goto err_free_dev_id;
+>> --
+>> 2.46.2
+>>
+> 
+> 
 
