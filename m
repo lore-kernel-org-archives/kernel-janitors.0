@@ -1,119 +1,188 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA2E13FD83
-	for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 07:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67E42B2DA;
+	Mon, 14 Oct 2024 07:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728889625; cv=none; b=St88pHjEnXgtl5Izp/EG58M4UyoodjB9/Vm/P3kZJtgjc4Dd9okoe+mGdV1gaulO7lgtwAG6aznEQG6f0RGvsnBgEBMI+96FQzKrTl48pkUrKWRLMIdmlYPz3OlRpuKGBkA4j/MRWuaC1QFv/yJHJOKQZvLghTPETKHDZXK7DXs=
+	t=1728889786; cv=none; b=IwNaoAZQDgkT730LaHcIDotgrISnZRYRharP4i2doRtajfpQoEo1q9kSK500J2kVOpyAAgwHt7rERrdLq+D15GMEg2ZLY0bgY517UPWAq+tWmqhFzWyricZE5XT1re3qUEytMWQ0aoFR4noFLrAep/x0AXcsIWy/oGQKRMZO7Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728889625; c=relaxed/simple;
-	bh=KWGyRtOe+d5eWEKkR8JItBQOun6IJ0kjNk0vi5LqyGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L+lhvTfSMrWY6mnREp/vbSYAVIuNoTAezHc0tQA8LOuH1zS6VnaIIPhUVW8mOSjyy8PvuSNU+tBGDajyJmUQPTW1pQFCR8SOp9RO4YAB8hr7PmEsSC2oI4gP8UawpOVo3EPvAnJykLq2y3bL0kKDzIRr4qUWHWj1J42IvTGEy70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uyWkLWnQ; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1728889786; c=relaxed/simple;
+	bh=0WkLB0EmFGeC3bqomW57TfB9c8cQ/8SyMc8XjatQhUk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ftoqmftgKhXz5kHqpQq9EFEBk77K1I/tIhZouFyw1fLOp8e8ZaLxISWudVdeHuKHGV0i+FUOuq6SLYLrAtNiurHmbASDCDdnQU3vG+ZsLjYgtcuC/Dj1nHx60kQrUWF0puXr+C1FnpRy8086tjOfSS5LrIXUdVrlPQlGt+oWb20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=cX9EIuEy; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uyWkLWnQ"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso1144923e87.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 00:07:03 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="cX9EIuEy"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728889622; x=1729494422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DGAZdY+3mMlegbLBhotjKigA3jsyDM7lCK6IChu1+M4=;
-        b=uyWkLWnQEKH6H2Pclv+rIyxkP7HdI4eWKKYd7DpLqcLbwK9D3xIT3ka+oUPJANuvRH
-         XSsStcHYZsiKnBmhLp1TxbgdVhwIQi3k1w+NbZnOqBg8VjMGJpHxBn9a4E/Q+swKWg5a
-         IZW1eGzC8YHjI2W3egxSayO/sHUl46SPwg2gB+8VjFEap+7+lKoLoN39zE2B5ArHeW+B
-         RivuqZEavjkeHYnOvJBu8zckGeFIQXi/alY4MoggaB3BJ4vg7g9PsCbnMh0gYyoFweE6
-         INfKuBoprd/GsLc2GwD7rODuaOK3d2JLSnfyMbgC0calOj9t64/XVap1ARPR0ZBWbU92
-         7xhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728889622; x=1729494422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DGAZdY+3mMlegbLBhotjKigA3jsyDM7lCK6IChu1+M4=;
-        b=mIcWrTOgzsljR92aJr9c0i/zrJsH+VjOhDyY6qp4r39PhaP6Q9VI/RKvBqVX05bnu7
-         wNjec//Hcsop8k5PWuimaQlpj2G6/RIQLp4fiBycy+HPn7AgYrX3cjbkwWLoYuQ1YOgl
-         RlAS7ikzbzFEhuynEXl6Llg1IMUmxe/ARGQ8V/RBpDwQKLYvEogSm1Uyj8/efkTiq9lp
-         NGsbgJQJwhkWCcdknhtTf4DwjstB607IelD7GUKOZ9heAs+yEedNtwvlfBp7rphtM5uG
-         63GuIbI6I7lxkgoxELwh/rDUB++ajc0jE70vgOc+dqX29UPSi6w7U+HUoTKi3BFbNXlN
-         10lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMVIm6+v0Q9c9xR/fmB2c2uM0Ul/npYkwjoiVjdEvhz4g/l+zZkGXcQojyCumjmaIC2bsVBMkAr5AxU+41YG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy15uwifghJj/JKZJbJ/HitG0X/FYNmetQFHPuT4WJjBgG7RX85
-	kHW7eoyTDYXLrk+4moCgKI90UvP2rEWYdtjs7jOZEjLqdfzDbom2wK1rouQa2W5+2UU1N6BS2Hr
-	lwMAcwSxmeO8OgxHe/QnJ9YCRbsYS3G37IF9Svw==
-X-Google-Smtp-Source: AGHT+IFnO48aGUpKmxvFD0o04bcR91QUkt1ZB3Pcb8GYRBZzTTyMcBni5r8seoxZT9HDgGHzFz8b7Seuy1zcTHncsSc=
-X-Received: by 2002:a05:6512:3ba5:b0:539:dca9:19cc with SMTP id
- 2adb3069b0e04-539e54d77e1mr2760395e87.4.1728889622082; Mon, 14 Oct 2024
- 00:07:02 -0700 (PDT)
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=H29/uZYFImOCL15YMDLKrJt+SdKdMFtmd5jkG29BNgg=;
+  b=cX9EIuEyDMi+CHBxADYDHfM2+/1wX3FVb1/+L8MshIVOb86jvWVFagVR
+   94jAncDEoguSuWgxf2KGzvFnsfUivSBMlaxG7kRes6zypVg2aRED2yf7S
+   YH0/Y/OY0yIXudU8I4Gxj8u4WV3zbQZHwrw9AwugjsA9cc5CaFShyoy1y
+   A=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,202,1725314400"; 
+   d="scan'208";a="188585391"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 09:08:31 +0200
+Date: Mon, 14 Oct 2024 09:08:30 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Sven Eckelmann <sven@narfation.org>
+cc: Julia Lawall <Julia.Lawall@inria.fr>, vbabka@suse.cz, 
+    linus.luessing@c0d3.blue, Marek Lindner <mareklindner@neomailbox.ch>, 
+    kernel-janitors@vger.kernel.org, paulmck@kernel.org, 
+    Simon Wunderlich <sw@simonwunderlich.de>, 
+    Antonio Quartulli <a@unstable.cc>, "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, b.a.t.m.a.n@lists.open-mesh.org, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/17] batman-adv: replace call_rcu by kfree_rcu for
+ simple kmem_cache_free callback
+In-Reply-To: <6091264.lOV4Wx5bFT@ripper>
+Message-ID: <f343355b-eda9-8527-ee2c-60f1e44e6e0@inria.fr>
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr> <20241013201704.49576-7-Julia.Lawall@inria.fr> <6091264.lOV4Wx5bFT@ripper>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <37842441-e372-40e9-b0f5-cf69defc2db5@stanley.mountain>
-In-Reply-To: <37842441-e372-40e9-b0f5-cf69defc2db5@stanley.mountain>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 14 Oct 2024 09:06:50 +0200
-Message-ID: <CAMRc=MdFYTtosq53tDFaPSBn11V3P36DOX8xsxRqFhu5iPwUcw@mail.gmail.com>
-Subject: Re: [PATCH] fbdev/da8xx-fb: unlock on error paths in suspend/resume
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Helge Deller <deller@gmx.de>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Sekhar Nori <nsekhar@ti.com>, 
-	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Oct 11, 2024 at 9:42=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Add a missing console_unlock() in the suspend and resume functions on
-> the error paths.
->
-> Fixes: 611097d5daea ("fbdev: da8xx: add support for a regulator")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/video/fbdev/da8xx-fb.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-f=
-b.c
-> index fad1e13c6332..66ff8456b231 100644
-> --- a/drivers/video/fbdev/da8xx-fb.c
-> +++ b/drivers/video/fbdev/da8xx-fb.c
-> @@ -1610,8 +1610,10 @@ static int fb_suspend(struct device *dev)
->         console_lock();
->         if (par->lcd_supply) {
->                 ret =3D regulator_disable(par->lcd_supply);
-> -               if (ret)
-> +               if (ret) {
-> +                       console_unlock();
->                         return ret;
-> +               }
->         }
->
->         fb_set_suspend(info, 1);
-> @@ -1636,8 +1638,10 @@ static int fb_resume(struct device *dev)
->
->                 if (par->lcd_supply) {
->                         ret =3D regulator_enable(par->lcd_supply);
-> -                       if (ret)
-> +                       if (ret) {
-> +                               console_unlock();
->                                 return ret;
-> +                       }
->                 }
->         }
->
-> --
-> 2.45.2
->
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+On Mon, 14 Oct 2024, Sven Eckelmann wrote:
+
+> On Sunday, 13 October 2024 22:16:53 CEST Julia Lawall wrote:
+> > Since SLOB was removed and since
+> > commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+> > it is not necessary to use call_rcu when the callback only performs
+> > kmem_cache_free. Use kfree_rcu() directly.
+> >
+> > The changes were made using Coccinelle.
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> >
+> > ---
+> >  net/batman-adv/translation-table.c |   47 ++-----------------------------------
+> >  1 file changed, 3 insertions(+), 44 deletions(-)
+>
+>
+> This was tried and we noticed that it is not safe [1]. So, I would get
+> confirmation that commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier()
+> from kmem_cache_destroy()") is fixing the problem which we had at that time.
+> The commit message sounds like it but I just want to be sure.
+
+Thanks for the feedback. I think that Vlastimil Babka can help with that.
+
+julia
+
+>
+> Kind regards,
+> 	Sven
+>
+> [1] https://lore.kernel.org/r/20240612133357.2596-1-linus.luessing@c0d3.blue
+>
+> >
+> > diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
+> > index 2243cec18ecc..b21ff3c36b07 100644
+> > --- a/net/batman-adv/translation-table.c
+> > +++ b/net/batman-adv/translation-table.c
+> > @@ -208,20 +208,6 @@ batadv_tt_global_hash_find(struct batadv_priv *bat_priv, const u8 *addr,
+> >  	return tt_global_entry;
+> >  }
+> >
+> > -/**
+> > - * batadv_tt_local_entry_free_rcu() - free the tt_local_entry
+> > - * @rcu: rcu pointer of the tt_local_entry
+> > - */
+> > -static void batadv_tt_local_entry_free_rcu(struct rcu_head *rcu)
+> > -{
+> > -	struct batadv_tt_local_entry *tt_local_entry;
+> > -
+> > -	tt_local_entry = container_of(rcu, struct batadv_tt_local_entry,
+> > -				      common.rcu);
+> > -
+> > -	kmem_cache_free(batadv_tl_cache, tt_local_entry);
+> > -}
+> > -
+> >  /**
+> >   * batadv_tt_local_entry_release() - release tt_local_entry from lists and queue
+> >   *  for free after rcu grace period
+> > @@ -236,7 +222,7 @@ static void batadv_tt_local_entry_release(struct kref *ref)
+> >
+> >  	batadv_softif_vlan_put(tt_local_entry->vlan);
+> >
+> > -	call_rcu(&tt_local_entry->common.rcu, batadv_tt_local_entry_free_rcu);
+> > +	kfree_rcu(tt_local_entry, common.rcu);
+> >  }
+> >
+> >  /**
+> > @@ -254,20 +240,6 @@ batadv_tt_local_entry_put(struct batadv_tt_local_entry *tt_local_entry)
+> >  		 batadv_tt_local_entry_release);
+> >  }
+> >
+> > -/**
+> > - * batadv_tt_global_entry_free_rcu() - free the tt_global_entry
+> > - * @rcu: rcu pointer of the tt_global_entry
+> > - */
+> > -static void batadv_tt_global_entry_free_rcu(struct rcu_head *rcu)
+> > -{
+> > -	struct batadv_tt_global_entry *tt_global_entry;
+> > -
+> > -	tt_global_entry = container_of(rcu, struct batadv_tt_global_entry,
+> > -				       common.rcu);
+> > -
+> > -	kmem_cache_free(batadv_tg_cache, tt_global_entry);
+> > -}
+> > -
+> >  /**
+> >   * batadv_tt_global_entry_release() - release tt_global_entry from lists and
+> >   *  queue for free after rcu grace period
+> > @@ -282,7 +254,7 @@ void batadv_tt_global_entry_release(struct kref *ref)
+> >
+> >  	batadv_tt_global_del_orig_list(tt_global_entry);
+> >
+> > -	call_rcu(&tt_global_entry->common.rcu, batadv_tt_global_entry_free_rcu);
+> > +	kfree_rcu(tt_global_entry, common.rcu);
+> >  }
+> >
+> >  /**
+> > @@ -407,19 +379,6 @@ static void batadv_tt_global_size_dec(struct batadv_orig_node *orig_node,
+> >  	batadv_tt_global_size_mod(orig_node, vid, -1);
+> >  }
+> >
+> > -/**
+> > - * batadv_tt_orig_list_entry_free_rcu() - free the orig_entry
+> > - * @rcu: rcu pointer of the orig_entry
+> > - */
+> > -static void batadv_tt_orig_list_entry_free_rcu(struct rcu_head *rcu)
+> > -{
+> > -	struct batadv_tt_orig_list_entry *orig_entry;
+> > -
+> > -	orig_entry = container_of(rcu, struct batadv_tt_orig_list_entry, rcu);
+> > -
+> > -	kmem_cache_free(batadv_tt_orig_cache, orig_entry);
+> > -}
+> > -
+> >  /**
+> >   * batadv_tt_orig_list_entry_release() - release tt orig entry from lists and
+> >   *  queue for free after rcu grace period
+> > @@ -433,7 +392,7 @@ static void batadv_tt_orig_list_entry_release(struct kref *ref)
+> >  				  refcount);
+> >
+> >  	batadv_orig_node_put(orig_entry->orig_node);
+> > -	call_rcu(&orig_entry->rcu, batadv_tt_orig_list_entry_free_rcu);
+> > +	kfree_rcu(orig_entry, rcu);
+> >  }
+> >
+> >  /**
+> >
+> >
+>
+>
