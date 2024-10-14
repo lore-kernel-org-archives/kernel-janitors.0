@@ -1,68 +1,71 @@
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D0933C5;
-	Mon, 14 Oct 2024 11:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B269199FC9;
+	Mon, 14 Oct 2024 11:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728905172; cv=none; b=UNZzV9+QRnyLNT02B5OdexqWAw3cOr9C7ufrbNQgM2ghiIO3acOaOg09F9aZ3CAPfQ2DNJze8QmJrmSKtGF3Eytpi38kUr8uivs5AmKXb2H2NhugVhYS812m74641GO9iWYdvwqydWXkhapYoYaFzhNMgdOT4UiFBP7/++QLwXM=
+	t=1728905661; cv=none; b=e7CYRMEUPQUw+FOyEenH5GqO7BQZnvBQKeFF0Oeww2KJ7kDP36CoM+c5LLlxylQzu0j9ayZY9/Xn1SyUlWxQLX/Oezq/xohVBGuqirwGR9E8tJimhbGKs97YIkuHoHdD/Oe/b9KzduzNx4DVNK8g3Tmeep+TSnJCCtBipT8m0wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728905172; c=relaxed/simple;
-	bh=KE+1RV7m2FOGPLNhNSEGqdDGgzbjlAE85XtRMREqhd4=;
+	s=arc-20240116; t=1728905661; c=relaxed/simple;
+	bh=leC8yKlYH4VNPM2C4uhTqo+xy0aVd69hjV1pJDYe5Fs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jr2XLTVDRnI5X55ZesHN4QRXxZSnkwQTZViei0Mhne1FO+vDYheT99g6yPNWr5tOFVzwA+aaXviHQpMZ7bTPzL2DCeLmSSYxA9CtlID/ysDzP0M6gfpHwTSsvYB0oedW+Nap0OlYw9KXgKaAgoWvdHPSKusY5v3YEJCr/qhkVMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=43780 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1t0JD8-006HZk-B0; Mon, 14 Oct 2024 13:26:04 +0200
-Date: Mon, 14 Oct 2024 13:26:01 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	vbabka@suse.cz, paulmck@kernel.org, Tom Talpey <tom@talpey.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Olga Kornievskaia <okorniev@redhat.com>, Neil Brown <neilb@suse.de>,
-	linux-can@vger.kernel.org, bridge@lists.linux.dev,
-	b.a.t.m.a.n@lists.open-mesh.org, linux-kernel@vger.kernel.org,
-	wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
-	ecryptfs@vger.kernel.org, linux-block@vger.kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org
-Subject: Re: [PATCH 00/17] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Message-ID: <Zwz_yU8PnqU9Ngg5@calendula>
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sDAAZqG/WnxsAnWs7wnWmezu1so2z55aGFXNenz2vX1AmxMMN6MtidYMmuCMiXT8rejbq1xLQAELtIuDHwNjPBaCNrMb1bFzjhnqExE/se2pHBFlhT807yuSondMKG9c3+rjkW/XyWgFhzAI3TQtuHZEdVNk1Nk5poq7i/1mTOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: x5PXqk6DQmWgUouKkadjQA==
+X-CSE-MsgGUID: 0WcgFxLAQf+V7bv1/HFEzg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="28380889"
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="28380889"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:34:19 -0700
+X-CSE-ConnectionGUID: olEkw6FRREO1uaLlY8DPUg==
+X-CSE-MsgGUID: o6UvEGmNSW6p3Fona3Ulkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="77199106"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:34:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1t0JL4-00000002sjn-2dPK;
+	Mon, 14 Oct 2024 14:34:14 +0300
+Date: Mon, 14 Oct 2024 14:34:14 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH] media: atomisp: remove redundant re-checking of err
+Message-ID: <Zw0Btri2dydmt3W3@smile.fi.intel.com>
+References: <20241012141403.1558513-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
-X-Spam-Score: -1.9 (-)
+In-Reply-To: <20241012141403.1558513-1-colin.i.king@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, Oct 13, 2024 at 10:16:47PM +0200, Julia Lawall wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
+On Sat, Oct 12, 2024 at 03:14:03PM +0100, Colin Ian King wrote:
+> The check to see if err is non-zero is always false because err has
+> been previously checked on whenever err has been assigned in previous
+> code paths. The check is redundant and can be removed.
 
-Applied and squashed into single patch for netfilter these patches:
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-[17/17] netfilter: xt_hashlimit: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-[16/17] netfilter: expect: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-[15/17] netfilter: nf_conncount: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+All patches that end up in 100% minus lines statistics for this driver are so good!
 
-this update is now flying to net-next.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks
+
