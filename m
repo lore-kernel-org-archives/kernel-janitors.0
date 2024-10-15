@@ -1,35 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E141C227BB2;
-	Tue, 15 Oct 2024 18:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79671F80C3
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 19:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729015236; cv=none; b=c2jM7eQf+0bM8GNsN0K0c8xvMPt61E/2NrY2Ji/f21jm7rFdjacLmRS1p/bRlmLIx8lfpoR0IT9LDGHxwImrbK6QAONEI+nS+1ZV8hQTQDaCEDMTub2sW3ukrp6+FucIDo1Z3Uual3L7+XxQLRUL+J6LN90SAmKGBGBhNEEghcc=
+	t=1729020709; cv=none; b=NpHcFHrEKGVcyCzY8A7fvFL6YZZ9Zlwn34SwlK093trf98BYglw+q85HX/1HP74CSt70zPgYY7sDN8Z00tYkyRLnxx+S12JI5Sf/TFvm63SB5pXRvXkkxek9uvDS6peB6Akc1DdIm+F6975Xt26Fpd94Uyx6BsHeWKoMY+gJ/g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729015236; c=relaxed/simple;
-	bh=Sa6sgGhK0f0PdlrPB+pJBNsb8BQKXN13Ox+Haom2HEI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rOFWgFWCtnk4LDFVUepGg8Wdy5Obtp+5s6OFL/CKc93EQ78wKLcV8yACYzyKZHbBSDn4msnMRW6rT+3pbIZk4GVmnDCCR4IfDsjaOgXsftc4jryiei/ZLr8Iz/rBr3IP4aTlKeDtL8Gn2khJfxmAkplpQf/mEBGFmBMOIKGqFFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KuGT0VK8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729020709; c=relaxed/simple;
+	bh=3MPzAc5mm/Td1wN/0LfJ7lxh6mw6E65klofZVkDNSj0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KFdFrhCtBxkr29lRDKcq7mJQA131urcrRUSxbXayh6uVBj1aQCDuC0DxOXozCL5ULS7XJHNcuuE2o68+wg5QA0oIF8Vqn+Sjqxv2SupW39WNRA5JbFoG5NA93Edz3dQr43FXIQS9d6Bnb4k0WJ9ePgQP9Gk/FeBLP5vRslV5jSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=0anlkkK6; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KuGT0VK8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE2EC4CEC7;
-	Tue, 15 Oct 2024 18:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729015235;
-	bh=Sa6sgGhK0f0PdlrPB+pJBNsb8BQKXN13Ox+Haom2HEI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KuGT0VK8S5iZkpWwdj4icg6/wNAAUrBPevfh4SZqoijO/LK0M//4+TxvzWdvkTnPh
-	 ej10iYjREMrmMJ2Gu5Npr2RUIAnkdhPsv3wpjIS9oD4lasA8tAu3GCw1fTFYauLrpu
-	 3RuHOcS958KJIGxUYsp0ERB1QMGW0dSsPNdQ80PsrTJLr49xkilO6b+UUnJ05d1/wn
-	 JClelGibXCeLsadFDN2D9J1PR77WpKnQ3JH6qPkguuPszYj5ShJSHAIV1To4/BfUf4
-	 6EO69W5HKU6Kiqfv8lDFOsDsbIiS0OIBybyVPrn0xkepuW1lWPDAUwAp49hj4XETun
-	 TYtKkZ3F14U8g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D453809A8A;
-	Tue, 15 Oct 2024 18:00:42 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="0anlkkK6"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-207115e3056so47530545ad.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 12:31:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729020707; x=1729625507; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=paWX0vjIceTNHtj5M3qpnChYLs9Zim+rhn02WroKkm4=;
+        b=0anlkkK6UWUBOpVcjh8ziyb4NXmWm35Wqc9wUT9f81ug1Jec7rgj4OmsC1bAx1j26K
+         yuADvMdRutwEt6zx8hdm50Mqv5Kdj7iQmUn1hCILaBbjd5+QJ34R9BckrR1VamEbVE5i
+         nbmtMiNbl0VYm1u2E2BJmFF9ea6n0TOWzZkRjrNTWUDKmayOj2PQQG4tBQYxUZrUx2lt
+         ppP8vvL8yAtPp3pCg+4eKw+9FPEnQS8wiAwrJowiTDuD3geYnJ22eFzr92dFfRMI/6Bc
+         uZJYqPcxi89A7Hb4xuGyfUkTH/ynoXE2enryUyoyqCj1QHmR+gYPG431NDOjCCTarQtk
+         6JXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729020707; x=1729625507;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=paWX0vjIceTNHtj5M3qpnChYLs9Zim+rhn02WroKkm4=;
+        b=CzLjx+rR+0Zsp4j7YcQAPtC41OLy63o5PGQFV/9RpJCYyZK50hvWtK+sA6dx9IPPrN
+         kP70oixZjnE3OeOuDwCtmlEi55rSy/yFER0CkiPP4EKB4i6gq6sqbJkO8rfuXFjYP/vZ
+         iFtTag15OTfKXeXVoSIqk1lYyZYUBMgODx3UVt/BjiW+sj3pBM/PZQWCFSPmYQ0x8fm9
+         DvoHA22uwZHW+a0X6BWI5aLky9/UiMYDCElFO4iyffeaXSw3ybhoHcBEmDEkO2JBgI9E
+         vkPE/QsZaNT06F0TBBqkJCpnHuLd0SP/sLdwUug7p5owK0En2tEH6c4DfP8bJ0QltHtC
+         5YAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs4HdsJeRv/W8j3S/12ahG22LV96Rk1gxZtIFhgPQsF9euMjJxVUIfXQXQ+gEtVxd6rxofPX0sKhe050+FrpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9ZOPRb3hPxauRBVxENI+YH734UFRY/joOeP9OeWekQaOPgQh3
+	LBYEH2Cp2eEKC1f+1bV1zRNO5EI3d/WHYtwYrpkLYj0pwNBa/ywkacb6a+2aL9o=
+X-Google-Smtp-Source: AGHT+IHtLTfDwQo39Vgb1mIVfVhDjaIFxsNNkqLBR7YB7rOsqgXVh2R0uxlTOXo63nSKZ/Yc5F25Xw==
+X-Received: by 2002:a17:903:244b:b0:20c:eb89:4881 with SMTP id d9443c01a7336-20d27f1cbc0mr17589345ad.37.1729020706961;
+        Tue, 15 Oct 2024 12:31:46 -0700 (PDT)
+Received: from localhost.localdomain ([81.17.122.160])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20d17f84e22sm15472335ad.52.2024.10.15.12.31.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 12:31:46 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	kernel-janitors@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3][next] Bluetooth: btintel_pcie: Remove structually deadcode
+Date: Tue, 15 Oct 2024 13:30:12 -0600
+Message-ID: <20241015193013.16790-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -37,71 +69,38 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 00/17] replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172901524099.1243233.14809044192149107515.git-patchwork-notify@kernel.org>
-Date: Tue, 15 Oct 2024 18:00:40 +0000
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
-In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
- vbabka@suse.cz, paulmck@kernel.org, tom@talpey.com, Dai.Ngo@oracle.com,
- okorniev@redhat.com, neilb@suse.de, linux-can@vger.kernel.org,
- bridge@lists.linux.dev, b.a.t.m.a.n@lists.open-mesh.org,
- linux-kernel@vger.kernel.org, wireguard@lists.zx2c4.com,
- netdev@vger.kernel.org, ecryptfs@vger.kernel.org,
- linux-block@vger.kernel.org, npiggin@gmail.com, christophe.leroy@csgroup.eu,
- naveen@kernel.org, maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
- kvm@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
 
-Hello:
+The switch case statement has a default branch. Thus, the return
+statement at the end of the function can never be reached.
+Fix it by removing the return statement at the end of the
+function.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This issue was reported by Coverity Scan.
 
-On Sun, 13 Oct 2024 22:16:47 +0200 you wrote:
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
-> 
-> The changes were done using the following Coccinelle semantic patch.
-> This semantic patch is designed to ignore cases where the callback
-> function is used in another way.
-> 
-> [...]
+Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between driver and firmware")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+V2 -> V3: - Removed that the change was successfully built
+	  - Removed the link to Coverity Scan report
+V1 -> V2: - Changed "Fixing" to "Fix" in the changelog
+          - Added that the change was successfully built
+          - Added kernel-janitors mailing list to CC
+ 
+ drivers/bluetooth/btintel_pcie.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Here is the summary with links:
-  - [01/17] wireguard: allowedips: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    (no matching commit)
-  - [02/17] ipv4: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    https://git.kernel.org/netdev/net-next/c/497e17d80759
-  - [03/17] inetpeer: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    https://git.kernel.org/netdev/net-next/c/bb5810d4236b
-  - [04/17] ipv6: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    https://git.kernel.org/netdev/net-next/c/85e48bcf294c
-  - [05/17] xfrm6_tunnel: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    (no matching commit)
-  - [06/17] batman-adv: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    (no matching commit)
-  - [08/17] net: bridge: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    https://git.kernel.org/netdev/net-next/c/4ac64e570c33
-  - [10/17] can: gw: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    (no matching commit)
-  - [14/17] kcm: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    https://git.kernel.org/netdev/net-next/c/7bb3ecbc2b6b
-  - [15/17] netfilter: nf_conncount: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    (no matching commit)
-  - [16/17] netfilter: expect: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    (no matching commit)
-  - [17/17] netfilter: xt_hashlimit: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-    (no matching commit)
-
-You are awesome, thank you!
+diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
+index e4ae8c898dfd..660496e55276 100644
+--- a/drivers/bluetooth/btintel_pcie.c
++++ b/drivers/bluetooth/btintel_pcie.c
+@@ -391,7 +391,6 @@ static inline char *btintel_pcie_alivectxt_state2str(u32 alive_intr_ctxt)
+ 	default:
+ 		return "unknown";
+ 	}
+-	return "null";
+ }
+ 
+ /* This function handles the MSI-X interrupt for gp0 cause (bit 0 in
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
