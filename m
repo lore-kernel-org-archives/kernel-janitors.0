@@ -1,70 +1,40 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAEC16A92D
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 10:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874AC4683;
+	Tue, 15 Oct 2024 10:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728989136; cv=none; b=jzoMjoTJdr3ODCEWdawq2LoSwWkZlc+UrKUcLAWwxXvCoeBnLlxL3sd+SBRdo7alcgZfwIK6pTz5vmVCQL0agDpbC/w8arFxN/vbAFkXmcn4aE0C+8/nhD9EcK54GJePEXiy8snK3qJm0RMtM70UMdKN2AkyXxb2BmD0TN1lhQc=
+	t=1728989475; cv=none; b=RMpR1ZYRklZFv/A28a7UhsxADW5kH6BPJFwUA3pZ5SzN1xUL0eDkPNq0hq2ppY59bVnyIXAfZ2rijLbR2VvhSU3RD3EyP/FY0N0iHDTwXGY9EGUZYtkPBsHkt5lDVCof2dBmFousCFrACiKnnNiMuc4+Oi9IFuF2wPbq8XZ2ZRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728989136; c=relaxed/simple;
-	bh=2RUa+Wp78UJcnBTaHrcjGmfuvysTndxMqeQSnUj1y4c=;
+	s=arc-20240116; t=1728989475; c=relaxed/simple;
+	bh=yhtwM+ih4E6+2BNcAKYUr+xWjXfcylje/HzRXgzQnnU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E8WcgMmfB6WtZ/TX8gBzpwbSiT5EBbT/UNfkPUof9TyF2wo5pEYHhT/Qnspk/g0f37IGeqeRVBP1iYVTwoINvLiTJMbjqOATQE4kIZJjYg2SkzZhzuWU31G5nv86/bRNC7tQQV/dIgy+bbYY8uS67Nm3Q9knry92j6RdIpSezs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TKpc3woS; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFNeRQ5XKSuQiZkLSei5q2GTVvMHuJRg5aVM2earWaGv9UAuuItL63gUl2cyh+qqlEFuMOO8gZ3pOyldYcq8uSf4+K4xGaQe+kKv0BVeZqcBsp3/pAWivJ4c962H+x3FP8zODvW8kQRDWqqsNV6CWtH6y0uHzaDTtLuTneCe+cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HSYRKC/7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TKpc3woS"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99ffeea60bso356590066b.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 03:45:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728989133; x=1729593933; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TCL9tE7kD/pEAlw/bIpW3296DIJpWExNiDbcmpjDgj8=;
-        b=TKpc3woSI8G0lsZy7MRjDx4BQlq1YfNnEb0d2nI5J4oviCb6w6SbqWbTOjJmkmXAye
-         vwIyo4fu6JgF7+ub8nAAOAZHhoSZIuPuLe46RRvZcVAUlSBDZqKe4QU1qyeEOzmiTAZQ
-         FLoSkdbEDp7TtfTnw13mAj9jVbK9Bbi4XpofaLtZlo6OAE6uq80aTPug7i4t2ko7bxIV
-         A6J7SU094mreEuxcTImfKFgxGvBg5CoDGcBS4+ipaqIot7FI8GlK7QPBMqyT7YhvdixT
-         cKedhCqcoapObKdIXS+6ZUu6AR4wXMg2dofdx02YE5gvmqoKF1Y/s7V771sb3CNcmRVE
-         TOVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728989133; x=1729593933;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCL9tE7kD/pEAlw/bIpW3296DIJpWExNiDbcmpjDgj8=;
-        b=gCkJTqn2RiD1gwrZ+0Z11Rq359hODqoHXXk6MIYTp1awmVII654o02MAhmWgzrrfXD
-         UVs+VcnepnjCjLwLDSzvW5IhK0rrbr4EIugZzYrM/47y49/xbFbnab5dmhh5Lhte+YcM
-         4RyKUNnnLyro7v3moajXFNDaxbT0jV0GBU5wSEPYH2892jfMtDXpZe7P/iwAzgGcnZPr
-         k5LCeKCq4vhIjQc64tX5YbD2x0aGWptmReWCy3NYNiVfCNDmRzQM7qWP7XS8mqE09X/o
-         1oyainHS0rSie2IYdW0yW3XzXumY2N6NWx7R2G5Pm7wEH4lZhlWX/tbN9g4wmncqUNvB
-         gvJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOaJqsQseyMMiu6SFqpaBEn+LKJ/DSHqkHIkfMoB0FQnNftHhrRZmwNOHdS3iolzcKpOLoInVg7xIJwEKsGug=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1JaL8wAPb+iBi2Jc5KxZjicCVere0IJRiDdNE1DGiFIXSEslW
-	Nqi4gxoZO3DIlrDbYMAJUyT6htQ9EbJlAMUFGSc1/Y6i9dQO8whTbhmf1YK7YQE=
-X-Google-Smtp-Source: AGHT+IGr2iqgWL4Av+20XWPNQ/ZE7fyuLmJsKSn2ZOfDWIZori+kUOfJFFddL5wMKnYz/zgwCRipDQ==
-X-Received: by 2002:a17:907:7e8e:b0:a9a:61d:7084 with SMTP id a640c23a62f3a-a9a061d7325mr751772566b.50.1728989133267;
-        Tue, 15 Oct 2024 03:45:33 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29843318sm56079066b.150.2024.10.15.03.45.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 03:45:32 -0700 (PDT)
-Date: Tue, 15 Oct 2024 13:45:28 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: sfrench@samba.org, pc@manguebit.com, ronniesahlberg@gmail.com,
-	sprasad@microsoft.com, stfrench@microsoft.com, tom@talpey.com,
-	bharathsm@microsoft.com, nathan@kernel.org, ndesaulniers@google.com,
-	morbo@google.com, justinstitt@google.com,
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HSYRKC/7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F86C4CEC6;
+	Tue, 15 Oct 2024 10:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728989475;
+	bh=yhtwM+ih4E6+2BNcAKYUr+xWjXfcylje/HzRXgzQnnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HSYRKC/7uzB1PQ/QRQTg+P7JmGZ/JhLOQQbXUwwYpm6LsAhRy5HB7tggyHb5zthKE
+	 ShraFLkrk4eGlgAav4WAdLs9z2ihBKZqS7KXQ852RmxbJFJtnyL8jkOMVEAnkDvIjS
+	 TgeSGoZlaBNeVBloHesRozLcQMgkURgOO5/LTEFU=
+Date: Tue, 15 Oct 2024 12:51:12 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] smb: client: fix possible double free in smb2_set_ea()
-Message-ID: <c0afa02b-991c-4601-bacb-13ace9cb96f2@stanley.mountain>
-References: <20241015102036.2882322-1-suhui@nfschina.com>
+Subject: Re: [PATCH 1/2] rpmb: Remove usage of the deprecated ida_simple_xx()
+ API
+Message-ID: <2024101529-shakiness-cognition-dab2@gregkh>
+References: <df8bfbe2a603c596566a4f967e37d10d208bbc3f.1728507153.git.christophe.jaillet@wanadoo.fr>
+ <CAHUa44GU=SR9MgBaXJi1yEbvg5Bb73FV4n8erGhN4s_qioKNCw@mail.gmail.com>
+ <1c421f69-7bad-4251-94dd-2ebde618be3c@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,33 +44,53 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241015102036.2882322-1-suhui@nfschina.com>
+In-Reply-To: <1c421f69-7bad-4251-94dd-2ebde618be3c@wanadoo.fr>
 
-On Tue, Oct 15, 2024 at 06:20:37PM +0800, Su Hui wrote:
-> Clang static checker(scan-build) warning：
-> fs/smb/client/smb2ops.c:1304:2: Attempt to free released memory.
->  1304 |         kfree(ea);
->       |         ^~~~~~~~~
+On Mon, Oct 14, 2024 at 06:53:56PM +0200, Christophe JAILLET wrote:
+> Le 14/10/2024 à 12:38, Jens Wiklander a écrit :
+> > On Wed, Oct 9, 2024 at 10:53 PM Christophe JAILLET
+> > <christophe.jaillet@wanadoo.fr> wrote:
+> > > 
+> > > ida_alloc() and ida_free() should be preferred to the deprecated
+> > > ida_simple_get() and ida_simple_remove().
+> > > 
+> > > This is less verbose.
+> > > 
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > > The ida_simple_get()/ida_simple_remove() API was close to be removed (see
+> > > [1]). A usage has been re-introduced with this new driver :(
+> > > 
+> > > [1]: https://lore.kernel.org/all/cover.1722853349.git.christophe.jaillet@wanadoo.fr/
+> > 
+> > I'm picking up this for v6.13. I guess your patch set now depends on
+> > this patch. I can ack the patch instead and let you include it in your
+> > patch set if it's more convenient. Please let me know what you prefer
+> > to avoid potential conflicts.
 > 
-> There is a double free in such case:
-> 'ea is initialized to NULL' -> 'first successful memory allocation for
-> ea' -> 'something failed, goto sea_exit' -> 'first memory release for ea'
-> -> 'goto replay_again' -> 'second goto sea_exit before allocate memory
-> for ea' -> 'second memory release for ea resulted in double free'.
+> Greg has already picked both patches in char-misc-testing. [1], [2].
 > 
-> Re-initialie 'ea' to NULL near to the replay_again label, it can fix this
-> double free problem.
+> Let it flow from his trees.
 > 
-> Fixes: 4f1fffa23769 ("cifs: commands that are retried should have replay flag set")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
-> v2: 
-> - Move 'ea = NULL' near to the replay_again label.(Dan's suggestion)
+> I'll wait the next cycle to resend my serie [3] or char-misc could take it
+> as well. Both solution are fine with me.
+> 
+> 
+> Greg, if you prefer the later, I can resend the serie if more convenient to
+> you.
+> 
+> CJ
+> 
+> 
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/commit/?h=char-misc-testing&id=dfc881abca4247dcf453ce206f05fe09b51be158
+> 
+> [2]: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/commit/?h=char-misc-testing&id=3b0889f95789aa90b0f1a6921d5d6b151f2e53ae
+> 
+> [3]: https://lore.kernel.org/all/cover.1722853349.git.christophe.jaillet@wanadoo.fr/
 
-Thanks!
+If this is the last users that got taken away in my tree, I'll be glad
+to take the removal series as well, so please send it on!
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+thanks,
 
-regards,
-dan carpenter
-
+greg k-h
