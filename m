@@ -1,116 +1,127 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C761C07D5;
-	Tue, 15 Oct 2024 14:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16411CB9E4;
+	Tue, 15 Oct 2024 15:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729001417; cv=none; b=KySc4E147+Q17FAFgG6U2GXhbwEy2nqZFPcfnm+Oxbp4BAU31qpLg/qxyGAhq33gUyFG/7dfJS8JfAubDbc1A3Kl2pW5SFzRjg2MpPnXPDA521FTY1+aNaRGuDXMQf+sf7Yrmp9FKKkUDSgrtXhDYWpEztWV89RLMIyaVX4ugoo=
+	t=1729004897; cv=none; b=YKLcke6rg6S885orKjavy85TOaGBbNcOXvw/9CvRO9C+I3bhc4LdnSw+x5iV0IGzbz0rQ3U5R1Zc5B9U04HPy8sIE8FcXf+xL7UW97woTWvcaYU6jDjk8KT8vTJC/nf3inCeYVhaZNlYR8rIGmD8U/ccqjfJ28sxwOyJhXfpnyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729001417; c=relaxed/simple;
-	bh=OCRhYLNXOugWZzNhEPUMgUEAfnigcDm7KPLLQGKvXow=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MQVdBfgNheOOYJp89BHZxI0y6aoqHwXS08HCbLO2lliuG9Gpwy6GJR2fk9sC2V1e3rnEdPfwbixeiu+J7aOFlkg60cyWHBafhDfaLH8aHbIZRh5bZp7UT9mQ01deiU85JJaRfzsyqel7sSERR4Rf+IB4PU+w+VJomQIg6H9xTvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L+saE+hY; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729004897; c=relaxed/simple;
+	bh=gdlIJel0Ab3zWpaPit2XyOzQkLrTxP7jMksrMJtCHWY=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=A4y/P13dZJozQm6naLYvsBXxWRWMtGxVyOzc/MYaJH/2uVVa0fKy1VzzJIno1szpaOI9+0LFb6Sqv8ViML4TfXZbrykU8qKKveJo/45nvdxAJ6wm0jgophrq2sza7JzHQkFHnwN4g8dLrbUCZl4LbkDj02niPFVePm4x5McijIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JkWSKLCH; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L+saE+hY"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43117ed8adbso60935265e9.2;
-        Tue, 15 Oct 2024 07:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729001414; x=1729606214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d0S6YMoGPkQS3jMGBGZ20kgoq+vZUxOnC0t6FsdhxLU=;
-        b=L+saE+hYM8e6v0jItBvTXTFkjpxtst06ujoj2eCGHmChpRMn7JX3gljOtcMN4AFCAG
-         3aId0aXDZ0EykTQXCFkJqRWFgxzCFNBD5XYl4xk2SE83SHzAwAjf8PW5b9Z/jN8+9rbk
-         I5WtPNYNPeo5TLYf2K3Pj9f9GMD2TTPuJlHvX/OaYfZgm2bcQVv1YhQ0kf1W0l0qfMGC
-         kbofAcwUXNQN3jP3uojyfBnfTAsmAdafwOFyJTYQvJ1k2IaprBKHybVNK5zwYEbCaByu
-         bqhFzHHwrdZpeEdy1poCqsgb3vQISALt0fPsrGUoXYWk60KSwUVlMOJ1OhS8aM8MK8YA
-         wQQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729001414; x=1729606214;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d0S6YMoGPkQS3jMGBGZ20kgoq+vZUxOnC0t6FsdhxLU=;
-        b=kShVI4efmtyeBVyJwjMddrTsTBVJjAanGTF6j+Z3EfWs/2FPlt9XJ/DNAexhPuQQhh
-         Qg47erJ0sHMK0q3/Xz71WAeTSvBNUVS0D9XgJiC+85u1b2OVpZpVfmMednACH+DiL27Z
-         vZBqE0L/RhqlGe8JwgypvZTqLL5W7lQtfBCL3qmkl25CMgc8QLgkxxNn+jkJBs7XyaZG
-         MDVKf2OQ6Z5xNZ2YeTpwuYzVhJ4u4bK7nYWNFLPlvvjRtb/DUdYEv7obGRX4MR9KikH7
-         OcEvek+vtqpEamFpMvjTRFNczV9FN2/acVw1rzujQFWLqhKuwyo+d0JEj/aW1GCux1NB
-         72CA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuBNvfh0AS01diyTHOicG+G/E3fd2FL9UvxyKLGUYG1hfj8lFJaYPYHpteKVYvwAswAeaVB4ef9XdNAOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4H9Swt5SnlQNlph8LNFIHA/3ETLFiykJ45kuGLVH/9stGJC8f
-	JTeJ9fA5rHODHBWA5cQWo0tWPRFnG1vkrS9mjBI32WptfmDLMks0
-X-Google-Smtp-Source: AGHT+IHp4e5RHLdoduJkY+KzguH7RjGzLSJHN735+mjgkEary+e1KlddLzkEUjNNgR+FRgq+djFEUw==
-X-Received: by 2002:a05:600c:3acd:b0:42c:df29:2366 with SMTP id 5b1f17b1804b1-431256166e5mr131924165e9.33.1729001414085;
-        Tue, 15 Oct 2024 07:10:14 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f55defbsm19257855e9.7.2024.10.15.07.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 07:10:13 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/omap: clean up error exit path on omap_encoder allocation failure
-Date: Tue, 15 Oct 2024 15:10:12 +0100
-Message-Id: <20241015141012.155559-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JkWSKLCH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1729004844; x=1729609644; i=markus.elfring@web.de;
+	bh=MaPDtsAu0VZDFqGSAskos6W/UUdZXWKX1E7T5Bfhlow=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=JkWSKLCHNB8kaCB9g1M8JfiGz1Gc0l/VhPaxS0LQyKyNL/hgDWVKNb3srRuEKEV1
+	 OSdGLy/YNoAZux0fmVRS3T2XdOaX6I3IPylYFKFqxx04UJCMnEF8CP3AvdQFxKxvQ
+	 QELr7IBxX6mXLCRqW80dxQOcHQoapzDhuSZpEt/qN2ZHxaN2DaQKZA5ufDHVEJ0rt
+	 15BKgS/qTaIxHvWTFhjOK7WENeRRsD3e9c/h26tNeLzithewjXBEDGRsw4hjK9ef2
+	 2Spz92VNA2FajUcCL4rVaC5p5ZLd+EhLpj8uVEDjS+5QY0MaLg7TR1XWcJ3SdunEM
+	 G8vDReVBL52VFyrYPw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [94.31.89.95] ([94.31.89.95]) by web-mail.web.de
+ (3c-app-webde-bap19.server.lan [172.19.172.19]) (via HTTP); Tue, 15 Oct
+ 2024 17:07:24 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Message-ID: <trinity-8fef4ba2-f5ab-4b78-b3de-aa1dc7d2fa33-1729004844102@3c-app-webde-bap19>
+From: Markus Elfring <Markus.Elfring@web.de>
+To: Kevin Chen <kevin_chen@aspeedtech.com>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-aspeed@lists.ozlabs.org
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, BMC-SW
+ <BMC-SW@aspeedtech.com>, kernel-janitors@vger.kernel.org
+Subject: RE: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX
+ INTC
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 15 Oct 2024 17:07:24 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <PSAPR06MB49496CC4F25425753EA4252C89452@PSAPR06MB4949.apcprd06.prod.outlook.com>
+References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
+ <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
+ <PSAPR06MB4949904D1FA95DBD3EF5288A89792@PSAPR06MB4949.apcprd06.prod.outlook.com>
+ <0b995a34-28c4-4ba6-8ad2-e8413c6a63f5@web.de>
+ <PSAPR06MB49491F8E0CE4069E9B9B1EA289442@PSAPR06MB4949.apcprd06.prod.outlook.com>
+ <trinity-a5696b99-bf11-4ae3-8b00-20db116f86e4-1728911450361@3c-app-webde-bs22>
+ <PSAPR06MB49496CC4F25425753EA4252C89452@PSAPR06MB4949.apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:F3RU5HNCdI/jhBQpl+toJRa3DuBoVXM/3J7YtGQP8UK7HGzSQbDWkPV1QXbhmYa1fJYWS
+ OT3rKdiRCJX+9hUs/QEWqw7bYCjq5DB6X9H1nPG5sBtFSjbelw9+KJRI6BrjJvEzHmSWCDSYYuVF
+ MhqAxLP9hbrZtcjr58Pyok9idl9H8LpMsJCOMB8mAfnUL/YivF3D6ymuyUXT0cuW8g7l1JB65aXy
+ vmPBcROpJgZfpg24+QtdQlF6FlL4XVIdNgFDbTIU1ei0HczxdoqplmDaAViogKxnqCdBRkVWF7e4
+ mM=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dD4MnKQdevg=;PGRHMRrbx68AQKUlksNjQBeq6CZ
+ 0U6ABRx88Ioju0X2E5N/+H0j2oCYnZ1Q99BM9ThJXW6seOOSEj7zeRqoDzfJlqx8nnMQyQ688
+ ZuQgWhBKfNB0jgNSvqi1qIX19OD18UjPzLPm001jOmf9CRu5CFX9K+7d+pUrWYlEsGN2TM6tV
+ YfM3FshPbU68Z/Bk8Lli5C4pF7abi06j0/UgKE1rjG1IzvuecELoUxx6j8aoMtpdwhvoXfZW7
+ LyLmWmZEFUmLvGPyOuif9XN55EK7aDJJaTTwIMKlBz/1V0a0wE/9rMNp/ZFzKqWA3xLXvEVmZ
+ PRSMC5apha1Y7Epxf2JKIAnoiS1u8SZFgxp67tH6Pf1ED1AJJFgoiNP9XhDctNnuT30RD69Td
+ Z52BDQgTxEVPeK6XYKgCtFAlptWh5VpSEXKsrySIO+YDGC1dJKLDQSvdwj6EF7hbBnBuCBB/S
+ GgI+K/Bb3272qz30qxXj8dzKh3LcM7gaIdwfLnLw4J9x1VXi3y4qVVUIiSh37g9e4OVh//QWs
+ yockuvjNsyTIg/bWkzOmV3S6U8GFRbRMW76jf/k9/Mq8acx9IhzsZk3Yv0/vuBZJWNrT+9wos
+ ULhFGGq9+IeR8SA4waEHtPk1JDQDyN624qb2M2yTtQcSYcf7o1JHBzewZShncbE/xdtmGlQgk
+ qTuldRrUkZoo2g27bf9qhhWTL+KSeyUWRjp0Uwnpbw==
 
-Currently when an allocation failure occurs for omap_encoder the exit
-path will destroy encoder via omap_encoder_destroy  if it is not null.
-However, encoder is always null at this point, so the check and destroy
-is redundant and can be removed. Clean up the code by removing the exit
-path and redundant omap_encoder_destroy call, and just return NULL.
+=E2=80=A6
+> > > +static void aspeed_intc_ic_irq_handler(struct irq_desc *desc) {
+=E2=80=A6
+> > > +       guard(chained_irq)(desc);
+> >=20
+> > Using another macro call =E2=80=9Cscoped_guard(=E2=80=A6) { =E2=80=A6 =
+}=E2=80=9D?
+> Is it necessary to use scoped_guard(=2E=2E=2E) {=2E=2E=2E}?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/omapdrm/omap_encoder.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+It depends on corresponding case disintions=2E
 
-diff --git a/drivers/gpu/drm/omapdrm/omap_encoder.c b/drivers/gpu/drm/omapdrm/omap_encoder.c
-index 4dd05bc732da..a99022638a2c 100644
---- a/drivers/gpu/drm/omapdrm/omap_encoder.c
-+++ b/drivers/gpu/drm/omapdrm/omap_encoder.c
-@@ -126,21 +126,15 @@ struct drm_encoder *omap_encoder_init(struct drm_device *dev,
- 
- 	omap_encoder = kzalloc(sizeof(*omap_encoder), GFP_KERNEL);
- 	if (!omap_encoder)
--		goto fail;
-+		return NULL;
- 
- 	omap_encoder->output = output;
- 
- 	encoder = &omap_encoder->base;
- 
- 	drm_encoder_init(dev, encoder, &omap_encoder_funcs,
- 			 DRM_MODE_ENCODER_TMDS, NULL);
- 	drm_encoder_helper_add(encoder, &omap_encoder_helper_funcs);
- 
- 	return encoder;
--
--fail:
--	if (encoder)
--		omap_encoder_destroy(encoder);
--
--	return NULL;
- }
--- 
-2.39.5
 
+> > > +       scoped_guard(raw_spinlock, &intc_ic->gic_lock) {
+> >=20
+> > Would you like to reconsider the proposed macro mixture once more?
+> Could I check the reason for once more?
+
+Coding style concerns =E2=80=A6?
+
+
+> > > +++ b/include/linux/irqchip/chained_irq=2Eh
+> > > @@ -38,4 +38,6 @@ static inline void chained_irq_exit(struct irq_chi=
+p *chip,
+> > >                 chip->irq_unmask(&desc->irq_data);
+> > >  }
+> > >
+> > > +DEFINE_GUARD(chained_irq, struct irq_desc *,
+> > chained_irq_exit((_T->irq_data=2Echip), (_T)),
+> > > +            chained_irq_enter((_T->irq_data=2Echip), (_T)))
+> >=20
+> > Would you like to add a #include directive in this header file accordi=
+ngly?
+> Can you give me an example?
+
+See also:
+https://elixir=2Ebootlin=2Ecom/linux/v6=2E12-rc3/source/include/linux/devi=
+ce=2Eh#L33
+
+Regards,
+Markus
