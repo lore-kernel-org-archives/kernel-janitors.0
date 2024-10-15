@@ -1,80 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988521EF92C;
-	Tue, 15 Oct 2024 11:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3030E1C07DF;
+	Tue, 15 Oct 2024 13:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728992427; cv=none; b=kj4Arwr4WHqOjYhlLIGVifEEZ9kypzQEd+KIJawV+rbDQIV+mbqUQIdSicGWyjlM/i31L0thV0oOD0HbcOAY0qzs0IR/uNI/Oaa/veAS7cEBU7ceZei3jRGit5PZONP8t5ClLT8vUt0BsiWBeIkJYGFgBr5VtdDiwKIimlKiPZ8=
+	t=1728997889; cv=none; b=YfCrEJacrOrIHQQ6WkhcG3RwfftYGQJaeJOnmwmlAoBjFIsOOVyxLf5vBPKc1ncUywwboSbAZbp8gGvIYonUX015rdh3yL0erqs75ZOzlIAAhAn32vLKyvQ9z0HYgm64hhNAcnp7HrXEetRpbc7ciKa56WJAueOKoNdJfju8c8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728992427; c=relaxed/simple;
-	bh=GgyyALiAHROOJ4yh2oDN4TdDkXimmPQpOKDE8hSo+0g=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tDhCgqWid+TmHjHUmG7VhRFcou/VrH968+W2R96D8ulMvh4k/wVEJ5cVfGCrFoDZtLltAszNFjXBKIjASerFC4dTseCFCXKQ2xWYtE0bIExCsmd8i/mrm++5if9L8uyH2uNf9b58aIqxYmV8IZa07WcfBoxpYe+dcHISHLKFumQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJMcicB6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728997889; c=relaxed/simple;
+	bh=6DubvOfcNitNNbFc4/CgkMkTSuW14iGdJHkB/Kq4p0U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OcuI1LW+oSEGT33Iu1QKFthYWlHI4moyMn0nguqob2JG0YnOLhTBYhk7CAmCU4WDtqlIVQ9k4Mx/3Pa0vo69gsrm/gjTm401Hogi4bRX4/OR5/Jga3cFK9MmJd7vIfNRtFMLK3EUcviIJyRw0Qu2eQ1Ccbuo+eSh7q43cDzdClc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BzdAt1J7; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJMcicB6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DD3C4CEC6;
-	Tue, 15 Oct 2024 11:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728992427;
-	bh=GgyyALiAHROOJ4yh2oDN4TdDkXimmPQpOKDE8hSo+0g=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=vJMcicB6bn3kPZ8QfQGe3RjEytZWp7S3wU8vb9858KuBlpO+gxFbVWT6nLxmRi7Y0
-	 V97xNVd1Ltb6OpZeCL8fJwcjGajKHUxINzoYye3DdrlpDCfI+Bplkil5PrWr7Z+V5c
-	 /yJQRqfPUSC3q4/4Ks7rM7ny5VJlAYwqrBVWBB1qMSaSjyniGvrxWiKfu6klYak/PA
-	 0j4mdBX384YvAgSfqHGksZTVcU/AXUKEyBfyRj9AFoQVdzumoKZLXSmfr9Oo6smws8
-	 M213ahC44JctsthJfLDEJCe1yv1fu+t433q6TFrgLl4FNsNRjsDDRoKl8LqVXvxiCD
-	 LAl6jiYSPFsUA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AF4133809A8A;
-	Tue, 15 Oct 2024 11:40:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BzdAt1J7"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d447de11dso3883302f8f.1;
+        Tue, 15 Oct 2024 06:11:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728997884; x=1729602684; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+1IE6vo5EI0G+9qqkm/qKlmdaFnB9SlCUS7LfmzYM5M=;
+        b=BzdAt1J7iEF2fUEizcyFJt+udH8eMoxVwTpVXColip1YsoYF3gWKGQ3MK6o5189JGi
+         /HmqLjUqmLHxyXr8yHfg4maBHXQx4b/qywTwKF+RfDgzeCbMOAZxKRB6Or9SSZioJOPy
+         PB4MsZ1UdQIBeGn5EKZnnN82XRkt1O+uvjuGF2Lu0XUykNVbkp74qC5MM2QoE4ft4sdD
+         oKIo8Ak87U+SrWJRGh8A+P4pjpFAB9t/WjytC97hER9La4xiNxHzpKv5HWyvISkOBxaI
+         CVg6jXhCX+0T+gaBQJZaambhJ0JqXDxE4nkA4LyubkKFWrcJvFi9XUxitfgZ+k9zWtYW
+         EaKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728997884; x=1729602684;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+1IE6vo5EI0G+9qqkm/qKlmdaFnB9SlCUS7LfmzYM5M=;
+        b=R1EHm4UATOdj0qz0NkniWjTWH/mEhu+X32C9B9AyhXtE3A6y4PAzO8+JGZYv4IseGD
+         Y23vnAGi7ykn/jcEigAnuotDr5+elVy+g6YBrAXS1WObT64uCtLkjvGBItrrdD1A1+YD
+         Ahw2CmbPLWH/nGKyX7gnMcMf+iKLr6uMDlERKP3QzvdlFnKPXW7/4q2EpUBjYcNQdUtl
+         lVDLmiHalbv6Ki2mu2OTIAZVbuYc49/x0x1mSlbGJffF6J9nKoMqO0f3Xr2HyxkZPqU3
+         nPwONLI1IlM9NSI7J5uBkcK8wd+bpxMmqR1T/qvnUL+6VdZC0n7jXMvimnCxONAIQFBX
+         acQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVB+6p08wnYFw7tLZOCzTuqSWOuB5BlKS/KwLwTNMxHnQTkM/RhdrAsyU4sbIpQz4RrwiHXD7JbNHUZRXc=@vger.kernel.org, AJvYcCWJInoTamc16vKuZtgWFYHZjnDwt6YT3LDanHb4nflRSzQ2q8T90pnSA7+gPxDkNvV2rwe5yEWFW3nulUd2@vger.kernel.org, AJvYcCXcgTaaEV6CI66e/7qpSSU6TcMHDwYLT+au9uA0vDSs0RZjGjOhSs+PzjyC9oASAAhFz530qNvYZCB9bSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYmyPp1b2Tjacp/gBpKS4DWx8lWOnNn5j7qSV/59mge9o4jibR
+	OfGeczRQ0kHw0e6ttNR08rPEkbvxJStiwyfxZkg+IubHeLIDjwG9
+X-Google-Smtp-Source: AGHT+IGQFWTBXvU5wXNEk0QGqxDOUX4gnEXP4PmUa1kS6aTrW558NclQ2ZVgyZ8GZr0QFArTBlc2Kg==
+X-Received: by 2002:a5d:4244:0:b0:37d:30e7:3865 with SMTP id ffacd0b85a97d-37d5521ac3fmr10146183f8f.34.1728997884177;
+        Tue, 15 Oct 2024 06:11:24 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fbf857fsm1552386f8f.74.2024.10.15.06.11.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Oct 2024 06:11:23 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Akhil R <akhilrajeev@nvidia.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-crypto@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] crypto: tegra: remove redundant error check on ret
+Date: Tue, 15 Oct 2024 14:11:22 +0100
+Message-Id: <20241015131122.152046-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next][V2] octeontx2-af: Fix potential integer overflows on
- integer shifts
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172899243250.1129876.14057410014037534113.git-patchwork-notify@kernel.org>
-Date: Tue, 15 Oct 2024 11:40:32 +0000
-References: <20241010154519.768785-1-colin.i.king@gmail.com>
-In-Reply-To: <20241010154519.768785-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
- jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- naveenm@marvell.com, netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+Currently there is an unnecessary error check on ret without a proceeding
+assignment to ret that needs checking. The check is redundant and can be
+removed.
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/crypto/tegra/tegra-se-aes.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-On Thu, 10 Oct 2024 16:45:19 +0100 you wrote:
-> The left shift int 32 bit integer constants 1 is evaluated using 32 bit
-> arithmetic and then assigned to a 64 bit unsigned integer. In the case
-> where the shift is 32 or more this can lead to an overflow. Avoid this
-> by shifting using the BIT_ULL macro instead.
-> 
-> Fixes: 019aba04f08c ("octeontx2-af: Modify SMQ flush sequence to drop packets")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> [...]
-
-Here is the summary with links:
-  - [next,V2] octeontx2-af: Fix potential integer overflows on integer shifts
-    https://git.kernel.org/netdev/net/c/637c4f6fe40b
-
-You are awesome, thank you!
+diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
+index ae7a0f8435fc..9d130592cc0a 100644
+--- a/drivers/crypto/tegra/tegra-se-aes.c
++++ b/drivers/crypto/tegra/tegra-se-aes.c
+@@ -1180,8 +1180,6 @@ static int tegra_ccm_do_one_req(struct crypto_engine *engine, void *areq)
+ 			goto out;
+ 	} else {
+ 		rctx->cryptlen = req->cryptlen - ctx->authsize;
+-		if (ret)
+-			goto out;
+ 
+ 		/* CTR operation */
+ 		ret = tegra_ccm_do_ctr(ctx, rctx);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.5
 
