@@ -1,107 +1,65 @@
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6D916DEDF
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 05:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5C51C9EDF;
+	Tue, 15 Oct 2024 08:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728968412; cv=none; b=f7N2Zfwmxkn103I3fHltubI4xED4ej5LZTglZkDjBXOPh/e/k5MmLoox0hHgF+Dtakm2AErpYGez6GQx8bqgZg/RlJr7btkNbmx0vcLfeL9sYqW7NG4Upc/RQb+1Em7Tpfm3goU0jAbrCp3mXOAszizzcJS6mbxFNV2DcXqCHTE=
+	t=1728980505; cv=none; b=WXW6a7FjdUmoDE5vx6bkBgVOXueTKe5u50w7z24UTbxCnwIX0OBBeqzwT10/QfcHKXjxZZX8tK2P2kvnJZF+elqplqk1lxVU9c9UEVNVsW09EFNY/MvLkcmwhCGXY6RJHn4SOPK2pIEZ1hNSoxysQfJj53RHH99IaORPU243w6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728968412; c=relaxed/simple;
-	bh=nMXhqh4HzokCG/i4LxOBg3hOYxhW1ngv6Tb8E8kN4Wo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eed32JvDrjNoKOuteg0sVVisMSh02CcFrJH35EgxxfVftGmA+1L5RszbUkiu5egD409+Lovpm055bEmvY9Fa6AyVvj0amO+F7EQ03Y4cjowBbEk41XHzcchfz/MgfTw6LXaSYjGrAkRJ8sQDw5yBR+jN+C90jEMUgdvJtBrIZwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=g2C4DFKy; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+	s=arc-20240116; t=1728980505; c=relaxed/simple;
+	bh=FJu8jxT7yybdlKVwSMNi866ZJN5F9ybvNy+FS1T0B/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ifKhn0l02MZkpOxsUvH/Dc2L1r6jDp3KrfkHnLdp8b+L+ukH/KYFlXTNSOcJcI4p6ot5ivcsQM2DYC1xLtXQCnJw44/kXUnru3fpj5TuaUHEAk+uRPALaevQqn6v58KWf10mJDUd3YRFALVCL8GXeqZgYZA1VA4ZF13n/LLl6gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=fm6R22uW; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="g2C4DFKy"
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-71e49ef3b2bso2293278b3a.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 14 Oct 2024 22:00:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728968410; x=1729573210; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UDE8ae4KGAACvTonZkpDinm//oEQtAd/MtLLCfcVh7M=;
-        b=g2C4DFKyDe3l+Fzyu7zFErMJ3To8sKhu16V1BPylJQ7vw5WY4FNcCZQ2/YYYsZuCdo
-         aY/6Sd04H4QxEYNKi2+PuZ4AmcHq9Y8Kd3HFnuWg+3OjeghaoOnFYOd9Q30Np7Jg54h4
-         iTvf9otptP1Q+NOlBC5CgC9rE4vqh3BMAgDwqKSrWlsh6/Bk9xoBJZScKebIe8uzK17u
-         pxobPNjJyvNXXU6k3/nB8/3Xx0otXeV/Ib7V3to3yOVVzMKTUe5KU0IqpBD7T/tkt15Q
-         0xsUv5+WR7+nKpgr+Exv2UyS1QnYqr1ELsKLXtF6xecpWistpmXRnm7+U0wNPyUZ6BSY
-         Tk8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728968410; x=1729573210;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UDE8ae4KGAACvTonZkpDinm//oEQtAd/MtLLCfcVh7M=;
-        b=XrjWEFNZV3HEOy4g9eU3buxw/htBQZ7xLYpX4A8YByiqOWbltwTSLjROXZ28PXyTTi
-         524Rg+ZjmIROBAUGffoc1oIyEK9BCegrTwHW2GVaS3IOnBngTo+I7J/Bb29qkvAMT9Y/
-         Sqs9tBvSsWXOJiTNl0Di/WgC8DHgZmpqMyAJL37kEMXvywXTHMpMVzRWXavzCwp3iNpJ
-         Uv9Myo4shQlGCv7FbXPlyFzDf2qpv53Fn3JjUlAPAfAMfI6hcOiVAm0uKN2G3Se64o7X
-         fg0/AwdbhJJ3tbqSG30uEFV4968uncJffmiVn0IbwaeV4ZbdueO34CCnKVsbcDThEKT/
-         80nw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjdsHeY7GRDTg5ZEHdFe7fHhOC29+9kHUu6I9ShDPceTakpAy/PfIXtlVGDGpsGBqtBwFuFgCtMxuDzkiufaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdVK4R4+QnDKK8bLkRi6Yh+n/y/AG8gCOGi1/rnLjtH/w4d4lx
-	dglcigFDxASMcyi03t9k2/DDX1eZyGFU+43n60v42zotUiKHAoY3m+spFR+ntUs=
-X-Google-Smtp-Source: AGHT+IGPdj8U1y9DYvRNnq4n+Baw1Zig5U/2Z3A5zNqzr6z2E57ek3/4AKtQDKOOKtFDMh3GKw4CrQ==
-X-Received: by 2002:a05:6a00:3e25:b0:71e:6489:d06 with SMTP id d2e1a72fcca58-71e6489127amr9511479b3a.0.1728968409796;
-        Mon, 14 Oct 2024 22:00:09 -0700 (PDT)
-Received: from localhost.localdomain ([138.199.9.153])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7ea9c61c839sm439758a12.0.2024.10.14.22.00.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 22:00:09 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	kernel-janitors@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="fm6R22uW"
+Received: from 8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 55C1C2A7853;
+	Tue, 15 Oct 2024 10:21:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1728980503;
+	bh=FJu8jxT7yybdlKVwSMNi866ZJN5F9ybvNy+FS1T0B/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fm6R22uWlTJA/xlFMaT7zegiH0tqkvyC8coAgom2ZDO1xhwDe9S++kP3FqI/FfEsU
+	 gy4Xs8L3u1NkEe0wzEG8TlM1u56N9z/T3XObwsrb5azhSUabCU40NLhKEUY3UwuBfy
+	 9OESxafPRMMMaGUTOpwFPGmjH9s42Rs2+cGu44wPQaUEudCgDun8fQukzeny3UrnZX
+	 KJq8qDJ7WOKv+C/wqJbbEVVAKZxUiCA78uxBkF1mXfwN5IPZ4v/1ofUGt0tPiAryQk
+	 txxcdbXHFKS+lkdMtiKxNb7GgagpiHQK+J2/d4EVgWnE8OvL4CPjn4p2WunBEckPHu
+	 S/6jBl94svJYQ==
+Date: Tue, 15 Oct 2024 10:21:42 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH V2][next] Bluetooth: btintel_pcie: Remove structually deadcode
-Date: Mon, 14 Oct 2024 22:58:41 -0600
-Message-ID: <20241015045843.20134-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH 19/35] iommu: Reorganize kerneldoc parameter names
+Message-ID: <Zw4mFoOGqif1xmv_@8bytes.org>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
+ <20240930112121.95324-20-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930112121.95324-20-Julia.Lawall@inria.fr>
 
-The switch case statement has a default branch. Thus, the return
-statement at the end of the function can never be reached.
-Fix it by removing the return statement at the end of the
-function.
-The intel bluetooth module was successfully built after the change
-without any errors.
+On Mon, Sep 30, 2024 at 01:21:05PM +0200, Julia Lawall wrote:
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
+> 
+> Problems identified using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  drivers/iommu/iommu.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This issue was reported by Coverity Scan.
-https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600709
-
-Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between driver and firmware")
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
----
-V1 -> V2: - Changed "Fixing" to "Fix" in the changelog
-          - Added that the change was successfully built
-          - Added kernel-janitors mailing list to CC
- 
- drivers/bluetooth/btintel_pcie.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
-index e4ae8c898dfd..660496e55276 100644
---- a/drivers/bluetooth/btintel_pcie.c
-+++ b/drivers/bluetooth/btintel_pcie.c
-@@ -391,7 +391,6 @@ static inline char *btintel_pcie_alivectxt_state2str(u32 alive_intr_ctxt)
- 	default:
- 		return "unknown";
- 	}
--	return "null";
- }
- 
- /* This function handles the MSI-X interrupt for gp0 cause (bit 0 in
--- 
-2.43.0
-
+Applied, thanks.
