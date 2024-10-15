@@ -1,172 +1,105 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B504140E50
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 11:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83D8146588
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 11:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728990293; cv=none; b=I2TUouP0Ri2teL4gvBsiwDrzt36nsNTG7GhQ6M9p0jqE1XREO9qrLAVrcfW/UEj8UEmlqlDhYdp+zFpchiYERksQ7XaYdMVCm4C4Y5XPfyxQDnLnHxn8f4ZJC50DYCSg3XJNb8nW0DwcDqK2fR3lHtTLS0sMqn8TUTGjhBpx3Lk=
+	t=1728991983; cv=none; b=WDJ/vvjxx+FWpttS7lHRo9cVHVFT0i0cyFhlezmrCmFZJVzKdyiS+zQZEWKQ+0qyl5TrZ3ubpox4hqLmJQwsXCowHwWvXyC6P4HMTX2AqpOQ2Vjulp0mNgqpTag2QAyhQeblYl2ACv2sbDKvrYHLzVHFjabdy5A59yWyL9tvC8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728990293; c=relaxed/simple;
-	bh=9U5bdDys3tg1CP0mSd84G+WVvwZMppDmWaRnqsDJtyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p+xlUqWZHF1ee3JREsAjjFXuuRZMS8DW8b4P8pnobVFJjWLfQf4FSOFT2fUCRQbqnE5miYEXleYE3NjUq3aB45DtMvfyoUBPLJdwYHpDkcFcniexRpzc3lZO3xwfYZh0qcN66LgORfXpYQTE9u6r2UVboFkGKlOSjsL/y/Qnv1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uLxwej56; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1728991983; c=relaxed/simple;
+	bh=4LJhOFliEGCYJeXPJjq9rcUD45sfo6k8OvuueXwJPNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lIAJwulPX+KC3+xzVlQ8ErFj9upjdtOSIiICMmn0vbO961u7NU8Di3+wtEaYs8owX9EooJrHl4OTvYbexcpBddJGNLHC75XP/XbPdwrrHqkxflQWH+n6N4oAfDjcNcU+ukGR5FpXbNwIOZRBPuAwyK50gpa9D95Bw6ELX0OrY4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aCXFZCqg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uLxwej56"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb3da341c9so28599781fa.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 04:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728990290; x=1729595090; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w4sjzNo3dq1SarzoHX+4jyrRuhoWt+Z5O4Pp5wIKaXs=;
-        b=uLxwej56vumvtWGm2d+RqmRck0kBcuaucKa6GbZlT60sJN/R3L5FwO9I//0/E03Tng
-         TY3NDZrK/vFYrozTzaUGKznIJFjTew9GsNGYCfxsDUrxGT1QzzDCBQAfmpM49BEN3R+2
-         jiFWsig9xomhRhdssKw42dueE7eJDoannViWlWsm0q2AKEhGWtT8U9J7EdJudAehHW88
-         vdgxdcsE5918bGTSmWhi/d/xyVObRptBpiF77MLjbySgdyjEUxS2gPqZaP5fH6Y75FEm
-         TwHt7r354Y2Q/lcXfB8nVHdSnTO2qmisqHs/Aizb7M4rsi+iv4eY9Xind8szwXxOAKD8
-         g/8w==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aCXFZCqg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728991980;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/HGIkCUj4P3GarxgLwJxQhDbXDAu8fFAFismcPS1kbs=;
+	b=aCXFZCqgc/97wXkszn6KCFesGptpNwFlxI3HLlv/BQGoLanD0HJTGYF5G0aYksGMSXvRu5
+	4XZLh9p2NwOFmanED4KPd1mTldzXSDBSVasjyDZEQHH9OZEclhZosUl9W4S2aj5U7TFr3x
+	CbC1wd6BywYMR5hXTNoFXh7Ybebi4WI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-444-7hs50sawM6-KB2yJnMx_4A-1; Tue, 15 Oct 2024 07:32:59 -0400
+X-MC-Unique: 7hs50sawM6-KB2yJnMx_4A-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d47fdbbd6so2456740f8f.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Oct 2024 04:32:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728990290; x=1729595090;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1728991978; x=1729596778;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w4sjzNo3dq1SarzoHX+4jyrRuhoWt+Z5O4Pp5wIKaXs=;
-        b=LlpEqDLd4AKnR7BJ71PJ2xhYDdT5aaa26anN2VXcnxJFZW3fe6y0CzydJvnBmwXA9F
-         BN4uZxNa9etS+SmAR/IYCcixhO3QJ1OcyTvNKIm0fcGspicpR2YDHNq4Mo8DBoUpB8xq
-         vx6LnCQHgvbfQdHKzre0IJuVtxshBoRYSZVKFK62Rxgij6HoPmqFcGGPf1QpVyF3h7CE
-         rPxsE/ps+2JKJ9T3qA92AhynV6X3hSCJ3DKcvodJDALiFZ0W9IdHMVWaSmGToE3ehRpm
-         QXITp2vw7FwkqxM/CwGPrLS8NFrywgBZ9GTl3Ht4Rh+Gl2Q1qjlcplvLQnJET0maCIMq
-         hxFQ==
-X-Gm-Message-State: AOJu0YyyE/CbMDEDpnfprnSwUUlRjCCbZsQqhM5jPGFoFxnLVAE3Xx4C
-	z5+5394aEdSipUoKZI42eLIFfsmmhQDgNSQQ2jwyKgBftqGraEF87Pt4ifSQHjo=
-X-Google-Smtp-Source: AGHT+IEW+7xSfuzszWdXiYziSnJCKx/0cOVwAZQodd3i1+n01NCTK68wcManz/dxFbungFSWw6nSbw==
-X-Received: by 2002:a2e:750:0:b0:2fb:5014:c998 with SMTP id 38308e7fff4ca-2fb5014f604mr27318601fa.28.1728990290010;
-        Tue, 15 Oct 2024 04:04:50 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c98d779975sm559860a12.67.2024.10.15.04.04.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Oct 2024 04:04:49 -0700 (PDT)
-Date: Tue, 15 Oct 2024 14:04:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Samuel Ortiz <sameo@rivosinc.com>
-Cc: kernel-janitors@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [bug report] NFC: Initial LLCP support
-Message-ID: <f32235a6-d884-451a-bec6-bf659c6f50b1@stanley.mountain>
+        bh=/HGIkCUj4P3GarxgLwJxQhDbXDAu8fFAFismcPS1kbs=;
+        b=gimrjl7LoILZxh3D3Er/Kwz3MFt7zmZaDTr9Zyx+GXsHAmpHxKKgub6cwBMvrgvuhw
+         UjB/PW/8AtWDz6Z7DMz4fQ0WMoH6a9BGim5nOXZe8RHVhgY9L2qf9DAjz4uCj5TYwjfQ
+         EGdjRwOLCsMyblvIuTKdaSNvqxWmqZ+3XqXOf8WaczW0DBjeipThoqZaS/IJS7ICfvYE
+         g8czkmRM8W/NRLx7U1ts6o2idHD7bn7OSslXD/GRiKKA4++Zokf4K8BXntG+faswv61b
+         xh/C/3XHIMBpJ1qIrmkAdQ7r68nUXpz6byjaN4lExdhjybs3++MK0bk3UNxx2BKtPDjc
+         w9YA==
+X-Gm-Message-State: AOJu0Yx0lK9G330mmwY6UOxppCm9H3F5DN5ZU/f88Wws5aCbDAM/fVSj
+	EnXzCpd9hpg0Vxqk/Jj2ED5LPSSpFWZ13Yc9f2pXQpNmk6XDzwBMPuasVv2fHpzVNyXf7kzRD0A
+	FdC8zNFP46zousCHeNuDG5FiUxpXgWG55rgmRt/RTj2Hrc8wKRBKCDa32+vteDX0gwg==
+X-Received: by 2002:adf:e88b:0:b0:37d:4cd6:6f2b with SMTP id ffacd0b85a97d-37d551d2566mr8948108f8f.14.1728991978134;
+        Tue, 15 Oct 2024 04:32:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH0OIgcZteYdJmzz82U4QRQMqjjMjSGyiYZpdCbwV+aF+nP0JM4GQJ9u+1zyEL5Auz8eFwycg==
+X-Received: by 2002:adf:e88b:0:b0:37d:4cd6:6f2b with SMTP id ffacd0b85a97d-37d551d2566mr8948093f8f.14.1728991977737;
+        Tue, 15 Oct 2024 04:32:57 -0700 (PDT)
+Received: from [192.168.88.248] (146-241-22-245.dyn.eolo.it. [146.241.22.245])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fc411fbsm1332551f8f.107.2024.10.15.04.32.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Oct 2024 04:32:57 -0700 (PDT)
+Message-ID: <d2cef2e4-d697-456f-8893-57f29ad17f3b@redhat.com>
+Date: Tue, 15 Oct 2024 13:32:55 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next][V2] octeontx2-af: Fix potential integer overflows
+ on integer shifts
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Sunil Goutham <sgoutham@marvell.com>, Linu Cherian <lcherian@marvell.com>,
+ Geetha sowjanya <gakula@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+ hariprasad <hkelam@marvell.com>, Subbaraya Sundeep <sbhatta@marvell.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Naveen Mamindlapalli <naveenm@marvell.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241010154519.768785-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241010154519.768785-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Samuel Ortiz,
+On 10/10/24 17:45, Colin Ian King wrote:
+> The left shift int 32 bit integer constants 1 is evaluated using 32 bit
+> arithmetic and then assigned to a 64 bit unsigned integer. In the case
+> where the shift is 32 or more this can lead to an overflow. Avoid this
+> by shifting using the BIT_ULL macro instead.
+> 
+> Fixes: 019aba04f08c ("octeontx2-af: Modify SMQ flush sequence to drop packets")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+> 
+> V2: Fix both (1 << i) shifts, thanks to Dan Carpenter for spotting the
+>      second shift that I overlooked in the first patch.
 
-Commit d646960f7986 ("NFC: Initial LLCP support") from Dec 14, 2011
-(linux-next), leads to the following Smatch static checker warning:
+The blamed commit is in the 'net' tree already, I'm applying the patch 
+there.
 
-	net/nfc/llcp_core.c:1147 nfc_llcp_recv_hdlc()
-	warn: double unlock 'sk' (orig line 1088)
+Cheers,
 
-net/nfc/llcp_core.c
-    1064 static void nfc_llcp_recv_hdlc(struct nfc_llcp_local *local,
-    1065                                struct sk_buff *skb)
-    1066 {
-    1067         struct nfc_llcp_sock *llcp_sock;
-    1068         struct sock *sk;
-    1069         u8 dsap, ssap, ptype, ns, nr;
-    1070 
-    1071         ptype = nfc_llcp_ptype(skb);
-    1072         dsap = nfc_llcp_dsap(skb);
-    1073         ssap = nfc_llcp_ssap(skb);
-    1074         ns = nfc_llcp_ns(skb);
-    1075         nr = nfc_llcp_nr(skb);
-    1076 
-    1077         pr_debug("%d %d R %d S %d\n", dsap, ssap, nr, ns);
-    1078 
-    1079         llcp_sock = nfc_llcp_sock_get(local, dsap, ssap);
-    1080         if (llcp_sock == NULL) {
-    1081                 nfc_llcp_send_dm(local, dsap, ssap, LLCP_DM_NOCONN);
-    1082                 return;
-    1083         }
-    1084 
-    1085         sk = &llcp_sock->sk;
-    1086         lock_sock(sk);
-    1087         if (sk->sk_state == LLCP_CLOSED) {
-    1088                 release_sock(sk);
-    1089                 nfc_llcp_sock_put(llcp_sock);
+Paolo
 
-Sorry, to bother you after 15 years, but hopefully this question is easy.  Was
-there supposed to be a return; after the nfc_llcp_sock_put()?
-
-    1090         }
-    1091 
-    1092         /* Pass the payload upstream */
-    1093         if (ptype == LLCP_PDU_I) {
-    1094                 pr_debug("I frame, queueing on %p\n", &llcp_sock->sk);
-    1095 
-    1096                 if (ns == llcp_sock->recv_n)
-    1097                         llcp_sock->recv_n = (llcp_sock->recv_n + 1) % 16;
-    1098                 else
-    1099                         pr_err("Received out of sequence I PDU\n");
-    1100 
-    1101                 skb_pull(skb, LLCP_HEADER_SIZE + LLCP_SEQUENCE_SIZE);
-    1102                 if (!sock_queue_rcv_skb(&llcp_sock->sk, skb)) {
-    1103                         /*
-    1104                          * I frames will be freed from the socket layer, so we
-    1105                          * need to keep them alive until someone receives them.
-    1106                          */
-    1107                         skb_get(skb);
-    1108                 } else {
-    1109                         pr_err("Receive queue is full\n");
-    1110                 }
-    1111         }
-    1112 
-    1113         /* Remove skbs from the pending queue */
-    1114         if (llcp_sock->send_ack_n != nr) {
-    1115                 struct sk_buff *s, *tmp;
-    1116                 u8 n;
-    1117 
-    1118                 llcp_sock->send_ack_n = nr;
-    1119 
-    1120                 /* Remove and free all skbs until ns == nr */
-    1121                 skb_queue_walk_safe(&llcp_sock->tx_pending_queue, s, tmp) {
-    1122                         n = nfc_llcp_ns(s);
-    1123 
-    1124                         skb_unlink(s, &llcp_sock->tx_pending_queue);
-    1125                         kfree_skb(s);
-    1126 
-    1127                         if (n == nr)
-    1128                                 break;
-    1129                 }
-    1130 
-    1131                 /* Re-queue the remaining skbs for transmission */
-    1132                 skb_queue_reverse_walk_safe(&llcp_sock->tx_pending_queue,
-    1133                                             s, tmp) {
-    1134                         skb_unlink(s, &llcp_sock->tx_pending_queue);
-    1135                         skb_queue_head(&local->tx_queue, s);
-    1136                 }
-    1137         }
-    1138 
-    1139         if (ptype == LLCP_PDU_RR)
-    1140                 llcp_sock->remote_ready = true;
-    1141         else if (ptype == LLCP_PDU_RNR)
-    1142                 llcp_sock->remote_ready = false;
-    1143 
-    1144         if (nfc_llcp_queue_i_frames(llcp_sock) == 0 && ptype == LLCP_PDU_I)
-    1145                 nfc_llcp_send_rr(llcp_sock);
-    1146 
---> 1147         release_sock(sk);
-    1148         nfc_llcp_sock_put(llcp_sock);
-
-We call release and put again here.
-
-    1149 }
-
-regards,
-dan carpenter
