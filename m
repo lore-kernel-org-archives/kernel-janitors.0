@@ -1,107 +1,68 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E2C15B13C;
-	Wed, 16 Oct 2024 13:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BCE1D1748;
+	Wed, 16 Oct 2024 14:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086395; cv=none; b=pdurnNkgqyPuReWnsfg4bEq7tg7pfa6yUw/he0dIVQz6pI9o2GRIgJs1wxSTTojlA0qicv1HxyiKyMUqZKvTHsTfkh1JcVGH6vfi3865OEmN6VlQTLD6u1BhqODhNGKkg72bFjDYKmUvVlJO0BzxYuMl70TbgrlduKtfXSVJHUk=
+	t=1729089306; cv=none; b=hRY0iUgcph3X2CYkxv4RG4QH1mOaEBwuX2uUFg23/gqQ6xmgrDmQHcqN3/vpVNGO4/4GyVypUEGV/5qDgIHLlEwMVTh/OtFiMeMHVXdnXTDBwm0HpsuRkaPOMi9Ed4hCPThmYLIre8ctm8h1LWgwwzYxPtFDrGnboP874zVEyRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086395; c=relaxed/simple;
-	bh=Go9Lpt6P6lduc1QG5NHEFhmQEuEpLhDeEKe4LtkOWVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sRH+oUu5kLwhUCY8RYh2D4TWeg6dFdNcpdZ8vqH7t+/xPJUJ1Vdjj62hdTf8tZcAW/T0jAoGgX5K7HSYjESYJyA3fkTaXHwYLPGxDAVmPDRGTz4KUFdiKMlJFfhBbsqkvI4FBzMK74nnCYY5B9gq7KBzcgd0BFAoJ0BDbAmLJGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hnmk1Ht2; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729089306; c=relaxed/simple;
+	bh=pQMQXj/R2fZDK/7JoZqlsC3XPxjmyc64AUqjn4r+iLA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AO4MTjtSu+nNuju+GRGIq3bCd+Fv773+fGj/MQmj82JVa8mIt4QX9+XIbV0qt99WJzzN6kaXEMc10BnhUAen4YS5LRQXw0L77mEwlYlbu1KE4vMyAO5JKvXN2giyDP+yZ1rHJg9yY2Xwv5RHDq8t6CkzG+Y0qC4HxfyAEmzRb+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=On8ulFps; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8bM/sX0L; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnmk1Ht2"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2ee0a47fdso1074891a91.2;
-        Wed, 16 Oct 2024 06:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729086393; x=1729691193; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jPG0IcYOOjj5wHuVKKI6JRMlVaZc1FuwPVrIRPhC8NY=;
-        b=hnmk1Ht2v/P5VUuxn3ZYfyhvujTKGQk2aq7RFPa6myHusJKYnEAS1lq6riCOC8e2zZ
-         bGjRVflPgKXSPmPYiLK9D2pxyXRrMEiYACTJdyfUa3VLjnx/JpvFVwKN7Vl449lkVlh3
-         n1GRYEnFuVidWSgkgDD5FOpBOHvws+fN89He3tWoTAdEY+3SOHVIQp+k3BbdAXox84+k
-         HHkz2dZS2ZwHUDKCDXUjREbTMZUgUm97KBLItbPIM5jNhawJvvU1xphbDED7jvCAikMC
-         Ion4nP1icuQDTUdIBf0/VjOjnPoGzkTmX+I3PUlb4v9oELdzQrswx7/kgzzpgRD3gz9x
-         pVfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729086393; x=1729691193;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jPG0IcYOOjj5wHuVKKI6JRMlVaZc1FuwPVrIRPhC8NY=;
-        b=Jl43rx9IjSyJAMh7B8T3lq/tBqRns+SrbY4+koTATdHYmuSrt2/yNDH7wC/RPeH/rO
-         OzpeEDGg4grtrL9gL7NZsEpSDl68R0gwVccNUMh/N/eeDtr/ia/ZdxNAav9HBTVvMcJz
-         FtA4Fe7E5mQEKxLW/D75UDd0UmhCVtBqLKZ9VDQwXcgJps80yuYloYOnRKB04sJwJJuH
-         ovbKJz2t3h/JD7SVmNPmz6BViILmnGH/EAO/Op5QQqBlA+mq9/tUSqYawjgyJu1Oba9R
-         10RgTZ4fjhBGjYWk2inDjDvlLuC/TQbo+g4QYfLn9XtEjq9tG6kTmfsb5E4de4lwsUEt
-         Jw+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUYhs1yemMj1ws1ZSLP+CiKyBTioVCkhDe+o5DEjzyP2STKs003N4Q/mw/Cp8ClcVGTFzRMaBbrbdOtC1sq@vger.kernel.org, AJvYcCXlgJJIYHNqEdT7qfaJUbJVqNay3114aPny/ufUIUZK1+hlu4N776HM95ZZsPPUptP5fj7T5dak7rwwhhJfTuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrJKHhu8CxPZdGYks7yPKltHnSQDt3/w+NzvnYmKxu2nk5Gq14
-	qa5gdP21b8MlLqDfn72YXDoEU8EQegToBE7kX0Evi/ubZKRcm5WNhe/s19AG3Ft2s14AihkwjVy
-	ncopjxLAgNbqRmCaqOisa0E8RD4s=
-X-Google-Smtp-Source: AGHT+IEoKuilAg8K+XtVXLqF5yfwI5xMJwIGApMZqNyYsDLitBiVCJtxvmZTCf5OM5yAAauiAQRQ1RzI6SsBKSnROvE=
-X-Received: by 2002:a17:90a:9a1:b0:2d8:9f4e:1c3d with SMTP id
- 98e67ed59e1d1-2e2f0d7750dmr9535838a91.5.1729086393193; Wed, 16 Oct 2024
- 06:46:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="On8ulFps";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8bM/sX0L"
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729089302;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pQMQXj/R2fZDK/7JoZqlsC3XPxjmyc64AUqjn4r+iLA=;
+	b=On8ulFpseIFW4ue5RlZ9mMhudTTqRw2BvQ8vYls+Jngd0o2oXS8rmd+80vzQN2Cbs0OPDi
+	ff3jbd3yxGLS7cQROyr84NrvmYkSJlVntQuIZenJlWiIZROG7NS9GGtchxivZbsF1X4p92
+	+lAQxvnLptBLEuZObfp8zDU3YgAjJWVdHf/thR4NAU1sXO7DcwoF1TSQE4iiQcR23mWhg6
+	El12KY9IADu8AoCd34PCzc4RAUYac1BQxBOcdSzLZUU0xIfN9vFXKExwK5sgChGpy7llTX
+	tgvX7fkekhncp2i877NlehYIHlcrQCeOELuoIYygRXbEt27i3OxQ8PICK7ZrOw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729089302;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pQMQXj/R2fZDK/7JoZqlsC3XPxjmyc64AUqjn4r+iLA=;
+	b=8bM/sX0LvP1G6jFgAGGxNA1J0n5yRnB6o5NwHWQduoG2Xh7l/aIMJ3BQamTAATnFq6zHxh
+	DrPISF1cXIJSnHDw==
+To: Markus Elfring <Markus.Elfring@web.de>, Fabrizio Castro
+ <fabrizio.castro.jz@renesas.com>, linux-renesas-soc@vger.kernel.org, Geert
+ Uytterhoeven <geert+renesas@glider.be>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Biju Das <biju.das.jz@bp.renesas.com>, Chris Paterson
+ <Chris.Paterson2@renesas.com>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [v4] irqchip/renesas-rzg2l: Fix missing put_device
+In-Reply-To: <692cabd4-038b-403a-b21e-69a2b0492e57@web.de>
+References: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
+ <663a37fe-ffc4-4826-b8ba-bcefdb0e7992@web.de> <871q0hdofq.ffs@tglx>
+ <692cabd4-038b-403a-b21e-69a2b0492e57@web.de>
+Date: Wed, 16 Oct 2024 16:35:02 +0200
+Message-ID: <87iktsce09.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016090812.280238-1-colin.i.king@gmail.com>
-In-Reply-To: <20241016090812.280238-1-colin.i.king@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 16 Oct 2024 09:46:20 -0400
-Message-ID: <CADnq5_NF1R=jNL1XT5JO9Obvq-bpr4qgsSE0mO+r17WkUSf6GA@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistake "tunndeling"
- -> "tunneling"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Applied.  Thanks!
+On Wed, Oct 16 2024 at 11:38, Markus Elfring wrote:
+>> We are not doing cleanups in a bug fix.
+>
+> Additional adjustments can be offered in subsequent update steps
+> (within a patch series?).
 
-On Wed, Oct 16, 2024 at 5:18=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There is a spelling mistake in a dm_error message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  .../gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c  | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capabi=
-lity.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-> index 518e5d1f3d90..e05b8fddf2af 100644
-> --- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-> +++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-> @@ -1637,7 +1637,7 @@ static bool retrieve_link_cap(struct dc_link *link)
->         /* Read DP tunneling information. */
->         status =3D dpcd_get_tunneling_device_data(link);
->         if (status !=3D DC_OK)
-> -               dm_error("%s: Read tunndeling device data failed.\n", __f=
-unc__);
-> +               dm_error("%s: Read tunneling device data failed.\n", __fu=
-nc__);
->
->         dpcd_set_source_specific_data(link);
->         /* Sink may need to configure internals based on vendor, so allow=
- some
-> --
-> 2.39.5
->
+Feel free to send patches.
