@@ -1,74 +1,68 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3168A1CACDB;
-	Wed, 16 Oct 2024 11:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2047207208;
+	Wed, 16 Oct 2024 11:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729076754; cv=none; b=ckQWNu88fkHol67DECp4hylkMUwozRlO20d+wmAFzblJuvDUv5GrOB6wlfcAI192+snA+meMt/DFwqtjvrSbPWvQS+9zqELFmSKInxVoNaIYpwDwuGUGZuluySjn7DQkmUwqS6uhkfr2mDQNonMe87motF9bZb2PtJJt7EoAKWI=
+	t=1729076816; cv=none; b=Y2MNy7H4dLkVla0He1rWrGy+zWlUaiielMipnoPGQmUC1touIz1DNPglZQtdSDOYsfnbFBhBpXgJNGPjdBBTdK5DHHoPzbWR2AnwF/1vD6/OV92AlaObm41ePJsvyotz5+SMyytQpw+jQa9NBTFlcn4khOfg8A6z+e+sUSTFJBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729076754; c=relaxed/simple;
-	bh=LGP8XR63nNO5ElCIu/02JsR6KlPMp9Bah7/In8e+CR4=;
+	s=arc-20240116; t=1729076816; c=relaxed/simple;
+	bh=QCZ0riA4KXlYTzoJ/11/Bb/+xk6ORhOod0g4QC/ZDhA=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=klCyDhnOGNNK7bgqTU+72CyUxVKl/wiahngPSm3VQvTVmgSXD6kvy3KJhRThAK7D0LpbajpSW3JGiqc/S+zCETMjBorEXu9l9LlM0sMqlYWH/t/ol1TbFvFJi6e7ktX0ZOLnrYBqiONJl/FVgNFDGN0YHWVZYTNmWP+U/irSKdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TrWFJ6/Z; arc=none smtp.client-ip=209.85.208.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=czFiQX1iquXseCiqb1UacASpIeZyY8ITc8kD8aTIqU9HLB0ySyjLlKJOkTPz1pieR4xJurOvkkfh0w4oMrpwS3WFG6QYL7ruDv9kaiZ5jEQ7rm1i3yeWTYtIjf8BqjKzIyq08FJId4rNbQ1e/WQglwriU5aSpKT2LaQjCvTZKJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmsyOlcf; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TrWFJ6/Z"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso32863611fa.0;
-        Wed, 16 Oct 2024 04:05:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmsyOlcf"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e59dadebso5361701e87.0;
+        Wed, 16 Oct 2024 04:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729076751; x=1729681551; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729076813; x=1729681613; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m4LueB2KQgGxlu12dfcJNaqU0W/5O88/vcQ/21eniVw=;
-        b=TrWFJ6/Z+Fu0IdUI7Du+sKW8No2SL5lWFZBZwV/HNv2YTYLV5cU9FS82feuG5fOymx
-         oVLePCZUW2Hk+VG0lxixlkZwnyhQbYRvW5/Nnx7bKhThBrMhtpiBk5138GmP6/mOisM6
-         lvUtniKNjpNWLblHHjj3CqMetwe1oKeZiDD7bPfm8DUufWv/gW6RPEjzesbLP7bZxPea
-         wxP1ER8zxipol276Rt2e1UpMa8lQKps96qROH70kEbcfRwNNs6lOizRYL3NQsmpjEPUn
-         ol8yrWG7syxjJN9BydyfVKLExv2cJSbsHlArex9VHF11d+oObhHZNlWi3+zU0UbjOfts
-         5Qnw==
+        bh=vYyqrJz2TEk2igPzsfZXes1hSgjCxocHugD9O2531Pc=;
+        b=WmsyOlcfEdv0/NTJZu3h3PFXK8E6WQSiVsA6YpFWRiMW6UeWsOeCcohAGaTpV/3f3h
+         vAVwEbA5qa5H/oaulIePTAhkIQdpA0kpjAZgbMCOsHM/KRM8rFJfC9UdjVCcj86IoMaX
+         eFzeYfWlzsdOz7VeJEXckGm4wx+/BWCu3xxVm71tPfYbKlabCnhBKZpg87qEa2UT5+0f
+         noexxOlZdfqGf1GqiuEA72VkbqmkSVieFczadUGWzlLD3vnyw4tQUH6Y/kAXi7OMqOaq
+         I1HqMakbHVUKHrGr0DbBXk0ivMuXGw6uoMFikVA7hHzR/6+zPYsOvNvtHOXyzsNEnnZ8
+         GOkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729076751; x=1729681551;
+        d=1e100.net; s=20230601; t=1729076813; x=1729681613;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m4LueB2KQgGxlu12dfcJNaqU0W/5O88/vcQ/21eniVw=;
-        b=tWXq+qA33M35Ch7RKMEdDkTmu0u5veSVKP5aZJX//iFgp9zk2diwsqkjmFBSG82k0A
-         TdMZBQY1cJZc9DxvXnnD6zVEOOkrB+XrNHPMh3V0FC6Ga/HFY4MLzb52gGtENnuaXiZ1
-         eDrKF8yJucki43xRuU52VwrqDCZa+ipIerTbTpqBfwl7e1HcO0b6xNsTrsAAp1DM+fN0
-         XEJZSYLflV5365XUg7ZkpXk6OIS9iZYvXmhMf9SHbHCEnJhqIKh0oMZy7sU8g0u5a9/u
-         F6LVfVS2rKRR8CgtwAMweIQAa3UlwqNTz90r4m2sE8We8hg38Z7NaycusUzSbZRPXaz5
-         tkzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUd2CxHio63jL4QsHqxnzPCVTdi/nys6qhQGnb+Apn8R1q7P78k4i485+N3UbDiSGbK59kXaA4JyPGYZZsT@vger.kernel.org, AJvYcCWyB5HG4+0/WDxLQ4vxrlgAWzb9ncqejGSH9S4KKwoqJpZNn2KQvj3GP7M7MeX8pYBnb99NSZ4b4RQNlYoZqDg=@vger.kernel.org, AJvYcCXARFpT0CvOqG455+PwyAIweYxNnE+Z74YwEGqp0e7+j1hdLDwygeuR2KCHloSqkDUaqJsQXnKr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWwX/ZFHUGeM1BaVCWLD6JDbM6sR3Q40hzj6TyQWzVlL6dtXwo
-	b43obZiAn9Ub2VRnE4n4wLrqp4l5fptWznskIT9v/4bh0yXZZKD6
-X-Google-Smtp-Source: AGHT+IGrcfyamzd6ykzuN6rZt6YTTc+0CMnG2WFlNB4kpaQ+AjqM8Bd8qcm/g39XHvVQSx6ZeTf34w==
-X-Received: by 2002:a2e:a990:0:b0:2fb:5a7e:504f with SMTP id 38308e7fff4ca-2fb5a7e5276mr37840231fa.35.1729076750886;
-        Wed, 16 Oct 2024 04:05:50 -0700 (PDT)
+        bh=vYyqrJz2TEk2igPzsfZXes1hSgjCxocHugD9O2531Pc=;
+        b=ZMUJTBhkfv+WvHJS78rIckT867jvEnI9N5oLPMRFZ55B0GmU3RkKqyeXtRH847hKZF
+         26ZIp7fgb0oazyqp4tbbNC7ztcsk/nDZT+HQMXO9vr/yg3T9t3yW7K/H7AWDFmhl9bL8
+         wnqgWIfHKvJOlEBC5XTtgVqLorkxgt6NTG83q5Usjomrar0NR0YbETJPV0V7JHI40zXq
+         dHqipmfmlDYdFA1WJd4UI9RLaSk0d07YGJ3XLljC6UeaPNa3NORizBBqhl7nlbuTJJqv
+         NPjMK7RZ+1P3L6ygGk8uz6ry1ASJyNAQ+kcyUix94rBv+ZblLdhz64S4CLWhdtByLGOS
+         m1EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNnnhPxar1fcXpsVWDuHS+/F5H83yWev6E2HOLfpDNhEvrdRZBzlDCVUoL60AjMp1lPphCo/YnmoUog5gM+t8S@vger.kernel.org, AJvYcCWqYs2GMJcRxQUqx6kcN0yML0Z90aSD9VXHAtAs2FpfgJzEWM6i/PwfiU1l4SvTCdE+4g+ho5uM4BjthxPv@vger.kernel.org, AJvYcCXUvkpva8zISGof0/zr+eLKnTdxLbkgk8hbf4JQd99zVXxLiQTRQ4kLnyOwf64w4IdoI+myuwGrbQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXrPSkYA0P7NAzp3mVGSP2s0Bq/fcchWV66wHhXr0j77nI26xA
+	0GG44Ec/efomMceLbxQnsv0SaCTDa568r7F3Yzu92XSTt/awC8AFfcKXUw==
+X-Google-Smtp-Source: AGHT+IFzsH7xHJlaGwKRRrNEdurssvvGtU48fA0LNdlbvPDyKgpsdVl06DnG+xIbJhMyfP53PkJ0Rw==
+X-Received: by 2002:a05:6512:3b13:b0:539:ea54:8d28 with SMTP id 2adb3069b0e04-53a03f0476dmr2780355e87.11.1729076812735;
+        Wed, 16 Oct 2024 04:06:52 -0700 (PDT)
 Received: from pc636 (host-95-203-1-67.mobileonline.telia.com. [95.203.1.67])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb5d1a82c3sm3949501fa.116.2024.10.16.04.05.49
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539ffff40c7sm417960e87.146.2024.10.16.04.06.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 04:05:50 -0700 (PDT)
+        Wed, 16 Oct 2024 04:06:52 -0700 (PDT)
 From: Uladzislau Rezki <urezki@gmail.com>
 X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 16 Oct 2024 13:05:47 +0200
-To: Julia Lawall <Julia.Lawall@inria.fr>,
-	Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-	kernel-janitors@vger.kernel.org, vbabka@suse.cz, paulmck@kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/17] xfrm6_tunnel: replace call_rcu by kfree_rcu for
- simple kmem_cache_free callback
-Message-ID: <Zw-eC42Wd33HDoad@pc636>
+Date: Wed, 16 Oct 2024 13:06:50 +0200
+To: Julia Lawall <Julia.Lawall@inria.fr>, Tyler Hicks <code@tyhicks.com>
+Cc: Tyler Hicks <code@tyhicks.com>, kernel-janitors@vger.kernel.org,
+	vbabka@suse.cz, paulmck@kernel.org, ecryptfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/17] eCryptfs: replace call_rcu by kfree_rcu for simple
+ kmem_cache_free callback
+Message-ID: <Zw-eSn0_Tmg4aiqV@pc636>
 References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
- <20241013201704.49576-6-Julia.Lawall@inria.fr>
+ <20241013201704.49576-8-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,9 +71,9 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241013201704.49576-6-Julia.Lawall@inria.fr>
+In-Reply-To: <20241013201704.49576-8-Julia.Lawall@inria.fr>
 
-On Sun, Oct 13, 2024 at 10:16:52PM +0200, Julia Lawall wrote:
+On Sun, Oct 13, 2024 at 10:16:54PM +0200, Julia Lawall wrote:
 > Since SLOB was removed and since
 > commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
 > it is not necessary to use call_rcu when the callback only performs
@@ -90,35 +84,35 @@ On Sun, Oct 13, 2024 at 10:16:52PM +0200, Julia Lawall wrote:
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 > 
 > ---
->  net/ipv6/xfrm6_tunnel.c |    8 +-------
+>  fs/ecryptfs/dentry.c |    8 +-------
 >  1 file changed, 1 insertion(+), 7 deletions(-)
 > 
-> diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
-> index bf140ef781c1..c3c893ddb6ee 100644
-> --- a/net/ipv6/xfrm6_tunnel.c
-> +++ b/net/ipv6/xfrm6_tunnel.c
-> @@ -178,12 +178,6 @@ __be32 xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
->  }
->  EXPORT_SYMBOL(xfrm6_tunnel_alloc_spi);
+> diff --git a/fs/ecryptfs/dentry.c b/fs/ecryptfs/dentry.c
+> index acaa0825e9bb..49d626ff33a9 100644
+> --- a/fs/ecryptfs/dentry.c
+> +++ b/fs/ecryptfs/dentry.c
+> @@ -51,12 +51,6 @@ static int ecryptfs_d_revalidate(struct dentry *dentry, unsigned int flags)
 >  
-> -static void x6spi_destroy_rcu(struct rcu_head *head)
+>  struct kmem_cache *ecryptfs_dentry_info_cache;
+>  
+> -static void ecryptfs_dentry_free_rcu(struct rcu_head *head)
 > -{
-> -	kmem_cache_free(xfrm6_tunnel_spi_kmem,
-> -			container_of(head, struct xfrm6_tunnel_spi, rcu_head));
+> -	kmem_cache_free(ecryptfs_dentry_info_cache,
+> -		container_of(head, struct ecryptfs_dentry_info, rcu));
 > -}
 > -
->  static void xfrm6_tunnel_free_spi(struct net *net, xfrm_address_t *saddr)
->  {
->  	struct xfrm6_tunnel_net *xfrm6_tn = xfrm6_tunnel_pernet(net);
-> @@ -200,7 +194,7 @@ static void xfrm6_tunnel_free_spi(struct net *net, xfrm_address_t *saddr)
->  			if (refcount_dec_and_test(&x6spi->refcnt)) {
->  				hlist_del_rcu(&x6spi->list_byaddr);
->  				hlist_del_rcu(&x6spi->list_byspi);
-> -				call_rcu(&x6spi->rcu_head, x6spi_destroy_rcu);
-> +				kfree_rcu(x6spi, rcu_head);
->  				break;
->  			}
->  		}
+>  /**
+>   * ecryptfs_d_release
+>   * @dentry: The ecryptfs dentry
+> @@ -68,7 +62,7 @@ static void ecryptfs_d_release(struct dentry *dentry)
+>  	struct ecryptfs_dentry_info *p = dentry->d_fsdata;
+>  	if (p) {
+>  		path_put(&p->lower_path);
+> -		call_rcu(&p->rcu, ecryptfs_dentry_free_rcu);
+> +		kfree_rcu(p, rcu);
+>  	}
+>  }
+>  
 > 
 > 
 Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
