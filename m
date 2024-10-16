@@ -1,108 +1,114 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297FC2076DA
-	for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 13:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776DD206E96
+	for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 13:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729086001; cv=none; b=cgbLd0wzkVOGo7aRcjyeYCBNrpizjwZ6behqcebFQisCcMSdRolGqeBO+npkn3AOT3ZM9rY8Dcq394+duPkHQsxRiYDqYmOwjbJVDayBBELXPlLMAZcv4iK2q0Fh2qQyWuoNGlwlcXk7AjR2iiMZoVMmBM5jL0rCQh6Wm2Ti6AI=
+	t=1729086230; cv=none; b=lB1uJk1HI576mHgCO1WJXGTiLUQMWj/eEEquUdeTg0oCY6SQ7m+86jiSI1CZtHHbZSaHp8W3X9iSH3Q9fQ9NGoHsilGapwYOD8Hca3PFPDSMuVQmlDR790R/J8hY+1xcQG2OtALFXj2+CatXMC1XHgqf4OztAACzEbTTl+yLD24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729086001; c=relaxed/simple;
-	bh=CH8Z2vUGmqSOv8MdEEAfce6v4Ceq6JjaXoXH43jMqsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IBWGnhGZQoAW6vBBz+fIPDexcr0jMbgOuRKnVaDZ369zqRFhheHHZg0pgEdKv6N6IGRrtWH1VV5dw7yGnuwFNlWmoPZx+YCcpwMLJPr7VOKinKad60bRsfAxyZBC5Zz+QN2UYHTIjmNIClAJrhjaj5pHBlpNIqifgWVI9nnNwAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GY0rAtI1; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729086230; c=relaxed/simple;
+	bh=KWcWN0Jm2eUdhtHlZSZFOhv8Zx+tr8YDUBPTLQTMBgE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NER/xGYaxNlmqnHCvYYI2f16pVxfcxEudJFax5iG3n6147uyDKocr2EYHAcSVdgTu5z7nksInCF2j247WErBQ3Om/1Gds1Pzh7VQPdNUaHZJuzgeGYIIvDjrAeeVz656IGbSaCDwyrlXSQWtQM4TdFPh58lvtXF5GlN1Rc4vShQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=VefHAbya; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GY0rAtI1"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso322990566b.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 06:39:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="VefHAbya"
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea8ecacf16so1937643a12.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 06:43:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729085998; x=1729690798; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Gtc/wvZtgZRYhU7nCyuDdZx7Qqo7TOKN4gjIik7fZg=;
-        b=GY0rAtI1qPDTf5lMMPuU6QUZDYKr2mASZozpq0t0qfzcwDzWKyXRzHTA1+8l3ajjLf
-         a6kul5DJRw48mlssDBmEWFGrtJctgjD0FLOsnApjaKE7xqmGbw70kDvdfuUKJg02W5Jy
-         CIbVqhJxac+ZOAFIlh6QQQIneTyPMN/szAcCCDZO9mAjnLxigyYv+dM61S++bDo2RwDp
-         dfKsacjHcxt0WWOMR8VRzPHgA1bba20LJPdDxYcglH3nvlFamncGSAy+MMaxlHfYwtNR
-         a85l4SIqKp2hgI4veCgC5ipnMHpQNWb5WLtMFddIHYJxVLPEvCD0N8OEgxIGy7oIpAxC
-         0SSQ==
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729086228; x=1729691028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hPSkU20Itc6yAh+bZBbT2R0RT9oB/wml9mSdgooTOww=;
+        b=VefHAbyajJ+EibY++LZu5yyNn8ulR6BdY4Xor9w+0ufoTXHxwawvH65ukuEch2Gmgs
+         D4giuT05u9kSpUZ9VzhhX5V0nNeKJlYoU7YwZ0KMgYPYb34NR/LcuYtvESYJykH2cqDh
+         yWu0zAMjnSJJsSO1+v8Ejr7/XR73n09RrvRyXPYTWx+DMA8/ischIZlALM3fMo6wTi07
+         kmJlIPaOhBZLq5G5a47+tk8TQFm7/H9I0BunCss/tJR+1SRHEy3jxITB2d+UJBTlMnjR
+         RULfdPFnO36GW0u7qDhNWewOC8akmqPiEt33zkobuFE7bmA0++KXjO4A0GmhgOdZOsAe
+         QMvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729085998; x=1729690798;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Gtc/wvZtgZRYhU7nCyuDdZx7Qqo7TOKN4gjIik7fZg=;
-        b=ZuZSsVQpcI4PRJ56QpBujgzSRE01TByyJKH/u8xktxeUSTXqmO0SPb1fBP2KEop2HG
-         eIg9YhwDxhvbYYxD11tIPlIoT1CuM+X/cH1IC76pHAL+SZx9Yv7QMHIsRXmbvoi5k82Z
-         X4qzHpin37dnvFlcznWWQelDRyms27hZcw1LOktEU3fC9Q/UlzABIidjBfV8GH7JmJiW
-         3IwZxiXqmEpSOeB2d0IrEZQ9gw9SJIZj9kg9fv/wWvNZhR0y8goqZzkq3plBbTdarm1j
-         brf7nPe7dVdAUT17RCVcMEXEySTjD54UwmQ4IQ7sFoiP6f7IDDYlj6Q6OaXIbc7epLmk
-         rC9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYOdjZbtZPi50aMY6FRWWZZtxxU0Y16gE/LvVANi4ojB+Iwk1YDp2kKarCcgSUIZN/97TBTp5emeT/tPrjW3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOCFb75wo7Mm4UPuKcVeJH/fl1EzGg23vVsspv8jnXbzNl477A
-	oDdOJ/FxVwD6V4Lf7lYauWQiOwGXSoev+yLVKxZ6pq/l4BvGaS1aY/sGvIQwLvM=
-X-Google-Smtp-Source: AGHT+IFAfsjHoVSlLzL1ZP/h9wEBchAr7uDR6VPsl4lgA/a6ZqvM2Wm8rkF3wN5KH+JSqUuZ0s+N6Q==
-X-Received: by 2002:a17:907:7ba8:b0:a9a:1778:7024 with SMTP id a640c23a62f3a-a9a1778712cmr810115566b.20.1729085998546;
-        Wed, 16 Oct 2024 06:39:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a29844899sm186338766b.178.2024.10.16.06.39.57
+        d=1e100.net; s=20230601; t=1729086228; x=1729691028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hPSkU20Itc6yAh+bZBbT2R0RT9oB/wml9mSdgooTOww=;
+        b=ZPdmBXgS/AtObHokM6ZlTSopI/WqPss+0bh/Z3SY9+FNPnjk9m0sxctebHNCyM8D1l
+         gzkWNsSFQPjELEVZsBD2d0JdQzJp+zqwGdtn7yWJkWZLQajdTC5h8tNTjA7g1mDNhdil
+         Cc3g4/A7tqQKs0s3hEqcos+9siSoetR9rhcLTJJwn04b2fdq2HNq6PZcFlnHOhzFVJPN
+         NL2Yi5X1FuHWqwj1FI+hCr60MFRZKRL3jlJ2V/ey8YAtpVuSLECewhs//7K00sqTQK1a
+         yyI4qyItEKZPDnp3h748YzDYRQ3UAp9HxoPfV00PPqrRwhaL9jyUn2mAZs4yAsE1oLbn
+         1wKg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/DeC8hZ+BLAb9gyqhN4DvpphzdLYFm1vzo+z1od8JjwC89sAd/JW9UOl71yPVodomfUmlNA7Nde67VVLmvOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdFIiheoAWo0VDU3NQDzuNoPnqtUszDf5gh58+IYehq6FS36aM
+	NVkqbUyMfJiIKxdWDs+vZWRH8GCv87PR1h2Q0pJG53l5oRs2u6po64SQBH0O2qY=
+X-Google-Smtp-Source: AGHT+IE1Q+vPA30KNlMFxGEt9h2r7Mf4JtaF8VKYh5yzDNUyMZMQT+8Yyx33/wO8c5gt6uUjOIGAxw==
+X-Received: by 2002:a05:6a20:d49b:b0:1d7:cc6:53d0 with SMTP id adf61e73a8af0-1d8c9576f83mr22762980637.5.1729086227779;
+        Wed, 16 Oct 2024 06:43:47 -0700 (PDT)
+Received: from localhost.localdomain ([132.178.238.27])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20d17f84e9bsm28977495ad.19.2024.10.16.06.43.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2024 06:39:57 -0700 (PDT)
-Date: Wed, 16 Oct 2024 16:39:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Wed, 16 Oct 2024 06:43:47 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: drew@pdp7.com,
+	guoren@kernel.org,
+	wefu@redhat.com,
+	linus.walleij@linaro.org
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	linux-riscv@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] media: i2c: ds90ub960: Fix missing return check on
- ub960_rxport_read call
-Message-ID: <18412b95-7d34-4a80-940b-e5fc5bec3ec9@stanley.mountain>
-References: <20241002165329.957739-1-colin.i.king@gmail.com>
- <20241016094111.7f5e899a@foz.lan>
+Subject: [PATCH][next] pinctrl: th1520: Dereference pointer only after NULL check
+Date: Wed, 16 Oct 2024 07:42:21 -0600
+Message-ID: <20241016134223.4079-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016094111.7f5e899a@foz.lan>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 16, 2024 at 09:41:11AM +0200, Mauro Carvalho Chehab wrote:
-> Em Wed,  2 Oct 2024 17:53:29 +0100
-> Colin Ian King <colin.i.king@gmail.com> escreveu:
-> 
-> > The function ub960_rxport_read is being called and afterwards ret is
-> > being checked for any failures, however ret is not being assigned to
-> > the return of the function call. Fix this by assigning ret to the
-> > return of the call which appears to be missing.
-> > 
-> > Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> No Cc: stable. Please follow the submission rules for fixes as stated
-> at:
-> 	Documentation/process/stable-kernel-rules.rst
-> 
-> In summary, all patches containing fixes shall have a Cc stable. There 
-> are rules there for the very few exceptions where a patch is not meant
-> to be backported:
-> 
->      Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
-> 
+The pointer `func` is dereferenced before NULL check.
+Move the dereference after the NULL check.
 
-I don't think this patch belongs in stable.  It's doesn't fix a real life bug,
-it's just static checker stuff.  I also don't think we should forbid it from
-going to stable if it's required as a dependency to backport a different patch.
+This issue was reported by Coverity Scan.
+Report:
+CID 1600802: (#1 of 1): Dereference before null check
+(REVERSE_INULL)
+check_after_deref: Null-checking func suggests that it
+may be null, but it has already been dereferenced on all
+paths leading to the check.
 
-regards,
-dan carpenter
+Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+ drivers/pinctrl/pinctrl-th1520.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
+index 7474d8da32f9..07f8b51fb294 100644
+--- a/drivers/pinctrl/pinctrl-th1520.c
++++ b/drivers/pinctrl/pinctrl-th1520.c
+@@ -803,11 +803,13 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
+ {
+ 	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
+-	enum th1520_muxtype muxtype = (uintptr_t)func->data;
++	enum th1520_muxtype muxtype;
+ 
+ 	if (!func)
+ 		return -EINVAL;
+ 
++	muxtype = (uintptr_t)func->data;
++
+ 	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
+ 				 th1520_pad_muxdata(thp->desc.pins[gsel].drv_data),
+ 				 muxtype);
+-- 
+2.43.0
 
