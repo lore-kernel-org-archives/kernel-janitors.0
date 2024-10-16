@@ -1,126 +1,97 @@
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C895478E
-	for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 21:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971821D27B1
+	for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 21:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729112442; cv=none; b=te+YfPdDaPxh1p/9xS6SbZE81sTzQIb7N7CyLX6ekmXH+MX6SKax2piVxMXCs/7zS7C7SP5AO03nWWX6kwzUhqOUysllbR+Ie7AhfjouH+p84tUoQ5g7V4R1vgvh/D15buAYzmaYQeczjYSiJrhFHLYZhjumOTjIV4r/AW3wdjc=
+	t=1729114756; cv=none; b=DiQ2vGr9PsnzQft5nL6A3SqB54+EEdl2yTTJnA/rXJVRtiQCDn04vcLfeMQ+b471NMsUM2ly23FQNJV3yfqnj/MMAiMsdq4OJMBofIsLd+uZFnrOYodMWhk6bCiD+TG1w7KrXhDypM00REq7FMhlaZqcIshWMQlgs//tYokzuSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729112442; c=relaxed/simple;
-	bh=4t5+OjK1ZS+gJDrLrnU/uff8C+hpDMwYCYudiNig0/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s6X9Gw026IYa3TeX0v+75TA82Aou99i//evFI4I4Q5+g+7O8maW8EitWYokP3s+goCZXaOed3hSge/mSVaTSZ5/iyz+6Oj5mAK4+SBZAYqhi5CaJ1JjM/cMsZWIMRXPtGPI2bvOGaOTSwKnwBRVt5nLASl24bACDXrP8N7rgyc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Oe6K4plL; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1729114756; c=relaxed/simple;
+	bh=k7GxTv21vlnA+IKy5RrAYAcCA8X9XxHW0ySsY+Tvi3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WnLcQn83OmZfgHrrOJ02cb+cbvdyBRAq+D+NG+HIBBJZ3ZuQ5rJGgzpp5aYt/zsIyb0LKvUFH3wpAcwDKOU+N1IPMdYIhRHi6iMo8j5n0u5qlStpg8E5WYfFLGjbxLGdEnB2ntYUWP0Yvszlw3x3tSN5lwKXY+ev5H4Fjf0U5OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=ysyGKW3J; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Oe6K4plL"
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-83aaac65f5aso7954739f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 14:00:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="ysyGKW3J"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c96936065dso356128a12.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 14:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729112439; x=1729717239; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KQkUyFxL6KPO58jEIgRqgtkUgZXFKeeIN5h6kSZxcRY=;
-        b=Oe6K4plLWdAVvmEtOXl4JrYl3pD5Ge1iCniA3ybTHa6ArDrTcNE6yeFpgC4TlqU5Jx
-         uuZ81ESMyt9gONFSslUo7DWnMtaoxQ4QanWrdk3j0+KuQut+Or53EzcruTDsMe0nXZ02
-         bAoUC3yw7JMATQbqG3oW/ZNMbQBaLddXzNSZM=
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729114752; x=1729719552; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sGbTpYZZEZP+mGuvzqT9GIg1Bljms7cSdFODzrCOUm4=;
+        b=ysyGKW3JYSClX/KxZX/QZpz1IRfsZnUcsas9RzzdWZ6ZFg91cuyPMT5aofgZUDiiOu
+         /+wXqwPFI86iSCNkxmdVpJe7f0Q41oSl6wK+UWHvsDAub4WWdZkh59G2GvC7WdBMTLan
+         F3g/08Ly1V02LMhvGSlXnnq4OYnVAE29fL093cgB3D/yhRI4buWY2PvhSjid1n6RPyCm
+         611Y/WcWOrhJVsguctvm2gA+QTDF6agjEzzRJ5dvhsMG3vj4BiKQ4PuxTJQzhLLagSgf
+         bYEiG/ey4VyWTHOg+xgv2jFhCyxtjvqcqc8jDoJKSOoesdR6auhOgRWQeNUtWZn4FeKR
+         tcBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729112439; x=1729717239;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KQkUyFxL6KPO58jEIgRqgtkUgZXFKeeIN5h6kSZxcRY=;
-        b=e9ZTarhWhEM6W3wwovgL79l+VR/MVefcyNj23kSpm3bInXN39SjebLHVNGSrm8aUGV
-         UaLyXEem4cZOvQbsRwLNVloXnscmydl0P4dNj9Gvke8/GbY/u3sU6PMbd+fERAGMGVEA
-         QsUzLYlNGpjPTZHNTjM/Jhkavc+vIxTfNKfKXmrpIhGmsr7RvKRB1/dIMgtfEgpiuIlQ
-         dlT+3J7OQGXDG23/u4lhASx+oBICLqnSNTXI/imfxEAtWFboT1ofWJyDTJE3IDK60gLu
-         j+ud+5RahCSdYDrA+v+3u4/MQ46RvVVsBLAdCaivu6Vhw4QSCKbnQu7pdLoqYHwWReeX
-         WbRg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1IAivKf5NsN/00w0//LSqfnseIs/bGldoB7DqfanFdVr/cwOlTEkFgf6dc2+zCQiDGUp9k0Pz9uubFef3myA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgCQvAm3w3alii42WLohvoxkdphLbdf8lf5bHcPAKvipoUu8PK
-	tSq76+Z20yMdLcUZj+dDgxIwzpxE/GUPIY4xgB2pwn4X4sQ3JsxjUhwVB+Diuis=
-X-Google-Smtp-Source: AGHT+IEr/mLDFSHaahfcbR6Ju6YahNPQWbFH52bUJmc8ClQuj82clhMLrKIsGaKx1CqLOFpCh6SR8A==
-X-Received: by 2002:a05:6602:3f92:b0:82a:48c5:4d04 with SMTP id ca18e2360f4ac-83a64ce007amr1258719239f.6.1729112438477;
-        Wed, 16 Oct 2024 14:00:38 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83a8b53c85asm97470939f.51.2024.10.16.14.00.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2024 14:00:37 -0700 (PDT)
-Message-ID: <2f82fbcb-4a3c-4dfe-8852-7fc0b27c38e4@linuxfoundation.org>
-Date: Wed, 16 Oct 2024 15:00:37 -0600
+        d=1e100.net; s=20230601; t=1729114752; x=1729719552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sGbTpYZZEZP+mGuvzqT9GIg1Bljms7cSdFODzrCOUm4=;
+        b=iXEuiZkyFU71piqir0Y9Ag0tjjkZ0QvdG7zveBowYrcWvindHr/M6KTg/WQp1JLghb
+         V0EReaaN4EpemVxlkxN91Ch9NeUKfP0BEePvDbrgvjmFNLhWXXgW8hB1dpOec01SwK/E
+         1RO+26z3iKVVwIO9ZcJNrz/f0hLG7wwSXzZluJaAJ9Vi04i+Dj69GUnKq8iE3y69xK1r
+         QOMklxMFE3VVzMvmmbP7oMbP8WAvw1O+rL0K956wtJ/kEBmzR5p5JM0zZRbtZMmZI74d
+         hzQ7MvWAleaWOswFqpnurs9xwPZ+uRctU5Fhs2IzS2jfYG0hDUsYYpO10NPBSTMLPJ5h
+         eCKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ5DTSkT+12bmqS4SngKf8tzt8QqphhFp+ZBZ6hUUNkJ29AQoUnsq4x05slkR53jDseq5bXyll/2AzlLQqCAY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFqbWhLqQtX0ONMvcRCaQ8O+N+zrI5E52dlgLUeO5jbKw6ZLet
+	6pGQGJR7uJ/4/dpSUEGEwbVAhK7lt1PSuHTONs9c/inOV0arWzf9oBJ0DRUESqGZH94MFntr4Zg
+	fvvX1bJSQx3Lw4QpBWNnTd9Su8KOQgo2EBm62/w==
+X-Google-Smtp-Source: AGHT+IGfXrUOPkq3mI2TubA4yiUF56RfE+/zlumUxASWgWuC+eB9Q8NPP8mccdlaABo7RMO5uJK/NoWjyHvR/RsH+kI=
+X-Received: by 2002:a05:6402:5247:b0:5c9:6b39:d9e5 with SMTP id
+ 4fb4d7f45d1cf-5c96b39dad8mr13701812a12.20.1729114751823; Wed, 16 Oct 2024
+ 14:39:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] pinctrl: th1520: Dereference pointer only after
- NULL check
-To: "Everest K.C." <everestkc@everestkc.com.np>, drew@pdp7.com,
- guoren@kernel.org, wefu@redhat.com, linus.walleij@linaro.org
-Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241016134223.4079-1-everestkc@everestkc.com.np>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241016134223.4079-1-everestkc@everestkc.com.np>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241015232212.19242-1-everestkc@everestkc.com.np> <e22aebb2-0961-459c-bc02-3165c364115b@stanley.mountain>
+In-Reply-To: <e22aebb2-0961-459c-bc02-3165c364115b@stanley.mountain>
+From: "Everest K.C." <everestkc@everestkc.com.np>
+Date: Wed, 16 Oct 2024 15:39:00 -0600
+Message-ID: <CAEO-vhGc9A5NfRDng1j43czdWo7=DO0wahC1Y5mQrF4w6kZRpg@mail.gmail.com>
+Subject: Re: [PATCH V4][next] Bluetooth: btintel_pcie: Remove structrually deadcode
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, skhan@linuxfoundation.org, 
+	kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/16/24 07:42, Everest K.C. wrote:
-> The pointer `func` is dereferenced before NULL check.
-> Move the dereference after the NULL check.
-
-Change log looks fine.
-
-Short log that clearly says it is a fix would be better:
-
-Fix potential null pointer defereference
-
-> 
-> This issue was reported by Coverity Scan.
-> Report:
-> CID 1600802: (#1 of 1): Dereference before null check
-> (REVERSE_INULL)
-> check_after_deref: Null-checking func suggests that it
-> may be null, but it has already been dereferenced on all
-> paths leading to the check.
-> 
-> Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
->   drivers/pinctrl/pinctrl-th1520.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
-> index 7474d8da32f9..07f8b51fb294 100644
-> --- a/drivers/pinctrl/pinctrl-th1520.c
-> +++ b/drivers/pinctrl/pinctrl-th1520.c
-> @@ -803,11 +803,13 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
->   {
->   	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
->   	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
-> -	enum th1520_muxtype muxtype = (uintptr_t)func->data;
-> +	enum th1520_muxtype muxtype;
->   
->   	if (!func)
->   		return -EINVAL;
->   
-> +	muxtype = (uintptr_t)func->data;
-> +
->   	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
->   				 th1520_pad_muxdata(thp->desc.pins[gsel].drv_data),
->   				 muxtype);
-
-Otherwise looks good to me. With the change to short log:
-
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
-
+On Wed, Oct 16, 2024 at 8:42=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> On Tue, Oct 15, 2024 at 05:22:05PM -0600, Everest K.C. wrote:
+> > The switch case statement has a default branch. Thus, the return
+> > statement at the end of the function can never be reached.
+> > Fix it by removing the return statement at the end of the
+> > function.
+> >
+> > This issue was reported by Coverity Scan.
+> >
+> > Fixes: 5ea625845b0f ("Bluetooth: btintel_pcie: Add handshake between dr=
+iver and firmware")
+> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> > Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> > ---
+> > V3 -> V4: - Fixed typo in the subject
+>
+> I don't like to be the typo police but, no, you didn't fix the typo.  :P
+No, using the correct spelling helps in searching the patches in lore.
+Thank you, will send a V5.
+> regards,
+> dan carpenter
+>
+Thanks,
+Everest K.C.
