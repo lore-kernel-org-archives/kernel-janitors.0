@@ -1,101 +1,130 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA9F1FAF17;
-	Wed, 16 Oct 2024 09:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702CA1CACDB;
+	Wed, 16 Oct 2024 11:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729072505; cv=none; b=nb7i2TXof2t71O0oyUfZQCOpiozFmuqyh1D1DDphtNWWDIknNEWSgT+II2grXdQXU30I1iuErc6j1MUhNdIaksVumo6+A87KRRsNZ8kpcwo/nGOAFZPxSoilIOc2hVDBMUsBGoDEpYngU0mT4Qh5OKEeBEXvBUb/hqgs2I0cSzs=
+	t=1729076686; cv=none; b=g0UK/WUM4JqwH7G4bYfT0SSBXGMmBdpiOOlzYDEhi2UEi7DG9BfnDqiHZg646PoY0aN1K3MC/Prf4FupLu4WtAJzsWUjSHStZCM6nSFvmzOjJq3U9SW68fs4aRCeNPoq3xt97eOaMGq6J3Lxrho60Pb3j6JAl1C8nJtfdU7zbto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729072505; c=relaxed/simple;
-	bh=B33N9NCktEKQzY6gUrpC2zYWEtyfJKfOrZV2IutPllQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SfMEX2myv9oE3BWzNybQghbw64hRq+nVfOV8pcqPATn4J/W8bDm22qYWzqbROepabEbBKfK0VxK1Fsk30Rt4W+kst17rqInH+nscp9CCH7KWO5Zd47TwU4waWAz9QKRjtMCV/mqW52+M/dx0gfLI/nUs2ZrG8AmcYMsyY2vItbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Je2FlEoG; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1729076686; c=relaxed/simple;
+	bh=/JTdtZ8yw6tvm9jNmB3rBmdMWwXa9IoO6v7YodFLaWA=;
+	h=From:Date:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TlTIatD/iWzPLWEcvuXLl89vQ9IJXztIEMrmoqlXGvp6RhOKYEXRp4snD4REOyCV9UYo1PsHmQKD2vmSVOtBqBZlL7Z43+NtNVJBY7t+25kWOfF27UgOouFPrM7fSKpyt1tpDUFJDE0rfDZgGaPny9S31Z5ohuP+QyzEfhS8YPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YbTnO6ig; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Je2FlEoG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729072459; x=1729677259; i=markus.elfring@web.de;
-	bh=B33N9NCktEKQzY6gUrpC2zYWEtyfJKfOrZV2IutPllQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Je2FlEoG1wn1fI2boLzaSCHA9EUoNF+dLrvNmQVKhwvyLQaab6SDfCTOC7HeVHmh
-	 nhYKmAi5n/f1lkTKGFmbMuck4ek6ag7oyTa+dgjf+Ek/v5tJM36FMXypYT8lqokBM
-	 J91tjrKBcnlxetSDpRYbGDMAiD6+hOtgmGW03ADO3jbvoYeN2M5LcUf8E09Zobutg
-	 jJqZtAqssIzuEvLcT06PUQZmJ+T/NazeSZIxtFovPF0m7prsfhhGWy/m/PkODpuWs
-	 Ke8Zd4UuO0N7xca3w7dHvEIaLQBUk1He+8RaAhGyjz3HoJ/6BO8lX1jSJTPwk6Z/q
-	 DE0enNNycmOFXgIr1w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGgNS-1tDiK90UFO-00Dmjj; Wed, 16
- Oct 2024 11:54:19 +0200
-Message-ID: <42c7dfe1-451b-4f70-8358-725cf3eed549@web.de>
-Date: Wed, 16 Oct 2024 11:54:14 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbTnO6ig"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb501492ccso28741651fa.2;
+        Wed, 16 Oct 2024 04:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729076682; x=1729681482; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NDbDctKYaoGebw4v3E0DI+6dZhiijtiLFfSf+SUecWQ=;
+        b=YbTnO6igDl3Osz/id9gmHd05VnChMBUfDPZaT48hQuAya7C5SHvPdZ8yofOlQtRNQ1
+         ct26DNF0Ibt1xU/8KElQjjY0Tp+jxDzpCfvHtpQj/yD81Eqv9shDFyXt8KpNItZ0SVsh
+         DbMAXhTkOJhhurP7rltIUQsQR0ldJAnsga0juFW4JjsgC4lmCiUx9XHBIUAtgH7JZrMZ
+         1dEKkN0BMQJ1nIVXGs19p0WNeaWYABxcgTI2lm8Hh3jr17VPZEWkj6cz+zGWb0aBLXXP
+         QnJQ/rnN+rn4EvPVznFHuUjK8+7TwtRnYOa4/C0E1xQhOrBmarMMxLZ+8VKwXsk8ienG
+         J2WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729076682; x=1729681482;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NDbDctKYaoGebw4v3E0DI+6dZhiijtiLFfSf+SUecWQ=;
+        b=VdYuHmaPsWXulkT5TV2jdv1zdFt+AKB0cSWenm3k0beOMDBsVKsK7cMwFpIwMs0ikx
+         +f7jRPmLhz3Fjj5tOIbXI5dj0bwWs80j7pirfnXoq+7yhwfKs2dBzfhXanuieLl/WuHS
+         C1j62HwY/2lcZcrpwrhHUd/og11nclLwMonZcT/AjzvCy5Lyd8zT5tdz7ShqHdIAkGRM
+         Iqj1a7YO817fyER3UtOhmkN5wuLahegDu/M09SFdgwrRPN+PtuYrY6Myt9LPiIBl2jPt
+         oFwwjzK6zp5UmLsS2tFc5A8dL7H4NK/81FDOm4QdCDcXPWo1TuXAkypBTsb3M56hOvtr
+         eUwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwVeNlJChzPFmCaau3eJ7gJh8KxOtvY/NVF2qFooX9mw8OqkzUSoHLvhoRuyLDwOQBu8pg0QjJJo/akqjr7bw=@vger.kernel.org, AJvYcCV6bPAJLle3aIywtIgtZKwABIUNqyiAQ7n8yop9k3rHQJB8oOH3QVkFPpc0TeF6qkQQ0H7yYcrX@vger.kernel.org, AJvYcCWfR26NtCpHvnHRhI3Mu40pAdqmf1hLEaLBU7hKzOcd63f5/CQ48F4cgdaXYm7wdNlFwQNxbqiqW9RZZf1R@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ3leMRryA9y5OYBDiuxZ2JZC5uDdQYQS7fO/U9FMvKYmAd/Nr
+	4hemdWm9JzKprxqgpHghWhFeFbZfTFEKI5TtBHjeadHJf8QoQCJP
+X-Google-Smtp-Source: AGHT+IGfqoIo176A3Xc2Q2xeErsC3HAJJY4ekVVwX4mFx6IEqtAbOxCsr3LqgtbGCH29R44xS0WATQ==
+X-Received: by 2002:a2e:a541:0:b0:2fb:5b23:edba with SMTP id 38308e7fff4ca-2fb5b23f28cmr33996231fa.23.1729076682233;
+        Wed, 16 Oct 2024 04:04:42 -0700 (PDT)
+Received: from pc636 (host-95-203-1-67.mobileonline.telia.com. [95.203.1.67])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb5d1a8590sm3863191fa.122.2024.10.16.04.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 04:04:41 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 16 Oct 2024 13:04:39 +0200
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, kernel-janitors@vger.kernel.org,
+	vbabka@suse.cz, paulmck@kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/17] wireguard: allowedips: replace call_rcu by
+ kfree_rcu for simple kmem_cache_free callback
+Message-ID: <Zw-dx50JDeenxwCr@pc636>
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+ <20241013201704.49576-2-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
-To: Thomas Gleixner <tglx@linutronix.de>,
- Kevin Chen <kevin_chen@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
- <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de> <874j5ddow1.ffs@tglx>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <874j5ddow1.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:5PdP4OeLPruXhve1TsYeyQlvYAJ06iKJriezhlJsCtBxNnKyTNx
- tNA77FMgapaBdZdjEsYh5tNukeEBponwO2/mdM2WRXYPipqo6efWLIslsPF/dmaBgTgIIHG
- 9blNFdTKuFT41sDFmnDzkCWjPZDuGGIFPMhj00W4i5aTQxEaNeisM5aBtn3C3aDSAHnMT03
- 5T/ms4ppv03+sfNzkZBWA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GDpmqTIObF8=;P+X0BK25UKhmiTH5Wz/6TTqcklE
- C/eBsj8x2ZwmC5cHvXLA49jMiMcLY12hG2naqPWceqI67SY/+2ao69O+zfdvI6GyL5qdgFNKa
- LTgbjkxJ0ViOaR9AhJE3ImYx/Peh7TArul5Gwsmtziopxz/OsXTjTUgLQMUirnBJ3oC041jW9
- 5cwMh2+qy/PK3AMzdWI5z9MAiGv1jywQDeoSjVO2MCqmo7mi86XIe2yPUCQ3BT5eYLTPM/Izh
- L53gJC5EG6dSRPnEuoanGBLnVPgBVEYd2Xyhi5TeUtXzW+zA6qlJwzdr2bjRheOcfpAnYBxnZ
- rmbnI3qUxbV2LK9C0iA3uqO14ASDbLnzZf184D9bSuIRysOwf5Kt8Ge+qBUtyqfB+8Uwt0/RT
- EY6AzoCI9idnxpm6tdLdWucU0vp6b5BaAtXKFH9gszMLuxa5h+9lsZbmJISl6BWhz1Pri6Nxl
- MdkBSew4sMwG8l/JB+GTlLlGYjbjCaBWwb6DxIfN/uxoGVgrm1aN3euOwZxkBh+p+AWORUOKC
- svcwtVudNFGDc7q+1qQXRhEvj/VITCbs95AeQrTjQNSGFjVGTOaH6k7717UuKb1S/SaHVknrK
- yjU4Re6IsAGhWDmBjJWXLNevczVm9dHuZgKTu24WK508oyp3uH8FbV6H5uMxzhv7+/BY36exo
- JwvR7ytBkatPki8VqYeuvnVd8v7dZ7+FKWp67ZvcWclXsJ/jO5eTIeiAkkTH188V5vfFmT0Nu
- HUIlA69XcqeZT8c0ZpIMEy2c/KV3HhH/2N8060jNdHqUJI0F2u5fJdaCYSrk8nc3Zdx82sE0M
- FANtqddy42xjvhpS1AWw92nw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241013201704.49576-2-Julia.Lawall@inria.fr>
 
-> Making a guard variant of chained_irq_enter/exit needs some thought and
-> a general plan for cleaning the whole chained irq usage up. It's on the
-> cleanup list already with quite some other items.
+On Sun, Oct 13, 2024 at 10:16:48PM +0200, Julia Lawall wrote:
+> Since SLOB was removed and since
+> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+> it is not necessary to use call_rcu when the callback only performs
+> kmem_cache_free. Use kfree_rcu() directly.
+> 
+> The changes were made using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> 
+> ---
+>  drivers/net/wireguard/allowedips.c |    9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/net/wireguard/allowedips.c b/drivers/net/wireguard/allowedips.c
+> index 4b8528206cc8..175b1ca4f66f 100644
+> --- a/drivers/net/wireguard/allowedips.c
+> +++ b/drivers/net/wireguard/allowedips.c
+> @@ -48,11 +48,6 @@ static void push_rcu(struct allowedips_node **stack,
+>  	}
+>  }
+>  
+> -static void node_free_rcu(struct rcu_head *rcu)
+> -{
+> -	kmem_cache_free(node_cache, container_of(rcu, struct allowedips_node, rcu));
+> -}
+> -
+>  static void root_free_rcu(struct rcu_head *rcu)
+>  {
+>  	struct allowedips_node *node, *stack[MAX_ALLOWEDIPS_DEPTH] = {
+> @@ -330,13 +325,13 @@ void wg_allowedips_remove_by_peer(struct allowedips *table,
+>  			child = rcu_dereference_protected(
+>  					parent->bit[!(node->parent_bit_packed & 1)],
+>  					lockdep_is_held(lock));
+> -		call_rcu(&node->rcu, node_free_rcu);
+> +		kfree_rcu(node, rcu);
+>  		if (!free_parent)
+>  			continue;
+>  		if (child)
+>  			child->parent_bit_packed = parent->parent_bit_packed;
+>  		*(struct allowedips_node **)(parent->parent_bit_packed & ~3UL) = child;
+> -		call_rcu(&parent->rcu, node_free_rcu);
+> +		kfree_rcu(parent, rcu);
+>  	}
+>  }
+>  
+> 
+> 
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
-I became also curious how API usage will evolve further here.
-
-
-> We are not adhoc adding a guard variant because guards are hip right now.
-
-Application interests are growing, aren't they?
-
-
-> And no this does not need a scoped variant ever.
-
-There are subsystems which seem to prefer such a programming interface occasionally.
-
-
-> guards are not the panacea for everything.
-Their usage might become more popular.
-
-Regards,
-Markus
+--
+Uladzislau Rezki
