@@ -1,74 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657E9212EF9;
-	Wed, 16 Oct 2024 19:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C895478E
+	for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 21:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107743; cv=none; b=SkdMd/jUWyr8IHZSsgbL3tNQltkt4laxBiz54s88b1RjV2OnlcNdHxM5D989x4wdvN/uuZ+YIkWZaeMkRw8JGFn8054u5RCPGm/CKCaNJbAG2CEwMZDchL8lK19OKDJ8WQl7bI1VzlCXOWHrput4nzpoWhtYBdpJywKps+8vS64=
+	t=1729112442; cv=none; b=te+YfPdDaPxh1p/9xS6SbZE81sTzQIb7N7CyLX6ekmXH+MX6SKax2piVxMXCs/7zS7C7SP5AO03nWWX6kwzUhqOUysllbR+Ie7AhfjouH+p84tUoQ5g7V4R1vgvh/D15buAYzmaYQeczjYSiJrhFHLYZhjumOTjIV4r/AW3wdjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729107743; c=relaxed/simple;
-	bh=6kuARo6R+izUJawqtMLy82AYZrt2UknikmPasItjF6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=mttfPJyiWCNgPMFtoblmGwnxi7SDnVd8Ww6h8XgXA1t+NWUgour2jOZJMMYDy/BtDYBcFFME2vknQM3RTkX6PUQ0wkRn00bvkAoHNKlwdC9fxqnhNDKeLqOxlXfHXBGkSkEdko8lK1nqXn/UaviKgNRzasAOE/jp9Blh9SDquw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kq8Ex3+o; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729112442; c=relaxed/simple;
+	bh=4t5+OjK1ZS+gJDrLrnU/uff8C+hpDMwYCYudiNig0/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s6X9Gw026IYa3TeX0v+75TA82Aou99i//evFI4I4Q5+g+7O8maW8EitWYokP3s+goCZXaOed3hSge/mSVaTSZ5/iyz+6Oj5mAK4+SBZAYqhi5CaJ1JjM/cMsZWIMRXPtGPI2bvOGaOTSwKnwBRVt5nLASl24bACDXrP8N7rgyc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Oe6K4plL; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq8Ex3+o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCEAEC4CEC5;
-	Wed, 16 Oct 2024 19:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729107742;
-	bh=6kuARo6R+izUJawqtMLy82AYZrt2UknikmPasItjF6A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=kq8Ex3+oNplSkp/j91IAnz7zUnun8iysvY9K/o/bsFIcA/eCGuprEaNUXTR7Fk94k
-	 i8tpKIZOauSyBdcDNAOYwDXqi4c5NuL8xbG6j+KaT5Mu9WcTMbsnOkN6HUq7xKluKs
-	 WNIiUm5rVLPRGnmfLIIM6YZhAHxWMgg6ws/CVrKEDjRMZeKrufeD7ORj45ER4/++dN
-	 EcTgrrqHYodO9P+b4g5AN3vvCo+5Y6XIf44wBnS7oL1uxYuBZOrzjwkqXugcFknfna
-	 MaYnw8k3oCKLXaKRw2eBQHEFldHPIrtEEFeod3NsyyDNvYOTzY0zoII5qNXI9APyeZ
-	 6+40M0W8VizgQ==
-Date: Wed, 16 Oct 2024 14:42:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: cpqphp: Remove an unused field in struct ctrl_dbg
-Message-ID: <20241016194221.GA646374@bhelgaas>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Oe6K4plL"
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-83aaac65f5aso7954739f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 14:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1729112439; x=1729717239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KQkUyFxL6KPO58jEIgRqgtkUgZXFKeeIN5h6kSZxcRY=;
+        b=Oe6K4plLWdAVvmEtOXl4JrYl3pD5Ge1iCniA3ybTHa6ArDrTcNE6yeFpgC4TlqU5Jx
+         uuZ81ESMyt9gONFSslUo7DWnMtaoxQ4QanWrdk3j0+KuQut+Or53EzcruTDsMe0nXZ02
+         bAoUC3yw7JMATQbqG3oW/ZNMbQBaLddXzNSZM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729112439; x=1729717239;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KQkUyFxL6KPO58jEIgRqgtkUgZXFKeeIN5h6kSZxcRY=;
+        b=e9ZTarhWhEM6W3wwovgL79l+VR/MVefcyNj23kSpm3bInXN39SjebLHVNGSrm8aUGV
+         UaLyXEem4cZOvQbsRwLNVloXnscmydl0P4dNj9Gvke8/GbY/u3sU6PMbd+fERAGMGVEA
+         QsUzLYlNGpjPTZHNTjM/Jhkavc+vIxTfNKfKXmrpIhGmsr7RvKRB1/dIMgtfEgpiuIlQ
+         dlT+3J7OQGXDG23/u4lhASx+oBICLqnSNTXI/imfxEAtWFboT1ofWJyDTJE3IDK60gLu
+         j+ud+5RahCSdYDrA+v+3u4/MQ46RvVVsBLAdCaivu6Vhw4QSCKbnQu7pdLoqYHwWReeX
+         WbRg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1IAivKf5NsN/00w0//LSqfnseIs/bGldoB7DqfanFdVr/cwOlTEkFgf6dc2+zCQiDGUp9k0Pz9uubFef3myA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgCQvAm3w3alii42WLohvoxkdphLbdf8lf5bHcPAKvipoUu8PK
+	tSq76+Z20yMdLcUZj+dDgxIwzpxE/GUPIY4xgB2pwn4X4sQ3JsxjUhwVB+Diuis=
+X-Google-Smtp-Source: AGHT+IEr/mLDFSHaahfcbR6Ju6YahNPQWbFH52bUJmc8ClQuj82clhMLrKIsGaKx1CqLOFpCh6SR8A==
+X-Received: by 2002:a05:6602:3f92:b0:82a:48c5:4d04 with SMTP id ca18e2360f4ac-83a64ce007amr1258719239f.6.1729112438477;
+        Wed, 16 Oct 2024 14:00:38 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83a8b53c85asm97470939f.51.2024.10.16.14.00.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2024 14:00:37 -0700 (PDT)
+Message-ID: <2f82fbcb-4a3c-4dfe-8852-7fc0b27c38e4@linuxfoundation.org>
+Date: Wed, 16 Oct 2024 15:00:37 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <551d0cdaabcf69fcd09a565475c428e09c61e1a3.1728762751.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] pinctrl: th1520: Dereference pointer only after
+ NULL check
+To: "Everest K.C." <everestkc@everestkc.com.np>, drew@pdp7.com,
+ guoren@kernel.org, wefu@redhat.com, linus.walleij@linaro.org
+Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241016134223.4079-1-everestkc@everestkc.com.np>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241016134223.4079-1-everestkc@everestkc.com.np>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 12, 2024 at 09:53:42PM +0200, Christophe JAILLET wrote:
-> 'ctrl' is unused, remove it to save a few bytes when the structure is
-> allocated.
+On 10/16/24 07:42, Everest K.C. wrote:
+> The pointer `func` is dereferenced before NULL check.
+> Move the dereference after the NULL check.
+
+Change log looks fine.
+
+Short log that clearly says it is a fix would be better:
+
+Fix potential null pointer defereference
+
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Applied to pci/hotplug for v6.13, thanks!
-
+> This issue was reported by Coverity Scan.
+> Report:
+> CID 1600802: (#1 of 1): Dereference before null check
+> (REVERSE_INULL)
+> check_after_deref: Null-checking func suggests that it
+> may be null, but it has already been dereferenced on all
+> paths leading to the check.
+> 
+> Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
+> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
 > ---
-> Compile tested only
-> ---
->  drivers/pci/hotplug/cpqphp_sysfs.c | 1 -
->  1 file changed, 1 deletion(-)
+>   drivers/pinctrl/pinctrl-th1520.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pci/hotplug/cpqphp_sysfs.c b/drivers/pci/hotplug/cpqphp_sysfs.c
-> index fed1360ee9b1..6143ebf71f21 100644
-> --- a/drivers/pci/hotplug/cpqphp_sysfs.c
-> +++ b/drivers/pci/hotplug/cpqphp_sysfs.c
-> @@ -123,7 +123,6 @@ static int spew_debug_info(struct controller *ctrl, char *data, int size)
->  struct ctrl_dbg {
->  	int size;
->  	char *data;
-> -	struct controller *ctrl;
->  };
->  
->  #define MAX_OUTPUT	(4*PAGE_SIZE)
-> -- 
-> 2.47.0
-> 
+> diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
+> index 7474d8da32f9..07f8b51fb294 100644
+> --- a/drivers/pinctrl/pinctrl-th1520.c
+> +++ b/drivers/pinctrl/pinctrl-th1520.c
+> @@ -803,11 +803,13 @@ static int th1520_pinmux_set_mux(struct pinctrl_dev *pctldev,
+>   {
+>   	struct th1520_pinctrl *thp = pinctrl_dev_get_drvdata(pctldev);
+>   	const struct function_desc *func = pinmux_generic_get_function(pctldev, fsel);
+> -	enum th1520_muxtype muxtype = (uintptr_t)func->data;
+> +	enum th1520_muxtype muxtype;
+>   
+>   	if (!func)
+>   		return -EINVAL;
+>   
+> +	muxtype = (uintptr_t)func->data;
+> +
+>   	return th1520_pinmux_set(thp, thp->desc.pins[gsel].number,
+>   				 th1520_pad_muxdata(thp->desc.pins[gsel].drv_data),
+>   				 muxtype);
+
+Otherwise looks good to me. With the change to short log:
+
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
+
