@@ -1,95 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D8E15C145;
-	Wed, 16 Oct 2024 07:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286F6205125;
+	Wed, 16 Oct 2024 09:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729064476; cv=none; b=fQWCXvpKigqo8BBLn+6MGtjNPEN9JgWL7G/MTL5qIvSMxLU/czysDftqSSC+2cZuHzdIKudULuISjRTQAIx1VJGEA/qWuYWB4cub32M78AccYFwZt7qPbZy2e9xY5sfC+A31jf7N5CvRvlrka5l0MF/p9weJVdPCoW16v8nZrkg=
+	t=1729069697; cv=none; b=Nj1WckkFq79oWc/T7XUqSg7jiQ39A3wgZai7IcqyjnT1G6MRCBqN2dYWBCX05CrL9t1GVCTeoft/R3Bh+pBf82kGO4Xcyviy/YcW7ukPNoT4pSZOJdga5TTuaNT5xy4SOAyJZlt+pChanBjoJOoIWCMrmHhRXgEXZUJvnCDahBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729064476; c=relaxed/simple;
-	bh=tKXMfFBGIn5G5s0ymqFGFyYf7iX+GK9QcNqPHOg8eWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qwTnSsLkzmP/2bf4DAThwNYUwiba7wmwBnN7uKEHhD+dl1HsokLOATxrB0bkmvymbHmZGFuyZRpwQVrLtYZyfC5mZrOf+44c1fZ9VsnY98yGXcmMas8BhtXDDvtPg4AWqahB1uBq59ddiiXsYOwyNUrp4bEsH7MVYnM1csOtOew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=miGEiOQo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729069697; c=relaxed/simple;
+	bh=CbyAZqMMc0gbRedEKGzjGqancCc65SQSYPTA0D/J3QQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qtsc1qN0L4y/DB0xRd1C5HnwCxPptpHEB3aZe9APGJrwbGTOwVGykB438hXDKtKQi4+tFpf1xBAmjDn2xTn9UOqWZVfXFqm5XVK6C11UoWgEGQ87l2jJEzyPNvvmkTQB9Pi4zljGSR+oALgatb+QMjtOyGDMlF7Peafk6iLZuVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6YHOl+x; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="miGEiOQo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7657DC4CEC5;
-	Wed, 16 Oct 2024 07:41:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729064476;
-	bh=tKXMfFBGIn5G5s0ymqFGFyYf7iX+GK9QcNqPHOg8eWE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=miGEiOQocvAdudkhHImLi7l7i0GEvzwAcDLKeRqGmSDE8lf44MvsJFepQUYxkP2hn
-	 hxeAcMMaRoYSiIUxu6Cafxh11vzjkTBDMbt1hsNWNrXiyf3crNTQ9PU9pjTvmFDfHq
-	 vkjW/kfYU2frshBxgGOWcu31Z3xeo3KsAK7XBnW3yutgI8M82RHSXO3O33Waqz/5ki
-	 S6oz8/61IM95Eh+fuzkMVlGh5es7i2NMcNrSqesoCuvNoa41FYwjwvNxtvqA/wJB6F
-	 WxUtpwcJk6ccfKOYttSh1UXnfY9E/AtI4TYMaA6HhelWSIeC3EDxolfvfUu8CMjtqo
-	 KqN968u6AdlAA==
-Date: Wed, 16 Oct 2024 09:41:11 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] media: i2c: ds90ub960: Fix missing return check
- on ub960_rxport_read call
-Message-ID: <20241016094111.7f5e899a@foz.lan>
-In-Reply-To: <20241002165329.957739-1-colin.i.king@gmail.com>
-References: <20241002165329.957739-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6YHOl+x"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d58377339so5097360f8f.1;
+        Wed, 16 Oct 2024 02:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729069694; x=1729674494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pCckWqcba+fa3Shgw28lw4/flbtKS6dT3/BQMij0a0E=;
+        b=f6YHOl+xB4PocYKL/ynkZYm/CkMmyHufzinKj+w1t4YAIEx7abyLTSi5legsIThhRc
+         Pxn8MlpK/0GlvC19sMaPVu/t4HIZ87wCfLjCfyA39kX62dHRHKvZD22op3SLPYJF+G4s
+         Y4OqB7nBVwwxvwgm1mkdEsAMkjA5epWZfNAFDuHYEmvt8c4/Pvvl+5P4VJ/9/Z/+hCZE
+         Z0FA3kwpBb+TKwnzoYNciwi8xyeiAsldiGhIIKNMawC19aaOJdGw/lHkZexGW78wwCAD
+         iNFAy1Da0FuBOVsQJo+K3v3lEWwGGeK44jDNAheAi7blnIeTd6oy1wjiJdUStsoooBNQ
+         jU9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729069694; x=1729674494;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pCckWqcba+fa3Shgw28lw4/flbtKS6dT3/BQMij0a0E=;
+        b=U8VRh+FFyTKj5ZpzR9jG0i1Bl6noTQvf8I7NQLvHSeyyOJyTCEArtMLN2Dy9ib1a8F
+         r8ojMzaZSvt2TVK0rUK9KLtPPuQeGDAKUtyn32AkHtkLUPr0wjO+KVNN8sXQa5N+WCAz
+         iDvjDZwPmbhG46E6lMk22irQ4QK/YrKtIOfB9zfn7Ova2s4URKal/VVYbEnJMNeJZVz1
+         9HTlJk7u95WuKe0KccV+8O+vWIUL0dfd/K9ZInwpChoYT9yyTj7R0DjWMVyNyI0bIqs9
+         QPbg0kW6S1lAyijJzFbqYkVP5gjEfDNpfvYTz77Pe9BqTsSr86M+d47bB92HC7lzzsLS
+         ydlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXz8DlWtyi7h36XEhKGBgqywZWiHrE65Ns6zeAOlNauE5rBlTNEJQf7SsyCvmrzIYRMxBs6bWsKSTj81Yk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi6vxRcmLVCb8PihYS4XlbrRnhuMUk8X0/T8rY3ZrZnC6szg8L
+	RCis1Hn5++gRIsm1EytR1saluuFt3gSJ50AaL9G1jwSsSmW+PzZM
+X-Google-Smtp-Source: AGHT+IEuoW36ECs0G3BohpHYmIuQ52zx189xfDZHUYwD27qVnNtffHsYOR71klxFyQQ5Hjzch7ywDQ==
+X-Received: by 2002:adf:9bd2:0:b0:37d:51b7:5e08 with SMTP id ffacd0b85a97d-37d5ff5a4cemr13000270f8f.18.1729069694199;
+        Wed, 16 Oct 2024 02:08:14 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d7fa7a04asm3780781f8f.8.2024.10.16.02.08.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2024 02:08:13 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "tunndeling" -> "tunneling"
+Date: Wed, 16 Oct 2024 10:08:12 +0100
+Message-Id: <20241016090812.280238-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Em Wed,  2 Oct 2024 17:53:29 +0100
-Colin Ian King <colin.i.king@gmail.com> escreveu:
+There is a spelling mistake in a dm_error message. Fix it.
 
-> The function ub960_rxport_read is being called and afterwards ret is
-> being checked for any failures, however ret is not being assigned to
-> the return of the function call. Fix this by assigning ret to the
-> return of the call which appears to be missing.
-> 
-> Fixes: afe267f2d368 ("media: i2c: add DS90UB960 driver")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ .../gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No Cc: stable. Please follow the submission rules for fixes as stated
-at:
-	Documentation/process/stable-kernel-rules.rst
+diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
+index 518e5d1f3d90..e05b8fddf2af 100644
+--- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
++++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
+@@ -1637,7 +1637,7 @@ static bool retrieve_link_cap(struct dc_link *link)
+ 	/* Read DP tunneling information. */
+ 	status = dpcd_get_tunneling_device_data(link);
+ 	if (status != DC_OK)
+-		dm_error("%s: Read tunndeling device data failed.\n", __func__);
++		dm_error("%s: Read tunneling device data failed.\n", __func__);
+ 
+ 	dpcd_set_source_specific_data(link);
+ 	/* Sink may need to configure internals based on vendor, so allow some
+-- 
+2.39.5
 
-In summary, all patches containing fixes shall have a Cc stable. There 
-are rules there for the very few exceptions where a patch is not meant
-to be backported:
-
-     Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
-
-
-
-> ---
->  drivers/media/i2c/ds90ub960.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
-> index ffe5f25f8647..58424d8f72af 100644
-> --- a/drivers/media/i2c/ds90ub960.c
-> +++ b/drivers/media/i2c/ds90ub960.c
-> @@ -1286,7 +1286,7 @@ static int ub960_rxport_get_strobe_pos(struct ub960_data *priv,
->  
->  	clk_delay += v & UB960_IR_RX_ANA_STROBE_SET_CLK_DELAY_MASK;
->  
-> -	ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
-> +	ret = ub960_rxport_read(priv, nport, UB960_RR_SFILTER_STS_1, &v);
->  	if (ret)
->  		return ret;
->  
-
-
-
-Thanks,
-Mauro
