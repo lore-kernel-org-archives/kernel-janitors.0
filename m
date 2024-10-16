@@ -1,94 +1,74 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBDA1885BB
-	for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 19:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657E9212EF9;
+	Wed, 16 Oct 2024 19:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729107189; cv=none; b=ZB/AyyX3qEXnJxLTp/drcs4/hScAchFKnhYktpYcEkdkdqFCk2uFmzRhbH8OW5f6WnLEsg6iYbjMfIJBBaJtAc1dTPSsjwkgpqb/z5ZF1xaHv8sE31ju2XVDhaAUWjiydfAg67oIxyH8cro6SZhhgcVLwvrg/utHuotOOPhe6Ew=
+	t=1729107743; cv=none; b=SkdMd/jUWyr8IHZSsgbL3tNQltkt4laxBiz54s88b1RjV2OnlcNdHxM5D989x4wdvN/uuZ+YIkWZaeMkRw8JGFn8054u5RCPGm/CKCaNJbAG2CEwMZDchL8lK19OKDJ8WQl7bI1VzlCXOWHrput4nzpoWhtYBdpJywKps+8vS64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729107189; c=relaxed/simple;
-	bh=A0/ojgL2fvBi172Wbp3BrgprcWdWI/pifihLOrfrqFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DyfS+s47/59THDC8oQp8hcnpl/wLrmhsSPwYJOnuZ/6hh1egxYHE/OZFdiLaNnR6+buL39ELLMAuX73A54fvEefwDpQZ+Qgt5azCvbUM2yxCcxEGbFnYHVqknQOTMUy5hLJWY+cl8DiB7Ycvml2xIotMkb+xHALHahzwHbY75cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fto4zm8j; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1729107743; c=relaxed/simple;
+	bh=6kuARo6R+izUJawqtMLy82AYZrt2UknikmPasItjF6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=mttfPJyiWCNgPMFtoblmGwnxi7SDnVd8Ww6h8XgXA1t+NWUgour2jOZJMMYDy/BtDYBcFFME2vknQM3RTkX6PUQ0wkRn00bvkAoHNKlwdC9fxqnhNDKeLqOxlXfHXBGkSkEdko8lK1nqXn/UaviKgNRzasAOE/jp9Blh9SDquw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kq8Ex3+o; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fto4zm8j"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e1f48e7c18so2299367b3.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Oct 2024 12:33:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729107187; x=1729711987; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0/ojgL2fvBi172Wbp3BrgprcWdWI/pifihLOrfrqFU=;
-        b=fto4zm8jEXnrZwyrpLSk5wFdsLKwuNQ/MKYiEiwgJu3nGAyxURoDzpcc6WuvQ5EPlG
-         TreAAUM8XekH1LN01v64Yz2d7TQO+rZtNRKQTKCPT07zskLzxDeoViqpLEfgaRSdv2S9
-         lugKzScVhNtzA3qj4wIDd82kJYoWmapBCb2k7mVTe6Py9AcN6Ncem8iDFH33q5bQMj/9
-         DNshxbxJJ4pTbjPG0mg0AKDBXA3O79cstPamh4zVOpO0SLMbmVvyUCc1rqbGS3p/vgh0
-         YX4sXDk3T7Ul1BYZ9wIsDq6UumjJMPGw+N3/rOraIYe7t9vhK/3wAtCSWmUwm4oNMZ8g
-         bKvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729107187; x=1729711987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A0/ojgL2fvBi172Wbp3BrgprcWdWI/pifihLOrfrqFU=;
-        b=Zjz7vOpOIly2PE4eiMLM+hAaDNaKUtiiZ9ooUZf2u4MXdJQvtbld2lNIAD+BYKPsgH
-         BfejMlxMreNiQ198DGcKHW0hKR3XFplSppjJ/8Surqqfa0oKYG/7FlYb5+M6eNvVOB6m
-         4EvdAlp68KgmEiwT6IvrC2aPCr2MuMH19GL9Qr56zBbGD7AAtKOGzGbSp//sjEebNmh2
-         aEu1M2yDpHjgOYlH0fBMfnmF2yA5Z1VkQAFY8aMqk4LyCQZGHa4XtVP9sjzSLB2L6pYo
-         HVz+tcVPkvzSNrALy9xqp6OIAdlOXevCOKeQ7gQaQ+JWv2ApUEjsPUUPmq9Eo1yhbWqp
-         Hxpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyBV7b47J7XzlxYdbb4BzyhjZuWX69c4DRKDwR2wuidx62AgD6Oa4yyAslkNA/fAMWzCQ2hfRTI/+AQHYe1fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznRiAlHMWLPdOJzCX16xBPMgHo59aqibtAuxlk6RsOaFiItCZK
-	2yMar3l6+Vr/vLo5ei7GM+oCeo9ZUZtauQFPYPspj7s7dpdjVusrH6qrJSXqyUKm/i08ZmHTF7I
-	+5mEMQ1BQy9hgoankrVH98vTH2Vvs9Ny4NfD+Hg==
-X-Google-Smtp-Source: AGHT+IGX07jif9j6w8MTv7ARHJ9/+lXGQIE504CDxiXkTKXqPtoikEAqB670DW1Rp7uFgjkSTFhaEJvJ5+tdTlNVD8w=
-X-Received: by 2002:a05:690c:388:b0:6e2:e22:12d9 with SMTP id
- 00721157ae682-6e3d41d08c3mr58083187b3.35.1729107187330; Wed, 16 Oct 2024
- 12:33:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq8Ex3+o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCEAEC4CEC5;
+	Wed, 16 Oct 2024 19:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729107742;
+	bh=6kuARo6R+izUJawqtMLy82AYZrt2UknikmPasItjF6A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=kq8Ex3+oNplSkp/j91IAnz7zUnun8iysvY9K/o/bsFIcA/eCGuprEaNUXTR7Fk94k
+	 i8tpKIZOauSyBdcDNAOYwDXqi4c5NuL8xbG6j+KaT5Mu9WcTMbsnOkN6HUq7xKluKs
+	 WNIiUm5rVLPRGnmfLIIM6YZhAHxWMgg6ws/CVrKEDjRMZeKrufeD7ORj45ER4/++dN
+	 EcTgrrqHYodO9P+b4g5AN3vvCo+5Y6XIf44wBnS7oL1uxYuBZOrzjwkqXugcFknfna
+	 MaYnw8k3oCKLXaKRw2eBQHEFldHPIrtEEFeod3NsyyDNvYOTzY0zoII5qNXI9APyeZ
+	 6+40M0W8VizgQ==
+Date: Wed, 16 Oct 2024 14:42:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: cpqphp: Remove an unused field in struct ctrl_dbg
+Message-ID: <20241016194221.GA646374@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016155655.334518-1-colin.i.king@gmail.com> <CACRpkdYhsnRSOgdrDKp7BNqE4TpY3r--cPByFMsq0VRRjW-sAA@mail.gmail.com>
-In-Reply-To: <CACRpkdYhsnRSOgdrDKp7BNqE4TpY3r--cPByFMsq0VRRjW-sAA@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 16 Oct 2024 21:32:55 +0200
-Message-ID: <CACRpkdYxsGC5Yay0dOaQEegrLKKkLrcivX7_GVpfQsEa=psdDA@mail.gmail.com>
-Subject: Re: [PATCH][next] pinctrl: th1520: Fix potential null pointer
- dereference on func
-To: Colin Ian King <colin.i.king@gmail.com>, Kees Cook <kees@kernel.org>, 
-	Kees Bakker <kees@ijzerbout.nl>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, linux-riscv@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <551d0cdaabcf69fcd09a565475c428e09c61e1a3.1728762751.git.christophe.jaillet@wanadoo.fr>
 
-On Wed, Oct 16, 2024 at 9:31=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
-> On Wed, Oct 16, 2024 at 5:56=E2=80=AFPM Colin Ian King <colin.i.king@gmai=
-l.com> wrote:
->
-> > The initialization of muxtype deferences pointer func before func
-> > is sanity checked with a null pointer check, hence we have a null
-> > pointer deference issue. Fix this by only deferencing func with
-> > the assignment to muxtype after func has been null pointer checked.
-> >
-> > Fixes: 1fc30cd92770 ("pinctrl: th1520: Factor out casts")
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->
-> Patch applied, added Reported-by Kees since he mailed about this too.
+On Sat, Oct 12, 2024 at 09:53:42PM +0200, Christophe JAILLET wrote:
+> 'ctrl' is unused, remove it to save a few bytes when the structure is
+> allocated.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-...which was actually the "other Kees" (Bakker), not the one the mailer
-suggested.
+Applied to pci/hotplug for v6.13, thanks!
 
-Yours,
-Linus Walleij
+> ---
+> Compile tested only
+> ---
+>  drivers/pci/hotplug/cpqphp_sysfs.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/pci/hotplug/cpqphp_sysfs.c b/drivers/pci/hotplug/cpqphp_sysfs.c
+> index fed1360ee9b1..6143ebf71f21 100644
+> --- a/drivers/pci/hotplug/cpqphp_sysfs.c
+> +++ b/drivers/pci/hotplug/cpqphp_sysfs.c
+> @@ -123,7 +123,6 @@ static int spew_debug_info(struct controller *ctrl, char *data, int size)
+>  struct ctrl_dbg {
+>  	int size;
+>  	char *data;
+> -	struct controller *ctrl;
+>  };
+>  
+>  #define MAX_OUTPUT	(4*PAGE_SIZE)
+> -- 
+> 2.47.0
+> 
