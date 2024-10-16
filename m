@@ -1,41 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A491D205E11;
-	Wed, 16 Oct 2024 09:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA9F1FAF17;
+	Wed, 16 Oct 2024 09:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729071538; cv=none; b=hP8aP7nFCu2DOYY17w+j2tvMunOchlBS0pQ9+eshyr8CSjBWHB6pJLkHzsXjfvoPWsHaFmt6bPqg6i95f7FflDOqZjTh6YMB6AXjviz/pvADPFGxZmWQKU6fCNN5moyXeOn8DKIYSqE3TKMbNNc+PJj7+NKWE3TCF30i5Zpnhmg=
+	t=1729072505; cv=none; b=nb7i2TXof2t71O0oyUfZQCOpiozFmuqyh1D1DDphtNWWDIknNEWSgT+II2grXdQXU30I1iuErc6j1MUhNdIaksVumo6+A87KRRsNZ8kpcwo/nGOAFZPxSoilIOc2hVDBMUsBGoDEpYngU0mT4Qh5OKEeBEXvBUb/hqgs2I0cSzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729071538; c=relaxed/simple;
-	bh=1qNWlha39QPc1Ly/s5ajEd47r0N517ph0wNTDjVEGDM=;
+	s=arc-20240116; t=1729072505; c=relaxed/simple;
+	bh=B33N9NCktEKQzY6gUrpC2zYWEtyfJKfOrZV2IutPllQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jlA53aqhz2omDlOu1pV/gKm+Fkr+3ERNzPNTmkhNKwFwXo1L6G15jDBc6iWzzNk9On2gXQPrstovEFnh5fWk68c6ISB1SWM8eBbVTb4IoLlnz68oztsEAmj2sIf409/YZQ69cmN+oRjHYop0Jg+vvuhmLUY2JjIU+VDYLba9A/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LwoRvWZS; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=SfMEX2myv9oE3BWzNybQghbw64hRq+nVfOV8pcqPATn4J/W8bDm22qYWzqbROepabEbBKfK0VxK1Fsk30Rt4W+kst17rqInH+nscp9CCH7KWO5Zd47TwU4waWAz9QKRjtMCV/mqW52+M/dx0gfLI/nUs2ZrG8AmcYMsyY2vItbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Je2FlEoG; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LwoRvWZS"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Je2FlEoG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729071498; x=1729676298; i=markus.elfring@web.de;
-	bh=1qNWlha39QPc1Ly/s5ajEd47r0N517ph0wNTDjVEGDM=;
+	s=s29768273; t=1729072459; x=1729677259; i=markus.elfring@web.de;
+	bh=B33N9NCktEKQzY6gUrpC2zYWEtyfJKfOrZV2IutPllQ=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=LwoRvWZSkfYs01v5E531zNKtNo+U4LRmyxrCZ5iGIwD6/QoXI7YpBJSjrEayxmMg
-	 aTxyoA7HWHib3HhIBehoteteCMXTGBufoyOMPCTxeR5vt9NzjORjG6hVE2wc+/w9a
-	 N5bUg59sgEXdb7xsLWX7b/NIvDwf3VwaxGcL2EZ+59l80WSjxg9IICUJMIwR8cmfJ
-	 9hbBjKQNIdpGC4SB+MxDw7B85bCzm8A47w6Sp61kHY+aUmA/GG3Br3eTpD/8U7XnM
-	 f2LsU+wY72NgfMzbqyQPVvsxSRnHFcvgmdTaGDPlFNTvMkkuCSiDKXvJRZN9XBtM/
-	 Xf1SDwOfsXUUCfBmdQ==
+	b=Je2FlEoG1wn1fI2boLzaSCHA9EUoNF+dLrvNmQVKhwvyLQaab6SDfCTOC7HeVHmh
+	 nhYKmAi5n/f1lkTKGFmbMuck4ek6ag7oyTa+dgjf+Ek/v5tJM36FMXypYT8lqokBM
+	 J91tjrKBcnlxetSDpRYbGDMAiD6+hOtgmGW03ADO3jbvoYeN2M5LcUf8E09Zobutg
+	 jJqZtAqssIzuEvLcT06PUQZmJ+T/NazeSZIxtFovPF0m7prsfhhGWy/m/PkODpuWs
+	 Ke8Zd4UuO0N7xca3w7dHvEIaLQBUk1He+8RaAhGyjz3HoJ/6BO8lX1jSJTPwk6Z/q
+	 DE0enNNycmOFXgIr1w==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7QUL-1u1PBE4Bav-017oVD; Wed, 16
- Oct 2024 11:38:18 +0200
-Message-ID: <692cabd4-038b-403a-b21e-69a2b0492e57@web.de>
-Date: Wed, 16 Oct 2024 11:38:08 +0200
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGgNS-1tDiK90UFO-00Dmjj; Wed, 16
+ Oct 2024 11:54:19 +0200
+Message-ID: <42c7dfe1-451b-4f70-8358-725cf3eed549@web.de>
+Date: Wed, 16 Oct 2024 11:54:14 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,96 +43,59 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v4] irqchip/renesas-rzg2l: Fix missing put_device
+Subject: Re: [v3 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
 To: Thomas Gleixner <tglx@linutronix.de>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Paterson <Chris.Paterson2@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Marc Zyngier <maz@kernel.org>
-References: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
- <663a37fe-ffc4-4826-b8ba-bcefdb0e7992@web.de> <871q0hdofq.ffs@tglx>
+ Kevin Chen <kevin_chen@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
+ <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de> <874j5ddow1.ffs@tglx>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <871q0hdofq.ffs@tglx>
+In-Reply-To: <874j5ddow1.ffs@tglx>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dpzg1uJ8a44W5ottMAMvWnOcF5NjfXFRWQXFJuNIHmHtUgJ95iN
- doSeAhykY7I0vmCWQjcEbraTPtQfYDyqZF0gALjYTb7gZgYDqHY4/jz5xJkIzYw7a3vXXDF
- Ki/JmxN6diSQ9rgCsiD4B8xjNAdzmspIG3JpfLud9KsetK9gg4E/dFcZEsKjjJYfbQqTb0Y
- kkF8xxsHekS/bhGLZviIg==
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:5PdP4OeLPruXhve1TsYeyQlvYAJ06iKJriezhlJsCtBxNnKyTNx
+ tNA77FMgapaBdZdjEsYh5tNukeEBponwO2/mdM2WRXYPipqo6efWLIslsPF/dmaBgTgIIHG
+ 9blNFdTKuFT41sDFmnDzkCWjPZDuGGIFPMhj00W4i5aTQxEaNeisM5aBtn3C3aDSAHnMT03
+ 5T/ms4ppv03+sfNzkZBWA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WCpCtI+ZGXk=;VKAI/nwgqM+VAvtPWbWeIeR8xjr
- NIKQaAIHIz7Jz5a2B8YNWTvJ+mvRWMKPwqgbc2OM5e/t2syW+W/pVl0zgB34WXK3K+F6hj1EC
- U0m53CsivrsXWzeR2UtxTpMo/7820I2UuLIEOMf8qRY7jQyvLxmZ6ietLjONBoUYqenX9U3FK
- MCzZM2Gvs7AKN249p0/WYbYOP+8DHCbsTBJAHHIuHH/m3eS4EfUTIKzvNJqjJ2eW+fWdNayVo
- ppdIYx4g7yz9ARJojW2Bvb3xFIGOqme50hAf2FkvQFJtfKZjlfZmzJ5sKUYOOvMVhgRXB6eBo
- HoPd/BhnoNNquAl4lI689HLP27J/Puk9wan2wBxa1MB5ka6UnjT6vup6zknPEj3iGa+tbzBbN
- hHe0/unIhqsCrJvxOJ1Tp/MrXK7h9pzoqLqmYJOFkuVE0VR1zu6GNLQOK/xYBrIwdQeTfrgCM
- gipM7xtnWA2qqE4Zc34e2gOsEDLOxdRBikb7LK5bulD48CyrBvXMiBjTSmw9R3vB6piJ8yxuM
- FxXUO6DanGZOhAG03dF7MDGN2DEGgb6O4coa26m6eUlTANbTZUfb9U8NR09+oInU+jX1vbtDp
- O6f2ELRpWjgMBZA+abJxF/lopMP1nxdCUG9gYOOYDUmPYhdvFcpK+e+a0ZeXA3Cn81whebs8x
- GFuFFNdt3KQFZF/DqwAzN5xQWo/PixXHFLUd5K2JENWtEjrZq56NMbz5jpNAvBppwhl1NIpFB
- PVK0BAraBn6EpQdvVf1Ds+gMSbAR64PhU7DRKCU1HffRMEzUWcRrRA5Is5Omp+cJORIl3lHjo
- mBsffrvWgh+sGKIG0BWQvwNQ==
+UI-OutboundReport: notjunk:1;M01:P0:GDpmqTIObF8=;P+X0BK25UKhmiTH5Wz/6TTqcklE
+ C/eBsj8x2ZwmC5cHvXLA49jMiMcLY12hG2naqPWceqI67SY/+2ao69O+zfdvI6GyL5qdgFNKa
+ LTgbjkxJ0ViOaR9AhJE3ImYx/Peh7TArul5Gwsmtziopxz/OsXTjTUgLQMUirnBJ3oC041jW9
+ 5cwMh2+qy/PK3AMzdWI5z9MAiGv1jywQDeoSjVO2MCqmo7mi86XIe2yPUCQ3BT5eYLTPM/Izh
+ L53gJC5EG6dSRPnEuoanGBLnVPgBVEYd2Xyhi5TeUtXzW+zA6qlJwzdr2bjRheOcfpAnYBxnZ
+ rmbnI3qUxbV2LK9C0iA3uqO14ASDbLnzZf184D9bSuIRysOwf5Kt8Ge+qBUtyqfB+8Uwt0/RT
+ EY6AzoCI9idnxpm6tdLdWucU0vp6b5BaAtXKFH9gszMLuxa5h+9lsZbmJISl6BWhz1Pri6Nxl
+ MdkBSew4sMwG8l/JB+GTlLlGYjbjCaBWwb6DxIfN/uxoGVgrm1aN3euOwZxkBh+p+AWORUOKC
+ svcwtVudNFGDc7q+1qQXRhEvj/VITCbs95AeQrTjQNSGFjVGTOaH6k7717UuKb1S/SaHVknrK
+ yjU4Re6IsAGhWDmBjJWXLNevczVm9dHuZgKTu24WK508oyp3uH8FbV6H5uMxzhv7+/BY36exo
+ JwvR7ytBkatPki8VqYeuvnVd8v7dZ7+FKWp67ZvcWclXsJ/jO5eTIeiAkkTH188V5vfFmT0Nu
+ HUIlA69XcqeZT8c0ZpIMEy2c/KV3HhH/2N8060jNdHqUJI0F2u5fJdaCYSrk8nc3Zdx82sE0M
+ FANtqddy42xjvhpS1AWw92nw==
 
->>> rzg2l_irqc_common_init calls of_find_device_by_node, but the
->>> corresponding put_device call is missing.
-=E2=80=A6
->>> Make use of the cleanup interfaces from cleanup.h to call into
->>> __free_put_device (which in turn calls into put_device) when
->>
->> Can it help to influence the understanding of this programming
->> interface by mentioning the usage of a special attribute?
->
-> Can you please stop pestering people with incomprehensible word salad?
+> Making a guard variant of chained_irq_enter/exit needs some thought and
+> a general plan for cleaning the whole chained irq usage up. It's on the
+> cleanup list already with quite some other items.
 
-Which patch review comments would you find more appropriate here?
+I became also curious how API usage will evolve further here.
 
 
->>> leaving function rzg2l_irqc_common_init and variable "dev" goes
->>> out of scope.
->>>
->>> Mind that we don't want to "put" "dev" when rzg2l_irqc_common_init
->>> completes successfully, therefore assign NULL to "dev" to prevent
->>> __free_put_device from calling into put_device within the successful
->>> path.
->>
->> Will further software design options become applicable here?
->>
->> Can any pointer type be used for the return value
->> (instead of the data type =E2=80=9Cint=E2=80=9D)?
->
-> How is this relevant here?
+> We are not adhoc adding a guard variant because guards are hip right now.
 
-I imagine that the usage of error pointers can occasionally be helpful
-for such programming interfaces.
+Application interests are growing, aren't they?
 
 
->>> "make coccicheck" will still complain about missing put_device calls,
->>> but those are false positives now.
->>
->> Would you like to discuss any adjustment possibilities for this
->> development tool?
->
-> Would you like to get useful work done insteead of telling everyone what
-> to do? There is nothing to discuss.
+> And no this does not need a scoped variant ever.
 
-I got other impressions for corresponding development opportunities.
+There are subsystems which seem to prefer such a programming interface occasionally.
 
 
-> But this change fixes a bug and that's it.
-
-Maybe.
-
-
-> We are not doing cleanups in a bug fix.
-
-Additional adjustments can be offered in subsequent update steps
-(within a patch series?).
+> guards are not the panacea for everything.
+Their usage might become more popular.
 
 Regards,
 Markus
