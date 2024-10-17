@@ -1,110 +1,97 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED241DDC31;
-	Thu, 17 Oct 2024 18:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D11817DFE0
+	for <kernel-janitors@vger.kernel.org>; Thu, 17 Oct 2024 19:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729189589; cv=none; b=EZtd91ImzQG8b00KksowTSA2jgLIUCLAS1Pc4Mf3aPqp+AeWY14IEf7JuIbhEcPvoaEDeK+AM8Am5tN0TohktVOtC5Lrj4jiKzD92E+EcF7umoWcxtZQK6pZl623RWBNK3fPK/XT7MYnH8lTslPrb7E8tD4mScwgMJfO8ey3zfk=
+	t=1729193518; cv=none; b=Yyqs5L5r33V39gxIAEZbB3jI2lHpYzgD3d+TbK+2/ApHwzpQrRrUvahWNpkuWjRQ4L3vWCc8YoQmylLEAd4Wct6vwnp8PtdRypjBwMOO1FVoH5eplP/IaOiQzL3w0KbBwLMmibBo1DaTbgi6sc0mn9jHkjJ1YxR5nSUoLmDQfzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729189589; c=relaxed/simple;
-	bh=73LhArcldW9YWoGAUUDQD70Xc6UvchdZ6iaCXM4EhDw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jyW8+D65RwHqnh+8g6hxgONCbyq1Tq9LsPn7wsuiq7mQB6qBxQuSru1lVpDuZwCeJP0AbfP6gemDCz/Y4ky6DeD1XJnBQDo3R7lW2Viv6mK5j92gSje70paWDC7wPqAcNYHKHhjdIMq06+DtnKKlNjxLFtoWpLyIQWdnZ+0GUdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Acw9OyjX; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1729193518; c=relaxed/simple;
+	bh=dAkeaamY7o1370cUdKQG7yxKGStXqWiEAMiubdm6br8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YASmN2yieKOGJI6LGYTfbqhgNvPxG7kObyPO95r/Ynhs01L+eLSbLE11FI9vk1xzd47JqVM+dyXMEn8DldSbXCcPVcHiEMm35cpUHyXJT1tXo4tt2aqzTF/Z6CMeNeMwOJi/7q7Em0TvIa0Omgc9nifS9YYT8WApEEJ3RZIxCqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M6PF+v+d; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Acw9OyjX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729189584; x=1729794384; i=markus.elfring@web.de;
-	bh=73LhArcldW9YWoGAUUDQD70Xc6UvchdZ6iaCXM4EhDw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Acw9OyjXs7wAmlpf7VNBmGHcv6iA4K5tdMUMd+KTlEtOk/1/nGtHTQGBxm6PqwyY
-	 k92/DomDJkbcS8nNgDuibD3wh/8Cv3ASyCFTYRouH/l5IPc9D5HcWxRnifMVgWWYI
-	 Ja6dz+31TvUmGjf7Q9DS5IO0KonSstj0O4OwlF21EBOkLv003kKAfZMGq/ZP1xcub
-	 6STWjF5xrwDmkz6Jsj+bi+T7+wq/3a89jEiaV36JnKoWcjqzKbShyGvxTYjRzKlUc
-	 UU26gqp6n536/6hoHx4P5H/JmlIfcwLOUGM0G6V7An3pzEvvHIseMu3hU48BkZeha
-	 UVWbmhqIQ9HJnw6y3g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Ml46y-1tmyTI2g8a-00lUMp; Thu, 17
- Oct 2024 20:20:36 +0200
-Message-ID: <e8bf7b33-01da-43fb-b71e-cd86a02be2e6@web.de>
-Date: Thu, 17 Oct 2024 20:20:33 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M6PF+v+d"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a99c0beaaa2so210108666b.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 17 Oct 2024 12:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729193510; x=1729798310; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+PI6B1iY+JP2eo71Lss2ueaqQvzi03LBy+TDhNeB/Zc=;
+        b=M6PF+v+d9fcEMOCsw5XOt4VzTOpjY9o+uyqpThUW34bL7cYJ6fayc/IvN03gd2FwaT
+         xYdC4AHZ3fkwOZPqZ4YFuD9sIljaHKYWo0wgJf4nPxIzVqGpRTaEZCeHJ30dmfHLjVzn
+         cRvlP52U20kua5gecnh5TH2XFAlPWARw9bhoHZl5DaiYRnc2dnogbHdVZIVmbWj4kzz1
+         f517Vxarwy9U94CPhVW3RKYkfhkR036vAf7Bc+yrca45DWYVyAUUX8ndcgvLmRJRoFeD
+         tIBfHs/rH8MGLtQhfelgQdPJpkJoTP4vYS978tkDvmZ2QPntrSs3WUG9E1pvmYqorV34
+         D3VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729193510; x=1729798310;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+PI6B1iY+JP2eo71Lss2ueaqQvzi03LBy+TDhNeB/Zc=;
+        b=QP7jJEzax2pQuP1h8g5dBZVrS4XmK46AkJEfZcexHr3drlp8WIGCDkL2uvouInjKV9
+         4zWk/qAE4Zmdv/R9aJgS18X+6OgW4YsF8DVj9AniAeDB4zQNhVVtK4qm+zdetvzlgWx/
+         VzFaf4CD+OBQeDmgu41TdfNkTr+kUmAIGRChbC1YqgWXSYa8rQx3YigVQRzZm0kfB2LI
+         L2CwuIjfLrpkJJE2mo7VH9ULZw1hqUbjY/My1NYt1Wbi5CK3JP2bo9IvhNeevm7JYJ0B
+         J1LQsYyIFvhEvTBN9k9fb19OrnlekgPWUJFLCU6hxf5uDc89OElW6y/2d/OtP/BWHy1Q
+         yx/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2eSSmoEGNapNTUkSRLXNgACZjWNe1vVCzX01iTqC4gKyLU6G1HrKxVRO7Hd2Og32jVi/Lh+gjViTJRcgwZ1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyORzsY0RPt5Z+mu5pJSIIFPsQ7uhfpZYhVx/dvvnbjydW2IesT
+	mKIPMIJ1TKKJYc99t2hvbW0SZ1/o3fVpxaTgpnMGOvRnc9OB2yLlyEGTUN5Qu7I=
+X-Google-Smtp-Source: AGHT+IGJon+b9dsLW9OFTm+VNv4AExNUwMLbQMOv3biKDHICy+rUsUPzF2VOZMg3pm/HFx79t1+13g==
+X-Received: by 2002:a17:907:f709:b0:a9a:b4e:b9eb with SMTP id a640c23a62f3a-a9a34ec99e7mr838913366b.46.1729193510331;
+        Thu, 17 Oct 2024 12:31:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c29b73sm2298166b.202.2024.10.17.12.31.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Oct 2024 12:31:49 -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:31:46 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] staging: gpib: fix uninitialized variable in
+ usb_gpib_command()
+Message-ID: <a7fed100-ea4d-4dd8-97c6-3fbd2c15f795@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: kernel-janitors@vger.kernel.org, cocci@inria.fr,
- Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Herbert Xu <herbert@gondor.apana.org.au>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: =?UTF-8?Q?=5BRFC=5D_Growing_usage_of_the_attribute_=E2=80=9C=5F=5Ff?=
- =?UTF-8?B?cmVl4oCdPw==?=
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:fOqmabauarM4Mm0Kro7lXPvx52ESGm/sJk6b1D08p6JdQW/nbQv
- UVgShpEpzfIYu/mwL9TtDcPXwyr0eE3HOG9odyw+wdkeca+biwkLt1xZwqIEWcIOpz+C3ls
- Bd2dnBF/Q5KwQOzYbKwgMK3LefW3AFmVzTrJ5wyjAq/bJc4VyLhz/3zBscOUNUgnMjpOeHg
- FNAyA8c87vZVpeiDxVDiw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FaRCpcyoAOM=;Hogbr8WehlRKd2Tt28sGNg1TOPN
- z3I0tejqAhGQ0fMHh/WoQqRAxLHh+j9ICftflvaGSMftdIYbW83ZbW9qQi1jeYzfEt95jUBee
- fvS10OpVhies0Yzuia6qoGiOi4l7cXhfOKL1Y5gIq9cgEePXh1GxeySvEdsm+fGXZGnqnX84D
- tlMUa0esT0dt1o4TZSgRKG/iIggjcePrQlgscH1hlMNG0X2zmVuwCcpBDVePn1jWJCOTsUdA2
- KfjLpQ6tPXyVMBSC3nbYJc1g5+kZ7yXPwgO+BdwUI3FCPEFe+8pZ3VZCZnJ5uHmaWB0uua0Sv
- thjMb9jbfXVpDbkTyZwyKI7akeh96sIvJAojahvq+9B5e0tQ32NCasVSDBULIGJzxZJ4qJnIe
- qL8/2Qv909gU0AomvEhoBEgwZEdVkme4mjTLt+VZusFJzJZsq/kAqNpbkQ4s3Yf1oZcN8sS2N
- FGDEQO5Bq04aVrL9DPnOYwCje+JyzvQi990vVSOeaDJXOkqdv6Ga1/7Rl3elaOCQ19pamQ1wN
- GvFs8KN4ch98dJAShcg1fx0N8kBsJgqXjWQYALFWVvXkwaRHSKKtPrwB/podvAqIOhwvNwie+
- yqErxLrU/uwX7E0KNl4b3ieKhQ9GxjYh8u7jIN1w10Cp4J0yAcvkjGQNj1LqUwpqTKwfIQ4Iz
- uEgQ6Yo6xztxcciir2EeMiFicPv3uTO1LZJCTsq1iXwGyccHM413IuWCJx0grQtBaWgG9bxQE
- AqcHlMKWN8Pe8Xi+gB5yhuvY0KwbjTrle4f3MtgCEs/zD/jr2KDElfOtPOZ04kCLXp+bKjOz+
- Wj2oZBs71tN47QhJTM+6WAPA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-SGVsbG8sDQoNClRoZSB1c2FnZSBvZiB0aGUgYXR0cmlidXRlIOKAnF9fZnJlZeKAnSBpcyBldm9s
-dmluZyBzaW5jZSBpdCBiZWNhbWUgc3VwcG9ydGVkDQpmb3Igc29tZSBwcm9ncmFtbWluZyBpbnRl
-cmZhY2VzIGJ5IGNvbnRyaWJ1dGlvbnMgb2YgUGV0ZXIgWmlqbHN0cmENCm9uIDIwMjMtMDUtMjYu
-DQpTZWUgYWxzbyB0aGUgY29tbWl0IDU0ZGE2YTA5MjQzMTFjN2NmNTAxNTUzMzk5MWU0NGZiOGVi
-MTI3NzMgKCJsb2NraW5nOg0KSW50cm9kdWNlIF9fY2xlYW51cCgpIGJhc2VkIGluZnJhc3RydWN0
-dXJlIikuDQoNCkkgd291bGQgbGlrZSB0byBwcmVzZW50IGEgY29ycmVzcG9uZGluZyByZXN1bHQg
-d2hpY2ggY2FuIGJlIGRldGVybWluZWQNCmFsc28gYnkgdGhlIG1lYW5zIG9mIHRoZSBzZW1hbnRp
-YyBwYXRjaCBsYW5ndWFnZSAoQ29jY2luZWxsZSkNCmJhc2VkIG9uIHNvdXJjZSBjb2RlIG9mIHRo
-ZSBzb2Z0d2FyZSDigJxMaW51eCBuZXh0LTIwMjQxMDE34oCdLg0KDQrilZTilZDilZDilZDilZDi
-lZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDi
-laTilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZcNCuKVkSAgICAgIHZhcmlhbnQg
-ICAgICAgICAg4pSCIGluY2lkZW5jZSDilZENCuKVoOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKV
-kOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVquKVkOKVkOKVkOKV
-kOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVow0K4pWRIGtmcmVlICAgICAgICAgICAgICAgICDilIIg
-ICAgMjQzICAgIOKVkQ0K4pWRIGRldmljZV9ub2RlICAgICAgICAgICDilIIgICAgOTQgICAgIOKV
-kQ0K4pWRIGZ3bm9kZV9oYW5kbGUgICAgICAgICDilIIgICAgOSAgICAgIOKVkQ0K4pWRIHFjb21f
-dHptZW0gICAgICAgICAgICDilIIgICAgOSAgICAgIOKVkQ0K4pWRIGdwaW9fZGV2aWNlX3B1dCAg
-ICAgICDilIIgICAgNyAgICAgIOKVkQ0K4pWRIGt2ZnJlZSAgICAgICAgICAgICAgICDilIIgICAg
-NyAgICAgIOKVkQ0K4pWRIGJpdG1hcCAgICAgICAgICAgICAgICDilIIgICAgNiAgICAgIOKVkQ0K
-4pWRIHB1dF9kZXZpY2UgICAgICAgICAgICDilIIgICAgNiAgICAgIOKVkQ0K4pWRIHB1dF9jeGxf
-cm9vdCAgICAgICAgICDilIIgICAgNSAgICAgIOKVkQ0K4pWRIGZyZWVfcGVyZl94YSAgICAgICAg
-ICDilIIgICAgNCAgICAgIOKVkQ0K4pWRIHBjaV9kZXZfcHV0ICAgICAgICAgICDilIIgICAgMyAg
-ICAgIOKVkQ0K4pWRIHB1dF9jeGxfcG9ydCAgICAgICAgICDilIIgICAgMyAgICAgIOKVkQ0K4pWR
-IGtmcmVlX3NlbnNpdGl2ZSAgICAgICDilIIgICAgMiAgICAgIOKVkQ0K4pWRIHNuZF9jYXJkX3Vu
-cmVmICAgICAgICDilIIgICAgMiAgICAgIOKVkQ0K4pWRIHg1MDlfZnJlZV9jZXJ0aWZpY2F0ZSDi
-lIIgICAgMiAgICAgIOKVkQ0K4pWRIGNsZWFudXBfZGF4ICAgICAgICAgICDilIIgICAgMSAgICAg
-IOKVkQ0K4pWRIGRlbF9jeGxfcmVzb3VyY2UgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGRz
-bWFzICAgICAgICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGZpcm13YXJlICAgICAg
-ICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIGZwdXQgICAgICAgICAgICAgICAgICDilIIg
-ICAgMSAgICAgIOKVkQ0K4pWRIGZyZWVfY21kX21lbSAgICAgICAgICDilIIgICAgMSAgICAgIOKV
-kQ0K4pWRIGZyZWVfY21kcyAgICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHBzdG9y
-ZV9pcHV0ICAgICAgICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHBzdG9yZV9wcml2YXRlICAg
-ICAgICDilIIgICAgMSAgICAgIOKVkQ0K4pWRIHB1dF9jeGxyZCAgICAgICAgICAgICDilIIgICAg
-MSAgICAgIOKVkQ0K4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ
-4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWn4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ
-4pWQ4pWQ4pWdDQoNCg0KSG93IHdpbGwgZGV2ZWxvcG1lbnQgaW50ZXJlc3RzIGV2b2x2ZSBmdXJ0
-aGVyPw0KDQpSZWdhcmRzLA0KTWFya3VzDQo=
+The number of bytes written is supposed to be zero at the start of this
+function but only one caller, ibcmd(), initializes it to zero.  For the
+other three callers, setup_serial_poll(), read_serial_poll_byte() and
+cleanup_serial_poll(), it's an uninitialized variable.
+
+Fixes: fce79512a96a ("staging: gpib: Add LPVO DIY USB GPIB driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+index aa7af352e709..4bcbaee65aa9 100644
+--- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
++++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
+@@ -596,6 +596,7 @@ static int usb_gpib_command(gpib_board_t *board,
+ 
+ 	set_timeout(board);
+ 
++	*bytes_written = 0;
+ 	for (i = 0 ; i < length ; i++) {
+ 		command[3] = buffer[i];
+ 		retval = send_command(board, command, 5);
+-- 
+2.45.2
+
