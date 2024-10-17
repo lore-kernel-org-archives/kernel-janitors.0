@@ -1,71 +1,71 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE6E22738A
-	for <kernel-janitors@vger.kernel.org>; Thu, 17 Oct 2024 19:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B09219CB3
+	for <kernel-janitors@vger.kernel.org>; Thu, 17 Oct 2024 19:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729194019; cv=none; b=sXDZxWknL3fbnT0w8rccMdn251jW8lYiG35sprsfSN1OL2XdtPcLIbMPMwhMiC3qFWLZVawqqYh6Jf6hcfstBv0LvVALPycIgPv/Ac6VRWczE26FJqbHrIDBPWMFwfekHA7F8GIB1Ds0wSP9krz8apXksjFK/Ds1TFVXn/FW+7U=
+	t=1729194044; cv=none; b=NVcdS8nNYJzXlPra3TX8JVcFLSfGcyJfHDHXI6gkArAXDop65ewPn3zZH3du9TmbBBBpPWeg3FX76KBGMFkPCyglKL0hG3bjARFNK//M4TsrxUMbELpwvcU7ypnPWZMlMDwWMtJprc1kKirZ3WCyX5IiWiU4qgLrNtjQ4l4hylg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729194019; c=relaxed/simple;
-	bh=3cjJavFR6NC/HCRHI9EPOyrqnyNGb2dE/RAZTMIh2Bk=;
+	s=arc-20240116; t=1729194044; c=relaxed/simple;
+	bh=IHi8t/Hjw1MvLyZq2tHFP9G1ZBIL5ssdRs8SQV2DQwA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Q5dnC4hJdpNO8R+v+bfDapqXHtbufhgHJOHEV48JZFJUJdQE9jUbRA7Q6j8hgSfao/gB6aPheVib8EplzQwolhe2Ggql0QLDdkHQXBsEb/20vSnkuty+dCKPs8COal3L2YI3x68hN1K2chHH7UUopgfZacTOFx1o56TdHZ7qnc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x6v4QXbK; arc=none smtp.client-ip=209.85.218.48
+	 Content-Disposition; b=L7YdBvAHP2rNOOLWGIVtRS1vO89nAo+L0Di35liwZMSKcgO4/WCJG1T/f34SK05+0fhX2S19AAy8PycFJxcbKCJ2YV57QtBpqciR5ex3/h3uAWY/wJeIADUrr1bKWNZWCk0yxesqA0nDH5h+IKrbzhNYVfOAQwHgoI9Nvk22YP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YuZBcqne; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x6v4QXbK"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a156513a1so161819366b.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 17 Oct 2024 12:40:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuZBcqne"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a156513a1so161857866b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 17 Oct 2024 12:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729194011; x=1729798811; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729194036; x=1729798836; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QZpms9R5kWODAqigQeGsxMS1uylrcIOwy5W+fcCCNgo=;
-        b=x6v4QXbKoA5p/Qg+ZWFTjQ2TBO7yBb8zMc3BLC0JA3KlC5i3HzOZhpdJuHJlVHLBBd
-         Wtgg+94A+u0Wr88PUAMmjQ/UstZW4GOq+qFqNljO+jXLMt52OC4pAvz7A/9eAnwBeyXF
-         QWaf8WGwqH35H5XidZjcPaOOGPC/D90ldKQ0iAuIHBprBcRmilb2Qra3nKT5lltcZnw/
-         nHmlNaZwRcv0/fgY93uEK0ovWKA83+qVqy6QKtOPfVBmtvO/xwGRwrDXTZ+uWos5KRab
-         vkCQpY47rz4C5lGJ7tTKizwXzQP0SFbcJXKifaLQ6gO8QN3CnGWVP5J2GnnWSwCsJr1U
-         /DQA==
+        bh=4OVlCn0UaUWh7bWeiu1Ka2GuXCsdMF034zBPeBiB8O4=;
+        b=YuZBcqne1HtwK3dHYaTNwW++Fj98cHbIkIa4YpJxe3UoQs45T7zV0OxI/W7IS1qVsW
+         yWPd/MayGSAr0A1QJ1H94CYhS4d+TGi2A5ZALoSbxFCwffQogMzxmD5yawmGEvLHb9qe
+         ilnKkgsWf65c3ZRAh0u4OCflnBCl3BQj6tYBbCag0xu4CZuJ9YGHBIL6jeGBVHsLLqiF
+         uldT4iQwJgdwnpbb44l2z+AAC+BO3LsCuwebPGHGUErPBiEg1WHIgdTvbch1+yVUWydK
+         u4QMnkox0GFAk9rITTW2PfzHhzeKJ50zE7fVN/+WIYY33bNVH8OWIHhQMo2CFxrPHuY2
+         dELA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729194011; x=1729798811;
+        d=1e100.net; s=20230601; t=1729194036; x=1729798836;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QZpms9R5kWODAqigQeGsxMS1uylrcIOwy5W+fcCCNgo=;
-        b=OTvA99OedWPtlta4V7XKws1PM5Dl5qMzZ508F7G9D3hoxv9InviZ4AKtJ7Y8MVyvLs
-         Gn68HlZk9ia2Z9GY8Rsj9G77b//y+OsJD2puOxl0kc6VoMsM3CP9Ws+yhg0auIvv6ACO
-         dYm04td6LevfvkbOe+v//l00bdIo0hFDIar5OiR2+ldNfHa6MNuAEbokYnqrhBLwINLT
-         TVfD/KUwFZTfKg2qo71KF1mEiWM0pECOIOVzbScS2W01iWp1DWPdyiMbbkq/dYL6zeYw
-         Qttc3+7XVp8k9XB1xAjiXrB2qvU/a0MsY8mo3R4Jk2Zaoc0CapEU7c8fUK+souKJXi2R
-         yEWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWXM/epcZP4hYgMOy9GhYkSnaE3+zy9T/LPXwRu/j8BMMSIaJ8ssxKInkWoaR1OwkdohTGRcKg1MoFuP5EUvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwohR/h66iS19YRQOltjJnLQA+zL7vtbSWtiXBp9lgCJD09RYjg
-	G8o+pHGEII/SYeqK/iJ4Chziq4ycUZX5+lZuBuLFAVbcSmJ4cehyTlDrYihbBiQ=
-X-Google-Smtp-Source: AGHT+IGxstbOFapOUqQjp3ZRs6n1QMqDvHLOM3P/WHoCxTXHHg04lmOTKj0g3pfWvKqi+rO1wTNiWw==
-X-Received: by 2002:a17:906:bc23:b0:a99:368d:dad3 with SMTP id a640c23a62f3a-a9a34d078d5mr696337266b.30.1729194011492;
-        Thu, 17 Oct 2024 12:40:11 -0700 (PDT)
+        bh=4OVlCn0UaUWh7bWeiu1Ka2GuXCsdMF034zBPeBiB8O4=;
+        b=qU4GVt6kVDC9/A2rzpDGfQUbcsgzJpTFccW1miiNaWL46wBvSn9fN6LzddOx9ddHzt
+         Ak0pxuaskzKA9ykX5C5iMPqdxK+qyERBYmgHjJQxQ/Kg52XP18wpc2EfB9jyRJ6ecuaR
+         sKt2zoj8K1kOtYvsMZNUajQyjTLaTbz4FBXJOoPR5mavzgYApmuD3eTy+GTC8uYOkbSJ
+         pYzWCI+FlHQyaXfxtEhSPi/SfgCsT5p2Py8wtOoTd8sTG3Ya0UilTON6hINLvDUMapuQ
+         LKBilqF7UgaA7KBVzPZ1ArQ93JDkZVaRaPuseJcR/Dhq84QMR0rLi7vfxBm8T2zRO8Kq
+         hiKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHbqy47t1nIlSNAckGKB4Pk6Jw6bR5WgU75ra5dHr0HC3yxskO31+VwGgBDDjHeoVxJztEdgQjXG+YNVPRnIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww1gqgW6CyxUZKOmwAFKk1h5qafIkbPJvm4MOiWC3gkywUdfJf
+	t7L6zUOhXktyb0zLUroAQsieKLr6EE4bMNV51oiXgxkUvyag1nI1AyyjOJAtdpQ=
+X-Google-Smtp-Source: AGHT+IGB8YRLVexFRV2mAH/o1FOXGUr7in+Kju2Iz89bABqeFQYgpmZ27BOoxu2BX9pjvnrZofmNYw==
+X-Received: by 2002:a17:907:f14d:b0:a9a:1792:f24 with SMTP id a640c23a62f3a-a9a34cbece0mr715958666b.24.1729194036034;
+        Thu, 17 Oct 2024 12:40:36 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68bf7037sm2959166b.183.2024.10.17.12.40.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a68c27212sm2902966b.201.2024.10.17.12.40.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Oct 2024 12:40:10 -0700 (PDT)
-Date: Thu, 17 Oct 2024 22:40:05 +0300
+        Thu, 17 Oct 2024 12:40:35 -0700 (PDT)
+Date: Thu, 17 Oct 2024 22:40:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ming Qian <ming.qian@nxp.com>
-Cc: Mirela Rabulea <mirela.rabulea@nxp.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, TaoJiang <tao.jiang_2@nxp.com>,
-	imx@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] media: imx-jpeg: Fix potential error pointer
- dereference in detach_pm()
-Message-ID: <ee0eac36-3bb7-4bc9-8062-1305d5679580@stanley.mountain>
+To: Lijo Lazar <lijo.lazar@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
+	Yang Wang <kevinyang.wang@amd.com>, Tao Zhou <tao.zhou1@amd.com>,
+	Vignesh Chander <Vignesh.Chander@amd.com>,
+	Shiwu Zhang <shiwu.zhang@amd.com>, Feifei Xu <Feifei.Xu@amd.com>,
+	Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/amdgpu: Fix a double lock bug
+Message-ID: <2e19e095-c022-45a3-8bb3-9a9321bc1905@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,41 +76,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The proble is on the first line:
+This was supposed to be an unlock instead of a lock.  The original
+code will lead to a deadlock.
 
-	if (jpeg->pd_dev[i] && !pm_runtime_suspended(jpeg->pd_dev[i]))
-
-If jpeg->pd_dev[i] is an error pointer, then passing it to
-pm_runtime_suspended() will lead to an Oops.  The other conditions
-check for both error pointers and NULL, but it would be more clear to
-use the IS_ERR_OR_NULL() check for that.
-
-Fixes: fd0af4cd35da ("media: imx-jpeg: Ensure power suppliers be suspended before detach them")
+Fixes: ee52489d1210 ("drm/amdgpu: Place NPS mode request on unload")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+From static analysis, not testing.
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-index d8e946aebba2..918ab12edc9e 100644
---- a/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-+++ b/drivers/media/platform/nxp/imx-jpeg/mxc-jpeg.c
-@@ -2679,11 +2679,12 @@ static void mxc_jpeg_detach_pm_domains(struct mxc_jpeg_dev *jpeg)
- 	int i;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+index fcdbcff57632..3be07bcfd117 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c
+@@ -1605,7 +1605,7 @@ int amdgpu_xgmi_request_nps_change(struct amdgpu_device *adev,
+ 					     gmc.xgmi.head)
+ 		adev->gmc.gmc_funcs->request_mem_partition_mode(tmp_adev,
+ 								cur_nps_mode);
+-	mutex_lock(&hive->hive_lock);
++	mutex_unlock(&hive->hive_lock);
  
- 	for (i = 0; i < jpeg->num_domains; i++) {
--		if (jpeg->pd_dev[i] && !pm_runtime_suspended(jpeg->pd_dev[i]))
-+		if (!IS_ERR_OR_NULL(jpeg->pd_dev[i]) &&
-+		    !pm_runtime_suspended(jpeg->pd_dev[i]))
- 			pm_runtime_force_suspend(jpeg->pd_dev[i]);
--		if (jpeg->pd_link[i] && !IS_ERR(jpeg->pd_link[i]))
-+		if (!IS_ERR_OR_NULL(jpeg->pd_link[i]))
- 			device_link_del(jpeg->pd_link[i]);
--		if (jpeg->pd_dev[i] && !IS_ERR(jpeg->pd_dev[i]))
-+		if (!IS_ERR_OR_NULL(jpeg->pd_dev[i]))
- 			dev_pm_domain_detach(jpeg->pd_dev[i], true);
- 		jpeg->pd_dev[i] = NULL;
- 		jpeg->pd_link[i] = NULL;
+ 	return r;
+ }
 -- 
 2.45.2
 
