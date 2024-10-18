@@ -1,95 +1,90 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D361B152E02
-	for <kernel-janitors@vger.kernel.org>; Fri, 18 Oct 2024 16:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B7520E312;
+	Fri, 18 Oct 2024 17:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729268670; cv=none; b=eSohNAVnz2atavjPpQyrTmWUtpPkq9cVyTAuXQ8mb6RqaWkuVe3PMGfb/jh5zyeVtFp7SwjLuVE+s8Dn9cIPxIWiJgU0jwqY7iqnYV5OvCkqPKSrCWTXXHIVb/mN7Kla2PvlOguKIHzI+9rvjQxo7cmFTXEov0chfr2kD7l2bBM=
+	t=1729271033; cv=none; b=pKrVjabIsrVSaAbb8OiCx5irIgz9RSSCC9kZZ7vnPlEBYCih67gBHz9icDfwBqdH4MS0JadgI9LUNg2UOWcRhnI1ZCSse0vyNyZeTITAyJ0R/18ddJ3zVtRVtWes0mJwQXp3si8mg7aL3knMQQtBqvJflc56+ZmuMCOB1G7Gu3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729268670; c=relaxed/simple;
-	bh=01OmuGFUNQmRAxj7LtspDTDEt788Pg4nhvfFhahXLso=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qv4IlbZ14ZGQIAfEjzSgWVnJrYGz/L4E/mQ1tFRQRvHXHxY4mF1zJFhyCMhpQk/KreHOTAWImIwxNBR9+hsDiI6o6N1AAStKgECIUdr7oZym2hoi8XbexYqYayoGS6EbYb/9ot3eGa8c5ZH036GnrfQugYrAgXtKnRbdJAx8fpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=gSNcxDbK; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+	s=arc-20240116; t=1729271033; c=relaxed/simple;
+	bh=af4nOxEDaAlJUk79W7/JLGCDf5ANyyNU0ZTLqOFFHlA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=dsaUdal631TnuaUNmUS85SuI4edyGOAw8rcJcASFx+3yqqkb0hkr0L6bOc+x6yCMwrnogXTuQHREdAEPsiyjzCYyouHekMvTez6IZ6A6IElFIe9Thx2IMOM0mwHxUvYzUscl7XiWjvh8a2KoZ3Yt35SnqrhSLptF+7DaBsXC0p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IT9DkDV9; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="gSNcxDbK"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4314f38d274so29806145e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Oct 2024 09:24:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IT9DkDV9"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so1620421f8f.2;
+        Fri, 18 Oct 2024 10:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729268665; x=1729873465; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729271030; x=1729875830; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l04dyyVzM4ASaoUOb4EeBqz615dHFIixDrN8t8rAv3s=;
-        b=gSNcxDbKwJOItjXw8KSFGWMcW5o6FPTWaa176lqFAtfHnfbCqqSoLWOCLIopXlfBpL
-         MqtIYAcVKFnqv46ZewjKaQGSP3N4odSVkTWf0XqwQFsFxDplFy2TW0Usmxuu0CHYSmHf
-         CnxjEMUuUdMY/j7INOLZVuIoor2aXY0X1/TTSuBeZOqysr5yn2+5BUVR25Yme2Sper7s
-         quEBQZ2USCuONwvXTcTJvI2FoeBBd1xh9BrwYQbDL0YfccYDNlUNUD+B1woI5oNTHsFC
-         2lL2J72TvuuBsMNItk3LHPhnQVR7pSt7j60Elsmg7MPobHtWyhBPyNJlD/Qdt309Rg2W
-         +PwA==
+        bh=SfKZpln6Wwby+6k34LZ6rWt4fai/cejuJdZ/Dg/sby4=;
+        b=IT9DkDV9tSfdK46VKtt+pLgpYBxtKVcgeLTtm83tkRFY9WI2i7joBTSs67GtdIxZ26
+         jqAjyyHY/NxfqFghvFDmPtpZFgxmlvt+5HJpfkyAMLBUuUNS+3nTu2/XJ9IiEOwFHEaO
+         AYpLVcCc/ahPb0GCOExKbkIE+CzBo6ef06FBgXI5ivzkhZU3lJmksqU/C5MrNSKeizx8
+         3UgrZaLwmui0Dtmh/mkTkYfyUS6JrjnasqZsUsYAmGVlnEvnIJk/aPvvpDBeJI9DAeQR
+         ORupYAh9NmHrVGFBfJvh4PnOsdJxyzA3R9ndH+hNFYilPECqKs5ZldlCWWj5sahkBsvE
+         XaBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729268665; x=1729873465;
+        d=1e100.net; s=20230601; t=1729271030; x=1729875830;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=l04dyyVzM4ASaoUOb4EeBqz615dHFIixDrN8t8rAv3s=;
-        b=EF4qW/6fWYn4fWC8d04cy7iCg4SNPfZI7TzhrUVHg6uxNm5dtFwwlfM91r6/rCxUH7
-         x1pjQ74eeUwRtfOtnh4HmHEPSG6fJhuvzL2wXiJ1zMNtjdGNI/52p/huzLsH7+z6x+KO
-         lZh0XvgLhuTye3wYB93p3y/3ZK+TnYk/5wGe7RGPCpcjO1uCXqdTi/BJO0PlVxk81o9P
-         w1QmqMpa9VQqGOH70dlmKm7vfe07Sp6pNck3MY/Gnk/fCdJjFSxYNuOfSiMFHNxi6cj+
-         FdqKirRL23FVFWEzg4QqBav1SHV7ehsxj1BWB8IP7DLlT0eJX7YFMGJfLh647JBP/06A
-         3fSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV39EIvHEpuqqFrcjyuKAF3Ji/pz7ZIJMG3MOoqsCjLUL7iC59yYRFtED9SloqoXi2KKA/mQq48kQXe5HCFN1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4ErQncXRXjDlBjVniPhQRlB+cfCyzpcGVNtgqDTD2A6J2VKSM
-	6/lIOfWiziJBOK/yFhG+CIlzZZZ0wn5FqaCB+Cr0xNBTXgWq5LHoWGTr9EX/TPU=
-X-Google-Smtp-Source: AGHT+IGhdQwCy7dGozKjCuyT8kKsDdG3f8/KAU4iCzV3UU05p9ozWe5ZuVHalGWiqzrKF3YocjdHLw==
-X-Received: by 2002:a05:600c:4e12:b0:431:4a5a:f08f with SMTP id 5b1f17b1804b1-4316161ee27mr24720365e9.4.1729268664785;
-        Fri, 18 Oct 2024 09:24:24 -0700 (PDT)
-Received: from localhost.localdomain ([195.88.86.203])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-431606c649csm31401105e9.33.2024.10.18.09.24.21
+        bh=SfKZpln6Wwby+6k34LZ6rWt4fai/cejuJdZ/Dg/sby4=;
+        b=vqpICrlXDQ6qQ5ihNFmJLAnc4vohKf8Pvyyfmku/csi0mWp1a6d2C0P5FPPxXmc7Vp
+         SAEFVR1QjLx35es2kg3cVrAh/E0Cd3avWeb5xfoo+bJoVl83ku4iOb0/qfdfz+jPx0ch
+         Yo+h+B9gxaXRRoN4pRR+PtsDEQslbnNuNxF119J9QstsPxUH4/Ysbm5OXsKmRxzInuUE
+         dTLdgmN2fpJivtz82WbBbZ61sU1qMYmwHz5Nad4fI9ZDjISuxvCMTzOaA5cd1gfCKcGE
+         K2KTAE+Xehq7jEDVJqQ89fR576NKS2M9ig4BEgiiHyAUC3OvnsJKaGU44GClbsta7BYB
+         r/Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhAsLWwc1fTp+OzA+PaisrakrvZgxnXCaKaa4+LlrI2FyIeLQNeGV6bDQzKbZVp7SsarqzocauNyM96jU=@vger.kernel.org, AJvYcCWtjDLROj3dcLidzIrDrf2AUbhjZPNe9zBY4nym1YyUF3fUoalyZhJZGxJRMwoCVMoqDpv+UNU3/1+MM/Ds@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6YEgwE12UqSWkHUSTiFdVB6WcQAgm8k4KOp9uzqtMNOsblhJb
+	RJrXLtUJ8ElziptYL3XdGHJQeLIA2BJK+xsZt+L6Se8+qGFGD14S
+X-Google-Smtp-Source: AGHT+IHh24BwjL+H2O9TSvYfQkICv7T8oN8MvPb7afjAbBO+kBCCjFPjdmIU6JcBFnB4oJsH1nayAw==
+X-Received: by 2002:a05:6000:1181:b0:37d:5274:7878 with SMTP id ffacd0b85a97d-37eab6ee5afmr1740865f8f.38.1729271028219;
+        Fri, 18 Oct 2024 10:03:48 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ecf0ed341sm2406051f8f.72.2024.10.18.10.03.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Oct 2024 09:24:24 -0700 (PDT)
-From: "Everest K.C." <everestkc@everestkc.com.np>
-To: gcherian@marvell.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: "Everest K.C." <everestkc@everestkc.com.np>,
-	skhan@linuxfoundation.org,
-	linux-crypto@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
+        Fri, 18 Oct 2024 10:03:47 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: George Cherian <gcherian@marvell.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	David Daney <david.daney@cavium.com>,
+	linux-crypto@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: cavium - Fix the if condition to exit loop after timeout
-Date: Fri, 18 Oct 2024 10:23:10 -0600
-Message-ID: <20241018162311.4770-1-everestkc@everestkc.com.np>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH][next] crypto: cavium: Fix inverted logic on timeout end check
+Date: Fri, 18 Oct 2024 18:03:47 +0100
+Message-Id: <20241018170347.647896-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The while loop breaks in the first run because of incorrect
-if condition. It also causes the statements after the if to
-appear dead.
-Fix this by changing the condition from if(timeout--) to
-if(!timeout--).
-
-This bug was reported by Coverity Scan.
-Report:
-CID 1600859: (#1 of 1): Logically dead code (DEADCODE)
-dead_error_line: Execution cannot reach this statement: udelay(30UL);
+Currently the timeout check will immediately break out of the
+while loop because timeout-- is always true on the first
+iteration because timeout was initialized to 100. The check
+is inverted, it should exit when timeout is zero. Fix this
+by adding the missing ! operator.
 
 Fixes: 9e2c7d99941d ("crypto: cavium - Add Support for Octeon-tx CPT Engine")
-Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/crypto/cavium/cpt/cptpf_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/cavium/cpt/cptpf_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/crypto/cavium/cpt/cptpf_main.c b/drivers/crypto/cavium/cpt/cptpf_main.c
-index 6872ac344001..ec17beee24c0 100644
+index 6872ac344001..48f878460f41 100644
 --- a/drivers/crypto/cavium/cpt/cptpf_main.c
 +++ b/drivers/crypto/cavium/cpt/cptpf_main.c
 @@ -44,7 +44,7 @@ static void cpt_disable_cores(struct cpt_device *cpt, u64 coremask,
@@ -101,15 +96,6 @@ index 6872ac344001..ec17beee24c0 100644
  			break;
  
  		udelay(CSR_DELAY);
-@@ -394,7 +394,7 @@ static void cpt_disable_all_cores(struct cpt_device *cpt)
- 		dev_err(dev, "Cores still busy");
- 		grp = cpt_read_csr64(cpt->reg_base,
- 				     CPTX_PF_EXEC_BUSY(0));
--		if (timeout--)
-+		if (!timeout--)
- 			break;
- 
- 		udelay(CSR_DELAY);
 -- 
-2.43.0
+2.39.5
 
