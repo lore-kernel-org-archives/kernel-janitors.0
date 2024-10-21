@@ -1,88 +1,96 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F355D1E0DD4;
-	Mon, 21 Oct 2024 10:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDE61F4736
+	for <kernel-janitors@vger.kernel.org>; Mon, 21 Oct 2024 12:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504940; cv=none; b=jY7y+dG4WcCtVPnFE900L3m2Fck5poP7BN6OB25XUHMQQMLxO3ptrBYEgjoxd7s+1QRXPuelDf88JoT0pNkEXpxtcFZaFqC0i+Fqcajw1hCJH1NN90AwUK1YqZ60haDdg72SfPBIoHUJUHA9trt5Dg46kR07nEe5ahk0rFVzfpA=
+	t=1729513071; cv=none; b=ojtI1J+9tmsD5GOXh3pb59D8PPy81/rp8uPsNlKnW2MKkxMGXHWaBnJTgXidtHADMJNmjRBJ/ir+H57LQV1H55+bM/dA+chvuzmtmHHLKHs7gtqyL3Dqrp3NDlZg2Rp2MMrzHcJdFGbbFhFcKN9gKQYQgHZqXbpSildgxkF7Bf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504940; c=relaxed/simple;
-	bh=bDztxjGoLMT9cbPe5QceDD5X4rmFLoxtqw7/vaEwEqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G5nwD2DMhKzkZMxKdl539bf7jJTp1S24hiCFWz3CS8oVc7qb6gvhCqH8Av7TGYdaGnH2GU9bt5REzA8I60EYHWCGg1ChZk1BiKvukPuiHBTq3xCiOKFiKxqOy+tP2mavdibfMu05oyEn4aA6NeHzkP69U1ZIcG8j4rDCiInVx0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WDeAFwi6; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1729513071; c=relaxed/simple;
+	bh=9JaJDa5MyPviy31aGKVHAgL1SbZdM09T8uuMJO3H9dE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JjNeFcmj8us7XRVQANSwPxUBy23AqMOU9sNLA069YSBvwlKD4SsOPIGg6+u7b08aL80nCVAmKrL8ZuwUWb9YLhppIZlU012IHOSIr7BTv6CkHVNUCPFPOjPPanfx1CsoCaijNFN2k6ItDp1oTUly+lXT5Lp8G4n3LrSUqcGaRjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yjT/4fsW; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WDeAFwi6"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7787D2000F;
-	Mon, 21 Oct 2024 10:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729504935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m79BIBKqneDCStQUQ14/pD49h3bl1usdmKNzsly5q9s=;
-	b=WDeAFwi61lq51jGCq2dtNZcjZYRng+WYMANNQlyiXvBIPczC6sd9Lgo5R99LEfGy0Wj3wm
-	SzmfcCM8jY0uiS/QE4GnfSSZeylVGZHUOKC/a4Ywl43vodweeWHqdMQ+zBcwTRJHx0yMKL
-	OeNniS5u+Pi3kI2z0aU42gmkRCecObZ49gwE44CMBSTIiN3mbGEW5j+8GPzBva/z4P14Ll
-	rrnrVJWRy+YLUNuF3iDnqnmiXukMRFbCSz+BoSrXAPAAfHdXzDKZYUy4IVA4/EYzMlmPKV
-	AxTzUTPQKq8w74Gv+SotqloQEHThh2apW9b763Q0+kkQuUlCBdsjWeb9RdATwA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] mtd: spinand: Constify struct nand_ecc_engine_ops
-Date: Mon, 21 Oct 2024 12:02:13 +0200
-Message-ID: <20241021100214.173157-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To:  <72597e9de2320a4109be2112e696399592edacd4.1729271136.git.christophe.jaillet@wanadoo.fr>
-References: 
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yjT/4fsW"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f58c68c5so6462577e87.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 21 Oct 2024 05:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729513067; x=1730117867; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b/lwrPsOwBrb5oh/mkFzBAjwdyTSBus1TJM49Q2CS5Q=;
+        b=yjT/4fsWV0T8jG4y4jk0A7OJd56cffPXz9tUL/vh0Qv6KIp15GEWEyNGiXqHzaUV6y
+         7TmbQw703KTTpUoPTIsztOh7dTXZLdupQJnG0wURc7HEmu0oK9CIaLFAkakrJLv0GX5X
+         wuvdEZKrLijsS17WNIrstbCWvgaxiaRQ1XX91/3BIlGG7BGDq7LS1XEWBv2TrOlpYqLX
+         0HDL16hIurbTO3zISqVwFNrcWKbMUF1z/UnxoFDSH3HwT3o/l3NSTKz0+k5Bmps8PcOu
+         q7hDK9OXsqjG/mUfJinNr97t5+sNR1pN1rfB57uDHQhenUmS8sZ4X5CwQu0enPlN8/o2
+         X3EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729513067; x=1730117867;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b/lwrPsOwBrb5oh/mkFzBAjwdyTSBus1TJM49Q2CS5Q=;
+        b=BDVLLPbgf69c4AowLKo5+W9PBYeFwDzbC3IBKuokoRH4pICHSTBg15wesc5ddFVHug
+         3IRbN7yAMUDPs5y6pG1glvzfk384/T634BR+tibM1YjkjdY8NRFNpxtTDzZR7ljqHfka
+         PJgKsSDgXO2o/vIWQvDcq7NY6ZMxRygI7SpWtGU2ueunb9O+Lhah11/sMp7nbyn1YVvX
+         DSSeUFBwKHyG/sm7NYDzr46tLnMQarqf1o+n2nxLJADvcZsIb9jYyVOfS2jBPkd0P3pZ
+         noLEeU5bY3+VNXbQyadkZhtajbJOeWXWVMeD/kW2clFCyZH1UwKw38w5GK+bV9mdbpyf
+         vJyA==
+X-Gm-Message-State: AOJu0YymaV62XCDy3lNJLh3zsSfgNRAO/KOuVYurvO4kneGJIWueAS5Z
+	1MYiuXzkryng/CcAn53y6Eh/0NH1bFf1EQH5n/Yp1Q00WYQczdAraUzCMmtSBnc=
+X-Google-Smtp-Source: AGHT+IEP6mcffhGZSX7EvL34NQS3DEgeiHeuK3RZgNWRLKAjBPSyrv8ab7zBjb68JmV7/I2QOU28cg==
+X-Received: by 2002:a05:6512:b11:b0:539:8a50:6ee8 with SMTP id 2adb3069b0e04-53a154da8c4mr8581550e87.57.1729513067076;
+        Mon, 21 Oct 2024 05:17:47 -0700 (PDT)
+Received: from umbar.unikie.fi ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a22431454sm464210e87.212.2024.10.21.05.17.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 05:17:46 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] drm/msm8998: make const arrays ratio_list and band_list static
+Date: Mon, 21 Oct 2024 15:17:37 +0300
+Message-Id: <172950935861.2053501.4420742606956398087.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20240912151037.592477-1-colin.i.king@gmail.com>
+References: <20240912151037.592477-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'af264e5989055ac33f413c4c80874345cda0cc97'
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Fri, 2024-10-18 at 17:05:57 UTC, Christophe JAILLET wrote:
-> 'struct nand_ecc_engine_ops' are not modified in these drivers.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
-> 
-> Update the prototype of mxic_ecc_get_pipelined_ops() accordingly.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   16709	   1374	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->   16789	   1294	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+On Thu, 12 Sep 2024 16:10:37 +0100, Colin Ian King wrote:
+> Don't populate the const read-only arrays ratio_list and band_list on the
+> stack at run time, instead make them static.
+> 
+> 
 
-Miquel
+Applied, thanks!
+
+[1/1] drm/msm8998: make const arrays ratio_list and band_list static
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/71f40d32fa4b
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
