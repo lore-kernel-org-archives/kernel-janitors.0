@@ -1,146 +1,96 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B361F472D
-	for <kernel-janitors@vger.kernel.org>; Mon, 21 Oct 2024 14:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978A41F6661;
+	Mon, 21 Oct 2024 14:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729520113; cv=none; b=hGhNlSF4LjPyjfV0J53AcFrws9tgrC8FKo/KMS0rPhGj4VfuxN70+hw9bJVk6qLL9qv5HkzXX48SmEbh2TfhrmhUFvoYFCkGHcmJXYDbeBCQ8TrMa4wAflMHZsGp7L/KmN0VySTo06FQIMnK2CuN+1ArtUMEdOET0nmzcgCreOA=
+	t=1729521669; cv=none; b=TPJLOp9wiOXfBCWJAAzid8n07nwiHtLwKWeef6b+eVRDKfxNKEpiwjCibM96BpAIX9jV5cLysbW9JI1kabOX7jiPRXmx197maud+1se/uRJJuGHrOv32aghBUXnYLYpyi0RkA1i2TJFPl5JB/dfcdnXViK3qXu3lYoY4ZA6uuEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729520113; c=relaxed/simple;
-	bh=dah3JuK6Qj6IQal1Ny+jb8WrCPXjvhvSomfNkrDZ96s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PkC5dgv/Tg1t6pF5EFtRAslsdOuSLNImkNnWJqI9UrDYDPqgAxAYn9nL9Ab6hQSxnHF8Vxbgdg2dw2FTv1bPd0iERuS/yvWFSy7V5/hI5zZzj/L7w38QDH7sR5NIj3b5HtYDAW9iHE3HuJ51eX6geTyNb/er2f2Je0xrmsBxraI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCYHqI4d; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1729521669; c=relaxed/simple;
+	bh=wEJWjkfmcIKHp4iFivlAhHssAMAlpxNOvJ38VUX1szw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aJxSzTPlw5oAyiLtTMr1wd6n8A0iH5dkdcKHu/2lVwhXTQ+o3Bgw3M+0zsFFnAPWpyzPV3oIRZa1jh3HzwzwIlrXH/AH9KbZW3PpbuO8BIgLTVmRGXdKZxVVFOiIesMnoew8ptqKCDKpOmo/Rxl7Q8EanH59hRBiPvCt3OF3b/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GXuBW79+; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCYHqI4d"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729520110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8PfOG8qztLmjgi5lvFTsWGzlDXgKb6KxReuT7wFO8Gg=;
-	b=hCYHqI4dYjXoehHoGEO+qWRuf/9/xTeiqO+leIti/H28zpw433goRAc5AEQWIWceA61aue
-	KXwqhmRJ1r2CnGymBhkdKqWdkEfKTiNgUCNhMr7H2NMI6WiN1j//cKAiU2hWrwxf058PMr
-	ck5L4BF36qOMVlhZ/NrjjRM8ujNAwMQ=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-NI3HKU-rNZ2TAkMolAY0qg-1; Mon, 21 Oct 2024 10:15:09 -0400
-X-MC-Unique: NI3HKU-rNZ2TAkMolAY0qg-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5c95ec24f1bso1258631a12.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 21 Oct 2024 07:15:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GXuBW79+"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43161c0068bso31709165e9.1;
+        Mon, 21 Oct 2024 07:41:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729521666; x=1730126466; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uH4DYrdYY8L09XhmIMIGq2jeejoQelZaPPckG7Z0QvY=;
+        b=GXuBW79+4Gr935ZVMGhGM66/NGFeL0AMBNNZyt2zTnKlUU6Zz5SElUHIBQRJAGruLU
+         t9cwmCaW/Pe7DTPfMIz2HfXcrzlS+4gAQ/sP7lL6tBQHtiC/Xk1DCLVOZ/ZBZdvlIsyk
+         nxeI3NJ0bz/6FDi1YvdtxMZalCRZ+Nis+FQvxUgzsJeBAD39vZda07mY1gy3YaVd0cIF
+         G9iUMUrAjtzjs10GVqXEY/ttmLVua7sWhs8/sD22XXKJ6y95P0QfWnpoQOImZnK3+9qm
+         u5TWrV89emxdruCE8F5s1qm6lAs1xrAaKY6a+DChrkW/XndrFqDj2kkJXJHfcmyLibN4
+         UtmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729520108; x=1730124908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8PfOG8qztLmjgi5lvFTsWGzlDXgKb6KxReuT7wFO8Gg=;
-        b=d5NhNBheESdVFJMr8PWKvzDr3g/QP76m77PIMG2vuem9oUOSSpM1DzmdBI/31Uxiqg
-         CposucACmZCWjnnMpvSBvh3pKGSNrafWIlzLVu4yoxh443qCR89yDc6yvQTVBN1g7FeP
-         2RQM9bWBoWjjbHSSwAIDVN2En56g0IdZRgQGQ1u26NTkiTP8MJnnsAL4ilmpxHFQL1xF
-         5ngpDkZ2puX28kb8utXfKFGIIZm5VhQ4ri+4TBn92YGny77/duOTCtUYL4ckL4RdU10P
-         WAa18oY4UNGzkG5t13zoVgapQDsJObiW3MA96v5u2b84q0fzsToWMn21NIF/2himwwtT
-         fgOA==
-X-Gm-Message-State: AOJu0YwgEbuy2+nCpRqB+vFjyaiBUPRpRD6JW/FL77qurwmYOWNiKXV5
-	ZUZyHAgPvPsALZ9wkIJE87h/hifCEfoKlF+2afyyJ9rglwbKwqUBrL4943eEIzxyX2kSarCCOfz
-	1uowjQMqnpw3KO8jiEuMc30yb1ZLQODEFZWlyqyiyTbJJcG24b2JryprRfDWlcDqmOQ==
-X-Received: by 2002:a05:6402:34d2:b0:5c9:34b4:69a8 with SMTP id 4fb4d7f45d1cf-5ca0ac43878mr13644512a12.6.1729520107969;
-        Mon, 21 Oct 2024 07:15:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpHf1ZB3J/KEvQafvB1tnTT7FwOJUSP1MV6sNMAiA03xnWJxYSnp9+2nbFOJpBxlvs1EdTqw==
-X-Received: by 2002:a05:6402:34d2:b0:5c9:34b4:69a8 with SMTP id 4fb4d7f45d1cf-5ca0ac43878mr13644472a12.6.1729520107505;
-        Mon, 21 Oct 2024 07:15:07 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c6b1adsm1981914a12.69.2024.10.21.07.15.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Oct 2024 07:15:07 -0700 (PDT)
-Message-ID: <c75fbe0f-f4b6-4003-8dea-2c9ddbab0f1a@redhat.com>
-Date: Mon, 21 Oct 2024 16:15:06 +0200
+        d=1e100.net; s=20230601; t=1729521666; x=1730126466;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uH4DYrdYY8L09XhmIMIGq2jeejoQelZaPPckG7Z0QvY=;
+        b=beH14Y+nLgtIAnZ4OU0pWmgvTfPBilSUTPw3y9udK9UzbTIazkUqDDeMdwNrSDaXdK
+         8lX4aEK8hPyEZra91/5O92ptUe4AI5++EpKnvXHyZ2w0cqhv0quvrT+Z1lZz9cGxZyoV
+         dtR6PMKYLs5DEcG9B7jrSbF9gr108gcwkdbLoZZXiUTsdmpVcWpfKyqMTiBJhJxua74w
+         yYT0aYsUzaINCpn7WDvvxIsZJCB1ykpazemNcPDM3HXcEOqBjQ0a38Ky7AcWvuW4mY6p
+         iEIhZ9RvhECszoOwa8/wD2qQXNnpqQe5kUPn//OjFDli5iS1YAmz5ccjypmU4WIy/UBE
+         2gVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaX9f+rgLszwfNwOSks772unKHcTRHTZmFjjFcSihOFNq2QyYasuFAYOtbBx0i6vdWuBjLV1MUzpplUw==@vger.kernel.org, AJvYcCXcgl01oechym9XqRKMdgkCJMvqJs9btTI3D/K0kIj2HVRwzZS9LH1WbJHHTeP3vb0+ELmLtigZIFMxJYKE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJz9GYT+3930+fvLX52aIWQzF6EoaP5aO/KVVnp3IohfMIZIbj
+	u10+wYhk+NMPCmK1TdVMiMc7SLWLSxkobVwfZ/C9MvVHYUoHEQlWQvtKzQ==
+X-Google-Smtp-Source: AGHT+IED1aGCt1yMsc3SxJEZZdr6y+3uXzAWdgpu65AhZbo4N+sbPYfiaV0ZPST7QuCCjvgI8LLCzQ==
+X-Received: by 2002:adf:f88d:0:b0:371:82ec:206f with SMTP id ffacd0b85a97d-37ea2174e92mr6426192f8f.16.1729521665691;
+        Mon, 21 Oct 2024 07:41:05 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bd6esm4483177f8f.104.2024.10.21.07.41.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 07:41:04 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] Input: serio_raw: Fix uninitialized variable 'written'
+Date: Mon, 21 Oct 2024 15:41:03 +0100
+Message-Id: <20241021144103.928386-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86:intel/pmc: fix IS_ENABLED() check
-To: Lukas Bulwahn <lbulwahn@redhat.com>,
- Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
- David E Box <david.e.box@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
- platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20240924084056.48447-1-lukas.bulwahn@redhat.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240924084056.48447-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The variable written is not initialized and subsequent increments of the
+variable are using an uninitialized value. Fix this by initializating it
+at the start of the function.
 
-On 24-Sep-24 10:40 AM, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with
-> pmtimer turned off") accidentally slips in some CONFIG_CONFIG_X86_PM_TIMER
-> (note the duplicated CONFIG prefix) in the IS_ENABLED() check.
-> 
-> Fortunately, ./scripts/checkkconfigsymbols.py notices this accident. Fix up
-> the IS_ENABLED() check with the intended config name.
-> 
-> Fixes: d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with pmtimer turned off")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Fixes: 5b53a9d40c4f ("Input: serio_raw - use guard notation for locks and other resources")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/input/serio/serio_raw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Note the code this modified is being reverted in the pdx86/fixes branch now, see:
-
-https://patchwork.kernel.org/project/platform-driver-x86/patch/20241012182656.2107178-1-mmaslanka@google.com/
-
-which I have just applied to my review-hans branch and will be in my next pdx86 fixes
-PR to Linus.
-
-Daniel, this means that once the next pdx86 fixes PR is merged there will be a conflict
-with commit d7a87891e2f5 ("platform/x86:intel/pmc: fix build regression with
-pmtimer turned off") from timers/drivers/next. The correct conflict resolution is
-to just drop the changes since the code which this patches is removed by the revert.
-
-Since this will now no longer apply I'm dropping this from the pdx86 patch queue.
-
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/platform/x86/intel/pmc/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-> index 0431a599ba26..4387b5103701 100644
-> --- a/drivers/platform/x86/intel/pmc/core.c
-> +++ b/drivers/platform/x86/intel/pmc/core.c
-> @@ -1546,7 +1546,7 @@ static int pmc_core_probe(struct platform_device *pdev)
->  			       pmc_core_adjust_slp_s0_step(primary_pmc, 1));
->  
->  	map = primary_pmc->map;
-> -	if (IS_ENABLED(CONFIG_CONFIG_X86_PM_TIMER) &&
-> +	if (IS_ENABLED(CONFIG_X86_PM_TIMER) &&
->  	    map->acpi_pm_tmr_ctl_offset)
->  		acpi_pmtmr_register_suspend_resume_callback(pmc_core_acpi_pm_timer_suspend_resume,
->  							 pmcdev);
-> @@ -1563,7 +1563,7 @@ static void pmc_core_remove(struct platform_device *pdev)
->  	const struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
->  	const struct pmc_reg_map *map = pmc->map;
->  
-> -	if (IS_ENABLED(CONFIG_CONFIG_X86_PM_TIMER) &&
-> +	if (IS_ENABLED(CONFIG_X86_PM_TIMER) &&
->  	    map->acpi_pm_tmr_ctl_offset)
->  		acpi_pmtmr_unregister_suspend_resume_callback();
->  
+diff --git a/drivers/input/serio/serio_raw.c b/drivers/input/serio/serio_raw.c
+index e058fef07f57..4d6395088986 100644
+--- a/drivers/input/serio/serio_raw.c
++++ b/drivers/input/serio/serio_raw.c
+@@ -185,7 +185,7 @@ static ssize_t serio_raw_write(struct file *file, const char __user *buffer,
+ {
+ 	struct serio_raw_client *client = file->private_data;
+ 	struct serio_raw *serio_raw = client->serio_raw;
+-	int written;
++	int written = 0;
+ 	unsigned char c;
+ 
+ 	scoped_guard(mutex_intr, &serio_raw_mutex) {
+-- 
+2.39.5
 
