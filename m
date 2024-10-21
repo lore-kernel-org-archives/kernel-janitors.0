@@ -1,48 +1,54 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0B11E2834;
-	Mon, 21 Oct 2024 10:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F355D1E0DD4;
+	Mon, 21 Oct 2024 10:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504852; cv=none; b=jY2w2Rrtcbr80l9ptYbSUPzmWH7l6NRofeUtVsxO4KLtpQ+GcMoHAPmNTh+J2nOJ34GnH3cKQrwGM4pCYKtmWmDgOz0lSqKYHTMpyf9ECI/moDuaF1vES8tJKDvuvKHagxabBkOVYd49Ohi2L6K0sq6gdyHpLYnoXcBTGGj+TXM=
+	t=1729504940; cv=none; b=jY7y+dG4WcCtVPnFE900L3m2Fck5poP7BN6OB25XUHMQQMLxO3ptrBYEgjoxd7s+1QRXPuelDf88JoT0pNkEXpxtcFZaFqC0i+Fqcajw1hCJH1NN90AwUK1YqZ60haDdg72SfPBIoHUJUHA9trt5Dg46kR07nEe5ahk0rFVzfpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504852; c=relaxed/simple;
-	bh=nWJx9F538qd8WsHYahYfniMsbpkK/g9Eu4QRgqryuDQ=;
+	s=arc-20240116; t=1729504940; c=relaxed/simple;
+	bh=bDztxjGoLMT9cbPe5QceDD5X4rmFLoxtqw7/vaEwEqQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uIxXc2ZSWO+czZsotNchbvgAV8SmNEs/RRXBU3/ZFnoxU3xC3toLFBNZOwDuqg1a7+P4qV8OFwWYnAA72vWrt8oNwl5uxHoQvcylziVrBrFl4tvKv+QLfhxhuV75y9Lh/2uVRFhdxRf8AaEEkEn7heAwz761V9/0Y/WUJv0rOEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BQXGVLuc; arc=none smtp.client-ip=217.70.183.198
+	 MIME-Version; b=G5nwD2DMhKzkZMxKdl539bf7jJTp1S24hiCFWz3CS8oVc7qb6gvhCqH8Av7TGYdaGnH2GU9bt5REzA8I60EYHWCGg1ChZk1BiKvukPuiHBTq3xCiOKFiKxqOy+tP2mavdibfMu05oyEn4aA6NeHzkP69U1ZIcG8j4rDCiInVx0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WDeAFwi6; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BQXGVLuc"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1BB4CC0003;
-	Mon, 21 Oct 2024 10:00:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WDeAFwi6"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7787D2000F;
+	Mon, 21 Oct 2024 10:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729504842;
+	t=1729504935;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rMK7niBniSWGtLwT6S/uPquKbfbY50UHICvFHDtW+Ns=;
-	b=BQXGVLuc5sSEWBcs9kT/tymqcKmNk95gso+GyI/mfbRC6nyKBZZbFgJJoTtpEwxORqDX4X
-	RKkJsmL/xig9zNAMFK67ED0FgORRbyTTla4JyUQHIhHNcQ8P6Y84BQExn5CSNInc9Wn+M3
-	GvnRfrqoveVpAriMZoDS3ERJMIo3VBBzHc0HvrSFI1FkLgQaukR8gzlUGkX92fT6RrXDDW
-	3y8f/1Xe7Rdw1G+gQnCyulzBFBtMvTPYCURsu/gQtpgPA60qVPK2ep2DUYZNi9p6gI5oLg
-	DNfdWfhDatofTLefCIMPebaJA7n022E8a9wUq++JZeUajsLLI1dpBx+E0OdwBQ==
+	bh=m79BIBKqneDCStQUQ14/pD49h3bl1usdmKNzsly5q9s=;
+	b=WDeAFwi61lq51jGCq2dtNZcjZYRng+WYMANNQlyiXvBIPczC6sd9Lgo5R99LEfGy0Wj3wm
+	SzmfcCM8jY0uiS/QE4GnfSSZeylVGZHUOKC/a4Ywl43vodweeWHqdMQ+zBcwTRJHx0yMKL
+	OeNniS5u+Pi3kI2z0aU42gmkRCecObZ49gwE44CMBSTIiN3mbGEW5j+8GPzBva/z4P14Ll
+	rrnrVJWRy+YLUNuF3iDnqnmiXukMRFbCSz+BoSrXAPAAfHdXzDKZYUy4IVA4/EYzMlmPKV
+	AxTzUTPQKq8w74Gv+SotqloQEHThh2apW9b763Q0+kkQuUlCBdsjWeb9RdATwA==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Colin Ian King <colin.i.king@gmail.com>,
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Miquel Raynal <miquel.raynal@bootlin.com>,
 	Richard Weinberger <richard@nod.at>,
 	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] mtd: cfi_cmdset_0002: remove redundant assignment to variable ret
-Date: Mon, 21 Oct 2024 12:00:38 +0200
-Message-ID: <20241021100038.101813-1-miquel.raynal@bootlin.com>
+	Mark Brown <broonie@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] mtd: spinand: Constify struct nand_ecc_engine_ops
+Date: Mon, 21 Oct 2024 12:02:13 +0200
+Message-ID: <20241021100214.173157-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241002172258.958113-1-colin.i.king@gmail.com>
+In-Reply-To:  <72597e9de2320a4109be2112e696399592edacd4.1729271136.git.christophe.jaillet@wanadoo.fr>
 References: 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -51,18 +57,32 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'4c9b44e774025d9fd6f8384a7dcd6a6917043650'
+X-linux-mtd-patch-commit: b'af264e5989055ac33f413c4c80874345cda0cc97'
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, 2024-10-02 at 17:22:58 UTC, Colin Ian King wrote:
-> Variable ret is being assigned a value that is never read, the following
-> goto statement jumps to a statement that assigns ret a return from the
-> call to function do_write_oneword_once. The assignment is redundant
-> and can be removed.
+On Fri, 2024-10-18 at 17:05:57 UTC, Christophe JAILLET wrote:
+> 'struct nand_ecc_engine_ops' are not modified in these drivers.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Constifying this structure moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
+> 
+> Update the prototype of mxic_ecc_get_pipelined_ops() accordingly.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   16709	   1374	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   16789	   1294	     16	  18099	   46b3	drivers/mtd/nand/ecc-mxic.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
 
 Miquel
