@@ -1,107 +1,88 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B981EEE0;
-	Mon, 21 Oct 2024 19:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF9D41760;
+	Tue, 22 Oct 2024 03:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729538407; cv=none; b=WbGUgougihCDi5xCo85MzU9GXlNPV9nQ0pW8bshWKz/ISezc5nP0+AQCgm1s2VLUTQbA9JN0h8fzV25DjGpZuakHn9cSRp/Gs5nqVZYEscW06SxL7V8qrodEwt/eDdhEYokFO2M8nXd6XFVhjfERj5G/A8PENtCvYST6rZxUv/U=
+	t=1729567636; cv=none; b=sE8z3JAHHoXM7hpc6+bGNAu+A2HQiWg/A3GPMzxrloiVXS+x+m7S19K7YWI28QETgInq7/7HJpTzWqOmZbmR4cIUfvQ1B4LRVgWknXaZ7rPTNm8P2IGO6//S4lLGjjFnq29WjuCnmolYn6rQUX1dKXDyP5PnaLOWRbkA73WT6mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729538407; c=relaxed/simple;
-	bh=GWxkYAuvukyefP09m8Gddhyv3iaEYaD+YF6g2gQsNqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2dlr3xY59iUAJrsp1gO9qR3Awlk0nUbnGrWAMDXs5qgcXsB6T9/HylAat2FydSklh5EP0ZU14jEpqWa60cHOtKorzGjj8zDFUdG27WChTmAHk00v9h9jyeE0E5DGzpakO7yH6UvekxYFDkB/z4qorzjsIQVGA6See57EYnhbm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zf2Y+SZP; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729567636; c=relaxed/simple;
+	bh=hrY7tzDzi1hxTikHoxdyBsPWJkSbxVPjxhhl6c+35V8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GJNtE0YcNUMsMJoKAxaxilqz/upmIAg+seiHQRSM83SvpURc3E6FIdlPA7hJj04aMBEDdzyDOK1dB/q3Rj7xOfmIKDH5z4nQya1A4hpyu3fTSfRVwaCi/YMX3PpruddPeIVpqNuYdMDJ/RMw6soQCaBun/jQGntZ/pQ3HnuQQTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=R5wBhoMl; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zf2Y+SZP"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c803787abso37447565ad.0;
-        Mon, 21 Oct 2024 12:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729538405; x=1730143205; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kF6W/N0f3ub28cEyMJY1MkQjoOhW/feAG72HvSg2jb0=;
-        b=Zf2Y+SZP2kaRzD/1XmY30Sppof4zpTjvGfq3ZqjY59Vd6TBuTAviHBrEI5qYFpujnf
-         TlTaIi23zWXRR/4rWa/b2uFuweLStW9Iyph7a7f1/OHg+g9bRtXbM0yXJlxcpX673zsI
-         zAIz73tM7Wce23bmyUvyyx1jZMZLXaTeU89j9LAz67O0vPGjZ1RQNbtb/JHtdeAW54b2
-         xMoEDGVPr8E6TTlOcIoNpX9o9OfP1T/k+mCwymZEKiG7TWe02GPJzLnIHoh9rRnuYaVW
-         yHxH/RJcyQYdCwPnuLjYf/E4PkFj6VWz+LZMYMbZsXGKEZ/pvsE3UhOaXuZE97sROlzI
-         TqDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729538405; x=1730143205;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kF6W/N0f3ub28cEyMJY1MkQjoOhW/feAG72HvSg2jb0=;
-        b=AedIlFxMbx9niNgpNohEivB8CcbrK8RCYuwbGD0Hj+l+bYzFbdbS7GiOQ0ucJlzfqA
-         EuVCAeTx1Vwd3ilWBUgpjh6uY3iW4lC6qyPCHzG87RaseaZ2FuX0SXUegj0VCSH5hrFh
-         12TteVs771sgmo4edHUNy+c55SzbkofYuivBXvXyQlzdC4K26MqjQudxLjDtti55l1JA
-         2w2ZL393hPTdDaGIE/Tr0FtwhD5iVWK3je0tD8Otg+ssj9mGZEqmYqrbBLjfLGauC2O+
-         iGFq2dV8k4NC8BPRPPtmxWWygGpgZKNO9h4+dFZXi2b01FUgDvyLEtP8SoZUxUkTjzhv
-         3oyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiOHdEZLywH79vsNjdACDoEtVuq6NGqLBpjyfw2PTveJWjJs53kHNjI7qHIzwzXJpMFqpfUHXl26bmC/SsaDo=@vger.kernel.org, AJvYcCV9oXoJcGpWLzXOuaDtYbFFFVq/bixP/CxinUboug6MZ6EA5ShArBsR+REHrj3yFVWOVowtEOwrHAoC9y4W@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBUpur9Ds3dLCO6SJTp0Wk4sU+Lu+KiiLJnwqZTjKiwo7TglW5
-	GzqvuJjk2uDS0qbFpG/r8E63b44W0fxKwYoMYBOqd+t3+4XAfrG889afwA==
-X-Google-Smtp-Source: AGHT+IFiu/V+Al6AnpH1978JIRIl/PtGw3xGt5gNQaQu20nnmrJCjx79zbf/Mkv1+Ufs18WyBY++Yg==
-X-Received: by 2002:a17:902:db0a:b0:20b:51c2:d792 with SMTP id d9443c01a7336-20e96d8b021mr10907415ad.2.1729538404640;
-        Mon, 21 Oct 2024 12:20:04 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:3336:4a8a:d651:58bd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee62cdsm29568965ad.5.2024.10.21.12.20.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 12:20:04 -0700 (PDT)
-Date: Mon, 21 Oct 2024 12:20:02 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] Input: serio_raw: Fix uninitialized variable
- 'written'
-Message-ID: <ZxapYkZAgxXBTJsb@google.com>
-References: <20241021144103.928386-1-colin.i.king@gmail.com>
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="R5wBhoMl"
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 49M3R3rE43442082, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1729567623; bh=hrY7tzDzi1hxTikHoxdyBsPWJkSbxVPjxhhl6c+35V8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=R5wBhoMlUptSa2yRFEUDuLIKtf+11zzhmtn9WP5rmRLpH8f04K1mzP2q4fxlxnYps
+	 i3nBV/S/njdQr6vVDLmA1JU3S7jttvWluD/u/BaGVJbtpFnZ3zv39zeqap7pUIv5d8
+	 cPK2TExtliU7Fwyarqy1WZ3es3beijX9oblc/EZfGOGoAmTHmG55wh/68NobdOsQ3J
+	 jiXfE9a5p7ct6Umox1os3L/ljXoB2Rdo/9b8AK1aNo4cELD1DPOnqelZFgb2zUCUXk
+	 dfHSRSL+TMm/HS91C/Epc6+WkuHok5VOAXVG7MKE68hmFb/sdnvrYU0lQfA/fOPUPG
+	 ono0z2riL+N5Q==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 49M3R3rE43442082
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Oct 2024 11:27:03 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 22 Oct 2024 11:27:03 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 22 Oct 2024 11:27:03 +0800
+Received: from RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f]) by
+ RTEXMBS03.realtek.com.tw ([fe80::80c2:f580:de40:3a4f%2]) with mapi id
+ 15.01.2507.035; Tue, 22 Oct 2024 11:27:03 +0800
+From: Zong-Zhe Yang <kevin_yang@realtek.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Ping-Ke Shih <pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH next] wifi: rtw89: unlock on error path in rtw89_ops_unassign_vif_chanctx()
+Thread-Topic: [PATCH next] wifi: rtw89: unlock on error path in
+ rtw89_ops_unassign_vif_chanctx()
+Thread-Index: AQHbI5mv2pwOn3Ho/kejuy2RYL9sTrKSGuGQ
+Date: Tue, 22 Oct 2024 03:27:03 +0000
+Message-ID: <6a80d4adc51f4ea884b5e02f16d8aaed@realtek.com>
+References: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
+In-Reply-To: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021144103.928386-1-colin.i.king@gmail.com>
 
-Hi Colin,
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>=20
+> [...]
+>
+> @@ -1373,6 +1373,7 @@ static void rtw89_ops_unassign_vif_chanctx(struct i=
+eee80211_hw
+> *hw,
+>=20
+>         rtwvif_link =3D rtwvif->links[link_conf->link_id];
+>         if (unlikely(!rtwvif_link)) {
+> +               mutex_unlock(&rtwdev->mutex);
+>                 rtw89_err(rtwdev,
+>                           "%s: rtwvif link (link_id %u) is not active\n",
+>                           __func__, link_conf->link_id);
+>
 
-On Mon, Oct 21, 2024 at 03:41:03PM +0100, Colin Ian King wrote:
-> The variable written is not initialized and subsequent increments of the
-> variable are using an uninitialized value. Fix this by initializating it
-> at the start of the function.
+Acked-by: Zong-Zhe Yang <kevin_yang@realtek.com>
 
-Thank you for the patch but I already have one fixing this up queued.
-
-> 
-> Fixes: 5b53a9d40c4f ("Input: serio_raw - use guard notation for locks and other resources")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/input/serio/serio_raw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/serio/serio_raw.c b/drivers/input/serio/serio_raw.c
-> index e058fef07f57..4d6395088986 100644
-> --- a/drivers/input/serio/serio_raw.c
-> +++ b/drivers/input/serio/serio_raw.c
-> @@ -185,7 +185,7 @@ static ssize_t serio_raw_write(struct file *file, const char __user *buffer,
->  {
->  	struct serio_raw_client *client = file->private_data;
->  	struct serio_raw *serio_raw = client->serio_raw;
-> -	int written;
-> +	int written = 0;
->  	unsigned char c;
->  
->  	scoped_guard(mutex_intr, &serio_raw_mutex) {
-> -- 
-> 2.39.5
-> 
-
--- 
-Dmitry
+Thanks
