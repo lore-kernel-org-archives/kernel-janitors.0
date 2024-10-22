@@ -1,95 +1,122 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B98312C522;
-	Tue, 22 Oct 2024 05:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081C919925F;
+	Tue, 22 Oct 2024 09:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729573921; cv=none; b=IYZxv7awz1a0Zw8BxM6O5Jn35/C7/mJBB9oF6WZAyvQdp0fHkvoi+wXbdcPTiyYzybqaO/nJE90/mwYmoVe+K4g+vaKJLePAB8aVC/+qscw0pKOVOi2Zw53rUkn/CZRq8Y8QZVsL1pYap62jNYyADpWj8cDbzMnCyNINGxvjDvw=
+	t=1729588674; cv=none; b=LnqTP5O/kTqZ2ejkoRGXN98yvg7To57xoNgk8Gvnze42cE6VrjdWf8FRKAkZgHSgKeWv0iKs1HaBSWtU0rFcQ7SVafkArewx7HkMPyTdkTGdSSDsAXRLvTxaBBY7vC69g+Y+INb92Z7pQlt0m/oO4o/M23gUH4oskYjQUaaTHDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729573921; c=relaxed/simple;
-	bh=6nL3F0+rXvu/ufwo6ILRxMgK5uGgnngX3VW9rqLR2cI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jJIpTq/icyRW0cA/hioFV932fuymwI68jfcLgOZe8Vazjkn8Uajb463/hb/u3G1q5aVDPoPFZaD94n2tLUPlmogNqx1apC8oQk6bY/9hL7y8RNnHpRjS0n5RTuIZxtCZ9/CMoiMRPQCrO6LGdWaLD7UCoVRiVIw7Oi0WTbP9B8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7Gbq3NS; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729588674; c=relaxed/simple;
+	bh=GUxS0JTPC+06cepyvKTyHw8qhBhBUqlDHxlOCDBrUic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+S3KaWM1vBJDcRt4JgJs+/GF1oGklxeDlHzm11koZEmrbdu/fq7yzEbWCS4/FtAwBWw55nCe0fhY0M37fit1qmG5qTBN8Zz4LpcVlWUESKZMXNX5a339vCI4oRkx29Hl3kJ1UFtWMiPjoYJhxfp73tNFU6qpUTzP4zNJEyJdPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=OmhBFV+S; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7Gbq3NS"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c693b68f5so55562675ad.1;
-        Mon, 21 Oct 2024 22:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729573919; x=1730178719; darn=vger.kernel.org;
-        h=content-disposition:content-description:mime-version:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cKMBsCanZz1Gh8n+AXUDeahzWcX6egHuFJT38KRlsqs=;
-        b=U7Gbq3NSUCTWk9aoGgC3vkORAN4WO/65FMpR9u7w/ny/Jze3lZvd0RswgDvD5Nj/9T
-         VlMoxZ/rumAG/7W6tX943EIx4P5IRZz0xpTLOB60zJdGiK4uyYt5XMzWJh6W1l4SrLg/
-         K3bQ9iT3gTwgAPvfIZZrtDXVExwMSOsuFuJPlYw1pWChup5cb1MtYMbf4cuMCCHWMqks
-         tCxG2PDPEYIR0nLKVkPbA8DL/zZdtkbo9gkRIOFg8I0q027IUV0L3QfA4eCi/HNEGll+
-         ETaefy5aWpyfteZyW3KDhy1IMnGiAyPrEft1xW3EMdsudNzTwHrnrDH64b+h17NMfiPn
-         2GmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729573919; x=1730178719;
-        h=content-disposition:content-description:mime-version:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cKMBsCanZz1Gh8n+AXUDeahzWcX6egHuFJT38KRlsqs=;
-        b=qNxYZS+XK8SMhtdPBCcBSR2leXHpsqQ69DtRFqBolO7xayrJ/89uETRqXl7YW2zS9/
-         mX9vMS7tHgkQ3GRgTDaVENJWBDnq90F2MR4YtOQY+SSM5cBBY1en72wNYQ/1GVcAnOrQ
-         mv2Gi3YvSQFO7SFgPTAX2PGoO2FpikQjARC6ERG6GdIp62VA9Nu/JB01C050nbNeKcQo
-         kzl94DM9nk2FMGYZl080gGXshHmedsZB5vRIBJ9qfVMLLomrMdvJTKBildjo6dJf+myQ
-         Q5aFPg2lw7MbB8lcdsb05xbvnbICqI/s4/6xuHzDOtcQsnlSe6u6QZUOHAAYpyXPC0tC
-         86Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4ew3arVYQfKXMbV/iZIiF+B9+fjjAfCP42L7qUYm5IQJE1OLTNgNKS0mxSmrOvzz0XckeA/zyQUuDVYTR@vger.kernel.org, AJvYcCUCTi0NA9rBSx+CC5RuM7pHNX3i8kO4ZMrGlwQG/Lc6RR6XtTf60lD0w9hDr1WgZu55QT/QUA4pp/ce9sqhS1I=@vger.kernel.org, AJvYcCVLLcfNmB0dCy1GjrAJguImSCbo7QD1mIcDvR5JrzDvpsB7eysfgNJ2cNtoA/RHPgCBt9nxPXPo@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM83+bzzumhZtWzd6gNdz+J9Bx8sKWx46R4um4hNC8/yGnN4Yz
-	GcqVrdXDUUtLp4lFebW1Q/JoSKftByjkUzoBPccAxT13DtWAmsft
-X-Google-Smtp-Source: AGHT+IFa0NskIKUN1a+IaBC/kiN3u+O4oI32iW4jSozQeLQ+HEEZ9YiELB5Tn/cEBttmtLXKufCSSw==
-X-Received: by 2002:a17:903:2306:b0:205:3e6d:9949 with SMTP id d9443c01a7336-20e98596fc9mr18662135ad.52.1729573919236;
-        Mon, 21 Oct 2024 22:11:59 -0700 (PDT)
-Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:f589:b8ad:400:2216])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f3665sm34705005ad.271.2024.10.21.22.11.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Oct 2024 22:11:58 -0700 (PDT)
-Date: Mon, 21 Oct 2024 23:11:56 -0600
-From: Johnny Park <pjohnny0508@gmail.com>
-To: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [net-next] igb: Fix spelling "intialize"->"initialize"
-Message-ID: <Zxc0HP27kcMwGyaa@Fantasy-Ubuntu>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="OmhBFV+S"
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 51D55D52;
+	Tue, 22 Oct 2024 11:16:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1729588563;
+	bh=GUxS0JTPC+06cepyvKTyHw8qhBhBUqlDHxlOCDBrUic=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OmhBFV+SfAtOCQs2jkQboGSPacB1AyfGQtIQll9yr1nj++RmG7S6XD4GvloCcorXX
+	 Lbj564hNbkv72uwyRVqvOvDgOO1BA3QUBd8+z8Zp7xthxzWZp9OQYqPn8k090/y1VA
+	 2sTEedORVfXIFTn48q7ntm0uj5ocKM8TlcOGf/dk=
+Message-ID: <485f9ce3-4e8f-4434-b090-24e67c79940a@ideasonboard.com>
+Date: Tue, 22 Oct 2024 12:17:46 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Description: Typo fix "intialize" -> "initialize"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] media: raspberrypi: rp1-cfe: Fix spelling mistake
+ "Orphanded" -> "Orphaned"
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-media@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241021082207.733506-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20241021082207.733506-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Simple patch that fixes the spelling mistake "intialize" in igb_main.c
+On 21/10/2024 11:22, Colin Ian King wrote:
+> There is a spelling mistake in a WARN message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/media/platform/raspberrypi/rp1-cfe/cfe.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+> index 045910de6c57..da9e1a1e4d0d 100644
+> --- a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+> +++ b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+> @@ -641,7 +641,7 @@ static void cfe_sof_isr(struct cfe_node *node)
+>   	 * Unfortunately, there is not enough hardware state to tell if this
+>   	 * may have occurred.
+>   	 */
+> -	if (WARN(node->cur_frm, "%s: [%s] Orphanded frame at seq %u\n",
+> +	if (WARN(node->cur_frm, "%s: [%s] Orphaned frame at seq %u\n",
+>   		 __func__, node_desc[node->id].name, node->fs_count))
+>   		cfe_process_buffer_complete(node, VB2_BUF_STATE_ERROR);
+>   
 
-Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 1ef4cb871452..ad091179872b 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -1204,7 +1204,7 @@ static int igb_alloc_q_vector(struct igb_adapter *adapter,
- 	/* initialize pointer to rings */
- 	ring = q_vector->ring;
- 
--	/* intialize ITR */
-+	/* initialize ITR */
- 	if (rxr_count) {
- 		/* rx or rx/tx vector */
- 		if (!adapter->rx_itr_setting || adapter->rx_itr_setting > 3)
--- 
-2.43.0
+  Tomi
 
