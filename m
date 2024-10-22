@@ -1,95 +1,128 @@
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37731A0BE0;
-	Tue, 22 Oct 2024 20:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E981527B1;
+	Tue, 22 Oct 2024 22:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729628085; cv=none; b=HkxE+zJJ/QeM5li3K4CThJj+9JRVLk8FtavLGiaJ0K2lOAtyPeTMHl1aMtaz+JFE0bT6njmzB24HolrE6JaMtpCoXtCQT3mfOaHKqMLoiZj3cd/jDFcJC0gMp2AQZo9xcriW3i+rK18a7nKjszQMuRdF9jVEF/HZg72hYk41cjs=
+	t=1729635703; cv=none; b=q/SU1V27wJerWYINqbrCmeU4OYcJjbnfXJOp6/yGCBk3573sXZBAzretIAcvK1kSuQqfrBhjhvYqXvtboQCgCpo/Bm4vOqZ/kCmD8b7GzyoHrj92iNTIfwUMN3BDd3+FleCM1wuwPSuNLuCHPZzkxaEDxly9f7r3bVrvn+kyrQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729628085; c=relaxed/simple;
-	bh=lV24AC0FIG+csJXLH/boGRNRTV8cTQO3c0cmYWdKs4g=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=c7Qvd3/2xwlk4DXhKlKjAj0mhAVG4iHCuOZjKwD8uckk+nf7xBeMREllBdwFBbExdjR9otGF7vN/4uVxzVUEPcMv1/3gUOpk/mSb26R3MUjoV2E9XUEHgle5Vlt7eWhpHuJ/klTtym+Qn6JL4hHKiidp3l59z0xkZ9k3rh30Ykg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=bZdmtKFp; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1729635703; c=relaxed/simple;
+	bh=JFE08dluIaiarxL21dzPDO6HbXbk9HvWUlkanoq8sYo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cCqyLJrGcb/ykduEV0gJLJXjhyaQbXVH/BqBB0ix/zZi7llNKL0aQ3+HKPy7HyVQWRvJwqAine7+a+jEqwAszHL+EYc16/V1PFUj2zjs6OdYKKBohjUje2cnmbbp3RphRaDOm+MUK0tEFhOSVhNUe3a/N+0WT+bHvboLWIhbXV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZ0nYv0w; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="bZdmtKFp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZ0nYv0w"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e63c8678so7500523e87.0;
+        Tue, 22 Oct 2024 15:21:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=JHiAfXulihULHCp2AWMygN+UygM9REk829usCvefi7o=;
-  b=bZdmtKFpqWye9BjdbJPqTBSVryF4Dvv5SdXWyLHYb+XjNrGnSE32AotR
-   DSq+qASk2fD2S8A85blGVSNKZJzEi4JURF8jkbd9UaqS3Vo9vXZ0r3Mtj
-   iF4nURoBbnxUt6HvpHPTgsLsmAunuBunMM5QYr9GaDUt7GOmDTPKxmr3g
-   w=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.11,223,1725314400"; 
-   d="scan'208";a="99781479"
-Received: from syn-071-095-008-132.biz.spectrum.com (HELO hadrien) ([71.95.8.132])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 22:13:28 +0200
-Date: Tue, 22 Oct 2024 13:13:25 -0700 (PDT)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Joel Granados <joel.granados@kernel.org>
-cc: Luis Chamberlain <mcgrof@kernel.org>, kernel-janitors@vger.kernel.org, 
-    Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/35] sysctl: Reorganize kerneldoc parameter names
-In-Reply-To: <nnbmui2ix23wjmfvxo2t3zd3tgymk77h765kyoc3pxu6wkhqxx@6qis4yyszkec>
-Message-ID: <e6f7d5e-6f7e-ed6-a54a-2a5fd87b3d7f@inria.fr>
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-10-Julia.Lawall@inria.fr> <nnbmui2ix23wjmfvxo2t3zd3tgymk77h765kyoc3pxu6wkhqxx@6qis4yyszkec>
+        d=gmail.com; s=20230601; t=1729635699; x=1730240499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9kgBh57DSw/h+OTaq/JFTaRyo9BI9dYA6G3zBw7DQ+M=;
+        b=FZ0nYv0w0OfGVKM4pj6Cn5W3zUxIdfOijLzWLJhGNEdPl9XIEs+DJr8R3MBB2wjY/K
+         lyMQmbBQYDQmVMBECZ5+UNlEgANCRPSxHJzatxGCw+pf6ZkYO/WroHacO/vF3AibhKfO
+         2feqvTb/w2bQlwTpisaw2J3uuF26UjO9rc7v5JURiI8TNOborqOco7+6TVTIS058G0q9
+         EYl0sORRZl6XNpQsOUbXm/gd8uomyKz1x7pTcvuDUU0bCAK8YkDc2xQlMIcihJJf9n/T
+         lkHTxQNprJuLMYvhwAnNYbugeQyE5wFzJDnmyTwwhGO/N0hciT3q+kF89AYb1Ue0wzeT
+         6E2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729635699; x=1730240499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9kgBh57DSw/h+OTaq/JFTaRyo9BI9dYA6G3zBw7DQ+M=;
+        b=vJk0oy+Odtbt/qAqhelq4lKftGVlPQ7guDarNst83IzQipYc55URos8Ip3yaqvTiwP
+         feM/cjAAJ0YiMcQkgdP8KR9ekFcsETIhe6/mqmzxt7Yy9yWvRpLD7xx72VxJ+B0tZ6R1
+         9fJL9fs4hO52CPTMskrjbByr8w7cJo27Lm8dh/Te4pUsRDp6+Scv/abifK6/NlPfqMbM
+         2mFzf5A4TEOsVN5t21Zs1Pa9xw8wIrtbUYiLfHQYgClTrjrTWMx5JpQj7LjRiTXX7j7V
+         i+KdqDpP71PgODaxC2TLf7AkvbvyZt0vvck9pz97A8qvT3Hqr7yaHEG+RNo23KPvot73
+         VyvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFKt4B1yQ+wn/WbdDuNv0qIkIvQk7HQYBojhusVMmeGls8TDmA47ZuBoZncsWGykf4mD6zbhfS7SErig==@vger.kernel.org, AJvYcCWBXfM5zhMn2U1FBQ1QASkAQmKFqG9dLq7t+WvioxkxKKX3DB4XEd24Eg1ercSSZuY3OReZB2/nRbVkCQy9IsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7wkSTEwntP0bO8I6wkmDFFBNLAGwgU0KxV4IXc5/r81AcnMPb
+	xDzzJgGWijoWzcW+ln5I72y3qpCV+XZxJJC/Jk6fCyt88zD/OhfetvRHGTGzzgdMYanlwERH8Q1
+	+IFjjTB//QnNlHDEABxa93RBdV/4=
+X-Google-Smtp-Source: AGHT+IE8lJvrh9YOTJ10anJKfHxrcIxLlvMcvR97sr2y6uBbugwAOCpM3iaIuIM+6ijv7YXCjo6Mf0kfgiOWCdBIxsM=
+X-Received: by 2002:a05:6512:2393:b0:536:a564:fd48 with SMTP id
+ 2adb3069b0e04-53b1a2f4d0cmr216189e87.3.1729635699166; Tue, 22 Oct 2024
+ 15:21:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241022171515.3330183-1-henrique.carvalho@suse.com> <20241022182126.3353440-1-henrique.carvalho@suse.com>
+In-Reply-To: <20241022182126.3353440-1-henrique.carvalho@suse.com>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 22 Oct 2024 17:21:27 -0500
+Message-ID: <CAH2r5mv+qUw=zJY85S4gQitafHXY6RaVPOqY5ZR_RXpF_Zqf3w@mail.gmail.com>
+Subject: Re: [PATCH v3] smb: client: Handle kstrdup failures for passwords
+To: Henrique Carvalho <henrique.carvalho@suse.com>
+Cc: sfrench@samba.org, bharathsm@microsoft.com, ematsumiya@suse.de, 
+	kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org, 
+	make24@iscas.ac.cn, markus.elfring@web.de, pc@manguebit.com, 
+	ronniesahlberg@gmail.com, sprasad@microsoft.com, tom@talpey.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+tentatively merged into cifs-2.6.git for-next pending review and more testi=
+ng
 
-
-On Tue, 22 Oct 2024, Joel Granados wrote:
-
-> On Mon, Sep 30, 2024 at 01:20:55PM +0200, Julia Lawall wrote:
-> > Reorganize kerneldoc parameter names to match the parameter
-> > order in the function header.
-> >
-> > Problems identified using Coccinelle.
-> >
-> > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-> >
-> > ---
-> >  kernel/sysctl.c |    1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> > index 79e6cb1d5c48..5c9202cb8f59 100644
-> > --- a/kernel/sysctl.c
-> > +++ b/kernel/sysctl.c
-> > @@ -1305,7 +1305,6 @@ int proc_dointvec_userhz_jiffies(const struct ctl_table *table, int write,
-> >   * @write: %TRUE if this is a write to the sysctl file
-> >   * @buffer: the user buffer
-> >   * @lenp: the size of the user buffer
-> > - * @ppos: file position
-> >   * @ppos: the current position in the file
-> >   *
-> >   * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
-> >
-> This looks good to me. Is it going to go into main line together with
-> the other 35 or should I take this one through sysctl subsystem?
-
-Please take it,
-
-julia
-
+On Tue, Oct 22, 2024 at 1:22=E2=80=AFPM Henrique Carvalho
+<henrique.carvalho@suse.com> wrote:
 >
-> Best
+> In smb3_reconfigure(), after duplicating ctx->password and
+> ctx->password2 with kstrdup(), we need to check for allocation
+> failures.
 >
-> Signed-off-by: Joel Granados <joel.granados@kernel.com>
+> If ses->password allocation fails, return -ENOMEM.
+> If ses->password2 allocation fails, free ses->password, set it
+> to NULL, and return -ENOMEM.
 >
+> Fixes: c1eb537bf456 ("cifs: allow changing password during remount")
+> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
+> Signed-off-by: Henrique Carvalho <henrique.carvalho@suse.com>
+> ---
+> V2 -> V3: Adjust commit subject.
+> V1 -> V2: Decoupled checks for ses->password and ses->password2. Ensured
+> ses->password is freed and set to NULL if ses->password2 allocation
+> fails. Corrected return value. Improved commit message.
+>
+>  fs/smb/client/fs_context.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+> index 28c4e576d460a..5c5a52019efad 100644
+> --- a/fs/smb/client/fs_context.c
+> +++ b/fs/smb/client/fs_context.c
+> @@ -920,8 +920,15 @@ static int smb3_reconfigure(struct fs_context *fc)
+>         else  {
+>                 kfree_sensitive(ses->password);
+>                 ses->password =3D kstrdup(ctx->password, GFP_KERNEL);
+> +               if (!ses->password)
+> +                       return -ENOMEM;
+>                 kfree_sensitive(ses->password2);
+>                 ses->password2 =3D kstrdup(ctx->password2, GFP_KERNEL);
+> +               if (!ses->password2) {
+> +                       kfree_sensitive(ses->password);
+> +                       ses->password =3D NULL;
+> +                       return -ENOMEM;
+> +               }
+>         }
+>         STEAL_STRING(cifs_sb, ctx, domainname);
+>         STEAL_STRING(cifs_sb, ctx, nodename);
 > --
+> 2.46.0
 >
-> Joel Granados
 >
+
+
+--=20
+Thanks,
+
+Steve
