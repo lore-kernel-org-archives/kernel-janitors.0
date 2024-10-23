@@ -1,112 +1,86 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0681AB6F1;
-	Wed, 23 Oct 2024 12:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF8812B71;
+	Wed, 23 Oct 2024 13:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729685490; cv=none; b=WK0NRJfx75+F8jwrxVZH7T8aYwwTwVVl3pKIt/ONUVveR89AaokZycj/QJVoRp+BlPVAUskyFLQm3W6fMA0kXvP4TdUGpMnd0YpLoBjjSZAE0CLFllBTYSwdLr1ClRJ6J+jO22JS/ty88olSanYOAX82O1jzCguCd3Dh4My4Pe4=
+	t=1729689656; cv=none; b=ElrhNMcibyL2+0w4qBg4tM4DnMPvwMDBufSc/TWw3FRp9f16BUUJwicEocQeWqBsiNlDzKnr+4SlR5EpqdunrOfstww/BJ+jaQh7pS9AHl0Cknp96prZSyJ45EYmpye4nllfEYiE7EFuCePXOd5/GY/iZeMvz1hUaLF56RBY7/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729685490; c=relaxed/simple;
-	bh=3rQj6fEZ/iZQD71N4a8ZhNCGI4KM2C73FPxf49T8aSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GwQT8tSItvy9gkICKLPTTNVfrzLg8u6BZP6fdEZPiaoUPg/1jO4w+9uQpSbHl+SdYDkZkqro5gkRN8WlohCFl4iGlSMucns4cY3q/qgke6FWE5q4iqVIYCUnB4vM3dmy2IP2Q58qIT7c3B7TPxUV0zvWoDTv8AzB05qyPTVnYAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DZz0rI2h; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1729689656; c=relaxed/simple;
+	bh=LVQXYrASjM/VnmqTuSPEIhogLWcRwzbltNRHE+dqq6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YndOYQ2ksA25WT+OvUAJvF+5fQwdVcXzhMhISn2399i1/vdaKwisJJTDWwJwaPhrAb83z7d7fPMk1Y9XkM9Vkh0dpMMn/j1sQkKsgZtSt3UYkzpTI3go/8BYh1OYO14laxBirrnV05FVpsHAsN09uvtwNrjsUQf9s7yd3aW8GH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkf0ULwK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DZz0rI2h"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729685471; x=1730290271; i=markus.elfring@web.de;
-	bh=3rQj6fEZ/iZQD71N4a8ZhNCGI4KM2C73FPxf49T8aSk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=DZz0rI2hh5JuUP0tcmEpgojxSzhtAcRzjFCWQqQH/oBICvbro9NuE9rrJrUJnXLZ
-	 d9CVwAs7YtfwDwPNnKaxEhERzYb/ujSfdyKXSdKhwMIGQ4mu8zn4fMfKWEXLa+X2e
-	 rR12qVzCRADzR5SDQZuT5RPy7e4bPUOXTjlLlPyBLpmhiu7mtEC/RNsRLBxc6UY2q
-	 iYDsq3rEmGWlnJttHLBqzJSlDW3l5RBQy1Eh03jhCbEN8nBR5kntqh0WoZkzzXwF0
-	 yN98zgastub5Qhn2FphFIUTxWKYmn/AwfefNrx2rKL1ne+I1cdX+tYfMmeNuu0yva
-	 nQZahcTpQufmKVPH0w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVJRl-1tVnNA0APn-00MYss; Wed, 23
- Oct 2024 14:11:11 +0200
-Message-ID: <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
-Date: Wed, 23 Oct 2024 14:10:57 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkf0ULwK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD68C4CEC6;
+	Wed, 23 Oct 2024 13:20:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729689655;
+	bh=LVQXYrASjM/VnmqTuSPEIhogLWcRwzbltNRHE+dqq6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jkf0ULwKxVbpGpPOoLIU7ZeX+X3gsPpBPlD+M1OGYex6nVUZ+9zgMNpYSYMMRskf1
+	 1aVOP2nA2aLLGJuBwEE65JpTrPJrel/R3DINt/dOSefdQlvaS2yTfMNuHnGynin1sQ
+	 HoUO8q9FP8ttRel+u/S3lVFLON6Jeh+sk3kZtP1Ye3LtY9mLz8ZCKefMWgm/ToNB6Z
+	 kzXhJ5Xa6VwN0aqExw4LvPXeCpdxihjgP56/BR5soacWlkMdTFtHfukmtpLlXDy1IE
+	 IfYrLSA2M+OtjuCWTrFYW9jHjOosv0yHx/wtyNfgFts0A1ZV6xPccmvbwZc+ePFoun
+	 J23OerzdFxBJA==
+Date: Wed, 23 Oct 2024 15:20:50 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Joel Granados <j.granados@samsung.com>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: Re: sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
+Message-ID: <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
+References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+ <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+ <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
-To: Joel Granados <joel.granados@kernel.org>, linux-fsdevel@vger.kernel.org,
- Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <kees@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: Joel Granados <j.granados@samsung.com>,
- LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
- <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eFyknJdf395MNGzbt8czznwldS29/evKPpb3O5cDjb3kVIiHWSl
- uS4fEYVnOSk/ugfbqc+0bcTZBh31WW668Shn19Vwd9mWF7Fj/x0ZeEMznYABIomhLRE8JqM
- WAUkOjPg17wL2bkS2/2rO2uEHFDeJJ4FxIo1xGXeiRZ8ORLm+5AP0DdlKaEW69rScyLMoAO
- 7xXW/Lwe3fOuUf+JzIgng==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RupwDlTdcTg=;YENjC31zGYBLO77iYX204OFMcQM
- +mrsX1whDKydsWFDWY2imTZt8j9nJWgweOGbbPmM7IEmPPD+zozIH5IBU9qC9p7CZwH9pOVyr
- iFWvzkGsWtewYW0bVFrhhN9LoO0vDTW4bYMCqHz1cFA3QAbpDCZLXNKrTN921VBqN8KDVhiN1
- kHTbULXWgRUteMiQToD7bMhyFhGw/2qJbU0M+tPd40av6Vd8UzFPjgGvvXoy/Lzoif7u9RDaF
- ekf6PMbYPEl460Nbn7Zlg1Jh6WkoSvGdi7uj9a/tHLGoJTQVio2jaGnm3BC+PEhv12+F8lyrV
- DIosV1ZTP2qNcde2cNnUuXzYcG7U4ZXOcmlyYCNW12kyYMTMA119kPVmyBabHp+0kI4twFKzy
- fmFIKG+Qv6Kl9uqrX+VDSiy0xILP9YPDymTA2DVZjd4Of+Fn4/iM6bmJ/AMx1eWadECdvvyLd
- /wZnbPUOOAPrsFGFHsWPNPVai60jpDeSJ5GEZ+18+oR4Vm+x3Vxd2SwBg6dt4EpKI/ECLJbfD
- DmFfsFmuzdSx1ksrgToi2XSOqteDWk5LrJNPGiqcxFQygC0R8KIMwYJ0TGmxT62Z4L6vc2ObH
- ARZ9qXZtHYhM7wiyvUB5dJa2xgALhU8ev1WNKrY7BQeHBwgCWUf3p3JAr0T+Wq+1Vl7Q5m1SP
- +fL0h7wkCZl+WytRgV3AF2rDZbRfQ0GkAXWCjztZI5IpJ5ZlhYGyJiTKM3TDgBYyRUICgqqzY
- P6abOVoi/p+CNHGh07qcnOkSozNjVk/eT/LO9BYHmEawRZgJVoQ4qe2sdVZh+C+BUxx3VsVL5
- /qdXWzeDp+Z1+3X9Q8O/Wigg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
 
->> A dput(child) call was immediately used after an error pointer check
->> for a d_splice_alias() call in this function implementation.
->> Thus call such a function instead directly before the check.
-> This message reads funny, please re-write for your v2. Here is how I wou=
-ld write
-> it.
->
-> "
-> Replace two dput(child) calls with one that occurs immediately before th=
-e IS_ERR
-> evaluation. This is ok because dput gets called regardless of the value =
-returned
-> by IS_ERR(res).
-> "
+On Wed, Oct 23, 2024 at 02:10:57PM +0200, Markus Elfring wrote:
+> >> A dput(child) call was immediately used after an error pointer check
+> >> for a d_splice_alias() call in this function implementation.
+> >> Thus call such a function instead directly before the check.
+> > This message reads funny, please re-write for your v2. Here is how I would write
+> > it.
+> >
+> > "
+> > Replace two dput(child) calls with one that occurs immediately before the IS_ERR
+> > evaluation. This is ok because dput gets called regardless of the value returned
+> > by IS_ERR(res).
+> > "
+> 
+> Do you prefer the mentioned macro name over the wording “error pointer check”?
+yes.
 
-Do you prefer the mentioned macro name over the wording =E2=80=9Cerror poi=
-nter check=E2=80=9D?
+> 
+> 
+> >> This issue was transformed by using the Coccinelle software.
+> > How long is the coccinelle script? …
+> 
+> A related script for the semantic patch language was presented already according to
+> the clarification approach “Generalising a transformation with SmPL?”.
+> https://lore.kernel.org/kernel-janitors/300b5d1a-ab88-4548-91d2-0792bc15e15e@web.de/
+> https://lkml.org/lkml/2024/9/14/464
+> https://sympa.inria.fr/sympa/arc/cocci/2024-09/msg00004.html
+There where several scripts in these links but non of them where too
+long. Can you please append the one you used for this patch to the
+commit message.
 
+Thx
 
->> This issue was transformed by using the Coccinelle software.
-> How long is the coccinelle script? =E2=80=A6
+-- 
 
-A related script for the semantic patch language was presented already acc=
-ording to
-the clarification approach =E2=80=9CGeneralising a transformation with SmP=
-L?=E2=80=9D.
-https://lore.kernel.org/kernel-janitors/300b5d1a-ab88-4548-91d2-0792bc15e1=
-5e@web.de/
-https://lkml.org/lkml/2024/9/14/464
-https://sympa.inria.fr/sympa/arc/cocci/2024-09/msg00004.html
-
-Will further development ideas evolve accordingly?
-
-Regards,
-Markus
+Joel Granados
