@@ -1,64 +1,63 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A750215A85A
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 08:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C3C15855E
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 08:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672560; cv=none; b=ZxI/zAEFENtx322fFaeNElBa+7J1XPJ1nu5zXGFQm2of64DWlX556pf78YPuYSMcVJ3KfNufbOEOiT849FfvNAF9X3HdXwx5M+iaF+7ZLQYRKdBalfThqP4d8nGhx8UfT1LX1uCi9m1jHqiqAyeMz2D39u5wqHti1vFYf3KDC/0=
+	t=1729672794; cv=none; b=jNGXWhxWo2ZhyI5/RHt3lSDKdFt7NE32AUdRMTeWnD8EX4hyDssQAxCPziaVUJ3PIFQWk0vm5ydnVeJwT/w4bFzlvNOGdXaZV6BpS5ZMFVq9W+uFKk4Kyun3HXnsw9zEZ/jP1+XdFm1DvABjGCOfUlEuN1EBrEk4639si4uChZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672560; c=relaxed/simple;
-	bh=XANjDqllGmT7dZD62JTbxNbSLbnFk78EEE3Fi0qytB8=;
+	s=arc-20240116; t=1729672794; c=relaxed/simple;
+	bh=iJbAb8skEa4Nx/8KUs6c6Kmf1XIOGfLjcxmhZaN7zqs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C+zWHZWLIZOae7qJcrRUtX2A9sx0Yu25CbrXDsnthL9g2EDEyQP57XO6zks7yKrmB1lrY732/j+Vcwa6OxHKDtH4/C4BdCO7HK9m/xtWE9Sq+pni/zUUXuCc+4lsNH8hUza275kHua6LTsvTTELcN7Qx+qO5rWRMyWM7i77pA+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vSIIW/u/; arc=none smtp.client-ip=209.85.221.43
+	 Content-Disposition; b=YcHiaZAP92ED+CktS3sTDGHaOHXA7jtsQXu5pBksIusMorfx2R7zntvUyW2+aFdQs2WlyRJ2KpH3V4UPtICx9qJH+S0cSaSzpSP7rLsmQVTfjV33PjOVEY+QNC76/Izj11xSK5s6yGRCEGjxXE0Ib2rTAgDJX0AlsvFOMSg3zaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oOO/UH4u; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vSIIW/u/"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d49a7207cso4736764f8f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 01:35:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oOO/UH4u"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43159c9f617so63097655e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 01:39:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729672557; x=1730277357; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729672791; x=1730277591; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=c4seAZLeLBao+DULFomE/haJsRyhT59WrLGt3SlbZ7o=;
-        b=vSIIW/u/qTlmnv7yorcsVTR83ovEOTzX72z9osFIk7dTCZ67lzuVelpFCvqh7AgpO+
-         zq7mjH47j+0zDS0nzyldaAH4WOLP2NS+i/UYq9icSytiVe47Nma3v24kE31YUW7UCpcb
-         gjUnqYhxtCdQOZ0d8YNiMv2wcODmsHrBpAjBj3ydjJk1gCXU4vcUuSp0hvCOBuP89Th4
-         G1r/1Rhs0EpbtB8UQCFerCgLJpwX7RUjC6Qsnvqd9wkwqp4nUgW2mRPgLxux0s5ThtBJ
-         FcgqMy5+iRk2+KxE+WGj0aE0r6KGEgUnvbeGDWRk6zjJqCxyvtEcpL0Fbuq+3Mt5paxy
-         vgFg==
+        bh=2q+EqKO/SmJ+LwoOc5NqrnnNgg93ONnESekHeBkrw9I=;
+        b=oOO/UH4umUXL2q/W87+IPDPrskl4aHiSoJejqSZCsxo6nL2FYwK1IkobOa/6Rf3qv6
+         gEPhyDnMic6+Cv+ur5cqmhhW4QhFMLwq0t10p4TyYovexoLFKJpexO2xyTfoMtxNZuBU
+         9xLO6IEKCUg+TYR5lI07LxbYa0GRMLbw+6FD/g0P1zaW3Yqda4XNRq9injEsnkqD7rXE
+         6pvm1YVOuNkQcSwTC2sQtj5WMzx3PKuj1ZGdZ2c6dkxLEbPY4spsJ4dIDUHIEZ1gh6TF
+         /iU8vabl1/0ZlGh4fby9v/JfWQaD4i5hhQI1Pwwa+P3RVytTRfq2WDyatAT/14LNf5pd
+         ugFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729672557; x=1730277357;
+        d=1e100.net; s=20230601; t=1729672791; x=1730277591;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4seAZLeLBao+DULFomE/haJsRyhT59WrLGt3SlbZ7o=;
-        b=Rr/kZ1y7hE+E+z8pI9WOGWeUw20TCTu9QiEMT4fvk2I6fxku9pIXauYkeVqPxM5CLC
-         ouQdcK8wch4ibSvFf0P7aDVlh3JjUE7TaLOSeKHnG9D2EOaiNsxR1oaO7oMMqm1/aqVy
-         AekWBhF1h6q6qFYM+qpfQp9W64CLPfCGRUQc1pAncERe6e8WoOHQpSO4JLErYO/bV8Zp
-         lTbO3xf+FSwBDxuoAwo0ZgFpdmEzBYnIZisPkWIFpBuW0UQLk+kU6Oq3xtztWls2NJXh
-         xpDdPu4Ri3Wm/9JDXWKcJiGBtGDPHstdV6QUAD+nPfNVPhWUy96PxCu5AkGoqBBAF6Xb
-         OwVA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4sV5F1EQa9VFay9MSb3R0t+TgilLSCfeFYDP7yHcuiDenBwbMXpvRHxNLu+3sxKUyNKFt8QsXpn5RacNPmb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJcnkN+LK7cMXN3f7utVH2rUCWom4dT59/33eUNohS7Tm5q7rp
-	O3N46Ket+MM41K1OBGBtDBVSbFzyHZKtdttk7ujqw4W43S36d+XBG6wagOi0Zr2nOoc61rLHOaI
-	fC6k=
-X-Google-Smtp-Source: AGHT+IGmggNRvQKAbAwZYa2Tm9b8tKfGWsofERa1h409m9EsubrlrhCiuo5ez/BbwM2CoYy92SzKew==
-X-Received: by 2002:a5d:55cc:0:b0:37d:4e80:516 with SMTP id ffacd0b85a97d-37efcf1fe4cmr1093598f8f.34.1729672557127;
-        Wed, 23 Oct 2024 01:35:57 -0700 (PDT)
+        bh=2q+EqKO/SmJ+LwoOc5NqrnnNgg93ONnESekHeBkrw9I=;
+        b=MMIF/DS4ADB0qBUyHGAFYACNiHuyXulXClBG2PWqb9PASph13vWL+MF1Fyh5BVvCfl
+         bsGYmlBp99oP2YgNITUiVo1wE1MTqA6gEjMxWqm1sSN0R0bw1nAKSbkoEloN0KKSlPXA
+         vEhJfYGhJkGNdlIibeyeu6ZDQSZZLlJKxQOMjB1xtSrRitzMKIg5fMVBfXCEgAtiQ+dV
+         X04KZ+NQEgvfm0hr6i6nLuAxaJZnT1EqtT6SHnXNqBBUgYPq81hXC3Jyh3Jm8yo1ITyR
+         ErQBC5N3o4+Lu419lBLTgCmaQLZV84ceqdpvvz+a92c4GU0S09pLxtueSTA5M1Gd0M/R
+         ELLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrQfZNols6ZSq7p8IAcOHC4pVWaVLLhpR4+1S8tcvuykyG8szRjnoFznjKLTc66AlRVuptavOFLAirMg5Dgdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ+ioeXgIkz8YB32uwKHK+2YSbU/2xYdxmPAxpAnf9DKUvmJ1T
+	tctdVYIMHGcoVddz/RBmHAioxH3STOJT+vsM4FWN1MBJCvUqleSCwof6R0wBQx4=
+X-Google-Smtp-Source: AGHT+IH33wSfSVODDvdL/yZ91O6rmVDtlC8FIWHeTBfVcquWAPxHFeIFGhVu1f0mob8q5XR3H0fZpw==
+X-Received: by 2002:a05:600c:190a:b0:431:561b:b32a with SMTP id 5b1f17b1804b1-43184158e72mr14918485e9.19.1729672790992;
+        Wed, 23 Oct 2024 01:39:50 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a583edsm8359536f8f.49.2024.10.23.01.35.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9413fsm8435305f8f.74.2024.10.23.01.39.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 01:35:56 -0700 (PDT)
-Date: Wed, 23 Oct 2024 11:35:53 +0300
+        Wed, 23 Oct 2024 01:39:50 -0700 (PDT)
+Date: Wed, 23 Oct 2024 11:39:47 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] gpio: mb86s7x: remove some dead code in mb86s70_gpio_to_irq()
-Message-ID: <b7f3a78b-7163-42a0-bd09-8b3184f29661@stanley.mountain>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: [PATCH next] pinctrl: spacemit: fix double free of map
+Message-ID: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,29 +68,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The platform_get_irq() function never returns zero so delete this check.
+The map pointer is freed by pinctrl_utils_free_map().  It must not be a
+devm_ pointer or it leads to a double free when the device is unloaded.
 
+This is similar to a couple bugs Harshit Mogalapalli fixed earlier in
+commits 3fd976afe974 ("pinctrl: nuvoton: fix a double free in
+ma35_pinctrl_dt_node_to_map_func()") and 4575962aeed6 ("pinctrl: sophgo:
+fix double free in cv1800_pctrl_dt_node_to_map()").
+
+Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-I have written more about the history of platform_get_irq() on my blog:
-https://staticthinking.wordpress.com/2023/08/07/writing-a-check-for-zero-irq-error-codes/
+ drivers/pinctrl/spacemit/pinctrl-k1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpio/gpio-mb86s7x.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-mb86s7x.c b/drivers/gpio/gpio-mb86s7x.c
-index 7efc9fc6f4cd..7ee891ef6905 100644
---- a/drivers/gpio/gpio-mb86s7x.c
-+++ b/drivers/gpio/gpio-mb86s7x.c
-@@ -145,8 +145,6 @@ static int mb86s70_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
- 		irq = platform_get_irq(to_platform_device(gc->parent), index);
- 		if (irq < 0)
- 			return irq;
--		if (irq == 0)
--			break;
- 		if (irq_get_irq_data(irq)->hwirq == offset)
- 			return irq;
- 	}
+diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
+index c75ea27b2344..a32579d73613 100644
+--- a/drivers/pinctrl/spacemit/pinctrl-k1.c
++++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
+@@ -314,7 +314,7 @@ static int spacemit_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	if (!grpnames)
+ 		return -ENOMEM;
+ 
+-	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
++	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
+ 	if (!map)
+ 		return -ENOMEM;
+ 
 -- 
 2.45.2
 
