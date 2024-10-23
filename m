@@ -1,107 +1,98 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745731FCF53;
-	Wed, 23 Oct 2024 14:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E90B1C331A;
+	Wed, 23 Oct 2024 14:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729694691; cv=none; b=mVzBiO8gRbqGg5CXDBPsaA502CYaoFJVHdtjhpJ6SaLQ0IVFlRIIPxbDcNT1dx/G+Pp4svxW8ghOb7RFvdMO1D9oGmdcdHIMoQJb2i5CBrEE8D1XwDr5JYGtLdZuCmaQB0apghfDxFVUSAIYfW/WsYnRk7cgcRFbxLGz3jmuf/k=
+	t=1729694801; cv=none; b=vGetQTLm7YWMTgBKTrv6iIUtNYx3F0tAniJXKddAakMyx0MOzFevo3giuvICsUIkKMk7AKzothUsP5Pm3b7R6fHY5Z30F2RSkhNyNjofUzjnqU3bXX8vidtdMmj0YtQpGyZeXRv2UzGCiYn9/ego9IhBII0RCBBMvyr6j8mL0I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729694691; c=relaxed/simple;
-	bh=i6gTQQWR/Q7iITKihWhTyePD6C8brJ6TfXHAPQzb59Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gx290zi2Gib8ppgfeU8edJgCs3GCEULwgeK+QITPn5ul/3Kg/wmswLoxWyPqqUcSdsDNC9wzM3nUWQJej5oSrkntGifRNf26tQ4VwZnAkEOjiD5LDzaYiVsGw0miW9pPTl+72H0J7+Qs7F+UHRvhKLSSevn/++cd/QHa3GvQc50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XsrgFca1; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1729694801; c=relaxed/simple;
+	bh=SFOGnBiupLKBx4sj/9NbGao1pH8tCSEFbJ4C2PRu1wM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fHOavcc5Qh/kr9j+EBOcbcoDsjpxGFOUXvmtV2YRRqkaGLV7O9QH4Os29kPiQ+Ol5PeZToqTzu8Bpf/w+QeD/Xr3ep5e4PuuQWA5V3wrUQciNSzBLXu6H2a/ATfNW6QLHDh5j2jAmXGFkqCWediloql2PUIDSVQBgNrcb8i+CS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m1HPxVZ+; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XsrgFca1"
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NEfhWI004197;
-	Wed, 23 Oct 2024 14:44:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2023-11-20; bh=iPM1LjVOR7/cD8+l6cv2bbnI+DWzh
-	Dz1FfPcamF+CvU=; b=XsrgFca1Aysfrwdc6K1+dC0MxvNFx5WAYYtPmMqshH6t7
-	rosRkcirIEDMgWPoRoXOZr3M3SYlZ/HV4uY4wcVL8193YX+77ycSE2EWqN9qFbDi
-	pRsNKfaiKxlXJ20WLzPjJJqUNxVvKrdG8/mRPfWlpXFrIjFrF0wfbTBi3jajJ6xn
-	VEGsQkqKJHzhHHlxfq/5Xdzzz5ladNYlv8cutxH/dd1QaTacxHv2SK4fbFHw0Wm8
-	8vnLkBtUMoGe2eZcb2RbeXA5gYy1p0bpMbMzK15Jf9gHkyLhwa9ixQf3Zhoulefd
-	or39+hqVbzodDLhJWWvMSgEVDV/DXefXuGOSRx0lw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42c53ur9sa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 14:44:26 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49NEWPJU030950;
-	Wed, 23 Oct 2024 14:44:25 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42emh1max6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 14:44:25 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49NEiP91016804;
-	Wed, 23 Oct 2024 14:44:25 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 42emh1mawh-1;
-	Wed, 23 Oct 2024 14:44:25 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Igor Prusov <ivprusov@salutedevices.com>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, kernel test robot <lkp@intel.com>
-Subject: [PATCH next] ASoC: codecs: fix error code in ntp8835_i2c_probe()
-Date: Wed, 23 Oct 2024 07:44:11 -0700
-Message-ID: <20241023144421.1720234-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m1HPxVZ+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729694799; x=1761230799;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SFOGnBiupLKBx4sj/9NbGao1pH8tCSEFbJ4C2PRu1wM=;
+  b=m1HPxVZ+v+1oyA2BYYtGbGHmPrtJJApszzXpmaCwEc5c4Gd+3v90hSuT
+   zqB42DXIA/wP0ohf3zVyFOV45N6KmwjvS0baTbevhdxoVYQeyDQ/7ZdgF
+   C0MJFUQeMmIJyyDtd1DRb0pwrHUh6CkSLWN4OxgQ10HMRUAeqOhGSfM+N
+   1eeUahCgEOB3IWN6GtHL16R1eZE30kfuPKkvtepEpEsoIeETPCirimhUM
+   gjDDzCl3vbft6DmCeywhHFeTG/696hRWgUFj0iVRfV3kep8vkeY2XbTsY
+   y7dRFzFKXTIYrDR9URoGUzFn3E7KhZIXFeq8jzYB0gmNdQa7jOaiHJupk
+   Q==;
+X-CSE-ConnectionGUID: BU29DCWySG6CdQA6kOmNpw==
+X-CSE-MsgGUID: HECTgzZuQTiDlyHmkxm6Og==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39835544"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="39835544"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:46:38 -0700
+X-CSE-ConnectionGUID: 2/65XuWbSqOXkpkL/CkXww==
+X-CSE-MsgGUID: fXm8mDTFSLqVo/P33V2kJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="84216607"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:46:37 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t3cd8-00000006F3P-2wFe;
+	Wed, 23 Oct 2024 17:46:34 +0300
+Date: Wed, 23 Oct 2024 17:46:34 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] gpio: mb86s7x: remove some dead code in
+ mb86s70_gpio_to_irq()
+Message-ID: <ZxkMSsBRhCa-foit@smile.fi.intel.com>
+References: <b7f3a78b-7163-42a0-bd09-8b3184f29661@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-23_12,2024-10-23_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 mlxscore=0 spamscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410230089
-X-Proofpoint-GUID: zId7C4s-5whJgfiO-z1nCfoess7VTI58
-X-Proofpoint-ORIG-GUID: zId7C4s-5whJgfiO-z1nCfoess7VTI58
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7f3a78b-7163-42a0-bd09-8b3184f29661@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-When reset_control_deassert() fails it returns valid error codes stored
-in return, pass that to dev_err_probe() instead of
-PTR_ERR(ntp8835->reset).
+On Wed, Oct 23, 2024 at 11:35:53AM +0300, Dan Carpenter wrote:
 
-Fixes: dc9004ea273a ("ASoC: codecs: Add NeoFidelity NTP8835 codec")
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202409281054.DUTb5KxU-lkp@intel.com/
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-Based on static analysis, with smatch, only compile tested
----
- sound/soc/codecs/ntp8835.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+...
 
-diff --git a/sound/soc/codecs/ntp8835.c b/sound/soc/codecs/ntp8835.c
-index 800bda6b49dd..796e1410496f 100644
---- a/sound/soc/codecs/ntp8835.c
-+++ b/sound/soc/codecs/ntp8835.c
-@@ -428,7 +428,7 @@ static int ntp8835_i2c_probe(struct i2c_client *i2c)
- 
- 	ret = reset_control_deassert(ntp8835->reset);
- 	if (ret)
--		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
-+		return dev_err_probe(&i2c->dev, ret,
- 				     "Failed to deassert reset\n");
- 
- 	dev_set_drvdata(&i2c->dev, ntp8835);
+> I have written more about the history of platform_get_irq() on my blog:
+> https://staticthinking.wordpress.com/2023/08/07/writing-a-check-for-zero-irq-error-codes/
+
+FWIW, this patch (see https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git)
+
+commit e13724956849975ef40cbc9898643f3074a1ed8a
+Author: Russell King <rmk@arm.linux.org.uk>
+Date:   Tue Jun 8 02:28:02 2004 -0700
+
+    [PATCH] Add platform_get_resource()
+    
+    This patch adds management of platform device resources to the
+    device model, allowing drivers to lookup resources, IRQs and DMA
+    numbers in the platform device resource array.  We also add a
+    couple of functions which allow platform devices and their resources
+    to be registered.
+
+added it.
+
 -- 
-2.39.3
+With Best Regards,
+Andy Shevchenko
+
 
