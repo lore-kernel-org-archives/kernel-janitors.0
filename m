@@ -1,112 +1,81 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AFB53368;
-	Wed, 23 Oct 2024 14:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280521CB51D;
+	Wed, 23 Oct 2024 14:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729692770; cv=none; b=kJYIOPtrTsxMKYfNc8aJgQevPII4lLITz9kgjm1vP8y+G1TxvhaDGFrb7b0zwthhrbAbD98qJJ7ad8Xpe+NUzsi3mFhYu3b6hlXWPhQ6qL9G0kuGBXX3MHdjT5fzKAWv8YEGDhCvF9ceasGjTynggcMlju/NPGHhIFpB1kkoX8s=
+	t=1729694334; cv=none; b=A3nMmYexkA3a16zji7IJoBEYUXP24QwGRJRhjgyMmMlWtilAe/YsXY8xf00IEJ+M4H7KYEEA87+VTMcdAqhyj6Qy5Jt75R/RKRAhf1r91hsZzOLFiiBK/KWpljdloWxsW6hiaSqntk5iu5UrB8aa4+tWgcPThpic5LiDWjXAZic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729692770; c=relaxed/simple;
-	bh=lT+2VpBy0BT7oY5bPbktSNUFx97M8RvIUrfH+KcF/Dc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iyojYOqKwgc5Ez4LukffuneH6GQy2OYLdRE6BLRnpIz8ZePVmIfKV+Q9dHsM4NWAatxl6lG54gsH3XRkXQ0xAKvZQzzQRZql/JHY1NoDXteXY1Y3DXyxyHLWJTFWmm6Kcqlh2ewmkuUuMxexnnAGgLniAw7IHvBXxQxBnQW2xhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+br8yx0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729694334; c=relaxed/simple;
+	bh=Ba/t7XJhyfeWS4PSORJvFeGXTYFHtcYoD6mXrqEYwvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOnYfTFMHHnytJnRAUs0C7MrGERexBl+9QvE1azcNur7Kvnl6i8+dOUdxxbWAJjBHywooqLfdRRbJvrexO1GcgDGSLbLoAfjHijcTck+tmFSE9Xv+HbSJACxQWiUF/I+u2sIDVwNGZDejdIuN82pkZYQ+cb19lReqE9GKiRuCTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OtJ7xwPd; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+br8yx0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AF51C4CEE9;
-	Wed, 23 Oct 2024 14:12:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729692770;
-	bh=lT+2VpBy0BT7oY5bPbktSNUFx97M8RvIUrfH+KcF/Dc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=W+br8yx0K06VIfrfvTTPp6H8RvGMv96AxJZySLP4dlcJFUhpirDAHaTFpIcPpoz/A
-	 N6QCXxzTD4M+AcJ6ap7fC3t/tpBJY9/E8+TUs6f/aQ8mO3vyHnxuTnyRZBeSEqLC7v
-	 C4Oa5C156i+HZJokRBkMJJt24mfC3vO3F05rKjaRqv9MUjPFz1MPgH3M2T16szp2XJ
-	 GhibYZl4h9CkJ46uip0M/M5DD1w9HsHBWwm8TnGy9BHdQMRTJx5OmlfCvnKkdo8UET
-	 jHEf+ItWv3xYMXwUYmIgW34LPDtXlrCeKIY8d6+WpoV8SvGQqyFeDBZybAhztAPfPV
-	 uL0NgWplSc4bg==
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ed67cfc1fcso1077399a12.1;
-        Wed, 23 Oct 2024 07:12:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjN+jLc03Uk8MHljoz+equ/nLHbytRoBZLz2yJ8tt78w+K2iN7MgUERe2ycUf8ayjXg29QOIc24B1I8dYY1gc=@vger.kernel.org, AJvYcCV3CGqTyl3h837wQgRqytYBgqP6lOReSGjCGTqroAfiIbHfibmDRuafXutjNs/Y22Nr6D67WXHE9+8YZ2FW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM689f8W+TwNAHRjnPxZGaCGVzgLnbCvsg3gqKpogtck0x0F2G
-	AHTBKOQceCg7oFaO6yQ/x7oYryQlkWdyvgokdFFjpU/bZZuMq1NyIdKL2fs4WA0uJkUWAQrsC4a
-	8OtxITEhiBJvCOSvAkKHpNZRVjw==
-X-Google-Smtp-Source: AGHT+IFlsad2/fwPdFPf6XhOvIClD0wIrRQ18NzI0oBgziJzaXBbTh6qI7+JGmlilOHZTPE+QeviZQ7b6sPyVX5hBBk=
-X-Received: by 2002:a05:6a21:3a41:b0:1d8:a247:945d with SMTP id
- adf61e73a8af0-1d978bef8bdmr2663185637.50.1729692769613; Wed, 23 Oct 2024
- 07:12:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OtJ7xwPd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729694333; x=1761230333;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ba/t7XJhyfeWS4PSORJvFeGXTYFHtcYoD6mXrqEYwvE=;
+  b=OtJ7xwPdlb/XHmFw1u/QmF/wF91K98teqX26QIBqnjyee1SSHJGcS+Do
+   6laHylk7uKK5jGIEHDSQ9Moyx9s+LWUkZhh4EJnWxQHKr2lUzS2fBuYMo
+   zJKeQNvf44RFpT20rhwHiEoLG63iaB+P+6/oBi/ZiQ6nkQ+5QnoFWUe3Z
+   b4qU+NxNM7eLwBWRm0cwfJqfeSS6U1hWQSJY4aWI5V0GEu/5fLlr+g1Np
+   TLH10FJvuv9HH9JKoNxT6AFxpvxVK5c9XIpVBJqiX+seB0cIcxpTDmuVN
+   KWld8Dq8JvNE9s1BzCQp2A6zIKtF5tKER+wKLdwOQTC+A4IcZvVeFjEK8
+   w==;
+X-CSE-ConnectionGUID: rwLPETSgQh6K/ZBJgkvxPA==
+X-CSE-MsgGUID: /7xhnxIdRSmDSC9rwvLEjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="33093332"
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="33093332"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:38:53 -0700
+X-CSE-ConnectionGUID: 2hK0MmFnS/KJFVzgqrvDmA==
+X-CSE-MsgGUID: NMRGm6uWRTSZQsz9Vv9kTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="80640965"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:38:51 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t3cVc-00000006Ev4-1qr1;
+	Wed, 23 Oct 2024 17:38:48 +0300
+Date: Wed, 23 Oct 2024 17:38:48 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] gpio: mb86s7x: remove some dead code in
+ mb86s70_gpio_to_irq()
+Message-ID: <ZxkKeOWPlPRLrZdY@smile.fi.intel.com>
+References: <b7f3a78b-7163-42a0-bd09-8b3184f29661@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cc537bd6-837f-4c85-a37b-1a007e268310@stanley.mountain>
-In-Reply-To: <cc537bd6-837f-4c85-a37b-1a007e268310@stanley.mountain>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Wed, 23 Oct 2024 22:13:10 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_8kG67ns8OokhzujmH7UNM-O+4Aa=GruO_spLOALMeARA@mail.gmail.com>
-Message-ID: <CAAOTY_8kG67ns8OokhzujmH7UNM-O+4Aa=GruO_spLOALMeARA@mail.gmail.com>
-Subject: Re: [PATCH] drm/mediatek: Fix potential NULL dereference in mtk_crtc_destroy()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, 
-	=?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7f3a78b-7163-42a0-bd09-8b3184f29661@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi, Dan:
+On Wed, Oct 23, 2024 at 11:35:53AM +0300, Dan Carpenter wrote:
+> The platform_get_irq() function never returns zero so delete this check.
 
-Dan Carpenter <dan.carpenter@linaro.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=881=
-2=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=884:45=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> In mtk_crtc_create(), if the call to mbox_request_channel() fails then we
-> set the "mtk_crtc->cmdq_client.chan" pointer to NULL.  In that situation,
-> we do not call cmdq_pkt_create().
->
-> During the cleanup, we need to check if the "mtk_crtc->cmdq_client.chan"
-> is NULL first before calling cmdq_pkt_destroy().  Calling
-> cmdq_pkt_destroy() is unnecessary if we didn't call cmdq_pkt_create() and
-> it will result in a NULL pointer dereference.
+Yes, effectively a dead code.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Applied to mediatek-drm-fixes [1], thanks.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-fixes
 
-Regards,
-Chun-Kuang.
-
->
-> Fixes: 7627122fd1c0 ("drm/mediatek: Add cmdq_handle in mtk_crtc")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/mediatek/mtk_crtc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediat=
-ek/mtk_crtc.c
-> index 175b00e5a253..c15013792583 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-> @@ -127,9 +127,8 @@ static void mtk_crtc_destroy(struct drm_crtc *crtc)
->
->         mtk_mutex_put(mtk_crtc->mutex);
->  #if IS_REACHABLE(CONFIG_MTK_CMDQ)
-> -       cmdq_pkt_destroy(&mtk_crtc->cmdq_client, &mtk_crtc->cmdq_handle);
-> -
->         if (mtk_crtc->cmdq_client.chan) {
-> +               cmdq_pkt_destroy(&mtk_crtc->cmdq_client, &mtk_crtc->cmdq_=
-handle);
->                 mbox_free_channel(mtk_crtc->cmdq_client.chan);
->                 mtk_crtc->cmdq_client.chan =3D NULL;
->         }
-> --
-> 2.45.2
->
