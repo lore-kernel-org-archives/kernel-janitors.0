@@ -1,119 +1,112 @@
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98401B85CF;
-	Wed, 23 Oct 2024 13:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AFB53368;
+	Wed, 23 Oct 2024 14:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729691391; cv=none; b=HrNTLW/BQ0QTIQNbH1lw6eHlsBBRpCOkClv3FT5YCDlgFhHIfiE0KULjtX32qL0SgCQDM+cmYX0r8T2mmghA+8wjgQcre9e/JZCq9vG61cWj/Sw7WjJRRpiDK8OHQbvfgpV6ZOvDMqkrS4J2fNMrs3QwSqgjdU34TkrM3PiL8VU=
+	t=1729692770; cv=none; b=kJYIOPtrTsxMKYfNc8aJgQevPII4lLITz9kgjm1vP8y+G1TxvhaDGFrb7b0zwthhrbAbD98qJJ7ad8Xpe+NUzsi3mFhYu3b6hlXWPhQ6qL9G0kuGBXX3MHdjT5fzKAWv8YEGDhCvF9ceasGjTynggcMlju/NPGHhIFpB1kkoX8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729691391; c=relaxed/simple;
-	bh=xKp0eaOiB2mHMTBJ2N0B7iUuiJVPbKGUPlJRuSVNO3Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g84MKS2k+cRUKc3/TCJAfMV3gNPJGSQZbeFIoWW/ELXndLDtuUOVNEgpuJ89xb20OWMESzDS0ku3J1HWNgMwdMfnDzD04XcOLz2MI3a6u3ceI1SMqXPzcDb6iweMdevJhIui5UwxgklFfORJAJYOBy92cfWwC/Jov7iRY5bMKv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OIXp0aqe; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729692770; c=relaxed/simple;
+	bh=lT+2VpBy0BT7oY5bPbktSNUFx97M8RvIUrfH+KcF/Dc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iyojYOqKwgc5Ez4LukffuneH6GQy2OYLdRE6BLRnpIz8ZePVmIfKV+Q9dHsM4NWAatxl6lG54gsH3XRkXQ0xAKvZQzzQRZql/JHY1NoDXteXY1Y3DXyxyHLWJTFWmm6Kcqlh2ewmkuUuMxexnnAGgLniAw7IHvBXxQxBnQW2xhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+br8yx0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OIXp0aqe"
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbd57cc35bso7459336d6.1;
-        Wed, 23 Oct 2024 06:49:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729691388; x=1730296188; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1E9hSMuxhJivqZkBd/5Upa72MwomOmtz47hUjemKq0U=;
-        b=OIXp0aqelk/fnlxovteTAg+9F5BphcMMBkf2EbuDFggD/RQqrCHpMzVHlqjvnZWvdX
-         R3rqQTXZJvn4l+ovwH987b/wlIS98wIBRmGnYT8gzS1E0jU0bjjGTW5B89m4OvbnkFPK
-         U3pjl3s5bXLQALuguUAq6OvQhLpph8Fu5QuYdIl7X45o+WqxE3yhz6dTTVBHdgMw3orC
-         5t3VS2g0NF/eVzbBpnZZ7pY/kWQ/nZvkuJJPOHQw+2rXh4f9XOiHNF/aAkM9liG3ORoS
-         wbZ2+dxLF3kOFSLz89T9rlhoy3j2+bpa5bL5ONgSnO+KaTgFPSwkTNRn6WP3A2TcvDJE
-         O8sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729691388; x=1730296188;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1E9hSMuxhJivqZkBd/5Upa72MwomOmtz47hUjemKq0U=;
-        b=dBxWQc3D0V2QhrGnf8a8r8OyqNxBF27LvYiN1oBW9Q+ZDVfsenhhbXCrn9K1PciCiB
-         wefojicCqil9Y+VYN+o2KISlQQmi9P+IVQsUxUpWJLU4KX0rcGau72o3ZbUknxkCtqkn
-         R9WsXWqTb4/fK1h41hInaIoDW8wMXPLKgEIrWwhahZ9MSV4g/UfNmqdUhcIYbyAD8RBO
-         mwMU5FmMaav8HYtQrIn7YPkIBJmDCVo6HgSPn7IvO62T67FWA0F72aZKggZZ1cEsfOrg
-         G7DwSKfiDt5igIJ9yYeUfozsVW8EVhPANY6o1Q7OsmuVE6BKOTQbMNlfM+mbav1k93dq
-         hpDw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3A5MwGcWQIFziQsWvKsY1vGmRdgYR3aT3Vji4M+Q/iweX0liE2FEM10jdH5RcH/V4UpMCBF8fwpJ/t48F@vger.kernel.org, AJvYcCXXisooVpZsitBxYe7EcKG2F8kdpdf7+P12VFCtsi3HXt7wcVq1DbphTimmJx7v+QiBMCqHC9J7ulKiYRJVVHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDhp13PP3Rrnr2KfdOMI1oNl5rNi0N6lyiKh3bkVdZPzTNNLGU
-	8y8Abf4gU1Dyo29VCCcKvSHBEh5AVVkZvwvdS8BgE6Kg4l8+nsfs
-X-Google-Smtp-Source: AGHT+IHwhJhDy3VRo4azo5fv6sWbQE1FDHxxvau6WVw6GJudrJZpRkuESW6AiLhrRy7U3PBV/WrnGA==
-X-Received: by 2002:a05:6214:29e1:b0:6cb:fc3f:6cc7 with SMTP id 6a1803df08f44-6ce21a7fdcdmr119843906d6.15.1729691388619;
-        Wed, 23 Oct 2024 06:49:48 -0700 (PDT)
-Received: from yoga ([2600:1001:b14e:1ecb:a95c:b3fb:e1a8:befd])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce0091ad77sm39274006d6.67.2024.10.23.06.49.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 06:49:48 -0700 (PDT)
-Date: Wed, 23 Oct 2024 09:49:44 -0400
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Mehdi Djait <mehdi.djait@bootlin.com>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/sharp-memory: Fix some checks in
- sharp_memory_probe()
-Message-ID: <x6dadpm2zmuuih4ndnpff5ljt2hy5geikjeejwy6v33qzaspsa@grxia5jw6y2j>
-References: <0d307349-c141-49ee-8b34-67caf5f8b638@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+br8yx0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AF51C4CEE9;
+	Wed, 23 Oct 2024 14:12:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729692770;
+	bh=lT+2VpBy0BT7oY5bPbktSNUFx97M8RvIUrfH+KcF/Dc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=W+br8yx0K06VIfrfvTTPp6H8RvGMv96AxJZySLP4dlcJFUhpirDAHaTFpIcPpoz/A
+	 N6QCXxzTD4M+AcJ6ap7fC3t/tpBJY9/E8+TUs6f/aQ8mO3vyHnxuTnyRZBeSEqLC7v
+	 C4Oa5C156i+HZJokRBkMJJt24mfC3vO3F05rKjaRqv9MUjPFz1MPgH3M2T16szp2XJ
+	 GhibYZl4h9CkJ46uip0M/M5DD1w9HsHBWwm8TnGy9BHdQMRTJx5OmlfCvnKkdo8UET
+	 jHEf+ItWv3xYMXwUYmIgW34LPDtXlrCeKIY8d6+WpoV8SvGQqyFeDBZybAhztAPfPV
+	 uL0NgWplSc4bg==
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ed67cfc1fcso1077399a12.1;
+        Wed, 23 Oct 2024 07:12:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjN+jLc03Uk8MHljoz+equ/nLHbytRoBZLz2yJ8tt78w+K2iN7MgUERe2ycUf8ayjXg29QOIc24B1I8dYY1gc=@vger.kernel.org, AJvYcCV3CGqTyl3h837wQgRqytYBgqP6lOReSGjCGTqroAfiIbHfibmDRuafXutjNs/Y22Nr6D67WXHE9+8YZ2FW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM689f8W+TwNAHRjnPxZGaCGVzgLnbCvsg3gqKpogtck0x0F2G
+	AHTBKOQceCg7oFaO6yQ/x7oYryQlkWdyvgokdFFjpU/bZZuMq1NyIdKL2fs4WA0uJkUWAQrsC4a
+	8OtxITEhiBJvCOSvAkKHpNZRVjw==
+X-Google-Smtp-Source: AGHT+IFlsad2/fwPdFPf6XhOvIClD0wIrRQ18NzI0oBgziJzaXBbTh6qI7+JGmlilOHZTPE+QeviZQ7b6sPyVX5hBBk=
+X-Received: by 2002:a05:6a21:3a41:b0:1d8:a247:945d with SMTP id
+ adf61e73a8af0-1d978bef8bdmr2663185637.50.1729692769613; Wed, 23 Oct 2024
+ 07:12:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d307349-c141-49ee-8b34-67caf5f8b638@stanley.mountain>
+References: <cc537bd6-837f-4c85-a37b-1a007e268310@stanley.mountain>
+In-Reply-To: <cc537bd6-837f-4c85-a37b-1a007e268310@stanley.mountain>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Wed, 23 Oct 2024 22:13:10 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_8kG67ns8OokhzujmH7UNM-O+4Aa=GruO_spLOALMeARA@mail.gmail.com>
+Message-ID: <CAAOTY_8kG67ns8OokhzujmH7UNM-O+4Aa=GruO_spLOALMeARA@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: Fix potential NULL dereference in mtk_crtc_destroy()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, 
+	=?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 11:30:31AM +0300, Dan Carpenter wrote:
-> The devm_drm_dev_alloc() function returns error pointers, it never
-> returns NULL.  Change that check to IS_ERR().
-> 
-> The devm_gpiod_get_optional() function returns a mix of error pointers
-> if there is an error, or NULL if there is no GPIO assigned.  Add a check
-> for error pointers.
-> 
-> Fixes: b8f9f21716fe ("drm/tiny: Add driver for Sharp Memory LCD")
+Hi, Dan:
+
+Dan Carpenter <dan.carpenter@linaro.org> =E6=96=BC 2024=E5=B9=B49=E6=9C=881=
+2=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=884:45=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> In mtk_crtc_create(), if the call to mbox_request_channel() fails then we
+> set the "mtk_crtc->cmdq_client.chan" pointer to NULL.  In that situation,
+> we do not call cmdq_pkt_create().
+>
+> During the cleanup, we need to check if the "mtk_crtc->cmdq_client.chan"
+> is NULL first before calling cmdq_pkt_destroy().  Calling
+> cmdq_pkt_destroy() is unnecessary if we didn't call cmdq_pkt_create() and
+> it will result in a NULL pointer dereference.
+
+Applied to mediatek-drm-fixes [1], thanks.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-fixes
+
+Regards,
+Chun-Kuang.
+
+>
+> Fixes: 7627122fd1c0 ("drm/mediatek: Add cmdq_handle in mtk_crtc")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/gpu/drm/tiny/sharp-memory.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/tiny/sharp-memory.c b/drivers/gpu/drm/tiny/sharp-memory.c
-> index 2d2315bd6aef..1bcdd79166a4 100644
-> --- a/drivers/gpu/drm/tiny/sharp-memory.c
-> +++ b/drivers/gpu/drm/tiny/sharp-memory.c
-> @@ -543,8 +543,8 @@ static int sharp_memory_probe(struct spi_device *spi)
->  
->  	smd = devm_drm_dev_alloc(dev, &sharp_memory_drm_driver,
->  				 struct sharp_memory_device, drm);
-> -	if (!smd)
-> -		return -ENOMEM;
-> +	if (IS_ERR(smd))
-> +		return PTR_ERR(smd);
->  
->  	spi_set_drvdata(spi, smd);
->  
-> @@ -555,6 +555,8 @@ static int sharp_memory_probe(struct spi_device *spi)
->  		return dev_err_probe(dev, ret, "Failed to initialize drm config\n");
->  
->  	smd->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(smd->enable_gpio))
-> +		return PTR_ERR(smd->enable_gpio);
->  	if (!smd->enable_gpio)
->  		dev_warn(dev, "Enable gpio not defined\n");
->  
-> -- 
+>  drivers/gpu/drm/mediatek/mtk_crtc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediat=
+ek/mtk_crtc.c
+> index 175b00e5a253..c15013792583 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_crtc.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
+> @@ -127,9 +127,8 @@ static void mtk_crtc_destroy(struct drm_crtc *crtc)
+>
+>         mtk_mutex_put(mtk_crtc->mutex);
+>  #if IS_REACHABLE(CONFIG_MTK_CMDQ)
+> -       cmdq_pkt_destroy(&mtk_crtc->cmdq_client, &mtk_crtc->cmdq_handle);
+> -
+>         if (mtk_crtc->cmdq_client.chan) {
+> +               cmdq_pkt_destroy(&mtk_crtc->cmdq_client, &mtk_crtc->cmdq_=
+handle);
+>                 mbox_free_channel(mtk_crtc->cmdq_client.chan);
+>                 mtk_crtc->cmdq_client.chan =3D NULL;
+>         }
+> --
 > 2.45.2
-> 
-
-Reviewed-by: Alex Lanzano <lanzano.alex@gmail.com>
+>
