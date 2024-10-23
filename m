@@ -1,87 +1,232 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EBD5D8F0;
-	Wed, 23 Oct 2024 17:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729703258; cv=none; b=IXmxV34D4FgmGdxDaICFKmR0pKsvlFdnsAUps+/BkQl1D8sU7jhqIxNFf4UzK5E0e5CookvlHjFcI5QOg/3KELYmDb9xfUx7s0HgZmdClx7lxonKLBEGpBVzoJCbXNDzMWcLdoGcAOXyoWsxVRbZSB450Zn7EAZxW05vaUBmLVE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729703258; c=relaxed/simple;
-	bh=pCakaD5ysHmugViv0AHD1Y1Y2ECUCJOpD8zllBC8d2U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=j87IAFUDck6eeWGk7d06qOnQ9ccbxYA4UKjLA/uZ67Z77SHZh6QCgeb5dzaqm77mWdy1+YsQyuDjWyiriyhowDM29ulsfSbF5I0p6x8/B5FJnD7VTR0BMACwPoGtrYVFhaV/v/T4oYuYG/ZrmsRD2B/WZxqCInukxsw2e6GQS70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsEi+qTJ; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C68142623;
+	Wed, 23 Oct 2024 20:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729714297; cv=fail; b=Kyerx/4xcCrC+SYJEsSBpYxnXOS6b8SnuriV/UCadMB38XV9T+C7uCWzIgC6MA6nKLJuXrXaL0EdsfiyM6jNqYEZpNZnHF4MFZKuQCef92fnkShgS43fm55saa3i3XLJIGauNehgsmru0/Ok2dR/ZAgr0fYSIfufH8y2D2OA6nc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729714297; c=relaxed/simple;
+	bh=xD0MOMePHfx2blUxJwxL/6/57jE5FG/B7w5FZb0omAs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BeKuBNWXUMi4Lv8/D0JP3/zaN1qKpm94OtIEf5LdgRPa9ypM6aGHzd77RoiCaSVhxFgl7fvfcWANqrEoCjXBH2lIgOerYLE1P6udu+CDf345XN75s6OVIpQohnk9GXaJs2ueebAQA1f5h77XgetZDutI9YKMB+TprgmyDBIRBMA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HgMgLFr1; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsEi+qTJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD51C4CEC7;
-	Wed, 23 Oct 2024 17:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729703257;
-	bh=pCakaD5ysHmugViv0AHD1Y1Y2ECUCJOpD8zllBC8d2U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=AsEi+qTJUGYvwjstEZlIsgu/9Q51yaNf3BEZDqgye4Ey0SQjG7Cjnz0WzMjyrGplA
-	 yI0TI7wtzhqnBfQJ8tu3X3BkopiRr9pbN4SuqioPjrqcEg189kug95mv9qMz2LQlqQ
-	 hHYpClt0w0JmRQ0kc5avRliXQ3qnFomXqPeO1HvBwKw227/fHadP2tz3U+6LnVIO0A
-	 eJ4/YEFqN6rXyo5RCWWba1rQmsbeu6zQsIYvXeORuwJboJjNqrrkEcHXd1FtQPpcUV
-	 E79XQVftmYie/Vk+E0EsIw3uI1Q8XDFBziullbrnITKMLvzCIJugW7+LpWD66XR3qY
-	 LBdmBHXDSgccQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Igor Prusov <ivprusov@salutedevices.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
- error27@gmail.com, kernel test robot <lkp@intel.com>
-In-Reply-To: <20241023144421.1720234-1-harshit.m.mogalapalli@oracle.com>
-References: <20241023144421.1720234-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH next] ASoC: codecs: fix error code in
- ntp8835_i2c_probe()
-Message-Id: <172970325510.86642.1481020060843547661.b4-ty@kernel.org>
-Date: Wed, 23 Oct 2024 18:07:35 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HgMgLFr1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729714296; x=1761250296;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=xD0MOMePHfx2blUxJwxL/6/57jE5FG/B7w5FZb0omAs=;
+  b=HgMgLFr1rUR3DtJDytZ9giE+92F5QDNoJziu/zxZhNzO5KM05GJeGAj7
+   KD+wpU01nYBMiT+flNynOJU+X/p4bNvf5SRtlt8glxbpInCu3cNHz0jxi
+   McexY4DkvAkk+1b4U0Cy9eFP2BbW6IWKairU51T8Fa1RcBGRhpm345uvn
+   HO6khp2Eo2QLXTV8sW4Om8ZV1ODavoAy+a5cPUVxRkFp5FN9ic8B2HkhW
+   /xe7KpzBWJWHM9NPDi4h1kZD5XUiarByv9NSAvMaLuZIqlsziIIafKNpv
+   FIeRkqglVXi9puvcA/kgxAx8xiQxwKf04mr6SXQ3s8lZqvc11guvasnSS
+   Q==;
+X-CSE-ConnectionGUID: 9jTxkP39RraIBZqviN1V5Q==
+X-CSE-MsgGUID: p0GgCoLMRpeE21pTFGIBpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29486281"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29486281"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 13:11:36 -0700
+X-CSE-ConnectionGUID: zXSAucJeTxqG4IfyPhljcg==
+X-CSE-MsgGUID: E4mxY9XjS96AEL9lCTyJbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,227,1725346800"; 
+   d="scan'208";a="84961370"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Oct 2024 13:11:34 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 23 Oct 2024 13:11:34 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 23 Oct 2024 13:11:34 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.171)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 23 Oct 2024 13:11:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iaJJjU6wUtOWA8Fr4tLAgW+UAKTQ3wG/9HYllnNqflft/lDn7hEFIZYd78tvMTES2aQ5gYf+gIv8b5UYZULlZSWwzHC4q476dvfI9SwqMxP/ZviXwrg+5mByh1Y9muPLvKYptUKnof1HBaM44Q3GRCb0D3fu4vbsOhgr6nCgmqpmEtVPy/DmRf1SG3GYjFQNhMd29rQMoS7UH4eHf5zFcfVy6AJVBJKPGQAtCrZKIGf1cUSmk8fmuzp/BGhV4Swckmle9puF/n1Uwin4/UIxg+8RLL+DbUhiOi4lAweUOColESUt20QF2Dsj/0VXFKS41/d5FedJr19QQFH1Yna8ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i/Rjg/eu3peaJ3frb/dG4gfc0ZCk6EJIER20m4z4FAI=;
+ b=GG7f1Nc1cboJmQ/PwI/M6Ic9ci6dnBvREgxk+KqUkmbAudB8+Tfb7PY8ZiBn+SZR2fdkJQVV8XDm+9Tz2Po/LKG4jG6PLHDWuSi8qwS0k9x4YNTvClmJPVLztRHMm6aqrNYhshRdnV0ZL7euQJIqL70EjVemXXwVhrwTgvUQURlLzbvk/VmCurzpbDQS20fQIWGx0kP7WRNtfRjCtjeklzAV3yEDkiC1k24Zp7+7pDLpDRbic0KcHFoIdSB29IvT4i9HCVlSQs2b7tcwS9c1LKakk7P3ig463LKnkDko++oK//VaSP7S1qfQBzHwWTxKXZ6oxEQFMFGVeqY18755rA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com (2603:10b6:a02:c9::12)
+ by PH7PR11MB5957.namprd11.prod.outlook.com (2603:10b6:510:1e0::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Wed, 23 Oct
+ 2024 20:11:31 +0000
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42]) by BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42%7]) with mapi id 15.20.8069.020; Wed, 23 Oct 2024
+ 20:11:31 +0000
+Date: Wed, 23 Oct 2024 16:11:25 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Everest K.C. <everestkc@everestkc.com.np>
+CC: <lucas.demarchi@intel.com>, <thomas.hellstrom@linux.intel.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<skhan@linuxfoundation.org>, <dan.carpenter@linaro.org>,
+	<michal.wajdeczko@intel.com>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <kernel-janitors@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V4] drm/xe/guc: Fix dereference before NULL check
+Message-ID: <ZxlYbVOLPQv-oWrv@intel.com>
+References: <20241010165801.3913-1-everestkc@everestkc.com.np>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241010165801.3913-1-everestkc@everestkc.com.np>
+X-ClientProxiedBy: MW4P223CA0003.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:303:80::8) To BYAPR11MB2854.namprd11.prod.outlook.com
+ (2603:10b6:a02:c9::12)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2854:EE_|PH7PR11MB5957:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4f16b68-7f3b-4b8f-0dfb-08dcf39ee265
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rcF7fOIUk1YjHD3IY1VAawH6RoL110luDMt3RrUP6JVfmVffEnZHtUKdecaQ?=
+ =?us-ascii?Q?Xb+dSH8SoTTSdEnpSszH9KSVYduh3yfKHngzrvEyQcpAnMWQdewJJHJl0QIp?=
+ =?us-ascii?Q?k8Upa5HYDTQAV9kpocwpELmrl5INzzxaa/D1TvNGDdSRFqqfCIRKhU6ZB2w7?=
+ =?us-ascii?Q?ucc8cJE95tflK1gLFS7vk8aqLWlg/P2LLWM0Ekg/j/CQs95/i9uxfmf5KzDk?=
+ =?us-ascii?Q?jb2gSJ0ejaaIXaNd88lrYT4qJnC9HRdtAR7+OqW5giMEwhC3p7YGhZbUR1dU?=
+ =?us-ascii?Q?UadA7aBO1qY2yM/Rkwo1zDIFfJZY37G5d5jjHAY8nOpj5DNHqQgh/GFhGwBj?=
+ =?us-ascii?Q?ApTJwS9nHWTJ3qZ/CfcH5ESAzLQXne/IzpADW8xV7z3ZRWwDxq5UMrtL4j2f?=
+ =?us-ascii?Q?BC/P5Cles7ZtnqdrKUm/wp9XMXsjP8Pje+rU18ELqbG2CGgJSyd5SvIQUXlJ?=
+ =?us-ascii?Q?ke/DtUz0NIlDe2k8I/0yDPQQ8/JsCpRhSCPJVhIU1HXAIioYhptRRIKpsSvx?=
+ =?us-ascii?Q?+UahM347k1/qsfrktPbRbHZPSh3iQ6Nt15SDvqODzqtvvk/kj9NUHS7vy1my?=
+ =?us-ascii?Q?zL1aViNN+R3grXVL0I6PTWWIJl1irBLVLGMGp/AYAuZyFXAZqNCWw2eHI4ws?=
+ =?us-ascii?Q?aZ1NANBSW6usBlKjZ0QZcfXgugORW9tN+yRFwBUuSYg8JExo+AmHenveCHgv?=
+ =?us-ascii?Q?Z3FufqDj70R8r5s0VNaCVcvqRX3BtNBkItjwYD28qwh3nsZvPHS06TEVUEiT?=
+ =?us-ascii?Q?blsCJlyoNvG7rnWypD78wfH0ygJT0GDPWdjhtpZ9fZ7Gn6wp050Lsrj3YVZY?=
+ =?us-ascii?Q?rzs9oBMzfro7sbbypH5zzrj/SdJiWtmU1LAsvc6kyVEy3OPyze9dSm4auFUh?=
+ =?us-ascii?Q?1X5hLvCn2JDDnA5HDl0r/OtJeD32Xr++mkiYUOiDskirKfo3r5P+K00yQ5l+?=
+ =?us-ascii?Q?l3UjYE7v0FgHf3Nhvwv6dCeP+kvpYRS7Q+rOGRl7r88Y8qeCAnRGQRjFia8r?=
+ =?us-ascii?Q?lG5W5QnAeJj9Ubck5dFi7FVN4nVR3V1YQfFjgK3JzOLMIX9EtvXEk3P5IJVg?=
+ =?us-ascii?Q?g9t8a1Ql0x/nOuttd25XIQitdKfCGG+ZA4SM9wtEuZFQJ78JFALMJ1jEUcpU?=
+ =?us-ascii?Q?LE+AJuLxe9O7ndI1zXBEcZWGNxq8+xB/Ncngfb38ZGs9dJwGhEvnRuOWXYKz?=
+ =?us-ascii?Q?fTIxzQagqbb+qwl5oD/++4LC7lR4qecbcfeemUU0IDPR9VoU+rG8rEUtBuBy?=
+ =?us-ascii?Q?P+JcNGL7h0oOcZkiFuYx?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2854.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CXetvDhbZbtAaYWKwSNpBGtCmUjaChf4Vg+h2RDFIpL5snrlh5U85bMZsbKw?=
+ =?us-ascii?Q?GJEn01q2FAG5qgCw0JOkQvLVKSf2Mt+bM5lVcYy+UBc47p4h/6lp5zawcKtO?=
+ =?us-ascii?Q?PTnsHDccAHcwCpCdgOXvTpMFOJB/woKc3C7IRkBfxoG0AlEf0hARCLV/p/uE?=
+ =?us-ascii?Q?wFrAGU77olj/lBCgVds9Zu4v1L/FBd/yL7BJdsAyCvmTTKzI5zyaoQxUISmI?=
+ =?us-ascii?Q?DB3fAx+rEXgQ171BtzW8FOEY1/c+ITwJsaIaPGHzgfwU1927Xr1cjM8UrrnO?=
+ =?us-ascii?Q?bSzBdwPrEgFov9XSwufi5PwU9oVYkT4gl35Arjuh4SGX8FHRZkhzVzKK6Z3y?=
+ =?us-ascii?Q?AwEzJASst0bxTlrZAHKiXGPqn89+7emWZ9ZI+nu30UkwbxKOOdNH+uYTxWqb?=
+ =?us-ascii?Q?EQT+z3l5m1rR5YqAKLeNeLEZkClspF/Px9DhTa/HO2e2cZN5tIY8dQFfL8W2?=
+ =?us-ascii?Q?cTJvrEWMAiIqVRyVO7htbFZiZ+bbqx+S04tZBJzaep20n1+HI+y32YoZlcBZ?=
+ =?us-ascii?Q?uNUrDP3PGG6zFcsvEsstYEJjkvfsdCL4fbN46HlrFpT6tcokUa83eW3iG892?=
+ =?us-ascii?Q?EhCR9WO/wKL8eXhoVMClPkKiv9Xy090ZefghrY72ChJwmiJw5xukQc+C43lH?=
+ =?us-ascii?Q?MrUXbRlHPwYWPqP2F3Hj+krA5sF0etEc+7B0cLMOGW0x87Y/NbtjHtWsF1VA?=
+ =?us-ascii?Q?os+0vJEc019V6QfymuVT24B5UbAgGdqAyzGtX76gB6lvKTna6vgZSKS5/JsR?=
+ =?us-ascii?Q?/u3YOthtTaINH8XTRgLclFLD69Nqd2gAYHyE05i9VXp6ZdQMOEbRW+04uv3F?=
+ =?us-ascii?Q?iZqfHT0UtdWM6Vl4SkAnS3dsRbxtMhdLpTw4LgWIldxp1saouXxJIF8xmfky?=
+ =?us-ascii?Q?+y7LS0O0PyR7CkjCZ5lY3WV7F2vMWCCJfZ7HkOuRN33qeQ4HRx4ptTYjk+C+?=
+ =?us-ascii?Q?3+ilCeTxXGO4XDd+cn65U2dkCR9q/HZsBP3KyFJlVk+QlDpVR+TQba32X+Xp?=
+ =?us-ascii?Q?Vc8eb+0T8CO7WXLdKdqyLeT4exGw/7GNQ0BaMjYEkNurA4WUTuZbKjbb/Uxv?=
+ =?us-ascii?Q?AwRfO/fVC+7QCiiiUs0iXaxstzOKLGevSCkCTOhZm6u1kFSBcyqJMMfpQgtM?=
+ =?us-ascii?Q?OoWhqcjZc5iSfLY0d4oxk3SFJS3zYOVWc2PE89qVNXdfVb8isxIZkHcJgQDl?=
+ =?us-ascii?Q?0lgPJo+rI2ModV+9XziamjFeTB1lJNPTLVBAOKv9sIjUprlbBhT9v/8U84ru?=
+ =?us-ascii?Q?YEMTIOElFQy621wwf7BDqRPGdBPjrqp/cTrZ/qg2LT4DFUmy1JkXtVvaAPT2?=
+ =?us-ascii?Q?5f+2QlNZfMSX78hpFmmiXda7YXz1dK8vh6wIXcBiSOmGGVyMw89RebTVL+BF?=
+ =?us-ascii?Q?AFCML7RzJAaAZZ15ql5loLCACKHg1FNzLmHdsOv5EdxJ/levQD2rsGdjbkuv?=
+ =?us-ascii?Q?ovI1bOoeH9mXaPJim0VrbLWMQApOONoEm/SEN1Au6Q6iWXXZCV22ogB9KJlx?=
+ =?us-ascii?Q?XhkGBTXUEBjOtchU3xs6PD4VfOWFE5+JstBcrPx01HBM4wB2Oo2olYf+PEF3?=
+ =?us-ascii?Q?jDwn5rjygKfEUy2IPchUF16xZ0KZtn0N/LMtLSw6yMBs5QtgStUDtD0ZMbma?=
+ =?us-ascii?Q?kQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4f16b68-7f3b-4b8f-0dfb-08dcf39ee265
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2854.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 20:11:31.1885
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZgrsL888fO3WBr550i7IvTRAzBnaHFpcOcZ6ESHC00zkji1KAjRJ1WKfcSlCOINaKDpm0kPQqdu54l7rgc5SsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5957
+X-OriginatorOrg: intel.com
 
-On Wed, 23 Oct 2024 07:44:11 -0700, Harshit Mogalapalli wrote:
-> When reset_control_deassert() fails it returns valid error codes stored
-> in return, pass that to dev_err_probe() instead of
-> PTR_ERR(ntp8835->reset).
+On Thu, Oct 10, 2024 at 10:57:59AM -0600, Everest K.C. wrote:
+> The pointer list->list is dereferenced before the NULL check.
+> Fix this by moving the NULL check outside the for loop, so that
+> the check is performed before the dereferencing.
+> The list->list pointer cannot be NULL so this has no effect on runtime.
+> It's just a correctness issue.
 > 
+> This issue was reported by Coverity Scan.
+> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
 > 
+> Fixes: 0f1fdf559225 ("drm/xe/guc: Save manual engine capture into capture list")
+> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> V3 -> V4: - Corrected the Fixes tag
+>           - Added Reviewed-by tag
 
-Applied to
+For some reason it looks like nor CI nor lore has this v4 version.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+could you please resubmit it?
 
-Thanks!
-
-[1/1] ASoC: codecs: fix error code in ntp8835_i2c_probe()
-      commit: 9c2e48ee9aa64f609709eeb120cf728d66d4a145
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> V2 -> V3: - Changed Null to NULL in the changelog
+>           - Corrected typo in the changelong
+>           - Added more description to the changelong
+> 	  - Fixed the link for Coverity Report
+> 	  - Removed the space after the Fixes tag
+> V1 -> V2: - Combined the `!list->list` check in preexisting if statement
+> 	  - Added Fixes tag 
+> 	  - Added the link to the Coverity Scan report 
+> 
+>  drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
+> index 41262bda20ed..947c3a6d0e5a 100644
+> --- a/drivers/gpu/drm/xe/xe_guc_capture.c
+> +++ b/drivers/gpu/drm/xe/xe_guc_capture.c
+> @@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+>  {
+>  	int i;
+>  
+> -	if (!list || list->num_regs == 0)
+> +	if (!list || !list->list || list->num_regs == 0)
+>  		return;
+>  
+>  	if (!regs)
+> @@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+>  		struct __guc_mmio_reg_descr desc = list->list[i];
+>  		u32 value;
+>  
+> -		if (!list->list)
+> -			return;
+> -
+>  		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
+>  			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
+>  		} else {
+> -- 
+> 2.43.0
+> 
