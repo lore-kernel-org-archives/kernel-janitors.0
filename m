@@ -1,62 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA4519F13C;
-	Wed, 23 Oct 2024 12:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0681AB6F1;
+	Wed, 23 Oct 2024 12:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729684962; cv=none; b=l3tGmDVPTL+c2hraxOz2x36uyfHoboHsETBtOC/mJEdB5iWp4fa8n/522F8rp/za89rqrGkepxCG25xiEqNAC52KDiANRh4LqdwQ3bLxqGzBl07kGbYUFDFgrbBMlPRdht5JRRKF5c/qmM+JIPi9n1z6ZiN1+z9TbOR8bB5KxDQ=
+	t=1729685490; cv=none; b=WK0NRJfx75+F8jwrxVZH7T8aYwwTwVVl3pKIt/ONUVveR89AaokZycj/QJVoRp+BlPVAUskyFLQm3W6fMA0kXvP4TdUGpMnd0YpLoBjjSZAE0CLFllBTYSwdLr1ClRJ6J+jO22JS/ty88olSanYOAX82O1jzCguCd3Dh4My4Pe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729684962; c=relaxed/simple;
-	bh=JXY75s2u6rRPudxtXz5fP+1Bnsjq+f7s0nxJfypNBvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lmb36HUF79gdz3Wlj1Sq1DPUCQrpbHFHAz4HFprbGLLSqGrcMu/jd2HHW0I1cnAgMfqWyuNb0aOTzfaS0NWuA+WTkzWRcEjjsyZSIqsrUp4rp2o56iLoILL5zxLmyOyKzSOekmHSAQLXxg2CZkB7IGWGGq8azaPgndCOW6w0HZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLmmHE30; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729685490; c=relaxed/simple;
+	bh=3rQj6fEZ/iZQD71N4a8ZhNCGI4KM2C73FPxf49T8aSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GwQT8tSItvy9gkICKLPTTNVfrzLg8u6BZP6fdEZPiaoUPg/1jO4w+9uQpSbHl+SdYDkZkqro5gkRN8WlohCFl4iGlSMucns4cY3q/qgke6FWE5q4iqVIYCUnB4vM3dmy2IP2Q58qIT7c3B7TPxUV0zvWoDTv8AzB05qyPTVnYAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DZz0rI2h; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLmmHE30"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41AF6C4CEC6;
-	Wed, 23 Oct 2024 12:02:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729684961;
-	bh=JXY75s2u6rRPudxtXz5fP+1Bnsjq+f7s0nxJfypNBvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VLmmHE30MNdMidUIAvLPu6/pyXAM2u588vAzss1L0k5zJJhCgcQcvznT8of5FXDrg
-	 m9OOQ9oF3qZwMdI3W2RAnyBt0UJ6mL4A0mzMB4pj91TlwzZAO3yb594fCOJK598+8a
-	 75vmcYOgTAYrJhBoI0PDbcfgUjpubbZHvRrN8OE+zUsQgiVdG9xWcN15snJGPScdhm
-	 Y3ZxdjsFEawR15u2J2rErqr2BqCj/YwuKjX5ZVX/tGcAYBRvlRX/h6PbCv+5aCyQxQ
-	 B/gXYcwlKeXgEoCulSLAs7YpPP3HgaM4kw6UH6nu1LL30aaEKXT7ncw9NSY4sh7wrS
-	 b0o/hFQ/P43GA==
-Date: Wed, 23 Oct 2024 13:02:37 +0100
-From: Simon Horman <horms@kernel.org>
-To: Johnny Park <pjohnny0508@gmail.com>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew@lunn.ch, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] [net-next] igb: Fix spelling in igb_main.c
-Message-ID: <20241023120237.GP402847@kernel.org>
-References: <ZxhruNNXvQI-xUwE@Fantasy-Ubuntu>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DZz0rI2h"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1729685471; x=1730290271; i=markus.elfring@web.de;
+	bh=3rQj6fEZ/iZQD71N4a8ZhNCGI4KM2C73FPxf49T8aSk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=DZz0rI2hh5JuUP0tcmEpgojxSzhtAcRzjFCWQqQH/oBICvbro9NuE9rrJrUJnXLZ
+	 d9CVwAs7YtfwDwPNnKaxEhERzYb/ujSfdyKXSdKhwMIGQ4mu8zn4fMfKWEXLa+X2e
+	 rR12qVzCRADzR5SDQZuT5RPy7e4bPUOXTjlLlPyBLpmhiu7mtEC/RNsRLBxc6UY2q
+	 iYDsq3rEmGWlnJttHLBqzJSlDW3l5RBQy1Eh03jhCbEN8nBR5kntqh0WoZkzzXwF0
+	 yN98zgastub5Qhn2FphFIUTxWKYmn/AwfefNrx2rKL1ne+I1cdX+tYfMmeNuu0yva
+	 nQZahcTpQufmKVPH0w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVJRl-1tVnNA0APn-00MYss; Wed, 23
+ Oct 2024 14:11:11 +0200
+Message-ID: <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
+Date: Wed, 23 Oct 2024 14:10:57 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxhruNNXvQI-xUwE@Fantasy-Ubuntu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
+To: Joel Granados <joel.granados@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Al Viro <viro@zeniv.linux.org.uk>, Kees Cook <kees@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>
+Cc: Joel Granados <j.granados@samsung.com>,
+ LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+ <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eFyknJdf395MNGzbt8czznwldS29/evKPpb3O5cDjb3kVIiHWSl
+ uS4fEYVnOSk/ugfbqc+0bcTZBh31WW668Shn19Vwd9mWF7Fj/x0ZeEMznYABIomhLRE8JqM
+ WAUkOjPg17wL2bkS2/2rO2uEHFDeJJ4FxIo1xGXeiRZ8ORLm+5AP0DdlKaEW69rScyLMoAO
+ 7xXW/Lwe3fOuUf+JzIgng==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RupwDlTdcTg=;YENjC31zGYBLO77iYX204OFMcQM
+ +mrsX1whDKydsWFDWY2imTZt8j9nJWgweOGbbPmM7IEmPPD+zozIH5IBU9qC9p7CZwH9pOVyr
+ iFWvzkGsWtewYW0bVFrhhN9LoO0vDTW4bYMCqHz1cFA3QAbpDCZLXNKrTN921VBqN8KDVhiN1
+ kHTbULXWgRUteMiQToD7bMhyFhGw/2qJbU0M+tPd40av6Vd8UzFPjgGvvXoy/Lzoif7u9RDaF
+ ekf6PMbYPEl460Nbn7Zlg1Jh6WkoSvGdi7uj9a/tHLGoJTQVio2jaGnm3BC+PEhv12+F8lyrV
+ DIosV1ZTP2qNcde2cNnUuXzYcG7U4ZXOcmlyYCNW12kyYMTMA119kPVmyBabHp+0kI4twFKzy
+ fmFIKG+Qv6Kl9uqrX+VDSiy0xILP9YPDymTA2DVZjd4Of+Fn4/iM6bmJ/AMx1eWadECdvvyLd
+ /wZnbPUOOAPrsFGFHsWPNPVai60jpDeSJ5GEZ+18+oR4Vm+x3Vxd2SwBg6dt4EpKI/ECLJbfD
+ DmFfsFmuzdSx1ksrgToi2XSOqteDWk5LrJNPGiqcxFQygC0R8KIMwYJ0TGmxT62Z4L6vc2ObH
+ ARZ9qXZtHYhM7wiyvUB5dJa2xgALhU8ev1WNKrY7BQeHBwgCWUf3p3JAr0T+Wq+1Vl7Q5m1SP
+ +fL0h7wkCZl+WytRgV3AF2rDZbRfQ0GkAXWCjztZI5IpJ5ZlhYGyJiTKM3TDgBYyRUICgqqzY
+ P6abOVoi/p+CNHGh07qcnOkSozNjVk/eT/LO9BYHmEawRZgJVoQ4qe2sdVZh+C+BUxx3VsVL5
+ /qdXWzeDp+Z1+3X9Q8O/Wigg==
 
-On Tue, Oct 22, 2024 at 09:21:28PM -0600, Johnny Park wrote:
-> Simple patch that fix spelling mistakes in igb_main.c
-> 
-> Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
-> ---
-> Changes in v2:
->   - Fix spelling mor -> more
+>> A dput(child) call was immediately used after an error pointer check
+>> for a d_splice_alias() call in this function implementation.
+>> Thus call such a function instead directly before the check.
+> This message reads funny, please re-write for your v2. Here is how I wou=
+ld write
+> it.
+>
+> "
+> Replace two dput(child) calls with one that occurs immediately before th=
+e IS_ERR
+> evaluation. This is ok because dput gets called regardless of the value =
+returned
+> by IS_ERR(res).
+> "
 
-Thanks for the update.
-I checked and this addresses all false-positives flagged by codespell in
-this file.
+Do you prefer the mentioned macro name over the wording =E2=80=9Cerror poi=
+nter check=E2=80=9D?
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+
+>> This issue was transformed by using the Coccinelle software.
+> How long is the coccinelle script? =E2=80=A6
+
+A related script for the semantic patch language was presented already acc=
+ording to
+the clarification approach =E2=80=9CGeneralising a transformation with SmP=
+L?=E2=80=9D.
+https://lore.kernel.org/kernel-janitors/300b5d1a-ab88-4548-91d2-0792bc15e1=
+5e@web.de/
+https://lkml.org/lkml/2024/9/14/464
+https://sympa.inria.fr/sympa/arc/cocci/2024-09/msg00004.html
+
+Will further development ideas evolve accordingly?
+
+Regards,
+Markus
