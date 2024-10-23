@@ -1,68 +1,67 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7210E160783
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 08:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2377A15B119
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 08:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672864; cv=none; b=YeLVajblL7xB5SB2HbjuXw7twangl7XPx6IUA+oa4eYqpEQ26YujmmCITuuO+ZlNzgf0dJ5+Y17qYCJhEhx/NO1LjZq5nAVFdZWRLS1aa7s23H2dd8YVw3YN4x5YfJtmH3BNX6CaW/9agZnczNu5MwAvQpOK6JGQWqsvVoWp3u0=
+	t=1729672926; cv=none; b=PLd+Ou2AXAV9XbpPFFDYgpD/FgKMeeW8XwXrcQfPeLcHY+towj6Nh3h2O9UygFvnaHh3U/2r55Sa4iqfMyXN8EbRq6qEGtmcRzVu8c+uXZhUjGauH44NXdZEC2vUmR1JssZLw05iCAalPLSW7m7LcKJVxeSLhnrU9NLjqNrYuL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672864; c=relaxed/simple;
-	bh=AhxknCPZ2gcrOaKuKqEw8OHcUo+zkXArRxDbHaTse4k=;
+	s=arc-20240116; t=1729672926; c=relaxed/simple;
+	bh=eLg/xfE9L4uf5NA59EESgWABT5YKgmF+DoFEsj5P+2Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UCqKU4x31k2SLXA1miRg1YvQ2BZyXo4C10TpKxEX3Snhi1wi/2YWf7giqCFMiqKDOmcUHqAyD8Q6LcBkr4YvZcnfb9vPmohDaLaPfZpiFkK+YLCmwE7svCvxZcxSj2xNoDSt0ux8WYWmtEevtxah1vLzADrGiTrnGKuUmTYlKqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cRfEktUa; arc=none smtp.client-ip=209.85.221.54
+	 Content-Disposition; b=UCiASPSxM0avRPC5H8sv1YBKRAJOt8YPILtZAZpBC2ld43NNNr92M5AwF56BoRopK0KJn4nJ1NVRx097AEqi2Se/KbdqHI3THX4hGamUFvWCHS3Vhj7LnDa9ZSFFskWwh8y2o5nv9WGEch2EWGInEUdq29gfbWERykdscd8868k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V6HZm0/a; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cRfEktUa"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d51055097so4784002f8f.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 01:41:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V6HZm0/a"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314f38d274so89068585e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 01:42:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729672861; x=1730277661; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729672923; x=1730277723; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OTGtBlFhpF4KfA5UaZkwNHNmAJyTL8PF0NqzCKMi89Y=;
-        b=cRfEktUaUBudFW1wshptFe8OVAlT7/V2/M0FQxYdQm/Ovwz/qYJEqkh8PoV3MUii+i
-         dsHh37NRVlb71xNqHcdlCY9vaxv0uCLVFdPyBb+tOTmPU/tivlJkUwHpiGEuJyW98z1l
-         TJ7i6XaKCUm63/0FYseldqeAMsKbKq4GoSNUUacj+ZyKzQK2JqrKfIGZxWOtf6/zJKAJ
-         xHS6iv3pLtAenyh/Yo7Ycka3H/2PGlAdnty4tpYdtUL5tlCu3XxY7pqEikSBgw0UBWek
-         H4gPR8WzaF9wHuBmgUUQ0purOB6fDgzOUXQRqNhqldHjmMBqskiM7VrizOKvxy7u/y5C
-         tYoA==
+        bh=jgEgDyVyxHK+n1+lMp/O7AAdm5QoPSpJEhFz0fntFAg=;
+        b=V6HZm0/apO52fm+3JXYYE3Slmm4jEFMraxfhRTgbs3e5np9JoYGc3/JOmtP/AC65gt
+         bpbdCjai1axYBKbPRRes9lYtiB/ooXoVzk8s9bL02DUfV+Ge2WA8IoEd4KHcfZUjwnbx
+         vc5wikwgzFVRuzcEiP1+LupB/dWJZ5shuXU5V7GjRFcMIm08mpzJOv7EhbRLcRCpjtXW
+         l2QLEAK7Z+GndQMfSw3QlEs3mNpP0FCVeinCXf6Yi8Kbi16kP7SSQHH7dkLhdqr6wQhs
+         VE1LyK2Pa377E6owVoqEhMdyHu/ceT/QqhB6U3QgrTDf3Owt1nhZ3xD++EExS7OQ1uYN
+         jvwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729672861; x=1730277661;
+        d=1e100.net; s=20230601; t=1729672923; x=1730277723;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OTGtBlFhpF4KfA5UaZkwNHNmAJyTL8PF0NqzCKMi89Y=;
-        b=WA3koTcTMAKQ1gO48KouB4HfvUsIpHfl7pZiZUxQm4a3KDU/QLmZqMU5cOV2xTk8ZX
-         jX6zyUu7Uja2xIyicGTenUFVNHhHtvnUqRkd+ehwabCOq8Sos/cSUOIl8LZVm8fkkrED
-         DpS6VA0wyLAY4iOVVvJ2tEvBq+EgV2NPdH9YbIGffK7ZVhD70sQp3lS1MlBcQfaBwyg2
-         PVj+LWqyi9j1jdXpW+dR7qFvPw6NMjLwBvtOUcnqq8nGFYjr9V1agKN6alBDpxR80Cte
-         rpXX9qLZ8jEt/WbEeWNYu9VpFQPbIeuSo/2V4Ucdi6W6b6rC6m30Nz5Og3J4pVJJyfWh
-         HlDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXM7CohCujj4VEgtvQSMlwNceeogYS4HXIKpuwLzE9OBgIdmojTrIPGt+FEjNI2QtWEIpLTzNcH69u0cf9m6OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7+bP/N7916wheG6uVMQvG37J4Q8Y0WSE46c8jNBjVfzGG2Akz
-	frwBhYAcV263nxm4YCBFC9PRZkk7EvDo5eLvB3LkC9STniZEwIrC4BU6zmvCRh8=
-X-Google-Smtp-Source: AGHT+IHBkbz8Gkiu8syBDS0U/jZ595MpfEdCm+s1X/ZgIeh+fOEidnPqxPO8f+s/cE9RJuzVEPDXEw==
-X-Received: by 2002:a05:6000:128d:b0:37d:4a68:61a1 with SMTP id ffacd0b85a97d-37efcf926d3mr1140382f8f.56.1729672860806;
-        Wed, 23 Oct 2024 01:41:00 -0700 (PDT)
+        bh=jgEgDyVyxHK+n1+lMp/O7AAdm5QoPSpJEhFz0fntFAg=;
+        b=T+EBU3NKtQU++K79tryJLkKaZOxTU3cG8i+hJotDzJ+Qj9Ft/QXfkF4jYkDpeDpCKn
+         UW+IcKjPWLPfxIFWykJg6PJ3316wPVXfhRPnSuCW+LA/TrEC9ekyfibWQhVnjwsWuDnn
+         uMZ6zpJ7O6BAlYx3cemXEp9mvpiuxE3leWiQgXgeC6qJo82ahULs0OEiv3HlXe1P+mpI
+         MgUJMaV9gW2gELvurvnjKhGzPRQLvNGVgdtz2z1XBBYAZ7M3qG7d6NygHGkcti7WDxhD
+         /OZU8wVuzF6XVl6mYTnXZdefwmfniENB6+Ytex/FfB9BauQtiWKHuFltnkpxhc1B2fee
+         A2RA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Xq5JwcWLbE+gvG0ggM10PmQqQHD0GCZYh13SHIB3G/1vTQhopsrIN+R858crV7pIT9VfqmppEPmhq/qdC34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEK8pAYLnoCpV5tjKrBJ0s/RBQoZSAUdb/cysvR4uh/tGnJm9C
+	6T8ce6yGUd7IgdX8o3vGRNXOkCHX4BTQ8fZ8ViKffZPBdAReycl6o8LvGhecwA0=
+X-Google-Smtp-Source: AGHT+IEdJTPLU+KIutK3YvEYkbyMsNru7UMvkTH+o3ilss9qDJzDB/AM60d14OwM1KUZAzrdCjPunA==
+X-Received: by 2002:a05:600c:5492:b0:431:562a:54be with SMTP id 5b1f17b1804b1-43184201b33mr18026225e9.9.1729672923367;
+        Wed, 23 Oct 2024 01:42:03 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b93e76sm8408355f8f.82.2024.10.23.01.40.59
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186c1f86bsm9778255e9.48.2024.10.23.01.42.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 01:41:00 -0700 (PDT)
-Date: Wed, 23 Oct 2024 11:40:56 +0300
+        Wed, 23 Oct 2024 01:42:03 -0700 (PDT)
+Date: Wed, 23 Oct 2024 11:41:59 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+To: Magnus Damm <magnus.damm@gmail.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Paul Mundt <lethal@linux-sh.org>, linux-sh@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] mtd: rawnand: fix double free in
- atmel_pmecc_create_user()
-Message-ID: <7d809e5f-32e1-4438-9cc6-3167f27dd239@stanley.mountain>
+Subject: [PATCH] sh: intc: use after free in register_intc_controller()
+Message-ID: <45ff88d1-b687-43f4-a022-4e07930cd2d0@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,32 +72,39 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "user" pointer was converted from being allocated with kzalloc() to
-being allocated by devm_kzalloc().  Calling kfree(user) will lead to a
-double free.
+In the error handling, for this function, we kfree(d) without ever
+removing it from the &intc_list which would lead to a use after free.  To
+fix this, lets only add it to the list after everything has succeeded.
 
-Fixes: 6d734f1bfc33 ("mtd: rawnand: atmel: Fix possible memory leak")
+Fixes: 2dcec7a988a1 ("sh: intc: set_irq_wake() support")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/mtd/nand/raw/atmel/pmecc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This patch is highly speculative and I am not able to test it.  Please,
+review with care.
 
-diff --git a/drivers/mtd/nand/raw/atmel/pmecc.c b/drivers/mtd/nand/raw/atmel/pmecc.c
-index a22aab4ed4e8..3c7dee1be21d 100644
---- a/drivers/mtd/nand/raw/atmel/pmecc.c
-+++ b/drivers/mtd/nand/raw/atmel/pmecc.c
-@@ -380,10 +380,8 @@ atmel_pmecc_create_user(struct atmel_pmecc *pmecc,
- 	user->delta = user->dmu + req->ecc.strength + 1;
+ drivers/sh/intc/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/sh/intc/core.c b/drivers/sh/intc/core.c
+index 74350b5871dc..ea571eeb3078 100644
+--- a/drivers/sh/intc/core.c
++++ b/drivers/sh/intc/core.c
+@@ -209,7 +209,6 @@ int __init register_intc_controller(struct intc_desc *desc)
+ 		goto err0;
  
- 	gf_tables = atmel_pmecc_get_gf_tables(req);
--	if (IS_ERR(gf_tables)) {
--		kfree(user);
-+	if (IS_ERR(gf_tables))
- 		return ERR_CAST(gf_tables);
--	}
+ 	INIT_LIST_HEAD(&d->list);
+-	list_add_tail(&d->list, &intc_list);
  
- 	user->gf_tables = gf_tables;
+ 	raw_spin_lock_init(&d->lock);
+ 	INIT_RADIX_TREE(&d->tree, GFP_ATOMIC);
+@@ -369,6 +368,7 @@ int __init register_intc_controller(struct intc_desc *desc)
  
+ 	d->skip_suspend = desc->skip_syscore_suspend;
+ 
++	list_add_tail(&d->list, &intc_list);
+ 	nr_intc_controllers++;
+ 
+ 	return 0;
 -- 
 2.45.2
 
