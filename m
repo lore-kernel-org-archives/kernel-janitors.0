@@ -1,152 +1,103 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A3F19E802
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 10:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04FF136331;
+	Wed, 23 Oct 2024 11:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729677986; cv=none; b=emW0JCk/3eC268penTIPKibpUMH5ecmeNOPwUg4BYMq3BvuepfzUNVT7m7xgRQemmu9OjQUtd0wIEG95z/wQQcTZKgnhMd1wWJTieBtpgAuRwRr0KA0WvXCNJi4Q0TuVIoJxPmOeWXOSYKUzTRhK8bhn1Eo3P4gpo/F2vlHOpjI=
+	t=1729681895; cv=none; b=tss/J0ylhhvWTmMXxHhnChCPA2C1Pszq6nvNuoRyOR4IanjVqM1k2p0YmpzbI+o0gCIJ2uxHyMxj3a60s5Tq1/VSjFxM/a/ROna2oNsonVIfaiFdRyiRXaTqjzzJe/h3l9Z9cAeNsOtC7gel1Tgou6QXtnmkoDIY5R7QsHR+dqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729677986; c=relaxed/simple;
-	bh=yU5dZthC4JR7clFEU+VaiuHzsRK9INyahbMu5Agd3mY=;
+	s=arc-20240116; t=1729681895; c=relaxed/simple;
+	bh=qVyuFJmjgg9fPMwZdxxV7x/VyKeD4f16AAlu5AmfvLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gr74jpUGacReqIIFKhTQcfj+Gge6MldtNpoG49+CibA2AyC/as7BpfFLnU5I5Z/6QhfBSkFJcDDfunB/K6NZRx4CAYCpFGhk4FN+kcFlIjT8IIbywhy494QQFrWtQpI3yqEVvX2bIHAld9uHrHIbBKxxuhPT+1H4iP/uN8volDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BOkPtVOt; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRqmQbVcKfg8QgQvdjcdUlHtxUW4krH7BLHWYifX/chLMl3MagW4E9DPWFJTKWZSlY9Cypkl7OmcYoZqUwync/AFec93LYYYH2GJ9sgIEs+MObyvirz7jdxu8IkKKASPx/VJyX+PyQz73f0NwOisco2uxEtHMALitrOW4Wzc5KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTjHx+SG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BOkPtVOt"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso5880696e87.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Oct 2024 03:06:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729677983; x=1730282783; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QmFWwJacJAgS5CGhagQj/y+QCn9s9Xrg8IyhVVZtACM=;
-        b=BOkPtVOt1LxHQ5opf1ucDJvtIJWKr2JsQ8jYpF9UO4nLWGupGgAA+fhuK1023+NX7R
-         1ssrUxsyYoxLR9jie7SzjuGKGZ/2h0CS+ktA9JDD46CGz1XbpytaCPTgyt/ikoI6ckij
-         9GH61VtPQNglgDMWWSClD/cnATNCRPvZ2YW41y1cyZEvT/8EYAlSCON4MTCgJxuLn1E8
-         WZWWyr1c621UzdzQaHtv50ZmujvDRw3THTCH4yD9iJMKfnCjVWeqjQ5zTlWXq9bF/jEu
-         VN7KCZJreCh2h82rqn3kfA2SEtG1hEANT1/1Ivm2wsJYwj0CWiRaHVlBZQY1WZOv3GYQ
-         4dVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729677983; x=1730282783;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QmFWwJacJAgS5CGhagQj/y+QCn9s9Xrg8IyhVVZtACM=;
-        b=o3SNAuPk4YxbvtylYk57QgTCXpf3PVOaA9nE1A37kvhCKjtFeKMcMmBAeupMMnlcRK
-         LXBzLKg6IVy4OgL0pA/M7M0UP73MhcJa+Ct9kiEu+BGNicaKygB7ipGyCdfD/xVmBNqW
-         1FJPPahCoZRhuOrjwiAUpUJAHg6YpMScMSdfyDLw/zWlT4oWUBQjNH0ZK3SbTcqjAeb7
-         53MEGIaKy3JUfjHfqGN5sBhSGSfy0jqJeN19EnfDK0IRa7fSiEbuneVe2RicIpT/ZqmC
-         G3T6cOwmMuMZS7Oz5FY2yxxUQV3i4Z2hyFYw3OaC/e8dRhZHkkGamlG9iiixtVwcBxlS
-         737g==
-X-Forwarded-Encrypted: i=1; AJvYcCXbkYLv9trDVQCqLgnwTS1z4xSd0srfL9WehgzLD9mCj4cji9XeKs9+/tnli49JrIMFM8aRmpADykBKSACZllU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXPXvStag7fzGtBi/KjejkcBU8rDus+DnPRSH54/KuhSg6Z9yo
-	tA32Xy/mhXKr0gJLpYrWbyYQ3xRqzIYKRyr0+oDGDyE2ZfA92SnbFBji1IEKvU0=
-X-Google-Smtp-Source: AGHT+IENoLqmzudlZrppge6f/QJA6ViYHAbyrrfgtDyUbQMErRS34yaCQr0YHoWGW0qrUIe/m7/udQ==
-X-Received: by 2002:a05:6512:1293:b0:536:55a9:4b6c with SMTP id 2adb3069b0e04-53b1a307d85mr1130622e87.13.1729677982662;
-        Wed, 23 Oct 2024 03:06:22 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bd69ebsm11979625e9.1.2024.10.23.03.06.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 03:06:22 -0700 (PDT)
-Date: Wed, 23 Oct 2024 13:06:18 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Ping-Ke Shih <pkshih@realtek.com>,
-	Zong-Zhe Yang <kevin_yang@realtek.com>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH next] wifi: rtw89: unlock on error path in
- rtw89_ops_unassign_vif_chanctx()
-Message-ID: <9729c2f5-2df5-4468-a4da-cd31f4332b4c@stanley.mountain>
-References: <8683a712-ffc2-466b-8382-0b264719f8ef@stanley.mountain>
- <6a80d4adc51f4ea884b5e02f16d8aaed@realtek.com>
- <931c79c15bc04be99bb87a9826cf2b04@realtek.com>
- <2e85c84b-31bf-484b-b3e2-9285999bb2e4@stanley.mountain>
- <87v7xjma5d.fsf@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTjHx+SG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 475E9C4CEC6;
+	Wed, 23 Oct 2024 11:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729681894;
+	bh=qVyuFJmjgg9fPMwZdxxV7x/VyKeD4f16AAlu5AmfvLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QTjHx+SGniyfno5hzpUEOCE/uEIe3TFzXFsKZNLdKXLsv7qqwrJDTfFL+Pc1AQ4Op
+	 6Wo8Y0YfPu9pt5rKFfHBrx+CcAo45fK1+JKCQ2NkYs10ClHKYGUl3t0esQtzXualdg
+	 2R9UizqKV6jLKZ5CPIxUVIDNeECNX9nloOOVyMcq5/MZCycIEqpVmIrfaG2FunBEIo
+	 YDMzQ2N3h1vbURHo0Vw3Q4+2gJb5n4TTuaxIT20SIoJrtNKTXz+OAC/L0rXr8v74C8
+	 Q2H8rD4pnL1zeuuiLfh1oukp9yH9oRVkJRmbWRqqgxoLDjsAIXDkP8O33fV7BH18jC
+	 Jrn+BXs7Gqr6Q==
+Date: Wed, 23 Oct 2024 13:11:29 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Joel Granados <j.granados@samsung.com>, Kees Cook <kees@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
+Message-ID: <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87v7xjma5d.fsf@kernel.org>
+In-Reply-To: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
 
-On Wed, Oct 23, 2024 at 12:38:38PM +0300, Kalle Valo wrote:
-> Dan Carpenter <dan.carpenter@linaro.org> writes:
+On Thu, Sep 26, 2024 at 10:20:34AM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 26 Sep 2024 10:10:33 +0200
 > 
-> > On Tue, Oct 22, 2024 at 03:32:23AM +0000, Ping-Ke Shih wrote:
-> >
-> >> Zong-Zhe Yang <kevin_yang@realtek.com> wrote:
-> >> > Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >> > >
-> >> > > [...]
-> >> > >
-> >> > > @@ -1373,6 +1373,7 @@ static void rtw89_ops_unassign_vif_chanctx(struct ieee80211_hw
-> >> > > *hw,
-> >> > >
-> >> > >         rtwvif_link = rtwvif->links[link_conf->link_id];
-> >> > >         if (unlikely(!rtwvif_link)) {
-> >> > > +               mutex_unlock(&rtwdev->mutex);
-> >> > >                 rtw89_err(rtwdev,
-> >> > >                           "%s: rtwvif link (link_id %u) is not active\n",
-> >> > >                           __func__, link_conf->link_id);
-> >> > >
-> >> > 
-> >> > Acked-by: Zong-Zhe Yang <kevin_yang@realtek.com>
-> >> > 
-> >> 
-> >> Thanks for the ack. 
-> >> 
-> >> Acked-by is often used by the maintainer, so I will change it to Reviewed-by
-> >> during committing. 
-> >
-> > To me Acked by just means you're okay with the patch.  When I use it, it means I
-> > don't feel qualified or interested enough to do a full review.  For example, if
-> > I complain about a v1 patch and they fix my issue in v2 then I like to say that
-> > I'm okay with it.  In that case I'll use Reviewed-by for a full review or Acked
-> > by if the bits that I care about are okay.  I don't like to complain and then
-> > just go silent.
-> >
-> > In the end, it doesn't make any difference.  You'll get CC'd on bug reports to
-> > do with the patch and you'll potentially feel bad for not spotting the bug, I
-> > guess.
-> 
-> I have understood that Acked-by should be only used by the corresponding
-> maintainers and the documentation seems to say the same:
-> 
-> https://docs.kernel.org/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
+> A dput(child) call was immediately used after an error pointer check
+> for a d_splice_alias() call in this function implementation.
+> Thus call such a function instead directly before the check.
+This message reads funny, please re-write for your v2. Here is how I would write
+it.
 
-"If a person was not directly involved in the preparation or handling of a patch
-but wishes to signify and record their approval of it then they can ask to have
-an Acked-by: line added to the patch’s changelog."
-
-The documentation does say that it's also often used by maintainers for
-approving part of a patchset.  But to me, it's the "partial" which is the more
-important word in that sentence.  I haven't reviewed the whole patch.
+"
+Replace two dput(child) calls with one that occurs immediately before the IS_ERR
+evaluation. This is ok because dput gets called regardless of the value returned
+by IS_ERR(res).
+"
 
 > 
-> The reason I ask non-maintainers avoid using Acked-by is that it messes
-> our patchwork listings (it counts both Acked-by and Reviewed-by tags).
+> This issue was transformed by using the Coccinelle software.
+How long is the coccinelle script? If it is a reasonable size, can you please
+append it to the commit message. If in doubt of what "reasonable" means, just
+share it to the list before doing your V2.
+
 > 
-> -- 
-> https://patchwork.kernel.org/project/linux-wireless/list/
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  fs/proc/proc_sysctl.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index d11ebc055ce0..97547de58218 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
+>  			res = d_splice_alias(inode, child);
+>  			d_lookup_done(child);
+>  			if (unlikely(res)) {
+> -				if (IS_ERR(res)) {
+> -					dput(child);
+> -					return false;
+> -				}
+>  				dput(child);
+> +
+> +				if (IS_ERR(res))
+> +					return false;
+> +
+>  				child = res;
+>  			}
+>  		}
+> --
+> 2.46.1
+> 
 
-Huh.  I wasn't aware that anything really differentiated between Acks and
-Reviews.  That does make things more complicated.
+-- 
 
-I rarely do Acks, but when I do it's because I'm outside of a subsystem I'm
-familiar with.  I would say LGTM and leave it at that, except other people want
-proper tags.  Probably they won't insist on proper tags from me though so it's
-fine.
-
-regards,
-dan carpenter
-
+Joel Granados
