@@ -1,128 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C303B1EB9F1;
-	Thu, 24 Oct 2024 15:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766E81F6676;
+	Thu, 24 Oct 2024 15:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729783992; cv=none; b=fRFL2nAnoLpknzuKOqRz9N9xg8NN2Z14M5DAzzfmyV1V2PknONUzbXZlCSnHxITo7lxkw/DXbAaOGgl3BNi4u+mw/amxhZdcLmO2LFJh9DHaLD5otTlQCpvbGPAX06xCXWtDUfvu0bj0ZViM5Oav5NAIJNc2e1WtAANSsJYzMRM=
+	t=1729784639; cv=none; b=Any8vIWqBXYSC3myaRJR6z6kiAbloa5ay4DdRdLEJLLfSOiYCb24ipbNhmw/iGbEcZydbc388zedSCnD7xc+33km/2uHedt9S7a5mbRwbQmUaMdj9lKNi60mwvilcUx9ab2Q28k7paIfjl7yt52BjZxXgUbUhpRjDrluE6jlkCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729783992; c=relaxed/simple;
-	bh=AYpxmCYf4yOv//CjOmlSMozXI31Ms0jTW1lstb6nXqE=;
+	s=arc-20240116; t=1729784639; c=relaxed/simple;
+	bh=49DttfIKQCHPgfjrhaS37EnWfxSeirs1B2D5isDzWug=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jHzJ8eik1uwPtVvP2vYLGa0DoJy2uytI02ZHDPzEWlhvtsVTvFqvud2JI5rFHZS39z9JDTiq19iHF3fPOVYYb9sqR15KTuiXmfNLNe6JbQ/SEWKiHkc5d4/FiU99b81rZ47SfiGiwqtRy6ZdykYr73n1MUVHeppnad6FDVuMIHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mnxYmXPM; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=HiVnBtw6WmDiMpP4YoqwliWYeFjb3mojzTmaDa5ERbaVuGzkyayyBzsRJ12jHCJb+WI3ABDs5I94a4ONEl7MIUQygkdmgxB49VvrA/t+DWt5ylQtuDeA5tHq05IhWxgg71xy6pRYLD996VzRTAuVcSf/C0GyugW/2MvvoZnamlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpVqvIQb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnxYmXPM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5523FC4AF09;
-	Thu, 24 Oct 2024 15:33:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpVqvIQb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F252BC4CEC7;
+	Thu, 24 Oct 2024 15:43:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729783992;
-	bh=AYpxmCYf4yOv//CjOmlSMozXI31Ms0jTW1lstb6nXqE=;
+	s=k20201202; t=1729784639;
+	bh=49DttfIKQCHPgfjrhaS37EnWfxSeirs1B2D5isDzWug=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mnxYmXPMxovdMM5V8rY1VOmlQ5f1j4D+O5UIjdBV92UryftCoY5CLm8MgnCWAqYp+
-	 ++Q+LZHq3sFHc0f2TebowjP/m2V28d/AIqPcsRwTygGIQ4LgiCGW18Q0rAAOO5VMZw
-	 q4qd/iM6ZMSkPscTsyFBC3IuiQmQnFeEjGbsxUiJhX5SyqREzoGeqSzMn/3hX8SbCJ
-	 5z0Nu1beCSWO1de1YjgpW2EcJaE5QreblxQFekcVhrNOP7Lbazs9RePwk2TMAEKuAo
-	 Xta3oYjxxsjQYqYbsQ1ExHMcMtnl6GSKSqZ+vb/ZhI19g/PU7IcRZ/FkkyRZkGxRZp
-	 weYp5pCnQRPOQ==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-288b392b8daso590847fac.2;
-        Thu, 24 Oct 2024 08:33:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVYGllIiiN3gV6i1ZHD7WJ4F8lKCvTyelslBpe0BEK5e+V16oqfNCsZlDMo6B6q7AzStiSGiJTsid7qylXN@vger.kernel.org, AJvYcCVnA74DsS+pYtKwN+vASklPZsSJJ15DzxPGoWXiqY6EDV1+lsN9h1mrLzY2OSzORewehViZ9KCFzkz4dw==@vger.kernel.org, AJvYcCWm6JtpM5dl1n/h1wCznRtH3srwWkVeEUWyywUkEcRM8Gjx0GNQD6WzerNjS2dUKdJZgbltVRAi2kJdYuIrYuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxuy8lQtpkOv1FEWXxNe1a/kWe7TmfPU1iCsnU+A4oz/nl5/J7U
-	qyd7AUxUT5YwbrQzUs1ljS4wAse1dull5IJSBpdcQMwOOPcDdr92JviRozC6IKKtFPrC8qhJVWp
-	aTc5RnH1ZduTRs3VyzXAk8AbM5M4=
-X-Google-Smtp-Source: AGHT+IH313pouYkwWOQ0XbO6cOPorbYtAPn3/0vID9VvN/xAHi1DE1RQQZjoKFUKDNXDkjG64OB1oPtQ9hYDSVIEkwQ=
-X-Received: by 2002:a05:6871:64e:b0:25e:940:e934 with SMTP id
- 586e51a60fabf-28ccb9e51a2mr5302878fac.47.1729783991514; Thu, 24 Oct 2024
- 08:33:11 -0700 (PDT)
+	b=jpVqvIQbD8yWcV9AZsFsZMtrrT21yYfDlolmhk0Efx3Y8rzUBOvsF19r5KgMca7ar
+	 fuFLdiAjXmmy5EOprecJk5iDji1YJy6TgDqY3Wp4dNIwzro0tTfAB9RGo+GtCPq2VO
+	 8IFqjNu1By8TbtVNPH3VEhaDUdLrfuspNX47LAwsP40lvTmlANBsslE9rGOO9H0M2i
+	 m9bexudl9mNl1yztTnYllR/lAghBpUsezJPZt/8n27/FVjC1V6v25RzzVxy/TG9UX4
+	 dBSlcv+1H+wSSg1Hs9sHyYOWaC8nEKzLYtu5ATS1y2zene+L3aAH93ryXaMs/q4AJB
+	 aO+oXdL+3zXWA==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-288d70788d6so599626fac.1;
+        Thu, 24 Oct 2024 08:43:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU24VXEdvCDHAgaOgkmwlwqHXshaVDFAEXONHGEU7PJLHWjwD5F6Sbtnb6uDK7/Tpa9vfZz235tk8IboQ==@vger.kernel.org, AJvYcCUgJwZ52KBjyqthrkP26Lanr0+UZlM/fWqHomipZ1OA+pThlkrB3TPQijrfz6CyD/mwiItYhPAT4X18x5qR@vger.kernel.org, AJvYcCWWNHyQ9ugrs66XKupzwefEGVRzZRdYx8HFMwZY+WI2dKjT8W3kPkZEDZVQHUSrEiNWppi/baLy7CYT6OVmwyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw11rlT3T2q/cYDutTcHGnBLD9m9AkQsyTxg5y8uTn/C+U68mJw
+	rCM5IlDANrxvldJISZhPkJZOMAfusOwECj7zVeb60TD3PHNRdm9HqaHaPSjNqaFBkdraOtSX7cC
+	BqKySKb0u4vtz46yoQuuFAd06slM=
+X-Google-Smtp-Source: AGHT+IHSUvErHQTpKpxRw8CFVNnKnDPL6Vq8IuMcUDPDqx3cJiQTbqjWEn2eiFYHfS+9cW+QrlQ/1Z9O3gRB/lvY4hI=
+X-Received: by 2002:a05:6870:658b:b0:288:aee9:e739 with SMTP id
+ 586e51a60fabf-28ced13b467mr2478073fac.1.1729784638209; Thu, 24 Oct 2024
+ 08:43:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3777d71b-9e19-45f4-be4e-17bf4fa7a834@stanley.mountain> <CAMj1kXFRUhkCyN0PjLrtw1uSCuy4m=9g=pwNO9tkxckj-koijg@mail.gmail.com>
-In-Reply-To: <CAMj1kXFRUhkCyN0PjLrtw1uSCuy4m=9g=pwNO9tkxckj-koijg@mail.gmail.com>
+References: <20241014130522.1986428-1-colin.i.king@gmail.com>
+In-Reply-To: <20241014130522.1986428-1-colin.i.king@gmail.com>
 From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 24 Oct 2024 17:33:00 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jhp8u8xz=GYF+ePzLjCtZ4KrUzNhA0HTdSPoFcE4q8Ug@mail.gmail.com>
-Message-ID: <CAJZ5v0jhp8u8xz=GYF+ePzLjCtZ4KrUzNhA0HTdSPoFcE4q8Ug@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: PRM: Clean Up guid type in struct prm_handler_info
-To: Ard Biesheuvel <ardb@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Koba Ko <kobak@nvidia.com>, Len Brown <lenb@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	kernel-janitors@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>
+Date: Thu, 24 Oct 2024 17:43:46 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jjrm0C7+6o3+ZfsrFKedo_o42wErKTHMjfU5ZGBJ=Mbg@mail.gmail.com>
+Message-ID: <CAJZ5v0jjrm0C7+6o3+ZfsrFKedo_o42wErKTHMjfU5ZGBJ=Mbg@mail.gmail.com>
+Subject: Re: [PATCH][next] ACPI: pfr_telemetry: remove redundant error check
+ on ret
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 12:40=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> w=
-rote:
+On Mon, Oct 14, 2024 at 3:05=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
 >
-> On Thu, 24 Oct 2024 at 10:07, Dan Carpenter <dan.carpenter@linaro.org> wr=
-ote:
-> >
-> > Clang 19 prints a warning when we pass &th->guid to efi_pa_va_lookup():
-> >
-> > drivers/acpi/prmt.c:156:29: error: passing 1-byte aligned argument to
-> > 4-byte aligned parameter 1 of 'efi_pa_va_lookup' may result in an
-> > unaligned pointer access [-Werror,-Walign-mismatch]
-> >   156 |                         (void *)efi_pa_va_lookup(&th->guid, han=
-dler_info->handler_address);
-> >       |                                                  ^
-> >
-> > The problem is that efi_pa_va_lookup() takes a efi_guid_t and &th->guid
-> > is a regular guid_t.  The difference between the two types is the
-> > alignment.  efi_guid_t is a typedef.
-> >
-> >         typedef guid_t efi_guid_t __aligned(__alignof__(u32));
-> >
-> > It's possible that this a bug in Clang 19.  Even though the alignment o=
-f
-> > &th->guid is not explicitly specified, it will still end up being align=
-ed
-> > at 4 or 8 bytes.
-> >
-> > Anyway, as Ard points out, it's cleaner to change guid to efi_guid_t ty=
-pe
-> > and that also makes the warning go away.
-> >
-> > Fixes: 088984c8d54c ("ACPI: PRM: Find EFI_MEMORY_RUNTIME block for PRM =
-handler and context")
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > Suggested-by: Ard Biesheuvel <ardb@kernel.org>
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Tested-by: Paul E. McKenney <paulmck@kernel.org>
+> The variable ret is initialized to zero and a littler later in
+> the PFRT_LOG_IOC_GET_INFO case of a switch statement is being checked
+> for negative error value. Since ret has not been re-assigned since
+> the initialization ret can never be less than zero so the check is
+> redundant and can be removed. Remove it.
 >
-> In case this wasn't implied already,
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/acpi/pfr_telemetry.c | 3 ---
+>  1 file changed, 3 deletions(-)
 >
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> diff --git a/drivers/acpi/pfr_telemetry.c b/drivers/acpi/pfr_telemetry.c
+> index 998264a7333d..a32798787ed9 100644
+> --- a/drivers/acpi/pfr_telemetry.c
+> +++ b/drivers/acpi/pfr_telemetry.c
+> @@ -272,9 +272,6 @@ static long pfrt_log_ioctl(struct file *file, unsigne=
+d int cmd, unsigned long ar
+>
+>         case PFRT_LOG_IOC_GET_INFO:
+>                 info.log_level =3D get_pfrt_log_level(pfrt_log_dev);
+> -               if (ret < 0)
+> -                       return ret;
+> -
+>                 info.log_type =3D pfrt_log_dev->info.log_type;
+>                 info.log_revid =3D pfrt_log_dev->info.log_revid;
+>                 if (copy_to_user(p, &info, sizeof(info)))
+> --
 
-Applied, thanks!
-
-> > ---
-> > Sorry for the unfair Fixes tags since you obviously aren't to blame.  B=
-ut it's
-> > more practical if we avoid breaking the build in backports or etc.  Fix=
-es tags
-> > are quite often unfair in this way...
-> >
-> >  drivers/acpi/prmt.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-> > index d59307a76ca3..747f83f7114d 100644
-> > --- a/drivers/acpi/prmt.c
-> > +++ b/drivers/acpi/prmt.c
-> > @@ -52,7 +52,7 @@ struct prm_context_buffer {
-> >  static LIST_HEAD(prm_module_list);
-> >
-> >  struct prm_handler_info {
-> > -       guid_t guid;
-> > +       efi_guid_t guid;
-> >         efi_status_t (__efiapi *handler_addr)(u64, void *);
-> >         u64 static_data_buffer_addr;
-> >         u64 acpi_param_buffer_addr;
-> > --
+Applied as 6.13 material, thanks!
