@@ -1,65 +1,68 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB32C8F0;
-	Thu, 24 Oct 2024 05:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F771AE01E
+	for <kernel-janitors@vger.kernel.org>; Thu, 24 Oct 2024 08:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729748732; cv=none; b=hcc8GyBaH4sGKipmeaWtBOv4BLF1tRBdc8WQyjr1oKfGbAejO1SmOcZQR0y1dWdR2w/YVoVD6nDuyQMPT7eDbwUz4eIyEvrt+YJ+ve5oFpMvMlF8JK3Zhzq62/Op8glw+GwGwezyTYONKYyl5EDZ/OzwwMfzc59QG4Sviih3mOw=
+	t=1729757247; cv=none; b=D8hcd+ZmKHjJ6kl2g7XJ0mhNsUblNjsHkivmD4lalKpos07Ncw7QHDNlInSd9AdHHXLqAOKV7ykcDi08MZbvNCFa9TgUsDPooT4/UrDymJcmv2vQFyAzQ6YAH30fQJhQ+z/N/Kcqkt57bA/JpyXazVV+PblvvtXgxGFEDL5etDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729748732; c=relaxed/simple;
-	bh=5Kh7/4MGgP/bL0WqxKoOsC5yzfBXVVaNAxEjN0DLaVc=;
+	s=arc-20240116; t=1729757247; c=relaxed/simple;
+	bh=lKJz69FkZU5PsLniCJS6Kxeee5PW8bbqpC3sMQ+Zazw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LAoHA7rieqfs5FH9OQJLjkbamJyqweLEIT/lY79nqz7rTxdOdjvJZMa4OMudqPCaxbil4+9b1+D15MqIvML7+prjab1y9QvDqq5+L1+RIwsKn33iELGOv1f4FG93t0YLfSV/lcOEyvhLCYHKy7YfWisKGVsTpMwswnt8LImNZA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ux0ok2tA; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Disposition; b=Jnhqh5pXb4gjUsqjqxK8u2Bd9GTDTYhIiHQhC/JOAR55SwM42FQ0KLLD5KtEf/nyvPLiXCj+mfnjIh0+7qESxtwkMBLhtauF4AbM+MGEvlNQDy5nnZ1mf2gx4WqthWtb+gafPJDWzdWb8FGiR/3ECWllzeNggoBAuzVZNIP5l7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d7hm6jgr; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ux0ok2tA"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso445560a91.3;
-        Wed, 23 Oct 2024 22:45:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d7hm6jgr"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso6080335e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 24 Oct 2024 01:07:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729748729; x=1730353529; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729757240; x=1730362040; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+yyo1TIYgMMh3a4MAR/ug/Ems+Ey9XMLLo9KFQKqZY=;
-        b=Ux0ok2tAQNSMqOgNiTm9QmVDtQdH/xK7lPMDIg8sCvtV+6dwQn+TJc15HbGCEMO771
-         /Ws/XIKWlQqBTWQpmKbqiyNzWPFnU6EdRpPV4xF8PNwf+YiDG3X5U+3OJdTOW4r3miUA
-         l0fOMYnbA8zPIIF8ME+Wdlv135QfHzrRRmGsh62G7TVgpPOjcuApCDTmdYbB6RIWl4Aw
-         4x0Nm3jM7JCpmtePmsRcTbq2+Tm0RmDpBcRcOtSLJzuT+reVHxMQZ73ijgm0kMJboPQX
-         zoSQL+vPjDXaFTza/dhbUGN0PPV7niYD5IplhFErUMo5kDunOnM2CAFohkHDTytcpa1i
-         G1Bg==
+        bh=EZy5UEggNFqbZ16nEcVpQryOaoa0SiPbjloEPBK8vjw=;
+        b=d7hm6jgrWb+CpMFjECvjUGI4pcH2mxDXhkDqEy5nR7ZSqzof3lomaaCW7BGLYOiuE/
+         PSIWBvyzijruYqJ5+Wnrcl912L1kitj//+k3QwKEJVjnrbrLVZ0mtvNyqRU13E4lCN4H
+         DoNdmvs7OApWYX28oPIS7wUszXWRB0DcRhIUsae5yXmA0wc+3iIeoe3xy7lJl4MNGQyH
+         /r68XOSxtmP6hdvnraj8XvnfwYhBUtIz4KpYn3U//6OQekU/u0FfuKKuNqnryEokXcLr
+         gjf/zVQGxzKGnvUBSvzVMJomvO6RQoMRtmkgWML18l9zPUsi9edh+CxnMAG28BcH+JTN
+         wujA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729748729; x=1730353529;
+        d=1e100.net; s=20230601; t=1729757240; x=1730362040;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+yyo1TIYgMMh3a4MAR/ug/Ems+Ey9XMLLo9KFQKqZY=;
-        b=rmmVMMiBb54JVwbKjJoXrgMM2P+jrYQr1gKN4TwYtRjLPWNqT8Q/5d7lP+Gr0sIv+Y
-         TN0X/HwwMVQelRGNj6TUxxy4wxbrVPVACyuW+mApiJ/Gmm5G40kKw1I8E1rGAaFphJQE
-         aF1GOJ9bbe3PEVSwhM0A93jualcDhCf16bwZRM8y7nhHe/jmXYmNnKrf34N9TbWjQxB1
-         8QOsmoHjIn8ClHIOsTi+kHito0w1PEBfWmlX8pijm0wJ/izwW5ZQH6neDKJ+NsuzNp4q
-         nAnlm9ZngOOm6FYddl9/uBUv/uydpTY5hp5qsqjIJIVzN9rxA3TkYXedLQk9Xo0+z0d4
-         vjrg==
-X-Forwarded-Encrypted: i=1; AJvYcCW08Ien6uV2ttxHRAqNkFwLCOV2QW7ZnhY8SUaoY51ITEIPOKt3uEsas3SVwjfx2mAVvhwj9VOI4kMuHydc@vger.kernel.org, AJvYcCWczy3zsLnv13QYaxVPeBVlq1nNQRHxmKUwLWSikBAePa+lSf9tnj8Ckp8C7Rk/EaLJNCP2TS5GcupY29FH5NY=@vger.kernel.org, AJvYcCX4TkmN1m0L6G8NFkZ3DtK9bDjGyQUJ4C1y2mh5dSwvv84JvR6UPtmzScw6oIGH/5Mg9UZxTazJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxffIvdROwHD0nKuB3fQSIrS7hJj/S+QDn4G9vW/Vs+MbdSAmvo
-	JxF+aBzurme6Fy8KeuHdKT5XJd3Gl7/Zel+ShaoVvk9F+cKTBgy+
-X-Google-Smtp-Source: AGHT+IGMu0wQIJyQYyM3MtZTwmXTHeotULXZZLZmunxl49BuoVTVKzIpHI0TTzuue/lTyTnLwc7E2g==
-X-Received: by 2002:a05:6a20:c998:b0:1d5:10c1:4939 with SMTP id adf61e73a8af0-1d978aeadf1mr5532925637.8.1729748729310;
-        Wed, 23 Oct 2024 22:45:29 -0700 (PDT)
-Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:c21b:c597:f9a6:3608])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76df7095dsm2532477a91.29.2024.10.23.22.45.27
+        bh=EZy5UEggNFqbZ16nEcVpQryOaoa0SiPbjloEPBK8vjw=;
+        b=T26yrKyfpd30H3Qn7A9Gk3SVt5cY1R93BhcQbymSp25ZLCyPfgBYSTdS28DfZMI/fx
+         IpAT4e98LkakUNer3WoT1/sjk/39rw506I8ME75P6TZnqO7oLw6vmEvWc27iv3c8BphZ
+         NDwUNzIPCBCcZxv6LF445tYPVPzmUVIRTxR/vZc0j3YdaufUPyRnXFZ6HcWPw0GHsSzn
+         TEGgkVWu4WuddR3V73y3HHZfoCUza3EFQqmyYLs7dkAzXkK0YSNYSAJ7tezuUJpBRoV+
+         C3Z/Fhb/8RYUtueealCDoDOYhgzbU0SajXJNs//g/7M4uo5oM64/f5P7AAPIFNAIdK4C
+         RRfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ651nxbWVlhDd+Vs39qGQuE6k6xSQGWGxU482xikSzYmxjEjphdXJCvVzZuVY9Zjc4c9MHAjPFlfRdepVu0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu2GPo4YNJABeP01qScpepQlfly78kxowaIvU6DZqQ/pXkq/TC
+	7Ct1Tv69JI68kk7oiTb+2MlYCwGrVsNp7ibYA6GHHLDBuQZhimwxn9NySKJn5no=
+X-Google-Smtp-Source: AGHT+IHj3dTiTdI/Cfg0wXRcMpCa/DQvbUN9eHqbQfyoSZ5v/QASIQRyjUyPWiqx5em0P01hF5B1ZQ==
+X-Received: by 2002:a05:600c:5011:b0:430:54a4:5b03 with SMTP id 5b1f17b1804b1-4318c6e0175mr8691295e9.6.1729757239721;
+        Thu, 24 Oct 2024 01:07:19 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186c0e132sm38394125e9.34.2024.10.24.01.07.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 22:45:28 -0700 (PDT)
-Date: Wed, 23 Oct 2024 23:45:26 -0600
-From: Johnny Park <pjohnny0508@gmail.com>
-To: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	pmenzel@molgen.mpg.de
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] [net-next] igb: Fix 2 typos in comments in igb_main.c
-Message-ID: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
+        Thu, 24 Oct 2024 01:07:19 -0700 (PDT)
+Date: Thu, 24 Oct 2024 11:07:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Koba Ko <kobak@nvidia.com>
+Cc: Len Brown <lenb@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH] ACPI: PRM: Clean Up guid type in struct prm_handler_info
+Message-ID: <3777d71b-9e19-45f4-be4e-17bf4fa7a834@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,42 +71,55 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Fix 2 spelling mistakes in comments in `igb_main.c`.
+Clang 19 prints a warning when we pass &th->guid to efi_pa_va_lookup():
 
-Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
+drivers/acpi/prmt.c:156:29: error: passing 1-byte aligned argument to
+4-byte aligned parameter 1 of 'efi_pa_va_lookup' may result in an
+unaligned pointer access [-Werror,-Walign-mismatch]
+  156 |                         (void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
+      |                                                  ^
+
+The problem is that efi_pa_va_lookup() takes a efi_guid_t and &th->guid
+is a regular guid_t.  The difference between the two types is the
+alignment.  efi_guid_t is a typedef.
+
+	typedef guid_t efi_guid_t __aligned(__alignof__(u32));
+
+It's possible that this a bug in Clang 19.  Even though the alignment of
+&th->guid is not explicitly specified, it will still end up being aligned
+at 4 or 8 bytes.
+
+Anyway, as Ard points out, it's cleaner to change guid to efi_guid_t type
+and that also makes the warning go away.
+
+Fixes: 088984c8d54c ("ACPI: PRM: Find EFI_MEMORY_RUNTIME block for PRM handler and context")
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 ---
-Changes in v3:
-  - Adjust commit message
+Sorry for the unfair Fixes tags since you obviously aren't to blame.  But it's
+more practical if we avoid breaking the build in backports or etc.  Fixes tags
+are quite often unfair in this way...
 
-Changes in v2:
-  - Fix spelling mor -> more
----
- drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/acpi/prmt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 1ef4cb871452..fc587304b3c0 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -1204,7 +1204,7 @@ static int igb_alloc_q_vector(struct igb_adapter *adapter,
- 	/* initialize pointer to rings */
- 	ring = q_vector->ring;
+diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
+index d59307a76ca3..747f83f7114d 100644
+--- a/drivers/acpi/prmt.c
++++ b/drivers/acpi/prmt.c
+@@ -52,7 +52,7 @@ struct prm_context_buffer {
+ static LIST_HEAD(prm_module_list);
  
--	/* intialize ITR */
-+	/* initialize ITR */
- 	if (rxr_count) {
- 		/* rx or rx/tx vector */
- 		if (!adapter->rx_itr_setting || adapter->rx_itr_setting > 3)
-@@ -3906,7 +3906,7 @@ static void igb_remove(struct pci_dev *pdev)
-  *
-  *  This function initializes the vf specific data storage and then attempts to
-  *  allocate the VFs.  The reason for ordering it this way is because it is much
-- *  mor expensive time wise to disable SR-IOV than it is to allocate and free
-+ *  more expensive time wise to disable SR-IOV than it is to allocate and free
-  *  the memory for the VFs.
-  **/
- static void igb_probe_vfs(struct igb_adapter *adapter)
+ struct prm_handler_info {
+-	guid_t guid;
++	efi_guid_t guid;
+ 	efi_status_t (__efiapi *handler_addr)(u64, void *);
+ 	u64 static_data_buffer_addr;
+ 	u64 acpi_param_buffer_addr;
 -- 
-2.43.0
+2.45.2
 
