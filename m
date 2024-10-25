@@ -1,68 +1,71 @@
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF251E492;
-	Fri, 25 Oct 2024 05:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294A1B0F3E
+	for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 07:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729832781; cv=none; b=F8MM2PhJu15FRukri6km+awbDgaRi4tN5R0FbReufBn4D0xrE6OVyY5qoDH0BpzgcMq7hqQx30rYNeORXO/9+8uTxzonQ0HFEEqZhJwF0Ky2qsJZI2DQGCSmrBG1Aswt8eaBL1H72JI3P1ozgz/JVGVC7t+BHuY8gRtw9yD1RkU=
+	t=1729840012; cv=none; b=VEqU5GOQtNXbMYpSKOcV+/RgUb+PiXteP5ktkzzVqQlphjJXBh3+Z4/p0kMmyIWcnfOibEfCpWjGc6/blQF+HSZ7Oa4AzwPMaTUmFFOoVZp+xp2hcz4PX4z3T1UIWCGJ7dUjAJAsdTdjTlRTvylc4Lp/+Kw18cB9bdAh+OmNFJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729832781; c=relaxed/simple;
-	bh=G0TW1MHX9q3O94Z9uB5GhQ/gVEMlXD7XcVH1NUUhal8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W43H/NEcO2an/v7Hp7IQG+x52X5ROX53jRrrociLuFfPuEig5uY+PbyFKqtaBAkyPT/HP/yGnhjLzAHv/BibquHeh3iUdmmHCqiNLIm8VtLZlJjmcX83N8WVVgjq1i6rOpxdfxjt07yZkwLqK8NCRe0g/4nMVdWrFim1q2WQLQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzLwX3A4; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729840012; c=relaxed/simple;
+	bh=rkQE7YIpEQbUrEPfHWGa3mK7WoBXUnnaqE0WUW6yzPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WDaSAOqPXz5uIG1vRq0ddg59VvavTnDGLP5Hr5IqyB9CJuRrfNK7WlfZOUYRqJypG9EM/kveiIzjgRLZS7ns3j8MAqlKYIw4eKcaOU90JDMUwwYudzSQvJ/ZUzbF3AgE8FYy/3EZCwbAOq39vAp02P4TJIQjb9C3G6ClRtbVIcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IXhttkxu; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzLwX3A4"
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a4e40a1d7eso2244965ab.1;
-        Thu, 24 Oct 2024 22:06:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IXhttkxu"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so17564085e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 00:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729832778; x=1730437578; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lrrFN+mHZMwxcP5FxfkCqubko9uzPwGKW+YiwvO7WRE=;
-        b=RzLwX3A4GhHLRQl42FG1ypSIB5NqIHgWpZ6C3ElJSTNhvH19948Yu1XQuM5cG/Sx2c
-         FYuRiFLiGDYgUcUlB/tQmVhYH3V1HMvurkVRzen0dHLWBB3JeqO2LHrngRZX0M6+o7f9
-         wo5IZ1FQbHxCz0BGzpqhcrbD4gMR4NBQAGZ+ht5CjfO8OMPEkoumtQmQUPfEyM44juDn
-         Dqi0If4yFUjVpp39gPbMr2tlUjnsTDffP1mZX9nUvN6WDc0tFbRzq1+HnHpWuZjAZvAV
-         kMo8TCIV67sgR+mqFmkxBuz06tX9u0Sdad9dXJgIFH8MrKls6dGDWYMXPLtyhVX1miJC
-         7nHg==
+        d=linaro.org; s=google; t=1729840008; x=1730444808; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nIsqbAvxya9NETYgH6mSG74loRrqRLi0pQc/bZmvIDA=;
+        b=IXhttkxul7XVo2rO8BjBmrq8qXNTxWajrr5BUT7qCtxzd7VjDp6LztsYukorOKr+KI
+         T3KktEDCecf/soOzkpRkazbp6En5Gu3Ke+fU6+sRhrM4hBK3SME/gY3Isy/WwAdRvqjY
+         QmGXnnK5OuNSpYPvFbeF3rrFMlINShqECQG80neIrN/Hh3vjbFcGC+XSQW7vdti3twcg
+         RNyE53UdTRjiU69Q4Q9BjPIne7WrfvENMv4G/hHZb7D5y9iFeaxJlQ8Qi0t7V+ttoIng
+         ziWZPMRe8jSAR29e+aYDtgETDptXhTjuAUHKZOXN+/hwZF6o3SpiE8s6guuwK3o/Ashw
+         kcKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729832778; x=1730437578;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lrrFN+mHZMwxcP5FxfkCqubko9uzPwGKW+YiwvO7WRE=;
-        b=J9SPjHk9gXhkOxoJar+epMM82t6QE5Yhbw0ymJT5hKMqUea+CwuWi58CmERfzKGXA9
-         S03g8GPuWaf8al1HaG/ggZiwIla+n3KgGuDBW0qpO0C05PzZUwdlyzSFq4pFILxu6RO1
-         Ifgrq/kGtAsrQM4gX4MmJpIn9YVNGytRT+WJCtAzy88+dbgGXSMY6AkGulNfRXCzFUpo
-         DK0CGpnIuZeFSLFF45ooQjni1bwczhjPg0nn25MdMWHCx9XSoRpIhQ8/2tlrJOrN0XSq
-         UrwdMzLm8HVvjCFKuxgAiAC/9vzwuJCHJ48stEO3clVd2ZpzcgOmTXB/+cqHgsAJU97+
-         /g0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Lgh5BkouvpWquc86Hp4vhht3Q7mp7fsdQhRHK2b8ZwpTztCeENlPDrN6ygCm5OVo62W5yM2QXVSuiH8D@vger.kernel.org, AJvYcCWCeZestfg5iSwOBPtvBRHZL7fjLKr2DDPpop0T1TlQSBY9c0CLWIlxwsVWPnsOHQZ4EyN1yeTb@vger.kernel.org, AJvYcCX8Y25SYcE4wNTPGCZXEzSyVeNlqlm4ifWy+Jzx0czo0h3rA81bcQUKhK9GiBa/NUASd9McyR0Y0jQ0EYDUKMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu5kDAp69HoSG8oyStL6UvtUy/0eHNhaorNmu/fdDiqn16g8My
-	O+bYt9KzrnZmXLh4m/OwKL1WmJvm/UhnYtIlFFolmAIjHjI/smjD
-X-Google-Smtp-Source: AGHT+IG9eFw1S1NRd1I3j1OEIDPkFWdnUdNub1uGVLvjvjh+3FMVMCl9vW8ceP5nCaJkh4kCZkZGJg==
-X-Received: by 2002:a05:6e02:b2a:b0:39d:2939:3076 with SMTP id e9e14a558f8ab-3a4d5a0431cmr97853315ab.25.1729832778418;
-        Thu, 24 Oct 2024 22:06:18 -0700 (PDT)
-Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:63af:26f:9965:8909])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a72e92sm224534a12.92.2024.10.24.22.06.16
+        d=1e100.net; s=20230601; t=1729840008; x=1730444808;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nIsqbAvxya9NETYgH6mSG74loRrqRLi0pQc/bZmvIDA=;
+        b=AzUXVJ9sjn7d9T9f6o12Md25aOXINVmm07S2chEmo98HFDY4pHY2+x0lD0PybUytnL
+         N0pB+VGt1jydoYbwU/5nKmgYMpKlfI7M2XDNV93E2TeZZF0f/ChcOrLNz/6M1Bopkm+N
+         wtvud1o9gpdNAlrtMZuHWaRo7cTeuhi0ijvNZCabeBdktrLEgxbjQjJKcIG/M+6yDx4r
+         l6tdcLcWQqnvYbhjgSRuW73XaGqYYGsB5BKcVXmAnEXLilnsJyB+XyTXxQ23NrldTJ7r
+         k0BRPDVd52vBeVd4iZnDvTDwipZp2JbNBt+ggcobhwqf9ShaO/jKgax3NhgIxnR5ulrt
+         8v4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUScblDS0ssSyQSUFCbpnzBS6SDf/cOSiveAQiIek7a9e9B7Yq1roBc6v1uNlSCUvv8Hdco8CxOSkEWmMPhpzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqckkvHYJRsjl+pUlW3I2fl14k7oJzmZN6QdGabQHHVLAvcnzW
+	iMEhiJ8GyrL0Bx0aZhNCf3Nl83ZsN+rGjnxdxFaYQ18Dh3GRqomr5f29Wzu+GG4=
+X-Google-Smtp-Source: AGHT+IFDxpEXBGCkffse7fkCSwVB2T/xPt5joroOVn7BJWc3mEQhF1RGjY6fvVprtingP48ezETMtQ==
+X-Received: by 2002:a05:600c:314d:b0:431:58bc:ad5e with SMTP id 5b1f17b1804b1-4318419a826mr71700265e9.28.1729840008063;
+        Fri, 25 Oct 2024 00:06:48 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058bb4724sm757578f8f.115.2024.10.25.00.06.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 22:06:17 -0700 (PDT)
-Date: Thu, 24 Oct 2024 23:06:15 -0600
-From: Johnny Park <pjohnny0508@gmail.com>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: horms@kernel.org, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org, anthony.l.nguyen@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, pmenzel@molgen.mpg.de
-Subject: Re: [PATCH v3] [net-next] igb: Fix 2 typos in comments in igb_main.c
-Message-ID: <ZxsnR_fJ5aGKWJTq@Fantasy-Ubuntu>
-References: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
- <91005d18-37c7-483b-bda5-2fa57a884a17@intel.com>
+        Fri, 25 Oct 2024 00:06:47 -0700 (PDT)
+Date: Fri, 25 Oct 2024 10:06:43 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] rcu: Unlock correctly in rcu_dump_cpu_stacks()
+Message-ID: <b3b2a438-92d8-4b63-a71e-ad3a155b96d4@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,29 +74,31 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <91005d18-37c7-483b-bda5-2fa57a884a17@intel.com>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Oct 24, 2024 at 10:41:25AM +0200, Przemek Kitszel wrote:
-> On 10/24/24 07:45, Johnny Park wrote:
-> you should collect Reviewed-by tags, as the one from Simon on v2.
-Sorry, I wasn't aware of that rule. For future pathces I'll include reviewed/acked tags.
+The unlock needs to be outside the } close curly braces for this if
+statement.  Otherwise it leads to a deadlock.
 
-> for future Intel Ethernet drivers series, please target them to IWL
-> (net-next in the Subject becomes iwl-next)
-Sorry again, from the other patchworks https://patchwork.ozlabs.org/project/intel-wired-lan/list/ I should have noticed that pattern.  
-> >   	ring = q_vector->ring;
-> > -	/* intialize ITR */
-> > +	/* initialize ITR */
-> >   	if (rxr_count) {
-> >   		/* rx or rx/tx vector */
-> 
-> Would be great to have capitalization errors fixed too, Rx, Tx, VF, not
-> necessarily in this patch.
-That sounds like a good idea, perhaps fixing those will be my next patch.
- 
-> to reduce traffic, I'm fine with this, to go via any tree:
-> Acked-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Thank you for the review!
+Fixes: 744e87210b1a ("rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ kernel/rcu/tree_stall.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Johnny
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index 8994391b95c7..925fcdad5dea 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -357,8 +357,8 @@ static void rcu_dump_cpu_stacks(unsigned long gp_seq)
+ 					pr_err("Offline CPU %d blocking current GP.\n", cpu);
+ 				else
+ 					dump_cpu_task(cpu);
+-			raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 			}
++			raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 		}
+ 		printk_deferred_exit();
+ 	}
+-- 
+2.45.2
+
