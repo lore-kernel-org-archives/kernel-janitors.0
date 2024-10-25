@@ -1,99 +1,129 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDAA1AD3F5
-	for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 07:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2BB2582
+	for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 07:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729840122; cv=none; b=iwWXV6+ud9aUMdI35Pu9+mAq24/kXLSz3CcCCt8835TY+aLupeD37ZLy98RZqdxk/KA+cDk1T9LrogQxq7O+v1aVxWEWfLGfC2dc29sYv9BY2QEJuNcFAt88t5risvWEqUAywL2OzIyw5dAt+CllOFzQhN5bSUZGHWkzldFKtZM=
+	t=1729841452; cv=none; b=US/WWJO4AFOZWHw77NI+NqBRPTadl/mW5X5iT3eKGnLRZlxSTgoE6Yt+cP7FqDNjYFMaRo5svtCudyAZuWPAvb9+JyVD8mdvoPdTkYKrEbq4rh1y3qS6AhT7Vxd/7v7g26xMVBts91TZ7hOxEDMFDCNYXFZS9uw5i9n3Zm3JRYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729840122; c=relaxed/simple;
-	bh=JRmgeIfgxiaJglBf348zcoInp8TPx5Pje2Z/1h2y5GE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=j0N1uT/OTMxyr7krcj6JAkRHZYR2FhqmoUxLAeXaptedKMNYR8QADLx7VJOTFj6+emquZH5QUvHyDfRbNuGbnchiVyzRYrqAqloktveFZBLdo+yK0yJYNdTTvzyzuCsDI9rNKLs4L/AjYSSelT3S/WTY+qQg7vVKlYrjaf9NAgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YIBuuPv5; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1729841452; c=relaxed/simple;
+	bh=tgy99DmJT1rVp1LrmB6ojFA2kufaH3nzhaBGHtk9wW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j4zgbPH2hb4644Hvsm6yCnbSgdXT9x/wnNuZs6CXS2//nXX9cyrzqevY1diAE3AcM56Wd5Oi3fu6rYEdVEVIDlOt3vzmlelmAEIENtIAI3wIv5oepMBarHBz3bFuIt3IzD9lcSE/5NSci9QaxAvAIrYaQHt+HRoXhdmQiIGCWaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WEbNN5rz; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YIBuuPv5"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4314b316495so16069375e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 00:08:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WEbNN5rz"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43168d9c6c9so17960235e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 00:30:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729840118; x=1730444918; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o8QIRJXZ0+XZEDeR8/B5YrJvK8bXfy8avEI3faauU9o=;
-        b=YIBuuPv5kvU/W49WWx3Jv5KLLBMZbO971zhLCr2blTNj/xxTj/82YkFLY4zaAkztB2
-         ShkXwbJdXEi2W6SwZNtVOpNF3kKQs8BitfmP1iR4IJnjtPyo5a8ApG/FWa5m+/jFnE3r
-         1w1Xq6B2PDsr4UXB6pyFzIRavm3Cm0ID5X6gM+yvTZrMPwEBhsEwwYjsxOaSL5dCp7hb
-         LnAJwb8gkFtodXX/cc2SzpUEfXZnvHJEFGqehTSalFmlZ1rryyZDkX4SyJWaztfbYxuV
-         HAZR2IzPuo/lI0oumldKLkG0cQLaR0zXVXaRFMnS21ezHpzMuhheoX4TXmwMNx3MKjul
-         ihQA==
+        d=linaro.org; s=google; t=1729841449; x=1730446249; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WtHDy1uLFgkmsG/x5nxbwS/MMMaeDjb30sYbzTEX8Zw=;
+        b=WEbNN5rzsIG7tseACo0OdLHx1ax16wU0n2Nv1J03790Q28o73lWzm7YCEpc0j3YtuR
+         ykI0KDIevxGFrsn0KEYyKYCOd6gg+2O7VJlYktov06EAj1m2zYmvOjNsa5JUBdRT0b2e
+         bevITz5ZhXJxakC96YOknw+le52Dk3+BxfQVZ/SVwj1WSud9KPolQjR10HUKWR6cWUYP
+         vKSuRi7NBqA8eFQlZ3U/5tamluomclBXJQ3WPYxITLFMmMVK5Sj7RJUfy5Bw/q+5VfyO
+         YRGJAOgSq0dOuwTZrsGGiSsFvohyF7mY8M/XX6WCT7V3+LnyNj5selT8xm/oT5yAGtJI
+         xexQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729840118; x=1730444918;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1729841449; x=1730446249;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o8QIRJXZ0+XZEDeR8/B5YrJvK8bXfy8avEI3faauU9o=;
-        b=xMV0Sw9fW02vEPWXUH9uW8nze0NRPcyebHPyL/jf87RtAVITArjZwNrVaT69FnMznY
-         ZMRnN3c8ggn/l+kgOXSh3q5fxXomoDYE9yQ4BaccrS0LvxCSWu7ml3nGckMhNE252Lkg
-         n6TYvjtW49xciAH88sIye83UmS4jpP7G6bkdmbvJi86Eb+MkKMhRtRXwPItXgFep/2YR
-         ARzS+dldKgcZzNsVqcU1kOmVdsgNcvE3eNqdTZ8EuM/x7/anlZqvHZYwa4LeFVA/ibDY
-         l37cr4cZiy/VnnQq8ahUHixJJI6WEVgnFLSrcJHeoL/5eGYKlmadC8MQdx0Fy3oYs05U
-         upyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYj+RZdTDxv1JWIpG9g+fPzQu+asrGVKc1Dp/pxJ2roJnhzaLbvD/I3p7dD7nXz09hCJqphwF69Uog3qzU9r0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGNg3+YL6+wxdA2Gro+5B4+zzF8TsbxAFg7WF0ZyfWcs0zoV+H
-	eUtadDcvd0o5Wm2c/MtAvfoDkDAlrKkNRNJgZ+kkbeoECgq5FXmbbWd1mg+9OnM=
-X-Google-Smtp-Source: AGHT+IEp2xGh5PqBWDM9Wkg+jeApGvA2cMBwWIOZECFXOmPjkiTnjE1h24IkOrL/WyXpO+gZkhUe8w==
-X-Received: by 2002:a05:600c:3544:b0:431:6060:8b16 with SMTP id 5b1f17b1804b1-431841a3434mr70696715e9.30.1729840118259;
-        Fri, 25 Oct 2024 00:08:38 -0700 (PDT)
+        bh=WtHDy1uLFgkmsG/x5nxbwS/MMMaeDjb30sYbzTEX8Zw=;
+        b=Z4wLIA4U+5TWf4DyoFlc/cDXUwbQh75UaoKRRVkOAhVOf80WdCIRHxiJQ0NuwDU7hx
+         4Kkrsw2oqRD+eemiY1ULnJMocknOq1VNe7cf/56k2rXAPjc1xoDSEgth8DOUCbp4+bU2
+         pLQGcNumT3LN3Y3mjSDLTKoLjmx9h5T6Gja1p/y6jM6GKl8Slx+0L2OaTFv/5AhynDrv
+         nVxjXTRLTnIYlSharUksOCovfzRtl0Lu5kV/axakJiKwG92EHxWzPkQ1nOtfHVLXHCPG
+         ssiwwrYkhS4iI6iVmdkSkQsTZInQNGVGHlvbgGTF2fmpheXvWmyPqLgwKkSle8o9nxrx
+         1k3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUdZkMcCj0yuWDtKVEp047JSokOYOHlb3i+j/FvFrvWIPgFyryvtUX9g8YXq3myt3MvxOvWOCzANKjzfvVWQO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvJTwVbRzXXQaLOt7ge6Xrk4cjiUBeuDZ7qvGZeoo1dyILKq8u
+	Jd3H2lRVN+HDngL4W1QKundiVnM1mQuk6Lf9LyGqTbmv3Oji4vBMyFnDIKzOFB8=
+X-Google-Smtp-Source: AGHT+IHxF+XBAnXeDnDqIMGQCJ8rtAbnYKULA9dlRYGwuNkgYKpDnNMejLiqlKZPt83EjxSWFFNeTg==
+X-Received: by 2002:a05:600c:1c01:b0:431:5a0e:fa2e with SMTP id 5b1f17b1804b1-4318c715cc0mr39763695e9.21.1729841448665;
+        Fri, 25 Oct 2024 00:30:48 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b56fbd1sm39546115e9.32.2024.10.25.00.08.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b71479sm800087f8f.69.2024.10.25.00.30.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 00:08:37 -0700 (PDT)
-Date: Fri, 25 Oct 2024 10:08:34 +0300
+        Fri, 25 Oct 2024 00:30:48 -0700 (PDT)
+Date: Fri, 25 Oct 2024 10:30:44 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Mehdi Djait <mehdi.djait@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] RAS/AMD/FMPM: Remove some dead code
-Message-ID: <6b914abf-b3ce-4baa-b4d7-f8da9a840a3f@stanley.mountain>
+Subject: Re: [PATCH next] drm/sharp-memory: Fix some checks in
+ sharp_memory_probe()
+Message-ID: <3c078224-071e-4dd9-bf8d-51dbd0f2a9b2@stanley.mountain>
+References: <0d307349-c141-49ee-8b34-67caf5f8b638@stanley.mountain>
+ <hojly7qagyszxbgonzqmuuxucdfqwovrjyiktdxpibku6yodum@n7algnce2tts>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <hojly7qagyszxbgonzqmuuxucdfqwovrjyiktdxpibku6yodum@n7algnce2tts>
 
-Debugfs functions don't return NULL, they return error pointers.  Debugfs
-functions are slightly unusual because they're not supposed to be checked
-for errors in the normal case.  Delete these checks.
+On Thu, Oct 24, 2024 at 11:08:05PM +0200, Uwe Kleine-König wrote:
+> On Wed, Oct 23, 2024 at 11:30:31AM +0300, Dan Carpenter wrote:
+> > The devm_drm_dev_alloc() function returns error pointers, it never
+> > returns NULL.  Change that check to IS_ERR().
+> > 
+> > The devm_gpiod_get_optional() function returns a mix of error pointers
+> > if there is an error, or NULL if there is no GPIO assigned.  Add a check
+> > for error pointers.
+> > 
+> > Fixes: b8f9f21716fe ("drm/tiny: Add driver for Sharp Memory LCD")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/gpu/drm/tiny/sharp-memory.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/tiny/sharp-memory.c b/drivers/gpu/drm/tiny/sharp-memory.c
+> > index 2d2315bd6aef..1bcdd79166a4 100644
+> > --- a/drivers/gpu/drm/tiny/sharp-memory.c
+> > +++ b/drivers/gpu/drm/tiny/sharp-memory.c
+> > @@ -543,8 +543,8 @@ static int sharp_memory_probe(struct spi_device *spi)
+> >  
+> >  	smd = devm_drm_dev_alloc(dev, &sharp_memory_drm_driver,
+> >  				 struct sharp_memory_device, drm);
+> > -	if (!smd)
+> > -		return -ENOMEM;
+> > +	if (IS_ERR(smd))
+> > +		return PTR_ERR(smd);
+> >  
+> >  	spi_set_drvdata(spi, smd);
+> >  
+> > @@ -555,6 +555,8 @@ static int sharp_memory_probe(struct spi_device *spi)
+> >  		return dev_err_probe(dev, ret, "Failed to initialize drm config\n");
+> >  
+> >  	smd->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
+> > +	if (IS_ERR(smd->enable_gpio))
+> > +		return PTR_ERR(smd->enable_gpio);
+> >  	if (!smd->enable_gpio)
+> >  		dev_warn(dev, "Enable gpio not defined\n");
+> 
+> Use dev_err_probe() instead of plain returns?
+> 
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/ras/amd/fmpm.c | 5 -----
- 1 file changed, 5 deletions(-)
+Sure.  Let me resend.
 
-diff --git a/drivers/ras/amd/fmpm.c b/drivers/ras/amd/fmpm.c
-index 90de737fbc90..3cde1fe17a7a 100644
---- a/drivers/ras/amd/fmpm.c
-+++ b/drivers/ras/amd/fmpm.c
-@@ -956,12 +956,7 @@ static void setup_debugfs(void)
- 		return;
- 
- 	fmpm_dfs_dir = debugfs_create_dir("fmpm", dfs);
--	if (!fmpm_dfs_dir)
--		return;
--
- 	fmpm_dfs_entries = debugfs_create_file("entries", 0400, fmpm_dfs_dir, NULL, &fmpm_fops);
--	if (!fmpm_dfs_entries)
--		debugfs_remove(fmpm_dfs_dir);
- }
- 
- static const struct x86_cpu_id fmpm_cpuids[] = {
--- 
-2.45.2
+regards,
+dan carpenter
 
