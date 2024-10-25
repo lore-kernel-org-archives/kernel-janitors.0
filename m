@@ -1,71 +1,63 @@
 Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2294A1B0F3E
-	for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 07:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDAA1AD3F5
+	for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 07:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729840012; cv=none; b=VEqU5GOQtNXbMYpSKOcV+/RgUb+PiXteP5ktkzzVqQlphjJXBh3+Z4/p0kMmyIWcnfOibEfCpWjGc6/blQF+HSZ7Oa4AzwPMaTUmFFOoVZp+xp2hcz4PX4z3T1UIWCGJ7dUjAJAsdTdjTlRTvylc4Lp/+Kw18cB9bdAh+OmNFJg=
+	t=1729840122; cv=none; b=iwWXV6+ud9aUMdI35Pu9+mAq24/kXLSz3CcCCt8835TY+aLupeD37ZLy98RZqdxk/KA+cDk1T9LrogQxq7O+v1aVxWEWfLGfC2dc29sYv9BY2QEJuNcFAt88t5risvWEqUAywL2OzIyw5dAt+CllOFzQhN5bSUZGHWkzldFKtZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729840012; c=relaxed/simple;
-	bh=rkQE7YIpEQbUrEPfHWGa3mK7WoBXUnnaqE0WUW6yzPo=;
+	s=arc-20240116; t=1729840122; c=relaxed/simple;
+	bh=JRmgeIfgxiaJglBf348zcoInp8TPx5Pje2Z/1h2y5GE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WDaSAOqPXz5uIG1vRq0ddg59VvavTnDGLP5Hr5IqyB9CJuRrfNK7WlfZOUYRqJypG9EM/kveiIzjgRLZS7ns3j8MAqlKYIw4eKcaOU90JDMUwwYudzSQvJ/ZUzbF3AgE8FYy/3EZCwbAOq39vAp02P4TJIQjb9C3G6ClRtbVIcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IXhttkxu; arc=none smtp.client-ip=209.85.128.54
+	 Content-Disposition; b=j0N1uT/OTMxyr7krcj6JAkRHZYR2FhqmoUxLAeXaptedKMNYR8QADLx7VJOTFj6+emquZH5QUvHyDfRbNuGbnchiVyzRYrqAqloktveFZBLdo+yK0yJYNdTTvzyzuCsDI9rNKLs4L/AjYSSelT3S/WTY+qQg7vVKlYrjaf9NAgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YIBuuPv5; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IXhttkxu"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so17564085e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 00:06:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YIBuuPv5"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4314b316495so16069375e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Oct 2024 00:08:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729840008; x=1730444808; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729840118; x=1730444918; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nIsqbAvxya9NETYgH6mSG74loRrqRLi0pQc/bZmvIDA=;
-        b=IXhttkxul7XVo2rO8BjBmrq8qXNTxWajrr5BUT7qCtxzd7VjDp6LztsYukorOKr+KI
-         T3KktEDCecf/soOzkpRkazbp6En5Gu3Ke+fU6+sRhrM4hBK3SME/gY3Isy/WwAdRvqjY
-         QmGXnnK5OuNSpYPvFbeF3rrFMlINShqECQG80neIrN/Hh3vjbFcGC+XSQW7vdti3twcg
-         RNyE53UdTRjiU69Q4Q9BjPIne7WrfvENMv4G/hHZb7D5y9iFeaxJlQ8Qi0t7V+ttoIng
-         ziWZPMRe8jSAR29e+aYDtgETDptXhTjuAUHKZOXN+/hwZF6o3SpiE8s6guuwK3o/Ashw
-         kcKA==
+        bh=o8QIRJXZ0+XZEDeR8/B5YrJvK8bXfy8avEI3faauU9o=;
+        b=YIBuuPv5kvU/W49WWx3Jv5KLLBMZbO971zhLCr2blTNj/xxTj/82YkFLY4zaAkztB2
+         ShkXwbJdXEi2W6SwZNtVOpNF3kKQs8BitfmP1iR4IJnjtPyo5a8ApG/FWa5m+/jFnE3r
+         1w1Xq6B2PDsr4UXB6pyFzIRavm3Cm0ID5X6gM+yvTZrMPwEBhsEwwYjsxOaSL5dCp7hb
+         LnAJwb8gkFtodXX/cc2SzpUEfXZnvHJEFGqehTSalFmlZ1rryyZDkX4SyJWaztfbYxuV
+         HAZR2IzPuo/lI0oumldKLkG0cQLaR0zXVXaRFMnS21ezHpzMuhheoX4TXmwMNx3MKjul
+         ihQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729840008; x=1730444808;
+        d=1e100.net; s=20230601; t=1729840118; x=1730444918;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nIsqbAvxya9NETYgH6mSG74loRrqRLi0pQc/bZmvIDA=;
-        b=AzUXVJ9sjn7d9T9f6o12Md25aOXINVmm07S2chEmo98HFDY4pHY2+x0lD0PybUytnL
-         N0pB+VGt1jydoYbwU/5nKmgYMpKlfI7M2XDNV93E2TeZZF0f/ChcOrLNz/6M1Bopkm+N
-         wtvud1o9gpdNAlrtMZuHWaRo7cTeuhi0ijvNZCabeBdktrLEgxbjQjJKcIG/M+6yDx4r
-         l6tdcLcWQqnvYbhjgSRuW73XaGqYYGsB5BKcVXmAnEXLilnsJyB+XyTXxQ23NrldTJ7r
-         k0BRPDVd52vBeVd4iZnDvTDwipZp2JbNBt+ggcobhwqf9ShaO/jKgax3NhgIxnR5ulrt
-         8v4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUScblDS0ssSyQSUFCbpnzBS6SDf/cOSiveAQiIek7a9e9B7Yq1roBc6v1uNlSCUvv8Hdco8CxOSkEWmMPhpzs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqckkvHYJRsjl+pUlW3I2fl14k7oJzmZN6QdGabQHHVLAvcnzW
-	iMEhiJ8GyrL0Bx0aZhNCf3Nl83ZsN+rGjnxdxFaYQ18Dh3GRqomr5f29Wzu+GG4=
-X-Google-Smtp-Source: AGHT+IFDxpEXBGCkffse7fkCSwVB2T/xPt5joroOVn7BJWc3mEQhF1RGjY6fvVprtingP48ezETMtQ==
-X-Received: by 2002:a05:600c:314d:b0:431:58bc:ad5e with SMTP id 5b1f17b1804b1-4318419a826mr71700265e9.28.1729840008063;
-        Fri, 25 Oct 2024 00:06:48 -0700 (PDT)
+        bh=o8QIRJXZ0+XZEDeR8/B5YrJvK8bXfy8avEI3faauU9o=;
+        b=xMV0Sw9fW02vEPWXUH9uW8nze0NRPcyebHPyL/jf87RtAVITArjZwNrVaT69FnMznY
+         ZMRnN3c8ggn/l+kgOXSh3q5fxXomoDYE9yQ4BaccrS0LvxCSWu7ml3nGckMhNE252Lkg
+         n6TYvjtW49xciAH88sIye83UmS4jpP7G6bkdmbvJi86Eb+MkKMhRtRXwPItXgFep/2YR
+         ARzS+dldKgcZzNsVqcU1kOmVdsgNcvE3eNqdTZ8EuM/x7/anlZqvHZYwa4LeFVA/ibDY
+         l37cr4cZiy/VnnQq8ahUHixJJI6WEVgnFLSrcJHeoL/5eGYKlmadC8MQdx0Fy3oYs05U
+         upyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYj+RZdTDxv1JWIpG9g+fPzQu+asrGVKc1Dp/pxJ2roJnhzaLbvD/I3p7dD7nXz09hCJqphwF69Uog3qzU9r0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGNg3+YL6+wxdA2Gro+5B4+zzF8TsbxAFg7WF0ZyfWcs0zoV+H
+	eUtadDcvd0o5Wm2c/MtAvfoDkDAlrKkNRNJgZ+kkbeoECgq5FXmbbWd1mg+9OnM=
+X-Google-Smtp-Source: AGHT+IEp2xGh5PqBWDM9Wkg+jeApGvA2cMBwWIOZECFXOmPjkiTnjE1h24IkOrL/WyXpO+gZkhUe8w==
+X-Received: by 2002:a05:600c:3544:b0:431:6060:8b16 with SMTP id 5b1f17b1804b1-431841a3434mr70696715e9.30.1729840118259;
+        Fri, 25 Oct 2024 00:08:38 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058bb4724sm757578f8f.115.2024.10.25.00.06.47
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b56fbd1sm39546115e9.32.2024.10.25.00.08.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2024 00:06:47 -0700 (PDT)
-Date: Fri, 25 Oct 2024 10:06:43 +0300
+        Fri, 25 Oct 2024 00:08:37 -0700 (PDT)
+Date: Fri, 25 Oct 2024 10:08:34 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] rcu: Unlock correctly in rcu_dump_cpu_stacks()
-Message-ID: <b3b2a438-92d8-4b63-a71e-ad3a155b96d4@stanley.mountain>
+To: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] RAS/AMD/FMPM: Remove some dead code
+Message-ID: <6b914abf-b3ce-4baa-b4d7-f8da9a840a3f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,29 +68,32 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The unlock needs to be outside the } close curly braces for this if
-statement.  Otherwise it leads to a deadlock.
+Debugfs functions don't return NULL, they return error pointers.  Debugfs
+functions are slightly unusual because they're not supposed to be checked
+for errors in the normal case.  Delete these checks.
 
-Fixes: 744e87210b1a ("rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- kernel/rcu/tree_stall.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ras/amd/fmpm.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-index 8994391b95c7..925fcdad5dea 100644
---- a/kernel/rcu/tree_stall.h
-+++ b/kernel/rcu/tree_stall.h
-@@ -357,8 +357,8 @@ static void rcu_dump_cpu_stacks(unsigned long gp_seq)
- 					pr_err("Offline CPU %d blocking current GP.\n", cpu);
- 				else
- 					dump_cpu_task(cpu);
--			raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 			}
-+			raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 		}
- 		printk_deferred_exit();
- 	}
+diff --git a/drivers/ras/amd/fmpm.c b/drivers/ras/amd/fmpm.c
+index 90de737fbc90..3cde1fe17a7a 100644
+--- a/drivers/ras/amd/fmpm.c
++++ b/drivers/ras/amd/fmpm.c
+@@ -956,12 +956,7 @@ static void setup_debugfs(void)
+ 		return;
+ 
+ 	fmpm_dfs_dir = debugfs_create_dir("fmpm", dfs);
+-	if (!fmpm_dfs_dir)
+-		return;
+-
+ 	fmpm_dfs_entries = debugfs_create_file("entries", 0400, fmpm_dfs_dir, NULL, &fmpm_fops);
+-	if (!fmpm_dfs_entries)
+-		debugfs_remove(fmpm_dfs_dir);
+ }
+ 
+ static const struct x86_cpu_id fmpm_cpuids[] = {
 -- 
 2.45.2
 
