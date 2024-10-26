@@ -1,95 +1,202 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85C71D270A;
-	Fri, 25 Oct 2024 22:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6859C217F2E;
+	Sat, 26 Oct 2024 06:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729896947; cv=none; b=Bm+Is0A+HvRw5J2qIRwSq4lK3DV82lh273UpdMjW3f279I1MQtI0tYESSS/A/C4ABc/UWEU854UaghqmaFg1HmvDfD4AEvXqJlnfJbyNTbTH+PX/Knliph7Xua4JBqEJPYvGlfuImKNlIaNVlGhlvtkGiaIE1V8lMa+7oYgs8Mc=
+	t=1729924383; cv=none; b=im1HcXQQeweKs+xWF3jr97p2nVODG1VCYEB7OWTcBvibWv1PiU4HxEn256y7LUzSTVHiifES/PtwK/2DjYpkGRqMALzgLiSukWmZetgXT0VxkOWg4AI8rkLbIHCF/YKSk0o/c/r0CcOJ4iSn+L9q/gsmHfBcwjafBdFMW9rLI5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729896947; c=relaxed/simple;
-	bh=IHkS8BTrqxwHtztrBN/xoBUkJLXL+FDXRMjX5jjYfPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nrQXmVrPgrO/ndMIrnVXBaQRfjNd+wEMzbmPWGow28LeklnGgBuhE2AnL9bRMD0SfqK4LBhm7U+XjnmSiKtTOQLkzizn4+QwCcYJMmfJtP5oIeodiTvq7g9o3GRkUUCsO/Qr7NBp7+aeDk+5Bg2nuz1tWAEqEK6dXMJvcnbh0eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHZm9cF9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729924383; c=relaxed/simple;
+	bh=agr57+TwKsLYZRR5ZaPF7RExp8eb0fp9/mzsJ9nUsqY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t5gsYzFz16/NnWY0wqUy+UrUXrP8elInYz526oYB1w3H/6GWp0ZMW7hu2qIXIPnH6ZP+uHlwxQyyVedkzJCTV58QGsKqizx1TVGp9Wm84LUjBHrrRJRJfkGcNvaalI7fYSha0e37bo7PE9LMTg3phNdDgup4I+2fZPlTyyMggsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tFs7N6QD; arc=none smtp.client-ip=80.12.242.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHZm9cF9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3357CC4CEC3;
-	Fri, 25 Oct 2024 22:55:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729896947;
-	bh=IHkS8BTrqxwHtztrBN/xoBUkJLXL+FDXRMjX5jjYfPU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=SHZm9cF91BRtU2TDY138Df20qEaWVv72Eviv+RR3DsqHFdwFcr8gL5KXqKL5jq+Q1
-	 PHYeZJfKx/44QkVvrXSGR1WqaZ5CBtI6BQYkXu+GyMNdSnWhhfPJj133ZezE0Pcmb3
-	 73LWHE1bK9sAdCTIaUm7gB9FBnSpJ1v5PuSgkha+chZdv0Xqgb1/K1z5Axg56sxSo9
-	 TPsS8t89TTU7vUT1F6K1zvWn2hduGiO3acEE9CetA3UO7BbMH8dsU8B4tmfTZsBFBC
-	 yW1nQjRKzhzqDl3bY2sp521WFfJbwXhvzpLo8IgvE4ZgV2Q0djkuBEk6dx3X9TIvuw
-	 p6f1YMBg6HCRQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C7E8ACE0D99; Fri, 25 Oct 2024 15:55:46 -0700 (PDT)
-Date: Fri, 25 Oct 2024 15:55:46 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] rcu: Unlock correctly in rcu_dump_cpu_stacks()
-Message-ID: <cdc3a34a-9533-4f0c-bd2a-3796aeed161c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <b3b2a438-92d8-4b63-a71e-ad3a155b96d4@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tFs7N6QD"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 4aM1tR7nLgeRP4aM1tvlXG; Sat, 26 Oct 2024 08:32:57 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729924377;
+	bh=4QS1A65O3hsr8uWMktbnBm+HEJ1CiTpjN/zqDqUf/lw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=tFs7N6QDolaDk7ESBYl8GFFTn+5HZ/WlloVaEE1Y7G7haduNLJhW4WvAmzayQlTk8
+	 sBsujEPYlcSb7F4Rd3UUj71cECce5/uCKSvSzHW5kHcHcB9aFWzTEcFh8rWPX2V1c+
+	 wRCLMqnZaTXU/Zh7uRoNPJPGwKWmslXSMdxZoDce5qRpzkpyQLu+N4rjQmaY7QwTpW
+	 Xuzb4TAXU1JEA0OScvK0Toeoz40tq3UVsrTjqi2zlImtLPe6n0iOAUs6FIaiGyCiiH
+	 AP4vXVXM2RaMwlkQO+T1+HAFWi8acVfhEOaxQy8YGNekW8fCHmpKDVoUgqPFqXzvde
+	 2rCMO7Ksvs41w==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 26 Oct 2024 08:32:57 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Alex Lanzano <lanzano.alex@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Mehdi Djait <mehdi.djait@bootlin.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-pwm@vger.kernel.org
+Subject: [PATCH] drm/tiny: Fix some error handling paths in sharp_memory_probe()
+Date: Sat, 26 Oct 2024 08:32:36 +0200
+Message-ID: <b218165cf9af60907e0912266134f1ef1d3617b9.1729924305.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3b2a438-92d8-4b63-a71e-ad3a155b96d4@stanley.mountain>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 25, 2024 at 10:06:43AM +0300, Dan Carpenter wrote:
-> The unlock needs to be outside the } close curly braces for this if
-> statement.  Otherwise it leads to a deadlock.
-> 
-> Fixes: 744e87210b1a ("rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+If an error occurs after allocating resources based on which
+"sharp,vcom-mode" is used, then these resources must be released, as
+already done in the .remove() function.
 
-Good catch!
+Use 2 new devm_add_action_or_reset() for that and simplify code
+accordingly.
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Fixes: b8f9f21716fe ("drm/tiny: Add driver for Sharp Memory LCD")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/gpu/drm/tiny/sharp-memory.c | 66 ++++++++++++++---------------
+ 1 file changed, 32 insertions(+), 34 deletions(-)
 
-This is a regression from this past merge window, if I am keeping track.
-So it is a candidate for going in before the next merge window opens.
+diff --git a/drivers/gpu/drm/tiny/sharp-memory.c b/drivers/gpu/drm/tiny/sharp-memory.c
+index 2d2315bd6aef..01d1ce2462e1 100644
+--- a/drivers/gpu/drm/tiny/sharp-memory.c
++++ b/drivers/gpu/drm/tiny/sharp-memory.c
+@@ -48,12 +48,6 @@ enum sharp_memory_model {
+ 	LS044Q7DH01,
+ };
+ 
+-enum sharp_memory_vcom_mode {
+-	SHARP_MEMORY_SOFTWARE_VCOM,
+-	SHARP_MEMORY_EXTERNAL_VCOM,
+-	SHARP_MEMORY_PWM_VCOM
+-};
+-
+ struct sharp_memory_device {
+ 	struct drm_device drm;
+ 	struct spi_device *spi;
+@@ -67,10 +61,6 @@ struct sharp_memory_device {
+ 
+ 	struct gpio_desc *enable_gpio;
+ 
+-	struct task_struct *sw_vcom_signal;
+-	struct pwm_device *pwm_vcom_signal;
+-
+-	enum sharp_memory_vcom_mode vcom_mode;
+ 	u8 vcom;
+ 
+ 	u32 pitch;
+@@ -500,25 +490,41 @@ static int sharp_memory_pipe_init(struct drm_device *dev,
+ 	return drm_connector_attach_encoder(connector, encoder);
+ }
+ 
++static void sharp_memory_stop_kthread(void *data)
++{
++	struct task_struct *task = data;
++
++	kthread_stop(task);
++}
++
++static void sharp_memory_disable_pwm(void *data)
++{
++	struct pwm_device *pwm = data;
++
++	pwm_disable(pwm);
++}
++
+ static int sharp_memory_init_pwm_vcom_signal(struct sharp_memory_device *smd)
+ {
+ 	int ret;
+ 	struct device *dev = &smd->spi->dev;
++	struct pwm_device *pwm_vcom_signal;
+ 	struct pwm_state pwm_state;
+ 
+-	smd->pwm_vcom_signal = devm_pwm_get(dev, NULL);
+-	if (IS_ERR(smd->pwm_vcom_signal))
+-		return dev_err_probe(dev, PTR_ERR(smd->pwm_vcom_signal),
++	pwm_vcom_signal = devm_pwm_get(dev, NULL);
++	if (IS_ERR(pwm_vcom_signal))
++		return dev_err_probe(dev, PTR_ERR(pwm_vcom_signal),
+ 				     "Could not get pwm device\n");
+ 
+-	pwm_init_state(smd->pwm_vcom_signal, &pwm_state);
++	pwm_init_state(pwm_vcom_signal, &pwm_state);
+ 	pwm_set_relative_duty_cycle(&pwm_state, 1, 10);
+ 	pwm_state.enabled = true;
+-	ret = pwm_apply_might_sleep(smd->pwm_vcom_signal, &pwm_state);
++	ret = pwm_apply_might_sleep(pwm_vcom_signal, &pwm_state);
+ 	if (ret)
+ 		return dev_err_probe(dev, -EINVAL, "Could not apply pwm state\n");
+ 
+-	return 0;
++	return devm_add_action_or_reset(dev, sharp_memory_disable_pwm,
++					pwm_vcom_signal);
+ }
+ 
+ static int sharp_memory_probe(struct spi_device *spi)
+@@ -595,15 +601,20 @@ static int sharp_memory_probe(struct spi_device *spi)
+ 				     "Unable to find sharp,vcom-mode node in device tree\n");
+ 
+ 	if (!strcmp("software", vcom_mode_str)) {
+-		smd->vcom_mode = SHARP_MEMORY_SOFTWARE_VCOM;
+-		smd->sw_vcom_signal = kthread_run(sharp_memory_sw_vcom_signal_thread,
+-						  smd, "sw_vcom_signal");
++		struct task_struct *sw_vcom_signal;
++
++		sw_vcom_signal = kthread_run(sharp_memory_sw_vcom_signal_thread,
++					     smd, "sw_vcom_signal");
++
++		ret = devm_add_action_or_reset(dev, sharp_memory_stop_kthread,
++					       sw_vcom_signal);
++		if (ret)
++			return ret;
+ 
+ 	} else if (!strcmp("external", vcom_mode_str)) {
+-		smd->vcom_mode = SHARP_MEMORY_EXTERNAL_VCOM;
++		/* empty */
+ 
+ 	} else if (!strcmp("pwm", vcom_mode_str)) {
+-		smd->vcom_mode = SHARP_MEMORY_PWM_VCOM;
+ 		ret = sharp_memory_init_pwm_vcom_signal(smd);
+ 		if (ret)
+ 			return ret;
+@@ -640,19 +651,6 @@ static void sharp_memory_remove(struct spi_device *spi)
+ 
+ 	drm_dev_unplug(&smd->drm);
+ 	drm_atomic_helper_shutdown(&smd->drm);
+-
+-	switch (smd->vcom_mode) {
+-	case SHARP_MEMORY_SOFTWARE_VCOM:
+-		kthread_stop(smd->sw_vcom_signal);
+-		break;
+-
+-	case SHARP_MEMORY_EXTERNAL_VCOM:
+-		break;
+-
+-	case SHARP_MEMORY_PWM_VCOM:
+-		pwm_disable(smd->pwm_vcom_signal);
+-		break;
+-	}
+ }
+ 
+ static struct spi_driver sharp_memory_spi_driver = {
+-- 
+2.47.0
 
-							Thanx, Paul
-
-> ---
->  kernel/rcu/tree_stall.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-> index 8994391b95c7..925fcdad5dea 100644
-> --- a/kernel/rcu/tree_stall.h
-> +++ b/kernel/rcu/tree_stall.h
-> @@ -357,8 +357,8 @@ static void rcu_dump_cpu_stacks(unsigned long gp_seq)
->  					pr_err("Offline CPU %d blocking current GP.\n", cpu);
->  				else
->  					dump_cpu_task(cpu);
-> -			raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->  			}
-> +			raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->  		}
->  		printk_deferred_exit();
->  	}
-> -- 
-> 2.45.2
-> 
