@@ -1,52 +1,47 @@
-Received: from msa.smtpout.orange.fr (smtp-83.smtpout.orange.fr [80.12.242.83])
+Received: from msa.smtpout.orange.fr (msa-218.smtpout.orange.fr [193.252.23.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888741632D3;
-	Sat, 26 Oct 2024 08:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F3718DF97
+	for <kernel-janitors@vger.kernel.org>; Sat, 26 Oct 2024 10:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729930213; cv=none; b=WiWNDZIK04zr/uVEQANILzhLb0fIjCmpMRlV52pIL2pqRi/mLcAHlj6DLmQlrg0suhsLvtQFdE617Sgcqsv0lnqXpuBdZDVGt+Zw3ms0GUv1u9m2fUnnLcDivorgA6XsguZeSHZ9hq/m9iydukiIIppIAAzVcUR6Lqpu70S46Bs=
+	t=1729938852; cv=none; b=FyfaOPLCFud2B10BD04mH1RLIZTJ1/Xby9aC5aVfYkjh8dqMYWk1S4y7hF7XbpdZhnaXFclQYUzNcgyAxHVgZhKH4x3Ba0owB11Vub9fr7iuiI6Yk5k84EXVZSjl8jThqRGgyFRi+9GoBSNReJhaczW8dqKlT/jqMk9CyZTDbdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729930213; c=relaxed/simple;
-	bh=eXezoRSGEJgqkLw+eS7eu6iiVu4G2376j5oOa6lRMIM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TmJtX6BmJVPTjCtRZa/P8Sq/sJpkXKtvNG8Ics1PV4Lqnhz3KMoHTzjSiemf+oOFOrJJkKC8PTYSwlEKvVTSJKoETYRGmT+AmHRa2jxQChxaP05QsInAT5xp/0ziDeLH8CSbNUDUYFVaUl212c6WNrtUfMbPchtqP+nvGXYJ1eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=rCAyjCqT; arc=none smtp.client-ip=80.12.242.83
+	s=arc-20240116; t=1729938852; c=relaxed/simple;
+	bh=A6U8ta+ZnS34szYa58THBFeG3YWzos6OCdiFKXWHVxU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pPN+ngzvWgWcb6tzf9MNQp4oE8QjnOU2myDvq8C8cKDgh61bLe2xNhaNS3nzgqAgZ4EMBw+79WG5HpIaatduSoyD5KAyNKrF90RMcIfrfdp0OI06TMQD/p2+EsqVikZdmxEt30ceJYoWVrlh/HKlbVrBAULGf7oPD3jKhbCgoUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JQN6IgbE; arc=none smtp.client-ip=193.252.23.218
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="rCAyjCqT"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JQN6IgbE"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id 4brttJTpvLmOL4bs2tUbsE; Sat, 26 Oct 2024 10:10:03 +0200
+	id 4e6KtNTeWVYl14e6Ltepe2; Sat, 26 Oct 2024 12:32:57 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1729930203;
-	bh=jwyVolGT/MuttDEEvCVVvrLh3Bzx6w8Pcg5EguUcACM=;
+	s=t20230301; t=1729938777;
+	bh=L28aRX9acwpDAskDQ+9C2QZMMfPavq0GBAMSCErET88=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=rCAyjCqToG4VITQW0xko/5scReyi0PVS3BGi6S+V77YCZI5oTsan8o+iV3MQ4NykU
-	 vCX3Tdod7dR1t+0qo4GWd9sQcj+qW4apYzhQ+0bc3LYfN6m5eDdtdhmvRPFUWTXShE
-	 GJ8AaepmzuDYImDTdtyUGfdPCjr5dKQdhlk/Sgvv0SgYTDrXajiBNJSxqh60lyKnCV
-	 oR6nhPHZX1S0wpTlc8Bzm6zWiEALsJvxUrL6EHcQdAWX6qNv8gduG5ayIRLafrQEE9
-	 LN47dBRm7e1kc13fpDn6yLwgunlVQnvOY2MQ8LWkBki6Jw50oEIuEvAz1cyFbLG4lq
-	 0BPkz1JVUSDbw==
+	b=JQN6IgbEVAdmr2N9c36JAG8x5t2KvDy7i2WbUJsk1ZOQonWoRf8HkMI5kZS5GF3vX
+	 kf+9PSJKqQrTam4qCnC3lL4AK+Cr0LtoRqpTpddN2+PtIk8aXLQnSVML+lMySsHCya
+	 tLqtA4it9YBpcAPa0waG8wvQoBbVgCtjxX54312wZrx+Sr1v7dOOqj5daqJpMuWqIV
+	 rg4I5PdzKKhLWCxkxIfMasbE7osQbMHUgOb/YLBy6pAiJR4tyOS/UTTRrdpdx1GAsI
+	 h+9PZ86xQJl3Kogy715PB/+4qWx0teDB05pT2Mpih1u0aD5seeZnyPP4sOUUCT/FP0
+	 DpXF4grvKTLpw==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Oct 2024 10:10:03 +0200
+X-ME-Date: Sat, 26 Oct 2024 12:32:57 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Selvin Xavier <selvin.xavier@broadcom.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>
+To: Thomas Richard <thomas.richard@bootlin.com>,
+	Lee Jones <lee@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-rdma@vger.kernel.org
-Subject: [PATCH 2/2] RDMA/bnxt_re: Remove some dead code
-Date: Sat, 26 Oct 2024 10:09:43 +0200
-Message-ID: <bc1135dc297ed2c6f3ca9446a2747b0c89102e61.1729930153.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mfd: cgbc-core: Fix error handling paths in cgbc_init_device()
+Date: Sat, 26 Oct 2024 12:32:46 +0200
+Message-ID: <24ec1348b99e76a853435ab081ae9a8f0e51fd52.1729938747.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <580de136ad9b85b0d70709e912cfddd21b7e3f6f.1729930153.git.christophe.jaillet@wanadoo.fr>
-References: <580de136ad9b85b0d70709e912cfddd21b7e3f6f.1729930153.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -55,83 +50,44 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the probe succeeds, then auxiliary_get_drvdata() can't return a NULL
-pointer.
+If an error occurs after a cgbc_session_request() call, it should be
+balanced by a corresponding cgbc_session_release(), as already done in the
+remove function.
 
-So several NULL checks can be removed to simplify code.
-
+Fixes: 6f1067cfbee7 ("mfd: Add Congatec Board Controller driver")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only
 ---
- drivers/infiniband/hw/bnxt_re/main.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+ drivers/mfd/cgbc-core.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
-index d183e293ec96..e510ffe91de3 100644
---- a/drivers/infiniband/hw/bnxt_re/main.c
-+++ b/drivers/infiniband/hw/bnxt_re/main.c
-@@ -300,9 +300,6 @@ static void bnxt_re_shutdown(struct auxiliary_device *adev)
- 	struct bnxt_re_en_dev_info *en_info = auxiliary_get_drvdata(adev);
- 	struct bnxt_re_dev *rdev;
+diff --git a/drivers/mfd/cgbc-core.c b/drivers/mfd/cgbc-core.c
+index 93004a6b29c1..7771d010eb2e 100644
+--- a/drivers/mfd/cgbc-core.c
++++ b/drivers/mfd/cgbc-core.c
+@@ -321,9 +321,19 @@ static int cgbc_init_device(struct cgbc_device_data *cgbc)
  
--	if (!en_info)
--		return;
--
- 	rdev = en_info->rdev;
- 	ib_unregister_device(&rdev->ibdev);
- 	bnxt_re_dev_uninit(rdev, BNXT_RE_COMPLETE_REMOVE);
-@@ -316,9 +313,6 @@ static void bnxt_re_stop_irq(void *handle)
- 	struct bnxt_qplib_nq *nq;
- 	int indx;
+ 	ret = cgbc_get_version(cgbc);
+ 	if (ret)
+-		return ret;
++		goto release_session;
++
++	ret = mfd_add_devices(cgbc->dev, -1, cgbc_devs, ARRAY_SIZE(cgbc_devs),
++			      NULL, 0, NULL);
++	if (ret)
++		goto release_session;
++
++	return 0;
++
++release_session:
++	cgbc_session_release(cgbc);
++	return ret;
  
--	if (!en_info)
--		return;
--
- 	rdev = en_info->rdev;
- 	rcfw = &rdev->rcfw;
+-	return mfd_add_devices(cgbc->dev, -1, cgbc_devs, ARRAY_SIZE(cgbc_devs), NULL, 0, NULL);
+ }
  
-@@ -339,9 +333,6 @@ static void bnxt_re_start_irq(void *handle, struct bnxt_msix_entry *ent)
- 	struct bnxt_qplib_nq *nq;
- 	int indx, rc;
- 
--	if (!en_info)
--		return;
--
- 	rdev = en_info->rdev;
- 	msix_ent = rdev->en_dev->msix_entries;
- 	rcfw = &rdev->rcfw;
-@@ -1991,10 +1982,6 @@ static void bnxt_re_remove(struct auxiliary_device *adev)
- 	struct bnxt_re_dev *rdev;
- 
- 	mutex_lock(&bnxt_re_mutex);
--	if (!en_info) {
--		mutex_unlock(&bnxt_re_mutex);
--		return;
--	}
- 	rdev = en_info->rdev;
- 
- 	if (rdev)
-@@ -2043,9 +2030,6 @@ static int bnxt_re_suspend(struct auxiliary_device *adev, pm_message_t state)
- 	struct bnxt_en_dev *en_dev;
- 	struct bnxt_re_dev *rdev;
- 
--	if (!en_info)
--		return 0;
--
- 	rdev = en_info->rdev;
- 	en_dev = en_info->en_dev;
- 	mutex_lock(&bnxt_re_mutex);
-@@ -2090,9 +2074,6 @@ static int bnxt_re_resume(struct auxiliary_device *adev)
- 	struct bnxt_re_en_dev_info *en_info = auxiliary_get_drvdata(adev);
- 	struct bnxt_re_dev *rdev;
- 
--	if (!en_info)
--		return 0;
--
- 	mutex_lock(&bnxt_re_mutex);
- 	/* L2 driver may invoke this callback during device recovery, resume.
- 	 * reset. Current RoCE driver doesn't recover the device in case of
+ static int cgbc_probe(struct platform_device *pdev)
 -- 
 2.47.0
 
