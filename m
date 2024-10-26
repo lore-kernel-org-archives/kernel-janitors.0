@@ -1,78 +1,101 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822981CF96;
-	Sat, 26 Oct 2024 07:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8CE1632D3;
+	Sat, 26 Oct 2024 08:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729926219; cv=none; b=oaYZKmL8zJcqDvfx0ziaeYOOMO+OHEX4U1Q40rGkVv0Pkbu88UtZmw8Fd4DGpvrtnSRpaxvroE1YmKncXsChkp6nm/mppZRfh9UKqj8UYSNJdDfmJVTIIYhCVsQA1aR0RQ6yptr96JiXki26nle0g2xJTSMkxMliPFqwaBBX8Fs=
+	t=1729930205; cv=none; b=g4AUOUA4PpVp5Y5maqFD+Ijltrv5X2LQl6XAaJkmdGkgtVi1VO0RyDRnHp79wrvczsVfS3cWnJsQiEQBUjULRWYwR8NKYgBLpAl+oDJIFTvt8lwnkGgqbjzRMURGpzNtdm2fpfq+dXPIp7/dmHUKPtOePqs60Q6MFC0eZuA3hEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729926219; c=relaxed/simple;
-	bh=H9fGZnzwcKNn6KZo3Ntsp5Charx8ZXj2oZObi1Cr8es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFuYvXIZ3KuAkkiQKLex7x0DU54tSpSzXfCju/sEvmara7XVXXwRn2HCj1MAGKj+WjBeG0NWboMav2HU9dEoUYpry/bPMq1nTHpdVJpS/wbGLkEAEVR07xOlvdP52UWibIHlfG6voaMB9ns/bXkfot3q+Z3fr/MT5B7k8gj39Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=GBd/UPkJ; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	s=arc-20240116; t=1729930205; c=relaxed/simple;
+	bh=roMrdDhWbQ7oiH7wmvK8cHSGZYmjLemzi0RKbT3G3RI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fXfX5zLCprokplpY+m7vbWbPFTEDtfUg2TAvuL6kT+yOksWDtWoIyzf1puG2e+bXxApp6VYk5DKcstInkcSiIPxZjHYGfkxjUlKvXlkyZ7gUPDyBJtQPUL65cVIpk8DChOmzJAWiXrX7zebyDHcKcqo9qaGx1uVjV+uiFMb/JsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QMbOoEkH; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="GBd/UPkJ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=M2BQO23FpOGOopTnjnb/SBnH2W0PJxbtAGu6aviJOXA=; b=GBd/UPkJVMgSHaFTmTxNrbuQil
-	kxxy2FwTV4L88peK2+YZzcnV88swtO+6pGDGXN4y7tIcHk3A4P4OMuu2EXgBGopvy09+Vlai1cfLE
-	/tOqgK0tVzNVNcxkKc28md94bQ/q0FU/BKLEjUYJobKYUiwIlK9y3rusyKvWXEF18ufbo3bDCeWst
-	2FzP6HIHOf0iW2i9WFYBcRzx6VBbbduyT05dS4eRaw1MBtNYkOUK2hV97yFnGiCOFxFQ61QsEEcKq
-	9ZFWIGY4TwNtN2Vm+SLziLRUFB/OZ299+zdyyxHDvu7SZcbcl5QtSeX85/ZD/Fb1522vkeNWXoG3A
-	/w1K9A4w==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1t4apZ-00CG16-1k;
-	Sat, 26 Oct 2024 15:03:26 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 26 Oct 2024 15:03:25 +0800
-Date: Sat, 26 Oct 2024 15:03:25 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Everest K.C." <everestkc@everestkc.com.np>
-Cc: gcherian@marvell.com, davem@davemloft.net, skhan@linuxfoundation.org,
-	linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: cavium - Fix the if condition to exit loop after
- timeout
-Message-ID: <ZxyUPf9qjZlSA-bK@gondor.apana.org.au>
-References: <20241018162311.4770-1-everestkc@everestkc.com.np>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QMbOoEkH"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 4brttJTpvLmOL4brttUbV9; Sat, 26 Oct 2024 10:09:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1729930194;
+	bh=UszODcSUisBsMEcSbF3Qc7T3xxScluRVwcisiRg5FVs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=QMbOoEkHHFvEPGDvhGNYyCK4U5d3MFkzNZm25BE1w0bhTKLz8a1L2eRVCQd9CJRYK
+	 Yz/DPQKoynVxk/4U+72ZjuVoSZ2dTMd4VtsPAZf6hDPuphY3QpFd78Av79XPpZPk14
+	 Vcwnc3iZKT/ajES6D6F/GbDXhkBpOTYjOU++VO5hjxH9Bt7boM626KvXQSagi48/SH
+	 w6IzjeLVb/xrsRqvj4+52XW30H0mpgpQL1nM2PHvNw0IHzR5b84Fb5kNWaud4CrR1F
+	 JYcnRPnH22QMkyD50C8fybE7CczlcfB0nfURw2VYzJ7E2u9MCrVpTN392GjyrhLvRc
+	 cqnX8g2uFnq3w==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 26 Oct 2024 10:09:54 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Selvin Xavier <selvin.xavier@broadcom.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-rdma@vger.kernel.org
+Subject: [PATCH 1/2] RDMA/bnxt_re: Fix some error handling paths in bnxt_re_probe()
+Date: Sat, 26 Oct 2024 10:09:42 +0200
+Message-ID: <580de136ad9b85b0d70709e912cfddd21b7e3f6f.1729930153.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018162311.4770-1-everestkc@everestkc.com.np>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 18, 2024 at 10:23:10AM -0600, Everest K.C. wrote:
-> The while loop breaks in the first run because of incorrect
-> if condition. It also causes the statements after the if to
-> appear dead.
-> Fix this by changing the condition from if(timeout--) to
-> if(!timeout--).
-> 
-> This bug was reported by Coverity Scan.
-> Report:
-> CID 1600859: (#1 of 1): Logically dead code (DEADCODE)
-> dead_error_line: Execution cannot reach this statement: udelay(30UL);
-> 
-> Fixes: 9e2c7d99941d ("crypto: cavium - Add Support for Octeon-tx CPT Engine")
-> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> ---
->  drivers/crypto/cavium/cpt/cptpf_main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+If bnxt_re_add_device() fails, 'en_info' still needs to be freed. This is
+done in bnxt_re_remove() with the needed locking.
 
-Patch applied.  Thanks.
+The commit in Fixes: in-correctly removed this call, certainly because it
+was expecting the .remove() function was called anyway. But if the probe
+fails, the remove function is not called.
+
+To fix this memory leak, partly revert this patch and restore the explicit
+call to the remove function in the error handling path of the probe.
+
+Fixes: a5e099e0c464 ("RDMA/bnxt_re: Fix an error path in bnxt_re_add_device")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+
+
+Another solution, maybe more elegant, would be only call kfree() in the
+error handling path. In fact locking and the other stuff in the remove
+look useless in this specific case.
+---
+ drivers/infiniband/hw/bnxt_re/main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
+index 6715c96a3eee..d183e293ec96 100644
+--- a/drivers/infiniband/hw/bnxt_re/main.c
++++ b/drivers/infiniband/hw/bnxt_re/main.c
+@@ -2025,7 +2025,15 @@ static int bnxt_re_probe(struct auxiliary_device *adev,
+ 	auxiliary_set_drvdata(adev, en_info);
+ 
+ 	rc = bnxt_re_add_device(adev, BNXT_RE_COMPLETE_INIT);
++	if (rc)
++		goto err;
+ 	mutex_unlock(&bnxt_re_mutex);
++	return 0;
++
++err:
++	mutex_unlock(&bnxt_re_mutex);
++	bnxt_re_remove(adev);
++
+ 	return rc;
+ }
+ 
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.47.0
+
