@@ -1,49 +1,51 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
+Received: from msa.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AC9217F22;
-	Sat, 26 Oct 2024 11:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547911CD02;
+	Sat, 26 Oct 2024 14:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729941166; cv=none; b=e/Kneh1O6adaSLFEPGFefVJtDrGee0YzFTEoMQvSZBT7B4YnRDQmqS1K9QVQ13LC3WHpQ80rPvsaWnhY+Tlut5BYSfiECNglmPFTmOXtySjP2uJco+UowZT9KK22sc/RM9fFRm8x6oftru6lQcX6BFnniui7OZVX9rOdO1NQImE=
+	t=1729952285; cv=none; b=JG+ACACrCL3IV+478/n/E7cgYzTS2KkOLC8O+s171HbSNFcCpDePsPxbf951Ws0jTLu8v0GyoChZMmIzJbso88rbA4Q/VZVA7+w/LenpW2gxeRPbHUOxQlzN1Y+WVwvcjREwsT/NV2DjqAuCsnV24VZYiuNFvjR0q3Yj5J05hbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729941166; c=relaxed/simple;
-	bh=G84evT0B+lKjUGpRq56h5jxxOl4TYHxpYmAc92bQ8oA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VCh2LwAz38wJCmRgzqWsXHuqpsbdPwQ/1fg+CN/7+YFBP1JtU3lJgaC2QHUyztTY19I3Dp2giSPq5T8D0teL+98sE+W4dnBuStbV2i5W11f+1eTyJ7QqE0pK3ddtyUepbfL7Jy02c5A00XVxTeb6kUBPo87ZDQ6hzSgq2HqBNwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=h3EaZv8S; arc=none smtp.client-ip=80.12.242.30
+	s=arc-20240116; t=1729952285; c=relaxed/simple;
+	bh=jtWRxub02rdof1ec5Ogg81M3zByqJ57Q0EX9sND/TsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rH88QZUuyhzpgTkzWXe2NjcR34Lap0Ho7pPuFm8PEXHUx4/Hv357JZh+pDN5SspR1bh4VgmSiddIlIYV1kMVf4j0e7ujEDF58HsX+/c0s1gF8lm0WSET6u72/V0RznCe91dbOajrPz1tIuOlPVKIDniDvzBR0DaeWFwK0nCY87c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dsVoWrTd; arc=none smtp.client-ip=80.12.242.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="h3EaZv8S"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dsVoWrTd"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id 4ea3tEjBah54N4ea4tPuht; Sat, 26 Oct 2024 13:03:40 +0200
+	id 4hc0tVIwCjP4T4hc1tRohz; Sat, 26 Oct 2024 16:17:54 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1729940620;
-	bh=G5GY2rPQRKm/v2JYqMqWO5YhIzdqawHoojEX7tDA53g=;
+	s=t20230301; t=1729952274;
+	bh=FfHm9nyVFxciJ4tCIjF7CcDaV35P+oGeXqN4ax4+YEs=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=h3EaZv8SCmDWRQWQmRUXi1k/LikSzIZB8nBI6Hs8poRBs07+XCQ4+jqw+619awLEN
-	 lJxHw9tO+aii6QxY3TZr5aRrTTYRiI0ba/DvR9lpzhiP7TogdW9d9N9c0MusKa2oDU
-	 +TA5rYy8oTtyUuWRuhmu+6jo/IhAL4BnI8AMW1cUHEKYVSeROg49C2fP8hjRj3m39J
-	 Hd9NYj68W9hzYMtgHUKu0i7R64iFRf19FYxRU/wg7FJHSKUGpjN19WtAkNs14uuizu
-	 x42ejo/bc25726NiuqOr1ZRUqXHpz4FpOQkUc8ww6QOK/QCdeoYodcJJxXM9x/VBrP
-	 Y5JAAK2UIHU4Q==
+	b=dsVoWrTdpJFaKRccvNFr4mvq07bOikx2VohX5J2zEGwa8IdsGn8HOhyDBHh9r4oGK
+	 4cTwhm/xkqS9LxmdTYDn3axB8UXT9gjcNHNqF6OyeG81vMytHenm5W22fwBbmLa5N+
+	 SOX2YQMuWJI9U0h6O7w4e0s0T6T69VDvqw46Pp1HxmlDDXByx/0vy24fr25fPMtPgZ
+	 QecGK7SDAa3dm07DqLAamBrx0TDnJ+I2KP7i4T5IScGPbhJ7wb9WPik6kXPvwom6AW
+	 y6hd5baehF6dJnb86qRK2+/uuvETBGY6c5ujg1ToCshT5e6zdCxlVobDerD1Zn5UOh
+	 bfFRU1inqJ7Ew==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Oct 2024 13:03:40 +0200
+X-ME-Date: Sat, 26 Oct 2024 16:17:54 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lee Jones <lee@kernel.org>,
-	Thomas Richard <thomas.richard@bootlin.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-staging@lists.linux.dev
-Subject: [PATCH] staging: gpib: Fix error handling paths in cb_gpib_probe()
-Date: Sat, 26 Oct 2024 13:03:30 +0200
-Message-ID: <459c267de8c9bf48fcb555364930ae7e3cdc798b.1729940596.git.christophe.jaillet@wanadoo.fr>
+	netdev@vger.kernel.org
+Subject: [PATCH] rtnetlink: Fix an error handling path in rtnl_newlink()
+Date: Sat, 26 Oct 2024 16:17:44 +0200
+Message-ID: <eca90eeb4d9e9a0545772b68aeaab883d9fe2279.1729952228.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -53,55 +55,40 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If cb_gpib_config() fails, 'info' needs to be freed, as already done in the
-remove function.
+When some code has been moved in the commit in Fixes, some "return err;"
+have correctly been changed in goto <some_where_in_the_error_handling_path>
+but this one was missed.
 
-While at it, remove a pointless comment related to gpib_attach().
+Should "ops->maxtype > RTNL_MAX_TYPE" happen, then some resources would
+leak.
 
-Fixes: 6f1067cfbee7 ("mfd: Add Congatec Board Controller driver")
+Go through the error handling path to fix these leaks.
+
+Fixes: 0d3008d1a9ae ("rtnetlink: Move ops->validate to rtnl_newlink().")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-*NOT* compile tested, so provided as-is
-
-It does not compile on x86_64 because of some missing includes. I've not
-seen if it was dedicated to a specific arch, so couldn't cross-compile
+Compile tested only
 ---
- drivers/staging/gpib/cb7210/cb7210.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ net/core/rtnetlink.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/gpib/cb7210/cb7210.c b/drivers/staging/gpib/cb7210/cb7210.c
-index c827d03dacf5..98f20dab320a 100644
---- a/drivers/staging/gpib/cb7210/cb7210.c
-+++ b/drivers/staging/gpib/cb7210/cb7210.c
-@@ -1194,8 +1194,7 @@ struct local_info {
- static int cb_gpib_probe(struct pcmcia_device *link)
- {
- 	struct local_info *info;
--
--//	int ret, i;
-+	int ret;
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 194a81e5f608..e269fae2b579 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -3829,8 +3829,10 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+ 	}
  
- 	DEBUG(0, "%s(0x%p)\n", __func__, link);
+ 	if (ops) {
+-		if (ops->maxtype > RTNL_MAX_TYPE)
+-			return -EINVAL;
++		if (ops->maxtype > RTNL_MAX_TYPE) {
++			ret = -EINVAL;
++			goto put_ops;
++		}
  
-@@ -1223,8 +1222,16 @@ static int cb_gpib_probe(struct pcmcia_device *link)
- 
- 	/* Register with Card Services */
- 	curr_dev = link;
--	return cb_gpib_config(link);
--} /* gpib_attach */
-+	ret = cb_gpib_config(link);
-+	if (ret)
-+		goto free_info;
-+
-+	return 0;
-+
-+free_info:
-+	kfree(info);
-+	return ret;
-+}
- 
- /*
-  *   This deletes a driver "instance".  The device is de-registered
+ 		if (ops->maxtype && linkinfo[IFLA_INFO_DATA]) {
+ 			ret = nla_parse_nested_deprecated(tbs->attr, ops->maxtype,
 -- 
 2.47.0
 
