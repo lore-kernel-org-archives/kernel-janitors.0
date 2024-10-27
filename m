@@ -1,66 +1,64 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CEF2C697;
-	Sun, 27 Oct 2024 13:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E612A1D6AA;
+	Sun, 27 Oct 2024 13:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730036148; cv=none; b=AuM/8L1oC3YilIzsj4V3YxOyUxPoBnH4vxgjo8Tr4Jutwe09KT8W2WuVoyRtLpOFtDewQkD9XSvqV6BedL7gpvtQ9xZbdzM3on6K5juhwe2MEUnwrjYrx+834Th8Lc+4DyBPhYgaMOR95rI6KVvIbwM183AXQHQM30F8KEe4FKY=
+	t=1730036782; cv=none; b=jZeT6JN1iA+rRo90pda0h5IO8XkOBZw03R7RCEJ57Na7ChQIqrQZLagWUl/6E1pE+ePjDtJ1zF4pibzTmPRv8M5nEzDebdwLWbh4TADciudVLxwwbfI822M49FK3YZn/85sjEFCPnEc2rXdVYlA7sIMuV7MtNKtWzCr/SXn7V38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730036148; c=relaxed/simple;
-	bh=0O8eKPQladhE8cLxr/bSaYHnQGuNIfdauWs5HzIC8rs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HOMOPokxnTGXyeZqo/OaxLq/Wfdp9sbw4n0Hg5UidT2Mx+HJUpD128++LkQTd5gkIojCe+qIoTAIa0AVvEbD96csIg00rddsrbp89SXfcwLg7Z3Lq8zHEw6Xazb0mC2hSqwnQ4dz826KqmDmWdTpAZjnS23RG7HTptyJYA18oPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wv1H/9yj; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1730036782; c=relaxed/simple;
+	bh=1wAsLqM/9YxIYVWDGTUmZxhjUhZh3V6gZDRoFAyHJe4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F/fUkX5iXRkM9RLqzbnMFW+hFYWHmS629VFn3OCzvUOZYk/1DeGqW6fV8XPtU4tsuf7FM282v9J2BfuHJUZlwL/3lcHSGBjHBvB13NyyK9PxCqiT5XILxBlw91Dt9Q27Lq0Zify+k+gf9muoosN5X2V4u1B0oG3as3vwnUd7vig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zenbv5+S; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wv1H/9yj"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43159c9f617so34349905e9.2;
-        Sun, 27 Oct 2024 06:35:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zenbv5+S"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so33751775e9.3;
+        Sun, 27 Oct 2024 06:46:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730036145; x=1730640945; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730036778; x=1730641578; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mK7sVqYoX25AgNKVn0A6qLQfrJlccu+9fSrGoYMncso=;
-        b=Wv1H/9yj0Iz81R5tRABdfT3BIi/fpOLzkToQ6IxPsBTM1luxzicSkld/80TVAAuf6t
-         XhPAHuja95kKIKnntEXxpsimwB1n2a0BQ8TV4sDn3tCY4iuG4w0DX+hI233jV8xbAzpE
-         Z+lYPBFFeuJBCUv1t7b79D8vVGPTS0D3k8WzQ2GrWg6KWq1z3/Tt/N0seeHhDBbmew0V
-         Q5hkYP7VoUZUzta/KM22YrL0MPdndM9N04s2Fpm6jPDy+5Lvj215k+O62nHLlXrwNDcj
-         jvZgsgWRf/b2oYh1mVIa+85mAdENHyisV0LfV5z4sAuuzyn678V4fSwJ8n1jUbOlacEK
-         8kcw==
+        bh=FBF2xCVjDBXY36r9f8qZDqWQaqa6k7kywBRKHfiq8Cg=;
+        b=Zenbv5+SWN6PD6cudq8+g5ANNi9nbdcbVsJIjbdSqXA5JCb8IxwOpmDJgsU7iT0T7X
+         /9HlrH3L8ibnUNskddlZIF3Uhg02BHIt7k9m6bB7uIlcdO2y7GT5eFEqFFP+Pj3BFxWr
+         RtYUwZ6g8Dn2PGoyd8q+/ChTaRL4n27EPDn7kebJ+ss8wqvHpvSdlJhS+m7vAM8/BKzM
+         6akk8efa8tIBlmkr8zIw82UWWpLLe2AuImjzLXcTPwUczwSxLZR7o8AGbROydbQ2BHJg
+         KwciMhVyikvU6Mou4WpGup+lyXWjwRAJ9mSSyfiAOZETVMWAxIgexz6BN9xSj8Lje+9Y
+         51eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730036145; x=1730640945;
+        d=1e100.net; s=20230601; t=1730036778; x=1730641578;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mK7sVqYoX25AgNKVn0A6qLQfrJlccu+9fSrGoYMncso=;
-        b=C1ScyW8Rt5xp/1dg91QvmWKaQOGTEY3PnKtdNpE8v7UyLfGvhsVHGIfyTH2HcbiZyl
-         n2pQahxR32vUp1Byvhos9JS4quHDEDXFJJaBMEV3UfUmxGWdyHnnSa3wNY8De+Ba1Z6E
-         a4GnyuxlDQxY4XB/gUbHV28wFQh+ZstCy9vsKEl7I3WfMAglBlqXsA/r5VuJ627PHYem
-         0Wo2a+qhBzx2XBbpXWfbrBjxmJ2hAFmbNyiOUYYgt56r+7H3jqgcpfOTHG2GaUUBWDK6
-         zZEC97NymzMt88gsxZF0a5eSfZ8B0bzVF94XJBgHtXzTSeaMQ3IRsG7ziSJ6r2Wt/phD
-         nk2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDxgAYLPGy6ah0ySN8q0J/YTHnjMEyBhcSAKSJpB1KnZc5RizeuxBpQsrd/5JjsAnJfAMG7T23Op/I9PFF@vger.kernel.org, AJvYcCWAzMVpp/OUSx7w2y0DZC6B68K4c6qeMMkDV+A3YAHdKMcK0e0p5j+w4KLH0iNZVXTh+16QHi1vbjOt4PKsWt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQWiF/dt9osZCrz2VndAWjvvyW1j/d4cqMtOLsJt4b/3js8Ve+
-	V67V0kcwYYv28vXUXsdfsCXCB5Sx2lpgfYFC94/7xDPxenoG7gLl
-X-Google-Smtp-Source: AGHT+IFvoR5pALM3sVKeUHGr16ao40f833nEkt8YEwQlcfMaEnCIzjNv8RcjHl6d476xPvJAQ3quew==
-X-Received: by 2002:a7b:c5cc:0:b0:428:1310:b6b5 with SMTP id 5b1f17b1804b1-431aa802774mr1484315e9.34.1730036145278;
-        Sun, 27 Oct 2024 06:35:45 -0700 (PDT)
+        bh=FBF2xCVjDBXY36r9f8qZDqWQaqa6k7kywBRKHfiq8Cg=;
+        b=GSrJNZO9f3QlkdM3cdBROrEbyDvqU8hMTb7qmNmnOIg/1KNFcscrsC/JsSH5f3BgAa
+         V6fo499UuY3tFQXSV2OEoHkpdjgdXy6q9XSBRlN7bB9+UU0qQaAmAF+ri7Ck4r5Y3RV0
+         P5yODjVvorhZ0SglOAczXJmwrpoJzjVeru9zawdrXxcgGWrTNeHy6iywyzMjLRxPaLUz
+         UhDwQkyeCxLkHolMgEFOwoyyahMKG+4XlXCqEa9RPyUGFcxpwhuxYUceEug+LSetxwSK
+         27xiXN7yXlkT0yV/mTalIzsQIBogdoHh8EpI//b2ea41p131TXLd0+D8rkuqJS2coXCu
+         1t0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURRlWQgkkzKzVEGhie8VshksDnnAUHZkgvh0GAxYthlbCLbXKy882tE82IzpfnVFIN+SGqCD/aq5Sx2gsPsBo=@vger.kernel.org, AJvYcCWc1yn3LpFivLrsb5RNVw6UT4SoRUI50TmxasSFzAY7mCIccEvgaNeCXmRfnZxFbnqfqNolv/ygkWUxgMwr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb4HZVraxD6KjFEtQSLVmQTedvR8651A3/x2nMoX8Cfhu1DUHf
+	n1A8BdG2BUKgk3NEixHxhy89wuR8T4LA9JCq620CViop/wICHsRZ
+X-Google-Smtp-Source: AGHT+IEMlm41NAVGO68RrktYRtrNXvoOnHit95Vmz7cUlneN2UZAJxzmsEtHxE25ytVoHyo3sCHmvg==
+X-Received: by 2002:a05:600c:3b14:b0:431:60ec:7a91 with SMTP id 5b1f17b1804b1-4319ac6f895mr48516405e9.2.1730036778049;
+        Sun, 27 Oct 2024 06:46:18 -0700 (PDT)
 Received: from void.void ([141.226.10.223])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b712d6sm6814218f8f.78.2024.10.27.06.35.44
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f7789sm76393165e9.36.2024.10.27.06.46.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 06:35:44 -0700 (PDT)
+        Sun, 27 Oct 2024 06:46:17 -0700 (PDT)
 From: Andrew Kreimer <algonell@gmail.com>
-To: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: ocfs2-devel@lists.linux.dev,
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] ocfs2: cluster: fix a typo
-Date: Sun, 27 Oct 2024 15:35:18 +0200
-Message-ID: <20241027133540.22090-1-algonell@gmail.com>
+Subject: [PATCH] fs/ntfs3: Fix a typo
+Date: Sun, 27 Oct 2024 15:45:30 +0200
+Message-ID: <20241027134613.23188-1-algonell@gmail.com>
 X-Mailer: git-send-email 2.47.0.149.g3e3ac46130
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -70,28 +68,28 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix a typo: panicing -> panicking.
+Fix a typo: recommened -> recommended.
 
 Via codespell.
 
 Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
- fs/ocfs2/cluster/quorum.c | 2 +-
+ fs/ntfs3/super.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/cluster/quorum.c b/fs/ocfs2/cluster/quorum.c
-index 15d0ed9c13e5..8bf17231d7b7 100644
---- a/fs/ocfs2/cluster/quorum.c
-+++ b/fs/ocfs2/cluster/quorum.c
-@@ -60,7 +60,7 @@ static void o2quo_fence_self(void)
- 	switch (o2nm_single_cluster->cl_fence_method) {
- 	case O2NM_FENCE_PANIC:
- 		panic("*** ocfs2 is very sorry to be fencing this system by "
--		      "panicing ***\n");
-+		      "panicking ***\n");
- 		break;
- 	default:
- 		WARN_ON(o2nm_single_cluster->cl_fence_method >=
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 6a0f6b0a3ab2..3d7693a55321 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -1252,7 +1252,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbi->volume.ni = ni;
+ 	if (info->flags & VOLUME_FLAG_DIRTY) {
+ 		sbi->volume.real_dirty = true;
+-		ntfs_info(sb, "It is recommened to use chkdsk.");
++		ntfs_info(sb, "It is recommended to use chkdsk.");
+ 	}
+ 
+ 	/* Load $MFTMirr to estimate recs_mirr. */
 -- 
 2.47.0.149.g3e3ac46130
 
