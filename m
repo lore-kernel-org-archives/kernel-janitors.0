@@ -1,63 +1,65 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367D98489;
-	Sun, 27 Oct 2024 13:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0977B16B3B7;
+	Sun, 27 Oct 2024 14:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730037051; cv=none; b=CMoPdTyvCPLnCj77Yxya6T0oAEGFtSHHCEweykhiLrEaZ+OdryZOrU8qGmtI+Kw9MjH84jEXNvCGWJr8gFYaSoHzRW8TKKtv0sb8OhK4j8gDk1iCPCz+TWU6XeiZmZSdFWBwz1HJBrcrm1dXQ8U10vdvXYz2LYiwsfv06qlNoj0=
+	t=1730037992; cv=none; b=US76GkpQb7mk+VX7Ys+ZJqnPdBZLN7WGISsmucIx7jL4+hzRFWRYLyWo7jqLsiEaGPU6TJiQgkZdPoSILoP+H9T4mQbn7lvy8tu03XluvWKZlXAd9yBoFovygs9nlL9dfsbwEKcGAdg9f+UJr2yiGPHfmVq2gVWg0bqSymp/2Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730037051; c=relaxed/simple;
-	bh=rntz41aukF0GgOif9N9M6U96FYbkXK0Me9t+AAat9vo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzvQhACI6A15/ur4RI+Zw6nsNivWpUXTN3TaBr04c1KXsA17JoAjQl+vwqbhLBTPJ/iMg5rwY6ddXStKwWp8NYKngiR869nJbBNtoY5dBOmDrr7fKM7J3hKzV5+9usXQ3y5SY+8Ju8/6fVXLuyPzJ69yURWDvIhBG4/rYYOEvZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RP1SSjc3; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1730037992; c=relaxed/simple;
+	bh=DlNqd9z2/ZM2XeHgclPgzwfuQVlBcaEE++IuuvdtZHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DdzkxYrY4TkSSq2JLmCtyUQ/Axg2GUjbZ3aEd++7eQH6W2uq4OMlDVbFfqmWYK9VCEXAfJfFQerp2acVIlIjWtuXrflxNO1ZdmAFhRmp74XlkfYGh9o/h2b7LQjdT3XHGfC08Z+eqCtjNbmnrQWHpkLRq08ZBPtYJUf4/Ax6Dpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZTVVR2C; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RP1SSjc3"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43159c9f617so34392175e9.2;
-        Sun, 27 Oct 2024 06:50:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZTVVR2C"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4d1b48f3so2625745f8f.1;
+        Sun, 27 Oct 2024 07:06:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730037047; x=1730641847; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730037988; x=1730642788; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IjLV1bEDo/MtMx6gk/KnUwVzXIaCsBTVYT7dT2Z8X0U=;
-        b=RP1SSjc3h2805fgMIMPMvHg7FdkuDn8bTfy++C3lXnr4qeSbN0lbmm3L0Z3WLNZv5/
-         i+lXrvkOssOpwxCg1ustsMNN/qjyKV7iPYkmcOv1/ZnNR91lCq3VWx8uTvU8+uvoXlQR
-         AUl2FWAlwlBBPWB58xJhA6VARkx4Qwe6KJUNKNb/8fu+bLGrwAr0Be3YE5TR+rmrL8qT
-         XuZShwRkzrroEP2lUbuxnNPgkOBbuiIWEAQdaI+/EpvaVLVaqbOswbpNhuGoWCVPgf2/
-         NanHxIy9Mj60i9EPloiEklKfwcE05rwHiWAxqQ+ODj77YoRhHh/59F2xZRE77AOqSJlU
-         Y+Bg==
+        bh=ciP5PqyHVqbZ4ar5lDSwgDPW/+/+QdOUjUbcyphWzWE=;
+        b=HZTVVR2CS7eOBP+K8+FWun+zIY3aFqWaUE93mGd+Y9VEenlY0lxDOzmRqw9KT9ty02
+         WybdAJxwyILupsMUWOGRaMYGEMM/9SizZX6hIvzTNQyTpCMBefSQmol/47HZ6148md5i
+         z3ue/KUSnsrrvpNznmbjgR0driK9Nw1E3RhaQ13DkneaQD5BAdkRkNKKCwvidJG8IeWu
+         xrKgSZAMOv4Tm6W2Gepu/8I/4MsmviikcpmUVqmbKipHGNLTUvnQPfWMI88lGAe20NZk
+         zBKzp0DQYWdwnteIlXuBnWSoVwVkM2ixQK/S4qTyJVu7Fbk+YE60NMxDkgSuyDb0obgZ
+         IYsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730037047; x=1730641847;
+        d=1e100.net; s=20230601; t=1730037988; x=1730642788;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IjLV1bEDo/MtMx6gk/KnUwVzXIaCsBTVYT7dT2Z8X0U=;
-        b=MIeY6Gy95idxw/OdqTv5UnXKE29LSAx7gX/0B78OWoK1U+gW5LZc9kWindGCBGn3wa
-         lv9wz0bABgZN9PvMvjcsjjTi8HFl3smn34aU23vKqGwxm9dFuUxVgKjxDBGKXgzznlAn
-         KCTCrS8Hug7BPb4sT5UgGBtxGNABczSk/8w4NMrPY5v/UjsVX4JJXyP0VB97emDmNSLS
-         MuPj8Wn0e4ERyCKc2UhMfEThYWggOp20SY7k9jjYNXjNuoi1ZMKdqkEDGI+A+/JG6zNc
-         rmm8EZjOXNFvjzqGbGrAgvj8r/ozNBuY9uJ37KId/uPgyaLZSQvIOSSGvY371zEaT8nw
-         j7Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXm4ZGsFw0I49uvAr9zfctPYojSSXEncaAD3UHv5xpKpwjdujnreMf9TjPBoT0UUIQ/G91I/6K9N/P1Wo+E/U8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa9S8U5iN5I5U7f2hiwIUgSsC+42zx5mowtlZcNtPOcf8aehRN
-	ZYQ0sxREd0Rx1M7CTSEP716UoauA7d7roQMjGK2nF52vL2yqGg7q
-X-Google-Smtp-Source: AGHT+IFZSdsgh8pvcncgHwHZRd8w844yRAmKPjSvmnyw+tgZwytUA1t/mD3WcP4RP6lpmD54tce6IA==
-X-Received: by 2002:a05:600c:458f:b0:431:3bf9:3ebb with SMTP id 5b1f17b1804b1-4319ad047a7mr46439315e9.24.1730037047280;
-        Sun, 27 Oct 2024 06:50:47 -0700 (PDT)
+        bh=ciP5PqyHVqbZ4ar5lDSwgDPW/+/+QdOUjUbcyphWzWE=;
+        b=IkQ5UbR3oE0885XbvnWZUzpJYzX1dL7iWCxonaotMnTTViIXzP7qneSI38bvTlR34G
+         nIvGFrSXGJJAPDlLlRSLJgDHa4OGy2mGJB7zSDFpJpcUG06PWKR6UyOdIPmLJrNpTOkS
+         8GFmCDwbMOHfChP2LA4dWdE+IUbPAcj3CqHs0dGgLR4nzb7NL+lSRx76EuEThQmHfJ17
+         4XZMnOG2mDiHrZKxHcXo+fE/h+xlFgOfl4eUxxS5xRJbbCphLg49EUg4td2ZLV+BIEPB
+         WjSfRlXON5zbvHdeutDwmNtNBs9mVaqRjetX8npi4odjzdoc9ajzc9dxj9U1uzFlYWu9
+         R3dg==
+X-Forwarded-Encrypted: i=1; AJvYcCV01Kw/ZDMftkBSheuOituNYqTCEPkfYGiV8homRwuzOM8fAYuxMEuChf4qEE/mK3r64olV1TYAgd3ClEr14T0=@vger.kernel.org, AJvYcCWuBlNepppttICfT7al6ZurlcKsRb6NwveGp34I3WIfQCG251yLyFQXoc2wH/zUs1IrAGN8JIqf+a88iHBk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIMyM/67X9by6/iDYqt5pm9vli3CFsRQEgEMf0GiuQNifpAjnx
+	aIVteoe7NPwCBCvsdI3v8NrnQE4PEBrwahaL7TWVpjFQMnriQs5c
+X-Google-Smtp-Source: AGHT+IGa9wvaZ5QuHXadDbtM1Tfk0wq1icLe9dx7brgIhawTZ5Q9vy/wi9r4O8n+YU+MyNdylirWTA==
+X-Received: by 2002:adf:f050:0:b0:37d:4657:ea78 with SMTP id ffacd0b85a97d-380611f5b86mr4049920f8f.54.1730037988207;
+        Sun, 27 Oct 2024 07:06:28 -0700 (PDT)
 Received: from void.void ([141.226.10.223])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b57b5d9sm105627565e9.44.2024.10.27.06.50.46
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9d70fsm6871843f8f.108.2024.10.27.07.06.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 06:50:47 -0700 (PDT)
+        Sun, 27 Oct 2024 07:06:28 -0700 (PDT)
 From: Andrew Kreimer <algonell@gmail.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] freevxfs: fix a typo
-Date: Sun, 27 Oct 2024 15:50:27 +0200
-Message-ID: <20241027135042.23693-1-algonell@gmail.com>
+Subject: [PATCH] f2fs: fix typos
+Date: Sun, 27 Oct 2024 16:06:08 +0200
+Message-ID: <20241027140623.24802-1-algonell@gmail.com>
 X-Mailer: git-send-email 2.47.0.149.g3e3ac46130
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -67,28 +69,31 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix a typo: ivalid -> invalid.
+Fix typos: datas -> data.
 
 Via codespell.
 
 Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
- fs/freevxfs/vxfs_olt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/debug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/freevxfs/vxfs_olt.c b/fs/freevxfs/vxfs_olt.c
-index 23f35187c289..48027a421fa3 100644
---- a/fs/freevxfs/vxfs_olt.c
-+++ b/fs/freevxfs/vxfs_olt.c
-@@ -63,7 +63,7 @@ vxfs_read_olt(struct super_block *sbp, u_long bsize)
- 
- 	op = (struct vxfs_olt *)bp->b_data;
- 	if (fs32_to_cpu(infp, op->olt_magic) != VXFS_OLT_MAGIC) {
--		printk(KERN_NOTICE "vxfs: ivalid olt magic number\n");
-+		printk(KERN_NOTICE "vxfs: invalid olt magic number\n");
- 		goto fail;
- 	}
- 
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 546b8ba91261..9dfb577d695b 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -598,9 +598,9 @@ static int stat_show(struct seq_file *s, void *v)
+ 			   si->ndirty_node, si->node_pages);
+ 		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
+ 			   si->ndirty_dent, si->ndirty_dirs, si->ndirty_all);
+-		seq_printf(s, "  - datas: %4d in files:%4d\n",
++		seq_printf(s, "  - data: %4d in files:%4d\n",
+ 			   si->ndirty_data, si->ndirty_files);
+-		seq_printf(s, "  - quota datas: %4d in quota files:%4d\n",
++		seq_printf(s, "  - quota data: %4d in quota files:%4d\n",
+ 			   si->ndirty_qdata, si->nquota_files);
+ 		seq_printf(s, "  - meta: %4d in %4d\n",
+ 			   si->ndirty_meta, si->meta_pages);
 -- 
 2.47.0.149.g3e3ac46130
 
