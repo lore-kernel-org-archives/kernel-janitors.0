@@ -1,54 +1,66 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD89713A3E4;
-	Sat, 26 Oct 2024 20:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54C313B59B;
+	Sun, 27 Oct 2024 12:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729975681; cv=none; b=FetPxIMTi4S7RLsxq1BNlbbKCjxGuiNgUl//ZUUDl/zpwQzeKCmaYZPnW1mx0nYhnbvINOdENBH+aqPPqZFi7dtXgyopfNyuO7E4XnhDAn+8GO/V03ZBW7iN+MEEXzc7VUP7n0Chi5jS2tRjiGZ6rw2Fll1RKASPNdHmXOPcHSA=
+	t=1730033841; cv=none; b=MUWJ/Xcs36nkGt/M/XO8TvGUcUF9P6BT9UShFZ2bY0Hanb2lMCeNlq5/tAc/FQkOtAn40X1UDzqz+PLxg/u12aEcDtDPJYwqWa4kgnfSbku2QDkt1uHVfh8eUmVAzoAsglbA31LocmIa3WEshRUy5TqtzY/Tu6SHLeiWWQZQlHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729975681; c=relaxed/simple;
-	bh=9FnWgsJSEVlXkZ1wLr3Wk4xUL0/ToS9bimclA0M8yXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SHu7mnRi1Nx9DvYrujnBybpse4Tq5lw0BYB95NCetj+196hf/rWxnZgr9Z7756k3kiLtGItb+qDmQqJ7jl9g4eR1ypclfhYzxPwqHDB9WzLBcCNrrkMA72QWmN65JZ45pPBl7iTc3j4W7geAh+BtKfmyOi1igEaylR0mYN4zfSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=e0K3HdA3; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1730033841; c=relaxed/simple;
+	bh=GDV/ewhoJQw4FLl+cDGr5/4YsMIEpPNuBtvtftfsYAU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ofyUlpixiF+inp6W81XbeWqSH5SUNo1yNnKidDlqG/dLR1xllhPPSMvjpvqlkSdwigBNyT79bq3SbJheKF7T1KMl9GUetGZmEFEW5+zQhJEYPMp07rkGSSp9ZcANi3YvaAQ9VmChvTndMaSwq9gFu/eGnOM9lUQFNGktZ1ODawI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZWlwHyou; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="e0K3HdA3"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 4ngLthueQ3B144ngMtGJoH; Sat, 26 Oct 2024 22:46:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1729975607;
-	bh=jf1SaVNmJGrG77cLP6KwHHPTkgsjA5JbYdn77mtkQQQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=e0K3HdA3ZYu5Sps9ixCm3mKULZIN/4YcphUkfru8baAJzYuLfiSlKsUI33LJ0cPZS
-	 /KfdLXGvRZ6itnJdm0axux2np6ho7nsAIHgR3w1eFgiAR4pn97sbSPIJXaW4j3D3RK
-	 Gwbei18C6OruTpp6LbjSpqkR4QX/ZDcZ2atUlGkkGY1ADfVBetZ5SThS9Bfm2f3t5/
-	 gc/A+17GjG2JEygpi3eTSRB/y1oM3UDeoxT4W5Nvwh62C1iwz08ny6xLxc7mnwq+Pe
-	 ykB1jAGVZS97AKNy8PEFz9v7t8uxv8lWBM91MdrPQffnvGWe9Yqcg6kfYFvgnaFnuM
-	 PrEY7asTZxvqA==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 26 Oct 2024 22:46:47 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Olivier Moysan <olivier.moysan@st.com>
-Cc: linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZWlwHyou"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431695fa98bso34174625e9.3;
+        Sun, 27 Oct 2024 05:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730033838; x=1730638638; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WUM2YCgP1YU3td6vo9h1GwekL9d/r6rhNYDcoHoWQGs=;
+        b=ZWlwHyouTVcnEmdkHZ+dx8tgXltoWhiAjDMiM+g7+9mScuOfo9eJzIWd0rHFZSOeXf
+         Od3EF1/KfwU/2jYA++2F1zRbZUKECgYIr08NbENgRSh/VGZov63tdoMxvnMCFHYV8uR+
+         KILQIMhH4R5iaMOW+d2TZfVgik4iqIanQhsmZVvy5D9DWeTrdq4yUGKsLMbVg/KnRBXO
+         jbxyDygTKLM9RTE/LCcqPlFgPWp1BwS7Uhh3/yy3WhDBjn6TKeekJoVxCo3rpRQzgGmA
+         P6mpIgU1QEja0vjR5jEwVSIqM3O3gcJcBBYyvhbycMPoKfiCGVAbNvDVtQMuWmLrFWu/
+         GxEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730033838; x=1730638638;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WUM2YCgP1YU3td6vo9h1GwekL9d/r6rhNYDcoHoWQGs=;
+        b=phinH22+mG86IEmNRWDs4Ib8jIbCQ3L2g4stRKbo6M4SsDGMOorXj5RtoKRgBQM7YX
+         DM/Vocxy1TH3lAEYHhssHpKFCFWS2nZ5VGLnhzMgEy3kHTUPUB3XPO0YntNHu+B6W/Py
+         5ELKUmj/YV8A3hxMYjtUMsZ9lwN1gQwmk9ybDOCOQsorPrFk0BYNc/YGJpCD9rVsQLPT
+         +LeNnkx/Q68uyAUaM9RD2tBB3HKW0ZN8b7seD/uCn3Z96IICzbASA8Hg6iGiOFgUplQ5
+         7Vp0612yI7f2D6Uyf7X/GmHC8e9yNWjlms2ZDSMFC7oxoYhS7IV9LGlY3UdzTbLAtWTP
+         4CsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUv+w3QJU72RRUCLEpn5pb5RIeDePCKHQp3Fl1HXqkNk67WoqX9rXaDUCH+dCtJvYpDUXyp8lO9Xv/5@vger.kernel.org, AJvYcCXC0yHc9iduJpfysGT/m/j7LhTBhN7r+owUeWB+AYLjZ7KUe0DTRPa1EmM0Kia4CMZ0lT6hgkkC7i/ajHX4@vger.kernel.org, AJvYcCXDModYd8zKN8tfJyvIlTU3j0qm1U539Hev47jgFhazkKn5lKKiDINUxFh2w764JXdtDkeduXr92zHjXoxM/WU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4dCiEYGDJsDm3voFkJ1IT7+7hBqE9pkYt0GEBoJ9pj8VWY/qY
+	GnSzQLHbiVdKs9wt/Ejd8EBV8+XAx5lR5vEhgTlAI9b97mD4uCy4
+X-Google-Smtp-Source: AGHT+IEExN056KF8Gd9onPpE6xpB4VKZwKvMLBeI7lz16UJtaUBi3JofI0FjUwVnIQrj3dM51yOqpg==
+X-Received: by 2002:a7b:c5cc:0:b0:428:1310:b6b5 with SMTP id 5b1f17b1804b1-431aa802774mr423585e9.34.1730033837569;
+        Sun, 27 Oct 2024 05:57:17 -0700 (PDT)
+Received: from void.void ([141.226.10.223])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f875esm74349005e9.37.2024.10.27.05.57.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 05:57:17 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: [PATCH] ASoC: cs42l51: Fix some error handling paths in cs42l51_probe()
-Date: Sat, 26 Oct 2024 22:46:34 +0200
-Message-ID: <a5e5f4b9fb03f46abd2c93ed94b5c395972ce0d1.1729975570.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] Documentation/maintainer-tip: Fix typos
+Date: Sun, 27 Oct 2024 14:57:01 +0200
+Message-ID: <20241027125712.19141-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.47.0.149.g3e3ac46130
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -57,48 +69,35 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If devm_gpiod_get_optional() fails, we need to disable previously enabled
-regulators, as done in the other error handling path of the function.
+Fix typos in documentation: a -> an.
 
-Also, gpiod_set_value_cansleep(, 1) needs to be called to undo a
-potential gpiod_set_value_cansleep(, 0).
-If the "reset" gpio is not defined, this additional call is just a no-op.
-
-This behavior is the same as the one already in the .remove() function.
-
-Fixes: 11b9cd748e31 ("ASoC: cs42l51: add reset management")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
-Compile tested only
----
- sound/soc/codecs/cs42l51.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ Documentation/process/maintainer-tip.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/cs42l51.c b/sound/soc/codecs/cs42l51.c
-index e4827b8c2bde..6e51954bdb1e 100644
---- a/sound/soc/codecs/cs42l51.c
-+++ b/sound/soc/codecs/cs42l51.c
-@@ -747,8 +747,10 @@ int cs42l51_probe(struct device *dev, struct regmap *regmap)
+diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
+index 349a27a53343..e374b67b3277 100644
+--- a/Documentation/process/maintainer-tip.rst
++++ b/Documentation/process/maintainer-tip.rst
+@@ -7,7 +7,7 @@ What is the tip tree?
+ ---------------------
  
- 	cs42l51->reset_gpio = devm_gpiod_get_optional(dev, "reset",
- 						      GPIOD_OUT_LOW);
--	if (IS_ERR(cs42l51->reset_gpio))
--		return PTR_ERR(cs42l51->reset_gpio);
-+	if (IS_ERR(cs42l51->reset_gpio)) {
-+		ret = PTR_ERR(cs42l51->reset_gpio);
-+		goto error;
-+	}
+ The tip tree is a collection of several subsystems and areas of
+-development. The tip tree is both a direct development tree and a
++development. The tip tree is both a direct development tree and an
+ aggregation tree for several sub-maintainer trees. The tip tree gitweb URL
+ is: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
  
- 	if (cs42l51->reset_gpio) {
- 		dev_dbg(dev, "Release reset gpio\n");
-@@ -780,6 +782,7 @@ int cs42l51_probe(struct device *dev, struct regmap *regmap)
- 	return 0;
+@@ -121,7 +121,7 @@ The tip tree preferred format for patch subject prefixes is
+ prefix. 'git log path/to/file' should give you a reasonable hint in most
+ cases.
  
- error:
-+	gpiod_set_value_cansleep(cs42l51->reset_gpio, 1);
- 	regulator_bulk_disable(ARRAY_SIZE(cs42l51->supplies),
- 			       cs42l51->supplies);
- 	return ret;
+-The condensed patch description in the subject line should start with a
++The condensed patch description in the subject line should start with an
+ uppercase letter and should be written in imperative tone.
+ 
+ 
 -- 
-2.47.0
+2.47.0.149.g3e3ac46130
 
