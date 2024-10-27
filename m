@@ -1,99 +1,73 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0977B16B3B7;
-	Sun, 27 Oct 2024 14:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2059E1CD2C;
+	Sun, 27 Oct 2024 17:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730037992; cv=none; b=US76GkpQb7mk+VX7Ys+ZJqnPdBZLN7WGISsmucIx7jL4+hzRFWRYLyWo7jqLsiEaGPU6TJiQgkZdPoSILoP+H9T4mQbn7lvy8tu03XluvWKZlXAd9yBoFovygs9nlL9dfsbwEKcGAdg9f+UJr2yiGPHfmVq2gVWg0bqSymp/2Zc=
+	t=1730048880; cv=none; b=KMuh0HeD0i5hT0MjMNQ1kmGAn2QoVInALmLZdQg0AlXKevWyhxD6dFapTgmx8Fm4h9Jk+ktEwnVQNoE700BwbmpGiPfcjygF1VvNiK+9D3gvljbvKfgWVbYPAz4l9jRslu+gW/HK2u5xZVNrAy0qFLCT9WgahMoWMs6lH+6Vy6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730037992; c=relaxed/simple;
-	bh=DlNqd9z2/ZM2XeHgclPgzwfuQVlBcaEE++IuuvdtZHM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DdzkxYrY4TkSSq2JLmCtyUQ/Axg2GUjbZ3aEd++7eQH6W2uq4OMlDVbFfqmWYK9VCEXAfJfFQerp2acVIlIjWtuXrflxNO1ZdmAFhRmp74XlkfYGh9o/h2b7LQjdT3XHGfC08Z+eqCtjNbmnrQWHpkLRq08ZBPtYJUf4/Ax6Dpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZTVVR2C; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730048880; c=relaxed/simple;
+	bh=e8axfX2mpFWjV8vbK0WZRMJNOcFQ5bvgWv4zQwxfIRE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m0D2kc0RZsppRHv1dztWxJr74GX0VEAynlZNAE4bMKmEE3IAy7cSzLMt+6ANlBQDAYTu5cbVA9+y4JNNkBVTR4CYU4aLvzzG2izhGqpbjaEMTisl4xOtFXIW6b/sUsvX/nGUKw+OdhEuJ4pMQXaFltOsV+liASAjFVwKcSt8hJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PTrhxT/V; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZTVVR2C"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4d1b48f3so2625745f8f.1;
-        Sun, 27 Oct 2024 07:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730037988; x=1730642788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ciP5PqyHVqbZ4ar5lDSwgDPW/+/+QdOUjUbcyphWzWE=;
-        b=HZTVVR2CS7eOBP+K8+FWun+zIY3aFqWaUE93mGd+Y9VEenlY0lxDOzmRqw9KT9ty02
-         WybdAJxwyILupsMUWOGRaMYGEMM/9SizZX6hIvzTNQyTpCMBefSQmol/47HZ6148md5i
-         z3ue/KUSnsrrvpNznmbjgR0driK9Nw1E3RhaQ13DkneaQD5BAdkRkNKKCwvidJG8IeWu
-         xrKgSZAMOv4Tm6W2Gepu/8I/4MsmviikcpmUVqmbKipHGNLTUvnQPfWMI88lGAe20NZk
-         zBKzp0DQYWdwnteIlXuBnWSoVwVkM2ixQK/S4qTyJVu7Fbk+YE60NMxDkgSuyDb0obgZ
-         IYsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730037988; x=1730642788;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ciP5PqyHVqbZ4ar5lDSwgDPW/+/+QdOUjUbcyphWzWE=;
-        b=IkQ5UbR3oE0885XbvnWZUzpJYzX1dL7iWCxonaotMnTTViIXzP7qneSI38bvTlR34G
-         nIvGFrSXGJJAPDlLlRSLJgDHa4OGy2mGJB7zSDFpJpcUG06PWKR6UyOdIPmLJrNpTOkS
-         8GFmCDwbMOHfChP2LA4dWdE+IUbPAcj3CqHs0dGgLR4nzb7NL+lSRx76EuEThQmHfJ17
-         4XZMnOG2mDiHrZKxHcXo+fE/h+xlFgOfl4eUxxS5xRJbbCphLg49EUg4td2ZLV+BIEPB
-         WjSfRlXON5zbvHdeutDwmNtNBs9mVaqRjetX8npi4odjzdoc9ajzc9dxj9U1uzFlYWu9
-         R3dg==
-X-Forwarded-Encrypted: i=1; AJvYcCV01Kw/ZDMftkBSheuOituNYqTCEPkfYGiV8homRwuzOM8fAYuxMEuChf4qEE/mK3r64olV1TYAgd3ClEr14T0=@vger.kernel.org, AJvYcCWuBlNepppttICfT7al6ZurlcKsRb6NwveGp34I3WIfQCG251yLyFQXoc2wH/zUs1IrAGN8JIqf+a88iHBk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIMyM/67X9by6/iDYqt5pm9vli3CFsRQEgEMf0GiuQNifpAjnx
-	aIVteoe7NPwCBCvsdI3v8NrnQE4PEBrwahaL7TWVpjFQMnriQs5c
-X-Google-Smtp-Source: AGHT+IGa9wvaZ5QuHXadDbtM1Tfk0wq1icLe9dx7brgIhawTZ5Q9vy/wi9r4O8n+YU+MyNdylirWTA==
-X-Received: by 2002:adf:f050:0:b0:37d:4657:ea78 with SMTP id ffacd0b85a97d-380611f5b86mr4049920f8f.54.1730037988207;
-        Sun, 27 Oct 2024 07:06:28 -0700 (PDT)
-Received: from void.void ([141.226.10.223])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9d70fsm6871843f8f.108.2024.10.27.07.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 07:06:28 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] f2fs: fix typos
-Date: Sun, 27 Oct 2024 16:06:08 +0200
-Message-ID: <20241027140623.24802-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.47.0.149.g3e3ac46130
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PTrhxT/V"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=MOV7G635ZHeO21+UFSbHL9SdIS44+C3yBqOBuyrwsQY=; b=PTrhxT/Vc2+t4y/tf671Ex1O0W
+	XuIy6aUbbL3Zp2X4NO5TlRJb24fRH3ycqCJP+hxfCtbBwEAhOGdDNVzs0zGwvvQtwwR5XKitT9Axp
+	axtn0UCUdyUgsDmgqNUha+bX+RMkLCqeRmDU6icjJvNpUtECRPHAR8FqnbaqBjGszv6C7L2cZd0Ap
+	vLpxZ6OCGEajo4KaObBjg8whHyA3VYAtQEWYy48wQoJHBW2hPPHsJdHFqhcICc7k8XCk7lN/DSutE
+	uN92M298UnuqriO0Vt10IX0/huJ1hhNvaAK0hTzlnx6y9WqLaObpum9fBVdNZj4Juq0tYhOhlonFw
+	O+eIZ1xw==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t56k3-00000007PgR-2Qq1;
+	Sun, 27 Oct 2024 17:07:52 +0000
+Message-ID: <933b175b-6b0e-43ba-bfcf-2148b76916f1@infradead.org>
+Date: Sun, 27 Oct 2024 10:07:46 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation/maintainer-tip: Fix typos
+To: Andrew Kreimer <algonell@gmail.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20241027125712.19141-1-algonell@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241027125712.19141-1-algonell@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix typos: datas -> data.
+LGTM. Thanks.
 
-Via codespell.
+I would  have copied the tip maintainers also, but they don't seem
+to identify themselves.
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- fs/f2fs/debug.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 546b8ba91261..9dfb577d695b 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -598,9 +598,9 @@ static int stat_show(struct seq_file *s, void *v)
- 			   si->ndirty_node, si->node_pages);
- 		seq_printf(s, "  - dents: %4d in dirs:%4d (%4d)\n",
- 			   si->ndirty_dent, si->ndirty_dirs, si->ndirty_all);
--		seq_printf(s, "  - datas: %4d in files:%4d\n",
-+		seq_printf(s, "  - data: %4d in files:%4d\n",
- 			   si->ndirty_data, si->ndirty_files);
--		seq_printf(s, "  - quota datas: %4d in quota files:%4d\n",
-+		seq_printf(s, "  - quota data: %4d in quota files:%4d\n",
- 			   si->ndirty_qdata, si->nquota_files);
- 		seq_printf(s, "  - meta: %4d in %4d\n",
- 			   si->ndirty_meta, si->meta_pages);
+On 10/27/24 5:57 AM, Andrew Kreimer wrote:
+> Fix typos in documentation: a -> an.
+> 
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> ---
+>  Documentation/process/maintainer-tip.rst | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+
 -- 
-2.47.0.149.g3e3ac46130
+~Randy
 
