@@ -1,127 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FF81D89F7;
-	Mon, 28 Oct 2024 09:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8464E762E0;
+	Mon, 28 Oct 2024 09:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730107387; cv=none; b=RyLAYZkV9YKQ6AkFIKMVeQEIQfchLhzQbAkV5TdywLX1CRj41ZRuBc1qWpqHqDEcALWzYrsTzKanaQaPG748AflrIrqg1bf5tRVf3LEchxr5gtjWoCeTLotRXC5TE19HKC1oN++Rm71WiPDkdL5LIdtZHJ3gOjou9O2dos+jino=
+	t=1730107906; cv=none; b=ZKW/mJgn74N3ypuWRIKS7+AJXhNyGzIH92ZbP6UIt+jFqj97fUNF7yFrlqyRAd8IXsMJWfIVv9it8tHzV6lDlmTQE58X1t6xNPXXRz6SX1eXQWnnv71zdlEMXXBASYKAxm58Qg9g/pdtSm5o4iCPXygpLXMQJozmXjONziEY7xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730107387; c=relaxed/simple;
-	bh=wKoWSet6DVEpE0W6MSLUyKXITne8n04ArzRUPEn81Q0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aPEzqNiaBhfuSazuF7FJwCnoiccrswUJklDjQeShG+sFsIKDlz7UXVTaJWkydMwpyOZW2+2H7ToY/ueB0t7SQWiNk1lXbzqlR4KQ4bMK4Afr2bKuhyBNQaxW/pJNBfeQ3VNEw4t4IXlfS/T2ZH4JiGmcTutzNzIeprjFvn96Mg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1HGmVJk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730107906; c=relaxed/simple;
+	bh=GHjYaCqpDy5MUxpTA8+UK4KZFKM1KDzO734VKuAQA48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NvwZ1SUeVpL0NsiZ/sUkyZXV0Or5teAh5kfvwhL1U/FKBFNBxwEkyL+A72++ImwOEW638LbpkiiQ54j6c5FOq8jD8n4O01DDgYKfRkobOI6VVUTCwZv4HLikD9ObGXt5UMVCQVrDWKJ+DoNvvmsYSAfm31H4f7M/2N0L86Qv6t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LT/RDKkX; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1HGmVJk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73F34C4CEC3;
-	Mon, 28 Oct 2024 09:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730107386;
-	bh=wKoWSet6DVEpE0W6MSLUyKXITne8n04ArzRUPEn81Q0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A1HGmVJkriajQWsDSFlP4Xz2RdbrqgpIudZ9ksouc0Fmfv1ycYKmIYQmvMdiZ9sfC
-	 jskaDg2+zAQ34HLvRqY1AXRWwBepNwRZ3qaVYzAXF8n8kE+z4nMS4+9j0puVtffBUt
-	 TJSfKQ9vPpB9P9vdytkA1i22dF00+pM7S5UldRUuhtxw2TfjjDcrZNDZ2da7jKsFI0
-	 1RPoZcmwi8vq+hsy+YA3rZJl/QN/+dXy47olF/qWoaVz3rBF/Nf0vAaU5qCViNo3DX
-	 /bXkOafaBN31AUo8JK503+ta4hwI1ux9aNuYWlxnd6awtM0komF9nnXm8jO3qsN+Uw
-	 0AryuuHxISegg==
-Date: Mon, 28 Oct 2024 10:23:02 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
-	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
-	Joel Granados <j.granados@samsung.com>
-Subject: Re: [PATCH v2] sysctl: Reduce dput(child) calls in
- proc_sys_fill_cache()
-Message-ID: <fpyvxkkhyv7gqbwayxmcglf2jh6gs65brbtojxxtpief4nm35g@l2jq7oab7p3p>
-References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
- <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
- <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
- <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
- <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LT/RDKkX"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9218E60004;
+	Mon, 28 Oct 2024 09:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730107895;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RlV6UCm7hBRqZrCbCmEQWq0Im41fGPv7HTBeS70SPZI=;
+	b=LT/RDKkXLooxV3gR0MSD37lefbdj4oGIsqxAvDpIzsmLHNUUaGWg1VuYc7DQQutSdgcdwm
+	nbPDgmdxo6JDrjkq6LQXG7vBHEMGVxmgBvDFo1CMkgyJacIkwCV7RJ6aFO/qK8ofqGgd3r
+	3P2KU7wuwaco180J0U8dCj26NK+kXcqTNRJa9uVsGk6HWUjTe1UwK+RRutCMChzkagZrkh
+	iyEfthBuNybUUvFifPfoQwsv+TfDgoHsNNw98OUC7uQWuwGub3r56JRGChVRPndEPGqhDu
+	60hXhnB67UhpYvgSOC2Ffyb+ts99drS6rFVvbxkloakzTglNFSOx32IXSRCJyw==
+Message-ID: <09e7baa9-8715-4f9c-924b-3e782dd3196f@bootlin.com>
+Date: Mon, 28 Oct 2024 10:31:35 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mfd: cgbc-core: Fix error handling paths in
+ cgbc_init_device()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <24ec1348b99e76a853435ab081ae9a8f0e51fd52.1729938747.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <24ec1348b99e76a853435ab081ae9a8f0e51fd52.1729938747.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Wed, Oct 23, 2024 at 05:27:11PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 23 Oct 2024 16:54:59 +0200
-> 
-> Replace two dput(child) calls with one that occurs immediately before
-> the IS_ERR evaluation. This transformation can be performed because
-> dput() gets called regardless of the value returned by IS_ERR(res).
-> 
-> This issue was transformed by using a script for the
-> semantic patch language like the following.
-> <SmPL>
-Aren't you missing a "virtual patch" here?
+Hello Christophe,
 
-Is there another way to run it besides this command:
-make coccicheck MODE=patch SPFLAGS="--in-place --include-headers --smpl-spacing --jobs=16" COCCI=SCRIPT
-
-Best
-> @extended_adjustment@
-> expression e, f != { mutex_unlock }, x, y;
-> @@
-> +f(e);
->  if (...)
->  {
->  <+... when != \( e = x \| y(..., &e, ...) \)
-> -   f(e);
->  ...+>
->  }
-> -f(e);
-> </SmPL>
+On 10/26/24 12:32, Christophe JAILLET wrote:
+> If an error occurs after a cgbc_session_request() call, it should be
+> balanced by a corresponding cgbc_session_release(), as already done in the
+> remove function.
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Fixes: 6f1067cfbee7 ("mfd: Add Congatec Board Controller driver")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
+> Compile tested only
+> ---
+>  drivers/mfd/cgbc-core.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 > 
-> V2:
-> * This update suggestion was rebased on source files of the software
->   “Linux next-20241023”.
-> 
-> * The change description was adjusted according to the wording preferences
->   by Joel Granados.
-> 
-> * An SmPL script example was appended.
-> 
-> 
->  fs/proc/proc_sysctl.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 9b9dfc450cb3..b277a1ca392e 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
->  			res = d_splice_alias(inode, child);
->  			d_lookup_done(child);
->  			if (unlikely(res)) {
-> -				if (IS_ERR(res)) {
-> -					dput(child);
-> -					return false;
-> -				}
->  				dput(child);
+> diff --git a/drivers/mfd/cgbc-core.c b/drivers/mfd/cgbc-core.c
+> index 93004a6b29c1..7771d010eb2e 100644
+> --- a/drivers/mfd/cgbc-core.c
+> +++ b/drivers/mfd/cgbc-core.c
+> @@ -321,9 +321,19 @@ static int cgbc_init_device(struct cgbc_device_data *cgbc)
+>  
+>  	ret = cgbc_get_version(cgbc);
+>  	if (ret)
+> -		return ret;
+> +		goto release_session;
 > +
-> +				if (IS_ERR(res))
-> +					return false;
+> +	ret = mfd_add_devices(cgbc->dev, -1, cgbc_devs, ARRAY_SIZE(cgbc_devs),
+> +			      NULL, 0, NULL);
+> +	if (ret)
+> +		goto release_session;
 > +
->  				child = res;
->  			}
->  		}
-> --
-> 2.47.0
-> 
+> +	return 0;
+> +
+> +release_session:
+> +	cgbc_session_release(cgbc);
+> +	return ret;
+>  
+> -	return mfd_add_devices(cgbc->dev, -1, cgbc_devs, ARRAY_SIZE(cgbc_devs), NULL, 0, NULL);
+>  }
 
--- 
+nitpick: useless blank line before the close brace.
 
-Joel Granados
+Reviewed-by: Thomas Richard <thomas.richard@bootlin.com>
+
+Regards,
+
+Thomas
+
+
