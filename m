@@ -1,108 +1,92 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552831CC88B
-	for <kernel-janitors@vger.kernel.org>; Mon, 28 Oct 2024 09:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE0E1D270B;
+	Mon, 28 Oct 2024 10:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730109557; cv=none; b=DFwvd0vzMHqnTTxU4RROzl1YbvXDpsKFD8CNIBIyhIwvKIsbk0+3NHZYjrq2bzBll9GHZy5Sa/ahQhCpsOP5tk5zY1/+D1DQu7ELH7G2TAl/1xWfCA6WYp82DrkrDjU3H72Ff8CsUmHN50AYXSv+NHvjqhl1S4hOoNGTCHjbK+4=
+	t=1730111926; cv=none; b=F5jqgjsJ1kyWBmASZHu19v8a7vfNcrPI9GGTBQGs8Ono6dY2XbPQPdKBNbHn24U8Uv1T9q3i5nCiLGlOAnvlMnnVsJS7OIOIkfocVM1x77SfVNlChGjRxjk60p5xTGU1X/JCMk31yBOjHH2sLghSIiiem8e3hBcrpw9UlKCVGJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730109557; c=relaxed/simple;
-	bh=KzaRKoTOmwWQy4AohfkDjioizKXOSufzZc0HObLo+N4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JaQVMh7wwXUKS4LefATMXpIMzn7avCzun+VAT9B2Owyg202yx8ShpRQ3YVKORUze7fIaOUpTeBgPNWXk5BnPPSWAAqqAZhwDFN1nsKM7tonA6DMO1OlInEeL7kAiBkv3/fvBmNgxPsYzG8wI4rL4OfPDCI7VL4l4Hfc1sWF2QAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FDKN2hvc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1730111926; c=relaxed/simple;
+	bh=wzdsu2j4UjuiVcgocXfHDpRtIlfWStfryai7a9e1h9w=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jv8ji6vEcjDeW4OxkAPaGBafK76Nu1djUuUxrsLF6oxDRDOhFooUAFWEv6KLybNBqJU8fRN+aGqqiF3r+7rln+Gmn6J+yKyjs9tk/kkavgLmOeOPwEiCiGEA2kfJO4EE7VPp2BuLPDpvhDPilFi4Db/cMMJ2RYQyel84GG9CFNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=o7v6jURI; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FDKN2hvc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730109554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=xGoT3W4idt0pQ7dWYy1s/3aPfFUS8vp3/+oiEybPAmM=;
-	b=FDKN2hvcGXwakD/ZaS4R14xPuC9ALTGVOqPod7vDFTiRVhKsaw3o6JCB1kqBhQn3okt8NC
-	oLrfoXNNoekTtEmoMHJuU23hfq3yWIlTir45ZVAYvjIahKrUzh2CGEuPM+2ZOdOyboqAgf
-	EwsOm2dQ+iWocgEjaqyQnZSOQyHNHyA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-125-2NIDe7lNNKSWPziXAP0HCA-1; Mon, 28 Oct 2024 05:59:12 -0400
-X-MC-Unique: 2NIDe7lNNKSWPziXAP0HCA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d533a484aso2446067f8f.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 28 Oct 2024 02:59:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730109551; x=1730714351;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xGoT3W4idt0pQ7dWYy1s/3aPfFUS8vp3/+oiEybPAmM=;
-        b=krT082AcnBkfU+A5V0z5Zml8dG5MU3rEOSHWfsT3aYCG4wnabiAta5uG3QPRzPhsxt
-         cfWKfqldQY0DbZMtJUwfi3VPP6rNnVkuzcZkGgmq/SqIHAMrnPc2znkUjtizsaeLjbxa
-         MmKLDiz76yVIRqFr/NiBoOBjNwdHroJj7AGWYhWjJRSsP2H+oPARO+J34H1jS6ZFoaba
-         1B386wHz3+jftxbOHBvnvEczDOKcYDmcPXIXcVgKwxgAJXMc6hAOjNp9/I7MNYxVqwaC
-         8XM7wB9Vk1V0usTmZ6/qGQZrzhjyPUKq/A+o0xy7h2RDaSbYezld1QJDFBYOEnJM+P3w
-         JI3Q==
-X-Gm-Message-State: AOJu0YzxB47ESjQpSwCVj2VgPfLBTe9d0LOUjT4SweogQqC7haRIcbBu
-	40Ofs7b/GAmKZRiqQrlgyZw2m3vcsOdEA/NnZ9QJ2Rtu4XEKliNYsE6jIlQghMS7bCzfFuYkURl
-	qaGfMhgG8MIJc2OJoVejPNcemAfxkKGUSbvusf6IEcqR8fh0Ni2AhCfJvsHsxWCBqAA==
-X-Received: by 2002:a5d:4003:0:b0:37d:43d1:2064 with SMTP id ffacd0b85a97d-38060f571damr5725713f8f.30.1730109551647;
-        Mon, 28 Oct 2024 02:59:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOEj+ZEttJYo3NZ6G3iW20Ip5TLN8eBYp6Av97jTXWOgan0CeJqsrWMsD/uXYdf5+ZxKG6Og==
-X-Received: by 2002:a5d:4003:0:b0:37d:43d1:2064 with SMTP id ffacd0b85a97d-38060f571damr5725692f8f.30.1730109551320;
-        Mon, 28 Oct 2024 02:59:11 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3ba7fsm9055827f8f.34.2024.10.28.02.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 02:59:10 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Vineet Gupta <vgupta@kernel.org>,
-	linux-snps-arc@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] ARC: fix reference of dependency for PAE40 config
-Date: Mon, 28 Oct 2024 10:59:07 +0100
-Message-ID: <20241028095907.30224-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="o7v6jURI"
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49S80mfh026238;
+	Mon, 28 Oct 2024 05:38:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=/WeVNuKv2qeq8LI2dz
+	MNVIh7KIor3At70uWYTMRemZk=; b=o7v6jURIdptaXzuhZjAMcW9Bd9JhZ8HXdp
+	XAVYL3bNgnLMOjOFKQHqFGE88TLRRQv0FYT2g+3hkpww/ANppWLY6DzlKR6SUe4c
+	TUtQV3Pjgjj+GVDH1aAKcJzpWS5gSPHJqz8qf3KhOesj6kxbhInwRdzfH2eXytND
+	8Vt6+QHElGukHK6fzUyHjMuWwuswKRMj5+MWllLubM0u9xi6zTJu0W/1KJim7bAu
+	plORmcBD+mgsjrdn8MTqwdaQBTvNxGzGKFe4i9mPw8i2By9lVpkq8MKzKBAIZYwb
+	LRfpZ7Ker/Dv6fhWo6iT/9vTQtomYnkJTEdRu2Mswl7CsPL1+m8Q==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 42gwtvsq2w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 05:38:18 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
+ 2024 10:38:16 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Mon, 28 Oct 2024 10:38:16 +0000
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 686F6820241;
+	Mon, 28 Oct 2024 10:38:16 +0000 (UTC)
+Date: Mon, 28 Oct 2024 10:38:15 +0000
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+CC: David Rhodes <david.rhodes@cirrus.com>,
+        Richard Fitzgerald
+	<rf@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>,
+        Olivier Moysan <olivier.moysan@st.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: cs42l51: Fix some error handling paths in
+ cs42l51_probe()
+Message-ID: <Zx9plzaiLcObb6PT@opensource.cirrus.com>
+References: <a5e5f4b9fb03f46abd2c93ed94b5c395972ce0d1.1729975570.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <a5e5f4b9fb03f46abd2c93ed94b5c395972ce0d1.1729975570.git.christophe.jaillet@wanadoo.fr>
+X-Proofpoint-ORIG-GUID: PKqJLKztO8jDcUeYX2R4iikGQC1njIQG
+X-Proofpoint-GUID: PKqJLKztO8jDcUeYX2R4iikGQC1njIQG
+X-Proofpoint-Spam-Reason: safe
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Sat, Oct 26, 2024 at 10:46:34PM +0200, Christophe JAILLET wrote:
+> If devm_gpiod_get_optional() fails, we need to disable previously enabled
+> regulators, as done in the other error handling path of the function.
+> 
+> Also, gpiod_set_value_cansleep(, 1) needs to be called to undo a
+> potential gpiod_set_value_cansleep(, 0).
+> If the "reset" gpio is not defined, this additional call is just a no-op.
+> 
+> This behavior is the same as the one already in the .remove() function.
+> 
+> Fixes: 11b9cd748e31 ("ASoC: cs42l51: add reset management")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Commit d71e629bed5b ("ARC: build: disallow invalid PAE40 + 4K page config")
-reworks the build dependencies for ARC_HAS_PAE40, and accidentally refers
-to the non-existing config option MMU_V4 rather than the intended option
-ARC_MMU_V4. Note the missing prefix in the name here.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Refer to the intended config option in the dependency of the ARC_HAS_PAE40
-config.
-
-Fixes: d71e629bed5b ("ARC: build: disallow invalid PAE40 + 4K page config")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- arch/arc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 69c6e71fa1e6..ea5a1dcb133b 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -473,7 +473,7 @@ config HIGHMEM
- 
- config ARC_HAS_PAE40
- 	bool "Support for the 40-bit Physical Address Extension"
--	depends on MMU_V4
-+	depends on ARC_MMU_V4
- 	depends on !ARC_PAGE_SIZE_4K
- 	select HIGHMEM
- 	select PHYS_ADDR_T_64BIT
--- 
-2.47.0
-
+Thanks,
+Charles
