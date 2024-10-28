@@ -1,94 +1,90 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5661DEFD2
-	for <kernel-janitors@vger.kernel.org>; Mon, 28 Oct 2024 16:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7493018BBB9;
+	Mon, 28 Oct 2024 17:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133655; cv=none; b=PLV+w9yKk4Kua/Q9DLpvOg5LQ3S8BbXp2wC5IwcVaLaxuZl5VO45sLwP4ldAQU2u5IQqqeeWqq3Utn033rdxzJDCHz/suBQab9B2PL+eQBT5gnqg4ydC75roSCYrOL1EYSE+B/KY82DFoF4N5BsRJo7fiNa/GWH5KORAO+69JiI=
+	t=1730135902; cv=none; b=LzMYJRCM7E2Arx52sbgh9i1MGPiQrWiBdJarjEWsv/j3AgnwAxIATORbaHBTEui+FDDT+1WV/EItK8GW/LyeqEQSxYDZEwziRygfrGAkgJUorpwW9RxQCyDZIcIGNezGWE05iPqnOllVGOPe6cxuUp81GgA2fsOmGlvMAA9f4Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133655; c=relaxed/simple;
-	bh=FuzDX4w5ksbOtt62LrKHOv6t3WZNEVlMo5Jwg+lRz8A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=emLO3Bx1oqqGvEjysOAZNywvr7PVsxQ5Kmh71eQADt4tDTDrVb/O2UNdGFS6cOJQeH5YbB7Ld1pNgm9r8Xw8aSo2EX80h1aa6jqqeSFldSX/mNRGQd9GuEHQmnXECMXbJpvNjmiDu+AIe8iuWwjZGCFt5VUna7kKMyCIyXtZZZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GXJfc0l7; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730135902; c=relaxed/simple;
+	bh=D78PPQSl6ZzwXnAhQCZItv2ujy63Pn3+gWcO9Llqftc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XYI0tw6a5m3eOam7P2wGz3F4NXAXTd+aRTf7okG5b7pS8nck9oQCXkjkOzR/wi79hyneNZKRQBcSMzE+8EVyxlct/G11C0yjQn0mr4yFVvDaXoedZH99/k+BOKEmXRMxyD7G2RE4M0CdAUUBE/AqOSLrf/0RHnra5UoeMM/ryt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CUg8/wy6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GXJfc0l7"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so46152825e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 28 Oct 2024 09:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730133652; x=1730738452; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z7H7MOZKwUSVXW/SZzObgRj+x6rST0JwI+YL7Wp/UUE=;
-        b=GXJfc0l7cQvGwu0u5KVA2QMyWdlIL/+5sPnDNkIEGzfJ0K/yBybzljcg+zBwCyKmeW
-         3OZauka0LjvOXLAfL/IpbtsCUxEHUrTgduduxxRxCwPZ7cu9UPn27QrrY9enXjbPn9BZ
-         3eNlGhLzNZ+HU4E/+Y5ZXI/MoxnBAWrqyfGVdVY8APtd5NKn5RTZe29W23/w8kzCJwvq
-         FBDBQ/o+zf3vDwk8JeMX3Fcn2akpnfiZDyDgZdIMwFRSatWlvccB2vdlemROIGa9x6sA
-         U0PkvWvHZiMf8YjIW7PWFPuNMhbeibGGIAiMXmGvfB+yrfvebHHtK2v616gruO8cETeA
-         /GCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730133652; x=1730738452;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z7H7MOZKwUSVXW/SZzObgRj+x6rST0JwI+YL7Wp/UUE=;
-        b=wKtbOfRdz05b+EcCxvH7ulhdyKls8mwb80rQWA5z3vloOi/cPxv9XRkxg2PZDlX4d/
-         t32iK5PYoXczpQiDPeBXY8X9nUPL5CjyDzTliJFpMeaWL1GfwIz6JOM5pH15Zu0zfdSG
-         vkG9/gG0YsZbVOjN6caATbmVQNjecVpQnrhwwbylGGJEwzKDVIc9fteH9CEctEG9Ddhc
-         vWP7hG2sXI8E+TGrDgOaamJUOh4yMkiGn6AQ/u/1P/cGoYrnbci1OdCOaJuMnuzV2zpQ
-         o0o4erANg2uoQSQBV9HC/m98rSzTyo11n0l0z/hg9vKegaieH6Vc6W8vR/ILGNrN828s
-         eMMw==
-X-Gm-Message-State: AOJu0YyPlzaii+CmYHnBHWElkq7mpdb/HY3SBh5fHwT4CbPy7yw8sKyK
-	mQzmF6jXxEPQ70BPdPGfWhNiN6qgvkiAq9QNQDtQRmtpX80K7WNtnf8g7Ij7Pfo=
-X-Google-Smtp-Source: AGHT+IHD7ecehSeRSersefttuZxWWc/yvJLPk3kslyGa7nuUur+ExAiKbF2BIlY7ADLI6KIVbs9TAw==
-X-Received: by 2002:a05:600c:4fce:b0:431:54d9:da57 with SMTP id 5b1f17b1804b1-4319ad20fb6mr68256455e9.30.1730133651812;
-        Mon, 28 Oct 2024 09:40:51 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4318b5433f2sm146420585e9.1.2024.10.28.09.40.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 09:40:50 -0700 (PDT)
-Message-ID: <0f626477-7af1-4f8e-a770-39f69d9b6cbb@linaro.org>
-Date: Mon, 28 Oct 2024 17:40:50 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CUg8/wy6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F475C4CEC7;
+	Mon, 28 Oct 2024 17:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730135902;
+	bh=D78PPQSl6ZzwXnAhQCZItv2ujy63Pn3+gWcO9Llqftc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CUg8/wy6zlkSPXz1YbgH6XBSNwTNj5zj6dBjSyToix+gZJxF7cCfC8odPKK++lv3A
+	 +hmnOolUcMbaLvQLnPxCnQEv9amJq7vkXTWhXwG3oorpbvmgS/vUYmY1M5+2TmGxoM
+	 1MVQpUDcwqhQ4N0Z4lB7Qz/Z8Xl3qu4KXBwhCGLcfQx2NI9EBcRWobEVmcJ9zQbx+N
+	 3eZBhLytNyGIESiPBfpOdX0sOdLLJPtvZcNo2jjyzTzDsVb4eoDK+QOQ+X/tz32eoe
+	 5BD0icvYVGKvC1hErUPnvLiQ05bnRCPeORFI8Dxr2CEt5pX3jMib8uQK/IPjKZTjoo
+	 CCRs8sWmxfEbg==
+From: Mark Brown <broonie@kernel.org>
+To: David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Olivier Moysan <olivier.moysan@st.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-sound@vger.kernel.org, patches@opensource.cirrus.com
+In-Reply-To: <a5e5f4b9fb03f46abd2c93ed94b5c395972ce0d1.1729975570.git.christophe.jaillet@wanadoo.fr>
+References: <a5e5f4b9fb03f46abd2c93ed94b5c395972ce0d1.1729975570.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: cs42l51: Fix some error handling paths in
+ cs42l51_probe()
+Message-Id: <173013589929.106425.15659465055974056146.b4-ty@kernel.org>
+Date: Mon, 28 Oct 2024 17:18:19 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] thermal/drivers/mediatek/lvts_thermal: make
- read-only arrays static const
-To: Colin Ian King <colin.i.king@gmail.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Nicolas Pitre <npitre@baylibre.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20241022184622.1296044-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20241022184622.1296044-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On 22/10/2024 20:46, Colin Ian King wrote:
-> Don't populate the read-only arrays on the stack at run time, instead
-> make them static const.
+On Sat, 26 Oct 2024 22:46:34 +0200, Christophe JAILLET wrote:
+> If devm_gpiod_get_optional() fails, we need to disable previously enabled
+> regulators, as done in the other error handling path of the function.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+> Also, gpiod_set_value_cansleep(, 1) needs to be called to undo a
+> potential gpiod_set_value_cansleep(, 0).
+> If the "reset" gpio is not defined, this additional call is just a no-op.
+> 
+> [...]
 
-Applied, thanks
+Applied to
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thanks!
+
+[1/1] ASoC: cs42l51: Fix some error handling paths in cs42l51_probe()
+      commit: d221b844ee79823ffc29b7badc4010bdb0960224
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
