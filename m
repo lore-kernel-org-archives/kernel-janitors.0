@@ -1,92 +1,90 @@
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE0E1D270B;
-	Mon, 28 Oct 2024 10:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950701E48A
+	for <kernel-janitors@vger.kernel.org>; Mon, 28 Oct 2024 12:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730111926; cv=none; b=F5jqgjsJ1kyWBmASZHu19v8a7vfNcrPI9GGTBQGs8Ono6dY2XbPQPdKBNbHn24U8Uv1T9q3i5nCiLGlOAnvlMnnVsJS7OIOIkfocVM1x77SfVNlChGjRxjk60p5xTGU1X/JCMk31yBOjHH2sLghSIiiem8e3hBcrpw9UlKCVGJc=
+	t=1730120083; cv=none; b=T3ldZHE9EVO0w12kjY2JgU3DftTTAOk0/PGCykjkYdM+Ll5QoFMoSpXUhl7z4vF324A0adXqHV33iF5Fcf7FLsEIDbk75TyQSCLGCBk6zRn31nEoogxXAjGXwEtWJ1dR7XvqAJiYoNmouMApFDvclyjuL30eBV8OLku2oK6X41M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730111926; c=relaxed/simple;
-	bh=wzdsu2j4UjuiVcgocXfHDpRtIlfWStfryai7a9e1h9w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jv8ji6vEcjDeW4OxkAPaGBafK76Nu1djUuUxrsLF6oxDRDOhFooUAFWEv6KLybNBqJU8fRN+aGqqiF3r+7rln+Gmn6J+yKyjs9tk/kkavgLmOeOPwEiCiGEA2kfJO4EE7VPp2BuLPDpvhDPilFi4Db/cMMJ2RYQyel84GG9CFNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=o7v6jURI; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	s=arc-20240116; t=1730120083; c=relaxed/simple;
+	bh=seI8UO8liH/MjIwO0BVJ3zPmW5DvN1lsIKmmEv7NXaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XqvLSsPl2Av3xMjpWg1bpAm89C2ccZeYax0TCJo1sLVB1INtfuKH8T4HrdofiVzkX8v+L3fyWWHx2AfGfrh95Lfha7v5+tbN2H3e1RzpMi8cMVTpVsyswZ0hn3788tDFovaX0z3XyFPiWgBA0VA1CxCZ5vhQh3IuqKUJtVOYhZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cCgtsLct; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="o7v6jURI"
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49S80mfh026238;
-	Mon, 28 Oct 2024 05:38:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=/WeVNuKv2qeq8LI2dz
-	MNVIh7KIor3At70uWYTMRemZk=; b=o7v6jURIdptaXzuhZjAMcW9Bd9JhZ8HXdp
-	XAVYL3bNgnLMOjOFKQHqFGE88TLRRQv0FYT2g+3hkpww/ANppWLY6DzlKR6SUe4c
-	TUtQV3Pjgjj+GVDH1aAKcJzpWS5gSPHJqz8qf3KhOesj6kxbhInwRdzfH2eXytND
-	8Vt6+QHElGukHK6fzUyHjMuWwuswKRMj5+MWllLubM0u9xi6zTJu0W/1KJim7bAu
-	plORmcBD+mgsjrdn8MTqwdaQBTvNxGzGKFe4i9mPw8i2By9lVpkq8MKzKBAIZYwb
-	LRfpZ7Ker/Dv6fhWo6iT/9vTQtomYnkJTEdRu2Mswl7CsPL1+m8Q==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 42gwtvsq2w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 05:38:18 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
- 2024 10:38:16 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 28 Oct 2024 10:38:16 +0000
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 686F6820241;
-	Mon, 28 Oct 2024 10:38:16 +0000 (UTC)
-Date: Mon, 28 Oct 2024 10:38:15 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-CC: David Rhodes <david.rhodes@cirrus.com>,
-        Richard Fitzgerald
-	<rf@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>,
-        Olivier Moysan <olivier.moysan@st.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH] ASoC: cs42l51: Fix some error handling paths in
- cs42l51_probe()
-Message-ID: <Zx9plzaiLcObb6PT@opensource.cirrus.com>
-References: <a5e5f4b9fb03f46abd2c93ed94b5c395972ce0d1.1729975570.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cCgtsLct"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb49510250so40949631fa.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 28 Oct 2024 05:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730120078; x=1730724878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=umup54zPr/YxS1kzJqH2Mzz16zItuDuoZj7kmVQKCCM=;
+        b=cCgtsLctISLLOVkD2JfHx3DXEAKRHbBvGVz2c3+v4KfWascqOPvaLBpS6DHQ4uWQBB
+         CHNn8/f7SxNrEqCV5zhHdRGrvaiUd6VxT5k8o5hI/kAx0ebEHRud7SorqlMSieIpNfQt
+         VeqZ2oaHDKQM4UojFdMIHlgDwSMmvXYWnczte2kKdZTUVGapjSL5z1LDSqVHBFs0fcj+
+         J4fFuYyp3kVoocZ35CIDJKa6cGuSbnmltDC3Q7Puu8vepXzTHJ4ZDw3L5gHlSAAeguwv
+         f1tqeNoOALR1Dm4jqdG8fehR6Yv4LB2G9Ar9I1UQxIN7ODeXwZvRAa26vzae/xhQGzjD
+         PJNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730120078; x=1730724878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=umup54zPr/YxS1kzJqH2Mzz16zItuDuoZj7kmVQKCCM=;
+        b=HD0EhuQlz25Mibw3igcw4LJQ6bZA0TST9Ge22JB5JGnxrYE8aVTlSUdOGaKCh8HvEj
+         tXB/9pD7CFqfW7SfA917VewCjLOIspb9/fSzOrIgYK8HKq2xIs5MD9pGAkRlCpcrST2c
+         tPJKb5dKI8pq1IfonJ1Ye/DE0TJtkATVDgGXfQSgxN7z9fN/DQu43wBRFQNQhQQcxZA/
+         9hmhFP0RdUQjU00HF7Gb245R72wND7kLhsSyCLAmR+sLawEYfzQRd9omLenmiqTmlAsL
+         QFtPUBvKnTEd1eJu5WCH+pGfc8kqG25D+qd5do1ZBC0xz6RVgRC1ftN1pVwiC0w0oTmE
+         ko5g==
+X-Forwarded-Encrypted: i=1; AJvYcCURmByI1R2sorLASahh/UjGCl3SvrUEIUD5dOat2uXQRnEBrTOD6tTV0EnI8E7aEhbPHx6p53LO4tmudyUJZuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxATc5zvmsfVx01+e5vREoCyBJ+pggRhrx+lp2Sb8nlyX+UY4EM
+	1o6NiCO67YINyO4txCLd926vSGHnwCJCZkvbTZVHZjVgui9C6erjiXw2iHFuH+cR1BgUn1mXJgB
+	bkfVcQTJjvwPj1NS9i/ucruTrBUtqi27m6h2EXA==
+X-Google-Smtp-Source: AGHT+IE0RFORu2qhCHVTzNL8EmTHxZvAv0CpOPcLoW/ThHRI1Ejo/uY+Ar9l2qfXZiVTY6d//qDHWFdO9TE8RAOq4Ro=
+X-Received: by 2002:a05:6512:3b98:b0:539:f51e:2465 with SMTP id
+ 2adb3069b0e04-53b348cad03mr3726018e87.22.1730120077585; Mon, 28 Oct 2024
+ 05:54:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <a5e5f4b9fb03f46abd2c93ed94b5c395972ce0d1.1729975570.git.christophe.jaillet@wanadoo.fr>
-X-Proofpoint-ORIG-GUID: PKqJLKztO8jDcUeYX2R4iikGQC1njIQG
-X-Proofpoint-GUID: PKqJLKztO8jDcUeYX2R4iikGQC1njIQG
-X-Proofpoint-Spam-Reason: safe
+References: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
+In-Reply-To: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 28 Oct 2024 13:54:26 +0100
+Message-ID: <CACRpkda=5rSCjoW0ScNg3pFFOjgSQEv8v+0ZkAw-d0pkF5CaZw@mail.gmail.com>
+Subject: Re: [PATCH next] pinctrl: spacemit: fix double free of map
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yixun Lan <dlan@gentoo.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 26, 2024 at 10:46:34PM +0200, Christophe JAILLET wrote:
-> If devm_gpiod_get_optional() fails, we need to disable previously enabled
-> regulators, as done in the other error handling path of the function.
-> 
-> Also, gpiod_set_value_cansleep(, 1) needs to be called to undo a
-> potential gpiod_set_value_cansleep(, 0).
-> If the "reset" gpio is not defined, this additional call is just a no-op.
-> 
-> This behavior is the same as the one already in the .remove() function.
-> 
-> Fixes: 11b9cd748e31 ("ASoC: cs42l51: add reset management")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+On Wed, Oct 23, 2024 at 10:39=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> The map pointer is freed by pinctrl_utils_free_map().  It must not be a
+> devm_ pointer or it leads to a double free when the device is unloaded.
+>
+> This is similar to a couple bugs Harshit Mogalapalli fixed earlier in
+> commits 3fd976afe974 ("pinctrl: nuvoton: fix a double free in
+> ma35_pinctrl_dt_node_to_map_func()") and 4575962aeed6 ("pinctrl: sophgo:
+> fix double free in cv1800_pctrl_dt_node_to_map()").
+>
+> Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC"=
+)
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Thanks,
-Charles
+Patch applied!
+
+Yours,
+Linus Walleij
