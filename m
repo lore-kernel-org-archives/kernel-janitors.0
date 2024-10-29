@@ -1,99 +1,99 @@
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86722B666
-	for <kernel-janitors@vger.kernel.org>; Tue, 29 Oct 2024 12:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAE5206E61;
+	Tue, 29 Oct 2024 22:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730205135; cv=none; b=gGJlF5wCIBgEfxj+Y/a71+ucb5wLq/keK3FOhVl/q4bqwpfrhKazcK+06fxo4zLBQMYhId5RXjp5CyNy2fYkHi5nmWIjRpAW8bGos1Br1FfTsMmk9CkarMvWoO3r/toe0nb1cO5Xfr8MLLTRpJXcX6MFbdEydzYxHl6WTgE6izY=
+	t=1730240420; cv=none; b=LK3SHUL9CtSI6JOqD89ZISagjbk/y0ukJey1SQ9qMPOX1XI5MuMCxHk34Aw7sNhZeT8erawpnLgMixzHFY0KnnkQ+L5OnAOzXln4oC6HfrYx88BSv6dUCeDOUjCDT5qynQ9+HLXKHUC0/6NnOrnTUpSRxUApi8la0FMdFy9jN6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730205135; c=relaxed/simple;
-	bh=XZPeYZ6csh+iLgIU6dPxvjDU9u3yhGlNS/BwYc9pr+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YZtOV6gWM9flK7+1vsomLGnzkYjVRnYCG+wmjuuVvff4W/iJ3V4FMuw6TvkMcUWmLynGcecHpqNd4pl7Je4jKv8zXuFoQ3uQuyCR9deGMIKN/CahdK0HSAU+EkM6V4TvZb9Wam46wdPgPE1aBGBHbShn7Gs+qhsQh5rVWne/vJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=C9UoaC1T; arc=none smtp.client-ip=80.12.242.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1730240420; c=relaxed/simple;
+	bh=0XkPUGLs3OUYWUj0mHzYM5xE1QTfkxXx2AYeL72sqKY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=o7tUU+6CxcL+K7bzCNlL9cU1cmCOaDE1rbWGeQlzblZp0upU5ITinYpm3S5Mbv3EMKGljGAtdi8ub0ASQXs5c+RbaMW4H0qcthlhZX/4npqrdh0jcigWT6CV3hInBs2RDqY+cLp25klVffiGlmgelHIlGicugvs/HtT2zjQUzhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dXwIC5xg; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="C9UoaC1T"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 5lOGt6UZmWAQ95lOGthGvC; Tue, 29 Oct 2024 13:32:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730205125;
-	bh=+mSbqJzHTb7UuKKE81wy4HqptEKJd9/7vkwwu/YmtSQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=C9UoaC1TVYmJLT+xkrE/mPPJXmjdVt33PX/USrYk+bzmxx4FPXGaBvzEf2oArG9YE
-	 4RmB7G5sZzkZah1NeuhImFNiz5IhGrb1FFDkNe4Wgx0636meQNOIcB0AJlFhe4m+NZ
-	 yr7TVXxX+U09+rA4L3dEC04Di7/C8bH5aSSgW3h8IlQ3PW7LMR815W62d5zu3KYMb1
-	 E9FiOjuB8GymFcnw0uNMghNiUWekqhNtAc3PWR/jCWcKspSMMnwMFUigrY1iesJReC
-	 UcoWxeAgWXHswE68YaFYUfG/8zaQ5fb/hdO21A2UinUIkhfbygHS/+9R2XyMFoxLLR
-	 EzRD476nsEXdA==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 29 Oct 2024 13:32:05 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Thomas Richard <thomas.richard@bootlin.com>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] mfd: cgbc-core: Fix error handling paths in cgbc_init_device()
-Date: Tue, 29 Oct 2024 13:31:49 +0100
-Message-ID: <83194335554146efc52c331993f083bd765db6f9.1730205085.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXwIC5xg"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4fd00574so197370f8f.0;
+        Tue, 29 Oct 2024 15:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730240416; x=1730845216; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/7OE/QMinTNnLERT167c3CvL/M1HjMkuOBezusZau2s=;
+        b=dXwIC5xgN+Bd7H7CrFjfjXOmGDfX/N0skhe/KSaDzUqGoFBSl5ImfsbpTagoZB7SoF
+         7QJ762v9CwU6miGw0G6q3MmHAjO59NrgOFq1zEm+OWfWqcOLWanmJ2JbhdPAYHQl5/B0
+         7guJ5SxhP+rQCuk+DTOLRFAKxG0eSYyZeIcSUeItJu3bThSRYEskHCDueaLfw64Qa8Ki
+         ggnOCgGqVrnV8U0sCqvVXuQCmw43xc9pPFbwvcbSl9I3NBXc944ExaCQJUJv1xjNIvE3
+         9li2Hq5oaMTdNbSKKKsSywxM2UObSuZQbcv4zNpviKM5B4Su5LT+PgcA4CByI8gVdew3
+         tY3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730240416; x=1730845216;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/7OE/QMinTNnLERT167c3CvL/M1HjMkuOBezusZau2s=;
+        b=bx0ukrFOxi4SbVOdDPBopPLF5xNthe/cvIDVM2otCwUm+Cnm86kYCAIlM2+bKXvQRQ
+         bVwRoTU2iUjKlrSlUOgfJ4mqeVY0h1jRRe5b5pZbcmANwXRR/lH+sdP2kTNYnYcYPS2Q
+         lfcwtmoEAw/zfOv5fUU/lMYk6RjPpIVF0VJaBmZuNQDoDF7qdxKQY3gY005l2Wh5ZEJQ
+         xrRFfrxYn3jWIA6gmH237El6kogYXMnSbwBPRXUdvEB2RElBiJl1qvcsxZtb7Bophaxj
+         2CAXFkol1tLDYYAZ+kcEBcuPeZDK9KDkrNO8SfzTnhs4znLJd1exixEolAB9pVgW+JUS
+         hkkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVR5bb4o6cnJNSePgPPm58fcFjKce5OuAM61CcsT4jYHDQjch46GQE49JDlkYRTeyfB9MRINwszZSY2Q90=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww8XAR775uTm6mKZfhEc3DT46WFlNzx11IkszCU4SKR0Ohm0jh
+	Fa1PWb/0iJxTZ7QRmiLRbP5i4Ys7nqq6hNwPm1mQj6rH+QzrL/8d
+X-Google-Smtp-Source: AGHT+IGu+nfYSmitltWyx5Bwjm+ThSqNw6TaW7O5o1H3hKftUq+FGaLL8JkRaM0CTwtlDfnaFXsyjw==
+X-Received: by 2002:adf:e810:0:b0:37d:4330:c87a with SMTP id ffacd0b85a97d-38173e61f42mr3163196f8f.4.1730240416210;
+        Tue, 29 Oct 2024 15:20:16 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b1c8a9sm13723466f8f.12.2024.10.29.15.20.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 15:20:15 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: David Woodhouse <dwmw2@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] jffs2: remove redundant check on outpos > pos
+Date: Tue, 29 Oct 2024 22:20:15 +0000
+Message-Id: <20241029222015.3069873-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after a cgbc_session_request() call, it should be
-balanced by a corresponding cgbc_session_release(), as already done in the
-remove function.
+The check for outpos > pos is always false because outpos is zero
+and pos is at least zero; outpos can never be greater than pos.
+The check is redundant and can be removed.
 
-Fixes: 6f1067cfbee7 ("mfd: Add Congatec Board Controller driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Thomas Richard <thomas.richard@bootlin.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Compile tested only
+ fs/jffs2/compr_rubin.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Changes in v2:
-  - remove an empty line   [Thomas Richard]
-  - Add R-b tag
-
-v1: https://lore.kernel.org/all/24ec1348b99e76a853435ab081ae9a8f0e51fd52.1729938747.git.christophe.jaillet@wanadoo.fr/
----
- drivers/mfd/cgbc-core.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mfd/cgbc-core.c b/drivers/mfd/cgbc-core.c
-index 93004a6b29c1..7c0ee6d53091 100644
---- a/drivers/mfd/cgbc-core.c
-+++ b/drivers/mfd/cgbc-core.c
-@@ -321,9 +321,18 @@ static int cgbc_init_device(struct cgbc_device_data *cgbc)
+diff --git a/fs/jffs2/compr_rubin.c b/fs/jffs2/compr_rubin.c
+index 556de100ebd5..9854253d0108 100644
+--- a/fs/jffs2/compr_rubin.c
++++ b/fs/jffs2/compr_rubin.c
+@@ -276,11 +276,6 @@ static int rubin_do_compress(int bit_divider, int *bits, unsigned char *data_in,
  
- 	ret = cgbc_get_version(cgbc);
- 	if (ret)
--		return ret;
-+		goto release_session;
-+
-+	ret = mfd_add_devices(cgbc->dev, -1, cgbc_devs, ARRAY_SIZE(cgbc_devs),
-+			      NULL, 0, NULL);
-+	if (ret)
-+		goto release_session;
+ 	end_rubin(&rs);
  
--	return mfd_add_devices(cgbc->dev, -1, cgbc_devs, ARRAY_SIZE(cgbc_devs), NULL, 0, NULL);
-+	return 0;
-+
-+release_session:
-+	cgbc_session_release(cgbc);
-+	return ret;
- }
+-	if (outpos > pos) {
+-		/* We failed */
+-		return -1;
+-	}
+-
+ 	/* Tell the caller how much we managed to compress,
+ 	 * and how much space it took */
  
- static int cgbc_probe(struct platform_device *pdev)
 -- 
-2.47.0
+2.39.5
 
