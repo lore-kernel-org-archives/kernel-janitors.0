@@ -1,99 +1,79 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAE5206E61;
-	Tue, 29 Oct 2024 22:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D133E1;
+	Wed, 30 Oct 2024 04:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730240420; cv=none; b=LK3SHUL9CtSI6JOqD89ZISagjbk/y0ukJey1SQ9qMPOX1XI5MuMCxHk34Aw7sNhZeT8erawpnLgMixzHFY0KnnkQ+L5OnAOzXln4oC6HfrYx88BSv6dUCeDOUjCDT5qynQ9+HLXKHUC0/6NnOrnTUpSRxUApi8la0FMdFy9jN6Y=
+	t=1730263558; cv=none; b=HPKahziTIXcRBKqn2aCBEIX12/nxOTJeQ1qANjYgRK0C5j/bUaRWpF2o8/Soaf8wuIzuuiAcSr0i3f7WVn8PMLwyyyWthfJIetYJ9QpdmijjWBslAeZZYN7G/wIKGhwP7dOXbpbCd6GsV5p8TbDE2oiZXD+GfzeZE6GUUWOjWYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730240420; c=relaxed/simple;
-	bh=0XkPUGLs3OUYWUj0mHzYM5xE1QTfkxXx2AYeL72sqKY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=o7tUU+6CxcL+K7bzCNlL9cU1cmCOaDE1rbWGeQlzblZp0upU5ITinYpm3S5Mbv3EMKGljGAtdi8ub0ASQXs5c+RbaMW4H0qcthlhZX/4npqrdh0jcigWT6CV3hInBs2RDqY+cLp25klVffiGlmgelHIlGicugvs/HtT2zjQUzhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dXwIC5xg; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXwIC5xg"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4fd00574so197370f8f.0;
-        Tue, 29 Oct 2024 15:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730240416; x=1730845216; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/7OE/QMinTNnLERT167c3CvL/M1HjMkuOBezusZau2s=;
-        b=dXwIC5xgN+Bd7H7CrFjfjXOmGDfX/N0skhe/KSaDzUqGoFBSl5ImfsbpTagoZB7SoF
-         7QJ762v9CwU6miGw0G6q3MmHAjO59NrgOFq1zEm+OWfWqcOLWanmJ2JbhdPAYHQl5/B0
-         7guJ5SxhP+rQCuk+DTOLRFAKxG0eSYyZeIcSUeItJu3bThSRYEskHCDueaLfw64Qa8Ki
-         ggnOCgGqVrnV8U0sCqvVXuQCmw43xc9pPFbwvcbSl9I3NBXc944ExaCQJUJv1xjNIvE3
-         9li2Hq5oaMTdNbSKKKsSywxM2UObSuZQbcv4zNpviKM5B4Su5LT+PgcA4CByI8gVdew3
-         tY3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730240416; x=1730845216;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/7OE/QMinTNnLERT167c3CvL/M1HjMkuOBezusZau2s=;
-        b=bx0ukrFOxi4SbVOdDPBopPLF5xNthe/cvIDVM2otCwUm+Cnm86kYCAIlM2+bKXvQRQ
-         bVwRoTU2iUjKlrSlUOgfJ4mqeVY0h1jRRe5b5pZbcmANwXRR/lH+sdP2kTNYnYcYPS2Q
-         lfcwtmoEAw/zfOv5fUU/lMYk6RjPpIVF0VJaBmZuNQDoDF7qdxKQY3gY005l2Wh5ZEJQ
-         xrRFfrxYn3jWIA6gmH237El6kogYXMnSbwBPRXUdvEB2RElBiJl1qvcsxZtb7Bophaxj
-         2CAXFkol1tLDYYAZ+kcEBcuPeZDK9KDkrNO8SfzTnhs4znLJd1exixEolAB9pVgW+JUS
-         hkkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVR5bb4o6cnJNSePgPPm58fcFjKce5OuAM61CcsT4jYHDQjch46GQE49JDlkYRTeyfB9MRINwszZSY2Q90=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww8XAR775uTm6mKZfhEc3DT46WFlNzx11IkszCU4SKR0Ohm0jh
-	Fa1PWb/0iJxTZ7QRmiLRbP5i4Ys7nqq6hNwPm1mQj6rH+QzrL/8d
-X-Google-Smtp-Source: AGHT+IGu+nfYSmitltWyx5Bwjm+ThSqNw6TaW7O5o1H3hKftUq+FGaLL8JkRaM0CTwtlDfnaFXsyjw==
-X-Received: by 2002:adf:e810:0:b0:37d:4330:c87a with SMTP id ffacd0b85a97d-38173e61f42mr3163196f8f.4.1730240416210;
-        Tue, 29 Oct 2024 15:20:16 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b1c8a9sm13723466f8f.12.2024.10.29.15.20.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 15:20:15 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: David Woodhouse <dwmw2@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] jffs2: remove redundant check on outpos > pos
-Date: Tue, 29 Oct 2024 22:20:15 +0000
-Message-Id: <20241029222015.3069873-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730263558; c=relaxed/simple;
+	bh=RiFRkTeWzWYOTOtTRqaMOnoGPHNFLH5m+GN2G8KKyes=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=T0Zqulj5+Qnr+OTmFY+qyXbwgxByEHdHn5HYzxJXzNL2BxfGOomVyXEHBxojI5Co8HREq8T2pkBfUNYwxiX94vA5oS/brfj7Uio8uK+1Ooj8W/EqZ+4rnXHnvtDrVaBnS5bHYmUIuJ2EvpTlBzJYZl29umy1IYfkB0nLXURlq94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XdZKn1Vmjz20r5F;
+	Wed, 30 Oct 2024 12:44:45 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4631B1A016C;
+	Wed, 30 Oct 2024 12:45:44 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 30 Oct 2024 12:45:43 +0800
+Subject: Re: [PATCH] jffs2: remove redundant check on outpos > pos
+To: Colin Ian King <colin.i.king@gmail.com>, David Woodhouse
+	<dwmw2@infradead.org>, Richard Weinberger <richard@nod.at>,
+	<linux-mtd@lists.infradead.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241029222015.3069873-1-colin.i.king@gmail.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <cf07a880-1429-cc75-657e-55b32841cc00@huawei.com>
+Date: Wed, 30 Oct 2024 12:45:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20241029222015.3069873-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-The check for outpos > pos is always false because outpos is zero
-and pos is at least zero; outpos can never be greater than pos.
-The check is redundant and can be removed.
+ÔÚ 2024/10/30 6:20, Colin Ian King Ð´µÀ:
+> The check for outpos > pos is always false because outpos is zero
+> and pos is at least zero; outpos can never be greater than pos.
+> The check is redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   fs/jffs2/compr_rubin.c | 5 -----
+>   1 file changed, 5 deletions(-)
+> 
+> diff --git a/fs/jffs2/compr_rubin.c b/fs/jffs2/compr_rubin.c
+> index 556de100ebd5..9854253d0108 100644
+> --- a/fs/jffs2/compr_rubin.c
+> +++ b/fs/jffs2/compr_rubin.c
+> @@ -276,11 +276,6 @@ static int rubin_do_compress(int bit_divider, int *bits, unsigned char *data_in,
+>   
+>   	end_rubin(&rs);
+>   
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/jffs2/compr_rubin.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/fs/jffs2/compr_rubin.c b/fs/jffs2/compr_rubin.c
-index 556de100ebd5..9854253d0108 100644
---- a/fs/jffs2/compr_rubin.c
-+++ b/fs/jffs2/compr_rubin.c
-@@ -276,11 +276,6 @@ static int rubin_do_compress(int bit_divider, int *bits, unsigned char *data_in,
- 
- 	end_rubin(&rs);
- 
--	if (outpos > pos) {
--		/* We failed */
--		return -1;
--	}
--
- 	/* Tell the caller how much we managed to compress,
- 	 * and how much space it took */
- 
--- 
-2.39.5
+Maybe this check could detect the overflow of 'pos', I guess.
+> -	if (outpos > pos) {
+> -		/* We failed */
+> -		return -1;
+> -	}
+> -
+>   	/* Tell the caller how much we managed to compress,
+>   	 * and how much space it took */
+>   
+> 
 
