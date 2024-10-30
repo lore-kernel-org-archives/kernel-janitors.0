@@ -1,63 +1,62 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F23A1E2319
-	for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 09:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEE01E493C
+	for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 09:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730282101; cv=none; b=pLw/8Jp9Q2HjGYUJF9k2L/sshQk1tFwtART+CLmShItxTJQQ+ZnnnUsKfC8anR93On639HqoSt8wpbnK1n7qk/9AUT3xNFK5HwF4WCDHuf7+3FKC+i9xpqmWRYBgbbV3cWL0tep1S4V6ZPTm+YzAUSFjsc8jkIxOcYwqafhTy/8=
+	t=1730282114; cv=none; b=Pb9MyuOFCsHJqqfsAJ02QpKJs5rx4n2Nc9wt9cqVoTfZeY0Rm/p1aCj4/zYrsyQpH3JAbb8P2pONlqP81mTUABkHWRXJf6dSqxGEUfJ59lPaghmjUO9BFQk0eCmUSnpG/FpgQiavQjP+VWMgfME6w/1MgzOmuyrmBOf+KIeIMcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730282101; c=relaxed/simple;
-	bh=VuCpj2n89DoanslWRbLq8TnzKCV9aR5L9fpM5ccZyo4=;
+	s=arc-20240116; t=1730282114; c=relaxed/simple;
+	bh=QX1c2rnUJdAFC2RHAlIPCaiJEIHCe919jerx2/vD1G4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VkqpaTXZbRT6i4E7/iHT54jl70hCl2j3YXHaCT+oW8J8+J5yViK4zYVLLWFX0xWeSUOaoUKvpN83uSdBhWocUOFcnaVn65AnEG2unKjsB6RcAEA4Opeh8K169H9TSQol5NNI5tsWKXuB0JOqinidKk/11qeSZrBxyAb5OcPJnxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aa7m4Gix; arc=none smtp.client-ip=209.85.208.182
+	 Content-Disposition; b=EcEUANID+CqYtmgprpuq+EymrqFsqnqby0C4t1jmXpDt1bDAW7CI4T9DIFwsO/s/YjJTxPQkjZNQSCWfQsuXs/FQF4z+stg5eDAynDKIoWtOSnl4VrdZzAA+DI46ME3g1qlZ6E7WXSm2exVes2yxIDctu0s+/0XHAgBN0+/Fb5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XEr9aXMt; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aa7m4Gix"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so55933421fa.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 02:54:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEr9aXMt"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so9051597a12.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 02:55:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730282097; x=1730886897; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730282111; x=1730886911; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gDDDNSuaWmBznhMfkp5tEHEC36JKKYqX7WNIjg9Fd40=;
-        b=aa7m4Gix8qgJ1U4j3E1DPojTs4xkcqecWuWWMNbRTqgN1Fw4Qx4LA89ZgwZQRf5G4v
-         prUm9niU3yI0KoFOm3Aml3rQ3M+bvidJwJm1uurfJYUGBPw7YNcOjhP1rnWgxwJPqTiV
-         c+3zAs2771rbPnWSdwK4vR4E9ANdPrcRTIdTcziUdhWlyZ1RIbaHcfFYaRy0moixSLm7
-         kgJ5D3rUICEJXuCSV+KZdzas/VlhRN29Yajt1tUPbZPINoVyOPTlrdlAXqa4BBMf43e2
-         kYw+LWEiOkwWo2jiyttcM3JYDjLJaYObouJ0BU7ggEkrw+7az8zOCc/8rs3+fmz1jlX1
-         aJSQ==
+        bh=myhzYHHZOsBi8fssbTItbk4eRlkhy/GUThFWV76ORgo=;
+        b=XEr9aXMtYG5q9YBatK1/E+t+YawsLjbeZgwOOsWlyh1pPu3yTNp9EFnOzyTkRVFH3o
+         H769bXEZ7ErlVvhYXe7HnFTqOaPm+ulB5fGcjuNuwDHq9tzJuVoKedvj8IUIBJjUPeAM
+         FOhb+RjirunhUrwaXR7eXOUJcNs9Zi0J0KK/Fif0r3FgdDwFSHhtGVP/VaM5jp9/nO/W
+         +KF1N2rR9JK7Edr/BKfeQQ4s0jJPA7l9YXubI8pksOWv/hwjNgIKNCz1R8+q4hXEqh8G
+         QKn/iBm8apB2iT+sSr/DVa2tc7mCI1v6UjNPbzNCLEKVcxW4XwRyKyyx5RpzAha3aKG6
+         Yr+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730282097; x=1730886897;
+        d=1e100.net; s=20230601; t=1730282111; x=1730886911;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDDDNSuaWmBznhMfkp5tEHEC36JKKYqX7WNIjg9Fd40=;
-        b=fzJsA087F/TWOQRsrNFvWwMd97ElmkQ8Ra1yDQBU1qnUQ8+1s6fPZ/8pjAOF2DAivT
-         WGAoEtYnFW8ZkIsAlrWI8s/4z5B7QknPXrU6CxhVr0I0dIb1fjpawjNS4VSC576daS5M
-         UFUhTqpEZVowkhnFtI6SJ/IVB1ZtSdX1jz6nTRhOR1qjJTOJ68FJLNEjdtDl6iOLWC3y
-         AuF61E2iM/iHwfhUTPPh+fAbRc27sgnV7lu10GNUkqXFyZHDwwbiNu8uSJ9tWTTedYyD
-         R+R/XTEoartsWMioWSwk1xmsDxeLmNnHGDzWHwIFcTn9HcnP46v0MKhKX2ntNWu+zQjC
-         hCYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAt5A1/CuEqEdX95PlT2KFvBY8vq+v5yPXH4nXrUjKPzY09wEY6HiNpjLkxbdQRDAXdDkhFDksJfTbIK05yj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPQpV2qtfsN/C3OmP8ZMvQJRHAOV7Dp5r4JXy2sezovVNKVYBS
-	G/uffs+OWWi64akxDoTEiSqpOXc/gMDS/r6xUB0g7bmQo+pFgWLJB2k7EgYqQwg=
-X-Google-Smtp-Source: AGHT+IH+TtYc1IJuGrClf3QG5CcuA5wgN1IsLr8/pAzsn43uVdspD6CyoRiCxP2LGdaFETGrr0KSjw==
-X-Received: by 2002:a05:651c:1504:b0:2fb:5014:abf9 with SMTP id 38308e7fff4ca-2fcbe04f0bamr64348391fa.31.1730282096687;
-        Wed, 30 Oct 2024 02:54:56 -0700 (PDT)
+        bh=myhzYHHZOsBi8fssbTItbk4eRlkhy/GUThFWV76ORgo=;
+        b=wdvdbUrnwvOLkJU4pDQxKohiE66QrvPI9P+oMYYmbjHS4LbRfhpKTw8YOyk5PbLInq
+         fMTYBc9jXA9QSDzMsU7sbsqLR9ahKvwuOgT+GzQR6UiA/edky9BE9d0NT+jWfpaeINZH
+         0H1VZSSkki/q+a+bwJ7NlCR6uA1DFfCxWLdJHVHtzwHtWojAg/NCmZU87etrsWg3KghO
+         Ix9NMxWen/NOaSVg9/0C6Gtv0oRH/gW6VJfyB47UOjipjhCQ4B96O+0YFUkIwkhpyPax
+         hv/YTVkSU8s1nL2yU0Gu8qzjxxRAYrL8Pa4VAy0z8lsNbSxVUibyIjHqicWKdgnHFPS6
+         m4AA==
+X-Forwarded-Encrypted: i=1; AJvYcCWingbaDAdbQzLR/HFrNlasf/qEyBU9nUpJIprsehH1UHGajG05KTlxILmiHAARCsjTjdoefUxjbpV5rVhkj0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKYO0WCTN6UZ7W4ZRQH8EBl499QcLD2k3c51KdRX63OBkZwwcI
+	dlwFY3cpNFBS5PYLh0PLilTLemOThH8QMD68+3ktJRnpRTEGxe4VWQa5KmZoeqI=
+X-Google-Smtp-Source: AGHT+IHsaH3qIoU/LqTqY0qV1GT3CRkq1Y3kFNvfZmWxV/jzT7lhY9M/Jf8d7CNzzM4kKfxO9/cmHg==
+X-Received: by 2002:a17:907:970a:b0:a9d:e1d6:42a1 with SMTP id a640c23a62f3a-a9de5d9105bmr1338783366b.30.1730282111023;
+        Wed, 30 Oct 2024 02:55:11 -0700 (PDT)
 Received: from localhost ([41.210.143.198])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b713f0sm14889466f8f.75.2024.10.30.02.54.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b928cesm14995506f8f.102.2024.10.30.02.55.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 02:54:56 -0700 (PDT)
-Date: Wed, 30 Oct 2024 12:54:52 +0300
+        Wed, 30 Oct 2024 02:55:10 -0700 (PDT)
+Date: Wed, 30 Oct 2024 12:55:06 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] io_uring/rsrc: Fix an IS_ERR() vs NULL bug in
- io_install_fixed_file()
-Message-ID: <762b0c95-f4ce-4fb3-8212-01e216f683ad@stanley.mountain>
+Subject: [PATCH next] io_uring/rsrc: fix error code in io_clone_buffers()
+Message-ID: <70879312-810a-49ce-aba3-fdf7f902a477@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -68,28 +67,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The io_rsrc_node_alloc() function returns NULL on error, it doesn't
-return error pointers.  Update the error checking to match.
+Return -ENOMEM if the allocation fails.  Don't return success.
 
-Fixes: ead12caeb8ac ("io_uring/rsrc: get rid of per-ring io_rsrc_node list")
+Fixes: c0b9c5097cbc ("io_uring/rsrc: unify file and buffer resource tables")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- io_uring/filetable.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ io_uring/rsrc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/io_uring/filetable.c b/io_uring/filetable.c
-index 78e77e2017be..fc6872304136 100644
---- a/io_uring/filetable.c
-+++ b/io_uring/filetable.c
-@@ -69,7 +69,7 @@ static int io_install_fixed_file(struct io_ring_ctx *ctx, struct file *file,
+diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
+index 784fd1ca6031..f317f39e8b95 100644
+--- a/io_uring/rsrc.c
++++ b/io_uring/rsrc.c
+@@ -977,8 +977,10 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
+ 			dst_node = rsrc_empty_node;
+ 		} else {
+ 			dst_node = io_rsrc_node_alloc(ctx, &data, index, IORING_RSRC_BUFFER);
+-			if (!dst_node)
++			if (!dst_node) {
++				ret = -ENOMEM;
+ 				goto out_put_free;
++			}
  
- 	node = io_rsrc_node_alloc(ctx, &ctx->file_table.data, slot_index,
- 				  IORING_RSRC_FILE);
--	if (IS_ERR(node))
-+	if (!node)
- 		return -ENOMEM;
- 
- 	old_node = io_rsrc_node_lookup(&ctx->file_table.data, &slot_index);
+ 			refcount_inc(&src_node->buf->refs);
+ 			dst_node->buf = src_node->buf;
 -- 
 2.45.2
 
