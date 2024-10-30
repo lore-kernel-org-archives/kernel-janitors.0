@@ -1,114 +1,106 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F151BD9DF;
-	Wed, 30 Oct 2024 18:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0FB19CC24;
+	Wed, 30 Oct 2024 20:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730312752; cv=none; b=U37rjr9hSiS1Cbmh0mo2K7eoOUWe/aMyrZ3b9Y37ojVFVBP+9/G6L/1oaOxc+MF+QNodz3FoFpR6nUQfiqFBIlUm/xJIhYkb+W3ZQEMKQYMeB3UL1CL0uWv3MO9x7u4OTrg//zKw4NsdzoasxUbrPOzHGOf4p/E4G9sl2gs4WEg=
+	t=1730321742; cv=none; b=drH6NdO4McTZObjSGjXiur1DyxSCQoAqzj6mHnr2aJYEAzt1gjK/sBSLBUXufkOYeJd3yFJScL3tEoTNj/Srood1qX/CgqyX+Ocfpvxn1+pJ1cLSPZqjEX/CJEqNhaiqlmY7iGvhjBf8c0QaO+IkfMF8q5U73tZdEAi9IKQNDw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730312752; c=relaxed/simple;
-	bh=NHxp+POG47JxZdOeOYq5ZodzrSlAFfIp+98+cQE2Qas=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jyj8ixyyK6N7Mjx8ePpALdPzUzeA5eOkAZgL6SVil3kHPfWUQXCeR7vRCZo7b6mf0kFKBap/sE7xt0JEmdb95b/ilbJnS+HYQyrh78KJzV9VsqtT8JBK39qtvjPnzF+E0mZqGMCv8q5EQ1Q2td6smEEeSwX/fsLxPtgig6q4JL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUJn1DBJ; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730321742; c=relaxed/simple;
+	bh=UTtlS48Hah5u7GdMzBlAhIwEqhmJZ1vHStfGamKkCnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=D0g1hVaRc7HuvEdJxqmX0DMMKxtzN4ZiSDX392Jd5AL+JN53ZYPOzT9DP8pkvrgldnQ+CtVW9Z/V4HxE4eFVzrjmTBIeem9tCNyJJSxEyNDFZpt861V5HobqJ6XpjMU1qG4s0HmU1D15JpVSRsxrEeC30+cmgQiLFkDjSky1eTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z5bPi4aG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUJn1DBJ"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e59dadebso197420e87.0;
-        Wed, 30 Oct 2024 11:25:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730312748; x=1730917548; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mn1i7qoZ8NMfOBLftMvEfbMqW6KLf/BKi0sKeBQxk/k=;
-        b=lUJn1DBJTBRKSkzuAFyJZFuMdtv3pRf3AqodR67271eU0eLUkG7rU/KnNV8dnvnJTz
-         P1bQ2njdgrRos7yv9NPqXicoXkizevuegEZIT6WwItd+2zGoX/B06Rk0TofCZmqwl8sq
-         zG8ZVwGVjqr0Jw6LOsmclqSsXK4QYY5h/DVj3oj6S7Z1RF6YjmY2aXTs8aoStIMbVT7Y
-         ePT3qmGWXwfF8CVWm2ilfREsR2mXiwt9ZvM0kq7Hwq4SCQGoaS1BzC5yu70tBwVvJUrz
-         Hbr6ejlobcH0lRPJrXt27RTzLgnhKFsOQuQHkzovXdn/N1DFJ4j6L0cHqAU9znj3Pj+c
-         uWRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730312748; x=1730917548;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mn1i7qoZ8NMfOBLftMvEfbMqW6KLf/BKi0sKeBQxk/k=;
-        b=LpE23Aombs6j3Nym56L02j8Lo5mnnY86PVJdguEaJ9ouWwqBRQasqSNm2hYx+0Jqi7
-         z2X807YVrdr1PmmcBCK9qcyb1HN8Awu8YwMZ1gbk5H3M3FsbGvfc0fJn/7Bws4Y5lQQ+
-         mX/hr/7lyYhME7L3mnioxNehPPkxJxiF34lJS5AWSdjR88WyoEYf24YP2OQHfwdi7kRi
-         DC2XP1iS+OsS2TnmmgIS1WeuXpz2/AeUESCjIH71Fwyb47Xl1AFP1YU2cYJw2zFwAH0B
-         d4I+TBRqYQl0P0lAtTavB9jbF/CFfBnaPOvh+TFdHd6bNun4YAUEqjFzZuOJpbY0Yil+
-         2IgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ2xMXqry4KjDu5ZWxze4Chjp/1hHZCBY5sL0JcbH0RdfY9/UKcNJUo86Ldomz7AixIgHOmWl0G1NRmoMg@vger.kernel.org, AJvYcCW26ioAArzniWDApTGSlyukBvBemGsHmy8j5iOdOtwxjysDLVCaY0ldBtDaZUxBuvfg+u/P1vUSZaoWzUTp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqCVmfShYtPT6Q2W77uNQWxao/FLIzLmoiKT8S97WOBKriuPrq
-	i5CIX4+5cRXNhhanBx/8lwjHHYjY3EaczFr80snxFZNwSd5d983AiLcEbVGp
-X-Google-Smtp-Source: AGHT+IGHVr7esO5Qax4uXPQVscjJOvQZjbcTjf2xBgTiQKVFHFL1ZaLzbdEEyUyAUWRnEv5syp3e+Q==
-X-Received: by 2002:a05:6512:b14:b0:539:96a1:e4cf with SMTP id 2adb3069b0e04-53b3490f291mr8622627e87.32.1730312748174;
-        Wed, 30 Oct 2024 11:25:48 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47aa8sm16041634f8f.51.2024.10.30.11.25.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 11:25:47 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] xattr: remove redundant check on variable err
-Date: Wed, 30 Oct 2024 18:25:47 +0000
-Message-Id: <20241030182547.3103729-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z5bPi4aG"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UCFS7l002341;
+	Wed, 30 Oct 2024 20:55:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Cq83RRr5iVH8Pk8KHhiMY95wpAhRPW9zl0sq+dBSCfY=; b=Z5bPi4aGSnSZvzRD
+	LfUZwu4p29jNuqJ5JNeKOoQPes8Mg9QPIa07XPCmbrmwvrKDi8LZup0jdZZwCDom
+	Lw5XD4i3eZ+5kmlCEcs+2VZr4/DVG44E0FFNR1lp26nLs1m1fmjLMa8ohba89uDb
+	s6f7J6+WMR0LXbL8rg1+whyTwJn4tOAlie1H8m53XIWpjgkd0LmpHarBCfc0sLfi
+	tCFZKzF0LPloa8bunSDwnlElW2UUYXXHuFIHIc7pggk3fNW3vMcJ4sGwparSYYTI
+	L7nhTOHTQZ+/u07FhKDlpaW6LcEf2GNv44P4f2FHH2rs5HD4cT4fuhHgeo9gXQd/
+	Rcnh1g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmn59c63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 20:55:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UKtVEa015633
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 20:55:31 GMT
+Received: from [10.48.242.156] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 13:55:30 -0700
+Message-ID: <eb39e027-7ab4-4062-a895-cac28d37a8a6@quicinc.com>
+Date: Wed, 30 Oct 2024 13:55:29 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] wifi: rtw89: 8852a: remove redundant else statement
+To: Colin Ian King <colin.i.king@gmail.com>,
+        Ping-Ke Shih
+	<pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
+        <linux-wireless@vger.kernel.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241030131416.3091954-1-colin.i.king@gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20241030131416.3091954-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YeftvneLpOBtWqNLKq3MR592dcrfa5bE
+X-Proofpoint-GUID: YeftvneLpOBtWqNLKq3MR592dcrfa5bE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 mlxlogscore=733
+ priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300164
 
-Curretly in function generic_listxattr the for_each_xattr_handler loop
-checks err and will return out of the function if err is non-zero.
-It's impossible for err to be non-zero at the end of the function where
-err is checked again for a non-zero value. The final non-zero check is
-therefore redundant and can be removed. Also move the declaration of
-err into the loop.
+On 10/30/2024 6:14 AM, Colin Ian King wrote:
+> The cascaded if statements covers all 16 bit values in the comparisons
+> of dgain and the last else statement is not reachable and hence
+> dead code. Remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
+> index 9db8713ac99b..f3568c4d0af6 100644
+> --- a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
+> +++ b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
+> @@ -2248,8 +2248,6 @@ static s8 _dpk_dgain_mapping(struct rtw89_dev *rtwdev, u16 dgain)
+>  		offset = -9;
+>  	else if (dgain <= 0x155)
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
-V2: Move declaration of err into the loop as per Al Viro's suggestion
----
- fs/xattr.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+should you drop the test and unconditionally return -12 here?
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 05ec7e7d9e87..fd4e3ab8034d 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -1005,9 +1005,10 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
- {
- 	const struct xattr_handler *handler, * const *handlers = dentry->d_sb->s_xattr;
- 	ssize_t remaining_size = buffer_size;
--	int err = 0;
- 
- 	for_each_xattr_handler(handlers, handler) {
-+		int err;
-+
- 		if (!handler->name || (handler->list && !handler->list(dentry)))
- 			continue;
- 		err = xattr_list_one(&buffer, &remaining_size, handler->name);
-@@ -1015,7 +1016,7 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
- 			return err;
- 	}
- 
--	return err ? err : buffer_size - remaining_size;
-+	return buffer_size - remaining_size;
- }
- EXPORT_SYMBOL(generic_listxattr);
- 
--- 
-2.39.5
+>  		offset = -12;
+> -	else
+> -		offset = 0x0;
+>  
+>  	return offset;
+>  }
 
