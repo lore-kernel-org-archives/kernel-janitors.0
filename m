@@ -1,67 +1,67 @@
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673EF1E9066
-	for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 13:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788961E9079
+	for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 13:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730293792; cv=none; b=oCqhA9UwazVjdX6Kh6M76uQgBqk/K+yLr5AtVT6Uxr/TSOKCHsMoLvSL4o38ACqyK2ZguhP/1do7FCQXrzE3LM4c/ABnBhbzCWz84VYgi2Ml8PrmnCmFu5pFlURC0W+JDMIoK46DEd14gaiG/k+lmlDRXilB3chMaTkQqtRYmWE=
+	t=1730293792; cv=none; b=TpmLA1jOazAv280rMq2w9qevpQV6QIvxPMU6R7I/siSj3tlCYjrruBTNSeji8N1I3srWTC20I+EduMAzBuZINWbdDf4UIU3hcI156wMVHY95EPtgrbQCDcBA8BCud50OquxEfwXuFEljbqaCLeuwPvx17svWz/V0JiNtZpIgXe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730293792; c=relaxed/simple;
-	bh=E5OwLTPy54ufFGgeBpt5ox7GUyM51fdd+bAxUQchzFg=;
+	bh=l8Vaqm8vvg2grcGZZMWtn8dZK5+rrhiM54tx+OtEKpQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XnFgGNPxnSYFMMW7H+I9Q4CicW1ORO7Spsllsw1Qj/MNpof/CjgG+apCXtSll/k85gJAZH116oNEHh4GjFmvFv3Iu456dv4St8wJghhqnmzQhSUjDPK7dJKmLoITX8JmQOhNuuLmSu5cDiXGwEOD9SXjS7gdwOs11SHtNVDRZ1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hwMwd1xA; arc=none smtp.client-ip=209.85.166.52
+	 MIME-Version:Content-Type; b=c8VLztgNPpB1xNeR0Ka3mJHR7CqOFFf7VyM71d+XIL6Sxes3U6zabVwa9xQ4oojWQXOBMWddPa4yC8qhqmXzuKs+FZU2Gs9xjGs/yVzCpkQEavtLF6z6QjyDd8C+febVyjmLJF92pQrpwvbjiAFh/tSaLN1Jdl3QNlec2nB/pQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=njkWoBCm; arc=none smtp.client-ip=209.85.166.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hwMwd1xA"
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-8377fd760b0so247091339f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 06:09:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="njkWoBCm"
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83abe4524ccso242543239f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 06:09:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730293788; x=1730898588; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LAS1y4kZ27f1rr18cg6s15oqwDD8HYKBoo6u8v38O4g=;
-        b=hwMwd1xAdjjzsa2bcepYVHhaKoyG6zIXaC0BNxmuQX1BrBMYhPWZk19ohypDhvh6d3
-         UGwW02p7ozyNSltuYAp2RVuu85PVPWiax5vrjs1opSRgisRwdk78haM5usLhXhQZQVrz
-         1AzIIG+u7TAcCOLYR4ZdeeC7H+SR/O2tU6Lt556LvBVKZwrJSvS/X6fex6Y3GFb9MXpM
-         EQb9b6vsOnuGlHW2Lzyp7i2OEvVUdbyEJpW63gq6T63AVaHrFr2hukCaKwnwS24UKGl3
-         3W7n/CJZpbowROnIgg0asRJ4qfzzLQKuG85FTpd1WcVBtic+5R4tYQBoOQCT5b5xsjZW
-         nJVw==
+        bh=N5uFWxZgbqN465Uc4jqzPSiXE3iBEC7P8OPuQ7oSz94=;
+        b=njkWoBCmtdDPdEkJI8oxqxwFx6XFnq97pWyHXt479kujWINxtzgugnn+p3Ktl5N1qk
+         TAz7jZELMX1oiR7fFO4QlifXhSyuOna8421DIODNoXDcIcCO3XA+p9q59RizcBKdDN3t
+         GJ7uo1FDI51aM51MEGg+P4ZltEihVXWm8blk8PRFWNflgNpq/WqrJdGXSPxkvf1JxCnS
+         q4uNdRmfe4MypsGwV64HV9WIKcZLOUKrqSmy85nRV7UyUVuS7gjuXcijW54VZvsnszpb
+         ZFTQ67BHvTGPwMgl3JNl03k4SQRsdQOyDl+zWZBTHojojCG98bT11SHkXGCEAyOU4T8c
+         I8pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1730293788; x=1730898588;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LAS1y4kZ27f1rr18cg6s15oqwDD8HYKBoo6u8v38O4g=;
-        b=B4pf/NfzuOE/gRRS2O+CaX8CjX03a5S9+YO3R7rZzwUz2quyRZpagHO1wHKzEqNdGx
-         0CyGPVzd1H0U0FCsLX+tlmarVRiHSuOvJMnjbbtlRc9Q0N0dK1wNRFtZp1l5bACtJPAZ
-         ++bXCz2dCrTkbfRN4NzMAu7L6kUvIzASIx7xygoaX3olTPXiIkNKxsf6zV+Nlbn03fM7
-         JvWL4TcuaLEpG65RsCNIfNZpyg0qAN7xouBFsGbfYpL66ntOqsB08ha2F7UfxhhyCUuq
-         gNi/+zSOpmLW1tBj5XaRQUuRahPpHZ6WCTiJ9AUd4vCTDnHFVAzi4F9lkKr/7G81iVwQ
-         i/oA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/sbxiMwKf20oWMSeEBV0vZd/nxyOTeF3srOzBRnuptZwS4fRV1VTmW/r6X68iHnCI9qjFI/lSy30zt8+mDNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN3n4HV6B3BwVfi4kpQE29b9/Fma2lSZB7KSmNRhtHOFyRNB2P
-	vMqxK4EoCR+E6YzQUJB/cPV54pjqksQ+MvBJfP9SmJdnCro5MmcXK20oztqv6hM=
-X-Google-Smtp-Source: AGHT+IENNDyNNZGII1nL/NaaQ0kx9gLki/JevI1ijapsM9JD9CCx62rACXRjzrtMV0m6Zp+z0JciFA==
-X-Received: by 2002:a05:6602:1656:b0:834:d7b6:4fea with SMTP id ca18e2360f4ac-83b1c3e9fcemr1284626039f.6.1730293788122;
-        Wed, 30 Oct 2024 06:09:48 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc72751298sm2872855173.91.2024.10.30.06.09.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=N5uFWxZgbqN465Uc4jqzPSiXE3iBEC7P8OPuQ7oSz94=;
+        b=q1LLkAkY7fTVPvPdYs1tB1eBnNUFrCsI7SIGG67w8CyLrOWyGumowsMbFd1QgppkCb
+         boiHy7cjQbbk+enLjyJLkQ+BPCW6S3+s2nufGqyt+wHK8wXrLGfBCGJekkP6/omkglwO
+         ias9m7qS8K/XPtdNaL1aG5a2/XnSXYsJIGhbZvxvMDTA6KRKzhjoEKvNny3AA/UY3sw0
+         EJYbKFWfQ3J1WX8DIGb8pmU05HsV93gmRvVOqUKdU8HidzrCHZ7mWlDtpUHFVCSboRTd
+         RoOKgnjg63V+mMl7eWQbRxEuJwoKG2rmf+WjEd0MOfWGaSpIiU1CgeSXOTrraT0960/V
+         y2FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtFrjve94/mu8Jc5l0lxkJXMYRnitDKmR8cf6PnP7W2M9YGPXBp46uwHJ9OHd4NJ/FHxR5YdH83pFXVx9vLJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywha3u8n61zP8C7855X4twLPvJpCzh0AZiZ+dCxyezpkQnBSi2u
+	oppQWg/sYGnKqdDnx99JqX/zyU1xGeIsAaOFQd1KCfRUWCFRZNyE21YEJ3VqkZw=
+X-Google-Smtp-Source: AGHT+IFQb4lZiBi+1U1zfzQLBtmJOfTwNZe/OueVbEgtpfPH0xKP6fFxVkr3LuD7QxaPgDfm7eVnKw==
+X-Received: by 2002:a05:6602:14cd:b0:835:4d07:9d46 with SMTP id ca18e2360f4ac-83b1c5eb908mr1288945239f.15.1730293787146;
         Wed, 30 Oct 2024 06:09:47 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc72751298sm2872855173.91.2024.10.30.06.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 06:09:46 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: Dan Carpenter <dan.carpenter@linaro.org>
 Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <70879312-810a-49ce-aba3-fdf7f902a477@stanley.mountain>
-References: <70879312-810a-49ce-aba3-fdf7f902a477@stanley.mountain>
-Subject: Re: [PATCH next] io_uring/rsrc: fix error code in
- io_clone_buffers()
-Message-Id: <173029378724.7840.5463253318064416297.b4-ty@kernel.dk>
-Date: Wed, 30 Oct 2024 07:09:47 -0600
+In-Reply-To: <762b0c95-f4ce-4fb3-8212-01e216f683ad@stanley.mountain>
+References: <762b0c95-f4ce-4fb3-8212-01e216f683ad@stanley.mountain>
+Subject: Re: [PATCH next] io_uring/rsrc: Fix an IS_ERR() vs NULL bug in
+ io_install_fixed_file()
+Message-Id: <173029378597.7840.16771277924370009156.b4-ty@kernel.dk>
+Date: Wed, 30 Oct 2024 07:09:45 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,15 +73,16 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 30 Oct 2024 12:55:06 +0300, Dan Carpenter wrote:
-> Return -ENOMEM if the allocation fails.  Don't return success.
+On Wed, 30 Oct 2024 12:54:52 +0300, Dan Carpenter wrote:
+> The io_rsrc_node_alloc() function returns NULL on error, it doesn't
+> return error pointers.  Update the error checking to match.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] io_uring/rsrc: fix error code in io_clone_buffers()
-      commit: 0f576012ae2ff08009ce91e2294832e2b88aba06
+[1/1] io_uring/rsrc: Fix an IS_ERR() vs NULL bug in io_install_fixed_file()
+      commit: 9b79509ce43370ceaf582bbf752aaeee9d40c9e0
 
 Best regards,
 -- 
