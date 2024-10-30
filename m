@@ -1,67 +1,65 @@
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788961E9079
-	for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 13:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1CD1D1E7A;
+	Wed, 30 Oct 2024 13:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730293792; cv=none; b=TpmLA1jOazAv280rMq2w9qevpQV6QIvxPMU6R7I/siSj3tlCYjrruBTNSeji8N1I3srWTC20I+EduMAzBuZINWbdDf4UIU3hcI156wMVHY95EPtgrbQCDcBA8BCud50OquxEfwXuFEljbqaCLeuwPvx17svWz/V0JiNtZpIgXe8=
+	t=1730294061; cv=none; b=hY9OTiyVwJNMFQUkaIWvoYliih6nqgfw2d8nMiLCG1Doc6tzaTsSDdMmvF90thGb2ObV0ioV6c8uLRAO5DQz11egO6Mgbw2UcrQ5pm+TXp0TR0xbGSl9kN/ZzyYVhf84OUTzFpLxxwEnd8ujFXUO4pURzVjNiF3x7HUniS4Ryz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730293792; c=relaxed/simple;
-	bh=l8Vaqm8vvg2grcGZZMWtn8dZK5+rrhiM54tx+OtEKpQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=c8VLztgNPpB1xNeR0Ka3mJHR7CqOFFf7VyM71d+XIL6Sxes3U6zabVwa9xQ4oojWQXOBMWddPa4yC8qhqmXzuKs+FZU2Gs9xjGs/yVzCpkQEavtLF6z6QjyDd8C+febVyjmLJF92pQrpwvbjiAFh/tSaLN1Jdl3QNlec2nB/pQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=njkWoBCm; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	s=arc-20240116; t=1730294061; c=relaxed/simple;
+	bh=BdmExtkMA0VZuzrJ5PrYQTQ5P7R2up+kNAlU+s9OMZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qqdqgBgEZ0DbEH4zjrz9tWPRY3Ttgw0HiIv39Dxt2kUfTsDc2NN0f1KS06gpt+1bqbMyc8aivImiabHxqknmn9Zl9iK+pzf/xqwaHmWEdfGY3n3Ddca59l2FDS6unmC+bOt/B6tsHxhKRTcfjzhgtVqfgg6WY4G3rERUzD8Bm38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZQAIhVr; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="njkWoBCm"
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83abe4524ccso242543239f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 06:09:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZQAIhVr"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so61052145e9.3;
+        Wed, 30 Oct 2024 06:14:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730293788; x=1730898588; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N5uFWxZgbqN465Uc4jqzPSiXE3iBEC7P8OPuQ7oSz94=;
-        b=njkWoBCmtdDPdEkJI8oxqxwFx6XFnq97pWyHXt479kujWINxtzgugnn+p3Ktl5N1qk
-         TAz7jZELMX1oiR7fFO4QlifXhSyuOna8421DIODNoXDcIcCO3XA+p9q59RizcBKdDN3t
-         GJ7uo1FDI51aM51MEGg+P4ZltEihVXWm8blk8PRFWNflgNpq/WqrJdGXSPxkvf1JxCnS
-         q4uNdRmfe4MypsGwV64HV9WIKcZLOUKrqSmy85nRV7UyUVuS7gjuXcijW54VZvsnszpb
-         ZFTQ67BHvTGPwMgl3JNl03k4SQRsdQOyDl+zWZBTHojojCG98bT11SHkXGCEAyOU4T8c
-         I8pw==
+        d=gmail.com; s=20230601; t=1730294058; x=1730898858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nFu9X9ZfhRR/+8JSdiYichwPIWFG9gfOkKOe7mEGzqE=;
+        b=JZQAIhVrRIpN9M5mPF5J8hf13bCts6aHYo6SOr7lMxjWV0bWyh70ogMIVW0QUZFi3l
+         sGqfcVdkLT9IptNA3CouuTRkKPpFB7jHaIV3qWSt8jxn5gOUDL0c5YTDsMaSUemZn5Bk
+         34CEVc8jIoWLYu+uHwV9iZiRRkIgnA5YhUW97cm6/EftdWKFIbrLAxBVrSoW5JlyBmga
+         ePZsdbvhXBCpC8Q1vpd10BjvDTTtscuQ3B4DFpIlPOACF6DlTVzo9uZikAKLhv63tAqh
+         HvhKa3XzDtrTMwH6rBQIis83hyqomZtSUDVePEm1jF+nFLNCUgY0PP8f+2OQ4/qgH/F4
+         jW9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730293788; x=1730898588;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N5uFWxZgbqN465Uc4jqzPSiXE3iBEC7P8OPuQ7oSz94=;
-        b=q1LLkAkY7fTVPvPdYs1tB1eBnNUFrCsI7SIGG67w8CyLrOWyGumowsMbFd1QgppkCb
-         boiHy7cjQbbk+enLjyJLkQ+BPCW6S3+s2nufGqyt+wHK8wXrLGfBCGJekkP6/omkglwO
-         ias9m7qS8K/XPtdNaL1aG5a2/XnSXYsJIGhbZvxvMDTA6KRKzhjoEKvNny3AA/UY3sw0
-         EJYbKFWfQ3J1WX8DIGb8pmU05HsV93gmRvVOqUKdU8HidzrCHZ7mWlDtpUHFVCSboRTd
-         RoOKgnjg63V+mMl7eWQbRxEuJwoKG2rmf+WjEd0MOfWGaSpIiU1CgeSXOTrraT0960/V
-         y2FA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtFrjve94/mu8Jc5l0lxkJXMYRnitDKmR8cf6PnP7W2M9YGPXBp46uwHJ9OHd4NJ/FHxR5YdH83pFXVx9vLJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywha3u8n61zP8C7855X4twLPvJpCzh0AZiZ+dCxyezpkQnBSi2u
-	oppQWg/sYGnKqdDnx99JqX/zyU1xGeIsAaOFQd1KCfRUWCFRZNyE21YEJ3VqkZw=
-X-Google-Smtp-Source: AGHT+IFQb4lZiBi+1U1zfzQLBtmJOfTwNZe/OueVbEgtpfPH0xKP6fFxVkr3LuD7QxaPgDfm7eVnKw==
-X-Received: by 2002:a05:6602:14cd:b0:835:4d07:9d46 with SMTP id ca18e2360f4ac-83b1c5eb908mr1288945239f.15.1730293787146;
-        Wed, 30 Oct 2024 06:09:47 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc72751298sm2872855173.91.2024.10.30.06.09.45
+        d=1e100.net; s=20230601; t=1730294058; x=1730898858;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nFu9X9ZfhRR/+8JSdiYichwPIWFG9gfOkKOe7mEGzqE=;
+        b=WLWp40yRbF8l7jsGI3hUqQG1FkvNDSrzHfSIcmvLIqVeNVk7jPp03NfpMuww0/z2xF
+         VzjNjtnyLZWutbCrRZygCVAil5Z/HAkrhH9/dlws08g/jViHlpciXGbVxsSFcTHofI3E
+         jj3llDdcHG9cj6yCsL8LACLLs9v3NwENA2ncrDNAKSMxQ9c6YA0hNHOOcWgB5timWtIZ
+         jPfduWNrxQANKlXz3u0B2A106HO7YGG/cULOuScp/D7aEDyGwkrOjxEwtwga8/63ZDcK
+         FisANrVJ98998cdUOC9cRU31LYMJdG4pJjDQjp45NRUnmitSagaCF0uuI95H+PO9TOLX
+         pnLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMb919B4C+G0rEFzkQdaJg1QHzbOCMUIxgHphtso3uQq6gW3uzlhwkhwqTG5hiemJM3FXAtVsFCGG3ugXR/qs=@vger.kernel.org, AJvYcCWKxHjFj0XrMtUIfxmNTfqUJ2a5ehE6du2kCCtJDGuK28AmiEF27vYxBZpXkqqKVVKcb3TV6Kx4cFUDv7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFdcDYOkWqz8upMRucryW7jNoLDiLFissQp2Q4au5T5KpCx7kn
+	UkN4ShpWcKC7euyRT2ukeN5ncXAOZEjdNLHdXAGnFaTxiYNcIXp1
+X-Google-Smtp-Source: AGHT+IF8uQpUwo28perjaG2xI3g/LHuSBns2dWrPqR/sBur/Bi+UnRnwW1Ksp3eUVXqn7ebfyU3rkA==
+X-Received: by 2002:a05:600c:4e04:b0:431:5c7b:e937 with SMTP id 5b1f17b1804b1-4319acb42cemr157648745e9.17.1730294057359;
+        Wed, 30 Oct 2024 06:14:17 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e848csm21382295e9.3.2024.10.30.06.14.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 06:09:46 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <762b0c95-f4ce-4fb3-8212-01e216f683ad@stanley.mountain>
-References: <762b0c95-f4ce-4fb3-8212-01e216f683ad@stanley.mountain>
-Subject: Re: [PATCH next] io_uring/rsrc: Fix an IS_ERR() vs NULL bug in
- io_install_fixed_file()
-Message-Id: <173029378597.7840.16771277924370009156.b4-ty@kernel.dk>
-Date: Wed, 30 Oct 2024 07:09:45 -0600
+        Wed, 30 Oct 2024 06:14:16 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] wifi: rtw89: 8852a: remove redundant else statement
+Date: Wed, 30 Oct 2024 13:14:16 +0000
+Message-Id: <20241030131416.3091954-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,24 +67,30 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
+The cascaded if statements covers all 16 bit values in the comparisons
+of dgain and the last else statement is not reachable and hence
+dead code. Remove it.
 
-On Wed, 30 Oct 2024 12:54:52 +0300, Dan Carpenter wrote:
-> The io_rsrc_node_alloc() function returns NULL on error, it doesn't
-> return error pointers.  Update the error checking to match.
-> 
-> 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Applied, thanks!
-
-[1/1] io_uring/rsrc: Fix an IS_ERR() vs NULL bug in io_install_fixed_file()
-      commit: 9b79509ce43370ceaf582bbf752aaeee9d40c9e0
-
-Best regards,
+diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
+index 9db8713ac99b..f3568c4d0af6 100644
+--- a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
++++ b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
+@@ -2248,8 +2248,6 @@ static s8 _dpk_dgain_mapping(struct rtw89_dev *rtwdev, u16 dgain)
+ 		offset = -9;
+ 	else if (dgain <= 0x155)
+ 		offset = -12;
+-	else
+-		offset = 0x0;
+ 
+ 	return offset;
+ }
 -- 
-Jens Axboe
-
-
+2.39.5
 
