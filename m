@@ -1,64 +1,67 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE3E1E1C2B;
-	Wed, 30 Oct 2024 10:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673EF1E9066
+	for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 13:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730283989; cv=none; b=SqgnhD7+0oiQSGcfo0p7SSnrLXPAx6mLZd30iebjlmD/8xaU346UFlzKkUizMiKqd6Sq1MYeZ7RCHcbdmeJDjuSezCc+V5zgSVsfIe8/tmg6uomhZOUorFAEhsPCs0prY3sLIJS3gEaquwCf46cK0qlHNVFMbu1lwhcSGyKSvrs=
+	t=1730293792; cv=none; b=oCqhA9UwazVjdX6Kh6M76uQgBqk/K+yLr5AtVT6Uxr/TSOKCHsMoLvSL4o38ACqyK2ZguhP/1do7FCQXrzE3LM4c/ABnBhbzCWz84VYgi2Ml8PrmnCmFu5pFlURC0W+JDMIoK46DEd14gaiG/k+lmlDRXilB3chMaTkQqtRYmWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730283989; c=relaxed/simple;
-	bh=KZxrHt9CYnQJFKvKowHqw9Jfy90y1ljtj4x03RBuQkA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IGMjSoQcWlH3G7lG6TNIFqi0RiCEqseP2p+GURu02fNV8RiK09py3WK0UgSjZWGFK8z9k1NPoVsHPqLzEcyuL8JnHaq3Pvz8dJynQcR4N6BZ6yfbJwo7IvmKxRtg0/oGrLALR6flmz5s59TWmSCsPql0iQ6wpRHV+WisGNqk7xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1GLVbga; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730293792; c=relaxed/simple;
+	bh=E5OwLTPy54ufFGgeBpt5ox7GUyM51fdd+bAxUQchzFg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XnFgGNPxnSYFMMW7H+I9Q4CicW1ORO7Spsllsw1Qj/MNpof/CjgG+apCXtSll/k85gJAZH116oNEHh4GjFmvFv3Iu456dv4St8wJghhqnmzQhSUjDPK7dJKmLoITX8JmQOhNuuLmSu5cDiXGwEOD9SXjS7gdwOs11SHtNVDRZ1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=hwMwd1xA; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1GLVbga"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d51055097so4080644f8f.3;
-        Wed, 30 Oct 2024 03:26:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="hwMwd1xA"
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-8377fd760b0so247091339f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 06:09:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730283985; x=1730888785; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K7IHw96pJSceCRXSurQsDRafKcFmCLrbbLG2f0iuwx0=;
-        b=B1GLVbga6sbPNl2goWQ0eTSL8Isfk0lAzUXwE9tBQcAFlzYBS9MeGiKK5SV/FIIfKb
-         FwfcPfez8yqlT1Cm6aysqVG/b9o1l1V7/29iSjruL5eVN5/IDAiMVchkY8ieWNXAnEmu
-         IkLvxSc9LzSeJehLmpHB1rF+DjHF9HiUnfQfs3auLOSIKdHzYzlrtSgdJWnk/4xmm9Iw
-         u5NWg1er+NCKCr4vKrv1nXncIjhObLIFE+sipkph5vduYdrAXDtTxUhl13JM2RxoJQv8
-         hmhIHifKHBNk9IrA+RU48fuL+fdkzMOhGG7CLEPvUX1ZAPnNQbCRmB9olVNhskLDXd53
-         chOQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1730293788; x=1730898588; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LAS1y4kZ27f1rr18cg6s15oqwDD8HYKBoo6u8v38O4g=;
+        b=hwMwd1xAdjjzsa2bcepYVHhaKoyG6zIXaC0BNxmuQX1BrBMYhPWZk19ohypDhvh6d3
+         UGwW02p7ozyNSltuYAp2RVuu85PVPWiax5vrjs1opSRgisRwdk78haM5usLhXhQZQVrz
+         1AzIIG+u7TAcCOLYR4ZdeeC7H+SR/O2tU6Lt556LvBVKZwrJSvS/X6fex6Y3GFb9MXpM
+         EQb9b6vsOnuGlHW2Lzyp7i2OEvVUdbyEJpW63gq6T63AVaHrFr2hukCaKwnwS24UKGl3
+         3W7n/CJZpbowROnIgg0asRJ4qfzzLQKuG85FTpd1WcVBtic+5R4tYQBoOQCT5b5xsjZW
+         nJVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730283985; x=1730888785;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K7IHw96pJSceCRXSurQsDRafKcFmCLrbbLG2f0iuwx0=;
-        b=IbY1BwVsLz9noEtqsYKTj15kjxKQ3P6tx8/DRWW2ZWrAVyWi2n6uZEfAEKuW3JpMv4
-         vwgJCWZLOipm1siViVrmhx/YSmPwlosCSZYHG8pwSfRyv3DARsy11OBgfi8TcTJPYsEm
-         xdRMx5Ncj+dd9kKcu8Xxql4ndsUTOsisTmZ3eRLpPhyUX4eP1FDjn1rrRpgPuQgidOEV
-         u1gZATlmR/HuKyzARlwqvidBfOLZvs2HJxsEGelUkS0lh4MB4AeTg6W9LJz43K9gNvnn
-         ZH7TsoL6mm/EhCyG2j36vYkjTkH9u5frCTDJV3YbCik+J7ctzSERWXfzOkpbuMR/Ru8O
-         xyyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh6yEqNVeZUxvmIA8baAYe4FwQ1/yg/1nCmyGHMVHuuu3LGkyLxYlP1lyDtIgEvBVJRanmozopgt+XgpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7umMGwwqW32oEl1z0NPfNp7qmTvgQN/apr8U5PGZ2a6JwgDuW
-	LFkYsMIDByhfYeLOLzP0DH3ep3UEsIG9YnnCDzm3lI6JaxjRlbVyjpsUg5w3
-X-Google-Smtp-Source: AGHT+IEsSQn2lZf939G8zecVmAyRk+7lmNeIiSQV0fgQYc2Uq2X5T2UTvVmvgUGq+bfIhy02aNc+xQ==
-X-Received: by 2002:adf:ebc7:0:b0:37c:fde2:93b6 with SMTP id ffacd0b85a97d-380610f4419mr10091913f8f.11.1730283985298;
-        Wed, 30 Oct 2024 03:26:25 -0700 (PDT)
-Received: from localhost ([194.120.133.34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b479ffsm14978666f8f.49.2024.10.30.03.26.24
+        d=1e100.net; s=20230601; t=1730293788; x=1730898588;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LAS1y4kZ27f1rr18cg6s15oqwDD8HYKBoo6u8v38O4g=;
+        b=B4pf/NfzuOE/gRRS2O+CaX8CjX03a5S9+YO3R7rZzwUz2quyRZpagHO1wHKzEqNdGx
+         0CyGPVzd1H0U0FCsLX+tlmarVRiHSuOvJMnjbbtlRc9Q0N0dK1wNRFtZp1l5bACtJPAZ
+         ++bXCz2dCrTkbfRN4NzMAu7L6kUvIzASIx7xygoaX3olTPXiIkNKxsf6zV+Nlbn03fM7
+         JvWL4TcuaLEpG65RsCNIfNZpyg0qAN7xouBFsGbfYpL66ntOqsB08ha2F7UfxhhyCUuq
+         gNi/+zSOpmLW1tBj5XaRQUuRahPpHZ6WCTiJ9AUd4vCTDnHFVAzi4F9lkKr/7G81iVwQ
+         i/oA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/sbxiMwKf20oWMSeEBV0vZd/nxyOTeF3srOzBRnuptZwS4fRV1VTmW/r6X68iHnCI9qjFI/lSy30zt8+mDNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN3n4HV6B3BwVfi4kpQE29b9/Fma2lSZB7KSmNRhtHOFyRNB2P
+	vMqxK4EoCR+E6YzQUJB/cPV54pjqksQ+MvBJfP9SmJdnCro5MmcXK20oztqv6hM=
+X-Google-Smtp-Source: AGHT+IENNDyNNZGII1nL/NaaQ0kx9gLki/JevI1ijapsM9JD9CCx62rACXRjzrtMV0m6Zp+z0JciFA==
+X-Received: by 2002:a05:6602:1656:b0:834:d7b6:4fea with SMTP id ca18e2360f4ac-83b1c3e9fcemr1284626039f.6.1730293788122;
+        Wed, 30 Oct 2024 06:09:48 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc72751298sm2872855173.91.2024.10.30.06.09.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 03:26:24 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Guenter Roeck <linux@roeck-us.net>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] docs: ABI: Fix spelling mistake in pretimeout_avaialable_governors
-Date: Wed, 30 Oct 2024 10:26:24 +0000
-Message-Id: <20241030102624.3085369-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Wed, 30 Oct 2024 06:09:47 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <70879312-810a-49ce-aba3-fdf7f902a477@stanley.mountain>
+References: <70879312-810a-49ce-aba3-fdf7f902a477@stanley.mountain>
+Subject: Re: [PATCH next] io_uring/rsrc: fix error code in
+ io_clone_buffers()
+Message-Id: <173029378724.7840.5463253318064416297.b4-ty@kernel.dk>
+Date: Wed, 30 Oct 2024 07:09:47 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -66,29 +69,23 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-There is a spelling mistake, pretimeout_avaialable_governors should
-be pretimeout_available_governors. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- Documentation/ABI/testing/sysfs-class-watchdog | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 30 Oct 2024 12:55:06 +0300, Dan Carpenter wrote:
+> Return -ENOMEM if the allocation fails.  Don't return success.
+> 
+> 
 
-diff --git a/Documentation/ABI/testing/sysfs-class-watchdog b/Documentation/ABI/testing/sysfs-class-watchdog
-index 94fb74615951..70eabccf0557 100644
---- a/Documentation/ABI/testing/sysfs-class-watchdog
-+++ b/Documentation/ABI/testing/sysfs-class-watchdog
-@@ -76,7 +76,7 @@ Description:
- 		timeout when the pretimeout interrupt is delivered.  Pretimeout
- 		is an optional feature.
- 
--What:		/sys/class/watchdog/watchdogn/pretimeout_avaialable_governors
-+What:		/sys/class/watchdog/watchdogn/pretimeout_available_governors
- Date:		February 2017
- Contact:	Wim Van Sebroeck <wim@iguana.be>
- Description:
+Applied, thanks!
+
+[1/1] io_uring/rsrc: fix error code in io_clone_buffers()
+      commit: 0f576012ae2ff08009ce91e2294832e2b88aba06
+
+Best regards,
 -- 
-2.39.5
+Jens Axboe
+
+
 
