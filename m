@@ -1,96 +1,99 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEE01E493C
-	for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 09:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECA11990CD;
+	Wed, 30 Oct 2024 10:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730282114; cv=none; b=Pb9MyuOFCsHJqqfsAJ02QpKJs5rx4n2Nc9wt9cqVoTfZeY0Rm/p1aCj4/zYrsyQpH3JAbb8P2pONlqP81mTUABkHWRXJf6dSqxGEUfJ59lPaghmjUO9BFQk0eCmUSnpG/FpgQiavQjP+VWMgfME6w/1MgzOmuyrmBOf+KIeIMcQ=
+	t=1730283754; cv=none; b=I6oRRFDCStR4zGbgFIK2vhDmROwUJX/6v3xbFmmEFaVPW+MGjFD/5jj++3LmJ+N2pUsKWVpl7dlsRYYFBy5ubqnjiVtwEhqOvz6icz/w3kfFBHKNgbopvay+sAw6UOpgQq3OAYpQFYwup8boY6W1KKDejRFZLLfvcOd33eE0GMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730282114; c=relaxed/simple;
-	bh=QX1c2rnUJdAFC2RHAlIPCaiJEIHCe919jerx2/vD1G4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EcEUANID+CqYtmgprpuq+EymrqFsqnqby0C4t1jmXpDt1bDAW7CI4T9DIFwsO/s/YjJTxPQkjZNQSCWfQsuXs/FQF4z+stg5eDAynDKIoWtOSnl4VrdZzAA+DI46ME3g1qlZ6E7WXSm2exVes2yxIDctu0s+/0XHAgBN0+/Fb5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XEr9aXMt; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730283754; c=relaxed/simple;
+	bh=4fT801tnpCU5ccrvSwjjjBp81I2/ME0Fo9DErJwwTfg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=KuHtjuhtM9cwvwO+VdLDSn7T+axBWy3kVI3j2zD6NNjN+3k6iSFa/d9rr1+B734Xv4g7PIMKGPPOG8OPfZeIMvnUzfVuTUXuZkxgGou03fm6juo2tvgimi7NyUEWu4p3ai25qnWwWXRU6tdSBjjv7hYGkJ28bCmgmuS7RjO2G8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VbRIkqMH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEr9aXMt"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c97c7852e8so9051597a12.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 02:55:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VbRIkqMH"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so57969275e9.0;
+        Wed, 30 Oct 2024 03:22:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730282111; x=1730886911; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=myhzYHHZOsBi8fssbTItbk4eRlkhy/GUThFWV76ORgo=;
-        b=XEr9aXMtYG5q9YBatK1/E+t+YawsLjbeZgwOOsWlyh1pPu3yTNp9EFnOzyTkRVFH3o
-         H769bXEZ7ErlVvhYXe7HnFTqOaPm+ulB5fGcjuNuwDHq9tzJuVoKedvj8IUIBJjUPeAM
-         FOhb+RjirunhUrwaXR7eXOUJcNs9Zi0J0KK/Fif0r3FgdDwFSHhtGVP/VaM5jp9/nO/W
-         +KF1N2rR9JK7Edr/BKfeQQ4s0jJPA7l9YXubI8pksOWv/hwjNgIKNCz1R8+q4hXEqh8G
-         QKn/iBm8apB2iT+sSr/DVa2tc7mCI1v6UjNPbzNCLEKVcxW4XwRyKyyx5RpzAha3aKG6
-         Yr+g==
+        d=gmail.com; s=20230601; t=1730283751; x=1730888551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l/cqopELy2+eorysxMacWsOMH8qMdYy0akIQnwzx3HY=;
+        b=VbRIkqMHQuV9FJOkojzs726bcNPqdfIj1JM2197SLEFP1OCyVQ2sl+p/dsd/3/Prdy
+         KZxXN0s4rmwxuytjZDnRN6WeoNmx8H+vGEN9BSpwxUoSkahKzzpsIs4sASNWGa8eR0QY
+         tEpk83HA7MuUb9fiHxbogdfg/sqsTleb6pyxkeOxOnYQKzoAoTN1tzghc3tEiP9Txn5V
+         WZdQ4eBmPoEy1N9T2BHmiO5evS+MLbGghZGqxQkMnxDdIFoPdIPh01yoGQaaw0OQpIhd
+         GeEW8luZsociph/8JjcF6VyKAYncmps0CknwvGIm7d0cdmqJjMrjKzsfjWRes61DuT3j
+         khUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730282111; x=1730886911;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=myhzYHHZOsBi8fssbTItbk4eRlkhy/GUThFWV76ORgo=;
-        b=wdvdbUrnwvOLkJU4pDQxKohiE66QrvPI9P+oMYYmbjHS4LbRfhpKTw8YOyk5PbLInq
-         fMTYBc9jXA9QSDzMsU7sbsqLR9ahKvwuOgT+GzQR6UiA/edky9BE9d0NT+jWfpaeINZH
-         0H1VZSSkki/q+a+bwJ7NlCR6uA1DFfCxWLdJHVHtzwHtWojAg/NCmZU87etrsWg3KghO
-         Ix9NMxWen/NOaSVg9/0C6Gtv0oRH/gW6VJfyB47UOjipjhCQ4B96O+0YFUkIwkhpyPax
-         hv/YTVkSU8s1nL2yU0Gu8qzjxxRAYrL8Pa4VAy0z8lsNbSxVUibyIjHqicWKdgnHFPS6
-         m4AA==
-X-Forwarded-Encrypted: i=1; AJvYcCWingbaDAdbQzLR/HFrNlasf/qEyBU9nUpJIprsehH1UHGajG05KTlxILmiHAARCsjTjdoefUxjbpV5rVhkj0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKYO0WCTN6UZ7W4ZRQH8EBl499QcLD2k3c51KdRX63OBkZwwcI
-	dlwFY3cpNFBS5PYLh0PLilTLemOThH8QMD68+3ktJRnpRTEGxe4VWQa5KmZoeqI=
-X-Google-Smtp-Source: AGHT+IHsaH3qIoU/LqTqY0qV1GT3CRkq1Y3kFNvfZmWxV/jzT7lhY9M/Jf8d7CNzzM4kKfxO9/cmHg==
-X-Received: by 2002:a17:907:970a:b0:a9d:e1d6:42a1 with SMTP id a640c23a62f3a-a9de5d9105bmr1338783366b.30.1730282111023;
-        Wed, 30 Oct 2024 02:55:11 -0700 (PDT)
-Received: from localhost ([41.210.143.198])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b928cesm14995506f8f.102.2024.10.30.02.55.10
+        d=1e100.net; s=20230601; t=1730283751; x=1730888551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l/cqopELy2+eorysxMacWsOMH8qMdYy0akIQnwzx3HY=;
+        b=AFueLEJgk0GzP6lMNjXGBN4taiEZyvk+fmYXf8ncBb78GaiCTTPrfjSeEHJOumB7yk
+         pNos6xGg8oKn+J+/E6Z1KD6IlBcmclvzKHwvms0EH/Wbx3+tkuuCcEih9DPli9dE1uOV
+         dIazjClZjmGOUzpvNgsPFxWubPg/1tHQZQ5CoGx87NMwqRq4ZD6MuLPyCoW7MQiIHGiK
+         LCP4glqlm3UJFDEnPkRvuX8szUu2XDUAJ4nKHcLA0pmRtnvNVOrR+YSxsYSn42TR6bPB
+         CVdwO86J+R0+sQP2Cy80wv8Pjc3PwYEmRJKEvDYr4xBokIjG6poDGB2TkdrwXxcF3n6r
+         J1Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEBufrHREfgjoCXYvHueWkl/jak3d/Vshuoaw1GbXnKZAVIwqE1VCjv3tH5gabjgp5n15tKybFxZkXf6md@vger.kernel.org, AJvYcCUOdZgJRtV6FCef69Jn0HGXY2yIUiwhvs7ZahLxSLYHCTNG5tS8Jm5lhXmTyKvWxin7r61jm4yUPnpjcer44GBB@vger.kernel.org, AJvYcCUTHcxoCAQ0IMBzRnnQ092MxPB9zWYN3JMjZ/bdxs7RPVNiY6HKQUmFsWcp6K3thbtWtrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUK3bibvvxgYIjSCGDn3Ui0qiBI2NvFh/yGWQvyURoRqFVUVCi
+	sBZFdTzvYt9EplrqMxrHzHntEK+kruZABrCkps9NDO/vumvq5xBH
+X-Google-Smtp-Source: AGHT+IGfo43UJNvQPjITUSCIJAK9Ze0chz0K2mNutQBnGmnznl2CM1ZwI7KvASW32glKedi/p8XYJw==
+X-Received: by 2002:a05:600c:1992:b0:431:1d0a:38e2 with SMTP id 5b1f17b1804b1-4319acb1d82mr133855645e9.21.1730283750464;
+        Wed, 30 Oct 2024 03:22:30 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9ca818sm16810685e9.40.2024.10.30.03.22.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 02:55:10 -0700 (PDT)
-Date: Wed, 30 Oct 2024 12:55:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] io_uring/rsrc: fix error code in io_clone_buffers()
-Message-ID: <70879312-810a-49ce-aba3-fdf7f902a477@stanley.mountain>
+        Wed, 30 Oct 2024 03:22:30 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] KVM: s390: selftests: Fix spelling mistake "avaialable" -> "available"
+Date: Wed, 30 Oct 2024 10:22:29 +0000
+Message-Id: <20241030102229.3085137-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Return -ENOMEM if the allocation fails.  Don't return success.
+There is a spelling mistake in a ksft_test_result_skip message. Fix it.
 
-Fixes: c0b9c5097cbc ("io_uring/rsrc: unify file and buffer resource tables")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- io_uring/rsrc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/io_uring/rsrc.c b/io_uring/rsrc.c
-index 784fd1ca6031..f317f39e8b95 100644
---- a/io_uring/rsrc.c
-+++ b/io_uring/rsrc.c
-@@ -977,8 +977,10 @@ static int io_clone_buffers(struct io_ring_ctx *ctx, struct io_ring_ctx *src_ctx
- 			dst_node = rsrc_empty_node;
+diff --git a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+index 222ba1cc3cac..34e0ceceaa74 100644
+--- a/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
++++ b/tools/testing/selftests/kvm/s390x/cpumodel_subfuncs_test.c
+@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
+ 			ksft_test_result_pass("%s\n", testlist[idx].subfunc_name);
+ 			free(array);
  		} else {
- 			dst_node = io_rsrc_node_alloc(ctx, &data, index, IORING_RSRC_BUFFER);
--			if (!dst_node)
-+			if (!dst_node) {
-+				ret = -ENOMEM;
- 				goto out_put_free;
-+			}
- 
- 			refcount_inc(&src_node->buf->refs);
- 			dst_node->buf = src_node->buf;
+-			ksft_test_result_skip("%s feature is not avaialable\n",
++			ksft_test_result_skip("%s feature is not available\n",
+ 					      testlist[idx].subfunc_name);
+ 		}
+ 	}
 -- 
-2.45.2
+2.39.5
 
