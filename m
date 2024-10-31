@@ -1,95 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906AF187864;
-	Thu, 31 Oct 2024 12:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC106156236;
+	Thu, 31 Oct 2024 13:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730376010; cv=none; b=ao+HxEOWurhwdAqsqvZfx43YZhN0zX3gMaT1lqf+RNCOd3Nj81v0iEfZbDOyL2m81qUgGMdpVaBusI6EjqfqtTbE6M93xxBpYNkd5GMMzlQGXKHRYUzu9GBI2dGpDDdVGYlxcvMnOZj3FyVLv59duwESLv85DYPobkiDtjAXVcg=
+	t=1730380029; cv=none; b=tdd2fm1Ir/3rhDOth4OcMjebGXt8doSeXwO3Nxi52lXxGVEvYirpHQVbtXTmAgn0hgWHKXi1uFSa1sWTJ63yfUfqJ6z6arrykckxAbAwAL3DxgEMC+utJYqmrrxH90aTYIi4r/Wn92cFFHP3zrxUbanaJjn2wvKIpxaQGx1YBrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730376010; c=relaxed/simple;
-	bh=nou37BOQzbySASGNLYCaFCziKZqaMSyL5JRKXAa47uE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Im3Lp/vPu1nzLsSVhv5lEvMJ1HRCqT9OPnF7Uu6tGz8wgE6jNWr8Ii5cLz3PykeRDVZD8jUA116/8y6e5818U+jXrhzDmrmkWoTHdbVEZ/sp3n5KMc/rHAqyNcWgdknmHjMA6KLnOOBLhQ4zqoEp3ZBY3jX58JwuLTfTioFdH1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMg3QYP+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730380029; c=relaxed/simple;
+	bh=Tim3WVZenUhdKc8y4bMjs9f1hfD1ZanodE9C+MQsCJc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aP8WmoyAvPinrFY39WVWqqWEoLYT052pylZtIPvXG2VcYOFQApbb8YSm2o382dF16e0HjMRTLAU2hKHnR8vT8v2E/PLjZDlBcdiDgVON49nVUj2L3aOxxpbeUu9vRpnQSdZGQZyTMIUYyMX008MIU2hI3uFeQS0gW+XEIUrCxbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FmThJNlW; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMg3QYP+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218BBC4E677;
-	Thu, 31 Oct 2024 12:00:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730376010;
-	bh=nou37BOQzbySASGNLYCaFCziKZqaMSyL5JRKXAa47uE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TMg3QYP+VUfmMPSuvGSxlOm4H14Fpt7Ka91hdnvsK4m2KXF38Jgt6MeigVk+SvKl+
-	 /3UQIbdVyNSry67eUuD/uVNWfYdaX7xNN9OqMCYa2TDvXZcgZoHQ+5loMQAy69AIKG
-	 4vYm64OnL/oDXA09+psR7t6XQ1pGqhhY1AkXmTB017rA4jKXteGcyYRFU+TVA6zqXP
-	 6ASGvCzFrg5+KMteYRjgqSaumHkGhsodx07YCM9rOIRzjsqUs9TM9m5vOyqrw22Dci
-	 CN825ohv+NsP2ZyPMqq9PILxl7XbxZhx9hMGYQ7XBT4tDtJAVIqvOhUHn01vaz1mEy
-	 qVNMefbOI22Zg==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c9850ae22eso1168290a12.3;
-        Thu, 31 Oct 2024 05:00:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUzhQIbLKgfLuwZF40S10xjY93eqA+v+kzuHEWcwAtShXjPzWJF55+kCxS/Q9vGOfzlOwqntX5SJ+AHTKc=@vger.kernel.org, AJvYcCXCqT3GsEu/mU8/7KIsavU4Fz12t/evvxaHto0X7332QxUz/4KojB0eZrB0bCsDYgIM5fjtfV1X08IgdzJyC4o=@vger.kernel.org, AJvYcCXnTAiUdPJqO0SzEqggkFS8WjhGbpAZfyKBqS632hjdk1w0V5ORgkmhmLQGK6XKYiKdEk1J+M2FiHYHlemB@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeFLvb5htOP6tiaPErzuHrzZdsE87zzwsGyVAclWuNEhowzL6D
-	aXZlQURu/Hbe5WxDWcdfPuZJPBQv5yAblPFeo8wtXlH4XsAWogAK6T3iFVf786zbyfv+CpLVo9T
-	HV+EK1NK3Vabjp1bwZq7GllNkK7I=
-X-Google-Smtp-Source: AGHT+IGkMFnaL45/nN9wPbMF4jHFeeRgokmXakwq7lS7GEPc/iuMPTvwo2RvecRGOcX95DQ8hI7VURywEVYR/6E/6/g=
-X-Received: by 2002:a17:907:9802:b0:a9a:422:ec7 with SMTP id
- a640c23a62f3a-a9de5f6e2f9mr1878869866b.32.1730376008645; Thu, 31 Oct 2024
- 05:00:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FmThJNlW"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d47b38336so727565f8f.3;
+        Thu, 31 Oct 2024 06:07:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730380026; x=1730984826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPzvubR4QyGZSA0yTPPpltAG7w4LTcpEG3Z5c7g1ktY=;
+        b=FmThJNlWRKBhLyRztIdRN9lK3XdRW7Oa98IvCaObLaZwkjrv5KHK8XTuWFxoZ0581A
+         InkH36vwgb9w0Gzgaqp0vTc1U6WiB9X613nceI5mxYQc9mBr/uyyxgYtS/tgR63280ye
+         FVh3ToPHJpeYeL4KvYrDAypmKS3a+qYsw3E0hZ52MIrLhCrSq0qQvP+iFwRwDmTLTpev
+         HY78PCmughEsHIlnRaKLdstgSX+B/V2JA/7AT1xA5xGrqt0VuC0BgL/wGdlSWuU9/Agr
+         DG4bVhlsIkrd3RMBueGKKiTlxNfouwRkH6vofwSJCg8Q8ho2pA0HhWqtYBCziNbHp32d
+         vdhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730380026; x=1730984826;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DPzvubR4QyGZSA0yTPPpltAG7w4LTcpEG3Z5c7g1ktY=;
+        b=lPTwdAhCjMJVDF7YzTDZTeufeU6aV1aaBZfLVklFjf7gesnZ40wsDqo0y4cpm5AtYi
+         SXdWoa28YblWij0pAohGSNLIPgqssjvepKg9//HUfbZLpJZlAUMqukSY7ZBaRbE7/5jv
+         QAiEziX6nnK8YiDUY94CJxDSuYcbUDTjhdyMBXusW4q3KxW15z69onbGIfDSCe2/HoCI
+         vd7WrUlO8cfgS5HsMc2XtgUlkxY+aIlCRq+Uy5XRotQ6SLH8mnnLSR4RyTREkMu7bmms
+         GJ0cuAFSBjkk5EYDDTdswLNVi3DTlwCZKJBsCNPuTSnS8x0gcqC3ArRaOEJOhlcyQ4pZ
+         0cug==
+X-Forwarded-Encrypted: i=1; AJvYcCW1A5NfnNtsMVKvjOm++4iov2AYVvJbI8hNqUqOcURX+PIfWvUPAnED+lJLGT1ZEefYI9uAPqT0gZMIp7wJ@vger.kernel.org, AJvYcCW74zzBNgd3wEZitU+lh0B7hyr/8K/alf+h1y2amKTA+3fRm+CmWjHZD06YC+8LZpjqjSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYyonKontTkAWKAHjmhFGveTzCL7IDpokBcbmIp/satWGSfe45
+	Mc3hPouYnFLSlRdILMguqqEw2D/3/nw8X/a6yG/5KDP22cX/LyL/asGJG/gn
+X-Google-Smtp-Source: AGHT+IFElO4Cc0U9XUZuJiTtwbGUcA6scYrGO9UPqoA1K8bLXgwwpREf4NjvR7tvBAMxq3DPEs2bbw==
+X-Received: by 2002:adf:b30d:0:b0:378:e8cd:71fa with SMTP id ffacd0b85a97d-380612008fdmr12704371f8f.39.1730380025853;
+        Thu, 31 Oct 2024 06:07:05 -0700 (PDT)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e741dsm2064965f8f.50.2024.10.31.06.07.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 06:07:05 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] bpf: replace redundant |= operation with assignmen
+Date: Thu, 31 Oct 2024 13:07:04 +0000
+Message-Id: <20241031130704.3249126-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8a26ccf8-707e-4004-8077-0d8b56501d83@stanley.mountain>
-In-Reply-To: <8a26ccf8-707e-4004-8077-0d8b56501d83@stanley.mountain>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Thu, 31 Oct 2024 11:59:31 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H7OShWGfbWJgZDhT37O9KRm4d=ANgo2+SLTjpWq13qj8Q@mail.gmail.com>
-Message-ID: <CAL3q7H7OShWGfbWJgZDhT37O9KRm4d=ANgo2+SLTjpWq13qj8Q@mail.gmail.com>
-Subject: Re: [PATCH next] btrfs: fix error code in add_delayed_ref_head()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
-	David Sterba <dsterba@suse.com>, Boris Burkov <boris@bur.io>, Qu Wenruo <wqu@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 7:23=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> xa_err errors are equivalent to "error_code * 4 + 2".  We want to return
-> error pointers here so we can't just cast them back and forth.  Use
-> xa_err() to do the conversion.
->
-> Fixes: 6d50990e6be2 ("btrfs: track delayed ref heads in an xarray")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+The operation msk |= ~0ULL contains a redundant bit-wise or operation
+since all the bits are going to be set to 1, so replace this with
+an assignment since this is more optimal and probably clearer too.
 
-Thanks, since it's not yet in Linus' tree and we're on time, I'll fold
-it to the original patch.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ kernel/bpf/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  fs/btrfs/delayed-ref.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
-> index 1f97e1e5c66c..012fce255866 100644
-> --- a/fs/btrfs/delayed-ref.c
-> +++ b/fs/btrfs/delayed-ref.c
-> @@ -848,7 +848,7 @@ add_delayed_ref_head(struct btrfs_trans_handle *trans=
-,
->                 if (xa_is_err(existing)) {
->                         /* Memory was preallocated by the caller. */
->                         ASSERT(xa_err(existing) !=3D -ENOMEM);
-> -                       return ERR_CAST(existing);
-> +                       return ERR_PTR(xa_err(existing));
->                 } else if (WARN_ON(existing)) {
->                         /*
->                          * Shouldn't happen we just did a lookup before u=
-nder
-> --
-> 2.45.2
->
->
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index 9aaf5124648b..fea07e12601f 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -914,7 +914,7 @@ static int bpf_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		str = param->string;
+ 		while ((p = strsep(&str, ":"))) {
+ 			if (strcmp(p, "any") == 0) {
+-				msk |= ~0ULL;
++				msk = ~0ULL;
+ 			} else if (find_btf_enum_const(info.btf, enum_t, enum_pfx, p, &val)) {
+ 				msk |= 1ULL << val;
+ 			} else {
+-- 
+2.39.5
+
