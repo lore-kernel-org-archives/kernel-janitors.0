@@ -1,118 +1,132 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5D2193427
-	for <kernel-janitors@vger.kernel.org>; Thu, 31 Oct 2024 09:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A8A195F28;
+	Thu, 31 Oct 2024 10:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730368117; cv=none; b=CZUurs45wtMmiqln2ota/QsdOh+E/faEPVbqTQoo51YTe2ZeWZO1QZjfQ0xBqzgCOzVAEYjj0dnC8a71ULAAGqF5SWKzrnjHw9O/E+A+tobq9gK2UXjIutPkTSM69Lg4RIkSagvtnLTxrQnMeSWniKA+OlmzbLLfIdxJdFitUnk=
+	t=1730369979; cv=none; b=HNTGn8pcb5c1L+hdkm8BZd2ZBQ7CbeMlcLcHuXu1BMxRpAY4u5/FuQE+bYuzuyPMamdbqCmjSH/o0yzk/YBq4+BeJGNKskXNVVBJ9kaAE4DL+uDW6ji2wnh84GdGdP0jh1H1NaPxSEycyCYXTVh02bt4/vZUCJ4GTCBP24s/GdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730368117; c=relaxed/simple;
-	bh=hFyuHVXE7Cz0qm3Tp1AuH1uPL3q7XxKfNijEB1y1rRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ubMRDj2c+cLGp59dBN2928aXrI7+NaFpIAwlV3qfcSJ3+1q6XJI9MLg+BVrUD/sM2AUiZk7qoV0+x0d+e4PPCBp+pwQiot8ONB542e7sAqSlywl9+I9NR3MR+3eZooub4PRhSK7S6DxDFaIHyO6x25tdgUD4z690CQPoity20I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FAzIx1n0; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730369979; c=relaxed/simple;
+	bh=HKRz/SHmEjtKuZrR+qUEEamtgN87CawYOO8zIncd/I0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=idkwoT7qCaMiSayP3T6qyIPY9aiEZVc7jnodpEKc9/bFmdRFcSpFaesvgDZqImoJVRWXD0UmThIJ/TFKC+XewgCaR4mPbJvEGb0FdVD8isShz++wPNWymFyFc4iU3CxJCWFES5rcYgtIh60OAhcDmgmjuIJfcGj9Xsvf3/ilBoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+H/9k2e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FAzIx1n0"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso493358f8f.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 31 Oct 2024 02:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730368114; x=1730972914; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aa5olyViLFOojnVkbBw9OEdbllf8/WSVMeqMqmVU3qY=;
-        b=FAzIx1n0LalqJbEpPVEW6D8y3W+Qm0r/LFHg3iaat9dhHTnT7yjUs1JxMtgwjJ+SSS
-         f0FF8aKvjcuXXsZzIPTUWZD89/ctTY0GJr9OCenu2RMi5AzxGmsBgtSDVvRHGdvH9UAe
-         K1hZItVRNrNgM9/bY8y2D/IALOWqJ3Qh64VehHAsLeRR3ne6fG4ZompxRAqz5H+acAnU
-         Retk+MlXtu8wiJovnF1QACeff198pAnZQvg1xf1dsnM5IHYe2bnMdAKGUv8Mmkl2Fbmm
-         zDb7H9q9TrFb2kGTdjh8JcOCdYUgdwtPRuWvsglBZeIBsHhjYE0BX5MtGom+kuPCu1wC
-         tfTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730368114; x=1730972914;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aa5olyViLFOojnVkbBw9OEdbllf8/WSVMeqMqmVU3qY=;
-        b=DBF0bmthWrIGHf7OQC8bl2RFH9RziEMIUfA0kFCDFXepo9SxO/GRnlIpVHDBr6AeJ9
-         c09Lw/t+5K8BucqTPw7zZQDim+ZIVUlnMD00rh9Lx+lRSmsdcmfoN23avvT9PgzyZ9MC
-         f9ZC/Z5I7njGQ7NJSV9W01NT9xVdoZ+k/jrKwE9QU3sZuEouJ8Fo1ElVlDoSJ/sNcmQi
-         asSoIyjqzrT9PG4SIclJ2Op2VDBS97CmApRvxv+FCvm7g8c+5nl6RP+ZZWr0KcoBw/VH
-         bKfEt85asNATJ6KQsNkgd6O05HM3JTXy7LDdYONKEkk16FFdE6UZJTbtJoTDYvgkFOGb
-         udMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvc3mY37jhJZPUBJ4i+q0JXXc9ehOEruKoUsKCRVScoBI2evVHlUimnfdPM9RifLBkrlaGUW76uJiO7ki9xa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJXpnuzWs5FeRR5JyQnTLRQz1woSa+wKMSTwMX3f053hKAnK5f
-	mVKgvonuJ+rjrfKkuTKb12MQ29+HQhcoSzpsWAS9Zxb0w00NletDI8KR59LaL4/56VzFMHG+FRp
-	L
-X-Google-Smtp-Source: AGHT+IGDxQJ/A5r0ClIpNqfZIzOIlvOQbqpKCuPfpxpKxXQvewn/QL8mRGK7ukGONcoXjVByhTIArA==
-X-Received: by 2002:a5d:5146:0:b0:37d:5496:290c with SMTP id ffacd0b85a97d-380610f255fmr13644733f8f.7.1730368114185;
-        Thu, 31 Oct 2024 02:48:34 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d437bsm1589665f8f.30.2024.10.31.02.48.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2024 02:48:33 -0700 (PDT)
-Date: Thu, 31 Oct 2024 12:48:30 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] USB: serial: io_edgeport: Fix use after free in debug
- printk
-Message-ID: <93490900-d2c6-45e6-b008-8d264e4c11b0@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+H/9k2e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D824C4CEC3;
+	Thu, 31 Oct 2024 10:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730369978;
+	bh=HKRz/SHmEjtKuZrR+qUEEamtgN87CawYOO8zIncd/I0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U+H/9k2e93/q+EILIZXUrtUPAqec5XC9BcY1VEcki8R4h+eMGbMkD9WVSOJNeslvX
+	 JY7hMv+dEx6tbY2eV0dR9hrFwq8ve1s8PhdXMXH8KpDuO6tFuMUitunhaQj5cuGl31
+	 taElyP8FA5DQPVZYi/8SFHg1QcP8S9ZwjVQaP4AbJMwcqFfGVioco5AquLBLsJdVTk
+	 fiegZjM9XLH2r9LHaji+1W6qT+5rfLQbgfnKtiUOtOgowAiB91cJOplkkZhOOfGB+p
+	 Vw7fJ+Ri7xDtmvDJ+o80qZysJpYSSx7AgcJQR309tfBx++7//L7RHXgKYHh7tpXw4p
+	 HI+YnOEJqEkNA==
+Date: Thu, 31 Oct 2024 11:19:33 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
+	Joel Granados <j.granados@samsung.com>
+Subject: Re: [PATCH v2] sysctl: Reduce dput(child) calls in
+ proc_sys_fill_cache()
+Message-ID: <3vjfwmskssuqoqrj6s5l5jlppogttiaqaqu37i7ax56ffo3lbh@lz6zmfjzpe77>
+References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+ <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+ <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
+ <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
+ <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
 
-The "dev_dbg(&urb->dev->dev, ..." which happens after usb_free_urb(urb)
-is a use after free of the "urb" pointer.  Store the "dev" pointer at the
-start of the function to avoid this issue.
+On Wed, Oct 23, 2024 at 05:27:11PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 23 Oct 2024 16:54:59 +0200
 
-Fixes: 984f68683298 ("USB: serial: io_edgeport.c: remove dbg() usage")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: Fix the subsystem prefix and use a "dev" pointer.  It brings the
-style in line with the rest of the file, and it's more future proof in
-case someone adds a new dev_dbg() later.
+Small comment: Remember to send out a new patch-set email in order to
+make it easier for tools like b4.
 
- drivers/usb/serial/io_edgeport.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> Replace two dput(child) calls with one that occurs immediately before
+> the IS_ERR evaluation. This transformation can be performed because
+> dput() gets called regardless of the value returned by IS_ERR(res).
+> 
+> This issue was transformed by using a script for the
+> semantic patch language like the following.
+> <SmPL>
+> @extended_adjustment@
+> expression e, f != { mutex_unlock }, x, y;
+> @@
+> +f(e);
+>  if (...)
+>  {
+>  <+... when != \( e = x \| y(..., &e, ...) \)
+> -   f(e);
+>  ...+>
+>  }
+> -f(e);
+> </SmPL>
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+> 
+> V2:
+> * This update suggestion was rebased on source files of the software
+>   “Linux next-20241023”.
+> 
+> * The change description was adjusted according to the wording preferences
+>   by Joel Granados.
+> 
+> * An SmPL script example was appended.
+> 
+> 
+>  fs/proc/proc_sysctl.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index 9b9dfc450cb3..b277a1ca392e 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
+>  			res = d_splice_alias(inode, child);
+>  			d_lookup_done(child);
+>  			if (unlikely(res)) {
+> -				if (IS_ERR(res)) {
+> -					dput(child);
+> -					return false;
+> -				}
+>  				dput(child);
+> +
+> +				if (IS_ERR(res))
+> +					return false;
+> +
+>  				child = res;
+>  			}
+>  		}
+> --
+> 2.47.0
+> 
 
-diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
-index c7d6b5e3f898..28c71d99e857 100644
---- a/drivers/usb/serial/io_edgeport.c
-+++ b/drivers/usb/serial/io_edgeport.c
-@@ -770,11 +770,12 @@ static void edge_bulk_out_data_callback(struct urb *urb)
- static void edge_bulk_out_cmd_callback(struct urb *urb)
- {
- 	struct edgeport_port *edge_port = urb->context;
-+	struct device *dev = &urb->dev->dev;
- 	int status = urb->status;
- 
- 	atomic_dec(&CmdUrbs);
--	dev_dbg(&urb->dev->dev, "%s - FREE URB %p (outstanding %d)\n",
--		__func__, urb, atomic_read(&CmdUrbs));
-+	dev_dbg(dev, "%s - FREE URB %p (outstanding %d)\n", __func__, urb,
-+		atomic_read(&CmdUrbs));
- 
- 
- 	/* clean up the transfer buffer */
-@@ -784,8 +785,7 @@ static void edge_bulk_out_cmd_callback(struct urb *urb)
- 	usb_free_urb(urb);
- 
- 	if (status) {
--		dev_dbg(&urb->dev->dev,
--			"%s - nonzero write bulk status received: %d\n",
-+		dev_dbg(dev, "%s - nonzero write bulk status received: %d\n",
- 			__func__, status);
- 		return;
- 	}
+This looks good to me. I'll push it to sysctl-next.
+Thx for the patch
+
+Reviewed-by: Joel Granados <joel.granados@kernel.org>
+
+Best
+
 -- 
-2.45.2
 
+Joel Granados
