@@ -1,158 +1,121 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B3D13342F;
-	Thu, 31 Oct 2024 15:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC9F33F7;
+	Thu, 31 Oct 2024 15:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730389404; cv=none; b=n25ai6LxaoripCHQodr7rt/wXlmZzOcK5KnB//hXleqDoSQ1FtshBEVEDSzbF5p7JFs6wpoFTm8KEGMqw1sY3JmVyvWB3KijB9QRC9hTlyeVpXJA3DJAfSbbn4mlCbBiR0lIu8izXNYbQt5vy/Z3gY5221aMeHtKtbDpNJjdKDQ=
+	t=1730390342; cv=none; b=pQMWHIk1hlEy5v8v96Rnq3CX4LXjPpDjmFgj9/EI7M81Khd0udpahj7isc/XAx3ohdlr/PwruAdiPIkiF4pH7eqfR8Sfb756GZ2ctvU5oYJsgtBfFORvW8dY37p2ui78AM1PmSQ0nHLffhbvrVch5Di+NzDO7xlgx5HswDYpUR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730389404; c=relaxed/simple;
-	bh=QIb+KiWW445jTY1jXtXhMes2+kcSRYXHrtlb1c57A/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aq7shM8R6l1SII4bH19EJ1+coBL0G9+NbGmlhDCYS0PsJzCNrbfuyCXmNrWxTZbzJnUexDtwzmjizhJjuW4fTBmv1JzF6cmQbYSxilUduyxWAHilM2K/iCU6/yjPxQ3ybNdKW/k7RT3FpH9Tj8J+hh1Vp8K54nPoxdLySPsLGJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DHxDqkNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCrJBWAr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=DHxDqkNb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCrJBWAr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1730390342; c=relaxed/simple;
+	bh=KVqtJ6+31/7LG0jubAcYGxBoG3ai1OLyPduzkmuaIoQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iQ2xA0SW9aqe9nFhpRbuQPcFMP5dWfG8rRELN4C7rl9TUR4LQ+3qAcCX8594cS24EZnb0UUNEK1bmGeuMIT3yu1tKu/E5fdpXc69CowO31wj3W7i83EknLFYWfsYofoW/3dXYbz5+/K8U1KLu3F0RmD8NHFGyM4u0iHBumvvskU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TS3Batvj; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DHxDqkNb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCrJBWAr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="DHxDqkNb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCrJBWAr"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 153B11FC05;
-	Thu, 31 Oct 2024 15:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730389399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
-	b=DHxDqkNbHxL8nFIB458dOVAhK40c8/5lPlJ9cMLv7Gh2/gfVxUeOo+n7ltlwM/waCPhAaG
-	trX5tptLZ9JKdwNzdNKM0ixt8sqf2UMW7VbOngH88q68/w2c2AzMDzBZVhGWWL4T7d0zEU
-	wEDFQZ5L8B6eTgwUHw8AXu0i23k+jjw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730389399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
-	b=UCrJBWAr6RyYmQCmVFq25CHGbrmwwMLPwBfZ8OWYcAlfAT+5WST/GnMLR8xIVynsQ31fYX
-	ED4OEW+BMLkC13CA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730389399; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
-	b=DHxDqkNbHxL8nFIB458dOVAhK40c8/5lPlJ9cMLv7Gh2/gfVxUeOo+n7ltlwM/waCPhAaG
-	trX5tptLZ9JKdwNzdNKM0ixt8sqf2UMW7VbOngH88q68/w2c2AzMDzBZVhGWWL4T7d0zEU
-	wEDFQZ5L8B6eTgwUHw8AXu0i23k+jjw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730389399;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=92Eib5T2+d4XUT2lN7mLZGH4pQN0PW78HSp3DubOHa0=;
-	b=UCrJBWAr6RyYmQCmVFq25CHGbrmwwMLPwBfZ8OWYcAlfAT+5WST/GnMLR8xIVynsQ31fYX
-	ED4OEW+BMLkC13CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 069FD13A53;
-	Thu, 31 Oct 2024 15:43:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LbKXAZelI2fjJgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 31 Oct 2024 15:43:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B2E57A086F; Thu, 31 Oct 2024 16:43:14 +0100 (CET)
-Date: Thu, 31 Oct 2024 16:43:14 +0100
-From: Jan Kara <jack@suse.cz>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TS3Batvj"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so9203175e9.2;
+        Thu, 31 Oct 2024 08:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730390338; x=1730995138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UgwNFtv7v+HTHeQa2LyIvaRpePXDUo69gSnUNfeHmCM=;
+        b=TS3Batvjdkr9QSGLcJr7NqN+nM686G/mwVgH6vRn0gcpm9G97ooPxsYbxOI3MDePNC
+         K1ANC0glmYeXGb97F0HFme7HHnyHprNSDd38hDZQV8HoqjuXXHn86mbwTsaCPQoMXT8r
+         1jPIC/yltCK5kt1eCOdRQFJnkkyud6S0JQRZhS0ekgJZFFuqXXN7cPUWsv4sgHaFO7ns
+         VbZGnWqT4Hs9f1XjJqE1ZxRGb1fi1NHcl5zBAoVqy95h7nNA+HpupsRqVUvvtyZIjQR/
+         8ji6z0C8TZV0gGE+LAOk4wHs7E+ha3nEYYUcQCE5o7zbpzW9zm70Fw/c4IobOLtQN5Qc
+         AI6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730390338; x=1730995138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UgwNFtv7v+HTHeQa2LyIvaRpePXDUo69gSnUNfeHmCM=;
+        b=S7JJbBqjvAVQ+RyALq1NR9hxAtllIQtZwDZh5xFq9nln84qUewHwpuSZ2XmNfCg4jt
+         En73yLpI84ehxKf2bGY0IFIrMSNIqm/hEvAO8hkGLeehrVM1e5+KpVR/pDBxOKisGFX3
+         u93WkqwXFboSjwyUdz1pOMo/zJ/KM+iucM+T6Ok32F+XwBkYJSHQtR5mLSwrEDmMoODh
+         VZ1I2vp4C33g52I3+AWgpRNR1Ix4uEyOVIExTq5S+c5+JxcKHlCwD2394O38nUgtl8Yk
+         9XRB9HEd2mST31rLmBIyn7Q1jwIMHscrqsCqaebElIZbwNIjLdyK8sgJD4zVE9i/eh38
+         Poeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCHpuDY5sXzyh2t3XZmzrwAFy/4Tao5eImVSTuJIOdS38xmrkYkDJyXREQAdBMIwU0R8wBQY6vFgX2gZ6uShOnEG/NTeqZ@vger.kernel.org, AJvYcCVpSBN6NdwZtKR54f+6TNSHT+/xDdTQZ+hQroSkcJYmxV2nSfKWsHMi6DX7zxDxZMvS9lOYqAR9fopJ59c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwniNFOusgaiCEbwecj2lVKnwjDRHFA/ljEfWSI6So6IRCv7wSn
+	HNFjEMMS8CfGTT1AsOnJUuODW2sx2VDG68KUmoYU7cbv+DsaxBOP
+X-Google-Smtp-Source: AGHT+IGaxUg+BMAR7WuTyNDh1F0SjP7q7ZPR3WHVrYWH4Tl6rULWauDzozYmmm+H4JDnLkKSEFz18w==
+X-Received: by 2002:adf:ea43:0:b0:37d:633a:b361 with SMTP id ffacd0b85a97d-38061206c0cmr15050819f8f.51.1730390338315;
+        Thu, 31 Oct 2024 08:58:58 -0700 (PDT)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c08sm2532758f8f.17.2024.10.31.08.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 08:58:57 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Fan Wu <wufan@kernel.org>,
+	Deven Bowers <deven.desai@linux.microsoft.com>,
+	Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] xattr: remove redundant check on variable err
-Message-ID: <20241031154314.576ksnwaruuqqwq2@quack3>
-References: <20241030180140.3103156-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] scripts: ipe: polgen: remove redundant close and error exit path
+Date: Thu, 31 Oct 2024 15:58:57 +0000
+Message-Id: <20241031155857.3262806-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241030180140.3103156-1-colin.i.king@gmail.com>
-X-Spam-Score: -2.30
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-0.999];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.978];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed 30-10-24 18:01:40, Colin Ian King wrote:
-> Curretly in function generic_listxattr the for_each_xattr_handler loop
-> checks err and will return out of the function if err is non-zero.
-> It's impossible for err to be non-zero at the end of the function where
-> err is checked again for a non-zero value. The final non-zero check is
-> therefore redundant and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Currently if an fopen fails the error exit path is via code that
+checks if fp is not null and closes the file, however, fp is null
+so this check and close is redundant. Since the only use of the
+err exit label is on the fopen check, remove it and replace the
+code with a simple return of errno. Also remove variable rc since
+it's no longer required.
 
-Yeah, makes sense. Feel free to add:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ scripts/ipe/polgen/polgen.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/xattr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 05ec7e7d9e87..21beb82ab5dc 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -1015,7 +1015,7 @@ generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size)
->  			return err;
->  	}
->  
-> -	return err ? err : buffer_size - remaining_size;
-> +	return buffer_size - remaining_size;
->  }
->  EXPORT_SYMBOL(generic_listxattr);
->  
-> -- 
-> 2.39.5
-> 
+diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
+index c6283b3ff006..01134cf895d0 100644
+--- a/scripts/ipe/polgen/polgen.c
++++ b/scripts/ipe/polgen/polgen.c
+@@ -61,15 +61,12 @@ static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
+ 
+ static int write_boot_policy(const char *pathname, const char *buf, size_t size)
+ {
+-	int rc = 0;
+ 	FILE *fd;
+ 	size_t i;
+ 
+ 	fd = fopen(pathname, "w");
+-	if (!fd) {
+-		rc = errno;
+-		goto err;
+-	}
++	if (!fd)
++		return errno;
+ 
+ 	fprintf(fd, "/* This file is automatically generated.");
+ 	fprintf(fd, " Do not edit. */\n");
+@@ -113,11 +110,6 @@ static int write_boot_policy(const char *pathname, const char *buf, size_t size)
+ 	fclose(fd);
+ 
+ 	return 0;
+-
+-err:
+-	if (fd)
+-		fclose(fd);
+-	return rc;
+ }
+ 
+ int main(int argc, const char *const argv[])
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.5
+
