@@ -1,43 +1,62 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E51465B4;
-	Thu, 31 Oct 2024 06:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47541482E3
+	for <kernel-janitors@vger.kernel.org>; Thu, 31 Oct 2024 06:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730356991; cv=none; b=d8WcXg+QLgBMzVuiXx5w5VrZFQmooN1RwJR4eGbAHGU4gAgvaKZurePOe5PcKZPT/+sM+sANSJziid5bC/36v3vvjlzQdWMfS2BTTX35MGqwIS6R/A3N8QNtVRbms9PuhfrPAIhpdlajsbHoFrtisgSuHG0qYu+Q4ZfLUmlHDd0=
+	t=1730357958; cv=none; b=LBZFuNb+FNiEaDpcsNiBZXXK2BYC4kLI01ITLN2Sg3j/S+cEdzn/sV+TDqhfH/2YIshuo6moNJVMEnY3n67VvAd3tgkeabPb42of9u3yDJ+O/ZxE/qzn6EKhnjYAwKeb1hHP7eaGbY8rV8xORUeXvyBIEDTysF/504wMQWPNb2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730356991; c=relaxed/simple;
-	bh=IUEIAQA7P1uYn/zqdUVz7OLKFK36rMIQuwpNjaL1YH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U/s5vJ2eNYo4qmjFgdgk403KFyasYWLeMONWok3H5nHwiWYJtzsgJMbRN9tXxqytSvASHo9CZ66pUw6KrYI/mR3PIN9Fz4Z9nHUvYKfzyKCwpfn/1qalRPV4ztFTCTazdnBreKoZHCzln/CmSUONaX29pwlmtbPSe4Swpf5gsO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=hLk5HnSZ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1730357958; c=relaxed/simple;
+	bh=PyyjjuExWf96KMWOS6hJ3XmzDi/kwD2m5Mi5FCrS1pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DVNbu1AhZRymG2jDUdxlQ3xsQaOA9DfpzN8cfm/SzyqYrZMNCnUYoHBQbcWmia4SbiWxzEg33iGCOrfUkM61DF6HCmhMfdcMuKYdhIxy6Pqg6Y3g9IhpVIijT2pVHnoq9vqKEw0UBPMtw/iW07tTjYUP5XRvg/EAQAZTwHV1TFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sgC4VISz; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hLk5HnSZ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CKiWvVEKmcC8Dyu608fHEAVQab08HJJoh41UJxZAbKc=; b=hLk5HnSZMZpyA1kqw6NAcrrsvm
-	TS+SBFgi2BGJCOLpuwWQTiWMznyzeCqr8jDL2zhCJhH2Bl/y4xPqqH6Nx/SglwbcrtoGXeOY/rlBd
-	4JGfgqunSKi49YudMFaQLaUp88/JbpnEdfroehCvjM5P1v3eATZnUD799qwJmMyfwv5LGcEgJvVLG
-	/iJRt1L1k7Lg/P1xYlzxz8msh8BE+pmjBFnXgBk6xQ+2WJHu8E6flAqUJP2xa3cGZZ5XdF58U05Xe
-	AbgoqIHSOG61oATdEVkZtxtoCdySXiKHZpbcmG5lr2eGtsyzJBIeyVccz2v+S0rV6CyQmcG20EGR+
-	gXZTrjuQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t6Ote-00000009gYV-3PM1;
-	Thu, 31 Oct 2024 06:43:06 +0000
-Date: Thu, 31 Oct 2024 06:43:06 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next][V2] xattr: remove redundant check on variable err
-Message-ID: <20241031064306.GK1350452@ZenIV>
-References: <20241030182547.3103729-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sgC4VISz"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d47eff9acso386872f8f.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 30 Oct 2024 23:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730357954; x=1730962754; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XYp7pAy5IN7AxvqS2KXRE6LCucy8VMk2vKZ6AdwjDR8=;
+        b=sgC4VISz6xwRIA+Gp5jLB/LcplaRidztubdeezdtSL3/esHFC3w2T3cIgjOuPSVv1t
+         9Tvq5f/uFcd2FjkIsjlH8V4b9swwiwCsJjOcd+npg+1SPb979MluqeAuembEqB9bSV0c
+         s56GAgS/XTa1eIccPd/wfnbmx8uHQ5/fRvJBnafZGosDhusSQrFWmOnyZT3JcDMIv3R3
+         Cn4JwUEGKE29VUjbweWt57J0sMnVGvKQ8xdq05PCWA9JkFDmlz0fZPYTzNJQ8Pism3rO
+         ZVHV8IuExjQu7StvzcrzkNmlJOVVUczbZ26BH2MeeXoEJt8NMauKU0IrUUhzHEKGGbck
+         kYVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730357954; x=1730962754;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XYp7pAy5IN7AxvqS2KXRE6LCucy8VMk2vKZ6AdwjDR8=;
+        b=c+DyDYYDzKnuCyb++NcuncThPMRmm8njM+VY85DkW5SpujYCeeuqS8y6Vc+uUJKNwi
+         9NlgiXkvVGKTqksXBIEkVQhD/MCNwmOHcbYEMmJbst3bjt9q7FKbmLVWyGi/MYZmcrNg
+         r9wB/6HsPdm8xyqSU/o7mD1uPjIZW7qKZcVaWlwQazjX6ekv/lcPspAjXEitNWXj19ir
+         aLgp81KXrnOHZClsKV5HpCDnz4dvYR1FQ6q8mn7poOYEVpe4/zJbSizMANQMf7Pj1XVp
+         YgYONE2yu1wcxOSQaW0mu9WXkLT5BQM3ukAEskWpdPBmQ3rg0SWzEbDrDrXQBVFxilfz
+         WoqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVihSgjWIWEMvhGbSqOO0Ck9OpxELnEuVWUDBgXxzeyWmkbjhZqkGXmxLRPL+7nVveABaM4kmotUEJVK3NbHiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9n/BR4xrBaZ5mduN2XPx89ol6Q8mHdqrgSAqFy68x7sIpxfy9
+	oXWBYlaqDb0hZaZpDiInH7nOBUXV/aUOFE6QcB6LqIRpWHV8XTC1fedfeR1Hn2E=
+X-Google-Smtp-Source: AGHT+IFKaEwGg+0PuPgAA9ujK3FLjHCzdGExL+Pb47x2feN1KVIOIBbkvnxqClFIGSOpI1sC1rLkPw==
+X-Received: by 2002:a5d:60d1:0:b0:37d:501f:483f with SMTP id ffacd0b85a97d-380611e76bcmr13051516f8f.44.1730357954152;
+        Wed, 30 Oct 2024 23:59:14 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116abb5sm1114069f8f.100.2024.10.30.23.59.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 23:59:13 -0700 (PDT)
+Date: Thu, 31 Oct 2024 09:59:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] USB: serial: Fix use after free in debug printk
+Message-ID: <7d0481da-5852-4566-9adb-3a8bb74cb159@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,17 +65,48 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241030182547.3103729-1-colin.i.king@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Mailer: git-send-email haha only kidding
 
-On Wed, Oct 30, 2024 at 06:25:47PM +0000, Colin Ian King wrote:
-> Curretly in function generic_listxattr the for_each_xattr_handler loop
-> checks err and will return out of the function if err is non-zero.
-> It's impossible for err to be non-zero at the end of the function where
-> err is checked again for a non-zero value. The final non-zero check is
-> therefore redundant and can be removed. Also move the declaration of
-> err into the loop.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+The dev_dbg() call dereferences "urb" but it was already freed on the
+previous line.  Move the debug output earlier in the function.
 
-Applied (viro/vfs.git #work.xattr2)
+Fixes: 984f68683298 ("USB: serial: io_edgeport.c: remove dbg() usage")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/usb/serial/io_edgeport.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/serial/io_edgeport.c b/drivers/usb/serial/io_edgeport.c
+index c7d6b5e3f898..b8f1bd41fb24 100644
+--- a/drivers/usb/serial/io_edgeport.c
++++ b/drivers/usb/serial/io_edgeport.c
+@@ -775,7 +775,10 @@ static void edge_bulk_out_cmd_callback(struct urb *urb)
+ 	atomic_dec(&CmdUrbs);
+ 	dev_dbg(&urb->dev->dev, "%s - FREE URB %p (outstanding %d)\n",
+ 		__func__, urb, atomic_read(&CmdUrbs));
+-
++	if (status)
++		dev_dbg(&urb->dev->dev,
++			"%s - nonzero write bulk status received: %d\n",
++			__func__, status);
+ 
+ 	/* clean up the transfer buffer */
+ 	kfree(urb->transfer_buffer);
+@@ -783,12 +786,8 @@ static void edge_bulk_out_cmd_callback(struct urb *urb)
+ 	/* Free the command urb */
+ 	usb_free_urb(urb);
+ 
+-	if (status) {
+-		dev_dbg(&urb->dev->dev,
+-			"%s - nonzero write bulk status received: %d\n",
+-			__func__, status);
++	if (status)
+ 		return;
+-	}
+ 
+ 	/* tell the tty driver that something has changed */
+ 	if (edge_port->open)
+-- 
+2.45.2
+
