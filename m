@@ -1,106 +1,77 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0FB19CC24;
-	Wed, 30 Oct 2024 20:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3A612CD89;
+	Thu, 31 Oct 2024 01:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730321742; cv=none; b=drH6NdO4McTZObjSGjXiur1DyxSCQoAqzj6mHnr2aJYEAzt1gjK/sBSLBUXufkOYeJd3yFJScL3tEoTNj/Srood1qX/CgqyX+Ocfpvxn1+pJ1cLSPZqjEX/CJEqNhaiqlmY7iGvhjBf8c0QaO+IkfMF8q5U73tZdEAi9IKQNDw4=
+	t=1730338246; cv=none; b=pzZqT0MipW+yhOlMicvnA4oBtPitRvqvkpEx1oUtbNZXdpnKVWbjVHHOD4caZc8UBvoZ/S3QOd8W6h/de+X+Ol+43ECSE1h7c42H1QY2cmEo8QFPgas01Bhc36DEpiKuWDWjolgZlQ8CT9Ew4odfIm+su6TM8Om3MoAi7Mi8Xwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730321742; c=relaxed/simple;
-	bh=UTtlS48Hah5u7GdMzBlAhIwEqhmJZ1vHStfGamKkCnE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=D0g1hVaRc7HuvEdJxqmX0DMMKxtzN4ZiSDX392Jd5AL+JN53ZYPOzT9DP8pkvrgldnQ+CtVW9Z/V4HxE4eFVzrjmTBIeem9tCNyJJSxEyNDFZpt861V5HobqJ6XpjMU1qG4s0HmU1D15JpVSRsxrEeC30+cmgQiLFkDjSky1eTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z5bPi4aG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1730338246; c=relaxed/simple;
+	bh=Y+lcThPBWVjCPTYYlmOezurYzskGCGSZ+hugRIeTewQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=SiMTimILUyzsJ1Lq/Y9D156htofoTa+dJHsUHs/IH6xfk9nDe/bP7n1sFFNtMwO5BDCIAiLci8gpe14887gfWhWOFml1qCOm/Dfo58VUqJqt8zTfwslfIEUm8zPszZL/nt7jecB19QjpMQf18LqTkRa4gwNlU+Gq3gWP248k5Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0GqxaZK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z5bPi4aG"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UCFS7l002341;
-	Wed, 30 Oct 2024 20:55:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Cq83RRr5iVH8Pk8KHhiMY95wpAhRPW9zl0sq+dBSCfY=; b=Z5bPi4aGSnSZvzRD
-	LfUZwu4p29jNuqJ5JNeKOoQPes8Mg9QPIa07XPCmbrmwvrKDi8LZup0jdZZwCDom
-	Lw5XD4i3eZ+5kmlCEcs+2VZr4/DVG44E0FFNR1lp26nLs1m1fmjLMa8ohba89uDb
-	s6f7J6+WMR0LXbL8rg1+whyTwJn4tOAlie1H8m53XIWpjgkd0LmpHarBCfc0sLfi
-	tCFZKzF0LPloa8bunSDwnlElW2UUYXXHuFIHIc7pggk3fNW3vMcJ4sGwparSYYTI
-	L7nhTOHTQZ+/u07FhKDlpaW6LcEf2GNv44P4f2FHH2rs5HD4cT4fuhHgeo9gXQd/
-	Rcnh1g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42kmn59c63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 20:55:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UKtVEa015633
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 20:55:31 GMT
-Received: from [10.48.242.156] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
- 2024 13:55:30 -0700
-Message-ID: <eb39e027-7ab4-4062-a895-cac28d37a8a6@quicinc.com>
-Date: Wed, 30 Oct 2024 13:55:29 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0GqxaZK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D64DC4CED6;
+	Thu, 31 Oct 2024 01:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730338245;
+	bh=Y+lcThPBWVjCPTYYlmOezurYzskGCGSZ+hugRIeTewQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=h0GqxaZK43sLetCv71O6lVTichkGB1j8LDoJZ9TbktWv6y0nNnK67JAjX0eklCMqj
+	 w00onVQVif/dpI60833yHnfTwXLGe7cphEkPbCdjDixXToYoCz9ZQJ9yP1T5GLqGcG
+	 uM5gMUZo5bjYGRgwNlx0RfVgK1HaKzan69W5kfIslsmP50jyZG4XX3vsW7W2X0eV6z
+	 i/lnPzK3sBKEkUc9FFyDizdXG+9t12RDFQTfK1bffGe8CLPm16N4ssziI/ovIv5u+9
+	 iiotBJZlrBBXqMEqeFQvppZar6xNpJ+GmU636BO6QEacl5Id8qojbmmWT0fbLsgFkS
+	 Uom+VR/eD0FYA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DB0380AC22;
+	Thu, 31 Oct 2024 01:30:54 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] wifi: rtw89: 8852a: remove redundant else statement
-To: Colin Ian King <colin.i.king@gmail.com>,
-        Ping-Ke Shih
-	<pkshih@realtek.com>, Kalle Valo <kvalo@kernel.org>,
-        <linux-wireless@vger.kernel.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241030131416.3091954-1-colin.i.king@gmail.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20241030131416.3091954-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YeftvneLpOBtWqNLKq3MR592dcrfa5bE
-X-Proofpoint-GUID: YeftvneLpOBtWqNLKq3MR592dcrfa5bE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 phishscore=0 mlxlogscore=733
- priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0 suspectscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410300164
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] rtnetlink: Fix an error handling path in rtnl_newlink()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173033825326.1516656.63148059324643801.git-patchwork-notify@kernel.org>
+Date: Thu, 31 Oct 2024 01:30:53 +0000
+References: <eca90eeb4d9e9a0545772b68aeaab883d9fe2279.1729952228.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <eca90eeb4d9e9a0545772b68aeaab883d9fe2279.1729952228.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, kuniyu@amazon.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ netdev@vger.kernel.org
 
-On 10/30/2024 6:14 AM, Colin Ian King wrote:
-> The cascaded if statements covers all 16 bit values in the comparisons
-> of dgain and the last else statement is not reachable and hence
-> dead code. Remove it.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Sat, 26 Oct 2024 16:17:44 +0200 you wrote:
+> When some code has been moved in the commit in Fixes, some "return err;"
+> have correctly been changed in goto <some_where_in_the_error_handling_path>
+> but this one was missed.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c | 2 --
->  1 file changed, 2 deletions(-)
+> Should "ops->maxtype > RTNL_MAX_TYPE" happen, then some resources would
+> leak.
 > 
-> diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-> index 9db8713ac99b..f3568c4d0af6 100644
-> --- a/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-> +++ b/drivers/net/wireless/realtek/rtw89/rtw8852a_rfk.c
-> @@ -2248,8 +2248,6 @@ static s8 _dpk_dgain_mapping(struct rtw89_dev *rtwdev, u16 dgain)
->  		offset = -9;
->  	else if (dgain <= 0x155)
+> [...]
 
-should you drop the test and unconditionally return -12 here?
+Here is the summary with links:
+  - rtnetlink: Fix an error handling path in rtnl_newlink()
+    https://git.kernel.org/netdev/net-next/c/bd03e7627c37
 
->  		offset = -12;
-> -	else
-> -		offset = 0x0;
->  
->  	return offset;
->  }
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
