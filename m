@@ -1,74 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DAE1BD9FC;
-	Thu, 31 Oct 2024 13:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4B019E98E;
+	Thu, 31 Oct 2024 13:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730380910; cv=none; b=u+ky5gD7hqG6/+Xf26tv9+KwHPWMUwyV0BlxXdJBJAztf2c11mVe33DytxHgPAXaehTXg7cSXdwSfT6Hf162E0aO6DjuQ4T3g/xj2QDpjN+pHoMbtI4o3GtOzbDfcKWX/gpf/s7ck6wPelHN0kJGHxy7b/Ib+0nO1xu2NzWQTAU=
+	t=1730382648; cv=none; b=L/343AnlHLuXm/V6rAYeLSrKQCQmMOGJ2VJ4ziMHi5d00IHdxe+0ID3GaLfk3Ac6vqo97CeZ92Lg5OAwyyI6eJdbEy0YumcNZCuPNcuCHngJz9YbdzFm+lZumIER06hDqAP4kbpsP+gZJzuc1zpJK5iZczS1litijsRJtFaCDps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730380910; c=relaxed/simple;
-	bh=4jTLrq+ZxELV1BhCEMSn5kaFlxZQ1y2nd9Kj/roH8nE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUXPxRETsO/hMNiUUzAPDDlaWBDtR1YOFSjtSKa1zhkWHzu8t9yPnzqcVhm1K1bBnuyhHGIKmR8fhp5wVWFOpLbtQmWmqtdS9LxgOc3sfIgIPDmhA1sTj4CaE0OS8yCTQgs2x6D5I6mhjjqUJWv77ms0NDGOD7WPZ4Z9BahFEtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSJsEikm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730382648; c=relaxed/simple;
+	bh=BMVTcutHhu+6ZQGryNtLyz86LcuO3vePR57Y+9HCDkE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pTAsU7QBIAF0x3zHYaxfXBJHfr2QcYcH+7ED4kehjji8BtR9UbWpL67xrdmV4uOH6XfzhkZ8sJMuLwrzLOIfONncbG0t1YENE1ymyLev6HgchwBM9R2clDSMWhKhN4vTA9M+CLvrfnfThNURIftm2058pqy2eFPxuhV5o6hULEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbFX9ihm; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSJsEikm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3907C4E68D;
-	Thu, 31 Oct 2024 13:21:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730380910;
-	bh=4jTLrq+ZxELV1BhCEMSn5kaFlxZQ1y2nd9Kj/roH8nE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XSJsEikmsLzUezNvuCSuEPV4uqgYfwddbe5p9sRMlhpD0VnoYdHk37UIgYwTft6my
-	 +TJEpwTuk71IWPO+VFrfHXgS8aF3Tmzia4V3RIGYOL4j5mp9dYjGNELhJb4qIzb2Hx
-	 NJUS5dU451xPMydK8wt1TKdywlaGlmciJbg/3nUe+Te93PZc0cG22khCUuAukQU3un
-	 pvXwGDyfWfLlzTe6p6Sqe2fo/arxo8WOds3A73TErkdIpAJ5Lloh8PpdbtxKo+IJ4e
-	 3FJ3fEQmIb2OwhKneiwgDhQrkG/8lmy2+bWNUShgaaK/6MyiNWX7/8+kQJHiCsGgRT
-	 EkrG86dKcLtMA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t6V7T-000000003d6-2dUB;
-	Thu, 31 Oct 2024 14:21:47 +0100
-Date: Thu, 31 Oct 2024 14:21:47 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: Fix use after free in debug printk
-Message-ID: <ZyOEa9VuXVus79Ev@hovoldconsulting.com>
-References: <7d0481da-5852-4566-9adb-3a8bb74cb159@stanley.mountain>
- <ZyNI3rQw6q4pkqpD@hovoldconsulting.com>
- <8bad985d-4655-45d2-b448-2b3377a8438c@stanley.mountain>
- <490dc872-fc62-49da-89ff-4eba067df8c0@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbFX9ihm"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43163667f0eso7973645e9.0;
+        Thu, 31 Oct 2024 06:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730382644; x=1730987444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVhYO33vVqCBdciqa+kZPbAFcZzbjS6IKLArecWVdrs=;
+        b=WbFX9ihmlK8yiAvT/pYuAyDRPRFRC1Vn1hhSQ+/2yZh1mMinek6wj6CkYJsmiNpPCB
+         lyYRdsVS2rkDW4odoZeSzgax/Xavkd49fVqTZji7vFSma+6gNPIkerkE8v07whI3Bkiz
+         rT0RIKlTtXSrK+Uo1+rfbV/0givcwotI9GOMjeRqlV6QVJ5bCyXTWlujDPFFrXEea0Cw
+         +4N6Unha+dGn7G5ubCja21M7maO9cTk9uATXjHEZQaGjFPqOrIi9nmQvevkKg39JieCK
+         DmgevlhyWol3MFARJYWVnyJP3qopPXpHG0fgEQ0N58eRWBmDbgcqGtFxrow95Jcakcev
+         45kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730382644; x=1730987444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UVhYO33vVqCBdciqa+kZPbAFcZzbjS6IKLArecWVdrs=;
+        b=MvO9VIa19J4KqKrR0wyc+KdhRduPd/DwnaapGLAL0blo6NLw5pxkI5AARofrb5YYfE
+         ZUL2DE2BsO7pqoL4leC2KgUfMqZoAi/qfiQfznRLWGZOYceSICSca5PzPsK3SGKvZXnA
+         Lu5jsrBWwMe0HfJ9sPxQrm09/MjU+Q9Ax7s5ZuH2AgUI3OWYlcI5SNLhCCYkTAkD2jIQ
+         0KNQNTUONUS0oO4bT8oexIyUuaf0Eop2otUDTpGF2Zqa+/f5uLr+rhIaVFglJTdvhmR5
+         Jv8B13fx4fNsx/v6JFET/cH8HtW9WlqcOcWDsfHr7PNMxVI54CcNwrjY7UWKLyQHIY/r
+         54aA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/jdNIPOnZuqtv/FECU0OO0YtDcE/qdzo2Ut7UGlj+WY+rfoYUYM5daWjcqsySmdnjYI2s1s+5EpOQUFs=@vger.kernel.org, AJvYcCVL10qd3qevYqz1J+Uc2Ith0WOZFPIZ3xVuH8BKQNut82vF6/7yPCaV/sjIrisw2vt5HLpy8tuR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXGYPOMENIosfduv3yalKPr0/+4hAUtuzAZZjFAUeql3Zd0P5n
+	sE8B6lPJ+5qOLyScJBEGGLqJQqB0Vdo+Uef75P3JQz8TLY4B/ST+
+X-Google-Smtp-Source: AGHT+IECcaSiBC7aXgNY1F0gkPYapD18wbQsdxVx/0i2rpGtbk3yjipiZw0BjGDrX5iSplBMT8GKtQ==
+X-Received: by 2002:a7b:c5cc:0:b0:431:52a3:d9ea with SMTP id 5b1f17b1804b1-431aa80275cmr119037755e9.0.1730382644164;
+        Thu, 31 Oct 2024 06:50:44 -0700 (PDT)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5e8562sm27143775e9.23.2024.10.31.06.50.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 06:50:43 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Richard Cochran <richardcochran@gmail.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ptp: fc3: remove redundant check on variable ret
+Date: Thu, 31 Oct 2024 13:50:42 +0000
+Message-Id: <20241031135042.3250614-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <490dc872-fc62-49da-89ff-4eba067df8c0@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 12:39:10PM +0300, Dan Carpenter wrote:
-> On Thu, Oct 31, 2024 at 12:35:31PM +0300, Dan Carpenter wrote:
-> > On Thu, Oct 31, 2024 at 10:07:42AM +0100, Johan Hovold wrote:
-> > > On Thu, Oct 31, 2024 at 09:59:10AM +0300, Dan Carpenter wrote:
-> > > > The dev_dbg() call dereferences "urb" but it was already freed on the
-> > > > previous line.  Move the debug output earlier in the function.
-> > > 
-> > > Thanks for catching this, but please use a temporary variable for the
-> > > struct device pointer instead of changing the flow.
-> > 
-> > Why?  The output is the same either way and this way is cleaner code.
-> 
-> Nah, you're right.  A temporary variable is nicer.  It avoids having two if
-> statements.
+The check on ret has already been performed a few statements earlier
+and ret has not been re-assigned and so the re-checking is redundant.
+Clean up the code by removing the redundant check.
 
-Yeah, and the debug printk belongs with the return.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/ptp/ptp_fc3.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-v2 now applied, thanks.
+diff --git a/drivers/ptp/ptp_fc3.c b/drivers/ptp/ptp_fc3.c
+index e14e149b746e..879b82f03535 100644
+--- a/drivers/ptp/ptp_fc3.c
++++ b/drivers/ptp/ptp_fc3.c
+@@ -986,11 +986,6 @@ static int idtfc3_probe(struct platform_device *pdev)
+ 
+ 	mutex_unlock(idtfc3->lock);
+ 
+-	if (err) {
+-		ptp_clock_unregister(idtfc3->ptp_clock);
+-		return err;
+-	}
+-
+ 	platform_set_drvdata(pdev, idtfc3);
+ 
+ 	return 0;
+-- 
+2.39.5
 
-Johan
