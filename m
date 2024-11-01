@@ -1,86 +1,125 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCC422097;
-	Fri,  1 Nov 2024 12:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D5B49620
+	for <kernel-janitors@vger.kernel.org>; Fri,  1 Nov 2024 14:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730464592; cv=none; b=iKFQyJ/gHw7kRo11xp7Rx3XWX743o9u40oKJjZlP2A+93fXWogNjrtP8VXP1hckH9PTBipVYF11u69GRzATH9yScEGdzSBZuxgJIVk6jWvYOND0wNdDsC15f7+qAcFYuQSygkFFarLGI1DtOEppTAhht55+BaXhnYT8Gk3kKE74=
+	t=1730471847; cv=none; b=rmQpJgmjNyFruMXT44K98pEj6amZZsNg3yiC1ecRb2wYM9Gt2b7RsfoM0yfsBeZhfGVDrqkTHOB+WCYRj+ibewKZDP7RDGcbktZrsZ5oiMOgQ9waoHrdEyLyHGIyHagup2rFsCzqmpDdEvw++cu3mHPQ2w9BPiH4jXEGPE3PiIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730464592; c=relaxed/simple;
-	bh=gRP6MN8zkcU6CaP595Krk9eoXpXecFjEFluVBdHI6Dw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iLwzUbsS5dZqYnLvmFw8wlOx8j9VGBPJnmG5XVU+I6JSRogzmqPxQ9u6n8XfStb7ZwOiC7ziRLic2ipF3CQJ8RuqwUPKIsh0xTM+buGxK1NUyDVpcGAxc6zDxkyER+M/seoXaxqjYfXzLb/wMg8dePy2NqRTdS1u3Fq09tZfsvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7uKhahJ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730471847; c=relaxed/simple;
+	bh=xihCVwmbBEbROkwdBiHwl8sFUTycGVe7moUKh5exmVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WQ+GrzuBF3IfcLAPga96BZVskzUUFQy9oZXwzfmKmGYG5VnmHgPW7TS2+7m8MeACc1Q5U+5C7BLmUz6/8gVjQ1MpZa5+0nPLEY4WgiUYTxLwI+SvaVobJlFXrNd5sgAHhK77KIoKHdwRFEeSbaFrZoB94vfcXGD2QAYGBL8I+3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hGC9a255; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7uKhahJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730464590; x=1762000590;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=gRP6MN8zkcU6CaP595Krk9eoXpXecFjEFluVBdHI6Dw=;
-  b=R7uKhahJyPUgwWAMShBxRPUxfZ15oAqBA+HUVaTNreUbpwNPT+4ZxGob
-   62gPAzz3zBjfXbOa9kllbFmJ7+rCqxM94Fck0TdC+3mGABk1sgBX7zgUg
-   kELqbIeBx0RASmTEsMO1v/ZDi87VLcOvgzRP+u8h4TeMh2MRo6wNDI3Op
-   G3ub7+VZ+MTnnN0F97YedlERytxieQdJBqWVJAKnUvFWFurgAOm8P8EZu
-   4iUT0rG3UnwqQAjzGwefefQf9yDe6dtYdofGR1XR9LtxB6L54oIiI0HXo
-   Fi9k0rJ92zifAXSqo17T06QjBWpWRsjXNT/szmoPc20Omj8nAcQL7bsNi
-   Q==;
-X-CSE-ConnectionGUID: gSGLJBhJR6K5mUIPTpAS7g==
-X-CSE-MsgGUID: n3IhfjNVRDC4XVsfyFmRPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="29647782"
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="29647782"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:36:25 -0700
-X-CSE-ConnectionGUID: VSxhE1D4Rv6k16aZfJE9gQ==
-X-CSE-MsgGUID: ZFqSEMFsQqy8Ka+VNR1QDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
-   d="scan'208";a="83386198"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.38])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:36:23 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>, 
- Kurt Borja <kuurtb@gmail.com>, Dell.Client.Kernel@dell.com, 
- platform-driver-x86@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241101110230.3303197-1-colin.i.king@gmail.com>
-References: <20241101110230.3303197-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] alienware-wmi: Fix spelling mistake "requieres"
- -> "requires"
-Message-Id: <173046457722.1736.12073152593852757455.b4-ty@linux.intel.com>
-Date: Fri, 01 Nov 2024 14:36:17 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hGC9a255"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730471844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eq2uqU7pkfVUiFU7SkoeHtKd6J30m6LjXgrS5SpQUqE=;
+	b=hGC9a255qNaRnCPB6I6k/ohYrByPae3n9ivTD94WW6PFdQx5Tf5Zm382OXFuQrkWCkex6U
+	uZlGNHndeJ0f4pZJSlbTsrlw6BSR2t34Iw1XtiVltnblaJZBgELt5MAEuSY1SpWuI/goGw
+	RVmkK3IVJ2YusyIVt4whMg3q56uQL1Y=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-648-JkV8_huQNZWWGZXTZkM01Q-1; Fri, 01 Nov 2024 10:37:23 -0400
+X-MC-Unique: JkV8_huQNZWWGZXTZkM01Q-1
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6baffc7f9so122105ab.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Nov 2024 07:37:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730471842; x=1731076642;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Eq2uqU7pkfVUiFU7SkoeHtKd6J30m6LjXgrS5SpQUqE=;
+        b=mvUpFQBAfRgW8xoVNPhGtZUU/WeW1/ubJ18glXGCp7T3dUikWOkEB060BZEmXpoNnC
+         /LO3iUSooKbGhT8G9jo40SYIn1aq36CPYvSML+OSGoLVJ12bHxYG0T+7hM9jaF0jQL/c
+         34TfvT5PECf3ltQefVTc7vXDyRWfTrQ2p4W0b+6LkwqSz3RmMIo9374zfr7n/731N2i0
+         DfgQicuW9HqqkcU9ODo9fKwRPmXI0DXuaa2uaBflgoCaUi9f+fLNljDGri5J0XbCdaTs
+         bO6t64pwvUXdRXfVtQzgpQvF/4xgk8Xsy3vWvhpPdbRmflb/GITaq8YtdYnQFEW80ysE
+         uNjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSRUPo+R8o35u56rt7RNp9SllefdmQYEaRzr+CW0VsvflQjOculCnp3zEPgVvGjH2Gn34IfDOSddkLzQzK7/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvJ8iiQV78CtPaqKRELoX5XdfiLtZfGio8Qqhf/WT6y3kG+qi0
+	uC77u/VNGFd+A/3AubiIQFUGvWv84tx0x1C+dxqtS62kzMq2Q/IiiCSIeCfULhyO1plH+vDkpBf
+	bjRHIifmBev2d48Dps5ZpTxU+/XEu0rrEAmvqLf958OFbAOKspIyOfVGM6Gmjhif2xLINMQwWZg
+	==
+X-Received: by 2002:a05:6e02:148a:b0:3a6:b445:dcac with SMTP id e9e14a558f8ab-3a6b445dd73mr4761795ab.2.1730471842026;
+        Fri, 01 Nov 2024 07:37:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvn5Vfsqs7qjJ8UOjFRtJ1SimPwyE/4ForKOavSr8aFXtbAKn8m8XJIDuFJ3eIu1sfmTnmTg==
+X-Received: by 2002:a05:6e02:148a:b0:3a6:b445:dcac with SMTP id e9e14a558f8ab-3a6b445dd73mr4761755ab.2.1730471841650;
+        Fri, 01 Nov 2024 07:37:21 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de04aca865sm743386173.169.2024.11.01.07.37.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 07:37:21 -0700 (PDT)
+Date: Fri, 1 Nov 2024 08:37:18 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH] kvm/vfio: Constify struct kvm_device_ops
+Message-ID: <20241101083718.32f1657a.alex.williamson@redhat.com>
+In-Reply-To: <e7361a1bb7defbb0f7056b884e83f8d75ac9fe21.1727517084.git.christophe.jaillet@wanadoo.fr>
+References: <e7361a1bb7defbb0f7056b884e83f8d75ac9fe21.1727517084.git.christophe.jaillet@wanadoo.fr>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-On Fri, 01 Nov 2024 11:02:30 +0000, Colin Ian King wrote:
+On Sat, 28 Sep 2024 11:52:46 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-> There is a spelling mistake in a pr_warn message. Fix it.
+> 'struct kvm_device_ops' is not modified in this driver.
 > 
+> Constifying this structure moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
 > 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    2605	    169	     16	   2790	    ae6	virt/kvm/vfio.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    2685	     89	     16	   2790	    ae6	virt/kvm/vfio.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only
+> ---
+>  virt/kvm/vfio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/vfio.c b/virt/kvm/vfio.c
+> index 388ae471d258..e72a6a1d5a20 100644
+> --- a/virt/kvm/vfio.c
+> +++ b/virt/kvm/vfio.c
+> @@ -353,7 +353,7 @@ static void kvm_vfio_release(struct kvm_device *dev)
+>  
+>  static int kvm_vfio_create(struct kvm_device *dev, u32 type);
+>  
+> -static struct kvm_device_ops kvm_vfio_ops = {
+> +static const struct kvm_device_ops kvm_vfio_ops = {
+>  	.name = "kvm-vfio",
+>  	.create = kvm_vfio_create,
+>  	.release = kvm_vfio_release,
 
+Applied to vfio next branch for v6.13.  Thanks,
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] alienware-wmi: Fix spelling mistake "requieres" -> "requires"
-      commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
-
---
- i.
+Alex
 
