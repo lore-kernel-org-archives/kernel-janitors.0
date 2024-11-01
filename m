@@ -1,111 +1,105 @@
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C9413B792;
-	Fri,  1 Nov 2024 19:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FE01E2828;
+	Fri,  1 Nov 2024 21:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730489471; cv=none; b=f/PrOLw3+gG8nIzUqWZQlM1sSSDWLIi0du5x6BZBBnIYVKTDt0WoocvbM91NBCiorR/NsRNHTSamhhyT5h1SY40K5BhE39IDnjE1kXQrWSoD7YEl2+M52ae8jDtt0EZO3mMDv8b7bTamBIXGa3PlBVDAvMrPqarcin90gCMWt1M=
+	t=1730497748; cv=none; b=RViMq2I4+OezglbPpx+wG9JVYqPgWa2LYLNwDCRdUHX4qujAl1lAC70B5hN8JUZO/30BPyvnO0X7VJ+Nczqusws6K6GWEGz8rFrWU/4yYaawSnVq/nOeBYPdyfmoGjmRbAszihdOl8Np06u0Sp7cXe6jOzwtOx7dpoE28R68LCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730489471; c=relaxed/simple;
-	bh=AJ4CS96WAaefrS31owoIg2zPjF9ZVZyzGhKtLx/uVkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qBbz0dLyxk1WvVwjIsnz/9SC8KWFaBkR329JSG0GAa2CYK8JKX0Dvkox93YeQUzwEa8TC1bEloPvf7bBB2bsvcbaHlmXIh9mK7EFAI+aLrbGXEUfzyIy7xujXUWMDVP6eweVMrLapApl8Fu243eZF+SOx1Rtz+1wRhZFddLLjRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uvkp8qaT; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730497748; c=relaxed/simple;
+	bh=lOOo4ZXdmdikkhGGJEt2LgdpZPz5E/NO8DC+U+ixe3Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rpi7fOj2j4m8ygsEbfjl36nffmHsmQi0xUo7xp1bXQEkmID1XJCAWPOfExn/+AmW4uuP8tnrlb34O1tDYnGzCfRZSoSEqRhWwD3PjzVTIErVt7/Q9daS0ZKB9yLkr5olChFAKGw8B0pCeaMKuc/aeQNHsMZFnvKawi4O3tNmJ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=h7g00QC+; arc=none smtp.client-ip=193.252.22.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uvkp8qaT"
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea8de14848so1621749a12.2;
-        Fri, 01 Nov 2024 12:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730489469; x=1731094269; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2NDDCbG1ahSlEGv1KkyBWJl1W3ZyvWt4FXc2MkJZxdY=;
-        b=Uvkp8qaT5l5VSGYReGAaPDRzd28eShGiIeY9A8iLiSXi4yGBtx8oduQn/CkQbNtLH5
-         dFGUEXLomPNF8dEejM2/vLnjkIX5ttNpWYO+irA8sh+dBzv8ePGZ6N7e6D1F6RSbvQAR
-         W+oav7pIkttrulD9AaNM2W8FNxLa/HRJrb0K9xZ5+eqGXYK5BX1YsCCVnFyCNUn17rAO
-         0wRHf14TWWsXka3QezEAO/i1CRdIY5A9btRWvLRPvhO1k1EKg6mym0l+V8GDnvs+gBHA
-         qDIT2VMbwCveED/tt0n5bZ0If8BThDeTEFNw0YS0mvfEK2HLFzcDRUkSRiKMMMqilYbZ
-         3GSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730489469; x=1731094269;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2NDDCbG1ahSlEGv1KkyBWJl1W3ZyvWt4FXc2MkJZxdY=;
-        b=qCoNBNO53h753w4ruqxMmTqOlaWVzzxZ2X/TsckucIkqF5Hhjjsdu8fs2Ma3X18zD0
-         9CLsLmWasz1YilWo/CbaXG3DFMfD4+Z0xbScI8c5W5AZBQVK+2qMpLd0ITU6KyxS2fHn
-         kyeqqDb5AvvvVNvOzvkYb+RQ8Y+iNS0TSfmc9HZTgvKfOfa5tag4giL7QUgOBY5tQI+c
-         kK8fczZrDws1QHHZ8dbI/iBUeBBOCTcqLclQyma6iX9yYY1P1LNUPhod2akJAU3fmbHz
-         d5XDjxe34qwgAmnJHCmlddrcTWVAMt9vv3hjo68d2daCyJTBOkqTw8W5w+XClOKQTHSU
-         Kckg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgjt9VSjvMB4iJmqizO+9ASkU7rZIadgLA98Ur1cAGz+XXHEHy2kPCzcOfAzfWNFLQxag=@vger.kernel.org, AJvYcCX68W0FLVdFZuwbo30Oxcxe8Pbe9wKlWPj2aitpKN48MnCqdhg03TbV/UhrwOM/xJozo2yweESAosi0z2DK+8MF@vger.kernel.org, AJvYcCXvRznOWlmVTxrsKQXMTL8ICT5ipnV7yBtjGtfW8vQ+pBhZACbgyeIGtMmPBi0HJBf8GkRhSlOZjUoKErwo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhky+bUqLfknKJGFl+Pi59xjj8vNMehiSqwHDR364KVxS18lQS
-	7WtvygWClhulDgrWKV3lXVmOfwKdFBFG6baqJ425Ojbdn1ztZtuIehiC/+v2sIzarnzr6Wex8Lg
-	BIU83en4mcyjoKmGIo0ix/yxnvXw=
-X-Google-Smtp-Source: AGHT+IH2JcQByIR08ndwyvZQilY6ZPngUA3Q8UPQqX29XjCXWrY8BWAu0dR78Tu6HtvLiDFNwB2xv2YGfXbsOuu6t/s=
-X-Received: by 2002:a17:90b:4acc:b0:2e2:bb02:4668 with SMTP id
- 98e67ed59e1d1-2e93c300b75mr8657535a91.40.1730489468993; Fri, 01 Nov 2024
- 12:31:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="h7g00QC+"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 6yxjtTrloA7fH6yxktswpK; Fri, 01 Nov 2024 22:13:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1730495625;
+	bh=EYi+7zxC4m12VG02hrYZtY36xLPuD6WgT3l4MPN+hD4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=h7g00QC+zuN+TfEujN3s0xj8P9ecv5kWshswogVhEBqlPfZh/5/INCFkppQxLjtaK
+	 J/yQKYKmTRBZ/+zEKj/SEqMKUCMBhs8diO8eXo8ZdhhGaspr1SGriH8XxBZgittLdM
+	 JYjl4pMkaV3lDjm5FCfjJ52YL7lxfUU7Ns3TQ/chqT0TUnveQcZ5hLQS6Jc5TWBaid
+	 jzH8KS/maKtrVap8iEYlvhwSXs36KaWLjtzF6+imsOyseL2lecsek6QevAiErLt8nF
+	 +9z7IzsNJJIf5McHQAjPl1MjUcl5PlhHaUz3jL538KD8aWGhxHaO4W+KPyzB+vambK
+	 GYv1+9O7lX8Hg==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 01 Nov 2024 22:13:45 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] uprobes: Re-order struct uprobe_task to save some space
+Date: Fri,  1 Nov 2024 22:13:33 +0100
+Message-ID: <a9f541d0cedf421f765c77a1fb93d6a979778a88.1730495562.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031130704.3249126-1-colin.i.king@gmail.com>
-In-Reply-To: <20241031130704.3249126-1-colin.i.king@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 1 Nov 2024 12:30:56 -0700
-Message-ID: <CAEf4Bzbd2qDmUmVYtX56oz7Cj4+H88LyemSVd3YxCmcPYLg5-Q@mail.gmail.com>
-Subject: Re: [PATCH][next] bpf: replace redundant |= operation with assignmen
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 31, 2024 at 6:07=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> The operation msk |=3D ~0ULL contains a redundant bit-wise or operation
-> since all the bits are going to be set to 1, so replace this with
-> an assignment since this is more optimal and probably clearer too.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  kernel/bpf/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-> index 9aaf5124648b..fea07e12601f 100644
-> --- a/kernel/bpf/inode.c
-> +++ b/kernel/bpf/inode.c
-> @@ -914,7 +914,7 @@ static int bpf_parse_param(struct fs_context *fc, str=
-uct fs_parameter *param)
->                 str =3D param->string;
->                 while ((p =3D strsep(&str, ":"))) {
->                         if (strcmp(p, "any") =3D=3D 0) {
-> -                               msk |=3D ~0ULL;
-> +                               msk =3D ~0ULL;
+On x86_64, with allmodconfig, struct uprobe_task is 72 bytes long, with a
+hole and some padding.
 
-This was done for consistency with the other branch. Is there anything
-wrong with this code? Doesn't seem so, so I'd like to keep it as is.
+	/* size: 72, cachelines: 2, members: 7 */
+	/* sum members: 64, holes: 1, sum holes: 4 */
+	/* padding: 4 */
+	/* forced alignments: 1, forced holes: 1, sum forced holes: 4 */
+	/* last cacheline: 8 bytes */
 
-pw-bot: cr
+Reorder the structure to fill the hole and avoid the padding.
 
->                         } else if (find_btf_enum_const(info.btf, enum_t, =
-enum_pfx, p, &val)) {
->                                 msk |=3D 1ULL << val;
->                         } else {
-> --
-> 2.39.5
->
+This way, the whole structure fits in a single cacheline and some memory is
+saved when it is allocated.
+
+	/* size: 64, cachelines: 1, members: 7 */
+	/* forced alignments: 1 */
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ include/linux/uprobes.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index dbaf04189548..c684a470477f 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -73,6 +73,9 @@ enum uprobe_task_state {
+ struct uprobe_task {
+ 	enum uprobe_task_state		state;
+ 
++	unsigned int			depth;
++	struct return_instance		*return_instances;
++
+ 	union {
+ 		struct {
+ 			struct arch_uprobe_task	autask;
+@@ -89,9 +92,6 @@ struct uprobe_task {
+ 	unsigned long			xol_vaddr;
+ 
+ 	struct arch_uprobe              *auprobe;
+-
+-	struct return_instance		*return_instances;
+-	unsigned int			depth;
+ };
+ 
+ struct return_consumer {
+-- 
+2.47.0
+
