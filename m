@@ -1,68 +1,60 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962ED2A1B2;
-	Fri,  1 Nov 2024 11:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCC422097;
+	Fri,  1 Nov 2024 12:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730458956; cv=none; b=t0IaTDs1OSoTd6FmiaMvL7CnMihr9p9tx0XdqGR1vNimkG9VtLJgTatPokbRZPNvN0MD8NZs9h1bK51c8DRt2fdLsaZQfT649/dUtqcb/3lu49Zvr8daXY/rwcsKCl8njRXX7P2f2yjLCCY6AZoAU63UMuW1NF3+1Qzl36tirYk=
+	t=1730464592; cv=none; b=iKFQyJ/gHw7kRo11xp7Rx3XWX743o9u40oKJjZlP2A+93fXWogNjrtP8VXP1hckH9PTBipVYF11u69GRzATH9yScEGdzSBZuxgJIVk6jWvYOND0wNdDsC15f7+qAcFYuQSygkFFarLGI1DtOEppTAhht55+BaXhnYT8Gk3kKE74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730458956; c=relaxed/simple;
-	bh=SL1acbncjPLxtjg0ZmvMhHjeJZVn1j5RtS+TyX6Deks=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hkZC78je5lImq2WLFRhjUCiKq0oBFHSXvC9sg88QQn5WBmFoMqJaGYblp+3qniRxzZdD8FRVCk8JvuKCEzxqDCWM1ltFDuMr8h0fHWZJw9GjZSOz/2dUzMmGd6hH1drz6eWLfBLjmJNoFmvPW/bjj0C5WMtmG96XBHXId+xnYPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+/Bp2HH; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730464592; c=relaxed/simple;
+	bh=gRP6MN8zkcU6CaP595Krk9eoXpXecFjEFluVBdHI6Dw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=iLwzUbsS5dZqYnLvmFw8wlOx8j9VGBPJnmG5XVU+I6JSRogzmqPxQ9u6n8XfStb7ZwOiC7ziRLic2ipF3CQJ8RuqwUPKIsh0xTM+buGxK1NUyDVpcGAxc6zDxkyER+M/seoXaxqjYfXzLb/wMg8dePy2NqRTdS1u3Fq09tZfsvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7uKhahJ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+/Bp2HH"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso20161385e9.0;
-        Fri, 01 Nov 2024 04:02:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730458952; x=1731063752; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PwPYMRGElaeiG6JSq5bTqnaG3KidHyWvWEm+AiFn5jM=;
-        b=k+/Bp2HHyPs98e8+CmpvLYZNUEtk9AbAFa1+ct0ddL/3kgMFUN52ReNwvEAXkAPza8
-         CGwbCDOSGlks986zDaGNJzV7evh2MvxBcsRkTqhNw/haXb01209vWh/mEoDQ2Y8n7bmg
-         iG0SzzfeuaHBDmbgtVBa4E6JooQ+flugtWuy4oG6e5Ura+5wORXVYs/dickn2E6ep1SM
-         mz3IkY8Y7Wxe28lSPI6Sz7SeHsPn3Fidmg948LJHKOmGaE22PmT+XDameGFMI50jGnBk
-         6rr1VVKp98F4gFpZfPQ8LdK84J5wOnDmH/3TBgNXjxsiAYIjhVlbvyfKpyrXKSugpbXG
-         5KKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730458952; x=1731063752;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PwPYMRGElaeiG6JSq5bTqnaG3KidHyWvWEm+AiFn5jM=;
-        b=byeX1/eRVz352w/+Y2Eu3c5yfCIYOPpWzcHR6Nwqw38mdjmpdL9lkp8UjJEJGCfekZ
-         mbJHvOWYUvyqfGeT5Pesv2XthBSBT5QgaBjUl6wfa+eb0hPb0eWXMrT+wP/ShDh4m3UE
-         rmr3FuDGZs0MSYCGz9oSv+UQfd0TIoXiCf51jfzF20RCRbmB2KoDZyC/MqfoeqgcQNAY
-         hmMTCwkbGutzr8mfPYXOKAr7p3aIkMsUyi4d4ctF4OP2oEb/wZnEU9FuSUEAFDId4y7N
-         Th5ulKyYOLtKGyYgX2/XisuGH3wlSbiGqEm9DLqmQ9TiA7Op3warZCRb8h4dt/A3PG8I
-         iAhg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+8K8lYd96pdkAk5qwoGVuoo7EmEJMAGHy3OF+Okf0EQK3Lukko8qPhIw+6lt+pH9HV4wguW0/WUjP3KI=@vger.kernel.org, AJvYcCWsTgkkZhYqB/oJuOg/5mZS7vqSKMqL600v0vGOCu/2u4/IS7mVGax0OrLemssMHNgViDYKcB//WzBDiTI5AQLA5XOKNQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRdgu1hf1uwkHrbvtz2x8BhJnqTqGwYZbBoY0hHGCIAxRjGjeP
-	KRQoyVSdVf11nCpl4NCtgMZts5Pcay+tf7iChoRUpoRA+0JuxJiL
-X-Google-Smtp-Source: AGHT+IGPpN1k7U8dhuPazlyTNVRyQKtUMxHMlMvnkH+Bz9BObQigNk4a5upkXSy7J090IGXyvmqNfg==
-X-Received: by 2002:a05:600c:3b22:b0:42c:a387:6a6f with SMTP id 5b1f17b1804b1-4328325638emr27908205e9.20.1730458952168;
-        Fri, 01 Nov 2024 04:02:32 -0700 (PDT)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8471sm88708965e9.4.2024.11.01.04.02.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2024 04:02:31 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Armin Wolf <W_Armin@gmx.de>,
-	Kurt Borja <kuurtb@gmail.com>,
-	Dell.Client.Kernel@dell.com,
-	platform-driver-x86@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] alienware-wmi: Fix spelling mistake "requieres" -> "requires"
-Date: Fri,  1 Nov 2024 11:02:30 +0000
-Message-Id: <20241101110230.3303197-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7uKhahJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730464590; x=1762000590;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=gRP6MN8zkcU6CaP595Krk9eoXpXecFjEFluVBdHI6Dw=;
+  b=R7uKhahJyPUgwWAMShBxRPUxfZ15oAqBA+HUVaTNreUbpwNPT+4ZxGob
+   62gPAzz3zBjfXbOa9kllbFmJ7+rCqxM94Fck0TdC+3mGABk1sgBX7zgUg
+   kELqbIeBx0RASmTEsMO1v/ZDi87VLcOvgzRP+u8h4TeMh2MRo6wNDI3Op
+   G3ub7+VZ+MTnnN0F97YedlERytxieQdJBqWVJAKnUvFWFurgAOm8P8EZu
+   4iUT0rG3UnwqQAjzGwefefQf9yDe6dtYdofGR1XR9LtxB6L54oIiI0HXo
+   Fi9k0rJ92zifAXSqo17T06QjBWpWRsjXNT/szmoPc20Omj8nAcQL7bsNi
+   Q==;
+X-CSE-ConnectionGUID: gSGLJBhJR6K5mUIPTpAS7g==
+X-CSE-MsgGUID: n3IhfjNVRDC4XVsfyFmRPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11242"; a="29647782"
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="29647782"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:36:25 -0700
+X-CSE-ConnectionGUID: VSxhE1D4Rv6k16aZfJE9gQ==
+X-CSE-MsgGUID: ZFqSEMFsQqy8Ka+VNR1QDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,249,1725346800"; 
+   d="scan'208";a="83386198"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.38])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2024 05:36:23 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>, 
+ Kurt Borja <kuurtb@gmail.com>, Dell.Client.Kernel@dell.com, 
+ platform-driver-x86@vger.kernel.org, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241101110230.3303197-1-colin.i.king@gmail.com>
+References: <20241101110230.3303197-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] alienware-wmi: Fix spelling mistake "requieres"
+ -> "requires"
+Message-Id: <173046457722.1736.12073152593852757455.b4-ty@linux.intel.com>
+Date: Fri, 01 Nov 2024 14:36:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,28 +62,25 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-There is a spelling mistake in a pr_warn message. Fix it.
+On Fri, 01 Nov 2024 11:02:30 +0000, Colin Ian King wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/platform/x86/dell/alienware-wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> There is a spelling mistake in a pr_warn message. Fix it.
+> 
+> 
 
-diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index 62cb81750573..a800c28bb4d5 100644
---- a/drivers/platform/x86/dell/alienware-wmi.c
-+++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -1090,7 +1090,7 @@ static int __init alienware_wmi_init(void)
- 		if (quirks->thermal)
- 			quirks->gmode = true;
- 		else
--			pr_warn("force_gmode requieres platform profile support\n");
-+			pr_warn("force_gmode requires platform profile support\n");
- 	}
- 
- 	ret = platform_driver_register(&platform_driver);
--- 
-2.39.5
+
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] alienware-wmi: Fix spelling mistake "requieres" -> "requires"
+      commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
+
+--
+ i.
 
