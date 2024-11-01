@@ -1,102 +1,97 @@
-Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479103FF1;
-	Fri,  1 Nov 2024 09:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962ED2A1B2;
+	Fri,  1 Nov 2024 11:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730451708; cv=none; b=TkEmxad+dfp00e9aReFf4aKcR1Je0gdFBoOyiWAgVuUnZ+pjdBqHqPlU/OSYAhgK/OLJVDLIHjfSJwNL0Y+vuvbpOvy4RzXquWxCvxpWraw5hfoUtUCKtoatGfzJvI38TDFz6RM2rwvM+TVhgVo1u1xtxTp2UinOSETqE7/tPMc=
+	t=1730458956; cv=none; b=t0IaTDs1OSoTd6FmiaMvL7CnMihr9p9tx0XdqGR1vNimkG9VtLJgTatPokbRZPNvN0MD8NZs9h1bK51c8DRt2fdLsaZQfT649/dUtqcb/3lu49Zvr8daXY/rwcsKCl8njRXX7P2f2yjLCCY6AZoAU63UMuW1NF3+1Qzl36tirYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730451708; c=relaxed/simple;
-	bh=J5++sjtFZWeNI50vrtuCNlQDzXvi1836X4y4WE7UGPE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rVDguX3LmPEotLca6jgpTtUgVcbeOL4APrUmVxGM4vMSYlnRDPUS3nkU91TdcfFGvCnuZUGG85xzQ0KMKUlGMtlO/cpXfKhBgA+HSq9sfMzRYW9WW53tc8zTqKyFWjDIVLjw2YnI6GJnx40pCq2L4MUL70NoJSLcO4Ync2Q5CL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=xIoTN7oF; arc=none smtp.client-ip=185.70.43.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1730458956; c=relaxed/simple;
+	bh=SL1acbncjPLxtjg0ZmvMhHjeJZVn1j5RtS+TyX6Deks=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hkZC78je5lImq2WLFRhjUCiKq0oBFHSXvC9sg88QQn5WBmFoMqJaGYblp+3qniRxzZdD8FRVCk8JvuKCEzxqDCWM1ltFDuMr8h0fHWZJw9GjZSOz/2dUzMmGd6hH1drz6eWLfBLjmJNoFmvPW/bjj0C5WMtmG96XBHXId+xnYPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+/Bp2HH; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="xIoTN7oF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1730451697; x=1730710897;
-	bh=Go4mtHQykmlWp4vclsuDHc2ni+VMGXx/GypLE6dY+gs=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=xIoTN7oF6JOMzCKFMU0XKqfiac9rzToMym+yjvSYUQM75UiJgCZqKOqE4QzMtePz5
-	 70Hu4RB4RuOxuFtLZ70VJsMXPuEqQ4miNSXevbpwS3INa5kdj3UTLlhBVD1WwNCMZL
-	 o2OTU5OgrjZOSnFPj1YHGrkhNzecnRlmtIXoqPRVvVZgUTZR/RJE8Lyyhj7Ur7AJ3l
-	 ogN0G87pGd/XuZhplZJmQiT3pAV2Ye7+3ZzlyrVyezj4p2nys5brfeB13eLWnBd+Hg
-	 Hz1ZnINuN16H0aNF95dQX8sc8LpfG+zMuy/rbdscl4hoTjcDL3sxgUOmAmerQZu/+1
-	 0TgF839GXHZBQ==
-Date: Fri, 01 Nov 2024 09:01:32 +0000
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-From: Yassine Oudjana <y.oudjana@protonmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: mediatek: mt6735-apmixedsys: Fix an error handling path in clk_mt6735_apmixed_probe()
-Message-ID: <882779be-6d8f-441d-89ea-f8be79ffd3ba@protonmail.com>
-In-Reply-To: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
-References: <89ad840e7a484eaf4727470824acfe0fdc60fcef.1729871146.git.christophe.jaillet@wanadoo.fr>
-Feedback-ID: 6882736:user:proton
-X-Pm-Message-ID: e77f34d9023207e3b609739a38960c2a439f5ca0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+/Bp2HH"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso20161385e9.0;
+        Fri, 01 Nov 2024 04:02:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730458952; x=1731063752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PwPYMRGElaeiG6JSq5bTqnaG3KidHyWvWEm+AiFn5jM=;
+        b=k+/Bp2HHyPs98e8+CmpvLYZNUEtk9AbAFa1+ct0ddL/3kgMFUN52ReNwvEAXkAPza8
+         CGwbCDOSGlks986zDaGNJzV7evh2MvxBcsRkTqhNw/haXb01209vWh/mEoDQ2Y8n7bmg
+         iG0SzzfeuaHBDmbgtVBa4E6JooQ+flugtWuy4oG6e5Ura+5wORXVYs/dickn2E6ep1SM
+         mz3IkY8Y7Wxe28lSPI6Sz7SeHsPn3Fidmg948LJHKOmGaE22PmT+XDameGFMI50jGnBk
+         6rr1VVKp98F4gFpZfPQ8LdK84J5wOnDmH/3TBgNXjxsiAYIjhVlbvyfKpyrXKSugpbXG
+         5KKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730458952; x=1731063752;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PwPYMRGElaeiG6JSq5bTqnaG3KidHyWvWEm+AiFn5jM=;
+        b=byeX1/eRVz352w/+Y2Eu3c5yfCIYOPpWzcHR6Nwqw38mdjmpdL9lkp8UjJEJGCfekZ
+         mbJHvOWYUvyqfGeT5Pesv2XthBSBT5QgaBjUl6wfa+eb0hPb0eWXMrT+wP/ShDh4m3UE
+         rmr3FuDGZs0MSYCGz9oSv+UQfd0TIoXiCf51jfzF20RCRbmB2KoDZyC/MqfoeqgcQNAY
+         hmMTCwkbGutzr8mfPYXOKAr7p3aIkMsUyi4d4ctF4OP2oEb/wZnEU9FuSUEAFDId4y7N
+         Th5ulKyYOLtKGyYgX2/XisuGH3wlSbiGqEm9DLqmQ9TiA7Op3warZCRb8h4dt/A3PG8I
+         iAhg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+8K8lYd96pdkAk5qwoGVuoo7EmEJMAGHy3OF+Okf0EQK3Lukko8qPhIw+6lt+pH9HV4wguW0/WUjP3KI=@vger.kernel.org, AJvYcCWsTgkkZhYqB/oJuOg/5mZS7vqSKMqL600v0vGOCu/2u4/IS7mVGax0OrLemssMHNgViDYKcB//WzBDiTI5AQLA5XOKNQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRdgu1hf1uwkHrbvtz2x8BhJnqTqGwYZbBoY0hHGCIAxRjGjeP
+	KRQoyVSdVf11nCpl4NCtgMZts5Pcay+tf7iChoRUpoRA+0JuxJiL
+X-Google-Smtp-Source: AGHT+IGPpN1k7U8dhuPazlyTNVRyQKtUMxHMlMvnkH+Bz9BObQigNk4a5upkXSy7J090IGXyvmqNfg==
+X-Received: by 2002:a05:600c:3b22:b0:42c:a387:6a6f with SMTP id 5b1f17b1804b1-4328325638emr27908205e9.20.1730458952168;
+        Fri, 01 Nov 2024 04:02:32 -0700 (PDT)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8471sm88708965e9.4.2024.11.01.04.02.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 04:02:31 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Armin Wolf <W_Armin@gmx.de>,
+	Kurt Borja <kuurtb@gmail.com>,
+	Dell.Client.Kernel@dell.com,
+	platform-driver-x86@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] alienware-wmi: Fix spelling mistake "requieres" -> "requires"
+Date: Fri,  1 Nov 2024 11:02:30 +0000
+Message-Id: <20241101110230.3303197-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 25/10/2024 6:46 pm, Christophe JAILLET wrote:
-> If an error occurs after a successful mtk_alloc_clk_data(),
-> mtk_free_clk_data() should be called, as already done in the .remove()
-> function.
->=20
-> Switch to mtk_devm_alloc_clk_data() in order to fix the memory leak in th=
-e
-> probe function, and simplify the remove function.
->=20
-> Fixes: 43c04ed79189 ("clk: mediatek: Add drivers for MediaTek MT6735 main=
- clock and reset drivers")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
->   drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/mediatek/clk-mt6735-apmixedsys.c b/drivers/clk/m=
-ediatek/clk-mt6735-apmixedsys.c
-> index 104722a61dfd..e0949911e8f7 100644
-> --- a/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt6735-apmixedsys.c
-> @@ -88,7 +88,7 @@ static int clk_mt6735_apmixed_probe(struct platform_dev=
-ice *pdev)
->   =09if (IS_ERR(base))
->   =09=09return PTR_ERR(base);
->=20
-> -=09clk_data =3D mtk_alloc_clk_data(ARRAY_SIZE(apmixedsys_plls));
-> +=09clk_data =3D mtk_devm_alloc_clk_data(&pdev->dev, ARRAY_SIZE(apmixedsy=
-s_plls));
->   =09if (!clk_data)
->   =09=09return -ENOMEM;
->   =09platform_set_drvdata(pdev, clk_data);
-> @@ -114,7 +114,6 @@ static void clk_mt6735_apmixed_remove(struct platform=
-_device *pdev)
->   =09struct clk_hw_onecell_data *clk_data =3D platform_get_drvdata(pdev);
->=20
->   =09mtk_clk_unregister_plls(apmixedsys_plls, ARRAY_SIZE(apmixedsys_plls)=
-, clk_data);
-> -=09mtk_free_clk_data(clk_data);
->   }
->=20
->   static const struct of_device_id of_match_mt6735_apmixedsys[] =3D {
-> --
-> 2.47.0
->=20
+There is a spelling mistake in a pr_warn message. Fix it.
 
-Thanks for the fix!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/platform/x86/dell/alienware-wmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
-
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index 62cb81750573..a800c28bb4d5 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -1090,7 +1090,7 @@ static int __init alienware_wmi_init(void)
+ 		if (quirks->thermal)
+ 			quirks->gmode = true;
+ 		else
+-			pr_warn("force_gmode requieres platform profile support\n");
++			pr_warn("force_gmode requires platform profile support\n");
+ 	}
+ 
+ 	ret = platform_driver_register(&platform_driver);
+-- 
+2.39.5
 
