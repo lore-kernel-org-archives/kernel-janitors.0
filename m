@@ -1,46 +1,51 @@
-Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
+Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75A67602D;
-	Sat,  2 Nov 2024 09:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AE315A856;
+	Sat,  2 Nov 2024 09:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730538699; cv=none; b=MvKbrzti6PI73wfH/KsG3YFQBlrEbWUqlnsO14HaSjoUBRRl4xR7l+uNwMEEAITbS1OPSrI97XSA8ZEkdFefYPPNSKUVOlotFIgRUdUncYlkGxQkEq9UmINT9uDuEgnjvC3FlXbzh+PjHlc/h0Yg6IdFKFHD/u+JVZovkYYWkS8=
+	t=1730539522; cv=none; b=KSSLOGg+8/vibKKjz6pijOjLueGcqL7aMDJ3/tYXgN6DklSArJGVElI6yjt8T8SwHC94UY5E4M4Tx4eGHq5HzF+xPnQLcRu9JcRnsV0L2WUbSgrJrT3CiIjorlKH6YMZ727mpRaBaTmUMXo0uLgzl84nnSVUd6O1kbhe+kv7Pps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730538699; c=relaxed/simple;
-	bh=09RQbKlqt6XRTpsKw2i7evCCtKnn7OJGygYBz22r6Wk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZSUJltxc50YI8xIHADtB01z7SHUyUld6GGSuq4ky12r2EzDGtJ2Nk14GQqzDiLOJr08Y0laj2CU9EocNjDrNTjDFNViT669s/g4oohTL/PqnczDLu9q9u/H7y4Ri8IRudtw/aMSEswhvXv9WZ+X/d/QnavHz9Jg8wQh8ngGgXVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TnW7RKUQ; arc=none smtp.client-ip=193.252.23.208
+	s=arc-20240116; t=1730539522; c=relaxed/simple;
+	bh=xFcOfOlnBAmZ1ouPT3PdXVy1XSEuzkRieAToIoF+dmw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L9ksJ/TrM7qa5m6LDVLlZi4vugAgZw2EnI8eg4nvxNAHk79gFdgNrU8Lzvzepsh5BV4uZDUK7neB6iBAk+mRzCochZGwqYL/eHp7wb7rucsN/mmhM9pgpQIW9YvkUq3eGJWAzlNE01jnULAYRkxOasnoihzlEb3hZmqAED31ez4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mDjWcPGK; arc=none smtp.client-ip=193.252.23.217
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TnW7RKUQ"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mDjWcPGK"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id 7AAPtgsTpxsCM7AAPtZ4Di; Sat, 02 Nov 2024 10:11:33 +0100
+	id 7ANftLM9g0BU07ANftAu4d; Sat, 02 Nov 2024 10:25:17 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730538693;
-	bh=fD8a0DZn/OzvIOnxOUi7PPNUVxckolPAfxV+EYthlhk=;
+	s=t20230301; t=1730539517;
+	bh=DIxqU9y3ZKraAtE/x5LoAuiso/aNBNvfgUhvN7CYOys=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=TnW7RKUQC0mgs1fH6WEflc45Mjo+1rSL9kYDhTmlMXEwF8UEatZc74nr4LcMkgKYK
-	 NMkKxL815STEaQyFa6UzNIeOWjN8GtiPcdsXyI2o5j1qvr49DpLlpF93C8UZZfRHhr
-	 /qcCiP4xTp8fWr1y2JJj02byF+MGMqiHQpUjQXHf436W6uJFwdcm6TNUqFK6YfOJPO
-	 RTxBrx3PKPqxGgs6Z8Mnq4veYv8KLQN0JrZP5zMDwFfjzP+uqvNra6Dt0iU5pbXNTN
-	 I+N2zvojMsGDCPVyvsAg4l+dDm1Kc/RIzxmDtrXF/jzhIGxpY/04q143HBsiYp1/yF
-	 PlhX50Uzy5uWg==
+	b=mDjWcPGKbwJsbtIUTzyHl8Ds1bZZxz8XaeFzkCFPKIcfgOu0ivOOPj41Cj5b2NSKM
+	 DU6rEiexeUPBrg/yGlZdwprj/0i64ApDIaYQj/lKjE3gWV3mjtELo1+pWrE8gkZwrB
+	 yitgCg7mIxmrRGKep3xPNF7SL8qp+L962dYobQj90PM/1/4RIyvuYSstr6Qw/ygOht
+	 0bgPGXv6BFy12QTaiVZCjFNIDbv6GU5kFzEqGU7qlaeE1K78fpHab+lsRXZfbBS1qf
+	 yePoHUUzN4O8saUesswPJLKuHf8W0qhznKtsoUtfaSxzvC8IHwYHEYSruBG+KCtvzB
+	 SQXgY4R0G+8pg==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 02 Nov 2024 10:11:33 +0100
+X-ME-Date: Sat, 02 Nov 2024 10:25:17 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-input@vger.kernel.org
-Subject: [PATCH] Input: synaptics - Fix a typo
-Date: Sat,  2 Nov 2024 10:11:24 +0100
-Message-ID: <f3365eab359feb9adc6e2dedcffc976f3b272d8b.1730538673.git.christophe.jaillet@wanadoo.fr>
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH] fs: binfmt: Fix a typo
+Date: Sat,  2 Nov 2024 10:25:04 +0100
+Message-ID: <34b8c52b67934b293a67558a9a486aea7ba08951.1730539498.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,27 +55,27 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-s/synatics/synaptics/
-A 'p' is missing.
+A 't' is missing in "binfm_misc".
+Add it.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/input/mouse/synaptics.h | 2 +-
+ fs/binfmt_misc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/mouse/synaptics.h b/drivers/input/mouse/synaptics.h
-index 08533d1b1b16..899aee598632 100644
---- a/drivers/input/mouse/synaptics.h
-+++ b/drivers/input/mouse/synaptics.h
-@@ -21,7 +21,7 @@
- #define SYN_QUE_EXT_MIN_COORDS		0x0f
- #define SYN_QUE_MEXT_CAPAB_10		0x10
- 
--/* synatics modes */
-+/* synaptics modes */
- #define SYN_BIT_ABSOLUTE_MODE		BIT(7)
- #define SYN_BIT_HIGH_RATE		BIT(6)
- #define SYN_BIT_SLEEP_MODE		BIT(3)
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index 31660d8cc2c6..df6a229b5e62 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -998,7 +998,7 @@ static int bm_fill_super(struct super_block *sb, struct fs_context *fc)
+ 		/*
+ 		 * If it turns out that most user namespaces actually want to
+ 		 * register their own binary type handler and therefore all
+-		 * create their own separate binfm_misc mounts we should
++		 * create their own separate binfmt_misc mounts we should
+ 		 * consider turning this into a kmem cache.
+ 		 */
+ 		misc = kzalloc(sizeof(struct binfmt_misc), GFP_KERNEL);
 -- 
 2.47.0
 
