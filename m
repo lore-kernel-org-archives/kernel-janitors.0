@@ -1,48 +1,46 @@
-Received: from msa.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
+Received: from msa.smtpout.orange.fr (msa-208.smtpout.orange.fr [193.252.23.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FE01E2828;
-	Fri,  1 Nov 2024 21:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75A67602D;
+	Sat,  2 Nov 2024 09:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730497748; cv=none; b=RViMq2I4+OezglbPpx+wG9JVYqPgWa2LYLNwDCRdUHX4qujAl1lAC70B5hN8JUZO/30BPyvnO0X7VJ+Nczqusws6K6GWEGz8rFrWU/4yYaawSnVq/nOeBYPdyfmoGjmRbAszihdOl8Np06u0Sp7cXe6jOzwtOx7dpoE28R68LCU=
+	t=1730538699; cv=none; b=MvKbrzti6PI73wfH/KsG3YFQBlrEbWUqlnsO14HaSjoUBRRl4xR7l+uNwMEEAITbS1OPSrI97XSA8ZEkdFefYPPNSKUVOlotFIgRUdUncYlkGxQkEq9UmINT9uDuEgnjvC3FlXbzh+PjHlc/h0Yg6IdFKFHD/u+JVZovkYYWkS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730497748; c=relaxed/simple;
-	bh=lOOo4ZXdmdikkhGGJEt2LgdpZPz5E/NO8DC+U+ixe3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rpi7fOj2j4m8ygsEbfjl36nffmHsmQi0xUo7xp1bXQEkmID1XJCAWPOfExn/+AmW4uuP8tnrlb34O1tDYnGzCfRZSoSEqRhWwD3PjzVTIErVt7/Q9daS0ZKB9yLkr5olChFAKGw8B0pCeaMKuc/aeQNHsMZFnvKawi4O3tNmJ8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=h7g00QC+; arc=none smtp.client-ip=193.252.22.68
+	s=arc-20240116; t=1730538699; c=relaxed/simple;
+	bh=09RQbKlqt6XRTpsKw2i7evCCtKnn7OJGygYBz22r6Wk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZSUJltxc50YI8xIHADtB01z7SHUyUld6GGSuq4ky12r2EzDGtJ2Nk14GQqzDiLOJr08Y0laj2CU9EocNjDrNTjDFNViT669s/g4oohTL/PqnczDLu9q9u/H7y4Ri8IRudtw/aMSEswhvXv9WZ+X/d/QnavHz9Jg8wQh8ngGgXVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=TnW7RKUQ; arc=none smtp.client-ip=193.252.23.208
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="h7g00QC+"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="TnW7RKUQ"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id 6yxjtTrloA7fH6yxktswpK; Fri, 01 Nov 2024 22:13:45 +0100
+	id 7AAPtgsTpxsCM7AAPtZ4Di; Sat, 02 Nov 2024 10:11:33 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730495625;
-	bh=EYi+7zxC4m12VG02hrYZtY36xLPuD6WgT3l4MPN+hD4=;
+	s=t20230301; t=1730538693;
+	bh=fD8a0DZn/OzvIOnxOUi7PPNUVxckolPAfxV+EYthlhk=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=h7g00QC+zuN+TfEujN3s0xj8P9ecv5kWshswogVhEBqlPfZh/5/INCFkppQxLjtaK
-	 J/yQKYKmTRBZ/+zEKj/SEqMKUCMBhs8diO8eXo8ZdhhGaspr1SGriH8XxBZgittLdM
-	 JYjl4pMkaV3lDjm5FCfjJ52YL7lxfUU7Ns3TQ/chqT0TUnveQcZ5hLQS6Jc5TWBaid
-	 jzH8KS/maKtrVap8iEYlvhwSXs36KaWLjtzF6+imsOyseL2lecsek6QevAiErLt8nF
-	 +9z7IzsNJJIf5McHQAjPl1MjUcl5PlhHaUz3jL538KD8aWGhxHaO4W+KPyzB+vambK
-	 GYv1+9O7lX8Hg==
+	b=TnW7RKUQC0mgs1fH6WEflc45Mjo+1rSL9kYDhTmlMXEwF8UEatZc74nr4LcMkgKYK
+	 NMkKxL815STEaQyFa6UzNIeOWjN8GtiPcdsXyI2o5j1qvr49DpLlpF93C8UZZfRHhr
+	 /qcCiP4xTp8fWr1y2JJj02byF+MGMqiHQpUjQXHf436W6uJFwdcm6TNUqFK6YfOJPO
+	 RTxBrx3PKPqxGgs6Z8Mnq4veYv8KLQN0JrZP5zMDwFfjzP+uqvNra6Dt0iU5pbXNTN
+	 I+N2zvojMsGDCPVyvsAg4l+dDm1Kc/RIzxmDtrXF/jzhIGxpY/04q143HBsiYp1/yF
+	 PlhX50Uzy5uWg==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 01 Nov 2024 22:13:45 +0100
+X-ME-Date: Sat, 02 Nov 2024 10:11:33 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] uprobes: Re-order struct uprobe_task to save some space
-Date: Fri,  1 Nov 2024 22:13:33 +0100
-Message-ID: <a9f541d0cedf421f765c77a1fb93d6a979778a88.1730495562.git.christophe.jaillet@wanadoo.fr>
+	linux-input@vger.kernel.org
+Subject: [PATCH] Input: synaptics - Fix a typo
+Date: Sat,  2 Nov 2024 10:11:24 +0100
+Message-ID: <f3365eab359feb9adc6e2dedcffc976f3b272d8b.1730538673.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -52,54 +50,27 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On x86_64, with allmodconfig, struct uprobe_task is 72 bytes long, with a
-hole and some padding.
-
-	/* size: 72, cachelines: 2, members: 7 */
-	/* sum members: 64, holes: 1, sum holes: 4 */
-	/* padding: 4 */
-	/* forced alignments: 1, forced holes: 1, sum forced holes: 4 */
-	/* last cacheline: 8 bytes */
-
-Reorder the structure to fill the hole and avoid the padding.
-
-This way, the whole structure fits in a single cacheline and some memory is
-saved when it is allocated.
-
-	/* size: 64, cachelines: 1, members: 7 */
-	/* forced alignments: 1 */
+s/synatics/synaptics/
+A 'p' is missing.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only
----
- include/linux/uprobes.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/input/mouse/synaptics.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index dbaf04189548..c684a470477f 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -73,6 +73,9 @@ enum uprobe_task_state {
- struct uprobe_task {
- 	enum uprobe_task_state		state;
+diff --git a/drivers/input/mouse/synaptics.h b/drivers/input/mouse/synaptics.h
+index 08533d1b1b16..899aee598632 100644
+--- a/drivers/input/mouse/synaptics.h
++++ b/drivers/input/mouse/synaptics.h
+@@ -21,7 +21,7 @@
+ #define SYN_QUE_EXT_MIN_COORDS		0x0f
+ #define SYN_QUE_MEXT_CAPAB_10		0x10
  
-+	unsigned int			depth;
-+	struct return_instance		*return_instances;
-+
- 	union {
- 		struct {
- 			struct arch_uprobe_task	autask;
-@@ -89,9 +92,6 @@ struct uprobe_task {
- 	unsigned long			xol_vaddr;
- 
- 	struct arch_uprobe              *auprobe;
--
--	struct return_instance		*return_instances;
--	unsigned int			depth;
- };
- 
- struct return_consumer {
+-/* synatics modes */
++/* synaptics modes */
+ #define SYN_BIT_ABSOLUTE_MODE		BIT(7)
+ #define SYN_BIT_HIGH_RATE		BIT(6)
+ #define SYN_BIT_SLEEP_MODE		BIT(3)
 -- 
 2.47.0
 
