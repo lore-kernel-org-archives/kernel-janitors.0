@@ -1,66 +1,64 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD9074C14
-	for <kernel-janitors@vger.kernel.org>; Sat,  2 Nov 2024 09:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D43914A630
+	for <kernel-janitors@vger.kernel.org>; Sat,  2 Nov 2024 09:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730539881; cv=none; b=swgZLn/dB1wweNS6U+FqA/YwVH7h3juHnrMXhcyA04UVD2zyDjZxPQpLwm9vQYTooBEoem3d15LTrtqSI8SOun4aF7uZe4ofMid352DDIjCOVJULbvw2lKfCi/I83ewjyZqYlST1tThb26OA83EXFcj9RsbIo21IsvvpQN0YmEo=
+	t=1730539888; cv=none; b=ZPwpHBUbbVoMLmQb3FWQUYrDlqpeSoooiXp5cvm0sxCmpusrZm6pbuTWFMf+cZYT17GtDZCkz7qqLIqXnhNgc0mCmXI/qePn+reQ92pmh+sIAJuNplmwq/P8x/zgjsGdoj1Wpi/Tf1qSp3sh9cPmZXq1e2r0YmVwuYoMiscPWV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730539881; c=relaxed/simple;
-	bh=H8Gb3WLJbngLpNTN81q7DwfW5UpCvmMUw/IR5xIOfr8=;
+	s=arc-20240116; t=1730539888; c=relaxed/simple;
+	bh=AxfZ6gGVPQPRt1Kkz1e9AnPzzLi9MaVmGq3SQAO0XGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qUAynSoIH98BKOSmE/OPC33UDiY2mbs5cw1UiPpXsevx9wtCGTRNM7xDYjN5wpLKYWDCMlsmE6+/5O1HkrcthgjHTmwn/QVVhTABYbSsaetxZBmfMrtbBbuTw8s1iDeSE9ZMcAb3LoL2yS7HtHFlBHsioRMddhYziY0izvCkpLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YbIXG55G; arc=none smtp.client-ip=209.85.128.52
+	 Content-Disposition; b=uiSVMKbSHBPmSsQv7IKI9MF37LAoAn/2sMxemOVx/A3zLTM3ztuHfx5y+C/eMSJ9dIK86n+ZvhpWUlGcdgntbD+uWTmJ8n0FI518ujy7Bfw1eJAB2N7KDqliPpFXh7QkVA40bMmKNjkUg9amEI5xUTUSYhINc+EY79yN/Ue6D8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uk6kea6D; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YbIXG55G"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4314b316495so23176775e9.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 02 Nov 2024 02:31:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uk6kea6D"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d6a2aa748so1506970f8f.1
+        for <kernel-janitors@vger.kernel.org>; Sat, 02 Nov 2024 02:31:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730539878; x=1731144678; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730539884; x=1731144684; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y20IPLl0T1Inu0ZWcS2TQ9J2Ib1jjVRfeGEd17R1p8c=;
-        b=YbIXG55GqcQ4NPSVURngZzFPwMzQYTqsc2WZft4XTzMn9JhbGbXjxNf1vNesUGKl28
-         yZad2LQll6+By0vhwVBMsARyXLYFPrIg8L4vdfnsbcY/czATgHH6xt5Pyk2OsJmzXj3z
-         MCOLcFs2Wm18LdOqP1xwst92qdyZVT5xu4Tct3e2IzTGtJZ8ERFymk/EDdf14x/3MHlY
-         1dsfvrNtqz8HPjZz0MCeo+3ezwOCs0mnA1pCK9Fw9L3g5QXApbw5U1P97u0kfBDOWRRO
-         p+AOz6Gd5PwsFwgitA9EYV0iFahtoU6ioutXKq5eJX1n6+WmyI8KFlbdtIhPp2d1GZKr
-         mkFg==
+        bh=2G33OuRKLaV8/Qlw+mzO1Q7pXloYVXQQTnj0b51x9wA=;
+        b=Uk6kea6DO+3dVkD/lMhzKq9JPrLY/9qbLQ/kuXxTQ+vi9rzA+BBnbnWASGN9dWXM9f
+         dwFyFLdyspMacm9C7UvplAdwqQ9eXVuUVkkwRlYyOAIKkKkculU385cJZjkwudrQHD2D
+         Q0eMkChINXVxMIiygDybbqzTNjm9Qs3Y7L3FDJO5THPCzastnsy6nZQhNCTnWrdrZOCk
+         ykFue19DfwicyBY7hyCMo5AIx/2EgicdObLblk8+u49ETXrOeTWNyIZ6G5Oqoa97lopf
+         G0u9UoZJTKup53qAa3UgBGKCN9DFYhXtsJAVXp6H+ULuqimW5JueagC2VwptVBtrEr6C
+         REFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730539878; x=1731144678;
+        d=1e100.net; s=20230601; t=1730539884; x=1731144684;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y20IPLl0T1Inu0ZWcS2TQ9J2Ib1jjVRfeGEd17R1p8c=;
-        b=awNyelDo2tQfaE05XeJ4OWOpwFTfamWFCMWGU0NCSvhFqYcXftkFlScevIhhdCx5YI
-         hGeUio5qzwSig18i67prRTB/P4fl3V6V8hAaBeQ0JMvVuVEP8x8MuTF1bQWwpNWPgnoz
-         L8K8sNyFY+IY4YbrO6QiH3zHYWA0LiN2ExZbfgs0wkeKausllF7sflpXkO5EOPoLhj54
-         bqNfSur9/UtmsdqBF6CpI1bBeiQOfPEoMdkkBg25f+Ha0G7yAh6qFvQlLaJk3iPCQh5H
-         TMnXMdgqoAM8XrawebAyBO0Zp0V4fiAGjcX5LsDhdRH5pHxrSAgchD7zqQJ5vVo877mr
-         TCvA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2/K+CUCOD/SuZoLpH3gtvTBmnT3t6NEuMYTV8jGb1+YcbGeg91YLebZCO4bJD1zwNkA7qync9i/djqKTC9+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPLMnSp9gVXaFN/lPJt2A9T4xGmayyYCCLp1jayL+iB0+pi4GT
-	GQ9Cs6vFDkpxMt1qNNA+2ddyeZAqumiFwOJo70W9uQWxdSvdQCzAG923inNwzko=
-X-Google-Smtp-Source: AGHT+IElQhl8RTx1u2Qv+Hf698kNw66wgtCjAXGbW3mdm/POfTMzJMzs4xEy2zd12QkNz0gSnIZD7Q==
-X-Received: by 2002:a05:600c:a08:b0:431:4a83:2d80 with SMTP id 5b1f17b1804b1-4327b6c1c78mr88114585e9.0.1730539878363;
-        Sat, 02 Nov 2024 02:31:18 -0700 (PDT)
+        bh=2G33OuRKLaV8/Qlw+mzO1Q7pXloYVXQQTnj0b51x9wA=;
+        b=VU9l9D7Yaxu0P3Dgh2rpaHx0EzjlTBEJvGtxL7W8IBI3iblgxHxJKn/I86YfIxAWFD
+         DrPD5CoOiQR093ls/Pr0Bs2GpE3NMo0it7cs4ZhL+BN3TbpUcBguGElDAyxXKcGqoU33
+         deEiQRxgr0oX1jiVDVFN+BPf7GQZVPRkrh11HE7qKwZlIor2hREGnu+uBv9h7lJRO07k
+         lQsk4VL+cKKoDKBV2mDGkKngEoVxdVyVUpLNXBu4Elm0/PDY2wo9yEo6RU0ErJpig05K
+         35NjxxqQYLYz7suFiZ15z+fc6tYWuRQMtGHypUSETcBtqsh4t0H3lH3Q5aLmdFlZO0AO
+         5npw==
+X-Forwarded-Encrypted: i=1; AJvYcCUz8DdLYAEJFhBqsbzRJicRdOwlfC8+WuRdAQHwb1Pck9E5Lx2BCExePHRVXBNe2kVJxvY1aUzFBL3v291paiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8Zvey8j1AHc/eGJ64GgCkYjb3N4Kfq2w5Xw6vTaxp/SO6U8LN
+	0HVqzKBQh6UBx5Ds1m4PtVEGpOm5DBpm9YOaL0BqRobMELPzLj2pkPP5gbbPv3U=
+X-Google-Smtp-Source: AGHT+IFMNVmV9EFSObPL947fodX0Fb+SP0SISXcsLVbP/D8qbWurJtklEVb7Kef4HIak7PcfND0EKQ==
+X-Received: by 2002:a5d:5f4f:0:b0:37d:4dcc:7fb4 with SMTP id ffacd0b85a97d-381c7a3a2e0mr5427434f8f.10.1730539884403;
+        Sat, 02 Nov 2024 02:31:24 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5ac37csm88619985e9.10.2024.11.02.02.31.17
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d414csm7493312f8f.26.2024.11.02.02.31.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 02:31:17 -0700 (PDT)
-Date: Sat, 2 Nov 2024 12:31:14 +0300
+        Sat, 02 Nov 2024 02:31:24 -0700 (PDT)
+Date: Sat, 2 Nov 2024 12:31:20 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Tycho Andersen <tandersen@netflix.com>
-Cc: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] exec: Fix a NULL vs IS_ERR() test in
- bprm_add_fixup_comm()
-Message-ID: <18f60cb9-f0f7-484c-8828-77bd5e6aac59@stanley.mountain>
+Subject: [PATCH next] lsm: Fix signedness bug in selinux_secid_to_secctx()
+Message-ID: <2d02f331-42ee-40db-a64f-5ee378eb44db@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,33 +69,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The strndup_user() function doesn't return NULL, it returns error
-pointers.  Fix the check to match.
+The "ret" variable needs to be signed for the error checking to work.
 
-Fixes: 7bdc6fc85c9a ("exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case")
+Fixes: 95a3c11eb670 ("lsm: replace context+len with lsm_context")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/exec.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ security/selinux/hooks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 7e24d585915e..c5c291502dca 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1512,10 +1512,10 @@ static int bprm_add_fixup_comm(struct linux_binprm *bprm,
- 		return 0;
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index eca9674c9478..0ff018f557ac 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6644,7 +6644,7 @@ static int selinux_ismaclabel(const char *name)
+ static int selinux_secid_to_secctx(u32 secid, struct lsm_context *cp)
+ {
+ 	u32 seclen;
+-	u32 ret;
++	int ret;
  
- 	bprm->argv0 = strndup_user(p, MAX_ARG_STRLEN);
--	if (bprm->argv0)
--		return 0;
-+	if (IS_ERR(bprm->argv0))
-+		return PTR_ERR(bprm->argv0);
- 
--	return -EFAULT;
-+	return 0;
- }
- 
- static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
+ 	if (cp) {
+ 		cp->id = LSM_ID_SELINUX;
 -- 
 2.45.2
 
