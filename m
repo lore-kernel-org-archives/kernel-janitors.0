@@ -1,111 +1,110 @@
-Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
+Received: from sonic306-8.consmr.mail.bf2.yahoo.com (sonic306-8.consmr.mail.bf2.yahoo.com [74.6.132.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A883C3C;
-	Sat,  2 Nov 2024 16:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4780B19DFAC
+	for <kernel-janitors@vger.kernel.org>; Sat,  2 Nov 2024 17:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.132.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730563271; cv=none; b=BH5ndp4HtqEsQ2gNGnLe84xuj00Ggi2ZJioRUrqoUD7ejcp3JCCjDl3oyMfOkfZxwc11eT/VnpGsjv0qAOCW00xhobeasqtmBvjhU92/eOygsiHc95lLOW5Y0sl3uCIvdJpUcvVB5jH8n8yuCqZz54Oz3aNMczEB1KwE2eXUb9Q=
+	t=1730569315; cv=none; b=vAslF0Yw5GWwBzBWtDEMkIfmZPFhK1g9LlXJZWxwOmI4+s3jdxkLVe2T0NYxtqOPH65B7WMpsUZugvMoLsw8LW9Gmkc5WB0vjxyG34LtTK9iSusmsNnPcGuHRmWrmjrX/trvHgCUEB8ZI1cPZdj1jg3ZaUDdDpdKaO2UQw2CytM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730563271; c=relaxed/simple;
-	bh=pWtlMhVEo5sTa10vHdWI3MJ+UdkICdAOYZ77Ui+PqCM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B36guDNfBN9/x6k2wTncY7ck8GEzI/qxggU8fD0ccMlmkRvYT6PweZvVEwZlA2AY/FhBU95VkrDpIRKW1BA4/2UY0yGBlREshFWk9QMV6itFX0ev6ZLaBYsTeFN7RIe3b0vtzrhV3sbh77gFED5WeZyPu5Ct+ipL0nxAlBboMAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FPsq+Ibm; arc=none smtp.client-ip=80.12.242.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1730569315; c=relaxed/simple;
+	bh=dFvM9H5o8lLuZ3v+nZHh7FedJzN3fiztbvdzhZ3/ovY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D0Eusf8PJKq6wpawrNlrC5q4TtNntoD8TU6vrigBYJ7YSP8RhICChznBwRHfZUVPvnNK7VDTHihtTUPADNbOhyDTTdTF5D4eKHruBrY85V0yP8YKQIDIZaHS7/0uPYHCco9Gg2h8FiwUUAt6CroRiJCMe5KYoNHCWN6C+29sAxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=I4FSFLAb; arc=none smtp.client-ip=74.6.132.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FPsq+Ibm"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 7GXat8EQFNFce7GXatlT3S; Sat, 02 Nov 2024 16:59:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730563197;
-	bh=KGKzVWsnOyVtcs0VCIBf32JB3OlZi4k6gGyDSCVIYG4=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FPsq+IbmN649gL8GgwbVI/cRjs4BDAzzEO+TIlCYtZBxAgNh9ev/V/hEToE4BL1WX
-	 j3crEuh8erPcq6Stva/3Vj1sMb6gvG8wl4jo51yGksnqp2TTKwOC6xxjlVvfy4NT5K
-	 yCDkwWGOkOhG+T+VXtJzu22cP0OAE7AXeHAWBSnEEOUMhqZJUpI1Brlng7OO4+wjOp
-	 2mEoV+iHW59WG+K7kMAsydg4k/deaZTffGX5ZvXXOrrgqDr9FJv6RhpFgZyMYWsSNi
-	 1OjQIeI2ZcfovJit6fcsIpfu9VT4CRBR3ilOLx4a/Ob04lqY7daamNq/OUmq5yttaw
-	 1MOWM5wVGIY/Q==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 02 Nov 2024 16:59:57 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: srinivas.pandruvada@linux.intel.com,
-	"David E. Box" <david.e.box@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH] platform/x86/intel/vsec: Remove a useless mutex
-Date: Sat,  2 Nov 2024 16:59:41 +0100
-Message-ID: <ccc08a262304f7f8c2e435349f0f714ebf9acfcd.1730563031.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="I4FSFLAb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1730569312; bh=MW6dV4JWMRLh67+TEVFd357UBd4Weuohh/ckRqkqiaw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=I4FSFLAbHeSyJReLKEzhwBJcsznT+8WVOISQO7YGEfuB0gKuADBRB5+ba61jQDjNDgfXDPFfJpWKsFVsyRnqJFHAh9TRL1hCU2OZDlvZ2YUWPkfh8hLWw1DOOym0lEqQmgevNNNjprawtPJE1YIPp4GPOJLahw/4oqb7YCfy1ubtOVHIx9uOOsR9TBK/j5z6VXEOkfBJAOOyYvQbuhobNSYCDdvwyt50fTVeQmoF3M9ZKM9SG14RSEJqSMW98trfn3NXaJbVvil6wvOVnSN9vPIZn/BRX+XWt8Aosh1LaFIuV4iat3KU1YPuJWI+JvPPs60855QEd1thEu0Ldbye3A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1730569312; bh=XhfspjvQrkwEIMZSitvDejkwxnCGC5wKxmdXHUMk6wz=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WFFnygzaAUaT+GR+oNZK+IcO4uq+oGXRyKNWayrdeTuexv3OFArOnFErunz1EJQdLd/PLVBQbKy4ecthcIWflmzt1EH0R7WtRQy+jjiQO4lm6IIlPYOPj47VcUmt7PskDInmc5usS8AHy4yAFiFyOr+Esc/+YJ0eGEe3l2vLHPcTkvQ8EEhfnJLRJesJ9P7WrYV4u/Hj/FwGJ2YUDlqZ/TxM+5veMaJF2J2e0BXNmg4YZxzjtR/qCvrFzyKZQNh5gBsKhl7FLGyxGcN6ysq4mqe7BufqxT6918KHWp+hYn78Nzyl6fMY2acSWvOPMZZRI6xFlR2ccjfLjMvuEOYMKQ==
+X-YMail-OSG: 00AVbv4VM1mBrYyX_FHYjm0lZJ12jZPOrI7sZy4elRJ3LOY.GTs3vN8Xez33U_x
+ gCBrCaz30B2PY5TLHYAh2iCavEcLx1Cn3Q2mUnWT0ypQTcrCkljgYzjc1KkImHYPCDrUaOyueZa8
+ xtkZWKr3M_ujJB9DMfrBhQ9MYG3sD1BiUsoX88I7ZBXif1eM47GpRmJyC.TJkygUAZucKG33OrQr
+ CWHfz.3F6gd6_CAawOcNI9ULFcyc55opl.KE20MGyTZ.wNCb1QyA.3g9SykKkYWfd6BecXfK83s8
+ cQOYlgvS1Lg4ymeNlTAh56Dv6dfKcSM_yTw135expLspQ9d8ZUcXu_gU7YbJXgtm7ldn99HVRV36
+ ro4L6DWaB2Zda9NfURUZkUbeqL9DLNJcvHc6W9Sj6GyI2pna62cjoK37MdyisqU6RijqiDpaq152
+ JG1u4nlLxkSgIMmkpqwqrzwIxtZmv9rwbEYAPq6uu0b1pF0G.KZJEJlyXcbTTCG1hnTjNf7VEcxu
+ t1_TFzUqGAMLnJfG6_Fmsw5UpjTejZAz002oaDtUrGuHCBKDMN.yhdkog.RY2Qp72ihlZ4wLH1rT
+ uToU.oEs5kxJWJP4MGN_l.ud.dJYRcSSHf3cir_MzTS7Fe4kD0NQTDBzJwl6L8.hGv0PYnnyhbOo
+ NDEQ5mHHunaZhQ7WcR5961L.KjjUeiaKTBrmQxEKHCEDz5K93x7.09.eOcdBjG2NJ3Y1zVW6vzYu
+ bTrS9Fh6Lq0QOUiHdfd1oUF9G13TBi74xE8txnEABr0iZYpj_d4szdRyQtV8AHmgDWhOIwzbc545
+ .XuMkR7tXxXfUv80ViUTRsdoFBDn0VJ9qoKwGTxcjhrpGCEb0kE6.o6ZX64HL6U3kwLxrYGoz36y
+ F9kAUebeoTRS81pNCVqpXNMAcoWxM56mSUi9sf.CCCP_dcvY2xGITIrVmZTLB2l8.SVK0Nqxjbiz
+ g6PpwHIdaCZ4zaLg5rjUob_Xi.qf5dLRCi.jwq2CweVw_OgYpJvSp2IkeiBKrdqzwqhDPipRvI6z
+ kyBkqLHVzskMw.Dupnk8VRXgHJYVJszs3p9wMbLLUGfbXMHqb1OfIaaChWnMk07UWNh23AMzMCrW
+ kM2bVRSpIqYG_c1pEru0fLPsc1fesoxDIdbzSt0ZAEkFIlCb808.ht2QwNrF93b5UenAAp37vjEn
+ pryS95LQXfMlT6maBPNqAQ.bQdIJWDdsolTGWQ7W461gjPShiB1eVKF56u8dPlkpotj75rX3DII4
+ biQhrRdoZQRVYswZfv4J9kEphYOcuetBfxCcX2XYTVV9Ptdb4Lq8vonuafEjLJ4ajJjVeq6BbBRj
+ 77tNCjV0lcmj_gYMWccq8b6xVhHzk_qDAFPfzrvoCHFo9dRDzxviDS8bRbUwJV8kF3eHDNB.cwdb
+ xNs18WT_kF5OGHVaS1h4Akzi1awtk.34wUE6b2DFJun7Tbx4kiZ9SQaR4J_HCf.q67XtFP3QyMh7
+ FEdLK3g9N.fiw40oxE11VGLD_JiMcDF_TnUCuQMCAHuWRtxlliEN6AV6vBythhvrpOQge.LnRVqn
+ 6YLXI8CP5xqhwM.i_XOpa1wc9rbGpz2zH4T1baztsnSqjneRD7SzAsff58Ajzki6dFwKzYGag.5r
+ XlzQ1T55u4yTLFl2ZjLUAPRTVaEOE5RWSrgmp02.aMnjRtLcxmGJLeeydcGKjIrONBqLHumk7j6X
+ ns1CoKfdjqXzeJItWMtnwtI25h3NzwO2mzBnzlS1e6wyDWKnu5Xmc5j5Fy_Xb9mw2ktJ7aujZS6Q
+ qjfZ_Eo9vdfUhu_w6ykbD4wtOAw9lJGTXzxR98mgWFZRZPAP3YLpvV99s0f1IINp0xMe5huIWCKR
+ NilegWMP64D75tSwU0TtJXSZX.2Bcn21DMLz2DDBktjn6Sz5APQjyc.LAkB6yCEjob25d.CraL7_
+ fl8boejUa4wRM78gRbC97wh.Yd_ti4WtC9WuPJGHN.F4PG6BemOHGd2DuoprxG9z2XNoaYhwuw9N
+ mcinU1ok8..B40RyVH7q4nb5OtIztrOwaglihi.ipEqHKyX6LuLgQDe0EKHwHPPjlaRE5hm7bGug
+ YspayCmVU0rkjj_c4N8SEm5XC3rPVVE_4UTttDeSI2qPL.8GIkmdlv6wa.0p3aMRlKqTdZJs0wQp
+ nWUTrmsXpPi46nOT_VWpdN1k3rdlsDwThxz8MjkRvPxCuTdjcUL.1FZwRS9oiI1seDI6g3mQ4UhB
+ xyFh_WlLDuPvA3dAMD5MUpggsLY9Tq0.ho29fMneqKaZrJ6aTs5adIsXTy17NuudhNzuG3QcoGmV
+ bIf6uZqd0_wzXtSQ-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 53e65d80-ff52-4089-be08-951dd0e3b7ee
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Sat, 2 Nov 2024 17:41:52 +0000
+Received: by hermes--production-gq1-5dd4b47f46-whghm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID bbb3197c4336a222fa4917ecdda88651;
+          Sat, 02 Nov 2024 17:41:49 +0000 (UTC)
+Message-ID: <b226a01a-2545-4b67-9cc6-59cfa0ffabbc@schaufler-ca.com>
+Date: Sat, 2 Nov 2024 10:41:47 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] lsm: Fix signedness bug in selinux_secid_to_secctx()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Paul Moore <paul@paul-moore.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <2d02f331-42ee-40db-a64f-5ee378eb44db@stanley.mountain>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <2d02f331-42ee-40db-a64f-5ee378eb44db@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-ida_alloc()/ida_free() don't need any mutex, so remove this one.
+On 11/2/2024 2:31 AM, Dan Carpenter wrote:
+> The "ret" variable needs to be signed for the error checking to work.
 
-It was introduced by commit 9a90ea7d3784 ("platform/x86/intel/vsec: Use
-mutex for ida_alloc() and ida_free()").
+Doh.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-See:
-https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L375
-https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L484
+Thank you.
 
-Review with care. This patch is clearly the opposite of the one in Fixes
-which states that locking IS needed.
-IIUC, idr_ functions need locking, but not ida_.
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-If I'm wrong, could you elaborate why? (because many other places will
-need to be fixed and the doc certainly needs updating)
----
- drivers/platform/x86/intel/vsec.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/platform/x86/intel/vsec.c b/drivers/platform/x86/intel/vsec.c
-index 7b5cc9993974..9e0f8e38178c 100644
---- a/drivers/platform/x86/intel/vsec.c
-+++ b/drivers/platform/x86/intel/vsec.c
-@@ -79,17 +79,13 @@ static void intel_vsec_remove_aux(void *data)
- 	auxiliary_device_uninit(data);
- }
- 
--static DEFINE_MUTEX(vsec_ida_lock);
--
- static void intel_vsec_dev_release(struct device *dev)
- {
- 	struct intel_vsec_device *intel_vsec_dev = dev_to_ivdev(dev);
- 
- 	xa_erase(&auxdev_array, intel_vsec_dev->id);
- 
--	mutex_lock(&vsec_ida_lock);
- 	ida_free(intel_vsec_dev->ida, intel_vsec_dev->auxdev.id);
--	mutex_unlock(&vsec_ida_lock);
- 
- 	kfree(intel_vsec_dev->resource);
- 	kfree(intel_vsec_dev);
-@@ -113,9 +109,7 @@ int intel_vsec_add_aux(struct pci_dev *pdev, struct device *parent,
- 		return ret;
- 	}
- 
--	mutex_lock(&vsec_ida_lock);
- 	id = ida_alloc(intel_vsec_dev->ida, GFP_KERNEL);
--	mutex_unlock(&vsec_ida_lock);
- 	if (id < 0) {
- 		xa_erase(&auxdev_array, intel_vsec_dev->id);
- 		kfree(intel_vsec_dev->resource);
--- 
-2.47.0
-
+>
+> Fixes: 95a3c11eb670 ("lsm: replace context+len with lsm_context")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  security/selinux/hooks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index eca9674c9478..0ff018f557ac 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6644,7 +6644,7 @@ static int selinux_ismaclabel(const char *name)
+>  static int selinux_secid_to_secctx(u32 secid, struct lsm_context *cp)
+>  {
+>  	u32 seclen;
+> -	u32 ret;
+> +	int ret;
+>  
+>  	if (cp) {
+>  		cp->id = LSM_ID_SELINUX;
