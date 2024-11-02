@@ -1,102 +1,117 @@
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B199D1E515;
-	Sat,  2 Nov 2024 13:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C331607AA;
+	Sat,  2 Nov 2024 13:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730553835; cv=none; b=DuJqP4iIejIbbPzP8W4oci7veLzwFijLSsPF8v1dp7zdtgpkID2eSdqr+7UpB9ddZV1ouxb+fxwVf9t3MlSydZHzP7/D3Xuc1bxsLB5wCaxgmGELNDK9JIUCFHkJ+CyV7y6AaYpVLtfVmGpz3tEKRDuK+ZAkYWjm+M6gXwhihn0=
+	t=1730555350; cv=none; b=HgQ/gmhvtAqw3C0+EAeuF2whl7sBUi6iiKNC3GOqe9mEwf2Z92ZThNo0I7y2jq/dbUIeyTGFr7Cg8h5sQkidFbDjWQlOYYXXAdgE+7tyZ247c7psHPYASo/AiUgHI7Izolspv21X4G6U5rrBXy0y6Rzc+rp6jETjacYHox73qVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730553835; c=relaxed/simple;
-	bh=cnZgompK9DLpu0oUx4hd67geHcCcGIiOVdT4sPIWGek=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=SMOP6YWnaRm+ewKHa/C2aXL9IyGmo3w1dZMfFdPa1bY35DqeDCR/+QxtQL5gDHkSW2yYpdO8ptHWfUJN7QHGq+m/4Y4uHx9W6ejBwfG0zfemxNkYDOu5X02+K+rS1I51fdVtHWO02eBHSyup9HHJ4BkI6rkVBRIIS+D352ltl78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:51330)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1t7E6Z-00FGat-NV; Sat, 02 Nov 2024 07:23:51 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:43360 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1t7E6Y-00EG20-Q8; Sat, 02 Nov 2024 07:23:51 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Kees Cook
- <kees@kernel.org>,  linux-kernel@vger.kernel.org,
-  kernel-janitors@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-mm@kvack.org
-References: <34b8c52b67934b293a67558a9a486aea7ba08951.1730539498.git.christophe.jaillet@wanadoo.fr>
-Date: Sat, 02 Nov 2024 08:23:31 -0500
-In-Reply-To: <34b8c52b67934b293a67558a9a486aea7ba08951.1730539498.git.christophe.jaillet@wanadoo.fr>
-	(Christophe JAILLET's message of "Sat, 2 Nov 2024 10:25:04 +0100")
-Message-ID: <87jzdl3h2k.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1730555350; c=relaxed/simple;
+	bh=QlN9eg7ts+7pJDsvtKx/3mxNo/F1JSwVO7OYNfiO9F4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g/SMCuts3PDTuQsQGQorx8AdNcNd7mHb7aAQnamkPmcRa1W0RVCvN1DlZXVb9VaE6MdCf4LMJhcrCiGX4XAGhpi6HHjkzrAmng/CpEclvMeBmfzlZMZlWvt20e6DViBAUyLsjEpTjc8L/UzquE4de/OFPdVE4PHVM5PnYkWfejY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i1jYIr3o; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1jYIr3o"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso21541205e9.1;
+        Sat, 02 Nov 2024 06:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730555347; x=1731160147; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZZXYdOojQ5JCeFAKKAsf3AfZWq+8G43XEkW5mMC20uw=;
+        b=i1jYIr3ogMxiQCsf0GsdOItYy7ouaS7q5+qN/B6/8576R4VtnrAazF+DH2a94ZQ7D3
+         x3DZBCKLAN3kWpTMksstdAOelL4SZVwDOvoFMGp4Je3rEXMh5GvOf2/MHzxqSJUOU3me
+         OqF5pVftPyR852DgQdwshFMyQFCrYP655RMqvEoVeUGJTMO+biojc1XHFqp4j0VaLNlu
+         HXkfkfNldnqY8Eq7Nkh61Qpgc7WjHg/rPr6BFh+QoLgMJjlibtJCrqccr75rZw/uwW1E
+         NfhXa0ee3+JQf7pGkwO+vhpgxvpTlzwS067/MRO1Ju5asIn9gWsdvf+kmNfc0M8wQ4Uo
+         CKWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730555347; x=1731160147;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZZXYdOojQ5JCeFAKKAsf3AfZWq+8G43XEkW5mMC20uw=;
+        b=vd6C6qNOdWmOGx3oG20OnVhOoKVnfwhwAEGN8DG2CC+wOs5jNwuyHfdlqzoYFQsazV
+         cfkLVJIY8B2nlhcHvAvfHwrakHLq0FmhfNG6hZCglN5SBIvj5Ai9qR7u3k+HMWmuojfw
+         tDzrbCIgRDETXaLyw/tlGo5r4reaFHVIMKCgLfDHLZultKf+HPPF4rA0xbttaAmiRRI/
+         4FaRWGskCyhCrTBtAc6hqN2WTCavbKdq78LPLHUVStBbDXU1tVUDWQcDN+fdA0nQRxK+
+         x0O2wMFqO8LYLUdvAKYAPpF4KHjST71fOIlLnp/tuqrF5hFXIYaxo/mr5+vkUeqqYtfn
+         Q2Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNsGoeZahHyMaQd4EToXiKwyBXUrLDOHiQDfQTGZU/qi4xbxZPyGe3AI5F3sO1hcGGpybIJmofch+xok6lz6g=@vger.kernel.org, AJvYcCXprq/n8PjPsPIZdwUb2j6AYOJ3EOCGrOJZRUdE4P9lmnM/AG89H6SessD18/272X6EfyYVybKWZi73pHOx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGxcHCRNNdlK9NXOJ748bHSx31KcPAA28mh2ks21n0KtYMuEA+
+	CSecZ6TB6wk9OhLwuVa1OUOByNigAhR0ixE8IWev1mpLfwr12szS
+X-Google-Smtp-Source: AGHT+IFQv52kCU7Mwzq1OHsKKTo1+SsQhgY0RzuxusXU/D0yybpByXaiO5qp726iFp5CmIGoMcnGvA==
+X-Received: by 2002:a05:600c:46d4:b0:427:ff3b:7a20 with SMTP id 5b1f17b1804b1-4319ad049a8mr216105165e9.27.1730555347446;
+        Sat, 02 Nov 2024 06:49:07 -0700 (PDT)
+Received: from void.void ([31.210.180.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4327d5bf429sm93256255e9.12.2024.11.02.06.49.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Nov 2024 06:49:07 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Karsten Keil <isdn@linux-pingi.de>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH net-next] mISDN: Fix typos
+Date: Sat,  2 Nov 2024 15:48:24 +0200
+Message-ID: <20241102134856.11322-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.47.0.170.g23d289d273.dirty
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1t7E6Y-00EG20-Q8;;;mid=<87jzdl3h2k.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+784bjb7XOAmC0ASw8osPUmENC1hfnnhw=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4998]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 303 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 11 (3.8%), b_tie_ro: 10 (3.3%), parse: 0.99
-	(0.3%), extract_message_metadata: 13 (4.2%), get_uri_detail_list: 1.02
-	(0.3%), tests_pri_-2000: 13 (4.2%), tests_pri_-1000: 2.5 (0.8%),
-	tests_pri_-950: 1.17 (0.4%), tests_pri_-900: 0.97 (0.3%),
-	tests_pri_-90: 93 (30.6%), check_bayes: 91 (30.0%), b_tokenize: 5
-	(1.7%), b_tok_get_all: 33 (11.0%), b_comp_prob: 2.2 (0.7%),
-	b_tok_touch_all: 47 (15.6%), b_finish: 0.92 (0.3%), tests_pri_0: 153
-	(50.6%), check_dkim_signature: 0.48 (0.2%), check_dkim_adsp: 3.1
-	(1.0%), poll_dns_idle: 1.29 (0.4%), tests_pri_10: 2.9 (1.0%),
-	tests_pri_500: 9 (2.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] fs: binfmt: Fix a typo
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, kees@kernel.org, jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, christophe.jaillet@wanadoo.fr
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> writes:
+Fix typos:
+  - syncronized -> synchronized.
+  - interfacs -> interface.
 
-> A 't' is missing in "binfm_misc".
-> Add it.
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/isdn/hardware/mISDN/hfcmulti.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+diff --git a/drivers/isdn/hardware/mISDN/hfcmulti.c b/drivers/isdn/hardware/mISDN/hfcmulti.c
+index e5a483fd9ad8..f3af73ea34ae 100644
+--- a/drivers/isdn/hardware/mISDN/hfcmulti.c
++++ b/drivers/isdn/hardware/mISDN/hfcmulti.c
+@@ -930,7 +930,7 @@ hfcmulti_resync(struct hfc_multi *locked, struct hfc_multi *newmaster, int rm)
+ 	if (newmaster) {
+ 		hc = newmaster;
+ 		if (debug & DEBUG_HFCMULTI_PLXSD)
+-			printk(KERN_DEBUG "id=%d (0x%p) = syncronized with "
++			printk(KERN_DEBUG "id=%d (0x%p) = synchronized with "
+ 			       "interface.\n", hc->id, hc);
+ 		/* Enable new sync master */
+ 		plx_acc_32 = hc->plx_membase + PLX_GPIOC;
+@@ -949,7 +949,7 @@ hfcmulti_resync(struct hfc_multi *locked, struct hfc_multi *newmaster, int rm)
+ 			hc = pcmmaster;
+ 			if (debug & DEBUG_HFCMULTI_PLXSD)
+ 				printk(KERN_DEBUG
+-				       "id=%d (0x%p) = PCM master syncronized "
++				       "id=%d (0x%p) = PCM master synchronized "
+ 				       "with QUARTZ\n", hc->id, hc);
+ 			if (hc->ctype == HFC_TYPE_E1) {
+ 				/* Use the crystal clock for the PCM
+@@ -4672,7 +4672,7 @@ init_e1_port_hw(struct hfc_multi *hc, struct hm_map *m)
+ 			if (debug & DEBUG_HFCMULTI_INIT)
+ 				printk(KERN_DEBUG
+ 				       "%s: PORT set optical "
+-				       "interfacs: card(%d) "
++				       "interface: card(%d) "
+ 				       "port(%d)\n",
+ 				       __func__,
+ 				       HFC_cnt + 1, 1);
+-- 
+2.47.0.170.g23d289d273.dirty
 
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  fs/binfmt_misc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-> index 31660d8cc2c6..df6a229b5e62 100644
-> --- a/fs/binfmt_misc.c
-> +++ b/fs/binfmt_misc.c
-> @@ -998,7 +998,7 @@ static int bm_fill_super(struct super_block *sb, struct fs_context *fc)
->  		/*
->  		 * If it turns out that most user namespaces actually want to
->  		 * register their own binary type handler and therefore all
-> -		 * create their own separate binfm_misc mounts we should
-> +		 * create their own separate binfmt_misc mounts we should
->  		 * consider turning this into a kmem cache.
->  		 */
->  		misc = kzalloc(sizeof(struct binfmt_misc), GFP_KERNEL);
