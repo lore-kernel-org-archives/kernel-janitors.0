@@ -1,101 +1,138 @@
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E6F2FC52
-	for <kernel-janitors@vger.kernel.org>; Sat,  2 Nov 2024 10:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9F913C67E;
+	Sat,  2 Nov 2024 11:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730544225; cv=none; b=Rc63N90HspQ0aM31U4RoZNA4U0BaBKlqcMOfkJd3dlhkNqoyD+T1bOh6rCa+YEoenVt5SE6qgQfBmJjF2c0NMn52utH1oUHNSOtQmkJmiO+9zq40mleq7VTVDzYbYAG0vB+1QQqAKhkEQoDqp2xre6CWCnCsPnuiKrsGNDTUTSI=
+	t=1730546896; cv=none; b=X80DhQlma/Dy6y9aikK101myELkWepAS9peWBJ04DSnILfoDtMfOw7Ov0pgtpJmFdRb0uk6IofajCN3GJYauqsAgpAe+H1Qj6DYna5SHXfAnSorYtIXvh19fR6JOFxb2d9W7lfPLRptExbKP9wvSwfLNAsspHVp/5olEO4eBqHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730544225; c=relaxed/simple;
-	bh=j2a1LW7AkCNYtiAHKl+WpY2EDHs10dxIy/hiRkkE8M8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aPKSlpbe7hLfEa+0sq22IxJypkQT/2W9Mqthz/Z7aQbmWzpMQmoVyI/Slr46XN0wm8r0UzVdBMHU9ColIft49EhK1p+k1NiMv+l6+UY8UH/fZxhJDFx3ADPQKvhSQsYz7Zs7cPXwYzYXWTIRSyyrcyvthcgPE35mkzSVP5ysVYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=TRMf/qhZ; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
+	s=arc-20240116; t=1730546896; c=relaxed/simple;
+	bh=6Xuvqvjz0O0f5DtMDCZIJtSxqS5u8/HCzRNuy/jlh0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hCmBQeWs4vgXlMEDHumF4xiIKUYeXw5l9J/uhJzqTIG7/uzRquCj7Fs1/vzG0lvMjVX8uFiBImihx3YRBT+YoWfZIJEvODWBBv2n6z6+Y5MniyT+IyGaja6r9+9NyVXfaQ71FBFn9idreF3JP6nXzCE5VYYdQ7jjjGbE7d1k15g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=vjmTzVjh; arc=none smtp.client-ip=212.227.17.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="TRMf/qhZ"
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-83abcfb9fd4so107215039f.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 02 Nov 2024 03:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1730544220; x=1731149020; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5E+zPbIeW2NpGExKCJwVS0jdkrwjIk/vifgXOVF84OM=;
-        b=TRMf/qhZDVDV1+JA3QZJX3Jo3oojkJlo+YaZgI6bbKyIkQIwan9TCFECIPA1shejkE
-         nbh2drMzAWPORWtvRj0y1fR3reEjMZi3JhIkhYSh+0uG6zICz3J7Xw+Kvx9DAeqoFlm2
-         p5OoWKbsFQ8Aqon+xtAuO0AouR22WvnzRyz1Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730544220; x=1731149020;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5E+zPbIeW2NpGExKCJwVS0jdkrwjIk/vifgXOVF84OM=;
-        b=nE2wtcM9sqHLJBvYLIkE8urNpB9dcUvbzW4+UrREsxY1wPGSVJmtgLi3V6T6dRk3ri
-         T+x/Fzkl/E0pvkPaPXkEN50UbcL1qwzKX7uKTubUuZMdOyqpMFwatDMaD9sGPr+mMhJG
-         fvYpGiHWXV3FwhULZvwysTS2wVhh1jqOLsBNStpXVONSPmr4OZcVLMQnXN15BpThaqQv
-         JteUSfK35pT4fuTBIH6fvUZzieEsrFHhd8sUJR5nDXZQrF0YX8IXwWBHZ4SfXiXVbkHG
-         fD29aC6rQaHEstRrLZMlucmoXjoTBfAOWPP4sYM4vuI/CLWhkDk31rtyKOPRyfVfe/1V
-         EJuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKuHt1QKit4mn9spoCevQ2dSXukZEoE7BPtc1TwtAua1NlQXqVl1bkRHvwNgtr66Iu2dhRHKy9Eeq/KaAdaiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT6Z5V361L472G3qsChfcpyKBneTYKHNQhillfae/4wG/jFqZe
-	xxTGSbxt/imVwxN1uwSTSw4Qmj+5kdTtaw0BuYmnRJERZlOS3sH1QfwHaUptYg==
-X-Google-Smtp-Source: AGHT+IFIRQe2VBYWUfM1dViJ0/6r91ZBIV79oZXOk0wloU6pWapZrMDRHrlB1fFtFHkqUCgQyhXoAQ==
-X-Received: by 2002:a05:6e02:1c2a:b0:3a4:e99a:bd41 with SMTP id e9e14a558f8ab-3a6b02be160mr70648375ab.12.1730544220349;
-        Sat, 02 Nov 2024 03:43:40 -0700 (PDT)
-Received: from [10.211.55.3] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-4de048885absm1114575173.29.2024.11.02.03.43.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Nov 2024 03:43:39 -0700 (PDT)
-Message-ID: <171a7284-100a-4850-989d-63b9f7782db4@ieee.org>
-Date: Sat, 2 Nov 2024 05:43:37 -0500
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="vjmTzVjh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1730546857; x=1731151657; i=christian@heusel.eu;
+	bh=WmMrR/YhdN4xuscWAnklkE6sNO6ghcpu6+bEbGV0Dl8=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=vjmTzVjh0S6GfFz24w7LgZLafZcxyg/CzcOzuKD6qKO+ytJm7SgiHWJxGl3R/+lu
+	 BCxrMZVfhO3iBmMa9x2Y9F74pflSaX8cl60zCD4ffZvHX04HEeAn3wvMtgPbfPYHS
+	 iMRPw7w49MwG27wlR9qtdw5qQ7T8zvy9JT1kxVVwrtKV/cX49uc65pmlFAqISzKif
+	 eOPoQYqezruUquf4sg/ciaGZe798zaDixOlYO+b8JfWTRjKoy1szrI2tDiem+KEfV
+	 M7M6GweONgY6PlMrQdg6c+Ek/fgK100CYB9OBxAECoKlUsfRkMCS+D0NcQ3Pn6lbC
+	 Ym5ytnc0D8weKfScYw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([84.170.95.171]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MhDEq-1tkOvj2UsM-00ajVM; Sat, 02 Nov 2024 12:27:37 +0100
+Date: Sat, 2 Nov 2024 12:27:36 +0100
+From: Christian Heusel <christian@heusel.eu>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] bpf: replace redundant |= operation with assignmen
+Message-ID: <cef129cd-44b2-449c-8a60-c918af005cbc@heusel.eu>
+References: <20241031130704.3249126-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] greybus: Fix a typo
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- greybus-dev@lists.linaro.org
-References: <aad9d19c20ea0463974b7652ba7f2f8d9fec1186.1730540152.git.christophe.jaillet@wanadoo.fr>
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <aad9d19c20ea0463974b7652ba7f2f8d9fec1186.1730540152.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mq46d7w2jh5srwvq"
+Content-Disposition: inline
+In-Reply-To: <20241031130704.3249126-1-colin.i.king@gmail.com>
+X-Provags-ID: V03:K1:BLFSXaSDwrRUxOWPQAYJW4MCsCZ66VH3B5fNZlyrNPQpIVwAuxQ
+ EIkKOJtYFfeQVdxZQqwxoddegPY2yO9b51n6S7hW4vjrFPm1SRmruP8OQbvYJCNaXs1/FCR
+ Ep06esM4QyyHNAg7NYWvu5YGBpbHFBbDG2ksbGy6afBXhFQPgXihjw9yKdo7OHLTHIH3DM9
+ WAIfJ3H8CT/iuXFlPJ4tw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0c9rEGd8oOs=;gNv4hqN2OexMjuuM10htPanwg2B
+ p4OqAKHEKbgJADSpmFSXa/BjBgfSY8VkxKDNwPe+hMWdRkhF+ADhwG49MONFNgwPj9da3b4dx
+ rgUUXIz2s2AsQkPDGHo+fJxAKwYNTtFBvdg/qX+gXZvw219u1rrk+zhSf3U8Wb4Q/sSDpdr7k
+ ox1MgluLPvnX0m+8p4zi/fscS+C6FNJAMlqHrz/+h1R7J3W8Gd29UHxuDnILTMTVOaHk5w8uh
+ INXCOEv0U9sZVd0Z8oHTkarsdr++kuRaKY5dnXltuBAyYCgXLu1rf0fdLAv9yIVjYZjclOi7Y
+ 554Wws/ICn/9XF2rWzxuXpDOOaUr+aq03xTOfowyA+E7OOZAr3ns4BRR3Ms9WONtQHLYmtOir
+ Zz/tFA+n5PkzVanhR5TVSRaeqRM0i9otuJ1/HyVGNL6jWfkwgoV5DWXlnlE4Hl5/Nm/t2oKXm
+ wA3WmA5w8Aso+hiHVK5iY3sR5QR84YGsmP39gjIfDMI+Ab/E5/DIAAygi1g92TM7WMk7eIP2c
+ fUHLmUPGXG75NUuHx8cHmWOTsX5op3sp26E5Toee/Tlef11X3tFsDKOhsQjhVFT+o18huCZBM
+ nSb9Ie+lffn+vstVzgKJKblFHi59iwxjryt1EulzW1CZ00DtyotCO93ZiiBWyXMtxfzGpQEnA
+ 2T6AcKCtwYyhZlntf4rj909FCrGmf5wUMlWqGLu8HOsX/XF1O70/5O1D6vM6sfSoDYB+xdin3
+ RJQlXJHHt/Q3JqGeh1UZJclnKG4s5NI5g==
 
-On 11/2/24 4:35 AM, Christophe JAILLET wrote:
-> s/interfce/interface/
-> A 'a' is missing. Add it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Looks good.
+--mq46d7w2jh5srwvq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH][next] bpf: replace redundant |= operation with assignmen
+MIME-Version: 1.0
 
-Reviewed-by: Alex Elder <elder@riscstar.com>
-
+On 24/10/31 01:07PM, Colin Ian King wrote:
+> The operation msk |=3D ~0ULL contains a redundant bit-wise or operation
+> since all the bits are going to be set to 1, so replace this with
+> an assignment since this is more optimal and probably clearer too.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   drivers/greybus/interface.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/greybus/interface.c b/drivers/greybus/interface.c
-> index d022bfb5e95d..a0f3e9422721 100644
-> --- a/drivers/greybus/interface.c
-> +++ b/drivers/greybus/interface.c
-> @@ -780,7 +780,7 @@ const struct device_type greybus_interface_type = {
->    * The position of interface within the Endo is encoded in "interface_id"
->    * argument.
->    *
-> - * Returns a pointer to the new interfce or a null pointer if a
-> + * Returns a pointer to the new interface or a null pointer if a
->    * failure occurs due to memory exhaustion.
->    */
->   struct gb_interface *gb_interface_create(struct gb_module *module,
+>  kernel/bpf/inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+> index 9aaf5124648b..fea07e12601f 100644
+> --- a/kernel/bpf/inode.c
+> +++ b/kernel/bpf/inode.c
+> @@ -914,7 +914,7 @@ static int bpf_parse_param(struct fs_context *fc, str=
+uct fs_parameter *param)
+>  		str =3D param->string;
+>  		while ((p =3D strsep(&str, ":"))) {
+>  			if (strcmp(p, "any") =3D=3D 0) {
+> -				msk |=3D ~0ULL;
+> +				msk =3D ~0ULL;
+>  			} else if (find_btf_enum_const(info.btf, enum_t, enum_pfx, p, &val)) {
+>  				msk |=3D 1ULL << val;
+>  			} else {
+> --=20
+> 2.39.5
 
+The patch subject contains a typo ("assignmen" should be "assignment"),
+but maybe this can just be fixed on apply ..
+
+Cheers,
+Chris
+
+--mq46d7w2jh5srwvq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmcmDKgACgkQwEfU8yi1
+JYWdIxAAotM3cGdE2NzOWvfeXmB8y5/PcO7OvXnCcp4RiWLjDHDO2TA1Mq3fOkRb
+TdBAIByTs2xo2lRyYFreqnoWA+PvwX7oxJouR1SMEWUbyWfWf3SwjiWgk4vW1V1B
+cmmF87IeRRN2ViIjW/aIhN2pjVcRjHxRZJcjORNlfDEewJDd9iT4cE5IkYcE9W/C
+baipFrEj6J0Kf7ewq22A3mKbaHRCoNYDRkOgNonh1jEORX0MHwMJIDHhVkzmtgC6
+tStNIDDg3A9Hp11li+eTDecA0OC9nvENYntfWvpdAqUi8jlC/+62LxadcSerTCSf
+N+ru/Qw7bJ8D9hmBano7iXzBFHK9rNVS73ctus0cIM2ge2JLDqdbs/QkAchk12vk
+drDcJc2VH931lh9eI88uDfQWSJFjFgI1yN2kBdycjsqIvX9VbZfJcb635FYbgK20
+KFF4ZhB8d5DTdR8+2UHpum5FgNWOITXB9u+NHSVZDd5a4y26E1gXBGr8jXHp85wx
+WIthFb+65YHwaGyeohR8RcEiG7SPIqAyqmdUUqJgKqzIeFlK1ww+UWQpK2rwJEd5
+fzukt2s3CeXKy9OB36ZfZ8MBj+Mz7J198AjP+KC3nBPla2n0NcY9hDX38XBQ91Hk
+9wfcA54NifMJLMPE3U8WU2CYGBnkufLDB0yYdiP3IY3lrSDwCT4=
+=b+Wj
+-----END PGP SIGNATURE-----
+
+--mq46d7w2jh5srwvq--
