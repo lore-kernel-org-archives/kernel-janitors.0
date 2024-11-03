@@ -1,75 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59BB155392;
-	Sun,  3 Nov 2024 21:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE1B18B491
+	for <kernel-janitors@vger.kernel.org>; Sun,  3 Nov 2024 22:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730667627; cv=none; b=rfbkJZvgpWWVdZieQcy0jpqchwOuJ3JYK3hPhSKAswk1I70wcuKrnpwh+LztCaraiXukHvdA4rIrQLDF/YYiV1sEqMxT9FJiTjIzbVP5Hib9g4An6R9j33IK4/fA3YckoOVjwxunXWObUH10ICM2HmjUM7cJD+O0TMlj+CYYWDs=
+	t=1730674395; cv=none; b=k4Ouunc/VtttiOdFnnKEH0qrkskqgGVSwQtjDn9KHkwmWEVT7E31cVvjUt5KkTx/1qPfljJME+bPnmmIWoY4F8sXO6+sU2jYRWm4VSsGidmBf18XxUTOCEzNI3ay/+zcErnyHNxbSGFX/4MtHYBz/O6KFpl2XUg4JWhnoV1q+oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730667627; c=relaxed/simple;
-	bh=pbd16GLlHtOC2dmcOjLcGwfE+tqzEsot5pNy9wyoHDI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=HlTa3OiIC5La9PiuxDZdvypEjak81F+plLzSlm18M/qjbFRLKmhWTEuQ3u83Obf5FWm3JgtdajVk8ECld2UL0NxWr9Q2uguLhYerKvJKWAtROf1DerbEKIgzdZBaPILyHz91/EFE7bO0RB7h8RUn/RzDAAS2+VSxtKBOatHmtbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvCjR6b8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730674395; c=relaxed/simple;
+	bh=h0N9JSxmh1chs4NvO7r3yn1fpf7R04K7m4MXQCWx5Bs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d1TEp2AhIsbHG1aSb3c4fgaWbXKdFuaSxHLlfgh9bogQl4h+74Gu0kfQiac1xtLC4aLDSuD9WlwVPoJDT2+lkZmcq7Xi+I+NoJXycDQoUsQvFGU579YX9vJPIT6S4EEBJPaKxT/R9/3a35kos2uYUKqF/5bE21WBj2w9niTCg34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=netflix.com; spf=pass smtp.mailfrom=netflix.com; dkim=pass (1024-bit key) header.d=netflix.com header.i=@netflix.com header.b=nmMNBHbG; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=netflix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netflix.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvCjR6b8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F624C4CECE;
-	Sun,  3 Nov 2024 21:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730667626;
-	bh=pbd16GLlHtOC2dmcOjLcGwfE+tqzEsot5pNy9wyoHDI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dvCjR6b8rsmxnSxmtAUIyFM2GFJ9Nsiviqxej0QH0GgPw4Y1NE2+LBTzo/NKKduhc
-	 20yStcNBtIDP2EfELaEj6zsWgIliGVaP0kRvH1lfBJqBoFLc62gl1RsIdtGFWQGKNw
-	 w6xoTL4XukvTUqtKbfaFOLVBQL9PAJYigm6iKDYaR6OPH2Tj1CKc674GUrQvJvSjvx
-	 HL8AIHeO4X1iziJ5Q667k0BSh+ecfdZesVZmOL/juVxY/OH2+Syd+658ceS3B5DsoG
-	 c8rcMkyQAGoisTeQQkgHTk/zcjWmrytnir/T+BeB+7L7bo+F0P16zSQG/j9DXowHoT
-	 9qgFHKpSnmdhg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EACFD38363C3;
-	Sun,  3 Nov 2024 21:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=netflix.com header.i=@netflix.com header.b="nmMNBHbG"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99ebb390a5so851871966b.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 03 Nov 2024 14:53:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netflix.com; s=google; t=1730674391; x=1731279191; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H/o07MZV6TjINQ+zDnpBISVrIcwIjg5m7Y/v0tWWBlU=;
+        b=nmMNBHbG7YxxK/QqGj6a+dPbafeTNMqt3paykLErXBrPx1TwmU6amIGCa63jzEqHrG
+         aMk4TEOfUY9zlDPtBvkHyBv3b6wk6Xt1JqLEQFvwY6AR7IrC9B8i3G2HaEhaTvxVLFCA
+         SvJ7GUOwoUJokGB1gAaSuP2L3wLl2F49RNsgg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730674391; x=1731279191;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H/o07MZV6TjINQ+zDnpBISVrIcwIjg5m7Y/v0tWWBlU=;
+        b=gLpgMGSuqndpIFMle1co14c7p7rsDQoqSuCqFAMxsLjxMymzuXG/ZWiD0KS/iNpe3m
+         rnElfNUkQDqiwmgQEud+kUHYHJkPi4oAIt+nutrXJOVemj/y9rfyCdBvSSCvQFmKt7un
+         uJucBgywtAsf/oZI1wSDKxFINe1wwhLKKRx8G1OkJCCRUJMSsjDqdEgJgo1UOGp3UObz
+         iXHY1XcMfsbOxezqXjVU8EaD709IugO6YjJXe3azoosl0r4Cxbj++YGEbGSnhGhcf96T
+         gdJqN63qpw4SOxHY8O18fAkRX2FLB5k11zaZnZt4/4aMLd8BD0B62AUd02qPG5+f6Psw
+         h15Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWSYgJwwyWaXCNkkkhVNe4BLNux7qoKB44+z5Rlu9W7tBg0QlnzTDfISu9PLxB1NJwN7FjF4LQ5MzJ9bDCWdo4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEKFHFMdEe0isMvY0CVaIkd8W4zeNSc/g+HWtVjBnJ0LyqfgAF
+	/ilBIMVjgfgi1emHprp5k6kQMFHTflfnDz8Mc3jbH+AUzDBPMkizEXbmeBxE85/gC56bCsNiSpb
+	yfF2ADJMovG520E8PoWIlvYyJq4V6iRS80ar77Q==
+X-Google-Smtp-Source: AGHT+IFy4o46TYKoQTbVYKAMB2on6bfie/1kLl5cIFqDUnN/9UDRY5lszF0hFgsjo2kqN5eCFId2gUMEqsXUF4IgBZM=
+X-Received: by 2002:a17:907:3e9f:b0:a9d:e1db:de8b with SMTP id
+ a640c23a62f3a-a9e55a80e56mr1303129166b.16.1730674391087; Sun, 03 Nov 2024
+ 14:53:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] ptp: fc3: remove redundant check on variable ret
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173066763448.3253460.8196124095861512095.git-patchwork-notify@kernel.org>
-Date: Sun, 03 Nov 2024 21:00:34 +0000
-References: <20241031135042.3250614-1-colin.i.king@gmail.com>
-In-Reply-To: <20241031135042.3250614-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: richardcochran@gmail.com, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <18f60cb9-f0f7-484c-8828-77bd5e6aac59@stanley.mountain>
+In-Reply-To: <18f60cb9-f0f7-484c-8828-77bd5e6aac59@stanley.mountain>
+From: Tycho Andersen <tandersen@netflix.com>
+Date: Sun, 3 Nov 2024 15:52:59 -0700
+Message-ID: <CABp92JB9GGbxWO0Q0QhkiQyZoYoAGmz7agaEp8VyH4ciXoELDw@mail.gmail.com>
+Subject: Re: [PATCH next] exec: Fix a NULL vs IS_ERR() test in bprm_add_fixup_comm()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Sat, Nov 2, 2024 at 3:31=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> The strndup_user() function doesn't return NULL, it returns error
+> pointers.  Fix the check to match.
+>
+> Fixes: 7bdc6fc85c9a ("exec: fix up /proc/pid/comm in the execveat(AT_EMPT=
+Y_PATH) case")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Oof, thanks.
 
-On Thu, 31 Oct 2024 13:50:42 +0000 you wrote:
-> The check on ret has already been performed a few statements earlier
-> and ret has not been re-assigned and so the re-checking is redundant.
-> Clean up the code by removing the redundant check.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/ptp/ptp_fc3.c | 5 -----
->  1 file changed, 5 deletions(-)
-
-Here is the summary with links:
-  - [next] ptp: fc3: remove redundant check on variable ret
-    https://git.kernel.org/netdev/net-next/c/5c87206cdb53
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Reviewed-by: Tycho Andersen <tandersen@netflix.com>
