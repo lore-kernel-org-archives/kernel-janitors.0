@@ -1,73 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF8C290F;
-	Sun,  3 Nov 2024 16:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4796013049E;
+	Sun,  3 Nov 2024 17:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730649751; cv=none; b=Qvb0FCTTWrkZSeCAGhDmo833YxpRez3UN6eNYjcvvBgSMX/36byzjzEaFx27hwA/8hoPehBcgOuyt5uPz5TARuqbiQdMFqjATrPz6JfoQ/Qj4mdfbPAAx0+YjPCruaNvkExbgzo0InBmmBjtRHPR6oYkWj6YI6wu+0QhhXWru/g=
+	t=1730655106; cv=none; b=Z77DikyqTs/vbFzrPDSIX6SE+kuKLzzgI8gQuQz9BhkgI+24Do3SBaw9ZrU3wufqSVK3LrhXplGZQzLdejHvpI6xD7mJ6pk2Zi2adIui2p8UnMG8cIKK3Y9uNX0Bl74F05/OkPwgOCBUrC+u6cmuAlLzoWJPeN//DCdyKoNvouc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730649751; c=relaxed/simple;
-	bh=/+DQmghZcV+OiRej/vlZM6VSNGosB6iFmadUL/BOou4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RiFGCw29hlv6xwaznoTndOc9q5gvJ8w3JVsLL/KGp61fLDvJbvTOML9J9Hku7j+3BjNzZwFQWY/6My4pzuAdoQ/TxFRCZ9MKPt78imnWy3S+jV4XlSWoLRnX5wYrP8U8c8xGMUi4qlEuLkC8gcHcngjsUir3d1Aynd/kEX08ZlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hknujNQ2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730655106; c=relaxed/simple;
+	bh=wfk8qbaU9InKWpE0Acf8Uzes5W/S9r9BMEmsxCgbAhM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DeQ0H8bAcWrow4lg+0OvmrfnJtOlJ7wD2MCEP3fDQaQ8bydDl9TIrbwdiScYpTy+oBs5c1Lu+0h11NDey7JeTCFpH8afaQiN7lxW1OMpQ75Z9dRMleSeZoMkmDyPtNFezne3HUAMO6U13RHHJjes4GoskWQL7Ym0wvSUKHJw4N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=a3euWv7Y; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hknujNQ2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89685C4CECD;
-	Sun,  3 Nov 2024 16:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730649751;
-	bh=/+DQmghZcV+OiRej/vlZM6VSNGosB6iFmadUL/BOou4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hknujNQ2noe5RZp6KM6GcJJOthjoJ+BrwlrUXOMzCXcOhKNdV/Ulrw+WSVnOudFBE
-	 0HXHN4rtk12WD5rNKQlTzbOAKkD0I5AKrlrqIpDhcCmPGiT+iRw3LiDUuI7P8XNzEo
-	 I1D9S44jWGE/sb6wAQpV2UAcjyJYqaQCU0iWhMTm0FfIJGRWSEttEi9j+rspkNA9l/
-	 yShc1rS/1bOW+5ODRMrKo9/ZFU9WOU34deau4U+jynPGOkmxO7LJb4OnMlutqN2zrv
-	 EdgK8qdO1m+cS1yZeXRITahreIdCqda8N1qXTNSAzwxIfR/dpv6ZIojRjolOhETg2G
-	 F6Ty4y33Dg81w==
-From: Leon Romanovsky <leon@kernel.org>
-To: Selvin Xavier <selvin.xavier@broadcom.com>, 
- Jason Gunthorpe <jgg@ziepe.ca>, 
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-rdma@vger.kernel.org
-In-Reply-To: <9e48ff955ae55fc39a9eb1eb590d374539eab5ba.1730477345.git.christophe.jaillet@wanadoo.fr>
-References: <9e48ff955ae55fc39a9eb1eb590d374539eab5ba.1730477345.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v2 1/2] RDMA/bnxt_re: Fix some error handling paths in
- bnxt_re_probe()
-Message-Id: <173064974755.148662.8075604022466705654.b4-ty@kernel.org>
-Date: Sun, 03 Nov 2024 11:02:27 -0500
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="a3euWv7Y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1730655104; x=1762191104;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=0VAq26ivGP6HWcypo61s63sxigrViuDKgoXzs5Trwx4=;
+  b=a3euWv7Y2mFsY9nx/YbOyXETICJ8BwkiYXBMZCxS5GQ7eMEmkegGkd1F
+   YdAYsdj0qzy6HFIpG+OD4zaX+IL8VsEIPS6kB99wCRpzXZDs5Rr1d8LmU
+   N2VieYlRHbbsw/cT3d2DUE7ACQDL5smk0Abk29oj+5t++YGDY00fUFyPD
+   A=;
+X-IronPort-AV: E=Sophos;i="6.11,255,1725321600"; 
+   d="scan'208";a="439899592"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2024 17:31:40 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:31684]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.22.121:2525] with esmtp (Farcaster)
+ id 44ab26f6-929c-4ae1-870c-42e369fbe483; Sun, 3 Nov 2024 17:31:40 +0000 (UTC)
+X-Farcaster-Flow-ID: 44ab26f6-929c-4ae1-870c-42e369fbe483
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sun, 3 Nov 2024 17:31:39 +0000
+Received: from 6c7e67c6786f.amazon.com (10.187.170.63) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Sun, 3 Nov 2024 17:31:35 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <markus.elfring@web.de>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <horms@kernel.org>,
+	<jiri@resnulli.us>, <juntong.deng@outlook.com>,
+	<kernel-janitors@vger.kernel.org>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<nikolay@redhat.com>, <pabeni@redhat.com>, <razor@blackwall.org>,
+	<ruanjinjie@huawei.com>, <shaozhengchao@huawei.com>, <tgraf@suug.ch>
+Subject: Re: [PATCH] netlink: Fix off-by-one error in netlink_proto_init()
+Date: Sun, 3 Nov 2024 09:31:33 -0800
+Message-ID: <20241103173133.96629-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
+References: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D039UWB002.ant.amazon.com (10.13.138.79) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-
-On Fri, 01 Nov 2024 17:10:56 +0100, Christophe JAILLET wrote:
-> If bnxt_re_add_device() fails, 'en_info' still needs to be freed, as
-> already done in the .remove() function.
+From: Markus Elfring <Markus.Elfring@web.de>
+Date: Sun, 3 Nov 2024 14:15:18 +0100
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sun, 3 Nov 2024 14:01:26 +0100
 > 
-> The commit in Fixes incorrectly removed this call, certainly because it
-> was expecting the .remove() function was called anyway. But if the probe
-> fails, the remove function is not called.
-> 
-> [...]
+> Hash tables should be properly destroyed after a rhashtable_init() call
+> failed in this function implementation.
+> The corresponding exception handling was incomplete because of
+> a questionable condition check.
+> Thus use the comparison operator “>=” instead for the affected while loop.
 
-Applied, thanks!
-
-[1/2] RDMA/bnxt_re: Fix some error handling paths in bnxt_re_probe()
-      https://git.kernel.org/rdma/rdma/c/cf90a4d1b9ff9e
-[2/2] RDMA/bnxt_re: Remove some dead code
-      https://git.kernel.org/rdma/rdma/c/aceee63a3aba46
-
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
-
+This patch is already applied to net-next.
+https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/commit/?id=bc74d329ceba
