@@ -1,112 +1,73 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABE71E52D;
-	Sun,  3 Nov 2024 13:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF8C290F;
+	Sun,  3 Nov 2024 16:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730639777; cv=none; b=rPbVaGsuN8EQhao3zF0u8uQ+LlNKnW4xTr03txJbhgMgs5RXYoxc696azrxTD0FSI4s6Lo2Mf6MPpmVl4OP0Y77SyyTwlbFZqNw3jLwTEHuYQLDwTZMKh3KL8dKUcw95ETKF+t9RbfTDfII5IGQCACP8LmVYW8zN/EBuG6a3lQw=
+	t=1730649751; cv=none; b=Qvb0FCTTWrkZSeCAGhDmo833YxpRez3UN6eNYjcvvBgSMX/36byzjzEaFx27hwA/8hoPehBcgOuyt5uPz5TARuqbiQdMFqjATrPz6JfoQ/Qj4mdfbPAAx0+YjPCruaNvkExbgzo0InBmmBjtRHPR6oYkWj6YI6wu+0QhhXWru/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730639777; c=relaxed/simple;
-	bh=J0bEm0YavRr3TS3jeCLxcn7Q8TAWoC2sGwksqFJ2bvc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jdeAqCoGt2YNIaePsYuaPKmRn+GYv95eZTxK70xXPMmDjG59HjSPJhdv9iejB4BHVl8PRI6m+cXfWo5dj1G2RpsRW4aM1gs78/1VM4e27uQxmRgjK6pO9OB335W2iKufeVcjYTOwgG9/90anOIL/68w8HEo1+8xdaI5UlzJlY4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ayrZ6uaD; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1730649751; c=relaxed/simple;
+	bh=/+DQmghZcV+OiRej/vlZM6VSNGosB6iFmadUL/BOou4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RiFGCw29hlv6xwaznoTndOc9q5gvJ8w3JVsLL/KGp61fLDvJbvTOML9J9Hku7j+3BjNzZwFQWY/6My4pzuAdoQ/TxFRCZ9MKPt78imnWy3S+jV4XlSWoLRnX5wYrP8U8c8xGMUi4qlEuLkC8gcHcngjsUir3d1Aynd/kEX08ZlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hknujNQ2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ayrZ6uaD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730639723; x=1731244523; i=markus.elfring@web.de;
-	bh=GRfPwkl244f2VsYqHO3OSu1ULhSp0VlnY57ITD4BKl4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ayrZ6uaDSylyE+AY8rvbCZDy6Ww/t1YL2YPN3lwoHZpO7RkuCdqUGMdF0JXFiIVb
-	 dU0Ij9zlyGzFfycqV/JgIryuFIm4yFPmTE5lCIUCOLWKmHvD5ZxTSwW+uBZEJnmTp
-	 a61YEcksJ6x0jKOv2KXH7F5I1KVieXEwjHOp6R4w2Vm5Lb281ZbNqklYjzxqhHpxk
-	 v64AolNxnnRNXsEosTjI0J1gFS/MYx8oKUq5SjWHhlUCnYN4faCLyBaGIY2nZhr+3
-	 Lu0lyhDi1JYZ1LuDgH8drMF7zTd89tIJuX1JWBdE25mXS9pB/TidMrsC0Iw4lTg6i
-	 5otSsbQDLhfPdAj4dA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqqTb-1tcCAU04q9-00aWmi; Sun, 03
- Nov 2024 14:15:23 +0100
-Message-ID: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
-Date: Sun, 3 Nov 2024 14:15:18 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hknujNQ2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89685C4CECD;
+	Sun,  3 Nov 2024 16:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730649751;
+	bh=/+DQmghZcV+OiRej/vlZM6VSNGosB6iFmadUL/BOou4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=hknujNQ2noe5RZp6KM6GcJJOthjoJ+BrwlrUXOMzCXcOhKNdV/Ulrw+WSVnOudFBE
+	 0HXHN4rtk12WD5rNKQlTzbOAKkD0I5AKrlrqIpDhcCmPGiT+iRw3LiDUuI7P8XNzEo
+	 I1D9S44jWGE/sb6wAQpV2UAcjyJYqaQCU0iWhMTm0FfIJGRWSEttEi9j+rspkNA9l/
+	 yShc1rS/1bOW+5ODRMrKo9/ZFU9WOU34deau4U+jynPGOkmxO7LJb4OnMlutqN2zrv
+	 EdgK8qdO1m+cS1yZeXRITahreIdCqda8N1qXTNSAzwxIfR/dpv6ZIojRjolOhETg2G
+	 F6Ty4y33Dg81w==
+From: Leon Romanovsky <leon@kernel.org>
+To: Selvin Xavier <selvin.xavier@broadcom.com>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, 
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-rdma@vger.kernel.org
+In-Reply-To: <9e48ff955ae55fc39a9eb1eb590d374539eab5ba.1730477345.git.christophe.jaillet@wanadoo.fr>
+References: <9e48ff955ae55fc39a9eb1eb590d374539eab5ba.1730477345.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2 1/2] RDMA/bnxt_re: Fix some error handling paths in
+ bnxt_re_probe()
+Message-Id: <173064974755.148662.8075604022466705654.b4-ty@kernel.org>
+Date: Sun, 03 Nov 2024 11:02:27 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Jiri Pirko <jiri@resnulli.us>, Juntong Deng <juntong.deng@outlook.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- Nikolay Aleksandrov <razor@blackwall.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Thomas Graf <tgraf@suug.ch>,
- Zhengchao Shao <shaozhengchao@huawei.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Jinjie Ruan <ruanjinjie@huawei.com>, Nikolay Aleksandrov <nikolay@redhat.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] netlink: Fix off-by-one error in netlink_proto_init()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:TT4XjSjVt+rEbf84WFV9lJ2jYZz/ENVfqTKLdxoeInfwoiB5GOj
- cHbwOHrInIJtM78rhKCuYzwiNNWamMzP4y223UhR78JIPxnt5pSVwgU29GTuY8C6PU44tfk
- dh7nOr8vGKhPtWeKpjnySQRCQq0MJv+0dqiOyoE2dZZRPD3u03+V3pMiYzpHyyIjKcSZz5F
- jutCb4cH/ICMbNYFG7I7Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vnA235YDMu8=;pry/bWJb/v0/8QCGck6fv7V9qia
- OMcoze3zWxQxCdCC0UYGYiUJQ0fIPoN/mIGI6iMhBap86MIRpdxv91OfTHpFRnHaZZiXWmsLp
- INmQ0s3o1z3cCtybeP/WCn8A1QDjLFokKDcavKEBesFkdxFF/KcbmEjAKcs1FGIdOyMI+gIPR
- QRgyqrKwlzZY2x65cxqzuVynbTfLgc+Mz1o2KFg1UzhzKsabhzsPRn6kGU6A2dY6G7YJmrMuK
- Caq0bUP2Lt5oOkkcZZy6dMhytg8dAGoRzg61RROLozZ/HhvcgPL2lhSTR1dIQCowa3KIDIzTD
- xsdHsBoChP4ycDGMfzV/3BE+y8adSiaZFQ+9zeCX96fBCtcAATgsP97NR8zcepIVHw6fRe2Ds
- kqRUpNRDUUMeRAp+3svMnLxjoptkmQKp3JL60nh2XZqshaglnvzQkUbX3K8B/9xRH1P+f+GIF
- Fp7r6Qi8jR6MSIlDFkDY7CcJjY3RuCHcZiqkrY3TWkgCiuhN3gxVVx+6d61YqXo0b68i/x2Z0
- vq3Ln1Pj7aey/6BzyMc/frY769X4pWl8/16/se4AvRho8+/xa7j30EtLrYqIHYUy8zBO5Yuhm
- akSFTVRyIXOue1IEtkc4LKHrKSWN6YatS4PuT+djL9Q08IzBdB1XveLA/WkuGYL20pCX94tMv
- 33xafYy+AxaSxU0r1KhWJ3zbJBQhjwqaXsrdXcd5vBpZ/mkVb6Si7EYzSRn4nbvraNnAL1rWj
- SpJlPHEG3NBfnSJYcBuX20oj/MZQ7Z2ckVk//nJrqldmoTtGy6xz3KIxx8OOtRGDcy6ghaB76
- oyFOS8KbCMdFpC/WfA2qy0FA==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 3 Nov 2024 14:01:26 +0100
 
-Hash tables should be properly destroyed after a rhashtable_init() call
-failed in this function implementation.
-The corresponding exception handling was incomplete because of
-a questionable condition check.
-Thus use the comparison operator =E2=80=9C>=3D=E2=80=9D instead for the af=
-fected while loop.
+On Fri, 01 Nov 2024 17:10:56 +0100, Christophe JAILLET wrote:
+> If bnxt_re_add_device() fails, 'en_info' still needs to be freed, as
+> already done in the .remove() function.
+> 
+> The commit in Fixes incorrectly removed this call, certainly because it
+> was expecting the .remove() function was called anyway. But if the probe
+> fails, the remove function is not called.
+> 
+> [...]
 
-This issue was transformed by using the Coccinelle software.
+Applied, thanks!
 
-Fixes: e341694e3eb5 ("netlink: Convert netlink_lookup() to use RCU protect=
-ed hash table")
-Cc: stable@vger.kernel.org
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- net/netlink/af_netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1/2] RDMA/bnxt_re: Fix some error handling paths in bnxt_re_probe()
+      https://git.kernel.org/rdma/rdma/c/cf90a4d1b9ff9e
+[2/2] RDMA/bnxt_re: Remove some dead code
+      https://git.kernel.org/rdma/rdma/c/aceee63a3aba46
 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 0a9287fadb47..9601b85dda95 100644
-=2D-- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2936,7 +2936,7 @@ static int __init netlink_proto_init(void)
- 	for (i =3D 0; i < MAX_LINKS; i++) {
- 		if (rhashtable_init(&nl_table[i].hash,
- 				    &netlink_rhashtable_params) < 0) {
--			while (--i > 0)
-+			while (--i >=3D 0)
- 				rhashtable_destroy(&nl_table[i].hash);
- 			kfree(nl_table);
- 			goto panic;
-=2D-
-2.47.0
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
 
