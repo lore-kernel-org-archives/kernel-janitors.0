@@ -1,77 +1,85 @@
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A061F18D642;
-	Mon,  4 Nov 2024 19:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A04218CC1B;
+	Mon,  4 Nov 2024 19:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730748632; cv=none; b=gALQZh2QYCysF4WgHbguZelPFmGya8JgdfI55sK++5jItWfBWaj7U2wCZadIP8bprN1V7f+oY5qM9Gw3RjNGKvu1nVz1pExWrcJbdi+riPjAwnYThVrsohS4UTwHNV508SShM1HxSGpoGVzQF4iI5igaFMArRI8SsQbwoI8q46g=
+	t=1730750289; cv=none; b=NjCsFb31uL64dge5VqMM0At0hRign1ZJt3N6HiECmwEzu9oD3UWYW3qTeCpJdW04JRPuEFnpW0HQihxEpxEcC+5/2jVm/RXkEIay3q2SyLPPis6SL/eRPMyNkS7qMoZi2DPYXZ8Ss+H9g1EHWZXCwdRir9Q5OJoJvhkQ90uKf/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730748632; c=relaxed/simple;
-	bh=a2c0rEc2+aCed1URt2xgKGZx+gMTdxMxU7gRLxLofhE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TusJpXvuIPrYwui+KHw9V4ysGLoYGIUZ0aAfBY6eeD0R50ydtLh0yYOViXLMbQS7BCfykwXBO3cWIThXyYdcWwB7Yi+y5RrlhBvi6IEIoHX1Dwnx29OH/N5yjRVNY5lUEnU6PVvMjgkRKuMeuALnN6oqVbhSZUDall/P962oEy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=G0EM96cr; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+	s=arc-20240116; t=1730750289; c=relaxed/simple;
+	bh=U6YAGRBLZ1jpjqi58H/3RwaLMYDj0nBH8huh+r5vjb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZPCZynIx3iz04ZYVlSLEEAEbVGDsIG9hSeSfFI6uI7P3h/RdZ0VCpVAHRETm/pnKBxJWclL3+e13ZsR0DSIbf1Lg4uBTs5hTbCr2wV3LFRKtjJ2Jew12obaBJEpbuP9IugR9S8s4os0Yb4hlI6SS4IWHzyzQnZ40ESgzCDAupf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4a6WM5J; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="G0EM96cr"
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CDFC642C34
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1730748630; bh=0y1bj1W8QgVjR9/2nJiw3UICAY97z0JFh5PXrqhdRHQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=G0EM96crxH5CFq6x9X9B9Hb6JQMXCQAYeREnm9KKkY1FlzlvCEW1Pqb8khGODq3su
-	 n8FUzomWl8mYLbsqz3T30dSJ4RcCOYAXP5rINLriy8nB5pE0yVv8r9Nu0JRJ3yJY2D
-	 HPoaXxvkC5KAeB8hqVYgnlUxRsklT9ubt85WWp7cXGr1QQHBpaja/XCw3jmVHxqkJ2
-	 gg9Yq4NYYlUFQhYJGJkIe0u/1Cy3AVNKxEH4yhxzbRoCSBTnN/CLcjpuTZZYFtxMrt
-	 x49EeP86bmcN2ZCwNMHBgJzAmgFQFUqLJnEr/zrGY7rOeJHYuL/5pGW78d+dqPlPXR
-	 FnVAWTEdiRYWQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id CDFC642C34;
-	Mon,  4 Nov 2024 19:30:29 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew
- Kreimer <algonell@gmail.com>
-Subject: Re: [PATCH] Documentation/maintainer-tip: Fix typos
-In-Reply-To: <20241027125712.19141-1-algonell@gmail.com>
-References: <20241027125712.19141-1-algonell@gmail.com>
-Date: Mon, 04 Nov 2024 12:30:28 -0700
-Message-ID: <87a5ee94q3.fsf@trenco.lwn.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4a6WM5J"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so41230265e9.2;
+        Mon, 04 Nov 2024 11:58:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730750286; x=1731355086; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4KOOCs+eEUeL9lk4Gx5Rez5RKYEtGyaqv1oOBQzRqD0=;
+        b=c4a6WM5JqSlWWu/P6sduBgCTy8PFh60LXcA5XQUOPXlRUTMeYJr7VaqtY//rA8BLfP
+         VJiYTISGulS/Ue393VjD6W24v/Na1WpVwtGsPCTum8l/WJ6rzzOWusTteq3BvYrCIQiD
+         09BO7u4eB0/IltSYkcsyV1pmAgd4nv1Nx1mzv+MIXvYcMPR7jkHWHHmRdVBLr7UovZu8
+         G56XgRfSzKjumsngVdu1DoJyYLuL1G/69Sb4NB0KGBIl5AwVF78GAzinu4bgBAjeewHZ
+         qlzPGmGszKwFain/rOvlsLZVeusE11J3jy7T7FobqlxLtFHKufUIxqx8OwTlb/aq4S8f
+         EXHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730750286; x=1731355086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4KOOCs+eEUeL9lk4Gx5Rez5RKYEtGyaqv1oOBQzRqD0=;
+        b=Qcs0WSEhEzjxjbRxrah4tRKIRD2s6yA2S5AFgDA8QCft/KPqtGYu7S2G0NAvB33imI
+         rokTipIdGx851xO9ACFif0RA4otH56WOS3t7v7RUPAsG620uHWH2GOTJmIoOEGVFJpHC
+         7YQ7P4qqU4NXPsgoOt5jCYEiAdkalh5wr/6HpRuLPeYqiOhPDF7mB3K2F7PRihuwKRPf
+         xX9/djpJIkFF3cacQ0iKu4SEhiEhSCJ8iJlpyKgqf2W+hB+0Oqhruo8giRjjGdwk78yZ
+         YTJz+IyDuHr24KtNdv5QhGHyxGkdhdnXzw050G1sOuo94tdS757UCMQxR5ErGubj2Z5g
+         270g==
+X-Forwarded-Encrypted: i=1; AJvYcCWtWMekLb4xEH2se17WRYLQP1pN5H5Ugh3CRXSEzCyDQIYzZnfXPKAEGbjWjXReDlYhZsYYHLuSnlEfCWUEeAQ=@vger.kernel.org, AJvYcCXhdVKes+ITcHgEIM3Za7l7qEoo5fDtcNlpU9KWXm/YGbqcoY90m899r77PSiuDIsWfIdBrcTH4xOBSaB/f@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywslq1vZIrYHBj0dFSr0K4w8PWC43abI9EzNGfyvSJUpHsJl30e
+	FCLjHQ654YzSbi+e1n20a8wl9qlzdUbtvs7KBbW1PL+cn3FqjRYP
+X-Google-Smtp-Source: AGHT+IF/aXzGn/5PDHDg4V1jAnzApl03/pds+DcXri2O0xl61zqTGqSCA0kXlZ9/qce0MAUVteik9w==
+X-Received: by 2002:a05:600c:4f43:b0:431:5ecf:2a39 with SMTP id 5b1f17b1804b1-4327b8222f2mr135115565e9.35.1730750285734;
+        Mon, 04 Nov 2024 11:58:05 -0800 (PST)
+Received: from void.void ([141.226.8.212])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7392sm13993981f8f.55.2024.11.04.11.58.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 11:58:05 -0800 (PST)
+Date: Mon, 4 Nov 2024 21:58:02 +0200
+From: Andrew Kreimer <algonell@gmail.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] sched/topology: Fix a typo
+Message-ID: <ZyknSoWK8zQ5MM2q@void.void>
+References: <20241102131943.10103-1-algonell@gmail.com>
+ <xhsmh34k757dj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmh34k757dj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-Andrew Kreimer <algonell@gmail.com> writes:
+On Mon, Nov 04, 2024 at 04:46:48PM +0100, Valentin Schneider wrote:
+> Quick, hide behind this bush before Peter sees you!
+> https://lore.kernel.org/lkml/?q=f%3A%22peter+zijlstra%22+borken
+> 
+> This happens to be valid internet-speak and isn't really a typo, see
+> https://www.urbandictionary.com/define.php?term=borken
 
-> Fix typos in documentation: a -> an.
->
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> ---
->  Documentation/process/maintainer-tip.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
-> index 349a27a53343..e374b67b3277 100644
-> --- a/Documentation/process/maintainer-tip.rst
-> +++ b/Documentation/process/maintainer-tip.rst
-> @@ -7,7 +7,7 @@ What is the tip tree?
->  ---------------------
->  
->  The tip tree is a collection of several subsystems and areas of
-> -development. The tip tree is both a direct development tree and a
-> +development. The tip tree is both a direct development tree and an
->  aggregation tree for several sub-maintainer trees. The tip tree gitweb URL
->  is: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
-
-Applied, thanks.
-
-jon
+What a dataset, my bad!
