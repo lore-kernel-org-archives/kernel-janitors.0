@@ -1,82 +1,101 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE1B18B491
-	for <kernel-janitors@vger.kernel.org>; Sun,  3 Nov 2024 22:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB8E19882C;
+	Mon,  4 Nov 2024 07:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730674395; cv=none; b=k4Ouunc/VtttiOdFnnKEH0qrkskqgGVSwQtjDn9KHkwmWEVT7E31cVvjUt5KkTx/1qPfljJME+bPnmmIWoY4F8sXO6+sU2jYRWm4VSsGidmBf18XxUTOCEzNI3ay/+zcErnyHNxbSGFX/4MtHYBz/O6KFpl2XUg4JWhnoV1q+oA=
+	t=1730705950; cv=none; b=P6sK23yQl13N1e3QdzezAn4K0lmqgvvJ3GhjUmTJicn8FF+x62jyY7pjUz2NCS6bYmgnJTdGrqJOpJvVUUNKZcxtk/GGnMnhuO3YQdTbEeRkCy/Sgz825a5tpSj2UumZ9BXtiZ5VjtHOPYcwSjA+ke/uit1pglNtZg3LbLKVMdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730674395; c=relaxed/simple;
-	bh=h0N9JSxmh1chs4NvO7r3yn1fpf7R04K7m4MXQCWx5Bs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d1TEp2AhIsbHG1aSb3c4fgaWbXKdFuaSxHLlfgh9bogQl4h+74Gu0kfQiac1xtLC4aLDSuD9WlwVPoJDT2+lkZmcq7Xi+I+NoJXycDQoUsQvFGU579YX9vJPIT6S4EEBJPaKxT/R9/3a35kos2uYUKqF/5bE21WBj2w9niTCg34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=netflix.com; spf=pass smtp.mailfrom=netflix.com; dkim=pass (1024-bit key) header.d=netflix.com header.i=@netflix.com header.b=nmMNBHbG; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=netflix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netflix.com
+	s=arc-20240116; t=1730705950; c=relaxed/simple;
+	bh=dIgNhzZFyb1tXkgTHvIdpDIM02zQr2IiVDUJNky1d/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uiyW/nt6w/up9YFhlg5hnM7NIO+ENWJqSA8cMuO7HCP3yVwFrYM9Ar+I829CUxmLy/nAqW6RFl3znZqHMk194u/yItc4SBtRHk8nFbY0bnVXiiAqwBMkDJzHWPqkP6dkposk9AP7h6meSWpAKz0ljQUX8u20xO7znDoOegDCzNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=T6BGzjR9; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=netflix.com header.i=@netflix.com header.b="nmMNBHbG"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99ebb390a5so851871966b.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 03 Nov 2024 14:53:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netflix.com; s=google; t=1730674391; x=1731279191; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H/o07MZV6TjINQ+zDnpBISVrIcwIjg5m7Y/v0tWWBlU=;
-        b=nmMNBHbG7YxxK/QqGj6a+dPbafeTNMqt3paykLErXBrPx1TwmU6amIGCa63jzEqHrG
-         aMk4TEOfUY9zlDPtBvkHyBv3b6wk6Xt1JqLEQFvwY6AR7IrC9B8i3G2HaEhaTvxVLFCA
-         SvJ7GUOwoUJokGB1gAaSuP2L3wLl2F49RNsgg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730674391; x=1731279191;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H/o07MZV6TjINQ+zDnpBISVrIcwIjg5m7Y/v0tWWBlU=;
-        b=gLpgMGSuqndpIFMle1co14c7p7rsDQoqSuCqFAMxsLjxMymzuXG/ZWiD0KS/iNpe3m
-         rnElfNUkQDqiwmgQEud+kUHYHJkPi4oAIt+nutrXJOVemj/y9rfyCdBvSSCvQFmKt7un
-         uJucBgywtAsf/oZI1wSDKxFINe1wwhLKKRx8G1OkJCCRUJMSsjDqdEgJgo1UOGp3UObz
-         iXHY1XcMfsbOxezqXjVU8EaD709IugO6YjJXe3azoosl0r4Cxbj++YGEbGSnhGhcf96T
-         gdJqN63qpw4SOxHY8O18fAkRX2FLB5k11zaZnZt4/4aMLd8BD0B62AUd02qPG5+f6Psw
-         h15Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWSYgJwwyWaXCNkkkhVNe4BLNux7qoKB44+z5Rlu9W7tBg0QlnzTDfISu9PLxB1NJwN7FjF4LQ5MzJ9bDCWdo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEKFHFMdEe0isMvY0CVaIkd8W4zeNSc/g+HWtVjBnJ0LyqfgAF
-	/ilBIMVjgfgi1emHprp5k6kQMFHTflfnDz8Mc3jbH+AUzDBPMkizEXbmeBxE85/gC56bCsNiSpb
-	yfF2ADJMovG520E8PoWIlvYyJq4V6iRS80ar77Q==
-X-Google-Smtp-Source: AGHT+IFy4o46TYKoQTbVYKAMB2on6bfie/1kLl5cIFqDUnN/9UDRY5lszF0hFgsjo2kqN5eCFId2gUMEqsXUF4IgBZM=
-X-Received: by 2002:a17:907:3e9f:b0:a9d:e1db:de8b with SMTP id
- a640c23a62f3a-a9e55a80e56mr1303129166b.16.1730674391087; Sun, 03 Nov 2024
- 14:53:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="T6BGzjR9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1730705914; x=1731310714; i=markus.elfring@web.de;
+	bh=dIgNhzZFyb1tXkgTHvIdpDIM02zQr2IiVDUJNky1d/w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=T6BGzjR9qHpHgAiSuapqTrEoCeH2muA5KZvtfw4WveK+c/L8Lj6CRg/k9+ykopay
+	 lQFrZkN7Tpef0vCOVZVnX7xIjcg3AABrpjMSaaOddF0k0N1DqnqxwrVpHBFg06hia
+	 cSHMebibM6BYPzxsnvLXGYRFcFaZqE8j/Mcz6KVTVMqrzA5Z8jteKD4NS07iiU/e+
+	 NMGlBxo7+rLxfhQ1l0VhMClYDI+cudRROQ/+qbeT8FWoC3lCAlV/OzzqQkd1OGN/G
+	 UnufZOK5ukfEmJyL7mVFrPk0/Vr0Yy1c5lCcTRWNWVy5aH4uoGen13aLpYiJxbnsR
+	 iM7yPxDkn6j962hfHA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVaYw-1tHfHJ38I0-00MHDG; Mon, 04
+ Nov 2024 08:38:33 +0100
+Message-ID: <8e0f08e3-c1a8-4143-b204-f4f3d4c944d0@web.de>
+Date: Mon, 4 Nov 2024 08:38:23 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <18f60cb9-f0f7-484c-8828-77bd5e6aac59@stanley.mountain>
-In-Reply-To: <18f60cb9-f0f7-484c-8828-77bd5e6aac59@stanley.mountain>
-From: Tycho Andersen <tandersen@netflix.com>
-Date: Sun, 3 Nov 2024 15:52:59 -0700
-Message-ID: <CABp92JB9GGbxWO0Q0QhkiQyZoYoAGmz7agaEp8VyH4ciXoELDw@mail.gmail.com>
-Subject: Re: [PATCH next] exec: Fix a NULL vs IS_ERR() test in bprm_add_fixup_comm()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: netlink: Fix off-by-one error in netlink_proto_init()
+To: Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ Jiri Pirko <jiri@resnulli.us>, Juntong Deng <juntong.deng@outlook.com>,
+ Nikolay Aleksandrov <razor@blackwall.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Thomas Graf <tgraf@suug.ch>
+References: <80516b25-a42d-48e1-bcf9-27efe58f44c6@web.de>
+ <20241103173133.96629-1-kuniyu@amazon.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241103173133.96629-1-kuniyu@amazon.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FWtIKQ7c0Cwrs4FPnWy8DKm3sh5ESkKIxeAU8qkiAf3WHjUN3lx
+ YcH29QVaV/VMK9EFuzFjJ9Mz+zZkMXxMYwgqx4KLtUhMucPcF2f/A5OgwiTG0ZPd1Lfy1B4
+ bKN2A8SnA9dkbXhDtoKZfRDtrX6F13LNYl1/pGfuVFEAYDoA65DNaRfT+gDiLFDGM0CDqZR
+ xBqtXXO8zid9X/amSB8eA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PVYWG6k8Mp0=;kBSwYs89OCNIhYO0Aiji6oDDsP5
+ +yQ/1a9mfn4F0Mt3cGU18c3MjjGyGKPndUEoCitNam1dhbf0wAXOM5qc9LQvyiCAUK5Ffhgde
+ xOPvetRVjPIdazWu36PtyvwteHmEXPtuL1KL76qhVuWMBwIGJC//G+Q9J0JbBjQsOnlTH78hO
+ k0m19/jJO58AsMO+ypO6Ubi+mptkK6tVwnqa3e9hU/bDWzau7DfvQvz7rCztVVboR8mqW0X+H
+ z2taCszAMrHm97MiCJW0G9VxszmrJ4Uj7YLujWaVqok8W9SeEyJPDTtNZIZgu9VXLm/3dk4sD
+ rYke6xtmObgaPI+6sK4pQQGsynf3S0Uy0YiflM25n3fPmSIIx3qFz7j45Al5sKOu4or/PkNA8
+ ydePFy/pDU9Dq5sw//2pLgAeD85eLjHnzfuPhj9jXLXV7ZI6nDhtdbl1v+ibEcP7c/lHSqMBz
+ 7EvmhnkVCyAySYlDpxgGsjxv646K7iJiDNUPraYgC6jWWJZjnpVdjuqHw6INDAffi1AJDavFm
+ IQxpuafvM8Zl0ZNVa+7FVelXcAxxLV/wdDI5YLm9h85/2O5gTRstjgAyHpi0qDaTm1F3TqOdO
+ seFJMM+XKNE/72jk0/MMnEhrT2dKjdr5nPjHMxWoDX400gwD7DxteXg/+beIjU+aNTYwSH830
+ C0zj6TGExN+EwHbg1Fmcf4atWLB2hFCPyw/HoVt/0aXhg5XTwHkBHHBM5bgVoszVnQF2sNQZs
+ QKNcaVPsyEY+7EjOWs/sraMkxeeOjrXHfLjc97I88KHPVh4VVCusD9IjcpYiCXV2csWbg9zrt
+ dRZL9KMOcYC75wKvJ/vNiGkg==
 
-On Sat, Nov 2, 2024 at 3:31=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
+=E2=80=A6
+>> Thus use the comparison operator =E2=80=9C>=3D=E2=80=9D instead for the=
+ affected while loop.
 >
-> The strndup_user() function doesn't return NULL, it returns error
-> pointers.  Fix the check to match.
->
-> Fixes: 7bdc6fc85c9a ("exec: fix up /proc/pid/comm in the execveat(AT_EMPT=
-Y_PATH) case")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> This patch is already applied to net-next.
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/comm=
+it/?id=3Dbc74d329ceba
 
-Oof, thanks.
+Thanks for your reminder on the commit bc74d329ceba23f998ead4f716266da5afe=
+319f7
+("netlink: Remove the dead code in netlink_proto_init()") from 2024-10-31
+for another contribution by Jinjie Ruan (also according to your suggestion=
+).
 
-Reviewed-by: Tycho Andersen <tandersen@netflix.com>
+See also:
+https://lore.kernel.org/linux-kernel/20241028182421.6692-1-kuniyu@amazon.c=
+om/
+https://lore.kernel.org/linux-kernel/20241030012147.357400-1-ruanjinjie@hu=
+awei.com/
+
+Regards,
+Markus
