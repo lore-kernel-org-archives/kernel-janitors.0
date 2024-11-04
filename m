@@ -1,126 +1,89 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C791B3942
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Nov 2024 12:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201C679C0;
+	Mon,  4 Nov 2024 13:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730721707; cv=none; b=NPKpFQGxgrXZHWUPqyVwhlyIqYDzTLcXB7Jpe029NE9gGJD4lntP/xc+eVEyvW1e0iDxG1xotdUWlBcguTwqlpqZHRWn0NThKDYFcTR6ZX+b1fkSxBhyJ04NDM5m6ac4N/DgdK8ZIIObDpGkXCDSrekz3S4lGGILEdTE9h2WFSQ=
+	t=1730726181; cv=none; b=jEuibH+7WjOcRlU0kjJ+2/EtiDgpDrI8JwB9fvstXlXDsv0byfKCI6MH7Gfji6cb78rkR3R6g0+1MihNf8ye/KTv2lQnC/PECdJpcWGkzFJfJS0jNHoD5IwoIY01w/OhnYO9+xnJFpgLkaEKuhwBRIhj3eaH19nrp0L9u7Chqy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730721707; c=relaxed/simple;
-	bh=qSdyZ2s9B5cARaoKsuwvCuT3hG3tvvz7d7IN6nt4dn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/AMYwpC/H0uloRajZNI77vzoZO7AmTbRTi6NX0jE2OchsS6atIsx3i72awCyA6pGp9YQztwuGUF4hjfwI93xT10O89L9z246jChyV90JyVmEe135li5Ahi7I/gjxl0jxXo8BPcNUhRqDQDiMK1rDJbSf/y7rfk7haIdKO617Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gHRdZNpl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1730726181; c=relaxed/simple;
+	bh=opA8FCEWxJHZIWCeT400QK2up7L+kKY9CnZkexN+5cA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pYv9o255nHU9yAmaECW7jOB4MSdCAHfJibl989YhEw/pKjzh5AYRW6T2ucgeFK0HdxRuTy1boeiHAICR1zM4UirQKKppLxEHrAtArGxq8cqTYMdjlsKZvJkMgMzR8TPiAvm2Zo13AznRh2hTEGE5iHjGIFriTJaOGiDoN/Q4lKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e7CDO7UJ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gHRdZNpl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730721704;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZjGJ8hV/x/q11ugCunF6S0uI4EeGKZp0XSGAnU91A0=;
-	b=gHRdZNplcxovpGvHqssH/wUlpo9BnUQaWcq3qTr1u1m2vUQZ72O8osETcEcIGnz2Jz0nf+
-	DYeF0yWADmXXpLT3h1MtcmZSzCaK/BBzMGzK3CcCoPPjuoLY3lCHwOR1DGbWuNW0DlRrDX
-	z78lNf+tPZzc+wJlEciHpkTxi7XagT8=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-OSeTq9fvMd2HxJCsdDYYvw-1; Mon, 04 Nov 2024 07:01:43 -0500
-X-MC-Unique: OSeTq9fvMd2HxJCsdDYYvw-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a9e0eb26f08so351683866b.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Nov 2024 04:01:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730721702; x=1731326502;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kZjGJ8hV/x/q11ugCunF6S0uI4EeGKZp0XSGAnU91A0=;
-        b=ECEM1L8LiWdN4aUurOyx2PtNyYzlbCA2a1oYNF3c7fQGeA+XPkEve3EGQ2u5TNI5GP
-         av1mfsDhU82aoAFagMFeH3lee3D1nHL+lCeYosOQMuQ47EpSdaXuWK1ydFHy4Xbe0bPt
-         l+WZ7c3HiUEgyOoRfiFqxMQq0rIjUm/9gKeK77JSH18lDyYpMzRuTpPHSGq4sLgx6XxQ
-         3fR6ge1QoC0Zgz6UNZ1zEObUqdIoG8kAI122ZWj0VkDhI5kqunpk69zrwBAbTWZVMuKb
-         R9Hn3QpjCYvpC+HCLt2eXp+nUHSQS1fhLNUSXpmqoGPvvVfcNIb4FZA5VF3d0TQPOVa0
-         /lQA==
-X-Gm-Message-State: AOJu0YwVTUH937s7mcZDLsZ3vuMbX9kjwlp76sKtpFsIjbhEvBt+4jRu
-	j4FwiOdSEcRQt3hOqjTHk5a4l8HHGqgpmFONYKeqH4qTv298K9VpZhlw02ixOgwMy2MN2IKqRpb
-	FiRSeWXI+5zOCqXdmlZ0GRPXtXia7Yb+xEazW8sGIMJ4Q67U/3cfWYlgQTHmZfbUICsOD87Jgtw
-	==
-X-Received: by 2002:a17:906:c14b:b0:a9a:1b32:5aa8 with SMTP id a640c23a62f3a-a9e3a5739demr2118206066b.4.1730721702157;
-        Mon, 04 Nov 2024 04:01:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEI+dMfsJ1bB1NHBzblIbjvGUdy5Hh2SEjrlZoRzKI+72rOu6N3AO1yDnXa1sfJg51HrWX1JQ==
-X-Received: by 2002:a17:906:c14b:b0:a9a:1b32:5aa8 with SMTP id a640c23a62f3a-a9e3a5739demr2118202966b.4.1730721701790;
-        Mon, 04 Nov 2024 04:01:41 -0800 (PST)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e566442easm542115966b.166.2024.11.04.04.01.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Nov 2024 04:01:41 -0800 (PST)
-Message-ID: <c220507f-5701-4602-9627-82728dccfb33@redhat.com>
-Date: Mon, 4 Nov 2024 13:01:40 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e7CDO7UJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730726180; x=1762262180;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=opA8FCEWxJHZIWCeT400QK2up7L+kKY9CnZkexN+5cA=;
+  b=e7CDO7UJfg0zPb6Yn1ojFeReUeaRES9yAI03sVPSfYnLp/tjMPSBH7nu
+   Xif4cRell/gX/l3qF/Iv0BPfj/EcEmpO5OPsQxdBHaTxwWjdCQnyAZGD1
+   IZiUK14XVmQ3Rbm2T415SJebm4G0+mySYZtAC2WYlCMT6GfG5fkmVe8bb
+   bk616+VYmM9mkW8j4kQ4F1etGwMR3yOJUQstn2n3LBemCe0uGWfyCTSsB
+   aAB6terSSMONBmhTKBLDzDeDT5mOqaI6dKF2+TQs0P/drZUm4WsbqaFT1
+   BW2a8wiQL/6YUgZiYRDh4nX5KrrKElgoTYk4SA/LUiaiL79+Kt9qhVaFI
+   A==;
+X-CSE-ConnectionGUID: V5oweAirSqOLTj1vw9vrNw==
+X-CSE-MsgGUID: DTFMwVXJRrm9x26uXB74MA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="30527533"
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="30527533"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:16:18 -0800
+X-CSE-ConnectionGUID: D/hDO2H2Q8eSQQAUap3KIg==
+X-CSE-MsgGUID: NQeEuiynSVagaWP/v7+GGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
+   d="scan'208";a="83770929"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.33])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 05:16:16 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: srinivas.pandruvada@linux.intel.com, 
+ "David E. Box" <david.e.box@linux.intel.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ platform-driver-x86@vger.kernel.org
+In-Reply-To: <ccc08a262304f7f8c2e435349f0f714ebf9acfcd.1730563031.git.christophe.jaillet@wanadoo.fr>
+References: <ccc08a262304f7f8c2e435349f0f714ebf9acfcd.1730563031.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] platform/x86/intel/vsec: Remove a useless mutex
+Message-Id: <173072617111.2177.10854169180361298827.b4-ty@linux.intel.com>
+Date: Mon, 04 Nov 2024 15:16:11 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: atomisp: remove redundant re-checking of err
-To: Colin Ian King <colin.i.king@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Andy Shevchenko <andy@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev
-References: <20241012141403.1558513-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241012141403.1558513-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hi,
+On Sat, 02 Nov 2024 16:59:41 +0100, Christophe JAILLET wrote:
 
-On 12-Oct-24 4:14 PM, Colin Ian King wrote:
-> The check to see if err is non-zero is always false because err has
-> been previously checked on whenever err has been assigned in previous
-> code paths. The check is redundant and can be removed.
+> ida_alloc()/ida_free() don't need any mutex, so remove this one.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Thank you for your patch(es).
-
-I have merged this/these in my media-atomisp branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git/log/?h=media-atomisp
-
-And this/these will be included in my next pull-request to
-Mauro (to media subsystem maintainer)
-
-Regards,
-
-Hans
-
-
-
-> ---
->  drivers/staging/media/atomisp/pci/sh_css.c | 3 ---
->  1 file changed, 3 deletions(-)
+> It was introduced by commit 9a90ea7d3784 ("platform/x86/intel/vsec: Use
+> mutex for ida_alloc() and ida_free()").
 > 
-> diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
-> index ca97ea082cf4..7cee4dc35427 100644
-> --- a/drivers/staging/media/atomisp/pci/sh_css.c
-> +++ b/drivers/staging/media/atomisp/pci/sh_css.c
-> @@ -6308,9 +6308,6 @@ load_yuvpp_binaries(struct ia_css_pipe *pipe)
->  		}
->  	}
->  
-> -	if (err)
-> -		goto ERR;
-> -
->  ERR:
->  	if (need_scaler)
->  		ia_css_pipe_destroy_cas_scaler_desc(&cas_scaler_descr);
+> 
+
+
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86/intel/vsec: Remove a useless mutex
+      commit: ab49d7bf991a524a976c9fbbeb53b050ebe4323f
+
+--
+ i.
 
