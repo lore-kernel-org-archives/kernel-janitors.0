@@ -1,41 +1,65 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5515A1C232D;
-	Mon,  4 Nov 2024 11:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C791B3942
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Nov 2024 12:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730718412; cv=none; b=uRZ2hEPxNs3xuIihJ3YFdJhn8Wb2IsGWFr62gpkvW/AsD/OWVcM0VCYrC48VdNuSGDzZq99d9QSPXbxB06Z4LRvzIaKu9qF32qGMf6+uXkXyGK3bgx9NKD50t1C5nDCz5eERDMTHVJl19zg3j4OrwnNqebfY3gcPRu9poq1tyNQ=
+	t=1730721707; cv=none; b=NPKpFQGxgrXZHWUPqyVwhlyIqYDzTLcXB7Jpe029NE9gGJD4lntP/xc+eVEyvW1e0iDxG1xotdUWlBcguTwqlpqZHRWn0NThKDYFcTR6ZX+b1fkSxBhyJ04NDM5m6ac4N/DgdK8ZIIObDpGkXCDSrekz3S4lGGILEdTE9h2WFSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730718412; c=relaxed/simple;
-	bh=cpMHOzTmHXwYuMf8y9DgtSpuqgJbsAryhON8DIq3anA=;
+	s=arc-20240116; t=1730721707; c=relaxed/simple;
+	bh=qSdyZ2s9B5cARaoKsuwvCuT3hG3tvvz7d7IN6nt4dn0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VuHPaLV2skHCniKy6Cwtnc+ypHsto3b6Z/ULyxB1QiFCo5MZrIhLGH8VMy5x/fLKDpSkee3B05Tm0E4FeXTnH9Avb6peba07msn0x5QV/PUOztCrgA2rxnyhRhy7a3wzpvBdeza0KYIuGt3SScfEtEEltBMj7LoWclgPymcU96g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wArfhlkK; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	 In-Reply-To:Content-Type; b=B/AMYwpC/H0uloRajZNI77vzoZO7AmTbRTi6NX0jE2OchsS6atIsx3i72awCyA6pGp9YQztwuGUF4hjfwI93xT10O89L9z246jChyV90JyVmEe135li5Ahi7I/gjxl0jxXo8BPcNUhRqDQDiMK1rDJbSf/y7rfk7haIdKO617Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gHRdZNpl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wArfhlkK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730718391; x=1731323191; i=markus.elfring@web.de;
-	bh=cpMHOzTmHXwYuMf8y9DgtSpuqgJbsAryhON8DIq3anA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=wArfhlkKYJZ9iDulb+ia3AmPgHdyh4qhgU1EjBjjAh2i/6LE6nQ17Voqd7lG5uKC
-	 RKbnV+MqTyFyOFCm19xoVajjZqjRoJk0Wp/P+5bn0jxOYTH08fitgy2jiYodV+/g0
-	 YMVghGo9CuwkKiKCcZ+2VBxb+dvh7DJYBi4di20dxo1gROy7KZNGu8EVZ9sOXEfhq
-	 sCb4XqHxSDckzv1ismB1XQXFQszE4fRB7pXHRYm3QHeQF8L89KT8ik6NA0FguyD4G
-	 0MZaawj2qXSDxnVkptu7JOP9YntI9pmFwgk910+1IJSiNvM6Id1BSdr+O79EX0esG
-	 5MhiqS1O0T/5YJEP5A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqIB7-1tdNps2XHX-00dOcl; Mon, 04
- Nov 2024 12:06:31 +0100
-Message-ID: <275d4e36-4628-4cfc-b51d-1bd909a6fadd@web.de>
-Date: Mon, 4 Nov 2024 12:06:26 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gHRdZNpl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730721704;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kZjGJ8hV/x/q11ugCunF6S0uI4EeGKZp0XSGAnU91A0=;
+	b=gHRdZNplcxovpGvHqssH/wUlpo9BnUQaWcq3qTr1u1m2vUQZ72O8osETcEcIGnz2Jz0nf+
+	DYeF0yWADmXXpLT3h1MtcmZSzCaK/BBzMGzK3CcCoPPjuoLY3lCHwOR1DGbWuNW0DlRrDX
+	z78lNf+tPZzc+wJlEciHpkTxi7XagT8=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-515-OSeTq9fvMd2HxJCsdDYYvw-1; Mon, 04 Nov 2024 07:01:43 -0500
+X-MC-Unique: OSeTq9fvMd2HxJCsdDYYvw-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a9e0eb26f08so351683866b.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Nov 2024 04:01:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730721702; x=1731326502;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kZjGJ8hV/x/q11ugCunF6S0uI4EeGKZp0XSGAnU91A0=;
+        b=ECEM1L8LiWdN4aUurOyx2PtNyYzlbCA2a1oYNF3c7fQGeA+XPkEve3EGQ2u5TNI5GP
+         av1mfsDhU82aoAFagMFeH3lee3D1nHL+lCeYosOQMuQ47EpSdaXuWK1ydFHy4Xbe0bPt
+         l+WZ7c3HiUEgyOoRfiFqxMQq0rIjUm/9gKeK77JSH18lDyYpMzRuTpPHSGq4sLgx6XxQ
+         3fR6ge1QoC0Zgz6UNZ1zEObUqdIoG8kAI122ZWj0VkDhI5kqunpk69zrwBAbTWZVMuKb
+         R9Hn3QpjCYvpC+HCLt2eXp+nUHSQS1fhLNUSXpmqoGPvvVfcNIb4FZA5VF3d0TQPOVa0
+         /lQA==
+X-Gm-Message-State: AOJu0YwVTUH937s7mcZDLsZ3vuMbX9kjwlp76sKtpFsIjbhEvBt+4jRu
+	j4FwiOdSEcRQt3hOqjTHk5a4l8HHGqgpmFONYKeqH4qTv298K9VpZhlw02ixOgwMy2MN2IKqRpb
+	FiRSeWXI+5zOCqXdmlZ0GRPXtXia7Yb+xEazW8sGIMJ4Q67U/3cfWYlgQTHmZfbUICsOD87Jgtw
+	==
+X-Received: by 2002:a17:906:c14b:b0:a9a:1b32:5aa8 with SMTP id a640c23a62f3a-a9e3a5739demr2118206066b.4.1730721702157;
+        Mon, 04 Nov 2024 04:01:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEI+dMfsJ1bB1NHBzblIbjvGUdy5Hh2SEjrlZoRzKI+72rOu6N3AO1yDnXa1sfJg51HrWX1JQ==
+X-Received: by 2002:a17:906:c14b:b0:a9a:1b32:5aa8 with SMTP id a640c23a62f3a-a9e3a5739demr2118202966b.4.1730721701790;
+        Mon, 04 Nov 2024 04:01:41 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e566442easm542115966b.166.2024.11.04.04.01.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Nov 2024 04:01:41 -0800 (PST)
+Message-ID: <c220507f-5701-4602-9627-82728dccfb33@redhat.com>
+Date: Mon, 4 Nov 2024 13:01:40 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,51 +67,60 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] smb: client: Handle kstrdup failures for passwords
-To: Henrique Carvalho <henrique.carvalho@suse.com>, make24@iscas.ac.cn,
- linux-cifs@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Steve French <sfrench@samba.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Bharath SM
- <bharathsm@microsoft.com>, Enzo Matsumiya <ematsumiya@suse.de>,
- Paulo Alcantara <pc@manguebit.com>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <smfrench@gmail.com>,
- Tom Talpey <tom@talpey.com>
-References: <20241022171515.3330183-1-henrique.carvalho@suse.com>
- <20241022182126.3353440-1-henrique.carvalho@suse.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241022182126.3353440-1-henrique.carvalho@suse.com>
+Subject: Re: [PATCH] media: atomisp: remove redundant re-checking of err
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Andy Shevchenko <andy@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev
+References: <20241012141403.1558513-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241012141403.1558513-1-colin.i.king@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UKsMFjSFw/SsoEH6fR4zC38H/Juei55bM3AqNKlYLFKcPyl6UZT
- 157woyooQgjV74nPVHCJ60NaFS+oprDknq9BoxQCUeSA/k4A/m1UXrYjjFHCu7XMHd/1q5f
- s8DUgCvTfeR9bzHMFW+S0AeDlrnEL32Bp5ow9hiHUMiF9pU4VXpsQMPCoXMNVY4X4WFgU+L
- YUK8gkTPb5k1HO0MsbB4A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fyUIJPm37sM=;E1oE+e4I49Ao5fkCvxxO87jZ/Sm
- nIiUTcSTW32fxAJpN9HTCjmuLnqYup6I3cl0PC5iHKeqaYlQBhkOLnJOesxnYADNtzMSUgYKK
- TDGghoK2L8gbzajyLmcwxnXWFbSfXC9LtirK+gmDsephcg6PCBsPpguaKwAXmAtQBTGbmJaKl
- xkkXJCYDy3OFcbEBOlwzF7sMiBdYCARhgmeb4IfpD9JgEJ+WL9F9y7zZbaKNyn0C9to25NnDL
- oGdNO9CYci1SuzPeUq3iPRKBVJGneZ3FFCk/M/SOPCEv1f+HJyNrjlN4XRBommNCLswj4KQz2
- ANT8+X2/H0edRXAuzsaHmVldKdVtgJmIh73CokGdL2ZqqVX4f7n3dwkec/HQR95qPF9hAWrAh
- Aw38w5HqpVWw6fCtVCJLnToxsuT4oZ+V+56SqdrdDLvLz8lUYiX/g7SHUSosj4SHyQBJkk57p
- RHsyaqGWMMJrVbWOTS1iZWB3yJFM3oFip53K4CHKIauaBk7xDhHHojWeva2VFm9JwxFisGvYl
- YCxhbx7XMeXoXS08FpzItBS3EN3Y89mCp1H4l8wrDX2e9OtT8tV4tbjhgbeuhri/ME0OrZS//
- 4aN6Fe7ytA9gvLO2Y37nYmD1bGcoepppWICX1UpLBMrwzLp+Fyz0r04mXxk3CqAsPwy5o87S+
- FkxFRNQrY90GDbpmPcZP6MJvp2rxVgk5VJui49iVADcfbFeFyqrhiWpAZ/dEDrMpMp/Bou25z
- 88cPpFQr48LxCsxGBEbKEZOFTvexu4P0EQH+udsledbsLfeS5xQKgolALz4jtyGd2xFFgzHv9
- AbvlLK123g0FIvEgi5RVTo/g==
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> Signed-off-by: Haoxiang Li <make24@iscas.ac.cn>
+Hi,
 
-How relevant can such information still be according to requirements
-for the Developer's Certificate of Origin after different names
-were presented for such an email address?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.12-rc6#n396
-https://lore.kernel.org/linux-kernel/?q=3Dmake24%40iscas.ac.cn
+On 12-Oct-24 4:14 PM, Colin Ian King wrote:
+> The check to see if err is non-zero is always false because err has
+> been previously checked on whenever err has been assigned in previous
+> code paths. The check is redundant and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+
+Thank you for your patch(es).
+
+I have merged this/these in my media-atomisp branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/hansg/linux.git/log/?h=media-atomisp
+
+And this/these will be included in my next pull-request to
+Mauro (to media subsystem maintainer)
 
 Regards,
-Markus
+
+Hans
+
+
+
+> ---
+>  drivers/staging/media/atomisp/pci/sh_css.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
+> index ca97ea082cf4..7cee4dc35427 100644
+> --- a/drivers/staging/media/atomisp/pci/sh_css.c
+> +++ b/drivers/staging/media/atomisp/pci/sh_css.c
+> @@ -6308,9 +6308,6 @@ load_yuvpp_binaries(struct ia_css_pipe *pipe)
+>  		}
+>  	}
+>  
+> -	if (err)
+> -		goto ERR;
+> -
+>  ERR:
+>  	if (need_scaler)
+>  		ia_css_pipe_destroy_cas_scaler_desc(&cas_scaler_descr);
+
