@@ -1,118 +1,91 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877431531EA;
-	Mon,  4 Nov 2024 15:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D133B1CF8B
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Nov 2024 15:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730733507; cv=none; b=cF+A9d23N37uEPdG6kU6OX4K/i6yiiD7Bi3gWqoeRjM8nk4e0OQl8E/5uVr3691UtEvnn9I01fk1FgC1uMmdU2qjx4qvQNJExSTMXoXZRbSffGDqgkrb0Cs7O5+in/4maLDB7r/XDJkUQkqZGK71kgdzilOHtdiWjs+VLO4XIuU=
+	t=1730735219; cv=none; b=UY1/VpERdrpyCKd+R8uP7fJnmZ+PnSLv49Ja67Ae6H9RaCte8wNP1WonrSgR1BTBfcrcodtcKpqs61PDm4JihfXX6PiUv24ifCEJr6OtLRneTANEsiIMrDv3hS02Y/SSkZQGv3grCvMpppZMOBeSL1DtnuClvrz8hX57PNkz9NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730733507; c=relaxed/simple;
-	bh=qWlIxJlDQefOcYZezqv3pTjAXZOrS/1t8kQimOUSHg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bo8Peo7R7yTznSoZtVQ+erhK59u2sSTPcahmj6gW2MFqMP2HZCr71/d8aL+wY23IyRPhyBYPdAdB2Zyq5Fqat0F/AhWKfZTAXGtJO3AKZtSzheC00ITkUdq6Whw7DbMtcauAmN2isJbIbuYg5HdVSM8eCwmbo9wKIJxOws+XYOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mzx66vva; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1730735219; c=relaxed/simple;
+	bh=cyh425pNXcQivIiwavEtYI0ranrZT4OUgdphHkKG6DI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=n7VlS/DXDVussalTh1qMAs16WacY0qfEGhOlpJBxwJNklCnZbDkYy4S+rt5lEf4qSc4dqhhHNmbAqsqDCEG/05gaTPWjNv8d5iqUOxAxrgbXcTYZZ4EFoIr24lVXbAB+J+Ss2r2CWoA+IExid7kFmhtQo6Qo/9grsajsU5k/5pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R5RksTes; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mzx66vva"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730733505; x=1762269505;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qWlIxJlDQefOcYZezqv3pTjAXZOrS/1t8kQimOUSHg4=;
-  b=mzx66vvalcmFgtJ3bg86UBp3dbiLZ+JjkJ79Q+P/4xyrmAamm6wAwXw5
-   UACgEQiCNjgbNTxtkyVglAnS9SDgG9B2QR6eTe4eFfJ4svabqzljt2Wot
-   u+qiuJlksHAL+gUtf6fILcTdejbK6iDkyuAvBFUeZYiRDNU8ZT2E9HnwL
-   zj8gggPFVRuaVN+XIaLh8qQXoHJ0wxiUMab5eS7oBAeRabqYyYOTY/5Tc
-   kcFfjfm99wYftfEtBhrq442R4LzUFM1x8zP6VPbBtdhCHoubm/MEK7DgC
-   29JyYfHqnsd0bvSDZ+OmXOMI8kG+iio5RoX6YLYg5r54QM7LI1UfpIuej
-   A==;
-X-CSE-ConnectionGUID: geQ4wmbnRA2zqsv1PS0Cog==
-X-CSE-MsgGUID: viWa4IRCT1+ouGUx/+XwbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="33272953"
-X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="33272953"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 07:18:24 -0800
-X-CSE-ConnectionGUID: RAGfsD2fR8qeKt25UpePUA==
-X-CSE-MsgGUID: LMK8OXWhRiK4et3Y7Cqkhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,257,1725346800"; 
-   d="scan'208";a="83797907"
-Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.109.168]) ([10.125.109.168])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2024 07:18:25 -0800
-Message-ID: <a9d10969-0b74-4fa1-8f3d-6fc2c7a475a7@intel.com>
-Date: Mon, 4 Nov 2024 08:18:23 -0700
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R5RksTes"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730735216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cyh425pNXcQivIiwavEtYI0ranrZT4OUgdphHkKG6DI=;
+	b=R5RksTesCwl6KfugZ3jm5FNZjKS0i9HgahpjOsPfx2U7gmoCorIDuR7OrKuPergIKFEEwQ
+	Z6Yi6paJNyfcGIMiy58j9elUrcKW+C4JtZHgaNAfuKFz4gH+h/k2OFXx+Q2IjkleFhU54a
+	JIT6iDKVjJySYxCO1foJ0D9RADrU1Ms=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-158-V2QZ8Dm4MnG4M42TeWBkBQ-1; Mon, 04 Nov 2024 10:46:55 -0500
+X-MC-Unique: V2QZ8Dm4MnG4M42TeWBkBQ-1
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7180a4bf542so4071741a34.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Nov 2024 07:46:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730735215; x=1731340015;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cyh425pNXcQivIiwavEtYI0ranrZT4OUgdphHkKG6DI=;
+        b=XqApQEx8uHDsRurGaOXCbUf8uCwFxGANs3kthmtnJS5V2GEP5VqGv++oeJu5gyfx8I
+         mUqm1cFncKHW6FRxj8Kv9Zti/HOH97VyW6nshnEBj57Oe/vgJrxYZwgcXC9ohszjP1U2
+         EBzNKJCE7nDgcAwsEeDrxVp7Nysdh+QyggNqwsKAm/WI+ZvUb8ADAfhUXCqxSyToDCNC
+         HRgVIUgTO/aLA6EKf7mN1OoWxe4TYo+3cPoIRLzpoHY5qpjFLLa4ztzMa0xOBYLaaSCK
+         paO9rl9+7rTn5GIBzV59FvjbvhU4ZQBbjN/YZaeueyTcwNNSScBQ69ZMZoOVViTxZQba
+         TmbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVP6GYzWPJJ7fKKR90k/C9RjZ3O0UkcPWqmVWqsSwahNjqtpR04mfEDbriL2vIQhrqsaV53HUVpJ52373jpKHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH7YntsDNyGW/qgxBjfmZ5n7Ct61eZ51Qh9krngtscUUjPTeuT
+	X3mAnmLdY/FVdNjjRn6V1eYWCPUE7aGqijcd2ONnK7M1PacnH4EruUcQVP52dOKUTUx/LkxN5vN
+	RUSQA4kTQgd3R4PqpCEbubVRqekcISIoTg0TCoS/pr/tnDuHoLqvYjXso7hLjNWhyzw==
+X-Received: by 2002:a05:6830:6709:b0:718:1302:b2a3 with SMTP id 46e09a7af769-7189b55ae98mr14724625a34.31.1730735214900;
+        Mon, 04 Nov 2024 07:46:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGcEeo/DI8hPzn4CSpfberrWrU9s96A8UhritWhfiA1EvpMRtLkpYPxZCs0Ec7KP5EoLMlVpw==
+X-Received: by 2002:a05:6830:6709:b0:718:1302:b2a3 with SMTP id 46e09a7af769-7189b55ae98mr14724608a34.31.1730735214628;
+        Mon, 04 Nov 2024 07:46:54 -0800 (PST)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7189cccefa6sm1996109a34.66.2024.11.04.07.46.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2024 07:46:53 -0800 (PST)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Andrew Kreimer <algonell@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
+ Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Andrew
+ Kreimer <algonell@gmail.com>
+Subject: Re: [PATCH] sched/topology: Fix a typo
+In-Reply-To: <20241102131943.10103-1-algonell@gmail.com>
+References: <20241102131943.10103-1-algonell@gmail.com>
+Date: Mon, 04 Nov 2024 16:46:48 +0100
+Message-ID: <xhsmh34k757dj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: idxd: Remove a useless mutex
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Fenghua Yu <fenghua.yu@intel.com>, Vinod Koul <vkoul@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- dmaengine@vger.kernel.org
-References: <e08df764e7046178ada4ec066852c0ce65410373.1730547933.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <e08df764e7046178ada4ec066852c0ce65410373.1730547933.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+On 02/11/24 15:19, Andrew Kreimer wrote:
+> Fix a typo: borken -> broken.
+>
+> Via codespell.
+>
 
+Quick, hide behind this bush before Peter sees you!
+https://lore.kernel.org/lkml/?q=f%3A%22peter+zijlstra%22+borken
 
-On 11/2/24 4:46 AM, Christophe JAILLET wrote:
-> ida_alloc()/ida_free() don't need any mutex, so remove this one.
-> 
-> It was introduced by commit e6fd6d7e5f0f ("dmaengine: idxd: add a device to
-> represent the file opened").
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
-> See:
-> https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L375
-> https://elixir.bootlin.com/linux/v6.11.2/source/lib/idr.c#L484
-> ---
->  drivers/dma/idxd/cdev.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/dma/idxd/cdev.c b/drivers/dma/idxd/cdev.c
-> index 57f1bf2ab20b..ff94ee892339 100644
-> --- a/drivers/dma/idxd/cdev.c
-> +++ b/drivers/dma/idxd/cdev.c
-> @@ -28,7 +28,6 @@ struct idxd_cdev_context {
->   * global to avoid conflict file names.
->   */
->  static DEFINE_IDA(file_ida);
-> -static DEFINE_MUTEX(ida_lock);
->  
->  /*
->   * ictx is an array based off of accelerator types. enum idxd_type
-> @@ -123,9 +122,7 @@ static void idxd_file_dev_release(struct device *dev)
->  	struct idxd_device *idxd = wq->idxd;
->  	int rc;
->  
-> -	mutex_lock(&ida_lock);
->  	ida_free(&file_ida, ctx->id);
-> -	mutex_unlock(&ida_lock);
->  
->  	/* Wait for in-flight operations to complete. */
->  	if (wq_shared(wq)) {
-> @@ -284,9 +281,7 @@ static int idxd_cdev_open(struct inode *inode, struct file *filp)
->  	}
->  
->  	idxd_cdev = wq->idxd_cdev;
-> -	mutex_lock(&ida_lock);
->  	ctx->id = ida_alloc(&file_ida, GFP_KERNEL);
-> -	mutex_unlock(&ida_lock);
->  	if (ctx->id < 0) {
->  		dev_warn(dev, "ida alloc failure\n");
->  		goto failed_ida;
+This happens to be valid internet-speak and isn't really a typo, see
+https://www.urbandictionary.com/define.php?term=borken
 
