@@ -1,68 +1,65 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756391C1AA9
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Nov 2024 17:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F0F1F942
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Nov 2024 17:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730740590; cv=none; b=C1CwlltJvcyrXFQu7qcDZPYfYEGHPrVR0RKsUBXn5SsbTQV46FHqBJ2M/AQKBpLWH7Gjbymn0S2aVx6aaOBkP+xnJocJMDw8ik0wmjTr0wFCT/JuXk3Uojj3KVs488vdEugQmxl996/8xIux+t+leFLV6oBRaKvCI2BniL9NIKE=
+	t=1730740598; cv=none; b=LzbZhtOeElC7L81Hr7egxQWctcj5YIDfj0XIh5VxXB+o+xZv4EpWXIXJs8IuF9JbW3GXIzhGdDBjXk1RJH0Ua2inDNynlzZslN6MB0aZAPJl+KjMzAn4Q6CsonadfyyV1I9JZt62DAVUGObgLvTH6UvPsCaBOE2UBQy8OgKRrgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730740590; c=relaxed/simple;
-	bh=oCbyiLng8gGHLNAG5imDAdJ2j5aQ/UDK+Oox/7J/Y2E=;
+	s=arc-20240116; t=1730740598; c=relaxed/simple;
+	bh=Xirldkcby312bseXyHXIkJ6yKbI0ywDaWby/Unv81r0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=B5oSWi4Ew5aHJanZMPUFzjrLcIDa/BKrSTyP/y/mwk0+EXLA45jNwywjLQxxicC4hxrNemd7pjtqGUAvOfbD2IWoW6zPpqQFN6ETyfGbdf9T+pxCBabOxIoxAiGceoztzesykfEBY+C+4rSsW9HPDo8/+HVsqEF9XtYi4v+hDUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MblyU2Nu; arc=none smtp.client-ip=209.85.128.50
+	 Content-Disposition; b=V/l7it0o94rgfokIyMUWN3hrqPuou/7lh3eVebNVpwV5/rz3S2Hi4Jq7DjjZLnJFS2nUWHNOI8M+ozNrD27Hgza7++oAUmpycJJJkwIiSXq2tqML/H+OQe3ZwO6w8EnWuLJQlFgLtbs6k0A5h+jwJBguiYnv/3SjYu1kC422t20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HXQVaENg; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MblyU2Nu"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315eac969aso27170905e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Nov 2024 09:16:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HXQVaENg"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d70df0b1aso2856609f8f.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Nov 2024 09:16:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730740585; x=1731345385; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730740594; x=1731345394; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=la6xj5vR8nTJ73x2ZaTngF8peM8uUMZUxIbbvjw1ql4=;
-        b=MblyU2NuR5et5Co8CUw/M252Zxk2rgeLO89bWr5qJSO6eID/08G9zbvolfF/dM04vQ
-         I7u7hijE/iUMBAZ6BgbhAEKwAej2JqdBOUicRje9V2nkk9JacfqMh+pwWSTL+b5600ay
-         utRr3fx87bPQHL3iewOPXMWK5H24eSGkitz2DWocPhydPOkFyVWI4w5/nJk/BC2Jf/UP
-         hsevU12EEBnE/cL15UNdaZ1pKwM/4RLtk7R+JuxhJBqKGzbo0iLnQlzU1CGRwLF3xjl0
-         /ysVE+wf6Sh/T8InNYQkBrDDoY/uLgzW0ddE0KHPQ9lpeGCrucSRTkZIVHEZS+7RiMp3
-         sy3g==
+        bh=mz7FQ3FxnnjD3yMz5V8+bY6+RD8conEDHBBPgd6Mgy8=;
+        b=HXQVaENgAVzvQgWpn7ZcVjuMSOXxRnEMlJILh6y0RHh/yLbezKeIjanQebI7+8j3V/
+         NtmPDK9WpBysKGJo58jxb9VTvKhECTxYRlVKRGH/JMym6guJZFbdx8cCEQp5hhIvN1Hx
+         YfcsVn5422EvdNvRDxopAZnbPdB9iTt4lH6FTq1PF0tWY62gTKVGoQ88wnDhYQLuVN0O
+         pJA5cquKjMDsC61oo5vfbpllS6JXNAextNcBwrIFoS+5Km1bzvoiTd1AozlGmKuf9J8d
+         GF91j7kSJOruSqhsX5xm8v+PR8uWiVXtRk3o7g1zhqVv6/Vmr1nSKjWw9TMBqr7cZzUj
+         9eNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730740585; x=1731345385;
+        d=1e100.net; s=20230601; t=1730740594; x=1731345394;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=la6xj5vR8nTJ73x2ZaTngF8peM8uUMZUxIbbvjw1ql4=;
-        b=Rl3xmhEN/wGIuYeq9AsKIr5V+x3j7StBt3UgdzCsahRKzet/uOHn72ZeQVxL0w+sYy
-         +tNh9wTpgYy2co/7UIGffyVNFq2sqZbJTj/CdM4lF5kKcmSql5iWj/pCoMOQGedUFStW
-         ccQYL/k72At20QTSWoPjy3vlUM8i9PRKZDWPEqttgtKmEQNIyMW2+pmp41JR1cgR+gu3
-         FKMuV9ArFziphtFwASomy48KaSho5xv6yklOqjs1BjLy0vKu6TXWv3w+Vk74aEcYVy+m
-         jR9Xx+fkrzp62p2z9Y8xnDsBfFkSWo/ISSSMceWuo8aRMuv3g5g5QCysCbfdVgnEr53c
-         SQNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVa+zp9xeGZJrAGyp0J+yWIczalTstBP9HWYFP2qTAMNE6UiYRQpjzWwuGd7p8jZLzOvlbf32zXKu7lPwWYmIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9USgr10TDHK6uibtiXzOJF5Pf2mxVfdylIdEKW1Rybm0/GijZ
-	RFeg861nvV8I3ke/Z8Dee71rtXg/tgT490248NfIGKLLBH6mW2cXxSdgJ0wKrNQ=
-X-Google-Smtp-Source: AGHT+IExVi+NfBAt2whjsx+0Pt93IxelL6rLzuY/ubpqgPe9heWtnY82NiVFj7fqgDFJGWhQtWWPcw==
-X-Received: by 2002:a05:600c:1f92:b0:431:405a:f93b with SMTP id 5b1f17b1804b1-43283000cdcmr104416805e9.10.1730740584601;
-        Mon, 04 Nov 2024 09:16:24 -0800 (PST)
+        bh=mz7FQ3FxnnjD3yMz5V8+bY6+RD8conEDHBBPgd6Mgy8=;
+        b=gfcfav8jL2nzKzakFBtSPeDdhAOwkafLyzYikFsRFzYuNQ+ciVPO9sr14V9aeUa9z2
+         Ecn8O1km66SZ2hLNBPBFqW2U/Suq+KhY/xmlehCEDBto1evHF/mibj9Z9BUCug1+ZuYt
+         Z/cxQ0D64saeBX3iVkx+f//WGd0pVh/PMRzWkH3VugoenPgJMxvhiH3zugC9vR/avzwv
+         xq3wtB+0iuHXtf1j3cJSiqCdLJ7QFjcoqBhFaIR5bL/vZoJ1h/c2lXdyKXYd6WzIMhiK
+         PBELJLDw74lES8jGcwpWD2v2Ja8sd/pO041mq/cwBfKcd9iBtabmgxJ/6oh9BviVniIl
+         dUzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcbEFm+yoSzduxCaMjCT9b/eQKn5GY6xDfDNpWpYZTrRnxMJIZF2E98uTBRJ/7XlOW8/mRNS72mPI6TmXlez8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTTBp8aFePu7DQqUK8kID5j4GCjaDytf34APd/ohmQVUSNjN3L
+	wKSri5aasMjB+o9vWwdk7P2Cqc7Z+q/0mV/PEsBNVo10EWgSLN8aH8gvQHPXK6U=
+X-Google-Smtp-Source: AGHT+IFSQQnkPJQJ9lUk8DLV1jIcd9nJjuwaEO70oN3T+acz9855Sjh80aCcaD5StAd7TvhDFC8jcQ==
+X-Received: by 2002:adf:edc2:0:b0:37d:4ebe:164b with SMTP id ffacd0b85a97d-380611e1252mr21410333f8f.44.1730740594471;
+        Mon, 04 Nov 2024 09:16:34 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd91096asm194139975e9.13.2024.11.04.09.16.23
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c116ad3fsm13604311f8f.95.2024.11.04.09.16.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 09:16:24 -0800 (PST)
-Date: Mon, 4 Nov 2024 20:16:19 +0300
+        Mon, 04 Nov 2024 09:16:34 -0800 (PST)
+Date: Mon, 4 Nov 2024 20:16:30 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+To: Benjamin Berg <benjamin.berg@intel.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] media: xilinx-tpg: fix double put in xtpg_parse_of()
-Message-ID: <f41dfe97-6e6c-47b4-91bf-199c5938c6d0@stanley.mountain>
+Subject: [PATCH] kunit: skb: use "gfp" variable instead of hardcoding
+ GFP_KERNEL
+Message-ID: <57a8d38a-6299-4d2c-bb2e-c9d1e3bf1c99@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,36 +70,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This loop was recently converted to use for_each_of_graph_port() which
-automatically does __cleanup__ on the "port" iterator variable.  Delete
-the calls to of_node_put(port) to avoid a double put bug.
+The intent here was clearly to use the gfp variable flags instead of
+hardcoding GFP_KERNEL.  All the callers pass GFP_KERNEL as the gfp
+flags so this doesn't affect runtime.
 
-Fixes: 393194cdf11e ("media: xilinx-tpg: use new of_graph functions")
+Fixes: b3231d353a51 ("kunit: add a convenience allocation wrapper for SKBs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/media/platform/xilinx/xilinx-tpg.c | 2 --
- 1 file changed, 2 deletions(-)
+ include/kunit/skbuff.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c b/drivers/media/platform/xilinx/xilinx-tpg.c
-index cb93711ea3e3..7deec6e37edc 100644
---- a/drivers/media/platform/xilinx/xilinx-tpg.c
-+++ b/drivers/media/platform/xilinx/xilinx-tpg.c
-@@ -722,7 +722,6 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
- 		format = xvip_of_get_format(port);
- 		if (IS_ERR(format)) {
- 			dev_err(dev, "invalid format in DT");
--			of_node_put(port);
- 			return PTR_ERR(format);
- 		}
+diff --git a/include/kunit/skbuff.h b/include/kunit/skbuff.h
+index 44d12370939a..345e1e8f0312 100644
+--- a/include/kunit/skbuff.h
++++ b/include/kunit/skbuff.h
+@@ -29,7 +29,7 @@ static void kunit_action_kfree_skb(void *p)
+ static inline struct sk_buff *kunit_zalloc_skb(struct kunit *test, int len,
+ 					       gfp_t gfp)
+ {
+-	struct sk_buff *res = alloc_skb(len, GFP_KERNEL);
++	struct sk_buff *res = alloc_skb(len, gfp);
  
-@@ -731,7 +730,6 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
- 			xtpg->vip_format = format;
- 		} else if (xtpg->vip_format != format) {
- 			dev_err(dev, "in/out format mismatch in DT");
--			of_node_put(port);
- 			return -EINVAL;
- 		}
- 
+ 	if (!res || skb_pad(res, len))
+ 		return NULL;
 -- 
 2.45.2
 
