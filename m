@@ -1,93 +1,63 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7CF45027;
-	Tue,  5 Nov 2024 15:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C78C5674D;
+	Tue,  5 Nov 2024 16:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730821421; cv=none; b=mruZTtL90Wyxphcw9T3fziTCgOCO4NcaJC2wtJWtZcHVZpHg7LWwHIKzgJezceZrsjUyYcq7TwXl088qC3htfDfXPnAS4obZr+vMIYgKeKy2d+QFvjmJWIgGJYm+ysEsh6lKg0symorBfKYFGBRrC3oLvELqwyDkfgP10Q/1hfA=
+	t=1730823242; cv=none; b=UY1r8xc6YEmbtVNxc9Fg5CY7Y+HT+u7DmuqB/pUfC6dYa111p62LLwQViXD5A13oyRl/Q2oEYG6jwsqcDBC5SPgIPMedpQxUiT3RkQz8s6R67l7hlugGaLQdD7+Je5xRLksLaTCskwF8TECrjsI8YgbNK52oy5XzGmuMIU6js4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730821421; c=relaxed/simple;
-	bh=U7N4Tas2wjzfxhfgpGb23nqSUHuBo7MwtvH/7ZhJMH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLeRQB7SGw//T1TzmwSSTTypWcM9AHsYdA/Yl/1QBzsi4BTr9UIaSka2Shh8AiaN7yeURx+FhIz3K1yyAEvlkeEyX3ver1uLnumD2H1KG2iQ6elHvnaaCgCx4dWbJmefD+WC5KmQ6nbbclZ0jDJPkf5GZUhs1ww4CMXLnw87+RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=io+J4iQR; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730823242; c=relaxed/simple;
+	bh=kNqJvWjI5Xv0aOKUS9RlKFkV67Nc7o5F6Ctjxq01Rww=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=k7oNS/N3guFBQG8yRsGouvfrW53NYTlqWr6pVnLmKoqH1L3twgVBSZsz3H96MFpLNrxG2FuZbBRbJSozMhb3z2YplvzfIkYjSBs0k8Q5gSrNlOD3wLmgV/yXN/dGY41jXuLb7qoSN/3cynfRFdIyIKg7rweGMto05Da25IfYRQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOuEmjon; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="io+J4iQR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730821420; x=1762357420;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U7N4Tas2wjzfxhfgpGb23nqSUHuBo7MwtvH/7ZhJMH8=;
-  b=io+J4iQRTTAXJlS9uSdLv+uVG8zkiU53+ZiouvAF0c2x9b+snqPdhr06
-   odOAoVY19xgfTX2Ln8NjcYPs4PS76C/DDKKNRgPpLIBSU/NN+8+JV9d3Z
-   XKtlFImyVRugNAKxerNkepTK5KGJmNnRy08GBpTLTU+8yf2UGFrm0Ptmy
-   J0Bfsa3NIkukZ+AcFTgAnNbDC5QusILs61J+ObNYe7RHzTJ14AH5hfk+Y
-   InJ9AcybX2SEDQbU0X2VT/WO91PwqAfCWs4RpIayuvDe2ORfWWn91eKnf
-   TURRJIfesV1P+NFR289vP5A2slxnHMhjlro3eisYg5acqLJfbp1jSCwIt
-   g==;
-X-CSE-ConnectionGUID: vOjX3nQUSg+ClW/jPo4flQ==
-X-CSE-MsgGUID: dxP36uJ8RnOAnL1xitwTUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11247"; a="55974204"
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="55974204"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 07:43:39 -0800
-X-CSE-ConnectionGUID: /B2vCChZRa2je0Fr3dO0Jw==
-X-CSE-MsgGUID: UjHQNn/ZQmS2ud7EScLyfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,260,1725346800"; 
-   d="scan'208";a="84186161"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 07:43:37 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t8LiQ-0000000BSMv-3jdE;
-	Tue, 05 Nov 2024 17:43:34 +0200
-Date: Tue, 5 Nov 2024 17:43:34 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in INTEL TPMI DRIVER
-Message-ID: <Zyo9JmxZt2lm9J6A@smile.fi.intel.com>
-References: <20241105152813.60823-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOuEmjon"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EADEC4CED3;
+	Tue,  5 Nov 2024 16:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730823241;
+	bh=kNqJvWjI5Xv0aOKUS9RlKFkV67Nc7o5F6Ctjxq01Rww=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=eOuEmjonUIcQ+ud/AKHdzCasrXq34DyNNSI03qyar6mjPyoSWLXSFR5nQobdgMAqG
+	 4y2986PFA7THO5ZuT+A8xdODk3mNJgfv2ua3DWH2Jlt+hcc6HDlT4Gfw17/w0KJ6x+
+	 YDO4TslKf6k0U4h8UXd2ojsBOeDJc1RDWX/FI0HYuZR5tq1LFAUFK7Ubrn7DBbbwBF
+	 ysNCUn/tMbfYjEJ+V49DcOeWm6pTYwS3U0hBBc2CNgYK7daQW/etlmCuxuyUopnKXV
+	 oLqVSGK38ygkxP6cqKVwHasUI0Hvj/AKZZwUiGqgzPtTAGe0G7U7Fjb2O1zxIhCO4k
+	 iz98v4dyGpXKg==
+From: Lee Jones <lee@kernel.org>
+To: Thomas Richard <thomas.richard@bootlin.com>, Lee Jones <lee@kernel.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <83194335554146efc52c331993f083bd765db6f9.1730205085.git.christophe.jaillet@wanadoo.fr>
+References: <83194335554146efc52c331993f083bd765db6f9.1730205085.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: (subset) [PATCH v2] mfd: cgbc-core: Fix error handling paths
+ in cgbc_init_device()
+Message-Id: <173082324035.2963343.17400162256012708399.b4-ty@kernel.org>
+Date: Tue, 05 Nov 2024 16:14:00 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105152813.60823-1-lukas.bulwahn@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Tue, Nov 05, 2024 at 04:28:13PM +0100, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Tue, 29 Oct 2024 13:31:49 +0100, Christophe JAILLET wrote:
+> If an error occurs after a cgbc_session_request() call, it should be
+> balanced by a corresponding cgbc_session_release(), as already done in the
+> remove function.
 > 
-> Commit df7f9acd8646 ("platform/x86: intel: Add 'intel' prefix to the
-> modules automatically") renames tpmi.c to vsec_tpmi.c in
-> drivers/platform/x86/intel/, but misses to adjust the INTEL TPMI DRIVER
-> section, which is referring to this file.
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> Adjust the file entry to this file renaming.
 
-Oh, right. Thanks for fixing this.
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Applied, thanks!
 
--- 
-With Best Regards,
-Andy Shevchenko
+[1/1] mfd: cgbc-core: Fix error handling paths in cgbc_init_device()
+      commit: 5a700e77d6458e838b4882627771cc5f367827af
 
+--
+Lee Jones [李琼斯]
 
