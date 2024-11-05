@@ -1,81 +1,102 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8701C383;
-	Tue,  5 Nov 2024 05:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44C118132A;
+	Tue,  5 Nov 2024 09:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730785760; cv=none; b=dz1voiGXQ+7qO4nCKGdH8GvZGe0jT5KibJWqDMcitdv1rljcmXBi0T50g2Ywr3sV0JVG74xm3psAYCdu9WnnAJtAxlT+5DnnsapZiTKHIjVnieatFlRZcTimBvBtufMtHXL68hkxuU7V1XGRwAsOgFvEFRc3feC5gN+t5bernEE=
+	t=1730799089; cv=none; b=k1QnV0EzDIaHgo715l9Co1/LS8eXCU9+e2sjwy5CRcaRsyEjvOP6AP8/t7sIJnVsAhy1nRlt3dJbhMOw8bmx9p0HyUSI7+eXHvDmCGDP/Nf8+kKIlCDL/jmOQxiBFEomM8ty0lgASGxIisQNy1cpOs7p5ZopZe2hgtmUOoJWLvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730785760; c=relaxed/simple;
-	bh=QCc1CcWl8qzd8Oayz0qzgWnGz7p/UNSbTN3wZFKIjOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5uYJmE/Vqg8/Y4/SQcdeiUpaeAD+Rd3DDx4Tg+bxG24vhTy6fwKjsHX1CebMSQXh+bm9xX4SM4Zt8EigR9VX6n8ykBmxsAlXgxGA8kLAIeGrpZDKY7KrI/nG1bZ4HbtIWmMCQptOOW2WqPy27XJ53hc+ndrhDrLPfm5k9DsCYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kulZ+AKq; arc=none smtp.client-ip=209.85.215.176
+	s=arc-20240116; t=1730799089; c=relaxed/simple;
+	bh=E8Wrg5ayvZa1X7I9VwxQLW/VIUYRWfbletUtBdxrlJU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QaIWKeSFDFUkESsbEdMi1mUxfKQhdDH9zATP+1Lwyl+IRxA9MNjA6WX2Q6puLLoQs2KKj6w+mnoaQ3MAsG+77o304GMSyG0AQ0avayLPETJiiXrK9+g++mr8zejdbYeG/6oxPVf0p7teYc7KAgcqvTyf1VSXzdyHjRrRVR1pd10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apAa7dD7; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kulZ+AKq"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ee51d9ae30so2961498a12.1;
-        Mon, 04 Nov 2024 21:49:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apAa7dD7"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso4411275f8f.1;
+        Tue, 05 Nov 2024 01:31:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730785758; x=1731390558; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BcELZ61LW1II9FFVnT5q9H6VhpRQxLxD7r/nck8P+Ds=;
-        b=kulZ+AKqS/l/iH/4nqPph122mv571eK+4txMbAqGWiF+EPakvMDvKG3M0TuqK/XKEe
-         6uFQY/I0Ekz6tBNbtp3pXJ3NpKBy9+YMdEkLdVCLmJopgIKdrXPdpNSh+t4FkvHMKBnd
-         v/HCUau/74B8PGsxw9nDsOa7sm1ng334mAX5m8HUii0uIh6ykkY/XO/kz92Xh3CnnFa5
-         h0DZbMw05bbh8GWTn4fOw9kUxJzrqNH9YccTTnRSoBzt97mvjMtQmkmlBFWFYMzovKdz
-         KPJYTZT3QioGaYh4NJJJGuPko3j8oC8q1VyrTeJooWbA0mP2A2TwEJengnCe1J1rt59K
-         ptlw==
+        d=gmail.com; s=20230601; t=1730799086; x=1731403886; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFdwTboQaaHQXvZmov57W+9Fn/ofMcP+vE6kpCz8Qe8=;
+        b=apAa7dD7NtcBluk5pWK70Zwo42ZM0JnxuZOZvgpx4nZnhJ/g8WBxr+mTyx4p6iK9UZ
+         DoDZo7gGyO96+f7RQ5HvCIlVoEOZ5ucoJAAm3WLyrDvGXJktqo6JRs0QeoWP+I+rg+CW
+         +H+TGKvNz4wuqFLxee1h+20xVHm+k+kv+DsceAjjCQ41Fc6OqeqcH0L64CYCTFoPe7zZ
+         psUeCzh7PN0oz+1Ah9kVOwdxxlcj4FgnfJK8ZfvpmpmW7inVO1/b1a3rZwXUfbjCfsIh
+         P7srsK3wd6HBgqETnliz4UYUGDK/gdSoyQFivnzMAtKhakCpiZGC/dKRv4THiF9TI2Cf
+         P7Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730785758; x=1731390558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BcELZ61LW1II9FFVnT5q9H6VhpRQxLxD7r/nck8P+Ds=;
-        b=IU7VlXLBS3uUlKWB/A5ccAdXkqauXxlQITF/8g4czurFKG2nobu7w1f1db1BmD7/ae
-         ALoPET6medZKVT7QF2UdhqVwguo5asjyEwxT+C9320dx9sYTW8MHke5f0ARqdlG7mUH0
-         jfBdoyCTWnkBfAz6fmG7LNbjAQGShAvSY6cK1qr6FX7wn/Kafe9Cn55Y1eeVs+A4Wffm
-         le4xHkW2yAgU98mdoUR6GSIiFXVu26Pkv0EryqavI54biTcEj6T2z5ZudUht6vICg+EC
-         BTQqICZN5kix5BSGHJZ68oWO0UuKFzUYcD4A0gt4oYp0LgOpPKPrNQLUMOj0yMIaFspg
-         e6Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSPGkbNWpxK1YgCyncQJx6z/tnMxRw8thK+QTfZgpG7e+FTYS5jT1wAkZBAzzi579TIAAqvAvt3QO6AKJsfu4=@vger.kernel.org, AJvYcCXyaaS3qb8xNbUGYDDE8QI+t4ift3I0NBuCKfQxItrfnlzGovl8pUpxtsMdAPr0eYHgZ+crF4pHOHBgXj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE6CSd5sXEJd6rCL/yHkmZQoZoXPqsonsKNzrhm1/9nmZi/f+Z
-	ZDl+tC+GIx6aZ8H7QID1MET6DJ9m45wDHP2ZFTpfdJvNPX8UPTzvvOObgw==
-X-Google-Smtp-Source: AGHT+IH3Ib+k0PANQyehmWIaDu8nhrZF2Sv9GCJZqHN/w7XITkFwND2IBnCQ+adLtOMtFRs71seSRg==
-X-Received: by 2002:a05:6a20:918e:b0:1db:e90a:6b24 with SMTP id adf61e73a8af0-1dbe90a6b7cmr5618157637.25.1730785757688;
-        Mon, 04 Nov 2024 21:49:17 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:1bb4:1f23:1031:ac0e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc315ac5sm8497972b3a.200.2024.11.04.21.49.16
+        d=1e100.net; s=20230601; t=1730799086; x=1731403886;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yFdwTboQaaHQXvZmov57W+9Fn/ofMcP+vE6kpCz8Qe8=;
+        b=HGFnkFf3NtpUAQpW3owqli2OtC1/c7nRRshHSlyBfyPlBmNDONZMivQUYcFe6+Vkwm
+         4GAiTL6L7z2VS4SQTLJ8tss6d3gzQiNFcfMTMshm0hRMsRTlMbdSvbeOShtWRJuuIKiz
+         D9v7Cbwn4bFsgBpdr37LimTOH6xBLiWPSVqdBIpM4b4kSVoLTKB0yQ+K5+ZBz4gaCAyS
+         t1RsBFQDXhJ2xaOJNmBAxCUbtrqdBSgci4FKt6AGgpkZ610+J+XCI1ykOzwQ4Ae5nFzW
+         tBufmFLv2wShgz04cTYJCiJh4Ndmx0Bg2wldTGFMxm1SzT8VNUuIf3z6f6jdztyF3GcD
+         VPOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUP6UBiLpyJNcnRzhVX1Qli4XpUzWDjtLFAqv28h4WyBr+OQbB+7JLgizK68HhF/9i84h7P88yfNroGrtI=@vger.kernel.org, AJvYcCXYe15NW96xvmFpQumPNsU928QMzGAUuaQSeAoIeUlUtiVo+xss7FpVwjHy0UEavobOzZdthxip@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6A/FZ8N93MTHVfVAHs39eL6HPP9nMVJZ2HKlOAivpErD7p6tk
+	vBhiVEDSmpI9FY7Reb7Zt1f5o96QkBE5eu2QvCLPeR/feADLo7wD
+X-Google-Smtp-Source: AGHT+IH6je/LDrue/yuovRF9FeVPclDA2R/0NSV0hMzJV0D9BP4i35BRYIEX4yarF0FD4RamSioAGw==
+X-Received: by 2002:a5d:6c69:0:b0:37d:7e71:67a0 with SMTP id ffacd0b85a97d-381c7a46788mr17773422f8f.9.1730799085944;
+        Tue, 05 Nov 2024 01:31:25 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d42adsm15458080f8f.40.2024.11.05.01.31.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 21:49:17 -0800 (PST)
-Date: Mon, 4 Nov 2024 21:49:15 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH] Input: synaptics - Fix a typo
-Message-ID: <Zymx27wcWCs7v7ui@google.com>
-References: <f3365eab359feb9adc6e2dedcffc976f3b272d8b.1730538673.git.christophe.jaillet@wanadoo.fr>
+        Tue, 05 Nov 2024 01:31:25 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Wei Fang <wei.fang@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	imx@lists.linux.dev,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: enetc: Fix spelling mistake "referencce" -> "reference"
+Date: Tue,  5 Nov 2024 09:31:25 +0000
+Message-Id: <20241105093125.1087202-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3365eab359feb9adc6e2dedcffc976f3b272d8b.1730538673.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 02, 2024 at 10:11:24AM +0100, Christophe JAILLET wrote:
-> s/synatics/synaptics/
-> A 'p' is missing.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There is a spelling mistake in a dev_err message. Fix it.
 
-Applied, thank you.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
+index 31dbe89dd3a9..fc41078c4f5d 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
+@@ -632,7 +632,7 @@ static int enetc4_pf_netdev_create(struct enetc_si *si)
+ 	priv = netdev_priv(ndev);
+ 	priv->ref_clk = devm_clk_get_optional(dev, "ref");
+ 	if (IS_ERR(priv->ref_clk)) {
+-		dev_err(dev, "Get referencce clock failed\n");
++		dev_err(dev, "Get reference clock failed\n");
+ 		err = PTR_ERR(priv->ref_clk);
+ 		goto err_clk_get;
+ 	}
 -- 
-Dmitry
+2.39.5
+
