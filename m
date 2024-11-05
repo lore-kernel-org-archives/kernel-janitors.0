@@ -1,70 +1,64 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A04218CC1B;
-	Mon,  4 Nov 2024 19:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8701C383;
+	Tue,  5 Nov 2024 05:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730750289; cv=none; b=NjCsFb31uL64dge5VqMM0At0hRign1ZJt3N6HiECmwEzu9oD3UWYW3qTeCpJdW04JRPuEFnpW0HQihxEpxEcC+5/2jVm/RXkEIay3q2SyLPPis6SL/eRPMyNkS7qMoZi2DPYXZ8Ss+H9g1EHWZXCwdRir9Q5OJoJvhkQ90uKf/Q=
+	t=1730785760; cv=none; b=dz1voiGXQ+7qO4nCKGdH8GvZGe0jT5KibJWqDMcitdv1rljcmXBi0T50g2Ywr3sV0JVG74xm3psAYCdu9WnnAJtAxlT+5DnnsapZiTKHIjVnieatFlRZcTimBvBtufMtHXL68hkxuU7V1XGRwAsOgFvEFRc3feC5gN+t5bernEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730750289; c=relaxed/simple;
-	bh=U6YAGRBLZ1jpjqi58H/3RwaLMYDj0nBH8huh+r5vjb4=;
+	s=arc-20240116; t=1730785760; c=relaxed/simple;
+	bh=QCc1CcWl8qzd8Oayz0qzgWnGz7p/UNSbTN3wZFKIjOk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPCZynIx3iz04ZYVlSLEEAEbVGDsIG9hSeSfFI6uI7P3h/RdZ0VCpVAHRETm/pnKBxJWclL3+e13ZsR0DSIbf1Lg4uBTs5hTbCr2wV3LFRKtjJ2Jew12obaBJEpbuP9IugR9S8s4os0Yb4hlI6SS4IWHzyzQnZ40ESgzCDAupf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4a6WM5J; arc=none smtp.client-ip=209.85.128.52
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z5uYJmE/Vqg8/Y4/SQcdeiUpaeAD+Rd3DDx4Tg+bxG24vhTy6fwKjsHX1CebMSQXh+bm9xX4SM4Zt8EigR9VX6n8ykBmxsAlXgxGA8kLAIeGrpZDKY7KrI/nG1bZ4HbtIWmMCQptOOW2WqPy27XJ53hc+ndrhDrLPfm5k9DsCYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kulZ+AKq; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4a6WM5J"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so41230265e9.2;
-        Mon, 04 Nov 2024 11:58:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kulZ+AKq"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ee51d9ae30so2961498a12.1;
+        Mon, 04 Nov 2024 21:49:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730750286; x=1731355086; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730785758; x=1731390558; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4KOOCs+eEUeL9lk4Gx5Rez5RKYEtGyaqv1oOBQzRqD0=;
-        b=c4a6WM5JqSlWWu/P6sduBgCTy8PFh60LXcA5XQUOPXlRUTMeYJr7VaqtY//rA8BLfP
-         VJiYTISGulS/Ue393VjD6W24v/Na1WpVwtGsPCTum8l/WJ6rzzOWusTteq3BvYrCIQiD
-         09BO7u4eB0/IltSYkcsyV1pmAgd4nv1Nx1mzv+MIXvYcMPR7jkHWHHmRdVBLr7UovZu8
-         G56XgRfSzKjumsngVdu1DoJyYLuL1G/69Sb4NB0KGBIl5AwVF78GAzinu4bgBAjeewHZ
-         qlzPGmGszKwFain/rOvlsLZVeusE11J3jy7T7FobqlxLtFHKufUIxqx8OwTlb/aq4S8f
-         EXHQ==
+        bh=BcELZ61LW1II9FFVnT5q9H6VhpRQxLxD7r/nck8P+Ds=;
+        b=kulZ+AKqS/l/iH/4nqPph122mv571eK+4txMbAqGWiF+EPakvMDvKG3M0TuqK/XKEe
+         6uFQY/I0Ekz6tBNbtp3pXJ3NpKBy9+YMdEkLdVCLmJopgIKdrXPdpNSh+t4FkvHMKBnd
+         v/HCUau/74B8PGsxw9nDsOa7sm1ng334mAX5m8HUii0uIh6ykkY/XO/kz92Xh3CnnFa5
+         h0DZbMw05bbh8GWTn4fOw9kUxJzrqNH9YccTTnRSoBzt97mvjMtQmkmlBFWFYMzovKdz
+         KPJYTZT3QioGaYh4NJJJGuPko3j8oC8q1VyrTeJooWbA0mP2A2TwEJengnCe1J1rt59K
+         ptlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730750286; x=1731355086;
+        d=1e100.net; s=20230601; t=1730785758; x=1731390558;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4KOOCs+eEUeL9lk4Gx5Rez5RKYEtGyaqv1oOBQzRqD0=;
-        b=Qcs0WSEhEzjxjbRxrah4tRKIRD2s6yA2S5AFgDA8QCft/KPqtGYu7S2G0NAvB33imI
-         rokTipIdGx851xO9ACFif0RA4otH56WOS3t7v7RUPAsG620uHWH2GOTJmIoOEGVFJpHC
-         7YQ7P4qqU4NXPsgoOt5jCYEiAdkalh5wr/6HpRuLPeYqiOhPDF7mB3K2F7PRihuwKRPf
-         xX9/djpJIkFF3cacQ0iKu4SEhiEhSCJ8iJlpyKgqf2W+hB+0Oqhruo8giRjjGdwk78yZ
-         YTJz+IyDuHr24KtNdv5QhGHyxGkdhdnXzw050G1sOuo94tdS757UCMQxR5ErGubj2Z5g
-         270g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtWMekLb4xEH2se17WRYLQP1pN5H5Ugh3CRXSEzCyDQIYzZnfXPKAEGbjWjXReDlYhZsYYHLuSnlEfCWUEeAQ=@vger.kernel.org, AJvYcCXhdVKes+ITcHgEIM3Za7l7qEoo5fDtcNlpU9KWXm/YGbqcoY90m899r77PSiuDIsWfIdBrcTH4xOBSaB/f@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywslq1vZIrYHBj0dFSr0K4w8PWC43abI9EzNGfyvSJUpHsJl30e
-	FCLjHQ654YzSbi+e1n20a8wl9qlzdUbtvs7KBbW1PL+cn3FqjRYP
-X-Google-Smtp-Source: AGHT+IF/aXzGn/5PDHDg4V1jAnzApl03/pds+DcXri2O0xl61zqTGqSCA0kXlZ9/qce0MAUVteik9w==
-X-Received: by 2002:a05:600c:4f43:b0:431:5ecf:2a39 with SMTP id 5b1f17b1804b1-4327b8222f2mr135115565e9.35.1730750285734;
-        Mon, 04 Nov 2024 11:58:05 -0800 (PST)
-Received: from void.void ([141.226.8.212])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10e7392sm13993981f8f.55.2024.11.04.11.58.04
+        bh=BcELZ61LW1II9FFVnT5q9H6VhpRQxLxD7r/nck8P+Ds=;
+        b=IU7VlXLBS3uUlKWB/A5ccAdXkqauXxlQITF/8g4czurFKG2nobu7w1f1db1BmD7/ae
+         ALoPET6medZKVT7QF2UdhqVwguo5asjyEwxT+C9320dx9sYTW8MHke5f0ARqdlG7mUH0
+         jfBdoyCTWnkBfAz6fmG7LNbjAQGShAvSY6cK1qr6FX7wn/Kafe9Cn55Y1eeVs+A4Wffm
+         le4xHkW2yAgU98mdoUR6GSIiFXVu26Pkv0EryqavI54biTcEj6T2z5ZudUht6vICg+EC
+         BTQqICZN5kix5BSGHJZ68oWO0UuKFzUYcD4A0gt4oYp0LgOpPKPrNQLUMOj0yMIaFspg
+         e6Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSPGkbNWpxK1YgCyncQJx6z/tnMxRw8thK+QTfZgpG7e+FTYS5jT1wAkZBAzzi579TIAAqvAvt3QO6AKJsfu4=@vger.kernel.org, AJvYcCXyaaS3qb8xNbUGYDDE8QI+t4ift3I0NBuCKfQxItrfnlzGovl8pUpxtsMdAPr0eYHgZ+crF4pHOHBgXj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE6CSd5sXEJd6rCL/yHkmZQoZoXPqsonsKNzrhm1/9nmZi/f+Z
+	ZDl+tC+GIx6aZ8H7QID1MET6DJ9m45wDHP2ZFTpfdJvNPX8UPTzvvOObgw==
+X-Google-Smtp-Source: AGHT+IH3Ib+k0PANQyehmWIaDu8nhrZF2Sv9GCJZqHN/w7XITkFwND2IBnCQ+adLtOMtFRs71seSRg==
+X-Received: by 2002:a05:6a20:918e:b0:1db:e90a:6b24 with SMTP id adf61e73a8af0-1dbe90a6b7cmr5618157637.25.1730785757688;
+        Mon, 04 Nov 2024 21:49:17 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:1bb4:1f23:1031:ac0e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc315ac5sm8497972b3a.200.2024.11.04.21.49.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 11:58:05 -0800 (PST)
-Date: Mon, 4 Nov 2024 21:58:02 +0200
-From: Andrew Kreimer <algonell@gmail.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] sched/topology: Fix a typo
-Message-ID: <ZyknSoWK8zQ5MM2q@void.void>
-References: <20241102131943.10103-1-algonell@gmail.com>
- <xhsmh34k757dj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Mon, 04 Nov 2024 21:49:17 -0800 (PST)
+Date: Mon, 4 Nov 2024 21:49:15 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH] Input: synaptics - Fix a typo
+Message-ID: <Zymx27wcWCs7v7ui@google.com>
+References: <f3365eab359feb9adc6e2dedcffc976f3b272d8b.1730538673.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,13 +67,15 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xhsmh34k757dj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+In-Reply-To: <f3365eab359feb9adc6e2dedcffc976f3b272d8b.1730538673.git.christophe.jaillet@wanadoo.fr>
 
-On Mon, Nov 04, 2024 at 04:46:48PM +0100, Valentin Schneider wrote:
-> Quick, hide behind this bush before Peter sees you!
-> https://lore.kernel.org/lkml/?q=f%3A%22peter+zijlstra%22+borken
+On Sat, Nov 02, 2024 at 10:11:24AM +0100, Christophe JAILLET wrote:
+> s/synatics/synaptics/
+> A 'p' is missing.
 > 
-> This happens to be valid internet-speak and isn't really a typo, see
-> https://www.urbandictionary.com/define.php?term=borken
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-What a dataset, my bad!
+Applied, thank you.
+
+-- 
+Dmitry
