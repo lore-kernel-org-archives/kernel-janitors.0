@@ -1,102 +1,108 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44C118132A;
-	Tue,  5 Nov 2024 09:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03D51CF7BE;
+	Tue,  5 Nov 2024 09:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730799089; cv=none; b=k1QnV0EzDIaHgo715l9Co1/LS8eXCU9+e2sjwy5CRcaRsyEjvOP6AP8/t7sIJnVsAhy1nRlt3dJbhMOw8bmx9p0HyUSI7+eXHvDmCGDP/Nf8+kKIlCDL/jmOQxiBFEomM8ty0lgASGxIisQNy1cpOs7p5ZopZe2hgtmUOoJWLvg=
+	t=1730799172; cv=none; b=HUQW0XJCIsJvHxl+tps2LkRpXfSUb4tDp84RRrQECBHjgRK8gUv7Am+TSJcXn5D0PfdxkqAgt/n49nus45ynmsohMX4QclV0AgQmClXgQ1fC0QKB+Pr7WafsnyaPASYn3Sc22cTcLdwbRdXGmubgMMuDEiYoHrovTWPyAvb3QPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730799089; c=relaxed/simple;
-	bh=E8Wrg5ayvZa1X7I9VwxQLW/VIUYRWfbletUtBdxrlJU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QaIWKeSFDFUkESsbEdMi1mUxfKQhdDH9zATP+1Lwyl+IRxA9MNjA6WX2Q6puLLoQs2KKj6w+mnoaQ3MAsG+77o304GMSyG0AQ0avayLPETJiiXrK9+g++mr8zejdbYeG/6oxPVf0p7teYc7KAgcqvTyf1VSXzdyHjRrRVR1pd10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apAa7dD7; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730799172; c=relaxed/simple;
+	bh=VzGwYF1KU9qAtBJUJAWuJl2+rTNOSrZ4zXnpCxU9a44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k8YpbbGux4k8dA1zZMYxH7g7KkcHqBwlv3SrgEWB6ZT8TaiZoAqLZ+TuMASsBK03ab59ZqWO2VCp6O6dWgabc1aMKM3obxQOZDvSHN0g9E1bP42t/IHjwMdkzgHJcIUKZkm2Sj3rglAddciK8r6Suh2ReQ7cOWUFHArJJA3ARYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVXSLghn; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apAa7dD7"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso4411275f8f.1;
-        Tue, 05 Nov 2024 01:31:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730799086; x=1731403886; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFdwTboQaaHQXvZmov57W+9Fn/ofMcP+vE6kpCz8Qe8=;
-        b=apAa7dD7NtcBluk5pWK70Zwo42ZM0JnxuZOZvgpx4nZnhJ/g8WBxr+mTyx4p6iK9UZ
-         DoDZo7gGyO96+f7RQ5HvCIlVoEOZ5ucoJAAm3WLyrDvGXJktqo6JRs0QeoWP+I+rg+CW
-         +H+TGKvNz4wuqFLxee1h+20xVHm+k+kv+DsceAjjCQ41Fc6OqeqcH0L64CYCTFoPe7zZ
-         psUeCzh7PN0oz+1Ah9kVOwdxxlcj4FgnfJK8ZfvpmpmW7inVO1/b1a3rZwXUfbjCfsIh
-         P7srsK3wd6HBgqETnliz4UYUGDK/gdSoyQFivnzMAtKhakCpiZGC/dKRv4THiF9TI2Cf
-         P7Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730799086; x=1731403886;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yFdwTboQaaHQXvZmov57W+9Fn/ofMcP+vE6kpCz8Qe8=;
-        b=HGFnkFf3NtpUAQpW3owqli2OtC1/c7nRRshHSlyBfyPlBmNDONZMivQUYcFe6+Vkwm
-         4GAiTL6L7z2VS4SQTLJ8tss6d3gzQiNFcfMTMshm0hRMsRTlMbdSvbeOShtWRJuuIKiz
-         D9v7Cbwn4bFsgBpdr37LimTOH6xBLiWPSVqdBIpM4b4kSVoLTKB0yQ+K5+ZBz4gaCAyS
-         t1RsBFQDXhJ2xaOJNmBAxCUbtrqdBSgci4FKt6AGgpkZ610+J+XCI1ykOzwQ4Ae5nFzW
-         tBufmFLv2wShgz04cTYJCiJh4Ndmx0Bg2wldTGFMxm1SzT8VNUuIf3z6f6jdztyF3GcD
-         VPOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUP6UBiLpyJNcnRzhVX1Qli4XpUzWDjtLFAqv28h4WyBr+OQbB+7JLgizK68HhF/9i84h7P88yfNroGrtI=@vger.kernel.org, AJvYcCXYe15NW96xvmFpQumPNsU928QMzGAUuaQSeAoIeUlUtiVo+xss7FpVwjHy0UEavobOzZdthxip@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6A/FZ8N93MTHVfVAHs39eL6HPP9nMVJZ2HKlOAivpErD7p6tk
-	vBhiVEDSmpI9FY7Reb7Zt1f5o96QkBE5eu2QvCLPeR/feADLo7wD
-X-Google-Smtp-Source: AGHT+IH6je/LDrue/yuovRF9FeVPclDA2R/0NSV0hMzJV0D9BP4i35BRYIEX4yarF0FD4RamSioAGw==
-X-Received: by 2002:a5d:6c69:0:b0:37d:7e71:67a0 with SMTP id ffacd0b85a97d-381c7a46788mr17773422f8f.9.1730799085944;
-        Tue, 05 Nov 2024 01:31:25 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10d42adsm15458080f8f.40.2024.11.05.01.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2024 01:31:25 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	imx@lists.linux.dev,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: enetc: Fix spelling mistake "referencce" -> "reference"
-Date: Tue,  5 Nov 2024 09:31:25 +0000
-Message-Id: <20241105093125.1087202-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVXSLghn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730799171; x=1762335171;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VzGwYF1KU9qAtBJUJAWuJl2+rTNOSrZ4zXnpCxU9a44=;
+  b=WVXSLghnfzF4S8MVZ/pWWpW4d4yF3W682Mbsx5BUDdZ/5XQ5ofhwKUXG
+   6ZbFFwrNkieXIdmMvFyx2CSNc/3BV7SzBk+O5nRcwb8dD7tx6iqx9FDkO
+   +VYcr23A4Y6eTwhOtxuSwUHBrIGrnuh+B5TilftItXeJlmcx/Io41bK7v
+   /r3zjOVvEaB3VonTAiirNRCwvIx6HoCXl8KjSIlwKQO3sRbycwGtaikRd
+   SN7os8N0tk4SSltVY/KqHN3KBq0lVdxodYmJdg9w+1YOaueqni2Bp3kCz
+   jSHNMdvb/1SKddZy5FJJgHKbYv4cY3d3fHl7DSbZ8M11jOpo+KFJNusaV
+   Q==;
+X-CSE-ConnectionGUID: XUgLM682SZiaIlEBloVdNw==
+X-CSE-MsgGUID: 6UWT0ccSRYqSeRskvEt2hQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11246"; a="55933368"
+X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
+   d="scan'208";a="55933368"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Nov 2024 01:32:50 -0800
+X-CSE-ConnectionGUID: ReeqqnroRriZ+kX+vtcFxg==
+X-CSE-MsgGUID: QUTquLKUTby+OEh+FvT8WA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,259,1725346800"; 
+   d="scan'208";a="83465564"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa006.fm.intel.com with SMTP; 05 Nov 2024 01:32:47 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 05 Nov 2024 11:32:46 +0200
+Date: Tue, 5 Nov 2024 11:32:46 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ajay Gupta <ajayg@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Haotien Hsu <haotienh@nvidia.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: fix potential out of bounds in
+ ucsi_ccg_update_set_new_cam_cmd()
+Message-ID: <ZynmPkv8wXNRjUQS@kuha.fi.intel.com>
+References: <325102b3-eaa8-4918-a947-22aca1146586@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <325102b3-eaa8-4918-a947-22aca1146586@stanley.mountain>
 
-There is a spelling mistake in a dev_err message. Fix it.
+On Mon, Nov 04, 2024 at 08:16:42PM +0300, Dan Carpenter wrote:
+> The "*cmd" variable can be controlled by the user via debugfs.  That means
+> "new_cam" can be as high as 255 while the size of the uc->updated[] array
+> is UCSI_MAX_ALTMODES (30).
+> 
+> The call tree is:
+> ucsi_cmd() // val comes from simple_attr_write_xsigned()
+> -> ucsi_send_command()
+>    -> ucsi_send_command_common()
+>       -> ucsi_run_command() // calls ucsi->ops->sync_control()
+>          -> ucsi_ccg_sync_control()
+> 
+> Fixes: 170a6726d0e2 ("usb: typec: ucsi: add support for separate DP altmode devices")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-index 31dbe89dd3a9..fc41078c4f5d 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc4_pf.c
-@@ -632,7 +632,7 @@ static int enetc4_pf_netdev_create(struct enetc_si *si)
- 	priv = netdev_priv(ndev);
- 	priv->ref_clk = devm_clk_get_optional(dev, "ref");
- 	if (IS_ERR(priv->ref_clk)) {
--		dev_err(dev, "Get referencce clock failed\n");
-+		dev_err(dev, "Get reference clock failed\n");
- 		err = PTR_ERR(priv->ref_clk);
- 		goto err_clk_get;
- 	}
+> ---
+>  drivers/usb/typec/ucsi/ucsi_ccg.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> index ba58d11907bc..bccfc03b5986 100644
+> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
+> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+> @@ -482,6 +482,8 @@ static void ucsi_ccg_update_set_new_cam_cmd(struct ucsi_ccg *uc,
+>  
+>  	port = uc->orig;
+>  	new_cam = UCSI_SET_NEW_CAM_GET_AM(*cmd);
+> +	if (new_cam >= ARRAY_SIZE(uc->updated))
+> +		return;
+>  	new_port = &uc->updated[new_cam];
+>  	cam = new_port->linked_idx;
+>  	enter_new_mode = UCSI_SET_NEW_CAM_ENTER(*cmd);
+> -- 
+> 2.45.2
+
 -- 
-2.39.5
-
+heikki
