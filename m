@@ -1,83 +1,92 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D9F1FBCBC;
-	Wed,  6 Nov 2024 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37FD1DF995;
+	Wed,  6 Nov 2024 13:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730897703; cv=none; b=P/rrY8kBLwKX9PO0QP+9mLgqC/2yppO5L2j2iWe1bV0cuo2lRZ8VYywM6Iv5BiU9AxWKmjDLRMM9P20IDkrjjRA8NsWEFB341YtOyXOVOYfqEzTzdO/CY+yHnZkCU0xLNVwnjqaoLQSCIhtW+xnsh6pMltbxVeI9zU9zZxGmRwQ=
+	t=1730899574; cv=none; b=smT8k5tlTJu0/y30VTk6yLlzvzQ4xasR/RM49gciUEJedt9xmPdZoGJl0NyYY4+vSUOC/F7R3aI1ktiuagPG/8XYt2HGmnDXi/bIEKQ38mJUOe/Bo3qUA/smVNJtB4jQR6k/MpyPiPgPwaf0eogiICGalZ1IoV6wud77tYdS5Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730897703; c=relaxed/simple;
-	bh=C/YyHTsrUA5cNUrNatbZfGIhA6FzfOxnYY7jmTSTWoY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qsmNgvfqfwGZhcW/K/q+AqGmlkehSb6r/+P0q2eBC79eF4HFtsdxKVGWOvVrfFp35CKZegpqF86GfGs+xsSFEoxn+esFiU3uhmAhA6J/zpoH7Rzam9rMNCNCUddTZ4FDfV0MfvuJhMl7NGlOv33Vm3Odgm3LmtW6kQSQU+VG+9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=r3i4JO0l; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+	s=arc-20240116; t=1730899574; c=relaxed/simple;
+	bh=2TKdnD2pCGp1HGWZ+uy5SvmeSKhAzj5r5r+FuhZcNnM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UwHFlqyhwYSjqgGHnWUubjx58e8Yb3G671Y4/X7FlprnAKBB8nF8SZoRYnXwmnkcLyZGvjn5RSfSPaj9z7Nd62DK2cu3d7OuTUOAzSnh0n8QTXKT+S0MoyRLTuWhfyb351adaQWEC+VJ6jMIvfAAPmKWTU4IcIGpsCZIyCQLHlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LhG+/OG3; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="r3i4JO0l"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730897696;
-	bh=iRLJUrrpvdggs7VLYItdrnY/LsBZ/gUpUlld7wSgZg8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=r3i4JO0l9iQ/cxv6XhZ8DpOqJ1j7acgckLxkKMl4bVwXA5RGLe7UDkjwHhojgmrwP
-	 DyZG+tZetPViar+nig97Y1e3NAu0EwOv/NjD9YIC4KKcMvbLrMVIXzuPzcjqLgDovE
-	 XiM9FezvsiY0J/Ty+HMvlufgk1ad3WTlsGYrCIU1Yk/BKEnYjRiJrAmKlkNvcY8j5l
-	 H/+YXKVDwa2XdpIquKUVEghyDfsQ/Y8j7LN3e7GemCZO/Zyj9gas7PIGXGgqu5XD8P
-	 bdqWjxJ8RU72jLFr1PjZPKGKDaQlHM90aHVh9ukfSU1Vu1MCf0lC3u8psiNAsEg0yW
-	 Wh9EveL3Kt/Fw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xk4t25VRLz4wyh;
-	Wed,  6 Nov 2024 23:54:50 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Olivia Mackall
- <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] hwrng: amd - remove reference to removed PPC_MAPLE config
-In-Reply-To: <20241106081343.66479-1-lukas.bulwahn@redhat.com>
-References: <20241106081343.66479-1-lukas.bulwahn@redhat.com>
-Date: Wed, 06 Nov 2024 23:54:52 +1100
-Message-ID: <871pzoldyb.fsf@mpe.ellerman.id.au>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LhG+/OG3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730899573; x=1762435573;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=2TKdnD2pCGp1HGWZ+uy5SvmeSKhAzj5r5r+FuhZcNnM=;
+  b=LhG+/OG3fRwglFM8XVBHdYgODj+WXKnaGHhXGSznzdl+B1TJyeXp8mck
+   ON7txYTqn+bRCwVu05Wkc846EBg/7f0i3VgPGTCObHcYo70CrYYxO1Qiz
+   T4vshIKeWQGFJNLivb5EBdPNp4ofQerAzVzzWAnJhGREcu1K1+0fp4okU
+   DOyFDLuH+TcojFhd53QmyEaL9kMg6SOgSYFU0Bgzm5hhjRoA7PqLf4nAQ
+   U7h5MlmYU41Pb0qTh8gl9PsV3X01QmTlcTkztb0IPi/eywMABMWgpDSR2
+   H568EIyy6RbggSlhrt7ijTd+Qz6yf5MUSqOXRx8uktTIjU2gG1/SbmDx5
+   Q==;
+X-CSE-ConnectionGUID: rnu/23JkSXiag4XQZk+D0Q==
+X-CSE-MsgGUID: XW+wSWyOR1Ob2B3ejb6MYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41245267"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41245267"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 05:26:13 -0800
+X-CSE-ConnectionGUID: TWzhqo02T/qVt+hq3bqvhQ==
+X-CSE-MsgGUID: nT34LukQQ6C+6LKEHajdnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
+   d="scan'208";a="84638577"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.110])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 05:26:09 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+ Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+ Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <20241105152813.60823-1-lukas.bulwahn@redhat.com>
+References: <20241105152813.60823-1-lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in INTEL TPMI DRIVER
+Message-Id: <173089956521.2259.13164548577532945229.b4-ty@linux.intel.com>
+Date: Wed, 06 Nov 2024 15:26:05 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Lukas Bulwahn <lbulwahn@redhat.com> writes:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->
-> Commit 62f8f307c80e ("powerpc/64: Remove maple platform") removes the
-> PPC_MAPLE config as a consequence of the platform=E2=80=99s removal.
->
-> The config definition of HW_RANDOM_AMD refers to this removed config opti=
-on
-> in its dependencies.
->
-> Remove the reference to the removed config option.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  drivers/char/hw_random/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 05 Nov 2024 16:28:13 +0100, Lukas Bulwahn wrote:
 
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+> Commit df7f9acd8646 ("platform/x86: intel: Add 'intel' prefix to the
+> modules automatically") renames tpmi.c to vsec_tpmi.c in
+> drivers/platform/x86/intel/, but misses to adjust the INTEL TPMI DRIVER
+> section, which is referring to this file.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+> broken reference.
+> 
+> [...]
 
-Thanks for cleaning it up.
 
-There's also an EDAC and cpufreq driver that need to be removed. I
-posted the patches before [1] but need to resend them to the relevant
-maintainers and with updated change logs.
+Thank you for your contribution, it has been applied to my local
+review-ilpo branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo branch only once I've pushed my
+local branch there, which might take a while.
 
-[1]: https://lore.kernel.org/linuxppc-dev/20240823112134.1314561-2-mpe@elle=
-rman.id.au/
+The list of commits applied:
+[1/1] MAINTAINERS: adjust file entry in INTEL TPMI DRIVER
+      commit: 44ed58e57984d0fb26d1e267deb9d83a1a071dfe
 
-cheers
+--
+ i.
+
