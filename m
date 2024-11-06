@@ -1,87 +1,112 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333CB21219E
-	for <kernel-janitors@vger.kernel.org>; Tue,  5 Nov 2024 22:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC64B1D3648
+	for <kernel-janitors@vger.kernel.org>; Wed,  6 Nov 2024 08:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730844325; cv=none; b=SyAxAUwPCQnkwEln/lEs6gKjLDqkJH1jueegHPcJw2UhnDdVWpmjEgt+IfRLe5rCZa24sCBBPEE+pnI422R9h+7kK70g2YOJtwLPu6R3T2n1Rq9ShB8t/ZTYyC9NlnX8RouZ4471Rfntsavk6qVzsGMLbTsfmI3w2vphoOD+9r0=
+	t=1730880834; cv=none; b=WoJIWDDRGbqy1uTQHcaFiIM5kyuGcFyaPVKUG4GPvRtXPu/If5k9qUrC0QMRtoRSauw/dOeQyAK0Fi7RFIzNyWjl7jWCKZz6DQ4gZyQ1huI2IAIRpYiBMqD97US48H3Y7XnRjrAoH8OH0iY7pyYk5WOXbdp0/s/oH87/C0kHQTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730844325; c=relaxed/simple;
-	bh=djBJ3X9b8PV3X9FBvYB2DvR8/bEo6mFq5HQ90DmmY4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jf36dHJNhfyWSAiAuevfj3dp8GyLL5s4DfA7CaY7A0vWb4tkOkvC77MAbwfzPo4QTILFR7sqJzBIFVR6MxVKYAXfBt7eDvvIT0phXD6qdknAb72mShB0T5a0JdpLDsFWq+Ni0GN7HsKkMpLRWIMPrqJJy1Cfslb8lt0s0Te0xn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MOCTC9us; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1730880834; c=relaxed/simple;
+	bh=IiVxXzi6cf1LmPboJPt94NJr13UCP0qfsLiOmx2zt5w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZmcW4NPhMiplzqH7pXlvKy1tEpVcY4arN1TFCfLxHtWexPKuJ4kWHiOZWGQLneavfk7KQ7zX4mPkbRGxjCqfSXeK28kjH+F0CsvMdXSDJtXE+7kiIM3It6lRuPMrgycJUUmQP8DCo08rkY9QKHg8S/FqHAhGQdRwtPe69q3dYPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ehUuWGGZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MOCTC9us"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e34339d41bso51676087b3.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 05 Nov 2024 14:05:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1730844322; x=1731449122; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PhZ+0Y9dSaLb2rve1kOjUAczY7wbLs+msnWKXaMK6Qs=;
-        b=MOCTC9usKgp1nGk5iaqLnYdttea3fDU3AX2cnt0Bet4WEu2WUWTwboM3TzvZ1sWM7E
-         MG4dk2wGRgdYj6Csuxn/qOPGhXr3iQSvAeEl4Ix61PtiJ+4ktyhbKB3BFqcSdGhvs0fL
-         AMCogWlcLAcIJvqo+W3H6AcGi9bMg3ZWZWpM8gPVltPVsnd1CUEgCIVFvYlfoMpwEgdZ
-         DkZ77YiEGzXFyj/8UoGM80TKVUYMhYid6toEzy2QKo1hD/WWgBGL8hhW/shGNQBI4i+N
-         ElfyCHB5/Q9/iS5yJi+1/gjTrYLonnbr+TAMbIz86OzvVWZ9pEUB0Z6rHowzD5qj5m+g
-         iI7g==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ehUuWGGZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730880830;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=u2secMimeI4+f4dvxa0WxHbdFtZeWJOJ8zwpB2N9L3U=;
+	b=ehUuWGGZJ/U863VXX9dIqO6S3SjmecykBvJb3I+QkqpL9iFEHI7nby7jo0Sd/xPn4g7sE9
+	Sb9M5qabQItdxxttl+XlJHSPn9crpw+eqO1+ATh3PoYs0aGp+R7aiBGZABcc9tNF8SwbnQ
+	7PvokHuR532jokHCHiyU22ggVhVJQ+4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-567-9-2BPpq5NymKbt6mddxScQ-1; Wed, 06 Nov 2024 03:13:49 -0500
+X-MC-Unique: 9-2BPpq5NymKbt6mddxScQ-1
+X-Mimecast-MFC-AGG-ID: 9-2BPpq5NymKbt6mddxScQ
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43157cff1d1so46935245e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 06 Nov 2024 00:13:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730844322; x=1731449122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PhZ+0Y9dSaLb2rve1kOjUAczY7wbLs+msnWKXaMK6Qs=;
-        b=oR+eG0lAfSbU6jY23Vk4C3wdXtTYJzbOFjS8uvTzoVAUQtHz/wNjivuW2/JhwR258n
-         9WFyJRoNUJHZDAnHeoDkmW8cEcOUClpy/xglWQ8ifKPIqZ3WyLOVig+uCIkXc9oPn6l8
-         E7bjlB3m1d6tIZ27D+q2DUMd5rvRKNA62SDPk931De8ZkDYSknRLHpbWIAUMaAqzMNIv
-         uycaFWafgMC/Dw4WhA7XaP4FSgLI4liVnwsTEJFgOYR/Ku7vJGrZv0tXP4HKrM4mAJKH
-         QSPnsrLQ24zeY4JQbYSK5UrOGDJBJM8LFDE3NEHrnNZ/rlZgjPHV4FvA1+R+CRcuAQ4F
-         JCWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWb6fuidbGE+KJa6QmvWnRpol+C/IoHBoqhLJaGzerttT61E626UkYUSFY8rnPbFsEun08D8zwTICoz5KzygLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwehFtipOt3wgjcEx5hZs7VCYPInzneGz6pX4poqvP8tly8P+9I
-	cepqQxT729WX7BQg5p6fnRQa4kNUkuLUJz9jB1dNylbMcpCtJ4/vzap5zENlNXnMrXpSZrZcN/8
-	FRhXMQ6GurG+JsVUDxK2WrrlpAVaTnx2Z+4+/
-X-Google-Smtp-Source: AGHT+IHOquUqvyWgtXT2/sE8iENbvnsQpc3TOSa8HX4MAum2KDhJxz63gYWb26deeOkneLh0dVm/l7sooH5/2AEa+1s=
-X-Received: by 2002:a05:690c:b82:b0:6e3:1008:6d7c with SMTP id
- 00721157ae682-6e9d8939dc8mr367029867b3.11.1730844322234; Tue, 05 Nov 2024
- 14:05:22 -0800 (PST)
+        d=1e100.net; s=20230601; t=1730880828; x=1731485628;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u2secMimeI4+f4dvxa0WxHbdFtZeWJOJ8zwpB2N9L3U=;
+        b=lxb1YNdVl4SH67pse8u+x4ymzale/Aqtp5MD2DL2nFMVxBXDDe760Fzt/ogPlCmf89
+         MYE3bCIfycph80mm1BOYyPrzmjLSWTxOQS40MZg6cpJhjQXy9VCvPeLlAQJMTz6qCMrv
+         5IqUyXwATA2jZ4HJYS7o0+ixTvIX4bo1XHRRXhW5V5MT2PzLDIN/XxCOMcB93K2cefeC
+         M+M9QeGKAGh2J1WUFKIh265jM55roX9+yvd5UPWTL9TI4RxiJa/rmlmH/65jjzvpRtEI
+         46R4TVYUWHLUhmeDe++NsRxfJnkpWyk2LipE3Gr/9wXDsBkpbwfD+LDKrlcjiBl07RDv
+         iPOw==
+X-Gm-Message-State: AOJu0YxOJN/exvj4yN+8THnwTzd/YQaN2SJ/h1Z3McaWOnCWykPUTpZf
+	zmEewt3i8LNgkS/ySripNE7mlnkdrARdCp1WYVlP3RmGn+ccPllPebWPpGHudwzp3bJTBHoHLzy
+	qKbuldmUHDZg4Obzk7sz2gNU3VSgyic5jM54Xrfy54ONr0tJz0Y3aFsX614MIQaP/Lg==
+X-Received: by 2002:a05:600c:5115:b0:431:7c78:b885 with SMTP id 5b1f17b1804b1-4327b6f954emr187771675e9.4.1730880828401;
+        Wed, 06 Nov 2024 00:13:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGEDbzGtgbC+limkqrDb3bgxn8MtUgaok9LxE3/Aqw87YDkCd2Xwwy8yw7eixK0KNLGFNgNJg==
+X-Received: by 2002:a05:600c:5115:b0:431:7c78:b885 with SMTP id 5b1f17b1804b1-4327b6f954emr187771455e9.4.1730880828017;
+        Wed, 06 Nov 2024 00:13:48 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c2bsm18387226f8f.23.2024.11.06.00.13.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 00:13:47 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-crypto@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	linuxppc-dev@lists.ozlabs.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] hwrng: amd - remove reference to removed PPC_MAPLE config
+Date: Wed,  6 Nov 2024 09:13:43 +0100
+Message-ID: <20241106081343.66479-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2d02f331-42ee-40db-a64f-5ee378eb44db@stanley.mountain>
-In-Reply-To: <2d02f331-42ee-40db-a64f-5ee378eb44db@stanley.mountain>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 5 Nov 2024 17:05:11 -0500
-Message-ID: <CAHC9VhQw-DGzCq-q=ZUXjzM8GN-cUJXb6nU2PhOMre3nhiQJ4Q@mail.gmail.com>
-Subject: Re: [PATCH next] lsm: Fix signedness bug in selinux_secid_to_secctx()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 2, 2024 at 5:31=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> The "ret" variable needs to be signed for the error checking to work.
->
-> Fixes: 95a3c11eb670 ("lsm: replace context+len with lsm_context")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  security/selinux/hooks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Merged into lsm/dev-staging, thanks Dan.
+Commit 62f8f307c80e ("powerpc/64: Remove maple platform") removes the
+PPC_MAPLE config as a consequence of the platform’s removal.
 
---=20
-paul-moore.com
+The config definition of HW_RANDOM_AMD refers to this removed config option
+in its dependencies.
+
+Remove the reference to the removed config option.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ drivers/char/hw_random/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index bda283f290bc..446c2def055e 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -50,7 +50,7 @@ config HW_RANDOM_INTEL
+ 
+ config HW_RANDOM_AMD
+ 	tristate "AMD HW Random Number Generator support"
+-	depends on (X86 || PPC_MAPLE || COMPILE_TEST)
++	depends on (X86 || COMPILE_TEST)
+ 	depends on PCI && HAS_IOPORT_MAP
+ 	default HW_RANDOM
+ 	help
+-- 
+2.47.0
+
