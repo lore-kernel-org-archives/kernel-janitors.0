@@ -1,60 +1,67 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37FD1DF995;
-	Wed,  6 Nov 2024 13:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F29200CB5;
+	Wed,  6 Nov 2024 15:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730899574; cv=none; b=smT8k5tlTJu0/y30VTk6yLlzvzQ4xasR/RM49gciUEJedt9xmPdZoGJl0NyYY4+vSUOC/F7R3aI1ktiuagPG/8XYt2HGmnDXi/bIEKQ38mJUOe/Bo3qUA/smVNJtB4jQR6k/MpyPiPgPwaf0eogiICGalZ1IoV6wud77tYdS5Tk=
+	t=1730906533; cv=none; b=pLlt2VfFWWe7w2cBFsPgvDfIItT1sGr2fL9kEJ72k4E3GJuda71IlbksM0jUtIjJ/ti7vWmTN/w6MUnljE0LhRq5BHArzrdm3rj6s+ELHis9lxkn3HzfHSy1wxswbu3z4VQjxrgEQD5mz+35kBr+W8zOC1ESs3rYIs9AlJfkRmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730899574; c=relaxed/simple;
-	bh=2TKdnD2pCGp1HGWZ+uy5SvmeSKhAzj5r5r+FuhZcNnM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UwHFlqyhwYSjqgGHnWUubjx58e8Yb3G671Y4/X7FlprnAKBB8nF8SZoRYnXwmnkcLyZGvjn5RSfSPaj9z7Nd62DK2cu3d7OuTUOAzSnh0n8QTXKT+S0MoyRLTuWhfyb351adaQWEC+VJ6jMIvfAAPmKWTU4IcIGpsCZIyCQLHlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LhG+/OG3; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730906533; c=relaxed/simple;
+	bh=TegPHsJb8UtZrNvXmEc16dnLIaw0GbTMBePpl8yK+PY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UyPTtiWNOXmoox3mYVVKsT1as+75gFSBiApwqScnBBXU/UscmZcYkqbyzYxB+81wY1PKqrrgNzwnNxWqypKu56uoJZ5WkyEjW2aluRLDzVf4nNtBQR7uS0YSVbaox6C3A/i8dd0dqkq4Fu0+pUw9FEDsyf34A8pZMX3PF3CvgPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=asvGlPzT; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LhG+/OG3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730899573; x=1762435573;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=2TKdnD2pCGp1HGWZ+uy5SvmeSKhAzj5r5r+FuhZcNnM=;
-  b=LhG+/OG3fRwglFM8XVBHdYgODj+WXKnaGHhXGSznzdl+B1TJyeXp8mck
-   ON7txYTqn+bRCwVu05Wkc846EBg/7f0i3VgPGTCObHcYo70CrYYxO1Qiz
-   T4vshIKeWQGFJNLivb5EBdPNp4ofQerAzVzzWAnJhGREcu1K1+0fp4okU
-   DOyFDLuH+TcojFhd53QmyEaL9kMg6SOgSYFU0Bgzm5hhjRoA7PqLf4nAQ
-   U7h5MlmYU41Pb0qTh8gl9PsV3X01QmTlcTkztb0IPi/eywMABMWgpDSR2
-   H568EIyy6RbggSlhrt7ijTd+Qz6yf5MUSqOXRx8uktTIjU2gG1/SbmDx5
-   Q==;
-X-CSE-ConnectionGUID: rnu/23JkSXiag4XQZk+D0Q==
-X-CSE-MsgGUID: XW+wSWyOR1Ob2B3ejb6MYA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41245267"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41245267"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 05:26:13 -0800
-X-CSE-ConnectionGUID: TWzhqo02T/qVt+hq3bqvhQ==
-X-CSE-MsgGUID: nT34LukQQ6C+6LKEHajdnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,262,1725346800"; 
-   d="scan'208";a="84638577"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.110])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Nov 2024 05:26:09 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
- Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
- Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-In-Reply-To: <20241105152813.60823-1-lukas.bulwahn@redhat.com>
-References: <20241105152813.60823-1-lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust file entry in INTEL TPMI DRIVER
-Message-Id: <173089956521.2259.13164548577532945229.b4-ty@linux.intel.com>
-Date: Wed, 06 Nov 2024 15:26:05 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asvGlPzT"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so80048455e9.2;
+        Wed, 06 Nov 2024 07:22:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730906530; x=1731511330; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ojWgkBkJEMmCI62V4jCnf16CEFOk3HJMOucjebvfEik=;
+        b=asvGlPzTl90WCzI8RCVJ7WWGt8jy7gum0fqOit1n6eNWOJlwLvcesFIRPPS+CwYUaI
+         xsBSg4I6EMySDWCz/jDvo1Vq5hsv7ocWRecEj5jpVcNDZfhJFM5WKHnJGVvkgLksQs20
+         g+940O1W9SVHQndFiG58v/xyYQhKhgdQ9VUjTw5e8o7IjNNGf+mePJatgY5D3+BXYbrL
+         tQZPJWoQfcxZocqtM5s+U/pXvryYXmPRd/3nOqPPe6Y2wkPQ7C+gLsBSewlZdWFx1TcH
+         1SNJVqbwhrIdX8ogFSmILHHcL4QFbKzzHAQb3RmN1gKW5gIGT21vP2hrEiRMVIkjamBQ
+         xKiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730906530; x=1731511330;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ojWgkBkJEMmCI62V4jCnf16CEFOk3HJMOucjebvfEik=;
+        b=dpn6LCS0dkqdwR4/kleQJBTRz1gwKDkCZCD1XChOliXOzdwzwGRWJwyodKlvaTpNSH
+         3Ac8sEYNDWzb3Mte8tEKrTSTxk+Kq89iJMGaKhDH33xtaq6B9y9J0UFB5xypztkQ/TCb
+         L6PSPSvWU6hRguTgS+kRoJs4uyiyMJDW6VPKLQowFz3KFBaeEXBUYElvJikvcA9pxVgk
+         jwsnguMjdjNvNFhjy8Tzm3bhAGc9GgN+xUl5zn36Fx8/xgmuqdWhN2Zf3xeqEJMYX20P
+         wslRhLtXM8GnwZ/8hfmCd7dPyGekjH6l5iKBAoMskAQVezI3RkrpSblESJt+D9DXBSgT
+         uL0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXawBL+mIP9C8Ob/+RBwPhuiebu4vMl/CN+1l8GXz7fGljJpSAOUZKH3/C5CKp1+bOdtMPkHXeY54BxsLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPJGgoyipwT4jWNiV0Z4QgwHSzethkHOszDVosgRMvxyezygeN
+	hptV8GETPoH5UWOcjNhnvFNqpsFa8qTpPF1qhbpTDpXboxGG4iTy
+X-Google-Smtp-Source: AGHT+IH79nN8Lx5TC+3a80nhd8cyj+o9blu3nB5kz6aXwplTbMCxWrEQiYYSM8yIiy9mD69AcgA8pg==
+X-Received: by 2002:a5d:5f8e:0:b0:37d:3705:84e7 with SMTP id ffacd0b85a97d-381c7a5d0d4mr21256608f8f.17.1730906530252;
+        Wed, 06 Nov 2024 07:22:10 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c113e528sm19654399f8f.78.2024.11.06.07.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 07:22:09 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] fs/9p: remove redundant variable ret
+Date: Wed,  6 Nov 2024 15:22:09 +0000
+Message-Id: <20241106152209.1626630-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -62,31 +69,35 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 05 Nov 2024 16:28:13 +0100, Lukas Bulwahn wrote:
+The assignments and return checks on ret are redundant. Clean up
+the code by just returning the return value from the call to
+v9fs_init_inode_cache.
 
-> Commit df7f9acd8646 ("platform/x86: intel: Add 'intel' prefix to the
-> modules automatically") renames tpmi.c to vsec_tpmi.c in
-> drivers/platform/x86/intel/, but misses to adjust the INTEL TPMI DRIVER
-> section, which is referring to this file.
-> 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
-> 
-> [...]
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/9p/v9fs.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] MAINTAINERS: adjust file entry in INTEL TPMI DRIVER
-      commit: 44ed58e57984d0fb26d1e267deb9d83a1a071dfe
-
---
- i.
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 281a1ed03a04..ee0a374e0d9d 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -661,12 +661,7 @@ static void v9fs_destroy_inode_cache(void)
+ 
+ static int v9fs_cache_register(void)
+ {
+-	int ret;
+-
+-	ret = v9fs_init_inode_cache();
+-	if (ret < 0)
+-		return ret;
+-	return ret;
++	return v9fs_init_inode_cache();
+ }
+ 
+ static void v9fs_cache_unregister(void)
+-- 
+2.39.5
 
