@@ -1,101 +1,124 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42ED4212621
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Nov 2024 13:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E7621315C
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Nov 2024 14:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987821; cv=none; b=s/H4o1C5I0Qt2s9dC5wflMAQ2eTwG5sFtHfO3NOmud7pY0Xcv4+HrRwqTHPTss9pEX7ahLn5ZqUCszmabkSZKXqiYo1csZXqNuBR9tEoOYcxchtGQzDG1TAmlM2ewYVfoaxPblQcvoY3P8BS8B+BGx99c0Usuo8JfXhLMO4MQWI=
+	t=1730991154; cv=none; b=tmHAvZrQzt6UcgTsubjeuCZBPliHxf64PY7eCmvTNtHg2s6Cog5f3RrXOreCYUJ3ZFmh+YGtHDdheEaAMOFIRHEtBEa4rt6OSEZwYnp/jqizzDxsNZjGDJcfMmS+JI+l9rRGuGPSRGytk03bRq0q7JgezW3ox1S6ueHMPI60+cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987821; c=relaxed/simple;
-	bh=qnMMY1EBIMFNCCj4m0hlU1mf5a1ROCT94LHu26I+oyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A8QuMVhsg3ZBUkIWaZEAVC4twD+CoFXt1fixkUlku3KKd1NcaYeGGVN6T0gxT9CAcJVi/KFm9/ieDcIdafspyxD/Wr8WM1yfzYF47/iVt6DorYSZh1GZvSgHTY9vhCXSx88PAgxpKJ7vclrkHTCk2kb9rDZxmdx+fgU7eVg0Y/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SawnAXcy; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1730991154; c=relaxed/simple;
+	bh=XVF/x0LDlBb9yXRs1bVbTtLmrXmFrENkF+22J4yL8ps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TosmwAjEUDR57KvGE/7BtBjOJ9jCJMhqzfaPW+3cHGhT6lfXfzX5upeYCGjwP8J6ZIZnFbtNwIhnoH+THkQrYkK80M+X1KblGLELzTHUiIYvp4IMdTa+frFuxqOSbeDnVJcX7lfwv8bxO2+9dmOCIMWNQ5SvRb2ybXWENzcArbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=crhZTEyD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SawnAXcy"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c9693dc739so1399276a12.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Nov 2024 05:56:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730987817; x=1731592617; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B4NpyOY6rUFjw/BWN7djSiT97ykyDTjSO50iSeMBEZ0=;
-        b=SawnAXcytegrbHUxWE//kKaAXr7G9KednCrMy4cAOm/eul7g++34ldE7et0RmMs6bb
-         Ar1d/Or9YQYGNF/DyR9iwP4E93glbPo/Yt+5dqF+/kyQhlbjII19t+7AyMv4PLLi16MN
-         lmsyFc7IJbfUZ9Mc81tmy786aHNRz7cJ4qq26utce6MTcUIVwmGLwg3R8ej2yvfGIcFj
-         vh0u1HIx16J9a79upEUKlbZr9g8ESqc+gHjn7mIO7oIOdL2cvFwTJqh5+M4D0IAzcn5P
-         /EOtyT5RzNY1T+BtiduqBf4EQPzPX8TUBlbiq0WapWylewUEVLYt5PiMD8OmN/+g4eP+
-         vZ5Q==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="crhZTEyD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730991150;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8Ff04YcLV8SPdoJxeVSiu4v58xp2P44LYVgJtEbYZ2A=;
+	b=crhZTEyDa69Fh/WYoVhBGAteI5MYHphmFLkJ9/w8Np02X8Z3H4gn+9qP7CbfxVS6uuzGWt
+	T0AVz/QZSaGwQtyGRSKuBW2zyFf/F6+GNn6oBK1nSt5sumemd3e8CETzTokX43wjb2Uq04
+	kOo1RCFhskEe/5oqYsIYS9JJcBy6yhs=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-97-gg6dSXLsNZemIZtLKD-jog-1; Thu, 07 Nov 2024 09:52:29 -0500
+X-MC-Unique: gg6dSXLsNZemIZtLKD-jog-1
+X-Mimecast-MFC-AGG-ID: gg6dSXLsNZemIZtLKD-jog
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6e3c638cc27so19389627b3.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Nov 2024 06:52:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730987817; x=1731592617;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B4NpyOY6rUFjw/BWN7djSiT97ykyDTjSO50iSeMBEZ0=;
-        b=e5q0zr7BLvIMefvcIb2727ZgMT0IMJQ/W8T5tqxpxPdoI1Xm085/epOQto72DdoL+R
-         C1wLioXN4gM1hrriMyimAX2lIV7FNNdbuxGP7K66kGgoF29aZf9HWOJwj1424hP4jdqL
-         lXo8zAXql1iBBt2K5T2sHzMTAcQdO/upGpLplWdgOp5G1ciOyJOEas+vpFkkkMcQ8wBU
-         aYNumNfVUir0l0LRuR5ty257FDp5t7WSe9nNqCmzREDu7lUXZ2NUOtJZvk37N7vs9LNS
-         EHDydjNYl1vW9nCkkygU+lhtFNdOrVXiCBRjAeoeXgTMNnj/fgMMEkf90qnJQaY+9GKc
-         f+7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWvISVCUEULrsceE3iGT5Ex9/AG49BtdD9VJ3SnrF9BAoJck7AUphm7gt8I7pTlJN8jJ9kTY0TyXR6kbKd9mvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvVJhym/Qv6KsnvQDIcOZuOpYrkcKqWTyCQdSadUVwjCycQSYr
-	ESTA9+hovnVIdNGdfBxmci8rB8Nk7VvIWF/2RgV1DT7QmnhQkdAprmyyolG1gCc=
-X-Google-Smtp-Source: AGHT+IGH/e4k1MIhd1tMRWeuprRyYe0nFe/9dywi2+snJ2+871SY5AWuiZ+eYzeGjIiiWkZbc4wxiQ==
-X-Received: by 2002:a05:6402:d0e:b0:5c9:76f3:7d46 with SMTP id 4fb4d7f45d1cf-5ceb928c9damr15946992a12.21.1730987817587;
-        Thu, 07 Nov 2024 05:56:57 -0800 (PST)
-Received: from localhost ([89.101.134.25])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03c4ed9fsm814147a12.62.2024.11.07.05.56.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 05:56:56 -0800 (PST)
-Date: Thu, 7 Nov 2024 16:56:55 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	v9fs@lists.linux.dev, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2][next] fs/9p: replace functions
- v9fs_cache_{register|unregister} with direct calls
-Message-ID: <d410dce3-36ce-4663-94ca-25bad2f91ad4@suswa.mountain>
-References: <20241107095756.10261-1-colin.i.king@gmail.com>
- <Zyyt0XUv0Ypl56qI@codewreck.org>
+        d=1e100.net; s=20230601; t=1730991149; x=1731595949;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Ff04YcLV8SPdoJxeVSiu4v58xp2P44LYVgJtEbYZ2A=;
+        b=ZAOQUaHCDYlFxsFFJnLB5Rs16iGR9js9lXTjBGsH4hoIi+DV2wql+Zn/jSYzEhSEJg
+         y+zXlPCX1TiroSExU/se+ACUqusnZiRtZRj6TLSNYd02yJdjMMX/wYM1DyyvzPTqUqcO
+         3npN7xSG6P3RhTODoB3Hh31vO8+d8yXN6eekuWmrps3kNu13F3gLvquq8+ulODYStCtk
+         Tx6uq4YMkOpBqDAQsYrxEfhdopwE/j7K7R/6nSlMPH1m4R9OKhzNV0T57vy7+VUjD5m6
+         oQkXpo8aUma8AE8aB3lVJWUeAkHxIhFCzFUbzzpk+dEsoIyaCm3GsU3t5TRimWRSClQV
+         cq1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXapqXV7dIDKo38jpsTYgR0+DEu+wUmiKnaqkCmG8+VJQPeoUSAcHT18Y7KIaNb8dVyGdPfKpWplciB2Ml3+Ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhaj1cl0Bczmub6sSgIIHLxzIQJUoH7ctbUq+jGaQXCW4RzYO7
+	L9SbdUvf477MrLtX3EBj17OPG2rtcSaJmfViVOrQTpRhYW9X+uNLGEktPSSdDSIT2SI1dQd40gJ
+	TmATKK1YlN6Anf4Zs1kpyvXJggKF0W1DihA1f5ELwXjOGY99R/bcxO531Y3IB9KbPLsOgy0JHHC
+	qWezvz2ZA41t2594fdCe9FkKRT5i7DAKdKIHbr+6br
+X-Received: by 2002:a05:690c:460e:b0:6e2:c13e:20e9 with SMTP id 00721157ae682-6e9d8b056ddmr313423027b3.38.1730991148939;
+        Thu, 07 Nov 2024 06:52:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEYqvt7/lT13XxcBmf4h4l8ghmjNiRZf2d8+XdMbFjM2u7ezJTrQtXi3YGHHMc7lpnFy6cI9XHQYWgxd3fJnwI=
+X-Received: by 2002:a05:690c:460e:b0:6e2:c13e:20e9 with SMTP id
+ 00721157ae682-6e9d8b056ddmr313422887b3.38.1730991148691; Thu, 07 Nov 2024
+ 06:52:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zyyt0XUv0Ypl56qI@codewreck.org>
+References: <20241107132114.22188-1-colin.i.king@gmail.com>
+In-Reply-To: <20241107132114.22188-1-colin.i.king@gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Thu, 7 Nov 2024 15:51:52 +0100
+Message-ID: <CAJaqyWcp2kbm9uwzqPXi-M3AUT3P54az8SLHv0Ex7HpM7zHHhA@mail.gmail.com>
+Subject: Re: [PATCH][next] virtio_vdpa: remove redundant check on desc
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, virtualization@lists.linux.dev, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 07, 2024 at 09:08:49PM +0900, Dominique Martinet wrote:
-> Colin Ian King wrote on Thu, Nov 07, 2024 at 09:57:56AM +0000:
-> > The helper functions v9fs_cache_register and v9fs_cache_unregister are
-> > trivial helper functions that don't offer any extra functionality and
-> > are unncessary. Replace them with direct calls to v9fs_init_inode_cache
-> > and v9fs_destroy_inode_cache respectively to simplify the code.
-> > 
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Thanks!
-> 
-> Acked-by: Dominique Martinet <asmadeus@codewreck.org>
-> 
-> 
-> @Dan, I don't have anything queued up 9p-wise so if you want to take it
-> through the janitor tree it'll probably get in faster; otherwise (if
-> you'd rather I take it or no reply in a while) I'll pick it up when
-> other patches come in.
+On Thu, Nov 7, 2024 at 2:21=E2=80=AFPM Colin Ian King <colin.i.king@gmail.c=
+om> wrote:
+>
+> The boolean variable has_affinity is true when desc is non-null and
+> ops->set_vq_affinity is non-null. Hence the call to create_affinity_masks
+> does not need to check for desc being non-null is redundant when
+> has_affinity is true, so it can be removed as well as the now unused
+> default_affd.
+>
 
-There isn't a janitor tree or any rush on this.  ;)
+Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-regards,
-dan carpenter
+Thanks!
+
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/virtio/virtio_vdpa.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
+> index 7364bd53e38d..1f60c9d5cb18 100644
+> --- a/drivers/virtio/virtio_vdpa.c
+> +++ b/drivers/virtio/virtio_vdpa.c
+> @@ -364,14 +364,13 @@ static int virtio_vdpa_find_vqs(struct virtio_devic=
+e *vdev, unsigned int nvqs,
+>         struct virtio_vdpa_device *vd_dev =3D to_virtio_vdpa_device(vdev)=
+;
+>         struct vdpa_device *vdpa =3D vd_get_vdpa(vdev);
+>         const struct vdpa_config_ops *ops =3D vdpa->config;
+> -       struct irq_affinity default_affd =3D { 0 };
+>         struct cpumask *masks;
+>         struct vdpa_callback cb;
+>         bool has_affinity =3D desc && ops->set_vq_affinity;
+>         int i, err, queue_idx =3D 0;
+>
+>         if (has_affinity) {
+> -               masks =3D create_affinity_masks(nvqs, desc ? desc : &defa=
+ult_affd);
+> +               masks =3D create_affinity_masks(nvqs, desc);
+>                 if (!masks)
+>                         return -ENOMEM;
+>         }
+> --
+> 2.39.5
+>
 
