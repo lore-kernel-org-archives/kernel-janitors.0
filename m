@@ -1,97 +1,146 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B509194ACF;
-	Thu,  7 Nov 2024 09:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DE6194A70;
+	Thu,  7 Nov 2024 09:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730970848; cv=none; b=SgvIAZH57fK4AXEPbRFPsFm3/kUfSSKVCWW1Zccy59JIoRYGmv2IuFa++tajxpFaHJlODDm7uG0KTNP5uUm1V1+cmUdnDvasVc+d5rICIOaYqxyeFkE0AkxZed6Pm4EkXK7wt57cn2sJqsM+6kNMS2WqxT1M2Mtf9YS/6kjYK8s=
+	t=1730973480; cv=none; b=Ds+jLRp6tfgxQNNJ7P+K/TGtaY/TsizB2pcVu54bTcz6wk7VQo13iIqWHYfXEBd8eXGe7PFHdyAC1A/jd1QzpuNrmkBm6NqcZ23g3Fvza8dgM8w7dL+evJNA8GbXQ15bYjB7mMVvVFcbtyHKUXnbjGsycCP8IebLDgWgHD1T0NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730970848; c=relaxed/simple;
-	bh=6tAAux1lly/TI0vCOujAeTNBXuv3W0q6Y48vNZZo7PE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Df6MAD7HFExZjGkzK3Cl/cNQ1TOEMqIyNiJFlvfTQWKAtVNEJKkrJjJ03C/0OCWjjwkRJJXypev3t64qBEPerBlheQcAdtZZedQSEPKVPToI08MnYlrWgIBaJf+HR7TyiCLSlViY52gt+iH10+FSFkhnDxLDgoVvPWwIQFcBAOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmxDtRpw; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1730973480; c=relaxed/simple;
+	bh=gHV9IguVe4/fNXzmzpXujryVT7rjBVHv1XiIwGs67K0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UJHydKaCop7vkYYUsnJhQ4yKtLx0UFs4R151DvABVOHaEBPS9v81XnGRmsohGqFLnOerK3V1Qk8gRDth4+5FfH3zA7RDfCx5LP4d3PO8jVq264IJ1T1D8i6zww6NpqW1Z3o9BtOSR8kDCzhFI6tIjtQFUt+iqQgPxKknYNBX+DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlXOyZvr; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmxDtRpw"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43169902057so6010045e9.0;
-        Thu, 07 Nov 2024 01:14:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlXOyZvr"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431ac30d379so6327625e9.1;
+        Thu, 07 Nov 2024 01:57:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730970845; x=1731575645; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dZJoYWgKwwmsJWfb2QT5nT8hw1PQ+BpTzyZIvvtju0M=;
-        b=WmxDtRpwCw36SYYIqFsIkh9MR79ZAbr3twlZtpoMp7B+D6EsWJCTZsul8IFbJ+zNr0
-         Mk9gt+suZ9R7a7ICliFaEAOdW+Z4QRGISUcWHGTOXpBgyFADNtP893ZvdFwV+bn/taiC
-         vhEdu5pmKV/OUDnLmf4ukCqXPIK2ED3+L8gvtCZHl3OU+qw+gWDr7OMmP1ZO2scz+IuL
-         bTmjnlwltDlulUYv9HFTCiKX0X6vV2F9FbqdktgQfKBogKXeW+vMX95gPc03RMXhVFfo
-         AHJilx4m7gU0txFxpPoZdyB85/kiwsQ6vYECGjadtnt3oeE+gtptf6H9mD5cXT1D7knL
-         Yq0g==
+        d=gmail.com; s=20230601; t=1730973477; x=1731578277; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dpKqltND5M1sTSxc7zhIf0AXALdPonkygyogIkTEVY4=;
+        b=PlXOyZvruKnQ98vOESG47QuMkzlJbRVK32g3BYMMZysGJFpTjFlJWlBqmYKlDkgqfk
+         1JJSA0uhqoU5dqWO51//pf4heYJ7aK2ZqbvdP/lZi1Y/MVpAu2HZCoHKrLOOwi7MKSgL
+         zSnGpcP5Oi57N9KTC+3121mJ+hpRE1R6PhvIHaWCxbkS1M7Q/7huL6T8ohxZKtmYPkF0
+         Ac7wC1cww5VoaFsY6SAhvilcmd8Mur0YxnG57MmmWL9MdoNl/TOkZTHqNmzbR2MAmKUP
+         vEHFyYErjYiAKWCsekrzcCLic+uBLiEfkg+OFlfq1bfyXaQR+Zs4IioajM9K9eNSeyBl
+         LALA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730970845; x=1731575645;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dZJoYWgKwwmsJWfb2QT5nT8hw1PQ+BpTzyZIvvtju0M=;
-        b=o+cDUXtaPYXZDZ6xeAxfSsIN209VGoXu15VhEH+fb13sXlPQIWk883DZT0Vn2kwZTr
-         D2xeWIJV5ZIA5h5aLjOWa+jM94qebggKgdfcpRJ0o1wDEsUIq+Cm5fAm23XhkE6NhFi0
-         l2lx+OT/jo9hcG64X+7zyyuKTYLCUMbz3rjaUXg2SaPhcSEXTF4RzSYS3UuNvFSW1i7y
-         nSG3DTxI3Zx+dNh1xV/XZai51YB4QgdlNMP+fXcTPSeK8cV857J5t7zyPJiu+CXSbrUS
-         cDFdFiIimCPiNnFnP8sZiJZHOqIVkcuiMW+prL/sbam9bXfU2YnjzIJ4h77uTIljBHnU
-         gu9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVpGDZ7MVgPxYgkaWBk/RxJFUanY+74DSvSplwGDgBbMQJpIMinPqO2JlJaQS/p+1B9LTLtOm8V6h7LQ5qYc4Q=@vger.kernel.org, AJvYcCWUyswMmWBoyWx1LXiixrlZr+QEIMCLoHS2M+ucN8Yv+hjeFuehkIeXaUoSQrgEoiQhDJuJzguZ9L4Zy9lS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDHgEQNPCcPZ5sTAouLCTjoGxvlEVt89kmkB3jz7JE4zbRZx41
-	KCnr/ZUfrBBfdzzDdLc3FumvvQ03NBhScxCAPZQqwf7IP4EPLSbl
-X-Google-Smtp-Source: AGHT+IFIm9AGuKcLross5xfua6rDaxLhOzo2CvrTnh1BEbODgP6JuCFF8fGOgbf6qFgkkCVJPvePpg==
-X-Received: by 2002:a05:600c:35c7:b0:431:5459:33c2 with SMTP id 5b1f17b1804b1-432b301e8e3mr5531435e9.17.1730970845467;
-        Thu, 07 Nov 2024 01:14:05 -0800 (PST)
-Received: from [192.168.1.248] ([194.120.133.65])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed97f544sm1171452f8f.40.2024.11.07.01.14.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 01:14:05 -0800 (PST)
-Message-ID: <f8fa71b8-05c9-4f1a-92fd-e72a8a2d34eb@gmail.com>
-Date: Thu, 7 Nov 2024 09:14:02 +0000
+        d=1e100.net; s=20230601; t=1730973477; x=1731578277;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dpKqltND5M1sTSxc7zhIf0AXALdPonkygyogIkTEVY4=;
+        b=HO0JA8//qJ/V1PiDPndV0aAyEowSqIWW37Jn6XyWzTVO6TGoBqezB1nE38XZ5dC4D/
+         6inX2ou+46g1UYSZEu/+upQIh/X0aNBXiT100i0f5xG380TpVPilYRUgn6c+QjPq2oJO
+         rZ6Hu/yZq5FEw5p+VkU9C48VhZfSuxz0CaQgHKnG8jMqPaOH6n05koR6RHkliVYm5ed3
+         AWo84XlvkifXPUY5rqDAZg+m1cPYYbR0KaRK4dZnyDgeQ9D5sXJg4+jpvWwBx/sCSDwR
+         zCT85cqtiA9ag5cAuxTTa5WQx+PYCRjcAZI7Z1P5YODxxqsCZ3ao6phvS8HK/kwupTOF
+         SGvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw9x1XSsKvB73rjPvF90PSqTM8UCrJ9hIrrTOeJXQS4riVtOoqDTz2Bgy0ZUfgb7WG9F6nIVUwRy1xatw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF1AUcbqgKCbB6+9JQ0suPDSaVbxu3NiFKphRlfnU04tVgK7jo
+	FeSXEoo5fmS7A/ajlvW/50AKTxOx0C00rLb1LejtQA9WMPBy6vDK
+X-Google-Smtp-Source: AGHT+IGzLToOEcix7DkuYcrqXxDDjq6bxBUxopWjxkVCGQdAefWYR0OGNd28kso8FNdruwrZQL4QuA==
+X-Received: by 2002:a05:600c:1d16:b0:42e:d4a2:ce67 with SMTP id 5b1f17b1804b1-431ae9c440cmr374619435e9.17.1730973477180;
+        Thu, 07 Nov 2024 01:57:57 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97ce0fsm1248509f8f.33.2024.11.07.01.57.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 01:57:56 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][V2][next] fs/9p: replace functions v9fs_cache_{register|unregister} with direct calls
+Date: Thu,  7 Nov 2024 09:57:56 +0000
+Message-Id: <20241107095756.10261-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] fs/9p: remove redundant variable ret
-To: Dominique Martinet <asmadeus@codewreck.org>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>,
- Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241106152209.1626630-1-colin.i.king@gmail.com>
- <23a44a2f-2a99-47a7-a446-d96b5adf62ec@suswa.mountain>
- <ZyvzuHBSyfI63CT0@codewreck.org>
-Content-Language: en-US
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <ZyvzuHBSyfI63CT0@codewreck.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 06/11/2024 22:54, Dominique Martinet wrote:
-> Dan Carpenter wrote on Thu, Nov 07, 2024 at 12:45:33AM +0300:
->> On Wed, Nov 06, 2024 at 03:22:09PM +0000, Colin Ian King wrote:
->>> The assignments and return checks on ret are redundant. Clean up
->>> the code by just returning the return value from the call to
->>> v9fs_init_inode_cache.
->> [...]
->>
->> Better to delete the whole function and call v9fs_init_inode_cache()
->> directly.
-> 
-> Makes sense, and if we go there delete v9fs_cache_unregister as well so
-> the init/destroy pair properly; that also is a single function call.
-> 
-> Thanks!
-OK, will do.
+The helper functions v9fs_cache_register and v9fs_cache_unregister are
+trivial helper functions that don't offer any extra functionality and
+are unncessary. Replace them with direct calls to v9fs_init_inode_cache
+and v9fs_destroy_inode_cache respectively to simplify the code.
 
-Colin
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+
+V1: originally cleaned up v9fs_cache_register to just a direct call
+    to v9fs_init_inode_cache.
+V2: replace v9fs_cache_register and v9fs_cache_unregister with direct
+    calls and change subject line
+
+---
+ fs/9p/v9fs.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
+
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index 281a1ed03a04..77e9c4387c1d 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -659,21 +659,6 @@ static void v9fs_destroy_inode_cache(void)
+ 	kmem_cache_destroy(v9fs_inode_cache);
+ }
+ 
+-static int v9fs_cache_register(void)
+-{
+-	int ret;
+-
+-	ret = v9fs_init_inode_cache();
+-	if (ret < 0)
+-		return ret;
+-	return ret;
+-}
+-
+-static void v9fs_cache_unregister(void)
+-{
+-	v9fs_destroy_inode_cache();
+-}
+-
+ /**
+  * init_v9fs - Initialize module
+  *
+@@ -686,7 +671,7 @@ static int __init init_v9fs(void)
+ 	pr_info("Installing v9fs 9p2000 file system support\n");
+ 	/* TODO: Setup list of registered trasnport modules */
+ 
+-	err = v9fs_cache_register();
++	err = v9fs_init_inode_cache();
+ 	if (err < 0) {
+ 		pr_err("Failed to register v9fs for caching\n");
+ 		return err;
+@@ -709,7 +694,7 @@ static int __init init_v9fs(void)
+ 	v9fs_sysfs_cleanup();
+ 
+ out_cache:
+-	v9fs_cache_unregister();
++	v9fs_destroy_inode_cache();
+ 
+ 	return err;
+ }
+@@ -722,7 +707,7 @@ static int __init init_v9fs(void)
+ static void __exit exit_v9fs(void)
+ {
+ 	v9fs_sysfs_cleanup();
+-	v9fs_cache_unregister();
++	v9fs_destroy_inode_cache();
+ 	unregister_filesystem(&v9fs_fs_type);
+ }
+ 
+-- 
+2.39.5
+
