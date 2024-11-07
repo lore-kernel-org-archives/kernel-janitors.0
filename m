@@ -1,77 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF171DE2B8;
-	Thu,  7 Nov 2024 02:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B509194ACF;
+	Thu,  7 Nov 2024 09:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730944835; cv=none; b=fGElcfTdoQPM5AJQXz2RMHfunw9m4Dly3b9n8dYSHZJp6zu9/8ZSRsh3PlcpmvteB8FCmKyAFre/5lTWFGqOFPsLr89CUgwGkirT2d6Xk+7g6l+HuJyTERJUXCqGGSG/RrFkOxbm4s7fHvRywVauFMysajPcs/QHQu5YMZkDAwI=
+	t=1730970848; cv=none; b=SgvIAZH57fK4AXEPbRFPsFm3/kUfSSKVCWW1Zccy59JIoRYGmv2IuFa++tajxpFaHJlODDm7uG0KTNP5uUm1V1+cmUdnDvasVc+d5rICIOaYqxyeFkE0AkxZed6Pm4EkXK7wt57cn2sJqsM+6kNMS2WqxT1M2Mtf9YS/6kjYK8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730944835; c=relaxed/simple;
-	bh=xnDZdbD/2xP0tWH/1uuH5+aag4ZGXoc+A93SI5BM0hQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=f52S3vTjnCelreLPpC4N1iwSC8hXlUStyjlwXJCrIr+j963RwtUut0SvNT+MkEUBNie+eSgDKfIn3ft5UmAiB0vWGr+u2AINVQ/60xT+w5dnc4WIvhOsoBpHg4GK5TemIFkIFdGMB/BD6Dx7/0JthiABEgzTD9odDglOw2eb9GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKjVD+KX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730970848; c=relaxed/simple;
+	bh=6tAAux1lly/TI0vCOujAeTNBXuv3W0q6Y48vNZZo7PE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Df6MAD7HFExZjGkzK3Cl/cNQ1TOEMqIyNiJFlvfTQWKAtVNEJKkrJjJ03C/0OCWjjwkRJJXypev3t64qBEPerBlheQcAdtZZedQSEPKVPToI08MnYlrWgIBaJf+HR7TyiCLSlViY52gt+iH10+FSFkhnDxLDgoVvPWwIQFcBAOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmxDtRpw; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKjVD+KX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A50FC4CEC6;
-	Thu,  7 Nov 2024 02:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730944835;
-	bh=xnDZdbD/2xP0tWH/1uuH5+aag4ZGXoc+A93SI5BM0hQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jKjVD+KXMTWCwxf0K+w7g0Qot3XkaZOaXnjrB7HcK/mym1iQ4eN72InuRfsi53LPH
-	 Q1qt+Jm3tzHgwRnhIVPdOWedhvoZXeNvYYWcL8Lx0eSscgbGwAQGJYrFsby7To7XRd
-	 4liy7tdVQrXK6MQ/weJh7aLMryXXvOpa/ujIHMnrUI5gheRg2jnIlkhlhu/RG+K9ve
-	 SJUebdL6faJHEYxJ/wSWozz8iXA39cpXfKkUtz35k91shpZbCSUnfhyZo4a9KFe57q
-	 vaqt801H7QB5yPCdZYtWRMh3xuj00OOX/UmKrrydmnL7Udcgpbe4hNKAhXIpZeXIeo
-	 bZUV7B/q9mgcQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B8C3809A80;
-	Thu,  7 Nov 2024 02:00:45 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmxDtRpw"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43169902057so6010045e9.0;
+        Thu, 07 Nov 2024 01:14:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730970845; x=1731575645; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dZJoYWgKwwmsJWfb2QT5nT8hw1PQ+BpTzyZIvvtju0M=;
+        b=WmxDtRpwCw36SYYIqFsIkh9MR79ZAbr3twlZtpoMp7B+D6EsWJCTZsul8IFbJ+zNr0
+         Mk9gt+suZ9R7a7ICliFaEAOdW+Z4QRGISUcWHGTOXpBgyFADNtP893ZvdFwV+bn/taiC
+         vhEdu5pmKV/OUDnLmf4ukCqXPIK2ED3+L8gvtCZHl3OU+qw+gWDr7OMmP1ZO2scz+IuL
+         bTmjnlwltDlulUYv9HFTCiKX0X6vV2F9FbqdktgQfKBogKXeW+vMX95gPc03RMXhVFfo
+         AHJilx4m7gU0txFxpPoZdyB85/kiwsQ6vYECGjadtnt3oeE+gtptf6H9mD5cXT1D7knL
+         Yq0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730970845; x=1731575645;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dZJoYWgKwwmsJWfb2QT5nT8hw1PQ+BpTzyZIvvtju0M=;
+        b=o+cDUXtaPYXZDZ6xeAxfSsIN209VGoXu15VhEH+fb13sXlPQIWk883DZT0Vn2kwZTr
+         D2xeWIJV5ZIA5h5aLjOWa+jM94qebggKgdfcpRJ0o1wDEsUIq+Cm5fAm23XhkE6NhFi0
+         l2lx+OT/jo9hcG64X+7zyyuKTYLCUMbz3rjaUXg2SaPhcSEXTF4RzSYS3UuNvFSW1i7y
+         nSG3DTxI3Zx+dNh1xV/XZai51YB4QgdlNMP+fXcTPSeK8cV857J5t7zyPJiu+CXSbrUS
+         cDFdFiIimCPiNnFnP8sZiJZHOqIVkcuiMW+prL/sbam9bXfU2YnjzIJ4h77uTIljBHnU
+         gu9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVpGDZ7MVgPxYgkaWBk/RxJFUanY+74DSvSplwGDgBbMQJpIMinPqO2JlJaQS/p+1B9LTLtOm8V6h7LQ5qYc4Q=@vger.kernel.org, AJvYcCWUyswMmWBoyWx1LXiixrlZr+QEIMCLoHS2M+ucN8Yv+hjeFuehkIeXaUoSQrgEoiQhDJuJzguZ9L4Zy9lS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDHgEQNPCcPZ5sTAouLCTjoGxvlEVt89kmkB3jz7JE4zbRZx41
+	KCnr/ZUfrBBfdzzDdLc3FumvvQ03NBhScxCAPZQqwf7IP4EPLSbl
+X-Google-Smtp-Source: AGHT+IFIm9AGuKcLross5xfua6rDaxLhOzo2CvrTnh1BEbODgP6JuCFF8fGOgbf6qFgkkCVJPvePpg==
+X-Received: by 2002:a05:600c:35c7:b0:431:5459:33c2 with SMTP id 5b1f17b1804b1-432b301e8e3mr5531435e9.17.1730970845467;
+        Thu, 07 Nov 2024 01:14:05 -0800 (PST)
+Received: from [192.168.1.248] ([194.120.133.65])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed97f544sm1171452f8f.40.2024.11.07.01.14.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 01:14:05 -0800 (PST)
+Message-ID: <f8fa71b8-05c9-4f1a-92fd-e72a8a2d34eb@gmail.com>
+Date: Thu, 7 Nov 2024 09:14:02 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: enetc: Fix spelling mistake "referencce" ->
- "reference"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173094484400.1489169.12133804920635225010.git-patchwork-notify@kernel.org>
-Date: Thu, 07 Nov 2024 02:00:44 +0000
-References: <20241105093125.1087202-1-colin.i.king@gmail.com>
-In-Reply-To: <20241105093125.1087202-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, wei.fang@nxp.com,
- xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, imx@lists.linux.dev,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] fs/9p: remove redundant variable ret
+To: Dominique Martinet <asmadeus@codewreck.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Latchesar Ionkov <lucho@ionkov.net>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241106152209.1626630-1-colin.i.king@gmail.com>
+ <23a44a2f-2a99-47a7-a446-d96b5adf62ec@suswa.mountain>
+ <ZyvzuHBSyfI63CT0@codewreck.org>
+Content-Language: en-US
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <ZyvzuHBSyfI63CT0@codewreck.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue,  5 Nov 2024 09:31:25 +0000 you wrote:
-> There is a spelling mistake in a dev_err message. Fix it.
+On 06/11/2024 22:54, Dominique Martinet wrote:
+> Dan Carpenter wrote on Thu, Nov 07, 2024 at 12:45:33AM +0300:
+>> On Wed, Nov 06, 2024 at 03:22:09PM +0000, Colin Ian King wrote:
+>>> The assignments and return checks on ret are redundant. Clean up
+>>> the code by just returning the return value from the call to
+>>> v9fs_init_inode_cache.
+>> [...]
+>>
+>> Better to delete the whole function and call v9fs_init_inode_cache()
+>> directly.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/freescale/enetc/enetc4_pf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Makes sense, and if we go there delete v9fs_cache_unregister as well so
+> the init/destroy pair properly; that also is a single function call.
+> 
+> Thanks!
+OK, will do.
 
-Here is the summary with links:
-  - [next] net: enetc: Fix spelling mistake "referencce" -> "reference"
-    https://git.kernel.org/netdev/net-next/c/4f19c824025a
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Colin
