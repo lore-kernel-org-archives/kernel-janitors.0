@@ -1,75 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1421E3772;
-	Fri,  8 Nov 2024 15:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D5C199FBF;
+	Fri,  8 Nov 2024 17:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731078195; cv=none; b=JbgJBwpPJgY9EknIo4kMglfP9Fnby2xTviNRCOWIrQWeDCJYJR8aSj/xE5bQuRN2XL3i8gAlw4cIr9VYMqp3a+pEzShqpokjctZIcDbQytzsb8Uq/9DoiVu39LkmukFqhbKyZ71/tY1XVz14Q7Y7duGWDdeNH78HQmRm2HJYueI=
+	t=1731086575; cv=none; b=APbswHPqEvGvFAw59eG0tz8g0qxrSmhMCY1NPJ62l+jOFThhrxAYAztdeIGVNyWYI4ZK6SLiNBWaxBQ+GZqeh6s6x4SyDebzSK69prZ4EIGt9aD7Sb9q1l4x1wmxO7IHv4yM51QorOyWPjrZsQruuEgOpfMGYynTIQslSHR7dMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731078195; c=relaxed/simple;
-	bh=eO/169y/RDrJ9YFf2P0i4jCDwhotL6vp5e4BQUh08Iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aktn2EKYLLKqcjxwdg0HNOSfZwOTe4P5tBaIJWsnsQp4/86Eh0jK937s/60eDujswFb5/IvybMy34+cJbUsiTTNKKqCV11R/nAa5jGNC+2XLXoQLJWIgUw3e0FIIANIs9RXa5ShPBP5O0Mcom+C2K74b1HV9ApaanxJAa3mY10I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMuNQ79/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731086575; c=relaxed/simple;
+	bh=b6A1bI7os5S/+V1H6vx1MjuodG50+axjahJKdWQPP2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pS+j655tSCGeYVqkDTMxPIYZtoHUIMc16bDUF/TI/3DR3uE1rJ8T0l17l4kQLM600y0TYi9TkN5Zpn2sFkGVlBOqlSRY7EPUNRRodAd/QsReZ6qt6Qu7Cetg96K3ByufeU/lRxjv3ulVdaE89oD/mTKPIwDFCokZPOvJqwY+OEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oVNVONmR; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMuNQ79/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A969C4CECD;
-	Fri,  8 Nov 2024 15:03:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731078194;
-	bh=eO/169y/RDrJ9YFf2P0i4jCDwhotL6vp5e4BQUh08Iw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QMuNQ79/27UY+78SPsaXOTUTgmChvQM1sblExDs2MyIo6gzVtaOi2/9tPROLhgGDp
-	 VfooZ1SU52Oywiofrvj8hqvaQBuzX/Dcpxbcj9crqQInridQQ52kWefAH8j0TKw0oi
-	 R4B03kzPPX1Up+LhfpReqgOC+ev6RaVpW7DyhhyRehZp8W/y+QLfrhFFgPGyiCagww
-	 eHXDnXSKW0MRrA20zjE2X7rWz2T/s8A2E/Bw8cIh8xaR3k9W1nSGfm8m9ieEm3t9+R
-	 IEDKCjgMTXGkmc8F4OFfTk70gA1NYEXcpvkRe7EgZuILCmDk5syHZY004KBNh4/S2o
-	 BjEUbKAThKgIQ==
-Date: Fri, 8 Nov 2024 15:03:10 +0000
-From: Simon Horman <horms@kernel.org>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Karsten Keil <isdn@linux-pingi.de>, Jakub Kicinski <kuba@kernel.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next v2] mISDN: Fix typos
-Message-ID: <20241108150310.GE4507@kernel.org>
-References: <20241102134856.11322-1-algonell@gmail.com>
- <20241106112513.9559-1-algonell@gmail.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oVNVONmR"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 9Sh0tBLraj1r89Sh0tCj0T; Fri, 08 Nov 2024 18:22:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731086565;
+	bh=XsYzB9aYFfAC89YLcVs+NFVyywkVwKLs2YtFKokEahE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=oVNVONmRqeOu26PVDDQwOtIrrYaEfS8QrwBr4ST/54LRZNt472erRiqYBfNjL2AM9
+	 PPGrWmrC3IJ5TqvjzAPSnzkCYHznikM/gkSIKtGBKMBJeWKqJlO+6zUHK5ADKTmMhC
+	 lQxjfnJCv8QnDyck0BrMuagMos1ABo1nOQw14DlIpljze3FpaD9ghRzShNvweuDjgp
+	 JyYYrNZzwtjsOgSfIICi/ZUVGnJslgqyWLTrCx1MC/W94JCJRPFXQBOjomEghlDYA4
+	 8zUZKaiqUI4dFpBGISI91Nyz2fJQw9g5WWO08kpuq1LEvCD28TWuc4LKoyj5O61pC/
+	 NLkMj4xdP8vDA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 08 Nov 2024 18:22:45 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: George Cherian <gcherian@marvell.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Daney <david.daney@cavium.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	George Cherian <george.cherian@cavium.com>,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH] crypto: cavium - Fix an error handling path in cpt_ucode_load_fw()
+Date: Fri,  8 Nov 2024 18:22:27 +0100
+Message-ID: <774a441420a14d4425c4b6f6d7ae0a06c795f61d.1731086525.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106112513.9559-1-algonell@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 06, 2024 at 01:24:20PM +0200, Andrew Kreimer wrote:
-> Fix typos:
->   - syncronized -> synchronized
->   - interfacs -> interface
->   - otherwhise -> otherwise
->   - ony -> only
->   - busses -> buses
->   - maxinum -> maximum
-> 
-> Via codespell.
-> 
-> Reported-by: Simon Horman <horms@kernel.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> ---
-> v1:
->   - Fix typos in printk messages.
->   - https://lore.kernel.org/netdev/20241102134856.11322-1-algonell@gmail.com/
-> 
-> v2:
->   - Address all non-false-positive suggestions, including comments.
->   - The syncronized ==> synchronized suggestions for struct hfc_multi were skipped.
+If do_cpt_init() fails, a previous dma_alloc_coherent() call needs to be
+undone.
 
-Thanks Andrew.
+Add the needed dma_free_coherent() before returning.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Fixes: 9e2c7d99941d ("crypto: cavium - Add Support for Octeon-tx CPT Engine")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+
+I guess that dmam_alloc_coherent() could also be used to fix the leak.
+This would simplify cpt_unload_microcode(), IIUC.
+---
+ drivers/crypto/cavium/cpt/cptpf_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/crypto/cavium/cpt/cptpf_main.c b/drivers/crypto/cavium/cpt/cptpf_main.c
+index ec17beee24c0..54de869e5374 100644
+--- a/drivers/crypto/cavium/cpt/cptpf_main.c
++++ b/drivers/crypto/cavium/cpt/cptpf_main.c
+@@ -302,6 +302,8 @@ static int cpt_ucode_load_fw(struct cpt_device *cpt, const u8 *fw, bool is_ae)
+ 
+ 	ret = do_cpt_init(cpt, mcode);
+ 	if (ret) {
++		dma_free_coherent(&cpt->pdev->dev, mcode->code_size,
++				  mcode->code, mcode->phys_base);
+ 		dev_err(dev, "do_cpt_init failed with ret: %d\n", ret);
+ 		goto fw_release;
+ 	}
+-- 
+2.47.0
 
