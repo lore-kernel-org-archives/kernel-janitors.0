@@ -1,80 +1,94 @@
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D54DDC3;
-	Fri,  8 Nov 2024 01:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EF11E3DCD;
+	Fri,  8 Nov 2024 11:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731030111; cv=none; b=qoWQ0jA21Ub1AQ37i+aHW7Oi3JrSY1vpwRgYgOh35a0mxi698+9G40c7mtVxYbXLDwKTNJ7KLjqo9XVftb0w7wDmv1IzmhfE7EGxafNrdYBgZwQZ2gKVXbnea3Qw5vhwO8snmuaGmcak7jtjg+FuqxOWzDdvDt1p8bVYbUzQ8io=
+	t=1731065114; cv=none; b=BU+iZEHlHDZjB4clD5iabORKgJj1x5A27YxsW3twDhK6+dXaREwEe0girB5eT+W6FKCqQVDh23NaixFIzwNWRUJIGjkxm9OvWxdkMzbAZrt2tRiMpFO8/yK6aobZKfho8KUOzo63qPlVRnPm90yxV0o7qNEIR3YMAHEU0vdBHys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731030111; c=relaxed/simple;
-	bh=3n4VRaBqdU5n0cVEdtc+ZK5ooA4vvZg0q9qsSHRics8=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oxyykn+QZ0y1rQLrKcLxTHAl780EbLiZgIIsxkSyJCIacU7J4Q7hyBTLQ8ynySBZFCpU7qD3PI0SwfAfL8Fe5srRqmkkek5A1LqtLxdo25ss1tRbdd+UIjToW2J4g5EpltdgqRmC05j8LO1XQ+nqibdx7NqvZaFSngUY31/9gwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Xl1q85XqvzQs71;
-	Fri,  8 Nov 2024 09:40:36 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id AA35818012B;
-	Fri,  8 Nov 2024 09:41:45 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 8 Nov 2024 09:41:44 +0800
-Subject: Re: [PATCH] mtd: ubi: remove redundant check on bytes_left at end of
- function
-To: Colin Ian King <colin.i.king@gmail.com>, Richard Weinberger
-	<richard@nod.at>, Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh
- Raghavendra <vigneshr@ti.com>, <linux-mtd@lists.infradead.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241107152357.63387-1-colin.i.king@gmail.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <56b13d09-91ce-6a4b-c6cb-449b478e3335@huawei.com>
-Date: Fri, 8 Nov 2024 09:41:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1731065114; c=relaxed/simple;
+	bh=oorU9etKZz31ATOvsE2qkwWf0ZAysP4RE7tBX3sYQJ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=psUAkZF7eU6ePU3fsGhnZIeMIrFjIasnN/G4SzemzOrrkgaM7XdztSUY5CgZ5VY7SQ3dGaCfIkDgzZjKEgDO4PwXw0EbE8b01RrML47FB5CJVEMdAPkaXARMWno8Gq7WsVR+9u52Uh5GzWyiWuGRFDXbSh1pPcK6+9wMx82ZJ9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZIDgS/2; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZIDgS/2"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4314f38d274so23726985e9.1;
+        Fri, 08 Nov 2024 03:25:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731065110; x=1731669910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lPPN5xIzS/w8CYU5eR0ocFrGPTZX7vjfWAjdag9gQtg=;
+        b=UZIDgS/2nA5OyA9Jz3qpxw+wBnjTwp3U6JD8dWfpS5Ze2SYbiKK8//1ZMn9smn2kbd
+         +6fyrzhcNPH2dDmSfQl6KN6B7HI8PmMdfx5SrFFyCRB2sqzSXYGlZqyKSOfXRUD6NwOZ
+         udZRDmxPnehT83lFluiY6E7Yti37oy14joHJ7NKGH7LzXXpF47PbgEG/M/yBFrI4pCAu
+         je2rb8o5TkiUKL8DAWJfN3Qp8fZXQPFcdxpBC9oUdyD905sLSZAS4AGENm12RKAhcYe6
+         3uGiRjdSwn/I+nkMeTWsowEp/iHqWQ0KYaucLPvSM5vATOw2m15A5j7+rMrgPEZyUWVv
+         mTWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731065110; x=1731669910;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lPPN5xIzS/w8CYU5eR0ocFrGPTZX7vjfWAjdag9gQtg=;
+        b=EOR+8ZBoIHYm4bomZWJXeJCpjwz2BhdMoK2KAZkVqwYlDEWB/RD5OVpBhzB3mVUrqv
+         XX4qto0bBjgQO/ylXi7MXnsZFotGyLC4DdIqayJd5eriIyn3E0iYGSVjfZbyvN97kzqr
+         ZnVBSn0Dw3rQXM/dpd9oh5gbfKiVplFwnMK0E0/dF0ro9JB/EncLBHL96tNfM43gAirH
+         o66tZWt0bwd1WqElRLYO9ZOUK/jCRz+E5+/tB6nBGO9r6tQS4orb5cjCKFDYRtzPYe/t
+         rlddFQizeF+JS7a1S6zPJTyDkU+aU9AX7RWcv1vMUF9asR38jG1g4KzaYZaxR4q62YXR
+         onbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUypt+VXLoIT1rKKEkMZUVN0RtY1LH2F3NNMy2EsC+qhxwjAipLjG/NoxrAt/0YfY9Ws3vcYBprxw==@vger.kernel.org, AJvYcCVkcEDXDVIoQSFOTblgQ+iIxa/SRAOdwgM9LUbHidJ0q3wh9F6Hogpkjgmvby+YTEEJO7wNaeUxqTWlL0Ck@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0HoWC2rAnYEr+4F63oAIVFr27GAeSWMDk6lrqVt/xBOfDpxKe
+	1cHngyhCW6+0joSVQnMlnnBr/6GKYv6Fqp+x26gV7uFO+CeLwOqN
+X-Google-Smtp-Source: AGHT+IGtCu/powZ0rYyIfXvvEAudEgsxmtLbffeMfZB/PaBUVK7ffLSIvMWZ1WHorKPrLM/ll51prQ==
+X-Received: by 2002:a05:600c:19c8:b0:431:4847:47c0 with SMTP id 5b1f17b1804b1-432b74fec2emr22646035e9.7.1731065110415;
+        Fri, 08 Nov 2024 03:25:10 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e8dsm100926605e9.6.2024.11.08.03.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 03:25:10 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Tyler Hicks <code@tyhicks.com>,
+	Christian Brauner <brauner@kernel.org>,
+	ecryptfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ecryptfs: Fix spelling mistake "validationg" -> "validating"
+Date: Fri,  8 Nov 2024 11:25:09 +0000
+Message-Id: <20241108112509.109891-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241107152357.63387-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemk500005.china.huawei.com (7.202.194.90)
 
-在 2024/11/7 23:23, Colin Ian King 写道:
-> In function ubi_nvmem_reg_read the while-loop can only be exiting
-> of bytes_left is zero or an error has occurred. There is an exit
-> return path if an error occurs, so the bytes_left can only be
-> zero after that point. Hence the check for a non-zero bytes_left
-> at the end of the function is redundant and can be removed. Remove
-> the check and just return 0.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/mtd/ubi/nvmem.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-Make sense.
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> diff --git a/drivers/mtd/ubi/nvmem.c b/drivers/mtd/ubi/nvmem.c
-> index a94a1a9aaec1..34f8c1d3cdee 100644
-> --- a/drivers/mtd/ubi/nvmem.c
-> +++ b/drivers/mtd/ubi/nvmem.c
-> @@ -55,7 +55,7 @@ static int ubi_nvmem_reg_read(void *priv, unsigned int from,
->   	if (err)
->   		return err;
->   
-> -	return bytes_left == 0 ? 0 : -EIO;
-> +	return 0;
->   }
->   
->   static int ubi_nvmem_add(struct ubi_volume_info *vi)
-> 
+There is a spelling mistake in an error message literal string. Fix it.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/ecryptfs/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ecryptfs/main.c b/fs/ecryptfs/main.c
+index c9aa80e534c2..8dd1d7189c3b 100644
+--- a/fs/ecryptfs/main.c
++++ b/fs/ecryptfs/main.c
+@@ -451,7 +451,7 @@ static int ecryptfs_get_tree(struct fs_context *fc)
+ 	mount_crypt_stat = &sbi->mount_crypt_stat;
+ 	rc = ecryptfs_validate_options(fc);
+ 	if (rc) {
+-		err = "Error validationg options";
++		err = "Error validating options";
+ 		goto out;
+ 	}
+ 
+-- 
+2.39.5
 
