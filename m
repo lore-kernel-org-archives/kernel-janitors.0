@@ -1,92 +1,109 @@
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65C015A85A
-	for <kernel-janitors@vger.kernel.org>; Mon, 11 Nov 2024 14:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679A84C66;
+	Mon, 11 Nov 2024 16:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731335359; cv=none; b=m2pFu+KqKbJDnWP7ruZ8GPzt6TAYM3CPbxl0FQiw++apNNpgHtiFJBJ05lDP3q3O9xYLvFB+ncX/dUvsqf5WVfFcACcnYTspHLOAP3azKcZKSpiz6mhN0nhJIvEgNpI2riGUIISvxpU+vh5i41LP9D04zzjyN/1jzW2p8gU8GYk=
+	t=1731341365; cv=none; b=krpo8970vxmO9/a7U+MQVzJBMu9t9mBbHugHYBUMFrUFdt+0l68e3uVrU1B4X/okI4a7mDIvfz+deoinumJKDxnO+ytw17GVMgnpU+JTWb6RDvmDLYB2SmIkXifAaumvDZSdRFDAoBmS5RWhkb4SCr+wzK1VBD8B3nlGZtirCiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731335359; c=relaxed/simple;
-	bh=tpRW8AWpeWuf1ejQeWaaBEjfeU0GbVtqmgneeggtGSA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JyVZCYSDG6/dPofT4QPQ/wSM6CNEeBT+b3Bf+AdcTrkDaOVG2q4/Qtwp7lnhQO8SqV+Wgd8fTz/+Gz1bvAg07mG31rlYlpicVtVdhW6MJ6fxVJtyLumPIEaUYf59XeRbbfF7G48NNc+CFO0CfSobDncEykarLyTVm0/kXPff+5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rCmAHFyt; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1731341365; c=relaxed/simple;
+	bh=C3hDKPMi8ro/fFUzo65/nRh6MyMkcb3ANZPXN8ZCN/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QUiPt6lKZMR0Jp1shoHPVKej0wRRDb73nwTXgiQm3jbwSfe1DOiiqorbK1tFiWikOXrzaftO76QHBQXdEafssrtqfenTspYk9qR2DmlY62TQMvvDTVrcN+0p2Gg/CZi4OigFPMmYSyTkX/fgbiszPs0ttxpd8mMdYtxo/5Wqkek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OykWgHsB; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rCmAHFyt"
-Message-ID: <295ec119-b862-4ab9-bc24-c1a98313cd39@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731335353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ln2j19kFbUmJ8iVDewbftH/CZUQmtLyzIATkBOnw74=;
-	b=rCmAHFytQ5/ZUTUZ2PSgwSERD83R8BbD6/6IHj9Kwd19otl+lEUNZGEFDQY7QEjhWoduXa
-	99ZTZVbjHx3m187hglFCaSO9tcSOh+jEQlo+weGMYnUeGbNMU/Hi+x+WWmn7Z/VWqGGa2R
-	TLyjtfP3GlV/XG1toAPtrtF7AT5H3B4=
-Date: Mon, 11 Nov 2024 09:29:08 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OykWgHsB"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e52582cf8so3654132b3a.2;
+        Mon, 11 Nov 2024 08:09:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731341363; x=1731946163; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/iY+ZJgltXfrniLx2byn6UyLdUM6Quqst+Zysvv4BTA=;
+        b=OykWgHsB/vfLvikTmuSDzS2IHV2mrtfEFsTf4b8Lyq2lfUi/QK0n8OmjO9JlEG3c0F
+         LxKVo+JmAHm5nrMR5EAvDAARYcbJ+lWlsHrw2rO6Dw+Iqw+iKHBz3QMWjbBf9Ppg3XsQ
+         pd9APnaBlcChbx1Rf1GxGrvUwoXVt/xToQ9vo1L0iJddEyhfNG7y3oi78a2TN0/vHZZW
+         0WSkihCEC/a0RdU2CQHkK5NhD9/Pmc6iTExPTT9EcgwtfzeS6krsphV29gw3blz5QUji
+         56KOX5QotQ6DXelVxAHWtpP6P2fAtEMgrDy0eDVrBuFLTb5VmolAo/X23Kag4YgeyJTA
+         MZCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731341363; x=1731946163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/iY+ZJgltXfrniLx2byn6UyLdUM6Quqst+Zysvv4BTA=;
+        b=KoZhyqq3Y+78PXP+XgUJarnrsnekG5EFsApD5Qa3GhLEhtgfOWb6sOJEu4WlVY20sG
+         OOeIfy2/E7fomaJdcahlsKRGxsaDLW49R+/FWfS+Ps5GleoBQ4IOVGwm1jQNsPUL0fKC
+         qe1EK0r0LaJE2Z7qHFRxwfa/il1HpAcjnquvbl/zzAkCWyGq8kUg/wP1yO0cyBlcwsr2
+         m69kUhu7GKiVQfd4ojeKR/nhdYpqftzm9B2H3Yqg2t6cLB5/acsAVhllVHEoi/S0WW9Z
+         yuepz+a0fe9ky2lhvvB9yjne4qdSUCVdjp4zqLWipsSKRFSN7Ve+++B6tFshAvP68xBg
+         mYxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIjr3Ryx3gLP9Fbr1w62Wq/P5Fndr6vakBtofDFFD5kGK/qXAt6Nuy6hLHV89ZL0D/koTvWrkCzltVeo/uuvKM@vger.kernel.org, AJvYcCXp5vaDNgGTfRxRHcZvSI6q4Lncz8PXjNgmlTgmCHq8VpVvlOSE4nLbDhXk68t7HRXd7Nzf4iRq0COw5HvqSs8=@vger.kernel.org, AJvYcCXqrIB9AMEA/pMay2mW7eUC39CHRUh9OFhk66Vf+3cUT1ASlPmSedzzi75Q8jOn+cxsWpcsL0J/HDWLjvQV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBIa5gbgMp0svnGUtHpdHqvjnMwttV/vkMQ23k4E1oDJWC8aYx
+	XoDiw7iXdoW6iGaLe1mqFjKY0+dKPLqEJWmgH3HQ4E4ETB0NadRI
+X-Google-Smtp-Source: AGHT+IGdXJsqRv3gpfBkjoc2DyCKI8nNMGsBFd+J9EL531H+nYTk6Y/yjvFtSiSo7brOE0VEefpjIw==
+X-Received: by 2002:a05:6a00:3c83:b0:710:6e83:cd5e with SMTP id d2e1a72fcca58-7241314669amr20370040b3a.0.1731341363367;
+        Mon, 11 Nov 2024 08:09:23 -0800 (PST)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a1fd2bsm9265322b3a.167.2024.11.11.08.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 08:09:22 -0800 (PST)
+Date: Tue, 12 Nov 2024 00:09:19 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] kunit: skb: add gfp to kernel doc for kunit_zalloc_skb()
+Message-ID: <ZzIsL7P7wDCP2VBR@visitorckw-System-Product-Name>
+References: <b31a16ef-382f-4b8f-b4d5-1c4d93803779@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH next] drm: zynqmp_dp: Unlock on error in
- zynqmp_dp_bridge_atomic_enable()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b31a16ef-382f-4b8f-b4d5-1c4d93803779@stanley.mountain>
 
-On 11/11/24 04:06, Dan Carpenter wrote:
-> We added some locking to this function, but accidentally forgot to unlock
-> if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
+On Mon, Nov 11, 2024 at 01:54:09PM +0300, Dan Carpenter wrote:
+> Kuan-Wei Chiu pointed out that the kernel doc for kunit_zalloc_skb()
+> needs to include the @gfp information.  Add it.
 > 
-> Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
+> Reported-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Closes: https://lore.kernel.org/all/Zy+VIXDPuU613fFd@visitorckw-System-Product-Name/
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+
+Regards,
+Kuan-Wei
+
 > ---
->  drivers/gpu/drm/xlnx/zynqmp_dp.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+>  include/kunit/skbuff.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> index 25c5dc61ee88..0bea908b281e 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> @@ -1537,7 +1537,7 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
->  
->  	pm_runtime_get_sync(dp->dev);
->  
-> -	mutex_lock(&dp->lock);
-> +	guard(mutex)(&dp->lock);
->  	zynqmp_dp_disp_enable(dp, old_bridge_state);
->  
->  	/*
-> @@ -1598,7 +1598,6 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
->  	zynqmp_dp_write(dp, ZYNQMP_DP_SOFTWARE_RESET,
->  			ZYNQMP_DP_SOFTWARE_RESET_ALL);
->  	zynqmp_dp_write(dp, ZYNQMP_DP_MAIN_STREAM_ENABLE, 1);
-> -	mutex_unlock(&dp->lock);
->  }
->  
->  static void zynqmp_dp_bridge_atomic_disable(struct drm_bridge *bridge,
-
-Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
-
-Although this reverses the order of pm_runtime_put and mutex_unlock in
-the error case, I don't think it matters.
+> diff --git a/include/kunit/skbuff.h b/include/kunit/skbuff.h
+> index 345e1e8f0312..07784694357c 100644
+> --- a/include/kunit/skbuff.h
+> +++ b/include/kunit/skbuff.h
+> @@ -20,8 +20,9 @@ static void kunit_action_kfree_skb(void *p)
+>   * kunit_zalloc_skb() - Allocate and initialize a resource managed skb.
+>   * @test: The test case to which the skb belongs
+>   * @len: size to allocate
+> + * @gfp: allocation flags
+>   *
+> - * Allocate a new struct sk_buff with GFP_KERNEL, zero fill the give length
+> + * Allocate a new struct sk_buff with gfp flags, zero fill the given length
+>   * and add it as a resource to the kunit test for automatic cleanup.
+>   *
+>   * Returns: newly allocated SKB, or %NULL on error
+> -- 
+> 2.45.2
+> 
+> 
