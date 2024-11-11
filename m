@@ -1,74 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3A919CC22;
-	Mon, 11 Nov 2024 13:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D664E158558;
+	Mon, 11 Nov 2024 13:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731330392; cv=none; b=ihuuJDbwybP4AOTNv3vu9MQpwdX55LpgXwopU2ygZ6CxtVJ8BI5CK771XOnzjvMWtBuaAp7nPmuqyYRIj1Pax6+7pyO5L/0NptD6PAu47NyS9b+OfoG1m1MiRZRdx0ckb3074wAtHvF3f/n6lITxEf0QG/iJnLhZCBBvj3+43PI=
+	t=1731330675; cv=none; b=cKdhfNqYwN+MaQ/yesD0vF5rZsp9v8L14Jb+q7JtYi6CQJS5ZjzO1vpi/naOMLg5RqMW+SGnaA/SQNfFQu7IzXNwe18titM5DkiRi6/iLGrHEh76ZnKvVrO651cqYrZz1s+dd2fsOnNpTd3eLhDvJJV2i1/lPkDYW7N7SsSonec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731330392; c=relaxed/simple;
-	bh=p4803cKuur+nTHiH2XN+bi6bUhrT0USkzF9hWtQRfSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J2xXrgt5RKuUD1z5HS0oeC011T395qT+hjAZAiDanefRPD5g0cCBmkCeqZEt6pjG4GX/lfXtLo+UJJR6jNiEctq1tjI0J4u4kw3Ia8Ukok40FUze88GZySdv1dGe/dzYTnh5TcVLBXthXznNI7dTrJyXa4eohjQcWtZyrQB3p4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTkSIlPA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731330675; c=relaxed/simple;
+	bh=pcvUj6hiQws2lylwq5PlCi5h3lu5Ev1MrCrkJ29r3H8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XXQ9k26M4NBkl+dX8UEKZbKiMCjlQHkKOb0IKw0Zpe5i990f10RrQPigPFhAro02rXf258czkKjDonZyqn2NyQdCMzEBbKsa3ozNtjv47GajflrSdr0r2tJRSVHzCnD3Wjp2xt02SUDYrtrlKO3hmaxSvsrTfYRsTq+pAGeIpak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KuO2EG7h; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTkSIlPA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F4EC4CECF;
-	Mon, 11 Nov 2024 13:06:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731330392;
-	bh=p4803cKuur+nTHiH2XN+bi6bUhrT0USkzF9hWtQRfSw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VTkSIlPAWpyp9E+DKF7zQMR3mA0/CGt2CnO3u7f1rTVS1tX6sVvpgFody47MtLLWo
-	 u8FXu84R0YRfdok5woySFtvvWBTH08QTvyfZ0hlv4PrbUtlCo2v5IuWAKvQmdz2DZC
-	 zCNQRqbjR5equTLF3B2vWwvtMTIcGZzsIhJCJSp0FzEtB9qZ+ilqtFLYSJ/33D80uN
-	 /YK46OUaLScvUEwknh+KdSFjspTY/Dn+LQaOkhIowYTicZgB0hNWQUQoi+ECQXFOjv
-	 c8mWykkV/goP2dxw463YrWRI+GLG6ktmzfC1memCz33ba5zkYAUFYZbs/O8po+t5R+
-	 I9cb+eAcnelcA==
-From: Christian Brauner <brauner@kernel.org>
-To: Tyler Hicks <code@tyhicks.com>,
-	ecryptfs@vger.kernel.org,
-	Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KuO2EG7h"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id AUCBtWVCtj1r8AUCCtNM7Z; Mon, 11 Nov 2024 14:11:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731330668;
+	bh=k6+U7vZ/tn1IEQn4DKT3rhNOeOOohqN78QfNcyAx/YQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=KuO2EG7hxR5vLmuSpVztvlr/EJ4dUoRAmCfUZ/KdlWxMyiPuzc0Pp2QtyOVGopIVj
+	 H75lqaf4Bx4Cu8dPOeZAVDDtKMB3MPC6btSQFd2Xn3EMeTNUCcbr/3/JOzjunAFoof
+	 cOyM6NBZ4g6qakikw2E26yXblZ8pm0OJw4fuuE5hTqQDEILhc3e2NfD8vADEq8ebqG
+	 B38T2AFtOYhGYD0uJflxSRHjLhhSvkrppeK1cBJ7Lg8ngRRDLk3f0/dVMBuQVyCCa8
+	 bWkUo8ZOqGpRGhg7lmDCBJvV33mTnTFZtC75qGbCMkP5FJPJfJS+LTJNQH18cYHu6j
+	 tUJyDvoXyrSeA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 11 Nov 2024 14:11:08 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Bodo Stroesser <bostroesser@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ecryptfs: Fix spelling mistake "validationg" -> "validating"
-Date: Mon, 11 Nov 2024 14:06:22 +0100
-Message-ID: <20241111-revitalisieren-kapelle-52baa92caa72@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241108112509.109891-1-colin.i.king@gmail.com>
-References: <20241108112509.109891-1-colin.i.king@gmail.com>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org
+Subject: [PATCH] scsi: target: tcmu: Constify some structures
+Date: Mon, 11 Nov 2024 14:10:56 +0100
+Message-ID: <f83cd8469cc17391178e1181e8c26c4c1fb6028f.1731330634.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=926; i=brauner@kernel.org; h=from:subject:message-id; bh=p4803cKuur+nTHiH2XN+bi6bUhrT0USkzF9hWtQRfSw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbMQYa1ZsZXi3m3yASq3hCUWLFAjE5vRdrZhZWB/Qrv nvS0dvQUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJGcywx/RRflsz09tTLh1HQu hs+fJm5bJcpndyfvXuI3Fo2Wf6LBXxkZ9nWteBvDytZn5eS3ObVNwvdnzOancWeY1nifvny1M3I SBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Fri, 08 Nov 2024 11:25:09 +0000, Colin Ian King wrote:
-> There is a spelling mistake in an error message literal string. Fix it.
-> 
-> 
+'struct nla_policy' and 'struct match_table_t' are not modified in this
+driver.
 
-Applied to the vfs.ecryptfs branch of the vfs/vfs.git tree.
-Patches in the vfs.ecryptfs branch should appear in linux-next soon.
+Constifying these structures moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers, which is the case of struct nla_policy.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  93188	   6933	    338	 100459	  1886b	drivers/target/target_core_user.o
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  93508	   6581	    338	 100427	  1884b	drivers/target/target_core_user.o
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/target/target_core_user.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.ecryptfs
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index 717931267bda..0f5d820af119 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -361,7 +361,7 @@ static const struct genl_multicast_group tcmu_mcgrps[] = {
+ 	[TCMU_MCGRP_CONFIG] = { .name = "config", },
+ };
+ 
+-static struct nla_policy tcmu_attr_policy[TCMU_ATTR_MAX+1] = {
++static const struct nla_policy tcmu_attr_policy[TCMU_ATTR_MAX + 1] = {
+ 	[TCMU_ATTR_DEVICE]	= { .type = NLA_STRING },
+ 	[TCMU_ATTR_MINOR]	= { .type = NLA_U32 },
+ 	[TCMU_ATTR_CMD_STATUS]	= { .type = NLA_S32 },
+@@ -2430,7 +2430,7 @@ enum {
+ 	Opt_cmd_ring_size_mb, Opt_err,
+ };
+ 
+-static match_table_t tokens = {
++static const match_table_t tokens = {
+ 	{Opt_dev_config, "dev_config=%s"},
+ 	{Opt_dev_size, "dev_size=%s"},
+ 	{Opt_hw_block_size, "hw_block_size=%d"},
+-- 
+2.47.0
 
-[1/1] ecryptfs: Fix spelling mistake "validationg" -> "validating"
-      https://git.kernel.org/vfs/vfs/c/ab088c6e4014
