@@ -1,64 +1,67 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8636815ECD7
-	for <kernel-janitors@vger.kernel.org>; Mon, 11 Nov 2024 10:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADC017C7BD
+	for <kernel-janitors@vger.kernel.org>; Mon, 11 Nov 2024 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731322457; cv=none; b=fd6Psb1bXCRGBhiPI016FVaIYJH+w817agZLMqwm8fPwqpWOuW/6tYJvOxTfIlyn6M5PJ2LiRbNlt/Ep8ADf/dzoplHl6bq6bC8sE09Mr3uR+TyYziuNNvGQ9VKJvblOV/zE5P0ZQapjOOtZRSUUYfSyAtuYOe7omchGd2MxFYc=
+	t=1731323293; cv=none; b=vFJWPqjlfRRVB2f4zv4UPFap6Bo5MEktm6BuxNQAU3JAu3FUaD4T4vt+IWozBdaUmStgtfWftBnBNRwNNbGk0S4z68ocDjQx4KXoLFqUlONuyRzu+Fea67Ge5Oka8Yj1uqFqWyU0IdqHLJXDJBl4Pq5HrzuESmlUwn5f+jup1wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731322457; c=relaxed/simple;
-	bh=OowcFAz5Dwz/C1seGeNFxtRG1mxbi5v5LtbKYioHDjQ=;
+	s=arc-20240116; t=1731323293; c=relaxed/simple;
+	bh=KrzJzC5LjIibjn2LH2QxndnXkbjvaFOu7KX1OY6Y2S8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OGb1dssbwm0IgEkt2hq5dyru0AzvqIJKSHDR+V7au1nhvcX03uMBoxb5pPY8dqeQYFupauOADTxfcWM8oX+QTv3LE9eFYMkbD/0Dh/V9NvoLFYi/vzf5JTL6wojDCwcSnRSgC2SMFIcTXRlqA//NuLd7mEVDz7DwAAuRM5MFli8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dFWlgv4y; arc=none smtp.client-ip=209.85.218.45
+	 Content-Disposition; b=BLexZsX7oKrySAfKyHR6Y57UAEEFtos8cxr97DlgvU5CSF90eQtnJQCUuvickviQrp/8wvZURKkcZelDeFOCbJVhQuwa9O/pIjP8u0jbP8fl/xF6EWig8fgdn1pI0U0ARo9IMt2e0tQiWjACNxgH9ONASKrhFCTcXJU6EovwhVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lsVs5Ns7; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dFWlgv4y"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ed49ec0f1so763412266b.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 11 Nov 2024 02:54:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lsVs5Ns7"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso179496966b.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Nov 2024 03:08:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731322453; x=1731927253; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731323290; x=1731928090; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=VQneMUOMjSH+Cp2gVnrl7p/sshIVbnp503eWg1V6QLc=;
-        b=dFWlgv4y5jEjfnjNP5Rxf29H+bSS1HT7f5qxixeRk/Pf0OL0idbXp/folesxxMZxGz
-         P7BwQpdNvxTjeLg6qURBwHJ1bqb52ywYZIy4vZSaDRoWcfGllCMDiI2/35YawF9CmOSM
-         sWR9yakxxUra4El48sVqaNhO4Ut7X0yev+aQK+u6ho5HlVEOti9ndAgYY/cyl+1UktvJ
-         asuRT6sCFBui7ExBvOwyBeAWM0O5/+exEl/Dz5v9sb99WB+NcAIzBRNMJdxnm7OTfyKe
-         HH7xbZ3EMiv6PjMz769Pg4j4EAbNe5XTNv6ESo/og7iBdYWtAELOsijGlELMfacT2QXa
-         FFGQ==
+        bh=JaOpQCnb58xwQNpZJwrt/dM577zB1AHFFgREUTf53Ns=;
+        b=lsVs5Ns7v6s2hgGqNxi4GsbiwNcoUmoIQP60jsFv3r11zjG8IIXMXj481uoCNReRBK
+         VAYa0LHFURO/l7Ip8fHRNsf1YSSiGUG3RrmhHCmfkY/GBIDJ1Xv/UwijxZFNMVUmsxFo
+         93ZctszrjbbKfYKblkvcJNAf82w3MVB9dk67sdPHrvNGXIgbP0vfEgKmv77MgWfZeWjL
+         uQ5MDLDQ1XoMGMMJwKpBpocZ63ar3rFTlMSzLjkzTpyseQwF7KzerFTUSES9T9MNnAmL
+         YgnYcMptPu6dtMmJrm5YEv1u83Nbowu3DeHAAsXNYL7VERbNNoVRW4eVtXHfCRD6PK1a
+         DedA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731322453; x=1731927253;
+        d=1e100.net; s=20230601; t=1731323290; x=1731928090;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VQneMUOMjSH+Cp2gVnrl7p/sshIVbnp503eWg1V6QLc=;
-        b=Eah8WR3jyUGSQMTapKxcTj6hzOEsukIihyXUg/MIGjR4zSRTIpwKalQgFNtHEKkiKk
-         QaeYlEIcJOEThhremKHVC/16F0B/CV+NUaLgO6jIsEmUoIytWzteVnjudFDqxbSqdxkP
-         sAKhVAZcIWh0wlrW+pi4tuxXJxBR+V/wTy1hVh7f9SapQuPWgTwRT/W056ewZilMIwMU
-         /uAl5nmrqSoHGgjJeooKRCgs6S7a/UJ6FUO6pFdNeF7xYbTZV4P211WTTC6pr4S6eNOK
-         xOoUdXlBJipydTdNnyzU3kTAtToEAAquWTaKPSPn7MBSmPXdU4+ZO732b3M1fMV1qZG4
-         OPHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqUNz8GFsecIBJNbcf6yC/TAK4W0Ybl1PQSHnmx6KhEfScOjYfFVX09hRbhxow1HHl1aSnIrFGMd9tiscR5l8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhapNMd1O51VneO4+vpX5Rx6l/B8D3KLXZq9QeWbmgqAq8MrxJ
-	Sc8GCzicAqkxnsdOtfvCJur/HG22Oe3j0VwfVCSdKeDbXfNaY9vhlKA2T5E/FfhgdnsqyzEOz/W
-	+DT0=
-X-Google-Smtp-Source: AGHT+IGGNGfUJKhCO6MzCsxlQnH5pxc4VNoNzngtjkm0QZ2t1Vi54hvYQhkfEkzTtVc4Yp3e4sQ5dQ==
-X-Received: by 2002:a17:907:1c11:b0:a9a:26a5:d508 with SMTP id a640c23a62f3a-a9eefebd194mr1111771566b.9.1731322452841;
-        Mon, 11 Nov 2024 02:54:12 -0800 (PST)
+        bh=JaOpQCnb58xwQNpZJwrt/dM577zB1AHFFgREUTf53Ns=;
+        b=rEYsX3nGbrVjRStBvRMPzxYifCrfNalR6kFc6Q3m3O+x/f7nCmy6M99zHIa7HG89gk
+         liuHrxmqEYDuMmesIwqoQvko5IE5FG9vtlYmJou+qMPSvjOAX2gdOK9tWeK97e0WbeN9
+         vLwhsFfW3dRqkXjCqmhc3etRS2OiAgW54FTj+bFj+pd/bTeVk6Y3F0QU/0IDtGoKfmvN
+         7XXo5VMMEpkJnNWOP6LBWZV6e2VhKSxAte8bZ2fXxDj/fc7vO0lhdghDVnaEGlcIwppk
+         dgXnP8Uzn12UCiKqNUNe5J47e2e0MxRRcnYp6iUkE40q1WE8oZjNrH8jXibwjsdxO7Tu
+         Uq4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOYH7f+QWjS1+WLfHqVGSchVz+Mw1G2CXP5cvozfdQ29MSk/1Yfqz4QT8O4dSFVNV3y+NjtlheR6ESTSY/coo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCGbbKY3sWh0HZv5oa6EFqv9AOXNhP1p5mJL9vID84k3GUS1Vb
+	lWj+tzLtO53qo8exGwF738oJCbz0z44W1lQdRcG06UMwo4hU6LC4eVPP2eZKcP0=
+X-Google-Smtp-Source: AGHT+IE8zTmpxJbeHHX6TsTo02EB6CL9dlS72DZFJARMZpcutHBxnoMI2RjnZgYXTYNZ3xGbE2kN8Q==
+X-Received: by 2002:a17:907:3fa2:b0:a99:5f16:3539 with SMTP id a640c23a62f3a-a9eefcebbd5mr1287269866b.0.1731323289768;
+        Mon, 11 Nov 2024 03:08:09 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0abe369sm575830366b.83.2024.11.11.02.54.11
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0deef4bsm576319966b.138.2024.11.11.03.08.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 02:54:12 -0800 (PST)
-Date: Mon, 11 Nov 2024 13:54:09 +0300
+        Mon, 11 Nov 2024 03:08:09 -0800 (PST)
+Date: Mon, 11 Nov 2024 14:08:06 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Brendan Higgins <brendan.higgins@linux.dev>
-Cc: David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+To: Ajay Gupta <ajayg@nvidia.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Haotien Hsu <haotienh@nvidia.com>, linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] kunit: skb: add gfp to kernel doc for kunit_zalloc_skb()
-Message-ID: <b31a16ef-382f-4b8f-b4d5-1c4d93803779@stanley.mountain>
+Subject: [PATCH] usb: typec: fix potential array underflow in
+ ucsi_ccg_sync_control()
+Message-ID: <c69ef0b3-61b0-4dde-98dd-97b97f81d912@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,31 +72,39 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Kuan-Wei Chiu pointed out that the kernel doc for kunit_zalloc_skb()
-needs to include the @gfp information.  Add it.
+The "command" variable can be controlled by the user via debugfs.  The
+worry is that if con_index is zero then "&uc->ucsi->connector[con_index
+- 1]" would be an array underflow.
 
-Reported-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Closes: https://lore.kernel.org/all/Zy+VIXDPuU613fFd@visitorckw-System-Product-Name/
+Fixes: 170a6726d0e2 ("usb: typec: ucsi: add support for separate DP altmode devices")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- include/kunit/skbuff.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/typec/ucsi/ucsi_ccg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/include/kunit/skbuff.h b/include/kunit/skbuff.h
-index 345e1e8f0312..07784694357c 100644
---- a/include/kunit/skbuff.h
-+++ b/include/kunit/skbuff.h
-@@ -20,8 +20,9 @@ static void kunit_action_kfree_skb(void *p)
-  * kunit_zalloc_skb() - Allocate and initialize a resource managed skb.
-  * @test: The test case to which the skb belongs
-  * @len: size to allocate
-+ * @gfp: allocation flags
-  *
-- * Allocate a new struct sk_buff with GFP_KERNEL, zero fill the give length
-+ * Allocate a new struct sk_buff with gfp flags, zero fill the given length
-  * and add it as a resource to the kunit test for automatic cleanup.
-  *
-  * Returns: newly allocated SKB, or %NULL on error
+diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+index bccfc03b5986..fcb8e61136cf 100644
+--- a/drivers/usb/typec/ucsi/ucsi_ccg.c
++++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+@@ -644,6 +644,10 @@ static int ucsi_ccg_sync_control(struct ucsi *ucsi, u64 command)
+ 	    uc->has_multiple_dp) {
+ 		con_index = (uc->last_cmd_sent >> 16) &
+ 			UCSI_CMD_CONNECTOR_MASK;
++		if (con_index == 0) {
++			ret = -EINVAL;
++			goto unlock;
++		}
+ 		con = &uc->ucsi->connector[con_index - 1];
+ 		ucsi_ccg_update_set_new_cam_cmd(uc, con, &command);
+ 	}
+@@ -651,6 +655,7 @@ static int ucsi_ccg_sync_control(struct ucsi *ucsi, u64 command)
+ 	ret = ucsi_sync_control_common(ucsi, command);
+ 
+ 	pm_runtime_put_sync(uc->dev);
++unlock:
+ 	mutex_unlock(&uc->lock);
+ 
+ 	return ret;
 -- 
 2.45.2
 
