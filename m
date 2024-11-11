@@ -1,127 +1,111 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA003B1A2;
-	Mon, 11 Nov 2024 06:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A38D15AD9C
+	for <kernel-janitors@vger.kernel.org>; Mon, 11 Nov 2024 09:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731305859; cv=none; b=d1n4nyZY7Zm059hW318P3k3L7ux7LvKy2Xy7w/f9LSkY71IqawBoI52W2eL8vv/DGiGhIBo0s5Poc5IIHYRRqCTrJAnXQZUJ5q7HtMRRmpZZyBHrYf+D1oORhJRaL+KEiFAV/m6wpiNRl18ZnuF64HNwB78fEyFGGAJxk0V9bYk=
+	t=1731315977; cv=none; b=G9OyCxFfXak2jT0yXJXrcn5gWwlpFYdSs06/G5ZWyiMqQG99jlKIHhDFD0ISyo79NktBand1n5UWhwdZbrkB/dmmYkEfE6zZVik6TQHc2KANMhl7Px4pucmtBLVRKwGaX8T1TpzH6Ygp6ax9FAIQMcxDZ5XYyxpDl4vpZp+i0yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731305859; c=relaxed/simple;
-	bh=ncjbv0XqcOfZzaJmbOfOv+5qicSMAB21heGShx92YTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rl9ySRBLg6OggBWeIHY/wy7ORwBSNe2OpsphqbD3825DR8/7uIRNu6wNEdoXC1e6Ib5ht0f024gI5pHSMsXAG2djNik8qPloBynu1hlkjnDkToqd3nh+9zZh2Em1iL+ir6+LBKP/mAzSU/oKNspw2rUFKUmFx1Ydgi3IPW5ZdO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QvXQdnzP; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1731315977; c=relaxed/simple;
+	bh=u5rSxTlaJbSxS6EV4TLb3I+LXVVN2oQUtHH9/BiBiYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sVOFfblX7YXPO37M/LfAbnHfeeNx2pvoh/awGnAJ9VO4omsNx+H+0+uTTCjArusQ144ZPdkfc4LZ0bhXZlC8uu8d0tpj/OGmdWiPrWHyUhtzk1il+l0fHKvEiu+3MCJ/iB4FYsrJjVgK4OQL5O3BvZvH6AQQrNCmmnTZsXJELiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rsIpSadc; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QvXQdnzP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731305858; x=1762841858;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ncjbv0XqcOfZzaJmbOfOv+5qicSMAB21heGShx92YTE=;
-  b=QvXQdnzPkhos+xv7IWzx5myavSgcDu8a3zwv6iDms+OLD3+LTQxDvNSg
-   rk8vcxIHm3JdG4qE5e/i0gKpaTVO9NTh62N+ZK/Mj52RF79xtZXFWmykL
-   fctVZSH1gH8wpbEHXN58zYjyJur43RCR7p/CvQsomXVIAcLOu9+iBbqi/
-   RTfhIhCHshy5WZ3VxmiLdjL35Qkw8qeVxRQYnSdSHlbis+69oBjNtB3t0
-   dnrYaxkkjHmC0Hg8fjc35NLcukhn2fghWRA3Vn+OSBTx6pmX3b+PywgxM
-   ua4+x5jnFMmzgD25QFZZxoHbsRwAok4/v0eZMofaHTwiT2PMy8tiSQEYn
-   g==;
-X-CSE-ConnectionGUID: 3Bp7ecOJTfCuizI0j6e3Hw==
-X-CSE-MsgGUID: /FDLnMy0RbG98vSD0Uaa4w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="42500681"
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="42500681"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 22:17:37 -0800
-X-CSE-ConnectionGUID: UcLni4JlRH2QesEAdpU4AA==
-X-CSE-MsgGUID: BcXks8rnT8SdkKne2iF2/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="86920847"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 22:17:33 -0800
-Message-ID: <c1592c50-e903-4ee5-a560-530792fcbae7@intel.com>
-Date: Mon, 11 Nov 2024 08:17:29 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rsIpSadc"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so557817366b.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 11 Nov 2024 01:06:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731315974; x=1731920774; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=apRs0DAdhKBkD9Qp2XtvGYAHxYv4VCBNiG5LEbw4AZU=;
+        b=rsIpSadcdHT/SZwQ4RUjEhHL97pjyFmiuQ8Hs6J1dxaQ8r9Z+eqgtwq6DG5EDY9Y94
+         p9KeIIUY8v6ADR3K3WeFaHPCqv0MMeNQqQMo7p0kzsJuXiRreKK8ig4rZL10FyTQnDUl
+         4R5XYRx/HkLhBjoYGS9o/y0JdCTb1GRr/JxBX1NB3gZEtA1IxhXe7IOUQjmD85xIeFpK
+         n4v9FKenWCdyT3k8HfpPHOnYJjzIK6NKSbx+8e1sgP2jWuEWHG0R6ByzcBvxqfu1gxyk
+         /4L7i7BgyaeqC+/El85QA4GPNx/6wGvnIQF6TU4lGim0tU5vy1A0MATqYngXjpLE5HsR
+         QH6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731315974; x=1731920774;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=apRs0DAdhKBkD9Qp2XtvGYAHxYv4VCBNiG5LEbw4AZU=;
+        b=uIoLnJks2e8kifLhuh4ypM6w4TPqtsxhsPzHlcEWcbPHFRDxEiYYTa30tfPFzKSeNR
+         RmfJ7uES4wJPGB62uAT4A1QCrZnAFFBLqcGVnZPKUcqHSUYxQlUKCnU1PNGPjRhLlBbB
+         QtCduiO54CkMucNmIhCJa0sLnFbeALBhAMP3OPt9r6CIAyuViYBXsZMIO720T05XpHKf
+         3OPWaaKHuuTk4iJwq4ScwPby3SucFdaxVgb77vb46w0FfchqXKXPZtjS+SydqIWEsYi9
+         1cTC3UQGSfkMHsamTyTFHBC+W8qKdzdcLJDDpIcmFx/kjVnCbrpQlCQp4EM/le5bOvJ+
+         E0Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3B56Xhzzglv/EPIT60r5e9Fu+Cv4NtNjVFIIyksGXD02HOPHdd4X3CzE0ZzfykochfCBF19Bg++pF6nAgsD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE4m6CGLIM49ypSl3EAG86uAUIXofXPIUv0qzEMr/0aFzou2vT
+	MeHYWKiW0L3MnqlSM1pM5YNfpd8SDhVKBGKXP4Gpt30S6XQiSuqfAmem30kR2uE=
+X-Google-Smtp-Source: AGHT+IG01DvV4fVYHey4p2gLJdP8gIwgetBzZShx8jJbLbuJv9DbED9jmrm294gcWaav324B9xGGuw==
+X-Received: by 2002:a17:907:c15:b0:a99:8a0e:8710 with SMTP id a640c23a62f3a-a9eefee6682mr1056624666b.14.1731315974411;
+        Mon, 11 Nov 2024 01:06:14 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4b82csm579023566b.67.2024.11.11.01.06.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 01:06:14 -0800 (PST)
+Date: Mon, 11 Nov 2024 12:06:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm: zynqmp_dp: Unlock on error in
+ zynqmp_dp_bridge_atomic_enable()
+Message-ID: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf tools: Fix typos Muliplier -> Multiplier
-To: Andrew Kreimer <algonell@gmail.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Liang Kan <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20241108134728.25515-1-algonell@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241108134728.25515-1-algonell@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 8/11/24 15:47, Andrew Kreimer wrote:
-> There are some typos in fprintf messages.
-> Fix them via codespell.
-> 
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+We added some locking to this function, but accidentally forgot to unlock
+if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
 
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/xlnx/zynqmp_dp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> ---
->  tools/perf/util/intel-bts.c | 2 +-
->  tools/perf/util/intel-pt.c  | 2 +-
->  tools/perf/util/tsc.c       | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-> index 3ea82d5e8d2e..a7c589fecb98 100644
-> --- a/tools/perf/util/intel-bts.c
-> +++ b/tools/perf/util/intel-bts.c
-> @@ -808,7 +808,7 @@ static int intel_bts_synth_events(struct intel_bts *bts,
->  static const char * const intel_bts_info_fmts[] = {
->  	[INTEL_BTS_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
->  	[INTEL_BTS_TIME_SHIFT]		= "  Time Shift         %"PRIu64"\n",
-> -	[INTEL_BTS_TIME_MULT]		= "  Time Muliplier     %"PRIu64"\n",
-> +	[INTEL_BTS_TIME_MULT]		= "  Time Multiplier    %"PRIu64"\n",
->  	[INTEL_BTS_TIME_ZERO]		= "  Time Zero          %"PRIu64"\n",
->  	[INTEL_BTS_CAP_USER_TIME_ZERO]	= "  Cap Time Zero      %"PRId64"\n",
->  	[INTEL_BTS_SNAPSHOT_MODE]	= "  Snapshot mode      %"PRId64"\n",
-> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-> index 3fe67bf652b6..30be6dfe09eb 100644
-> --- a/tools/perf/util/intel-pt.c
-> +++ b/tools/perf/util/intel-pt.c
-> @@ -4110,7 +4110,7 @@ static int intel_pt_parse_vm_tm_corr_args(struct intel_pt *pt)
->  static const char * const intel_pt_info_fmts[] = {
->  	[INTEL_PT_PMU_TYPE]		= "  PMU Type            %"PRId64"\n",
->  	[INTEL_PT_TIME_SHIFT]		= "  Time Shift          %"PRIu64"\n",
-> -	[INTEL_PT_TIME_MULT]		= "  Time Muliplier      %"PRIu64"\n",
-> +	[INTEL_PT_TIME_MULT]		= "  Time Multiplier     %"PRIu64"\n",
->  	[INTEL_PT_TIME_ZERO]		= "  Time Zero           %"PRIu64"\n",
->  	[INTEL_PT_CAP_USER_TIME_ZERO]	= "  Cap Time Zero       %"PRId64"\n",
->  	[INTEL_PT_TSC_BIT]		= "  TSC bit             %#"PRIx64"\n",
-> diff --git a/tools/perf/util/tsc.c b/tools/perf/util/tsc.c
-> index 2e33a20e1e1b..511a517ce613 100644
-> --- a/tools/perf/util/tsc.c
-> +++ b/tools/perf/util/tsc.c
-> @@ -119,7 +119,7 @@ size_t perf_event__fprintf_time_conv(union perf_event *event, FILE *fp)
->  	size_t ret;
->  
->  	ret  = fprintf(fp, "\n... Time Shift      %" PRI_lu64 "\n", tc->time_shift);
-> -	ret += fprintf(fp, "... Time Muliplier  %" PRI_lu64 "\n", tc->time_mult);
-> +	ret += fprintf(fp, "... Time Multiplier %" PRI_lu64 "\n", tc->time_mult);
->  	ret += fprintf(fp, "... Time Zero       %" PRI_lu64 "\n", tc->time_zero);
->  
->  	/*
+diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+index 25c5dc61ee88..0bea908b281e 100644
+--- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
++++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+@@ -1537,7 +1537,7 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 
+ 	pm_runtime_get_sync(dp->dev);
+ 
+-	mutex_lock(&dp->lock);
++	guard(mutex)(&dp->lock);
+ 	zynqmp_dp_disp_enable(dp, old_bridge_state);
+ 
+ 	/*
+@@ -1598,7 +1598,6 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 	zynqmp_dp_write(dp, ZYNQMP_DP_SOFTWARE_RESET,
+ 			ZYNQMP_DP_SOFTWARE_RESET_ALL);
+ 	zynqmp_dp_write(dp, ZYNQMP_DP_MAIN_STREAM_ENABLE, 1);
+-	mutex_unlock(&dp->lock);
+ }
+ 
+ static void zynqmp_dp_bridge_atomic_disable(struct drm_bridge *bridge,
+-- 
+2.45.2
 
