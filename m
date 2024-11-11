@@ -1,66 +1,47 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679A84C66;
-	Mon, 11 Nov 2024 16:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D256414A4FB;
+	Mon, 11 Nov 2024 17:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731341365; cv=none; b=krpo8970vxmO9/a7U+MQVzJBMu9t9mBbHugHYBUMFrUFdt+0l68e3uVrU1B4X/okI4a7mDIvfz+deoinumJKDxnO+ytw17GVMgnpU+JTWb6RDvmDLYB2SmIkXifAaumvDZSdRFDAoBmS5RWhkb4SCr+wzK1VBD8B3nlGZtirCiw=
+	t=1731346156; cv=none; b=LV8/W2PAeSf69phBgycXUtD15Q4uQVIOKhiR3SIBizMzxRRHS2u2/a9+siLKYgQUjNB77OySMG8RmgKpNAvT+srchG0ySaia5viRnWR+N/OOzSta1o03LtLCuMBwcVGyBJU5g5x7c5gdjXVrygukQSwU35yvzdU4jbtFAfo2T+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731341365; c=relaxed/simple;
-	bh=C3hDKPMi8ro/fFUzo65/nRh6MyMkcb3ANZPXN8ZCN/0=;
+	s=arc-20240116; t=1731346156; c=relaxed/simple;
+	bh=2ORGgfRrFCZo3gKmRviGAldc/6tnzHmOpaLBRqobq8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUiPt6lKZMR0Jp1shoHPVKej0wRRDb73nwTXgiQm3jbwSfe1DOiiqorbK1tFiWikOXrzaftO76QHBQXdEafssrtqfenTspYk9qR2DmlY62TQMvvDTVrcN+0p2Gg/CZi4OigFPMmYSyTkX/fgbiszPs0ttxpd8mMdYtxo/5Wqkek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OykWgHsB; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTTnwy79cgOR+qGVY4buOiMrofF8mkQCzmUwRgyEi4ufErD+iCFSLLIOc89xJErQXTKLBLgczVete7S2Fjk31YIXnzlPfk18pry8bN7H5KHDk5GXIZVAoC6LYtMUJRmR0WvN0i1FK7WEyz0pKgTX2KdVqS7gkCHyZVRrLDmgsG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A0fnGxzU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OykWgHsB"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e52582cf8so3654132b3a.2;
-        Mon, 11 Nov 2024 08:09:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731341363; x=1731946163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/iY+ZJgltXfrniLx2byn6UyLdUM6Quqst+Zysvv4BTA=;
-        b=OykWgHsB/vfLvikTmuSDzS2IHV2mrtfEFsTf4b8Lyq2lfUi/QK0n8OmjO9JlEG3c0F
-         LxKVo+JmAHm5nrMR5EAvDAARYcbJ+lWlsHrw2rO6Dw+Iqw+iKHBz3QMWjbBf9Ppg3XsQ
-         pd9APnaBlcChbx1Rf1GxGrvUwoXVt/xToQ9vo1L0iJddEyhfNG7y3oi78a2TN0/vHZZW
-         0WSkihCEC/a0RdU2CQHkK5NhD9/Pmc6iTExPTT9EcgwtfzeS6krsphV29gw3blz5QUji
-         56KOX5QotQ6DXelVxAHWtpP6P2fAtEMgrDy0eDVrBuFLTb5VmolAo/X23Kag4YgeyJTA
-         MZCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731341363; x=1731946163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/iY+ZJgltXfrniLx2byn6UyLdUM6Quqst+Zysvv4BTA=;
-        b=KoZhyqq3Y+78PXP+XgUJarnrsnekG5EFsApD5Qa3GhLEhtgfOWb6sOJEu4WlVY20sG
-         OOeIfy2/E7fomaJdcahlsKRGxsaDLW49R+/FWfS+Ps5GleoBQ4IOVGwm1jQNsPUL0fKC
-         qe1EK0r0LaJE2Z7qHFRxwfa/il1HpAcjnquvbl/zzAkCWyGq8kUg/wP1yO0cyBlcwsr2
-         m69kUhu7GKiVQfd4ojeKR/nhdYpqftzm9B2H3Yqg2t6cLB5/acsAVhllVHEoi/S0WW9Z
-         yuepz+a0fe9ky2lhvvB9yjne4qdSUCVdjp4zqLWipsSKRFSN7Ve+++B6tFshAvP68xBg
-         mYxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIjr3Ryx3gLP9Fbr1w62Wq/P5Fndr6vakBtofDFFD5kGK/qXAt6Nuy6hLHV89ZL0D/koTvWrkCzltVeo/uuvKM@vger.kernel.org, AJvYcCXp5vaDNgGTfRxRHcZvSI6q4Lncz8PXjNgmlTgmCHq8VpVvlOSE4nLbDhXk68t7HRXd7Nzf4iRq0COw5HvqSs8=@vger.kernel.org, AJvYcCXqrIB9AMEA/pMay2mW7eUC39CHRUh9OFhk66Vf+3cUT1ASlPmSedzzi75Q8jOn+cxsWpcsL0J/HDWLjvQV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBIa5gbgMp0svnGUtHpdHqvjnMwttV/vkMQ23k4E1oDJWC8aYx
-	XoDiw7iXdoW6iGaLe1mqFjKY0+dKPLqEJWmgH3HQ4E4ETB0NadRI
-X-Google-Smtp-Source: AGHT+IGdXJsqRv3gpfBkjoc2DyCKI8nNMGsBFd+J9EL531H+nYTk6Y/yjvFtSiSo7brOE0VEefpjIw==
-X-Received: by 2002:a05:6a00:3c83:b0:710:6e83:cd5e with SMTP id d2e1a72fcca58-7241314669amr20370040b3a.0.1731341363367;
-        Mon, 11 Nov 2024 08:09:23 -0800 (PST)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a1fd2bsm9265322b3a.167.2024.11.11.08.09.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 08:09:22 -0800 (PST)
-Date: Tue, 12 Nov 2024 00:09:19 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] kunit: skb: add gfp to kernel doc for kunit_zalloc_skb()
-Message-ID: <ZzIsL7P7wDCP2VBR@visitorckw-System-Product-Name>
-References: <b31a16ef-382f-4b8f-b4d5-1c4d93803779@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A0fnGxzU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1540C4CECF;
+	Mon, 11 Nov 2024 17:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731346156;
+	bh=2ORGgfRrFCZo3gKmRviGAldc/6tnzHmOpaLBRqobq8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A0fnGxzU0rXfX2ZGSf4D7Q1eQg5Vpg26nE87/egpqdV4bQbuVemAZ3nDzTOroPgzB
+	 pinkLpO8V91GwXW53kCfjLOsSoLG4l7YyOG0FP4g44py0Za9LVKYWcFn7NPm8fIPta
+	 K8k/vHVNGqruf9X7ycsegPPyh29erKsm34d3OHI7EOV/IwafBf79h4p+cR8Y6F9Qrb
+	 z8Ik0qyk8XWZ4pyJ7d7BZkKuVe6VsjS4qZPJiYtUFpw3JLT9byZy3qude0eFNxx8oC
+	 tLlNkAaXKKDIlclec0DLipy+nCljponprdjETilwC+It+aiAzBirsgDciYMtkwiMi1
+	 Fqsk+M36sGYcw==
+Date: Mon, 11 Nov 2024 14:29:12 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andrew Kreimer <algonell@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Liang Kan <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Fix typos Muliplier -> Multiplier
+Message-ID: <ZzI-6MJ4b7mZRkg3@x1>
+References: <20241108134728.25515-1-algonell@gmail.com>
+ <c1592c50-e903-4ee5-a560-530792fcbae7@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,41 +50,17 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b31a16ef-382f-4b8f-b4d5-1c4d93803779@stanley.mountain>
+In-Reply-To: <c1592c50-e903-4ee5-a560-530792fcbae7@intel.com>
 
-On Mon, Nov 11, 2024 at 01:54:09PM +0300, Dan Carpenter wrote:
-> Kuan-Wei Chiu pointed out that the kernel doc for kunit_zalloc_skb()
-> needs to include the @gfp information.  Add it.
-> 
-> Reported-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> Closes: https://lore.kernel.org/all/Zy+VIXDPuU613fFd@visitorckw-System-Product-Name/
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Mon, Nov 11, 2024 at 08:17:29AM +0200, Adrian Hunter wrote:
+> On 8/11/24 15:47, Andrew Kreimer wrote:
+> > There are some typos in fprintf messages.
+> > Fix them via codespell.
+ 
+> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+ 
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Thanks, applied to perf-tools-next,
 
-Regards,
-Kuan-Wei
-
-> ---
->  include/kunit/skbuff.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/kunit/skbuff.h b/include/kunit/skbuff.h
-> index 345e1e8f0312..07784694357c 100644
-> --- a/include/kunit/skbuff.h
-> +++ b/include/kunit/skbuff.h
-> @@ -20,8 +20,9 @@ static void kunit_action_kfree_skb(void *p)
->   * kunit_zalloc_skb() - Allocate and initialize a resource managed skb.
->   * @test: The test case to which the skb belongs
->   * @len: size to allocate
-> + * @gfp: allocation flags
->   *
-> - * Allocate a new struct sk_buff with GFP_KERNEL, zero fill the give length
-> + * Allocate a new struct sk_buff with gfp flags, zero fill the given length
->   * and add it as a resource to the kunit test for automatic cleanup.
->   *
->   * Returns: newly allocated SKB, or %NULL on error
-> -- 
-> 2.45.2
-> 
-> 
+- Arnaldo
