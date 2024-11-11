@@ -1,96 +1,92 @@
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A057D55C29;
-	Mon, 11 Nov 2024 13:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65C015A85A
+	for <kernel-janitors@vger.kernel.org>; Mon, 11 Nov 2024 14:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731332455; cv=none; b=aObiklIwSLNGa82Uq2OUY0JiCD3K4zcAd1j6XoyNsWQkodve7hbevEwhSPXYVR/9Oxl2Qu1N/cjEqTsr+T8jOip4ReUpMIWjyn5uIVafzuzOmxxGXgIs2ALb+NuPg3cFWpqWNYqKbm1ARe9yiCqNSXfdIKkBB8OqR4h2+AGPMI4=
+	t=1731335359; cv=none; b=m2pFu+KqKbJDnWP7ruZ8GPzt6TAYM3CPbxl0FQiw++apNNpgHtiFJBJ05lDP3q3O9xYLvFB+ncX/dUvsqf5WVfFcACcnYTspHLOAP3azKcZKSpiz6mhN0nhJIvEgNpI2riGUIISvxpU+vh5i41LP9D04zzjyN/1jzW2p8gU8GYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731332455; c=relaxed/simple;
-	bh=/lRgHsdUwoCuJ9prqAOMcFVLNmskl71F/Sic+hVnauo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UjI3y1sjMTB08bjOIJlC/+nfLSk7JHCMm7kUkMQVXvlBkgQCwmDPZONsihN0CUNZunUzNvMbaF95vhlVRfxK/WIcf3gvWtUejizL/q0s+MdYdRm3W7tDr6/zwejTXH/R4lpsEGPJrZc6jxqOXfhnEdaYo/PmEyBMKOwRGK1vBzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O8PY86N9; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1731335359; c=relaxed/simple;
+	bh=tpRW8AWpeWuf1ejQeWaaBEjfeU0GbVtqmgneeggtGSA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JyVZCYSDG6/dPofT4QPQ/wSM6CNEeBT+b3Bf+AdcTrkDaOVG2q4/Qtwp7lnhQO8SqV+Wgd8fTz/+Gz1bvAg07mG31rlYlpicVtVdhW6MJ6fxVJtyLumPIEaUYf59XeRbbfF7G48NNc+CFO0CfSobDncEykarLyTVm0/kXPff+5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rCmAHFyt; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O8PY86N9"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id AUeotDgOMjazzAUeotYuEf; Mon, 11 Nov 2024 14:40:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731332445;
-	bh=aySs7bPSbKHWLCsqe0IIm6YT4GwJ1SdufWSYkYaSwbI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=O8PY86N9o1YxVmAvOi+EPQ182u26D9pzzm1S1y6qWETG6+O2hE66wviD3oAwa2Gt6
-	 9nIIMvC4ADzLn1TvnNYhVDo//mJuQAavXJjQC6yx1YZjwPgmeVckyMGIMtLCLyVh25
-	 3iHLtI2DuUTMNTE5pt4ejl8e/Fwe4XPqrmKXA+agqkg2S+0uIO4dhvkaxH3VwA2X/M
-	 RumGr+FGQoTQ6ePSEu5YlXfHNydANZ+b0jeS/GU14Twiu4J8nLBOAruIITf/XiHhxo
-	 SDj8578AqRNmy7e4E2VJ4OK5xTwtsHVtDGINf+5TS3aWJI9Q3Z4W7h+nr9KyDCuuq7
-	 bbGJtXZuY83ig==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 11 Nov 2024 14:40:45 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Kalle Valo <kvalo@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] wlcore: testmode: Constify strutc nla_policy
-Date: Mon, 11 Nov 2024 14:40:35 +0100
-Message-ID: <78810e3ebb74ddbd3a4538f182bf1143b89baba7.1731332414.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rCmAHFyt"
+Message-ID: <295ec119-b862-4ab9-bc24-c1a98313cd39@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731335353;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3Ln2j19kFbUmJ8iVDewbftH/CZUQmtLyzIATkBOnw74=;
+	b=rCmAHFytQ5/ZUTUZ2PSgwSERD83R8BbD6/6IHj9Kwd19otl+lEUNZGEFDQY7QEjhWoduXa
+	99ZTZVbjHx3m187hglFCaSO9tcSOh+jEQlo+weGMYnUeGbNMU/Hi+x+WWmn7Z/VWqGGa2R
+	TLyjtfP3GlV/XG1toAPtrtF7AT5H3B4=
+Date: Mon, 11 Nov 2024 09:29:08 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH next] drm: zynqmp_dp: Unlock on error in
+ zynqmp_dp_bridge_atomic_enable()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-'struct nla_policy' is not modified in this driver.
+On 11/11/24 04:06, Dan Carpenter wrote:
+> We added some locking to this function, but accidentally forgot to unlock
+> if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
+> 
+> Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/xlnx/zynqmp_dp.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> index 25c5dc61ee88..0bea908b281e 100644
+> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> @@ -1537,7 +1537,7 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+>  
+>  	pm_runtime_get_sync(dp->dev);
+>  
+> -	mutex_lock(&dp->lock);
+> +	guard(mutex)(&dp->lock);
+>  	zynqmp_dp_disp_enable(dp, old_bridge_state);
+>  
+>  	/*
+> @@ -1598,7 +1598,6 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+>  	zynqmp_dp_write(dp, ZYNQMP_DP_SOFTWARE_RESET,
+>  			ZYNQMP_DP_SOFTWARE_RESET_ALL);
+>  	zynqmp_dp_write(dp, ZYNQMP_DP_MAIN_STREAM_ENABLE, 1);
+> -	mutex_unlock(&dp->lock);
+>  }
+>  
+>  static void zynqmp_dp_bridge_atomic_disable(struct drm_bridge *bridge,
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+Reviewed-by: Sean Anderson <sean.anderson@linux.dev>
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   5062	    528	      0	   5590	   15d6	drivers/net/wireless/ti/wlcore/testmode.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   5178	    404	      0	   5582	   15ce	drivers/net/wireless/ti/wlcore/testmode.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/net/wireless/ti/wlcore/testmode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ti/wlcore/testmode.c b/drivers/net/wireless/ti/wlcore/testmode.c
-index 3f338b8096c7..fc8ea58bc165 100644
---- a/drivers/net/wireless/ti/wlcore/testmode.c
-+++ b/drivers/net/wireless/ti/wlcore/testmode.c
-@@ -45,7 +45,7 @@ enum wl1271_tm_attrs {
- };
- #define WL1271_TM_ATTR_MAX (__WL1271_TM_ATTR_AFTER_LAST - 1)
- 
--static struct nla_policy wl1271_tm_policy[WL1271_TM_ATTR_MAX + 1] = {
-+static const struct nla_policy wl1271_tm_policy[WL1271_TM_ATTR_MAX + 1] = {
- 	[WL1271_TM_ATTR_CMD_ID] =	{ .type = NLA_U32 },
- 	[WL1271_TM_ATTR_ANSWER] =	{ .type = NLA_U8 },
- 	[WL1271_TM_ATTR_DATA] =		{ .type = NLA_BINARY,
--- 
-2.47.0
-
+Although this reverses the order of pm_runtime_put and mutex_unlock in
+the error case, I don't think it matters.
