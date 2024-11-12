@@ -1,86 +1,113 @@
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD531189B8A
-	for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 17:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353A9213125;
+	Tue, 12 Nov 2024 18:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731432137; cv=none; b=fF60LB5LErCWCRWWq+rJSJt7ErIPu6XT0F4n16BHGczFjpknOKLRR3LQkk1MdnmOZn9hmCWN2v5feQWyMIyaG7xRZzDkU7LbLQLbFXEtp31kgNO7L1zkFgOwlJLJG/OwTzM2vcmc4LUgfjsfTvOu/IC6/JK9rAIrV4r6mtrC7hI=
+	t=1731435742; cv=none; b=OxGeJSjWTqtAxCGB3Kx1ymibDkHJkEcTEjxo8iWBrNog4PS4khIK/Y4ut9uqVODmrOzlt+xOGPM3awflLuCyQcxvuYcOALKeLndNsErEMJNqTJQM3lV0qkObZuh4CqWxgheWHaW5ilfo1wgb7TgumOLiwE/pthbGgkN2AOVUaws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731432137; c=relaxed/simple;
-	bh=r1Y26rWuL55b2h/Wg51aWlCb8jZ7cV/tlzqaXPQg+FA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/Rf9uqcG4yKKXtCagRpth0Dc9cy82WH9YNfOl+XXKrFEIXcInoGgH4edn5Qg4TuLqPao4Z5TaukHW6APPK9IbKrR5DgIfESSLXwhu3d09EG46XWf1P+2q+UJ6AVd6f/m5FNvF6aODOFWVWdp6Xzxc00N0zDbfqzQIg2kw0Hk6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QLDH6lZU; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1731435742; c=relaxed/simple;
+	bh=dm411aeuElhk98z7KlbEChgibpFt0Ls8H3nVP5qWzns=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=odd9561Wb0qYniyWBC1jtAEAtBPNonHvFj4YlWvE/BRNQnRaa+puKDVEqu7GIPQtYsbcI3gU1DweTjE0d8R6Wb4vWt6dKmh8F9afO7zryjMw7RlzFUrQIoA89bsid4UU0M5B/lnQyhSUr7TsUfua2r2epuP/hh+EC7FOBrdRYOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=de6F0h7+; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QLDH6lZU"
-Message-ID: <5c2c6883-d81a-4869-9f32-48d23c0728ea@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731432130;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rfw+wN9AUH3h9IWdAAjZRROFX4GdxCR15t9sueSJP5E=;
-	b=QLDH6lZUK7ldFBFFY60D1IJpEJpv6E6CdX/D0wMreRUW5s13VDtpQ6iWetQwB2fRloelJT
-	P3wvGndCwU3q+yyxxJhHZCgficVY9HnxmwVTsxE+/TdfnUFdIvMPCJ16mn43n+W3FxNnEw
-	dh1Svbb5dK9UzKQS5LfKFQmN8wlWqLY=
-Date: Tue, 12 Nov 2024 12:22:05 -0500
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="de6F0h7+"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431688d5127so47834425e9.0;
+        Tue, 12 Nov 2024 10:22:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731435739; x=1732040539; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rGw8I43GoIEdw75f9gcID3EPkPrgfiDyB1X473+QaOg=;
+        b=de6F0h7+D7Aj+IXEmLqLMeI4+B+KJJYz5dtynCic+UpeeMiKkmsovwtwdINNnlXksQ
+         K/gY76AYXUknbhs+LvhEpqb1r4tLRPKn7ipSRoAghwz5kttCOq+CYEPdWTWM7D3IIo5i
+         d/FUBfoTAHgFi4kFTX0SrC6NR2OQweebFvd1fQW9DXt638JlvWSHeWPr6fp1JcInv2yZ
+         MMB0M9DTbplhAubksMlqawi8kk3wdqTEmA8tfxJSHJN/IwyNVF5+7x7W6qfYy/dUXo8F
+         VWYdpGEA0kcT0d17dHWm8WGvTdGnee06jgDliRDHxIKgOPGM/5uk2ibpDBulOTp45fRm
+         1fOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731435739; x=1732040539;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rGw8I43GoIEdw75f9gcID3EPkPrgfiDyB1X473+QaOg=;
+        b=riBfQCtkSeOMv2yGvObaMJgqEOfZut7kqbriO7wvhtrCNw8ML93t2BzkcvjR9sn6yC
+         dobrjjY/yaBsaxQknGSswXOWmln5Lf3vun34Ew+hLODB1dnrd4aWKydBWNcujA0yI5Ds
+         /L01ZiTNBkbw3NAAtANmc7uzEFgLYkux5w9qsyneJ+H486s/kLE2zCeesErHHxo7CzIc
+         L9K/Qg5c52hVCNOe7n9iTYbnfQDXdmy8Hqa0Oi4LPqP4VFxJFnGvMsAOdhKKB5Fhqw+I
+         avaW5nDF15ehxzqxiXX98ngBtsJuacDO5ixb0Cn9S912N2n8StGesp54rnVCxQvD6q0A
+         6YJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRE7Vr2cf4R8s0gIrf1ZXNR3zO+WvDWwLly1mB1XjnQf4nrshaiAAksLEcPLZSbvVvWl/jfNwDd04QJlZv@vger.kernel.org, AJvYcCVRuA8tQ8T+d2FTLUpALeH/Ta2EXgvbyhWegBWIGwMqaAE8y8dVLITstv1ZUJ+nGOCr3zjWqYmz0fW3K7CW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1OqhBFw5rJRuCHlDbaIJGyuFwGSf/jF+hVxH949u9VTir/jP8
+	qHriI++qSj4GRwPMkoCbJn3yIjX8iJnnTx+A+lAutSmmZfW2yMm6
+X-Google-Smtp-Source: AGHT+IHQJ9DcCw2M41pZGval9nx2PIlFgi2G38OFndiORIwfTgf0326SaoN/rywDWnrSrr2FwxlJzQ==
+X-Received: by 2002:a05:600c:4507:b0:431:5c1c:71b6 with SMTP id 5b1f17b1804b1-432b750a433mr165118395e9.17.1731435739344;
+        Tue, 12 Nov 2024 10:22:19 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97e62csm15903604f8f.37.2024.11.12.10.22.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 10:22:18 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] drm/msm/a5xx: remove null pointer check on pdev
+Date: Tue, 12 Nov 2024 18:22:18 +0000
+Message-Id: <20241112182218.1119158-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH next] drm: zynqmp_dp: Unlock on error in
- zynqmp_dp_bridge_atomic_enable()
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
- <20241112052754.GB21062@pendragon.ideasonboard.com>
- <37be000a-3ef8-4df4-aefa-b4d73487ad27@linux.dev>
- <20241112164305.GA24067@pendragon.ideasonboard.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20241112164305.GA24067@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 11/12/24 11:43, Laurent Pinchart wrote:
-> On Tue, Nov 12, 2024 at 09:41:58AM -0500, Sean Anderson wrote:
->> On 11/12/24 00:27, Laurent Pinchart wrote:
->> > Hi Dan,
->> > 
->> > Thank you for the patch.
->> > 
->> > On Mon, Nov 11, 2024 at 12:06:10PM +0300, Dan Carpenter wrote:
->> >> We added some locking to this function, but accidentally forgot to unlock
->> >> if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
->> >> 
->> >> Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
->> >> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->> > 
->> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> > 
->> > Sean, how about replacing all the mutex_lock()/mutex_unlock() calls
->> > you've added in a7d5eeaa57d7 with guards ?
->> 
->> I have no objection to that.
-> 
-> Would you send a patch ? Otherwise I can do it.
-> 
+The call chain on a5xx_gpu_init is such that pdev is not going to be
+null, so the null check on pdev can be removed. This also cleans up
+a static analysis warning where pdev is dereferenced before the null
+check which cannot actually occur.
 
-I can send a patch, but it will not be for a week or two.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
---Sean
+---
+
+V2: rewrite Subject, remove null check on pdev
+
+---
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+index ee89db72e36e..4edf9109d1d8 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+@@ -1760,11 +1760,6 @@ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
+ 	unsigned int nr_rings;
+ 	int ret;
+ 
+-	if (!pdev) {
+-		DRM_DEV_ERROR(dev->dev, "No A5XX device is defined\n");
+-		return ERR_PTR(-ENXIO);
+-	}
+-
+ 	a5xx_gpu = kzalloc(sizeof(*a5xx_gpu), GFP_KERNEL);
+ 	if (!a5xx_gpu)
+ 		return ERR_PTR(-ENOMEM);
+-- 
+2.39.5
+
