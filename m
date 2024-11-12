@@ -1,82 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B537621E109
-	for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 19:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511AD1FA829;
+	Tue, 12 Nov 2024 20:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731440922; cv=none; b=SLIHbiRJUmInWREGQjOt+TD+mpY8vcI96IoHgNTlW/dSaTdKH0OY8OTrWBQQPiEvsxe/wdwiOnrmfrq2h8pcgIxajXZ7Fq3pASVLCJg0fqMhrZsleANzQvr6M0WgyDYMC8lQleI5YOA+96UU79P4NjiITk9HbkEpKVOBM8cC7rA=
+	t=1731443433; cv=none; b=m2u/BGqC3cx5KMvXk34FCBvT8gyUy9n17CXR5k4BHycCjk6R6Phxk6hyaCXCEUDxl3IP+B/I3joj2VDisBPlIgs8uuH6DudN3xu56SMSzfAOGHL1Ys/OYR3g3dNpY96/XWzQZx2NZYUqSDhAZMv2neUBn1xRPPzeqBUi7LnFpO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731440922; c=relaxed/simple;
-	bh=djAWtpD0P7lUawn/eXm+lSeJa83RlIDf/sAHJqiXbdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMo16Bosqv7gwW3eULLZf3+SBWUPWYng7UjlUY3OngTtqHFYxSInfnoB8uPNdbIcQ3J3oS85blsOKI6iO2Iorn/XWXzGqlNSRnamXnUdpSWhQ4A5/dWocNSCs67XpbbK6l02s9uQ5T7j6fI8QFLhepdWwf2S/qvk5ZpMJ6cbIw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQFHlsUr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731443433; c=relaxed/simple;
+	bh=+PUVRgggdhPSTIkIBl/ezF6/hWqD9yQj8MKY0IoHDko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IX86qWRHVRt/QAU0oOWPvb7YuGOpE1dQ2iw2Gv97SQpKzEgQCCsJj1jhEygS8CWgBAmFff52ew7SWu+u7HwxQXq9dT1ckWTITFGbX48TZA2one9dxLrWlHvQDeLuaec5rEirs3VIB2r5Z6v7W1yv7L8qJI2ornXb6mFwf+2Sp7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ftZAx+wX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQFHlsUr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38F6DC4CECD;
-	Tue, 12 Nov 2024 19:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731440922;
-	bh=djAWtpD0P7lUawn/eXm+lSeJa83RlIDf/sAHJqiXbdA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=GQFHlsUrmEv1tm3tSLfxgw1bFjoHLAvtSqEHYKeF/pQVfPE5LI5ZV9CDFxVFdSOmZ
-	 Pd/vhEwGgubKh84pNJ9UgoXGO1DKnvbK5fXliEl6YVmHbpAxwiLvbvVUXuVtq+4s0k
-	 sGxfpir9ZKd+lZ/0J5/KcQm8FNF6pv4xier3Pn40nZzBksZSeqT9EcOOs4wyGmB6wA
-	 RirkI/cbLREvIwSdd3vhI2hufsoWzczchw1O/CfTQ7WGwkCGzt0Or6mAOJCA/y2vef
-	 vkxeAY7T5Ss/BpGu4hCcYqXMTavWhD+2o9VE2BRvgmO8uALsxcTNjUuMhv290FYDIX
-	 cuHfXElHUmPZg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id B8006CE0FA5; Tue, 12 Nov 2024 11:48:41 -0800 (PST)
-Date: Tue, 12 Nov 2024 11:48:41 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scftorture: Handle NULL argument passed to
- scf_add_to_free_list().
-Message-ID: <c7b02e51-d738-4523-b76a-c8a84be35124@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain>
- <20241112162023.glRj_YAz@linutronix.de>
- <ec532c16-c7c3-4029-b996-284ac32f9820@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ftZAx+wX"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACCGhv7005745;
+	Tue, 12 Nov 2024 20:30:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Au4EFGKypvp3GDzbOIj5YnMCOF2q1QNzsySezonXE2k=; b=ftZAx+wXpl8Lg50x
+	vQl5jLUXXnMTnR2avmFkgwKw4olieFdOvWqDrur2naYIJf9ERfS3+li5LayzyhUU
+	DpaFMLtcVltZsJIDN08DyFePXy1B/cyyf/4MoSn3xygJi95rV1d3ssR7H5I7wSeB
+	40SqmYBikyD0/Zehht4QCdWsOYVhnwxUyu7xNgYDqYQH3SFN//q5Qf8yPhzEcnzc
+	USKIFeC3yYmAH060YzeOLRpPClSFH6+jL2pZBC4tDM27Yz2M2/T82IRPXU2WMdpe
+	pfnc/3QAblt0Dct8UNFGE0SVzR1UwRtQuMLVGJGqyR3CA7c9g5OLMgDZPcjzl2jd
+	kChA3w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uwt5jqys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 20:30:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACKULXv006224
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 20:30:21 GMT
+Received: from [10.216.22.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
+ 2024 12:30:16 -0800
+Message-ID: <eb665284-31f0-4e95-8f24-c2782bec72bd@quicinc.com>
+Date: Wed, 13 Nov 2024 02:00:14 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec532c16-c7c3-4029-b996-284ac32f9820@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][V2] drm/msm/a5xx: remove null pointer check on pdev
+To: Colin Ian King <colin.i.king@gmail.com>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>
+CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241112182218.1119158-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <20241112182218.1119158-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xZXpRrSehdhS4gDgZuKMyLCWgIDajSip
+X-Proofpoint-ORIG-GUID: xZXpRrSehdhS4gDgZuKMyLCWgIDajSip
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=965
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1011
+ malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411120164
 
-On Tue, Nov 12, 2024 at 07:30:03PM +0300, Dan Carpenter wrote:
-> On Tue, Nov 12, 2024 at 05:20:23PM +0100, Sebastian Andrzej Siewior wrote:
-> > Dan reported that after the rework the newly introduced
-> > scf_add_to_free_list() may get a NULL pointer passed. This replaced
-> > kfree() which was fine with a NULL pointer but scf_add_to_free_list()
-> > isn't.
-> > 
-> > Let scf_add_to_free_list() handle NULL pointer.
-> > 
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/all/2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain
-> > Fixes: 4788c861ad7e9 ("scftorture: Use a lock-less list to free memory.")
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> > 
-> > Thank you Dan. I had to look twice, that `scfsp' above looked almost
-> > identical.
+On 11/12/2024 11:52 PM, Colin Ian King wrote:
+> The call chain on a5xx_gpu_init is such that pdev is not going to be
+> null, so the null check on pdev can be removed. This also cleans up
+> a static analysis warning where pdev is dereferenced before the null
+> check which cannot actually occur.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> 
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-Queued and thank you both!
+-Akhil
+> ---
+> 
+> V2: rewrite Subject, remove null check on pdev
+> 
+> ---
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> index ee89db72e36e..4edf9109d1d8 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> @@ -1760,11 +1760,6 @@ struct msm_gpu *a5xx_gpu_init(struct drm_device *dev)
+>  	unsigned int nr_rings;
+>  	int ret;
+>  
+> -	if (!pdev) {
+> -		DRM_DEV_ERROR(dev->dev, "No A5XX device is defined\n");
+> -		return ERR_PTR(-ENXIO);
+> -	}
+> -
+>  	a5xx_gpu = kzalloc(sizeof(*a5xx_gpu), GFP_KERNEL);
+>  	if (!a5xx_gpu)
+>  		return ERR_PTR(-ENOMEM);
 
-> Yeap...  Me too.  #LowHammingDistance
-
-That could likely be improved, to be sure.  I am one of these strange
-people who wants the pointer to give a hint about its type, something
-about pointers to rcu_data, rcu_node, and rcu_state pointers all
-being messed with at the same time.
-
-Maybe s/scfcp/scfchkp/?
-
-							Thanx, Paul
