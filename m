@@ -1,88 +1,86 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A852076BB;
-	Tue, 12 Nov 2024 17:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD531189B8A
+	for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 17:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731431848; cv=none; b=TUAYMb3EeX7IbNEg63FS7p0SbdTvlZx6TrLKqgtIfcOXgElqtKgABPNrN0/NGLlu/vtGffM4yJJmtJOY75ubK2+mB7FgYP2y72VXlvoJnJAYiHnP6LAXLfizxX72tYSMetmZsFdXIk0rVkJEwIkAa28ZOqLh9t8sFbyJGj4L+Qc=
+	t=1731432137; cv=none; b=fF60LB5LErCWCRWWq+rJSJt7ErIPu6XT0F4n16BHGczFjpknOKLRR3LQkk1MdnmOZn9hmCWN2v5feQWyMIyaG7xRZzDkU7LbLQLbFXEtp31kgNO7L1zkFgOwlJLJG/OwTzM2vcmc4LUgfjsfTvOu/IC6/JK9rAIrV4r6mtrC7hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731431848; c=relaxed/simple;
-	bh=JwYWuXfpSL5AkdZAREAFkweuJZUY7ozAMJNysu17CHE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XZ6v6dXZaffXdhbKAzcCmIYmjwm5weNKVAExtd3YWAhfcm4CgiGt4xV0prz2aMceky1HINKqQQFtIkhYvLMHkHwv9q0C4yWig0OjFSooiUK93FFDxOgS8ko2+YP+rWK3Kq7WzeJqv/wG8gCP/DjfDYTP7c6JSrAyC5foZxrBqrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QrnNtRDq; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1731432137; c=relaxed/simple;
+	bh=r1Y26rWuL55b2h/Wg51aWlCb8jZ7cV/tlzqaXPQg+FA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B/Rf9uqcG4yKKXtCagRpth0Dc9cy82WH9YNfOl+XXKrFEIXcInoGgH4edn5Qg4TuLqPao4Z5TaukHW6APPK9IbKrR5DgIfESSLXwhu3d09EG46XWf1P+2q+UJ6AVd6f/m5FNvF6aODOFWVWdp6Xzxc00N0zDbfqzQIg2kw0Hk6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QLDH6lZU; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QrnNtRDq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731431847; x=1762967847;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=JwYWuXfpSL5AkdZAREAFkweuJZUY7ozAMJNysu17CHE=;
-  b=QrnNtRDqfZ9BWGB4im5jO7yjEP1nUWTKMFytUOM6/EcTXJ87xU/ZvHMK
-   GtCKr2lT4dXrCHl0d88HdC9gXOlZPoR+4kiN9oQvJEv9GcPdyj5YVONSS
-   ouk/9WBREuNGRpDXQw/axWvh4KIzgdGqoTG9jEbpOl76n1rIsVQMyNhGZ
-   r/60dSSC4uXNX23gdJGQ/crXLoRZK27T2IBWnhxEe2RILXy5nUOU8JzWD
-   a8SVc1A64Vtf7fw6q8odLSlMuxi5SD7jjzGva/me8qWwd2tKVH6+AK3dy
-   Y+5h1QmZWuVRy2MDrxSIggjfXUNhPDZHkLRnZeZ3LoM5je2BM7fOFzoUN
-   w==;
-X-CSE-ConnectionGUID: WVAKl+egSkSKR0ljmWYoJA==
-X-CSE-MsgGUID: PiIVNmzgSTu2QnWs/8dKUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31157146"
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="31157146"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 09:17:26 -0800
-X-CSE-ConnectionGUID: k35N3V1lQfye7DmzF1Vj9w==
-X-CSE-MsgGUID: oxbK1Tq4T+6eyFQnuLacWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="87141279"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.234])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 09:17:24 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Jorge Lopez <jorge.lopez2@hp.com>, Hans de Goede <hdegoede@redhat.com>, 
- platform-driver-x86@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241107113543.17137-1-colin.i.king@gmail.com>
-References: <20241107113543.17137-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] platform/x86: hp: hp-bioscfg: remove redundant
- if statement
-Message-Id: <173143183902.3180.9868160429476963926.b4-ty@linux.intel.com>
-Date: Tue, 12 Nov 2024 19:17:19 +0200
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QLDH6lZU"
+Message-ID: <5c2c6883-d81a-4869-9f32-48d23c0728ea@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731432130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rfw+wN9AUH3h9IWdAAjZRROFX4GdxCR15t9sueSJP5E=;
+	b=QLDH6lZUK7ldFBFFY60D1IJpEJpv6E6CdX/D0wMreRUW5s13VDtpQ6iWetQwB2fRloelJT
+	P3wvGndCwU3q+yyxxJhHZCgficVY9HnxmwVTsxE+/TdfnUFdIvMPCJ16mn43n+W3FxNnEw
+	dh1Svbb5dK9UzKQS5LfKFQmN8wlWqLY=
+Date: Tue, 12 Nov 2024 12:22:05 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Subject: Re: [PATCH next] drm: zynqmp_dp: Unlock on error in
+ zynqmp_dp_bridge_atomic_enable()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
+ <20241112052754.GB21062@pendragon.ideasonboard.com>
+ <37be000a-3ef8-4df4-aefa-b4d73487ad27@linux.dev>
+ <20241112164305.GA24067@pendragon.ideasonboard.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20241112164305.GA24067@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 07 Nov 2024 11:35:43 +0000, Colin Ian King wrote:
-
-> The if statement performs the same action if the strcmp result is
-> true or false since there is identical code on both branches. The
-> if statement is redundant and can be replaced with just one call
-> to sysfs_remove_group.
+On 11/12/24 11:43, Laurent Pinchart wrote:
+> On Tue, Nov 12, 2024 at 09:41:58AM -0500, Sean Anderson wrote:
+>> On 11/12/24 00:27, Laurent Pinchart wrote:
+>> > Hi Dan,
+>> > 
+>> > Thank you for the patch.
+>> > 
+>> > On Mon, Nov 11, 2024 at 12:06:10PM +0300, Dan Carpenter wrote:
+>> >> We added some locking to this function, but accidentally forgot to unlock
+>> >> if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
+>> >> 
+>> >> Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
+>> >> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> > 
+>> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> > 
+>> > Sean, how about replacing all the mutex_lock()/mutex_unlock() calls
+>> > you've added in a7d5eeaa57d7 with guards ?
+>> 
+>> I have no objection to that.
 > 
+> Would you send a patch ? Otherwise I can do it.
 > 
 
+I can send a patch, but it will not be for a week or two.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86: hp: hp-bioscfg: remove redundant if statement
-      commit: 4ceb681f1822819f78b747ddc189479fead43be2
-
---
- i.
-
+--Sean
