@@ -1,66 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D256414A4FB;
-	Mon, 11 Nov 2024 17:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D3619EED4;
+	Tue, 12 Nov 2024 05:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731346156; cv=none; b=LV8/W2PAeSf69phBgycXUtD15Q4uQVIOKhiR3SIBizMzxRRHS2u2/a9+siLKYgQUjNB77OySMG8RmgKpNAvT+srchG0ySaia5viRnWR+N/OOzSta1o03LtLCuMBwcVGyBJU5g5x7c5gdjXVrygukQSwU35yvzdU4jbtFAfo2T+E=
+	t=1731389287; cv=none; b=IzYG2K/zSPWgQ7C0otR6Mh7jU/LEBEMnPCD/2KiTp7hqk4RCN3Dp4r3y6gb3SHmBWteO7Eg6d3/rPjpDjqcN2862iCrGk0sO7XJHTSHYoUjZzkgT1ueZPO0QackyBI5YqKApPxXeLO7jK5oXJLH34rTqPBYmgkXfVzgLJbTc5Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731346156; c=relaxed/simple;
-	bh=2ORGgfRrFCZo3gKmRviGAldc/6tnzHmOpaLBRqobq8M=;
+	s=arc-20240116; t=1731389287; c=relaxed/simple;
+	bh=CB5Mstp2qxKyukg8FzhUAeWs09g1Ok4GO9m7FzDj240=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HTTnwy79cgOR+qGVY4buOiMrofF8mkQCzmUwRgyEi4ufErD+iCFSLLIOc89xJErQXTKLBLgczVete7S2Fjk31YIXnzlPfk18pry8bN7H5KHDk5GXIZVAoC6LYtMUJRmR0WvN0i1FK7WEyz0pKgTX2KdVqS7gkCHyZVRrLDmgsG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A0fnGxzU; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=cY/nSRLg1zsfqWJGn7CWR7tcAgtVxM6E8OOYU05TUAElqleGuJ9cFvTW8XnODo7jijNMS6yAW7Lqatn2egsePbyFo9a9kFiSWtMLvch5ksB+ihAeG7lcsNIbgUbernXKOCIlQDwnYyjW/F+sQAj7DuDBdIW8SIc9/UlelTxR4ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=M4UPWU9W; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A0fnGxzU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1540C4CECF;
-	Mon, 11 Nov 2024 17:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731346156;
-	bh=2ORGgfRrFCZo3gKmRviGAldc/6tnzHmOpaLBRqobq8M=;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="M4UPWU9W"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E50EC512;
+	Tue, 12 Nov 2024 06:27:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731389271;
+	bh=CB5Mstp2qxKyukg8FzhUAeWs09g1Ok4GO9m7FzDj240=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A0fnGxzU0rXfX2ZGSf4D7Q1eQg5Vpg26nE87/egpqdV4bQbuVemAZ3nDzTOroPgzB
-	 pinkLpO8V91GwXW53kCfjLOsSoLG4l7YyOG0FP4g44py0Za9LVKYWcFn7NPm8fIPta
-	 K8k/vHVNGqruf9X7ycsegPPyh29erKsm34d3OHI7EOV/IwafBf79h4p+cR8Y6F9Qrb
-	 z8Ik0qyk8XWZ4pyJ7d7BZkKuVe6VsjS4qZPJiYtUFpw3JLT9byZy3qude0eFNxx8oC
-	 tLlNkAaXKKDIlclec0DLipy+nCljponprdjETilwC+It+aiAzBirsgDciYMtkwiMi1
-	 Fqsk+M36sGYcw==
-Date: Mon, 11 Nov 2024 14:29:12 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andrew Kreimer <algonell@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Liang Kan <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	b=M4UPWU9WZ9q+u5oGMGpQuri/yg8akGIPgpNvz6U3Eb7KkeSnEv4REAk+0wYl23lWR
+	 D8bHCCLH+ttHxcfEHWMkMuIMGZEaxlNjVBgqeGO5tl2avZy/NVGSFvW5nYZYzpYReP
+	 xq2l8/yixOXh8xtVTM703gzH1n1/RAtR+2BUZWIo=
+Date: Tue, 12 Nov 2024 07:27:54 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sean Anderson <sean.anderson@linux.dev>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Fix typos Muliplier -> Multiplier
-Message-ID: <ZzI-6MJ4b7mZRkg3@x1>
-References: <20241108134728.25515-1-algonell@gmail.com>
- <c1592c50-e903-4ee5-a560-530792fcbae7@intel.com>
+Subject: Re: [PATCH next] drm: zynqmp_dp: Unlock on error in
+ zynqmp_dp_bridge_atomic_enable()
+Message-ID: <20241112052754.GB21062@pendragon.ideasonboard.com>
+References: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c1592c50-e903-4ee5-a560-530792fcbae7@intel.com>
+In-Reply-To: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
 
-On Mon, Nov 11, 2024 at 08:17:29AM +0200, Adrian Hunter wrote:
-> On 8/11/24 15:47, Andrew Kreimer wrote:
-> > There are some typos in fprintf messages.
-> > Fix them via codespell.
- 
-> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
- 
-> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+Hi Dan,
 
-Thanks, applied to perf-tools-next,
+Thank you for the patch.
 
-- Arnaldo
+On Mon, Nov 11, 2024 at 12:06:10PM +0300, Dan Carpenter wrote:
+> We added some locking to this function, but accidentally forgot to unlock
+> if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
+> 
+> Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Sean, how about replacing all the mutex_lock()/mutex_unlock() calls
+you've added in a7d5eeaa57d7 with guards ?
+
+> ---
+>  drivers/gpu/drm/xlnx/zynqmp_dp.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> index 25c5dc61ee88..0bea908b281e 100644
+> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
+> @@ -1537,7 +1537,7 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+>  
+>  	pm_runtime_get_sync(dp->dev);
+>  
+> -	mutex_lock(&dp->lock);
+> +	guard(mutex)(&dp->lock);
+>  	zynqmp_dp_disp_enable(dp, old_bridge_state);
+>  
+>  	/*
+> @@ -1598,7 +1598,6 @@ static void zynqmp_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+>  	zynqmp_dp_write(dp, ZYNQMP_DP_SOFTWARE_RESET,
+>  			ZYNQMP_DP_SOFTWARE_RESET_ALL);
+>  	zynqmp_dp_write(dp, ZYNQMP_DP_MAIN_STREAM_ENABLE, 1);
+> -	mutex_unlock(&dp->lock);
+>  }
+>  
+>  static void zynqmp_dp_bridge_atomic_disable(struct drm_bridge *bridge,
+
+-- 
+Regards,
+
+Laurent Pinchart
