@@ -1,95 +1,83 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4531020694A
-	for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 16:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F772206963;
+	Tue, 12 Nov 2024 16:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731429011; cv=none; b=kARXGqPTAMQjJdE0iczrhY5wIJe3h5FZ1uQTv1yb7y+xnZ9sRAX6apzMRj4V9KMd8IYMj0VQkFWu5ZoMcGXjvr+mlND4kU4fpXQ0PrzSWWw8M4WJ7iCyG2qOjBUKVsgSRwvpdLR1WIvlC5JTQWglihDtefJ+lRniRruw/h/f61k=
+	t=1731429798; cv=none; b=mpsBEUsKW32a2FfjFdKyJesHmDzae2k/2fpCANtUEpbQMtVxad/gHuT44asK42jVXJlVrY3ghqxKxDntN0XYTXwCCmNmoYHx8xE0UKTPnh4k9+U+JqADpK8Bz+ejeL8xdlPY8zdpP2iEUcQ/HX5jHv2elNY1VuGHfzK9cFTpFRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731429011; c=relaxed/simple;
-	bh=8vIwmJ/+4m5wOhC4ieLUeluEzzdiMVyNAjPQoO5ODS0=;
+	s=arc-20240116; t=1731429798; c=relaxed/simple;
+	bh=65VsRjVcEe9IvdBJ/DvvVbzX+0/6GvW4V9ctYpdSrKI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQ7aOpuzw51NgHxHMG4PVgVF3Tlc9Dn7nMAPe7NKeXxVha5kgzelBR0y7Zw5lsnX27Y7FQLGu7e/H3BGKd2I0mJLBFxkBtwwHIUShWUjthDZPvmob0dCo/QkEfV42BU3Y5IPD08yr6HAsKw3oGJ4z5G2IJtUi83xFHK2kVkr7eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=txLV2or7; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=cZPxVWcvkrHqz+dGGxgP5Kl2sO83cPkPpOzBKUd/WEIPUozmz7GVYLrMA+6oTqefHAJoPdfpxjnzHAMDDQlqkYBSpYyeE582g/sPsotIPnHEJQxvmq/g6n7r6LHkFw3+KfESZrPPMOJqNhODltVIUQ/9DH/m3ZtUmIsyPoItuGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qKIDCDSx; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="txLV2or7"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so4159982f8f.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 08:30:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731429008; x=1732033808; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xwqekHTXSDgXsDI3RdTo14WCCfnnAAvGaD9ots6hOTU=;
-        b=txLV2or7XBsS4LjYgw9SJoupHhZnFkIa9iV8pKPj0Jqo5gPOgxNP0Xn/UwfCKJO+SO
-         ddplx+5aBUWJwiB/Eg3ygj0CwYurxhk2J6CllwTxtEkc+/O8SfIuCI7iB3zVpzgDbfCQ
-         1rSc5CLjUFGwOpnZgKKP1jYOG7ttkOuTIB79Ue0JHh5vxVA0KFgEAnicHM2OM4hyH4HZ
-         H+Z+as0ewKCBSePh5sCGdtP/sNDhcf2LfRsGJZz6cD9jxEmRLIIocAOckMMGcLywz/oP
-         toI+B209nrtYyjPKMDzoE0/+SEK7CTViLG1TUi/bwLmtohNqdT+JhrtxphJGrBGZ+mfz
-         SD4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731429008; x=1732033808;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xwqekHTXSDgXsDI3RdTo14WCCfnnAAvGaD9ots6hOTU=;
-        b=xUN/UxjMLPje6YSCZNVeyOzsKc/smc/cOPeyHg+MeUYz2EmkBX75+WqinV/3nIqzN+
-         QhihAfIeowDi4My82xi0oWiaIZ3iWHcWUscRWgPYBAoWlGTGKV5kc+K72xkFgS3ygv2D
-         MoGhrrU47O/RLE4xL3WOY1msGrTv7DBxOnvzp7/m+vDEiKMA0hg6bWlPuUuMjwlKEeBT
-         4PwMqWVlnIdkqQ3l/LyQY17wI6cW8gHbOlBUjaODJDvCSwKBt/kvbWn9XbrY8rKC9sS3
-         q5HwnZFUEwOTdd3uYkj5b1ZVltuvy8VE8Ch89mW3jOjY+L/3JJdyImEbgJ1JVAFuwbZw
-         8JJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnGJ17D2YrlllVdX30s7GREy1oM1oUSBqc445mhx1vFx6JKXHOORQRFHfV1t3dqJJFz5sq6qZtEXaC9i26WOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMdE67hJFB+phzt6Zw8exky/7l7e4Qp/h7Pv5LHVlcWGa13oPa
-	DrecjWHzEKcUCmXsQ/B9Nckq3OEDR4DFeU7SRv7PGICLpPHm9Hxq+Cb6ELfdTsI=
-X-Google-Smtp-Source: AGHT+IFtALBXrwd3Y3rxevzTqm/aZf3UiOGXh6n/rVS1DJex7USZ2M5gctne+yuo9jidW5rLOTF8Dw==
-X-Received: by 2002:a05:6000:2aa:b0:374:c8e5:d56a with SMTP id ffacd0b85a97d-381f188c8ffmr14302092f8f.48.1731429007689;
-        Tue, 12 Nov 2024 08:30:07 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6c1205sm255947045e9.26.2024.11.12.08.30.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 08:30:07 -0800 (PST)
-Date: Tue, 12 Nov 2024 19:30:03 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qKIDCDSx"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id ACEB6512;
+	Tue, 12 Nov 2024 17:43:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731429780;
+	bh=65VsRjVcEe9IvdBJ/DvvVbzX+0/6GvW4V9ctYpdSrKI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qKIDCDSxxKY37Yoayj++VojJCA882nVp1mOs+5bUrDgIxFyRNST6HrdXK87+y/UTW
+	 LPJv/2w4C0hvOdZe5i47ERqp++oMfcyz1OTQZnxWnU8o1puJzQg3l+tXAyMr6p1LIG
+	 cOMxU7Wl/UXEXtiHOCk7kjkKCQ9zHC8atICcOj8Y=
+Date: Tue, 12 Nov 2024 18:43:05 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scftorture: Handle NULL argument passed to
- scf_add_to_free_list().
-Message-ID: <ec532c16-c7c3-4029-b996-284ac32f9820@stanley.mountain>
-References: <2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain>
- <20241112162023.glRj_YAz@linutronix.de>
+Subject: Re: [PATCH next] drm: zynqmp_dp: Unlock on error in
+ zynqmp_dp_bridge_atomic_enable()
+Message-ID: <20241112164305.GA24067@pendragon.ideasonboard.com>
+References: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
+ <20241112052754.GB21062@pendragon.ideasonboard.com>
+ <37be000a-3ef8-4df4-aefa-b4d73487ad27@linux.dev>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241112162023.glRj_YAz@linutronix.de>
+In-Reply-To: <37be000a-3ef8-4df4-aefa-b4d73487ad27@linux.dev>
 
-On Tue, Nov 12, 2024 at 05:20:23PM +0100, Sebastian Andrzej Siewior wrote:
-> Dan reported that after the rework the newly introduced
-> scf_add_to_free_list() may get a NULL pointer passed. This replaced
-> kfree() which was fine with a NULL pointer but scf_add_to_free_list()
-> isn't.
+On Tue, Nov 12, 2024 at 09:41:58AM -0500, Sean Anderson wrote:
+> On 11/12/24 00:27, Laurent Pinchart wrote:
+> > Hi Dan,
+> > 
+> > Thank you for the patch.
+> > 
+> > On Mon, Nov 11, 2024 at 12:06:10PM +0300, Dan Carpenter wrote:
+> >> We added some locking to this function, but accidentally forgot to unlock
+> >> if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
+> >> 
+> >> Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
+> >> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > 
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > Sean, how about replacing all the mutex_lock()/mutex_unlock() calls
+> > you've added in a7d5eeaa57d7 with guards ?
 > 
-> Let scf_add_to_free_list() handle NULL pointer.
-> 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain
-> Fixes: 4788c861ad7e9 ("scftorture: Use a lock-less list to free memory.")
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> 
-> Thank you Dan. I had to look twice, that `scfsp' above looked almost
-> identical.
+> I have no objection to that.
 
-Yeap...  Me too.  #LowHammingDistance
+Would you send a patch ? Otherwise I can do it.
 
-regards,
-dan carpenter
+-- 
+Regards,
 
+Laurent Pinchart
