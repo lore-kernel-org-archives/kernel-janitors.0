@@ -1,75 +1,63 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540852101BE
-	for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 10:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54772123F0
+	for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 10:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406991; cv=none; b=ObsrTUzwmZR4pcp8KoYDvDxa2MGHMGNM1koZSB0/mAqGo6ozShBu6vf/1WsGcOSNtjyw36FlItV7tQOdCDLwgTXau9YBdBoAEdHlCIBWWORjYfS7fPLmuHUCg/Ktd2rK8K2wiw21URWdPSCLaNwyEZ1LbklCggCpcxyLeKAN8TQ=
+	t=1731407009; cv=none; b=s8c9QGj86ZpA4IBNRGC3CiMS//8UF31QUF6rEU/PaQfn+t/f3oBPd33fZNBQkDrPgVsdFHpB64Z584Dstg9cz7cpS12LPNhTWfIbCwsET/fU86ElOJaaqk4IXLjnEv1JNbVgLDBM0TWfQ1SsMaV4Mi+iGBoohwf0fojyjwn2qMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406991; c=relaxed/simple;
-	bh=e/QqDzlVLbsFjZCG9tc6aZaGsN5YICbP0g+qKrCy2XM=;
+	s=arc-20240116; t=1731407009; c=relaxed/simple;
+	bh=5zn6QDm+5JONhM/X6FzXT+b3IMfiG4Yf/coEYQ5RTcY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bJhjduzEyFh+PnrVaqq3jWd5zyXr8IX6Kr2elJRq8lt0dE2FnY1G1Lzi7AOoQuJ+TbpEqLvZrVuu+fcE+XY3f4oABEOMqg+Q388poEOpkwM3jmE0lK4crnkBd6TEEMVrLsOGzmkD1XZmPqTMH4mcrpRZbgAK2Trbz60Xe2Guylw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qjUh3xZj; arc=none smtp.client-ip=209.85.218.52
+	 Content-Disposition; b=nizmHt5IiviBcB5ZmLyk09OYGJncTRHCWSbT2V6EpM2ZKzFQNga84usC+4JNDzvqsRp/Xxdz0d/C7v/kZLLtDfwFe77ZRcBc5YdaIIx+22lDLXcoBh2kIwT5yKab7pafoWSejGdw+xTRmmjYggd70GwuogZioLiRJJLZYEK2r4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nVBXrdg8; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qjUh3xZj"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a4031f69fso901182966b.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 02:23:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nVBXrdg8"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so363945466b.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 02:23:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731406988; x=1732011788; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731407006; x=1732011806; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ezd42G+JwcNpijWol87RV7vPAsy6HdlYEXoioaZ3yUM=;
-        b=qjUh3xZjuf2V4Kddsrd7fwDSoiID/KN/poQOgn6lFjGqf4cDP60PVTGIp5iIspKcsa
-         FFtdv/GuG9/g6uff3JulmtVQoZsUwwVelUPid7NrEWHF7ty9W2R7RfZ70gp466kIk76h
-         DbhTaN2id+s+R1c/qSyXIXdyP4B70zFL1Sq3fvjowOvu4pKb76+Md0FCJ1dacCCg5AS3
-         OdedmMS/fwSLeNObBWelp8GbdqzofpMInQueJ29DsmQgj8ef38Sbfd4rmqdDnvEFr1BC
-         y9G11KNFoADEQ4x26C+WAfVr6A9V+KhYXTkKKfHaqePkMXTzjRwxPd/hkjoo1xGIf/E5
-         vf7g==
+        bh=9UJLcVLjMsCGZ1NrOuqE4NTMM7+4VNPA65AdGe5Wz2E=;
+        b=nVBXrdg8lXKc/uMws2ehN1+aM87Nrvvxax6EIWHy4Ro30tBeW8xo+74epQDOIClmnU
+         5AQnCx80E0pJNDkeyx0JO9+IwcRQ3yLliJcpwv/i4jw87lr3PNNJVDKmc0Cbgm/pZbvk
+         Q5w64jsl1nzK57BqbNUe4cQJnjZefxt5fqXNQSg1I3bWFcWIPIj3ZMmp+fZkTCydpwZR
+         BF8m+hMtllWgRrOfb+vVxLiGMcNy6UnU8MS1LpctHmMEz8IbHmey6J0CSQFK0L9O6wOB
+         aWu1K7rUFmJNhmDtE2XajzommiuWb/HjpXLKGfjlNCUfFb1mtYj7cUnj131t8khAk50O
+         O/wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731406988; x=1732011788;
+        d=1e100.net; s=20230601; t=1731407006; x=1732011806;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ezd42G+JwcNpijWol87RV7vPAsy6HdlYEXoioaZ3yUM=;
-        b=jx54AqiIyuHtzLPhrR+eFr6xeXEUeb+SoqRv4sdHpYJYaAlfP/sbR4B3QLCSHqfI84
-         mgOCO3xlhbbvBxn22tM944JpevOYwL2zbWgLUHrOYv+hYMpGd3yNHuuZwfvdRMa78hYq
-         HojV0vkHinASWshIFgUqCUe90TTkr7WusN1o9BNCKLjL12e7lFpnuNt/pGs78S6uYPsL
-         vamGFcwG6JR/j3zW2PeuxJ3w+Bi4n4/pCwRBOfOnNHe+0Beifmx7L6/u9WjUpkPbn8At
-         +/XOHgkGVwBVqE5ndz9jr1XM1XRBT5GwJrJDRJ+sjmlyZOTGOjDx1bJJ2oK3Epnsu8qX
-         QYmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVC+0hg5rJ7R3hR3fwL+WxXgDv1qtssXX/0D6cqDav90EmdcSOsBLdAUGsukWmt0DJDVWLXMMnKlFB3D08mbP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyco7JZS5v6aY+fMs4Q+K/+eZ4rBlDO94GUb7LNHMgxMnu38uc0
-	vi/TpSv84xarfD2xdx4dlR/83YU4f64/I7XcnOdwwBIpF7WweLt3fmeWJ0XJIJA=
-X-Google-Smtp-Source: AGHT+IGt4j9ZZSe9rgo5rLVKL7Sw0JNMnKYRedUbOwvl2VfIbz2NdhXaY+7ntI9ZFHojloYTONpjJw==
-X-Received: by 2002:a17:907:7d8e:b0:a9a:14fc:44a2 with SMTP id a640c23a62f3a-a9eeff44f6emr1650475766b.30.1731406987590;
-        Tue, 12 Nov 2024 02:23:07 -0800 (PST)
+        bh=9UJLcVLjMsCGZ1NrOuqE4NTMM7+4VNPA65AdGe5Wz2E=;
+        b=T+vPW50pw4mXw3ZtDK8f/JC6Eo8VB4N+aTjhDhlbkjxZBkCtlMTQrv2ZzrqGBoFHPQ
+         oPiFIXZ4SwSsWXkCULiqG8CZCR4oezRREas/Hi/nE2NyebYkpGvG6dqo5SoRUSuTnZm0
+         LHz2LPf/qN/G/N8uklkryD/NM8pxmb2Tgjgam6S6a5u3JMLM7CtmaMl5EJ32vx49MYiO
+         PU5LGY0phrdVZFzoGdFk+IxVnOGuaK3cTiQurnTmInTK7rGUAYE3pOJ/OUKT6XTSD8Ct
+         N78MaAlRWQpZ3BeVEDskCgi5EW9K4+0ubz4wwAE3gMjlv/TiQPDUiV9+ep+h5e7DsjMG
+         zzMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXz+cS0Mf0AW4QvXeT9vmxNVvjOD7TmEjSsdL+piZ7febf6BcnqA9cMVi04lseeUwdyS7zojbszKm3rBlA+ZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG/J/Ileiqo4/OovcyzxPd79CtD3U953h2J/nqEZFcUuJYxqio
+	Q0P7lhJW0teyh/RIWTeIQ3UX/siKXgRvL21H+3rPJutfvgrRGzwsM+tnLAyHpGWS+SVtlavSLuA
+	f
+X-Google-Smtp-Source: AGHT+IFT9TkjV97fDB0mBH8vI112tVWHpyJwXeKKCy8t3BAkylLtZW5YvoHNeLMzXihVqki276S4JQ==
+X-Received: by 2002:a17:907:1b0e:b0:a9a:1792:f05 with SMTP id a640c23a62f3a-aa1b10a45a5mr234361466b.31.1731407006255;
+        Tue, 12 Nov 2024 02:23:26 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9f08c9ae30sm394026966b.55.2024.11.12.02.23.06
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0def900sm703662766b.147.2024.11.12.02.23.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 02:23:07 -0800 (PST)
-Date: Tue, 12 Nov 2024 13:23:03 +0300
+        Tue, 12 Nov 2024 02:23:25 -0800 (PST)
+Date: Tue, 12 Nov 2024 13:23:22 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/bridge: ite-it6263: Prevent error pointer
- dereference in probe()
-Message-ID: <804a758b-f2e7-4116-b72d-29bc8905beed@stanley.mountain>
+Subject: [bug report] scftorture: Use a lock-less list to free memory.
+Message-ID: <2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,33 +66,80 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-If devm_i2c_new_dummy_device() fails then we were supposed to return an
-error code, but instead the function continues and will crash on the next
-line.  Add the missing return statement.
+Hello Sebastian Andrzej Siewior,
 
-Fixes: 049723628716 ("drm/bridge: Add ITE IT6263 LVDS to HDMI converter")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/bridge/ite-it6263.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Commit 4788c861ad7e ("scftorture: Use a lock-less list to free
+memory.") from Nov 8, 2024 (linux-next), leads to the following
+Smatch static checker warning:
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
-index cbabd4e20d3e..5f138a5692c7 100644
---- a/drivers/gpu/drm/bridge/ite-it6263.c
-+++ b/drivers/gpu/drm/bridge/ite-it6263.c
-@@ -845,8 +845,8 @@ static int it6263_probe(struct i2c_client *client)
- 	it->lvds_i2c = devm_i2c_new_dummy_device(dev, client->adapter,
- 						 LVDS_INPUT_CTRL_I2C_ADDR);
- 	if (IS_ERR(it->lvds_i2c))
--		dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
--			      "failed to allocate I2C device for LVDS\n");
-+		return dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
-+				     "failed to allocate I2C device for LVDS\n");
- 
- 	it->lvds_regmap = devm_regmap_init_i2c(it->lvds_i2c,
- 					       &it6263_lvds_regmap_config);
--- 
-2.45.2
+	kernel/scftorture.c:393 scftorture_invoke_one()
+	error: we previously assumed 'scfcp' could be null (see line 382)
 
+kernel/scftorture.c
+    342 static void scftorture_invoke_one(struct scf_statistics *scfp, struct torture_random_state *trsp)
+    343 {
+    344         bool allocfail = false;
+    345         uintptr_t cpu;
+    346         int ret = 0;
+    347         struct scf_check *scfcp = NULL;
+    348         struct scf_selector *scfsp = scf_sel_rand(trsp);
+    349 
+    350         if (scfsp->scfs_prim == SCF_PRIM_SINGLE || scfsp->scfs_wait) {
+    351                 scfcp = kmalloc(sizeof(*scfcp), GFP_ATOMIC);
+    352                 if (!scfcp) {
+    353                         WARN_ON_ONCE(!IS_ENABLED(CONFIG_KASAN));
+    354                         atomic_inc(&n_alloc_errs);
+    355                         allocfail = true;
+    356                 } else {
+    357                         scfcp->scfc_cpu = -1;
+    358                         scfcp->scfc_wait = scfsp->scfs_wait;
+    359                         scfcp->scfc_out = false;
+    360                         scfcp->scfc_rpc = false;
+    361                 }
+    362         }
+    363         if (use_cpus_read_lock)
+    364                 cpus_read_lock();
+    365         else
+    366                 preempt_disable();
+    367         switch (scfsp->scfs_prim) {
+    368         case SCF_PRIM_RESCHED:
+    369                 if (IS_BUILTIN(CONFIG_SCF_TORTURE_TEST)) {
+    370                         cpu = torture_random(trsp) % nr_cpu_ids;
+    371                         scfp->n_resched++;
+    372                         resched_cpu(cpu);
+    373                         this_cpu_inc(scf_invoked_count);
+    374                 }
+    375                 break;
+    376         case SCF_PRIM_SINGLE:
+    377                 cpu = torture_random(trsp) % nr_cpu_ids;
+    378                 if (scfsp->scfs_wait)
+    379                         scfp->n_single_wait++;
+    380                 else
+    381                         scfp->n_single++;
+    382                 if (scfcp) {
+
+This code assumes that scfcp can be NULL.
+
+    383                         scfcp->scfc_cpu = cpu;
+    384                         barrier(); // Prevent race-reduction compiler optimizations.
+    385                         scfcp->scfc_in = true;
+    386                 }
+    387                 ret = smp_call_function_single(cpu, scf_handler_1, (void *)scfcp, scfsp->scfs_wait);
+    388                 if (ret) {
+    389                         if (scfsp->scfs_wait)
+    390                                 scfp->n_single_wait_ofl++;
+    391                         else
+    392                                 scfp->n_single_ofl++;
+--> 393                         scf_add_to_free_list(scfcp);
+
+Originally this was a kfree(scfcp) which can accept a NULL, but
+scf_add_to_free_list() can't handle a NULL parameter.
+
+    394                         scfcp = NULL;
+    395                 }
+    396                 break;
+    397         case SCF_PRIM_SINGLE_RPC:
+
+regards,
+dan carpenter
