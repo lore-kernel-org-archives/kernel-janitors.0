@@ -1,103 +1,110 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E36E2123DC;
-	Tue, 12 Nov 2024 10:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540852101BE
+	for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 10:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406348; cv=none; b=CO3nAWsMCsr3cNE5djqtsGpRxmJvttaIZdK6sFNn6K41VxaDJULcvP9VVdw9IRDAVfjmW4jckMz9OYq/HZZHWg7WUlqKQhmfxxyTrGL3M37jXkJC+ew0Mc5OdMaPhMsJPzXcpp9Z+j4ypWrgyPystVSvmFGMOhlPB/2xDsBr5rM=
+	t=1731406991; cv=none; b=ObsrTUzwmZR4pcp8KoYDvDxa2MGHMGNM1koZSB0/mAqGo6ozShBu6vf/1WsGcOSNtjyw36FlItV7tQOdCDLwgTXau9YBdBoAEdHlCIBWWORjYfS7fPLmuHUCg/Ktd2rK8K2wiw21URWdPSCLaNwyEZ1LbklCggCpcxyLeKAN8TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406348; c=relaxed/simple;
-	bh=lrclKszYRsv2TFhiNgHUYKis9sZV2lC17OkxDG08BdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UA/cAy8NFAcWv7+a3cR3J6BdNvSN10NjUg/eCow+oKNJ5COBTUeGVZeo/qZwSiEefwAb+lbf3Kfjm7fhKoXhLB/C/DggjWzD3HOc49c4GFcZz9e2HQJWtwKOinccR65WtpJ8B60JzCd3jDl7HeiaJxah9CRguxmdABqM0eXlXWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sf0hPrYB; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731406991; c=relaxed/simple;
+	bh=e/QqDzlVLbsFjZCG9tc6aZaGsN5YICbP0g+qKrCy2XM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bJhjduzEyFh+PnrVaqq3jWd5zyXr8IX6Kr2elJRq8lt0dE2FnY1G1Lzi7AOoQuJ+TbpEqLvZrVuu+fcE+XY3f4oABEOMqg+Q388poEOpkwM3jmE0lK4crnkBd6TEEMVrLsOGzmkD1XZmPqTMH4mcrpRZbgAK2Trbz60Xe2Guylw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qjUh3xZj; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sf0hPrYB"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d63a79bb6so3618599f8f.0;
-        Tue, 12 Nov 2024 02:12:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qjUh3xZj"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a4031f69fso901182966b.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 02:23:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731406346; x=1732011146; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1731406988; x=1732011788; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pxM4gTQSQABswxwP+nf/NclermLnvfNjsT0wLCiH6gI=;
-        b=Sf0hPrYBOJ7JeyVLOIGUxr9CR3uBkmwRLZG59J5fJUfWMWaXLjQ7ZyOuFihkYnRH9l
-         o933V5ZksDrwiXnCiICmz9OpL6h370OsDx7A6R5JPKkHv2+v3YPBOLB2bKWC+jkEWZT+
-         7X6J8UvCwkyImzbWBjCJSuzMSN9CQSbN/iZOFa9a/NRp6fk6/CK7TupCEou5dUOSvJ3P
-         Pv1YnJB5RVjcHX+SWaZC70TjQpjtMcDBf1HH2KOawvqPyHb0pLu4xOdPa+thJ9D6DmjD
-         tOQe6IOLXz6En5CdHiN5XnMO/p/QHRmzb69fWYPY5g39UfTFSKQHSCYPoGxjPxwQ3+Lf
-         4Z6w==
+        bh=Ezd42G+JwcNpijWol87RV7vPAsy6HdlYEXoioaZ3yUM=;
+        b=qjUh3xZjuf2V4Kddsrd7fwDSoiID/KN/poQOgn6lFjGqf4cDP60PVTGIp5iIspKcsa
+         FFtdv/GuG9/g6uff3JulmtVQoZsUwwVelUPid7NrEWHF7ty9W2R7RfZ70gp466kIk76h
+         DbhTaN2id+s+R1c/qSyXIXdyP4B70zFL1Sq3fvjowOvu4pKb76+Md0FCJ1dacCCg5AS3
+         OdedmMS/fwSLeNObBWelp8GbdqzofpMInQueJ29DsmQgj8ef38Sbfd4rmqdDnvEFr1BC
+         y9G11KNFoADEQ4x26C+WAfVr6A9V+KhYXTkKKfHaqePkMXTzjRwxPd/hkjoo1xGIf/E5
+         vf7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731406346; x=1732011146;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1731406988; x=1732011788;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pxM4gTQSQABswxwP+nf/NclermLnvfNjsT0wLCiH6gI=;
-        b=bOg+TFprfDWSi8TJuxodULGM36ElO5g5R3zDXCaN9SytvwfhNU/tGmWqttZDIgpRVV
-         1OiRylEsI5uSLCOM02x759aSBE2naDb5tyKBE+ROqCDr5IUolZYGiNyBVEYVceMdSyyY
-         hydGITioJZSvMpI/oMn+9nmDq29awu7aYugryeRROl62cADi+cJ0g/dhbmMdvGHDk+Fg
-         epGqFY9DCa9cW+X7RfMcwK3Zllch6OHK0fwNrY9zgWhvNcNmkyMZmHlNo8SofxQdC8hH
-         I20uwClIQFqCTo7SUAe1b60Cp/X86ETz4UXs86A5bMfZZRzQFuRkfDE/6ZLHBTNRFmhW
-         CQWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW47nSC5K60yEBAe9qcDFWtA4xVMHcyLIDIPZQ1PUq0xo2DCVDue5Hnt/1BEJAvav3lg21v0nTI0xhIYlSXcDA=@vger.kernel.org, AJvYcCXVv51cjZrnf6CiCw+1CRik+C4tZ0pfQRBhssq8JNtcCAzBr2IcDlKL/KpGbbd2uYkgBb5hgjXeDv0mVsYz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1z4Tu+onzcLcBh53706djA1HIgGi0sEeH3LmA0pE91kOn+u24
-	HrDpZ8Jt3HZs9tj1t+zL0dAJ9nvuiJ67LRsAvKdAiaFYjaWEqqpj
-X-Google-Smtp-Source: AGHT+IF2lKwcu2657ck5gxeudUjTWht1t6K5qHLNTn06ITYmACxEnF6yEezmxaFASANVfwEza7fpUw==
-X-Received: by 2002:a05:6000:1844:b0:368:3731:1613 with SMTP id ffacd0b85a97d-381f172108dmr11334219f8f.13.1731406345364;
-        Tue, 12 Nov 2024 02:12:25 -0800 (PST)
-Received: from [192.168.1.248] ([194.120.133.65])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432b0562ccdsm200920345e9.23.2024.11.12.02.12.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 02:12:25 -0800 (PST)
-Message-ID: <13db01a1-1c8b-4d56-ac2d-9f39082c2644@gmail.com>
-Date: Tue, 12 Nov 2024 10:12:24 +0000
+        bh=Ezd42G+JwcNpijWol87RV7vPAsy6HdlYEXoioaZ3yUM=;
+        b=jx54AqiIyuHtzLPhrR+eFr6xeXEUeb+SoqRv4sdHpYJYaAlfP/sbR4B3QLCSHqfI84
+         mgOCO3xlhbbvBxn22tM944JpevOYwL2zbWgLUHrOYv+hYMpGd3yNHuuZwfvdRMa78hYq
+         HojV0vkHinASWshIFgUqCUe90TTkr7WusN1o9BNCKLjL12e7lFpnuNt/pGs78S6uYPsL
+         vamGFcwG6JR/j3zW2PeuxJ3w+Bi4n4/pCwRBOfOnNHe+0Beifmx7L6/u9WjUpkPbn8At
+         +/XOHgkGVwBVqE5ndz9jr1XM1XRBT5GwJrJDRJ+sjmlyZOTGOjDx1bJJ2oK3Epnsu8qX
+         QYmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC+0hg5rJ7R3hR3fwL+WxXgDv1qtssXX/0D6cqDav90EmdcSOsBLdAUGsukWmt0DJDVWLXMMnKlFB3D08mbP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyco7JZS5v6aY+fMs4Q+K/+eZ4rBlDO94GUb7LNHMgxMnu38uc0
+	vi/TpSv84xarfD2xdx4dlR/83YU4f64/I7XcnOdwwBIpF7WweLt3fmeWJ0XJIJA=
+X-Google-Smtp-Source: AGHT+IGt4j9ZZSe9rgo5rLVKL7Sw0JNMnKYRedUbOwvl2VfIbz2NdhXaY+7ntI9ZFHojloYTONpjJw==
+X-Received: by 2002:a17:907:7d8e:b0:a9a:14fc:44a2 with SMTP id a640c23a62f3a-a9eeff44f6emr1650475766b.30.1731406987590;
+        Tue, 12 Nov 2024 02:23:07 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9f08c9ae30sm394026966b.55.2024.11.12.02.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 02:23:07 -0800 (PST)
+Date: Tue, 12 Nov 2024 13:23:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/bridge: ite-it6263: Prevent error pointer
+ dereference in probe()
+Message-ID: <804a758b-f2e7-4116-b72d-29bc8905beed@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] mm: shmem: Fix error checking on utf8_parse_version
- failures
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
- Christian Brauner <brauner@kernel.org>,
- Gabriel Krisman Bertazi <gabriel@krisman.be>,
- Andrew Morton <akpm@linux-foundation.org>, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241112095449.461196-1-colin.i.king@gmail.com>
- <3b865b4a-5d82-4d11-a60c-f4bea6cd25c0@igalia.com>
-Content-Language: en-US
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <3b865b4a-5d82-4d11-a60c-f4bea6cd25c0@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 12/11/2024 10:06, André Almeida wrote:
-> Hi Colin,
-> 
-> Em 12/11/2024 06:54, Colin Ian King escreveu:
->> Currently the error check on the call to utf8_parse_version is always
->> false because version is an unsigned int and this can never be less
->> than zero. Because version is required to be an unsigned int, fix the
->> issue by casting it to int just for the error check.
-> 
-> Why is it required to be an unsigned int?
+If devm_i2c_new_dummy_device() fails then we were supposed to return an
+error code, but instead the function continues and will crash on the next
+line.  Add the missing return statement.
 
-It's being passed to various functions that expect unsigned int, so I 
-presume it was intended to be of that type.
+Fixes: 049723628716 ("drm/bridge: Add ITE IT6263 LVDS to HDMI converter")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/bridge/ite-it6263.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Colin
-
-> 
->>
->> Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Another fix was already sent: https://lore.kernel.org/lkml/20241111- 
-> unsignedcompare1601569-v1-1-c4a9c3c75a52@gmail.com/
+diff --git a/drivers/gpu/drm/bridge/ite-it6263.c b/drivers/gpu/drm/bridge/ite-it6263.c
+index cbabd4e20d3e..5f138a5692c7 100644
+--- a/drivers/gpu/drm/bridge/ite-it6263.c
++++ b/drivers/gpu/drm/bridge/ite-it6263.c
+@@ -845,8 +845,8 @@ static int it6263_probe(struct i2c_client *client)
+ 	it->lvds_i2c = devm_i2c_new_dummy_device(dev, client->adapter,
+ 						 LVDS_INPUT_CTRL_I2C_ADDR);
+ 	if (IS_ERR(it->lvds_i2c))
+-		dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
+-			      "failed to allocate I2C device for LVDS\n");
++		return dev_err_probe(it->dev, PTR_ERR(it->lvds_i2c),
++				     "failed to allocate I2C device for LVDS\n");
+ 
+ 	it->lvds_regmap = devm_regmap_init_i2c(it->lvds_i2c,
+ 					       &it6263_lvds_regmap_config);
+-- 
+2.45.2
 
