@@ -1,132 +1,92 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF75200B88;
-	Tue, 12 Nov 2024 15:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE35C20494F
+	for <kernel-janitors@vger.kernel.org>; Tue, 12 Nov 2024 16:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731425306; cv=none; b=RBPE92GJnf1uFH/2bqGHcQ4N30XldAja7DOkr0P2gwS5AbPlHtMxtOmsYbXgJobZhbPetq76Cze1hGg+z6hOAFij/lEnh6XueDC+H7ySoPRUbYLreEtsV34cmlBdk6Law346MVngVWd6LO4rftu+ySxfuO9cR8DePPonKIgFfs8=
+	t=1731428430; cv=none; b=WZN/K0YBZNe+JmuQ+Q/wIggF36mOxlBNcSqAoOCKCy+TjhqqivwgtpT/BHPSomLjY9RLrbm+zh3Uk0le48Td543sDkbuQUsbF45d0HAHx5wj3YVxiezcmjtvbeALAh+BafkjkxPWrLSmu0rZTkl2MJo6n2HCGcsiolqfpB4CfQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731425306; c=relaxed/simple;
-	bh=06B/5dHzmYo8ngAYwiLFmDVK9ypYG7My4Hwdf/m1UbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WbTSqSQhgTdy+uTUPUFNj943ls4AiSGvBnPXO7+HhUDZz9Ves4r29uDLiDHNDlgOSgIjis7Ep0ssrMkjkvVddVw70pGnaz5gjVGDmNggrs8RZfMWQvzVwMLv7oEln7KWJvru2bc711j4n5oL+ry5TJYQ0OhD8qmyhAZ4smRGLiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PD201mb+; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731428430; c=relaxed/simple;
+	bh=kT/ta0BjrBum/OraAqfdb+N4Gy//ectNDOqvgMI46rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t0r67I7RkB/qQz6nor1VrlhcrAkWKHNrQt5A2AgS04FPETGoyQUtRNdSbkst8iwoVrjMSCSrWA1aHBDoKataMBJP8Qrywb7noD/wlJKhfKHR719zsA0WHMtDx+uEBjxmSPj+XneI8F5f8C4kEVBP2Pk43sdjVrjIYDzA1gJG0XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nhA9dOsY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oHT3w37J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PD201mb+"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9e71401844so733175466b.3;
-        Tue, 12 Nov 2024 07:28:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731425303; x=1732030103; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ayot+HwfR74CXO2T1cgPWYEBdAmHU6mQcSK5AjZEZ+g=;
-        b=PD201mb+SmoVYDnu0JZYLx/azc+SRT9by7mXKZ1QC91rb/82/sX0viFy4TcaPs3p2O
-         /qRI3W56F58/Yjr+cQB177NUiaA6bHQzrdIXGgVtfMYr4eWAMzEaN9IX2hzm2G/AJ2KF
-         /UpHJYsqHbEZjIoy6nmbZjTlfSpO/+vy1+7fH3BR06syUEEWgqNB2tTE35vEutrNfaSg
-         N6b8kouZvU09Qi0eNYXJZOzBN4vw5F3vaUvQGrGv8iYwkxbUqJcOcQfmOZo6BheyloVt
-         cq22cvheE6BH2NWoKXCBfWea3RUrGiBBTzIFOwYDBuffs46u6TOCsmr3qicn56YLtLOo
-         h/6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731425303; x=1732030103;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ayot+HwfR74CXO2T1cgPWYEBdAmHU6mQcSK5AjZEZ+g=;
-        b=kZLwaOsQAH8nvmCC9F2Z9Fe4/tuxnmr/Qizzb+pXgpWpz4pglMN9FKJ04HYNbuMia/
-         qsJhbxYTbgRFoo1y/rUHaHxFUlLJydu6Z68LYrfIEiQYIxk/UKlT8DK4v3bb1UtUbdzj
-         EJNa6wMqu1BOVli50A+lzlOjzqrKWM5et7tV7HPTAMmIzs26GtmUn8MBqilagNCYgfVk
-         ZNvEde2/H6qRAfJEQl161oaW1BM62JHLDZqBO7J3odS4uuRMLEENBU+enki7bR91xZ4i
-         dmrrFB6rf/mLR43HibZt14XU8WBUqlYlaw1HIkIUb2eGyNhjzJCISPYlRJIZ6I6Foarx
-         Jx2A==
-X-Forwarded-Encrypted: i=1; AJvYcCU1niB2Xk6V39TyVPaNRUNvynKsZVVBxEFfP6tbA6db7sMTnufBCre45V4GaSu7BjLsntxGVpIw0dHCXfDw@vger.kernel.org, AJvYcCWr/bHgpyZ8fw+WYKQ3lLvhNjOlxOmYcX8Hrxj7GASK0P/qbTFb6IlapvDjbV+DY2RNtObUe0mLzMxiKfyh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc3uYJfhRUyb/ockfJ6p+WgVauKRvcfekyrJ/miWfsB4L23520
-	uvKU05wfP+0Mkji3gyD3sTcAM0D1/YCEEZt3w0K2qXHxWgEGC5Q3reU9FALH
-X-Google-Smtp-Source: AGHT+IFk9HNfnlRuALtk4W7HEqbT7NEtlHSMqk6UkHeiuxG0PmCJQrKfLmHIBaR/9yR7cq9nw587NA==
-X-Received: by 2002:a17:906:d552:b0:a9e:c4df:e3c5 with SMTP id a640c23a62f3a-a9ef0010e3cmr1550741766b.54.1731425302490;
-        Tue, 12 Nov 2024 07:28:22 -0800 (PST)
-Received: from [87.246.220.203] (netpanel-87-246-220-203.pol.akademiki.lublin.pl. [87.246.220.203])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a18b15sm730254166b.18.2024.11.12.07.28.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 07:28:21 -0800 (PST)
-Message-ID: <34bc44c2-e1d2-4610-8a87-f20078592e7e@gmail.com>
-Date: Tue, 12 Nov 2024 16:28:19 +0100
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nhA9dOsY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oHT3w37J"
+Date: Tue, 12 Nov 2024 17:20:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731428424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q90bkERe6YhsoeONJXZvnBhmqp1lWJFNK9oSdTqjLZY=;
+	b=nhA9dOsYMM3apDQF4XBzJ5szDo3ZVuM76jShmQJivXCH8J7rvMBrwBjHoUl/RVoz4osbwA
+	trzkDDAMJnNkopqFyGn/vfUHfSt9pLVyLgAEOOk8aNsta3MkNI5KKY9pkl7eVGMOVSbYnT
+	trC+D49AGbO4Tg+5hE35dfVGhCHV1vFM0gF5w2GMvzgfpGKCB7tPk6gWtwkGO38LGLIVDf
+	dum2L2y1ggfILOEd+fi0jIP5s33IfhhEKmVNtUOALkOszdGNM2o4uyMg+Gwe/vMIXKyWsj
+	06gIiJuVsyOfm0L90P71opUF/l8ern1rsBxo9txH5MrduEmGKOw/Hf7wAn0mYQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731428424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Q90bkERe6YhsoeONJXZvnBhmqp1lWJFNK9oSdTqjLZY=;
+	b=oHT3w37JWwnx5bNMNq156la6gFK2XR3aTpeDoXUw/4sf0ofEAugeiFbJht8uqRD/LupVb9
+	aLA57u68R/GHsLDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] scftorture: Handle NULL argument passed to
+ scf_add_to_free_list().
+Message-ID: <20241112162023.glRj_YAz@linutronix.de>
+References: <2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/a5xx: Fix dereference of pointer pdev before null
- check on pdev
-To: Colin Ian King <colin.i.king@gmail.com>, Rob Clark <robdclark@gmail.com>,
- Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241112132005.469357-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-Autocrypt: addr=konradybcio@gmail.com; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20241112132005.469357-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain>
 
+Dan reported that after the rework the newly introduced
+scf_add_to_free_list() may get a NULL pointer passed. This replaced
+kfree() which was fine with a NULL pointer but scf_add_to_free_list()
+isn't.
 
+Let scf_add_to_free_list() handle NULL pointer.
 
-On 11/12/24 14:20, Colin Ian King wrote:
-> The pointer config is dereferencing pointer pdev before pdev is null
-> checked, this could lead to a potential null pointer dereference on pdev.
-> Fix this by only assinging config after pdev has been null checked.
-> 
-> Fixes: 736a93273656 ("drm/msm/a5xx: really check for A510 in a5xx_gpu_init")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain
+Fixes: 4788c861ad7e9 ("scftorture: Use a lock-less list to free memory.")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
 
-I'd rather drop this check, the only call chain is rather
-safe here
+Thank you Dan. I had to look twice, that `scfsp' above looked almost
+identical.
 
-Konrad
+ kernel/scftorture.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/scftorture.c b/kernel/scftorture.c
+index eeafd3fc16820..d86d2d9c46248 100644
+--- a/kernel/scftorture.c
++++ b/kernel/scftorture.c
+@@ -155,6 +155,8 @@ static void scf_add_to_free_list(struct scf_check *scfcp)
+ 	struct llist_head *pool;
+ 	unsigned int cpu;
+ 
++	if (!scfcp)
++		return;
+ 	cpu = raw_smp_processor_id() % nthreads;
+ 	pool = &per_cpu(scf_free_pool, cpu);
+ 	llist_add(&scfcp->scf_node, pool);
+-- 
+2.45.2
+
