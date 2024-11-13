@@ -1,102 +1,90 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006E01DF75C;
-	Wed, 13 Nov 2024 14:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DA1487B0
+	for <kernel-janitors@vger.kernel.org>; Wed, 13 Nov 2024 14:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731508979; cv=none; b=D61uE520Zwk72Qahtay7UDrriLa4sBRbKyGij2BEBGBvw6I/NlWW4nVBE+qwWZxXadFXlZGLAl9jUsid5SjfoB7HWU3LcrDbfiGPFIdyxJNxS9X7EkittEEU1o+yhTN8yWpTC6T6hHUAhtSmlHqw/nTu6Wjv1fujfRbvbG6jBZ4=
+	t=1731509837; cv=none; b=foH4fupHNOPhr67c7aOPGG6DF8iZUYV5CffP3K8z5stG41Dc9QRQxmBlSz3icRI7pFkEQ4jpqlhKp9ms584lcMZzt3qYXSANlge0lelgYZqeLJ1uecsFrY9yXZd+4DfwqvZNAbcG0HbYwmkHGhOZT4NwE6dLU2ZpEjjBc+828Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731508979; c=relaxed/simple;
-	bh=MIxc9pb3A2IxQL5HlFSEwl7Wd892uNstH+zzZQyRacA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=c08zh6lV47FeMguVzKrQiVHYyOsYYx4/SppqfCRhaKLIk+tilfe+rvwGRSpktpuhLLFgU9s9oKDnCSiK5L/9mHBGN6UN4tEF1FR6u83Xo+WuePSIlpdvSo+O0PZFs5Y2uz3kIZSIwapeGLkjUgc9RVmgddgzmC/kR+bYI0n0tU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DFQKezZI; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731509837; c=relaxed/simple;
+	bh=dm4PD2uTnxJVwcgIe9XGiwRJvt8e+3sX+FsvbpWchxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQx7iJg5XCsSLprwGQcEZ9DZLAPUo/59a8lVRBcPB7mBFl5Ig9KtQL65tsKYfRSN4YG79hbx+ITLuNPSz2M2Mv7kfQDXzrCrdem8HGw2A4juxgIysc8It/bvzb0qX/JTZ18n60ZBpTWzpx6wJb9yzoxuokHuzv9ZcsTs7ls8cc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzZRDuI3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFQKezZI"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38207c86695so1630051f8f.2;
-        Wed, 13 Nov 2024 06:42:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731508976; x=1732113776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dB4na/rSVlbZKhgTIhlmuJopwJzo4mNu4vTYN5GfTVw=;
-        b=DFQKezZIp9GcvlHHkiizpqHcb7fG6XJp5Ta9ee4avo6tdGLk9DsBcpHBLlyqO+g7eV
-         qjr7WEZZWsK3M3cPW3oS6L6eXg+gNaK1cE/pALig9DYCkNXVMeHx/sxwVM+X56OJQitF
-         l64p4qyRGRUlftJ5Kb6ozbP5y0RGMHyUSHekGPcYGi/X9nDKSMwlVRuUM2N7airtkoIa
-         CSs7x7Z4UxIKEFnHGK8L6K7TTXJy+TLsSPCZffYFfwHtwqzg/y8a2CsCD88nq4SR8cqb
-         KNlYoTVApSLCccBZeK8MAE2cwUjYDG9l0ERtHqF6NQupYdrPvbeHWb++UJbevQiSJXKq
-         neVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731508976; x=1732113776;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dB4na/rSVlbZKhgTIhlmuJopwJzo4mNu4vTYN5GfTVw=;
-        b=EHIfr29GL+Y34hadmxH7PMZnQm25zpHMlG1RJHiFOhEuaWN+axNn5flDufLE2jCwOn
-         LKfz7EcXXLqAos0ow3Zr9wtpwl/c5cxQGA9SUQg2ou+XQNLK861K+WOtlUvmfzE/Vfp3
-         I6kWmoMkKPj+J14YhMWwo+lBkDTMYtwuf/2+w9ynMiB+BfYK6qdFa3jWcmVPJi2l5/6r
-         XTtBkWs6Mj+/s+Rt6A63c+xD1x01SftadnyRHS3fKuQ0IAgQyu/9YsAr+hOhXBlyTg3N
-         AQf8Ejrf1vm7UQEd23VkUzgJHKlPUxl8tWy6MlkA/Aqrhdd7+RXHTbt5BOQZTTrCVI38
-         dFqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpJlHidV3OByTgsWLjA0tr5aUK1yqblBJV/WESM6Ke63HEgr/OGikoqsYqaZxs+vUTmNcE60acgXVxxoo=@vger.kernel.org, AJvYcCX5fm2+VH9yq2qjXvUKQXnHff527fkklBhqSOQ8WOGOOaADQkoz80r4SbsXJvwqyllNvNjgnKJ0KgXtLlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLcBmRiqBXB+Q5s4Xj2drEAYqBu1/MB4FepYqmtTXCk1riePsl
-	lgwQoZrT1w0g/ZPRorrNNlpKfYiGfGVeRjZdaYktkKclOY2pVKiQ
-X-Google-Smtp-Source: AGHT+IGdB0I10MRy//DQtn2pgcBxQGYqiKCA6270vkhNXaESTEy+2CPVLajdOtMtRzZ02y71aHwvgw==
-X-Received: by 2002:a05:6000:1a8d:b0:37d:370a:5248 with SMTP id ffacd0b85a97d-381f18855f4mr18790113f8f.39.1731508976058;
-        Wed, 13 Nov 2024 06:42:56 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97ce27sm18510040f8f.29.2024.11.13.06.42.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 06:42:55 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: cx231xx: remove redundant assignment to variable value
-Date: Wed, 13 Nov 2024 14:42:55 +0000
-Message-Id: <20241113144255.1500762-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzZRDuI3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C3E5C4CEC3;
+	Wed, 13 Nov 2024 14:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731509837;
+	bh=dm4PD2uTnxJVwcgIe9XGiwRJvt8e+3sX+FsvbpWchxs=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=IzZRDuI3ibg6BCb8UsE0Vh9c5BbMJ1pNpK/bYyGUmBCM74C6prh+jRP7uc2A77jmz
+	 FFARuAOzhoUDxs8hghXWLZ9JIPM4qsXuKlnLM8Ma/j+S5wtI8wtHDGK+b6ARqEiTw2
+	 uD2qU+SQ26NhcVP5ljxhvh7jmcGhyNasVhKQhjZdnkGkn4zhZtlQz9Au4vxm2NnTwG
+	 f7+Paz2Q1xm/0Ldd1Jk7KHxaqKh/Z6Uf/mA/+AGXvyQGCHyK//R46/O/j4EgtAcN+w
+	 eztKLbrxW3kAXGRFGcjJlMpTkCH3aCoLwHgVpXZ1wkyYarmbqcDXrSAqVRxQU6JLWN
+	 UdRhPz/2VZWIg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id DA103CE0484; Wed, 13 Nov 2024 06:57:16 -0800 (PST)
+Date: Wed, 13 Nov 2024 06:57:16 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scftorture: Handle NULL argument passed to
+ scf_add_to_free_list().
+Message-ID: <78fbfaf8-3288-4849-bf51-d2a7fc8ccd57@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain>
+ <20241112162023.glRj_YAz@linutronix.de>
+ <ec532c16-c7c3-4029-b996-284ac32f9820@stanley.mountain>
+ <c7b02e51-d738-4523-b76a-c8a84be35124@paulmck-laptop>
+ <9c1bab5f-4e72-4fb5-bf3b-1599aea59e7c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c1bab5f-4e72-4fb5-bf3b-1599aea59e7c@stanley.mountain>
 
-The variable value is being assigned a value that is never read
-afterwards, the following if statement re-assigns it with a new
-value in both paths of the if statement. The assignment is
-redundant and can be removed.
+On Wed, Nov 13, 2024 at 10:30:04AM +0300, Dan Carpenter wrote:
+> On Tue, Nov 12, 2024 at 11:48:41AM -0800, Paul E. McKenney wrote:
+> > On Tue, Nov 12, 2024 at 07:30:03PM +0300, Dan Carpenter wrote:
+> > > On Tue, Nov 12, 2024 at 05:20:23PM +0100, Sebastian Andrzej Siewior wrote:
+> > > > Dan reported that after the rework the newly introduced
+> > > > scf_add_to_free_list() may get a NULL pointer passed. This replaced
+> > > > kfree() which was fine with a NULL pointer but scf_add_to_free_list()
+> > > > isn't.
+> > > > 
+> > > > Let scf_add_to_free_list() handle NULL pointer.
+> > > > 
+> > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > > Closes: https://lore.kernel.org/all/2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain
+> > > > Fixes: 4788c861ad7e9 ("scftorture: Use a lock-less list to free memory.")
+> > > > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > > > ---
+> > > > 
+> > > > Thank you Dan. I had to look twice, that `scfsp' above looked almost
+> > > > identical.
+> > 
+> > Queued and thank you both!
+> > 
+> > > Yeap...  Me too.  #LowHammingDistance
+> > 
+> > That could likely be improved, to be sure.  I am one of these strange
+> > people who wants the pointer to give a hint about its type, something
+> > about pointers to rcu_data, rcu_node, and rcu_state pointers all
+> > being messed with at the same time.
+> > 
+> > Maybe s/scfcp/scfchkp/?
+> 
+> What about scf_chkp, maybe?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/usb/cx231xx/cx231xx-avcore.c | 1 -
- 1 file changed, 1 deletion(-)
+I would rather avoid the underscore, myself, but...
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-avcore.c b/drivers/media/usb/cx231xx/cx231xx-avcore.c
-index 6139ef5d891d..1cfec76b72f3 100644
---- a/drivers/media/usb/cx231xx/cx231xx-avcore.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-avcore.c
-@@ -2701,13 +2701,12 @@ int cx231xx_set_gpio_value(struct cx231xx *dev, int pin_number, int pin_value)
- 	if ((dev->gpio_dir & (1 << pin_number)) == 0x00) {
- 		/* It was in input mode */
- 		value = dev->gpio_dir | (1 << pin_number);
- 		dev->gpio_dir = value;
- 		status = cx231xx_set_gpio_bit(dev, dev->gpio_dir,
- 					      dev->gpio_val);
--		value = 0;
- 	}
- 
- 	if (pin_value == 0)
- 		value = dev->gpio_val & (~(1 << pin_number));
- 	else
- 		value = dev->gpio_val | (1 << pin_number);
--- 
-2.39.5
-
+							Thanx, Paul
