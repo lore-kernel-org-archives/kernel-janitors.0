@@ -1,47 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DA1487B0
-	for <kernel-janitors@vger.kernel.org>; Wed, 13 Nov 2024 14:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D349C20514D;
+	Wed, 13 Nov 2024 17:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731509837; cv=none; b=foH4fupHNOPhr67c7aOPGG6DF8iZUYV5CffP3K8z5stG41Dc9QRQxmBlSz3icRI7pFkEQ4jpqlhKp9ms584lcMZzt3qYXSANlge0lelgYZqeLJ1uecsFrY9yXZd+4DfwqvZNAbcG0HbYwmkHGhOZT4NwE6dLU2ZpEjjBc+828Ho=
+	t=1731520754; cv=none; b=LHvHmYYBHqCGJHFiTKR/vrnahtHsvB2otDDCs+hhyiQb8mQ4y49E12GJMl5CexCAvAf7yxEms8F4qlzgbUE8WlxjDduGp4YspsWTQK3AiOsGkasLZZan05L8hOhj5/xwujFA6f3StRC9IHqJh3bO2cYVKjfziOJKLJQop1ttPlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731509837; c=relaxed/simple;
-	bh=dm4PD2uTnxJVwcgIe9XGiwRJvt8e+3sX+FsvbpWchxs=;
+	s=arc-20240116; t=1731520754; c=relaxed/simple;
+	bh=kvruL1GdSBx8iandcR56wwKSMO8JMiEGXVsrb7k0A/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQx7iJg5XCsSLprwGQcEZ9DZLAPUo/59a8lVRBcPB7mBFl5Ig9KtQL65tsKYfRSN4YG79hbx+ITLuNPSz2M2Mv7kfQDXzrCrdem8HGw2A4juxgIysc8It/bvzb0qX/JTZ18n60ZBpTWzpx6wJb9yzoxuokHuzv9ZcsTs7ls8cc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzZRDuI3; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zjc8sbl1Bk+E8Z5KXyTfivJUzKs6mfVnosJ3P9226myyw22YLRmEHFAOdL5vf8xACeuFK4Dttft3PFXd8z6Y/IA0mvPQeAhZ0U32OyPmf6+opQzhqkEvGiaHfuka4/4bJVbaHJ+3oya5gnrrA+ViRm1mqenMmljhpKam8Iz834c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JfR47I9n; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzZRDuI3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C3E5C4CEC3;
-	Wed, 13 Nov 2024 14:57:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JfR47I9n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 462DDC4CEC3;
+	Wed, 13 Nov 2024 17:59:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731509837;
-	bh=dm4PD2uTnxJVwcgIe9XGiwRJvt8e+3sX+FsvbpWchxs=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=IzZRDuI3ibg6BCb8UsE0Vh9c5BbMJ1pNpK/bYyGUmBCM74C6prh+jRP7uc2A77jmz
-	 FFARuAOzhoUDxs8hghXWLZ9JIPM4qsXuKlnLM8Ma/j+S5wtI8wtHDGK+b6ARqEiTw2
-	 uD2qU+SQ26NhcVP5ljxhvh7jmcGhyNasVhKQhjZdnkGkn4zhZtlQz9Au4vxm2NnTwG
-	 f7+Paz2Q1xm/0Ldd1Jk7KHxaqKh/Z6Uf/mA/+AGXvyQGCHyK//R46/O/j4EgtAcN+w
-	 eztKLbrxW3kAXGRFGcjJlMpTkCH3aCoLwHgVpXZ1wkyYarmbqcDXrSAqVRxQU6JLWN
-	 UdRhPz/2VZWIg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id DA103CE0484; Wed, 13 Nov 2024 06:57:16 -0800 (PST)
-Date: Wed, 13 Nov 2024 06:57:16 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
+	s=k20201202; t=1731520753;
+	bh=kvruL1GdSBx8iandcR56wwKSMO8JMiEGXVsrb7k0A/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JfR47I9ni6SRUhA2VcKNUa5Zv8rMdbJKqQZKpEUklGnFSHV1zpUdFP04UKVVYMSrN
+	 HAn68Cp+Txg8bxLkRDJ5We6Iv8sJmUarkZxB0S3QXIjeS26xx4+15G7UwuMIOIhTvc
+	 6sMIJha7+nJckfN9I8P5C0ecmtlnSLP5yoLHstQ9Pt0TELguTk8PB5dKOfiDTZqXJG
+	 yhE0EoKXNfyr3n7zHkxUtJRIuPWn1MtOZKKUeVw1E+V4Yj1NSrgs9TT8E3dYp2VW5v
+	 ICCciIufsu6mPdGr70zrhBAkdDtkNr58hKK+JEhM9aDbDt1kqedQHXCe4PbTUlSrNc
+	 zygohYDtkZqAw==
+Date: Wed, 13 Nov 2024 17:59:09 +0000
+From: Simon Horman <horms@kernel.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scftorture: Handle NULL argument passed to
- scf_add_to_free_list().
-Message-ID: <78fbfaf8-3288-4849-bf51-d2a7fc8ccd57@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain>
- <20241112162023.glRj_YAz@linutronix.de>
- <ec532c16-c7c3-4029-b996-284ac32f9820@stanley.mountain>
- <c7b02e51-d738-4523-b76a-c8a84be35124@paulmck-laptop>
- <9c1bab5f-4e72-4fb5-bf3b-1599aea59e7c@stanley.mountain>
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] xfrm: Add error handling when nla_put_u32()
+ returns an error
+Message-ID: <20241113175909.GB4507@kernel.org>
+References: <20241112233613.6444-1-everestkc@everestkc.com.np>
+ <20241113105939.GY4507@kernel.org>
+ <81088611-41d9-4472-94e6-3170418156c9@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,41 +48,61 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9c1bab5f-4e72-4fb5-bf3b-1599aea59e7c@stanley.mountain>
+In-Reply-To: <81088611-41d9-4472-94e6-3170418156c9@stanley.mountain>
 
-On Wed, Nov 13, 2024 at 10:30:04AM +0300, Dan Carpenter wrote:
-> On Tue, Nov 12, 2024 at 11:48:41AM -0800, Paul E. McKenney wrote:
-> > On Tue, Nov 12, 2024 at 07:30:03PM +0300, Dan Carpenter wrote:
-> > > On Tue, Nov 12, 2024 at 05:20:23PM +0100, Sebastian Andrzej Siewior wrote:
-> > > > Dan reported that after the rework the newly introduced
-> > > > scf_add_to_free_list() may get a NULL pointer passed. This replaced
-> > > > kfree() which was fine with a NULL pointer but scf_add_to_free_list()
-> > > > isn't.
-> > > > 
-> > > > Let scf_add_to_free_list() handle NULL pointer.
-> > > > 
-> > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > > Closes: https://lore.kernel.org/all/2375aa2c-3248-4ffa-b9b0-f0a24c50f237@stanley.mountain
-> > > > Fixes: 4788c861ad7e9 ("scftorture: Use a lock-less list to free memory.")
-> > > > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > > > ---
-> > > > 
-> > > > Thank you Dan. I had to look twice, that `scfsp' above looked almost
-> > > > identical.
+On Wed, Nov 13, 2024 at 04:10:15PM +0300, Dan Carpenter wrote:
+> On Wed, Nov 13, 2024 at 10:59:39AM +0000, Simon Horman wrote:
+> > On Tue, Nov 12, 2024 at 04:36:06PM -0700, Everest K.C. wrote:
+> > > Error handling is missing when call to nla_put_u32() fails.
+> > > Handle the error when the call to nla_put_u32() returns an error.
+> > > 
+> > > The error was reported by Coverity Scan.
+> > > Report:
+> > > CID 1601525: (#1 of 1): Unused value (UNUSED_VALUE)
+> > > returned_value: Assigning value from nla_put_u32(skb, XFRMA_SA_PCPU, x->pcpu_num)
+> > > to err here, but that stored value is overwritten before it can be used
+> > > 
+> > > Fixes: 1ddf9916ac09 ("xfrm: Add support for per cpu xfrm state handling.")
+> > > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
 > > 
-> > Queued and thank you both!
+> > Reviewed-by: Simon Horman <horms@kernel.org>
 > > 
-> > > Yeap...  Me too.  #LowHammingDistance
+> > For future reference, I think the appropriate target for this tree
+> > is ipsec-next rather than next.
 > > 
-> > That could likely be improved, to be sure.  I am one of these strange
-> > people who wants the pointer to give a hint about its type, something
-> > about pointers to rcu_data, rcu_node, and rcu_state pointers all
-> > being messed with at the same time.
-> > 
-> > Maybe s/scfcp/scfchkp/?
+> > 	Subject: [PATCH ipsec-next] xfrm: ...
 > 
-> What about scf_chkp, maybe?
+> All these trees are a pain in the butt to track.  It's fine for people who only
+> work in one tree but for people doing static checker stuff, then we have to
+> deal with all 388 trees in linux-next.
+> 
+> I've changed my scripts to add [next] to my patches if Linus hasn't merged the
+> commit from the Fixes tag.  I still add net and net-next by hand but I'm going
+> to just automate that as well because doing it by hand has been failure prone.
+> 
+> But then if we try to add all the ipsec or whatever trees, it just becomes
+> unworkable.  I started to write a script which would look do the --is-ancestor
+> check based on the Fixes tag, but it take forever to update the git trees.  I
+> wasn't able to figure out a way to make this work.
+> 
+> Also once Linus merges the commit, there is no way to tell which tree the commit
+> goes to so it only applies to linux-next.  For networking, I already have the
+> script that greps the patch for -w net and grep -vw wireless.  But I don't want
+> to maintain a list greps for everyone's tree.
+> 
+> A lot of this scripting could be built into the CI system.  The CI system is
+> already doing some scripting based on the subject but we could do it based on
+> the Fixes tag instead.  If there isn't a Fixes tag, then it should go to
+> net-next.
 
-I would rather avoid the underscore, myself, but...
+Hi Dan,
 
-							Thanx, Paul
+I take your point that this is not very friendly to people sending
+the occasional patch (towards Networking). And certainly there
+is room to improve the CI.
+
+FWIIW, my goto when preparing patches is something like the following.
+Because at least for Networking, we do try to make MAINTAINERS reflect
+reality:
+
+./scripts/get_maintainer.pl --scm net/xfrm/xfrm_user.c
