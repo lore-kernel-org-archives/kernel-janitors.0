@@ -1,104 +1,123 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802B1433CE;
-	Wed, 13 Nov 2024 13:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C06F1DF25E
+	for <kernel-janitors@vger.kernel.org>; Wed, 13 Nov 2024 13:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731503291; cv=none; b=aARZLBAFqP3mFYvQoN6GOFdVUmflx5fdmwl49ATlgZzzdfZ6lpoVwkILYtaSiqAZoRs+HlFFCbzgCjChkr2PytycBmiltNINFzJ8SQEudH3IDN6a8RSrN945pY2400W97EZZbAZGd8X7Bem07cUOZ83bHe3H7vPb4PnMEzfBPhI=
+	t=1731503423; cv=none; b=Xf+AJO0pPX+Kvwg2jayznig5rgkWYHAVc4tdLStM3/0ls6nhHmRGyYRQRQMSO/g/Etx4ZC9DfnC2RzHekxYY+rVgQ8QHVzx5paaBgWKmUbBAqVwTr8bmJQb4T8YSTW5D2/llNoNuOspXmEgMBaNmIADI8+4EV6dZBr80KrSlxxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731503291; c=relaxed/simple;
-	bh=2WWRK703YmFJmLzZ2S+UG/8X4WmXCsvMcbUca5/g/z4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iD3TWM0kpjZ1glB7JhPqnUvQi/sKxM5E++15x/guA1Kx3OpcffO7tR3bE9yBYQ2WMSsRKwHa6QXgVsNMSwGzGUW6PChFvlzrH1ufdu3jLeHOhmJZDmkHuZlsSqZYln8VHmZxbC0V/Ed9MP6bypN1IrAq17N2K/f9N6g1XoG2dpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoRYYZfg; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731503423; c=relaxed/simple;
+	bh=Opcmz9YYIaVdPWsOxhUqLPlpXQUP+f6SvaFPoN8x2S4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YrrfH4c4d5AY+qAEUXTgizbxskTL0uSOFDrmwOTnEJMTIi5JbhFiuoWuOD8IW1qV8Q5ZeBJlG5xRiQmSis7d/pBgN9xBZfGUmifdifBKYl/jJvN1lHsJMHiC/4zHJEuPc1wcvr0QVV+3/PuNAHHTaa4ez9RiGtI2teDlFqnGqNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WcsJ72je; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoRYYZfg"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4316cce103dso85518555e9.3;
-        Wed, 13 Nov 2024 05:08:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WcsJ72je"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315eac969aso4504615e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Nov 2024 05:10:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731503288; x=1732108088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2a0NVxNB/W5Csc9TxzF7W/iYXO3VvsRJea43sdbNNNY=;
-        b=WoRYYZfgI8uTPueNx8rzbEz9s5CpFjORR/NCD4p6s8x2uniGRioWBA9fSPbJdurOfQ
-         muKKJBkbrnlr7k8i9+Gy4dZsXw/8zFK6Db1ov2f1mTgfZQ57hEJlL3/brwrHZSJSlbLW
-         k9TCKWy5nuDYPcibQoVLm8O7qOiDVl7U1HTi5jzyTjtNRJnshCKwaJ3VECtQO1pmvrwC
-         o2O5F6mg9CscgS8s8iB5MLUPe4i2b8Wo3cyjiyiH7S+iFZylYJ4xfPcKI2XyQ4lNX5SV
-         KYK0OWK8dl95+O/OE6mu7lDUwqtdQo198zi1kkJdZv3qWefmJfZUntFf1QipFirgf05Z
-         r3/Q==
+        d=linaro.org; s=google; t=1731503420; x=1732108220; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vrCyUIt2ww7l4E4yjLiYIeNzWk/0rCkfz0cRlXOTRlw=;
+        b=WcsJ72jeySrgNlU53qllluOgJb/aFlqt3rKFw4SeoMUCnWGrbfxrzGbtgxtDjsAw+M
+         XACker0FEQcyDNYqclFPOROgiRrxqAJCyQxPcDLUUwt8nab6qbMxsMv6m4PsJbohHHsV
+         tZVXU578PZIEk0ZA0I4rO4U1NXmH7tz/zIFSRwuNSlYgGLlex/REIbYD+NHclwHPWSlY
+         GJgGHPRNqNnmfsKnfU1TrjPNtT6maxijY5BAW1/0jhyLU621D0VscAZG1Q5B2Co3xCn1
+         W/xnWqEt4JBwS7yJy1g2V4CwjCzAR5mTfpx1RVntMINbNhg+6+HQhm8y76IWP8iooVTw
+         a1ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731503288; x=1732108088;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2a0NVxNB/W5Csc9TxzF7W/iYXO3VvsRJea43sdbNNNY=;
-        b=tqlvqDMXxI7HpVsTR9KyNprElycEx1FMuvvPJ2aOb1B75rJMC7C3tWo39dnSZ6Glap
-         hbvYUfi4LFUyGGg9SqOBboRsJ8bP7ep5g2BsEsjy2KMmbifxu2jnjTLvxseTZpoOOW37
-         Cw9skasA25IZXKizxeqDaWC0hiQ7ZLx8hI1VEHzFFv54IB/VfbbpHjk3YNMX/stxelAj
-         vKdQARAQwRw3yZestyqn2W0UMUdp7Ji4HCALtVsNzPFuBew7aWj0hS4VPmgl1x4FU+SZ
-         BnpABEXSRW+h480Q2L6ajAXPgYFaRz2E7OOGZzmRhXhdqllx/08Q7Fc0VDN1PPmmDMg6
-         Xf+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMC9NwRZTUN2rmL+5pjwylhjerUVEBYaZolr8qbdbnoLdocmRhng0CpfzZ/DIelNKG8POyI6uUiaSOluY=@vger.kernel.org, AJvYcCWqTomBGMwHzn80X58I0Zx6jQoaHrotviiTKusbhuc/YWJEDpfRA6HDrWg1exkCccZGpLOOAky5p9MD2ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU5oKWF54HN+fWBUvsQ6fDopAXKop3p9097YYxm3AD9BvvzZIZ
-	obISGxxcwtjefaQwFCNrOhaYkrIlJLbjttm3xahK/m3InZCkZACh
-X-Google-Smtp-Source: AGHT+IFCS0AhpP2qyy3IR0ypDlDOr0f3Bs+wNSNJoR+LC9CYkW34Um/O+lusmxIzJqY8AAMjqsNosA==
-X-Received: by 2002:a05:6000:18a5:b0:381:d890:b5b7 with SMTP id ffacd0b85a97d-381f1889de6mr24360788f8f.52.1731503287618;
-        Wed, 13 Nov 2024 05:08:07 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381edc1104asm18664751f8f.88.2024.11.13.05.08.07
+        d=1e100.net; s=20230601; t=1731503420; x=1732108220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vrCyUIt2ww7l4E4yjLiYIeNzWk/0rCkfz0cRlXOTRlw=;
+        b=se7z4003dK858cQp8mxEP7RWtUohR7j4XcybwdCCJRutjPTXlbg2VJBGPAR+8MDi/U
+         dl2EuskXs0hLa0c7CvjYomaCaAjSxRHmpvQB22iC2LgqV95YZy+wAZiBkldllgj2+YLb
+         rwr0SM7aS/PicrTCFgqsVOv77F9Lkh4++NxiK7yz1lTfd+zsWLpjNZjODASpWFyN/J09
+         VnIp69EOjq5LRrDD/19+KKaLi9yI8q1tJwUAN1/8rLhPw0ZgvGBTSngXGheX7iKs1trV
+         qW8SHa53dq7G9BhWB0uXx0WvDBSMp1yaaGniH9ZJ7hsp7h5S3ytM2VGxFYkABnFG9AKe
+         o2/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXHyKAUn4JSN7nMaOhTPes6eOQg5+XiOYUwDR5j06mLROZhrIUZ3xT7CenulDm9cZ3xYkPRTB/PVKT9ovStxtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4oON843HgWOoy0yrVPN5M9e1MX7NkS37yiYINSp9wLY86I7tr
+	eeEmCkKbYTaIDO4YSPz7KCfU8nPNsx65ExMcqZYjuKWfk+TABaGeGNVVpp9qv9s=
+X-Google-Smtp-Source: AGHT+IE0LhHchWSjR1k9sQMVXr3w1p9/+8HBLDRMWC0wiutg6e3LOt2hgiDvsOk5dnHwLzxqCoRJPA==
+X-Received: by 2002:a05:600c:354f:b0:42f:84ec:3e0 with SMTP id 5b1f17b1804b1-432b685c0a8mr175006505e9.9.1731503419662;
+        Wed, 13 Nov 2024 05:10:19 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d550c159sm24063835e9.32.2024.11.13.05.10.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2024 05:08:07 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	sound-open-firmware@alsa-project.org,
-	linux-sound@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: SOF: ipc4-topology: remove redundant assignment to variable ret
-Date: Wed, 13 Nov 2024 13:08:07 +0000
-Message-Id: <20241113130807.1386754-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Wed, 13 Nov 2024 05:10:19 -0800 (PST)
+Date: Wed, 13 Nov 2024 16:10:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Simon Horman <horms@kernel.org>
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] xfrm: Add error handling when nla_put_u32()
+ returns an error
+Message-ID: <81088611-41d9-4472-94e6-3170418156c9@stanley.mountain>
+References: <20241112233613.6444-1-everestkc@everestkc.com.np>
+ <20241113105939.GY4507@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113105939.GY4507@kernel.org>
 
-The variable ret is being assigned a zero value however the value is
-never read because ret is being re-assigned later after the end of
-the switch statement. The assignment is redundant and can be removed.
+On Wed, Nov 13, 2024 at 10:59:39AM +0000, Simon Horman wrote:
+> On Tue, Nov 12, 2024 at 04:36:06PM -0700, Everest K.C. wrote:
+> > Error handling is missing when call to nla_put_u32() fails.
+> > Handle the error when the call to nla_put_u32() returns an error.
+> > 
+> > The error was reported by Coverity Scan.
+> > Report:
+> > CID 1601525: (#1 of 1): Unused value (UNUSED_VALUE)
+> > returned_value: Assigning value from nla_put_u32(skb, XFRMA_SA_PCPU, x->pcpu_num)
+> > to err here, but that stored value is overwritten before it can be used
+> > 
+> > Fixes: 1ddf9916ac09 ("xfrm: Add support for per cpu xfrm state handling.")
+> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> 
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+> For future reference, I think the appropriate target for this tree
+> is ipsec-next rather than next.
+> 
+> 	Subject: [PATCH ipsec-next] xfrm: ...
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- sound/soc/sof/ipc4-topology.c | 1 -
- 1 file changed, 1 deletion(-)
+All these trees are a pain in the butt to track.  It's fine for people who only
+work in one tree but for people doing static checker stuff, then we have to
+deal with all 388 trees in linux-next.
 
-diff --git a/sound/soc/sof/ipc4-topology.c b/sound/soc/sof/ipc4-topology.c
-index 1fcf4692a21f..b55eb977e443 100644
---- a/sound/soc/sof/ipc4-topology.c
-+++ b/sound/soc/sof/ipc4-topology.c
-@@ -755,7 +755,6 @@ static int sof_ipc4_widget_setup_comp_dai(struct snd_sof_widget *swidget)
- 			 * It is fine to call kfree(ipc4_copier->copier_config) since
- 			 * ipc4_copier->copier_config is null.
- 			 */
--			ret = 0;
- 			break;
- 		}
- 
--- 
-2.39.5
+I've changed my scripts to add [next] to my patches if Linus hasn't merged the
+commit from the Fixes tag.  I still add net and net-next by hand but I'm going
+to just automate that as well because doing it by hand has been failure prone.
+
+But then if we try to add all the ipsec or whatever trees, it just becomes
+unworkable.  I started to write a script which would look do the --is-ancestor
+check based on the Fixes tag, but it take forever to update the git trees.  I
+wasn't able to figure out a way to make this work.
+
+Also once Linus merges the commit, there is no way to tell which tree the commit
+goes to so it only applies to linux-next.  For networking, I already have the
+script that greps the patch for -w net and grep -vw wireless.  But I don't want
+to maintain a list greps for everyone's tree.
+
+A lot of this scripting could be built into the CI system.  The CI system is
+already doing some scripting based on the subject but we could do it based on
+the Fixes tag instead.  If there isn't a Fixes tag, then it should go to
+net-next.
+
+regards,
+dan carpenter
 
