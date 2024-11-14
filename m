@@ -1,87 +1,115 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC3D1DE3C6
-	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 09:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 41B081E9089;
+	Thu, 14 Nov 2024 09:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731576550; cv=none; b=V6ZbQOYye239OLwkCtjHnISfWC3GszZfRALz7aS6qeciE5GOzPInOooLOwumLfSLpXEI7mcCBNAn0BVBdIyxi3yX3VwjXm83i9brY2ClKlEBcmmHOtWifWYFqMRsSdXDSp2oHqFAK7fQMBkox/U9MH/QAJOi+etcn0/Xr1cs9R8=
+	t=1731576867; cv=none; b=je/fltEY2DAm+athIV8fzVaYLF6Oaq9g3tfX3GC/+bxrUZ5nnbpEEUvHQgBc6Q+Cw0qdee5UGm9BaJVX7D++LmT8XodwwCMvPTy5SZ1H16Au/+x25Lz/8mtFjmJVB/q86/mw+zNnzzXFA4OjVGvU5ARBp+zF0xrb0dxiuw2+vgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731576550; c=relaxed/simple;
-	bh=SunWVLxZJU191an+c75kTT6SIArlemY5vm2v+U03SGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/taCwQoauQ4vcjlxU/rWHnfQUXlw0MgyWoULndZVzRhJtCSD6FoBDKDfHJEPE49uHvEwYrN2q8jQxUUKjBQ28DbFO5XCTlSSgWGOHMJ/0gfcPJHPGtoOoURNCeywy8G/GyTJGwIx1yEZ96mNiNl0a3kUTys3FsqzBGJs/bVlpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rvmgsPyb; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rvmgsPyb"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315eac969aso1922575e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 01:29:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731576547; x=1732181347; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nS1EJqfWpVBxhs4KFRyVItEivrNNryuQ6Ge6sLEQQzg=;
-        b=rvmgsPybBABEfCgrfeczr90Z3zLDGWvaDlGrPsDGEZ7cT+yIBwyXSQxjywJZQK467v
-         LvPyGCisaSo8U87xyA88aUW5MnXzDo6ChTK9l7tjB2CeB0YH4CLcAgicWWwmaHhB6V3G
-         gJsc6uPChCYdtGs1o1eZ1zt+cRblivoqBUWFendyuZd2xMF5g7dFzadY3ZxWeI8kFPT+
-         avNei5N4jBFiVisYUlZZESAcKPL7sfqYYItO+O6A3WM68KoO+IgbnXGuRQ4fR3tIb+Mt
-         /97rnym+1dDTZ5Y4lqBfan1m3ydiM7YjbUaaMbNPePLsfg4e/LMDDnc0XtjqNGCw0EMa
-         7AbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731576547; x=1732181347;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nS1EJqfWpVBxhs4KFRyVItEivrNNryuQ6Ge6sLEQQzg=;
-        b=AM0LTaAZXNvprz8YVK6PmnpEJnxaco0oEMcTOoEn4PaHJWQW4JrFhhT6n7LpKnPUEM
-         +ykAADFhjdiXWvBiVqzhiaW1IRZbKbd19z+bFSIIbWEUPj4fyl1hIu2yUe4PD9ufcSHV
-         cDrp0TJZaMvspX7rQ7RdpkbkaCSFgfZe5qPn4TaLyTBRt4HiErhueFQe6GOdKwpc1vnd
-         uVa+HQYk5SXJsGoJvBEIDFjtOFpCFy96PyPtHrNY1ZUXnI5K/5q2LR4FHWny1GpKUXzs
-         y9Btc2T5fzLLdvK+7oPRZuw5m3ElPzScg6KdaLIOZCfL2oHnh4d0ktbTcYs3ltMExPAH
-         bJHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0hsYylHnZLQnhTXjZiB/WvkqiB1ZXL8aQztMMqIMxbipt3MbZsJZK5onFTQ7ZDJ4L3LGoKeafu6bQ6cPw6ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV/rj+be5AVnYcr6Wj457CJV+YW0ULBNgMtt39+BdHECB8HuKx
-	14wETl4+rS+6tSk9sEZoGaEEyoKsMzmAP4YvjOKmdKZMN2OYq3WbsIAG9wLC0/U=
-X-Google-Smtp-Source: AGHT+IHa+GwPw1XMCZ+cH9jSTN1XwUkHTtzXZGQ1rcTxNIzhWEEEwnyYXS3SOYBkd1TsYzhe+styJQ==
-X-Received: by 2002:a05:600c:a4c:b0:42c:b991:98bc with SMTP id 5b1f17b1804b1-432d95ad53cmr21357685e9.0.1731576547571;
-        Thu, 14 Nov 2024 01:29:07 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432d48a7cf1sm47674685e9.1.2024.11.14.01.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 01:29:07 -0800 (PST)
-Date: Thu, 14 Nov 2024 12:29:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Max Staudt <max@enpas.org>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
- can327_handle_prompt()
-Message-ID: <033f74e6-2706-439a-9c02-158df11a3192@stanley.mountain>
-References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
- <22e388b5-37a1-40a6-bb70-4784e29451ed@enpas.org>
- <1f9f5994-8143-43a2-9abf-362eec6a70f7@stanley.mountain>
+	s=arc-20240116; t=1731576867; c=relaxed/simple;
+	bh=myrJcA/kaJM9MSdwEkR2gSyVF5erP6z7ffO5TOvnsNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=rk5yWoIdZWV/gkIK3r8x90qC3HaxDWCLNzkgKQyTwsSSO9O7wJ+teOEQMfSwpacU8tya60wAIYPr6IwLzUdQqZj9IFqrDBEmLu4bvxd5Gxs5rhtEJfjlvON7kdQPYOHoI85mtmBYxqf1PnJZIUJtFBDf/TFD36BlGejSnfoAWtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 6D581613746FC;
+	Thu, 14 Nov 2024 17:34:18 +0800 (CST)
+Message-ID: <3c35be8b-95e2-1ee6-9745-7766008fd1f6@nfschina.com>
+Date: Thu, 14 Nov 2024 17:34:17 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f9f5994-8143-43a2-9abf-362eec6a70f7@stanley.mountain>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH] bus: fsl-mc: Fix the double free in fsl_mc_device_add()
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: stuyoder@gmail.com, laurentiu.tudor@nxp.com, nathan@kernel.org,
+ ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+ gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <b767348e-d89c-416e-acea-1ebbff3bea20@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-To be honest, I was afraid that someone was going to suggest using on of the
-helper functions that dumps hex.  (I don't remember then names of them so that's
-why I didn't do that).
+On 2024/11/14 16:57, Dan Carpenter wrote:
+> On Thu, Nov 14, 2024 at 11:41:25AM +0300, Dan Carpenter wrote:
+>> On Thu, Nov 14, 2024 at 04:27:52PM +0800, Su Hui wrote:
+>>> Clang static checker(scan-build) warning：
+>>> drivers/bus/fsl-mc/fsl-mc-bus.c: line 909, column 2
+>>> Attempt to free released memory.
+>>>
+>>> When 'obj_desc->type' == "dprc" and begin to free 'mc_bus' and 'mc_dev',
+>>> there is a double free problem because of 'mc_dev = &mc_bus->mc_dev'.
+>>> Add a judgment to fix this problem.
+>>>
+>>> Fixes: a042fbed0290 ("staging: fsl-mc: simplify couple of deallocations")
+>>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>>> ---
+>>>   drivers/bus/fsl-mc/fsl-mc-bus.c | 6 ++++--
+>>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+>>> index 930d8a3ba722..8d2d5d3cc782 100644
+>>> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
+>>> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+>>> @@ -905,8 +905,10 @@ int fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
+>>>   
+>>>   error_cleanup_dev:
+>>>   	kfree(mc_dev->regions);
+>>> -	kfree(mc_bus);
+>>> -	kfree(mc_dev);
+>>> +	if (strcmp(mc_dev->obj_desc.type, "dprc") == 0)
+>> This works, but it would probably be nicer to write this as:
+>>
+>> 	if (is_fsl_mc_bus_dprc(mc_dev))
+>> 		kfree(mc_bus);
+>> 	else
+>> 		kfree(mc_dev);
+>>
+>> That way it would match the release function.
+Yes, it's better!
+>     820          mc_dev->dev.release = fsl_mc_device_release;
+>
+> 	[ snip ]
+>
+>     891           * The device-specific probe callback will get invoked by device_add()
+>     892           */
+>     893          error = device_add(&mc_dev->dev);
+>     894          if (error < 0) {
+>     895                  dev_err(parent_dev,
+>     896                          "device_add() failed for device %s: %d\n",
+>     897                          dev_name(&mc_dev->dev), error);
+>     898                  goto error_cleanup_dev;
+>
+> I don't think this goto is correct.  I think fsl_mc_device_release() will be
+> called automaticall on this path so the goto is a double free.
+Agreed too, maybe using put_device(&mc_dev->dev) to replace ?
+>
+>     899          }
+>     900
+>     901          dev_dbg(parent_dev, "added %s\n", dev_name(&mc_dev->dev));
+>     902
+>     903          *new_mc_dev = mc_dev;
+>     904          return 0;
+>     905
+>     906  error_cleanup_dev:
+>     907          kfree(mc_dev->regions);
+>     908          if (is_fsl_mc_bus_dprc(mc_dev))
+
+Yep, this looks better :)
+
+I will send a v2 patch to use is_fsl_mc_bus_dprc().
+It might take some time because I'm not sure about using
+'put_device(&mc_dev->dev)' to replace 'goto error_cleanup_dev'.
 
 regards,
-dan carpenter
+Su Hui
 
