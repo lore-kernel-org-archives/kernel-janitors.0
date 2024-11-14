@@ -1,115 +1,122 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 41B081E9089;
-	Thu, 14 Nov 2024 09:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7D61F470B;
+	Thu, 14 Nov 2024 09:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731576867; cv=none; b=je/fltEY2DAm+athIV8fzVaYLF6Oaq9g3tfX3GC/+bxrUZ5nnbpEEUvHQgBc6Q+Cw0qdee5UGm9BaJVX7D++LmT8XodwwCMvPTy5SZ1H16Au/+x25Lz/8mtFjmJVB/q86/mw+zNnzzXFA4OjVGvU5ARBp+zF0xrb0dxiuw2+vgY=
+	t=1731576900; cv=none; b=Y0MOKXC5lmrStgi5QAIUlgdGjLSFjioOQUssw3ZZm4wGb21suRwfi1UJMboP3MMqNL5BT6iDAqi6lJkkQ+u7VzMLFG7Hl15ZBTkQ0pBGnhYUzkS7fXDEPzzbNzt48KftxqD0QgNGHUz0I7NuIFv03LEEwbnZiQunBkHIVlZ/+TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731576867; c=relaxed/simple;
-	bh=myrJcA/kaJM9MSdwEkR2gSyVF5erP6z7ffO5TOvnsNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=rk5yWoIdZWV/gkIK3r8x90qC3HaxDWCLNzkgKQyTwsSSO9O7wJ+teOEQMfSwpacU8tya60wAIYPr6IwLzUdQqZj9IFqrDBEmLu4bvxd5Gxs5rhtEJfjlvON7kdQPYOHoI85mtmBYxqf1PnJZIUJtFBDf/TFD36BlGejSnfoAWtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 6D581613746FC;
-	Thu, 14 Nov 2024 17:34:18 +0800 (CST)
-Message-ID: <3c35be8b-95e2-1ee6-9745-7766008fd1f6@nfschina.com>
-Date: Thu, 14 Nov 2024 17:34:17 +0800
+	s=arc-20240116; t=1731576900; c=relaxed/simple;
+	bh=z6+I7+CYarKdEBPM3FA1TYZtfIOd/tndwNaEyQSMZPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Si+o1NdJjWDZmYTHdb0/+2rAyKQyKPdAUSc0+rpGO7zDZ8Os/mBN/JobaifbqlXAuNWzLjPYRgD53Jtz48dU/TaBa8t941H5yBD2LLkQnge//gw2MKFHUXSb/k95joOIYMgqlj0ZIQ83PEMH1j++sZMsKK1AGE4kJpxvCygewK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oKXO3QgC; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oKXO3QgC"
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id BWFRtPe7vUepfBWFVtwEYZ; Thu, 14 Nov 2024 10:34:55 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731576896;
+	bh=FUfrCo/CScN+GZNhfYe1RnJiRuI/wkqeEkNkQMFOKuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=oKXO3QgC7FzfFdy24K6cirs9PpHvYwoFE6Z7m7KGTU6+Gh8NYcVb2naYhOLpARhOd
+	 9lwfdmZ38E+GDrFpo0Pou7aGe5gaOK8B8ifN6NoYWWwe6ENT9OqDLZx07S6w/jw9aI
+	 o6KedacyMCGxGi4QDsn/dsxo8bg7ywzXOQzE5m2N99EhqUvc7VRgiyRAdc/2QGC2QF
+	 X9qp+q7kxazuf2ye8i3JnDaj9Ki1c2hFDioPzKTGssmhy3CNUPJ/fT55ns6lHWSqgK
+	 siG/kPv1IxGaGmBxdlor+kh1sFIJj/U1aV/JiVcYBg1TYuGBSmuUxbuaG0h//Zfmbj
+	 GWi7qSxbPqQkw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 14 Nov 2024 10:34:56 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
+Date: Thu, 14 Nov 2024 18:34:49 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH] bus: fsl-mc: Fix the double free in fsl_mc_device_add()
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
+ can327_handle_prompt()
+To: Dan Carpenter <dan.carpenter@linaro.org>, Max Staudt <max@enpas.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
 Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: stuyoder@gmail.com, laurentiu.tudor@nxp.com, nathan@kernel.org,
- ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <b767348e-d89c-416e-acea-1ebbff3bea20@stanley.mountain>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+In-Reply-To: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2024/11/14 16:57, Dan Carpenter wrote:
-> On Thu, Nov 14, 2024 at 11:41:25AM +0300, Dan Carpenter wrote:
->> On Thu, Nov 14, 2024 at 04:27:52PM +0800, Su Hui wrote:
->>> Clang static checker(scan-build) warning：
->>> drivers/bus/fsl-mc/fsl-mc-bus.c: line 909, column 2
->>> Attempt to free released memory.
->>>
->>> When 'obj_desc->type' == "dprc" and begin to free 'mc_bus' and 'mc_dev',
->>> there is a double free problem because of 'mc_dev = &mc_bus->mc_dev'.
->>> Add a judgment to fix this problem.
->>>
->>> Fixes: a042fbed0290 ("staging: fsl-mc: simplify couple of deallocations")
->>> Signed-off-by: Su Hui <suhui@nfschina.com>
->>> ---
->>>   drivers/bus/fsl-mc/fsl-mc-bus.c | 6 ++++--
->>>   1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
->>> index 930d8a3ba722..8d2d5d3cc782 100644
->>> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
->>> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
->>> @@ -905,8 +905,10 @@ int fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
->>>   
->>>   error_cleanup_dev:
->>>   	kfree(mc_dev->regions);
->>> -	kfree(mc_bus);
->>> -	kfree(mc_dev);
->>> +	if (strcmp(mc_dev->obj_desc.type, "dprc") == 0)
->> This works, but it would probably be nicer to write this as:
->>
->> 	if (is_fsl_mc_bus_dprc(mc_dev))
->> 		kfree(mc_bus);
->> 	else
->> 		kfree(mc_dev);
->>
->> That way it would match the release function.
-Yes, it's better!
->     820          mc_dev->dev.release = fsl_mc_device_release;
->
-> 	[ snip ]
->
->     891           * The device-specific probe callback will get invoked by device_add()
->     892           */
->     893          error = device_add(&mc_dev->dev);
->     894          if (error < 0) {
->     895                  dev_err(parent_dev,
->     896                          "device_add() failed for device %s: %d\n",
->     897                          dev_name(&mc_dev->dev), error);
->     898                  goto error_cleanup_dev;
->
-> I don't think this goto is correct.  I think fsl_mc_device_release() will be
-> called automaticall on this path so the goto is a double free.
-Agreed too, maybe using put_device(&mc_dev->dev) to replace ?
->
->     899          }
->     900
->     901          dev_dbg(parent_dev, "added %s\n", dev_name(&mc_dev->dev));
->     902
->     903          *new_mc_dev = mc_dev;
->     904          return 0;
->     905
->     906  error_cleanup_dev:
->     907          kfree(mc_dev->regions);
->     908          if (is_fsl_mc_bus_dprc(mc_dev))
+Hi Dan,
 
-Yep, this looks better :)
+On 14/11/2024 at 18:03, Dan Carpenter wrote:
+> This code is printing hex values to the &local_txbuf buffer and it's
+> using the snprintf() function to try prevent buffer overflows.  The
+> problem is that it's not passing the correct limit to the snprintf()
+> function so the limit doesn't do anything.  On each iteration we print
+> two digits so the remaining size should also decrease by two, but
+> instead it passes the sizeof() the entire buffer each time.
+> 
+> If the frame->len were too long it would result in a buffer overflow.
 
-I will send a v2 patch to use is_fsl_mc_bus_dprc().
-It might take some time because I'm not sure about using
-'put_device(&mc_dev->dev)' to replace 'goto error_cleanup_dev'.
+But, can frame->len be too long? Classical CAN frame maximum length is 8 
+bytes. And I do not see a path for a malformed frame to reach this part 
+of the driver.
 
-regards,
-Su Hui
+If such a path exists, I think this should be explained. Else, I am just 
+not sure if this needs a Fixes: tag.
+
+> I've also changed the function from snprintf() to scnprintf().  The
+> difference between the two functions is that snprintf() returns the number
+> of bytes which would have been printed if there were space while the
+> scnprintf() function returns the number of bytes which are actually
+> printed.
+> 
+> Fixes: 43da2f07622f ("can: can327: CAN/ldisc driver for ELM327 based OBD-II adapters")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> ---
+>   drivers/net/can/can327.c | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/can/can327.c b/drivers/net/can/can327.c
+> index 24af63961030..5c05ebc72318 100644
+> --- a/drivers/net/can/can327.c
+> +++ b/drivers/net/can/can327.c
+> @@ -623,16 +623,16 @@ static void can327_handle_prompt(struct can327 *elm)
+>   			snprintf(local_txbuf, sizeof(local_txbuf), "ATRTR\r");
+>   		} else {
+>   			/* Send a regular CAN data frame */
+> +			int off = 0;
+>   			int i;
+>   
+>   			for (i = 0; i < frame->len; i++) {
+> -				snprintf(&local_txbuf[2 * i],
+> -					 sizeof(local_txbuf), "%02X",
+> -					 frame->data[i]);
+> +				off += scnprintf(&local_txbuf[off],
+> +						 sizeof(local_txbuf) - off,
+> +						 "%02X", frame->data[i]);
+>   			}
+>   
+> -			snprintf(&local_txbuf[2 * i], sizeof(local_txbuf),
+> -				 "\r");
+> +			scnprintf(&local_txbuf[off], sizeof(local_txbuf) - off, "\r");
+>   		}
+>   
+>   		elm->drop_next_line = 1;
+
+Yours sincerely,
+Vincent Mailhol
 
