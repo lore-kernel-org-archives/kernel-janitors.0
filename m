@@ -1,89 +1,82 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from smtp.smtpout.orange.fr (smtp-14.smtpout.orange.fr [80.12.242.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC9313B2A9
-	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 15:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167A72C859;
+	Thu, 14 Nov 2024 15:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731596897; cv=none; b=jQkV5O/BzhwFUF92L8E0IOE0jKg0RnB/H+kCAdmeRk/lxqScDTuGGj7oZZZ2sdhKMhuLdGjTPFQfXEygcr2zIvDEL3QAdUgccKvor6pGMgwRtAuAoItj4bC6voreqXMVyttNkAmDa1ePabjCtHAJCnVTXIhlZvT8LQ6tt9FD0hw=
+	t=1731597877; cv=none; b=lgDAzMu1c8yxIMpi/U8VM4AuXAB2WuzVV9UCc8QaDM1mDn1cn1UMgXA43ijfUzo8w7Ik55KsjhnwlzyNIVsKz8n+aFG52Mb5cRXFOCt7B0mkdajnDdByHCUWPpUzs4RUS2muKHhX6KwpaPM6VmoMbbmKDsy6+edP9I7MR/YuJd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731596897; c=relaxed/simple;
-	bh=/BYQNd++hlfPbuOhq+QHwO6NZMZHHVCL1uTzzD2INQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UUy5fxRD3IE29oLaSCj9P5v8m6wIUL6ptbTeXvNjrsCCcMiE50nqZ7QMTrwgsWFpqohSf8Z7lDdyl4ZOziXC6VA/jhJAjHPPCdpgshA6rXdjgsrCY7buJ6Jgu1q0n9o/Al9enMWO7c8ObEAS6oEbhR8l0PNgN/Gt1e/juRHN6DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sY1fuPqZ; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1731597877; c=relaxed/simple;
+	bh=xsVf3vew9SpRW1h1Z2z1A+QH4M4mxu4f69LMnQRUV98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lpW4LanhBsaiv4xsxrUxK0OdrzPpE1WUM3esFtuV8+HjNA8Go/MDIgIv1CpXzngM1QlQNxZSEUFrp3YoM1Ha6AZVQRzT/4xK9ZFkJUg0CrLLEsYJwIQvcpdRXhlydz4HaYP918uaTwNqa8GNGZEusgrjGG7uw6oCudyLnhvOoTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sU68WJzs; arc=none smtp.client-ip=80.12.242.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sY1fuPqZ"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3821df9779eso330712f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 07:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731596894; x=1732201694; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AgEfLtq8i/M2M75YOJzjdmjGGJwIKwjUcYodGngqvzE=;
-        b=sY1fuPqZue0E6O7bT01aq2X5PjRR/YvzITyxTf8csOImt089a3WQirDz/qZgi1RIFr
-         DNy7gakNkL9rhjoFnXzHLVmHOHnWpLEraryNB70x5AYQFg7C/Lll+op2wzr0Iw76u+5G
-         lzrRxl/eIP1L8IqFqX7ju+lg04411u1bVSRvd3jHT6MYdfrYXo4JPuY8L2ciWQvYSnlH
-         DWlx84gCumhHv/peNcDZXV4it8ARmFfBqhs5uTJ8uos1P1qJYSVsreT0hmf5nnjeqjBt
-         xcqilkJ8POSkn3SbxuLXXX89DV+BUE/QjDqAAXJZykx65b7gCG+KvSolnCgNJqd+r5oG
-         xIjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731596894; x=1732201694;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AgEfLtq8i/M2M75YOJzjdmjGGJwIKwjUcYodGngqvzE=;
-        b=aHppbh2dizdf4ovYJHwCui7b3pfpxDGX5+xV2c7PZUtNWlqIrU+7BolI3lJTQ0uFin
-         Vb8gKJy7QnHPXmlQxSXpxPUOK/fkNjpuYnr5U7ZPf8PjTa+YK57fcHFPojNbBdV/+2w9
-         +LULtBtdPjgMO9ikVK39e8IC45ncKIjpaiSj0v++VSf4/sqNbsRwRmjEh9ytGy7KXI8E
-         sUP/cfuxWLNXpQ6oaxdX9nptI+MY6WaNu96FvXRLseqokSgClMIUozLGWZbjSeO7fTeT
-         2AaLLidI3HDveDXDUgzuJu3gsdFHh98U01gnUF97/5c+PSFO+Nk9VgEEBsPJndjkhEBW
-         fq3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUDkZrOuXhL8y2vtE9Wl6AvNqHLOAg77nUUzQ49ep6G9WYlMOv2iIDRlj/salrN7x0VrAWw+BkHuryER6w0nZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOY7KRyanhT7TmhiOL5fHl+c39R2a+5mcnX9WEwmoOk8z0THkQ
-	Yvje8AODjXUl6I6FjNSvh0bdTYsTqHNp6x4gOUsW//LVzWN4FbviQirqsDolMfbkhbqXdM3bObO
-	R
-X-Google-Smtp-Source: AGHT+IFplMK03X58NbalioWaxnFldro9DAQmBOQt4nnGHdoMh9Yy1lXTcO15M41+5hv7LNH/if3ZJg==
-X-Received: by 2002:a5d:64ce:0:b0:381:f5c2:97c9 with SMTP id ffacd0b85a97d-3821851c110mr1743132f8f.25.1731596894541;
-        Thu, 14 Nov 2024 07:08:14 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821adada8esm1703155f8f.36.2024.11.14.07.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 07:08:13 -0800 (PST)
-Date: Thu, 14 Nov 2024 18:08:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Max Staudt <max@enpas.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
- can327_handle_prompt()
-Message-ID: <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
-References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
- <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
- <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
- <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
- <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
- <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sU68WJzs"
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id BbhitqbCk9tmtBbhrtq9SO; Thu, 14 Nov 2024 16:24:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731597873;
+	bh=izzFa5suPr8w2SBDN7iZD4T89oyWBt6p8wvOJcttrRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=sU68WJzs4DKbkHpVLb/IM1jhnO6MA7K6B5Vac7upD4dChBDroo3OOBl5pllxPz+ie
+	 +POA9pB3zED1p4gocSpHVjKAjsK0WkciLFh38CJY3JM6f09eFdic9s5mBlV9Cgbral
+	 o83a/L9Hj8rw1pVPZDmCwxT/ym58qgKui6/ad65bDQ+wyt6ExEwXeM/Mh2Fe9yfJgx
+	 6wJKGsqQz/cIWR2rjnlKYoCwv4i9LTtfqkUIcIut8jPNYFE1c6FFK+5/F+EIx2cjpI
+	 oWFjQchODcDdhBWXt9JZKqSCZCgBGpNGC0tXxxoYpRXRmUssRk0zWX75xnyh8Cp5yO
+	 MWXT401gTY1ZA==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 14 Nov 2024 16:24:33 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <7d4b176b-6b44-450b-ab2d-847e5199d1b9@wanadoo.fr>
+Date: Fri, 15 Nov 2024 00:24:17 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
+ can327_handle_prompt()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Max Staudt <max@enpas.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
+ <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
+ <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
+ <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
+ <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
+ <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
+ <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+In-Reply-To: <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-I'm happy to re-write the commit message.  Changing snprintf to sprintf() makes
-me so much less happy...
+On 15/11/2024 at 00:08, Dan Carpenter wrote:
+> I'm happy to re-write the commit message.  Changing snprintf to sprintf() makes
+> me so much less happy...
 
-regards,
-dan carpenter
+OK. Let me amend my previous message. I kind of understood from the past
+exchanges that Max will take the ownership of this patch and credit you
+a with a Reported-by: tag.
+
+If you keep the ownership of the patch, then that's a different story :)
+
+I do not want to make you sad and I am fine with your preferred approach.
+
+
+Yours sincerely,
+Vincent Mailhol
 
