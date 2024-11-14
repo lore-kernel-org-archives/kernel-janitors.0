@@ -1,71 +1,40 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BE722331
-	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 13:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD7E3C466;
+	Thu, 14 Nov 2024 14:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731592650; cv=none; b=A5Aj2t549Mobzx+E+ZyCQ+aF75sILRv4viJWM+S7CMKSs/fILKQJ/nMeXp/TQo5JFep8f0p1XHPlTtUo3ofbhuPVXuZ3WMy3pqowZvRDaB0MJOoDcW0OUaV+0WT1Jdpee/uj/Omz4681K/RacNKsjMUTBJGZHqLMJL4G2ItjE10=
+	t=1731596065; cv=none; b=CMrGOpXcclJpfQkTMW6bwn56MCwuFSqKVFAY+ZyJZV22eLU0pCHZpm/w8ediQx7t5i9nq1/FEItqiqjAIqPFzbUAmL3Mxg+eyOl8TKO2axCcGiln2p6UEo1ZZ6CMj8FSOe3fRol5jgzgZQT2GO4xAwS1DwX65E6pcrVIvqvBK0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731592650; c=relaxed/simple;
-	bh=a+AUQrdW+PYA61YxrcqIvJErr6SmNmqDLMixPc3UFdw=;
+	s=arc-20240116; t=1731596065; c=relaxed/simple;
+	bh=7urnx5vu/yESHJWnIBOTy1RbM2n6RW2xZI/t8XcbpJw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qkES6ISJ6llUxNDlhYAkkHjuWdonzxMLs1Olu9gm8P9g4I6XPt7SXBj91YHar+NAjlCAlucOkMWqtul9Se+wzjjNmISCC9G3H/4RJJadpEF1nilWwOMc3NBctXT31jUdz17mSILN0CPO7T/pTrpCRKUu3QrWkaxJ9lZeA2673wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GghzDWtq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=joYjcOuqiPVKoSJqBPRSIvDl+dvmsXofU2BKExXeK9PtvQicylWXUECPsx5UdtJKB4yYSdEeuL6sodJQS6Kh8XHMmOI0rhdOK4XxqFkqWWVGJSLdvhSdbqwy0Dp9r7GtNrqTWOcjQdV8lHOIiyvjDE7a9+tckKPsN4af+eijN40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XQvJgcUi; arc=none smtp.client-ip=80.12.242.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GghzDWtq"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AE9or2R021648
-	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 13:57:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	r5goF3KV2cIAs2QaOfnwRv9qRBAvGbfSx7o/YGvGW+Y=; b=GghzDWtqvmaAP1j4
-	vOufLtvEUGYsuKGXjo0khJzFlWa8OWZEbRzCGfwLcxiNEwmPdz9i6O18u0PmdsCB
-	Qg4gsypOsQnXSHk3eNJbpbJfSIsRTKAaMN4GX1KSlxBAvhAAzQGk3oPUdVDi0eKP
-	8fnqxwXBLLeMSEVgPYggKUP80cCTkHByZe8M4s30d4HeoJm+iCeSeJm9SsMJK7MH
-	v8MvMcjVGohDJ6h9Z5wUOpOv85d7Z76mqB5mylAtsLrJqZ9hQ8ctmVo6ennA6UrG
-	iYs04Fe9eOtp25pGgtIRYiQcYxDO6vICtr56lh67TktFw09+0gqDu0HbFIddKAQ4
-	tzQV+w==
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42wex8rn0b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 13:57:26 +0000 (GMT)
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3e60838eed4so23440b6e.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 05:57:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731592645; x=1732197445;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5goF3KV2cIAs2QaOfnwRv9qRBAvGbfSx7o/YGvGW+Y=;
-        b=sAljw4sCUpei13aZ4pbIL31FioiO3gpSdH4nppmg2fve93Hp58Ec1YHiFU/Aubopzb
-         gfN0TzOcf53TkrxvKeS4vSfPpNRknHy6/LNtGya4NbTlMflDCsD2OvMN8bukAyHfYGPr
-         v3wyaBEOddst7ZaatwTbsRFrjCH16FeZbXHxxRoFW+2JL9HtowwL5IRfq/FjyUVLMRLH
-         /ZdcLQdseXyysEmlgNX6oLsu0aouDqCGTDyYQhlyKRdVL5HiPyUxsv1i9lVvvWSyepZz
-         AUhiK1kr1EWxBow9afOPoFRnRtMtAmtL5uCKgwXhwhEWV3ED/QLVIjN3XSIycBPNS+ba
-         M70g==
-X-Gm-Message-State: AOJu0YyKhApLOA3AtVZvGLYoU+m0bxo0UEmtUdO2M9KNmJqLv8z6K4cj
-	qrVCgMHUYqL4FIu9c9YzHpmOLWC7N7Lr0c/1nFU3ykfOMUREMudQf2QWQhGh0JJ1VhEGhbSpF6U
-	lyTB7KBGl7/2W2JXoUTnGA1k5vz/gE4a/3ibCtjy5+qHncxX9QZfbjWGSoQiYautWXdk=
-X-Gm-Gg: ASbGnctzlkkq7pn470AG3okxeVRWvmOAmFllZDxXNSM2gNTvhozSuml9JcKO0JuV3aO
-	oypYZvWuzD7WmSo0De6iOtcafCRDNl9ztLESXm5l3/pPgI4VzuP4QODt43huVdTJX/ekaxn3a+3
-	TRZN+GTlCra49Nju0GHnwybTNu3ceRU/xkoYeGAJoJjNq4uI5leJZPSwVh0BagqqKmvzTurC9WT
-	bylmgT2/WsfIJ6EQ9UOEoJSqQjHXOh1WbdVT0miYMnFDkeeH0QIx5JV6Q4jvZrPNTgbxsFCSMPB
-	X+mTJSqDazNs1mnst1Adi4OhQJxDW7w=
-X-Received: by 2002:a05:6830:f93:b0:715:4e38:a184 with SMTP id 46e09a7af769-71a1c2ad1d8mr4817816a34.6.1731592645258;
-        Thu, 14 Nov 2024 05:57:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH6WOi/e6VYMuaESWh26yXjsRegZdqLm5bTpJ4NEg8Pa4CgUSOaZkbMvHVfXE3iWkVhZnN9DA==
-X-Received: by 2002:a05:6830:f93:b0:715:4e38:a184 with SMTP id 46e09a7af769-71a1c2ad1d8mr4817809a34.6.1731592644879;
-        Thu, 14 Nov 2024 05:57:24 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df2649esm66079966b.39.2024.11.14.05.57.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2024 05:57:23 -0800 (PST)
-Message-ID: <49b50756-bb6d-4863-bf19-f61057d5861d@oss.qualcomm.com>
-Date: Thu, 14 Nov 2024 14:57:20 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XQvJgcUi"
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id BbEatkpiFKUdDBbEctKGl2; Thu, 14 Nov 2024 15:54:20 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731596060;
+	bh=6aybBEMH2m5gabV302QoPDrP38h4o14hvmeyTfnxSfI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=XQvJgcUiwKA0R69DkqnvYqg7v4kaDqqKJCEN8yuYn3+dIw467fIWYLjESWfyuCjIk
+	 MhuyrSYGKzE0EAo8iKZ32Xvh4N45zwr7+KeNb7BJuyFLiwEOPVi0wDBw8b2rVX97nt
+	 QS41SEmSQX5KRNUdHsj/TgTGmXlcTQmpbQHjhbZ9pWzwtFi5gY1roF/W81KWFMnNFv
+	 TmynebIVaI/xeourGNBUDY04YSACdO197A+dXEYTFsF3lkvE2pjjNL1peLRQ6aGu/P
+	 sVS1lygl5GtgGomK8HA/YXyyLw7LprLPhKZT+e/u1/h/JvhztlynF7iPLSyWKRDrV2
+	 3IjXs2hGzbvaA==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 14 Nov 2024 15:54:20 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
+Date: Thu, 14 Nov 2024 23:54:11 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,43 +42,90 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][V2] drm/msm/a5xx: remove null pointer check on pdev
-To: Colin Ian King <colin.i.king@gmail.com>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241112182218.1119158-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
+ can327_handle_prompt()
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Max Staudt <max@enpas.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
+ <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
+ <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
+ <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
+ <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241112182218.1119158-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 14LGoU_HN5QLR8iXBul0zKXNzCP-aRt3
-X-Proofpoint-ORIG-GUID: 14LGoU_HN5QLR8iXBul0zKXNzCP-aRt3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- phishscore=0 bulkscore=0 mlxlogscore=704 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1011 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411140108
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+In-Reply-To: <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 12.11.2024 7:22 PM, Colin Ian King wrote:
-> The call chain on a5xx_gpu_init is such that pdev is not going to be
-> null, so the null check on pdev can be removed. This also cleans up
-> a static analysis warning where pdev is dereferenced before the null
-> check which cannot actually occur.
+On 14/11/2024 at 22:34, Marc Kleine-Budde wrote:
+> On 14.11.2024 21:35:07, Vincent Mailhol wrote:
+>> On 14/11/2024 at 18:57, Dan Carpenter wrote:
+>>> On Thu, Nov 14, 2024 at 06:34:49PM +0900, Vincent Mailhol wrote:
+>>>> Hi Dan,
+>>>>
+>>>> On 14/11/2024 at 18:03, Dan Carpenter wrote:
+>>>>> This code is printing hex values to the &local_txbuf buffer and it's
+>>>>> using the snprintf() function to try prevent buffer overflows.  The
+>>>>> problem is that it's not passing the correct limit to the snprintf()
+>>>>> function so the limit doesn't do anything.  On each iteration we print
+>>>>> two digits so the remaining size should also decrease by two, but
+>>>>> instead it passes the sizeof() the entire buffer each time.
+>>>>>
+>>>>> If the frame->len were too long it would result in a buffer overflow.
+>>>>
+>>>> But, can frame->len be too long? Classical CAN frame maximum length is 8
+>>>> bytes. And I do not see a path for a malformed frame to reach this part of
+>>>> the driver.
+>>>>
+>>>> If such a path exists, I think this should be explained. Else, I am just not
+>>>> sure if this needs a Fixes: tag.
+>>
+>> I confirmed the CAN frame length is correctly checked.
+>>
+>> The only way to trigger that snprintf() with the wrong size is if
+>> CAN327_TX_DO_CAN_DATA is set, which only occurs in can327_send_frame(). And
+>> the only caller of can327_send_frame() is can327_netdev_start_xmit().
+>>
+>> can327_netdev_start_xmit() calls can_dev_dropped_skb() which in turn calls
+>> can_dropped_invalid_skb() which goes to can_is_can_skb() which finally
+>> checks that cf->len is not bigger than CAN_MAX_DLEN (i.e. 8 bytes).
+>>
+>> So indeed, no buffer overflow can occur here.
+>>
+>>> Even when bugs don't affect runtime we still assign a Fixes tag, but we don't
+>>> CC stable.  There is no way that passing the wrong size was intentional.
+>>
+>> Got it. Thanks for the explanation, now it makes sense to keep the Fixes:
+>> tag.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> ---
+> Should we take the patch as it is?
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+I am not keen of taking it as-is. *At least*, I think that the 
+description should be updated to say that this bug can *not* result in a 
+buffer overflow because the frame length limit of eight bytes is 
+enforced by can_dev_dropped_skb(). If we keep things as-is, I am worried 
+that we will create additional work for the CVE team.
 
-Konrad
+As for the code itself, why not, but I prefer the suggestion made by 
+Max. If the length can not exceed eight bytes, why writing code to 
+handle an otherwise impossible to trigger condition?
+
+I also quickly looked at the hexdump helper functions and found bin2hex():
+
+   https://elixir.bootlin.com/linux/v6.11/source/lib/hexdump.c#L87
+
+It is promissing on first sight, but it produces lower case hexadecimal. 
+And it doesn't look like the can327 would accept that.
+
+At the end, I am fine to defer to Max the final decision on what to do 
+on the code. At the end, he is the maintainer of that module.
+
+
+Yours sincerely,
+Vincent Mailhol
+
