@@ -1,104 +1,101 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964DA13B288
-	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 15:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCAF199FD3
+	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 19:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731598972; cv=none; b=ILnw9mFk5PUVuA+I3SH1zSLmrMVg65+76Oaz3AFbOfNSn+9pTRfT/o3OVAvqDezAtKHDAWHVQ0ous492hmyKpO9s0aiPbtfE16niL7kFccyIuNtjQu5uAKB9vusx8NQZWx3mpmv+tQyHjfjTywIjfU4ylIptndil2lBU40p/Ui8=
+	t=1731612463; cv=none; b=e1mxL3WeEs/wKxxSdFdJY4RJKrGUcDQnRwCk7OAGeNkZCke7TO9ilxfNcybZ5ux9baNLWYjvds+KNLbc8KLZD8fY3Wg/l/5dEXZPO+4DOh2aspwHhqfl4PooRvZG9/+FuMINNPmCDSTiHeZIS00SHD5r9gu2+/YXFp823v6N5a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731598972; c=relaxed/simple;
-	bh=5lKBuQID5A6V/TtMNiFrE0dY9fXYPxM6odgRZVO7MTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dVd+mMyp+bE5h2nuujkIHAUSOGjsk03GUfNExe4AuO0OCmeyzBEXD5pZdE+3YzxHurQek5CxkONoImXQAFqZzFYZqACEyU9ZjOjG8TwbCSc+V7b0xwwxPOAqLOszoEVZq9I9TEuHf+Os0iL+QwCUvyd6RM8Yx10Mzg9PCA6RJX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KrT4PnQx; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1731612463; c=relaxed/simple;
+	bh=txcz9rml5UlukCVS1D+ITLftMxjZTir6dwyu0ic8vgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r1YymavPX1L/C9dMeyo+p+bQ2Ud1PL5OovyVLyW+i1ciw2xBV4RToimztZmhA9kECc/hv00CeIHhNjzfqfRCvJBRppQOnIuUatzPZWIONgyOmUi4nZLVOVSu66dI0Kb0bvenqKGwb/RSpW7GnZJXznDUBKFBYU+YbxwjEpu+IYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=lkmqC5Ym; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KrT4PnQx"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3821e0b2262so357771f8f.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 07:42:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="lkmqC5Ym"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cf8b788f5fso288196a12.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 11:27:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731598969; x=1732203769; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KX2+fSGUfmeU6/csaLeMCbckFU11xR4X8/Q/gUEL7bI=;
-        b=KrT4PnQxoDYvO1FRefk8ODtVOUxQ7ZbFskSH+D2in0nNXs+ZM+MtbiqyT8K1PGBy60
-         gmI1AKFwhC+o2KYldz/JTLzgtPqMVXHF0RvOd8hZurBhamyebjwVeKqT00+6VT5Wwu65
-         0qFg/bYjbgAaZjlOTWR2PXzQsijT64gY0cKpq0tPErGyu+an2t6foEwmKMv6LJK85Dmd
-         doBsrTIXFlxTHINLeCEQgPRWBz3bjEobcQxT60Jt4fB3spsEhG+HlgohZRn48uRYux4V
-         /QLl07+UOmTvWa/Tr541buEpS3HsotG9Gau4Oo+zbAm0YC94nV3krLJPGbhlRPnn+S40
-         Jd4Q==
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1731612460; x=1732217260; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jeniB389OKvN5zEj18bT2eYMneg20P17C1/p3gN89l8=;
+        b=lkmqC5Ymx6d3saVpOtEWzHv1FucT57O8Ag67el/sfpPgk5EOvJYm3BD3HmwfyRuBBS
+         vP9Zgk6NTf00bk/GvcYeS1rtxCWYpzzaTCni5rBKUukfeBPWJfSlSFPX5fDTOUdznqbR
+         sU1PMlrIYyVPOZWcXpwr0mnK+mOPKPRGybkhVQKM6q2hPxj4TMyqlhidAh2y7zWKpZ4s
+         EAIJP8BpoTzJNFTgUXWAk1m5wFda0g6c8SbRxzWFHuFMzahHlRtZ0+9Oats6c0GDFECl
+         uRWCq5ale12V4Iu+2V75nqhFWeBVJdm6qHvfju5s/r1dqlXPTJQsDVjvYN8ZsW4JpfIL
+         8BLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731598969; x=1732203769;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KX2+fSGUfmeU6/csaLeMCbckFU11xR4X8/Q/gUEL7bI=;
-        b=mSa6Wumw6QHtc51tCMyyJjKv1qf40EAJvqmPZFb1s0G1iHxL9a9OxGPmv34Ik1XOka
-         fx7KnpI3oaqw+g7++MJy0PTWMtScKmTMXA9oZ1XxlDrOlBoehZQ1nW+KfqDLOQJhYq2p
-         G5HVGcT9MrTe7iDbqtN/2OUSYtpw1u54vcSUnx/YmULN2Ma1WGPJsPWuQ/HtOAnGIjY7
-         NFp03ZItrzU04+50+7SuEAe6RUMP0B+H1ShRGNkG4yluq39FeNpGjLIUvxMnx1QpUg+N
-         /vmL6BA7Jir8ccRm9yWi9ZDcz1Qf32N50XbphKvK1QJwzViKTCEPwjRQkn3qmsylUlDC
-         ptlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuEOGfJ8Ejw2EyRws3Hfd3/g8516F84IyeCpEaNCJDHINxGGcuX1rdosIcMjoMjWhTVbL7FTIHieUIYALe32s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq/Om/APW8suQCyMHgHOto7rbDQz2Xubrpq88wZ/b8wHe00kOG
-	x1GBxzeiiDcTUL/r50OQTtN5Hhjvm6+t2MVTlA5N9aFNkSD/0JTN3Xfwg77Rp6k=
-X-Google-Smtp-Source: AGHT+IFinWny9gPHiwjHi0Xnjp+VmawkDv8LOfWqaLaGRLkw5Fwzg9gT4mhRC/81ZoQXRB3xpi7PiA==
-X-Received: by 2002:a5d:5f92:0:b0:378:89d8:8242 with SMTP id ffacd0b85a97d-3821851c3d0mr2406983f8f.26.1731598968872;
-        Thu, 14 Nov 2024 07:42:48 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382200fe00esm1093677f8f.42.2024.11.14.07.42.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 07:42:48 -0800 (PST)
-Date: Thu, 14 Nov 2024 18:42:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Max Staudt <max@enpas.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
- can327_handle_prompt()
-Message-ID: <e5572514-83d7-4b7e-b4f0-5318c6722250@stanley.mountain>
-References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
- <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
- <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
- <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
- <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
- <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
- <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
- <7d4b176b-6b44-450b-ab2d-847e5199d1b9@wanadoo.fr>
+        d=1e100.net; s=20230601; t=1731612460; x=1732217260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jeniB389OKvN5zEj18bT2eYMneg20P17C1/p3gN89l8=;
+        b=Ix02vBnYRQj7iy+tc0te7tpVa6LqN9+0XMpV93QZnpz4rcYAUKtAdWoUJoFtDezEoP
+         V55olTz5PlOpQf23xKF71oBE3J5558Ft4zcu3uRKepWSCSemXAJCforDienRV4Y9UC/Q
+         cU3I6wNP1o0YPak/kWsc10JQFaCGIZ46VjlWDo0qtBCQmdP5LLKIXHzwtyGDIygBfPiT
+         kNXz1qI0vzSu0AKUif2AaQJNFGTzak0v6Xz96+WMyEN/Jmv8f3UGV1IXmVyJ9fWA4VSx
+         bWls1EG+hrkVTABWzFucl8Ac4Fvs17FsTHRMEMaywGoG5tSgepnis6ULpXC/rT3S8cGz
+         DI6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLZ253U+vPhd6/DOArG2uM1PJz8S8LarwOHU9tVqd8y3GSxu4qMIHz27arnw1P7fOFJSmY0zaunu734UfONck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMFvA7uYVsfPeqLZ9L/YWpPyL4DTC5wG9Agippi6+ABb4YIgSp
+	mjCFwUm+9ZXyx5+5H+uJqeQhzExUPIOmXE65K7yOhFJOkRuY1B66kyplAMvoTGC1hKxnOLXX8q0
+	a/14ZoDLQq+HqWpfLs6BXuFwsfai009KsTUle7w==
+X-Google-Smtp-Source: AGHT+IFSQszniN+RtUbvA9KWKxINe1wk8KIYUXCCO8l/ucVV+qEreHHvFvj2XdwHBbQri+4d2NNe/piuHj9oJNb3iSo=
+X-Received: by 2002:a05:6402:2792:b0:5cb:dd06:90d5 with SMTP id
+ 4fb4d7f45d1cf-5cf77eeb2acmr3116704a12.26.1731612459509; Thu, 14 Nov 2024
+ 11:27:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7d4b176b-6b44-450b-ab2d-847e5199d1b9@wanadoo.fr>
+References: <20241112233613.6444-1-everestkc@everestkc.com.np> <20241113105939.GY4507@kernel.org>
+In-Reply-To: <20241113105939.GY4507@kernel.org>
+From: "Everest K.C." <everestkc@everestkc.com.np>
+Date: Thu, 14 Nov 2024 12:27:28 -0700
+Message-ID: <CAEO-vhFzEo12uU7EBOb6r6J7Ludhe4HNNGvfN71fSDQRmR16pQ@mail.gmail.com>
+Subject: Re: [PATCH][next] xfrm: Add error handling when nla_put_u32() returns
+ an error
+To: Simon Horman <horms@kernel.org>
+Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 12:24:17AM +0900, Vincent Mailhol wrote:
-> On 15/11/2024 at 00:08, Dan Carpenter wrote:
-> > I'm happy to re-write the commit message.  Changing snprintf to sprintf() makes
-> > me so much less happy...
-> 
-> OK. Let me amend my previous message. I kind of understood from the past
-> exchanges that Max will take the ownership of this patch and credit you
-> a with a Reported-by: tag.
-> 
-> If you keep the ownership of the patch, then that's a different story :)
-> 
-> I do not want to make you sad and I am fine with your preferred approach.
-
-Then I can just resend this tomorrow.
-
-regards,
-dan carpenter
-
+On Wed, Nov 13, 2024 at 3:59=E2=80=AFAM Simon Horman <horms@kernel.org> wro=
+te:
+>
+> On Tue, Nov 12, 2024 at 04:36:06PM -0700, Everest K.C. wrote:
+> > Error handling is missing when call to nla_put_u32() fails.
+> > Handle the error when the call to nla_put_u32() returns an error.
+> >
+> > The error was reported by Coverity Scan.
+> > Report:
+> > CID 1601525: (#1 of 1): Unused value (UNUSED_VALUE)
+> > returned_value: Assigning value from nla_put_u32(skb, XFRMA_SA_PCPU, x-=
+>pcpu_num)
+> > to err here, but that stored value is overwritten before it can be used
+> >
+> > Fixes: 1ddf9916ac09 ("xfrm: Add support for per cpu xfrm state handling=
+.")
+> > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+>
+> For future reference, I think the appropriate target for this tree
+> is ipsec-next rather than next.
+>
+>         Subject: [PATCH ipsec-next] xfrm: ...
+Should I send a patch to ipsec-next ?
+>
+> ...
+- Everest K.C.
