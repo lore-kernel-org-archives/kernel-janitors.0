@@ -1,122 +1,92 @@
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7D61F470B;
-	Thu, 14 Nov 2024 09:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F6B1E47A5
+	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 09:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731576900; cv=none; b=Y0MOKXC5lmrStgi5QAIUlgdGjLSFjioOQUssw3ZZm4wGb21suRwfi1UJMboP3MMqNL5BT6iDAqi6lJkkQ+u7VzMLFG7Hl15ZBTkQ0pBGnhYUzkS7fXDEPzzbNzt48KftxqD0QgNGHUz0I7NuIFv03LEEwbnZiQunBkHIVlZ/+TQ=
+	t=1731576995; cv=none; b=jD8PdbtgAprjgkXAI5FzCt+qrqbmqHxEmKfqJkMU/bPlJn9aRthqQz1VfqFgcJKlzXFFVQzTOk6BFTrEsjxZQ2KVlGDhf5U1ngCGgzlBsLp6Kb+enEOzF0geGsNmVFc7uXYv2UTPIEg2SwI3L8Qgjt3ybVdbgHkNUm4v4B2nl84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731576900; c=relaxed/simple;
-	bh=z6+I7+CYarKdEBPM3FA1TYZtfIOd/tndwNaEyQSMZPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Si+o1NdJjWDZmYTHdb0/+2rAyKQyKPdAUSc0+rpGO7zDZ8Os/mBN/JobaifbqlXAuNWzLjPYRgD53Jtz48dU/TaBa8t941H5yBD2LLkQnge//gw2MKFHUXSb/k95joOIYMgqlj0ZIQ83PEMH1j++sZMsKK1AGE4kJpxvCygewK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oKXO3QgC; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1731576995; c=relaxed/simple;
+	bh=csv1M4CyQEt/RntGtEVuXcsMRsZzag2MnVexJKsM2FQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DY+hJVKFasmP5CwsCdfG6kPEEYxWpYs83FeSDxlsut2j1/qWNuap4/rv2aGvo5E3EWJPCNIfySMB6MxyHqERNaBk3N7l48ybfOe0etiTHyFn4q163kKD9VqEDpJc412+O3uiwQWqsq/bZb+D3uwA89QbR8zNWeSFdRIfpYJA3Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Gx5NQb/T; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oKXO3QgC"
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id BWFRtPe7vUepfBWFVtwEYZ; Thu, 14 Nov 2024 10:34:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731576896;
-	bh=FUfrCo/CScN+GZNhfYe1RnJiRuI/wkqeEkNkQMFOKuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=oKXO3QgC7FzfFdy24K6cirs9PpHvYwoFE6Z7m7KGTU6+Gh8NYcVb2naYhOLpARhOd
-	 9lwfdmZ38E+GDrFpo0Pou7aGe5gaOK8B8ifN6NoYWWwe6ENT9OqDLZx07S6w/jw9aI
-	 o6KedacyMCGxGi4QDsn/dsxo8bg7ywzXOQzE5m2N99EhqUvc7VRgiyRAdc/2QGC2QF
-	 X9qp+q7kxazuf2ye8i3JnDaj9Ki1c2hFDioPzKTGssmhy3CNUPJ/fT55ns6lHWSqgK
-	 siG/kPv1IxGaGmBxdlor+kh1sFIJj/U1aV/JiVcYBg1TYuGBSmuUxbuaG0h//Zfmbj
-	 GWi7qSxbPqQkw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 14 Nov 2024 10:34:56 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
-Date: Thu, 14 Nov 2024 18:34:49 +0900
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Gx5NQb/T"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=csv1
+	M4CyQEt/RntGtEVuXcsMRsZzag2MnVexJKsM2FQ=; b=Gx5NQb/TxsG39PJI4OhA
+	xRaUrIyqf333IARNcupnlejQk4X6MHmE3Wr7TUBRmwgFklhYfiuU88viTRZqm8/w
+	mCDoPaf88yi8w2Cxh1OTkhX1ggWpW1rIWwmm9u5ptm8YxpKvK/ePGPoAZlG39enq
+	Humfby3mdyfb3UhUl3M/omJ/NOmcK1F9ix+ucWifYHX5HuHn8Y2nLS1GvnBaEdOp
+	vPauj+/bAPpfAWmWbzdcOucRgoqAaawAauaBPkD+a/6mBZClID+zZQ+HPzfobHhx
+	Fg1QP3KU96oAZ+Z2sroeydqDpN7umWZeVHoFYRyvf4+oFeMchvcJOsQTqnV+Deqy
+	xQ==
+Received: (qmail 3106452 invoked from network); 14 Nov 2024 10:36:30 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Nov 2024 10:36:30 +0100
+X-UD-Smtp-Session: l3s3148p1@3gFpL9wmZLRehhtH
+Date: Thu, 14 Nov 2024 10:36:30 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] Documentation: i2c: Constify struct i2c_device_id
+Message-ID: <ZzXEnp5fi01ePWnP@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+References: <c8e6da4adb7381ee27e8e11854c9d856382cdc93.1731445244.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
- can327_handle_prompt()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Max Staudt <max@enpas.org>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="x5iuvD6cL/QxHzcL"
+Content-Disposition: inline
+In-Reply-To: <c8e6da4adb7381ee27e8e11854c9d856382cdc93.1731445244.git.christophe.jaillet@wanadoo.fr>
 
-Hi Dan,
 
-On 14/11/2024 at 18:03, Dan Carpenter wrote:
-> This code is printing hex values to the &local_txbuf buffer and it's
-> using the snprintf() function to try prevent buffer overflows.  The
-> problem is that it's not passing the correct limit to the snprintf()
-> function so the limit doesn't do anything.  On each iteration we print
-> two digits so the remaining size should also decrease by two, but
-> instead it passes the sizeof() the entire buffer each time.
-> 
-> If the frame->len were too long it would result in a buffer overflow.
+--x5iuvD6cL/QxHzcL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But, can frame->len be too long? Classical CAN frame maximum length is 8 
-bytes. And I do not see a path for a malformed frame to reach this part 
-of the driver.
+On Tue, Nov 12, 2024 at 10:01:00PM +0100, Christophe JAILLET wrote:
+> Constify the i2c_device_id structure in the doc to give a cleaner starting
+> point.
+>=20
+> Also remove an empty line which is usually not added.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-If such a path exists, I think this should be explained. Else, I am just 
-not sure if this needs a Fixes: tag.
+Applied to for-next, thanks!
 
-> I've also changed the function from snprintf() to scnprintf().  The
-> difference between the two functions is that snprintf() returns the number
-> of bytes which would have been printed if there were space while the
-> scnprintf() function returns the number of bytes which are actually
-> printed.
-> 
-> Fixes: 43da2f07622f ("can: can327: CAN/ldisc driver for ELM327 based OBD-II adapters")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> ---
->   drivers/net/can/can327.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/can/can327.c b/drivers/net/can/can327.c
-> index 24af63961030..5c05ebc72318 100644
-> --- a/drivers/net/can/can327.c
-> +++ b/drivers/net/can/can327.c
-> @@ -623,16 +623,16 @@ static void can327_handle_prompt(struct can327 *elm)
->   			snprintf(local_txbuf, sizeof(local_txbuf), "ATRTR\r");
->   		} else {
->   			/* Send a regular CAN data frame */
-> +			int off = 0;
->   			int i;
->   
->   			for (i = 0; i < frame->len; i++) {
-> -				snprintf(&local_txbuf[2 * i],
-> -					 sizeof(local_txbuf), "%02X",
-> -					 frame->data[i]);
-> +				off += scnprintf(&local_txbuf[off],
-> +						 sizeof(local_txbuf) - off,
-> +						 "%02X", frame->data[i]);
->   			}
->   
-> -			snprintf(&local_txbuf[2 * i], sizeof(local_txbuf),
-> -				 "\r");
-> +			scnprintf(&local_txbuf[off], sizeof(local_txbuf) - off, "\r");
->   		}
->   
->   		elm->drop_next_line = 1;
 
-Yours sincerely,
-Vincent Mailhol
+--x5iuvD6cL/QxHzcL
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmc1xJ4ACgkQFA3kzBSg
+Kba90w/9EEUbK0gVlZeKrg6mlUDTaRW6Qpve4CK7/6E0z7kTdFDGttEbequD7CZj
+PGh5hTdCxsuJ311klMedkx+tm4uGONubPVlKhKTk9UEXV2xSIb0gFm3E0f7nQvLm
+GEX5n9up9Mg0DmLYgiOjWgLqq7r2OgzN9IxgRk/BtK/zAQsMSDzVN6J1Ep5sxUNK
+1Ju461QXUFYEGcsoqZk1FLYIK7eguDxJtGnCpFI/hUjUBpCOgDvSvOT7E0ZCHArS
+kJo1E1tE8xo8Fntp2WWwSGudbWuawt+VnV/IeMJledSCywR4IHgxQgjrNu+DPj6N
+YADdB25vMv0jByzmjCc40BHixKA19Wf6cZTIZ3uo9DunKCi17/kw1cnZFlWEjz8t
+2hY1AXIebniHT2AWe6JdA+pisX6HbFqsk2gPDCWfUVfZO+1ExEcS4tZmUCqolgb9
+bPgrmUE1424aizH6zKSMyWFz1lMSJR9h02f9VW0F0hTr5nJMldmEfHuaJl8fDOKX
+Da8sAnK2Tk8u/rLeFP5A/zKNLE9DQx1AO1UJ9UpORDTw/IUyrl5VpRSl5LusbHZ9
+jLFaZPnEqMFnqCywFkDf234xLlEoq/YSM6BvMbFOExNRb9sw36o2F3U6xVZQB5ZY
+o7h4HHy9k4+g0wRg8Tnnv1tCGamJfdKplFrKayiOA3XLDb/Hjps=
+=0J7m
+-----END PGP SIGNATURE-----
+
+--x5iuvD6cL/QxHzcL--
