@@ -1,149 +1,112 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A526D1632DE
-	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 08:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7831F7098
+	for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 08:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731574674; cv=none; b=E+Oa4ZzICpkEA7oZgsZ6kbfqst7ApIzGl7WtaaDIzHu0h22bG+pTGxHGpz0lfWQ5TOy8zrC6TeUJ0mtgNTx/pj5cbT9zxsrMqJnn1mZUUaI/xSdCPGDdjuWhJ2NruKRwitP/D2h3NGdJgc1nHxUI1HIxS67illrKROqHwJVyOQs=
+	t=1731574779; cv=none; b=YF9M8cJY0cZot9cnfjbtEiIk8+aldxvMWpABmPkP6WtJvT0SKg9fixZ3g9zBgMi4pfrTW4RejKRciCG20eDxYbpxK8mkZTgDbl04Z7mHTVItWtr2HIPYlTYEY21jjDDyqp3dvKGT0S+gDJ9GZEEX6k5lb2ggTwmSF47kVyYe/aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731574674; c=relaxed/simple;
-	bh=rwLTIjTp1zdqDObkdY+d+liJFZYYxTRT5NDlHebd/78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQ3hSlPwTewFlbbpe6+oiuP2ieuGqRrtmpdgduBCzXytWlhP+w0oSR2DTm5fz9PFsFEQBKImU7mxShINRSTVSMXIGZ38i+nMDhNLRkrXptaVvLHeGPqGdhVqbb/qfAokdlXyO7wRro1EVudvIR8qrMjyEIxhZXaAPUtZ+eOu0AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bfxawefe; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1731574779; c=relaxed/simple;
+	bh=XycamBY/nYOgqAvwbffcnYn4/Yabq7JhXqCOkrXC1xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kqikarhztBVZE4+rQSh/8nJINcf6c1hTIK8JJHSV8n6OsEUYP0k0n4dEANM6Yk46uZY7SVYDp1DhjG4I2QHMeR4EgsUR9rYDUN1W5vBgVp1IiMpRethkhQbb4ZlQSr0Kygz5LbPy3RBvjiROsHgTd3PNGgQWrkfwGU8BYYlBwhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jNbFXWb7; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bfxawefe"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cf04f75e1aso520262a12.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 00:57:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jNbFXWb7"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so451197a12.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Nov 2024 00:59:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731574671; x=1732179471; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RbQDz8bnzrpIu+TOHQPeiD1K6+1spFdelZENd64veIQ=;
-        b=bfxawefeF30w9s1W7pRUK/qIJVAq05mkWYpwHirM3jPRa/QQ7l1iMhO3fGlQ48xUIc
-         j54EM+ONN830Frw3Rq/adKAgo15mNtQu821YSX7RI1GuLxsAXAxh/JcIJITGiKjfiTrQ
-         fY7tza8b1J7ntonSJSfzNPDCg1DUmueG0VJR1Wa+0C8r/ce/Lc9xLD07gNV91TauG9P5
-         uJiqm/vNAMFKdZnWBzOSXs7gT4G9B1SvAKoon5Ko60O9UnPwP7SBO9A3igwPDfKf8aTN
-         xrskXxTSxIRWiX+iuxLL53BG6JqeFOlFb0gQUvW4Nee0+4as6Eeb2wRyupG73GGmzUut
-         RYyg==
+        d=linaro.org; s=google; t=1731574776; x=1732179576; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RFvv3LbF9Kdg9CtKKlONGsxCX12ovGg602Za7rDJdl8=;
+        b=jNbFXWb7jcm+CDw7YVEZz23nl4UM1utKC5g3fqOHWPXKBMO0zc9aZ89LoDGSm9se1r
+         cK2tPrK5YvrJJ6nFOSMXEamgQTC7+6HczQZOAvkwO5O4+dn+tKblhZJtiaKiVOazbgEX
+         xadz47PXFUddSC/bEQWU/uR3dekqmuqZLEpxTgAsZwXdDbXLnYWOJ24DgrVm6+To9Myu
+         y4I3y7TwIkULbdQQRRhtYpExJtqtc8brkAI+NdbgXPHPTyqqUKt9LhfqqWlR2RHKig/x
+         0Ts2fEP2bKzcTRYZ/0Ist/ixEJR1vw30RHzkbjDq4sqXE9SZ7VimomJpiFIyUUW86IKl
+         grJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731574671; x=1732179471;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1731574776; x=1732179576;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RbQDz8bnzrpIu+TOHQPeiD1K6+1spFdelZENd64veIQ=;
-        b=K+lY4G95/NsPQxs/m2Y+nVB2BG0YkzPgssaYALy40eW5eLzreSxzee9YvZ9V6BrPRa
-         09Aavfgg8W6aIaXOaIjLi2B9C7kjE+FaGVchU5x7tO2eFM1dVdKgPZRpF2T1tlRDoS1Z
-         L1qhE8s2a5fucQFCBpapi/YqtpnVtunfCZPsYwWt7ONGW3jzbAAcX/gK1wB6zX86FOt0
-         nlPp9D4u9so/cJlp12L5Dy6h8roW/HH4aRHiCFAkYabFNrGz6838qRjKijBwoCafvl72
-         dRKw0CiKslm7bsre4/74Iw2b5CCuK1NvB0tlmW+MXAbt2UoiBTwfWwX9jOINmUEdttaA
-         9oCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpoVYAvahPouDcdVJoPBh3u/wSIgeZFv+ipuqxbEq4xobk1qBIBzqVqBwjVXTDlN8XaoR193mRQ6wijQ3qazQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKeLpwiwFH7LVpaYBMuopqZdmkOWsaH29xHZj46ONQV3rBiebc
-	IXiH0QUdnPu9NLiTPQxHnL+cHfMBKdGBW3MPOJMIGLH31PwPC1ZmLr4L6FuB9YU=
-X-Google-Smtp-Source: AGHT+IF+lgQLdO4dE5if0pVOm/wKl9mRYOB+40nEsOkzxOGa7AvqMKFsDRtr86qysSD1D/s8l9jt6Q==
-X-Received: by 2002:a05:6402:2355:b0:5c9:8a75:a707 with SMTP id 4fb4d7f45d1cf-5cf0a306754mr17336067a12.2.1731574670997;
-        Thu, 14 Nov 2024 00:57:50 -0800 (PST)
+        bh=RFvv3LbF9Kdg9CtKKlONGsxCX12ovGg602Za7rDJdl8=;
+        b=FmHggspzcXdAlxV9sZ0FHeCxesVsDPQrkHDJurF+XwVt5wn0isoo5QB0iaBcYce8nB
+         1lyV9One6my9KxNzLHNvym36gA7LR0+3io1gysKmNbKhfGsOh8IjIeCcWDqnSUKukl44
+         W3z5hdk642w7uME1UtG9WAxAaJEyfPEw4aoPRLsKF2rJNw2zSgdnIYxvC4UA9eaEhRNC
+         YwVZ0GhCyRdtjpceXrMy83TQdoNMIZgemD0w5TJSjQB7QpXkW1FqRizhAJ8ZV1DqH0Mj
+         O+RGFqgPrUfHgKqmsKvKuZB3d34dCrBWGQmPuxTXC5UbL/sBeRhMzhsI1tUP4Rj6iq04
+         PFRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTXb3e84QGdAHArOKjei1x6ZxqIsvj3xVuKINzs3YnmBmZnMBt30u+82rYWrJHHpOpQBcT9ZjwO90abIxtOh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGUlHQKYIA4S8ypWfxrRRyZp/6blyD3vHKtk+kPDMp5ZKqpVjr
+	2oPh/LskEI8gwuzLGBw8n/60OWCSGAVDhZ5o1rgyIAJrsWXskcUHsVWwQ2WfGvI=
+X-Google-Smtp-Source: AGHT+IERWfaAqNKqw9yYfROoHVQjEmjB8jy1fnYHJoHTg2lYc4YgdDb9SwWLsbU0fU1K76xN3CY0pw==
+X-Received: by 2002:a05:6402:40d0:b0:5ca:da2:b2ca with SMTP id 4fb4d7f45d1cf-5cf630c4fc0mr5133838a12.19.1731574775753;
+        Thu, 14 Nov 2024 00:59:35 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79c0ad33sm355356a12.65.2024.11.14.00.57.49
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df56b13sm38701066b.76.2024.11.14.00.59.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2024 00:57:50 -0800 (PST)
-Date: Thu, 14 Nov 2024 11:57:47 +0300
+        Thu, 14 Nov 2024 00:59:35 -0800 (PST)
+Date: Thu, 14 Nov 2024 11:59:32 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: stuyoder@gmail.com, laurentiu.tudor@nxp.com, nathan@kernel.org,
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] bus: fsl-mc:  Fix the double free in fsl_mc_device_add()
-Message-ID: <b767348e-d89c-416e-acea-1ebbff3bea20@stanley.mountain>
-References: <20241114082751.3475110-1-suhui@nfschina.com>
- <656ca826-cb81-4b46-8e15-ec0b1044db8d@stanley.mountain>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>, Peter Xu <peterx@redhat.com>,
+	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+	Andrei Vagin <avagin@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/proc/task_mmu: prevent integer overflow in
+ pagemap_scan_get_args()
+Message-ID: <39d41335-dd4d-48ed-8a7f-402c57d8ea84@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <656ca826-cb81-4b46-8e15-ec0b1044db8d@stanley.mountain>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Nov 14, 2024 at 11:41:25AM +0300, Dan Carpenter wrote:
-> On Thu, Nov 14, 2024 at 04:27:52PM +0800, Su Hui wrote:
-> > Clang static checker(scan-build) warning：
-> > drivers/bus/fsl-mc/fsl-mc-bus.c: line 909, column 2
-> > Attempt to free released memory.
-> > 
-> > When 'obj_desc->type' == "dprc" and begin to free 'mc_bus' and 'mc_dev',
-> > there is a double free problem because of 'mc_dev = &mc_bus->mc_dev'.
-> > Add a judgment to fix this problem.
-> > 
-> > Fixes: a042fbed0290 ("staging: fsl-mc: simplify couple of deallocations")
-> > Signed-off-by: Su Hui <suhui@nfschina.com>
-> > ---
-> >  drivers/bus/fsl-mc/fsl-mc-bus.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
-> > index 930d8a3ba722..8d2d5d3cc782 100644
-> > --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
-> > +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
-> > @@ -905,8 +905,10 @@ int fsl_mc_device_add(struct fsl_mc_obj_desc *obj_desc,
-> >  
-> >  error_cleanup_dev:
-> >  	kfree(mc_dev->regions);
-> > -	kfree(mc_bus);
-> > -	kfree(mc_dev);
-> > +	if (strcmp(mc_dev->obj_desc.type, "dprc") == 0)
-> 
-> This works, but it would probably be nicer to write this as:
-> 
-> 	if (is_fsl_mc_bus_dprc(mc_dev))
-> 		kfree(mc_bus);
-> 	else
-> 		kfree(mc_dev);
-> 
-> That way it would match the release function.
+The "arg->vec_len" variable is a u64 that comes from the user at the
+start of the function.  The "arg->vec_len * sizeof(struct page_region))"
+multiplication can lead to integer wrapping.  Use size_mul() to avoid
+that.
 
-   820          mc_dev->dev.release = fsl_mc_device_release;
+Also the size_add/mul() functions work on unsigned long so for 32bit
+systems we need to ensure that "arg->vec_len" fits in an unsigned long.
 
-	[ snip ]
+Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/proc/task_mmu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-   891           * The device-specific probe callback will get invoked by device_add()
-   892           */
-   893          error = device_add(&mc_dev->dev);
-   894          if (error < 0) {
-   895                  dev_err(parent_dev,
-   896                          "device_add() failed for device %s: %d\n",
-   897                          dev_name(&mc_dev->dev), error);
-   898                  goto error_cleanup_dev;
-
-I don't think this goto is correct.  I think fsl_mc_device_release() will be
-called automaticall on this path so the goto is a double free.
-
-   899          }
-   900  
-   901          dev_dbg(parent_dev, "added %s\n", dev_name(&mc_dev->dev));
-   902  
-   903          *new_mc_dev = mc_dev;
-   904          return 0;
-   905  
-   906  error_cleanup_dev:
-   907          kfree(mc_dev->regions);
-   908          if (is_fsl_mc_bus_dprc(mc_dev))
-   909                  kfree(mc_bus);
-   910          else
-   911                  kfree(mc_dev);
-   912  
-   913          return error;
-   914  }
-
-regards,
-dan carpenter
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f57ea9b308bb..38a5a3e9cba2 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -2665,8 +2665,10 @@ static int pagemap_scan_get_args(struct pm_scan_arg *arg,
+ 		return -EFAULT;
+ 	if (!arg->vec && arg->vec_len)
+ 		return -EINVAL;
++	if (UINT_MAX == SIZE_MAX && arg->vec_len > SIZE_MAX)
++		return -EINVAL;
+ 	if (arg->vec && !access_ok((void __user *)(long)arg->vec,
+-			      arg->vec_len * sizeof(struct page_region)))
++				   size_mul(arg->vec_len, sizeof(struct page_region))))
+ 		return -EFAULT;
+ 
+ 	/* Fixup default values */
+-- 
+2.45.2
 
