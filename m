@@ -1,50 +1,47 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4DA1D5AC3;
-	Fri, 15 Nov 2024 16:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4801D5166;
+	Fri, 15 Nov 2024 16:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731689105; cv=none; b=SPNf+bALFkkSIYAuGhvjWEAJv58Q6aCM29NNPbCnqA5iDZDp0fsHJr8lozdkhS0d6qjm8YElN5scrci6Drp3FHioALbYq+EBdRCrwwmWcJu/Kua5hMps4NtTnRa1ROdIdifG9JaAgWN7WlepcVTZ01dkk8aZQqOsH9NomMELz8E=
+	t=1731689460; cv=none; b=Ffs4GcFyleUKWBW+e3ifWFTUJVaA/PFWX2LF6HfNkHOJHLpP/Q5hsfRuxV2tYaYnCe4efgXncMOtab2E8Z1cPhUiMEE1MB7uRjHfmo0OqU8+dhh3Tn/TSwf00AkWN6fBK7VQvhArTv6j5ilWHznQK4aY2TPN/zXL4J6pxerB8a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731689105; c=relaxed/simple;
-	bh=9osvHc4yaQHRYSrVx6nuy+zzEEXa/T40Z1U5UcKJ2kY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AzHPfXUZWRFNW3lvJiVL2BK566FThSFaR4Eg8aSVhbxiMpqMt0Fl6SIW47Q7by5nfPDAY+SujmipSqCxLos2sQVeqdgPJEVw0Mocac/TTiIikBvwfwP8q7xiueq9HuAb7Kttn1GmfESaw6zr7gwaggG7i6opVAe1+nroEHEAiEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UHJnlDmt; arc=none smtp.client-ip=80.12.242.22
+	s=arc-20240116; t=1731689460; c=relaxed/simple;
+	bh=Dh6VoU9zwjMl9JckDaBsClwL1bYVAj7+lJHn/AxCiw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6Qotmgi4sdxLkst6YWeiXYyUfT7gBKL0Wgk/DZlfCrQOhkvtbKHHsRLrL4tW0QI8GMFPvB2SJc8TXxYJbHtPXUXha4e5TlZgx+22Nv31aXnWeKehQza059f+IbwnPw9hJtwcyyqw9vNA/bSTLW4LANccGCuTxNH0d7k08/k49Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BTIaINUq; arc=none smtp.client-ip=80.12.242.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UHJnlDmt"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BTIaINUq"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id BzRKt9S50PqyaBzRKtzdae; Fri, 15 Nov 2024 17:45:00 +0100
+	id BzWytmXWNNywhBzWztDLqn; Fri, 15 Nov 2024 17:50:49 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731689100;
-	bh=g8Wzp5+7fJS/vNhoxSgPrU0/wiW6HwJG9NHcRVskjnA=;
+	s=t20230301; t=1731689449;
+	bh=D7i3WbUAxo57vU5iXZm97MwKXkcrSqG2y+8GbDnWHjc=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=UHJnlDmtghCt+DMn9DMXGCZ7Gil6JVGU9YC9L3LHs7vp6stA5ABULWORq+tDjWDlw
-	 Tc4k1iYJCnvJHpZD8tilknCJL9DQT3JmzL5vnh4AbRRHTWMbm/RacwVf8l4k8Uy3X8
-	 Iu0GEF8mqrY9diLsqMWhGMQBajm0fSJ3Ee5/XJAVqaYsL6T0IAgK7yFdlSFexSt7zr
-	 OpKOcULXJ8/koIo0CnIHn58bDrihkcvdLJiOpoa69IlIHqTRCPnKH/fNDt1NeMq1ZF
-	 ee/dedxkmslMOTKhNNYCvZNtd+9KOeI/Ium9eVKuwJ4Y4LQWbZJbtg1IiWoYcmrwol
-	 HP+nNmdwBza1g==
+	b=BTIaINUqtp9cEkQwJZGcQiOyrwOtgL8ne+lKN3whF/Z942yR4P0uZukGX4WRQb+DM
+	 k8eBBPYH661yXWQt1tDRGOoS5YP0mFeQesq7fswBoq0XuVgse5jRwe/At5LFeae9Kn
+	 NmEIvI1LtLz6mwMueTrbcgmA498s4Oipnk/uAYZcubJL5BLwh4p6Q/gohmcVU2eL56
+	 McVLUwUoq1v0K/4iV6W3JV6QTpUMR/fGTjKRUKO3+V1AAVs/SeadAKS2gAaTB4fR+L
+	 nzp7qE6xuWgd3FcPczAn4DFnjjmYKoNkUlHSwIWqiQ0SPLpHo4wOo1Qod+HiUybMXm
+	 kvWs3PyAWgx3g==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 15 Nov 2024 17:45:00 +0100
+X-ME-Date: Fri, 15 Nov 2024 17:50:49 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
+To: Yassine Oudjana <y.oudjana@protonmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/i2c: tda9950: Constify struct i2c_device_id
-Date: Fri, 15 Nov 2024 17:44:27 +0100
-Message-ID: <d0f63418af53a887cec0ad0e7d9741ffeb2a7a8e.1731689044.git.christophe.jaillet@wanadoo.fr>
+	linux-input@vger.kernel.org
+Subject: [PATCH] Input: cypress-sf - Constify struct i2c_device_id
+Date: Fri, 15 Nov 2024 17:50:37 +0100
+Message-ID: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -63,32 +60,32 @@ On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  12136	    822	      0	  12958	   329e	drivers/gpu/drm/i2c/tda9950.o
+   6438	    618	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  12200	    758	      0	  12958	   329e	drivers/gpu/drm/i2c/tda9950.o
+   6502	    554	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only.
 ---
- drivers/gpu/drm/i2c/tda9950.c | 2 +-
+ drivers/input/keyboard/cypress-sf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/i2c/tda9950.c
-index 82d618c40dce..5065d6212fe4 100644
---- a/drivers/gpu/drm/i2c/tda9950.c
-+++ b/drivers/gpu/drm/i2c/tda9950.c
-@@ -485,7 +485,7 @@ static void tda9950_remove(struct i2c_client *client)
- 	cec_unregister_adapter(priv->adap);
- }
+diff --git a/drivers/input/keyboard/cypress-sf.c b/drivers/input/keyboard/cypress-sf.c
+index eb1d0720784d..335b72efc5aa 100644
+--- a/drivers/input/keyboard/cypress-sf.c
++++ b/drivers/input/keyboard/cypress-sf.c
+@@ -208,7 +208,7 @@ static int cypress_sf_resume(struct device *dev)
+ static DEFINE_SIMPLE_DEV_PM_OPS(cypress_sf_pm_ops,
+ 				cypress_sf_suspend, cypress_sf_resume);
  
--static struct i2c_device_id tda9950_ids[] = {
-+static  struct i2c_device_id tda9950_ids[] = {
- 	{ "tda9950", 0 },
- 	{ },
+-static struct i2c_device_id cypress_sf_id_table[] = {
++static const struct i2c_device_id cypress_sf_id_table[] = {
+ 	{ CYPRESS_SF_DEV_NAME },
+ 	{ }
  };
 -- 
 2.47.0
