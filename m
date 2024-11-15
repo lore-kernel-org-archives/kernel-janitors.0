@@ -1,64 +1,66 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD6B18B484
-	for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 09:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7616A18E057
+	for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 09:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731662033; cv=none; b=OSXe62qp7xVx0mrPftqmVd0KjREX+9Tl/7+yLyB7Zx84oEdw9pe5FW3b52RxBCeVs2SC9dWcJ/23Uo9mk4RKWkEjTTRCVvc4/S/BcBtQDFRxO3vcCEFFdilmMfW+mW+KQtd4rUBQ8NuhRzaJtdUZeNrE9prTof1onMoA+MC2Rqs=
+	t=1731662045; cv=none; b=s+EF7NzKX5iEV8P54hBTKQqe1UABLFSCjeM/CwMMYkPbw8Yn1kUyK6G2UnGYHeWWg38/eKl8lzAqV1gLhoyIW7wAypcVNxrOeC62PWmhNtVk2572OfHnvGuDZECY4S/qW5L+hqemtpXCTdYj3+icavHT4yF0igf9k+8SgaaYH3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731662033; c=relaxed/simple;
-	bh=1gpbH+F/EyAt7/qdUtEQNzUhRagbx8xAr7oPVt5RjTg=;
+	s=arc-20240116; t=1731662045; c=relaxed/simple;
+	bh=oL0UzlFZqjOr/6ocBd/mXCjQcqAFgGA2jsO52+VBifQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jNZ5J7HCQPYhfyfvLxGy6PkLeOlTXRcfGjqFF3nJ7nK/aDxT+YxIGSM8fELnsLTylopA2E6EPTxNdyHxWMeUuvYWglG/YWiYgIJ8vOqk1YNyDvC5ZumZw2RjjihPstdinE2lVtAzY8jgSrb6AWJfESf/fqsacocn73Zp+/Hc11U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R5I9e5Co; arc=none smtp.client-ip=209.85.128.52
+	 Content-Disposition; b=LsOOklxV36aERFrGECQ7zlAb9LkcGnjyVpgU97JLdg2Km9Yjs7nKs8BVad6cRVAfFsAz2WDyxBAuk1nhmKrcDL0dxysJNl1PFpUNqtnvhneN9i+MBRifd47B+ay+47Hda/3mx/RqxtClkiSMerZqYfiFJNnX5jdY9tkecf9u++E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TeRfDmx0; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R5I9e5Co"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-432d9bb168cso9676985e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 01:13:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TeRfDmx0"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4314f38d274so16985015e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 01:14:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731662030; x=1732266830; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731662042; x=1732266842; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=B8COCFgpNqgb0Y7Anvsa8b6bhjh2JHm033ij5t0kw0Q=;
-        b=R5I9e5CoPM/aQPgX41XFKdbka73yFh+88oqZ/9hJqCCj+0y9MQRtJIX9f+wRfDaHLv
-         KiVC8C4n77YvLqMopfeX8Lk6JS/QuXvG0llSlpBBZAcqvZkr1fkLFjj+UtGw83XLgpCI
-         Obw0F1/nuX9CdXbq/YplY36vIqKtuDzmtMa8nuNocUaNnqOcBs41UxHVP1b20xoSkZY/
-         t2MOCoWP8/Ff3xRbxSafG0g6mKXekMr5mzPGmns7nljistl59aD3RKjWsR/B0+FZA3mJ
-         514/v9ROijofCtf/w/U0ifxdYgyeh3QXNzXdCPhVfnpvDd3oqbphHkDNfhw0eT/ipqD1
-         QV9A==
+        bh=7YuB/szIEkMxlq3tPJ1z9SjBnVW4504PF0OtGMyd9Ts=;
+        b=TeRfDmx0sSznIaXIO832QZ3lrjOKmsmr3ZuKVWR6RfILfEReImRvSg153NjPKvpLwg
+         IdV/y/y8iPPUjb50MApxbLOeit1/zbKduAGAIappbfVINE7FvemoiPteUN/mfF/BfMJx
+         pEDv71PQO9/RNOegrxJdhrTmjcgSurepFk0rr1uscrB1JPhTOujk1ESuAUpS8T+Mwt1I
+         +ApDcfd/zwyaOxw//N/SkdEq+Ayl61MtwiBxJAZ1vx1K4br3M3Mup7cAjpGqQlfegirE
+         oROduPYLOv3vPOf5wnlSaZGABEQy6HpUDu9cpPqAfiYvBOLSTaL8Av6BC5lRjEsAoafo
+         XwAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731662030; x=1732266830;
+        d=1e100.net; s=20230601; t=1731662042; x=1732266842;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8COCFgpNqgb0Y7Anvsa8b6bhjh2JHm033ij5t0kw0Q=;
-        b=UZRd81hs9/hcwfG65ObzGHXQaAiiT7R3C94pT7xdLnJU2rpZmURDmvOka7NwlO59j3
-         4NCITLO8rj9/biwQHqQpkSKxFDQLOzpOU39Nh99y6oChgQZ1K9f78Ex/23kdd66tOYya
-         ZVdPwOV22k4i1xPo6sype4gPslVorNLBiv+Co4LljKj048g6kBwlFk5SoVc3AmcZqi6+
-         NO0ZhZzUskpNedFeOO0dCNk/FoxNd4LuiI1BBlV5Uq2hBM2CjfVAxAG3G4/rCkNofcYq
-         X6Vxp9/WPNlLzdyvQnStnrT3GfdL/Qr0IigN+iQGzNrz9y5b4JPPe7BQ+qnGFEFPYeNG
-         Owew==
-X-Forwarded-Encrypted: i=1; AJvYcCVVXAjwosG9qW5rBpjVDcsN6wdqX0lFb75b1sK2MPEWM10dRenbdg63o40kNY+zMeZ74XD6WjV10Msb+FfXZmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywDjf0ZkfkastGZ9p3dIkH1Q8H9KPg7wv9ReJwIoBmRR/32jxi
-	fGSIhchOWp1cVI1ljbV0eIiy8QNznVVBKWAso13KY9g1xX24f84LGJsIxj78Wlk=
-X-Google-Smtp-Source: AGHT+IFDwyeF9NdbO3uA8WPZbwIsipDKiK7gl4rjQvHP2ciMl3NTCJLQxQXZjpw4OVLXp1FI70A9Yw==
-X-Received: by 2002:a05:600c:a4c:b0:42c:b991:98bc with SMTP id 5b1f17b1804b1-432d95ad53cmr54878725e9.0.1731662029843;
-        Fri, 15 Nov 2024 01:13:49 -0800 (PST)
+        bh=7YuB/szIEkMxlq3tPJ1z9SjBnVW4504PF0OtGMyd9Ts=;
+        b=p9kMdoDiBhWMpC4Ns0yA6yI6wM84D3ULoA6MROp22mA8TqPZeO8/FSZDelaEbCWdG9
+         y8IbtP4zyF5E83Wayvdzl/LmYPpzNBSTzSYedGXykjM0fdujZuRshStQtuGk7sbiLynt
+         cd5bWZLXOpEx+gUd1iD1jB+Lrjfvpk7VyOYlxGYeVrYiltbjRgDkwrSBJfiY16KAhorp
+         zTjeZMB3rP5I/QTZtZSNu0Myw/MreXmR4GDTTalY/NyfZyBTb3alqMtn09yXiY+gCk+v
+         2cyroTYbSEhsL2nneSLZS8E/Dq56LEtSW2gTUXt63G04AUr+8+1NcNw/y4CGt3pbc0bs
+         yK7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWEmdUNhiPWlWbxj3BioxMNtJ0y3rjfTeDXlhBnZOj82SMNawQn6+okWQETrCnBxzJqgJC8ib55yL8dGXWpwuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxffbFbpJTLqKBtBZYqCI8aKRLTHHZi0OvG9sSGgMgBiKbk5ob+
+	J12La4dAtyH/bQKSCl3TuMeC8XLNr0GyHCGJPZAu251JJlJ4o6wnIhDN/jsHjLY=
+X-Google-Smtp-Source: AGHT+IG/yzx2BrirfQLi4fTkAmm6tdWmADdgYhJai5mJ+OObY3rJiGs8gvXT6Hvgka4TOkojxVFw+g==
+X-Received: by 2002:a05:600c:198b:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-432df723048mr17674985e9.5.1731662041725;
+        Fri, 15 Nov 2024 01:14:01 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298c81sm51915835e9.39.2024.11.15.01.13.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac0ae04sm46823735e9.33.2024.11.15.01.14.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 01:13:49 -0800 (PST)
-Date: Fri, 15 Nov 2024 12:13:46 +0300
+        Fri, 15 Nov 2024 01:14:01 -0800 (PST)
+Date: Fri, 15 Nov 2024 12:13:58 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] netfs: Remove duplicate check in
- netfs_cache_read_terminated()
-Message-ID: <dfc4ac23-88eb-4293-b4dd-e617779ee7ac@stanley.mountain>
+To: Shyam Prasad N <sprasad@microsoft.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>,
+	Meetakshi Setiya <msetiya@microsoft.com>,
+	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] cifs: unlock on error in smb3_reconfigure()
+Message-ID: <e4ea558b-5124-4f3b-83a1-267097d067f4@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -67,33 +69,31 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-There are two checks for "if (transferred_or_error > 0)".  Delete
-the second check.
+Unlock before returning if smb3_sync_session_ctx_passwords() fails.
 
+Fixes: 7e654ab7da03 ("cifs: during remount, make sure passwords are in sync")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/netfs/read_collect.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/smb/client/fs_context.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index 7f3a3c056c6e..431166d4f103 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -597,10 +597,8 @@ void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error, bool
+diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+index c614c5d8b15e..49123f458d0c 100644
+--- a/fs/smb/client/fs_context.c
++++ b/fs/smb/client/fs_context.c
+@@ -1008,8 +1008,10 @@ static int smb3_reconfigure(struct fs_context *fc)
+ 	 * later stage
+ 	 */
+ 	rc = smb3_sync_session_ctx_passwords(cifs_sb, ses);
+-	if (rc)
++	if (rc) {
++		mutex_unlock(&ses->session_mutex);
+ 		return rc;
++	}
  
- 	if (transferred_or_error > 0) {
- 		subreq->error = 0;
--		if (transferred_or_error > 0) {
--			subreq->transferred += transferred_or_error;
--			__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
--		}
-+		subreq->transferred += transferred_or_error;
-+		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
- 	} else {
- 		subreq->error = transferred_or_error;
- 	}
+ 	/*
+ 	 * now that allocations for passwords are done, commit them
 -- 
 2.45.2
 
