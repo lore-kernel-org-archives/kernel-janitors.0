@@ -1,53 +1,54 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13621D5AAD;
-	Fri, 15 Nov 2024 17:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C8184D02;
+	Fri, 15 Nov 2024 17:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731691078; cv=none; b=lB5WcyHFvOuXeyn7w6RTuLUQSrsqRUpZ0mQGSqHo43SEN8e12et9d5BeemqCaIqI8dNT82Ctut+heROqfP55Ld7GTI2Tqpw9Q4KLv3OQjU9+gP53SJ8z4pByRecxnvFjIMJVD7DKoytAzhgUYMNQDD8ykLIrZqv1MHPZ1no6kSc=
+	t=1731691583; cv=none; b=Mnf62Y3fY7N+PnVLXPvVq7Q8ipAfOYK1ms9tYIs40LM1m5BCstwzCCDFTQL2dCfgGAPCC1s3C64GmP87WAC76j1OVDynU2y+bJ4qIOY66okZTk/r6JdYMlWAGty2/9Mk7PR3Pf4HqQYk7yAd6Fc4DPtAKEKEtxR+bEzukgoAv14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731691078; c=relaxed/simple;
-	bh=A3XfQLWFeEI3B8csH2YJxU0EFPGKWtOEhtBvLgkdqek=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vGBhhAwJaZm1o5hOL8m5zp6X69J2vVgS7cdRpAX83LbDvh+J90gXiWEPsCd1zeHWG5TVI23leibQK3NKrHzsohOqFPEhy+rCQE1Ed8zQWVoN7mPTntLziXrMI5qHMR0PsP4kFYfyry8iMW44qYh8HxNnmtygXuh641yygY1B9VU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oBd6nc/Y; arc=none smtp.client-ip=80.12.242.20
+	s=arc-20240116; t=1731691583; c=relaxed/simple;
+	bh=SfQYjl64402cRIHcYRSF8hREmjASTugCRFUUgfkXnUA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZPdytyQarJ6rTp9ifI/rUxmAiM0yCML/mRHxtmwl5hoj1Lie7o0N7Oix8RU/UpkjMQCsOBz3HkWlVOyMXgXupQjDcfaCIBGputFjC1aM/RNI9zL+VicWXoGvwVYv9swJfjqiiqmnQ8jdQe/Y46H6LM4nPlHWCnvf4s1Wf567EeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NZ2hqJNv; arc=none smtp.client-ip=80.12.242.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oBd6nc/Y"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NZ2hqJNv"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id Bzx9tMAAh8AEMBzx9t85Ul; Fri, 15 Nov 2024 18:17:53 +0100
+	id C05Jt9hymPqyaC05Kt0Z2L; Fri, 15 Nov 2024 18:26:18 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731691074;
-	bh=ISPrq17danPOpPQ4NpNMvjghXiy3pfLupLJvQtzC6JE=;
+	s=t20230301; t=1731691578;
+	bh=Ce50d8CDL8pg9VTVcidQUBBsONObBsW+KaLtOOzdVmw=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=oBd6nc/YARXreRA3M9Pq2t+jvnNX3qzxwdqosxR/EPoYRzBDDWOAMc/bbXjeB4EuQ
-	 ZuUvWnIXFQVccJm+/ga018jdZdcvZ0o/LBC4b3ldYFA96bLHSxncOHAUJYJhab5f4z
-	 8KKQDI6kn02UkBesWS9NBz0zqBxvEc9wemi91qkcuzHXT20PRU34FuJHvuyt9uEbvv
-	 dU+0/Dewjp2a4C2P7bmG6pBBlH2nAXoYtjBiQzLOleC9jk4QrUIA4WIFD36cNMRsvp
-	 XxvOhp8b8y9ny6Vl4ySHm1aZcJcqpQnlThMSTDlJfbaj5jjhIqjY65dDZAcguqtQ6L
-	 h/F6Nf3jNXWtA==
+	b=NZ2hqJNv2eCYVEVfD1tsEf/FLmfCewP29Mf1t2i3jQsyTkXpfwRDcyiuxyS54v9Fh
+	 dvq4IRHa/tZ/EG8KpTtW5HAbiCA8bqT7DcdGeKpDlfv5gEcfMlCLfVhMTA0M221cT2
+	 5s54yS9WbD+hknJcqgrfEPNPUg4vFQlfPK8tufcmFEDIQ4xg1bWyA9rdYb/68nSUbS
+	 g5WpsvA309ZWjRAIl2m5sbmK0cck8tZ3sAGOlbB20Gubj7OEzPvnx+dVoiXLY/ev4/
+	 4R2VEdBbOMmICY/dzLmckO2wv85NLHloMdPYj55kOP0rkyMzrR6Kzz0WktBWhxFFcf
+	 h8yE2eOY1kodQ==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 15 Nov 2024 18:17:54 +0100
+X-ME-Date: Fri, 15 Nov 2024 18:26:18 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: linux@weissschuh.net,
 	broonie@kernel.org,
 	lee@kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH v2] drm/i2c: tda9950: Constify struct i2c_device_id
-Date: Fri, 15 Nov 2024 18:17:27 +0100
-Message-ID: <d0f63518a053a817cec0ad0e7d9241f9eb2a4a8e.1731689044.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] drm/radeon: Constify struct pci_device_id
+Date: Fri, 15 Nov 2024 18:26:06 +0100
+Message-ID: <039846c0278276e7c652395730f36051216fd4c3.1731691556.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,7 +58,7 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct i2c_device_id' is not modified in this driver.
+'struct pci_device_id' is not modified in this driver.
 
 Constifying this structure moves some data to a read-only section, so
 increase overall security.
@@ -66,35 +67,36 @@ On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  12136	    822	      0	  12958	   329e	drivers/gpu/drm/i2c/tda9950.o
+  11984	  28672	     44	  40700	   9efc	drivers/gpu/drm/radeon/radeon_drv.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  12200	    758	      0	  12958	   329e	drivers/gpu/drm/i2c/tda9950.o
+  40000	    664	     44	  40708	   9f04	drivers/gpu/drm/radeon/radeon_drv.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only.
-
-v2: fix missing const :(
 ---
- drivers/gpu/drm/i2c/tda9950.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/radeon/radeon_drv.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/i2c/tda9950.c
-index 82d618c40dce..5065d6212fe4 100644
---- a/drivers/gpu/drm/i2c/tda9950.c
-+++ b/drivers/gpu/drm/i2c/tda9950.c
-@@ -485,7 +485,7 @@ static void tda9950_remove(struct i2c_client *client)
- 	cec_unregister_adapter(priv->adap);
- }
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 23d6d1a2586d..5e958cc223f4 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -248,10 +248,9 @@ int radeon_cik_support = 1;
+ MODULE_PARM_DESC(cik_support, "CIK support (1 = enabled (default), 0 = disabled)");
+ module_param_named(cik_support, radeon_cik_support, int, 0444);
  
--static struct i2c_device_id tda9950_ids[] = {
-+static const struct i2c_device_id tda9950_ids[] = {
- 	{ "tda9950", 0 },
- 	{ },
+-static struct pci_device_id pciidlist[] = {
++static const struct pci_device_id pciidlist[] = {
+ 	radeon_PCI_IDS
  };
+-
+ MODULE_DEVICE_TABLE(pci, pciidlist);
+ 
+ static const struct drm_driver kms_driver;
 -- 
 2.47.0
 
