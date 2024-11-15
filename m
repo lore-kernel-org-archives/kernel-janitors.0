@@ -1,104 +1,95 @@
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AECE1DFFD;
-	Fri, 15 Nov 2024 08:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731658059; cv=none; b=SFd6GqUbYPpsQJ/0Nmt89dUSbtl8UdGHUpDBQqQ/TXaksbywLCid7dNxtdyv3tsQUquwjQCPPtKPUzjXpDRV8RJ3X6oD9OrO8ZmcARGrWu+CchYjCLfudOmT/zclAHUb0UYE+2GmGf1R/0afvx9iyi4+RLDAquzKYhhsOp+187I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731658059; c=relaxed/simple;
-	bh=1+p/mscZrLAnQ7sIlEXDO7iW/5pncMsKkAGqXXhzPH0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g1ddCK2q8FzoOfPVtzd7X/xEO5PJwNHMbfcKXJBUci8lOfKgbHPkyA0YsGpJ3tLwUJ/DPqI+af4su22HsMMKNdlPvCSPVFqCSH0nVISbDn7zACMCNqV0ceEZQgH1vEjQs+k5CXq3g/xMy6wUWzhTZqrOwZJ/Ke6SSQpX44ATkMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=pTsQ1HN4; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="pTsQ1HN4"
-Received: from localhost (localhost [127.0.0.1])
-	by a.mx.secunet.com (Postfix) with ESMTP id C7B0820870;
-	Fri, 15 Nov 2024 09:07:32 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id L9Myi-YdyJ_K; Fri, 15 Nov 2024 09:07:24 +0100 (CET)
-Received: from cas-essen-02.secunet.de (rl2.secunet.de [10.53.40.202])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by a.mx.secunet.com (Postfix) with ESMTPS id D31F22085A;
-	Fri, 15 Nov 2024 09:07:24 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com D31F22085A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1731658044;
-	bh=be3MroQoWJ6+StAwpuPSR7YGmORoS7e29Sa3/889s9c=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-	b=pTsQ1HN4bkvwM1RUV/HT6FnRwP80/3n1QfcCmd4OjyYzxO1OfbZLeXSNSCGVD72c0
-	 fjcmjXPp4Gh13F1sLBKyRqQDyjILj8kc2d9IPl2E3rNQNB0I3Jj7wP2OfX9dPe0CLv
-	 Ut84QgDJIp5Ja98vZIrsdkypnvK44fn+mqcxITueCSiekAKX/nZ3XrVmWVak6sNfed
-	 dnDHWjPci1sqQpiCuLSAg/bsZ+DFtXmnPXdX7uWH5Xm24+WGP/rqayCim1wvvdAXO1
-	 6QpcNj1zj6wDLBgqtxx3k7wdTbLaEQUCxnGrDP/53/0HYh+vpEq8H/qTtWx4/zbXLw
-	 83WQlTS1HCSbg==
-Received: from mbx-essen-02.secunet.de (10.53.40.198) by
- cas-essen-02.secunet.de (10.53.40.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 15 Nov 2024 09:07:24 +0100
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
- (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 15 Nov
- 2024 09:07:24 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-	id 2D97F3182ACC; Fri, 15 Nov 2024 09:07:24 +0100 (CET)
-Date: Fri, 15 Nov 2024 09:07:24 +0100
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Everest K.C. <everestkc@everestkc.com.np>
-CC: Simon Horman <horms@kernel.org>, <herbert@gondor.apana.org.au>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] xfrm: Add error handling when nla_put_u32()
- returns an error
-Message-ID: <ZzcBPA+8nXwJdGBh@gauss3.secunet.de>
-References: <20241112233613.6444-1-everestkc@everestkc.com.np>
- <20241113105939.GY4507@kernel.org>
- <CAEO-vhFzEo12uU7EBOb6r6J7Ludhe4HNNGvfN71fSDQRmR16pQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619E12B9B7
+	for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 08:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731659057; cv=none; b=R6PhY+DtQpaPuENsy3f5PjqyCQ1qlxtBWm22rgntyhIs3a05FpLnysIuXp8QJWhQEZlsWPj9g2lOXTYEj4FjyDd8sRxBv2SxykLXont9spz5/M06mx5SUugGZ1ShpcwYKD+O/IJymaNtWBxQ2xCnCdpBtFdVsBHnc1bQJEUNN3g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731659057; c=relaxed/simple;
+	bh=ibYVGR5cGY11jXY5MH7HJGwhiLSdI3f82ZXTv3gR5vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5AqQ8Ms0b17CUrXHt3G0B46Hx+JCbBcE5Zp1xaE0p9X0GHziU5AieSE3P6f+FHGPhXHvhxWL2IaTeBUcBhcOs0CRDu8vAwE+WN4xO4xiipe5oFEQ+OtMVVDzROH3xJUePR4dTehSH9MFsE1E39GkwdUJ7Gca3HMbb+kAiVhtvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CXQBiES6; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CXQBiES6"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so3569205e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 00:24:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731659054; x=1732263854; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eWRrZUkhxGjMZeY29OrWmdvCo90xdRe7Aypy1R6OUmE=;
+        b=CXQBiES6E+fgzH6WENOoQQifQin5TYPlQSOCuFDopaXXVhld5/Ol9lURGlRvcE6ZjV
+         5EUkNFfQzteGdubCFuOV3ds9nAQHi2wy407T8fceoVh9H8ULHzonkq06BDp6IQ1X6z7i
+         hDY/w2SeAQUBP/RgfntRzG1i4ntUYAKLslhbTcrltoqGKxcvOj2B5XKjhbqvfieyq49I
+         ZrbdJ+/QkPTefaaYXCEzXPPhlLntHNiUN2HdFiGxmKeTC1tPSpLr0FWZLDlBHDf3HwK2
+         k5qBwOAZdoatmpcQOvTj9TKQ13/tXdiBV1CZVGu/KouASWiG+81fARGCE8PIZzsIdv8q
+         /ykQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731659054; x=1732263854;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eWRrZUkhxGjMZeY29OrWmdvCo90xdRe7Aypy1R6OUmE=;
+        b=TWE2DfFENBX0hivdupwhY/5JqfYJtdJ6BeZKCP1TQRJWgnhXStgRp5T3UJA+/OyV93
+         HOVLcV1M+CcEoRhx6lARzN5+9jkgmY0vXbRUIxsFBSeOjlSt8y2hr+lrfKxKXx6S+pg1
+         /OLr/QORlBKZTPeqUQk7LvGZAWKrge9j4qhZ/4C15vjjaWhgTxNMp1JwWvrn+hrDe+fD
+         4fDdD6tn30WKir9LRvYAk9xJzP0jWfgHGAxQyrqQDaarXGgjVAbMqCfE5d7Vckt6CE1Q
+         LkD3z77DCqUzaHAc7pDGzCsJQdKakxfrUAE0jty8gUcKk6BzhBi7egg31RodlbSK21UH
+         QRqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUg9eCiuO35n79U9lCtz57/B0s0FjnbmPGJvOhcde4QKG8uGQvP6Nw/kynOkVWP6f/NQG7RE4ZLJOahH5yO7A4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMpmM+vWlJ7WVZQaEP72+Xg+Ozn4xBC8CJc8Ub+BLyVn8wFYQz
+	EVHbwgKK43i9pQUxLc2Pa+u4je6aHM98ASFJ+zeKZbt9LsOzUc+t0CkgBmlr1Gk=
+X-Google-Smtp-Source: AGHT+IE6iZRKIEII2jo7jJBhaHE9KSdI3yml3wTWpJc85CoFNhJyDFKxbpJmnFwfiCV7cb6knB5SAg==
+X-Received: by 2002:a05:600c:3d15:b0:432:d797:404a with SMTP id 5b1f17b1804b1-432df78de80mr11268285e9.22.1731659053736;
+        Fri, 15 Nov 2024 00:24:13 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab78918sm45682765e9.17.2024.11.15.00.24.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2024 00:24:13 -0800 (PST)
+Date: Fri, 15 Nov 2024 11:24:09 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: stuyoder@gmail.com, laurentiu.tudor@nxp.com, nathan@kernel.org,
+	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 0/2]  bus: fsl-mc: Fix two double free problems in
+ fsl_mc_device_add()
+Message-ID: <e18e02dc-4628-4205-96da-fff67afae8ab@stanley.mountain>
+References: <20241115023206.3722933-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEO-vhFzEo12uU7EBOb6r6J7Ludhe4HNNGvfN71fSDQRmR16pQ@mail.gmail.com>
-X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
- mbx-essen-02.secunet.de (10.53.40.198)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+In-Reply-To: <20241115023206.3722933-1-suhui@nfschina.com>
 
-On Thu, Nov 14, 2024 at 12:27:28PM -0700, Everest K.C. wrote:
-> On Wed, Nov 13, 2024 at 3:59 AM Simon Horman <horms@kernel.org> wrote:
-> >
-> > On Tue, Nov 12, 2024 at 04:36:06PM -0700, Everest K.C. wrote:
-> > > Error handling is missing when call to nla_put_u32() fails.
-> > > Handle the error when the call to nla_put_u32() returns an error.
-> > >
-> > > The error was reported by Coverity Scan.
-> > > Report:
-> > > CID 1601525: (#1 of 1): Unused value (UNUSED_VALUE)
-> > > returned_value: Assigning value from nla_put_u32(skb, XFRMA_SA_PCPU, x->pcpu_num)
-> > > to err here, but that stored value is overwritten before it can be used
-> > >
-> > > Fixes: 1ddf9916ac09 ("xfrm: Add support for per cpu xfrm state handling.")
-> > > Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
-> >
-> > Reviewed-by: Simon Horman <horms@kernel.org>
-> >
-> > For future reference, I think the appropriate target for this tree
-> > is ipsec-next rather than next.
-> >
-> >         Subject: [PATCH ipsec-next] xfrm: ...
-> Should I send a patch to ipsec-next ?
+On Fri, Nov 15, 2024 at 10:32:05AM +0800, Su Hui wrote:
+> This patchset fixes two double free problems in fsl_mc_device_add().
+> One is reported by clang static checker, another is reported by Dan when
+> reviewing the code.
+> 
+> ps: There is only patch 1 in v1 patch, patch 2 has no v1 version.
+> 
+> v1: https://lore.kernel.org/all/20241114082751.3475110-1-suhui@nfschina.com/
+> 
+> Su Hui (2):
+>   bus: fsl-mc:  Fix the double free in fsl_mc_device_add()
+>   bus: fsl-mc: using put_device() when add_device() failed in
+>     fsl_mc_device_add()
 
-No need to resend. This is now applied to ipsec-next,
-thanks a lot!
+Thanks!
+
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
+
