@@ -1,67 +1,64 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619E12B9B7
-	for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 08:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD6B18B484
+	for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731659057; cv=none; b=R6PhY+DtQpaPuENsy3f5PjqyCQ1qlxtBWm22rgntyhIs3a05FpLnysIuXp8QJWhQEZlsWPj9g2lOXTYEj4FjyDd8sRxBv2SxykLXont9spz5/M06mx5SUugGZ1ShpcwYKD+O/IJymaNtWBxQ2xCnCdpBtFdVsBHnc1bQJEUNN3g=
+	t=1731662033; cv=none; b=OSXe62qp7xVx0mrPftqmVd0KjREX+9Tl/7+yLyB7Zx84oEdw9pe5FW3b52RxBCeVs2SC9dWcJ/23Uo9mk4RKWkEjTTRCVvc4/S/BcBtQDFRxO3vcCEFFdilmMfW+mW+KQtd4rUBQ8NuhRzaJtdUZeNrE9prTof1onMoA+MC2Rqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731659057; c=relaxed/simple;
-	bh=ibYVGR5cGY11jXY5MH7HJGwhiLSdI3f82ZXTv3gR5vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5AqQ8Ms0b17CUrXHt3G0B46Hx+JCbBcE5Zp1xaE0p9X0GHziU5AieSE3P6f+FHGPhXHvhxWL2IaTeBUcBhcOs0CRDu8vAwE+WN4xO4xiipe5oFEQ+OtMVVDzROH3xJUePR4dTehSH9MFsE1E39GkwdUJ7Gca3HMbb+kAiVhtvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CXQBiES6; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1731662033; c=relaxed/simple;
+	bh=1gpbH+F/EyAt7/qdUtEQNzUhRagbx8xAr7oPVt5RjTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jNZ5J7HCQPYhfyfvLxGy6PkLeOlTXRcfGjqFF3nJ7nK/aDxT+YxIGSM8fELnsLTylopA2E6EPTxNdyHxWMeUuvYWglG/YWiYgIJ8vOqk1YNyDvC5ZumZw2RjjihPstdinE2lVtAzY8jgSrb6AWJfESf/fqsacocn73Zp+/Hc11U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R5I9e5Co; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CXQBiES6"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so3569205e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 00:24:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R5I9e5Co"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-432d9bb168cso9676985e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 01:13:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731659054; x=1732263854; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWRrZUkhxGjMZeY29OrWmdvCo90xdRe7Aypy1R6OUmE=;
-        b=CXQBiES6E+fgzH6WENOoQQifQin5TYPlQSOCuFDopaXXVhld5/Ol9lURGlRvcE6ZjV
-         5EUkNFfQzteGdubCFuOV3ds9nAQHi2wy407T8fceoVh9H8ULHzonkq06BDp6IQ1X6z7i
-         hDY/w2SeAQUBP/RgfntRzG1i4ntUYAKLslhbTcrltoqGKxcvOj2B5XKjhbqvfieyq49I
-         ZrbdJ+/QkPTefaaYXCEzXPPhlLntHNiUN2HdFiGxmKeTC1tPSpLr0FWZLDlBHDf3HwK2
-         k5qBwOAZdoatmpcQOvTj9TKQ13/tXdiBV1CZVGu/KouASWiG+81fARGCE8PIZzsIdv8q
-         /ykQ==
+        d=linaro.org; s=google; t=1731662030; x=1732266830; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B8COCFgpNqgb0Y7Anvsa8b6bhjh2JHm033ij5t0kw0Q=;
+        b=R5I9e5CoPM/aQPgX41XFKdbka73yFh+88oqZ/9hJqCCj+0y9MQRtJIX9f+wRfDaHLv
+         KiVC8C4n77YvLqMopfeX8Lk6JS/QuXvG0llSlpBBZAcqvZkr1fkLFjj+UtGw83XLgpCI
+         Obw0F1/nuX9CdXbq/YplY36vIqKtuDzmtMa8nuNocUaNnqOcBs41UxHVP1b20xoSkZY/
+         t2MOCoWP8/Ff3xRbxSafG0g6mKXekMr5mzPGmns7nljistl59aD3RKjWsR/B0+FZA3mJ
+         514/v9ROijofCtf/w/U0ifxdYgyeh3QXNzXdCPhVfnpvDd3oqbphHkDNfhw0eT/ipqD1
+         QV9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731659054; x=1732263854;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eWRrZUkhxGjMZeY29OrWmdvCo90xdRe7Aypy1R6OUmE=;
-        b=TWE2DfFENBX0hivdupwhY/5JqfYJtdJ6BeZKCP1TQRJWgnhXStgRp5T3UJA+/OyV93
-         HOVLcV1M+CcEoRhx6lARzN5+9jkgmY0vXbRUIxsFBSeOjlSt8y2hr+lrfKxKXx6S+pg1
-         /OLr/QORlBKZTPeqUQk7LvGZAWKrge9j4qhZ/4C15vjjaWhgTxNMp1JwWvrn+hrDe+fD
-         4fDdD6tn30WKir9LRvYAk9xJzP0jWfgHGAxQyrqQDaarXGgjVAbMqCfE5d7Vckt6CE1Q
-         LkD3z77DCqUzaHAc7pDGzCsJQdKakxfrUAE0jty8gUcKk6BzhBi7egg31RodlbSK21UH
-         QRqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUg9eCiuO35n79U9lCtz57/B0s0FjnbmPGJvOhcde4QKG8uGQvP6Nw/kynOkVWP6f/NQG7RE4ZLJOahH5yO7A4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMpmM+vWlJ7WVZQaEP72+Xg+Ozn4xBC8CJc8Ub+BLyVn8wFYQz
-	EVHbwgKK43i9pQUxLc2Pa+u4je6aHM98ASFJ+zeKZbt9LsOzUc+t0CkgBmlr1Gk=
-X-Google-Smtp-Source: AGHT+IE6iZRKIEII2jo7jJBhaHE9KSdI3yml3wTWpJc85CoFNhJyDFKxbpJmnFwfiCV7cb6knB5SAg==
-X-Received: by 2002:a05:600c:3d15:b0:432:d797:404a with SMTP id 5b1f17b1804b1-432df78de80mr11268285e9.22.1731659053736;
-        Fri, 15 Nov 2024 00:24:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731662030; x=1732266830;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8COCFgpNqgb0Y7Anvsa8b6bhjh2JHm033ij5t0kw0Q=;
+        b=UZRd81hs9/hcwfG65ObzGHXQaAiiT7R3C94pT7xdLnJU2rpZmURDmvOka7NwlO59j3
+         4NCITLO8rj9/biwQHqQpkSKxFDQLOzpOU39Nh99y6oChgQZ1K9f78Ex/23kdd66tOYya
+         ZVdPwOV22k4i1xPo6sype4gPslVorNLBiv+Co4LljKj048g6kBwlFk5SoVc3AmcZqi6+
+         NO0ZhZzUskpNedFeOO0dCNk/FoxNd4LuiI1BBlV5Uq2hBM2CjfVAxAG3G4/rCkNofcYq
+         X6Vxp9/WPNlLzdyvQnStnrT3GfdL/Qr0IigN+iQGzNrz9y5b4JPPe7BQ+qnGFEFPYeNG
+         Owew==
+X-Forwarded-Encrypted: i=1; AJvYcCVVXAjwosG9qW5rBpjVDcsN6wdqX0lFb75b1sK2MPEWM10dRenbdg63o40kNY+zMeZ74XD6WjV10Msb+FfXZmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywDjf0ZkfkastGZ9p3dIkH1Q8H9KPg7wv9ReJwIoBmRR/32jxi
+	fGSIhchOWp1cVI1ljbV0eIiy8QNznVVBKWAso13KY9g1xX24f84LGJsIxj78Wlk=
+X-Google-Smtp-Source: AGHT+IFDwyeF9NdbO3uA8WPZbwIsipDKiK7gl4rjQvHP2ciMl3NTCJLQxQXZjpw4OVLXp1FI70A9Yw==
+X-Received: by 2002:a05:600c:a4c:b0:42c:b991:98bc with SMTP id 5b1f17b1804b1-432d95ad53cmr54878725e9.0.1731662029843;
+        Fri, 15 Nov 2024 01:13:49 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab78918sm45682765e9.17.2024.11.15.00.24.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298c81sm51915835e9.39.2024.11.15.01.13.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 00:24:13 -0800 (PST)
-Date: Fri, 15 Nov 2024 11:24:09 +0300
+        Fri, 15 Nov 2024 01:13:49 -0800 (PST)
+Date: Fri, 15 Nov 2024 12:13:46 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: stuyoder@gmail.com, laurentiu.tudor@nxp.com, nathan@kernel.org,
-	ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 0/2]  bus: fsl-mc: Fix two double free problems in
- fsl_mc_device_add()
-Message-ID: <e18e02dc-4628-4205-96da-fff67afae8ab@stanley.mountain>
-References: <20241115023206.3722933-1-suhui@nfschina.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] netfs: Remove duplicate check in
+ netfs_cache_read_terminated()
+Message-ID: <dfc4ac23-88eb-4293-b4dd-e617779ee7ac@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,26 +67,33 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115023206.3722933-1-suhui@nfschina.com>
+X-Mailer: git-send-email haha only kidding
 
-On Fri, Nov 15, 2024 at 10:32:05AM +0800, Su Hui wrote:
-> This patchset fixes two double free problems in fsl_mc_device_add().
-> One is reported by clang static checker, another is reported by Dan when
-> reviewing the code.
-> 
-> ps: There is only patch 1 in v1 patch, patch 2 has no v1 version.
-> 
-> v1: https://lore.kernel.org/all/20241114082751.3475110-1-suhui@nfschina.com/
-> 
-> Su Hui (2):
->   bus: fsl-mc:  Fix the double free in fsl_mc_device_add()
->   bus: fsl-mc: using put_device() when add_device() failed in
->     fsl_mc_device_add()
+There are two checks for "if (transferred_or_error > 0)".  Delete
+the second check.
 
-Thanks!
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/netfs/read_collect.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index 7f3a3c056c6e..431166d4f103 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -597,10 +597,8 @@ void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error, bool
+ 
+ 	if (transferred_or_error > 0) {
+ 		subreq->error = 0;
+-		if (transferred_or_error > 0) {
+-			subreq->transferred += transferred_or_error;
+-			__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
+-		}
++		subreq->transferred += transferred_or_error;
++		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
+ 	} else {
+ 		subreq->error = transferred_or_error;
+ 	}
+-- 
+2.45.2
 
