@@ -1,78 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139DC10E9;
-	Sat, 16 Nov 2024 00:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4343319306F;
+	Sat, 16 Nov 2024 08:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731716417; cv=none; b=AX87FidnQ7Vk20Cw8OZkMukZzoW68wUrbj/3wo2JoZffof0ZifdMtsl7JzlURhUj6NE5urepdEs5e4zRn8elCTUCF9XTVuvqNEYNjIR0KlIO0jb3NzyOiSwFA07cuqABRI5UJFGMsOY17Esg2e4YvBo0B9FZWPR+8jeeg3RolLw=
+	t=1731745658; cv=none; b=Js4oIBwIqYEbJMJhOElN8zqmZDMJ7apInqks4xYywYlUk/cPtuEyXiVNBItF1FBOoNkmdsIIthjXZDHysF2Dt+Kf6i0Et9XGsA8NmAnNBJCQVPLsNJc20suF8o/P505jiivspU9iV0gymI5lPDg5rHkCl+nBEKomyjbFYYX7D7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731716417; c=relaxed/simple;
-	bh=1ObQtB5rkm++rVSRlWaXFVCFxZ687s3aiQ0sZIWrAlI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XP0WmI8hcuFWJx6ChpYbBE06QuAAYgf0YRNqXAAMsYYKO1hR0ZysKpIsnZUOZb/vHfRSSxHl5lmS/TaTmpOV+OAtVEuTbT0YoNk6oTdL5MA5tOQdv767ffxQrgULWe3TMlC6/sOdTWSPudunYI8faVGj48oZAy1FCVJ1vyMi41I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyH3FFSS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731745658; c=relaxed/simple;
+	bh=MOVng9Ha4sMJk3+Jdat+wN9LMmfgLGKMsUzsSGUIiHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=epnclM3RqZ1DYeUR/1lGo7KFnrEgcMFhwuexpMUdq6OPnuCUeHBGoXzLgcj7AGJ3fGMcUKx0SQFXGdxw0SoPpD20EOsGkSdpH54Uq25Z/oeUdUtqjCTS2Y5EL0VCJN1fU/Wz0kAWdGgFsOqopAnw+E/G8NGWeGmFrE5hL0qd+zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=q4WM7UrE; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyH3FFSS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1ABC4CECF;
-	Sat, 16 Nov 2024 00:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731716416;
-	bh=1ObQtB5rkm++rVSRlWaXFVCFxZ687s3aiQ0sZIWrAlI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=uyH3FFSSlwje6+6tCcPSR5DXOzq6Wq9dG6CjdiIvywIbc0gKLBXydaHprl/MFmNUH
-	 tqj6C5XpClFVANqO0A1j7DrsbvCxKvhdmGGgrmxhvlXxErMWmxxKcX/nbhfeFKkyuv
-	 5Ginyjpg9nW7m9kwAn1OBrCCSMY0hKBtZ4v7nWAcfmFPQgJDxEkuztGT0XBzrFuH4m
-	 6tFuF+pAsN1uS9jXahqYToiqqCqhN5QMtvRC6eyQjWk7aGxFqHXExRzkK49I33otXP
-	 VBZ9TzDeuFh1ZL7uSSVLeyM85gAv/Cr6NF05hep3ZyBjWEJm4zbnn9fkCXcxD6JZEI
-	 zdGsZ9muzNXCA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BDF3809A80;
-	Sat, 16 Nov 2024 00:20:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="q4WM7UrE"
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id AE98B14C1E1;
+	Sat, 16 Nov 2024 09:27:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1731745645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KswjZy/HqPntBZ/99MsDazDdPI3IQwrkpz4Pv2A/tBg=;
+	b=q4WM7UrEeKRUvgS0GdEXq6mFtoRBoOUipqcoVaH7brZbBaaVJiePYYgAnnkRls766U+cl0
+	0oAHnwy1nBRByk2gHT26ev0/u3Vgv/2mmb8q3TOqWIYL1vFeTOqzm0xH8gO7C8oa2zfVZW
+	4HcnfERgwNQkqw20mPDEob/naIxzC18LqoGuUSbKsDFXuyM3y12G6j5YnNCu4zQY9FQMZ9
+	46ds80N79P9ozyKMOt54n3WiHk3ZAeIgwpQWjYGKJ6ye1y9Alcctq0U7WdDHWycCGwCtWF
+	+LH45kV7LLDZTjpCatoaUGb1FSmZuiYpqJxCVVQ7HlbpfxKJAtb6CbhL1JVzRg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id f7b2776e;
+	Sat, 16 Nov 2024 08:27:20 +0000 (UTC)
+Date: Sat, 16 Nov 2024 17:27:05 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2][next] fs/9p: replace functions
+ v9fs_cache_{register|unregister} with direct calls
+Message-ID: <ZzhXWfkxj3cY8zTm@codewreck.org>
+References: <20241107095756.10261-1-colin.i.king@gmail.com>
+ <Zyyt0XUv0Ypl56qI@codewreck.org>
+ <d410dce3-36ce-4663-94ca-25bad2f91ad4@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] octeontx2-pf: Fix spelling mistake "reprentator" ->
- "representor"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173171642725.2779297.12906858184939692054.git-patchwork-notify@kernel.org>
-Date: Sat, 16 Nov 2024 00:20:27 +0000
-References: <20241114102012.1868514-1-colin.i.king@gmail.com>
-In-Reply-To: <20241114102012.1868514-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
- hkelam@marvell.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d410dce3-36ce-4663-94ca-25bad2f91ad4@suswa.mountain>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 14 Nov 2024 10:20:12 +0000 you wrote:
-> There is a spelling mistake in a NL_SET_ERR_MSG_MOD error message.
-> Fix it.
+Dan Carpenter wrote on Thu, Nov 07, 2024 at 04:56:55PM +0300:
+> On Thu, Nov 07, 2024 at 09:08:49PM +0900, Dominique Martinet wrote:
+> > @Dan, I don't have anything queued up 9p-wise so if you want to take it
+> > through the janitor tree it'll probably get in faster; otherwise (if
+> > you'd rather I take it or no reply in a while) I'll pick it up when
+> > other patches come in.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/nic/rep.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> There isn't a janitor tree or any rush on this.  ;)
 
-Here is the summary with links:
-  - [next] octeontx2-pf: Fix spelling mistake "reprentator" -> "representor"
-    https://git.kernel.org/netdev/net-next/c/11ee317d883e
+Sorry, I was somehow convinced you had a tree somewhere.
 
-You are awesome, thank you!
+I've now taken it in 9p-next, will pobably submit it for next cycle.
+
+
+Thanks,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Dominique Martinet | Asmadeus
