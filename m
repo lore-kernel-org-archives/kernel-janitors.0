@@ -1,46 +1,35 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D038B33997
-	for <kernel-janitors@vger.kernel.org>; Fri, 15 Nov 2024 21:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139DC10E9;
+	Sat, 16 Nov 2024 00:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731705890; cv=none; b=JJH9EE0zU8uqnR3u5iPZsbZkrPz26+iDHtHyH7J5yJFQWqAeEXZRF+4fjXWJD9Bl3GKmCshxpyTSwfxPdvXyIKM3Cw0gEBJIfpQfhhlBvy0v7uRHoAE8g1KDWDXNkV1oXWXhYAMOpUHtyPeZ2aWkftcNukovx7+dRUqlTWJkpjU=
+	t=1731716417; cv=none; b=AX87FidnQ7Vk20Cw8OZkMukZzoW68wUrbj/3wo2JoZffof0ZifdMtsl7JzlURhUj6NE5urepdEs5e4zRn8elCTUCF9XTVuvqNEYNjIR0KlIO0jb3NzyOiSwFA07cuqABRI5UJFGMsOY17Esg2e4YvBo0B9FZWPR+8jeeg3RolLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731705890; c=relaxed/simple;
-	bh=Bgs/12PtZuTnrvMeWK5ZWfYat10JaNSvHluJaDBzt2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d35UyThVCgr+OyFsZPJ6r6s0ZKLTsV1blmTkzTqcS4G8k8eYet/zAaDGY5S/VEIeb72LrG1/3K55D9pARDJJP522EHdZfaZXMb0k2YGzZYvl5yOZ0IX+jjt00rv3Rra4YrWj/LjxfsC9V5WJi0wKac+bTg0EyAqkUtVZ9VGb9fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sXW1ZkB2; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1731716417; c=relaxed/simple;
+	bh=1ObQtB5rkm++rVSRlWaXFVCFxZ687s3aiQ0sZIWrAlI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=XP0WmI8hcuFWJx6ChpYbBE06QuAAYgf0YRNqXAAMsYYKO1hR0ZysKpIsnZUOZb/vHfRSSxHl5lmS/TaTmpOV+OAtVEuTbT0YoNk6oTdL5MA5tOQdv767ffxQrgULWe3TMlC6/sOdTWSPudunYI8faVGj48oZAy1FCVJ1vyMi41I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyH3FFSS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sXW1ZkB2"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id C3mwtFV0AeGuUC3mxtsoiA; Fri, 15 Nov 2024 22:23:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731705815;
-	bh=Hs/wZDfKXx3ShBLaY4pSoUha6GqQ4qK+FdcROdbUR3o=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=sXW1ZkB2a1904wsfA+dXdNNvVC5/+Q3NlyOKX6RxWyt7VipMhR20sWwrck/u81oBX
-	 8EPnl28rnZPHvmUOPT0fRY9+VTeMLvj4TXP1hEn9YyvHXnKSoHjTUveXNiKZcfWU1u
-	 OLxIHAaNhqjmyKjtOEbwa4j849DWDuwqlEduxJIkfpSAaPZGxtW2mWQ+wqipEmgz4B
-	 gzuzJvpndLaVjVvYBc1tw7H+nehgfjhqriwLVnAU90GgU+N3lPeJWJBpRnhWRfeWQ2
-	 IJwwVDaSVRfNMWjE1OeFN5AfVaCx6PKeeXDTV1tq5on/V5soxFuy2ILeVHSePdBgYY
-	 zVat3qTHOayYg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 15 Nov 2024 22:23:35 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] parport: parport_serial: Constify some structures
-Date: Fri, 15 Nov 2024 22:23:21 +0100
-Message-ID: <d658d87078312fd2860a91a167eaa7ca5365ea23.1731705791.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyH3FFSS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E1ABC4CECF;
+	Sat, 16 Nov 2024 00:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731716416;
+	bh=1ObQtB5rkm++rVSRlWaXFVCFxZ687s3aiQ0sZIWrAlI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=uyH3FFSSlwje6+6tCcPSR5DXOzq6Wq9dG6CjdiIvywIbc0gKLBXydaHprl/MFmNUH
+	 tqj6C5XpClFVANqO0A1j7DrsbvCxKvhdmGGgrmxhvlXxErMWmxxKcX/nbhfeFKkyuv
+	 5Ginyjpg9nW7m9kwAn1OBrCCSMY0hKBtZ4v7nWAcfmFPQgJDxEkuztGT0XBzrFuH4m
+	 6tFuF+pAsN1uS9jXahqYToiqqCqhN5QMtvRC6eyQjWk7aGxFqHXExRzkK49I33otXP
+	 VBZ9TzDeuFh1ZL7uSSVLeyM85gAv/Cr6NF05hep3ZyBjWEJm4zbnn9fkCXcxD6JZEI
+	 zdGsZ9muzNXCA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BDF3809A80;
+	Sat, 16 Nov 2024 00:20:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -48,71 +37,42 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] octeontx2-pf: Fix spelling mistake "reprentator" ->
+ "representor"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173171642725.2779297.12906858184939692054.git-patchwork-notify@kernel.org>
+Date: Sat, 16 Nov 2024 00:20:27 +0000
+References: <20241114102012.1868514-1-colin.i.king@gmail.com>
+In-Reply-To: <20241114102012.1868514-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
+ hkelam@marvell.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-'struct parport_pc_pci, 'struct pci_device_id' and 'struct pciserial_board'
-are not modified in this driver.
+Hello:
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   8125	   5232	      0	  13357	   342d	drivers/parport/parport_serial.o
+On Thu, 14 Nov 2024 10:20:12 +0000 you wrote:
+> There is a spelling mistake in a NL_SET_ERR_MSG_MOD error message.
+> Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/ethernet/marvell/octeontx2/nic/rep.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  12272	   1072	      0	  13344	   3420	drivers/parport/parport_serial.o
+Here is the summary with links:
+  - [next] octeontx2-pf: Fix spelling mistake "reprentator" -> "representor"
+    https://git.kernel.org/netdev/net-next/c/11ee317d883e
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/parport/parport_serial.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
-index 3644997a8342..9ffbd69a32d9 100644
---- a/drivers/parport/parport_serial.c
-+++ b/drivers/parport/parport_serial.c
-@@ -118,7 +118,7 @@ static int netmos_parallel_init(struct pci_dev *dev, struct parport_pc_pci *par,
- 	return 0;
- }
- 
--static struct parport_pc_pci cards[] = {
-+static const struct parport_pc_pci cards[] = {
- 	/* titan_110l */		{ 1, { { 3, -1 }, } },
- 	/* titan_210l */		{ 1, { { 3, -1 }, } },
- 	/* netmos_9xx5_combo */		{ 1, { { 2, -1 }, }, netmos_parallel_init },
-@@ -168,7 +168,7 @@ static struct parport_pc_pci cards[] = {
- 	/* brainboxes_px263 */	{ 1, { { 3, -1 }, } },
- };
- 
--static struct pci_device_id parport_serial_pci_tbl[] = {
-+static const struct pci_device_id parport_serial_pci_tbl[] = {
- 	/* PCI cards */
- 	{ PCI_VENDOR_ID_TITAN, PCI_DEVICE_ID_TITAN_110L,
- 	  PCI_ANY_ID, PCI_ANY_ID, 0, 0, titan_110l },
-@@ -328,7 +328,7 @@ MODULE_DEVICE_TABLE(pci,parport_serial_pci_tbl);
-  * Cards not tested are marked n/t
-  * If you have one of these cards and it works for you, please tell me..
-  */
--static struct pciserial_board pci_parport_serial_boards[] = {
-+static const struct pciserial_board pci_parport_serial_boards[] = {
- 	[titan_110l] = {
- 		.flags		= FL_BASE1 | FL_BASE_BARS,
- 		.num_ports	= 1,
-@@ -619,7 +619,7 @@ struct parport_serial_private {
- static int serial_register(struct pci_dev *dev, const struct pci_device_id *id)
- {
- 	struct parport_serial_private *priv = pci_get_drvdata (dev);
--	struct pciserial_board *board;
-+	const struct pciserial_board *board;
- 	struct serial_private *serial;
- 
- 	board = &pci_parport_serial_boards[id->driver_data];
+You are awesome, thank you!
 -- 
-2.47.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
