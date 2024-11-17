@@ -1,44 +1,44 @@
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F16186E58;
-	Sun, 17 Nov 2024 12:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D74919ADBF;
+	Sun, 17 Nov 2024 12:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731846330; cv=none; b=edI/EPiFrVrOwAtoqabqOQ5HCOctbNWmp+J1ijcLl0+nVq+TvP9M8WM53ait0fZ6iyo332SNnCj7Xk440x5rp/qUUCUMz9tHBwvneHjPcPVSjpCIur8NsWsIhEc7TAu8y0ogJAkOuW+4JEasH+9YHF8LlOnEWp4okHvZKtyJlqI=
+	t=1731846333; cv=none; b=hfxEx4OTnfp3LkhtBy7FGaHY4l4MeOzz+NIjVD8rdO9vkgMsAhsgtQvUVcXE2fLZqP7VV8jqdIOcBIpdoDtUSCxjN52cLxRXQVsNQLfAlDpLfSMc2lPBeXfkVtVCn1vQb5zBV+LW2DggSQrf2UhrwXBqXqr5gQJMFdTOf3y52nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731846330; c=relaxed/simple;
-	bh=v0SczrddyMYujY9dYZIJhDs68nkrXtTFyaJ2w+eGWUo=;
+	s=arc-20240116; t=1731846333; c=relaxed/simple;
+	bh=Is8yc5+TSfPF5LwkL6cMbKzwx66c7RFMVwvIrqQbSUk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rjUhkXKtGv/g0faY1kTcQ7V4JCKHhIR0DPh9ygJhFgwX0uL1oaXWiJwcbAY1SM7HEXcMhxsnkQVZptfSS9HDZtA0KmOAKFMSCFLRGSKqe1gddxkdfw7DW1lvMk6CyZ/gjxvSltOyYx++CyDMIGNHcO/I0GdM4ieeIN0TjBY0XuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=de3N7xye; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version:Content-Type; b=gb48ccTj/TealCltDNFrZt0I740MO3YtKdm9/HgMVUliDLV7sbKjlQfY5YnLLRoJvZJv/fHFNmYSR10HAXji1QOEdtA2jIbjZE8UM2LzaiZuSnuLOYashQtIKu4NwSqwBBL2OR4PtumRd/PJ+SCibaDQ8WZDFuLvuw+zZKo07/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=BfA+hDrB; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="de3N7xye"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="BfA+hDrB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731846323;
-	bh=3Q8GF405lgPrVBMNIcWwlkYcIcKlMKmYZQRNZamOSn8=;
+	s=201909; t=1731846327;
+	bh=KaVcfOJB5yHFkrI9gBoi6KkKyub0hH9jAka1jgkP7js=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=de3N7xyekklCVojBYAsLV7SwZQaYEA5qDTjTXw8a8r3iLi8xPMcUsFxoI3AWHUK/Q
-	 4ziG7DmSyzGQafjZ4A+8hy8pI9Tv9+b5icFGZLsQ8jcHBEF8U5n4ljXk0HOsAVI9Zv
-	 qSCn5qk7a9Me7PFPL55Q3+ociPNKooHr8TI4j5X6JYWyWXkILKv/tjKuaqmtUnoaZN
-	 k95mU8mj3KruLMC1Z2bvT5AwPt29bo/SsFYXm0J46zYslL4P0QnSPy3EfWpNqHdKce
-	 Jjt5YrL49S86/zMeewnM5OzHIX7rd6zH2jqnEGWrNdaFqy6NJ2qhQbk1QG9MAYOnb9
-	 P8E6m6UO+fTsw==
+	b=BfA+hDrBx4pasiTqOPTLolLQ/OuZVtnl+jlr0QV+dYbn3p8dExFxdsdsSXOaTOTTW
+	 8vGsEDqQhCzQJtY5P7jpcNoKtkQ0Z4dEWZBdH3EVCBp3XuHAJ1R8sebUu+l7byZ6u6
+	 NjN5q5GifvWctHaEdF36bgoW4ndeR4r1vP8fZEHrOM+C27scsTMZZhqhOA0ermMKkW
+	 IrCUU5MvIlnoTJiNc6TUyLR2FqVMCm9Gq43MmYL/Lw/q0onSb5CliEjn8ts1RlTtFl
+	 baKUnobbQNi7+CtMrM7o/+544GmOvKcOy1qizi1wF4BY3RrghWhUfRQw2As3v450K/
+	 +Pc/bVc6rx6fA==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xrqhy405Kz4xf3;
-	Sun, 17 Nov 2024 23:25:22 +1100 (AEDT)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xrqj04H09z4xdS;
+	Sun, 17 Nov 2024 23:25:24 +1100 (AEDT)
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: Scott Wood <oss@buserror.net>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, linuxppc-dev@lists.ozlabs.org, Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
-In-Reply-To: <20240927095203.392365-1-lukas.bulwahn@redhat.com>
-References: <20240927095203.392365-1-lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] powerpc: remove dead config options for MPC85xx platform support
-Message-Id: <173184539765.890800.8133214752125480117.b4-ty@ellerman.id.au>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, linuxppc-dev@lists.ozlabs.org, Jani Nikula <jani.nikula@intel.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Naveen N Rao <naveen@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Zimmermann <tzimmermann@suse.de>, Paul Mackerras <paulus@ozlabs.org>, Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ede25e03-7a14-4787-ae1b-4fc9290add5a@web.de>
+References: <b7e69e04-e15c-41ec-b62b-37253debc654@web.de> <d9bdc1b6-ea7e-47aa-80aa-02ae649abf72@csgroup.eu> <ede25e03-7a14-4787-ae1b-4fc9290add5a@web.de>
+Subject: Re: [PATCH] powermac: Use of_property_match_string() in pmac_has_backlight_type()
+Message-Id: <173184539766.890800.18087603028273437362.b4-ty@ellerman.id.au>
 Date: Sun, 17 Nov 2024 23:09:57 +1100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -49,19 +49,15 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Fri, 27 Sep 2024 11:52:03 +0200, Lukas Bulwahn wrote:
-> Commit 384e338a9187 ("powerpc: drop MPC8540_ADS and MPC8560_ADS platform
-> support") and commit b751ed04bc5e ("powerpc: drop MPC85xx_CDS platform
-> support") removes the platform support for MPC8540_ADS, MPC8560_ADS and
-> MPC85xx_CDS in the source tree, but misses to remove the config options in
-> the Kconfig file. Hence, these three config options are without any effect
-> since then.
+On Fri, 11 Oct 2024 18:18:42 +0200, Markus Elfring wrote:
+> Replace an of_get_property() call by of_property_match_string()
+> so that this function implementation can be simplified.
 > 
-> [...]
+> 
 
 Applied to powerpc/next.
 
-[1/1] powerpc: remove dead config options for MPC85xx platform support
-      https://git.kernel.org/powerpc/c/f20b0a03674cef555a5f48b65f81b82868b17cdd
+[1/1] powermac: Use of_property_match_string() in pmac_has_backlight_type()
+      https://git.kernel.org/powerpc/c/2e716f5cdebed2fb98cafffaf626645c2e922dbb
 
 cheers
