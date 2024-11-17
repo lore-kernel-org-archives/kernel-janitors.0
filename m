@@ -1,49 +1,55 @@
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548AC18D65C
-	for <kernel-janitors@vger.kernel.org>; Sun, 17 Nov 2024 09:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7265733E7;
+	Sun, 17 Nov 2024 11:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731837016; cv=none; b=epk4sjM2Jzc5n7/hrt2wsBK3iP6gZ9EOJIaWlo1VuHOaN7x/BanYYxxr8RGcOkkVd9gLPVhF2bDr94T/bWQgjexvLkVQhNNVUmvS4dI/Waj5hwO6B8veQirLf4bqdE7ujdQ1UpQStoeep6dKS+jb2HCCVZ10v9trbPSswZHRkSw=
+	t=1731842530; cv=none; b=NvMM2NlOlGHtj4mfhQWks0hmNhTGVM+vWcieIyVAg3eto4r+hIK7nhzTLUp0fWyA0WobaLhBizsz2uyvubEq/tM4z+O5+jhfaee2Lo9vm6tKH7c0ORPsdPu1FwhCWRP/oBFJSw6jal7RZI6C+x5HCTBF4G3CrSjl4LmwvVXhTLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731837016; c=relaxed/simple;
-	bh=YItoIAOS0SMmhYS9IXyLsbxI586VpFxrOh+FXt2aOoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rKao//E3BKnJNMdJvVuin/670VFVDrmv1jV3DtAd5vvH9Q7hzY1UwrNE7hLIHXpRDg6vghSc8TyoIshG8ecV/VTiOtmhJzU7Wo20gHEasb7P4xLzAqpldEU2AvseLrIWBE0CFYf1GmspAWHEwUiywjTD73p8TmSWi3YlS2nkIuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=S7RQDUAF; arc=none smtp.client-ip=80.12.242.19
+	s=arc-20240116; t=1731842530; c=relaxed/simple;
+	bh=GL6L0RdEB3pV7TqNFOrFDekS6axn/OVeGdxC9qw5byM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tOsyRwhh4opw+/55JS/vk1HLDgl8OujH/40NQ5R/erV3/R9x/giQ93xXtE9g9bzegje2LdbBPTKHlbquOd3slRLrD7AVG9aNL5JhepCs0hFNNlZC6vTBHOhMgNCHNMIHa6RxBinRbZp7bzUtR7DS5KJdNSW5Ra3nl+0UKM7Pkwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=g3uU7i02; arc=none smtp.client-ip=80.12.242.29
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="S7RQDUAF"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="g3uU7i02"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id Cbuot94NAgiuVCbv2txshp; Sun, 17 Nov 2024 10:50:12 +0100
+	id CdLltujfVkz9DCdLltiABX; Sun, 17 Nov 2024 12:21:58 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731837012;
-	bh=QsFY+oFBT/L9WpTZKsV7kPeliUrBcejT52WMrTeVP3Q=;
+	s=t20230301; t=1731842518;
+	bh=wutmjbunPazncW+7ACgp5eT9w4BJnbyk7q/fyDFLZ9g=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=S7RQDUAF7ya1otQt2aqeiM6QmAnQ/bWuKsMo5ZK8PaJd3XdDhh4g2VOdmJJb5loVu
-	 gpesMNOvf2RAZ1Yq736C0f+MBvsct6oGvp9rE8D/3fk7YoEu3cEiZNfkPLsFo/ACTt
-	 ruB6ZU7ATRscZaqU8T6xLCScOBb1W2atYUjxIw2CjXaGCtdSKaIRsl+M+awQEvVZ+G
-	 D/hMemT/nl8MJwXLVadOKILBLGP1K/+sHE8ayD5eZrDSE7YnlLCnszYydCAQW7n25A
-	 qGZm9oso1ZLX2e7MVlTX0fpllcyWp3bSwjk0nTK16cMvmB8Txk6bOWWjeZNW4cyRdq
-	 1LjuPlNpAbIBA==
+	b=g3uU7i02kt7I5UMCR2YSd0Jh7XdjTBkf1sV5I1IvB/dWjRSWhguCsUDnUcPk9SjIQ
+	 xDbA/sY5wzXGp8+lUTDjx2fYMIK+VM/BprxDh/mzNzDLzaFTigAq1Hoc/IMPxrGRgY
+	 yqA2uh+d8/VzX1GnsqNb4qS5v8Iar4rlm+iGqNfcHgGXZGryfmrV7xDXJMq7kAN91Y
+	 JyYvVYr2+ybGGGY+e7EVDLVvyXFZCP6CqVg1QbNvsA7+wIQU+PEWXsGIqQSmnZ+BLd
+	 JF7rqbpM7vRTqz1nBMLz3TAqN9PhVDxzsu0uCkF/T2TkPAYdSfR9bSUBG7OXrejMFw
+	 x+wqWFVIao+EQ==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 17 Nov 2024 10:50:12 +0100
+X-ME-Date: Sun, 17 Nov 2024 12:21:58 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: tglx@linutronix.de
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Marc Zyngier <maz@kernel.org>,
+	Aisheng Dong <aisheng.dong@nxp.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 4/5] irqchip: Constify some irq_desc_get_chip() usage
-Date: Sun, 17 Nov 2024 10:49:46 +0100
-Message-ID: <a683ada6749705812e9cfc4c36ce36386362d814.1731835733.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] irqchip/imx-irqsteer: Fix irq handling if an error occurs in imx_irqsteer_irq_handler()
+Date: Sun, 17 Nov 2024 12:21:43 +0100
+Message-ID: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1731835733.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1731835733.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,68 +58,45 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When irq_desc_get_chip() will return a const struct irq_chip, the const
-qualifier will be needed for local variables that store the return value of
-this function.
+chained_irq_enter(() should be paired with a corresponding
+chained_irq_exit().
 
-So start to add some of these const qualifiers.
+Here, if (hwirq < 0), a early return occurs and chained_irq_exit() is not
+called.
 
+Add a new label and a goto for fix it.
+
+Fixes: 28528fca4908 ("irqchip/imx-irqsteer: Add multi output interrupts support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested only
----
- kernel/irq/chip.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Compile tested only.
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index eca39c4dd094..d3acccf7e2e2 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -751,7 +751,7 @@ EXPORT_SYMBOL_GPL(handle_fasteoi_irq);
-  */
- void handle_fasteoi_nmi(struct irq_desc *desc)
- {
--	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	const struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct irqaction *action = desc->action;
- 	unsigned int irq = irq_desc_get_irq(desc);
- 	irqreturn_t res;
-@@ -849,7 +849,7 @@ EXPORT_SYMBOL(handle_edge_irq);
-  */
- void handle_edge_eoi_irq(struct irq_desc *desc)
- {
--	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	const struct irq_chip *chip = irq_desc_get_chip(desc);
+Review with care, irq handling is sometimes tricky...
+---
+ drivers/irqchip/irq-imx-irqsteer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
+index 75a0e980ff35..59abe5a8beb8 100644
+--- a/drivers/irqchip/irq-imx-irqsteer.c
++++ b/drivers/irqchip/irq-imx-irqsteer.c
+@@ -135,7 +135,7 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
+ 	if (hwirq < 0) {
+ 		pr_warn("%s: unable to get hwirq base for irq %d\n",
+ 			__func__, irq);
+-		return;
++		goto out;
+ 	}
  
- 	raw_spin_lock(&desc->lock);
+ 	for (i = 0; i < 2; i++, hwirq += 32) {
+@@ -153,6 +153,7 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
+ 			generic_handle_domain_irq(data->domain, pos + hwirq);
+ 	}
  
-@@ -894,7 +894,7 @@ void handle_edge_eoi_irq(struct irq_desc *desc)
-  */
- void handle_percpu_irq(struct irq_desc *desc)
- {
--	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	const struct irq_chip *chip = irq_desc_get_chip(desc);
++out:
+ 	chained_irq_exit(irq_desc_get_chip(desc), desc);
+ }
  
- 	/*
- 	 * PER CPU interrupts are not serialized. Do not touch
-@@ -924,7 +924,7 @@ void handle_percpu_irq(struct irq_desc *desc)
-  */
- void handle_percpu_devid_irq(struct irq_desc *desc)
- {
--	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	const struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct irqaction *action = desc->action;
- 	unsigned int irq = irq_desc_get_irq(desc);
- 	irqreturn_t res;
-@@ -967,7 +967,7 @@ void handle_percpu_devid_irq(struct irq_desc *desc)
-  */
- void handle_percpu_devid_fasteoi_nmi(struct irq_desc *desc)
- {
--	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	const struct irq_chip *chip = irq_desc_get_chip(desc);
- 	struct irqaction *action = desc->action;
- 	unsigned int irq = irq_desc_get_irq(desc);
- 	irqreturn_t res;
 -- 
 2.47.0
 
