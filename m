@@ -1,131 +1,93 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67B41863F;
-	Mon, 18 Nov 2024 15:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C5D1BD9FB;
+	Mon, 18 Nov 2024 17:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731943592; cv=none; b=a/aheXUodOAk8EWx+WbarrdYS8KBavUmXQfyl5ZvmvWTFkcp7eQ4FyvOjxP5XusWtOkBgB6LVENjZufiF8lwEiKuNqYtRW3awrfTyDlMqw/oW9z0DKkTFHjeGXDeVWpLpPvp0leAEaztfuNGwZw399CGnqQvQ6kTYkpmuBkskqI=
+	t=1731951081; cv=none; b=PG0ORnqxu4Gq1q1N7UPsST4sjKlXZ9xRAsXSle2ECvWCUHCvoYpuh5KiZcCl/3XHcl9j6d8xdOT0nolg1ebkAy9vhd4iomprUDcmn29OnOz0ApTGghgipOjR+HQPWtWlaaoLB80Lmgqfw3vnEWNxI5HOcQ42mfCF99xAWtGExSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731943592; c=relaxed/simple;
-	bh=mEqBzDik5b80IK5VbC+h4r2kXN/x63z5e8pMZHOi2bw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QgK+JTvhn3z+zvkZEcxdhT4az2FuvdUflLzB1WTP+E1lPxLSx2CKK0sSUx7LwY8IRXbyFT+KXr5y8dtjGo2DtMs0eeSSaI8BgtY6kW89sDYcYIVd0vwdXGTwO/UqXUgY4wLUTwomVSzloMvIbLYBljCvNwyT6pw5DdfA5cKBTjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jLstS+Xq; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731951081; c=relaxed/simple;
+	bh=85G7UTP1K7kTdCA3yQ/1SDqQWbdyEWfjArDXx9ZLIV8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ZyDCs9VkSyROJ7D4+5vOLimMcDHUTKwvXYk9BN2wuNwfCWcLmqwJDNyxKnx9yDSOJ91CfIwRzJKH6HR1D7nJMn3yP5rmpyV035NboGwLU/zwcdSSKqbv9JJNKoG8LgQaTEyUCHgz/FqjGgwlC7rLl+Uc2cstjdJq/osBwS8hRGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jK941Ie9; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLstS+Xq"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ea93311724so82773a91.2;
-        Mon, 18 Nov 2024 07:26:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731943590; x=1732548390; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VxLNPkkdLQbSGAjECvY64z6azuuyEaYCFq24xqUSCNA=;
-        b=jLstS+XqTAxV/I/Xi+cv6We3g5CDQqlaUecCEd0y/3n95mtY/lwUkof2i/TxTr6lGn
-         7KgRu6DVCzm8mV/GzMchcDxas/2t5KfynWg5v4RuhGUEbc734YUQ/dW/NszlNDFLFDXs
-         iVZsGlyFDS2h+vBfsASluv0L7L/ZKmBOHAYV9ri1CAmLCZMosrM/sC1dvBW7M1isb9QC
-         OCKjm2qaJgd4Uwq1E9Aic9XF2Vnh//eeS9fQ0n/4HEa2U9458x3UqeRulQKA3NxfOnaz
-         FcjmE/mmRp5JZg/Nkp6NicgR+AL1hMW+2SSxaqqCNKxodb/UGjYUeAKcF/5qEaincKDB
-         wg0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731943590; x=1732548390;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VxLNPkkdLQbSGAjECvY64z6azuuyEaYCFq24xqUSCNA=;
-        b=GbkjqeaT+Rycf2h1YK8J23Rv/q0LFtAlMD3CSBTRZ5GLiul71M9MWimWJ4MbSJIIBn
-         NAUwCBZmB2A2C3RGVRWmGFqRrLCBAe+t4iCZ6KbKmxbKGJOvJCOvIvYPMJyT7mCdhQ0d
-         a9PmKC/rA28a8S9VqcSwEIR5BcCzT2SX/vXCypfjVJDdLeNSgtsz9gpn1XXt25tLa5PM
-         /2duWALstbhaU/8qQ8xYWaMRUGfg6t2irDcqBus/Y/qDzUvo5G+DqhjhwB7sdMkt4Bel
-         MV/lYXai+KHfLwYyWTVKVL3zB4SK+hwOhhLFW08DejYqo0hdi02e7otdhAqwGqZefo3A
-         KKDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOKIvzQmLzlH+fEH68ulcN5igs4DalUTudJPOIsefdTz1gPeaZ0nq0+r+NOKngGYocjd21hOCnwf5r0sxB5bg=@vger.kernel.org, AJvYcCUfwbef9bkdvr2h3l7mK/Hmv3j+oi4uheS67LCxwU6pqZd+oSKprLru28uMkLpV3gQKsEgSOUTyXHPcLyhW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFJDNJIFPN9j5iU9edLhii6+NgjTm1k/liEf0q6bC319t3VBrp
-	GUR8L79IsYvV3htVT8bUYqxy+UeLP/sRr7StszOANtCiTM528REEi9q/wTpsomKJen/VMS627sX
-	o8aWvbhJGbHDu8CdMmycpIB6MwnM=
-X-Google-Smtp-Source: AGHT+IHk+nsIvISW+3hBwejGBc/PZwCBrs22kLEHGbh9RYjj0wMdgfHvqHkteLWeoPI3OUMObMfh4V2KUB4Wd4l6Ndo=
-X-Received: by 2002:a17:90b:5187:b0:2ea:3ab5:cb83 with SMTP id
- 98e67ed59e1d1-2ea3ab5cee6mr4404015a91.9.1731943589858; Mon, 18 Nov 2024
- 07:26:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jK941Ie9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731951054; x=1732555854; i=markus.elfring@web.de;
+	bh=85G7UTP1K7kTdCA3yQ/1SDqQWbdyEWfjArDXx9ZLIV8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jK941Ie9o6x/SsaTl/5prNUj9JwcJLVEDXq5713J9G5ltJ5vM+PAUXoKqG4ocHqE
+	 4gJ7RVvsQUlSIzwuNnD0DPMKQiqUvxmvxH4Jrv7Tz19dHI5pv28j5aKgbXLwfHl6z
+	 NqILQXIEQ5Vd86dF3WJ6AyzblON1Wb0xxln8l2bBAh5n/f9YcfXzh+LIKaG+hjlNI
+	 y5iHbzqJFOhrHVKingNNhybIYYhoPzBwmExyDCV657WJvPRMkgRSQEzH1FM4Rx0QD
+	 R+fnB9xsmpTZ3gKV9ltSMSMcLr6pgPwEBKT9N8ktsYgWL1rcIhHw6rnHM1vA6bB9z
+	 1b2wdNziSkKFftNC+g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmymz-1tds1x1aXX-00pkdw; Mon, 18
+ Nov 2024 18:30:54 +0100
+Message-ID: <a9f86b63-6645-49e8-88d5-a5dbab2aaccd@web.de>
+Date: Mon, 18 Nov 2024 18:30:53 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <039846c0278276e7c652395730f36051216fd4c3.1731691556.git.christophe.jaillet@wanadoo.fr>
- <acd637f7-a1ce-443b-8d05-d285c28cea7d@amd.com>
-In-Reply-To: <acd637f7-a1ce-443b-8d05-d285c28cea7d@amd.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 18 Nov 2024 10:26:18 -0500
-Message-ID: <CADnq5_NLObja=ctv60w3uhx1yf-bZTUhR2VvtT=aUkaG4SXOUg@mail.gmail.com>
-Subject: Re: [PATCH] drm/radeon: Constify struct pci_device_id
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux@weissschuh.net, broonie@kernel.org, 
-	lee@kernel.org, Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: guanjing@cmss.chinamobile.com, Barret Rhoden <brho@google.com>,
+ David Vernet <void@manifault.com>, Hao Luo <haoluo@google.com>,
+ Josh Don <joshdon@google.com>, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20241116230258.140098-1-guanjing@cmss.chinamobile.com>
+Subject: Re: [PATCH] sched_ext: fix application of sizeof to pointer
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241116230258.140098-1-guanjing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SOfWYe3CAgBGvO68l+vi7ssFmFkfpSaq8XAdHA8ij8GYalRdzOL
+ /N0S/AwfIFJ1Nz72W9p5QI4zDurA+9L4eteICqkQCaFvh6rmL/BNH0WjSm1R5lra44tbS80
+ QnESlVP3kWoHT66Y3RBinX/KrPwwlx/ro72Uobt7a4//rvPYrI7Wtc7t8ARELVydRwXHoio
+ zhtXAd9JLj3AxACpnHFkA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:p0neG0qW/e4=;refRek5BDM8epMyGJ82SMKH+npA
+ SuBnTkzVod+jINn4rAjEkvzsi7KMcGndy1CDpU/66ZHUmrTNaej0NNURlq1xMKxc6+oPD4YMX
+ k5Cwd1SsYhDaNW6AsL0si+R7TBrdCs/PauXya7Z6hVJHU4Fzdjbsi960VoNC0ZrAQlnjxrPjR
+ m8AcBhmflLOwIycEZETbsaauXxof04/W2uOGUq2dgdttDyLVcHmwIMWnZ0cYMI8JCka95ktL1
+ JWKI+L1DKNlmLcLgwDFxQGe1I/udkNZWKm4IkMvGXKKgSSsfszEqvIa07MBUV/Gts56NF5vC3
+ mbBu3PwieoIn5McORUltRdFHfFT2rWzcsapGU+IQiAqbntT/0W8/AKzyn4uAG1Xd870IIpLm9
+ wkD3sh0pQQEBog0F2qZTCuGvoUsvL5/2x2K7CzJubJhJI9mt0gHAbv9AvgD82JcM6rlQ19Iux
+ PInB6x/Me2pXE4Nh+oaytJmpC1Al7ue+/mzxwdmQwjbylVigghkh/d6kkYCX6OGNacfVGM0Zz
+ fD56UoKKn4QWG7FSxH8Ginj5+Yh/w9toxRN1f9pEeeHHfjRH9VjYnap2vULHq3mDM81TlhbZG
+ fkwvKCv3C56+s8ix25MvMaicy1f4cknrhb9062mLgtrc5sEvkaBAgpb6ebo4V+4DCYx9tVs/b
+ UQI/BB6SZcD0kpHzJ3qUYNmjoOT3xopeUC7+LhFo7HaKicAo0/2RYnWcCXpmXTNyFDXk4I6pB
+ WGr5CwtkgzXXhm7X5ptZcZeGwcwJa/nbmT1cNpkygsg/RCB4WDxQIVAuGLmHdALQ1uVsiHAE3
+ 7vS47532ruRLFOTfk3wyrzkOBbNNZD2jFtVuf6uoxf1mo+Yp7wdU8rWQu+0tlzwZtpAYvsOtq
+ 5IgOylDbnaR7kUgTU6pvykQpaholTNgKpLos9UdBi7M1otZixTi0dmV3Q
 
-Applied.  Thanks!
+> sizeof when applied to a pointer typed expression gives the size of
+> the pointer.
+>
+> The proper fix in this particular case is to code sizeof(cpu_set_t)
+> instead of sizeof(cpuset).
+=E2=80=A6
 
-Alex
+I suggest to reconsider this view once more.
 
-On Mon, Nov 18, 2024 at 6:25=E2=80=AFAM Christian K=C3=B6nig
-<christian.koenig@amd.com> wrote:
->
-> Am 15.11.24 um 18:26 schrieb Christophe JAILLET:
-> > 'struct pci_device_id' is not modified in this driver.
-> >
-> > Constifying this structure moves some data to a read-only section, so
-> > increase overall security.
-> >
-> > On a x86_64, with allmodconfig:
-> > Before:
-> > =3D=3D=3D=3D=3D=3D
-> >     text         data     bss     dec     hex filename
-> >    11984        28672      44   40700    9efc drivers/gpu/drm/radeon/ra=
-deon_drv.o
-> >
-> > After:
-> > =3D=3D=3D=3D=3D
-> >     text         data     bss     dec     hex filename
-> >    40000          664      44   40708    9f04 drivers/gpu/drm/radeon/ra=
-deon_drv.o
->
-> Mhm that's a bit more than "some data" :)
->
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->
-> Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
->
-> > ---
-> > Compile tested-only.
-> > ---
-> >   drivers/gpu/drm/radeon/radeon_drv.c | 3 +--
-> >   1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/rade=
-on/radeon_drv.c
-> > index 23d6d1a2586d..5e958cc223f4 100644
-> > --- a/drivers/gpu/drm/radeon/radeon_drv.c
-> > +++ b/drivers/gpu/drm/radeon/radeon_drv.c
-> > @@ -248,10 +248,9 @@ int radeon_cik_support =3D 1;
-> >   MODULE_PARM_DESC(cik_support, "CIK support (1 =3D enabled (default), =
-0 =3D disabled)");
-> >   module_param_named(cik_support, radeon_cik_support, int, 0444);
-> >
-> > -static struct pci_device_id pciidlist[] =3D {
-> > +static const struct pci_device_id pciidlist[] =3D {
-> >       radeon_PCI_IDS
-> >   };
-> > -
-> >   MODULE_DEVICE_TABLE(pci, pciidlist);
-> >
-> >   static const struct drm_driver kms_driver;
->
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.12#n941
+
+Would the specification =E2=80=9Csizeof(*cpuset)=E2=80=9D be more appropri=
+ate here?
+
+Regards,
+Markus
