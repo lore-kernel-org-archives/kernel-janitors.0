@@ -1,125 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5657618B47E;
-	Mon, 18 Nov 2024 11:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67B41863F;
+	Mon, 18 Nov 2024 15:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930183; cv=none; b=hOiqZQY9llHpn/SPSbC8hgy6gwLe2o+caPGTyRpkwNEfJ34kXUIhjntPdSgF0mqpBPyTdirWyZyqaFd/8qiMK/a01PMaBkv6Wow4RVLlvthPHFJu27HU9uC5vrXFWuBuUQNx5wWiwxn4NNQJ6U2PerJKS4arj/2rcC/dBAdJhHA=
+	t=1731943592; cv=none; b=a/aheXUodOAk8EWx+WbarrdYS8KBavUmXQfyl5ZvmvWTFkcp7eQ4FyvOjxP5XusWtOkBgB6LVENjZufiF8lwEiKuNqYtRW3awrfTyDlMqw/oW9z0DKkTFHjeGXDeVWpLpPvp0leAEaztfuNGwZw399CGnqQvQ6kTYkpmuBkskqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930183; c=relaxed/simple;
-	bh=1Mu1Oe4up2k7/Ym+0BclLRPliMzcmd4nehsjMkkiK+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SkpC6zcLndqvMj+cuKRCXo/BKLPe/l2M7yw+mfZ6HHhqQFIE8261tXujIjvaQEdyJn8tv74wB3TCMr+UilcAGqIGMhQRC+6gaola4svQ9EXWf/Yi6/PMgkqrkV5LQI/+awgiyMIivpCSAzidCfO14zIL2HTLIV5d8V5cTak1r10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5znzDYc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731943592; c=relaxed/simple;
+	bh=mEqBzDik5b80IK5VbC+h4r2kXN/x63z5e8pMZHOi2bw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QgK+JTvhn3z+zvkZEcxdhT4az2FuvdUflLzB1WTP+E1lPxLSx2CKK0sSUx7LwY8IRXbyFT+KXr5y8dtjGo2DtMs0eeSSaI8BgtY6kW89sDYcYIVd0vwdXGTwO/UqXUgY4wLUTwomVSzloMvIbLYBljCvNwyT6pw5DdfA5cKBTjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jLstS+Xq; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5znzDYc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D219C4CECC;
-	Mon, 18 Nov 2024 11:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731930182;
-	bh=1Mu1Oe4up2k7/Ym+0BclLRPliMzcmd4nehsjMkkiK+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U5znzDYcfP7e/PkaQyn1TGyrHDIDHQVZ4sMoTAWqMVz7weOcUZOtx6BsHL362pNaF
-	 qSU0Cxnwls+yj0MtELD6fjB7C2Kegp4uhxQnIaf5MOlggl4P3OPXzQ7iW0uhZAID4T
-	 dJV2z9oQ8nLoUEL/wUYzQ0cCcgTrySqH32vYAw6yIf1zuLXofm2G0TQ1krRUglscwm
-	 phtgPlk3JnODOUB5S0m1R04UjvsFZgz9bErEW929ZXpOqci73BYvHq+E1y6/8ZNlvt
-	 zXiH3qIh8JKqbdfM7oUTjWQ0Z9Vx+UKjVm8y0WBViPRxRJY4mY+Bq0cfK2atH920wv
-	 15XlMts+gMx5w==
-Date: Mon, 18 Nov 2024 12:42:58 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Damien Le Moal <dlemoal@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org
-Subject: Re: [PATCH] ata: Constify struct pci_device_id
-Message-ID: <ZzsoQlOaDP4FJ8G-@ryzen>
-References: <8bddfee7f6f0f90eeb6da7156e30ab3bd553deb1.1731704917.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLstS+Xq"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ea93311724so82773a91.2;
+        Mon, 18 Nov 2024 07:26:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731943590; x=1732548390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxLNPkkdLQbSGAjECvY64z6azuuyEaYCFq24xqUSCNA=;
+        b=jLstS+XqTAxV/I/Xi+cv6We3g5CDQqlaUecCEd0y/3n95mtY/lwUkof2i/TxTr6lGn
+         7KgRu6DVCzm8mV/GzMchcDxas/2t5KfynWg5v4RuhGUEbc734YUQ/dW/NszlNDFLFDXs
+         iVZsGlyFDS2h+vBfsASluv0L7L/ZKmBOHAYV9ri1CAmLCZMosrM/sC1dvBW7M1isb9QC
+         OCKjm2qaJgd4Uwq1E9Aic9XF2Vnh//eeS9fQ0n/4HEa2U9458x3UqeRulQKA3NxfOnaz
+         FcjmE/mmRp5JZg/Nkp6NicgR+AL1hMW+2SSxaqqCNKxodb/UGjYUeAKcF/5qEaincKDB
+         wg0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731943590; x=1732548390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VxLNPkkdLQbSGAjECvY64z6azuuyEaYCFq24xqUSCNA=;
+        b=GbkjqeaT+Rycf2h1YK8J23Rv/q0LFtAlMD3CSBTRZ5GLiul71M9MWimWJ4MbSJIIBn
+         NAUwCBZmB2A2C3RGVRWmGFqRrLCBAe+t4iCZ6KbKmxbKGJOvJCOvIvYPMJyT7mCdhQ0d
+         a9PmKC/rA28a8S9VqcSwEIR5BcCzT2SX/vXCypfjVJDdLeNSgtsz9gpn1XXt25tLa5PM
+         /2duWALstbhaU/8qQ8xYWaMRUGfg6t2irDcqBus/Y/qDzUvo5G+DqhjhwB7sdMkt4Bel
+         MV/lYXai+KHfLwYyWTVKVL3zB4SK+hwOhhLFW08DejYqo0hdi02e7otdhAqwGqZefo3A
+         KKDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOKIvzQmLzlH+fEH68ulcN5igs4DalUTudJPOIsefdTz1gPeaZ0nq0+r+NOKngGYocjd21hOCnwf5r0sxB5bg=@vger.kernel.org, AJvYcCUfwbef9bkdvr2h3l7mK/Hmv3j+oi4uheS67LCxwU6pqZd+oSKprLru28uMkLpV3gQKsEgSOUTyXHPcLyhW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFJDNJIFPN9j5iU9edLhii6+NgjTm1k/liEf0q6bC319t3VBrp
+	GUR8L79IsYvV3htVT8bUYqxy+UeLP/sRr7StszOANtCiTM528REEi9q/wTpsomKJen/VMS627sX
+	o8aWvbhJGbHDu8CdMmycpIB6MwnM=
+X-Google-Smtp-Source: AGHT+IHk+nsIvISW+3hBwejGBc/PZwCBrs22kLEHGbh9RYjj0wMdgfHvqHkteLWeoPI3OUMObMfh4V2KUB4Wd4l6Ndo=
+X-Received: by 2002:a17:90b:5187:b0:2ea:3ab5:cb83 with SMTP id
+ 98e67ed59e1d1-2ea3ab5cee6mr4404015a91.9.1731943589858; Mon, 18 Nov 2024
+ 07:26:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8bddfee7f6f0f90eeb6da7156e30ab3bd553deb1.1731704917.git.christophe.jaillet@wanadoo.fr>
+References: <039846c0278276e7c652395730f36051216fd4c3.1731691556.git.christophe.jaillet@wanadoo.fr>
+ <acd637f7-a1ce-443b-8d05-d285c28cea7d@amd.com>
+In-Reply-To: <acd637f7-a1ce-443b-8d05-d285c28cea7d@amd.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 18 Nov 2024 10:26:18 -0500
+Message-ID: <CADnq5_NLObja=ctv60w3uhx1yf-bZTUhR2VvtT=aUkaG4SXOUg@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: Constify struct pci_device_id
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux@weissschuh.net, broonie@kernel.org, 
+	lee@kernel.org, Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 10:08:55PM +0100, Christophe JAILLET wrote:
-> 'struct pci_device_id' is not modified in these drivers.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    4245	   1454	      4	   5703	   1647	drivers/ata/ata_generic.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->    4725	    974	      4	   5703	   1647	drivers/ata/ata_generic.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
-> ---
-> ---
->  drivers/ata/ata_generic.c  | 2 +-
->  drivers/ata/pata_atp867x.c | 2 +-
->  drivers/ata/pata_piccolo.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/ata/ata_generic.c b/drivers/ata/ata_generic.c
-> index 2f57ec00ab82..e70b6c089cf1 100644
-> --- a/drivers/ata/ata_generic.c
-> +++ b/drivers/ata/ata_generic.c
-> @@ -209,7 +209,7 @@ static int ata_generic_init_one(struct pci_dev *dev, const struct pci_device_id
->  	return ata_pci_bmdma_init_one(dev, ppi, &generic_sht, (void *)id, 0);
->  }
->  
-> -static struct pci_device_id ata_generic[] = {
-> +static const struct pci_device_id ata_generic[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_PCTECH, PCI_DEVICE_ID_PCTECH_SAMURAI_IDE), },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_HOLTEK, PCI_DEVICE_ID_HOLTEK_6565), },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_UMC,    PCI_DEVICE_ID_UMC_UM8673F), },
-> diff --git a/drivers/ata/pata_atp867x.c b/drivers/ata/pata_atp867x.c
-> index aaef5924f636..308f86f9e2f0 100644
-> --- a/drivers/ata/pata_atp867x.c
-> +++ b/drivers/ata/pata_atp867x.c
-> @@ -525,7 +525,7 @@ static int atp867x_reinit_one(struct pci_dev *pdev)
->  }
->  #endif
->  
-> -static struct pci_device_id atp867x_pci_tbl[] = {
-> +static const struct pci_device_id atp867x_pci_tbl[] = {
->  	{ PCI_VDEVICE(ARTOP, PCI_DEVICE_ID_ARTOP_ATP867A),	0 },
->  	{ PCI_VDEVICE(ARTOP, PCI_DEVICE_ID_ARTOP_ATP867B),	0 },
->  	{ },
-> diff --git a/drivers/ata/pata_piccolo.c b/drivers/ata/pata_piccolo.c
-> index ced906bf56be..beb53bd990be 100644
-> --- a/drivers/ata/pata_piccolo.c
-> +++ b/drivers/ata/pata_piccolo.c
-> @@ -97,7 +97,7 @@ static int ata_tosh_init_one(struct pci_dev *dev, const struct pci_device_id *id
->  	return ata_pci_bmdma_init_one(dev, ppi, &tosh_sht, NULL, 0);
->  }
->  
-> -static struct pci_device_id ata_tosh[] = {
-> +static const struct pci_device_id ata_tosh[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_TOSHIBA,PCI_DEVICE_ID_TOSHIBA_PICCOLO_1), },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_TOSHIBA,PCI_DEVICE_ID_TOSHIBA_PICCOLO_2),  },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_TOSHIBA,PCI_DEVICE_ID_TOSHIBA_PICCOLO_3),  },
-> -- 
-> 2.47.0
-> 
+Applied.  Thanks!
 
-Looks good to me:
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+Alex
 
-However, since we are in the middle of the merge window, expect to wait
-until 6.13-rc1 is out until this is picked up.
-
-
-Kind regards,
-Niklas
+On Mon, Nov 18, 2024 at 6:25=E2=80=AFAM Christian K=C3=B6nig
+<christian.koenig@amd.com> wrote:
+>
+> Am 15.11.24 um 18:26 schrieb Christophe JAILLET:
+> > 'struct pci_device_id' is not modified in this driver.
+> >
+> > Constifying this structure moves some data to a read-only section, so
+> > increase overall security.
+> >
+> > On a x86_64, with allmodconfig:
+> > Before:
+> > =3D=3D=3D=3D=3D=3D
+> >     text         data     bss     dec     hex filename
+> >    11984        28672      44   40700    9efc drivers/gpu/drm/radeon/ra=
+deon_drv.o
+> >
+> > After:
+> > =3D=3D=3D=3D=3D
+> >     text         data     bss     dec     hex filename
+> >    40000          664      44   40708    9f04 drivers/gpu/drm/radeon/ra=
+deon_drv.o
+>
+> Mhm that's a bit more than "some data" :)
+>
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>
+> Acked-by: Christian K=C3=B6nig <christian.koenig@amd.com>
+>
+> > ---
+> > Compile tested-only.
+> > ---
+> >   drivers/gpu/drm/radeon/radeon_drv.c | 3 +--
+> >   1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/rade=
+on/radeon_drv.c
+> > index 23d6d1a2586d..5e958cc223f4 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_drv.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_drv.c
+> > @@ -248,10 +248,9 @@ int radeon_cik_support =3D 1;
+> >   MODULE_PARM_DESC(cik_support, "CIK support (1 =3D enabled (default), =
+0 =3D disabled)");
+> >   module_param_named(cik_support, radeon_cik_support, int, 0444);
+> >
+> > -static struct pci_device_id pciidlist[] =3D {
+> > +static const struct pci_device_id pciidlist[] =3D {
+> >       radeon_PCI_IDS
+> >   };
+> > -
+> >   MODULE_DEVICE_TABLE(pci, pciidlist);
+> >
+> >   static const struct drm_driver kms_driver;
+>
