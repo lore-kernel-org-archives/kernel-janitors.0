@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C5D1BD9FB;
-	Mon, 18 Nov 2024 17:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9813E8AE;
+	Mon, 18 Nov 2024 17:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731951081; cv=none; b=PG0ORnqxu4Gq1q1N7UPsST4sjKlXZ9xRAsXSle2ECvWCUHCvoYpuh5KiZcCl/3XHcl9j6d8xdOT0nolg1ebkAy9vhd4iomprUDcmn29OnOz0ApTGghgipOjR+HQPWtWlaaoLB80Lmgqfw3vnEWNxI5HOcQ42mfCF99xAWtGExSY=
+	t=1731952195; cv=none; b=BCtvsNXIOwEoWVZOShOFW1tLmFqaXz1Guc+3I6vSo6tmhX+eXRIrz7Ls0pXiUt8WApqYyWNKIMYW1qXkgMcs91zLQQlclfdrofv/liLxutdl8wIyEilWS6xf81UJYAgBCiBMB7LZCxq/Eq5sKhEM/lh8064QKHO8D8is5WMKcP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731951081; c=relaxed/simple;
-	bh=85G7UTP1K7kTdCA3yQ/1SDqQWbdyEWfjArDXx9ZLIV8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ZyDCs9VkSyROJ7D4+5vOLimMcDHUTKwvXYk9BN2wuNwfCWcLmqwJDNyxKnx9yDSOJ91CfIwRzJKH6HR1D7nJMn3yP5rmpyV035NboGwLU/zwcdSSKqbv9JJNKoG8LgQaTEyUCHgz/FqjGgwlC7rLl+Uc2cstjdJq/osBwS8hRGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jK941Ie9; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1731952195; c=relaxed/simple;
+	bh=s8Mcf03i/aNKLyu54XXwTZKMYXn4YbUNSZMT5ZgYmAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fbvadszj6dUDtOLqMYVWhCrhPlf75opspvR0ntgMufh/DluqWN9V6ASS9C/VO3pDjWGlQQ2KjkS2iafAnK54th3WPURfBbJcoVGMCWws0NQonR2/Ow7axy7M8n7ynHVsG1nhLQUNT2N8Nu9qXh3TrHQfuwLZ694/L9dstgDMDuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CvgZ8LmO; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jK941Ie9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1731951054; x=1732555854; i=markus.elfring@web.de;
-	bh=85G7UTP1K7kTdCA3yQ/1SDqQWbdyEWfjArDXx9ZLIV8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=jK941Ie9o6x/SsaTl/5prNUj9JwcJLVEDXq5713J9G5ltJ5vM+PAUXoKqG4ocHqE
-	 4gJ7RVvsQUlSIzwuNnD0DPMKQiqUvxmvxH4Jrv7Tz19dHI5pv28j5aKgbXLwfHl6z
-	 NqILQXIEQ5Vd86dF3WJ6AyzblON1Wb0xxln8l2bBAh5n/f9YcfXzh+LIKaG+hjlNI
-	 y5iHbzqJFOhrHVKingNNhybIYYhoPzBwmExyDCV657WJvPRMkgRSQEzH1FM4Rx0QD
-	 R+fnB9xsmpTZ3gKV9ltSMSMcLr6pgPwEBKT9N8ktsYgWL1rcIhHw6rnHM1vA6bB9z
-	 1b2wdNziSkKFftNC+g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmymz-1tds1x1aXX-00pkdw; Mon, 18
- Nov 2024 18:30:54 +0100
-Message-ID: <a9f86b63-6645-49e8-88d5-a5dbab2aaccd@web.de>
-Date: Mon, 18 Nov 2024 18:30:53 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CvgZ8LmO"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id D5sftAobEYfukD5sftuvIF; Mon, 18 Nov 2024 18:49:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731952189;
+	bh=0lmL6Ml3/ySb/jedLCT0Yz+EsgzLwGRL3HflcFIhF8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=CvgZ8LmOwyswLBBlxp/vw23cwYCgi859mdP/lWv8q9+7lxWq76eKJ/6xVrMiLNWhS
+	 bDbsQAejkfjoKCbNqFu0zVKY0xH00v9QELTnn09AN1/OFDcJuN32GVZXsurra4am9u
+	 aj4QbW5uSpSjGLZJJm+ZBlVNy/ogXPNDXK0ge2iJa92vEY5vbTQ3sMXnXL/AY3VaQr
+	 PJRxLEAw3avSTxhQ5KF5si8XiwwOoao523j030lW3q7AOXZzQvdzOwShCDk82dzL+s
+	 f/Yph6pW+azXI0snt2CAWV6s5HQ1wXMvj+CdS1Z3dqtxIkUvgbyHpws92sJGQx+XmT
+	 6/XTmwg8cF9hg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 18 Nov 2024 18:49:49 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <52fb32e9-11f4-48a7-8042-0e09f26569d3@wanadoo.fr>
+Date: Mon, 18 Nov 2024 18:49:44 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,52 +42,66 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: guanjing@cmss.chinamobile.com, Barret Rhoden <brho@google.com>,
- David Vernet <void@manifault.com>, Hao Luo <haoluo@google.com>,
- Josh Don <joshdon@google.com>, Tejun Heo <tj@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20241116230258.140098-1-guanjing@cmss.chinamobile.com>
-Subject: Re: [PATCH] sched_ext: fix application of sizeof to pointer
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241116230258.140098-1-guanjing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SOfWYe3CAgBGvO68l+vi7ssFmFkfpSaq8XAdHA8ij8GYalRdzOL
- /N0S/AwfIFJ1Nz72W9p5QI4zDurA+9L4eteICqkQCaFvh6rmL/BNH0WjSm1R5lra44tbS80
- QnESlVP3kWoHT66Y3RBinX/KrPwwlx/ro72Uobt7a4//rvPYrI7Wtc7t8ARELVydRwXHoio
- zhtXAd9JLj3AxACpnHFkA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:p0neG0qW/e4=;refRek5BDM8epMyGJ82SMKH+npA
- SuBnTkzVod+jINn4rAjEkvzsi7KMcGndy1CDpU/66ZHUmrTNaej0NNURlq1xMKxc6+oPD4YMX
- k5Cwd1SsYhDaNW6AsL0si+R7TBrdCs/PauXya7Z6hVJHU4Fzdjbsi960VoNC0ZrAQlnjxrPjR
- m8AcBhmflLOwIycEZETbsaauXxof04/W2uOGUq2dgdttDyLVcHmwIMWnZ0cYMI8JCka95ktL1
- JWKI+L1DKNlmLcLgwDFxQGe1I/udkNZWKm4IkMvGXKKgSSsfszEqvIa07MBUV/Gts56NF5vC3
- mbBu3PwieoIn5McORUltRdFHfFT2rWzcsapGU+IQiAqbntT/0W8/AKzyn4uAG1Xd870IIpLm9
- wkD3sh0pQQEBog0F2qZTCuGvoUsvL5/2x2K7CzJubJhJI9mt0gHAbv9AvgD82JcM6rlQ19Iux
- PInB6x/Me2pXE4Nh+oaytJmpC1Al7ue+/mzxwdmQwjbylVigghkh/d6kkYCX6OGNacfVGM0Zz
- fD56UoKKn4QWG7FSxH8Ginj5+Yh/w9toxRN1f9pEeeHHfjRH9VjYnap2vULHq3mDM81TlhbZG
- fkwvKCv3C56+s8ix25MvMaicy1f4cknrhb9062mLgtrc5sEvkaBAgpb6ebo4V+4DCYx9tVs/b
- UQI/BB6SZcD0kpHzJ3qUYNmjoOT3xopeUC7+LhFo7HaKicAo0/2RYnWcCXpmXTNyFDXk4I6pB
- WGr5CwtkgzXXhm7X5ptZcZeGwcwJa/nbmT1cNpkygsg/RCB4WDxQIVAuGLmHdALQ1uVsiHAE3
- 7vS47532ruRLFOTfk3wyrzkOBbNNZD2jFtVuf6uoxf1mo+Yp7wdU8rWQu+0tlzwZtpAYvsOtq
- 5IgOylDbnaR7kUgTU6pvykQpaholTNgKpLos9UdBi7M1otZixTi0dmV3Q
+Subject: Re: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs in
+ exynos_irq_demux_eint16_31()
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
+ <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> sizeof when applied to a pointer typed expression gives the size of
-> the pointer.
->
-> The proper fix in this particular case is to code sizeof(cpu_set_t)
-> instead of sizeof(cpuset).
-=E2=80=A6
+Le 18/11/2024 à 10:40, André Draszik a écrit :
+> On Sun, 2024-11-17 at 13:03 +0100, Christophe JAILLET wrote:
+>> chained_irq_enter(() should be paired with a corresponding
+>> chained_irq_exit().
+>>
+>> Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
+>> is not called.
+>>
+>> Add a new label and a goto for fix it.
+>>
+>> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested only.
+>>
+>> Review with care, irq handling is sometimes tricky...
+> 
+> Well spotted, thanks.
+> 
+> It looks like there is a similar problem in exynos_irq_request_resources()
+> in same file. It should likely call gpiochip_unlock_as_irq() if clk_enable()
+> failed.
 
-I suggest to reconsider this view once more.
+Agreed.
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.12#n941
+> 
+> Care to fix that as well?
 
-Would the specification =E2=80=9Csizeof(*cpuset)=E2=80=9D be more appropri=
-ate here?
+NP, I'll send a patch.
 
-Regards,
-Markus
+CJ
+
+> 
+> That said,
+> 
+> Reviewed-by: André Draszik <andre.draszik@linaro.org>
+> 
+> 
+> Cheers,
+> Andre'
+> 
+> 
+> 
+
