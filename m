@@ -1,73 +1,63 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7087C13E02A
-	for <kernel-janitors@vger.kernel.org>; Mon, 18 Nov 2024 06:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B4D13E02A
+	for <kernel-janitors@vger.kernel.org>; Mon, 18 Nov 2024 06:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731909810; cv=none; b=Etz5xswgdCfAFaDkMLvsrQQ3oNX0EtucpkG9z0F0zJ0WmuwB3ZZ40TLNU610zmX4uGvtRoW+jOiBqWGuNjbRMaoYP/JRgFLo2jvzw3o/T1aGUNCEX0ZCwdTGSYHiiyOrTJVeIoOeUCXa05sVzOz+AStbqy87dmduF/vcKo/obHU=
+	t=1731910106; cv=none; b=tLv6+k/QrqfJNtJJEc5oiCLiR/bNdRPgDMd/qgwWG1Rv8PKowx+2iByAc6ydGGmcxiC124uQjD+p9TorH0anNnwR6kLYJyiHex7qmWz+T8xxbrLyOAuk/Gn/K8VIdueLhLP/TPIuyhwevsxKohqOPS49JLZcRwzk7M+QIRZrd7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731909810; c=relaxed/simple;
-	bh=4BAXl/N5qs5x1KD1SM9rYhuStYyPUTHtfJIvrbnxABo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VN4zA5CCeZWU1iqj0OahK8lP1j+dS18RqY7gkI3pXxjBPo8xcuVrLx8Cl+mwN4oLhUH/RUtG1I1zCMvBK8o3olwXoCupkzN9d/HsjgNC+eEw0LbcBwkXZpCqb5LwDtA5/IcdHNgPgBfzELTEnEoYZ8G38qLIm0xhtc/YmKehy00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h1O6cVvK; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1731910106; c=relaxed/simple;
+	bh=cJ2P6uR4opZsVGWIta5h5IZmD3jekZ9UDttr48No1E0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=H6Db6fDsON3FDXwG5t5rFYAe8E8j41P00mjVbplPkdmk0EPk+pyg+lufCQ8IlHwElQ6vtjMfqj5FZPIsX9CI/yNFq94ACTQ5nQKTBef9vkjykMquPCJKmU8Hb3mmUZtHkoc+ddS0WrkvDZUwOfNCTPaYD4QTsZ5TBvCJvaIbEWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dj432bVi; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h1O6cVvK"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43168d9c6c9so32950665e9.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 17 Nov 2024 22:03:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dj432bVi"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so34774865e9.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 17 Nov 2024 22:08:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731909805; x=1732514605; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AR8vRiyQWafhkwLMuApVW/fxma/Zo6ed3zIRAdgzhAY=;
-        b=h1O6cVvK6aOIMYaUWJprIfXU8YVaS2b3GxbNg/wa1glq40lKAnNvDEFZLYoyRym1A+
-         eEoX30YAmEouelMstFimJmFcpUs7hDyVBjMAjuhWUgOPoNBwlPQC6hOHuDFcL+SLCRAJ
-         QrCOAMVoL/Mz6vwSrDFRt2aqDMo2L8qZ1osUoPgfHn9pR4xqVWgVGkEJgyPsn6I2gpWA
-         EtVBM0CSJD09rajrVnWOsmMqKeTnmu6m4XumK6kYW6s6IlkqJvEiLs9kPBB7XCOFDQFB
-         syKEIB3lY4BR/YGuB4Va5/QWR2MTiGja+m6tM1RhmzopuTcJ1aiCaWLEKcwmSo/P5twq
-         bWEg==
+        d=linaro.org; s=google; t=1731910103; x=1732514903; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fF7b8budhWUD2De6hv7m+BHsAeeg1J7TYowVwHq0Uok=;
+        b=Dj432bVieEbcQxizrB7AhmvEEiIYvJJsuqzBbCQJEsDYCv4WHJaiNywoHacU8CEwht
+         2hxP89nt6T5IjXvtqiihUxB7cDYRmidNWlayEYHqgnC9vmoWpGt5Fir/KiAdFsv1O7oB
+         VF+LY5UiBFR0qtkU7rA3ODPWU4mN8hYptXymGWWJH3mKLS92Wj/IK1e+drcCiqyCX2qY
+         +DuKsUBhz0JpSy8pTZM4zHevnzf/GnkJA8NxR3Q1rJ6UY2pnia+Rxq0/cVYX41bmBSYc
+         IM1Mkpc0x6oGZ8t+sDGFoDG/9FqnWHd1/tFfNvXXf/WIUlidmGsOTCWiWdo/4khMXhmu
+         e3kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731909805; x=1732514605;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AR8vRiyQWafhkwLMuApVW/fxma/Zo6ed3zIRAdgzhAY=;
-        b=Fkzh2GjCy4TsdEfKEWjHhu2rw1yyHPYObxPPuxqQIfhcoccX0dzTQFCK4IWFd2CIT1
-         S2bicWJPSVltVPm2sl1LpgiF+O5kTEQGDGZ4Inq3irgXfopPlPTw15J4DEWD3mlDl85K
-         Y3vctLG+C6r+dqWNM0R+utVncSNFc7I9DmOKmkY7U8f70R84tew/kVBQPNmp21SIIOeZ
-         6V7JJkdBFV5OBgmh1ltVBiAGUXnkcLMz5qKLGRP5fe0k+kFOwYKych6/Nm15Gexlj2IH
-         rrHibcnjXrQQVmTkJc35oIBjZqw0+duwB0y0l3omR8VFiudD0pTPTiuKDlldUzttlF5J
-         sVpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWi3q/WBTkqJ11VZCkQ3BDIvl1M1pk6PfQxrP3khs+Bluvk599aNwd7Z5e3dlx5R02jGSMUQtg3QQEYTWAt0jc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoexsrMZ/+8RoUxCJFD83cAVOqT48kxAFfW+2UVyuKFPN8ahyF
-	sVE8f22bRfPA/WmhEj5eTAUJx3o7wBavWDuU8ix+JD8k0ERZa76/VAESvXKCcs0=
-X-Google-Smtp-Source: AGHT+IGbozm5imyvI1diBD8cPltGKKe70Wh5xUrFEtI3IIMcZHzRvhf6hhocFPZiJAaaikEibw1ZfQ==
-X-Received: by 2002:a05:600c:1382:b0:431:5d4f:73a3 with SMTP id 5b1f17b1804b1-432df74f0d4mr84755155e9.18.1731909805553;
-        Sun, 17 Nov 2024 22:03:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731910103; x=1732514903;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fF7b8budhWUD2De6hv7m+BHsAeeg1J7TYowVwHq0Uok=;
+        b=EWXo+TY3CdcHeFH4HDUk9ArnmmlnOkkMZLtsekswOlF25YLVXIiA8GYrRhjHbNkiMH
+         TAYYjb02p6O5fmRe2IeVeZlUlaK93FGXhXRmCq3Ge9aU9FWGhICKPO5Tqck7LbE5rq25
+         5LDTjyQgqPoIn5+UecqTiowccBowG19Fe4beGllUWR6Dzqe9wx3KHejfT442M8gVAx90
+         7/s9wyxEDZriQdztKxdNlxwGNwcy08mmiT/+HLLuKchuR8ZlbvvQ9dpemijGDqD35jE/
+         Wgi+VcFRVJwHDMcX95hzL7YM5B8R4MOs0DBEaMWyB52OXdj6k+0B0G4SnvbAX6cfKemv
+         fytg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgfBG/ynhHjTI9Qhq4sae66E1Em0N+A/ZgqWhGqA86qVN4xnSrNkDEkkvsgvtHo1cSNqXSvyHNDJNdSVN4wDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzkmNxBcPAfMHRNi8dwN8KKfGNyOe8rKhT1cYOtYLRXgOblsyb
+	bYetFSQEmGzR1N5IW1dxTIz6L/72j7vW+AhLM2SlPV9OHQKPDrp0z+soh8ESMsE=
+X-Google-Smtp-Source: AGHT+IEro4yYmZP5OKHef+XOzgZ/LRIKlD6qWiYZLHMGCu2nTq/i6YxPj2oMalXqgeMbxjS/2dLAvw==
+X-Received: by 2002:a05:600c:4505:b0:431:1868:417f with SMTP id 5b1f17b1804b1-432df74be9amr107263115e9.17.1731910102919;
+        Sun, 17 Nov 2024 22:08:22 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3823ef97042sm4424753f8f.35.2024.11.17.22.03.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab788a2sm141599425e9.11.2024.11.17.22.08.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 22:03:25 -0800 (PST)
-Date: Mon, 18 Nov 2024 09:03:21 +0300
+        Sun, 17 Nov 2024 22:08:22 -0800 (PST)
+Date: Mon, 18 Nov 2024 09:08:19 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] wifi: mt76: mt7915: Fix an error handling path in
- mt7915_add_interface()
-Message-ID: <98b8f06d-e8b7-4a49-8508-ea87c385bd30@stanley.mountain>
-References: <b9d8fbfc19360bfe60b9cea1cb0f735ab3b4bc26.1727639596.git.christophe.jaillet@wanadoo.fr>
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] netfs: silence an uninitialized variable warning
+Message-ID: <867904ba-85fe-4766-91cb-3c8ce0703c1e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,21 +66,33 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b9d8fbfc19360bfe60b9cea1cb0f735ab3b4bc26.1727639596.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email haha only kidding
 
-On Sun, Sep 29, 2024 at 09:53:40PM +0200, Christophe JAILLET wrote:
-> If mt76_wcid_alloc() fails, the "mt76.mutex" mutex needs to be released as
-> done in the other error handling path of mt7915_add_interface().
-> 
-> Fixes: f3049b88b2b3 ("wifi: mt76: mt7915: allocate vif wcid in the same range as stations")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
+Smatch complains that "ret" is uninitialized on the success path if we
+don't enter the nested loop at the end of the function.  In real life we
+will enter that loop so "ret" will be zero.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Generally, I don't endorse silencing static checker warnings but in this
+case, I think it make sense.
 
-This fix is still required.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/netfs/write_issue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index cd2b349243b3..8f02d8effe78 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -862,7 +862,7 @@ int netfs_writeback_single(struct address_space *mapping,
+ 	struct netfs_inode *ictx = netfs_inode(mapping->host);
+ 	struct folio_queue *fq;
+ 	size_t size = iov_iter_count(iter);
+-	int ret;
++	int ret = 0;
+ 
+ 	if (WARN_ON_ONCE(!iov_iter_is_folioq(iter)))
+ 		return -EIO;
+-- 
+2.45.2
 
