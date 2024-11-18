@@ -1,98 +1,112 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B4D13E02A
-	for <kernel-janitors@vger.kernel.org>; Mon, 18 Nov 2024 06:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94074183CD1
+	for <kernel-janitors@vger.kernel.org>; Mon, 18 Nov 2024 09:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731910106; cv=none; b=tLv6+k/QrqfJNtJJEc5oiCLiR/bNdRPgDMd/qgwWG1Rv8PKowx+2iByAc6ydGGmcxiC124uQjD+p9TorH0anNnwR6kLYJyiHex7qmWz+T8xxbrLyOAuk/Gn/K8VIdueLhLP/TPIuyhwevsxKohqOPS49JLZcRwzk7M+QIRZrd7U=
+	t=1731922823; cv=none; b=PWuWhgOWz8XY7vjGCIGuWk1LLnFo/Z+LtJ6kWkBazZuKY0rmrI4ShZzHXe+oDHVtOFk/1fGqYEvLpNODzly5pN/Tfl6vCqddLAcOro9BDX731dR+1t8o8y5qIChjHGVT1PBGFg+DO3CvtIsNCM3Al5HK6hr8Pp3pmLurJ3MYFD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731910106; c=relaxed/simple;
-	bh=cJ2P6uR4opZsVGWIta5h5IZmD3jekZ9UDttr48No1E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H6Db6fDsON3FDXwG5t5rFYAe8E8j41P00mjVbplPkdmk0EPk+pyg+lufCQ8IlHwElQ6vtjMfqj5FZPIsX9CI/yNFq94ACTQ5nQKTBef9vkjykMquPCJKmU8Hb3mmUZtHkoc+ddS0WrkvDZUwOfNCTPaYD4QTsZ5TBvCJvaIbEWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dj432bVi; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1731922823; c=relaxed/simple;
+	bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ohi04cIQHY2aND5kLpR1dUpzWLnB34AjNVWbwxsgJ7HS0CizIbCE5KFudbCwCnhCFqDX+YNBhPaFPPMGY9l4G5DG3a7upipYWSnROPS1/MRnSMPsqIoesX2QPW/KrM2xtw1ExKGsyqHNgWe0q7Hx/zUXOXs4c33bu4UBzOKC3vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZV+TU7NO; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dj432bVi"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so34774865e9.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 17 Nov 2024 22:08:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZV+TU7NO"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431ac30d379so34566255e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 18 Nov 2024 01:40:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731910103; x=1732514903; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fF7b8budhWUD2De6hv7m+BHsAeeg1J7TYowVwHq0Uok=;
-        b=Dj432bVieEbcQxizrB7AhmvEEiIYvJJsuqzBbCQJEsDYCv4WHJaiNywoHacU8CEwht
-         2hxP89nt6T5IjXvtqiihUxB7cDYRmidNWlayEYHqgnC9vmoWpGt5Fir/KiAdFsv1O7oB
-         VF+LY5UiBFR0qtkU7rA3ODPWU4mN8hYptXymGWWJH3mKLS92Wj/IK1e+drcCiqyCX2qY
-         +DuKsUBhz0JpSy8pTZM4zHevnzf/GnkJA8NxR3Q1rJ6UY2pnia+Rxq0/cVYX41bmBSYc
-         IM1Mkpc0x6oGZ8t+sDGFoDG/9FqnWHd1/tFfNvXXf/WIUlidmGsOTCWiWdo/4khMXhmu
-         e3kw==
+        d=linaro.org; s=google; t=1731922819; x=1732527619; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
+        b=ZV+TU7NOJI40iDDH+7QIyyvyzwmDPk5q5oVOAM2vME0PtVYf6q8aGB9Ylnw2COb2a/
+         xz1yfCBiDQAFlDH9kPdVkuZ2/Wg6Jfgis8a7VHWrB4qHTzVzrD7qpeJORBuO8SJDtx1i
+         1pRCUsZhsu25gs7nwvqaiAn2Z3G2J3HijK3cT+5TUZKz5Q1IVna1M8lx0rbYf/suuZF4
+         FHFX6a+j5s3mLUItgNapuMxE6r0+OroRTSHWHvOIo2XyeRqf/C9N2nejc3ttesjywWE0
+         5FjNU1wp9qHzRNv3OrqMyHqZO1apq4bG3/hg59/DDZSbIdX1pazYGmMGKZdhoFikbk7A
+         J7pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731910103; x=1732514903;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fF7b8budhWUD2De6hv7m+BHsAeeg1J7TYowVwHq0Uok=;
-        b=EWXo+TY3CdcHeFH4HDUk9ArnmmlnOkkMZLtsekswOlF25YLVXIiA8GYrRhjHbNkiMH
-         TAYYjb02p6O5fmRe2IeVeZlUlaK93FGXhXRmCq3Ge9aU9FWGhICKPO5Tqck7LbE5rq25
-         5LDTjyQgqPoIn5+UecqTiowccBowG19Fe4beGllUWR6Dzqe9wx3KHejfT442M8gVAx90
-         7/s9wyxEDZriQdztKxdNlxwGNwcy08mmiT/+HLLuKchuR8ZlbvvQ9dpemijGDqD35jE/
-         Wgi+VcFRVJwHDMcX95hzL7YM5B8R4MOs0DBEaMWyB52OXdj6k+0B0G4SnvbAX6cfKemv
-         fytg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgfBG/ynhHjTI9Qhq4sae66E1Em0N+A/ZgqWhGqA86qVN4xnSrNkDEkkvsgvtHo1cSNqXSvyHNDJNdSVN4wDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzkmNxBcPAfMHRNi8dwN8KKfGNyOe8rKhT1cYOtYLRXgOblsyb
-	bYetFSQEmGzR1N5IW1dxTIz6L/72j7vW+AhLM2SlPV9OHQKPDrp0z+soh8ESMsE=
-X-Google-Smtp-Source: AGHT+IEro4yYmZP5OKHef+XOzgZ/LRIKlD6qWiYZLHMGCu2nTq/i6YxPj2oMalXqgeMbxjS/2dLAvw==
-X-Received: by 2002:a05:600c:4505:b0:431:1868:417f with SMTP id 5b1f17b1804b1-432df74be9amr107263115e9.17.1731910102919;
-        Sun, 17 Nov 2024 22:08:22 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab788a2sm141599425e9.11.2024.11.17.22.08.22
+        d=1e100.net; s=20230601; t=1731922819; x=1732527619;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
+        b=Sc4Wpc8ZCw6RFLh4m11ke8ew/+6jEu81FDj0e441obN7Ung2Z7Ow2MOU4a+JbyUT6e
+         YdJRwB7hmQ7XLSUQ0HX1z5a56FHD0jF4y44BeDjxZYXeqmhwS3ksx8IiCrDoQQ5pE3BF
+         Tz7wu/ezjt6Yb58WeWcEA5FvKW7Gkv+pwYBfHL/k5dzmeglMRwk3djnAzbzc5UGfX/qG
+         oPgIuEwd79Qdxgj15F8op+6IiM7VTa5RRQrJy4LRkkx3rpp3WLLHTMcu3mL+CLGWutM6
+         FDaLwwq+FCE/BFcA7hnL8lJVykChDf/8m4SdcF5NUwc/7fO5QDde5nCzO8BVoj01TGVY
+         Y8dg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/3L5W1Dot68OWPkGQnLKI1dWsMrf35nDvVHtk47qD7k2v0Ij7p2O6K2J7UVr0u5f6jVeasXo34y6yP3HE5NU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa92w5s2mM7EKcHrwlohVpYnmhMw9S2TPHHWbceAg91WlcwDCo
+	gc3xikF7yDzWKkA38OCt+t5QqCQtnAhw5v9R1PcvKuNChXdIeLTNmiNHOamE6dw=
+X-Google-Smtp-Source: AGHT+IGHa7gc48NoS0q6ZGoDNAksIkFsU8teJxL7tX5AMyhsKg2Sq4IjQbIZKZWs65VOlUxgPKn/cw==
+X-Received: by 2002:a05:6000:2c6:b0:374:c3e4:d6de with SMTP id ffacd0b85a97d-38225aa8607mr8472740f8f.41.1731922818924;
+        Mon, 18 Nov 2024 01:40:18 -0800 (PST)
+Received: from [10.1.1.109] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382456ba017sm3220899f8f.97.2024.11.18.01.40.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 22:08:22 -0800 (PST)
-Date: Mon, 18 Nov 2024 09:08:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] netfs: silence an uninitialized variable warning
-Message-ID: <867904ba-85fe-4766-91cb-3c8ce0703c1e@stanley.mountain>
+        Mon, 18 Nov 2024 01:40:18 -0800 (PST)
+Message-ID: <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
+Subject: Re: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs
+ in exynos_irq_demux_eint16_31()
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+Date: Mon, 18 Nov 2024 09:40:17 +0000
+In-Reply-To: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
+References: 
+	<f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-Smatch complains that "ret" is uninitialized on the success path if we
-don't enter the nested loop at the end of the function.  In real life we
-will enter that loop so "ret" will be zero.
+On Sun, 2024-11-17 at 13:03 +0100, Christophe JAILLET wrote:
+> chained_irq_enter(() should be paired with a corresponding
+> chained_irq_exit().
+>=20
+> Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
+> is not called.
+>=20
+> Add a new label and a goto for fix it.
+>=20
+> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+>=20
+> Review with care, irq handling is sometimes tricky...
 
-Generally, I don't endorse silencing static checker warnings but in this
-case, I think it make sense.
+Well spotted, thanks.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/netfs/write_issue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It looks like there is a similar problem in exynos_irq_request_resources()
+in same file. It should likely call gpiochip_unlock_as_irq() if clk_enable(=
+)
+failed.
 
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index cd2b349243b3..8f02d8effe78 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -862,7 +862,7 @@ int netfs_writeback_single(struct address_space *mapping,
- 	struct netfs_inode *ictx = netfs_inode(mapping->host);
- 	struct folio_queue *fq;
- 	size_t size = iov_iter_count(iter);
--	int ret;
-+	int ret = 0;
- 
- 	if (WARN_ON_ONCE(!iov_iter_is_folioq(iter)))
- 		return -EIO;
--- 
-2.45.2
+Care to fix that as well?
+
+That said,
+
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+
+
+Cheers,
+Andre'
 
