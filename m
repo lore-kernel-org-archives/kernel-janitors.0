@@ -1,40 +1,24 @@
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE9D13E8AE;
-	Mon, 18 Nov 2024 20:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282FF1F941;
+	Tue, 19 Nov 2024 00:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731962471; cv=none; b=uYorSw6MeyYaCTbV0YqW6cKW96fAF4/ffuqvgZvWtyxBXA9ywtFD+OC9kSiCLfohqVfmGjYSalNoO5op+GWQCB9BNjqsY0KD0ASqqoD1bwTYnVUuFcD7cnKxi0qGZok1aeO4NqxalO5YOUfz6SLFH9hrQCh/GzFkafuVcVTm2tw=
+	t=1731977345; cv=none; b=ni/rPqlY2sEw7PodNlQRM+oDf44FU0FCYs+zIG1Ij3NdGi7nfDbDQHDywsbh6kmMRvQORSXdliGQp2mK4ikBHiuIPl6VAynjEWDo7QMY0q5sZssKmH0ryzjOx8ELT8ixsehlwtsaU6EDThES1zjvxyGkubVps/PR14Hl40zMl7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731962471; c=relaxed/simple;
-	bh=LnYa092RE7BvV3uytN7fiQQixEXb/DI7ReymMTLp7xc=;
+	s=arc-20240116; t=1731977345; c=relaxed/simple;
+	bh=J+WPrwsuAWpNkX7H54JmUhwKRSLKv+/L5TWT0yg4wEI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CVXCg5sOGwOPNP0rpXhRBQVHHtibzy+P4h8Irlj8rDwcYPPEETKFtv38OdY6c858uZ8ogHamrXBqOnhjKAtPNj/fM+wYZ6c9m+XI7Q+i6Srtt0EdEXPIwU+05+QexQ5GJdrwFvDBQO0PYtm11Ps8YYEKlebcWkRvcrFKbmLZUSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Z87tQCm2; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Z87tQCm2"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id D8YLtJy3aW6lUD8YLtdjd8; Mon, 18 Nov 2024 21:41:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731962465;
-	bh=2taa0UsiDaOJXoR9CITESohKEOrxoakSVH3g+gRS8Vs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Z87tQCm2pAyVE5hS3osvEjqtFlDYtFmWWvZMd8pDyCk0/4P753RBg0TM4yBfGfiKb
-	 IYDXx/GSbiYWXZF0D0xAJ7eHfHdv11FkvtklAenfc2M0LZ+p8r8XIs0vg4kpqqUm9b
-	 zIwBSGzZ/0n7Niwb3Jk5rRTRpXOJYQlyLX0bxxtev2I+Fq9GmUIQ6biRxY3OMmpsze
-	 N5R5VlrsO9hxVoPPewrR+jhgO6l9nCNx6H+ZfmsCeJ7SxqqO4TvL/xGGcht0itQmO4
-	 JOvepPKaQhRPjZxpGyVIKx7ZGVZ2cksnFSj+aIwwFauyLqBsiKPBroFSL9dN3UM3u3
-	 Lu+A4FwUcKT+g==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 18 Nov 2024 21:41:05 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <c8358dc9-24e0-40f9-b559-18cf7b93f5c3@wanadoo.fr>
-Date: Mon, 18 Nov 2024 21:40:57 +0100
+	 In-Reply-To:Content-Type; b=YxU654aRtnEWnOfcs0iSILvBFPSVPJ6qtc+6Mbfqb3SZfeSkuEUaB75j3pYROyW60Vnga5Q5Q0REwkllJgw0kQ29l+ekQH/aCnb93drBsV+76yuu+HlA0Wl3Ua8dJhjaJcmag8u1wW+L/YiKCr+KHFCQySq3nMJ74dfuV7p5nXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.enpas.org (Postfix) with ESMTPSA id 890EB102ECB;
+	Tue, 19 Nov 2024 00:48:56 +0000 (UTC)
+Message-ID: <8c358157-d28d-4c42-b983-4191061edd70@enpas.org>
+Date: Tue, 19 Nov 2024 09:48:53 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,69 +26,51 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs in
- exynos_irq_demux_eint16_31()
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
- <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
+Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
+ can327_handle_prompt()
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
+ <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
+ <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
+ <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
+ <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
+ <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
+ <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
+ <7d4b176b-6b44-450b-ab2d-847e5199d1b9@wanadoo.fr>
+ <e5572514-83d7-4b7e-b4f0-5318c6722250@stanley.mountain>
+From: Max Staudt <max@enpas.org>
+In-Reply-To: <e5572514-83d7-4b7e-b4f0-5318c6722250@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Le 18/11/2024 à 10:40, André Draszik a écrit :
-> On Sun, 2024-11-17 at 13:03 +0100, Christophe JAILLET wrote:
->> chained_irq_enter(() should be paired with a corresponding
->> chained_irq_exit().
->>
->> Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
->> is not called.
->>
->> Add a new label and a goto for fix it.
->>
->> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Compile tested only.
->>
->> Review with care, irq handling is sometimes tricky...
-> 
-> Well spotted, thanks.
-> 
-> It looks like there is a similar problem in exynos_irq_request_resources()
-> in same file. It should likely call gpiochip_unlock_as_irq() if clk_enable()
-> failed.
+Hi all,
 
-Also wondering if it is needed in exynos_irq_release_resources() if 
-clk_enable() fails and we early return.
+As promised, here is a patch cleaning up can327's payload "encoding" 
+(the hex dump part), plus a comment explaining why Dan's finding turned 
+out not to be security relevant. It's as Vincent already explained, plus 
+additional background information:
 
-I don't know how these callbacks are used and if we could dead-lock in 
-such a situation.
+  
+https://lore.kernel.org/linux-can/20241119003815.767004-1-max@enpas.org/T/
 
-What do you think?
+I've taken the liberty of not CC'ing the network maintainers on that 
+patch, hence this email with a pointer to it for anyone interested. In 
+the end, while it looked worrying at first, it ended up being just a 
+minor cleanup.
 
-CJ
 
-> 
-> Care to fix that as well?
-> 
-> That said,
-> 
-> Reviewed-by: André Draszik <andre.draszik@linaro.org>
-> 
-> 
-> Cheers,
-> Andre'
-> 
-> 
-> 
+Thanks Dan for pointing out that ugly piece of code. I'd really like to 
+one day find the time to do some further cleanup, and especially further 
+commenting in order to reduce the bus factor, but oh well...
+
+
+Max
 
