@@ -1,118 +1,99 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C551D07BB;
-	Tue, 19 Nov 2024 17:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0D11D3195;
+	Tue, 19 Nov 2024 20:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732038760; cv=none; b=XyUnoB9PYKwwxGtO4tbSC/DfSxF2GAvkVK2VMvATN5LX+BxZ/LgiL0pY2NmWMtzKSWgHp8hjZHq432a4Mf+UhtRx3iCyDJULf4jFsxej+jBFxPm9iEUUu+KZmF5gBSV80nL6HPU0eIj1D7/LsjUcZn98OUEc0lXibhWG/IvwSuM=
+	t=1732047815; cv=none; b=HIq3dRr/q5JRDhrTGLcn/08Uto3/bHutVFGXGkm33fHxn7HzYwTjr2nsuwXg5zFr8ocvl8sc7U+t4uyqPiri3xQFzsuxGDcst3CG2uWcusxxQTT/JzHIrLbohWLo6cGxktTfaLtdejR8TdnOxsGljsbDE5IGOLFnGP6f12V9AGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732038760; c=relaxed/simple;
-	bh=3v8Kxm0aJIEv7WMZjJ/vtu1dfG1rAFuLoHlG8l+Hw0Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iG+qb5s3wcgykwjGcDrhdx4sK69YAvvzRIYiDTivxoNzcLkTvEYPmbi88W592NwgQaX2MFkaj7gAYrfpWWnDvphhhDMQHB//PxU7WqGfXfsLHZUSmFm69JxGPAGhix0IiZqlFz/uBxDZOuCvfGxdO7/Dk91S/N/mIqdA4MFfnPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LguMHeEu; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1732047815; c=relaxed/simple;
+	bh=CnuOZ+G3ThNNEmasSHzxM8ld9x27BcMXZ1h5gE+H0XE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uonmLPMNotnAM9eaMP1c1Hw2YB1K7QdQ78hzu0Sqsb6R6yMB86BAu1MP+ZU3PhY50qfZBvt2a4/pYItbfuTF195GLOhF3eIsY9RvxMzLAoJiNnyG4yB961Q27ng28C9TLJ5fZdD8Tvj7vDSyEtCoifl2AC3zQGk6qB/UorBKg3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=FsQhm00q; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LguMHeEu"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-431ac30d379so11194195e9.1;
-        Tue, 19 Nov 2024 09:52:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732038757; x=1732643557; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7x1Cvl6uYAhIlsTQJAM2lxLGZwm8G52/uSj6u7+hOrc=;
-        b=LguMHeEujdocfsUrB9uGYLB30n5bg/v9WIxBmImhB9AERenBaQazbgan2/jdMEkrue
-         Ta9EIufQAdctn7DuPhGe2dVAW55RioN9WJUw06OoPulDw/bH/P9F89y/aPlivpROCM+c
-         hKGmIzVVBazKL2fkqnE6gF/rlnG8GzYxQzl3i1TA6orZigPzHpDdIb8yZF5GZmVhtqNW
-         Ipjb/+/fign96e9ca5OPKZ6b4pAS7c5ZzZA8p74nBdtrTPPxyfOsl1lBYBsuuMkfIaxh
-         MrMCzyx0gQ8KyoZgo+iH+mxKxyvCTsj8H4HQbI3Ub7H09Vmqg6F5mows+cw0j0tJKY0K
-         BgTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732038757; x=1732643557;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7x1Cvl6uYAhIlsTQJAM2lxLGZwm8G52/uSj6u7+hOrc=;
-        b=CBieDyCf9NjZuPLrAS+UNpSYpct2t971LLwtem3cuAtmyQ99vVsTAPArMoJozSohoj
-         vND2tTNZvqtmTItqsKIpfVcMnfBKSxpoNbkFC3BTTDQk2qHUPSlyonTfdLnNdWp/6Zwt
-         akMJ3R7W28XdXLvrixZEBX7C1FItua89cH9wthyQRuYXK1EV64N5GUqJqoBho8+fOUd5
-         fgrIW+L6/EMNsmKmCHLgmw1gOngYvjYcpoPg6Oe+dFOgswX87+WHt6v0qYvydjS83LSP
-         gSc9EMeRmsoHDW5I5+As7LyhGILXE5VwpAnltDMkEijqsVkZ0qHG1TajGhNcofI/5H4C
-         PLcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBZXtzRHXnkPolgtwuOA/V0mhVRjTKRitkhvXKvt4DImX3BbwTTJV7410LRsE714VoZOH/E86ywkzPKOE=@vger.kernel.org, AJvYcCX/zbI3+meBGt5aWslX0k7jtLZO9L5CooIctj7ClmbxfqsiJeaQ21Ek6XROE5YEUFoLSAPr/VrX@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqF8tqfw+6+rfbDV8Kj1OuknuyVJHpv8iT0D2PVFT4cY9dBsdU
-	Yb0nL0XEBiGclSfSv8N1Lqt05VuveslE5QLST5jmLmvmc7tWgxXm
-X-Google-Smtp-Source: AGHT+IEOJXELUvf9uYs3VOaj0xHe17Bk5fUMwLEL8rW80ii9z2sn1isp4uanHAx6agWwYDfN5sdXuw==
-X-Received: by 2002:a05:600c:1c98:b0:431:5a0e:fa2e with SMTP id 5b1f17b1804b1-432df78a858mr126641465e9.21.1732038757144;
-        Tue, 19 Nov 2024 09:52:37 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da27fcb4sm208414245e9.23.2024.11.19.09.52.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 09:52:36 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	hariprasad <hkelam@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] octeontx2-pf: remove redundant assignment to variable target
-Date: Tue, 19 Nov 2024 17:52:36 +0000
-Message-Id: <20241119175236.2433366-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="FsQhm00q"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id DUkytck50PqyaDUkytUMqx; Tue, 19 Nov 2024 21:23:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1732047809;
+	bh=FN6W5Nw0/usd3+xzvpL3gptGh1Ltab0zPDw2vSLmM4U=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=FsQhm00qozxXMgu3E5JGxbABbzt50IvAJAzpPbzgcdWXod5n4B3Ej/vwbAQc42RkN
+	 B59AU0DqbFTjU7n5LI1f9X2KWTzOhClBsVAPyaN7AXxYQti0mLhoul3ymr3cvvSVSq
+	 XwqmiV5tp71HIShDQy5PPEjTCSmaSnhZrGxXzJmO3JWNxVX0O8N39CYdK9MC3HI9v5
+	 FG24hYfByBMrPFvNAhQ7eoFiv4rZdCvMAsd6fOvJh5eF/YLvLt2qCJ1mEklcZGWmUC
+	 S+KcGm0+3q7k7A0XqTOhOAHXBZpTeHW50lMNXqZjkHz5uLfpmWHCzi+9WTGPdq+oiz
+	 3t/JhfMmq3f1g==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 19 Nov 2024 21:23:29 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Kenneth Feng <kenneth.feng@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Evan Quan <evan.quan@amd.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/amd/pm: Fix an error handling path in vega10_enable_se_edc_force_stall_config()
+Date: Tue, 19 Nov 2024 21:23:18 +0100
+Message-ID: <6584a62da5436ffd726d68e5dbdaf5eadde8af9d.1732047767.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable target is being assigned a value that is never read, it
-is being re-assigned a new value in both paths of a following if
-statement. The assignment is redundant and can be removed.
+In case of error after a amdgpu_gfx_rlc_enter_safe_mode() call, it is not
+balanced by a corresponding amdgpu_gfx_rlc_exit_safe_mode() call.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Add the missing call.
+
+Fixes: 9b7b8154cdb8 ("drm/amd/powerplay: added didt support for vega10")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 1 -
- 1 file changed, 1 deletion(-)
+*Not* even compile tested only because of missing "hwmgr.h". I've not
+checked on which arch it is supposed to run in order to cross-compile.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-index da69e454662a..ceaf5ca5c036 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-@@ -1451,21 +1451,20 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
- 	 * rvu_pfvf for the target PF/VF needs to be retrieved
- 	 * hence modify pcifunc accordingly.
- 	 */
+This patch is speculative, review with care!
+---
+ drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_powertune.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_powertune.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_powertune.c
+index 3007b054c873..776d58ea63ae 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_powertune.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/vega10_powertune.c
+@@ -1120,13 +1120,14 @@ static int vega10_enable_se_edc_force_stall_config(struct pp_hwmgr *hwmgr)
+ 	result = vega10_program_didt_config_registers(hwmgr, SEEDCForceStallPatternConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+ 	result |= vega10_program_didt_config_registers(hwmgr, SEEDCCtrlForceStallConfig_Vega10, VEGA10_CONFIGREG_DIDT);
+ 	if (0 != result)
+-		return result;
++		goto exit_safe_mode;
  
- 	/* AF installing for a PF/VF */
- 	if (!req->hdr.pcifunc)
- 		target = req->vf;
+ 	vega10_didt_set_mask(hwmgr, false);
  
- 	/* PF installing for its VF */
- 	if (!from_vf && req->vf && !from_rep_dev) {
--		target = (req->hdr.pcifunc & ~RVU_PFVF_FUNC_MASK) | req->vf;
- 		pf_set_vfs_mac = req->default_rule &&
- 				(req->features & BIT_ULL(NPC_DMAC));
- 	}
++exit_safe_mode:
+ 	amdgpu_gfx_rlc_exit_safe_mode(adev, 0);
  
- 	/* Representor device installing for a representee */
- 	if (from_rep_dev && req->vf)
- 		target = req->vf;
- 	else
- 		/* msg received from PF/VF */
- 		target = req->hdr.pcifunc;
+-	return 0;
++	return result;
+ }
+ 
+ static int vega10_disable_se_edc_force_stall_config(struct pp_hwmgr *hwmgr)
 -- 
-2.39.5
+2.47.0
 
