@@ -1,49 +1,53 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C3615853A;
-	Tue, 19 Nov 2024 20:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10791D043F;
+	Tue, 19 Nov 2024 21:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732048972; cv=none; b=hlh78f21pRkexHAO9BlRrr/CoeXkboUEJrjfsNhdRYqDFkvVF2DhVvoopKE6E6+psYzszXmyrPdJBMendM3tkiofJumoowJeAYIyoC+5SRQo0IECvlqoEYdnazBGgo2K4fVp+DjhpF6iXr78E1wNQCkGCvvGL8STIFO2DP8lWDE=
+	t=1732051860; cv=none; b=t+nRNh1oJENsrSD5F8lvbWFzAJSyjg1+Ng/nWgMCh8aUVxikEi1wjUNixA8KdiUV7nYfRGhl6jrCkW24IKxi1Dslwgx13F7b+GQ4yV7iW5AkeVBdjFMpoieaAOV9D3zEjEKMh/Dkh+xD0QqH9fZQBYkSR5xhNXlw+x71XT66+8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732048972; c=relaxed/simple;
-	bh=3lXxTb1SdDh9ydSVgaqyBCqdnMn1iBLrcRXrWySr1zM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f7j+INY5qV3PM3Q+Fl4MeHCFwtL1L8RDmuag2mfB81B8DUFKNqibTYW0ouiuINzcjB29HaYJ4kn9Uimhl1Ub9Hf/vKXE8gD3MIACMowJRwdADgwYgmsIftYrPdb4/u1D11zzepWdCnNVLdCTEsAzTxYdfVGqBH4zoWQx8Ntai/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VbKHY+ml; arc=none smtp.client-ip=80.12.242.17
+	s=arc-20240116; t=1732051860; c=relaxed/simple;
+	bh=CLacKn45ZJzzKF/aDfg8hX19NVkE4WN0HsH0eXEdVjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DCdCRw/P9EchELR3MA3oOFShGsCRvXPIrYl0LWn/ngpFmC28RNEZJkLgUeCGOXQOQkzZIBMnkYIXkFxljWqamHGq67+VpXw+VqaogP2hAxZ11bkYqHcdUdafjuv3dxA5ir5jvjWobc9g/qULomkgR7HaiKW4xygyfj+HrA62gb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fs6XKAXK; arc=none smtp.client-ip=80.12.242.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VbKHY+ml"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fs6XKAXK"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id DV3WtqL3lt7pwDV3Wt8WJd; Tue, 19 Nov 2024 21:42:41 +0100
+	id DVo0tZBgMlMRCDVo0teyUl; Tue, 19 Nov 2024 22:30:49 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732048961;
-	bh=oTvpCQq8alGc1ZL61S7t0BIfplAY2aaCla8sSIriT5I=;
+	s=t20230301; t=1732051849;
+	bh=EjYh1cknlZ7PMy6sRG187xTDVC5FFJcX/Odw6mzP5bM=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=VbKHY+mlpgskjUyX+wxpYcuC1c/8GQQ+E5Enw/i0AuZkoWr1oQbGbExT7uhBNkz00
-	 bQqT2jvlf4lhLEsZsvW6KqO39EFWrxzo2lus8pANKgVycmVgEpkOvFYDKvjRP5F2AY
-	 xm9JACV6Nad6i7jZi+pS8C0qW16nvijQq39k4sle2GIN378TguFs7ElzPhqO/tvTBj
-	 QZuyzfQbsoLgW59qrdar5uiWMH+xK9OH/X01kYXX2egrEpQD9XDPUZMOo63r+TfFBB
-	 R9hJiemZsljz8f6+9rnCEUUvHLQ4rD3DfAeqGIgHG1lrDGBqe4gFuxBqnDtrWjJdEc
-	 GNgkuLSgKhk9Q==
+	b=fs6XKAXKEa7OiGdYVIxWxoX52NB9X9sFNwHavWtknoVS7Z1y0i9KjA7T5Hcz2N04G
+	 oGU7ylyi7JaqkPL4uNOf8Qk/bK7w/mBi0klb3GdO73sCvx76Qx4AGs7GAZjXMWs0N3
+	 uX/cFd2bZHVehren5fcaR5tkVEH+EmLU1QCfrLU9crfmdQO+ck55e3SvNxfM1ycuM3
+	 0dZbgx1nxMHEae/5hr54Un7Ta4Y1f49V21pB9poCOHlOuJMQ2pHfL21MvriwpNQM+w
+	 eWKSG3bJhYwZT1m1VrxKdg4OqVRgIQpGTtElsaT46/a3uXEqkcMPWrNN1N57pXeVyT
+	 QqRSxYCfY4y1g==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Nov 2024 21:42:41 +0100
+X-ME-Date: Tue, 19 Nov 2024 22:30:49 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
+	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+	Mark Brown <broonie@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-media@vger.kernel.org
-Subject: [PATCH] media: s5p-mfc: Fix an error handling path s5p_mfc_open()
-Date: Tue, 19 Nov 2024 21:42:28 +0100
-Message-ID: <b486e0ede5803258464c97d702f6588e7e7d3077.1732048929.git.christophe.jaillet@wanadoo.fr>
+	linux-aspeed@lists.ozlabs.org,
+	openbmc@lists.ozlabs.org,
+	linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] spi: aspeed: Fix an error handling path in aspeed_spi_[read|write]_user()
+Date: Tue, 19 Nov 2024 22:30:29 +0100
+Message-ID: <4052aa2f9a9ea342fa6af83fa991b55ce5d5819e.1732051814.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -53,44 +57,62 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A mfc_debug_enter() is not balanced by a corresponding mfc_debug_leave().
+A aspeed_spi_start_user() is not balanced by a corresponding
+aspeed_spi_stop_user().
 Add the missing call.
 
+Fixes: e3228ed92893 ("spi: spi-mem: Convert Aspeed SMC driver to spi-mem")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 
-Apparently, only a debug message was missing, so don't bother with a
-Fixes tag, it is not really a bug.
----
- drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-index 2fe3c9228ac5..5f80931f056d 100644
---- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
-@@ -774,8 +774,10 @@ static int s5p_mfc_open(struct file *file)
- 	int ret = 0;
+This patch is completely speculative, review with care!
+
+It is only based on naming where a _start() function if not followed by a
+_stop() in some paths but is in other paths.
+---
+ drivers/spi/spi-aspeed-smc.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/spi/spi-aspeed-smc.c b/drivers/spi/spi-aspeed-smc.c
+index 8eb843ddb25f..e9beae95dded 100644
+--- a/drivers/spi/spi-aspeed-smc.c
++++ b/drivers/spi/spi-aspeed-smc.c
+@@ -239,7 +239,7 @@ static ssize_t aspeed_spi_read_user(struct aspeed_spi_chip *chip,
  
- 	mfc_debug_enter();
--	if (mutex_lock_interruptible(&dev->mfc_mutex))
--		return -ERESTARTSYS;
-+	if (mutex_lock_interruptible(&dev->mfc_mutex)) {
-+		ret = -ERESTARTSYS;
-+		goto err_enter;
-+	}
- 	dev->num_inst++;	/* It is guarded by mfc_mutex in vfd */
- 	/* Allocate memory for context */
- 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-@@ -946,6 +948,7 @@ static int s5p_mfc_open(struct file *file)
- err_alloc:
- 	dev->num_inst--;
- 	mutex_unlock(&dev->mfc_mutex);
-+err_enter:
- 	mfc_debug_leave();
- 	return ret;
+ 	ret = aspeed_spi_send_cmd_addr(chip, op->addr.nbytes, offset, op->cmd.opcode);
+ 	if (ret < 0)
+-		return ret;
++		goto stop_user;
+ 
+ 	if (op->dummy.buswidth && op->dummy.nbytes) {
+ 		for (i = 0; i < op->dummy.nbytes / op->dummy.buswidth; i++)
+@@ -249,8 +249,9 @@ static ssize_t aspeed_spi_read_user(struct aspeed_spi_chip *chip,
+ 	aspeed_spi_set_io_mode(chip, io_mode);
+ 
+ 	aspeed_spi_read_from_ahb(buf, chip->ahb_base, len);
++stop_user:
+ 	aspeed_spi_stop_user(chip);
+-	return 0;
++	return ret;
  }
+ 
+ static ssize_t aspeed_spi_write_user(struct aspeed_spi_chip *chip,
+@@ -261,10 +262,11 @@ static ssize_t aspeed_spi_write_user(struct aspeed_spi_chip *chip,
+ 	aspeed_spi_start_user(chip);
+ 	ret = aspeed_spi_send_cmd_addr(chip, op->addr.nbytes, op->addr.val, op->cmd.opcode);
+ 	if (ret < 0)
+-		return ret;
++		goto stop_user;
+ 	aspeed_spi_write_to_ahb(chip->ahb_base, op->data.buf.out, op->data.nbytes);
++stop_user:
+ 	aspeed_spi_stop_user(chip);
+-	return 0;
++	return ret;
+ }
+ 
+ /* support for 1-1-1, 1-1-2 or 1-1-4 */
 -- 
 2.47.0
 
