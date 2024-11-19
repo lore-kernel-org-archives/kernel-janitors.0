@@ -1,202 +1,118 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F380D1993B4;
-	Tue, 19 Nov 2024 09:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C551D07BB;
+	Tue, 19 Nov 2024 17:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732010330; cv=none; b=IX3Bm5yeV+8UiBRXcjOnUrlqIFzrs1yQzsrWizdLGsXkV/pRuSj+NQuU88GZNLBP2ar+ObHqn6q61FqgB0jwVuAiyh0ME7M2s8v2lTHtN/aNIR7B9moQIpRoyDwABF0H9AXhhu6nbkCJb9rTg6gjo7PpIxZNT9lXoT5J7bToRMY=
+	t=1732038760; cv=none; b=XyUnoB9PYKwwxGtO4tbSC/DfSxF2GAvkVK2VMvATN5LX+BxZ/LgiL0pY2NmWMtzKSWgHp8hjZHq432a4Mf+UhtRx3iCyDJULf4jFsxej+jBFxPm9iEUUu+KZmF5gBSV80nL6HPU0eIj1D7/LsjUcZn98OUEc0lXibhWG/IvwSuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732010330; c=relaxed/simple;
-	bh=zQIikO0GBs+YujTONJpDT2qcd27uAJI/XYbLhsbKmx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a94Uag1wJCzTYfBgerM7eY3XPz2y26gYqrU2bbh1ltF3bjOBDshS4N2ujQAuMrzTUwvwSQ+QLQNDXI88WNLMJHR+RleGvyC/mhIDTFWn6ZUw39Jzkjh71RpmyQgUVcOsEDwvKggTSOZM5UB8AKugcokEAeYvjB0wo9uHLGFXQXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FBtpbdYJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zyNxIwYm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FBtpbdYJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zyNxIwYm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1732038760; c=relaxed/simple;
+	bh=3v8Kxm0aJIEv7WMZjJ/vtu1dfG1rAFuLoHlG8l+Hw0Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iG+qb5s3wcgykwjGcDrhdx4sK69YAvvzRIYiDTivxoNzcLkTvEYPmbi88W592NwgQaX2MFkaj7gAYrfpWWnDvphhhDMQHB//PxU7WqGfXfsLHZUSmFm69JxGPAGhix0IiZqlFz/uBxDZOuCvfGxdO7/Dk91S/N/mIqdA4MFfnPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LguMHeEu; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FBtpbdYJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zyNxIwYm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FBtpbdYJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zyNxIwYm"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B6541F889;
-	Tue, 19 Nov 2024 09:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732010327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tzJ/Qp5/7cpbxXGfdSBC3oSrdNQ+xYn9ZukBL2E6cUI=;
-	b=FBtpbdYJ96udJr+nHNONXfuwgkwdE0dZT5VYZPfk/UzKwX7uU5AJTyPJNYAHUY5ZD7Q4ZH
-	0cbk1xN1G0eA0oNoKcZoTVmnsRAfV+Dmoa/AsschvhSIajaPyiDXDJ1hj3bdH1+vJmT+ba
-	qTvjrXrPqyuZE038ViJezry1gEkPbww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732010327;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tzJ/Qp5/7cpbxXGfdSBC3oSrdNQ+xYn9ZukBL2E6cUI=;
-	b=zyNxIwYmpLAZXMYzE/L5Xit7XbiMc4qKs/wjrobQL3izevphz6XpGxDWgEOVECWl6mcfUp
-	xTLHhSf1fAsnVgAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732010327; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tzJ/Qp5/7cpbxXGfdSBC3oSrdNQ+xYn9ZukBL2E6cUI=;
-	b=FBtpbdYJ96udJr+nHNONXfuwgkwdE0dZT5VYZPfk/UzKwX7uU5AJTyPJNYAHUY5ZD7Q4ZH
-	0cbk1xN1G0eA0oNoKcZoTVmnsRAfV+Dmoa/AsschvhSIajaPyiDXDJ1hj3bdH1+vJmT+ba
-	qTvjrXrPqyuZE038ViJezry1gEkPbww=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732010327;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tzJ/Qp5/7cpbxXGfdSBC3oSrdNQ+xYn9ZukBL2E6cUI=;
-	b=zyNxIwYmpLAZXMYzE/L5Xit7XbiMc4qKs/wjrobQL3izevphz6XpGxDWgEOVECWl6mcfUp
-	xTLHhSf1fAsnVgAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 931B81376E;
-	Tue, 19 Nov 2024 09:58:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wl81IlZhPGesNgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 19 Nov 2024 09:58:46 +0000
-Message-ID: <62557e58-55f1-4260-9357-30a222bb204e@suse.de>
-Date: Tue, 19 Nov 2024 10:58:45 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LguMHeEu"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-431ac30d379so11194195e9.1;
+        Tue, 19 Nov 2024 09:52:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732038757; x=1732643557; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7x1Cvl6uYAhIlsTQJAM2lxLGZwm8G52/uSj6u7+hOrc=;
+        b=LguMHeEujdocfsUrB9uGYLB30n5bg/v9WIxBmImhB9AERenBaQazbgan2/jdMEkrue
+         Ta9EIufQAdctn7DuPhGe2dVAW55RioN9WJUw06OoPulDw/bH/P9F89y/aPlivpROCM+c
+         hKGmIzVVBazKL2fkqnE6gF/rlnG8GzYxQzl3i1TA6orZigPzHpDdIb8yZF5GZmVhtqNW
+         Ipjb/+/fign96e9ca5OPKZ6b4pAS7c5ZzZA8p74nBdtrTPPxyfOsl1lBYBsuuMkfIaxh
+         MrMCzyx0gQ8KyoZgo+iH+mxKxyvCTsj8H4HQbI3Ub7H09Vmqg6F5mows+cw0j0tJKY0K
+         BgTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732038757; x=1732643557;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7x1Cvl6uYAhIlsTQJAM2lxLGZwm8G52/uSj6u7+hOrc=;
+        b=CBieDyCf9NjZuPLrAS+UNpSYpct2t971LLwtem3cuAtmyQ99vVsTAPArMoJozSohoj
+         vND2tTNZvqtmTItqsKIpfVcMnfBKSxpoNbkFC3BTTDQk2qHUPSlyonTfdLnNdWp/6Zwt
+         akMJ3R7W28XdXLvrixZEBX7C1FItua89cH9wthyQRuYXK1EV64N5GUqJqoBho8+fOUd5
+         fgrIW+L6/EMNsmKmCHLgmw1gOngYvjYcpoPg6Oe+dFOgswX87+WHt6v0qYvydjS83LSP
+         gSc9EMeRmsoHDW5I5+As7LyhGILXE5VwpAnltDMkEijqsVkZ0qHG1TajGhNcofI/5H4C
+         PLcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBZXtzRHXnkPolgtwuOA/V0mhVRjTKRitkhvXKvt4DImX3BbwTTJV7410LRsE714VoZOH/E86ywkzPKOE=@vger.kernel.org, AJvYcCX/zbI3+meBGt5aWslX0k7jtLZO9L5CooIctj7ClmbxfqsiJeaQ21Ek6XROE5YEUFoLSAPr/VrX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqF8tqfw+6+rfbDV8Kj1OuknuyVJHpv8iT0D2PVFT4cY9dBsdU
+	Yb0nL0XEBiGclSfSv8N1Lqt05VuveslE5QLST5jmLmvmc7tWgxXm
+X-Google-Smtp-Source: AGHT+IEOJXELUvf9uYs3VOaj0xHe17Bk5fUMwLEL8rW80ii9z2sn1isp4uanHAx6agWwYDfN5sdXuw==
+X-Received: by 2002:a05:600c:1c98:b0:431:5a0e:fa2e with SMTP id 5b1f17b1804b1-432df78a858mr126641465e9.21.1732038757144;
+        Tue, 19 Nov 2024 09:52:37 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da27fcb4sm208414245e9.23.2024.11.19.09.52.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 09:52:36 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sunil Goutham <sgoutham@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Jerin Jacob <jerinj@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] octeontx2-pf: remove redundant assignment to variable target
+Date: Tue, 19 Nov 2024 17:52:36 +0000
+Message-Id: <20241119175236.2433366-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/i2c: tda9950: Constify struct i2c_device_id
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux@weissschuh.net,
- broonie@kernel.org, lee@kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <d0f63518a053a817cec0ad0e7d9241f9eb2a4a8e.1731689044.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <d0f63518a053a817cec0ad0e7d9241f9eb2a4a8e.1731689044.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[wanadoo.fr,weissschuh.net,kernel.org,linux.intel.com,gmail.com,ffwll.ch];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,wanadoo.fr];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+The variable target is being assigned a value that is never read, it
+is being re-assigned a new value in both paths of a following if
+statement. The assignment is redundant and can be removed.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-
-Am 15.11.24 um 18:17 schrieb Christophe JAILLET:
-> 'struct i2c_device_id' is not modified in this driver.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
->
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->     text	   data	    bss	    dec	    hex	filename
->    12136	    822	      0	  12958	   329e	drivers/gpu/drm/i2c/tda9950.o
->
-> After:
-> =====
->     text	   data	    bss	    dec	    hex	filename
->    12200	    758	      0	  12958	   329e	drivers/gpu/drm/i2c/tda9950.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-> ---
-> Compile tested-only.
->
-> v2: fix missing const :(
-> ---
->   drivers/gpu/drm/i2c/tda9950.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i2c/tda9950.c b/drivers/gpu/drm/i2c/tda9950.c
-> index 82d618c40dce..5065d6212fe4 100644
-> --- a/drivers/gpu/drm/i2c/tda9950.c
-> +++ b/drivers/gpu/drm/i2c/tda9950.c
-> @@ -485,7 +485,7 @@ static void tda9950_remove(struct i2c_client *client)
->   	cec_unregister_adapter(priv->adap);
->   }
->   
-> -static struct i2c_device_id tda9950_ids[] = {
-> +static const struct i2c_device_id tda9950_ids[] = {
->   	{ "tda9950", 0 },
->   	{ },
->   };
-
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+index da69e454662a..ceaf5ca5c036 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
+@@ -1451,21 +1451,20 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
+ 	 * rvu_pfvf for the target PF/VF needs to be retrieved
+ 	 * hence modify pcifunc accordingly.
+ 	 */
+ 
+ 	/* AF installing for a PF/VF */
+ 	if (!req->hdr.pcifunc)
+ 		target = req->vf;
+ 
+ 	/* PF installing for its VF */
+ 	if (!from_vf && req->vf && !from_rep_dev) {
+-		target = (req->hdr.pcifunc & ~RVU_PFVF_FUNC_MASK) | req->vf;
+ 		pf_set_vfs_mac = req->default_rule &&
+ 				(req->features & BIT_ULL(NPC_DMAC));
+ 	}
+ 
+ 	/* Representor device installing for a representee */
+ 	if (from_rep_dev && req->vf)
+ 		target = req->vf;
+ 	else
+ 		/* msg received from PF/VF */
+ 		target = req->hdr.pcifunc;
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+2.39.5
 
