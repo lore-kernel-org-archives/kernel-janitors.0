@@ -1,76 +1,95 @@
-Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282FF1F941;
-	Tue, 19 Nov 2024 00:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28BE2CAB;
+	Tue, 19 Nov 2024 03:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731977345; cv=none; b=ni/rPqlY2sEw7PodNlQRM+oDf44FU0FCYs+zIG1Ij3NdGi7nfDbDQHDywsbh6kmMRvQORSXdliGQp2mK4ikBHiuIPl6VAynjEWDo7QMY0q5sZssKmH0ryzjOx8ELT8ixsehlwtsaU6EDThES1zjvxyGkubVps/PR14Hl40zMl7M=
+	t=1731987337; cv=none; b=BiZMhZBr4ITG1/tMrrN6sDIzeMs39vvb3c2nK6UYN8yU3bUmuFLQWcHhBV5QKCFSQhzWJJhlgWmBm1L2etWOIn0rrWAawcbZ/nw6YUAYBwoIe/sZ2FBFwZcYp+3FUpJ3uqo8v9nIgLUyq4CiFLVSEjgF5RxTT6J66rybUgI1K9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731977345; c=relaxed/simple;
-	bh=J+WPrwsuAWpNkX7H54JmUhwKRSLKv+/L5TWT0yg4wEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YxU654aRtnEWnOfcs0iSILvBFPSVPJ6qtc+6Mbfqb3SZfeSkuEUaB75j3pYROyW60Vnga5Q5Q0REwkllJgw0kQ29l+ekQH/aCnb93drBsV+76yuu+HlA0Wl3Ua8dJhjaJcmag8u1wW+L/YiKCr+KHFCQySq3nMJ74dfuV7p5nXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mail.enpas.org (Postfix) with ESMTPSA id 890EB102ECB;
-	Tue, 19 Nov 2024 00:48:56 +0000 (UTC)
-Message-ID: <8c358157-d28d-4c42-b983-4191061edd70@enpas.org>
-Date: Tue, 19 Nov 2024 09:48:53 +0900
+	s=arc-20240116; t=1731987337; c=relaxed/simple;
+	bh=yMdgjpWa/uNZ3ldUiUE8ibXpM6RRA1oPWRCdLCYab9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gRexobmFsV0613EBY8UhBzg0P1+TjsGeM20w9LwAttE5n0JPf8vCsb0OyvxPRVxatVG452mz26mIwJractzk9wpoUlbieXKjNIF3bMbTPunOyUUr/rFwToxPx7G5HI0MmC+iZSFHU/L9GUNZE12CxhhNDFzaNyC7vI11MeTk+Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h/or/w+F; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/or/w+F"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cdbe608b3so48603155ad.1;
+        Mon, 18 Nov 2024 19:35:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731987335; x=1732592135; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CRdspri6WC09Szb6BqPAf0mcwTL7p9PzdKttkU4B4pQ=;
+        b=h/or/w+FkNctBbtYRF5KYD/nJ6CKFPwfc31lgMx6DhW4UOZK7qgcdobHM5HmwxHANx
+         QN5LzOH6VZXnHEB+4z+nNAi8F7fX7lt5xVNT/kmm8hr6DLGiOU+RZacwhVngVUSfktCn
+         pw7MH+R7rQKrSRZdzunUy3BWzn1WVpxsOXsz21SKGyzG/HvvXzdI10q1UWG2dDxYrlDK
+         fXhXgABsd9De5vUwJGReIKCES/9acXdnhek2Xvml+az72x/+pNhQdcGhDS6EKfy5nv1q
+         RLOHbrBG8uU8UqpbgpnbCAjFVcbE473qCy0Idxr+pAjFLTscl6xUruRYOmSaFxZQz4rI
+         3d3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731987335; x=1732592135;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CRdspri6WC09Szb6BqPAf0mcwTL7p9PzdKttkU4B4pQ=;
+        b=sT1/MSo3seAJhkxl0jtVemLTn2XILt4cudcq78m0SKbXDtDItviAPo8Kux3Y08QYpy
+         nxHPrVjbhqL/UJ/QsHnQ7sObGqhRC8ZHFg6Jn6FEj71cZrxYUp0TVZd8cFf5CTr42kw+
+         PJYWs4CW+PmYlgQ51H5I+umrICXmO62VRO9/ggjkV+UFaxdwWeICMAwCMRNO8EB+lcGL
+         39V27Mtx1VJQMm3hoYKY+jndhBKWuzI9zHDz7Y6oVn1z9B+vrHXlh0lQk49IgsLUdlTa
+         sEpl5uaDKTUwnZq+ovrNPoa5ov/tuQn/1fprxrOcsAmi5fQaU62azCh2tRDq/KWVwTDN
+         rZqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHksOWdFFwgS/qh+Wszcbby3l0iWB25GZs97sH3Ut0HMTGcQhLMq9Cr9cwsLJMcecvm0+zpaSgPbVexsk=@vger.kernel.org, AJvYcCVruL0GOuodFb4xRAv6LJptW3hZm1aI/VPfi5no/ZYbbk3ZgDclxy+glaq9/qAFxK8LOr+DmsSmQm70fTpA@vger.kernel.org, AJvYcCWoaJnQCntwExI0QKxT4eUVl+sXEFSwCdG9jzLj0Rvl/lMrFi412fNkokvJXWgvu0fafrVnNXJIKLn+CxHdBlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yziytu4paCNt0/gTtI4Sc557ielSvddDWt2/IFG9I5jvs+liEWH
+	DzOE5GbbIkxKaMBXR141PNx3Ip4kGusaz4gacvwlwBxstvJ5BHcI
+X-Google-Smtp-Source: AGHT+IHLNfB8EgtJ05UOIBcVDWvknvO4vYdOOsW5Y7Gj4yEdEjOSf9b/6uebLnSewf2oqalNRmLVVQ==
+X-Received: by 2002:a17:903:2d2:b0:212:13e5:3ba1 with SMTP id d9443c01a7336-21213e54277mr112969095ad.36.1731987334807;
+        Mon, 18 Nov 2024 19:35:34 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:38b7:c100:6f21:312d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212027071bdsm37934415ad.283.2024.11.18.19.35.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 19:35:34 -0800 (PST)
+Date: Mon, 18 Nov 2024 19:35:31 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH] Input: cypress-sf - Constify struct i2c_device_id
+Message-ID: <ZzwHg2nCqUsxMwqg@google.com>
+References: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
- can327_handle_prompt()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
- <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
- <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
- <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
- <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
- <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
- <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
- <7d4b176b-6b44-450b-ab2d-847e5199d1b9@wanadoo.fr>
- <e5572514-83d7-4b7e-b4f0-5318c6722250@stanley.mountain>
-From: Max Staudt <max@enpas.org>
-In-Reply-To: <e5572514-83d7-4b7e-b4f0-5318c6722250@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
 
-Hi all,
+On Fri, Nov 15, 2024 at 05:50:37PM +0100, Christophe JAILLET wrote:
+> 'struct i2c_device_id' is not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    6438	    618	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    6502	    554	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-As promised, here is a patch cleaning up can327's payload "encoding" 
-(the hex dump part), plus a comment explaining why Dan's finding turned 
-out not to be security relevant. It's as Vincent already explained, plus 
-additional background information:
+Applied, thank you.
 
-  
-https://lore.kernel.org/linux-can/20241119003815.767004-1-max@enpas.org/T/
-
-I've taken the liberty of not CC'ing the network maintainers on that 
-patch, hence this email with a pointer to it for anyone interested. In 
-the end, while it looked worrying at first, it ended up being just a 
-minor cleanup.
-
-
-Thanks Dan for pointing out that ugly piece of code. I'd really like to 
-one day find the time to do some further cleanup, and especially further 
-commenting in order to reduce the bus factor, but oh well...
-
-
-Max
-
+-- 
+Dmitry
