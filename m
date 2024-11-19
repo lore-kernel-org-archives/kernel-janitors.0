@@ -1,53 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA2B1D2796;
-	Tue, 19 Nov 2024 20:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C3615853A;
+	Tue, 19 Nov 2024 20:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732048620; cv=none; b=SJX4z74d7X04yINoCJVdnw5BO6VsLQdkhLBvIUSvBvTThfEN+9ShYsBqT3yA5LtYMJRbGIO3dxfjx6lXSZKzIqXTfCYxayfD+H6QYlkkPkYDF0JsZAP73LuXbdZZpdQvpip0xhEOiQQyFuQca/DvqGE6gGsnrltqN0UH9Erq6zw=
+	t=1732048972; cv=none; b=hlh78f21pRkexHAO9BlRrr/CoeXkboUEJrjfsNhdRYqDFkvVF2DhVvoopKE6E6+psYzszXmyrPdJBMendM3tkiofJumoowJeAYIyoC+5SRQo0IECvlqoEYdnazBGgo2K4fVp+DjhpF6iXr78E1wNQCkGCvvGL8STIFO2DP8lWDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732048620; c=relaxed/simple;
-	bh=E7H4D9XjCwSSdzBU3c/DR11h3IehoLN6uHcPSFcznUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CqyuqHsjridBd53ciBPLpuDNnFN721CBVHTSr9C0BRF6nxAMn85Eozg3UhNo3VvXoy5fa2PwYXP2FBlmy5ZTCsKGBaPGWrJ7/x1DPL+Ada95n43NAx7zqszsouo0TinyXFRwusgYWPRYwO9wvMIvf1YwFizG4VBLWowRskHhMHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=P57nhXr3; arc=none smtp.client-ip=80.12.242.19
+	s=arc-20240116; t=1732048972; c=relaxed/simple;
+	bh=3lXxTb1SdDh9ydSVgaqyBCqdnMn1iBLrcRXrWySr1zM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f7j+INY5qV3PM3Q+Fl4MeHCFwtL1L8RDmuag2mfB81B8DUFKNqibTYW0ouiuINzcjB29HaYJ4kn9Uimhl1Ub9Hf/vKXE8gD3MIACMowJRwdADgwYgmsIftYrPdb4/u1D11zzepWdCnNVLdCTEsAzTxYdfVGqBH4zoWQx8Ntai/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VbKHY+ml; arc=none smtp.client-ip=80.12.242.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="P57nhXr3"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VbKHY+ml"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id DUxytSUZHgiuVDUxyt3ul2; Tue, 19 Nov 2024 21:36:55 +0100
+	id DV3WtqL3lt7pwDV3Wt8WJd; Tue, 19 Nov 2024 21:42:41 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732048615;
-	bh=ZhEWScZ9cqnOnTV9yj0gNXc3fVhx21n0ePBE8U68IHM=;
+	s=t20230301; t=1732048961;
+	bh=oTvpCQq8alGc1ZL61S7t0BIfplAY2aaCla8sSIriT5I=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=P57nhXr38pLvajtcxUwpyqtxVAZnB3p7P873TOjBwuUwX2eTr9aw0DTGzJulbMwms
-	 B6RqDI5XSi8xi+YjRLToHCFNSusSJ3RooJBgwq1RInVrUuNMHriQ66D5yuJIMTAN07
-	 MIlTtWSqUA48jR1Rak662jtiUSWbGDWp1jsAM7ZwjkZkH/jj78KeBv3l2+1RBHobx5
-	 z7O1tT6WOIZJ4q94OdrRbuomYk2ceHa55IOK0lKC3UfnZ9iKdBotJV5NRVB9HJjXf9
-	 ooLVsD4qqPhS+/LJnj8t1JJfVl7Uuawy0kpdIL6nwyB0qMC70RqhY/4aqljtCkiZPi
-	 ukkbxXnUm+mLg==
+	b=VbKHY+mlpgskjUyX+wxpYcuC1c/8GQQ+E5Enw/i0AuZkoWr1oQbGbExT7uhBNkz00
+	 bQqT2jvlf4lhLEsZsvW6KqO39EFWrxzo2lus8pANKgVycmVgEpkOvFYDKvjRP5F2AY
+	 xm9JACV6Nad6i7jZi+pS8C0qW16nvijQq39k4sle2GIN378TguFs7ElzPhqO/tvTBj
+	 QZuyzfQbsoLgW59qrdar5uiWMH+xK9OH/X01kYXX2egrEpQD9XDPUZMOo63r+TfFBB
+	 R9hJiemZsljz8f6+9rnCEUUvHLQ4rD3DfAeqGIgHG1lrDGBqe4gFuxBqnDtrWjJdEc
+	 GNgkuLSgKhk9Q==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Nov 2024 21:36:55 +0100
+X-ME-Date: Tue, 19 Nov 2024 21:42:41 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Le Ma <Le.Ma@amd.com>,
-	Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/amdgpu: Fix an error handling path in amdgpu_device_xgmi_reset_func()
-Date: Tue, 19 Nov 2024 21:36:43 +0100
-Message-ID: <59760ee9c40003b50eac7fd08f20a6c3e3acf5d0.1732048587.git.christophe.jaillet@wanadoo.fr>
+	linux-arm-kernel@lists.infradead.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: s5p-mfc: Fix an error handling path s5p_mfc_open()
+Date: Tue, 19 Nov 2024 21:42:28 +0100
+Message-ID: <b486e0ede5803258464c97d702f6588e7e7d3077.1732048929.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,41 +53,44 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In case of error after a amdgpu_gfx_rlc_enter_safe_mode() call, it is not
-balanced by a corresponding amdgpu_gfx_rlc_exit_safe_mode() call.
-
+A mfc_debug_enter() is not balanced by a corresponding mfc_debug_leave().
 Add the missing call.
 
-Fixes: c6a6e2db9945 ("drm/amdgpu: Redo XGMI reset synchronization.")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only.
 
-This patch is completely speculative, review with care!
-
-It is only based on naming where an _enter() function if not followed by an
-_exit() in some paths but is in other paths.
+Apparently, only a debug message was missing, so don't bother with a
+Fixes tag, it is not really a bug.
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 0171d240fcb0..facb35249da0 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -3933,11 +3933,11 @@ static void amdgpu_device_xgmi_reset_func(struct work_struct *__work)
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+index 2fe3c9228ac5..5f80931f056d 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc.c
+@@ -774,8 +774,10 @@ static int s5p_mfc_open(struct file *file)
+ 	int ret = 0;
  
- 		task_barrier_enter(&hive->tb);
- 		adev->asic_reset_res = amdgpu_device_baco_enter(adev_to_drm(adev));
-+		task_barrier_exit(&hive->tb);
- 
- 		if (adev->asic_reset_res)
- 			goto fail;
- 
--		task_barrier_exit(&hive->tb);
- 		adev->asic_reset_res = amdgpu_device_baco_exit(adev_to_drm(adev));
- 
- 		if (adev->asic_reset_res)
+ 	mfc_debug_enter();
+-	if (mutex_lock_interruptible(&dev->mfc_mutex))
+-		return -ERESTARTSYS;
++	if (mutex_lock_interruptible(&dev->mfc_mutex)) {
++		ret = -ERESTARTSYS;
++		goto err_enter;
++	}
+ 	dev->num_inst++;	/* It is guarded by mfc_mutex in vfd */
+ 	/* Allocate memory for context */
+ 	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+@@ -946,6 +948,7 @@ static int s5p_mfc_open(struct file *file)
+ err_alloc:
+ 	dev->num_inst--;
+ 	mutex_unlock(&dev->mfc_mutex);
++err_enter:
+ 	mfc_debug_leave();
+ 	return ret;
+ }
 -- 
 2.47.0
 
