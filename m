@@ -1,114 +1,109 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA39A1A4F1F
-	for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 14:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AD01547D2
+	for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 17:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113818; cv=none; b=fsL7zJVpadPWBv9kgrzRUi1TBtUEzI3QXC1OtJ9GsqCPnsH4NLo3M951Ad2+fbHgKQsmUBz5a1lqiuGhJ8Vh225xDgsKnRphtAYH3UQjh48u2wZe2H6Wc87Mfsv1e5GXwCL8vqWdwzhzbIzaEU0m9M/GLsU7K5JeFt2Dpy9gOU8=
+	t=1732123121; cv=none; b=ileB7NfGv1s8tEi7dIfYnFpaoIhHp05JXwLN63TuubyAEvVwB5N64bEz1ccf5NQzuWzDfkK3YyXabJylkEy/emEXmXCTmGEXcUh6UhFnLDBGRKye6+k2ihZmgzu+GTGkm7FsXXwyotmbFTHl3OhYcO6/6oQ2P2Dj00/QoZzyGYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113818; c=relaxed/simple;
-	bh=HWv3O6mnhLgHBvZnLjyJuGkoqsE6g/V5K7cYN3gihHk=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=G9aNcOFVHpuTRfUY+Vnly7eSOFa1CtT4zZp4MyhaiTVrBy6sPmbvCdAIlmk50Dh76eGlDd5nyPdCCOtN1NWZhkdcVQDUVZHXiH8PV/Vjha+zkfi9v9UN0NJ3oDevRzMLSOMXZVkIKAPu9tS1OZo6hSjH9TFkQMny1/8MkvyqAWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Za6YGCLG; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1732123121; c=relaxed/simple;
+	bh=i9lBSWFYP6iGVF9K57CJ12bcNiGVIPE6WKd4wy5FNvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YUFHvnVqDIHMLq7uhHhf2QOH6w/OkMvJE1+Kv6cLZdSI+PCRsAnLH2LYODPcvpweqITE92NkfumNJXPs1VPlpjVh3e19S1lFdgV8b4xUBllxOkLH2cfeZ5XZlqFy8KPseLmkA589MffWHyF+Lh4p6ChjH38od7JLov0hSjv5Bb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vWXQOpo2; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Za6YGCLG"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa4b439c5e8so596523166b.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 06:43:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vWXQOpo2"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3824709ee03so2715898f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 09:18:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732113815; x=1732718615; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5mwThuDCRr+UAlhR80l7NoS9A71RIIDiDHpF0mb3xcY=;
-        b=Za6YGCLGYHk1T8RZLizh5BxttMSuS8eDFYLh4DRs/Fv/qZMdO0QUzLD5x99BAzdVvo
-         Ben4KF556i0B9xUCloCw4wbFRQmPiFdfsYRRep6l6CPi9fBAb5soe09IYZjIwwv5RHGH
-         sVATO/WfsRbzN1g1zM/Vk3awoi7hDXdDlG/LjqEotLJBWzq3zfcIYamjS+a1YsVoKH66
-         mGwVFFlChvbK0HycD+bap2B3w6cN2bYFasYiaNI+kaBrldinhjK2gxQFmG654QTMULp0
-         4FdFtY+QDVcOqcgChbcXKyCDXIAdMJWCH8kw/BqVuX/9FcwATT2mB/Os70NOp+tzICrP
-         VN3A==
+        d=linaro.org; s=google; t=1732123115; x=1732727915; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BrN4jnx/DXfC0UwxYbDC3cvmXnvAO37Xv/dCbsQ/GeY=;
+        b=vWXQOpo2XUhZ+fXAQO4rZCblnLrUgkrSQi+LH+wmkB6GOMr6c/dAgajyeCIK7RHgjR
+         5kfYcPbICuVrYDurybC9AnirbdK+MVQ2CCu/1MMcGd5mJpNitYx3pYwgC3fHEQtLy3jI
+         4rEy2UvFF0R55aTJjpjgoAA5jhhieKxrcn5A4ST/ZQQsck394oSVBP8XJ+TMWN2wOSUk
+         bBPN34c3yXTh4pEailHi9d2Cdh+BbRSHBQTQPp0BaXg7k7DMEkVHGr/MsgJ6EgpHJDCu
+         fGaXARzaigh1pL2CRLoFj3e05uMtiAZ8gafoxJXZm7iEkCmP8IUagn63om+rhdjDs/hZ
+         cZUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732113815; x=1732718615;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5mwThuDCRr+UAlhR80l7NoS9A71RIIDiDHpF0mb3xcY=;
-        b=P29YcGaxXK6rBQbYfUsNoj0epCp0pNSjgD28DDbsLTqGTac0kzLWl/1BnrAIyWJ3yV
-         kQte2RuL09JziSFNv6fx4cRW/MMWH7wt+0qtlK1K2Obplb2fc8ql2XxuucIpO2VFl3eQ
-         Q20oPn06Kv86PW5GEv/gBUcgjDvUWdMFCe76W6uJeblyhv5L9fIx1b/+BrPauI8aMJih
-         FqqWx9NaNgQjnSHOJ4jLbKSDKnRmJ2rZjbDqWvJEegtWvFzph6S7Te7lwzrOpNlVLB6f
-         MV/bEI6c+izDZb0qWdtvbyNTmUReaDEI/9YKFnm9tm+UETeAF9YbxVg1m9cMILTc42b1
-         sNeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKQhiEo7RtRBLfnFumlU9CI+gSUXdO8h0t96zqiYkMAQ1WwgFU1B55LJq0ugfo5XwH8BYGtm0+rGaJsRaSr3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNtX6d6h5I4fGVMu9aMy6ZFvB+/yLJFqxRyI5gpwhJfVMKoGaS
-	gVhIIZ2lOeOwqL404QCuWzR/XIrsUhrfy8pxocw+hKXbY3iA1CcCTeAYDw==
-X-Google-Smtp-Source: AGHT+IF4ivbmM3zTkLn/9rbQ1Ncc+xJ3/jeY6/1TXsIev5TFTNFaQbnSzoxV+v8vgnbGqpyrpSWlcA==
-X-Received: by 2002:a17:907:787:b0:a9e:c881:80bd with SMTP id a640c23a62f3a-aa4dd719b2dmr206574666b.37.1732113814921;
-        Wed, 20 Nov 2024 06:43:34 -0800 (PST)
-Received: from [127.0.0.1] ([193.252.113.11])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd75asm791488466b.104.2024.11.20.06.43.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 06:43:33 -0800 (PST)
-From: Alexandre Ferrieux <alexandre.ferrieux@gmail.com>
-X-Google-Original-From: Alexandre Ferrieux <alexandre.ferrieux@orange.com>
-Message-ID: <e9035219-4f16-4d27-bc8d-31f720c52e00@orange.com>
-Date: Wed, 20 Nov 2024 15:43:23 +0100
+        d=1e100.net; s=20230601; t=1732123115; x=1732727915;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BrN4jnx/DXfC0UwxYbDC3cvmXnvAO37Xv/dCbsQ/GeY=;
+        b=BlPAPCf+MPGszt/cueyj42FKWWuWE4VFnemQQs670PSpvPH1QbZ5bMQEH7R8gcHY1L
+         TAu4e0i3QqUaAzCnS+dl3G4mOUMoGfm3u18ffTYLi718b6vKkyBacPBFqDDk2EjrHd3n
+         pR+hU+sA6jO11bA9pbNIlZzJBNCcTgajLAtOterOtLyyq+HDfgBzQ5DbEnYGLR9lT/5L
+         zTVKE5cCXcRewqhFFIF0vZGCBJvcpRI7P8lLuugVcDJZPofrhhgnfH2DxnOhSeJJqWEX
+         D9tIyxfNrjCjW1+D2VcxIlBuXkCVBChgOeCH4Dv9lRZB7UBsn9TLZsanoRpuNJ3JBH3I
+         Hi2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWxcQ1AOEe0gnQlTLE0JNQJnjrVlmVkKrJ54hF3BdgaSKLE/DJTjYlZU1f4TAI1OIeISAcY8D/5KD2mrAbwuPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+S1hym4ZtBUZBmN3yT/B+SroU5iVad+01gPzgNS6x5eg1l8DW
+	tQWqM+wv0r9bebmaniUDBh7sOD6CgDwI9T4/1DOAk3WfYTzx2JD0EeLkLEeMLME=
+X-Google-Smtp-Source: AGHT+IEMl+Umzt9pfPJny9A4FApXoCusklewOWpxImV08bteT+GtUrMqokXLGrs0BQncUmJ0q6YgKA==
+X-Received: by 2002:a05:6000:4029:b0:382:4978:2aaf with SMTP id ffacd0b85a97d-38254b259f0mr3136310f8f.57.1732123115553;
+        Wed, 20 Nov 2024 09:18:35 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493ee14sm2541451f8f.99.2024.11.20.09.18.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 09:18:34 -0800 (PST)
+Date: Wed, 20 Nov 2024 20:18:31 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ralph Boehme <slow@samba.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] smb/client: Prevent error pointer dereference
+Message-ID: <e0addd3d-2687-4619-8f47-4d8ff13950a7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RFC: chasing all idr_remove() misses
-To: Alexandre Ferrieux <alexandre.ferrieux@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org
-References: <97f3b17f-2e92-4cb7-8ee5-3a76969fb2cf@orange.com>
- <304a9635-9bb0-4dbe-94c9-135f43dd8217@stanley.mountain>
- <0b537aa4-7dba-4290-8b83-444023571425@orange.com>
- <Zzqq2ypY0JKrwlMb@casper.infradead.org>
- <d4e75e41-cbea-4c24-82f7-6b9f85f66bd3@orange.com>
-Content-Language: fr, en-US
-Organization: Orange
-In-Reply-To: <d4e75e41-cbea-4c24-82f7-6b9f85f66bd3@orange.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 18/11/2024 12:33, Alexandre Ferrieux wrote:
-> On 18/11/2024 03:47, Matthew Wilcox wrote:
->> 
->> IDR is deprecated.  I'm not excited about patches that make it better.
->> IDR users should be converted to use the XArray API.
-> 
-> Well, the problem is more about chasing a bad usage pattern than an API's
-> limitations. Indeed, doing the same grep for Xarray shows that, out of 434
-> (naked) call sites of xa_erase() in the kernel, 307 fail to check the result.
-> 
-> So, independently from the IDR->XArray transition (which may still take some
-> time), it looks like there's a Damocles sword over a possibly huge number of
-> areas, and that would handily be grabbed by a syzbot scan, with a ridiculous
-> time investment: just add #ifdef ... WARN_ON_ONCE() ...#endif on the "return
-> NULL" path of both idr_remove() and xa_erase().
-> 
-> Again, I'm not asking to do this on production kernels. All I'm asking is the
-> detailed procedure to let the "established" fuzzers exercise that, as using
-> syzkaller locally on my limited hardware is not an serious option.
+The cifs_sb_tlink() function can return error pointers, but this code
+dereferences it before checking for error pointers.  Re-order the code
+to fix that.
 
-Reading up on syzbot documentation, I can see that the recommended idiom for
-such cases is #if IS_ENABLED(CONFIG_DEBUG_AID_FOR_SYZBOT):
+Fixes: 0f9b6b045bb2 ("fs/smb/client: implement chmod() for SMB3 POSIX Extensions")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/smb/client/cifsacl.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->> https://github.com/google/syzkaller/blob/master/docs/syzbot.md says:
->
-> However, syzbot kernel config always includes CONFIG_DEBUG_AID_FOR_SYZBOT=y
-> setting, which is not normally present in kernel. What was used for
-> particularly elusive bugs in the past is temporary merging some additional
-> debugging code into linux-next under this config setting (e.g. more debug
-> checks and/or debug output) and waiting for new crash reports from syzbot
+diff --git a/fs/smb/client/cifsacl.c b/fs/smb/client/cifsacl.c
+index c68ad526a4de..ba79aa2107cc 100644
+--- a/fs/smb/client/cifsacl.c
++++ b/fs/smb/client/cifsacl.c
+@@ -1592,14 +1592,16 @@ id_mode_to_cifs_acl(struct inode *inode, const char *path, __u64 *pnmode,
+ 	struct smb_ntsd *pntsd = NULL; /* acl obtained from server */
+ 	struct smb_ntsd *pnntsd = NULL; /* modified acl to be sent to server */
+ 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
+-	struct tcon_link *tlink = cifs_sb_tlink(cifs_sb);
++	struct tcon_link *tlink;
+ 	struct smb_version_operations *ops;
+ 	bool mode_from_sid, id_from_sid;
+-	bool posix = tlink_tcon(tlink)->posix_extensions;
+ 	const u32 info = 0;
++	bool posix;
+ 
++	tlink = cifs_sb_tlink(cifs_sb);
+ 	if (IS_ERR(tlink))
+ 		return PTR_ERR(tlink);
++	posix = tlink_tcon(tlink)->posix_extensions;
+ 
+ 	ops = tlink_tcon(tlink)->ses->server->ops;
+ 
+-- 
+2.45.2
 
-So, if I submitted a patch doing WARN_ON_ONCE(..==NULL) under this flag in all
-naked idr_remove() and xa_erase() call sites, with suitable macro decoration to
-keep readability, would it stand a chance to be committed ?
