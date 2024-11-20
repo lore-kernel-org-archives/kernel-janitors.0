@@ -1,81 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3362156F20;
-	Wed, 20 Nov 2024 08:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A870A199E84
+	for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 09:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732091309; cv=none; b=J8UeYXECOb6IxQhDCoUg35TS7vY8WyCXMv7wxbKbb20xQOJbv7a5sHl1y7zNlQU/jgQKFmpFSFTbOUnF0N1pXoNGbPlVRskCuNOy4cxCLbm6mz+HdVKZ7JEs75/LWS9PvwFdMJVnzzGgKjy7sus6XttT+IULge4TmeCVW4S8Q8Q=
+	t=1732094113; cv=none; b=k49nmYTU7kNBcnDYJr9hegds/VCajH4a8aDnrIWuwi2wqwCZyPR6aJC+qrxVVUEG2aFEJZnc/59kcAcU6xICvy+sQU9yvV+t44ASzUXoElk5yp976rxlcfGjqQ65Y0EcQG96S3gJoPuo3Ls30vR3Bn4OvxHqZkK8C0vjamr7cqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732091309; c=relaxed/simple;
-	bh=BEN+FFG8DzVJ1Osemg/1oIpG9nJboJMmdJivsCj5HIU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BzgrHDcDURIfzRnkJd6vpMQwcFo2NNldCK0m0RplgrNgT8NGKmsgtAyUOZL0lVbvV3I11lMxmdrpb7KJ3Q6SXIDUcJxQo8X7yAQaq7nBFtuw4/f3/xm6QleRzNkJA/FEZ9dZQiI+kzn2dmSZgLYqYjg2638y34NK3LPn29gpH2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RI6Ns4Z0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732094113; c=relaxed/simple;
+	bh=2hdAbT7Sq9ipOSToiegjJMfm1hDkH2O1SCc4PKB5D7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nERBZXihmlksiaT0ljFv0jXseRKKpZge7YDPo5eaRkVXwFiy0UYNnb7bN/2uq2cAfE6KbULljNaJzihSPzy8fmVFp5vUDc2i/RoXoA3X+nFH/A0dJcvQT8BP6BpyEaPNg8sO5oaSZ03RX7dSxY2JTfnB+GHOHbcZgX5Kuq3R6BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BrwkreO2; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RI6Ns4Z0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC74C4CECD;
-	Wed, 20 Nov 2024 08:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732091309;
-	bh=BEN+FFG8DzVJ1Osemg/1oIpG9nJboJMmdJivsCj5HIU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RI6Ns4Z0pYGeqqYyRzWp77GU8jov8PilY5yrobKeBgcqD8S6ZpqISfqKlrj0OZx3U
-	 GfHE34tX4H3cO6a0r7cHKBks6kpccjSL6yU6Y2TZ2msE39Gufe7jDC96ud4bNwogys
-	 Rf0QgRYg6lyN4tc3QUwq61U5FU6M7fKzvzutLE2jzrWyUoNTsWzw2AeK4S9h9VYNDg
-	 54C6UpMHibVGysZg4GgVtCfg1Blzsl4p+QqQvWiZ8roWUdockS6KK9x560C3zP1MkW
-	 ynqrCYmtIc9aOhetsDYn3meLpcAO/FT91O7F/GoyNEG0on/tJoMRj6r7422w31W6MZ
-	 2AMkgeYD2bZIQ==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] netfs: silence an uninitialized variable warning
-Date: Wed, 20 Nov 2024 09:28:20 +0100
-Message-ID: <20241120-lageplan-kneifen-e124b37dee93@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <867904ba-85fe-4766-91cb-3c8ce0703c1e@stanley.mountain>
-References: <867904ba-85fe-4766-91cb-3c8ce0703c1e@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BrwkreO2"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb49510250so50531251fa.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 01:15:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732094110; x=1732698910; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nZqPJTooMuIvfQxCxUlIoLxMsIJNKGcrHg/Zv8d6/H4=;
+        b=BrwkreO2me6Kg0w0t9CBycLmcioKk5bJoDqEjtHnPXP5m3txQarl9UjkCdEWDI3hy2
+         muAk8GTFqdHwSK0SFbFIe9rcE8D3VAaFn4n8TTD80qOx5KJHtLIQrn2UVVusf7PIhYmu
+         /tuYHNWUTtxVhWhPT9M/O60UAy7/BA9Sw1xxh3Jm1tmziOZjQ+NBoSUlRDNirD5SCn4o
+         aKKNZ8kfQr1j94Jdh3Fb/BuJ3IHpeQPJ7+9eQ+2EYre2H1A/bR7H2yYGLfsgsupbBgAG
+         CgL80q4u/pskeme61HFeYE3YBvzHxD6G19+kj3r7v1uY5ZE12OhQKmIjkbpis8rBpW07
+         xSmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732094110; x=1732698910;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZqPJTooMuIvfQxCxUlIoLxMsIJNKGcrHg/Zv8d6/H4=;
+        b=j+nkDyJmg+qGW4IkA35A5VsLlD6Kfiq+CcfktR33ZibBIAjgZv9b1U1IIndu+34gvo
+         UNd0qyKTgJzBWjvQrE+Xa/TQCNuEdaHrqAWuWe6XRHOBJZ0Fb0EO5To2N7qxxfd/LDlO
+         RvhRVjKy2INNt0LEH10qkmrmrPi4MK38qhuL4fIZyTlZ/oTt3V0L3XCx1VIOLBzi0e59
+         hcRSvUcV0GBrisWL3FXFBc5OEvKFBtAFxge0Abw1LbjP23O/mQ2llGKzvkvf8UT5TuI9
+         TqifQdX405fPH6gs39zaG/4GqIqmpkOvizg6rov6sgxc6A51mSUYCDYIfH8xAFPVkFIk
+         8aXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4joHr2WCNLkDVAlESqXuADJeaoSfBvkpS3WY5we+40RMj9WZdbgHHmDh4npeRVKHC7wufL3FSg4yF2E1gzXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdhcQehffvLuq92bb0zhvSB+ZgFEFLzTpIqbSjSJ+yol/UDu0/
+	6EEM+l3k3+UcRrVyk3qno0a/UXMdk0yL7QGj7oFvXvx5US4EwvONvDsKNujUTfU=
+X-Google-Smtp-Source: AGHT+IFpsEvlnavPKpISmZgS8ov+/Rflr4MbgvHBN0Ln88a6ToQBQhFBJg6MAGm+8dhJ0Y0wJj72pQ==
+X-Received: by 2002:a2e:be2b:0:b0:2ff:4ce0:d268 with SMTP id 38308e7fff4ca-2ff8db6039bmr11228371fa.2.1732094109757;
+        Wed, 20 Nov 2024 01:15:09 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643e65bsm38337075e9.0.2024.11.20.01.15.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 01:15:09 -0800 (PST)
+Date: Wed, 20 Nov 2024 12:15:05 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] io_uring/region: return negative -E2BIG in
+ io_create_region()
+Message-ID: <d8ea3bef-74d8-4f77-8223-6d36464dd4dc@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1158; i=brauner@kernel.org; h=from:subject:message-id; bh=BEN+FFG8DzVJ1Osemg/1oIpG9nJboJMmdJivsCj5HIU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbzl2m8GxdzyqWFy9zImbvUJw/++bl1mUb5tr3zntx5 srjFCG+Zx2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATWfmO4Z/iEqHAqz0XZ2/0 Wq897+Mx8YYDebm3tbSLDXVNjtvLtlsxMiwsrfPROC4gLmD4wtk7pslGyzaXt+mg4mI3Ea1JDy6 L8wIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Mon, 18 Nov 2024 09:08:19 +0300, Dan Carpenter wrote:
-> Smatch complains that "ret" is uninitialized on the success path if we
-> don't enter the nested loop at the end of the function.  In real life we
-> will enter that loop so "ret" will be zero.
-> 
-> Generally, I don't endorse silencing static checker warnings but in this
-> case, I think it make sense.
-> 
-> [...]
+This code accidentally returns positivie E2BIG instead of negative
+-E2BIG.  The callers treat negatives and positives the same so this
+doesn't affect the kernel.  The error code is returned to userspace via
+the system call.
 
-Applied to the vfs-6.14.netfs branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.netfs branch should appear in linux-next soon.
+Fixes: dfbbfbf19187 ("io_uring: introduce concept of memory regions")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ io_uring/memmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/io_uring/memmap.c b/io_uring/memmap.c
+index 6e6ee79ba94f..3d71756bc598 100644
+--- a/io_uring/memmap.c
++++ b/io_uring/memmap.c
+@@ -229,7 +229,7 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
+ 	if (!reg->size || reg->mmap_offset || reg->id)
+ 		return -EINVAL;
+ 	if ((reg->size >> PAGE_SHIFT) > INT_MAX)
+-		return E2BIG;
++		return -E2BIG;
+ 	if ((reg->user_addr | reg->size) & ~PAGE_MASK)
+ 		return -EINVAL;
+ 	if (check_add_overflow(reg->user_addr, reg->size, &end))
+-- 
+2.45.2
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.netfs
-
-[1/1] netfs: silence an uninitialized variable warning
-      https://git.kernel.org/vfs/vfs/c/574cb560cc1c
