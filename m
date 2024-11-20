@@ -1,97 +1,95 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A870A199E84
-	for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 09:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C4D19E804
+	for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 14:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094113; cv=none; b=k49nmYTU7kNBcnDYJr9hegds/VCajH4a8aDnrIWuwi2wqwCZyPR6aJC+qrxVVUEG2aFEJZnc/59kcAcU6xICvy+sQU9yvV+t44ASzUXoElk5yp976rxlcfGjqQ65Y0EcQG96S3gJoPuo3Ls30vR3Bn4OvxHqZkK8C0vjamr7cqE=
+	t=1732112028; cv=none; b=A0jK4WsxoR1C/M6o1tdmFRMHhSPlplqtYBrwgqyDaeK/D44iNqthXPFNCUYiiLVcXUeYccIKrllDSCOcDDnwsm15c/E9UURJuXDtCzbT0DT26lERgNJ/qP+lpPbmmLhAVrITpaAo8ZpuBJAfuuyDbnlno0W2TNyUF0zEAV+P8iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094113; c=relaxed/simple;
-	bh=2hdAbT7Sq9ipOSToiegjJMfm1hDkH2O1SCc4PKB5D7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nERBZXihmlksiaT0ljFv0jXseRKKpZge7YDPo5eaRkVXwFiy0UYNnb7bN/2uq2cAfE6KbULljNaJzihSPzy8fmVFp5vUDc2i/RoXoA3X+nFH/A0dJcvQT8BP6BpyEaPNg8sO5oaSZ03RX7dSxY2JTfnB+GHOHbcZgX5Kuq3R6BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BrwkreO2; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1732112028; c=relaxed/simple;
+	bh=fG2rtQP3i/fL3pl3U4h6EqkOrbGR5g+ma9OgPWJDVWE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CeVzA7qwpFs5uu69FDKdJasX6rdYbsaumvAggqLyC4pVY6C8FWqLzY1+AXzeDlICKFyst7N5bBiavtri/RibIBHEfdtykqIbvId2CERns3rHH09WHBd7eAka+VE9PzUKWvPMo0lG3M8hOT3z/pHjLfeza0+3jWPB+zixEFTsI+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LpmCIM6x; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BrwkreO2"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb49510250so50531251fa.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 01:15:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LpmCIM6x"
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so1739343fac.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 06:13:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732094110; x=1732698910; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nZqPJTooMuIvfQxCxUlIoLxMsIJNKGcrHg/Zv8d6/H4=;
-        b=BrwkreO2me6Kg0w0t9CBycLmcioKk5bJoDqEjtHnPXP5m3txQarl9UjkCdEWDI3hy2
-         muAk8GTFqdHwSK0SFbFIe9rcE8D3VAaFn4n8TTD80qOx5KJHtLIQrn2UVVusf7PIhYmu
-         /tuYHNWUTtxVhWhPT9M/O60UAy7/BA9Sw1xxh3Jm1tmziOZjQ+NBoSUlRDNirD5SCn4o
-         aKKNZ8kfQr1j94Jdh3Fb/BuJ3IHpeQPJ7+9eQ+2EYre2H1A/bR7H2yYGLfsgsupbBgAG
-         CgL80q4u/pskeme61HFeYE3YBvzHxD6G19+kj3r7v1uY5ZE12OhQKmIjkbpis8rBpW07
-         xSmg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732112025; x=1732716825; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eTi5b10WLqsSCiJUbo5/jmc+MHfUzlPQvFKPqOZIskk=;
+        b=LpmCIM6x4TvKbGsPpW1de+zhTNl+wyyKhR66oMlBjtPPpyw3WK1HsH1DFSH33jlEJ8
+         P+6hE07JpLLfp3Ihp3RpUSHwaZ0BVel+cr3juEEllrLYdyZkBo7EN+k2uioJir5+fsw+
+         bEWB1X2l4oelgfkbfvXrgg7HmejO/cI5N/vM1+IwOR3lLzdslmAiUvR9rPbDsUIzTxPR
+         i1IZLvKNdCJdYioxtTv+jyBa+ZSSvbl9a+JnYukGDIctDx0uzzf8OJZF72RYQMx36Ozv
+         4PskqUECzyv4QjFUOcxc92+HQX2CnlvXIS2OjBuAmo3abvl7dOxvzMwzo4ASPXUESiAJ
+         0Wgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732094110; x=1732698910;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZqPJTooMuIvfQxCxUlIoLxMsIJNKGcrHg/Zv8d6/H4=;
-        b=j+nkDyJmg+qGW4IkA35A5VsLlD6Kfiq+CcfktR33ZibBIAjgZv9b1U1IIndu+34gvo
-         UNd0qyKTgJzBWjvQrE+Xa/TQCNuEdaHrqAWuWe6XRHOBJZ0Fb0EO5To2N7qxxfd/LDlO
-         RvhRVjKy2INNt0LEH10qkmrmrPi4MK38qhuL4fIZyTlZ/oTt3V0L3XCx1VIOLBzi0e59
-         hcRSvUcV0GBrisWL3FXFBc5OEvKFBtAFxge0Abw1LbjP23O/mQ2llGKzvkvf8UT5TuI9
-         TqifQdX405fPH6gs39zaG/4GqIqmpkOvizg6rov6sgxc6A51mSUYCDYIfH8xAFPVkFIk
-         8aXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4joHr2WCNLkDVAlESqXuADJeaoSfBvkpS3WY5we+40RMj9WZdbgHHmDh4npeRVKHC7wufL3FSg4yF2E1gzXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdhcQehffvLuq92bb0zhvSB+ZgFEFLzTpIqbSjSJ+yol/UDu0/
-	6EEM+l3k3+UcRrVyk3qno0a/UXMdk0yL7QGj7oFvXvx5US4EwvONvDsKNujUTfU=
-X-Google-Smtp-Source: AGHT+IFpsEvlnavPKpISmZgS8ov+/Rflr4MbgvHBN0Ln88a6ToQBQhFBJg6MAGm+8dhJ0Y0wJj72pQ==
-X-Received: by 2002:a2e:be2b:0:b0:2ff:4ce0:d268 with SMTP id 38308e7fff4ca-2ff8db6039bmr11228371fa.2.1732094109757;
-        Wed, 20 Nov 2024 01:15:09 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643e65bsm38337075e9.0.2024.11.20.01.15.08
+        d=1e100.net; s=20230601; t=1732112025; x=1732716825;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eTi5b10WLqsSCiJUbo5/jmc+MHfUzlPQvFKPqOZIskk=;
+        b=u8ZST1IJ7qpYNJCtv1vJJIhr8sA4+CYZv1Y4hsVK+Uq4p4TQmsmKxcXMEtD2Bz+FfL
+         HXEBoICs2rdJW18/ZUdjUfSAU0z3/Fc2Lu9QDm03U4AW8kPCaT6MxxP74I02TECovnp7
+         0PyRrVL1gkiopUEJHiqsDIcqw5yIObxdYFNvxpecNMU4PhoqY2iRryVjlLWJv/FBIk3+
+         g5tGzk1pkX0yH/oXkjIes8yk3CIlJfzWz043bKwzhhIC+6Kz1sHNeIXpc24aljLuupCZ
+         Pp4Y8apcWkduh/VYV+4NpEnKkMBrdz4UZW8tTIFbUlG3JysKe1vqfElIcswmaGL9wGJ4
+         hAVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSpYR4NVC2kxz8bJLHK67tfc4u94PxgCX/kOBQ9llcM/4qWHB8vioRbShWlxFMjYdv4Ry1clvYNC9WluvSfL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFtlAnf/hDxozRf6bFIvcHbtTA3pOr91Vg9B/aAJSb5JOxxR+d
+	1pLpEODxBNukwV35vUkvpRoO09lpnL/nNVxWU+f+Z/kielHYXjm78xPFegChG7E=
+X-Google-Smtp-Source: AGHT+IHKEqEaFV0atda3jXxRVp2Q7ZAibmbPVVSQctOYrQe4CjaraL/pBwf2ptYdMN+qn4DtUXHsLQ==
+X-Received: by 2002:a05:687c:2c11:b0:296:dd44:de85 with SMTP id 586e51a60fabf-296dd44e290mr2244900fac.28.1732112024924;
+        Wed, 20 Nov 2024 06:13:44 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29651ac5ff9sm4185830fac.42.2024.11.20.06.13.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 01:15:09 -0800 (PST)
-Date: Wed, 20 Nov 2024 12:15:05 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] io_uring/region: return negative -E2BIG in
+        Wed, 20 Nov 2024 06:13:44 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Pavel Begunkov <asml.silence@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <d8ea3bef-74d8-4f77-8223-6d36464dd4dc@stanley.mountain>
+References: <d8ea3bef-74d8-4f77-8223-6d36464dd4dc@stanley.mountain>
+Subject: Re: [PATCH next] io_uring/region: return negative -E2BIG in
  io_create_region()
-Message-ID: <d8ea3bef-74d8-4f77-8223-6d36464dd4dc@stanley.mountain>
+Message-Id: <173211202382.191688.16891113055939966026.b4-ty@kernel.dk>
+Date: Wed, 20 Nov 2024 07:13:43 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-This code accidentally returns positivie E2BIG instead of negative
--E2BIG.  The callers treat negatives and positives the same so this
-doesn't affect the kernel.  The error code is returned to userspace via
-the system call.
 
-Fixes: dfbbfbf19187 ("io_uring: introduce concept of memory regions")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- io_uring/memmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 20 Nov 2024 12:15:05 +0300, Dan Carpenter wrote:
+> This code accidentally returns positivie E2BIG instead of negative
+> -E2BIG.  The callers treat negatives and positives the same so this
+> doesn't affect the kernel.  The error code is returned to userspace via
+> the system call.
+> 
+> 
 
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 6e6ee79ba94f..3d71756bc598 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -229,7 +229,7 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
- 	if (!reg->size || reg->mmap_offset || reg->id)
- 		return -EINVAL;
- 	if ((reg->size >> PAGE_SHIFT) > INT_MAX)
--		return E2BIG;
-+		return -E2BIG;
- 	if ((reg->user_addr | reg->size) & ~PAGE_MASK)
- 		return -EINVAL;
- 	if (check_add_overflow(reg->user_addr, reg->size, &end))
+Applied, thanks!
+
+[1/1] io_uring/region: return negative -E2BIG in io_create_region()
+      commit: 2efeb13a0e2a0a188ae85ce7d838874a4c8d135d
+
+Best regards,
 -- 
-2.45.2
+Jens Axboe
+
+
 
