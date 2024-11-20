@@ -1,64 +1,64 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1C015573D
-	for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 17:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0864D1AB539
+	for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 17:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732123141; cv=none; b=OgrC3+MROWwDBKCQsq/Hrwg7MvNXlM03dSBPeEFNNFrN28dXvyV1SDZjOjNmhecDQvHHZGGoe9vxnZWgxIrVO7PbSchQKnNYSzmLun8/qRTZ3XPqmJvLRB4lBYpLecSkNg/LSxcnBEFaTfA6p4gc4440UHkoLVpxggEqzyfAXh8=
+	t=1732123152; cv=none; b=g6cHrsr+ejUNufbUmdDziMD7zVHj21kzMsSnXEhkM63zzLcva44pPUD6+G/CEwQWVSk3zXzuGJjDW3ur10+PHXHZ4nluKA9IdcZ8WbhiI8zU/x5ka/gBhoWj/gLW4bXOlcq508Mgmrct2QjX7RxNT3G6be3ySZOwtMacxPyKpU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732123141; c=relaxed/simple;
-	bh=VMLOhPH//1FlBQm40XRhlKtuyXZJpKN5xaEpPTsmgEo=;
+	s=arc-20240116; t=1732123152; c=relaxed/simple;
+	bh=aMlj912aJwM7LIeO5svmmFwooxRnaRCe+Yl+8o1KcuM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d/+mUlPAuCvTFYY8LykVHuUPQrJVyGB5+i/MKnJ74Jop+UoBKybfXsY4YEFgSoj5ds2YvE08YkDXRmAYqhiHTt8zgaOj/PgiQenfppK9IZ3bMptQSTq4eDRMyJC2nxshyZityON9wWeaD3yln+rob033NqDH2W2KWifBP/MmI+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NfNnSeAA; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=KoB8y58VBiTKCH7otzjAu2Tz+zWXIHrnwk50mbBt038AufAOBK1Ule9cmCJqtdYkKQyIz4x+7uSuZhksvILI1OZnlw2mnqsdwpuvZdONXcDOyyiATkZePSkz4WUJY4JQ3CxTLCQ2KURZMgwqeLtFbeG5ToOwouyDsy8Emz4hLg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SSRTU90A; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NfNnSeAA"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315eac969aso7105575e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 09:18:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SSRTU90A"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-432d86a3085so42941145e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 20 Nov 2024 09:19:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732123138; x=1732727938; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732123149; x=1732727949; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6OIt9APg7rl+6VkRZLbtxcfZxEjXQpmkc9A4DcorfhI=;
-        b=NfNnSeAA3JAcyNjibjkiJibFQOpOIgKVLQehyHA4mDeZdXgZdbkFRAqahvq3WEgIA0
-         zazLGur833j1m07fHuebMFQT7s6kYZLvpo9oc2jUdTJkKtZw8c2nhEe6L3/GjNdchY90
-         ebC1zlSXJ0QtbbOGZ7ZlfMkppwMbSJY2z03wRrWNEv2VmkcfK2EzM7hBtrocYrK3FiM2
-         qrynHfyEinlpKo5oUrGDnDmBZiDPoWHacPwGN9sjmWXS6kUeLpkmO3hfM17Q0+U0aL0J
-         RcT9EfFhop0N0FtKNQ0pRigXVw5ToxIMMIf16m2Wir8IIq/8tC7Cro8S86franiDL59G
-         YOsg==
+        bh=LyiP0MxQdAmx7H0LainU7jczTRUd4MKDrKPjA66RP3I=;
+        b=SSRTU90AB/FImv+Oov9FKEre//n4Zjo2YM3ajRDib0FrfNHea2nQSIa831/VtMnZ24
+         oyMWbYFWfoOSb0k5S72KEjC6NtkolS9TVwXr5ouqboocuSl4ReqHMnvLxTWM83SnRNKg
+         wM4Gfub9gxxedKd7ZatbYAvvqurwNHCMlf/ouiVvMyxhjaqVMEjA8+OQfB4dtSYcxDfm
+         ilkE+H5hbCK3LruVQvSvH9YMfYWCckp9hjWH+vGfaf+vl9M/Nn/0VmXNbh+uzbmhGndK
+         zfNRO2ukBXMSSzLO+HIjRXJFeip2NbvJRqfzhZe3zuIQeFZm0lpNzrBr37WXYZTDA8dQ
+         Cyyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732123138; x=1732727938;
+        d=1e100.net; s=20230601; t=1732123149; x=1732727949;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6OIt9APg7rl+6VkRZLbtxcfZxEjXQpmkc9A4DcorfhI=;
-        b=dOXNbPCl+6SzMOeEyIC5sqhSncc+4nHO/JwbSbKl3/0SIj2MFEFG57I0Uh/4NkystL
-         Zh5ah9ltdfW9rQaz6nkOh4Kz1lLoipLs0SJdZxunxDM9oz+K0cuIWn+sOXnoyD7/EDf9
-         9FJkueauNJSCAK9c/+CYTbqOh3ouqtbYEWze9kn4gyQZqsksmpQ6Yr/mDgstcunQO3kY
-         GUhqHfiopSWceCWNg93eIFfNzMfqYn4tqTP6Aqcs2WBy30fkpSaSoG1g0oMBs4vlbQhl
-         UdAXVi958w6bEQ6he42G1m6hh2sHF+JhjbTStzjwTE5u9lfbQQV5DNSzMq09B6hgEr2D
-         vBbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVXDBarbH+HP696f70QtdFDaGUYap9aDs0wTKkAJHLAmwzLaGNONtBgCNP1oGX/IdYJjKWmiWu3xKL3agC6yw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaEfHOgI8xWEgueRsJgTOe5eRCE3tDWOGgCS1Pt5mCdOPT3cHC
-	DOKoYHqE13mtZ3QSrq0/wQ4cFc6Z/AVv8TfPWADTdxLUXzX70lfFEOYoAULYIYQ=
-X-Google-Smtp-Source: AGHT+IGN4jnKaNwqn5jDQ4Z0JFaJ3NGwDCLW4eL8iuhhfaD5aFK+WN+J+O55z5TrORF8zlK6Mk84zQ==
-X-Received: by 2002:a05:600c:b85:b0:433:c463:62d7 with SMTP id 5b1f17b1804b1-433c5c97f36mr1677635e9.4.1732123138455;
-        Wed, 20 Nov 2024 09:18:58 -0800 (PST)
+        bh=LyiP0MxQdAmx7H0LainU7jczTRUd4MKDrKPjA66RP3I=;
+        b=pZpB7a9c1+CC6j7Wfroo7kVmiq6oKN3wapy6M7ijXjqG1D53phJ3JYMaQc56YjT+bf
+         7oVQ8nnMJDjEDPxjT2Nr9Vj8qtQITPeS3xBy9GWqaKYE2OeysXqU5teV3IpZTH3R9jIJ
+         12H/iKNqTtAXMVx/LluMj4Ff3kiE8nzUKjaGomsFMKhs33TXqUn8+mlzM0qHItDMwAW+
+         cJFRMdvhlpCc0ru0MtiuY66HDzUys+ygE2YTFld6kTd9eChZTLc7GkwJzp32UevA9uia
+         pKTEU3I+0Wu6+Ai4Z0R38tMz3roHJbdRBd7Iz/VF3mnMHcye2L0x4vYa6TlTqUw60+QT
+         +dDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD7mi9Q4aV64bQp4q8gcAeQHVECS36dkdjRf6aT23Ml5+yWMa1Uzcb0MmtrgdQMv+MvR7mUo+NqG9o+3Dnwc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwEAd73img7gAIUaEspwv4ys4SzRR4y+O/SA4afSaD2abG0xyb
+	jHbp0XwsPJP41xXD7YSXv2rE/0IuIbJ4HVNV+dJdk7LL9oixgj6l66z5LpW+GEQ=
+X-Google-Smtp-Source: AGHT+IG5JIx0KMSnLhIOx6fmV+jjW0KaoHFqxB+0+tP9hY+E93urgyzJG12FpUEVyW5mCoKbBXDttg==
+X-Received: by 2002:a05:600c:1c16:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-433489ca97fmr35463405e9.16.1732123149443;
+        Wed, 20 Nov 2024 09:19:09 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b4633b5csm26761585e9.29.2024.11.20.09.18.57
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463b0d1sm25375975e9.42.2024.11.20.09.19.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 09:18:57 -0800 (PST)
-Date: Wed, 20 Nov 2024 20:18:50 +0300
+        Wed, 20 Nov 2024 09:19:09 -0800 (PST)
+Date: Wed, 20 Nov 2024 20:18:44 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
 Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] clk: mmp: pxa1908-mpmu: Fix a NULL vs IS_ERR() check in
- probe()
-Message-ID: <5b3b963d-ecae-4819-be47-d82e8a58e64b@stanley.mountain>
+Subject: [PATCH next] clk: mmp: pxa1908-apbcp: Fix a NULL vs IS_ERR() bug in
+ probe
+Message-ID: <6155067d-aed5-4799-9e14-6dff7be1cb3a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -69,20 +69,20 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_kzalloc() function returns NULL on error, not error pointers.
-Update the check to match.
+The devm_kzalloc() function doesn't return error pointers, it returns
+NULL on error.  Update the check to match.
 
-Fixes: ebac87cdd230 ("clk: mmp: Add Marvell PXA1908 MPMU driver")
+Fixes: a89233dbd4df ("clk: mmp: Add Marvell PXA1908 APBCP driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/clk/mmp/clk-pxa1908-mpmu.c | 4 ++--
+ drivers/clk/mmp/clk-pxa1908-apbcp.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-pxa1908-mpmu.c b/drivers/clk/mmp/clk-pxa1908-mpmu.c
-index e3337bacaadd..90b4b2488574 100644
---- a/drivers/clk/mmp/clk-pxa1908-mpmu.c
-+++ b/drivers/clk/mmp/clk-pxa1908-mpmu.c
-@@ -78,8 +78,8 @@ static int pxa1908_mpmu_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/mmp/clk-pxa1908-apbcp.c b/drivers/clk/mmp/clk-pxa1908-apbcp.c
+index 08f3845cbb1b..f638d7e89b47 100644
+--- a/drivers/clk/mmp/clk-pxa1908-apbcp.c
++++ b/drivers/clk/mmp/clk-pxa1908-apbcp.c
+@@ -48,8 +48,8 @@ static int pxa1908_apbcp_probe(struct platform_device *pdev)
  	struct pxa1908_clk_unit *pxa_unit;
  
  	pxa_unit = devm_kzalloc(&pdev->dev, sizeof(*pxa_unit), GFP_KERNEL);
