@@ -1,119 +1,112 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA0C15CD52
-	for <kernel-janitors@vger.kernel.org>; Fri, 29 Nov 2024 09:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1799B1991D2
+	for <kernel-janitors@vger.kernel.org>; Fri, 29 Nov 2024 11:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732873969; cv=none; b=KXRlGoJ4o4s9zTjRIxSAWdBW2nZN/8OgBvVhDAOjxvlJXgEY7n1ji42PJHIkr34yGmju7bhKNkK4ElP2O7D6o3xI+Yi2uMP5CK7ZBBCIuC9j0RhSUTq9ighTWIgb/oLLaafrPh3htp5CwvE+hhjfYuPKhpjNWnVBfd5fVnHCV38=
+	t=1732881383; cv=none; b=DPCHuLxRURmbNc6mrwvXDX2YZIpY0vFCS+NqZSeWBlJDZ8rPBfrLICj8MlT+GHXmlJ4STdT58MZPDN2vqTJZEecf7cHdzhQxK/YbjTbcHy0C84cS0wDvowsykGDZQ852XAzKkA4A2kGq7pqisbSg2S9WkBLYmiX7cEb08Zs+8Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732873969; c=relaxed/simple;
-	bh=SqmOT6iWjnt0mG+nwdZYca2nN237AFxzOVzsJfDWvqY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UDWWnYx3+G7we5SvJwvqiHKZYpGu3lx/JhCTHOQhDo4oPeoX9FHMVRLaSMkUCSz3SdjAVeDidVIxtjMbp9tNyY8n9jBf/+MeLcYPffSW0yGxof37zXRvVZIddekfWGb7Tkxj8f//mwJM9UkEkIEtD1pE4cNIU6429wkZAUTFrxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PB/sQjAw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1732881383; c=relaxed/simple;
+	bh=BRdQq1d646B38q0Lh5kk9wKgLFcCeeNgaOzA4wBFSYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eu9JU1zXdFyF+EeJDIsOIzT9+DMWcIX4J1BIE00Jjg9403dQZZSJURzPQQhGmg4mlnAdJM2vgeG0RUfXHcSsAfPiyStbDM4Yw7C7VA0lvO+cRfzDTe4PINI9kQV+YldY6EogePm2BQohwFqy2eb35S2lYYDeOwqFgqQEyEZMCYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HzmXzuTb; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PB/sQjAw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732873966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=u9pRkC1e52aumPgah0dPBX2kXf19ILENP915r5Qwrhw=;
-	b=PB/sQjAwGKzNRQb9trHpHFbGh3W3OXgKkJrdO2fvS5oOYbFOLVRyhNiWY9Z8At09wzXGVx
-	xbnKP6arz4xnk8ntzEWTEUNaRaGvzbTjeBT+Dox2S4c1bWdJoHVT/yQVTHsUUBlSu2OaLy
-	TA5DqIomaP+mm58reCUCx3Iqb7CbxXc=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-392-bWLzZfGfNquTkfCIBWDpXw-1; Fri, 29 Nov 2024 04:52:44 -0500
-X-MC-Unique: bWLzZfGfNquTkfCIBWDpXw-1
-X-Mimecast-MFC-AGG-ID: bWLzZfGfNquTkfCIBWDpXw
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5d028dcdb47so1032378a12.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 29 Nov 2024 01:52:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732873963; x=1733478763;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u9pRkC1e52aumPgah0dPBX2kXf19ILENP915r5Qwrhw=;
-        b=du3roMrhDJIpKKSsHnyJiJeCzCBnbJt6HFKqIALrG6u4YXeOgq1hh3Zrgy6QI/2cBh
-         UY9nWgZuh7jtTr9wZpIm3RPvFvoqqR9oShILINc7yK81bTbxaxbL3oo6fRYMvuoZpl6U
-         Ph6KNMcrtnIEqZ3IT8n3/wa7m15EfJjNVsT40BG4VLg1ch518BZR4bhTGb13B1JY1fT+
-         OS/YiU/uvq1CybM2UrLegwR94KC57JOAdHshTFLtGE7d+hS22SAXUnP85CZ4J6zRGJ6A
-         W73g+PwfHyDQlgPR55oCfVlMLxU/A6jDjNkvx01flLCT/+2ITL/YDSv0cnsehpazeV6j
-         A0yQ==
-X-Gm-Message-State: AOJu0YxKLlsMptwJQfULItYZGYUI46YQ5G1ORSC+I/UMQYfSorhZ7VO/
-	mbND/AGHHZ1B8kmYV4AD/f1h6MjuZx0R7+V7CU2+2R6S/IkDeCuK7lCXkSNipjXvPOJCHuYwbz7
-	uyrx5Ty6ldhWGOtTLG0z4QTxudt9GzeYKvjsClIdNIYN0/3BIrZDXITxrJVvwQE0FqA==
-X-Gm-Gg: ASbGncsunqPEyjBqkosSJmLePAPwp8j/3hvBISMU5EH1SHykf9EfTrMSytRtNwYLqin
-	uZwIWuzLKYTyPa3vXpyImLV1LvXL5IQWZIFshmcj0UPA5yAdUH3OwHZ4Le79P8vhVIyoMwVno6J
-	ld+bZWzrmgUxE3c3r5yf/RYY6MrIBpEqHx4x+m7M1ORQB468EiXA+qysC+RYW/3ng7f8GcIReMm
-	Bkr6oA5sIOaqwl8OLhh74LU1eJc90Eqlr4020OyDjKs+JxWcmnw8rnivPn9BW2lmA2Nx5f7JKbu
-	TQymz7Zt3DGja38Hdy1VnQ==
-X-Received: by 2002:a05:6402:42c4:b0:5cf:f5fc:4160 with SMTP id 4fb4d7f45d1cf-5d080c69119mr7901103a12.34.1732873963452;
-        Fri, 29 Nov 2024 01:52:43 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG1x2CcmMS3DDHYn2ZMvn/87pV8k//bJ2vQzTxS8d5iTD5KADjFjqrm1NCoFWK+kP+P/4M1Eg==
-X-Received: by 2002:a05:6402:42c4:b0:5cf:f5fc:4160 with SMTP id 4fb4d7f45d1cf-5d080c69119mr7901082a12.34.1732873963145;
-        Fri, 29 Nov 2024 01:52:43 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097dd9b7dsm1728078a12.52.2024.11.29.01.52.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2024 01:52:42 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Chen-Yu Tsai <wenst@chromium.org>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HzmXzuTb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=BRdQ
+	q1d646B38q0Lh5kk9wKgLFcCeeNgaOzA4wBFSYs=; b=HzmXzuTbPF/4uDarEdbY
+	oMBibca0fqng0poVkkQP+vUFIM1sfz/nke4hLYjX6vS+OWNDBRQKXaeLpodoVbZc
+	Y2rMkOzItkbUXzju+UuDzC+WEQkM439gX1vnalf+T0RPeb5MRTxtmzgPuw8cBW9J
+	zbMb7qKyjgXYpVUqdg2Q8UYS3IiMAqL7lBoEi+CS2+Oo9lP/xdvpIKoyQRY/85mX
+	nssR/XQOdckKeluQCYNbpy3Wg/R2/qr5ie7hLQ0LjPSa8hWudo+QXNDENAYb6Wdc
+	vExRZAE/KKZBsrhNG3jTD4sVQseG70jbe9CLd+W29Do3kEiFloV1tG2ge/0qYOp2
+	yA==
+Received: (qmail 1390799 invoked from network); 29 Nov 2024 12:56:15 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Nov 2024 12:56:15 +0100
+X-UD-Smtp-Session: l3s3148p1@0VPL4gsodtMgAQnoAEnuAE61Ad4iLfCs
+Date: Fri, 29 Nov 2024 12:56:14 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Douglas Anderson <dianders@chromium.org>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: fix typo in I2C OF COMPONENT PROBER
-Date: Fri, 29 Nov 2024 10:52:38 +0100
-Message-ID: <20241129095238.51748-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.47.0
+Subject: Re: [PATCH] MAINTAINERS: fix typo in I2C OF COMPONENT PROBER
+Message-ID: <Z0mr3uIatn1A0iSE@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Lukas Bulwahn <lbulwahn@redhat.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-i2c@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20241129095238.51748-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yBRPQr3UFnGOqWre"
+Content-Disposition: inline
+In-Reply-To: <20241129095238.51748-1-lukas.bulwahn@redhat.com>
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Commit 157ce8f381ef ("i2c: Introduce OF component probe function") adds the
-header file include/linux/i2c-of-prober.h and a corresponding file entry in
-the newly added MAINTAINERS section I2C OF COMPONENT PROBER. This file
-entry unfortunately has a typo.
-Fortunately, ./scripts/get_maintainer.pl --self-test=patterns detects this
-broken reference.
+--yBRPQr3UFnGOqWre
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix the typo in this file entry in the I2C OF COMPONENT PROBER section.
+On Fri, Nov 29, 2024 at 10:52:38AM +0100, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit 157ce8f381ef ("i2c: Introduce OF component probe function") adds t=
+he
+> header file include/linux/i2c-of-prober.h and a corresponding file entry =
+in
+> the newly added MAINTAINERS section I2C OF COMPONENT PROBER. This file
+> entry unfortunately has a typo.
+> Fortunately, ./scripts/get_maintainer.pl --self-test=3Dpatterns detects t=
+his
+> broken reference.
+>=20
+> Fix the typo in this file entry in the I2C OF COMPONENT PROBER section.
+>=20
+> Fixes: 157ce8f381ef ("i2c: Introduce OF component probe function")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Fixes: 157ce8f381ef ("i2c: Introduce OF component probe function")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to for-mergewindow, thanks!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1240e75ecf4b..d1b50664b5e8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10765,7 +10765,7 @@ L:	linux-i2c@vger.kernel.org
- L:	devicetree@vger.kernel.org
- S:	Maintained
- F:	drivers/i2c/i2c-core-of-prober.c
--F:	include/linux-i2c-of-prober.h
-+F:	include/linux/i2c-of-prober.h
- 
- I2C OVER PARALLEL PORT
- M:	Jean Delvare <jdelvare@suse.com>
--- 
-2.47.0
 
+--yBRPQr3UFnGOqWre
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdJq9oACgkQFA3kzBSg
+KbZSDA//WVfUWr7RZtRfQdM3rxGc3tg3gOh/v43xBLYMzMw+YRr5ntV59jLBixkc
+i5Dljx+8yOOqw3oNJwTe6uVoHfwP8kc/n0BbdunKUoO9LyoI2Jv1cpsANdleKJi0
+9QXahMyl/w0Jmoruv9SaMxg1GYg1wNx5mtCqIo3kZEnopxkzuOXpE6u1gelQ69f3
+u69Opunm4olZ4+SwShk/y0M2t2om8sUoSeNuTT2L9wSJbuEk/uTnKhe/ft3NP/H8
+d/D4VMBOAQLDP4TlC5hJZD/Jxi8KKbEoJN0KbZMysACtcWiPdlu/RWIUg64OzfQ9
+y4gyiCtlDBGufCJicdhctxFD6PCK6ay7ZY6BwfUW1xKRV1f4sdSpOBtOZDqdMMi6
+s55/MnKtu9RvCXqVgPPNfd1VYLK3DKQe5/WDBYRm9r2esbXvKwS4kD5M/U3MxMJ/
+XVxbCzTQWhqc5RDnvOJW+O53FVj4vRFqavCd4D4DVRFqBdL/bXTdvvR0gH0gUvJV
+sYSB5wiKzW9iKgLeKYqyaS6Y2t/87rqjfxyRPrybX4CdEGijcbBjIA5Y+56XtMTp
+OQn7TVoANIHZFEb3E/PpbFY70GINlzfp2QHwt8olCGP3lI5w0ugg7H0ZHP6ozzyu
+XZ7/rXO6FQRX+6cpYCsWxc1co+LCPcEqgw+wOZQedvFdNqBhlPU=
+=hFPO
+-----END PGP SIGNATURE-----
+
+--yBRPQr3UFnGOqWre--
