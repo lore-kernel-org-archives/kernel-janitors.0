@@ -1,74 +1,74 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9631537CE
-	for <kernel-janitors@vger.kernel.org>; Sat, 30 Nov 2024 10:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6A71547FF
+	for <kernel-janitors@vger.kernel.org>; Sat, 30 Nov 2024 10:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732960870; cv=none; b=GAlKOEkleQ40UKie3HdWaVYudYkPwAkbtXNRVNTygZABhaFO4+sRSVqyWJCdmryC6Qr86SldkT8MN/KJ0UbN62gqhruFiWNcbAofSffb7fMaKnBdHXqyCdM27kV15BqB7Ib25sDDaN9HUjMsub1r31yisfSNJg3/mKVSuiwV7kM=
+	t=1732960880; cv=none; b=Un4ybVN1IJBbKgXZ/gIIK2roSXH3/ARDn1sbth6Az6Mf0kZnbiBLQBbUf60xvJVq5zqGy4ab0cVkSbPpNG1RA5vuoRP21cfyYzoU1oDE3BWlxV3GzcODPcqCFjhdYEehbYxMz+pBAydI3adTX02pozyTgyVY62jqYB5LjyfUpbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732960870; c=relaxed/simple;
-	bh=/XpaTseG/TEeisBd+wk4TWWeiStEhV6ICnH01fIZSu0=;
+	s=arc-20240116; t=1732960880; c=relaxed/simple;
+	bh=pwCVrSo2d63QozkbYlTrgoal5OaXwx+yCaGWKkdfnss=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ir+gjIHeLqCqI/PkQch2MrD+a+yyXGlMuX/ujoEeeFjDsuiq1qUKnxEDPFoaBssfubL7lMxofL/qFUhUmKVWJQ6i71JLd0Mu/QqUAaOvKSpNzXzxQu/MMWaD+Wdu8/Jq+WQC0kh3NJgZh2XICoRDDWhy7Za08T0KOo+PFAy63Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d1YyKLUz; arc=none smtp.client-ip=209.85.208.49
+	 Content-Disposition; b=TGR4pDt6lyNukl1prsVwgZf/0C58yvRXabtrlx9xpnR+5GWEFCdwn7D12W7shSQeeihL2uxLt/YqddTWafHuXQZNxK0YkQ12A4r9kSPSzgNvTO7IqEb9D4JSV6ARjcp4m+V0q2AbQ1Tmr/hFGuixkIUxWm9f0NdnHXvYHq8B7fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xJDwtJWJ; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d1YyKLUz"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cfc19065ffso2973595a12.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 30 Nov 2024 02:01:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xJDwtJWJ"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aaddeso3154421a12.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 30 Nov 2024 02:01:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732960866; x=1733565666; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732960877; x=1733565677; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=a67SmAxg7nZOip6zVhj4ZsmBcbeJIrKRZCIwBRUJFXg=;
-        b=d1YyKLUzWuTjh2B4bEUrPOGTF5zhAiYqp3Ha8yY5Quyjso2KPJm4Yt6xEyzT99yZz2
-         nFTJbNWOzGTTXjU4aPAATBmUn9maJj4zvf1B4UH2+n2o8SSGI5XRf5s0U2ynrVd5ZKuv
-         YUzR+igj4Mu9a8DiHoCfEAWtSUzpMBwqOVMcG6dwxs0d8tGpWBcLnAN7x1FzwIZXFXqs
-         T33rqTeCOZ/nOxYSQbL4xJI4egCBO00mku5/zd8Zpodkuw367jFtr5ktz4QjnNhR5TJ1
-         9Q8N4GlOZI6BhdRzkg8HKX+AwHu4VlfYOohIYLH3AcMBeLpuR7GkjR5Ude0X1SclfK12
-         OCOA==
+        bh=aK0dV1gfejvgX5AVRAv0AO9jA2ssYUcI54wSBwP2RLM=;
+        b=xJDwtJWJ5nVVYoF8BeAwKwPx19hTzgGsYMyVveS/HUx/+9EhIYH5A/O1785udRsVQe
+         AMUgPTTC8wFIg11nGNEPm29CLucQOHlZWF6CaserezMgX9bMvWBoUoNCcldIi2m3Sxva
+         s0Vlif+LVIFuiamCOKtOPO9u37LmTIiu8HPte1A86ZgQPtVPjyuHvBoTZck3cOYfh5As
+         PowTScUTXytEOhD9GNC5CXfPs9AyhTbFsvMk1jbHGg/deDV0MhhNEYpziiF09MSb6B7s
+         Mx823j+dqBIkBVwLJfwWlAAC210nBtQWZy1IewM3Z4sXY2vg9CsvPZ/spqHsV+rx+CXl
+         WkuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732960866; x=1733565666;
+        d=1e100.net; s=20230601; t=1732960877; x=1733565677;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a67SmAxg7nZOip6zVhj4ZsmBcbeJIrKRZCIwBRUJFXg=;
-        b=FnNo03sqO1JR2Eu7eMbaITYyxWXRKb90quUcdJ35mW8GG95vQcXVHllbpUqVUhbDR9
-         DLuCMZA9v/cAP06ck9PExiaYUBVXFGSBZ3DmDQlE1W4VEn9OfayzTBXkNX2JP4bpyuZE
-         FnZT3OrWfG7d/Nyh2OSOaL1m/DtKJkQc312IyUkadMCwwQxT0zdVYrbLcVRVwz243zgw
-         /WzqmIXeKimzfI4nMB9oCChtlXI1yblEU2nI1y3sbR8dSjtI6cuJv3gAkSzIPvVlK8UT
-         UyEBexprrNTVOEe40FF+3XCYCuhj2r6rgUa/UP4WoEbst8S+QHPz4DyQ1JYWE1Sl5nwO
-         cw7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU31gVSudWbUAoqK7T0JqKEWHzWmAgoKKRSJ+Vo8FAwVXItyPwj8B7BBMRfMklA0cMpvlGFHZtpewRSz1PVmgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdhAoPkbIu6pno7s1RBC+dwcZLuhzjmEoOQHT+ccfCTnlbm+TZ
-	T9Y4ujebmuXI08z5PcTMw5vvvmJ7s1/UXf1cHn99xiWkr3kIReIwDKLjHH7IutA=
-X-Gm-Gg: ASbGncsur3MaRCAN01tsi+GHxVvdjE7VQALUJyFNx3+XtmdK5qVRgvNUI1DO/rk+cFY
-	yap5TtbnV1Csxijntk1vAA3J2KxEkYGk80djmLnaVSRiRUFIclMHG9xxGF2izgwSfGz7xvzxyo2
-	ShSrx797cxgzrRHy2vXdhRBe3H1CE4Vky+IMAaQE6wVPAepe6aJF507hwn5Xvdd9ZBXCYMI8Vm5
-	nzWPCGsJrhF/74rceTgAHgzy7eGmYe/7MuS7dyMHUXtwze/q6K0YEdDw45UFZuAvqzlEekr
-X-Google-Smtp-Source: AGHT+IHz6Lgpgq1CwlN5SY6GoUtJEsnuXZdZiLP/TvT694J0WqT85iYkJrByZ7WTMbPj28wc6GAvsQ==
-X-Received: by 2002:a05:6402:354c:b0:5cf:e9d6:cc8a with SMTP id 4fb4d7f45d1cf-5d080bd019amr12849937a12.20.1732960865832;
-        Sat, 30 Nov 2024 02:01:05 -0800 (PST)
+        bh=aK0dV1gfejvgX5AVRAv0AO9jA2ssYUcI54wSBwP2RLM=;
+        b=EaB8zmWLkEwvjPHIopKFiL17TjJaSYuw63xmi+HwyZf+pQOoEmtzvGFwn+olmCq0xk
+         qh11rbg0OFR/JFEKX8VcF02BKcMhqUQYqKqMpkGeqNbNRGuHyYQDGNbe+Mo5NKLrcCgd
+         lHkvnHHiQ7O3ZENw8mZ8Yfg2zoilEsTuVY9IROqsG60gye/LFVwZxWLjQTYuzIwDIc4C
+         NeK34l3ljgLhGmu1Wi86Qe5u0PI2HmJd6WHpEyXMa3ZpR4niEYNDHJiReWA0QXTHKccW
+         LLzag07TB85wN+m481YMs93Qc4WEPqryHXyrklYX1mYE5hkV8NRt0sjQxG+cx6au0wsc
+         78vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCg+FTY/rDAt9Z12UqrB/mi4QyaIauYyvemNZQbUMdt4/WVT/p3X9RLUeFGEGKQCLVvhGIowwRpaE5iZ10Q2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2hEg94+NLh7imJ4KnpRb7pQGknmFdiuXPVAGEJZPGWDOMf3YZ
+	G2u/Vxbdn6n28liWZN3bE7A5Sk8abfGDGRTms02RxjkGpJeJXESRvsieLxImyQI=
+X-Gm-Gg: ASbGncurBYjaZmfn0a01EeO9FoUXq8kg1wrZ+c5ZSA1NjYznwaHDJdgv2Hfcxra7xa2
+	op7Xv4usVcJyFK2uiwcAtmcld6MTO0Q04UQZ897avvualV6SptxNve9VJ2A+kMADcHwA759hZzM
+	6EkbjYd2gFUiBjvKb3gAjRnMfTv96XodWbV2nNXBc8fdep2CdrcJbZe+33GLV/IlyrPkmmwim+H
+	fC7fr4pRflzKVdxm3v6Ld7BVHhl9n2y3kztxMc9ZWb89OfnG+wqSRciAO40UhQcs3Bb91Oz
+X-Google-Smtp-Source: AGHT+IEtv6gd869K+dRtqKZE6OGZWNVbaOzagbrsUDx5xx6VOeUmeXvzJOk8eFEsMgnWDlwVcluldw==
+X-Received: by 2002:a05:6402:2116:b0:5cf:e3cf:38af with SMTP id 4fb4d7f45d1cf-5d080b8d46fmr14459310a12.2.1732960876730;
+        Sat, 30 Nov 2024 02:01:16 -0800 (PST)
 Received: from localhost (h1109.n1.ips.mtn.co.ug. [41.210.145.9])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097dd619bsm2665439a12.39.2024.11.30.02.01.04
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d097d9f5fdsm2670060a12.15.2024.11.30.02.01.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 02:01:05 -0800 (PST)
-Date: Sat, 30 Nov 2024 13:01:01 +0300
+        Sat, 30 Nov 2024 02:01:16 -0800 (PST)
+Date: Sat, 30 Nov 2024 13:01:12 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yevgeny Kliteynik <kliteyn@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH net] net/mlx5: DR, prevent potential error pointer dereference
-Message-ID: <aadb7736-c497-43db-a93a-4461d1426de4@stanley.mountain>
+Subject: [PATCH next] PCI: rockchip-ep: Fix error code in
+ rockchip_pcie_ep_init_ob_mem()
+Message-ID: <8b0fefdf-0e5b-42bb-b1ee-ccdddd13856d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,29 +79,24 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The dr_domain_add_vport_cap() function genereally returns NULL on error
-but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
-retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
-and if it's and -ENOMEM then the error pointer is propogated back and
-eventually dereferenced in dr_ste_v0_build_src_gvmi_qpn_tag().
+Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
 
-Fixes: 11a45def2e19 ("net/mlx5: DR, Add support for SF vports")
+Fixes: c35a85126116 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory allocations")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- .../net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c    | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pci/controller/pcie-rockchip-ep.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-index 3d74109f8230..a379e8358f82 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
-@@ -297,6 +297,8 @@ dr_domain_add_vport_cap(struct mlx5dr_domain *dmn, u16 vport)
- 	if (ret) {
- 		mlx5dr_dbg(dmn, "Couldn't insert new vport into xarray (%d)\n", ret);
- 		kvfree(vport_caps);
-+		if (ret != -EBUSY)
-+			return NULL;
- 		return ERR_PTR(ret);
+diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
+index 1064b7b06cef..34162ca14093 100644
+--- a/drivers/pci/controller/pcie-rockchip-ep.c
++++ b/drivers/pci/controller/pcie-rockchip-ep.c
+@@ -784,6 +784,7 @@ static int rockchip_pcie_ep_init_ob_mem(struct rockchip_pcie_ep *ep)
+ 						  SZ_1M);
+ 	if (!ep->irq_cpu_addr) {
+ 		dev_err(dev, "failed to reserve memory space for MSI\n");
++		err = -ENOMEM;
+ 		goto err_epc_mem_exit;
  	}
  
 -- 
