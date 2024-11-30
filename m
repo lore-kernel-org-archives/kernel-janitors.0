@@ -1,67 +1,68 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8580914B97E
-	for <kernel-janitors@vger.kernel.org>; Sat, 30 Nov 2024 10:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D4715573D
+	for <kernel-janitors@vger.kernel.org>; Sat, 30 Nov 2024 10:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732961283; cv=none; b=uHnF0mVWkuc0QMhw4m2/rh2JyH6O7NK6+WUVfsMaPMGCNmFFeM3czJgQWj/Eg+/L0JJH1KFTzOLahGmq68djvXSNDJmjUwjq36HnFf03GI924fQkuPzXbkoR6rYSR3ipcfkAa2nJue/BQ0FijrpZiPj9u+R512a8RSG2HEziIGA=
+	t=1732961305; cv=none; b=B55XM23fbvkHpqC5eYXeK5srZq66kQW/gP++x14XLfaD/lKWG/i1WXUKFVqwCFbPs/EXI/Nh6m44dZt9i5AZiRxyMBVdU72csbPhGyu4RbeEJlUapivEEkEHMwlwypprCkKUfKHL8XjE7+jDOzSb0QfvOsjdi6/PFOoWj+rTr/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732961283; c=relaxed/simple;
-	bh=7zmpFrkNE9b9fiTObZOVjwcI3iZNrUR2CLn6+i8hq2o=;
+	s=arc-20240116; t=1732961305; c=relaxed/simple;
+	bh=yGN0skpZCH/XVXgf1QIShlnVw3a2xJjULCwKrnqKSg8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pJwcJCR2Sn+vBoQHRV9E0+9+Fi8pJyuQSvXo4hst/gc3+HSYDsDT4Vc/frNBusfRPC+pr26imwtdwF1CME3r5XITwcUeMNKcZ12zkUwiXAsz8H412fIeOce1IYp7/6xfqAaPmVxuU1KiEqsJEDfTrbVTd2NRNa1a4T/GerDK9Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b3GBR9rd; arc=none smtp.client-ip=209.85.218.50
+	 Content-Disposition; b=PxcYc2JSjpFwawBdWSXULAz/xBEaluBN1uDtW76YoGRu9D0etIrPh/pH/DeVRfMfGEoeArb1bBLjlptYdxMYRoZN+YQt1OtXSOpJLodC3bYNLE7KIVu9An3jt1wbQObOH7LMOrT37S605tg+JkEtsfav+Y+3NLuA+TyFbUWRs9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZTWUD4X; arc=none smtp.client-ip=209.85.208.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b3GBR9rd"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa52bb7beceso286351466b.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 30 Nov 2024 02:08:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZTWUD4X"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cf9ef18ae9so6417150a12.1
+        for <kernel-janitors@vger.kernel.org>; Sat, 30 Nov 2024 02:08:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732961280; x=1733566080; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732961302; x=1733566102; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bF1qKdUD6G82UToWOeQ2OIejZEXXxD5wyzBbKqaeajo=;
-        b=b3GBR9rd0hyfCgYKbu8TnWR3qKxYGOMQvNRF3pPW54jLcHrFjMguPv5NyYyQOP/YDm
-         xS1dSKvt+9R/eR5S8HICejlOgGrg3re5qSYaL0q8UW9qmQNmxllmN1YcAEP3qHENpyQH
-         wtFEK6EJmi0nPi4VAVQzhJyVXj6cK9+e4yCfq0eNHGQyBIUWhrTiA4TZx1E50Puvuyqm
-         Hc5hO/jiXVBPKMBe5EBA3D5G/sNkyeHn1qALIuKFAW+NtTiZ/13P0b0jKei9fEPxKTSv
-         ET4wwN1gmBSt5AT9FUTVpAMrMVG4RqqC1cq3D3k5B5asl4+ABWPuQje1Yh6MyZDfwdJH
-         VlTA==
+        bh=Foltdq1wnJptf4CLVy8W4RVoCPqvSVXILCEAnOfXokg=;
+        b=MZTWUD4XrpdcLOOg/ncjq550IxAEH9fos0PkNXiSDMfZIBB7EouCckfaKvw+SQvniv
+         6BIYMzLjh7/OzNTCbdcXSd00o2z0JkDLP0ENn0KKWU/iXu98W+4j853c5Y1495fUPVly
+         tCid7j6+99WpmrAbECIy5MUwKD0buQgnG6CvK6fEv7CwtdE5HSSL2E+kV8tjx1mdBmEF
+         mbAQepSnwTujAaZX2EY9WIlXaXk9LRqudY/Wc3nRTQUGq7Wvw+TikBaeRZ+XAeVh79PX
+         Qd60dv/o5jdJBs1vttP2+jjy5DiYRboAjOAGn04LfrO9VjIfcaadXLVgbTSGcvYy6M34
+         mXsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732961280; x=1733566080;
+        d=1e100.net; s=20230601; t=1732961302; x=1733566102;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bF1qKdUD6G82UToWOeQ2OIejZEXXxD5wyzBbKqaeajo=;
-        b=LFr0/T+iGMLTzdFGjSOZh4y3aORewGTLbp41Lf54yR6yr1uJLrE0ZaDsYhyzD8lzBV
-         WZXPdhf8RDgLmvmhiwAgGUlXzl2dSk/DCn4fnrrPR3HRrpuqiVo9hQUoHd9eq/oOTGZ9
-         1KKBNMhNBDtF6HVYMX1ds5A4YDE3sFDGkFT/zYKL6WugIrk0kVzKjUm0biBKPImq2qiD
-         P3paWvSH+1vLdb0ZbYOWmLI4jNpo9wozz/rEb+XxgMREOnPyshpeB9hywJq26DZCobLr
-         3agU6DkOrF+geitCxsnbN71NNVEupdgoWXIaxqEKJziwPK+D/fVYIz4xOA0s3MhgIR9r
-         JWDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlivsXJNmsANs3CJ1aP/YU5iJc2nHmGJ3dfEWpsCBEP20ZQDZ5iHthIpbyqcPRRvzB5ycsPOxvfTT21g8QbHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6s7TZ5Pq/cEAmBKU9kj26rHEYskZtzHmHl3R3W+NtuSZ7qDMR
-	KtFWfa+f34DsvSTTprxgLs11FPOEfSRMTXPFJ3DYxxu3hpF8XL3zIwE1PSGGm0I=
-X-Gm-Gg: ASbGncvnAtWwcXfODSn6685Rg3mYuMYm+W4sA3nfzHtwjHw5svbK5qs+tyC+lQd9KFY
-	QdNe/aPNQ+t/rCVABJbLtUiEaRXRtVh5WLf6GNBYtHHaCk3E1mXG4n3RovRx2nns4JoTWMcVXZv
-	P/llzEpZ4t4vO699qJSrbr92s9jPmE9J/5sz5xHSbWr/SwdhJz3QHiI75Ra8AGKMFUs5lQMPloD
-	lT3H1QGrChqkrrR+i/YwwGipntgLD//jlbzVT0lreaVUQTvTsyAHvMYTmCcgTI7Y7MyEPKl
-X-Google-Smtp-Source: AGHT+IGFFkuSzUzBV6MpzgZNlz2YgAq3cRPDWZKCNGkjjw0xQWjwQCZY0kfL1J0lIP1VbayZcSBWxw==
-X-Received: by 2002:a17:907:7819:b0:aa5:b2b:f236 with SMTP id a640c23a62f3a-aa580f353f3mr1240877266b.28.1732961280003;
-        Sat, 30 Nov 2024 02:08:00 -0800 (PST)
+        bh=Foltdq1wnJptf4CLVy8W4RVoCPqvSVXILCEAnOfXokg=;
+        b=MMhZrwa7K1koUOAPDOanQxtaeWIqr83FaD4i82RoT0mM2woxwUweD9LP3510OTWJv1
+         triQHrylnAmJpskfVw/u90Cod717MbxbZpaWd8DEvnsU5FQbwhCpl+/zympVYr1OMNq9
+         kIZQBz9i/lU+TqEgPuS2IylDuq5oBRluDRlv5a8z7OIJM3sfm2DEVIds7U8omXX77weK
+         m0OVceEEHu2sDUXOzDRi41bH/hBxP2yGBBgHLINJcjaVAhXc5yUjvZC5LyWO812WX3gj
+         gO9me0exy9fGplYcyG1m7Kvg9H7tWXO1lTIvqlzsPugZRU28klcNx/99rRk2mDrQivwt
+         vV1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUP6eCv0knFcpk/TB8S6vMn8DYhZN7xM4oz1898qrLTrJQY0xdQrmSt48uIZ6d72nPKJ4nYacKW3zG5r0/sjik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUdt8znSq4YOyOuRrx/JOrM1WTRtr4p5IgeNudPbs1sE+0xQwj
+	yNQ5dW7Z/TV83XSUopK7W7Wz2O1DlMrZxTwGqZW0/IrI39dDrWkUhymDCZSw7B8=
+X-Gm-Gg: ASbGnctyiVoCp7WYIkCizkXyhgLMxUcE1NdVacOF/VVn4/f8Xsi4sqlA2NLpHFQ1Kkf
+	v5HBX0WEAWyEYHg+G7EJh/0MoVEkM9AFf8kRPYiMH4o3whGR1NJAe2YtavGZGdCuv1+dYlGLuJr
+	0Gl3V+S/+3CA60qvw7lBbhmo8SZRAintrJIU4aZnxpNUIyfG/CPgODEhywmKTPAvr+OW6ITkiot
+	HH9TpYvRiuHMC1TISCYwrKscwthu1Dfq0lX52gpWTnVmxOJLDQJpyBb3dxTI0GGG1Ms91/W
+X-Google-Smtp-Source: AGHT+IEpsOjTRBw3ZIvPknkFFjSqYnH4ouKRAqfBsVsF+pma6HwTEfCu8fT9yrQ73+MialO52y3mFg==
+X-Received: by 2002:a17:907:7615:b0:aa5:358c:73af with SMTP id a640c23a62f3a-aa5945075fdmr1341277966b.6.1732961302097;
+        Sat, 30 Nov 2024 02:08:22 -0800 (PST)
 Received: from localhost (h1109.n1.ips.mtn.co.ug. [41.210.145.9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5996de7e7sm264394866b.71.2024.11.30.02.07.58
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa59990a79bsm264809266b.151.2024.11.30.02.08.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 30 Nov 2024 02:07:59 -0800 (PST)
-Date: Sat, 30 Nov 2024 13:07:56 +0300
+        Sat, 30 Nov 2024 02:08:21 -0800 (PST)
+Date: Sat, 30 Nov 2024 13:08:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] opp: core: Fix off by one in dev_pm_opp_get_bw()
-Message-ID: <41ae307c-f6ff-49fb-a962-eb488152de71@stanley.mountain>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] ALSA: hda/tas2781: Fix error code tas2781_read_acpi()
+Message-ID: <ef773f8a-a61d-478b-9e81-41a38a75c77b@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,29 +73,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "opp->bandwidth" array has "opp->opp_table->path_count" number of
-elements.  It's allocated in _opp_allocate().  So this > needs to be >=
-to prevent an out of bounds access.
+Return an error code if acpi_get_subsystem_id() fails.  Don't return
+success.
 
-Fixes: d78653dcd8bf ("opp: core: implement dev_pm_opp_get_bw")
+Fixes: 4e7035a75da9 ("ALSA: hda/tas2781: Add speaker id check for ASUS projects")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/opp/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/tas2781_hda_i2c.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index d4a0030a0228..09a1432561f6 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -121,7 +121,7 @@ unsigned long dev_pm_opp_get_bw(struct dev_pm_opp *opp, bool peak, int index)
- 		return 0;
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index 45cfb5a6f309..8ec03bda85f3 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -143,6 +143,7 @@ static int tas2781_read_acpi(struct tasdevice_priv *p, const char *hid)
+ 	sub = acpi_get_subsystem_id(ACPI_HANDLE(physdev));
+ 	if (IS_ERR(sub)) {
+ 		dev_err(p->dev, "Failed to get SUBSYS ID.\n");
++		ret = PTR_ERR(sub);
+ 		goto err;
  	}
- 
--	if (index > opp->opp_table->path_count)
-+	if (index >= opp->opp_table->path_count)
- 		return 0;
- 
- 	if (!opp->bandwidth)
+ 	/* Speaker id was needed for ASUS projects. */
 -- 
 2.45.2
 
