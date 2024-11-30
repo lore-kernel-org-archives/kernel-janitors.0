@@ -1,33 +1,40 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD5512B93;
-	Sat, 30 Nov 2024 10:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B49013C695;
+	Sat, 30 Nov 2024 11:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732962491; cv=none; b=bVG7tfFALRYC5vSURsIJ7eZsenFRhUu2UkVrBmQYVbCkdycnPYhoNwaFv2QXza9mmjauFEa6ZZNVfIHTBRi+3u+uuOaaJ5FydmzySSuMHpmYDosog/epnfeu/f4YG/86/ZGqoQobkGnYDUwa84yh3WQR4dYRUJgWVXrfg5wy31c=
+	t=1732965816; cv=none; b=i4P2LnPoH9Dru654P1ufyefPLf+Zepsz9d0a7DYVx+9FCiAlx3JMftHbXO4+PQnSlA3/yeScke0gzuY8PVMxfEFCfPtQ48gvtpHZo4cB+ZmhXe9SAIwtrNgcTmyqeQRcVJ9u5ePFF8vs7a9n5+EByuy2dDojy7qlIOrCB6e28r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732962491; c=relaxed/simple;
-	bh=H0noXI74C/Zki/cAOUy3v09yRzJnW9gLLKsDYh9ILj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VLRDghHp173EoweLDDMIkKmV0v6foZeoFiyAhqnQ8AcUlJHRr25SuBxC35efjUUGdUTCf2sKp5x0iS9X2n8HXySyzxj91mvWOawd/tdU1QL5mZU4wOJgEvX77bsrvyHm+rDjiK17MhpkD3MNx4XgtfVuoXAyp5W2KOAHEQ1Sr0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkzg3Ng8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732965816; c=relaxed/simple;
+	bh=knzIZJGI/ka2HQESpgpY1s9ew3sLGgzZogYqUV0m55E=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=tJ661O3aooVJEmJf5uMMnQFrh+RgeOn1J5sdkh/BQLqPgP9IwvtRBWY2nIOn6NkS4SpG4bxLfnRPA7QgUq9XBW203w73/HaUMigHVRmS8cuQEbDGvYQpHMroCBBE9g9FUHJU0ubSnnc2u3A0bZyT3AIi8Dnu2V70Br51+1BIYMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=un4w9fyQ; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkzg3Ng8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DCB4C4CECC;
-	Sat, 30 Nov 2024 10:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732962491;
-	bh=H0noXI74C/Zki/cAOUy3v09yRzJnW9gLLKsDYh9ILj0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lkzg3Ng8Nd3eRCvOR5+7VFIy11KPI7flKiR1AsNRfmZnUC/tuV7JKtiFhwetJbd9S
-	 oDjTgoxJaCaSuieHu+qpH2hzSkgS5BtmHYbHFQbdKSpbBNlSP6JRvmE+2dXmS6XLMR
-	 LEV7+x3VReDOmaNFj4CsWoDEkT6yIzhyeYOYoDa9nLM5YIu7br8Cwc4MB9RRQIRIth
-	 no0I+bfsXLu/F0V+Ed0EDXk1WHXb0PrPvPpYpCZg5wRAfSoyBjT6XXjL28yE7mXCnm
-	 hlTv1YOMDPxBEKA1uY56amW2K0UXZKSJk9pLnzsGqlH37gZKxhQEe2Mx7ndm7Vje3L
-	 0MKI+2noO14UQ==
-Message-ID: <db90b752-307c-4baa-9aea-c3fbb07e5cb3@kernel.org>
-Date: Sat, 30 Nov 2024 19:28:08 +0900
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="un4w9fyQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732965788; x=1733570588; i=markus.elfring@web.de;
+	bh=knzIZJGI/ka2HQESpgpY1s9ew3sLGgzZogYqUV0m55E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=un4w9fyQn707HCAS+/OpHumpmCjQAjgXooZg4+3sHRB5DqhD/8aekJ0cDG6llmht
+	 SzAnEBnGkARWe9GK42UyVMWNjfZ5dHD8j3AGeJXBQUae1xggkV8AY5V5wBikz3uzc
+	 LhfVho7uJ+SEd3Y/PjbHB+kDTgiLHYm9L1qwmSlxPsWjrGeVVoEkcEti56MZ0EVi7
+	 zlLe13s4fXw/9HBtHBieDWnWEaakNmQACD0GvuhOgAMP4S6dn6U2YfOQp8pL/IL+h
+	 6Lru/wLU7G+dWJZPjslQY6Cny44r3IW29j7N9HW3rJG4SprFE2I2qh+rb7Hv7SZo6
+	 jxl+i1XurwMMuF/qLg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1aHx-1tEsit1LFT-002xZ4; Sat, 30
+ Nov 2024 12:23:08 +0100
+Message-ID: <55392b68-1159-4b95-b107-6aa050f45c11@web.de>
+Date: Sat, 30 Nov 2024 12:23:04 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -35,42 +42,51 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] PCI: rockchip-ep: Fix error code in
- rockchip_pcie_ep_init_ob_mem()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <8b0fefdf-0e5b-42bb-b1ee-ccdddd13856d@stanley.mountain>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <8b0fefdf-0e5b-42bb-b1ee-ccdddd13856d@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-sound@vger.kernel.org,
+ sound-open-firmware@alsa-project.org,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Jaroslav Kysela <perex@perex.cz>,
+ Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+ Takashi Iwai <tiwai@suse.com>
+References: <67d185cf-d139-4f8c-970a-dbf0542246a8@stanley.mountain>
+Subject: Re: [PATCH] ASoC: SOF: ipc3-topology: fix resource leaks in
+ sof_ipc3_widget_setup_comp_dai()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <67d185cf-d139-4f8c-970a-dbf0542246a8@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:9oJrICSvB3vXxBaiRmuxR0PPz98NoJQ2znt/ji/AqoCtWaw+xqd
+ TgkFCMkbf1h79bPaRjrPgBqoRTybbWTJarYHtD1Brf+u3RvaXJ8Nr7F/BuFJkoZU1uR69pk
+ /SDJb/cjUzSFJLQpJqYzBSnWueuw6MKviWoxIFDRF7MC7+t3MsQiJBEQx2QO4RhE8HaJ2r0
+ 8JV+1Ge1qamLsY7Y9aimw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:vTjTXEZz9Vk=;T6qK9UwbxJYOp7SjCirLjKhpnSA
+ rgqJ10PUWDlYpMKXmsQ/Q5vDDU9KF0H5u7T+6dymutBrfxXq7E6oqqC6qxYCD1hFG/fa1Fh1J
+ WRTxtplrmnTFul7f3Ip3/PrVlkP4ko92+QO+FumuwByxSCqSaJdwE9Q5i4IcRrDsgt6RXkl0w
+ 4c3dY9GTTotKstjBDbc5sruyIOson93TCAjABVaY74eYCTFRMCZPVn7M3qjyZNUZXqg+ttOFI
+ eHv1h9yW31hvcu3Uq8u+rX0gakiCRkXl2zE7NgWwEISos3/9cFdIXUZVwFXRNjK7zbJhHpJGO
+ d18juXO/IMKcNoPzpcxjjWK08K/dgHww2eZf4BxOwUigyH8H2g0IW+tux3wnHre7Meyy3ZwTE
+ ecJcL+Ekbq7QPPLpNCNUrX4CbV8HGHat0TaORTYqmZGtlcLL4IA1YjqT/gE6PEqrYBd7p57WT
+ niA+Pifgazh/UFKKG0Bo4Ri6h2WgUYW66IdMQ5rO1792Ew+3SIgn3nbP4w0OUe5PsDsV+tP5B
+ /Uwl4hCJ2TAqPVT/dkDzOY17f0GIXHdSnTlywNZgkORRRSoidciDdRgSd1BGtctYCFmt7tlet
+ y/H8KPa0DCa7Hb0xaHMG+titvot+Y8jneL+8yJuEmKsIo59dQOKlEWwp5Yk5XlSwFukmcys9e
+ Kezdxdo5x/1uHjsAhgm3tu53Ny9JiwWkhedIQvfz0dD68+FY1NFS3AspBvbUUGPXMOO9pr6sk
+ ZGAHsMVSey8PF0rXcVCJyU5nniPHe9HuLmRb0mU6Prcy14Ito98VBThgzPR8qgEdb3LAsJG1x
+ N1owPRMpZgw8wd4Rkv87IdDT8geoiwa/AV3ARhV9SSH0Z6I4OBOCyU1lmmPiDuST1wur/oSOp
+ Ny+OVywvyEnu15OctpzhfayiVJinEufDZ8VKAG6gfhnetYsBhN3zCCCe8duoSJu6uGbhEmuQ1
+ rOYdoHHbAzOrgEFphCzCwPJwzzlkyFFWqiU7W4B40Ru9ZuCd7EwRr+b5N0jIlE+xLY1IafKl4
+ x72qXYVWI3Xp/T3SGWZmuD59JtuW24oRsS4XuU1EK/rlAKFIOHM2m2yU7xBuBAZjlDFkQniGz
+ olh1nv7Lw=
 
-On 11/30/24 19:01, Dan Carpenter wrote:
-> Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
-> 
-> Fixes: c35a85126116 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory allocations")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> These error paths should free comp_dai before returning.
 
-Oops. My bad :)
+I hope that such a change description can become better.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
-Note that this patch is in Linus tree now so the Fixes tag should be:
-
-Fixes: 945648019466 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory
-allocations")
-
-Thanks !
-
--- 
-Damien Le Moal
-Western Digital Research
+Regards,
+Markus
