@@ -1,196 +1,105 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582F11FECAC
-	for <kernel-janitors@vger.kernel.org>; Mon,  2 Dec 2024 12:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57C02036EB
+	for <kernel-janitors@vger.kernel.org>; Mon,  2 Dec 2024 14:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733144283; cv=none; b=alkgO98+Y2tjt3jeF0aA7eoplPJMHZlozowL+u+IHRX/ZMIKNdY9GWbp9ggpD4sAkPQ5UNX8gNyBXY4aOfHWdOd7m86BijcG5iqJcl2YgMn5x8XyOpOI5/iRMF8Q6NJ4kJ1qu9v374oS+n7wjc9m2kch8SYXoa8uw+Mt0sUSSRc=
+	t=1733148134; cv=none; b=KaDJM7yibe70ROzFwlhdYih1c358K4UpeykeLxUJJbAdlnJ4Aj9yqtSEv2/7qu8lps+jPlWmp8PYoPUYv7rgmwPKrvpb+Y/nhWXb/1g2vRNAYjYn8OHz0Om33acIEaxl1kyPy0lL76x3j4ZKYyHj7+tse1exAJVbLkkTMsUK2Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733144283; c=relaxed/simple;
-	bh=GEQTVkp0q7S6wbPvLRUNqVr9Oj8O3XKdaZNNO+BsE7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fJLSaePq/ZjyTqxm+YwBIV2XLVWEYVyvyLbWVfquVhMG0+1c3iSNpmwYW7txQwRj2z+12docBhjIutmNmQTS7Hlkgkg9X6pDqFKbz44N7TiS7ZrqLEKJZnzE5fd7RKJybEhu1HkLJ2geTUYuOwwviuYIAlAeJ2FiRDsbtrLGdPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q6ZL0xRI; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1733148134; c=relaxed/simple;
+	bh=jJxlcqRxB873knVtlY401xtr37Z90jDtvx8oMXlNiPY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=muNX8YAV5EqPtcyfPHrQ4QI7dB5K9hJHMKfhld7nNsZDl33QwqCP7dkuGN9N/Bq3vTezixbyMBSKRKf+tOKMDfDEHs4j1kMR/VmIPiI8rjMpNkvgfI5IRY/RotHytEwKRGdb18mKD3bsHaIPWYmU/Ht4xtl3b/CHJVz1OUrcw+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cPbXcQEp; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6ZL0xRI"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385e06af753so1535673f8f.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 02 Dec 2024 04:58:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cPbXcQEp"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385d851e7c3so238862f8f.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 02 Dec 2024 06:02:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733144279; x=1733749079; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LZEzOmy1c1zMqWMX7Wa3GA2/fvlPtEiXHjsYcmo7LSw=;
-        b=q6ZL0xRIu3aL2KyRhkSIo0cPAs4T9/ZGXOMmadRsXoW/3S7lcYEvw/fuy1oFiaB0LL
-         hSQzAWjNInzf05PZhRkA1fbEIRXaElY8iwURlelf8iXWY/Y07XyLCXYC85Fc7E3CI5c5
-         ExU8vekbT/oOX1lrQ3qc/HR9r2/xjylOosUSxT04SXayGoaxvhpUHjh+kH3ECXUa7ab8
-         wzzuhow3DD20QVu2d3zdWs286p18yDP2rOXUxNbLowuyFY5CM0/alk9Ldi8FQ5s2xWUh
-         sTLXO5oNFz8mzOElU+YxMI1LE5rVak1aRAw/C0l8wI251ZqVJMkNLXUi47iq+n1/Fhrf
-         T3JQ==
+        d=linaro.org; s=google; t=1733148130; x=1733752930; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bt9rbvg88W4Mm9rufdW2t6Ewrnb3f/HKBLkJJoL/hiY=;
+        b=cPbXcQEpR+v+1F0ESx/yn6K016tyOZ90xmHzKs9eFufHLPd/Htwmp6RwU0C88/Gxgm
+         SOjGNkibqUK+/0kg7uqcxYkq8iEUCgylj/kGHOf7+7x4W1H3xbQGUuFwMzbSYoZCmV3p
+         V4cisD/L7bMH0glRxcu544Upj48fQeUjQK9V+PY+oT5sMgyIlSt25+HUOPaNpuxKr33L
+         babHjzUafvf3OZPDDVmaqD4q0etRFuepSxM4MgzPDUvpJU3x58GfwiZNTq4d8DPAeaPl
+         C1UVFquvJ8iul0YnjxNr0ghq3wNX+h7BBpnCD9yGQkvciChcKhrUaJr5fLKtlhNP1E2Q
+         VF3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733144279; x=1733749079;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LZEzOmy1c1zMqWMX7Wa3GA2/fvlPtEiXHjsYcmo7LSw=;
-        b=SuiuytrMutuj3+m9Pn7vh41slzS+s+Nnk2IvWtfcKCuV4Fh1Jg9uz8/mdV4mP+2ZAd
-         K0S6UdPECqHA4TENDpZPKMNHZ7aVYxUxLJeqiUocXsl3SGNw0DMtTwrohvxTqYx1PbjT
-         AxfvLMTLx92OPH+XLIU+34+8KgsGSIu4ID9xHMrOZVJgYDjc3xqvZkHs2lQG4W6NigQH
-         cycXacPtEuVsjo5YGsaqNimlry0qQaysFhlwUzmjAb2ICB9rtSsQh+zbMOhTokKuIJQm
-         eFu7T6GgNimD9lPtU/AnsqTDUJkvE7zq6CPVXm3z1MXZmNkbTmvHoXg9g+UpNKJvMZ5F
-         +7hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjShLITihZMkugNXY7hoUJ7YmRohcaMrjPc/EK86h2shVZHJuZgtPXDNlz2SGb3E7yTrZ82EbtVN0MHUqDMOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7K53xTpGZgiPaID41uy1htWD7UXTHuxMFQf4SBRm13HWX0w7R
-	Dkv1NOOcDVPRSRPZqATL9BnWqU0iB023kHdR5U4gQB8dgu20eT6f6fDxGXMRXjw=
-X-Gm-Gg: ASbGncs5n/4QCQlPz6Ons8RXKrdoOvcLmBo2kH7BLbL49A0FmvJNadxWtV91yEjSn/T
-	dGxmJ2oBG2Rg9IJM14MTIeRdlpRcJ66cy9cWHv0GdRlu1vwX+x++5hQB0SBqXzNur+aecqWrQhq
-	IGpaHtn4uisTf//fUI9zjSBXMM97OZMv6rYjEfziilZBQK3obdBZrgrw95W2RoZ0OqS8bmeFvUO
-	6+cnGLL46/lQPMeIK6nKvKm6yp79uU4wFYqWZNRgslo3qvQ5/0KJ8g=
-X-Google-Smtp-Source: AGHT+IE6fYWnBhMoQgAuqEUuYRVJcRW1Ua9iOjCZrmiZOy42mMa37ZKinsmWcYvq0V848TnBhQipiA==
-X-Received: by 2002:a05:6000:2b12:b0:385:df43:223c with SMTP id ffacd0b85a97d-385df432391mr8837794f8f.13.1733144278635;
-        Mon, 02 Dec 2024 04:57:58 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa74f18bsm187503585e9.4.2024.12.02.04.57.57
+        d=1e100.net; s=20230601; t=1733148130; x=1733752930;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bt9rbvg88W4Mm9rufdW2t6Ewrnb3f/HKBLkJJoL/hiY=;
+        b=OKQqsvPMss9GaNexketqitHnbSrBHFh+dSyso1ONIORexZ0hprB4xWLHc4R7dyyMXe
+         Cz7eMab5aAJy9xFW/LMdUwl1DuOzmGvkoytPB6xStAosMFfOO+LQ7XQOuzzOSQGgTYtu
+         ffem+VF5l7IvHGYtE27cYlXLuDMOnwRYmzRYrJl2b9oOYynqT3AMAGcjAVMRZORjyn/Z
+         rgLOogFxBoTNFtWE51eTknuxYIERp5VbzzOaGPKycJ+escdMbABl8pkGx/JhCBx1rETJ
+         IeuWpjZxP5bSIK9Yo+YMPM3WgypKnUMljlKN4TgRBJxTBoOzx1zkmHz66rM6FCLg/wHn
+         zOUg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6rn8IYzUzI9XaF0z2+KeGHheTkQcmrdjRywsCY86EUMw+uk5G4eru8k2VUqVypVEbbOuQtd/CDJgL4ZI/TEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrB5yvbLYTNWxXFo/2eQwpcUx8bCLyCbg7YuMhw7ti3LPkFHdB
+	MXAg5r9F7Sb1s6PyUDzDwHNcu3WChazdyjcgU/zreEyyOiVF8JSCUSM+OMhFy8w=
+X-Gm-Gg: ASbGnct+AriPCszW6tZXa+O8hOf6jXYNHwrerK8KOR9VHOJHLS5z/orqfEGVdZRVPTM
+	hPUGGQFYQwRgYIMPiYHLu84f319GtGHrL77hSOFyexvoZl+73IGquzgvNCKZEkVtrcJEyvRwIem
+	s2EEvKym/IexarSjUZNhPI2MqBrSht4eo5EbI/gyPKuwTwqmq51Vmz1yOmFp6FSHEWzXuylaadf
+	AhMPGo3ITZXQ3r/7Clp8akYbjqR1qPa3z7VgZaaI0azXnFO3K7UgOvbdkD7sF4l
+X-Google-Smtp-Source: AGHT+IFbpzvvcbBvcWNOUYta+EWWguWeH07ZXYUdJCdTYkzN3I9OEgPah3/QG+sVL8wvnjrRt4H4Kw==
+X-Received: by 2002:a5d:6487:0:b0:385:e9ba:acea with SMTP id ffacd0b85a97d-385e9baadf7mr2382448f8f.10.1733148128320;
+        Mon, 02 Dec 2024 06:02:08 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.23])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385eed2510esm4232260f8f.69.2024.12.02.06.02.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2024 04:57:58 -0800 (PST)
-Date: Mon, 2 Dec 2024 15:57:54 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?iso-8859-1?Q?Beno=EEt?= Sevens <bsevens@google.com>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	wangdicheng <wangdicheng@kylinos.cn>,
-	Manuel Barrio Linares <mbarriolinares@gmail.com>,
-	Lianqin Hu <hulianqin@vivo.com>,
-	Shen Lichuan <shenlichuan@vivo.com>, Cyan Nyan <cyan.vtb@gmail.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ALSA: usb-audio: Fix a DMA to stack memory bug
-Message-ID: <60e3aa09-039d-46d2-934c-6f123026c2eb@stanley.mountain>
+        Mon, 02 Dec 2024 06:02:07 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org
+In-Reply-To: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
+References: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs
+ in exynos_irq_demux_eint16_31()
+Message-Id: <173314812685.47615.16378245073169097611.b4-ty@linaro.org>
+Date: Mon, 02 Dec 2024 15:02:06 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-The usb_get_descriptor() function does DMA so we're not allowed
-to use a stack buffer for that.  Doing DMA to the stack is not portable
-all architectures.  Move the "new_device_descriptor" from being stored
-on the stack and allocate it with kmalloc() instead.
 
-Fixes: b909df18ce2a ("ALSA: usb-audio: Fix potential out-of-bound accesses for Extigy and Mbox devices")
-Cc: stable@kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- sound/usb/quirks.c | 42 +++++++++++++++++++++++++++---------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
+On Sun, 17 Nov 2024 13:03:32 +0100, Christophe JAILLET wrote:
+> chained_irq_enter(() should be paired with a corresponding
+> chained_irq_exit().
+> 
+> Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
+> is not called.
+> 
+> Add a new label and a goto for fix it.
+> 
+> [...]
 
-diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
-index 8bc959b60be3..7c9d352864da 100644
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -555,7 +555,7 @@ int snd_usb_create_quirk(struct snd_usb_audio *chip,
- static int snd_usb_extigy_boot_quirk(struct usb_device *dev, struct usb_interface *intf)
- {
- 	struct usb_host_config *config = dev->actconfig;
--	struct usb_device_descriptor new_device_descriptor;
-+	struct usb_device_descriptor *new_device_descriptor __free(kfree) = NULL;
- 	int err;
- 
- 	if (le16_to_cpu(get_cfg_desc(config)->wTotalLength) == EXTIGY_FIRMWARE_SIZE_OLD ||
-@@ -566,15 +566,19 @@ static int snd_usb_extigy_boot_quirk(struct usb_device *dev, struct usb_interfac
- 				      0x10, 0x43, 0x0001, 0x000a, NULL, 0);
- 		if (err < 0)
- 			dev_dbg(&dev->dev, "error sending boot message: %d\n", err);
-+
-+		new_device_descriptor = kmalloc(sizeof(*new_device_descriptor), GFP_KERNEL);
-+		if (!new_device_descriptor)
-+			return -ENOMEM;
- 		err = usb_get_descriptor(dev, USB_DT_DEVICE, 0,
--				&new_device_descriptor, sizeof(new_device_descriptor));
-+				new_device_descriptor, sizeof(*new_device_descriptor));
- 		if (err < 0)
- 			dev_dbg(&dev->dev, "error usb_get_descriptor: %d\n", err);
--		if (new_device_descriptor.bNumConfigurations > dev->descriptor.bNumConfigurations)
-+		if (new_device_descriptor->bNumConfigurations > dev->descriptor.bNumConfigurations)
- 			dev_dbg(&dev->dev, "error too large bNumConfigurations: %d\n",
--				new_device_descriptor.bNumConfigurations);
-+				new_device_descriptor->bNumConfigurations);
- 		else
--			memcpy(&dev->descriptor, &new_device_descriptor, sizeof(dev->descriptor));
-+			memcpy(&dev->descriptor, new_device_descriptor, sizeof(dev->descriptor));
- 		err = usb_reset_configuration(dev);
- 		if (err < 0)
- 			dev_dbg(&dev->dev, "error usb_reset_configuration: %d\n", err);
-@@ -906,7 +910,7 @@ static void mbox2_setup_48_24_magic(struct usb_device *dev)
- static int snd_usb_mbox2_boot_quirk(struct usb_device *dev)
- {
- 	struct usb_host_config *config = dev->actconfig;
--	struct usb_device_descriptor new_device_descriptor;
-+	struct usb_device_descriptor *new_device_descriptor __free(kfree) = NULL;
- 	int err;
- 	u8 bootresponse[0x12];
- 	int fwsize;
-@@ -941,15 +945,19 @@ static int snd_usb_mbox2_boot_quirk(struct usb_device *dev)
- 
- 	dev_dbg(&dev->dev, "device initialised!\n");
- 
-+	new_device_descriptor = kmalloc(sizeof(*new_device_descriptor), GFP_KERNEL);
-+	if (!new_device_descriptor)
-+		return -ENOMEM;
-+
- 	err = usb_get_descriptor(dev, USB_DT_DEVICE, 0,
--		&new_device_descriptor, sizeof(new_device_descriptor));
-+		new_device_descriptor, sizeof(*new_device_descriptor));
- 	if (err < 0)
- 		dev_dbg(&dev->dev, "error usb_get_descriptor: %d\n", err);
--	if (new_device_descriptor.bNumConfigurations > dev->descriptor.bNumConfigurations)
-+	if (new_device_descriptor->bNumConfigurations > dev->descriptor.bNumConfigurations)
- 		dev_dbg(&dev->dev, "error too large bNumConfigurations: %d\n",
--			new_device_descriptor.bNumConfigurations);
-+			new_device_descriptor->bNumConfigurations);
- 	else
--		memcpy(&dev->descriptor, &new_device_descriptor, sizeof(dev->descriptor));
-+		memcpy(&dev->descriptor, new_device_descriptor, sizeof(dev->descriptor));
- 
- 	err = usb_reset_configuration(dev);
- 	if (err < 0)
-@@ -1259,7 +1267,7 @@ static void mbox3_setup_defaults(struct usb_device *dev)
- static int snd_usb_mbox3_boot_quirk(struct usb_device *dev)
- {
- 	struct usb_host_config *config = dev->actconfig;
--	struct usb_device_descriptor new_device_descriptor;
-+	struct usb_device_descriptor *new_device_descriptor __free(kfree) = NULL;
- 	int err;
- 	int descriptor_size;
- 
-@@ -1272,15 +1280,19 @@ static int snd_usb_mbox3_boot_quirk(struct usb_device *dev)
- 
- 	dev_dbg(&dev->dev, "MBOX3: device initialised!\n");
- 
-+	new_device_descriptor = kmalloc(sizeof(*new_device_descriptor), GFP_KERNEL);
-+	if (!new_device_descriptor)
-+		return -ENOMEM;
-+
- 	err = usb_get_descriptor(dev, USB_DT_DEVICE, 0,
--		&new_device_descriptor, sizeof(new_device_descriptor));
-+		new_device_descriptor, sizeof(*new_device_descriptor));
- 	if (err < 0)
- 		dev_dbg(&dev->dev, "MBOX3: error usb_get_descriptor: %d\n", err);
--	if (new_device_descriptor.bNumConfigurations > dev->descriptor.bNumConfigurations)
-+	if (new_device_descriptor->bNumConfigurations > dev->descriptor.bNumConfigurations)
- 		dev_dbg(&dev->dev, "MBOX3: error too large bNumConfigurations: %d\n",
--			new_device_descriptor.bNumConfigurations);
-+			new_device_descriptor->bNumConfigurations);
- 	else
--		memcpy(&dev->descriptor, &new_device_descriptor, sizeof(dev->descriptor));
-+		memcpy(&dev->descriptor, new_device_descriptor, sizeof(dev->descriptor));
- 
- 	err = usb_reset_configuration(dev);
- 	if (err < 0)
+Applied, thanks!
+
+[1/1] pinctrl: samsung: Fix irq handling if an error occurs in exynos_irq_demux_eint16_31()
+      https://git.kernel.org/pinctrl/samsung/c/f686a2b52e9d78cf401f1b7f446bf0c3a81ebcc0
+
+Best regards,
 -- 
-2.45.2
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
