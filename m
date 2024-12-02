@@ -1,140 +1,106 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9F46FD5;
-	Sun,  1 Dec 2024 08:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1908E156220
+	for <kernel-janitors@vger.kernel.org>; Mon,  2 Dec 2024 06:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733043128; cv=none; b=qk3LCl/4bw7z7m9/66g+Va73aSD1aUwY+CyEQojqyGaMBHU5V8O2uplcx8V+KdTpUtnz25JzaxhhOYcE9cswHXjuMKq/4ZW9g4aSJGvgAHGSkddQVjtf9yNtvazEocdFWTrVb31rzZn0Vr3guOO5eazl2fVGP69+yEUSEsywr2Q=
+	t=1733121145; cv=none; b=Qswz7/+6uYhLsfuJwY1rDgP3gmpBP8j/Yp6300W7Rxv+QFVH+tEE7ELnSUoghCBMcT7+lbJoExlHcnhRWN09VL4jxxPbuxSK6+2R4B/ukqUlcauTvo8EV+zuiGERhXrQQOHDKZbInpnuBdfYXy9DGuhMHiNuvyrOAjMEwKsskDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733043128; c=relaxed/simple;
-	bh=CAyguM1DSzeokMJloQ+itmnxxUMxAvTTxRz+3gb7REU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t72IbWBQSxBI2dTbMnHHpKVOAuT6r5dSuDsOF459SdOUHwtaAz8NSshzldl4GeIepy2nTDGypYIkhs8DFJv6+gebYXobkh/ejpWdFWadQPZKZogK647zok2pcX7nXt+k5WoNX3pK28tAkf81jvBeg/5SW5Tmp9umxJ9l+LNzBUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=d9hMJ/PV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wM/QXLyE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rJcldgkm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CY3a9XI9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1733121145; c=relaxed/simple;
+	bh=QQLnYmKvGqFJ7sA2gHqV0Upd6Bo/7oU8H7gUN18PrYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUMG/4zawaPdaE2tdl58uin4csWcVWIjR2LF4unKJmgcpuaD2loqQvmj6F8GxvClji4iYksl8mbnvUXqCOxBpZ+kxrP6DE+vVX6LdPMJaAFGIZ61s0kDYeB8t8qxB2N8Cf8uKwbshDJG/87zyMW+t9nCuWm9F0s5BBqhPXD4YpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rFYnVibo; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="d9hMJ/PV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wM/QXLyE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rJcldgkm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CY3a9XI9"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0802921183;
-	Sun,  1 Dec 2024 08:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733043123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InbJb7I8OR4chlQjQL0LZvVEHMiVRbAkpmktMf3VnvI=;
-	b=d9hMJ/PV12mX3qTyceQWxYPM0iIsUT8cSrVgcN0x5T5R1QUAcYiZ83SRFUAOfs4p4dQK4+
-	Fu8y7MguG8pzGhf8Jr4UEv0l2uuqQO7a/4CzVCpHq1N2S35ipNslw++t1hh4+610t09BR8
-	coTFpg9Zj7tKGrLtS32sFM3oBI6g7gw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733043123;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InbJb7I8OR4chlQjQL0LZvVEHMiVRbAkpmktMf3VnvI=;
-	b=wM/QXLyEW4KCBZkb+odH2wPmbwHrf8+1KsLV0BiYgHAvKhCX0JhBdN6xoonMLcpzcIJfLt
-	u7Z3GbDjtBiXJCDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=rJcldgkm;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=CY3a9XI9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733043122; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InbJb7I8OR4chlQjQL0LZvVEHMiVRbAkpmktMf3VnvI=;
-	b=rJcldgkmLEoSNl7wiI2ySzHnU2NY++F48ag69zxvUWa8KGHp58LXs97l2o/Zo6JDh5z6ib
-	bblDBayzbT5BXiJFV7JfqriMR2U3nVPzsg0nPRveBb1emfHIjxKIN/SnZE2MPRktCkX+Lu
-	sSDKNsKKSg4IZhfwuEJ6Di+zroyD7QQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733043122;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=InbJb7I8OR4chlQjQL0LZvVEHMiVRbAkpmktMf3VnvI=;
-	b=CY3a9XI9a6U5ehCJKPAAWV7oCA+EZN2CZ23Z7Jcbtjrg+qFJsy3WfZ4GRbdu+5Mo06te+Q
-	GPt3QryaSm6zUTAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD12713974;
-	Sun,  1 Dec 2024 08:52:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oIC+LLEjTGcKRwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 01 Dec 2024 08:52:01 +0000
-Date: Sun, 01 Dec 2024 09:52:01 +0100
-Message-ID: <87a5dfzsy6.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rFYnVibo"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-724f74d6457so3735974b3a.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 01 Dec 2024 22:32:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733121142; x=1733725942; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QaAjXlMahWaPPK8kYZPf2znqjEQMRsE6lGjRgJChzrk=;
+        b=rFYnViboTz63rorSBARNeVPsXGYa8+3OZUe0OflwbmEi1EtVtfRfFp8QeT0S8eHefx
+         dNI6Ch0J+kjlJJDBxyhNOJPBLpC5L57iTm4motjKL2Rv9DR7V2eJH++alH3vs0gz4isK
+         G6jsfenRn9LXlg2Q8qtgVEP1hZeDFX60kIr9EKtvVkfi/yI7+9KNOeNa2xNV1TH3a22b
+         5j+NTabCaFh2Vap0r+vgh2x1F/20T7/kR47snLV6DfcoPT2RGnmVAbl2t/SZGfj0cGt2
+         fm9pISuddgwNVNDWewMMJ9uTfNnQlzpyCUcNuflz9TyRH+wcTopIYIbmQ+lRCx9G7VS/
+         ay3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733121142; x=1733725942;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QaAjXlMahWaPPK8kYZPf2znqjEQMRsE6lGjRgJChzrk=;
+        b=UnlPpu8ANROIsd63f8rSTzhpSApI17LmNtfC2E6k4ABznj+LBTkrY+XfMFL1HyBmxC
+         Qb7yJPxndb8CZw/tgIIuZTtK2AgOAGHjMcJDwqpzVFRP+wPDGwFmup72tl0LS6OErIpM
+         nhLV1zmPjY7xHcbhYyewxCl6bVWC39gRDamqNYPsZrhzmbeK+7i+REZeF8Ktmss4puie
+         iEvW5CaKH8Kk907x4mSSbL2DQ5gNSUAOpoojja0t+FNKNS6LtJLbgIGSKMrO3RTLRjIT
+         pw/DCUBEyDVEyO8OW+myr+udIAwEXb5QlbAwuzcsqySkolHijjwO/qhox/zLHkD2EcJV
+         IWNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXG8U2zL4li4Lo5kA5KxbvTQCi0EcuSU+elftvRRRYhMCawP60zHnZRzYsIA1ekrqCn7GsANOeQZoa3Qz+fDd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaXJQr+umQhOcMUNNygVyXm/EOfWr+rB8lyv7O0nliPtTfBa3H
+	sf1a95bkaH79Hz/H32i2VgGYIBcJn4nUskw46BRQWotkkggmnyyqkpnZpHyI+P0=
+X-Gm-Gg: ASbGncunj5elUB62sN+1HECXaWbPRiIBhrO8BM6cFJellC6cSwr6plcUpgBahAJ0xsR
+	ZaM5eXTJz6vLQH1BS4EAIhRLqe02w9dl+AgNGy24qzapPLMDVcvWN09PEYCcaqBRZhq+CalHurM
+	EzAkj1ebHUH629/UsFwceNYAx3hyagP5nlhVWH5CeNpnxHhFOWYJUa9Y690l5Vl45tSdk7tynM1
+	QgtghUdoMDikb8TEeJwu7LELMEEfn4Er260rPlL3rvVIW1kuR9E
+X-Google-Smtp-Source: AGHT+IGYhjUoHDCLwzmR+4DgTs9bkKuenJfFo+6JvE40VkbLu5HidScSvlyxpJil/9dg5jbAH9nNVw==
+X-Received: by 2002:a17:90b:3c11:b0:2ee:b4d4:69 with SMTP id 98e67ed59e1d1-2eeb4d40232mr6275373a91.35.1733121142397;
+        Sun, 01 Dec 2024 22:32:22 -0800 (PST)
+Received: from localhost ([122.172.86.146])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee72dea03dsm4216447a91.27.2024.12.01.22.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Dec 2024 22:32:21 -0800 (PST)
+Date: Mon, 2 Dec 2024 12:02:19 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Baojun Xu <baojun.xu@ti.com>,
-	Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] ALSA: hda/tas2781: Fix error code tas2781_read_acpi()
-In-Reply-To: <ef773f8a-a61d-478b-9e81-41a38a75c77b@stanley.mountain>
-References: <ef773f8a-a61d-478b-9e81-41a38a75c77b@stanley.mountain>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] opp: core: Fix off by one in dev_pm_opp_get_bw()
+Message-ID: <20241202063219.evknbyimnldqrymn@vireshk-i7>
+References: <41ae307c-f6ff-49fb-a962-eb488152de71@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 0802921183
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,linaro.org:email];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41ae307c-f6ff-49fb-a962-eb488152de71@stanley.mountain>
 
-On Sat, 30 Nov 2024 11:08:18 +0100,
-Dan Carpenter wrote:
+On 30-11-24, 13:07, Dan Carpenter wrote:
+> The "opp->bandwidth" array has "opp->opp_table->path_count" number of
+> elements.  It's allocated in _opp_allocate().  So this > needs to be >=
+> to prevent an out of bounds access.
 > 
-> Return an error code if acpi_get_subsystem_id() fails.  Don't return
-> success.
-> 
-> Fixes: 4e7035a75da9 ("ALSA: hda/tas2781: Add speaker id check for ASUS projects")
+> Fixes: d78653dcd8bf ("opp: core: implement dev_pm_opp_get_bw")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/opp/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index d4a0030a0228..09a1432561f6 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -121,7 +121,7 @@ unsigned long dev_pm_opp_get_bw(struct dev_pm_opp *opp, bool peak, int index)
+>  		return 0;
+>  	}
+>  
+> -	if (index > opp->opp_table->path_count)
+> +	if (index >= opp->opp_table->path_count)
+>  		return 0;
+>  
+>  	if (!opp->bandwidth)
 
-Thanks, applied now.
+Applied. Thanks.
 
-
-Takashi
+-- 
+viresh
