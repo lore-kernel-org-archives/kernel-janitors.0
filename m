@@ -1,70 +1,74 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1908E156220
-	for <kernel-janitors@vger.kernel.org>; Mon,  2 Dec 2024 06:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762E91F9F76
+	for <kernel-janitors@vger.kernel.org>; Mon,  2 Dec 2024 09:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733121145; cv=none; b=Qswz7/+6uYhLsfuJwY1rDgP3gmpBP8j/Yp6300W7Rxv+QFVH+tEE7ELnSUoghCBMcT7+lbJoExlHcnhRWN09VL4jxxPbuxSK6+2R4B/ukqUlcauTvo8EV+zuiGERhXrQQOHDKZbInpnuBdfYXy9DGuhMHiNuvyrOAjMEwKsskDc=
+	t=1733130450; cv=none; b=ND7Axk6HooDdFhUP3U/ksdadmVJZeUTUpW6M70O12ObhkjXyFHtq04fFdMfMMBHZZAnxFAMP1rMXw5tCru1/vmeiqukuY/CyeOsO07FHHRaSXKdqxGD8flPckb/478Sda6Z/QmsdloW7bUSteUwob1Hp28m9xDrH3cYt9Bgyahk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733121145; c=relaxed/simple;
-	bh=QQLnYmKvGqFJ7sA2gHqV0Upd6Bo/7oU8H7gUN18PrYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NUMG/4zawaPdaE2tdl58uin4csWcVWIjR2LF4unKJmgcpuaD2loqQvmj6F8GxvClji4iYksl8mbnvUXqCOxBpZ+kxrP6DE+vVX6LdPMJaAFGIZ61s0kDYeB8t8qxB2N8Cf8uKwbshDJG/87zyMW+t9nCuWm9F0s5BBqhPXD4YpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rFYnVibo; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1733130450; c=relaxed/simple;
+	bh=eDatTayJdQZOiMDh398vW8A73/RB5IYaI7qGAmHkcV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=U/wWUvqTO8JIrO2oRGaqiAUnw/WS1DMsJSuq30yCzJqGRnivEhJmsdAvvh7RbSg70Q3MbcZm+yK25HQPjgZWXseg+1n63S4rgHhwr+Gto4ozEbPsD1ie+EbhojcCaB9o0uyppRCtyC/Yj3Zn9mCkZL8Uq3eEeDNu/3zAW1ptvTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GjXKHDQK; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rFYnVibo"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-724f74d6457so3735974b3a.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 01 Dec 2024 22:32:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GjXKHDQK"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434aa222d96so50520725e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 02 Dec 2024 01:07:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733121142; x=1733725942; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QaAjXlMahWaPPK8kYZPf2znqjEQMRsE6lGjRgJChzrk=;
-        b=rFYnViboTz63rorSBARNeVPsXGYa8+3OZUe0OflwbmEi1EtVtfRfFp8QeT0S8eHefx
-         dNI6Ch0J+kjlJJDBxyhNOJPBLpC5L57iTm4motjKL2Rv9DR7V2eJH++alH3vs0gz4isK
-         G6jsfenRn9LXlg2Q8qtgVEP1hZeDFX60kIr9EKtvVkfi/yI7+9KNOeNa2xNV1TH3a22b
-         5j+NTabCaFh2Vap0r+vgh2x1F/20T7/kR47snLV6DfcoPT2RGnmVAbl2t/SZGfj0cGt2
-         fm9pISuddgwNVNDWewMMJ9uTfNnQlzpyCUcNuflz9TyRH+wcTopIYIbmQ+lRCx9G7VS/
-         ay3g==
+        d=linaro.org; s=google; t=1733130447; x=1733735247; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BR7917va66KYfi/dxTW86XB5ZaenGMbVA2IyXvz+JIw=;
+        b=GjXKHDQKQd5ZXfD05lLstT6GVkN4nM2KruJwqhgp6+QdzuLMAOJt4xcM9pkdoaB0Uh
+         yelJU1omDuWAMXjn4+4RloQ5PAJkDnqB2WZivKcCcdCpGunmeeKdlRpk9N9FVSvk/LLj
+         LYERcITvoR+pdxfSTAbSQhp5LLNh7F814tePm4iANAt+62NE7Kh0HXqzA8WV3WnEOEnE
+         zIgXVM5iTH1j9JE+Ic0ovTuGMnTxRIM5S9Fr65fIaI/lIZQ7dtB2Q2NbhlcuqSQ1WWyR
+         s8CwgJXzYUN+S3ZxggeHE5xGNrokVeou4RGRMVB+7LNebWSblGkCYFURQpM/oKE5MpiW
+         ndKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733121142; x=1733725942;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QaAjXlMahWaPPK8kYZPf2znqjEQMRsE6lGjRgJChzrk=;
-        b=UnlPpu8ANROIsd63f8rSTzhpSApI17LmNtfC2E6k4ABznj+LBTkrY+XfMFL1HyBmxC
-         Qb7yJPxndb8CZw/tgIIuZTtK2AgOAGHjMcJDwqpzVFRP+wPDGwFmup72tl0LS6OErIpM
-         nhLV1zmPjY7xHcbhYyewxCl6bVWC39gRDamqNYPsZrhzmbeK+7i+REZeF8Ktmss4puie
-         iEvW5CaKH8Kk907x4mSSbL2DQ5gNSUAOpoojja0t+FNKNS6LtJLbgIGSKMrO3RTLRjIT
-         pw/DCUBEyDVEyO8OW+myr+udIAwEXb5QlbAwuzcsqySkolHijjwO/qhox/zLHkD2EcJV
-         IWNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXG8U2zL4li4Lo5kA5KxbvTQCi0EcuSU+elftvRRRYhMCawP60zHnZRzYsIA1ekrqCn7GsANOeQZoa3Qz+fDd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaXJQr+umQhOcMUNNygVyXm/EOfWr+rB8lyv7O0nliPtTfBa3H
-	sf1a95bkaH79Hz/H32i2VgGYIBcJn4nUskw46BRQWotkkggmnyyqkpnZpHyI+P0=
-X-Gm-Gg: ASbGncunj5elUB62sN+1HECXaWbPRiIBhrO8BM6cFJellC6cSwr6plcUpgBahAJ0xsR
-	ZaM5eXTJz6vLQH1BS4EAIhRLqe02w9dl+AgNGy24qzapPLMDVcvWN09PEYCcaqBRZhq+CalHurM
-	EzAkj1ebHUH629/UsFwceNYAx3hyagP5nlhVWH5CeNpnxHhFOWYJUa9Y690l5Vl45tSdk7tynM1
-	QgtghUdoMDikb8TEeJwu7LELMEEfn4Er260rPlL3rvVIW1kuR9E
-X-Google-Smtp-Source: AGHT+IGYhjUoHDCLwzmR+4DgTs9bkKuenJfFo+6JvE40VkbLu5HidScSvlyxpJil/9dg5jbAH9nNVw==
-X-Received: by 2002:a17:90b:3c11:b0:2ee:b4d4:69 with SMTP id 98e67ed59e1d1-2eeb4d40232mr6275373a91.35.1733121142397;
-        Sun, 01 Dec 2024 22:32:22 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ee72dea03dsm4216447a91.27.2024.12.01.22.32.21
+        d=1e100.net; s=20230601; t=1733130447; x=1733735247;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BR7917va66KYfi/dxTW86XB5ZaenGMbVA2IyXvz+JIw=;
+        b=AEszatLUzs2THwWXN5sSN9HaC2DDkTacdYEnqpKU85x6rq1FKOYOVDn7zzJW1M4o5A
+         1HuN1KA8gsloeUdQSF7n1o9fCgT0iyIWNC6iMcaYkZM3Z40pkie4Fa9+CSskpDq5dxAg
+         BJOWpB/bjzELpYhl5wUJllX/IpDprCM80DCo/0qUCn6RpFWvFgOdOTrS2ky87MHZmL2J
+         9G81mDu9QQ7FOjbn1ZDJaHnYxgToFYhH+o6zcrCu8aaL2Z/0I37kXBQ170YOspq93lK0
+         aExaexl135BW3xr8jh4zTJg/g2vDnhBK7LxqIix6LvhY7HBp1IAuS6A1Yp7UXXTSC3eS
+         AB2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkTjgsw3K9DF+RQyT4ojbbahw5J6rjI1O55bRbPaI70H+KOuotqEUdztTt3khM+d+roR2mcMbRP4any0y/NZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGqOCnOFjAqLauJk9kPBpBnRwAL41d5G4j0dc4gTZjm+RUeCiX
+	FdZi3pqP4ZobBQ3RfjZjYSWSLIyqIg3BvuQWihDrsPqdjiWE0XjE63KC9Ii/OkM=
+X-Gm-Gg: ASbGncs1A13xSBSrG3qj4WG7JDCrRQ0dw1M339SZGJLO7mK8QStvEGpVCMfrjJko8dw
+	Wi2J3XNJlqVL9oqbR/MusY/AxuZtlJmafB7K9ywJj+UYdyI3nPkyghVjgCoogpuV68DS6VXnY1T
+	D5EvrNhYL3zz/heSmRtTIXFq+AvDrHNjGvYQCAneVQQyjPmlcPGX26kAXlTKqpAgQKJil3sX0EU
+	ueEcd6H3GINkCXuNfyy2IXg6OacnzPI8uOW+bTntNDdKbJnnYlDp7w=
+X-Google-Smtp-Source: AGHT+IErHtjKyBNSf/XUWvWl1AoW/h4AU63KtH1xNYUNQzmKxpbD3bUa+ZybCCBWlQeaV0PJJSm5wQ==
+X-Received: by 2002:a05:6000:156e:b0:385:f062:c2d4 with SMTP id ffacd0b85a97d-385f062c49emr4402219f8f.37.1733130446807;
+        Mon, 02 Dec 2024 01:07:26 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434aa78120dsm175382645e9.24.2024.12.02.01.07.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Dec 2024 22:32:21 -0800 (PST)
-Date: Mon, 2 Dec 2024 12:02:19 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] opp: core: Fix off by one in dev_pm_opp_get_bw()
-Message-ID: <20241202063219.evknbyimnldqrymn@vireshk-i7>
-References: <41ae307c-f6ff-49fb-a962-eb488152de71@stanley.mountain>
+        Mon, 02 Dec 2024 01:07:26 -0800 (PST)
+Date: Mon, 2 Dec 2024 12:07:22 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] PCI: rockchip-ep: Fix error code in
+ rockchip_pcie_ep_init_ob_mem()
+Message-ID: <Z014ylYz_xrrgI4W@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,34 +77,30 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <41ae307c-f6ff-49fb-a962-eb488152de71@stanley.mountain>
 
-On 30-11-24, 13:07, Dan Carpenter wrote:
-> The "opp->bandwidth" array has "opp->opp_table->path_count" number of
-> elements.  It's allocated in _opp_allocate().  So this > needs to be >=
-> to prevent an out of bounds access.
-> 
-> Fixes: d78653dcd8bf ("opp: core: implement dev_pm_opp_get_bw")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/opp/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index d4a0030a0228..09a1432561f6 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -121,7 +121,7 @@ unsigned long dev_pm_opp_get_bw(struct dev_pm_opp *opp, bool peak, int index)
->  		return 0;
->  	}
->  
-> -	if (index > opp->opp_table->path_count)
-> +	if (index >= opp->opp_table->path_count)
->  		return 0;
->  
->  	if (!opp->bandwidth)
+Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
 
-Applied. Thanks.
+Fixes: 945648019466 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory allocations")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+---
+v2: Update the git hash for the Fixes tag because the tree was rebased I guess.
 
+ drivers/pci/controller/pcie-rockchip-ep.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
+index 1064b7b06cef..34162ca14093 100644
+--- a/drivers/pci/controller/pcie-rockchip-ep.c
++++ b/drivers/pci/controller/pcie-rockchip-ep.c
+@@ -784,6 +784,7 @@ static int rockchip_pcie_ep_init_ob_mem(struct rockchip_pcie_ep *ep)
+ 						  SZ_1M);
+ 	if (!ep->irq_cpu_addr) {
+ 		dev_err(dev, "failed to reserve memory space for MSI\n");
++		err = -ENOMEM;
+ 		goto err_epc_mem_exit;
+ 	}
+ 
 -- 
-viresh
+2.45.2
+
