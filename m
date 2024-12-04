@@ -1,72 +1,68 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C35720ADDD;
-	Wed,  4 Dec 2024 15:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1063E1BC9F0;
+	Wed,  4 Dec 2024 15:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733324697; cv=none; b=aZD3wx89aMiyPRfS6gCQSYoEyfe2VsOSaw+2b+LHcrv5EjBpvcVGrNk4zwC9RyMDjfL5leb1lbxelimRyxy5hCMP8PpVZucMONXbgOamhT/dsuT8EnrzJYPK1on5+SrnSZaRzpNbTUbh5K8U/wXUppQhrMq2u4uPi0lSZ3g8SC0=
+	t=1733325124; cv=none; b=J4BnupDUsj3Uc0r9oLfnpCREc57d/Tz08tRd7X8R9pawdsUKWxf22wl4nm4bf8fhZsmE7Isrjo2rxLQLhXtd6ihsdRUZAbPGrUPT2fkNhrw0Unt2tXALQDXLo9qvRWLC5mmvdQpnki3W3Oc1sIIN8zhyU0+j+2ewzoV07mmaWg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733324697; c=relaxed/simple;
-	bh=hewadqbWLJKRts95eOYXdwWNooML3XA7/3FBG/3C6lg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ZttceMr9Cl5J6yp7vOkA17PHUubHvIzaIpZWgOyKM1plmd0JPCmsZRcftx2zP/UrIwC6Av2ucg2OTySGsuWiSZ+9qu5dBnfCPCjCVCIXyv68E0cgqDCQDZTWmy0s8Ty55wtm0JYS3xQrsRQFQNN5nT6cEpZ2a4wWt2BVtVngGjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7pvPyRr; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1733325124; c=relaxed/simple;
+	bh=sCBuah6nn6DorPuCQQxE6hYgM+ORL0NQDVYqO/lKc1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DT9jyuuXDHtSbqnra6InHYiheYPMK0Av23LtUdOpPEAsrt6zMZG1Mz8RKlgnZJR9Db5m5RuEgM1fwifqdx+lPk3KpWwnPDWm7khuvV8oM/tHQzpBhsma+TsVokvnxlfkzNWh8iNOiGxyuCoJKnSzS2OiQbT7LL6pjGtjQqDD7H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9IzDfOB; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7pvPyRr"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a1833367so6400285e9.1;
-        Wed, 04 Dec 2024 07:04:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9IzDfOB"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385deda28b3so3501325f8f.0;
+        Wed, 04 Dec 2024 07:12:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733324694; x=1733929494; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733325121; x=1733929921; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EA+h0saep05HaBgoBiILoVwh5Jsa3eA0cCo7gYVbZ2A=;
-        b=R7pvPyRrIUbSB/5kgooy2b5aBCjVY0DwgUSJCvVTDU6K8jATal5gN6ul9V4OdaPVrd
-         vLxTq2ZuYUI0SL8Qe5YsAuVwVPvesSQ6/tM+dOBV02v8k8fCiZFNrxkJCXpEgWHXb9v+
-         nue2kuFm0kLc9bhgDuWnY0FILN22JU1l4/53IFRAPNSltdmCMb6I0PAhmaOzpmkP03Fg
-         D/QXISpTPdPMMD/keri/h6q9rzwKFBGJtEHCcantVX/0xQf7MnQeFnSZ1OePnLGvqmte
-         xWmyLU+8pbcmBEKeY6a2k+72BkvFz0BFYnOk+Yh4+8IYZ2nir33nhuH89NtTmF7qJzlz
-         966A==
+        bh=ulL3T8InS0Quvke01cG4yfvO65Xh+6E0FkduTMFmRhI=;
+        b=j9IzDfOBUeTsgaRjT3ns0niHE8YUwJS6I0DVtuTSwxfZebUfJUBQoele7L5NZUNh5/
+         c2evH1kjX4v+CjH5OiasZ3WVoJDO4sDH4FbrpQh7emqgP84Ji8GCCGcRwZRpBzfnq0rK
+         hEXBqqv3XGGVSHav8O0PkRBkE7kroeR6+OLsN+Q/DcloXpjAfuozQ+pKim8wE6FjuWxt
+         Cn7PgtqtxqMUShYlVm0DHSECxE5v+aDfguhx4byZK6Yi+0GoXiCoDPyF7sLrOq8skYjU
+         Cm9TrGc3zOiCk6ZdBr8Y76Vh1Gk1a6htm7dFTXIBLijh0rpqvXQ4U5GsTKIu0dbR/K1n
+         EeAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733324694; x=1733929494;
+        d=1e100.net; s=20230601; t=1733325121; x=1733929921;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EA+h0saep05HaBgoBiILoVwh5Jsa3eA0cCo7gYVbZ2A=;
-        b=uSLajtFj7BgsT0TkwoIhWsvUv43H36od8Hvd2FrYpuYqiF6b76gW4KX/6oQ2RqkEiI
-         NZNu8/LWeUUwzhMVgD14UXNS2q65DcrGP1u2ln+VkfJG89RoXIOq/yvlPO/bvizXbUkw
-         qXkBo7Xaezxf8xBOJUj2V+2nmhC8fC16eUcJuwEBJKtuenBNPIKprEK8GHNL5OLE1ed+
-         meA016dyvc2w8PbwZMnkklZbWgQj+WnJg4rQbLOX34fAkIkCE4vuiAjw0pLedzDL0MLK
-         OHRKbKof+TrXaapFPNTt7zGo18Lt7u2+0tmg4DWsR9xxzdqlohDRLcVOpxYnLieIb5h1
-         bi2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUhSbMpqzO7hmrJ2NIkolyc7mMGR+ILeQ7g4g/YpoC4qPYl9qzDPzjItJGlI/b0BVVDlJIdXd7Au7FXVg==@vger.kernel.org, AJvYcCVJ6koNaLoPv9TbHeu9OQ5g7TZILGDaPTtTMMEZ4hE61L59Mh6ZaVPyzFBzj7NEXQ5ryC77x4pfVfSbxlqkTBY0mJJ2@vger.kernel.org, AJvYcCWocS+p/HBu6vy39TmRsqqzb0McPgorJkJSz0oA0MLnUxDPfBerKUonbabmdwSJNAF2wgmjjbUF4gEF9ElN@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQi8ffZ5U67Iyat/4HFBp1mn0DUr/35lVzqMS4xWOh0ba7wZ8P
-	9J80fd/068TtPx9RqxKKc/dd6+tLtJCeSOQ3xQSSdMwDiG0gQJGs
-X-Gm-Gg: ASbGnctzC6Is0Q/j1u5ZR/pD7ZMDWqf+hsshFElQHa2+zkm6HN2oEJCuN9QtC0wPdQA
-	CKQXVcfGU7Epzv4x7xhU0hlAFvJMbTJrB7KhTYfIcc78qR9zGVSbNjs9Z89HZ4yjvfbyLgFUmF3
-	ry9oWFsecsDKrT8zc6HIRLRC7lJ0K7PtkX7csmOQRUWoqCClcmdvE4VEIvj7YtTSStyi2MOhYD7
-	8OlXRfH39A+JyV1ie4iRjx4iXLMumGVgQWfV2XdxH+cy7nDae4=
-X-Google-Smtp-Source: AGHT+IG9QX67ZxBd606G3QR1uTGV5YwZCnPF29rocVK9K7/R3gYKV4ItXJrojh7qMPNmn18OgiE1Zg==
-X-Received: by 2002:a05:600c:458e:b0:431:4a82:97f2 with SMTP id 5b1f17b1804b1-434afb944bbmr222608275e9.6.1733324691930;
-        Wed, 04 Dec 2024 07:04:51 -0800 (PST)
+        bh=ulL3T8InS0Quvke01cG4yfvO65Xh+6E0FkduTMFmRhI=;
+        b=KMyk23cvFb/PoP//4y91UaYoX/iK1AMel2FtODYEQZntUY5W7u6co4rx1Sb3fjDClq
+         1gIcFRNGkGNFTgk352n6rxWJSwqc49Mey4iUKPAN9FLSKcAG5bY8uRq4MguscwkUR8YP
+         WFyDmH+zAr3cvossFHxnsIe4Mi7R2d9b6OYrBtvckHCv7FWTv4lW1Wrv2pvzXC8xtemK
+         BUunTnW21Khd2SNW9tSs2oZgzAdXs6egeSwYE6uixUcC9whqoadS93XMf6SNR8avogae
+         67yHYGqV+foiMklpFwcXTujm0YO6/i4g22TyMKHuIP/4EtRFl0coFuGUG8U9wD7+XpW9
+         CzhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYsNN5e5PTNCsZWlKKOOfTucsulLnO67ja04ax4fSu7tpHyE0LABo7QhSHkJe8Ty/VLaAJ627rmQVk4Zs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2gWBHa/Yw5Tvx6+v3HG+WcnVmZQ6o57D7p2Df1mEQk6Z1Ne7P
+	W6wUYoQIQ1RU8Ca7rbc/ZF6DVQMq+BMliFXSfdo8NIMmm5ZCAf+B
+X-Gm-Gg: ASbGnctPF5238QcVHVKGM+4h+Lncxnoehrjgw2gdmScSCsnE8BCFfXxuH/d4b20FAA8
+	m6y3S+YEOY12sg+IOWQKPWUJaTaKhPDYtw0BLeRkKCDUMpttl17DWcnQiIVwn6MmW+Xf2zWqO21
+	4scenRflaZsYNmrugGn8SEpNuIeLsjbAMPcaMl+QID4cjYrKolnQonk7p0IaLLaSL3IxahXbOA/
+	dodXRI2I8xAwMlBz8xQb3eKMu8dYjpINFLxMC4S4M/QGwEAGtY=
+X-Google-Smtp-Source: AGHT+IEVBBg1YJOhpeXi0WEdn1yE/JozVAa3iha7YuxVEquuYeILdGh0LwP7Ll4C048taQR1AQQS5g==
+X-Received: by 2002:a05:6000:2d10:b0:385:dffb:4d66 with SMTP id ffacd0b85a97d-385fd3e762emr3643278f8f.17.1733325121233;
+        Wed, 04 Dec 2024 07:12:01 -0800 (PST)
 Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273b1dsm27157315e9.15.2024.12.04.07.04.51
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3a710sm18360272f8f.57.2024.12.04.07.12.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 07:04:51 -0800 (PST)
+        Wed, 04 Dec 2024 07:12:00 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	linux-block@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
+To: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	linux-afs@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] blktrace: remove redundant return at end of function
-Date: Wed,  4 Dec 2024 15:04:50 +0000
-Message-Id: <20241204150450.399005-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] afs: remove redudant use of variable ret in afs_dir_iterate_contents
+Date: Wed,  4 Dec 2024 15:12:00 +0000
+Message-Id: <20241204151200.399599-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -77,30 +73,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-A recent change added return 0 before an existing return statement
-at the end of function blk_trace_setup. The final return is now
-redundant, so remove it.
-
-Fixes: 64d124798244 ("blktrace: move copy_[to|from]_user() out of ->debugfs_lock")
+The variable ret is being initialized with 0 and is never re-assigned.
+At the end of the function the check for ret being set to -ESTALE
+is always false, so the check and the call to afs_invalidate_dir is
+redundant. Remove ret and this check and just return 0 at the end
+of the function.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- kernel/trace/blktrace.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/afs/dir.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/kernel/trace/blktrace.c b/kernel/trace/blktrace.c
-index 18c81e6aa496..3679a6d18934 100644
---- a/kernel/trace/blktrace.c
-+++ b/kernel/trace/blktrace.c
-@@ -639,8 +639,6 @@ int blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
- 		return -EFAULT;
- 	}
- 	return 0;
--
--	return ret;
- }
- EXPORT_SYMBOL_GPL(blk_trace_setup);
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index b6a202fd9926..83233814bd19 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -488,7 +488,6 @@ static int afs_dir_iterate_contents(struct inode *dir, struct dir_context *ctx)
+ 	struct afs_vnode *dvnode = AFS_FS_I(dir);
+ 	struct iov_iter iter;
+ 	unsigned long long i_size = i_size_read(dir);
+-	int ret = 0;
  
+ 	/* Round the file position up to the next entry boundary */
+ 	ctx->pos = round_up(ctx->pos, sizeof(union afs_xdr_dirent));
+@@ -502,9 +501,7 @@ static int afs_dir_iterate_contents(struct inode *dir, struct dir_context *ctx)
+ 	iterate_folioq(&iter, iov_iter_count(&iter), dvnode, ctx,
+ 		       afs_dir_iterate_step);
+ 
+-	if (ret == -ESTALE)
+-		afs_invalidate_dir(dvnode, afs_dir_invalid_iter_stale);
+-	return ret;
++	return 0;
+ }
+ 
+ /*
 -- 
 2.39.5
 
