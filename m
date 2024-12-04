@@ -1,106 +1,122 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D6C1B4153
-	for <kernel-janitors@vger.kernel.org>; Wed,  4 Dec 2024 12:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8CC1B983E;
+	Wed,  4 Dec 2024 12:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733314045; cv=none; b=mdA/hd/SvpIwTRg4fSqGWH4KX1i8gMCpMp56fDJ5MudOQqSAjekjum94Z4fMmqJggwO0fC76EDYLYoy0D6hnW10H/r/kx5HQTJb/LpKTNhq/3tdu8/RaOYiZ5okwI+dRQhGVg0OFKWFFG1tUk3enMmWNI7hdYk6aM3AfmmBBIjI=
+	t=1733316797; cv=none; b=IC0UE5stDpI+2q/po3d+nRdt0rN5Rs2ym6dInv9KGxQ2drGdlN1agx/XME2lhsOlwEIUaszINT+TNNsB9fZKkRqpV32KJgn6Fey2adoVq7L55C6DC7CIqNz+1W5/gTTlsdtbLtV0CJgrsflDJy/GvDha1zfhFfq8KIX3AdSRxb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733314045; c=relaxed/simple;
-	bh=RvR3qOxj7F/0e9rnW7O2IklQmCFVE6f3EueDbZzyUHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gBlsZXlBf0bvE/8vY0xOFAUFUVVgpedxO8BtShTERZiGXWPzKryAcvqIxwy81cACQ4LiU1s4wkCYBFLz+lF1xvKRoeXFDY7cohYAUmSEcoB000ucFVb1C+zZQGANhfFSsK10F+ptxR1mJf8mJfS6ULqnbkKg9XrMbhU0juJ2Ecs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nl1jZlwf; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1733316797; c=relaxed/simple;
+	bh=4KB7IhX41Jdx7R0pUSh4XrjrTpiCnCVaZJyu8gjdkpc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dckPkZIHYlbXMI7ol2GJcLrLXt0LwGCfs1TqmmfUVz4r0QyT1RSMjzzqNdYcOvr61nb+KSyZZU7dmz0XqujkQWDaAe8EN/5DjJR5zn+WQN0TLAoSwBAETkbOIpJuAW3k5R5BAfh0+eivRwdV9xZSvgV5dgbD3eZk1ywjlNvmSRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMeGr35B; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nl1jZlwf"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434a0fd9778so61769525e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 04 Dec 2024 04:07:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMeGr35B"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a742481aso55859685e9.3;
+        Wed, 04 Dec 2024 04:53:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733314042; x=1733918842; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=gmail.com; s=20230601; t=1733316794; x=1733921594; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=h210QoOSRhdPOVfbdTSglVOfvi7IBDHS6sm3Gy55HvY=;
-        b=Nl1jZlwfY1Nt1c1j+pN2QmDPxKOcAoXDPFhQJ6G3+I6gBaFxQIGeYBgx1gvlZ72kLt
-         nKmJIlDnRdgB98L8bUxncMzIPGn6DRE3riy5BY24IKbVU+KZx62iteuk1rYoxd9ShIBO
-         t24mdAA3fen00onL9nIzDdP9qTeg8fN9KOeQT4L2DCHXmrTqwwfxUCceYZyBGcfuaRpX
-         OgEXx6TBRJmwm+5DHqG3d3HDVpeC59f0nijF4Mu0uefZaYGL8oUydjlhRRGLrH8mDTXV
-         bddrm2YZnXKPiqWXxPElf5GkEkEWmqg/uwh4ltPah5KhD0O0lS4Lq7n3SmOpPqSYkolw
-         TbEw==
+        bh=S2aCUMfq9PreWWxmmta62wgfEIacoacSv9wLVfG0EG4=;
+        b=HMeGr35BHm4xrFK031+WpJUM/Tqqaj8cv23XNuTykB3/GHkgUgE7iHD2JE2Zclp547
+         sFK6aGVnNcDcqiWEJh+Y9wtEEr1s4E+UCW32DXBRvn8vdr0pTSgPq9239WumoJAmTJHx
+         OcMA1ZlarQLSlx9ThIugGidCDV5Dmp3F1Fc8QvWnM8PL4W3f11uvf0NJXNPtHCfQTXyu
+         cykTDlrqLh4TgMIXNn9Ok0MfqyZlxVXPPRcYT5znR25ptSWP+A5CeHx8OcD9bwlQG4pl
+         hMBfXBMe4MM4dRiZpoe2zPNXYrStsdxSfTyswW9uQ7hc3yexIleRyIXqhz8d+XS0qMPG
+         LK1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733314042; x=1733918842;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1733316794; x=1733921594;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h210QoOSRhdPOVfbdTSglVOfvi7IBDHS6sm3Gy55HvY=;
-        b=Q3I7mJhA81QPUc4g/FH55DjDEQqFlzpicjMasIxvO5DQMu1qRmT+kaatFLnPWRkv1T
-         khV2Zvr24xRVWtxGlOyiczYIHK+NY2ELMNdeYS9EQg7EAk6Xr6Cf4R3/2BANncx6Vgm8
-         JLd+t+I3Cip08IMRfhXZrLQG3oNptI8YvZQyPe1x8n7wgY/4ImAEPp62TsAwU51K/2J3
-         Ct+EcC2tYgO6mWYTpMJOLzwrLsLCvEX9bKfO4IxGRp0SndHwAUHOR9a8MNg9KTEsSzs8
-         mUJ/EnQg6Nm5yHVnxbiBJFprexby5hRhkmn/CZFN/v2KToaK2EsQTvXWIKHO9J9mS1yo
-         ygPw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/1q4J/8nAUJBo7Dy15iPuZMPfDyPqhQ/JggTbrUyWtbLYX/nmrxnGkPsYOCfdg0/6i6m0cUGpbpIdIFfwwSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiX3Avvp5JE8E1Hfz91FSYoyCTHeKSNy+ktV4bMVzlScBCY9br
-	rjWAMCNKj2rKSF9zU7k2fMlEJrMWCZTCN2NNQYhDqOrUbwUGEsql+OiQBCmZSAo=
-X-Gm-Gg: ASbGncuUwaei/NHSLt5ABdw33HzzfEMz6FBHm7s7zeHSqBf8l47JM557MpfMEaVdJV7
-	wyl/npXUTDSZq5S5krUyBZEpZZOmwo58zvEL9b/Ld0bPjfeXuiw8rsydrAGTqtKOH1fxgFG9wr5
-	m8DT6eE00bej1fin1NE8OAhZ7NENY8d/gypcXuwuJBLSS7K3HHIhvyKDYP9Zcs1a/oKwzGjpJF2
-	oV1IZPsEHuBSpMKijoZFdZtTzU5uYnvTXCp86BLNpdU8Z4cUHo1JLA=
-X-Google-Smtp-Source: AGHT+IEMOOOmz0PjNc5gkcjsABrK46MDH+6JTcOtcJN37eRjlQ+sir8R5ollqwe8lrVAPHvlPmBp4g==
-X-Received: by 2002:a05:600c:3b8c:b0:42c:b52b:4335 with SMTP id 5b1f17b1804b1-434d09c0b53mr62649135e9.10.1733314041606;
-        Wed, 04 Dec 2024 04:07:21 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526b14csm23020975e9.2.2024.12.04.04.07.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 04:07:19 -0800 (PST)
-Date: Wed, 4 Dec 2024 15:07:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Nicolas Pitre <npitre@baylibre.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] binfmt_flat: Fix integer overflow bug on 32 bit systems
-Message-ID: <5be17f6c-5338-43be-91ef-650153b975cb@stanley.mountain>
+        bh=S2aCUMfq9PreWWxmmta62wgfEIacoacSv9wLVfG0EG4=;
+        b=iIvYRVxeLnr84KOeyEwX+6CgJ76bpAI61p9rU12TZAqHzV5CBJzWiANyNmjuEcUkSv
+         Ieyl9o0HAEsjVc8ccgZN4X3m5kwwzRZ9CEMWqyVrAniMx0GWNCZToO3oswQEet0Ix9Aw
+         qHSUq30vv/A3sp8DESsfe2E39umNGiatXHwAtOGdmEZdS0sTV05OHtOH/kWNpkhga0Bf
+         wFck3JA1IZnPmUYxVmrz6Bkcy51v+dpFk+5cO5lsr2tSLXvpFoeaV9D4d5XoEGpFPlJ4
+         zXzAqa8EyBJ2iRswvayT+YjJkzXhkuBYPOBOZ96tt2LT56hJ7A+ZmNJyRi1eJpxS/LkI
+         vzIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTp5hDxH7+sQ+w6H9kqwEhNzJxKRC7WcVcjhl+2qNyDQfHaVrUmXyze9MaD2SYASY3Bl3gZOaJY8V7jw==@vger.kernel.org, AJvYcCWK94TUoKFDyZsj4EXGd0NBBCtk3bFaV02dY48xXw+vAJTPnMU+XPoIqluoSxvX2HChjs+x634r@vger.kernel.org, AJvYcCWVdqwpSHiVTp6gE0AiHTUqJ+pRNJdEGTIZglZOmxvE0TtPG4ZELNN5lf9R8fBSWyjtSbOeOhLxQvotaS2q@vger.kernel.org, AJvYcCWfiSv3JCxJBgYpVMQ2PTJzvbnUEJ5Kno861G2QEOHKbaLdKidFwVio/8hHShqtH7IqxSvyOgBPhcnx/+Z34w0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfqUd1VakuPrdss3tV8JStSyKo+gOJcEYbl1He6sunJApPdqor
+	A15xykJ7JLjyy8+2cHwSnxfIk4s2a0hS68mAt3I16e6yMazEu0wnN5TN0w==
+X-Gm-Gg: ASbGncsJOtgRveQOBthWRlsci5MnFkl3aTIopIKWPOMnGRJQBNZryUpUmpOZNNiFagZ
+	KxmXgwixKpPpJIHCzr1oc/GDt+cceGGSTUuX2m23UBPY0y74Jmr/M2Jqx+1Q2NDF2uY9/mWSzjr
+	hZce1fzc4MLeFWIQKbcJk+fp1QFsNx2WyOGWz2EkzbO+BrWSrSH/NAtV8HQFbwr+4tIvJdhvom+
+	3JXyhSpe0boS6sj+GXCezkoH2O0zsZVXU0rFHwIAD/eg8USic+gnIi4Tb7uxtEb3V604QI=
+X-Google-Smtp-Source: AGHT+IEAjhyCi0OQTbfcNqIUsFj4yLHAHGPEiHTTUIeK2/a5ydVX5KehPnGynnnKDQWpIUjUjZeADQ==
+X-Received: by 2002:a05:600c:3ba1:b0:434:9dfe:20e6 with SMTP id 5b1f17b1804b1-434d4102563mr30395095e9.23.1733316793815;
+        Wed, 04 Dec 2024 04:53:13 -0800 (PST)
+Received: from [172.27.34.104] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5280b60sm23327285e9.25.2024.12.04.04.53.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2024 04:53:13 -0800 (PST)
+Message-ID: <f334a5d0-3eb1-44ea-860d-b0a5235a973c@gmail.com>
+Date: Wed, 4 Dec 2024 14:53:09 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 net] net/mlx5: DR, prevent potential error pointer
+ dereference
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Yevgeny Kliteynik <kliteyn@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Muhammad Sammar <muhammads@nvidia.com>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <07477254-e179-43e2-b1b3-3b9db4674195@stanley.mountain>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <07477254-e179-43e2-b1b3-3b9db4674195@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Most of these sizes and counts are capped at 256MB so the math doesn't
-result in an integer overflow.  The "relocs" count needs to be checked
-as well.  Otherwise on 32bit systems the calculation of "full_data"
-could be wrong.
 
-	full_data = data_len + relocs * sizeof(unsigned long);
 
-Fixes: c995ee28d29d ("binfmt_flat: prevent kernel dammage from corrupted executable headers")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/binfmt_flat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 04/12/2024 14:06, Dan Carpenter wrote:
+> The dr_domain_add_vport_cap() function generally returns NULL on error
+> but sometimes we want it to return ERR_PTR(-EBUSY) so the caller can
+> retry.  The problem here is that "ret" can be either -EBUSY or -ENOMEM
+> and if it's and -ENOMEM then the error pointer is propogated back and
+> eventually dereferenced in dr_ste_v0_build_src_gvmi_qpn_tag().
+> 
+> Fixes: 11a45def2e19 ("net/mlx5: DR, Add support for SF vports")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: fix typo in commit message
+> v3: better style
+> 
+>   .../net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c  | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
+> index 3d74109f8230..49f22cad92bf 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/sws/dr_domain.c
+> @@ -297,7 +297,9 @@ dr_domain_add_vport_cap(struct mlx5dr_domain *dmn, u16 vport)
+>   	if (ret) {
+>   		mlx5dr_dbg(dmn, "Couldn't insert new vport into xarray (%d)\n", ret);
+>   		kvfree(vport_caps);
+> -		return ERR_PTR(ret);
+> +		if (ret == -EBUSY)
+> +			return ERR_PTR(-EBUSY);
+> +		return NULL;
+>   	}
+>   
+>   	return vport_caps;
 
-diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index 390808ce935d..b5b5ca1a44f7 100644
---- a/fs/binfmt_flat.c
-+++ b/fs/binfmt_flat.c
-@@ -478,7 +478,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 	 * 28 bits (256 MB) is way more than reasonable in this case.
- 	 * If some top bits are set we have probable binary corruption.
- 	*/
--	if ((text_len | data_len | bss_len | stack_len | full_data) >> 28) {
-+	if ((text_len | data_len | bss_len | stack_len | relocs | full_data) >> 28) {
- 		pr_err("bad header\n");
- 		ret = -ENOEXEC;
- 		goto err;
--- 
-2.45.2
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
 
+Thanks.
