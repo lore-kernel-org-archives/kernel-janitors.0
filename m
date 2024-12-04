@@ -1,69 +1,73 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0D120C02C;
-	Wed,  4 Dec 2024 15:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C06F20C00E
+	for <kernel-janitors@vger.kernel.org>; Wed,  4 Dec 2024 16:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733326770; cv=none; b=Q5s3mI000tUqojBzQ0KqzPhWnoFS81mVKhUztNkRYL99SnEHeXK5XNaL7N6AIDCxDUOqxqQIq0H2uwfYLIq9ATYeyQ0HD8S20xsdEbq4bDTVt2IR5yLfD66XbC5/du6cncngkn93HHAWKw20l1Jc+j4AhK/MrcPRiyrInF0gLt4=
+	t=1733330008; cv=none; b=gSQ6VLhJMVwpiZ0ZDwUhFUTJSuv4ITUH4VGbFaCGt43jyqDGy3SU66SkKkpb6OOqaw9Bs9aUrrD542TTYW/UojDnpzn2CdVlB37DTLnNwYt/GSpzwTXWa4Zu0kJTU8hS2gDa52rTQ7cvlPCkNXiUn6H285zveanzN6AIAM/EcmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733326770; c=relaxed/simple;
-	bh=1KLvifziJbjh4pRqHKFaVZ0dtAKC1haIZRmPiJO9xZY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=f3/c176S73Gm1HlBz5+Jv+3izR456t4YubIWwxxYE/Ozcz9AWzNYdAtzuQmQR6SgjFjScmZPKMZqL+bIum9DEYOd3dii0pQvxw52Y6Yj23exHcbD21X6COzinmz/bFAMGd5umKlZfdjce8IItwpQDTJdvgksc2638aDurFGN17Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATH+asxk; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1733330008; c=relaxed/simple;
+	bh=YLqX/28N5thdvuWAhBCT6xbYIfwdHgRjjlYUHnZfPww=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rgFoNNQUhaWXZgKOga//jyE7GXSsju8uthkdXR5hdv9jFhEgxiYXexZARCVywmh3aSWPpmVZO30/Kfdvx5sc0ZHHDS8ihgw8TPhSRi56GAtGJPfU0omgLY11/A/DeqtAdzuWboib52g45Fekkn7UnZLR/oNRaQw2d8JtMXD6CTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cbOP1qWm; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATH+asxk"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434aafd68e9so57328965e9.0;
-        Wed, 04 Dec 2024 07:39:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cbOP1qWm"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7256dc42176so11140b3a.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 04 Dec 2024 08:33:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733326764; x=1733931564; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aMys5V1UTDgHq7pxYmVg8DrcO/JHKqHwaoAxkhnrpU0=;
-        b=ATH+asxkFAdUw4bQkq1Z7ArhuiWnmcxTi4wh0Eq1mb+zIpvW3ZcfU1W/ga6nBJlDw/
-         hNsiQRVp3hHklfmbuCRQ6YkWVYVDIJOt5A5X/jzdj4y02RLXPd3LAh3tE8TaaPHhvkSQ
-         Vtg/2Ry143dKdoxh8kA0Gl8XfW9vz1PmHudDuIpbIVTGAP+5XUe6g/22vqkz9DeLTHAs
-         k9Tu+3By9DxFqSp+4rIZF1EMPVYVAp84G6TegwfxRuBYxMlv5R4dXm+Tvh49kkNDPgKO
-         6zDUJfEdr2UvSkAn+z6LelE9SZc3WmUsZ/xu4mNUi1hKRwR9ylFccfD/UCTFjWCtV4t8
-         8OCQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1733330006; x=1733934806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8HFpbZOKpkO7AeS8bDe3st3+sWFuj7iai+TcTZhQd9c=;
+        b=cbOP1qWmavkAFYTjIGGtxmICesXawjm7Tw0HYbCU1e44Cjsq1mwqI9RYGBfu4ZdzCK
+         etKRraOqeFHs+Ev7wG0NXqYDvsRggihA2pOCYbBGpiJviaXUzVZmna5PzJxDURJv+Cm7
+         5Xvk9nJxjTGRomDor9qKlDvik1uEDVH1o8ZsiaeKN5p8J/oyplIlNkbF5iX7vdlw2FOF
+         DxeKZo2qOalyVhtPNcerN3p9rSaWa517MC2NdiNs5wmvWOoIjmX8enlrB2XluUmce7PB
+         zjdgkdN25dDPEYQ9iH4uN90fOFkmqKuhbeTqYDPD/tT5+20PN3jNwbfzMa/vZs79YmSa
+         6epQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733326764; x=1733931564;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aMys5V1UTDgHq7pxYmVg8DrcO/JHKqHwaoAxkhnrpU0=;
-        b=GX9lCm2niZ1bNPyOrbVYSApzAwSXlhhfEJaccyditMqe8Qht4YxiKsGK0LxLeJtWQj
-         j3T+mzr8RZBVo10DiWY6RDlWKsNv1DrllQk2fv6o6wQoOZ+ae17kcBBGyq6FdL3X5x96
-         NKFTrIGPSAF+pdbn/ZMUuMVCF2CT2UlzUpA48p5iJm6TZL6d6iggohYrLNf6fJWbCFgy
-         Qa412AKIqISnwei4BCs8AySSfkgzp8X9OJPENEsb+d9v4TN1T895pVJkkIpXfjKU/0ND
-         r9bFP0yuAsfOv5B1g5x8Q5OY73soLnlHYK1mgkb5aexschLs9nQkaZ6Q5g0kKPay5RVQ
-         Cq1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUcfRVxO2mvcrspbnO11ZyWsudnac2xgnQZsagukw5+mbyI4K2wxWICxeeswS0i0/2ByiaD7ZYnjA==@vger.kernel.org, AJvYcCVeiTe17DkOwAQYXrcusABnUdJ/agTnzadhfLZ/ofZHcVGuF0relMgfXjg0Dos4ekKUp4Lijxfop22A98d1@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywwl+ECLCvNfnbvWOoFLdKD0egN0e0fOWfjHm+/AIJnCSIh2Ydx
-	y+uEvngQENse56dPBnbEE4rvQkokKh6gqGAaWc2gn6TrZgMBP10SWiLc/lukuH3vkQ==
-X-Gm-Gg: ASbGnctsHNw8jxi9wC8bcMevaNr04/I8718rCgyyHMPjrR9EU3o6eg1xalFyH5XXJ5r
-	oqLRd3hkp0HQUiycYJlx/Sv+uO/pPW8dYawusNE/E9/7gE9qz5zp7S9qpbLjvs3VXsC2tF9fJNz
-	znYrc+U8PyBvri7ERBMxgMyv6zNsigr9bddI0VrwDTB6aNiJOtVkLOh/An4iFr91rIJKllyC2O+
-	Y1Q+rmU6UcDsORsWCIYwlULAMCJRL9lZgSUbOBcaKAsgJilQQw=
-X-Google-Smtp-Source: AGHT+IFDtt6Y8nH2grDoAeaoEZHxBB0gdeNB563wKehiNeGHaviDfMWxStlrMNFWOalCeJSFG7AR+Q==
-X-Received: by 2002:a05:600c:1ca2:b0:434:9e1d:7629 with SMTP id 5b1f17b1804b1-434d0a1dab3mr53925035e9.33.1733326764433;
-        Wed, 04 Dec 2024 07:39:24 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d52a46e6sm29130355e9.30.2024.12.04.07.39.24
+        d=1e100.net; s=20230601; t=1733330006; x=1733934806;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8HFpbZOKpkO7AeS8bDe3st3+sWFuj7iai+TcTZhQd9c=;
+        b=fmtwAsRRcPc4HcSRVjpe8GzA1i9NbIJOwiTYLM08+wXeUkk66trXMFJXguTsP3xp3n
+         5AHnLCRcFSMgsIrL9MhmBeV9zf75/0WZQ6cEIjjWcFeXmtGC6nH+L6L8WdH4jCRW5KUK
+         lS2g6ni8IoGesRg7CcGgImh4Gj8rM7cPKMYVJhRoKuGt5U/sEdYEtKf2YrSFageX91Ua
+         oYWcSYfLLHsEo3DUpQlasz3i0zWSC1ZmAPwSlI+LboDfV3vDUmvy5IZxzqkgs2LS3ucm
+         MJI1GC39j31fBrBbLgRNF0jBYs9rfwcNPGY+7Bv2x9yI6ai/+PvjIUdrb2U6Jnn/XnyS
+         RpFQ==
+X-Gm-Message-State: AOJu0YwGEiAuXh7l14Kn05vN2s1yufer9Mr7iWHQpldAv5udsXQTR9VM
+	ciJ0licl4e/G3MulOzptO0Z4wMflMmFQv85yPMTedfC+k0PyOUiyYC9fAmgW7EA=
+X-Gm-Gg: ASbGncua+KElucrAno2QhwWMuvH6FOtU7K1gl8dutAl64sXAZQh2aX4ns/Flf7JMTt0
+	6djUFUQ9UVlkyiEAklKQQuZmcHGnVCF2J4us1mayWsk2voR1x5f8VIhmRSGodMKYB8lkK9ZAtbq
+	/jDRx4o7dBRSxTBatRfyEF79Ktp/d/bffeo5WV0K1FB5vc8kt+PUaZq8wPYNEOJmHFOfOBzM2XU
+	NPi/C0XHi1M6gvdtESsbPTH7vhYDA==
+X-Google-Smtp-Source: AGHT+IHGetUSTLBEO7g1Mr54/8uXPJm1zbpOiVPZj2JidglSRGFFA2sX/e54bN5zcvRXs+5U75O04g==
+X-Received: by 2002:a05:6a00:995:b0:725:2b93:3583 with SMTP id d2e1a72fcca58-7257fcbc006mr8373190b3a.21.1733330005713;
+        Wed, 04 Dec 2024 08:33:25 -0800 (PST)
+Received: from [127.0.0.1] ([2620:10d:c090:600::1:a7a9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7254184952csm12955492b3a.185.2024.12.04.08.33.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 07:39:24 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	io-uring@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] io_uring/kbuf: fix unintentional sign extension on shift of reg.bgid
-Date: Wed,  4 Dec 2024 15:39:23 +0000
-Message-Id: <20241204153923.401674-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Wed, 04 Dec 2024 08:33:25 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241204150450.399005-1-colin.i.king@gmail.com>
+References: <20241204150450.399005-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] blktrace: remove redundant return at end of
+ function
+Message-Id: <173333000444.511414.17569005007152720429.b4-ty@kernel.dk>
+Date: Wed, 04 Dec 2024 09:33:24 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,35 +75,28 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-Shifting reg.bgid << IORING_OFF_PBUF_SHIFT results in a promotion
-from __u16 to a 32 bit signed integer, this is then sign extended
-to a 64 bit unsigned long on 64 bit architectures. If reg.bgid is
-greater than 0x7fff then this leads to a sign extended result where
-all the upper 32 bits of mmap_offset are set to 1. Fix this by
-casting reg.bgid to the same type as mmap_offset before performing
-the shift.
 
-Fixes: ff4afde8a61f ("io_uring/kbuf: use region api for pbuf rings")
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- io_uring/kbuf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 04 Dec 2024 15:04:50 +0000, Colin Ian King wrote:
+> A recent change added return 0 before an existing return statement
+> at the end of function blk_trace_setup. The final return is now
+> redundant, so remove it.
+> 
+> Fixes: 64d124798244 ("blktrace: move copy_[to|from]_user() out of ->debugfs_lock")
+> 
+> 
+> [...]
 
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index e91260a6156b..15e5e6ec5968 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -640,7 +640,7 @@ int io_register_pbuf_ring(struct io_ring_ctx *ctx, void __user *arg)
- 			return -ENOMEM;
- 	}
- 
--	mmap_offset = reg.bgid << IORING_OFF_PBUF_SHIFT;
-+	mmap_offset = (unsigned long)reg.bgid << IORING_OFF_PBUF_SHIFT;
- 	ring_size = flex_array_size(br, bufs, reg.ring_entries);
- 
- 	memset(&rd, 0, sizeof(rd));
+Applied, thanks!
+
+[1/1] blktrace: remove redundant return at end of function
+      commit: 62047e8946da6269cf9bcec578298dd194ee4b7f
+
+Best regards,
 -- 
-2.39.5
+Jens Axboe
+
+
 
