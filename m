@@ -1,97 +1,96 @@
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27701B87ED;
-	Thu,  5 Dec 2024 20:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3B317E019
+	for <kernel-janitors@vger.kernel.org>; Thu,  5 Dec 2024 23:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733432228; cv=none; b=FOOXp2MaHvjLfIfHpLMapLmg+zK1Qdm9tMoThRouY4adkyfhdeol+SLNEUQh/ozIO2JDMZyKEydIBdbC87IGlJqPwRWX5cxumVmBSEnzrZnq4ObE1TOHn+atDJqf8cqZtmfO3j5J+oY31L5Gw45+UVakxOXgwBeC3R3GY8QrZo0=
+	t=1733440023; cv=none; b=EIYl+it0xkcJsdIHL1dwP3MPoE8MkbGWNolR/hAi8D7LJLG9iNs3teqnmjwSzHzPy/Cc/tV2WvhSVHPBEhyhcgPS1iDanB3wttnEZnUfdAyfpd0JpR07pqzsK63+6f9pk5TG/wpGEt8+8op9jBiDiKv2G4x+N22suhee7omdyTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733432228; c=relaxed/simple;
-	bh=exLBzZN44uq/eA51sJujDUJBC7JPNknSB8+UHw95tF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=abTPjLmk51c2fmM2peKYraP9hREZKJTYVwxU2J0P6sCSlsIH5iY6yjolof7eGTwze/sFoDykmo2IJqj+vlomAyhMjqavZ8PO0sjKcrcB4fyE7Ob2IcIIics49jCKUGenkeTdDz0RucOMC0HDU2nEVOI4gfm6hDkbfOehq/1kRmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=I/IZYPg3; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1733440023; c=relaxed/simple;
+	bh=UciXj6R8kmj7F1nkPNLftcUuWn2zjjonY7XeTsiisyQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dWb/GGrKA/PQVZUza8GTyczMyv3HDInCS+/s+wWKUoDBjfydUoVIFDxt42qlfMP/iZnjd5MqrfF8uhPsQaATLaW7N2A1MdAjvdP2Tcd3SZTmV/y+y0ImnRd8eQ+gnO5kvC6V2E7YnaTbiqkYYd6xsw+bvBAHdDNZY4vIqsT4dDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cVPp2XKe; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="I/IZYPg3"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id JIlAtbRosTOxlJIlAtj0ZA; Thu, 05 Dec 2024 21:47:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733431663;
-	bh=pyxcVRr6ZRTbmf6+JN/+2wrLbnr75KpReBklbPYd8+M=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=I/IZYPg3BkLso/QaobGcJZ5eJL6VbnL4e3isD3pRhWgkfik35/o83uss3AXEUNGD8
-	 w2URZl+OgsO2aRc74wZ8juEfzJzWr1vPNOmVqg9B7Sbc+fI87dHYa7PIWwM+F3/ftI
-	 Tf34jQF68h/yV6klnM3gZZOM3KS+2roGiUI46JQRVoF4piLcB1kd6v2ddrvI5CvXV1
-	 9RMHQJROQsUKC7jAMO66tEsfYtPPnAtBQ1X7fhDZf0aDzaCgjWHw1/4WO6EVJcZRiR
-	 OrTZX0Z1boCFAMGcX94RGqDmnZ8EiHu3xWS85RdxGBVvAvOEL/liU3GsCJhVBVE6d7
-	 PIqBN6xrfwu0A==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 05 Dec 2024 21:47:43 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org
-Subject: [PATCH] iio: adc: ad9467: Fix the "don't allow reading vref if not available" case
-Date: Thu,  5 Dec 2024 21:47:29 +0100
-Message-ID: <556f87c8931d7d7cdf56ebc79f974f8bef045b0d.1733431628.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.1
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cVPp2XKe"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee6abf124aso1251161a91.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 05 Dec 2024 15:07:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733440021; x=1734044821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2cfmId59vxiNvq6eQ30QkQNn6nuXdIqcNwMG9TRCwVI=;
+        b=cVPp2XKesf4ltGnkcHkA+JjCxU88rJTYqOXLX/RrkGqP1gISqUyPdwdPvIihg026XK
+         u5LOC8eRJ0fGtGxo8/Ij6UHDnrS4svhMGZmVAxezXsQ5ISYn5XePWtOMeU04EGpvh8r1
+         dUs9XTsD/zkWGXqDnNzPTU1gqvG2wiwCgavoYlFG8U/myvrZjdFmpr0KZAISfHeuKD7S
+         dstr4mHMITuc/45nnoFkiz01SFVLkq8wesE1K6HIzRoxDb6aE5tmlSen2qRtwjWlRT/u
+         64wNQTTm8kjMXtGIlbhxRubAFd4DC/HMM3A1Av4kj8QJON2PjA2A1OzSZkhvd9/sP9tr
+         mbRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733440021; x=1734044821;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2cfmId59vxiNvq6eQ30QkQNn6nuXdIqcNwMG9TRCwVI=;
+        b=d9HoSqlQY7cAEB7msS6GMOU7OgRyyJrtaVDSWKwgAl6xAT5KLirzSL07/cahJogVLq
+         AijsDeXwHMGXqc3b/RyT1FVTO8X93jguRW8iJLi6PNykR+4BoLBmIhiDyuKIvApEQnHD
+         itBWtO/It0TT9T6NTAkpZXwsCepSG32dB5AZ6bLnVLq5Mg+IDKLnO78M+Kk2qvibhkZi
+         BwGj2771qQJT3Z4ps2DlsPvwz/b3ynPLlO4lZIABK+3mgvTDKTfkKNeV8ibteZy64Wmo
+         KJDZYZWSDGZGeR6pjsyXIam258dHvKDkQFdtKtHh7p4zyVy5VW+FfGontdzL5uef8IFI
+         prQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoH634YhlWd5J7KgDZu0Z4fi7SHCHoRsZDsymbO3/EQ2qs7vk3HEdPDG7V5Eif6Y95JAlDpXazQIuXMaPLejw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNViBkH2f58PVVu2Q3H5NwWkfMfI75DA9dTeIv4n0+KN+CbPDW
+	H/mOtz+xROwv5xkjywzkiJttVZbWcbqdMDDQoaB0lfqAJioowRt53k2AIb+BEf8=
+X-Gm-Gg: ASbGnctp9pRRZl+v7A58fISUaZVJN0SDTbmG5XKKqKxHKd2sOiR1WoRUqoPSccAOEZN
+	D8/COdkyVQLHOFybWMCifksqgTd8MxjTH3djDNfdeHFhbOkS0FSbnWXNRDhjDCcX07Fn2VfwTts
+	YCKJBapnRCOL0sdAtjiSV+hi5Lv/CeXvNCepr/i1OhOODcYtFEmRxXGUJeY1EB43s0a9242ZsFW
+	nTn99NWVpWM7AyuA5hBJh21iVTVxHXS6OVTA8uhdgrLHVgl
+X-Google-Smtp-Source: AGHT+IF0lJnHZZwx5qW89pY3JM7PmU56DWfppWtG1IiiileeHZLO1SZtL+I4lEvD0dwQNQWcZ0pTbg==
+X-Received: by 2002:a17:90b:520e:b0:2ee:fa0c:cebc with SMTP id 98e67ed59e1d1-2ef6a6c112cmr1324606a91.20.1733440021483;
+        Thu, 05 Dec 2024 15:07:01 -0800 (PST)
+Received: from localhost ([97.126.182.119])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45f7d804sm1938792a91.1.2024.12.05.15.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 15:07:00 -0800 (PST)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
+ Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+In-Reply-To: <ec20fd5c347bf74963532e95282f850d209d84d5.1730539664.git.christophe.jaillet@wanadoo.fr>
+References: <ec20fd5c347bf74963532e95282f850d209d84d5.1730539664.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ARM: OMAP2+: Fix a typo
+Message-Id: <173344002056.407600.10771943462992727832.b4-ty@baylibre.com>
+Date: Thu, 05 Dec 2024 15:07:00 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cb14d
 
-The commit in Fixes add a special case when only one possible scale is
-available.
-If several scales are available, it sets the .read_avail field of the
-struct iio_info to ad9467_read_avail().
 
-However, this field already holds this function pointer, so the code is a
-no-op.
+On Sat, 02 Nov 2024 10:27:51 +0100, Christophe JAILLET wrote:
+> A 'a' is missing in "powerdomin".
+> Add it.
+> 
+> 
 
-Update ad9467_info to actually reflect the intent described in the commit
-message. Keep .read_avail to NULL, unless it is changed to
-ad9467_read_avail() in the probe at runtime.
+Applied, thanks!
 
-Fixes: b92f94f74826 ("iio: adc: ad9467: don't allow reading vref if not available")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This patch is compile tested only and is completely speculative.
+[1/1] ARM: OMAP2+: Fix a typo
+      (no commit info)
 
-Another solution would be to keep ad9467_info as a const struct as it was
-before and add a new ad9467_info_no_read structure.
-This way, instead of writing in the structure itself, we would choose at
-runtime which version to use. The main benefit would be keep this structure
-with function pointer const.
----
- drivers/iio/adc/ad9467.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/iio/adc/ad9467.c b/drivers/iio/adc/ad9467.c
-index d358958ab310..356637677524 100644
---- a/drivers/iio/adc/ad9467.c
-+++ b/drivers/iio/adc/ad9467.c
-@@ -900,7 +900,6 @@ static struct iio_info ad9467_info = {
- 	.write_raw = ad9467_write_raw,
- 	.update_scan_mode = ad9467_update_scan_mode,
- 	.debugfs_reg_access = ad9467_reg_access,
--	.read_avail = ad9467_read_avail,
- };
- 
- static int ad9467_scale_fill(struct ad9467_state *st)
+Best regards,
 -- 
-2.47.1
+Kevin Hilman <khilman@baylibre.com>
 
