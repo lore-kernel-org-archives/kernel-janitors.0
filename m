@@ -1,96 +1,112 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3B317E019
-	for <kernel-janitors@vger.kernel.org>; Thu,  5 Dec 2024 23:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8ED819
+	for <kernel-janitors@vger.kernel.org>; Fri,  6 Dec 2024 00:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733440023; cv=none; b=EIYl+it0xkcJsdIHL1dwP3MPoE8MkbGWNolR/hAi8D7LJLG9iNs3teqnmjwSzHzPy/Cc/tV2WvhSVHPBEhyhcgPS1iDanB3wttnEZnUfdAyfpd0JpR07pqzsK63+6f9pk5TG/wpGEt8+8op9jBiDiKv2G4x+N22suhee7omdyTg=
+	t=1733443425; cv=none; b=L6RS1q96FwzHl1V0yDdYIgqe2tFpQ9p+qh+oMqycQyPvmwW4BdBJ9FpW/7FcwfmF09cvbwrqBessYSzt76Ce6f+UlkGr/UzCirhlZ2hxnarxuZA1D16GwOKgJ29pBuntTFVLChnna8NNjk5oSDX4BbOIvvkEX4gRFGSu/D1e9qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733440023; c=relaxed/simple;
-	bh=UciXj6R8kmj7F1nkPNLftcUuWn2zjjonY7XeTsiisyQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dWb/GGrKA/PQVZUza8GTyczMyv3HDInCS+/s+wWKUoDBjfydUoVIFDxt42qlfMP/iZnjd5MqrfF8uhPsQaATLaW7N2A1MdAjvdP2Tcd3SZTmV/y+y0ImnRd8eQ+gnO5kvC6V2E7YnaTbiqkYYd6xsw+bvBAHdDNZY4vIqsT4dDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cVPp2XKe; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1733443425; c=relaxed/simple;
+	bh=qbCLbXOAmU7/fx5+PDIlZxfkhc6FTJSnBNp9tcZ/sBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aJ6sWuYl69eZ19eTaDY7g/fBjURMZi3xDCO1OjmRT+T91oYLArP0uM+1R269s+yJNvOP5ex+6E3cKB+irAzZhSl/jdWfqx95zCA4l41pWVGl7zt2XT72e8S3w6PCkwNsd4+zLnua3KhBmwgTGvQ1byVqJnFXS9TlhtIhlQtMiwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uDmidVB7; arc=none smtp.client-ip=209.85.160.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cVPp2XKe"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ee6abf124aso1251161a91.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 05 Dec 2024 15:07:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uDmidVB7"
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2967af48248so867125fac.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 05 Dec 2024 16:03:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733440021; x=1734044821; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2cfmId59vxiNvq6eQ30QkQNn6nuXdIqcNwMG9TRCwVI=;
-        b=cVPp2XKesf4ltGnkcHkA+JjCxU88rJTYqOXLX/RrkGqP1gISqUyPdwdPvIihg026XK
-         u5LOC8eRJ0fGtGxo8/Ij6UHDnrS4svhMGZmVAxezXsQ5ISYn5XePWtOMeU04EGpvh8r1
-         dUs9XTsD/zkWGXqDnNzPTU1gqvG2wiwCgavoYlFG8U/myvrZjdFmpr0KZAISfHeuKD7S
-         dstr4mHMITuc/45nnoFkiz01SFVLkq8wesE1K6HIzRoxDb6aE5tmlSen2qRtwjWlRT/u
-         64wNQTTm8kjMXtGIlbhxRubAFd4DC/HMM3A1Av4kj8QJON2PjA2A1OzSZkhvd9/sP9tr
-         mbRw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733443420; x=1734048220; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A5vFET2LxG5T8tpAsNWIDLmJd+E6eUUYCjL8dYpTWOg=;
+        b=uDmidVB7oXNr/6cbSTzWwLQC7y8JS/D3KYhPUGf/10suZbkQLoqfDzjsPYTtP5MZs/
+         uu6MutZQzAKT+FWYH3DqGL5RMLk84Ilx96t9EkMzK19DDW2FOs+gHfLrH5ML/Yu6Vjfb
+         BQI1pvIAlv59LLnAyXRqlelNL1Sns4qQceDTUFjUml79geWGJABXPOhGjsdbwxXCS+uY
+         uJZuPRUZHuCWvxnz9E622KMgp/bBh5AzNAJXrncQkeNFYgpAPdFhO1FdYmB5tGpvmKO5
+         V6vaWQskXllB0zdabkVEbN8wseNbZ1PYiKLLNTmREbt1gZLhArY5E7NrPtExik28Tit9
+         DO6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733440021; x=1734044821;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2cfmId59vxiNvq6eQ30QkQNn6nuXdIqcNwMG9TRCwVI=;
-        b=d9HoSqlQY7cAEB7msS6GMOU7OgRyyJrtaVDSWKwgAl6xAT5KLirzSL07/cahJogVLq
-         AijsDeXwHMGXqc3b/RyT1FVTO8X93jguRW8iJLi6PNykR+4BoLBmIhiDyuKIvApEQnHD
-         itBWtO/It0TT9T6NTAkpZXwsCepSG32dB5AZ6bLnVLq5Mg+IDKLnO78M+Kk2qvibhkZi
-         BwGj2771qQJT3Z4ps2DlsPvwz/b3ynPLlO4lZIABK+3mgvTDKTfkKNeV8ibteZy64Wmo
-         KJDZYZWSDGZGeR6pjsyXIam258dHvKDkQFdtKtHh7p4zyVy5VW+FfGontdzL5uef8IFI
-         prQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoH634YhlWd5J7KgDZu0Z4fi7SHCHoRsZDsymbO3/EQ2qs7vk3HEdPDG7V5Eif6Y95JAlDpXazQIuXMaPLejw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNViBkH2f58PVVu2Q3H5NwWkfMfI75DA9dTeIv4n0+KN+CbPDW
-	H/mOtz+xROwv5xkjywzkiJttVZbWcbqdMDDQoaB0lfqAJioowRt53k2AIb+BEf8=
-X-Gm-Gg: ASbGnctp9pRRZl+v7A58fISUaZVJN0SDTbmG5XKKqKxHKd2sOiR1WoRUqoPSccAOEZN
-	D8/COdkyVQLHOFybWMCifksqgTd8MxjTH3djDNfdeHFhbOkS0FSbnWXNRDhjDCcX07Fn2VfwTts
-	YCKJBapnRCOL0sdAtjiSV+hi5Lv/CeXvNCepr/i1OhOODcYtFEmRxXGUJeY1EB43s0a9242ZsFW
-	nTn99NWVpWM7AyuA5hBJh21iVTVxHXS6OVTA8uhdgrLHVgl
-X-Google-Smtp-Source: AGHT+IF0lJnHZZwx5qW89pY3JM7PmU56DWfppWtG1IiiileeHZLO1SZtL+I4lEvD0dwQNQWcZ0pTbg==
-X-Received: by 2002:a17:90b:520e:b0:2ee:fa0c:cebc with SMTP id 98e67ed59e1d1-2ef6a6c112cmr1324606a91.20.1733440021483;
-        Thu, 05 Dec 2024 15:07:01 -0800 (PST)
-Received: from localhost ([97.126.182.119])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef45f7d804sm1938792a91.1.2024.12.05.15.07.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 15:07:00 -0800 (PST)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
- Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
-In-Reply-To: <ec20fd5c347bf74963532e95282f850d209d84d5.1730539664.git.christophe.jaillet@wanadoo.fr>
-References: <ec20fd5c347bf74963532e95282f850d209d84d5.1730539664.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ARM: OMAP2+: Fix a typo
-Message-Id: <173344002056.407600.10771943462992727832.b4-ty@baylibre.com>
-Date: Thu, 05 Dec 2024 15:07:00 -0800
+        d=1e100.net; s=20230601; t=1733443420; x=1734048220;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=A5vFET2LxG5T8tpAsNWIDLmJd+E6eUUYCjL8dYpTWOg=;
+        b=hNRcVr+52oabd9XBQtjZGThYLDYYpVQutpMSqknECEQq52alIYonaKUhONdDsm8wtl
+         rN2B8EPonQ2RIwx8dqheBvSwtxoJfJwHaDovOGbUUayLwLB/t1EaDOWOS0ARaQ3QGFw1
+         JMkQzf7A+pKI9w0XTDZwbJGOPhx+4J8TA2bHLLjXH/04yBTZU1SFshgN7cj1G/WpvIgW
+         mEbkNNqxovKjaoo4gIzwsT7R6ixbFmD4J83Ni9NgzzNXaFLUJYNS00Xt6AkOhiGRcDao
+         YY0tpuYBMFpHt5G5tqbCL13nSL0Tq7e82okx/P0jiKc5geTnpoGJaYkzF1iw0UQxZXrA
+         l3nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjfioXjqC/2hP/8BoVwvzUw/DLoy8Z6CkVvsLfqXJHSZ6qVCv2J3op6aIKnG6gJOuJ3Oh0AaBwhTW8kdyUOxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM7Ij1XFNjcSlPTJvWlrNwsGTLTCMHX0MTl7jRcsyMAIELA9fc
+	fg4fIDv5PJdZIa5enVmHgeeB5heruhJqn9C2i2azU9yKccVwzfAd6tqWb6QLzbM=
+X-Gm-Gg: ASbGncv6+ZgScVZcnKZqiANAC0VDk3AKeGA6YHu49cBqiiXyJljRiQxziTRBN4Ijssw
+	qsoJvVnqku2ROge7ItOt7IOOaoC024pPXp852NNRnUqXcjql7+pXe1sp5GyWsUNd+7pv2PvT+vA
+	DxsVr6T5Kkwy7QLnpA6l8GPgGYU+qtGYrMOmmp4hU+oYXL/fsrS4/oO1W6TsrEb8Qri+u0CKkQS
+	B1wFyZdzeMG6st+FDmkpTQRRy10joQRNMvze5rQsMPGXVQhcf5bms9b0+w5naIUMGVf+yURrlar
+	GLWO8KdrmQQ=
+X-Google-Smtp-Source: AGHT+IECYU0jj5jbbPl6E6YzHzZxPOVKClUUsz6XXsvoWGW5CsRwuTbkcIDj8EBTYuLuAoRMOO2XjQ==
+X-Received: by 2002:a05:6870:6b99:b0:29e:1cd8:4a0f with SMTP id 586e51a60fabf-29f73283e34mr546914fac.17.1733443420263;
+        Thu, 05 Dec 2024 16:03:40 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29f56739df9sm587232fac.21.2024.12.05.16.03.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Dec 2024 16:03:38 -0800 (PST)
+Message-ID: <5c2d828b-247a-419f-97a9-a77a6653e846@baylibre.com>
+Date: Thu, 5 Dec 2024 18:03:37 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: adc: ad9467: Fix the "don't allow reading vref if
+ not available" case
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org
+References: <556f87c8931d7d7cdf56ebc79f974f8bef045b0d.1733431628.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <556f87c8931d7d7cdf56ebc79f974f8bef045b0d.1733431628.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cb14d
 
-
-On Sat, 02 Nov 2024 10:27:51 +0100, Christophe JAILLET wrote:
-> A 'a' is missing in "powerdomin".
-> Add it.
+On 12/5/24 2:47 PM, Christophe JAILLET wrote:
+> The commit in Fixes add a special case when only one possible scale is
+> available.
+> If several scales are available, it sets the .read_avail field of the
+> struct iio_info to ad9467_read_avail().
 > 
+> However, this field already holds this function pointer, so the code is a
+> no-op.
 > 
+> Update ad9467_info to actually reflect the intent described in the commit
+> message. Keep .read_avail to NULL, unless it is changed to
+> ad9467_read_avail() in the probe at runtime.
+> 
+> Fixes: b92f94f74826 ("iio: adc: ad9467: don't allow reading vref if not available")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This patch is compile tested only and is completely speculative.
+> 
+> Another solution would be to keep ad9467_info as a const struct as it was
+> before and add a new ad9467_info_no_read structure.
 
-Applied, thanks!
+Yes, making it static const again would be best. Modifying static structs
+that are shared between all instances like this based on the properties of
+a single instance is asking for trouble down the road.
 
-[1/1] ARM: OMAP2+: Fix a typo
-      (no commit info)
-
-Best regards,
--- 
-Kevin Hilman <khilman@baylibre.com>
-
+> This way, instead of writing in the structure itself, we would choose at
+> runtime which version to use. The main benefit would be keep this structure
+> with function pointer const.
+> ---
