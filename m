@@ -1,69 +1,70 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363782066C6
-	for <kernel-janitors@vger.kernel.org>; Fri,  6 Dec 2024 12:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91470201278
+	for <kernel-janitors@vger.kernel.org>; Fri,  6 Dec 2024 13:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489557; cv=none; b=qtHcHt2cVh74ERT9xD6J3WgNTN/OjnqLqrd89t90K3A04D/Vln9COTVfvvlTHg0ZPaN1eOLDhmqDzF9xSZfYj3ZonIzpR7OWJ1Qo4yOr9nYUqqDePmZpElKJGpcnJkZpA0Te1pIrc6cs2ejWOpfp18ou1lSMfVqVKw6ImVVSpXs=
+	t=1733490567; cv=none; b=A+gc5WQwJVkaed8ppWIlLJEP6R9Syv3y/+lfl0W0eNxUI4YBgEHGEBwRDId4iNJ0Sc02vyiVEKgAARH+HpBhbZq68HQnkKlVV+QjIvVzrb9EXAWMKooamPjkHxWXOMYFRooplm1PZVzwG74PT5pSLzrJxYMLPVdVeqQckIE7LiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489557; c=relaxed/simple;
-	bh=f+27fzhEEViDzKM3BdD9NsjlQj3nr6zdqL/DbQ0dhcs=;
+	s=arc-20240116; t=1733490567; c=relaxed/simple;
+	bh=Hk+8FdCJyJ2RtcsWXsbcyvBWzUyxa4peO3nujhwWwz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gWpbTc86KikwzoWhC4KUKn29XNl6TG9pce5fgMFgMKRzUvfcRfn/HWVX9I+1QaGcnS9qIOIpgefEnh99Lk7WdDd56MAskj1e+mQnVBv+4/NWUhshOJOPcBk8wsTnwUDVB8EBiE6bc0In6ME2+KV2dHmMnnJ80k8Ilm4B2viWk9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uB+CD3kU; arc=none smtp.client-ip=209.85.221.53
+	 Content-Disposition; b=Dw0hCB5gl6Fzxu6G/8ZWZnQuAV49IFVKZy6CqQ3lQY6IpUPytM2N+c0o9v1b8Q+bqjYePuNNVijLQbepK9zk7WaWkzX6xjf2DeW5qaQTMIvt92arrw0+zJGIVacONcOGJjhahY4IVI8kwxBQ5Ub2Ezonp+nc7QRc7o99wJF2NwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m4LMBlNZ; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uB+CD3kU"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3862d16b4f5so328759f8f.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 06 Dec 2024 04:52:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m4LMBlNZ"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso20101815e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 06 Dec 2024 05:09:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733489553; x=1734094353; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733490563; x=1734095363; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QrDABpUIa8XNiUd2yRie5JLoWvXscChzPwT5Xcajj3I=;
-        b=uB+CD3kULrEBu9yaY++G1hkEM/iCyLHs4FFa+5H7UgK7p3Oh0iYfpLu1YpJ955ezoU
-         yhP+J7czsqhRrvVeQXCTWqGcIkDAwsLxlxRbO9aG78n1+3aZrpSaLwF3wcOQ40pDsgSi
-         MokuefxG8BIhh40ot0xnpySjf/wcJnGX3s/CF/3RwYuPMccOsTUe5UpOSMpkRt7hIYD3
-         fB5cd+zsQEo3qsUKw71QAviVZHTonFQWhLhnKnFKP1nTX9sB7hjrjFEzsJ2q1Rny/SKw
-         PdXuU3LGRIasKCb8czjez4dzitkJvpdRR7Qk1DED92MwSvMvS8jK1YNcFn0nbMkLktuR
-         XyhA==
+        bh=n/SGgSgGbGfS4qal8H23FKyEqnU45LmUqMyclprxKRY=;
+        b=m4LMBlNZ/oEep3zcGJu0K5tRl1lx77q+YjT5h53ZZcw4Wyl44rACj6eL5bFj6NSGvf
+         CDd/SOkRS3ahS9FDqfEdN5pBOeGmC/L3AkAfhdopoJSqvrgwTI5mqribBO/Ls3NQinM9
+         Mfyx9u+id8ldl7wfMUTEVfGvG7j2SMvuyYcOugabNgzfqgCRQLknngBI2pz7FiJRJWKe
+         hIxbRbz6zHNdoTzfMz2t8vBt/4W/0m2iV9qV6OtgK1OVaMUTCSV1TjZUjnm/3eaCKbkK
+         h8LW3L5cenuZWGMFNI5H7Rst0eyJ4mvzzkFKmd6k7P8MQ7kVZZYUvynOp2CR/SEGya/+
+         fsQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733489553; x=1734094353;
+        d=1e100.net; s=20230601; t=1733490563; x=1734095363;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QrDABpUIa8XNiUd2yRie5JLoWvXscChzPwT5Xcajj3I=;
-        b=voLsOZ+cjSwLk1pxAHV0fekXJ/ljVFTkbwK7d8/7DZd9X8mNovMTG7j/lUY58G1oIG
-         cVlEbAizbm7gNtQlNn5BbkBTi+lgcKmAUeUz61MXKXFTiBbR8OLu1++119p+k14VX75a
-         Iq1fkBATVr4O0ed30ASUsczlMLFNBrXBt5llKT94wyno/5hl8qzdSH3vDhwUi2DVGDff
-         evNiABJ76aew4v04/Qzz5Gi8v5SZCwlSS+Hmf+bKXASjbU1N/iqn7nhLmpbSiBQs2BK+
-         CBYk6T7Q2BKkMzYqJ5YiIz/FJYkg1LraQDrEGlf04AOw8Z/9TfVJvCFCDuIrJzCDi7px
-         4zeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNfX21AzaKaD6GFWsrKBIULMKr518LO9Vvh0B/ODkUSg2XMYaSBuB7kexpRJgn81u9kWZxTf6M/xGATcIFe2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0xDKzpJ7K9yF0W1IhuqCXazZauydLqwwQ0BoYBE61VsyK+N2L
-	yvIxk2XIPsWSauPc3XbtayLZZvypnn1SN2gzazluROyWe6JdUH6Eyy/0oq+aAAQ=
-X-Gm-Gg: ASbGncvyI4CCFgTWKaQcqoIllwPuBdr6RT2f0xKTbNB5uiOsRegDYdfU4wQcy9d4JuB
-	mk9GOj2939J3Aha70IK5DcrRHUE/p0LVL+i5PjoGLITc3XqMbibK/5hS3vflFwPQw1KMGQiw9/2
-	OT09AywCsAdgkfXhefRNEXDgrTyNb6Qf87yIIw+GoqtnrOlF65wkmRyhaw5UR+aUVm+5itj9CnL
-	9h0/2CIKsbzDBhDGGrVHodZiriK9bwJTKZuKgeTF3gR8hbImZovumE=
-X-Google-Smtp-Source: AGHT+IHm8JzdfN+FTAHMT8Z6wMEGsSN1pUfe5dL+iyuyKffu7U5Grq3ElPDgSbj9GKe3ItmO5v0RPw==
-X-Received: by 2002:a5d:588a:0:b0:385:f9ed:1637 with SMTP id ffacd0b85a97d-3861bf98719mr4466825f8f.28.1733489553444;
-        Fri, 06 Dec 2024 04:52:33 -0800 (PST)
+        bh=n/SGgSgGbGfS4qal8H23FKyEqnU45LmUqMyclprxKRY=;
+        b=H7AjDXh+fgjrHVRmQHqFeANHvlVwUjeHMetbDyZFQ4qunzZ4vJwVt+E/WojPMvZHf4
+         irwooyf0wPZwmXOLWKoHa4I3EG6sbeMSZBOyKyPAvdkUFlnfxKNJx/Apg3tcRWbi18fj
+         9OCcXMRH+F7jj2ugw/gIp6kL5i22LUC29K0FNc7S+b+Sqq9XxccyHMfJgOPbNN3KVSjX
+         VWU2ProVb9KopNR+jsmML+eEWzNp0Bkhq6zgGDgY3zBtBBO/MKsa/3UdFTApFAvZuiaV
+         8xo57WJXrpaijWF7kMJerjUCU2uWyRcH+58Ztb3EXb2SQF7xKr2OfGaZmXUtnfsmvpJz
+         7Sog==
+X-Forwarded-Encrypted: i=1; AJvYcCUq+egltLLnEq8ZZ8ze9US6t9gZhY2+eyr+/BYvpaihzrpulKbyj5YblTit6ImMcOSUk16ABkmOP0CQfAxsd9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4/z4yCNqgh4O4fTOSRe3Or6MZOxXwYK4simRHrsUXz/Rviu9S
+	o+Yfdkp5eDpzmmzB3o522MxQM0pmQXwj0czgRgbEUwODeIJXJRfj47xxiSZrNYk=
+X-Gm-Gg: ASbGncuMlxOdSNVxmg4Ca2o5svv/2f+ztH2PLGABb+gKeSJMhV9I8gXicNvjvGTwIeI
+	gfbvjng4VDnvwlGCJhnlYXFT4NOoyzmrwKNhr3YcLyvdO28W8sakHH8Xtq2CX0Z0aemici9KVhm
+	v3HgY7Msvh+Eg2q505J4G4ZZk+3OGuUIG6A/9lOGjh+S9xJPiGxMk9QlYzvBezzyuiefo9nPU+D
+	EjDS2quwWOGkdWfEofrnQkXojpttwP/MRjoh0K+82bTEtS2k5RAlpQ=
+X-Google-Smtp-Source: AGHT+IEe8eUou/A//oG9K2iNOUpaAPFb7T+EAvrirPkHn2z8KIBCuyQ60MWJalATbJ02kxAAUHl+dg==
+X-Received: by 2002:a05:600c:3b99:b0:431:52da:9d67 with SMTP id 5b1f17b1804b1-434ddeacf25mr27975715e9.3.1733490562877;
+        Fri, 06 Dec 2024 05:09:22 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da1134b9sm55104575e9.33.2024.12.06.04.52.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0da4a1sm57254375e9.19.2024.12.06.05.09.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 04:52:32 -0800 (PST)
-Date: Fri, 6 Dec 2024 15:52:29 +0300
+        Fri, 06 Dec 2024 05:09:22 -0800 (PST)
+Date: Fri, 6 Dec 2024 16:09:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sriram R <quic_srirrama@quicinc.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-	Rameshkumar Sundaram <quic_ramess@quicinc.com>,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+To: Badhri Jagan Sridharan <badhri@google.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] wifi: ath12k: Off by one in
- ath12k_wmi_process_csa_switch_count_event()
-Message-ID: <755becb1-819b-484d-8fac-9a2db53ced1b@stanley.mountain>
+Subject: [PATCH] usb: typec: tcpm/tcpci_maxim: fix error code in
+ max_contaminant_read_resistance_kohm()
+Message-ID: <f1bf3768-419e-40dd-989c-f7f455d6c824@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,28 +75,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The ahvif->vif->link_conf[] array has IEEE80211_MLD_MAX_NUM_LINKS elements
-so this should be >= instead of > to avoid an out of bounds access.
+If max_contaminant_read_adc_mv() fails, then return the error code.  Don't
+return zero.
 
-Fixes: 3952657848c0 ("wifi: ath12k: Use mac80211 vif's link_conf instead of bss_conf")
+Fixes: 02b332a06397 ("usb: typec: maxim_contaminant: Implement check_contaminant callback")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/wireless/ath/ath12k/wmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/typec/tcpm/maxim_contaminant.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath12k/wmi.c b/drivers/net/wireless/ath/ath12k/wmi.c
-index 402ae477da61..46c5027e4f1c 100644
---- a/drivers/net/wireless/ath/ath12k/wmi.c
-+++ b/drivers/net/wireless/ath/ath12k/wmi.c
-@@ -6873,7 +6873,7 @@ ath12k_wmi_process_csa_switch_count_event(struct ath12k_base *ab,
- 		}
- 		ahvif = arvif->ahvif;
+diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
+index 22163d8f9eb0..0cdda06592fd 100644
+--- a/drivers/usb/typec/tcpm/maxim_contaminant.c
++++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
+@@ -135,7 +135,7 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
  
--		if (arvif->link_id > IEEE80211_MLD_MAX_NUM_LINKS) {
-+		if (arvif->link_id >= IEEE80211_MLD_MAX_NUM_LINKS) {
- 			ath12k_warn(ab, "Invalid CSA switch count even link id: %d\n",
- 				    arvif->link_id);
- 			continue;
+ 		mv = max_contaminant_read_adc_mv(chip, channel, sleep_msec, raw, true);
+ 		if (mv < 0)
+-			return ret;
++			return mv;
+ 
+ 		/* OVP enable */
+ 		ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCOVPDIS, 0);
+@@ -157,7 +157,7 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
+ 
+ 	mv = max_contaminant_read_adc_mv(chip, channel, sleep_msec, raw, true);
+ 	if (mv < 0)
+-		return ret;
++		return mv;
+ 	/* Disable current source */
+ 	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, SBURPCTRL, 0);
+ 	if (ret < 0)
 -- 
 2.45.2
 
