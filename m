@@ -1,51 +1,59 @@
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28911213E7F
-	for <kernel-janitors@vger.kernel.org>; Fri,  6 Dec 2024 22:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A8522C6DC;
+	Fri,  6 Dec 2024 23:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733523970; cv=none; b=hYVrCMXWK9i5loJlBws3DrWnmSRBGytDcyUJ1URGT9QMqOwLLfJstgOVlDQBuW+PRbSBhFeslkbllUBKi+VxgQie4jADY0E9m5U/paUmb1bhlsOGj15OxFUzlkB3fg6N8PpQ2PY3XvEdVpddBl/sefn5k7QYPuTM4wesCweM8R8=
+	t=1733527666; cv=none; b=GWfiz2Eg4NClZzovjg3Bhkxeu8VvsE2As8SvpaDqGGJEuDCVrOGdytlHrvOa40bw0c7W3KP3o0ACzD3fimRFvz2s+mxt5fHALC1M2fA+blON+L/TcnmG9EAjqcmHpDcmKTUfKI+a2RJRFPk+7zMKBklnPQcMj+a2sarqXJvUsYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733523970; c=relaxed/simple;
-	bh=Lnuw42Mv5iHPBLo/2AByl5VlBgqQFDUrAunAYV1GFec=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nkdNsFDUdiL0VYTvlLh76fJ7EYHNd49KKuVd1jMSE9Iya5yABNZgnQFjXyOEmEy8QIvcARpktEciPWBcEe0QALxZWWq5nLg79qfvRhyZg97FfOeASQyXd5A8ifsoYloj/9lnYJK5lDS376T2XXJXWTI4ow1+tLiepqYplfVNNd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Db06uJAk; arc=none smtp.client-ip=80.12.242.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1733527666; c=relaxed/simple;
+	bh=T/hdbAzVv7g18kp7hxGCuy92NcslPbzZ1NtmtxEqNUE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n4VtJdUdnYDwzOL4mzJgTuntRKSIizHz9zWVOSBUx6Ze7t0JO7PDWB0ITWNFPKL3h8jqSqRYm821aGNarFjwzPtrhj97AYR+HgQqlJ5PNWkw7d+UIRCbKDrKprxPOGGqpYMXbEkX4oGw1xkEWLmBbis8dT6PhpqinBhrMov3dX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=m9i/WufE; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Db06uJAk"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id JglqtTW6qgyqpJglztoJXr; Fri, 06 Dec 2024 23:26:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733523968;
-	bh=g1WxuViRwGa1+bDp1AsTQe31lF4KfiLv3FxP9yuHr6w=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Db06uJAkQEDTFLQLzcpIu2x/Dqn+GTenRvjIJBeu0OU/NkxEMORiJW+XxtwycrgZZ
-	 cNRffc7eeA6P5XqdjMe0O4kf6uOnqqUYt9DvotIj9ajk98fQxw19YNmKKt2DYumh4/
-	 c3MxCwX4GtJhsUsG+2f85lOirQeEH3sB51VUUqMEnT7ocpEx0nrnH/MEBSjSSymge7
-	 OSxWS/V7nBtOGm5GyW7Wokzqon8P8+3czkJtYaCf8FX9zFlN7XVKN2+dLsmlBV8W+Z
-	 VANKnINwtsgjUQQJcWIS30xxi6XfZbAm63vhIi3XYJnnb7/X1vxVkfV1aBaAaIwoyj
-	 HOUWSoTkagc4g==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 06 Dec 2024 23:26:08 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Paul Burton <paulburton@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] auxdisplay: img-ascii-lcd: Constify struct img_ascii_lcd_config
-Date: Fri,  6 Dec 2024 23:25:42 +0100
-Message-ID: <f205c8ab886a4e12b2ceda6f89c873a9d921625d.1733523925.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <35fab997bcac76cd4135797a4968c2c72511dcb9.1733523925.git.christophe.jaillet@wanadoo.fr>
-References: <35fab997bcac76cd4135797a4968c2c72511dcb9.1733523925.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="m9i/WufE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1733527665; x=1765063665;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TcejyqLKLMz7bPyWnjBeG1tus8EctKbOLswdbH9vFzM=;
+  b=m9i/WufEOPKqW2vI/r/q/4BFVh6sSO7WhAiPebIaCFWrpnF4CHx3cMhF
+   2w/f6XfS2Pzm6ZkiNWMPjjG7Yy/mu/bnLsjtRvvUGpKxAgYO9V3HX4XCY
+   C6oSmeRCZ8Hq3GEyAJXz7Plkwj6QKR5ZufFpDIv7+66rnfcTSPQ7U84dr
+   g=;
+X-IronPort-AV: E=Sophos;i="6.12,214,1728950400"; 
+   d="scan'208";a="153828443"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 23:27:43 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:62272]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.31.190:2525] with esmtp (Farcaster)
+ id 8c9cc2af-c9e8-477d-a247-3b3a38f3d34d; Fri, 6 Dec 2024 23:27:43 +0000 (UTC)
+X-Farcaster-Flow-ID: 8c9cc2af-c9e8-477d-a247-3b3a38f3d34d
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 6 Dec 2024 23:27:41 +0000
+Received: from 6c7e67c6786f.amazon.com (10.118.240.36) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Fri, 6 Dec 2024 23:27:37 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <dan.carpenter@linaro.org>
+CC: <cong.wang@bytedance.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<horms@kernel.org>, <idosch@nvidia.com>, <kernel-janitors@vger.kernel.org>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>
+Subject: Re: [PATCH net-next] rtnetlink: fix error code in rtnl_newlink()
+Date: Sat, 7 Dec 2024 08:27:31 +0900
+Message-ID: <20241206232731.38026-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <a2d20cd4-387a-4475-887c-bb7d0e88e25a@stanley.mountain>
+References: <a2d20cd4-387a-4475-887c-bb7d0e88e25a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -53,62 +61,46 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D037UWB002.ant.amazon.com (10.13.138.121) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-'struct img_ascii_lcd_config' is not modified in this driver.
+> [PATCH net-next] rtnetlink: fix error code in rtnl_newlink()
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+This should be tagged for net.git.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   6110	    728	      0	   6838	   1ab6	drivers/auxdisplay/img-ascii-lcd.o
+Otherwise looks good to me.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   6198	    632	      0	   6830	   1aae	drivers/auxdisplay/img-ascii-lcd.o
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/auxdisplay/img-ascii-lcd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> If rtnl_get_peer_net() fails, then propagate the error code.  Don't
+> return success.
+> 
+> Fixes: 48327566769a ("rtnetlink: fix double call of rtnl_link_get_net_ifla()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/drivers/auxdisplay/img-ascii-lcd.c b/drivers/auxdisplay/img-ascii-lcd.c
-index 693339ba89d0..32e1863ef4b2 100644
---- a/drivers/auxdisplay/img-ascii-lcd.c
-+++ b/drivers/auxdisplay/img-ascii-lcd.c
-@@ -69,7 +69,7 @@ static void boston_update(struct linedisp *linedisp)
- #endif
- }
- 
--static struct img_ascii_lcd_config boston_config = {
-+static const struct img_ascii_lcd_config boston_config = {
- 	.num_chars = 8,
- 	.ops = {
- 		.update = boston_update,
-@@ -98,7 +98,7 @@ static void malta_update(struct linedisp *linedisp)
- 		pr_err_ratelimited("Failed to update LCD display: %d\n", err);
- }
- 
--static struct img_ascii_lcd_config malta_config = {
-+static const struct img_ascii_lcd_config malta_config = {
- 	.num_chars = 8,
- 	.external_regmap = true,
- 	.ops = {
-@@ -200,7 +200,7 @@ static void sead3_update(struct linedisp *linedisp)
- 		pr_err_ratelimited("Failed to update LCD display: %d\n", err);
- }
- 
--static struct img_ascii_lcd_config sead3_config = {
-+static const struct img_ascii_lcd_config sead3_config = {
- 	.num_chars = 16,
- 	.external_regmap = true,
- 	.ops = {
--- 
-2.47.1
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
+Thanks!
+
+> ---
+>  net/core/rtnetlink.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+> index ab5f201bf0ab..ebcfc2debf1a 100644
+> --- a/net/core/rtnetlink.c
+> +++ b/net/core/rtnetlink.c
+> @@ -3972,8 +3972,10 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
+>  
+>  		if (ops->peer_type) {
+>  			peer_net = rtnl_get_peer_net(ops, data, extack);
+> -			if (IS_ERR(peer_net))
+> +			if (IS_ERR(peer_net)) {
+> +				ret = PTR_ERR(peer_net);
+>  				goto put_ops;
+> +			}
+>  			if (peer_net)
+>  				rtnl_nets_add(&rtnl_nets, peer_net);
+>  		}
+> -- 
+> 2.45.2
