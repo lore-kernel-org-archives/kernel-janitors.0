@@ -1,106 +1,109 @@
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A8522C6DC;
-	Fri,  6 Dec 2024 23:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152ED219FC;
+	Sat,  7 Dec 2024 04:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733527666; cv=none; b=GWfiz2Eg4NClZzovjg3Bhkxeu8VvsE2As8SvpaDqGGJEuDCVrOGdytlHrvOa40bw0c7W3KP3o0ACzD3fimRFvz2s+mxt5fHALC1M2fA+blON+L/TcnmG9EAjqcmHpDcmKTUfKI+a2RJRFPk+7zMKBklnPQcMj+a2sarqXJvUsYU=
+	t=1733545061; cv=none; b=AEoIQrytjxaGoyXsxE/+yboEL6vZpgNLguhG04Klf8KIba1eUxweEuo3YRwHLw9OlbmE7IBiyJQws7kgIBRmiHB76AjRrX4NR/HasHs6RHonkE7zB3CuqWFMXL0dQ058IRGq1BioXs8UMkjSrLyGpsiI1JfuhknsCrAwvdRTJCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733527666; c=relaxed/simple;
-	bh=T/hdbAzVv7g18kp7hxGCuy92NcslPbzZ1NtmtxEqNUE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n4VtJdUdnYDwzOL4mzJgTuntRKSIizHz9zWVOSBUx6Ze7t0JO7PDWB0ITWNFPKL3h8jqSqRYm821aGNarFjwzPtrhj97AYR+HgQqlJ5PNWkw7d+UIRCbKDrKprxPOGGqpYMXbEkX4oGw1xkEWLmBbis8dT6PhpqinBhrMov3dX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=m9i/WufE; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="m9i/WufE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1733527665; x=1765063665;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TcejyqLKLMz7bPyWnjBeG1tus8EctKbOLswdbH9vFzM=;
-  b=m9i/WufEOPKqW2vI/r/q/4BFVh6sSO7WhAiPebIaCFWrpnF4CHx3cMhF
-   2w/f6XfS2Pzm6ZkiNWMPjjG7Yy/mu/bnLsjtRvvUGpKxAgYO9V3HX4XCY
-   C6oSmeRCZ8Hq3GEyAJXz7Plkwj6QKR5ZufFpDIv7+66rnfcTSPQ7U84dr
-   g=;
-X-IronPort-AV: E=Sophos;i="6.12,214,1728950400"; 
-   d="scan'208";a="153828443"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 23:27:43 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:62272]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.31.190:2525] with esmtp (Farcaster)
- id 8c9cc2af-c9e8-477d-a247-3b3a38f3d34d; Fri, 6 Dec 2024 23:27:43 +0000 (UTC)
-X-Farcaster-Flow-ID: 8c9cc2af-c9e8-477d-a247-3b3a38f3d34d
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 6 Dec 2024 23:27:41 +0000
-Received: from 6c7e67c6786f.amazon.com (10.118.240.36) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Fri, 6 Dec 2024 23:27:37 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <dan.carpenter@linaro.org>
-CC: <cong.wang@bytedance.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<horms@kernel.org>, <idosch@nvidia.com>, <kernel-janitors@vger.kernel.org>,
-	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net-next] rtnetlink: fix error code in rtnl_newlink()
-Date: Sat, 7 Dec 2024 08:27:31 +0900
-Message-ID: <20241206232731.38026-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <a2d20cd4-387a-4475-887c-bb7d0e88e25a@stanley.mountain>
-References: <a2d20cd4-387a-4475-887c-bb7d0e88e25a@stanley.mountain>
+	s=arc-20240116; t=1733545061; c=relaxed/simple;
+	bh=w1vUuuw2lEabhaxmKYm8/Hy8J1FHp8Q8/ya1gdv3jJs=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pnRKlw4hXqSvEe3PXA2OMove8TQch2sRrq/D/AJhbqFCaLaQBmIhF/jUxGhd6VYMolVHGMpluTQhbWeCnetrAbrSnoEs3KdPPuCWV1xnPmLZFx+pgYOM0bETHrCR+DxRb0BIkCvfrttCpPBGUe/jGYKJDFkjHzPOAK1rLj2F+j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Y4vty5fvNzRhmq;
+	Sat,  7 Dec 2024 12:15:54 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 426C51800FD;
+	Sat,  7 Dec 2024 12:17:35 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 7 Dec 2024 12:17:34 +0800
+Subject: Re: [PATCH] mtdchar: fix integer overflow in read/write ioctls
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+	=?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+CC: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>
+References: <020f98d2-eee1-434e-8236-775cca9fd157@stanley.mountain>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <e3da1bba-9740-6b6f-385a-1bdf25f056a9@huawei.com>
+Date: Sat, 7 Dec 2024 12:17:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <020f98d2-eee1-434e-8236-775cca9fd157@stanley.mountain>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D037UWB002.ant.amazon.com (10.13.138.121) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-> [PATCH net-next] rtnetlink: fix error code in rtnl_newlink()
-
-This should be tagged for net.git.
-
-Otherwise looks good to me.
-
-
-> If rtnl_get_peer_net() fails, then propagate the error code.  Don't
-> return success.
+ÔÚ 2024/12/7 4:26, Dan Carpenter Ð´µÀ:
+> The "req.start" and "req.len" variables are u64 values that come from the
+> user at the start of the function.  We mask away the high 32 bits of
+> "req.len" so that's capped at U32_MAX but the "req.start" variable can go
+> up to U64_MAX.
 > 
-> Fixes: 48327566769a ("rtnetlink: fix double call of rtnl_link_get_net_ifla()")
+> Use check_add_overflow() to fix this bug.
+> 
+> Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE ioctl")
+
+Hi, Dan. Why this fix tag? I think the adding result('req.start' and 
+'req.len') could be overflow too before this commit.
+
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-
-Thanks!
-
 > ---
->  net/core/rtnetlink.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>   drivers/mtd/mtdchar.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-> index ab5f201bf0ab..ebcfc2debf1a 100644
-> --- a/net/core/rtnetlink.c
-> +++ b/net/core/rtnetlink.c
-> @@ -3972,8 +3972,10 @@ static int rtnl_newlink(struct sk_buff *skb, struct nlmsghdr *nlh,
->  
->  		if (ops->peer_type) {
->  			peer_net = rtnl_get_peer_net(ops, data, extack);
-> -			if (IS_ERR(peer_net))
-> +			if (IS_ERR(peer_net)) {
-> +				ret = PTR_ERR(peer_net);
->  				goto put_ops;
-> +			}
->  			if (peer_net)
->  				rtnl_nets_add(&rtnl_nets, peer_net);
->  		}
-> -- 
-> 2.45.2
+> diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+> index 8dc4f5c493fc..335c702633ff 100644
+> --- a/drivers/mtd/mtdchar.c
+> +++ b/drivers/mtd/mtdchar.c
+> @@ -599,6 +599,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
+>   	uint8_t *datbuf = NULL, *oobbuf = NULL;
+>   	size_t datbuf_len, oobbuf_len;
+>   	int ret = 0;
+> +	u64 end;
+>   
+>   	if (copy_from_user(&req, argp, sizeof(req)))
+>   		return -EFAULT;
+> @@ -618,7 +619,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
+>   	req.len &= 0xffffffff;
+>   	req.ooblen &= 0xffffffff;
+>   
+> -	if (req.start + req.len > mtd->size)
+> +	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size)
+>   		return -EINVAL;
+>   
+>   	datbuf_len = min_t(size_t, req.len, mtd->erasesize);
+> @@ -698,6 +699,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
+>   	size_t datbuf_len, oobbuf_len;
+>   	size_t orig_len, orig_ooblen;
+>   	int ret = 0;
+> +	u64 end;
+>   
+>   	if (copy_from_user(&req, argp, sizeof(req)))
+>   		return -EFAULT;
+> @@ -724,7 +726,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
+>   	req.len &= 0xffffffff;
+>   	req.ooblen &= 0xffffffff;
+>   
+> -	if (req.start + req.len > mtd->size) {
+> +	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size) {
+>   		ret = -EINVAL;
+>   		goto out;
+>   	}
+> 
+
