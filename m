@@ -1,77 +1,112 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CD44C9D;
-	Sun,  8 Dec 2024 02:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B4F13B7A1;
+	Sun,  8 Dec 2024 12:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733625015; cv=none; b=cueGKP8Dh8xrcIly5AHKNaeYhWpdqzkOHAZYsjXToPIMb1WxsE4ajqwEwGIGdQcecQ2GLNqzRt5BAE3cFaEGM4FudlnjOC5/MZi475AG5Hp+xL89SsSaGdPIrspsATUBomiati9AbY9lILO5Efl++/D2Kc21TR8IIsOdT54+Clc=
+	t=1733661434; cv=none; b=jmJ7/KT4VBVrphQKMqVNuvO1CTSrJO2YmdflvV9jZoTgafseRrEY+IRISYI313R4NJZMeaGfJf2ev0+jHSER3pDa+uE1lGpFAaCdydAmkHBzQ4oHS3QTB/eUFl0xnS6g8mp48nzQYhkAM8ASZ6q4ytJD4Ocl5tDAbKqnGBzNrdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733625015; c=relaxed/simple;
-	bh=vHQj57/Wy7hQSU5mcdZp993GWoU3DY6UmrIfuZL9SH4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Bz1LtaR5HcBmpmdq9iJaVt5k4UNcHnHJvovnH7l9vLrwoFX0Avlp3+Kj5Q1qqPrkJe2ISOYmtkjTYiY8nij+/DnMGi16T3b6sK8xLHoTU2o5ZKoKTNJd7Ax7Lk5hjaAwpUnZ/ceCw2kOXEIRSJfx3IOc+Es6yT82ctB5A/YIrUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbVo+cSs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733661434; c=relaxed/simple;
+	bh=DmMoUIBrwMXZutmShh9Bgg9DdQdHmUc5FikzbPs4BQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pn+b/GGw/aXWBXGnqRiPbiWNZEPhXnoXYUlmiHYgh1djB4ReAbv/QiNYMqI66B+khODIEb3cdpEb4bzCbFwSWNxSiJOJJV7QoemFJC3/ljEgd6TzdpeI8yGQRBlTv7pNHqUv0ahjfPWh5LahYUlPFSrr+GH8+bFBg1hNnc2lzbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTd3aPuA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbVo+cSs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C56A2C4CECD;
-	Sun,  8 Dec 2024 02:30:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTd3aPuA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E53E1C4CEDF;
+	Sun,  8 Dec 2024 12:37:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733625014;
-	bh=vHQj57/Wy7hQSU5mcdZp993GWoU3DY6UmrIfuZL9SH4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=QbVo+cSspdLs17xwhOe0eTSL+NodFUig141nms+yPKbWD8sLZo6gZ633b3YeBihCo
-	 8in306ACXz0Ui+GyAkqymrjfIiY+VwU0rsB/VqsjGvb4lCizgm42bcUFQnU7rbnXNO
-	 29Byn2w2Ck7ghdONu9Ww2yxy73SgzsdfJBsVQuuHo86g6trfhTavixLIdbFis0a0gB
-	 ssdoGSTY1STgqTb5gw9YjeEJX2goqkiRLEfwXWuNBa1fHvnacFdWoA4q2Dh3wrRC98
-	 uVW0b86dy5ThiPhJrZ5nPulmbq/iPguGcl3P4StJ/v6wLYc7iyh7zVxS2oTNKAcs6U
-	 DtvPmzNZJERGQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34863380A95D;
-	Sun,  8 Dec 2024 02:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1733661433;
+	bh=DmMoUIBrwMXZutmShh9Bgg9DdQdHmUc5FikzbPs4BQo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FTd3aPuAAGDJ0M0CpvAHrUzrxiI5HSdYT6o9bn7lzks5QL7Ocw1NIVqjb40BVeRUG
+	 T3/Ry9SAQtdjCXvLF0zBXUM6iJ6Fu1uxZ3BixC35ianVrg2OEcn/0UJEdcO24Z3gC6
+	 E98sRBPsY0VAMi9q/69eepto/ALj9bJx4O4R2Qz69QLa/vWNr45THGf8aVdzUjPzwv
+	 6wAdNgsqv+0m75sMJd+MyfytMYv0oRLhXr9b5pymcOlJn9bab2zOMcCIJynIY1clO8
+	 AwkeVhde//DL7LYe5iRY28GTi+P4DOfDWjhdFHB5K86VXYjHNR6WkXmJQ72jhj3FVI
+	 CXiwQTjfBJTuA==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3d143376dso2298163a12.3;
+        Sun, 08 Dec 2024 04:37:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXDhdn2SFJHiQ5Icq1K9nsSBJtQ+2oJkBq5o5P99yJlPqDuZBtoLCwPiuJft/EDw2rqIdv6FRyXm9xSIS4WMiU=@vger.kernel.org, AJvYcCXTJa1djDM9ZB4znuLVB8vhkvVPrJXtaC49VA3hknbfgob3SaWozO0R7f3WroQvbMu8pvO43buXcUFJC76H@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX9gy3iw46Wg979JRQI7D3KUXvjdxQZnIlr2qhBTu83XcmxqaQ
+	XwgfqEkYJ8qWkVr+qPzNjucYfunz9zme+MMhBiWv8zCGCuR9feveokYjSpUmGrnLwRteCLWZG05
+	K7kn4Fh/OqqO2DMD/A5i+OHPwVIk=
+X-Google-Smtp-Source: AGHT+IGZ1cfW6HylZROHWM5wryBiSSEJ8/qGwc7HNG9IdNJ6RXwiUEKdAUMu0osWRSOptwV3GKQ4WFRb3HYYYrSPze8=
+X-Received: by 2002:a05:6402:1f4d:b0:5d2:723c:a57e with SMTP id
+ 4fb4d7f45d1cf-5d3be6b2d84mr10669410a12.16.1733661432747; Sun, 08 Dec 2024
+ 04:37:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] rtnetlink: fix error code in rtnl_newlink()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173362503002.3137016.194680734913660375.git-patchwork-notify@kernel.org>
-Date: Sun, 08 Dec 2024 02:30:30 +0000
-References: <a2d20cd4-387a-4475-887c-bb7d0e88e25a@stanley.mountain>
-In-Reply-To: <a2d20cd4-387a-4475-887c-bb7d0e88e25a@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: cong.wang@bytedance.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, kuniyu@amazon.com,
- idosch@nvidia.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+References: <0f103384-376c-41f0-a35c-8ad98327d6cb@web.de>
+In-Reply-To: <0f103384-376c-41f0-a35c-8ad98327d6cb@web.de>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Sun, 8 Dec 2024 21:36:29 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH3jRPZrepiS31GzXpr26xser9hdQmBcnXbsr1O7VoY0yA@mail.gmail.com>
+Message-ID: <CAGTfZH3jRPZrepiS31GzXpr26xser9hdQmBcnXbsr1O7VoY0yA@mail.gmail.com>
+Subject: Re: [PATCH] PM / devfreq: event: Call of_node_put() only once in devfreq_event_get_edev_by_phandle()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-pm@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+Hi,
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Applied it. Thanks.
 
-On Fri, 6 Dec 2024 15:32:52 +0300 you wrote:
-> If rtnl_get_peer_net() fails, then propagate the error code.  Don't
-> return success.
-> 
-> Fixes: 48327566769a ("rtnetlink: fix double call of rtnl_link_get_net_ifla()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Thu, Oct 3, 2024 at 6:15=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
+e> wrote:
+>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 3 Oct 2024 11:01:30 +0200
+>
+> An of_node_put(node) call was immediately used after a null pointer check
+> for the local variable =E2=80=9Cedev=E2=80=9D at the end of this function=
+ implementation.
+> Thus call such a function only once instead directly before the check.
+>
+> This issue was transformed by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  net/core/rtnetlink.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  drivers/devfreq/devfreq-event.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-ev=
+ent.c
+> index 3ebac2496679..70219099c604 100644
+> --- a/drivers/devfreq/devfreq-event.c
+> +++ b/drivers/devfreq/devfreq-event.c
+> @@ -244,13 +244,9 @@ struct devfreq_event_dev *devfreq_event_get_edev_by_=
+phandle(struct device *dev,
+>         edev =3D NULL;
+>  out:
+>         mutex_unlock(&devfreq_event_list_lock);
+> -
+> -       if (!edev) {
+> -               of_node_put(node);
+> -               return ERR_PTR(-ENODEV);
+> -       }
+> -
+>         of_node_put(node);
+> +       if (!edev)
+> +               return ERR_PTR(-ENODEV);
+>
+>         return edev;
+>  }
+> --
+> 2.46.1
+>
+>
 
-Here is the summary with links:
-  - [net-next] rtnetlink: fix error code in rtnl_newlink()
-    https://git.kernel.org/netdev/net/c/09310cfd4ea5
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
