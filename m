@@ -1,120 +1,89 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA43149DE8
-	for <kernel-janitors@vger.kernel.org>; Sun,  8 Dec 2024 12:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3274B17C219;
+	Mon,  9 Dec 2024 06:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733661884; cv=none; b=NkpZL8Sk3Gs5lbVfxkeRVUi4fPtzhDO6w2OqNKzpg1F0XCrH29sGwWHOafE/bjv/tAH63GQGwQUdRiUGsqTC83wdlVq9zPN6OLKHDTrxqYDo0JPXDUx6DTCw4h1MjKfnCVrKAIAAEvTdW+yfygH8BrlOgCcaiNInpQsQhRnSaBc=
+	t=1733725692; cv=none; b=unw2WtWogWPlEGxDh9QjbUuPbQuIQ9tiDMY2drOMjrKO6/2cumiBosvjiXmj0cTAskaUOQQbHWmt1fzuSds8XF4TpLZ2hJ847oqEtdD8OCCNcW+fjBHDxClK7IKm/Bk92HzSnCUCIumQe9XhzMmHbcsaOtkw3cN1+zeaQWxTF2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733661884; c=relaxed/simple;
-	bh=pFIGxvFPsv5hV0g3ScDxxRxCjlmfbMjHw/GW2NH5Nbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6wkoiStUe1SY3Rywr+hRlUB5PQuSufzaoPg9BCsN5Nxyi/wziu+ziH+PFiSja3fOYd9SQ849Xwc653WEv5bq7hE1FDxHq+Ok9FHjlxtposk7GsXB5/GAzihLWnsmUe1yw+GEnN10bg4mHZsgFNExauRSgIcCcs7a0scsyInS40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ij84obFk; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ij84obFk"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7259d6ae0c8so3083166b3a.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 08 Dec 2024 04:44:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733661882; x=1734266682; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ObzuBtRvdTYYc5ZI72EO8xxEXcCsf9XtGeinrNeixuA=;
-        b=Ij84obFk02xlqNvUtEpru4/h3dwDOu4zP1LWgByzo0GR3/YmHY5qwBTHzNfbV9Y6gk
-         9PJPzHFNunXpmqJ4rxKtxhpMcN7UJkDD2dOoDJuw4Xg6SlIWDJ6auWpN3DXIqVJQ1ZeN
-         Dt3o7azh/lq5rFijtE4n0hI/wbzwC7bBOqlgzRVGidGAZXakKtQxtO4xK2pkFR/5jtgM
-         +jO2RAL1i+emM8zT/rszl+w/YL18lJyv7akJju3pp7Y2BIbKe52gzdYgQUMQ/9isdLU2
-         VAHRNVfwexmqFYbYAkB6xiQxCm8spJcr71DrlIk3Z6IYCfocmBDxrGRG40q/2KzvHKo2
-         7H/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733661882; x=1734266682;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObzuBtRvdTYYc5ZI72EO8xxEXcCsf9XtGeinrNeixuA=;
-        b=bKVof/YGwcqIwogJRFUv0XFst+63iPbdo0Z+sHrkcPLJS8TXqVsrlTlfIANZvvlA4J
-         WGvmhxBwcLBfd+oIYZ/nEBk1GMZZbm6ZhiHAiJwAC6bQltQeariK6/ELPuxXZ1Y/rBf6
-         t1p+fPr/Q65xHGfS2C5svdV47elJt/nQcpMfGtdMR1oV4lMpimWjHucg/8btGA9YYFVn
-         +mZVa3aQgOitvUZ0PZqQyPJ3eGEbuLjYSClRIp41GXWj5wHV52joXQc/5EvnRN0bZfl4
-         IYqxPXseJpJS/TuQv2DcVYNaf6ErMQZi5RTmBcezixDKIQMsXG+358E0GxtLnqVHkgPw
-         BA2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWB7kJlXAvzVBSEVc5MEKPXzUNPrKKVISwG/fBkBzQx4ZsCX1JKxhYC+u7re8P4vD5xXjM7W0hLE8VkskmBcWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0FXuTX+d8TrXqTNsZueiEa/wmlovI6Mk5XCxuFjP24QqLpz5N
-	L1kknxvyGyJrW1PvN3CCTj93Mr6I/evlv/WWtZ5HxlS9KdHOmRevFhbXMTCtzA==
-X-Gm-Gg: ASbGncu/AHigBoyLSq0g380fSTj0SHmbfzlsMPb0bC454+KbT7UPp340F1D6pUA1d5e
-	I3NeOP7KuBPzL63l89MasAyf79f0PWXYgOZT4Pcxj8I+TJ+7ity/OzqIdZqOTgpD/LUhrcYg3uO
-	7SINZ5Obad478J/bjI9IAJDgzXrVTK6vR5SKKG8nGXRLMZiZvmpiMDHJHabMRkNSTma7dSrKX3B
-	HX2nrQZUlDJOFU3NGhXo0DgioY/MZ7epr3JjOlmHk5Bmv54XwuZAMXpzg0=
-X-Google-Smtp-Source: AGHT+IFWStgtABEgXeuwa+0us5wTIZE6ArS1wlJLYxBQNATuRowJR77uhfkJK4Vk9aSU1pZvjciMaw==
-X-Received: by 2002:a17:902:e5cd:b0:215:9a73:6c45 with SMTP id d9443c01a7336-21614d45334mr158926955ad.22.1733661882268;
-        Sun, 08 Dec 2024 04:44:42 -0800 (PST)
-Received: from thinkpad ([36.255.19.23])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21617531ba7sm39465845ad.106.2024.12.08.04.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 04:44:41 -0800 (PST)
-Date: Sun, 8 Dec 2024 18:14:36 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+	s=arc-20240116; t=1733725692; c=relaxed/simple;
+	bh=3EID9GGzdHT/F/F+Bl0HmFUV66x53Yec4t4oNfCvyYw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YGxssEsH6Ir5WSn6/S/fyaOd37DmlJC4akJPFMhGuXkwIVmt1qccYE2x6hqaN7kR4Ee70L8/A1SNyuwQrGsgpC0ZlCP7uRsDMUoUhYRI8d+Ny7W8VO5fOeNf06fsJppEAQMHqpqGcRrBw4HvhXfN/QepfFGi01prMnq+7lz8MjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Y6Bfx3G3dz1V5hn;
+	Mon,  9 Dec 2024 14:24:57 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3A236140123;
+	Mon,  9 Dec 2024 14:28:00 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Dec 2024 14:27:59 +0800
+Subject: Re: [PATCH] mtdchar: fix integer overflow in read/write ioctls
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: rockchip-ep: Fix error code in
- rockchip_pcie_ep_init_ob_mem()
-Message-ID: <20241208124436.vicbi72xyomahp3s@thinkpad>
-References: <Z014ylYz_xrrgI4W@stanley.mountain>
+CC: =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Miquel Raynal
+	<miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <020f98d2-eee1-434e-8236-775cca9fd157@stanley.mountain>
+ <e3da1bba-9740-6b6f-385a-1bdf25f056a9@huawei.com>
+ <6b4f7a14-297f-4fc7-bc4b-a9e7d822fb23@stanley.mountain>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <fabbceb3-90a3-2cc8-c664-e53fcd504393@huawei.com>
+Date: Mon, 9 Dec 2024 14:27:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <6b4f7a14-297f-4fc7-bc4b-a9e7d822fb23@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z014ylYz_xrrgI4W@stanley.mountain>
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-On Mon, Dec 02, 2024 at 12:07:22PM +0300, Dan Carpenter wrote:
-> Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
+在 2024/12/8 1:05, Dan Carpenter 写道:
+> On Sat, Dec 07, 2024 at 12:17:33PM +0800, Zhihao Cheng wrote:
+>> 在 2024/12/7 4:26, Dan Carpenter 写道:
+>>> The "req.start" and "req.len" variables are u64 values that come from the
+>>> user at the start of the function.  We mask away the high 32 bits of
+>>> "req.len" so that's capped at U32_MAX but the "req.start" variable can go
+>>> up to U64_MAX.
+>>>
+>>> Use check_add_overflow() to fix this bug.
+>>>
+>>> Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE ioctl")
+>>
+>> Hi, Dan. Why this fix tag? I think the adding result('req.start' and
+>> 'req.len') could be overflow too before this commit.
+>>
 > 
-> Fixes: 945648019466 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory allocations")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> I've looked at this again, and I still don't see the bug before the
+> commit.  Secondly, commit a1eda864c04c ("mtdchar: prevent integer
+> overflow in a safety check") is missing a Fixes tag but the message says
+> that it's this commit which introduced the bug.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-> ---
-> v2: Update the git hash for the Fixes tag because the tree was rebased I guess.
+Ah, I see. There is not an addition operation for 'req.start' and 
+'req.len' until commit 6420ac0af95d("mtdchar: prevent unbounded 
+allocation in MEMWRITE ioctl") and 095bb6e44eb1("mtdchar: add MEMREAD 
+ioctl"), so I guess the there should be two fix tags?
 > 
->  drivers/pci/controller/pcie-rockchip-ep.c | 1 +
->  1 file changed, 1 insertion(+)
+> Which commit should get the fixes tag?
 > 
-> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-> index 1064b7b06cef..34162ca14093 100644
-> --- a/drivers/pci/controller/pcie-rockchip-ep.c
-> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
-> @@ -784,6 +784,7 @@ static int rockchip_pcie_ep_init_ob_mem(struct rockchip_pcie_ep *ep)
->  						  SZ_1M);
->  	if (!ep->irq_cpu_addr) {
->  		dev_err(dev, "failed to reserve memory space for MSI\n");
-> +		err = -ENOMEM;
->  		goto err_epc_mem_exit;
->  	}
->  
-> -- 
-> 2.45.2
+> I should have added a CC to the stable tree though.  I did that correctly
+> in an earlier draft of this patch but I messed up in this version. :/
+> 
+> regards,
+> dan carpenter
+> 
+> .
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
