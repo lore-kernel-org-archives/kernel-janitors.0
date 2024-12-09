@@ -1,109 +1,133 @@
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990C215F5A;
-	Mon,  9 Dec 2024 08:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6AD1BC4E
+	for <kernel-janitors@vger.kernel.org>; Mon,  9 Dec 2024 09:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734565; cv=none; b=Fh1/ZUd/4W+T+7F2Z7x70aQpMJbIoBlUUECEfe8WbTi1QGMkBa1Rk8C4+vl46h5c2JcXrUxq/RltzUz4Lxk4QkZ8gQ7aSZbnfitZi1Q8aDGavFgQmQkdIJfWkZYpYQ22H6dfDG+Tdhtsb6+JISj2sSUNuAQ3f98WHG2HDfkxcgA=
+	t=1733734887; cv=none; b=R2pxnb+Sn3FrjMZQZ0xvO4j311LV1+LntmGYqU3V+KTHtygRDN87qJ6C36mafPfqvkFQs3q+ok3bbrSzKUfyK/Ks/DpX4oChPDSXu8TYM2YQUq2HweY3i+FG5lVonXnZJpXdgUtFs488m4gZVIytb5z8BOYYUrk+gtHvbqhEaZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734565; c=relaxed/simple;
-	bh=NFk5AHP1WzcwCnF1yLNTssPwFD+Hxat6kdDIFCsmMUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e4wfxbcH/b8t66oi5gfDXErQ0O1M7IcNNxFqftq4JYy9MMHFOCdr/aMnrTTwOMaT8Fu9VZQRbtUj7guRm3X6wdCOZgRJ5cPsRApeOGg6ghhrN/P31B7524WJgKN3QDWbAYUEk0zr045DiKQDrjYLVTz/INwIJYPxHorHpqlxfRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-85b0a934a17so2686334241.1;
-        Mon, 09 Dec 2024 00:56:03 -0800 (PST)
+	s=arc-20240116; t=1733734887; c=relaxed/simple;
+	bh=WpDibjcHfnA3hlnUvjLGwyhWaTaamib5k/eDBpn4uPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qGS3BHETrbKwN6m59YDwxfv79hkRsNP1XVNNNTOsIHEbbY3xzFlMdpoo1AhjPoNDHnkmmVENJtHKnJv2FQJlAks+Fu7I+/3gmiVUobChkHJ94zBIFjvE1N3rykdMZ2QgUtm1Nl8W/kKYEGzEdaV1IlGGTQ44wSBoamW6FNCj0iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yC2aSGl3; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yC2aSGl3"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so45668315e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 09 Dec 2024 01:01:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733734881; x=1734339681; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zfmkzNoJxgWiG5Z0g0jcQ4NV+0tXwsBrqoBTR0SIamg=;
+        b=yC2aSGl3FCWAYmdwMFszZmWyV8j+Vmm5Tf6AeoolwMCgTywARxZZlOobdvynrsD8tA
+         hdrnOAII9ukVgF0CnnRZxyz0ciY63w96loGG7Y1HzZRcT1ZAINOtoczEHpgwQkGmqQ7G
+         xky8yhRvCa4JWRKbKRYhkWZGpy4Jn9k0+ClgRCR9iZeGhJkez7SjwNrRrMUFIaU8Dcbb
+         d6IJz3GAMWhTNC1JoWSzvx2hUzKQxLIatgTWXLNc3wAQvF4Ga3P+LBsJ/CAJY1appRu2
+         rPpqyeDMM4t5EGEO7fkL1KpNIHoMfFknXLvj1HKkAV3kFQxoDIXY40kF3s7MPw9Hcftd
+         Hl5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733734561; x=1734339361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bzbi+zwrT7LVfp++4Pd6gcn4qoo/SBJnwYE7iRP5rR8=;
-        b=aiFtTj4RIYzmcN7kQUwaxQx0GGoHS6oBg9e/YDT1fnziUmviXEHOCFCEOilqXv4XAp
-         ZdPtRLcu9BsHKHVzu9MuWUy2M6BLLIOpyLhg/66xXNwuBCXoRdpOykYjKWGcYBtp68up
-         nAL6o+Utr1afrhg8hJ7V1uMh/UuyOuuwfI0jij15YknN5ub09FmKjO2Ek+3qJ0P/mNQ8
-         qnjUX807NEEzMyYefU1AXr7riNon3g9bxeE02HbUaD3hHNZd5wxGTukwNkP19JdcGm5N
-         cgdUyCu6zqwV3WqF8QvYp5XkMj8krWGIHOdfWfpjQIVjKOxXmeg3k7i49dHXb7VBUaWH
-         913A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFKAy3RRcX7c5AQQIHgxFrI6i25n49LQBPJRMJnOXTZ5N83mIDXpZEHC5XBQiSiTr/qGJrdNM0DRw8USnh@vger.kernel.org, AJvYcCUmgK7B+JBVs1fydOrd5p/LeHO+ZpiECmGTslJmsFkQIVpj2lbLp3NwnOvkR6aNo14eEahJgP5z9I8a343C5NA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsZ2G9BMaiEzluR5yYMvddazm9ttd5gXZ22mde8rA+d164HG1p
-	pTAh42dR4EyS8yvcdJuAYS8dgjTHVDMpZDCnMkM6j0ar9VVb+vYnwnHxvGQeVbo=
-X-Gm-Gg: ASbGncsS7txEhLEKuFDVBYok0S6X9pEFStdnGaxmJOJLjbPiMmbubnSh2VsyVjAON66
-	eyzX+WSlmzaUcOjZIYtMDbPiwY6TLhQXXer3tRHwr8drGvPQayfUrsfPpVa1WcnrzWkNTsmbO6M
-	3sOUZbm/U/D9+5ZCDtpjuhgh2yLHWjXc3ZqpCm0f1inhJao+2j86+bPjj/UpH7T0FLRGtWD3yAg
-	RSJ2UeWdr0Z0NqZIHnSUtUiemDYF2jcUBUJt8vCqhnT+YxuUcHO53og+O3dYDNx9qifTxTwy2VN
-	/9Te473yH8LU
-X-Google-Smtp-Source: AGHT+IHXxzNiIy7BRb20W61inpirpSwfAcjUeZRNU6HCcVmpqsggHgzPTAiwbVFExv7Bj963KqTlgA==
-X-Received: by 2002:a05:6102:c0a:b0:4af:ef82:ce8d with SMTP id ada2fe7eead31-4afef82de4fmr2559213137.0.1733734561384;
-        Mon, 09 Dec 2024 00:56:01 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afde356522sm683913137.16.2024.12.09.00.56.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 00:56:00 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4aff04f17c7so607711137.0;
-        Mon, 09 Dec 2024 00:56:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVBRN7vpiyE5z0Hu0V1NBK106QlY6gHgiahZ4RpG2tty5ahzZkVNoWcINAkhQ713tbXIkRDU3YFUN47SlgkBL8=@vger.kernel.org, AJvYcCVykIsRgJ87NZzZ2S0SC4u+Jhy4OJzRq27o7lTJScFKoxox8kocWXxwJ0tL346Q/MT5Q+zIOcCyxWtHtqUI@vger.kernel.org
-X-Received: by 2002:a05:6102:3311:b0:4af:dcf3:b384 with SMTP id
- ada2fe7eead31-4afdcf3b504mr7969626137.11.1733734560816; Mon, 09 Dec 2024
- 00:56:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733734881; x=1734339681;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zfmkzNoJxgWiG5Z0g0jcQ4NV+0tXwsBrqoBTR0SIamg=;
+        b=cu/DIQWIU6LyaAmeJ2DkFClom61hzNS2GE3YsYL4qgFrmoKR5SLyntTeNKonuOg1H9
+         AkByv6u1/8YkO7tRgfQB07M9rpvCao0fk+8t836SUdmoaE36mZxgWkAtPrPC8yXHo90p
+         doepH02xJjAvFKPHe3MDtX27ydmQ0Mw9w5Rj33MZb+VhDPt2o3ifoxqfUPm+N/qSzi0Q
+         44uOxvbaGbG+OC0UKZoZeUozoseDh26dZXSO8t6v7ytWPVfsra0+cdKdR0o2pJd5THrT
+         EwcBJiLMFxn6H1/BRibLKGLCJmaK36Bik0vdd+38Fgg4+/ZwMr4A1evObyu5DaTVqMlw
+         3Vbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhMeEQ1oEZEOqjhqYpJKIIt4H6BHeqDpHbvT0Ch59qGHeL2HNgm04UY/uainRaoMYafkxRJIA+GbE4BnNgrTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZG3lCATXQMf9sIGNnk3kIz7PkQJkpkSgfol9A6markDIc7mNh
+	H+p5B9m+3hSIUtgeTywxDf9vzl4NPotrAft5eq+flwZPogSTGoc4EiDAzCbmHuQ=
+X-Gm-Gg: ASbGncu/RRX034Bb5z1IjmIRTBM4Pk9Y1wW33mVfjrHqkOFtZn6y8ZKeQJJ1+uXKEtv
+	51DT+rVSBgAMVnnahaGDYRMmGyQKS7Ssx7KT1LznZ/y5RKSttx+SrbVNvWIhfL+pcWiDI7AZlvT
+	spb2WQxua1POXgABTvmJWSOeiKr//hr7S7ebxrJE16YAjWY031M4htxE5F2tizTbEz8Qvi5FUVt
+	DniyL61OSkUwTBzyJfOKQcd/owJmdU+b3jcjMhH160symouHXdJATg=
+X-Google-Smtp-Source: AGHT+IFmp+9Cbk91wy/S26/TnevCyDFcz+T27bFU4Ss//r84rMuo+tniIyTuEqKycjEZM1O5HWZh/A==
+X-Received: by 2002:a05:600c:3144:b0:434:a202:7a0d with SMTP id 5b1f17b1804b1-434dded67cdmr83625685e9.22.1733734880111;
+        Mon, 09 Dec 2024 01:01:20 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da119abbsm151793365e9.43.2024.12.09.01.01.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 01:01:19 -0800 (PST)
+Date: Mon, 9 Dec 2024 12:01:16 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] mtdchar: fix integer overflow in read/write ioctls
+Message-ID: <Z1ax3K3-zSJExPNV@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <35fab997bcac76cd4135797a4968c2c72511dcb9.1733523925.git.christophe.jaillet@wanadoo.fr>
- <f205c8ab886a4e12b2ceda6f89c873a9d921625d.1733523925.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f205c8ab886a4e12b2ceda6f89c873a9d921625d.1733523925.git.christophe.jaillet@wanadoo.fr>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 09:55:48 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVaJyW3bvTxRfcDavA9HaukUDGBaTWRoUtrwjy_rb2DpA@mail.gmail.com>
-Message-ID: <CAMuHMdVaJyW3bvTxRfcDavA9HaukUDGBaTWRoUtrwjy_rb2DpA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] auxdisplay: img-ascii-lcd: Constify struct img_ascii_lcd_config
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Paul Burton <paulburton@kernel.org>, Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Dec 6, 2024 at 11:26=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> 'struct img_ascii_lcd_config' is not modified in this driver.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers.
->
-> On a x86_64, with allmodconfig:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->    6110     728       0    6838    1ab6 drivers/auxdisplay/img-ascii-lcd.=
-o
->
-> After:
-> =3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->    6198     632       0    6830    1aae drivers/auxdisplay/img-ascii-lcd.=
-o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The "req.start" and "req.len" variables are u64 values that come from the
+user at the start of the function.  We mask away the high 32 bits of
+"req.len" so that's capped at U32_MAX but the "req.start" variable can go
+up to U64_MAX.
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Use check_add_overflow() to fix this bug.
 
-Gr{oetje,eeting}s,
+Fixes: 095bb6e44eb1 ("mtdchar: add MEMREAD ioctl")
+Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE ioctl")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: fix the tags.
 
-                        Geert
+ drivers/mtd/mtdchar.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+index 8dc4f5c493fc..335c702633ff 100644
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -599,6 +599,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
+ 	uint8_t *datbuf = NULL, *oobbuf = NULL;
+ 	size_t datbuf_len, oobbuf_len;
+ 	int ret = 0;
++	u64 end;
+ 
+ 	if (copy_from_user(&req, argp, sizeof(req)))
+ 		return -EFAULT;
+@@ -618,7 +619,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
+ 	req.len &= 0xffffffff;
+ 	req.ooblen &= 0xffffffff;
+ 
+-	if (req.start + req.len > mtd->size)
++	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size)
+ 		return -EINVAL;
+ 
+ 	datbuf_len = min_t(size_t, req.len, mtd->erasesize);
+@@ -698,6 +699,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
+ 	size_t datbuf_len, oobbuf_len;
+ 	size_t orig_len, orig_ooblen;
+ 	int ret = 0;
++	u64 end;
+ 
+ 	if (copy_from_user(&req, argp, sizeof(req)))
+ 		return -EFAULT;
+@@ -724,7 +726,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
+ 	req.len &= 0xffffffff;
+ 	req.ooblen &= 0xffffffff;
+ 
+-	if (req.start + req.len > mtd->size) {
++	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+-- 
+2.45.2
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
