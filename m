@@ -1,133 +1,93 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6AD1BC4E
-	for <kernel-janitors@vger.kernel.org>; Mon,  9 Dec 2024 09:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B472215066
+	for <kernel-janitors@vger.kernel.org>; Mon,  9 Dec 2024 10:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734887; cv=none; b=R2pxnb+Sn3FrjMZQZ0xvO4j311LV1+LntmGYqU3V+KTHtygRDN87qJ6C36mafPfqvkFQs3q+ok3bbrSzKUfyK/Ks/DpX4oChPDSXu8TYM2YQUq2HweY3i+FG5lVonXnZJpXdgUtFs488m4gZVIytb5z8BOYYUrk+gtHvbqhEaZQ=
+	t=1733738771; cv=none; b=Zn8pByQNRUxaZDBwGEEl20+Oxo8TkgcQTeRggwry2c50MfCxTKjuSxBKbUWrrEg5WRW3IWjSWxqU8NJR6ileJI5B1aWmJ+0ijpvynsRpolyV3noGp+DZKs9ZeTuINwf4Jk1BPlJ1rFs3cKLCFssZhQ2TIIBYzb8n+IjzyKyRNNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734887; c=relaxed/simple;
-	bh=WpDibjcHfnA3hlnUvjLGwyhWaTaamib5k/eDBpn4uPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qGS3BHETrbKwN6m59YDwxfv79hkRsNP1XVNNNTOsIHEbbY3xzFlMdpoo1AhjPoNDHnkmmVENJtHKnJv2FQJlAks+Fu7I+/3gmiVUobChkHJ94zBIFjvE1N3rykdMZ2QgUtm1Nl8W/kKYEGzEdaV1IlGGTQ44wSBoamW6FNCj0iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yC2aSGl3; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1733738771; c=relaxed/simple;
+	bh=/LJlxxkuxafc63Wd1bi4UU+iQoIDb9QxMs9b6JJz8hQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eU5jIZvIwvzODiWzPSqh5h33YfAhK+w+cV0HCAd/c2/gzg8fk5jg54J/ygqdN7fc4yQtXNoVVjlxL45CtkCEgIv3Y23h8YtI8eloRTbQjlRsd7Ih7f6NP1NfO/Ge38Z4SUdF1kv1w6USGsFVC+mKBsIJFPzoTA0N7JOT3h8WC5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HOBzPojp; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yC2aSGl3"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so45668315e9.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 09 Dec 2024 01:01:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HOBzPojp"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434e9716feaso9453735e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 09 Dec 2024 02:06:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733734881; x=1734339681; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zfmkzNoJxgWiG5Z0g0jcQ4NV+0tXwsBrqoBTR0SIamg=;
-        b=yC2aSGl3FCWAYmdwMFszZmWyV8j+Vmm5Tf6AeoolwMCgTywARxZZlOobdvynrsD8tA
-         hdrnOAII9ukVgF0CnnRZxyz0ciY63w96loGG7Y1HzZRcT1ZAINOtoczEHpgwQkGmqQ7G
-         xky8yhRvCa4JWRKbKRYhkWZGpy4Jn9k0+ClgRCR9iZeGhJkez7SjwNrRrMUFIaU8Dcbb
-         d6IJz3GAMWhTNC1JoWSzvx2hUzKQxLIatgTWXLNc3wAQvF4Ga3P+LBsJ/CAJY1appRu2
-         rPpqyeDMM4t5EGEO7fkL1KpNIHoMfFknXLvj1HKkAV3kFQxoDIXY40kF3s7MPw9Hcftd
-         Hl5w==
+        d=linaro.org; s=google; t=1733738766; x=1734343566; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/LJlxxkuxafc63Wd1bi4UU+iQoIDb9QxMs9b6JJz8hQ=;
+        b=HOBzPojp3ZD1huZ3EJKekpDzGQk8HG8IJGKVWHcRE6AidUjTcFcENE07Xd7VjLorn8
+         5B90C6lseTDnpadr8+Vuy/kXY/GkJAz8SCsAIXod6PAKc2NnfxbNcln/keqohgPNrAhc
+         TxixAlQ9X/m8gOyKZGnmnHgUzk2Va1J12TmBtcYEViVznNjv+Glt8WcP5ceJUwb7PTSK
+         kD7hWG7Lb4eeYpsDI+g6PK5i9+z6O8c8JAEMsjJf0uBX014I2XMfcIhv272LFDjs5U1N
+         nRMJzoHo6I9gIxLhbhMAwWPDiWnrGGsnceM+OdIx2MZnkGB3DAH9HRdQWuYISSozOrGF
+         PpYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733734881; x=1734339681;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zfmkzNoJxgWiG5Z0g0jcQ4NV+0tXwsBrqoBTR0SIamg=;
-        b=cu/DIQWIU6LyaAmeJ2DkFClom61hzNS2GE3YsYL4qgFrmoKR5SLyntTeNKonuOg1H9
-         AkByv6u1/8YkO7tRgfQB07M9rpvCao0fk+8t836SUdmoaE36mZxgWkAtPrPC8yXHo90p
-         doepH02xJjAvFKPHe3MDtX27ydmQ0Mw9w5Rj33MZb+VhDPt2o3ifoxqfUPm+N/qSzi0Q
-         44uOxvbaGbG+OC0UKZoZeUozoseDh26dZXSO8t6v7ytWPVfsra0+cdKdR0o2pJd5THrT
-         EwcBJiLMFxn6H1/BRibLKGLCJmaK36Bik0vdd+38Fgg4+/ZwMr4A1evObyu5DaTVqMlw
-         3Vbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhMeEQ1oEZEOqjhqYpJKIIt4H6BHeqDpHbvT0Ch59qGHeL2HNgm04UY/uainRaoMYafkxRJIA+GbE4BnNgrTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZG3lCATXQMf9sIGNnk3kIz7PkQJkpkSgfol9A6markDIc7mNh
-	H+p5B9m+3hSIUtgeTywxDf9vzl4NPotrAft5eq+flwZPogSTGoc4EiDAzCbmHuQ=
-X-Gm-Gg: ASbGncu/RRX034Bb5z1IjmIRTBM4Pk9Y1wW33mVfjrHqkOFtZn6y8ZKeQJJ1+uXKEtv
-	51DT+rVSBgAMVnnahaGDYRMmGyQKS7Ssx7KT1LznZ/y5RKSttx+SrbVNvWIhfL+pcWiDI7AZlvT
-	spb2WQxua1POXgABTvmJWSOeiKr//hr7S7ebxrJE16YAjWY031M4htxE5F2tizTbEz8Qvi5FUVt
-	DniyL61OSkUwTBzyJfOKQcd/owJmdU+b3jcjMhH160symouHXdJATg=
-X-Google-Smtp-Source: AGHT+IFmp+9Cbk91wy/S26/TnevCyDFcz+T27bFU4Ss//r84rMuo+tniIyTuEqKycjEZM1O5HWZh/A==
-X-Received: by 2002:a05:600c:3144:b0:434:a202:7a0d with SMTP id 5b1f17b1804b1-434dded67cdmr83625685e9.22.1733734880111;
-        Mon, 09 Dec 2024 01:01:20 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da119abbsm151793365e9.43.2024.12.09.01.01.19
+        d=1e100.net; s=20230601; t=1733738766; x=1734343566;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/LJlxxkuxafc63Wd1bi4UU+iQoIDb9QxMs9b6JJz8hQ=;
+        b=HK55lymPqQl9vtavINdLAB3fXsGCSs5p4KRSJ9ELOuYOZD4uONzVcirl4u2jdSHA2b
+         pzypf2yLr789U/TacwfdVGFKoEmmZ0jxK6YDUv9tul+dSbq2As3ee4cKftHFKT/WHvNw
+         yqjwlqxLofB8JveFuSfIlRBfJ++BTBIYL3gYOZQf82UadlRdOPm8zvQPvinSoWReYvGY
+         RNGRRPoqyha0pEC4pccKpO5J6Hptrohe3H9ko3gPCYIdrtm410wflHEZv0tT07D/fOva
+         hHCpmXojjfq979+2Ik7e0cuWJx9oQRsSmnui1S1O+Ma1pn1jbrB+cfWCuayyGokt1Xqp
+         QbBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG9Z4+8VT2JCPRaQADzaOKYN5I9Z6ItctVVU83lX44qHyUYpqSsWG8hiLJM6A+pa6FxNbrp+Qb8UOp2NsN2/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxly8TX5pAR94MdxR9YOG4fyEKqe35UWEiD98awxhzlcGSLMmeT
+	xAWyYwyt0do2ZOt/lBZbl3g496/g6LHJ2e5coHfk7oB85SzxiT8He2i9vHDbyGk=
+X-Gm-Gg: ASbGnctisceU9tjJz0Dg7KeyqfFoSAOAFfZZcp4ogIQkGti7A3ae5YwwWjUqwgs4c7M
+	zBvz25O9PJcvM6uBbyxokJ3tmkGKYEs1AnyvaYh0VK1REzUTuWMAMEGhTW6YJmsi8htn3I4xwWI
+	EgIH5k5f+GodBxcX13p0HY2x4lhQdQgS1ynf6oEXowmsmQ4qM2bZAVS1V1JRBCFtGx/CUc7XLp+
+	reVAY/aOB7KA+PuFFT1KqvRcpqqb4JAKfJXNZVgGa31HDtIO96xyg==
+X-Google-Smtp-Source: AGHT+IGJPbrzOuK2a05dvm0F4dtdPq0Y/T2pAGQw1YzQ1ka2ok+Y6aOk+x+gp+whelzTQDnBCo2xjA==
+X-Received: by 2002:a05:600c:4fc9:b0:434:a529:3b87 with SMTP id 5b1f17b1804b1-434ddeb53b9mr109539965e9.10.1733738766502;
+        Mon, 09 Dec 2024 02:06:06 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f19023d1sm64250965e9.20.2024.12.09.02.06.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 01:01:19 -0800 (PST)
-Date: Mon, 9 Dec 2024 12:01:16 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mon, 09 Dec 2024 02:06:06 -0800 (PST)
+Message-ID: <cac8862fff16a9f1d4ba59371a226759ad9b71cb.camel@linaro.org>
+Subject: Re: [PATCH] usb: typec: tcpm/tcpci_maxim: fix error code in
+ max_contaminant_read_resistance_kohm()
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Badhri Jagan Sridharan
+	 <badhri@google.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>, Guenter Roeck <linux@roeck-us.net>, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] mtdchar: fix integer overflow in read/write ioctls
-Message-ID: <Z1ax3K3-zSJExPNV@stanley.mountain>
+Date: Mon, 09 Dec 2024 10:06:05 +0000
+In-Reply-To: <f1bf3768-419e-40dd-989c-f7f455d6c824@stanley.mountain>
+References: <f1bf3768-419e-40dd-989c-f7f455d6c824@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1-4 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-The "req.start" and "req.len" variables are u64 values that come from the
-user at the start of the function.  We mask away the high 32 bits of
-"req.len" so that's capped at U32_MAX but the "req.start" variable can go
-up to U64_MAX.
+On Fri, 2024-12-06 at 16:09 +0300, Dan Carpenter wrote:
+> If max_contaminant_read_adc_mv() fails, then return the error code.=C2=A0=
+ Don't
+> return zero.
+>=20
+> Fixes: 02b332a06397 ("usb: typec: maxim_contaminant: Implement check_cont=
+aminant callback")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
 
-Use check_add_overflow() to fix this bug.
-
-Fixes: 095bb6e44eb1 ("mtdchar: add MEMREAD ioctl")
-Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE ioctl")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: fix the tags.
-
- drivers/mtd/mtdchar.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
-index 8dc4f5c493fc..335c702633ff 100644
---- a/drivers/mtd/mtdchar.c
-+++ b/drivers/mtd/mtdchar.c
-@@ -599,6 +599,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
- 	uint8_t *datbuf = NULL, *oobbuf = NULL;
- 	size_t datbuf_len, oobbuf_len;
- 	int ret = 0;
-+	u64 end;
- 
- 	if (copy_from_user(&req, argp, sizeof(req)))
- 		return -EFAULT;
-@@ -618,7 +619,7 @@ mtdchar_write_ioctl(struct mtd_info *mtd, struct mtd_write_req __user *argp)
- 	req.len &= 0xffffffff;
- 	req.ooblen &= 0xffffffff;
- 
--	if (req.start + req.len > mtd->size)
-+	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size)
- 		return -EINVAL;
- 
- 	datbuf_len = min_t(size_t, req.len, mtd->erasesize);
-@@ -698,6 +699,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
- 	size_t datbuf_len, oobbuf_len;
- 	size_t orig_len, orig_ooblen;
- 	int ret = 0;
-+	u64 end;
- 
- 	if (copy_from_user(&req, argp, sizeof(req)))
- 		return -EFAULT;
-@@ -724,7 +726,7 @@ mtdchar_read_ioctl(struct mtd_info *mtd, struct mtd_read_req __user *argp)
- 	req.len &= 0xffffffff;
- 	req.ooblen &= 0xffffffff;
- 
--	if (req.start + req.len > mtd->size) {
-+	if (check_add_overflow(req.start, req.len, &end) || end > mtd->size) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
--- 
-2.45.2
+Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
