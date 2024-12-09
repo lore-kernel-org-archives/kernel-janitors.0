@@ -1,84 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B2233139;
-	Mon,  9 Dec 2024 15:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C662C9A;
+	Mon,  9 Dec 2024 16:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759934; cv=none; b=rBfIBp27g4DEgiIVUFMgRVUJXyQAt8cd3Jjk4lN50Y6dxTm/IhmsJwSBKtoZJnmqGaG12ZRR/gLtxbr5j2D8SR+889lTXUT0t/W+6lrO0TE3zt+UP0ZrUMLyTKeZSq0xm/skEez0p0Y20rKVSXE0ZrzLUgDfq/lBQjQjEfxzzkI=
+	t=1733763354; cv=none; b=NqA9ZLBN1yBAFQFjtYxABNEKinfp6Qgb4w6kZ1Qz22g6r/R3EDkUEYcBfbTgEmS3p0URDHmrME7gFdACSIBOPC5mj0Dv2hz7S8gb23O2/vuXSupv4ju9dEZZyY2NIHcbil5kRbQVX7FaHoOJLbhsYBQYf6RQMQmbcixAox2Rg1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759934; c=relaxed/simple;
-	bh=OO/cbnYzf7FBnThMr5HyGBtVFD9nIjTXZEtzGzeppGE=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=H8sdoMoE9z/gkwkcFZX/XXutBYHiuHEambXs95QeRNKqYxYgN2JAYN0YJ6l6wOFRHF1RtnR/K6cqF9UFHmNpGQ/pLCUg/d3NMgDYN+aVi3jvsexwF+0Eo4TXO0DRrQ9kxKHkEO5BUHs9hiuacC66lQkFXBDAy7GeQ+3mM3CFxk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fg+oFQeO; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fg+oFQeO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D4C6C4CED1;
-	Mon,  9 Dec 2024 15:58:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733759932;
-	bh=OO/cbnYzf7FBnThMr5HyGBtVFD9nIjTXZEtzGzeppGE=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=Fg+oFQeO2kxp5YwnqKCYMkxppM0DGUp3qVxQ5sA5nAhg3znZy/eC4jlBglaQcF/pD
-	 1ek0X+lGA/sb+0yV86GarHhJ0//nhWl6/GeurMFilAnXgVNik5+axaVubjfJjqrBrn
-	 86+D1UrJksk/A/x7WQkpy+hnh6fB3EM8+OelfkaB9ESisxtWQuZNPPWc8FbMqDy4kl
-	 8JkRD4kzTEhYQqrCcC5V/LWtyFXz9lTa1eRABmGQQ0yimefBwGiWp9fLGT93pJHCyk
-	 U2M6D7V794lB7TwBTexFvKiGyb5NKZYztjvbcbzPQRSGcT2/O8refdTkfvvj9cWQks
-	 R1eAulDtuAE/Q==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733763354; c=relaxed/simple;
+	bh=/+IoL6yT04naLm0YS2E/bg1d0nnL1xvkoT0ltvf6aVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFgTlOJs4KOHKlj3Aga41WKPB79B31291vO0E/O1uG+R0UeAB1aKURemUrRItWDRoM/wtNN4gugKus9lerElUjoRMRZiNG5baFHUqVc1izba5Cvl4LP19zintWXtlu2JAuwsdSiny2FEVSNnw4PkQaHxFglm4HbfpQDwlMtmXA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 1yfg6N+vTwau+KBHdYAtPQ==
+X-CSE-MsgGUID: yjbs+PmASDWI9BQd6aGGYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34129624"
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="34129624"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 08:55:50 -0800
+X-CSE-ConnectionGUID: 0S1ZjDmSStmv6z/kiFHLDg==
+X-CSE-MsgGUID: z1pUL3BOSoS+4WlHmp1zXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="99942161"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 08:55:42 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1tKh2p-00000005ntl-1h9X;
+	Mon, 09 Dec 2024 18:55:39 +0200
+Date: Mon, 9 Dec 2024 18:55:39 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Paul Burton <paulburton@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] auxdisplay: img-ascii-lcd: Constify struct
+ img_ascii_lcd_config
+Message-ID: <Z1chC8GHeog24M33@smile.fi.intel.com>
+References: <35fab997bcac76cd4135797a4968c2c72511dcb9.1733523925.git.christophe.jaillet@wanadoo.fr>
+ <f205c8ab886a4e12b2ceda6f89c873a9d921625d.1733523925.git.christophe.jaillet@wanadoo.fr>
+ <CAMuHMdVaJyW3bvTxRfcDavA9HaukUDGBaTWRoUtrwjy_rb2DpA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: wlcore: testmode: Constify strutc nla_policy
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: 
- <78810e3ebb74ddbd3a4538f182bf1143b89baba7.1731332414.git.christophe.jaillet@wanadoo.fr>
-References: 
- <78810e3ebb74ddbd3a4538f182bf1143b89baba7.1731332414.git.christophe.jaillet@wanadoo.fr>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- linux-wireless@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <173375992872.157598.4366313738760552668.kvalo@kernel.org>
-Date: Mon,  9 Dec 2024 15:58:50 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdVaJyW3bvTxRfcDavA9HaukUDGBaTWRoUtrwjy_rb2DpA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On Mon, Dec 09, 2024 at 09:55:48AM +0100, Geert Uytterhoeven wrote:
+> On Fri, Dec 6, 2024 at 11:26 PM Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+> > 'struct img_ascii_lcd_config' is not modified in this driver.
+> >
+> > Constifying this structure moves some data to a read-only section, so
+> > increase overall security, especially when the structure holds some
+> > function pointers.
+> >
+> > On a x86_64, with allmodconfig:
+> > Before:
+> > ======
+> >    text    data     bss     dec     hex filename
+> >    6110     728       0    6838    1ab6 drivers/auxdisplay/img-ascii-lcd.o
+> >
+> > After:
+> > =====
+> >    text    data     bss     dec     hex filename
+> >    6198     632       0    6830    1aae drivers/auxdisplay/img-ascii-lcd.o
+> >
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-> 'struct nla_policy' is not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    5062	    528	      0	   5590	   15d6	drivers/net/wireless/ti/wlcore/testmode.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->    5178	    404	      0	   5582	   15ce	drivers/net/wireless/ti/wlcore/testmode.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-
-Patch applied to wireless-next.git, thanks.
-
-01e767d6f783 wifi: wlcore: testmode: Constify strutc nla_policy
+Pushed to my review and testing queue, thanks!
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/78810e3ebb74ddbd3a4538f182bf1143b89baba7.1731332414.git.christophe.jaillet@wanadoo.fr/
+With Best Regards,
+Andy Shevchenko
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
