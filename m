@@ -1,87 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47691B4F0D;
-	Tue, 10 Dec 2024 13:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6B31AA1E5;
+	Tue, 10 Dec 2024 17:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733835651; cv=none; b=Ig/Q1COv5DmXq31OpIrDdywOeXeNLwMM2WTR99v8NBZlkL+nVAletixNvu5W7+9ssAFPTD3CFtR9e3OZw/pJndMDFWuJQhuqlhT3qvISyUZypVofqDPr4w5XUUQnQOsqGtX3FTHq0OhjT0YliuHJNfHCIA52ZEYF+6PD9kJLE+8=
+	t=1733850051; cv=none; b=O1jvWo9IAqjOWtK7ql+eXjlrSBaL/uT8L7gKwQfYTcC5GNl0q+KH6pv3ak7sSDwyJEI/ds5PDBwV4w489bjTUUzz/4Q82jhiy823joMHtIBC/1DvOh4toXm9sqsXlzsGDMQ7YtTLJMsCO+MEwt8r02gMXieDrlb+bqwJ+eZgDuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733835651; c=relaxed/simple;
-	bh=jaThpRIjcCNZ0lQjQ42i7rnft7gfMtJKkGlTrJdutek=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=drqLL37M31rCYxAXunEqu2o9Z050f2v8p7suPg2OoRN5Ue/9ox+MioqDNnqQFmQ9twY0ZnC5X4qdvNtZ41WW7ZYczSsrRr03c5umCwRH5bK+VkQW9BD+OOazWTvUaIiMIArTZdw44hNsLScilr9/TUfPp1QleYYrtxOhK9QbqIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kF8HjOEO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733850051; c=relaxed/simple;
+	bh=1PDd8uGZupfHDrOEaJNWBGi5/aMu9Oa8BwOhWISvABM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dc/bkr9A6lIPtmkjMgVgxr/28eAdFVR8yOlaMz06QS0VuI5An2qQJgpuJfGlNN5SGdfm8aNS002AsPX1VyLRYscoSRGCIGFUacf9EUcGP1M+s4/IlSFaoJDgFwd0kW39ZL3EjIiK/XrK3bkZQKetVAFIfCv6nG1rotXGG+Mop7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LO2lCGPO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kF8HjOEO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63526C4CEDF;
-	Tue, 10 Dec 2024 13:00:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LO2lCGPO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 206EAC4CED6;
+	Tue, 10 Dec 2024 17:00:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733835651;
-	bh=jaThpRIjcCNZ0lQjQ42i7rnft7gfMtJKkGlTrJdutek=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=kF8HjOEOVQLLfosqKYy2yxSmojOUK9dE5AA0qn5ypsIUCqMuvvubvy0hKGiYQ8Xor
-	 6795C5de8kjVFtlMwiiO0yvBtylBAJx9uLg2QTrUhj5LBT5gc8YXjxO05YOmVhg8W+
-	 0qJh03WHF00pbCa0+Watf5W+S8lygjvV2SzdapZuYoYrn+0OOjY1V3FxUylPh8QjU0
-	 tQ9Jme+ujIAPmykTpGt7yA/94UwUvxyAPnO5Ouf8L27JwQK3ismNTAfGbIb5IlDVlR
-	 n239MCpWHdhRAvcEwbC2K+wkt+X/bK8qXG3Qxvsbgm9FBdOXG0wlyWlvBl9AnIxSYy
-	 Fj80hDpsJ6ALQ==
-From: Mark Brown <broonie@kernel.org>
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, 
- =?utf-8?q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>, 
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
- linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <4052aa2f9a9ea342fa6af83fa991b55ce5d5819e.1732051814.git.christophe.jaillet@wanadoo.fr>
-References: <4052aa2f9a9ea342fa6af83fa991b55ce5d5819e.1732051814.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] spi: aspeed: Fix an error handling path in
- aspeed_spi_[read|write]_user()
-Message-Id: <173383564913.34030.1229101307217258864.b4-ty@kernel.org>
-Date: Tue, 10 Dec 2024 13:00:49 +0000
+	s=k20201202; t=1733850051;
+	bh=1PDd8uGZupfHDrOEaJNWBGi5/aMu9Oa8BwOhWISvABM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LO2lCGPOosp2jJyVMspmxnntroXHCrD9R4uqrRPY2DE4AWJBsCKspT1GpfPdDDH3k
+	 s7Gfo0VHtge2rUQMkei8DuzILitzj/uyYS1ref2qj2WFgYGinOCQXOPDqdnQIVwLoD
+	 /MIqLobFo3HVITFv7VrDUfGkyNqKJJAbqoNm212ta71RnSd421mbLSobOs4MLLLnD6
+	 tqRtbj0YJUD9rYKsh/cis7qMn9K7nP+tB7NbE57Mao1SOImOFhYwfbfhv9lEIhL7Wc
+	 6hlRu5jVrzLwSW2HUBwbmE+AlOfBcbCago2FK/WDJwlGw3irCaCF92Qp/P70S55b8I
+	 kdSu6+Rz/3G3A==
+Date: Tue, 10 Dec 2024 17:00:46 +0000
+From: Simon Horman <horms@kernel.org>
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Cai Huoqing <cai.huoqing@linux.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] net: hinic: Fix typo in dev_err message
+Message-ID: <20241210170046.GC6554@kernel.org>
+References: <20241209124804.9789-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209124804.9789-1-algonell@gmail.com>
 
-On Tue, 19 Nov 2024 22:30:29 +0100, Christophe JAILLET wrote:
-> A aspeed_spi_start_user() is not balanced by a corresponding
-> aspeed_spi_stop_user().
-> Add the missing call.
+On Mon, Dec 09, 2024 at 02:47:30PM +0200, Andrew Kreimer wrote:
+> There is a typo in dev_err message: fliter -> filter.
+> Fix it via codespell.
 > 
-> 
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
-Applied to
+Thanks Andrew,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+I agree this is correct.
+And I see that this codespell does not flag any other spelling
+errors in this file.
 
-Thanks!
-
-[1/1] spi: aspeed: Fix an error handling path in aspeed_spi_[read|write]_user()
-      commit: c84dda3751e945a67d71cbe3af4474aad24a5794
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Reviewed-by: Simon Horman <horms@kernel.org>
