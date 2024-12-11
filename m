@@ -1,108 +1,172 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DE0225A44
-	for <kernel-janitors@vger.kernel.org>; Wed, 11 Dec 2024 12:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450AC38DE9;
+	Wed, 11 Dec 2024 16:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733920174; cv=none; b=dPGrCCTSIFAwDmN3EeTVFPJSfnQ8PRBVhWELEyyLj1J49KLQ1g9jmaVSMJCBBhcCdPnJsaQB0QVq+xu96otmpIEwAUoQ7DWbffqOmIpoqyd5/JtE85HKWzVk48n1Y/3uXCVO7iQWdPpExmZ8Wk4a9QCyVUgk+cfOXBOOTDTraOs=
+	t=1733935706; cv=none; b=oiv6XvkI03idEpZYDsJqzvZ5ZTsYXAihJaLnnT+B7ft0CI++P7gbmNhHH7ZhL6Z9/GQ3P8a3jvXXfHtmYI601LJRaCK4wEADrU6RZPLkETaqTI5bdeX+zpPFIkqaZDMUZWHs2Q52c7u406NfwmlqhB9BAdEqK9EW9lvGECH/sx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733920174; c=relaxed/simple;
-	bh=YEw/IRYYRv/+z+aIG9Q+90G+HCvcHBe1Et0PZYVkGhc=;
+	s=arc-20240116; t=1733935706; c=relaxed/simple;
+	bh=Z+faUIpdUj0Nqr728cT8TmlvcXaD3eeCwKNDNhgoqOQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fAELGyt3+j/MZ2+PY2SgXZIzd34yHD8T+PZYSKV7Lu0ldFDc4XdFTappRWalm02mtaFWu3SV9ciQLfjch78ssoM4G9FZVW7IaxtnGkZzsUFaLvbe1EItWuMa4MRFHFxAcel35QwuacdBuUcDz1E0bRG8cZDEEw444XU6JLdWBzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ekav7q+u; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRSyn4/u2d1fA0UPFBh1J+50FQML1Nn6VLy9U2CW9by4VJBlTHOTL2yaqmuUXiHTAtYS7J9rJFSXC20BDd6pU446b8VfQtDricmKOEXPVg2f5dPsCKPiPwBbHMoifZD6hcp/asPdYif4hT9gdyfHXMGUAMVwoA7iRqPoN4tpwIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JCzrzn4N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0JdujfP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JCzrzn4N; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0JdujfP; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ekav7q+u"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3862df95f92so3378497f8f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 11 Dec 2024 04:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733920171; x=1734524971; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4q1I1Yh84bKu8NCVCn6hfhSIWeIgmZ50vGMDpFsxBHQ=;
-        b=Ekav7q+ufLl3fuWLREiCJGSstwg9iN8bF+06/HnGxcpTnMBpy9xC0dBe0vDwyJ50bi
-         dfuPuscO4nO2AOynyAp3BKRJHhcKGtTCBPPvKDqEWPbMGp0NxpfXxWHZXsC/nDHckkIa
-         APyp35geaWmbms2cJB/UKitcdDzHkhwr+jaEWO/sct6ZRUdhqspqEv15sEenALsvJcEG
-         xkYvG6qaivMMZmH20EVyojtAf2CA9AK3Vv2xhnVDFR/ZweJMjt4/2mRFb4RqJ2laEqIn
-         hzjjFUoRoKa1PAVNqtate1hO9jf9Xcbeg/RSpfqFdHCmvfh2Z8GY7U5ghhKyIWENz3AQ
-         JjsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733920171; x=1734524971;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4q1I1Yh84bKu8NCVCn6hfhSIWeIgmZ50vGMDpFsxBHQ=;
-        b=qiTItNquYlywAVph6S8yEuRH7FvOBaYMjw12BMQ6JIyvBIvA9h477bIjYIW67jRxMT
-         Ly/J3zS1u2bpxg/vWQqserxsojPC3n0JjnC1hfmEUn6I0htrjjzPkU0/83Sl3g+l94yo
-         z/bDJoaCi/+SAsXQQBTcjGiodZxLsCDnuLgiibXv0Fiwxq9Y/7JKsNsKSOeQ8x8sfIL9
-         DUQws3aiNXpvKtiwJF/GVQJ7cA5/6uu/UWLJZ2Gtesv5VtN75Br1j0qjvsZTz0nQKem1
-         2Psvp/6L5+nB1Z12uzXJ4lZZdxGIC9uVSmHOioqHQb4bay+vnPzfrSLhGZXqG/Qb+AI3
-         SbRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuLLywwmHCqTwRMpYpXess53hE30UdgW1CollrYZGZmYNAAwpagoT9yM8MryPNRPsN4N2AQpBlCJbj7cfkj3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf1jSZG29n6UuuOZi/fdEuEZdK4qlSm4HsQx2jhjkAx6bD6zgw
-	zxM/IEMjyDyGsnfWdUi5Jq0GK3RZsraZyPnaFmooOOFot8WIvGqscouDHBVb+bQ=
-X-Gm-Gg: ASbGncsM1zFev5N8+G33OFWe91lfhOYYIboTEaGNa4cNKkaVdaq4qYTvqUtF7xEzLpt
-	pcjcOkz3tnzRjNYeIDksnLt+i4rh5ROs9N2hX94d3IGCawAaiD+dxuXAY8CZlIp8JZD6erW0nU2
-	sn4JMkyT4tUl0A/BLe7Y39Ct1eD3h1alX9oqEXxWBgI5yK99bsOOVpXDEpbhZdfyHoSV1VljEtv
-	VwyiObXOYD/p+SKlFTMlSizSWoR3riT1ezJJYW+SOFMD1P8YfwLn+vlVM4=
-X-Google-Smtp-Source: AGHT+IE0TgsU6/73zikWtGl+XcC9OJmbSxFiscCQo7i68052biLcQRUNTqXnT2vH4aEJK/3SFna9UA==
-X-Received: by 2002:a5d:64e6:0:b0:386:424e:32d5 with SMTP id ffacd0b85a97d-3864ce556f4mr2228673f8f.14.1733920171168;
-        Wed, 11 Dec 2024 04:29:31 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4361d541eccsm20564675e9.10.2024.12.11.04.29.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Dec 2024 04:29:30 -0800 (PST)
-Date: Wed, 11 Dec 2024 15:29:27 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Esteban Blanc <eblanc@baylibre.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtc: tps6594: Fix integer overflow on 32bit systems
-Message-ID: <e434930a-f30d-427f-9cc6-41562a31d8dc@stanley.mountain>
-References: <1074175e-5ecb-4e3d-b721-347d794caa90@stanley.mountain>
- <CAHp75VfssNnd9zvNu+N9xc74RO+qBPC_qhF5ed_G8p5HJ8LWvw@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JCzrzn4N";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0JdujfP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JCzrzn4N";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0JdujfP"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B90D2117B;
+	Wed, 11 Dec 2024 16:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733935702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kVgazgq1PikQ/169F+CRX5eNyOAH+ARoQ+7953vu2/A=;
+	b=JCzrzn4NkNwitIrDl6BEfFHTA5bXkjvmDw5mJ2PkaupDO2kdFQwyXAXTvnQ8Fy9XcodufA
+	83pNCRi6gT7rpnrSPXh6grzSYo0h/2tPFeUK/9RUevGimcxqUo7UhAFphtl+DchViG1ygo
+	gIgRBWd7n/LaePieCt4fCv0G31yYgdg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733935702;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kVgazgq1PikQ/169F+CRX5eNyOAH+ARoQ+7953vu2/A=;
+	b=r0JdujfPg2zXdNiLJAJ9fV8jIJm+zxrFllPeWFblT+UrxAkeKdb3thwqzmmAR7tuoIIK5R
+	hwVocnNyOFdJOOBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=JCzrzn4N;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=r0JdujfP
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733935702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kVgazgq1PikQ/169F+CRX5eNyOAH+ARoQ+7953vu2/A=;
+	b=JCzrzn4NkNwitIrDl6BEfFHTA5bXkjvmDw5mJ2PkaupDO2kdFQwyXAXTvnQ8Fy9XcodufA
+	83pNCRi6gT7rpnrSPXh6grzSYo0h/2tPFeUK/9RUevGimcxqUo7UhAFphtl+DchViG1ygo
+	gIgRBWd7n/LaePieCt4fCv0G31yYgdg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733935702;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kVgazgq1PikQ/169F+CRX5eNyOAH+ARoQ+7953vu2/A=;
+	b=r0JdujfPg2zXdNiLJAJ9fV8jIJm+zxrFllPeWFblT+UrxAkeKdb3thwqzmmAR7tuoIIK5R
+	hwVocnNyOFdJOOBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 322FC1344A;
+	Wed, 11 Dec 2024 16:48:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZZQ6DFbCWWcDXgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 11 Dec 2024 16:48:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DFDC5A0894; Wed, 11 Dec 2024 17:48:21 +0100 (CET)
+Date: Wed, 11 Dec 2024 17:48:21 +0100
+From: Jan Kara <jack@suse.cz>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] binfmt_elf: Fix potential Oops in load_elf_binary()
+Message-ID: <20241211164821.ki4wy4ltffgx677t@quack3>
+References: <5952b626-ef08-4293-8a73-f1496af4e987@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VfssNnd9zvNu+N9xc74RO+qBPC_qhF5ed_G8p5HJ8LWvw@mail.gmail.com>
+In-Reply-To: <5952b626-ef08-4293-8a73-f1496af4e987@stanley.mountain>
+X-Rspamd-Queue-Id: 4B90D2117B
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_CC(0.00)[gmail.com,zeniv.linux.org.uk,kernel.org,suse.cz,xmission.com,vger.kernel.org,kvack.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,linaro.org:email,suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On Wed, Dec 11, 2024 at 01:51:31PM +0200, Andy Shevchenko wrote:
-> On Wed, Dec 11, 2024 at 11:32 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > The problem is this multiply in tps6594_rtc_set_offset()
-> >
-> >         tmp = offset * TICKS_PER_HOUR;
-> >
-> > The "tmp" variable is an s64 but "offset" is a long in the
-> > (-277774)-277774 range.  On 32bit systems a long can hold numbers up to
-> > approximately two billion.  The number of TICKS_PER_HOUR is really large,
-> > (32768 * 3600) or roughly a hundred million.  When you start multiplying
-> > by a hundred million it doesn't take long to overflow the two billion
-> > mark.
-> >
-> > Probably the safest way to fix this is to change the type of
-> > TICKS_PER_HOUR to long long because it's such a large number.
+On Wed 11-12-24 12:21:39, Dan Carpenter wrote:
+> This function call was changed from allow_write_access() which has a NULL
+> check to exe_file_allow_write_access() which doesn't.  Check for NULL
+> before calling it.
 > 
-> ...
-> 
-> > -#define TICKS_PER_HOUR (32768 * 3600)
-> > +#define TICKS_PER_HOUR (32768 * 3600LL)
-> 
-> Hmm... And why signed?
+> Fixes: 871387b27c20 ("fs: don't block write during exec on pre-content watched files")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-It needs to be signed for negatives.  That's deliberate.
+Thanks for noticing! I've opted to change exe_file_allow_write_access() to
+check for NULL instead to be 1:1 replacement for allow_write_access().
+Because bugs like this one are very easy to introduce.
 
-regards,
-dan carpenter
+								Honza
+
+> ---
+>  fs/binfmt_elf.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 8054f44d39cf..db9cb4c20125 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -1354,9 +1354,10 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	kfree(interp_elf_ex);
+>  	kfree(interp_elf_phdata);
+>  out_free_file:
+> -	exe_file_allow_write_access(interpreter);
+> -	if (interpreter)
+> +	if (interpreter) {
+> +		exe_file_allow_write_access(interpreter);
+>  		fput(interpreter);
+> +	}
+>  out_free_ph:
+>  	kfree(elf_phdata);
+>  	goto out;
+> -- 
+> 2.45.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
