@@ -1,74 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2502451C0;
-	Wed, 11 Dec 2024 04:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4440F1A8408;
+	Wed, 11 Dec 2024 09:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733890141; cv=none; b=V3xGWgp+PO4EuHHeXHIXuFw9t9xb+BfMvP7l2IWhYxC0gSZeo7GWNj4ojn7x+fyQoVZvrSJgMwg7qWbhvxiNVSJFNkK0Qz+AmZ1SqOMVxJo/u0q39QmLNQ56vbPIMBgR/HcmMIjUXmujCkQ0PGAwDxqrOk4m0ORCXWosr7Zgt1s=
+	t=1733908746; cv=none; b=eoxQdwrylcZPQEzlFFKMMDgKX2A8u/xum9d7EWvl3uqjGOSLoJesab3Z47koG26g1QI83+pvf914YlmVjjSfOQX+uckuTU3DrZIfgKM+JCs+WPDltZl7cQKZ5ZcxDjLz3eZbhP4zskm0cRJ0kVxXRBM5GeGt8COaKyCcyV+bVTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733890141; c=relaxed/simple;
-	bh=QiMaimw4aRsQbi6cS1aDUySjZuQu274e7bOktDP5CCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c/X3Ewe27OwaQbXq+XdcQS9u3OSgG128e9LG6YwHMJVDxlsG9t6htacDX618cdrbP5hsz8kIiO+2ei7JERUkzCHL3JQ4joPAB51uNqzVmdjRaZIChwQp0s02udtciEVdFbYCnGdrvigpKFLwB+bBC58/NtYpy+GwJVhwJEfjasg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7405AC4CED2;
-	Wed, 11 Dec 2024 04:09:00 +0000 (UTC)
-Date: Tue, 10 Dec 2024 23:08:59 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] Documentation/rv: Fix typos
-Message-ID: <20241210230859.6b0d93b2@batman.local.home>
-In-Reply-To: <20241209130640.10954-1-algonell@gmail.com>
-References: <20241209130640.10954-1-algonell@gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733908746; c=relaxed/simple;
+	bh=EAZc5BG/lGj4Chm2b9mW1NY7iiGPZNBIY+xChKuEvmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvkGvTUO+yJcmjDnYlDoLgJKa2Xb6ffJkPDJlMous8vRMY3zkcmasofS0dZTQOh2W6PCF+2vIM19Q3S+X0vzc+u86c4lraoPvZo+jokbQUGIpPplZfbEx3f9Ew/4V94bgF2UWMsHnYOBz/sdnnxXm8F30kBGElorExjrKgCHn0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MbQCZRk3; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MbQCZRk3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733908741; x=1765444741;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EAZc5BG/lGj4Chm2b9mW1NY7iiGPZNBIY+xChKuEvmo=;
+  b=MbQCZRk3tX1ryDDg+dN4pAH/aFVV3GSoeKA4NTguBVRjKhze9GFDAI45
+   lHP76WLph0MRDV6GqykZPPmQ739ogVfO2UePT5Wb1ZfTVs5CJHFJMozaM
+   s0mrVbpA2ai+mEmeztb/jk+dfmjpSQ5i0D/LsaZvaCRJSlFOXiWwD+QrE
+   2OI2760cNUjEeugDJpJvfDZkrNxpt5GLx6cUveDr0/TDkeBaSUBm1KfH6
+   HDt9AyFH9nkGsiSsrCqJawHwVCwbZ6HhgPoKRIF7esaIwPwss8KHFJZkH
+   5MiNzX26WKT4lcjALYKwqkpmv88J+12vMdKAZIwyREn4xz/KCeNVkeMZ3
+   Q==;
+X-CSE-ConnectionGUID: n6NGchO+T+6myJ2PV9dDKg==
+X-CSE-MsgGUID: /jsb/KS2RPyWx4k9Hy2kJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11282"; a="44951279"
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="44951279"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Dec 2024 01:18:58 -0800
+X-CSE-ConnectionGUID: yOTttQY1SJmWD38zPJwHSw==
+X-CSE-MsgGUID: AIOLTSZPRBmMr4J7M5fB/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,225,1728975600"; 
+   d="scan'208";a="96203619"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa009.fm.intel.com with SMTP; 11 Dec 2024 01:18:52 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 11 Dec 2024 11:18:51 +0200
+Date: Wed, 11 Dec 2024 11:18:51 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Badhri Jagan Sridharan <badhri@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: tcpm/tcpci_maxim: fix error code in
+ max_contaminant_read_resistance_kohm()
+Message-ID: <Z1lY-9ik5T76U_Yn@kuha.fi.intel.com>
+References: <f1bf3768-419e-40dd-989c-f7f455d6c824@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1bf3768-419e-40dd-989c-f7f455d6c824@stanley.mountain>
 
-On Mon,  9 Dec 2024 15:06:00 +0200
-Andrew Kreimer <algonell@gmail.com> wrote:
-
-> There are some typos in the documentation: 'a' -> 'at', missing 'to'.
-> Fix them.
+On Fri, Dec 06, 2024 at 04:09:18PM +0300, Dan Carpenter wrote:
+> If max_contaminant_read_adc_mv() fails, then return the error code.  Don't
+> return zero.
 > 
+> Fixes: 02b332a06397 ("usb: typec: maxim_contaminant: Implement check_contaminant callback")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
--- Steve
-
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 > ---
->  Documentation/trace/rv/runtime-verification.rst | 4 ++--
+>  drivers/usb/typec/tcpm/maxim_contaminant.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/trace/rv/runtime-verification.rst b/Documentation/trace/rv/runtime-verification.rst
-> index dae78dfa7cdc..c700dde9259c 100644
-> --- a/Documentation/trace/rv/runtime-verification.rst
-> +++ b/Documentation/trace/rv/runtime-verification.rst
-> @@ -8,14 +8,14 @@ checking* and *theorem proving*) with a more practical approach for complex
->  systems.
+> diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
+> index 22163d8f9eb0..0cdda06592fd 100644
+> --- a/drivers/usb/typec/tcpm/maxim_contaminant.c
+> +++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
+> @@ -135,7 +135,7 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
 >  
->  Instead of relying on a fine-grained model of a system (e.g., a
-> -re-implementation a instruction level), RV works by analyzing the trace of the
-> +re-implementation at instruction level), RV works by analyzing the trace of the
->  system's actual execution, comparing it against a formal specification of
->  the system behavior.
+>  		mv = max_contaminant_read_adc_mv(chip, channel, sleep_msec, raw, true);
+>  		if (mv < 0)
+> -			return ret;
+> +			return mv;
 >  
->  The main advantage is that RV can give precise information on the runtime
->  behavior of the monitored system, without the pitfalls of developing models
->  that require a re-implementation of the entire system in a modeling language.
-> -Moreover, given an efficient monitoring method, it is possible execute an
-> +Moreover, given an efficient monitoring method, it is possible to execute an
->  *online* verification of a system, enabling the *reaction* for unexpected
->  events, avoiding, for example, the propagation of a failure on safety-critical
->  systems.
+>  		/* OVP enable */
+>  		ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCOVPDIS, 0);
+> @@ -157,7 +157,7 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
+>  
+>  	mv = max_contaminant_read_adc_mv(chip, channel, sleep_msec, raw, true);
+>  	if (mv < 0)
+> -		return ret;
+> +		return mv;
+>  	/* Disable current source */
+>  	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, SBURPCTRL, 0);
+>  	if (ret < 0)
+> -- 
+> 2.45.2
 
+-- 
+heikki
