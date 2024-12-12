@@ -1,61 +1,60 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB89C211709
-	for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 12:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D653D1714D7
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 12:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734007521; cv=none; b=A60sFM8dbgtdL26fOBhq+e4iKnuTmDolzdFDaXM46X/HwUD1XFFev+zywOMyFe+QWQCQ5EKDMHoWMqFVlXU/Imze48FT1pqmZ+38hbQWFL+CKEWMCeW+OzQisBlvqm+//6VJusfM8uq9uFx8d1WH8it9E5rCTfjTy61PraGNuBw=
+	t=1734007666; cv=none; b=GD2myRiTXL1YKE9Fu/pMXJp9tTGPq22vfd7xnKpzDKgjgzFpnwKMNKjbhTvXhiCzqGjORLLu5vE24Jz+2/uMzKpJKaTywuFJwWkZY66dOdSaAGvT+HazL89iuv4KUP9XcUl8jBzSRvWbp5zSdgGLeo61N67+6s5R3ivt/7LMjTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734007521; c=relaxed/simple;
-	bh=a1c+csz78lwGyO+6sWEuvcLVxfOtf9ra7N4OQm7xEfY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eskKroeod8iKiYf9P135ugQCUNZ5g54z+pV5h6f/Xfaff9xaq3SkYMuwufn7mNgklMchz6HChcd1uvTi9m+U3fE/7ExJpPbUmxm/p1a8Xzpr2KzWdr7IZF0iGinUunMO6q+ezVsby1v3wW66qhoeoqX1HpDu9z/zjBK3SeLAOoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CaVziD81; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1734007666; c=relaxed/simple;
+	bh=1Ts9EKssjbPUaajtIUeXtbeIZ5MvymgYej7/+BBHFJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cD4FhaIzeEXHeItImHVXmUcnD63Wyn4uiEjUudL0dt0HJxvO40aZO2o94uR5Ui2kbUyChPr3/aUU0nBCWdH1aqOLiYhfirFxI6/ALClqYz1+ANyObWnB5Zy7/2IqtqnmzYPzAqa3CsXRKpVQGZyAZ3YjQUx6aBWz7rYZlJRBYFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C1n7cW1z; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CaVziD81"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso3566205e9.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 04:45:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C1n7cW1z"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-436202dd730so3919035e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 04:47:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734007518; x=1734612318; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b0MIlrd8hgKTeaMZkhqf3o5F9gaR/A/34B2prwrX9Lc=;
-        b=CaVziD815998e6WExfp1njY4vMIzDEljtLeVj7vNyv939K77cnXT0tophhnVUMHZJW
-         xY53SholZrTDWgeliaSI7OGBf+PRx4gV3yy8oDX5SfALR7HmtFD4dPKjNylrtRidFd15
-         aEijEwwa1LH/q9uP7pD37azOn9/nRNRk9ps5Q7qSA6UM396z/Li7Aq9eItpbC2Cfo0v0
-         YFuU2F4Lb/l1MSwVym/h/hJdHhmxhA9FNQXe0luRy2IVcfov8IDf1WrWqG1olAzlyeKH
-         nUzqKGpOPTedbpYtVzDHCCH43wRLN6v+hq33vIS6mdSOkJQFpi5DONNwmbmDPsxvdf/z
-         9/WQ==
+        d=linaro.org; s=google; t=1734007661; x=1734612461; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B1Aa7kk3KKfy9aAdx9Y9ApzJ11F7xml9XtZy8ZKLnk0=;
+        b=C1n7cW1z429N8uy32cjEurBOqlnHcBCUH3zEyHviNwukhyXZgm75PbGL4xwY2STQFP
+         N3dVjVLLzbohvPUZ0crQyFo2KksIANcHg/GyLJtXlizPcH1rHKzrPuPE9Ui3VaE7AB1r
+         mQvQ13yTHxQs5I6StSNoFHxEonEsBRGqcwdHVE4bRJTRpb5O/jK5X8j9SHIk5L4eyPv6
+         hV+BJnOX48NRFXD0itA2s2KKMPQSxyaHIUTsFGCXM+kyV9/GwtfBGLJj/I0znfTrQ9Gp
+         BuA4FzWRNwbP58Z0QDDt2/3phoUsikNfiuMVWi7WFOWWs/TN1xlErvkFOOUdSZ7gcZCm
+         SxJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734007518; x=1734612318;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b0MIlrd8hgKTeaMZkhqf3o5F9gaR/A/34B2prwrX9Lc=;
-        b=TvHA9KPdrN/NVxbzvy8mjoTKrybE8Cpsf+U98ddSFuP01/+Q6NQrIohnVvUzDmIlpr
-         oyTvgS8X07l8Om1fQfUFbuJKZgM5T5WkFVNBh25X1hxpw17FWKgR6PYQ3gc00uERzxoj
-         FXwteftMqKx4zbuuItOB2p5fAIDvg80Tdg2YEDY507XpiXnM8WersM9S034XU99gETzS
-         y163M6wOZeRvDK6Q3sxsd0MFQFt9X4fZUjHcojECd8on8rcO/yfZXtTM9JoyqUg9JA6W
-         vEgW17fnucS4R4ulOudSTrS1Ea7lnA0rw+ba8W2ZCea8nyWa2NAzIte3uvJ0d2RBw7HS
-         aD9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1XS+W7QBhzh/17YMhiZE49j+7SkRZIiZi6VPP0pQJsx9PDFB1vIOYdiObKPJax7JE8ZyAabEtwk8ku39P2BE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxinW1dT8Q7f+iYU5goNdDynnA5mewbhgxaJUa29VuYlOP6R+Hv
-	w+k3QGbCXGA794de2UM6b5RRQW8OLbbGfUhMue1Dsu5miE3CscpxpCVBk6uNHVU=
-X-Gm-Gg: ASbGncvhHEGJMRhyDPTmouGuKEOXR9q8NEgUgsBsqxO8LZAUTLUnYqHFjeSJH/rSR20
-	MNh0E8B59kv7XhvjQMJY7gDmnW3Bp7P7WFTkm6ZrYIyUSK65CdZ/PWntZrDtLDHOLlWoh8+eBWH
-	Dkz7JVmdhe3VnL/yxEmPgo7lYaxpeoyjxNRJc9SENBlH51rM1HorY/f0a/tLqyYp93xfiUu2RDd
-	limgJBmY9/yW+lChaNPcFnwszppv7m4pnCXyPEk/w7hZBZJllQwpBLd0rc6rg==
-X-Google-Smtp-Source: AGHT+IEyNpazD7YeXxHYvPwjQS+Xs0/1F2YZVhWJvmtRAVKWT7Dsk7UichfBnzoTMoxDG9nSIZeQ6Q==
-X-Received: by 2002:a05:600c:34c6:b0:434:fe3c:c662 with SMTP id 5b1f17b1804b1-4362310c025mr22321795e9.12.1734007516330;
-        Thu, 12 Dec 2024 04:45:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734007661; x=1734612461;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B1Aa7kk3KKfy9aAdx9Y9ApzJ11F7xml9XtZy8ZKLnk0=;
+        b=naQYSgHObO/f97av33PGpvapNzjzuDVzXp4CYSOK6M7wPEgQ7bX2xuyrS+HAPethgJ
+         mjX/I05VfWCqSRkDj8ELlXDnLJ9OJB1zawJOT+rGpnH8FhKr3djRqeqaWoNMILj3XHR2
+         pwt4fM4QRC7v4MfAWhFPZkt8fK+puz+NK2B5RZ7+hlXQ4IbDSW2Nscsz4MBzIgzy4O3B
+         1TmInm7tcb5KM0hDZP1nqu7VAxsj5xoXke5V5GBA7dHi97dx6JUweatVON0Ty53SivMA
+         pkg2J1Coy6X18W40g3joYUOa5Ha/lV0/VBX44S0XfoaE9qlmh8Y1TxqDK2CEHd9Ch72q
+         P/og==
+X-Forwarded-Encrypted: i=1; AJvYcCUCg+09YrHjJsd2I5JUVWuc+n2F/JaJIaXNunCHZw4tyoyEiLSx1TO1zyfTuMZggDyJ8VqMjaI3vgiNq13Tkgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI7/9PvojHPJPtkS3MY/5AcE1lTfX1Tl0cGTWNFAX9BB0oyuF7
+	kTfsQozjeDtZx3ZUnyroUftmqCbEgTSaPXO8U12DhOCzeNbeFrpmHfhTJF0qGe4=
+X-Gm-Gg: ASbGncvOzRJml7MuQrm8mrFZL49H7bqTYlbKV5RIj/ch7r68qgCb/xAjGRh/v2eFe6y
+	DYN8xBTDGvDkR5bA26joo+xBypq3SYNRwo/dmE0Ip8dWEcndUml/wvM8R+vDfe3o6wlLekgIUuE
+	QIEay4ZzILHT1/JV2RJ6kXN4sR+PMUUh0l0i5zgtwMYgYh7aqPJIMuJEXwcrwNj0D+hDGEVmm5D
+	AS7h3DdL2Utd1w+zHf6eOEbplZkhLmTZuLUUO4Pb+wHwQhApk6FmJlvwivFhQ==
+X-Google-Smtp-Source: AGHT+IHG070ZSCDM3VoQ8IcxxgcIA8LmAYT5Wy1Ts2flXAmROuoKHKuI+kgLYIo8ua64rhinlAKIfA==
+X-Received: by 2002:a05:600c:1e0b:b0:42f:7e87:3438 with SMTP id 5b1f17b1804b1-4362256dc73mr30023385e9.0.1734007661208;
+        Thu, 12 Dec 2024 04:47:41 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625716e5csm15409365e9.36.2024.12.12.04.45.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625553234sm16279045e9.3.2024.12.12.04.47.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 04:45:15 -0800 (PST)
-Date: Thu, 12 Dec 2024 15:45:12 +0300
+        Thu, 12 Dec 2024 04:47:40 -0800 (PST)
+Date: Thu, 12 Dec 2024 15:47:37 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>
 Cc: Maxime Ripard <mripard@kernel.org>,
@@ -66,11 +65,9 @@ Cc: Maxime Ripard <mripard@kernel.org>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/vc4: unlock on error in
+Subject: [PATCH v2 next] drm/vc4: unlock on error in
  vc4_hvs_get_fifo_frame_count()
-Message-ID: <92dfd6cd-2e10-4606-9502-3619c4b265a0@stanley.mountain>
-References: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
- <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
+Message-ID: <b61a81b2-0101-43bd-a4f6-09cf3a016484@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,18 +76,32 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Dec 12, 2024 at 11:54:28AM +0000, Dave Stevenson wrote:
-> I don't know how others feel.
+The default statement is never used in real life.  However, if it were
+used for some reason then call drm_dev_exit() before returning.
 
-These days we have "warning: this statement may fall through
-[-Wimplicit-fallthrough=]" which triggers a build failure so fallthrough
-bugs are pretty rare.
+Fixes: 8f2fc64773be ("drm/vc4: Fix reading of frame count on GEN5 / Pi4")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: style fixes
 
-But I only care about *your* opinion, Dave.  Everyone else can bounce.
+ drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'll send a v2 which adds the break.
+diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+index b42027636c71..4811d794001f 100644
+--- a/drivers/gpu/drm/vc4/vc4_hvs.c
++++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+@@ -522,7 +522,7 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
+ 		break;
+ 	default:
+ 		drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
+-		return 0;
++		break;
+ 	}
+ 
+ 	drm_dev_exit(idx);
+-- 
+2.45.2
 
-regards,
-dan carpenter
