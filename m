@@ -1,117 +1,96 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969392147E5
-	for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 11:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB89C211709
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 12:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734004489; cv=none; b=PAsnoYEJOIQtT3PRqkuqsG+FfAwpxDoAMPJh11e1Sy9tDpwHQmfy20W7AOxiQMhQyFS0+CzIf6RH9/QDk+aQYlmTWxYRNzosSKcig0YQncaaL99etpaCxzgB4wtsrcCXfGiFJes+PXgDlhYPNfYMuJE3an446L9pIBHxQdttZpE=
+	t=1734007521; cv=none; b=A60sFM8dbgtdL26fOBhq+e4iKnuTmDolzdFDaXM46X/HwUD1XFFev+zywOMyFe+QWQCQ5EKDMHoWMqFVlXU/Imze48FT1pqmZ+38hbQWFL+CKEWMCeW+OzQisBlvqm+//6VJusfM8uq9uFx8d1WH8it9E5rCTfjTy61PraGNuBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734004489; c=relaxed/simple;
-	bh=1XJH+j4IJIIke0IBSeywdnhf4g+AbrpLY8ypOEZSdxQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cGIt8SmODA0KkCEN4eXMLO7doKWeHND6kvlJ9qenhq1cMRRnTo10FppyqYWETJFHtCdeX9NZiCGYFkksyRkhm+OREAkQxxf/psEYc1ZYNE+eY4rBHjrDrc6lfrmmxr7KIEy63Vm2Twcw7gVbKGleb4+UYHOVpreMxcS8J49HgGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ZNOtM1KG; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1734007521; c=relaxed/simple;
+	bh=a1c+csz78lwGyO+6sWEuvcLVxfOtf9ra7N4OQm7xEfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eskKroeod8iKiYf9P135ugQCUNZ5g54z+pV5h6f/Xfaff9xaq3SkYMuwufn7mNgklMchz6HChcd1uvTi9m+U3fE/7ExJpPbUmxm/p1a8Xzpr2KzWdr7IZF0iGinUunMO6q+ezVsby1v3wW66qhoeoqX1HpDu9z/zjBK3SeLAOoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CaVziD81; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ZNOtM1KG"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e3c8ae3a3b2so364491276.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 03:54:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CaVziD81"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso3566205e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 04:45:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1734004486; x=1734609286; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO/kWUsb4uL9LlTqLCCAldTNWq3Gj6otKLX1s/PNWac=;
-        b=ZNOtM1KGpBHNIPErn/tHjPmkZsfFRyDJ7xvTzo65/X6rGUk1zqk9Th9/DMLZNCrNZ2
-         LNoXXqcy/kgMgsSxE8MDRlGr2IiwQwcggjaMKeOPg5lQiNQYLtYe/uOIxAp6v7q+rlZB
-         +9e3oHtghPq7OFgsofw7XH8cFUpsBv7EjmKWLIK9MAGu1E68EoalPfRrsIp2afADs0eD
-         rcUtd0q2n+AtUIel0OBKmm76Bb3bZSIwURFkXIVNcbkaCK13qJvZEGPC/pdLgX73cCQf
-         11PvPfwmCsqzvdu8fkE4R7lXckYgsjTBZdKMU7ONh7D3tO6vWbkaKHuJchous+uLbar5
-         +VpQ==
+        d=linaro.org; s=google; t=1734007518; x=1734612318; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b0MIlrd8hgKTeaMZkhqf3o5F9gaR/A/34B2prwrX9Lc=;
+        b=CaVziD815998e6WExfp1njY4vMIzDEljtLeVj7vNyv939K77cnXT0tophhnVUMHZJW
+         xY53SholZrTDWgeliaSI7OGBf+PRx4gV3yy8oDX5SfALR7HmtFD4dPKjNylrtRidFd15
+         aEijEwwa1LH/q9uP7pD37azOn9/nRNRk9ps5Q7qSA6UM396z/Li7Aq9eItpbC2Cfo0v0
+         YFuU2F4Lb/l1MSwVym/h/hJdHhmxhA9FNQXe0luRy2IVcfov8IDf1WrWqG1olAzlyeKH
+         nUzqKGpOPTedbpYtVzDHCCH43wRLN6v+hq33vIS6mdSOkJQFpi5DONNwmbmDPsxvdf/z
+         9/WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734004486; x=1734609286;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QO/kWUsb4uL9LlTqLCCAldTNWq3Gj6otKLX1s/PNWac=;
-        b=rJFVgIypf8l0qP7hiOj4e1S0/FdxYSY4JeUkrHkaZkBoKVJei7AWeUeUgwDSHBoYSE
-         or7I0Xh880dfNMkTVIim9VHxRMoshYp26uhZR5M58idkNMAI+vqS4Ct1kjk91U4YUdpB
-         azdvtBFMmQKL3pJbMkRUn/ef+4+3qagUFtrauXBk0Dm1BKypnyrl8lxLiC+DDpaif+ba
-         5sAnAtEg1fUK5qs9ih3W0QM5ffZpQiHWoVxEaj+wryl2MQAWOaAC1dG+04RggDiKtNbO
-         9xFkqxp1UNFImO7Rw+RFNdJhQ8qF//5/JeTARWuwwn5QOV090xGEFlDNXZl65t3I2KxE
-         QHag==
-X-Forwarded-Encrypted: i=1; AJvYcCXo0I+Puig1fvAYtgEnxXSeWRyaPFRaEhOSxqvVoHrY00OWFU40YXsIu0b/YI2VBkxFqdq7w0pHFEqoDEn9MA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhMRu85wAvEzry8HFY0Il2RlzYtYavpbOUb4nmgO5BgiBpXx2q
-	9cWUQ4INIc4Dn5+dtwFU+YL9fBW1NaUuqeytY0LIx8KBVLAtO99KR4jWqIOXhUVbnXNnT5qYbhS
-	AE3t9jz7Ck+kSlupWdKByklgV5egRpQbAwuFE9Q==
-X-Gm-Gg: ASbGncvaxQ3dtSxaz2MPVuOgHFO8OyL1mpT75fKEl796eiJ6x9IVK2Gg2Pq30ud8ex+
-	PDO7kSa/WDefrI4BZ6dZAN9zw1DYsPFd1hym8hQ==
-X-Google-Smtp-Source: AGHT+IEZF99x3Z73R94L+ljBCygUUX+Knk3vSPh2S8Sa4SUHrFwCAM7NZhFFUD6/0ncFI/p+axz2uwCX+vrS2ZOL06w=
-X-Received: by 2002:a05:6902:2701:b0:e38:87bf:8e65 with SMTP id
- 3f1490d57ef6-e41b8dd9f38mr127426276.0.1734004486531; Thu, 12 Dec 2024
- 03:54:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734007518; x=1734612318;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b0MIlrd8hgKTeaMZkhqf3o5F9gaR/A/34B2prwrX9Lc=;
+        b=TvHA9KPdrN/NVxbzvy8mjoTKrybE8Cpsf+U98ddSFuP01/+Q6NQrIohnVvUzDmIlpr
+         oyTvgS8X07l8Om1fQfUFbuJKZgM5T5WkFVNBh25X1hxpw17FWKgR6PYQ3gc00uERzxoj
+         FXwteftMqKx4zbuuItOB2p5fAIDvg80Tdg2YEDY507XpiXnM8WersM9S034XU99gETzS
+         y163M6wOZeRvDK6Q3sxsd0MFQFt9X4fZUjHcojECd8on8rcO/yfZXtTM9JoyqUg9JA6W
+         vEgW17fnucS4R4ulOudSTrS1Ea7lnA0rw+ba8W2ZCea8nyWa2NAzIte3uvJ0d2RBw7HS
+         aD9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW1XS+W7QBhzh/17YMhiZE49j+7SkRZIiZi6VPP0pQJsx9PDFB1vIOYdiObKPJax7JE8ZyAabEtwk8ku39P2BE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxinW1dT8Q7f+iYU5goNdDynnA5mewbhgxaJUa29VuYlOP6R+Hv
+	w+k3QGbCXGA794de2UM6b5RRQW8OLbbGfUhMue1Dsu5miE3CscpxpCVBk6uNHVU=
+X-Gm-Gg: ASbGncvhHEGJMRhyDPTmouGuKEOXR9q8NEgUgsBsqxO8LZAUTLUnYqHFjeSJH/rSR20
+	MNh0E8B59kv7XhvjQMJY7gDmnW3Bp7P7WFTkm6ZrYIyUSK65CdZ/PWntZrDtLDHOLlWoh8+eBWH
+	Dkz7JVmdhe3VnL/yxEmPgo7lYaxpeoyjxNRJc9SENBlH51rM1HorY/f0a/tLqyYp93xfiUu2RDd
+	limgJBmY9/yW+lChaNPcFnwszppv7m4pnCXyPEk/w7hZBZJllQwpBLd0rc6rg==
+X-Google-Smtp-Source: AGHT+IEyNpazD7YeXxHYvPwjQS+Xs0/1F2YZVhWJvmtRAVKWT7Dsk7UichfBnzoTMoxDG9nSIZeQ6Q==
+X-Received: by 2002:a05:600c:34c6:b0:434:fe3c:c662 with SMTP id 5b1f17b1804b1-4362310c025mr22321795e9.12.1734007516330;
+        Thu, 12 Dec 2024 04:45:16 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43625716e5csm15409365e9.36.2024.12.12.04.45.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 04:45:15 -0800 (PST)
+Date: Thu, 12 Dec 2024 15:45:12 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/vc4: unlock on error in
+ vc4_hvs_get_fifo_frame_count()
+Message-ID: <92dfd6cd-2e10-4606-9502-3619c4b265a0@stanley.mountain>
+References: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
+ <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
-In-Reply-To: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 12 Dec 2024 11:54:28 +0000
-Message-ID: <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
-Subject: Re: [PATCH next] drm/vc4: unlock on error in vc4_hvs_get_fifo_frame_count()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPY8ntD9XzrzrhX=1XojjcZmRm60KLc39HZq0bJ9cEq0J7nQ9g@mail.gmail.com>
 
-Hi Dan
+On Thu, Dec 12, 2024 at 11:54:28AM +0000, Dave Stevenson wrote:
+> I don't know how others feel.
 
-Thanks for the patch.
+These days we have "warning: this statement may fall through
+[-Wimplicit-fallthrough=]" which triggers a build failure so fallthrough
+bugs are pretty rare.
 
-On Thu, 12 Dec 2024 at 11:31, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> Presumably the default path is never used.  However, if it were used for
-> some reason then call drm_dev_exit() before returning.
+But I only care about *your* opinion, Dave.  Everyone else can bounce.
 
-Correct - the default path would mean something badly wrong.
-Without it though, if you add an extra enum value it throws a compiler
-warning of an unhandled case.
+I'll send a v2 which adds the break.
 
-> Fixes: 8f2fc64773be ("drm/vc4: Fix reading of frame count on GEN5 / Pi4")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index b42027636c71..4f524ec126e7 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -522,7 +522,7 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
->                 break;
->         default:
->                 drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
-> -               return 0;
-> +               field = 0;
-
-field is initialised to 0 anyway to handle the cases where fifo is out of range.
-
-Personally I'd like to see a break in there to ensure we don't
-accidentally end up with a fall-through situation if another case got
-added at the end. I don't know how others feel.
-
-  Dave
-
->         }
->
->         drm_dev_exit(idx);
-> --
-> 2.45.2
->
+regards,
+dan carpenter
