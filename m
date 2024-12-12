@@ -1,48 +1,73 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A4B20E011;
-	Thu, 12 Dec 2024 09:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818A01F37CB
+	for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 11:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733996643; cv=none; b=poERMgV6Jxy6bhkm+snKWBhhecEYNNilK49s78NAejFXFuEg40fJCZ/6Q192HmgnsX/kItOUsGNYO984KkEaX1w5O2sZwN3LpvLD+NMiCx1xEaa5wgSkPbS78qT8VsSqw5mclFxtE66inDFPKhA+nxuSWbx6+56U00nG8IAg+ss=
+	t=1734003105; cv=none; b=shMbLqjPl7MngQlXFmdn72nmruvAQVyJphtPaprYorSZBEJdV/0Vu9UXjlvjh4jnuzjRI3O8MQf4whGLsZvZuCsqwydyh6r/V+NuEEVZmFKi+Y1Ntx74Z0UyMDiqIlwUlC1aibHDpfuYsLJ7hscMcxUssNTOK8PXU1wwxkog6VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733996643; c=relaxed/simple;
-	bh=xW8UtOL2UXi7yjUrl55suIta7E2vXsUZs6DEyaUeOyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOJjKEf/QchCRaI8fXaSeYVADhTXlzX0L1zhpPvr7+WVVzJ7tbWjzLKMaBEAaQDp8QsdY7Ffc0M4QWaqTrYI7A/q5PL0Xd82diboMOUIJrL/Mu2UYFOXN/mnOrTq6GcC8Zi/ULJ4//ZlSO0UKRq275u0QpddOXBxqsHBRx+uZF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mo06OTF2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734003105; c=relaxed/simple;
+	bh=sgb6rx6Ubncn+ZQjyakieXna291FTKXhuXB6pqhFDNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZacTFZ6cOYTYt5v4UTRPiQhKEhEezQm4G4/fwTum1If/NjQbhjxWJQYI2JFcYKxF/J8wnVhUaJzitOhMUtO9omBZ4NQ0z6ZuGp8Ew5S8S4U4vcIGnGanzPNIYNR8uoArgYsnL9tRM9QVPd7FHWoOqXnCGlbUvheKL1yEop0DefU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iVcfcMdG; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mo06OTF2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB5FC4CECE;
-	Thu, 12 Dec 2024 09:43:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733996643;
-	bh=xW8UtOL2UXi7yjUrl55suIta7E2vXsUZs6DEyaUeOyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mo06OTF2QLXnpk8pJD3fhIIcycZOR79JprHYTH7ei1OcIWL8la70QaOZRvQAZ/uhH
-	 efcOtwXVSLO9VOCO9x5ULnaJ7DwHFcOCcEntyNLmi/Iu/7g/2jd306WupYjI6y0+wO
-	 ktRnAY1Mo0dkvdrjOf8TxDnjC40rgrHbXgCdRdWzu5pBaFScQe29QKV8bx1Ht6p/yK
-	 xxZh1p2A4AGpgYwjwDGLHT0h8f047G8xWECSF19NHyiopXQGbGG+oswKYGiOGFrtQa
-	 jhgNM2mo7+yEnVhXyC1rOA7HWve1/N+sKlmUj7UuDqblpbSwgnId2nys15xpoUBgbB
-	 oEBzoq5YD4Xnw==
-Date: Thu, 12 Dec 2024 10:43:57 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iVcfcMdG"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4361f796586so5473285e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 03:31:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734003102; x=1734607902; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+gESUwGVm8WBjqVJACEoM8n/aZXcQ4Fx33aNt8RmViA=;
+        b=iVcfcMdGafECUbVi3ovQIkPAUqh1MNOlZPE4mIq1YodZ3GJOpgUCMcza4v/IUliQRn
+         Dl7H941J9SX8378eKVrWn/JttAwPJi983BBR5egklPA8+0fOu9199QcpOJELJGVnIR0G
+         jo20um3j/xish8aAsZflzuylPN8U5sZNQMg1tygdNWQgS28pa+3WqJrofQkmauhNLy2f
+         UyywjNXtfltv6vpiL08p6/TWnHZIKZhxHQeV+ZFDXhQURvkw6/i4HrUQw7OaUTbo074/
+         AEZV24Im7OgZOMox/aP/HD9nJoQoeXMtbZEKCyCvP7cEfm/9X/IiYxTSNHXmUfpNp30X
+         lOBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734003102; x=1734607902;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+gESUwGVm8WBjqVJACEoM8n/aZXcQ4Fx33aNt8RmViA=;
+        b=NEIMmGnwGPEStOzuayA3+IWmvEyJwXlkwH+rFntis7o7cNmMmw5+/WSBTAmCUxs5rK
+         x2+t/XOPVy44pF/D1YFUUBmirp9kgGU3CLgM0V3GzdL+ETqFGzn6xIlZzCfVjqqs6k90
+         OXXVE1IDyclCoYPiBjR4uSFmNRr9vOQRZXcMfZC8OI7SaVWSf1Btu3bqtO84Rf1CH49W
+         EbOdPf3aq/NSmHSPT22Jt4b2Cd7R+iF9c6Ja3v7fWadfM8vo9EYUa3ud1fGvByE4HOne
+         Cy5MpewuWdspjBwyo1uLAEHCGfJU1YCmSGDz4rcVN582XPM7lrj5Ct4zUMlKyZWGN0sN
+         OLqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjNWwBrRW9fMYGpGM56DME/6ovBzxDYzEk4pE5/Qcv6dOqQ7SloSnLuVfspKojpWLU1lHCxeYNZKxjO55ruYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNqTdiXyeS0XXNOb+pKVA33/WOuZp0uOPuMrnZOKItdpz2oYbo
+	fD3bq4ZLkLCw/GezH3I1rKFFsz6umGz7Z1l7bLHNnFgy2uIxwjVlBXa/M6RJDbU=
+X-Gm-Gg: ASbGnctUL+ksSsUJoz76/j8o4BN5jZnW3UVr3akeX5wg00kFJ5fbvDpUDq1czBZ3pIp
+	alZZyIC8yFyCGCU7AyHDi3eVqFtZaDTGOYRQQ6qJ6q3YEoabRyKQGosyC0h+S+gi4i79vKT2Ecp
+	R1BDv+m91VvhAQvFptwKsUt1lfJbgeG+5nf2jN+YCXXcURQK9hMCMY8P9Fdsldd7Kg55b5p35Ka
+	NuQHlj76pHIZKeYLqvj2Z9zRQRHrhtvUsQ8+L093IUfW8gYCZsU1NVgtFaCjg==
+X-Google-Smtp-Source: AGHT+IFXD9JCROyiJxtYSdcxXayCgPwhArAcMYowgXbP6P19iREmdzEMAFHi33xiUeQM1gepZzrOHA==
+X-Received: by 2002:a05:6000:a10:b0:385:faad:bfb8 with SMTP id ffacd0b85a97d-3864cec7d55mr6267275f8f.41.1734003101646;
+        Thu, 12 Dec 2024 03:31:41 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3878251dbbfsm3727812f8f.97.2024.12.12.03.31.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 03:31:40 -0800 (PST)
+Date: Thu, 12 Dec 2024 14:31:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: rockchip-ep: Fix error code in
- rockchip_pcie_ep_init_ob_mem()
-Message-ID: <Z1qwXYtO4pBswIXS@ryzen>
-References: <Z014ylYz_xrrgI4W@stanley.mountain>
+Subject: [PATCH next] drm/vc4: unlock on error in
+ vc4_hvs_get_fifo_frame_count()
+Message-ID: <02c87d9c-76b8-4d93-b0da-0e4f7d4952ae@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -51,34 +76,30 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z014ylYz_xrrgI4W@stanley.mountain>
+X-Mailer: git-send-email haha only kidding
 
-On Mon, Dec 02, 2024 at 12:07:22PM +0300, Dan Carpenter wrote:
-> Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
-> 
-> Fixes: 945648019466 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory allocations")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-> ---
-> v2: Update the git hash for the Fixes tag because the tree was rebased I guess.
-> 
->  drivers/pci/controller/pcie-rockchip-ep.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-> index 1064b7b06cef..34162ca14093 100644
-> --- a/drivers/pci/controller/pcie-rockchip-ep.c
-> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
-> @@ -784,6 +784,7 @@ static int rockchip_pcie_ep_init_ob_mem(struct rockchip_pcie_ep *ep)
->  						  SZ_1M);
->  	if (!ep->irq_cpu_addr) {
->  		dev_err(dev, "failed to reserve memory space for MSI\n");
-> +		err = -ENOMEM;
->  		goto err_epc_mem_exit;
->  	}
->  
-> -- 
-> 2.45.2
-> 
+Presumably the default path is never used.  However, if it were used for
+some reason then call drm_dev_exit() before returning.
 
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+Fixes: 8f2fc64773be ("drm/vc4: Fix reading of frame count on GEN5 / Pi4")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/vc4/vc4_hvs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+index b42027636c71..4f524ec126e7 100644
+--- a/drivers/gpu/drm/vc4/vc4_hvs.c
++++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+@@ -522,7 +522,7 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
+ 		break;
+ 	default:
+ 		drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
+-		return 0;
++		field = 0;
+ 	}
+ 
+ 	drm_dev_exit(idx);
+-- 
+2.45.2
+
