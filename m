@@ -1,55 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45261DE4FF;
-	Wed, 11 Dec 2024 17:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A4B20E011;
+	Thu, 12 Dec 2024 09:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733937647; cv=none; b=DwSYX0iqMZ5ipkA3t0oSbL8ZtaF2WpdwztNTwTv6F46+c9wNaZ7ceUF962eyJIgwZfyax0p9NAI24W9BiSxoDtROn4CjPKRChZ0LEMiPT8C56wBkqq4d3dYLRR5VtMHK2R82Fb6DmStJg1AGozKXnyFzA/qbnzdnDm5L9hPN770=
+	t=1733996643; cv=none; b=poERMgV6Jxy6bhkm+snKWBhhecEYNNilK49s78NAejFXFuEg40fJCZ/6Q192HmgnsX/kItOUsGNYO984KkEaX1w5O2sZwN3LpvLD+NMiCx1xEaa5wgSkPbS78qT8VsSqw5mclFxtE66inDFPKhA+nxuSWbx6+56U00nG8IAg+ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733937647; c=relaxed/simple;
-	bh=24LHVsPPGzRM7HsZ0yR/+9TkDvB1RkUeOujKaY5kCpI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=L+uN3pHg/w6azWw9vn3APfhp2LAw4dFWsDaSIEES64zgyyryxC41aHMyoQ0WBflnSu+8z8pguctZ9QfP7tRYBz03cfuR1qhYHIZUU1xcl7t9KCxAC8wU5h90SaxbjUOMvg784vvd/qkY0M3NR9ieopZ3Wb8rd5epraGUTUCTzpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40664C4CEDD;
-	Wed, 11 Dec 2024 17:20:47 +0000 (UTC)
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-To: Sriram R <quic_srirrama@quicinc.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
- Rameshkumar Sundaram <quic_ramess@quicinc.com>, 
- linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <755becb1-819b-484d-8fac-9a2db53ced1b@stanley.mountain>
-References: <755becb1-819b-484d-8fac-9a2db53ced1b@stanley.mountain>
-Subject: Re: [PATCH next] wifi: ath12k: Off by one in
- ath12k_wmi_process_csa_switch_count_event()
-Message-Id: <173393764722.2156603.16648228152971339085.b4-ty@oss.qualcomm.com>
-Date: Wed, 11 Dec 2024 09:20:47 -0800
+	s=arc-20240116; t=1733996643; c=relaxed/simple;
+	bh=xW8UtOL2UXi7yjUrl55suIta7E2vXsUZs6DEyaUeOyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kOJjKEf/QchCRaI8fXaSeYVADhTXlzX0L1zhpPvr7+WVVzJ7tbWjzLKMaBEAaQDp8QsdY7Ffc0M4QWaqTrYI7A/q5PL0Xd82diboMOUIJrL/Mu2UYFOXN/mnOrTq6GcC8Zi/ULJ4//ZlSO0UKRq275u0QpddOXBxqsHBRx+uZF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mo06OTF2; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mo06OTF2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB5FC4CECE;
+	Thu, 12 Dec 2024 09:43:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733996643;
+	bh=xW8UtOL2UXi7yjUrl55suIta7E2vXsUZs6DEyaUeOyw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mo06OTF2QLXnpk8pJD3fhIIcycZOR79JprHYTH7ei1OcIWL8la70QaOZRvQAZ/uhH
+	 efcOtwXVSLO9VOCO9x5ULnaJ7DwHFcOCcEntyNLmi/Iu/7g/2jd306WupYjI6y0+wO
+	 ktRnAY1Mo0dkvdrjOf8TxDnjC40rgrHbXgCdRdWzu5pBaFScQe29QKV8bx1Ht6p/yK
+	 xxZh1p2A4AGpgYwjwDGLHT0h8f047G8xWECSF19NHyiopXQGbGG+oswKYGiOGFrtQa
+	 jhgNM2mo7+yEnVhXyC1rOA7HWve1/N+sKlmUj7UuDqblpbSwgnId2nys15xpoUBgbB
+	 oEBzoq5YD4Xnw==
+Date: Thu, 12 Dec 2024 10:43:57 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: rockchip-ep: Fix error code in
+ rockchip_pcie_ep_init_ob_mem()
+Message-ID: <Z1qwXYtO4pBswIXS@ryzen>
+References: <Z014ylYz_xrrgI4W@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z014ylYz_xrrgI4W@stanley.mountain>
 
-
-On Fri, 06 Dec 2024 15:52:29 +0300, Dan Carpenter wrote:
-> The ahvif->vif->link_conf[] array has IEEE80211_MLD_MAX_NUM_LINKS elements
-> so this should be >= instead of > to avoid an out of bounds access.
+On Mon, Dec 02, 2024 at 12:07:22PM +0300, Dan Carpenter wrote:
+> Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
 > 
+> Fixes: 945648019466 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory allocations")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> ---
+> v2: Update the git hash for the Fixes tag because the tree was rebased I guess.
+> 
+>  drivers/pci/controller/pcie-rockchip-ep.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
+> index 1064b7b06cef..34162ca14093 100644
+> --- a/drivers/pci/controller/pcie-rockchip-ep.c
+> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
+> @@ -784,6 +784,7 @@ static int rockchip_pcie_ep_init_ob_mem(struct rockchip_pcie_ep *ep)
+>  						  SZ_1M);
+>  	if (!ep->irq_cpu_addr) {
+>  		dev_err(dev, "failed to reserve memory space for MSI\n");
+> +		err = -ENOMEM;
+>  		goto err_epc_mem_exit;
+>  	}
+>  
+> -- 
+> 2.45.2
 > 
 
-Applied, thanks!
-
-[1/1] wifi: ath12k: Off by one in ath12k_wmi_process_csa_switch_count_event()
-      commit: 58fa8109fa8dae2947567e8f56dbd55ad81bc35c
-
-Best regards,
--- 
-Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-
+Reviewed-by: Niklas Cassel <cassel@kernel.org>
