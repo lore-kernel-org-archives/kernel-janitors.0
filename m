@@ -1,46 +1,82 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9261E222D62;
-	Thu, 12 Dec 2024 17:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E308A4A21
+	for <kernel-janitors@vger.kernel.org>; Fri, 13 Dec 2024 06:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734023598; cv=none; b=UgI7QOdQ5Wc2VJLYc5zNQB3WXKCQlw6INDX4A6RrjCswRXJNNjMrjYvRgWK5li00kDmYmIKZ7cOsRl6L5dR8r4lV98u+JSKvOKrOSWtUtVACtrI/ZH9Kyff9+2NUNF51MZ4Fk3WjeY35zu+i3/t3gYp8xnNJTpKj7zRcqzVXEbQ=
+	t=1734069628; cv=none; b=lSl3J7/0F936utCI2ejIJq09/6LQhE6r3vg9Z5Ootr2AQX3tvnMym1W99mho2PuOQF/lhVMw121btbmBdLNyQ9Um0kzNQn4CBkgWX10BbtJCWz18Hb2ubpMtx/7No+xL+4T045qZYKkgOBq5AtsGwJFdSEuqj84rJKKgs1BI0cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734023598; c=relaxed/simple;
-	bh=rB4mtu4iKHlj6RWDnYUzj+JRFRcsKGfxUeEHcGVPK8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f8eRvOBmvL81vT57tmJoZKU7K1W8bY1VnYhbjYQbFdZkUXXxHyHvGJJra+6FIhnOvUqQcUJZniJAf65xfsuC5/7u+HrA6j3ZyPKT/3yBuNgWDYvC96lYj7jxILcu2vByKTSfYiqvsuXjobnEci2Ri4/QLjv7Iz4eYTn8NjZaaDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=M4a1OkK1; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1734069628; c=relaxed/simple;
+	bh=0feM0v9/HSqQnZrLaLJb8piuDlCnb2V34BAOP+y2+DI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BAFw8OTNAoFv6j8PU4pNP5c0pNQONWOvGJvE0YbTX91XXdEJd3hevjXWPtAf4HjldRiOOqJyEhuDH2ejJy2OO2/5wDe/oImqlzm4Ht1bp18kxDzkh9vXOEPulUpfyAyeTBT3HyHHwef8ePmBqE9+ze7gurkgvs6/VTuzZ9QugmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RlykQvXJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="M4a1OkK1"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id LmkMtwB1zI1FGLmkNtmLkK; Thu, 12 Dec 2024 18:13:07 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1734023587;
-	bh=51NrNSj4/sSiDsIxX0ra1E3Fc+ogQSxfneBLhB1PdEY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=M4a1OkK1/KTkazL3kJMvho9xTVFjNzVxBexe2/pLh+vtNBD3Vm5D/LFdWR4R+skiB
-	 8w+M7uVeFXGcItfq3HIjyXCamXbDYr7t6SVKDZ0P+CVYz7M7qFPfbfo3XjVB2ZNHPs
-	 NemI1cghqLjEjNqiW1LVLn04Vjkk9uElFDlh0i0ZTkE2zLovC5bmL2jPwoeTxL9pet
-	 gjh43VixjsXybMDPa2gBEHAkwiPYDInht1V3EuGD4hib21H4PDux2+MmNFwjRhqzQa
-	 30iaJ5mbsHtRQtj+82TjZDZdga0KPsnYdI/ontiBAdvz1si9kNOpQibCF/vlmWr2h7
-	 ZtHp9yZoRfPUA==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 12 Dec 2024 18:13:07 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] pinctrl: ocelot: Constify some structures
-Date: Thu, 12 Dec 2024 18:12:58 +0100
-Message-ID: <32edcf0567fffd0b1a219e7e2dad7e0bd8c5aaf4.1734023550.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RlykQvXJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734069625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TWteF4vrF1/pE81Ren4Vt30zPczJ6J6JzqVwaxLGNdQ=;
+	b=RlykQvXJ2MbzKl81q/vTaA04ErSv3jsKpj5pO77bILWOwB87jCg4u9YJm72q8sftFynFK5
+	5yaCXOCEkleIdxrsV0vqrUQLqL5ZGhdnpqAyRsGWputfFtdqaM9xw9qsLqtjAS8kxKbvlt
+	4qSMJdKdMpkaNOLkNMtKO38w2H4ywYM=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-352-m51cy_8pPNm0wwNyz_EBug-1; Fri, 13 Dec 2024 01:00:24 -0500
+X-MC-Unique: m51cy_8pPNm0wwNyz_EBug-1
+X-Mimecast-MFC-AGG-ID: m51cy_8pPNm0wwNyz_EBug
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-aa6a1595fdaso11428966b.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 22:00:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734069623; x=1734674423;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TWteF4vrF1/pE81Ren4Vt30zPczJ6J6JzqVwaxLGNdQ=;
+        b=sofQa4F6S1ZveecyDxB7O02cs69qk0G/m9NZylpD3dmMKJXpQJmo7VEs52YJ9opRLg
+         Xn8jmhQzhJZAnyUBcnllgF8TGHGlia8w04fv9QYETFV9xpUKY3hl5rj6G0H9opkol7ix
+         ZraHGhk1wDnA7ypyndWXDtlG7MxEJ86AG67Kn15L0Li1q0Qf017OehcsRpWjAzAv0P0t
+         Lv06FL1B4yzNVHkmrG9a3i5+vIpC7xDzD8aUb0nRb+z7SmaExh3mWR/AgvQRj4jclWbO
+         gy92gBX3Yzce6gbyppfLIZyAHSbV2WzZdagdoT+Xf2GcIV/jpgmGvx1KkLb7eeZc/sEg
+         0c8A==
+X-Gm-Message-State: AOJu0Yz54mThcmlOtVS2TO/sxcUgD5K9ts47fnMLawpTPzMFIndq1Fw/
+	Jb/gsfoDiDRWDuUHm3GUk3idkeIPcklAZJ5KAuBuRSQwI3Apns9W4iMwoSID4VNnPEstv1M0rFt
+	tKi/QT7Ix12NCMqhX8pJ3rDRlLVM6TNn9h9ArOiwJVuLMCHGs99Ekc92nu8FrpsiXJg==
+X-Gm-Gg: ASbGncuJmsB8KKqFYNWyOFzKj/ZlUmfi/DUGguCBHDpNbjyaFVMQJIcyiJzNqdxPwQg
+	rDjzCfMu8zFiFdy2Oa+5vw6NNy8e3fiZfAMpuHXwy64Iiu3S6m8DEHNio9RinexeTnJXKe5p+W5
+	T7NjIj1S63WQ/K2+opVseUqBSdByXpcPrwaxK03/3A2BMjwL96qveBXFcWuBdQinn41vEAv6ZTO
+	lc/VoLSwgRt+hw50ACtABSyLEOzaaovcUEHnur7UuZk35hPO1BcBfE+4O8vlJQYHWlNq7eonAUm
+	mQxJEaIcIXijWU6yeQV5g6OctHel
+X-Received: by 2002:a17:907:1ca3:b0:aab:7588:f411 with SMTP id a640c23a62f3a-aab779c8bcamr130015966b.25.1734069622967;
+        Thu, 12 Dec 2024 22:00:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGXwxJQVizGE5WgbyQd8OUq9Hy5FwjaQj5sQqA5agUSpWu1Zpe7/5Tw755l4EDxVsme0PEmFQ==
+X-Received: by 2002:a17:907:1ca3:b0:aab:7588:f411 with SMTP id a640c23a62f3a-aab779c8bcamr130012766b.25.1734069622555;
+        Thu, 12 Dec 2024 22:00:22 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa689a0a6fcsm648156266b.30.2024.12.12.22.00.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Dec 2024 22:00:21 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Alain Volmat <alain.volmat@foss.st.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-media@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: repair file entry in MEDIA DRIVERS FOR STM32 - CSI
+Date: Fri, 13 Dec 2024 07:00:11 +0100
+Message-ID: <20241213060011.67797-1-lukas.bulwahn@redhat.com>
 X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -48,127 +84,38 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-'struct ocelot_match_data and 'struct irq_chip' are not modified in this
-driver.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+Commit dcb0f4c16be5 ("media: stm32: csi: addition of the STM32 CSI driver")
+adds a new driver at drivers/media/platform/st/stm32/stm32-csi.c, but
+creates a new MAINTAINERS section MEDIA DRIVERS FOR STM32 - CSI with a file
+entry pointing to drivers/media/platform/stm32/stm32-csi.c. Note that the
+file entry is missing the ‘st’ directory in its path.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  41459	   9008	     80	  50547	   c573	drivers/pinctrl/pinctrl-ocelot.o
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference. Repair this file entry in MEDIA DRIVERS FOR STM32 - CSI.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  42803	   7640	     80	  50523	   c55b	drivers/pinctrl/pinctrl-ocelot.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
-Compile tested-only.
----
- drivers/pinctrl/pinctrl-ocelot.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index 61532a7a612a..329d54b11529 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -1777,7 +1777,7 @@ static const struct pinctrl_ops ocelot_pctl_ops = {
- 	.dt_free_map = pinconf_generic_dt_free_map,
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index bff3d35f80b5..230b7a4ee95f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14551,7 +14551,7 @@ L:	linux-media@vger.kernel.org
+ S:	Supported
+ T:	git git://linuxtv.org/media_tree.git
+ F:	Documentation/devicetree/bindings/media/st,stm32mp25-csi.yaml
+-F:	drivers/media/platform/stm32/stm32-csi.c
++F:	drivers/media/platform/st/stm32/stm32-csi.c
  
--static struct ocelot_match_data luton_desc = {
-+static const struct ocelot_match_data luton_desc = {
- 	.desc = {
- 		.name = "luton-pinctrl",
- 		.pins = luton_pins,
-@@ -1788,7 +1788,7 @@ static struct ocelot_match_data luton_desc = {
- 	},
- };
- 
--static struct ocelot_match_data serval_desc = {
-+static const struct ocelot_match_data serval_desc = {
- 	.desc = {
- 		.name = "serval-pinctrl",
- 		.pins = serval_pins,
-@@ -1799,7 +1799,7 @@ static struct ocelot_match_data serval_desc = {
- 	},
- };
- 
--static struct ocelot_match_data ocelot_desc = {
-+static const struct ocelot_match_data ocelot_desc = {
- 	.desc = {
- 		.name = "ocelot-pinctrl",
- 		.pins = ocelot_pins,
-@@ -1810,7 +1810,7 @@ static struct ocelot_match_data ocelot_desc = {
- 	},
- };
- 
--static struct ocelot_match_data jaguar2_desc = {
-+static const struct ocelot_match_data jaguar2_desc = {
- 	.desc = {
- 		.name = "jaguar2-pinctrl",
- 		.pins = jaguar2_pins,
-@@ -1821,7 +1821,7 @@ static struct ocelot_match_data jaguar2_desc = {
- 	},
- };
- 
--static struct ocelot_match_data servalt_desc = {
-+static const struct ocelot_match_data servalt_desc = {
- 	.desc = {
- 		.name = "servalt-pinctrl",
- 		.pins = servalt_pins,
-@@ -1832,7 +1832,7 @@ static struct ocelot_match_data servalt_desc = {
- 	},
- };
- 
--static struct ocelot_match_data sparx5_desc = {
-+static const struct ocelot_match_data sparx5_desc = {
- 	.desc = {
- 		.name = "sparx5-pinctrl",
- 		.pins = sparx5_pins,
-@@ -1850,7 +1850,7 @@ static struct ocelot_match_data sparx5_desc = {
- 	},
- };
- 
--static struct ocelot_match_data lan966x_desc = {
-+static const struct ocelot_match_data lan966x_desc = {
- 	.desc = {
- 		.name = "lan966x-pinctrl",
- 		.pins = lan966x_pins,
-@@ -1867,7 +1867,7 @@ static struct ocelot_match_data lan966x_desc = {
- 	},
- };
- 
--static struct ocelot_match_data lan969x_desc = {
-+static const struct ocelot_match_data lan969x_desc = {
- 	.desc = {
- 		.name = "lan969x-pinctrl",
- 		.pins = lan969x_pins,
-@@ -2116,7 +2116,7 @@ static void ocelot_irq_ack(struct irq_data *data)
- 
- static int ocelot_irq_set_type(struct irq_data *data, unsigned int type);
- 
--static struct irq_chip ocelot_level_irqchip = {
-+static const struct irq_chip ocelot_level_irqchip = {
- 	.name		= "gpio",
- 	.irq_mask	= ocelot_irq_mask,
- 	.irq_ack	= ocelot_irq_ack,
-@@ -2126,7 +2126,7 @@ static struct irq_chip ocelot_level_irqchip = {
- 	GPIOCHIP_IRQ_RESOURCE_HELPERS
- };
- 
--static struct irq_chip ocelot_irqchip = {
-+static const struct irq_chip ocelot_irqchip = {
- 	.name		= "gpio",
- 	.irq_mask	= ocelot_irq_mask,
- 	.irq_ack	= ocelot_irq_ack,
+ MEDIA DRIVERS FOR STM32 - DCMI / DCMIPP
+ M:	Hugues Fruchet <hugues.fruchet@foss.st.com>
 -- 
 2.47.1
 
