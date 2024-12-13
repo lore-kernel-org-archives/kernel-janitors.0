@@ -1,69 +1,71 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779901B6D0F
-	for <kernel-janitors@vger.kernel.org>; Fri, 13 Dec 2024 14:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE9E1AAC9
+	for <kernel-janitors@vger.kernel.org>; Fri, 13 Dec 2024 14:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734099909; cv=none; b=MuZIuYX1mJYYPsRYJOnC+A71sOA8CC9i6UuurGiHv7W0kujJY7YcvrMzoluCdidtChdUrWCaStPm9+raG0fFBsMX+mp2dTbXt3258/SrZr/mp/zVnGs+bRuNFp4XxMpcj0yEriNJo0oBOezWaybiLMTi+C/xkeCQjVhy/xjxHUw=
+	t=1734100099; cv=none; b=aqI4n/zklTqqPCe5tGENFNFZFJGPUROZlcXGj2t88EIJwnigkAnMuDGJewn/TCaZ/6XznCPRiAAGGmQ8Qa6kPch3KtQNWyOLUI8MrHvLCK4NWmPw/6d2uJcXpbAB1aiG6vzNemQOsBuz3mhEezd+ioGAFx/Als81xtcZEUk+LwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734099909; c=relaxed/simple;
-	bh=t+Fci6Wr6RyAVUyax6WtlRrMWfMTVgsO0PXOjq1qZEo=;
+	s=arc-20240116; t=1734100099; c=relaxed/simple;
+	bh=ycSL9pobM2GhQ8mh8TcgkFJoZAB71btUIwZlSI8OBQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QgfzB2KV0n/dgVOG8uje8Uiz1fYiIIBAXUyyWuR2mL6UtHxOubEDftQjv42GtxdTPJdmTzmnpjx6togzYJyiyuGKFWzaKKODC54IIs29BBhb6OhrvjAuqqa0zSxM7vhlKJgDyuSrGll5pmCz3e1zoPUame/KGWcnxrB84zbZgJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AsxJ3AbC; arc=none smtp.client-ip=209.85.208.41
+	 Content-Disposition; b=XoWngV7A/G2monGO5I4PHEV1hjH6FFBbjMcuSDInyBj6q08qSF75MPYNtRzOWbBh4rPAfnzGY/gf7xvi9p9vKhGzMVbRy+s52b//KlR3S4cv2WW92wA4bPiZQ0gv7BOwkLTkHnmGHoCmpp0vrWIVuJG968dfsQLLbpwcPuRJuto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GykInT51; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AsxJ3AbC"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d41848901bso3387688a12.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 13 Dec 2024 06:25:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GykInT51"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d3d143376dso2672365a12.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Dec 2024 06:28:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734099906; x=1734704706; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1734100095; x=1734704895; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LsEyhK1UDCh91BCy8kAzhKC4PcLtI4+QQ+70pp3vZ98=;
-        b=AsxJ3AbCI0PyAe6FAajhwEruu1RTkZ4JvPQ7Bx5KWRRJILmQBq+IO08CnY4TOq6g4v
-         nakKhOXX9GzlYTibyzRcujpdYzWLgsdg/r0xry6QLVDX7u0QHrmpotOwjryp82w/aRFu
-         K2XsbX7VFEN3+E+9owMxx+MKxUXOTNVyabzQAtxD137bxWyvl8byX8+Bm308siFYHNFy
-         o7IAA45aN3+1k5tQsMp6Pp4BFbO57YGO16rAJelDqcSz6bNYlJGdukNcBVui0BtMdXiI
-         hz0MAwgFuU7mRlkeOVJRZUN32Q+6VoKjpp8xJvzBypKOUB4cWJ9loecv52cuoGFRYgky
-         QE7Q==
+        bh=7HgAV16YkdRGlFfEMnvEaWjST0Bhl3h+Wb8WzngoB54=;
+        b=GykInT51SChvGiDEfeYGzIpfxjxZnSLyHN6saQXW62tSB3pMMm2Y2Xhc7LGknP+bzC
+         BiBTo5GyCes6qwTWuBbzekG1bi8FWoAGKd7gGL564zQh2QMU16FTlQ5ROWLPlLh1Vi9u
+         pdcO1rnWcxJ8Lk8CHe+/2m8PXgaJI1nqvNix/EEKiuGLugc+yFC/3WIH+84G6hleQkfh
+         /Zcc5wH1X3FjPr23RVnt559R6Jd22E6oe+d2NlobGQBVC23HKgGtubwkNA/cM28ShEYI
+         w3pOScruyWraGjM2xnhQQOK4DqQY6R9f5ybfuWjaGoSDJQb2Zqk8SfTPgxFrdttq031Z
+         5NMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734099906; x=1734704706;
+        d=1e100.net; s=20230601; t=1734100095; x=1734704895;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LsEyhK1UDCh91BCy8kAzhKC4PcLtI4+QQ+70pp3vZ98=;
-        b=SWrDqwFP5o/25KGCDclTRI3/cL45M1lICec3UQ9o61Or+GJCQ1otaL1QNj9CMY3cAo
-         jw1I935x9jOy/e+9u8REsRVYdNc83Fx/WmJKNF8Qhijdycrxt2A5m98UVH6HvD+ozmFk
-         D35GR19f6huhGptnutGbc7q1z2ejdK2TXD/rR+Y06/T0l1I5PKBi8+tSK5+kJ1OU86ra
-         dtGyWJDSvtyesqRzd9ESGQpGfCdW9qiStKWxkJrjk+TGS3ycUvfVHQ9d0lJBF2dsThRQ
-         P7zxlcKnnIeUemGyLf2UqMOARP9BJWI4OtuLJaaDATkulAXPKbi3ZSbE2htKeGrMocny
-         uC7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXZxsF2MziKg/jyWMw5+fwq9ReFDIGlqO2F3qQWdXxVGRjltDz+HkPRJBZ/n6sSL0NJerzB5yBzAJA01csdDTo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEYiux5MFF+6JpoFEyZtatW7fKQbxT4zQbmBsdhcO76oUfmkY5
-	yXIy+INhnrkek1Ub5Iwmg168nbOboFGIojmGIJy1Wrfar39PhWPO8PCvA96wXZE=
-X-Gm-Gg: ASbGnctAdnw/DN2CQ/GW8wp6s4cw0k9GG8VVSX1Iz3bvoFehpkljZpWIUIe4F2R6Nnc
-	Qya20CaaagQLk5ctr2xfsnlvDhIDiS39fAznroFk0w0Oq2uQILST0XodX95hqk/wsaVKQtC6E4y
-	HEAuVS51Kv2y5mvU9j9jW+Ay9yBSDJvWrCzSz7/SH+SE4TU6M79dQHoDcUiHLXCO1TtK5mfNk8S
-	JmEiXgfDHg2riG+H7c/UODXicEdiZ//nOqPF8yJPRF+NWqj85xDqsH4beTKVQ==
-X-Google-Smtp-Source: AGHT+IF/x7LXkAXimyLkyfWi+pepsYvfRdlmpoLdzPWYXB9z1y+v2IhnIOSPg0r2ct1zfV9cRdMS6g==
-X-Received: by 2002:a05:6402:43c6:b0:5d0:d845:2882 with SMTP id 4fb4d7f45d1cf-5d63c2c8e70mr2227780a12.13.1734099905774;
-        Fri, 13 Dec 2024 06:25:05 -0800 (PST)
+        bh=7HgAV16YkdRGlFfEMnvEaWjST0Bhl3h+Wb8WzngoB54=;
+        b=J+BhheGXMrKcL0Z29ee440meao2p7In1kvPWVKJjOiZ6uy31LwSdLP0YUqSqIDQByU
+         vU6eS3qXgwy8CF92tJTZtBnsiahDRN8yQXiIZrtg48eTEw6U4IHz9Fnqu8T8MiVnv1Cv
+         nDXzJNOlrGL4J7zOEsvsMaVSjzPfy6J3IUF30xEIQ39FqPXp4eDaUiYs9HIMhor7Ex41
+         SENBKRlF2xO7/T33UiotxZumDkTvXaTEPn6FUPGXrt8QlNisTHaNU60drfDMejE8+XOp
+         LXsPURx1sKKBIgqp4e9D6sgLaMISW49T2VEzIrwVy4fHqyiyWq2z9lx4npsqb10PP5D0
+         e3zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqlh+9rqorsFS6CVPeNQDxJNuy/06N7zAekq0pZvztDw/ztz4dImNLdoyrtzBD31Bd04hTAc94sDjBYNE736Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkJXwZ3WvyKLHIf9A0vM9URJHCyAWwzGrio1C9RfraxouywbzN
+	jfpZCrC+rWev8fKAOMY3OyCU42lTqHv2k4K6EDclqhYYX79tUGhG8oThbDxyz4o=
+X-Gm-Gg: ASbGnctScTetC+27KTia/qifCfOHU0VG4NL5AORUr+a5TChSkYjgwBPvzoHssYGp2bx
+	QSUXpEMLwnGnUKWxx3nDFKXjj4hrQ9PMYHKMBHNwAGMIfYN1dQqzVZqstCb++dbQmroZqIkD7tx
+	mbl0oAgq+phgwjAsO1ak10uVb2sOx5kB6wqotBprMLFHbLHgBUqOoi0A+XWckkMe+mDv1OS/TY0
+	1ZxINgo1CWJM3vGd1uh+5QL6CRmq01E2Eo4D4RyE4mJTW1/NolUFe+6hWcRKA==
+X-Google-Smtp-Source: AGHT+IGJkag4RDJORMNjsRd1byODIzZaljb10SMvh4Y3I8u2YSlY83WcCmGpoYoRVmZz3xf2h0z1zQ==
+X-Received: by 2002:a17:906:7944:b0:aa6:6e04:eef6 with SMTP id a640c23a62f3a-aab77f07a24mr319003966b.61.1734100095261;
+        Fri, 13 Dec 2024 06:28:15 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3e7349b44sm8530694a12.71.2024.12.13.06.25.04
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6773936c8sm808925466b.85.2024.12.13.06.28.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 06:25:05 -0800 (PST)
-Date: Fri, 13 Dec 2024 17:25:02 +0300
+        Fri, 13 Dec 2024 06:28:14 -0800 (PST)
+Date: Fri, 13 Dec 2024 17:28:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Chen Yu <yu.c.chen@intel.com>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+To: Aviad Krawczyk <aviad.krawczyk@huawei.com>
+Cc: Cai Huoqing <cai.huoqing@linux.dev>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Zhao Chen <zhaochen6@huawei.com>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] kthread: Fix a NULL vs IS_ERR() bug
-Message-ID: <64c234af-5141-4062-9170-2122c3edf088@stanley.mountain>
+Subject: [PATCH net] net: hinic: Fix cleanup in create_rxqs/txqs()
+Message-ID: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,28 +76,44 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The kthread_create_worker_on_node() function returns error pointers,
-never NULL.  Fix the check to match.
+There is a check for NULL at the start of create_txqs() and
+create_rxqs() which tess if "nic_dev->txqs" is non-NULL.  The
+intention is that if the device is already open and the queues
+are already created then we don't create them a second time.
 
-Fixes: e9853c812f86 ("treewide: Introduce kthread_run_worker[_on_cpu]()")
+However, the bug is that if we have an error in the create_txqs()
+then the pointer doesn't get set back to NULL.  The NULL check
+at the start of the function will say that it's already open when
+it's not and the device can't be used.
+
+Set ->txqs back to NULL on cleanup on error.
+
+Fixes: c3e79baf1b03 ("net-next/hinic: Add logical Txq and Rxq")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- kernel/kthread.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/huawei/hinic/hinic_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/kthread.c b/kernel/kthread.c
-index 83bf73d2355c..922f15762ec3 100644
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -1124,7 +1124,7 @@ kthread_create_worker_on_cpu(int cpu, unsigned int flags,
- 	struct kthread_worker *worker;
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+index 890f213da8d1..ae1f523d6841 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+@@ -172,6 +172,7 @@ static int create_txqs(struct hinic_dev *nic_dev)
+ 	hinic_sq_dbgfs_uninit(nic_dev);
  
- 	worker = kthread_create_worker_on_node(flags, cpu_to_node(cpu), namefmt, cpu);
--	if (worker)
-+	if (!IS_ERR(worker))
- 		kthread_bind(worker->task, cpu);
+ 	devm_kfree(&netdev->dev, nic_dev->txqs);
++	nic_dev->txqs = NULL;
+ 	return err;
+ }
  
- 	return worker;
+@@ -268,6 +269,7 @@ static int create_rxqs(struct hinic_dev *nic_dev)
+ 	hinic_rq_dbgfs_uninit(nic_dev);
+ 
+ 	devm_kfree(&netdev->dev, nic_dev->rxqs);
++	nic_dev->rxqs = NULL;
+ 	return err;
+ }
+ 
 -- 
 2.45.2
 
