@@ -1,121 +1,117 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E308A4A21
-	for <kernel-janitors@vger.kernel.org>; Fri, 13 Dec 2024 06:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527691B3930
+	for <kernel-janitors@vger.kernel.org>; Fri, 13 Dec 2024 09:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734069628; cv=none; b=lSl3J7/0F936utCI2ejIJq09/6LQhE6r3vg9Z5Ootr2AQX3tvnMym1W99mho2PuOQF/lhVMw121btbmBdLNyQ9Um0kzNQn4CBkgWX10BbtJCWz18Hb2ubpMtx/7No+xL+4T045qZYKkgOBq5AtsGwJFdSEuqj84rJKKgs1BI0cw=
+	t=1734083254; cv=none; b=jKdEaTt1OaKxLm2tT+Xrlg0xtdkqVfmDE0xTG9tu0FeGKFCaSj/TpDOUosYJLjhCsXCfWF3Lx1KE3+F6Qs12BDOH3PXW0lFZxdwyV1ULMf8vnOcdvMWLKBJpVO6d0tb4ldlkSUJjZbVIs2b8cnTqRaFaFAGxiGkPynLV+5VPr1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734069628; c=relaxed/simple;
-	bh=0feM0v9/HSqQnZrLaLJb8piuDlCnb2V34BAOP+y2+DI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BAFw8OTNAoFv6j8PU4pNP5c0pNQONWOvGJvE0YbTX91XXdEJd3hevjXWPtAf4HjldRiOOqJyEhuDH2ejJy2OO2/5wDe/oImqlzm4Ht1bp18kxDzkh9vXOEPulUpfyAyeTBT3HyHHwef8ePmBqE9+ze7gurkgvs6/VTuzZ9QugmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RlykQvXJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1734083254; c=relaxed/simple;
+	bh=QftEkgPw/0GI0tdyO/fV+/Wq6wLc69fz7Mk4V7VnBf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qFCIz3WJ9LIxqv9WbZXeQmFcXX8budc5RIdXTm/+HF8vDGLtnM4UzE0Rez1VOrLzZf6kozzEKDSEDx2DuDry3YuXxiYaVsbmCHhlKnxRFa+eNw5ZRP3/sda5abDZGpOSY3RxHLnNgDPACCKpEsvdM5YFEL3YBNpOjkAi/DV+VGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wqX9myFf; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RlykQvXJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734069625;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TWteF4vrF1/pE81Ren4Vt30zPczJ6J6JzqVwaxLGNdQ=;
-	b=RlykQvXJ2MbzKl81q/vTaA04ErSv3jsKpj5pO77bILWOwB87jCg4u9YJm72q8sftFynFK5
-	5yaCXOCEkleIdxrsV0vqrUQLqL5ZGhdnpqAyRsGWputfFtdqaM9xw9qsLqtjAS8kxKbvlt
-	4qSMJdKdMpkaNOLkNMtKO38w2H4ywYM=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-352-m51cy_8pPNm0wwNyz_EBug-1; Fri, 13 Dec 2024 01:00:24 -0500
-X-MC-Unique: m51cy_8pPNm0wwNyz_EBug-1
-X-Mimecast-MFC-AGG-ID: m51cy_8pPNm0wwNyz_EBug
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-aa6a1595fdaso11428966b.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 12 Dec 2024 22:00:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wqX9myFf"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d0d32cd31aso1854140a12.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 13 Dec 2024 01:47:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734083251; x=1734688051; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rdxFYaYZsFwA6EnsM4K6iSZW6gjULgohyiFusWzHRuE=;
+        b=wqX9myFfGq1RC5tbQJD7JL0OKd4Xbtx3irGbR2FR7CjeHh5YUUoLRZf/3G4Igx7EgD
+         YS2F7+bDyBoAbimKmbco76d1K03ooFDYvVO4rsUvZZhlpnnQgA/L4CX+IGC7UsZCvGuP
+         B6uOLcit1bxqK47Np9dp3jYtJQJ+B5FbeNwmOGmconQjCwWjxcRidQSSq+6titNrHvF/
+         tGGmITnkGYO2RN06J6vJZfdJywPzv/6jFNlL6lgnicWJghJ1A1AlcFS+gSVcN+4YeeIZ
+         Q7gbXzQgaMBhB7eHhO7Ye6n8YWq8zpxG0lfwui74XS1IxZs4epXQwwhQvIjTrLg3EhuQ
+         g70Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734069623; x=1734674423;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TWteF4vrF1/pE81Ren4Vt30zPczJ6J6JzqVwaxLGNdQ=;
-        b=sofQa4F6S1ZveecyDxB7O02cs69qk0G/m9NZylpD3dmMKJXpQJmo7VEs52YJ9opRLg
-         Xn8jmhQzhJZAnyUBcnllgF8TGHGlia8w04fv9QYETFV9xpUKY3hl5rj6G0H9opkol7ix
-         ZraHGhk1wDnA7ypyndWXDtlG7MxEJ86AG67Kn15L0Li1q0Qf017OehcsRpWjAzAv0P0t
-         Lv06FL1B4yzNVHkmrG9a3i5+vIpC7xDzD8aUb0nRb+z7SmaExh3mWR/AgvQRj4jclWbO
-         gy92gBX3Yzce6gbyppfLIZyAHSbV2WzZdagdoT+Xf2GcIV/jpgmGvx1KkLb7eeZc/sEg
-         0c8A==
-X-Gm-Message-State: AOJu0Yz54mThcmlOtVS2TO/sxcUgD5K9ts47fnMLawpTPzMFIndq1Fw/
-	Jb/gsfoDiDRWDuUHm3GUk3idkeIPcklAZJ5KAuBuRSQwI3Apns9W4iMwoSID4VNnPEstv1M0rFt
-	tKi/QT7Ix12NCMqhX8pJ3rDRlLVM6TNn9h9ArOiwJVuLMCHGs99Ekc92nu8FrpsiXJg==
-X-Gm-Gg: ASbGncuJmsB8KKqFYNWyOFzKj/ZlUmfi/DUGguCBHDpNbjyaFVMQJIcyiJzNqdxPwQg
-	rDjzCfMu8zFiFdy2Oa+5vw6NNy8e3fiZfAMpuHXwy64Iiu3S6m8DEHNio9RinexeTnJXKe5p+W5
-	T7NjIj1S63WQ/K2+opVseUqBSdByXpcPrwaxK03/3A2BMjwL96qveBXFcWuBdQinn41vEAv6ZTO
-	lc/VoLSwgRt+hw50ACtABSyLEOzaaovcUEHnur7UuZk35hPO1BcBfE+4O8vlJQYHWlNq7eonAUm
-	mQxJEaIcIXijWU6yeQV5g6OctHel
-X-Received: by 2002:a17:907:1ca3:b0:aab:7588:f411 with SMTP id a640c23a62f3a-aab779c8bcamr130015966b.25.1734069622967;
-        Thu, 12 Dec 2024 22:00:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGXwxJQVizGE5WgbyQd8OUq9Hy5FwjaQj5sQqA5agUSpWu1Zpe7/5Tw755l4EDxVsme0PEmFQ==
-X-Received: by 2002:a17:907:1ca3:b0:aab:7588:f411 with SMTP id a640c23a62f3a-aab779c8bcamr130012766b.25.1734069622555;
-        Thu, 12 Dec 2024 22:00:22 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa689a0a6fcsm648156266b.30.2024.12.12.22.00.20
+        d=1e100.net; s=20230601; t=1734083251; x=1734688051;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rdxFYaYZsFwA6EnsM4K6iSZW6gjULgohyiFusWzHRuE=;
+        b=f1l3w2xR2fuQhdwGYgosN2PS11T6WwMMahowSzs20X4cC9i52UDORtIB7pQda3CXIl
+         nJgyM98nQRQVuBbOHzPdQT4FtNo+xfGji/CoFUxOSJSTJuQOm0EmH8572avu19T0L8wL
+         5GdZqtbE6G4QZR6el3klK9oOzJRBw36qxCkdS3TOUUnRq7CVBknhB9p6Gp70Z8sLuGYD
+         j6G6sfelpCCMNq2kxAEFJBtx9maYz6sEUMoQJ3ONIQCL1/3n5c/saSc1fjf/bOJdas7l
+         3fGD+JfnfJwUYaWO7/WFG42vKNClWFmVM3l/m3wMxVLc45yYe5YgEeyDFNMkcjV8wgj7
+         iBBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWW7bSoWGm8r+isUr0z6ubwHxqOm2vqmNeidmHKvUyifVBJ1J5oe+d1kjXCzk1MDGw6aQcAwjz/qokpj9GxURo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX8KVy12H9ChqvOZyGg1kv4Bnr/C+YGmPHmm4hmI6uxBRcmNbX
+	tY/G9mQt+Ufe/wo7Rl4Xlfu494zGS9bf4PhWzcjJSPjfnnqcBuqUwuM3w1z+jKY=
+X-Gm-Gg: ASbGncvxq3EKW7UbaqshZeJaeFCld5l8ujMTMcOGCsQvcWhj2jbpoO49iK9ytj/uCtz
+	rMyNlTX42XlKwPyPBGXkPx8wQZI1DqfKZViBPgKsXdvzDStxayPKiv11JbtgXiZm/cyWF+7XBV6
+	Ul9G9ltfCef3+SrI1FidmdMjh6h6tNfcZNO44Kn3tBGawLg/ObESB8DFPHH8fmbFfDBfsoCuXmm
+	taxSGJdZZiKYV5PRwSDXJkqTv1Z9FY094QY2SLrDoww6zUuDC9UAXEdkgK6ow==
+X-Google-Smtp-Source: AGHT+IGltlAdrz0s/05wujMEiapProTMuSaTetpEvSQ5pgYx7uxayECdPRY4Y4KRwu3RO0NYkPh3qg==
+X-Received: by 2002:a05:6402:390a:b0:5d4:2ef7:1c with SMTP id 4fb4d7f45d1cf-5d63c3db8d9mr4114411a12.24.1734083250584;
+        Fri, 13 Dec 2024 01:47:30 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa671136c3esm814037566b.7.2024.12.13.01.47.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 22:00:21 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Alain Volmat <alain.volmat@foss.st.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-media@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: repair file entry in MEDIA DRIVERS FOR STM32 - CSI
-Date: Fri, 13 Dec 2024 07:00:11 +0100
-Message-ID: <20241213060011.67797-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.47.1
+        Fri, 13 Dec 2024 01:47:30 -0800 (PST)
+Date: Fri, 13 Dec 2024 12:47:27 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Atul Gupta <atul.gupta@chelsio.com>
+Cc: Ayush Sawal <ayush.sawal@chelsio.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexander Zubkov <green@qrator.net>,
+	Simon Horman <horms@kernel.org>,
+	Michael Werner <werner@chelsio.com>,
+	Casey Leedom <leedom@chelsio.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH net] chelsio/chtls: prevent potential integer overflow on
+ 32bit
+Message-ID: <c6bfb23c-2db2-4e1b-b8ab-ba3925c82ef5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+The "gl->tot_len" variable is controlled by the user.  It comes from
+process_responses().  On 32bit systems, the "gl->tot_len +
+sizeof(struct cpl_pass_accept_req) + sizeof(struct rss_header)" addition
+could have an integer wrapping bug.  Use size_add() to prevent this.
 
-Commit dcb0f4c16be5 ("media: stm32: csi: addition of the STM32 CSI driver")
-adds a new driver at drivers/media/platform/st/stm32/stm32-csi.c, but
-creates a new MAINTAINERS section MEDIA DRIVERS FOR STM32 - CSI with a file
-entry pointing to drivers/media/platform/stm32/stm32-csi.c. Note that the
-file entry is missing the ‘st’ directory in its path.
-
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference. Repair this file entry in MEDIA DRIVERS FOR STM32 - CSI.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Fixes: a08943947873 ("crypto: chtls - Register chtls with net tls")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I fixed a similar bug earlier:
+https://lore.kernel.org/all/86b404e1-4a75-4a35-a34e-e3054fa554c7@stanley.mountain
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bff3d35f80b5..230b7a4ee95f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14551,7 +14551,7 @@ L:	linux-media@vger.kernel.org
- S:	Supported
- T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/devicetree/bindings/media/st,stm32mp25-csi.yaml
--F:	drivers/media/platform/stm32/stm32-csi.c
-+F:	drivers/media/platform/st/stm32/stm32-csi.c
- 
- MEDIA DRIVERS FOR STM32 - DCMI / DCMIPP
- M:	Hugues Fruchet <hugues.fruchet@foss.st.com>
+ .../net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c    | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+index 96fd31d75dfd..daa1ebaef511 100644
+--- a/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
++++ b/drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_main.c
+@@ -346,8 +346,9 @@ static struct sk_buff *copy_gl_to_skb_pkt(const struct pkt_gl *gl,
+ 	 * driver. Once driver synthesizes cpl_pass_accept_req the skb will go
+ 	 * through the regular cpl_pass_accept_req processing in TOM.
+ 	 */
+-	skb = alloc_skb(gl->tot_len + sizeof(struct cpl_pass_accept_req)
+-			- pktshift, GFP_ATOMIC);
++	skb = alloc_skb(size_add(gl->tot_len,
++				 sizeof(struct cpl_pass_accept_req)) -
++			pktshift, GFP_ATOMIC);
+ 	if (unlikely(!skb))
+ 		return NULL;
+ 	__skb_put(skb, gl->tot_len + sizeof(struct cpl_pass_accept_req)
 -- 
-2.47.1
+2.45.2
 
