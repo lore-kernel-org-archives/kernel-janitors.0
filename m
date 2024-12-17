@@ -1,98 +1,63 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A7D1E282D
-	for <kernel-janitors@vger.kernel.org>; Tue, 17 Dec 2024 12:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C1D1F6671;
+	Tue, 17 Dec 2024 15:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734438758; cv=none; b=ocv9vwRMmDNn/5rJVGM1ofryyHXkX4/xtcGvBraqwxN5qMC2nfrqB5Qiesy5hBu7AgLqagt5hjl0bEB8rh0aKWK854A3RHvDrPO7662/3uY7Gmuzu2FbW48uDwghHrdbSoaB+pbqG2ffTT4mVdc5C6EV5ScCrm/hGhdDdUL+3t4=
+	t=1734449257; cv=none; b=XML74kEECaR0PB2fYwSmeMiObSpcPtoG6faOY23fSR5PfVNo9Z/s5vg9l2CPNpS7c51+WVpcOFSjXJgn3BzXTYbHnP+bkkRRq8oDWoa0Virkp19f+94wpxam29J4tjA7UBP0pZ9RfNldsbwJqp3YjjWOx6LipfG+7AIZ5RVk3jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734438758; c=relaxed/simple;
-	bh=YbfDs8LoY5asKM7zZM/qu8gLr3JGUTt7arQC8J9od4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=px0SaBXtkv0JXKR3etqx4aF0aC+JcBvAWT+fSDrzxbvFUuQ6+vzyMsyXB0beZxnTvJSAkr+Q4kdKJTspGrFxj7r/eJHENEfGMaaVBEHp7ip0APOFf8rh1E9hSG4sVwdFjs2YLCdqYMXq17XA6VMzo5meO8TPdjlGO58k0xLzMoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qul2Xkte; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1734449257; c=relaxed/simple;
+	bh=X6fhOCIws3YMr58Boun0EIq/EQYH3sARWR30RF1nuik=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=jS8rLTsFBOQXa3BmvwtP0BZ7L+KQcqqN3jqQJDRG+8E6tSpXMIURetfxLES9GTN6Df3aaowD+5WIA3quhinF1kK8ajmN3nh37OC2fzrmdBm0XyjY6SnuRMp6Q2QqKuCmUk6YCrJVnitV+5k6KK+A0xd1EGiZAyOyZWXrLuggEEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXmfk+g0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qul2Xkte"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3e6f6cf69so1811753a12.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 17 Dec 2024 04:32:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1734438755; x=1735043555; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vadTVklg9DZ5KZn/j1FjuzNmgd1jDV/1Li8ndKsd3tw=;
-        b=Qul2XkteNGKGuQGn2HWKJC0pzrkQhXq4k9nAgHHAhL1CeOEoBx5Wr3FfWpsXjffc4r
-         t8MqNdhX3kjOpCrCCyY8MZ8txcn3F4Bry7Ibbb6vQ5osDMq3qOigAaxpPJCn28UxiyQD
-         aibyBkIntJZr9HIbTgGVWHm6pcWTGq+usDYHh8kf01Z0GXKCOaa6DFmh4vF2DvQwikbw
-         N+42qhZothYnYNppq60Y5ASH8oMBKwsNazRXdyBaRzW8xk4HvtWvGqIQFBM/iOI+IpHa
-         tUYkhUIgwcb2faqdMZKBjIZP04rnBQLh1qpiIglkGQReTgfbNmM3IUh2p1mHQit0qYPi
-         qflw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734438755; x=1735043555;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vadTVklg9DZ5KZn/j1FjuzNmgd1jDV/1Li8ndKsd3tw=;
-        b=iFHgOUwXHvE0AdF6qr+2qYM/x4fr4/wbBAlqOXKeObvnUwLynCP+f/EEq7O5eBFOjN
-         GITi6XOuo9kuwXQcT+zt3vu7ttUWt02ZzOpozLyzwPyQz/YZhrM8ln2wXaz0OsyVhqq4
-         gQiuhULW/Y1m31S276e19U+b6QDKZqLlhAReEhY4gie0qIKhXtXAecnfLTmF5QrgiF0i
-         GAvADdDkDyiEV/rTrnu3jBY5bK/exawCr/P3ZnJemeHPD89AdVR4JeMHznGwEW2cJY8H
-         lrWpwFowc3o29ql/b7xIY4w4J849XqvpCh59XtkVg7NXZdJD3OwmitrdGSOa8K0PisqC
-         gsPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNCc+dLhmLkIqW95cdCX/qL/HZV82vvN2Upn4iMy/f8nljsgjUxIvSWT4RbgmSKuLouvHYvAimjib21CxrCFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyihih1Y2BRSABR3iJo5gG/l8wRIpma4viEfjnY5R+L81cJYRfL
-	Dz1vnDvJZtuUKahmiWZckdO+gtuJHBm7IXffYRZiy6MMAmmqAMUuMKtcUR+GR5o=
-X-Gm-Gg: ASbGncvHO/FL+iNnAqvAzUWAizkaIo/Idm41yRcEjlUNV3wFuPvkyYd3VBE+lWmXPC2
-	f4pvbU1g5yPfrk+lzZKPyB6Y73FKPxtJ6GrhAyUtZMFIGXLnXqXRGgSXAmIm4K1GLC8WxlRkq3d
-	LRAEyuKeXTzuxHG2nRkKhJZ7L6zadT4XUcuJmwjWCOLUV5xHi0Uth3kOnWgAxqjqoq1pnTUfetB
-	DFHCu6IchgNgR53Ed3hGrwk4ZfsRdhqUzqfzUyd6/SptQ2lvoTC7SJyVs0jzw==
-X-Google-Smtp-Source: AGHT+IHQ03iEFjc/Teha21bLrHNLnNIrRs6fDpiX/v4CZTbwJmuV1NtVhgiSm8VrPkB6aW1UmvcDog==
-X-Received: by 2002:a05:6402:5288:b0:5d3:e8d1:a46 with SMTP id 4fb4d7f45d1cf-5d63c3bf48dmr17438136a12.30.1734438755313;
-        Tue, 17 Dec 2024 04:32:35 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f271a6sm4407073a12.60.2024.12.17.04.32.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 04:32:34 -0800 (PST)
-Date: Tue, 17 Dec 2024 15:32:31 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] xfrm: prevent some integer overflows in verify_
- functions
-Message-ID: <053456e5-56e7-478b-b73e-96b7c2098d07@stanley.mountain>
-References: <92dc4619-7598-439e-8544-4b3b2cf5e597@stanley.mountain>
- <Z2FompbNt6NBEoln@gondor.apana.org.au>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXmfk+g0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37CB3C4CED3;
+	Tue, 17 Dec 2024 15:27:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734449256;
+	bh=X6fhOCIws3YMr58Boun0EIq/EQYH3sARWR30RF1nuik=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=LXmfk+g0k8nqUIPgdc6P4Piy783E65cTIdYdt2UwRTum3bsO0mKgRrvqehX9pu0/e
+	 4ySj1CjCMsDlwL8tstxkCoAX8EDu5MF7auqwEt8KqLhTxJpXFOnvebSPyKenK5ie/z
+	 CGRsyu8lyWNfwQnt3uo6wTKWtbUNv1+d+sfcS4qL/GEa4kWB7zhJ9QKUUe5w3Xyxin
+	 fpJ51Ntw/GACYvigo8wM+2QXUoZRYggiMkf9Il5VG+YoaRRWfx6uAMCY/4d+/MgNb3
+	 WTk2x2EoWqV2vvy4vbnGmx9dljn1sY9hvlabxuGl4la1is9fY+eGmcs4noJDi4sx1+
+	 LeV01bgvpaetw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Jeff Johnson <jjohnson@kernel.org>,  linux-wireless@vger.kernel.org,
+  ath12k@lists.infradead.org,  kernel-janitors@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] wifi: ath12k: Fix spelling mistake "requestted"
+ -> "requested"
+References: <20241217105505.306047-1-colin.i.king@gmail.com>
+Date: Tue, 17 Dec 2024 17:27:33 +0200
+In-Reply-To: <20241217105505.306047-1-colin.i.king@gmail.com> (Colin Ian
+	King's message of "Tue, 17 Dec 2024 10:55:05 +0000")
+Message-ID: <87pllql47u.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z2FompbNt6NBEoln@gondor.apana.org.au>
+Content-Type: text/plain
 
-On Tue, Dec 17, 2024 at 08:03:38PM +0800, Herbert Xu wrote:
-> On Tue, Dec 17, 2024 at 11:42:31AM +0300, Dan Carpenter wrote:
-> >
-> > +	if (algp->alg_key_len > INT_MAX) {
-> 
-> Why not check for UINT_MAX - 7? INT_MAX seems a bit arbitrary.
-> 
+Colin Ian King <colin.i.king@gmail.com> writes:
 
-That seems like basic algebra but we have a long history of getting
-integer overflow checks wrong so these days I like to just use
-INT_MAX where ever I can.  I wanted to use USHRT_MAX. We aren't allowed
-to use more than USHRT_MAX bytes, but maybe we're allowed USHRT_MAX
-bits, so I didn't do that.
+> There is a spelling mistake in an ath12k_err error message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-regards,
-dan carpenter
+My bad, thanks for fixing it.
 
+Acked-by: Kalle Valo <kvalo@kernel.org>
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
