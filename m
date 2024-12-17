@@ -1,99 +1,69 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8821DE8B9;
-	Tue, 17 Dec 2024 10:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C961DAC88;
+	Tue, 17 Dec 2024 12:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734432910; cv=none; b=XgFjIyct2CShE2Fa/wBN+3RLNPF+sFiHxj3rGbAGSFGRkc5y2AzoxGhUFovWHiCxox0dEyFNqoQq9zrMS9o2qP5Hvc7NbtpFXV4mM/UBbx1j57KITPyaJHQsGgoOA8zNmW3RoUdVe6kdt9gWI6g+VfbrNUkgYAdC53uCPvAxvQE=
+	t=1734437053; cv=none; b=Bhbf5y8wghQtKb9TchlqQZX5FFwyXZg0H+BkbmkicDZrQ6TH4FzV20EgoAUDlQarUFJAwHHWN4xm+wZyjP7Xidl0YzZu/76Fkks7so4NQVbQV6dopXzMJJqEvqgHYpI5XWSO7BfaADXBMHRyA+rgirXu0pXl7rshh/y67+/nSCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734432910; c=relaxed/simple;
-	bh=ARmUWXNjtCdLplhcw2jPmOWbt7LIjIgb2WlFDUIbPBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JoT+d4tNHK7CCfB0R+5n/K0y/qKATRO/lqE+F4EHz3Pjrk6umX/aOGq16DzgvOgonncVVKb3Xo/UV3MK9xLC9BfQZVQ2wbxeWYsOU7w+34a2Ao05ojtJ4KmUs3RN9JnX/Ca2gqdPPtXqJ3Z0GulMy+SknP6e7sC8ebnRK1/mW9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zp/mMxuR; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1734437053; c=relaxed/simple;
+	bh=MoV5dUrWpK3MUnaq34/CH85ZC5O5lbllu84Bv3WzExQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IhpHnd6w0/WgYf6AGKiyK1uqI32h6gy1vQEf9u5CR3nllmAPXXIF3M1138ebWL9kkw4msaNN5cvNnQw/ca97m+Q/3T90Hbz9ZZaqBjJFqNOVM9ZJv4JexZreo+4udOh4/RHEZazWeEQwW1WIrnSHe1HcTThGW8hS5gECs7PLKeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=aRrkdswT; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zp/mMxuR"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38633b5dbcfso5533153f8f.2;
-        Tue, 17 Dec 2024 02:55:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734432907; x=1735037707; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t1P1TqEyoALESItQY8HZIv0AXy8Gz40dHfSRpRIHYdo=;
-        b=Zp/mMxuRDIR21kpknHgxiibO6EkexocqBGR6wVspQjCj9rGFzK2TacR/c5L/tYR4Pa
-         5zDZKJnDCs3fYyu6PKnUrlCuYvigM+fIILn1zenlXPYg94oW110hR5TZ+rXi0RtW0fKM
-         nHF70+tla5U/plejWAIxdmqaqc+uX8XD8guzr/AIz8y6z0IBzsKsHb8vB7MuS193fnKV
-         j/emOwPrwMj8Izfjaz86QYeD63Z8F5CJB5LNb3VmXApnFBDIW3E6l5MhPW772EeHd7YE
-         udd6x8uWXbzxJUIbwpz1JmE4F5B8o3oVO95rPK/Bl4zby6SAqRo65OZ4hqtnzjuaN7T+
-         +UEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734432907; x=1735037707;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t1P1TqEyoALESItQY8HZIv0AXy8Gz40dHfSRpRIHYdo=;
-        b=HtIwSvIvmBk4B0ZDUHeK3CBGPBePD6BpbT10QQsC12CEjHj8qbFbutJNFqYv/b0FRg
-         OR3WA0YyvQrCZqlg8XMpVWMXGjIStDJTOHvrxaoNKWYKgJ3TTcD8OYeNWFI64CQgl115
-         0xPqaPulU1DUmH3RK1r5oHCVviiY1IzZcvPiX3UiSBsY+/bQVGE9D6VWjh0X8TmCiy0q
-         c8nXOMQskj++nW4sQKGUUkmKAX6UnOoksYqNmI0aXG1VGqfl2jmyt3ZDWhHq95N6oazF
-         jOgleq5JVXYXdgVPnqxnyu5KCvz6vAqTV1LK3bzoONpXj92Im10v7wuLc1lqL6W4WJbs
-         MZ3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVaA86TdJUVEU8RKSMKk10a0v85XfXOeQC4N4JeOqkiIQThvDWiLjRabaLAgcR2p9sqBsSSchdjY4BjxNKX560=@vger.kernel.org, AJvYcCWtkx1IHvrefHHt4zgYoXuEcIaQ7pHSIKUTq7fpgUTUZr5O6qx3E+81tPEwsBx62PZ1ZYdUidZ97Vc+64w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1pyW+9AezXDy3ej0ITVU700iMlKG4vlD+osauTUthlmOXZOZk
-	Fk4qPoVKycMAwgLg+KZlkG6vR4aez8Zxe6HEhTI01GzdBlXZWaz1
-X-Gm-Gg: ASbGncv0aRMUrYtWM5DMb74qsPtPoRJ2f1S5YmOPF9eZt60ijiEap4O39oau7AlFR1+
-	0UR9q9vLgFMy/mLTpiIFpAhjYLgR9CgsRqGrIEtViPPEFdi7HRkVi83RWWfK0cNLsEAeWZf0JUH
-	6Rv6JY8ZVbRpNkREG8qP/kiCaProDj9P4iLYq5v3kDfxFTz0Kpb0vbuN0HFUqNDKvl7S9dah+f9
-	zwdNNAYkaUnxbWgfJ+0mwTSG1HSIM3nzmkMo+lmjHTJ9C510QBPBy+WZg==
-X-Google-Smtp-Source: AGHT+IEh1D+hUTDqtsK6Q6FnMsXdjFA7vFWK+1wQfH24VH3oPJK5ij9/iIMEiO2NSFyK3gqfjQY0oA==
-X-Received: by 2002:a5d:59a6:0:b0:386:381b:6690 with SMTP id ffacd0b85a97d-38880ae152fmr13393915f8f.31.1734432906277;
-        Tue, 17 Dec 2024 02:55:06 -0800 (PST)
-Received: from localhost ([194.120.133.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-388c8046c66sm10704706f8f.69.2024.12.17.02.55.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 02:55:05 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: ath12k: Fix spelling mistake "requestted" -> "requested"
-Date: Tue, 17 Dec 2024 10:55:05 +0000
-Message-ID: <20241217105505.306047-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="aRrkdswT"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Kyd7fuRsvhaZ4THXfqK627NmpFPWLv9guswigQTwKtE=; b=aRrkdswTYzOyVCiVtwUn0ooP+7
+	jZLrZcScMZJKK/I2HqJkeq/Lz+ygy0vXp0vPzhpn+SRsOovOar3qoARgjstjxBGx8WoNH33arWqjF
+	TXUHbiICckXwdoCkdnN/ygMYZKufpiMN/oHHhAMZNjnnWq1etAdh7U/k3OqbGEFzwqgqpfCF2efEb
+	pwQl9uZ/CNug5vErHXG50UxK/rrir/jXbo19aA6svYuF7Zva58B5R+I/JI0D4vmkKR+umjKZv2/ZY
+	QBmawtc3lLQtj3IRiHdSg0p3ffJOFibUlG1xNB4i64a5kc6HnYnU3KN1YC7ONZQbUrj/wJ7EwoS6U
+	va2+0pLA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tNW5i-0023Ji-0h;
+	Tue, 17 Dec 2024 20:03:40 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 17 Dec 2024 20:03:38 +0800
+Date: Tue, 17 Dec 2024 20:03:38 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] xfrm: prevent some integer overflows in verify_
+ functions
+Message-ID: <Z2FompbNt6NBEoln@gondor.apana.org.au>
+References: <92dc4619-7598-439e-8544-4b3b2cf5e597@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <92dc4619-7598-439e-8544-4b3b2cf5e597@stanley.mountain>
 
-There is a spelling mistake in an ath12k_err error message. Fix it.
+On Tue, Dec 17, 2024 at 11:42:31AM +0300, Dan Carpenter wrote:
+>
+> +	if (algp->alg_key_len > INT_MAX) {
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/wireless/ath/ath12k/qmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Why not check for UINT_MAX - 7? INT_MAX seems a bit arbitrary.
 
-diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
-index a8ed86a294c3..5c3563383fab 100644
---- a/drivers/net/wireless/ath/ath12k/qmi.c
-+++ b/drivers/net/wireless/ath/ath12k/qmi.c
-@@ -2618,7 +2618,7 @@ static int ath12k_qmi_alloc_target_mem_chunk(struct ath12k_base *ab)
- 	if (!ag->mlo_mem.mlo_mem_size) {
- 		ag->mlo_mem.mlo_mem_size = mlo_size;
- 	} else if (ag->mlo_mem.mlo_mem_size != mlo_size) {
--		ath12k_err(ab, "QMI MLO memory size error, expected size is %d but requestted size is %d",
-+		ath12k_err(ab, "QMI MLO memory size error, expected size is %d but requested size is %d",
- 			   ag->mlo_mem.mlo_mem_size, mlo_size);
- 		ret = -EINVAL;
- 		goto err;
+Thanks,
 -- 
-2.45.2
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
