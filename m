@@ -1,41 +1,63 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C961DAC88;
-	Tue, 17 Dec 2024 12:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A7D1E282D
+	for <kernel-janitors@vger.kernel.org>; Tue, 17 Dec 2024 12:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734437053; cv=none; b=Bhbf5y8wghQtKb9TchlqQZX5FFwyXZg0H+BkbmkicDZrQ6TH4FzV20EgoAUDlQarUFJAwHHWN4xm+wZyjP7Xidl0YzZu/76Fkks7so4NQVbQV6dopXzMJJqEvqgHYpI5XWSO7BfaADXBMHRyA+rgirXu0pXl7rshh/y67+/nSCM=
+	t=1734438758; cv=none; b=ocv9vwRMmDNn/5rJVGM1ofryyHXkX4/xtcGvBraqwxN5qMC2nfrqB5Qiesy5hBu7AgLqagt5hjl0bEB8rh0aKWK854A3RHvDrPO7662/3uY7Gmuzu2FbW48uDwghHrdbSoaB+pbqG2ffTT4mVdc5C6EV5ScCrm/hGhdDdUL+3t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734437053; c=relaxed/simple;
-	bh=MoV5dUrWpK3MUnaq34/CH85ZC5O5lbllu84Bv3WzExQ=;
+	s=arc-20240116; t=1734438758; c=relaxed/simple;
+	bh=YbfDs8LoY5asKM7zZM/qu8gLr3JGUTt7arQC8J9od4M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhpHnd6w0/WgYf6AGKiyK1uqI32h6gy1vQEf9u5CR3nllmAPXXIF3M1138ebWL9kkw4msaNN5cvNnQw/ca97m+Q/3T90Hbz9ZZaqBjJFqNOVM9ZJv4JexZreo+4udOh4/RHEZazWeEQwW1WIrnSHe1HcTThGW8hS5gECs7PLKeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=aRrkdswT; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	 Content-Type:Content-Disposition:In-Reply-To; b=px0SaBXtkv0JXKR3etqx4aF0aC+JcBvAWT+fSDrzxbvFUuQ6+vzyMsyXB0beZxnTvJSAkr+Q4kdKJTspGrFxj7r/eJHENEfGMaaVBEHp7ip0APOFf8rh1E9hSG4sVwdFjs2YLCdqYMXq17XA6VMzo5meO8TPdjlGO58k0xLzMoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qul2Xkte; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="aRrkdswT"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Kyd7fuRsvhaZ4THXfqK627NmpFPWLv9guswigQTwKtE=; b=aRrkdswTYzOyVCiVtwUn0ooP+7
-	jZLrZcScMZJKK/I2HqJkeq/Lz+ygy0vXp0vPzhpn+SRsOovOar3qoARgjstjxBGx8WoNH33arWqjF
-	TXUHbiICckXwdoCkdnN/ygMYZKufpiMN/oHHhAMZNjnnWq1etAdh7U/k3OqbGEFzwqgqpfCF2efEb
-	pwQl9uZ/CNug5vErHXG50UxK/rrir/jXbo19aA6svYuF7Zva58B5R+I/JI0D4vmkKR+umjKZv2/ZY
-	QBmawtc3lLQtj3IRiHdSg0p3ffJOFibUlG1xNB4i64a5kc6HnYnU3KN1YC7ONZQbUrj/wJ7EwoS6U
-	va2+0pLA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tNW5i-0023Ji-0h;
-	Tue, 17 Dec 2024 20:03:40 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 17 Dec 2024 20:03:38 +0800
-Date: Tue, 17 Dec 2024 20:03:38 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qul2Xkte"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3e6f6cf69so1811753a12.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 17 Dec 2024 04:32:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1734438755; x=1735043555; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vadTVklg9DZ5KZn/j1FjuzNmgd1jDV/1Li8ndKsd3tw=;
+        b=Qul2XkteNGKGuQGn2HWKJC0pzrkQhXq4k9nAgHHAhL1CeOEoBx5Wr3FfWpsXjffc4r
+         t8MqNdhX3kjOpCrCCyY8MZ8txcn3F4Bry7Ibbb6vQ5osDMq3qOigAaxpPJCn28UxiyQD
+         aibyBkIntJZr9HIbTgGVWHm6pcWTGq+usDYHh8kf01Z0GXKCOaa6DFmh4vF2DvQwikbw
+         N+42qhZothYnYNppq60Y5ASH8oMBKwsNazRXdyBaRzW8xk4HvtWvGqIQFBM/iOI+IpHa
+         tUYkhUIgwcb2faqdMZKBjIZP04rnBQLh1qpiIglkGQReTgfbNmM3IUh2p1mHQit0qYPi
+         qflw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734438755; x=1735043555;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vadTVklg9DZ5KZn/j1FjuzNmgd1jDV/1Li8ndKsd3tw=;
+        b=iFHgOUwXHvE0AdF6qr+2qYM/x4fr4/wbBAlqOXKeObvnUwLynCP+f/EEq7O5eBFOjN
+         GITi6XOuo9kuwXQcT+zt3vu7ttUWt02ZzOpozLyzwPyQz/YZhrM8ln2wXaz0OsyVhqq4
+         gQiuhULW/Y1m31S276e19U+b6QDKZqLlhAReEhY4gie0qIKhXtXAecnfLTmF5QrgiF0i
+         GAvADdDkDyiEV/rTrnu3jBY5bK/exawCr/P3ZnJemeHPD89AdVR4JeMHznGwEW2cJY8H
+         lrWpwFowc3o29ql/b7xIY4w4J849XqvpCh59XtkVg7NXZdJD3OwmitrdGSOa8K0PisqC
+         gsPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNCc+dLhmLkIqW95cdCX/qL/HZV82vvN2Upn4iMy/f8nljsgjUxIvSWT4RbgmSKuLouvHYvAimjib21CxrCFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyihih1Y2BRSABR3iJo5gG/l8wRIpma4viEfjnY5R+L81cJYRfL
+	Dz1vnDvJZtuUKahmiWZckdO+gtuJHBm7IXffYRZiy6MMAmmqAMUuMKtcUR+GR5o=
+X-Gm-Gg: ASbGncvHO/FL+iNnAqvAzUWAizkaIo/Idm41yRcEjlUNV3wFuPvkyYd3VBE+lWmXPC2
+	f4pvbU1g5yPfrk+lzZKPyB6Y73FKPxtJ6GrhAyUtZMFIGXLnXqXRGgSXAmIm4K1GLC8WxlRkq3d
+	LRAEyuKeXTzuxHG2nRkKhJZ7L6zadT4XUcuJmwjWCOLUV5xHi0Uth3kOnWgAxqjqoq1pnTUfetB
+	DFHCu6IchgNgR53Ed3hGrwk4ZfsRdhqUzqfzUyd6/SptQ2lvoTC7SJyVs0jzw==
+X-Google-Smtp-Source: AGHT+IHQ03iEFjc/Teha21bLrHNLnNIrRs6fDpiX/v4CZTbwJmuV1NtVhgiSm8VrPkB6aW1UmvcDog==
+X-Received: by 2002:a05:6402:5288:b0:5d3:e8d1:a46 with SMTP id 4fb4d7f45d1cf-5d63c3bf48dmr17438136a12.30.1734438755313;
+        Tue, 17 Dec 2024 04:32:35 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d652f271a6sm4407073a12.60.2024.12.17.04.32.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2024 04:32:34 -0800 (PST)
+Date: Tue, 17 Dec 2024 15:32:31 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: Steffen Klassert <steffen.klassert@secunet.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
@@ -44,8 +66,9 @@ Cc: Steffen Klassert <steffen.klassert@secunet.com>,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net] xfrm: prevent some integer overflows in verify_
  functions
-Message-ID: <Z2FompbNt6NBEoln@gondor.apana.org.au>
+Message-ID: <053456e5-56e7-478b-b73e-96b7c2098d07@stanley.mountain>
 References: <92dc4619-7598-439e-8544-4b3b2cf5e597@stanley.mountain>
+ <Z2FompbNt6NBEoln@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -54,16 +77,22 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <92dc4619-7598-439e-8544-4b3b2cf5e597@stanley.mountain>
+In-Reply-To: <Z2FompbNt6NBEoln@gondor.apana.org.au>
 
-On Tue, Dec 17, 2024 at 11:42:31AM +0300, Dan Carpenter wrote:
->
-> +	if (algp->alg_key_len > INT_MAX) {
+On Tue, Dec 17, 2024 at 08:03:38PM +0800, Herbert Xu wrote:
+> On Tue, Dec 17, 2024 at 11:42:31AM +0300, Dan Carpenter wrote:
+> >
+> > +	if (algp->alg_key_len > INT_MAX) {
+> 
+> Why not check for UINT_MAX - 7? INT_MAX seems a bit arbitrary.
+> 
 
-Why not check for UINT_MAX - 7? INT_MAX seems a bit arbitrary.
+That seems like basic algebra but we have a long history of getting
+integer overflow checks wrong so these days I like to just use
+INT_MAX where ever I can.  I wanted to use USHRT_MAX. We aren't allowed
+to use more than USHRT_MAX bytes, but maybe we're allowed USHRT_MAX
+bits, so I didn't do that.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+regards,
+dan carpenter
+
