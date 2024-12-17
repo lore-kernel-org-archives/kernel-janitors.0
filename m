@@ -1,69 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4E01CD1E0;
-	Mon, 16 Dec 2024 10:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B482670827;
+	Tue, 17 Dec 2024 02:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734345237; cv=none; b=iAsrHCzp3mMy9t4Bi7/NIV7sqgspKHgIN1eAOq3XLwR3a316vPcKoAGJc48K5VHQ7g2b2wfFVsUJyqTMLM9QyYpFBaFJhRlsDvAB2y+OYh4oJr/b50dbv3Qix+jS9w7sHpWRWPhrWlJfuIVFDmJ/vpQJpspAqUDd2oCTo14Ak9g=
+	t=1734402015; cv=none; b=kmcmDAoqham/SjgDeye/DjlTUQZuzJbZ5YjuptUO93uMKR8/t9Dq3DOALhdOYXb345mysedPsPhmMrq1uTPGrVn0dIUJUML2dzT1KnQFt6tfuUJm9YzjFRo8p50y9msKKAXlui29XbQjq4vh+x/zaOAcexbDEkGKn7/OHLo1+Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734345237; c=relaxed/simple;
-	bh=qk4tHCi45AeYn35KUrKNzZZJMfz9AxiHC3bgwhgpFGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJ0SDybcBLEHclkhU33fdXxut57XXnBLB6/c4401qgv9YJDqjlhgEYdF0ii9ITQd1qjv+mCg+1vF+4wUVcs69/dxNQSPkCbOViz7d3h0LmWsPbG8O4OQHGB5WlMw7FAkYjVtXN8puuCl6cXHyXvstY8BCldF+HMCnAgVbuEHRw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ab95bM8g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734402015; c=relaxed/simple;
+	bh=n7CaTJOp+NRFRkoP+aaLkQZqBL3ymC1rPFhgna7nj0U=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=JS4WXlGqBsiSYuS+a6f/IlF5d7KCgio0TukqD4ThklCDUnQu40f8ybs6Q5Feqbr2u0/RAVxia3hLFv+o+FkD4a7cgCF5E63OVMdZohMpEk5lu39426Dn4BfC5V8kLHBwmvn0VFdC3Xcl3Yf/DSZiNkl7wkDoKwqT1GAnBnEtA9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zi+mqH2T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ab95bM8g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6CB4C4CED0;
-	Mon, 16 Dec 2024 10:33:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zi+mqH2T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 474F2C4CED0;
+	Tue, 17 Dec 2024 02:20:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734345237;
-	bh=qk4tHCi45AeYn35KUrKNzZZJMfz9AxiHC3bgwhgpFGc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ab95bM8gPDCkWA+Xp0DacngeOp0lk2RjC/00gs1l9s2bcCagH62jezq/foo4g2z/l
-	 GXnjtA6ENxBFTaMSN6hB2Ds2lwuVwXDuOBq5MKb64YRzZypYFCF6xPaQ6FrOQSWsYg
-	 9PJHH8BjMSLRvVmoh01wpWkvZHbmlBjpCBfG8CtfHgnMW9BnjwhyS+d+0Tq+8nL5S1
-	 Pao6eIvlKU6hVSR5zh65d87sU3Rxf+eFQ8ykFH8Kj6V9f7qrDdjJNqCv5GQcsKbbQu
-	 o7DIg+/DIhv5FRFjcBlbdnDnQhT9s4T7bRp89UtSQE8bOAJVsnDETDKSO3B3gLt1/+
-	 Ht1Ihk2db1yAw==
-Date: Mon, 16 Dec 2024 10:33:52 +0000
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Aviad Krawczyk <aviad.krawczyk@huawei.com>,
-	Cai Huoqing <cai.huoqing@linux.dev>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Zhao Chen <zhaochen6@huawei.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: hinic: Fix cleanup in create_rxqs/txqs()
-Message-ID: <20241216103352.GA780307@kernel.org>
-References: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
+	s=k20201202; t=1734402014;
+	bh=n7CaTJOp+NRFRkoP+aaLkQZqBL3ymC1rPFhgna7nj0U=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Zi+mqH2TzEl/x31yrYS/WI68L6wG0UayCRvkhoDebw902/kmlCIzV2O4+aHg1sv2G
+	 ZYAb4awofXdfILW+CvBs7ekxoCCONiEjZWTJ9Vx0gmF1jWyZCpoh2b28kdU2SFG2F6
+	 03GI30YWB8YrfQyYuYvdzTVx4S3KVJfIegp6lvDcYUOSB36LbcS+2I4AWXrSV5Yhyf
+	 bpWSU/YzElBqsl1pDcQsszXtFDxJ9yqMHwRltwodn3rChDH7zvuE8QG6qEM3DMdbFZ
+	 RJDcZ6W9JyiNp30EdL/uTJUYj4JKKKjhiXkuiwNFDuq4YPsbRPdExpVssZEgIrTt+L
+	 biyE5/J9f6TSA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 9F7163806656;
+	Tue, 17 Dec 2024 02:20:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] chelsio/chtls: prevent potential integer overflow on
+ 32bit
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173440203151.417803.17558200798224826958.git-patchwork-notify@kernel.org>
+Date: Tue, 17 Dec 2024 02:20:31 +0000
+References: <c6bfb23c-2db2-4e1b-b8ab-ba3925c82ef5@stanley.mountain>
+In-Reply-To: <c6bfb23c-2db2-4e1b-b8ab-ba3925c82ef5@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: atul.gupta@chelsio.com, ayush.sawal@chelsio.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ green@qrator.net, horms@kernel.org, werner@chelsio.com, leedom@chelsio.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, jgg@nvidia.com
 
-On Fri, Dec 13, 2024 at 05:28:11PM +0300, Dan Carpenter wrote:
-> There is a check for NULL at the start of create_txqs() and
-> create_rxqs() which tess if "nic_dev->txqs" is non-NULL.  The
-> intention is that if the device is already open and the queues
-> are already created then we don't create them a second time.
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 13 Dec 2024 12:47:27 +0300 you wrote:
+> The "gl->tot_len" variable is controlled by the user.  It comes from
+> process_responses().  On 32bit systems, the "gl->tot_len +
+> sizeof(struct cpl_pass_accept_req) + sizeof(struct rss_header)" addition
+> could have an integer wrapping bug.  Use size_add() to prevent this.
 > 
-> However, the bug is that if we have an error in the create_txqs()
-> then the pointer doesn't get set back to NULL.  The NULL check
-> at the start of the function will say that it's already open when
-> it's not and the device can't be used.
-> 
-> Set ->txqs back to NULL on cleanup on error.
-> 
-> Fixes: c3e79baf1b03 ("net-next/hinic: Add logical Txq and Rxq")
+> Fixes: a08943947873 ("crypto: chtls - Register chtls with net tls")
+> Cc: stable@vger.kernel.org
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> [...]
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Here is the summary with links:
+  - [net] chelsio/chtls: prevent potential integer overflow on 32bit
+    https://git.kernel.org/netdev/net/c/fbbd84af6ba7
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
