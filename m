@@ -1,35 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3F9145FE0;
-	Tue, 17 Dec 2024 02:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814EE13BC18;
+	Tue, 17 Dec 2024 05:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734402613; cv=none; b=XvYuEp9gLGPTKUwd2d2wDkbaOtEah6Rt6rUsu9JlabZt9NyCJe2yu3Jv8y0dbjP55jGlOnoCmxMxix7UfT8ZsvrzQVBB/O6rGuTnczm63dK3J8aKMGhLA3At/PGheqGPmESp9OY7P483mwMu0j3KAFZIWp/uDO0Gc6V/HwaavO0=
+	t=1734413037; cv=none; b=k894jHt1si3Cn5EZ8bkQktBvOwbzu3w+XTlbQQ5cOUt58x5pqC5mwY0B9q45pN+s/ZCmHJfZnoW2nRx1HGC7nxiIuthaJM0rHMXrW0+GBgx7F1LccxcSx59powqtswrCAElQCTgM2D45AyEzybriPawU5QKmipKVWl0kSrB42Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734402613; c=relaxed/simple;
-	bh=YFVs1GSeMboi50d9wwhk1qZytEoVY03tfo4cZz3xYv4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mx3VkTIlj33aZixRShue4J6RcY+0ITkhyxgNbMXjJufEWf8Y5B2xgHOgVypWdAb4gne4pPOux/NhCDF/gtMhMlUiiwI1/DYL1as39VMT4WrJ8vBFT/vehU3Uh9D/Hte/3yucVXwvhULrFqcztspUv8m+Pxlx7Jd4rFPGwFmmt/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrMJyYbz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734413037; c=relaxed/simple;
+	bh=3s+0u4xd4GmR1sqz3OLBDTkSUWqK+I+fbJYwRbzSKEo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KcpZWflxVITDNEezqUD3lr8h8FdJjmXYvcOlx37NVWJfAEUqJyjH0vXkvYnYLlK3z76sn8a0LE+BVvOSsMkhzxWx/q4vHZJmapR1wWTPS/kfNYclH65bkLWtptp3gKDOvFaowhq5AhIcE55r5ynpdgMSlcfv7UHFQSH7s0cj0oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bViq+Wzf; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrMJyYbz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9283C4CED7;
-	Tue, 17 Dec 2024 02:30:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734402612;
-	bh=YFVs1GSeMboi50d9wwhk1qZytEoVY03tfo4cZz3xYv4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=PrMJyYbz5ueWHY9srQaOXCnR1jWeOMjv7t3sw8QqyEP8hwba8XUqyha1Z39HqTu1s
-	 bCAFjfZX4Omr9aydAEMnw2ewGz6mxq+3ZNc4shp+r9Symrej3PaztVodXypf7ZjQzc
-	 Wae2sQrhC/m1jPRyTMKkeJhNtlOJCPgWC3XwScA3DcJuscxpkoOufJO3tGCt6IQ4Ri
-	 g1e7vBLpOYmpnBwHEszF5jqmbFej8jVZ4EK2S5wBL+i+XjqNVNNZOZVutxTq2tEETp
-	 NhkvmvkFEmttJlr9+bmuxvzsGPaMSba6R9ZuXPocX6cH4hzyKNF3KMqsZU9RVrrW6Z
-	 SD8whiwO8EJRw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 343EF3806656;
-	Tue, 17 Dec 2024 02:30:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bViq+Wzf"
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH1tujx011210;
+	Tue, 17 Dec 2024 05:23:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=R/mA3PoDoSR2Tz4MWnyVegA3EQUHc
+	WBcFN+6dNs1SXw=; b=bViq+WzfzvCRsBghAJEYpiot8d6v4vMQ5GDiWdOxh5BEj
+	EV3y+XXbWBb8e4KQhAeMdPDybQbMnu5+MhsOR6tW6AZekspmtOXZPZXhpFSQ+5WP
+	Ffe4+vv5ilnMRyOgK1Dz1S9MWDEdV/MhDJUg4PTHa8bvtk0sJ39t0a42PkwiAqpd
+	a/EbOeAnhqmBuIcVQkc1XyxWM1CIo+yTz2H01+aR3zgUZlxCuP7aBTTBTLE7ENzK
+	AnaiqJ+gR/CLP9F6acw/7Iw65rXCKpEzFEFAyej9YXxBOCsQHi8stJN4YW+IpDx2
+	cVEigiKVa3NQlv+OXcR0vgHJZ4wjBkE1vemss3bhQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43h0xaw7ht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 05:23:39 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4BH52mO6032664;
+	Tue, 17 Dec 2024 05:23:37 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43h0fe76jp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 17 Dec 2024 05:23:37 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4BH5Nb9n019585;
+	Tue, 17 Dec 2024 05:23:37 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 43h0fe76e5-1;
+	Tue, 17 Dec 2024 05:23:36 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Sunil Goutham <sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>,
+        Subbaraya Sundeep <sbhatta@marvell.com>,
+        hariprasad <hkelam@marvell.com>,
+        Bharat Bhushan <bbhushan2@marvell.com>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Subject: [PATCH net v2 1/2] octeontx2-pf: fix netdev memory leak in rvu_rep_create()
+Date: Mon, 16 Dec 2024 21:23:24 -0800
+Message-ID: <20241217052326.1086191-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -37,44 +68,44 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: hinic: Fix cleanup in create_rxqs/txqs()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173440263001.420431.12522081889821148366.git-patchwork-notify@kernel.org>
-Date: Tue, 17 Dec 2024 02:30:30 +0000
-References: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
-In-Reply-To: <0cc98faf-a0ed-4565-a55b-0fa2734bc205@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: aviad.krawczyk@huawei.com, cai.huoqing@linux.dev, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- zhaochen6@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-17_01,2024-12-16_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 suspectscore=0
+ adultscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412170042
+X-Proofpoint-GUID: Uvu985dQsfp8qkZYvgG5DlwsJ3pwT3rD
+X-Proofpoint-ORIG-GUID: Uvu985dQsfp8qkZYvgG5DlwsJ3pwT3rD
 
-Hello:
+When rvu_rep_devlink_port_register() fails, free_netdev(ndev) for this
+incomplete iteration before going to "exit:" label.
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Fixes: 9ed0343f561e ("octeontx2-pf: Add devlink port support")
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+v1-->v2: Change the Fixes tag to the correct one as pointed out by Przemek
+---
+ drivers/net/ethernet/marvell/octeontx2/nic/rep.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On Fri, 13 Dec 2024 17:28:11 +0300 you wrote:
-> There is a check for NULL at the start of create_txqs() and
-> create_rxqs() which tess if "nic_dev->txqs" is non-NULL.  The
-> intention is that if the device is already open and the queues
-> are already created then we don't create them a second time.
-> 
-> However, the bug is that if we have an error in the create_txqs()
-> then the pointer doesn't get set back to NULL.  The NULL check
-> at the start of the function will say that it's already open when
-> it's not and the device can't be used.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net] net: hinic: Fix cleanup in create_rxqs/txqs()
-    https://git.kernel.org/netdev/net/c/7203d10e93b6
-
-You are awesome, thank you!
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+index 232b10740c13..9e3fcbae5dee 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+@@ -680,8 +680,10 @@ int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
+ 		ndev->features |= ndev->hw_features;
+ 		eth_hw_addr_random(ndev);
+ 		err = rvu_rep_devlink_port_register(rep);
+-		if (err)
++		if (err) {
++			free_netdev(ndev);
+ 			goto exit;
++		}
+ 
+ 		SET_NETDEV_DEVLINK_PORT(ndev, &rep->dl_port);
+ 		err = register_netdev(ndev);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.46.0
 
