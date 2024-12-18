@@ -1,79 +1,114 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35FD19F422;
-	Wed, 18 Dec 2024 11:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C728D175D34;
+	Wed, 18 Dec 2024 17:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734523163; cv=none; b=oGu3/J5r+wuzxF8K/F8kMUo1buTgHF8D1dFBGgl0oxSc/cxGprE5IbLR1Vx9m8h180iJKJPDiH59A622wF5aBFCpRPSBfnUB2BBANJj1x5F3xz1OBgaugoTJi2z5dv7EY/o66CK3z6gVZp3hQSI9GCdjyEVlchozAxa8IFiNW7Q=
+	t=1734543546; cv=none; b=P4Vlr9LnFf6dtQzSY/67RMmxMmEj+Nd2ywC2l4YF8LpwGAdIF+uklmRDPbN9ZaIypN7Apb9ht+uYK0Z8FwR3PKJtSRsBUVAcR5PsLo84+PmhqULLQthX++MA3+I2CQunwb1yHmlT6X+DtZAZvCqR/fYISpwpAtGPELoFn1vSmfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734523163; c=relaxed/simple;
-	bh=yiZT+zgyBtvbWw8XjBXECMyehJBWlJrNl0wBu4Dp3Zc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WVknND8n/o0EtShCc/Lj5gWYnrFC/JilTDGcEDAVUx53h/hmSSoDYcmJxKjflNGGP1TQzMBCD/XEtqUOYYqy244ZMUAAkiFMFZa8IdsQNeZ2oIeF8at0Mqf0R9WzyDhRhro74+KPUL/7zfOllt9gyNI5XOpkaN/t9TRfJ89sWVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=FroTQ6+M; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	s=arc-20240116; t=1734543546; c=relaxed/simple;
+	bh=U5S4MwYDBf+wwJoNz8uVZzm4gZ937iYPGnjPcLwGL6w=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=izPfV9gckurmHs6mwPyS2/3kyr4z+CzOkr6omJLQSgB5SV7vPcvAvjN+dGUhnjA2q0YYlb2vlLofhrKL6BeN4mRAEYrW6BWWcJ+mcro4dZfRR1WJR8Yqkrr3O3Art0pKeYxIGN9wO1iUXaNNOa0+d6ALhpkQ+iQJiwchdlYrm+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bIG/fc30; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="FroTQ6+M"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=OW0y2IpzhJkNdhWNb/VkJVFWXHp4qHaaxBGPF8TsTeQ=; b=FroTQ6+MO2zH4Tnv0PwtHxLm+Z
-	kF2riz1rloEbUK2wa/95HBqJyQhsfEkPOPo98XIDGtHiEzweDJ77JUrfvwXl9xDOKx8WZ+tTZznEF
-	YaiMp1J+qjWFY09HS634oc9ySK1hEMov7wzMunOj1p44Sh5NR/vlkLQnDaS9OUkgh5oW/7B/FpqLo
-	wzxipY8DH+fS+MgmhbCYvF5hqkkh2DQq+1t0ATrkSkSXGgVY1kJf21lTYnJnobvtc8XJosUHfVFxa
-	bFeflCcwb/o/gBJCS0+wQ26wMqE2BhaDHu3G+Ln934MLc1aCmV3KYQd1eTZTG4iuDh+tn4RXtTixy
-	3yie2/OQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tNsUl-0029Cl-0H;
-	Wed, 18 Dec 2024 19:59:00 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 18 Dec 2024 19:58:59 +0800
-Date: Wed, 18 Dec 2024 19:58:59 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net] xfrm: Rewrite key length conversion to avoid
- overflows
-Message-ID: <Z2K5Aw2Mma9Crr1G@gondor.apana.org.au>
-References: <92dc4619-7598-439e-8544-4b3b2cf5e597@stanley.mountain>
- <Z2FompbNt6NBEoln@gondor.apana.org.au>
- <053456e5-56e7-478b-b73e-96b7c2098d07@stanley.mountain>
- <Z2KZC71JZ0QnrhfU@gondor.apana.org.au>
- <cedbaec9-d149-48af-8068-182f0af5a89c@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bIG/fc30"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1734543510; x=1735148310; i=markus.elfring@web.de;
+	bh=k7t4oNaWZUmDndsSIfmlqR6PmTTjsV953prQswRMY6M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bIG/fc30zWhLuiQOSbsD7dn/pQryB+u1z59yt8dCcVFQ3WPzR6WDOOdxVgrdZgDZ
+	 kep8rWQHlg9JDUYtElIy5FIpnpAWhVSMbGYANOAaHCBazxW+OQ/8x5lS9reoace7K
+	 s6ablZ3WlXgSrVYT+hsgBysnzmclYu3xDP2nXiq33n+zsJ+to3y3/OS7xs/lix/Iy
+	 DvKZuSjd3o432MnZvLCSrjbtKlJXb2+HKgGNsGeP12hmSDC7DxkSzmzz9sSzPM07F
+	 Ho0hWTdsWQFPGJj4zbZ+RvK1+4e0TQSOT9XlXIeZMk+gwOWMdNVjmbzCuLR85wm1N
+	 lvy5EHDq6cS18bcy9g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.70.41]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuVGC-1tfDwC2FVK-00rZPs; Wed, 18
+ Dec 2024 18:38:30 +0100
+Message-ID: <8d54b21b-7ca9-4126-ba13-bbd333d6ba0c@web.de>
+Date: Wed, 18 Dec 2024 18:38:25 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cedbaec9-d149-48af-8068-182f0af5a89c@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Bharat Bhushan <bbhushan2@marvell.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Geethasowjanya Akula <gakula@marvell.com>,
+ Hariprasad Kelam <hkelam@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+ Sunil Goutham <sgoutham@marvell.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Dan Carpenter <error27@gmail.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>
+References: <20241217052326.1086191-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH net v2 1/2] octeontx2-pf: fix netdev memory leak in
+ rvu_rep_create()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241217052326.1086191-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BZjLDS3M5wjs76RkCTAjAg3DkmyAwsH8MfCz5p8ay1IN0xq8HYY
+ bJirIjeIXtU1Z/gwK39OG9Y6NnWi66v2Zi/xIU77cnXhwkV7Ecet583igkIr+olwXaYghRZ
+ qDB1lLOfsiduqovUynqPlp9YUeprg43yz9F4t6DjTBkq7CkSSFruwizn3GgZjmd1qSuA4XE
+ T4bZ21S6cIUTaiWKO3AGw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZUrw+YskXEE=;a/q1Vn0849OChlob+xMuzKY4leV
+ STiYjNoYFO3WDQrYEuoSca64x7sV5tTZAv++89A0fMiRVpcPU33lSYhkVkosqEDrXmnymPE7g
+ SHzgLRgh3rZCfoTzbWtv19Cj5uELx+r062ZaPTXuzm8h5Evo2TdjCbKaQ06OcNjJ8FK3xZoPX
+ I7KS1N6ohipwHI8H1VTe0dB8ewkk2olug1r2kCjMlyfYoQXCObdJwuz5m+5tTdl6nOrxl36t1
+ SbNDJ/0QSBtcJZe/zaRYnhUpIByCCJSvvOhD38BwlGaFHycBjkwBpmzlQ1Gwt87LgJ4HNrx9P
+ AVekNw7WDT8CVJdqnJcTU6JO1gc21JCA9aI1TDm/aga/fztA56wXlKIPgT6Ypke5WocflnZcB
+ ofIhWHD56lRmogY+epFbbXNFkh3VxygUQsBdxcvq1RxyaedpBhlA7tVhY1wk8HnHoQWLMWFSC
+ bwSNmtzUQ2+Y2l7dVZ/XL47RoBXABhUvZ/BYyf4gdRX30KNfEO4n+mKWjZ2XZNSCUiTX7E1TF
+ d1+79AGT+vT4JduYyHvOPjQPYmpkCXUwVfvxrics6Z8XqMkkbUhV7uGji7Kpt4t0FNzZfVIFB
+ N69eTfEqAkp6H0ShdBwIW37+V5VEGpVxr5L74s7BUQ5RLeQc3KzCclaG604Dgw5a2EnDdmE84
+ JocdYuoDZamMoy0eGoTeDCqEqNol68tAIP1IFHKD2L90sGlRFxDhLhFIKBpH4Jt+OSrWSpO92
+ B6b5tPrz0FsiLdzZxEg67OHjN0FNerf/348GPoQzr3WyD/TTw4cwp2lRUAOWEqRDZq8LvgN76
+ phTtG01RfUgKlB1jEOfgzfY61jMDvoNprQX3mmTQnLcbpSeZ7iQfBE2YplVbLKHQVtqKaS5W7
+ 6ri38oyngFzJXE6YzktCXUDRuuHJGfVFfPvRlRJ75XkpCuDctjJ+IE7eTZb0NwSl45abE8fPZ
+ ksusK3vUD9juRG4U1tIHCIhjnqLk48Xh1vKxhjClPo0luLvfUNcmZPT2qkcDrPHdAiEwUgs8K
+ Ex9NX/mumM8GCWCc9OAG34uwH/0gPx7/17CdwqdYa+8dp3SpMtleJKgXGjhrxsNvwUoTTesjj
+ H7sKD6HE0=
 
-On Wed, Dec 18, 2024 at 01:54:38PM +0300, Dan Carpenter wrote:
+> When rvu_rep_devlink_port_register() fails, free_netdev(ndev) for this
+> incomplete iteration before going to "exit:" label.
+
+
+=E2=80=A6
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> @@ -680,8 +680,10 @@ int rvu_rep_create(struct otx2_nic *priv, struct ne=
+tlink_ext_ack *extack)
+>  		ndev->features |=3D ndev->hw_features;
+>  		eth_hw_addr_random(ndev);
+>  		err =3D rvu_rep_devlink_port_register(rep);
+> -		if (err)
+> +		if (err) {
+> +			free_netdev(ndev);
+>  			goto exit;
+> +		}
 >
-> The length is capped in verify_one_alg() type functions:
-> 
-> 	if (nla_len(rt) < (int)xfrm_alg_len(algp)) {
-> 
-> nla_len() is a USHRT_MAX so the rounded value can't be higher than that.
+>  		SET_NETDEV_DEVLINK_PORT(ndev, &rep->dl_port);
+=E2=80=A6
 
-Good catch.  I hope a similar limit applies for af_key?
+I suggest to add another jump target instead so that a bit of exception ha=
+ndling
+can be better reused at the end of this function implementation.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Regards,
+Markus
