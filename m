@@ -1,77 +1,81 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B85B225A23;
-	Thu, 19 Dec 2024 12:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46661A08C4
+	for <kernel-janitors@vger.kernel.org>; Thu, 19 Dec 2024 17:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734611559; cv=none; b=uzgzLhhNlS9RQPFeP7nqfbnFJ6fYsdIxYuyGwv8zznQrZ0YYNNzc+nEWoMyJhpIleCK51uB0DNPLo5+rz774XF4uW53lYh77Efxujk2AAVn+ztVmSQzKYpyo7nomErdrkZG3Tdbyki5VeQjXFo9NI6TBhgBfTrZ048EoqnxArSA=
+	t=1734630900; cv=none; b=lWQ43cjT2wdH1DiRMyGYmYtvjucjnSqYVSWOJyE6kR+nYPw80iWoXX8IHwgA6DDk17OX62hin/fngs2bV08s6mejEoAlt9drp/eCB8bJ+x/mu7qbfIvS16p5OfE9fabEOFcLWmWQqJQ1970YNd75r1b1ix55Jjs0EKntTLx4rWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734611559; c=relaxed/simple;
-	bh=j92hZ39eHxVvxOBHeXyRC4Eo+r1zbB0t4hoie2ha+q8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iMGvhDtUK+SFRoSqrN6c7pHtIPucGuNKDuuLn/NSkmJeUCe8WOzkco9F/e4FzL8eeAZqgyalOqT7RpmmiSygXFeeujbByKcfHM0VcYCH/DkO3gEHwVWhWJjpLF8SKBhR4o9EQMu5CM+XmZUmsKdBZuDRa2MILe0C7THRep7guAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VpRx6Hg2; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1734630900; c=relaxed/simple;
+	bh=oZwRqy803An+355ixhKoW0TKxaGqD5dbK2vsid0b4SI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=uS9SyeOl4i5XKZPAr/ji/EgCrlnt2kDVABehMn6jqk6K98ymSyzK9IVRnQtC39JJKXJicnmTg9HAPxhzLn68lN+oca6XbK7f5blzJlce6msH0luUqVYMWrx6LY1UqK8sJzUP2Y/IjpW6774PpUAn4VRITBc6D6tLP/UlMIBLNUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LeSb80QG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VpRx6Hg2"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43622354a3eso5179755e9.1;
-        Thu, 19 Dec 2024 04:32:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734611556; x=1735216356; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7uOMmOxTuC9inC7UAGuj5K8CgVJVzatCr2SxuceBbgc=;
-        b=VpRx6Hg27yqO+y5r39oRouCpFbGmSRdkLxgLguxwuBTzqUEEH3Txq+KVp+YjYwvCj2
-         M8e168oh4N3bFnnkeqpLo57P3JqbE9F/k3VKHQ+gd1dppbaBH9lfMECp9CrcOQVLPkBI
-         2qDF6oONqakgXfb4IlVpN1f2BkObHtPTiQV25y2hnB68aYT1+RZEc5vbTcufk2pKTFDa
-         JbbBurInSai+ceKy8Iv6h8kEgILsI467YK9bOXqQHPyUQFs5ClUZYLEvoQAtQ1TyEDgw
-         saSuR5WqpBs2/bVCVotX7ErKOni58hPeDevd7kkrL5FJx/rcxABVAgui0oeybevHLuUJ
-         PfSw==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LeSb80QG"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BJGIxaJ006161
+	for <kernel-janitors@vger.kernel.org>; Thu, 19 Dec 2024 17:54:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VA7tV2ui67rX61THZ5+FlVRr7eM0epEaxOyh5+LbLho=; b=LeSb80QGhzC57pbQ
+	vy0j2a0k9IR6erOWMy0LMyZSYm/pcNB5JyhRgokuipyW5VUh56ghcmmuoRmMWGVJ
+	aRkhtGgUC9iv+Pwsz4sOEdl/OmOL8yqvlesQHe8JP7E19Ok24zelaiLv1GlJS0EJ
+	AReBmd1aLV3VtYrs047hbM3zLpFoJDf3kUGgOX0U2rZ8y64kK2m0g2Kpo2ACcgHm
+	tyq+VL15c0brZl2tPWSi1ZMhfEFW772Ma7ZFiVDqwg3u6pn5NrEfNp6KxiG82h7F
+	VxiQ1CAY5uDq2PYcMrGJqIBWSj1NnBxa9Yt5Q47QYwCswr4L+4/hbA3iKNoA+1p9
+	jLaQvQ==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43mpw608jj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Thu, 19 Dec 2024 17:54:57 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ef9b9981f1so1388311a91.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 19 Dec 2024 09:54:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734611556; x=1735216356;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7uOMmOxTuC9inC7UAGuj5K8CgVJVzatCr2SxuceBbgc=;
-        b=YzRMpOhvkx6jWsr1Szo7bjgyLIQIDdFG57SzG1/DB7+gG/tWpiU58CPOT/KC8fxQqg
-         KPOXaKlPinHIxzzMvKedUSvWBJjPnaTUHE6P4IutkT2WEjG/s7QXO+V8F1swDNS6WDu2
-         UPEf0Q3EBsu2/WY/zLpxdg0k+8GT52vYE7FgaR1X7CClYPejF+joxl4tGUWYk5SNmsQV
-         1YQc+kVnanNEQealT9ShaERHdxy6CLl2SxhZIbGGj9QMLj8RCMwLBN8bvLK4w48/OHdY
-         YbpO/oELvqlnvICOQ8RnVn6LqnPuRztXe0RMTdbu035T/+cmHRQFqfFXQdZ0neQUYQUS
-         jzNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXto7+yHx5vjLQRdOPW0nN7mqXaeHV99e3+LWf5GoBrwrx0atXXO66OHEfAd1Ozgq7pKUzeugpTt7Pr/GU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvOGB8SkT4iQORiNoSeqaDpWE9VhadEE5qaeHMlQrjpwIA0IvY
-	X9NECEkQ2M4uxs67/yl7A1NBObYJH1u54YvpiYI/3Bwr6elMTqup
-X-Gm-Gg: ASbGncs9D3C7T9Gp93SauUad/Baud1z1d+x2K1E9sYdFRziITnBFVrsU2+UM2/rNh3L
-	kHJFQxsh3ZcXuEJA/6rR30blq00pEk1ogyU3MgCi6k1tDtnM+/I644nX+4eed5SPI+zzCG+RGL8
-	bfHOwQcmRiO3eUfSoQIis2N8Ruo5UYuYIQoRpRkrWHPYFtm3m6dcjyzLkoRpvMqyxD8v25GJ9rk
-	594iVvswr9qz1GkxEIt6m7+0PQ6ZtKhRl1dCArOncePZzbx0ZnsmyQ0Vg==
-X-Google-Smtp-Source: AGHT+IHJaWy4Syj1FDqmmodsg0qce4bbV8C9mjEYRpvZWrWVy6MDcpPigtdiqfpwr/3HujPnW6Dr1w==
-X-Received: by 2002:a05:600c:350a:b0:434:f7e3:bfa8 with SMTP id 5b1f17b1804b1-4365cbbc5c5mr23736705e9.33.1734611555485;
-        Thu, 19 Dec 2024 04:32:35 -0800 (PST)
-Received: from localhost ([194.120.133.23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43661289e0fsm17105165e9.39.2024.12.19.04.32.34
+        d=1e100.net; s=20230601; t=1734630896; x=1735235696;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VA7tV2ui67rX61THZ5+FlVRr7eM0epEaxOyh5+LbLho=;
+        b=FpfR3x4Y6JSX2EQWwaF0zW7jfQVsMsdekCXu/VBrjQIJyXAk6GCVao1/sVrAWJUx2y
+         3KKj8N/69g5DILfenzlWTyaB5WrSC3CzLYIol5FWGr+tBdLD7qc/ze4VKI1O75yd7IvS
+         mq86dX54oSzSOflzugg1GQG5axe1tgd3TozLCrfAin0K07x6L2a6L3+xG/2Z5oE+ETL7
+         UgaBYVyzJkwveQKbLR/GjtF46Yniudc4bcA/+ItJxCsjCxUFbFMHN8yuXqbS7bzQfUTN
+         4uqsX6rglrUStUpN+pKwbpnxgH1dicfFwxFEBp9amifAikWFI9joJBB/ojHmodkUNjHc
+         k9hg==
+X-Gm-Message-State: AOJu0YwOxdyPuZRzW1Gzj872SpR6/wPAQz5WNbZP6Wk98H2jnaOPdaI0
+	KPnhVXEm7UGXDGLnGFslNbvQ9SuYOOovntLIn1hiwlNipFlS/I2LAOZ7l3/tX0JJcMkbUK76gMX
+	vKeSJebKZieKelB/5GUf/WgQGeX7Fw9ftdfSxsapwYKkjSMW6z5pHdshl89WGzVi6hbI7wQr37N
+	c=
+X-Gm-Gg: ASbGncsKUeekgsE3WGtGQEdUxbHEUd2aDSQdUg/qIj5OZt/Vj5/pWgR+9xOJOITiRJa
+	ArdFagXUJHGlstxQ9E+JDMkeH2nSBj6OcnDGlwRihrvLtl5kL//SXZMdFqFYbiOUr2fsreXZF2k
+	Mtff260uSQ3qKcmHHJNySVdwZRsAvQavb+01sGPuJXODEWqymwqFYWAXfBFz1PfxKFwtEL/JdHj
+	kshYVbmrPLubDDHRzWQbI5s5/OJXuAewn9qhczQeA7EmkfXaYWDH1Qtp0dj2PDRi9QVLSO53+t9
+	tG4Kz8yYXcB/MGXp6Q==
+X-Received: by 2002:a17:90b:50cf:b0:2ee:f1e3:fd21 with SMTP id 98e67ed59e1d1-2f443d454a8mr5966929a91.25.1734630896238;
+        Thu, 19 Dec 2024 09:54:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IELG3UMWl1CbADJmhXEaU2YZ7TC+6nbgzolRNVUIHmnFsQx0hXG9D4OQTIDGnY8nNs8qGa/+w==
+X-Received: by 2002:a17:90b:50cf:b0:2ee:f1e3:fd21 with SMTP id 98e67ed59e1d1-2f443d454a8mr5966895a91.25.1734630895835;
+        Thu, 19 Dec 2024 09:54:55 -0800 (PST)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2ee26fdfdsm3630628a91.52.2024.12.19.09.54.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2024 04:32:35 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Chaitanya Dhere <chaitanya.dhere@amd.com>,
-	Jun Lei <jun.lei@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "tolarance" -> "tolerance"
-Date: Thu, 19 Dec 2024 12:32:33 +0000
-Message-ID: <20241219123233.404925-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        Thu, 19 Dec 2024 09:54:55 -0800 (PST)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241217105505.306047-1-colin.i.king@gmail.com>
+References: <20241217105505.306047-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] wifi: ath12k: Fix spelling mistake "requestted"
+ -> "requested"
+Message-Id: <173463089453.2609009.334897453986903182.b4-ty@oss.qualcomm.com>
+Date: Thu, 19 Dec 2024 09:54:54 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,28 +83,31 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
+X-Proofpoint-ORIG-GUID: za2wkTP-jrwIioqCgA1hK1xYSO9XiLhA
+X-Proofpoint-GUID: za2wkTP-jrwIioqCgA1hK1xYSO9XiLhA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=967
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 phishscore=0
+ clxscore=1011 spamscore=0 bulkscore=0 impostorscore=0 mlxscore=0
+ adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412190142
 
-There is a spelling mistake in a dml2_printf message. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- .../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 17 Dec 2024 10:55:05 +0000, Colin Ian King wrote:
+> There is a spelling mistake in an ath12k_err error message. Fix it.
+> 
+> 
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-index b9ec243cf9ba..774c7692d416 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
-@@ -8561,7 +8561,7 @@ static bool dml_core_mode_support(struct dml2_core_calcs_mode_support_ex *in_out
- 	dml2_printf("DML::%s: mode_lib->ms.DCFCLK = %f\n", __func__, mode_lib->ms.DCFCLK);
- 	dml2_printf("DML::%s: mode_lib->ms.FabricClock = %f\n", __func__, mode_lib->ms.FabricClock);
- 	dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz = %f\n", __func__, mode_lib->ms.uclk_freq_mhz);
--	dml2_printf("DML::%s: urgent latency tolarance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
-+	dml2_printf("DML::%s: urgent latency tolerance = %f\n", __func__, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kbytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)));
- #endif
- 
- 	mode_lib->ms.support.OutstandingRequestsSupport = true;
+Applied, thanks!
+
+[1/1] wifi: ath12k: Fix spelling mistake "requestted" -> "requested"
+      commit: 578f6fc55c2ced5f68a7f87edbf6db3663dc6b57
+
+Best regards,
 -- 
-2.45.2
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
