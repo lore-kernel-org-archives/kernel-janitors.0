@@ -1,95 +1,107 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466E528FF;
-	Mon, 23 Dec 2024 20:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5384B7464;
+	Tue, 24 Dec 2024 01:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734987055; cv=none; b=p+LGBOY2WdbQlpXHkUpEqf/Jf+MElPoGhK2o00F7NGVm8+CQwzHB1ShZDyMo6xt2ymLVx0C36K9efdI4J/iTbvXroKF19s599W9loYTO7JFjQrx4i4/JXg15hKSekvHmZcB4E6ULnTY1C52kICdLjUZ/DuAa5n6GP+ptffco7vA=
+	t=1735005239; cv=none; b=dYh4IFeIP2or0KPK50uBJeeMiCZj/JnnY0osiSTkpRoCfoC3B5GuPiJR/s7jTXYLsRuQnMtCCI5LcthnYiX7NXqZ/F057nQoDr+6W4vznBu4LK/EGXPoWbl/U4G1NZALe8NbnrdFczpj8+cx2QKs+5Ea0+YkL3DzgG56r0U/F9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734987055; c=relaxed/simple;
-	bh=3T9qzlFyEqHF6vosQqzArBl8JuV3uCTmVULi4qJddKY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=nEW31SKNAc8H9ciekeV2jB7eaSHWF+iquFuLGTlN93LydtJLBkSeUqZewAw2R1+GNJ4FrESGNUI1/a18BeNmMLmFKRK+VUArO64zK8HczA/T+7aFrpK3YCMJO3/6vRtYZp3TSph5SAiUhrlGFfSkP8W8DOHNRyzMnpJt5cnme3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RG2clnMA; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1735005239; c=relaxed/simple;
+	bh=VnwcLPXzqphwAru4vXuUQ50A0B78VxkwzhAKqzuZEv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=duzSbIfObMDJJRobmEQzydLwaavL28/oMFJQYbG9gQq03A0FSb9qkurh7iHeHEjP+mJ1zTHExkIJuuu3Q2DaX5XVlRLII5o+a5O2Gx0KpQiNnvysqPVxZDsHYlQkMwa0v1WX+8EKQ5rr8oxT8iEeQf+xp2acnvue3wJaXqWERR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OS4DyRWR; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RG2clnMA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1734987031; x=1735591831; i=markus.elfring@web.de;
-	bh=z7Nbn3U4UHyXoXWBz5/azVwobvtrqjxYgFCk+vEPTZo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=RG2clnMAswu60PezC9qXi/GI5K89kXC12H09YVMPYvO9ksWTr1ZLKOEkVmo8FQUD
-	 6IP6UeNvOnHA7ePS/8EWQlXOCvxIhsp/ofyLGhtb7EcMFnMu6KAm00ADVtIkH7WsH
-	 ZUXk2NUQZGj0LACfXVaxWLImkytGosZ0ekSQvwJqMMcaI8C5qfjUoRf92cb7LiSoG
-	 gyKhhNuOD8U/vqmWCoNxutrMPaB8Ff/Z8D5qFPp+2OMcdcru2skXVU25bOHY6NQwo
-	 k0e2LoeZq6A6vLAEwOsu7BU7pzFrGlrANBG/sX1m4SCcjkOHQOxKo9mFLBstgoVT6
-	 IKp5lP4yZr9lqBHe+w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.70.52]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRW2R-1tDOfC1V7l-00Lf7V; Mon, 23
- Dec 2024 21:50:31 +0100
-Message-ID: <d983b931-b623-4af4-ac87-3807a86d1f87@web.de>
-Date: Mon, 23 Dec 2024 21:50:19 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OS4DyRWR"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-216401de828so43589625ad.3;
+        Mon, 23 Dec 2024 17:53:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1735005237; x=1735610037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oC8GYDukRinZpuoEEk5zn8i64A3XW6v21GLGztLKYa4=;
+        b=OS4DyRWRnAmmfbB23WWO3Llm3bW3/AjO/XccC0gXrX6ryS1kWBcdzCgyEE5tE6uPkt
+         n6a/bH967YY4VyaQrvCEL2fby60PRpQBEeQ01ClGvvYE2EUNGo/cyRCjdiGS8yczTl8M
+         6rBCnYr9GCK96wmWnuoGnZtxpISPH5C9zNSWDaPdZcaBsxUZCuup8lN7GC12Vvx58UGp
+         Ktin8YFomFkF6gHyAbXcewket5UGxwrEfh2zPcHg0o7ZLHAD6O4Eprwpe7wZ22ZATEE2
+         jUfsYCdt3BlQjNYzDl3TZf8soEwGG1J2yf11+drw9KYRI14T28ACZ+pkKqE7R4Fcmo1b
+         +LEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735005237; x=1735610037;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oC8GYDukRinZpuoEEk5zn8i64A3XW6v21GLGztLKYa4=;
+        b=ukOahyzSFdxGaT3ZIJAo//AmNU4BF3xNFttPqpi/T1TAkhWeNrsOlbuNCJEgvqq73b
+         UGeVBtAZCxoPY49OUBhiTrYNLrHIIbyh00IMlnJsvjw89o2niMIZtuPeZB9FetIISK/m
+         ot9/EgC4ByL3oHTVnk0GeK3A5+Nfnljaltjwls2JAzVRiAJRcdZgLRtRrbb4EHhMpySF
+         Db3kHKW++FquEBkuuvGLCjNPvdURa9kPIr/XC9Zm0gCzoD1WwQY4UhgVEC7dYVFCOZ4Y
+         2HCabuRa0Z4iwrj5ZJbQ1Hkc1/UN6mIgoB9iGW7Rapq6EChbYdInwztCzivI64EZrDhi
+         COJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJYfNYKuhV3/L6dZMwoH04H4oOcZKNZx2Uf0H0eYARCr34rdMMvIDlUUk4m3LsnYL3w7llvjI/rq/ezuB/4P4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfA4qPk8EQj+9MXdh322ZZ6D55xwfh/Dj6uxl8OCRZIpeCmNka
+	OlhpC6xLN1WifvQ8RWnXbn0mUczLVQHkaU2XcTW+7ZofbGewc8AKdadBGw==
+X-Gm-Gg: ASbGncuywbStk7A3bryhrYn3m64fJtgprrcKZ6k+tSWaJ42iXdjH0feT4oO+7HFyzzN
+	wPhrATB8DAA9xAbCRTprtLTn2rEz2JjTHClAZRKB0IF5EkhcBi/g9f/hZFn1u6+0LELGTwbYng0
+	/kLeAZIQRkgnRnV72D6ZyMPFpBY6JgXjP3RgDfS6/tJrXW4V/rUBEYjX5zCrFFTmfhJNlMdu+2S
+	vdavLvmRYfIXxJ3nkIvPIDltycMdPyMbK807y1zcVaDOp+XTfXyyaVI4NylFLCDyhZbz2/THKah
+	7g==
+X-Google-Smtp-Source: AGHT+IFvID5nwcfm6cCE92DCDypKQpsKIvCswMYrxS04bcrP1v/ydx9K7UDHMR/ubdPyyNsEcj+7Hw==
+X-Received: by 2002:a17:902:dac6:b0:216:2426:7666 with SMTP id d9443c01a7336-219e6e89559mr184496045ad.12.1735005237434;
+        Mon, 23 Dec 2024 17:53:57 -0800 (PST)
+Received: from [10.125.112.12] ([103.165.80.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dca0194bsm80186515ad.248.2024.12.23.17.53.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Dec 2024 17:53:57 -0800 (PST)
+Message-ID: <2cfea522-8015-d86b-f78d-a6a2c56ba8b8@gmail.com>
+Date: Tue, 24 Dec 2024 09:53:48 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Hao Jia <jiahao1@lixiang.com>, kernel-janitors@vger.kernel.org,
- Ben Segall <bsegall@google.com>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@kernel.org>,
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.0
+Subject: Re: [PATCH v2] sched/core: Prioritize migrating eligible tasks in
+ sched_balance_rq()
+To: Markus Elfring <Markus.Elfring@web.de>, Hao Jia <jiahao1@lixiang.com>,
+ kernel-janitors@vger.kernel.org, Ben Segall <bsegall@google.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@kernel.org>,
  Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
  Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
  Valentin Schneider <vschneid@redhat.com>,
  Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Hao Jia <jiahao.kernel@gmail.com>, LKML <linux-kernel@vger.kernel.org>,
- Ingo Molnar <mingo@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>
 References: <20241223091446.90208-1-jiahao.kernel@gmail.com>
-Subject: Re: [PATCH v2] sched/core: Prioritize migrating eligible tasks in
- sched_balance_rq()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241223091446.90208-1-jiahao.kernel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:p4HKWBUmz9Oc54VJ/ICfs+OsDNqIsWj/Fr97pVK9AL9jCvHkJ/e
- v5zW4McvNE+bX0aJkQJ+iB3EoOeK7QF2QAdlrJQnMxL2Yo2uqqOl/LifS01XYKkbfdsrGi/
- XWzKbmXwymkG50FfipCiHRv59U7c/IwIlDGGpOTUKK3FXX+6DwT/vw11OF5EsuFy6Llmn3J
- WlCaoXiA86eHyI0kjrW3A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:msIF+b2dNIo=;M9P0wwvyUqa2BL6JDXMoLAhPUKy
- 8TrMOp7uXJXUsXuvurJbqOWGcMu8T+++WPpbqrdLBjd3MuS+mhzEFIT+Wmu5SG+G5u5sFApFX
- 9xRKBxQsC3yydmgVXNa1k21m2M0uEWAzSb3ops8pNxfjBmk0Tcex2xnlIjBLmhNx70/+nxpm8
- fELzAu8aIp2f67L6e+0RVvo+nm21ebXdSkOt37QvZBGApqemQ3C2oAHoqMwc/EyAWP66KcCUm
- TvcyD2Pjokbq9jVm8WczLfsjQbAycVVHBiyILt1up/1+XhOEcCw4VIZmPVRbW4wDcBrQdpVov
- 0MLVhZpNzO94j1fuCTaQQ2JmSTbbHKdwJ9vyxqSzVlcfutPtK7dfCtTzL2ESMGcGgy7mDKJER
- raqs/jteOXAJYXE8fhjRA1FZ/FQ93al+4wzagRgJvGhL0J1wcMpjPv+0AHYi6jQM0/QwDOHnY
- 8Mk3qeGykQGIJYa9wLi8GpOtqBTTTpaycGwluvOwXy3FCrwz9BVgGNQ7DKd+L7YqaAinuV1iw
- MXc7TS1ZGANPmC6PS4U4kf4pvOWBnfiLjCSUdWiOnrBYYwB32gG/ElV3c7MNOLEigzVS23C0p
- pVR6PcXPDW6qBWu/nIxKfMajdJpaK6DQaOeKI7rnYzU1Viz4sM5sY4vb0GzfLdfb++XvqGE1s
- D2NU5gH7Mmt/osGwEgkfIAXAGs998vDQ6vguS1vv0ByVDyHBaVkkzfH4qA9biX0cx8E5B60Hd
- 5ERMSL/2a65d3wnFB7fb3W1fweQhlAPY6OuvPoWF/Ndf8HlyJEwI576ODjLwNrLQlZSMVa5MV
- /vmk9CVxiZ+x9gEOZn5BMizHolT70/cHEAWyZdcBBcZjqeNMnD9V9KoEqetrDENfaWS6wusWL
- 5cVVsTvloy30sC6PS8IoF+uBHMs3oRsGdgBPz7q6jaKdjxLOFlWSTYiUN6fzDn+n9XZKGsWCQ
- CCsGqyBSfkDuVMFho9kO6pt9kZSD6viVg8h4b3Ua4Ym+2fD3vaOPodZKZFMRNC3ITz2PnXhnB
- 2ue8MXzmqaI3tbZkk2QP5ztTYVFenQpERRt8PXwM7BN+0DSduXkaVlp+RCZFe6ktwr4aHBAU0
- KTannsFXg=
+ <d983b931-b623-4af4-ac87-3807a86d1f87@web.de>
+From: Hao Jia <jiahao.kernel@gmail.com>
+In-Reply-To: <d983b931-b623-4af4-ac87-3807a86d1f87@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> All of the benchmarks are done inside a normal cpu cgroup in a
-> clean environment with cpu turbo disabled, and test machine is:
-=E2=80=A6
-                         CPU?
 
-You may occasionally put more than 63 characters into text lines
-of such a change description.
 
-Regards,
-Markus
+On 2024/12/24 04:50, Markus Elfring wrote:
+> …
+>> All of the benchmarks are done inside a normal cpu cgroup in a
+>> clean environment with cpu turbo disabled, and test machine is:
+> …
+>                           CPU?
+Thanks for your review, will fix it.
+
+> 
+> You may occasionally put more than 63 characters into text lines
+> of such a change description.
+
+I checked the patch using ./scripts/checkpatch.pl before sending it, and 
+found no warnings or errors. The commit log should preferably have less 
+than 75 characters per line. If I'm wrong, please correct me, thank you.
+
+Thanks,
+Hao
+
