@@ -1,116 +1,93 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89141208AD;
-	Sun, 29 Dec 2024 06:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C4B219EB;
+	Sun, 29 Dec 2024 06:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735454408; cv=none; b=WKZ3FoTmWjJCMMV6xXxDTe7iMc4iN5wqsFDEFSCFXBb6P6SPTKgVK0hG6VDWfj9LhoC8BxDQBnAmhvI9JJqrJkB+Mtp0C+Y0t9icW9jyXPxaSA7gMQHI9Xkk6aWaOQmnK371otcsotDWtM/pyQ+1PktxPtEp9+EDSqlccqt3BWs=
+	t=1735454524; cv=none; b=A7umJK7vuvipiB9eZINdU9Cmdzp2WdFRzRwSPCnvdYLGD9uiweh82C3icl9kqd9ueh//fUMJW4dxE3vbkBbTSmdepz1lvYxsRc5FpjcGwt8hdb4LFi4PTr42pX7sqh4Ftay8KWAnYBNI1mFCkr2XV8u1QI8hfmxG6PnPVyt3QVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735454408; c=relaxed/simple;
-	bh=lWrr23FGGEH+BSZ5R0/lFrLpPLyketsMIiBJrvdnNAo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s7oJjsBcCrDfV/x5TKHjceJnCSTLFNll3jvEONukTRxX5GyMaqqsNgz+j8+2gA9KgM9Z7zWqWyPeolF4eujLjtlzIPT8QSjWTL4icPzVd6Vm8f/aHG7bMsz76M+XYC1GL5cF0GAk6/ocIlyQkn1JdqJ7OEM0l5NjGHTccgJwS2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRpuQCSb; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1735454524; c=relaxed/simple;
+	bh=LfvIXnnK+g8OOYxG0E9RecJ5c83C19LSBRYzScoDZdM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BmozILlxyUXVgZ72HyXiUpsY5aVpNVOjJNY7rzBaOtp+z03+7v3sh1kZdasVsrDdgG1mThPjxqnHisNJls67GOnLrM81fRtguoTWczN3uYyCKnA8QN1wtTriJQXu9dxbsemnKEGmWTHyyxFgfZXmrtdRYxZcwAesRn9ZU0jOqQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fOjTgLK1; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRpuQCSb"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21654fdd5daso99348445ad.1;
-        Sat, 28 Dec 2024 22:40:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fOjTgLK1"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fdafso16809393a12.0;
+        Sat, 28 Dec 2024 22:42:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735454406; x=1736059206; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7sjL3tMQpPKs7kVWK7kRAWcSXHsD7fTFbrTvdXfa6UU=;
-        b=FRpuQCSb9GqXtErbuXxQ7OKQiEUT8wLnWRcHU7xnKMkp7IR3oLl4K3Z2/RLqMS6f06
-         otzPS2ulliBP5fNqjukqfcy7cC/pndl0JQwp5zVZfzGNNVgJ2olpLRWi4ZyCbpwOgEun
-         A9jA6Te42radYNoqDdnGqDhapi6w48k1Y4fEA42crnWIZ8mol2ahGS44cGV/i7r3CHA7
-         jMT/FS3fiF4cqdTGXQ1nxs0u8Zco0aeXHVn2l8MjC8oiG1r/+Mj7iJ7t22LGzJQMLE1M
-         0CaRkM/OktTsABN8XFVpEDblFDIn3yQKS/l1riL36Hiy321ornQHMjh5So8+JGm9F6jw
-         ee5Q==
+        d=gmail.com; s=20230601; t=1735454521; x=1736059321; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yoQs17Sw2Xyoi+9aEpzBByXBdm4OjNM+7umUp5NjZM0=;
+        b=fOjTgLK1WtResXqt0o8bjMRGNXGlARcjdFIgkBt7CXGAhJnhy3WPetPo5HKzBhFMuD
+         HVCLWndU9BtH7eaHO9o0Ztda/MgJWrIiJvVjJTWRibJOJ4jdDcPCIAx1LnIY1DKcoaqN
+         INDqcv7lVdGsRldH8V84xkXNkdb4YNti+pRFbU+JG0vW/J3xoteMTthXsfiWaf6N/jAG
+         yVOI6KId8PsIv1VWCf/6FSi6BiTp0sETQY6SWY+gDnvZsjiTbw9655ttzYTuYMrXGtTk
+         0koL96w1JeSjrcMg9MxaRV+r5RBDUS/7ew/sytnvTVFIgACQT+HFWWGDSUtqozgcAhoK
+         5HMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735454406; x=1736059206;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7sjL3tMQpPKs7kVWK7kRAWcSXHsD7fTFbrTvdXfa6UU=;
-        b=eHiZMxicKZ/BtGNnI2RSN7rJI/avOnPCJnxUdgOhXILB2p/czBRB4pPOWIWqfEkOjp
-         nf5iQDPlbdtKLRzGG17RKDGOkIyN3aXPimb5PzMV231Tg19KalnpOt1JNDOzFN0btL87
-         5x8hJmg9gboVHR6dr65LF7Ft9gyvDWFkHxlQQQ7PH0NO5ChuRh53HXqeGHld17JIbV0L
-         C/MEwofCBnjDKTc5Cw0nbAJdOsuvGzZwubPPIbjHAwbN8gXoBJIr0EvZaDiewDj0ZyHf
-         dI26pp/6BwZYuaFAraYBpuFkYT/NjT9aASgtZ9vB4GCT5RKsH23e5akdrJZvglYXua40
-         8jnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULxsFVQvk0GH2C5N760mAJNcqPiFMVbc5E94C8kUhmFNrGaospCI4LQK14+ebNm9s7s13ofh+Oq4r4XFGlRzU=@vger.kernel.org, AJvYcCVEyBBKBsWH8s58bkOmnbyHWbESggAsU1BSPVXy5nYovFcUNv7RR9/bqpB5P2CBHzdD1fKbdbdC7l/Ltigi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpnsJeA0IVfhX3Uof4vLmhv7iBSqYiNmR+7ig0S8kVS7Jr3b87
-	SnXn7o1M4sl++1+gTLKyojwshVz1oZ+dKAg8vyhZqRA1gzPsSwuL
-X-Gm-Gg: ASbGnctVXqM6o0VRvt9onUtvPku7vw/nPsXMukyZO7NkheNl+uTohzhcT8GQrSfnG4F
-	ndG8iX77WedduCjjtXYoE1jXoKK5FdjyjLaATuGg4EMQ/QukGCnvHKLFXS2/QAn1lCHXDhSzXpj
-	q9hb9wxeu3rZjdHNT0X2ytUz8yp1UdXZSgAj03GyUIrSWp/8OvyuN5SlDJ5UPtix1gT/RW/15Cd
-	5aILBhUXzqIh4RhTxDDvnibDBDQ1yqOo5yOtlJ9XJdTvx+tHpcx
-X-Google-Smtp-Source: AGHT+IGkDUpl4eqzTvDw5PObJToTwrtJwD3A0wNk5+svd3doxM/Xm1bHQdfSr/E1suBt61gbnb5rpA==
-X-Received: by 2002:a05:6a20:12d5:b0:1e0:dc7b:4ee9 with SMTP id adf61e73a8af0-1e5e0445d5emr59065912637.8.1735454405837;
-        Sat, 28 Dec 2024 22:40:05 -0800 (PST)
-Received: from localhost.localdomain ([45.115.0.249])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-842b17273dasm15722872a12.19.2024.12.28.22.40.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Dec 2024 22:40:05 -0800 (PST)
-From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-X-Google-Original-From: Tanya Agarwal <tanyaagarwal25699@gmail.com
-To: haren@us.ibm.com
-Cc: Markus.Elfring@web.de,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com,
-	tanyaagarwal25699@gmail.com
-Subject: [PATCH V2] lib: Fix return check in 842_compress.c
-Date: Sun, 29 Dec 2024 12:09:45 +0530
-Message-Id: <20241229063944.2252-1-tanyaagarwal25699@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1735454521; x=1736059321;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yoQs17Sw2Xyoi+9aEpzBByXBdm4OjNM+7umUp5NjZM0=;
+        b=iCpLjxZo/HwdlAj4ROQulqxRtg+G8WFZGdr7DjxlcPMyQ2IKgSpaiwoNZFzPKoc/4B
+         q4dHP2KlWj3b/+u4a2+Z2SK0ZJAbtljQroiHvVPkvAafUWoWgsBe1S7JSB1DRa3wYHUz
+         jcMNL9bvA1OIGBbv8qT5dEryRpHnK4IHwwPWjTdZrxO4tYupzSJITizij2e5Rf9Y4bKv
+         LNJyKJ/aUG+5PVFqKmwU0cRBZP0uEKHpUWzPHIJaPAMcvrqUVVZ20YJbtb5XDua+8Cuo
+         3ifZHWOK0ifqYN0//H6eF8Uv9DkycagKIwuKBfI2uqmigfJT9NEpGLP55seCo5KN+FQD
+         z4KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQRRmjrPnqAnAU+HPKsinmSOK7zIFeoSFsmzrg3ki2ta2bWlwGVB+lH1SsUdkvN+PRGC1L2T0j5Y9BM2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBc0nP7uKO+a78nJI1Cer4opjMRUDLC2LCxvHkbnsCZ940i7Sp
+	HjofcSufsRtgL6z+/dHmdWpxC0wXwkfVkiM5FZBJ33QVecSiTGna22HNVS6uIfhsIj344r1yiFY
+	ygy+9Uhv56hJjj4CE5YwNvFksdv5uPy8E
+X-Gm-Gg: ASbGncuC3Xl8k6YUnV9MDbxSzgdADCKpGlgDxehANHOxPKjTx8zMkWqCGLn2ALEqVoc
+	9Q/jbQnTEApJCmNcDLq+7Cj1MJtJP4aZGwauc
+X-Google-Smtp-Source: AGHT+IFMexdolapzsNWCSErE2ta/6RJx3HbXRPOmvab2v0Wbh21e200XRuc5yaE/u8IvQ06ETXnrw3pIyQU85KtqXVc=
+X-Received: by 2002:a17:907:d9e:b0:aac:61b:a079 with SMTP id
+ a640c23a62f3a-aac334f3b6amr2712896966b.40.1735454520681; Sat, 28 Dec 2024
+ 22:42:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
+References: <20241228074246.3572-1-tanyaagarwal25699@gmail.com> <6b3a53ee-666f-4f1c-b00a-4bcacaf8cfb5@web.de>
+In-Reply-To: <6b3a53ee-666f-4f1c-b00a-4bcacaf8cfb5@web.de>
 From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Date: Sun, 29 Dec 2024 12:11:49 +0530
+Message-ID: <CAPdGtUyz_w5bGJtr7OR2oQWVehuAi-OUKS_pZZKk4p3GvOJseA@mail.gmail.com>
+Subject: Re: [PATCH] lib: Fix return check in 842_compress.c
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, Haren Myneni <haren@us.ibm.com>, 
+	LKML <linux-kernel@vger.kernel.org>, Anup Sharma <anupnewsmail@gmail.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Improve error handling in sw842_compress() for add_repeat_template().
-Note that this error case is already properly handled later in other
-add_repeat_template() function calls.
+On Sat, Dec 28, 2024 at 11:52=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
+.de> wrote:
+>
+> > Add missing error handling for add_repeat_template() return value.
+> =E2=80=A6
+>
+> * Would the summary phrase =E2=80=9CImprove error handling in sw842_compr=
+ess()=E2=80=9D
+>   be more appropriate here?
+>
+> * How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D an=
+d =E2=80=9CCc=E2=80=9D) accordingly?
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/process/submitting-patches.rst?h=3Dv6.13-rc4#n145
 
-CID 1309755: (#1 of 1): Unused value (UNUSED_VALUE)
-returned_value: Assigning value from add_repeat_template(p, repeat_count)
-to ret here, but that stored value is overwritten before it can be used.
+Thank you Markus for reviewing.
+I have incorporated these changes in v2.
 
-Coverity Link:
-https://scan5.scan.coverity.com/#/project-view/63683/10063?selectedIssue=1309755
-
-Fixes: 2da572c959dd ("lib: add software 842 compression/decompression")
-Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
----
-Changes in V2:
-- Updated commit msg
-- Link to V1: https://lore.kernel.org/all/20241228074246.3572-1-tanyaagarwal25699@gmail.com
----
- lib/842/842_compress.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/lib/842/842_compress.c b/lib/842/842_compress.c
-index c02baa4168e1..055356508d97 100644
---- a/lib/842/842_compress.c
-+++ b/lib/842/842_compress.c
-@@ -532,6 +532,8 @@ int sw842_compress(const u8 *in, unsigned int ilen,
- 		}
- 		if (repeat_count) {
- 			ret = add_repeat_template(p, repeat_count);
-+			if (ret)
-+				return ret;
- 			repeat_count = 0;
- 			if (next == last) /* reached max repeat bits */
- 				goto repeat;
--- 
-2.39.5
-
+Best Regards,
+Tanya
