@@ -1,93 +1,65 @@
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085BC1B6CE3;
-	Fri,  3 Jan 2025 14:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A8A1E535;
+	Fri,  3 Jan 2025 18:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735912917; cv=none; b=BRHZqB58I/moYdv6JLchwHm61BYEsQ9GxnN+Bbsztd7DEP/ql592c0fgj9aZ987MxlP6EfwtPwgSkastfowk2LT0nBKliHCmpQNbTLe6u7y3ITeBqgdFPF8YZPAZaMrurkwHfnpNfINytDFh3nqNLQqy8aaWHH5k3vf0z2ywp8g=
+	t=1735927659; cv=none; b=qdZxddUmcBFp9Vc5nlA1GFL91E3td1Q62bWaPAYYlC7iVWLAynrR8wDbWGLNX6yr2RLj1LJD6YIxaHg1XFtmOdAJZgiRVpJk17p1WxTHjaerM8LX7pqzYt6jLuXBVa9y4JNN9QvDALzsVf7IEeZ7lpc131i4YyU2EeaxnRe7P2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735912917; c=relaxed/simple;
-	bh=ZRno73Lk2Ty8S0opHivTNzfFl53OIMiLT3tzSC/C688=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dY6RB6t+wnCX7Cy6dA6C49VG88yCdo0Qm9qmpZ3tWNrDg9svDuU85Wdcgpe9xYEnu2NAqFcx67EC1IbjJwL7QcFRLB4JAZdK3yOmOizda9NFBsQWPlMfEGUsqQlLvFBfV0UIuAUVPvTJyTLuKIJLiNhDT1+h1cfs7M6PCumXMNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=qQM+R7kU; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1735927659; c=relaxed/simple;
+	bh=VclUfTsbh5IoXG6Lu4dBSyCzArpH6mdIekP3I2X+5BA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A4VMg5fBiCx6raAprS1/cYQKtJjM5AjkdckNBhoYWq1/RDQ/2qDdZFarDHCDdpplhL+EWiZd81Zvk834gjqRLbXT5FcHeGENfRL7kdh6p1JFGFKUPFGBUr8+IVkZ5rRRBNfPV5Gm9oaqpXoA9JcfcaNKCdzS2jOVAW1KoyFuXxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D8mr+8TQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="qQM+R7kU"
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id TiD9tWQAL3p3ETiEGt9jNC; Fri, 03 Jan 2025 15:00:44 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1735912844;
-	bh=Q7/8sNe6EE+YUMiz3BwMXFn6gQr4fPPu1y7Xq24DSTo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=qQM+R7kUntUm27bjnscuB4czDTZsh/deE0yB26iMb7BXl/Wn9tmlOvFlj5u7/6M+4
-	 QF/sLtmbApUjGRCugm4FtaprL1XP1/WcdQGt1kGABidmRRELbiV1i2VZQ7eT0C+nv/
-	 caXqebeZtTtsalMFmiOJrBMb52QlTxcP7lzEjTRHL/3GkaoBWCPa/oiyouFf6nckTs
-	 c0uk4dCCRua/rHn8NBAS41YDM7KJYQuVQjgTLlKYfaQWhpsFiyRuzdzENgtAzkiqma
-	 WG2/83dQFlP+VU0htC0f7oIt7QFjIwvyOUAKFj8NAsPXbPEPHukGmPsdSahM+NwkQO
-	 kEFrC+VppkTjQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 03 Jan 2025 15:00:44 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH 3/3] ext4: Remove some dead code in the error handling path of ext4_mb_init_cache()
-Date: Fri,  3 Jan 2025 14:59:18 +0100
-Message-ID: <282d130abca6fe7db5edef1922c971849397ffa9.1735912719.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <3921e725586edaca611fd3de388f917e959dc85d.1735912719.git.christophe.jaillet@wanadoo.fr>
-References: <3921e725586edaca611fd3de388f917e959dc85d.1735912719.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8mr+8TQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D770C4CECE;
+	Fri,  3 Jan 2025 18:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735927658;
+	bh=VclUfTsbh5IoXG6Lu4dBSyCzArpH6mdIekP3I2X+5BA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D8mr+8TQ0hzhp4HxNB2q+JgmiiDq419HnsPRBUgDI93HSnQv3FLbIQ9fNAolzFdzu
+	 jyNi6iYNSHgUcVNjm44OfD2wTORYEKG0tj2qZyuCbdnrXi8s2mjjexAGYOpScyAVE1
+	 bbwb95/AM3aUfTH6IiB50m8IgoMhigqyBWxAvEjWv0kfnz0jQDGQ65O7PJxEL1Mfxh
+	 /oHfYXCpBOm8ULfwlh0RiRF82gDB2IhufZ5UtNejlqQz16KU3bUsfcqSVipxrahTy5
+	 zFR8Q5j0b6Er9QZ1wYbzOXymQLat8Oh8YnsHpNrMXc23igQU3L42v5q7LmHlKEsoDJ
+	 B4vCoSD8Chftg==
+Date: Fri, 3 Jan 2025 10:07:37 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>, Su Hui
+ <suhui@nfschina.com>
+Cc: alexanderduyck@fb.com, kernel-team@meta.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ horms@kernel.org, mohsin.bashr@gmail.com, sanmanpradhan@meta.com,
+ kalesh-anakkur.purayil@broadcom.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] eth: fbnic: Avoid garbage value in
+ fbnic_mac_get_sensor_asic()
+Message-ID: <20250103100737.1f329212@kernel.org>
+In-Reply-To: <20241230085249.4aa68872@kernel.org>
+References: <20241230014242.14562-1-suhui@nfschina.com>
+	<Z3JTFJgbzX4XGHwG@mev-dev.igk.intel.com>
+	<20241230085249.4aa68872@kernel.org>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-'bh' is known to be a non-NULL value if the error handling path is called,
-so there is no need to test for it.
+On Mon, 30 Dec 2024 08:52:49 -0800 Jakub Kicinski wrote:
+> > It is more like removing broken functionality than fixing (maybe whole
+> > commit should be reverted). Anyway returning not support is also fine.  
+> 
+> I defer to other maintainers. The gaps are trivial to fill in, we'll 
+> do so as soon as this patch makes it to net-next (this patch needs to
+> target net).
 
-This slighly simplifies the code.
+Having slept on it, I think you're right.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- fs/ext4/mballoc.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index e536c0e35ca8..c22f7b8fd941 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -1430,12 +1430,11 @@ static int ext4_mb_init_cache(struct folio *folio, char *incore, gfp_t gfp)
- 	folio_mark_uptodate(folio);
- 
- out:
--	if (bh) {
--		for (i = 0; i < groups_per_page; i++)
--			brelse(bh[i]);
--		if (bh != &bhs)
--			kfree(bh);
--	}
-+	for (i = 0; i < groups_per_page; i++)
-+		brelse(bh[i]);
-+	if (bh != &bhs)
-+		kfree(bh);
-+
- 	return err;
- }
- 
--- 
-2.47.1
-
+Su Hui, could you send a revert of d85ebade02e8 instead?
+It's around 126 LoC, not too bad.
