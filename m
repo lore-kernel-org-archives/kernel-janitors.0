@@ -1,106 +1,98 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846921E529
-	for <kernel-janitors@vger.kernel.org>; Sun,  5 Jan 2025 02:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCEA84D29;
+	Sun,  5 Jan 2025 20:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736045684; cv=none; b=IpCnuYXWyPBp1kbUF2KR9XsmWH9HnqdTN3NbHx9CE6VUZumY6W6OZ2w3690OPo308NDU4VGZqox0dPKXz4c3fRDsERfmZT2mNhZE/7GLl7LBYJYaLLLpYKRkOidvDl4SV1LSbp3O4j1AuLGK6exl+zkH8NGgcz4enE2ub63sHH8=
+	t=1736108839; cv=none; b=NO1UT6qG0PTxI40XjepSHBVhJfDNrRHKo/6uwnhNfz0MXjG7a5uAKVQig5CdhYxJv51q0dqeXUuwY5JbBY/vSpko+RM1+71TXWdY5OPpw69sEZ/daxpVQOcORbhcQhAcyovB0V/HKtZpW4jaTQNqbd0K7sDLdCgK6kHKE5NYurU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736045684; c=relaxed/simple;
-	bh=K4BQ0O5FB2ZbQKs3Ep7eTJpcCAMT9HjPAO8b/DEqCo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G4RGL7nPzehmx06qeNlDn+swQMGQF2kBkcUAH/VSkWV2QZXHHsjCHvEdAPwnkum2VxBN5WhV+y3KV4fW+MeK32GxlTyPgjortNLO7yE9Wl6dkbmdeLvc9nZOsec2ZslQ2EPxdUbsDgtDMsTw2cPmBdWD7Rlq//Keu2RbN9tNRH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EtYEVmnh; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1736108839; c=relaxed/simple;
+	bh=58qULRVWr9hMZr3lET2E5PRUQ6delVmmtebNxc4U1Ak=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=DcqU2y44ownvfKQdz3H/QLrOuYDzgJiBrjIJiYRiOzexor5yncOabdL8UtLUeCRzerhiq9u1L/kpjEZAY6MUlH+B7uZtbwJl+I43hfRxhOgYR2Bnwlzlau6tT9l/z/aY+J6ItKQWPf3Idwv+xZVBV4VNMJorXcL+YgHrtvfe5j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nOzAyYM2; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EtYEVmnh"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e537d9e3d75so18971953276.3
-        for <kernel-janitors@vger.kernel.org>; Sat, 04 Jan 2025 18:54:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736045680; x=1736650480; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sS26tpyWT7dlWr6BoTq4p/vjr1hXYpZOniphQk82fnk=;
-        b=EtYEVmnhTgTiFNbFs4c7imI5fSiVYrFSylsxMwxA9WZb+DoP2dvl3LiUI/ZCO13z56
-         q8HvWAxh2BYIoEQw7g/cd+QL9Jy1Y9KllyxhrH7FDqFIKUxw147Maj/cAJe9/amqtfTM
-         ihLuAhGWebzd97xs6WfOffWEXa48/RbOrlFaWDFgpEZgeABrp15P6w5+L1j6GLJg86hh
-         FQ9l1uWad81IpKpWL6fkDQCUKbO58i8zho6Pb2WnGeBgrCVLurD1/zOJOGZeYprnOfG2
-         lV4+5iiTLw39YSG6uhcBAQusX3494jAxrLNtHcL5um+MpFBLOLY6/LfrrX8TRBjZBHjh
-         MsDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736045680; x=1736650480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sS26tpyWT7dlWr6BoTq4p/vjr1hXYpZOniphQk82fnk=;
-        b=d6rek6msCvqEx42OM7z6M5ZolohDLHcTiUcQS6jNBBEHJ5fPMyVLm4uZgmwZGtRxe7
-         jegJuIM1WgJdv5Zef47tPdtVXteYF5FiO+ll7Wl0YahRSCjKHdFEZ5SSa3FrSj2/ymfq
-         rfOde3sBMLkWGyubQ89BkcVm+4y9LcyqNbQpBFDTkOr7U+yqTyBY9k6GaQHCpTGHNblR
-         +H3llipYnyQ6fkX9+gQSuacnsOOjU9MiiPiTRj9/vTbSFikaEHD5FaMQyfZWMIiIWS2v
-         uyd49R6AyxSE7N1znmIPU4VUrAmktd90tIE/K1fC3iQ/T0oi3wjB8e+rnbmsEMS+2p3l
-         NG+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVsJpiIzatWbWo47CagPKhEDeqgIR0Po5dhpfH+nmpndv/xMmWHaPIvmbyMmuWvM3spWOTuSiHZdWgQZ/jXM9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnAbY2ABQMAZriW3rrSYG3SdkiB0CceJcI/KOI4n0JXF4DJDGk
-	8pTXwETudcowB8X/Iyuirk2YPfHxqId0Jo17M6SzGy7W/jLqF1ZT/DUFCYycqzapO50FDeuwm4G
-	kITCQLkevSNe+rRX6NMr7weAGVwV/uv1a0bVj
-X-Gm-Gg: ASbGncuzkzx+1NeEB1wyT5ZuNGL86Q8DpnOMc+z6Y5kSl7KSg8QLU83hF89ff4vncG8
-	BymfpFCFrGHpq4jB8P5Qgp3933lCQYtNIDIVu
-X-Google-Smtp-Source: AGHT+IHxA4Bwa4vhQsSrWbpnPia3Eq/lgZeEjF8aSXgYYB9IwAwuXzIS9iZH8CoqCu98GYWrWJcY1wJJgL8pkYkwdVo=
-X-Received: by 2002:a05:690c:6307:b0:6f2:8e62:d8f0 with SMTP id
- 00721157ae682-6f3f8216b58mr369761097b3.30.1736045680661; Sat, 04 Jan 2025
- 18:54:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nOzAyYM2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1736108812; x=1736713612; i=markus.elfring@web.de;
+	bh=58qULRVWr9hMZr3lET2E5PRUQ6delVmmtebNxc4U1Ak=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=nOzAyYM2Wd+o3EHPjCc8esCdiAbFZ99wmWKg7egl8wdxorkhiouCs1L1FUl+JoXu
+	 WngslhfF7SgKzUB1U8sFUAONFMYHKZJ9jFGvectnGSr5GvxZvRI2+iZN50LXF3h4t
+	 IC/SJCB94FOZnED4IlQLhcCiWC5TEhaEvlzyPBKYIDBOcb11xneS91AK0iGQIrhYZ
+	 vNWOdBANDi0xgG86nivtvEWLzjbXLgt4U45ZwNWjifXeYxYiIkUp1cyHAsaHroBBq
+	 E7f+6yDx/+faty6li15AFCRa30Igu8LjBkdrBt24duRm/P/V0PrMeH32qyqleVRdO
+	 HhRPVsAkB7TtWtdX7w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.17]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3Ez3-1tThjC3Ra1-002A81; Sun, 05
+ Jan 2025 21:26:51 +0100
+Message-ID: <c80c06f6-d283-4687-bf32-9b6be19c8257@web.de>
+Date: Sun, 5 Jan 2025 21:26:40 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112124532.468198-1-colin.i.king@gmail.com>
- <20241112133224.GA340871@mail.hallyn.com> <433bb625-480f-46f2-986a-604fda49c046@stanley.mountain>
-In-Reply-To: <433bb625-480f-46f2-986a-604fda49c046@stanley.mountain>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 4 Jan 2025 21:54:30 -0500
-Message-ID: <CAHC9VhQuVYCNZm9S-TsJ7vm-Zihp=A5qHXQ8BPyZcfncakvOfA@mail.gmail.com>
-Subject: Re: [PATCH][next] security: remove redundant assignment to variable rc
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	James Morris <jmorris@namei.org>, linux-security-module@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, linux-pci@vger.kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
+ Thierry Reding <treding@nvidia.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org
+References: <20250105105927.276661-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] PCI: fix reference leak in pci_register_host_bridge()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250105105927.276661-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BcMa+aPchTM4skFyDan+jVpxs55rFWi9hblbLBBlgcKaAHqjcpj
+ IO3FjpVjn2RdPwF7y9zhLu5PrsetejA0N+nf7GEflNtmvaARxxpQ4NxsBtiSKE8IhGfKdD8
+ 9qh5RaiyiL5+TveMWJAx4FSf7/8Tr0LkLi4bXKr7GsN5MFurUXPBGOTq4y9GGDt414uZx0u
+ SjfE0CMuaBSCeFNYAYemA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:X2y37VtCzfY=;6ktzJ0o4sivRgNOTNzjKBdSQPr6
+ XkV9iOC9ZSpZAuaIegsllKSGMSCF9I5EmfGcGkR3JeaO6UFQMwz45d8i3Pc0rmf96SD2rSDhJ
+ c1dGyjgz5tWEwpjc0cLot88N2dmxyjgJqIp6dFLlwJHryVIZv9rTCn97ePMQYKOQzuRGNeAjI
+ fmqhr3EWPs5wqhlJosiAxwss0KRdc8EH/ZLX4Z33crWkfvziP15hwDeCc95zz533MV/G0NWMN
+ cJNm71e7r3WMbZeCKCGtmHecNDw2H8TPp/h+xFJu+wMT0KRny8lwSXzlxTkiy6OKx1u79a8kt
+ 0Ri6w4LMOsan6kS9ouHxywBazTdgv3Z6jQKjQ/fnshzxAvul8y+jeph3YG4t83hI1fcdUi9dC
+ QyZfmc3KHR3FFFJRwAAER6nmNRac2qC5AdHffBIy9ieuVibHiJVy6HrdA2MwEcy89a3l2uMhi
+ ohAIOi3klJSm3+lm6I5f61ymGBDhTjcdYNPyN/5cNzSRNmVeGDeojxgssnOq6hQONX1ANkVJu
+ r4axPg6PofmgjzvCu9iSzPxOhIhJdYiyU9Fnlu8+fsuBBwKwDI0nIi45m/kJT16dMnm8Dyk4C
+ U9egBF+uj5GlIc4iNT3Sd/z9Y+fhozva3WqXejESqALwaNTvBShWf5/AmtEvscnEbZe+3DXmX
+ 5+uJI3gMB9LxIhfvXqYzn4tBWZNccbch3uXTayxiSzBaVMyYxX/sqW5myGBUaxykzppzyDBr0
+ rtChrOuLhGsT17LA5bDCgz8pZD8xITzhYqkC3R7xdC38TKiRfN11Ikl+yJngG/UgqG8gEdXyp
+ 2h2pdihKGNhpA7jAwH1npoBvwO2Sf3JrF0vssHzEYznqJPlikeo8rdAGOjhzHMGVGOTV+4PH1
+ tx8bjb5jdgjM5rU8eLLxdUk+H9FrCJpF3UiLAf8TY5E35q/whmA2N1zZFXdMiMRFovDbTPmSJ
+ mEdygt5365vIz4Vvg+UzBG9mLZEQu31cOEFdJ8upCzKD+furbHSa4M5ZEDWzKrFvVSNVpN+Yg
+ tr0DHXO8HfpdHKnSgG7g0TosjeHP1i2q0E+Tu+jD8tDEWt1mEhNnVPGCNgh1DBoJWW/mzVZnj
+ n9LZtSNsQ=
 
-On Tue, Nov 12, 2024 at 9:00=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
-> On Tue, Nov 12, 2024 at 07:32:24AM -0600, Serge E. Hallyn wrote:
-> > On Tue, Nov 12, 2024 at 12:45:32PM +0000, Colin Ian King wrote:
-> > > In the case where rc is equal to EOPNOTSUPP it is being reassigned a
-> > > new value of zero that is never read. The following continue statemen=
-t
-> > > loops back to the next iteration of the lsm_for_each_hook loop and
-> > > rc is being re-assigned a new value from the call to getselfattr.
-> > > The assignment is redundant and can be removed.
-> > >
-> > > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> >
-> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> >
-> > (long as it doesn't go to stable :)
-> >
+> Once device_register() failed, we should call put_device() to
+> decrement reference count for cleanup. Or it could cause memory leak.
 >
-> There is a tag for fixes which would break stable.
->
-> Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
->
-> But this isn't a fix and it wouldn't break stable so probably that's not
-> appropriate.
+> device_register() includes device_add(). As comment of device_add()
+=E2=80=A6
 
-I've also talked with the stable kernel folks and they no longer
-automatically pull any LSM commits with a 'Fixes:' tag.  LSM commits
-need to be explicitly marked with the stable CC for them to be pulled
-into the stable trees.
+I doubt that the information from the second description paragraph is help=
+ful
+for this issue.
 
---=20
-paul-moore.com
+
+> Found by code review.
+
+Would you become interested to check how many similar control flows
+can still be detected by the means of automated advanced source code analy=
+ses?
+
+Regards,
+Markus
