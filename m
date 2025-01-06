@@ -1,86 +1,66 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0861469D;
-	Mon,  6 Jan 2025 14:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA2D1DC9BC;
+	Mon,  6 Jan 2025 15:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736173225; cv=none; b=ppLr8OTJnZglixHAr8mS5YpGYQLlfTnsgOaHMoP9N8pb4RgTE7tcRef2DDTR7vFL1pFlKTxGrvbyfMPHnuXzCYangpi8UoL3HcmdcZnIYU3vAnD9H3BX7eSd1Z1LosVA8BnG7MeVlmC+pxgxVmFtIJ7bPcOviHOwm9746ZMs6ek=
+	t=1736177507; cv=none; b=Ys5eTlAuijUxQTGKkkDPGVGqi3w4VF0Z/h/zcNwYxIagr+U4yFUdQ//hkXeMqFrOcboWo+5WhV2mBIqWu6tbRUUzY8qW0btGYr/GBrb/JZxU1g6sSwe1P3ihBWweMylUsGAVBbLgpl+5i8v3jOPbyvvUyyE5SN6u4QbOo2JL5Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736173225; c=relaxed/simple;
-	bh=H3o1WOzrrk23WPvGqo0oelniBWiOET0tWoR3lHnPCS8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=RVGBD3LOYFgOqWfMpYJcpU+hG0VPloM8DxbKIcwYrCVIijx0YoGpkE/5VwRURnxcvQJvy/hGpm68UfIttDkwVTpoYmnEgW6/eaoKgP0A1LZOie/2XTmPj729EfHj36itaPmK05FadNHM5erBX92IHhYZPINgmZwnyPFFjSbmdaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pMlVJh9E; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1736177507; c=relaxed/simple;
+	bh=1CDx1KZGRF4KtODc2j+SU0Oxq5Hi2xlNf9VcrcJLqqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FglsVRjWG0gcuLz5G6TpQvObYHMPC+jVFsXQYHxGUHNceaXYhATpS3VdNpIfsiM+lZ1apZ6fq64L9Q4kauSJ5JM0nwIH2v8EbfosdDocrMf94Jsf8c4ka8X0s9kjrkz0P/A2Zk/oWiLul8DacOjNPMmNOfmuZOsoGkBTK2DYlnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFb7sKSO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pMlVJh9E"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1736173215; x=1736778015; i=markus.elfring@web.de;
-	bh=H3o1WOzrrk23WPvGqo0oelniBWiOET0tWoR3lHnPCS8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pMlVJh9E9HpdX3+g17/d2eMevo9pUfUEpJNlGip6LTFEf/Q0FG66EwID6Q4pDagm
-	 5S5AILx7ZEZFl4W6GaV6K/MtBi+FJNIRk/cAf7dfCTKasACH2vIK9SYtFQfSxQnSC
-	 2lXI65/1qOOvjxiDJ5GY/pAYIPZfWyfhjFrJBluUxHaZmNH7aPXOfw90wTQ5XzR65
-	 fAAwLsu2xxdO4O2gKbP1RBTjgRNQLYouQxDq3cOmuO3uZV5lWlBxPIZ/C11yrtZhU
-	 Upc3/DUXoXtW+w6ZpyBDTeuSZHjIwTehlDCGQkFuRBIj1SA3huXPeKQ6fQDsVUu5D
-	 uGs9rR4scyXv6mRB0g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.38]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwJO-1u4PMW3XwE-00caRS; Mon, 06
- Jan 2025 15:20:14 +0100
-Message-ID: <544231e3-a355-4229-879f-d5ed4a5130f2@web.de>
-Date: Mon, 6 Jan 2025 15:20:14 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFb7sKSO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA0CC4CED2;
+	Mon,  6 Jan 2025 15:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736177506;
+	bh=1CDx1KZGRF4KtODc2j+SU0Oxq5Hi2xlNf9VcrcJLqqk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DFb7sKSO2QFKTzxUlzKpGjsRN72jPlJpkBXFN41PwOH4CD0/V9U+e0Hw6AtNLwJaI
+	 bQ2uCiSQXbjeMmH2HzLqsJgxL2TJSTIZjlkiurAP97teLBJpxDFwSB0cEwU+OS9Dls
+	 mVblcoJvq/MQ6Zu8NWV4V0fkrI0qYGW705tiPXS2+KC5dWnUdnId+TR/gZ3g2PHqSf
+	 Wn9S3FZ+MqWXCZOTwRF7r//0UyRM8Vk1L8D0J/xAcXSLYV5tRiTBynTT55LgrW3XWA
+	 A3Xe0gwm+jsD0a9xNcu0iXY4FN8pF7ByHelEF62GblFbOj7A4laXq4MaSa8T6k0gr7
+	 j5meuSF1u6T3w==
+Date: Mon, 6 Jan 2025 07:31:44 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: alexanderduyck@fb.com, kernel-team@meta.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ jdelvare@suse.com, linux@roeck-us.net, michal.swiatkowski@linux.intel.com,
+ mohsin.bashr@gmail.com, sanmanpradhan@meta.com, vadim.fedorenko@linux.dev,
+ kalesh-anakkur.purayil@broadcom.com, horms@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3] eth: fbnic: Revert "eth: fbnic: Add hardware
+ monitoring support via HWMON interface"
+Message-ID: <20250106073144.25d6b9fb@kernel.org>
+In-Reply-To: <20250106023647.47756-1-suhui@nfschina.com>
+References: <20250106023647.47756-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
- Theodore Ts'o <tytso@mit.edu>
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <282d130abca6fe7db5edef1922c971849397ffa9.1735912719.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 3/3] ext4: Remove some dead code in the error handling
- path of ext4_mb_init_cache()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <282d130abca6fe7db5edef1922c971849397ffa9.1735912719.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:f7Rsa4GrcbI+xlzCvAEiR3ihuGYq9AmQfrd7aCsqvkae5ZlEl45
- 36dJ2bIOeF08N2uzNhS28ulpZpnUQR2AJt4a1AeX5YyplhuzO5HnNYZo13hocf7TL8DGkkM
- 7DNZyaWTu+BurU/HMGNwJJKTeXVlRWkoTgWJmk87TXWwojUbumzVXSYzGyCSb9gehSntIEb
- GwQeSG8qkTHE5p4IcrTLw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LaIMWPJlEXA=;mJgtnXjeXCT34EkzHBcY8ZR6XXB
- 2StUVO8aG+4RLELd2fatNt7joZ5VSCqHkzG02iwshfTbQ7rmoIxnSgUjoLO3s90bImb4M+/Ip
- bzOOm3RzYcvwRvkYFHd3wDymHw9fRvTpR+v3oQVEwobKmShXDGBSidLcHWSk1Hd4oHqDHdWa6
- h/YlRNGV3q7vqSXKRFbXqrq2AWMLeUtZomjybIVEjXdZyD6LDxgoVfzFVUfAS0oKXYOSZZjnN
- t6B/NsOGQxuPMxCD5xbqlsF/Wvn3H0dkKWAKWhoG6h0OuhYcWvCDbzJVpjB1ZeMIhLP4hMxWF
- 1ot3GPkFy/3ypln3LVyUMF7cuy6hFBQUWOOJGy4Sp/m2XmzAOitJhEvldYTXq7L2dJcwZIof1
- +bqJUA2nuxCYO1q+ylHnB0DFXcpYwthGalRrlrjGsAYkMOMVGNCTsq8f+LdUmps7bPVnHX5Hf
- CFq30sE02JJi8N1t+QpDQ/oK6WQxNOaZjZgkxiN77G2HYqi6UBpsYv/ABCOJoNTkORIJoMJy+
- ldKEYtfsMT+nzXXbx6W94yFk5pnw/IhJ/HMisRazNuZQfr/3yz0cl/c68oQrKuZ82Zpvv9PqB
- yGRHcbXhJn7C4WKUAd/7JT+Quiu0w4WTrdROl7wHk+PO3/bHRmfwSB6esmMqO1nB1HnHf6IV/
- zZ2IgEhSxlt/ZEbyIK5/xgnF+BMq4E/ePRZWAqOLWR6x29eiuvsRchfDGLwWd2gOT/vkIpuiS
- /Wh0GTeifPWb9cWyljZfZynSXoFWA1hBsMUrbL8NAX9c+1Jd19iqjXrL/mdKdoP5oH7icSyCb
- z8oaw0BNo6Hie4XzU8QZ3HeEM32PNCZpgGxf7ejbJaAyxXi1fZfC86ccNjSNngxFc/4IkQW4b
- aqHY9gYHILo7khL8wiWLuDq59pFPaKLOh5Vw4g0IkPOI7hpvH23eYqfw2Xv1MEKl1zfrfWdvp
- Q5HaprA90WKuCaIJtGQMyTcGDvIh9ewcbGN8mue5s0CezPS0nteWa+nddHge62U6C7eKmoKfO
- jCl3SFIgRDRqIf8YENa5c5tArBr1gPLxr8YEPiABh9TH35guyn6Dxj+ESCoDY9qcKz3OKTaBc
- Qn/Kff2T4=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> This slighly simplifies the code.
+On Mon,  6 Jan 2025 10:36:48 +0800 Su Hui wrote:
+> There is a garbage value problem in fbnic_mac_get_sensor_asic(). 'fw_cmpl'
+> is uninitialized which makes 'sensor' and '*val' to be stored garbage
+> value. Revert commit d85ebade02e8 ("eth: fbnic: Add hardware monitoring
+> support via HWMON interface") to avoid this problem.
+> 
+> Fixes: d85ebade02e8 ("eth: fbnic: Add hardware monitoring support via HWMON interface")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Suggested-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-Simplify the source code slightly?
+Reviewed-by: Jakub Kicinski <kuba@kernel.org>
 
-Regards,
-Markus
+Thanks!
