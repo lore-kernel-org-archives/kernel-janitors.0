@@ -1,121 +1,144 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47C3198E78
-	for <kernel-janitors@vger.kernel.org>; Tue,  7 Jan 2025 10:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0431EB9F9
+	for <kernel-janitors@vger.kernel.org>; Tue,  7 Jan 2025 13:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736246868; cv=none; b=Kh08jyEr7TprxCqb6AXVFxgkX2CxQoWzsK/vKb8ZIEJ6rivlghEo/S8PnhY1Zhi8+I/Mk2el6/C6TCsSDxivANp2nfnONYog94eOf82f1n22iZOOCfb5bZMsdpa0lnUgfGp2jl4ra6+6+5ixCB5MJNim2PcY4WFlU4aah7pVrDc=
+	t=1736256928; cv=none; b=HuWZRCqBJBShcAhDZtc5Edt5E5IdUIdTVh8fRLOhhsNCye0wUOqDyvZHVWuc7jE5YHh0BpwgERn+IDdVklAcBjflBAITb4jc6sAfGRRt6HgNjFYqc+wzywcCBMqqpWxbxcJLYwouQnKxxn6UxcCblD2Nvr/1cq7Q80PRV/pYnIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736246868; c=relaxed/simple;
-	bh=4DxIWS4UxbWb/GxgImQ2LJd+yXKvqJI5SXd4jfKZslM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KXsf0HECjX0Py0EbGWEuy4lI4xq6ijYSZlHzYpyImhRluS6TPUNmHAsaf8D6RJBzv9gjtG7re7ToUPNNZT0SR7pHFxIrWECsGv8uIEcnTypOAFlduaMnzil89c/Yn0CPXzS3HZ7NFyzerTwYB8fNN948aJXwmSiMNeGIxlyGoeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a3IlgDGP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1736256928; c=relaxed/simple;
+	bh=4286aysA7oRVs8jwu5zQ5rCNC2YPaGJojNRwFE8eYfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nzGdm4pD+CZaatTOl/g9iI1HfDKD/FHZETvBqaf82JesGBuiyEpBqOHzGHl0CiwM6c6IfjqroCccmwil0RNu97dK5GsyywtZsdHN9TNOS7lq9AsywG8PGCiltkput/DoOiyz/attVJMWwKvRM1I2EPp3N/K5qlMUMIK048uw+DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IrDiW7tF; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a3IlgDGP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736246864;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Xxf3smob+6l57OQXLoAdYMn9bpXPBaTQlMB2diZdpmc=;
-	b=a3IlgDGPwktYC7Bgs2PuilGSvMWjcvm7cjq6x0o7NCAQvGIWG5Q1dl2WXJtco87mpCc+gX
-	aF7N3T6BvVnIQ9ya+LpO8znKpHI/p6UPRBp3/90cnETUzF9LZYcAdCpVnlaCgh6pVSyFA3
-	7P1u9piuHtm5mWV/1DCgKJsSpXK//C0=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-196-XC5OSGgmOPO4m0kDjaVZxA-1; Tue, 07 Jan 2025 05:47:43 -0500
-X-MC-Unique: XC5OSGgmOPO4m0kDjaVZxA-1
-X-Mimecast-MFC-AGG-ID: XC5OSGgmOPO4m0kDjaVZxA
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-46799aa9755so462434961cf.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 07 Jan 2025 02:47:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IrDiW7tF"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so12118413f8f.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 07 Jan 2025 05:35:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736256923; x=1736861723; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J7FFIEdHS9CbAL61Tl5ApigOpZoV4UoWP/2qqHJFSmM=;
+        b=IrDiW7tFFBPDNCrpIZfSYCI9kKiIqXHdsw2geF3xrMQpptLb0uPLA4OS7g2e+c/eCJ
+         /wdDtlNcTGHVDDkouNeGLoD8SitYnPeIF4YA9Q1NQXeIWHoXePPe+SRFiYHKd9cBosSD
+         iXF0YEcBGK08fw+X+cQndtTUK2bmGqVZJEI7BwysapFKOBEg/G/KJfX/dprrEprRT7m3
+         dLRuwZgKvRMtOZ43iWrJjapSldx1NR60Mh8GKrWVie0+ImzPDfZOcL0YJ1Vj/DhvwJ9b
+         VXDx6x+Q2DZFvaJgeRET9dFJhU7ihS3autCDdKjW6xN08qwIweptDPXJTsrcOdoK6e/e
+         4Yjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736246863; x=1736851663;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xxf3smob+6l57OQXLoAdYMn9bpXPBaTQlMB2diZdpmc=;
-        b=ZNkCNNDxdg8nFab9Zah9WJWcy+osa69yADMutDCJPM5p4UKsiOH/suuoJzy2qPAn0/
-         W3sA7qioiB7fFr0H6BajKHBd/CUOkGPkAa3WJ2jmqQRp9wjfJxMCfMlbjHxmWrzJFor/
-         p2D3/SY17KXaw6cPACVKkbZ3R3UvB/y89F8LF1aAdts3jDfpf8jCSHzyeq1Es7lrkhtw
-         s5kG7KmOY7rQ12UXqES8AN4JCsmsUYK11guu5YZaFtacZjGfNeeQCL7XeT1vg37Kv1gQ
-         2wYcOEtUejl26lzvlTrmtcJY48/79ksH4yEDrPhdN56UDNL6+KUI2kIJk2tUgCck3sFq
-         P+kg==
-X-Gm-Message-State: AOJu0Ywxf723BtwUFWKaqiqwDhJmKcmOUWaqAg18+ndaIA3oJ4xJfwKd
-	Gw/8CdymhnVsPZofNj6mpO8bdZSCS+yXsoJdGH3UzaxkteShfeeiPPHk6IUPA16q1iknn0DZeTZ
-	+kY/t8KzEOgRC8r0IOeO5EZg8a8WRCCJt9Es3i2myF0DAEgt/zfbVu/L0Ja8sRSuVaA==
-X-Gm-Gg: ASbGncsbfpYJiLEjFEO8YxEHatw4mm+ohUT1Yihml/iTiMlkmUtU0ReD04LrYoqB8rr
-	i3l1hwx7kICRmCjfqrIdc+/l3ckA3Rsb9MlMQA7zXBONDcMHQ8THS5vdb3u+Oswsmc3oyii2Vzb
-	EhwcR8RjuzgbF2KJ8ear86YViNo3VcSpi3Igpe0Pc90XplTvn0a4WTfFlP9o2m4vtuLKBICy46O
-	cHprBvbCI0tci4syyZyDg9Bx1L5BQesqIeI0/QWP39DjTddP3jYspKKER0LtGVPnnnri894V9aW
-	I72MFNsh1d6y0fgi+FQvF77H49XH
-X-Received: by 2002:ac8:5fcc:0:b0:461:313e:8865 with SMTP id d75a77b69052e-46a4a8cca9dmr937479981cf.21.1736246862796;
-        Tue, 07 Jan 2025 02:47:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFCN1wrufu76U/PyJOp8iP1dgVNtmKaWBLmDGU07zHb7TNTTnchQao00F/SfyXcsqdNs1HzrA==
-X-Received: by 2002:ac8:5fcc:0:b0:461:313e:8865 with SMTP id d75a77b69052e-46a4a8cca9dmr937479761cf.21.1736246862555;
-        Tue, 07 Jan 2025 02:47:42 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46a3eb3403fsm184169821cf.88.2025.01.07.02.47.39
+        d=1e100.net; s=20230601; t=1736256923; x=1736861723;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J7FFIEdHS9CbAL61Tl5ApigOpZoV4UoWP/2qqHJFSmM=;
+        b=e0TOCWXdHhn0wesNQ98ZGw+bpD5+RxUIpMWBcpRXxIKUFNPRNiby5a449nqj2AKP18
+         FFivis5qRTZtgOAeKXvHDAl28oK39lrnYYDqFVTbAe1LwX7BCTM8f+8X+cL8Z07+EREi
+         WQZIKFmKx8PA274i/kriarCozSPydriXMTg604XHeXnBFpVcAD8vSV+QxxvLTp+JnJws
+         lVM8J6ZK+NvuVaFRKp4VWKgQ6ThnAty1M7lPZ6o/n/vHhKCTkrGC1NoYTgctJRx6jqeb
+         AeTfh4ootrb/yTdZ7+rDmAOFQSgllNnseokDNy5e0ixjmRaH2WdAKgEKDjSrhdCSNnWU
+         M3oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Fz9RxCckZdxF3kWET32VTN7JvBiVb1eBRd7CIID8EvxXSnZ0gEy6u82CdJtPWmuXsaSLhb6igzUV+PsIcuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr8lXztZkxoKESF9D8i/fnIkCOfGIx+143s9hzdASlOqnIconE
+	krOga4pI0uQSryXaJnL7948yoj9Lt3xQTdrYF3q/GuPdrhjDCxuYCo/v01RdCaDefwiVBxRhov4
+	b
+X-Gm-Gg: ASbGncucc6XacosDqeCDff7gESD5QZyljn5w93jbmiWVk+1ogQSks0kICvAYrErENwA
+	X0ungCK/w3pHMdKJ7qLBmcdJwmQnl1t3OnLw7/FOhMid8P4ldSPh2dxAXdp7SEO6kmK/poRaAbb
+	ForLVstfN19S323BFNlDxsEa1Ke9q3GqaTVltvcpoR/ma97GHagkJqlxqnxCyuvLqEfJA7LvsCP
+	bFlEJJeDkneRkblK6HOCaNDJW23Fv3x9LgpUI9VXfVBlQvOr3rfmmDvwqYpyQ==
+X-Google-Smtp-Source: AGHT+IGcx6zv+W7uELezmWMCmgGv2pbdtmIgaj3rQCqkbfeqR1hydKp/UfPE/8wdBxQsYajS2jxmFA==
+X-Received: by 2002:a05:6000:186d:b0:386:1cd3:8a08 with SMTP id ffacd0b85a97d-38a221ed256mr58676524f8f.5.1736256923354;
+        Tue, 07 Jan 2025 05:35:23 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c828817sm51326659f8f.1.2025.01.07.05.35.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2025 02:47:41 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] clk: qcom: Select CLK_X1E80100_GCC in config CLK_X1P42100_GPUCC
-Date: Tue,  7 Jan 2025 11:47:28 +0100
-Message-ID: <20250107104728.23098-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.47.1
+        Tue, 07 Jan 2025 05:35:22 -0800 (PST)
+Date: Tue, 7 Jan 2025 16:35:19 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Karan Tilak Kumar <kartilak@cisco.com>
+Cc: Sesidhar Baddela <sebaddel@cisco.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: fnic: delete incorrect debugfs error handling
+Message-ID: <a5c237cd-449b-4f9d-bcff-6285fb7c28d1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Debugfs functions are not supposed to require error checking and,
+in fact, adding checks would normally lead to the driver refusing to load
+when CONFIG_DEBUGFS is disabled.
 
-Commit 99c21c7ca642 ("clk: qcom: Add X1P42100 GPUCC driver") adds the
-config definition CLK_X1P42100_GPUCC. This config definition selects the
-non-existing config CLK_X1E8010_GCC. Note that the config for the X1E80100
-Global Clock Controller is CLK_X1E80100_GCC.
+What saves us here is that this code checks for NULL instead of
+error pointers so the error checking is all dead code.  Delete it.
 
-Assuming this was just a minor typo in the number, i.e., 8010 instead of
-80100, change the definition to select the existing config
-CLK_X1E80100_GCC, similarly to the definitions for three configs
-CLK_X1E80100_{CAMCC,DISPCC,GPUCC}.
-
-Fixes: 99c21c7ca642 ("clk: qcom: Add X1P42100 GPUCC driver")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/clk/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/fnic/fnic_debugfs.c | 25 +------------------------
+ 1 file changed, 1 insertion(+), 24 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 42c257e4c433..ecba763a1a59 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -67,7 +67,7 @@ config CLK_X1E80100_TCSRCC
- config CLK_X1P42100_GPUCC
- 	tristate "X1P42100 Graphics Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
--	select CLK_X1E8010_GCC
-+	select CLK_X1E80100_GCC
- 	help
- 	  Support for the graphics clock controller on X1P42100 devices.
- 	  Say Y if you want to support graphics controller devices and
+diff --git a/drivers/scsi/fnic/fnic_debugfs.c b/drivers/scsi/fnic/fnic_debugfs.c
+index caee32bc9190..5767862ae42f 100644
+--- a/drivers/scsi/fnic/fnic_debugfs.c
++++ b/drivers/scsi/fnic/fnic_debugfs.c
+@@ -679,46 +679,23 @@ static const struct file_operations fnic_reset_debugfs_fops = {
+  */
+ int fnic_stats_debugfs_init(struct fnic *fnic)
+ {
+-	int rc = -1;
+ 	char name[16];
+ 
+ 	snprintf(name, sizeof(name), "host%d", fnic->host->host_no);
+ 
+-	if (!fnic_stats_debugfs_root) {
+-		pr_debug("fnic_stats root doesn't exist\n");
+-		return rc;
+-	}
+-
+ 	fnic->fnic_stats_debugfs_host = debugfs_create_dir(name,
+ 						fnic_stats_debugfs_root);
+-
+-	if (!fnic->fnic_stats_debugfs_host) {
+-		pr_debug("Cannot create host directory\n");
+-		return rc;
+-	}
+-
+ 	fnic->fnic_stats_debugfs_file = debugfs_create_file("stats",
+ 						S_IFREG|S_IRUGO|S_IWUSR,
+ 						fnic->fnic_stats_debugfs_host,
+ 						fnic,
+ 						&fnic_stats_debugfs_fops);
+-
+-	if (!fnic->fnic_stats_debugfs_file) {
+-		pr_debug("Cannot create host stats file\n");
+-		return rc;
+-	}
+-
+ 	fnic->fnic_reset_debugfs_file = debugfs_create_file("reset_stats",
+ 						S_IFREG|S_IRUGO|S_IWUSR,
+ 						fnic->fnic_stats_debugfs_host,
+ 						fnic,
+ 						&fnic_reset_debugfs_fops);
+-	if (!fnic->fnic_reset_debugfs_file) {
+-		pr_debug("Cannot create host stats file\n");
+-		return rc;
+-	}
+-	rc = 0;
+-	return rc;
++	return 0;
+ }
+ 
+ /*
 -- 
-2.47.1
+2.45.2
 
