@@ -1,67 +1,71 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530311F03CA
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 09:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B9C14883F
+	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 09:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736327607; cv=none; b=F/KTlQC9Vb2Yi2PRZrr7gpC5tc5LOz/EOJfpSqrSf5W4yTbyntEKBfQaRGBLFNVoJzXF2P/i+xJ36wVKTjbYthoZmGwBjx5DqE9hRonGUGgDm1az5VLAaiiu2ClVyDh8qJ/CJ1kiz10hDxafJRQ7qlBXyq2ZAwGk+uplTE6m+38=
+	t=1736327760; cv=none; b=oGRYoFZBLP+KcuyZdGviRDD5kxkSwJp9SjZN5ylAd3VnCNhd7/4kX1tw62moM527p85UGSwJMEDBZXK55+P1r0r0CnnNZB+VJA/bAwTz/FbiFejGvP+Tu+uu5vLIdQJqwsl2OD2R8N5l5FYVzUbMSAe3NTonHdm9aI3UV1OMia4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736327607; c=relaxed/simple;
-	bh=apMMjVP+kwbKtHPFp/A5uUFdrg+Nshc3Olcebw/xj6g=;
+	s=arc-20240116; t=1736327760; c=relaxed/simple;
+	bh=BDpuea0x98xGaOH/brrQV7qpk2foL2fZltIoQWXcJDA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qrAGfxv0ev/+8CDKvjvqb5hJKA6E71EkFPeughS8Q9Bmsdas5d2j+OBMppzVd1kifTW46Ac6a4FziSWcXmfhRc7nwNJFuvOTUWGAOuGBqvvPMojl7VJzdRAvenGb5NhLO2jKJ/ERT8+2AIKGaqID/1N9oj1+xrDuy+K/EEOhDJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aHo429h+; arc=none smtp.client-ip=209.85.128.49
+	 Content-Disposition; b=OfWoDO3Ql2mR58zv7z3gIcIH9bwtOXw8WCnZ/FbK5NLfsx2EQHot5Ww87UQqtxEX/nSdxlwKvYaS+5w7aQcH0XvM3IkzoxS5lB22QN2DCkpKZpx7YP3iCVUm9ZZyCMzLesKqdIpdyW3cebpYvI8wUvqQa9x+2DWHS/czmCDAtXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MFum00QC; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aHo429h+"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4361f65ca01so163494635e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 01:13:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MFum00QC"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385d7b4da2bso14008896f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 01:15:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736327603; x=1736932403; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1736327757; x=1736932557; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MzXs3KFyj+OlwwBWlXhhhHxWf9NDPhglowmb8OrsU0U=;
-        b=aHo429h+SPawfeaDbWlms7HxQFlUOrZkfZ5RP8ZXt0urvOkAMKbgIJxTbP6lLbu6i9
-         JkDR+E792lAhzulQ2cohPyGG3pR6AsjSKsU9n6F2xXH1CpD5uFaR7Th9ORk77Jqpr/VB
-         Uah7JCFm1oJ0XzjBOUI30gtaC6BDPARk1wO1t0jBYwIqd5x1LW8OVDP1CrG34CNJELd6
-         O4lxaYEJk3C9jlqgsNdahh9+xlybDF9qNxRcmB4t1b7kGMwis4hrhXDfDCJ27/JMV0Ic
-         2xyjO5PJsHf6adhzMRr3PmOFZSeYbCFGJgHCV88jueAlKPJhNg2KHV8DqqsbQgDPaltd
-         giMw==
+        bh=dNfHlg7+rOJqYIBrKsr5HH/Jvz6rLd05OrWMK+Cy6zQ=;
+        b=MFum00QC+j+d2mDTtauIYhucJVzVSaefzQSYr0BELxxO4n8ZMI3/t/xelRNB20uLMV
+         19QEeoK0D3SlizjyiBCfEZBovA8kB2ZuiihrzMrLIACtClH3m9Zm9gvSAmg29tcxRiu5
+         tR0d24pR4Zz0NQKmBPgA7BQur9idFhEmh1RJydjceV/qU2inuT11wrzhDbQz4js4uyWN
+         APDle9opOL1PePRtJ3xiPyOEB+g22/bB3MGP6Mz3wfS5qwDODQJFloFGPgxs9P5iBkhr
+         5umBydSjkyRDo3dPQpRY1zdhuie0sACntlxlkHIhb/X+LnyxQuY4Muqs+Bp2uN+UUnx4
+         R+bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736327603; x=1736932403;
+        d=1e100.net; s=20230601; t=1736327757; x=1736932557;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MzXs3KFyj+OlwwBWlXhhhHxWf9NDPhglowmb8OrsU0U=;
-        b=l7PBseb/nGwSLKMjIzkeBUqSyb5562we/FSqINrJImjzHgb7FOK32fXDWRbWbTubpb
-         KI9Qffu9SUrsx0gZlQjM5ExFmsL2lh2x4RP7jTK9r5KLZ7FfAY3zFmWdwe7i0EX6xfhX
-         IrjyWG3b4hCWO8CHhrUlz2f9DoI9AM9eD/X+g+1n+LZITLJQiMo3CnOK46/8iKrYZ66i
-         uzEkAyDX8lTgL9HnL0vVuD0S3NgORZWPeMefQdLuhrX7pRaFyiWfYsfLK6hQ+zmeQEaJ
-         9UEwxCXaOPonaoUluM6yeGRHbIw3U8kwDhKLzCJEVT+Y31wSov1REMW8HmYwKhK7fsy/
-         tAsw==
-X-Forwarded-Encrypted: i=1; AJvYcCX39wQeZ/Td8cKIwInDve1p6Y8//tHbeHnQTA3pT39vD5XQq0jW+KpDRdFeC8+ie3ymzaJh4+BTGJpwza0xVJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV5zUsfrQqErf2QLSnIyo2i9PbH1VNG0arxvQ0rKSRCCxtMDyy
-	8TUh62tuSdibD3uOptarOCA4bkIstSrMgzYw/h5m0gumdWruL6aCJkFnbyAP4II=
-X-Gm-Gg: ASbGncvtsr6XoFlrD3qD/SVU7ajdR+iaH22aainSwa+WnZ/Ggx7JOC3QWBE63sEUAuv
-	l6YyjV3QPNNkipQZ95bDqclZMsYayPdJe4FXaMkBwo7dGFx1zHI9PLQR4MUHviE/7qpvARuPV2h
-	dycIDhX+G/urcOhs97g5Bk1RcVWbCz2+oX9GQxxHi3xv9n9kOH+7bjS+867bDh+kWbgY+JzC7yG
-	UYWlNPRIJUv54rwyYjgxMYFZNg0YHSptC21DoRkE05moSHLXL2IIz7ewZpLWQ==
-X-Google-Smtp-Source: AGHT+IHGv+AYtNiD8pZSgTeJJr69q8hxwaeSukDvA5nr1zKw8kvCDzL2/uyOHrj1po6Sh+MfWJg6+A==
-X-Received: by 2002:a05:600c:4f09:b0:42c:c28c:e477 with SMTP id 5b1f17b1804b1-436e2707f13mr11755805e9.23.1736327603629;
-        Wed, 08 Jan 2025 01:13:23 -0800 (PST)
+        bh=dNfHlg7+rOJqYIBrKsr5HH/Jvz6rLd05OrWMK+Cy6zQ=;
+        b=UsP6EKWelnCYYW1jgiEdMKUnI+GcupS/0Q4DNhWKAJdfrM7LEGgsZXnyeLU+LjY9tD
+         LcYM6XaRLfoLlf8uGX38mO9lC7hQDxr488ssX7PHEChFQ5+cBjK7LHpASl3kAxdxXDr4
+         vyvbwXb+Jze5iNqE9682QZ5lLc2uXEPhJwmDZK7AjbgVbFwTqZeGW/SD/hZtp1mP0fT8
+         w/DqHbRUkzSP83jxtP8zfGuJl8Tg+JdpQgfzx7Qt0pKQYwIw5nhBigjuKzv+OjdlMrMO
+         IDghvhCGw+hamboybULb8Kpi33os63TjGooVfwN9QgiXE//iWpPG0PkW+dKXL2EeKq61
+         5ubw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSWky3u2qiI23AYhAKoltnAA4+05C9yp4Mdw+uHlIuwTWRPsfsDWav7atHVu6y6zmaMdYaCrR1Jp+ANxUg9D0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEVSe21bqki3CbSyrKKn3p07m69G1MDAR2XebdrAJl2j3paPsC
+	7jRJtT/+9e+6PjrQIzjcTvobO/Wa6X6UPEZPtn2IBENGbJ893HE8VKqTRrN6XYs=
+X-Gm-Gg: ASbGncv+fopqSeNWyvkMiiVpFtOS6qjB8BIXEk7tQSNlxw/+DvH6toTKJirofcxdypL
+	KP2XBPRCGfgS0aLhJbC/XibbaTvIAabodCZEl01bfZQyv2XJZ/UDGiyRqss+1LWO0Rw5nLKP+ez
+	if4yD4R2Qrnx4W2GygyLAJ+uIn9SVf0O9UVIGAdFsIOgstYAi5ma7xp4NwC0nQpIgRtlsry3AHy
+	Arqg/3jhgZ7Hev0+z56p1QqG3YKuFZGG6+qcZoxNqmwEXgjD6qsbedQgsdyIg==
+X-Google-Smtp-Source: AGHT+IHCY6wO+12ioIIeFx5QBHEz/z5fXqeEkaIQcWC8b/Zkck8otn4DFulJBJDQ/f9lbUQDLV7jiQ==
+X-Received: by 2002:a05:6000:4714:b0:386:33e3:853c with SMTP id ffacd0b85a97d-38a872fc034mr1308522f8f.12.1736327757259;
+        Wed, 08 Jan 2025 01:15:57 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2da6401sm13964575e9.2.2025.01.08.01.13.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c832e31sm51691430f8f.33.2025.01.08.01.15.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2025 01:13:23 -0800 (PST)
-Date: Wed, 8 Jan 2025 12:13:20 +0300
+        Wed, 08 Jan 2025 01:15:56 -0800 (PST)
+Date: Wed, 8 Jan 2025 12:15:53 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: Larry Chiu <larry.chiu@realtek.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] dmaengine: idxd: Delete unnecessary NULL check
-Message-ID: <ec38214e-0bbb-4c5a-94ff-b2b2d4c3f245@stanley.mountain>
+Subject: [PATCH net] rtase: Fix a check for error in rtase_alloc_msix()
+Message-ID: <f2ecc88d-af13-4651-9820-7cc665230019@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,28 +76,32 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "saved_evl" pointer is a offset into the middle of a non-NULL struct.
-It can't be NULL and the check is slightly confusing.  Delete the check.
+The pci_irq_vector() function never returns zero.  It returns negative
+error codes or a positive non-zero IRQ number.  Fix the error checking to
+test for negatives.
 
+Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/dma/idxd/init.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+For more information about the history of IRQ returns see my blog:
+https://staticthinking.wordpress.com/2023/08/07/writing-a-check-for-zero-irq-error-codes/
 
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index b946f78f85e1..fca1d2924999 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -912,8 +912,7 @@ static void idxd_device_config_restore(struct idxd_device *idxd,
+ drivers/net/ethernet/realtek/rtase/rtase_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+index 585d0b21c9e0..3bd11cb56294 100644
+--- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
++++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+@@ -1828,7 +1828,7 @@ static int rtase_alloc_msix(struct pci_dev *pdev, struct rtase_private *tp)
  
- 	idxd->rdbuf_limit = idxd_saved->saved_idxd.rdbuf_limit;
- 
--	if (saved_evl)
--		idxd->evl->size = saved_evl->size;
-+	idxd->evl->size = saved_evl->size;
- 
- 	for (i = 0; i < idxd->max_groups; i++) {
- 		struct idxd_group *saved_group, *group;
+ 	for (i = 0; i < tp->int_nums; i++) {
+ 		irq = pci_irq_vector(pdev, i);
+-		if (!irq) {
++		if (irq < 0) {
+ 			pci_disable_msix(pdev);
+ 			return irq;
+ 		}
 -- 
 2.45.2
 
