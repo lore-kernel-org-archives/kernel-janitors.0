@@ -1,88 +1,89 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904A71F9A80
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 12:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4611F8661
+	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 12:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736338590; cv=none; b=ixsf2tNW40ezPbypE1EP6Gi4+68Mygcx6y7646aFN6bdHO+YSoIwOD7bM+F/08SvXfkGI++4BJhdX6DKzvVvZH7TYcwCJfEp6ukakntagTMdYml8SBGgR9Rd02HxZD+BvQ6pK7ytsWURoVOi90n+hjJw9qhH+aWwk+puSS1rRmw=
+	t=1736338622; cv=none; b=K+pOtIfCR8NlIQ1XKhYTsjWVieOQSjq7B1ABmj0i9nEg56A/kvheCD8R2DNl5UBJMs50GnCbeU6FsqPIMsxnAVNQlmgBQCKhm5Pb1ttKK04isV4L31LNWttMnyhnsTHStZ6t8YiPIok9JEF8OopQb6gEEJdsrouWobfCz7siZSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736338590; c=relaxed/simple;
-	bh=v8SeKMpGQ7xob3NVqdJXJl4x9eN6bZNYovKoNB2x0nM=;
+	s=arc-20240116; t=1736338622; c=relaxed/simple;
+	bh=5H+NZoygXS+XSqvX0QBpXcU5IGrrogksmsxKedbhneY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kq+dv1FkeBxBQmPztY9p47MmUtaiiBBkDeQyu/8CYiwD/Ipe2/vBY/YOec+ENNsZTYbjS8dbPIOoCUzC6KtcHChI8Za608MgO71iheQD9JgaoZ9PJujUeRPDUNtnKbEV8rnjoAMvIqtZKweX69Csh1cwyyI6AyTH87C2Cfg53hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=T+tF739U; arc=none smtp.client-ip=209.85.208.49
+	 To:Cc:Content-Type; b=rN1klyUzFQXtdU64xq+drKmtuhgc/Z2i9c0SGlMXdIurDH2dmDNdMkF/AyuhFSUXzFtEBGQa8lXgRreGKnbp9vIgNPEJyBay0s3p608Ge7ADglVnRMTBolxiXJMJ3cGLy55AsrUEVBmRekDbJqh50Aa+2DPbAlkQtq4OuPpQuPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LPv6SX+I; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="T+tF739U"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3f65844deso28286295a12.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 04:16:28 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LPv6SX+I"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3ecae02beso495365a12.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 04:17:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1736338587; x=1736943387; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1736338620; x=1736943420; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cFiwC+hbCb5pPs43KFBNFEao46auzBA5DGzzz7Q7dZ4=;
-        b=T+tF739UXd7ysk4nuChs9aY9tyG8P2Tl/TIEhXs4/To4kriMVybRact/a/ieA5xujT
-         D/xa6/BNz5ddNbX4uk6cGJCNNjnL4XY0Neqzn9QNo6yiORxxa3la8orjqfWpQbp/9q/N
-         fF9l3khOsVmqg2ht3oeWJFePc7GKNdjwmv4qs=
+        bh=CJ8PHLgkOGEsVfCeUIFHUWhRPSYH8q1JVoIswARWMZo=;
+        b=LPv6SX+I5hbT/hi1j0y6HuX21CygfR5eiig0zcELLuUdqzQcL8EV0GhcNuJLDHnwjs
+         DLvEfVjhGNgcMMmy6Hknn3X7pCmun+vz30QXclisWdL+rm8k1DweHPiDZgsq2+AJ/Xam
+         hrmuTdK3A88EIIQgFkJT94FhLCHkP4Jkq7Pi0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736338587; x=1736943387;
+        d=1e100.net; s=20230601; t=1736338620; x=1736943420;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cFiwC+hbCb5pPs43KFBNFEao46auzBA5DGzzz7Q7dZ4=;
-        b=C0doi+jrTdS5mxPxN0CdfY5iCw2c9PryUGYH8QsysLMKlM5hWkbKlBxr338KGGf3FZ
-         jBTtcPqPVhy+pCnFhBeIDKB09lq/VFNxDeXDya7uM5lFXNQORT4UUv/FS11yIjuKiNHY
-         gRpqCmTmcseX/sMdOjvrdJQtwN0kj0rWS8OXymRn9MzpvSSXqzlrOqSLGsRrdSXpruwb
-         Fijf3tx+9FBG1+Hve8YwuIIoiFSU0jOdT2St1wwVVwqIGRfkPkZKnEzAoVDf0/RxcB+u
-         6sdzCSKtKRimByRnyZ8XUnEfLJ34Y4KELBokfw7KLVhT0YuGs26M1lySeQlUPZGH3Dil
-         vytg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdyxzJipWUoDXpp78dyaZ3jLOSgmjTx5swXw547KliWeH4MfAwOb6oT70C+L3MuHjCwc/lBPat6r5oPwXAacs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBazoqwI2P7ra597Gxy2Hrx2BqWKXjoDLDOQLS57VEX4HMRnh9
-	sKvKZFoNG9BB5QAsGL0B179qOm3XqvZRrL1ET/eO6Z7+zaIqgCehmM0GpjAMlkAKxEJPpfgzb+z
-	Tm9WmkOjZGk/Ci+5O5xkoS9v/PBMFlT+Ak/o9
-X-Gm-Gg: ASbGncs4X6IYEQF3HJJc9TxWbx8yeTrD9VvGwtrShSoh0ddnGQWMUz5doBPMOH75wZv
-	UIJzbja70L/aigwARknWqS1UaP+v2Kk855H+W
-X-Google-Smtp-Source: AGHT+IHLn8HBlVwNvq+tovXBPbQMwQ9nAuq+jl4DQFxCMXw0zNFrBytsE637M0LgtUvqP5U7YhniyiwkKOeHTx+Apc0=
-X-Received: by 2002:a05:6402:360c:b0:5d0:e826:f0da with SMTP id
- 4fb4d7f45d1cf-5d972e1683fmr2246245a12.16.1736338586996; Wed, 08 Jan 2025
- 04:16:26 -0800 (PST)
+        bh=CJ8PHLgkOGEsVfCeUIFHUWhRPSYH8q1JVoIswARWMZo=;
+        b=Za+dybMjFaBSgWPjxoC5RrKy9pLLEv8wKa8ljgDBIIRjv75mV5tR59bbJjSP80qAWN
+         3OYVoIP6koSuPpFwVGIsJb6+ek2vGxQI6tIRGNMj8ZvnpvCsnJ7I16ywsUH39TpILC9v
+         7TFpVjQgiQfLbEPnfpl4sC+kjhMRxbqSUeVUcTSVwpqjWAq/3KludMx87+XfPC9iim0a
+         VnrQ88NjQeO8xu2cTX6RknKLvry5dn7TZ21fAKL6cMub8wUvGpes6nc+g4D2Ejcz/MB4
+         yu1hiT9k8ZUVhB1CKh/DqjM+CnrWt8S99zHpianYIy20sfXCA2V7SbyCgmQXCjOpxvOb
+         sGpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbFEPGZtKQIebbm7XIiOFeTWspYVk/zceaJSKKMbnEDkUa3V4S8UMbCa7TAIyBJAqvn5SiLiWvmdjG3Sm+plc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs9eUAn0b5zKgFT1M6nu3v0NOqp+gtVllu9z+gabP5VDPqpeTA
+	thcdHw1eAa3nXkQQWO4vJNQCQixwUwmD6CZkb88rr30FrGbqtd75dEUN0noFbE2idMQxDB73t5Z
+	7lGFjxqW9x7vq+WrPGsvpzaMHkQ9tHJfxy2qW
+X-Gm-Gg: ASbGnctSpZFWhgrKB4GI8nqOzAbuSmZSOgR43lx3FN1iFf6ZeYFqHm+36ZLFpPSSnfd
+	/wlk7fagZEI853rlyrT2+t8iOcAy7rZuJ+73z
+X-Google-Smtp-Source: AGHT+IGKy8w0KOIWPKUQ6cPlZR7A57qoUGiIFGOGCsPEAOsO42FrYECd+43FumEZrwdlpavkvUmdjXN2KRXx5p82bL0=
+X-Received: by 2002:a05:6402:50d0:b0:5d6:37e9:8a93 with SMTP id
+ 4fb4d7f45d1cf-5d972dfbbcdmr1806410a12.2.1736338619730; Wed, 08 Jan 2025
+ 04:16:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ee1a790b-f874-4512-b3ae-9c45f99dc640@stanley.mountain>
-In-Reply-To: <ee1a790b-f874-4512-b3ae-9c45f99dc640@stanley.mountain>
+References: <f2ecc88d-af13-4651-9820-7cc665230019@stanley.mountain>
+In-Reply-To: <f2ecc88d-af13-4651-9820-7cc665230019@stanley.mountain>
 From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Wed, 8 Jan 2025 17:46:14 +0530
-X-Gm-Features: AbW1kvYDhfzIql41LdFYILzHNun7Af6T5PK_lZaCo4FP-HiLxTo8FtCtIiOLGrE
-Message-ID: <CAH-L+nMpNvYr4igweeTgkXj_gKBSzSa=SZZ+mkZoKz4v8te7Qw@mail.gmail.com>
-Subject: Re: [PATCH net-next] net/smc: delete pointless divide by one
+Date: Wed, 8 Jan 2025 17:46:46 +0530
+X-Gm-Features: AbW1kvYmNrRXnJPfn1InnI-amnOOlOcNhBH6pDkj-QbcAiL_BBEPNyUd2ClXCz4
+Message-ID: <CAH-L+nP146Y1VnSkr8ykoJy_nUd-txtHwS13r-k2Z=e3tPxBbQ@mail.gmail.com>
+Subject: Re: [PATCH net] rtase: Fix a check for error in rtase_alloc_msix()
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>, 
-	"D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>, 
-	Wen Gu <guwen@linux.alibaba.com>, "David S. Miller" <davem@davemloft.net>, 
+Cc: Justin Lai <justinlai0215@realtek.com>, Larry Chiu <larry.chiu@realtek.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
 	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org, 
 	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	kernel-janitors@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000b57e05062b30d401"
+	boundary="000000000000a9a456062b30d630"
 
---000000000000b57e05062b30d401
+--000000000000a9a456062b30d630
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 8, 2025 at 2:56=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+On Wed, Jan 8, 2025 at 2:46=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
 org> wrote:
 >
-> Here "buf" is a void pointer so sizeof(*buf) is one.  Doing a divide
-> by one makes the code less readable.  Delete it.
+> The pci_irq_vector() function never returns zero.  It returns negative
+> error codes or a positive non-zero IRQ number.  Fix the error checking to
+> test for negatives.
 >
+> Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
 LGTM,
 Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
@@ -91,7 +92,7 @@ Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 Regards,
 Kalesh AP
 
---000000000000b57e05062b30d401
+--000000000000a9a456062b30d630
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -163,13 +164,13 @@ a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
 x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
 VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
 bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIPow6+HBgLf8WoW+ZUXJNwfjaMP/gSTu/SdfHf3F1gFMMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDEwODEyMTYyN1owaQYJKoZIhvcNAQkPMVwwWjAL
+AQkEMSIEIJmpX8QUcsLBTvmQE9+IgcnJwBYBDOV6DSb1Ian1Nc0tMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDEwODEyMTcwMFowaQYJKoZIhvcNAQkPMVwwWjAL
 BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAcYlO8QrqZ
-ZwjgaP9LLlRpAYCYuZ8zrJubRYY9mVos41+9+Fc9A2Azeb9/pPK+QsGOjUfNrmPFGOcXoUqxQFsx
-+X7pEjMKAt9lzfnYm1rmEo9a7HDZctmHCJ887Ti2r2acyhP7dNzl0AgSnA4zeaEU2d2wwdCyclJz
-FNoUAm259cBCl+HGG957fx03JjoN5jU0Nq0W1xt4Nf9860R7ZcaJbsXCYUXXJtJfASmYZ+QVqoxk
-fi+A7Ohp/yQ7pcz0A7esCwsnWqWGOeEgVE+dY+U/23Pqc4JZGPtTwM1SuhgJclR9AQ+i0d0n9d+J
-joLhvnEvmqHp1Gum52bQl31u2mdP
---000000000000b57e05062b30d401--
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBPmlIBRqT0
+4xeY+CEuGt2QVIqil+/hnstaS07dKUJHgFlcEWXv6NQjJY0MGRd3NBv6dmpQ5KO3uPg7oe70EToe
+vAJAlegstlQ0jp6Gr9cXz7m7hF5jPsnuviDqMt3pGalszK/xshl+U52c1wixuqBU0KbXp07QhM5n
+W9AiFSbb0ZJJEa06gm0dmDqHZzassIfYduP63wcxnZIq65nmMV7HkMbjLF7Nu3NVzOl8wthLlE9K
+QB/e154y2YsbnWRZVeExQKmR+Qks1sZGMX1zi1eLU2TSOkVrc87jnAW4IqCGZs+ElZN35lU7Vnec
+G8ukY4ZQaFZAgqDItiVcWg4SGU74
+--000000000000a9a456062b30d630--
