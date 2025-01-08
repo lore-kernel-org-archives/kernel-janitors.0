@@ -1,68 +1,74 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A382594A2
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 09:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695071EE7D5
+	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 09:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736328850; cv=none; b=jLTITKOMRai+VNf0nPIssSL3AWICg9MH3caa/Na/CG2rSjg+jGaPu+6DXG9MCYiHjjX0qB6b1hap1BubzQ/xZaJ0N6RBjMHrpzJpBovnr90IVcNe+hjjRfBW6IZ18PWBFHoGQRnZoWdxoP6l3ERKMNA7ND6G497bjmJ9LtOJmJ0=
+	t=1736328964; cv=none; b=PuhYxo70bYBqbVPPdAjFibE73X2IFS1QcxRFggS7O6ulL3j7F7YUxh/S8A69bCC/z1nGDfG0t3rMHaLc2O8sMgDYkfzToYZhYCxUfwdCS5up/Ki4ajVSd4O0PBy8hLKcBXTYP/M9Wih+WzCROQE2xbeIUBm1mW2b/YorP3ZAuQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736328850; c=relaxed/simple;
-	bh=YEHRYqphhlHXIFjLhXf/Fqi8uitgFtuwyim62lLZhNk=;
+	s=arc-20240116; t=1736328964; c=relaxed/simple;
+	bh=yA/0y5/r3RXc5njX7twbCnZs2KG90snQm7Bt83v8+3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ExhFKaCbeZ9uKLZtY2DrIrbEyKWpCDlghyKGAdaVLDyp4GSl9ZjNaUPFaHotI9bTz1Ork13xmkwFBHQLf5njeSNVKXp3peJihI79p+QTYFxNvjyrXkszl1iFzjlLlXuZaQwb6RLHhc5HUomDOoEcdqh3KXEsaAbCM6NJec1VmmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GWfmduPt; arc=none smtp.client-ip=209.85.221.48
+	 Content-Disposition; b=S+UIdMFfvv0jtHtjddI4Jdpeni1oI6pXkC0s+v6mXD+TDXzTV17c1c6aNLkvQMqbxtZ1QoeFIa/4QflkjYAA6JdZOieljmte+3hbEKP7BUC/7T2VqiKdEzi2V8Zdn9hll7efDEwHcNj0ElGJ4PTnNIx2iZdTb1zGDOBInNC6U0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T8gt+hrN; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GWfmduPt"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385e0e224cbso8241061f8f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 01:34:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T8gt+hrN"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361f664af5so186351425e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 01:36:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736328847; x=1736933647; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1736328961; x=1736933761; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1DjUCM/jbBSR6cK0gy/+/2U77r5hRrUDOcnrZNiR9wY=;
-        b=GWfmduPt+da0vX5ejCxRsUAt08kvHdCohVnCUgrxdBWwCXFjMJQ/6ak0pkZtCjxt1G
-         3IE8ORWGbZLQ4wrAx4JDaIHGcbwRBzpZhwPJgjQukIBEpB7T52HVR9tdrrMBmcWLnXEE
-         I1p8T+Dkns6S1rh9e90eYgkJBP1YiIA8cfh/jbPHbR/siDj93WjWdioq/Sk5z53O+wbZ
-         zKey4zhsp7NShFLuNukY2gyA9iRW2uJPrizl8RFpH7boQNzUAIU4kIDNNhQwtxKY5SU5
-         VjCuV/BbSLSeXGa0dEkhgzEyQPHtUoYde8oKSdxum6Aj9KBhqBTZO8HPjHHrLLvgSMIB
-         uxww==
+        bh=UqzxWOab6evyJePUEZiyqiNeRR2ktAmye9JuSg0gIEo=;
+        b=T8gt+hrNzT8b64Mp3+VwJ9Qwgh1IdeU0+QQzKjEA/tVQdrR0Dvi5oXYdY58hbiCgIR
+         2AIv5jv6g2EXX8dhSJHBznIrRDFbr+fzo2FK+RCgASHodIVCipReuz1toKxGA9upVQgY
+         xdRLvfhU0oDCglebSE8AGblwSIcE2MXjSpOHUopiaLqnLILETom54AL0AFZfLoE7QOpn
+         hheUxddj48OxanTjHTvRJOtaWnofgs8sknzo7Jh6eXoqyczDhbU3jz9/sY0WlsJAZvDM
+         V68o4xWGz3M/D3JOseJix0qZ3ZgWTJIVTH934d0Ng6b5Q7fuJi+/A74Q6bHz9Qu8PkAw
+         x/6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736328847; x=1736933647;
+        d=1e100.net; s=20230601; t=1736328961; x=1736933761;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1DjUCM/jbBSR6cK0gy/+/2U77r5hRrUDOcnrZNiR9wY=;
-        b=XnLUt6HFepjdEu8xqeyASNNhVL9wK7qZn+4pIJuoGUvat7ckjNMeq2lW9DgMFV2FHP
-         blWXGEQFEDJ0SIDOPAcWds6ftwyFbatcJ5WMCjS/OfYF/HTc3lcwcdodfMlfg7nLxjWd
-         5TMKcbBqM0hZuOKz/MCGQxtLHdmTC7vaJ8yqh67qDhq9Fc0Mq9/gkNYxdTq+GN0ucZo0
-         8a2tUBKJXAkpkv/vfKYnne4zKyrpKhwa0kJ/bWRxjvP8/yuuy2W4geoo/5rf5F4ziRm0
-         s8Iwvz3abjc15zgLqyUATAtIS+GHx6Rgr5KSVSpBwEOt8g8WziUkoy+1i5Dv92TLcKGB
-         yk7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXyz0HC1nBkvsEFCo8eOBVzqUXGvWz+KGyUdgEQC3NydK4mV2rFmZT7yGLsT9p/UJovxjS6m6OAaX7p42vxdUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUc++6o7+NinklHDvr0zLDCbx6s7ipaWlHxBJylmKJkrx6RxuZ
-	kqndA4iS7D4tegtk93337dkhXIK0kSt9YJPikTqFLVgBiwfG5gKqS/VT8s++ovw=
-X-Gm-Gg: ASbGncu3VJ5kQ6Vwj572N8fxI/Euwmda+fHi4hn/O/EzlFjqJkaU1EHGsqbjNMP11f9
-	qo9tMh/be5SkM85H0GZ2NPTb0Kp4Q9CFg+GDdks55Uhj/+pRmY/oBGhnoJYn78pUbu1/6GUAYiW
-	m0+pPe0+aY1VZQ4fGoxGm8BubVW8atVH3yUDaM7RVocdZxzGaEyhGsmW2rVNND+5FyTGyS8Qyzf
-	KJG7PsoxlgJNcYZp9BlubKwq2d2P5r4EsNS6WKLwAQiXjGK4fn6MpzqNMX9UQ==
-X-Google-Smtp-Source: AGHT+IFIvyFGgaq0/LulwNY8T7dmzAp5swTnN2NutVuGddfkmNBlI6+QhCrQSOIBcI4yvN6nZlRY8A==
-X-Received: by 2002:a05:6000:712:b0:385:f3fb:46aa with SMTP id ffacd0b85a97d-38a87308c15mr1512201f8f.43.1736328847516;
-        Wed, 08 Jan 2025 01:34:07 -0800 (PST)
+        bh=UqzxWOab6evyJePUEZiyqiNeRR2ktAmye9JuSg0gIEo=;
+        b=iFEBNpl3CDra6FW9LyI7enfVFqiJqcPYDJRrhltXn4OqbaDGWJ3Dtp3vP0PQc01csB
+         ZH0nRcGYtoY9W8udXfzRJxj6zycF3kw/TuNRJ2At3f4gAFFp2xTO6/ncyQ9wG53JIB/Q
+         RpMEY1+MD4RYTIaxFdwvIeirXw5Q60cMiMGw4xgkvSatqxvh9eHSD9IfkkspPcyFeyKm
+         7ZMUx86JdTnYEFGxzDTSNAo2jHO/Kw9cGswAJQGxPYYhM+KC2jmX9c9kPAl+NkYf6rCB
+         idQcqAGeSuqIzCxSbE277cngP0DSs3iA2Vmy59FoEFvvx1Z4PrR6kAhE04db+MvC2rQR
+         y2xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkdMac8BFNK8E+g8XbGRr5H34YE7BZG3ewRPVFcj3ueG1cI+vHPPdDr1JFQNi7Fpx/XBbqHrkvC8J8bzCq1Yc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx36y1pGnIXlhAFHS0JTPfAFtj4lSiBGbQd/IwMw83wplfSP1oV
+	I0w7TghU2KJTNuQfxeuA+bSTcsCWNzfQGBGIfrU3nSoAVqfVepQv1rV6KtI2Bbw=
+X-Gm-Gg: ASbGncstl/qZRy4jmZpoh3Kit6eGf6WJBnBoCAp3/UQE++SIKY7rXagQHXrkM8yiVO9
+	PvL/iu/vRTS19UuIhvmj5scrHiNIx+LR4PrpQrU5bm/1c84lzheZjj/QrDbTEfDMbiNqyek1jBQ
+	XfEvBIBFkbxjFiri53wYsIUMexqlTP5v/wk1bW7hzqF2zfAo6BogRr/sPCOG28+7VrtQ4fwJzW7
+	eKAWif4q4iID+BlkczDFYsjylbTORSm1O52FwUkVYlj4lv1sHb+ffDzTCwIeA==
+X-Google-Smtp-Source: AGHT+IG5WSBhFOJisgYTUKeIhRXBAfvDEN8YKwZDJA2mb5m6FO3aJNoBZk/2i3G8RcBgch7B0HaYEw==
+X-Received: by 2002:a05:6000:1acf:b0:386:4034:f9a6 with SMTP id ffacd0b85a97d-38a8735727fmr1340774f8f.57.1736328960701;
+        Wed, 08 Jan 2025 01:36:00 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2da63eesm14430465e9.3.2025.01.08.01.34.06
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2ddccf4sm14566785e9.19.2025.01.08.01.35.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2025 01:34:07 -0800 (PST)
-Date: Wed, 8 Jan 2025 12:34:04 +0300
+        Wed, 08 Jan 2025 01:36:00 -0800 (PST)
+Date: Wed, 8 Jan 2025 12:35:57 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Chaitanya Kulkarni <kch@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+To: Julien STEPHAN <jstephan@baylibre.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] nvmet-auth: fix length calculation in nvmet_auth_challenge()
-Message-ID: <2abae353-5e30-4dc5-a2cd-26dab4db93d0@stanley.mountain>
+Subject: [PATCH RESEND] drm/mediatek: dsi: fix error codes in
+ mtk_dsi_host_transfer()
+Message-ID: <b754a408-4f39-4e37-b52d-7706c132e27f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,45 +79,59 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "d" variable is a void pointer so sizeof(*d) is 1.  It was supposed
-to be sizeof(*data) which is 16.
+There is a type bug because the return statement:
 
-The "data_size" is the data required to hold the data struct plus
-"hash_len" which is the length of the variable array at the end of the
-data struct.  Plus the "ctrl->dh_keysize" which is the extra space after
-the end of the data struct.  The "al" variable is actual length of the
-buffer.
+        return ret < 0 ? ret : recv_cnt;
 
-This mistake means that we will not zero the last 15 bytes.  We likely
-copy data over these bytes so it may not be an issue.  The main problem
-is that the check "if (al < data_size)" which ensures that we have
-allocated enough data is incorrect, potentially leading to memory
-corruption.
+The issue is that ret is an int, recv_cnt is a u32 and the function
+returns ssize_t, which is a signed long.  The way that the type promotion
+works is that the negative error codes are first cast to u32 and then
+to signed long.  The error codes end up being positive instead of
+negative and the callers treat them as success.
 
-Cc: stable@vger.kernel.org
-Fixes: db1312dd9548 ("nvmet: implement basic In-Band Authentication")
+Fixes: 81cc7e51c4f1 ("drm/mediatek: Allow commands to be sent during video mode")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/r/202412210801.iADw0oIH-lkp@intel.com/
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
-I thought about changing the caller to use kzalloc() instead of kmalloc()
-to get rid of the memset().  But we need to calculate data_size anyway
-so moving the memset() doesn't really add very much.
+I sent this patch earlier:
+https://lore.kernel.org/all/Y%2FyBC4yxTs+Po0TG@kili/
+but it wasn't applied.  I've changed the commit message a bit and added
+new tags.
 
- drivers/nvme/target/fabrics-cmd-auth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/mediatek/mtk_dsi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nvme/target/fabrics-cmd-auth.c b/drivers/nvme/target/fabrics-cmd-auth.c
-index 3f2857c17d95..aad113e17072 100644
---- a/drivers/nvme/target/fabrics-cmd-auth.c
-+++ b/drivers/nvme/target/fabrics-cmd-auth.c
-@@ -356,7 +356,7 @@ static int nvmet_auth_challenge(struct nvmet_req *req, void *d, int al)
- 	struct nvmet_ctrl *ctrl = req->sq->ctrl;
- 	int ret = 0;
- 	int hash_len = nvme_auth_hmac_hash_len(ctrl->shash_id);
--	int data_size = sizeof(*d) + hash_len;
-+	int data_size = sizeof(*data) + hash_len;
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index d871b1dba083..0acfda47f002 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -1015,12 +1015,12 @@ static ssize_t mtk_dsi_host_transfer(struct mipi_dsi_host *host,
+ 				     const struct mipi_dsi_msg *msg)
+ {
+ 	struct mtk_dsi *dsi = host_to_dsi(host);
+-	u32 recv_cnt, i;
++	ssize_t recv_cnt;
+ 	u8 read_data[16];
+ 	void *src_addr;
+ 	u8 irq_flag = CMD_DONE_INT_FLAG;
+ 	u32 dsi_mode;
+-	int ret;
++	int ret, i;
  
- 	if (ctrl->dh_tfm)
- 		data_size += ctrl->dh_keysize;
+ 	dsi_mode = readl(dsi->regs + DSI_MODE_CTRL);
+ 	if (dsi_mode & MODE) {
+@@ -1069,7 +1069,7 @@ static ssize_t mtk_dsi_host_transfer(struct mipi_dsi_host *host,
+ 	if (recv_cnt)
+ 		memcpy(msg->rx_buf, src_addr, recv_cnt);
+ 
+-	DRM_INFO("dsi get %d byte data from the panel address(0x%x)\n",
++	DRM_INFO("dsi get %zd byte data from the panel address(0x%x)\n",
+ 		 recv_cnt, *((u8 *)(msg->tx_buf)));
+ 
+ restore_dsi_mode:
 -- 
 2.45.2
 
