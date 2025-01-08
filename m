@@ -1,74 +1,68 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695071EE7D5
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 09:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FD61F3D4F
+	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 09:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736328964; cv=none; b=PuhYxo70bYBqbVPPdAjFibE73X2IFS1QcxRFggS7O6ulL3j7F7YUxh/S8A69bCC/z1nGDfG0t3rMHaLc2O8sMgDYkfzToYZhYCxUfwdCS5up/Ki4ajVSd4O0PBy8hLKcBXTYP/M9Wih+WzCROQE2xbeIUBm1mW2b/YorP3ZAuQY=
+	t=1736329049; cv=none; b=TZ+UXjit4ySTh/65vVKpxCawKW1FJzFzOKSH6PSgVM4Tna/JyGpivV6HgmzHdoiBEeiBW0jaqmxseB6I1yiLe0HB3jG15z8J8f+XyGUtoc7/IVX9zU20VCibWTRaj6cNsV7GxijEmvRKXbYgsEpsY36IjS3AmjXO6XBA0B11/Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736328964; c=relaxed/simple;
-	bh=yA/0y5/r3RXc5njX7twbCnZs2KG90snQm7Bt83v8+3E=;
+	s=arc-20240116; t=1736329049; c=relaxed/simple;
+	bh=tN5okRrYoBGpX5AHsBFQyTsnw6M+opkwftx20mNQmpg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S+UIdMFfvv0jtHtjddI4Jdpeni1oI6pXkC0s+v6mXD+TDXzTV17c1c6aNLkvQMqbxtZ1QoeFIa/4QflkjYAA6JdZOieljmte+3hbEKP7BUC/7T2VqiKdEzi2V8Zdn9hll7efDEwHcNj0ElGJ4PTnNIx2iZdTb1zGDOBInNC6U0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T8gt+hrN; arc=none smtp.client-ip=209.85.128.52
+	 Content-Disposition; b=ZvzlecJIKqBCNgx8TDJjt9GQT64bltX6ShYnxO4DGQ+DD/ZsakiLGnyvu2+i6kWIbUSFwe0km4Gj6tbAUwh/wnA2K4XOfNvCs48F6b39sUJCb5SA6rjTx4jjpKbZVjgMzhoQP/woh5pgKp/I8hUbWWGEBPmqNR6tc5qUU6S0taQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WbvLTg1b; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T8gt+hrN"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361f664af5so186351425e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 01:36:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WbvLTg1b"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385e0e224cbso8243176f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 01:37:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736328961; x=1736933761; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1736329046; x=1736933846; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UqzxWOab6evyJePUEZiyqiNeRR2ktAmye9JuSg0gIEo=;
-        b=T8gt+hrNzT8b64Mp3+VwJ9Qwgh1IdeU0+QQzKjEA/tVQdrR0Dvi5oXYdY58hbiCgIR
-         2AIv5jv6g2EXX8dhSJHBznIrRDFbr+fzo2FK+RCgASHodIVCipReuz1toKxGA9upVQgY
-         xdRLvfhU0oDCglebSE8AGblwSIcE2MXjSpOHUopiaLqnLILETom54AL0AFZfLoE7QOpn
-         hheUxddj48OxanTjHTvRJOtaWnofgs8sknzo7Jh6eXoqyczDhbU3jz9/sY0WlsJAZvDM
-         V68o4xWGz3M/D3JOseJix0qZ3ZgWTJIVTH934d0Ng6b5Q7fuJi+/A74Q6bHz9Qu8PkAw
-         x/6Q==
+        bh=G7qr+xH74BUjb8c6klWG/dnkZsYFFWd8nuIpiiYr2Do=;
+        b=WbvLTg1bOmHUScDAg6n3Jcf72LV0C4F5BaYbkrNhVv4Etq9SwL2YtmmHXcKRsSC9iO
+         DjaNjiCcM72pgH47QUAfRfTDrupjZQVAfjogC3S+8m4AfHjSHbo/LQpRew+zCbLEdC/m
+         BKKmQCehxIRxSwXoZQLaydQ/v5m1yEcuwIrBSeR62YjD2UVU7lSt5eAryNusF669Erii
+         zFigFZO2fUso82hFFzgRDfOpJSvRvNSFhh9uG5X2P+hnda5umM0BXPxsAWpDMXJXFU5x
+         TfqPz7vhHT5DG5ufWAMLZvV10qVS5i3qKCxWEuLYZOBky7giI4ybkruhZyW2UN1RE1T+
+         Kmlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736328961; x=1736933761;
+        d=1e100.net; s=20230601; t=1736329046; x=1736933846;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UqzxWOab6evyJePUEZiyqiNeRR2ktAmye9JuSg0gIEo=;
-        b=iFEBNpl3CDra6FW9LyI7enfVFqiJqcPYDJRrhltXn4OqbaDGWJ3Dtp3vP0PQc01csB
-         ZH0nRcGYtoY9W8udXfzRJxj6zycF3kw/TuNRJ2At3f4gAFFp2xTO6/ncyQ9wG53JIB/Q
-         RpMEY1+MD4RYTIaxFdwvIeirXw5Q60cMiMGw4xgkvSatqxvh9eHSD9IfkkspPcyFeyKm
-         7ZMUx86JdTnYEFGxzDTSNAo2jHO/Kw9cGswAJQGxPYYhM+KC2jmX9c9kPAl+NkYf6rCB
-         idQcqAGeSuqIzCxSbE277cngP0DSs3iA2Vmy59FoEFvvx1Z4PrR6kAhE04db+MvC2rQR
-         y2xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkdMac8BFNK8E+g8XbGRr5H34YE7BZG3ewRPVFcj3ueG1cI+vHPPdDr1JFQNi7Fpx/XBbqHrkvC8J8bzCq1Yc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx36y1pGnIXlhAFHS0JTPfAFtj4lSiBGbQd/IwMw83wplfSP1oV
-	I0w7TghU2KJTNuQfxeuA+bSTcsCWNzfQGBGIfrU3nSoAVqfVepQv1rV6KtI2Bbw=
-X-Gm-Gg: ASbGncstl/qZRy4jmZpoh3Kit6eGf6WJBnBoCAp3/UQE++SIKY7rXagQHXrkM8yiVO9
-	PvL/iu/vRTS19UuIhvmj5scrHiNIx+LR4PrpQrU5bm/1c84lzheZjj/QrDbTEfDMbiNqyek1jBQ
-	XfEvBIBFkbxjFiri53wYsIUMexqlTP5v/wk1bW7hzqF2zfAo6BogRr/sPCOG28+7VrtQ4fwJzW7
-	eKAWif4q4iID+BlkczDFYsjylbTORSm1O52FwUkVYlj4lv1sHb+ffDzTCwIeA==
-X-Google-Smtp-Source: AGHT+IG5WSBhFOJisgYTUKeIhRXBAfvDEN8YKwZDJA2mb5m6FO3aJNoBZk/2i3G8RcBgch7B0HaYEw==
-X-Received: by 2002:a05:6000:1acf:b0:386:4034:f9a6 with SMTP id ffacd0b85a97d-38a8735727fmr1340774f8f.57.1736328960701;
-        Wed, 08 Jan 2025 01:36:00 -0800 (PST)
+        bh=G7qr+xH74BUjb8c6klWG/dnkZsYFFWd8nuIpiiYr2Do=;
+        b=haA9oPHzqTjYNnwnlh7kM1bSJsyrwE51Z5o0vEpVDAazMspbnkAPdTu9Sc0mHUEJ7f
+         ZcgI1tYI0A3h5zn+dB5cJojFECSbJC2DFwxJe+9Wvf6NnntQHDlwpkuY7mkKV/jPBSKK
+         2opTzy6z/bKazNjTD3bCGVQV8CRqIG8HEqNrdIAFqRkNvJgm1Yd67YglfTOc7bwhIXUL
+         B4/kp7PkVNlRiKvJvzPRVrDK5fy4hq4AAYELPAun7aUeaGEqXxQW4KlCzSmzMMqFCQuN
+         HmibjWkONV82E2AnANacSAGiPu1+HPf7+bwGZ+3yg8WsNSfxO/XUofUFMfd5efIcfA8I
+         0Swg==
+X-Forwarded-Encrypted: i=1; AJvYcCUU8ijrmW+pbx73RJZibO99RdXPdlJzvGevuqhIRId+w7SMMtE/wLczcUWkcg7+h0adKCU8X9bJPikSTO2YTEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn0yR+gGr+OdxCPEI6iZoZGA63V3AoJdQRxuuScNR4sQLh6y5N
+	R9xAa4jeuD9uq50rUhG7Ey4Yg0BcR9OsMUUmJTE+JS4EEWQR5yTYXk0NYH9Hhiw=
+X-Gm-Gg: ASbGnct0mB9i+rZiOnDQpONiTxbRyuF5Ex8Tr1+KL0qr8YBZh9e/xy2wfuw4wKrIc9z
+	bQbaMwoDbzP14KHTBrraYl+O1Gs9E3Fj75yh0/pEPgdDpSOum8mBTpa5JTFDO6yzZeKuELLluLm
+	DWRTA16Q7DRHtpz9Y85W+jdic7jZSO+d6NZ2nb3IuaiRDY40d57X48UtdIK3nJ6bGW0mwzVK+rF
+	VH9yauUvfojHXPv6lC0K3M5UolN109AUAEIJeUGTgwUHcsN2vMSZRW3QvYJgA==
+X-Google-Smtp-Source: AGHT+IErnSBFhYxUJzsggddRVs3RbCystP6n1/ZQ4IX9uvuRMpjYqQBmS+F0oGJazwIWYP0YaTEAwQ==
+X-Received: by 2002:a05:6000:18a7:b0:385:f220:f798 with SMTP id ffacd0b85a97d-38a872c93eemr1482892f8f.6.1736329045814;
+        Wed, 08 Jan 2025 01:37:25 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2ddccf4sm14566785e9.19.2025.01.08.01.35.59
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8acb17sm51765404f8f.97.2025.01.08.01.37.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2025 01:36:00 -0800 (PST)
-Date: Wed, 8 Jan 2025 12:35:57 +0300
+        Wed, 08 Jan 2025 01:37:25 -0800 (PST)
+Date: Wed, 8 Jan 2025 12:37:22 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Julien STEPHAN <jstephan@baylibre.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH RESEND] drm/mediatek: dsi: fix error codes in
- mtk_dsi_host_transfer()
-Message-ID: <b754a408-4f39-4e37-b52d-7706c132e27f@stanley.mountain>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] iio: chemical: bme680: Fix uninitialized variable in
+ __bme680_read_raw()
+Message-ID: <4addb68c-853a-49fc-8d40-739e78db5fa1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,59 +73,36 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There is a type bug because the return statement:
+The bme680_read_temp() function takes a pointer to s16 but we're passing
+an int pointer to it.  This will not work on big endian systems and it
+also means that the other 16 bits are uninitialized.
 
-        return ret < 0 ? ret : recv_cnt;
+Pass an s16 type variable.
 
-The issue is that ret is an int, recv_cnt is a u32 and the function
-returns ssize_t, which is a signed long.  The way that the type promotion
-works is that the negative error codes are first cast to u32 and then
-to signed long.  The error codes end up being positive instead of
-negative and the callers treat them as success.
-
-Fixes: 81cc7e51c4f1 ("drm/mediatek: Allow commands to be sent during video mode")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202412210801.iADw0oIH-lkp@intel.com/
+Fixes: f51171ce2236 ("iio: chemical: bme680: Add SCALE and RAW channels")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
-I sent this patch earlier:
-https://lore.kernel.org/all/Y%2FyBC4yxTs+Po0TG@kili/
-but it wasn't applied.  I've changed the commit message a bit and added
-new tags.
+ drivers/iio/chemical/bme680_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/mediatek/mtk_dsi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index d871b1dba083..0acfda47f002 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -1015,12 +1015,12 @@ static ssize_t mtk_dsi_host_transfer(struct mipi_dsi_host *host,
- 				     const struct mipi_dsi_msg *msg)
- {
- 	struct mtk_dsi *dsi = host_to_dsi(host);
--	u32 recv_cnt, i;
-+	ssize_t recv_cnt;
- 	u8 read_data[16];
- 	void *src_addr;
- 	u8 irq_flag = CMD_DONE_INT_FLAG;
- 	u32 dsi_mode;
--	int ret;
-+	int ret, i;
+diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+index 26eb0fa77a43..9d73fd2cf52c 100644
+--- a/drivers/iio/chemical/bme680_core.c
++++ b/drivers/iio/chemical/bme680_core.c
+@@ -879,11 +879,11 @@ static int __bme680_read_raw(struct iio_dev *indio_dev,
+ 	case IIO_CHAN_INFO_RAW:
+ 		switch (chan->type) {
+ 		case IIO_TEMP:
+-			ret = bme680_read_temp(data, (s16 *)&chan_val);
++			ret = bme680_read_temp(data, &temp_chan_val);
+ 			if (ret)
+ 				return ret;
  
- 	dsi_mode = readl(dsi->regs + DSI_MODE_CTRL);
- 	if (dsi_mode & MODE) {
-@@ -1069,7 +1069,7 @@ static ssize_t mtk_dsi_host_transfer(struct mipi_dsi_host *host,
- 	if (recv_cnt)
- 		memcpy(msg->rx_buf, src_addr, recv_cnt);
- 
--	DRM_INFO("dsi get %d byte data from the panel address(0x%x)\n",
-+	DRM_INFO("dsi get %zd byte data from the panel address(0x%x)\n",
- 		 recv_cnt, *((u8 *)(msg->tx_buf)));
- 
- restore_dsi_mode:
+-			*val = chan_val;
++			*val = temp_chan_val;
+ 			return IIO_VAL_INT;
+ 		case IIO_PRESSURE:
+ 			ret = bme680_read_press(data, &chan_val);
 -- 
 2.45.2
 
