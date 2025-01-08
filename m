@@ -1,68 +1,77 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FD61F3D4F
-	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 09:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8ED1B3938
+	for <kernel-janitors@vger.kernel.org>; Wed,  8 Jan 2025 09:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736329049; cv=none; b=TZ+UXjit4ySTh/65vVKpxCawKW1FJzFzOKSH6PSgVM4Tna/JyGpivV6HgmzHdoiBEeiBW0jaqmxseB6I1yiLe0HB3jG15z8J8f+XyGUtoc7/IVX9zU20VCibWTRaj6cNsV7GxijEmvRKXbYgsEpsY36IjS3AmjXO6XBA0B11/Tw=
+	t=1736329294; cv=none; b=Yr6tZr89M+swfjNdXH6GqEIW6C4z/G19n3doZ0ovi6++bzM4nq9cKe5VpyKC9oqJ5cTyrXhDuHy61PQSzVGRYcQfGZxqisRgVmfVcm9pQotnIiH/wLyKP6F5Nc6ozcnZdnEhUslogYn2AGeUtaB09VJq0TGvLdQmf5q+7alAw/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736329049; c=relaxed/simple;
-	bh=tN5okRrYoBGpX5AHsBFQyTsnw6M+opkwftx20mNQmpg=;
+	s=arc-20240116; t=1736329294; c=relaxed/simple;
+	bh=PHtGowL/XAuxW5yOf8yS9NWR7H/GWen38IWBTnsqDu8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZvzlecJIKqBCNgx8TDJjt9GQT64bltX6ShYnxO4DGQ+DD/ZsakiLGnyvu2+i6kWIbUSFwe0km4Gj6tbAUwh/wnA2K4XOfNvCs48F6b39sUJCb5SA6rjTx4jjpKbZVjgMzhoQP/woh5pgKp/I8hUbWWGEBPmqNR6tc5qUU6S0taQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WbvLTg1b; arc=none smtp.client-ip=209.85.221.46
+	 Content-Disposition; b=ernS79G4YX9Xql9eyfefYjva8ASbPpVAnskJ6dBnw+vstnBIUhQcjoTzF6zB+DDdp4EuuO943ftjci3K8O6KrIZBlGo0t3MOB5bG3sU4Fn0qXQ5iG9dCTVXUMTuJLy51kCKWVXEigXFCOA4BIevef6bYmvDZfq8thgrl1EPmwF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iAfNrEkg; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WbvLTg1b"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385e0e224cbso8243176f8f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 01:37:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iAfNrEkg"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso163890245e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 08 Jan 2025 01:41:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736329046; x=1736933846; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1736329291; x=1736934091; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=G7qr+xH74BUjb8c6klWG/dnkZsYFFWd8nuIpiiYr2Do=;
-        b=WbvLTg1bOmHUScDAg6n3Jcf72LV0C4F5BaYbkrNhVv4Etq9SwL2YtmmHXcKRsSC9iO
-         DjaNjiCcM72pgH47QUAfRfTDrupjZQVAfjogC3S+8m4AfHjSHbo/LQpRew+zCbLEdC/m
-         BKKmQCehxIRxSwXoZQLaydQ/v5m1yEcuwIrBSeR62YjD2UVU7lSt5eAryNusF669Erii
-         zFigFZO2fUso82hFFzgRDfOpJSvRvNSFhh9uG5X2P+hnda5umM0BXPxsAWpDMXJXFU5x
-         TfqPz7vhHT5DG5ufWAMLZvV10qVS5i3qKCxWEuLYZOBky7giI4ybkruhZyW2UN1RE1T+
-         Kmlg==
+        bh=g54O8YkwZGrgLT3edof7A4TrnCHNhhKENcG6SumtW14=;
+        b=iAfNrEkgQBTPCdnbaAl3ZpwuFrcgUDBFO+Up7vPyBY4KOASigzFIxEJIt8kn5Mpc7J
+         6hj3z+1UXhqDn9kmuYdz7sj42rJSZhLGoO3gDk1Aw0AVJXGl8s82EzgYL8Xl1WVSX4Cg
+         LVsjy7+MbecgbVHdrDb+bjt+eA5w2D0aaWy9/hqKa94Sk+CLzF13Mk7bSOMXoYTaqxXY
+         siKjM6g2oQqVmKTEiehcDP4+ASECQQy1PXdQacpgErdgGYLqGUoNA02SPSIcEOOXfAqw
+         5wMT+s4+cP0HyNe2HJIESqt8cFY9iAGPNVefEglCGc8+zT6pfs66JODoQ2u1Uen1ul5H
+         fsJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736329046; x=1736933846;
+        d=1e100.net; s=20230601; t=1736329291; x=1736934091;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G7qr+xH74BUjb8c6klWG/dnkZsYFFWd8nuIpiiYr2Do=;
-        b=haA9oPHzqTjYNnwnlh7kM1bSJsyrwE51Z5o0vEpVDAazMspbnkAPdTu9Sc0mHUEJ7f
-         ZcgI1tYI0A3h5zn+dB5cJojFECSbJC2DFwxJe+9Wvf6NnntQHDlwpkuY7mkKV/jPBSKK
-         2opTzy6z/bKazNjTD3bCGVQV8CRqIG8HEqNrdIAFqRkNvJgm1Yd67YglfTOc7bwhIXUL
-         B4/kp7PkVNlRiKvJvzPRVrDK5fy4hq4AAYELPAun7aUeaGEqXxQW4KlCzSmzMMqFCQuN
-         HmibjWkONV82E2AnANacSAGiPu1+HPf7+bwGZ+3yg8WsNSfxO/XUofUFMfd5efIcfA8I
-         0Swg==
-X-Forwarded-Encrypted: i=1; AJvYcCUU8ijrmW+pbx73RJZibO99RdXPdlJzvGevuqhIRId+w7SMMtE/wLczcUWkcg7+h0adKCU8X9bJPikSTO2YTEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn0yR+gGr+OdxCPEI6iZoZGA63V3AoJdQRxuuScNR4sQLh6y5N
-	R9xAa4jeuD9uq50rUhG7Ey4Yg0BcR9OsMUUmJTE+JS4EEWQR5yTYXk0NYH9Hhiw=
-X-Gm-Gg: ASbGnct0mB9i+rZiOnDQpONiTxbRyuF5Ex8Tr1+KL0qr8YBZh9e/xy2wfuw4wKrIc9z
-	bQbaMwoDbzP14KHTBrraYl+O1Gs9E3Fj75yh0/pEPgdDpSOum8mBTpa5JTFDO6yzZeKuELLluLm
-	DWRTA16Q7DRHtpz9Y85W+jdic7jZSO+d6NZ2nb3IuaiRDY40d57X48UtdIK3nJ6bGW0mwzVK+rF
-	VH9yauUvfojHXPv6lC0K3M5UolN109AUAEIJeUGTgwUHcsN2vMSZRW3QvYJgA==
-X-Google-Smtp-Source: AGHT+IErnSBFhYxUJzsggddRVs3RbCystP6n1/ZQ4IX9uvuRMpjYqQBmS+F0oGJazwIWYP0YaTEAwQ==
-X-Received: by 2002:a05:6000:18a7:b0:385:f220:f798 with SMTP id ffacd0b85a97d-38a872c93eemr1482892f8f.6.1736329045814;
-        Wed, 08 Jan 2025 01:37:25 -0800 (PST)
+        bh=g54O8YkwZGrgLT3edof7A4TrnCHNhhKENcG6SumtW14=;
+        b=eepYhy0ug0Qzrm7af3KRdyuBiM5juxn2QfxaJigJ2xU98QxAcsj11FSICP1G4JpieL
+         gTmZvD6732Juow9ezgd8P9LqDhF8kskl2VXvaIudAcmc1hBwgilWCYIvHbJJ+YGR6vil
+         aSuV419TV4+cvIQ84+oX1zK7w47vha5F/x9PPwBlXIpukmIPe0Cb1CUrMLWwPqe//a+u
+         6Ugpwc+eFC0EjuLbd/GRbvGtlOzun9BU6pdHFAaI4sFNb2YEyCtkJroz46t4XJ3uVpTH
+         OAotD4abLiC5GL2/Co4MUsIA7EvdzIZPj+iJ1raG1d7Ne63S2uyPlbmz8KxRHCgOymaZ
+         5BrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVirv4XWX/HWe2JprhqKmSruXib1zX71lUNAYYsaHLxChX3QysrsmEmS16LP9QVdAOICjsYcuD/pLsONBqsBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT0TWazXVkrfyjk42BwZZV2PhQtY7c9M6gPB7p5HkMzW/v8UeG
+	N4BesnUjC1cx+8Rg6lPAxe7F0AkU41mQLGGR6oGQoZPtqpzDu3T7s4ogaQD/84g=
+X-Gm-Gg: ASbGncu9nuzvm7vICQdOjK6S2Q5wbTzlHAOuNbi4pdH4KcubiCaKeBWsTTWDVqea5hk
+	UOZTuOD6cci4xUbtizG6MCr2KIZBz4uVY0Jz3Cm5kR4ZEVI8LjA6MHUZVcavVUruO0zkkTHOiEE
+	AU3ZBk6/UK6Cpu+EB38u2Ul5UF1vkbpNxt75Ixd1k/66V+PlLkjUz020/6lIC5AneOH3GDEt6k8
+	uweFomZqh/cC4fWt0upLBYgtkfjOgIXb+xYB6o7CcEmhHaGzLktV83a9MoXug==
+X-Google-Smtp-Source: AGHT+IHkhtjxU/+Fjus/E3cnU1FkrZVIFQ90dsX1DLhvXda8HEgNw6w3TvBh5/m1vuuiaw6SkOOZIQ==
+X-Received: by 2002:a05:6000:490e:b0:385:ef39:6cf7 with SMTP id ffacd0b85a97d-38a872ec3c7mr1392758f8f.32.1736329291503;
+        Wed, 08 Jan 2025 01:41:31 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8acb17sm51765404f8f.97.2025.01.08.01.37.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2c27b54sm14879005e9.0.2025.01.08.01.41.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2025 01:37:25 -0800 (PST)
-Date: Wed, 8 Jan 2025 12:37:22 +0300
+        Wed, 08 Jan 2025 01:41:31 -0800 (PST)
+Date: Wed, 8 Jan 2025 12:41:28 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+To: Jesse Zhang <jesse.zhang@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
+	Tim Huang <tim.huang@amd.com>,
+	"Jesse.zhang@amd.com" <Jesse.zhang@amd.com>,
+	Likun Gao <Likun.Gao@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Yang Wang <kevinyang.wang@amd.com>, Le Ma <le.ma@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: chemical: bme680: Fix uninitialized variable in
- __bme680_read_raw()
-Message-ID: <4addb68c-853a-49fc-8d40-739e78db5fa1@stanley.mountain>
+Subject: [PATCH] drm/amdgpu: Fix shift type in
+ amdgpu_debugfs_sdma_sched_mask_set()
+Message-ID: <d39a9325-87a4-4543-b6ec-1c61fca3a6fc@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,36 +82,42 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The bme680_read_temp() function takes a pointer to s16 but we're passing
-an int pointer to it.  This will not work on big endian systems and it
-also means that the other 16 bits are uninitialized.
+The "mask" and "val" variables are type u64.  The problem is that the
+BIT() macros are type unsigned long which is just 32 bits on 32bit
+systems.
 
-Pass an s16 type variable.
+It's unlikely that people will be using this driver on 32bit kernels
+and even if they did we only use the lower AMDGPU_MAX_SDMA_INSTANCES (16)
+bits.  So this bug does not affect anything in real life.
 
-Fixes: f51171ce2236 ("iio: chemical: bme680: Add SCALE and RAW channels")
+Still, for correctness sake, u64 bit masks should use BIT_ULL().
+
+Fixes: d2e3961ae371 ("drm/amdgpu: add amdgpu_sdma_sched_mask debugfs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/iio/chemical/bme680_core.c | 4 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-index 26eb0fa77a43..9d73fd2cf52c 100644
---- a/drivers/iio/chemical/bme680_core.c
-+++ b/drivers/iio/chemical/bme680_core.c
-@@ -879,11 +879,11 @@ static int __bme680_read_raw(struct iio_dev *indio_dev,
- 	case IIO_CHAN_INFO_RAW:
- 		switch (chan->type) {
- 		case IIO_TEMP:
--			ret = bme680_read_temp(data, (s16 *)&chan_val);
-+			ret = bme680_read_temp(data, &temp_chan_val);
- 			if (ret)
- 				return ret;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c
+index 632295bf3875..174badca27e7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c
+@@ -362,13 +362,13 @@ static int amdgpu_debugfs_sdma_sched_mask_set(void *data, u64 val)
+ 	if (!adev)
+ 		return -ENODEV;
  
--			*val = chan_val;
-+			*val = temp_chan_val;
- 			return IIO_VAL_INT;
- 		case IIO_PRESSURE:
- 			ret = bme680_read_press(data, &chan_val);
+-	mask = (1 << adev->sdma.num_instances) - 1;
++	mask = BIT_ULL(adev->sdma.num_instances) - 1;
+ 	if ((val & mask) == 0)
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < adev->sdma.num_instances; ++i) {
+ 		ring = &adev->sdma.instance[i].ring;
+-		if (val & (1 << i))
++		if (val & BIT_ULL(i))
+ 			ring->sched.ready = true;
+ 		else
+ 			ring->sched.ready = false;
 -- 
 2.45.2
 
