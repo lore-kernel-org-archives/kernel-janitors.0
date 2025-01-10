@@ -1,113 +1,113 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028851AAA1F
-	for <kernel-janitors@vger.kernel.org>; Fri, 10 Jan 2025 11:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2D820C478
+	for <kernel-janitors@vger.kernel.org>; Fri, 10 Jan 2025 12:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736509920; cv=none; b=iyMr1J5JVSG2I6nooTraxyNZJR54qFZq3Q+EGyS62pkutdFXvE5zjGy4QkGc6jjVkv+kIkGOy/NA57oJeGvvM6jqdsAunSyZhUqnmfUgJwt8249zBTvTKpFHeSccxJZE6ZOiWlWFwfF4uJf1WFrod4uDwV8YQxZtpN9K4hXwCx0=
+	t=1736510868; cv=none; b=tPspZwz9rORE1EWOHb2n2Uy6iNmoWq9C+lKfi4nl3esjuR0ZVwVa3Cwey1MP3CuWfs2ip8pGT11T6Xtizz3WgahPvhYW5rwIhPg2PcNDRKAAyJYfLkWQzdESQNyUy1VXr7TDNBgOHSY8gbcLpZGqGV1lnEVnm3p2ieB+1Fs22kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736509920; c=relaxed/simple;
-	bh=YV7GmQKqg7lNtZgyhSg6UFYi73qjEM3setYvQpJ1qVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=di7XmE2uK6MECDKfRBokEgPREHL5rOSNFWiY2HCaqwohWKHzKVxInsg4IqGXMp8Imr4LpqDfT99twN8v/s+/liZYAQfu3vFxgxJHbX5WYek8QzfqSKc9TgJ6cig1AUP4wVHa0eOM1+ZWtzyGbuxu5RuXsLUgEYpzinliwpw5GoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fLILecPY; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1736510868; c=relaxed/simple;
+	bh=4OIC0awF9qdqrSYze3bLtli1VnuK3Zbdv6/S+ikE0YE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nq6o4nEaxs5ewiBylYHWaGonoHEJbENUrFOI2LduSjBQEiehczBepNMpceqWou1hfgEcBbo3mRWnRLOlCryC5BFPMqjVnhNoCm2dTVEjKpX7rXg/7wFO2CfIU/A7rwskoEXcW/vS/Oi6vB3CYFptVtpbXfDngR4AEXhKHog7jAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=amrX3qMI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fLILecPY"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361dc6322fso14255845e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 10 Jan 2025 03:51:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736509916; x=1737114716; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5CDjoH/Bj4sC3csaucGOxK7bWFGpVLWDds1mIa0onws=;
-        b=fLILecPY9NeA+AS3t5ue8chMv1Ob/pcKEuOzaL+Li3wos9F4qCPZkgmMHmjWhoK8Qd
-         p+2ItSSR5D389y9/c3VXtc2WP2WlnwTP4myLUHbXvgK/YnM2qt8u3M+AeS7g+ZConJuQ
-         +1vupOA7g/0QvJCiuUOc8nJXyuNrsiUcBHSM6fxlkY3Yjo9cF6rzOxQJTo1NpabEYvc2
-         jHUg/gbscT1HVFBhp87fSAcUuEvYsQYoPr4DZwNUOi9MQcGgEuYrDW0GPARHSD5mlyUl
-         mcwc8bh4l64q5NtbrrZ4hyqOO1d/WeXXqsy8yylhOnWewB7NBuvMfb1gsmZ7EY9RQAgD
-         4ksA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="amrX3qMI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736510865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/s6AcoV7eSa8oU9Cj5O6jNKTNB31fGwfafoEc6FUA1U=;
+	b=amrX3qMI46GRa0T/LuQssmTg4CI5iEjphbXLAvBTEvr3q/5Ort1velPRTRcteElYt2Cbpu
+	LHwclhpxlRD26bKl3DaQbWgQZYeKupJZuUV+z0leiXEzSk8own2rjB5TY1JPy6A+kspNWM
+	oKEQIPGg3n8MqYFWyGFPgKp0Gr1sigY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-294-qan6yjonPgmQxulYGRpJ8Q-1; Fri, 10 Jan 2025 07:07:43 -0500
+X-MC-Unique: qan6yjonPgmQxulYGRpJ8Q-1
+X-Mimecast-MFC-AGG-ID: qan6yjonPgmQxulYGRpJ8Q
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-436379713baso9643785e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 10 Jan 2025 04:07:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736509916; x=1737114716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5CDjoH/Bj4sC3csaucGOxK7bWFGpVLWDds1mIa0onws=;
-        b=RIt9idOsUosOqOYCZ47n6Uy7EXcAXcPyyTivJaVlTa/GC6HgiNGg7wQtrqiH6HXxGO
-         281RmGB/5ucQpFGToVq3PA1/+otAGFP+3IOapRPFggJrpDMRZ+BRdFaAaKG29cePmym+
-         aJylwViow2aqRozMJwmIL7OlxjzLqeZllojltXiW99pPKsHWBuEHuD39JpF7kmy2GngA
-         DxFb8odi6q1p9xMP+tC+/7UFK9P8qs9T19Bv58hcqEDh8SkdbQ/HUUvcaVlgx1B9a2At
-         myAnV5sTCPaMNszlUDoJeGrjO/+5PjSwUgaQKGstW7GBi305UZ6X3mH8Lg9ARhAoUKqw
-         Tqig==
-X-Forwarded-Encrypted: i=1; AJvYcCU4zLSOdSZVTV/ToG2N2BZHdTn0DkYo/rpjRnPXTgSk+tSvQZV+SJ++V7O4fYABwRe9OMsUPB6vjfNR/I3Apg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDlClpzE7+2tBK+cJ5PjTe/QvtFDtfmu8L3JA3MmfVv8QyquJe
-	INv3KfJNHDUGBsz6y5nc6xlEJlvM3AdMqEB7G/3+3aPQWSOEsUVlETisqizrDAs=
-X-Gm-Gg: ASbGnctVOsUhZ2dykwIEhMDoDbdxDIQCpwzAyKeNvDHIrVMGiVZpw7hWtOnMpOxw1eg
-	CQIAM8DyAz4+8F0gY9P8TzxPhWbm84hcd975ClQFdh5U7r3e3YMmTFdUmXsOGXaSCLTfMMPm2xF
-	TkWIih6o05n7dt55udkuP8mDsqzs/eIIUm0bQNz7pqOwJ76rhzv/ASiDmQLfSXp+s/EvwHUX3hR
-	UGbIyW9urXmkZHB8NYnlQWybRkgENhoczucdJUTllxUouDLh/fxvmNDoOmDnA==
-X-Google-Smtp-Source: AGHT+IHKediC199TcMSxu21acE0CN/02tK8RHMMIB+sspKStxvJN02qDARg/u2Qf3U6RMNr9mfLUwA==
-X-Received: by 2002:adf:a44e:0:b0:38a:36a5:ff81 with SMTP id ffacd0b85a97d-38a8730e0admr7718927f8f.40.1736509916395;
-        Fri, 10 Jan 2025 03:51:56 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e38c990sm4384653f8f.56.2025.01.10.03.51.55
+        d=1e100.net; s=20230601; t=1736510862; x=1737115662;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/s6AcoV7eSa8oU9Cj5O6jNKTNB31fGwfafoEc6FUA1U=;
+        b=lSjIcC0+/KMK6Zix20qBsjtQ5EpRL8tGGDw4QfrRhnLarXBSFyazFawYhd8ajrcx7l
+         TfdgyfdUuAoONqAW5zA98LCW9V5WKkZL/JUYLUXpsyvl9/CWRPvj1yKBj5W0yq6i1vJY
+         iS8WqDmAaEzLo6oQ/wsLtywnXmdl3LfeecO3nWbUS814Gkz7ynBJdhq9BYDFxEfWSa4V
+         xfaaj8d7C5LQ7S/vOv6aOgb5pGnUQ/LfgApkofW+hptE7uwAKZ632O33IyZF9K+I8rvi
+         lW1xZQbBvhROcsqsB9ep/upG+vuCgsONYUpBgVoNJ7RiMiT8MoBA7XYpRkO1le1hytAz
+         dgsg==
+X-Gm-Message-State: AOJu0YyRb/CDAnH+5LLn3rG5vJPvZwB3s1UKP2qs1eRGZTG7zAknLwJw
+	Zu9xA6mhsrGgI1tTGRGrOh3j6Ue7D4dAOKS0rhDF0sAeaUsu+yZdidfjFgGGSIEydqwgOH+67aG
+	jUsnVk0Mqaharv29Tbvve1rBeTsgu2p5nV5jo0sgow8DjSDwgATBplBUJrgv81pe4MA==
+X-Gm-Gg: ASbGncszWaTENCtOwmRry+PlI5CEnr7mpmHdFubnibtBK+JyWa/9PHwiZJ6gXoFPpZr
+	okIvdJbfysPcg65+HWwzCHIheMP1gskJ4ISjA8MYm3CkXKYPOq0R7FLVT80OG10n7XokDeiSwOd
+	cPEIwlvDllVmrtQrOVPG+OkYGqLMTIKc2nkuX5hhhKTdugPLzyvKl4+zKwbEm+g8Y0ufsXrrVAp
+	MNGc62Uzyx80LorIfl518QRphHQ5qKhFkLa/GLh+Ucrmzwf7e4ZLmItR79VFIFK7w743xLu2xv2
+	hMVqgUwsrtE5M9MPtKWO+UDrDDDv
+X-Received: by 2002:a05:600c:3505:b0:434:a7b6:10e9 with SMTP id 5b1f17b1804b1-436e26a9045mr102324415e9.17.1736510862544;
+        Fri, 10 Jan 2025 04:07:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFbgDQ3ewebQfLS4urKYZZILsPA8GS3xvXnwmYJ52EVcMnygfg0FQR9Yh+N96Ihn3P91v+A4g==
+X-Received: by 2002:a05:600c:3505:b0:434:a7b6:10e9 with SMTP id 5b1f17b1804b1-436e26a9045mr102324195e9.17.1736510862220;
+        Fri, 10 Jan 2025 04:07:42 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9d8fc81sm51204965e9.5.2025.01.10.04.07.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2025 03:51:55 -0800 (PST)
-Date: Fri, 10 Jan 2025 14:51:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Nicolas Pitre <npitre@baylibre.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] binfmt_flat: Fix integer overflow bug on 32 bit systems
-Message-ID: <f946074f-60ed-455f-bcc7-4364f15b9603@stanley.mountain>
-References: <5be17f6c-5338-43be-91ef-650153b975cb@stanley.mountain>
+        Fri, 10 Jan 2025 04:07:41 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Lee Jones <lee@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: Adjust the file entry for the qnap-mcu header
+Date: Fri, 10 Jan 2025 13:07:36 +0100
+Message-ID: <20250110120736.58831-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5be17f6c-5338-43be-91ef-650153b975cb@stanley.mountain>
+Content-Transfer-Encoding: 8bit
 
-Ping.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-regards,
-dan carpenter
+Commit 998f70d1806b ("mfd: Add base driver for qnap-mcu devices") adds a
+file entry in MAINTAINERS referring to the file include/linux/qnap-mcu.h,
+whereas the file added in the commit is placed in include/linux/mfd/.
 
-On Wed, Dec 04, 2024 at 03:07:15PM +0300, Dan Carpenter wrote:
-> Most of these sizes and counts are capped at 256MB so the math doesn't
-> result in an integer overflow.  The "relocs" count needs to be checked
-> as well.  Otherwise on 32bit systems the calculation of "full_data"
-> could be wrong.
-> 
-> 	full_data = data_len + relocs * sizeof(unsigned long);
-> 
-> Fixes: c995ee28d29d ("binfmt_flat: prevent kernel dammage from corrupted executable headers")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  fs/binfmt_flat.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-> index 390808ce935d..b5b5ca1a44f7 100644
-> --- a/fs/binfmt_flat.c
-> +++ b/fs/binfmt_flat.c
-> @@ -478,7 +478,7 @@ static int load_flat_file(struct linux_binprm *bprm,
->  	 * 28 bits (256 MB) is way more than reasonable in this case.
->  	 * If some top bits are set we have probable binary corruption.
->  	*/
-> -	if ((text_len | data_len | bss_len | stack_len | full_data) >> 28) {
-> +	if ((text_len | data_len | bss_len | stack_len | relocs | full_data) >> 28) {
->  		pr_err("bad header\n");
->  		ret = -ENOEXEC;
->  		goto err;
-> -- 
-> 2.45.2
+Adjust the file entry to the actual location of this header file.
+
+Fixes: 998f70d1806b ("mfd: Add base driver for qnap-mcu devices")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9fc47f2f1286..ccb919894a1f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19260,7 +19260,7 @@ F:	drivers/hwmon/qnap-mcu-hwmon.c
+ F:	drivers/input/misc/qnap-mcu-input.c
+ F:	drivers/leds/leds-qnap-mcu.c
+ F:	drivers/mfd/qnap-mcu.c
+-F:	include/linux/qnap-mcu.h
++F:	include/linux/mfd/qnap-mcu.h
+ 
+ QNX4 FILESYSTEM
+ M:	Anders Larsen <al@alarsen.net>
+-- 
+2.47.1
+
