@@ -1,75 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C40210F6D;
-	Fri, 10 Jan 2025 16:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCAE24B22A;
+	Sat, 11 Jan 2025 19:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736527792; cv=none; b=p/w/YJIC+TBRU+/Qe5u+GNeshQbpkHP8G6koaYZxthT92FgpF1TtD/KOJZ0mvnBhyiAeK2RubwDwAKKklKEPGOo/bbdeDXT5NhhakPRP/LwMwgz1cdciQk2N7JBefqnhTkR2yzkdlND7hfsFnkTTUqL4g+NJj9009QBQmIZVY5E=
+	t=1736624870; cv=none; b=p6243MobX+RKpxWaX7g8Rdr1obJswrSBk/RBLOoiSCtoszX1PXRS6tim2KE5qlMjWOigWmngfhs4i68/9OizHmvJdc4gkEK+YobFoR7A2Wgxj9HY0GCRMRc8AAMfelvNPFecikrIHWd8yZtyZ1ZpnOflULXP+/ptFBuZZIqOXBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736527792; c=relaxed/simple;
-	bh=+yDQ+vJqHznaDyos9xjW00xrBMEHb0ruggMNJ4oZado=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FFRITKTtjwuxTUcR0nqJp7VwW4BiHdqhg6L2TDurffso2h5XNhPZ1Au1q7rtnroTidWUpfs+pTiUG3W+odYYn8mEPJ/PPeg3TlcQ8/AKvvUVOuyJkKq1c3IM+eHwEvJbbFDj5XacW2LZG8Lg7dTjDJ1NGwVjXvm8jhp8sXW0BH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLO9DXzI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736624870; c=relaxed/simple;
+	bh=pCHxNFYTC0M25bVDxnFv5v2wGuiQVcvAQ4dtqAP6CLs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bQt0rCrX1dIw22o00Okpp9dBSAtH2eE9B54wTEDkTI+8tVcmACNmMTlmf2eYd1UgxnoXPCs90oPGmqL7kVkUw2dqtUgRQkdxFb8V79FZyAihf1LXPWiKbw/8MTF5vhTtMesMLfI+DDVwCtiZOReJV9vFCncAGKYMI5XNGTKcMo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JhiCqToJ; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLO9DXzI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40CDAC4CED6;
-	Fri, 10 Jan 2025 16:49:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736527791;
-	bh=+yDQ+vJqHznaDyos9xjW00xrBMEHb0ruggMNJ4oZado=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gLO9DXzIlngQ9OUW3zqrNtoKR/H74kAqGYSNWAScFW40NQZJn2QqcvV6+MG3gNXgI
-	 my5endsWAut9pMhmvwxsvzquT3VC1mKv5BjgbGhotQIzW3OogWmpYsEn3+uqWcd38m
-	 5G0gI2C7eH443UZFOqee6loc3CoWD8/K57KY0OSpObvFjG9HE9v6GQin6VK8AExl88
-	 rHmm3X45mMJjtDM9spQ8s8VL9MGJWWsVLwjqBmk7qHUoyGiFDPYTa+AFZV1/R2TMF4
-	 1IG+OfL3s3hZDWmsgCw1MQ8Rm+HNhXbgkQ6f8B7oaD9tHFy7Qew4SpzdVm0r6qIXbo
-	 cD2Vklyl/aqPA==
-From: Kees Cook <kees@kernel.org>
-To: Nicolas Pitre <npitre@baylibre.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhiCqToJ"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2efb17478adso5113002a91.1;
+        Sat, 11 Jan 2025 11:47:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736624868; x=1737229668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNPm5XgYPf3Wtfr1LKIDSnDOGdbJV1zMvz2mCxjuB+8=;
+        b=JhiCqToJSuHF2vL8MByHr/rxC5gXXCkcPfbf/Gy8yoQF0WgN1bFKkaxOJtv3yx1SC0
+         wqjNp3eqBvb7dUZmRrn0caTdNXIr+aOK4NFgiT82HmczmpgIfqnFN/08ZfM3Uy1xDPae
+         +wyOEykb85aiiAAJT1R355DZ4pwcZKSons+Nml9H5caeTb9c+kECKYPV8mUxrhzbsmaf
+         NQhQP1xC+XJXuOV7C9PRo3vsEK0jt2CxoSG3PN30Af8mg8Tn8Ip7aIiqv4ce8TgqdqDY
+         8EG4V/lfpAXjFhnO6M5AQd7XadOoR8XqGk2dYUG0qPhjoe2kpme33Fr1DyGPJ0TXJ2N9
+         kLOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736624868; x=1737229668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xNPm5XgYPf3Wtfr1LKIDSnDOGdbJV1zMvz2mCxjuB+8=;
+        b=RZ84Lzp2VQfCveb00+kfHuMzxcYByKxhooI87UytSBkQ5T9fmSw1U4vf2GOYrAtPn8
+         sEJhNASVgOG8nKEDYgjuup+RwAHv7U7RxZc9+ePsfq3ll5ucD7UxcR8MX2C1AttujdMl
+         XaaWZFsMRzvWjhjiVGu/YUPr3rnqLEWuUauAHQGh2xlq3a+lb5bOHAHuFQ8tVlWh9ibw
+         oq0mmiwUq3etf8OgLmkvKO/l7yln3zP9q3Yui0xTdDimyJKVEBD3iwVx4EfTHe2BsVEL
+         ijG8VJ5KXO89JKlRqmfhB0DDVLliHrNHkRK/L9xFJFIc78jvXN3GrVM+gdy/7RqOD7vH
+         NmTA==
+X-Forwarded-Encrypted: i=1; AJvYcCURt+3XMKnJpUk5AReoeZbAha8NKz7+ch9LdQxnTUI+18RL+ZTXbhP3kOAA5/GGt1nbnpISkSBTuckk5SU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE2LS2OCU2qVQKFERbi8oIiZeg94ipOzl2uNKcfVmE6E83kSbQ
+	C1XxvxskZt/PPCifWr0Byx9ctTSG21KgQdy99p6wQ9DmzNpQRhbLvcFz5dXba0U=
+X-Gm-Gg: ASbGncseKc6NMlvcpidhPXPWH2GpLaLOKkkQRbEJvL28YdXhycoKjVSKjfkaYAUduvD
+	e4C5gj+EkfkZHQWyoNuQSvvswzUejeBPOmNeJ36vOTfvQKrV3xQstAatWCU4hcGkG9sZ6AlQSqb
+	j35KNMFCi2A075oLwk07td1270Czb6d78SBow1/yuzn6Q8OE6o9tWXzsGAdlSB56k6hm00lq9Pw
+	+0PXDl6h3NHC4tEaWL4VszA6RyO/a/6wEfeti3kWVhJ6fnQOEDYf6I=
+X-Google-Smtp-Source: AGHT+IFsHGDM2NDNSc8JFy6rDLeM+s4LBGtq3j4iUYl1rCyHKBlHpFODg64YbnKSOk75RrTAi7SVEg==
+X-Received: by 2002:a05:6a00:1385:b0:72a:aa0f:c86e with SMTP id d2e1a72fcca58-72d21f17738mr21870378b3a.4.1736624868043;
+        Sat, 11 Jan 2025 11:47:48 -0800 (PST)
+Received: from localhost.localdomain ([122.174.69.103])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-72d4065c475sm3384993b3a.117.2025.01.11.11.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Jan 2025 11:47:47 -0800 (PST)
+From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+X-Google-Original-From: Tanya Agarwal <tanyaagarwal25699@gmail.com
+To: akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] binfmt_flat: Fix integer overflow bug on 32 bit systems
-Date: Fri, 10 Jan 2025 08:49:47 -0800
-Message-Id: <173652778610.3103415.15796406713093643015.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <5be17f6c-5338-43be-91ef-650153b975cb@stanley.mountain>
-References: <5be17f6c-5338-43be-91ef-650153b975cb@stanley.mountain>
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	tanyaagarwal25699@gmail.com
+Subject: [PATCH] CREDITS: fix spelling mistakes
+Date: Sun, 12 Jan 2025 01:17:10 +0530
+Message-Id: <20250111194709.51133-1-tanyaagarwal25699@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 04 Dec 2024 15:07:15 +0300, Dan Carpenter wrote:
-> Most of these sizes and counts are capped at 256MB so the math doesn't
-> result in an integer overflow.  The "relocs" count needs to be checked
-> as well.  Otherwise on 32bit systems the calculation of "full_data"
-> could be wrong.
-> 
-> 	full_data = data_len + relocs * sizeof(unsigned long);
-> 
-> [...]
+From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
 
-Applied to for-next/topic/execve/core, thanks!
+Fix spelling errors identified using codespell tool.
 
-[1/1] binfmt_flat: Fix integer overflow bug on 32 bit systems
-      https://git.kernel.org/kees/c/55cf2f4b945f
+Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+---
+ CREDITS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Take care,
-
+diff --git a/CREDITS b/CREDITS
+index cda68f04d5f1..1f9f0f078b4a 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -4339,7 +4339,7 @@ D: Freescale Highspeed USB device driver
+ D: Freescale QE SoC support and Ethernet driver
+ S: B-1206 Jingmao Guojigongyu
+ S: 16 Baliqiao Nanjie, Beijing 101100
+-S: People's Repulic of China
++S: People's Republic of China
+ 
+ N: Vlad Yasevich
+ E: vyasevich@gmail.com
 -- 
-Kees Cook
+2.39.5
 
