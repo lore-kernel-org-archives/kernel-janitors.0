@@ -1,103 +1,76 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F3114B96E;
-	Sun, 12 Jan 2025 21:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3131BF7E0;
+	Sun, 12 Jan 2025 23:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736717994; cv=none; b=cghPHcnNeuWsp5Xl087ujs7Ho+tVRMJdiHUa5Geb4o6px1BCN2bYpuYRlUHm/muxW1HJ9sd1oWlrDg43cSDVJMWFVQIN3g7ngV/owsIVeSuL+805xreboscBm1avsspa94PAB05Vs+CMoR1QVXWo4ccK4IYG/lT05e3XzhBBQWc=
+	t=1736724092; cv=none; b=iP1zMtXWr6qIanD1eJCsNWC/2CkFP8CemMOIHx38sjWm+aqmAXjVRewjTFMIz1CWO8JImOstYzdqs0EIi29Jn3/X2bY+RtT+tBK8UXJavLuZ0N2PpI6K6PyRXYIDZMQUzLxw/dJaAtJnwEacJ/GFJoFdqpc5ylobWHBJhb6XFZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736717994; c=relaxed/simple;
-	bh=mFdjjbWGUCKF/tomzarw1lYWzqiOvK428B3wtrYFo2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W1QHygVwnnLzYxNYsJcdoCp8nGPyzGAuGQxqVbKJRlTWwabWX7w0z/8xN2zz2ARi2t8KiXzvtG0sIzQuKE9mBugOm0khjGr15It+7EpT0Dx8RPNWeJ3keDKXuF3osmTo1jeD/4zeZg5awXmXGsZIJ21+B/p2x2oBdpIH7N9La+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZINzIox; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1736724092; c=relaxed/simple;
+	bh=9clxHogCAD5/jbOmit1s3wQ2EvDCYSz8MZeiLhZIp/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KrzdG2YjZL+KJLKMMbSShdqUEUPEYjcTLuElH05HLhaA2OQjuNF2bx3w0if4YxMwHVUQJJ3w1k4SdI8gPQAWUPtHy/MsmnIf+nLLjAyw06ETgIko4VNkumVn1pJ/UpcbaRiB2uX84UnE+MueCxvH0gK2kYEs1Vfl6hoDWjZhf7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=feTup4NZ; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZINzIox"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38789e5b6a7so2009912f8f.1;
-        Sun, 12 Jan 2025 13:39:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736717991; x=1737322791; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1QLt9s+zP7rcQyhkyJBlf2MB81VnrFZkithnJlGG1X4=;
-        b=SZINzIoxSps2jjKO1tZP04zy/W52eBp3PfaOSrjap4LytRqrQCwVJveECV6QrTmv29
-         r3b+CFOtSJKNQ5yotbKOCdACOAYFc/3PQUT7Mu7k1sldZ5qrjFFceUcTRan+nFmH/7dp
-         uZNtw5kPELphgj0rOQldhZ0+7XR1Rtavfgc4mAtj/ffnWRvcXzEfvFGgJuD88DOFkGkr
-         Jqrk8wbNwK66PDfbKD3s67V/fJBkpbm8nlyro4Sz2+kPKnxb7tD3shpmdvubhZNaQoZy
-         eTAhATlt84nIQvS4kyIz8PgEcqDnmKD9L4nW4E1ZPSsWxCvCtD6r7moj4Vlm59i41042
-         IXUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736717991; x=1737322791;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1QLt9s+zP7rcQyhkyJBlf2MB81VnrFZkithnJlGG1X4=;
-        b=D+n9omEo/Np4xAjw//L1NaXqW1qkr01EQfomaDfGhAR1wg7PhheCk7P/YdEaDYvr1y
-         5Lu5jDDvtA5KuRtexhWUYx8xc6eKO5twAxzSDHsrIWADiZuA3C2Zi8PpTN3sPOZvaT3L
-         jrn3MIPPqx1MEwtIuUePQAIEU3Dz2UIAWLo3gk6o+fPhG6PsNVsq+mpEd/ao6Qygnl1T
-         k9WXNd6JK39onCQOXMKp6mWFB11hzNamGXunQXUyd+cYLEg6NauD7VofD8Pfvl8UsM1U
-         MvgTJeKiYu7U3H+aeXH87cubErw8WtJ90Tq6uOgv6BHBDw4oE4KokDfWoK8m7pSHHBEp
-         6zzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZIeHjLPUm8aLnFYlgnHuGRr981TWp/cz4OyuxJTPMfRtSlUK/+M15j4w6TwpUbzwK1fvL2E6g6sc=@vger.kernel.org, AJvYcCWFUhjXUUEQCgBIHGUW0Rnh4CkXH0PCAHxz46HmQaTY5jC6++dmtBjZuMf14D7q0sg6k9/MF4IiAcP/k6ah@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ4ErN2DNgtTuzDNGRB+wjZgiGiwJwO5vMvVZH0XbbxHL+by8p
-	WgMrCaMeY15kz6pwISj48kZUXslQhY/eAvW9gEHHjNBtFWSpi3c7
-X-Gm-Gg: ASbGncsyPSYDUkMqAEZ7F42YLUGxl0wQau3nOZXPxtzURrHSWVB523pvELgh3X47ooM
-	/5ddtGN8l34+CiFofDjuEdEPkDM0iPkCaMmf6cQfeTn44tZ6orbD99mck8iCNBByXQ55kjyrFYn
-	eHYd6/j72o517Coco8tplA0Lp9bx8Lq1LZWkCSPDC0UTy+1HNOoVUGp0Aa0cK7qFrlMfsX0iua6
-	MCusx7Qg0iCsHWcUlrJOJ/Nt9DUFWvfS8+ZMv6pBPcn71Kc/zrlKlkQWA==
-X-Google-Smtp-Source: AGHT+IEk1Eqa+9Dem5I1quDZ63cclXmtqObIW9f8dsm241vNqV4DMXLFl+xYgWu1iKRwCO9lDDQ2Wg==
-X-Received: by 2002:a05:6000:1a8c:b0:385:f677:8594 with SMTP id ffacd0b85a97d-38a87336b29mr17199600f8f.43.1736717990523;
-        Sun, 12 Jan 2025 13:39:50 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e4c1ce5sm10684180f8f.94.2025.01.12.13.39.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2025 13:39:50 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: ep93xx: make const read-only arrays static
-Date: Sun, 12 Jan 2025 21:39:47 +0000
-Message-ID: <20250112213947.8524-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.1
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="feTup4NZ"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B323F240002;
+	Sun, 12 Jan 2025 23:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1736724081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=foxZ4OPCvLORpxi9EKDR8nn5Jms+wKcLcYMTxUyJCyk=;
+	b=feTup4NZMCNIg8ww0bruHEYGXZKPs0EuMBNTG4RDe32aiGQmCOf6pYtkziirMKKgiX30vr
+	McsxfujL5Ccl/CG0fVeK1DWLjzOALiBT44KCZgTDz2gBWkQwsouT2KLMO71AdjLXRN1E99
+	undVABrdFggMYyId0P1LWurbIcrqbclD4DZ8t97Te4nU7SvBddTZY4kxGFN3BOfKRApONX
+	yyXbEO/X+UG/3x259FwvyoWWFYBpanMNe8KNvIEt94pWLcMaNo484eC8QuMOMYcCkr8Yhc
+	0u0JdvPUr4RWcGQdYBSmSqQt17W9P34+VJ0UlG5a/cGcy5acSP5TrcGbH8drVA==
+Date: Mon, 13 Jan 2025 00:21:21 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Esteban Blanc <eblanc@baylibre.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rtc: tps6594: Fix integer overflow on 32bit systems
+Message-ID: <173672406962.1487447.9603474833606557636.b4-ty@bootlin.com>
+References: <1074175e-5ecb-4e3d-b721-347d794caa90@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1074175e-5ecb-4e3d-b721-347d794caa90@stanley.mountain>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Don't populate the const read-only arrays on the stack at run time,
-instead make them static.
+On Wed, 11 Dec 2024 12:32:34 +0300, Dan Carpenter wrote:
+> The problem is this multiply in tps6594_rtc_set_offset()
+> 
+> 	tmp = offset * TICKS_PER_HOUR;
+> 
+> The "tmp" variable is an s64 but "offset" is a long in the
+> (-277774)-277774 range.  On 32bit systems a long can hold numbers up to
+> approximately two billion.  The number of TICKS_PER_HOUR is really large,
+> (32768 * 3600) or roughly a hundred million.  When you start multiplying
+> by a hundred million it doesn't take long to overflow the two billion
+> mark.
+> 
+> [...]
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/clk/clk-ep93xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
-index f888aed79b11..4bd8d6ecf6a2 100644
---- a/drivers/clk/clk-ep93xx.c
-+++ b/drivers/clk/clk-ep93xx.c
-@@ -586,9 +586,9 @@ static unsigned long calc_pll_rate(u64 rate, u32 config_word)
- 
- static int ep93xx_plls_init(struct ep93xx_clk_priv *priv)
- {
--	const char fclk_divisors[] = { 1, 2, 4, 8, 16, 1, 1, 1 };
--	const char hclk_divisors[] = { 1, 2, 4, 5, 6, 8, 16, 32 };
--	const char pclk_divisors[] = { 1, 2, 4, 8 };
-+	static const char fclk_divisors[] = { 1, 2, 4, 8, 16, 1, 1, 1 };
-+	static const char hclk_divisors[] = { 1, 2, 4, 5, 6, 8, 16, 32 };
-+	static const char pclk_divisors[] = { 1, 2, 4, 8 };
- 	struct clk_parent_data xtali = { .index = 0 };
- 	unsigned int clk_f_div, clk_h_div, clk_p_div;
- 	unsigned long clk_pll1_rate, clk_pll2_rate;
+[1/1] rtc: tps6594: Fix integer overflow on 32bit systems
+      https://git.kernel.org/abelloni/c/09c4a6101532
+
+Best regards,
+
 -- 
-2.47.1
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
