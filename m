@@ -1,109 +1,103 @@
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08BA1BEF7D;
-	Sun, 12 Jan 2025 17:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F3114B96E;
+	Sun, 12 Jan 2025 21:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736701435; cv=none; b=ai/Rd0J15ID9pQgksSeMJlWFdnBsj26aX4SQn6gpMnypey5tWSW14CKU0n+6J7xTvvJt97unaXFk9YgPDh9tdo0M8XhRNWVCXBDUN7vw1uR5CV2XGPGp0i1BeSfCsMNrflKIxXT19syCYvhjtRVyvYvw0Q2PslyANYKNZGInfMU=
+	t=1736717994; cv=none; b=cghPHcnNeuWsp5Xl087ujs7Ho+tVRMJdiHUa5Geb4o6px1BCN2bYpuYRlUHm/muxW1HJ9sd1oWlrDg43cSDVJMWFVQIN3g7ngV/owsIVeSuL+805xreboscBm1avsspa94PAB05Vs+CMoR1QVXWo4ccK4IYG/lT05e3XzhBBQWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736701435; c=relaxed/simple;
-	bh=ABE6baLfT+jnOfm3E0iUTl8bed0Mn68JyxJRW+NvnLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G41g8LplAGLrDj706IxuoCTzGrJWPBFAFy7HKUmkZhBfvilh6Tk2FBAnk6orjUEETHVAYC/cpuUmed50LI2ilymgYX1eeStZSJ5gJpRcTHOGIZ82czPB10rqY4fJyWKV3QLZi+oNwGIFbxM4eXY2E5t7X2MwJetuM/rkm3VIpF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fnH0iNQQ; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1736717994; c=relaxed/simple;
+	bh=mFdjjbWGUCKF/tomzarw1lYWzqiOvK428B3wtrYFo2E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W1QHygVwnnLzYxNYsJcdoCp8nGPyzGAuGQxqVbKJRlTWwabWX7w0z/8xN2zz2ARi2t8KiXzvtG0sIzQuKE9mBugOm0khjGr15It+7EpT0Dx8RPNWeJ3keDKXuF3osmTo1jeD/4zeZg5awXmXGsZIJ21+B/p2x2oBdpIH7N9La+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZINzIox; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fnH0iNQQ"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id X1NCt2XX5qZ5JX1NGt8sSO; Sun, 12 Jan 2025 18:03:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1736701429;
-	bh=gcp02vfLN1uVTWXJ8UJ8BzKX5eeyuNnorXOtRkd8w94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=fnH0iNQQzQe3piqBMIVE5d9BG6+w8xEgN2VBqmi8AXirOeRy60NrMR/v+/jXABh16
-	 JpvenW7mQrRyQJNS7ODfCQud/A0sHpCYumL7Rxo4dvkQRkFn5Sq+X8YWWLh1l3Npj7
-	 EKCh7IqNNNluOSSWpJWw/jeZKljq/zAdtpT71biBfD3cTuF1rjWn5vFZEgL0E6FQCj
-	 rUQtMFXuQPg5CYG5zF84tPPtJtZ/Li8U3366GMCLOd/+RYloATVfvXiYux/yyQLhAh
-	 h/GhbIjMLlosT95vg3PB740gtcl7sPYn5Kc0tMKx+JEYGR+BJ4RpBBEKNHbPCy3uh+
-	 8FUFx8/CX7JlA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 12 Jan 2025 18:03:49 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <05dfdd2f-e2c2-40ff-8a84-038c4da8385a@wanadoo.fr>
-Date: Sun, 12 Jan 2025 18:03:38 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZINzIox"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38789e5b6a7so2009912f8f.1;
+        Sun, 12 Jan 2025 13:39:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736717991; x=1737322791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1QLt9s+zP7rcQyhkyJBlf2MB81VnrFZkithnJlGG1X4=;
+        b=SZINzIoxSps2jjKO1tZP04zy/W52eBp3PfaOSrjap4LytRqrQCwVJveECV6QrTmv29
+         r3b+CFOtSJKNQ5yotbKOCdACOAYFc/3PQUT7Mu7k1sldZ5qrjFFceUcTRan+nFmH/7dp
+         uZNtw5kPELphgj0rOQldhZ0+7XR1Rtavfgc4mAtj/ffnWRvcXzEfvFGgJuD88DOFkGkr
+         Jqrk8wbNwK66PDfbKD3s67V/fJBkpbm8nlyro4Sz2+kPKnxb7tD3shpmdvubhZNaQoZy
+         eTAhATlt84nIQvS4kyIz8PgEcqDnmKD9L4nW4E1ZPSsWxCvCtD6r7moj4Vlm59i41042
+         IXUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736717991; x=1737322791;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1QLt9s+zP7rcQyhkyJBlf2MB81VnrFZkithnJlGG1X4=;
+        b=D+n9omEo/Np4xAjw//L1NaXqW1qkr01EQfomaDfGhAR1wg7PhheCk7P/YdEaDYvr1y
+         5Lu5jDDvtA5KuRtexhWUYx8xc6eKO5twAxzSDHsrIWADiZuA3C2Zi8PpTN3sPOZvaT3L
+         jrn3MIPPqx1MEwtIuUePQAIEU3Dz2UIAWLo3gk6o+fPhG6PsNVsq+mpEd/ao6Qygnl1T
+         k9WXNd6JK39onCQOXMKp6mWFB11hzNamGXunQXUyd+cYLEg6NauD7VofD8Pfvl8UsM1U
+         MvgTJeKiYu7U3H+aeXH87cubErw8WtJ90Tq6uOgv6BHBDw4oE4KokDfWoK8m7pSHHBEp
+         6zzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZIeHjLPUm8aLnFYlgnHuGRr981TWp/cz4OyuxJTPMfRtSlUK/+M15j4w6TwpUbzwK1fvL2E6g6sc=@vger.kernel.org, AJvYcCWFUhjXUUEQCgBIHGUW0Rnh4CkXH0PCAHxz46HmQaTY5jC6++dmtBjZuMf14D7q0sg6k9/MF4IiAcP/k6ah@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ4ErN2DNgtTuzDNGRB+wjZgiGiwJwO5vMvVZH0XbbxHL+by8p
+	WgMrCaMeY15kz6pwISj48kZUXslQhY/eAvW9gEHHjNBtFWSpi3c7
+X-Gm-Gg: ASbGncsyPSYDUkMqAEZ7F42YLUGxl0wQau3nOZXPxtzURrHSWVB523pvELgh3X47ooM
+	/5ddtGN8l34+CiFofDjuEdEPkDM0iPkCaMmf6cQfeTn44tZ6orbD99mck8iCNBByXQ55kjyrFYn
+	eHYd6/j72o517Coco8tplA0Lp9bx8Lq1LZWkCSPDC0UTy+1HNOoVUGp0Aa0cK7qFrlMfsX0iua6
+	MCusx7Qg0iCsHWcUlrJOJ/Nt9DUFWvfS8+ZMv6pBPcn71Kc/zrlKlkQWA==
+X-Google-Smtp-Source: AGHT+IEk1Eqa+9Dem5I1quDZ63cclXmtqObIW9f8dsm241vNqV4DMXLFl+xYgWu1iKRwCO9lDDQ2Wg==
+X-Received: by 2002:a05:6000:1a8c:b0:385:f677:8594 with SMTP id ffacd0b85a97d-38a87336b29mr17199600f8f.43.1736717990523;
+        Sun, 12 Jan 2025 13:39:50 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e4c1ce5sm10684180f8f.94.2025.01.12.13.39.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Jan 2025 13:39:50 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: ep93xx: make const read-only arrays static
+Date: Sun, 12 Jan 2025 21:39:47 +0000
+Message-ID: <20250112213947.8524-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: phy: Constify struct mdio_device_id
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: SkyLake.Huang@mediatek.com, UNGLinuxDriver@microchip.com,
- andrei.botila@oss.nxp.com, andrew@lunn.ch,
- angelogioacchino.delregno@collabora.com, arun.ramadoss@microchip.com,
- bcm-kernel-feedback-list@broadcom.com, daniel@makrotopia.org,
- davem@davemloft.net, dqfext@gmail.com, edumazet@google.com,
- florian.fainelli@broadcom.com, heiko@sntech.de, hkallweit1@gmail.com,
- jbrunet@baylibre.com, kabel@kernel.org, kernel-janitors@vger.kernel.org,
- khilman@baylibre.com, kuba@kernel.org, linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux@armlinux.org.uk,
- lxu@maxlinear.com, martin.blumenstingl@googlemail.com,
- matthias.bgg@gmail.com, michael.hennerich@analog.com,
- neil.armstrong@linaro.org, netdev@vger.kernel.org, pabeni@redhat.com,
- piergiorgio.beruto@gmail.com, richardcochran@gmail.com, rjui@broadcom.com,
- sbranden@broadcom.com
-References: <403c381b7d9156b67ad68ffc44b8eee70c5e86a9.1736691226.git.christophe.jaillet@wanadoo.fr>
- <9dfeb860-3c0c-4f16-a150-fdce133281e8@lunn.ch>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <9dfeb860-3c0c-4f16-a150-fdce133281e8@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Le 12/01/2025 à 17:46, Andrew Lunn a écrit :
-> On Sun, Jan 12, 2025 at 03:14:50PM +0100, Christophe JAILLET wrote:
->> 'struct mdio_device_id' is not modified in these drivers.
->>
->> Constifying these structures moves some data to a read-only section, so
->> increase overall security.
->>
->> On a x86_64, with allmodconfig, as an example:
->> Before:
->> ======
->>     text	   data	    bss	    dec	    hex	filename
->>    27014	  12792	      0	  39806	   9b7e	drivers/net/phy/broadcom.o
->>
->> After:
->> =====
->>     text	   data	    bss	    dec	    hex	filename
->>    27206	  12600	      0	  39806	   9b7e	drivers/net/phy/broadcom.o
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> Seems sensible.
-> 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> 
-> Is the long terms goal to make MODULE_DEVICE_TABLE() enforce the
-> const?
+Don't populate the const read-only arrays on the stack at run time,
+instead make them static.
 
-It was not my initial goal, but I can give it a look if you think it's 
-worth it.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/clk/clk-ep93xx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-But some other constifications will be needed before that.
-
-CJ
-
-> 
->      Andrew
-> 
-> 
+diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+index f888aed79b11..4bd8d6ecf6a2 100644
+--- a/drivers/clk/clk-ep93xx.c
++++ b/drivers/clk/clk-ep93xx.c
+@@ -586,9 +586,9 @@ static unsigned long calc_pll_rate(u64 rate, u32 config_word)
+ 
+ static int ep93xx_plls_init(struct ep93xx_clk_priv *priv)
+ {
+-	const char fclk_divisors[] = { 1, 2, 4, 8, 16, 1, 1, 1 };
+-	const char hclk_divisors[] = { 1, 2, 4, 5, 6, 8, 16, 32 };
+-	const char pclk_divisors[] = { 1, 2, 4, 8 };
++	static const char fclk_divisors[] = { 1, 2, 4, 8, 16, 1, 1, 1 };
++	static const char hclk_divisors[] = { 1, 2, 4, 5, 6, 8, 16, 32 };
++	static const char pclk_divisors[] = { 1, 2, 4, 8 };
+ 	struct clk_parent_data xtali = { .index = 0 };
+ 	unsigned int clk_f_div, clk_h_div, clk_p_div;
+ 	unsigned long clk_pll1_rate, clk_pll2_rate;
+-- 
+2.47.1
 
