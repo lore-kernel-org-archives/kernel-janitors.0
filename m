@@ -1,79 +1,103 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581671BBBD7;
-	Sat, 11 Jan 2025 21:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72286224D7;
+	Sun, 12 Jan 2025 13:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736630411; cv=none; b=Wa+1eYM38U7s1SncmVxCTKhavKtrOQCTxhKLtA7ntVT3eHvrHgr1EQjIIEsJ8ss0LrrVNZ9iJTw3nsrxtVh/G+IDH1JhzJRuS5JBMPRnaGdMbfaDlN4mzP6Ikx0sdpf2Al7VDCj8mQZsWbHQYOBoudjXwe7fQJObkv5FO1AcVns=
+	t=1736687601; cv=none; b=Oq1l2rpmNhCEEowF4jugmAa2Oi8yuru39zQhoaeSuyJ5lvJKaCVSuVHShma7+a+j6hb0A0qlVFZZeaXkwxPpkRybW0zKVXgBTmRKrfwsYa05OyjCGxdDjr255S7pCD47530Oakii4fn8HVrxQzIYSfSFXNaSl7mNx2z9FDOo/BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736630411; c=relaxed/simple;
-	bh=xRnRLoBesJG/EZ9jRC0T4oavXLsrIkvaL4M32cLMxDU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=b3q+XxbxlK+4I6VzWLEH8RxuYgJ/W5fIVBM/NDE3+YS0OjN6bWASSHPrMhekxIOYOw1gOvBq58uNTy2gn/DHEuMScQaIU+dZQ24bkbkL3H7UMcd7Ju1yumvaTQmU+v0BPZVtT3S5I78AajaS3hTvtCAHmjRGfAG2Z/DOgijuMxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpU+vRQH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736687601; c=relaxed/simple;
+	bh=QEcnFhl++ltNcvDgJni9HgjGPl7mLIix7BHHZUKp8Pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZCKccW+BWWakeXvIFrKs7aNtZ4zgc6NgzAh2jLNwRPduxD2pvo8I5k1PvJUTiNLK3QhEqQrhXHmaL0f7aSGOuJ5Dyy/qbWNIx2AtKLCra++LI0n77RJkMrmd8MtJwqatFht7Fj73ZR2bLAJByuEdtG5416cTxGyBO+KGwJPNUDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JdXbfAMZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpU+vRQH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C41C4CEDF;
-	Sat, 11 Jan 2025 21:20:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JdXbfAMZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C697C4CEDF;
+	Sun, 12 Jan 2025 13:13:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736630410;
-	bh=xRnRLoBesJG/EZ9jRC0T4oavXLsrIkvaL4M32cLMxDU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dpU+vRQHaIVbANeRBu1UAL5ukcD+7okkV+cpnJwXbooQAqwY2kaJ0M0CYeDManon8
-	 i87kEeEmpbTmRDIrO35E6YzF5FxJS4W4Tq83kuo4iOVlJhuDOFsTndIYktstAf9oXe
-	 xEVA8mOr5K2imVXp20TE1BMvpOKpJiJTYe0LeQVA6d9iAR2Wf7t1CSDpGIweqv0kJ6
-	 9eAeC1lsQUdaMe+oj0a+msJNf/61ShMUmFrBnXlTG6dYXQudc9vaIOF1kzkf4ZDfh3
-	 UfuHlbqAdSDp1BYVglHFCvpqCyJImAiGqIIGzMkL1OUzAe37Yoe0Uw7KYgGkErHEsE
-	 8+RgKSaAoX7ew==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FDE380AA54;
-	Sat, 11 Jan 2025 21:20:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1736687600;
+	bh=QEcnFhl++ltNcvDgJni9HgjGPl7mLIix7BHHZUKp8Pw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JdXbfAMZxB4Uq8m9K9N+2lDUtUxeCmWMgOhqDYDAcvE0OOjcU9kdLRWuzVwgdjyIQ
+	 y271YQN83kg1u5GEwxz9yZ5n2odHpl2X5b7xfqOTLpeQEIaJy1vHell32dNJHhp+kX
+	 gvV5BrZ6ekSJ3qif4XSsJEnqi6hm3BEYWf16iobtzu+0sPnFAF8ioDIUKEU4lMIxoF
+	 N7ymnTiZLBnui0kDVJtoCaUNB0jm5vNO5BgDWyJOl5r/2y3PbAV9m27TF00LMI1D7t
+	 KF3toxNw9ZVY+15vVmFDfDVqBpy37XpFl4H0/68RRN3RbdRn+U+PxB3BjRmVFKT4ng
+	 MbHDiqfrZNF5g==
+Date: Sun, 12 Jan 2025 13:13:13 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] iio: chemical: bme680: Fix uninitialized variable in
+ __bme680_read_raw()
+Message-ID: <20250112131313.749b58ec@jic23-huawei>
+In-Reply-To: <Z37uRAl18atKgVz0@vamoirid-laptop>
+References: <4addb68c-853a-49fc-8d40-739e78db5fa1@stanley.mountain>
+	<Z37uRAl18atKgVz0@vamoirid-laptop>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net/smc: delete pointless divide by one
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173663043299.2451513.4391354145760496406.git-patchwork-notify@kernel.org>
-Date: Sat, 11 Jan 2025 21:20:32 +0000
-References: <ee1a790b-f874-4512-b3ae-9c45f99dc640@stanley.mountain>
-In-Reply-To: <ee1a790b-f874-4512-b3ae-9c45f99dc640@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, alibuda@linux.alibaba.com,
- tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Wed, 8 Jan 2025 22:29:40 +0100
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 8 Jan 2025 12:26:06 +0300 you wrote:
-> Here "buf" is a void pointer so sizeof(*buf) is one.  Doing a divide
-> by one makes the code less readable.  Delete it.
+> On Wed, Jan 08, 2025 at 12:37:22PM +0300, Dan Carpenter wrote:
+> > The bme680_read_temp() function takes a pointer to s16 but we're passing
+> > an int pointer to it.  This will not work on big endian systems and it
+> > also means that the other 16 bits are uninitialized.
+> > 
+> > Pass an s16 type variable.
+> > 
+> > Fixes: f51171ce2236 ("iio: chemical: bme680: Add SCALE and RAW channels")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/iio/chemical/bme680_core.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> > index 26eb0fa77a43..9d73fd2cf52c 100644
+> > --- a/drivers/iio/chemical/bme680_core.c
+> > +++ b/drivers/iio/chemical/bme680_core.c
+> > @@ -879,11 +879,11 @@ static int __bme680_read_raw(struct iio_dev *indio_dev,
+> >  	case IIO_CHAN_INFO_RAW:
+> >  		switch (chan->type) {
+> >  		case IIO_TEMP:
+> > -			ret = bme680_read_temp(data, (s16 *)&chan_val);
+> > +			ret = bme680_read_temp(data, &temp_chan_val);
+> >  			if (ret)
+> >  				return ret;
+> >  
+> > -			*val = chan_val;
+> > +			*val = temp_chan_val;
+> >  			return IIO_VAL_INT;
+> >  		case IIO_PRESSURE:
+> >  			ret = bme680_read_press(data, &chan_val);
+> > -- 
+> > 2.45.2
+> >  
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  net/smc/smc_core.c | 2 +-
->  net/smc/smc_rx.c   | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> Acked-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> 
+> Hi Dan,
+> 
+> I had already applied this for IIO_CHAN_INFO_PROCESSED but not for the
+> IIO_CHAN_INFO_RAW channel... Very good that you spotted it!
+Applied to the fixes-togreg branch of iio.git and marked for stable.
 
-Here is the summary with links:
-  - [net-next] net/smc: delete pointless divide by one
-    https://git.kernel.org/netdev/net-next/c/10bc9761d12e
+Most likely will go in during the merge window or slightly after.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+> 
+> Cheers,
+> Vasilis
+> 
 
