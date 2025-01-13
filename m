@@ -1,88 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3583D22CF12;
-	Mon, 13 Jan 2025 14:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EBE23ED7F
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 Jan 2025 14:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736777899; cv=none; b=C+fV0iJJaGDNmhpwlwAN7bBTwn+AQTfQWPXTZPOtpy8SrGwZHV/N3il1O9E24Vaoi+kIgSdqtdWciQICQXQA1onqKHj2U2MYJIGDxUy7j+6+Y7M6D2p23AkD304MxMtqm27FXobPC6T4KMrL4nNSld1swO4j+k/iQ+8Fw+n/Zp8=
+	t=1736778363; cv=none; b=CDwKoGQ4NMQM5jBi1wMeiP79ANStxhQGgwCVLpnzm+BshsuiV/T67XdkKUAHcBTCYfs+D3rMf0/5poy7HqhihaTHTojoHdELGCozdtN+jLARu6zi30ASw+amRyBM5O6r+HzhzptFA5qfk26Xw7Dzo49KG9B8oCJtgQMvGbZ12O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736777899; c=relaxed/simple;
-	bh=JIrBeHttf6I/fLu6mjSVMdpC+lAqk1oqfwTbIcFecMU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6JCTtO+1igXjB/yRza1fwmP5JWqCfuVTBKzN+2+/94CTT70AioZMbrDmnaO8OxXKxMfPSyn8PJj+UnZnSwoQw/c5eWJwA0Rc3FGggYrOHtm2jwjawTZZoV5zV8lOC7D+dySqyFiG09NdwIkTqFRlvPFYA+8xvfBeeJPbnBULg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HW37IBlA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736778363; c=relaxed/simple;
+	bh=vtjFb22sOyYN0URjnHGpdOp2r+nchub7kCKSAjg8r1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HB0/OqkRC2sAb4DV9ADWH8OaxMyITUDRT3YgMpqZkALDY0XEha72Hgd2PNYOTtVz/akA0e9V+KBIBXaqi5bbgSNu/QaxLqFfXfVtOkzOQMhW5yiK2C9jgq59Yqve8cTtzcSQ+7O73wdjF7E6om99u118zGA7yRdy6/ke+KAM2zQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dcU3KHsC; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HW37IBlA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC844C4CEE3;
-	Mon, 13 Jan 2025 14:18:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736777898;
-	bh=JIrBeHttf6I/fLu6mjSVMdpC+lAqk1oqfwTbIcFecMU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HW37IBlAXzXPEDDqGRtGCvhGNaW+Z3DYJtYeg9OfFc0lTqW3Kd8rxXZPNbcJg207E
-	 6M/p2S0VrCWs4wgftG8Y9q4CylASuDzRIv+XDFRSPsWdeyR9cRPclJKGsBMluWwEe7
-	 SRGsF/wSi13uW0saaqfEjZAU44A+Vgrk8t0r8uMS9NK9SZoOYsLuczqzQB8l4+LH3b
-	 rvXuJdlgyZJ8KEwgUnaZD+52CyDKHaU95sKJThqscjbUWBxIiL8FSHfDE0jYo5U9vK
-	 EWlprlOj1vku9ZQFhSQYz83dM6P3iEglAsIRruAIbQIRFXN9xYyySwyF+kIP/+QtW+
-	 oM6jhHPiQJytw==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30613802a6bso18670371fa.1;
-        Mon, 13 Jan 2025 06:18:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU2XrhH3er8fLacbET4F0RUMpWDt+8JgHIMR/+2MqYaT6IFQk1+Juz8slW24CG/Sk1wFZSpT0YjgH0X@vger.kernel.org, AJvYcCUky1zKMnCHOaKjiIR1iU/WhdIxaGqddsfLdMOkUM84Opy0MCsoKFJ0V+jl8k0eX160HieRAmTg3IKk1rTA@vger.kernel.org, AJvYcCXwsT+MDyCmFpNuqVZsu4I9xjUDIup5Rx46vSyMm/iuheFVqa9PuCI2+sXV+XTPg34JlpjOYhNs42F4yRiqJw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpz2IYM5ffN6BPoDiFjmE84oti6nbyZTmF11IsVn+rmTMqBr6k
-	QAIwI7+XpPINhCz7DgMhAuO0cWKx0zJ+1xccEF3zj6lYVieK3YHBFB/G46m54fQzDlXGKHNp0EW
-	VTspyviXk/Vi6mK8VqD8EvzJYi2Q=
-X-Google-Smtp-Source: AGHT+IEbYAapgR3P8XqK9xEqeyJvNURt51Dn93R/joVVmWDoVWL+hMBQDhPPO7q4lbX0b6Adn/nnFgwX5/2E2cRKGGM=
-X-Received: by 2002:a05:651c:154a:b0:303:4289:b991 with SMTP id
- 38308e7fff4ca-305f459f152mr72365961fa.19.1736777896759; Mon, 13 Jan 2025
- 06:18:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dcU3KHsC"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab322ecd75dso110643166b.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 13 Jan 2025 06:26:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736778360; x=1737383160; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbGS74CoYRC6HITNgfJj5iVQRYRBtTPZjkH5gxrs3J4=;
+        b=dcU3KHsCK26bfVBwmKb5enz2JpzCdaFmKMItbdbUBSYvuJjJvZqG2hW0fbPAJ4QyBd
+         HkXOTLgMy7taud/WK1KF4M7tjdZziXae9m55/eSkWQfbNSvodfDiiLCECB3FWCmLgpAs
+         W52UmvpwPKYGE8vghrsiu0LucyMdqnesK9qXjtG35qbx9G6dAGGs1U4lUuPLbTNt1PXv
+         2reNL8ShgecaYOGhTNfP/Ul48ay4OCao9VCtzPdiQ5seayguoCRx8i1BTASFY8DOuCdw
+         jP2q0HUIORfgt7n357W2MIQ2RXEzthszujR3Hc5VJUv6VMqWK4YP0WbiJnXGkHbm46Hx
+         oimw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736778360; x=1737383160;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HbGS74CoYRC6HITNgfJj5iVQRYRBtTPZjkH5gxrs3J4=;
+        b=csq4i2OhEKd7qOmFeS7sqBOcrDk8smeXiHnm6Va6F38XVggjI+HPXsjX4PNSwB5MKU
+         bLJqpRViz7P9quWTHTFrr3pm7Cv06o/ZwcioTKn6j+EdZWgI6BObOzrixnvyFxH/YDjc
+         noBwdJlZDMnTwNkvJhjaG2kyGfMS561dO2+SKic/bFedrvzFYGeIUZpPhTxA5p8nFioQ
+         ZiaqF2ekb2jBwuE0Hmb9zJdYosfSBE1bR/w2KD3h4Nrnzag5juZmX1PJUQaP6vCxMBNu
+         aghh4AQ0OvxKAEF43ZLl/dWnpfVBgB/rCXooqJsFBYawgBph5218ktTYQO9g17y4bBBx
+         ZNPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1FA/vASrRg8zvHn5lINr9rwrdzNrbexOCPfTg16r2ZR+PAuL7Ovf1LbrEBzf906Bcf5d0XSSEwcQ+Cr05BSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXYZRIxds6smanYxc2VKn4VYQOM0IToKNXVPSfedKyisyxnsKw
+	hDL5TxOyGLXyYDVHwVxSgnHVHmPxhbtS1ryEJWjJDYlBWhiHbfAh6aUQddVTfhU=
+X-Gm-Gg: ASbGncsE+Ohy9pAjzH8t9wayEnJeUH2TiDPYWgvE+UMRusOd+DevFHfraLyCDA5hWz+
+	FK2gkk/5RSNH1rKDapORKOtJOz/O+e39rfyLqAFW70WpzQ1jIpeXS9C+cWUoezQUapOE/BFjBcs
+	DGf9M9Z+tqETe0/UJuructjSQTFLv0TNaOrsfaCIHjaqBQ9baRr9SHrtoz2qABilYEb7GPSZwur
+	PTBcqOnVTthum18M5BjrvtbGoBws3Ti1Ots8bTkjWO84P76ezIHkwqQ0QFp0g==
+X-Google-Smtp-Source: AGHT+IEnKdGkClwyG7opxWkRcljwnKOVs7IVEdnY2tiY4md2d2c+zHEDMbTCN2pklGV0IVCxeDqfqg==
+X-Received: by 2002:a17:907:3d91:b0:aa6:7ff9:d248 with SMTP id a640c23a62f3a-ab2c3c452c8mr1603204866b.8.1736778360297;
+        Mon, 13 Jan 2025 06:26:00 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c9060bccsm503321866b.22.2025.01.13.06.25.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2025 06:25:59 -0800 (PST)
+Date: Mon, 13 Jan 2025 17:25:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jeremy Kerr <jk@ozlabs.org>, linux-efi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] efivarfs: Fix a NULL vs IS_ERR() bug
+Message-ID: <68a5cabb-c5b3-4090-b9be-bdb34ea5a35e@stanley.mountain>
+References: <7f7565d8-ef9f-4e5f-834b-9735db01835a@stanley.mountain>
+ <CAMj1kXEt6DJufw7Jv+nWYzt=SrBsiTmRrXeRZFYdA5zC+3M6kA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7f7565d8-ef9f-4e5f-834b-9735db01835a@stanley.mountain>
-In-Reply-To: <7f7565d8-ef9f-4e5f-834b-9735db01835a@stanley.mountain>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 13 Jan 2025 15:18:05 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEt6DJufw7Jv+nWYzt=SrBsiTmRrXeRZFYdA5zC+3M6kA@mail.gmail.com>
-X-Gm-Features: AbW1kvbYvRsld8EQ-1cyjRL_bNp-iwY4TScxnTHJw3y4StYn78qnrh6oAS8pDGg
-Message-ID: <CAMj1kXEt6DJufw7Jv+nWYzt=SrBsiTmRrXeRZFYdA5zC+3M6kA@mail.gmail.com>
-Subject: Re: [PATCH next] efivarfs: Fix a NULL vs IS_ERR() bug
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Jeremy Kerr <jk@ozlabs.org>, 
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXEt6DJufw7Jv+nWYzt=SrBsiTmRrXeRZFYdA5zC+3M6kA@mail.gmail.com>
 
-On Mon, 13 Jan 2025 at 07:16, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> The kernel_file_open() function doesn't return NULL, it retursn error
-> pointers.  Fix the error checking to match.
->
-> Fixes: eb11e99adef8 ("efivarfs: add variable resync after hibernation")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  fs/efivarfs/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+On Mon, Jan 13, 2025 at 03:18:05PM +0100, Ard Biesheuvel wrote:
+> On Mon, 13 Jan 2025 at 07:16, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > The kernel_file_open() function doesn't return NULL, it retursn error
+> > pointers.  Fix the error checking to match.
+> >
+> > Fixes: eb11e99adef8 ("efivarfs: add variable resync after hibernation")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  fs/efivarfs/super.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> 
+> Thanks - I'll fold this in rather than apply it on top though.
 
-Thanks - I'll fold this in rather than apply it on top though.
+Sure.  No worries.
 
-> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
-> index 961264f628dc..968e4af7b7e4 100644
-> --- a/fs/efivarfs/super.c
-> +++ b/fs/efivarfs/super.c
-> @@ -492,7 +492,7 @@ static int efivarfs_pm_notify(struct notifier_block *nb, unsigned long action,
->         /* O_NOATIME is required to prevent oops on NULL mnt */
->         file = kernel_file_open(&path, O_RDONLY | O_DIRECTORY | O_NOATIME,
->                                 current_cred());
-> -       if (!file)
-> +       if (IS_ERR(file))
->                 return NOTIFY_DONE;
->
->         rescan_done = true;
-> --
-> 2.45.2
->
+regards,
+dan carpenter
+
