@@ -1,73 +1,67 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9FE191494
-	for <kernel-janitors@vger.kernel.org>; Mon, 13 Jan 2025 06:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30AE231A2A
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 Jan 2025 06:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736749126; cv=none; b=UOcTf7aAv9vDH3JH6BHSzXA/KXj1lBLzZRI3pgfHBpwRC0U/EILzzGddc1lSpICNp9UKlF5x2bXjlxgbFtBaDiCrbBtOlJd7vmdGC17N1c0n/PRDC0O0al4LCca//roIir+uxTDELDpC35guKliwWKluYPslQLKBcwt/F9Yb5zw=
+	t=1736749158; cv=none; b=LfvxYdkv7SyYBIjLYFZhTskqZ9k3ZmL9kZAppLXD+erKxwBFni71n0SfjhrlcrPzoHhQepwazuzt0ZLsldNRWQ31aG+RPJIUxx34baMvDjVqhmE+i9wEuXr2ZB3DjjxPqgYaCk5wC7glTYUlzGIN+59ADw4bnPGuyFadMAgq5/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736749126; c=relaxed/simple;
-	bh=LUrrlU4BNkR/ay/fSfOJeTi1DTX6YT5sJQ7H0bsPWk4=;
+	s=arc-20240116; t=1736749158; c=relaxed/simple;
+	bh=JS+4J5lh8Fucg3Gbhf9aAPZyh0H2XmOy45D+czstqF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=g/ugAEmt8+vF/nGsGoQuyGg8wjNjUilVGQyhliSuRyp7gp3ZNOd/Quhut0J9kzN/fNpZU/ZCr7zlAIKFC7Uk2Wqfx2O9P4cUio2Yl7VuJ8atfboa5SjOXrvh9axdYJKJqVNg7HFzSyOAmhZ2P3OT2I0M3dnWy2dHjEC10EduPE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mr/cOPQh; arc=none smtp.client-ip=209.85.208.49
+	 Content-Disposition; b=gXE7QiT3MpPbMJI7oiZwEvboTr36CDpm5OkS+aNYW9VBO+t4tzCWrLE4OgJ4/SfubSZiiiwWhTCH46+KQlqK+LMq+rDeRkeAVivlBHSZVs1FklsIbPgYkEN8rK2PEtTW0hcwQnlRyJAolP3FyXRwSoYqqwJwm+JG3s5kkoC+FbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VttzT19s; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mr/cOPQh"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3e8f64d5dso7573606a12.3
-        for <kernel-janitors@vger.kernel.org>; Sun, 12 Jan 2025 22:18:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VttzT19s"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa67333f7d2so597359266b.0
+        for <kernel-janitors@vger.kernel.org>; Sun, 12 Jan 2025 22:19:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736749123; x=1737353923; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1736749155; x=1737353955; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6S+t9FaG2NoF2nwQgSa+JvhqmiyhhbiLGkuYyDyovfo=;
-        b=mr/cOPQhgnEwP9P4rcQmeR2eP6cfh2iLhzQvXZBMr7rB2iXcRM12k73s9jnS1Bo/Ry
-         u+hXS6sGlkDrk5miIYorX/3xDOfZBm9e5TZxuYkhnbQlmucNGHTTyI9uywbgEl9Pgaqc
-         U6NNGCRA2vUmJbKCussoS3SCbTdwP3foSRIUXtBD+wrgl1VzS20Fm2g9aFX+7dr787sM
-         xBHFQPAvCQ1J8qr/NU8i44D2hFA3NqA12H5zvV7K1MQjuTfUaVsEuT4RH1XlCNticw0W
-         MW+TqN6EfpvCfigoys+InJLhe19/M8QoFzrNzW53kB+7CfgFYoRQboDBbj3uqfSiYsb2
-         iJSQ==
+        bh=IsRvXHGSWUxVyT3HvHK3zRMHjp5k3n6wAVlQb9UAIoo=;
+        b=VttzT19s66sUUcMCO9MYS2mBazY2P2Ck+IqK7m/+bmpljh4he/aEoMagid9FIOR8iM
+         Uoed4Btr2vfkfCO7HNPO2sYVLmMs2SOdxNzq/m2fmcIySwfmeN/UletaUa9sVWGsd+DQ
+         nZtAmlBHOnhP/C9L5WbcUNIhuvftBGF0KHvPQRFma5Bh03HyzWyQkai2bQd9Zzox3v3K
+         V38kh0LQ66EJOSVa0m6dVV1OzHhblIJfjoa76QQMm83w8XCKVp6WS5ZpKW64ZnxW7YjX
+         kOxGDonShA/XD99/SjhOjPyPg07RSAFjGGCM42xMiI7WTy6Wvbx3o4GXz5Q6iDNZt0wc
+         MAXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736749123; x=1737353923;
+        d=1e100.net; s=20230601; t=1736749155; x=1737353955;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6S+t9FaG2NoF2nwQgSa+JvhqmiyhhbiLGkuYyDyovfo=;
-        b=dNO+sngCElnC5cbaA3glPbkzab+quccq3NgouZnxDcl+OyV6irp2zC/5oYszXuCGtp
-         ybFQQwvueEi5mFQM5wHd2ARGyo0eRpxBWJkpCvrJ7efl/Q8DggrSuEhyMThMxl+LSGcA
-         HW5KzA1qRxrVcsii53hLnLSEjbfDfOl7O0ksINm5fzW88ysi5qz7WGlSfBo5zpQwmkvT
-         a7u3uHNdefIvA9GS7hrFoBkAsUYjlOwMFFAl7Q1odU9Agwk8kPlAd8vCAMxgAVtiFfC/
-         xt9k2HATA05Dpv8UnwrfY4ayL8HeHSksctRYHUuTNpdcXKbGoCrLROJFSl1p96r9uOti
-         Mirw==
-X-Forwarded-Encrypted: i=1; AJvYcCXq4FHvgwHNcm7tRY8Y6LUMjv8V8qCJSchE+RnNLEt1+dn0pchFB0S+nrW8m66Cfn5DP2VSZ5218usrTKBLnw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTP/SuMqeVG/S5kl2RmN80XESi2sRxAku2zw2iZIDK2K8lwrty
-	+j6usv0Kqgq31aFDc4Uq0tLXMzZQdwQoJpYB0oRBTUyDc0m0lX4Hu/S/NXln2dU=
-X-Gm-Gg: ASbGnctSjOKAVVIBpan1tdfW/Ar6mMVZfP0/gIKWLRpgQz2n0HEL5cNmSoF8fzWJP6N
-	EtRxFL4rH6SNg1NYcpQTXeZppPIiYae3lk2dGKFV7r0jKIpAXEfzmTUL45LUf3JXT4WoQljfZy/
-	A5XTokhIOGoXWYc2E331HMk/NWncwiYY5ebxAYjIFUr0F/aph3QP7SK33Uk8VRnJONFlpe4SipO
-	/xIGPIvp9LL4sWGZv0JrsFR7dcE1Vpsk6mSnyrBmNWEF8MDQXdZ4FvkrCdjeA==
-X-Google-Smtp-Source: AGHT+IEF+9I/nmlTuNhL+jsv7WcG7fafEtH/1G6wbIJb2hKurpya4UqUE3HWDQiZJqimw76RM48otA==
-X-Received: by 2002:a05:6402:34d2:b0:5d1:1f2:1143 with SMTP id 4fb4d7f45d1cf-5d972e1a602mr17851264a12.18.1736749123084;
-        Sun, 12 Jan 2025 22:18:43 -0800 (PST)
+        bh=IsRvXHGSWUxVyT3HvHK3zRMHjp5k3n6wAVlQb9UAIoo=;
+        b=E8swK5gvKk5KQ0QRnbdEIFnrIb8J7Ee4BB5gwWBR0zyS2u1ew7L7nKkwAzjxv8mRc7
+         lsmcc0gIqz5eAg2QpAzbZewdxNQY1VCeGip5aQUEtIiawEstIGg5lofEFyg+B8kZpmPp
+         G701brI2XTNUMSjV50OgaJ0z4oTZWwhrZgeswPMXhR/kQ2Eiy821SdWK3Q0GyXPApZAv
+         bKIXHWxWYY8AUiI4jDUCq7UQEQynTnhpmTedMVAoKCG8ZZ14gAcQE0KPBAYj2fNb6hj6
+         14ZpXhvnnolYvNVVFrVbUDmdJXTxO/lvyeLPs8OLkKeMuUGngtGFkDhXpkbZvewb9Nxw
+         +b8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPH4mJ10wpNKvX08zLe/rQ4m0UZvZrWCCqrbmgF+ySUyHJL5PkG3H0wZ5GzxWVdLHyc0RACK6gkbXR7JEWJs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb9EvcJwPE1K1nKeW7oQU86ZktUCSkfaYSQmIfWjn1J/1H1280
+	HRQ0l/OBp+Z2ownvldMgnO/Cdp6ddWUXvnVgxHaNXJPD2MsxwDd8D6ThVCKqW6w=
+X-Gm-Gg: ASbGncsqY8Xhla9ifxjJcEQGwAiOFJGQH104SRRvHgwOk95sDe9SEnqDGD3sc8Yf6/5
+	F3AQii/zQnNOkkNGMiXSLbqPidkKYWKhbFmyjgIXrS/3+Fp+IgusdveCYGStXQozdXBWrRQJcUR
+	MlJ4zJHZHJv1Ie77JlzvUAo0+aPO4qZ/3hFH9JDpKRrld75o23n3zaT3dHdeKj9tleJaiE3Ygul
+	PP0pcOnOrH1EAkUAWTli1TaRkcXTpB5s840zlCtTPVCJg8KMWB9TigQLGnTQw==
+X-Google-Smtp-Source: AGHT+IFqpX9e3c3D8tjbJ4iafdBuamD/RqHrGmivwZIPI4DdokOcWz0agCCvtb6wFgzixam07yQ7Rg==
+X-Received: by 2002:a17:907:c0d:b0:aaf:1183:ec2c with SMTP id a640c23a62f3a-ab2ab6bfc89mr1610144966b.5.1736749155208;
+        Sun, 12 Jan 2025 22:19:15 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d99008c366sm4523124a12.17.2025.01.12.22.18.42
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c9060bccsm451648166b.22.2025.01.12.22.19.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2025 22:18:42 -0800 (PST)
-Date: Mon, 13 Jan 2025 09:18:39 +0300
+        Sun, 12 Jan 2025 22:19:14 -0800 (PST)
+Date: Mon, 13 Jan 2025 09:19:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Louis Peens <louis.peens@corigine.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Quentin Monnet <qmo@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>, bpf@vger.kernel.org,
-	oss-drivers@corigine.com, netdev@vger.kernel.org,
+To: Michael Halcrow <mhalcrow@us.ibm.com>
+Cc: Tyler Hicks <code@tyhicks.com>,
+	Andrew Morton <akpm@linux-foundation.org>, ecryptfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net] nfp: bpf: prevent integer overflow in
- nfp_bpf_event_output()
-Message-ID: <6074805b-e78d-4b8a-bf05-e929b5377c28@stanley.mountain>
+Subject: [PATCH] ecryptfs: use struct_size() to prevent in integer overflow
+Message-ID: <cb70e767-1498-4b5b-9d77-0270a6548ab6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,30 +72,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "sizeof(struct cmsg_bpf_event) + pkt_size + data_size" math could
-potentially have an integer wrapping bug on 32bit systems.  Check for
-this and return an error.
+On 32bit systems the "(sizeof(*msg) + msg->data_len" addition can lead
+to integer wrapping.  Use struct_size() for safety.
 
-Fixes: 9816dd35ecec ("nfp: bpf: perf event output helpers support")
+Fixes: 8bf2debd5f7b ("eCryptfs: introduce device handle for userspace daemon communications")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/netronome/nfp/bpf/offload.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ecryptfs/miscdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/netronome/nfp/bpf/offload.c b/drivers/net/ethernet/netronome/nfp/bpf/offload.c
-index 9d97cd281f18..c03558adda91 100644
---- a/drivers/net/ethernet/netronome/nfp/bpf/offload.c
-+++ b/drivers/net/ethernet/netronome/nfp/bpf/offload.c
-@@ -458,7 +458,8 @@ int nfp_bpf_event_output(struct nfp_app_bpf *bpf, const void *data,
- 	map_id_full = be64_to_cpu(cbe->map_ptr);
- 	map_id = map_id_full;
+diff --git a/fs/ecryptfs/miscdev.c b/fs/ecryptfs/miscdev.c
+index 4e62c3cef70f..88882f96e06f 100644
+--- a/fs/ecryptfs/miscdev.c
++++ b/fs/ecryptfs/miscdev.c
+@@ -325,7 +325,7 @@ static int ecryptfs_miscdev_response(struct ecryptfs_daemon *daemon, char *data,
+ 	struct ecryptfs_message *msg = (struct ecryptfs_message *)data;
+ 	int rc;
  
--	if (len < sizeof(struct cmsg_bpf_event) + pkt_size + data_size)
-+	if (size_add(pkt_size, data_size) > INT_MAX ||
-+	    len < sizeof(struct cmsg_bpf_event) + pkt_size + data_size)
- 		return -EINVAL;
- 	if (cbe->hdr.ver != NFP_CCM_ABI_VERSION)
- 		return -EINVAL;
+-	if ((sizeof(*msg) + msg->data_len) != data_size) {
++	if (struct_size(msg, data, msg->data_len) != data_size) {
+ 		printk(KERN_WARNING "%s: (sizeof(*msg) + msg->data_len) = "
+ 		       "[%zd]; data_size = [%zd]. Invalid packet.\n", __func__,
+ 		       (sizeof(*msg) + msg->data_len), data_size);
 -- 
 2.45.2
 
