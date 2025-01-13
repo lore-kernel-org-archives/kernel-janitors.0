@@ -1,60 +1,88 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7897D1CAA8C;
-	Mon, 13 Jan 2025 13:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3583D22CF12;
+	Mon, 13 Jan 2025 14:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736776096; cv=none; b=DiJriJRkIyoZcpmt5hJ3yUc7lZXfps2qMCjhMfNdrw127mbM2xyFKNOUPqdB9r81/aG0+eUNFA+a1i4e/s1MDqf/6mBeSqt3Z6NV+N9/Hl2YsJ4rz6hZ/+xY3ksonKS8ST3os92D21MX+WzYDLuyEBawSlMVAUykv4qeOhnEkT8=
+	t=1736777899; cv=none; b=C+fV0iJJaGDNmhpwlwAN7bBTwn+AQTfQWPXTZPOtpy8SrGwZHV/N3il1O9E24Vaoi+kIgSdqtdWciQICQXQA1onqKHj2U2MYJIGDxUy7j+6+Y7M6D2p23AkD304MxMtqm27FXobPC6T4KMrL4nNSld1swO4j+k/iQ+8Fw+n/Zp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736776096; c=relaxed/simple;
-	bh=rQEwxqCEB/1YuP2FXEJk8qVbPLS1Qzt0Zl022xTYdo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpXdsXPHWWJvJq1BtRJNveXgLJeOSgicphakGZyagl6JLV5W5HF2do/ZgCpwF3iTqTGm9qveCzFyxKhoh4RNQACl0lki3s8xj7mCFc71cE4rbvf6HBt5t6H/OZpXwy+w9JZwVWfImi1JMq+D/EGzw013gYmZ8CbVFy12VaEJXxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3KcShy6C; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1736777899; c=relaxed/simple;
+	bh=JIrBeHttf6I/fLu6mjSVMdpC+lAqk1oqfwTbIcFecMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X6JCTtO+1igXjB/yRza1fwmP5JWqCfuVTBKzN+2+/94CTT70AioZMbrDmnaO8OxXKxMfPSyn8PJj+UnZnSwoQw/c5eWJwA0Rc3FGggYrOHtm2jwjawTZZoV5zV8lOC7D+dySqyFiG09NdwIkTqFRlvPFYA+8xvfBeeJPbnBULg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HW37IBlA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3KcShy6C"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=HV9E6yFunTBFSMsnaDZTf3fcrXGi8EXxXbUNvG/Y8m8=; b=3KcShy6CNi7Fmxo/FaPg+uj1nd
-	yvocBzcTKpYhznG4xR5n7FmY2wJwjaAaKvqWYT9ogCVfpE6cznZ9AmKD8ejUtFEE/CTQP1Ggxs54D
-	Q0ryC+8YKPcBtAiV2yT1nJhNPPjYuvA3hgFb8ZSs53+Re+4w5I2YjfjxLRJpBbyYnPqY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tXKnX-0046co-3b; Mon, 13 Jan 2025 14:48:07 +0100
-Date: Mon, 13 Jan 2025 14:48:07 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] net: phy: dp83822: Fix typo "outout" -> "output"
-Message-ID: <90779923-0ea6-4754-aa93-c3c191ec4980@lunn.ch>
-References: <20250113091555.23594-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HW37IBlA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC844C4CEE3;
+	Mon, 13 Jan 2025 14:18:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736777898;
+	bh=JIrBeHttf6I/fLu6mjSVMdpC+lAqk1oqfwTbIcFecMU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HW37IBlAXzXPEDDqGRtGCvhGNaW+Z3DYJtYeg9OfFc0lTqW3Kd8rxXZPNbcJg207E
+	 6M/p2S0VrCWs4wgftG8Y9q4CylASuDzRIv+XDFRSPsWdeyR9cRPclJKGsBMluWwEe7
+	 SRGsF/wSi13uW0saaqfEjZAU44A+Vgrk8t0r8uMS9NK9SZoOYsLuczqzQB8l4+LH3b
+	 rvXuJdlgyZJ8KEwgUnaZD+52CyDKHaU95sKJThqscjbUWBxIiL8FSHfDE0jYo5U9vK
+	 EWlprlOj1vku9ZQFhSQYz83dM6P3iEglAsIRruAIbQIRFXN9xYyySwyF+kIP/+QtW+
+	 oM6jhHPiQJytw==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30613802a6bso18670371fa.1;
+        Mon, 13 Jan 2025 06:18:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU2XrhH3er8fLacbET4F0RUMpWDt+8JgHIMR/+2MqYaT6IFQk1+Juz8slW24CG/Sk1wFZSpT0YjgH0X@vger.kernel.org, AJvYcCUky1zKMnCHOaKjiIR1iU/WhdIxaGqddsfLdMOkUM84Opy0MCsoKFJ0V+jl8k0eX160HieRAmTg3IKk1rTA@vger.kernel.org, AJvYcCXwsT+MDyCmFpNuqVZsu4I9xjUDIup5Rx46vSyMm/iuheFVqa9PuCI2+sXV+XTPg34JlpjOYhNs42F4yRiqJw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxpz2IYM5ffN6BPoDiFjmE84oti6nbyZTmF11IsVn+rmTMqBr6k
+	QAIwI7+XpPINhCz7DgMhAuO0cWKx0zJ+1xccEF3zj6lYVieK3YHBFB/G46m54fQzDlXGKHNp0EW
+	VTspyviXk/Vi6mK8VqD8EvzJYi2Q=
+X-Google-Smtp-Source: AGHT+IEbYAapgR3P8XqK9xEqeyJvNURt51Dn93R/joVVmWDoVWL+hMBQDhPPO7q4lbX0b6Adn/nnFgwX5/2E2cRKGGM=
+X-Received: by 2002:a05:651c:154a:b0:303:4289:b991 with SMTP id
+ 38308e7fff4ca-305f459f152mr72365961fa.19.1736777896759; Mon, 13 Jan 2025
+ 06:18:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250113091555.23594-1-colin.i.king@gmail.com>
+References: <7f7565d8-ef9f-4e5f-834b-9735db01835a@stanley.mountain>
+In-Reply-To: <7f7565d8-ef9f-4e5f-834b-9735db01835a@stanley.mountain>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 13 Jan 2025 15:18:05 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEt6DJufw7Jv+nWYzt=SrBsiTmRrXeRZFYdA5zC+3M6kA@mail.gmail.com>
+X-Gm-Features: AbW1kvbYvRsld8EQ-1cyjRL_bNp-iwY4TScxnTHJw3y4StYn78qnrh6oAS8pDGg
+Message-ID: <CAMj1kXEt6DJufw7Jv+nWYzt=SrBsiTmRrXeRZFYdA5zC+3M6kA@mail.gmail.com>
+Subject: Re: [PATCH next] efivarfs: Fix a NULL vs IS_ERR() bug
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Jeremy Kerr <jk@ozlabs.org>, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jan 13, 2025 at 09:15:55AM +0000, Colin Ian King wrote:
-> There is a typo in a phydev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+On Mon, 13 Jan 2025 at 07:16, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> The kernel_file_open() function doesn't return NULL, it retursn error
+> pointers.  Fix the error checking to match.
+>
+> Fixes: eb11e99adef8 ("efivarfs: add variable resync after hibernation")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  fs/efivarfs/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Thanks - I'll fold this in rather than apply it on top though.
 
-    Andrew
+> diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+> index 961264f628dc..968e4af7b7e4 100644
+> --- a/fs/efivarfs/super.c
+> +++ b/fs/efivarfs/super.c
+> @@ -492,7 +492,7 @@ static int efivarfs_pm_notify(struct notifier_block *nb, unsigned long action,
+>         /* O_NOATIME is required to prevent oops on NULL mnt */
+>         file = kernel_file_open(&path, O_RDONLY | O_DIRECTORY | O_NOATIME,
+>                                 current_cred());
+> -       if (!file)
+> +       if (IS_ERR(file))
+>                 return NOTIFY_DONE;
+>
+>         rescan_done = true;
+> --
+> 2.45.2
+>
