@@ -1,72 +1,67 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6919A946F
-	for <kernel-janitors@vger.kernel.org>; Mon, 13 Jan 2025 06:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ACE191494
+	for <kernel-janitors@vger.kernel.org>; Mon, 13 Jan 2025 06:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736748951; cv=none; b=Ww0aIofiZhan+of0DXOYmmNi656PRRv/Na4Z8cyiucf6FyFGcYjnZrCi4Hp76l5ScCoyH336qruWAs4YBjDeNp8WZkisxBVTkSe2x/0HHn3ELChyrmyYmyDkOtkjUqfRromPCZLOfEaxClMftFuEaLxHGBkvvye0QTIKtFxcNV8=
+	t=1736748962; cv=none; b=mGRl2FNhAabWbOIC8MFdnUYbDP7VJkGanruuYdIIXkWNSPsPzvxC4MI2c34Qh7pMhKWmt88RlRTnfIt8H91+V4dPIquudjV97tqteTq1Li8bCdddD2n19GiPUy/riWuUxHmwtTDG9TAoXDgxaIzMR7AGFym7STrQc6TeuuuN80U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736748951; c=relaxed/simple;
-	bh=wJglrbrpbuhe0bcViDXdcbU/vXOT5RSMKFIKdYKZOSw=;
+	s=arc-20240116; t=1736748962; c=relaxed/simple;
+	bh=HDIQlLSSIWxnjcOUeF2giiJnQXHfIYD0kokOmD+7EWw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=syhlAVRxEQGmBL8VR9OUzEbT5SG/8QQgT77kamkmwzRsLiiuzCH5aJJTW7Z9WYpizUe64DVvBVpIyqOAgT5j4IECcYK8GBu2OL6XZWHdphUen6WyF+LRlDl5iKTw8xEUrDOlOyW4GUKbCZL1FUglR2wwgOzjYw0ni3I+3yOTHsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ElpooeCl; arc=none smtp.client-ip=209.85.218.45
+	 Content-Disposition; b=hNk4UtJCZjaUfcsgVQZ6F02CHieVYa8xnZp2E2h0mdcaKlbw5uNMNpLGTFSR5mRZ2M+CAbpksqNTXblqmIz3iaJTunQY0mxxjgN147lsIE+tkOgg2TMhWUqIrH0HC/+H07VMs1pC5u7xKTi/7jMnhQ5pC83Gx59wfaCwfqv6BpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ihd6Kn3F; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ElpooeCl"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa67ac42819so562940766b.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 12 Jan 2025 22:15:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ihd6Kn3F"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso559211266b.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 12 Jan 2025 22:16:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736748948; x=1737353748; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1736748959; x=1737353759; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ljpYCVAC5Fhvp7P/AHA7k7jRhiqtXcEAQiNkoKKm8BM=;
-        b=ElpooeClhMvpieCgur0BkJ7i2cxOSKgKKC1V0oHDQOPifzd2PF8Utlq5p6wsxXq2R9
-         lbb86nDzXvq0fak5ZHcm5bCsvHrchHNFm+6D2ugun/Vew0JFhY4SeC0CzadI+R8kNIj2
-         tnKTjBjKZ1kbxY02JOtCZjotnFORhoFWBEqmgPu51Oa9Zbmm9RJFbBIPi/CRJIqGZyTr
-         ukbU2ki1RHPKPIclTi4zXLzXheOFztBIAD5eaMYQ3n0E5fmdZ5oBNUZoSDJ7DzphKa1c
-         nQ1+knXbjtseRplVJ0BD2/v5TJZhNzJEyLZ9xePIcrPTyfdw3pd/A54jagmkD/DxPlx/
-         ZVjw==
+        bh=/pjJbm+GL3xMGT2PHevSgzgHjM9ueX6e0WLe9Qs+akw=;
+        b=Ihd6Kn3FkxeURxRXPXJUVdBVw1v7iOaCLXuOfosE1vSAAlXrFNaMyg1W/DyP1y1C23
+         Tei1iWQwWc46yiJegF0/Ese1+0/N4qYAOBRxhUt1NoxokZ48avxBTGMP/Y2ia02ixnNN
+         HAgyYKt9rMS8dtGGIRCYlYbq74Cd+Xvn8yvHUWFuGWWNahmS270T9T5yNM+1iaO/C2dW
+         zHwdQbMmmuYRlovfzMVlkQEMdFG9Qse+UVsgQ5VJp6yzFp56lpEuX+QP47APZCpJr+RZ
+         Zua2WTZAY1g//Qyzplq6+Iyhh1Q+vyVgkM00/rTav/OAJHVYqOYXjJOK+uF6Qsf777KQ
+         1PbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736748948; x=1737353748;
+        d=1e100.net; s=20230601; t=1736748959; x=1737353759;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ljpYCVAC5Fhvp7P/AHA7k7jRhiqtXcEAQiNkoKKm8BM=;
-        b=cclr5K4u6+n+hxs0whpYVvMrufZd10Ti2qqHfcUeMxa29FUe8C7vYWQ1gjExC0cyau
-         CW8X1TIz2WsAsc/fcCN35XyNZa8p/RoVKOjFNp0iKAUWezlY2fPlgXUXvAxEzXtDpb4Y
-         YHkwWezTOR+EFhyZi95+py3ZKJal1ek2F41D0e2lzJjrcQvkAeBfFuzZHk8GbUXuLqDR
-         cbK5dF4hYBRrarEydfHrcluGcyA1kdZtqcBNFyqg21pTxfqy/QZ4IQrW1kpReg9RaVxs
-         0bRQGBkrqCWrkyVLkcMCz31+4lZlU/VmWVYVFo1BL5kHVTgfZwVNcHbrHSO97a6G6E4n
-         vfLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4uRLI32vBb4xXq3/h2fUkh3sWPC6M2BZfcyWMVMycL5nkHhCZulJKfeg3kIPz28TE9ej3te7mQYxZ8N91ZXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7fIdlHZUqMB7jf08esotKI0m23aMFYTKPxbKK8Ek8zLyBCNiT
-	FkYY0/n28fCHPTUHXkK18TqcW4aZt08Jo0Go5wK8P+rGJoFxA+ib/jQ3U82Y7fbOmVC1TyBJuto
-	6
-X-Gm-Gg: ASbGncujGxJMIPrZiXUdysXkKaWu6qGhLtsLn09cTjp07cq2Y7oZem8vnPeuhPaNz5l
-	w4ilx/bgFkU2KhnlDnlDmsy73F4BJb1w7gg50/+8xTCQzbpWH5VAX0WL0J0wpxUybpmYBxOA/ob
-	t8Z/6zowjapvfvIikExV302ELh8+WkfXp+pkLqPBKNmU1Q+k3RyyngEwtpzoG5OXty2ph+3+ijw
-	7ckCIG8QoKCzsKPBjmRtdO4xkhbzd2nI5rCkxoVSD727PCFi6rb4GucMYII6w==
-X-Google-Smtp-Source: AGHT+IH1/GOLoqjf7Ff0rxYoskGhR3MvBLdbph8W02eRMXEQrG0OrOaaYHpU49nJqe6GOf8x8VpLtw==
-X-Received: by 2002:a17:907:97d2:b0:aa6:96ad:f8ff with SMTP id a640c23a62f3a-ab2abc927abmr1766580766b.52.1736748947870;
-        Sun, 12 Jan 2025 22:15:47 -0800 (PST)
+        bh=/pjJbm+GL3xMGT2PHevSgzgHjM9ueX6e0WLe9Qs+akw=;
+        b=HRmuUzOC1OSfzW22lF7OOo3pH0OYBi2cMEyOfB9QSzX9d4zr+X3t8PjkSQhBuxfPHK
+         YcBQAUsQmGr+UyJRaB/mHxzXrrmw6gMq/iHLz2hl9gDAEciDD7Ctu14malREvei3iZ8G
+         mx181TWSAZ/MkhnIr8rDDOTRbJIVgGFYvqa9BH9dkkg6658cpO9RLa0diJT+W+YbvY88
+         bqTyKObTmgY9Cp0EmlLwsiZ/NqfNMU2pHaxTg44JyJV9bKqy4L2BJbmt0hvnRPKBnTNG
+         PYDQJM/1T3t7JwjJjn5nXDXZ7sDXJ4XfAFheIj98A4W7TxTX9rvNabvFwRhfmGXflPgB
+         KuPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqbkAayyCtjXAGW/29JQ4sanm6noUnWqOeUoYpqbG6E5BkHQHM9z8qX1KbOoNY7TPJR++BOMAgZ4nqw6n5c3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvsXtFBLkUNTntTYqKyuNlVP9QlXlTo6XopY/CXYGcIaFVE5L0
+	8ZI/wsQX2Frd2ZsgqkfX9O56S/g4WWWZy2GtjkK+BZu9FaqqE02NnBniPDoKHLE=
+X-Gm-Gg: ASbGnct/+3gDtQ+XC8rFGrDYaOAbmGdiJYiIZMJUgm4Su0/ovu7y5zra685QSv9q5z5
+	f2XRIN5fRyRRydx1u42PeJoHsf5z99o+Qz4M1rYjbrgsSq1gZ0MeUZ2DTfZssYb7CipSXL4cBpL
+	Pj5YJ9qTWHInQiZTb1IfB7I/9aoSX49oJw/A+/3O1IipLtpIaKdMpw+FVC49QnYus28LtXBIyJR
+	Ud3MHP3COQQ7IqY6Tncdc2dnVvqfH8UXLgbxHXKolLJO73DXv0/RxF41uylXA==
+X-Google-Smtp-Source: AGHT+IGq08j5sMzi1AzMjZ1y83V0c4GO8GFxsXUHAj6RdJN05L0egWonX5MsDLpHWtkmf38w3+RFfg==
+X-Received: by 2002:a05:6402:27cd:b0:5d3:cf89:bd3e with SMTP id 4fb4d7f45d1cf-5d972e708d2mr40816202a12.30.1736748958783;
+        Sun, 12 Jan 2025 22:15:58 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c905f0c9sm464700666b.19.2025.01.12.22.15.46
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d9903c4477sm4308820a12.51.2025.01.12.22.15.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2025 22:15:47 -0800 (PST)
-Date: Mon, 13 Jan 2025 09:15:41 +0300
+        Sun, 12 Jan 2025 22:15:58 -0800 (PST)
+Date: Mon, 13 Jan 2025 09:15:51 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Even Xu <even.xu@intel.com>
-Cc: Xinpeng Sun <xinpeng.sun@intel.com>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] HID: intel-thc-hid: intel-thc: Fix error code in
- thc_i2c_subip_init()
-Message-ID: <eb4ea363-c3b7-4988-9ff5-5ed74bf47620@stanley.mountain>
+Subject: [PATCH next] efivarfs: Fix a NULL vs IS_ERR() bug
+Message-ID: <7f7565d8-ef9f-4e5f-834b-9735db01835a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,27 +72,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Return -ENOMEM if the allocation fails.  Don't return success.
+The kernel_file_open() function doesn't return NULL, it retursn error
+pointers.  Fix the error checking to match.
 
-Fixes: 4228966def88 ("HID: intel-thc-hid: intel-thc: Add THC I2C config interfaces")
+Fixes: eb11e99adef8 ("efivarfs: add variable resync after hibernation")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c | 2 +-
+ fs/efivarfs/super.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c b/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-index 92a1dbe9a928..4fc78b5a04b5 100644
---- a/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-+++ b/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-@@ -1519,7 +1519,7 @@ int thc_i2c_subip_init(struct thc_device *dev, const u32 target_address,
+diff --git a/fs/efivarfs/super.c b/fs/efivarfs/super.c
+index 961264f628dc..968e4af7b7e4 100644
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -492,7 +492,7 @@ static int efivarfs_pm_notify(struct notifier_block *nb, unsigned long action,
+ 	/* O_NOATIME is required to prevent oops on NULL mnt */
+ 	file = kernel_file_open(&path, O_RDONLY | O_DIRECTORY | O_NOATIME,
+ 				current_cred());
+-	if (!file)
++	if (IS_ERR(file))
+ 		return NOTIFY_DONE;
  
- 	dev->i2c_subip_regs = devm_kzalloc(dev->dev, sizeof(i2c_subip_regs), GFP_KERNEL);
- 	if (!dev->i2c_subip_regs)
--		return PTR_ERR(dev->i2c_subip_regs);
-+		return -ENOMEM;
- 
- 	return 0;
- }
+ 	rescan_done = true;
 -- 
 2.45.2
 
