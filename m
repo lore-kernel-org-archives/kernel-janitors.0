@@ -1,94 +1,89 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5CE44360;
-	Tue, 14 Jan 2025 14:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60A314B97E;
+	Tue, 14 Jan 2025 17:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736864043; cv=none; b=U1w/nOzY7d/R+4ixG++D9cfCVCQT1cgLurTZtaQ7kqJo3RoQ/44jw8uQZmA4mq3Xw9/gDNqvxobY9B0IHf6aQpVeFlV/MEEi0XEXtpLgIys4MfY7EDSU0e6VtWBKgmR/gmjwJXTWUTkfSc8fRrO/Y8NR0gVtFawlPGlVCrlCdfI=
+	t=1736874694; cv=none; b=WZLrvsJC+0PaJNALmaHFVCH/wKe151AG5crjK09rtVeFuuFYAIutLGiaRlfdX638Iv07OTvweK+pkj18s3wH/lz3o/kxF2pN0+60I0VoYMD0CZ/fDOM/6QP8g3CGahvyYBpvgBTfz36ISZiyxbQ8IgN4cqdglAZ/tSO8ArAc7/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736864043; c=relaxed/simple;
-	bh=oPLxYVFgMqBoMZEC4nDdIGfzLwYnmn9Rt055dg3XOsg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YyfVv8qakJ9m00YcmriYt8b9pZrvzNB57g0QI+83wNIAsgjakowUHnN3tKDm7W+yRCKdeg3R2S7NjH0vhAZF6lLBHnEakJzmQlho0QRmtd8i0XEKeyo7HXqjql59QGpogjIasyTBft2wbPykByg5UiPBfpnrJwYTyYtrpZu5YwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fd+THPGe; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1736874694; c=relaxed/simple;
+	bh=Xyn6dIyPBB9LkzrQS1m98P3wiMJvXrlGf48iyyNyGYI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=dynlY07cRQL2lTj1EYPcH/rVJsqwdvan47o7rO6ZKpSkjFAzaec7nHmoJyGtvOcvMhsq/tY5gHuuQnC6NLcJfxjEvdSxQ0cWN5CTgpBhzT7VMQwlQ97C8Iv/mAVa+RXmgnajV6fsS2/+g9IGBN7VVOznhYEpRPPJisqb+cd7vl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gFXu5q0D; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fd+THPGe"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d437235769so9548033a12.2;
-        Tue, 14 Jan 2025 06:14:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736864040; x=1737468840; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mq/Rw+S9lv/LYyE3ZquC93DcWY1bKMQz9/XVHbWsV8E=;
-        b=fd+THPGeQ55JSEYY4fsXhX+oGMcrXMbaBQ0tbVvIUUd52krokRkOIt6HcK5fOlwqSk
-         ajHrdrBBhI4HEJEUeLROupRlnvw5P29X+TLNuRDkWKazp/5AkXuUKxz4yGWHKxw4kxit
-         arttrfdIIHHddAieNfAu1jfQ4nVSSx53If7JSfFMQ5tc99udalMCXx/gSeuf/YYjZ9Jb
-         VxoF3ComwUVa4vECov5Is7/OcyxxG5E6yUtWELkqrw05nV/bvg7KwAo9gmd5qfIcH5zt
-         EjjBoH9T8HTr+7YsemW4Du2tn/I8mfvGoOuw6cYuZF2wEkrIA8v/lM44PaqwfQE/cDOE
-         Kr2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736864040; x=1737468840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mq/Rw+S9lv/LYyE3ZquC93DcWY1bKMQz9/XVHbWsV8E=;
-        b=BCoRpSIlatfPD9+6wbNzXfe65Zm7pTLqPzaS9TWVl2xL7rk9d5IqDrrdRnBvz8XrIx
-         QqkJW7P+CDTEpdkAD3mIZKDixwrzMq4eWAsvJ1r/BJ/oMeZh39MIkwRmK3+W7eXIozNU
-         e+fpDXnTeqM05P3nCbXkuSo/QJe2l1zUvIWkvntG0bcDC/OG1eBsJUlIg/QfQAMng0Mi
-         +DCaPvn9M8e9p/g730zUMdfym9CR/ZChGzqLcWQkd5JPmvuQApLK/zwUzJ0VCIp1rtDD
-         CYVyHgD/BJ64AAsMEfkjNBaI0tfbJdLX5nfS1DdqvqdcFmpk5fhW9CWRGn56WoiDicRT
-         f8PA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLPOf9/xvdgGms/uijvnzpPdhawCTHpUVvoIEse/n2k6DwtOGx2OIKHHHYpq5rwnhjifDRUmzKdUsxsTALAfM=@vger.kernel.org, AJvYcCWmZOo4NDtU8brjufkjQZ8u0AXmgRbIZWlV2irOo5INlS20bnfE+4RfbsStswgT7nK/POvBF4lTw04fY4ke@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX+Rsy0RMCpUo/D8+9TfHip75zYSThQ2swF4q0xw74g0AHadNY
-	albkh6r8FsOzfWKZ0qJPlV+mEJ6MesBkZlAy3sXrse5B+B1xS1XI4hR9+3+Otkl4Z2mz+CW8HLF
-	gMN9hCHlkxkGerV3HyA2LgZhDTuI=
-X-Gm-Gg: ASbGncu+19Wol24V53dZWDmJ1AfsVPW0IbYU5t93CYcH+V2sDBim3H3A6dRXYFDgv1y
-	zM+L7zJEpUm68QNK4SUAbqcTVLEUoSPqqK6HHnhDlyl2riRl0fhAFJ38D90f4uPIBAirgNS6V
-X-Google-Smtp-Source: AGHT+IHZW2SKYJrAv7pV6GuqxUX4ozUmcVlb/S9pdxoitWdJD5a3iByLC6lxC4FR/LWy0pgtKfmr1ZvL8omKLmU0QUw=
-X-Received: by 2002:a17:907:944f:b0:ab3:3184:6890 with SMTP id
- a640c23a62f3a-ab3318469b2mr377395866b.33.1736864040264; Tue, 14 Jan 2025
- 06:14:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gFXu5q0D"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1736874672; x=1737479472; i=markus.elfring@web.de;
+	bh=00vnptrSnwNPrAsLTXSUjpNVE+iJ/+8PHoZ9WDxkrtI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=gFXu5q0D9t9ujT3rLT48ecCsvvrvMO6RqLN9Z4U13WkN2PJb0dp3CIaybxgrNmZp
+	 IXMum38uaUWPP+mA9EM5XlrjPK/0u2h4JkL2cLlnajUmxXDSH0+Jdm8+Pi2IsaolL
+	 0eaPW0WqxDlEO4FABoW7epXQwVqli8z/YDZWpoDSSR2PXcK0fc3qujKSA8ES5o2g4
+	 13j1+SJk6J6TtBcIUhVp0JMKnG+/nUxTdAta/munnPr4OYO3HhUlrFNwiWyBwMnjt
+	 BF+DMNec+M3wtNpaqZdFv7mlrmorJg194MTvshi8qekza+tp00JXhByVGD5NozahY
+	 erem743D4EJX2Yp2ag==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.67]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMY1D-1to2oJ04c3-00OAFr; Tue, 14
+ Jan 2025 18:11:12 +0100
+Message-ID: <de667368-baee-46fc-9683-62cc92936e7d@web.de>
+Date: Tue, 14 Jan 2025 18:11:01 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250104184951.3481-1-tanyaagarwal25699@gmail.com> <Z4Xdvxsnezp-tLUn@gondor.apana.org.au>
-In-Reply-To: <Z4Xdvxsnezp-tLUn@gondor.apana.org.au>
-From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-Date: Tue, 14 Jan 2025 19:43:47 +0530
-X-Gm-Features: AbW1kvZ8GT5Y42MlHrd453qy1cxvuL_Rl8m0KzoOTlYyPDz33kBsxftgdZ4-E44
-Message-ID: <CAPdGtUx4KShKZiYqX7K89h3RPQpuJuiz1b-dBUf9c17rntjDcA@mail.gmail.com>
-Subject: Re: [PATCH V3] lib: 842: Improve error handling in sw842_compress()
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: haren@us.ibm.com, ddstreet@ieee.org, Markus.Elfring@web.de, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: Dan Carpenter <dan.carpenter@linaro.org>, linux-efi@vger.kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>,
+ James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Jeremy Kerr <jk@ozlabs.org>
+References: <7f7565d8-ef9f-4e5f-834b-9735db01835a@stanley.mountain>
+Subject: Re: [PATCH next] efivarfs: Fix a NULL vs IS_ERR() bug
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <7f7565d8-ef9f-4e5f-834b-9735db01835a@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:pUZYKmp03byp1/2GkXWAW1qDUSw9ndWjqdcDMpmDgU8ZqjRWoSG
+ LuquM1YQl/9N8AVVmZ7XI/7yDziiJp0iqKt+bJRBFpN8MKZa+QPUknXdFHRcWBEwvXgPyvK
+ CXPDJ7xOLLCvWvxF7eB4OsS+t+COsJI0BvBKau+0T9xolx6DQkbQ5g+RhuZ3HUlUBaZsyVu
+ 5a0XqfDm8psho/2JIpqUQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WX+M4ixk4s4=;P9l/IXO/AyruVkBPecb1HagYWfR
+ o16Jif7gYAEyi9C2qyelUf1oAMQFRksQ6aYPSuVF7fLehxgudk0j4Tj/AoCLrl1s9ii+Hjmt5
+ T4KHuCdZ8SWidEH+603y14pYhQuZyXYVg6+x7aKQsZESku9VeCG0qrRHC84KOpbGcKAv/wxzo
+ h3GvI75X3lABysmsLZbdmJOHcpJCnJUtx/3GGm81lzvy3LR2qwUZcJpm9555xgM67un0vFUja
+ ZpUAXTxpkQ78P1dIWAi7jEFuilhXeaCxKhx9Wc3186ndh+FawVcOYVxGYWPFISXEy/E0RsqcA
+ E7ey2wcdqVKys2XB3XcdTYFuaFPUMj6YnI56T+FMHp3BHxxvvzbAiOWpwas54zBEx9zkx5b6Y
+ fljZGiUyve9x7hDXGmzggyY3u7NUcbjvoLwr4svmXkQz12UUUecwETMhJKijajy1UW95TDMgE
+ u3BaWnhXXAfrVzTM0XT0NoWeXNJB/dgL9aAfwWQSWmOrzZdRxBqNCsY5GJaLZBMjk8I7VTuEE
+ vAFwzeau8IS/8ceIvmipf696eKW+Kx2N7wvZoU0WQOCGmvvTYgNojO7DLpuA2HPzL3Sz7pFQU
+ 9xrXRrlQRnHGw0wvYBhdO+AsCiHu3H2hpAAFOBcvzA1mSKCGxcXQMmpoyyuGvZTZSvoIKokUu
+ jpmWnnaRSA/XyzGX8vw1gwSMtxqpHW3UxR143cdF1ZwNnyqM/uXE1zKtgnddujkB7od59qFzJ
+ 2ZtNPdl7jTtUlaaQFe6JwPWn5S9R9tOxBgVqQEhZZLYGht5zCkATSYnkUX6K2I+wYjhEaKQI/
+ v3H8u89jNAjwJmiifLtmddln8TNDvaf6xwnZ+yCWMb3xCjVcyheZ1Mw28VwHXVVKAn2zCjEVp
+ giGWWYUGZrj+cvQsVdkEm92izeL3pY1qeMTNf8X3AlE9NpSWcQzyfoAQ8M/FnnazGcbJa+6No
+ nB5IFyz9t/fUgau3cQmY/tkpoRKO1rg4Fr+fuIRgAVx5pac0/el/qfPHyL/mJoPtzYuPF8QGi
+ 2TocIp3sKU/k32gLt8Ij8VmTCtQTcMAwe78UGh1856jSxA4e/Oikdqih/AaOK1cwhJGToBBDK
+ oJT4F4/So=
 
-On Tue, Jan 14, 2025 at 9:15=E2=80=AFAM Herbert Xu <herbert@gondor.apana.or=
-g.au> wrote:
->
-> On Sun, Jan 05, 2025 at 12:19:54AM +0530, Tanya Agarwal wrote:
-> > From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> The kernel_file_open() function doesn't return NULL, it retursn error
 
->
-> Please resend via linux-crypto@vger.kernel.org.  The MAINTAINERS
-> entry should be updated to include the mailing list.
+                                                          returns?
 
-Done. Thanks for pointing it out.
-https://lore.kernel.org/all/20250114141203.1421-1-tanyaagarwal25699@gmail.c=
-om/
 
->
-> Thanks,
-> --
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> pointers.  Fix the error checking to match.
+
+
+Regards,
+Markus
