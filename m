@@ -1,121 +1,94 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378FC762F7;
-	Tue, 14 Jan 2025 14:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5CE44360;
+	Tue, 14 Jan 2025 14:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736863951; cv=none; b=C1ZcT1wtT0dGIA+DlhLR859vACjghFUD+p4Pfi9vQaoPMnupsJeI6ikkycp5EABxOgwLmgImAHmy6WPy+JaLZNBJ9IetLxO5D4SnBEyJa6uJiq8k4UMyu/OXi+iRGkv0bXIPI/JJ6hHCr325wVA6UIyLZb5bo0Qh8qIroroccec=
+	t=1736864043; cv=none; b=U1w/nOzY7d/R+4ixG++D9cfCVCQT1cgLurTZtaQ7kqJo3RoQ/44jw8uQZmA4mq3Xw9/gDNqvxobY9B0IHf6aQpVeFlV/MEEi0XEXtpLgIys4MfY7EDSU0e6VtWBKgmR/gmjwJXTWUTkfSc8fRrO/Y8NR0gVtFawlPGlVCrlCdfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736863951; c=relaxed/simple;
-	bh=PDv4GfT9htaoo/dVnXnLNDVEfVRO2ud3WWEE+TXfR4w=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IRZYVglqrU+YSbt2N7RUGZ0RqkOcOPYb7KEgmjYs7yy7/Dw1k9++GjbPi35yuD0BZesE+aG48mvsWsq8pHixFJqOcvBZpI6PdoQ8m4dS/xETqhL3CrxEezxvGdVKJsMiT0yEMWvyNsZnkrYPx1/b1jIWk3AVqq4hzAsQ8V6hZOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D5D4bwC9; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1736864043; c=relaxed/simple;
+	bh=oPLxYVFgMqBoMZEC4nDdIGfzLwYnmn9Rt055dg3XOsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YyfVv8qakJ9m00YcmriYt8b9pZrvzNB57g0QI+83wNIAsgjakowUHnN3tKDm7W+yRCKdeg3R2S7NjH0vhAZF6lLBHnEakJzmQlho0QRmtd8i0XEKeyo7HXqjql59QGpogjIasyTBft2wbPykByg5UiPBfpnrJwYTyYtrpZu5YwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fd+THPGe; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5D4bwC9"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2f43da61ba9so7313064a91.2;
-        Tue, 14 Jan 2025 06:12:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fd+THPGe"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d437235769so9548033a12.2;
+        Tue, 14 Jan 2025 06:14:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736863949; x=1737468749; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FTG79nL8NQo8aVgerNCdWBkI5u/Jw2Lke8vYbSuDz18=;
-        b=D5D4bwC9Kvkpy9ADSiSSZ+rqk7qdjouiLqHXeS34rkfF4QMCVXoXglbrt54cq8+Zjh
-         A1QM3liOZwI731ee1BXyxvw2kKrEdxAmzS3jEYG5sB5QxTviyMPi6R5WsvI/R8Up9o4z
-         YV+lbTIs11L9qrthlA7ZugeWAlzL2Ax912Yn4jZpu3ygrQFkrDDKUD1hcb+cqvxX2Z62
-         Yeh4x4WbOzVmWzKhSN9AY6iC6TDB9NzqlukEQf/ALfjZ0K3ViZ4YOQd8YSP/gzV/Y6Hz
-         yGE7UlZ45Zot4a0DqnVDmcUB08iszKg6Nm63Mm5OA+E/eyOx6BVgSCJFfsn2IJAl7OQU
-         ub0w==
+        d=gmail.com; s=20230601; t=1736864040; x=1737468840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mq/Rw+S9lv/LYyE3ZquC93DcWY1bKMQz9/XVHbWsV8E=;
+        b=fd+THPGeQ55JSEYY4fsXhX+oGMcrXMbaBQ0tbVvIUUd52krokRkOIt6HcK5fOlwqSk
+         ajHrdrBBhI4HEJEUeLROupRlnvw5P29X+TLNuRDkWKazp/5AkXuUKxz4yGWHKxw4kxit
+         arttrfdIIHHddAieNfAu1jfQ4nVSSx53If7JSfFMQ5tc99udalMCXx/gSeuf/YYjZ9Jb
+         VxoF3ComwUVa4vECov5Is7/OcyxxG5E6yUtWELkqrw05nV/bvg7KwAo9gmd5qfIcH5zt
+         EjjBoH9T8HTr+7YsemW4Du2tn/I8mfvGoOuw6cYuZF2wEkrIA8v/lM44PaqwfQE/cDOE
+         Kr2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736863949; x=1737468749;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FTG79nL8NQo8aVgerNCdWBkI5u/Jw2Lke8vYbSuDz18=;
-        b=int53aWpR/A06zNhtX1I8VHNLYJOgEoMWcq2hapIu/CNXlRJlJVXPMDRBAdwDOVU4h
-         h0k6jQECj1T3hsXJ5SF68SYjIlRgRf2xVVwJX2Y33UwGZvHeoiLYf1WCUzYpkZkV/OAS
-         p7diaAYWhqaFfbm97VJIgxcT89JHH+BOJEieyXliTrrs98+LnzD8KNTMzVeF/RR2A0ax
-         MnpSJUG8NUk7QcnYwfE6soIMFsWGMnTKb6TUzhkDYCmxAjU0shmz8U7XKT4cnuWPGPcd
-         3dM23KCe51Q1stPajqUQXXasN6CwB4S+H1aO/JGuqd8IJF+MSIimxbWceyriKocP+yAN
-         viOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPTio4xm9sMKCpFLQmML/km2fOLYzqYN4niwMsQCU9878aUv8SSdQUmVyeyF6ZEqvT3zR8+v1jKTCw+J9x4Hg=@vger.kernel.org, AJvYcCUruxHyCPMxkzbhoMUC/kMFJ8BDApxPH7ZTIIWSV6D5JqAyKpOB35zygPmvJontZfFZxGNJlOAMQoItxs/B@vger.kernel.org, AJvYcCWuCAyb8X9VTr9iucsIzTEhHrytbIk+neLiCbqUA+2IIaUjqnKzmvIdt770etWAEx6W/o6S86CSvEJ72r6J@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJIwNWuF7D/wgywHxPXpUyyG4bjML5FYhFfuc/Ya3dsCp0okOC
-	UAOwGQL35EY2pmvVaBGU3+QpJS6q3nORWeL0PEkhCdUKGfCmQ1Rb
-X-Gm-Gg: ASbGncv9dXWW6j3wNQTt0iZrxVDaCCufhaRI3v8vLKuJMdb3elq2wYpGMUbhwk1/Ks7
-	MJwuVMWXqxQ0JIKneMzLQRH2jZTkVD21C4TFLF0Auj4T4mxLBsBvVsoQ1eNHo45vzDg45CoNZwb
-	/pdssy2y4to2wK/fYWPlJCSOGCBFNaF+V4af7lSiH30KCIokqrugYpjda5vOQ5f0p6BLLRh9DFY
-	aE3YCkdiKNwlQzJGqeWJtFCeaKHR2Lz1gxOIQudV4yEpWm2vugdjdY=
-X-Google-Smtp-Source: AGHT+IGsMN+DbsOzOVjwV1/Tp/QJgEFXp+tCMu+w4OtAhGEYSdhmGfR3oTFUeKGZ6DKKI+H7wNRFXQ==
-X-Received: by 2002:a17:90a:d88d:b0:2ee:edae:780 with SMTP id 98e67ed59e1d1-2f548f34ebdmr38752356a91.15.1736863949310;
-        Tue, 14 Jan 2025 06:12:29 -0800 (PST)
-Received: from localhost.localdomain ([122.174.71.101])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2f5594512f0sm9501840a91.36.2025.01.14.06.12.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 06:12:28 -0800 (PST)
-From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-X-Google-Original-From: Tanya Agarwal <tanyaagarwal25699@gmail.com
-To: haren@us.ibm.com
-Cc: ddstreet@ieee.org,
-	herbert@gondor.apana.org.au,
-	Markus.Elfring@web.de,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com,
-	linux-crypto@vger.kernel.org,
-	tanyaagarwal25699@gmail.com
-Subject: [RESEND PATCH V3] lib: 842: Improve error handling in sw842_compress()
-Date: Tue, 14 Jan 2025 19:42:04 +0530
-Message-Id: <20250114141203.1421-1-tanyaagarwal25699@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1736864040; x=1737468840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mq/Rw+S9lv/LYyE3ZquC93DcWY1bKMQz9/XVHbWsV8E=;
+        b=BCoRpSIlatfPD9+6wbNzXfe65Zm7pTLqPzaS9TWVl2xL7rk9d5IqDrrdRnBvz8XrIx
+         QqkJW7P+CDTEpdkAD3mIZKDixwrzMq4eWAsvJ1r/BJ/oMeZh39MIkwRmK3+W7eXIozNU
+         e+fpDXnTeqM05P3nCbXkuSo/QJe2l1zUvIWkvntG0bcDC/OG1eBsJUlIg/QfQAMng0Mi
+         +DCaPvn9M8e9p/g730zUMdfym9CR/ZChGzqLcWQkd5JPmvuQApLK/zwUzJ0VCIp1rtDD
+         CYVyHgD/BJ64AAsMEfkjNBaI0tfbJdLX5nfS1DdqvqdcFmpk5fhW9CWRGn56WoiDicRT
+         f8PA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLPOf9/xvdgGms/uijvnzpPdhawCTHpUVvoIEse/n2k6DwtOGx2OIKHHHYpq5rwnhjifDRUmzKdUsxsTALAfM=@vger.kernel.org, AJvYcCWmZOo4NDtU8brjufkjQZ8u0AXmgRbIZWlV2irOo5INlS20bnfE+4RfbsStswgT7nK/POvBF4lTw04fY4ke@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX+Rsy0RMCpUo/D8+9TfHip75zYSThQ2swF4q0xw74g0AHadNY
+	albkh6r8FsOzfWKZ0qJPlV+mEJ6MesBkZlAy3sXrse5B+B1xS1XI4hR9+3+Otkl4Z2mz+CW8HLF
+	gMN9hCHlkxkGerV3HyA2LgZhDTuI=
+X-Gm-Gg: ASbGncu+19Wol24V53dZWDmJ1AfsVPW0IbYU5t93CYcH+V2sDBim3H3A6dRXYFDgv1y
+	zM+L7zJEpUm68QNK4SUAbqcTVLEUoSPqqK6HHnhDlyl2riRl0fhAFJ38D90f4uPIBAirgNS6V
+X-Google-Smtp-Source: AGHT+IHZW2SKYJrAv7pV6GuqxUX4ozUmcVlb/S9pdxoitWdJD5a3iByLC6lxC4FR/LWy0pgtKfmr1ZvL8omKLmU0QUw=
+X-Received: by 2002:a17:907:944f:b0:ab3:3184:6890 with SMTP id
+ a640c23a62f3a-ab3318469b2mr377395866b.33.1736864040264; Tue, 14 Jan 2025
+ 06:14:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
+References: <20250104184951.3481-1-tanyaagarwal25699@gmail.com> <Z4Xdvxsnezp-tLUn@gondor.apana.org.au>
+In-Reply-To: <Z4Xdvxsnezp-tLUn@gondor.apana.org.au>
 From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Date: Tue, 14 Jan 2025 19:43:47 +0530
+X-Gm-Features: AbW1kvZ8GT5Y42MlHrd453qy1cxvuL_Rl8m0KzoOTlYyPDz33kBsxftgdZ4-E44
+Message-ID: <CAPdGtUx4KShKZiYqX7K89h3RPQpuJuiz1b-dBUf9c17rntjDcA@mail.gmail.com>
+Subject: Re: [PATCH V3] lib: 842: Improve error handling in sw842_compress()
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: haren@us.ibm.com, ddstreet@ieee.org, Markus.Elfring@web.de, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, anupnewsmail@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The static code analysis tool "Coverity Scan" pointed the following
-implementation details out for further development considerations:
-CID 1309755: Unused value
-In sw842_compress: A value assigned to a variable is never used. (CWE-563)
-returned_value: Assigning value from add_repeat_template(p, repeat_count)
-to ret here, but that stored value is overwritten before it can be used.
+On Tue, Jan 14, 2025 at 9:15=E2=80=AFAM Herbert Xu <herbert@gondor.apana.or=
+g.au> wrote:
+>
+> On Sun, Jan 05, 2025 at 12:19:54AM +0530, Tanya Agarwal wrote:
+> > From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
 
-Conclusion:
-Add error handling for the return value from an add_repeat_template()
-call.
+>
+> Please resend via linux-crypto@vger.kernel.org.  The MAINTAINERS
+> entry should be updated to include the mailing list.
 
-Fixes: 2da572c959dd ("lib: add software 842 compression/decompression")
-Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
----
-V3: update title and reorganize commit description
-V2: add Fixes tag and reword commit description
+Done. Thanks for pointing it out.
+https://lore.kernel.org/all/20250114141203.1421-1-tanyaagarwal25699@gmail.c=
+om/
 
-Coverity Link:
-https://scan5.scan.coverity.com/#/project-view/63683/10063?selectedIssue=1309755
-
- lib/842/842_compress.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/lib/842/842_compress.c b/lib/842/842_compress.c
-index c02baa4168e1..055356508d97 100644
---- a/lib/842/842_compress.c
-+++ b/lib/842/842_compress.c
-@@ -532,6 +532,8 @@ int sw842_compress(const u8 *in, unsigned int ilen,
- 		}
- 		if (repeat_count) {
- 			ret = add_repeat_template(p, repeat_count);
-+			if (ret)
-+				return ret;
- 			repeat_count = 0;
- 			if (next == last) /* reached max repeat bits */
- 				goto repeat;
--- 
-2.39.5
-
+>
+> Thanks,
+> --
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
