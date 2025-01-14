@@ -1,61 +1,75 @@
-Received: from sxb1plsmtpa01-12.prod.sxb1.secureserver.net (sxb1plsmtpa01-12.prod.sxb1.secureserver.net [188.121.53.126])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76D320E005
-	for <kernel-janitors@vger.kernel.org>; Tue, 14 Jan 2025 21:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.126
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BF42135CB;
+	Tue, 14 Jan 2025 22:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736889255; cv=none; b=GRZPd8xnEnGAuCYYRrolQvHXqDxTZywMNoN3ZiTUJenc3N+w45PAw0kI+ZVY33w7rA3KkdHC9M5ZwzszvVUJ0Bm3Na1MBn0PF3EUhiBKyJGJR2YGQA4fsXDTqjEslcJhRjyCHkkBqpBnC5rW2WQ7BDSJBkJj6AL2LEVU9BXn1yM=
+	t=1736893817; cv=none; b=RUSRhac3/hpgFV8ymS1hy7mNo4s9xYi0ri1S+9eEBCupwH1f3EA9wV4Od65HITgKuDpHbZ1NA4Xlpg8ATY+kmf9gnCWoCAalLX+2bsVB/Il5rtTMqm5BAhYFyTJAlkhcNUyULnT9lf6AMmy8+5Xtgz9Oh95gtVsoltVHVuwybzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736889255; c=relaxed/simple;
-	bh=gAzQgdwxvmLjjJKc6AQmzRosNOPZA5/hTTHgmMR0yJI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fZVlVF0TZXgEwTTJy+x5NyCIJf9SbCFoWKY80d8JbNE6Y4YBiSc/pQxZpZvr2xkJTUoScHn9ERQy9/f+U/qbUlbruJD49YxQg3qwLKwrwd4Yexbgjg0iRFicYNMRSGxCbpaxdUPph08IozEVtLurhQmHX2zF60cLSj6nqE4y/qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from [192.168.178.95] ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPSA
-	id Xo7Lt55fOxZ1ZXo7MtRqcg; Tue, 14 Jan 2025 14:06:32 -0700
-X-CMAE-Analysis: v=2.4 cv=S8MjwJsP c=1 sm=1 tr=0 ts=6786d1d8
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=IkcTkHD0fZMA:10 a=KKAkSRfTAAAA:8 a=FXvPX3liAAAA:8 a=a5sIoMY38lD32Rg_RhwA:9
- a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=UObqyxdv-6Yh2QiB9mM_:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-Message-ID: <d4adbf20-2d14-4a0f-9f2d-5132f87ec493@squashfs.org.uk>
-Date: Tue, 14 Jan 2025 21:06:05 +0000
+	s=arc-20240116; t=1736893817; c=relaxed/simple;
+	bh=Iu8yBQSLvGkiHBDJx3T9KQSV5ydXG/G9eF7XFC9rHA0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YlL+YJ08AD3Axmv03zI60FcDRKOVmyMAxBpYWbp/pxkhakyeAr6CfKO9hUs5Uuv7dxHFmawizATA2Wu6hN31Iv9/AK8GwK6AkBuCQlYbeCilXLNwS3DMo7C0U/xCHkXjQy6SIdMYMhyfQLF4I1WuRo8dKXbo4nesChrKEGB/uCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YPXrMWei; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPXrMWei"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A68EC4CEE1;
+	Tue, 14 Jan 2025 22:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736893816;
+	bh=Iu8yBQSLvGkiHBDJx3T9KQSV5ydXG/G9eF7XFC9rHA0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YPXrMWei8w4ymqSLQeOVyCZx/u8LQjsMSQYAbPHiiDnraJf/YpHHOBeKhecGZL5/C
+	 SEV3/kH6eB6ACSS2rdxuptzwdgR1VpjD2HsAEh0Wq0C6NGfTyBW7e5060Rn1aJ10Tq
+	 2dl/GGhP46ZuBPFSy7rLtoyV4iDzpqkAryo9P2EUrcdVnv2H9KCMJapwX6bkUOCkFp
+	 yoVV0kzxxJUu62cKaxRmNcVfjlotwUmjQeF+PnUGmfBQizjD5GUDKy7QwDATHxlUng
+	 yX3RS4PW2GgHctFbRM43SKPd12i+iU4IoCkO4EFpTcoLxNBs+QluDlc23rxaU7XLVa
+	 2hEUrJADPLvRw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F70380AA5F;
+	Tue, 14 Jan 2025 22:30:40 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] squashfs: Fix a NULL vs IS_ERR() bug
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <7b7f44d6-9153-4d7c-b65b-2d78febe6c7a@stanley.mountain>
-Content-Language: en-US
-From: Phillip Lougher <phillip@squashfs.org.uk>
-In-Reply-To: <7b7f44d6-9153-4d7c-b65b-2d78febe6c7a@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfMrlhComPLR0KI3Be1MAjuVz2frrrPieBA7E03NCCsYWR9cZUP2jTdbjiKLVKWZBSCH6wy3RGVjWPSAA4xKndWOj7NPDSwOQDSr1PEQ52eRVfFGLcj5R
- 6BXtTWCr9HBzSDzxeXuBie4ywfiO9VAghvVANN+F452k3aQRGXGc97zYh9JG6hq0PtN+CaFaY5cgpl+zcu4gOu2v2NPi5UBhR8cWYcPu7KCI18XDpwFX4EeF
- pmZNXlD4raE5tqHs3h4eUFbkNWLKYZ4mR5Ym4pniNHfKcrTmGTzE/UvJ1HyQiEC19JmYtdKz94CrEaPgaN8W9VnhOdu6Lw/KxlFGOw0HgzTVx1+Rh8UBcHz6
- gocTSiEg
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] net: phy: dp83822: Fix typo "outout" -> "output"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173689383901.162948.7046290834387824823.git-patchwork-notify@kernel.org>
+Date: Tue, 14 Jan 2025 22:30:39 +0000
+References: <20250113091555.23594-1-colin.i.king@gmail.com>
+In-Reply-To: <20250113091555.23594-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
+Hello:
 
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-On 1/8/25 09:16, Dan Carpenter wrote:
-> The __filemap_get_folio() functoin never returns NULL, it returns
-> error pointers.  This incorrect check would lead to an Oops on the
-> following line when we pass "push_folio" to folio_test_uptodate().
+On Mon, 13 Jan 2025 09:15:55 +0000 you wrote:
+> There is a typo in a phydev_err message. Fix it.
 > 
-> Fixes: 43c73ba98b2c ("squashfs; convert squashfs_copy_cache() to take a folio")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/net/phy/dp83822.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
+Here is the summary with links:
+  - [next] net: phy: dp83822: Fix typo "outout" -> "output"
+    https://git.kernel.org/netdev/net-next/c/652aac7ecd33
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
