@@ -1,156 +1,96 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC67322F38B
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Jan 2025 06:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604DE1DB12F;
+	Wed, 15 Jan 2025 07:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736924119; cv=none; b=Nq+Mly6dZsGTw8e7KbgcVe4gQ8V/uBsMOlqfI0g916qz+ryTtBpgEHVo/Ezhtq6XZmCkD3ze8QCNdRtKXiRzpZBoGTsWRf9UmjrC0ieUkcYPEAgR6PJQL7bTfALHtlQ07Ppcg4cSES53BU+gsgvYP0va6EaiD0mWFkmfOpvTMd0=
+	t=1736926321; cv=none; b=pdg4sdM7J2kagRjI1A/dIS12qTXkF5cnXk/biE4mX1WFlFAx1sldyfy7Mt93Fn8T21yiJZkq/Mw/3hNr4TMHxxCYq0RHKaj8Zvw5IaDtZOZ6GtKfAGW52u1ueWDMeVmd8uPMn321rqtUkkgA50OIwQiYjamk2Zaz45PVtvsxjk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736924119; c=relaxed/simple;
-	bh=93Zf6r6djTsOLjTwFwQbsL4xCusRovQNhv2ba7R6CRg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=g5NmIo3LYKaPVu2ewc02WRvJO5xtMkcDeEYxvf9obT1z01aR/mw7ZyRm9+2QlZqM2lyvAUHP5fcb/c9jHb4NsB4wQ+d7xKHdCUug0GSJNtUlnQp8Bwl6MaKEMyILNRwfpj8E9xJ0t1wCQuELQI3kWxnDbx5Wd/xBcPPoceeQYdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tiwZg4eN; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tiwZg4eN"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso913950166b.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jan 2025 22:55:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736924116; x=1737528916; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XKBt5/R3U0Riotc/EXMrk2lAFncNvsaicQi2el/Oz1E=;
-        b=tiwZg4eNkMCQTIuLSSaWe8AFU4NrkteMjU1mRT6lcKvRz4vY+smtNulsSNIWk1tQix
-         MPcclIgP+smcS6d/QrKT+gBn4eHFMp1UguEPXQXbQIxcSmdekVdql4H2Ss/mzG/3m7I8
-         l8WEA0EE+lmzImzcKVY8jzPm6/wwkJ6VpoBioszN4Me+KXYqFQrMVa8YRIMIMhDGpIBD
-         SwsY3N68xcIfrKnoaILDdV6VXgRLEaKEauMmnDPhShd2V3Jy7/dzBfk4oNK9vAP4QzHX
-         4Fi1YhwydsBYK8RL1E1KaKWzVkIdQHgFYSu+1b/xPhoC+MvQjZb5Hgpeb5vl5ESbN6Dy
-         +RyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736924116; x=1737528916;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XKBt5/R3U0Riotc/EXMrk2lAFncNvsaicQi2el/Oz1E=;
-        b=DprM8owL6zd8XwYtYmqQ3DOx8oHXCLOcd6HX2UXUnSDqt9qcAkEfMWHnePRHU012VD
-         FCIW4MWHx/xMF+r+yPQYJ4kuYuzTihn+I8WJH9X4QQxSgJOLZG+N8h8Vhzj4L0HUjQBX
-         PKAFz6V7WiLEPdVQR5bTJeqrmLOW91v6+Kgk5/yoQVvL7GH5UXVwf6it7ZSfxCNqciU9
-         w/H54Rnn9AEj35Sx72uz2gtXeMzsO4FknhHZh6MJh5xmwIFdaEidftEioyiOXslBz6ny
-         sVyUcXxC57PXe+ivqLdNxFOA62OTNqiaK8jMvl4c6YwJc+9AzY5WPVN1v5dteupJFSNz
-         igkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4o5ZnBPQrhLGhlboLan+s+zp4TiLL/UPVt4EcMQfQhCNeRx5DFtw86IYaf+uBsl4FEedtU68bCiYeJu3o8vw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdw4WZKni1pThI6gYRyM4b4vJ+lps+wF6skTL8O4f6DbCdSszL
-	XiFdb5bs7ICs3HG7C/VKvI3Jsb7YQnxWJQ8yGWkuWYjXQTa02NScAxhE13RSCc8=
-X-Gm-Gg: ASbGncs6C3qrgIlJiuHo0XwWcc0YhJalQvHgherD5Ki4Dt3KaFkJTguKQ4pJ6UXphUz
-	U2Ei56GCwWc4sK41zKpqXDv2j1Rsmkr2huE/SK81R+ClCZIeWkfV1KKthJiVgR0GbPvV6xmCI/g
-	6r5VNATeNE1DY5DssG+xUN0cuRysXMYJAHLpIrjS3UudHjScnSHEX5dsHJ2+5i/tRUZId6G7GpY
-	Q992sWbHOk/mkwvxT0IWwcvgjPn8QOwhWqZNdkY7Pdn6wCTAfbXTAFBy4cIcw==
-X-Google-Smtp-Source: AGHT+IExCD1XX9izJi90Kdc42+9qhGwcjFZAxBY7JMxh2yX9I9+lBRCI+6LTlP3SWrBy5me6fxhpIw==
-X-Received: by 2002:a05:6402:354a:b0:5d2:7396:b0ed with SMTP id 4fb4d7f45d1cf-5d972e0e3abmr58693927a12.14.1736924115733;
-        Tue, 14 Jan 2025 22:55:15 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c90da11esm726930166b.69.2025.01.14.22.55.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 22:55:15 -0800 (PST)
-Date: Wed, 15 Jan 2025 09:55:12 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: renesas: rz-ssi: Clean up on error in probe()
-Message-ID: <14864a18-c256-4c7d-b064-ba1400bed894@stanley.mountain>
+	s=arc-20240116; t=1736926321; c=relaxed/simple;
+	bh=ewQdqRgpwRn9vAS/RWd75mbnlBeYuXNPL5x0HiVF0uk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rtYf1KqSOSo2Q8/l69PZuqlpbGIftVh5nXEMWQPpQE0LHup0Te0ULW5TsBdCcL6GmUuwQwSLfGhuHaypH63ok32sfikVmpPfNCEk83hR3fLe6Uy4DBkFVIK/MeEeKeZpNZq4Ye3oOcicOSjxU5gRSvWxuqFy1g+nELay41ra9wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YXyNq5q0Qz4f3jks;
+	Wed, 15 Jan 2025 15:31:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 075F11A0D08;
+	Wed, 15 Jan 2025 15:31:55 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP3 (Coremail) with SMTP id _Ch0CgCH2sRpZIdneEn4Aw--.15027S3;
+	Wed, 15 Jan 2025 15:31:54 +0800 (CST)
+Subject: Re: [PATCH next] md/md-linear: Fix a NULL vs IS_ERR() bug in
+ linear_add()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Song Liu <song@kernel.org>, Coly Li <colyli@kernel.org>,
+ Mike Snitzer <snitzer@kernel.org>, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <add654be-759f-4b2d-93ba-a3726dae380c@stanley.mountain>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <41e896f6-c71b-48c3-8944-eba3dba235cc@huaweicloud.com>
+Date: Wed, 15 Jan 2025 15:31:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <add654be-759f-4b2d-93ba-a3726dae380c@stanley.mountain>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgCH2sRpZIdneEn4Aw--.15027S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr47uw48KF4xZr4rtw1xAFb_yoWDWrg_ur
+	s2vry7Cwn8XFyjvr1Yq3ySvrZ09w1j9r4kZryftFZxua4Fy3s3XryDGr1kAas7ZFWfJFy5
+	A3s2g34ftrZ7ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4kYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUU
+	UUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Call rz_ssi_release_dma_channels() on these error paths to clean up from
-rz_ssi_dma_request().
+ÔÚ 2025/01/15 14:53, Dan Carpenter Ð´µÀ:
+> The linear_conf() returns error pointers, it doesn't return NULL.  Update
+> the error checking to match.
+> 
+> Fixes: 127186cfb184 ("md: reintroduce md-linear")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/md/md-linear.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-Fixes: 26ac471c5354 ("ASoC: sh: rz-ssi: Add SSI DMAC support")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- sound/soc/renesas/rz-ssi.c | 42 ++++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
-
-diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index 3a0af4ca7ab6..4b3016282717 100644
---- a/sound/soc/renesas/rz-ssi.c
-+++ b/sound/soc/renesas/rz-ssi.c
-@@ -1150,35 +1150,47 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 		ssi->irq_rx = platform_get_irq_byname(pdev, "dma_rx");
- 		if (ssi->irq_tx == -ENXIO && ssi->irq_rx == -ENXIO) {
- 			ssi->irq_rt = platform_get_irq_byname(pdev, "dma_rt");
--			if (ssi->irq_rt < 0)
--				return ssi->irq_rt;
-+			if (ssi->irq_rt < 0) {
-+				ret = ssi->irq_rt;
-+				goto err_release_dma_chs;
-+			}
- 
- 			ret = devm_request_irq(dev, ssi->irq_rt,
- 					       &rz_ssi_interrupt, 0,
- 					       dev_name(dev), ssi);
--			if (ret < 0)
--				return dev_err_probe(dev, ret,
--						     "irq request error (dma_rt)\n");
-+			if (ret < 0) {
-+				dev_err_probe(dev, ret,
-+					      "irq request error (dma_rt)\n");
-+				goto err_release_dma_chs;
-+			}
- 		} else {
--			if (ssi->irq_tx < 0)
--				return ssi->irq_tx;
-+			if (ssi->irq_tx < 0) {
-+				ret = ssi->irq_tx;
-+				goto err_release_dma_chs;
-+			}
- 
--			if (ssi->irq_rx < 0)
--				return ssi->irq_rx;
-+			if (ssi->irq_rx < 0) {
-+				ret = ssi->irq_rx;
-+				goto err_release_dma_chs;
-+			}
- 
- 			ret = devm_request_irq(dev, ssi->irq_tx,
- 					       &rz_ssi_interrupt, 0,
- 					       dev_name(dev), ssi);
--			if (ret < 0)
--				return dev_err_probe(dev, ret,
--						"irq request error (dma_tx)\n");
-+			if (ret < 0) {
-+				dev_err_probe(dev, ret,
-+					      "irq request error (dma_tx)\n");
-+				goto err_release_dma_chs;
-+			}
- 
- 			ret = devm_request_irq(dev, ssi->irq_rx,
- 					       &rz_ssi_interrupt, 0,
- 					       dev_name(dev), ssi);
--			if (ret < 0)
--				return dev_err_probe(dev, ret,
--						"irq request error (dma_rx)\n");
-+			if (ret < 0) {
-+				dev_err_probe(dev, ret,
-+					      "irq request error (dma_rx)\n");
-+				goto err_release_dma_chs;
-+			}
- 		}
- 	}
- 
--- 
-2.45.2
+> diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+> index 53bc3fda9edb..a382929ce7ba 100644
+> --- a/drivers/md/md-linear.c
+> +++ b/drivers/md/md-linear.c
+> @@ -204,8 +204,8 @@ static int linear_add(struct mddev *mddev, struct md_rdev *rdev)
+>   	rdev->saved_raid_disk = -1;
+>   
+>   	newconf = linear_conf(mddev, mddev->raid_disks + 1);
+> -	if (!newconf)
+> -		return -ENOMEM;
+> +	if (IS_ERR(newconf))
+> +		return PTR_ERR(newconf);
+>   
+>   	/* newconf->raid_disks already keeps a copy of * the increased
+>   	 * value of mddev->raid_disks, WARN_ONCE() is just used to make
+> 
 
