@@ -1,75 +1,67 @@
 Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AD022F837
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Jan 2025 06:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A607A22DC30
+	for <kernel-janitors@vger.kernel.org>; Wed, 15 Jan 2025 06:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736924004; cv=none; b=rjl//Xk2DTRQjmPaGRjXdnJpgxhUybzkBql+nXa8xOVp/KadjFT6i15kAHW3MbIbLmdo8QhIRk5F+fc38nmxECe6e2HoQGXTY8exeD0TwmOFej/L2tGu33oYcVRLR3yGE3Wzz971JYYgqgATnUEGFj/HgD8ZFNxEONB5JzUsbqY=
+	t=1736924039; cv=none; b=M0Avn09X6in+Hw5F7/Y6T8xYqJ4UFtXPPrUCIorrSbpQsSTvwKATIHOVcAwJrHSfFSol6HYg1UD5ZKQUjQ052BxlZwNsdqNp1bh7/Z6DVCXF0aHzZeZiVxj+UzDyNqCmA8fs2nA7XpNsjmrGyhEsOb9wR065hbRUxc8Cxvl6MGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736924004; c=relaxed/simple;
-	bh=lZtdYvwm0/D+wrEsjVubJTTYAK+wxUZeR9nJ3jVsGl8=;
+	s=arc-20240116; t=1736924039; c=relaxed/simple;
+	bh=KFp3jdXWgMaBUXdQHCLFP0wUMgB2SIATpb93CgoUtDY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PvNtqAXRYaTd68E2VnpTjNDonDb2XW/9UM2u47LVh3g4ws76D3lI3qS7eGJP/GPK+QXS8FH71Rld0sM66qywUmiW1OyQLPUwGc9dd2/ED6V6Gl7Er9Yo2ODQGPeoxmR+/5djtTz92qPvLjWtmiVTWz7dIrdnG8LrR2RC5KXs0XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XLOf31fG; arc=none smtp.client-ip=209.85.208.53
+	 Content-Disposition; b=N/xUg+7ny7CP1mDFLPzm+CM25QyQjsRJ7HjE8EN7qWdAf4QjYSXWPGM/ZnJ+3ItXjsxDme20B/GKcE6hklMdP6e5iKXzgIFMRlATuI6jAAOB+I1NEGGKvTr/1MLwsjlKiUOgs/r43/C1xTnNZ2z8LI6w1NLXp3xOSvSYx3uhQuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mZxGvw48; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XLOf31fG"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d647d5df90so10743377a12.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jan 2025 22:53:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mZxGvw48"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d3bdccba49so10651878a12.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 14 Jan 2025 22:53:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736924000; x=1737528800; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1736924036; x=1737528836; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1jHKviSWbOJnThNL+BRNc29xaYnK5sB8qfkKjQ020pY=;
-        b=XLOf31fGgX/FS5ncmoLi84Csb4BAl3+99Eu2RWNBz/HZZKXx7tFbk4vkvP6gQ+a6uU
-         HGBEdEVqUzh1dIFzfAD6rppY6Ot2wIM/jZM55GbVqVJWPwu08/qXZhxgF5eLnzCZfVpN
-         6VLp9XayHP5ZTaqV+04cguwo8YbI7qYbWkJU6J0hO5AguzDoIe4mDg4IXVdTnuB7Zuhp
-         AyaX7oky33O/E1S2RyPEQCdVUlm7tvLSnNRioamXBUJ/QaIY5o3x5QQZTzI9ofNMBAde
-         C9pGUyv3vePMsQDXb1cEBSzke43LeUpAOldPAURV1DDe2hi0JAPWgxKMhy+5cGgdC7Ot
-         uAkw==
+        bh=eKPKC6VCuB1agu4M92Pt0Cj7EiQedFYv4oj19q1B6lE=;
+        b=mZxGvw48X2M5Z3PBIxQtbFz741kjqRkxPiGypncHr/Q6S87yciiMbYw/YUis1rBrAq
+         +h0WhcAlmwFyTxBtuv+WfdFk2W/+sdE2JcF649DWYq+3XDcDoh3959Etw68bgbTEX6fN
+         hDCssWTqJrpFovWkzrqM585lhFb35zbfNene6cOwHcdJ/xTL3rqTYAgI8sC7U1I7xl68
+         4blHojoLRQ8DfhYBGXLMIZc/poe0CUdYXT6XCehOmFXB+Q0I88X4a05fEhAL+2f/kiwA
+         64sB3lOtWQKQ4Rf3NThNTZRzOn4gEBJOaomR/R7ouHJPspjhcobUJQm7ttm+KVAsdeb8
+         LcSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736924000; x=1737528800;
+        d=1e100.net; s=20230601; t=1736924036; x=1737528836;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1jHKviSWbOJnThNL+BRNc29xaYnK5sB8qfkKjQ020pY=;
-        b=OGrILZIfYjGbX03RgGYGpq4hd6trst8NjyPgloTwnuohlaZni/Wn+2BETTzaWkB34y
-         fGdvgKbbP9/7D1M+vmhNPAVfUTzbGyR5RgY5Q8sV56/MBY6VO8qychtIUxQf3ajbiXNf
-         gRcS2F1E3lmT5eV3eCKa2pjhFTk0oZEXwcIqseLbtGMu7OlIHw5iBjZFwv3l9G0BiLlR
-         9xBDKUsII7YEDI7J0Ughg3sU2LqqsWZ+mU57uXJa5GrqPBLMJdqHzzArJURdP+n9EsL0
-         pAJBm5djvwbHcqT8ieUnmK721TenMmMaQ78ZsAxJqUaZ7cBud+d7WPc77f0GKSA5kN6q
-         r+yA==
-X-Forwarded-Encrypted: i=1; AJvYcCXH678fTsYE4jxZeMkRkPhHGCwAsRwZodZ8pwhx5KDpn1vwm+StO4fowD50Ufz6v+qGKylOfzxXIfqTo1OQTKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB+qwnGeRDh4tfDcvHOpciSAGH4IGnxwaj/wpm3zgI1fYuuOyp
-	BftzSeInij4fXA6eS/X6bGpjhufKQSjLRbVo+1C4vKShHYym6mDUg2aA4PfiSNDlcdY0H9yJ6nl
-	v
-X-Gm-Gg: ASbGncvOxUvq+YqSR7V3yy1jtcXxC5HxCczTadDw2UVZebCkmrFRx2UXcleEVfIqdLD
-	pi1/FIij29+ts3eLTeL0MCyPZQDmbtn43IuQiEeJ8UBZGRBZH08g22aCkonYsBuRfkT0B/nmPfK
-	zDMtWGOoTs8Hdy8nbe/pT3rU+Bc5ev7sAjVy7tWCx5Wyemakv1ooutWp9KMNEqawRYY+2Z/yf5c
-	EtUetQyQ+5dAK4pLXrSh/Kxn1EXBR8bU41mI5hV2s8S6D0Qo7R9pHq+XLzi1Q==
-X-Google-Smtp-Source: AGHT+IE9P5PDtBvyWPxhRNEsLiyx/nfhdVfXbwMkWhpN/F7zwvZlvMv1+220NOQBetuNrhffj43vww==
-X-Received: by 2002:a05:6402:518b:b0:5d3:baa3:29f with SMTP id 4fb4d7f45d1cf-5d972e06740mr26199332a12.9.1736924000495;
-        Tue, 14 Jan 2025 22:53:20 -0800 (PST)
+        bh=eKPKC6VCuB1agu4M92Pt0Cj7EiQedFYv4oj19q1B6lE=;
+        b=dDEyHgLfngNF6TXPfDUujxkgBjbbm457BTGlaltWA+YIaXXl6BBzG7FwJryjKjGX1f
+         lCmo65j8FKIcUUpMyj53YVHgmxADNSURNXVnXjSOR3noFv/Wg4+mcGcsyUofgXVTUEHy
+         yafRI6M8EeNG6KsRvYE2c3A9JRwoKei+Mr7/pRIBKSBPuH5MdOBMhNAYsD8fI54Cxhij
+         A0LM4O1esd7GxJo7Y8ebLkf6mPMkIUIHrCZ4GXGUgXOwfMooJ3qP6OZu2bH30gGyAQRb
+         n8AdbDk+fHVaQfYlwWA6JMQBKZouptSF81QcaakPMsBeYB+5pb9j/zsGc+mK4ZS4qcB5
+         9vHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4E2zwWx2Dmpx3gvZZ+q8H1CiDSPVdjIZN0+/8/YFPR0BSpnghls5VyQ25op7G6Xa+UQPCMbFts3Se3VjNY9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI6jvYvRyUH7WpykyQ2Jhvj5dv1Ro4ZLR8ZkuAYgn/bjJuThnS
+	v9tVlBxhM6T6g4ujHzTWfdmwtc9/9+2P4R3YHOSbWz/op9JRm4hoj6cTP7W2fHM=
+X-Gm-Gg: ASbGncsfKPDnKaxLCp+mEVlAUo3dXD8UDWvDCx0PSehGhcjhlisDF8NVX7N8m/9i+yv
+	F761HauaBW9F5AlHFRLp9zmBzzZxepzzAh7IX3HH3bAVOO36zy/S5/d+EpJaYUYw5TA6BZj9KuS
+	QxxfPUKIrFaeH7RQwqZa6JtvSQ7fekQPHIf06lqn1eVsmEfkm4V9o/CCzvcjdXQKA0LBSiqfFpj
+	oOUsiLZBIrHZaKY47ffx+6pjqo6v3uZmTuAE8mY/syqlXY5DsbbVKD+4WuuVw==
+X-Google-Smtp-Source: AGHT+IGY+XCJvxMBIZ+HThERjNXncTtFcruCLfZ72BdFMv3vmRIgxjd7ygYKOJiD0ORhulrxl1l94w==
+X-Received: by 2002:a05:6402:27cb:b0:5d9:f362:1686 with SMTP id 4fb4d7f45d1cf-5d9f3621959mr5507086a12.21.1736924036001;
+        Tue, 14 Jan 2025 22:53:56 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d99008c371sm7145838a12.11.2025.01.14.22.53.19
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d9900c440bsm6865481a12.26.2025.01.14.22.53.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 22:53:20 -0800 (PST)
-Date: Wed, 15 Jan 2025 09:53:16 +0300
+        Tue, 14 Jan 2025 22:53:55 -0800 (PST)
+Date: Wed, 15 Jan 2025 09:53:52 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] PCI: rockchip: Clean up on error in
- rockchip_pcie_init_port()
-Message-ID: <7da6ac56-af55-4436-9597-6af24df8122c@stanley.mountain>
+To: Yu Kuai <yukuai3@huawei.com>
+Cc: Song Liu <song@kernel.org>, Coly Li <colyli@kernel.org>,
+	Mike Snitzer <snitzer@kernel.org>, linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] md/md-linear: Fix a NULL vs IS_ERR() bug in linear_add()
+Message-ID: <add654be-759f-4b2d-93ba-a3726dae380c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,31 +72,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Call phy_exit() before returning on this error path.
+The linear_conf() returns error pointers, it doesn't return NULL.  Update
+the error checking to match.
 
-Fixes: 853c711e2caf ("PCI: rockchip: Simplify reset control handling by using reset_control_bulk*() function")
+Fixes: 127186cfb184 ("md: reintroduce md-linear")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/pci/controller/pcie-rockchip.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/md/md-linear.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
-index fea867c24f75..35bfdf3e17a3 100644
---- a/drivers/pci/controller/pcie-rockchip.c
-+++ b/drivers/pci/controller/pcie-rockchip.c
-@@ -132,8 +132,10 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip)
+diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+index 53bc3fda9edb..a382929ce7ba 100644
+--- a/drivers/md/md-linear.c
++++ b/drivers/md/md-linear.c
+@@ -204,8 +204,8 @@ static int linear_add(struct mddev *mddev, struct md_rdev *rdev)
+ 	rdev->saved_raid_disk = -1;
  
- 	err = reset_control_bulk_assert(ROCKCHIP_NUM_CORE_RSTS,
- 					rockchip->core_rsts);
--	if (err)
--		return dev_err_probe(dev, err, "Couldn't assert Core resets\n");
-+	if (err) {
-+		dev_err_probe(dev, err, "Couldn't assert Core resets\n");
-+		goto err_exit_phy;
-+	}
+ 	newconf = linear_conf(mddev, mddev->raid_disks + 1);
+-	if (!newconf)
+-		return -ENOMEM;
++	if (IS_ERR(newconf))
++		return PTR_ERR(newconf);
  
- 	udelay(10);
- 
+ 	/* newconf->raid_disks already keeps a copy of * the increased
+ 	 * value of mddev->raid_disks, WARN_ONCE() is just used to make
 -- 
 2.45.2
 
