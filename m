@@ -1,78 +1,108 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D27248BDD;
-	Wed, 15 Jan 2025 11:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA83E248BB5;
+	Wed, 15 Jan 2025 11:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736940707; cv=none; b=A+aZh/9kMjsgsQUjfdN9YQ+dpNpW7jt1JQNzKUIjsZpMfvpFrQhkNCDDdxX6oM9CasKIFrxdo3YGD+MGPxYJGKH/d18Nl4mOyECu7Yw9t82m2XZXbdliU5t3PSihO3aXb92a90sPBUnvo15+9IL3RSEMBORBs9yv3GpfGRHBMDk=
+	t=1736940960; cv=none; b=W2Znf9eGfJleVJAZEX+Ck5FVpjn7TwHbAJD4pORRV7wem7gd8uPKgXCRGoMo0j2edJHWcd0eoxD3K/CYCKZvLpZCI6GOBaOqMaa+XyGPBaH9ZqbLQFOb8o9sRe7hOuuPKUFtAOg3Cs6xkXERNcviZ6YaOSp37rwJe4PZZLUdkoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736940707; c=relaxed/simple;
-	bh=TGM3MfL6uTLHlCgh4E5WI4Tp0xSJ1kLZcIBG6Hvvypo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BbZH7b9hOCdCE+yBcy/u3k/dfbgiWMlfSGXAuWnO/ETXLIam7KnQvFnj5Qrh38JaBWYXqIEFGZ/dyqVEjAvi1Q4R+iaPkPTJ6k2Qu+ZhtoTaQb3teNa/CvbXRd/kDU0E7kj8ppj8GtcApAMc6CaRAtIQsFno7wpAUwgN6gnhvPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1736940960; c=relaxed/simple;
+	bh=bVJrvQSAQ2x5SfTiS+mXrxVNveoO7kyWDhsKX95PObM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M1e7qdS3I8I3Wy9IRk6uPlSPluwwA5vpz+g6VosteDVvxWILbQcTbyZtGPS5ipRE9QwFbBjx+uh/RzU2z+uyvnFVhruz3DxVYUa3z36WuCKwG9stApBpGr2RJsyGo2XJxs2s8W5lotPHezPuHuf4rrC//99i1zKhp6qFOsMHG5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/2w+05u; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21628b3fe7dso112217365ad.3;
-        Wed, 15 Jan 2025 03:31:46 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/2w+05u"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3862d16b4f5so440159f8f.0;
+        Wed, 15 Jan 2025 03:35:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736940957; x=1737545757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zRvh6fMAdyPOi5lt24tLnCWVAigh759btngcaiFvNUw=;
+        b=a/2w+05u2jBG8q73hNfRyqHmCIGeW3TIZ0VIb17bqVCd2tUo26rB8zwSL/P7MipNrM
+         eyFms8vZjppYwpnB5bpC0oEkITZQ4C12RkJ0486cynyx3ZHuYsPhQSj46P5xI2EBVqnO
+         0k+4dDDuOzahaHtX6CDFouWCa02gYvzJjlEqecNDcDkRege/ByWizPLEw6VE7KitJLlH
+         JOXgWf0b+abv5s1qev8c3L7nJMpnna/xG+C8UKleOiMeq/a3d89gv/CoHLOsG4HhAFiF
+         UWYHXqMVPLp7vniM6H1ofPBd3EjAbuaQksRlfQ8eAblwgbHyMe3RLhYFoRXwJ7UXcJQn
+         bOWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736940706; x=1737545506;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMf/gjH9CaGlznAM7Zrfe8YwB74BkxcaBNpx5Jp341k=;
-        b=KOkhzofNb4PLtiMeIOHM2tXHLpYJMKJ7a1ReTsHOMexwXuq85PWbGho0iu60yO16kA
-         1lDE0EOLNivKGYeqOV22t9lki/XfMtBr4kAEu/42cZ5M6pDzlZKhuNcwGjO8oe2iot2Z
-         DySVI4A9JSFXYCXC73ZDAOgCc5V4XdyV/erzYcoTangWFfEy7803IYxRDCO45vVP6zwF
-         BPYcaqWmqf1p0THo4h5HgzfYL5D0RG3tAh9veBkkljYw5s4uLkKjRwGoT8SH5WnZGlAD
-         v5t1FOWC5+zLei9c19VT7la/XnnS3KTCs/K1zQW6fdT4NZ3UwsPyBn8NCZLqrpob2zPi
-         HYoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUXuqdoobjnumeSb8N7IwM8WC5eSpjrNmj3PavjS9o9PnLk5/zkfkfjZ7x0QrOqZ/L9eRlzxbpK/9WN2CNLHw=@vger.kernel.org, AJvYcCWpWC6Flz4ruu/OpkBuiLAL2I9r9KOh62UNDoZ88IW1Wl8WRjD/PFneOWUVd2RTNUd243tUHyvHjaLNFa5J@vger.kernel.org, AJvYcCXgQAvpUzgF3uBb5phtByUXLofn+XLaXlKJxjp8vmq/hsAkxf/THt6TnDgpzAqA8RTs2ozpjuPTSnJI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlUjDQV0g5wODW2Z5z6hHgXuz3qd1pEmJMaExN7F93P+Wl2gWI
-	w63vSTi22gZ1V0PE55Am7yB8R1MzOGlE3VGjlR2j3F8IBmfgSdPG
-X-Gm-Gg: ASbGncvPmLt/p/2aMuQ0UibyOoMXdIhitYWWir67B3OGFXQTaEU9OU9G/awNYaKY1GW
-	kIImr61TaYglO44HAXy46Us5dqaux+L0hqHEQ0E2F78FZ2JF+al+KZXawFBEqeb9zanU38s/ryW
-	x1hjWslBzVAAeoIVLvDmqyeCY+YIm6g2qyPWd61MrfpkU/LcHhPfewLXSwiMpQ99qYuFaf22Vpm
-	LKm5vcgHeIrPivnADAMs1CsE7IzGYnWFhbWjOKFzr2jjyE3xuoRG6fe3uHRYLvNcUVSRee5BAfe
-	hD5dAw7DDlwa3kk=
-X-Google-Smtp-Source: AGHT+IHH3vdl0SoO7I29qFqmrTAjmo+4RApDGp3zpjzEyS9KqQP4GKUQ7H0LW2xUTEH4LU28i+G6ew==
-X-Received: by 2002:a05:6a00:2c86:b0:726:41e:b313 with SMTP id d2e1a72fcca58-72d21fc659dmr36762604b3a.16.1736940705705;
-        Wed, 15 Jan 2025 03:31:45 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72d40658db6sm9275820b3a.104.2025.01.15.03.31.44
+        d=1e100.net; s=20230601; t=1736940957; x=1737545757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zRvh6fMAdyPOi5lt24tLnCWVAigh759btngcaiFvNUw=;
+        b=M/lJAhnFnIXleoNgjwed4VCHBn1nORXviHkBXfHxKgVR+1qw2R6U+M8iiIWCWBSanI
+         lbbHlFZYXCAl18RFU/Q/rE6dpsQO4ypCEaj47u4iewhplT5FBEPSBcRJm60yQhCAXhjw
+         pqaC7geYbSQLQ7K5Hfzb9VWPJ2RuKZyjgE57AA4zhgsqu8LOD6+6N/qtwy097TBuUF42
+         9W25KDjtn8WkRwt0gyxVyFyDySZi86n+Zq8o7PyKIjaJhWFTldPDBlNvc0kRLFsIRcLh
+         OhO7ECO5bIUr/URFTssIMeIHKazgPg6RuLCHiUU/uYK/nRcFkqHr3QO/g2JoETqYYT2l
+         uCfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2hqZsaemrl3b+5R3CNw913RfiXTDcgsFSiku7F7cl3/nBit63YEijTfTTzdn5Uh2+n4ANmpe+3X8ONsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkEJEgZW+0lh9ocE1o1g/yMHpytlGnr0t3hdVDunyql3FsICL3
+	MCx8Enme6aZfVkhUVCrTgwHS07NYreEtVaxjne7/ahGLE7XqFPUw
+X-Gm-Gg: ASbGncu4lTfFd6X48w6eoKOwodfQo6i05+0kWz8fQKChj/W2yMtXTlHcxfgYNi3d8T/
+	k0n+iUB8WyThtOsvg8myBTiHd2vVcwXURhNwgchZ3Ng/OEhG5SmPZcxJ/TUGGYzcYhtgC4rNjZt
+	qdp2t0y1va/3ubknKyC3MHSTjKTRNwhD4p/iA7VGWpQpws/YDR9pzff1meA7ntxEobuL0huawRM
+	hg2JNYRf/LcLb6xf8evhRm/7Y+EVOZmW95znFHM+watYHH0K5mS4kv+IQ==
+X-Google-Smtp-Source: AGHT+IFYFB9Ou4f27iNI8oZssCfOJqnX6hcFH/loMJvx+kQqlMotWMHRayuUpQMW8k1E+3lZnGIW2g==
+X-Received: by 2002:a5d:5f91:0:b0:386:3afc:14a7 with SMTP id ffacd0b85a97d-38a8b0c7177mr20606160f8f.7.1736940956666;
+        Wed, 15 Jan 2025 03:35:56 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74e6511sm20188625e9.38.2025.01.15.03.35.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 03:31:45 -0800 (PST)
-Date: Wed, 15 Jan 2025 20:31:43 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: rockchip-ep: Fix error code in
- rockchip_pcie_ep_init_ob_mem()
-Message-ID: <20250115113143.GK4176564@rocinante>
-References: <Z014ylYz_xrrgI4W@stanley.mountain>
+        Wed, 15 Jan 2025 03:35:56 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Chaitanya Dhere <chaitanya.dhere@amd.com>,
+	Jun Lei <jun.lei@amd.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amd/display: remove extraneous ; after statements
+Date: Wed, 15 Jan 2025 11:35:52 +0000
+Message-ID: <20250115113552.297307-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z014ylYz_xrrgI4W@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+There are a couple of statements with two following semicolons, replace
+these with just one semicolon.
 
-> Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c        | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to controller/rockchip for v6.14, thank you!
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
+index c4dbf27abaf8..1a0a08823ed9 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
+@@ -3894,8 +3894,8 @@ static void CalculateSwathAndDETConfiguration(struct dml2_core_internal_scratch
+ 			p->SwathHeightC[k] = MaximumSwathHeightC[k] / 2;
+ 			RoundedUpSwathSizeBytesY[k] = p->full_swath_bytes_l[k] / 2;
+ 			RoundedUpSwathSizeBytesC[k] = p->full_swath_bytes_c[k] / 2;
+-			p->request_size_bytes_luma[k] = ((p->BytePerPixY[k] == 2) == dml_is_vertical_rotation(p->display_cfg->plane_descriptors[k].composition.rotation_angle)) ? 128 : 64;;
+-			p->request_size_bytes_chroma[k] = ((p->BytePerPixC[k] == 2) == dml_is_vertical_rotation(p->display_cfg->plane_descriptors[k].composition.rotation_angle)) ? 128 : 64;;
++			p->request_size_bytes_luma[k] = ((p->BytePerPixY[k] == 2) == dml_is_vertical_rotation(p->display_cfg->plane_descriptors[k].composition.rotation_angle)) ? 128 : 64;
++			p->request_size_bytes_chroma[k] = ((p->BytePerPixC[k] == 2) == dml_is_vertical_rotation(p->display_cfg->plane_descriptors[k].composition.rotation_angle)) ? 128 : 64;
+ 		}
+ 
+ 		if (p->SwathHeightC[k] == 0)
+-- 
+2.47.1
 
-Krzysztof
