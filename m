@@ -1,167 +1,105 @@
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D211E50B;
-	Thu, 16 Jan 2025 12:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0240E22C9F6;
+	Thu, 16 Jan 2025 17:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737031091; cv=none; b=RLZjp5fp6tBXcCKNMaHzE2nS33YDP3DtKeQkfYGALDeWr660EkxnXH4Z5t+QFvysjBvsUycfYgeKfWTaP97dbepI5Fs/xH6emwlafxQihRs99dJBAkvVIbN2oVRJ+gjjP/DIFOMd8v6gIk4X7WpYFXoj1bWjxg8pBOPlpa+rNGM=
+	t=1737048026; cv=none; b=E3e8xo3eWVuJRj3lKZQb8G4GHTD2ov/eRkIxBJjHoZ53H6JU+U8Cf2/1SkDo9jH+Ca6Q92Fk3NQp5tnBAbY6UDiqJiVJqa5WX05wEFaoN8V0NTu5XQPnRZjnqGsu0fM0YnrU3iXDwMfQujhSejUAqsYuOBZ/bPrWaoQ0uep3r9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737031091; c=relaxed/simple;
-	bh=jonUW3dEfOtfI8lihvuawd6C1cWCqfdoW81F2sROXnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=e0aKh4T521DBxSNnninRVVEFGPiJyL1QJY2bGwsRY6fp/Ztw0NSQCvQL510mh+ymhJU/PKob+oyIkr3ld6Z4EyoLcOYy3PfGDg6C2W+xzqUggLFLK0Vih2ljDkSLsYCPBG46VyTnmEdrx1lKm/Iw9NF8IjBX+p3j5suou61WUos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 16 Jan
- 2025 15:38:02 +0300
-Received: from [192.168.211.130] (10.0.253.138) by Ex16-01.fintech.ru
- (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 16 Jan
- 2025 15:38:02 +0300
-Message-ID: <f5a76ca2-33cd-471d-8997-797a9a070804@fintech.ru>
-Date: Thu, 16 Jan 2025 04:37:59 -0800
+	s=arc-20240116; t=1737048026; c=relaxed/simple;
+	bh=RIBw3okMjZ2OZXKTW5wOtVvyIBb6zyHQ4G0PDnyqNI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WcVkroVdjyepC6zW3mCfEjh17d/JORi5m6arKkpCudn6G0N9BlOwF2O1dVJyJZLXPMcBcPWGkCjUadbxf6eRThYgK8H7J/ivGTkcUu5erP13AZkMQsUjBwpg3HARD9jpRUhmmrZQ40PYYAbtQiNkeZd8OmoB4booQ/YMvivQ3nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fgx8FnVS; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fgx8FnVS"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3862d161947so686782f8f.3;
+        Thu, 16 Jan 2025 09:20:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737048023; x=1737652823; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dQTtZHORNcDqQcdHQDi2gw/Jqi6ul7TH0rswJJiARjE=;
+        b=fgx8FnVSVOcBkotGx4nX8u2MDgUGmegvYNEM4pp0m3+4n5g5yKvkuyOH09pM2d0xpO
+         stVDMHJzXjB6d5VkFlDPXga9JVi6ppvdOC601UqhGqM0JULxKGw5uHi7LmluFuXNPOrc
+         A3G79cmJViVXPWfCxfhYtroa3qMwWN201wWny7TUIrqFVoQGick0aPE26JpQsZftVz9x
+         fOjPYA208+pxKazI0G5D3Rpq1ZuzxytxGSObP6v1aRq8r1eJ2OW6+Q/+/pFlBvqt5Y/m
+         SzywwPDP24DHpzMyHS7T9HVhH/ceDAXRzb17RWja9ijzlSyYiqjTzpA+mTJqaEKVPB5O
+         ExeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737048023; x=1737652823;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dQTtZHORNcDqQcdHQDi2gw/Jqi6ul7TH0rswJJiARjE=;
+        b=kxl4m8+0oPqbopXoZzNuqgk9U/XVw0t1Xz3p9As98LOqg1WQhccycU2jy4yUReiTtI
+         4iVZoaQxLOxet6yoLJpCKhvLW9w9uMB5OXLnfJ7IkzXHtu8W457ZjRQIlyLzGGACAab3
+         DNQxF4yyMcwhoQRs2pW0yDuGBl9TWYewYeAcs9uxyyXMD/s3G+FkInpDPnb7ru7p/k4r
+         BDQQMDZElHOISUbkHYUBIKIrDGEcdhqZfBsML8NmdLB3HzivJoxfC6lmftkK1Gt9Ek5A
+         hfM7zlQseoR5Bidqo42Vv8BIrTfA9oXzBhpozsHMjwu5E2J6XpKCqTdo+cz1X07dno0b
+         3YgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYCg1y6fqQCvXNmkuJOF35IjLPi51qHc9LfxgRzD9A6eE1z2wE3oWaoGaaXbFnVVFd08Mze6NGUnXk@vger.kernel.org, AJvYcCWNiLCG8muNaszoTVc9dAw6/W/6XC2l7RnG7TTBJ0bJqIf4KklByRdbMec2cyd7+prDvABr1LiZKrU6xGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP0eXNTv+mALkzP6xJvfmlgUOWomEhs+PDnxrBo2IhjE0pmxGr
+	2ql3O9PXstpL/XTccmwfI1jyaI5Qe/tXIWDdVlDpIr0bvKWw6GH9
+X-Gm-Gg: ASbGncva1vqsDrgFyyX/Guj1mnjHQV6em8Cz+5HSlH0IO5Cs8VuVy/ieqCVVb4Vpf6c
+	aVSUow445TPgNrxFVPFDaGmIjbPxPxICCkVnEdnFQ6xjc8JcreLnXnqY8PCdY8LkI2g5o02rg/8
+	Uv5LlmJGu4b2L7YGdUg1V0uLpy/16GAr45+DuB3OWRThhRv6HLeSyx7tYQ9Cl46PzMZvlW/2IoO
+	7qNburwiX0qmGyLoqh8+n5ayW9ikHnsodaOzsgqcf9vAJMfOwMizWJsVQ==
+X-Google-Smtp-Source: AGHT+IGl5iPKG/eHH9fRqhK6YgzwXRIXwynjsToCIBC+NL+X1QFWodpH8A/0ZqaK+jF0oxdGRcSaeQ==
+X-Received: by 2002:a05:6000:712:b0:385:e8dd:b143 with SMTP id ffacd0b85a97d-38a87306a79mr27244124f8f.19.1737048023207;
+        Thu, 16 Jan 2025 09:20:23 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf3215bf2sm387384f8f.18.2025.01.16.09.20.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2025 09:20:22 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] PCI: Fix ternary operator that never returns 0
+Date: Thu, 16 Jan 2025 17:20:19 +0000
+Message-ID: <20250116172019.88116-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net/rose: prevent integer overflows in
- rose_setsockopt()
-To: Su Hui <suhui@nfschina.com>, David Laight <david.laight.linux@gmail.com>
-CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	<linux-hams@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
-	<stable@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <6f79c23a-7acb-5faf-5e8d-104ca37dbb08@nfschina.com>
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Content-Language: en-US, ru-RU
-In-Reply-To: <6f79c23a-7acb-5faf-5e8d-104ca37dbb08@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
 
-Hello,
+The left hand size of the ? operator is always true because of the addition
+of PCIE_STD_NUM_TLP_HEADERLOG and so dev->eetlp_prefix_max is always being
+returned and the 0 is never returned (dead code). Fix this by adding the
+required parentheses around the ternary operator.
 
-On 1/15/25 18:04, Su Hui wrote:
-> On 2025/1/16 07:29, David Laight wrote:
->> On Wed, 15 Jan 2025 08:42:20 -0800
->> Nikita Zhandarovich <n.zhandarovich@fintech.ru> wrote:
->>
->>> In case of possible unpredictably large arguments passed to
->>> rose_setsockopt() and multiplied by extra values on top of that,
->>> integer overflows may occur.
->>>
->>> Do the safest minimum and fix these issues by checking the
->>> contents of 'opt' and returning -EINVAL if they are too large. Also,
->>> switch to unsigned int and remove useless check for negative 'opt'
->>> in ROSE_IDLE case.
->>>
->>> Found by Linux Verification Center (linuxtesting.org) with static
->>> analysis tool SVACE.
->>>
->>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
->>> ---
->>>   net/rose/af_rose.c | 16 ++++++++--------
->>>   1 file changed, 8 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
->>> index 59050caab65c..72c65d938a15 100644
->>> --- a/net/rose/af_rose.c
->>> +++ b/net/rose/af_rose.c
->>> @@ -397,15 +397,15 @@ static int rose_setsockopt(struct socket *sock,
->>> int level, int optname,
->>>   {
->>>       struct sock *sk = sock->sk;
->>>       struct rose_sock *rose = rose_sk(sk);
->>> -    int opt;
->>> +    unsigned int opt;
->>>         if (level != SOL_ROSE)
->>>           return -ENOPROTOOPT;
->>>   -    if (optlen < sizeof(int))
->>> +    if (optlen < sizeof(unsigned int))
->>>           return -EINVAL;
->>>   -    if (copy_from_sockptr(&opt, optval, sizeof(int)))
->>> +    if (copy_from_sockptr(&opt, optval, sizeof(unsigned int)))
->> Shouldn't all those be 'sizeof (opt)' ?
->>
->>     David
->>
+Fixes: 00048c2d5f11 ("PCI: Add TLP Prefix reading to pcie_read_tlp_log()")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/pci/pcie/tlp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Agreed, but my thinking was to keep it somewhat symmetrical to other
-similar checks in XXX_setsockopt(). For instance, in net/ax25/af_ax25.c,
-courtesy of commit 7b75c5a8c41 ("net: pass a sockptr_t into
-->setsockopt") an explicit type is used.
+diff --git a/drivers/pci/pcie/tlp.c b/drivers/pci/pcie/tlp.c
+index 9b9e348fb1a0..0860b5da837f 100644
+--- a/drivers/pci/pcie/tlp.c
++++ b/drivers/pci/pcie/tlp.c
+@@ -22,8 +22,8 @@
+ unsigned int aer_tlp_log_len(struct pci_dev *dev, u32 aercc)
+ {
+ 	return PCIE_STD_NUM_TLP_HEADERLOG +
+-	       (aercc & PCI_ERR_CAP_PREFIX_LOG_PRESENT) ?
+-	       dev->eetlp_prefix_max : 0;
++	       ((aercc & PCI_ERR_CAP_PREFIX_LOG_PRESENT) ?
++		dev->eetlp_prefix_max : 0);
+ }
+ 
+ #ifdef CONFIG_PCIE_DPC
+-- 
+2.47.1
 
-I don't mind sending v2, as it would be a bit neater.
-
->>>           return -EFAULT;
->>>         switch (optname) {
->>> @@ -414,31 +414,31 @@ static int rose_setsockopt(struct socket *sock,
->>> int level, int optname,
->>>           return 0;
->>>         case ROSE_T1:
->>> -        if (opt < 1)
->>> +        if (opt < 1 || opt > UINT_MAX / HZ)
-> 
-> 'rose->t1' is unsigned long, how about 'opt > ULONG_MAX / HZ' ?
-> 
-> BTW, I think only in 32bit or 16bit machine when 'sizeof(int) ==
-> sizeof(unsigned long)',
-> this integer overflows may occur..
-> 
-> Su Hui
-> 
-
-Here I was influenced by commits dc35616e6c29 ("netrom: fix api breakage
-in nr_setsockopt()") and 9371937092d5 ("ax25: uninitialized variable in
-ax25_setsockopt()") that essentially state that we only copy 4 bytes
-from userspace so opt being ulong is not desired. Even if the result of
-* HZ ends up stored in ulong 'XXX->t1'.
-
-I may be wrong but I think same principle applies to rose_setsockopt().
-
-All we need to do here is to enable a sanity check that there is no
-int/uint overflow in right hand expression before the result gets stored
-in ulong.
-
->>>               return -EINVAL;
->>>           rose->t1 = opt * HZ;
->>>           return 0;
->>>         case ROSE_T2:
->>> -        if (opt < 1)
->>> +        if (opt < 1 || opt > UINT_MAX / HZ)
->>>               return -EINVAL;
->>>           rose->t2 = opt * HZ;
->>>           return 0;
->>>         case ROSE_T3:
->>> -        if (opt < 1)
->>> +        if (opt < 1 || opt > UINT_MAX / HZ)
->>>               return -EINVAL;
->>>           rose->t3 = opt * HZ;
->>>           return 0;
->>>         case ROSE_HOLDBACK:
->>> -        if (opt < 1)
->>> +        if (opt < 1 || opt > UINT_MAX / HZ)
->>>               return -EINVAL;
->>>           rose->hb = opt * HZ;
->>>           return 0;
->>>         case ROSE_IDLE:
->>> -        if (opt < 0)
->>> +        if (opt > UINT_MAX / (60 * HZ))
->>>               return -EINVAL;
->>>           rose->idle = opt * 60 * HZ;
->>>           return 0;
->>>
-
-Regards,
-Nikita
