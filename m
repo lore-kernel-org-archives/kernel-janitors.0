@@ -1,103 +1,142 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6003219343B
-	for <kernel-janitors@vger.kernel.org>; Wed, 15 Jan 2025 19:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 29DB78836;
+	Thu, 16 Jan 2025 02:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736969701; cv=none; b=Zhgb55nTmhzUkc7GBe0W+E5F/UflD9lx5kqZ0Sp4bdHZIT3o3li6jzphrQNlLVl/kdtgxbIMqbfGBueAVHxmkPVTOaZP/sKWAkSWWm6bC6A2LTaOVfYLSqf0SDzD5dJqh/9kQRGHQp1b2YQZxKQ9esNHr5zpWYi6VKJMDw5FFrI=
+	t=1736993108; cv=none; b=sOzEENN3gNnrFAuHnTTPEsnzBYZpYxQ2lUEM5N7lcTUIZuzm0Wm2DArkIIV5l1IVAMUOciSa1Vx4+Evl694QYWfOmo+/Yzx/oYjnkyki/wrbOf1J4XVOb2zoovJL8JX47EtxWGLj0aB+4wm5tJo1FEYWZb7nRElU7XDYoumHbdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736969701; c=relaxed/simple;
-	bh=8I+04AwhM0Y1+1Fh5biVpdLR6Blu36k00nrrspUY13s=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Content-Type; b=qWbBXXb5oc8xeAy1jni5BH2WYPiY7u+I4eWZ5Fchz1fxs8e1GURtunx5hGJIOYxKzNsLFhY/MJ13H57bFp1JMGuuErlpQOkC5lIeB6XuU/cQyzqjVyDzV/R4rv0LW7sXFBMH7/OCjX5eucRVtssPpCGdbyygUvN8W83c6jpMDi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EIIaEufE; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EIIaEufE"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5d932eac638so241861a12.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 15 Jan 2025 11:34:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736969697; x=1737574497; darn=vger.kernel.org;
-        h=content-transfer-encoding:organization:content-language:to:subject
-         :user-agent:mime-version:date:message-id:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8I+04AwhM0Y1+1Fh5biVpdLR6Blu36k00nrrspUY13s=;
-        b=EIIaEufEQatLceB1Od4nIsQy2MQQENsNwIVKANI6hpMTs58nLOYPy4oLH0X4MOgMJ5
-         8flaar7rxEQ7is+UFobXAqCPdkkxxB/atJFLnVSok6DJCF/J6wnoBekprOoAw9NqO6H+
-         kWNYrmsk2mdV56P/oQA26+4z0GoWggW8hZ8XWAuVreBsyn7xRRDCGzCtP87198WmOfyu
-         BPOql7ue2OWlWA+WogjQH0xecYC6v4v3VachbF99U0aqbH9XStGGxqYN5jwj06023Sjb
-         E3AdFvwpLgcWstl3Kd2FqpyZsrNx1z6sCxj7nz0Ejo+g2OfubZ0TOVwqT1fo4ZqttYKP
-         PgkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736969697; x=1737574497;
-        h=content-transfer-encoding:organization:content-language:to:subject
-         :user-agent:mime-version:date:message-id:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8I+04AwhM0Y1+1Fh5biVpdLR6Blu36k00nrrspUY13s=;
-        b=CDyeaFpRdQvD3vaWkz+zNP+xorle0M2KQrH9Vj9cDibrwbtdVR1+p+GnQ1SVxvV+1g
-         QtoXzkkl7OPDqFW2ArWIKz0MPUrxNptmHEUQnU9CxDpZHbwoMTQKAG0YbFnB64kXX8NB
-         FESSTvRPODuJkzPrH8Qm62lM4nTi861l2oRikiSVLFe82TUvKuieg36cETbY9blMJgzv
-         jsyxJ5UP4P1RXzEDdUhtbMIVuXm8lf1HfIAMFgpfvi7bA+2IYL5JFBjolG2mfNVsqLv/
-         cgsy8j9AcGOfHuinErhdfXAKONv4NolannCKbjOW+LH+Du252r9UdQ+VcFk91I8oGjoY
-         EJ3w==
-X-Gm-Message-State: AOJu0Yyv524aLCay56B8tyGeTf/P9FjIZdhfeP8Ev10qqgtBdNPA2BMJ
-	vEm+TZsRTpVqZvPtyAeFbVFZbZYG994JAM2uAiRYt29AK1IF2stMPmyxww==
-X-Gm-Gg: ASbGncuEZ5MteHtL2f0uvUUPb3RQri4ZQ+OvJYZy0O6MdGhHjC3LSD+HVSwL0helPlW
-	sdXEGbI2OELb1LtA7iFg/da6ucN551Nbo7tfCreKKj0jJgLyiPotH00VvLm0lztAjwZw31aDzEU
-	Lt8V2EhS72Ip3ksoVoPiiMDLZD+N4DNTxnG/BnFvpZruby/385GFkv53N37XU9fFLkMPdStcBLW
-	zQa43W8yVp7eGiM3OMAHjHwlc+QRBQP1mlR4fLFpqg6kSh4PRVEuEHvHiDZQXG8Ny9t
-X-Google-Smtp-Source: AGHT+IHGiYTUWMGrDHzYdQ6fkl6zAwfd1c+GN/N/CPvG0LV+HQFc88vDnmo9a/tzv+xI83opOExCBQ==
-X-Received: by 2002:a17:907:3e8c:b0:aae:83c7:6ce3 with SMTP id a640c23a62f3a-ab2abca7867mr3189609666b.43.1736969697066;
-        Wed, 15 Jan 2025 11:34:57 -0800 (PST)
-Received: from [127.0.0.1] ([193.252.113.11])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c95647absm792486566b.118.2025.01.15.11.34.56
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jan 2025 11:34:56 -0800 (PST)
-From: Alexandre Ferrieux <alexandre.ferrieux@gmail.com>
-X-Google-Original-From: Alexandre Ferrieux <alexandre.ferrieux@orange.com>
-Message-ID: <51e7e935-1e0b-490f-a947-c3e71fd10439@orange.com>
-Date: Wed, 15 Jan 2025 20:34:55 +0100
+	s=arc-20240116; t=1736993108; c=relaxed/simple;
+	bh=K41LxaeY5b1PJhdqsphAZteLpi5PMaWTF/rGxvUmgEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=LL0kLTm9YmB+aH3RS/8hZ7eCbGAOypsiwhU7LKGm1kPCVoS7N2Go/pj/HtLDFRMl+ZBcaMUbl+tbW7E3vfcanihnuL60P5UfihDbF5MnWbKc7+kd8c0jyFEp8AAk3kesLvuIFGDp41dHmfL3ZBLNIK00hGlU3Q+ZhM7gHD6K63o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id B711660108120;
+	Thu, 16 Jan 2025 10:04:47 +0800 (CST)
+Message-ID: <6f79c23a-7acb-5faf-5e8d-104ca37dbb08@nfschina.com>
+Date: Thu, 16 Jan 2025 10:04:47 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Generic sk_buff contract documentation ?
-To: kernel-janitors@vger.kernel.org
-X-Mozilla-News-Host: news://news://127.0.0.1:1119
-Content-Language: fr, en-US
-Organization: Orange
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH net] net/rose: prevent integer overflows in
+ rose_setsockopt()
+Content-Language: en-US
+To: David Laight <david.laight.linux@gmail.com>,
+ Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+ stable@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <20250115232952.1d4ef002@pumpkin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
+On 2025/1/16 07:29, David Laight wrote:
+> On Wed, 15 Jan 2025 08:42:20 -0800
+> Nikita Zhandarovich <n.zhandarovich@fintech.ru> wrote:
+>
+>> In case of possible unpredictably large arguments passed to
+>> rose_setsockopt() and multiplied by extra values on top of that,
+>> integer overflows may occur.
+>>
+>> Do the safest minimum and fix these issues by checking the
+>> contents of 'opt' and returning -EINVAL if they are too large. Also,
+>> switch to unsigned int and remove useless check for negative 'opt'
+>> in ROSE_IDLE case.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with static
+>> analysis tool SVACE.
+>>
+>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+>> ---
+>>   net/rose/af_rose.c | 16 ++++++++--------
+>>   1 file changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/net/rose/af_rose.c b/net/rose/af_rose.c
+>> index 59050caab65c..72c65d938a15 100644
+>> --- a/net/rose/af_rose.c
+>> +++ b/net/rose/af_rose.c
+>> @@ -397,15 +397,15 @@ static int rose_setsockopt(struct socket *sock, int level, int optname,
+>>   {
+>>   	struct sock *sk = sock->sk;
+>>   	struct rose_sock *rose = rose_sk(sk);
+>> -	int opt;
+>> +	unsigned int opt;
+>>   
+>>   	if (level != SOL_ROSE)
+>>   		return -ENOPROTOOPT;
+>>   
+>> -	if (optlen < sizeof(int))
+>> +	if (optlen < sizeof(unsigned int))
+>>   		return -EINVAL;
+>>   
+>> -	if (copy_from_sockptr(&opt, optval, sizeof(int)))
+>> +	if (copy_from_sockptr(&opt, optval, sizeof(unsigned int)))
+> Shouldn't all those be 'sizeof (opt)' ?
+>
+> 	David
+>
+>>   		return -EFAULT;
+>>   
+>>   	switch (optname) {
+>> @@ -414,31 +414,31 @@ static int rose_setsockopt(struct socket *sock, int level, int optname,
+>>   		return 0;
+>>   
+>>   	case ROSE_T1:
+>> -		if (opt < 1)
+>> +		if (opt < 1 || opt > UINT_MAX / HZ)
 
-Recently digging into a driver-specific issue with sk_buff->protocol, I
-discovered (with surprise) that the computation of this field (which is *always*
-necessary for protocol handlers to kick in) was somehow "delegated" to
-individual network interface drivers. This can be seen by looking for callers of
-eth_type_trans(), e.g:
+'rose->t1' is unsigned long, how about 'opt > ULONG_MAX / HZ' ?
 
-- tg3: called from tg3_poll_work
-- ixgbe: called from ixgbe_clean_rx_irq
-- veth: called from veth_xmit (though indirectly via __dev_forward_skb)
+BTW, I think only in 32bit or 16bit machine when 'sizeof(int) == 
+sizeof(unsigned long)',
+this integer overflows may occur..
 
-This is a surprise as one would naively expect this ubiquitous behavior to be
-triggered from generic code, depending only on the L2 header structure (but not
-on the specific NIC hardware at hand). Another surprise was *not* to find any
-mention of this "contract" in Documentation/*.
+Su Hui
 
-So, is it an unspoken tradition for NIC driver developers, to
-"just know" that prior to emitting an skb from the rx path, they must fill
-skb->protocol (along with who knows how many other metadata items) ?
-
-Or, is there *somewhere* some reference documentation listing (exhaustively) the
-required metadata computations that fall within a NIC driver's responsibility ?
-
-Thanks in advance,
-
--Alex
+>>   			return -EINVAL;
+>>   		rose->t1 = opt * HZ;
+>>   		return 0;
+>>   
+>>   	case ROSE_T2:
+>> -		if (opt < 1)
+>> +		if (opt < 1 || opt > UINT_MAX / HZ)
+>>   			return -EINVAL;
+>>   		rose->t2 = opt * HZ;
+>>   		return 0;
+>>   
+>>   	case ROSE_T3:
+>> -		if (opt < 1)
+>> +		if (opt < 1 || opt > UINT_MAX / HZ)
+>>   			return -EINVAL;
+>>   		rose->t3 = opt * HZ;
+>>   		return 0;
+>>   
+>>   	case ROSE_HOLDBACK:
+>> -		if (opt < 1)
+>> +		if (opt < 1 || opt > UINT_MAX / HZ)
+>>   			return -EINVAL;
+>>   		rose->hb = opt * HZ;
+>>   		return 0;
+>>   
+>>   	case ROSE_IDLE:
+>> -		if (opt < 0)
+>> +		if (opt > UINT_MAX / (60 * HZ))
+>>   			return -EINVAL;
+>>   		rose->idle = opt * 60 * HZ;
+>>   		return 0;
+>>
