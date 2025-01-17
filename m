@@ -1,73 +1,70 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2983E1F560E
-	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jan 2025 05:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A8F1F941A
+	for <kernel-janitors@vger.kernel.org>; Fri, 17 Jan 2025 09:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737091559; cv=none; b=gCZTRTFBdFPftoY36eiVVvkQolRrLAI/V6pEaIUVXfEYkMMU2fRFADJG75K4G4AU08bxsx+j5IYnSFGK0hokqC1Ld5Q3MVLIl0QS51YtlXiT0KJZp1qH8vZfN3/vPPe7nXtGvnm23bk994+PJKonEgZnq1cGlSyOdkJRn+x0JWQ=
+	t=1737106580; cv=none; b=D01ihQO5cQ/Dz5SGniJaOfGVNTivyqEymnFHDHosDx+SNUjjVDVmTjTAGyr/8CzEeEjB1PmgNse4/4wtJHJ916W3EQ6Jb4hcYPz+8dZZazWB+SJ/v5OHj6kKmcuVRfl84Md5t0MfuiLe/t+KXwQjClZL20C8TEpwZlJjM9CvtQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737091559; c=relaxed/simple;
-	bh=DGgHReRoxV/+DmamGVoxWAyOfGnMynXqub0Abuj3F4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4v/BncUfUZEHZ9FukKgkKU80+yqtHF+udc50gPGfOS5StOQyBxVLvLreap2cViyTtnZzdfaSp7hZ23BTMHnzyO9+62nH2AKgVT+O4lJFua+DNVboBJ10a+HeQMjkfbzuF7aeCw4/2PinmLGp3amoB5MEnmCgXm/I/feo87f4H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PSsaLtcp; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1737106580; c=relaxed/simple;
+	bh=H+FhnTGuFT5UOXr7qIHtnGqAh1+qkO7Xh2Yqjl00IFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jCyqOIjjd2Em9ojaPzHc9fC7feWkYBpDWSDgMA+6afwSzOP5xuj5H/INPxMBaKZAlZ3jsJ8IhwR0P40k8BmnfDVnTxny2QrqJPMKkjYsUlxdkt3aYV5TrB9SZ1E0UtHIMxANcE9UBNJKWHt7c1gkPHi8RiS+qWgQvFlQPvB643s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uQIicy/X; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSsaLtcp"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4361dc6322fso10453005e9.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 16 Jan 2025 21:25:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQIicy/X"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso17982665e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 17 Jan 2025 01:36:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737091555; x=1737696355; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pgp2+IMXxJqntfEcanaBoZCtUVslmuF+HfybjYKMqH8=;
-        b=PSsaLtcp9/7l1mCRevhmjLIT9wr1OZLjIRDhZ6mW91Q6pws+vA+aVMbeWETapsxuqt
-         dBP9jVmHIiTfuBV57jkzeuFMPscfvWot5BqCfcNhxE9t8M6ppJAIaVIJtjzS0sEt5UDF
-         HFe6Ib1xs9C/MxLibePOh47f3Uu6v6sKjxX/M2v9KK1LLv85qO5ZU4DQ/gVaJjMjEQ9G
-         ddeZYgX3VZnX56GPgJUlB56QaTx/LAVthGxDBlsU2AoIIuBHphTryxzPVS9ey7N4R2HE
-         1eiOaNXqovDZ2aMPAWFSRcEzQCZaNkkzOoEfPDhxQc5NC0hx88wLMapP+RNJDkh8/+XZ
-         AT5Q==
+        d=linaro.org; s=google; t=1737106577; x=1737711377; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dirbEAQ7TpkYOTZ9TBmIZ+8lIOorFd5YMgxh1YmdvBI=;
+        b=uQIicy/XGx1/GD+z8/EdsiMlrsn4Ta/gkJhjUNkDZM1mBWK45nSVUMz80CvyTrQGvU
+         vN4edeyWeCV6BujLJn3q82RqSMDPpNdRVd1wUsKJkI9ADcm59S8IuKmjDtZXLDKN9rAI
+         vaxbR0ivrgasOfR88GHZnMZxrib/GNZ4kU8Gdiz7xmzud00RbLYVIyD7UuTvKiVBC4/W
+         KMPmTQl+BeIG50c1cFdjDmcpo6eNTcQciF/Q2iVC2SOemyLAzQCxE82DP2tiPYYmCvPs
+         xGYfosblCD0TS28CpLAEWH3Bkx9ZNU4vK3pUU8Z4uTaxEXF2o+84PidW4Oh3HQ0+IIkp
+         V+7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737091555; x=1737696355;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pgp2+IMXxJqntfEcanaBoZCtUVslmuF+HfybjYKMqH8=;
-        b=jjTYPJzXSwsPsTfoDGeQAzU+AD+v7AEokU7iFIi6Q2GlvyTaQpu/kvxQ8pEOP98O6F
-         no/BwK9aarkmRykUk7Vf8PS1ITvsalFBeazYEcNsMsr5o4V4uEXzHoPiNNT/7njE53dz
-         Gz1fMyhyzUNQSdIjNivXooaj8+sOTKjeHhgsexeee1+qSbwJDIgtmrMPb/vhZxAOMEK9
-         XAavqOlnKqVjpOo4v+KPB2oXiyg485Df/p/4xD/5dyzN6PcDmqmwW8JEpjycNTtCRd51
-         e022rOrFDb0ydh6mv5JGBS+5UU2zHGlSPAZA+azSvmD/H5S8wLjRI2q3wbxKAhnDsbNO
-         euXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaC23kPaMpQ81tTydXi+bJxEsCs1jiaebGfqvMojwKEeciKo7Z52CtS5QGsPjsAazdvvoAnhhvfPMV/or9Ng0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT1iQGoSMWpFdZo7RaPeUwpWSBgNciI8o1dXO99Hzh5859PE10
-	ZQUApPN4kR6Vb+yegqMz69Pv7ni0wLP7AH28XQQSKlFPBBmxtjHFK+EDnV8h3Fc=
-X-Gm-Gg: ASbGnctsHrRvvCpPl6+tSxv2FZtQgRFfLdnYMkXi3fnK1w69ZOxEbisx9ldmyyUxSG8
-	HquL6VfNR9M6UwrFu1Q/v046MWb8jFYA4b6ufvwrc21R5gPv2qIGZrzEk90MAaq6GBd+Z7wtsZF
-	wGPaKmEcmT8+eBqji4lRmuhxTWIln5D13EJY/5RuoxazhO7mSZkGHcNWVq77JWVwAdFCfWXHqTZ
-	EyOQz1DTG6/sj1Ip9QnmeigWj7mJ//kR8hnf+61w4FnOewoEvHDNzaMZM6ZPg==
-X-Google-Smtp-Source: AGHT+IHv7DJAAYThC9GNwDlLUZxVW1EfKgbU1RsWLT2vIWkxB/JLRBW88SN+q/9DKAm8e5HkbQzR7g==
-X-Received: by 2002:a05:600c:3b29:b0:434:fe4b:be18 with SMTP id 5b1f17b1804b1-438913ef951mr9742005e9.18.1737091555500;
-        Thu, 16 Jan 2025 21:25:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737106577; x=1737711377;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dirbEAQ7TpkYOTZ9TBmIZ+8lIOorFd5YMgxh1YmdvBI=;
+        b=RdxtmCpla0nGkq83hUvoMZIpRTSeDZMIXyOVAz8wcNqy+oeho2+pCdhb/hkixDG1jL
+         yZ6hUqal5+C2zmGR6BZ8W2nJ9zGj5/1FwKIj1kqF1yC6X8A2VCtRcQ8n9JLiitKCZRA9
+         cTgp8uw8flqv4kOIJ6RtGF0lrWKuZPz0guNyoVty3qcJgyQPhNJxQP14IElFSxdajjkm
+         4nQhryWFe6Mag+h4k9o/nJVku7Pr8Qh17SRReZKWpJreC3SaqCd2w9R4kB+wMOjHaLs4
+         y43angAnuw1qM4tKypO50dkLHN3H1t45m6Vq1HwbCdHywVYVM49KZJoDKfw4T3ivZ/E6
+         +pYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWE1J7ywcVYzflLQV3X6YleUFzwY1OKNFy+IH+vTPzmsYHMHeoLlYEP57Ff6WQ+LEaesAoQovzNjLM+BhuCF5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6N0Al20T/u+UKWduVboQwsf1MSlsYiGDvTz3AQpqxOV+XL6Xc
+	7Cfsujam1MS3EFmuo9HgbPCK4WJ5HPpLgjyxsSc54nF3o9XC4I9rTz82BGDUUNg=
+X-Gm-Gg: ASbGnctylz1JYJoAQrNbPbTkawdIQhduy2egZhIxwdRV9XpjF+s7759CXFSDWIkvqIH
+	8BcH0sN9dl2vh9lDIVl4WTo75Xfg2/yhJYfhMqQphnZ9ybuadHcWQ1IZnxlKVtbyHMDUGwpTgBF
+	anbFS6VfDyxLR4/hr83gzMXqcK0ojrjuYzPEy21qoezk4WLDSBXtdcuBJc2nbfE2d54dlnGVRN2
+	lfCxx94g3VmuqwhQh8UPpPnaeZeX63Hssj3acaplo6fjAt6FfOe12Iy/HyvdA==
+X-Google-Smtp-Source: AGHT+IHBC8ZKB6uvv0nxI6PfIPl0cg315iXRGrXvLFhaitipFvwZL0qXSwpAFvCqWeg/C7bXlU5hmQ==
+X-Received: by 2002:a05:600c:a01:b0:436:ed38:5c7f with SMTP id 5b1f17b1804b1-438913db8b0mr17966025e9.12.1737106577494;
+        Fri, 17 Jan 2025 01:36:17 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf322a838sm1501717f8f.48.2025.01.16.21.25.54
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74995f6sm88940665e9.1.2025.01.17.01.36.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2025 21:25:54 -0800 (PST)
-Date: Fri, 17 Jan 2025 08:25:51 +0300
+        Fri, 17 Jan 2025 01:36:16 -0800 (PST)
+Date: Fri, 17 Jan 2025 12:36:14 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] PCI: Fix ternary operator that never returns 0
-Message-ID: <b0d6ea82-c979-447a-9e63-0dbdbf23d411@stanley.mountain>
-References: <20250116172019.88116-1-colin.i.king@gmail.com>
- <20250116224944.283e14fb@pumpkin>
+To: Jon Maloy <jmaloy@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] tipc: re-order conditions in tipc_crypto_key_rcv()
+Message-ID: <88aa0d3a-ce5d-4ad2-bd16-324ee1aedba6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,43 +73,34 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250116224944.283e14fb@pumpkin>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Jan 16, 2025 at 10:49:44PM +0000, David Laight wrote:
-> On Thu, 16 Jan 2025 17:20:19 +0000
-> Colin Ian King <colin.i.king@gmail.com> wrote:
-> 
-> > The left hand size of the ? operator is always true because of the addition
-> > of PCIE_STD_NUM_TLP_HEADERLOG and so dev->eetlp_prefix_max is always being
-> > returned and the 0 is never returned (dead code). Fix this by adding the
-> > required parentheses around the ternary operator.
-> > 
-> > Fixes: 00048c2d5f11 ("PCI: Add TLP Prefix reading to pcie_read_tlp_log()")
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >  drivers/pci/pcie/tlp.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/pci/pcie/tlp.c b/drivers/pci/pcie/tlp.c
-> > index 9b9e348fb1a0..0860b5da837f 100644
-> > --- a/drivers/pci/pcie/tlp.c
-> > +++ b/drivers/pci/pcie/tlp.c
-> > @@ -22,8 +22,8 @@
-> >  unsigned int aer_tlp_log_len(struct pci_dev *dev, u32 aercc)
-> >  {
-> >  	return PCIE_STD_NUM_TLP_HEADERLOG +
-> > -	       (aercc & PCI_ERR_CAP_PREFIX_LOG_PRESENT) ?
-> > -	       dev->eetlp_prefix_max : 0;
-> > +	       ((aercc & PCI_ERR_CAP_PREFIX_LOG_PRESENT) ?
-> 
-> You can remove the extra set around the condition itself as well.
-> They are a good hint the writer doesn't know their operator
-> precedences :-)
+On a 32bit system the "keylen + sizeof(struct tipc_aead_key)" math could
+have an integer wrapping issue.  It doesn't matter because the "keylen"
+is checked on the next line, but just to make life easier for static
+analysis tools, let's re-order these conditions and avoid the integer
+overflow.
 
-Please leave them as-is...  I obsolutely do not remember the operator
-precedences between & and ? and I have to look it up every time I see
-it.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ net/tipc/crypto.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+index 43c3f1c971b8..c524421ec652 100644
+--- a/net/tipc/crypto.c
++++ b/net/tipc/crypto.c
+@@ -2293,8 +2293,8 @@ static bool tipc_crypto_key_rcv(struct tipc_crypto *rx, struct tipc_msg *hdr)
+ 	keylen = ntohl(*((__be32 *)(data + TIPC_AEAD_ALG_NAME)));
+ 
+ 	/* Verify the supplied size values */
+-	if (unlikely(size != keylen + sizeof(struct tipc_aead_key) ||
+-		     keylen > TIPC_AEAD_KEY_SIZE_MAX)) {
++	if (unlikely(keylen > TIPC_AEAD_KEY_SIZE_MAX ||
++		     size != keylen + sizeof(struct tipc_aead_key))) {
+ 		pr_debug("%s: invalid MSG_CRYPTO key size\n", rx->name);
+ 		goto exit;
+ 	}
+-- 
+2.45.2
 
