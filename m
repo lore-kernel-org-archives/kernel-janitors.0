@@ -1,35 +1,51 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354E013DDAA;
-	Sat, 18 Jan 2025 04:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02FA127E18;
+	Sat, 18 Jan 2025 15:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737172812; cv=none; b=tNBPycxRvame2vDcftaGDXbhTGCS7//qEi5SeNe5vloz/N4I/WfOiZmMw/oXzR03Szi2w+gpaGjyGcXuiXfzRLj8xlQ2SB04eYGUwom3F2kkkyK+b/c9Px9TsrEjmfpRZl67ivgYVmXyQZ7yKsMV51INiVtY2bdBvJbtGDNGKpM=
+	t=1737215484; cv=none; b=i3ATkaH7Ph2xgPLawpVjtJP3yiK6O8sR1yaq2V858R6LPAJZNx2RMHApS4NdQkMG0lajljKUjz5TR5rMosa9C3Po7NCrgVQGbGrCcNxZPhY3UENAz4H5/xk+vd7cNfuNrfGTY3FuNgIylxusxJ9Bilf7LKu5tNbgYWxycngGGR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737172812; c=relaxed/simple;
-	bh=jFv8EUCLu6ozxPuVJTFgfwgeNm5H76i/O7yykL5YHfY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=H77OAQ0Q5tqK2arbU6Hptc4muAjkJAC8wraStCqsyl/b5fRF6DvgulCC3cHO9QgzssSjz9NLvw69edn5Tf0+b5FvGLZ+z/FZuCAXffCHG/cg4//liQHBchkmy0xGGwV0BVTrvkCb5biBomsMsNcBO5oLSBOde8xmbwqA+NyQ38Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEloBdND; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737215484; c=relaxed/simple;
+	bh=kpDar05Z+8TDqXL0VdtmIGvXoPqyDSXE0TPyDExkCH4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Qdd/LH9oRF+iXNBDl+FNi04tQAaa6mQgnp83c7XATYSiwNWVoZCCWYkB8RYGmrsx87vyPx+Ca/49RYkg2bPGHvYJ6jBACPStPQCSuerHaiEOiO5/+5qkHuKmlB82vg4s5992vZQ9TdGhrfI5jMvUtAoyWG7OQSzIESj6q1k6S1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UVtcia/F; arc=none smtp.client-ip=80.12.242.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEloBdND"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B3A0C4CED1;
-	Sat, 18 Jan 2025 04:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737172811;
-	bh=jFv8EUCLu6ozxPuVJTFgfwgeNm5H76i/O7yykL5YHfY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=UEloBdNDm3PtybiuUjrI0tf6/ciu6iE6k7oHpvCis7qsJ00zxguqV5qLgGHFzJOut
-	 Sm81r3ryuSopv4eIAbtczpqN3aFGrE53u3sOHXlVA4nOuiFxp7Xewsu/e0uh60r0oz
-	 w5GRHOlAxTRlKlK8QgawxCmBm3mE/Q8qJlBJKRUuKhHzss7s7mErIHW84X4U16c0c9
-	 02mV7faaIdetUhPuSJv/ntoKZId+giNGCymPTVjKjWGN+eltogj7cqqYUagjDzdoIx
-	 9xT03wCNbYFbtnF2aDm7RdIYgyO8zYpvx7qPqsJmx+W2x8FSHIa46DoZxsHOkKgWi7
-	 yQAHV5moij/xg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34166380AA62;
-	Sat, 18 Jan 2025 04:00:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UVtcia/F"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ZB6MtxSpjzpxCZB6WtMt45; Sat, 18 Jan 2025 16:51:20 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1737215480;
+	bh=6OfKyfNh9kt18eqBJGlLtTA1zHGzp0LyAtBzM8XOuxE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=UVtcia/FM6H859pGKKDOELvyte6Ap/JOEx647LRfK/4K5ebmEZj52dlwo7MSOutLN
+	 QupR5DXo0viX4/PCIJBamlxJx9uuhicfl9UeweUodQ+4YhAKQ/HWd9Bo+eG5IdGM7v
+	 KEmnz2jiqN8DveiCHdrSCI8QgvyRhfREpetr5m+GST0WJ7GHDS5rFrT+TXOok6aMnZ
+	 PsOR1boctIw+6pY3lRQvFayhi/fLuZlTMoY/yClOu/td4gfnU77EaohPEVP4yPdg0E
+	 rne6aokkwQWgjLTzT+ZXt0q5CBmpLEOfC4WFodEJ4N1TnBOW1LfslZs6Z68Ook9/3C
+	 C/MCMyfzVFRYQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 18 Jan 2025 16:51:20 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Basavaraj Natikar <Basavaraj.Natikar@amd.com>,
+	Vinod Koul <vkoul@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dmaengine@vger.kernel.org
+Subject: [PATCH 2/3] dmaengine: ptdma: Slightly simplify error handling in pt_pci_probe()
+Date: Sat, 18 Jan 2025 16:51:02 +0100
+Message-ID: <3285a03b9b3b6b6c8fa15f2bdc3a7d11386283af.1737215423.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <ae19d76a10773d6ebee0e08cef49786eb20fd052.1737215423.git.christophe.jaillet@wanadoo.fr>
+References: <ae19d76a10773d6ebee0e08cef49786eb20fd052.1737215423.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -37,43 +53,37 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net/mlx5: fix unintentional sign extension on shift of
- dest_attr->vport.vhca_id
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173717283499.2332438.5321768112783382973.git-patchwork-notify@kernel.org>
-Date: Sat, 18 Jan 2025 04:00:34 +0000
-References: <20250116181700.96437-1-colin.i.king@gmail.com>
-In-Reply-To: <20250116181700.96437-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, moshe@nvidia.com, kliteyn@nvidia.com,
- mbloch@nvidia.com, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello:
+'ret' can be non-zero, only if pt_core_init() was called a few lines above.
+So move this test inside the same "if" to make things more obvious.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/dma/amd/ptdma/ptdma-pci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On Thu, 16 Jan 2025 18:17:00 +0000 you wrote:
-> Shifting dest_attr->vport.vhca_id << 16 results in a promotion from an
-> unsigned 16 bit integer to a 32 bit signed integer, this is then sign
-> extended to a 64 bit unsigned long on 64 bitarchitectures. If vhca_id is
-> greater than 0x7fff then this leads to a sign extended result where all
-> the upper 32 bits of idx are set to 1. Fix this by casting vhca_id
-> to the same type as idx before performing the shift.
-> 
-> [...]
-
-Here is the summary with links:
-  - [next] net/mlx5: fix unintentional sign extension on shift of dest_attr->vport.vhca_id
-    https://git.kernel.org/netdev/net-next/c/41c5d104f338
-
-You are awesome, thank you!
+diff --git a/drivers/dma/amd/ptdma/ptdma-pci.c b/drivers/dma/amd/ptdma/ptdma-pci.c
+index 7f12474bd39f..b25b6f7618c3 100644
+--- a/drivers/dma/amd/ptdma/ptdma-pci.c
++++ b/drivers/dma/amd/ptdma/ptdma-pci.c
+@@ -188,11 +188,11 @@ static int pt_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	dev_set_drvdata(dev, pt);
+ 
+-	if (pt->dev_vdata)
++	if (pt->dev_vdata) {
+ 		ret = pt_core_init(pt);
+-
+-	if (ret)
+-		goto e_free_irqs;
++		if (ret)
++			goto e_free_irqs;
++	}
+ 
+ 	return 0;
+ 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.48.1
 
