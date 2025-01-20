@@ -1,88 +1,151 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4057D149DF0;
-	Mon, 20 Jan 2025 09:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1440019DF4D
+	for <kernel-janitors@vger.kernel.org>; Mon, 20 Jan 2025 09:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737365171; cv=none; b=VRaT/15Wl5w/n2GxXW/Ljb59Kj2tQ8g+Hj5+cqo3yKnJXjxHRO7pPlJn8/37eH2Gh0xAcPRktzQI2sRShIfwSbBCdHoRHmX21seQVcsmzwvqt6nHZHYUk0xidrZGwmZ9TH6fbB/Q5AQCXgBmRz6/whLfS589tOsDY+6c9umui4o=
+	t=1737366425; cv=none; b=hPN+HdzvoVSOoJItKVtBzHsRvD/zWvjzrxd76zFCFVIAgpeyEJllGOFWlSDoPWC9ftSDeJAaDTzDe9Y1E2O5FZ3RIOqnrYTRxLcaPKJfVc3rB7sLEfE2ohuSRcafr/p/iKiUx/1R0+JdqSKLUcjq1tBkKyrvG8MeSYe/M9cD75g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737365171; c=relaxed/simple;
-	bh=XLHW9Xlxwngn1I2lo/Z1hj+kDSsOP1FLCFa0VV5xfCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KVj0JnyZ7g/w1kMrgTbo9WcM+XXWluuOaGaZF4T7a5OgCV3siJu4ECiFX+nN3ukhIBTjWfxACGQOIF+IMAKvoL2M5dxvcPo39KQPVvHBkyuznF483wl+7XF6E8y2IfJPYM/eTupSS5hIyxtvwWYt1VtRUHU/eK7Cxr5iTnL3eaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a5BW+f2P; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1737366425; c=relaxed/simple;
+	bh=CLtH6u90O+N7mDiNWKKTvhQAJx7W2UlPQbyMWSmfrks=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=miB0ltNi+e6DhLpxSuH6AITrTqfTT6DTCyTFfQfRFNL7w9SJXJCXXzNcdwmIX7XxaoSImWFhaQjR3/0e5YtlnGpD0S+3dR51wIFJNkuxKTnuFWYm+7TqmTqDV1oYls94qkoyXnZTNuaBLCNX4mDe685PrOFIjjHh2nPW6xHsqHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vj+7Pt//; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a5BW+f2P"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1737365167;
-	bh=XLHW9Xlxwngn1I2lo/Z1hj+kDSsOP1FLCFa0VV5xfCE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a5BW+f2PvqMj5ersOmtnCf65IJhY46344qAOOP1z5Igiqft3KSvTgMQ3ymw+2QKfJ
-	 kp/58w87j0UHxb+da2CSIaWwg93z+i3NS6ErA8T8dTjOBiXGl+YqT/sXkGvDnCCYHr
-	 XAD7oxPufYgQ1LENk8uKFqGuKDmB/pAMDDx4iUe2UrDnsyPZV3SIYxCAmJQ9bHCzcU
-	 0b5n2nwO1OMZJdavUStvB6qdW4VzsKDXtt14S2YjGARN3qQ1nPlyLNDKYknlDnZ1zs
-	 B7+iN6E8EC5QQZDurKnBiPjalwjs3Yd7Pl+SmnPa/0HM8Lz/FRyzAOMWZSa1nkzyMJ
-	 LV48ZhQ+xQw/Q==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B95F017E023F;
-	Mon, 20 Jan 2025 10:26:06 +0100 (CET)
-Date: Mon, 20 Jan 2025 10:26:00 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Su Hui <suhui@nfschina.com>
-Cc: steven.price@arm.com, liviu.dudau@arm.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, mary.guillemard@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/panthor: avoid garbage value in
- panthor_ioctl_dev_query()
-Message-ID: <20250120102600.39b1be80@collabora.com>
-In-Reply-To: <20250119025828.1168419-1-suhui@nfschina.com>
-References: <20250119025828.1168419-1-suhui@nfschina.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vj+7Pt//"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38634c35129so3576657f8f.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 20 Jan 2025 01:47:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1737366422; x=1737971222; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VM6sOkfE8iqC95N0AKyRjkMPid32wJ87nN4QCxrUuqo=;
+        b=Vj+7Pt//YpE+KQ+Lotti2s+qxJrq1UCy5MJJE5uWS+uMWfI8m3+6MQFjQ69NOfn4B0
+         dE7xluF2BumlkbvdrDn7+jQx+TgJ/2HjqyLrnbd+eKza9YE19sEWugxN87R2O5Yt32mC
+         UFGw4IhwhNB8V4OcE7Ghzc1yfw8XfOZVrbO+v/sfGA4KWCNlWa7RWUEc5P8xFuh6TGv4
+         T7nGFraeYOcBF25iF53O7fbLtzsins72xHMZm725iflIknKUfzjYHqs7vjzUMId6saZ6
+         uyVPM+A5bC8ORXdA1WxAXj5ls6GguCsdzbESF0hKiZMItXRWGvLnORQbJpwBMT5rMzLq
+         5FRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737366422; x=1737971222;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VM6sOkfE8iqC95N0AKyRjkMPid32wJ87nN4QCxrUuqo=;
+        b=r6eKtRaHGAvfTLxQXG8q2TRD6i4VgSS9Tw7w5YAQr3T4Z/h2wpaMXsc1pw4mgxHMZK
+         /xtTnPx8McVq2E6HEynxtIQsQAbiD9OvFNJ32/Sb9kyXGHlW9PXGKerJoGDrhlfu6H4A
+         5FZD2Hjf0uHQw9oy9Oy3ZbDGPEi00mO4whU8fJz3pQt+C+LsCsgtnRTVpaz96hOoZ6BL
+         kxsbEzg1yebKu2jTtajJHQnTykBh2clwSPsy1kpHtfG02AP4YY740Ihvxm4tyiSjJMt5
+         FnPRMZwGKzDpzuXzJjD43VK4Tdy6ZPJjJVQZ/tt3zOU+uzKDV8dpOfnmgPSn1obdtRFz
+         lE5A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0c8tSrjUgC9xIiK6lFYojGOj1aWYtsbRZGQuWbcGR0Qg92gZeWiAeYdFPr5yEjFT5IOTOkbhwwuKZfTxBOlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbXwFSqH+JxkwmSt7odp8f5RYVsCO9/aVr0GNDEu3Y3SCgEVis
+	MBJWt9QRD+GLICy0Tav55Roj8tRKolS05mlmECgMJal3WatigAZzWx7Ei1CASyA=
+X-Gm-Gg: ASbGnctr7Zc99etb03zL7mRTovkx9Cpd4lynr8Z0B0X8sp1mEg7xDwQLDHvAlSNMU9X
+	03JQxoMxpjsaTFZbDEd6Ft5G6EcB0TlyX+7NGJ5RaFFmi6G9TOGanRQiT+JrAM+cVGk3cVOiqKT
+	IbvCRtgldaUFNe2PP0YJxHJz7lu241EbyW4wagt7ED8Tzz6Vg+ZzY4zbhcQpTEY1WNM9OzaQZXI
+	sIw0maEXiuEirHQNqVZprutb1toCyZ2wihYimoexL3MqywIAEGOcXFdW6c8PlNjcUTiMj/Vpuc=
+X-Google-Smtp-Source: AGHT+IGPG329V2074yOYSMY1ziObuL2UZ+m5lYehxxQsiJfOBHTxj4D3R6O9lmeqMjiIW6U9yiBaRw==
+X-Received: by 2002:adf:9bca:0:b0:386:3356:f3ac with SMTP id ffacd0b85a97d-38bf57937a7mr7522401f8f.26.1737366422340;
+        Mon, 20 Jan 2025 01:47:02 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf32758dbsm10018595f8f.64.2025.01.20.01.47.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jan 2025 01:47:01 -0800 (PST)
+Date: Mon, 20 Jan 2025 12:46:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
+Cc: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Deren Wu <deren.wu@mediatek.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] wifi: mt76: mt7925: fix error checking in
+ mt7925_mcu_uni_rx/tx_ba()
+Message-ID: <063aafdf-3234-42ac-a4ea-3ff98e2835b6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Sun, 19 Jan 2025 10:58:29 +0800
-Su Hui <suhui@nfschina.com> wrote:
+The "ret" variable in mt7925_mcu_uni_[rx/tx]_ba() needs to be signed for
+the if (ret < 0) condition to be true.
 
-> 'priorities_info' is uninitialized, and the uninitialized value is copied
-> to user object when calling PANTHOR_UOBJ_SET(). Using memset to initialize
-> 'priorities_info' to avoid this garbage value problem.
-> 
-> Fixes: f70000ef2352 ("drm/panthor: Add DEV_QUERY_GROUP_PRIORITIES_INFO dev query")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+Also the mt7925_mcu_sta_ba() function returns positive values on success.
+The code currently returns whatever non-negative value was returned on
+the last iteration.  It would be better to return zero on success.  This
+function is called from mt7925_ampdu_action() which does not check the
+return value so the return value doesn't affect runtime.  However, it
+still makes sense to return zero even though nothing is affected in the
+current code.
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Fixes: eb2a9a12c609 ("wifi: mt76: mt7925: Update mt7925_mcu_uni_[tx,rx]_ba for MLO")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index 0b3fbee3d37a..44f5c72d46c3 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -802,6 +802,7 @@ static void panthor_query_group_priorities_info(struct drm_file *file,
->  {
->  	int prio;
->  
-> +	memset(arg, 0, sizeof(*arg));
->  	for (prio = PANTHOR_GROUP_PRIORITY_REALTIME; prio >= 0; prio--) {
->  		if (!group_priority_permit(file, prio))
->  			arg->allowed_mask |= BIT(prio);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+index 15815ad84713..b3a00964e802 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+@@ -617,7 +617,8 @@ int mt7925_mcu_uni_tx_ba(struct mt792x_dev *dev,
+ 	struct mt792x_bss_conf *mconf;
+ 	unsigned long usable_links = ieee80211_vif_usable_links(vif);
+ 	struct mt76_wcid *wcid;
+-	u8 link_id, ret;
++	u8 link_id;
++	int ret;
+ 
+ 	for_each_set_bit(link_id, &usable_links, IEEE80211_MLD_MAX_NUM_LINKS) {
+ 		mconf = mt792x_vif_to_link(mvif, link_id);
+@@ -630,10 +631,10 @@ int mt7925_mcu_uni_tx_ba(struct mt792x_dev *dev,
+ 		ret = mt7925_mcu_sta_ba(&dev->mt76, &mconf->mt76, wcid, params,
+ 					enable, true);
+ 		if (ret < 0)
+-			break;
++			return ret;
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ int mt7925_mcu_uni_rx_ba(struct mt792x_dev *dev,
+@@ -647,7 +648,8 @@ int mt7925_mcu_uni_rx_ba(struct mt792x_dev *dev,
+ 	struct mt792x_bss_conf *mconf;
+ 	unsigned long usable_links = ieee80211_vif_usable_links(vif);
+ 	struct mt76_wcid *wcid;
+-	u8 link_id, ret;
++	u8 link_id;
++	int ret;
+ 
+ 	for_each_set_bit(link_id, &usable_links, IEEE80211_MLD_MAX_NUM_LINKS) {
+ 		mconf = mt792x_vif_to_link(mvif, link_id);
+@@ -657,10 +659,10 @@ int mt7925_mcu_uni_rx_ba(struct mt792x_dev *dev,
+ 		ret = mt7925_mcu_sta_ba(&dev->mt76, &mconf->mt76, wcid, params,
+ 					enable, false);
+ 		if (ret < 0)
+-			break;
++			return ret;
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int mt7925_load_clc(struct mt792x_dev *dev, const char *fw_name)
+-- 
+2.45.2
 
