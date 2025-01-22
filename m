@@ -1,42 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F331C4604;
-	Wed, 22 Jan 2025 14:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A382144DB;
+	Wed, 22 Jan 2025 15:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737555869; cv=none; b=uROYatR9Lm+E7JNevVz2DUs5IykT78ayEuBJY//XEYhNHbSs/eUiLiibM/1QP2bZmV63vZxbDRvoxfVuCOyVcKyVfL1onGzsMvla73C1VvG7c0VTYaKwnYXQnAyqSF2a1XFuei3rbpFNsAhcsjcl/VvCua5aKuzZp0bFNsCYN0E=
+	t=1737561097; cv=none; b=FdHEX/Swm+MickjI9X92wLQ1hlh2FbvSKTXWU0k+xkcnqFprfHkhk+23mzNAKkVtldzjavnhI3GoCYveZt0v+pX6a1RyXGC45MIB23UmtK4M6SHIsM4OBbJ5sINR3AO3l8W4D0b2itjI69VaRZ1xfYJRxFOI7sVy5qFGuXeyMO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737555869; c=relaxed/simple;
-	bh=k3EtP2MZDpS09SDsW5P67dHVHXE3A1k2aezP5m1ZLkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pGf/GxTe+SiGkl9kQTourL/CwIAMdCLLWw16kc2cgQAr8ucSE1+uaXsr9PI/cJKb/bns+rD7y1Fhrgrhb+xIeVMcJrDmVn2ypvoKKLkymE4Y9L354GNzOuuruF2ud7j6Oa8d8bMiaRRcHljfv8vPVMSVrLSpWegHOvG+2YnY2MA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KM4U9PMd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737561097; c=relaxed/simple;
+	bh=v7N4Q4l0ABvopdX/qmHrxNvdVx7lRwDM9DbQsVIvnMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCey9YupKesHWy/EKsuq3drN5LkTHaDheimt4ZRfRohhuuHiDNULzPfIC0fsAHfwpKGhmhgjoMuOtxjRMuS0t/krqUikzDc7Y+x8ShFuzZnkPNQPatsonw7fCYRCWx3/Bk8ZiyYXBlc7FAzit+IIol0k68nQzUM3rA4b5TtRJHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tU4s5AJg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KM4U9PMd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84983C4CED2;
-	Wed, 22 Jan 2025 14:24:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tU4s5AJg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2991BC4CED2;
+	Wed, 22 Jan 2025 15:51:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737555868;
-	bh=k3EtP2MZDpS09SDsW5P67dHVHXE3A1k2aezP5m1ZLkk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KM4U9PMdmMAaxXtd9sW5aLZd6DSfU0s44SC0QVQ4CNu1xYZTJHolCXl0tUrPks0lY
-	 cFiK5sce9cMX1jhV630rjDe0tRkYuszWItjux7WzkDn75Np9o/t9lTaR1vR3eVoYRT
-	 SnBCu00To3ZqyV0DwvFIEYgjd6EUNzURvWVA6935nX71x/1nKcoNBJRWLyIhI3j5Sl
-	 VyLGABCiHcBzrRHQmxNmx4OJ6I3oR556YDmpJeY+kZoYcE/cT6zhoeHzxfTxcedhWL
-	 wsvfp3h1V/1g2PGfnyYJzPvcdw4hlXcsv7mIzB3swWp/0yKGQuDDfdmvPbZ8WwgObx
-	 m16TVxq3RuJEA==
-Date: Wed, 22 Jan 2025 06:24:27 -0800
-From: Jakub Kicinski <kuba@kernel.org>
+	s=k20201202; t=1737561096;
+	bh=v7N4Q4l0ABvopdX/qmHrxNvdVx7lRwDM9DbQsVIvnMY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tU4s5AJg8xK+7eEvh/6/FAfR3BIrW0jshY1NTMRn/FtlyP7wmrg3zP2tAiwwz8++x
+	 lYyunoevy7xz246E7uiSaBmTczFM+bsil7J3AhUJMIqFTLbe1cHjUxtxRDNHe7tqhx
+	 FP6uxpuX3fzXdKWqqoW6HH6hWI1feP84l6WfqMMxGMQNO5xnYttzhDeiQ81MwWDdHD
+	 p/mwm1Lpy14QWa70/FrGRaQfcIgsro9P4SWSDtgc3xl6uputWn4M2i7vacB6EMXDpo
+	 PAKIA2+WRwgivM6ZYWwfdPSAcnC8/aMFL2WuRno+FPBoOMm3/xqA5dbft/ZyaCFu6p
+	 Y01SNtieOgJMQ==
+Date: Wed, 22 Jan 2025 15:51:31 +0000
+From: Simon Horman <horms@kernel.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>
 Cc: Thomas Graf <tgraf@suug.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH net] net: netlink: prevent potential integer overflow in
  nlmsg_new()
-Message-ID: <20250122062427.2776d926@kernel.org>
-In-Reply-To: <58023f9e-555e-48db-9822-283c2c1f6d0e@stanley.mountain>
+Message-ID: <20250122155131.GF395043@kernel.org>
 References: <58023f9e-555e-48db-9822-283c2c1f6d0e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -44,13 +44,39 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <58023f9e-555e-48db-9822-283c2c1f6d0e@stanley.mountain>
 
-On Wed, 22 Jan 2025 16:49:17 +0300 Dan Carpenter wrote:
+On Wed, Jan 22, 2025 at 04:49:17PM +0300, Dan Carpenter wrote:
 > The "payload" variable is type size_t, however the nlmsg_total_size()
 > function will a few bytes to it and then truncate the result to type
 > int.  That means that if "payload" is more than UINT_MAX the alloc_skb()
 > function might allocate a buffer which is smaller than intended.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: bfa83a9e03cf ("[NETLINK]: Type-safe netlink messages/attributes interface")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  include/net/netlink.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/net/netlink.h b/include/net/netlink.h
+> index e015ffbed819..ca7a8152e6d4 100644
+> --- a/include/net/netlink.h
+> +++ b/include/net/netlink.h
+> @@ -1015,6 +1015,8 @@ static inline struct nlmsghdr *nlmsg_put_answer(struct sk_buff *skb,
+>   */
+>  static inline struct sk_buff *nlmsg_new(size_t payload, gfp_t flags)
+>  {
+> +	if (payload > INT_MAX)
+> +		return NULL;
+>  	return alloc_skb(nlmsg_total_size(payload), flags);
 
-Is there a bug, or is this theoretical?
+Hi Dan,
+
+I wonder if this is sufficient.
+
+If payload is INT_MAX then won't the call to nlmsg_msg_size() inside
+nlmsg_total_size() overflow. And likewise, it feels that NLMSG_ALIGN
+could overflow somehow.
