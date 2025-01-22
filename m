@@ -1,71 +1,76 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB2C14F70
-	for <kernel-janitors@vger.kernel.org>; Wed, 22 Jan 2025 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B78A1E4AB
+	for <kernel-janitors@vger.kernel.org>; Wed, 22 Jan 2025 13:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737553764; cv=none; b=sLkUOt+vLm/VDBD8hwRjIKZzbumM3hGyH+05BurUWdJPyQoHu310eZG8XjBOzKLYPz6p51i1JA+uO+vDQZlGyHC/bHmW5K/UvbPnPLHOiYS7Ia+QccLEvtcMnDQiCeeT1lrbaCBPn+Lco16SkAHKfZBT/bgUiMAxnnMemKO+dD8=
+	t=1737553857; cv=none; b=IH0oVjHwlRHOZxCYwPBU6OhHmmYpgnRjwFWh8XTemPNtP6j6Tjy+wfsbp+P2t2z6Q1WryQXdMnaC5BQhu9mL0MigG3JsYeSlsjUoM4f54ebEMD2VAuLx27PYN6xj+UzUOxwycR7KkoEBbWkQ3Gb9P14SHyOoQQPE5CtPCUmIYYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737553764; c=relaxed/simple;
-	bh=/o3/l/9afeGTYp17GP2QC2MUMdmrgWfRjZnggaQP8GY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=thWtHtLMNWkKfCPX16k5lIIY1oYR7bl5SXZPb9zmRX6UpAEVuxjDY+UdZS50GK7dqHWN+9BBcL95MXeezKs25XoOltq1AaTOK7QvXtu1HrunzOtj3FCnrUGVvCZOIamBPwP1ME+8cNstCSZnlb5T/IBKsH/VHmNNOO4+Kz0AE9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YttRcNa0; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1737553857; c=relaxed/simple;
+	bh=bks+dcymjfuxwpQMDs5ixSXGxUexUIw8mAnKAomCojs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QcMTt9jy4DQNMrF04Je1o0Y6ljZFI+epE6AlyV3kz3QGzxEjPrOmzdVP2FXU+sOkPXb1nXmb9EfSjpTqRI/H/j7BVls32u1YIygidWiLkSCYMy4oQLDD68pNp9BmXDXp4RP0QxSlkLzaBqReoCBrIhg7f9L0S/XK8ZdNpEc4cwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iPqmzRd7; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YttRcNa0"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so3740273f8f.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Jan 2025 05:49:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iPqmzRd7"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43634b570c1so50967985e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 22 Jan 2025 05:50:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737553761; x=1738158561; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K51/6g4P9GYdkZ38G8mfX52Y5q+LxzCdwPw5czgkm70=;
-        b=YttRcNa0noHwMbSsrzASNuHeMCWT2Fr6Sk06fBYAGoO40fm/2a349KQl5/05SB0XvX
-         c+c5kVzd91QlMuIEkXC/fDcf/nxQLmTVXW/bOQEWG+SPzujVD1ncEqRl+5BCtsgp4Rjm
-         nusRGYmd05ZPDkRXvYEmIv7g8HaNTuK3HweSxUmwzQtoEZM8apiVMaTTzeOaeAO7fUWD
-         SWsD86+qJA25kstpusx/fuvhnE3WfaOsJHFF8S3kt5ERDDgfbMaw65gLYXEGv3dHKjRV
-         lIIIQbtU+HKFF1X+TPZ+MUI3qR90CcBIOLD4xfTknP3d6Z1MH6WkfV5lRwJ91qyZF5Rx
-         iutw==
+        d=linaro.org; s=google; t=1737553854; x=1738158654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LeJQbMKgxTKE/VdTo5M9qbk3XdSIS18Xn3c/OFMKt/Y=;
+        b=iPqmzRd7baIPYn33C3KRXTrV+pCb463BW28fABHTx8ITb24hrWxLQnJ+nviGXhxSfY
+         zb+MNO9VEUyt/GeIcQCdh5cwTsZ6u81oMDftOkRtWp/lDnhFKYQnv8PgEe3AOO2Cys7B
+         jCTVTMoJsesIeF8nJDx29w/IAF3PGo4v/5WUkGHEeQUdwweIup2Lo6F39lGioVi+FYaU
+         qdkSxs1lUrSSjJg/uW2G1+TTq7j6HfgEbqcPibjxY2ZJr/rQxJ1qvAQBMz/tsTGm7XpH
+         xuvJnxFuBVBrO9Bv2ya7BYoQ3paWVENWcHjKecPQeljXyasJkXGBSqgJTE6UYddMZAvL
+         fpKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737553761; x=1738158561;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K51/6g4P9GYdkZ38G8mfX52Y5q+LxzCdwPw5czgkm70=;
-        b=rncB5Sw3KWy8mhH4zw2TFjAdErtvkTthUHNJmNliupyM4SSkcUrLp5KXKZMai99nxF
-         pA/s6/SY/bGyDBqQotGNFHEPWMRULhWOP07W5INJcdY3pUaNBI89ZtL5Y08PiBgfhdSM
-         k9rtafQkOw8/MIxASXfjeDr1OXuHWBoqPjIskVSHNgX78p6PWAHCXJnn7Rg/z8wN6Wv/
-         gRilhsRzt7HbI8WvZPsug/oubHbztK0y9kxEn8rRZj6Taz76AGGYwxnITjWseEmB5TJx
-         AL2eOGwyFxHawkULVyCq9kxBiCgt8GHzN0Ob26OIJt2FSEULmA8dj+hcF5d8G4sVNBzw
-         Rsug==
-X-Forwarded-Encrypted: i=1; AJvYcCXj9fsV5tr32D5zPWpzyqg/+oTJxNeJWk2xNdyzyy0PRKBBNyEzcpXMulGKBLiNZXcTj7VqQTUZlJsF9BsjSCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu01Oii2w6dOo5uSbpb+M9HEQ7mCz2bz/hzGflaX3aV8Bi3927
-	TP01FhoFtEdi2OEUC/GQ/8LxWJAuKZ3+nH1p/FkZmFRbuAuM9ezi4Zuq8aA4IZk=
-X-Gm-Gg: ASbGncudV/5wiIjKoECP77fq0KdR4TXb/lIpOo7Qb0g+85wJEW5c0Wj+BnTtdSR7D+c
-	BSrHG9xbZb9mU0IP2eOg+M1ULLNi85swWqbnKDeL9COD+rBdn93KQoE0WBy8NgASF1FGXIOxoaX
-	2gQnODlgUXWPWxkp1ehgp//98sLLAvH69v4oaC6hb2PlhxE/tmzylQB/vnY0kdMVbA2jq3Ge1f+
-	3kf8Y0rc2GMX8eG9wRZ+w6XHO46lhM6Jk4PqKlo7wbpqtTsLwPR2JZgRP1ym7NmIvxzzGcZJ8uq
-	/0Pmk491gw==
-X-Google-Smtp-Source: AGHT+IE3o4b4BdauC6AlHv26it9Zg4i8+S7clf5AWO2pmyOuXXW5i8JwhMit4b//DvHU4sQvCrgQbw==
-X-Received: by 2002:a5d:47cf:0:b0:38c:1270:f961 with SMTP id ffacd0b85a97d-38c1270fabemr8203304f8f.46.1737553760630;
-        Wed, 22 Jan 2025 05:49:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737553854; x=1738158654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LeJQbMKgxTKE/VdTo5M9qbk3XdSIS18Xn3c/OFMKt/Y=;
+        b=MaCSgFQ/9tLRPVtTrlZWlKuRqTqEWmmQrIUOlN1yDRr6c/Cdk6M7Z4mwC1ANIF0spQ
+         tZVRLSmLpuBoG+7Dk7tizwhUxBeBlHILmwBSxhLWMlpy6o/OENv5FuWB3suJHF/PtefA
+         i3vSzA2ae0PVMTlIzP1MBd5EQUm2iYrmoxPWtKi0wj+LofacFMhm8PnN5NvL1gIlQib2
+         Ebt7r7tP6lsSzQJDpkzFC/p0owlBN6T4nMkapP7xb+siwRixwr88joH7XfO96LfbEHqf
+         kPiBsunT3RNoVd50gAgjl4W1J9afgBkgXi2E2QRYw2pXamYnOjV0DRop5aRgH6xHdzhj
+         7qKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLCHYPqXUXE0QDapYgGp0M5OV8ekiAf3/5AVqbaLdQLo+L/4iKJ2dUgcBm3C9NUv5MwJwZXfyODPIocgk89mU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSE0DSINDvQRSzDgbLJcKm/LTj1s/wZGrIy/Yn1Yo9pMt9ZfZK
+	WDMwzAnI6iffdZ+nMTXkA22YNwMGgEZ0t6QSAhYe4VuV9smN0r/7mT+YFMGcMI4=
+X-Gm-Gg: ASbGncvzhbpVGnzZnhcEApAjfY3w4g89WidzbU8CelOTZPnGF3UFm6SDLsmA1Enwv2V
+	/oad09xbJF8ZVnmofuiN5rDf/27drwxlCfks921uI5UtanhJqLrCzl0qou+UYt8V4vTo2d3m23v
+	RabTPMUy59d4xZV2m5/fMZyoV546OrscDgjgZ9ERp3iU+Ghtt7TXlJOopPZ07EocCPMFVDSzxZX
+	DqbqZX3EWu3fPSE9b9vt0whyw/3wg/VzDZ+HYUKqq+RW4HMx37N2WtaYJqbnVihrasKZf495kA=
+X-Google-Smtp-Source: AGHT+IFV7PIhFkke0uCO2oWIdMNtHM2fB8T0QZVi6jL0x9DpK6ZPV63ZMQQxSYMhiuEQfz57I9x/1A==
+X-Received: by 2002:a05:600c:4e06:b0:434:e8cf:6390 with SMTP id 5b1f17b1804b1-438913c6856mr195769175e9.6.1737553854420;
+        Wed, 22 Jan 2025 05:50:54 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf3214c5csm16346804f8f.8.2025.01.22.05.49.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b3189924sm26248475e9.3.2025.01.22.05.50.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2025 05:49:20 -0800 (PST)
-Date: Wed, 22 Jan 2025 16:49:17 +0300
+        Wed, 22 Jan 2025 05:50:53 -0800 (PST)
+Date: Wed, 22 Jan 2025 16:50:45 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Graf <tgraf@suug.ch>
-Cc: "David S. Miller" <davem@davemloft.net>,
+To: Simon Horman <horms@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net] net: netlink: prevent potential integer overflow in
- nlmsg_new()
-Message-ID: <58023f9e-555e-48db-9822-283c2c1f6d0e@stanley.mountain>
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] xfrm: fix integer overflow in
+ xfrm_replay_state_esn_len()
+Message-ID: <32890a3f-1258-4c03-86e1-86c0e4e8e415@stanley.mountain>
+References: <018ecf13-e371-4b39-8946-c7510baf916b@stanley.mountain>
+ <20250122123936.GB390877@kernel.org>
+ <670272e2-a4b2-4bdd-95c0-26d1e7c65816@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,33 +79,44 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <670272e2-a4b2-4bdd-95c0-26d1e7c65816@stanley.mountain>
 
-The "payload" variable is type size_t, however the nlmsg_total_size()
-function will a few bytes to it and then truncate the result to type
-int.  That means that if "payload" is more than UINT_MAX the alloc_skb()
-function might allocate a buffer which is smaller than intended.
+On Wed, Jan 22, 2025 at 04:16:48PM +0300, Dan Carpenter wrote:
+> On Wed, Jan 22, 2025 at 12:39:36PM +0000, Simon Horman wrote:
+> > > The one caller that I didn't modify was xfrm_sa_len().  That's a bit
+> > > complicated and also I'm kind of hoping that we don't handle user
+> > > controlled data in that function?  The place where we definitely are
+> > > handling user data is in xfrm_alloc_replay_state_esn() and this patch
+> > > fixes that.
+> > 
+> > Yes, that is a bit "complex".
+> > 
+> 
+> I don't have a reason to suspect xfrm_sa_len() but if we were to write
+> a paranoid version of it then I've written that draft below.  I stole
+> Herbert's xfrm_kblen2klen() function[1].  Also the nlmsg_new() function
+> would need to be updated as well.
+> 
+> https://lore.kernel.org/all/Z2KZC71JZ0QnrhfU@gondor.apana.org.au/
+> 
+> regards,
+> dan carpenter
+> 
+> diff --git a/include/net/netlink.h b/include/net/netlink.h
+> index e015ffbed819..ca7a8152e6d4 100644
+> --- a/include/net/netlink.h
+> +++ b/include/net/netlink.h
+> @@ -1015,6 +1015,8 @@ static inline struct nlmsghdr *nlmsg_put_answer(struct sk_buff *skb,
+>   */
+>  static inline struct sk_buff *nlmsg_new(size_t payload, gfp_t flags)
+>  {
+> +	if (payload > INT_MAX)
+> +		return NULL;
+>  	return alloc_skb(nlmsg_total_size(payload), flags);
+>  }
 
-Cc: stable@vger.kernel.org
-Fixes: bfa83a9e03cf ("[NETLINK]: Type-safe netlink messages/attributes interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- include/net/netlink.h | 2 ++
- 1 file changed, 2 insertions(+)
+Actually, this chunk is necessary.  Let me sent that by itself.
 
-diff --git a/include/net/netlink.h b/include/net/netlink.h
-index e015ffbed819..ca7a8152e6d4 100644
---- a/include/net/netlink.h
-+++ b/include/net/netlink.h
-@@ -1015,6 +1015,8 @@ static inline struct nlmsghdr *nlmsg_put_answer(struct sk_buff *skb,
-  */
- static inline struct sk_buff *nlmsg_new(size_t payload, gfp_t flags)
- {
-+	if (payload > INT_MAX)
-+		return NULL;
- 	return alloc_skb(nlmsg_total_size(payload), flags);
- }
- 
--- 
-2.45.2
+regards,
+dan carpenter
 
