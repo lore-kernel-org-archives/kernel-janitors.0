@@ -1,129 +1,111 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3892015D5B8
-	for <kernel-janitors@vger.kernel.org>; Thu, 23 Jan 2025 05:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D575C20CCC8;
+	Thu, 23 Jan 2025 12:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737611323; cv=none; b=N1SVuJpq/+kSYHeKeCPc3x5AGuJRzPwlbFfHqz9fb+miWbh6BjPDUE9hyH9pZg+k62j6zpKJvQUIm/jR7hNpAxmOmDLe7s4S7X2gVul+hKnNgjh6ZnhTy8Um/qD/0pJZqDzLEFulOzHAYRYtsstEqSt6buIUpSVlv5o0yy9AOuE=
+	t=1737633982; cv=none; b=pcyhUlDySRQE+g7RrlKyLCgRc40+vZ+XuFKCWJ6CSJST+iYSKa0mtxdXvuTRFf1oTEh1tptbHk0MU40CD4+AbwWbo9LrAZMNcGcRK/xW0HgjlWjmHV+8D9nm3LzxqFtgolYCmkmBOoFVLoW6H3BOlI5XI72V0NF+j34W0yXynSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737611323; c=relaxed/simple;
-	bh=kEvoazzEBBRD5gZ07meCmNxt26LbtQKPNXbF1ZZ4GoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=juqgVZdagF6xGsyAIoXjY7kwPcLhtGPch7QQ4NWyaqP8juZmYQXjHYKqQzrdDL7lPMbKhDEtGwxxlhsz3FXcFsoLURvfkFyge18NZAtqL1WEzbeXaVQ65VVoe4AUb0Bxp1QF+Ouo3ZVjfI9YibnP33ls/ZXDxL385yOatoAFzRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v0PVzCal; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1737633982; c=relaxed/simple;
+	bh=UTqiET7WvIyNmxkB9HztfBX6a1pIICycyDq3ehfiDBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=KMRmWByhTWXXoLhRky+HCtrkKahz6IVcWV5u3D6IoKWD9Zas3abO+JfnjPtDV8coW+rXZ2JxoDsuLHFbVRC0csb7QCJQ5LSCsJujcQL7+ZKncbJvsOmCuIJ63qCcdWR5rXE6JyZijxNQ3Hc2Uay+B94nehPrphLBe0EztvjRPuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=J0/5sZUr; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v0PVzCal"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43625c4a50dso3028795e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 22 Jan 2025 21:48:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737611319; x=1738216119; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A5FNxfeI0Gjs1UJg9SIXn0hbte3FEgt2gJ2X+tR1nrY=;
-        b=v0PVzCalTWCZFF553s86ykxC8POmBZQbi+82Q4cBy6zdCfPomnwIuudkqeAzW9gq75
-         gD0kvXuONCVJguqllZEeXhdtYwpaJJBNNZ/oaotM/K5FGowjGzkOjn41rhe68euTIR4J
-         NO0ioOE+WWag16hjERQXuyRrS1fZHVrQqcCFbJOoSV/MqrfQZBAW4MAdeRFLhT3ZL+Iy
-         +1ey8+EsYJs9sZsRP+eZk3DdtGeryKr/eXQ8Vd18kjJUepQZov7pwGplMOIPv4QpImMf
-         xisI9pfczIV6DQBMyr5wILpPGYUUU0p8qc0dYgTj215Gy8v+E+uTZ8NBGlaKkyvZMsni
-         MG+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737611319; x=1738216119;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A5FNxfeI0Gjs1UJg9SIXn0hbte3FEgt2gJ2X+tR1nrY=;
-        b=dDyaSOJtQrRSZ6TY/izwbkRV2xbWvOTfop57fHcvi34J1TXEi9sScRZ5Li7y2QF4uh
-         jF2ULBupL1FqPBuzs7EQa41t18g8f0G7vVdZHgwy9B/gxAcROa8lr7sHnJ7mXGYo6/ak
-         LhY520cJv2jz75H0v7zvQF4tnSd7SmATaIwLTJC+qZaCG18zszOnC4L/lIeSJawR+WcK
-         L8+AmKEU9AKOyM01a9lu7b2+mJt7yCVBTuIqJHz5quBmkyUwh68im8Ock1P484E7FLTB
-         Epk0P+uyb5IND1R+7iHE0JHZMWRKN660zXRd0wpOn55oKMxc14EP1IaO/w1D5wPIKOkF
-         2yvw==
-X-Forwarded-Encrypted: i=1; AJvYcCULri66IhtirOPTO+asFZl/K4AYY1rhd2hUQzmE73m42OnV7VeX2bJRsWXLr26jp7KZZlcyywDn+keRdcpnXbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNeQT1Tosus35T6NeJyAoi1qFjml0hP3jhtmhPKgTDXUnmtnSB
-	mtG/nqdjgNWqYHhIzOG+5D/3z3CThAZaMP5NfMlvD1NXYjvLBOSnN4nYlOmoEKU=
-X-Gm-Gg: ASbGncuzxt8ArCFOLhQq5LCmNPH6xo3jSUclNw6CXhMQweWGVRpaTaswkY6Rgj2KKZg
-	CwbMK4N+lfzj1Fx+ARPjYgEvkBkEsWKiquppbzzfOLzxvaYR7cFsTv8bDG/kGECcrGe5HR7xnN0
-	/9JhHH2dAZtvvKD+UCfaf25Da9OuPIYxsUPCscYXAUy3c0tgQVvB6tHnRlp9bBI+LWs6KtnxT4b
-	9SibMzvh0yzzjJ3Vf+RXoREIOFV6+migtK6kYqBoqlbK96xgIzgN9PrvvJ++OhkskIQMhsct9jP
-	m8kC9AiUow==
-X-Google-Smtp-Source: AGHT+IELH+bBqrR/DNdgG5xv1+tVHzYnjMiPoKdiDc9L/i/0lW5ZPH1QuoM9q8QfCwS7dKz0mFT1kw==
-X-Received: by 2002:a05:600c:5486:b0:434:a10f:c3 with SMTP id 5b1f17b1804b1-438913cae48mr206468175e9.9.1737611319450;
-        Wed, 22 Jan 2025 21:48:39 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b318aae1sm50769655e9.1.2025.01.22.21.48.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2025 21:48:38 -0800 (PST)
-Date: Thu, 23 Jan 2025 08:48:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Thomas Graf <tgraf@suug.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: netlink: prevent potential integer overflow in
- nlmsg_new()
-Message-ID: <c428890e-1ad1-4602-9919-ba720546b821@stanley.mountain>
-References: <58023f9e-555e-48db-9822-283c2c1f6d0e@stanley.mountain>
- <62af8b0f-7361-4099-ae20-f5a55e9cffb5@intel.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="J0/5sZUr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1737633969; x=1738238769; i=markus.elfring@web.de;
+	bh=UTqiET7WvIyNmxkB9HztfBX6a1pIICycyDq3ehfiDBg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=J0/5sZUrC3lKWzqNKO4jFDxE1IqTSEZq1Jw9k0moBbt99Ke6hwlOJ9/wQuDVTPD3
+	 BIIW6PEz0OAQ+/OuJK4XX2qtgJjn3p224Zu0N4lDFq+qDtKp0bfL6tanrHdsZb50d
+	 4C3F4CFmFhE2g2SKbCQv+zmbMRa2myKi2/k3uTvLPHWraJnc+JM9E8zEmXnVXBiaG
+	 XJQa4UYk9xjE+q9z0FrXzo/o7IZepmZaDcmIK4clVh7XdaZYnVWUurhhHQrhTDveE
+	 hTxLvGuMZmfHp63fsglJ/gauLkyqt5VIPZBCxa4lN04ZiMlay7GjwCN6giB9h88kt
+	 O/Rzt1J3jVlFGO1tpA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.29]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MYcll-1twg6c2iFn-00Sq37; Thu, 23
+ Jan 2025 13:06:09 +0100
+Message-ID: <07da64ca-e645-4a29-bc21-c3065ad5a3c4@web.de>
+Date: Thu, 23 Jan 2025 13:05:54 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62af8b0f-7361-4099-ae20-f5a55e9cffb5@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] linux-next: virtual rule report not supported
+To: Ricardo Ribalda <ribalda@google.com>, cocci@inria.fr,
+ Easwar Hariharan <eahariha@linux.microsoft.com>
+References: <CANiDSCvLCaMdJVSMahNgg1UQMh3naoTrWGh=9+4p8pePWyLStg@mail.gmail.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CANiDSCvLCaMdJVSMahNgg1UQMh3naoTrWGh=9+4p8pePWyLStg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ETKQyoQm+2wisY4zMXlznKj4rTVYFgMBgmfgxnKx8kRLbgjOYZ5
+ sKpHCL0Frerjxr6hiLBdhqHfZ8encQXBH2d9lFELMtfZiIJ0v8HjdYE9lfWpM9dG9jKqfgs
+ v/Fri3PLZYiEw3+8bAFq1ErlEpheQAarn66/PaZ6WoJ7ebhZhiSWk17IFd4G1TrYEO9vpOQ
+ 4ODEVFwC1eEFjqWMfesog==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qnxH8L+R42U=;JcHHDYgJ+ZKhG7SlbXIjDav3hR5
+ dBZ0q0qG15YwJ0kEsR95KGfVJMMLaN+lxnLX3hp7cf0R+JWHQSqwQjqgrx8YArb1YXUy32tRp
+ zL//Ndq0QzTq7jTh6MD4Hcbdl8NvIFsuFsqaGLok8EtX4eN9r73ndqovoV7UVwXLKS0agm3RR
+ 33SwOaBD/F7yx5JxvgdDLQ+6nQvTUqZlSC5zapaRJBWLsrOjyC92/+IV3Ihl0O2RLthNoMqjq
+ V5c868qdHxGE9ZQt9U4gDnTi7zyz5kNKMoWly46rLbbr+uLx2NqIDOaY5qyncLZtZDOyLJLTK
+ b+NgEiAyoYpW9qQjRTJbYOqWvbEEhuVR+F/BEhe+zzOoD12E17954jzyXNx8IFhDUc2ho/OQN
+ tV1SQOoM3nUwW3N19OyfOaGTY+KWoP50Twc5ddv/Xu6IOqyGKhEa/7IKk7sKOumzFmBqLlpd5
+ Hymn5dHdi1bE1NVrzz9GT5QxeisSygkourf24m3tsvHkpOv6pcVcEg4iBIkJbFOd8ncRaqiar
+ mF7bDVOyVXn9quOaeqqSrsc3OUF3EKnyI5h+cuztrHtuRzeM61kJxtTTBBEinLNh2VUo4HIas
+ hMMy2Ec11Ol20EE3UFUKujDNZC0IzMyBdHjV+L1a5Tce76OtZWke/txaVZh2JE3adK7aRVtYV
+ /L9VUWnl0Jh11I1TC1xJY5TzRNq95tVoX8ib0NZN9vZKH3oos4I0Ep5KfED2lxqeo7UO2fC6P
+ Pefw7c+G4nV/dXrbjNZC47YTRpR9FFwU4jSzhp/bRPG1ffUF1qUEA48OQdW8t2Oor0otQ7CsD
+ TwYIXEIK3vC6wz2nq55frC7mJTZrmNmKOUbR39EAQOolrYPWGNOPOoo31GUCWPQNfs3dvdKrW
+ WsieonCAVhJnfP66bVVbCNiVU46zBdFJ31gN2h/sxaPA/QjvipUaDuc4VW/FJdsl0qxscZ8Z/
+ bvGZmf0/tphuyZHOXM1FFfgUUH9hQ+1XGwrYvMnvt0Xwj6l+Aew1ah4X/3zNkKRosqM5J8IqU
+ tfX7usXuTgbHF+Eu7lONcEyy1I2mMMb8JXMBJ6FFfBnQ3HXCu329h5q5AVBNffsDmXsoze1Jm
+ rgoV/Kxj7l42IJVM4bHw86abgNBZ26rMc9/vzE9p3nDz4jxXHKiOV/beW7vVl7kdrThYNbbg4
+ ZCmOxF2nzteO2VsPCNVMpaMHy7xaiFzw7HdacbGvq6CiWzmj2VcM8Hv/2f1iFownjHDbmSWFE
+ elbw+Oif5GaYcTvzeARDJEzF2IAAIkVeiQUyv6rZPNuVPlnChU6Gioir9muH4xW4c6Jz4BpA3
+ T9Ce0T9zRV3G/IokZWJvS5zqngjQrAY109mVv4xfVpvu/bF5fGs8PVUFdWDFzXXtzbm
 
-On Wed, Jan 22, 2025 at 02:52:39PM +0100, Przemek Kitszel wrote:
-> On 1/22/25 14:49, Dan Carpenter wrote:
-> > The "payload" variable is type size_t, however the nlmsg_total_size()
-> > function will a few bytes to it and then truncate the result to type
-> > int.  That means that if "payload" is more than UINT_MAX the alloc_skb()
-> 
-> In the code it's INT_MAX, would be best to have the same used in both
-> places (or explain it so it's obvious)
-> 
+> While trying out linux-next I have hit an error in cocci:
+>
+> $make coccicheck M=3D"$dir" MODE=3Dreport
+> ...
+> /usr/bin/spatch -D report --no-show-diff --very-quiet --cocci-file
+> /workdir/scripts/coccinelle/misc/secs_to_jiffies.cocci --patch
+> /workdir --dir . -I /workdir/arch/x86/include -I
+> /workdir/arch/x86/include/generated -I /workdir/include -I
+> /workdir/include -I /workdir/arch/x86/include/uapi -I
+> /workdir/arch/x86/include/generated/uapi -I /workdir/include/uapi -I
+> /workdir/include/generated/uapi --include
+> /workdir/include/linux/compiler-version.h --include
+> /workdir/include/linux/kconfig.h --jobs 64 --chunksize 1
+> virtual rule report not supported
+> coccicheck failed
+> make[1]: Leaving directory '/workdir/drivers/media'
+> make[2]: *** [/workdir/Makefile:2094: coccicheck] Error 255
+> make[1]: *** [/workdir/Makefile:251: __sub-make] Error 2
+> make: *** [Makefile:251: __sub-make] Error 2
+>
+> Deleting scripts/coccinelle/misc/secs_to_jiffies.cocci "works"
 
-Yeah.  It's not probably not obvious.
+Would you like to increase the development attention for better support
+of involved operation modes?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/dev-tools/coccinelle.rst?h=3Dv6.13#n71
 
-I don't like using UINT_MAX as a limit because why push so close to the
-edge?  Normal allocation functions are capped at INT_MAX to avoid
-integer overflows.  You'd have to use vmalloc() to allocate more than
-2GB of RAM.  So it's not like we gain anything by using a higher, riskier
-number.
-
-The nlmsg_total_size() function adds potentially 19 bytes to the
-payload.
-
-INT_MAX plus anything less than 2 million number can't overflow to zero.
-It could overflow to negative but you can't allocate negative bytes so
-that's fine.
-
-The vfs_read/write() functions use MAX_RW_COUNT to avoid integer
-overflows.  That's basically INT_MAX - PAGE_SIZE.  There are quite
-a few places like this in the kernel which assume small numbers like
-sizeof() are generally going to return less than PAGE_SIZE.  Would
-that be better to do this.  Then it couldn't overflow to negative.
-
-regards,
-dan carpenter
-
-diff --git a/include/net/netlink.h b/include/net/netlink.h
-index e015ffbed819..ceeea04fae4a 100644
---- a/include/net/netlink.h
-+++ b/include/net/netlink.h
-@@ -1015,6 +1015,9 @@ static inline struct nlmsghdr *nlmsg_put_answer(struct sk_buff *skb,
-  */
- static inline struct sk_buff *nlmsg_new(size_t payload, gfp_t flags)
- {
-+	/* Prevent integer overflow */
-+	if (payload > INT_MAX - PAGE_SIZE)
-+		return NULL;
- 	return alloc_skb(nlmsg_total_size(payload), flags);
- }
- 
+Regards,
+Markus
