@@ -1,146 +1,78 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F58215045;
-	Wed, 22 Jan 2025 16:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2661EA80;
+	Thu, 23 Jan 2025 04:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737564850; cv=none; b=LuKr23sWrsCU9ogtzErebvG8aAvka89wZ/odqFq1zywLJdyHqdvjNpFzXakQgMs7paXSie+U4afCvL8O8h0YEzXWB+ZUYWVv2q1sk7loLXBsjM7CFWYPsk1XrFbm1TDtT2LIEw6xLKNx7wrIueR6Hsud4xIZ1toOXnOaOfT058k=
+	t=1737605407; cv=none; b=SlorF5ej/R2iO5SXNjH4WcY2NK1KuXZosiHleQtNSOrYYGtV/1WIGab9VQXDc2D9cTu5nLVh4XmLw+ruIXncWr0HgP79QpAhdmKlJ3HHuNdT5N0x2tttQmHqT1ZkF05omXMKkwzQFhJiWWK22sdAXG1Sl/jsK1YJR7WTQhVhbLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737564850; c=relaxed/simple;
-	bh=YuUqBXFwxJR+NzY8T6Fja35g1/jWJVAvocoIsfKf2E8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YIagJm5rq4rJQjzfNbIVmbHVXYLF/BkdSa04mPV1KobHELgEL+JTvwFyxZIx/GBkFY1aTTGN2OkW6efLK38sReTlEAXKv0/nbF5ysCVxkDnLDFQXAucQxR1ewhAdhoLlyGgldgsBZnYARZO6IyRvB4VetndkQO8H0zDuutr0Fpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U4y1EOxR; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1737605407; c=relaxed/simple;
+	bh=imTtN7rF/OdbUjVXQxMuzTmzvPpWK/sSu9e40fb7FoA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=jQlnueJ4AIoEdQK/JrEO79ZSGF/6/xLCZuMtNC2dsb5rcrcLNmtoJkuVAJB8lGR5p5pKL3/fS0iTDGci+r8rpM1PEQw6OPOk9x1CP2t6O1GhegtiVlnLQJnEzDfWt2kcjmBMDwp5z93mfnWsohYfvPYO4q/wIZDXkQ70H19ivh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATN3HJOy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U4y1EOxR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1737564849; x=1769100849;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YuUqBXFwxJR+NzY8T6Fja35g1/jWJVAvocoIsfKf2E8=;
-  b=U4y1EOxRuvchmxBcWc1Dj5nvIky8Ms9tFTK5NCGThn5RpGva71+LbYrN
-   CG24ZX3WY74XgukwiDs7776TzEMoneis4gXGfpGNt5qU+IPQtPMTTijmR
-   5uv/AFDaMIMHxkDe1/DlFLrQa3syzRj7626zZxFNKPgGA1cf8hnShMmnR
-   U+QoH84RQg93AVZmrQl4w8wdQJfhjnHJyES2jXVYEVnAsArR1qSWy7IMN
-   3gFK/RfzHoYRaXp5ZJeEmDLz1667XsxiO8LgjIQ75IAoHtsxdaX9fy/Cq
-   mAjZPYhre0QyxZWpB1I0sUwzbRjcIe08wFrjNq3JkIRfhPxUBBlj9iUXa
-   Q==;
-X-CSE-ConnectionGUID: 1CO9Ch7jR3+XgIEZz9Ai9Q==
-X-CSE-MsgGUID: Kec7awuGQqGsFCoDfV/zQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11323"; a="25632195"
-X-IronPort-AV: E=Sophos;i="6.13,225,1732608000"; 
-   d="scan'208";a="25632195"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2025 08:54:07 -0800
-X-CSE-ConnectionGUID: k5KJ2rIkS0iD21NFb/oc8A==
-X-CSE-MsgGUID: 0lOu5m7nRRGqiW0slVFPnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="112286242"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 22 Jan 2025 08:54:05 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tadzO-000a83-1u;
-	Wed, 22 Jan 2025 16:54:02 +0000
-Date: Thu, 23 Jan 2025 00:53:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dan Carpenter <error27@gmail.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>
-Cc: oe-kbuild-all@lists.linux.dev, Herbert Xu <herbert@gondor.apana.org.au>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] xfrm: fix integer overflow in
- xfrm_replay_state_esn_len()
-Message-ID: <202501230035.cFbLTHtZ-lkp@intel.com>
-References: <018ecf13-e371-4b39-8946-c7510baf916b@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATN3HJOy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 715C7C4CEDD;
+	Thu, 23 Jan 2025 04:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737605405;
+	bh=imTtN7rF/OdbUjVXQxMuzTmzvPpWK/sSu9e40fb7FoA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ATN3HJOyy7qLHCNnWRiGrDvGyrBdvK48vavmHtqdDy4QzmIxUHADeqo968N5P1QcO
+	 CSllhXle1tN5H447kas0h3h9+hivGUm0eO2dxQrBV6v369Rqljs9DnMTvadlOfLFAH
+	 aZEOcvvbWq2JqNXGD7d5KpHQj2QVn5+ddUl/GHRBQBY45zwWXF44aU6mWI8G0ofP1k
+	 FaFVJjyOB3mAC+AhV4dmxDM1ZgEsW3u/tKRs5O2+Lp5u35ZrDkkN3Ibl77muIeuNzv
+	 R2LtCaFM/TNY+L532ER6ml2D618VK4QYGBp4TKC/o2ZtpPdyLKwXdo5JidWXuTlvoj
+	 vxQ/qDOvHN/Nw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D7C380AA70;
+	Thu, 23 Jan 2025 04:10:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <018ecf13-e371-4b39-8946-c7510baf916b@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] NFC: nci: Add bounds checking in nci_hci_create_pipe()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173760543003.917319.8232121908443720165.git-patchwork-notify@kernel.org>
+Date: Thu, 23 Jan 2025 04:10:30 +0000
+References: <bcf5453b-7204-4297-9c20-4d8c7dacf586@stanley.mountain>
+In-Reply-To: <bcf5453b-7204-4297-9c20-4d8c7dacf586@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: christophe.ricard@gmail.com, sameo@linux.intel.com, krzk@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 
-Hi Dan,
+Hello:
 
-kernel test robot noticed the following build warnings:
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-[auto build test WARNING on net/main]
+On Fri, 17 Jan 2025 12:38:41 +0300 you wrote:
+> The "pipe" variable is a u8 which comes from the network.  If it's more
+> than 127, then it results in memory corruption in the caller,
+> nci_hci_connect_gate().
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a1b0b9415817 ("NFC: nci: Create pipe on specific gate in nci_hci_connect_gate")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> [...]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/xfrm-fix-integer-overflow-in-xfrm_replay_state_esn_len/20250121-191827
-base:   net/main
-patch link:    https://lore.kernel.org/r/018ecf13-e371-4b39-8946-c7510baf916b%40stanley.mountain
-patch subject: [PATCH net] xfrm: fix integer overflow in xfrm_replay_state_esn_len()
-config: mips-allyesconfig (https://download.01.org/0day-ci/archive/20250123/202501230035.cFbLTHtZ-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250123/202501230035.cFbLTHtZ-lkp@intel.com/reproduce)
+Here is the summary with links:
+  - NFC: nci: Add bounds checking in nci_hci_create_pipe()
+    https://git.kernel.org/netdev/net/c/110b43ef0534
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202501230035.cFbLTHtZ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/string.h:389,
-                    from include/linux/bitmap.h:13,
-                    from include/linux/cpumask.h:12,
-                    from arch/mips/include/asm/processor.h:15,
-                    from arch/mips/include/asm/thread_info.h:16,
-                    from include/linux/thread_info.h:60,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/mips/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:79,
-                    from include/linux/spinlock.h:56,
-                    from include/net/xfrm.h:7,
-                    from net/xfrm/xfrm_replay.c:10:
-   In function 'memcmp',
-       inlined from 'xfrm_replay_notify_bmp' at net/xfrm/xfrm_replay.c:336:7:
->> include/linux/fortify-string.h:120:33: warning: '__builtin_memcmp' specified bound 4294967295 exceeds maximum object size 2147483647 [-Wstringop-overread]
-     120 | #define __underlying_memcmp     __builtin_memcmp
-         |                                 ^
-   include/linux/fortify-string.h:727:16: note: in expansion of macro '__underlying_memcmp'
-     727 |         return __underlying_memcmp(p, q, size);
-         |                ^~~~~~~~~~~~~~~~~~~
-   net/xfrm/xfrm_replay.c: In function 'xfrm_replay_notify_bmp':
-   net/xfrm/xfrm_replay.c:308:53: note: source object allocated here
-     308 |         struct xfrm_replay_state_esn *replay_esn = x->replay_esn;
-         |                                                    ~^~~~~~~~~~~~
-   In function 'memcmp',
-       inlined from 'xfrm_replay_notify_esn' at net/xfrm/xfrm_replay.c:402:7:
->> include/linux/fortify-string.h:120:33: warning: '__builtin_memcmp' specified bound 4294967295 exceeds maximum object size 2147483647 [-Wstringop-overread]
-     120 | #define __underlying_memcmp     __builtin_memcmp
-         |                                 ^
-   include/linux/fortify-string.h:727:16: note: in expansion of macro '__underlying_memcmp'
-     727 |         return __underlying_memcmp(p, q, size);
-         |                ^~~~~~~~~~~~~~~~~~~
-   net/xfrm/xfrm_replay.c: In function 'xfrm_replay_notify_esn':
-   net/xfrm/xfrm_replay.c:360:53: note: source object allocated here
-     360 |         struct xfrm_replay_state_esn *replay_esn = x->replay_esn;
-         |                                                    ~^~~~~~~~~~~~
-
-
-vim +/__builtin_memcmp +120 include/linux/fortify-string.h
-
-78a498c3a227f2 Alexander Potapenko 2022-10-24  118  
-78a498c3a227f2 Alexander Potapenko 2022-10-24  119  #define __underlying_memchr	__builtin_memchr
-78a498c3a227f2 Alexander Potapenko 2022-10-24 @120  #define __underlying_memcmp	__builtin_memcmp
-a28a6e860c6cf2 Francis Laniel      2021-02-25  121  #define __underlying_strcat	__builtin_strcat
-a28a6e860c6cf2 Francis Laniel      2021-02-25  122  #define __underlying_strcpy	__builtin_strcpy
-a28a6e860c6cf2 Francis Laniel      2021-02-25  123  #define __underlying_strlen	__builtin_strlen
-a28a6e860c6cf2 Francis Laniel      2021-02-25  124  #define __underlying_strncat	__builtin_strncat
-a28a6e860c6cf2 Francis Laniel      2021-02-25  125  #define __underlying_strncpy	__builtin_strncpy
-2e577732e8d28b Andrey Konovalov    2024-05-17  126  
-
+You are awesome, thank you!
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
