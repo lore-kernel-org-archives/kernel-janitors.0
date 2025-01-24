@@ -1,33 +1,33 @@
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A751DB126;
-	Fri, 24 Jan 2025 07:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ADD13AC1;
+	Fri, 24 Jan 2025 07:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737703722; cv=none; b=GIRvm+m/4kv/lfHwqVge/CJrCpVuiQCsI3zy11CfiRg6g/p/vTAjfEDeeWRur/efb+fAkfZBdBymoi0axDlzGPUz8Bw+yfcCq7/4R8jJDOZS+eBSf85LmK70r5nqfCHACCUv+cGQGIyl6TaJppjnAMgL/wP0z8oH+Wghn/xnfjI=
+	t=1737704509; cv=none; b=Dxh8lJlb6yEUbCfXHXoPTGBeC3XLW8thQKAtDctqEwF/L/FpWJ0mu9VqC0JgZjXunnsb4M0/3DpnwUwe1XswyFR+QzH83ln/dCUpZFCysaxzY2c7uWkPGHnimks1eW9sYMdUfviBpePWiyHhnKiJefsV7RTeHD16dVZDyPcnpLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737703722; c=relaxed/simple;
-	bh=tadFFT9/jzoFvFgIb1qCZD/e6ulUeAxvLuKkWd/1bng=;
+	s=arc-20240116; t=1737704509; c=relaxed/simple;
+	bh=WBcbTgy3ulr1uQelNdMAjS6ra/7qdZhij1DB83EsW4E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VR459/TbAEaKbS7f9GBDsiF17GtdyQ+7w80VUz6I5HfIYvDD/ZUGYQfMr+XfRhK58RCsNHsv6NV+FcYifM4N3FJ4YDABRDzwGG/PWa0/ONQ6n+xHyhaWOB2mgMLmQ3xgJts6oB/Fd4Eg8JpmZvLN6W5JlhAinI+V3V6tqSu6VZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ox+5y6WG; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:Content-Type; b=YBFKXTk8acjhtjINpSv++Ga9tsGYKd7WHrAihxS/Bci+if39oCgPv8m+lzQUsAAc/4wCDH6NDzpN7aQUAy+950jcs2sjmoy6fL3MnoPJALjtAkA902sR////qCZ7hBzU9djxTNK2HKL6gaY6gcKKTK9eM8tFHNEARNv7uzDpqnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Ut6aj5KQ; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ox+5y6WG"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ut6aj5KQ"
 Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2F137465;
-	Fri, 24 Jan 2025 08:27:33 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4582C465;
+	Fri, 24 Jan 2025 08:40:41 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1737703653;
-	bh=tadFFT9/jzoFvFgIb1qCZD/e6ulUeAxvLuKkWd/1bng=;
+	s=mail; t=1737704441;
+	bh=WBcbTgy3ulr1uQelNdMAjS6ra/7qdZhij1DB83EsW4E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ox+5y6WGBeCPHYc8DZ7Ys+7XxXyH0Z6QJrY23WiHlAillfvDSwOeIe1x3b29EXQSv
-	 +1SOMjEIdsUYngLaBn0vWnsGD0vYjLAtY3bBnHyMJjspEclbCdYybUHdrxfFluWi/D
-	 njUfp85Ugc1HOQF4p4QzWBGSEo6GVWsjUZlHNrmg=
-Message-ID: <976580f4-2e2c-4269-b5a6-2f9431cecaf8@ideasonboard.com>
-Date: Fri, 24 Jan 2025 09:28:34 +0200
+	b=Ut6aj5KQDlp5wNfnSpqzjBXKp2UNyrN3I8W/biegXn/Cy8hTwHyS8w3kxxdAbkogX
+	 fBmJXLBviEbjsniUvxDirZJ5A5T5CBPd48UlqCdbk10AUTtOOlB8hdwHSeKNeuMQE4
+	 uy9l9IACmu9LGEMmkzjxjH7nJMCB0in9cD8N12ys=
+Message-ID: <f4ed52b3-42a3-4aec-9656-3ef79c57803d@ideasonboard.com>
+Date: Fri, 24 Jan 2025 09:41:42 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -35,23 +35,15 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] drm: zynqmp_dp: Unlock on error in
- zynqmp_dp_bridge_atomic_enable()
-To: Sean Anderson <sean.anderson@linux.dev>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+Subject: Re: [PATCH] drm/tidss: Fix typos
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <b4042bd9-c943-4738-a2e1-8647259137c6@stanley.mountain>
- <20241112052754.GB21062@pendragon.ideasonboard.com>
- <37be000a-3ef8-4df4-aefa-b4d73487ad27@linux.dev>
- <20241112164305.GA24067@pendragon.ideasonboard.com>
- <5c2c6883-d81a-4869-9f32-48d23c0728ea@linux.dev>
- <11b81c8b-5ef1-470c-836a-a436ecadf0f4@linux.dev>
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20240912125735.45114-1-algonell@gmail.com>
 Content-Language: en-US
 From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
@@ -97,46 +89,50 @@ Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
  ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
  yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
  3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <11b81c8b-5ef1-470c-836a-a436ecadf0f4@linux.dev>
+In-Reply-To: <20240912125735.45114-1-algonell@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Hi,
 
-On 24/01/2025 01:56, Sean Anderson wrote:
-> On 11/12/24 12:22, Sean Anderson wrote:
->> On 11/12/24 11:43, Laurent Pinchart wrote:
->>> On Tue, Nov 12, 2024 at 09:41:58AM -0500, Sean Anderson wrote:
->>>> On 11/12/24 00:27, Laurent Pinchart wrote:
->>>>> Hi Dan,
->>>>>
->>>>> Thank you for the patch.
->>>>>
->>>>> On Mon, Nov 11, 2024 at 12:06:10PM +0300, Dan Carpenter wrote:
->>>>>> We added some locking to this function, but accidentally forgot to unlock
->>>>>> if zynqmp_dp_mode_configure() failed.  Use a guard lock to fix it.
->>>>>>
->>>>>> Fixes: a7d5eeaa57d7 ("drm: zynqmp_dp: Add locking")
->>>>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->>>>>
->>>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>>>
->>>>> Sean, how about replacing all the mutex_lock()/mutex_unlock() calls
->>>>> you've added in a7d5eeaa57d7 with guards ?
->>>>
->>>> I have no objection to that.
->>>
->>> Would you send a patch ? Otherwise I can do it.
->>>
->>
->> I can send a patch, but it will not be for a week or two.
->>
->> --Sean
+On 12/09/2024 15:57, Andrew Kreimer wrote:
+> Fix typos in comments.
 > 
-> Just following up on this; will the above patched be merged? I would
-> prefer to keep the bugfix and the conversion separate.
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> ---
+>   drivers/gpu/drm/tidss/tidss_dispc_regs.h | 2 +-
+>   drivers/gpu/drm/tidss/tidss_plane.c      | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc_regs.h b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
+> index 13feedfe5d6d..e88148e44937 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc_regs.h
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
+> @@ -49,7 +49,7 @@ enum dispc_common_regs {
+>   /*
+>    * dispc_common_regmap should be defined as const u16 * and pointing
+>    * to a valid dss common register map for the platform, before the
+> - * macros bellow can be used.
+> + * macros below can be used.
+>    */
+>   
+>   #define REG(r) (dispc_common_regmap[r ## _OFF])
+> diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
+> index a5d86822c9e3..1396bbf9616f 100644
+> --- a/drivers/gpu/drm/tidss/tidss_plane.c
+> +++ b/drivers/gpu/drm/tidss/tidss_plane.c
+> @@ -59,7 +59,7 @@ static int tidss_plane_atomic_check(struct drm_plane *plane,
+>   
+>   	/*
+>   	 * The HW is only able to start drawing at subpixel boundary
+> -	 * (the two first checks bellow). At the end of a row the HW
+> +	 * (the two first checks below). At the end of a row the HW
+>   	 * can only jump integer number of subpixels forward to the
+>   	 * beginning of the next row. So we can only show picture with
+>   	 * integer subpixel width (the third check). However, after
 
-I'll push to drm-misc-fixes.
+Thanks, pushing to drm-misc-next.
 
   Tomi
 
