@@ -1,124 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337F3182D2;
-	Fri, 24 Jan 2025 16:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DC9BA53
+	for <kernel-janitors@vger.kernel.org>; Sat, 25 Jan 2025 00:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737734532; cv=none; b=FLg0b4+MkG1Usk7SzsYTXFvYnro3Dq21M69hC6X8n3wO46ic5GSPBM2yzbuq84Bj2Vr5rwN8uS50tJ0akq7BDSMFF5xLhBkYl+pqulf8IRqw/nmLGLHj9iLK481U/Pm86MYXeFWS5TsmdpuOwH0Kvxl7esMup4+X0SJ/zfAM1Hc=
+	t=1737765761; cv=none; b=DwBpYa3/tCzp6Rny5au0Y+c31IgMuY2VQAnKI84SLDJnEvCYBq3aCa8BYFhWQ+zG6ueFWRj8Ix8A7L/BmhP7JMgcixR6TUlr5XV/JtWDQzgYVd+q3QatfW/ytvqcX/HbIy/lCDi0MK6L7r2UTZFmsJuTbAdyKHK2ZylS7barFug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737734532; c=relaxed/simple;
-	bh=mc7C+xWF1Inf26mfK2Z5ENKooEXC/JlUijWAy2yAlBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q7CF5YNqqh/fMk+WMbxlE1sCH8EvzWQ2+Zu5LFCBJNv6WKoTNNYWVMjQ4jaIG40ep9xtYFpFkhwxyXWX0MexZ/k9D48DTBHqdLax/LFxa+DNb6PQwIpDl20upfau8/pnqT8TEhNWrjQ1DE8jG6ncpKN/t8YRvzJ7UTtgGMHZYJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHPu2we1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737765761; c=relaxed/simple;
+	bh=4jy+OLhpqZHInk4qb29AFovGyww7uHJ9mMKT8hjae78=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ndhzv7R3gf+y7KX1Bv8PMM7z3GNRUmhVqjxrK8f6D2wF7G6mQe/6j+H2sBUFj8l50KgsEkJgkFRerYxFobZZP3srRbpA1A+HSlBQ762MhhrKaaEsFddrYkSd2U/+g9FNYtQGIQenRehA63WKrc4SMPPrzZ5Fl1DIkBGD9RflknY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cV+rjXER; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHPu2we1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3CBCC4CEDD;
-	Fri, 24 Jan 2025 16:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737734532;
-	bh=mc7C+xWF1Inf26mfK2Z5ENKooEXC/JlUijWAy2yAlBg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qHPu2we1GYDq4abcoJt1sMXdp89JBCs25XvXrHdH7aa5B2kAYK2CB4KLyMGSEsShC
-	 dJaC6Z1nwJXA0NhC0e2AJ/iFevLwB++k5AzbdzRiK+P55iqSWrY/vmuCbgh/v9VIeM
-	 71CsuGFP8U6xynMeKGmltiGKhcT1SBz0g7NTq4XJU96nTfDJGApxTxMG4oisClQ7tu
-	 s8I6i5kOsxFCCa7wqEBTAlpQ+wnh7nqH1JrHjQRI1xn/yLLwARfzKPPPwNlEsXibcO
-	 77fiJvoOFsG4RbPquL1/ANSGfzzbDDYdy4dprS+XFhFqEO1AzmD7jR8/ue+XOgVgc/
-	 HFaCcsYaEoEYg==
-Date: Fri, 24 Jan 2025 08:02:10 -0800
-From: Jakub Kicinski <kuba@kernel.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cV+rjXER"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1737765757;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MK7dj0TEkuXhy6rMdQfrC3EijRaQ1TSJle0iu1e3X/o=;
+	b=cV+rjXERklbq+c83c1DbT5IUBkuT2kAGqEnpIDgPyRo7EdzqIbMTJeENaFPDTJj5qSK1rl
+	3l9OtHVlFNxuO11wNj7F2tvfYsm+e75SI6fFnlHLlLqILPiREPgMTTU0v0NOhm+Cq1o0Ql
+	9RPvsqk6pLZAQX73XAXgXWGoG91oiss=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-611-didQv12iPGK6TCqDydgeog-1; Fri,
+ 24 Jan 2025 19:42:33 -0500
+X-MC-Unique: didQv12iPGK6TCqDydgeog-1
+X-Mimecast-MFC-AGG-ID: didQv12iPGK6TCqDydgeog
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5BBA619560BA;
+	Sat, 25 Jan 2025 00:42:31 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.64.79])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EEF9230001BE;
+	Sat, 25 Jan 2025 00:42:28 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Thomas Graf <tgraf@suug.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net: netlink: prevent potential integer overflow in
- nlmsg_new()
-Message-ID: <20250124080210.23208829@kernel.org>
-In-Reply-To: <04dbe1d5-51e8-42d5-a77d-59db4bc13957@stanley.mountain>
-References: <58023f9e-555e-48db-9822-283c2c1f6d0e@stanley.mountain>
-	<20250122062427.2776d926@kernel.org>
-	<04dbe1d5-51e8-42d5-a77d-59db4bc13957@stanley.mountain>
+Cc: William Tu <u9012063@gmail.com>,  dev@openvswitch.org,
+  netdev@vger.kernel.org,  kernel-janitors@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Eric Dumazet <edumazet@google.com>,  Simon
+ Horman <horms@kernel.org>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  "David S. Miller" <davem@davemloft.net>
+Subject: Re: [ovs-dev] [PATCH net] net: ovs: prevent underflow in
+ queue_userspace_packet()
+In-Reply-To: <4d6d9d9e-b4d9-42f1-aa78-1a5979679b2e@stanley.mountain> (Dan
+	Carpenter's message of "Fri, 24 Jan 2025 17:49:05 +0300")
+References: <4d6d9d9e-b4d9-42f1-aa78-1a5979679b2e@stanley.mountain>
+Date: Fri, 24 Jan 2025 19:42:26 -0500
+Message-ID: <f7th65nhggd.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, 24 Jan 2025 17:35:24 +0300 Dan Carpenter wrote:
-> On Wed, Jan 22, 2025 at 06:24:27AM -0800, Jakub Kicinski wrote:
-> > On Wed, 22 Jan 2025 16:49:17 +0300 Dan Carpenter wrote:  
-> > > The "payload" variable is type size_t, however the nlmsg_total_size()
-> > > function will a few bytes to it and then truncate the result to type
-> > > int.  That means that if "payload" is more than UINT_MAX the alloc_skb()
-> > > function might allocate a buffer which is smaller than intended.  
-> > 
-> > Is there a bug, or is this theoretical?  
-> 
-> The rule here is that if we pass something very close to UINT_MAX to
-> nlmsg_new() the it leads to an integer overflow.  I'm not a networking
-> expert.  The caller that concerned me was:
-> 
-> *** 1 ***
-> 
-> net/netfilter/ipset/ip_set_core.c
->   1762                  /* Error in restore/batch mode: send back lineno */
->   1763                  struct nlmsghdr *rep, *nlh = nlmsg_hdr(skb);
->   1764                  struct sk_buff *skb2;
->   1765                  struct nlmsgerr *errmsg;
->   1766                  size_t payload = min(SIZE_MAX,
->   1767                                       sizeof(*errmsg) + nlmsg_len(nlh));
-> 
-> I don't know the limits of limits of nlmsg_len() here.
+Dan Carpenter <dan.carpenter@linaro.org> writes:
 
-Practically speaking the limits are fairly small. The nlh comes from
-user's request / sendmsg() call. So the user must have prepared 
-a message of at least that len, and kernel must had been able to
-kvmalloc() a linear buffer large enough to copy that message in.
+> If "hlen" less than "cutlen" then when we call upcall_msg_size()
+> the "hlen - cutlen" parameter will be a very high positive
+> number.
+>
+> Later in the function we use "skb->len - cutlen" but this change
+> addresses that potential underflow since skb->len is always going to
+> be greater than or equal to hlen.
+>
+> Fixes: f2a4d086ed4c ("openvswitch: Add packet truncation support.")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> From code review not testing.
 
-> The min(SIZE_MAX is what scared me.  That was added to silence a Smatch
-> warning.  :P  It should be fixed or removed.
+I think it's pretty difficult to trigger this case.  'cutlen' will only
+be set by a TRUNC action attribute, which does a length check there.
 
-Yeah, that ip_set code looks buggy. Mostly because we use @payload
-for the nlmsg_put() call, but then raw nlh->nlmsg_len for memcpy() :S
+>  net/openvswitch/datapath.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/net/openvswitch/datapath.c b/net/openvswitch/datapath.c
+> index 225f6048867f..bb25a2bbe8a0 100644
+> --- a/net/openvswitch/datapath.c
+> +++ b/net/openvswitch/datapath.c
+> @@ -477,6 +477,11 @@ static int queue_userspace_packet(struct datapath *dp, struct sk_buff *skb,
+>  	else
+>  		hlen = skb->len;
+>  
+> +	if (hlen < cutlen) {
+> +		err = -EINVAL;
+> +		goto out;
+> +	}
+> +
 
->   1768                  int min_len = nlmsg_total_size(sizeof(struct nfgenmsg));
->   1769                  struct nlattr *cda[IPSET_ATTR_CMD_MAX + 1];
->   1770                  struct nlattr *cmdattr;
->   1771                  u32 *errline;
->   1772  
->   1773                  skb2 = nlmsg_new(payload, GFP_KERNEL);
->   1774                  if (!skb2)
->   1775                          return -ENOMEM;
-> 
-> *** 2 ***
-> There is similar code in netlink_ack() where the payload comes from
-> nlmsg_len(nlh).
+I think the right change would be more like:
 
-This one is correct. Each piece of the message is nlmsg_put()
-individually, which does bounds checking. So if the allocation 
-of the skb was faulty and the skb is shorter than we expected 
-we'll just error out on the put.
+	if (hlen < cutlen)
+		cutlen = 0;
 
-> *** 3 ***
-> 
-> There is a potential issue in queue_userspace_packet() when we call:
-> 
-> 	len = upcall_msg_size(upcall_info, hlen - cutlen, ...
->                                            ^^^^^^^^^^^^^
-> 	user_skb = genlmsg_new(len, GFP_ATOMIC);
-> 
-> It's possible that hlen is less than cutlen.  (That's a separate bug,
-> I'll send a fix for it).
+Since trunc is supposed to be a cap on the length to trim
+the packet.  If the cut length would be longer than the
+packet, then the whole packet should fit.
 
-Ack.
+>  	len = upcall_msg_size(upcall_info, hlen - cutlen,
+>  			      OVS_CB(skb)->acts_origlen);
+>  	user_skb = genlmsg_new(len, GFP_ATOMIC);
 
-In general IMVHO the check in nlmsg_new() won't be too effective.
-The callers can overflow their local message size calculation.
-Not to mention that the size calculation is often inexact.
-So using nla_put() and checking error codes is the best way
-to prevent security issues..
