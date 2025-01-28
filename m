@@ -1,41 +1,41 @@
 Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE21A59;
-	Tue, 28 Jan 2025 07:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F3C18CC10;
+	Tue, 28 Jan 2025 08:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738050202; cv=none; b=UV1mb5x4rOxb8Q9Sw5ep58xfRy/JF7PNDOx40grFR7zyk+48Xi+1yMChe3v2DASwk2NtbmzqQzb0ezabVPyglPTSItQDkTAYBitMpmwh91AMy626YOlVmxSS0unZVB63ZWkw6aq7mOavK7hCB495xprxKO7f+nkzm16vrOOlFMk=
+	t=1738053926; cv=none; b=oLzH4ekHC/Lmvz+R2ej6c/rEnDAKAJuorD0OBockSgG53ZwWRSA52MZlQrI6DN58OjR46BuKkEhZN6zUq7Hrc8NHQat+0/RmuKJ0j8tRz037vyELAn0EarZMUOgp9zsSuNIrjZN7bTPddODKtu9ETSNnz+4VTysz4XNTTfHR8fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738050202; c=relaxed/simple;
-	bh=FD02n3gm6ctJ6uJVlklZhJUtbV4yGblE934DoBaJmyQ=;
+	s=arc-20240116; t=1738053926; c=relaxed/simple;
+	bh=zxA5LUrDDzqaIPg89ah6h7ql1bD5waECNicaW58q/8U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e9j+IXKNZ8TGzJ07sJWusCf7I46S72kedeP7KD2pt+7erNKpoKyxW95/1ub7R6QHvYeMnvWDDjZvhMrhGCwQQw38Cxqg2tyTEKX3sLAwb+a1BaZIMAkb9HK8NPSs1pWJJHubdWPGIyXKmfmhFTyHt4GqsPG30er1meM0GWRFMNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h2leAxWE; arc=none smtp.client-ip=217.72.192.78
+	 In-Reply-To:Content-Type; b=h3/w9wKNWjovaBubtNrJ8q9C516A011XIIjLLfIFuMgQvK+IHLD1OXHhb5IxmOmOl3MnQCNH8IfjTX0ub3o5J6DydsOJm1YpJyFbUKGJJR2H8o69pYwlGpoebVS9DSpDjvHqeltezsjyFUSOkTR5Dv2ObF2OOFZnasqWjLAwuPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nxp56bfy; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h2leAxWE"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nxp56bfy"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1738050153; x=1738654953; i=markus.elfring@web.de;
-	bh=/U34p4w78yFndwcx+JBqEEAUiXBS7tyfZXTPxvR4u8Y=;
+	s=s29768273; t=1738053921; x=1738658721; i=markus.elfring@web.de;
+	bh=zxA5LUrDDzqaIPg89ah6h7ql1bD5waECNicaW58q/8U=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=h2leAxWEsAxnS78Tsg/AoQ5qeIBHF0CafZIVEXBFKOc3CJo12fhSnfO3tiuNKrNj
-	 CLyotDdXOWbKUZV985RK3QrVtGba7l8M9UmHUOkuS6RqXetmmeJ22ZYoCRqutQB7a
-	 oFRQlVJAhuRZhzQjimORU/YC1o9+xjA0fsHzeoa4Kf0mm+eNZHEWmkHDSeoMZkpit
-	 tLpErEV3c2hy6vJJ5IyhZ4x7J2RBqHrEKz8YwVEj9KLQ/vsDOaVcNuDS6v0G1Bvfr
-	 cdg74TgimL6RYjnaxTVBrP5ua1UoB0IIrkarEYCAlPEOLb5S04BrobQaLSZxsdmla
-	 jAu3euj0HQyhAUY5Kg==
+	b=nxp56bfyelV11uEnF2IILrIrWz8VgoMcvbRQtmSJQn4DnA1lAoGXGA5ZPFI8KAEv
+	 EhtHmexdhABUSwdpg7wgS6cxITJs8aotUJHOk9eJpBCjHXKBUM86iFrblXWcpE58B
+	 tYZ30CeMe0W1j7o6rMGktS2uXysyvo8d8VGiYgsFzztEpdeBXvIfsrpmhJsZODuS9
+	 X2q5j9UWrXqn2h4dc/6cvwiSOzprgHYvwztjHj42XXmcEsXg0VnvMF3KaR2ge0ZdV
+	 GEube+pixEDgD8lXXuokmICXJKnMvog+l26VQIk5HTZUpeOdHYfwa0UefydyeGv75
+	 ZuQG0RCCFZJ0ja6ZXw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.29] ([94.31.70.40]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFrxl-1tgqpi34wx-00A5IV; Tue, 28
- Jan 2025 08:42:33 +0100
-Message-ID: <761f0b1c-efd4-4002-95d8-f76edc23e4b4@web.de>
-Date: Tue, 28 Jan 2025 08:42:32 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzTPW-1tGc2D1vGK-00ttO1; Tue, 28
+ Jan 2025 09:45:21 +0100
+Message-ID: <2ee90f45-0ef2-4c9b-8b0b-79d8c6cde1de@web.de>
+Date: Tue, 28 Jan 2025 09:45:20 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,11 +43,11 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: init: Unnecessary braces around single line statment.
-To: Jeremy Dean Clifton <deaner92@yahoo.com>, kernel-janitors@vger.kernel.org
+Subject: Re: init: Unnecessary braces around single line statement
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Jeremy Dean Clifton <deaner92@yahoo.com>, kernel-janitors@vger.kernel.org
 Cc: LKML <linux-kernel@vger.kernel.org>,
  Andrew Morton <akpm@linux-foundation.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
  Geert Uytterhoeven <geert+renesas@glider.be>,
  Huang Shijie <shijie@os.amperecomputing.com>, Ingo Molnar
  <mingo@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
@@ -58,53 +58,39 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
 References: <20250125154139.7565-1-deaner92@yahoo.com>
  <a0f58c66-2ea2-45ee-a426-5934846990a8@web.de>
  <Z5iHRSUPEQoI2Rfl@vmi2410184.contaboserver.net>
+ <5033d386-0765-486d-bf5a-68fe790ee455@csgroup.eu>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Z5iHRSUPEQoI2Rfl@vmi2410184.contaboserver.net>
+In-Reply-To: <5033d386-0765-486d-bf5a-68fe790ee455@csgroup.eu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:bLEHAak0PvGroyh517sIP+PJBWC3X7EPYTV3lI8+2IKAQ+KVlEc
- p7D2kBnB2b5W2UQO/vm8sc4SfcGpoJpQz0iRmRveXcGm7IWGLb+L8XtqkNfjc2XmzpggcBV
- 7rGcUWVonKVk3Mm8sLaZhULAEPKwTWxEIkCZG1QRIFvlt9BPOP/jBSjWrfHZB/KnP3gImjM
- CGKJp9TrFDTQfbyM2nBog==
+X-Provags-ID: V03:K1:RjJdUcN157q3TgJztESoQwACDolzW/vqAqOJfK3FzkYmEc/BQbN
+ V7MveICSu9iUv4Im56TaVLThTB3m+o1UAj5e7QrjZ6n1nOdf7IGtquSeiW4RH6bb+YDUkox
+ y/L1aOMMlA5h7kduqSrAeuuQZXcDkK7cEYY7sDPbct3/gaYACb/c8+prNQ4nxYRdzK1dvIK
+ 4b9n7H21171Vl0SESq0oA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:U0xL+DpWwxU=;C2aoeQhP3BVwvwAceOnIt5JmcLC
- GtLv42MBHm6SwICJ8ytHLHCV9/uy8BixW+lnWOMCC6fVHZ4eOHK8G1CBOadbUpOzXhM4eme5T
- ddLjo6xTpFpysosm5IE4GSiSgyoAKTL6dGBqqni881WmJ4kyyafQO0kCPP5L+AIr3E5hc+ywy
- iiI5EuzhLKhiC+62VikBJ512w4eaDwCfey5BAmDtm33CW/vv+5tW37aSZqD030srELatdEP0V
- KwDGJuwXCPTMQ9MrkDu3Y4HiISuS+5DxNJRqWQJXrhenq79lcnra6XohrqHQy8fp/upp/q55Y
- uheVUzMam0ldzOD+F+Ih9tmxR6vriFXGw/L5x7H3i327K02sfJEEDHiZpSwBPu/HRgc5Ef4Cu
- cRM4UNc1hs8d2rtxyQKKNiufF4Z5ZP2clvdbcY3+GeF09Oyp2/Fx/++YL73/WyAEzqGEm7rhu
- D+y7awq6Hk+etXkW3Ruq5vpe0XdxQytQsizePZRvx0jL/yB+08tgqxYyL2ocrWGqaS97Fjuzo
- TwRAgXkqDrZJo7LW4RFrLx+ZemkssOXb4Sjxrl00sBx98HQhosKUaBeDQ7rjs064O9DG8Q1tn
- VDAEKE76VvSOrqIdkwFPK+N8fPhh1jBrEYdg3sSeaUG3gSIO2Gr39V1DJdKkyFZ+2oU1pxYAx
- TdG4hqhEOe28GPEBhmPgpyfzdfsJDsSsyvk05L7sp+fSdoeuTEtTtRu1fckOKxuHmVBqdBqbX
- 8sStdQGRYviTwaaJHO0SerXxlOak4fZmFUgsV+zb4mYefIqtMlriD3NrxmemK6RxHpLDyuULy
- Yhh8uh0bhaJMIbbyOXsHtn3W1o2VJrX+rl2x1hPxCZ1AQLgIesD0NuJTKczlzoFNxDavM7yIy
- mr0szSQykVHFBXHGz2UXAw9L0FiKNdo5CcTSBNWwcFCbeZRAD4gXZPzJtR34Xl4zVFJzuV1XM
- Ffo0Sy2lW1ncgMz3ZdEJRkgbf/FXKY9zKyjgBN+lz+B9WvsLMAAE6+OfFVhPnlWh0U2V7DCdc
- hytaqHjzoqr40GSqwoxN7ohY4HLcdDA5G8B/+Ce+OnfyhNvalp8J/Tvn5OrIUYAqMc/z0C10N
- NLC9N8WKJrIw8A67HjMAKcFx6j40r2X7GqG7elQRomR4sE2ZEwVghhME0Du360taus3szvWum
- DvwLeH5mkskIyG9NUXzPWT1Fdgtt4WB2K+ixPJ+37rA==
+UI-OutboundReport: notjunk:1;M01:P0:scGj4n6p9pA=;IMYOmcYVoNzO+dcICCOtveiBBG0
+ lvOP3EXaaDLvY2hNVxxPILHSEYuX33j0pu9dUOMxSjqw0oNixzQIubDM90M12t9H6G1ek3LuR
+ aI6kfQZb9tgdSCYue7y5unDOEpy+e2FY5KGc5AcEbvTiFIsiH0PDeZHD/N57ENErMkeMP3kiw
+ 3UGCyaRlcxDvsKQpoF6z/0G5opqVfChSQZaIyiD7oICfrkTVfqj/HoVutmsgqb7Cyc5gliFQ5
+ fr35S4itq4yv4xjgHvQ4P0gG+LwW08oQbm02rq4scZjGSPd+4TBG6DkcxEkzgdpYx8u7pSu9S
+ xuBOo3x3rfhuk3MUTZuiO1+IAF5fmNLApmd/Kyu6usp6zOZHcTENmCIw6HeLrrb8z5nZYzXPe
+ XIjEDhTddI3ONJ+dUTskEGwQeM7gGMt4k0JFmJFti+UxmIMwwb9QO/fF8RFyNW2Al0H4W27SL
+ gabAJyvcQD75KREf9PkbBRheu9ZZwBuVfSSPHI7orbrlYLLqyKkhNOZR7NZATIhSdG4/ZNOFZ
+ F+VV83+8DmnaT5QNm/xJnDBlvN24KcB6RXRpo2gO8/ui616R5KRcyo8EniLbcHhubkoHvww9/
+ 6BLXCYKh4RcaczPellzP6AJ+ZRcfDkEzYM32rN+KlcBKq9G5UcHW6H4C0bBl435vuUKyOnuqC
+ TAaRoMTmrPzs+KlItrm17zkLCIB2uLUM69H7iw2CR/gHN2SgDNWkrCOUuvfV/wsLq67W7LlBi
+ 2fPHWFkBwQBYhsbHb4+aesYOYOQqFxOyev4T4P9I2a+bw/H4FRkEy37ZeCirnE6yZzhpGCHiW
+ ZUxlZrNoEfrzfxH6ywrcoz5uLyQNEHYZE2YvHZ+lg5D5WuitwhM2XJBqGS1ieFpDfZrDxhx1V
+ 9/wTqJUSdXE/vUh5Puvm42zsh9lFP+G/O5SUSX7h3+YIADRBgLQFykivCWlvsK+CIH9c0lGL2
+ QbLOrlK0Gta6z9qKIPIE1CXLDfO2fCt1EnPWkhJs22jpF1QMN/vCnX/J8p3z9yK2k4+X1ttmP
+ 9bXS0G/Gosdbr5/PloshnJHkFDV/vTpAYhzwekrItHhX0jtDvGJhh5BoHWwYmmZR0LEgeQX5V
+ Y9c+SMdUbV5vy82rAsHHoVdO9QJHq/NScWGiBJU80dXT1XIE+TVZhbdTzxEIICMlGvQgLwGk3
+ zxzh4aQVLSLJi3d62+cv3xAUuKLhtyYpLd1OACo2yuA==
 
->> 2. Please avoid a typo in the summary phrase.
->>
-> I will need to resubmit another patch to the mailing list.
-
-Yes, please.
-
-
-> How do I close this one?
-
-It will probably be noticed that you sent a subsequent patch version.
-
-
-> Should I reference this in the new post with  'Fixes?'
-
-Unlikely.
-
-See also once more:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.13#n310
+> So ask yourself whether such a change is really worth it.
+Some change combinations can occasionally become more worthwhile,
+can't they?
 
 Regards,
 Markus
