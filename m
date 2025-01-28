@@ -1,102 +1,82 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21C71A8401;
-	Tue, 28 Jan 2025 13:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E931C5F1D;
+	Tue, 28 Jan 2025 18:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738071672; cv=none; b=pQQgfknsndG19BnYF7WiAmvxZVahQAiK2rrPNMo4yQXmOCT0nJ5sfMNEN0Zu20J52LaXS/niFsAjZ6eBfDLg6sS+ZIQ9w/cJzEmomWNV3z5VjzztLCKrpMnwbXxSaEFaldWZTu1qZvUkI+a2FrryZgBNCFdhSllYbKyWnqQugGA=
+	t=1738087975; cv=none; b=f6f/G1FbY1FnX2g3E99ZTLajhfxU0OCj/P5ownp0L63JCe6Pn02mcU3Qw0SoVgKJoHlJypm67iS3mbXLQkAIy2MdjH+AdOnMZCKWjzjJdr1uLlpVErZSfeeW0+zEo9INXnRwMeIiZxnwhfRwfrRr9qtbgrpNmoPWU4cOmfR2XF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738071672; c=relaxed/simple;
-	bh=IjQJqJ91QhTr8vjD/8vwy4Ss7qhgsOdb0zvelMfLU2o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yz5imTCW1MQb+My9nHX1H3SetwgvZrvWqnxF6jZEHFhlE6q2OfxW2uFDaLTb1tG2gDIbQZdQUgp4xjSdOA/l7Y8rFH3fJctQVjBqK/edxrMf9aWmDZ9Qy6sLEfWsoMwMY8SHuUzOIDKWATwWGSWrDl0XvQqVRFM0oG+7fxLF0NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=b/t0RwRK; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1738087975; c=relaxed/simple;
+	bh=95lk6YfqqRVVR/aa6V0QOhf1oGZBK2E+oCT4l1g0Caw=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=ZvLXPJHV5sY4VZJJ7KLa9UhYY1DOXgBZwFWepd1suyxKMglmAgOzA+bY1x9IpPXk6gECUrXXDSqcYmLqC0aJt49whLb1YDsxlu375JdiTQqS3f/wVbOAVBs0V0BEtEDa2J3c1zUr7ibZkW65DYnWnBKEF67vpHcLUmjK80qTT88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDjCk15m; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="b/t0RwRK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1738071665; x=1738676465; i=markus.elfring@web.de;
-	bh=IjQJqJ91QhTr8vjD/8vwy4Ss7qhgsOdb0zvelMfLU2o=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=b/t0RwRKaElNA2Kk4OBtnOWHTLPICeVdglsFwK6CpQVGZcdfhHNieC5I4NwceBtL
-	 vWf7VBP95DQ7JoHDdS4mkxSeSGlG28JFVLJnSg5FBUbr54GNL+TFDPsoOUS7OyiBr
-	 3Y0Cdo59b9deHfb/ToJksQYcwIa74N4FxfHuQwwzfNFGE9+m7P72SXnswpanUyczL
-	 a/bwhYq4bKF1AetXUwCuNGLJVUQVBwxBR4Q4ShLyWxnASMilM46SGHjrmVh+ia6Hz
-	 4ukDl0wIG01gP1MhRgEDL6rKyTNaAupA+6mhga/KHabZSKf9qvIwlwbiWItLzb+tJ
-	 w8zMNIUlSIwQOHBNNQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.40]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MGgNU-1thjpg2TeU-00BRsv; Tue, 28
- Jan 2025 14:34:58 +0100
-Message-ID: <d55609a5-0c8a-4804-90de-3ce8aa8848e7@web.de>
-Date: Tue, 28 Jan 2025 14:34:57 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDjCk15m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA39C4CEE1;
+	Tue, 28 Jan 2025 18:12:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738087974;
+	bh=95lk6YfqqRVVR/aa6V0QOhf1oGZBK2E+oCT4l1g0Caw=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=fDjCk15mjWJ8g4sNs/1T6Ik/doH48kqvRlt1wENNFhK8BccNAiGkJzXUEPDHXFaHl
+	 qDWb0UHG1IiqPJ+r1LnVZOyLEzNgfjG/Aw8Iq++T4beejZw3bWWuuHp0xsDzruuASO
+	 JL9cCVVdHXDK+WyniXK6mwwumxlWvmNIMd+X4pJdSPCRxIL0kzOE/EtLyg96fJk/WS
+	 05TC8dnkBTpefM+IMaoJ2NuwkDg336h0PMgF3iWSxQuOJp7JtRD0ftvpWr8ErHHc5F
+	 EcsSs/+0IBz21qBal+bhySPH9q5AyMdFdHnMUnshfSZ9aQbECNR5OZneYmjidOeWe0
+	 hR4aAHXKAiOaw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: init: Unnecessary braces around single line statement
-To: Petr Mladek <pmladek@suse.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Jeremy Dean Clifton <deaner92@yahoo.com>,
- kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Huang Shijie <shijie@os.amperecomputing.com>, Ingo Molnar
- <mingo@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Paul Menzel <pmenzel@molgen.mpg.de>,
- Raul Rangel <rrangel@chromium.org>, Tejun Heo <tj@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Yuntao Wang <ytcoode@gmail.com>
-References: <20250125154139.7565-1-deaner92@yahoo.com>
- <a0f58c66-2ea2-45ee-a426-5934846990a8@web.de>
- <Z5iHRSUPEQoI2Rfl@vmi2410184.contaboserver.net>
- <5033d386-0765-486d-bf5a-68fe790ee455@csgroup.eu>
- <2ee90f45-0ef2-4c9b-8b0b-79d8c6cde1de@web.de>
- <55498563-eb4d-4475-bf85-1543a59aed20@csgroup.eu>
- <Z5iiX9clA62t8Llf@pathway.suse.cz>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <Z5iiX9clA62t8Llf@pathway.suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:l1GwEhsuZG2bb8B6SRBzbaHfwKgznT0kZQYWHiLitKl9wO2guLF
- PRwxLggIExodxLvR1UPfhNKZBPNzT5EsH15hr4e1WfJWGOrzN4oGjTnpCgERtFsMRKpHBEe
- IQqL2Jo9eut1JFnrZNVZArwwaC24ZY+jijBhNe6Cq3M/DOxPbt5AQaAZg7XZZKwAgXSXtp+
- 0q+b3eL9koQBSDW4CE1Lw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:T3a9L/4RdAQ=;oYzyUC0KfehV6oQuEJgFstPRnkJ
- j0A+t44ssv4spoP8nxOE/X23073cKezSiOrSQxct/SZax2prFDmxLMOhLF9EX8YuLtkeK15Mf
- DI15dR5Iu994tY2uzTaN8PuyayMNGlP+92kUZK2pORs4xKIS5xv+QXQzMnbRhbufLQ4jiuHpf
- L5vylGMbdFOELjrTqVqngjj2VXBqVRbC09LGsANnmq4SzuXLozIxG8mUSBnvKwK/6176KvfDB
- 970dPcU3n+ZHGgsybhz+vzDZ2DDzBsizjRfFUedK5EmUWz7xXiPGWK+x/mjVGRh7r8ufIhVc8
- pmnNUJY/ydYVk2ElPkT5ZuioEWRbuM2TwRKvTEpbtUy2hsPoc6ThLB2SL5Qo2MUy3DxuijKNh
- 0lwbq/vkkOxtWwJ6tawFI6oeAYINoXiZrvtpPdTQO/+3mUDXxc7+zRAsI1iNoQfAce8tNWWoh
- dUMOB7vvYxmAgO2QJPQ7gtanukYT6MO1xPdyZh0AXp1rmXiRS5Mv5ajRp7weD9pHsPNKnCOWf
- Ev0kBTGjFZHWIFMKdBCW5cM0btfq1F5RND5skQvrN53GiBX1yeVH2fF3RlaslIXZ3Tqg0iq4Y
- 9pT3xIijY/Mg24FhwV9LlID3kdgCoZySCJ/3BJUK40fZhj0wvBf7DyiGl3QFgxC/aSrBHZm9p
- 6jm2jTsJ7FXOQ5lHPjvXlUFOb/7G1QMEmP9oRNEy2EEd8VpBMelCeW3XLmhDrakzehUUi860B
- biLa7Tmmzy4/kiC+FqtDpE0W8ycMoCM5fyYY79mabL/l418P2tnSqhEYmyZHhP6sFbhBSk+Iw
- 2co28v9jpUwTpIWK7HbGeVzQfy9wvz34i31bwRhWUb99EYwqeHIlUdpIUCHHR0/KjkOQs5lG9
- VxJgiOb3dSLIc2xmxGlElIPVr/Hz5rvAuBZu0uX0EFq7+mtHOP8UDY5Q49vIdqANe/bNfRX54
- K+BUWO/fLVilb6pvPO9GqyQxdj9DsiS33rk2venkIajryUFHBhy3NbBIWOhNYhZ1TeBgNxwfG
- RWUoRQ2im12DaYdyZvuyVvWEYVJzSuOjScseldgYdfFfNEHg1+XwAYD7lMUM5eEwtR6gFXY/Z
- Fg2AJe9E+AlWJ1+eZ9iWwtuEYku8K11N1CIDdWDfwosh2rWidE1HR8KQUaDcznzEW+tZ92qS8
- 0ATOdnXyncMmceM+q88Qx
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: mwifiex: Constify struct mwifiex_if_ops
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: 
+ <03d524b72f20a0302e4de5e0ebdc20ab69469dec.1737308889.git.christophe.jaillet@wanadoo.fr>
+References: 
+ <03d524b72f20a0302e4de5e0ebdc20ab69469dec.1737308889.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Brian Norris <briannorris@chromium.org>,
+ Francesco Dolcini <francesco@dolcini.it>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ linux-wireless@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <173808797082.1254064.16676111572438788530.kvalo@kernel.org>
+Date: Tue, 28 Jan 2025 18:12:52 +0000 (UTC)
 
-=E2=80=A6
-> 3. The authors of cosmetic changes will not learn much by this.=E2=80=A6
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-Would any contributors wonder how many efforts may be invested in coding s=
-tyle improvements
-for selected software components?
+> 'struct mwifiex_if_ops' are not modified in these drivers.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   61439	   4367	     32	  65838	  1012e	drivers/net/wireless/marvell/mwifiex/pcie.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   61699	   4127	     32	  65858	  10142	drivers/net/wireless/marvell/mwifiex/pcie.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Regards,
-Markus
+Patch applied to wireless-next.git, thanks.
+
+e50e30fa966e wifi: mwifiex: Constify struct mwifiex_if_ops
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/03d524b72f20a0302e4de5e0ebdc20ab69469dec.1737308889.git.christophe.jaillet@wanadoo.fr/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
