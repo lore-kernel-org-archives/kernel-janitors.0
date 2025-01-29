@@ -1,41 +1,41 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713D199EB7;
-	Wed, 29 Jan 2025 08:46:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7A81917F9;
+	Wed, 29 Jan 2025 09:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738140420; cv=none; b=iLJXJmaXDVySL5qFFbgtY7rz3FO1hJMNGGI4PwWsOd3Jxe19OQrM08U/18eHKfh3WF9fBw3qzNL06E0H+34Hv7KTJ1MvOgZHLxRlUmCVoYe2rcZ3IyLwxyNy3uXEcgTGwdBaI181gHbwQRHsrjTOUEQm7ZAm3CY4DU5EcB//S6E=
+	t=1738143644; cv=none; b=Td7qm/3cZgwYjyMxLmZLmUO1zmIEGtxTN4ff9gVizbxnP/0VVz1ZyhefltpY+h5rdA2OQnhyHCVuUl2lFmxOqai7fe0Lc5GyF3cGrt6hifGySFdT5mnubViTT2WW++nEoaJEDCLUs/rVx8D8gJnfclVfVRPgP9oRitqyJsDb1Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738140420; c=relaxed/simple;
-	bh=/630C+CIkYuGrn0QRV/2ElPy58L7cgeFfD+7FLwoMKM=;
+	s=arc-20240116; t=1738143644; c=relaxed/simple;
+	bh=f6YZi+aj3vtvGBm2x62fa1lw4+jY/LfPDrFJLCES+DY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JaglM+7ulImwtIgod6U6R/eQxaZRnj2UfkEJ5di7DmZVmmWFho5Xe2Q5WZsiySStJXf6JnDtrbz3P7V4PP3zRv5Z297KJkC6P0rK1xdZkOc2kSz7ofq/XWkcOZOm9+QLVBJQUqqOPkWQB3NNeN6oSH0bqTHgk6QSQHTL2WSexOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=htAkK86s; arc=none smtp.client-ip=217.72.192.78
+	 In-Reply-To:Content-Type; b=qoMJCS+7sm0r3KwmP6/B8SishjWvXuQrJTfabMFowKWvxai/SNKa9e0kI69UqTAgPCetmcB55cd85FIz0UA5fNHXLv9e7Msr17x3wMvZgEgExTxVRmcOqqaDvJQzDcFX/iuoHckWXV+rry4BpimOE2B0Zsg3J7ZTJNbHIY7yMUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ibsOXJKP; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="htAkK86s"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ibsOXJKP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1738140409; x=1738745209; i=markus.elfring@web.de;
-	bh=/630C+CIkYuGrn0QRV/2ElPy58L7cgeFfD+7FLwoMKM=;
+	s=s29768273; t=1738143622; x=1738748422; i=markus.elfring@web.de;
+	bh=RmUlpFblDQ0X0FrPNxA6WyeicYW3HpJ3EyGlM0jP5z0=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=htAkK86s/S61beDFPmL8eYy88jSodQwQgCsnpy8uwgxO3wL7ZVneMhCtDXLr3XzD
-	 ya/ulQvPl/kWDcxYrzJ7eD1n6x8C3fNps9gjq1lCUUb31LX4qqUaq1kHXb6Q+GnbB
-	 RZ4Q8+uoIaoEk4Lij64dHWG5b6GOmogmHgN55y6EkQzgMdNjVnj5PTrp0yt17AHNd
-	 AXJRsdobl87/bTx6I/zHbpBlsDR2jBG6Ofe9NwjGrf658NgarQ/G3HZs4Z+oRYCzB
-	 4ZS1q85fRTP2UtmbfljwWZDCF2oYyJYCtXGcBf9ec40jybsGNuscd+CiHHmruSgVu
-	 krkubfslaDxTuGV95Q==
+	b=ibsOXJKPJKhZo8FqJFepmaYQoSFoyR2qxzl8lohWNNUQx+2NF2ManFbNjUNGq/F2
+	 gbw8iml79L7rvtKd56Ir7+yYHXrAe1EUIefoTtrBNrmtFI2yM2WYsLj1b568yC1rb
+	 SKGUWYn0X41jPRogXjuGLSd6Gt6171dGmUJ2Fp3bc0pBO92HArHd48fDFFdCCxzPK
+	 pf78m0ogusJQNS3QQ3zn1K/mM4iA6yn4B0KggTtABnb9cI7MMqnv247Vl4f+VntcE
+	 +DVoabadzyBcjKoDGRsAmxtyEkjkG+dxMfHbTqq28F/8W87L00uXvdFhKdqm9Gctj
+	 xUEgsrypLeLKtXHbAg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrwsB-1t8w5U3HV7-00lt03; Wed, 29
- Jan 2025 09:46:49 +0100
-Message-ID: <fce88885-8c10-4f22-a19c-3b04430aec3d@web.de>
-Date: Wed, 29 Jan 2025 09:46:48 +0100
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MG994-1tgKE62NvY-00Fdf6; Wed, 29
+ Jan 2025 10:40:22 +0100
+Message-ID: <9ca0337d-e378-4de5-99be-1dfa1d4f8cff@web.de>
+Date: Wed, 29 Jan 2025 10:40:18 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,60 +43,141 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: coccinelle: misc: secs_to_jiffies script: Create dummy report
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Easwar Hariharan <eahariha@linux.microsoft.com>, cocci@inria.fr
+Subject: Re: [01/16] coccinelle: misc: secs_to_jiffies: Patch expressions too
+To: Easwar Hariharan <eahariha@linux.microsoft.com>, cocci@inria.fr
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Victor Gambier <victor.gambier@inria.fr>
-References: <20250129-secs_to_jiffles-v1-1-35a5e16b9f03@chromium.org>
- <fe13604a-2626-4641-908e-87eeaca53288@web.de>
- <CANiDSCvufe0nK_NLykSRLb9RmttNOhw3-mm6aiC=gj41Hxtgiw@mail.gmail.com>
+ linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, ibm-acpi-devel@lists.sourceforge.net,
+ imx@lists.linux.dev, kernel@pengutronix.de,
+ linux-arm-kernel@lists.infradead.org,
+ Andrew Morton <akpm@linux-foundation.org>, Carlos Maiolino <cem@kernel.org>,
+ Chris Mason <clm@fb.com>, Christoph Hellwig <hch@lst.de>,
+ Damien Le Moal <dlemoal@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ David Sterba <dsterba@suse.com>, Dick Kennedy <dick.kennedy@broadcom.com>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>,
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ James Smart <james.smart@broadcom.com>, Jaroslav Kysela <perex@perex.cz>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+ Josef Bacik <josef@toxicpanda.com>, Julia Lawall <Julia.Lawall@inria.fr>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Ilya Dryomov <idryomov@gmail.com>,
+ Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
+ Keith Busch <kbusch@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+ Mark Brown <broonie@kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nicolas Palix <nicolas.palix@imag.fr>, Niklas Cassel <cassel@kernel.org>,
+ Oded Gabbay <ogabbay@kernel.org>, Ricardo Ribalda <ribalda@google.com>,
+ Sagi Grimberg <sagi@grimberg.me>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Sebastian Reichel <sre@kernel.org>,
+ Selvin Xavier <selvin.xavier@broadcom.com>, Shawn Guo <shawnguo@kernel.org>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Takashi Iwai <tiwai@suse.com>,
+ Victor Gambier <victor.gambier@inria.fr>, Xiubo Li <xiubli@redhat.com>,
+ Yaron Avizrat <yaron.avizrat@intel.com>
+References: <20250128-converge-secs-to-jiffies-part-two-v1-1-9a6ecf0b2308@linux.microsoft.com>
+ <565fb1db-3618-4636-8820-1ca77dad07a2@web.de>
+ <2402812d-b818-4d1b-9653-767c9cd89dda@linux.microsoft.com>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CANiDSCvufe0nK_NLykSRLb9RmttNOhw3-mm6aiC=gj41Hxtgiw@mail.gmail.com>
+In-Reply-To: <2402812d-b818-4d1b-9653-767c9cd89dda@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kcKgRWibP0MRuqDZ3WitnDD2Gm8HrfqOd/QvbiBB2IZFvyaKW3q
- 3OUNoCfqyvUyEC/vhS7z3V4wt8Mxb/fwYXeSckvA4/nA2v772aFH4E9RjXYPgSMWNM2p5sI
- 4ygUfE63xVtF4NUxF11hRUGoXGgnK4Y+NbdbZX6p7qrIkRvKQ0IxCiZyX75B+Asz/prIhYX
- DcHlMjwdbCqtxsOjYOmdQ==
+X-Provags-ID: V03:K1:VVUayMb32w7y67C7tTjgB5AAr0xhckczX0N8TokrIpC9jN6eUE9
+ EFsN7wRaBX0tQgtAxOLriEuyy3B/8avbPqaD1zz3GlxmzANwcYY0B13b3+dGcse9e29fR2B
+ x1FDILYMT0Hm6Op4dZPmgiuO2ynGivSf8q+hlfpEEa8MIXRg6GY1vfPop11AepKnCCaop1O
+ +p76d5j2Efo5XT3k24tTg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0Hq9ZiBWIa4=;v+dcI54E1H0PZTcRdUYBRUs9R7B
- WH6vy9YGPZF0/vUewsGfFj1xEHU7WSDhiUWlwjl79VYEydI74O84uNvswM1fYRPMbrtbTWY3Y
- Rc0jg1WU87azaHkRJBKdQpH0JT3o9Zi0/lXyZv7ZbCwdtc8mnEq7+JKrRVKXM5+lEV0+/Yiay
- 1+xeVk16yG2Wt1zr61Wwf3NDii2VOkWbw6M70qW0faZoC2CgnEoDmJRcnxlduTlChD1y88N3J
- BV0887i8RcDh28E9qSWVR6knJ02xPyQg3cnlSCcNhQhycyrwmU4igK9LlO1s+5vD4GY5qATPu
- TSxzaRM4Edem5FVcLgSLWfukohwtPVPyKpm6Ya+GUre5JxByg92f6uujQVthVXIOd4DPwCCqW
- 1ESj2b4W97zAT3artIdlrfVlK7poFZ2qN/B9lG/RVAztTVD1NMYlHXWjw2BtXQzCLt1WmlXvz
- Fv+QdY5vqAyriVaUOfxlocvCQIa8vTFtGdOAe0abuJC5Q8ok5Rhgu2J1hky3CIk8JXBGKBCcZ
- sn97rypWF9b5ItakTRwiqU1Po5Msr+5iLntPeLzI0Z5oOhJZ9UaGgcbOLqcTMAZ/UvYvaefFi
- P9ZhXLnlDAlgJhCtX8zt7na/IsSzQgm8o8B+04scCDgwvUM8p0RiSdyKq10CFOs4kItLkwgm4
- PFKKTNT6e8C5XaQSXjzHfKFe3/r/DzZJrggXwiDLaf5amDOlTrtohZuuAGdv2/hmTSJzbspfG
- d4GSMsk4Ae4lxpKzF76csxpxM+df66+TshkGC5Q6oWSk53T1gdhwSNfRQDQUG12vRgDPT4RU5
- t8F3BD8eeJG26HrJJJthfhWjOp08qj/oCpgLtYlfIAY5MJZT3NE30u+eMR+634JqtFuW3oUPL
- /Yud7Ps98zNnx9QA18yPSFqWCoVj5qSnsTbW6aq8aHgkahl54grJ0lV8Cr9Zzf6jsnWZNe2Q5
- RjdodczSgII2lF2T/PHxgq4r88FSWPS3qndy6YJyOuHNmTOWPJGiutQoii1n7VCdbF66F6LKz
- SxS6sUCyBk3nNN9KRzJeLiqfMx9wMQZys+EYiuMrbEOxXp9NxTmbn1+RgmN1mwejZIQ0k0Llr
- aPaLTAmkILhuklylp0CD/DtKdLDCbWLduIN7n6t9LO8LsXKprJlZADm5/L9q3Aqjg9qxwXAaZ
- 4TWkuSeQS7U6/9oC6eR8TeATZUMhBNIetnXtGLfHH2A==
+UI-OutboundReport: notjunk:1;M01:P0:tcxCLGC+RCc=;ey0yBxZW/tRSJQW6qo2D+Q6kDrW
+ B7ti/3QUhXC8WrcBjNzI4u6z+d1rV4adoqTUoUSMt/DqJcKI/DlrivOEoz806s/5+Kn56DDqL
+ LU9xtxxU9vsLyCTP7I8gL7dl6Qx1gz/cso735SydkffMPYwAsbCaRqy9WGoFqBlIQ9QCxafc3
+ W4RbDo3aQwMCu9VcGvB6j+H5tbohMyIwgg8IKKOqedJ1nboWwMgz4OIZ7EST+13jVvGHzPDUP
+ RMgEYGdAiBMWyxIajIWHh0tiMSE3p1A+yPFCKxzA51+Jsl4lqfDwp6i6xfZI0wLLB4pLlY9o9
+ 4q4fn10BcFNZy38f62U9iuLflyBSQy3IDj2SnmtLJbJzYINTq3rTIPHq21PIW76G8fDbFN0aG
+ 3ac6gqwYlxfQhltWeUu6Jf+r0y/8ZDSvg6BenYTc1SAFAqZHEM4upcrvZQorHyWClmJeL4R1d
+ pwRYkmLBgkDzN9R/bb0jfrgkgXUIzdRpQYEu62HTHwYHvlMnYXeCcivCQRHgqKox7R6hNuIrn
+ rxTrTFacoaE+vqTHL959kdf+7baowrszBGfdV4G67c90sFgZ24V7UDmogT/jAdPtbbKWpCJ3F
+ kMrOyabr3gWq6SX50hyVFHIUca6hdwNAbHNQqpbFNzCXjeuhFqIkBldPkgoHIWodZqGhWHxbJ
+ rh9yga8+A7Xz90bS7If3X8UB0JOiOJoqee5k8VuGqGUor7M8/IYAWxEzk0sfRhZN5x9gzYIwj
+ z5v+Opf6qMCYFMEpDc5oZNLzukYChx6b04HyYvuAIbzbqHM64L8pCx9PjiofRQqAAUENSsyVK
+ wSLOByWJNd0hj3dnFK4MWKIc72WDX2na+gBRF+CITUiUaTapl8UB+IMJ1+mNkz1dW85FtBpIj
+ tD/0moj9gcbkIb1LR6m5OI0uHLkCOXIBTrIfx3IHv6b13SsYXuqGkV/RzTBhQpQUsnir3VJIj
+ cVkG88L1qB1XMwvpL5WZaIlaVUahCedhQsFB49sgDWhVH58n5+/Z9aWfVKo9SGwG1/1EYyVhs
+ xdj7mKATCRxJL8YFYbK1K5zFB2c5chXeAOrRuI6GfbxLg4Jr5TwIV+gUIoOLkM9oBMdE3PZmY
+ FmuKpySVCwL9uRLQ0lYfPXIDXqcQix+7IQpKOnC7/mKJSccV7o1cXqpz0osAScgdxIeUIW7Oo
+ TT3dPmTAxqyMA5HLb2IdqDbNqBt78hG7Vp0fBYOvquK98imV2V34SSApTC+PTRD9nO5SEk1WD
+ M5c0DPUlZtR3e/lmnDioWB77iUkT5JV0a7FRF40QmlHGvbSs8vfTQg9ZFgjUq8jYaGVb32YjP
+ AEhromp4VpaoN9T5CJol8F+orrIemlZIcgjTh9W5NmdUN4pRCbHOUfJ/tbXwdPtCw5lPPfB1R
+ 5kdsgtTCg2hWVnV9uMjqAZCd/Sr1UngGlxpd0=
 
->>> Create a dummy rule to avoid this error and run the other cocci script=
-s.
+>> =E2=80=A6
+>>> +++ b/scripts/coccinelle/misc/secs_to_jiffies.cocci
+>>> @@ -11,12 +11,22 @@
+>>>
+>>>  virtual patch
+>> =E2=80=A6
+>>> -@depends on patch@ constant C; @@
+>>> +@depends on patch@
+>>> +expression E;
+>>> +@@
+>>>
+>>> -- msecs_to_jiffies(C * MSEC_PER_SEC)
+>>> -+ secs_to_jiffies(C)
+>>> +-msecs_to_jiffies
+>>> ++secs_to_jiffies
+>>> + (E
+>>> +- * \( 1000 \| MSEC_PER_SEC \)
+>>> + )
 >>
->> Please add proper support for operation modes around discussed source c=
-ode analysis approaches.
->> Will it be more helpful to work with function calls like the following?
+>> 1. I do not see a need to keep an SmPL rule for the handling of constan=
+ts
+>>    (or literals) after the suggested extension for expressions.
 >
-> My main concern is to fix the CI that was broken when this semantic
-> patch was introduced.
->
-> I am sure that a person more capable on cocci patches can implement
-> the report mode in a follow-up patch.
+> Can you explain why? Would the expression rule also address the cases
+> where it's a constant or literal?
 
-I prefer to avoid a temporary workaround when a more useful solution
-is actually simple.
+Probably, yes.
+
+
+>> 2. I find it nice that you indicate an attempt to make the shown SmPL c=
+ode
+>>    a bit more succinct.
+>>    Unfortunately, further constraints should be taken better into accou=
+nt
+>>    for the current handling of isomorphisms (and corresponding SmPL dis=
+junctions).
+>>    Thus I would find an SmPL rule (like the following) more appropriate=
+.
+>>
+>
+> Sorry, I couldn't follow your sentence construction or reasoning here.
+> I don't see how my patch is deficient, or different from your suggestion
+> below, especially given that it follows your feedback from part 1:
+> https://lore.kernel.org/all/9088f9a2-c4ab-4098-a255-25120df5c497@web.de/
+
+I tend also to present possibilities for succinct SmPL code.
+Unfortunately, software dependencies can trigger corresponding target conf=
+licts.
+
+
+> Can you point out specifically what SmPL isomorphisms or disjunctions
+> are broken with the patch in its current state?
+
+Please take another look at related information sources.
+Would you like to achieve any benefits from commutativity (for multiplicat=
+ions)?
+https://gitlab.inria.fr/coccinelle/coccinelle/-/blob/bd08cad3f802229dc629a=
+13eefef2018c620e905/standard.iso#L241
+https://github.com/coccinelle/coccinelle/blob/cca22217d1b4316224e80a18d0b0=
+8dd351234497/standard.iso#L241
+
 
 Regards,
 Markus
+
