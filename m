@@ -1,131 +1,102 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F3F166F29
-	for <kernel-janitors@vger.kernel.org>; Wed, 29 Jan 2025 08:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713D199EB7;
+	Wed, 29 Jan 2025 08:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738140064; cv=none; b=KARG5br87z6LtBJcg2DBRowmMo2Xn/AXuZoCHNjQyTCV7k83rIvH6p5AXVX+FrM3cxLDJRLs88E5jSUaNHaBrux5lbt2GK5MpzN+f1i+wvJH6b+9hGLXuLrs5ewxxksDmg9dk0ryHPm8udGg7VVNb7oRqc/nOzRLH5cGExNzQuo=
+	t=1738140420; cv=none; b=iLJXJmaXDVySL5qFFbgtY7rz3FO1hJMNGGI4PwWsOd3Jxe19OQrM08U/18eHKfh3WF9fBw3qzNL06E0H+34Hv7KTJ1MvOgZHLxRlUmCVoYe2rcZ3IyLwxyNy3uXEcgTGwdBaI181gHbwQRHsrjTOUEQm7ZAm3CY4DU5EcB//S6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738140064; c=relaxed/simple;
-	bh=cO39370VtQtqphEmZUqo/vdz5Ks//iXnVcC+FwG8BVs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S6IFXHCGh3Z+almd3b/+maM66R5Pz+cweNuEV8+IRUnxtyk7bPiahx6/25HIl658lHvrIvaeZ+nxaDo2iTgRYtG8qa1ZjH+yalonNkGsDjULlZfgCjl7Dj17cYRpUD3M+/yVCO7BHTGJKrFp5ooLwNFWzZ9Eb+cEoTkhXHFU+ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=U1SmZjfv; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1738140420; c=relaxed/simple;
+	bh=/630C+CIkYuGrn0QRV/2ElPy58L7cgeFfD+7FLwoMKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JaglM+7ulImwtIgod6U6R/eQxaZRnj2UfkEJ5di7DmZVmmWFho5Xe2Q5WZsiySStJXf6JnDtrbz3P7V4PP3zRv5Z297KJkC6P0rK1xdZkOc2kSz7ofq/XWkcOZOm9+QLVBJQUqqOPkWQB3NNeN6oSH0bqTHgk6QSQHTL2WSexOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=htAkK86s; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U1SmZjfv"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-304e4562516so4821581fa.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Jan 2025 00:41:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1738140060; x=1738744860; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cO39370VtQtqphEmZUqo/vdz5Ks//iXnVcC+FwG8BVs=;
-        b=U1SmZjfvMEpo6N0Y5qqD38y3mbHGav71QbpA3gKsgezW2nrXwWngCZflAGfODgJcb/
-         f4XW0tBQF3ZpMtxlVBPBntPsRA1UIDbWBIKJ/seCcteWUJcbfaM6JFSEjo9E+a3x5cMX
-         dKZ8AuBedwUfIeNTCrcrhmbqx3mhwBmduw2sQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738140060; x=1738744860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cO39370VtQtqphEmZUqo/vdz5Ks//iXnVcC+FwG8BVs=;
-        b=PJvJmBO7tBBoKkCBC3esnGFjD8++Q5Owzwv5s/FUccYfzAxC936fiRR39N+QqBLziL
-         qW1cmIahU4siE3WozYmwamJOx7DaVXixsbHuBkaQlQ/5jLaCguNSyGKMUgzqNfJBdAhn
-         J5IEe42PCFCTzZO3hWmsPso32eNjMbLLnI+iyTn6I54WZCSAMPlKzV5n9lq2/sFUx2ac
-         S8MEGA++jSR1jeQw06sDwQQbNGBB7bdq258fGOZw3zPGQCafgBSqw75AlH2Lj6d1YqDQ
-         59YP/5mG0lsxk8LugTX16r8tsik5j6TfMoCr8AjYZEznvwgKKfRvlWZS/j4ciyvfkXXD
-         uMcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAjMGc2rQTjFHnYBHPuK2x1ykGXuCkDrYkHfm0yIxmhGLntmmYKYS8wCoyMqN8Y6c4pS0iiAcgZBCKQigWbTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUfoxa8w/JKov4PXPjZ/5RJ9DbTp+6BDwRhNLAkF61OJu55Jji
-	Vkk4ExrcNKsqg00zGKKTYhob66wL1AURRMRzpvtMUgwOHstemgrSQz7k7zLbQh5cQWHVZmdv1Yw
-	Jhg==
-X-Gm-Gg: ASbGncvWk2Q0SMSt5yjcCgLUfiK5t0b05YqZuDLevTmrVw7VJuoikp/rfq/VWzU1NgK
-	LZ9jqEOgA3FH/M99PYrDmMU5JYTbdh1LQFbLNWSwu+fVt/9c24Bjy91HtYbV/Zh/ipxWrBdORv2
-	OCiIzfUI+Gu5wAkpAzqAjIJVzj2sSNDIeH08fEAgMTmYmpGgrMpj+y6zXN0FBZiTYB26tZ3O7pb
-	vHoFuzvUKtTxofuKmJgyrUqYkK31ZVlrz9dcezlMIavNZEeLA5dvnGwYkmxC9UsxvRc44Rh4Jwx
-	KALpdWeOgSJ5Of6jcA/DCM294P059pERVVoM+lu8FxcUHd2YH9E5O0b9iA==
-X-Google-Smtp-Source: AGHT+IEc3Vp7TKRn751DwYFTxLLwmE1lOFdzRDh/OunGhzTMey0GTuNFafevlucjKm8sJLbnTzBitg==
-X-Received: by 2002:a05:651c:2213:b0:302:251a:bcfe with SMTP id 38308e7fff4ca-307968d7fc4mr9056651fa.6.1738140060278;
-        Wed, 29 Jan 2025 00:41:00 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3076bc1956csm21261451fa.70.2025.01.29.00.40.59
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jan 2025 00:40:59 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30225b2586cso4475471fa.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 29 Jan 2025 00:40:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUxO+UGVrjo7Yx+h7/cvBv5S+2LhEGjZxWj+zDGc11D8BA970IkDiliGNtW4+ifs+hFcksXCtJ9O1EF7oMaxuA=@vger.kernel.org
-X-Received: by 2002:a05:6512:1313:b0:542:8bf0:2fa3 with SMTP id
- 2adb3069b0e04-543df6ae7a2mr2036916e87.5.1738140058920; Wed, 29 Jan 2025
- 00:40:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="htAkK86s"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1738140409; x=1738745209; i=markus.elfring@web.de;
+	bh=/630C+CIkYuGrn0QRV/2ElPy58L7cgeFfD+7FLwoMKM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=htAkK86s/S61beDFPmL8eYy88jSodQwQgCsnpy8uwgxO3wL7ZVneMhCtDXLr3XzD
+	 ya/ulQvPl/kWDcxYrzJ7eD1n6x8C3fNps9gjq1lCUUb31LX4qqUaq1kHXb6Q+GnbB
+	 RZ4Q8+uoIaoEk4Lij64dHWG5b6GOmogmHgN55y6EkQzgMdNjVnj5PTrp0yt17AHNd
+	 AXJRsdobl87/bTx6I/zHbpBlsDR2jBG6Ofe9NwjGrf658NgarQ/G3HZs4Z+oRYCzB
+	 4ZS1q85fRTP2UtmbfljwWZDCF2oYyJYCtXGcBf9ec40jybsGNuscd+CiHHmruSgVu
+	 krkubfslaDxTuGV95Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrwsB-1t8w5U3HV7-00lt03; Wed, 29
+ Jan 2025 09:46:49 +0100
+Message-ID: <fce88885-8c10-4f22-a19c-3b04430aec3d@web.de>
+Date: Wed, 29 Jan 2025 09:46:48 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129-secs_to_jiffles-v1-1-35a5e16b9f03@chromium.org> <fe13604a-2626-4641-908e-87eeaca53288@web.de>
-In-Reply-To: <fe13604a-2626-4641-908e-87eeaca53288@web.de>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 29 Jan 2025 09:40:46 +0100
-X-Gmail-Original-Message-ID: <CANiDSCvufe0nK_NLykSRLb9RmttNOhw3-mm6aiC=gj41Hxtgiw@mail.gmail.com>
-X-Gm-Features: AWEUYZlpM9GVhs5ldC_citqJGj5iIReMpwx347jREvFQp64Ws0GIJSK33decl3Q
-Message-ID: <CANiDSCvufe0nK_NLykSRLb9RmttNOhw3-mm6aiC=gj41Hxtgiw@mail.gmail.com>
-Subject: Re: [PATCH] coccinelle: misc: secs_to_jiffies script: Create dummy report
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, cocci@inria.fr, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
-	Nicolas Palix <nicolas.palix@imag.fr>, Victor Gambier <victor.gambier@inria.fr>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: coccinelle: misc: secs_to_jiffies script: Create dummy report
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Easwar Hariharan <eahariha@linux.microsoft.com>, cocci@inria.fr
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Victor Gambier <victor.gambier@inria.fr>
+References: <20250129-secs_to_jiffles-v1-1-35a5e16b9f03@chromium.org>
+ <fe13604a-2626-4641-908e-87eeaca53288@web.de>
+ <CANiDSCvufe0nK_NLykSRLb9RmttNOhw3-mm6aiC=gj41Hxtgiw@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CANiDSCvufe0nK_NLykSRLb9RmttNOhw3-mm6aiC=gj41Hxtgiw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kcKgRWibP0MRuqDZ3WitnDD2Gm8HrfqOd/QvbiBB2IZFvyaKW3q
+ 3OUNoCfqyvUyEC/vhS7z3V4wt8Mxb/fwYXeSckvA4/nA2v772aFH4E9RjXYPgSMWNM2p5sI
+ 4ygUfE63xVtF4NUxF11hRUGoXGgnK4Y+NbdbZX6p7qrIkRvKQ0IxCiZyX75B+Asz/prIhYX
+ DcHlMjwdbCqtxsOjYOmdQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0Hq9ZiBWIa4=;v+dcI54E1H0PZTcRdUYBRUs9R7B
+ WH6vy9YGPZF0/vUewsGfFj1xEHU7WSDhiUWlwjl79VYEydI74O84uNvswM1fYRPMbrtbTWY3Y
+ Rc0jg1WU87azaHkRJBKdQpH0JT3o9Zi0/lXyZv7ZbCwdtc8mnEq7+JKrRVKXM5+lEV0+/Yiay
+ 1+xeVk16yG2Wt1zr61Wwf3NDii2VOkWbw6M70qW0faZoC2CgnEoDmJRcnxlduTlChD1y88N3J
+ BV0887i8RcDh28E9qSWVR6knJ02xPyQg3cnlSCcNhQhycyrwmU4igK9LlO1s+5vD4GY5qATPu
+ TSxzaRM4Edem5FVcLgSLWfukohwtPVPyKpm6Ya+GUre5JxByg92f6uujQVthVXIOd4DPwCCqW
+ 1ESj2b4W97zAT3artIdlrfVlK7poFZ2qN/B9lG/RVAztTVD1NMYlHXWjw2BtXQzCLt1WmlXvz
+ Fv+QdY5vqAyriVaUOfxlocvCQIa8vTFtGdOAe0abuJC5Q8ok5Rhgu2J1hky3CIk8JXBGKBCcZ
+ sn97rypWF9b5ItakTRwiqU1Po5Msr+5iLntPeLzI0Z5oOhJZ9UaGgcbOLqcTMAZ/UvYvaefFi
+ P9ZhXLnlDAlgJhCtX8zt7na/IsSzQgm8o8B+04scCDgwvUM8p0RiSdyKq10CFOs4kItLkwgm4
+ PFKKTNT6e8C5XaQSXjzHfKFe3/r/DzZJrggXwiDLaf5amDOlTrtohZuuAGdv2/hmTSJzbspfG
+ d4GSMsk4Ae4lxpKzF76csxpxM+df66+TshkGC5Q6oWSk53T1gdhwSNfRQDQUG12vRgDPT4RU5
+ t8F3BD8eeJG26HrJJJthfhWjOp08qj/oCpgLtYlfIAY5MJZT3NE30u+eMR+634JqtFuW3oUPL
+ /Yud7Ps98zNnx9QA18yPSFqWCoVj5qSnsTbW6aq8aHgkahl54grJ0lV8Cr9Zzf6jsnWZNe2Q5
+ RjdodczSgII2lF2T/PHxgq4r88FSWPS3qndy6YJyOuHNmTOWPJGiutQoii1n7VCdbF66F6LKz
+ SxS6sUCyBk3nNN9KRzJeLiqfMx9wMQZys+EYiuMrbEOxXp9NxTmbn1+RgmN1mwejZIQ0k0Llr
+ aPaLTAmkILhuklylp0CD/DtKdLDCbWLduIN7n6t9LO8LsXKprJlZADm5/L9q3Aqjg9qxwXAaZ
+ 4TWkuSeQS7U6/9oC6eR8TeATZUMhBNIetnXtGLfHH2A==
 
-Hi Markus
-
-On Wed, 29 Jan 2025 at 09:37, Markus Elfring <Markus.Elfring@web.de> wrote:
+>>> Create a dummy rule to avoid this error and run the other cocci script=
+s.
+>>
+>> Please add proper support for operation modes around discussed source c=
+ode analysis approaches.
+>> Will it be more helpful to work with function calls like the following?
 >
-> > When running cocci in report mode, eg:
-> > $make coccicheck M=3D"$dir" MODE=3Dreport
-> >
-> > It returns this error:
-> > virtual rule report not supported
-> > coccicheck failed
-> > make: *** [Makefile:251: __sub-make] Error 2
+> My main concern is to fix the CI that was broken when this semantic
+> patch was introduced.
 >
-> I hope that more collateral evolution will happen because of such informa=
-tion.
->
->
-> > Create a dummy rule to avoid this error and run the other cocci scripts=
-.
->
-> Please add proper support for operation modes around discussed source cod=
-e analysis approaches.
-> Will it be more helpful to work with function calls like the following?
+> I am sure that a person more capable on cocci patches can implement
+> the report mode in a follow-up patch.
 
-My main concern is to fix the CI that was broken when this semantic
-patch was introduced.
+I prefer to avoid a temporary workaround when a more useful solution
+is actually simple.
 
-I am sure that a person more capable on cocci patches can implement
-the report mode in a follow-up patch.
-
-Regards!
-
->
-> =E2=80=A3 coccilib.org.print_todo(p[0], "WARNING: opportunity for =E2=80=
-=A6")
-> =E2=80=A3 coccilib.report.print_report(p[0], "WARNING: opportunity for =
-=E2=80=A6")
->
->
-> Regards,
-> Markus
-
-
-
---=20
-Ricardo Ribalda
+Regards,
+Markus
