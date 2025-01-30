@@ -1,178 +1,103 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CD41BBBEB;
-	Thu, 30 Jan 2025 11:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D41B1E47C8;
+	Thu, 30 Jan 2025 13:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738234974; cv=none; b=ZeUiHC77fuy5nYFZgD2XnveM+mKQy/yCKL+HBduwG1kBfny3xbFV6rk9cKOdfbqIKQ+56o7EZc+bc42DgnU3+WJrNI8UtYKPLGWJwYnjyh5bE0WX92Ya6bYNOoQ7VRjpMGJCviPce7j3t13o1/jJjgVQNsXf6VGl96XX5xaZuGY=
+	t=1738244688; cv=none; b=fk2giDcsn0xMKWUWHkZLpqnVg35Ph3ykMLdTMCGtnw3n/a6qyt9twIBv5Xp0xXed6GW8PsaV5uCa0UzDATvuwQEUtCBWPNWPlbBGid+hIM1vHXnYwULrFEWiQIgZb1dQ0+IpoERbqV7lbEMn7ZRQa0lLopEK+hu/ZUvRqCkNneU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738234974; c=relaxed/simple;
-	bh=+t4JrvrPiLsj7bfb840h38pFA44a5hm5mtWmRSYdCpU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=bR9un1CPdwQMvRHOQ9+Dffxe0SW8y6ttVU0BOlVjrd4n0l7DJOC+s+7voBwTmqlgsQ+opwzVkRiVDWwFa7LtDUCOg6PDuHAxaQKMu1lbsb6EuSpKadqbRNBYac9dK7gh+ky9RR7L/8e8Ynv9x0CdpqrZQucUxlk7AmxV2vU9ols=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EbrlbQSA; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1738244688; c=relaxed/simple;
+	bh=Zoo1lecfhZxxU+f9T/aEumCtGAS46u8d15EzmjphLKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m21E4vLi3bZ8A3an3fsF6s1Sd77pX73Ip6qm91djdT7oMfSpMY7AbAoYTsVAJORf0erdSzSQ4rXd85ZmOgjASo7noam+y1WZVfpfXZiFg+xsL3GrePId1/+ckrS0T0b1fFSFt+wqbqIYZ2EECWJBWSuBJ09aYSqhpO4/OZ//Q8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFY1Onie; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EbrlbQSA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1738234870; x=1738839670; i=markus.elfring@web.de;
-	bh=+t4JrvrPiLsj7bfb840h38pFA44a5hm5mtWmRSYdCpU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EbrlbQSAj+f38PA8703tTZaMiR4ayuD9Qrvyd9QGYqJH7YthbOq//pBZda9lk8L/
-	 8Z/bzqm9AcXAMhwbS7RdUkARLZ8bEvd0EdUhD+FRE9AbkWXJxoHLcoT2yUZDnoAru
-	 AEpVtrhhTX6gwbMUeKZ3owYdgRazmCSF+8S1sKEY3QoZ9646CKqHg5lS86sDrdRD4
-	 GAbkiHBdMvF1FSVgBio0MksJCA2Iu2Q6DHWn+Yg3/3vqeK/pNqvYcFMKTRC3o8uWh
-	 KgSWCXjJhP+JBxslKqGd0a2lz6i0DAbUIk83mJ6VEQvNIYUmrFpRTTuGrXGp53KWW
-	 cqA7/eN/08snJD7Q9w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.40]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MIya8-1tsDzY10Di-00Lbns; Thu, 30
- Jan 2025 12:01:10 +0100
-Message-ID: <e06cb7f5-7aa3-464c-a8a1-2c7b9b6a29eb@web.de>
-Date: Thu, 30 Jan 2025 12:01:03 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFY1Onie"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab2bb0822a4so186540866b.3;
+        Thu, 30 Jan 2025 05:44:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738244685; x=1738849485; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LoyBCNpacaLR1y8uMZvCscmsTHlmutDhN94aZ0BhOz8=;
+        b=FFY1OnieigESNeapkY1MFVjt3GG/Y4x0Rwfimpv3xhJold8gjHuk//VsnqVG1MHUE2
+         SCKiILbfZ5OkMn1lx5s9LuYOtL+VIdE+tuH8kvUaZX/kdtqJICqnLeV3KqPzz019yIYb
+         /TdV/RFIMYuJK+f8JTS2RFqVHZzSM/HMtVchJ04o7HON9Xka5wMQniJD300cL/qV8vdU
+         mJ5mo4CKbOYes+DAgs0di41XQVwCTmOnQ3a0G45I67fexIjQiY2pNeX1NwTfSOe9lAi8
+         Z9E1fapgyKjNjb6fo6GuNTOhHtXIyeiInkbsuTOHxMLELPRiFITGqWSJU6J113p02ekN
+         SbUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738244685; x=1738849485;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LoyBCNpacaLR1y8uMZvCscmsTHlmutDhN94aZ0BhOz8=;
+        b=pbrueyflxXM8UyhFmw0XhaOwHX4tPxscOZX4zekxOazAJassZQSgko0uv3gfaEc/UX
+         hpeRulxi8XwnZXC3wK3UFBDjcs89CNoA8hGUlMOmDU8Ud9KheHyA1sqGEnzoD744EvPG
+         n5MrjC0tTyE6uRE+jVuhSw+760eJeMd2ZIns4Fy+huoLOtVc0Rc/qCGNsw+HDHxakAmX
+         uk2dughiEXzTM3zVPFvAPWXoP6d9N/5dFoPcca/pceKGoFkuKjqznWOapVjbMuQtTmAZ
+         iiSPVRTbgrUEj+Y4yjh+vmL5KyRdHe8HiLvfFY+vL2E9ky+iIkASxqiumMoW0tMabiHu
+         hAUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUl81tgj6ZoCKG9YYAz3+cT0cjUoKT1y6d3DuYNcTBsf3wiX3igIuM5W5WBeE3tkg13xDdQFxdUS4R6oyVQ@vger.kernel.org, AJvYcCX5HlB9/Ot0K5MygRECowDztIB9rp7B4uyWFZwk2mUYTRwcAg63u/UoqMA0wZSzXZfjXz8cOrVMlWVuBNotqdA=@vger.kernel.org, AJvYcCXeyqN9Ymew+VDkoNVQabyLVKwobZsNiV3UnWtwEzGg+lhtA9OgvP/0Hl+00EEBJRCrFymHuefK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9rARsYwE+j7ayF29hsduKjvT2uTwLv/sQD5yNmU2sWm9fJR2b
+	Cx7ypmVZ2gsxH1g8P+j9lTqcb6x8UiENPnDwxFOH9Ha/uQjbocM=
+X-Gm-Gg: ASbGncv6EF/gBf0jzst0dfaimJ4p8U9xNWlWQ8CllmL119vk0Y2Cc8kLYExJ1xKDTnU
+	bMvXzAoUMXvQLtOsAwsi9n1x96OaNzyCDdITOlupYvEc/oo6DuDleRUkVO2oD6F4xDF7muAUkXR
+	K3ONi+SswDzx/MLlQhfWyBfbRQSXFzUJ+2zWMYWQO314YfRPbQmaOQBCfMipgeTkZAAE7wwDk3P
+	Mxg0XxZYYcs10jRC5t7eVRbT1Z0zbe0wG4FF2xHUAaR2yjtgFOEFYiEwOzsCGw3oxqUOrdXSmWL
+	vA==
+X-Google-Smtp-Source: AGHT+IFuQn+B8fj12pxE0PfL3E5gFfWpeVUKxRinZMiH9LzfBPmTNaSIGfoXgI38Wep2ZZ4q38CiRg==
+X-Received: by 2002:a17:907:7f29:b0:aaf:73e4:e872 with SMTP id a640c23a62f3a-ab6cfcc5171mr714662766b.3.1738244685038;
+        Thu, 30 Jan 2025 05:44:45 -0800 (PST)
+Received: from p183 ([46.53.253.11])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e47f18e8sm122099166b.76.2025.01.30.05.44.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2025 05:44:44 -0800 (PST)
+Date: Thu, 30 Jan 2025 16:44:42 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: less size_t please (was Re: [PATCH net] xfrm: fix integer overflow
+ in xfrm_replay_state_esn_len())
+Message-ID: <03997448-cd88-4b80-ab85-fe1100203339@p183>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: cocci@inria.fr, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, dri-devel@lists.freedesktop.org,
- ibm-acpi-devel@lists.sourceforge.net, imx@lists.linux.dev,
- kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
- Andrew Morton <akpm@linux-foundation.org>, Carlos Maiolino <cem@kernel.org>,
- Chris Mason <clm@fb.com>, Christoph Hellwig <hch@lst.de>,
- Damien Le Moal <dlemoal@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
- David Sterba <dsterba@suse.com>, Dick Kennedy <dick.kennedy@broadcom.com>,
- Dongsheng Yang <dongsheng.yang@easystack.cn>,
- Easwar Hariharan <eahariha@linux.microsoft.com>,
- Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- James Smart <james.smart@broadcom.com>, Jaroslav Kysela <perex@perex.cz>,
- Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
- Josef Bacik <josef@toxicpanda.com>, Julia Lawall <Julia.Lawall@inria.fr>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Ilya Dryomov <idryomov@gmail.com>,
- Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
- Keith Busch <kbusch@kernel.org>, Leon Romanovsky <leon@kernel.org>,
- Mark Brown <broonie@kernel.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Nicolas Palix <nicolas.palix@imag.fr>, Niklas Cassel <cassel@kernel.org>,
- Oded Gabbay <ogabbay@kernel.org>, Ricardo Ribalda <ribalda@google.com>,
- Sagi Grimberg <sagi@grimberg.me>, Sascha Hauer <s.hauer@pengutronix.de>,
- Sebastian Reichel <sre@kernel.org>,
- Selvin Xavier <selvin.xavier@broadcom.com>, Shawn Guo <shawnguo@kernel.org>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Takashi Iwai <tiwai@suse.com>,
- Victor Gambier <victor.gambier@inria.fr>, Xiubo Li <xiubli@redhat.com>,
- Yaron Avizrat <yaron.avizrat@intel.com>
-References: <20250128-converge-secs-to-jiffies-part-two-v1-1-9a6ecf0b2308@linux.microsoft.com>
-Subject: Re: [PATCH 01/16] coccinelle: misc: secs_to_jiffies: Patch
- expressions too
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250128-converge-secs-to-jiffies-part-two-v1-1-9a6ecf0b2308@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:MEBO0GsSQ1SMY/zsPX1U6svBkJN6BjoZlGAGaEjdoAIc7rC0MTJ
- jMCDSnzW+JUiBx0jWaw4axa0ASi7RKu+znCfMa+5DA/GZz89brkDkAWXkPNY1Ii+WKoCg2M
- 6p6JIXEbQugmQdBp3V5wVA0hm/aJde6kKUDnCeJpidqtVh0kGmNtl+sNaqnuL+ZhzFG6g5Z
- yt9wjcSDL8KRKPEOFFBUw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PCsLlrQ8lfw=;SoOTgoPi1u3ddphFfFnJ4K80Ey1
- LhQV5NN3S1upZ+kQWRf5X13xSqfZszqJAWQG1OpVuCmo6tpVtGTWgh7ad8U9WwKa6cxbghVrt
- NekQpjR/Dsev5s67AnEX8ThdDcbbfKvRw5T8fgaGslTYv3XceDxH2g+ZINh1g5Zl1a5Kb7tUy
- iHsXRJsmGMh72moAwMl2T0JX0Ldu9mm36L7zjNeIOX0Xh1EcbDwPTnBvWT5Jmf/TZjjTD915z
- wkMwvyKEhqv+ILIT2NmQNRENiOP1N2A5cNBwL7S6RvzS4B2b6TETCM6HSXEgzk4eBq/cjFYJ7
- Ta/beBAeX/x1vlhieJ7zCgVJ/DjpXSnLIakxsKLFsTqznw+ifPF4fJli2HnMVo9sGRnRMWTrl
- qkRACaZwBVl2ReKWA6Ylw6VqlTKMT2hF2oCiSA6SNHSwnqWCdtkKT3MwrASEpsgRd1t3m2qrg
- dzBxkwY3Iqvyla51ZhZ4KeRRsMYftkVOD06V/LWAUsGh3adVyfNfo1rFkiXbs8oaQXw9Ja6tZ
- RzPDki+nrGeKxCzQaenUyiA48SLrGJ61YEiLCyUiil3FCYQCPBx6oGNf2hTXlPwkPSrMnvfyk
- yvQjlFy7DS+9l6YMcPoT4oJhRV5HGFbKwznZ3oL4+T60BN/ekmSzbtefb+GOhIG+4+ywk54uP
- mTXT8J21gH5qaPIaPiannqZ/nmjWeakTcPkk/rVwdP3tmwDxSgnRKkzPj2UadACH+VKlM8JrQ
- lfxiv25g7Br2uvZqXG/3Mkq5j8BPnzef0ZEvV00FZ4lN2l35qROKiS4KNw+Oa2MExwmkZF8N0
- Me4UosI1FbMOonU2tpnvT5R9FbJv2h1tIMF/XYUdA7G6V3mY01f2O3g0W60Gd1Z/onfWiWTsC
- vsuTuJ7TZfE6AwrUs1WQ/Wi8E1So2MZdkmeUagRZY0DoLytG1bmL84SvJIdb8h4sdAVK3EONn
- 3chVYtWWI+cM+cz3Whj1giWzBTzyQOpKjx+HZcaRA80KQWJ5iUExiJkz11n/ptAWXabZtwVr1
- IIfHoUKeT2WT8pACVlj4x3gvqIClbPKbcGWhs4epE3uD2mR9gqFM8fCUfkHNngYTCZq6z5Did
- d50IILddgQEvH7rjWs9K2n3wFTct4+ajCi45dnopg2wTz/Oma2Lt3tO8Qenl6l70EogpyLyCN
- iMoxPpi5Wclpw/Kc+5YCXrWUIzzUatEenh+mkeiB0/g==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> Teach the script to suggest conversions for timeout patterns where the
-> arguments to msecs_to_jiffies() are expressions as well.
+> -static inline unsigned int xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
+> +static inline size_t xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
+>  {
+> -	return sizeof(*replay_esn) + replay_esn->bmp_len * sizeof(__u32);
+> +	return size_add(sizeof(*replay_esn), size_mul(replay_esn->bmp_len, sizeof(__u32)));
 
-Does anything hinder to benefit any more from a source code analysis approach
-(like the following by the extended means of the semantic patch language)?
+Please don't do this.
 
+You can (and should!) make calculations and check for overflow at the
+same time. It's very efficient.
 
-// SPDX-License-Identifier: GPL-2.0
-/// Simplify statements by using a known wrapper macro.
-/// Replace selected msecs_to_jiffies() calls by secs_to_jiffies().
-//
-// Keywords: wrapper macro conversion secs seconds jiffies
-// Confidence: High
-// Options: --no-includes --include-headers
+> 1) Use size_add() and size_mul().  This change is necessary for 32bit systems.
 
-virtual context, patch, report, org
+This bloats code on 32-bit.
 
-@depends on context@
-expression e;
-@@
-*msecs_to_jiffies
- (
-(e * 1000
-|e * MSEC_PER_SEC
-)
- )
-
-@depends on patch@
-expression e;
-@@
--msecs_to_jiffies
-+secs_to_jiffies
- (
-(
--e * 1000
-|
--e * MSEC_PER_SEC
-)
-+e
- )
-
-@x depends on org || report@
-expression e;
-position p;
-@@
- msecs_to_jiffies@p
- (
-(e * 1000
-|e * MSEC_PER_SEC
-)
- )
-
-@script:python depends on org@
-p << x.p;
-@@
-coccilib.org.print_todo(p[0], "WARNING: opportunity for secs_to_jiffies()")
-
-@script:python depends on report@
-p << x.p;
-@@
-coccilib.report.print_report(p[0], "WARNING: opportunity for secs_to_jiffies()")
-
-
-Regards,
-Markus
+	int len;
+	if (__builtin_mul_overflow(replay_esn->bmp_len, 4, &len)) {
+		return true;
+	}
+	if (__builtin_add_overflow(len, sizeof(*replay_esn), &len)) {
+		return true;
+	}
+	*plen = len;
+	return false;
