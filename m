@@ -1,63 +1,64 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D41B1E47C8;
-	Thu, 30 Jan 2025 13:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D7E81720
+	for <kernel-janitors@vger.kernel.org>; Thu, 30 Jan 2025 16:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738244688; cv=none; b=fk2giDcsn0xMKWUWHkZLpqnVg35Ph3ykMLdTMCGtnw3n/a6qyt9twIBv5Xp0xXed6GW8PsaV5uCa0UzDATvuwQEUtCBWPNWPlbBGid+hIM1vHXnYwULrFEWiQIgZb1dQ0+IpoERbqV7lbEMn7ZRQa0lLopEK+hu/ZUvRqCkNneU=
+	t=1738253722; cv=none; b=o4LLMUrUufYPnpDcqIweW5/XZh5JRqXx6D55Fd07yxniu7p9FDXbymYZiyDKM3v2/Ewec7wdDHiNvfsq0tjcNeLp/NO6Iv2xnB/VyZC3fkVqEetMkHPmPTueHwudoHbzs/UVteA7zaKPQgRwP5al2mctIZ9OxqtocGgTZl3Ngik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738244688; c=relaxed/simple;
-	bh=Zoo1lecfhZxxU+f9T/aEumCtGAS46u8d15EzmjphLKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m21E4vLi3bZ8A3an3fsF6s1Sd77pX73Ip6qm91djdT7oMfSpMY7AbAoYTsVAJORf0erdSzSQ4rXd85ZmOgjASo7noam+y1WZVfpfXZiFg+xsL3GrePId1/+ckrS0T0b1fFSFt+wqbqIYZ2EECWJBWSuBJ09aYSqhpO4/OZ//Q8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FFY1Onie; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1738253722; c=relaxed/simple;
+	bh=dO+OPJCXXibwKzWyjQUcel5uqQk/wf0H/j7qRS1SYbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HY+9zta+nrw3N2RTWJ+jKsKz6O79802aGobWDGG6hwhoQNsAMxj4nly7ZiaZQ+Li8MUMdadMjE6cIIG1Gx9XfeDEPCNKxtDl1sQn3hWp76oph8wCs94ws9ZrVG/YcphejjblQD2/gg8VSAFd4K31EURVc2KUcUoc3RrFdgEHvTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FUI1oZOb; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FFY1Onie"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ab2bb0822a4so186540866b.3;
-        Thu, 30 Jan 2025 05:44:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FUI1oZOb"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385eed29d17so538945f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 30 Jan 2025 08:15:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738244685; x=1738849485; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LoyBCNpacaLR1y8uMZvCscmsTHlmutDhN94aZ0BhOz8=;
-        b=FFY1OnieigESNeapkY1MFVjt3GG/Y4x0Rwfimpv3xhJold8gjHuk//VsnqVG1MHUE2
-         SCKiILbfZ5OkMn1lx5s9LuYOtL+VIdE+tuH8kvUaZX/kdtqJICqnLeV3KqPzz019yIYb
-         /TdV/RFIMYuJK+f8JTS2RFqVHZzSM/HMtVchJ04o7HON9Xka5wMQniJD300cL/qV8vdU
-         mJ5mo4CKbOYes+DAgs0di41XQVwCTmOnQ3a0G45I67fexIjQiY2pNeX1NwTfSOe9lAi8
-         Z9E1fapgyKjNjb6fo6GuNTOhHtXIyeiInkbsuTOHxMLELPRiFITGqWSJU6J113p02ekN
-         SbUQ==
+        d=linaro.org; s=google; t=1738253719; x=1738858519; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tJ5gAZC0bHzN8tU6kHMbxQ3VEtHEehzEjoAQRurzPa4=;
+        b=FUI1oZObzcKk2iz0B2Qa6z/W/aCnRcPtTguKz24LZ1wewpQplNLfgsWBXB+B57zPLM
+         0fhPGYEmva18x2QxE1y5RsXUCaC6SWA09ciQba3DytGW4dpIx3tqA/xyVjJfbpQDF3AG
+         d8EmR6sv+lSzzkl8X9zXBP1YUdDsseb2RB2ctrF/kRXy3FrFUVwfF1KvDnsjRDow/PWx
+         GYcuuJgZxTihfMbfbSGCdwJPn2KoTceNw+YyFF6QiVmP/dbfxX7Bb4z0b6ZpkSTGRE87
+         tCU81CsxDEQB1PdNzEynCd58N/hCzXI/aKqbuMHZPigluxxfh3rV8CC4XFb1mjPWsGL1
+         wsJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738244685; x=1738849485;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LoyBCNpacaLR1y8uMZvCscmsTHlmutDhN94aZ0BhOz8=;
-        b=pbrueyflxXM8UyhFmw0XhaOwHX4tPxscOZX4zekxOazAJassZQSgko0uv3gfaEc/UX
-         hpeRulxi8XwnZXC3wK3UFBDjcs89CNoA8hGUlMOmDU8Ud9KheHyA1sqGEnzoD744EvPG
-         n5MrjC0tTyE6uRE+jVuhSw+760eJeMd2ZIns4Fy+huoLOtVc0Rc/qCGNsw+HDHxakAmX
-         uk2dughiEXzTM3zVPFvAPWXoP6d9N/5dFoPcca/pceKGoFkuKjqznWOapVjbMuQtTmAZ
-         iiSPVRTbgrUEj+Y4yjh+vmL5KyRdHe8HiLvfFY+vL2E9ky+iIkASxqiumMoW0tMabiHu
-         hAUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUl81tgj6ZoCKG9YYAz3+cT0cjUoKT1y6d3DuYNcTBsf3wiX3igIuM5W5WBeE3tkg13xDdQFxdUS4R6oyVQ@vger.kernel.org, AJvYcCX5HlB9/Ot0K5MygRECowDztIB9rp7B4uyWFZwk2mUYTRwcAg63u/UoqMA0wZSzXZfjXz8cOrVMlWVuBNotqdA=@vger.kernel.org, AJvYcCXeyqN9Ymew+VDkoNVQabyLVKwobZsNiV3UnWtwEzGg+lhtA9OgvP/0Hl+00EEBJRCrFymHuefK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9rARsYwE+j7ayF29hsduKjvT2uTwLv/sQD5yNmU2sWm9fJR2b
-	Cx7ypmVZ2gsxH1g8P+j9lTqcb6x8UiENPnDwxFOH9Ha/uQjbocM=
-X-Gm-Gg: ASbGncv6EF/gBf0jzst0dfaimJ4p8U9xNWlWQ8CllmL119vk0Y2Cc8kLYExJ1xKDTnU
-	bMvXzAoUMXvQLtOsAwsi9n1x96OaNzyCDdITOlupYvEc/oo6DuDleRUkVO2oD6F4xDF7muAUkXR
-	K3ONi+SswDzx/MLlQhfWyBfbRQSXFzUJ+2zWMYWQO314YfRPbQmaOQBCfMipgeTkZAAE7wwDk3P
-	Mxg0XxZYYcs10jRC5t7eVRbT1Z0zbe0wG4FF2xHUAaR2yjtgFOEFYiEwOzsCGw3oxqUOrdXSmWL
-	vA==
-X-Google-Smtp-Source: AGHT+IFuQn+B8fj12pxE0PfL3E5gFfWpeVUKxRinZMiH9LzfBPmTNaSIGfoXgI38Wep2ZZ4q38CiRg==
-X-Received: by 2002:a17:907:7f29:b0:aaf:73e4:e872 with SMTP id a640c23a62f3a-ab6cfcc5171mr714662766b.3.1738244685038;
-        Thu, 30 Jan 2025 05:44:45 -0800 (PST)
-Received: from p183 ([46.53.253.11])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e47f18e8sm122099166b.76.2025.01.30.05.44.44
+        d=1e100.net; s=20230601; t=1738253719; x=1738858519;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tJ5gAZC0bHzN8tU6kHMbxQ3VEtHEehzEjoAQRurzPa4=;
+        b=mq03D/WBd+l8aD7z5OUt90/Sbe1bvFSyOeRTgOCd0fSz7U+A05nl0HMNghofDYuvms
+         rjivr2ChHu+cWQeACDw39pZeKbB2jJn2O10bsVk6JeSOpCjYKr8XPnJ1UBtmIIEhhlOE
+         /Me/+1/s3rtTNexkAhu8jRSts0o5RbkiqtxHf4AEy2vW7FMJ+fW0kYfZRrPtW6khhomu
+         voqKfkK3EO5jbd88wiSNaScr6ylJQ4ONvpy3l+EwIzkLiYmCIjioiZry5RTzvrPcOepv
+         jXYbLmDhilh0qU15BxpZ5++NPhPwzzAqef8zlIGmUB9PzozHXGVoQTv7j7V3qn4Ximm7
+         Sx7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVfRnL3/n1hnRAMKyBhE+i7RmDunEDv6v4A70FLSZj0Wmi6BeVjni8ZZupB/BZQoGUXobGG89/usQ3dEPoaaQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaDzzN/vw1hGkbSvmVOH5lGUNvjPJ6ebSUiRUJs/djrM7rbxUN
+	9I6CzQcJeK1qzpkqMU4t5wp2PKLbq0aAAOHQpsWw3hPkt8NU8mf7yId91wLea9M=
+X-Gm-Gg: ASbGnctKTbtqe2zjajHmt8Vwj5DNaS8srRhH7V9jPklZSn9k9JPeb1qOTRo/DwRucmE
+	iRuOhPkqCDxptR2aUWiziMZC2z0CyUUHTDQ0ZouUo8SEW7a7HXvC8JYt2Nwg/PItdhg9/dnxWzT
+	HB+U8lVpQZR/EN7cZvhOKcMvWO6B5/t8pcljkhVZdXFlwkhbKYsoRmu6qXUTbgepco/N/+YKvgX
+	sOqVDoqoOLA4q3ACjRn3eiglVXwxy2NoeX/TFllYrf29nOPJ5Fz2asIi9/15JQqLhIx3v+3T5Pe
+	V/jwbIoKyUS2ll/700eo
+X-Google-Smtp-Source: AGHT+IEWAxjoEy901q5jZtjgoOuXqWVHPE/3mfWiQmIt2BfJ1PCxbLkP3Jb1C2QUHIQvntE2tv4LNw==
+X-Received: by 2002:a5d:6d86:0:b0:38b:ef22:d8c3 with SMTP id ffacd0b85a97d-38c5209395cmr8931986f8f.35.1738253718683;
+        Thu, 30 Jan 2025 08:15:18 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38c5c1b5492sm2419555f8f.73.2025.01.30.08.15.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2025 05:44:44 -0800 (PST)
-Date: Thu, 30 Jan 2025 16:44:42 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
+        Thu, 30 Jan 2025 08:15:18 -0800 (PST)
+Date: Thu, 30 Jan 2025 19:15:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
 Cc: Steffen Klassert <steffen.klassert@secunet.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S. Miller" <davem@davemloft.net>,
@@ -65,39 +66,73 @@ Cc: Steffen Klassert <steffen.klassert@secunet.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: less size_t please (was Re: [PATCH net] xfrm: fix integer overflow
- in xfrm_replay_state_esn_len())
-Message-ID: <03997448-cd88-4b80-ab85-fe1100203339@p183>
+Subject: Re: less size_t please (was Re: [PATCH net] xfrm: fix integer
+ overflow in xfrm_replay_state_esn_len())
+Message-ID: <1ee57015-a2c3-4dd1-99c2-53e9ff50a09f@stanley.mountain>
+References: <03997448-cd88-4b80-ab85-fe1100203339@p183>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <03997448-cd88-4b80-ab85-fe1100203339@p183>
 
-> -static inline unsigned int xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
-> +static inline size_t xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
->  {
-> -	return sizeof(*replay_esn) + replay_esn->bmp_len * sizeof(__u32);
-> +	return size_add(sizeof(*replay_esn), size_mul(replay_esn->bmp_len, sizeof(__u32)));
+On Thu, Jan 30, 2025 at 04:44:42PM +0300, Alexey Dobriyan wrote:
+> > -static inline unsigned int xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
+> > +static inline size_t xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
+> >  {
+> > -	return sizeof(*replay_esn) + replay_esn->bmp_len * sizeof(__u32);
+> > +	return size_add(sizeof(*replay_esn), size_mul(replay_esn->bmp_len, sizeof(__u32)));
+> 
+> Please don't do this.
+> 
+> You can (and should!) make calculations and check for overflow at the
+> same time. It's very efficient.
+> 
+> > 1) Use size_add() and size_mul().  This change is necessary for 32bit systems.
+> 
+> This bloats code on 32-bit.
+> 
 
-Please don't do this.
+I'm not sure I understand.  On 32-bit systems a size_t and an unsigned
+int are the same size.  Did you mean to say 64-bit?
 
-You can (and should!) make calculations and check for overflow at the
-same time. It's very efficient.
+Declaring sizes as u32 leads to integer overflows like this one.  If
+you look at integer overflows with security implications there is a
+5 to 1 ratio of bugs that only affect 32-bit vs bugs that affect
+everything because it's just so much easier to overflow a 32-bit size.
 
-> 1) Use size_add() and size_mul().  This change is necessary for 32bit systems.
+aab98e2dbd64 ("ksmbd: fix integer overflows on 32 bit systems")
+16ebb6f5b629 ("nfp: bpf: prevent integer overflow in nfp_bpf_event_output()")
+09c4a6101532 ("rtc: tps6594: Fix integer overflow on 32bit systems")
+55cf2f4b945f ("binfmt_flat: Fix integer overflow bug on 32 bit systems")
+fbbd84af6ba7 ("chelsio/chtls: prevent potential integer overflow on 32bit")
+bd96a3935e89 ("rdma/cxgb4: Prevent potential integer overflow on 32bit")
+d0257e089d1b ("RDMA/uverbs: Prevent integer overflow issue")
+3c63d8946e57 ("svcrdma: Address an integer overflow")
+7f33b92e5b18 ("NFSD: Prevent a potential integer overflow")
 
-This bloats code on 32-bit.
+> 	int len;
+> 	if (__builtin_mul_overflow(replay_esn->bmp_len, 4, &len)) {
+> 		return true;
+> 	}
+> 	if (__builtin_add_overflow(len, sizeof(*replay_esn), &len)) {
+> 		return true;
+> 	}
 
-	int len;
-	if (__builtin_mul_overflow(replay_esn->bmp_len, 4, &len)) {
-		return true;
-	}
-	if (__builtin_add_overflow(len, sizeof(*replay_esn), &len)) {
-		return true;
-	}
-	*plen = len;
-	return false;
+This is so ugly...  :/  I'd prefer to just do open code the check at
+that point.
+
+static inline int xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
+{
+	if (replay_esn->bmp_len > (INT_MAX - sizeof(*replay_esn)) / sizeof(__u32))
+		return -EINVAL;
+	return sizeof(*replay_esn) + replay_esn->bmp_len * sizeof(__u32);
+}
+
+regards,
+dan carpenter
+
