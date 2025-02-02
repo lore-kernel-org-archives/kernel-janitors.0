@@ -1,74 +1,69 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC0E2F3B;
-	Sun,  2 Feb 2025 22:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB2D20C003;
+	Sun,  2 Feb 2025 22:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738533894; cv=none; b=ICnT31M1A78xzVE5+4jNaoESb4nun7lT1d2lqoY2wnjI0GmCICCOa0jjGad5hxuDfJSzItBCrh5mmwSiiCa4zt1BcyC5DOR/T/ADGLbo2p0yVX/DROLuofhhQisO5ZVZLYgQJr2+x78OYiWaIg7FvsAmnVTeByVZtcon3FXmmIE=
+	t=1738534048; cv=none; b=uDqdYP8Gn/gDJNsGNVlEEkObh7FTWR42G5zHL7mGu8gSRp2RtRbUCKVCxTJa5pmhtr9HTQsMjahwyCpBDfF1d6w2hcrGQrgm2wMjAYcuYX22PQkL/GcxWLP6u2dzr8/45H5nWNs76ZRfqt0vTNv3VoOAFDfYV8+SsbQG/gV1Lh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738533894; c=relaxed/simple;
-	bh=xLpOT+pnlMKKjkqg84cHkVtwQSmCriCuURRitq28k6c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B3gJPEjotKTgmw+5zfy33THZ9Vi86TbPrXlPdmtoC9yW8ClY5WLwSMVfeYwEJDuJNiaN7xonGlh31H7fbVbAxKpfq3SfUsdVTcMdTwag3vgc6A724xXHqMetPIE6IQtkPYXS52rtXL2XMcyRAnNcLJjzH8BbNF/rIyjc1inQ6aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/bkWAS2; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1738534048; c=relaxed/simple;
+	bh=Tww6j7IITtP1JpiFaLexj9OLS/m0wJmj2DIOLw7haZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L83nqVQGPX6ZETXaj09iIaLyrMSwGLAQmhjl4ppiNaCIaU1qQ89t4rhNyY48pPnUDE/0JhF9oaOyAgAjUDh5C/wR+omWXT46btOxbZdKfS+ezRowOIVFOzEuRWrHxKHNEHQ1mL9U9rFUOu+8lNJPBkvCqodhiEPDdDR80T28bzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nbTdU9Zk; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/bkWAS2"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385de9f789cso2867281f8f.2;
-        Sun, 02 Feb 2025 14:04:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbTdU9Zk"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4361dc6322fso25279635e9.3;
+        Sun, 02 Feb 2025 14:07:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738533891; x=1739138691; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738534045; x=1739138845; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bvLRQSNeMyywAL2VZYkzDGhGJ2EB8RE56tLO1zBW2oo=;
-        b=D/bkWAS2c/Qkq0LKK1c4dTd7q0sqJqfdBkJej787eau/PQ4VWgwTmtI2XeTlN7R1iq
-         k5PgI3D5jCD9IaeV5RecCmqodidL1Wb5N4iAUsnctUuJ99QdZFl1InIIY/MkDey7X2gG
-         qjgFzr0u+XuMkJ6f863heOXnl/lF941TC8Ug1t9QM28pjll/f1/4bosYSusEt/glCinx
-         DWjaOGd9BilpjzJnbCBCJdnSwTxVC0jLDVnK+ls1jV8B4txzMjYjasKZkkwne6QN2bsT
-         XBDt3sv/Yzq6u+850Xkxv+2ttfyIeNwQW1EMGgb0TwNx/HUxS0jo8+xLZEs/7yebTeSO
-         P5og==
+        bh=bNwdZ9Rby6QrQ/t2sXkUgdNUisz3NDMDNDDC7nr5Ytw=;
+        b=nbTdU9ZkaK7tsKva8OYK3dgnld3VEBkDlVRCjQMJXGYb8fnRTbBuMnvi8WsnkAuOM4
+         LWqoblbxy8/uSdKXfO3/X30A6bvPnkZC8QmrJuDAPQUkB16RcTXLV+gaulumaB8nG7xS
+         GStnpa3+qz5M1aFb4rIjdaRAxkoQwjEhPnNE/f+PAOmUGxo5eMEFTOEGiYQU2JPt9acX
+         WdhJJadfBMpKb7CEW1+4xXPe/wtU4s30n1OdHKwRqH/zrxFLq3/52yjbGT9S0bnnLC0s
+         LVZ/Ohe3Z/q6cV2S9Yc8S2QOPvc5+p1uCIqx/JMERUacpsMXP1vCcFYBmdZCakAn7b4+
+         vtjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738533891; x=1739138691;
+        d=1e100.net; s=20230601; t=1738534045; x=1739138845;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bvLRQSNeMyywAL2VZYkzDGhGJ2EB8RE56tLO1zBW2oo=;
-        b=UnVg+cdKAOmIeVijg70Z9ZT9KTT23ScM0b77TWz7wH6Medp13CzAceaeZtO0WLUJ8j
-         cayMnEag8bhBa+O1vjmWt79rWY7Bh1gMOOMBHzSVxqwzmiPXxDe599bGsBJpYsmUZdn5
-         UtD5aFdaPCQuqPrkiPGaBDjo7uJvWahjwMvz0SSsr2x4cZePjKLQCeAtxMKF9Rfd8sHm
-         wLMj7rIBM9oUpAJlkNqJOtbjOnsMhB4FgHgdv8G5m/PMM88Nd1vJBlFbJBOojTlp2HIA
-         YYos58cKpCqAjyNb+WXT7wuYph8d0YlwhZIFaWg5Ddxzxs2OE9pSWptxm6IbSoA6a0Ca
-         RxkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkrL3Uqxup6/aAjhJ19mHVPgRu9kROORJobeDlWQF+jzZX9WqC9m/MWqb5/UvWBu1RtiSLT4TRzww=@vger.kernel.org, AJvYcCVsWCoLN8dJbF93ZSVkhf3mQ28erzwd01PkwHbvb4pTfkGBmrd8vgy6UQE5ZEwlWKoP/JSM3LW9GBX8DY/tBE2PmAk=@vger.kernel.org, AJvYcCXxpsOY4IZvCzp3j+Iy2Srb1S3BJ1VTYMSJaZpNPZqv39xHhaIvGsfBgo2p9IhVt0Ae2MsnjuhwGsUrgX8Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSGIoRz8THuMh8XzCk/G12+phKf5XlWwFLySwHz9fRRR4zVv4d
-	+pDGeT25+5t4ApXW/ejPRNHVMCbTmHvIN57K8LojxTqmpHBju+a3
-X-Gm-Gg: ASbGncuBjlZWCFwKfzxG9DrBtOr39tRhp1G1czHOcycoAI+pkPyKvQLNNcCT9qGModH
-	fhzyIMQyx2bOgXKoN8SoTIS6UWGkPNEuakwpRaSvo/9m5BeOGjRtTWJX6PRfJOfMsVbl/rfkOOh
-	sHAr17ybS1X+e/oafHvnnxpOhiJ3o9d71OmlA+5K6F5BIIS5Q6XHx6UzP2Wu6MphTLAxiZOMvTE
-	krJIHHbddEOr++eneQQKIPw8xeUDFZ1XHNoMjYIF+vboFM/anI19x1+YO81T5/5mTf0YyU1boDf
-	vliWahbAilIKJbBP
-X-Google-Smtp-Source: AGHT+IE0+XXDl//rer1jPDvr8EzMd6rwQ+VNhIPvmOGjHUvrqbfJiAxcB7DdPCj5lUCudMn87klHjA==
-X-Received: by 2002:a05:6000:188b:b0:385:dedb:a156 with SMTP id ffacd0b85a97d-38c5192f329mr15135346f8f.6.1738533890785;
-        Sun, 02 Feb 2025 14:04:50 -0800 (PST)
+        bh=bNwdZ9Rby6QrQ/t2sXkUgdNUisz3NDMDNDDC7nr5Ytw=;
+        b=dXgDNZJpZIamwH9TWZ9elo38AFH66MYa7lcXwTUdhP/5vAN6j6UBCRhUFoT1WbXTGZ
+         LkiULn7Y0fN1xyi6MUsyUGGvtJsr4wsiSUdAL8jpBBxC9IJbdQTk/yhozLunmLRYt0ek
+         4ZiiIw+8MO45lU6Eb0ZtP/B48/CzBgx/Rj7A92enDlIryhN6axzdscqfXeITsAFMbAiR
+         5IvIhF0Ckpdsg7sHGS1yLStNZqIZ8nzwgvzvjNtK+KsxV93ugrGxGwwseDZidC0ovdV1
+         7PewrqvZoszFZZKtx88k1MrUtFaQTDRc7X6XmlSuI1JTZwIBjf4rrs+92BaZee/IK22o
+         SZZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoww+1TeBLQoPADtRTddwCn5Lw9jw/bDu5vZLyitzySrrs7VIjCCA/Dpg312Rl9J8hWw90tEqmVeoqoYWoKlk=@vger.kernel.org, AJvYcCXsMgyojlFfLphKPU9v2tTZxDL7196r/PMIM3IQ7sju9xs4cNLO7TK9wRYQ29nye4Yofv1DRs8hNWZmfag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2DH7tmzonHDMlnbrTKj40Ptl4AjxWVBqLOn66gpTMBxta5kVO
+	lgRsvlKmiMXt19bP8TnNpX1umLqu7LTg5f14F0WH8hc/l+MMhUd2Ns6Q9lJ+aaw=
+X-Gm-Gg: ASbGncsMTpsio0qxIWrBQzmhwWa3WREHdiwhyWfkcXzQzd5SMxBbTJbaOCQEbITeSiu
+	YqYr6trYh7QDWUo1R97GVMdHxP6uDMePPKXeMjxOiiKycf13OJkO8G8HC3JD21uHmd/sczJPQWb
+	mKe5o9nmu31P5lsGKAQq5TNxKDtS8r6YPmsd2i9EdhEiNyTCAnZGzC32dvpeHE52fXJXRsV8x7f
+	/qQyoMRTXMIWZP7Sq12z9LAkQLH+LiUiSUDeqZAKX0pMgcjBkyyF0iljyqEnIgTIDtBEq6lVu9i
+	bxC0NLKqKnu8BaSI
+X-Google-Smtp-Source: AGHT+IGqToJckq9WXaHfFTvgbHEi1aCj7NGnpjNkDKNYHEBTw3PFmy6Sr/Ktlpr9n14KVY4K4FlLqA==
+X-Received: by 2002:a05:600c:3c89:b0:434:a7e7:a1ca with SMTP id 5b1f17b1804b1-438dc40ffaamr151077395e9.20.1738534044751;
+        Sun, 02 Feb 2025 14:07:24 -0800 (PST)
 Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-438dcc27130sm167892735e9.16.2025.02.02.14.04.50
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-438e244ed3fsm135150805e9.31.2025.02.02.14.07.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Feb 2025 14:04:50 -0800 (PST)
+        Sun, 02 Feb 2025 14:07:24 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
+To: Stanislav Yakovlev <stas.yakovlev@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: samsung: Fix spelling mistake "stablization" -> "stabilization"
-Date: Sun,  2 Feb 2025 22:04:25 +0000
-Message-ID: <20250202220425.199146-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] wifi: ipw2x00: Fix spelling mistake "stablization" -> "stabilization"
+Date: Sun,  2 Feb 2025 22:06:59 +0000
+Message-ID: <20250202220659.199341-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -79,26 +74,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a pr_err message. Fix it.
+There is a spelling mistake in a IPW_DEBUG_INFO message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/clk/samsung/clk-cpu.c | 2 +-
+ drivers/net/wireless/intel/ipw2x00/ipw2200.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index dfa149e648aa..97982662e1a6 100644
---- a/drivers/clk/samsung/clk-cpu.c
-+++ b/drivers/clk/samsung/clk-cpu.c
-@@ -133,7 +133,7 @@ static void wait_until_divider_stable(void __iomem *div_reg, unsigned long mask)
- 	if (!(readl(div_reg) & mask))
- 		return;
+diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+index be1d971b3d32..24a5624ef207 100644
+--- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
++++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
+@@ -3295,7 +3295,7 @@ static int ipw_init_nic(struct ipw_priv *priv)
+ 	rc = ipw_poll_bit(priv, IPW_GP_CNTRL_RW,
+ 			  IPW_GP_CNTRL_BIT_CLOCK_READY, 250);
+ 	if (rc < 0)
+-		IPW_DEBUG_INFO("FAILED wait for clock stablization\n");
++		IPW_DEBUG_INFO("FAILED wait for clock stabilization\n");
  
--	pr_err("%s: timeout in divider stablization\n", __func__);
-+	pr_err("%s: timeout in divider stabilization\n", __func__);
- }
- 
- /*
+ 	/* assert SW reset */
+ 	ipw_set_bit(priv, IPW_RESET_REG, IPW_RESET_REG_SW_RESET);
 -- 
 2.47.2
 
