@@ -1,74 +1,67 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17001101E6;
-	Sun,  2 Feb 2025 22:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51B935958;
+	Sun,  2 Feb 2025 22:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738534500; cv=none; b=iVNnL4R6jNi5LElEmR5gDmasVscnxkC53Qdq9tFp+L0FEGIK69eRouuJZ247pvv6ZJzWKBcLqXMfN3uctqnDv5DUddK0F6OdC8fbf5Cb3NKy+MiggmNsrx8V7Ojv+1Jd8RgfO6cJ7Qte4p2Oj9jn9dnVczWWamtikh+6AvTHBEo=
+	t=1738535036; cv=none; b=SXLc4V+gJj95x9GIP9cLPEyfpHLjDlXBpcoInkQzaRvGsgWLN5M4oPpHJbS1owDAsYpTTb5GRh4FvyD0SHP/Aav+yXU5J20i2ixyq0FsEhzKZwVIUlLD2F9L/369xXJ5L1i9nZa93GrvSf7RoKbZ7In1RL810rM3SOsgDU9tZug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738534500; c=relaxed/simple;
-	bh=t0btTXTxDYqNqNDaMQam8DdZeMc//oOetyM8hHci/9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LRaUS9pT0dGaU0HgvmvlHdz3TfpVNuxlIQOp+uTN9ajMGQjzSlwcZKhWYQdbhzmaKZrmy8tKN7UCPQmTtpy9XWLO+Zw+15uKeeS7VmnRvIpXhLHgxc7Px0uMtKvFI4KI+qRbec7ekgegSQervUqAss1wIJ22wrMoCv1kQjus2Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2mDIJFi; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1738535036; c=relaxed/simple;
+	bh=UoYB/trv8Iol0MuUUKBG5qPWot2+WIDQonMIAwMDczI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eAHTqbXpGvVwsleiAVBFC1/8JbDiCRM6Y0ujiBbv2sfd9MGsxdqH9hMf1enuGO+laIC6fRJalfcQxiWTqu8lraAymBF3MXEmZqF0y9a68Bv8ybsI7DIEk5MoNQvUcbSfzXx2A8aChK6wSXidBGOG+AU+WitmgQeH/gAEtySTPOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jH3YrXw/; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2mDIJFi"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so44555075e9.0;
-        Sun, 02 Feb 2025 14:14:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jH3YrXw/"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38be3bfb045so3209394f8f.0;
+        Sun, 02 Feb 2025 14:23:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738534497; x=1739139297; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738535033; x=1739139833; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/d+6kPbWsXoeRB2D7/hAE4JuKSelsZt/eO8TnxXuCpk=;
-        b=m2mDIJFiTzf41NWqt18onB+30n0RSicWUsOA/h2zfy+IO/HB6rUMyJBDq0QUR1HIZQ
-         A2P5b8MHnqBlGzg8wNDkXxzQ48L2NmzVkmVU3aMPrUjEA0gfQ7BjxiveTx0/h/64WEn4
-         T2RlghuXuocO3FTNcUC865P/F0TxaUzDVOX1ueS+/sW8EJZMkRAc2QtMF4kwJO2zCwqf
-         +UBJJTp+XTjGZ0LpJkAmm+caw3uqxfHQ797QP7/60tnoxPHdM+v0oKUJvKXvhWTF9CrW
-         aHP7YzvG3rjjdaeiHxeX8R4j9s1iGPI3F1NABaYPDfyJnfmvKCgrnSB8LrnpssRWcBf0
-         DJTQ==
+        bh=sPge7hJBFTAy8hBIjP18QmIC3VRabllYYNmaNi1fIfE=;
+        b=jH3YrXw/d4K/5wG9XYEOtIpZN5Xiniz7sqqRr6Lor0JESvfDSGh8rY4AYRrGllMQPq
+         3g11QvsTg1HsHPa0g4JeFGZzkq0iyIcoasaiW0ZLPDcoMjK8ov549uZu2Tcgx4ICHSR7
+         5VGm6ITHaAHFCDe0o9NUkzOs99WID9vNJVSfWn07J+mQvFPfZ5fgWYdg6TCJOtzjljRc
+         reqnAKjiIyyjQd9f5spTNm8wvyhctv/NTM1sc19cWQWdv+/xd7lklmZMnTV/Vw0AeSSZ
+         tHQejwRgoQeeSjC9LXr16q4H5j6eVqawrDjnjJT/0l8eMYQF3Fxn3DNB2FPCGF3k0wnw
+         KS8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738534497; x=1739139297;
+        d=1e100.net; s=20230601; t=1738535033; x=1739139833;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/d+6kPbWsXoeRB2D7/hAE4JuKSelsZt/eO8TnxXuCpk=;
-        b=QoJLpyCZs5r9lkRuTDF8sgVC0IZt8tc2rLRrogANDRrr/OyDPjzjgxd/KtltcNJyLe
-         f/vLxmQ/iMZI2j7qrubZjaKncvZONBPAgHURkMsuodwQazJxXgq7R7lsBe3xntM35ZS5
-         rVxFJOXiF4KpiNmL3lqVqvv9Oh+MfWDBeTkohUufz6vng+x1brOQzkg1JrqYVK/4seKy
-         NoDFNnFgbxN6M4GV5qgcVLlwA5Sq583V+E8dHbxoi4gHT8U3BXZeTHEaPt10dt1x9APt
-         V1FRwUzXhScF9Pc54hA9o910RAm+kMWGF8yG2aJpzeM6uBA4J33weDX6TKL2q8R4k1Yl
-         tLZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVn23PmrPQwU+dSst5VoMyy6ucTeVXo6hRTWdXfkzY4DUg0tOC6i+S6xCHItKKcEeGN58srcV35YqOnuws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKiBvfJNOQ29XaKk4KhB2Zx7GSNPw8qntoV7UrLVSVO60o1pOc
-	Z41YGgDGkE9KiYy+KpQDS1TO5BnQlfcfDt3uwLQLV8SUQCz973Li
-X-Gm-Gg: ASbGncuIatIsE5RXRZZtoPzZ80nJBMk7via3fc1IF9RVm2x91X5xaecFpAKl7JM7nok
-	3u0rp+2m+NKEFjH5fRptUlArjojeqyL3c5+zZhjlOXBNO0OjjK+bn3HJXgYxWja2LOmsXC+CTBJ
-	vp4IHGxWWpfVwdclWcFk/WftcmxmI75yvdDO9secdJByeKjUcAgdKRDer+4WjKoPR3gu4Ah2sRE
-	hzI9G4fIFU/g5uBHP/EiBEvgOB6cCVpeP2B0rF/4gAczxclV1r5KVnxKGvbb50DmC2sErOhsSVo
-	aLamPdxEKv7kT7JD
-X-Google-Smtp-Source: AGHT+IHplxqjgEP0dFwLXvJfrL/A1CbJGFKEyQ9oY6WjTEsVIqOplrcFOwDsR1meWL5D4TeYkh8bkg==
-X-Received: by 2002:a05:600c:3306:b0:435:294:f1c8 with SMTP id 5b1f17b1804b1-438e018288dmr124323665e9.28.1738534496966;
-        Sun, 02 Feb 2025 14:14:56 -0800 (PST)
+        bh=sPge7hJBFTAy8hBIjP18QmIC3VRabllYYNmaNi1fIfE=;
+        b=PahbjMssquQ1rkz4sP9q+C6pFNnNFarihJH+HYgbqGla2aXrG9lP69UCgqgT77txao
+         AT8OzX99TwpU9uLnN8HnQB49IwafWuE7tgzBrFO3aCbGuzPtp1kiUjcCoSDo2PRreOnd
+         hYn7/lgUO55IttmuXGVWahIX5zM/KI7uj4evDNXfpxV7yGcC5CHMVMtZGDnTTUuaK03m
+         1lb/+0hwC6Gsorye+CnbD/Gm9CS1VVtikzhiXMry631aMetnnnpUwh7VSM4kWy3lnm5k
+         2/SRtvb2uMg7q3hYb6T7PSiEHviVS7cnFXV/bYfyVIhOy8LmEn//vNSt5LjTniP+WZdB
+         vvQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB3pSuR/lRQhHM5Wl6P7dCs90DG0KCxTCATpO6UqprbCB+wZqSrQG3CUaa9rNbU6Kc+wLEYXOT91Qhis0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlCpdRrejfNy6/HR7SsrfhL30oBKSHaNObmn8rQjL8PZSVaCYO
+	n2IFyFEt4KG2z95mwvvkZzZqFi3ZPL/gp72aw4PaW8we46qV9KBa
+X-Gm-Gg: ASbGncsEqPA8qLHLMiqyQKezitc0PbfMUDdFnANLzSC9tA+ug4BdLBtx0ExFD5l14az
+	A9LeQcQ4CV/XvmKIHNlVinwexTnkywsOoeqUcrPmE7fv6L5AEeK7sLdxPgDAmuwe5uUdDzV/Lno
+	Wk42nDz9fu5fwz+xLhZTG6N2NbMN46xhm1Wnjof3u8HHZ79HnY8n0RNpBW0IX0PSjzw/Lt53hSI
+	Jx+kohH3fDyKZQdEwXjeK968yzn9OkRYGzRZkQXPOxjeMnWCwpgxQp832f2IrtzSLPSQaSRDeaz
+	D91v5DcAwzjofojC
+X-Google-Smtp-Source: AGHT+IH/tpk9RnrIW9+0s11YBZYVvfLmwimUPLX81tuS00v0OW448Pt4vmuq4BTCKHLaa/cIy31fOQ==
+X-Received: by 2002:a5d:648c:0:b0:38c:24f0:fc28 with SMTP id ffacd0b85a97d-38c60f027ecmr8109970f8f.3.1738535032819;
+        Sun, 02 Feb 2025 14:23:52 -0800 (PST)
 Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38c5c1b51e1sm10974566f8f.77.2025.02.02.14.14.56
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38c5c125f77sm11119999f8f.56.2025.02.02.14.23.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Feb 2025 14:14:56 -0800 (PST)
+        Sun, 02 Feb 2025 14:23:52 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
+To: Huisong Li <lihuisong@huawei.com>
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/selftest: Fix spelling mistake "ofset" -> "offset"
-Date: Sun,  2 Feb 2025 22:14:31 +0000
-Message-ID: <20250202221431.199802-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] soc: hisilicon: kunpeng_hccs: Fix spelling mistake "decrese" -> "decrease"
+Date: Sun,  2 Feb 2025 22:23:27 +0000
+Message-ID: <20250202222327.201958-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -79,26 +72,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in an error message. Fix it.
+There is a spelling mistake in a dev_err message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/i915/selftests/i915_gem_gtt.c | 2 +-
+ drivers/soc/hisilicon/kunpeng_hccs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-index 5c397a2df70e..3eff0894c26c 100644
---- a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-@@ -964,7 +964,7 @@ static int __shrink_hole(struct i915_address_space *vm,
- 			break;
- 
- 		if (igt_timeout(end_time,
--				"%s timed out at ofset %llx [%llx - %llx]\n",
-+				"%s timed out at offset %llx [%llx - %llx]\n",
- 				__func__, addr, hole_start, hole_end)) {
- 			err = -EINTR;
- 			break;
+diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+index 8aa8dec14911..828ec8fec5d7 100644
+--- a/drivers/soc/hisilicon/kunpeng_hccs.c
++++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+@@ -1476,7 +1476,7 @@ static ssize_t dec_lane_of_type_store(struct kobject *kobj, struct kobj_attribut
+ 		goto out;
+ 	if (!all_in_idle) {
+ 		ret = -EBUSY;
+-		dev_err(hdev->dev, "please don't decrese lanes on high load with %s, ret = %d.\n",
++		dev_err(hdev->dev, "please don't decrease lanes on high load with %s, ret = %d.\n",
+ 			hccs_port_type_to_name(hdev, port_type), ret);
+ 		goto out;
+ 	}
 -- 
 2.47.2
 
