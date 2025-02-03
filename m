@@ -1,188 +1,88 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B9A2AE99;
-	Mon,  3 Feb 2025 07:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE742010FD;
+	Mon,  3 Feb 2025 14:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738567467; cv=none; b=jNH1j+VoxJSzufGyk68BDIQsW/GyEfhNi2Hu+4AtHIe/7RA5oqoOnY/bTHI8YX4yKtHj1hqQBo24rsbA3OtPk72ejGk/fOnFSWEJl6NsBg/ou4Ca1qDNMwb3NEvyo6BDMvRK8n8tgnjGVRZd1NnMqC7cA63mKNwsJDQ2xbRPwLQ=
+	t=1738591927; cv=none; b=VXTfrVG06rBlvSPITJk+GRZJzrOw+J9dqpU93X/EffTqYZeewPAjNczkTPFZeahMiTeFf2PoI8jQov5eKioNfSgTw5w1tqnMLtiR+/Yg2HFgLFqsmfJW6lQH6yYCI87H8Sk4+TYFraDipxIfZuTVcya7jTtjqYgzw0t0zZttILw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738567467; c=relaxed/simple;
-	bh=OqgD85/7bIAJyUYEBqgq8wzvekzYox1KAlmROyC8qI4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SLWAer/HyI1p6Alo/0n2IsdO5pn+1/ffepyJpdLXRQ6MBt6gW3S4qU5J1N4taPggy91AsxuF5Qy+JWvXV0qrXi6UIHcr1F5VAssvOiEeIgWZvm+DLvPE7Zh8nJz+ES+hauz2iJl0NtNK90ag5/8J5+mw16ksV8c3Lz94qMOu540=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wdF6T+KC; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1738591927; c=relaxed/simple;
+	bh=OOZV6cGnwytCGkUmPkipRump1HRxP99C2VbvSgsVbU4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Kjvfe+lMsrH3D8DJeq6nt5aMjr3fbPYsSO3X2HfFrYDnmkIVYoFREvwNkSwVoDpfCKX8py1Nr0Sx00EXzV7g1QFj2YKLKivuzwKFUgzjbWruTVEfySVk0hZqo3mMGmVfzaY7NknFQeu2oNKXa1pG8ENLHaX0Djvk67PCf3bwcCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tw81QUss; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wdF6T+KC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1738567460; x=1739172260; i=markus.elfring@web.de;
-	bh=76ak89OEGf6cpJT+ox2q4ztkodd+5nXQpwjXqZ9yOKc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=wdF6T+KCAbAQPHtval/iWwDO33k8/S4h1JYkZkuCvIRGwjbHt4JnkKQi+xGR4+Bw
-	 H0BC5+gGoV5Bkygpv1QydzwlAEMqnRTPt5Z3tdA+s/szywNlr8krtmc9bPgqTJL/l
-	 m43pM0uYNjr86d6LJoGFn3vRbfVvmmH3UhogIx6YkeHzpIK88ewzM5ltRK0GmHuYz
-	 uJ65bY3H4HxJCiICSVN16WeM9AA2cOSDCyj2pE3qtIfe6LG8MfIcoZleKl+Ic730P
-	 z8CVRgmJuWNeKZ9UYlho4uzq63KesQSPsgvhMznyhGunfkF9iBghglX/9RlPGodHP
-	 saV32DJWQnwT3Ot5pA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.29]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MyvBA-1tSHoc1goM-00tLWv; Mon, 03
- Feb 2025 08:24:20 +0100
-Message-ID: <80cae791-663c-4589-b67e-d4d1049fcd98@web.de>
-Date: Mon, 3 Feb 2025 08:24:19 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tw81QUss"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DD9C4CED2;
+	Mon,  3 Feb 2025 14:12:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738591926;
+	bh=OOZV6cGnwytCGkUmPkipRump1HRxP99C2VbvSgsVbU4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=tw81QUsse5F7LjTFMnuWgKK9xTitTvUpvCngnoIoPaiPCVc0hUN9QjR9nrKlivkIj
+	 E7Qyv7N6lAz8mG/Q4DNhxKxNPpTp8jacGUQFm0ZIet7OXRF/ZzxHWec/IIi++M64Ym
+	 qComHcX66mpckO+8qAVu/y3/gD0JY7y9VDbZ5RPdZ90dGhE7gp1DDdf1AeM6Zs6Kw8
+	 Qj6bs1RaNxtTp6/T+5czWyFQkrJimFJkE1P6sRxt8Ikbv2uGZ9+D1krTh93dhK05Zw
+	 3e7kiUS7WUsUwgpa+AbnKMIdPIsjIhVCuioPT3AG2cJLhoSqXY/reQr8SrlFpLoj2A
+	 I1Ij2YJiXaigA==
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <f01f900d15633d5cda5f27763723acb307c0d22f.1737725820.git.christophe.jaillet@wanadoo.fr>
+References: <f01f900d15633d5cda5f27763723acb307c0d22f.1737725820.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] regmap: Reorder 'struct regmap'
+Message-Id: <173859192471.164939.14221359396991942917.b4-ty@kernel.org>
+Date: Mon, 03 Feb 2025 14:12:04 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [01/16] coccinelle: misc: secs_to_jiffies: Patch expressions too
-To: cocci@inria.fr, Julia Lawall <Julia.Lawall@inria.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Easwar Hariharan <eahariha@linux.microsoft.com>,
- Nicolas Palix <nicolas.palix@imag.fr>, Ricardo Ribalda
- <ribalda@chromium.org>, Victor Gambier <victor.gambier@inria.fr>
-References: <20250128-converge-secs-to-jiffies-part-two-v1-1-9a6ecf0b2308@linux.microsoft.com>
- <565fb1db-3618-4636-8820-1ca77dad07a2@web.de>
- <2402812d-b818-4d1b-9653-767c9cd89dda@linux.microsoft.com>
- <9ca0337d-e378-4de5-99be-1dfa1d4f8cff@web.de>
-Content-Language: en-GB
-In-Reply-To: <9ca0337d-e378-4de5-99be-1dfa1d4f8cff@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HFy0LVj+DeY80/+bsPHMXBwLtRD+7CynvELc3D19FkeUZr+iQwn
- tQDzZFV/qBLLeet8ApiuPh0I0fDpfZYd7gmj26W2keHKbLVpFDZRGgRPrOcXEbVUrR+hUaV
- oddoLg2mxi2s/7bATo0/je8bYMTNkYAP2FlDbhSr3XDhlVQaXki0I64NZVmAvG90SGe6I1f
- S9Rwr0P4NtnFwriJhZI6w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:G8MfkOHipCo=;iGUbWBarwetgRpfOnz+/TFA0Ypd
- 0XD5yRGwm0/UY0h0Nm/X3ZYENbJS7LSO33rohKyPfAO2kizP7kWsiwuBCcqY/DB3Q1yGiA1FQ
- BKl+aWQhhInChLUFyPTwYiHRiO94ip3qo8fW10x/8QZLXRr9tHpNlErB31KGh5UJSJZ43KLmj
- I1C31EUGLVjPS+TZvtuTGYlz5qs66MXi6YtFGxtx9nUcnkBfJwerFcuU5MVOv0jX6UF4+Uj1F
- akR9+Rx617/fs7OVZxKDVO5k9XaH4s6tc/DPle4YR7Q3gAXXaczPSrAHXBpxe59yhl+LMw1zB
- +dJT4d8k5ZOfyi7q2gXgnABMSg+kOGQ2yRxNcoUO5n/a6Rdwvb402lx2MtgKmpQSTnOrTZBR4
- Ubit4jhFfXZjti1SdUG4kznuyUMYdfkvj7j+/cQLIvueqqNn5F1Ys/y6YPMTX6FXjo9WqXfqx
- tu+LjNX2RmN/JXYuojAfMt1/04jvhto6ILRzl9pDX7NoKKl0XP08Fk5gCOMi22fGANLTI7IrB
- JAN6DSyJuOWTT9G4KFZh9E9Vhrz4zkLOB0lek7TeRP3Qc+SQ2hxqPQUPQqFTxw4Uk/MoAJouY
- DaZxxDcKU392sTybh2+XInX100H+Nz53n623w/zsNBnrYmVFxa4N/888+K/+RcR9tyZNeYKXI
- 1EJpisfhSsCDRbtNHQGC5jJB6+Y9DbqHu0A79DdMGtxsDxNSQumRxHjHKWsNHR/IP9ThQSUKx
- 8nSF2uI8GlAq0lyiAaoWdAJ06rw/k18y46WtCIMnIjY3csQhu7gI5NSd8wwzoHggDOaV1MWjB
- 6DlRvlA+Q3xABi+P0OBjb6PpeOaa1+O5ErlPdMon+EjrMGrKbifSKtuGLK4zY+R0gYcESqyt5
- f6MVEp0wc+TZ5+kpGiR6v/Nn3uVhwbHqvxY/jC2xch5gdHYCm4/etXFB9hH4jLDUdLJruyeVI
- wE8dOt6lU6aqFVNHawdSY+CAavWhHR9UJl1fdS47fxgPgufgmd9C+zWucTgaqh6gQYrzqc7iJ
- 5k8DtYILabEtOz/ti9dZ0bjIIf63hRJcGFNJchvS40OXTOTi8laX4Yuf08eumLdED6YbmBxwZ
- 26Z7uguC35MwXolazAGIVBsKcJ76opr1efjAQX2EGFAxkKlkwmbxkCluc92A1cSYDbMRcdzgB
- MQXXbcE9pBEaJoDOXKpacJz/bk1jWzRWRqhgT9v64/Qfo2yh2CdREzHm8fOKSA57bVvqPTr5r
- p9kdhdVkthhsQXH5fnlC7H97kktZAmfsufNVi5hwJOwe7uiZmq2svb7N5axKqK9TZ/tuvtgMj
- yhCyDwM4MHUSvb+52uC9su3dh5gWjcqr4q5HjWupqNX0r/sZCciDk+7S1h0zV8FYCLT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-> I tend also to present possibilities for succinct SmPL code.
-> Unfortunately, software dependencies can trigger corresponding target co=
-nflicts.
+On Fri, 24 Jan 2025 14:37:58 +0100, Christophe JAILLET wrote:
+> On a x86_64, with configured with allmodconfig, pahole states that the
+> regmap structure is:
+> 
+> 	/* size: 1048, cachelines: 17, members: 78 */
+> 	/* sum members: 1006, holes: 9, sum holes: 35 */
+> 	/* padding: 7 */
+> 	/* member types with holes: 2, total: 2 */
+> 	/* last cacheline: 24 bytes */
+> 
+> [...]
 
-@adjustment@
-expression e;
-@@
--msecs_to_jiffies
-+secs_to_jiffies
- (
-(
--e * 1000
-|
--e * MSEC_PER_SEC
-)
-+e
- )
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
-A command (like the following) can indicate how isomorphisms are applied
-for the transformation of some data into SmPL disjunctions.
-https://gitlab.inria.fr/coccinelle/coccinelle/-/blob/bd08cad3f802229dc629a=
-13eefef2018c620e905/standard.iso#L252-257
+Thanks!
 
-Markus_Elfring@Sonne:=E2=80=A6/Projekte/Coccinelle/Probe> spatch --parse-c=
-occi suggestion3_for_Easwar_Hariharan-20250128.cocci
-=E2=80=A6
-@adjustment@
-expression e;
-@@
+[1/1] regmap: Reorder 'struct regmap'
+      commit: 995cf0e014b0144edf1125668a97c252c5ab775e
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-(
--msecs_to_jiffies
-  >>> secs_to_jiffies
-(-e -* -1000
-  <<< e
-)
-|
--msecs_to_jiffies
-  >>> secs_to_jiffies
-(-1000 -* -e
-  <<< e
-)
-|
--msecs_to_jiffies
-  >>> secs_to_jiffies
-(-e -* -MSEC_PER_SEC
-  <<< e
-)
-|
--msecs_to_jiffies
-  >>> secs_to_jiffies
-(-MSEC_PER_SEC -* -e
-  <<< e
-)
-)
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Grep query
-msecs_to_jiffies
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
+Thanks,
+Mark
 
-
-I find parts of such a data representation improvable.
-I would usually expect here that parentheses for the selection of call par=
-ameters
-will not appear in the first text column
-(so that confusion will be avoided for the usage of delimiters according t=
-o SmPL disjunctions).
-
-
-
-The isomorphism specifications represent also a software development statu=
-s.
-It seems that they do not contain direct support for SmPL disjunctions so =
-far
-(as an explicit entity).
-
-
-
-The identifier =E2=80=9CHZ=E2=80=9D is used by the referenced macro.
-https://elixir.bootlin.com/linux/v6.13/source/include/linux/jiffies.h#L530=
--L540
-https://lore.kernel.org/linux-kernel/173831299312.31546.879788998548796583=
-0.tip-bot2@tip-bot2/
-
-Is there a need to take further (preprocessor symbol) variations better in=
-to account?
-
-
-
-How do you think about the handling of multiplication factors within bigge=
-r expressions
-(and not only at the beginning or end of a term)?
-
-
-
-Would you be looking for further restrictions on expression combinations?
-
-Regards,
-Markus
