@@ -1,74 +1,70 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53B520CCC2;
-	Mon,  3 Feb 2025 17:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A12A1D5176;
+	Mon,  3 Feb 2025 18:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738605584; cv=none; b=OMiiDCAbkHPRlGYrTLiCangc9D+OVtyKJgf2tac9Vok1s5nuaxHMbQ9UrIeykRT+TIPi93lkiAOjESTt0i8uDV8I7Xpc9l+xOp7tj/t3K6RXr/8BYtxj4cpC/qHBcY5yoS0z7cB4P23s1GEVi8qnahA13ew7N9xgnBg7c2FtFI0=
+	t=1738606163; cv=none; b=EV0pHh/JINWNLE77OnE3JSXExeKaRpMk9OeFgPT0tFkqTzqVf4v2ezjRLYmmTxUr8Zlfwb4jaa4ymYyRfWkNLylqqmhxcm3a9txK/kZbagQ0z9D+KwTPyUCezIX5uZNdy//wt9aau6FBpGgBJ3Fe0iInrq7wYj3XkMHrmtY4ab4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738605584; c=relaxed/simple;
-	bh=bHOp0QUrMuogWHVDOqjCZX+gH2Orn1MzQQkMPVmxQ+E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u0TVu91dcAKiDkmPTd+ZPpZeatweCPcJE8fH1cKwStaSufAAju9sQXQ+6cS295ohzBbFvaRhia1maXVum/xsvWWjKh/mdH0fmc8GVUy6/mMdMxitBh9Y4yRSS3D2lwJfwux/KNnHuTS9kL2oTN1U7TnFmQPSRaKZKSBM5nhdmqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ak0EoQUq; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1738606163; c=relaxed/simple;
+	bh=OYykUork3X+hICHRr3hJuZdlIa+GgROF2W8koUUx7Dk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S8QTUolYHfggnOVwC46CTDiNtWBlizC/WZle+SpF9OvrA7cdgbDeMLxkcNHmVW5dDT+mFDi0mzx8sjceWX9D+zu8m1/xbcF/MSQZSmJFNJHXU9uyiw/qXLdLflWdDFnuJj7rCwJi7nnOlr6MfC5Qr+ZXhJ7cuJRgTZFyUx0e2sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NhBI+fEM; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ak0EoQUq"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3862d6d5765so2483042f8f.3;
-        Mon, 03 Feb 2025 09:59:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NhBI+fEM"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4362f61757fso48738775e9.2;
+        Mon, 03 Feb 2025 10:09:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738605579; x=1739210379; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738606160; x=1739210960; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cawTWtf8oPVLDrUkrYoMuQNnqZbL3O9HeB89EuCja7U=;
-        b=ak0EoQUqs/yD0W+FN2Rxj6ca93jXC948eo7rW4Q6k8d+nm2rI/gCx1T+or8SHvnfdT
-         s01RL7PhxW6kIJps1jASRSjTIjuSsb+t5HGcY6KZdiW0bPLemoD1BR1pUy6PFJ+BiWSh
-         kQLX90LmRcU9grSWb0zrA3axHRuBKs2yUNiFROaSePO0DfvMzbz8ymt/IrWCqbLHJe6Q
-         IClJ1css88+ehwfWT03kZLKy3bbVDqvhyHK9OPs3xpi6s3YgsPTZcNArEgvGCMyvQ4B/
-         mdaA/y+yvZTmtJPyc8eyIehb3DQ11mXGSEmsfgUcqR1e8DMoVDmmET7bBQY02Ch5flFA
-         msZQ==
+        bh=Sgtlo0xo5sqrWLZRiaVyPa8HevdAgKTIjU5uL9579lo=;
+        b=NhBI+fEMXfEfJdDmq4KyljxNcXEVvJuELJMVjxpl0I7i2lRe7dUmlJNoEKo9z9RR4a
+         nVhnLlF0lpP0skCtnlC1DRL6dNjTIEWw+qWSuovt8aFsv7gHI0oGLU9mr+joobABZ1Ur
+         l7+4JGoWXBLO7WQt6vrIpWxyPcg/xf+rAfRrl/D7ZounzL2by36xgqZbKnB0HlWMnCmM
+         pyzDyGmMV1H0Q0SdpZtLd1hCutDd5Cu/FvUuyhQx4ju+7nSx7gWyHxD+Yvo20osAXhYy
+         rcgQCuNopHpOayjUHJlwhViYJ34xnwiEFBdkpB8cwVhWmDJddPkw/qJJUWCbAEUDVkvp
+         yktg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738605579; x=1739210379;
+        d=1e100.net; s=20230601; t=1738606160; x=1739210960;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cawTWtf8oPVLDrUkrYoMuQNnqZbL3O9HeB89EuCja7U=;
-        b=klF/JL7PsDL+xXv7LEu1ppGWsAuHbrs+muL9DTnmlcTTHNRfDWip7qpP0ii7TK6+W7
-         ClEGFeWQPdVTJDxjNaze3zvBHwidasJxOw5ZnJgzW2JGyuhy00Ph5JjXLp+v3zSgStor
-         U63FfRtX92y06h35XUVPXOGkWmEx3NTlh5ly0wDxVtuZAuNNynirb0noWN6HPxktcHsc
-         VeeNRz1d5SXa5MXMXUAHWq865XONSNjz1fMh8ay+U0zdHCUCjuukFhp11sBjd5XSwrPF
-         yaOjy5H8zH/DLFIBVkxBMGo2zdWtGIDsw4/etN3S3XICfCGCLSqrv65eoYLXCk7jMQkz
-         3dig==
-X-Forwarded-Encrypted: i=1; AJvYcCVE9ABQ9fS2uZha+zZ1YgpffJ+/xHMWDbiXR9HigVoMj2nVm2KBNy2dbKm0DkMowD5DmlieUIh1RDDtvai2fZY=@vger.kernel.org, AJvYcCVHN19BfLn+kncZH/RKY7P9Vw0v7FCahN7dpSohP9v7Cl9PqbaYBW4QZB+3us0Uh0oMl5YcC9PQZ36E01ER@vger.kernel.org
-X-Gm-Message-State: AOJu0YylAECCqZsDACy774ySnSNX9jWVQjfCidSi1Jk+HKUD2AsdsUOw
-	lRPbVjscAQuNqCYPQeNt09MXnvWPhI77HfeVlVTdKKXKdXp+gkoU
-X-Gm-Gg: ASbGnct4j7WGVoibhvshqtU7Qw+eBMa9d31xk+KRqWmCrU5S6rGdaijOOdIVlv/NH7F
-	b/dtthnFgmaQ4cOzqjIi/56pQs6v5NZK+byvT9RNc8BclR+Tdlj8eBbHsNy+UZch/5+KHrt+S5H
-	eEeElNk/+JcCrslwVYTEBMx9u4NwqXQVb0rlSlQbnrdYS+SnweWg3aOzwTEunwKDo8lM0lX3SiD
-	FnqiwGuBrOoaWAJel6Z9nMwiFw6mVMwBvhE5ixWuWuzzHaicmP59AfFqZFhsDloLdhbCukM1dE4
-	abRMjxLwGwhR3VhE
-X-Google-Smtp-Source: AGHT+IGeinNHnhJtiqaajyHesWJ+5C8zkEwFfCR8tg4FWfMeuhnH2qwTG/FWDN+nrATLGwVPMKFwFQ==
-X-Received: by 2002:a5d:694f:0:b0:386:5b2:a9d9 with SMTP id ffacd0b85a97d-38c520bfa02mr15179849f8f.53.1738605578603;
-        Mon, 03 Feb 2025 09:59:38 -0800 (PST)
+        bh=Sgtlo0xo5sqrWLZRiaVyPa8HevdAgKTIjU5uL9579lo=;
+        b=uMbN209fQq5aVJbMYLHILUTQtDGOfv2864cXwxdrM3m3VsRKsdw8TcOuEeCqgS/f63
+         Fs2a35QJTEE68iyrSacb0jsBDfv7VXjroDPFoHmj1aMwnM5UeQWutNK19Pj0yYtrMDzj
+         GoD4UOfmrWRV9Y6kYd0S+T/VW8HRBQZYEnGdRbWCt50odRNwFDpvCsu4YWiyao/BJIyS
+         WnVoJphruXkehN4r6AOukUxTY4ORH3ibWsxxKgIsk0D/rxPW20ibbTbU6Fcq8sO1gZAy
+         YCMC+ItoKWMrQDJieijJVU6Gn0pedOI4e24UW5YsPgzcd5Xi94b7qokUOQ/s2bF83g/2
+         G9sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMO1ddhESH6GPqqK32Ra0BYWzSIL5BF/iCQVwn1l4kn0adQPWbPxX7x6wolGRcJJZ7RutYyrHDv35M3bak2fE=@vger.kernel.org, AJvYcCV3zOReEO827/pWC52JP8jy+lsckyJUHxa7Ej8lMthXhsdAjmQ6j/DCL8FysgmPjtIHD/tVJ+jTXpulJYfZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIpOCq5rTIEyOoMdA/3HgAHDz+w2pJp+IUMvOoszz9Kd14H+OR
+	NBH3r5S+AckS9iLs0g7xhkYIqXvd1KKii7NobZDYkIPttt6rOinB
+X-Gm-Gg: ASbGnctNyV3v3skyYjxyJvAHtWjy+aF4DLIKyXwUF/n81L4wfXtPyBzLq8WS3mpWrwA
+	Dkg34Ge0uXYv42MazTrrqYDvN2j+C0181UNPmhL91HcsMCp5EXgfB/2J8z/bS2H6iVwOuh3gnE+
+	RZbRiS0Ad53496LqOQpRQypwdAaKKQ4w/olq/pq6uaqYzhZ6C4gKeFEYjFxr01u5bqxfndS1fVc
+	UBWgtpY+nsErT6AkCejpHmRUCkztUWKftO2TFvYJVeD4hV+Yt0h8NxhHgUMeo9PR5HInUMLukwX
+	PuUmlLczRQ5ISx9G
+X-Google-Smtp-Source: AGHT+IHW9DR5vFDwPqNm5XHYpy6u6vBd+UMSCORSDM1BSpZI9d7BkFPGP542xUfbD7mk9cbTF2UZ5A==
+X-Received: by 2002:a05:600c:1e02:b0:434:ffd7:6fd2 with SMTP id 5b1f17b1804b1-438dc3c22d4mr210504855e9.7.1738606159655;
+        Mon, 03 Feb 2025 10:09:19 -0800 (PST)
 Received: from void.cudy.net ([46.210.194.238])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438e244f0d2sm166484425e9.30.2025.02.03.09.59.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438e244ecd6sm167073535e9.28.2025.02.03.10.09.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2025 09:59:38 -0800 (PST)
+        Mon, 03 Feb 2025 10:09:19 -0800 (PST)
 From: Andrew Kreimer <algonell@gmail.com>
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Ilan Peer <ilan.peer@intel.com>,
-	Daniel Gabay <daniel.gabay@intel.com>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Kalle Valo <kvalo@kernel.org>
 Cc: linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH net-next] wifi: iwlwifi: mvm: Fix typos
-Date: Mon,  3 Feb 2025 19:59:05 +0200
-Message-ID: <20250203175931.4795-1-algonell@gmail.com>
+Subject: [PATCH net-next] wifi: rtw88: Fix a typo
+Date: Mon,  3 Feb 2025 20:08:27 +0200
+Message-ID: <20250203180913.5435-1-algonell@gmail.com>
 X-Mailer: git-send-email 2.48.1.91.g5f8f7081f7
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -78,89 +74,37 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are some typos in comments/messages:
- - Increate -> Increase
- - intenally -> internally
- - stopp -> stop
+There is a typo in debug messages:
+ - afer -> after
 
-Fix them via codespell.
+Fix it via codespell.
 
 Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c  |  4 ++--
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c | 10 +++++-----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/wireless/realtek/rtw88/rtw8723d.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-index a8c4e354e2ce..fd37e9dc9e0f 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -1783,7 +1783,7 @@ static enum rs_action rs_get_rate_action(struct iwl_mvm *mvm,
- 	if ((high_tpt != IWL_INVALID_VALUE) &&
- 	    (high_tpt > current_tpt)) {
- 		IWL_DEBUG_RATE(mvm,
--			       "Higher rate is better. Increate rate\n");
-+			       "Higher rate is better. Increase rate\n");
- 		return RS_ACTION_UPSCALE;
- 	}
+diff --git a/drivers/net/wireless/realtek/rtw88/rtw8723d.c b/drivers/net/wireless/realtek/rtw88/rtw8723d.c
+index eeca31bf71f1..87715bd54860 100644
+--- a/drivers/net/wireless/realtek/rtw88/rtw8723d.c
++++ b/drivers/net/wireless/realtek/rtw88/rtw8723d.c
+@@ -444,7 +444,7 @@ static u8 rtw8723d_iqk_check_tx_failed(struct rtw_dev *rtwdev,
+ 		rtw_read32(rtwdev, REG_IQK_RES_TX),
+ 		rtw_read32(rtwdev, REG_IQK_RES_TY));
+ 	rtw_dbg(rtwdev, RTW_DBG_RFK,
+-		"[IQK] 0xe90(before IQK)= 0x%x, 0xe98(afer IQK) = 0x%x\n",
++		"[IQK] 0xe90(before IQK)= 0x%x, 0xe98(after IQK) = 0x%x\n",
+ 		rtw_read32(rtwdev, 0xe90),
+ 		rtw_read32(rtwdev, 0xe98));
  
-@@ -3125,7 +3125,7 @@ static void __iwl_mvm_rs_tx_status(struct iwl_mvm *mvm,
- 			       "tx resp color 0x%x does not match 0x%x\n",
- 			       lq_color, LQ_FLAG_COLOR_GET(table->flags));
+@@ -472,7 +472,7 @@ static u8 rtw8723d_iqk_check_rx_failed(struct rtw_dev *rtwdev,
+ 		rtw_read32(rtwdev, REG_IQK_RES_RY));
  
--		/* Since rates mis-match, the last LQ command may have failed.
-+		/* Since rates mismatch, the last LQ command may have failed.
- 		 * After IWL_MISSED_RATE_MAX mis-matches, resync the uCode with
- 		 * ... driver.
- 		 */
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-index 7a4844ec3c10..a246f1e4f5a6 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -1113,7 +1113,7 @@ static void iwl_mvm_unshare_queue(struct iwl_mvm *mvm, int queue)
- 					    "TXQ #%d is now aggregated again\n",
- 					    queue);
- 
--			/* Mark queue intenally as aggregating again */
-+			/* Mark queue internally as aggregating again */
- 			iwl_trans_txq_set_shared_mode(mvm->trans, queue, false);
- 		}
- 	}
-@@ -2801,7 +2801,7 @@ static int iwl_mvm_fw_baid_op_sta(struct iwl_mvm *mvm,
- 	switch (status & IWL_ADD_STA_STATUS_MASK) {
- 	case ADD_STA_SUCCESS:
- 		IWL_DEBUG_HT(mvm, "RX BA Session %sed in fw\n",
--			     start ? "start" : "stopp");
-+			     start ? "start" : "stop");
- 		if (WARN_ON(start && iwl_mvm_has_new_rx_api(mvm) &&
- 			    !(status & IWL_ADD_STA_BAID_VALID_MASK)))
- 			return -EINVAL;
-@@ -2811,7 +2811,7 @@ static int iwl_mvm_fw_baid_op_sta(struct iwl_mvm *mvm,
- 		return -ENOSPC;
- 	default:
- 		IWL_ERR(mvm, "RX BA Session failed %sing, status 0x%x\n",
--			start ? "start" : "stopp", status);
-+			start ? "start" : "stop", status);
- 		return -EIO;
- 	}
- }
-@@ -2861,7 +2861,7 @@ static int iwl_mvm_fw_baid_op_cmd(struct iwl_mvm *mvm,
- 	}
- 
- 	IWL_DEBUG_HT(mvm, "RX BA Session %sed in fw\n",
--		     start ? "start" : "stopp");
-+		     start ? "start" : "stop");
- 
- 	if (baid < 0 || baid >= ARRAY_SIZE(mvm->baid_map))
- 		return -EINVAL;
-@@ -3059,7 +3059,7 @@ int iwl_mvm_sta_tx_agg(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
- 	default:
- 		ret = -EIO;
- 		IWL_ERR(mvm, "TX BA Session failed %sing, status 0x%x\n",
--			start ? "start" : "stopp", status);
-+			start ? "start" : "stop", status);
- 		break;
- 	}
+ 	rtw_dbg(rtwdev, RTW_DBG_RFK,
+-		"[IQK] 0xea0(before IQK)= 0x%x, 0xea8(afer IQK) = 0x%x\n",
++		"[IQK] 0xea0(before IQK)= 0x%x, 0xea8(after IQK) = 0x%x\n",
+ 		rtw_read32(rtwdev, 0xea0),
+ 		rtw_read32(rtwdev, 0xea8));
  
 -- 
 2.48.1.91.g5f8f7081f7
