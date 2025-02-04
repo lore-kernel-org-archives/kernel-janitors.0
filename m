@@ -1,101 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C403185E4A;
-	Tue,  4 Feb 2025 12:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65C1215F73;
+	Tue,  4 Feb 2025 13:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738671906; cv=none; b=Het9nKuW/VxztZpFuXAr8fvvJYI5Mcc9smmqf8zhCwKvAfoPWbwlSlu0cJw5z0eNs1PAuzaecByXzwWkMdwj1rsHbu3Hd85PW/BSP0rNeQQFdOfmLIlzk6PMGJCoIGks37IMyCoEQhwSHg+1vnhpzrYxmqcoE5p4iHLhJcXxUfE=
+	t=1738674557; cv=none; b=LDzJvOcBBHbT5FnjJ22YPihbS7S6Id8G61XxUqLrp4L4eZGirR2PhJ7gora+xvBvayJREgRtDby200fMqaSmV9SuoBtNbHrjxNfgl9gOTfT8TeQ6shMRhQL54CAcz4OlhztGMPmaMHL9iC2naQkAWHwodow+QvTW1AFlpELfaNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738671906; c=relaxed/simple;
-	bh=nxM4s2+q4jMZZl9mmJo4b5VSqkcMlsVNTuzIDh7bq9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afA9eEd64vwzodX3Sp+PlI25yZPM8RdguItVvwj9HRaBMYacQBy6/GFX0/ULUi7RBkwkQfTYxp78okKeUugbi7dlBpnI1kEqN3EeAm0XK8tdb5DUJRVOYnNcbIdaPoBh3zj42fp/1z3603wiYmmbdi8fWGvmjIjl49DyKScXx3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ks/IsdNh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738674557; c=relaxed/simple;
+	bh=vxDHz8ElI6Ex4LZgJZ8U26irCHGknU34NH8DsZG5iSs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GTQErrF9VDOX8N4ZVoqj69lZ8IptIiTVhdVL6FJCASXeoQM0/5kU2ETWP7LlvvA25ZcAkvOwnYyBcpoqUzh8hE9Quw7GsAyitV6rIEKt+cMdMjbJjZ2IKdPwmtqkdfvIYmoabbd5KoVdlgkYi7rU/gCu+eH5ia6kcl3n2GEj+FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqHji4ei; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ks/IsdNh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2491C4CEE2;
-	Tue,  4 Feb 2025 12:25:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqHji4ei"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DF9C4CEE2;
+	Tue,  4 Feb 2025 13:09:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738671905;
-	bh=nxM4s2+q4jMZZl9mmJo4b5VSqkcMlsVNTuzIDh7bq9k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ks/IsdNh5Qkr6K3WXKSZIcSbXY6wUP5hDJ2befaqkWNrPe2XwEUZCFrZc6rgK9Gyh
-	 zU23yHkNgIA+ZmgQ4GIUyRtO+v4OSacd9aH+20AWDsGE2ANT2rqqeEgHz8mx83/pbU
-	 vN2q69DIDF1Vu7LQHyykA1RhLOmYlrgysh6HinQVNGD3tzpyLVZJczVAb0Vi7Wmp4y
-	 9FGhHKr4x1D6amsB0Tk/MFD9byksGe2z1y1YvsFMOP8mDSl9maPPwBgjbAqvxAu/ix
-	 MPzuAaAkKjK3e+cHZhsF6L6Z+1I2cp4XCJf/MfScHqwDlf0jpP3yHezz2dWobBn4zY
-	 LqxVsMTd8BszQ==
-Date: Tue, 4 Feb 2025 12:25:00 +0000
+	s=k20201202; t=1738674556;
+	bh=vxDHz8ElI6Ex4LZgJZ8U26irCHGknU34NH8DsZG5iSs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NqHji4eix0w461AuS2feo2p8tgbNje2wDxWa5HEF7d/NWCIACk2U+fLFn8wTQHWie
+	 Uhl6zZgZwS5LNVBtLAQawJyfwqde116QD9uoA8BxmvPwOanf7KMdck1cnwicLTd5G0
+	 MsxFMpPa0iRi5EXCFbpdSQGdjjT6A/TL1RZbHfz3AYmfvpB6P41kR4fOUnWA9uJQx0
+	 80SoXpiJD7mZDemrmta/lJLIpExMSROUootZ7GCERtJUit1hC0YDCM8l+nMq32U1/N
+	 einegFkb/GDssWWEuFTZGTvT6CRKrBnZj7oAJwa8Dx2iu9sBESZf5BVu1wBP8N2+bE
+	 +TBd+rkcwJF7Q==
 From: Will Deacon <will@kernel.org>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+To: Masami Hiramatsu <mhiramat@kernel.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-trace-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
+	Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
 	Heiko Carstens <hca@linux.ibm.com>,
 	linux-arm-kernel@lists.infradead.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] arm64: Kconfig: Remove selecting replaced
- HAVE_FUNCTION_GRAPH_RETVAL
-Message-ID: <20250204122459.GB1063@willie-the-truck>
+Subject: Re: [PATCH] arm64: Kconfig: Remove selecting replaced HAVE_FUNCTION_GRAPH_RETVAL
+Date: Tue,  4 Feb 2025 13:09:04 +0000
+Message-Id: <173867195188.3988698.8446978312627999775.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250117125522.99071-1-lukas.bulwahn@redhat.com>
 References: <20250117125522.99071-1-lukas.bulwahn@redhat.com>
- <20250204113614.GD893@willie-the-truck>
- <CAOc5a3O-8wrQq3oNJC+H9ncFt0yxcm4O+QSgPk4QckF6Ak5pGg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOc5a3O-8wrQq3oNJC+H9ncFt0yxcm4O+QSgPk4QckF6Ak5pGg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Feb 04, 2025 at 12:44:25PM +0100, Lukas Bulwahn wrote:
-> On Tue, Feb 4, 2025 at 12:36 PM Will Deacon <will@kernel.org> wrote:
-> >
-> > On Fri, Jan 17, 2025 at 07:55:22AM -0500, Lukas Bulwahn wrote:
-> > > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> > >
-> > > Commit a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
-> > > replaces the config HAVE_FUNCTION_GRAPH_RETVAL with the config
-> > > HAVE_FUNCTION_GRAPH_FREGS, and it replaces all the select commands in the
-> > > various architecture Kconfig files. In the arm64 architecture, the commit
-> > > adds the 'select HAVE_FUNCTION_GRAPH_FREGS', but misses to remove the
-> > > 'select HAVE_FUNCTION_GRAPH_RETVAL', i.e., the select on the replaced
-> > > config.
-> > >
-> > > Remove selecting the replaced config. No functional change, just cleanup.
-> > >
-> > > Fixes: a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
-> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> > > ---
-> > >  arch/arm64/Kconfig | 1 -
-> > >  1 file changed, 1 deletion(-)
-> >
-> > Hmm. There are still a couple of CONFIG_HAVE_FUNCTION_GRAPH_RETVAL guards
-> > kicking around:
-> >
-> > include/linux/ftrace.h:#ifdef CONFIG_HAVE_FUNCTION_GRAPH_RETVAL
-> > kernel/trace/fgraph.c:#ifdef CONFIG_HAVE_FUNCTION_GRAPH_RETVAL
-> >
-> > so it's not clear we can just remove the option from arm64 without
-> > breaking ftrace_return_to_handler(). What am I missing?
-> >
+On Fri, 17 Jan 2025 07:55:22 -0500, Lukas Bulwahn wrote:
+> Commit a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
+> replaces the config HAVE_FUNCTION_GRAPH_RETVAL with the config
+> HAVE_FUNCTION_GRAPH_FREGS, and it replaces all the select commands in the
+> various architecture Kconfig files. In the arm64 architecture, the commit
+> adds the 'select HAVE_FUNCTION_GRAPH_FREGS', but misses to remove the
+> 'select HAVE_FUNCTION_GRAPH_RETVAL', i.e., the select on the replaced
+> config.
 > 
-> Will,
-> 
-> I believe you are looking at a tree, which did not include commit
-> a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs") yet.
+> [...]
 
-Argh, sorry, you're completely right! I'd forgotten to fast-forward my
-fixes branch to -rc1 before looking at this.
+Applied to arm64 (for-next/fixes), thanks!
 
-In which case, thank you for the patch :)
+[1/1] arm64: Kconfig: Remove selecting replaced HAVE_FUNCTION_GRAPH_RETVAL
+      https://git.kernel.org/arm64/c/f458b2165d7a
 
+Cheers,
+-- 
 Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
