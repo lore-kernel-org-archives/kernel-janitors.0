@@ -1,44 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0BA16B3A1;
-	Tue,  4 Feb 2025 11:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E91620C47D;
+	Tue,  4 Feb 2025 11:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738667037; cv=none; b=WIGB7t+UfjnkBSaICzOhno9bJqDQLBAOgL6TnPfEQg5SvQChdVoBTYsdbIPiMz4LwoOqYMKwjJfWTFyy1mstsZACyPwlz42/L4Zw1tIBO8vnz0er+/yDVxZ5lWchOrhGFJSZ4fTKnPNnUebgzi9uhlhrLA0Q7djQJFGFnMfJj4c=
+	t=1738668981; cv=none; b=OogNBhJfGms6NwlwzdnfFtUchBCF7sc4uA57+HKpqxYzoLrw7G5IGGjvpUzhKuaBMxWUZNJWYsdStjdJnrxLiy2CEROkLb7zrpcIrnGjofT0/Y3UEa8OwfAWcRq4HszGZNfYnADeCFP7TFRmlWS9fJFsahuTylhdKCIfYjzcCQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738667037; c=relaxed/simple;
-	bh=Rba8810OtKU+NnpF6c/K3i6RDqKs+qiNz1cG/DK/n64=;
+	s=arc-20240116; t=1738668981; c=relaxed/simple;
+	bh=9X+tis0IwLqTIYnFzk4iTIu76qprOrfcQ9DCye4RlTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VYRYYhXQMEcjnxMRCBGgyizUewMGxiRLqb69+G2Hgo6JcIl8Z5OidkjggW7Xc/7/j1JLCTFxobpSstlCFD8eIYt4pgmArO1WnB3xzyyLugmYtOqw5wMHwyGIdV+6kscQ48xs4PIAjVQsXEzKRz84Zu8sOopl4B7QHo7fyO8HHqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZBGK7dB; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=NpFLYv/BGQJrwa7mbWfxhg05dWFj2R3N063TR1I6x7hz1YFAkUM8U6TTy55tW4IuRXROm1Me3kVh5HBY1DBB65zK8FPyAFZZSwXu82+Fj+zww/pTAlGFreHAsWD4dq+b1PbcbIAyM1Km2tK8V7kdpV6HzM2kFwthio8pO0oIJ40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDFnnhgZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZBGK7dB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C09C4CEDF;
-	Tue,  4 Feb 2025 11:03:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDFnnhgZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1BE6C4CEDF;
+	Tue,  4 Feb 2025 11:36:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738667037;
-	bh=Rba8810OtKU+NnpF6c/K3i6RDqKs+qiNz1cG/DK/n64=;
+	s=k20201202; t=1738668980;
+	bh=9X+tis0IwLqTIYnFzk4iTIu76qprOrfcQ9DCye4RlTA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dZBGK7dBxWW3oEJC0ITHexJJfI9nBFo6er53O1WJOwrKvAcHtqO3IyKIK7ZPEWw5I
-	 mUDcuOOhBJ3KizKGe8GZlgwuvqml1VMPPlT6G9N1pnCSmTDeaubV2l7m/HToIfP9Fu
-	 3x/ec5uRgfaIdUf0d8GrujoQTia/rZRIyrHWRpY0mRJcJ4MHT6Fw+f+8aw93PTh3bG
-	 pGvyogDTd2f9DBtGLpKj3DQCUjVMNwvzChv3NJxaCLilwCxj9fDhmQ43VASN6DiAPF
-	 adQZB+xlr80T+dNL6yZB1cxRQe7Bl69vF2aXJyUtAGfn1A3ir+xxLMX+05V8jPJQJ4
-	 OIp94JyEMGnCA==
-Date: Tue, 4 Feb 2025 11:03:53 +0000
-From: Simon Horman <horms@kernel.org>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: Manish Chopra <manishc@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: qed: fix typos
-Message-ID: <20250204110353.GQ234677@kernel.org>
-References: <20250203175419.4146-1-algonell@gmail.com>
+	b=mDFnnhgZRME/U/EMXm/1x66WeaCmeSdJnJ6v/b7LyiLQffZ9w3y+huilybV2nktIY
+	 dZ5kyDcHFThD5AYT171tSX/hcrIK2jcHGX4+YNmpu5e1MGV7wc9VFG3zo/aMxKTE5E
+	 g8LeZvnFa7hcSOpd9S56sIw6FYD/y2d/4Ppas6SVD69JfrWn+HsF0km8nCz35aYrFW
+	 GZ+niiNCBje6ffC9/SU/gNR8g3DUFj/MJ9hV1Wmp7jk4WDCshab49oEvR0u57Egi2x
+	 PfpyeVuWy1I+J3xKZsdEUEHEseRvKPYJdZT8fb1VYweOn6eE5eriNkZ642woM0pgHM
+	 kA5ptUCOzGx+g==
+Date: Tue, 4 Feb 2025 11:36:15 +0000
+From: Will Deacon <will@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] arm64: Kconfig: Remove selecting replaced
+ HAVE_FUNCTION_GRAPH_RETVAL
+Message-ID: <20250204113614.GD893@willie-the-truck>
+References: <20250117125522.99071-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,22 +50,35 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250203175419.4146-1-algonell@gmail.com>
+In-Reply-To: <20250117125522.99071-1-lukas.bulwahn@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Feb 03, 2025 at 07:53:24PM +0200, Andrew Kreimer wrote:
-> There are some typos in comments/messages:
->  - Valiate -> Validate
->  - acceptible -> acceptable
->  - acces -> access
->  - relased -> released
+On Fri, Jan 17, 2025 at 07:55:22AM -0500, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > 
-> Fix them via codespell.
+> Commit a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
+> replaces the config HAVE_FUNCTION_GRAPH_RETVAL with the config
+> HAVE_FUNCTION_GRAPH_FREGS, and it replaces all the select commands in the
+> various architecture Kconfig files. In the arm64 architecture, the commit
+> adds the 'select HAVE_FUNCTION_GRAPH_FREGS', but misses to remove the
+> 'select HAVE_FUNCTION_GRAPH_RETVAL', i.e., the select on the replaced
+> config.
 > 
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> Remove selecting the replaced config. No functional change, just cleanup.
+> 
+> Fixes: a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  arch/arm64/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
 
-Thanks Andrew,
+Hmm. There are still a couple of CONFIG_HAVE_FUNCTION_GRAPH_RETVAL guards
+kicking around:
 
-I confirmed that with this patch applied codespell only flags false
-positives.
+include/linux/ftrace.h:#ifdef CONFIG_HAVE_FUNCTION_GRAPH_RETVAL
+kernel/trace/fgraph.c:#ifdef CONFIG_HAVE_FUNCTION_GRAPH_RETVAL
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+so it's not clear we can just remove the option from arm64 without
+breaking ftrace_return_to_handler(). What am I missing?
+
+Will
