@@ -1,83 +1,74 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90006214A65;
-	Tue,  4 Feb 2025 15:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338EB3232
+	for <kernel-janitors@vger.kernel.org>; Tue,  4 Feb 2025 16:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738684539; cv=none; b=WYJkmtCNAOEunEAig9tK0eu8MbWbJxrNfjFlq+AxfI504RDyQLGn3v5aCt2cy8QlQwEEjb436gkBAt+b97OqrKpHO4d5G1QXIbqkg2pZjJi4Xuu/WGgyP4YLXGlcCYyh3+XPcwpUb4PUv9Q5wEMNCtcf0zPantXqR4BDUoJsnNo=
+	t=1738685762; cv=none; b=jcww0clmaQF0q3ln+7depxPuHlArt/9ayGVMBe7d++ovpse9zMLJIsD5ok5nJm8boztoQ4nyBMjOBCeiqT+LQBLsNQ+uvYbPdYoWUUPb4KxRg3ZpEr0AIIQ7CIDnyrF0WrdIpZf50E+rRJ786OTmA8vFvsxYRIg3GxlXcBAyX0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738684539; c=relaxed/simple;
-	bh=GndJEtpYdFqEDOd4Z8mTp5BDPpjjgXLx/u3RIQMRdow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bnP5R0Q/9JtkItK0TlLUS1ALSvjuwPqIie3husvx5hZDSePNnhf8gwXl4/dMoMcnXYZWRA5zKLv1buqcMlmd6X1cx64m/8qpxVOBDCTeeWFVaTbLNULJGyAM1qgFgS86y6J/CM3Uyw/SpgqNDm35lFX2Sf2BV4Xf8l4Lpqa7Wrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iEydTaSm; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1738685762; c=relaxed/simple;
+	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bzj6UzONKT+OZGKaVdt6eSjEEedgG1D/el7u/IPKiZ/PZ/2mxqOj9lDfPgTttIoGWNV9ZpLd3pM1wIyYicKR5MOaVHkuVdmXy4D87s+XN/0RzpZW3ngdvxNdCQBZchvx2aJ0EchQSGGj5EwYFOIPYzXvtLIULsA8qUioLm/e000=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dQPxi4UG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEydTaSm"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso35873305e9.1;
-        Tue, 04 Feb 2025 07:55:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738684536; x=1739289336; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GndJEtpYdFqEDOd4Z8mTp5BDPpjjgXLx/u3RIQMRdow=;
-        b=iEydTaSm6NMKdgXjtWMown9Qe5WEdcWM06SdzecszpR4goWDYk4Chgzv0TWEXTyaNb
-         NX19oHKc+X7reL4PcTSB8+FGs8uOs11/Y4l5ZFBTo9dyxiVVUYPlnGzFJgIuv/dStYP9
-         Y7/oK4+5Rj32MfOIx/yKUodYjYb07TO5LQwAbxa26EZ4tf92Uroo7ZNjrpEyMI5s/12Z
-         o+gx092I/U0EspvZesAACjmn335NrzHoaTKvDRQzce3ZPSjAVL7kwrNiokZgeUM8iDy/
-         sB2OeVnKjOzxLMJCwTpPNz8lcikeVJnUB4QTTCoZLI6uqMp/ltWm7MoUTsrt6EZWaWzq
-         y+Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738684536; x=1739289336;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GndJEtpYdFqEDOd4Z8mTp5BDPpjjgXLx/u3RIQMRdow=;
-        b=k0na3jOHIgZzuzcvxMAByodmUqsH6K/Q9ehTDTHvVqNNHE0zMzFXt0/dttjxZmP6ZT
-         xHYkG3cuqxbjsxFG1ZuNtIpmQMMkZL8Ey2kP2txKLYw9AVPPoIR1BlQUyHNjGudQZnh7
-         BWVLmVu65K0LfwXNLD3BuVHoojfZxEZ4j17Yj0tJaUeU2BoKAoByMOvKXc6DKV85cNUX
-         SYoupAiTOij43kmfy/FsgU2K1jceY0ocbiu2iadxlyEMT59EBzshlG3McWFPMTPGTfpd
-         yzNXqNjW2Xu/t76pp6nn28mwlQKbmDieRd3xdyM3DcLuXOZwxB/amKotY1nwDyPeXvMr
-         Gf/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUo/mzoHV1IAxLDcGbTDywNfNGSOrhjQ/3+xCryGa5FWvuNZFgsT4pK5wfU6CcvuK5jsYs6OKt6ydroGkodi2A=@vger.kernel.org, AJvYcCWsNl9Y1jlDTNQuPooXlhRtDBCartBvwVdJElxfqjj/GmggdTNaLChpd56RSaABEhZm7MgCoC9T4fJkxliv2Yo=@vger.kernel.org, AJvYcCWvDr498hQ6wSN2+BO66lkkc+kYra5jwV2e3S08+jE2wnyo0OEkbFT1Bkkv/zqox9/ZgAzm984cIHyF5cUx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfJxvhr6mEusrhjqjhdh3EcmCIPFEol/T+vHstrUVyUsJJT+6o
-	oMtd2X8o+yUlq6oL3yrFMLRZV+TXLPzlAgbxhl43Gw1pHLpiv2/8
-X-Gm-Gg: ASbGncuDGlJbm+bHEhZMasubFE761uygNuirPfMuC/KDxzAhjZWxIEJXVXkYRI7XUIL
-	7adswGr/xtXBNEnQORBwwiI8/WnqeMdaVsObAlGQRoL86ElTB6EZE84P2UsbVBPalJqxMZZqHMq
-	pdFn9wN5011+oqVPeiht8wfAMYMrh484Aj/hjeRpkuz0b4zboIZDt2Lef4v0XG8J+tK1dnmKuA+
-	lcnjw9avklSHMNmNPaRaSjT/y38Qw3c1Wq+e4NKCH+B3Ww/xXQRAqKdHqx6IeQhyOOBrA3iMZ6r
-	qQxwmPy/fw==
-X-Google-Smtp-Source: AGHT+IGKGruzA4wwdDq7Y2RpTmwsPaCmy5oTDCAJQDreSJXPZQcJrKJIeOVsRrar+qymm+QTF5yaFw==
-X-Received: by 2002:a05:600c:15c3:b0:436:fdac:26eb with SMTP id 5b1f17b1804b1-43905f72ae4mr29643885e9.7.1738684535476;
-        Tue, 04 Feb 2025 07:55:35 -0800 (PST)
-Received: from void.void ([46.210.150.20])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438e23d42dfsm198278465e9.4.2025.02.04.07.55.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2025 07:55:35 -0800 (PST)
-Date: Tue, 4 Feb 2025 17:55:32 +0200
-From: Andrew Kreimer <algonell@gmail.com>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Kalle Valo <kvalo@kernel.org>,
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH net-next] wifi: rtw88: Fix a typo
-Message-ID: <Z6I4dGqtAXGM8rls@void.void>
-References: <20250203180913.5435-1-algonell@gmail.com>
- <59ace70567f544e3b0b9bd601e2a24b7@realtek.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dQPxi4UG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738685760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
+	b=dQPxi4UGj4Sfj5tTTqMttbT1KrZ9c0MJeKDUAa/5+LgOLuHRtrfz0GXtoyMNiZ2sBPuh8i
+	shgcIWeOyK3Faadg83gSfy4Xyi4BwfABgtMViA9jby0NIDqtRDqex6SuTYf4PLop9/Zgs4
+	dKkkCZWBios1u4Zeggc6ruRJBZ/hpwo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-NefMONUHNcaM9JCWy--Unw-1; Tue,
+ 04 Feb 2025 11:15:58 -0500
+X-MC-Unique: NefMONUHNcaM9JCWy--Unw-1
+X-Mimecast-MFC-AGG-ID: NefMONUHNcaM9JCWy--Unw
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E25019560A1;
+	Tue,  4 Feb 2025 16:15:57 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5FECE3003E7F;
+	Tue,  4 Feb 2025 16:15:55 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: selftests: Fix spelling mistake "initally" -> "initially"
+Date: Tue,  4 Feb 2025 11:15:53 -0500
+Message-ID: <20250204161553.252280-1-pbonzini@redhat.com>
+In-Reply-To: <20250204105647.367743-1-colin.i.king@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59ace70567f544e3b0b9bd601e2a24b7@realtek.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-> To be clear, during commiting I will change subject to
-> "wifi: rtw88: Fix a typo of debug message in rtw8723d_iqk_check_tx_failed()"
+Queued, thanks.
 
-Noted, thank you.
+Paolo
+
+
