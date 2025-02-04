@@ -1,75 +1,75 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729D9206F31;
-	Tue,  4 Feb 2025 08:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94F1207A34
+	for <kernel-janitors@vger.kernel.org>; Tue,  4 Feb 2025 08:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738658965; cv=none; b=uga3+0CdlgwIHMrjaLu6WWn86EcQeWFQlj57ltnmiyJE/ziE3+WBuudsCfqCDJsKcjr6N+UO/sodCRr4597Vn4nJCCi31IGkMCSYdfU8VipD0ErTVSsLht83j/IDfVDIIVyWBIIaiueQhKvjoQJtyXPrpP+SJUQleYy1EJQmRAQ=
+	t=1738659061; cv=none; b=hyihpK52kVNIs1NktJ5Dv2KunJNDa+H9bKmkuuocKa6EvEykkZAfly2sjTsRZ+9pH8Wozgm7NeSRcA2yZXrNeCAb3M4hjCVEsj06xK3ByzgrsT/FbG3nVSnXOMrV68aSu6SjgpvB+gFK8zwU/E1R/BFSUrdMY/dUA0aJVpC6yX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738658965; c=relaxed/simple;
-	bh=6qPxxQkPJXpa+GHucQD5T+scc7Nur0OfNC/iEYnLwaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VL2fg6x/Zq9h86riFyxEMyMqIaSZh9zAGudeoqi2c2raC6RSSqdi5flGxKyKihpT+4RV360gA6UT8KPq3ypA6UxIMCnpftW9BxyzRwh8hHK0WEjjqvDruNMAr1qDA0eCspkiCZwf1sq4Bnn8TfF7lbswGTSSSRmQKKoTwYNl9lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iIPdLAAp; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1738659061; c=relaxed/simple;
+	bh=YPt7gKipaMwkPE8abX4wqOxhxvYT2FdS5FceQVgzPek=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bYiO0x2Rd1nVDfFozN7Umo8g4QfGcKYnsGNTWyR5s4uWknfQxmPWPBTJwdCV2E+j/UhGpHVXIiBKwOUTKuX9rLTJPBvvSiNw9Py+KpXJCgd2ADgdbDH95yVbNBN2Lme50gZ8Ldv1uJ1DnWEScGaFxL+TjNnuaETFIfKy98FBR6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FIFosrYo; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIPdLAAp"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-438a39e659cso36251445e9.2;
-        Tue, 04 Feb 2025 00:49:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FIFosrYo"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e44a1a2dso312338f8f.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 04 Feb 2025 00:50:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738658961; x=1739263761; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JKqxMgS7cOJmvu8n7ruvjfJ25x9XTw1HrpboWdsZH4c=;
-        b=iIPdLAApgHdH9F4Ys4Go58PDI0fa0KDVi4m2VLs2frLoAg5gi1JnIvmpKJ8+7zzAQK
-         P03WahQTLn4vieAcvCPZQjCKbKB8i03YJlsfD/L5vYcCawFFsleKs+JN25Bx3kP/wlYn
-         XH3I/fqyIVqHwHFRS3tuTRjYgbbZULihDKtXZoIHBphyc3uwMYkUIqxC+bc7gMcU2t4U
-         +drwACCv5CIJf+QVrnNlp2VeC6cpswpQPF3ze7eF1TbOh54qR3Q/sDDCOa8WTeVgTjDN
-         6CJPlZ7OL8CQfBa/6KogVKHDBjgOTb1aQyYOPcDgfLehy2qMIjN1dSaqmf051+oDpN0R
-         g6xQ==
+        d=linaro.org; s=google; t=1738659058; x=1739263858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zHI4ANQ0svBkpULL9bY+LYyIFtREYaSz2osAbuLLKME=;
+        b=FIFosrYoqaZw9A8jE3nW7g1JYOdhLSC6NHKF0mksHZ1h1PWUuI9pIhCMJ8pb/WEtZR
+         DakFB1M/QOPcpwhVfCi2ukcqrBHUNDHlbMLR1s0/4bkToPFgqTmVkJj1Doz7DndoiKC+
+         hskeiS3dgLm1vh+FRPwoLyZ9XRW+dXYgjB//Rbuw7d4zrNgYkc8iDXCJEJ3F8ssJbUhu
+         W5sbSbI7C5+qC+xvgWgs3/f1Z//EbOikA51rqjtm1MYZacBKDbQaVK/lIL0gpNfjv7r5
+         81f0+4AXmkYzkkzbvgIj1gvE+G/oU/3fWTjcJQhiXIbUcxpO9Y+ozSGj4NnT9wj7kdAl
+         LqNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738658961; x=1739263761;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JKqxMgS7cOJmvu8n7ruvjfJ25x9XTw1HrpboWdsZH4c=;
-        b=rTraHLSGp2+Oa8SrnMZoblpWmH5O6G/XCe1VEBnXhejSUQ5ImYphKzlCDW+lK0ge/Z
-         dJei81r1V94grVYqzbqwLnH250zWTNm7fz7GkHUrnNcX95YoDsIVYdZ3TF2qRdwjoeqF
-         M6CVDbNgTEg9MVs1w9MWKByrD5vKhp4j7EuvdaO1KmDSDEJg+T03y7q8rV8kPL5CdqM0
-         FBu5AVNQk3lCUCgpyXzUBQLCyGEM+Ys7EA9+kFl6AfJNM2VtVoWeVNA1QPZybrh4lU1l
-         xtfCNO1QGz6KaLEKZw7QNo+wDfLQKjEzVJlOrhAvuv7SQWVCZqw+Boy835uaMSyqUIQE
-         bpJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPNDKcECdGgsJ/F0p07YxdJOMCzCnMveEm7sbIkVqBd6mmv6cK+PfEOiV7LFrzMoege0g=@vger.kernel.org, AJvYcCW/qE61gFpmYAtGIsE2CbA/Nz1CZwjUMh8fc7B9X6TBhMVWCHfc1YleGaJqEqeUjloZ4g9FXeVBeUFUd1EPZr71@vger.kernel.org, AJvYcCWO6UYQP8ujvl5VMvcufl1O+9nvcIdilWn+AIj1AUVHYCxPwX8b8lm8lh2HsP9VflSUxTLezIGKqXKcynxR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx6wRaSWY/ed7kCPqldf6gsVnUD2YfW/M51F7aLqVhwhbJAIkE
-	ANVwjpv14ZGzHAaoGycN/4uqm6Lha3CECq4Yz1+mfJJEXfvAsi5y
-X-Gm-Gg: ASbGnculYVSP7gynQi607TmpuvIqfhiWiuoYrELZwWzlkS0w5Xs7fdynbQPwGZd1Ule
-	jwhWaEXnL5n0xVu3wLudLM3gjumRWzCCZy82URtd79Smy821Gn1ZVfpjOawKoyjY6usD+L1Q/F6
-	TyPKWAiatOP83AT8EkKZLuuPbDYh3FH0AeD4DtIR/9LCiMDAd6fZ0URdL+lrlDm9Sv0jsymJZAX
-	KA+Qx+COj0Dz/GOuHUMoI5vOA093/vsk1qWJrw83F0JUy3RR3D1D43iDsTi/dkBW9Qy/wqLqjHd
-	aO9ICaeLx/9UqSNs
-X-Google-Smtp-Source: AGHT+IE9fXgtGIX8eqCCVnPxl2DOsl3U6eIpAZWwtfegPMHLFSk58xoi288rwAFhcfV7tliJlLvqTw==
-X-Received: by 2002:a05:600c:474f:b0:434:a10f:c3 with SMTP id 5b1f17b1804b1-438dc3c346fmr192963645e9.9.1738658961261;
-        Tue, 04 Feb 2025 00:49:21 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-438e23de016sm185830355e9.9.2025.02.04.00.49.20
+        d=1e100.net; s=20230601; t=1738659058; x=1739263858;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zHI4ANQ0svBkpULL9bY+LYyIFtREYaSz2osAbuLLKME=;
+        b=uOnlrwQxOHLt9IuVY5UUADHsYZdLJ2w6oS4P3nmd73j/qwyoBUHSa/HxPUk7gXuJQn
+         +sgrkN8upGLu4Ap0EWggqOyOG+8NjkZmDD66vDCv9mnsep2BjjWNbg9OQokQTl5oY8zD
+         jc+stFAbOx/1A+9H+d2Ox24k6756Gm4QhyfJ2KLAu6JtsGEeqOBqSGP01jilaFJX0Xwk
+         JcUxC6LHgpBcf1qa8uXQfw+xHg8hn6Q7ywoT6u7+PfhOw+D7ZoFzCFvh7ixQBl3BPBCG
+         FFFuJfAfOFrQazlLGzq9xQI05PJyLy6ih2JiOXUES7jQne+RqPWBlJuJ2zKkpXEw8uJ1
+         Pfeg==
+X-Gm-Message-State: AOJu0Yx2aQsuqjL8oP7g6zEi8h/ZLpEibAUzVyX6QwNUib2IpfGPkCem
+	/trpwgbr9MBmluAcfXtAXoZfoxe4503xwSIn+Jl8U4KB0vmLnWq53FscSSzUrNE=
+X-Gm-Gg: ASbGnctefgRjNplNzQzUkwTrGPHo1V3LY4cJAGsGMHumjOGcp0/LNSj+RBnyPusdfMl
+	xt6xUjIOJYASiyThzUR27fO5UlkWL59Y9VqHV8JB777TAMVtv69/7d4B7rNetdmspY4w+NctFpb
+	lKVt0sg0hmdlSTOVjCL/+7phpkP5W8x5f35I8qIO6+THFj9yJaTUwvQ2SF8nuf/1x43JWf4jf0k
+	66l99dx3plP3UNwL7FiR9x9RP/G46XWsfWFFm8y5qj1yYVA4l60Y3bctnsJZqXGBPjaoJSumrtm
+	4DleEVFtmHqDdC03JSxY5HwmM6oBB48=
+X-Google-Smtp-Source: AGHT+IGO43N3gDtliqfjaHSeEORXODUkak0lfjeeQYTFjCKfZJOWJrPYG7CBCu9P6KNQnJ4ls7UBSw==
+X-Received: by 2002:a05:6000:1f88:b0:385:e374:bee with SMTP id ffacd0b85a97d-38da4e0276emr723050f8f.4.1738659057514;
+        Tue, 04 Feb 2025 00:50:57 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38daf27bbf5sm503066f8f.48.2025.02.04.00.50.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2025 00:49:20 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] KVM: selftests: Fix spelling mistake "initally" -> "initially"
-Date: Tue,  4 Feb 2025 08:48:55 +0000
-Message-ID: <20250204084855.289493-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        Tue, 04 Feb 2025 00:50:57 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250202220425.199146-1-colin.i.king@gmail.com>
+References: <20250202220425.199146-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] clk: samsung: Fix spelling mistake
+ "stablization" -> "stabilization"
+Message-Id: <173865905644.26600.17565544065003058616.b4-ty@linaro.org>
+Date: Tue, 04 Feb 2025 09:50:56 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,28 +77,21 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-There is a spelling mistake in a literal string. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/s390/cmma_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, 02 Feb 2025 22:04:25 +0000, Colin Ian King wrote:
+> There is a spelling mistake in a pr_err message. Fix it.
+> 
+> 
 
-diff --git a/tools/testing/selftests/kvm/s390/cmma_test.c b/tools/testing/selftests/kvm/s390/cmma_test.c
-index e32dd59703a0..7fbbe8b912b6 100644
---- a/tools/testing/selftests/kvm/s390/cmma_test.c
-+++ b/tools/testing/selftests/kvm/s390/cmma_test.c
-@@ -651,7 +651,7 @@ struct testdef {
- } testlist[] = {
- 	{ "migration mode and dirty tracking", test_migration_mode },
- 	{ "GET_CMMA_BITS: basic calls", test_get_cmma_basic },
--	{ "GET_CMMA_BITS: all pages are dirty initally", test_get_inital_dirty },
-+	{ "GET_CMMA_BITS: all pages are dirty initially", test_get_inital_dirty },
- 	{ "GET_CMMA_BITS: holes are skipped", test_get_skip_holes },
- };
- 
+Applied, thanks!
+
+[1/1] clk: samsung: Fix spelling mistake "stablization" -> "stabilization"
+      https://git.kernel.org/krzk/linux/c/480b1825d3806d744c589064df4af2bdbe2c7c2a
+
+Best regards,
 -- 
-2.47.2
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
