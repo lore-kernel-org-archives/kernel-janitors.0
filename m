@@ -1,80 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65C1215F73;
-	Tue,  4 Feb 2025 13:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90006214A65;
+	Tue,  4 Feb 2025 15:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738674557; cv=none; b=LDzJvOcBBHbT5FnjJ22YPihbS7S6Id8G61XxUqLrp4L4eZGirR2PhJ7gora+xvBvayJREgRtDby200fMqaSmV9SuoBtNbHrjxNfgl9gOTfT8TeQ6shMRhQL54CAcz4OlhztGMPmaMHL9iC2naQkAWHwodow+QvTW1AFlpELfaNA=
+	t=1738684539; cv=none; b=WYJkmtCNAOEunEAig9tK0eu8MbWbJxrNfjFlq+AxfI504RDyQLGn3v5aCt2cy8QlQwEEjb436gkBAt+b97OqrKpHO4d5G1QXIbqkg2pZjJi4Xuu/WGgyP4YLXGlcCYyh3+XPcwpUb4PUv9Q5wEMNCtcf0zPantXqR4BDUoJsnNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738674557; c=relaxed/simple;
-	bh=vxDHz8ElI6Ex4LZgJZ8U26irCHGknU34NH8DsZG5iSs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GTQErrF9VDOX8N4ZVoqj69lZ8IptIiTVhdVL6FJCASXeoQM0/5kU2ETWP7LlvvA25ZcAkvOwnYyBcpoqUzh8hE9Quw7GsAyitV6rIEKt+cMdMjbJjZ2IKdPwmtqkdfvIYmoabbd5KoVdlgkYi7rU/gCu+eH5ia6kcl3n2GEj+FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqHji4ei; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738684539; c=relaxed/simple;
+	bh=GndJEtpYdFqEDOd4Z8mTp5BDPpjjgXLx/u3RIQMRdow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bnP5R0Q/9JtkItK0TlLUS1ALSvjuwPqIie3husvx5hZDSePNnhf8gwXl4/dMoMcnXYZWRA5zKLv1buqcMlmd6X1cx64m/8qpxVOBDCTeeWFVaTbLNULJGyAM1qgFgS86y6J/CM3Uyw/SpgqNDm35lFX2Sf2BV4Xf8l4Lpqa7Wrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iEydTaSm; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqHji4ei"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DF9C4CEE2;
-	Tue,  4 Feb 2025 13:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738674556;
-	bh=vxDHz8ElI6Ex4LZgJZ8U26irCHGknU34NH8DsZG5iSs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NqHji4eix0w461AuS2feo2p8tgbNje2wDxWa5HEF7d/NWCIACk2U+fLFn8wTQHWie
-	 Uhl6zZgZwS5LNVBtLAQawJyfwqde116QD9uoA8BxmvPwOanf7KMdck1cnwicLTd5G0
-	 MsxFMpPa0iRi5EXCFbpdSQGdjjT6A/TL1RZbHfz3AYmfvpB6P41kR4fOUnWA9uJQx0
-	 80SoXpiJD7mZDemrmta/lJLIpExMSROUootZ7GCERtJUit1hC0YDCM8l+nMq32U1/N
-	 einegFkb/GDssWWEuFTZGTvT6CRKrBnZj7oAJwa8Dx2iu9sBESZf5BVu1wBP8N2+bE
-	 +TBd+rkcwJF7Q==
-From: Will Deacon <will@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org,
-	Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] arm64: Kconfig: Remove selecting replaced HAVE_FUNCTION_GRAPH_RETVAL
-Date: Tue,  4 Feb 2025 13:09:04 +0000
-Message-Id: <173867195188.3988698.8446978312627999775.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250117125522.99071-1-lukas.bulwahn@redhat.com>
-References: <20250117125522.99071-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iEydTaSm"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso35873305e9.1;
+        Tue, 04 Feb 2025 07:55:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738684536; x=1739289336; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GndJEtpYdFqEDOd4Z8mTp5BDPpjjgXLx/u3RIQMRdow=;
+        b=iEydTaSm6NMKdgXjtWMown9Qe5WEdcWM06SdzecszpR4goWDYk4Chgzv0TWEXTyaNb
+         NX19oHKc+X7reL4PcTSB8+FGs8uOs11/Y4l5ZFBTo9dyxiVVUYPlnGzFJgIuv/dStYP9
+         Y7/oK4+5Rj32MfOIx/yKUodYjYb07TO5LQwAbxa26EZ4tf92Uroo7ZNjrpEyMI5s/12Z
+         o+gx092I/U0EspvZesAACjmn335NrzHoaTKvDRQzce3ZPSjAVL7kwrNiokZgeUM8iDy/
+         sB2OeVnKjOzxLMJCwTpPNz8lcikeVJnUB4QTTCoZLI6uqMp/ltWm7MoUTsrt6EZWaWzq
+         y+Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738684536; x=1739289336;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GndJEtpYdFqEDOd4Z8mTp5BDPpjjgXLx/u3RIQMRdow=;
+        b=k0na3jOHIgZzuzcvxMAByodmUqsH6K/Q9ehTDTHvVqNNHE0zMzFXt0/dttjxZmP6ZT
+         xHYkG3cuqxbjsxFG1ZuNtIpmQMMkZL8Ey2kP2txKLYw9AVPPoIR1BlQUyHNjGudQZnh7
+         BWVLmVu65K0LfwXNLD3BuVHoojfZxEZ4j17Yj0tJaUeU2BoKAoByMOvKXc6DKV85cNUX
+         SYoupAiTOij43kmfy/FsgU2K1jceY0ocbiu2iadxlyEMT59EBzshlG3McWFPMTPGTfpd
+         yzNXqNjW2Xu/t76pp6nn28mwlQKbmDieRd3xdyM3DcLuXOZwxB/amKotY1nwDyPeXvMr
+         Gf/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUo/mzoHV1IAxLDcGbTDywNfNGSOrhjQ/3+xCryGa5FWvuNZFgsT4pK5wfU6CcvuK5jsYs6OKt6ydroGkodi2A=@vger.kernel.org, AJvYcCWsNl9Y1jlDTNQuPooXlhRtDBCartBvwVdJElxfqjj/GmggdTNaLChpd56RSaABEhZm7MgCoC9T4fJkxliv2Yo=@vger.kernel.org, AJvYcCWvDr498hQ6wSN2+BO66lkkc+kYra5jwV2e3S08+jE2wnyo0OEkbFT1Bkkv/zqox9/ZgAzm984cIHyF5cUx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfJxvhr6mEusrhjqjhdh3EcmCIPFEol/T+vHstrUVyUsJJT+6o
+	oMtd2X8o+yUlq6oL3yrFMLRZV+TXLPzlAgbxhl43Gw1pHLpiv2/8
+X-Gm-Gg: ASbGncuDGlJbm+bHEhZMasubFE761uygNuirPfMuC/KDxzAhjZWxIEJXVXkYRI7XUIL
+	7adswGr/xtXBNEnQORBwwiI8/WnqeMdaVsObAlGQRoL86ElTB6EZE84P2UsbVBPalJqxMZZqHMq
+	pdFn9wN5011+oqVPeiht8wfAMYMrh484Aj/hjeRpkuz0b4zboIZDt2Lef4v0XG8J+tK1dnmKuA+
+	lcnjw9avklSHMNmNPaRaSjT/y38Qw3c1Wq+e4NKCH+B3Ww/xXQRAqKdHqx6IeQhyOOBrA3iMZ6r
+	qQxwmPy/fw==
+X-Google-Smtp-Source: AGHT+IGKGruzA4wwdDq7Y2RpTmwsPaCmy5oTDCAJQDreSJXPZQcJrKJIeOVsRrar+qymm+QTF5yaFw==
+X-Received: by 2002:a05:600c:15c3:b0:436:fdac:26eb with SMTP id 5b1f17b1804b1-43905f72ae4mr29643885e9.7.1738684535476;
+        Tue, 04 Feb 2025 07:55:35 -0800 (PST)
+Received: from void.void ([46.210.150.20])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438e23d42dfsm198278465e9.4.2025.02.04.07.55.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2025 07:55:35 -0800 (PST)
+Date: Tue, 4 Feb 2025 17:55:32 +0200
+From: Andrew Kreimer <algonell@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Kalle Valo <kvalo@kernel.org>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH net-next] wifi: rtw88: Fix a typo
+Message-ID: <Z6I4dGqtAXGM8rls@void.void>
+References: <20250203180913.5435-1-algonell@gmail.com>
+ <59ace70567f544e3b0b9bd601e2a24b7@realtek.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59ace70567f544e3b0b9bd601e2a24b7@realtek.com>
 
-On Fri, 17 Jan 2025 07:55:22 -0500, Lukas Bulwahn wrote:
-> Commit a3ed4157b7d8 ("fgraph: Replace fgraph_ret_regs with ftrace_regs")
-> replaces the config HAVE_FUNCTION_GRAPH_RETVAL with the config
-> HAVE_FUNCTION_GRAPH_FREGS, and it replaces all the select commands in the
-> various architecture Kconfig files. In the arm64 architecture, the commit
-> adds the 'select HAVE_FUNCTION_GRAPH_FREGS', but misses to remove the
-> 'select HAVE_FUNCTION_GRAPH_RETVAL', i.e., the select on the replaced
-> config.
-> 
-> [...]
+> To be clear, during commiting I will change subject to
+> "wifi: rtw88: Fix a typo of debug message in rtw8723d_iqk_check_tx_failed()"
 
-Applied to arm64 (for-next/fixes), thanks!
-
-[1/1] arm64: Kconfig: Remove selecting replaced HAVE_FUNCTION_GRAPH_RETVAL
-      https://git.kernel.org/arm64/c/f458b2165d7a
-
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+Noted, thank you.
