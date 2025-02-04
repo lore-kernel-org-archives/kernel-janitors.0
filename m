@@ -1,74 +1,65 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338EB3232
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Feb 2025 16:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA751C5F37;
+	Tue,  4 Feb 2025 16:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738685762; cv=none; b=jcww0clmaQF0q3ln+7depxPuHlArt/9ayGVMBe7d++ovpse9zMLJIsD5ok5nJm8boztoQ4nyBMjOBCeiqT+LQBLsNQ+uvYbPdYoWUUPb4KxRg3ZpEr0AIIQ7CIDnyrF0WrdIpZf50E+rRJ786OTmA8vFvsxYRIg3GxlXcBAyX0I=
+	t=1738686024; cv=none; b=INxy0sYbZ5u/Roa62L409GTK4AKUDw6mdAPARySW/Q4Iuosx55+UpHXkQqDau8QrleXxbd6nIHQqepHcDvAl+tsKcejxZTyuhx316dcBVPE12ndRngQjHKlPrEmvOtv5z/IADxPzb79p7LEhKwGVTCRPSj/JOOwqDjUiJkncWm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738685762; c=relaxed/simple;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bzj6UzONKT+OZGKaVdt6eSjEEedgG1D/el7u/IPKiZ/PZ/2mxqOj9lDfPgTttIoGWNV9ZpLd3pM1wIyYicKR5MOaVHkuVdmXy4D87s+XN/0RzpZW3ngdvxNdCQBZchvx2aJ0EchQSGGj5EwYFOIPYzXvtLIULsA8qUioLm/e000=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dQPxi4UG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1738686024; c=relaxed/simple;
+	bh=qsQ3qC5Tpg63dCD7/jZT/AEnIALZtLkxfeA7sZPfYvI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jSoQXLmbQ/YQPUosTOYOD+xQ+tlWkOdgPX+RT8J1dgkNSMEKqHfY23HYQesElQZLzXPLIJiO1px0HFwDWKSzjJYBupTLmug31GNPlZPTyOuLIFju41DM+KwiCg5AMZONDS4YNxvAFKsS5hdoMdloXUARe8YidpGF63YqrLSj+dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=JFNqQ3WM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dQPxi4UG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738685760;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	b=dQPxi4UGj4Sfj5tTTqMttbT1KrZ9c0MJeKDUAa/5+LgOLuHRtrfz0GXtoyMNiZ2sBPuh8i
-	shgcIWeOyK3Faadg83gSfy4Xyi4BwfABgtMViA9jby0NIDqtRDqex6SuTYf4PLop9/Zgs4
-	dKkkCZWBios1u4Zeggc6ruRJBZ/hpwo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-610-NefMONUHNcaM9JCWy--Unw-1; Tue,
- 04 Feb 2025 11:15:58 -0500
-X-MC-Unique: NefMONUHNcaM9JCWy--Unw-1
-X-Mimecast-MFC-AGG-ID: NefMONUHNcaM9JCWy--Unw
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E25019560A1;
-	Tue,  4 Feb 2025 16:15:57 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5FECE3003E7F;
-	Tue,  4 Feb 2025 16:15:55 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: selftests: Fix spelling mistake "initally" -> "initially"
-Date: Tue,  4 Feb 2025 11:15:53 -0500
-Message-ID: <20250204161553.252280-1-pbonzini@redhat.com>
-In-Reply-To: <20250204105647.367743-1-colin.i.king@gmail.com>
-References: 
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="JFNqQ3WM"
+Received: from [100.65.217.97] (unknown [20.236.10.120])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A1B222054913;
+	Tue,  4 Feb 2025 08:20:16 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A1B222054913
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1738686017;
+	bh=qsQ3qC5Tpg63dCD7/jZT/AEnIALZtLkxfeA7sZPfYvI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=JFNqQ3WMJYt9x5FlRLFXv9KHyV1pKDlzhODb53QoWzpp6J3AdAjnkgoFXzX5upaKS
+	 NFB7RQX/lTZhUgAoDftbhFMBWRFjJJRgsKy9ZaQziRTcbj53IbbgDHyBHFcvhpmjTi
+	 8Sj+Z0cZpDnm8hl7T3Q2wnghxJwrjTRbik8PdIpE=
+Message-ID: <974a03d2-3f3f-4be2-9dba-ece6dca8015e@linux.microsoft.com>
+Date: Tue, 4 Feb 2025 08:20:16 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Cc: cocci@inria.fr, Andrew Morton <akpm@linux-foundation.org>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>,
+ Ilya Dryomov <idryomov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Ricardo Ribalda <ribalda@chromium.org>, Xiubo Li <xiubli@redhat.com>,
+ eahariha@linux.microsoft.com, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Subject: Re: [cocci] [PATCH v2 1/3] coccinelle: misc: secs_to_jiffies: Patch
+ expressions too
+To: Markus Elfring <Markus.Elfring@web.de>
+References: <20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com>
+ <20250203-converge-secs-to-jiffies-part-two-v2-1-d7058a01fd0e@linux.microsoft.com>
+ <49533960-e437-4042-951a-0221164bfa3d@web.de>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <49533960-e437-4042-951a-0221164bfa3d@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Queued, thanks.
+On 2/3/2025 11:56 PM, Markus Elfring wrote:
+>> Teach the script to suggest conversions for timeout patterns where the
+>> arguments to msecs_to_jiffies() are expressions as well.
+> How do you imagine that the shown SmPL code fits ever to patch reviews?
 
-Paolo
+By the simple fact of accomplishing the same result despite differences in
+code style, as explicitly called out in the changelog.
 
-
+- Easwar (he/him)
