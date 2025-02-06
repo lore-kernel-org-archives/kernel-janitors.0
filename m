@@ -1,79 +1,68 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237971514EE
-	for <kernel-janitors@vger.kernel.org>; Thu,  6 Feb 2025 08:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E812253EB
+	for <kernel-janitors@vger.kernel.org>; Thu,  6 Feb 2025 08:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738829829; cv=none; b=kheYu6MUzV0Gjr9fx/R1rpzGpB1wGYWcXSOBrtrlvPaSVKd8ZMcH5jLLL3ppNHATevKMdU7PckdHDKNTG94EHSrJdp5mPW44xYrWP0bIXJrng3vHRdhgXbUMVDQq0KUozZW4AgJHI6LuJcvun/31zmt76KHxwLqYX7Y8Ttxwc3o=
+	t=1738830042; cv=none; b=R4zNiybx5PuYLLfsyCRaRTuKaPxZQ/kR1DhHisRqmesKTEz8JyhlW8Nf5k8SpEggNEPMVujlEAOez/p5x5D0n/pvwV65fyI9VPC8Ayo/23FnTvYYriXILiRCVaZgCnL1GTUNwMv3Njju7myQ1TdJwdyZ77L2OaIiU7JMBy48QUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738829829; c=relaxed/simple;
-	bh=jEJ+dzjS9jkqBg5sz39XNcksg28cvuzTKz0gQ8s/HRM=;
+	s=arc-20240116; t=1738830042; c=relaxed/simple;
+	bh=gvvj+VL2oy/SYlCfXe1IkAWYcwruIZvvhOBZmeM7UuI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JIbas137UqPs3PAeLi8umpC/dxR5UtVb8EzyTStiDcwXeVmzGT4K9aMdAr1FyhnSSK6YnRXJ3VPatpCbYPnevJ5jPNQ7Jqgga9brOvfEFb/FKFUh07v6g7kUoX1Yobgh5Zt8Tg1cV10KdZQw5gQ4pKze7w9QXra+RlXkxQtRGD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EvfjblR5; arc=none smtp.client-ip=209.85.128.44
+	 Content-Disposition; b=K7x7xVkTyBn5o6wvbGksno2PjOR2eS8zCNWH6lKcpv4VaVurD0vPP63TZC0i3ejP1fKu6w37k7QWDCneOrjOKP0oPCOZqco4l+//dRzd3IbnZ9qLhi9wf5Q0SIlIewdM+glKtgIIVbYaEut5PullHWUYNVU0m9AdN8a7POxvBW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XPKH7iJb; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EvfjblR5"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43621d27adeso3474795e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 06 Feb 2025 00:17:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XPKH7iJb"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4364a37a1d7so5725815e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 06 Feb 2025 00:20:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738829826; x=1739434626; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1738830039; x=1739434839; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ubql9r1omCt43g1m4gjLWGeKKiFiLncoJpuHUqF935k=;
-        b=EvfjblR5bg4TmIZW61dM0iXo3gfCZ8kQC3nV/am8kYd1I59JxHDrihw6kLGFERjhMn
-         btTW4SnHNdLthJ9y+iuo24NeT4JPjyww5BF4ViLyna5WXxoj/8U421BcfkYH9lW8Vt+R
-         iBNFDold/gBRSu80VHbjR/+uTVqF9Y37P7Gq1wX2xZ7b/Lv5X+xBZPEvOD5EQySRB/j1
-         UcOK+yoe35VVXiVqOTKakTOHr8/YfrHgkxbGjDlHgz1VisqO5F2A6Dbf9onMW2lID4Gt
-         yZdjt7wykIMqE++TrdxdB/W1Q2T12ST1ZsoiAzIsS2/40VQ+xAJqUX7VSBrfJDc2n5RY
-         gVrg==
+        bh=+ZsjqPZJwxPhczAVuwJaDZW5cSu9f0BQ2iUCT8QnQh8=;
+        b=XPKH7iJbLj7EdNd2NZritpx2z9UQ6Wd1Sm+gMINIVAqd+UlxPU3ZI3ggGkcR3me2Wk
+         VxkuZ001mmRkrbsnwb4P72Cmo1Qgba3J5BcrITv8YQe1O6OuIDEgS1iRk/9XETgvz048
+         gRrWZruOl3+lAHd7YJAO9iEXLXJVz0BK91IALTgML5nUCk/PauUlbQUNArh89A2Fsvs1
+         o/E/19MCQ+WQa9+Tun+jlpoRqawVMiLQGULhj62By5WPLFdvfhs3nuVueBPekn6iLVIs
+         KJ3eFk9BLXRC/IdbnOasgo5RjszxPyKJ+H5NSS9UPoxGXSKQh6XxOtnFScf40UyfXjTz
+         Fdpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738829826; x=1739434626;
+        d=1e100.net; s=20230601; t=1738830039; x=1739434839;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ubql9r1omCt43g1m4gjLWGeKKiFiLncoJpuHUqF935k=;
-        b=mgWTKoiGhl4AP3hcpx75aripAVtQSmfl6vbJhBNr6FiKedx1EIkPhC52T1yO9xQTTg
-         CJWQjCX6uO96m20gCq4M55O3cQqvMfAFHpYZCCIxmmF1ELOmyBy6OzI8wOWTikbOr+F6
-         pFT4jZ27fh7wMyV/9/5OwkyR5e6qZiJa5RoDolBp2tb7J5mKVhc2B0Kg9QtpFrjIf+Mv
-         zU/PJK2dn5qwhpU5/OzLTL63onWKXVoxPoeMYXzGTIrlBa+2Au9RdlGKo0tynU24GDC5
-         4Bs25vN9OE0GPlT5YJHZYTeRnG7JHf+mulnIbDZnlwhiAfS6sdD4ji/Nhu7KEjJGEb/t
-         eSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUkAjR1TzWt89zoOWZ/F9olmUwJnRnYoKCaUfnn1a/K8PCCTN9fXt4f15X8Z/h0r+uQYJF1M7i3fEpSnKislU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR2KpYsHF1cGtHMB14J4av6dj1PMmO+9XHaeGvyS2Ug5nsWzp0
-	g4MwV4agMx6GmdiGRhvacCKDrhUi6hsiVF3AqYmBpIA4h88xG/rrujbUdeoTvEs=
-X-Gm-Gg: ASbGncuWfmlyDWyZyL+JCrNSYtYK7CKTrl6UTutYaio/f9FWczl/yjoZJAArFk87lLL
-	dYAh3Gy+f7L3jFzBurNoU4dYLiCLhaVD/Xa81GXf5EC3txXD4DkMtb8huOY8omafnhdu1mqRI6z
-	V5CM8A8wtCVQ7JXy6zfhihROv9D6qf+WjvLOlQ/UXBL2IRmb+fbcZRr7cbMrR3+eZhOelKyQjXZ
-	7dAS6IaPQARQXzN6d4h1T+xX9TyCcTH2X5/ETcawvfyxnHekSywKIetbZm94sVsN7swffyVOgln
-	nlEdO5hPa6iC7oo08eDO
-X-Google-Smtp-Source: AGHT+IF7c/c3cT8gIKlZmV09tdvJuSUhNmFcmUl5w0RwgKRFabBb32VFjSdJlhbFnDoNrb4CYnO3Bw==
-X-Received: by 2002:a5d:64ec:0:b0:385:f7a3:fea6 with SMTP id ffacd0b85a97d-38db48ba435mr3619651f8f.13.1738829826339;
-        Thu, 06 Feb 2025 00:17:06 -0800 (PST)
+        bh=+ZsjqPZJwxPhczAVuwJaDZW5cSu9f0BQ2iUCT8QnQh8=;
+        b=Dg+Ay5uNS9DpZwX7/MCfUB1rJ8YzrbTrHcnjlUlFYWCQZEWdsZrvMN7vbyEs+n+aj+
+         /c0Uar14Np17gjUGZa/lgwyJr9DV03FFn9edh61SJ1uyyWzOamsRXhBtVKMBvlIRxLXe
+         y8QMjpNTjufSZC7uwsvWghMjs7qqYudgvRr9BtXXN0fsJPeNaeccglQlwX5jn6DBtPiU
+         BAj+1Dl9VLgd/UC66VsWpMT7vCNeytYVLI50mQd2iY99Oq+tebPvzxJRTplEifiZxpAK
+         0VT5wYzPwf/WpUFDdxzt8SGSh7LlYhYEpsVReyRBsglJZqdZnlJo4TF/fUrziff1yPPe
+         4yqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVggIZQQgPpyqSW32AT3O21j8ceG0fxfHqz4H/hm5RaTrNofiKBtBssYzHhaGsmtQUEhQfUZYnjsCWobVwrLww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXWrWcMG9TJKN3njea3l0EuwuL0aAMB5L/NvxJYiqZCvxbf/NN
+	pfYnKWUw1ObIekr9jh8p/lkv/N3bRHZDW8lXcv7UTm+PpLYR5M/ltWCork5HtFM=
+X-Gm-Gg: ASbGncsTyJrDbF6HrOnvCpOXHU1EzYWxxp3Jea/6y3RmLMTFKpLjm47Rq6JPv7cTUAj
+	O5DPavBdwwQVwSAD0wcKzlGbrE4NYeERUdbVUXQHAFWARiCJsyfS23IpxbIb98ls1EzeWrpOr++
+	KNFiaerpdXs4l53BiakObPtgWPElpFllAb/xksqFo/Q5FObKDLS/Q96dszeRz+LMc24CmX6Olao
+	362EgWGBz1nKn1EZaj44Lw63z5ZhBveTj+QavoQTbdVshymtYZTYYyAGpXkETFzhXNZoWkNdko4
+	YbvTDH0wwbvIcxCAWu5r
+X-Google-Smtp-Source: AGHT+IEw672wkeMRWS0mG0ONJyCs+3Lw27g/wNKsVWY4s/Z5oEiommyWvGRy9G5wlJR9rng6ZVaR0A==
+X-Received: by 2002:a05:600c:5687:b0:436:713b:cb31 with SMTP id 5b1f17b1804b1-4390e17e820mr44665435e9.3.1738830039214;
+        Thu, 06 Feb 2025 00:20:39 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38dbde1de32sm1040103f8f.83.2025.02.06.00.17.05
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4391dca0179sm11159505e9.11.2025.02.06.00.20.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2025 00:17:05 -0800 (PST)
-Date: Thu, 6 Feb 2025 11:17:02 +0300
+        Thu, 06 Feb 2025 00:20:38 -0800 (PST)
+Date: Thu, 6 Feb 2025 11:20:35 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Brian Geffon <bgeffon@google.com>, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/i915: Fix NULL vs IS_ERR() check in
- __shmem_writeback()
-Message-ID: <7f99a56b-d517-40b0-92b7-421c4fd813f2@stanley.mountain>
+Subject: [PATCH] HID: lenovo: silence unreachable code warning
+Message-ID: <4585c11a-3e85-4f26-b1e1-0aad5e05706d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -84,28 +73,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The filemap_lock_folio() function doesn't return NULL, it returns error
-pointers.
+In theory, this code used to return 0 if CONFIG_ACPI_PLATFORM_PROFILE was
+disabled.  It's not clear if that was a config which would actually boot
+so we've removed the CONFIG_ACPI_PLATFORM_PROFILE ifdef.  But now the
+"return 0;" statement is unreachable and static checker tools complain.
 
-Fixes: 25dd342f0cc8 ("drm/i915/gem: convert __shmem_writeback() to folios")
+Delete it and pull the else statement in a tab to silence the checker
+warning and make the code a bit more clear.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-lenovo.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-index a784fb44e59c..fb263b421958 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-@@ -319,7 +319,7 @@ void __shmem_writeback(size_t size, struct address_space *mapping)
- 		struct folio *folio;
- 
- 		folio = filemap_lock_folio(mapping, i);
--		if (!folio)
-+		if (IS_ERR(folio))
- 			continue;
- 
- 		if (!folio_mapped(folio) && folio_clear_dirty_for_io(folio)) {
+diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+index a7d9ca02779e..0fe487a6c071 100644
+--- a/drivers/hid/hid-lenovo.c
++++ b/drivers/hid/hid-lenovo.c
+@@ -728,11 +728,9 @@ static int lenovo_raw_event_TP_X12_tab(struct hid_device *hdev, u32 raw_data)
+ 			if (hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB) {
+ 				report_key_event(input, KEY_RFKILL);
+ 				return 1;
+-			} else {
+-				platform_profile_cycle();
+-				return 1;
+ 			}
+-			return 0;
++			platform_profile_cycle();
++			return 1;
+ 		case TP_X12_RAW_HOTKEY_FN_F10:
+ 			/* TAB1 has PICKUP Phone and TAB2 use Snipping tool*/
+ 			(hdev->product == USB_DEVICE_ID_LENOVO_X12_TAB) ?
 -- 
 2.47.2
 
