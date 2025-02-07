@@ -1,70 +1,69 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F2E1D61B1
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Feb 2025 09:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A3A1DDA2F
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Feb 2025 09:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738919770; cv=none; b=fwXZR8mXtAfiMGLyWGgRUNABsMS3obwHv6z9JNY8bOkSsfALm9jxTdRdvG+vaWSkNDZ39lxSiSCrMkoQdOcn54JlMuZUNwuql6Hpzg28Jmp5XeLhF5iCn8zv1KdEGX4i+vC4SjVJa5WPujscNh2swGOtXOuzOCcPq4JUAbjYa3M=
+	t=1738919786; cv=none; b=B88xhw2rSdnAt3pTzs1T4KYPkUfu2jJVUi/37VIdNRx2WHKFrjMNe+Ntr9MthiIjRVsfoCNouHbRZrsK+xOl2J9nPQXaqRRPXqN/4aKEGQFvDHl8nVP4QBtZ2AHQ6dsKNhKqPZ8psVBwlc39wdjJR9o7NfWHgD/aKhwEtgtUJ+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738919770; c=relaxed/simple;
-	bh=fLjMsIh/HJUQjg/hVkNg/XMCQsi3SepuuV9mpQx0YkA=;
+	s=arc-20240116; t=1738919786; c=relaxed/simple;
+	bh=8QyhjSt+PXmG79JqqMzYxvWUPvnaR1/TlhVoEt5+boM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jm06YM87/2TA06UYYhjRIETP1f9kvuYKmfQXGYi7yQo5nEaAUJY7ItPPWZbl0DUxrOAkM27WRUeTl6D4SwuyxUTX+03YHSzIp09RcDmWl29r8kSRNjdp5pnL30GgOk0YzhlUQkc4AHgjgcFpzYmBea3TDCTAyP2R8NKNkj0mO2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KwkS8JkA; arc=none smtp.client-ip=209.85.221.43
+	 Content-Disposition; b=d+kqMSc3DvDvByra5Ue273e5IwMcr+N0tQ67SrJvcn6EL8DO0tMqrlbc8keZCGSSwHeWcPjfzmd6IJ+gHE3XY8GTfxdWVLVTOzJdK67u+IU0PGmrafjftxjkDdeZ7bfDxoO4eBcZ7Or0nPhNIsQOynFDn44pQnuBHEsknMLGxmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rEfuvVzJ; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KwkS8JkA"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38da72cc47bso1357589f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 07 Feb 2025 01:16:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rEfuvVzJ"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38dc1dfd9f2so880338f8f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Feb 2025 01:16:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738919767; x=1739524567; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1738919783; x=1739524583; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=j4lQXrAzi2rTihX6fV/JOGU2Qmj1GaTD2TDSWqFqUgQ=;
-        b=KwkS8JkAYngepUKakIgxlAw9ZJDEEqP0rlkd94WuzpQNTkw4VkenSSprCzNdsEWVPj
-         aln7f+bzBCPhfPrimocpSmnfSJPnwaVchfLWyD1SA5DS5ZhmhDJtB9t/kzVAf5KYfGhp
-         O0H8pvEAArWziNdwDT0loinNyRDacGGDxxXZs5ZUYxi+RESy4i3VCzLqA7MH9B8K7vKP
-         qml3rAWBIo6M9k77Ub3M5QSKkc+RRPXwRMHk33lPjH+fZtphJ2/P0P918/7LaIcxqa2v
-         UP0A78vXE+1YLWQ6hykfSALWIPcT+2dWNv/bx16e3VRyzQ/wocnSrVAiOheJmpSTGw0b
-         Y4EQ==
+        bh=vvLbUtxX6Is1AqBp8WxV0jhxtX114UxVQqr6c6sxU+8=;
+        b=rEfuvVzJaugBmbO1ALFHHOKtedha/I3DKWGnXzXrsyODjKqCWZlu28q9j8b4cyUpc9
+         b0leMaD7xx/qHCTYdURVKfF4E7/UtBJd4/eAC4UFFT9vbl2CrVu74q/Ks1iYUSHp4KZk
+         5XJJ0iKczoiohEHsDJnavZJKLIeCtJLZQQ1kRsxyreaysn3zoGMI5w5eQUzhB1d3Jfmp
+         +27hrAO18exGrdY0nIdnERfjHfTMCO1tfEKm7VKRkEzE58e1tl1RR5vlwQZZ4jMQiohN
+         xvOMQKX1KNigz25GtoQA74Pa3Tcro+vQvL9fZiSs5eli9585J/eTw067p6Ebxpm3Tfhw
+         Pq1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738919767; x=1739524567;
+        d=1e100.net; s=20230601; t=1738919783; x=1739524583;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4lQXrAzi2rTihX6fV/JOGU2Qmj1GaTD2TDSWqFqUgQ=;
-        b=ijr58EfTLgJfdjxYTicVZMvWh897kjRtVb/iUn0w1ZcuiSId2zJmvzHjDYTBqnu8CP
-         bnHE+epYYfV2u2biECXu1Vx+Sdt7gv2/lKswgg9Pu44md7tok+qVtCDWz697giLmkKyZ
-         aJcoOK381MiJc/raXfJ8A+83CJUOYWAundEWtdDFJY4R+6bdrPfDRjV/5U423GakYJNF
-         dgZl8EEy1PrYV/s9jc37al+ImvbA5sf0knx3F112JIIg9L7oEqz/UuVJ9tFdrtMIrVk8
-         bbokp8athS3Qp5qaCd0kYU5VdPN3ME7IGCj9YlzxQ+lAg3zp7O+AnsCij6w3nAQMYrr5
-         2gCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZygzcyBUdUHc0PflZoDBbMOAFJl1Moe6FYO0+5QgVBZtYRnxvniWP7D8upLDhYh0HUfpbMrVV45fbvt9lFr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoNWI1kdbxS4vpXKhVGwrzAvbQDPgg0MsTS9QryeXPz5vK25Ve
-	dOqU5IqhYhAwflZb7i8XXDDA9SY68a3Tws5lSAZ69KcuEmhF21g4/2r2UeBIp3Q=
-X-Gm-Gg: ASbGncv0A39q7bDvx90WWlFRlUoC4bIPvE8fuLxaq7uwHlbD1Zqx6LUxE+pbG1Jab5b
-	BHhd8qERsBYShyfPs3Wxw2PGZS5FhqJumsG8sl83AiMZ2ESdKuMCN84fP8WFQfdyp9hsWF1q3E9
-	e6dPcKYjKultJy3fmm6DFIb8VFs5coCFWZSjOx8OxKmKk696CQS/iiHZCJVAYgE8QEWceze7upM
-	WgxINVaGzC++p80fXvZTIeL/Le4Hi/+Qnb8Zl7GfWqb3h6mbrk2oxGyaNLi9T+v480USk3pF4zu
-	2I3XutSLjRpCyHeQ0Eu7
-X-Google-Smtp-Source: AGHT+IHqtqD6HtRJQqxarv4GMNZzNGdDdWvX5SgVvhPcMKn3XQ/iYaRb3DhRIJRCpWinxpVTMd6nJg==
-X-Received: by 2002:a05:6000:1448:b0:38d:c739:276e with SMTP id ffacd0b85a97d-38dc90ee4f9mr1602513f8f.26.1738919767387;
-        Fri, 07 Feb 2025 01:16:07 -0800 (PST)
+        bh=vvLbUtxX6Is1AqBp8WxV0jhxtX114UxVQqr6c6sxU+8=;
+        b=pnwRQqFHP2Z/UCodCJ1DErhMDtmKuU+lPwHuI+TJVq3JL0rFtlDM5EHZigqKTtr+vz
+         +S2HBgCmGahhg06EBnobA+A1lp/2kiqs/7rUsa+XlLDYGo3Ea9s8QUGSNdRxW2MgXyLH
+         dBWX4HY2wOKoMtABjz3rtKus7eC8vtYZmeAcsANax3aTe8Go/GBOlozqpzycAjNKnKOH
+         xjPww0hYmmrlj3tniBB19yAfKCAkGRi7kE93Cl0iBQv1urY8TAS9aHfPNKxjDbTuepWq
+         QnazBGNfEZ5m1cXwUS4BYtP0iiX/n9fzuy1MkfuHhUR7qNozbKxDx91R1fZCtlVGEzlh
+         e3ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWV5zp19m1c7XU/l8iHZvIDF9ZR20lcSxbdB/5uO74v64nsXMPLxIWKPdWKiyuWFBZs859IzBsHHdzqI/SmgJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfCAijXSzxGpp+OC5ZPoQaTk5sc2Mg3Ftzoov6M1Le41PTi3gK
+	puDYyPstTXFP5YJdj5tfCnHV1TDwnfiWVtYSV3nJ2Q0554DKQVgBvvshXr3NpIk=
+X-Gm-Gg: ASbGncsnuuL7N0xbIMNhSNi4qfqOjVD7w+2xNooVogOQjbf1tU71I+HXTzi2cTw8qPJ
+	cRP3faeDQrljpIgmLjrARrCHtfzHHnl1EwE3HNaTdNc5bTv3XpLaCjMNaXPIzSsw3JyQ5B2KkD7
+	zaBr/XPjUm7A/orqYLOGaj2lhKKfejhmnNM9h4Y0bbCmYJXYHkguXKZC45El8hiFr8rPUZMAhft
+	NBLNDh0MO/CLovJoePHAcI4dPUju7KOshATphQYebROBctj3SDjpb9gl1xJadwWaweJ2ZsqUUq0
+	6OmZKBXfk0/+HcMM8M97
+X-Google-Smtp-Source: AGHT+IHzf8MzMXdkrcAtuah1r8BuF90slZNj+eI0Wnjcj38CkfEtHceBBNaIgCqFjXafoOn3pJtT+w==
+X-Received: by 2002:a5d:64c3:0:b0:38d:c58f:4cfd with SMTP id ffacd0b85a97d-38dc8914130mr1679493f8f.0.1738919783039;
+        Fri, 07 Feb 2025 01:16:23 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38dbdd1b9b3sm3974521f8f.13.2025.02.07.01.16.06
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38dbdd5c87csm4012010f8f.52.2025.02.07.01.16.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2025 01:16:06 -0800 (PST)
-Date: Fri, 7 Feb 2025 12:16:03 +0300
+        Fri, 07 Feb 2025 01:16:22 -0800 (PST)
+Date: Fri, 7 Feb 2025 12:16:19 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Konstantin Taranov <kotaranov@microsoft.com>
-Cc: Long Li <longli@microsoft.com>, Ajay Sharma <sharmaajay@microsoft.com>,
+To: Selvin Xavier <selvin.xavier@broadcom.com>
+Cc: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
 	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Shiraz Saleem <shirazsaleem@microsoft.com>,
 	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] RDMA/mana_ib: Fix error code in probe()
-Message-ID: <2bbe900e-18b3-46b5-a08c-42eb71886da6@stanley.mountain>
+Subject: [PATCH next] RDMA/bnxt_re: Fix buffer overflow in debugfs code
+Message-ID: <a6b081ab-55fe-4d0c-8f69-c5e5a59e9141@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,30 +74,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Return -ENOMEM if dma_pool_create() fails.  Don't return success.
+Add some bounds checking to prevent memory corruption in
+bnxt_re_cc_config_set().  This is debugfs code so the bug can only be
+triggered by root.
 
-Fixes: df91c470d9e5 ("RDMA/mana_ib: create/destroy AH")
+Fixes: 656dff55da19 ("RDMA/bnxt_re: Congestion control settings using debugfs hook")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/infiniband/hw/mana/device.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/bnxt_re/debugfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
-index 0a7553f819ba..a17e7a6b0545 100644
---- a/drivers/infiniband/hw/mana/device.c
-+++ b/drivers/infiniband/hw/mana/device.c
-@@ -144,8 +144,10 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+diff --git a/drivers/infiniband/hw/bnxt_re/debugfs.c b/drivers/infiniband/hw/bnxt_re/debugfs.c
+index f4dd2fb51867..d7354e7753fe 100644
+--- a/drivers/infiniband/hw/bnxt_re/debugfs.c
++++ b/drivers/infiniband/hw/bnxt_re/debugfs.c
+@@ -285,6 +285,9 @@ static ssize_t bnxt_re_cc_config_set(struct file *filp, const char __user *buffe
+ 	u32 val;
+ 	int rc;
  
- 	dev->av_pool = dma_pool_create("mana_ib_av", mdev->gdma_context->dev,
- 				       MANA_AV_BUFFER_SIZE, MANA_AV_BUFFER_SIZE, 0);
--	if (!dev->av_pool)
-+	if (!dev->av_pool) {
-+		ret = -ENOMEM;
- 		goto destroy_rnic;
-+	}
++	if (count >= sizeof(buf))
++		return -EINVAL;
++
+ 	if (copy_from_user(buf, buffer, count))
+ 		return -EFAULT;
  
- 	ret = ib_register_device(&dev->ib_dev, "mana_%d",
- 				 mdev->gdma_context->dev);
 -- 
 2.47.2
 
