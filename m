@@ -1,77 +1,70 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC791A8413
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Feb 2025 07:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F2E1D61B1
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Feb 2025 09:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738914407; cv=none; b=NfpAObWoY/sPRS5z4iu6AtzYYLXEwZbyFi4sgAlRITD/V2DOrOrtZxsOgAmY+TdZofZ5D88W5mCdSaePjy2MFuPaGV2mYRCm9lW66gvNnJdaPtXUPk1HRoSuq45cTF3OZmBw7T1rk0HkpTreCa2F0zbDbnR95JJwdyRZjoC9kLM=
+	t=1738919770; cv=none; b=fwXZR8mXtAfiMGLyWGgRUNABsMS3obwHv6z9JNY8bOkSsfALm9jxTdRdvG+vaWSkNDZ39lxSiSCrMkoQdOcn54JlMuZUNwuql6Hpzg28Jmp5XeLhF5iCn8zv1KdEGX4i+vC4SjVJa5WPujscNh2swGOtXOuzOCcPq4JUAbjYa3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738914407; c=relaxed/simple;
-	bh=4WlCS3JeXkjPmLde1zn1z87+Lbmb6/6ubwT13elmIkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QfgeLcUE95HY2vH8injDBbIgMPKl6U2Y11VEVW/qcVLY1Q0K2XzAzji0PMUmVFyjorID479qQ1bQBzDsNC2FvTnj/+IV0ksGzk3h75uXf4Xnmb4oMEtpNNvm9Sw/TR1SjmzLTWIngwbQ7UGufg7dsM7sfNECb3jenWss2Eln49M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eP1Yp8ys; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1738919770; c=relaxed/simple;
+	bh=fLjMsIh/HJUQjg/hVkNg/XMCQsi3SepuuV9mpQx0YkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Jm06YM87/2TA06UYYhjRIETP1f9kvuYKmfQXGYi7yQo5nEaAUJY7ItPPWZbl0DUxrOAkM27WRUeTl6D4SwuyxUTX+03YHSzIp09RcDmWl29r8kSRNjdp5pnL30GgOk0YzhlUQkc4AHgjgcFpzYmBea3TDCTAyP2R8NKNkj0mO2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KwkS8JkA; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eP1Yp8ys"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43622267b2eso17486825e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 06 Feb 2025 23:46:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KwkS8JkA"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38da72cc47bso1357589f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Feb 2025 01:16:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738914404; x=1739519204; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XfZew55UaFAS2DkPjmH09kFmgY4u4YTpbMvFSQKziTM=;
-        b=eP1Yp8yskVIPa1KcM9JosOjiaLG0bBxAt31C/1Rrk7YLr1eEAAoV6ZZmJg5amKMOqe
-         qW4xvYX54kM9Ea1T4/+fIWtkg8VlcfLsCVVVs4poBe7RFgg/5fm4Ia6JruTXhWwhOD6d
-         kg8CE/KHeAe7Xe/KcC5A1aMT/px9Web/0Fy4idU3gwhTro6LzDXVZEn9pxp/49QXmBD1
-         ILSUsqCx1gJZiWwBs885nfAlTc2tI4nDKqYOboaxjTDpAy+RqadWnyccNtpRfiAKgBjc
-         7yDCWg/tSCP7Nho7/9XBH47X0nu2MfaOWS2nLknuqhoJ8eSAEtM/ITNbY26N2JkniHVa
-         swqw==
+        d=linaro.org; s=google; t=1738919767; x=1739524567; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j4lQXrAzi2rTihX6fV/JOGU2Qmj1GaTD2TDSWqFqUgQ=;
+        b=KwkS8JkAYngepUKakIgxlAw9ZJDEEqP0rlkd94WuzpQNTkw4VkenSSprCzNdsEWVPj
+         aln7f+bzBCPhfPrimocpSmnfSJPnwaVchfLWyD1SA5DS5ZhmhDJtB9t/kzVAf5KYfGhp
+         O0H8pvEAArWziNdwDT0loinNyRDacGGDxxXZs5ZUYxi+RESy4i3VCzLqA7MH9B8K7vKP
+         qml3rAWBIo6M9k77Ub3M5QSKkc+RRPXwRMHk33lPjH+fZtphJ2/P0P918/7LaIcxqa2v
+         UP0A78vXE+1YLWQ6hykfSALWIPcT+2dWNv/bx16e3VRyzQ/wocnSrVAiOheJmpSTGw0b
+         Y4EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738914404; x=1739519204;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XfZew55UaFAS2DkPjmH09kFmgY4u4YTpbMvFSQKziTM=;
-        b=BRZYsJ/qWqjoEsQmAonih2OF0tTaUuy+sAurGmckic/ju3jl80X1SE9o7LEgEx02mJ
-         ew8NOX6XO4s276DwtD+SX39yz+VYeNUajG+6kymVBlZ+p/mlY4inrbFVzNhokFJz/ZHM
-         w7sad0puSLfTk30rJniPHLTWPkqUuOz95m27lDJnYGM8U12FAEFwMN01Imcua0M1L3ua
-         3gflQB09FfX16rmnEwK0aZShKqfX0EMqlrp/BkECLQB1TrVdji3su2FsWGjSNLDJfM2d
-         xtx2OuhgzfN5HWxZvYLtDmYf6NIT52nz8HjYuQL328+dvtteUpx1vPD5go2lB+0kLl5H
-         JxPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUa3cgWeOIiAg/m2U3l9YcVnq7a0MFufElnS3Ff3zkoMdKQjpiUP7cHT4HuIfFJVrWUnf60Dt6s3OiFNRjFIQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQfPam4elLkzK5mutx4LxDSRFlKTjInO+k6pgAVcZ4Mt1kGHGD
-	n+hSZg4wPqjzGX2UlyDOoUIhBHvivSEO/MYE2w0uIpa1gDpt6ys00nXksSa/0L4=
-X-Gm-Gg: ASbGncu7hC/TCnIMGXy9dGbDMR4YjMQtWCmtc9ReNaXZ1oZaLZ66vAvWOGiZcC0SyOZ
-	d/jjEQbzUErYp9E7E4iNEXgYtMTU7QhOwoITKzSqmiN19tpr8SgmuhENHYXgfkmk49Ih07elGRt
-	DJcvdG6UN8ffB24rgRrF3mmxd9csUnXTdT9jYqAg6GK2kWspfmXv9BKd8oXoaFRsE+C5OAjWREn
-	l4v/Jh2A8RCsU9OfDf7b8SSIBmOROp6nNI7J/25vjGjGCoDuKhm/VoswNozbBLCiJkIdPjFK4b5
-	iYUSyY80YjtjC7+wgF0b
-X-Google-Smtp-Source: AGHT+IEo2yPiCgxBsxpCRN/XebBRYuQDTFrOfCTuJ4SN+z1RTMfh8ojROe+Se5jOtplASZvtuf9R5Q==
-X-Received: by 2002:a05:600c:4706:b0:436:488f:4d8 with SMTP id 5b1f17b1804b1-4392498d6cemr23308885e9.11.1738914404200;
-        Thu, 06 Feb 2025 23:46:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738919767; x=1739524567;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j4lQXrAzi2rTihX6fV/JOGU2Qmj1GaTD2TDSWqFqUgQ=;
+        b=ijr58EfTLgJfdjxYTicVZMvWh897kjRtVb/iUn0w1ZcuiSId2zJmvzHjDYTBqnu8CP
+         bnHE+epYYfV2u2biECXu1Vx+Sdt7gv2/lKswgg9Pu44md7tok+qVtCDWz697giLmkKyZ
+         aJcoOK381MiJc/raXfJ8A+83CJUOYWAundEWtdDFJY4R+6bdrPfDRjV/5U423GakYJNF
+         dgZl8EEy1PrYV/s9jc37al+ImvbA5sf0knx3F112JIIg9L7oEqz/UuVJ9tFdrtMIrVk8
+         bbokp8athS3Qp5qaCd0kYU5VdPN3ME7IGCj9YlzxQ+lAg3zp7O+AnsCij6w3nAQMYrr5
+         2gCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZygzcyBUdUHc0PflZoDBbMOAFJl1Moe6FYO0+5QgVBZtYRnxvniWP7D8upLDhYh0HUfpbMrVV45fbvt9lFr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoNWI1kdbxS4vpXKhVGwrzAvbQDPgg0MsTS9QryeXPz5vK25Ve
+	dOqU5IqhYhAwflZb7i8XXDDA9SY68a3Tws5lSAZ69KcuEmhF21g4/2r2UeBIp3Q=
+X-Gm-Gg: ASbGncv0A39q7bDvx90WWlFRlUoC4bIPvE8fuLxaq7uwHlbD1Zqx6LUxE+pbG1Jab5b
+	BHhd8qERsBYShyfPs3Wxw2PGZS5FhqJumsG8sl83AiMZ2ESdKuMCN84fP8WFQfdyp9hsWF1q3E9
+	e6dPcKYjKultJy3fmm6DFIb8VFs5coCFWZSjOx8OxKmKk696CQS/iiHZCJVAYgE8QEWceze7upM
+	WgxINVaGzC++p80fXvZTIeL/Le4Hi/+Qnb8Zl7GfWqb3h6mbrk2oxGyaNLi9T+v480USk3pF4zu
+	2I3XutSLjRpCyHeQ0Eu7
+X-Google-Smtp-Source: AGHT+IHqtqD6HtRJQqxarv4GMNZzNGdDdWvX5SgVvhPcMKn3XQ/iYaRb3DhRIJRCpWinxpVTMd6nJg==
+X-Received: by 2002:a05:6000:1448:b0:38d:c739:276e with SMTP id ffacd0b85a97d-38dc90ee4f9mr1602513f8f.26.1738919767387;
+        Fri, 07 Feb 2025 01:16:07 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4390d96548bsm80885035e9.21.2025.02.06.23.46.43
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38dbdd1b9b3sm3974521f8f.13.2025.02.07.01.16.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2025 23:46:43 -0800 (PST)
-Date: Fri, 7 Feb 2025 10:46:40 +0300
+        Fri, 07 Feb 2025 01:16:06 -0800 (PST)
+Date: Fri, 7 Feb 2025 12:16:03 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: less size_t please (was Re: [PATCH net] xfrm: fix integer
- overflow in xfrm_replay_state_esn_len())
-Message-ID: <fd6b950f-4d5f-4f8f-b248-52239cbcb4bb@stanley.mountain>
-References: <03997448-cd88-4b80-ab85-fe1100203339@p183>
- <1ee57015-a2c3-4dd1-99c2-53e9ff50a09f@stanley.mountain>
- <3c8d42ca-fcaf-497d-ac86-cc2fc9cf984f@p183>
+To: Konstantin Taranov <kotaranov@microsoft.com>
+Cc: Long Li <longli@microsoft.com>, Ajay Sharma <sharmaajay@microsoft.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Shiraz Saleem <shirazsaleem@microsoft.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] RDMA/mana_ib: Fix error code in probe()
+Message-ID: <2bbe900e-18b3-46b5-a08c-42eb71886da6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,41 +73,32 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3c8d42ca-fcaf-497d-ac86-cc2fc9cf984f@p183>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Feb 06, 2025 at 08:06:55PM +0300, Alexey Dobriyan wrote:
-> On Thu, Jan 30, 2025 at 07:15:15PM +0300, Dan Carpenter wrote:
-> > On Thu, Jan 30, 2025 at 04:44:42PM +0300, Alexey Dobriyan wrote:
-> > > > -static inline unsigned int xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
-> > > > +static inline size_t xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
-> > > >  {
-> > > > -	return sizeof(*replay_esn) + replay_esn->bmp_len * sizeof(__u32);
-> > > > +	return size_add(sizeof(*replay_esn), size_mul(replay_esn->bmp_len, sizeof(__u32)));
-> > > 
-> > > Please don't do this.
-> > > 
-> > > You can (and should!) make calculations and check for overflow at the
-> > > same time. It's very efficient.
-> > > 
-> > > > 1) Use size_add() and size_mul().  This change is necessary for 32bit systems.
-> > > 
-> > > This bloats code on 32-bit.
-> > > 
-> > 
-> > I'm not sure I understand.  On 32-bit systems a size_t and an unsigned
-> > int are the same size.  Did you mean to say 64-bit?
-> 
-> It looks like yes.
-> 
-> > Declaring sizes as u32 leads to integer overflows like this one.
-> 
-> No, the problem is unchecked C addition and mixing types which confuses
-> people (in the opposite direction too -- there were fake CVEs because
-> someone thought "size_t len" in write hooks could be big enough).
-> 
+Return -ENOMEM if dma_pool_create() fails.  Don't return success.
 
-What was the CVE number?
+Fixes: df91c470d9e5 ("RDMA/mana_ib: create/destroy AH")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/infiniband/hw/mana/device.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
+index 0a7553f819ba..a17e7a6b0545 100644
+--- a/drivers/infiniband/hw/mana/device.c
++++ b/drivers/infiniband/hw/mana/device.c
+@@ -144,8 +144,10 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 
+ 	dev->av_pool = dma_pool_create("mana_ib_av", mdev->gdma_context->dev,
+ 				       MANA_AV_BUFFER_SIZE, MANA_AV_BUFFER_SIZE, 0);
+-	if (!dev->av_pool)
++	if (!dev->av_pool) {
++		ret = -ENOMEM;
+ 		goto destroy_rnic;
++	}
+ 
+ 	ret = ib_register_device(&dev->ib_dev, "mana_%d",
+ 				 mdev->gdma_context->dev);
+-- 
+2.47.2
 
