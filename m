@@ -1,103 +1,97 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A3A1DDA2F
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Feb 2025 09:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C041D7E21;
+	Fri,  7 Feb 2025 09:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738919786; cv=none; b=B88xhw2rSdnAt3pTzs1T4KYPkUfu2jJVUi/37VIdNRx2WHKFrjMNe+Ntr9MthiIjRVsfoCNouHbRZrsK+xOl2J9nPQXaqRRPXqN/4aKEGQFvDHl8nVP4QBtZ2AHQ6dsKNhKqPZ8psVBwlc39wdjJR9o7NfWHgD/aKhwEtgtUJ+w=
+	t=1738921546; cv=none; b=GRIUe/KJuPcpqgsennmhnv+fVHJ6q4nj1QNt0XWXjgVZO4wfD32aKbbc1baQfkIYL2OqTHRyBJWyqzEGBFLwolzetrWd+y/fgDvsI1Zl19bCDrdKauhhOl5Z1NUMILs7A9vNzqE132NqCwKGu079ZRmHe6n0hZ8i/JMyJU+m7ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738919786; c=relaxed/simple;
-	bh=8QyhjSt+PXmG79JqqMzYxvWUPvnaR1/TlhVoEt5+boM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d+kqMSc3DvDvByra5Ue273e5IwMcr+N0tQ67SrJvcn6EL8DO0tMqrlbc8keZCGSSwHeWcPjfzmd6IJ+gHE3XY8GTfxdWVLVTOzJdK67u+IU0PGmrafjftxjkDdeZ7bfDxoO4eBcZ7Or0nPhNIsQOynFDn44pQnuBHEsknMLGxmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rEfuvVzJ; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1738921546; c=relaxed/simple;
+	bh=EtiEn7NHh3nbo00IjjxVgadUdQcYzfcZj0lYUhwK4iE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iOto9cjWfpnEZotqhejpuITkYJphxSKG+YRqRCEQqzBVDfKFrCozlj7v38GfGSa15Cr8ktm4SYu3t7PGIa/okQV7jycYl7Ca9Elafy/I8dYekgEXKv85nbLxVOEhOMkr4aSABZ2L2sdxjJgWX1F3JjM8jpaJ9OXdEZzLwqPhv8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=I+eU5nPo; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rEfuvVzJ"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38dc1dfd9f2so880338f8f.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 07 Feb 2025 01:16:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738919783; x=1739524583; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vvLbUtxX6Is1AqBp8WxV0jhxtX114UxVQqr6c6sxU+8=;
-        b=rEfuvVzJaugBmbO1ALFHHOKtedha/I3DKWGnXzXrsyODjKqCWZlu28q9j8b4cyUpc9
-         b0leMaD7xx/qHCTYdURVKfF4E7/UtBJd4/eAC4UFFT9vbl2CrVu74q/Ks1iYUSHp4KZk
-         5XJJ0iKczoiohEHsDJnavZJKLIeCtJLZQQ1kRsxyreaysn3zoGMI5w5eQUzhB1d3Jfmp
-         +27hrAO18exGrdY0nIdnERfjHfTMCO1tfEKm7VKRkEzE58e1tl1RR5vlwQZZ4jMQiohN
-         xvOMQKX1KNigz25GtoQA74Pa3Tcro+vQvL9fZiSs5eli9585J/eTw067p6Ebxpm3Tfhw
-         Pq1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738919783; x=1739524583;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vvLbUtxX6Is1AqBp8WxV0jhxtX114UxVQqr6c6sxU+8=;
-        b=pnwRQqFHP2Z/UCodCJ1DErhMDtmKuU+lPwHuI+TJVq3JL0rFtlDM5EHZigqKTtr+vz
-         +S2HBgCmGahhg06EBnobA+A1lp/2kiqs/7rUsa+XlLDYGo3Ea9s8QUGSNdRxW2MgXyLH
-         dBWX4HY2wOKoMtABjz3rtKus7eC8vtYZmeAcsANax3aTe8Go/GBOlozqpzycAjNKnKOH
-         xjPww0hYmmrlj3tniBB19yAfKCAkGRi7kE93Cl0iBQv1urY8TAS9aHfPNKxjDbTuepWq
-         QnazBGNfEZ5m1cXwUS4BYtP0iiX/n9fzuy1MkfuHhUR7qNozbKxDx91R1fZCtlVGEzlh
-         e3ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWV5zp19m1c7XU/l8iHZvIDF9ZR20lcSxbdB/5uO74v64nsXMPLxIWKPdWKiyuWFBZs859IzBsHHdzqI/SmgJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfCAijXSzxGpp+OC5ZPoQaTk5sc2Mg3Ftzoov6M1Le41PTi3gK
-	puDYyPstTXFP5YJdj5tfCnHV1TDwnfiWVtYSV3nJ2Q0554DKQVgBvvshXr3NpIk=
-X-Gm-Gg: ASbGncsnuuL7N0xbIMNhSNi4qfqOjVD7w+2xNooVogOQjbf1tU71I+HXTzi2cTw8qPJ
-	cRP3faeDQrljpIgmLjrARrCHtfzHHnl1EwE3HNaTdNc5bTv3XpLaCjMNaXPIzSsw3JyQ5B2KkD7
-	zaBr/XPjUm7A/orqYLOGaj2lhKKfejhmnNM9h4Y0bbCmYJXYHkguXKZC45El8hiFr8rPUZMAhft
-	NBLNDh0MO/CLovJoePHAcI4dPUju7KOshATphQYebROBctj3SDjpb9gl1xJadwWaweJ2ZsqUUq0
-	6OmZKBXfk0/+HcMM8M97
-X-Google-Smtp-Source: AGHT+IHzf8MzMXdkrcAtuah1r8BuF90slZNj+eI0Wnjcj38CkfEtHceBBNaIgCqFjXafoOn3pJtT+w==
-X-Received: by 2002:a5d:64c3:0:b0:38d:c58f:4cfd with SMTP id ffacd0b85a97d-38dc8914130mr1679493f8f.0.1738919783039;
-        Fri, 07 Feb 2025 01:16:23 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38dbdd5c87csm4012010f8f.52.2025.02.07.01.16.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2025 01:16:22 -0800 (PST)
-Date: Fri, 7 Feb 2025 12:16:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Selvin Xavier <selvin.xavier@broadcom.com>
-Cc: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] RDMA/bnxt_re: Fix buffer overflow in debugfs code
-Message-ID: <a6b081ab-55fe-4d0c-8f69-c5e5a59e9141@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="I+eU5nPo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1738921518; x=1739526318; i=markus.elfring@web.de;
+	bh=EtiEn7NHh3nbo00IjjxVgadUdQcYzfcZj0lYUhwK4iE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=I+eU5nPocV2Z+aRnkdr0njmJa4XhMrwZxi+Abw2vkZRwx8UKMYp7GEv+42jk7+ZO
+	 bkL1IPwMz3gHfLx5xHtq+hyfblq8mln5iiSOhWsx7Eu71rC+ldlGvlZxZAklBDLEI
+	 2fe7eEiesAMWShxO0tPS3AWlvzUvb3Vrh/xyxhjrFo130yGlbSjFbTmMd2K233ZSF
+	 bnSMEF0yvZATeUfytCdGWYPfNBgn1HI0jiJLb8y9E/3dAey6YNJq3fYw6v5EQEg0M
+	 tv5vxr5GgTq9FHafLK4K83pMFpl9bIFRl53CjVGmfpaqHcjc7OtfQpcdMHpy42+Zq
+	 F8PpMtFD8qgqr3SP5g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.29]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mo6Jl-1t56M10XoR-00eaQC; Fri, 07
+ Feb 2025 10:45:18 +0100
+Message-ID: <2f8cec76-c882-4f48-8345-d03fb09404c1@web.de>
+Date: Fri, 7 Feb 2025 10:45:14 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v8 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+ Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ devicetree@vger.kernel.org, Bharat Kumar Gogada
+ <bharat.kumar.gogada@amd.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Conor Dooley <conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84s?=
+ =?UTF-8?Q?ki?= <kw@linux.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Michal Simek <michal.simek@amd.com>, Peter Zijlstra <peterz@infradead.org>,
+ Rob Herring <robh@kernel.org>
+References: <20250207065925.6u7bemyn2aireiii@thinkpad>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250207065925.6u7bemyn2aireiii@thinkpad>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:XpeVuxEZzZPZKVrplBoSdaZIWts8OscNE8mi4ye49l0yNVNMzPK
+ ikYoI468e5S8HbI3eQER1Eqk551Ex5/u/4A1taKF8qg8ICTxQH3kEeOc5ubnLmHXLkPVUnB
+ PPVF0f6FYQrCQnWg2QCrVgUDtYgqorENvBSUUasSsSq7XU3Rd/r4Baa/3dlxBDvI8YJdeN+
+ ICJ3p8tRXTMxAqK5uhJDg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:R2NmjkEBWHE=;yBCi1rHnyYuPNimhd8q9wyKO89+
+ zHnO8ztuQvNXvxvRhyMgZpRg1jY9SDkGA8M60DlSNdlhfgBbpSe9n7jSyaEFkEYX43S0bIbUg
+ AoB7+/JVrMINBx0W69rWNKT7F38CbseiNJ0R5ZScOE0GEeqfGO0a30T8eFpVQs9y73c68evaP
+ 3lF261L46kjEIrb0qETdKb0EBxFMaGq5ov7pq1ulR7rGp787pUzvl/TMhcatOGTqfL2VONxQj
+ rCRIsUc2Q3mZ0e/47m/vlONdGX1TFw2tS6rX2uT/EuhLASHU9pvxytTM2mxbPxEUa9tftzqq1
+ qOCPGeAEsTo389vJrf99yP0u8TerISgmr/NwthJ3fsC9lEb3EwehXMVjxWiLBLjF6tcqUo/2j
+ s0JFbI2KeHkEEJItElrCDMCYC60cGYcoo1AIRRdIHM/+wyi+FTJFdVR+/IxZbTLcLG8/paZdI
+ GsttAKZUAi7zTm4PxTfKwUE4nMAJHgUxACtgLOzh3okZMqO51cxG0NcnNiKGGfBHNXWmw26HE
+ HldaKvbregZfxU/7Y7txCeyyT/4NIwEVP1m8siy50W+KwSzBtr0jIyaGcBzpFeKgpHvepAwCp
+ xNsGo1oFiKZSLWJM0IFiyQthTRSYAR6c4roNEDokUBldzhZtkYOJBUIfdkW2mRvFLuwj2y4//
+ UmDI8xJP0EZDkMT6gZHCTG7JO90mSt3/2F9zdlLq48i4URDxVL0NJeb3kUveizE+gATRB9Eoa
+ 1dYAJwS+ZBmQpM3nyAnQ5mAYqB/3MWW+nR53WYsH31gv1ibfepNpJ8dYqvj44cl89HGLNTeQb
+ cq2SPovzNlUoCSYH+Ys9xb27lJHM9P+gpQ31BxUoplX4fku8BGGiWfx2/iBDmuo8fkdQ4fdwm
+ SOSvlCnryKZKRt4zJdTQkb++Zra4ud+9S1Qm1RUsbc6rB0cR4lnI6k9usCl4qn1VW7WrKc9Yz
+ X2+JG4S6AHEQQN5KL3KiseoyG2mqQ6mFWXrPAnWsHbh8qlc+fkLvgmQDjn5YQ/3YUL7hjVVWT
+ 5AEomn6nkRxtSm1gXSIdpO9P/+kN6D0kcKA0Lkc4AsIdDWQR+ovJYwouh5uGyz4zq4Fy9AmUE
+ wGk9FBI6yHN+AX59yg9YwfvnxWfYETOVoK9PfEDK2qiCzpb3e3IXZvjDPI6nSCfhierDhDHqh
+ wLhQIawEl1J9DeLsZojY7vbnRmsRL3h7DK0lvlhc89m9J6bcdx3RV+kAmDM2ZWq8EGVEeBtmU
+ B2O3cBY9j61hWcp7XPA05l1fT0r15mM/2mU0DQow04NiIxXY2PCPKoUYAPYE7KIK0ri98D/1K
+ CKpEFN0Y0rt4485/drYglAcED2qHKOe0LbaKjHVJN+bR+ksASsRYYeEy+SiLwV1EAysRiyiZd
+ gddSf1bPJSUi39UwVE5VsYuy2bknMx6xpADmLAnmDo+zD+XdVrWs6KBfzFa804jQFhspAJuXe
+ W1kuO3/C44JVL8ry8dIJIWZBQmVU=
 
-Add some bounds checking to prevent memory corruption in
-bnxt_re_cc_config_set().  This is debugfs code so the bug can only be
-triggered by root.
+> Please ignore the comments from Markus.
+I hope that patch review and software development discussions can become more constructive again
+also for related topics.
 
-Fixes: 656dff55da19 ("RDMA/bnxt_re: Congestion control settings using debugfs hook")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/infiniband/hw/bnxt_re/debugfs.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/infiniband/hw/bnxt_re/debugfs.c b/drivers/infiniband/hw/bnxt_re/debugfs.c
-index f4dd2fb51867..d7354e7753fe 100644
---- a/drivers/infiniband/hw/bnxt_re/debugfs.c
-+++ b/drivers/infiniband/hw/bnxt_re/debugfs.c
-@@ -285,6 +285,9 @@ static ssize_t bnxt_re_cc_config_set(struct file *filp, const char __user *buffe
- 	u32 val;
- 	int rc;
- 
-+	if (count >= sizeof(buf))
-+		return -EINVAL;
-+
- 	if (copy_from_user(buf, buffer, count))
- 		return -EFAULT;
- 
--- 
-2.47.2
-
+Regards,
+Markus
