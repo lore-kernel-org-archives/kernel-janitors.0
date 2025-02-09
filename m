@@ -1,43 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3981A143723;
-	Sun,  9 Feb 2025 09:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1B615533F;
+	Sun,  9 Feb 2025 09:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739093099; cv=none; b=RdyNOaxbc0tyNXVctuwT87WSPnlzz2wrsZxQNU5oHML28rMOu2jLtC7w5oKVBa8F2TmznS0NsypPpXK1jHbFcIYFBDGzFOIz6wXqjXzZxv9RoItXQf2xhfYO7yhR0tmfgn1DhuHmf9GOtB+cfaGu6Hmd00ovOqTC6QJAx4ubOlY=
+	t=1739095123; cv=none; b=Ns3XDCphNk6FV8qcSvesaxbv8tJ8RQMGJM9Yh+cA8cvH3YhvKQ2ZuACyDLOCRKrEUstl2mvXETSp/IKOGQHARf4Awbx0/TTH88JntcfroPhBpIIFqDCanESqAEU28U0JJ+x48VifHsP/QnTjeaMQuHKfqY8Vw1MRm9hr+h0HTzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739093099; c=relaxed/simple;
-	bh=ssQObEYlw8YT4fp9TnwZdyIO3kgihzlK1DnhYvED8kE=;
+	s=arc-20240116; t=1739095123; c=relaxed/simple;
+	bh=L7FwTv+nbIdJL8d3SJiYiMCmiT7OHJiIT96Vv4Q+Qbk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NBbamSk2fb83IvR8cGv3EZtyng0sG63W6POaiE0nG21DUD5c1mYSwdm6T3hELQL7we/dhQ/OlmfnF60t0jTbRfulVFdiXfV5vW5HfhhIVnGU2e4HL1QtvJJoftHk5xCipeODr+1IiA9PPRRqPQ+//9zh5Cxrsr4Ku7J8jkA41S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2PXEBzF; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=jyhr7sbYxRfQ5vA7TIjpX55aG9e+KQ9Rk/3KZ9517Wf1hEEA9Dr/lQ4cbG4mzsc7kQCHAjURHeyvmTn00fVMPwJuEd+gwSVI7MCx3Y6+60sD5Qm+gxe0iRljy+WJuKxYtSMTzl+BhVHC7eDnIvMCjKML7UCV0YNPrVQirba7ByY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFlpJcqX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2PXEBzF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0418DC4CEDD;
-	Sun,  9 Feb 2025 09:24:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFlpJcqX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31F6EC4CEDD;
+	Sun,  9 Feb 2025 09:58:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739093098;
-	bh=ssQObEYlw8YT4fp9TnwZdyIO3kgihzlK1DnhYvED8kE=;
+	s=k20201202; t=1739095122;
+	bh=L7FwTv+nbIdJL8d3SJiYiMCmiT7OHJiIT96Vv4Q+Qbk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=D2PXEBzFn2b5wylIjH7TeTYgGZO4dXFM+PH7XjVKP8QxV6SzI3Y+NAEmzS6CpuW8z
-	 ubmWsK4vRtHByTLgg3swhZZ51iY8YMhxSFNj2YLsuDLsuekQrqVIkGccTcjfEbCKr0
-	 gAg40Q00z92Ybw0Dk3hTikrpzlTcs2VaraM0q8jDxsNfW6lEItC2UGSqCuxRxxbIAU
-	 qHeNosIOfOD2sopDQPrHLJrM6upEpBIpfQpKjVh8HfdwJixfbuIdVCaX9j5kpoBaMr
-	 IViQyzToVGB3Zn4w7UyLx4nMiMZb9kBF0O1L38MEehKjEmqwmRXVlFxeo8mjwX6/0m
-	 HJzkZyP3PynNQ==
+	b=OFlpJcqX3RrY/Jat/cKRanXNUPbakjiEsQtRpzjOaPbA4BWOYyc+wO2VzHdlu1/qK
+	 Q4YFyk5KtpHEtRQKsjLLKCsv2t+23IYtbEfg7ZO7P1AiHkU29Y1BZTYvi/cCwB3Ewn
+	 1Ctf8IxBjsNolZRU93IvbFKaWxuLH+L8UOVos3WBWipytuuTJ47BLSQ+UEEapM48Lm
+	 dnVRF2oPuL+pLL5KuicKsjm1ftPgFrRHYjgeJAgupnf+QfumdpTzvA67eyetrGLSfg
+	 Oh0VE+gZu8VyPMcG4PvYPFx8vZdE6kiiIkyyc+6svOj28thvu/bw1eKZ8HrGuYNGOh
+	 rIM10UIo1mf+w==
 From: Leon Romanovsky <leon@kernel.org>
-To: Konstantin Taranov <kotaranov@microsoft.com>, 
+To: Selvin Xavier <selvin.xavier@broadcom.com>, 
  Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Long Li <longli@microsoft.com>, Ajay Sharma <sharmaajay@microsoft.com>, 
- Jason Gunthorpe <jgg@ziepe.ca>, Shiraz Saleem <shirazsaleem@microsoft.com>, 
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <2bbe900e-18b3-46b5-a08c-42eb71886da6@stanley.mountain>
-References: <2bbe900e-18b3-46b5-a08c-42eb71886da6@stanley.mountain>
-Subject: Re: [PATCH next] RDMA/mana_ib: Fix error code in probe()
-Message-Id: <173909309517.4223.3295047094322113196.b4-ty@kernel.org>
-Date: Sun, 09 Feb 2025 04:24:55 -0500
+Cc: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <a6b081ab-55fe-4d0c-8f69-c5e5a59e9141@stanley.mountain>
+References: <a6b081ab-55fe-4d0c-8f69-c5e5a59e9141@stanley.mountain>
+Subject: Re: [PATCH next] RDMA/bnxt_re: Fix buffer overflow in debugfs code
+Message-Id: <173909511967.39679.271467641210884194.b4-ty@kernel.org>
+Date: Sun, 09 Feb 2025 04:58:39 -0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,15 +48,17 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
 
-On Fri, 07 Feb 2025 12:16:03 +0300, Dan Carpenter wrote:
-> Return -ENOMEM if dma_pool_create() fails.  Don't return success.
+On Fri, 07 Feb 2025 12:16:19 +0300, Dan Carpenter wrote:
+> Add some bounds checking to prevent memory corruption in
+> bnxt_re_cc_config_set().  This is debugfs code so the bug can only be
+> triggered by root.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] RDMA/mana_ib: Fix error code in probe()
-      https://git.kernel.org/rdma/rdma/c/607a7dcf2e9814
+[1/1] RDMA/bnxt_re: Fix buffer overflow in debugfs code
+      https://git.kernel.org/rdma/rdma/c/dbc641ecf1cbd4
 
 Best regards,
 -- 
