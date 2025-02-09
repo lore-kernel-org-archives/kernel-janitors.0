@@ -1,40 +1,39 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB02313BC0C;
-	Sun,  9 Feb 2025 11:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048D6F9FE;
+	Sun,  9 Feb 2025 15:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739098821; cv=none; b=vCct09hsjC6qAeZhyvHnw/HI1eExZQ7wBNd6880pllrm1qOEeKPu2hERerXX5tNlyDNZC76Rz14kMZhlxlvAiXi8j2fhI3V334TiAX3kY/81yXOcnEWt+bajXMh4j5fDWQpCmPT9N7+9Psd5KPovlhkABYKGIlHRULr7nH+G50A=
+	t=1739113862; cv=none; b=H90strh/nGW9WtH9Vjnbo0ajq/RhjQhGt28mc7abuS88ontFocrZmxhyIxQrOFsXjiyU8kIowiA6Gq25KLUCXerZNRUgilZhY/0mX3VJd8vA1m5QO0Jm1Zm9rUQsC4lnZ+hSHlptKV4KFYVz66eHWURH9VvcEO4RNFGrc4jhpvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739098821; c=relaxed/simple;
-	bh=uchKxHe/6t1Gucz4FmMs/tY7jNQzjVFaIGS0K7VXSjU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=NmehvnZGd06zQpiIaZSmPIkaDYJNDcG0ZU4tVhK8CajO6IScVzDW7iHyj2PHbSfmTk0VN4CSEfewBmETjscfs2iIb3jtanlyNkeaPpPbVm1um9v9FN+5nbCIXJ7Rs/BKtDWGLcxEyfguw0G+TQkn559DPaOBefR97Pfo+vMYso8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JkUbwCqH; arc=none smtp.client-ip=212.227.17.11
+	s=arc-20240116; t=1739113862; c=relaxed/simple;
+	bh=Pw4A9EPtu6M+CznVZfsow6MTIebmDOlA4bH9NLWTaKc=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=j+YGYHXVz31afHvkbYT9JAmCpmrIyYf3ZUjGXsvKDc7uua+nhTUpjPG9yNhTgPFfbZYVXkd9Lf3T7/QxwdtY8OTDUZq05QD/AMgbv+Q9nvHiAoFeQhXxq9+T7djhGff1oSdtV+FVuscIbJVjg+jR2cOl/nZ50YDefqqzlpQKxGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=umvhQtFk; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JkUbwCqH"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="umvhQtFk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1739098812; x=1739703612; i=markus.elfring@web.de;
-	bh=zTTFXhhuzuAGcnouAfDibr4bNX81x1TGXC62o0Kjysk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	s=s29768273; t=1739113849; x=1739718649; i=markus.elfring@web.de;
+	bh=g+85RQ49D14pcg2rQ7TtGa2VAdHK1hPQ3J5/ITKF/WA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Cc:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=JkUbwCqHQaAXl52/EVdi1ljGmh9spZiC/zg49giAScmn8Lmbgj5UzIriGtVfn+0A
-	 3AKLn5pRNeBX51sfSYVsyoKFfBj9CeJRo8f9ewaLC4OfxRjeTKXzPlxMRojt2emgq
-	 69chWMz6JBmfsxlbYLqnTjUn3T2XSsc84XwdRFw2GCVnYawwR7C6WwLUEvijdtIZs
-	 g3vnXyP+WNBn+Lk8YObabbgbU/16Pgu7hJEmDG0wKDwJD/feoPFEjv31evWBcBBon
-	 VYbppIuN9cUyr5zJksMJLXUOFDvrIJk6aS5/LExbor9DOVayPKQYURkVwZNtrOsLx
-	 wqkx6maeta8BBPa9CQ==
+	b=umvhQtFkJKgEp7S9+0oDsmUmnjV+vi2ERNdv2wvGbItwxEeKfvUdPEwVKwoxd6sL
+	 01oEc35CzzQk/C2ZayrMW/d01J1Q/6Jumi53MO/gX5yLSIcfXZtvEISoRyKsnRR19
+	 Hav0HtDDG26Xrxh+zwiIemCxyUlDwN41sXkOy2ypAvbBkVzi2aN9znJcvtW48XHQq
+	 /HQzHkhc9Zo0NJLK+nVrcRVZ9kApA6WsXPzsXCZ5xo63UzCLJgaruqa2FTmBhEyY1
+	 tinTKK+zvmSBeqbnhiuNI6xqo2aAcxolUKtp9N27Nx098PtxZMcWp+BaY07XHXJhh
+	 yeTWntG8AR3Yj/GMoQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.29] ([94.31.70.5]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MyNwk-1tSj0y2xKe-017uN8; Sun, 09
- Feb 2025 12:00:12 +0100
-Message-ID: <df74c693-45fb-4c02-bc75-32f70633706a@web.de>
-Date: Sun, 9 Feb 2025 12:00:11 +0100
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MkElP-1sx7su09tp-00cJ6d; Sun, 09
+ Feb 2025 16:10:49 +0100
+Message-ID: <7692fda2-f9a5-4381-b1a8-f949543c0a89@web.de>
+Date: Sun, 9 Feb 2025 16:10:48 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,58 +41,53 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Ethan Carter Edwards <ethan@ethancedwards.com>,
- kernel-hardening@lists.openwall.com, linux-hardening@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Ben Segall <bsegall@google.com>, Peter Zijlstra <peterz@infradead.org>
-References: <wayfdq456uccu2kzujdokp5kklbl7evp432rmnxcdh2222wwlp@67idbpxoy32u>
-Subject: Re: [PATCH v2] sched/topology: change kzalloc to kcalloc
+To: linux-rdma@vger.kernel.org, Cheng Xu <chengyou@linux.alibaba.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kai Shen <kaishen@linux.alibaba.com>,
+ Leon Romanovsky <leon@kernel.org>, Yang Li <yang.lee@linux.alibaba.com>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <wayfdq456uccu2kzujdokp5kklbl7evp432rmnxcdh2222wwlp@67idbpxoy32u>
+Subject: [RFC] RDMA/erdma: Avoid use-after-free in erdma_accept_newconn()
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6VLn2NDmUxJaetn9zKEBY3t2zlEqmfbtGelOKPrXuClPkOEyi+X
- gGMkbre9CTAauYoztqdq8j0ciqgbRHSb2VMz/dzBGjxM9KuAiJ+D6PGUXsTAspq6XmxWC0z
- ILl5jdCg4zfYUBMgFTPCMUuYYXm2QFSvV68ii9VKJfkhqv4DGIxeHCZWo7vOcM2y4cHDVyY
- RqXPUyXtxL9ANVHzJbhug==
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:NA+UC7Qcrq9UtmA+RHMOp869eZiVVcuDInHKov2+UH89LDoaMyY
+ u2e64DgcxrjjlYXhEOCevq4c6JvFdeOOv93jypj2l23DXZkK9ZYZ7xvWTXt+suR6wYPc2PN
+ F46Sh9TaV6iO0pdDU6gwSm2W/ySNbho6AfgPjBnSf8E1roCvYLuNld8n5/puDK9LnZuurMP
+ Ia9EaKnOFcp3FwjldGOdQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8oCHxsTpdIs=;dwECqzLvlQ2np28+V4Z733uGZsX
- 3jqs8Nme6dbgp/a94OcBg2dAA9cF2PE7/3e63RwGDWL7JbsjWOjvglE3HRBmyGx9Ym4HQLife
- HDK7wjKQ8/NpT1uf8iAmVHnwZ4k+ppsF4JMkRMLyKRxU7c1v1Z6Kw1wUFdj/BL3bZ2kaYiuov
- 0fxuhFdsxoBUfslAWm0zWhaeZrJAg4V9DhJcF29Qs5fV1YPJ6rD+yyKyDyczJOt9E8TFdtmXy
- qF8CTrXAQW6BpMUivtx7WOjb1MNddSuhBII+bqNYaoKnbbjEaS0yohw51PjGu79BGQgCSMH8y
- DzuaIhE3KlU16manOVrCi+0CdcYZIBzVL1fEXnoFXNYgzrPQPWjcu79nCmvuEV45019FXHZYa
- TFe6XrB6EO37yp6nav75vxluw4AONOBg4kSLEEiFS1LJGpRehXme8RqFscOia+rvDcJvFCnvC
- a25hRIf01l+R3k+m8zQAb5/t6AWbv03THfbmVG+Ddc5KlnWg7Lr7xpaIJFCi0J4yeXvx9uCc2
- NKUYOmjr0iA942zInzddqXxHJiCazjQ0pCQCPEEoNe8mi0dlN3jY/4jXeb5Z56h4kVaWgvrVY
- pzqHOGwdZbCE+JzNlfq3Pn5ZRq3jDfHzV39m/W92TT3MNBEgLAfBtpPhsjS+8knTrNl99ZXR0
- abVtV12V1SfIHidBBvc/yvsld/dqTXu7+aey+7FXlyBG2TxjEiACjkfTee7e6VuaNfeu9kqAD
- Yv/zK2eWuDCQYKRPAH12nda7rn7bEHr3NDypkIqVMfL4HBir5Mo4iPnasiusWQbqu3JvwM902
- NCU9AQZ1FvyKbXDg4gBnFVpujUYF3MiYzJcnctIYo2Mn/304CCgCp7czrsGJ2Djw8wEF5w+CJ
- 3Pu+w0RJfYBK1gs8z3EkTD/h6eF0SE2a7y1DxegNLglWrDAgLGHHrvMN9lEaVRCH6J5XRxDLU
- o1/Qcjz5hf1RD6A5+1WoAArxwQSMVS6xmi8Qc3mX0VHJa3+vgjf1N5YbdXliSV5QLpZCRBomh
- s4Gef0CEOxZKEN/Z+vCedFLFCFoSt5tlhknGcS8IUAxXCKECmY6Z6vVV2/ns4l/4U2AkAxbJB
- kzJGhaoxU28PXB8EvuBHY/chblWxDj6mQ9UWVDSJKSMTjLdQpA3NdghHj7erkILT1VHRDkaak
- 4HJ5Y/RX5KIai6jt7tPFsrGUhVYrcEulGsJtTGUy6mfaXkrhkArZkl0W38Zc8cOQrDXIpp5qA
- 1jy1xFUzwSW9nSqSrvw6332k83VSOfyqB/WFC4UHSonT/ZqQQOHzlFfbk7JmEaoxyDIXNNCXb
- eUd971cZBygRXO3hCVja7trd+/KjqsoaZT1DqZrvP9MN9Pkbf038QKRIPFwCp0lRuHhKch2Pi
- Sa0HixxWxwzZGo+C4q9c5Z4isp9hihrwpoeKOWr++54Zfw4Pkm6g0j8SVTYuHVdAdpBKfa8Xn
- ZqEz9yDNTvnY2IaxU8vJ/olgmO0E=
+UI-OutboundReport: notjunk:1;M01:P0:18ZA4r85Zbo=;EwgIFKo/HgaCN4a56LVXXBTrez0
+ ft7w01R5PC69J4Ey20IchS8+53f+3cCI2nj6sgfHogpdVsFSXtNv/hneDyra3j7KAz5GrLnOx
+ W0anZV2/GtAAH/vYvaRkdzdzPK8PuofgedjsatB2po2yXV3TtzRrAcGR2cb9Tt68Vq3lN6myH
+ cT5WMycl+q2ldPp8thcM+WW4ria2TE7p94fRzbZ5Zvxsv39QqBeKqCQij+gpfIHnD8+08bA87
+ iC7mM1R5noTvsFsWYpt+kIoRkyPNwcBNPJVhChex+Z77RpYo0cqlcKtkNnMj6WIuhXa0qEbWe
+ 4UmGppfBpzMst3it8E4cS9qKZ3AIXg4MGKfMSxgp/RnPo0waqUnkWK0mVjrRDgb2slTiZ/yz3
+ UM6X8+Nt9PEyqOTUJ6HqKmhPSHyNCMe8WU67u6mtvT1SDaH/gsdaM9cG1fpV/dXvz0LyOMbsy
+ gGT5hSKIULP9uUu7AHMAIvUoBaDtUZKgC5AZdxbCnC+P2I3Ndqh+lgzI8m9ntquk6043KL4Hy
+ ul9YDY/GSxS3WezFKA+OVaigXK776OeS+sQ9IJEueYtV+aUgX7IDn0hp2ym4GB/U83YM8b7Wn
+ BtFlkpBw+U1Ei7/gqWrUc1rRTWSdOlOFf38Gp4YvcRosLNi536cdoqSmXPJSHjAgzo31DOCFt
+ Vw5l5mb4oiRvV4gGNwVsxK+VIDYSG9R34A0N6seXXA5l6gXHzwwonUNOE1JDzcjNJCaJ3nMbg
+ FiYh+Fz3+y1T4HJQ8T3sC5vmOgwsuowTLpfgndAgiMOoGJTxLDYX5BVlE4a1TPn6KJHqKsS20
+ dDCm9nm9CP+P620xeDk4wJqjnXK/ga9YFGaNwgpf/gNxWbglO0mLAgz/p1oI0X6Hog2PIduHP
+ MFvhFWWqgHXmTDNVk9OL3Ej5713OjcrCBEChyo004QHNPxhT7JN7fad8sw5dJG/sUEEGGEIh+
+ gTggLn6zoZz1GarO9a3sxDOLGEDX1izDOk76bZvU/mRlLibYK8Oh//DFmhxIUu/E/JC6YxAqy
+ dfV6SBWIL+Y40aoT2nlERT61XREJLCtPCGtfDCK97X8Lg05bOZ6FvakZvaunb51b7MjxWHAHJ
+ gqCc7ZnoN3hpJcz53OrjnNR+7IeUXiNn9Pf9VDli5sVR4WMP5pRVaxtAqEOaqAflxoJIrGR6M
+ CXyx95XxwOsOQYQ7QyGJhKNUDEoKfYOLngt1YHo/enYOxQNYykJac/JSET7XnCSDhn7S60JIi
+ hqPrS1UUVeWMceQ7up9DBHyVoiYBT/Gi4XMxPAaFN3PmfGAHohSnApz6JrTIIZxZAhLDDIyhY
+ exC2G1RPdVIHnIJRaHAXTfWqzBA1oOQzXbTS/aW+znmllGLaKaRw1PUyO4l13577ec/utI/Zf
+ ixNgRGgh4u0fTag/nFwlo1tby8w6t7494ypWXVGrVii8b7Mp6RqgvWJHsza5FOjth8gcUVG38
+ /FPCR5N4WymtRnf+5IR4REQe6D54=
 
-> We are replacing any instances of kzalloc(size * count, ...) with
-> kcalloc(count, size, ...) due to risk of overflow [1].
+Cheng Xu pointed out that the following statement combination would be undesirable.
+https://lkml.org/lkml/2023/3/19/191
+https://lore.kernel.org/linux-rdma/167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com/
+https://elixir.bootlin.com/linux/v6.13.1/source/drivers/infiniband/hw/erdma/erdma_cm.c#L707-L708
+		erdma_cep_put(new_cep);
+		new_cep->sock = NULL;
 
-* See also:
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.13#n94
-
-* How do you think about to use a summary phrase like =E2=80=9CReplace two=
- kzalloc() calls
-  by kcalloc() in sched_init_numa()=E2=80=9D?
-
-* Would you be looking for any coccicheck extensions accordingly?
+Are there contributors who would like to fix the commit 920d93eac8b97778fef48f34f10e58ddf870fc2a
+("RDMA/erdma: Add connection management (CM) support") from 2022-07-27 accordingly?
 
 Regards,
 Markus
+
