@@ -1,66 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1B615533F;
-	Sun,  9 Feb 2025 09:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301B1189902;
+	Sun,  9 Feb 2025 10:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739095123; cv=none; b=Ns3XDCphNk6FV8qcSvesaxbv8tJ8RQMGJM9Yh+cA8cvH3YhvKQ2ZuACyDLOCRKrEUstl2mvXETSp/IKOGQHARf4Awbx0/TTH88JntcfroPhBpIIFqDCanESqAEU28U0JJ+x48VifHsP/QnTjeaMQuHKfqY8Vw1MRm9hr+h0HTzU=
+	t=1739096529; cv=none; b=tZSaawHwIbqalbvRCN9YKjmvFY/zJnNTJxBKXFh1LgszdFev7YIRu1z7KSPgQwrZbxDruSW+ZrB54qNBTnGazo+qPzA78HEaWbaElSlw0oOKA8D4rS+35f0tuTyp8Avuq2mDffBAmU5lbkTzSQZ3n3/eUpaHHS0+tYa0vFmCbbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739095123; c=relaxed/simple;
-	bh=L7FwTv+nbIdJL8d3SJiYiMCmiT7OHJiIT96Vv4Q+Qbk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jyhr7sbYxRfQ5vA7TIjpX55aG9e+KQ9Rk/3KZ9517Wf1hEEA9Dr/lQ4cbG4mzsc7kQCHAjURHeyvmTn00fVMPwJuEd+gwSVI7MCx3Y6+60sD5Qm+gxe0iRljy+WJuKxYtSMTzl+BhVHC7eDnIvMCjKML7UCV0YNPrVQirba7ByY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFlpJcqX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739096529; c=relaxed/simple;
+	bh=UPLXXe6L2MrDc++BeOFQIuV2owi8xKA6eaEAAeZ776U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4YPb0s09RT/giM3z1lnSECA5CoiKrY9pyLYceWMj7qqx4s0tQpOZnhcDE9+6pX2flFQqZYx3VWymxNMOe5CniaLIkcRtBan7IaudppWXt6TCLSNTI3dXM5sGE9J1b2Fe4NrbIqTHAuqPbeO03E6kVwRLlCleWFdR+tpz+hb4H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=MO2maLvL; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFlpJcqX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31F6EC4CEDD;
-	Sun,  9 Feb 2025 09:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739095122;
-	bh=L7FwTv+nbIdJL8d3SJiYiMCmiT7OHJiIT96Vv4Q+Qbk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=OFlpJcqX3RrY/Jat/cKRanXNUPbakjiEsQtRpzjOaPbA4BWOYyc+wO2VzHdlu1/qK
-	 Q4YFyk5KtpHEtRQKsjLLKCsv2t+23IYtbEfg7ZO7P1AiHkU29Y1BZTYvi/cCwB3Ewn
-	 1Ctf8IxBjsNolZRU93IvbFKaWxuLH+L8UOVos3WBWipytuuTJ47BLSQ+UEEapM48Lm
-	 dnVRF2oPuL+pLL5KuicKsjm1ftPgFrRHYjgeJAgupnf+QfumdpTzvA67eyetrGLSfg
-	 Oh0VE+gZu8VyPMcG4PvYPFx8vZdE6kiiIkyyc+6svOj28thvu/bw1eKZ8HrGuYNGOh
-	 rIM10UIo1mf+w==
-From: Leon Romanovsky <leon@kernel.org>
-To: Selvin Xavier <selvin.xavier@broadcom.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
- Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <a6b081ab-55fe-4d0c-8f69-c5e5a59e9141@stanley.mountain>
-References: <a6b081ab-55fe-4d0c-8f69-c5e5a59e9141@stanley.mountain>
-Subject: Re: [PATCH next] RDMA/bnxt_re: Fix buffer overflow in debugfs code
-Message-Id: <173909511967.39679.271467641210884194.b4-ty@kernel.org>
-Date: Sun, 09 Feb 2025 04:58:39 -0500
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="MO2maLvL"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=mkPPjC8o0FMzZtM8Xt0RmrJn3Y3MticcSZvxgZEKe5I=; b=MO2maLvLsYu1EMaGtfRZxmWxkm
+	4Xpbu+Qm9RpGHqbzq+74mtxkXboM7K75TdFmZs0Sszm2rYVzqLT09Yrnx4fLzyYOxMpEKf+GF4mdY
+	7oQsF3xxULMwu37xr3pejXwQJBkIuo9IGRJmjgBWG6tO/myjFr5dHfwSj76xrptHjQ7vWTL8AX8Bh
+	78gl05Sr5BF+xB/ml1X8+wwWqRJnbs/Uos+g+ABPo+/DOhZZJ916gVuzJ+eA0tR4DlK4yS58+WVuF
+	zimwqV3agOSaww1mAW089Boy6Cl7b1B6jX/MkWFcyOTBCpsNjTJdKmN/xGOhM0CyK+TY1I0fVpSTG
+	RFXn8CJA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1th4Ei-00GIk9-1g;
+	Sun, 09 Feb 2025 18:21:46 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 09 Feb 2025 18:21:45 +0800
+Date: Sun, 9 Feb 2025 18:21:45 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Cc: haren@us.ibm.com, ddstreet@ieee.org, Markus.Elfring@web.de,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, anupnewsmail@gmail.com,
+	linux-crypto@vger.kernel.org
+Subject: Re: [RESEND PATCH V3] lib: 842: Improve error handling in
+ sw842_compress()
+Message-ID: <Z6iBuarMDVyPv-UA@gondor.apana.org.au>
+References: <20250114141203.1421-1-tanyaagarwal25699@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250114141203.1421-1-tanyaagarwal25699@gmail.com>
 
-
-On Fri, 07 Feb 2025 12:16:19 +0300, Dan Carpenter wrote:
-> Add some bounds checking to prevent memory corruption in
-> bnxt_re_cc_config_set().  This is debugfs code so the bug can only be
-> triggered by root.
+On Tue, Jan 14, 2025 at 07:42:04PM +0530, Tanya Agarwal wrote:
+> From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
 > 
+> The static code analysis tool "Coverity Scan" pointed the following
+> implementation details out for further development considerations:
+> CID 1309755: Unused value
+> In sw842_compress: A value assigned to a variable is never used. (CWE-563)
+> returned_value: Assigning value from add_repeat_template(p, repeat_count)
+> to ret here, but that stored value is overwritten before it can be used.
 > 
+> Conclusion:
+> Add error handling for the return value from an add_repeat_template()
+> call.
+> 
+> Fixes: 2da572c959dd ("lib: add software 842 compression/decompression")
+> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> ---
+> V3: update title and reorganize commit description
+> V2: add Fixes tag and reword commit description
+> 
+> Coverity Link:
+> https://scan5.scan.coverity.com/#/project-view/63683/10063?selectedIssue=1309755
+> 
+>  lib/842/842_compress.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Applied, thanks!
-
-[1/1] RDMA/bnxt_re: Fix buffer overflow in debugfs code
-      https://git.kernel.org/rdma/rdma/c/dbc641ecf1cbd4
-
-Best regards,
+Patch applied.  Thanks.
 -- 
-Leon Romanovsky <leon@kernel.org>
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
