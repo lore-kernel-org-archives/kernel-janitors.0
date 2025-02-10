@@ -1,112 +1,105 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1161C4A0A;
-	Mon, 10 Feb 2025 09:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A808E1CB337;
+	Mon, 10 Feb 2025 11:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739180615; cv=none; b=f9Y3KqhnLP8+shEhX6IdS2mOO5FRvs+z0HFgI5JAc341X88xYwB5OoQB7dvt5tT5ldDWTTKTh5ATtS7reqyDi7MiQO1uVxEazySe1MzK6Pqw8ecAc8RbuNBNBiKnxpRhvJhlBEYaf5wC+LRhDjzPuqUYdqilIsFwmRF58aRncaQ=
+	t=1739186013; cv=none; b=C0f6S+iIRxQdgWuqmuvdvV3i0O3KOEwRnnmN+zUPDitwJLNFifDskRvPZprIa5Ats2hy57q7nW0dc7815HZHLU8XuCITosMUQycT0sFr6F3OydztIK8egkICGDRihftox5JVZvAg0qipHc5VOvPhQQllTdTWKSCeRcksU+ynKOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739180615; c=relaxed/simple;
-	bh=0pUNFOEBOA/bUdc92ju0BJmYOTZUzllU9khd7afAmBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OtRqujkcvNcKP1QW7GjAMf5GuQcCkHidQxF+TbQG4dSiBounrtkE5TMR2iYz7l3qqB12Luhpq8lBqF6kXKjQuLNe3SYo75/X0BzODlbNHvQAm6Gs2O28XcZdVZlIpZwGuj8pvkFIzuwRD5aJsf+HM/hD6IbV18lhnATXoT4P2TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sa87ltDx; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1739186013; c=relaxed/simple;
+	bh=2zJ77jcUVTjeAXAGAxzJaL/gPkHMt5mWPCza1IUne8s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sVeRotJ/5jGSisF1VIlziKk7T07WpRXgPzZyVLwk/4cyA77SCToOYVBgMJou0FiQGX8z20Vwzrz954ugD148RavT0rm6xBbHbq2LY/sK3JNE6CckIldIY0HYZnkEfYxuVtkSZ7TeSup0yzTR6/6twZ3pSxqmJwRGYz1HcllCPZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUFDZAT3; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sa87ltDx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739180614; x=1770716614;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0pUNFOEBOA/bUdc92ju0BJmYOTZUzllU9khd7afAmBk=;
-  b=Sa87ltDxS8HYG0otW5hWUsqW5srPJLFDAG4+CiTIkrLaapVZbbxr/HDe
-   KPzmGyvAiTmzTqce/3bhR0oBSTZSxtQw2FnogyT0h1w/jPONsaYK45E2A
-   4BJlTDGxymkMmsJiY5wDmSqYgzdAio5VsyFE/JyJ/dcU/wS4z5P1bjC92
-   4+RwYoMSYCOlPV2DuYZYphClqVP1FU5+zLHlIIr5NJ25VL7yP84i5+4kM
-   jJ38Xr+nrfim4JvRpSJdiqIPOcUtuL1rGDLVKktRJrtVIt2nQxQnPX9ac
-   HvredeICGntXEBYCR40M1gooDLvXx7HModRhFBpULm5siSQumY1xXKc5v
-   w==;
-X-CSE-ConnectionGUID: ugAQTnTTSPqgg94rUj/cXg==
-X-CSE-MsgGUID: vOISYeibTX2Tk5rJQIlJlA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11340"; a="50737151"
-X-IronPort-AV: E=Sophos;i="6.13,274,1732608000"; 
-   d="scan'208";a="50737151"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2025 01:43:33 -0800
-X-CSE-ConnectionGUID: O7W/l4usSU6qZYIIoAae/Q==
-X-CSE-MsgGUID: pcTRZCcsSBeLLVNUDYD+7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="116208180"
-Received: from mgorski-mobl1.ger.corp.intel.com (HELO [10.245.84.116]) ([10.245.84.116])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2025 01:43:29 -0800
-Message-ID: <43eb87f7-0d47-43a7-b34a-9180f50de3b2@linux.intel.com>
-Date: Mon, 10 Feb 2025 10:43:25 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUFDZAT3"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4361f664af5so47312795e9.1;
+        Mon, 10 Feb 2025 03:13:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739186010; x=1739790810; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LSdJQgcp2y7iHjwit0HOOl9HKbnE8QQbbuMwDImG398=;
+        b=eUFDZAT3xzlqz88/IIBLKL/zc5StcsBcgmiNm5D305ZPjdyfOUXDOT9a1WMyqTsOEc
+         UQusRf8VKMu0DU7cwcP1KeEMpam0saD0mvZJtqhK4vmMilZv+kAbM5KnV0UE2c0EgGGn
+         FgmW52AzcFKrYEfGpkbXKzRxxSiBxmMIBm3xW7tx0aWr9niQlxqc83hlwoxukh6a12kZ
+         RdKynkX5Jsl/ZA760Lh6l59eCn4tI0Wm/fz4J7TO/OCwP0vaGlQWaFpO61+Qa/l2iOVU
+         JxTm9DAXRagSdBx4CzEY7SWmAR4jIy6rw5JeyCmkGzMKrVjzAPjSRIbzEi5bDCYXInqL
+         ROOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739186010; x=1739790810;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LSdJQgcp2y7iHjwit0HOOl9HKbnE8QQbbuMwDImG398=;
+        b=m5hMzFGWT/pxAF00wR4HwrkDxqvhYQZ7alpPcE72/Go2tEUX1jSKt3typYK5xiLYTr
+         vRTB+I01/cxo0jubIoPbym9N4H34rhX+BUYxUJ0R/05w/K3Nyb47AF4ERIKicdnPMg2m
+         YbCht2lefPECNfIaflHQjPaG21Y2yMcAP/RdK2fy632y7yVrYeNCUt1cxonAGfhRYMXg
+         /kdSDkg+HcOfxVt7X4GC1E9TtZJfilzSz0WivHD4BFrpX8FeyV2yQad/HC4avUeLJx8Q
+         5GuAGRjpMH+U8G/p+BhkosmRha43k1rhaI8b0ruhNo6gzTcs1hw0MLaqJeogATzHIWZR
+         JbTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNd91y97fw7bhrLVjnzsgvoZ4jsuP/r9NG4/HiXyoodQfgElgYdKePfb2E9O/CCp7da1K9dUClUNC29SpV@vger.kernel.org, AJvYcCWFVGT4kupeiWLrO0YBo9hBGOfYvTeu+I4tLHMTQJ7bB8+w2kHxI0Am0LTTIRcXQjkBKGYAvAzet90vCj/Xm7g=@vger.kernel.org, AJvYcCXFbagOX6WqnlUcqawqZPrLueRwLOWE0RaEtzwrNWdSrs+9CYMOFqKfVc1+LMDx3JGtrs8mDP2Hl523ExE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIP9O4s/7E6qsBCndUiulZZswF5jlwZvXyjrYRpU6SPe7gLFjZ
+	gajQ4CyAjBAw9BfP9UqKoUpPsIqALMJe/UHIek6SF+5O4Zb8xmg7
+X-Gm-Gg: ASbGnctU2K9PHw8UC0mEkmRorkzcciSU8nygCXyl5swbfLsUmdl8WRLIBG4W59oYHNA
+	Hg+LjaTsBZVRvTmjr83ED5SOqcqXRI842Yxh/ApeuZ28WBZVtKShoBptt++H6hzGDsYmi5CDnfh
+	sBJs8jmP8ecwvHwVJZNSQqe666i0t7Xn9HRxSRUeve4LOUSUBmod+qC5ideL4SoChG3XixzCpGO
+	lbFzxeAieDaWJaI/ABRJcxm5jfyFFlgMUFMqCyJhECPysw14cjwgC+nqVabzssZh2WNKcp0qGH4
+	TURZB1YuTW1u
+X-Google-Smtp-Source: AGHT+IFaU2YoCTpHdtd/tojrjTH8ALsB9SNLM2ym1wrDznm+SKutFiqojoOwPae3ZpHcm6k0gVP0mA==
+X-Received: by 2002:a05:600c:468c:b0:435:23c:e23e with SMTP id 5b1f17b1804b1-4392498a1eemr107768405e9.12.1739186009633;
+        Mon, 10 Feb 2025 03:13:29 -0800 (PST)
+Received: from void.void ([141.226.169.178])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dc672b55bsm10260635f8f.79.2025.02.10.03.13.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2025 03:13:29 -0800 (PST)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: drbd-dev@lists.linbit.com,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] drbd: Fix typo in error directive
+Date: Mon, 10 Feb 2025 13:13:05 +0200
+Message-ID: <20250210111324.29407-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.48.1.268.g9520f7d998
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] accel/amdxdna: Add missing include linux/slab.h
-To: Su Hui <suhui@nfschina.com>, min.ma@amd.com, lizhi.hou@amd.com,
- ogabbay@kernel.org
-Cc: quic_jhugo@quicinc.com, George.Yang@amd.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20250208080548.1062441-1-suhui@nfschina.com>
-Content-Language: en-US
-From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
- Gdansk - KRS 101882 - NIP 957-07-52-316
-In-Reply-To: <20250208080548.1062441-1-suhui@nfschina.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+There is a typo in error directive:
+ - endianess -> endianness
 
-please move the header to the include block above an keep it sorted:
-#include <linux/iopoll.h>
--->#include <linux/slab.h><--
-#include <linux/xarray.h>
+Fix it via codespell.
 
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/block/drbd/drbd_state.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2/8/2025 9:05 AM, Su Hui wrote:
-> When compiling without CONFIG_IA32_EMULATION, there are some errors:
-> 
-> drivers/accel/amdxdna/amdxdna_mailbox.c: In function ‘mailbox_release_msg’:
-> drivers/accel/amdxdna/amdxdna_mailbox.c:197:2: error: implicit declaration
-> of function ‘kfree’.
->   197 |  kfree(mb_msg);
->       |  ^~~~~
-> drivers/accel/amdxdna/amdxdna_mailbox.c: In function ‘xdna_mailbox_send_msg’:
-> drivers/accel/amdxdna/amdxdna_mailbox.c:418:11: error:implicit declaration
-> of function ‘kzalloc’.
->   418 |  mb_msg = kzalloc(sizeof(*mb_msg) + pkg_size, GFP_KERNEL);
->       |           ^~~~~~~
-> 
-> Add the missing include.
-> 
-> Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  drivers/accel/amdxdna/amdxdna_mailbox.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/accel/amdxdna/amdxdna_mailbox.c b/drivers/accel/amdxdna/amdxdna_mailbox.c
-> index 814b16bb1953..80b4b20addd6 100644
-> --- a/drivers/accel/amdxdna/amdxdna_mailbox.c
-> +++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
-> @@ -12,6 +12,7 @@
->  
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/amdxdna.h>
-> +#include <linux/slab.h>
->  
->  #include "amdxdna_mailbox.h"
->  
+diff --git a/drivers/block/drbd/drbd_state.h b/drivers/block/drbd/drbd_state.h
+index cbaeb8018dbf..89d7c828eb59 100644
+--- a/drivers/block/drbd/drbd_state.h
++++ b/drivers/block/drbd/drbd_state.h
+@@ -106,7 +106,7 @@ union drbd_dev_state {
+ 		unsigned peer:2 ;   /* 3/4	 primary/secondary/unknown */
+ 		unsigned role:2 ;   /* 3/4	 primary/secondary/unknown */
+ #else
+-# error "this endianess is not supported"
++# error "this endianness is not supported"
+ #endif
+ 	};
+ 	unsigned int i;
+-- 
+2.48.1.268.g9520f7d998
 
