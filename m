@@ -1,80 +1,72 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B85E125B2;
-	Mon, 10 Feb 2025 03:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id E850957C93;
+	Mon, 10 Feb 2025 08:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739159425; cv=none; b=dtQamuTOqq9KHVauPPKloeIqiA1TtYI7+B6PwJLUFX15mCa1rq/+eU8WprKg1yyedtuzC3hmct2hlUBWNFwmJY/WOHvZnHt1bWu9elgxG0CyzcfstqUPN0yEEfFK3mJ/G6Tlwxn0PohMDVQX6zrIv4QDIdaUrtJEHWf23SWhkPo=
+	t=1739174594; cv=none; b=mGEsWH9y2ry9cFLB3Z/gcJRJ7fJS7ntJWNMDqjGk2rP7Ai+yC4TkmRc4fUVMqtKsZgKwXMEcl6so0/QahKw19zwca8PGYdmcLP0cqO57DzqzI9ChL+gbXGW2xbnlmuWy+dSG848usFu9pfy4nA6W1sRFIf3YAabXTRL8/9qxarU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739159425; c=relaxed/simple;
-	bh=AQbAd1v0Btbrh9m+EmG/+yuJT/dULSVEHMZ7L8h+lEY=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date; b=E04uhfnxdXR3A6thfQPtiO9mj9UesWsumoeXuCRmu3fA8dL57FkHYTMk6UfcGMIg3auoFc3ENm5X0+0cpHSI6CAYVsBPnPgfZHS3ThiS8pHSm9riUK5P8E0I0uWCbDJhyhhe9QHUyIPGWzqnXpfJQSmy0fqMuKV6WmR3KP2LqnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=KKZQh2wH; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="KKZQh2wH"
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 51A3oE9L11598199, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1739159414; bh=AQbAd1v0Btbrh9m+EmG/+yuJT/dULSVEHMZ7L8h+lEY=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date;
-	b=KKZQh2wHUO9Xtvm4AhbenvhKV3WDN5iznjgGYCSt70pwnxWKcIfBgQ8JdOG0wMfsm
-	 KIHsJZsYGAN+eWyFXd/OzBrw082S97umzy0kP+7+wtD+5Mx0HOIjTN+TkGlAttOKzt
-	 5z53D31gT9qd5/GnuJ4TC7145bdmcoMC0rtJWkLmUZSD7kT5+1QZY1ZjxayjLMSV3A
-	 NjWKiS8JFMd88X/rN8xRxVTn9EptW0DZIvQfFc4mCG1KN2YhlvZEjEcKEVQ23o66VA
-	 tlI6h0arPMpd6572bjQWEr7VQ648clawIWplD4dZZFI5PYZs+r2ldAAze9f7QUtgDp
-	 W6p2W0vO1l8LA==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 51A3oE9L11598199
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 10 Feb 2025 11:50:14 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 10 Feb 2025 11:50:15 +0800
-Received: from [127.0.1.1] (172.21.69.94) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 10 Feb
- 2025 11:50:14 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Andrew Kreimer <algonell@gmail.com>, Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@kernel.org>,
-        Bitterblue Smith <rtl8821cerfe2@gmail.com>
-CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Andrew Kreimer <algonell@gmail.com>
-Subject: Re: [PATCH net-next] wifi: rtlwifi: rtl8192de: Fix typos
-In-Reply-To: <20250206082457.9148-1-algonell@gmail.com>
-References: <20250206082457.9148-1-algonell@gmail.com>
+	s=arc-20240116; t=1739174594; c=relaxed/simple;
+	bh=jL/pEsH/rjvfPHDD6aA0E6boPhBCMlwB7mXQln+dGSc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YVDiavswIaLNgMICeyQhy7fbw2XpdzOZP8IHnR2zw/rqvs+QVEPYbsRY3io6t9pMl+kTu+FkDsCeTdAjkH1W+1PaW3MP/znYLy+NoHE23TnIbU9pSPDdg5Mwo0LPVMO0cU7xlIULArqDsaQLTNP7pdwJgQqFq+8I05D5NNVzCOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 8B00060272A84;
+	Mon, 10 Feb 2025 16:03:03 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: wsa+renesas@sang-engineering.com
+Cc: Su Hui <suhui@nfschina.com>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] i2c: core: mark i2c_detect_address noinline_for_stack
+Date: Mon, 10 Feb 2025 16:02:18 +0800
+Message-Id: <20250210080217.2772467-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-ID: <3cb7598b-8e67-4ff8-aba1-e41df2fe0eed@RTEXMBS04.realtek.com.tw>
-Date: Mon, 10 Feb 2025 11:50:14 +0800
-X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Andrew Kreimer <algonell@gmail.com> wrote:
+When compile with CONFIG_FRAME_WARN=1024, there can be a warning:
 
-> There are some typos in comments/messages:
->  - althougth -> although
->  - asume -> assume
-> 
-> Fix them via codespell.
-> 
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+drivers/i2c/i2c-core-base.c: In function ‘i2c_detect.isra’:
+drivers/i2c/i2c-core-base.c:2507:1: warning: the frame size of 1028 bytes
+is larger than 1024 bytes [-Wframe-larger-than=].
+ 2507 | }
+      | ^
 
-1 patch(es) applied to rtw-next branch of rtw.git, thanks.
+Mark i2c_detect_address() noinline_for_stack to avoid this warning.
 
-6b39cc01af66 wifi: rtlwifi: rtl8192de: Fix typos of debug message of phy setting
-
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
-https://github.com/pkshih/rtw.git
+ps: found this warning during running randconfig test.
+
+ drivers/i2c/i2c-core-base.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index 5546184df05f..59983d2a9cca 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -2405,8 +2405,8 @@ static int i2c_default_probe(struct i2c_adapter *adap, unsigned short addr)
+ 	return err >= 0;
+ }
+ 
+-static int i2c_detect_address(struct i2c_client *temp_client,
+-			      struct i2c_driver *driver)
++static noinline_for_stack int i2c_detect_address(struct i2c_client *temp_client,
++						 struct i2c_driver *driver)
+ {
+ 	struct i2c_board_info info;
+ 	struct i2c_adapter *adapter = temp_client->adapter;
+-- 
+2.30.2
 
