@@ -1,83 +1,100 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884281EB9E3;
-	Tue, 11 Feb 2025 11:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DCE2505B3;
+	Tue, 11 Feb 2025 15:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739273288; cv=none; b=bgM2ImBoOnpXS/JueLJ6t4OeJYuY3zyqLS2GCXmApguK1hGAyQHYDDVsKdCUPJ/Dr8b29WpHLgTtT+TKANsKmaYXGe7M4SigfKHhEId/7M8mx8pBgulj480JZPxfJViTvFamQ8wcE9nI1o8l90UfbGuqLSyJ7byX//29nko6BB0=
+	t=1739288200; cv=none; b=noe+arzyCX3oyzpngKm2DKdHGRm7WnF3oA+w5sr28SJqCZA59nzuZK/zWBYilz2+UU3CAa+eZ3PP2lQ3zBsev2v0pT/scWyRU3zx36wxVXzNO9KkyoBi+BSaO13Ez3UsP+k2XH3Utu3fPe9xDKvJnElgm3u27SF9xhi3MQbpnio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739273288; c=relaxed/simple;
-	bh=VYTh2Dd5YpFdfEp44t+vH0d7Jh/+1s7ZwElHdQz8p/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZX5WZgQXsriypiEDR85+x61USGJQAJbYxdr7ezzNQ8TWpIF9sn1wJfM7akbX8JookpclhA/9pw9KUPcRwBtqUuqTGtPQa1y236vU0gwj3Oe76FuPNcZ6iAVyk0TkeyElmQOMxqmYjtdtcNY7G+BSShJ2WHiC3OR581YuTtOITfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDDdP85a; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739288200; c=relaxed/simple;
+	bh=cdS+RQxChcNBaUozaYiF6PS0cFF3cqIzDB7HHD32L34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T5MTS0qM1sBItQBBqA/dD6vdJnQ5SVGa+29uR4tYFj93BKSmrvIUjaRZoAxKschQLXw/3ElSVV6rS5LE0wYwfYZomVkuG6n0bMTCVMv/EioQ1MZAzAX49zHXs5ano1OIUNw/eIq7yvGLsQSu7PNyx7STIP3kdHErwPQs81qrbLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NXwELLWW; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDDdP85a"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4394a823036so13826395e9.0;
-        Tue, 11 Feb 2025 03:28:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739273285; x=1739878085; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VYTh2Dd5YpFdfEp44t+vH0d7Jh/+1s7ZwElHdQz8p/U=;
-        b=PDDdP85a/7Tr0AGRjLPWj3iKVAMeK4PfKP1mBAnlKBAaKUUYYwiCbPpsrslGIAAUUS
-         b3xqNRgsDnXTtQ1YeCQYAhrN/Ye5X0kdDRz8Xxb0rU0sKsUQT162ivfcWxE9p+TLpMJj
-         Kf9m1TxaOCYwd6CZoF4v5gcYuRFVmXS2bcKZAXHXDyzDnfLcn4iitv8Rkm85/XsXOYqs
-         kdxwLxLRRK+fL/QhyhECoHdh2H+KLe5oTzfRCNsSgiDDTS2z+WlRxF7W+1noOcBdgpNr
-         Q87fPYf2Ap5kFPwOar45rmmAIuPHXZsJTqeabgk/t65nDysXx7GW1sagcuDyjQRCrcI2
-         lj0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739273285; x=1739878085;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VYTh2Dd5YpFdfEp44t+vH0d7Jh/+1s7ZwElHdQz8p/U=;
-        b=EeAso59pstjuBsctr0I5aDkXwtaLZotPn4hwvvdPHlhN7ycQRSdU5qJji4/b5Q3Bnw
-         Qa9zHRJ3tqQbsjRGNVNmFLQnm6ZMV7MQcIsjitcrzyILie2M3RZ6mm5BMyT+9PVRoJkU
-         FrDHNfxtEQd7D+bWA6eibJL1yWs64PXOlzJvw9N6Xs9Q9N9ntGi9YZvfbXvpYZwT9nCN
-         Hp5mGJAFD10tm+6y0u9c4JKAa2vvY8l7bNZHhoSK1hHXzI711GgLIAZBrrTQJ5GxjBTH
-         REI/IX/cy4/LVw55Bwb/h0cpNG3F3DRjpiMYgNCRIw/KB6Puo+RPk9KQejhFI4O2K8gG
-         fNYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUitlaPRD7LBfs4fC9mO0vJjiU1y2wXKLUNBcEYYmjZ73bP+MPxdVWcIqRrSRECnrR7fIdmqeJtzVR3yHVS@vger.kernel.org, AJvYcCWpxZXpis/p+mGAcXIJn0vEbj/l6vO8P7lJEnifn0ySenHWqjTMXm9Xe59IAi0Kh7jw1YVuPEZpkC8Ft3Lk+PI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx89sJ52pAecmXDc1DWuI7/Fv5L+lJJYtiSb7fnYsj/81RwRd6j
-	Q/h8R6uQdrTgxdnB+Tljn7PEejfIYB+Vs4xdzhr9qhVXwUiPoLXE
-X-Gm-Gg: ASbGncsN56EbRfaYSCjJaYy9rTsOGOTermKBFnCpzfVZXh6u8nlv+3nst0H6YtBVuyZ
-	r50j8QbJgP34In85ogkxhWuU4UbxPeFFuJ/0pfhv4RzhEckOhyJQ/2scNmH4Xv67KVYhROKTRhs
-	Hyd3V0aMwE+Wfa2QMdO1/ERs6UZ5pQQylXs2CyqWPja3c8mBtHMuQWSwmtJYf6LGzpWInVY8xjv
-	s1oOY+FTZ9UBWStcLOCiOzbA0n7amR8gKCMLi8VgAOUrIpjffUAFwSOxCnZnoLIk5WeY0M7nY2m
-	HPOC5BMzPqc=
-X-Google-Smtp-Source: AGHT+IFjtzrrOH6AEcWqOF7uAUp5Krt174vzd2ADL15QEq43Z93qXvsdyAqa4jtx3B2VMmowJ/TvPA==
-X-Received: by 2002:a05:600c:34ce:b0:439:3254:4bf1 with SMTP id 5b1f17b1804b1-43932544f7cmr96377755e9.8.1739273284557;
-        Tue, 11 Feb 2025 03:28:04 -0800 (PST)
-Received: from void.void ([31.210.181.104])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4394127afcbsm71091105e9.23.2025.02.11.03.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 03:28:04 -0800 (PST)
-Date: Tue, 11 Feb 2025 13:28:01 +0200
-From: Andrew Kreimer <algonell@gmail.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dave Penkler <dpenkler@gmail.com>, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] staging: gpib: Remove unnecessary TTY_LOG expansion
-Message-ID: <Z6s0QYoEZf9gJqAv@void.void>
-References: <20250210121552.33455-1-algonell@gmail.com>
- <20250211093051.15993-1-algonell@gmail.com>
- <2025021119-unsalted-shrink-1211@gregkh>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NXwELLWW"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51B9su75023961;
+	Tue, 11 Feb 2025 15:36:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	geASupeKeQGhVuQ+0D/XwXT7FpJw/7mdwC9f2X/fIHg=; b=NXwELLWW6USbfcIj
+	3MWQ5yNjQM8mhTgbnqlxhNVnlD6BdgtWcyWIzpaH8URALzgwFz+mP+tjt18dC5RV
+	7gBEZm8MAhivN9EIdwHJOESFbghkqOtCOQlQOC72MFDSEIr450ERmTgJMkKZz/NF
+	sLjUkxVrSETUph/YN8kH33lLEV6Ktrwqj+Tooii35vRRJFgw8nClARbbJS8ECrrJ
+	V5dlK5MfKjybgsd9+bO7425B2lLj/vkylEcC0RIR8r+c8nCX9sdxpHYo0pBeSlnL
+	NkL3z+LiJb4UF9RHbXeeRIzCwcpfqDxeJUvjfW7wp8q2U7vvzcLymxzBRvvSC96Q
+	E/qL+w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44r4b5s105-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Feb 2025 15:36:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51BFaSPF023065
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Feb 2025 15:36:28 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Feb
+ 2025 07:36:27 -0800
+Message-ID: <60700ca3-8d9a-d284-d2d8-343d770ca384@quicinc.com>
+Date: Tue, 11 Feb 2025 08:36:26 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025021119-unsalted-shrink-1211@gregkh>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH v2] accel/amdxdna: Add missing include linux/slab.h
+Content-Language: en-US
+To: Su Hui <suhui@nfschina.com>, <jacek.lawrynowicz@linux.intel.com>,
+        <min.ma@amd.com>, <lizhi.hou@amd.com>, <ogabbay@kernel.org>
+CC: <George.Yang@amd.com>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20250211015354.3388171-1-suhui@nfschina.com>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20250211015354.3388171-1-suhui@nfschina.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: N42MYBqoEO8bAG9DJgkixlcC7HJREoO4
+X-Proofpoint-GUID: N42MYBqoEO8bAG9DJgkixlcC7HJREoO4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-11_07,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=988 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 clxscore=1011 mlxscore=0 bulkscore=0
+ spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502110104
 
-> What is the interdiff at the bottom here for?
+On 2/10/2025 6:53 PM, Su Hui wrote:
+> When compiling without CONFIG_IA32_EMULATION, there can be some errors:
+> 
+> drivers/accel/amdxdna/amdxdna_mailbox.c: In function ‘mailbox_release_msg’:
+> drivers/accel/amdxdna/amdxdna_mailbox.c:197:2: error: implicit declaration
+> of function ‘kfree’.
+>    197 |  kfree(mb_msg);
+>        |  ^~~~~
+> drivers/accel/amdxdna/amdxdna_mailbox.c: In function ‘xdna_mailbox_send_msg’:
+> drivers/accel/amdxdna/amdxdna_mailbox.c:418:11: error:implicit declaration
+> of function ‘kzalloc’.
+>    418 |  mb_msg = kzalloc(sizeof(*mb_msg) + pkg_size, GFP_KERNEL);
+>        |           ^~~~~~~
+> 
+> Add the missing include.
+> 
+> Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
 
-Indeed, it is pointless here.
-
-Should have sent as a separate patch as well.
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
