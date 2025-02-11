@@ -1,100 +1,78 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DCE2505B3;
-	Tue, 11 Feb 2025 15:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E940726A08F;
+	Tue, 11 Feb 2025 23:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739288200; cv=none; b=noe+arzyCX3oyzpngKm2DKdHGRm7WnF3oA+w5sr28SJqCZA59nzuZK/zWBYilz2+UU3CAa+eZ3PP2lQ3zBsev2v0pT/scWyRU3zx36wxVXzNO9KkyoBi+BSaO13Ez3UsP+k2XH3Utu3fPe9xDKvJnElgm3u27SF9xhi3MQbpnio=
+	t=1739315809; cv=none; b=qkFIZccYC/Va3QL5lHZq+HSR14Rwog0uSECaZoaXQaCNq+Banu1TubhQhHxoBly1/OvkAHhvHMOJo1xmzP2N98+Qxb4k7u+9OLmRfYfTk/d03QNbulFJ4vUaV7lsrd9E/CcIrj02zF9nH5rbl/PlysZ2mHzOGPJgsl38cxZc+hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739288200; c=relaxed/simple;
-	bh=cdS+RQxChcNBaUozaYiF6PS0cFF3cqIzDB7HHD32L34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T5MTS0qM1sBItQBBqA/dD6vdJnQ5SVGa+29uR4tYFj93BKSmrvIUjaRZoAxKschQLXw/3ElSVV6rS5LE0wYwfYZomVkuG6n0bMTCVMv/EioQ1MZAzAX49zHXs5ano1OIUNw/eIq7yvGLsQSu7PNyx7STIP3kdHErwPQs81qrbLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NXwELLWW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1739315809; c=relaxed/simple;
+	bh=3zTpwPVBu5FhsZX4yiDd5kXq166OpvaNogmElK6aTus=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ja4KmqyQGro7DhUzxizSEdtBgbeY96e+AUG54pGutGaB+QG+ppTdgunfZOhigc+vXQA9Uqay5Ud1EvYwBPu5o6hsgrHWm0XpvIpWOhNJSn8Ay6nnOXn0ZOb1kgacjbmSuUYC7D3Ngode17kaWlA2DDz2AT6MN+60Z1tZs0Pmcxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bttBPPcj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NXwELLWW"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51B9su75023961;
-	Tue, 11 Feb 2025 15:36:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	geASupeKeQGhVuQ+0D/XwXT7FpJw/7mdwC9f2X/fIHg=; b=NXwELLWW6USbfcIj
-	3MWQ5yNjQM8mhTgbnqlxhNVnlD6BdgtWcyWIzpaH8URALzgwFz+mP+tjt18dC5RV
-	7gBEZm8MAhivN9EIdwHJOESFbghkqOtCOQlQOC72MFDSEIr450ERmTgJMkKZz/NF
-	sLjUkxVrSETUph/YN8kH33lLEV6Ktrwqj+Tooii35vRRJFgw8nClARbbJS8ECrrJ
-	V5dlK5MfKjybgsd9+bO7425B2lLj/vkylEcC0RIR8r+c8nCX9sdxpHYo0pBeSlnL
-	NkL3z+LiJb4UF9RHbXeeRIzCwcpfqDxeJUvjfW7wp8q2U7vvzcLymxzBRvvSC96Q
-	E/qL+w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44r4b5s105-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Feb 2025 15:36:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51BFaSPF023065
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Feb 2025 15:36:28 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Feb
- 2025 07:36:27 -0800
-Message-ID: <60700ca3-8d9a-d284-d2d8-343d770ca384@quicinc.com>
-Date: Tue, 11 Feb 2025 08:36:26 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bttBPPcj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218A4C4CEE2;
+	Tue, 11 Feb 2025 23:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739315808;
+	bh=3zTpwPVBu5FhsZX4yiDd5kXq166OpvaNogmElK6aTus=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=bttBPPcjLAml4vtqknB3/v0wkFPPoVEK8XZ2S+iaArQyIcmJF8Ai/gxtHPWBlHF3G
+	 /7ZI0j7SBZCnw4BO85GshXa2qKk0PRM0mIYpBXsM58GxjFQ3p61g/k1AqIuyXtdZ1w
+	 flr6BOMRxeRTC8IjVyv45+6xPabbmlmqEsa8jJtZFXZuLmckds/S/wFbauFftMY9Vs
+	 uzKGfSWphT53CgHR7Bn3D6yDJkbxlE1psObKa1cNbjLh4EW/Yfwba9BJLQR/lUPGUO
+	 pHz5o5yVMm5YY/foY11CLPaxo19JesEZ9IJCAs3CC9vjBsOvlbP5c1x/G+Htn1Pr94
+	 aIcSdF5qBOUwA==
+Date: Tue, 11 Feb 2025 17:16:46 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
+	linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [v8 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
+Message-ID: <20250211231646.GA58828@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH v2] accel/amdxdna: Add missing include linux/slab.h
-Content-Language: en-US
-To: Su Hui <suhui@nfschina.com>, <jacek.lawrynowicz@linux.intel.com>,
-        <min.ma@amd.com>, <lizhi.hou@amd.com>, <ogabbay@kernel.org>
-CC: <George.Yang@amd.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20250211015354.3388171-1-suhui@nfschina.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20250211015354.3388171-1-suhui@nfschina.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: N42MYBqoEO8bAG9DJgkixlcC7HJREoO4
-X-Proofpoint-GUID: N42MYBqoEO8bAG9DJgkixlcC7HJREoO4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-11_07,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=988 lowpriorityscore=0
- malwarescore=0 impostorscore=0 clxscore=1011 mlxscore=0 bulkscore=0
- spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502110104
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60c5504d-341f-4ce5-b337-1eca92a9506f@web.de>
 
-On 2/10/2025 6:53 PM, Su Hui wrote:
-> When compiling without CONFIG_IA32_EMULATION, there can be some errors:
-> 
-> drivers/accel/amdxdna/amdxdna_mailbox.c: In function ‘mailbox_release_msg’:
-> drivers/accel/amdxdna/amdxdna_mailbox.c:197:2: error: implicit declaration
-> of function ‘kfree’.
->    197 |  kfree(mb_msg);
->        |  ^~~~~
-> drivers/accel/amdxdna/amdxdna_mailbox.c: In function ‘xdna_mailbox_send_msg’:
-> drivers/accel/amdxdna/amdxdna_mailbox.c:418:11: error:implicit declaration
-> of function ‘kzalloc’.
->    418 |  mb_msg = kzalloc(sizeof(*mb_msg) + pkg_size, GFP_KERNEL);
->        |           ^~~~~~~
-> 
-> Add the missing include.
-> 
-> Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
+On Fri, Feb 07, 2025 at 07:39:03AM +0100, Markus Elfring wrote:
+> > I don't *really* like guard() anyway because it's kind of magic in
+> > that the unlock doesn't actually appear in the code, and it's kind of
+> > hard to unravel what guard() is and how it works.  But I guess that's
+> > mostly because it's just a new idiom that takes time to internalize.
+>
+> How will the circumstances evolve further for growing applications of
+> scope-based resource management?
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+I'm sure it will evolve to become the typical style.  Right now, it's
+not quite there yet, as evidenced by the fact that the only reference
+to them in Documentation/ is this somewhat ambivalent note:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-netdev.rst?id=v6.13#n380
+
+We do already have a few uses of guard() and scoped_guard() in
+drivers/pci, and I don't really object to more, including in this
+amd-mdb case.  Whatever we do, I *would* want to do it consistently
+throughout the file.
+
+Bjorn
