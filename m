@@ -1,113 +1,108 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45B71D9688;
-	Wed, 12 Feb 2025 16:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F90D214A8F
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 16:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739376486; cv=none; b=SusyCN0DiKuw5J4MrjbCOENkGFXXbTTJM24TvQJ7MOEv+nPe3UXkXLNT46RLBqjGZM2L6NKMrxcyoZ82LdHl9DiJ/nKT1n7DGUZBfgcFDtVMmmNTq9CQwhg4B4HAo9xpXISfjaJGmkVObvv3AuYsa6HndhslCr/qHfbQkEIWXrI=
+	t=1739378438; cv=none; b=tMgeiKGaqMqCVH3Qh4wP2IS6TaDe6Edgck+g+QaJnwGnEgQqtqlIt+5986FSzH401gbyBPC3KyQE2fLPAJjWYJMQU94x38yUD1hC/+ZboMA6BGaBzp1sRR04vh4oGghJ6KFCxHiBsDIpxIbODhb0ayTbv54WgyvsW7y/ebH85d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739376486; c=relaxed/simple;
-	bh=VAuhs9u09a/f35HYUTjGbhVG0CNeiFDZpBWCT1Fvqcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Onjmi50RAg4kAZvYq5M59kIRGR83Hpaj4OSVUHQ69qHRK3u+a6ZEjp8lJ6+2eKTedBDQcKjKdyCCPrP6yhJciexucjeAPbrKTolS/MYnBfFipesNIZogyEQ/YkPNQQ55rrmgaqf1bRpiaZXc4VqxJdUTzOeobM4GwdWyFOCCYzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRdP0xO5; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739378438; c=relaxed/simple;
+	bh=fIvihShcE39cxMOgvzvAE4sHjptoKE7mi4lhmy0B4f0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rcx5sfzCWr5S1lsPWVh3KgghtPi/4SMZA0cFkQ1QP5v2SgI2ZuIceyTRkh5xn38kvCB50PfHp6sUMT7uZ/6gY6vfpmr/Eqylurv7PIZi6ak0f96RMRh0WSe1Sb+c79pYDQCQLh/6h4cEiDFMdzdpXrdwDhQck/ImVk6eD25ezsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MjV59ihk; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRdP0xO5"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-439585a0544so6673435e9.1;
-        Wed, 12 Feb 2025 08:08:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MjV59ihk"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dea50ee572so2990635a12.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 08:40:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739376483; x=1739981283; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=enB6VpwoOzA1BhOL6deI72AZfVPGYPPBVh8XI8rOxME=;
-        b=iRdP0xO50UU5exUzkENcxj34cR/rv4NXwWX1vgvX8+SaG9Nkfz7uhjBxlIYbs7h4fm
-         unwcaTY5nKLEH3zLhkXiTNVyOwYej0U2jwyT+XrHcW64it7I32/Tt6dZ/ODOIdzRxFbw
-         nq2bx9/6WM7hzV4ED9N9DYPxdhZVdxSDgwMyxssu+jGiANvZUrsH3+A9TJoaDmZcoNHW
-         7AzZc0rwe5gqqbaPVFx3HooEYUiAzBpnDH68fgNoL1nbOoeZu0/HY1ulV9h3HXPGp45p
-         Jlteo3JbofaGlcXbmyKhGOzC7LoeiFiD1bAO3jYEF6BgVUwaIEJ3j7PZwRIcexNqXNtg
-         jj8w==
+        d=linaro.org; s=google; t=1739378434; x=1739983234; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ypsXxYmlUDNAgS7vll0CP7szhdB/OHfZFzs1nsbbuTk=;
+        b=MjV59ihkdzLi+A18alBCA9M/pl8qcWykYSoTS/yohdfWRFby4TGv7imNQVrw/S6Rl+
+         DwMfxZKoJOU7ZHiise1pEN8+nNXH1iv8i4IUuiRGBJfjSnE2Tz3I0mUIsQEryR2fIPek
+         DMAoN+Jfywkb///gIf6AzMhkRg/EoS/+FZpD8V8JE/iCqvVP82q5CXZ7xybyvmdkZm52
+         KDVtR7dD95CW6mFjeUV6IBLPvdaaDHbIWgY6t4rbbPdU/Ox4GipKs0GwrCq7d43s/DVU
+         RHGk+DZFagmT5ACeud3MSOQF8PTo5TWSArVCSJL0u4XSxOvRCzke0Nw52HAL5SLodmpr
+         gC2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739376483; x=1739981283;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=enB6VpwoOzA1BhOL6deI72AZfVPGYPPBVh8XI8rOxME=;
-        b=PX0PUJ/8JahgSMTDKo+hKVcyR2kqoFaEpMhpXU3ziQnhyyC7RRnZi6A++/YoD/SaBh
-         G7KURnbXl/RAleyR2UIotsr2IMTjPTadot3MgMndjpiOsNbAVVq67nZqG0hCuEpj1mbs
-         t0Z+1mTf/AcRbUKiC2CqG5Mdp4tTYnZPCKv7VFF1DPSXPYgRD5l3Z99EqGY4BrcjM9Qh
-         AdE8QNpx0beOugZxWgQ9mmwWL+Ot9RysHZOS9bwbZa9C3rwH92uKGWhKaExqrvGPxW22
-         XU28Awp7WftWuf18djTD0WWGq0OYgxAgS+d8eiC4S1yinHQpvVxZnNQAvEy41ta0z32x
-         bMXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkeh3fXTekIeEjgg1qvjeoS5mhScQU66TVOAj2TmPlc4QkXQ8nAtlZUxO/9vx1S9v5QPcun2ZD0dOYmHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ19+bN9009DWsJNaKtGVctdPSDHIdjlXS1G+zfYxO0d0WBIEQ
-	7RjeSJoodJCwD6vrs76WjBpMityhW9kgRjMwjB/L5Jy5ufsH5w5x
-X-Gm-Gg: ASbGncsEqtNbGix3w4Ko0Iov9NqFrVhtt5lzOopmKZYsR3OLj1Pyjsh/2fNRuCHog1Z
-	I1uFPPMC+k5XKx1rfMdGbLUv9T2l3KtSB06Cxybi8BESH4opQjoQNBI2X/judPX6aPn4tThWIiB
-	cf2eMQesqUEbdYTewfq8ySqAuUIbQ4zcjb3XTAPS7jE80/Z0A+lKihPUVdHDi1+6ZL8CwlCf2Ul
-	wz32CC/XETqm9DX9OXFcpfmN83rtaAEkugy7pkJtPKRhj81FJwOPKeD+dxbIXE7S+5edjDbLhKR
-	ynVfBNnc2knmNtTE
-X-Google-Smtp-Source: AGHT+IFZClm954umRgqvsnO48Pxdz7Faf+eQxyE77ajeKZ1ehn9upBDGCss0Soar4O8O5eriAPlKFQ==
-X-Received: by 2002:a05:600c:4f41:b0:434:f131:1e64 with SMTP id 5b1f17b1804b1-43959a2ac15mr29520085e9.9.1739376482705;
-        Wed, 12 Feb 2025 08:08:02 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4395a0725eesm23356605e9.31.2025.02.12.08.08.02
+        d=1e100.net; s=20230601; t=1739378434; x=1739983234;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypsXxYmlUDNAgS7vll0CP7szhdB/OHfZFzs1nsbbuTk=;
+        b=r49tkBNT2lIjRCrTIUdPeafZLVu/EG4rPvf6FcCyREcOPIyy+ClbO518ESwcCtd/xu
+         JeNmMBsgbGDuL2JfkXN3HEhwTFVJ4VFuDpaX6tFfb0eF00p0KRCXijovdNTxLT/EqbhO
+         RzkNYEzQro9zc4XsXSFp8v1mB0pp4q4eaQMYgpiHucO4pyQHpeWPHcguvSsYsAU2LCny
+         +smGqWv85HtYb44ufX4ZW1hGiHtTNOuaY7AhMYDjN4Z15TIRdXZJxiZ4mcL5afjNfSZY
+         UNe8G74ebjxyb9ZwWObWJYA8CfvIqX+NQI9njmrKFv0k7dq+nc5YXMUq8i6vt11Jk7bc
+         hWeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWYHumNHafwGY3bJDKPUgLyJTb4LMd7oe2lyJnNBrh6mOnSAyPxjUmPUBuFWewePQFY33VodhgXFZpnLHCeLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdZzNXmX0KJ3OLtNQhMpKCuk69ngP5dN0Xbhcn8sV83aqX5Ta3
+	DpBP0Isx0Q0NnBLfIZqDqAMHIHYdJdSv8L99Dyr1w1p/5ZO08oIRpbEWXPV0EJQ=
+X-Gm-Gg: ASbGncs4qb2dsoboAAeV4CL7Kn4Eb3qNVhsUZpA3sQpIQOveSF2dqmC/OZZGwqEcjsT
+	65PAJvzqwWH9mOfDuDNKPIohooTP15islLvqgF6kDX+qB7yUPq7+31i3zCyGkltQhZaOIzNgHso
+	YRBinBf5NPNQACnbP09Bh/iUhnrx96DOrDsRm91SwTa0z6a0Vn2jbcetkoT2KFbcIsL9qZmzaAV
+	P//Ryx99TBid/7C7yVrOnvlNP3qam14BHOkHyQEXpTBoOkU5NJo4TaIzGbqd8rQVZIbK7cj/Xt0
+	q2xQrj4wLvk4kKBtcbKT
+X-Google-Smtp-Source: AGHT+IEMax/OSHUJltNQhKyJlOjabg9OH0ij65Z9dSRbXrh3omUujr+vpFNHmyS95enTpRBK7kAIBg==
+X-Received: by 2002:a05:6402:2688:b0:5dc:d913:f896 with SMTP id 4fb4d7f45d1cf-5deadd75028mr3104581a12.4.1739378434362;
+        Wed, 12 Feb 2025 08:40:34 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5de4cbdb434sm10348391a12.20.2025.02.12.08.40.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 08:08:02 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] signal: improve performance of tgkill and do_rt_tgsigqueueinfo
-Date: Wed, 12 Feb 2025 16:07:34 +0000
-Message-ID: <20250212160734.527199-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        Wed, 12 Feb 2025 08:40:34 -0800 (PST)
+Date: Wed, 12 Feb 2025 19:40:30 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] Bluetooth: L2CAP: Fix NULL dereference in
+ l2cap_recv_acldata()
+Message-ID: <f9975604-6a65-4bcc-b532-15fcaa6da0e5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Adding an unlikely() hint on a couple of unlikely error return
-paths improves run-time performance of tgkill and do_rt_tgsigqueueinfo.
+The "conn" pointer is NULL so this "goto drop;" will lead to a NULL
+dereference when we call mutex_unlock(&conn->lock). Free the skb and
+return directly instead.
 
-Benchmarking on an i9-12900 shows an improvement of ~5% on a tgkill
-on a process and ~3% improvement on sigqueue. Results based on running
-20 tests and taking geometric mean of number of calls per second. Used
-signal number 0 to check if process exists.
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: dd6367916d2d ("Bluetooth: L2CAP: Fix corrupted list in hci_chan_del")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- kernel/signal.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/bluetooth/l2cap_core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 081f19a24506..4ae848ce3a7a 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -4165,7 +4165,7 @@ static int do_tkill(pid_t tgid, pid_t pid, int sig)
- SYSCALL_DEFINE3(tgkill, pid_t, tgid, pid_t, pid, int, sig)
- {
- 	/* This is only valid for single tasks */
--	if (pid <= 0 || tgid <= 0)
-+	if (unlikely(pid <= 0 || tgid <= 0))
- 		return -EINVAL;
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index 6cdc1dc3a7f9..fec11e576f31 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -7456,8 +7456,10 @@ void l2cap_recv_acldata(struct hci_conn *hcon, struct sk_buff *skb, u16 flags)
  
- 	return do_tkill(tgid, pid, sig);
-@@ -4233,7 +4233,7 @@ COMPAT_SYSCALL_DEFINE3(rt_sigqueueinfo,
- static int do_rt_tgsigqueueinfo(pid_t tgid, pid_t pid, int sig, kernel_siginfo_t *info)
- {
- 	/* This is only valid for single tasks */
--	if (pid <= 0 || tgid <= 0)
-+	if (unlikely(pid <= 0 || tgid <= 0))
- 		return -EINVAL;
+ 	hci_dev_unlock(hcon->hdev);
  
- 	/* Not even root can pretend to send signals from the kernel.
+-	if (!conn)
+-		goto drop;
++	if (!conn) {
++		kfree_skb(skb);
++		return;
++	}
+ 
+ 	BT_DBG("conn %p len %u flags 0x%x", conn, skb->len, flags);
+ 
 -- 
 2.47.2
 
