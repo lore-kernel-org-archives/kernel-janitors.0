@@ -1,99 +1,111 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3E32080E6;
-	Wed, 12 Feb 2025 12:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9217205AA7;
+	Wed, 12 Feb 2025 13:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739363209; cv=none; b=T8qF7X6FbF/Fe7TmanDEpJ3C6Uz6gcuEGoSnZ0GxkTGSqln7PKwTD9rT8r1Bpr0uCNryaqSgSLsPTPHpPyaoLj6Wc9sw+kWF5RN3W7WJc+oQVZ+fm8dLgeE44qLZBF7jJI7CJXTVOMjs03EZvQYdcCRKBeE5IvFajs7VPt+kDhk=
+	t=1739367067; cv=none; b=JXBlhE/1I7gi3/+7BHVASUGz/z+9nRzX/3EqXA5CsEGBMigVoTtCj3r0/WSN/6x9ad0XH7a3FJJKOW4F+fH6sdbDnFTlpM5zh/nB00uzHIguUlx1sTAxp14dhXQ96WKQMvrAAWaNooZKlXo2ajhsV09RWb8WTdhwLtCE3KkQ1Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739363209; c=relaxed/simple;
-	bh=/5vDf73OeCA0N4T/7EoMUxHAuvnWQcA5e32GrqPx1nw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ofaWWxvIxGpiSH5AawjKczZjoEybu+pECUWN9iAd0uzJ7rAo28ug88mlZKMLfeuBoNo24fgx5u557ZmSq2tjBVf2RW1iYOY7zVNG8riEAuof/N+9cKfwjy48ul62TIOY9EV86JVVHBegyFk5uixPyK0WGwOXV1+3D52UTDGJjTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGQIzx0W; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1739367067; c=relaxed/simple;
+	bh=kApJtCtd/6G9vbdy3Zw6CPfIH0zwHzv1yg41rvrFPns=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JGdreEQdvouCvpYnL9ucvUtI+5kMjsYokhxesWIDUbOp+v03eRQO/APBWl9FMocI3Jmjs8XpliybTo0j4KZzxm5tX+uGKtvwW9Qx8LotKRjZSwFDt9N1TzcOPxEFOD+ANkWEfgz5KzGyWOsw6WP74kqq0yVG3HqkXzk2nEp8MT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J3iQopJ6; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGQIzx0W"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-438a3216fc2so66509935e9.1;
-        Wed, 12 Feb 2025 04:26:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J3iQopJ6"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ab7ee6f5535so22924866b.1;
+        Wed, 12 Feb 2025 05:31:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739363206; x=1739968006; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sCu6b3woM+c5soUL+CL/3/8vzh19NcMbxFpr4cPyY0w=;
-        b=bGQIzx0WyT/RlXS21s7AcGhRr/Z1Zc77StHWOl2MBDclEwB9c1mVjSxANyRfGZAhgB
-         jhR5nKPWpF4zyWrHzr6XRxW/x7jJpJKrWzwBvGur46YSO+elfP6dtUzOEdh7fSIFUF/D
-         aSptQmzNDa7jxReezzUZGVS3950qrBdR2luqEzhQVk97+cnc7Lh3Mj7E3F5cRVkqEMb7
-         hYqLjAyc+E7r+jSIaHwMzhEtSO2Shbng5eO+z5Fyb08OUZ8+rOprlbebYkLsuRdEr4Fs
-         pQK1ZI5LHML/ptZt95N72w/GeOGJHvHdtwdcjS8qJav/R+tTOhBJnUPjqO1c9750l+UI
-         HoGA==
+        d=gmail.com; s=20230601; t=1739367064; x=1739971864; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding
+         :disposition-notification-to:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=p7geNC4E1J+sp/PMxn2+gCYJ+qwFRG86MbpqHzD7gu4=;
+        b=J3iQopJ6i7Ft8Puhcaa8wKMV6cdpQjUCjIOIyP+EsKRgwGvFqnIBl0tzaJtDic1leX
+         2ejb7QyCaVHlLGIKFyB0xJdYdHEIaYsfJofPu1702PEdRVemxp0AtaUvZd9iFvoi1A2b
+         ag6YmQeUsd8ApAIKmv2sbCgaw9TJwmUuUcN4nfSTrGjZ9PEt8/q3Wyx5RfOVjnwTXIxU
+         ZZy8u9AENDrU1sfusG3dcXHkeOonBEkChACWanV8ssU4xeU4YCEECVSbo2L7bgYms2TG
+         5o25GUtf6B2WGqVwa/w9ta6CRhv+uBk3hGrffwUVWJhQLCFopU0vKYiytM4mAacRbQWV
+         Y94g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739363206; x=1739968006;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sCu6b3woM+c5soUL+CL/3/8vzh19NcMbxFpr4cPyY0w=;
-        b=nqEjEqXDiPFeU6/BaPsabgjN3KNHum188VFzDfSayfo9A3JRrKkCdAqarZwAecIGAK
-         xETRkzy4o+XdJ+xwfkN1DzOKl0EdMJt9uLmTE9Uwq7szb/+rR2CoWPMrVmQ9xOLR3Cw0
-         hmz7NjzojiKo8PKU/s20Ec1UmaAEqInJWGiW7wA3RcAyG0EXB56ZWjCZXPE4eZs1C5w7
-         P6dWsbjyBrznMjWnNpA4t97iyfXcAgeCCYu001EJ/bB1D98GadHj43tFfkJAFVGJShMi
-         Y7c733XD/cl0CxMUsD9P3lF60e0UHuwDo6mmOSE/teFxORQQWru/OMSk/Mj6CsyOaxEx
-         SNEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgKo177ecMZiP2NL2D5INer1Tp8/bjH+bjnrsEx/mP4smxCn37XZ8XhdTJVu5Xo911koQbFtEI8C6xTfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7QEJXuotkL6M+SKUqn680UQ/V9IE1bHXCLW7UOsjgaDeD7sLm
-	A9vVNXYm7ob8BG8eAhgj0brR3y8Bnr8rBqIyP33ZaA7EMw4F+nTu
-X-Gm-Gg: ASbGncvfOjZo3rVj0Lu8XH0rQ2007HCysZXut3SKFHq5muMRoYRY3TrL2ZPXfzyUPEq
-	Dl4nyx9Zl3V4CJTTf6iy18rQ5wDtW48Guq1kic3hxFUHgk4lzEs9ScTNOpu2/o2kHxyepuDZkGA
-	xdsBM0smHhgO+3FXhm0dGg7wo+Uc60D5W7pE0dQTfJJC6tD+7YZIO9E+HGvGvrtUhETPHghO/uO
-	4Li6fzS2GJZl0xvPX7c6szSOh8d2xMi1hHsH1mbrndy7zSp+1UhZwUPF8Bv5rCryyG+ZNg5MYuk
-	ZPd1aE1oYdGX8+9o
-X-Google-Smtp-Source: AGHT+IGmFNu24b1qS0VJTdN4xDOY35KObKCCcjvjGWIaPEwKxZczxmHjIMyVZoSknTa53QLxoZt9IQ==
-X-Received: by 2002:a05:600c:8706:b0:439:55a8:c61f with SMTP id 5b1f17b1804b1-439581ca4f1mr32824285e9.30.1739363206063;
-        Wed, 12 Feb 2025 04:26:46 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4395a06d22csm18674495e9.22.2025.02.12.04.26.45
+        d=1e100.net; s=20230601; t=1739367064; x=1739971864;
+        h=mime-version:user-agent:content-transfer-encoding
+         :disposition-notification-to:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p7geNC4E1J+sp/PMxn2+gCYJ+qwFRG86MbpqHzD7gu4=;
+        b=Dv7nBbzo9c8IdWss+AsRinM1HjLeg5IcT3FAKLnkPckWP6nc3USzcFEquA+ZIpVJM6
+         fx4QIDGebTIPZE2xhu0M/scMI7wf9TL2jtt6pBeA6CPQUCuXKPOx1bFXGqIe/iwUrKZ9
+         5iet3QH/ZEEWsw9zw6dar0unL04YO7dj4YVz/xAHDRPWQnwrbaOcafrT705yW3H6nEa1
+         Csfm4t8iAg9woRUWNYVADqcOhbQgQ4j02fCJbgqaUzXFLOkQOEw9PY6yn3ieS4RTxSg9
+         wcHwEl85+w5PW0PLTfxjiDrxly5QrjHFVXKv0mfLK5H173lLJII1pHGsc5hkQxxVpDcy
+         /w5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWgokanpSa9ziRioT863VO84/JDkIp+7W2fdH9Uqm2R6Q6s81PcEFI35W9aJ/QENuCVB62G4sMDeB0Ndjtz@vger.kernel.org, AJvYcCXN4Bde3M5lcE3hLfC4S/SCKd2k8IJdeJDVdW8z3j9V4isSowHJZVwKcuQpSL3sTjbX2F9FyKL585+R0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm2m6HvOdsXFzMuajSPoJ1EkrqWeO42d5BWVopAe4Gkf7Dofq6
+	DsoiwSDq2ZCrxy/1clpKOGIFnmtoomBwzXTT1lM6HwalhJ0jdU/iy7kyAM7fiWg=
+X-Gm-Gg: ASbGncvAbWdDNwFvWZbsRnsTaU5TupBI9mloyp71p0n9qjQWpOjfHhWVusDweN136UM
+	3E0VTHiOVh6nBUT6BFnhBEEOLDFIuNysBT2XhQ9z8QGdM1/J+QQ6XhLgURYvIghnbQlruGoYoQ7
+	oVwy3yIAfvUn2LnfyEprX1aclHT50fXgfvYBFSq2ZO9mNiyuCYq6qS+EC/yXnsIUZrMnRR0lkDC
+	d31KmDAt1dtT0ENJ2NGqSUGgeHDg+L8TftMdhOskpHvLEKfWwDcJWdLrYlmDqE122mMQWmCOCtp
+	AU+oAHYXAZ790VtUuO0xKarCs+keivy7AZWx9tp8jId/Djb1R0aUSo3CygYQxuccinzZ
+X-Google-Smtp-Source: AGHT+IEN7Gw4tjxbHiTzd1DSth8yZsaKN7tAsBzYwtGanlUBLMUh52Y9e7IE8/BmexnJ5tZh/Q4JFA==
+X-Received: by 2002:a17:907:9495:b0:ab3:2719:ca30 with SMTP id a640c23a62f3a-ab7f347056amr119748566b.10.1739367063966;
+        Wed, 12 Feb 2025 05:31:03 -0800 (PST)
+Received: from [192.168.1.239] (89-64-31-140.dynamic.chello.pl. [89.64.31.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7b2adcd58sm761858666b.112.2025.02.12.05.31.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 04:26:45 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] staging: gpib: Fix spelling mistake "sucesfully" -> "successfully"
-Date: Wed, 12 Feb 2025 12:26:18 +0000
-Message-ID: <20250212122618.495963-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        Wed, 12 Feb 2025 05:31:03 -0800 (PST)
+Message-ID: <067382bbfaa4bf9729a8d8ba1a7afb387ba04bd4.camel@gmail.com>
+Subject: Re: [PATCH][next] HID: hid-universal-pidff: Fix spelling mistake
+ "sucessfully" -> "successfully"
+From: Tomasz =?UTF-8?Q?Paku=C5=82a?= <tomasz.pakula.oficjalny@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>, Oleg Makarenko
+ <oleg@makarenk.ooo>,  Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires
+ <bentiss@kernel.org>, linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 12 Feb 2025 14:30:59 +0100
+In-Reply-To: <20250212122347.495701-1-colin.i.king@gmail.com>
+References: <20250212122347.495701-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a TTY_LOG message. Fix it.
+On Wed, 2025-02-12 at 12:23 +0000, Colin Ian King wrote:
+> There is a spelling mistake in a hid_info message. Fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/hid/hid-universal-pidff.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/hid/hid-universal-pidff.c b/drivers/hid/hid-universa=
+l-pidff.c
+> index 5b89ec7b5c26..001a0f5efb9d 100644
+> --- a/drivers/hid/hid-universal-pidff.c
+> +++ b/drivers/hid/hid-universal-pidff.c
+> @@ -104,7 +104,7 @@ static int universal_pidff_probe(struct hid_device *h=
+dev,
+>  		goto err;
+>  	}
+> =20
+> -	hid_info(hdev, "Universal pidff driver loaded sucessfully!");
+> +	hid_info(hdev, "Universal pidff driver loaded successfully!");
+> =20
+>  	return 0;
+>  err:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Huh, I actually "fixed" that word recently but only added one missing
+'s'. It's a tricky word for sure :)
 
-diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-index 85322af62c23..1c3e5dfcc9ec 100644
---- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-+++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-@@ -542,7 +542,7 @@ static int usb_gpib_attach(gpib_board_t *board, const gpib_board_config_t *confi
- 		return -EIO;
- 
- 	SHOW_STATUS(board);
--	TTY_LOG("Module '%s' has been sucesfully configured\n", NAME);
-+	TTY_LOG("Module '%s' has been successfully configured\n", NAME);
- 	return 0;
- }
- 
--- 
-2.47.2
+Applies cleanly on top of hid.git#for-6.15/pidff
 
+Acked-by: Tomasz Paku=C5=82a <tomasz.pakula.oficjalny@gmail.com>
