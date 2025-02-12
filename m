@@ -1,71 +1,76 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40F2116FC
-	for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 15:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48AF1F94D
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 15:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739373951; cv=none; b=qet2Riv6f/KCVrLaNtXal/rOUqAcwgKHbYIdok/vVgqevy2vXK7G/Y1KViRmE86gjqeH0jqe8ADLlSeQzxEX9qght841SjbbcErBjovxqLDkeR0gUL9L67Nw5ZmGy8DX0We2HmotSgL7fp8fCf3NYWZJ12SijMamIWVLfgErkOw=
+	t=1739374036; cv=none; b=MtksfMTEdS5xOb0lgENo+Ij6TkjJjsH6ezd6Pjz779BiybKaruu3alxhT/FNRbZUOhXcZvhO/TbqaLqMfmVVSkcU2kDkQ0I5e2P2byKpfugdoiB2rYWDzB2pzs8//2S38jVndORdmI+K/M3yVvcdpeac9owKwlGSQPEKVbhUE1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739373951; c=relaxed/simple;
-	bh=9Xev0WPL3aqSoOZ+iEdwAurHlCOlmppDeErE0Vxv/pY=;
+	s=arc-20240116; t=1739374036; c=relaxed/simple;
+	bh=vT8V7lsGJePHRPxn1DhEuL1JPbBPo0A5217Nn0dXSCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m99vvnfOIFZmPK3dypuKYa5vgbEnrgb7Yvj+PO1HM6PD2eAYGGaGRckx5ryU+lCtPgH/2IzsQV9FqCxdxLtim+TLMwxxy0cRrPsqie+IZiRsYdL72UASOmyLTzGf6r1kb2wgwZn3NxP/5OIhZtFMB49LSQ6y6MOiubN9OPXNmSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TpMAppSM; arc=none smtp.client-ip=209.85.208.43
+	 Content-Disposition; b=bM6QXVFGvRfOix4yLuHVlFCotrARngB+ScN07cwB5zX9vDGHCtJ0kh3gHtyNX4MwrWiG0akd13ZNY8soF4cIfhAM055gobkGplRAc1UkwRQup5MGU9wenemJkSjdjZUwyFzhw7EnUnDWx6LTBbwABuwb4GQretUS2t98mAIOEKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QVt0IQ3F; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TpMAppSM"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5dea50ee572so2856613a12.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 07:25:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QVt0IQ3F"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5de38c3d2acso10261564a12.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 07:27:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739373948; x=1739978748; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739374033; x=1739978833; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=m7M5GwfQ+3LOfRzgrXxTqKn9y3djRSUzmsbdmGEOdrs=;
-        b=TpMAppSMzGe7Qgv4SD2KCRxTXd7Cs/VAiAWIT/QKGvfTP+ILlGxHKXM4soOQca0ag8
-         8GDz5fTZziGjiehapCvZXCW+BJbJclA1dYlLH3SJu359VtyhHMXVb0eICI2ME5DhLHGC
-         +nZA9GeBm/Y47BBKn3Fc/Y4k2zMIBp2F/YobO3m+mA18daRp5pzAHM0sMUNQiSVRNIq1
-         C6PEo5joERGid0roqAMquRmaXxMokaHzYJQDZIOxlQSYxFCK/pgRLk3SbdBLL1FcOIll
-         YUllb/JwuL2OfRpxrDA1g6h4Xzo7dit65ZLhVDQkXsBWtmw7F6MLYxtGtTYyxVqNZLKa
-         DmxQ==
+        bh=+v2zlsZVCTCaFO8Ecu0yqe/8KFXTvc0pR9tUkdrVCUw=;
+        b=QVt0IQ3Ft3T0kCZkeUUozt3rj0FoFWoSfRDDmny5D0E7rwGBcb6VeIochAW4QcxtPR
+         L1AAAq54QeuB+2Ivwd4/HYiZ6Agv9CsYxwdNptp3t+sZqdqHEKrE2Z/wYc+IOk7Vyc2G
+         pAvL8oH5A48OvG6nkOlxjWekw7iT162EuIazbBGk82YiNheSWKMc+YQ0+rRvc01UEDXw
+         CLFd5L6Y3uzlcDjKXV7f0rOBJK3Fsdj2kviYSlOAi2MCOFVxgfMBQecIEYlBPeDkC89D
+         zK/+brhhq97slXHm5ea+6dH+pKDnpGNLfS02xP4oYyiwPuJKXTe0yhwK1Kcn9lmvRKzR
+         PfhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739373948; x=1739978748;
+        d=1e100.net; s=20230601; t=1739374033; x=1739978833;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m7M5GwfQ+3LOfRzgrXxTqKn9y3djRSUzmsbdmGEOdrs=;
-        b=Z31hP8818vXt4eGz5RR1RTqO9Bb0SUPDz8Q5K5Vw5XzRS4dfNhKWI+KgG3J0JmLsoG
-         SlYTJ/ZoCXUliccW8wl06SmaJg8YctulQjB1vWerMQIFGcF/bf78Tf5a/GsDOo7rOFoq
-         2tkBSrTjh9lj6rg3qEqGXPyrKGGNdEA8nXgRXtP/wIZIsd/KCpOXnPfF/uSfDPw9i7+o
-         llTgT8v9dJYZti70f42OiTKy5Oj2PJWWEd+SmV04MqCFiqVYpHx6YNNFruThKA6N6rID
-         tMaOc084xjch5c6SG0VDru/NFanbP91GacQasOzbrYWOmPN7oMVFnYAKug8XXEuOw/Kf
-         +6iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWG3F1bWUZhReekhs/N+ddxWBayd7LbNv7BNLBxzhFIZA1vqsJYGiCTGf0dBJZi1VIzoJJRDB5xGPCIQwvusQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCETinCLtn4HHB5cyvKQAruiEU0Y/SdCdZsRfapoNpbiPPQ0gr
-	nMtUfgdXYILDNTNKXSutNuv1lxI/0Kvn0es89oLcvTm3ib07glBZwqfDAlSNspA=
-X-Gm-Gg: ASbGnctBBz4HNyyHx/PaikoiV1EKBQ9L3v/jUTqwGnHvOaXEpXcz65QcZpb8jYNW1t0
-	/6ixNwLFo3DfmEYwyI1JXl7NKsn6j424t0lWe7RO1JXOj7pdA8FtgTghhKs+9o0jJJ1/juHGCly
-	kHhHHxTZl5YCmWj1JHpIMEhWmv5gCJidxH+5dLzYdTzUX4+JAQvHdcgcZCk5IjEhBz97wGDkOCv
-	syS3VYY2kMi4dC5fo77HmxIbKNjq3jmb163i0hkE16BRmeGTxHSIcEk6bZ5AYXs+z0IZPWrWT8M
-	dCSgmyIEtmk+Ms5UWWla
-X-Google-Smtp-Source: AGHT+IGbFzs4+6mWsWpYBe7JoXi+IDrmdHZBXOXvhE9G4jtbV7nz5cMuSQAFACr2ooMFlOpmsOYjfg==
-X-Received: by 2002:a05:6402:40c7:b0:5de:ab36:699c with SMTP id 4fb4d7f45d1cf-5deade00bc6mr3449416a12.30.1739373947907;
-        Wed, 12 Feb 2025 07:25:47 -0800 (PST)
+        bh=+v2zlsZVCTCaFO8Ecu0yqe/8KFXTvc0pR9tUkdrVCUw=;
+        b=RIfKCSgUmaRLlMtUiDwncBtsNL3HJjEchDbO1eFJLuOIk5xlRTHAS2jB3ccnGFlHB+
+         g4y7Fh71DxDKvafDeeKo2bneBM2QOLQt/A2TQnmWiDDFGLmQ1bb/G7b6O+OKw+hIjIDK
+         ZpZfor8AvR1U5yuty0RZYOS3ON9KyGoosS+ZYAuPCNsHZdiJbTSzasSUm8e8e+bZNGAZ
+         EfNJGo0lOIlHU6Ah2eE2BrLCkSYUnFHI9JK5CPNvRAOFcJeuERRKrv3a2rjizJftbRco
+         nUEm5ft2Ww3jcmr/7aLnY+ytXYyu3IJ7HKfJIpBPIjiZC7XLSBJdVneHy/nwAiYv/gVf
+         MNoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWmvjHjNfFc2Voyuashe+ciJqX9yJ6W4hYjNZUEVaraq5yvzGYLra+SXpD8JwTtdTP56Rq0fVdCqbhrnxxfHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoT1wU6YLP4JHBv5aAySJykrUCBeDF+lPpXLvlQzoIir3tRbbF
+	sRSlhq9tHjOc3r/XAprNr89E/x5grAzo3coe5VcqIgnWm4KJl/3+eKeHm4xe3P3kG5eib3mLnbL
+	F
+X-Gm-Gg: ASbGncubtzWm/3XNLG9CmvVcE2TOCVSk6igglMtCT3X242N5LYZs8uh2vi1YGjThlpi
+	XO0GqJSEolJNRAZbNCgYghiOOPaBVK+YtIjl7ozuKL0CByYI85DAKUqt1m2C6llLofb5TCelfrZ
+	kouFz/UVOkX9VnHiPYKXSU4Hhoog4TfrFYiEwuKyWoH280z9KKoZKpHeX7jL6zMlBQA/s46piLG
+	VXtmtnt+69h/Nrxdj9NbRmYjdAzqmZquv8Wqi8QLAfWuqTg3D3sxX7kaGOa7zd+SAcywA2p9G3P
+	mCMwGMRi6fuOqIiyzlRf
+X-Google-Smtp-Source: AGHT+IGudd/dN1L+NiUERa8stm+ICSFlfU46rMuNR2Hncaq6Xkixith7aRyVs5EP4RRtpT5jd1UaqA==
+X-Received: by 2002:a17:907:7e97:b0:ab7:b826:d84e with SMTP id a640c23a62f3a-ab7f338113dmr293815266b.17.1739374032574;
+        Wed, 12 Feb 2025 07:27:12 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5de59f893ebsm9040916a12.45.2025.02.12.07.25.46
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab78e3e212dsm1122175766b.147.2025.02.12.07.27.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 07:25:47 -0800 (PST)
-Date: Wed, 12 Feb 2025 18:25:44 +0300
+        Wed, 12 Feb 2025 07:27:12 -0800 (PST)
+Date: Wed, 12 Feb 2025 18:27:09 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc: Mustafa Ismail <mustafa.ismail@intel.com>,
-	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Jacob Keller <jacob.e.keller@intel.com>, linux-rdma@vger.kernel.org,
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Wojciech Drewek <wojciech.drewek@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] ice, irdma: fix an off by one in error handling code
-Message-ID: <47e9c9a0-c943-440c-aea7-75ff189c5f97@stanley.mountain>
+Subject: [PATCH next] ice: Fix signedness bug in ice_init_interrupt_scheme()
+Message-ID: <14ebc311-6fd6-4b0b-b314-8347c4efd9fc@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,30 +81,32 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If we don't allocate the MIN number of IRQs then we need to free what
-we have and return -ENOMEM.  The problem is this loop is off by one
-so it frees an entry that wasn't allocated and it doesn't free the
-first entry where i == 0.
+If pci_alloc_irq_vectors() can't allocate the minimum number of vectors
+then it returns -ENOSPC so there is no need to check for that in the
+caller.  In fact, because pf->msix.min is an unsigned int, it means that
+any negative error codes are type promoted to high positive values and
+treated as success.  So here the "return -ENOMEM;" is unreachable code.
+Check for negatives instead.
 
-Fixes: 3e0d3cb3fbe0 ("ice, irdma: move interrupts code to irdma")
+Fixes: 79d97b8cf9a8 ("ice: remove splitting MSI-X between features")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/infiniband/hw/irdma/main.c | 2 +-
+ drivers/net/ethernet/intel/ice/ice_irq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/irdma/main.c b/drivers/infiniband/hw/irdma/main.c
-index 1ee8969595d3..5fc081ca8905 100644
---- a/drivers/infiniband/hw/irdma/main.c
-+++ b/drivers/infiniband/hw/irdma/main.c
-@@ -221,7 +221,7 @@ static int irdma_init_interrupts(struct irdma_pci_f *rf, struct ice_pf *pf)
- 			break;
+diff --git a/drivers/net/ethernet/intel/ice/ice_irq.c b/drivers/net/ethernet/intel/ice/ice_irq.c
+index cbae3d81f0f1..b1fdad154203 100644
+--- a/drivers/net/ethernet/intel/ice/ice_irq.c
++++ b/drivers/net/ethernet/intel/ice/ice_irq.c
+@@ -149,7 +149,7 @@ int ice_init_interrupt_scheme(struct ice_pf *pf)
  
- 	if (i < IRDMA_MIN_MSIX) {
--		for (; i > 0; i--)
-+		while (--i >= 0)
- 			ice_free_rdma_qvector(pf, &rf->msix_entries[i]);
+ 	vectors = pci_alloc_irq_vectors(pf->pdev, pf->msix.min, vectors,
+ 					PCI_IRQ_MSIX);
+-	if (vectors < pf->msix.min)
++	if (vectors < 0)
+ 		return -ENOMEM;
  
- 		kfree(rf->msix_entries);
+ 	ice_init_irq_tracker(pf, pf->msix.max, vectors);
 -- 
 2.47.2
 
