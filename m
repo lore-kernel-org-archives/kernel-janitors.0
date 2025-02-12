@@ -1,101 +1,113 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1506211719
-	for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 15:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45B71D9688;
+	Wed, 12 Feb 2025 16:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739374073; cv=none; b=ERirkyPwMQYVLVE6f9Im8FysGreL9tRbhBCPFGfLGM3rWltrGIAELKEmp3mYL6Hz3LrmaJGIsmA4UjmP/W1MachGKwF/2TPfapFqQUGK3UnmC3In8YfB4UtGinoJ05mWRKrYdrDfZbE6Y9Uws9RXC6y2SNezK9OQQmOwKThX230=
+	t=1739376486; cv=none; b=SusyCN0DiKuw5J4MrjbCOENkGFXXbTTJM24TvQJ7MOEv+nPe3UXkXLNT46RLBqjGZM2L6NKMrxcyoZ82LdHl9DiJ/nKT1n7DGUZBfgcFDtVMmmNTq9CQwhg4B4HAo9xpXISfjaJGmkVObvv3AuYsa6HndhslCr/qHfbQkEIWXrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739374073; c=relaxed/simple;
-	bh=nGOHHKMn8GtXJDicwnkL8tmz9VcKp2LxDT7FzaficDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nNj8QWKGtySGyQYECvfZ3S+prn4L5Tm+cYOVDpl33KyWZLfS+MAM5uurABg/0aZn8JVSQDrUQsX4hYhq+gk8rFGbwsNmo8//q7YlKDUQmFSwti1exXPGRp6DFw8F+nY6IsXh6Or9AEhBFg88/yEBblRv/oWux4T1Z/tJf4i1KiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=laZvZrLv; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1739376486; c=relaxed/simple;
+	bh=VAuhs9u09a/f35HYUTjGbhVG0CNeiFDZpBWCT1Fvqcs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Onjmi50RAg4kAZvYq5M59kIRGR83Hpaj4OSVUHQ69qHRK3u+a6ZEjp8lJ6+2eKTedBDQcKjKdyCCPrP6yhJciexucjeAPbrKTolS/MYnBfFipesNIZogyEQ/YkPNQQ55rrmgaqf1bRpiaZXc4VqxJdUTzOeobM4GwdWyFOCCYzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRdP0xO5; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="laZvZrLv"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ab7c14b880dso706707966b.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 07:27:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRdP0xO5"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-439585a0544so6673435e9.1;
+        Wed, 12 Feb 2025 08:08:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739374070; x=1739978870; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gIK/hsLjBmZb4Q7phf+8q1FhCeVWqfbKwX81hLs6leU=;
-        b=laZvZrLvajbe2NVmhCSHQkDLWb84Kp2eSfV0E9fjiZ0hDzBWt7T15XZM3Anp8FpC/8
-         75KKTUx5rQ3P2ObiIGcxyImsSbpRd4t3LlCiZQ6QAMMppDnnupbyWUWqPIlM4gAvNxOo
-         diABh2kPy4TFr9xlDiW+2LzDex9uU5LlDOCqpJMgQTrdLcaQfPm6UVkfXgessfNkr6no
-         mUtquWoWyCCjxbWCxWy09TOjRzvRDughZg6V7GVyC7oHFTutcWYAIpd+bxu63mXmIxO3
-         Axi6Cplv2dqrfgjLH9WWGIuSNTi4ujywvZhQSOoZ/rAtOUVMToDtZqP9Hs302RaWrNXw
-         ZvsA==
+        d=gmail.com; s=20230601; t=1739376483; x=1739981283; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=enB6VpwoOzA1BhOL6deI72AZfVPGYPPBVh8XI8rOxME=;
+        b=iRdP0xO50UU5exUzkENcxj34cR/rv4NXwWX1vgvX8+SaG9Nkfz7uhjBxlIYbs7h4fm
+         unwcaTY5nKLEH3zLhkXiTNVyOwYej0U2jwyT+XrHcW64it7I32/Tt6dZ/ODOIdzRxFbw
+         nq2bx9/6WM7hzV4ED9N9DYPxdhZVdxSDgwMyxssu+jGiANvZUrsH3+A9TJoaDmZcoNHW
+         7AzZc0rwe5gqqbaPVFx3HooEYUiAzBpnDH68fgNoL1nbOoeZu0/HY1ulV9h3HXPGp45p
+         Jlteo3JbofaGlcXbmyKhGOzC7LoeiFiD1bAO3jYEF6BgVUwaIEJ3j7PZwRIcexNqXNtg
+         jj8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739374070; x=1739978870;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gIK/hsLjBmZb4Q7phf+8q1FhCeVWqfbKwX81hLs6leU=;
-        b=d5O+JxfjiFoZImeOkkwVoSbCmh/gX2Dc5rLiHTRd/T9DQ+K3q2OOVVrSdAdWL32pmy
-         Ydp12IJ1vF1I5E2ZKXtmxUiqS1W8CJIvmMNmkxilDd2vuI0qV9d5jpYdt2knPR/BaK1u
-         5tIuru/eOzDMUP/d9nC1M1ZfrlLPfh7xJe1i3IeBa5jHhQDaLRjp6OT1Tfm0tOIrEJTf
-         5s481m1SWdGVV0BZ0hAXHJmDEpqYp0d5LWqPCOB1KK+UitgE6h3g2JRtl0Baoy2FnOFe
-         pktjnrzRgNEThSNT2a0dunib0XstqxsO3DBkXMNOX37vdzOlUh28DprbyyKDx9kFviU8
-         gfwA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5HsRa3vfdLyMSzTtGjnkJGHfvM5g6XVaqopGgLUHa/raPOgE94xUxH7qio3fzO7FTS6/HnW5muHiePsBzgEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBC9qkibtj6gSi5oh6opEcGIwLKGmGhAXYjBYpyiJnHE03yaFT
-	RBxEj9n4SNc7hEmx1P0+oJGlgehbQKN6bJL6z/7mycXgJMxnrCmwYb/2nLDiPt0=
-X-Gm-Gg: ASbGncsmnHhV1JWTrNmb2Fp3rDuz2iPoMcLAps6uVNtCH3s4IBLBkl8W5lD3oR7lVQd
-	J4Ftd1uo/RHZIrhXCIkl37WmzF6zWPIF0VgJG5Y8BVwWlJa9KTJfgA+pxT1nvrZJvTt2/k4JQUU
-	kel3htG4D+da6Gfbmu7N5cGU1EaNEYOiBMr6DztIIKC6bn/cZX7diuRXAHFYMBTU4KFaMwEWxWW
-	WsQ/+uXX5P+KgoJUbdPHfdalzZ91CJxYtYM6KiUhwpm+s5/UAQZe/Ld1DwTJ9rtmj1A99p4WILH
-	tzE8j/iPI5G0Brp6dUyr
-X-Google-Smtp-Source: AGHT+IFpL8Nw1g0cPCijD/OhpU2DBTaHM0/BqrJs7pa0K+2D+M9iqhuvdq5hwJqMDWlN3ZppYMHMIA==
-X-Received: by 2002:a17:906:dc91:b0:ab7:eeae:b23b with SMTP id a640c23a62f3a-ab7f354ed67mr381322466b.0.1739374070037;
-        Wed, 12 Feb 2025 07:27:50 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ab79d9ced43sm967079866b.78.2025.02.12.07.27.49
+        d=1e100.net; s=20230601; t=1739376483; x=1739981283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=enB6VpwoOzA1BhOL6deI72AZfVPGYPPBVh8XI8rOxME=;
+        b=PX0PUJ/8JahgSMTDKo+hKVcyR2kqoFaEpMhpXU3ziQnhyyC7RRnZi6A++/YoD/SaBh
+         G7KURnbXl/RAleyR2UIotsr2IMTjPTadot3MgMndjpiOsNbAVVq67nZqG0hCuEpj1mbs
+         t0Z+1mTf/AcRbUKiC2CqG5Mdp4tTYnZPCKv7VFF1DPSXPYgRD5l3Z99EqGY4BrcjM9Qh
+         AdE8QNpx0beOugZxWgQ9mmwWL+Ot9RysHZOS9bwbZa9C3rwH92uKGWhKaExqrvGPxW22
+         XU28Awp7WftWuf18djTD0WWGq0OYgxAgS+d8eiC4S1yinHQpvVxZnNQAvEy41ta0z32x
+         bMXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkeh3fXTekIeEjgg1qvjeoS5mhScQU66TVOAj2TmPlc4QkXQ8nAtlZUxO/9vx1S9v5QPcun2ZD0dOYmHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ19+bN9009DWsJNaKtGVctdPSDHIdjlXS1G+zfYxO0d0WBIEQ
+	7RjeSJoodJCwD6vrs76WjBpMityhW9kgRjMwjB/L5Jy5ufsH5w5x
+X-Gm-Gg: ASbGncsEqtNbGix3w4Ko0Iov9NqFrVhtt5lzOopmKZYsR3OLj1Pyjsh/2fNRuCHog1Z
+	I1uFPPMC+k5XKx1rfMdGbLUv9T2l3KtSB06Cxybi8BESH4opQjoQNBI2X/judPX6aPn4tThWIiB
+	cf2eMQesqUEbdYTewfq8ySqAuUIbQ4zcjb3XTAPS7jE80/Z0A+lKihPUVdHDi1+6ZL8CwlCf2Ul
+	wz32CC/XETqm9DX9OXFcpfmN83rtaAEkugy7pkJtPKRhj81FJwOPKeD+dxbIXE7S+5edjDbLhKR
+	ynVfBNnc2knmNtTE
+X-Google-Smtp-Source: AGHT+IFZClm954umRgqvsnO48Pxdz7Faf+eQxyE77ajeKZ1ehn9upBDGCss0Soar4O8O5eriAPlKFQ==
+X-Received: by 2002:a05:600c:4f41:b0:434:f131:1e64 with SMTP id 5b1f17b1804b1-43959a2ac15mr29520085e9.9.1739376482705;
+        Wed, 12 Feb 2025 08:08:02 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4395a0725eesm23356605e9.31.2025.02.12.08.08.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2025 07:27:49 -0800 (PST)
-Date: Wed, 12 Feb 2025 18:27:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/dax: Remove unnecessary check in dax_break_layout_final()
-Message-ID: <ddd61469-637c-4a1f-a024-141574fd76a8@stanley.mountain>
+        Wed, 12 Feb 2025 08:08:02 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] signal: improve performance of tgkill and do_rt_tgsigqueueinfo
+Date: Wed, 12 Feb 2025 16:07:34 +0000
+Message-ID: <20250212160734.527199-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-The "page" pointer is always NULL at this point.  Adding a check is
-a bit confusing.  Delete it.
+Adding an unlikely() hint on a couple of unlikely error return
+paths improves run-time performance of tgkill and do_rt_tgsigqueueinfo.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Benchmarking on an i9-12900 shows an improvement of ~5% on a tgkill
+on a process and ~3% improvement on sigqueue. Results based on running
+20 tests and taking geometric mean of number of calls per second. Used
+signal number 0 to check if process exists.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/dax.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/signal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 9e4940a0b286..21a743996f90 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -987,8 +987,7 @@ void dax_break_layout_final(struct inode *inode)
- 		wait_page_idle_uninterruptible(page, inode);
- 	} while (true);
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 081f19a24506..4ae848ce3a7a 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -4165,7 +4165,7 @@ static int do_tkill(pid_t tgid, pid_t pid, int sig)
+ SYSCALL_DEFINE3(tgkill, pid_t, tgid, pid_t, pid, int, sig)
+ {
+ 	/* This is only valid for single tasks */
+-	if (pid <= 0 || tgid <= 0)
++	if (unlikely(pid <= 0 || tgid <= 0))
+ 		return -EINVAL;
  
--	if (!page)
--		dax_delete_mapping_range(inode->i_mapping, 0, LLONG_MAX);
-+	dax_delete_mapping_range(inode->i_mapping, 0, LLONG_MAX);
- }
- EXPORT_SYMBOL_GPL(dax_break_layout_final);
+ 	return do_tkill(tgid, pid, sig);
+@@ -4233,7 +4233,7 @@ COMPAT_SYSCALL_DEFINE3(rt_sigqueueinfo,
+ static int do_rt_tgsigqueueinfo(pid_t tgid, pid_t pid, int sig, kernel_siginfo_t *info)
+ {
+ 	/* This is only valid for single tasks */
+-	if (pid <= 0 || tgid <= 0)
++	if (unlikely(pid <= 0 || tgid <= 0))
+ 		return -EINVAL;
  
+ 	/* Not even root can pretend to send signals from the kernel.
 -- 
 2.47.2
 
