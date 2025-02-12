@@ -1,128 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB04C271837;
-	Wed, 12 Feb 2025 05:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316C0271828;
+	Wed, 12 Feb 2025 08:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739338583; cv=none; b=SKOnHjvE7oloerWlMCqcVES0PF1bKoZ4iQvN+8iL+nBWQSPFP/ROsjAvNbM1CdT/3uClehCqUvdwOHk0GFNQ3GjmjsNp+HRWDDY21BVWYMAcXaFZETuCw8VasQP8EM6oyj4nOYkW2dUZqNPUnO3A74URi5tNzs10p19uS5Jb+DA=
+	t=1739350795; cv=none; b=C2kEYI4yuWv9OBwOHJ6AKBp8/QRVkHnHT379VFpIWk3bpYIX7/0F/V1mPDWkRuQpWvMnq3pqEdrwlqOu0aACJIvzopkv8Nc/5JlWk2qeBxFWfxNVBpA1bnjdfRO3EkcZ9Q5qT/7c4y0uqRbuY4dvX/2SI4El2sbzTPtHME+M98Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739338583; c=relaxed/simple;
-	bh=RBcuD/ENGFYSayznVyThEkO7GUD8HBS8E4dDcSHfPhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+Z1l0RQ4KOk4ruZYn2JQqLvngH2feXm39GTHTQKwlD25bLYphpXQCxBxmIle4Uf3X+CGHb5lETmZ0T7XVdv5MlQJ3l6a03bEBmkDWTJytk3m6fl6jCwuWJLPrw/02/jTpwVqImO0rZmK6IBf4HX32aV0S7CdxGfd18wFgd1xMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uz0IJMSX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739350795; c=relaxed/simple;
+	bh=tkIbzF/VE87FfH08HryaQAxJKBpLdyOgoDpYoolYttY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nVqY7Mxba+JxfNaKJXax9v8rpidZ82IeppA+me9S3Yu/B05T1ZRogpIz2APFPW8TvrFx+XCj4BA6QFehYwA8rwvmc2qzDl6e5FxkREp+i4f+w7jiSuIymCaE6x1ivgeJ0tX8DSj+n8ZQ57ETdCzOM8mx3+k/O2BSuJt05vNveaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dTDteLxw; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uz0IJMSX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E96BC4CEDF;
-	Wed, 12 Feb 2025 05:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739338583;
-	bh=RBcuD/ENGFYSayznVyThEkO7GUD8HBS8E4dDcSHfPhU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uz0IJMSX3veX0py61eYQILomLlEgA+nyBPp3jvgs5PP0J3A2UN6ITne73WyLa1Eco
-	 bXFKsyKc/QBHHDhxLIFu+CEdKShyYAdMzYswx2y2L1wMtaakBYET4YYTUYyT2z+a3i
-	 wHpzPXgrVBS9PFnVaWNpcllu0UgMkWOXZUQ0+JfhcJyeX+MAsD8MJeUP6Rfi1G4ELH
-	 XyGcN/tRJNFD51Bak9p6j54FoOSnwIoZ47ZtZw0AcY4s/xS+waT7pe+kYu9TSuVgpu
-	 x98OXtUSJ80JbFe4FWeRsVYifT9UzZXhZ7uWauAhA+LQeS6A9lvIr09/svuetxvpgy
-	 8Oj1JBR1U4F2A==
-Message-ID: <1eca92c0-9dc8-42fd-8149-390fcb91f4f6@kernel.org>
-Date: Wed, 12 Feb 2025 06:36:16 +0100
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dTDteLxw"
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C1BbX1002423;
+	Wed, 12 Feb 2025 08:59:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=3jEbAOIXwseuskCe2/0uhyXK88iKw
+	0GjqWtoWGzO/G0=; b=dTDteLxwcdxQRB1WSy79NwbwFn/pPTXd90xVwhkqKh1Sg
+	32wpI8qPd8061dcjfDZyVceSsdKiSEzyVm6rqyET2JwxDhy43/Dfax+MUn0SvWxl
+	FYFy02posUzAfTjpdjC6SkjLgbq8302Y5nXl0XjTdoLmxWrdS6JeD7M5b8bIdZ8L
+	pPeugtc1OAxqLCOQk6LkRHRsKptwk7J/ESpEVhSp5TX4eLKjjhozls4BkZ2fICZv
+	oiZAGFf9cM43Y3GtO35ZOCKKTZbJcmyH0VvysvQW5joYmrSgMVqeNkVwr41mkIap
+	PBuyaiesOieKaxWHSMGvsq8yMtlY2182n3viTSYdg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44p0tn6vku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Feb 2025 08:59:22 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51C82Lrs002313;
+	Wed, 12 Feb 2025 08:59:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44nwqggfpf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 12 Feb 2025 08:59:21 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51C8xHoS035041;
+	Wed, 12 Feb 2025 08:59:17 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 44nwqggfc1-1;
+	Wed, 12 Feb 2025 08:59:17 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Janne Grunau <j@jannau.net>, Asahi Lina <lina@asahilina.net>,
+        Jens Axboe <axboe@kernel.dk>, asahi@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] soc: apple: rtkit: Fix use-after-free in apple_rtkit_crashlog_rx()
+Date: Wed, 12 Feb 2025 00:58:53 -0800
+Message-ID: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v8 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
- linux-pci@vger.kernel.org, kernel-janitors@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
- Rob Herring <robh@kernel.org>,
- Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Conor Dooley <conor+dt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Michal Simek <michal.simek@amd.com>, Peter Zijlstra <peterz@infradead.org>
-References: <20250211231646.GA58828@bhelgaas>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250211231646.GA58828@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_03,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
+ phishscore=0 malwarescore=0 mlxscore=0 spamscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2501170000 definitions=main-2502120069
+X-Proofpoint-GUID: oXk8rO_FymSKpMyuwOW0i7zrRQoM96WV
+X-Proofpoint-ORIG-GUID: oXk8rO_FymSKpMyuwOW0i7zrRQoM96WV
 
-On 12/02/2025 00:16, Bjorn Helgaas wrote:
-> On Fri, Feb 07, 2025 at 07:39:03AM +0100, Markus Elfring wrote:
->>> I don't *really* like guard() anyway because it's kind of magic in
->>> that the unlock doesn't actually appear in the code, and it's kind of
->>> hard to unravel what guard() is and how it works.  But I guess that's
->>> mostly because it's just a new idiom that takes time to internalize.
->>
->> How will the circumstances evolve further for growing applications of
->> scope-based resource management?
-> 
-> I'm sure it will evolve to become the typical style.  Right now, it's
-> not quite there yet, as evidenced by the fact that the only reference
-> to them in Documentation/ is this somewhat ambivalent note:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-netdev.rst?id=v6.13#n380
-> 
-> We do already have a few uses of guard() and scoped_guard() in
-> drivers/pci, and I don't really object to more, including in this
-> amd-mdb case.  Whatever we do, I *would* want to do it consistently
-> throughout the file.
+This code calls kfree(bfr); and then passes "bfr" to rtk->ops->crashed()
+which is a use after free.  The ->crashed function pointer is implemented
+by apple_nvme_rtkit_crashed() and it doesn't use the "bfr" pointer so
+this doesn't cause a problem.  But it still looks sketchy as can be.
 
+Fix this by moving kfree() after the last usage of bfr.
 
-Bjorn,
-There is little point in discussing anything with Markus. It's a person
-known to waste our time.
+Fixes: c559645f343a ("soc: apple: rtkit: Pass the crashlog to the crashed() callback")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is based on static analysis with smatch, only compile tested.
+---
+ drivers/soc/apple/rtkit.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/soc/apple/rtkit.c b/drivers/soc/apple/rtkit.c
+index 4b0783091a92..1ccec7ba640c 100644
+--- a/drivers/soc/apple/rtkit.c
++++ b/drivers/soc/apple/rtkit.c
+@@ -360,7 +360,6 @@ static void apple_rtkit_crashlog_rx(struct apple_rtkit *rtk, u64 msg)
+ 		apple_rtkit_memcpy(rtk, bfr, &rtk->crashlog_buffer, 0,
+ 				   rtk->crashlog_buffer.size);
+ 		apple_rtkit_crashlog_dump(rtk, bfr, rtk->crashlog_buffer.size);
+-		kfree(bfr);
+ 	} else {
+ 		dev_err(rtk->dev,
+ 			"RTKit: Couldn't allocate crashlog shadow buffer\n");
+@@ -369,6 +368,8 @@ static void apple_rtkit_crashlog_rx(struct apple_rtkit *rtk, u64 msg)
+ 	rtk->crashed = true;
+ 	if (rtk->ops->crashed)
+ 		rtk->ops->crashed(rtk->cookie, bfr, rtk->crashlog_buffer.size);
++
++	kfree(bfr);
+ }
+ 
+ static void apple_rtkit_ioreport_rx(struct apple_rtkit *rtk, u64 msg)
+-- 
+2.39.3
+
