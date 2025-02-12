@@ -1,139 +1,101 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37D3209669
-	for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 10:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC8E271829;
+	Wed, 12 Feb 2025 12:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739354479; cv=none; b=SPRQG1zSojD6CJk2sOsdj4pgSJL5fhzInNqxjR9ATqr4bq36B4V0AXrDojB+AUPatqGHaRTbo6Ms+zDiR07MR6oGyk2s065lYj2DyiYjMNqQmzIwvO6wx9x7DH10ULC3Yxb7gqHeojy1vOkni8YgH4lw5oy85rUZ0u3l8eer8yw=
+	t=1739363058; cv=none; b=bgtJYKRC4/fP/GSMWDqk9zgsVBTJuFuJMpl4UVCmbDCHJPRNVrH2GKR5of4KPdRPyqwoscpbdkD9d75isxKknxewKgSiLBTEPbyBx4lZscoVgqhTGMhRNVL4uRvyIY4WlB85bhNiw79YLSowSEs+pjnwmK2usJLGsF/BB5FQHPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739354479; c=relaxed/simple;
-	bh=sLtMNl2PIK/GBgnQIKx/qPFCh0ea5y3KjwR+JGxQbxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JtQdEcTM/O1IAw7qZsdpOVy+psFvjEF9fBbVQGNYvkMy1bT5qxg8WkdfKHZ5iHuTFtFunYVDjAfUpw+r98FQrhqxbjpsFAX+UOsM4qOIh3n80jsmXV9bOgNqJznvQpR5DRNFNx55QashVRJ9FwyrgS0VQjaRy7vafbKQdIgskw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ag+g7u1q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1739363058; c=relaxed/simple;
+	bh=Lq92TNbdy7iFBABmyM4Tqt+wG4oPSZ8i+xhZzcRzluM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d5DpwIOnclcWy63giYbcxl6bwfOmwc9F/gF+LkfjexQK/TSqPSP3n+RXviAU3gN4++inE/yjAyXl0qRHblUCaNRpewh1SDC+rWfGuN7Bhd1pT/Ma1uZ2LIc7v7KH7l1qIHsn7Ooj1CZMHMEvVzBArCbM6AK0dC4xWz/1QTuS5vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7TIEy91; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ag+g7u1q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739354476;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k10/aEW9kI4Fw7g7ICooPKDGPu1yctxg0l9c8ZseCIM=;
-	b=ag+g7u1qDtYw/QcwbCDCqqQ2lfEpfwLaab9xlmie5m+S8UTLb6pOvlZL//kQIwfKDAsq41
-	hQF8WUT9Y+3wRTNLBtPrAHgUTavzMtOQQvNnsWxor1X71VeZrrLKqKLoZxEp0BlwVzuuPd
-	BeV97o+4a1mGPPmBLrNX3nIVvTYb7uY=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-4VF4PnetPe6IJMIW0DAZLQ-1; Wed, 12 Feb 2025 05:01:14 -0500
-X-MC-Unique: 4VF4PnetPe6IJMIW0DAZLQ-1
-X-Mimecast-MFC-AGG-ID: 4VF4PnetPe6IJMIW0DAZLQ
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fa3b466245so9082294a91.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 02:01:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7TIEy91"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38dcae0d6dcso3048493f8f.1;
+        Wed, 12 Feb 2025 04:24:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739363055; x=1739967855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sf0fCUR6elaxXWiV1DtQUoY4//OKzn7UVKTG1pmy2mI=;
+        b=Q7TIEy91dqspc1GfyVP2LW5nIr0EQyGh5ult+JXAmWIQGEBzR/JvhvRO15wksiUlpi
+         IGaDkF7UmxrI7exudkypNKiPi7ZWiAwdIw9ulaGiz83D8fP5qZBzjAS/JxEKHMoRzSRT
+         OxiUVX9Q5g76qwDKMoTUQAuklJA/PMlSm/kKs1hQEwDPFqKOZqcJGmFeUt/SETSfswJe
+         0EY6P9zSiY6nZ0WPFSi48jEJLjG37WW8CkgQYRJxQFT3wy0QXDW5XAimvcYA9tGEc6nF
+         MozRDUl8upjk3jYIauMueO8t/DYH4LgcKZQ9CUq+ABCgDsBGLsMF/oJvpKu6HBYRrTPy
+         kRzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739354473; x=1739959273;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739363055; x=1739967855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k10/aEW9kI4Fw7g7ICooPKDGPu1yctxg0l9c8ZseCIM=;
-        b=SExk8X9CszTKHpt1A8LXIjAwiEdSG3CVnZX7k466OdLX8IqPAgRRaXFfH1P/5WIgFj
-         KYCR2j2hYJsKwJjmCXd1yoHFkcCcpQOBbgcrE/lRUchKGvTuUW6IduJcduh4yMWwYU9S
-         ZEcUHHA0gQs9l6WUGXj+R9Vhp5BrLEVQmJNZJOAgnRTcDX1kGzfCCbokGshqzyJZffTT
-         Ajk+p9grrNt0BH0AolDFQC0Uk36XYWdsaygNmaMNL1c1g3O9HsTmMcTUDow4SbRUbYyn
-         TdTpa8y36mJKKPhqQtNeW5S2oOUEF1b+8u7g9tCC2IYjaQK7u4q9hfl8xb+o7I5bd/Tx
-         6M+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXvYUO0PnpeLZDdby/AGMmbvRfVx31oDlIRv6SdQZ4CDyMzARLSur8++pHlXgDVA02Xtj0eHYUW4YuWCoplPAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNi00wWN+KDUnTGnvibTDhYv6o1pHjfBcnbZBvWe55RG+4Adfm
-	7m7manBO182VwxGCIP7sNEio+xLkhCHlx2C+MHukpmHIxzfKCKjaZmkc10T85ktS5zKdr9EO/u2
-	V0scbOjFRpoUOunYq6mewcOqO6HEWLxlHPQWKl4ROKou9y37OU1QvFSXHr+YD+FJ1PzEK3bdDau
-	5QPW40kbtvUhXkgNBZvJYLhFKOhlroyi3krOjT5r7g6G3lRqBNElOAC80b
-X-Gm-Gg: ASbGncsPUz+x7b5Q0twV00HG1qVjv9DNCTeWl2v/6aORJNo4jrNat4M2oJow9zKgVSl
-	s827Q2VrXoGYr8CYH/1yWdq9H+u9AhEPBDY400Rg8CEkD5DIPmPtZ5bfFYJqb/LNZNmi6dwUCUz
-	6dm7Hhs6nQU7fgmewHZ4w=
-X-Received: by 2002:a17:90b:3a08:b0:2ee:db8a:2a01 with SMTP id 98e67ed59e1d1-2fbf5c6a05amr3885260a91.30.1739354473033;
-        Wed, 12 Feb 2025 02:01:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHapn9jYWGyKoK8rERdyukBRLyP6apd4I5Sp/cSU8BhLWDuyyGc2UAEQe4Lq75zmYbK/CB6jhRtH7HcRUIhM4Q=
-X-Received: by 2002:a17:90b:3a08:b0:2ee:db8a:2a01 with SMTP id
- 98e67ed59e1d1-2fbf5c6a05amr3885222a91.30.1739354472720; Wed, 12 Feb 2025
- 02:01:12 -0800 (PST)
+        bh=sf0fCUR6elaxXWiV1DtQUoY4//OKzn7UVKTG1pmy2mI=;
+        b=eE2TSKXRVWelUlBzf3V3j902TeTn7jBpbDNGFwSbZjrgeVRy6rM5P7h3WLrDG8xj/P
+         4tGrmXuKxJ6jKtte6rJpAiTSj6WjJ4wz3tszGizxREM/dtRBS+AsTIvn6TuTpZ6X3ds+
+         RIZ3FQUjki+BCeiqdJbQxGT8UjOJmnbDTjO64Nr0Ennbtzg7Mw4oK2uYlp9G247JDJ3c
+         qlhM6b2D5+XjGoDKcLkecqJMAQCircIPIyvyjGtql284YdlMVKZnWKW68UNv4rf8PSj8
+         IvN8mEFZvFpJsMkHtQo1wpRIIxVv7gP4pYWeWLWfUvfBrNJO8fgchswNEMAoJ/1U+oni
+         Y5vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAsBasxL+48+JdT1e0l6ifS16j73eoGZO7FtuQdGKVlpI8ics9/oFe2hAm4mzgTo02g/6XZ6PjK9TYCA==@vger.kernel.org, AJvYcCWZY9NILNv82CiOwbtPJ/nuCqPerfOwOXD0mptAcmWIsBK0/3Bd6BqjAZ6oEzodG9Ki+fjLVq31Qs1/cAsK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt3OxhzS1rzM8o13RPLpvdJTOimPQyfhlnNiG50rNO1pypIwcG
+	E3Eqii+HxekcRqoH6tJ6zIAL/pT3u9WVKbCSaB8I13h/0CDLlfKk8o3UmmBuhJoVAw==
+X-Gm-Gg: ASbGncth9y1xIFaSUouT1/NEsUnZ6nzcDgNbeTPVNj9qzgfydgJ4Mfn452fRpebwV07
+	p/CceLfg8odBkLIinUb0Q+qd03/euCBDFKP5eAhwIsF64j3ixKsLd43D3awWr2G6IR31Lw7s1K4
+	MYRrSQdOCAljfX0ImqZ69G+u5+IrV2rElI2piUktyL5XXVjQXZ1yK0NV0k4QY8DNvraLpr19K8Y
+	IV8ic40JtEPKEmrE4H748fR6kwZKLWfsB3GQd4T41NuMY7yG622NO1cEqTbJAlYY7tpCLGzamg9
+	SNs5GrsDgaHYNLIL
+X-Google-Smtp-Source: AGHT+IFB5hyOEVCQDsErW1G67bm7ykKDxXt7eMB6BeYyhuCNqMXc2bOwHBQPLVUhb2eJQCqpi7xn8g==
+X-Received: by 2002:a5d:648d:0:b0:38d:c9da:d0d8 with SMTP id ffacd0b85a97d-38dea256ec3mr2407904f8f.9.1739363055332;
+        Wed, 12 Feb 2025 04:24:15 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38dd9a6153dsm9805592f8f.60.2025.02.12.04.24.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 04:24:15 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: =?UTF-8?q?Tomasz=20Paku=C5=82a?= <tomasz.pakula.oficjalny@gmail.com>,
+	Oleg Makarenko <oleg@makarenk.ooo>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] HID: hid-universal-pidff: Fix spelling mistake "sucessfully" -> "successfully"
+Date: Wed, 12 Feb 2025 12:23:47 +0000
+Message-ID: <20250212122347.495701-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
-In-Reply-To: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
-From: Eric Curtin <ecurtin@redhat.com>
-Date: Wed, 12 Feb 2025 10:00:36 +0000
-X-Gm-Features: AWEUYZn-hP_kxTTtLow8M16VioOce2ZF8-IggRFFQ_uJOeNCeNsgfNjbEVocXew
-Message-ID: <CAOgh=FzNk089VSrLbuAS=UA45dpY3mVFoebE2xg5ZGvTrtmVWg@mail.gmail.com>
-Subject: Re: [PATCH] soc: apple: rtkit: Fix use-after-free in apple_rtkit_crashlog_rx()
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Janne Grunau <j@jannau.net>, Asahi Lina <lina@asahilina.net>, Jens Axboe <axboe@kernel.dk>, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, dan.carpenter@linaro.org, 
-	kernel-janitors@vger.kernel.org, error27@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 12 Feb 2025 at 09:08, Harshit Mogalapalli
-<harshit.m.mogalapalli@oracle.com> wrote:
->
-> This code calls kfree(bfr); and then passes "bfr" to rtk->ops->crashed()
-> which is a use after free.  The ->crashed function pointer is implemented
-> by apple_nvme_rtkit_crashed() and it doesn't use the "bfr" pointer so
-> this doesn't cause a problem.  But it still looks sketchy as can be.
->
-> Fix this by moving kfree() after the last usage of bfr.
->
-> Fixes: c559645f343a ("soc: apple: rtkit: Pass the crashlog to the crashed() callback")
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+There is a spelling mistake in a hid_info message. Fix it.
 
-Reviewed-by: Eric Curtin <ecurtin@redhat.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/hid/hid-universal-pidff.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I wish we used the attribute cleanup stuff by default more in the
-kernel, it would prevent a lot of things like this, it does what we
-want it to do, most of the time.
-
-Although I'm not sure it was introduced yet when the code was written.
-
-Is mise le meas/Regards,
-
-Eric Curtin
-
-> ---
-> This is based on static analysis with smatch, only compile tested.
-> ---
->  drivers/soc/apple/rtkit.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/apple/rtkit.c b/drivers/soc/apple/rtkit.c
-> index 4b0783091a92..1ccec7ba640c 100644
-> --- a/drivers/soc/apple/rtkit.c
-> +++ b/drivers/soc/apple/rtkit.c
-> @@ -360,7 +360,6 @@ static void apple_rtkit_crashlog_rx(struct apple_rtkit *rtk, u64 msg)
->                 apple_rtkit_memcpy(rtk, bfr, &rtk->crashlog_buffer, 0,
->                                    rtk->crashlog_buffer.size);
->                 apple_rtkit_crashlog_dump(rtk, bfr, rtk->crashlog_buffer.size);
-> -               kfree(bfr);
->         } else {
->                 dev_err(rtk->dev,
->                         "RTKit: Couldn't allocate crashlog shadow buffer\n");
-> @@ -369,6 +368,8 @@ static void apple_rtkit_crashlog_rx(struct apple_rtkit *rtk, u64 msg)
->         rtk->crashed = true;
->         if (rtk->ops->crashed)
->                 rtk->ops->crashed(rtk->cookie, bfr, rtk->crashlog_buffer.size);
-> +
-> +       kfree(bfr);
->  }
->
->  static void apple_rtkit_ioreport_rx(struct apple_rtkit *rtk, u64 msg)
-> --
-> 2.39.3
->
->
+diff --git a/drivers/hid/hid-universal-pidff.c b/drivers/hid/hid-universal-pidff.c
+index 5b89ec7b5c26..001a0f5efb9d 100644
+--- a/drivers/hid/hid-universal-pidff.c
++++ b/drivers/hid/hid-universal-pidff.c
+@@ -104,7 +104,7 @@ static int universal_pidff_probe(struct hid_device *hdev,
+ 		goto err;
+ 	}
+ 
+-	hid_info(hdev, "Universal pidff driver loaded sucessfully!");
++	hid_info(hdev, "Universal pidff driver loaded successfully!");
+ 
+ 	return 0;
+ err:
+-- 
+2.47.2
 
