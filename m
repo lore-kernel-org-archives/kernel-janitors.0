@@ -1,61 +1,76 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE3E2063DB;
-	Thu, 13 Feb 2025 05:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6652BA2D
+	for <kernel-janitors@vger.kernel.org>; Thu, 13 Feb 2025 06:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739425855; cv=none; b=R2Eui1oP2xqEfxvkm1MUA7CV61hGAFhimpAYTYaim5IYZ5hXBs73mlkRoSCZuEKUHa1ezE5lnP4TROgkDOCs61sTy1JgUlIDGe4Qi0XxjTegAqFnlOSjlu85LoEuXIfIjJjVA4H4LCqF71CIZRsJEl3/Mh7JYn2ZhAM7jESGYUA=
+	t=1739428308; cv=none; b=Vcl8VT4HX7tXr5+TQ4msPphSDQlYqA+hpEgAidfklkaSalgxPWIH694VtNHHKHgtKfvlJHuNQ+jvqzLT+dtN5QL1GKUZ3NlcDL2ilLUI9NZLdfJOyFepkM9HaP2T555AeXWOT6Wpuz5B6r8PjxhYTO0mfUFzLDp8fe8fuoHogRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739425855; c=relaxed/simple;
-	bh=lHllTOckj62DvxFMO4ex25j5C0vpTrjk+U+h4A/42pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fuS/7oPKExdUTkAAe66kYnTU3Si+vDmAjbFa03S/xMzFpZo6W2x6ZQ+/3PDQjV2gKh8/Yo11AyfSiKvaLYtXQ2DmpkyyoRg51Yijya7horJmmvXrfa1NlY5n9D2En0sm56MNoExBFkpXOtARtarbxdHSuT3pUXhxv/afjyyjAQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E9LQT4rh; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1739428308; c=relaxed/simple;
+	bh=TSm+EhFKzQ+nmagJ+NpWIUWkYFzwrLV6u54VSh1bzrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DG2x8MLnelKOhQ3HOCVm5IYtj131loIZjQoIM5U8BjJhC6PPG00Rmvyx6Y6eEco3rM50wgrMycivgiwx/LTYDueezOG79diiWQh2bFDaZ7RJKUGe1GtwTtqtFkgAQniyqrTKO3q8vRS4A7Cs9yxY3PxsDTeOPMOV+PKDpyCAJGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zui295ws; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E9LQT4rh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739425854; x=1770961854;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lHllTOckj62DvxFMO4ex25j5C0vpTrjk+U+h4A/42pQ=;
-  b=E9LQT4rhveleK6EeruG3ywgnLHd8biziDQ+ozMjyy9NGJ5B+gGW1308l
-   v0/7WNz0EQOOa2Ih2Ny3WQMdC9AWouGKpkS0PKdhWrqrK6zp2zGiIPLS+
-   Z7RdFyulcMWXHMr1eVhSaw3ppaM8SQGsE2CmKiKiYIwnWS41SoC/K1/Dk
-   glHqgxjPytvN+e2APvp1sG86uJvy/AMiFBE+OUUq8tmOHCJzWFTr14gUv
-   uUn4SSX4Wm2wUGkIqBzthTgBpJFXAWJVi+m4iBHUVr5qj3uriLQu1wk8n
-   JQ3SSiajUhkq8eZkSmxEeXd1k0UvG9WUrkgYOeMKybzYGbPC4fWEtxoLS
-   w==;
-X-CSE-ConnectionGUID: mO/7qVxOS2igOQ//KBk8Zg==
-X-CSE-MsgGUID: 6edW2TbzSrOnZCZteUywRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="50735646"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="50735646"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 21:50:52 -0800
-X-CSE-ConnectionGUID: 0eLb8kH0R9WbKxHK25TPGw==
-X-CSE-MsgGUID: z8+jw21CQ0aS1HnEzgCRxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="118043724"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 21:50:49 -0800
-Date: Thu, 13 Feb 2025 06:47:16 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Mustafa Ismail <mustafa.ismail@intel.com>,
-	Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Jacob Keller <jacob.e.keller@intel.com>, linux-rdma@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zui295ws"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dc89df7eccso777355a12.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Feb 2025 22:31:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739428305; x=1740033105; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lN2Y2nwgj5zUTnrECdXbocmCWoXI6GrsrPx3j3TC4Yk=;
+        b=Zui295ws93WTTPWNXD2buqZj+h98nk+ZKUPjjReH3vwTsDjRZFMZaPwPQvLSajTiAv
+         JomKw74jFwMnPz+dAqvKkttjodB+baMP561AxOryUtrehw1zJ5Ob7FWWXjntnpafstFl
+         LwUdkCM42isIwRjdXWN4HXNtIFZkkurnx0RDkZCES+iKm91ZigthbRK4EN2v5Axlidv7
+         d/onpbbgPaR7JgnRHljLL7ZEPaegRCdEgpdUk2e+9K6cLG1NV50qXh/rLGsmekTlE57s
+         Pk8DV2sqWghxRxh+2bB1YgDdM2Sl76O0cdbu6W2vOGJcy6aFhy6xByfnWxmCMp9zOdcM
+         xpiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739428305; x=1740033105;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lN2Y2nwgj5zUTnrECdXbocmCWoXI6GrsrPx3j3TC4Yk=;
+        b=Ji4AHc+wH+KG+kcnHwzDSoXlwwqAw7ZBmutqbUnwpXuvX2Okc6vcdeTiqtmdhkFk5Y
+         FshN/9c8R00vCzWj5pu0tI8QbD40MDJlF3Qt8wOMHRLigg0II69uvreFcfoQ+MjKCsGu
+         b/uSi03gbhqxHjEUU8z8mLE0OmegMoCra+YzPxKkr07IodGSNaB6J3hdUISu8DM14maQ
+         C3BOh1GBWeYAk2TLxa95TPfLlaWULm8eKeJ4nuRY6ORVpdokEkOOjIsCZRVOSwy3Dz5T
+         y1s1AN+1FLk5txg1Xxd+zPI+hvdvVFMZR2pkZ16lmtbNEfSWTd7JtHrPWuMpSmBlkLa6
+         wP+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWoV96Hik7UTTxsjmiMYGsQqHZ9wGI+0AEaHxhkqmE2bnZ1ETrg8G2rCyVoeio7NAqDzn7H8WTb2ydcMP59n/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIXslbRkhOQaMoMT9n4P3A7qVh55PpUaBnN1ecEgxeXrEwdj0b
+	OAvIDtdKXgFH6dzFNIVqi8f/0gCX5qHELgWjIsBBtcmtlQfWH3axawKGC9XEdno=
+X-Gm-Gg: ASbGncsre/JSmtP3yJCbF2hgqBchcALTppUm8P3fnUwEpgUhMHAKmt3UXRDWVawPZoH
+	gp5Q4KWBw5LZKNCGbQBPBmJD4SMkwbHY7gayCio+srZ+xG9xU3wx4YdctpSEwu024ofWCIsNVnt
+	VMefCPjCW5mv4c4QHBFfJvRh21Q+uSivye+7gCkVbPWEr0pgqyYuZuAb9mThiudwqBAF0EkcuBz
+	WzQanuKji9ly5CLdpQUjJyEj2XAr5ZApRuMyw+Y5WDSOwq9X6z+1JNDwN36vin6bOVrARzZNgjX
+	iP4OcGWWEyDiSj7bng7x
+X-Google-Smtp-Source: AGHT+IF4GmQVmoYV3tMifs3xYxMEmFp8h++H06hQyM0sB214aBjWO3g4Ojs0FH/d8ojvyeWMu3n5Fg==
+X-Received: by 2002:a05:6402:5d1:b0:5d9:a62:32b with SMTP id 4fb4d7f45d1cf-5dec9d326b0mr1910867a12.7.1739428305096;
+        Wed, 12 Feb 2025 22:31:45 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece2880e1sm596423a12.76.2025.02.12.22.31.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 22:31:44 -0800 (PST)
+Date: Thu, 13 Feb 2025 09:31:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Wojciech Drewek <wojciech.drewek@intel.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] ice, irdma: fix an off by one in error handling code
-Message-ID: <Z62HZM0xjSWSSBiL@mev-dev.igk.intel.com>
-References: <47e9c9a0-c943-440c-aea7-75ff189c5f97@stanley.mountain>
+Subject: [PATCH v2 net-next] ice: Fix signedness bug in
+ ice_init_interrupt_scheme()
+Message-ID: <b16e4f01-4c85-46e2-b602-fce529293559@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -64,38 +79,43 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <47e9c9a0-c943-440c-aea7-75ff189c5f97@stanley.mountain>
+X-Mailer: git-send-email haha only kidding
 
-On Wed, Feb 12, 2025 at 06:25:44PM +0300, Dan Carpenter wrote:
-> If we don't allocate the MIN number of IRQs then we need to free what
-> we have and return -ENOMEM.  The problem is this loop is off by one
-> so it frees an entry that wasn't allocated and it doesn't free the
-> first entry where i == 0.
-> 
-> Fixes: 3e0d3cb3fbe0 ("ice, irdma: move interrupts code to irdma")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/infiniband/hw/irdma/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/hw/irdma/main.c b/drivers/infiniband/hw/irdma/main.c
-> index 1ee8969595d3..5fc081ca8905 100644
-> --- a/drivers/infiniband/hw/irdma/main.c
-> +++ b/drivers/infiniband/hw/irdma/main.c
-> @@ -221,7 +221,7 @@ static int irdma_init_interrupts(struct irdma_pci_f *rf, struct ice_pf *pf)
->  			break;
->  
->  	if (i < IRDMA_MIN_MSIX) {
-> -		for (; i > 0; i--)
-> +		while (--i >= 0)
->  			ice_free_rdma_qvector(pf, &rf->msix_entries[i]);
->  
->  		kfree(rf->msix_entries);
+If pci_alloc_irq_vectors() can't allocate the minimum number of vectors
+then it returns -ENOSPC so there is no need to check for that in the
+caller.  In fact, because pf->msix.min is an unsigned int, it means that
+any negative error codes are type promoted to high positive values and
+treated as success.  So here, the "return -ENOMEM;" is unreachable code.
+Check for negatives instead.
 
-Przemek pointed that in the review, but somehow I missed that :( .
-Thanks for fixing:
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Now that we're only dealing with error codes, it's easier to propagate
+the error code from pci_alloc_irq_vectors() instead of hardcoding
+-ENOMEM.
 
-> -- 
-> 2.47.2
-> 
+Fixes: 79d97b8cf9a8 ("ice: remove splitting MSI-X between features")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: Fix my scripts to say [PATCH net-next]
+    Propagate the error code.
+
+ drivers/net/ethernet/intel/ice/ice_irq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/ice/ice_irq.c b/drivers/net/ethernet/intel/ice/ice_irq.c
+index cbae3d81f0f1..30801fd375f0 100644
+--- a/drivers/net/ethernet/intel/ice/ice_irq.c
++++ b/drivers/net/ethernet/intel/ice/ice_irq.c
+@@ -149,8 +149,8 @@ int ice_init_interrupt_scheme(struct ice_pf *pf)
+ 
+ 	vectors = pci_alloc_irq_vectors(pf->pdev, pf->msix.min, vectors,
+ 					PCI_IRQ_MSIX);
+-	if (vectors < pf->msix.min)
+-		return -ENOMEM;
++	if (vectors < 0)
++		return vectors;
+ 
+ 	ice_init_irq_tracker(pf, pf->msix.max, vectors);
+ 
+-- 
+2.47.2
+
