@@ -1,69 +1,67 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F84186E54
-	for <kernel-janitors@vger.kernel.org>; Sat, 15 Feb 2025 08:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CAA1F94C
+	for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 15:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739609914; cv=none; b=gOfFcly3U2/Urzl7T0ZgWZehnBW40wgw+FKRpius9U4OuOXEfXxDLH6HGp7WQNgwokLYU/sPrB5ljzDcUv33gE/dzBPHzv+57XqQAsx2ZSLK8KS5fw+bbdvNO2GjKl6XmtPevavZROjP5K8GBY7NulbdPs/MZhYGUTmjzjYixqY=
+	t=1739720424; cv=none; b=tfKBfvdAAtrRCndLEIZoWeIAQDL34DdtWrCDVs2Xop2P+jceJBaQl1/nWJlO12WoVrKnXhWqsbXwel1U62hQcqHG/rGUqeD+FrON/foqsylUFmoSbZA5GbIXxk5gU4gB1RLLkqiEOtnUYyuErFGtJH1eJpYsw+9IkO1w4FgwjWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739609914; c=relaxed/simple;
-	bh=zUcr1lsE9NXqWKcxOYzvbEjOMUWBYjxxMbRR++FyHqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j8mlSfPCxWW8vrNfgmtkJC0TsTvl18LLwGj4tDDcb0kHOYBCparIuD7wfkIrzKqGxw37B009Bg2Dlwbv/VN763/1S576DcpRYsEKjNzi5qQmZcjPupxcyLviwTRKTLwMUJLABbicmXAnOA/AcbmiJ6weDvHvhMqe9aE84q2Ntu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T3Z9Xksz; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739720424; c=relaxed/simple;
+	bh=23BCv9NMPWl0vltH0ImlklKRTezm3xo/cgREjGcw3Fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gU4rrFW8qtS0ozhew9Nd3oR5iV2zY8Pb8VU2zsBv/XSSQIaGudLNvgCnJfT+JNIR6A7sReKIm4VWeRuGX9LhMC3Pu71+MHJqrvA6khsWjs+4p8FhZdIItfndmdLNeEmpZFQPzWGXHXn9K7m6AOLxzA3m10Qyoy2mMBc9FgkLRLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kcZIN8de; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T3Z9Xksz"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22113560c57so444665ad.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 15 Feb 2025 00:58:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kcZIN8de"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab78e6edb99so536443966b.2
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 07:40:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739609911; x=1740214711; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NgcMkFe+nMofBxiOR9bhZok0ftWdrYrG3MfErIxo/qs=;
-        b=T3Z9Xksz+6N1SngQuP2X2LLUttf68N7m3sQu80cHNAbgTYUgLFs6GMHTn0+0/u5UKx
-         jacM2rrmVPMkY4E9y/t/xAug8fToxfhZqfoTV2bm1IVKO9txsuSCo8QtLassz3TP2G5y
-         Yjdwwjllj+g4wizYxK/pDlYBpdDpWBW9aQOhI9954R7E09uYwqKqntGn1LY3jPpyoxvs
-         uzDSfvLDvnAFXxUwVJRNfUpaLbKx30TqvvcBINH7ya4s2foW4/rUfsGd/avdD7sw4nCm
-         nUeZeN25e+Wi0vyicxM3FeYKJ9ckJDsPJ8a7mRqX4o0R6V/+tCVbB9OO1BqLGV+7ehSP
-         9a8g==
+        d=linaro.org; s=google; t=1739720420; x=1740325220; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZtNwStOppjM4/e8u6hy72aYwVIViHgzz5BiaHnWzXhw=;
+        b=kcZIN8deoDq2ozpTZLnGdwaTxwyqF7JHJ2t3d20YWjM5VmZtVrPV2qC1hG2JocGAq4
+         80ciPgwEOmxZpd6lLUt/wAPj7l11pZu9rBNypA/YFsl8pMJMJxssdbNZ6YkDdkDnfOyr
+         JFOhJpVDyl5zLvyJ6bc0mjeGG8eWuuXdOA52GUNntLyF5v/u37mT2pr3PWa7BfZHK+lZ
+         F1J+VFxujWgt90gdElSejWr/Xs4hbfyAiYMgqwf7Ceb4VxYsseps8fN3tlWIxOxR1Nfb
+         9MVKOAMg4N6yr8BFJC02ZuZ578TXZ9mNMvf6I/3vTQdYhd6J+bcWj1tR5Oqm0WRdLGHg
+         oJyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739609911; x=1740214711;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NgcMkFe+nMofBxiOR9bhZok0ftWdrYrG3MfErIxo/qs=;
-        b=Xleq/bt6z3mL/0vOy2rVbQtSi46REks6YtgQhwAXRcBzxI4Fb5EXaV7ca/hheB2ymi
-         hfGtYxeWTebEvDLAEKV6yBAdG65i+9Q7v4YCiXEnk4b+iRjD+S1qffJE8Ar3+2jE51oI
-         Mdoyd4vh1U1y3pwClgguqBf03B+pxNNKsleeYJ0QZBKBfhBwJl9hAtLO2E03MWiAlhK5
-         6uo3+FLVtWMrrigV1vugRsR5bkAMDybKvv2NIwI+mFSFZsF6/xeclCPBMFMlpCG9Q357
-         RCqKzqmKkF+PlWPuccFd41k1xfZzn2uJhepy7WK3KTTZd1+pRAK1MOLGP0KCJit3RBdq
-         94+w==
-X-Gm-Message-State: AOJu0YxWxfSYG7xssRCBvDwvKKT/tpK+wngX57bMHet5/CqcNYX3RR+J
-	s4q2kQbr76LvfDfkL4gDmI0FSOZwhEQ8iWiGDo/FqVKsbJPq2mc69M71Kg==
-X-Gm-Gg: ASbGnctQsbfynnWMfq4QRvKkRULfXW6MwTVo+HECVWd0sXDVrrCFXMZMNM335EZlGC4
-	AP7CRgdUHlt4/WFL+H0zD6GxjZrQc1S0ujMzQhHwv27eYWdia5zygXMpDMdzobjip2ioQMEZprX
-	n9UCyc5RLy6kHHu7ueZwkA1c2b8FzETfRdGoOHuuJ6SKvzIblN1jTRnrP38Qq1cywBS9T5Z7i9L
-	qwdPkxTu46GxtakxaiXKJk32xGE7sDUjaBa2gBuPlSuN+AtFHaVnM2u/hM8X/WKErX5Y+ZJgfUa
-	/rwKAs0IKc5HruvvuODwGdFIcdWf1YMDND6Zqr8BBHJ+ODQ=
-X-Google-Smtp-Source: AGHT+IEDwksIHuY/iTnMSoQBD9qMyj19+JkpGQknJa6yzP53ceis5QXHPLT2AA8agnhQk5MGnT/luQ==
-X-Received: by 2002:a17:903:2f8c:b0:21f:b483:2ad5 with SMTP id d9443c01a7336-22104038460mr36360485ad.20.1739609910865;
-        Sat, 15 Feb 2025 00:58:30 -0800 (PST)
-Received: from LAPTOP-HLGLEP2K.domain.name ([223.181.111.163])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545cf76sm40084755ad.131.2025.02.15.00.58.29
+        d=1e100.net; s=20230601; t=1739720420; x=1740325220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZtNwStOppjM4/e8u6hy72aYwVIViHgzz5BiaHnWzXhw=;
+        b=X04FiNJC2L3u73eDbUiu7hw6P4zGg9dvo6Zww7Bw6Q3pGsjoCKxAcRFVa3zHEMWGdz
+         27zDa+j8eU6DH6LrSyeYffNkfoMCIKb45VLnOojNBlPFtYvu2Qb6fXdkPm4Ap9RiueEm
+         ZVsVpSTNaWZrTd6kdeUHXi7yH1FFGbVuiEuvmKqfL3r+jPyW4VtOYH4HJgCYxCHa16L5
+         iEEnYnSTbRxHlW2tZNjl5AsCl2uWECXqjEzpSEQiAm0Nf8sYwT9FN/IvF79qgqysYHcL
+         oLOt/rfK36BBDtBzE3K02QgRHEGPzd1QRE0G/n/foJ3zfkQ0t088/UhepNs80k1WhHLt
+         +3XQ==
+X-Gm-Message-State: AOJu0YyY9t5+P3IWclLjDGsPNHbrznr4MjN8mYn9QUn5ZyEW8idMwzO0
+	v8ziGH+rH3F3gzJZ8HlQaTNSqASxVGvOHTzFVW7FOh3BC3nwZxKYOnu6sH59Bc7e/ekrcVzHkdM
+	j2k4=
+X-Gm-Gg: ASbGncu5ZFRYQYEGkQqPlGpcBMccKVmDTAxw5Esm+Y2bGCnpiS7hupXzidIgSeTU45q
+	IViNf1idcrEOPF27WoDX8kA35IiBQgeA7azA+fHdVn+Ylwi7uqaniPAIvLqM2Zgw4y4asbA4OFs
+	DqrE90pVDkUbah1SLjiY2CVeAiukNwYs6AVy/vtWznG8lOtdmboKvjXdlEpqbJTlK9/kyasQoua
+	TbGixZUWI1rjutcDYYf432VcTYrB8T//b/ytYvAIneu0dU1epAdLCCIFViEDFtUc5sgm7T30m38
+	FKLDtZr4H9n0x+wWfi4k
+X-Google-Smtp-Source: AGHT+IFb2bc1jCptEc3HT/NhXAOkE5lUlEBFzskYOh90KrSgW4C5FjqoNnmDpRrD5Gxd45LZhzSZBg==
+X-Received: by 2002:a17:906:57cc:b0:abb:9a1e:47cb with SMTP id a640c23a62f3a-abb9a1e4826mr90815766b.55.1739720420211;
+        Sun, 16 Feb 2025 07:40:20 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba5339db5bsm718666566b.150.2025.02.16.07.40.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Feb 2025 00:58:30 -0800 (PST)
-From: Viswanath <viswanathiyyappan@gmail.com>
-To: kernel-janitors@vger.kernel.org
-Cc: Viswanath <viswanathiyyappan@gmail.com>
-Subject: [PATCH 2/2] i2c: Fix grammatical errors in i2c_msg documentation
-Date: Sat, 15 Feb 2025 08:58:17 +0000
-Message-ID: <20250215085817.2455-2-viswanathiyyappan@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250215085817.2455-1-viswanathiyyappan@gmail.com>
+        Sun, 16 Feb 2025 07:40:19 -0800 (PST)
+Date: Sun, 16 Feb 2025 18:40:15 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Viswanath <viswanathiyyappan@gmail.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: Update i2c_msg documentation to clarify write
+Message-ID: <e973c9a6-8d4d-411f-9d05-f5e8abc23575@stanley.mountain>
 References: <20250215085817.2455-1-viswanathiyyappan@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -71,43 +69,26 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250215085817.2455-1-viswanathiyyappan@gmail.com>
 
-Fix the following grammar mistakes:
-Makes only sense in -> Makes sense only in
-may have changed those standard protocol behaviors ->
-may alter the expected behavior
-No functional changes.
+On Sat, Feb 15, 2025 at 08:58:16AM +0000, Viswanath wrote:
+> Update I2C_M_RD Documentation to clarify that not setting it
+> signals a i2c_write
 
-Signed-off-by: Viswanath <viswanathiyyappan@gmail.com>
----
- include/uapi/linux/i2c.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Period on the end of the sentence.
 
-diff --git a/include/uapi/linux/i2c.h b/include/uapi/linux/i2c.h
-index fa8a35881ce1..28f327366d16 100644
---- a/include/uapi/linux/i2c.h
-+++ b/include/uapi/linux/i2c.h
-@@ -25,8 +25,8 @@
-  *   not set, the action is taken to be write data (from slave to master)
-  *
-  *   Optional:
-- *   %I2C_M_DMA_SAFE: the buffer of this message is DMA safe. Makes only sense
-- *     in kernelspace, because userspace buffers are copied anyway
-+ *   %I2C_M_DMA_SAFE: the buffer of this message is DMA safe. Makes sense only
-+ *	in kernelspace, because userspace buffers are copied anyway
-  *
-  *   Only if I2C_FUNC_10BIT_ADDR is set:
-  *   %I2C_M_TEN: this is a 10 bit chip address
-@@ -67,7 +67,7 @@
-  * @i2c_msg transaction segment, beginning with a (repeated) START.
-  *
-  * Alternatively, when the adapter supports %I2C_FUNC_PROTOCOL_MANGLING then
-- * passing certain @flags may have changed those standard protocol behaviors.
-+ * passing certain @flags may alter the expected behavior.
-  * Those flags are only for use with broken/nonconforming slaves, and with
-  * adapters which are known to support the specific mangling options they need.
-  */
--- 
-2.34.1
+> 
+> Signed-off-by: Viswanath <viswanathiyyappan@gmail.com>
+
+Hi, there isn't a kernel-janitors tree.  This has to be sent to:
+
+$ ./scripts/get_maintainer.pl -f include/uapi/linux/i2c.h
+Wolfram Sang <wsa+renesas@sang-engineering.com> (maintainer:I2C SUBSYSTEM)
+linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM)
+linux-kernel@vger.kernel.org (open list)
+
+regards,
+dan carpenter
 
