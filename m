@@ -1,68 +1,67 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B554D19047A
-	for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 15:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76416154C05
+	for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 20:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739720589; cv=none; b=kEHueb0gpoEY0qSbrraRXQgtiQGiuw2Bkp1HDYUmM+JdXqL9u/u+K2ektWCdGMyVhc7fiGT2GXXA5sFRWNmUMvEHvzXahuzDftcWUjCBuaNT2F51bSPskEwRRo1GFGMaIlz4CtW2g32pRdnb7scO4pzjliZMj9wpK20hXAT/vyg=
+	t=1739739129; cv=none; b=SAYhZUthrVK29TyQZi/CuInjyFxwQThGzHtiae/ySvbPS3/kIliPc0CgeaBo3MT+TXe7bx9UPvQq2EN15XwVkYmzknikRtGRmRTrriBKE9X8dS4Ih0HJUaMvSS99sF7cDXY6tq1R4RM3+S/Yk6i/e19vd/ItX1gyglnZZSowOXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739720589; c=relaxed/simple;
-	bh=kd9a7kr48+YGq10c6UpGntuWh+WznF1BkaOnLQM2584=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRxCrtHoI3Tx5HEoc8fzJG7SfI+2R/MEz9fQv5pgWaumOm058zm7FrolXWrN4/BEGU5Pyvvu0oElJbVkyI8V8oRa8V7eAIk/gzn/+qgMISf5siVYhwxG/w2L1N0kDDcHjwMuqsQUWPzaJ2c9fzfxNyEVbylLRYb5yZ86+gT5D4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=De1oBBD8; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1739739129; c=relaxed/simple;
+	bh=NtGbrjrmznu2NSRW7WDGTNFMx2/QQx6TquE+W2bapjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=B2zDOfTXOOs4OoKahASW+9dq6BqjZ6lml/5A1AhbJpzZkTjaDIzi+KZPz9LvWIaMYyo9in9+3jy1Jynysl2+/GZa4YGPLAjKJO7VfeLsEYYH0RYOqIx5GWas8UhXNgYU3kOYo/OJgR2geBLg+PWgWnffkS14GV+8VRMCAaxPSkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nI7mxsWz; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="De1oBBD8"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5de63846e56so6882653a12.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 07:43:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nI7mxsWz"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5ded46f323fso4519794a12.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 12:52:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739720586; x=1740325386; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kd9a7kr48+YGq10c6UpGntuWh+WznF1BkaOnLQM2584=;
-        b=De1oBBD8I1DDMB5+ACSJgwBHVHG23i3Tmj5AxWv8lW2ZcIKjkwaBu7uG9sGwSMd4CF
-         U1P7804AhNONu3A9d6fG0ARdpNc9shcG11Ej3ff8qfpMOzrWxncerRRZvIMIEj4ovILs
-         6KiOTb+tVG1rk/up35AvUdJi6JX6+7HdE148RknWJAaR63fU5JBdVeWeAkIUhZQ+5IFJ
-         snbs8u95e81JR1zGnVWMs3vAeh4OLg+vqbWqsPnbfis/3ZAxI3Usc4yW5A8CLTja4W6s
-         Ora0y1zBlgp33dz/xWsNxZmrTuH3EHvtRad+V5zPdsuItN6HpiGrslQBKwi5fcQGNLk+
-         xmtQ==
+        d=linaro.org; s=google; t=1739739125; x=1740343925; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uwcNQNpK2HNYBvKAgWSMSPgBYr8v+ovYWYrUWEbnsrM=;
+        b=nI7mxsWzPGhiccb5Cd/0VY8Datq0NhxNpLZ3//qyI+JIreWmibNQZQaBNbEkOB8sM7
+         Jx6PBRZXAoRKL/rNHBZmnQBZMlXeruF66ANQu02F7LNSVzCzV4lz8MbTISordRSUYMgq
+         6QhNiccQ5lwm9l1X2vZr2rnlw4w8gCa9GGkl02ok85PzubceBNQzwl1xoJHrZFkHJQJw
+         +d5Bfx9T1/yctv0ohQnjXWbedCGJF/SJTexbdwoR0me5RsZk5SlgKmWw8GAFLns0l5uM
+         iMijDDys465KmiUOhU4DaAth6wLnnGH20emi9sK/Xz+VhYDWbyUmclEJRNxPgRzXCAnI
+         Uzlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739720586; x=1740325386;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kd9a7kr48+YGq10c6UpGntuWh+WznF1BkaOnLQM2584=;
-        b=TIylGRKJx1tdAnpQ1XAH/NdIh07xPlCEsF2NGgbCakZJXX1bzRa2rLDUm8aaTgKTwx
-         JMISSCkQ7XKPOlg/F9bgPeCZqulWKNu5r22lQvOkgoStPv/211vYkEtvIKm3QFWNjm6T
-         OXppVSx6IAeawlJoSYlU0Lgdb7fb1GylV97xt7kzIjR7k1wMRm9uaByrzwxmjLb0R21C
-         aTi/G3zgSEHzUqGnkXVTsMBNmJVLokJPG9wXELyGZA0S5l390vQZzRbBjGTf5mOdNUGN
-         6N8Go7+Q50qNw1gMWxHTm7VuAeoEBVn7HPR8pdhdh14zd4SQROSZmS2I4HGrSj7c+cK3
-         MdZQ==
-X-Gm-Message-State: AOJu0YxewxJ5Ffil9NAJkXyNH1+vSHKbwDTQQQpWOZR6QJfrnmjNxNJ8
-	WtrE8BcKYWvna8y4gtNeonvW424tiDO34BpLmlsL14n7B1SzgMBVrRhCbP8knkY=
-X-Gm-Gg: ASbGncuBxKdivUw/j7sGYxsDevG32RDtNmMTZVkIZdjtoiKjXC4i0FUNzDgYEUTdQY8
-	8TWSKRX4vitFcxkAPdddssfUhY/sZRwzame1rG/F1uK232jZX40pHnXAPpcmMfj/Ocpk8c+OwZw
-	PPt0u62X1aN2RleaitCv57mcmUqiVkv4i6KTacXsxDzVLtiO9FFXCqZ+0KvyG3n+psZYVJF0urj
-	MAPhi2dKOSux4WkyY4aZz8VHON+PIHwfyQl9zQEOKWCDiZhLt7XOdeD5hVn0aGJEyFMMR+5BFYF
-	2IlVkcjQfWt+GiUPh2ET
-X-Google-Smtp-Source: AGHT+IGlAMhZ2qZ5UIZdIUZsQCwjPenASR9HF9JuCl/PKwhQPtxHIKuVnHf/CEEIx9BtMsp1i+LbzQ==
-X-Received: by 2002:a05:6402:4609:b0:5dc:d913:f87f with SMTP id 4fb4d7f45d1cf-5e036048681mr5652168a12.4.1739720585968;
-        Sun, 16 Feb 2025 07:43:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739739125; x=1740343925;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uwcNQNpK2HNYBvKAgWSMSPgBYr8v+ovYWYrUWEbnsrM=;
+        b=jMJMDa6MJgBi/3C2kOyktMFxzN2vBw85F74eRNHC7GoKcKxE41P/in0FRYgGCz+HQ3
+         9xPlAFCSAJkUKHWFppBZq8pJSCYZU+QglPaV/GjMsdwwxZnxEprRGoLm+B5sBi+T8c9P
+         pE/eK7fh6O4SCVjTM08Aqywdfxq7x5Lzfm2YoHQZnT8V0g7+l/E4ok/jPexyI9CtqMLR
+         qG0WQaHdMAfKrWOCOuPDa9kdHEIcz+ZnZYGP953eGVui7TleMHH8TpVsIaVESYxwVLal
+         gNiNNMrI09XmyrNOzZGd9nkAeCWDKbB1Xi/eVUysEprSaVnmMv6d3P6z3muLD9dUQluy
+         f50A==
+X-Forwarded-Encrypted: i=1; AJvYcCV5Q3NxnMxIcmpXmo++w9xpm+HQ8b48RMWanqFvTZptC0mf2It6wsJOfmAHgZZTcoGHeR7Oh7OAMTMXx1lvbTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRrmrHK5QbcLrXhkg3bvrKSadHYDxRwNZIVD+NQYpBA9AK2SeZ
+	AnqrXFomAu1tYbQfeNDn25foc7arT/5UMqCPb7Id3Pm8XLLLP7Ys07ZIFWz/fb8=
+X-Gm-Gg: ASbGnctfPkfbW0BIXQ/jaSw5D8lPED+4jfdCAvXZAxfnYhp2fcBZhW+YaXW0AgFRa00
+	dF/QXxpteiTAOsZOYcNfGQ26peg5SwKCcFXwHmQjkTyB+4pPVo4ulft6idY6q/JPudBV8YTQfeB
+	chmLNttYpT2mEAmC2DuCwsgAP2mZ00oj9qVeOfKNhlqs3pa6IwA05jWhir5OBvuXMCFUKBkcZuf
+	0qEiFnFP9xGUekSI5wUOlnBucfzzIboCv9OGEnQPrPH7CeQujhuNxMraAwITyzJPWLDtX8voBBw
+	bndfz00IXNrKPIyXZhtb
+X-Google-Smtp-Source: AGHT+IHgwYPj3iqat9vbldQSlkyDo1u1ykz7UQvzC8QUVDQndEh7Kshy5EEfZbLcYAkxQywWbeqVOA==
+X-Received: by 2002:a17:907:1b0b:b0:ab7:ee47:9938 with SMTP id a640c23a62f3a-abb70dd9024mr765292366b.39.1739739124793;
+        Sun, 16 Feb 2025 12:52:04 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece2721d9sm6120617a12.56.2025.02.16.07.43.04
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abb9b81aacdsm75610966b.104.2025.02.16.12.52.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 07:43:05 -0800 (PST)
-Date: Sun, 16 Feb 2025 18:43:01 +0300
+        Sun, 16 Feb 2025 12:52:04 -0800 (PST)
+Date: Sun, 16 Feb 2025 23:52:00 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Viswanath <viswanathiyyappan@gmail.com>
-Cc: kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: Fix grammatical errors in i2c_msg documentation
-Message-ID: <5034bf7a-e415-478d-912f-5442bdb28143@stanley.mountain>
-References: <20250215085817.2455-1-viswanathiyyappan@gmail.com>
- <20250215085817.2455-2-viswanathiyyappan@gmail.com>
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/ntfs3: Fix a couple integer overflows on 32bit systems
+Message-ID: <3e34cf5a-e70c-4096-b516-661c2a836001@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,21 +70,39 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250215085817.2455-2-viswanathiyyappan@gmail.com>
+X-Mailer: git-send-email haha only kidding
 
-On Sat, Feb 15, 2025 at 08:58:17AM +0000, Viswanath wrote:
-> Fix the following grammar mistakes:
-> Makes only sense in -> Makes sense only in
-> may have changed those standard protocol behaviors ->
-> may alter the expected behavior
+On 32bit systems the "off + sizeof(struct NTFS_DE)" addition can
+have an integer wrapping issue.  Fix it by using size_add().
 
-I like changing "have changed those" to "alter the" but I don't think
-changing "standard" to "expected" is correct.
+Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/ntfs3/index.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> No functional changes.
-
-No need to say this because it's obvious.
-
-regards,
-dan carpenter
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index 7eb9fae22f8d..78d20e4baa2c 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -618,7 +618,7 @@ static bool index_hdr_check(const struct INDEX_HDR *hdr, u32 bytes)
+ 	u32 off = le32_to_cpu(hdr->de_off);
+ 
+ 	if (!IS_ALIGNED(off, 8) || tot > bytes || end > tot ||
+-	    off + sizeof(struct NTFS_DE) > end) {
++	    size_add(off, sizeof(struct NTFS_DE)) > end) {
+ 		/* incorrect index buffer. */
+ 		return false;
+ 	}
+@@ -736,7 +736,7 @@ static struct NTFS_DE *hdr_find_e(const struct ntfs_index *indx,
+ 	if (end > total)
+ 		return NULL;
+ 
+-	if (off + sizeof(struct NTFS_DE) > end)
++	if (size_add(off, sizeof(struct NTFS_DE)) > end)
+ 		return NULL;
+ 
+ 	e = Add2Ptr(hdr, off);
+-- 
+2.47.2
 
