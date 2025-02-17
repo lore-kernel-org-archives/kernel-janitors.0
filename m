@@ -1,69 +1,72 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D7F199921
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 07:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D05D192D68
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 08:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739777618; cv=none; b=ZKYbGFPkz06ESM9zj469F/Z40YAv2QlatmDb81a6Dq4P+Tt7rH+IrJ0d1oc5Gayv88MWxMfQYUYIpKe5PpgEB9hDeZUCejoi+dwtGATj8l+edn+lY3dkbiXcfWHPKeM0meUuOm/hHIRPF3YMY/RLBGR8H5go0ulA6YsPokk8aFw=
+	t=1739779688; cv=none; b=Z+7M2rIaqurcYUnGoH1lU1CqaoP2Brgsrb9OFla1KRdvtq2b3QkP/jFB76+QTTsoSISZCAGWXFZWY/1NOHLJm8O/TCMSiI9A+J57BOYQ+DaVhrUTY2LNLC0K7z2V9bLCHylMQrzjUgWfoA11EypBWXs6qHLa5OkMH+T+eXuDoS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739777618; c=relaxed/simple;
-	bh=zcM0c0V1GS3TZJGed3LcwXT+koAZctVBP1JWt1wC7bs=;
+	s=arc-20240116; t=1739779688; c=relaxed/simple;
+	bh=2ikSgfGf1exOnsFu88z+5kxpMPTxBzklFFNfq0MBXfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=G6u48Dc656R6matR9VISJbdaBooraRuO6z1+J9hc4TAmF6brdxBH3VpXSfBxaywTx8GO5sEGVX6wKbFnqFXYTi0uO9SdSj0+q2VpBtuZNOTh9ZvlUdQ2M6s5HR47yqlCpga364SSb0+XpWc0/e29ITQBFO4SeXRVuIwIznaeWg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DAIbeN7y; arc=none smtp.client-ip=209.85.218.44
+	 Content-Disposition; b=Nq407V6vLRsfRQfOqDbbW78OpKXlWPpSO1/5MA4eIanQkckcGghPqR3+3UkoiwsIX2z71FNp5neA7PObhG17f6asae9KQ5I+kqXQCGNYONUKgxuA5sziXoQ+NHDSFuKd9Ep5yyNwb10/TfagWnf21v1p+k3+4sOjcgtyzYH+dis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fcb+1zgw; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DAIbeN7y"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abb8d63b447so106301366b.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 23:33:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fcb+1zgw"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5ded368fcd9so5034900a12.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 00:08:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739777615; x=1740382415; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739779684; x=1740384484; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=d4LcgUMXB/Wz2DoEL+bbrP94KZi1QyVcM8jrNwIU/TI=;
-        b=DAIbeN7yi3FYa7O7TITI1BtUZEFdMsSqQR7IT8S3AuisRtxSU6zkig4Rh9LsplObPi
-         fsJ8qNAltGfR0KqX0P56PX8aBqBh17uhah8GcPd3JSuLVvbRnBaG/CMsHFTUYThZAtGj
-         kWEjb0FTaqcUBd8nEHSEck3dP8ZpMU+gPrEoFinQWt5Vnx8mn6f+1rB5O+Zv9g7jLDlD
-         Y+EzHiOqBU2eQ+SMl8S7jBAUyBK6rfPAcC96G90bvh+Yy/Yy0aWc8yqTOwVMIMEP9yjx
-         neKrFb3d5+nGNBG2CReMURnD0w2BPWmVG00dDbc5ZG0MVm96ur2NcmAUWXSny6QCQs4v
-         9WPA==
+        bh=ziFzV0Y9ZdSXReLGJPFeArO5FCiM55hkxr4sd1Sn0do=;
+        b=fcb+1zgwh2mXX1AMSgeEnNFcHK5Mf2w1i1Zi0KaTTmM6YjVrBKmIqVF1Dc2OFwd0w4
+         OkysB3CFui06AqR3Sk+//iriDKsbGWA5+75okgn7Pd/y6gB1a9c65uhxsQf9QVEjQj+p
+         pYLpvTcmk8+JfzbiK74fRLqJ+doBD4LlaNhbaHaFIia4IlSWlkGDVoiIzp9BcKj2lMnB
+         mPxFgDXsCMZyRh8pPEGOt6Nsz+oKrLcQJ6DIWl9twHMwuUVTsb90XG4GE0IRFXiGjFbd
+         GcBaWkPvfwK2bOl4XTIzLeDeWBe5ijlYbDz/5ajO58lVXKFXPdg+Vdh9BcuDKk3Og786
+         gJEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739777615; x=1740382415;
+        d=1e100.net; s=20230601; t=1739779684; x=1740384484;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d4LcgUMXB/Wz2DoEL+bbrP94KZi1QyVcM8jrNwIU/TI=;
-        b=Me1zALdCSpoHdtYIP8O0gJ6yo5UaGqE9clghyIUaJf2UOb8ZtUMGFV7d6XvDfZZIVz
-         /osl/hKYRbf5479M6xbeG9dm1GF2cuNs5RLIOcR/84n9Mwocb2bl13EK7JHgcbA/A7UQ
-         i2l1pPan77zQCHWEMTfo9Tnt3gVBxH1fAJsOQD6nFQ/YAEGPNoQk+CUEdzdOFPt2ywGZ
-         LAYGgexB/iRcER2cXk/+w7/fLwCHKTyNpJAo35+O9fkqKCXjHkeBaQ3/cafL1g9QToD4
-         KfW3W366SXJiT/OBKk7sxfCDH5KUe/RtDZgpgFU8r6vfP4LbQf98eWdSd7gWO95Fv/c5
-         bMsA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7/TMW7HpwerLOREJ9xNMD7bcauP394Ic26ucKrrfCznNkSU3bHnLvpfrruQlrIRSLa9uUfQJahqid1o15m1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhLlvTTONJEEA9j9N688t9vMEIAePiQTsON3+kghDaJ9dn53JD
-	x4fu0DcpqaUGYXlx1l/DiBKU7MvYn0/x1+L+L+JRgKpZTwd6OGYGZr3kzOHmE78=
-X-Gm-Gg: ASbGnctPEIGPoZIuLatybGSoiZJ6n9GOnlh3Ek3Xnufc2lpqEGCdS+RaKP41oCBO3hy
-	vS/D4YW8ybG6Qgf8Q1esrUdcTcT1dg+XqJOYl/CBvHbUriVipXq7rwZXg7YRevChm4nlzm1YdTz
-	camq553r+4ImQ/OZtzZZKCofgWkRB1WF9G6QDSN912VB7yzAB3su03ZL2fgcPUflo2q6q5bIrsZ
-	ZCWYB5nU8lUoIO/3Cx5sRxcFkStHjJtTc2EW6nFw0MvJF2yObffiBWtomPeKM4juhsyrwEaHtx5
-	uEpM11ZTe4HZyC4O7MZA
-X-Google-Smtp-Source: AGHT+IF7SQDPhS34NSoyAyl0oz3XF6hgO/dLFCbg4PL3cGhqcXdyTG7Koy72X0FHVW9/sFD79dcHNA==
-X-Received: by 2002:a17:907:9802:b0:ab7:bcc0:9067 with SMTP id a640c23a62f3a-abb70dd72f8mr973363966b.40.1739777615128;
-        Sun, 16 Feb 2025 23:33:35 -0800 (PST)
+        bh=ziFzV0Y9ZdSXReLGJPFeArO5FCiM55hkxr4sd1Sn0do=;
+        b=lzVoONjrDYJM3gvpbLHo2+LHw5qVaVWOD1VZRkgbo5l98Kk4ce20oKxViczwAm0esI
+         1eRjCw/iky90sd2bIjQKuJXXJKKWydv4R0yOvln7xrfhKGd3M/drIRO+C9RUNSsc/dWm
+         ieNxzR1c+/pDWPllSol2vTJvqdz6ZusUgEZMQch7nY+CUbvaxIgJwxQTj55NCLloIBlz
+         ZgjSkV+Ozd3YrLD8q+WslL76n8LvrbgZVhA1KlAiE1HNGOBrzWHZ/V0s+Ez0F/Y2EILy
+         MVRC4Q6fLwtlgzOlGg2k9AcjSBf5yvekyIlObefh3x0MxzgsIl4T41Lrbl1kkJJ5TmlH
+         2zsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUM3qTdAzhLie2RjSyQrBobzDdGQngu26hUebilHJBnnb9StCDLMhXFKlFtRE0Q4uzMxQCEF1FG5aE03Ob1EvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDKhuttdlnekSb8++xqUcbLUeUPDIvv5VL+Jcpax4k0mizF8YL
+	4v67fBXHEj8x34otnQmuUfg5mY6qdHSXm8JjJV165GWMyHIYoSSkEGOV4urfDuE=
+X-Gm-Gg: ASbGncs2UHW4O4lcES+E0VrHIpdwoAj14hf31GMAD1qSeHcD3PyY5ukkWfUQCuYV1z6
+	99v+FQjESZZ+Nu7A/2gDBCaEUJaST7hbddgQzxuoMpLMc13+S6vMcbBxNCB2fVCrl02R6F22K14
+	FoFdYYkHWU+2m1fkzFG+WBO9O1VKKW1LRVHtpsc5icIz5VpAdBrsDe9LjHBxSXrNordtHBxt31Q
+	Bq6KGXqDvhqM/JdfpGDkz15wUrsA5anwUJLY8bdN2lencfPGscZypEkoCRRXp94vWztoZt42o5V
+	QfMKCV8zJJk28fyLHwjj
+X-Google-Smtp-Source: AGHT+IFBXYQnvhbaTs+R1+H9kU9Himyc237EX2vSSmBY82Bm6sjx/eueayJNYvLdiOzneYVu+KD0DQ==
+X-Received: by 2002:a05:6402:348d:b0:5dc:882f:74b7 with SMTP id 4fb4d7f45d1cf-5e0361747fbmr10164192a12.30.1739779684400;
+        Mon, 17 Feb 2025 00:08:04 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abba9657249sm41281166b.38.2025.02.16.23.33.34
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece287cebsm6843141a12.74.2025.02.17.00.08.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 23:33:34 -0800 (PST)
-Date: Mon, 17 Feb 2025 10:33:31 +0300
+        Mon, 17 Feb 2025 00:08:04 -0800 (PST)
+Date: Mon, 17 Feb 2025 11:08:00 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Olga Kornievskaia <okorniev@redhat.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>, Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] nfsd: Fix a WARN_ONCE() message
-Message-ID: <39691ae0-124e-48ea-8a1a-1a7f26423236@stanley.mountain>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Stefan Schmidt <stefan.schmidt@linaro.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] media: iris: fix error code in iris_load_fw_to_memory()
+Message-ID: <a1d9e082-a4d5-4440-996f-7ee7e850de60@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,28 +77,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The first parameter of WARN_ONCE() is supposed to be the condition but
-it's missing here.  This WARN_ONCE() will only print the "xcl_name".
+Return -ENOMEM if memremap() fails.  Don't return success.
 
-Fixes: 61b490d48618 ("nfsd: fix management of listener transports")
+Fixes: d19b163356b8 ("media: iris: implement video firmware load/unload")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/nfsd/nfsctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/qcom/iris/iris_firmware.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 2cd540b26965..ac265d6fde35 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -2027,7 +2027,7 @@ int nfsd_nl_listener_set_doit(struct sk_buff *skb, struct genl_info *info)
- 		xprt = svc_find_listener(serv, xcl_name, net, sa);
- 		if (xprt) {
- 			if (delete)
--				WARN_ONCE("Transport type=%s already exists\n",
-+				WARN_ONCE(1, "Transport type=%s already exists\n",
- 					  xcl_name);
- 			svc_xprt_put(xprt);
- 			continue;
+diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/media/platform/qcom/iris/iris_firmware.c
+index 7c493b4a75db..f1b5cd56db32 100644
+--- a/drivers/media/platform/qcom/iris/iris_firmware.c
++++ b/drivers/media/platform/qcom/iris/iris_firmware.c
+@@ -53,8 +53,10 @@ static int iris_load_fw_to_memory(struct iris_core *core, const char *fw_name)
+ 	}
+ 
+ 	mem_virt = memremap(mem_phys, res_size, MEMREMAP_WC);
+-	if (!mem_virt)
++	if (!mem_virt) {
++		ret = -ENOMEM;
+ 		goto err_release_fw;
++	}
+ 
+ 	ret = qcom_mdt_load(dev, firmware, fw_name,
+ 			    pas_id, mem_virt, mem_phys, res_size, NULL);
 -- 
 2.47.2
 
