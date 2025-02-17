@@ -1,72 +1,75 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1585717B425
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 07:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49E31AA1D9
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 07:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739777488; cv=none; b=ks5v8ahOAdiKm7o/3jgSf95FrAm4gACh9df+KACs1B7HR4pcr2q932NGBkrd2kpPQIeA0C3JsjEBmOJyFL4q2uHDQ0gGB5nxHQlGTXRuSyeYWO7dHYVW2foNeBzmKO4fAvnSkvMncOV+8JPvkgiRDeqTaw9T0fphBWEyOiDzde0=
+	t=1739777538; cv=none; b=Drvda0hrOvPdkDw5r0BMmJqrS+Sem9q3F/67mFmxMEQtLQAqSUuzvu6ilPyZQO9dtinmtmuvZaj257b9ooZHyRGUw7eG1SrofPRX74A32VKTWHtGViVviufux31P1YJX4tPUr/67xE0Mrf7xpRKd7Ctf9vu3v4cbOSZfDBVC+1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739777488; c=relaxed/simple;
-	bh=5LfAzuERriSmpQuSJeDzYhRoc6w7MgsIIf2LhY1/C1I=;
+	s=arc-20240116; t=1739777538; c=relaxed/simple;
+	bh=D1P6HRkRSuWuGIyFa3FIxyItrNqE/YBTIxKXZkYDpZs=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Oi8bzjrhDLXpYbmfMLoJ6gDjjaSWtOVA/eQFneeN274dlS/3R8phSDsfg4rhtgwkazq1x/m2TU/qJQTMcbbP2iqMPQ1NTWi4V7oaGh74H+quD/o0wfZmJ3RqqrtSkPPYqqr3MC8tqaMs9jGfdZHwNxFQstGyjuHw2JXFWtaaDa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YCjhtPLJ; arc=none smtp.client-ip=209.85.218.42
+	 Content-Disposition; b=erlegfQMno/ySjc4iiRAYMzSZu5xPH8XFHZLhC0FcFkGhH+AmwNh/gErJ2S8LaR7XioS+wWFS9u+NlbxTg1nb+O70LOyrDGpet9seLKqY+mVBRaYeCqpUShQlHCKEJXoNVp6s08dE5qHX80LHbt4QoyDIP+x7gQeym/zMu7n7cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m9KU0cwi; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCjhtPLJ"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaedd529ba1so475364266b.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 23:31:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m9KU0cwi"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abb7f539c35so301334766b.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 23:32:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739777485; x=1740382285; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739777535; x=1740382335; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=i3N1F9lKBugdIVSZf0JnXa3f5AJ+PHptBaxL337Q39w=;
-        b=YCjhtPLJ8c3VCtW0f/7lU7w575uDXecEJoK9/RYmdF9yX3i7UWH43dJFHLCYjDRqt3
-         XfKJq9o59ldaSNBogGV4zRa+c7ZnzzOwdD1DwZvTfeGdwPvUNK8xbbZCwDGU9lrJzJio
-         +hokEWi5YihR8Y7VH4n/lHv3zvX45DYFDK1KiDjm59lHjkDkApXJKLA970PiNCSm3LY9
-         2y/g/9bbstz4yWgRhZgIz49fodywQ4T5nxuPDmH+0jP1r6NMyOEz3WAEMb0B7HRVu3wG
-         gZ51Z9Us9SguU82050e99U/iT2CCKC/B28VBiQ4BXcn8nW9jyIMfQScVXnuUHeryHmFs
-         p63g==
+        bh=hO2J1j2m5X6qQF5wOtrAqeimkscPDnsoO2uRIRbK0t0=;
+        b=m9KU0cwiicIeYiizaiCHFyu2MmbjQPk2nn5VQp0Mdq20mf2kJ+F+9Lfe2cKph/Vo+R
+         z33sb3x3NZVYSPD0d3Ab85S/88jJn1P+rHuRSSe+u2RO3sQ0//PPS3N/hu/9SajP6+6g
+         MRrwf66gM31TmiU5RWwv7Z1GAU08Xjc4yXIwQtnYBO5IiCy3XDBlQbvR17I1UQL1ZHKn
+         H/K24yVfO+v2RdkdcKC3MUJKfvbslQhc2pjwT6p0g1Itj9VVv2PLx9RRzc3PeMYa9E9+
+         5fnGcrGldDNKaZbJfgmFrLP2ENhoxluMuHwk00katDPwEqUKZMlEMvQd706geiJZsNLB
+         y1HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739777485; x=1740382285;
+        d=1e100.net; s=20230601; t=1739777535; x=1740382335;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i3N1F9lKBugdIVSZf0JnXa3f5AJ+PHptBaxL337Q39w=;
-        b=QPqytYUzX1mDuHvT6dd42eJq4/7JMw87H1fAS3+I53AlINBX+XmRPsJ7H+4zmTYygD
-         3k90stqWPaeznWgMsh3u7lybb2vW7QQCiOeO2sBUW+KTQFJ3/0bsHVuwdQzotu+9VUzN
-         P+TPgrxHydMw8ReM42jcRgWSWj/GqQDR0HGzDeRkahwLUTIipgBAPJDWHCL3COoKmYQ2
-         QbstqpyF0CPr6/KVwQdXFH/Pk7d4k2eE7gRnlH3By+iusFtaoH7qxEQFF4BCCVhZHUMl
-         RoO7p4+RzQX8pdmrc+TzfPRr6AmELVEEkX9xABZbUkzR6ejXawirKtnTgTQevJXunHlc
-         q9Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQcZOXhY/UWL2c1p6doPC/rL1N2aqizGWUVci9PAg9P7bS/rG8QeEQTlEo3SK+8ZF2nLgCIDKPQ70VW/kyYdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywGBY7g45+Xzi21huWf02mrKAtK9Q7YPvlz/VUDprtbm7wOS1F
-	ohYrXmm8O+YvdpeYtb5uuZShfORGVPPiSOkFsO2a8AJ+aUGafyXuAeRYFaTSLN4=
-X-Gm-Gg: ASbGncvWQ2qwqxFKmGxGmvjTnAez7s70PmHOrWMsQ7w8IppQyAm4982PcrmajSxgdt4
-	KFmxtgnHE2yFioXpqluSAR8XmrOQAi13kBMUfJaZ2qlXL6o7CW4n4KWlA3komQQHKJd+KYNRXi7
-	ny20aIkkwK1S27GbFN/AB0cD1yJJKSW0H8vpPrkDhhOhsfYfM/iUA0H+7Py+LjOS16ytHnyFkh3
-	KsEOhD9VlnMMe/wWH6DxmJ1XR4JZHB/3qTvtu6jN2B4wRd6sC4ukOFI7K9KabLHwhlE0GacsklD
-	sKmL9RCh80YcJbnBLzwF
-X-Google-Smtp-Source: AGHT+IHnHjxlo58ZzOxdeP7u7lyqoH4uJ6/5PcUK9k1FokcbI7i8gKzpjfAHODR2Y8cP+hgufV5HRA==
-X-Received: by 2002:a05:6402:3589:b0:5dc:9589:9f64 with SMTP id 4fb4d7f45d1cf-5e03602f759mr19286982a12.13.1739777485351;
-        Sun, 16 Feb 2025 23:31:25 -0800 (PST)
+        bh=hO2J1j2m5X6qQF5wOtrAqeimkscPDnsoO2uRIRbK0t0=;
+        b=vfU5w06w3jPBgUTNV5QaSCISVh/x3WmjYjnNqChp4kcTbwmxkGzzBFyQOeXfo7qFZH
+         Ys49zqPQnh4MZacVoZgG2KA0aGRV0VdBSUWHcBlyBPoUi3clyFMzVmrYyjbN2BVbcL2N
+         827Hs6VRTX0lKeVcsk7+gZMwfql1tp9zvysrcuwwlUGGvGYXSipG6dwLJlBoYKqMSlzA
+         dAWhHqvPUJvYPmEGWGJrD43mCTNyiLd4YcX+4Q3fEHClKwqQaswevx1/DZi1sSFDUbnx
+         vKkQeGHeG14X5rbIYKvgs49hBeNvSv1n54AYv20EFTTm08HxuevJHZS8K7/ql0OUemdv
+         Ol+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUQpzJ3CpJx3UiStlo3k40KHoRYyboxd+L8TDTUsWwbMc4N3gaIB1H6sd4seChwOoRC8yQv7gWTdav4+zcbCEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJui/+mr69p5f/MsZ6pWYXSLGFsk71EFLnVBk1DzXM5Z6QAkHv
+	w0EpcMi1r6zKxLLcu+SqEyLgxiNue9TQiV0TESuzsm9whp435hTY8RZPokKwvaw=
+X-Gm-Gg: ASbGnctyrR8C+NzIi40s3psmueX4f7m/XQRbm262PsGIjNbtZzebmlC9+Z9X9gvweyv
+	RTIFyXfVTV7BafJuu2RcGDaN/Lco6vPh9CsSJiRy6venHVpQmksTKq0riKN71yfYgO6L1sczqv5
+	UfYZO3PGLV8xk5dzOaYolVDqzeQDLDc2MTH5FDFUmijcAOtlmqO62EUXBubwqRUJObK3ZXXotEQ
+	bjG53fZwv79S8wqCXuObB7Hz6NlEKRpoivJZzKGTrItbHlCFS98QTbbg+9++AzTSfe+gDYH7Ya5
+	bu2DmTxGXjiy8sz6VD15
+X-Google-Smtp-Source: AGHT+IEXChx9P0XiKZoNkZiSog2lL7kqWeWWaA+fbxmQW7+pyPDaxfCj2UqyTeAJOchNetAsSy3KVQ==
+X-Received: by 2002:a17:907:c1f:b0:ab6:8bc1:9b5a with SMTP id a640c23a62f3a-abb70da2ad5mr751573366b.41.1739777534951;
+        Sun, 16 Feb 2025 23:32:14 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba532322c4sm830991766b.34.2025.02.16.23.31.24
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba910e8b11sm556516266b.21.2025.02.16.23.32.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 23:31:24 -0800 (PST)
-Date: Mon, 17 Feb 2025 10:31:21 +0300
+        Sun, 16 Feb 2025 23:32:14 -0800 (PST)
+Date: Mon, 17 Feb 2025 10:32:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zhi Wang <zhiw@nvidia.com>
-Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+To: Rob Clark <robdclark@chromium.org>
+Cc: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Timur Tabi <ttabi@nvidia.com>, Dave Airlie <airlied@redhat.com>,
-	Ben Skeggs <bskeggs@nvidia.com>, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/nouveau: Fix error pointer dereference in
- r535_gsp_msgq_recv()
-Message-ID: <b7052ac0-98e4-433b-ad58-f563bf51858c@stanley.mountain>
+Subject: [PATCH] drm/msm/gem: Fix error code msm_parse_deps()
+Message-ID: <75a78610-281b-458e-b703-57c7e7de573c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,27 +80,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If "rpc" is an error pointer then return directly.  Otherwise it leads
-to an error pointer dereference.
+The SUBMIT_ERROR() macro turns the error code negative.  This extra '-'
+operation turns it back to positive EINVAL again.  The error code is
+passed to ERR_PTR() and since positive values are not an IS_ERR() it
+eventually will lead to an oops.  Delete the '-'.
 
-Fixes: 50f290053d79 ("drm/nouveau: support handling the return of large GSP message")
+Fixes: 866e43b945bf ("drm/msm: UAPI error reporting")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/msm/msm_gem_submit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-index 2075cad63805..db2602e88006 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-@@ -348,6 +348,7 @@ r535_gsp_msgq_recv(struct nvkm_gsp *gsp, u32 gsp_rpc_len, int *retries)
- 	if (IS_ERR(buf)) {
- 		kvfree(info.gsp_rpc_buf);
- 		info.gsp_rpc_buf = NULL;
-+		return buf;
- 	}
+diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm_gem_submit.c
+index dee470403036..3e9aa2cc38ef 100644
+--- a/drivers/gpu/drm/msm/msm_gem_submit.c
++++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+@@ -509,7 +509,7 @@ static struct drm_syncobj **msm_parse_deps(struct msm_gem_submit *submit,
+ 		}
  
- 	if (expected <= max_rpc_size)
+ 		if (syncobj_desc.flags & ~MSM_SUBMIT_SYNCOBJ_FLAGS) {
+-			ret = -SUBMIT_ERROR(EINVAL, submit, "invalid syncobj flags: %x", syncobj_desc.flags);
++			ret = SUBMIT_ERROR(EINVAL, submit, "invalid syncobj flags: %x", syncobj_desc.flags);
+ 			break;
+ 		}
+ 
 -- 
 2.47.2
 
