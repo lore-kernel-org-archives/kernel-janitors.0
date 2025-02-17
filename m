@@ -1,67 +1,72 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37DE1A238D
-	for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 20:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1585717B425
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 07:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739739139; cv=none; b=qBis8gz+XaqFdPbBNXbaJws51y7BMW57IGfSPHfwFGeHjbtyGNPxEgdfLgJD0iTtRYRYNnND2cPLz/G7Ep9E5LRySWqUmfZxz7RTVr7sYMqTMcsWF8j1h4L6EQhpuL+E3xUpV2cQc21xuxd+OMPJMkLE7CWb9HS9IwndrjW6lmk=
+	t=1739777488; cv=none; b=ks5v8ahOAdiKm7o/3jgSf95FrAm4gACh9df+KACs1B7HR4pcr2q932NGBkrd2kpPQIeA0C3JsjEBmOJyFL4q2uHDQ0gGB5nxHQlGTXRuSyeYWO7dHYVW2foNeBzmKO4fAvnSkvMncOV+8JPvkgiRDeqTaw9T0fphBWEyOiDzde0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739739139; c=relaxed/simple;
-	bh=aXs0vWAmuS0U8j3KJYwst5oPNJcMtkOfy6vx1+vPaD8=;
+	s=arc-20240116; t=1739777488; c=relaxed/simple;
+	bh=5LfAzuERriSmpQuSJeDzYhRoc6w7MgsIIf2LhY1/C1I=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UxAFcRQqC8DFxTodviBLTHTQs7OgTam/KQs6DK8Cj7vlh/D5xcOX39UFvbQZ6LQHH2K2exPv2A22X6NRjwhV4/js+gaz1eGYZBOEJx7CV092o4QFpiXfesgLYmKgwAQpbGH4tc5tbOi6Bwq7oujHDPeT+NUCJihkLOKB0torKLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qTo1zww6; arc=none smtp.client-ip=209.85.208.50
+	 Content-Disposition; b=Oi8bzjrhDLXpYbmfMLoJ6gDjjaSWtOVA/eQFneeN274dlS/3R8phSDsfg4rhtgwkazq1x/m2TU/qJQTMcbbP2iqMPQ1NTWi4V7oaGh74H+quD/o0wfZmJ3RqqrtSkPPYqqr3MC8tqaMs9jGfdZHwNxFQstGyjuHw2JXFWtaaDa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YCjhtPLJ; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qTo1zww6"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dea50ee572so5427466a12.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 12:52:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCjhtPLJ"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaedd529ba1so475364266b.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 16 Feb 2025 23:31:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739739136; x=1740343936; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1739777485; x=1740382285; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XkyPg/crIfWv0Cn6JEGTdKe/XqmIlkAQmtesjInAumU=;
-        b=qTo1zww6FSZbLTcAJMRuG3KZoIcSmR5WH6W9vordHWTFHoWehPOLkQ6/jxP+0GW0hH
-         HPaAPtW1dQNIkEZ2gy2FB0Ued6oj+lV61JRAhp1lDxL3xgRpybLt9h54PwoJsukbZG6a
-         RR2lYJcMG7kBsaUQmVKKWuqaeGWwAbKnenX750NMB2jVfOCvOaRcWnFszYzQ/vI9tsRG
-         XlQPrLASnGRD9ATkG0H8zgOil/E9BovNA/w5MdDlwD6TtryJwE15m4nFy2rEyh23bXLa
-         7wolUuyaFLlFiwn7R2z5u6AWR8+M1MeQk7Ll1L8rzzrOhxAunt39iK9i8XJnafcoGFfm
-         VJRA==
+        bh=i3N1F9lKBugdIVSZf0JnXa3f5AJ+PHptBaxL337Q39w=;
+        b=YCjhtPLJ8c3VCtW0f/7lU7w575uDXecEJoK9/RYmdF9yX3i7UWH43dJFHLCYjDRqt3
+         XfKJq9o59ldaSNBogGV4zRa+c7ZnzzOwdD1DwZvTfeGdwPvUNK8xbbZCwDGU9lrJzJio
+         +hokEWi5YihR8Y7VH4n/lHv3zvX45DYFDK1KiDjm59lHjkDkApXJKLA970PiNCSm3LY9
+         2y/g/9bbstz4yWgRhZgIz49fodywQ4T5nxuPDmH+0jP1r6NMyOEz3WAEMb0B7HRVu3wG
+         gZ51Z9Us9SguU82050e99U/iT2CCKC/B28VBiQ4BXcn8nW9jyIMfQScVXnuUHeryHmFs
+         p63g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739739136; x=1740343936;
+        d=1e100.net; s=20230601; t=1739777485; x=1740382285;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XkyPg/crIfWv0Cn6JEGTdKe/XqmIlkAQmtesjInAumU=;
-        b=cYVQ4yPrTsHUZ0YD74cK2I2t6q0ApP36Wy2pYas2fSXxgFh3KjEs99Qea8r2LEvUwC
-         fzS29YEyKtu/+p9tB7r5e367tXHOpB54HKXfjBDGW1bfO8uPhWM/uhQPuOtpQSC+Irg0
-         VGcX979ljP03UO5ZH6oY8qAd2PmjWjok3Vhwfc5995RCWJQoY/AhBXqR08xNJxHFvBVn
-         leBhb5M9OjknrR4eLtyTLM76Gv/VhQ4CQbg7TB9V0/Qr7ICmS91+ijDVhYxzWMW2yFEL
-         RK96M2eEuiZ1J/7CfRCaVb4638j/Ago9scxh8GOJE2JL3buLb4mmebsrhglbU6AITBRT
-         hwUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCplVyQcjZDfl3BEcA6cflnWgmgtGnJgTtkOkrD56n66KC5kMrmRhkayIpgPpgghUU4uXSz8QmAdG67mn0+Ps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuSrIdJO86+qNG304ybV+XI0MuCt2n9Xw4HUEaMi3Oe0EIdLb0
-	9g2BNk9ZpFdyFatyw/21wZTV+qaDZU+J44jQZpxKtx0nTiVxk+CJtHCS/c1jZfw=
-X-Gm-Gg: ASbGncvUh3EfQ8BqmzYwjFYXcyzYYdxeeakwaUGiSLpbGkwzTJcqLr7M5EaGfr761Cf
-	X0gBVlE+8DkoB5p2uowhOhzotS3ExaaJh1BLJITj4DJqOfWu3jRRs/3MuMT55Mda0UOC0HYuB0x
-	ZtFdFnhW8eLXmzl1pRC/WYzVQQe42yuXSrcAYY7VnlSCeNshlwMYCt0DROtYZXdPegVa8c1LpO4
-	LuCN4a0Fm/Pv4Bf9uynJ+nDS3JOQodci0FP4t4p0KwPb0PCCmlSi3hqdYO17mA/qc/w98MDrsJQ
-	06uujjeoIX5ubljFnlU9
-X-Google-Smtp-Source: AGHT+IEMU++D2lnTLgi14JzxAcN1KpQU2iWjj9Zk4bircM7Q9WHx1vcmQHv39BJ+Q3JC4O7xeGXx3w==
-X-Received: by 2002:a05:6402:42d2:b0:5e0:2996:72ff with SMTP id 4fb4d7f45d1cf-5e0360bdf15mr7424447a12.19.1739739136154;
-        Sun, 16 Feb 2025 12:52:16 -0800 (PST)
+        bh=i3N1F9lKBugdIVSZf0JnXa3f5AJ+PHptBaxL337Q39w=;
+        b=QPqytYUzX1mDuHvT6dd42eJq4/7JMw87H1fAS3+I53AlINBX+XmRPsJ7H+4zmTYygD
+         3k90stqWPaeznWgMsh3u7lybb2vW7QQCiOeO2sBUW+KTQFJ3/0bsHVuwdQzotu+9VUzN
+         P+TPgrxHydMw8ReM42jcRgWSWj/GqQDR0HGzDeRkahwLUTIipgBAPJDWHCL3COoKmYQ2
+         QbstqpyF0CPr6/KVwQdXFH/Pk7d4k2eE7gRnlH3By+iusFtaoH7qxEQFF4BCCVhZHUMl
+         RoO7p4+RzQX8pdmrc+TzfPRr6AmELVEEkX9xABZbUkzR6ejXawirKtnTgTQevJXunHlc
+         q9Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQcZOXhY/UWL2c1p6doPC/rL1N2aqizGWUVci9PAg9P7bS/rG8QeEQTlEo3SK+8ZF2nLgCIDKPQ70VW/kyYdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywGBY7g45+Xzi21huWf02mrKAtK9Q7YPvlz/VUDprtbm7wOS1F
+	ohYrXmm8O+YvdpeYtb5uuZShfORGVPPiSOkFsO2a8AJ+aUGafyXuAeRYFaTSLN4=
+X-Gm-Gg: ASbGncvWQ2qwqxFKmGxGmvjTnAez7s70PmHOrWMsQ7w8IppQyAm4982PcrmajSxgdt4
+	KFmxtgnHE2yFioXpqluSAR8XmrOQAi13kBMUfJaZ2qlXL6o7CW4n4KWlA3komQQHKJd+KYNRXi7
+	ny20aIkkwK1S27GbFN/AB0cD1yJJKSW0H8vpPrkDhhOhsfYfM/iUA0H+7Py+LjOS16ytHnyFkh3
+	KsEOhD9VlnMMe/wWH6DxmJ1XR4JZHB/3qTvtu6jN2B4wRd6sC4ukOFI7K9KabLHwhlE0GacsklD
+	sKmL9RCh80YcJbnBLzwF
+X-Google-Smtp-Source: AGHT+IHnHjxlo58ZzOxdeP7u7lyqoH4uJ6/5PcUK9k1FokcbI7i8gKzpjfAHODR2Y8cP+hgufV5HRA==
+X-Received: by 2002:a05:6402:3589:b0:5dc:9589:9f64 with SMTP id 4fb4d7f45d1cf-5e03602f759mr19286982a12.13.1739777485351;
+        Sun, 16 Feb 2025 23:31:25 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece1b4e99sm6273670a12.16.2025.02.16.12.52.14
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aba532322c4sm830991766b.34.2025.02.16.23.31.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 12:52:15 -0800 (PST)
-Date: Sun, 16 Feb 2025 23:52:10 +0300
+        Sun, 16 Feb 2025 23:31:24 -0800 (PST)
+Date: Mon, 17 Feb 2025 10:31:21 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+To: Zhi Wang <zhiw@nvidia.com>
+Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Timur Tabi <ttabi@nvidia.com>, Dave Airlie <airlied@redhat.com>,
+	Ben Skeggs <bskeggs@nvidia.com>, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] fs/ntfs3: Prevent integer overflow in hdr_first_de()
-Message-ID: <b78ff7ff-f260-4499-beaa-169f725abff9@stanley.mountain>
+Subject: [PATCH next] drm/nouveau: Fix error pointer dereference in
+ r535_gsp_msgq_recv()
+Message-ID: <b7052ac0-98e4-433b-ad58-f563bf51858c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -72,30 +77,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "de_off" and "used" variables come from the disk so they both need to
-check.  The problem is that on 32bit systems if they're both greater than
-UINT_MAX - 16 then the check does work as intended because of an integer
-overflow.
+If "rpc" is an error pointer then return directly.  Otherwise it leads
+to an error pointer dereference.
 
-Fixes: 60ce8dfde035 ("fs/ntfs3: Fix wrong if in hdr_first_de")
+Fixes: 50f290053d79 ("drm/nouveau: support handling the return of large GSP message")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/ntfs3/ntfs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/ntfs3/ntfs.h b/fs/ntfs3/ntfs.h
-index 241f2ffdd920..44c99d35a59c 100644
---- a/fs/ntfs3/ntfs.h
-+++ b/fs/ntfs3/ntfs.h
-@@ -717,7 +717,7 @@ static inline struct NTFS_DE *hdr_first_de(const struct INDEX_HDR *hdr)
- 	struct NTFS_DE *e;
- 	u16 esize;
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
+index 2075cad63805..db2602e88006 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
+@@ -348,6 +348,7 @@ r535_gsp_msgq_recv(struct nvkm_gsp *gsp, u32 gsp_rpc_len, int *retries)
+ 	if (IS_ERR(buf)) {
+ 		kvfree(info.gsp_rpc_buf);
+ 		info.gsp_rpc_buf = NULL;
++		return buf;
+ 	}
  
--	if (de_off >= used || de_off + sizeof(struct NTFS_DE) > used )
-+	if (de_off >= used || size_add(de_off, sizeof(struct NTFS_DE)) > used)
- 		return NULL;
- 
- 	e = Add2Ptr(hdr, de_off);
+ 	if (expected <= max_rpc_size)
 -- 
 2.47.2
 
