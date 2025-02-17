@@ -1,167 +1,116 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2076.outbound.protection.outlook.com [40.107.94.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD89121B199;
-	Mon, 17 Feb 2025 14:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739804210; cv=fail; b=Ot6qSCsuWrVitLDYBJlC+jkP4xcuU8f6M0BCr7vl85t/rH6bZ1fHGRSMp7xjx3k4/RtmFFSkkXiKndKML73TMy2i8gRo/ghuTk0QsTOTV7KO3ot1VZDbOZBPX+IAZZnpg9d9C4ZVRzIhAgp0IKaS8X5MPlNvFoQuSHDVyyjbqfw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739804210; c=relaxed/simple;
-	bh=c1zwqTnLoJ1BLYWwH3KW/52VzIpbxDQFzweV7YBWgsw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=axA/Dd5wI8amDM8vtOvgPP3VkJrCk6oXiF7tlc41Hp+k986QRztntxNtckKC4ki6HfoVt6CgjgdX6cTJ8n/icqzHNoNiuHTcBIe20LI2vD4k6KqYjzdujxcrC8nTWU1kP/57kuc2wJbZsthUECegbmRvPgSXJ9+PujChDKwQdBs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jMkZrKJm; arc=fail smtp.client-ip=40.107.94.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259992BAF9
+	for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 15:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739806307; cv=none; b=ul4R2n7T+SH4RVjagwfUp7eDSqK+I8tnXP7+SDDlSLyjblX62p41B9DTahcJyMTeBNeHW5bFtFRhhAmcq0k4gqOHjc4q/yX4AiBu6qlJCwN3FXVyMfFXpaZWgKntMKIUaCfNAzohyGfg9qZvTmqQOYZrkYZSt03JcLBm80s0014=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739806307; c=relaxed/simple;
+	bh=i4cD0V8+nfCJgVSaBV4TSFCD+HZ8bi6YcjwUGYdl3Qk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lnEl9hg+d+Z/3+Qb+jvLNa13S7M8/kjI0pjngK0TSXqCW8SXcVFfLBWm3bHmcpZwgLqKOfZzXqoPV/LkRBTWhcimAOvFoz0HEv5g7XcER/6WcFAcZENgoBtFdFNBpkYNiIcOScbbeuFzCRb9fT0nTC02QZ59X3rU1jQOsOj+uII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=auzi/rSO; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jMkZrKJm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w1EYxkn99bUAZcZZLFzSU4pG5GQZhCnPxifoHUPMaMCcOrIKUqYDg5QERqB7fJH0UKohUQN+FqfuAclj2Jze+6Q4aqwDu24larULX7HaKXFw1L6tSX745OywdC787RO2udv0WEGkUg4CcNNCI+PIdk0F/bNgla5Ac0CA7Nopo+ApFuG+jJmm8gbR6IIpocaIXFgaUU+j/CvqHpoi0x4Rp/V26MHU2rkekTJ9iBNJqj8Qd1r3y+PBqUTe98hR+9aw0Yv5ERMPmvfFUbk9haXaNyz5+JoTeLGwAIy499cCnJ7z7E52qUcI3raftCcEqtpI5M97U+Eo3MU5y/TiWX9WHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jArcG+k6KqGxZRuMIsTAGVcRrZ1lMSpjmDJ5UIhphTM=;
- b=khQPDigi/zu+q0nslf5V98NjOI/c21ulW/gkiFJL5g2EIs/qhGn1gb/bSWuwiXgnhHr2lleUw3noJAtMfFTarX3bbHKEnHXbpLSC8UnpABCLlJCbKOlvHc+l/CcDNcfpFTkha7rElVfkZn85qcYX92xaCfKRHdpv4xu6l2Ft6tp4n89uJgQNNQGZ3vrkTjNynrarV3MP2flhp66EYs0EWB0Spy73oMUFLXcyqFQY+1UfjfL3ieKVb6iYJ6LNh0u2Tu9U5WkZ53yJLZot5+99y0RrTaQejbRhuj5ntOzODmaUe4iZBnC+7Xc78S7thcyJhK8Oa7tWeHP9NIyP/xkMWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jArcG+k6KqGxZRuMIsTAGVcRrZ1lMSpjmDJ5UIhphTM=;
- b=jMkZrKJmvU8Fw2/Sx/0/R2NZdTdojU1dumylafpodlPv1MHMTo8ZbAnf2+2BUF8X2f7WweqcMmYebVl8VMYS/1wjljTOx+lN3IzJCLKLvxp0vSzX+8j27H+Fbh8wFT7IoJ8wq85TxaGX8bLvob9UA2+g1y/60xKLdGwS25E2Y1szosEsEARt/i3kcskima6yf0DXjoRQF3AP3ZcEZ5JPjg7+ifD0vKfOrAep0pciXYC3dx5cx9vco4c9eUXzc3w8bsCGqH9OUsYS3YQN9ZF00gDXJB4KC+Bb6dzdPJvU1RU5no+nps7g9dQjSSFYwboxKk2sqnRYOpuFp4FTtJ3yfg==
-Received: from CH2PR07CA0003.namprd07.prod.outlook.com (2603:10b6:610:20::16)
- by SA0PR12MB4495.namprd12.prod.outlook.com (2603:10b6:806:70::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Mon, 17 Feb
- 2025 14:56:44 +0000
-Received: from CH3PEPF00000009.namprd04.prod.outlook.com
- (2603:10b6:610:20:cafe::73) by CH2PR07CA0003.outlook.office365.com
- (2603:10b6:610:20::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.16 via Frontend Transport; Mon,
- 17 Feb 2025 14:56:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CH3PEPF00000009.mail.protection.outlook.com (10.167.244.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Mon, 17 Feb 2025 14:56:44 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 17 Feb
- 2025 06:56:38 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 17 Feb 2025 06:56:37 -0800
-Received: from localhost (10.127.8.10) by mail.nvidia.com (10.126.190.180)
- with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Mon, 17
- Feb 2025 06:56:34 -0800
-Date: Mon, 17 Feb 2025 16:56:33 +0200
-From: Zhi Wang <zhiw@nvidia.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, "David
- Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Timur Tabi
-	<ttabi@nvidia.com>, Dave Airlie <airlied@redhat.com>, Ben Skeggs
-	<bskeggs@nvidia.com>, <dri-devel@lists.freedesktop.org>,
-	<nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH next] drm/nouveau: Fix error pointer dereference in
- r535_gsp_msgq_recv()
-Message-ID: <20250217165633.00004d13@nvidia.com>
-In-Reply-To: <b7052ac0-98e4-433b-ad58-f563bf51858c@stanley.mountain>
-References: <b7052ac0-98e4-433b-ad58-f563bf51858c@stanley.mountain>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-w64-mingw32)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="auzi/rSO"
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2aa17010cbcso3599829fac.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 07:31:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739806303; x=1740411103; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hLy6tCidb31UtJbepHKM6tCxizCfttBLfmcun9Z57EU=;
+        b=auzi/rSOT7lrk01fYLwijlvQnQLpts2nKb7Vj6exFCNMH/k9dd8/oOLdD11bEUZzH2
+         V22jAQPIaafhqfK5LeS7KaueOtzUM5q4qZ9/L4VK1DDr04fhOdLjaVQp82YZyLvJls5H
+         GyB4CAsa0BtB77j6X9tz+AfvNWQWrjBDpbdXL3ai/UucYJLv/XR5iXaiklmxqhtZp+ey
+         jB+RejG7V35CglT4BEVcRuHQJZ3mEJZdrGKSJsu9Tgg9H8Y61VJ1m4dlm8srbwEU+SGm
+         RswIQEGQNyZ5q+iXS2uZhJRpKxESsW9VRv+sjy1Jh4TJ6DekerSX6e0R2CSl3r66zj/U
+         hAyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739806303; x=1740411103;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hLy6tCidb31UtJbepHKM6tCxizCfttBLfmcun9Z57EU=;
+        b=t6Jl5ANja92nNe7KOvZQblHcwV2Tblp39ieQRGSZgvhgfFAc9hE2O4k5d6c/MjSiDN
+         REL9fVrMIuaDzBCTuTOiZLVoXSA7aeXR5igpEMqhY03OuBryvVAhV+xse88R3RadIrEP
+         XHvZinXWE1QbBWWafs6lH/qepzPPuHY1fHoi91Nunroyli+UqBMr+0lWjDP89TbM8VPa
+         /GaeZW7+10iXfsQB5DU+kSJGIdSodGx64tLzC4mkmEsGBQgpDzN6GFZznLCwoLvINUya
+         Q7YtBN1viWUpzB37zEkr7QAJMuHLXWpEIlKTynJzMkFJ8j8BtQz8qtSVulHZHFV7DT3L
+         RKIA==
+X-Gm-Message-State: AOJu0YzvRuBj9rgn9u9q9mY21mdt74KkzBTqzZ/KrPZdWU52rnNp5ux6
+	gxb6PiTiAH6mpioZ36NiiDTy01cdIGVKhh3Do1SMAwdfkUlm9rvCj8gQJvKnmFb0ut5x2QwYsok
+	X
+X-Gm-Gg: ASbGnctHdJbEzkazxxTN66PDVS5fYxiah8/m5mVAQrumtkOSg/VfX6+Dz7+Za/3uSgu
+	zgn6y1RmN5N2OH1Gw47jEd0+Zsm0V8hP1Kr4mvFvUJMno+zPfDwbsFYDDXZZSkgeOBEP69x+tc3
+	TlrYHl8nW0wneLujgZvQ9dPdeZj3qgksakBARyyvVXELvOgIf224AiF3sVcPTyk6HG6xhx+4iLo
+	CmHGGYJ+2EJWm+1LdB6uFAbU2Ssb7k+sOWYTba/1T9rXVF6EEvJKHWhTJ7a45KuW48gLcS5M3Xv
+	jUxKe4MdkECa8OU6PZai+A8wPYZDiFxKU4c2+1UiKrYnpZP56tHf
+X-Google-Smtp-Source: AGHT+IGNFQrTrIxdPZwMWpXCPOJVGNSy4LIlCpINievqrtoFIHd9q6fEfiQqQaF94LwUcwd34eFBIQ==
+X-Received: by 2002:a05:6870:912b:b0:296:a67c:d239 with SMTP id 586e51a60fabf-2bc99abc0ffmr5808371fac.12.1739806303211;
+        Mon, 17 Feb 2025 07:31:43 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b9548205d6sm4061410fac.4.2025.02.17.07.31.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 07:31:41 -0800 (PST)
+Message-ID: <7f0689d4-e940-4889-a29f-4fcbe8a32676@baylibre.com>
+Date: Mon, 17 Feb 2025 09:31:39 -0600
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: adjust the file entry in SPI OFFLOAD
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Mark Brown <broonie@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, Nuno Sa
+ <nuno.sa@analog.com>, linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20250217092851.17619-1-lukas.bulwahn@redhat.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250217092851.17619-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000009:EE_|SA0PR12MB4495:EE_
-X-MS-Office365-Filtering-Correlation-Id: 14a90c20-a251-48ab-763e-08dd4f634b80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CtaytH1l302ifTzWhKoixVRzhZ1cUOVwMQs20wdhRVfUVyw5Hc6K1nZNzCpu?=
- =?us-ascii?Q?TO+5jC78UbZydE4PHZI2Pn8/ysW72+wZmW3P2lbPVixz5BRzSwGwhfjZot8a?=
- =?us-ascii?Q?ouBgklUGvaB0jyyRxqIYc3enwpY0k3wQ7V2fyP1KVRVbw9N0HkVWIKzNskvf?=
- =?us-ascii?Q?9Mm8Wz0CTu+VciSuGJXFzaRFUO+GODi4N5mTW/hMzAdMcb66J9ImAw0XB1Tn?=
- =?us-ascii?Q?Y1dm/5H/Q/UDxi0EYHQjcr+Mv3KwVmyL4N2NzUxHCiczPafSmHGGP2VhXC1X?=
- =?us-ascii?Q?Kt6BL74SZTg8Ygrmf0daFpFbhM8Hiac5n4Yt7JijfcSsUyVZwdleLwl6hhN4?=
- =?us-ascii?Q?5qDKThXEQnwbfD9R9bW+ab7cGEEDRowTmq5KzyCbNCFOfDdZ0oVxnHNfmtyM?=
- =?us-ascii?Q?vBiYbNyJkuxHxujBNK6tN4otSUMrnOd7Q8w9YnjQTPyQkQg4kkqJiZmMg3fb?=
- =?us-ascii?Q?5CYAjuhF3u9v+QVEJwGcc7fI0yK2AsTLrEMVJb841AUDrOCSj/Woxm71x/oa?=
- =?us-ascii?Q?MB/3BEvwL0qokiz7qKsNJdv+tl2rRPB5lPVqMXBiL56xFp36puFgSH6jKqYe?=
- =?us-ascii?Q?IK1LLqNLBNJl0z0mjKe3Hin5t4t7dVmPdq03INSpZ/XJAduQsoEMueAj8cux?=
- =?us-ascii?Q?CoiEIxJ1NcQQvIf1qXT3rWoL5/cUvWVUlNSUJGuvePDCV0K/yIQ+2pwghj6p?=
- =?us-ascii?Q?GEtIPNYGtwhLFt3pOe9oXyaZ36mdWcYuflkfqurcxTgsJk4i9OwT9iVg1fDy?=
- =?us-ascii?Q?z6XFYkF5AnjULv+aFS1iUn2IAitFKqspiGnTwIVUWH6OWTx+OZCGs9lO/G14?=
- =?us-ascii?Q?OfnRVSfQwSHBehARi+DpgsGgL1DWx2YYQ1rtB1fFJkjcnquQXGErNOkrWfO2?=
- =?us-ascii?Q?9uOsZ6z2RcBzatz1Me2I6VDoBVd486EEuQcdABQ26cqGX+o5L+t4pKG4rsLH?=
- =?us-ascii?Q?G9C5oaYkJB94yvNU4D4fYy7C4C3/x9WlzR0kySJlIo7VbniWYdjTvXa72ZcK?=
- =?us-ascii?Q?JzYIJADxw2XYY+XnS8SOdiYQhb8efYV9dO5DhBy7MrP6v0mez8ITO3BROGlG?=
- =?us-ascii?Q?7DL7RKBNr9GKXQygbuYAkxUyB7RCsr3wVCdTdpJb/0UcqBoFpIP6h5tavsim?=
- =?us-ascii?Q?9RnZDD/C4o1O4CNRlK4tgBf9+QX9nWeNdQ9UkYElrhM4NGGUflGaw2IeMVAs?=
- =?us-ascii?Q?YnqmEFYFfkCeEAp7Khc4BRdwu6uNbJJUfERzj3soY60NL/tnIt+jAEYyNq4n?=
- =?us-ascii?Q?f3inlbEP2nNDsdxwRtehYqwYedzlyci4QizS5g0+nR1YIaXoXDQwtKn7YsRT?=
- =?us-ascii?Q?UsXViBxh5e9RHsqEJ3tB7UyUzsWW4+lNFl8OiO7dMznz/mrRHpyegCq7meSX?=
- =?us-ascii?Q?7zrm+ACz+HnVrYWfEQIyqP3hXZKPHfS6wAaCeaToFS0XBBi2KTRerE8SdcIN?=
- =?us-ascii?Q?ZL/j2FshcYCf7HyuUMkhK0eihBApCAP+pWDybDI+NhkpA10qhEGeA9EOzbv8?=
- =?us-ascii?Q?2bBnWaaQiE72jVw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Feb 2025 14:56:44.1982
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 14a90c20-a251-48ab-763e-08dd4f634b80
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000009.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4495
 
-On Mon, 17 Feb 2025 10:31:21 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-
-Thanks for catching this!
-
-Acked-by: Zhi Wang <zhiw@nvidia.com>
-
-> If "rpc" is an error pointer then return directly.  Otherwise it leads
-> to an error pointer dereference.
+On 2/17/25 3:28 AM, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > 
-> Fixes: 50f290053d79 ("drm/nouveau: support handling the return of large GSP message")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Commit 8e02d1886988 ("spi: add basic support for SPI offloading") adds a
+> new MAINTAINERS section referring to the non-existent file
+> include/linux/spi/spi-offload.h rather than referring to the files added
+> with this commit in the directory include/linux/spi/offload/.
+> 
+> Adjust the file reference to the intended directory.
+> 
+> Fixes: 8e02d1886988 ("spi: add basic support for SPI offloading")
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c | 1 +
->  1 file changed, 1 insertion(+)
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-> index 2075cad63805..db2602e88006 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c
-> @@ -348,6 +348,7 @@ r535_gsp_msgq_recv(struct nvkm_gsp *gsp, u32 gsp_rpc_len, int *retries)
->  	if (IS_ERR(buf)) {
->  		kvfree(info.gsp_rpc_buf);
->  		info.gsp_rpc_buf = NULL;
-> +		return buf;
->  	}
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a54d8510ea6e..53cf3cbf33c9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22402,7 +22402,7 @@ SPI OFFLOAD
+>  R:	David Lechner <dlechner@baylibre.com>
+>  F:	drivers/spi/spi-offload-trigger-pwm.c
+>  F:	drivers/spi/spi-offload.c
+> -F:	include/linux/spi/spi-offload.h
+> +F:	include/linux/spi/offload/
+>  K:	spi_offload
 >  
->  	if (expected <= max_rpc_size)
+>  SPI SUBSYSTEM
+
+Thanks for fixing that.
+
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
