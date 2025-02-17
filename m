@@ -1,116 +1,107 @@
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259992BAF9
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 15:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82EB22838F;
+	Mon, 17 Feb 2025 17:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739806307; cv=none; b=ul4R2n7T+SH4RVjagwfUp7eDSqK+I8tnXP7+SDDlSLyjblX62p41B9DTahcJyMTeBNeHW5bFtFRhhAmcq0k4gqOHjc4q/yX4AiBu6qlJCwN3FXVyMfFXpaZWgKntMKIUaCfNAzohyGfg9qZvTmqQOYZrkYZSt03JcLBm80s0014=
+	t=1739812206; cv=none; b=VKEOboV7yy9qtRpLps6oZuu49BnJu4ctJN01P+O0ezd87G9faMF59FYXF/XQxfP4EX912ocFk1lHaZD5K3Rz8uJQF/jwo4twEvahOVqSqzI7JsysHV2w3u20NNEsGk4l4viGtvqYLFDCutKhUQYngLtbS1qhESll9AaXr5WlaMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739806307; c=relaxed/simple;
-	bh=i4cD0V8+nfCJgVSaBV4TSFCD+HZ8bi6YcjwUGYdl3Qk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lnEl9hg+d+Z/3+Qb+jvLNa13S7M8/kjI0pjngK0TSXqCW8SXcVFfLBWm3bHmcpZwgLqKOfZzXqoPV/LkRBTWhcimAOvFoz0HEv5g7XcER/6WcFAcZENgoBtFdFNBpkYNiIcOScbbeuFzCRb9fT0nTC02QZ59X3rU1jQOsOj+uII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=auzi/rSO; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1739812206; c=relaxed/simple;
+	bh=8i74CWaRxLv7NxCrbdApGSKYAo9DKf1lUGbNfyZyegE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GZL7OAd1Qr9QohjQj4mpGJ3FargpyPyQmZecKhNgeCmx5fiOW3qnsmoRaQ8Bsh8CwneQDl6nrzRoqyQIevi8wiZi7D5JNS4G5Jt5+S1wYO1MYfvn7tdzECkDDUOYbiMhb6vTgrM08QE8yn8XWAR3g+ibnQG1ku0QI/eIrgvtyJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9WsG2Mm; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="auzi/rSO"
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2aa17010cbcso3599829fac.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 07:31:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9WsG2Mm"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4396a4d5e3bso30733345e9.3;
+        Mon, 17 Feb 2025 09:10:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739806303; x=1740411103; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hLy6tCidb31UtJbepHKM6tCxizCfttBLfmcun9Z57EU=;
-        b=auzi/rSOT7lrk01fYLwijlvQnQLpts2nKb7Vj6exFCNMH/k9dd8/oOLdD11bEUZzH2
-         V22jAQPIaafhqfK5LeS7KaueOtzUM5q4qZ9/L4VK1DDr04fhOdLjaVQp82YZyLvJls5H
-         GyB4CAsa0BtB77j6X9tz+AfvNWQWrjBDpbdXL3ai/UucYJLv/XR5iXaiklmxqhtZp+ey
-         jB+RejG7V35CglT4BEVcRuHQJZ3mEJZdrGKSJsu9Tgg9H8Y61VJ1m4dlm8srbwEU+SGm
-         RswIQEGQNyZ5q+iXS2uZhJRpKxESsW9VRv+sjy1Jh4TJ6DekerSX6e0R2CSl3r66zj/U
-         hAyg==
+        d=gmail.com; s=20230601; t=1739812203; x=1740417003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=st4+9SuOYSXi/BL8qizMsgfbdxZRW4vboBrM8JIcEZM=;
+        b=E9WsG2Mmmzuk6kr1Bhlq98HWOlfLGQFQ6GrNxWzIVk7VUfENbXRrDjedkcTr5qb5KK
+         dHTfo5W2v3igcS1R2Ll90zvdlyMkqH632f2zyPXhlf1dZri9cIwUgc+xJbtcNCm2eKDA
+         z0IhceMwUFmN+nA/7dUOUSshEB6w1egpAWnFP04/pn7h5BrsCGfqZ7cydINdXXZA46Lr
+         u9rFj4S4x0hK3vgNTTcCZ3vBMokAOMwOksT++Hfo4ACt5aZygrgQ7121LQMbkAGtWRuj
+         p8/4Ml8bwZFq2Jma2XpCJGKZTUmzG3FyfuY4LO2JPU7EayQ27vFlCy/xvgqlZhifJ66R
+         XiKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739806303; x=1740411103;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hLy6tCidb31UtJbepHKM6tCxizCfttBLfmcun9Z57EU=;
-        b=t6Jl5ANja92nNe7KOvZQblHcwV2Tblp39ieQRGSZgvhgfFAc9hE2O4k5d6c/MjSiDN
-         REL9fVrMIuaDzBCTuTOiZLVoXSA7aeXR5igpEMqhY03OuBryvVAhV+xse88R3RadIrEP
-         XHvZinXWE1QbBWWafs6lH/qepzPPuHY1fHoi91Nunroyli+UqBMr+0lWjDP89TbM8VPa
-         /GaeZW7+10iXfsQB5DU+kSJGIdSodGx64tLzC4mkmEsGBQgpDzN6GFZznLCwoLvINUya
-         Q7YtBN1viWUpzB37zEkr7QAJMuHLXWpEIlKTynJzMkFJ8j8BtQz8qtSVulHZHFV7DT3L
-         RKIA==
-X-Gm-Message-State: AOJu0YzvRuBj9rgn9u9q9mY21mdt74KkzBTqzZ/KrPZdWU52rnNp5ux6
-	gxb6PiTiAH6mpioZ36NiiDTy01cdIGVKhh3Do1SMAwdfkUlm9rvCj8gQJvKnmFb0ut5x2QwYsok
-	X
-X-Gm-Gg: ASbGnctHdJbEzkazxxTN66PDVS5fYxiah8/m5mVAQrumtkOSg/VfX6+Dz7+Za/3uSgu
-	zgn6y1RmN5N2OH1Gw47jEd0+Zsm0V8hP1Kr4mvFvUJMno+zPfDwbsFYDDXZZSkgeOBEP69x+tc3
-	TlrYHl8nW0wneLujgZvQ9dPdeZj3qgksakBARyyvVXELvOgIf224AiF3sVcPTyk6HG6xhx+4iLo
-	CmHGGYJ+2EJWm+1LdB6uFAbU2Ssb7k+sOWYTba/1T9rXVF6EEvJKHWhTJ7a45KuW48gLcS5M3Xv
-	jUxKe4MdkECa8OU6PZai+A8wPYZDiFxKU4c2+1UiKrYnpZP56tHf
-X-Google-Smtp-Source: AGHT+IGNFQrTrIxdPZwMWpXCPOJVGNSy4LIlCpINievqrtoFIHd9q6fEfiQqQaF94LwUcwd34eFBIQ==
-X-Received: by 2002:a05:6870:912b:b0:296:a67c:d239 with SMTP id 586e51a60fabf-2bc99abc0ffmr5808371fac.12.1739806303211;
-        Mon, 17 Feb 2025 07:31:43 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b9548205d6sm4061410fac.4.2025.02.17.07.31.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Feb 2025 07:31:41 -0800 (PST)
-Message-ID: <7f0689d4-e940-4889-a29f-4fcbe8a32676@baylibre.com>
-Date: Mon, 17 Feb 2025 09:31:39 -0600
+        d=1e100.net; s=20230601; t=1739812203; x=1740417003;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=st4+9SuOYSXi/BL8qizMsgfbdxZRW4vboBrM8JIcEZM=;
+        b=Gp9wX/V+L79JLgZ3HVMigS9+vTfRaK1F/z/7DKSckz3hywGPkub/OlXsD2Ngjoo2vz
+         lOQ5Ryvirn8NO0d8eNkPG8T71of0yejLG8UYhibOVqvaod9GhcSzXgSiLOCufTevNCz8
+         n7HhlEzn0ARj2qybGdjO9vAY3XduZ/9J99xsSYvzP5wDzqmI2fwh2LWm2G7hPluNeFFW
+         YbO8NLChD7fnmLSCVXXC4PihEo00jB3b0MRAX1sK59DnxostYsbcuoafmfA0g+rChxsm
+         UoHEQfqMPGmvsU3OX3BFWUeFVfEv4kIfg7hAS2pAD76AHbmCUIEwS7vvrV3ihsM/fXhX
+         arHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXq/YQyOG3Zz6/ynb6STCR+BnAnsiovl5pSGqHq7BmXmmI543o/ASmXJVlffRjVtfSYj5RCnFh0gCJyyIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcd5qRxB2ar/s4hbFXAIcNFL5OkEPcTHou/5YAUnzcHcaY4U1g
+	BVGHURNlaFBTzZyvlsV0eqMc5TsLbF2ZtqwUNAVQnsur2122PW0+kx1CmlRvtjA=
+X-Gm-Gg: ASbGncvjkfNPCrjL4xmfnj3zrgrpFUhnVntBx6xJBhC5MyXdtxjbxN0qnf3Q9i9rEVD
+	t9BgsiEK5pQw4c/kfQc5iY+KtDP77OeLCs166X4QUUvRJ73uqC9aXJUOxkNMlicUaGPwuo1YXl+
+	B+Ieqz5z4HfTjRYBxj9ldFdCfXW306y5RLDqdfPKt4RRXa+MJEVEy2D36bL30+I+9nNTb0y2sc1
+	rA3GBV8GMcn0zrOMPorL7u2yhfcDevJvPbAY/KsIPlLdACTNI0n9LWsp+PRr2h2hnM7nPbZQNS7
+	6ATUX0VHcLyahAHo
+X-Google-Smtp-Source: AGHT+IFR8wIX5kzLKdIN4OP3fmjkfv73Yd4uUXOuq7Mpy4RCDvMHb9zJ6sCjSSKf8UjQNxFMmKSGoA==
+X-Received: by 2002:a05:600c:154e:b0:439:8bb1:14b1 with SMTP id 5b1f17b1804b1-4398bb117e6mr31066175e9.11.1739812202821;
+        Mon, 17 Feb 2025 09:10:02 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4395a1b84bcsm163583295e9.40.2025.02.17.09.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 09:10:02 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mm/mincore: improve performance by adding an unlikely hint
+Date: Mon, 17 Feb 2025 17:09:34 +0000
+Message-ID: <20250217170934.457266-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: adjust the file entry in SPI OFFLOAD
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Mark Brown <broonie@kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, Nuno Sa
- <nuno.sa@analog.com>, linux-spi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lukas Bulwahn <lukas.bulwahn@redhat.com>
-References: <20250217092851.17619-1-lukas.bulwahn@redhat.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250217092851.17619-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2/17/25 3:28 AM, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 8e02d1886988 ("spi: add basic support for SPI offloading") adds a
-> new MAINTAINERS section referring to the non-existent file
-> include/linux/spi/spi-offload.h rather than referring to the files added
-> with this commit in the directory include/linux/spi/offload/.
-> 
-> Adjust the file reference to the intended directory.
-> 
-> Fixes: 8e02d1886988 ("spi: add basic support for SPI offloading")
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a54d8510ea6e..53cf3cbf33c9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22402,7 +22402,7 @@ SPI OFFLOAD
->  R:	David Lechner <dlechner@baylibre.com>
->  F:	drivers/spi/spi-offload-trigger-pwm.c
->  F:	drivers/spi/spi-offload.c
-> -F:	include/linux/spi/spi-offload.h
-> +F:	include/linux/spi/offload/
->  K:	spi_offload
->  
->  SPI SUBSYSTEM
+Adding an unlikely() hint on the masked start comparison error
+return path improves run-time performance of the mincore system call.
 
-Thanks for fixing that.
+Benchmarking on an i9-12900 shows an improvement of 7ns on mincore calls
+on a 256KB mmap'd region where 50% of the pages we resident.
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+Results based on running 20 tests with turbo disabled (to reduce
+clock freq turbo changes), with 10 second run per test and comparing
+the number of mincores calls per second. The % standard deviation of
+the 20 tests was ~0.10%, so results are reliable.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ mm/mincore.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/mincore.c b/mm/mincore.c
+index d6bd19e520fc..832f29f46767 100644
+--- a/mm/mincore.c
++++ b/mm/mincore.c
+@@ -239,7 +239,7 @@ SYSCALL_DEFINE3(mincore, unsigned long, start, size_t, len,
+ 	start = untagged_addr(start);
+ 
+ 	/* Check the start address: needs to be page-aligned.. */
+-	if (start & ~PAGE_MASK)
++	if (unlikely(start & ~PAGE_MASK))
+ 		return -EINVAL;
+ 
+ 	/* ..and we need to be passed a valid user-space range */
+-- 
+2.47.2
 
