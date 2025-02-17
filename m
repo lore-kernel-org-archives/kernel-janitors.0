@@ -1,118 +1,139 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A015213245
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 09:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4481B212B3A;
+	Mon, 17 Feb 2025 09:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739784544; cv=none; b=UyUejGPGPTwHHIEiNNFrOFv1ThDOfmVjKqfEhr7mexzPStz35cmyyuyfXhnyoD0rFBvEIeR8I7EmLN0BwSYisSDXnz8D+bu7odi1JUanmtaSCQMseXrkr4pRVzdg2mTU5T0KZhcz4jTCw+AcMcfp+SDBe3QSolKg2jxOnfxccso=
+	t=1739786036; cv=none; b=S9scDuVO74uyu1STWe9ppvufgt+zWxdEa1qZpL0yOpAtkx/o5bJjd2zUkfBB1tP3UOocV+ep3My08/GhXBsld5fWleENuJOrZQ4IVAKaQVzRspJwU/x8twqVIuSibgOOuvH9Z8ALTDs8JwvWpY9efUYhjZRL/s9LB7GN80sm60I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739784544; c=relaxed/simple;
-	bh=DvnzqR3N+Yt1hJiN/UFuDlnF+d8ai01tb91e7tKjUK0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZZUdjQvd8Fhv5OJDx2b0Mz9uEyIfx2ggMYgrZcVRPb/sgcULwagcmisWTq4wGVXT4U5OVl1mzY2Jro1ICKr8kd9+6jTc2ko4klGsIphkZU4dVltpwBC7vWlLyVziy5Kv5UvKyYpw1nQYBgt3bVJMqeVOf/+JndG9IHweBs41ePE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RvxmxhLy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1739786036; c=relaxed/simple;
+	bh=gQmGV+kn9fXoyJgSNZ5yNLGTOGnhxeIlafZzMM8kSJo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AiwxjN0FdlH2aZq5hZaC07qtDCf77JUDJkIcvSh0Cm9+h09z+yCKl+ycUkKvDBw3GPYUYW4MqkoxXhxfO+oBTke1jF6oqkfMoIhTDNjIVmOrgjLX7ZDtp2nkM1q511t9ZPBO7Yd9yNp6hdksfkheoUmNSsMXTT/NSnlpFsJx220=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhSF2S0m; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RvxmxhLy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739784541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qeVUNDEioZ1zA8ELxm1OFFvu01528gdmuR0pSmN5LWs=;
-	b=RvxmxhLyiCQdro9HLllY6GwEoZAC6rvMnyK+hiw+zIO7GPE+cFxJInPnZolAzxtDNscYR8
-	LJcUyOQ37StumQc+P58PVl3wXq076R9/49HxpUdcCOqOKhcPKWQydWV+f+C2qSnoGoqKBX
-	QTb2qQOi8mQrngVSxZ3lrg2laV7sNTk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-613-suJ-Bjm7NxeDnGu4PPvK_A-1; Mon, 17 Feb 2025 04:28:59 -0500
-X-MC-Unique: suJ-Bjm7NxeDnGu4PPvK_A-1
-X-Mimecast-MFC-AGG-ID: suJ-Bjm7NxeDnGu4PPvK_A_1739784538
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38f28a4647eso2116920f8f.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Feb 2025 01:28:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhSF2S0m"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4396a24118dso26333625e9.0;
+        Mon, 17 Feb 2025 01:53:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739786033; x=1740390833; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CvYjEMSsQkQBSc5nAfPUda644OnnC5/ncK3yD6+VkrU=;
+        b=HhSF2S0mVAa9ipjtJXVJ7g6OVjg/JFs48ycC8QTFuP+LRmHUYch2AjJdJOljvyLXoA
+         keB7+LpExcJE4MAFeOQ3ZPF4Vl1CFlKqVhK/SmzBqkk0iieuGg2C740MhJn1XF1mJ8d0
+         XTNagg5y9aro3T9B6dHfduVLjDN548ru+1s/7q4WX9pt/D8nh1NCd3cAce6vEumVyif1
+         HEKpGjx7tYOUVxzJrWh7/VkAPPanrwbzamlIIrgYR4oEnAd/zpzK3njrWvGh6Wfrw+Z+
+         JoRKx2FrAvQM16fs1eWT1VAhCb3GzsXulbIo68esBiFcbzj6hx+1EUm/CO3luVAOTwhe
+         /wRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739784538; x=1740389338;
+        d=1e100.net; s=20230601; t=1739786033; x=1740390833;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qeVUNDEioZ1zA8ELxm1OFFvu01528gdmuR0pSmN5LWs=;
-        b=J2i5guBzM2/ssTI3cRDF0oXUwj3nuqDoGZI0MJ0GFmKShlsGi2givBFitBba8sMU5Q
-         6Gk374qL3Jv9DMoFQaDBONrGIzUh6QKm5ar3GMNU+Yfl0wCnvE/XCEnHlqdZOTpT3F/D
-         tw0m2sX5F4Lpnx956BY3Nc6S86sv6thTNxZnN2R8RsyC/ztxlgSk3g6RvFwxOPiuMHBk
-         EVr0okrGdrOVq3AGhzj2t8Sap/IZPcZh07balsWXfH/OGeNRYwjo/yvNCf2f2YPkCWFw
-         QHd11GbjkZwTK/r0Y4oa8h+3BMqwP9HqPqM6LMVU08qSMX4IzruqBahSbD3oAhGn6WQc
-         5jAw==
-X-Gm-Message-State: AOJu0YxoxBspWGQbIY7HUDBKoBUdJw4h2L0Gt0t2QUDuEJDaNQodAAoR
-	PFm0zmlfgRrVdPAQt7j4Q5EWfjCzxh0XZPMJquHcFpmmOk8uKOwj+0a6zZM6/K4uvQoWI3oWUjN
-	9Q6gifLNsB2zu5KY/IfmhuFFTjZzU7kqy7ZCZYq/CPhheCRReyfhwgyqQDqhQB7dgKL7pL2A6qW
-	U4
-X-Gm-Gg: ASbGncu4uJIYlsht96jusBU6jCfBAdM2ISWYmfoIN0ZcYMjN13EOasLYmM3DkHj3Y1S
-	eUcTodyUdzZe+7AbPT7Zh8Bv9q1VV2HJDFkzUdnR6u3GGxzgKf/N1lrEPCFddpwiLsPsENBhXpk
-	9RDBSBLSkfdEX10gI5oCNxA0wqEAq+9eapwvIgfAHGoOLuVZl33ZpTOZdc8qf33/fbPMUj/xBvm
-	b9h1yoy5R3HzXAp5DqMS4V4hlJtAft14o7REqBwvGa/CLu9hjo9nqjyZz79bwqidHfs7A6QCfck
-	AwnHWoyosOIMcbxUlYatXbjtVsgbXl/7i8bV+AiPbhe2q+UTsLzf
-X-Received: by 2002:adf:fa08:0:b0:38d:df70:23e7 with SMTP id ffacd0b85a97d-38f33f34cecmr6714672f8f.31.1739784537698;
-        Mon, 17 Feb 2025 01:28:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHrmijOoGMXonbnwZyd9fLGlM4O8FZOdIeSBCVRiU0u4DCtv0gGZP/fVwdyLL1x9WLMBEhxAg==
-X-Received: by 2002:adf:fa08:0:b0:38d:df70:23e7 with SMTP id ffacd0b85a97d-38f33f34cecmr6714640f8f.31.1739784537284;
-        Mon, 17 Feb 2025 01:28:57 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f7998sm11554234f8f.82.2025.02.17.01.28.56
+        bh=CvYjEMSsQkQBSc5nAfPUda644OnnC5/ncK3yD6+VkrU=;
+        b=MJ+dB4qNmkHPRv0w2o0F3J1tV3jfXiTOaWAZ+PXHYqa/VXycmBXmQMmWZ1UuCORuI+
+         6Fp8LhW3xjyCx+XismNcPnZgLBxOzH2dhOZwL1e/ZAdw/8n0+7PCAnLPjp/WS1wY2aw2
+         7Xao0IR6nYqOkAWZuDwP4DDa30PkoUnGJZUeCN/B9ChM+d7cCvYOXitwEczREz+N1Kny
+         BRyx0hBDBVPmzwADAc/tLGAAUUDSf1AQPSswCRpROHNEZs50k65vTnVei6K3SQXzKVJU
+         eQsnKbtCz22OwXG4I+pAhwXtSsbzajBCmyR4fAg03I22tdeluwWOeUw+h/iM+y94Ywsg
+         rpfg==
+X-Forwarded-Encrypted: i=1; AJvYcCW07O9zzTlyQcIBV1Ibtr7ovXZaYJV/KaPZBerdF7fEwANqwNP+uQqS3EpxLmODZu6H9d1NFHOFZyfxG2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztOhaJhxbag2xNkfjfuGSJ/O6E90g8k7e26v5T81LTjXhIcPC0
+	al4aW4+Tx76cTGauPbJO2pTNDFS2oEHKHTbu+6D54RKBgOspqokh
+X-Gm-Gg: ASbGncs3XFiBQztqlv8cuptXc1Osw1GsyYtFcxcz2OfhehmU8K+Lzn945r02WuuXXhJ
+	qtHUrtzkLM4oceirAG21KEQ1+Cc/EhMTsAo49qaE3cGjxFCpjxD2hd4Pxya5ZN5UM4MCqShAxQs
+	1etw2WLMS8iD6IuDM8xj3WjcHTS+urhvWqEGJ1SijS2t+l0DXEndPznFBQKeb+NwA35QthzY2xE
+	/L8RE1Md9r6HTyNlaGomSVlde89aRtd9Am636VBNe4vdQUO2XQreab6mYzA7M3qEfB+961fkB+R
+	oVoNou+uXSZs3162
+X-Google-Smtp-Source: AGHT+IEVl4GpzgQ45gGVZiMJl31oCUggGlRZvE8AqWl93V+B3xcv35Ou1jGbrhoUWP+6dZJA3C4Onw==
+X-Received: by 2002:a05:600c:5247:b0:439:5f38:7ca with SMTP id 5b1f17b1804b1-4396e70c718mr67407475e9.20.1739786033270;
+        Mon, 17 Feb 2025 01:53:53 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43989087517sm13265865e9.8.2025.02.17.01.53.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 01:28:56 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: David Lechner <dlechner@baylibre.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Nuno Sa <nuno.sa@analog.com>,
-	linux-spi@vger.kernel.org
+        Mon, 17 Feb 2025 01:53:52 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jun Lei <jun.lei@amd.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust the file entry in SPI OFFLOAD
-Date: Mon, 17 Feb 2025 10:28:51 +0100
-Message-ID: <20250217092851.17619-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.48.1
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amd/display: Fix spelling mistake "oustanding" -> "outstanding"
+Date: Mon, 17 Feb 2025 09:53:25 +0000
+Message-ID: <20250217095325.392152-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+There is a spelling mistake in max_oustanding_when_urgent_expected,
+fix it.
 
-Commit 8e02d1886988 ("spi: add basic support for SPI offloading") adds a
-new MAINTAINERS section referring to the non-existent file
-include/linux/spi/spi-offload.h rather than referring to the files added
-with this commit in the directory include/linux/spi/offload/.
-
-Adjust the file reference to the intended directory.
-
-Fixes: 8e02d1886988 ("spi: add basic support for SPI offloading")
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c      | 6 +++---
+ .../dc/dml2/dml21/src/dml2_core/dml2_core_shared_types.h    | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a54d8510ea6e..53cf3cbf33c9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22402,7 +22402,7 @@ SPI OFFLOAD
- R:	David Lechner <dlechner@baylibre.com>
- F:	drivers/spi/spi-offload-trigger-pwm.c
- F:	drivers/spi/spi-offload.c
--F:	include/linux/spi/spi-offload.h
-+F:	include/linux/spi/offload/
- K:	spi_offload
- 
- SPI SUBSYSTEM
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
+index 87e53f59cb9f..243d02050e01 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c
+@@ -5058,7 +5058,7 @@ static void CalculateExtraLatency(
+ 	double HostVMInefficiencyFactorPrefetch,
+ 	unsigned int HostVMMinPageSize,
+ 	enum dml2_qos_param_type qos_type,
+-	bool max_oustanding_when_urgent_expected,
++	bool max_outstanding_when_urgent_expected,
+ 	unsigned int max_outstanding_requests,
+ 	unsigned int request_size_bytes_luma[],
+ 	unsigned int request_size_bytes_chroma[],
+@@ -5106,7 +5106,7 @@ static void CalculateExtraLatency(
+ 	if (qos_type == dml2_qos_param_type_dcn4x) {
+ 		*ExtraLatency_sr = dchub_arb_to_ret_delay / DCFCLK;
+ 		*ExtraLatency = *ExtraLatency_sr;
+-		if (max_oustanding_when_urgent_expected)
++		if (max_outstanding_when_urgent_expected)
+ 			*ExtraLatency = *ExtraLatency + (ROBBufferSizeInKByte * 1024 - max_outstanding_requests * max_request_size_bytes) / ReturnBW;
+ 	} else {
+ 		*ExtraLatency_sr = dchub_arb_to_ret_delay / DCFCLK + RoundTripPingLatencyCycles / FabricClock + ReorderingBytes / ReturnBW;
+@@ -5121,7 +5121,7 @@ static void CalculateExtraLatency(
+ 	dml2_printf("DML::%s: qos_type=%u\n", __func__, qos_type);
+ 	dml2_printf("DML::%s: hostvm_mode=%u\n", __func__, hostvm_mode);
+ 	dml2_printf("DML::%s: Tex_trips=%u\n", __func__, Tex_trips);
+-	dml2_printf("DML::%s: max_oustanding_when_urgent_expected=%u\n", __func__, max_oustanding_when_urgent_expected);
++	dml2_printf("DML::%s: max_outstanding_when_urgent_expected=%u\n", __func__, max_outstanding_when_urgent_expected);
+ 	dml2_printf("DML::%s: FabricClock=%f\n", __func__, FabricClock);
+ 	dml2_printf("DML::%s: DCFCLK=%f\n", __func__, DCFCLK);
+ 	dml2_printf("DML::%s: ReturnBW=%f\n", __func__, ReturnBW);
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared_types.h b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared_types.h
+index dfe54112a9c6..4e502f0a6d20 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared_types.h
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_shared_types.h
+@@ -1571,7 +1571,7 @@ struct dml2_core_calcs_CalculateWatermarksMALLUseAndDRAMSpeedChangeSupport_param
+ 	unsigned int *DSTYAfterScaler;
+ 	bool UnboundedRequestEnabled;
+ 	unsigned int CompressedBufferSizeInkByte;
+-	bool max_oustanding_when_urgent_expected;
++	bool max_outstanding_when_urgent_expected;
+ 	unsigned int max_outstanding_requests;
+ 	unsigned int max_request_size_bytes;
+ 	unsigned int *meta_row_height_l;
 -- 
-2.48.1
+2.47.2
 
