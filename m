@@ -1,72 +1,77 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E708269815
-	for <kernel-janitors@vger.kernel.org>; Tue, 18 Feb 2025 13:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA333208
+	for <kernel-janitors@vger.kernel.org>; Tue, 18 Feb 2025 13:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739883961; cv=none; b=tYeUctGBkTIaGr5S6YjypruFsBwbCeo0+HY2QyjVlJ6ReaHJGofUUOn0HUnTuJFtV5GnYkcLmsBR65mbbybAnHrPswQ46+x/YPCAHW6Kq7yC++0iih2x8nIUZCu15Rf7quLImvAnPETbe0KjR2hF7w4Q1sa+oRh8QFtRl5WijgI=
+	t=1739884544; cv=none; b=qOQjMxXYz4+p2mTQXOOkN04sql1Dy7DB/lINSFM8NZtoT+nvGkxmhZwxpzxjmG40nX/K3KmGGSlQTHeFuQX/toPzeE7Vd55v15O1Zb+8ZoEY7qGR8L+GtN865qej6BYJMyDLd+Zo0U/cS3zOFAV0gJmFk9R9BQr9IRZqHGDwlDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739883961; c=relaxed/simple;
-	bh=4qkh8yLy8dDdZM21T9lsKyPTqQzhKGIVigwfv4cqQ2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=B8K2f0OKIKQ8BQ745Oi8FZaxCCxfarLYBRJHd0ygCJBgyCzljwybHDYibp6keQDeyBM7nTKeyBeZWWO7v4QFzYnWpOGrPlmNL9mHE2Y4hA4ZFFCjvujNq7PoLRkMMxr4KBz5D5qANDNRpNbTNemmnLbGWKyFq6KdfTUnuakUAOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SfuWBYV0; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1739884544; c=relaxed/simple;
+	bh=T2JYe+LQSB/nygVTjyMcCXLEryVG9kuvcUDlAdCDWu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jJpUG/CXFYcfpBJfiz5bHQVcu3mi3aFn8FbXGD4tRU+pciWFDg8ixa+rFqKeRVXAPz7VG2blkYE/ZH4/bDWKVUXoqs1W4SOEZmI4f6DeyKRZXtOS9aYJFbftdIQqXI5YurNSQqQyuGZ7EeCY7UTkn9488ApM1TU2xCtgHkOmxO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sbe68vC1; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SfuWBYV0"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abadccdfe5aso673654766b.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Feb 2025 05:05:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sbe68vC1"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abbc38adeb1so70324366b.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Feb 2025 05:15:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739883955; x=1740488755; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kasHUX4bzeiCrVBmf7mcD2rXkVNVkykZ6gjvVSR3ULQ=;
-        b=SfuWBYV0e6WFQq9q6DWaRHs/D5VVlhArm4iAsWWis9S4c+B9STONknQ5vwHbX72XHK
-         A24MtlGLOISPMGcoX50Z+GkIgI/CWynSiHxOxNBUIamyUs7QoBMwf3822Ayj7evV0VFK
-         gw51z18ADrNYGjdZHHTyO7bZr2ua7FLKOfKS2EgX4wdjePcm7cxCIIOZ7VtGy2mJ7wWs
-         ydsNRX6MpmBvMeQwlz/Zvo20fOm8P3Oc3tvs9t/0WvuZlB2sX8/kDmcSIYHXBrBF8ewb
-         E3wRtC7clgMxSu++ZpIkmCEOiGOsIjkE/grgOJrpl4utZl385xMeBARkMPzrFd4KPxjv
-         Acew==
+        d=linaro.org; s=google; t=1739884541; x=1740489341; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=seJOt702BxciOrZQGfbCE9NbiygJD+aaFMVx5CIWE5E=;
+        b=Sbe68vC1CVmagAPRSL6NVbBprvMJPfh+v7MQiT+1pd6Q+8PdI+eODgVmFkgGZ5N0Qc
+         HQazzI4xgzYr0FEDHQVM2NcSiSaZP2M9z2IhEIHU5+4zcKm60JLXvOhn54Wjh3/XQwZo
+         LBLCUsF11fvM6b6qgetEIblMK6nnCKjhRf5Yv7gq/93Kk3gdJWVpuydfAOD0d3pHzJ3W
+         AiVQhxTWDde9esDFPXmy0fBT5YeTzJ73Q9RX27OrlyifmlytMpK0QHmldP0ms+OETyae
+         9kSUSXfubiSyd7HmLzwEIxtxc1CKB8mAw+W96za3Qsjuxn7KZExK/dHH4cKNFEtdaT3U
+         FycA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739883955; x=1740488755;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kasHUX4bzeiCrVBmf7mcD2rXkVNVkykZ6gjvVSR3ULQ=;
-        b=D3zM81F0ggQkPrzEPRjQ/pBGhsr+Jj3QLEsnvrZ676EMOihSEuyNLtOcc1rrdapRLY
-         qqIpH78MPG2RuKchED8KxbHccx/VI3mYYcjtFti+1JUbFa4moR8mOc9G/Sl/RachWzU2
-         nb6C0dEmCpZ0ovAgCX07yosplex4X6Wu6XEHgM4rANAGaG8v8Pnan7SuqXKGj9la5kGh
-         W8V/hJgfQcw2xJ70mR24SK9pPGDgmbg21dshDAcviHAMkxpZPemKaf4FAdBsfwVD0O5u
-         W1AJxFa0+Fsw+UiioI9BODj4/Mel6R9MY1JnoWM0NXOo5kbefxPGkTzIfe9xtIsFynzT
-         wFFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0pn3m/pPpimStabrA1em4J9KYA9n2jZECyO9f+ZXfc949qERgh5qZAKRzpa7sNrcC2x4tZCBcXOLcX8+MC10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjUD7bpUuBKCvBQoJ+SFPy481Zp57UXb4Fd+WKCJmi4E0VJ8FU
-	e59rn1JIH31h6/+tTS3BxO6JBvQLGH1Dn1sIcm//bm3CIZVjtw9rgF7ZH+QiHBDiBe/liALe4X/
-	h
-X-Gm-Gg: ASbGncvqmkuv0vAw2H0FBL+8F70ESrHbOm+m30xI7MTo+4A4wMsB4Evr3/EdzBLkV8v
-	pVsLkVTQChfXQLe2aA2ukKuudmCDjP2vh2/Dss37KnCkXIuRZT+GQHSgO2htZNVtlfqC+3Ogjgd
-	MR2RepE8kID1Lv2esIXFpkRx7B1Y3PYyAAs701EnOnKyQa3MJkIqy6zni2eS83PsjuJRlg+/qda
-	VKG0Y3QukwtFnRCUGONO27oYqwexx2Ta3P1P2DVYvcU/mXhZwTdasDa6q+VV8X5PXjdZV28q8RT
-	eAYByEaKr48B09nvt1lw
-X-Google-Smtp-Source: AGHT+IF2qeAel4OTdeuho/BN/9zq3dRQjnmGfMFgYzkqOj53acAaPZ+YeAFgAYZN9+aL4nEgHblvKA==
-X-Received: by 2002:a17:907:1c21:b0:ab7:faca:a323 with SMTP id a640c23a62f3a-abb70d677c5mr1438999266b.39.1739883954756;
-        Tue, 18 Feb 2025 05:05:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739884541; x=1740489341;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=seJOt702BxciOrZQGfbCE9NbiygJD+aaFMVx5CIWE5E=;
+        b=spbvQrhf8vc/eoMostaZdAqYRsUS4vHR3+Qdj4PfFtbUUqFsieVElbZoN47kajKrmd
+         uWoV84Itq5O1Ct0rj8JK6fSeXUotOX0hronOQY62rHP8Xf2bvRcXyNwFS5dtlPVYcZ5B
+         YVduTccSx+QEiDP4Fw/QKIx+wZBkkZQKzYx5xBRyyHru/Qr4Dw52wLq08CYTfWJKuyhh
+         9Nn8T9ZPU6gfghMzCb+AwpDIhfyaLFwDs2QN2UveUMM/vZBRyfPkRNtRRmOf1OFM/OHZ
+         t4ktrQ0Dikrf7CSTrGFW3HeBs2m9Zd227vZefUKUOuHXiJxcn1x4xsKzB57jpZ0skmdh
+         WCoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUw0Lg6fBMV9LGqhqxK1TxdeD+Ax3dkVbHZ4u8naMjrJTZAna82f27VXEyqrh3wo0hk/bnt5RK+y0l6m76OLt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd8qkqoUP5Zv+JLHH49MEqU++KP6mSbnH0faa+nS2RxhLOGdoi
+	D9FNh2u44UhQgUXf1JIqrw9Tx6kcVOtJKSHe1icvC8wJtAILBabj4dNFMaEJUng=
+X-Gm-Gg: ASbGnctHswnoGSUNJBdmKwWvqeThrrSm0A0jCWW2+9y+vEKgksZcXBjb2cZ32yp17cA
+	l67xkm/9Zr/TWNqFE7jhYWO91lngUdkYpIJbADkJrOgrNCMwQFbuMzF6k4t/YYjgDfyISebW4La
+	OCp7vZuVcQBCdh5b3x29A7C6zGf93LrIjcCfMphFTlCC6SRb4LroBHkuDVmnRQgjIiEmIW7U/tG
+	RKBgXTHJMEwCILV0DYQ/Vz8BZNHST+vMobDkUVrft1TxhFWaAGPTzXj8fPjaixInOmo/yQPtOR/
+	uwHszsHstz88XcEGwYEC
+X-Google-Smtp-Source: AGHT+IHnl+jBmdJsRUXRwBR/mH52YC23EuGVS0vmhx7dq14tgwuSG89//4yrt5azsXLFxS0+HMeVxw==
+X-Received: by 2002:a17:906:e0c5:b0:abb:ac56:fcf8 with SMTP id a640c23a62f3a-abbac570080mr510173266b.57.1739884540816;
+        Tue, 18 Feb 2025 05:15:40 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abba9bd6e3asm261505566b.58.2025.02.18.05.05.53
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5dece288e38sm8604786a12.79.2025.02.18.05.15.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 05:05:54 -0800 (PST)
-Date: Tue, 18 Feb 2025 16:05:50 +0300
+        Tue, 18 Feb 2025 05:15:40 -0800 (PST)
+Date: Tue, 18 Feb 2025 16:15:37 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-Cc: Ricardo Ribalda <ribalda@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] media: i2c: imx214: Fix uninitialized variable in
- imx214_set_ctrl()
-Message-ID: <1e4da85e-b975-4638-bd14-09ba0675d9d6@stanley.mountain>
+To: Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
+Cc: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Deren Wu <deren.wu@mediatek.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] wifi: mt76: mt7925: fix error checking in
+ mt7925_mcu_uni_rx/tx_ba()
+Message-ID: <5e7bc52b-332d-475e-94ca-571864cb1a6a@stanley.mountain>
+References: <063aafdf-3234-42ac-a4ea-3ff98e2835b6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,30 +80,81 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <063aafdf-3234-42ac-a4ea-3ff98e2835b6@stanley.mountain>
 
-You can't pass uninitialized "ret" variables to cci_write().  It has to
-start as zero.
+Ping.
 
-Fixes: 4f0aeba4f155 ("media: i2c: imx214: Convert to CCI register access helpers")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/media/i2c/imx214.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+regards,
+dan carpenter
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 6c3f6f3c8b1f..68775ee8256e 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -795,7 +795,7 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctrl)
- 					     struct imx214, ctrls);
- 	const struct v4l2_mbus_framefmt *format = NULL;
- 	struct v4l2_subdev_state *state;
--	int ret;
-+	int ret = 0;
- 
- 	if (ctrl->id == V4L2_CID_VBLANK) {
- 		int exposure_max, exposure_def;
--- 
-2.47.2
-
+On Mon, Jan 20, 2025 at 12:46:58PM +0300, Dan Carpenter wrote:
+> The "ret" variable in mt7925_mcu_uni_[rx/tx]_ba() needs to be signed for
+> the if (ret < 0) condition to be true.
+> 
+> Also the mt7925_mcu_sta_ba() function returns positive values on success.
+> The code currently returns whatever non-negative value was returned on
+> the last iteration.  It would be better to return zero on success.  This
+> function is called from mt7925_ampdu_action() which does not check the
+> return value so the return value doesn't affect runtime.  However, it
+> still makes sense to return zero even though nothing is affected in the
+> current code.
+> 
+> Fixes: eb2a9a12c609 ("wifi: mt76: mt7925: Update mt7925_mcu_uni_[tx,rx]_ba for MLO")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+> index 15815ad84713..b3a00964e802 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
+> @@ -617,7 +617,8 @@ int mt7925_mcu_uni_tx_ba(struct mt792x_dev *dev,
+>  	struct mt792x_bss_conf *mconf;
+>  	unsigned long usable_links = ieee80211_vif_usable_links(vif);
+>  	struct mt76_wcid *wcid;
+> -	u8 link_id, ret;
+> +	u8 link_id;
+> +	int ret;
+>  
+>  	for_each_set_bit(link_id, &usable_links, IEEE80211_MLD_MAX_NUM_LINKS) {
+>  		mconf = mt792x_vif_to_link(mvif, link_id);
+> @@ -630,10 +631,10 @@ int mt7925_mcu_uni_tx_ba(struct mt792x_dev *dev,
+>  		ret = mt7925_mcu_sta_ba(&dev->mt76, &mconf->mt76, wcid, params,
+>  					enable, true);
+>  		if (ret < 0)
+> -			break;
+> +			return ret;
+>  	}
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  int mt7925_mcu_uni_rx_ba(struct mt792x_dev *dev,
+> @@ -647,7 +648,8 @@ int mt7925_mcu_uni_rx_ba(struct mt792x_dev *dev,
+>  	struct mt792x_bss_conf *mconf;
+>  	unsigned long usable_links = ieee80211_vif_usable_links(vif);
+>  	struct mt76_wcid *wcid;
+> -	u8 link_id, ret;
+> +	u8 link_id;
+> +	int ret;
+>  
+>  	for_each_set_bit(link_id, &usable_links, IEEE80211_MLD_MAX_NUM_LINKS) {
+>  		mconf = mt792x_vif_to_link(mvif, link_id);
+> @@ -657,10 +659,10 @@ int mt7925_mcu_uni_rx_ba(struct mt792x_dev *dev,
+>  		ret = mt7925_mcu_sta_ba(&dev->mt76, &mconf->mt76, wcid, params,
+>  					enable, false);
+>  		if (ret < 0)
+> -			break;
+> +			return ret;
+>  	}
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static int mt7925_load_clc(struct mt792x_dev *dev, const char *fw_name)
+> -- 
+> 2.45.2
+> 
