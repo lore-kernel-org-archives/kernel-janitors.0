@@ -1,124 +1,75 @@
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD50726F449;
-	Tue, 18 Feb 2025 17:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3E1286295;
+	Tue, 18 Feb 2025 21:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739898336; cv=none; b=A/E2Ll/QE1P7KN3O5Ix86Y7rNtt9xg86AHPRbyct8zB+KAL8oGhvXGRbqvlkkKAxMHro68T52Dk42vcz2ASwD3br9rgUJVWYga+VgFJ/eiSKdnaii6jF2MXHjevhngfksZ8i5eusoau6+YspdJfcGmcZRMGpe29PcwvParnIQYo=
+	t=1739912734; cv=none; b=ldDuZ1HSKLJLfgBFBkfdNQMLnem2a1fxBylGxypmHPq1VjsyMfYPil4OQ/mXe1EYYe/Dc5zxPwoVal5xun412oEU8vWW7PcE4HcTkqRg11jivUaby997yPirRpnC0rLFJEtPh67UTr2CP1QQAko/bOdGS8pW+el1DFrBGf4XnFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739898336; c=relaxed/simple;
-	bh=x5U56tZVCuT5LWmJKBQY3XqlQC3tuJAS2mDZtD1d4IA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C+2MUFN45L/CBd/4ZXCl7k4BkEbRuqqm40n6Mm5WUzQ0s+bWGRnZy7PX/jY5PpTJK8sI2ZPc3X/Ml6hycnpK/1++dFXAjE9wR7jORHDv6BjJB1PRWZYG+7xlQBuY6ieNh7MNwgV5c+l/0RlDoWP3CuMO7kLXnpiSTnwbVIPqcbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=JoeflBjS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aiw9LZ50; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
+	s=arc-20240116; t=1739912734; c=relaxed/simple;
+	bh=f2KAeNcWioRJEebmT/6HJ0UgVFeEAG4JQ37rgRoHJhc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fCAXAvsszQyZU8TC+UgNaV0GRwO9ToeUcbCiAeFKZyRS+TxCr8MawhxM4D1Gs75DfDOF8F6YcDxcVFSAzSuk5PvgnxmzrpdG8R6kJHAyuf4xV2FFKLSV3kiXSlDBPnxbL4w1OdQMrOQbxDMHd3hEsitLucb0fuhTcWEjaGy/H6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcNvdbOq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="JoeflBjS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aiw9LZ50"
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id C1DC111400C6;
-	Tue, 18 Feb 2025 12:05:33 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 18 Feb 2025 12:05:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1739898333; x=1739984733; bh=X2YBb1ww7P4FN6Kapfe0IGZ60gd3Ip2D
-	VQdxj2GxLyY=; b=JoeflBjSlcECYktB8zIicHBlOAIRwj32VLOU9LZRCUOvNJz6
-	xFCznPxz2DYndiNeVdGp2c+dx6FdbZ+sUO6rKTkM1+IUZs6iuhDxiQHnY6ALBR/K
-	gowHqBRpdla38zSP4ao8AC6omid4ZQDCufpRdqK1bwOjubN8Qzk0Hkdf9goHsRjo
-	72wYAVhMSsm82QXkThitDTHSzt8shcD9IoX+wgGN6j63voQEor8iM/l80BqQDwUe
-	mPFCIjv9dMvMXOHBBbsyMGk5x4sL3a94rVnTYJ+ky41+IV4ZGJi64s+ry2O8/a3h
-	RqOEkVNhgTXqYnonAK57Um/wgRHTW/VhOQfZPw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739898333; x=
-	1739984733; bh=X2YBb1ww7P4FN6Kapfe0IGZ60gd3Ip2DVQdxj2GxLyY=; b=a
-	iw9LZ50bRNZaZQxx4tlb60DuiBq0r4tiV9DR/9qYm181DbPTWEDiuwLmtYjgVfoN
-	PCWc+5Lste7N/i6y1AL2WF1sNZ0D/X272MemhXEfM00LtgQYKLVCCfkB2tx4jNYN
-	dcraQIbKVmOo37ZZ3rRuxzJiFBljtCns2Ea6CzWVTjfRYmGLowb/bZrb6S17cIhn
-	QOQutCpvzqDW6qY9/PLdxmtPuPw5bkUR4DT8+Og+cBbKMc+v3IhbxhX7S/8lg93h
-	38kjzmMNtY7fQJzI4VotHEhRbRRn+67ZVPNlJXnP57fUCj21iZw5eZYi2OhIIPSr
-	O52ozPO4xCYWGcu23xV3Q==
-X-ME-Sender: <xms:3b20Zzz_1Z_YVvfAPjQnhLVW_63deT-Rm51msfkgovtsAmAO_3arOQ>
-    <xme:3b20Z7Sws-x803j8OCRaPnLnEPofH53AVJRqwefhpBUo6I5jUCRcx8yCfvNBwzYpx
-    xTD0dpHall8d_m3-yA>
-X-ME-Received: <xmr:3b20Z9VMlC4XcisRVf0_Fxmw4GpeIb53f-ZlolIuRj8dcljLHrXgs0RSvbyOcy_XmdoWBF24wAv78XWFnIL2ZGRwkWx75xTiTuQLrRU0EGnh92swSFbB03Gtd4bd8mA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeiudekjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfgggtgfesthekredtredt
-    jeenucfhrhhomhepufhvvghnucfrvghtvghruceoshhvvghnsehsvhgvnhhpvghtvghrrd
-    guvghvqeenucggtffrrghtthgvrhhnpeegieehffethffhffefhfehkeevleevieetfeeg
-    keehhfeifffgheehieejheeihfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghrtghp
-    thhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhihshhsrgesrh
-    hoshgvnhiifigvihhgrdhiohdprhgtphhtthhopehjsehjrghnnhgruhdrnhgvthdprhgt
-    phhtthhopehlihhnrgesrghsrghhihhlihhnrgdrnhgvthdprhgtphhtthhopegrgigsoh
-    gvsehkvghrnhgvlhdrughkpdhrtghpthhtoheprghsrghhiheslhhishhtshdrlhhinhhu
-    gidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtsh
-    drihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghrshhhihhtrdhmrdhmoh
-    hgrghlrghprghllhhisehorhgrtghlvgdrtghomhdprhgtphhtthhopehsvhgvnhesshhv
-    vghnphgvthgvrhdruggvvh
-X-ME-Proxy: <xmx:3b20Z9iAa-FCjrsN2Rk1i86HGdEpAmjfrJxB9_UKNYv1ihQCZ7zHGA>
-    <xmx:3b20Z1Cw6-MipYR4ZYpRtLo8aJHLMElI-KMh67ZOR1twqj8yTiGP9g>
-    <xmx:3b20Z2KOaDYVxI9EwCuo8eKbQVCkeUl1R2pQWbQfmUu9JjCykak3yA>
-    <xmx:3b20Z0A9Zsu1FoRiwZDRzmaacllSxIcg9cl_nvqz3STC4Bk9yqlcZw>
-    <xmx:3b20Z54NHNk79hMLD2GLpkFnUMe7AyebEstp-Qt8fhwk1mLMcOV1SNqL>
-Feedback-ID: i51094778:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 18 Feb 2025 12:05:31 -0500 (EST)
-From: Sven Peter <sven@svenpeter.dev>
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Janne Grunau <j@jannau.net>,
-	Asahi Lina <lina@asahilina.net>,
-	Jens Axboe <axboe@kernel.dk>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: Sven Peter <sven@svenpeter.dev>,
-	dan.carpenter@linaro.org,
-	kernel-janitors@vger.kernel.org,
-	error27@gmail.com
-Subject: Re: [PATCH] soc: apple: rtkit: Fix use-after-free in apple_rtkit_crashlog_rx()
-Date: Tue, 18 Feb 2025 18:05:27 +0100
-Message-Id: <173989828130.49947.10388452698510580758.b4-ty@svenpeter.dev>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
-References: <20250212085853.1357906-1-harshit.m.mogalapalli@oracle.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcNvdbOq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB82C4CEE2;
+	Tue, 18 Feb 2025 21:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739912733;
+	bh=f2KAeNcWioRJEebmT/6HJ0UgVFeEAG4JQ37rgRoHJhc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=OcNvdbOq+t90rYGTZSA2558SkUTd6ATv72ARxTbld5K82gRaGYzM2moDguWVqG44a
+	 uk3+kLT0CZfusCGjo2jzhK6+MaIjJGyZ6lqkYuzydAAq/BCZwswU2HQyKAlYC7dnfU
+	 W8CHierPe0LV7a0ABRfG6uMv8Wy5p1JZas6lHrdsalHEXzLIZo7FJhQD45n4wlVD6L
+	 zJVsYuLHRWv0m5WjnZifpQSJbXwNGWJaZGDNVvuzpSHR5MMYmmUO2nB+Nv6lKPJdA+
+	 tiJvSabRnMDef/DCHnPyCHkG8ay2sLKD7XdxJ/ej6cWzIWmBOvSDlvVSrG3zhgjHS6
+	 devpP6C8KyQAQ==
+Date: Tue, 18 Feb 2025 22:05:30 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+cc: =?ISO-8859-2?Q?Tomasz_Paku=B3a?= <tomasz.pakula.oficjalny@gmail.com>, 
+    Oleg Makarenko <oleg@makarenk.ooo>, 
+    Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] HID: hid-universal-pidff: Fix spelling mistake
+ "sucessfully" -> "successfully"
+In-Reply-To: <20250212122347.495701-1-colin.i.king@gmail.com>
+Message-ID: <q516nr37-79n9-8267-29o3-03r3s3oqs945@xreary.bet>
+References: <20250212122347.495701-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Wed, 12 Feb 2025, Colin Ian King wrote:
 
-On Wed, 12 Feb 2025 00:58:53 -0800, Harshit Mogalapalli wrote:
-> This code calls kfree(bfr); and then passes "bfr" to rtk->ops->crashed()
-> which is a use after free.  The ->crashed function pointer is implemented
-> by apple_nvme_rtkit_crashed() and it doesn't use the "bfr" pointer so
-> this doesn't cause a problem.  But it still looks sketchy as can be.
+> There is a spelling mistake in a hid_info message. Fix it.
 > 
-> Fix this by moving kfree() after the last usage of bfr.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/hid/hid-universal-pidff.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> [...]
+> diff --git a/drivers/hid/hid-universal-pidff.c b/drivers/hid/hid-universal-pidff.c
+> index 5b89ec7b5c26..001a0f5efb9d 100644
+> --- a/drivers/hid/hid-universal-pidff.c
+> +++ b/drivers/hid/hid-universal-pidff.c
+> @@ -104,7 +104,7 @@ static int universal_pidff_probe(struct hid_device *hdev,
+>  		goto err;
+>  	}
+>  
+> -	hid_info(hdev, "Universal pidff driver loaded sucessfully!");
+> +	hid_info(hdev, "Universal pidff driver loaded successfully!");
+>  
 
-Applied, thanks!
+Applied, thanks.
 
-[1/1] soc: apple: rtkit: Fix use-after-free in apple_rtkit_crashlog_rx()
-      commit: 00834971f0d9e38beae37e92055b1432782827d0
-
-Best regards,
 -- 
-Sven Peter <sven@svenpeter.dev>
+Jiri Kosina
+SUSE Labs
+
