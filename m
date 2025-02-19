@@ -1,65 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210A34A23;
-	Wed, 19 Feb 2025 00:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114D81DFE1;
+	Wed, 19 Feb 2025 01:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739923723; cv=none; b=cfC83mEgRwEhYKmWas5WgPOIHQINkqQJvTD9Zpy4wVhSbP+g5ZF/6LRobMa8o+CS/7LYJXNDGLu/CMSdcO/P7cx6VgT3UrVtXnpD2lhqRwA/YJcl6VYoB7BUEnZ+dUlgBwdGuDRNSlOsSFTP5Q0Y3Q5JnzhebaQOdolbx4nQ/BY=
+	t=1739927248; cv=none; b=l1+nt+DYinUU7Ei1rFv4MWQKG32tIBIUk8p9cp86OdqOOJ0EIStCt3KLRBjzcLoLYSS+mm58bwNgi36Ap7jRrvXcrjVT6oZrhysmZGf85874DDl+BF7ZbWiG/ZwVz+DKx+oWLAydmQV4orbdbFVHSBPP2KDF3pHH9UOtA1BJ7Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739923723; c=relaxed/simple;
-	bh=yEwLVxfjgxCsvIUwG0Nns7OEvptA/tamjhpAsrlueIU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Sax2AHPjQDlhW2Km9BOOPOuRE3bb554TIgfdeuIgjgDbJ+Kxr19RaB4JU3YxJZl3V9Mrg5TnAS5Jh0sYs+p/bAi8ebdcOf+SYedGVDBK+2m1LjHNISFiAGKEjXH4GbAbWtcWP8p2Jv+YG/E58bNM6rx7kJFf3EPiQhdz28VHQ7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=nevgMhPm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739927248; c=relaxed/simple;
+	bh=1kYpNdNswqEKqHoA7xUZIEZTpC/TVQMSfLkBfXk1KaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gMxr9yLYNCfvNcHYhO7/s/2VNdztlb26ZFXDE4Wd35OJ5dxYlcgelwi2FKr4qW1H19x6XP8zU1TPh4FSG5jdqpWDSmCFMSIxcqSQEygNeYo3OuOKtVWeCWlC5AOkH1BI0qwWDarIVMawphlXUaG0pbFGxb2l0lwixFEh2WJF1qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=f4ke4FVD; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="nevgMhPm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28C0C4CEE2;
-	Wed, 19 Feb 2025 00:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1739923722;
-	bh=yEwLVxfjgxCsvIUwG0Nns7OEvptA/tamjhpAsrlueIU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nevgMhPmZfs35Lx75GBafIpWH/HozlYHwfXLhMOcdU/oeI7gsLup1xn1MdYv3ovkt
-	 zCMLnT2FHCgaGErSWJuKgySdpAq3aq04pRj9HPcYsPosmH10IaYusE0AnXdXSrGkWQ
-	 s2TVUOBlVqjywg61C4seFztePff2msU6iU9ZShtM=
-Date: Tue, 18 Feb 2025 16:08:42 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] mm/mincore: improve performance by adding an
- unlikely hint
-Message-Id: <20250218160842.2fd9fd47b47704681cad1e5b@linux-foundation.org>
-In-Reply-To: <cbb812ea-4585-4777-aaae-3dcdcd0bd8d9@gmail.com>
-References: <20250217170934.457266-1-colin.i.king@gmail.com>
-	<Z7N4tLUpRA1EKfDm@casper.infradead.org>
-	<08e4a7fc-bd06-4c8c-96e2-84991c4ce891@gmail.com>
-	<20250217191351.0003a6f07d017d80762fae41@linux-foundation.org>
-	<cbb812ea-4585-4777-aaae-3dcdcd0bd8d9@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="f4ke4FVD"
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IMg7tY007173;
+	Wed, 19 Feb 2025 01:07:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=vC65oQ0d9y1/m/p52u5CLaY0PWXZTDCshaVJaUJwIiY=; b=
+	f4ke4FVDSqCjG1aZHFaNTl64eetvs9dUKysIC+pn1/8+PmGBYm8lkBqXxL8+m6p8
+	IUlc/ae5wRQOyiHf8VrPB4iWympF0xPsdU2H2tfIHxKb0ijbP6gqHHBpmTzdfT8Z
+	aek4s9XQaDOkoSlgp7jRRZ3Y3pREXh1RIyVYXJbT199tYfB6BxUD7hpdhTczZCAK
+	hV6fKYvJ1jekxzinS3RSYLwHQxF/AWycHnLJfxZmCFrY9Hsj6bV43HpzC4zX8Py/
+	x2C1JXG35t3TZaqhNwRRaCDnTGNA4xZJLcvo8ZHFIUM1pSGhc5wiRV58fcML8Kie
+	3/dbd/QarVOoCruuVpxvtA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44w00n0jy7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Feb 2025 01:07:21 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51J09Yom002048;
+	Wed, 19 Feb 2025 01:07:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44w0tk1rqk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Feb 2025 01:07:21 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51J17KeJ000669;
+	Wed, 19 Feb 2025 01:07:20 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 44w0tk1rq5-1;
+	Wed, 19 Feb 2025 01:07:20 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Eric Biggers <ebiggers@google.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Andrew Kreimer <algonell@gmail.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] scsi: target: iscsi: Fix typos
+Date: Tue, 18 Feb 2025 20:06:49 -0500
+Message-ID: <173992713066.526057.2711978174410450492.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250206084905.11327-1-algonell@gmail.com>
+References: <20250206084905.11327-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_11,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=802
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2502190006
+X-Proofpoint-ORIG-GUID: lKxiJP9NB8igtyu8-npPRq2NsGbM3_kZ
+X-Proofpoint-GUID: lKxiJP9NB8igtyu8-npPRq2NsGbM3_kZ
 
-On Tue, 18 Feb 2025 14:16:20 +0000 "Colin King (gmail)" <colin.i.king@gmail.com> wrote:
+On Thu, 06 Feb 2025 10:47:03 +0200, Andrew Kreimer wrote:
 
-> >> Improvement was from ~970 down to 963 ns, so small ~0.7% improvement.
-> >>
-> > 
-> > It actually doesn't change the generated code:
+> There are some typos in comments/messages:
+>  - Nin -> Min
+>  - occuring -> occurring
 > 
-> I've compare the generated x86 object code using gcc 14.2.1 20240912 
-> (Fedora 41) and 14.2.0 (Debian 14.2.0-17), 14.2.1 20250211 (Clear Linux) 
-> and I get differences in the generated object code comparing old and 
-> new, and the improvement on ClearLinux is more significant too because 
-> it uses -O3. So I'm confident the change is generating improved object code.
+> Fix them via codespell.
+> 
+> 
+> [...]
 
-I was using gcc-13.2.0.
+Applied to 6.15/scsi-queue, thanks!
 
-Please resend, with a Matthew-friendly changelog?
+[1/1] scsi: target: iscsi: Fix typos
+      https://git.kernel.org/mkp/scsi/c/035b9fa023fb
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
