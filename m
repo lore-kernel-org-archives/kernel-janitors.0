@@ -1,118 +1,94 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D993B22A819;
-	Wed, 19 Feb 2025 19:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904D1184F;
+	Wed, 19 Feb 2025 19:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739993104; cv=none; b=bDSPtcUQu/nAUr4G872VUg/XqNzch4KtVKj4vssYDNmIG6kQdTfMW+Unhf8CUg+J2aEvn7iET8z+CZehj9M/itvTjDqifkKNFO/RDI5bjG/phJ4z4f18kDLvzevf9kZXF4LBJ1SBsvHgJJyRGyuktBT6LG0MK/Q9+IhuSRb3hYs=
+	t=1739994048; cv=none; b=FgNLmo069tdvD8646EMzIxE3ma1/qUpSQMfDzVbkUEo64ys5hAg04zML3WY15P4h1c8Xp7KQf852oxlgobz740Wi5DY5DwTFCBbSEYPEFRw2oPUQqB+y/Vw+4DDpr6FKB+8rNrm7OPVfXGxBgzxntCt5sTfiwkRSieHs4Qh4mUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739993104; c=relaxed/simple;
-	bh=4xkjxsKSnDG+ejxVEfbphpK/6goWvTkMshFWpmtRGeA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OfxV3MGUefmwRufsQEZU8DXGkOgqLkfscYZ06Sj20xvBz+Wlvhid6LzqRlQKPSkag2YO5gO++aMrYwJcImWKkeoqUhGUjge/trUeBNUe08jxO3368A0TIPGZMI2FcKMIOMcHgm4aKdWi9h15S+l7MQfVBvseW/klxkHj9+KCQ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fleSNih+; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1739994048; c=relaxed/simple;
+	bh=IZvZQ+Z2ANgypM5Ai42o0D3/NeLsJT0qXFUyLp8/kH4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Pgv8KC8VucHzqIr5RU3VmxC9LVMX8DTLpeVwENd7DUslcqSMCntA779RV/N4mZD7JrNLB05ma+Z9sXuqIsg442YOt6YN5+Jw5hW/wDjmADdOifIjh32r2LKpMlkF+d5+IZOO47KmhdmOKgAFoaNiXNnsMUokbRpsKJ0bcezBdgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=znhrNoNg; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fleSNih+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739993103; x=1771529103;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=4xkjxsKSnDG+ejxVEfbphpK/6goWvTkMshFWpmtRGeA=;
-  b=fleSNih+rQIRNQmvCjmSFGbM3RUb+ZuTYk7Z3y1gI/CKRE3aez8XRrvX
-   Mm0dP7Gnj/dZeinbYIQ/S/+HR/vYZw07QB62uN8NFZlSW2fwCV5hRFOUI
-   9K8+s1URn2NDC5a4ZDazdVLwSi0BOG84kQ8yOnW13+LN0Dtw+cE/3g3cI
-   PVj2xOkpsHOhhJHLANJa7aB5srIR2ZNc7cR1qMNsem5YpnVNYvmHnyR6X
-   ACvKglWqNvxXQVxOhlcMUb/74tpWpBUFCoRsiQBpnD3FtpE1OvoxoKekv
-   hydZF+QIVt0XU52p6ywxG5oKzDMcbLnPRfThlJEstCcNbioaKwGWdIpZI
-   Q==;
-X-CSE-ConnectionGUID: aOdavW0RRAaww0BU75viLg==
-X-CSE-MsgGUID: /HsYx9OCQIOXk9dZHmUClg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40604683"
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="40604683"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 11:25:00 -0800
-X-CSE-ConnectionGUID: sT6FCgk1RDag9ulyZnQRTg==
-X-CSE-MsgGUID: v13zxD0XTXmGo28FPVA9pw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
-   d="scan'208";a="114791542"
-Received: from dprybysh-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.160])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 10:55:18 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="znhrNoNg"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=uE1hvjxXsUUC1et/VMLf8EeRBWH8/5FEEmjbMg7Vyu0=; b=znhrNoNg1jDWT+rZCye1OrEbRx
+	0pK4ORsezD6ZZI0kEsrUVLnU6Nx0x8S2UJ1UbY6pnDID5AlvQe1b8CG6EwezIt/o3eEXl0jl/IfYL
+	cy/U8xZrKX6LqsFnPRE2/jtOZluTSUT8AAVceZq74UIt14nOJlvlCNZ7unA+pQwZAzB6ojwewx5CY
+	PqnALiqnk25KM0q0xudc6bxFSUwLVuBnAdFM60aFGc4TCaPnNMb73oUD/TFkK5PaPNs6eHmGN3Wl0
+	jF8oWQ78Dgl877QN45H4KhVuaPCxNxsHXaLuXXBhn6uuktsd4Ya7Wh5+CKTBOct8rRmtbBvAsrBtv
+	BjblUO8Q==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1tkpVW-000Geo-2e;
+	Wed, 19 Feb 2025 20:13:18 +0100
+Received: from [92.206.120.88] (helo=framework.lan)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1tkpVV-000N4n-0Z;
+	Wed, 19 Feb 2025 20:13:17 +0100
+Message-ID: <426de13199c560301ed0a148d9ecd0155dfcff0f.camel@apitzsch.eu>
+Subject: Re: [PATCH next] media: i2c: imx214: Fix uninitialized variable in
+ imx214_set_ctrl()
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jim Qu <Jim.Qu@amd.com>, Lukas Wunner <lukas@wunner.de>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Takashi Iwai
- <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Su Hui
- <suhui@nfschina.com>
-Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
- vga_switcheroo_register_audio_client()
-In-Reply-To: <f608a3b5-320a-4194-bd03-cf08be04c317@stanley.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
- <87zfiim09n.fsf@intel.com>
- <f608a3b5-320a-4194-bd03-cf08be04c317@stanley.mountain>
-Date: Wed, 19 Feb 2025 20:54:41 +0200
-Message-ID: <87r03tn4su.fsf@intel.com>
+Cc: Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus	
+ <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+  Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	kernel-janitors@vger.kernel.org
+Date: Wed, 19 Feb 2025 20:13:15 +0100
+In-Reply-To: <1e4da85e-b975-4638-bd14-09ba0675d9d6@stanley.mountain>
+References: <1e4da85e-b975-4638-bd14-09ba0675d9d6@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Authenticated-Sender: andre@apitzsch.eu
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27554/Wed Feb 19 10:50:24 2025)
 
-On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> On Wed, Feb 19, 2025 at 05:17:56PM +0200, Jani Nikula wrote:
->> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->> > The "id" variable is an enum and in this context it's treated as an
->> > unsigned int so the error handling can never trigger.
->> 
->> When would that be true with GCC?
->
-> The C standard give compilers a lot of flexibility with regards to enums.
+Am Dienstag, dem 18.02.2025 um 16:05 +0300 schrieb Dan Carpenter:
+> You can't pass uninitialized "ret" variables to cci_write().=C2=A0 It has
+> to start as zero.
+>=20
+> Fixes: 4f0aeba4f155 ("media: i2c: imx214: Convert to CCI register
+> access helpers")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> =C2=A0drivers/media/i2c/imx214.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 6c3f6f3c8b1f..68775ee8256e 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -795,7 +795,7 @@ static int imx214_set_ctrl(struct v4l2_ctrl
+> *ctrl)
+> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0 struct imx214, ctrls);
+> =C2=A0	const struct v4l2_mbus_framefmt *format =3D NULL;
+> =C2=A0	struct v4l2_subdev_state *state;
+> -	int ret;
+> +	int ret =3D 0;
+> =C2=A0
+> =C2=A0	if (ctrl->id =3D=3D V4L2_CID_VBLANK) {
+> =C2=A0		int exposure_max, exposure_def;
 
-This I did know.
+Thanks.
 
-> But in terms of GCC/Clang then enums default to unsigned int, if you
-> declare one as negative then they become signed int.  If they don't fit
-> in int, then they become u64 etc.
-
-But somehow I'd failed to appreciate GCC/Clang actually do use unsigned
-and signed on a case by case basis. I thought they defaulted to signed
-int. TIL.
-
-And I still consider myself a rather experienced C coder. There must be
-something wrong with either C or me. Or possibly both.
-
-
-Thanks,
-Jani.
-
->
-> enum u32_values {
-> 	zero,
-> };
->
-> enum s32_values {
-> 	minus_one = -1,
-> 	zero,
-> };
->
-> enum u64_values {
-> 	big = 0xfffffffffUL;
-> };
->
-> regards,
-> dan carpenter
->
-
--- 
-Jani Nikula, Intel
+Reviewed-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
