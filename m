@@ -1,94 +1,102 @@
-Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904D1184F;
-	Wed, 19 Feb 2025 19:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCF921B9E0;
+	Wed, 19 Feb 2025 20:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739994048; cv=none; b=FgNLmo069tdvD8646EMzIxE3ma1/qUpSQMfDzVbkUEo64ys5hAg04zML3WY15P4h1c8Xp7KQf852oxlgobz740Wi5DY5DwTFCBbSEYPEFRw2oPUQqB+y/Vw+4DDpr6FKB+8rNrm7OPVfXGxBgzxntCt5sTfiwkRSieHs4Qh4mUo=
+	t=1739995892; cv=none; b=UA8Qf5DNN4gLxZr14KlPcFpAv4ARVi/HjpGTsUwjxhKEYGzrLvfLDwt5FWn57WglLna/qbVqKn9vc03aOOK07hhs0SSujlUFXFcKKscqdXL57N1kqBJdBt8Vd8LAIGfs+fNzM3XovweGIagHaX+0FPzYIX/y0s7c+/UnokXpsdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739994048; c=relaxed/simple;
-	bh=IZvZQ+Z2ANgypM5Ai42o0D3/NeLsJT0qXFUyLp8/kH4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pgv8KC8VucHzqIr5RU3VmxC9LVMX8DTLpeVwENd7DUslcqSMCntA779RV/N4mZD7JrNLB05ma+Z9sXuqIsg442YOt6YN5+Jw5hW/wDjmADdOifIjh32r2LKpMlkF+d5+IZOO47KmhdmOKgAFoaNiXNnsMUokbRpsKJ0bcezBdgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=znhrNoNg; arc=none smtp.client-ip=168.119.26.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+	s=arc-20240116; t=1739995892; c=relaxed/simple;
+	bh=vVc8kNeKRrfQX23z0vb9lTZ07UAQytComilfQtfkp3c=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=OsWIw45dOA5nIpCHuThGhI6gABD5jK7krv5UaNIs9hNznsq0igIa/+DdBndXaPKIKMRipTGxFfpotumALM8b7zw7JZ9oXD5n6vosgKGD9flt9QQHMb6uDLKgDIF1vlSXKk1rZtempcWmZsKVYKzIoncw3rYxuHYGESaZGzpv1qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=A7GIG5xo; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="znhrNoNg"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
-	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
-	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=uE1hvjxXsUUC1et/VMLf8EeRBWH8/5FEEmjbMg7Vyu0=; b=znhrNoNg1jDWT+rZCye1OrEbRx
-	0pK4ORsezD6ZZI0kEsrUVLnU6Nx0x8S2UJ1UbY6pnDID5AlvQe1b8CG6EwezIt/o3eEXl0jl/IfYL
-	cy/U8xZrKX6LqsFnPRE2/jtOZluTSUT8AAVceZq74UIt14nOJlvlCNZ7unA+pQwZAzB6ojwewx5CY
-	PqnALiqnk25KM0q0xudc6bxFSUwLVuBnAdFM60aFGc4TCaPnNMb73oUD/TFkK5PaPNs6eHmGN3Wl0
-	jF8oWQ78Dgl877QN45H4KhVuaPCxNxsHXaLuXXBhn6uuktsd4Ya7Wh5+CKTBOct8rRmtbBvAsrBtv
-	BjblUO8Q==;
-Received: from sslproxy07.your-server.de ([78.47.199.104])
-	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <git@apitzsch.eu>)
-	id 1tkpVW-000Geo-2e;
-	Wed, 19 Feb 2025 20:13:18 +0100
-Received: from [92.206.120.88] (helo=framework.lan)
-	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <git@apitzsch.eu>)
-	id 1tkpVV-000N4n-0Z;
-	Wed, 19 Feb 2025 20:13:17 +0100
-Message-ID: <426de13199c560301ed0a148d9ecd0155dfcff0f.camel@apitzsch.eu>
-Subject: Re: [PATCH next] media: i2c: imx214: Fix uninitialized variable in
- imx214_set_ctrl()
-From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus	
- <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-  Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	kernel-janitors@vger.kernel.org
-Date: Wed, 19 Feb 2025 20:13:15 +0100
-In-Reply-To: <1e4da85e-b975-4638-bd14-09ba0675d9d6@stanley.mountain>
-References: <1e4da85e-b975-4638-bd14-09ba0675d9d6@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="A7GIG5xo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739995867; x=1740600667; i=markus.elfring@web.de;
+	bh=vVc8kNeKRrfQX23z0vb9lTZ07UAQytComilfQtfkp3c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=A7GIG5xoQLXADczgbO0CvHCP644fS1ow9URsZy3kefibGZYUD94krXbiDwdPw2xy
+	 6XckxWP9jkpt6rqrOBAiUG7yrKsRZWGtDJITGT+xrO6coCFEaiIqQEmigEN7N+K1n
+	 8d8u7B3diTqYrYXo+TV/B3ROwLFDX6HrCB3gGURiu/+JumHczCujbAq5YsZruEaly
+	 iclkdC0f5hPFAdXv+Q2+8RvkATVy00VfmkspDVtFVGAv6zdrAI/RgijbgsIFVtvxU
+	 MKo1ead4vcNgQJ6rG7gfYsXtbM9uyxldfManPQdCNXl41rvCmdn5AvL+j44pOXFyT
+	 H3F9DXj7aIv9Q0xsrQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MI3p7-1tWDpF3qQp-008Xvw; Wed, 19
+ Feb 2025 21:11:06 +0100
+Message-ID: <8923aaae-becd-489a-bfe1-8c1c569d8d48@web.de>
+Date: Wed, 19 Feb 2025 21:10:53 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Authenticated-Sender: andre@apitzsch.eu
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27554/Wed Feb 19 10:50:24 2025)
+User-Agent: Mozilla Thunderbird
+To: Josh Don <joshdon@google.com>, kernel-janitors@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Segall <bsegall@google.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>, Mel Gorman <mgorman@suse.de>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>
+References: <20250210195117.1074569-1-joshdon@google.com>
+Subject: Re: [PATCH] sched: fix potential use-after-free with cfs bandwidth
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250210195117.1074569-1-joshdon@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:X3d0E9WrjagRkba4BQm0pfUD+YOsvBTW2m2USxRtZE4oOAsiyi/
+ n8JSJAmZ+gc5ElVU0TBeloHmbm0LEk5tfjHFdNr4DddiSWCz0F0osNqophwlK/1cs1w84ka
+ ow40DtBp4665Y94uxzt5Q+aQjEtJJO8Usu+xGhxKLyPPY94Nu9Ptc7Nh/1p8nOsmbb9ArvG
+ ybxx5xNdhE2aGllDcVyyQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MAC5JS6jmxM=;mXe69x3zsDUjeVuwGYCr1umOBbN
+ EYoBsIrLDJVE0kx5f08ZH2ujWwi3HFKVAjaQ7C9JGE/82OO8yn5QY17EuYHl8xD3pHclp5ZAd
+ Xv0odmOgC8Xn9XXIHPDxEXOiv4oVwHjzgrNxAI9ViEkUCNfOBxSNHqSocxyMLbQTcb+RXwK24
+ kT5+BEmv6MGkvpUODd1TPHIExeZ0jJ0uIKhvnqh4qwQ1eh2ntgOkBkpxjrK7clmT7yQ5rBllS
+ ykbHazLRVEP+UevlridiRj+P1bUZWaNZm9Or9GrC7GYtJhxMm07wIqvHGppfHRiTUuFgKn9Bn
+ fuqD26bEh/2PmqKh63VUit91Z6OV78D1AyvymppuA4c/x5rZHaVFewuz8CSzcSu6lERqMafL4
+ f8F7eoUhIk753QL185elJKmzgKS39+sAoknJ8p4xIRU1Ch5BH1byuZLAwX6toSiUliawyfQjd
+ t6aGlFMIgGtteK+Om4HyYHSwXxzgSECmcBMpenYOc/8G5Mem3M42SAarvFJ3oX4iCM4D5NyHg
+ qemFJL/UCNTO19X0oaBgoJtEfvzqGIO1m5dRyxgRlmmWm+4HFHgDR3+NSficsrtnry3T1h7/g
+ rQCsJLJqPJ1Fy98at0NE2Werl6iJF5eNe7cWjKvB9Vy3S0vBGPUUP9Re1wWMtZv5RXlxoqpwL
+ 2/o7f6sN8ywA5c4OPsZJ7trsz4XBUxsOZ0u6qhS8mkslPsL8ilZWEXVK7DC+NjRqj15FbI9Jv
+ gjlrDEwgfBUq8GeSxWFtRy/ou3ATf3ZkGxWPjxZtii5yRgKthjgl9Y87WFAp4iXbKBTy2cMeB
+ 9Nw+Aga0dfiqoFlSekloCImBiDy3EJhinpt4Qf8EGVnBUNg80Tolq35hYCmBO17G1hxMg4HWj
+ Z53uCHnjaF8xrcBHq1GpHj8ryrevxHCB+IxvrjQl791dLdaJfNutrOXUw5qVjay83oOgw3MaY
+ +JCW14aPH86s5MfiY/1pbo0IKFQrLbTld7+e/dJWCwpwZy/KY1Tmw5Wgc5MxkL8xMl3Iy9ROn
+ hc8G0kauWQGHxVgMPDf+2r3BOV6BL/lVNuiu0pBS0EkEYdKBOyezTom7XrSRMaCzWmQWhM7nC
+ ekoQeIR2L8MyXEvm2PoKZYgdthXb7iC95p+0j2CRaXodv5LaJDRGborB+nTsbWjrbSxjidb6H
+ H7/6ud+hxw+RkhO/y2WcTZyTJR3SGGTde9vJxff/O/1Nr5ZZmseXzSce9FbykciWGVyBQUVu0
+ ib9HntGxx6iA2n2DNYYcz7VaEWnnYSlDh7hLjx+1Hu5Q4kd0JHM82k3yFZ3yNm4ti1RCU2QVO
+ XQwprT1NLkU1l0im+sbbAQYUguO0cQFtxL73cvnzjRgdqXdr1Gg4X2v61YLW2MnrW0I0RR2CZ
+ Mq9z6FrknGJuBWWtTkKLFd1nZ5NjkDCR89nC2bQFoVQo4/ZOpYIzNWYdyxnpuUbo3N6Bd38Zx
+ el/SSb9+RU1CgjulB6UGYQWWvITU=
 
-Am Dienstag, dem 18.02.2025 um 16:05 +0300 schrieb Dan Carpenter:
-> You can't pass uninitialized "ret" variables to cci_write().=C2=A0 It has
-> to start as zero.
->=20
-> Fixes: 4f0aeba4f155 ("media: i2c: imx214: Convert to CCI register
-> access helpers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> =C2=A0drivers/media/i2c/imx214.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 6c3f6f3c8b1f..68775ee8256e 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -795,7 +795,7 @@ static int imx214_set_ctrl(struct v4l2_ctrl
-> *ctrl)
-> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0 struct imx214, ctrls);
-> =C2=A0	const struct v4l2_mbus_framefmt *format =3D NULL;
-> =C2=A0	struct v4l2_subdev_state *state;
-> -	int ret;
-> +	int ret =3D 0;
-> =C2=A0
-> =C2=A0	if (ctrl->id =3D=3D V4L2_CID_VBLANK) {
-> =C2=A0		int exposure_max, exposure_def;
+=E2=80=A6
+> For full correctness, we should avoid removal from the list until after
+> we're done unthrottling in __cfsb_csd_unthrottle().
+=E2=80=A6
 
-Thanks.
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n145
 
-Reviewed-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+Regards,
+Markus
