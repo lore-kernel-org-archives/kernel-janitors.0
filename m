@@ -1,82 +1,97 @@
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AB8286284;
-	Wed, 19 Feb 2025 17:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50973214226;
+	Wed, 19 Feb 2025 17:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985701; cv=none; b=HMC2di0GF4pYYw792aHM2oe/WprrjXffyHDNB2jdtPa18JtgXhomNJts/G+WDuZD4kKXWpp76NxIXdC0WrxN8okC+708ltKuvCHjNSBQuqs01H4X/YB9mCDhrD81k83AUpSgek6l3dJViqtrJ8xTiYIcv9Hf2Wuch11ryLOKyQc=
+	t=1739986893; cv=none; b=XUyc9ru/Lo0leczBCO6s347npG6pTDNHbe0AtFQ37RlTrKRf2ySwVoHSs6S5DJc0eJOC5Yx/hea6zHcmBzqmoqZhuyVBrT+9jnUlfDJUSONHd8ZbgfuNHb8d/mMPSeUM5eibZzj0gUk18qbHYCzsPsyAwPWa9bC9Q/TLhYp2CII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985701; c=relaxed/simple;
-	bh=1Me3lu0fX9NUSPq+Ggrr4DEAwkU4l3ce4Mld2GXKtg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BYce3WBAjfXjpI+8r0FQv3NDprBDJIBahSS0rVG0rhUh1ZcE5qvw0X4IACDsTW/fueh4hT1DG5xW8fiVqjUn9bSLwnTTJlVQrvji0/MCnREvKN7UFzntUJVkWGY3qCxzZfITm6+UkZReUgkUHEVIV5rFVUzHebpZ4LqMw9imMtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Oec9H/gA; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1739986893; c=relaxed/simple;
+	bh=kIkXxFdDl1vputqcWWA/PGngcXIL7N9KY7LhHR64CNg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fxfpmE4e+EHG0mX7ZKJsOyng0J1PQmDwwt0JLv5vBiHxl+mdE1075ziUgefp4ZJppP2uiIjJFML2ypHpN03yoThtzSYQmPZO3VB/OLaQifwgIrihmEHt55PX6K0ZZAHb193/JzGPsDCJkx0/6mYDuSzRSUf2ajNzI5PisKajdFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nC/KdewT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Oec9H/gA"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id knkEt082zsC0pknkHtl0HU; Wed, 19 Feb 2025 18:20:26 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1739985626;
-	bh=QW6x6Fz8XX5peZDa2MJO8SZhs7Tp8RyNuh/Nt9PBXRE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Oec9H/gAZMMuSXgE68f9B/TYvkhyYCZxwWie6NgYFH0TjbLCByUDa3Vx7BDcXSPgF
-	 HSoZn/z6jWtYw9sMKm1BuxGRC70Bw93hdBbF5yrprmV4/nZrGU6bVCmedccal8JVOk
-	 W7CK8OP7Qxpd750ShNiWHS5aQNGyaNrKB4LboofPf8Rk8rIpVfVhaxITnBgpD++Iy1
-	 CDClym/uMUSGPmXEEoWxJAYGzU/jbSyLJUsIYfN93078Way/gUF0RfQj6WMDB0vJcT
-	 EkNcj8b3Nif4ctnAPHE2N0b1GLTcRonx498ixCGMm9fyuUP+SQwA2fmrciBnELr9s9
-	 bM59H7wDOfXnQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 19 Feb 2025 18:20:26 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-leds@vger.kernel.org
-Subject: [PATCH] leds: st1202: Fix an error handling path in st1202_probe()
-Date: Wed, 19 Feb 2025 18:20:20 +0100
-Message-ID: <4afa457713874729eb61eec533a4674a51d1d242.1739985599.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nC/KdewT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B940AC4CEEC;
+	Wed, 19 Feb 2025 17:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739986892;
+	bh=kIkXxFdDl1vputqcWWA/PGngcXIL7N9KY7LhHR64CNg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nC/KdewTBAob2JJ1uqMwVsBBzE8m/TwQa2UUkrzR1wbB+TmeoXa4Nw13KbhS/5EqF
+	 W7Z6VHUBcp/13jIZIMD/YiYUh8/sQLkkljM+rQjbkTWuvyE/murE9n1wF3wD8eCpiK
+	 80SrE4pwpKM8FFav0gmUyu/zXrN80vr+OgQhU0iL6tql3oaENPPEQS1ptWsRM2tuOl
+	 S07xKvSvnnnHNHtEk75UmTNq/yKrOfk+VCXc6IeMk0tsjyIV0BHz/NUYTrS8IQgbCB
+	 PuMFpyTQLjRJO79a4LysY4gCx2Pp8VyD4WWlXcl2CPfvHeTwAKlv2ZQToeqehQnzpy
+	 eM2rMogfgWkBQ==
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d2acdea3acso54415ab.0;
+        Wed, 19 Feb 2025 09:41:32 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWzPaFgJkMR2KdWndYyZ1DySWr9gI+XaBZJ1AiBW7jGFu+PLOYhYWRMx1ny6mkHntvlLDuXYDaWrEuXUPWD@vger.kernel.org, AJvYcCXA8D8V8kynNxhLiOjTw20c/WFjcI0tGi4uVZTuc7jZTzwzhAkgDcP0vBOEmtPU3ShnvIU6EooSAbbEVLpTFGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZVKTwhpuqbio+UgNhfdlH23HMnW8HikXFYlDdGcmu1sGL1SiE
+	mNEERL7Z95PdGAvLnTNokFP6A71ZUWqocFPGguZ8ZszsSKRgMJ3WOWDxALwA62GZJnxvKAbHp05
+	Ee2C9twIplJyVD9vpqCHG9hecyJE=
+X-Google-Smtp-Source: AGHT+IHb2AivR32bAhoSImkfZXBTi8hepDC23rVgdSlJiw648cpS3OEqQW4LY10/pxCZAXe2LrWKJDC73oUpaG0w3po=
+X-Received: by 2002:a05:6e02:1a8b:b0:3d0:10a6:99b9 with SMTP id
+ e9e14a558f8ab-3d2b526d97dmr47301155ab.3.1739986891944; Wed, 19 Feb 2025
+ 09:41:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <fcbb2f57-0714-4139-b441-8817365c16a1@stanley.mountain>
+In-Reply-To: <fcbb2f57-0714-4139-b441-8817365c16a1@stanley.mountain>
+From: Song Liu <song@kernel.org>
+Date: Wed, 19 Feb 2025 09:41:21 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7z=rQoGRmWaEihtmxb=QNcuiM8aTgtaR0wZ6G049YjkQ@mail.gmail.com>
+X-Gm-Features: AWEUYZl3TM-I84V7hE6jNxKt7ipYmmXW-aQkPh2AuOoX7b837qicOk9GqelBzsM
+Message-ID: <CAPhsuW7z=rQoGRmWaEihtmxb=QNcuiM8aTgtaR0wZ6G049YjkQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/module: remove unnecessary check in module_finalize()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-devm_mutex_init() may return -ENOMEM.
-So this error should be handled in st1202_probe().
+On Wed, Feb 19, 2025 at 5:48=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The "calls" pointer can no longer be NULL after commit ab9fea59487d
+> ("x86/alternative: Simplify callthunk patching") was merged.  Delete
+> this unnecessary check.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Fixes: 259230378c65 ("leds: Add LED1202 I2C driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/leds/leds-st1202.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Acked-by: Song Liu <song@kernel.org>
 
-diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-index b691c4886993..4fc17d518292 100644
---- a/drivers/leds/leds-st1202.c
-+++ b/drivers/leds/leds-st1202.c
-@@ -356,7 +356,10 @@ static int st1202_probe(struct i2c_client *client)
- 	if (!chip)
- 		return -ENOMEM;
- 
--	devm_mutex_init(&client->dev, &chip->lock);
-+	ret = devm_mutex_init(&client->dev, &chip->lock);
-+	if (ret < 0)
-+		return ret;
-+
- 	chip->client = client;
- 
- 	ret = st1202_dt_init(chip);
--- 
-2.48.1
-
+> ---
+>  arch/x86/kernel/module.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+> index cb9d295e67cb..615f74c4bd6c 100644
+> --- a/arch/x86/kernel/module.c
+> +++ b/arch/x86/kernel/module.c
+> @@ -278,10 +278,8 @@ int module_finalize(const Elf_Ehdr *hdr,
+>         if (calls) {
+>                 struct callthunk_sites cs =3D {};
+>
+> -               if (calls) {
+> -                       cs.call_start =3D (void *)calls->sh_addr;
+> -                       cs.call_end =3D (void *)calls->sh_addr + calls->s=
+h_size;
+> -               }
+> +               cs.call_start =3D (void *)calls->sh_addr;
+> +               cs.call_end =3D (void *)calls->sh_addr + calls->sh_size;
+>
+>                 callthunks_patch_module_calls(&cs, me);
+>         }
+> --
+> 2.47.2
+>
