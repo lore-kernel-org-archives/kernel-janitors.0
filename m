@@ -1,114 +1,109 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F181AF0C8;
-	Wed, 19 Feb 2025 08:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44AE1C4A16
+	for <kernel-janitors@vger.kernel.org>; Wed, 19 Feb 2025 13:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739954208; cv=none; b=oniZ0KdHTnJipY8kk698wz2vkeTzW6O9QK9VWYqjZH0BfqDmf4GOyKa4PtPijSrxE2zzg0TpFjLrX3Wv4YxNURsVq24OYgaabGz1XIvYCXbxiMmW0yFqUMmkseblXwRIYPwUDyodVFDxKvAkUFx0D01l1xy6FLy04xQmTWdEdVw=
+	t=1739972937; cv=none; b=LRWBklBGIk/PtIFX3+XpKBHVbKvoJhSjwGqiA3B6dmtPPucnaGVsae2On2f9e+xKZKMfgeSRT1tV0IJ+eC15QkU09aJ2PWZfEapFsN1BGyo8c+rhVXPD4RM4XexfbMCfgTyzLokxzyI5QIrR/T1Fit2H0RhgWa+dezpXK3oQCH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739954208; c=relaxed/simple;
-	bh=vBWdb5FzpHt5ZjRBzV17DBH89UaJ076ckpjDBTFsSZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fvD2z1VZaq50Jh7Mw12VaZ3TPonfRIze8SO8oCLdQwoZxD6PudHuRwdstjR4/VsWXDDgEy/bG1M0GX6tPXWtmLAZFPeBqFvrKKXeVb8pixcJqpuZHe6O7UnSCIDo2omcLLXmD40fpCv/qp6nbJ9oXux0XSJS21LHtAzU2cBILhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JNOUB4fF; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739972937; c=relaxed/simple;
+	bh=oMwaFNRSxLI6lNwV/DUx9I+Ovl1YavfQaqXHXDL8Ito=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JaYV/we169vzUaWqmc+99fX2lFEr1K99K/W5YsXTCtTUa2XdIuYFuTXvzWr6V4mVox1PiFE0B7sHYquiZE6YTqmXc7hkbtruCMJiz5a/r/Gk4fSOrloZe8bS04gfhnFWfzvQmyhrEFPl0wqmE46tFxVKf4bFTjh6GdzrALqxEhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K05k9B8i; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNOUB4fF"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f2b7ce319so4016328f8f.2;
-        Wed, 19 Feb 2025 00:36:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K05k9B8i"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaeec07b705so1003824066b.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Feb 2025 05:48:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739954200; x=1740559000; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YFUfS4MN212nAVnRhe58nyBjXY8HxrKGCZnWtI4ATrk=;
-        b=JNOUB4fFIBPqhkfAtnkMmzYkwgaFH80VRzMisCVhb9L5iMhq+RRRBAMxCGMorelcMC
-         fbsbS4r3EYPVltRqRgPWdTzc6tC8LZLXqngu0X2GpolpPxqnRQGE/CiD1zRtVt68XBDP
-         vHiXVODOob/Q28BNbxv5/DYDqyv6AhKeUGjmNC7WJDcyx0AZe+9hVxLYwigbVJTJMTsz
-         xtzjK0xt61pUufPZV06CrqnRpDMMdLLRiWk298CjdR2QEJ6bOi1ZeLDu2OAZiCRMDSJD
-         RgPYhluyw8DhCVaOjuitAtXlMFKXnUvqQh+lV32TtSHT3FiVW0atJZ2onze2+t2qWw95
-         7yvw==
+        d=linaro.org; s=google; t=1739972934; x=1740577734; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OIzLBEimKpadUH9ewb3+li+IYyg2jvk1s+5b+2HIs6I=;
+        b=K05k9B8iTkOh12rSVkvqXRnUOotxg7UNJQSehggQWBSIAj3vdaXfnpMTjCp/kkNfMp
+         8MvAckYpqNdPe5XqeXpv4cyQB2Aue8lP+73+B1l8imOaQPOYTAMLJq/N6O8GiqoUHdm4
+         2H0vsxef45+rKNHFaTxcmTRG9jznlYvUO6C1Pk2j6ZO0hPiyJAsPMZ+ZDK/Lpd+LwLfW
+         9Val9YmZUoD9LK9ymCevSnHKDfxlUXfVHOkJqg+7j32EYgLDtw4y+Hp/xo0bBWkFcv4c
+         k6+onWfNAszcJS6zsNGI1YMagPGp4yH5VlWhx+mogjHCsDSwMKfY60yOvr8vgQAiYsPa
+         Hyow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739954200; x=1740559000;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YFUfS4MN212nAVnRhe58nyBjXY8HxrKGCZnWtI4ATrk=;
-        b=U6s1XCWa4F7PnYZ7avdavVfUYCAk50hDLJmqkC7wve6gcqwpn5EDqCfXjuf0MA2qCN
-         AOP0D7geiXAQQHqj5SLghAbxAJnmQReyBRwjb8+7EUr/THpFVGWzUA1Fr3znJCfOh+RB
-         f6EjSAahNbOGSbZYa5oPAp5cmkyYqZyrrIqVbD6YsEaQIIFmtlX+gyqGxuzoK5ghGaur
-         vhDJS6iQ+0xVlFiRL3J5UdkrqSh12BSA4bkG6Mu2AhrluRs/c3L6lvBnICmKSzSc+oAo
-         ksX/IMIJhjr/jQUSEEl2ty8wMCamrfoWunHQNNf/Zs754LYQmIWSjJhFhr9lgjJ1JB29
-         isUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyIwEM97FQL8VQ8PwgUYdZnrj4ypHu2XtEAqgWtdNt1MWRXv3dTMjMipqkmvjmBPSU2JavdOkxEuBAh/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK//aeoyAobebcsmLcHc35JevSgnibHThB+BiXmhY75XvccSkU
-	ZAPpr9MjvhcbzWYgpJSRgFziFhdO8Hd2f0C9KT/ZeaCzsm27p6Sh
-X-Gm-Gg: ASbGncsOk1yJQYbq+A0Z0WbWLhnL6AWYTJsaVh/RK2N19SfLbPBHCrLoEc86zENZGgZ
-	KPAT+8O5iOtKqvZjSilwXZBWptPUZBklt2fG6m+5s1uNvFbF5sdSjvU8WKBCxZ/zpUgiXftSzLT
-	Hvo0I52laEI0FZtSHMhyDQRJoSHAzkw5If+Sei0YwG0OID+JdhBMZLiUS91TQp+NKPhKVn85//1
-	e/kkPjuDDY5UjTxHeNIKHsNxDsJ6XsXfJ7tGGUORlXFvjWvBUIziTP+zKACCfhnRoOPm06M7ZZt
-	xQyvAvjXGY5+JWGk
-X-Google-Smtp-Source: AGHT+IGUR3tSkS3WDS6O427aOiUDWFepr6QHmWHQE9Tm5bdBdUFEY/hZlA8g9FMTjybk2Wv4qUWMsg==
-X-Received: by 2002:adf:e647:0:b0:38d:ba09:86b5 with SMTP id ffacd0b85a97d-38f587e6476mr1897829f8f.52.1739954199911;
-        Wed, 19 Feb 2025 00:36:39 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38f259f7df2sm17193376f8f.84.2025.02.19.00.36.39
+        d=1e100.net; s=20230601; t=1739972934; x=1740577734;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OIzLBEimKpadUH9ewb3+li+IYyg2jvk1s+5b+2HIs6I=;
+        b=naOja0zLgtqLkRFqJu3Wk3+OSpX15GgJGOby3vDWEG/f5ID4gsdnfoXCCPLLScLCA/
+         sSFNw02DeC2J2FsbGFQ4b+/wxrkfwRcINlfsQyOy8bpVjRf4i5YflXnHGQ6I589NSVqZ
+         k5o+Fy01rzwDf2Egc8T4hhFxkGdl5J57/lAN3qr81/ZRFcWEevrjAqzp4lUlk4huYQmV
+         xnZlg+eD3S+vF3ZuRmwtv8wKkni5g933niEy4l0vlHb9z5HbYG1r5oNOH1NtDbVCN7bi
+         ZvCit840Z0S+Ehk8TKbWIYnFblciEpX+KMIz+/5S0HvmJDHFfp/NMIA3/Db2gyMm2XBe
+         K/yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCqNez0svQZtaZp3LBqsWhNnufFJA4YzLQBon6ZqGu+9Rq4Lij1YBARcTran+fUEO+NsAwA2uXJYxl9wQjyFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFV2vXHwRIWaLNoky+Z7RsYQv6gpeUgqO6iGLZxmdtUs6xwa+h
+	xf+4zQh1TaIe5NXrz6PqnRTJ+pl/vsKGSMVPhrW2+LbznNagJf1sdLOeElegZcA=
+X-Gm-Gg: ASbGnctdXWB6/bFkWh2SRMIue4o4nwOdUfm+KIRrbPGgoTtwGPE3yi/w7a4h7ZZll8D
+	SJWv1Ey4yZKqANl9czkhg6v5bqZs09NorkJeBhHb8aQkL7pQk0a1/kpN99D1if3yiNwF5Oi1NQK
+	Ukp0uGrgmu51UgJcf0xvLN9NnoiMh9jWgjOGwjnt1q9E1mqzSyPLEl69WcnK4CAn2Qg+tnXFmUN
+	S/2WFngfSfRpkSgos82mH+kA0PNkgutPAYipUJgBkFGIosZ4Gl1u6g+VeZGmX8Or03RduX9ztrT
+	9X+enMRTKrdMD8xTVCSP
+X-Google-Smtp-Source: AGHT+IGVvTzWtsgWQmX9AYDEGxJVEA48DTkqKoPAbaJuri2XyoyiLcFTQ9TnZOBStmbppRu4kyBHZQ==
+X-Received: by 2002:a17:907:7ba4:b0:ab7:eead:57ad with SMTP id a640c23a62f3a-abb70de4097mr1690745366b.52.1739972934169;
+        Wed, 19 Feb 2025 05:48:54 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abbad297430sm437130666b.5.2025.02.19.05.48.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 00:36:39 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org
-Cc: kernel-janitors@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] mm/mincore: improve performance by adding an unlikely hint
-Date: Wed, 19 Feb 2025 08:36:07 +0000
-Message-ID: <20250219083607.5183-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        Wed, 19 Feb 2025 05:48:53 -0800 (PST)
+Date: Wed, 19 Feb 2025 16:48:49 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>, Will Deacon <will@kernel.org>,
+	Song Liu <song@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] x86/module: remove unnecessary check in module_finalize()
+Message-ID: <fcbb2f57-0714-4139-b441-8817365c16a1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Adding an unlikely() hint on the masked start comparison error
-return path improves run-time performance of the mincore system call.
+The "calls" pointer can no longer be NULL after commit ab9fea59487d
+("x86/alternative: Simplify callthunk patching") was merged.  Delete
+this unnecessary check.
 
-Benchmarking on an i9-12900 shows an improvement of 7ns on mincore calls
-on a 256KB mmap'd region where 50% of the pages we resident. Improvement
-was from ~970 ns down to 963 ns, so a small ~0.7% improvement.
-
-Results based on running 20 tests with turbo disabled (to reduce
-clock freq turbo changes), with 10 second run per test and comparing
-the number of mincores calls per second. The % standard deviation of
-the 20 tests was ~0.10%, so results are reliable.
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
+ arch/x86/kernel/module.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-V2: Add information about % improvement and timings in nanoseconds
-
----
- mm/mincore.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/mincore.c b/mm/mincore.c
-index d6bd19e520fc..832f29f46767 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -239,7 +239,7 @@ SYSCALL_DEFINE3(mincore, unsigned long, start, size_t, len,
- 	start = untagged_addr(start);
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index cb9d295e67cb..615f74c4bd6c 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -278,10 +278,8 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 	if (calls) {
+ 		struct callthunk_sites cs = {};
  
- 	/* Check the start address: needs to be page-aligned.. */
--	if (start & ~PAGE_MASK)
-+	if (unlikely(start & ~PAGE_MASK))
- 		return -EINVAL;
+-		if (calls) {
+-			cs.call_start = (void *)calls->sh_addr;
+-			cs.call_end = (void *)calls->sh_addr + calls->sh_size;
+-		}
++		cs.call_start = (void *)calls->sh_addr;
++		cs.call_end = (void *)calls->sh_addr + calls->sh_size;
  
- 	/* ..and we need to be passed a valid user-space range */
+ 		callthunks_patch_module_calls(&cs, me);
+ 	}
 -- 
 2.47.2
 
