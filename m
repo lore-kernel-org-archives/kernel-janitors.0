@@ -1,59 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-80.smtpout.orange.fr [80.12.242.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C416D1EF0AC;
-	Wed, 19 Feb 2025 14:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02651D5CFA;
+	Wed, 19 Feb 2025 14:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739973767; cv=none; b=MsPbZcXDtYw6u2oJPzIhDvy+a8Xl23nJNnn8NrdYxJCZRZ3cx0mGXNN/1ilB2mLxix8ttx1jEQvcwmjPnj7xzO9UuSEfOthg9egyz0s5MR5l1Pn3y3+4upOwOMl4rNIvhd+toF4GpzH8QvezA3tBp0okI7I2DWeBQOtvdz5if0Q=
+	t=1739974760; cv=none; b=tAVXt5fyaYLFS4GjB5j9xwSxXsjznbpbX3uDLLGjxiv1WIoxHdMykptdLmz70gjxLr+oNU/kw5TiwvVQkmyASx0JIz9SkF0rh3LULIQmKL9PCjp3y0SlSUUXZW1MYTynRTUPBJcAZ/q+3wR5qjaHxcLrdUHBZy0PRk7jEddb04Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739973767; c=relaxed/simple;
-	bh=Zti3H5sZRXPrT/wgsFtd7JosJu7DWgxLjY1/qLK8CAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sk6tUZf28SDPSEGS91+/jPHdnPB9Zek5u562/P5405zdmuI2ojs0ur/sL3fS1cS75WW65ooaRYJb9B+rVzoK5Bki2m99JGwFLt89fR+IwZ0qxb7BMBFXdMYN0dSOjRgFnKvmxZLQ8IxMqYTrg3vjwbuy+83riM0E+/lkkUo+IuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrMrzmT6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739974760; c=relaxed/simple;
+	bh=xhOka5HrB/5l9DnPGh8I/d8vI/RjpFfgtquNt4qx9kk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GtbUXK1airPflb+BCP3ODWwLgbWTnnq4UqdJ9r1/BuR0s0kihMlBPrkfk0erGOdDKydnuxpZ2dUXUv5tACsS4Ie9mzRrvEG8U88rpB6eymZ5lAjGrHZanCgpDkyxFsyFYY0UnsDv9fadDwvWE/5lY4PgnhUu6DVr5pS2kADfiv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Iy8gBjDX; arc=none smtp.client-ip=80.12.242.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrMrzmT6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C55C4CED1;
-	Wed, 19 Feb 2025 14:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739973767;
-	bh=Zti3H5sZRXPrT/wgsFtd7JosJu7DWgxLjY1/qLK8CAI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QrMrzmT6/Ttxw+lY5X5liP3ZDX6ejkZBxuz/lGmpZGqbwip9NN10iMpwRvaflgzRa
-	 tWdglfSTcSLji0kw5orVPYOUDGM/9P51NmBNjy4AkUPKNxnWHqoTSHzLOUlKfnXiXh
-	 RrlblesBsQgwpGOHTqcfL7HnB2QrxbA72zVqo9CSERMPxJbMz6+ExoavDfnk8tEmQi
-	 6HrZskyWLtmww6efpGT7GMdgyQ3CS+NUTCxQGTJknkKv1iuC63SPvS/LncZ7W7cW3C
-	 zjZzevxDBBkcnvhrE8Lxrzbq6ip/0IJZ/b/DnUsUxKtRL1qn7aNgqwfc4laoMCiuef
-	 X2eIEvx8Av5GA==
-Date: Wed, 19 Feb 2025 15:02:42 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Zhi Wang <zhiw@nvidia.com>, Lyude Paul <lyude@redhat.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Timur Tabi <ttabi@nvidia.com>, Dave Airlie <airlied@redhat.com>,
-	Ben Skeggs <bskeggs@nvidia.com>, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/nouveau: Fix error pointer dereference in
- r535_gsp_msgq_recv()
-Message-ID: <Z7Xkgr5zP23VRhx1@polis>
-References: <b7052ac0-98e4-433b-ad58-f563bf51858c@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Iy8gBjDX"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id kkmNtlwWuP1lPkkmQtAPTZ; Wed, 19 Feb 2025 15:10:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1739974227;
+	bh=/3VqG2Ixu4D/b/fBjdxtIHmnWs32ARGjXTBEBsZkq2k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Iy8gBjDXBxphsv6TAVjALjMVIWnok0wI4Cn6sv230TK+vh1OEefemFDGWNn93Q3dW
+	 mi6c47I+n2eTCn+vM0WVmX0SRdFkR1mbig/p1d4gFvyZ0+l6M0fJHGwlCqE5ZmgKJ6
+	 05lb5Beqs9gRPb9WW8e0Q6+v2f3v2XktqjQQH3DIFLLb5K5CMBpRsil+Aupeg2hsuH
+	 +9wnWbiqgkK3yf0SoktRsrp8WYCnzZZuwaztUh8kmED9XgKDcMCyCr1ozmRj0kUH8l
+	 tZpjHPXWUuFZxo/yydJ/XvXeiwDRCgNaIztMvQcAMWPgu8k4fMGEMS/Bc9fHFYoDGt
+	 eeEiSBiqY2xBg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 19 Feb 2025 15:10:27 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-btrfs@vger.kernel.org
+Subject: [PATCH] btrfs: zoned: Remove some code duplication
+Date: Wed, 19 Feb 2025 15:10:21 +0100
+Message-ID: <74072f83285f96aba98add7d24c9f944d22a721b.1739974151.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7052ac0-98e4-433b-ad58-f563bf51858c@stanley.mountain>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 10:31:21AM +0300, Dan Carpenter wrote:
-> If "rpc" is an error pointer then return directly.  Otherwise it leads
-> to an error pointer dereference.
-> 
-> Fixes: 50f290053d79 ("drm/nouveau: support handling the return of large GSP message")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+This code snippet is written twice in row, so remove one of them.
 
-Applied to drm-misc-next, thanks!
+This was apparently added by accident in commit efe28fcf2e47 ("btrfs:
+handle unexpected parent block offset in btrfs_alloc_tree_block()")
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ fs/btrfs/zoned.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index b5b9d16664a8..6c4534316aad 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -1663,15 +1663,6 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
+ 	}
+ 
+ out:
+-	/* Reject non SINGLE data profiles without RST */
+-	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
+-	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
+-	    !fs_info->stripe_root) {
+-		btrfs_err(fs_info, "zoned: data %s needs raid-stripe-tree",
+-			  btrfs_bg_type_to_raid_name(map->type));
+-		return -EINVAL;
+-	}
+-
+ 	/* Reject non SINGLE data profiles without RST. */
+ 	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
+ 	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
+-- 
+2.48.1
+
