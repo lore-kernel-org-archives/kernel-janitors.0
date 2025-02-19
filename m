@@ -1,180 +1,118 @@
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2067.outbound.protection.outlook.com [40.107.95.67])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155F1E4AB;
-	Wed, 19 Feb 2025 18:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739990840; cv=fail; b=nMaiHo1D7YKEbC5BeJDfwjL2t3Q+Swz20zOQzeB4yCG29YYFjZUCgmXcjaKsShQWx9/zUnk912vxueJhCi4xm4oXEAPnz5iIhy1QRQJh0JSBuxRmrqZBfm5wwG+TWXRnbukAUnh/DFkA7TiySLzjwLM+aS5JNZO4zWUkNHXMwsY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739990840; c=relaxed/simple;
-	bh=u/1MW1Qz5QeWp9/6BNEy8SOGLXtTUIGGmvojRndfeCc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MIvL3Ib06sXhAPXDOCtGGNuW5KZ7YC4Nl8QLIHi4fQLoVe1+xrAkpOq5CA/f94zohzcueJFLfBobm7P6irn8cOegcVdWOMW2BM3U9Y0eo4RmczXPQylnh/1+8fxPpqWVtkpEUWitfjySP5px7p/B5UhlMdBBxkIjGNKMDoSk23M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Z2QH8Sxx; arc=fail smtp.client-ip=40.107.95.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D993B22A819;
+	Wed, 19 Feb 2025 19:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739993104; cv=none; b=bDSPtcUQu/nAUr4G872VUg/XqNzch4KtVKj4vssYDNmIG6kQdTfMW+Unhf8CUg+J2aEvn7iET8z+CZehj9M/itvTjDqifkKNFO/RDI5bjG/phJ4z4f18kDLvzevf9kZXF4LBJ1SBsvHgJJyRGyuktBT6LG0MK/Q9+IhuSRb3hYs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739993104; c=relaxed/simple;
+	bh=4xkjxsKSnDG+ejxVEfbphpK/6goWvTkMshFWpmtRGeA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OfxV3MGUefmwRufsQEZU8DXGkOgqLkfscYZ06Sj20xvBz+Wlvhid6LzqRlQKPSkag2YO5gO++aMrYwJcImWKkeoqUhGUjge/trUeBNUe08jxO3368A0TIPGZMI2FcKMIOMcHgm4aKdWi9h15S+l7MQfVBvseW/klxkHj9+KCQ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fleSNih+; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Z2QH8Sxx"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fACvvsLLyNIAauUxctgbiBgGGAlmKPJj062/1x1++yXmUux/HkNrfjwkxB7CZLwlnG/0bowVYYm+xMOIm1xYzJ77dnMmzUg7LynYV6Ye5iMZQ+YsLI0Kf+38kHUc7QZhFCgHWKy2sFuFceaMMCPfoyuIF4RMLV7n01ZF0FP8wnFcR5snKJ95mnaMKXGlSGu7Si3RHwVm0zbbkx3mQEuISclf94vsTYl5Z1104gSJSHLS5JQ/GFQlBE7dBWRGhXQKHC/j4RJD4xz3Q8tX2LsLy2qCbGJixbPqFNevwYx/eomWQGakq9A0L3p6JvF44LrzUNjImV0PRBCXcPQaPpSgWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=scT/KsI42Z/eyT34daJd2VXa/5Vxm+ZdLwiMkCSUVMc=;
- b=CS3Ef18sN5leLF0qfYmw3hsVvYPYZ0dqIEKh/H3z4Vg5Fg+oXCDvHnsQMXmkVzcg5CFtpyXN/enhr/DKbcdbYC987URStNDJBiGIOYrhQEuJwTdtcHPswvLlDBE9xBSaj3B5nGqdre34twmM47geY0XyFlAM0wNOgcB9RLv4npG6Y1rYRbIRs1QyRLX9iQaUqEBmgcZomQT1A0NZzx3zR4GySObYYxUTZSm0brFWhNATtp2ztqjhBy4k80E9rEaBMdmhxWJPl5qtLXUPX5kUJEK1ipGumt5817Pr8cxDPoeguiyPx+olY3jKs1L6wIFS/GzoANSurDzXbz/+E0jAPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=scT/KsI42Z/eyT34daJd2VXa/5Vxm+ZdLwiMkCSUVMc=;
- b=Z2QH8SxxVFIBjPJ9ethzY9avITwPFf6eATVXcU33A0tDrCSLTPxPwMriM+vVzQff66r2+qvGKySdGTBNElComVLAi9VNskOFIIq2Ou4d4hnrxc6HGVTTFErJYpI5fIkGD0EoNuYh27URPXKZY4flE+cITnaM6UEBtQOVHl5ezkY=
-Received: from BY5PR17CA0013.namprd17.prod.outlook.com (2603:10b6:a03:1b8::26)
- by CY8PR12MB8266.namprd12.prod.outlook.com (2603:10b6:930:79::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Wed, 19 Feb
- 2025 18:47:16 +0000
-Received: from SJ5PEPF00000208.namprd05.prod.outlook.com
- (2603:10b6:a03:1b8:cafe::a3) by BY5PR17CA0013.outlook.office365.com
- (2603:10b6:a03:1b8::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.14 via Frontend Transport; Wed,
- 19 Feb 2025 18:47:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ5PEPF00000208.mail.protection.outlook.com (10.167.244.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8466.11 via Frontend Transport; Wed, 19 Feb 2025 18:47:15 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Feb
- 2025 12:47:15 -0600
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 19 Feb
- 2025 12:47:14 -0600
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 19 Feb 2025 12:47:14 -0600
-Message-ID: <c3075150-94f5-7187-007c-0037eaed6077@amd.com>
-Date: Wed, 19 Feb 2025 10:47:13 -0800
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fleSNih+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739993103; x=1771529103;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=4xkjxsKSnDG+ejxVEfbphpK/6goWvTkMshFWpmtRGeA=;
+  b=fleSNih+rQIRNQmvCjmSFGbM3RUb+ZuTYk7Z3y1gI/CKRE3aez8XRrvX
+   Mm0dP7Gnj/dZeinbYIQ/S/+HR/vYZw07QB62uN8NFZlSW2fwCV5hRFOUI
+   9K8+s1URn2NDC5a4ZDazdVLwSi0BOG84kQ8yOnW13+LN0Dtw+cE/3g3cI
+   PVj2xOkpsHOhhJHLANJa7aB5srIR2ZNc7cR1qMNsem5YpnVNYvmHnyR6X
+   ACvKglWqNvxXQVxOhlcMUb/74tpWpBUFCoRsiQBpnD3FtpE1OvoxoKekv
+   hydZF+QIVt0XU52p6ywxG5oKzDMcbLnPRfThlJEstCcNbioaKwGWdIpZI
+   Q==;
+X-CSE-ConnectionGUID: aOdavW0RRAaww0BU75viLg==
+X-CSE-MsgGUID: /HsYx9OCQIOXk9dZHmUClg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="40604683"
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="40604683"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 11:25:00 -0800
+X-CSE-ConnectionGUID: sT6FCgk1RDag9ulyZnQRTg==
+X-CSE-MsgGUID: v13zxD0XTXmGo28FPVA9pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,299,1732608000"; 
+   d="scan'208";a="114791542"
+Received: from dprybysh-mobl.ger.corp.intel.com (HELO localhost) ([10.245.246.160])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Feb 2025 10:55:18 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jim Qu <Jim.Qu@amd.com>, Lukas Wunner <lukas@wunner.de>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Takashi Iwai
+ <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Su Hui
+ <suhui@nfschina.com>
+Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
+ vga_switcheroo_register_audio_client()
+In-Reply-To: <f608a3b5-320a-4194-bd03-cf08be04c317@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
+ <87zfiim09n.fsf@intel.com>
+ <f608a3b5-320a-4194-bd03-cf08be04c317@stanley.mountain>
+Date: Wed, 19 Feb 2025 20:54:41 +0200
+Message-ID: <87r03tn4su.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2] accel/amdxdna: Add missing include linux/slab.h
-Content-Language: en-US
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>, Su Hui <suhui@nfschina.com>,
-	<jacek.lawrynowicz@linux.intel.com>, <min.ma@amd.com>, <ogabbay@kernel.org>
-CC: <George.Yang@amd.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20250211015354.3388171-1-suhui@nfschina.com>
- <60700ca3-8d9a-d284-d2d8-343d770ca384@quicinc.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <60700ca3-8d9a-d284-d2d8-343d770ca384@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000208:EE_|CY8PR12MB8266:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89aff0a5-0535-40b2-4429-08dd5115d4b1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UEZTSk5RSlMzS3NjbDRuajR4QUROcVQxRmZjSWUvUjZSa09EU3lTYnlwMDJK?=
- =?utf-8?B?VkhUZks3eXRzV1MvNUtNdVRqbHgvK1UwQVcxV25BcW1ZMmFZWTVnMXlNS1ls?=
- =?utf-8?B?bGk1VE9UUGYrelpLbDdKT0pQUE5LVG05ajZJSE0veklYZUs2V0dvb1JVVEw1?=
- =?utf-8?B?OTZKTmFjNnhJMFhSa09BcDZoYXRUaU5xSld6WnhNUkZteGE3RnRrM294azFt?=
- =?utf-8?B?Z0dxTWJlQWVGTEtyejNYSnArTWRMUS92Zytic29oNGhZWkdUaUVJOTFCdkJz?=
- =?utf-8?B?cEVFeUNaVDhtTEVhVSsrbmc1dlBHL2JYSWNpWS9qUU9aSWs4WGVmQ0pDaXNr?=
- =?utf-8?B?UWV2ZitvOTlpMi9SdkVSQzd6cVhkNFRYTW45Z3BScklkb0dLeWpsMEZMUG9W?=
- =?utf-8?B?aTZzMEFjSlphTDNiK0tYTWdPNWxTc3JNNDltN1RvWkNLeGMxQkJvY3dmSlYv?=
- =?utf-8?B?L0Z6RHNMM08wL0Z1QWdhbEhPc0hENEJkdXB0bGtObUVVZVp4dUszN0xrMWFq?=
- =?utf-8?B?RGdJTU9KYWRVdUZQTXF6Sit4VzkzdHhqWmF2NVR1VzZBQzNoa0JxOVZXYlhT?=
- =?utf-8?B?SlpvamIrN1RxeFVZVDhYelJoMWJOZkQ0S0k0UEQ2MXA3T1NTcHlkbXFsL2Np?=
- =?utf-8?B?YjE3c2xWNU13KzNrai85Y01ZSTZLdS9qVEV2bTk0MlB4ZzdraXpZelVxWVg5?=
- =?utf-8?B?YlBtZDlzTzFKdThtdTlXdmh6RU0zVjFFZUpHa0s4bDlqem5aNmFCVFVJR09G?=
- =?utf-8?B?ZFJqY0p5NWN1SHVXdWMvYjhEV1llNlkxS1lxSVhTY3BGcGFoVlFqZitWZkVU?=
- =?utf-8?B?Nnpvc0JIb0wva3RteEV4SndrcmVWZ0IySVFYdjFNN0VkNkZiY2cxUlcyb1Zw?=
- =?utf-8?B?eFliOGtwYjJ0ekZCcnZ5L0QzSGpyc1JlaWFlK1V1S3paa2hBdHhlcWtLU3dv?=
- =?utf-8?B?aHBhc2YwTThhV1c2c045YXZhR0hQNzRJc2d2S0c5NTdkVktjRFVOa0FaeGFR?=
- =?utf-8?B?STAzc3BBYmxhVUtzbktNeEdZdkYzeER0N1VJdWVPTFY3Y2FnVkxJTmRSNE1L?=
- =?utf-8?B?amlsV1hzNnZhOXM4bms5RTEwa1Y0UWE0ejRZMDQ3M0lROVBUZGdSZGNmTkg2?=
- =?utf-8?B?cVZZOHhKRFR5dHJnR1lJTmFOV0RCaStyL2h1bTRIK3dPZUQ3LzRaM0dZMG9T?=
- =?utf-8?B?d1BlcHQrczFjS2dZZUc1aDBrTkxtZVNrbGE4bFczaGZPQ0dpbHd5TFZVa2lu?=
- =?utf-8?B?UGM1cytpTEhXVWRBNkYrdlhKWDdBZnYwaFd4N0V6cHpubTlaYit3V3YrZ1dW?=
- =?utf-8?B?a1BVUDRoRVl1MkY1L0x0NTdBRUtLSWdnTWZ6Z2F2MDhlR0V3OE11L2JvWVVi?=
- =?utf-8?B?NXc3WFZEYS8zVklDdFpSVSs5Q01VZS9zM1ViMWh0ZC9iUHBuVVlFODJoeFVX?=
- =?utf-8?B?eXE4b2pQazl1c2Zkb0R3ekVQQzZrdzQwZUJ3QUVzVlFnQ2pmalBLSWZnZEJE?=
- =?utf-8?B?ZlBLU1BNZ0FrUnVsQWR0cWpVMnNFV29pNkxoWUltT1JKT1grbXhrT05jVExV?=
- =?utf-8?B?RVgxNlkzNUxJVklLRjVVR1A0T1JxdTZNWEFTYWlXalR4aXNwdmVDZW55Q2ZE?=
- =?utf-8?B?T3lJZXBUZUNXdlpoRWR2c2EybXBqM1JNME9WelV6TUpOK003RVh2aVBBeTR3?=
- =?utf-8?B?YjJ4WDNySEtNWk5FdllQZ2c4cG9mdzRGWWswUjV2MEo5N0FCMEZxVUtCZ3FL?=
- =?utf-8?B?MTYrZlFmUnNTVFlKZjZTVGZRSlZlOC9QMzh6U051UUNTMDQvSXlOa3BqMkhi?=
- =?utf-8?B?Q2M0Z3F0eHFJVW9WZHRKNUpZbHk2aGNOdGZCSE9mYnMvajFFbjk2KzdDQk5h?=
- =?utf-8?B?cTFKZWRIbDk1dXhrN2Y5c0pYZDkwU0hwTWllUnVWMUxsL1FpcHFOOTBramxv?=
- =?utf-8?B?K0hsZU9zVDNSWDRJdWVwRGlMTkFYbEVGc3dLanFwSWRoMk5IMklRQVpwc2RO?=
- =?utf-8?Q?dmWGjCZ9XTcDT5fu4KtQ4S3qwGxlN4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 18:47:15.9466
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89aff0a5-0535-40b2-4429-08dd5115d4b1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF00000208.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8266
+Content-Type: text/plain
 
-
-On 2/11/25 07:36, Jeffrey Hugo wrote:
-> On 2/10/2025 6:53 PM, Su Hui wrote:
->> When compiling without CONFIG_IA32_EMULATION, there can be some errors:
->>
->> drivers/accel/amdxdna/amdxdna_mailbox.c: In function 
->> ‘mailbox_release_msg’:
->> drivers/accel/amdxdna/amdxdna_mailbox.c:197:2: error: implicit 
->> declaration
->> of function ‘kfree’.
->>    197 |  kfree(mb_msg);
->>        |  ^~~~~
->> drivers/accel/amdxdna/amdxdna_mailbox.c: In function 
->> ‘xdna_mailbox_send_msg’:
->> drivers/accel/amdxdna/amdxdna_mailbox.c:418:11: error:implicit 
->> declaration
->> of function ‘kzalloc’.
->>    418 |  mb_msg = kzalloc(sizeof(*mb_msg) + pkg_size, GFP_KERNEL);
->>        |           ^~~~~~~
->>
->> Add the missing include.
->>
->> Fixes: b87f920b9344 ("accel/amdxdna: Support hardware mailbox")
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> Reviewed-by: Lizhi Hou <lizhi.hou@amd.com>
+On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> On Wed, Feb 19, 2025 at 05:17:56PM +0200, Jani Nikula wrote:
+>> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>> > The "id" variable is an enum and in this context it's treated as an
+>> > unsigned int so the error handling can never trigger.
+>> 
+>> When would that be true with GCC?
 >
-> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+> The C standard give compilers a lot of flexibility with regards to enums.
 
-Pushed to drm-misc-fixes
+This I did know.
+
+> But in terms of GCC/Clang then enums default to unsigned int, if you
+> declare one as negative then they become signed int.  If they don't fit
+> in int, then they become u64 etc.
+
+But somehow I'd failed to appreciate GCC/Clang actually do use unsigned
+and signed on a case by case basis. I thought they defaulted to signed
+int. TIL.
+
+And I still consider myself a rather experienced C coder. There must be
+something wrong with either C or me. Or possibly both.
 
 
 Thanks,
+Jani.
 
-Lizhi
+>
+> enum u32_values {
+> 	zero,
+> };
+>
+> enum s32_values {
+> 	minus_one = -1,
+> 	zero,
+> };
+>
+> enum u64_values {
+> 	big = 0xfffffffffUL;
+> };
+>
+> regards,
+> dan carpenter
+>
 
+-- 
+Jani Nikula, Intel
