@@ -1,73 +1,114 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 48C698F6E;
-	Fri, 21 Feb 2025 07:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A7E1D798E;
+	Fri, 21 Feb 2025 08:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740122304; cv=none; b=iZ7CZ/ChJP+YionuOf3Iwa14M/z8ucEFrjc7ozMDb0CR3w9yp5A6SHFbLBNxC/6kMcZLWD275FCvldD+DtO0DZzRhkCZNSh+W+HUlKG74hID39Ys+tiFfdDvteuqAmFp/zqiZLwVH6REfccf1VBG0eDIf8zJmwP5Fapm5RpWYpA=
+	t=1740125060; cv=none; b=cLM3hORSL5FTQgDLu7ZX12nEXHDWBZOnPYKkFL8NcruRyIZLiYsvsYDGfGYRjlOZElmnczhzqaXxIxGj6qwm9dVoALXEgB9K3c43koaaVg6A9jFP87ZKg66+5ITrZx4b0F3jUVdGtWFhGsW0llQk207A/CdQ+vMvaQf94UgwzW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740122304; c=relaxed/simple;
-	bh=Z92IeH03E87WjMgNNGxUrtb6MDAucuDKaPVm85LC7wE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QdUu91M5s9yxnfK3+Z3KHW5jXunrnSNYjGjBpP9j0hmv/NDESxOfUP4mW1xFGX233mza+7ZWBccFk2tltF3LHeMFPMlirwPch7KMLpEKntYDr6qU/nLKNyB+uy+IO+Jq0dLSxAeMwMnDmCZBH2YYOCHD/WmgItdvvfIrv7RcBXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 2F21360234D6D;
-	Fri, 21 Feb 2025 15:18:08 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: binbin.wu@linux.intel.com
-Cc: Su Hui <suhui@nfschina.com>,
-	seanjc@google.com,
-	pbonzini@redhat.com,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: [PATCH] include/linux/log2.h: mark is_power_of_2() with __always_inline
-Date: Fri, 21 Feb 2025 15:16:25 +0800
-Message-Id: <20250221071624.1356899-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1740125060; c=relaxed/simple;
+	bh=a+iB+6V2NB5xFg9ygOOMKy9Dnt7qDVIg5M/U+rLO9CE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B7iiU9d+OZ5V6AOoFMVdS97u3JjtUqUTejYzd73wQlsBldBujOqVTqDJeta9tBUq5r3gn5GprFN2dbktymHOSWOVxl0dy23VNo0EruJoGnYzCtBy3HM791twD+5XKu+6eBoiz8/B+qeEn4IGpLi/HZbOtbgTEoy5bEsUi5bOS3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BureGQXz; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BureGQXz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740125048; x=1740729848; i=markus.elfring@web.de;
+	bh=a+iB+6V2NB5xFg9ygOOMKy9Dnt7qDVIg5M/U+rLO9CE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=BureGQXzSGScc0QTj9c5JTA1Bv0QWOuTVlzQ5Hlf2xnilgz5BoNKlQcH83sGvpbS
+	 1iC0Gn+3doGAINYiFpcybYhxcpCBJsgjl4KVh909Fg56nFPertU+W66tObniEiIGz
+	 QYYkPkADgZ1GmpTrE+4x2G7OePoZWwuSxfDPenuk5EEva3FBOEyfT/xzPE3HtcLkf
+	 Yf2rsbKeLbHEkBnmn0GiLcpUbJrcJc8+oQkKb7lKVnTWTgM3zuDiIOK8iLpszGbN1
+	 ZUU/rY9r5H5+uO7/fmtN1rU5C3e3LHvDtr4dWQbU/Rd0HCkcxfeJH2VEGxHsg4rlH
+	 YxAFmVIF0F7NXm6SQQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MoeY7-1sx9sX0dXV-00e2bP; Fri, 21
+ Feb 2025 09:04:08 +0100
+Message-ID: <05f3fc66-f11d-4cda-8ea3-91aac650ec20@web.de>
+Date: Fri, 21 Feb 2025 09:03:50 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched: fix potential use-after-free with cfs bandwidth
+To: Josh Don <joshdon@google.com>, kernel-janitors@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Segall <bsegall@google.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>, Mel Gorman <mgorman@suse.de>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>
+References: <20250221012335.233404-1-joshdon@google.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250221012335.233404-1-joshdon@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BG2sYxsze/PyI5uB/J0H76STggS63ytFxggW3Ax/pgQ+aFCirgX
+ IisiqhGOJnJV8Mp0N/UwMJqlPBDBZTKxu9LiFEckEUszW4BrG0/P4zVvPrIjdGbzpKmm2Hj
+ dHIOn2Kbg5F4HhbWgFST6sW8HHUpxZW0/q/VAhlxcQ1r3E9yvTYhoBIXdQoQIH7v3fPtEIM
+ GFgmATuUSSBkMtZwbJIQQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qc0EudHn7Ss=;5Z0dvCw+L89pDhS4iC0RD07RBn/
+ gNUeoG6gWQYJswNbKFgPJWhzizM4AEQvW0POOmPvB+pD0pvlilyUnuTdhr/ZPah13nAdd+xlH
+ q9cAJPx1jU1YKj9iwC80DzzckJ3OsWV1fimpu9CFPx8GeclrZ6ECQJbgBm5Mu978OFiajw6Df
+ WD1BImvLMwCUjOndgLRvTESc7RnPQjWs2KUWvOS+AgziF2JLGg7JhG6EzUVJpTj8EMXGqNjnd
+ yfKebhHZroY4ILS1uuK6K+ei08r6V5ld6pmMqN/S6x7OdGEb+//KGwCoY3HKeZld33Se9lBF3
+ pehVL8U3c6Y9D0GV1LXmWMPbGodhRA2TbTAZGWRR6+s+0zwaxPE4w6VpL+gYIs+ZyoSQczLCe
+ uW+lyb5it8TojZOpiK6l3ndk8Si0ji0OzpyZR53Kz0OOAlvi+9M6jDJG0/KSIrYmcXFXrvNCs
+ 1o/fOxFUttwL410eNGjmI2dsUoURYoN9pHmZOlfp+mk+NknjRLUtlK3RuHjPkutj9bdIVvvZq
+ C3bXC5ya0lu+A1ew5RkU/l9OxzMZKDnKS+DRC/wElb2q3EukAT7XTftH1555QIlEQmUMM7yWv
+ nkKmOONcCoFSX9BoreqJNjkOubBzR4H8vfjFWc2DH8Fnhk68SkBwUsvJNgWXLzGPe2z6YZqGj
+ b0mumEOMvDEQDuI3ljEtD0vnvWGiu815A7bHf+5SQnnlbbdH5A2kPkWm2Xyf75y1y3TbjeLk4
+ hzNMu0UlpkApPXv4sKA0a4vD8Y3+h6cxfdMSOUTnt3j+7yPrU3ItAFnSzTgBQ5K4UfCetfwt9
+ we4vsTZ+OPkOAscjk6stq3CpgwHFkvJ8vdb0sJZKO5WvBHXqnXBsQMc814eG3/4FyfXvy7pzh
+ uHcgAoN0ZBTMcEljdLqtCGrh+lZL/5tXeScPiHwJeL7KN0qy/Zs1oEqSQIVW7LpsloowJy9a1
+ aDRHvsluy0psHgP6vLyKunILLfKckMTtMnYzzG/hFJcc0F104H+CcRkFJl3ZidG36O/O1F/lg
+ fkn6knCaqj7R83aGo+r6zEfzGTynWvRlZgTxN9m4anUDQ64rHOJJ8+9wehL9Jv5cA3/Yzzk7a
+ tbp0TVJYAclcwG1FH2gieOXrsLNcGE8ECosv0/9VNGXuvRR9G737F4lVQC6PaTOUsxzZb/tWU
+ UEaqkaQwupIQokjt6kFETLh3VykCXZ/uEJabzLv3J1X0P0hNF+jfYzs2R2Zd+Dp9jljXVyHU3
+ rYldGPtYdYWUXlWtCCcK3PXObRPbMdctWNg41yy4Eon5UCNpmxjM8/18ZHkXwmtldqSWA4Jau
+ pE9xOVhaeXYcpR6jArKFowol5Byiy8qw0Ci64zIro+tnKxEtlKzePhAavPJ+pbSM+YjSzQux7
+ 4LMPabHId6Z1NIvs05+AHPDZgiRRCjrHyXLu0lrx1sOp87XKIP6qZxug2qNXiLWMjes+UKvQl
+ tWmudOEejAfM9Bc6Knj5wH3Qa0A0=
 
-When build kernel with randconfig, there is an error:
+=E2=80=A6
+> For full correctness, we should avoid removal from the list until after
+> we're done unthrottling in __cfsb_csd_unthrottle().
+=E2=80=A6
 
-In function ‘kvm_is_cr4_bit_set’,inlined from
-‘kvm_update_cpuid_runtime’ at arch/x86/kvm/cpuid.c:310:9:
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
 
-include/linux/compiler_types.h:542:38: error: call to
-‘__compiletime_assert_380’ declared with attribute error:
-BUILD_BUG_ON failed: !is_power_of_2(cr4_bit).
 
-'!is_power_of_2(X86_CR4_OSXSAVE)' is False, but gcc treats is_power_of_2()
-as non-inline function and a compilation error happens. Fix this by marking
-is_power_of_2() with __always_inline.
+=E2=80=A6
+> Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+=E2=80=A6
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- include/linux/log2.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is such a tag really supported?
 
-diff --git a/include/linux/log2.h b/include/linux/log2.h
-index 9f30d087a128..1366cb688a6d 100644
---- a/include/linux/log2.h
-+++ b/include/linux/log2.h
-@@ -41,7 +41,7 @@ int __ilog2_u64(u64 n)
-  * *not* considered a power of two.
-  * Return: true if @n is a power of 2, otherwise false.
-  */
--static inline __attribute__((const))
-+static __always_inline __attribute__((const))
- bool is_power_of_2(unsigned long n)
- {
- 	return (n != 0 && ((n & (n - 1)) == 0));
--- 
-2.30.2
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n539
+
+Regards,
+Markus
 
