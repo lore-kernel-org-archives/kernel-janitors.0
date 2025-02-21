@@ -1,114 +1,95 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A7E1D798E;
-	Fri, 21 Feb 2025 08:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95371FFC66
+	for <kernel-janitors@vger.kernel.org>; Fri, 21 Feb 2025 08:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740125060; cv=none; b=cLM3hORSL5FTQgDLu7ZX12nEXHDWBZOnPYKkFL8NcruRyIZLiYsvsYDGfGYRjlOZElmnczhzqaXxIxGj6qwm9dVoALXEgB9K3c43koaaVg6A9jFP87ZKg66+5ITrZx4b0F3jUVdGtWFhGsW0llQk207A/CdQ+vMvaQf94UgwzW0=
+	t=1740125506; cv=none; b=e7V8B0a9a1OqOzPbhIlZXRQHbRFQlN7HpDJmZ1locLnnNL4vXsvPy9fjn8cXSbMvaMaGxmKMUYBcMiznzb6qwMm3uQhKTrH/OW63iqGZzGHNXS/XR+t2WZ5nrAD8du2fkMhDY7sSizjJLkihKoWrc6jxfcfQX5RlkL0QprkqkKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740125060; c=relaxed/simple;
-	bh=a+iB+6V2NB5xFg9ygOOMKy9Dnt7qDVIg5M/U+rLO9CE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B7iiU9d+OZ5V6AOoFMVdS97u3JjtUqUTejYzd73wQlsBldBujOqVTqDJeta9tBUq5r3gn5GprFN2dbktymHOSWOVxl0dy23VNo0EruJoGnYzCtBy3HM791twD+5XKu+6eBoiz8/B+qeEn4IGpLi/HZbOtbgTEoy5bEsUi5bOS3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BureGQXz; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1740125506; c=relaxed/simple;
+	bh=hCwB8kSF7aboWe9MWosKA0MPvltpikkpS8eP32SogpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QbYspQYX640Y/Gg+s7fpqQrCvApDVQT9xNB4lhjRQt9qT+LwpWkQqvvr3Ev2xjBEKQPdYPMEvgHeakvhn3j4R5pPqCgoTtf7O8wcvsa66syMbC+DqqyFk/ySeKoL8WaIl7ULSdy4DBXwek9iqbYAjxRPABry1jPri7qMtCsHE6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v2hT8SRZ; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BureGQXz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740125048; x=1740729848; i=markus.elfring@web.de;
-	bh=a+iB+6V2NB5xFg9ygOOMKy9Dnt7qDVIg5M/U+rLO9CE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=BureGQXzSGScc0QTj9c5JTA1Bv0QWOuTVlzQ5Hlf2xnilgz5BoNKlQcH83sGvpbS
-	 1iC0Gn+3doGAINYiFpcybYhxcpCBJsgjl4KVh909Fg56nFPertU+W66tObniEiIGz
-	 QYYkPkADgZ1GmpTrE+4x2G7OePoZWwuSxfDPenuk5EEva3FBOEyfT/xzPE3HtcLkf
-	 Yf2rsbKeLbHEkBnmn0GiLcpUbJrcJc8+oQkKb7lKVnTWTgM3zuDiIOK8iLpszGbN1
-	 ZUU/rY9r5H5+uO7/fmtN1rU5C3e3LHvDtr4dWQbU/Rd0HCkcxfeJH2VEGxHsg4rlH
-	 YxAFmVIF0F7NXm6SQQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MoeY7-1sx9sX0dXV-00e2bP; Fri, 21
- Feb 2025 09:04:08 +0100
-Message-ID: <05f3fc66-f11d-4cda-8ea3-91aac650ec20@web.de>
-Date: Fri, 21 Feb 2025 09:03:50 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v2hT8SRZ"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abbdc4a0b5aso346494466b.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Feb 2025 00:11:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740125503; x=1740730303; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hCwB8kSF7aboWe9MWosKA0MPvltpikkpS8eP32SogpI=;
+        b=v2hT8SRZdMvTB1ggAqXj5t4H5JOYRhCTSEgRmsDR2lns6DSaiNg/T46BhMz8Z8DtZi
+         iHoR1m897dt1+aBEIiFzVNpcmgVTiAieUow3jDrsqcpduTCvleCLigm7F6wkUhYpAqlX
+         pUVQO5KjqTW/VyR6SDF2UtKbmDu74tjH6jWhnvVblXJVXiYATj3q5MzV//dZ5BQXD4f1
+         RO9bcfXo2vb4LI6iUequLqJGCqBaX3wSN9mpY7QWdTQVuojbGOkCNbT7217C78v+Ps6r
+         L1Pjq3/WrE9w9HNHUL7R5fOC7o3iU4ZPyTq0PdGAFWQMaZkOSg6hg/EqsTpEtOfJcr9l
+         X1rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740125503; x=1740730303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hCwB8kSF7aboWe9MWosKA0MPvltpikkpS8eP32SogpI=;
+        b=VCH16tcOYV3d2/35ipnLV3DEwmx04yxoMIvolAwzHQ/WT1vKFf4vhEbwlbu/rpMlx0
+         /ft/llQkd5QMdqFTwQtbFSSxpP8HILnFWkUKDs+FIduCoRrahahSRwMzSIfcwNu651o9
+         wNP92IqTOk4aFGbGs/zkcDhsRXaFBln6C4nUUySzaLaVsey1cxocFyOiyod6MvxAE4uc
+         fIIE27jVorY1ARpXSfJQNyHSh1NgOrXfzESl5D6drjwHcUupdusROUEgJGKbN7VKUXPX
+         81Yo6U/ipyJSbdT2Yri1co5WJEZ8/FUIlxPWhoPC2SZIC8VTjkSXOokpIieaNemM8n2C
+         uVtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXji9ENHYJUHSaVOXWP98Xme3akOaL5yNtWcm5If5TNI6RoUmlKrsQLJKo9zkO18t5BbOFxontjerYo6hlccJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya+tw/rVc5P5s6P1IE+7gKm2o9p+Fuzi/lK0B0di87NwrPYPsa
+	M7E6vdnm7FwYhrW2D1qx6bgjQJrtuHHYOE+a2EkgPeDj9feCeJw9bqcw+uouPXV3QDR/9Fum4Vo
+	F
+X-Gm-Gg: ASbGncs0siLFqAUrf8g8Fi3CvGclWIo7sNFlrvJmCtPxRDIxd4Y+P5oD5jMR9DVeG5T
+	0lcasU+Xdeb3S2nNi+o3DcT9jMwkITejuDtGge+cB+YsT5Su9UoTXUDoF3IJGCc0DI7qasLm7GO
+	9VQASz4EhPYXfKJKVIUn3g2S52yE0kIL+aq3a5rsRukk1RcDqpaQ/wqNj3dsKl7rcX/gHMsBonn
+	cg6D/+AIliWdsqAnJB8F4W7vtMU8GgRCPcNtcotPgC66e2cwluYkAVAGh40I6f6aO1qBYajgOXV
+	e0PaabCwz5fXOHMDBjdmWlufoQX9x1E=
+X-Google-Smtp-Source: AGHT+IFuU0kFfUB+9CyBx7lXud4c9haNcdYJF6e0i3cVIr8FWn1DAHV4Txb/+etbyGDMWrWlIiVGAQ==
+X-Received: by 2002:a17:907:720a:b0:aba:6385:576e with SMTP id a640c23a62f3a-abc0ae1aed3mr186595766b.3.1740125503011;
+        Fri, 21 Feb 2025 00:11:43 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abbbefd080asm648847866b.179.2025.02.21.00.11.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 00:11:42 -0800 (PST)
+Date: Fri, 21 Feb 2025 11:11:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Josh Don <joshdon@google.com>, kernel-janitors@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Ben Segall <bsegall@google.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mel Gorman <mgorman@suse.de>, Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v2] sched: fix potential use-after-free with cfs bandwidth
+Message-ID: <9f1f3ff7-b4dc-43b0-993f-1f062f85d0a5@stanley.mountain>
+References: <20250221012335.233404-1-joshdon@google.com>
+ <05f3fc66-f11d-4cda-8ea3-91aac650ec20@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched: fix potential use-after-free with cfs bandwidth
-To: Josh Don <joshdon@google.com>, kernel-janitors@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ben Segall <bsegall@google.com>,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Daniel Bristot de Oliveira <bristot@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>, Mel Gorman <mgorman@suse.de>,
- Steven Rostedt <rostedt@goodmis.org>,
- Valentin Schneider <vschneid@redhat.com>
-References: <20250221012335.233404-1-joshdon@google.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250221012335.233404-1-joshdon@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BG2sYxsze/PyI5uB/J0H76STggS63ytFxggW3Ax/pgQ+aFCirgX
- IisiqhGOJnJV8Mp0N/UwMJqlPBDBZTKxu9LiFEckEUszW4BrG0/P4zVvPrIjdGbzpKmm2Hj
- dHIOn2Kbg5F4HhbWgFST6sW8HHUpxZW0/q/VAhlxcQ1r3E9yvTYhoBIXdQoQIH7v3fPtEIM
- GFgmATuUSSBkMtZwbJIQQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qc0EudHn7Ss=;5Z0dvCw+L89pDhS4iC0RD07RBn/
- gNUeoG6gWQYJswNbKFgPJWhzizM4AEQvW0POOmPvB+pD0pvlilyUnuTdhr/ZPah13nAdd+xlH
- q9cAJPx1jU1YKj9iwC80DzzckJ3OsWV1fimpu9CFPx8GeclrZ6ECQJbgBm5Mu978OFiajw6Df
- WD1BImvLMwCUjOndgLRvTESc7RnPQjWs2KUWvOS+AgziF2JLGg7JhG6EzUVJpTj8EMXGqNjnd
- yfKebhHZroY4ILS1uuK6K+ei08r6V5ld6pmMqN/S6x7OdGEb+//KGwCoY3HKeZld33Se9lBF3
- pehVL8U3c6Y9D0GV1LXmWMPbGodhRA2TbTAZGWRR6+s+0zwaxPE4w6VpL+gYIs+ZyoSQczLCe
- uW+lyb5it8TojZOpiK6l3ndk8Si0ji0OzpyZR53Kz0OOAlvi+9M6jDJG0/KSIrYmcXFXrvNCs
- 1o/fOxFUttwL410eNGjmI2dsUoURYoN9pHmZOlfp+mk+NknjRLUtlK3RuHjPkutj9bdIVvvZq
- C3bXC5ya0lu+A1ew5RkU/l9OxzMZKDnKS+DRC/wElb2q3EukAT7XTftH1555QIlEQmUMM7yWv
- nkKmOONcCoFSX9BoreqJNjkOubBzR4H8vfjFWc2DH8Fnhk68SkBwUsvJNgWXLzGPe2z6YZqGj
- b0mumEOMvDEQDuI3ljEtD0vnvWGiu815A7bHf+5SQnnlbbdH5A2kPkWm2Xyf75y1y3TbjeLk4
- hzNMu0UlpkApPXv4sKA0a4vD8Y3+h6cxfdMSOUTnt3j+7yPrU3ItAFnSzTgBQ5K4UfCetfwt9
- we4vsTZ+OPkOAscjk6stq3CpgwHFkvJ8vdb0sJZKO5WvBHXqnXBsQMc814eG3/4FyfXvy7pzh
- uHcgAoN0ZBTMcEljdLqtCGrh+lZL/5tXeScPiHwJeL7KN0qy/Zs1oEqSQIVW7LpsloowJy9a1
- aDRHvsluy0psHgP6vLyKunILLfKckMTtMnYzzG/hFJcc0F104H+CcRkFJl3ZidG36O/O1F/lg
- fkn6knCaqj7R83aGo+r6zEfzGTynWvRlZgTxN9m4anUDQ64rHOJJ8+9wehL9Jv5cA3/Yzzk7a
- tbp0TVJYAclcwG1FH2gieOXrsLNcGE8ECosv0/9VNGXuvRR9G737F4lVQC6PaTOUsxzZb/tWU
- UEaqkaQwupIQokjt6kFETLh3VykCXZ/uEJabzLv3J1X0P0hNF+jfYzs2R2Zd+Dp9jljXVyHU3
- rYldGPtYdYWUXlWtCCcK3PXObRPbMdctWNg41yy4Eon5UCNpmxjM8/18ZHkXwmtldqSWA4Jau
- pE9xOVhaeXYcpR6jArKFowol5Byiy8qw0Ci64zIro+tnKxEtlKzePhAavPJ+pbSM+YjSzQux7
- 4LMPabHId6Z1NIvs05+AHPDZgiRRCjrHyXLu0lrx1sOp87XKIP6qZxug2qNXiLWMjes+UKvQl
- tWmudOEejAfM9Bc6Knj5wH3Qa0A0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05f3fc66-f11d-4cda-8ea3-91aac650ec20@web.de>
 
-=E2=80=A6
-> For full correctness, we should avoid removal from the list until after
-> we're done unthrottling in __cfsb_csd_unthrottle().
-=E2=80=A6
+Markus, it was good to ask for a Fixes tag but now you're just distracting
+people who are doing actual work.
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
+https://lore.kernel.org/all/60c7ed79-c344-4f6a-aefc-d6d45a4d9004@kernel.org/
 
-
-=E2=80=A6
-> Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-=E2=80=A6
-
-Is such a tag really supported?
-
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n539
-
-Regards,
-Markus
-
+regards,
+dan carpenter
