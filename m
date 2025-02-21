@@ -1,108 +1,157 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B6D1F4299;
-	Fri, 21 Feb 2025 10:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462A7253338;
+	Fri, 21 Feb 2025 20:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740132681; cv=none; b=gGkdyBjVybRe98st0UrhIxaG5Aoo+pBtvD/bSxQC+bsKY/BLg79aW6syuPs+ndV5GMABbHgCxYlyipmLpuMSvRbHrCClyp9T8InZrD6ey4eCYzDymX1bV5KRhQ6/vhODf3y+nU9ud4xU33ngznIdQwkCNkSa55cEfX2lqsr97pM=
+	t=1740171401; cv=none; b=j9aChte5sD5t2qGu6FXEStatLpeZ9/UzxdTFSuefjwNM6AqEHoMpkKqjZKYx3HKkzmQUFdho2uZve5RRxd0EwUUG3E0VNNnk4M+HRkaTVXPYKQToenVrwCT3ViqkAO3kMZBO1V0EJUJxgr5gb3RO52v899Cv+GYHjVY67VQxfVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740132681; c=relaxed/simple;
-	bh=GDmCe53Y2cxCxTc2pZ7YEzEK4/9czcfUq1+QZdAFsTk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=qw0rByUlUmCah9IrJvQ/VYZ8024yv1iGET4WpEVQd26vncWVopC4ILQYRg87SjTpzVxPWKUZ0TSiJYE6isTtTtSDHHyozBO62L7Be29enASbWFYb97gvP8EEcO47QJfDGtMc/VRUKZ2YdTw8N7kDG0G6Ypzzwsp/W4yIoHsZlm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XhHkyLIj; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1740171401; c=relaxed/simple;
+	bh=kPABSk89z0t89xDH5ilBsjLyOpR7/0y0TwjsL3wzqGs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kUTTDirzN3RrX1ZeYs9wEJGBRHQ/MtTsUNLWNEzaDKNRPJQGzlvCeCZKVJ1BgFEMWtj30QUP+2eu4Wp1wO4rD1Vhcygh2lxgGQoyOMM4uqN8AJGF59jA+l9Y1vCpkTosqEvfMxzMIYMacy6nDwv207OaQvAVgtLOBVTWtncBQyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TLzGMWHk; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XhHkyLIj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740132670; x=1740737470; i=markus.elfring@web.de;
-	bh=GDmCe53Y2cxCxTc2pZ7YEzEK4/9czcfUq1+QZdAFsTk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XhHkyLIjGTT7Il28wEPj+RRjv0JrC5f33PfZH262kEuNEMIz4hmlGpvw2W9HWFZF
-	 /ndcPonxwDeZLXaEtwO04OIm1K8K2QFrCBEDx6ktho1ceQQpl8F6rv4uwJZgoplGS
-	 zmu2pX+7XKGAFuXBqAEJeNXx3vtVVDCDzW9xWKcNeyQS07xQARbAe4wdkQSFlNQ46
-	 UIpGlVl6cQBLRwmgwJIit5W6q5cyuly3w6A6T+dMekAcRPkRlZlPpvyY0FUbpaGj1
-	 iXmBPUIqEd/m6sb+SyRvmnwL6jLlqDwq+dUsxxZ2YVyoeR1XE9Wy9wY6HL5KhRs9e
-	 YzL+US2TPV1qDyMzhw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.4]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mc1ZN-1tC66r0bKZ-00bIp4; Fri, 21
- Feb 2025 11:11:10 +0100
-Message-ID: <1fab8d2f-20e5-4e92-afb3-53167fecab54@web.de>
-Date: Fri, 21 Feb 2025 11:11:09 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLzGMWHk"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fc317ea4b3so650624a91.3;
+        Fri, 21 Feb 2025 12:56:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740171399; x=1740776199; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GTZj1VfgXuSxDSAhZ5TKDIe0iQGufaJMlCuZk2vxFBY=;
+        b=TLzGMWHk66lBODgmVJG7llyepLtXBZDn9mxskm+AoSexBwWlXiT6h9BHr6AglAUgk1
+         gQaZRweUnkyFHDQ/uyaa1TUxQbUSZfBlR4oZLDA/uAOQi2a3Cnl9mfN5Hiv7zs3WuYTu
+         QxHNish6b2/fgfkDvJGp9z7wpr7Y6jMe5kVyhqNgqU8Lyu8gfsA/Tv2mjkfMBBBrDs1+
+         sJVO15oUpd7MBlfbreoIyovhgCB5EeYN0f+fwwEjSg+LLd8STGmFtUhIc/bbZHQAx2nl
+         gC0u++dn+dIAo6X/Fc3qhmdFoVTpWMe4dXC0H+lOfEt6/bosAxGtjAVs6qLeIeTTWWR/
+         jHHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740171399; x=1740776199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GTZj1VfgXuSxDSAhZ5TKDIe0iQGufaJMlCuZk2vxFBY=;
+        b=hDnuYjwp0tgVzbJyPEccFEzW5fT9eFaLf6XpqtQcdrPROTXv118uIp1BfefNjhx7lk
+         TIySY8gvgi6TWAhMGcDRMrRpscZmaPCn7I9xGIYURzyAg4fW/+drY+0ad5pPlt7ZNh95
+         vDxTEbNUcBjdnPkIVYEbD0RESKzmt0geyUPBqDDxLMKCjNAuZHEWiTr6R9AmgGUJSnP4
+         nDLRAJSlOJk/+mdP+vNVe0MBzP+4z3ruCSh75utDIm8LIXj2Bs3MQMSLkNCj8OvsZD7r
+         2Nek8YarNg9AFmnKWM7NxJc2PXo6SgucKXq3CLohvWqKbcyOUWNSg0D3YV9MvS5f51nE
+         VSaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWompNIbRGJNqe/hzpRKO/cT/lpGQBTqzEOjtlBNj0p9mOXTTQLFTv6EtXPIlHlTmFIkDI5XL5bx7syKFp0@vger.kernel.org, AJvYcCXVjxAbzSLHZxe4OZrQV66q5i+7GN4KHKsLxj/AYR1FYAWefGF2y6dBeWzrDCCRmkAh2uoR+9eDZKq3hWFgea0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXVgejcbzRPyrGRuSaq1SeHsJrjoPZV2CJ6txFgD/wwUw4BFEL
+	DigRws99iT7InFg/p6V0Z2RSK6R/ZGhdX/C+K9b0uEGmQp4f/txAnQ9MG9ECgtfC+W6hlkYrnMm
+	VeTFUvHJSyOCxKmDdM0VgQc0jYx8=
+X-Gm-Gg: ASbGncsp7HkL5ZGoa1uXHX0BOAoMJF7o4Au40Os05i/EjCoSgvuhgKB1tq6wzpnEMZR
+	ymGHl0SCsiJQRswrSa+42DGMWZa48LLAXAVulL6Z72KrC7UwlsgL9FPUW/BAuP8y9wuS2lx46KU
+	rVn+Mn2ss=
+X-Google-Smtp-Source: AGHT+IFM/J8ccLUv6pCWoCHFq6aIfv3z+UGD1zIf76O88EjqTbIyqqsctg0qW8JzGFkwIsg0BzVkO6VURoA+T3MG9O8=
+X-Received: by 2002:a17:90b:3a81:b0:2ee:b665:12ce with SMTP id
+ 98e67ed59e1d1-2fce789cc70mr2888192a91.1.1740171399575; Fri, 21 Feb 2025
+ 12:56:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: cocci@inria.fr
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: More benefits from higher level structures for coccicheck scripts?
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:9LNEizQ2clxvfWWQdpZe1VFLV2jQrBCIvewuRxWmh8LctzB6RW3
- tQXBeNI/JAXr/5mX40qGXqU4JaMsM8ctXSNU12i3u87Mc3pM1LWRdPHwDjnpBLg/9GS2LtL
- O/x4j9kPphMGi7I4VlbspWlw9NF/HyLoCITfRdqo1WKmNrDQ9vU2xxThB25RvzcZOxEYJJ1
- nC2VEakr7sJy7dnzZgKRQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:DU4gnxnkiRo=;sXvtjMmjVszrThb0iCyBmFJUlQJ
- f06t+T3zG3C30VHEzr4Xc+B1PMcFH3/brZUB96xwqq5zMF9HZ7MaV0BBlPK3ijIWDs5Dl0pAM
- Zml5EXwiAm58uWb5Q1NKGJIBKnw4kTsu5TkoXzbZr8gOi98HV4wN3XFdR7z/TeDGBlUVlw6L9
- S8CIy/gOfGvXjS7lwuNcxKoE2b60zI08bu7JOwMQeJVneShdOBi08P2/XavFmOsUfGwkswR8S
- EqPKGNF9QEFSfBd4EoGbKkGzD9LTvKOoZbxJpH2rSrRYhg/W/bEcJDq1uBVSPQ1/Egk9E5Fw5
- CsZkNkn44F1fiBu48BptEaJcvIXgsf22t1FvHNc0VB7vvUUtau1CL7PjvtOYmwx9oRp2C1+7f
- kTFw1P9uoHItjhnTI/t5T7J4t2PXedLlqKNESrPZfnlP6glUmGBbEUjxv502ZXUFvgSpjn/T2
- 8s3BnyHMs6q6vOf5b8znJ43xbvxsR/8+hYqYRX9KQQhn4rIkSSnelZHit1Ih6g5IGpv15a/c0
- EN5fXVKzo0B4T7j82LpKJMXv9keTba78b3jvgUpm0Y55HCEz2ItxWW7ByZHn9tGbpn9+tZin7
- m71uES0s0GhYMRdUaaVr+3iJliUjPW48E+eNSs3xErytatz4Hh//zcEkksBvucKP9bpO59d93
- Pf8POMr2Wi6VxQj9IqLBV4+634lOJxab5JPvlHm7S9TdBW/fvJS2qaabhxOJXkmLs/OEwG8hj
- w3P4EqYzOo3sACbBQEsxPxpkr5K9yOjNxK0k+34oi7ibmF3ejJKboOPTGFJM/nF2Ek07QTfEw
- V1SkXdXfyIi96TK3fdCzn0cNqiWoPpgo0MymBpBUg671NZjK5PEZ3oolxNUuZJYOwJzMlFcwY
- oAVBPEvhqBoYPkUSfwWVoDP6t8kS0tD3UskKsupIdbN+odcon3wzdFQ4AfWm2FHZO9nzPAGGQ
- TrbVmAJ7QhcCtbR9nFbNk4XvC4V0b4PS1q10wJCfWr41W72cSN4YpQbDWnpLl5ptGMYrtJBKM
- nXgj74Vv4DG7AobpCqPjQJYxRlAEuM3xrQydl+fvHl6Um+uquGBQzp7dZd2rqLPNgC1crJXE1
- viulVomotiDKkXMjQHWewVxNbPNXmGwEAAtyQRHZR7lni9tVsf75yaQ+gIyz7kWzduC6qfhQj
- Lnux/aCp+4mbK9SIpgWoNrxy0gwpdr6byC/q4yGUAzuryXj8RIkrO84QU3tkkLfWulRVxwDnq
- 1qegcpgt8lG1msOXhNC4PeWd95EDa5NrSUQ0ClHgN6UC2ab1pTfWAK3enF+xfqWRJkslA4+BW
- Ib3DzToyp0gxu1p/JqOOeo5yyGu2Yv4PL1Z5SU7u0xowCQ3lTD5nwP8xQszgxeYC1FTyWAIvo
- mqZ+cbsxD5T6sM58ySjX+c+WQ4jiJPDWTdfJKzCHxpOMHhBqUCg1ejN/L0eWyc/6aX84DyT7f
- vxsAHTLjU2bMfWc5jH4R0iEOVQfs=
+References: <20250217095325.392152-1-colin.i.king@gmail.com>
+In-Reply-To: <20250217095325.392152-1-colin.i.king@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 21 Feb 2025 15:56:27 -0500
+X-Gm-Features: AWEUYZlGjjBQHXFe4kVYYoLXSOdkH8QC_8D4sDFG32SyXzn4R5IkXpUkq-hRSHg
+Message-ID: <CADnq5_MPcshUk9uYqZ9eroJ8Pcbdr_ymqnaHeGYQf-VuVseDEg@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistake "oustanding"
+ -> "outstanding"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Jun Lei <jun.lei@amd.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Applied.  Thanks!
 
-Various source code was assigned to functions (or function-like macros).
-Common functionality is stored at selected places.
-Thus there is a desire to increase the corresponding usage.
+Alex
 
-Some scripts were constructed also according to the means of the semantic
-patch language.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/coccinelle.rst?h=v6.14-rc3#n71
-
-It can be seen that some of these SmPL scripts share also program structures.
-
-* Operation modes need to be determined.
-
-* Special source code items should be detected somehow.
-
-* Data output should be provided.
-
-
-
-Would you be looking for the support of higher level structures for
-coccicheck scripts?
-
-Is there a need for placeholders (or variables) which could be filled from
-other advanced information sources so that selected data processing
-will eventually not be mapped to separate SmPL script files to achieve more
-desirable transformations?
-
-Regards,
-Markus
+On Mon, Feb 17, 2025 at 5:48=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a spelling mistake in max_oustanding_when_urgent_expected,
+> fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c      | 6 +++---
+>  .../dc/dml2/dml21/src/dml2_core/dml2_core_shared_types.h    | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
+_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_cor=
+e/dml2_core_dcn4_calcs.c
+> index 87e53f59cb9f..243d02050e01 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> @@ -5058,7 +5058,7 @@ static void CalculateExtraLatency(
+>         double HostVMInefficiencyFactorPrefetch,
+>         unsigned int HostVMMinPageSize,
+>         enum dml2_qos_param_type qos_type,
+> -       bool max_oustanding_when_urgent_expected,
+> +       bool max_outstanding_when_urgent_expected,
+>         unsigned int max_outstanding_requests,
+>         unsigned int request_size_bytes_luma[],
+>         unsigned int request_size_bytes_chroma[],
+> @@ -5106,7 +5106,7 @@ static void CalculateExtraLatency(
+>         if (qos_type =3D=3D dml2_qos_param_type_dcn4x) {
+>                 *ExtraLatency_sr =3D dchub_arb_to_ret_delay / DCFCLK;
+>                 *ExtraLatency =3D *ExtraLatency_sr;
+> -               if (max_oustanding_when_urgent_expected)
+> +               if (max_outstanding_when_urgent_expected)
+>                         *ExtraLatency =3D *ExtraLatency + (ROBBufferSizeI=
+nKByte * 1024 - max_outstanding_requests * max_request_size_bytes) / Return=
+BW;
+>         } else {
+>                 *ExtraLatency_sr =3D dchub_arb_to_ret_delay / DCFCLK + Ro=
+undTripPingLatencyCycles / FabricClock + ReorderingBytes / ReturnBW;
+> @@ -5121,7 +5121,7 @@ static void CalculateExtraLatency(
+>         dml2_printf("DML::%s: qos_type=3D%u\n", __func__, qos_type);
+>         dml2_printf("DML::%s: hostvm_mode=3D%u\n", __func__, hostvm_mode)=
+;
+>         dml2_printf("DML::%s: Tex_trips=3D%u\n", __func__, Tex_trips);
+> -       dml2_printf("DML::%s: max_oustanding_when_urgent_expected=3D%u\n"=
+, __func__, max_oustanding_when_urgent_expected);
+> +       dml2_printf("DML::%s: max_outstanding_when_urgent_expected=3D%u\n=
+", __func__, max_outstanding_when_urgent_expected);
+>         dml2_printf("DML::%s: FabricClock=3D%f\n", __func__, FabricClock)=
+;
+>         dml2_printf("DML::%s: DCFCLK=3D%f\n", __func__, DCFCLK);
+>         dml2_printf("DML::%s: ReturnBW=3D%f\n", __func__, ReturnBW);
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
+_core_shared_types.h b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_c=
+ore/dml2_core_shared_types.h
+> index dfe54112a9c6..4e502f0a6d20 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
+hared_types.h
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
+hared_types.h
+> @@ -1571,7 +1571,7 @@ struct dml2_core_calcs_CalculateWatermarksMALLUseAn=
+dDRAMSpeedChangeSupport_param
+>         unsigned int *DSTYAfterScaler;
+>         bool UnboundedRequestEnabled;
+>         unsigned int CompressedBufferSizeInkByte;
+> -       bool max_oustanding_when_urgent_expected;
+> +       bool max_outstanding_when_urgent_expected;
+>         unsigned int max_outstanding_requests;
+>         unsigned int max_request_size_bytes;
+>         unsigned int *meta_row_height_l;
+> --
+> 2.47.2
+>
