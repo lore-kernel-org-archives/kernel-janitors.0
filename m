@@ -1,157 +1,71 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462A7253338;
-	Fri, 21 Feb 2025 20:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF385383;
+	Sat, 22 Feb 2025 00:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740171401; cv=none; b=j9aChte5sD5t2qGu6FXEStatLpeZ9/UzxdTFSuefjwNM6AqEHoMpkKqjZKYx3HKkzmQUFdho2uZve5RRxd0EwUUG3E0VNNnk4M+HRkaTVXPYKQToenVrwCT3ViqkAO3kMZBO1V0EJUJxgr5gb3RO52v899Cv+GYHjVY67VQxfVs=
+	t=1740185534; cv=none; b=E/PvmA/UWBxpbF6h2ZlDyyQPuldsxAahOR1LrnWDmQKLliAwIOTiIlczsvIx/JTUpBSuewTuYkDRihgzVn4GrSa3LNMqfUBJlFtCw+LdCvseBVyuNmTVGEBIVMTV6dIouTsUADFAC7W8KIbryUvZeAs5EFuk3k8kuOajSIb1wuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740171401; c=relaxed/simple;
-	bh=kPABSk89z0t89xDH5ilBsjLyOpR7/0y0TwjsL3wzqGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kUTTDirzN3RrX1ZeYs9wEJGBRHQ/MtTsUNLWNEzaDKNRPJQGzlvCeCZKVJ1BgFEMWtj30QUP+2eu4Wp1wO4rD1Vhcygh2lxgGQoyOMM4uqN8AJGF59jA+l9Y1vCpkTosqEvfMxzMIYMacy6nDwv207OaQvAVgtLOBVTWtncBQyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TLzGMWHk; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740185534; c=relaxed/simple;
+	bh=p3Z3OV/D1L8Z9Gx0KgTb3RoA/MWjnp5ufzpx82ZXlAY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dDRQ2dw0SbIbb60hDAn0O//L5+Zk92zAtAx8BPRJAb4hz70jmK2lPg+NcRPzlNXVcmQuutyeRmuy6FYFH4/1U8CuCUmWCk/vlTakC8axe41o6qFcB0Iy4EKtM+PRw79ofXH3YXqJKRFwncjcsKMsKS32jLSJnUPocp/jjEuHpc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/4zBEGc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLzGMWHk"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2fc317ea4b3so650624a91.3;
-        Fri, 21 Feb 2025 12:56:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740171399; x=1740776199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GTZj1VfgXuSxDSAhZ5TKDIe0iQGufaJMlCuZk2vxFBY=;
-        b=TLzGMWHk66lBODgmVJG7llyepLtXBZDn9mxskm+AoSexBwWlXiT6h9BHr6AglAUgk1
-         gQaZRweUnkyFHDQ/uyaa1TUxQbUSZfBlR4oZLDA/uAOQi2a3Cnl9mfN5Hiv7zs3WuYTu
-         QxHNish6b2/fgfkDvJGp9z7wpr7Y6jMe5kVyhqNgqU8Lyu8gfsA/Tv2mjkfMBBBrDs1+
-         sJVO15oUpd7MBlfbreoIyovhgCB5EeYN0f+fwwEjSg+LLd8STGmFtUhIc/bbZHQAx2nl
-         gC0u++dn+dIAo6X/Fc3qhmdFoVTpWMe4dXC0H+lOfEt6/bosAxGtjAVs6qLeIeTTWWR/
-         jHHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740171399; x=1740776199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GTZj1VfgXuSxDSAhZ5TKDIe0iQGufaJMlCuZk2vxFBY=;
-        b=hDnuYjwp0tgVzbJyPEccFEzW5fT9eFaLf6XpqtQcdrPROTXv118uIp1BfefNjhx7lk
-         TIySY8gvgi6TWAhMGcDRMrRpscZmaPCn7I9xGIYURzyAg4fW/+drY+0ad5pPlt7ZNh95
-         vDxTEbNUcBjdnPkIVYEbD0RESKzmt0geyUPBqDDxLMKCjNAuZHEWiTr6R9AmgGUJSnP4
-         nDLRAJSlOJk/+mdP+vNVe0MBzP+4z3ruCSh75utDIm8LIXj2Bs3MQMSLkNCj8OvsZD7r
-         2Nek8YarNg9AFmnKWM7NxJc2PXo6SgucKXq3CLohvWqKbcyOUWNSg0D3YV9MvS5f51nE
-         VSaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWompNIbRGJNqe/hzpRKO/cT/lpGQBTqzEOjtlBNj0p9mOXTTQLFTv6EtXPIlHlTmFIkDI5XL5bx7syKFp0@vger.kernel.org, AJvYcCXVjxAbzSLHZxe4OZrQV66q5i+7GN4KHKsLxj/AYR1FYAWefGF2y6dBeWzrDCCRmkAh2uoR+9eDZKq3hWFgea0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXVgejcbzRPyrGRuSaq1SeHsJrjoPZV2CJ6txFgD/wwUw4BFEL
-	DigRws99iT7InFg/p6V0Z2RSK6R/ZGhdX/C+K9b0uEGmQp4f/txAnQ9MG9ECgtfC+W6hlkYrnMm
-	VeTFUvHJSyOCxKmDdM0VgQc0jYx8=
-X-Gm-Gg: ASbGncsp7HkL5ZGoa1uXHX0BOAoMJF7o4Au40Os05i/EjCoSgvuhgKB1tq6wzpnEMZR
-	ymGHl0SCsiJQRswrSa+42DGMWZa48LLAXAVulL6Z72KrC7UwlsgL9FPUW/BAuP8y9wuS2lx46KU
-	rVn+Mn2ss=
-X-Google-Smtp-Source: AGHT+IFM/J8ccLUv6pCWoCHFq6aIfv3z+UGD1zIf76O88EjqTbIyqqsctg0qW8JzGFkwIsg0BzVkO6VURoA+T3MG9O8=
-X-Received: by 2002:a17:90b:3a81:b0:2ee:b665:12ce with SMTP id
- 98e67ed59e1d1-2fce789cc70mr2888192a91.1.1740171399575; Fri, 21 Feb 2025
- 12:56:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/4zBEGc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCFBAC4CED6;
+	Sat, 22 Feb 2025 00:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740185533;
+	bh=p3Z3OV/D1L8Z9Gx0KgTb3RoA/MWjnp5ufzpx82ZXlAY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=p/4zBEGccczupXg+ewnuC2hmKWM51kfTF8QiA4iFGnRal5FHNFJqV8wMSXJ18KAtw
+	 tn33Agh3zexCGhuX3CsOPomkhn0VwSKAz0YU4rdubFJmHbTo2wK0LA0jAPvVgOMIh4
+	 pawPurfCNhx1I2mHL75wLEeDgSprjbrf6wsg/KBTIZVjqlYxN7orliHxhPqi+hf2Mn
+	 eQTYsRpi8qn6kgn8WqurZ11sNWX1S1FUDyglLOjPMK3aVJOIwtPkD2TGS6KQAr3glL
+	 oCWclS46Owqda/sRAEd4SAz9KxvnUg7l7Lxjii5OZ0KaVt5oZjQjBWJzgN5wxZE1hB
+	 Q3XF8ExgcWUxw==
+From: Kees Cook <kees@kernel.org>
+To: "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org,
+	Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Kees Cook <kees@kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust entries in FORTIFY_SOURCE and KERNEL HARDENING
+Date: Fri, 21 Feb 2025 16:52:08 -0800
+Message-Id: <174018552604.3367606.18022424280657472316.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250217100643.20182-1-lukas.bulwahn@redhat.com>
+References: <20250217100643.20182-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217095325.392152-1-colin.i.king@gmail.com>
-In-Reply-To: <20250217095325.392152-1-colin.i.king@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 21 Feb 2025 15:56:27 -0500
-X-Gm-Features: AWEUYZlGjjBQHXFe4kVYYoLXSOdkH8QC_8D4sDFG32SyXzn4R5IkXpUkq-hRSHg
-Message-ID: <CADnq5_MPcshUk9uYqZ9eroJ8Pcbdr_ymqnaHeGYQf-VuVseDEg@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistake "oustanding"
- -> "outstanding"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jun Lei <jun.lei@amd.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Applied.  Thanks!
+On Mon, 17 Feb 2025 11:06:43 +0100, Lukas Bulwahn wrote:
+> Commit db6fe4d61ece ("lib: Move KUnit tests into tests/ subdirectory") adds
+> a file entry to the non-existing file scripts/test_fortify.sh. Probably,
+> this entry intends to refer to ./lib/test_fortify/test_fortify.sh, though.
+> As that file is already covered by the entry lib/test_fortify/*, there is
+> no need for a separate file entry. So, drop the unnecessary file entry to
+> the test_fortify script.
+> 
+> [...]
 
-Alex
+Applied to for-next/move-kunit-tests, thanks!
 
-On Mon, Feb 17, 2025 at 5:48=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> There is a spelling mistake in max_oustanding_when_urgent_expected,
-> fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  .../dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c      | 6 +++---
->  .../dc/dml2/dml21/src/dml2_core/dml2_core_shared_types.h    | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
-_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_cor=
-e/dml2_core_dcn4_calcs.c
-> index 87e53f59cb9f..243d02050e01 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
-cn4_calcs.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
-cn4_calcs.c
-> @@ -5058,7 +5058,7 @@ static void CalculateExtraLatency(
->         double HostVMInefficiencyFactorPrefetch,
->         unsigned int HostVMMinPageSize,
->         enum dml2_qos_param_type qos_type,
-> -       bool max_oustanding_when_urgent_expected,
-> +       bool max_outstanding_when_urgent_expected,
->         unsigned int max_outstanding_requests,
->         unsigned int request_size_bytes_luma[],
->         unsigned int request_size_bytes_chroma[],
-> @@ -5106,7 +5106,7 @@ static void CalculateExtraLatency(
->         if (qos_type =3D=3D dml2_qos_param_type_dcn4x) {
->                 *ExtraLatency_sr =3D dchub_arb_to_ret_delay / DCFCLK;
->                 *ExtraLatency =3D *ExtraLatency_sr;
-> -               if (max_oustanding_when_urgent_expected)
-> +               if (max_outstanding_when_urgent_expected)
->                         *ExtraLatency =3D *ExtraLatency + (ROBBufferSizeI=
-nKByte * 1024 - max_outstanding_requests * max_request_size_bytes) / Return=
-BW;
->         } else {
->                 *ExtraLatency_sr =3D dchub_arb_to_ret_delay / DCFCLK + Ro=
-undTripPingLatencyCycles / FabricClock + ReorderingBytes / ReturnBW;
-> @@ -5121,7 +5121,7 @@ static void CalculateExtraLatency(
->         dml2_printf("DML::%s: qos_type=3D%u\n", __func__, qos_type);
->         dml2_printf("DML::%s: hostvm_mode=3D%u\n", __func__, hostvm_mode)=
-;
->         dml2_printf("DML::%s: Tex_trips=3D%u\n", __func__, Tex_trips);
-> -       dml2_printf("DML::%s: max_oustanding_when_urgent_expected=3D%u\n"=
-, __func__, max_oustanding_when_urgent_expected);
-> +       dml2_printf("DML::%s: max_outstanding_when_urgent_expected=3D%u\n=
-", __func__, max_outstanding_when_urgent_expected);
->         dml2_printf("DML::%s: FabricClock=3D%f\n", __func__, FabricClock)=
-;
->         dml2_printf("DML::%s: DCFCLK=3D%f\n", __func__, DCFCLK);
->         dml2_printf("DML::%s: ReturnBW=3D%f\n", __func__, ReturnBW);
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
-_core_shared_types.h b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_c=
-ore/dml2_core_shared_types.h
-> index dfe54112a9c6..4e502f0a6d20 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
-hared_types.h
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_s=
-hared_types.h
-> @@ -1571,7 +1571,7 @@ struct dml2_core_calcs_CalculateWatermarksMALLUseAn=
-dDRAMSpeedChangeSupport_param
->         unsigned int *DSTYAfterScaler;
->         bool UnboundedRequestEnabled;
->         unsigned int CompressedBufferSizeInkByte;
-> -       bool max_oustanding_when_urgent_expected;
-> +       bool max_outstanding_when_urgent_expected;
->         unsigned int max_outstanding_requests;
->         unsigned int max_request_size_bytes;
->         unsigned int *meta_row_height_l;
-> --
-> 2.47.2
->
+[1/1] MAINTAINERS: adjust entries in FORTIFY_SOURCE and KERNEL HARDENING
+      https://git.kernel.org/kees/c/ee0445d6b6e9
+
+Take care,
+
+-- 
+Kees Cook
+
