@@ -1,39 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F6953365;
-	Sat, 22 Feb 2025 13:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0723204C27;
+	Sun, 23 Feb 2025 10:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740231902; cv=none; b=Dnwz0HqKzCgg4utQT91q8kV1fta6BDd4I97+XmMVjh6L2h9LaYmalPnYL2kiNbnZeS5XA7FjOd+3GzVcfDLrd/2ZLG+7GcR9nmHmqERqHnB7ud5g6jBS4QToPBRRpyjF9z/eF0R7qaJZbzjDvU4UlivywKKPmYbbQeDixh2SJLs=
+	t=1740306638; cv=none; b=bzp7z/yxsTQB1oq4H0WgQ3i8qJRbKvao2X19UybEetpDwF3Cj3hAYV5xWgYqhbRSZZq3sljzxNa1paqYc6R/vTkRLNQwRlZDxLkTF7DT1+8ifWjvxxfi2Fp8DmSWOB+tpY46kTzVcdU1qFqI/u0Z5FmpQFmcY/RdwdAHPFRC0Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740231902; c=relaxed/simple;
-	bh=CXNcdYrn1tkb6ObOF1F72eS1mkhkerPs/MCI9WlxYdI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=r08vSiF29ujdOqhD7R3r8U5YHHImyT6Y1iBye+iwYbMj8kqYXUecNNbXTp5x4qaysliloDPoAo5Kfb4SxWhwuc4OwWYndwA7clQHCVwAuFSyixJPBSguXTwyGzdoiLkGNbdEljxvIOPtpwBLsXXbKv/GUtBH3ldpHcS6Jk2Lp18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jfw23gZo; arc=none smtp.client-ip=212.227.17.12
+	s=arc-20240116; t=1740306638; c=relaxed/simple;
+	bh=r9wwqaJRtk9sOisVJ2iyPiOMx6Bdq8PHJKb1LjosIZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jxbfVZQOs6YRosKTCpo7x56sdJnSTt1UjEsIQNKok2DV7JejQ5lNR+3pkKCEROYLVaGG0DvWqhZGwouUwdjcNQNx6RYS55Wyz0yfoVFhxjiTk7zYKd9IYZbuAusPbbsKstRyKRRc75s4mQA3aAEOreGH7zYyJCuCssVUMXnYqsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iwhUJxZF; arc=none smtp.client-ip=217.72.192.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jfw23gZo"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iwhUJxZF"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740231883; x=1740836683; i=markus.elfring@web.de;
-	bh=0wTZa0Kkcr3qmm6VKMjFNVqBA4FCJpNUSxDAb0tLRbE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=jfw23gZoxS1V7FWKPnfCM5OX0gfh04PtRmvmN8BFsHvFwMlRBHcnjq7FOXgtPFkQ
-	 xHv80RTNR6GhJUWV7NKJoqDQt+eyqiPMeW/bbHiBXxOZwa9CjN9qKVM0wMkC0Tiy/
-	 rZaqIhkdkIMdrpOmgaS7Rf5MBFUFenVpPkJMwBuPy3PmRuALDr3Wgd1Jc54lSKgj7
-	 Nh3AecW4NnJXMrzgGlP4v3PUHAg17cYomP5fWhMhbg+9NRUBhffAJxk6zGzTXXvMt
-	 PkZzx5EVN5ce77mlpt8qs/4qCCPLm+ZlFK54LSP9pvVPea/dbNAS2lLJmYdnHGrTE
-	 4k/LIaQjlJE7NZFnzA==
+	s=s29768273; t=1740306611; x=1740911411; i=markus.elfring@web.de;
+	bh=PbEif29t4SAIHbCmdiQGiPpEasdSjQ1egXOJVydscBQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=iwhUJxZFB6ap5DO7t+PvJt8NIVWkFJ8ass5I7Z0Rd6NsprE+ecudFC94v4MTNUbG
+	 5qoHOPQ/MHei7dJVWrGJ6HMeG5Tm+AQs9RavyUZ3CRJ+nnhCF58iuVewaQM95yr0I
+	 V/FgzfmfW6+wzLCcTkQiN5P5nVBymiQzGsVOMFqrVJsPvhV4eSezYpqzE06jCnJGc
+	 IY+hAUldl4TBd5lmB0QeuikEVJfW0UDx2Y4AWF90+PRqaAHIqFynyHaV8ykU78MUC
+	 g70emJ/UdHlQbNFlUKo0Ap4jtsgMkmMILdecKqm9ZIRbARtqFuh9NkojLfypBG3ct
+	 cGa9a/IpaeCB0Sr+Tw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.22]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MfKxV-1t6AXA1H9n-00ec4q; Sat, 22
- Feb 2025 14:44:43 +0100
-Message-ID: <04032bab-ad6f-4ef1-9600-27554233b9a1@web.de>
-Date: Sat, 22 Feb 2025 14:44:30 +0100
+Received: from [192.168.178.29] ([94.31.70.18]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSIEs-1tsdVT2iz2-00QT7H; Sun, 23
+ Feb 2025 11:30:11 +0100
+Message-ID: <31853d6d-a0bd-45b9-beaa-5d67c34ae09c@web.de>
+Date: Sun, 23 Feb 2025 11:30:08 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,86 +43,86 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: kernel-janitors@vger.kernel.org, cocci@inria.fr
+Subject: Re: [PATCH v3?] sched/topology: replace kzalloc() with kcalloc() in
+ sched_init_numa()
+To: Ethan Carter Edwards <ethan@ethancedwards.com>,
+ linux-hardening@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Ben Segall <bsegall@google.com>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Mel Gorman <mgorman@suse.de>,
+ Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+References: <20250222-sched-kcalloc-v1-1-4dee15fd8241@ethancedwards.com>
 Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Peter Zijlstra <peterz@infradead.org>, Ricardo Ribalda <ribalda@chromium.org>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: =?UTF-8?Q?=5BRFC=5D_Extending_usage_of_attribute_=E2=80=9C=5F=5Ffre?=
- =?UTF-8?B?ZeKAnSAod2l0aCBTbVBMKT8=?=
+In-Reply-To: <20250222-sched-kcalloc-v1-1-4dee15fd8241@ethancedwards.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0KBopMn0YCRV6z39DeA4axqW2lNIPDu54nztBRouELgFmszUaBF
- Hxp/TrdBhx352nQh+jBj37RA7sPaWckW1zfTtp3lGuG5w/QQbteehMZUr6ZHmQClSe0HhHE
- h6ZEBJS7X4LwRNLfvc/vachUjwLDXVcbVt/bBCOjvcMwJOLEE49okhqsMiC5unbYaWsZcFV
- TDg6EdQdZ/6t0SOvBQM3g==
+X-Provags-ID: V03:K1:HDGssSRZxKiT8gDiaJYDr9WtSjjbq3k37tt9irOMvIDgtkfSqhO
+ DMUb5lB7Pn5CKR6tI1aUuLEzugj7+s50uJhZoy/0hu3Xx9jYqdsm3TVR2CsipPqsuHfIRx2
+ 6jV4ZrQfgaNEQITeTbuIq9ZIss1tx42yCT1ge+7EdeVo1bUboPATDJj+WkhD2PTr/b2Xi/a
+ 8dOGEkCXguXkQzmVXxz1Q==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:XuauyZXjj4g=;Ex7yATVTFt+De4YPVdosrs6YTWy
- 9RTnhWutFuZVHTgC3/ShbhQ9sB92rjVsKWFsAhIqAH+57VO8hUHZvqbOsC+YKKOxCpIfX6ncr
- 4n4qPiA+mUW4L1SBNojtHN3UNH3qmYegmaR37wBfUs8JQTRBsSnFJIkD4uKnvX38fHcYl4PgK
- fOED2OdsNATHIU2T7T0Dlthul3X+vjMsN/MaGBfbi1VpjCCMXsofoLF+TbEExPZLYhRaKV4O4
- Vk3+IwDXYP1HnD9+8elEcCAqGXDTknukvFnlJ1x1J4N+i8jNquSlPqf/OPCXz+g3270hwLvlL
- BYi7+KE7MSmX83msfHZ4b1lgAw/ZSst3WBehkU9BIgWaMQcOOt/Mf9pTIao1h7qVJbWxFpY8T
- A1nojOhh8H6h4mZyPVZ34M4+kYcZKb5oti9ISExhuPKfFefCxtBv9XtmoTGySIi3PGiweC2ON
- k0sRDYWQindDK3jTS1VDaAZBUyDmahk4gn9u3/j9NPf4FARmXWU14KAY29MqCezWPnwZD59/7
- ko2b17rA1mxa1HU4XT7uJq1KOuwYcVX24QCJbNHZQHws/8DetLUFu26/PlGvPoFl2zZB8Prcz
- 5YoNdqsSe2mRRDSZUEABGYfT6RkJ0HT9udcCrALS5PwMl8zZB4FE3wHqmb9wivuKZ+cyRIOUj
- uOugPnPFq2SL1aNUfxLQuHtEDDMAcTLnQku9rr/82reomSLJ+gdhLV0NgnG/gus6InvvNBFLB
- PslQhXPx02KbcKaJvrpqIylzDU8i/H9ewiAMnWvJrd+Csd2iE2eCCrUcSzL9LNdjW1I0RINRW
- EmVZhLM9etGJGrFAi4fJ2pD1Bk9AHXBKBwN6AziJUVelO3q3OhugF8/v9YKPrqAS9i2msKuUh
- ToEhRn/Lj2OioCr8y1v1t5L5rgioY0cK26ZIj0X84i5cBILoYIqXt62m0wH0hG+8ns3GNuMYJ
- iPxFX6WCWZkpiH21bT+phAkAJ6lVqWSghnPFm4w3ik5gZTxq/3yjuBjekR1G0y8B6auV0wi9+
- Cbkc97tQsV3V3GfL1OZ6c7RoJfOj0DswgdwwRuNrHuSWEOUf5A0og60rhbBxOsOo2u8PF9qhY
- /BtKQbeS/D8ur8WMBovd9kftGVYBTGn3C2vOFPHlc7hSY6Wfm1DB2jnz0wvIqNs9G3dhgpO5P
- SjyPJqVG3jBdpa3wsZY/MwlQu15nr6kYL0fO4to/nsYE2FW9gas94fhJjy1PgsETLZmTc48gO
- Ado8VpWpIL4Ztpqgd+hLjQBdFvsJwDWcbkvUnIolqulSPiMHczViHIltBzZD8YEk4oR8+6AwD
- 0Yh8MKQGuZarv8a6kz/thWhWpP9q5jwVIpJbvInO1Z9oYFT6Tdls6AoX+ERwQ4IR+jmI33Gef
- BaqNKv4A3sCbzyY8j3c5jL2klW1UnZDyQZm2NPa70qWFrHlVgdmBqTfjI2IQVP5GdmH7nCM92
- 4WkM8FmmHQOxlDsVhIeiB1h/4hZg=
+UI-OutboundReport: notjunk:1;M01:P0:vxsDjfL+reg=;MknuHBV43lDa80L2CAw30rdXaHw
+ akCapvI1poewCtA2hK9DU2M+oTr62mnRa4T7Jl842Z9uKIwzHTkmnAa6NJ24IeFVys/yWtt2+
+ wbDYrulvyVlgmLIYXG4DVRWC4lN00P7YzZ8pVymDmDdBVLAqVK3RCTdXucAxsa6zSIZUAdtVm
+ wJir+1SPVPQHF9t+hKPUTmaxE/8DMaBjWD4H9A35BT7E+hPw+RpjjIZWfZl3qkgsFWxLWaCZp
+ EN4IFmlZfG9rs+a9ohrQDvTNob6UULX0cttmo3Y1HGv5dHZKQ3QqtTepR0opBa9BVdefP0R/n
+ 7M6gDeAOKFJ4uRn4/H/gsbKBTGzPWfv6nF2fB9qMjIGajg566t9CHYG0kq/4v9rXGmuezoyU4
+ bQRX4GrTAQZEhT+4z2sX7Jr4h+AG9BZrWzOtHSP+jpIR6KSKy55HyxJM9/Fl3BvQ/7lVXP17Z
+ qwe6wWmwp9dtTlUKAP0HWHDzvQxv10M70nHxoLLbP+e/fqsEQMUGs516otiXqJzPox7NoOy4d
+ RBr0+q2b7ArLIz5kDEHOaGo/Hhm1a8tHwpMU23JsWHpw0VIUh0tiNxSbOk4PqJ3IYfgePEwea
+ hjDvFcohuSnjJIJ2nZO0XtTE/sGx1Lig1M9fdWpbTNUZ4k5oEwZG0Mtn6k2c50tZkv1+RIS3P
+ DhUTaBlEm8R8IN7EbD2XuHL7O0OQoQjQrzfn6+8NgOLq//U+26/3j9oGFTb9OBG2edrHJ95jM
+ C0UcsmWowve1zS0LDi5mxd6jJTWYu3GMl2mGguXSN6AL+Va9IYzorbcpzSaMDG2nQZdVIabC1
+ rNVCDALyJJFBsx+ldniqYCftl0mARHZDqayf7IkRutKZqce27WQ7/1s4GPGfaVSgOU0o6KXD8
+ Yydkki1lvb7OZU0xhpzDzK5vEkZ5h1ElxNVTx3SjGpYt87z0nPY4qa183UKrwi+50s/0i46pP
+ oX+bvyHXO2tUazsuOWGQKdziBTOvablY3JTDo26ySyJ+2lnj7drTc++0ssX+WpLJReXDKhL16
+ HMlPiW9KWgfOA1s9cM7tDhGZG6cjqNeE/C4eIbKDQWf7ORXOfxUToyR0vNZZK1LfSVozWEYFL
+ moe/T568iK7p2rAhfZe9qTzoBFSgEsst472O02VpyNLcQH/KYksYldpUjZDYuA5ZRh+k6QPT7
+ EiF+TTUvUv63CfmZWrQe0bARt6oRwLYRSUM7AZSaFNEVnwUhFem2EDctRlnCLPx0SPlPIHolg
+ YyBKjxP5M5z83cgChu/0vnZla3xBsSMAjVHGFSEBc07kMMGRXyWE0JS4I4FKYH5lfU1wo5qZ7
+ 8Tmn5saG9K7/iD/qQZwC+j8Lyi8/hsRNMH0MeTOHqAyIY7pl0RkRkEprr7gvp5d9EFDLN/4Go
+ TOvokZLve/U8AwNH0Ah0hf+3asCZJ+01+xowsv8U59pdyf/M/wlu9zz7hjIYxYJ1UhTiDeHcn
+ zixYXa9CJQ6seCPtAqhdLlOR5YRQ=
 
-Hello,
+=E2=80=A6
+> We are trying to get rid of all multiplications from allocation
+> functions to prevent integer overflows[1]. =E2=80=A6
 
-Various software extensions were developed based on the programming langua=
-ge =E2=80=9CC=E2=80=9D.
+Is an imperative wording more desirable for such a change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
 
-* Object-oriented software development became supported with some programm=
-ing languages.
 
-* Scope-based resource management became also supported for Linux componen=
-ts
-  to some degree.
-  See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
-  Introduce __cleanup() based infrastructure") from 2023-06-26.
-  Some contributors are still struggling with corresponding collateral evo=
-lution.
+=E2=80=A6
+> ---
+>  kernel/sched/topology.c | 4 ++--
+=E2=80=A6
 
-  But a well-known source code cross-referencer can point out that an iden=
-tifier
-  like =E2=80=9C__free=E2=80=9D is used in 281 source files so far.
-  https://elixir.bootlin.com/linux/v6.14-rc3/A/ident/__free
+How do you think about to improve your version management?
+https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
+viously+submitted+patch%22
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n780
 
-  See also a previous presentation of analysis results:
-  https://lore.kernel.org/cocci/e8bf7b33-01da-43fb-b71e-cd86a02be2e6@web.d=
-e/
-  https://sympa.inria.fr/sympa/arc/cocci/2024-10/msg00011.html
-  https://lkml.org/lkml/2024/10/17/1393
 
-  Thus there can be a need to adapt advice which can be offered also by
-  coccicheck scripts.
-  Example:
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-scripts/coccinelle/free/put_device.cocci?h=3Dv6.14-rc3#n2
+=E2=80=A6
+> +++ b/kernel/sched/topology.c
+> @@ -1918,7 +1918,7 @@ void sched_init_numa(int offline_node)
+>  	 */
+>  	sched_domains_numa_levels =3D 0;
+>
+> -	masks =3D kzalloc(sizeof(void *) * nr_levels, GFP_KERNEL);
+> +	masks =3D kcalloc(nr_levels, sizeof(void *), GFP_KERNEL);
+=E2=80=A6
 
-  The attribute =E2=80=9C__free=E2=80=9D belongs to properties of variable=
- definitions.
-  Source code search approaches can eventually be adjusted also by the mea=
-ns of
-  the semantic patch language.
-  Corresponding software run time characteristics might become more intere=
-sting.
-  How will development interests evolve accordingly?
-
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.14-rc3#n941
 
 Regards,
 Markus
