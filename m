@@ -1,115 +1,110 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A98245004;
-	Mon, 24 Feb 2025 09:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4D423BCF6;
+	Mon, 24 Feb 2025 13:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388922; cv=none; b=nBMfHVOphBZEMCthlrhm9Tgq9iY0jB+iWpk+xqP6LBiWgDowIknnXrB0evPppDTGC3VhyC3gILrcCE+yboPJhchnsrduylvymChEIq6TPp8eibOWoUp0egsi8YAgbRJcujYtPkN9ktQRq0PwxvmqCpTXpJzECss6p/d6fAgO8qk=
+	t=1740402883; cv=none; b=us4LJS/tZtjI3hHVGHWD4pyteH/fkjvsqVprDs9brmGD2BUl8cJSVpVllkgVHXcUwOU338J73llf/QxKMmEk++00QE3gB+qprLPRM8f4XljQg0ohHLeSYhMJyI6lEl82AHTFHdY0Cn6lYid+mfLjYn6WkBr2MVnma4ZSyVZgD50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740388922; c=relaxed/simple;
-	bh=6s6mE6iWL2zLpUlwDFdCQx4XhtHfEW/hJy2iFvXQnHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nXed0Mt6BEYWMyF50ppWcuqPIph2L3BmBbTfRUR+P+b0FVC+wHdM7mTSYy71HKcLf9lvQWvoR14LFkW4H0Tikp2MCUOrxBC54XmDPkry9sf4inJ5j7QGcP/GpMFXSSUWPT/ejISsK1vvdMIpFVclPA4ykwCvQCHFvU2wHmvofmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aKCFL4+l; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1740402883; c=relaxed/simple;
+	bh=XiVTLCpQjoG7i4GIZhQDVM3cLNtiY+nfowdB5nwr+lI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nLZmiJDYWbsFM34mQCV0V/57nW6o0E3LROZiizCwpTKOZpHCMICLo5GUeKgmp/JwaA3Bht1K0yuMgbh9dgThXD6JPYbdmZuRvp7rSaYl2Lbs1ZrkspcxNdwUqpAmPBqcse/AKNqTIGMUyWzCdeZKXmFQi/JXGAqjQPFuYgiGp0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HWVhIiMq; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aKCFL4+l"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F42F55A;
-	Mon, 24 Feb 2025 10:20:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740388832;
-	bh=6s6mE6iWL2zLpUlwDFdCQx4XhtHfEW/hJy2iFvXQnHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aKCFL4+lUe+cwxys5YXBpNb6v6150ygxINtgje7a9KI1N2NgUWCmK2b+uqeP1ih+A
-	 BHtTxQ9tpd/5GI+SVum39bcOPKx4l/+FJN8vtRMQ204Ych1Xe1U8mnT0PEVe42k9yr
-	 Y7T8GDFdHJ6I8+/ngq/6RKYuF7C31YeZypBQg54c=
-Date: Mon, 24 Feb 2025 11:21:40 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] media: xilinx-tpg: fix double put in xtpg_parse_of()
-Message-ID: <20250224092140.GA29646@pendragon.ideasonboard.com>
-References: <f41dfe97-6e6c-47b4-91bf-199c5938c6d0@stanley.mountain>
- <20241105165928.GJ14276@pendragon.ideasonboard.com>
- <71d343e7-ff9f-44e6-abfc-64425640c4f6@xs4all.nl>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HWVhIiMq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740402882; x=1771938882;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=XiVTLCpQjoG7i4GIZhQDVM3cLNtiY+nfowdB5nwr+lI=;
+  b=HWVhIiMqEwj6YZ5exHDiZxnHJhDVMylwuG6SkE1XkjS7ccghzKy7TJla
+   llyuQVyKfgvD+PO8v2D4v8mf/CwETs+XmNmHqCzHu4oHjix9xYJ+zTDev
+   eCtA56kvcdd/UbOlNJqgGw4XN2p6GYO/k1k/zKj2MotOqgHjDqMyuqIi1
+   ZxHOzB87K+i3Z7QeZOG3Bt7zHHthv9MQ+F7JkMOPYcN+GTXP5KW7xqGf3
+   +CTuIsMi0Wjob54cn2gJTGI0asm864jabt7amFE+90u4uvMxzdCQhTss6
+   ldSwzrizC1umjduS0HReFqSwgmE/nSUhCFIU+aHeTf3BWpr7M1NoEsBsz
+   A==;
+X-CSE-ConnectionGUID: 9/BS2fYGS5KbRW5MY8G7qg==
+X-CSE-MsgGUID: cEjCMEkNT7W/KXXzhzJbqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="40344075"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="40344075"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 05:14:41 -0800
+X-CSE-ConnectionGUID: vOJLew+fQQiJ7KeLZRkCvQ==
+X-CSE-MsgGUID: FZp77It4RS+Qoz+lHAOAbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="115895179"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.133])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 05:14:36 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Jim Qu <Jim.Qu@amd.com>
+Cc: Lukas Wunner <lukas@wunner.de>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Takashi Iwai <tiwai@suse.de>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
+Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
+ vga_switcheroo_register_audio_client()
+In-Reply-To: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
+Date: Mon, 24 Feb 2025 15:14:33 +0200
+Message-ID: <87eczn7adi.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <71d343e7-ff9f-44e6-abfc-64425640c4f6@xs4all.nl>
+Content-Type: text/plain
 
-Hi Hans,
+On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> The "id" variable is an enum and in this context it's treated as an
+> unsigned int so the error handling can never trigger.  The
+> ->get_client_id() functions do not currently return any errors but
+> I imagine that if they did, then the intention was to return
+> VGA_SWITCHEROO_UNKNOWN_ID on error.  Let's check for both negatives
+> and UNKNOWN_ID so we'll catch it either way.
+>
+> Reported-by: Su Hui <suhui@nfschina.com>
+> Closes: https://lore.kernel.org/all/20231026021056.850680-1-suhui@nfschina.com/
+> Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/vga/vga_switcheroo.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
+> index 18f2c92beff8..216fb208eb31 100644
+> --- a/drivers/gpu/vga/vga_switcheroo.c
+> +++ b/drivers/gpu/vga/vga_switcheroo.c
+> @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
+>  	mutex_lock(&vgasr_mutex);
+>  	if (vgasr_priv.active) {
+>  		id = vgasr_priv.handler->get_client_id(vga_dev);
+> -		if (id < 0) {
+> +		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
 
-On Mon, Feb 24, 2025 at 09:49:47AM +0100, Hans Verkuil wrote:
-> On 05/11/2024 17:59, Laurent Pinchart wrote:
-> > Hi Dan,
-> > 
-> > Thank you for the patch.
-> > 
-> > On Mon, Nov 04, 2024 at 08:16:19PM +0300, Dan Carpenter wrote:
-> >> This loop was recently converted to use for_each_of_graph_port() which
-> >> automatically does __cleanup__ on the "port" iterator variable.  Delete
-> >> the calls to of_node_put(port) to avoid a double put bug.
-> >>
-> >> Fixes: 393194cdf11e ("media: xilinx-tpg: use new of_graph functions")
-> >> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > 
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > 
-> > The offending commit wasn't merged through the media tree, so we can't
-> > easily merge the fix there either. I'm fine merging this fix through
-> > Rob's tree.
-> 
-> I don't see this patch merged anywhere. Should I just pick it up? I think
-> it got lost in the noise.
-> 
-> The commit 393194cdf11e is now available in our media tree, so it should
-> be fine, I think, if I pick it up. It needs a CC to stable as well, right?
-> I can add that.
+Maybe we want to do something else here... see [1].
 
-Yes, I'd CC stable. Thank you for handling it.
+BR,
+Jani.
 
-> >> ---
-> >>  drivers/media/platform/xilinx/xilinx-tpg.c | 2 --
-> >>  1 file changed, 2 deletions(-)
-> >>
-> >> diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c b/drivers/media/platform/xilinx/xilinx-tpg.c
-> >> index cb93711ea3e3..7deec6e37edc 100644
-> >> --- a/drivers/media/platform/xilinx/xilinx-tpg.c
-> >> +++ b/drivers/media/platform/xilinx/xilinx-tpg.c
-> >> @@ -722,7 +722,6 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
-> >>  		format = xvip_of_get_format(port);
-> >>  		if (IS_ERR(format)) {
-> >>  			dev_err(dev, "invalid format in DT");
-> >> -			of_node_put(port);
-> >>  			return PTR_ERR(format);
-> >>  		}
-> >>  
-> >> @@ -731,7 +730,6 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
-> >>  			xtpg->vip_format = format;
-> >>  		} else if (xtpg->vip_format != format) {
-> >>  			dev_err(dev, "in/out format mismatch in DT");
-> >> -			of_node_put(port);
-> >>  			return -EINVAL;
-> >>  		}
-> >>  
+
+[1] https://lore.kernel.org/r/CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com
+
+
+>  			mutex_unlock(&vgasr_mutex);
+>  			return -EINVAL;
+>  		}
 
 -- 
-Regards,
-
-Laurent Pinchart
+Jani Nikula, Intel
