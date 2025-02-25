@@ -1,107 +1,141 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0724C80
-	for <kernel-janitors@vger.kernel.org>; Tue, 25 Feb 2025 07:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B84241696;
+	Tue, 25 Feb 2025 09:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740468634; cv=none; b=MbpPTKaQ/OX76lojnisHxTEYgVXxGJApPIa0TRdIlxbaEjFNdW0sMQ4wiP6yZWnzIsX3wzBFYbNaR0oYWU2BJrR4c+FAqHZS1jQDhyfrZPD73VgcIELlcrfzcfXElToqqxzY5CZSmDbEQu6MwcT/RUYByycyYejCeAhBBh/pw6c=
+	t=1740474638; cv=none; b=kXxBEZFRUq4wt5Xeh+XspO0fJBbGwVFclu1uWZrAgUjqRao8zSNvkO3fL9faEpsJaV5VdvK2lM2x23n74e35hbgNFlOzxTqr2QoKNAMD1u3LJwLwU13EnVwznzZZql6iaStZk2f/f2EXWe2TMtdcQhsvIkgYWC3RrslDC3tAqc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740468634; c=relaxed/simple;
-	bh=lLY/y7/44+oHF/HGys9GOAGZNYPIN8tsHz48KOcoOlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=X0gZPnvM+UVz29bYAUUERJLoOPuzwIW9GF+LyIa1aQEWryX1H/1ELUe9/6A3Bt59bbrLuUEXGSwNehOQI5dgFJyd2veDd4te+V/WZDsTXG3l3Vm06STTGJNV4R7aMFxfd8hpxJ5GlgB5sZR1M9GEHc0i0An8eNDqmPraIAbGB1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YeLtH51u; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740474638; c=relaxed/simple;
+	bh=sQpPwoXRcrLe1y7aA+MEVSALbJkK7A9Ad3ufdJ8khXk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ky3MJ3gOMI4eprxqUtU3PWUAwbh8SICgrEjn95wxgNopVdkLNULt7xeclorPEcwA7iApe6192c1MpR0yoAl7Qy+VgSB/CHXWi5htM3DZgBsJmoN9ca4k1pinE2z6RR//LLkNzoTKYIi7VjivWMn0I1jYcINxQVgvloIglPuB7lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UcOj4Dlp; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YeLtH51u"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dec996069aso8447478a12.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Feb 2025 23:30:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740468631; x=1741073431; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TfuM5g5b1bzsFznJjaGXX66+r8znKzFeJVWgK6VGC58=;
-        b=YeLtH51uj2ZMwpsbrjGousjmJApJDXWareRt2wehq5iJM8azmSSebwmFhbJuwAmxbn
-         xMH/gK3mnTSpJJIFtxqcIIOlxBCIMTcDLpH5XJcEXz3tl2l+QlJgnH29PWvIdZW923E9
-         /0ZWy1q2fZRjCkBiCF93nW2rjZ6KWoXWweVq5U8iESuDiXBOVhhQp3YkBcD7nQjoONJ/
-         eb/JxOpYogOLipxHKpboNqF8BUrpFbHpvn1t1APitjY17D34nQGVlEWBNKKMErLg0LjN
-         3t0PnyENuKcaxRZcK4mx7hbhl3cFWCxemgOzghErkN9A9RZMLOz4t0Ex0YBBptbseZU+
-         pcqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740468631; x=1741073431;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TfuM5g5b1bzsFznJjaGXX66+r8znKzFeJVWgK6VGC58=;
-        b=Kn4FTnfzxUXOC68n7qwl8OwpOhom77d4CSDZAfg/ze0hzqf0o0O+8sG+N4wZ0ATroK
-         AJPMg2BPOqGBp1Db69efsH0CHA2nqTLdVZBxi2US/nllcW0muVAwpYVhBPyvQFVRzHNH
-         Za58LQeyuoKqOcCzmfkcY1HAJ0iKvoTlPEL6ko2BJpmqcBivCF3klK+3/nYdQiPIW6Z4
-         7cCrEvGNHNQFNLNFi17XzHmaz/HUv2AVnkdRQI+54C2RoLfZLzr9rYkd8LZABKbX7F2/
-         pVViCb+bw8xIyahshZG1d25aJEdj48JCalLpe9Vu87KH4jIynSUVENzpKhOeZuBjBWQo
-         Zgkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkjvNyPT9yQa5d5q+KTVo6uzlzko4RROfA+pT7yth4sAROExyPh74BG9iZFcYlTbs29rKqZHi3kbXA8hWqp/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR6UwHw/fwIbgxohgMl2L4GHV0VOOoUWOVdPjYjmY6dqqgcUTW
-	uQyiIG+OezYaKjvfJbq+G5P8OwIwrxI6zcbvTQoNIGSQqoDVD3aDzbD0oh3P10E=
-X-Gm-Gg: ASbGncsssIY7HkIUFJf5gqX5kxWN+w5ycKIs5OZnqtzbxQO1nDVKyWNDaEe09Gw5h4W
-	AWlBKenGi/kQigNCyR5cNlweCuTNz/lYwIR4D8IhROxE2SzSo8Bb7rQOSegQOKC8P46hF1MJ1xH
-	9FbuaUFJYAjTDVde18yJHMFNxqGarGVasLAmANZhatZAJrn8lhT3QlnIhFZ5wfJhARnzqQoz1eN
-	/GDiJjMb27Rhyv8Rz4v2X/4rWxYONvuoSZnW91WGQ8o+NfJVA5DgDBassN5IYKVprimg95a2W/P
-	ICAmXedisgw9xcJuBHxGochm5RxfTBY=
-X-Google-Smtp-Source: AGHT+IF1jD1nIi0UqQ/yrLSB611MTk3aZB/2hvtf9cDDpXVP93eDIhNTWNWnPWPNHZu27Gv83YTAhQ==
-X-Received: by 2002:a05:6402:27c8:b0:5e0:8261:ebb2 with SMTP id 4fb4d7f45d1cf-5e0b70d6598mr16065265a12.12.1740468631260;
-        Mon, 24 Feb 2025 23:30:31 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e461f3e7f8sm788694a12.69.2025.02.24.23.30.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 23:30:30 -0800 (PST)
-Date: Tue, 25 Feb 2025 10:30:26 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/msm/dpu: fix error pointer dereference in
- msm_kms_init_aspace()
-Message-ID: <3221e88c-3351-42e6-aeb1-69f4f014b509@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UcOj4Dlp"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740474637; x=1772010637;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=sQpPwoXRcrLe1y7aA+MEVSALbJkK7A9Ad3ufdJ8khXk=;
+  b=UcOj4DlpzgrEzGgt+mDmIgM5fAzVH4tx+bdCR5dXjct4/Shdy0S2Y8Wj
+   2EvRL/R9HlLpATilOSs6zH550iS2Pb+eNc7ykTedbmhHampUxuCNmo9ZN
+   F+cpLuhU7QjlYSiSWRoT9bfl3kiy60GKiIdnUF/FyBtv8mI6VXLdLJho5
+   1NGYdn6vpmWvddWLclRquU/iATod5nlUWq+D/i+jS30qHUBQfHvAIG7BJ
+   kSS5Qj2wiIyav0sxc+epecPZmO6LW7ur5UCGNVjMsbtszqtp3VK5uLKgz
+   4MtGyIJp29oeALVB5bd7+AB/b1pNSmheUw38PCnBLfSSUbNhq6FYDvFkF
+   w==;
+X-CSE-ConnectionGUID: 5YBSHX3/To6/WBsGC8CTgg==
+X-CSE-MsgGUID: dFk1x64nSwe2VSyIeQDVwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41185115"
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="41185115"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 01:10:36 -0800
+X-CSE-ConnectionGUID: lLouOT1dRo6qMbBUadUawQ==
+X-CSE-MsgGUID: XZD0O4wkT8KxtqRGM6PyHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="116818412"
+Received: from monicael-mobl3 (HELO localhost) ([10.245.246.246])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 01:10:32 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Lukas Wunner <lukas@wunner.de>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Takashi Iwai <tiwai@suse.de>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
+Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
+ vga_switcheroo_register_audio_client()
+In-Reply-To: <8e161bf8-70f6-4557-8fa8-81d4bbfab91f@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
+ <87eczn7adi.fsf@intel.com>
+ <8e161bf8-70f6-4557-8fa8-81d4bbfab91f@stanley.mountain>
+Date: Tue, 25 Feb 2025 11:10:29 +0200
+Message-ID: <87zfia5r0a.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain
 
-If msm_gem_address_space_create() fails, then return right away.
-Otherwise it leads to a Oops when we dereference "aspace" on the next
-line.
+On Mon, 24 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> On Mon, Feb 24, 2025 at 03:14:33PM +0200, Jani Nikula wrote:
+>> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>> > The "id" variable is an enum and in this context it's treated as an
+>> > unsigned int so the error handling can never trigger.  The
+>> > ->get_client_id() functions do not currently return any errors but
+>> > I imagine that if they did, then the intention was to return
+>> > VGA_SWITCHEROO_UNKNOWN_ID on error.  Let's check for both negatives
+>> > and UNKNOWN_ID so we'll catch it either way.
+>> >
+>> > Reported-by: Su Hui <suhui@nfschina.com>
+>> > Closes: https://lore.kernel.org/all/20231026021056.850680-1-suhui@nfschina.com/
+>> > Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
+>> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> > ---
+>> >  drivers/gpu/vga/vga_switcheroo.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
+>> > index 18f2c92beff8..216fb208eb31 100644
+>> > --- a/drivers/gpu/vga/vga_switcheroo.c
+>> > +++ b/drivers/gpu/vga/vga_switcheroo.c
+>> > @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
+>> >  	mutex_lock(&vgasr_mutex);
+>> >  	if (vgasr_priv.active) {
+>> >  		id = vgasr_priv.handler->get_client_id(vga_dev);
+>> > -		if (id < 0) {
+>> > +		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
+>> 
+>> Maybe we want to do something else here... see [1].
+>> 
+>> BR,
+>> Jani.
+>> 
+>> 
+>> [1] https://lore.kernel.org/r/CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com
+>> 
+>
+> I feel like my patch is good enough...  I guess the concern here is that
+> GCC could change enums to something else.  I don't think that's likely as
+> it would break a lot of code.  The other option, which is a good option,
+> is to change the function signature for vgasr_priv.handler->get_client_id()
+> so that we do:
+>
+> 	ret = vgasr_priv.handler->get_client_id(vga_dev, &id);
+> 	if (ret)
+> 		return;
+>
+> That's better code, honestly.  But I can't find motivation enough to do
+> the work.
 
-Fixes: 2d215d440faa ("drm/msm: register a fault handler for display mmu faults")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/msm/msm_kms.c | 1 +
- 1 file changed, 1 insertion(+)
+The more I look at this, the more bonkers 4aaf448fa975 feels.
 
-diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/msm_kms.c
-index b877278888e6..35d5397e73b4 100644
---- a/drivers/gpu/drm/msm/msm_kms.c
-+++ b/drivers/gpu/drm/msm/msm_kms.c
-@@ -209,6 +209,7 @@ struct msm_gem_address_space *msm_kms_init_aspace(struct drm_device *dev)
- 	if (IS_ERR(aspace)) {
- 		dev_err(mdp_dev, "aspace create, error %pe\n", aspace);
- 		mmu->funcs->destroy(mmu);
-+		return aspace;
- 	}
- 
- 	msm_mmu_set_fault_handler(aspace->mmu, kms, msm_kms_fault_handler);
+Anyway, I don't think ->get_client_id() hooks should return negative
+error codes, and indeed none of them do. None of them return
+VGA_SWITCHEROO_UNKNOWN_ID either, but that would be a valid return.
+
+I suggest only checking for id == VGA_SWITCHEROO_UNKNOWN_ID. And doing
+that in all the places that have that check, there are two more, but
+they assign the return value to an int. So the int ret should be changed
+to enum vga_switcheroo_unknown_id id I think.
+
+Any chance of finding enough motivation to do that? ;)
+
+BR,
+Jani.
+
+
+
 -- 
-2.47.2
-
+Jani Nikula, Intel
