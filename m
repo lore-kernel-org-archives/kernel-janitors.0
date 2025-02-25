@@ -1,100 +1,102 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5BA267AFE
-	for <kernel-janitors@vger.kernel.org>; Tue, 25 Feb 2025 10:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211F3264A93;
+	Tue, 25 Feb 2025 10:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740477894; cv=none; b=euigxhDeyozHxAsyfCfwnnz9aCnqx4xiPhDvukyRabRyRTZYvJHKSp9m2b/6wFImkFLXb8K7YK6humg/oeA1++iRYy2xqwXlQ51QPTc2VekN9x/gGKITJoJ/yddji7QqRLxbpWRK/JLsJ+3CDQsQUFlnWDkrnz2rz/UWVFyD6/0=
+	t=1740478340; cv=none; b=LcxkLKKNIK5iO/3UAR5srdrDehsOEOeQfwXkrC1r/zDQQhV3y9TYaomB8F8RJpsGO0rLR9RqkwsympTv3lR5NzcTuZGRmq8lYiZ9p3l2v7d/1A4csMGVHX6/qPMvekBLjnPIkFmX6v6ZrzwN2ufn4Qd/HlHLTsDHLMwB/e4ap2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740477894; c=relaxed/simple;
-	bh=DuA0E92AFzqVAQkY9I4a+gZlF79J+R3+j7twI3wDzXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGu5b3oWoYiGqiz5asu3LsCxuf/AuonluuC2P5/HzH7iKCv1tlakGt2peIPN8TJSpZlPQfSwldGZbQFSiVC25rGiyiBlBk42dECUeyxlcGJA4bDucTJ1KO0SL/pP7yIfFqQ1D2zE3xyhSA1YjXIJ5PBV6JulJpnxjUvPndsGrTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GQegHoU7; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740478340; c=relaxed/simple;
+	bh=hE+OYAFm57UzumtsPo2MCdm6/Z+qyVrO2i/t3SAQ7g4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bnFQ+RYtRK5Lf5lO4brOlw1h2sOddKM/RP2v6E5RHDuAojt7Zdi6ZTpN5VGD/oVuquHHqY3jY4/i+hy0NYsjYmaqJYV5fv4fi286CQU+OyQbBGvH92q3lvJMNL09r2glIbzEJws/Tj2LZb8Z4QfFIDqhC7vA+dJXH4JSJXIESaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QeOzjdX9; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GQegHoU7"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5461a485a72so5238963e87.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 25 Feb 2025 02:04:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QeOzjdX9"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4398738217aso47041475e9.3;
+        Tue, 25 Feb 2025 02:12:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740477891; x=1741082691; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUfGZOLBpPXz98roGZug6GzOuxZ57fwrWBTaMGnGD5k=;
-        b=GQegHoU7zMaoX0CCcDUstVZHEP9+1/KQNkt1EpS+vIIFy5FvWSl5vF7BK1Zg5h18dI
-         Yb0r+yajDFy4HpSc34S8mwSN+9kaZ4NfThLl935v9VAzzIk6huLOT9fNeurTlW5kKDvP
-         H8rw5tK5PV/sFqO3CFk0nYzXcFm/fVxEC4iib4gr5KfudokWG5A4RcN5dGEanCIuwsX5
-         SzXIqprGvO+Kz7u5GVRBE3VQhhyY7NCramgDStv1WpMyBgfFkVw4hZByP9DgslbmGNO0
-         oQ2jDwCTPs+to8k0Z/j7xOtKBaGZ36/R86qO6ae65QZIaLni6LFqdKJpWaBB6aQsQg0N
-         RPEQ==
+        d=gmail.com; s=20230601; t=1740478337; x=1741083137; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8f50ReeNO2ewLKOc+m/ce/otGU09DrlDIWdxnZUlcMA=;
+        b=QeOzjdX9Nl0qR8npHnpjLxyoKy79GpJsb/DfC7m+empx1maOxQHC8znpRtFt1xVLJq
+         gCCMcSP5lIesniyefDAhtI3S36yWg9foo/24skz/IcnugPtkJVqg87Cr0sTASJK0vb/7
+         BQ35wf9Rk6McK40tfyEeTlyMZLOg0iomDpjpMy08ewlA5fGTRpWktQtPqTnW/dkFT4s8
+         +/X1L8kL92T1BKwz6zVDqFYuqzeq3JDWPiCtVCIBs/DR0aGBqGNDOoxlxasCqppzSxWs
+         4Y3/wNE41SA1k/PIC6SLJx95+A3EYEBkkUCKeT3Cih3aAMqKCvs2ipOY/CZwMOqExjE+
+         yX+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740477891; x=1741082691;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sUfGZOLBpPXz98roGZug6GzOuxZ57fwrWBTaMGnGD5k=;
-        b=dXnIBhbGjSSaSL/p6Ph+z1Vtef5BTzgIl7oflgNpoW+T4XwI1HmGJg7C++g4BSo4qy
-         u52rI9VOyIRzGPzOMwrY6yekh4milhHOk43QKGIML8klC23A6NgteaeBtlCa3b6kHT81
-         bqPRsu6FSPowOGlo0hkBq6B/l6+XRdWn1QHtwMxmbgTv2ublKGYS8TDgrqs3AqAJky4K
-         pjvB4Q7Ufc9nNfl0j/aUORQl9DTJV9BVY5N4l2+LOjWSMFe8lZubJFd1HAQAcJ/2SwJl
-         IWDXXon85De5uSe/9Y1BB96O+W+g2EIIpyOXH1IQ8ZbBr7QwAfwucv6cwEVBXzJ5oTap
-         EIHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaaB937bVfibGI0TIe1opIs2VhNpULM3NIimNLIDeyak+zrSpOPBPOoslNW2zXqk2dGHVRKFT/pwfc1mslgLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFCZPbYpSTNaGkPr41uDBqSPw4r9WY4d6CNodQ344Nx8oqtlQl
-	aCiHVuEe3yhmRYlktPEW1UcPn6GnRWfm1sRD48odHPpFGszC8EgqWVkrxx+IyTZU5z7ElXDizG0
-	G
-X-Gm-Gg: ASbGnctdmaOLdjm8n8hL+l6NlxQQFqlN+LMDfpZuLa0bPiV9ZJfvJvHrnho1isLZvLK
-	4hGoTng/y/MCWzNJl923cFaECH5dtkItIngWn+Q40n5Wyq1epKDie2m5+ybDbH3Nju0R7QSG6lF
-	bPnhhwskiRQ8rRB5OJzj6x9RZhdBBlRziAn6Xk7spxjmDz6P1w9uGKmyn5hb9pOOFoaGp4bfHIL
-	9L1dRb+f0Kpb98kvjiIqlfsqE4+j0TChW1miNiVLiodJWH+4Yzx5IfARgkgvHVtO9Wd69m05qWR
-	GPpA24zxMpx/NqMBnCoJNOgaaOBgtV8u9HmKpAnaaCiV0llt9N2qk1yXsAMXzSCWFR+4D07Ag9b
-	qBciDAg==
-X-Google-Smtp-Source: AGHT+IFe8roSMzt3VVv7TZk036TpcSGcoxSHvfVATn8ZrfpARrpjkEuvUDMxx89xTrZ/KzUJppvbMQ==
-X-Received: by 2002:a05:6512:104e:b0:546:2ea9:6666 with SMTP id 2adb3069b0e04-54838f4e48emr8396425e87.34.1740477890594;
-        Tue, 25 Feb 2025 02:04:50 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b9e11sm136744e87.92.2025.02.25.02.04.48
+        d=1e100.net; s=20230601; t=1740478337; x=1741083137;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8f50ReeNO2ewLKOc+m/ce/otGU09DrlDIWdxnZUlcMA=;
+        b=gpNeYP+/8ztTFbAbYMtP668CDPSwdZ9T4BMy5SSBxmPlo5pZerIlMuc3lc/aWY3CHR
+         OfqD+Ed2CA0tVec8fal4sUdv117snp0CQ1BR1mZoPcoeSLLXxMTU0WKZyG5+2Mt2/PAZ
+         Bq2h+yaHXlGo5oUjx4N8KSLkvXkI+YQPK5MvSaxdlMXQ/tdqNSMerQRGv+W/BqNGCbzV
+         uALHWX+cWt+rdvwA8z6hhLz5KaUSWuO2NyHDmH04EkuLSPzzGCklGU7JFV5vh4oHXMYH
+         Et8k5LGBnZKeanLThGy+g/E6t0xXPNGbNixeWUYW6cQgOkuBGsbpVix9UBIVYrSOflqR
+         roHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDALv9x61xllZC+oESfwcsNDx/EhRVcbnUV5CuBlrPgnf2j8CsPlor5xQ91WB9Gc9M3REUkAN/ZZnU7Fk=@vger.kernel.org, AJvYcCXdbUk+mnU5ArzGyu63B3gRdtSuK0XuouerrKITyLWmU63S7DtvWhyHRWGXFZHyZ810TzPMHB/p5bLuzw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMXqMb52sLXwJ4/J4zMfDNSHGE13wR0fvx2Wo7zBUeLOOj/FQP
+	GdV5B3t3R7fC9of8xH6EbrX3TU4UBgr2jAmQyNIdTtpDRTu9PLIz
+X-Gm-Gg: ASbGncvHV5Xe8Qvu1jUIKpSOAptiDQOhHOykQG2bYnUyLMaKRPaj50wMn6g+4Kx4P22
+	HB+xfWLTn/D9QrBjVHf/nwl5s1aQ/6bMAAUDk8GxHQRhH8t12s5ig+Jtz4PnJNC7WftljGQD3Yz
+	7RwBSSWx0Qv32dqZs3x80K8QZjkjIKo6qD7+UH/OUeFCT2l7/YyxveMW1XGSGtbQhtiBcdtkXWR
+	mPG/RtD/HT06idZ4zM8alUJ41lhDvDT52Qt8Cx6g1l8S+zaRhcH+B/k5B0XOJzFKVCBiSPkOkSE
+	nhyzoY2yLWwCvbN9IYKSqLhyYfg=
+X-Google-Smtp-Source: AGHT+IH3M1TCXeGQjPYelk3PO2DOrAA7RTWE9FnFRNNtZ+SU4MlPMarj5Sh4XgmPSVxXCUY6AifVTA==
+X-Received: by 2002:a05:600c:1390:b0:439:9274:81dd with SMTP id 5b1f17b1804b1-439ae1d7b20mr113737095e9.1.1740478336758;
+        Tue, 25 Feb 2025 02:12:16 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-439b0367577sm134605925e9.25.2025.02.25.02.12.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 02:04:49 -0800 (PST)
-Date: Tue, 25 Feb 2025 12:04:46 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/msm/dpu: fix error pointer dereference in
- msm_kms_init_aspace()
-Message-ID: <uzrw5szojucylvminnxghqld34jez7lfzljtdxtkmkxtm5xodt@ruihfzdhkx7p>
-References: <3221e88c-3351-42e6-aeb1-69f4f014b509@stanley.mountain>
+        Tue, 25 Feb 2025 02:12:16 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-scsi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: ufs: rockchip: Fix spelling mistake "susped" -> "suspend"
+Date: Tue, 25 Feb 2025 10:11:42 +0000
+Message-ID: <20250225101142.161474-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3221e88c-3351-42e6-aeb1-69f4f014b509@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 10:30:26AM +0300, Dan Carpenter wrote:
-> If msm_gem_address_space_create() fails, then return right away.
-> Otherwise it leads to a Oops when we dereference "aspace" on the next
-> line.
-> 
-> Fixes: 2d215d440faa ("drm/msm: register a fault handler for display mmu faults")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/msm/msm_kms.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
+There is a spelling mistake in a dev_err message. Fix it.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/ufs/host/ufs-rockchip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
+index 5b0ea9820767..dddff5f538b9 100644
+--- a/drivers/ufs/host/ufs-rockchip.c
++++ b/drivers/ufs/host/ufs-rockchip.c
+@@ -307,7 +307,7 @@ static int ufs_rockchip_system_suspend(struct device *dev)
+ 
+ 	err = ufshcd_system_suspend(dev);
+ 	if (err) {
+-		dev_err(hba->dev, "UFSHCD system susped failed %d\n", err);
++		dev_err(hba->dev, "UFSHCD system suspend failed %d\n", err);
+ 		return err;
+ 	}
+ 
 -- 
-With best wishes
-Dmitry
+2.47.2
+
