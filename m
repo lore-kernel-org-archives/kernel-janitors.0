@@ -1,102 +1,395 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211F3264A93;
-	Tue, 25 Feb 2025 10:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0BA2673A5
+	for <kernel-janitors@vger.kernel.org>; Tue, 25 Feb 2025 11:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478340; cv=none; b=LcxkLKKNIK5iO/3UAR5srdrDehsOEOeQfwXkrC1r/zDQQhV3y9TYaomB8F8RJpsGO0rLR9RqkwsympTv3lR5NzcTuZGRmq8lYiZ9p3l2v7d/1A4csMGVHX6/qPMvekBLjnPIkFmX6v6ZrzwN2ufn4Qd/HlHLTsDHLMwB/e4ap2o=
+	t=1740484572; cv=none; b=u6gp5ZEm7dWODniU0DRpNxsP0xQkJOadR04f3uSKDsYBDgkR+z/XtGdGL5rpy9SkZHmhph9Vn4VpQhbVEx2BImSdppRtkYGumLGZUXxozFCbaRPt7ZYzlMFa19HpR7CrmcEPgmoptDFJNtwt7ZtBSp7vHcLj94ZVCyfjdk6GtyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478340; c=relaxed/simple;
-	bh=hE+OYAFm57UzumtsPo2MCdm6/Z+qyVrO2i/t3SAQ7g4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bnFQ+RYtRK5Lf5lO4brOlw1h2sOddKM/RP2v6E5RHDuAojt7Zdi6ZTpN5VGD/oVuquHHqY3jY4/i+hy0NYsjYmaqJYV5fv4fi286CQU+OyQbBGvH92q3lvJMNL09r2glIbzEJws/Tj2LZb8Z4QfFIDqhC7vA+dJXH4JSJXIESaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QeOzjdX9; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740484572; c=relaxed/simple;
+	bh=iWgmiXsLf83OauoL4O+8afLdL8TcN5A77a9qDkmqwtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOTk+7ZQ3IZxmOmVRuh7EhHZOSdHVai2r3oEAfi4GG0ayPQYjCymkzRiLl6ctpn2JxWPYzhsegSrJv3MuoCZwhb+q3MgC/ehhJAeyKo3h/kLWg4eYgHh2oq8NTHGC4ogr2+/rUdka7rZwlLqGz0jpEt04NbqFDSPwPJKnruDOGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RInhwchU; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QeOzjdX9"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4398738217aso47041475e9.3;
-        Tue, 25 Feb 2025 02:12:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RInhwchU"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aaec61d0f65so1097698066b.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 25 Feb 2025 03:56:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740478337; x=1741083137; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8f50ReeNO2ewLKOc+m/ce/otGU09DrlDIWdxnZUlcMA=;
-        b=QeOzjdX9Nl0qR8npHnpjLxyoKy79GpJsb/DfC7m+empx1maOxQHC8znpRtFt1xVLJq
-         gCCMcSP5lIesniyefDAhtI3S36yWg9foo/24skz/IcnugPtkJVqg87Cr0sTASJK0vb/7
-         BQ35wf9Rk6McK40tfyEeTlyMZLOg0iomDpjpMy08ewlA5fGTRpWktQtPqTnW/dkFT4s8
-         +/X1L8kL92T1BKwz6zVDqFYuqzeq3JDWPiCtVCIBs/DR0aGBqGNDOoxlxasCqppzSxWs
-         4Y3/wNE41SA1k/PIC6SLJx95+A3EYEBkkUCKeT3Cih3aAMqKCvs2ipOY/CZwMOqExjE+
-         yX+A==
+        d=linaro.org; s=google; t=1740484568; x=1741089368; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WJyPxjFleKuEal7BN10cNxi9EzRWaplUTMZg3DzwJ5g=;
+        b=RInhwchUgde91kcg4T8ATu6pV/C0pN1kWSKDmr6UY/E1BdBkOWJtymrpZBhkwhx3+w
+         UuiJ1t/WJuIgwm9P+BJRf2pFvcVGuGoPaQUngIw7VRK6D2HtR2hrT/xNOZhL9cxOxiAG
+         kwqD3Bm7132T6gCFUhGogBbGz1IU3EYQc1ReNJ9cs9C5Ycumpo15SLnSOAnCpjdmSjjQ
+         wRwwkfNHxWnUVUHCtb9um/HT6PWJAG/xDyvtUU8wIf6GnAkra0GOBQNBUVKOpd9ZM+0Y
+         l953RmdyQVuoJzETedIMe8uqpCFNTHZONyQw6xHdZvBWRzQOatwEb6BTMDMpswx9Ofx+
+         ca5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740478337; x=1741083137;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8f50ReeNO2ewLKOc+m/ce/otGU09DrlDIWdxnZUlcMA=;
-        b=gpNeYP+/8ztTFbAbYMtP668CDPSwdZ9T4BMy5SSBxmPlo5pZerIlMuc3lc/aWY3CHR
-         OfqD+Ed2CA0tVec8fal4sUdv117snp0CQ1BR1mZoPcoeSLLXxMTU0WKZyG5+2Mt2/PAZ
-         Bq2h+yaHXlGo5oUjx4N8KSLkvXkI+YQPK5MvSaxdlMXQ/tdqNSMerQRGv+W/BqNGCbzV
-         uALHWX+cWt+rdvwA8z6hhLz5KaUSWuO2NyHDmH04EkuLSPzzGCklGU7JFV5vh4oHXMYH
-         Et8k5LGBnZKeanLThGy+g/E6t0xXPNGbNixeWUYW6cQgOkuBGsbpVix9UBIVYrSOflqR
-         roHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDALv9x61xllZC+oESfwcsNDx/EhRVcbnUV5CuBlrPgnf2j8CsPlor5xQ91WB9Gc9M3REUkAN/ZZnU7Fk=@vger.kernel.org, AJvYcCXdbUk+mnU5ArzGyu63B3gRdtSuK0XuouerrKITyLWmU63S7DtvWhyHRWGXFZHyZ810TzPMHB/p5bLuzw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMXqMb52sLXwJ4/J4zMfDNSHGE13wR0fvx2Wo7zBUeLOOj/FQP
-	GdV5B3t3R7fC9of8xH6EbrX3TU4UBgr2jAmQyNIdTtpDRTu9PLIz
-X-Gm-Gg: ASbGncvHV5Xe8Qvu1jUIKpSOAptiDQOhHOykQG2bYnUyLMaKRPaj50wMn6g+4Kx4P22
-	HB+xfWLTn/D9QrBjVHf/nwl5s1aQ/6bMAAUDk8GxHQRhH8t12s5ig+Jtz4PnJNC7WftljGQD3Yz
-	7RwBSSWx0Qv32dqZs3x80K8QZjkjIKo6qD7+UH/OUeFCT2l7/YyxveMW1XGSGtbQhtiBcdtkXWR
-	mPG/RtD/HT06idZ4zM8alUJ41lhDvDT52Qt8Cx6g1l8S+zaRhcH+B/k5B0XOJzFKVCBiSPkOkSE
-	nhyzoY2yLWwCvbN9IYKSqLhyYfg=
-X-Google-Smtp-Source: AGHT+IH3M1TCXeGQjPYelk3PO2DOrAA7RTWE9FnFRNNtZ+SU4MlPMarj5Sh4XgmPSVxXCUY6AifVTA==
-X-Received: by 2002:a05:600c:1390:b0:439:9274:81dd with SMTP id 5b1f17b1804b1-439ae1d7b20mr113737095e9.1.1740478336758;
-        Tue, 25 Feb 2025 02:12:16 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-439b0367577sm134605925e9.25.2025.02.25.02.12.16
+        d=1e100.net; s=20230601; t=1740484568; x=1741089368;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WJyPxjFleKuEal7BN10cNxi9EzRWaplUTMZg3DzwJ5g=;
+        b=B6iOuwcyuLaKbRP+KAFLVss8fC3mUOVSKOfyGiPOXFUKAZ5GNTXIQt7n/f28S0zS0m
+         +qIpWzvm534emgrBxHMf0quKyufsIBgIC0A0ugKE3Ro9Ept9AJgGVQjIQCIon6iTaXjt
+         4YrbNq+nzv+cQ7+2DeRZrPGPAhQUzrVtNEG6sfH2Ok3qEOCRknnIGXoyoN9/s1VgkdYA
+         up2ixHmA9/q1h2IU+D/VXFMxKBRmi/v6xD3SUjoDAsQ8nPnkBtPjB5tNkryXFU2diabW
+         6k95aD4HTvnvsIG8S0pHJhxSy/2IV2/DPS4XhOpDvw72/GsiSPTlnrRjE+KqQgtmry4O
+         x3/A==
+X-Forwarded-Encrypted: i=1; AJvYcCV+bz9wVrT7nDlf0mZp71TrXlPXu7PvOYiMYvRQjB5V/1QVR968fJ+POYIav0wmocN57nfW8IPkxQfhC/GqjB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY0Ux/f+986H81DyW8eYjfgKCNxdzD1gMqc3nNLRYXk9g7xCvQ
+	0GIw9yVND4+S0t6DDmT3DbqscijlTI8vZOekhQ4pIgKhwgSMuxeE/m35qLHlCEY=
+X-Gm-Gg: ASbGncufrzQUvd9Ewr1vlZyGs6SYSjUgNIJTB1B1YG0Ro0CCxOpZla4tEKS07Y+61K0
+	w5e8rH0IZjIJ2583iI0GpPSYRyilqdd9ZOO6WvVfjIg8qEFT1XyY6h5+/O9D/EtdKxqLOBI8FV0
+	A02KPoo1cTrkwDIWVNnsaKpNUhie/5DxHKn2abu4i3MlQVBHz4Zx1iuE2gwWxR4NYtgHLXk84DQ
+	9EB8aJ8RD1dPQGxo35Sq5ZjM0NTm60fXTZ+asLlNe+tbj6JoF5obCPjIZ+Hvj0+iNyFF5xXyMhC
+	jrQrfoqrnMDzKE1mv+scgkh0974rbKs=
+X-Google-Smtp-Source: AGHT+IGtwfDPoI1urGz4W6sWGWt7cIKJRtHke0xAzp1DGA8IEACl7iCkLafu7qlCmJ17Ht/wFJ+uJw==
+X-Received: by 2002:a17:906:3290:b0:ab7:b30:42ed with SMTP id a640c23a62f3a-abed0959f38mr253119666b.0.1740484568004;
+        Tue, 25 Feb 2025 03:56:08 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abed2012360sm127195466b.114.2025.02.25.03.56.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 02:12:16 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-scsi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: ufs: rockchip: Fix spelling mistake "susped" -> "suspend"
-Date: Tue, 25 Feb 2025 10:11:42 +0000
-Message-ID: <20250225101142.161474-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        Tue, 25 Feb 2025 03:56:07 -0800 (PST)
+Date: Tue, 25 Feb 2025 14:56:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Lukas Wunner <lukas@wunner.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Takashi Iwai <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Su Hui <suhui@nfschina.com>
+Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
+ vga_switcheroo_register_audio_client()
+Message-ID: <121efc5e-1050-476e-8e34-e4db11a4ac11@stanley.mountain>
+References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
+ <87eczn7adi.fsf@intel.com>
+ <8e161bf8-70f6-4557-8fa8-81d4bbfab91f@stanley.mountain>
+ <87zfia5r0a.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfia5r0a.fsf@intel.com>
 
-There is a spelling mistake in a dev_err message. Fix it.
+On Tue, Feb 25, 2025 at 11:10:29AM +0200, Jani Nikula wrote:
+> On Mon, 24 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > On Mon, Feb 24, 2025 at 03:14:33PM +0200, Jani Nikula wrote:
+> >> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >> > The "id" variable is an enum and in this context it's treated as an
+> >> > unsigned int so the error handling can never trigger.  The
+> >> > ->get_client_id() functions do not currently return any errors but
+> >> > I imagine that if they did, then the intention was to return
+> >> > VGA_SWITCHEROO_UNKNOWN_ID on error.  Let's check for both negatives
+> >> > and UNKNOWN_ID so we'll catch it either way.
+> >> >
+> >> > Reported-by: Su Hui <suhui@nfschina.com>
+> >> > Closes: https://lore.kernel.org/all/20231026021056.850680-1-suhui@nfschina.com/
+> >> > Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
+> >> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> >> > ---
+> >> >  drivers/gpu/vga/vga_switcheroo.c | 2 +-
+> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> >
+> >> > diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
+> >> > index 18f2c92beff8..216fb208eb31 100644
+> >> > --- a/drivers/gpu/vga/vga_switcheroo.c
+> >> > +++ b/drivers/gpu/vga/vga_switcheroo.c
+> >> > @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
+> >> >  	mutex_lock(&vgasr_mutex);
+> >> >  	if (vgasr_priv.active) {
+> >> >  		id = vgasr_priv.handler->get_client_id(vga_dev);
+> >> > -		if (id < 0) {
+> >> > +		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
+> >> 
+> >> Maybe we want to do something else here... see [1].
+> >> 
+> >> BR,
+> >> Jani.
+> >> 
+> >> 
+> >> [1] https://lore.kernel.org/r/CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com
+> >> 
+> >
+> > I feel like my patch is good enough...  I guess the concern here is that
+> > GCC could change enums to something else.  I don't think that's likely as
+> > it would break a lot of code.  The other option, which is a good option,
+> > is to change the function signature for vgasr_priv.handler->get_client_id()
+> > so that we do:
+> >
+> > 	ret = vgasr_priv.handler->get_client_id(vga_dev, &id);
+> > 	if (ret)
+> > 		return;
+> >
+> > That's better code, honestly.  But I can't find motivation enough to do
+> > the work.
+> 
+> The more I look at this, the more bonkers 4aaf448fa975 feels.
+> 
+> Anyway, I don't think ->get_client_id() hooks should return negative
+> error codes, and indeed none of them do. None of them return
+> VGA_SWITCHEROO_UNKNOWN_ID either, but that would be a valid return.
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/ufs/host/ufs-rockchip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ugh...  Yeah.  The checks should all be the same obviously...
 
-diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
-index 5b0ea9820767..dddff5f538b9 100644
---- a/drivers/ufs/host/ufs-rockchip.c
-+++ b/drivers/ufs/host/ufs-rockchip.c
-@@ -307,7 +307,7 @@ static int ufs_rockchip_system_suspend(struct device *dev)
+
+> I suggest only checking for id == VGA_SWITCHEROO_UNKNOWN_ID. And doing
+> that in all the places that have that check, there are two more, but
+> they assign the return value to an int. So the int ret should be changed
+> to enum vga_switcheroo_unknown_id id I think.
+> 
+
+I mean the future is hard to predict but it's way more likely that
+people will return negative error codes than that they'll return
+VGA_SWITCHEROO_UNKNOWN_ID.  To be honest, I'd probably just apply
+Su Hui's original patch at this point based on that's how that's what
+all the callers essentially do.
+
+https://lore.kernel.org/all/20231026021056.850680-1-suhui@nfschina.com/
+
+Really returning VGA_SWITCHEROO_UNKNOWN_ID is a headache for the callers
+because they have to test for it and then return -EINVAL.  It's
+non-standard and more complicated than just checking for negative.
+
+Changing it to return int is also slightly frustrating because everything
+returns zero but that's more likely the best approach.
+
+regards,
+dan carpenter
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
+index 3893e6fc2f03..494df3984c68 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
+@@ -549,12 +549,14 @@ static int amdgpu_atpx_init(void)
+  * look up whether we are the integrated or discrete GPU (all asics).
+  * Returns the client id.
+  */
+-static enum vga_switcheroo_client_id amdgpu_atpx_get_client_id(struct pci_dev *pdev)
++static int amdgpu_atpx_get_client_id(struct pci_dev *pdev, enum vga_switcheroo_client_id *id)
+ {
+ 	if (amdgpu_atpx_priv.dhandle == ACPI_HANDLE(&pdev->dev))
+-		return VGA_SWITCHEROO_IGD;
++		*id = VGA_SWITCHEROO_IGD;
+ 	else
+-		return VGA_SWITCHEROO_DIS;
++		*id = VGA_SWITCHEROO_DIS;
++
++	return 0;
+ }
  
- 	err = ufshcd_system_suspend(dev);
- 	if (err) {
--		dev_err(hba->dev, "UFSHCD system susped failed %d\n", err);
-+		dev_err(hba->dev, "UFSHCD system suspend failed %d\n", err);
- 		return err;
+ static const struct vga_switcheroo_handler amdgpu_atpx_handler = {
+diff --git a/drivers/gpu/drm/nouveau/nouveau_acpi.c b/drivers/gpu/drm/nouveau/nouveau_acpi.c
+index 21b56cc7605c..72f3d02779ec 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_acpi.c
++++ b/drivers/gpu/drm/nouveau/nouveau_acpi.c
+@@ -192,17 +192,22 @@ static int nouveau_dsm_power_state(enum vga_switcheroo_client_id id,
+ 	return nouveau_dsm_set_discrete_state(nouveau_dsm_priv.dhandle, state);
+ }
+ 
+-static enum vga_switcheroo_client_id nouveau_dsm_get_client_id(struct pci_dev *pdev)
++static int nouveau_dsm_get_client_id(struct pci_dev *pdev, enum vga_switcheroo_client_id *id)
+ {
+ 	/* easy option one - intel vendor ID means Integrated */
+-	if (pdev->vendor == PCI_VENDOR_ID_INTEL)
+-		return VGA_SWITCHEROO_IGD;
++	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
++		*id = VGA_SWITCHEROO_IGD;
++		return 0;
++	}
+ 
+ 	/* is this device on Bus 0? - this may need improving */
+-	if (pdev->bus->number == 0)
+-		return VGA_SWITCHEROO_IGD;
++	if (pdev->bus->number == 0) {
++		*id = VGA_SWITCHEROO_IGD;
++		return 0;
++	}
+ 
+-	return VGA_SWITCHEROO_DIS;
++	*id = VGA_SWITCHEROO_DIS;
++	return 0;
+ }
+ 
+ static const struct vga_switcheroo_handler nouveau_dsm_handler = {
+diff --git a/drivers/gpu/drm/radeon/radeon_atpx_handler.c b/drivers/gpu/drm/radeon/radeon_atpx_handler.c
+index f557535c1d7b..8dce19cd3d3a 100644
+--- a/drivers/gpu/drm/radeon/radeon_atpx_handler.c
++++ b/drivers/gpu/drm/radeon/radeon_atpx_handler.c
+@@ -529,12 +529,14 @@ static int radeon_atpx_init(void)
+  * look up whether we are the integrated or discrete GPU (all asics).
+  * Returns the client id.
+  */
+-static enum vga_switcheroo_client_id radeon_atpx_get_client_id(struct pci_dev *pdev)
++static int radeon_atpx_get_client_id(struct pci_dev *pdev, enum vga_switcheroo_client_id *id)
+ {
+ 	if (radeon_atpx_priv.dhandle == ACPI_HANDLE(&pdev->dev))
+-		return VGA_SWITCHEROO_IGD;
++		*id = VGA_SWITCHEROO_IGD;
+ 	else
+-		return VGA_SWITCHEROO_DIS;
++		*id = VGA_SWITCHEROO_DIS;
++
++	return 0;
+ }
+ 
+ static const struct vga_switcheroo_handler radeon_atpx_handler = {
+diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
+index 18f2c92beff8..5ff222921d2f 100644
+--- a/drivers/gpu/vga/vga_switcheroo.c
++++ b/drivers/gpu/vga/vga_switcheroo.c
+@@ -187,6 +187,8 @@ static void vga_switcheroo_enable(void)
+ {
+ 	int ret;
+ 	struct vga_switcheroo_client *client;
++	enum vga_switcheroo_client_id id;
++
+ 
+ 	/* call the handler to init */
+ 	if (vgasr_priv.handler->init)
+@@ -197,11 +199,9 @@ static void vga_switcheroo_enable(void)
+ 		     client_id(client) != VGA_SWITCHEROO_UNKNOWN_ID)
+ 			continue;
+ 
+-		ret = vgasr_priv.handler->get_client_id(client->pdev);
+-		if (ret < 0)
++		ret = vgasr_priv.handler->get_client_id(client->pdev, &client->id);
++		if (ret)
+ 			return;
+-
+-		client->id = ret;
  	}
  
--- 
-2.47.2
+ 	list_for_each_entry(client, &vgasr_priv.clients, list) {
+@@ -209,13 +209,13 @@ static void vga_switcheroo_enable(void)
+ 		     client_id(client) != VGA_SWITCHEROO_UNKNOWN_ID)
+ 			continue;
+ 
+-		ret = vgasr_priv.handler->get_client_id(client->vga_dev);
+-		if (ret < 0)
++		ret = vgasr_priv.handler->get_client_id(client->vga_dev, &id);
++		if (ret)
+ 			return;
+ 
+-		client->id = ret | ID_BIT_AUDIO;
++		client->id = id | ID_BIT_AUDIO;
+ 		if (client->ops->gpu_bound)
+-			client->ops->gpu_bound(client->pdev, ret);
++			client->ops->gpu_bound(client->pdev, id);
+ 	}
+ 
+ 	vga_switcheroo_debugfs_init(&vgasr_priv);
+@@ -364,6 +364,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
+ 			struct pci_dev *vga_dev)
+ {
+ 	enum vga_switcheroo_client_id id = VGA_SWITCHEROO_UNKNOWN_ID;
++	int ret;
+ 
+ 	/*
+ 	 * if vga_switcheroo has enabled, that mean two GPU clients and also
+@@ -374,10 +375,10 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
+ 	 */
+ 	mutex_lock(&vgasr_mutex);
+ 	if (vgasr_priv.active) {
+-		id = vgasr_priv.handler->get_client_id(vga_dev);
+-		if (id < 0) {
++		ret = vgasr_priv.handler->get_client_id(vga_dev, &id);
++		if (ret) {
+ 			mutex_unlock(&vgasr_mutex);
+-			return -EINVAL;
++			return ret;
+ 		}
+ 		/* notify if GPU has been already bound */
+ 		if (ops->gpu_bound)
+@@ -559,6 +560,7 @@ EXPORT_SYMBOL(vga_switcheroo_client_fb_set);
+ int vga_switcheroo_lock_ddc(struct pci_dev *pdev)
+ {
+ 	enum vga_switcheroo_client_id id;
++	int ret;
+ 
+ 	mutex_lock(&vgasr_priv.mux_hw_lock);
+ 	if (!vgasr_priv.handler || !vgasr_priv.handler->switch_ddc) {
+@@ -566,7 +568,9 @@ int vga_switcheroo_lock_ddc(struct pci_dev *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	id = vgasr_priv.handler->get_client_id(pdev);
++	ret = vgasr_priv.handler->get_client_id(pdev, &id);
++	if (ret)
++		return ret;
+ 	vgasr_priv.old_ddc_owner = vgasr_priv.handler->switch_ddc(id);
+ 	return vgasr_priv.old_ddc_owner;
+ }
+@@ -597,11 +601,14 @@ int vga_switcheroo_unlock_ddc(struct pci_dev *pdev)
+ 		return -EINVAL;
+ 
+ 	if (vgasr_priv.old_ddc_owner >= 0) {
+-		id = vgasr_priv.handler->get_client_id(pdev);
++		ret = vgasr_priv.handler->get_client_id(pdev, &id);
++		if (ret)
++			goto unlock;
+ 		if (vgasr_priv.old_ddc_owner != id)
+ 			ret = vgasr_priv.handler->switch_ddc(
+ 						     vgasr_priv.old_ddc_owner);
+ 	}
++unlock:
+ 	mutex_unlock(&vgasr_priv.mux_hw_lock);
+ 	return ret;
+ }
+diff --git a/drivers/platform/x86/apple-gmux.c b/drivers/platform/x86/apple-gmux.c
+index 1417e230edbd..4f10e8c81a30 100644
+--- a/drivers/platform/x86/apple-gmux.c
++++ b/drivers/platform/x86/apple-gmux.c
+@@ -541,19 +541,21 @@ static int gmux_set_power_state(enum vga_switcheroo_client_id id,
+ 	return gmux_set_discrete_state(apple_gmux_data, state);
+ }
+ 
+-static enum vga_switcheroo_client_id gmux_get_client_id(struct pci_dev *pdev)
++static int gmux_get_client_id(struct pci_dev *pdev, enum vga_switcheroo_client_id *id)
+ {
+ 	/*
+ 	 * Early Macbook Pros with switchable graphics use nvidia
+ 	 * integrated graphics. Hardcode that the 9400M is integrated.
+ 	 */
+ 	if (pdev->vendor == PCI_VENDOR_ID_INTEL)
+-		return VGA_SWITCHEROO_IGD;
++		*id = VGA_SWITCHEROO_IGD;
+ 	else if (pdev->vendor == PCI_VENDOR_ID_NVIDIA &&
+ 		 pdev->device == 0x0863)
+-		return VGA_SWITCHEROO_IGD;
++		*id = VGA_SWITCHEROO_IGD;
+ 	else
+-		return VGA_SWITCHEROO_DIS;
++		*id = VGA_SWITCHEROO_DIS;
++
++	return 0;
+ }
+ 
+ static const struct vga_switcheroo_handler gmux_handler_no_ddc = {
+diff --git a/include/linux/vga_switcheroo.h b/include/linux/vga_switcheroo.h
+index 7e6ac0114d55..cd3167ba2d02 100644
+--- a/include/linux/vga_switcheroo.h
++++ b/include/linux/vga_switcheroo.h
+@@ -119,7 +119,7 @@ struct vga_switcheroo_handler {
+ 	int (*switch_ddc)(enum vga_switcheroo_client_id id);
+ 	int (*power_state)(enum vga_switcheroo_client_id id,
+ 			   enum vga_switcheroo_state state);
+-	enum vga_switcheroo_client_id (*get_client_id)(struct pci_dev *pdev);
++	int (*get_client_id)(struct pci_dev *pdev, enum vga_switcheroo_client_id *id);
+ };
+ 
+ /**
 
