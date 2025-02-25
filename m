@@ -1,105 +1,103 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C9218C930;
-	Tue, 25 Feb 2025 16:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122B91A5BBB;
+	Tue, 25 Feb 2025 23:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740500042; cv=none; b=NNq8kJzzZT74K+T35O/FLEtSNtOhKNJIwwxJEOKaC4nDFnXHeJmVV9VfZlKca+IctXTwAcDdsPhxya+ogBbNH3iHTTxCKtrUdMwwZYEBSh4KHj+ezTWkpyVSHy251FzfPRE51SHoSTh+wpd7/PrLc8pvNwoE78uCCdwKqyvqLDM=
+	t=1740524610; cv=none; b=XRELpxldrzldHG/PIwke0udp4NfA6O2WzK9x8WTIYVsCkk8CUjUj5le8f85dDZMsfOYHwOTX+c6G1h90zeNAZ0ru90bgPcCmRw5mLGtG3XYRjaBLtuImOt5bYuJaXraWKwtxaZY5Cx4tgYTx5+9JGe8ffNky/oekr//lYtY/t0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740500042; c=relaxed/simple;
-	bh=QFTbxmMTthkctu4tV0CojyuOfRzetFKnNh9ri6aKSLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YwO2RXngaKUsM6tHb23ryCFiE1R+tVu5YrNjAzJD0mzDtAEVaxwFyZo+3Ze7UPjNEnr7m/zNEesECe+7v/t090b3vJGRMSCVbW3dBy47gwHU/vttUNEhaMG+IOLYPWq46D9d6e73J9kc4laN1l1FWjucACXvD+6uKIXaQEDVIIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k79C2Q8S; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740524610; c=relaxed/simple;
+	bh=ewP6ODZkMhs7hGc1QB5TrPbuQUEkuRzB9VfGrj2jKw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MAPnSlGr8J/Z9EJ2eXWbP9cMRrpQcQJB5QOgPlvb976uMKPGsMfNwzPCi9Gouru/B6jAhDdvRz9H1CXBM7sYT4T4oizYMEA9dxuH3UEuvwJMlembEuqUdma/E8UtZFM7Pv6wfayz4Zauxt+7o/Vdf39bhxIlW/GVLKjCX/M1a+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SjZkHExh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k79C2Q8S"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4399a1eada3so50798495e9.2;
-        Tue, 25 Feb 2025 08:14:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740500039; x=1741104839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YVqC1KYj3QeFyojAXvM68gVfAafK5PNiYMunoZclccA=;
-        b=k79C2Q8Sz+4acTO6HyIOR+PCGa/R1169vPvkskAlTS6KeNEf7NVhjrbcA8a7MnsC1J
-         rgDSUhs10q+XSf4I+4ucq/iT0uTxh6D9Pvi4zDoUNhIRUPXTJuggNIxzMveE9coflp2n
-         agAcMnNJejyZHDGm2gLqWzSQKPAkqQ6PeV5hN7ysYqnRiFUdVL+6c6TF6eGQsBnxx0Vc
-         TJVX4U5SvFLW1z/gsWS0mHe5gr6oKZaBTQWgCg5qVAQ8h5XhdXjEW3u6BtZw3pf1+vCy
-         XFd8RgYCYJPeMidps4B2LY6pc29kYWC6q9pWDJ6GFPnqdnym2ZLWKapbtLwP7Kez36I8
-         GlNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740500039; x=1741104839;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YVqC1KYj3QeFyojAXvM68gVfAafK5PNiYMunoZclccA=;
-        b=iGaL5TEV+wsWAxB97h5jNhcddArBx71x7NxyxwkJGw+zKtZhRF6ziYBJLU9V7ZfodY
-         KNJipGGahLq1yFkTU8HXCjhLw2myGIIIIkodg3ObozUz8kDaZ36PLhJCgs2CoB6VKptH
-         fq0szww36RU27780iAeBMfO0vSriCYNSzC7Oyjivdb7ihlPIIWzQY82muaPpsr3jPCee
-         iTJtTOsxeHBwg2vlw8Rk+Gq3RmAxGbOtg6UCUZn4e+T3j1FDDEiEqSx+1mN+YIDSHhrV
-         0bE7t0f/gW7YfiJ7q29ZlqDqaYf6+/t8HbF94xmPj0XqFawYb1V1hnVoqk/D90bNCEh1
-         huYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUk8RT4oVCl0uZSlavEh0NjtEz7BTR8YCGZLsp34OBIMdX61qs2b3ZIK0UAA8fHTacECvJG5O+otI41PXU=@vger.kernel.org, AJvYcCWHzZOi3fM329tmEWL5fzliVmo3Cvm1S0IYPOtfuwHLU51c8o2ju2MuJafNyKAPs1D6BP8Ln0KzrGkpgA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqcRHYtpqf+jrui8AlFw/fWD9491gbz2BGomU1/VX00B3r8VXq
-	4wDL5POVMOP1U0P1ugyKV3fFFG7e5DNA6ZFvnWhqouvkYHrTBH2u
-X-Gm-Gg: ASbGnctDkovPMD2/GATnDw+KZzs7Sv5y3s/o7EcWXOHDhrLQASeOPRDJjyanCjuQ9kx
-	TdEH33tvj+gZ7LjXyZsbHY0G8nSrodWbqvoSENMmm+dE3iY5V6NH6QXK13IUqFzm0s2sHO9bXeo
-	gAaLt+H+EKjywsWPpLcU43q/GVbpB4f2GKapBfsUgDApuQQxsvMtr1LMmY9PZRyhsi4L6yG3bdp
-	JR3CPe1N7AgLfGgHfio5GDowryocSF2F8PWVqe+WON8QsjK9BH3S6r45D/3AbWknRwzAXwGyNjy
-	zTwh73H2KNWRVSFjqev9VGTyF6I=
-X-Google-Smtp-Source: AGHT+IHy4xy6/HN4dy/+/6JzfHC644RceilHrzVGqkVL0BnSOX0fmHA+U1810SLzdXoTSnHtfBg5cg==
-X-Received: by 2002:a05:600c:a05:b0:439:30bd:7df9 with SMTP id 5b1f17b1804b1-43ab8fd7947mr1252705e9.9.1740500039281;
-        Tue, 25 Feb 2025 08:13:59 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ab60c68b9sm18126425e9.29.2025.02.25.08.13.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 08:13:58 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	=?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
-	John Meneghini <jmeneghi@redhat.com>,
-	linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: scsi_debug: Fix addition of uninitialized variable len
-Date: Tue, 25 Feb 2025 16:13:24 +0000
-Message-ID: <20250225161324.184873-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SjZkHExh"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMWrai023826;
+	Tue, 25 Feb 2025 23:03:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vzTbpIQHeO/NQvneOetGfXYw+iaT57eRWGCj9DIDnSM=; b=SjZkHExha3huMzTM
+	c6FUj5iLu7U9mWhAyXj1lSrAxnL1eowl3tnP9kmTnIBG8SBFAnThyYOU0yU4UgsF
+	NnkiH0RpzwHT/kQvhTcdmPlOSOZL4lxELs1yk2klfVKKL1xxA6xA6QzDGUsipfce
+	4BA6DVVQBSqU8xpTISa0wiYUGzueidGNWu3ceQUKci9d/vOKD+Rka237u9dFGq42
+	+lRcanD+MJjddelvi+5tSjpprrZnSsbxwaXWL4s0iRtwhPjwZA2lGcfD6j5AvuA5
+	XufNgJ0dVKFC8Nu+MEpu9S0vtg/aSuzhLB7VXqb+L2W5/wGkunXEJZMLpf5kIhWv
+	nQgiOA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmg1t3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 23:03:17 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51PN3GmS025432
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 23:03:16 GMT
+Received: from [10.110.101.220] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
+ 2025 15:03:16 -0800
+Message-ID: <dd8e3f51-e8e5-4a4d-9932-c2005988c366@quicinc.com>
+Date: Tue, 25 Feb 2025 15:03:16 -0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] drm/msm/dpu: fix error pointer dereference in
+ msm_kms_init_aspace()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <3221e88c-3351-42e6-aeb1-69f4f014b509@stanley.mountain>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <3221e88c-3351-42e6-aeb1-69f4f014b509@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nxPbVw4LaHUfcyUv3F-1fAKLkVzQfzZy
+X-Proofpoint-ORIG-GUID: nxPbVw4LaHUfcyUv3F-1fAKLkVzQfzZy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=873
+ lowpriorityscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502250136
 
-There is an addition on a previously uninitialized variable len that
-results in an undefined result. Fix this by making the addition an
-assignment. Issue detected with static analysis.
 
-Fixes: 568354b24c7d ("scsi: scsi_debug: Add compression mode page for tapes")
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/scsi/scsi_debug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2/24/2025 11:30 PM, Dan Carpenter wrote:
+> If msm_gem_address_space_create() fails, then return right away.
+> Otherwise it leads to a Oops when we dereference "aspace" on the next
+> line.
+> 
+> Fixes: 2d215d440faa ("drm/msm: register a fault handler for display mmu faults")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/msm_kms.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 722ee8c067ae..f3e9a63bbf02 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -3032,7 +3032,7 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
- 	case 0xf:	/* Compression Mode Page (tape) */
- 		if (!is_tape)
- 			goto bad_pcode;
--		len += resp_compression_m_pg(ap, pcontrol, target, devip->tape_dce);
-+		len = resp_compression_m_pg(ap, pcontrol, target, devip->tape_dce);
- 		offset += len;
- 		break;
- 	case 0x11:	/* Partition Mode Page (tape) */
--- 
-2.47.2
-
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
