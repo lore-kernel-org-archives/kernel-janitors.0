@@ -1,48 +1,26 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mail-m49236.qiye.163.com (mail-m49236.qiye.163.com [45.254.49.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122B91A5BBB;
-	Tue, 25 Feb 2025 23:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E2258CCB;
+	Wed, 26 Feb 2025 08:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740524610; cv=none; b=XRELpxldrzldHG/PIwke0udp4NfA6O2WzK9x8WTIYVsCkk8CUjUj5le8f85dDZMsfOYHwOTX+c6G1h90zeNAZ0ru90bgPcCmRw5mLGtG3XYRjaBLtuImOt5bYuJaXraWKwtxaZY5Cx4tgYTx5+9JGe8ffNky/oekr//lYtY/t0g=
+	t=1740557091; cv=none; b=u2iinM3ewDtgUSX/bEmBUjkfdE5mCBaxYHw+xSXXdrXOakTEGbpvHkGCF6qxRSdtIqNo9R42IVUD3mwLyArpJGdaMe82volLu7Rznh3Z6E2iRHPUJ2gwToVnAbvPvXcCqxz2v688Es5FWwbd5BZ2Gf4J7zD3hz4t6yQIOaf8w3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740524610; c=relaxed/simple;
-	bh=ewP6ODZkMhs7hGc1QB5TrPbuQUEkuRzB9VfGrj2jKw8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MAPnSlGr8J/Z9EJ2eXWbP9cMRrpQcQJB5QOgPlvb976uMKPGsMfNwzPCi9Gouru/B6jAhDdvRz9H1CXBM7sYT4T4oizYMEA9dxuH3UEuvwJMlembEuqUdma/E8UtZFM7Pv6wfayz4Zauxt+7o/Vdf39bhxIlW/GVLKjCX/M1a+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SjZkHExh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1740557091; c=relaxed/simple;
+	bh=l8E5RKP2L+w9L35Iyf+g+FiycmYARSKEIs/aumVhbF8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=HzT+vILxpjNC0TvE5yK7DqRtZLehQwW9RCk0tLTZhu+eh/WxOoqv1t8yig2WJzaLXnzSvjOaEjSHPDTOm2LGjD6w1FiRwsU3HkYrejKgQdAL7kWatBm3HN/dFOVIibnFl+wgnsNrAzxJzt8gREXAhvC+YKXCRS/ZbB3OISZLRF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=M1sany9x; arc=none smtp.client-ip=45.254.49.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SjZkHExh"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMWrai023826;
-	Tue, 25 Feb 2025 23:03:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vzTbpIQHeO/NQvneOetGfXYw+iaT57eRWGCj9DIDnSM=; b=SjZkHExha3huMzTM
-	c6FUj5iLu7U9mWhAyXj1lSrAxnL1eowl3tnP9kmTnIBG8SBFAnThyYOU0yU4UgsF
-	NnkiH0RpzwHT/kQvhTcdmPlOSOZL4lxELs1yk2klfVKKL1xxA6xA6QzDGUsipfce
-	4BA6DVVQBSqU8xpTISa0wiYUGzueidGNWu3ceQUKci9d/vOKD+Rka237u9dFGq42
-	+lRcanD+MJjddelvi+5tSjpprrZnSsbxwaXWL4s0iRtwhPjwZA2lGcfD6j5AvuA5
-	XufNgJ0dVKFC8Nu+MEpu9S0vtg/aSuzhLB7VXqb+L2W5/wGkunXEJZMLpf5kIhWv
-	nQgiOA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 451prmg1t3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 23:03:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51PN3GmS025432
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 23:03:16 GMT
-Received: from [10.110.101.220] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
- 2025 15:03:16 -0800
-Message-ID: <dd8e3f51-e8e5-4a4d-9932-c2005988c366@quicinc.com>
-Date: Tue, 25 Feb 2025 15:03:16 -0800
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="M1sany9x"
+Received: from [172.16.12.45] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id c3c2a2d3;
+	Wed, 26 Feb 2025 14:48:58 +0800 (GMT+08:00)
+Message-ID: <a4f43d3e-2e41-4163-8938-5aa1592db371@rock-chips.com>
+Date: Wed, 26 Feb 2025 14:48:59 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -50,54 +28,60 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] drm/msm/dpu: fix error pointer dereference in
- msm_kms_init_aspace()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <3221e88c-3351-42e6-aeb1-69f4f014b509@stanley.mountain>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <3221e88c-3351-42e6-aeb1-69f4f014b509@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nxPbVw4LaHUfcyUv3F-1fAKLkVzQfzZy
-X-Proofpoint-ORIG-GUID: nxPbVw4LaHUfcyUv3F-1fAKLkVzQfzZy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
- priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=873
- lowpriorityscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502250136
+Cc: shawn.lin@rock-chips.com, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] scsi: ufs: rockchip: Fix spelling mistake "susped"
+ -> "suspend"
+To: Colin Ian King <colin.i.king@gmail.com>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Heiko Stuebner <heiko@sntech.de>, linux-scsi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20250225101142.161474-1-colin.i.king@gmail.com>
+Content-Language: en-GB
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20250225101142.161474-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkNCHlYdTBlJHhodGBpOSENWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9541040a1509cckunmc3c2a2d3
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ngg6PBw4UTILHQsaTh4TMzIq
+	VhkKCSNVSlVKTE9LTk5JTkhCTEpJVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUNNTjcG
+DKIM-Signature:a=rsa-sha256;
+	b=M1sany9xNBK7VREkWV+9K9oI/K7EOJWY8i/mkHFni5If+uuFp4nTfsfWo9NCBVfDJdv9SDXXVnASaacyLeGHJB5rIQt9n3k0cBugM1hAYPP0B+QlPaT6e/DmwYoHFTvU8BUo6xe397yo4rW3fLRhW2Du3oV/FRStof5aetgnBqQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=vU92AfkXpo1upHQPW1E57oSrBRV5YkhXMeN9wMA5lys=;
+	h=date:mime-version:subject:message-id:from;
 
-
-
-On 2/24/2025 11:30 PM, Dan Carpenter wrote:
-> If msm_gem_address_space_create() fails, then return right away.
-> Otherwise it leads to a Oops when we dereference "aspace" on the next
-> line.
+在 2025/2/25 18:11, Colin Ian King 写道:
+> There is a spelling mistake in a dev_err message. Fix it.
 > 
-> Fixes: 2d215d440faa ("drm/msm: register a fault handler for display mmu faults")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
+
+Thanks Colin.
+
+
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->   drivers/gpu/drm/msm/msm_kms.c | 1 +
->   1 file changed, 1 insertion(+)
+>   drivers/ufs/host/ufs-rockchip.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
+> index 5b0ea9820767..dddff5f538b9 100644
+> --- a/drivers/ufs/host/ufs-rockchip.c
+> +++ b/drivers/ufs/host/ufs-rockchip.c
+> @@ -307,7 +307,7 @@ static int ufs_rockchip_system_suspend(struct device *dev)
+>   
+>   	err = ufshcd_system_suspend(dev);
+>   	if (err) {
+> -		dev_err(hba->dev, "UFSHCD system susped failed %d\n", err);
+> +		dev_err(hba->dev, "UFSHCD system suspend failed %d\n", err);
+>   		return err;
+>   	}
+>   
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
