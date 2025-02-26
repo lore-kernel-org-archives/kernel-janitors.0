@@ -1,26 +1,41 @@
-Received: from mail-m49236.qiye.163.com (mail-m49236.qiye.163.com [45.254.49.236])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E2258CCB;
-	Wed, 26 Feb 2025 08:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB88258CC5;
+	Wed, 26 Feb 2025 08:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740557091; cv=none; b=u2iinM3ewDtgUSX/bEmBUjkfdE5mCBaxYHw+xSXXdrXOakTEGbpvHkGCF6qxRSdtIqNo9R42IVUD3mwLyArpJGdaMe82volLu7Rznh3Z6E2iRHPUJ2gwToVnAbvPvXcCqxz2v688Es5FWwbd5BZ2Gf4J7zD3hz4t6yQIOaf8w3k=
+	t=1740558386; cv=none; b=Li48OXh53uyyaByunXEV58gmvSNczpAqpVWEKnchvl/zrN9eSvkAzpQN92dPPImzb+yFFNrOoRjyeW0wGZZgJOmRUtsGdPLCP4d/yoTFmoVUIkEeQnv/Mp6FXs/S2Ig5WwQWpw3nLflkECOSgOG0VZclDHfvFLc5gd+uk6dLVds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740557091; c=relaxed/simple;
-	bh=l8E5RKP2L+w9L35Iyf+g+FiycmYARSKEIs/aumVhbF8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HzT+vILxpjNC0TvE5yK7DqRtZLehQwW9RCk0tLTZhu+eh/WxOoqv1t8yig2WJzaLXnzSvjOaEjSHPDTOm2LGjD6w1FiRwsU3HkYrejKgQdAL7kWatBm3HN/dFOVIibnFl+wgnsNrAzxJzt8gREXAhvC+YKXCRS/ZbB3OISZLRF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=M1sany9x; arc=none smtp.client-ip=45.254.49.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+	s=arc-20240116; t=1740558386; c=relaxed/simple;
+	bh=njsILLkZkjyzEv/vKowZpeaDQvMRXfnUx5wck86CXdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=qMUPC1xwV7gs3LPaZEHQuOj+Uefn+Paw6YooZZcK5m77ppkM1AIupJ4ZqMi/wKDskP5ilh2G1sFcO4hd1tturMvlZmExwQMBASFdsEr0x11ouB5hfDAAmEeorNsgtCZXthu3ojvZ7ceBh0qEgaeL1iz8Ik2rc542InpxXvJUkGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SIvRvmLn; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="M1sany9x"
-Received: from [172.16.12.45] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id c3c2a2d3;
-	Wed, 26 Feb 2025 14:48:58 +0800 (GMT+08:00)
-Message-ID: <a4f43d3e-2e41-4163-8938-5aa1592db371@rock-chips.com>
-Date: Wed, 26 Feb 2025 14:48:59 +0800
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SIvRvmLn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740558375; x=1741163175; i=markus.elfring@web.de;
+	bh=JKZ0hhA194JzGtLnAGjE7Tna8UgHB+lZSaCvTNzqLik=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=SIvRvmLn8flUsGl5JcfolgQVFctLE8OIoa7MSA8VqUzJwiwUljIzskLbousNrkq+
+	 s6YCNQz7zIL9+lFqI5WSe7vUrJx0Yo77ScqwzShmSwXuPbW+uHdWmsvfkClFpA7rK
+	 usGxux+2O3/m/sH2Ol+aALD3UBAn0eLdYMCB/Zmhd8AxelKc6OigP+h1alFew5Dnc
+	 gPrustT65hY/Zl11lrJKD1kY3sy1JITGeTQFZwFBRfct+lEaKac+97UB4gEf52sZf
+	 Dfbezpt6AbuUfdntRPve72587MBApZwGt5tNaM+4croKEmsOyTmKlyMXy/PZQ37Cl
+	 n5TfjKV2NzLDX+X+gA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.43]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLzn1-1u50kB3RC5-00JCvd; Wed, 26
+ Feb 2025 09:26:14 +0100
+Message-ID: <3abf9e69-77bc-40eb-b84e-a84726c693a4@web.de>
+Date: Wed, 26 Feb 2025 09:26:02 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -28,60 +43,61 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] scsi: ufs: rockchip: Fix spelling mistake "susped"
- -> "suspend"
-To: Colin Ian King <colin.i.king@gmail.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Heiko Stuebner <heiko@sntech.de>, linux-scsi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250225101142.161474-1-colin.i.king@gmail.com>
+Subject: Re: [cocci] [PATCH v3 01/16] coccinelle: misc: secs_to_jiffies: Patch
+ expressions too
+To: Easwar Hariharan <eahariha@linux.microsoft.com>, cocci@inria.fr,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>,
+ Ilya Dryomov <idryomov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Ricardo Ribalda <ribalda@chromium.org>, Xiubo Li <xiubli@redhat.com>
+References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
+ <20250225-converge-secs-to-jiffies-part-two-v3-1-a43967e36c88@linux.microsoft.com>
 Content-Language: en-GB
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20250225101142.161474-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkNCHlYdTBlJHhodGBpOSENWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9541040a1509cckunmc3c2a2d3
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ngg6PBw4UTILHQsaTh4TMzIq
-	VhkKCSNVSlVKTE9LTk5JTkhCTEpJVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
-	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUNNTjcG
-DKIM-Signature:a=rsa-sha256;
-	b=M1sany9xNBK7VREkWV+9K9oI/K7EOJWY8i/mkHFni5If+uuFp4nTfsfWo9NCBVfDJdv9SDXXVnASaacyLeGHJB5rIQt9n3k0cBugM1hAYPP0B+QlPaT6e/DmwYoHFTvU8BUo6xe397yo4rW3fLRhW2Du3oV/FRStof5aetgnBqQ=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=vU92AfkXpo1upHQPW1E57oSrBRV5YkhXMeN9wMA5lys=;
-	h=date:mime-version:subject:message-id:from;
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250225-converge-secs-to-jiffies-part-two-v3-1-a43967e36c88@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8T0doJfXh5Xn7cF2aNYOOKjzaCLuQ6TqMSMuzhfQJClOkTbtxxb
+ WwwOPp7N2qlsBqQ00o23C3N3aVcUZY4TjAGA+UrRfMjxNPTKTdOiNBOQwZ9VQNsUmd6mbZy
+ KL9u5kffTfvv716Cs7afT5khYDw06LMDjCV3+bzJsgWJ4vukB2wup+YsixbEw0HAWd2IhUU
+ sgp5ksKAElGs1EpqGW8jA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OGs6+r90pjI=;Xp1eJI63N70NI9WqtvgfsrbPcjm
+ rejW+UAjPV4MCQgv3/dxOZAaJVFE+L7EourFK4xAa//fhfqZ0btf2C18nTt3onMh/ij/Yb9Eb
+ T0H359kFvwQMR64ul87fexPZIwayUvLL4EMgSbNeZ4Bo99udJSEfTvfapfE8PfdgejwtYtkGC
+ vBgpCoA3d3unI7qRXRh9YVLc8njdbqop93SzJzAXXuvQkY0pr2isUFQYfceEEqHyZYUkasX/9
+ hjnd9clqawcls/NWlpBzXvnXAdgWWjHcE4IMujQQ/PpeLAbn3IsfKZgbpv6eiTGG+Z7fqQqsZ
+ dIR+iTAi+3sMw+MjNa0C/apJS83+HJ+uAVk+cEpMJCm8tp/OGvqnfUVvP4kbrGnEN5pjijKkq
+ IuTDQ3D1VHOXo8aXYnRji0Z3C4oY7e1YAEwjE5PWdfkcCNxS7t6u87myzzJfNEsmWEs9jMW2+
+ H0rnQaffodiEOSgUHrwEbtuLlWq4GpxSOc6Q/ZlC1jMNPSut2vd3xZ+dtmQv1Nl488cpPmwsS
+ JKXdlIqpS/Uh+8ESz1Yl6L5lUJAqnFvBfMa65+cs1cjTgeHKmVDHZ8g0uMWqjjnwmcaWeGLrb
+ icCBUjV9O5/YLaNVaiKyHShsLusR+U8qRmV4wk8XR7ZYZj5OeB1vpgawSCQfNexSQRRJsOXXJ
+ I2QXL4g/1jt1QlapifmgrxUa6CaIzPZWYYBAm2hdaWdRzA+oSysm37nVGM2HwP+yrvthOwDo/
+ 5nfI0R6Tp9iaevpPpq92IfJpBCmdKka/vd3uhPaera4sRHUu+SkehtOOc+kzWtp9JMB2bmJ08
+ uneEpTPQTfnJijuPS8zw91Fp41AUNHad7+GYTKS8oi7ZilDK9MgcmZDqh2yEJn8LtqKnkqY0V
+ b4FrlZkeeBIJ+ZoMrM9VligtBsZQrWT/hSFTPgKF4RnMWr/xsEbIjyr7VnuDQ6W6mc/KqkvMR
+ T/Z1p7RMnlXqMVMdEG/RUPfCbNqkA37xnqclEC99lb2otbZ6V5hBEsFVSIF2u4RS0wTottnz1
+ ebZ4KPntTuP1H8yR8EXRi43bm0/vIb3H52E9qW0y8ZBngoivBNQ0LwyHIq2aGZ++SHVHolGOJ
+ juiTRD1tRMxCHnAA8RpZVJ51z8mhkoCut4QkOKTIsG5g6DPDxGr7uIpfJIuzwFY3TBmWI4bA4
+ TQ1OGIFfyt9jpEYH7mNoq2q9TF9CZly0rFAUedyRYm5LpBSHPwp6TGCjI1WAe8yJ6pbSvJoa6
+ 56jQAESh71iph7QxwpzQKoasaQuoeRBkQeCxh9NnE3lsHLTMCcuw3u7tn/F6wHdFCdoLcOyU3
+ vnEpf/g3ha4eTjBE/N6jOgPnPN6P+USvCp0rn9Mb5kdujiLqyNfr1MmGc4W9EtG+aONjj5kGG
+ pjlaod0Xin9HArUw2MYbXOw+oJWHaP1O6KCEzJV5TC9zhidAR4gDh4NUGv+eU8QBzOLaYpBOE
+ 0S9XESzAIgZgr0noSVz8XSbEay1E=
 
-在 2025/2/25 18:11, Colin Ian King 写道:
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-
-Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
-
-Thanks Colin.
-
-
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Teach the script to suggest conversions for timeout patterns where the
+> arguments to msecs_to_jiffies() are expressions as well.
+=E2=80=A6
 > ---
->   drivers/ufs/host/ufs-rockchip.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-rockchip.c b/drivers/ufs/host/ufs-rockchip.c
-> index 5b0ea9820767..dddff5f538b9 100644
-> --- a/drivers/ufs/host/ufs-rockchip.c
-> +++ b/drivers/ufs/host/ufs-rockchip.c
-> @@ -307,7 +307,7 @@ static int ufs_rockchip_system_suspend(struct device *dev)
->   
->   	err = ufshcd_system_suspend(dev);
->   	if (err) {
-> -		dev_err(hba->dev, "UFSHCD system susped failed %d\n", err);
-> +		dev_err(hba->dev, "UFSHCD system suspend failed %d\n", err);
->   		return err;
->   	}
->   
+>  scripts/coccinelle/misc/secs_to_jiffies.cocci | 10 ++++++++++
+=E2=80=A6
 
+Will any information from previous patch review approaches trigger more de=
+sirable effects
+also for such an SmPL script?
+
+Regards,
+Markus
