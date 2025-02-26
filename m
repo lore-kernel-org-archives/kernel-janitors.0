@@ -1,74 +1,75 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC5C28F3;
-	Wed, 26 Feb 2025 16:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB1B3FB0E;
+	Wed, 26 Feb 2025 16:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740585962; cv=none; b=ivDmArazTbou7nmZCcmzRQz86biQJxtyvN9jhVlmgRra6SsVG/d0CiT+L+XcDgLv1x63PVEHoXf/JZInl8VNriOMua7BGM2mzbXkTv/GpYJZpu8L7+obSE1dkMPhHn24hgb+8T+kV8kXV0H3KNZSIKxxoSFPQ7H1bJEyweynhUc=
+	t=1740586764; cv=none; b=YgfNbd6r1cGUsWW/TpoQbF+ffsUcMIvlJ+D9Vj56LygUU6M60vrUOydeSvNAMfDDh5vf8KNOFHkDNudwlOKe9PdRKjPx0uvCfp6QoLiJ1mwoniOVvYXvxWA3hF72DeX8oV/hxO9r9w0sm7iPA7RmGligLDICWuyp7ip8+rGxMTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740585962; c=relaxed/simple;
-	bh=50SyHSPsZ2sNe0rMMqCy3BVIW13LLvsvmYC10oh50Ik=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hD/mFRbHf1UO+h0je6MT8XiBcxscXvQGnecg3TkT39OSISvoqP0Lym3KdE7O/2iWvVwb6BESZjnKS5ikJG/eps/CAZ0hZ3pYnaLkuT86cqI9gjQwY0txMaL9uNWaGsjzMhj8AtE7Xmmz2oJscn5xAQaTOU20Kg00dq18OGwz1qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PPT2cpy7; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1740586764; c=relaxed/simple;
+	bh=kVAJWJ1n9B5HqAXvAOf2QCSR41y110AB9N77022F3hA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rgLEiSGDDtpIfNLfMIfpBaHCUTqHenpNGNzxTzluMr+YeZp5QOz0MEstk5SV2znY3ZsCRHKfeJDpexv+5uDNIuIOh4kQz/9/xedRGr2R9h2vBbYgXaS4T/v9m7GXD1Y9mCvvdrEua9WZ65SGyVxijUnUwf4MtXhGKvcKUcRhHz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBGKO0eO; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PPT2cpy7"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-390d6b29ba4so473645f8f.2;
-        Wed, 26 Feb 2025 08:06:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBGKO0eO"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-439a4dec9d5so267355e9.0;
+        Wed, 26 Feb 2025 08:19:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740585959; x=1741190759; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740586761; x=1741191561; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sjm0Buwjwxm+WDev80/Z7KsjHHkctsu1ONm9k/3wnjM=;
-        b=PPT2cpy7HK3Bms1hWBFu3rSo9JJXFPxN645jZO7VaUXPoDO+3ByeM8D0s4Ampt52ec
-         RFsiSBkxxtpOuyamUzJWEmMbIwNdFQzRxUv8G0pTwkmR42DPQlv5unRRi9uyHoblHCA7
-         ZfmbOW9WeciSZOItLnljxjyWJT7n+HQDXqxvtKv5Vu3hHzgXJY6HHEbhofsOhoi2URIE
-         rG3zmIvVgf6QQe1rUVxOlKnJwOThAOm+34PY/Hpk5yEkWnw+bCrjsGHKMedAA3t6GPUh
-         8hW0NzTy1PwF7JcKfVH9E9Btoe+uyiAdPPuV0NjeyE4/SfQwt7R5KGaVhyczWBYyx2iF
-         77tw==
+        bh=t7oIbL6Oq4nSHg07LEL+0/DEW8r33JxAc53XxQi3IME=;
+        b=NBGKO0eOuTOSDlD8sla8qt2JXaeuCOPy60ZrVKFXgq/OAzwxNkIxmUY0fNnVMJpWKX
+         /3O4K0UhzDnGc9ccKfVHQ76S/DYlm7jPQMWfK+tYRdYeLoz6F/DcvgcnTZSxKKSnlTWn
+         lywLDeFsWeX+rjpymlPP7RVsjm5w61D8RcV47g4n4Vfp0LyElgoOBzdvSVKMt/htvA9i
+         tOUFlB4UNQekGbEDkup5BLZpJ1kdqEau7u+Mhf6y6+Qqg6hVriOekyNmKaFBzCXaKWtF
+         XIj62gKEECLN+qqI04ka4SjMh5VSvPhMNtGLxGKjNY74kzllp2I3swu4EnFZpULtejjy
+         illw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740585959; x=1741190759;
+        d=1e100.net; s=20230601; t=1740586761; x=1741191561;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sjm0Buwjwxm+WDev80/Z7KsjHHkctsu1ONm9k/3wnjM=;
-        b=Ki7qtdJcudpljODtX4a52AjmDLhkm58a3yZP7Z4Neh5cuxh4lTMc86rgninigob1ze
-         vLG9V/xF/tuL1FZTdBs7tlFbgq78K7vPpsK3qgkCsRrWIbBAUEP/r/w/lhv5YFjhhYGx
-         Ev7gVTTRM4UxbcJeVi4Ah05ch7HoRBd1qlDvdWGM1Sop6dEzpB3GF6s9ycnJEI/sgm3g
-         9u9vhBDz4cETWh5FkVXqWdi7nS7FjOEIaioV3L5x1ufERIY656cXem3P77XioTdi4V5P
-         Ai9YWR6aQPoD/tPTdjixFj1TZ5s9NPYJoTvr+XinWO9r4R2yjyVUoNAYcguWGQ/Z0GHu
-         PSsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlQiRK8L2YY4Iw40Dzr1mVpF3MsABZXzPtLGyucuamL+VWS1AD21c3OhOpZVv/Nc72OmGjdaHE/EeAstE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA1N2ouvQsUt5CqDxy89eOswmJDQeS3sZZ8AsO27on8IqpAkAw
-	ce5cn1iMhd6ZThOfNsuq7fz9vOpAkjGZVzyiinom+vYaA2LNDuDU
-X-Gm-Gg: ASbGncu9MCq1qJB6+3kct3kC5NA2FKip7U4TtVrrNCMfgKpo/08N8ikNqL7xpqqay3d
-	fhV5Ct5TtzxVn9uJhrfdmHRrljDRHgTUgJF+D7rO0CUj4E/fY9qI5+a2h1ELI2cEf9/A2rJDGo+
-	TwSbGO/vJSdt+kTPln3OZwnis26TTagLs+LDmBk3vlCwjqt3S+e4hKac8J6CGh9BQJTMzUvH+tt
-	w4B0c4nB3oyhwpUmFfsPVRqT9fRqwjmajhll11yObFiJXBa7c/KQit7hFPy9js5NhsETQKizset
-	9rgpo+eMvoKYBVzeJd1XxxIIZm8=
-X-Google-Smtp-Source: AGHT+IFVFHkpnnU9VW7aOfIZgP4iCvawfQNvVOj9zraHTLvEMvl93gNJtyixpuT6X2RHpxCfcLJtrA==
-X-Received: by 2002:a05:6000:2c7:b0:38f:21ce:aa28 with SMTP id ffacd0b85a97d-38f70827b21mr15686879f8f.36.1740585958499;
-        Wed, 26 Feb 2025 08:05:58 -0800 (PST)
+        bh=t7oIbL6Oq4nSHg07LEL+0/DEW8r33JxAc53XxQi3IME=;
+        b=VFjLeUwynXK0s9QuDmYSbt0Cg7KhqBwJeRTTRnIwwIXtbE3WSA5sfvkR+K2Z8QoWoV
+         dZFWYOh+k3LDmm64+IwM7DOZJzepKBPiZ86EMszBK6MoVqXehIheno99TfJRJ9/pH6Y3
+         Lk5FuD9HPBTw7b2Tv6o8VBsimDscG3FCRCTFGcfMWJtrNc6QlM1f9zQTiFggoUfcBYW+
+         OiJoQOHnTZwANhEaHOl3xzy9okJGs1GM8HPQLGDhTyMGKCFZDFSGlBlbsViEjzAjVF9F
+         gbI5JVkssPwa4h4/I1UYdzcr130c25to7+RtYlyKFglrDAwYqbX2BtyHsqtxtQExeBNO
+         OC2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZyFo40EGUT6njLCk18OdKFsXHz5Ltrzwa1Ni8rxW6gH0Mp4s6D4dziDeCCMUEpMNlwXrA8Si1tmSoTNU=@vger.kernel.org, AJvYcCXfrjgepbWw6UfUc18LpcrXjdj7yZyjlD1noOseYjwxs3XkUQbLUmHH8HxfdisL22pEOBJyM1TujeVyh50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz81AnIDTlClZwjoIIq5gAAAIAnheO9LXJDax2nzm2LeWbbu1uV
+	tJipGrmVPO9qsRuLbHUmxfyEF69wXpEj6MwYfmMz5/qM0HVgk3TV
+X-Gm-Gg: ASbGncvvU3oL5oW4WQBGHno7H70QL7vlaN6yt44cTJOWZDW2i8dgzr3EAVUKeVjBdLl
+	Ngd4ziTAZBgqzW2h2g1Z3KToGsWnx4SRyw/l3KiLUTWfS2WZO3L/hveMyCeB13yp29vZ6hqgNxZ
+	tfsrI+Z9rAgyAp8/nNQ3RbCetNfjVgwzdLm5dlpawavfDxgarfu1tyo3B57GD5oHLjj1IKflcZe
+	QvPFFnrUbrujPg6H26Exg6qxXBfnVDfdlPu6s/r+iqENMcLm+GBPn/zfZYPupQjq3BOZynYDW/i
+	SWVUqVby372SYs32skJ9rSwZPDU=
+X-Google-Smtp-Source: AGHT+IFCHrP0DmNTDiQaKF5lTigPtiLat3d0zHJOGbPCRd6J2ldYAIFvsJPwNG1s+zkxJZVh4LfRHg==
+X-Received: by 2002:a05:600c:154e:b0:439:a0a3:a15 with SMTP id 5b1f17b1804b1-43ab0f3c907mr103513685e9.14.1740586761203;
+        Wed, 26 Feb 2025 08:19:21 -0800 (PST)
 Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390cd8fbb5dsm5943880f8f.84.2025.02.26.08.05.58
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba5397d2sm27064705e9.22.2025.02.26.08.19.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 08:05:58 -0800 (PST)
+        Wed, 26 Feb 2025 08:19:20 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Cavitt <jonathan.cavitt@intel.com>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/xe: Fix uninitialized pointer def
-Date: Wed, 26 Feb 2025 16:05:24 +0000
-Message-ID: <20250226160524.566074-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ASoC: mediatek: mt8188: Fix uninitialized variable msk
+Date: Wed, 26 Feb 2025 16:18:47 +0000
+Message-ID: <20250226161847.567160-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -79,30 +80,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-In the case where a set of checks on xe->info.platform don't assign
-a value to pointer def the pointer remains uninitialized and hence
-can fail the following !def check. Fix this be ensuring pointer
-def is initialized to NULL.
+The variable msk not initialized and is being bit-wise or'd with values
+in a for-loop, leading to an undefined result. Fix this by initializing
+msk to zero before the for-loop.
 
-Fixes: 292b1a8a5054 ("drm/xe: Stop ignoring errors from xe_heci_gsc_init()")
+Fixes: c1e42ec04197 ("ASoC: mediatek: mt8188: Add support for DMIC")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/xe/xe_heci_gsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/mediatek/mt8188/mt8188-dai-dmic.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/xe/xe_heci_gsc.c b/drivers/gpu/drm/xe/xe_heci_gsc.c
-index 3ea325d3db99..27d11e06a82b 100644
---- a/drivers/gpu/drm/xe/xe_heci_gsc.c
-+++ b/drivers/gpu/drm/xe/xe_heci_gsc.c
-@@ -173,7 +173,7 @@ static int heci_gsc_add_device(struct xe_device *xe, const struct heci_gsc_def *
- int xe_heci_gsc_init(struct xe_device *xe)
- {
- 	struct xe_heci_gsc *heci_gsc = &xe->heci_gsc;
--	const struct heci_gsc_def *def;
-+	const struct heci_gsc_def *def = NULL;
- 	int ret;
+diff --git a/sound/soc/mediatek/mt8188/mt8188-dai-dmic.c b/sound/soc/mediatek/mt8188/mt8188-dai-dmic.c
+index 4cfbcb71d2d9..adcea7818be2 100644
+--- a/sound/soc/mediatek/mt8188/mt8188-dai-dmic.c
++++ b/sound/soc/mediatek/mt8188/mt8188-dai-dmic.c
+@@ -307,6 +307,7 @@ static int mtk_dmic_event(struct snd_soc_dapm_widget *w,
+ 	switch (event) {
+ 	case SND_SOC_DAPM_PRE_PMU:
+ 		/* request fifo soft rst */
++		msk = 0;
+ 		for (i = dmic_num; i >= DMIC0; i--)
+ 			msk |= PWR2_TOP_CON1_DMIC_FIFO_SOFT_RST_EN(i);
  
- 	if (!xe->info.has_heci_gscfi && !xe->info.has_heci_cscfi)
 -- 
 2.47.2
 
