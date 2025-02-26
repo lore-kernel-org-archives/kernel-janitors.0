@@ -1,103 +1,104 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB88258CC5;
-	Wed, 26 Feb 2025 08:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B38258CC6;
+	Wed, 26 Feb 2025 08:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558386; cv=none; b=Li48OXh53uyyaByunXEV58gmvSNczpAqpVWEKnchvl/zrN9eSvkAzpQN92dPPImzb+yFFNrOoRjyeW0wGZZgJOmRUtsGdPLCP4d/yoTFmoVUIkEeQnv/Mp6FXs/S2Ig5WwQWpw3nLflkECOSgOG0VZclDHfvFLc5gd+uk6dLVds=
+	t=1740560290; cv=none; b=mqYkYD3E/hIMwrQTRMyAC8LswuLWFO87m3dpyPTk97z3+uqckLX993fDQ/PzhC8zu1GUQpPAFSBOdebq25thneegYlww8zPgvOS4aewUVm4sH3dJB9lHSiU93CqXyjg85Tey5socLIOdJrE1eAoe58H8+uodpPOrA9YThCBUkiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558386; c=relaxed/simple;
-	bh=njsILLkZkjyzEv/vKowZpeaDQvMRXfnUx5wck86CXdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=qMUPC1xwV7gs3LPaZEHQuOj+Uefn+Paw6YooZZcK5m77ppkM1AIupJ4ZqMi/wKDskP5ilh2G1sFcO4hd1tturMvlZmExwQMBASFdsEr0x11ouB5hfDAAmEeorNsgtCZXthu3ojvZ7ceBh0qEgaeL1iz8Ik2rc542InpxXvJUkGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SIvRvmLn; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1740560290; c=relaxed/simple;
+	bh=df297RRRxIuu25s3CW8lMJRkI+XvD81QCzDAgsFUlBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CyyXgVB6S2hDdEIMR2dVUr9pV4G3KB/b+ckU9624kUXerham0yKpGBwk2EXuN9j/+u6ugsTo4sf/M6Kni7U9xM15TNuLPgImfVY5668lhjgUnhZMadj6zYwKS1RTLT5n8G/Fcy7kYm5HkXCvFjEPT1zXM3Drtx5lPVXu1UXp1No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vq2/xnbH; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SIvRvmLn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740558375; x=1741163175; i=markus.elfring@web.de;
-	bh=JKZ0hhA194JzGtLnAGjE7Tna8UgHB+lZSaCvTNzqLik=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:Cc:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=SIvRvmLn8flUsGl5JcfolgQVFctLE8OIoa7MSA8VqUzJwiwUljIzskLbousNrkq+
-	 s6YCNQz7zIL9+lFqI5WSe7vUrJx0Yo77ScqwzShmSwXuPbW+uHdWmsvfkClFpA7rK
-	 usGxux+2O3/m/sH2Ol+aALD3UBAn0eLdYMCB/Zmhd8AxelKc6OigP+h1alFew5Dnc
-	 gPrustT65hY/Zl11lrJKD1kY3sy1JITGeTQFZwFBRfct+lEaKac+97UB4gEf52sZf
-	 Dfbezpt6AbuUfdntRPve72587MBApZwGt5tNaM+4croKEmsOyTmKlyMXy/PZQ37Cl
-	 n5TfjKV2NzLDX+X+gA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.43]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLzn1-1u50kB3RC5-00JCvd; Wed, 26
- Feb 2025 09:26:14 +0100
-Message-ID: <3abf9e69-77bc-40eb-b84e-a84726c693a4@web.de>
-Date: Wed, 26 Feb 2025 09:26:02 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vq2/xnbH"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-439a4dec9d5so63179395e9.0;
+        Wed, 26 Feb 2025 00:58:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740560287; x=1741165087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=suF/teP+DWSFsSfArZYg1iXgnKXCO2rOI3avcmOnDss=;
+        b=Vq2/xnbHMDkzLGOVx8U6ub1JwenBG0r2enkW+BxdbnN+u0Z2kcXpbLWd6ka2V4T6cU
+         Dm7ltoNUfN7qeTemYefqhKtCICeSdIsMg8RHU7dfVBJS85EvA3ohbjEa5L8+kXbiRzOC
+         QD+RTZYVxkBDDRM0VXOtiDTIeMWQfgZMctt9xbjO40YgBZ3LeIU9FU0bSzTxL59UQ0lX
+         JlvtgSH2IaYl79dfZsBtxP1dh2+kCKaajIHnrnaj4yVJ6SH3BqeTOLVvYvjV60EW8U9Y
+         thOKzmtNbi8qn9G8NQuC823R7yFzn1gRPrMR0jutQqINiyAnwJ0IZoYkbWpyiEP4Y0xQ
+         eerA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740560287; x=1741165087;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=suF/teP+DWSFsSfArZYg1iXgnKXCO2rOI3avcmOnDss=;
+        b=fGWHMhBnqDLLVktOFHzbuVSmGeL9eGNmbVRfPGXc7G0vxzStfD8Z7f/MamhFxPDwSk
+         AfIr7Pno/bh3ZN/EFtmlXlF3PaFHGwv9ATxID32mSe/XBJmyCSOz7FYwFPX4Zid3WHbM
+         sN3Xyz37DhftbijCQoYeCX+sOXzukwEWqkAR6yawqxKjNhmwbdphq4nGcEplyrS4ZBFN
+         Qjj7XXQL5UWOh7zUvOBSYkPdMCQ4UGhYCG/orr1VzIQt8IeWmVnw2zKgspXhzXUFmoVL
+         RrCWtnFFeUFMpJZcp8e3HKipGac+6/thcTDCbgtrhRx108f3YC+nr193ueDXuvxjkIjX
+         gm/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWgrCMS+t9g1kK4XrGvHnyd8zvpLVcVNKxqgojjCjmRahsQtN08+MyigIaNrSmsCVL95q5/2AknRm2TVNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDTuc72Vz35s9lTMzzZXJIDvz9ws+GPqE+N+QTNacIIfWJIgHT
+	lolFH6hJ9JA/i5r5ckV+qvYLHh1xR3EXDixipunIVwqzWZEGJGPg
+X-Gm-Gg: ASbGncv4lOKGhP+eivSal+swxG5SWkbeaL4WcgYS3BmDfr5UoHv0wmzW3190a/rRris
+	ZX2AUOyHPVq8UylP0Xw27OsYCIHMRZNhIHLuyesGjDf7XONLafl/CYSVfrUvK08roNHJ2pXCNG7
+	hg5ADqGsRfPlJXo2tmx5lhVQoVAWL0YReajJvEoplA/Vhtf1MhLiExd/sFvCDHg9JfJ9ihiD7E5
+	4dmzj/LVGQ+RhbwxB0bZ3Ws1rFR3IyDhedbZFmR89mSaKrjDU6KKkJcPTG0B57gSUqjTFYa+0To
+	/hH7drCNAxgOTfeWyzIdpKV07T8=
+X-Google-Smtp-Source: AGHT+IGJvO/TujG4cMElAMuyj6EXh6AHZPvNU3l8WJpviyiwkZC1zPbmDpzi6DzGvrVuk5qBkteAPw==
+X-Received: by 2002:a05:600c:190c:b0:439:3d5c:8c19 with SMTP id 5b1f17b1804b1-43ab0f6440emr51946695e9.24.1740560287453;
+        Wed, 26 Feb 2025 00:58:07 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba532ba6sm13636695e9.12.2025.02.26.00.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 00:58:07 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tao Zhou <tao.zhou1@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/amdgpu: Fix spelling mistake "initiailize" -> "initialize" and grammar
+Date: Wed, 26 Feb 2025 08:57:33 +0000
+Message-ID: <20250226085733.230185-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [PATCH v3 01/16] coccinelle: misc: secs_to_jiffies: Patch
- expressions too
-To: Easwar Hariharan <eahariha@linux.microsoft.com>, cocci@inria.fr,
- Andrew Morton <akpm@linux-foundation.org>,
- Dongsheng Yang <dongsheng.yang@easystack.cn>,
- Ilya Dryomov <idryomov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Ricardo Ribalda <ribalda@chromium.org>, Xiubo Li <xiubli@redhat.com>
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
- <20250225-converge-secs-to-jiffies-part-two-v3-1-a43967e36c88@linux.microsoft.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250225-converge-secs-to-jiffies-part-two-v3-1-a43967e36c88@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8T0doJfXh5Xn7cF2aNYOOKjzaCLuQ6TqMSMuzhfQJClOkTbtxxb
- WwwOPp7N2qlsBqQ00o23C3N3aVcUZY4TjAGA+UrRfMjxNPTKTdOiNBOQwZ9VQNsUmd6mbZy
- KL9u5kffTfvv716Cs7afT5khYDw06LMDjCV3+bzJsgWJ4vukB2wup+YsixbEw0HAWd2IhUU
- sgp5ksKAElGs1EpqGW8jA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OGs6+r90pjI=;Xp1eJI63N70NI9WqtvgfsrbPcjm
- rejW+UAjPV4MCQgv3/dxOZAaJVFE+L7EourFK4xAa//fhfqZ0btf2C18nTt3onMh/ij/Yb9Eb
- T0H359kFvwQMR64ul87fexPZIwayUvLL4EMgSbNeZ4Bo99udJSEfTvfapfE8PfdgejwtYtkGC
- vBgpCoA3d3unI7qRXRh9YVLc8njdbqop93SzJzAXXuvQkY0pr2isUFQYfceEEqHyZYUkasX/9
- hjnd9clqawcls/NWlpBzXvnXAdgWWjHcE4IMujQQ/PpeLAbn3IsfKZgbpv6eiTGG+Z7fqQqsZ
- dIR+iTAi+3sMw+MjNa0C/apJS83+HJ+uAVk+cEpMJCm8tp/OGvqnfUVvP4kbrGnEN5pjijKkq
- IuTDQ3D1VHOXo8aXYnRji0Z3C4oY7e1YAEwjE5PWdfkcCNxS7t6u87myzzJfNEsmWEs9jMW2+
- H0rnQaffodiEOSgUHrwEbtuLlWq4GpxSOc6Q/ZlC1jMNPSut2vd3xZ+dtmQv1Nl488cpPmwsS
- JKXdlIqpS/Uh+8ESz1Yl6L5lUJAqnFvBfMa65+cs1cjTgeHKmVDHZ8g0uMWqjjnwmcaWeGLrb
- icCBUjV9O5/YLaNVaiKyHShsLusR+U8qRmV4wk8XR7ZYZj5OeB1vpgawSCQfNexSQRRJsOXXJ
- I2QXL4g/1jt1QlapifmgrxUa6CaIzPZWYYBAm2hdaWdRzA+oSysm37nVGM2HwP+yrvthOwDo/
- 5nfI0R6Tp9iaevpPpq92IfJpBCmdKka/vd3uhPaera4sRHUu+SkehtOOc+kzWtp9JMB2bmJ08
- uneEpTPQTfnJijuPS8zw91Fp41AUNHad7+GYTKS8oi7ZilDK9MgcmZDqh2yEJn8LtqKnkqY0V
- b4FrlZkeeBIJ+ZoMrM9VligtBsZQrWT/hSFTPgKF4RnMWr/xsEbIjyr7VnuDQ6W6mc/KqkvMR
- T/Z1p7RMnlXqMVMdEG/RUPfCbNqkA37xnqclEC99lb2otbZ6V5hBEsFVSIF2u4RS0wTottnz1
- ebZ4KPntTuP1H8yR8EXRi43bm0/vIb3H52E9qW0y8ZBngoivBNQ0LwyHIq2aGZ++SHVHolGOJ
- juiTRD1tRMxCHnAA8RpZVJ51z8mhkoCut4QkOKTIsG5g6DPDxGr7uIpfJIuzwFY3TBmWI4bA4
- TQ1OGIFfyt9jpEYH7mNoq2q9TF9CZly0rFAUedyRYm5LpBSHPwp6TGCjI1WAe8yJ6pbSvJoa6
- 56jQAESh71iph7QxwpzQKoasaQuoeRBkQeCxh9NnE3lsHLTMCcuw3u7tn/F6wHdFCdoLcOyU3
- vnEpf/g3ha4eTjBE/N6jOgPnPN6P+USvCp0rn9Mb5kdujiLqyNfr1MmGc4W9EtG+aONjj5kGG
- pjlaod0Xin9HArUw2MYbXOw+oJWHaP1O6KCEzJV5TC9zhidAR4gDh4NUGv+eU8QBzOLaYpBOE
- 0S9XESzAIgZgr0noSVz8XSbEay1E=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-> Teach the script to suggest conversions for timeout patterns where the
-> arguments to msecs_to_jiffies() are expressions as well.
-=E2=80=A6
-> ---
->  scripts/coccinelle/misc/secs_to_jiffies.cocci | 10 ++++++++++
-=E2=80=A6
+There is a spelling mistake and a grammatical error in a dev_err
+message. Fix it.
 
-Will any information from previous patch review approaches trigger more de=
-sirable effects
-also for such an SmPL script?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Markus
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c
+index 5b6bdabb8012..7b9c98be5b1a 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c
+@@ -545,7 +545,7 @@ int amdgpu_cper_init(struct amdgpu_device *adev)
+ 
+ 	r = amdgpu_cper_ring_init(adev);
+ 	if (r) {
+-		dev_err(adev->dev, "fail to initiailize cper ring, r = %d\n", r);
++		dev_err(adev->dev, "failed to initialize cper ring, r = %d\n", r);
+ 		return r;
+ 	}
+ 
+-- 
+2.47.2
+
