@@ -1,129 +1,189 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7351C221736;
-	Wed, 26 Feb 2025 14:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87D722157E
+	for <kernel-janitors@vger.kernel.org>; Wed, 26 Feb 2025 15:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740581755; cv=none; b=PLalj+fmvR/1+8kkfG4KlFpuyt7EZ/hdbjpbs80Q7a5Yt1e9O6XTL0u+G52qDnDySzgCXZiM5EsMr+BWwWDchA0e5zDWJoB3rH/4qs1BmJKm8DgXA2rtjTvzYifLrTkcQ7WDjHf1xLJrAfBxG6dUlekkuVtvJkf9h+/K4WQWva4=
+	t=1740583229; cv=none; b=emhzb+mLuR/04pyJXjUiRN7djNiOHcWvv2jbadvPsErx/RtlCAQFaOG8WcdeesARuc2ut1RZktJXPFDFmq/sbiu6Mtc7vL9c5yT15U22boTGHcpJGbOHtcfX+rbAES88UFuSg9GkApmsjnUxYzTjbjmwvMGXciB2FzJBhCg98v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740581755; c=relaxed/simple;
-	bh=tr5lbU3wGEr6BN68LboeolUuB8Kv0BBPiAchVDKlxcQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L2dQs9QmjxQtLtorXRtqF0m6nA5Fmbm2WLtC2fy3WNU+qBhnu9fiw0aGjHfvzEy8AAt+8MvtbdcWO2cce6swlyRUm8/TE8DdeJtR9oQnJuFfQ8Ez/PTyn3zW2P5GR6l1OjSEgy1euMqnFL2nZLWQiop5K8G60G1nm9GwIkMrP0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GwTz48Pw; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740583229; c=relaxed/simple;
+	bh=Q86lEjphtQaGBuy6TaEFVjscKMHedHdqJO5v7MJsMgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=shUzSysEUSs+itlOvQI24wAGMlZb41LPaZaus1X4XrLudvIfyfgy+TUh9PFmnZNhIl5leo95FSkrlAonNuCm+iSxWVjR6xO6gN04y56op/mTa+kdl1uXmjXpzxk8klvOMiDkUQBQ12gnJuUejbVji6XN6NdfqCzCCMdBwK7a66Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PA7ANbA8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FT/0M1Pe; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=btdCGLCa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=elTkrsiY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GwTz48Pw"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fe82430bb4so208696a91.2;
-        Wed, 26 Feb 2025 06:55:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740581754; x=1741186554; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oocQ0fbbk+dYcG+8o2rJPHRghcOSBtECMM/3xI25Xs0=;
-        b=GwTz48PwIaNBsrFqeaVMOqzl3dEqedZujaa31COPzwTpWmpZseLgQv162H9hhocstX
-         QrM6av2bCltwWV9q30fadT2DOGJcW4lpfSQGhXrH8SN2yzzYF+DI6P3fSilUtZT8HWiu
-         DvK5vmihFsORTCjrtYuBuv9BHN88EMevug3Sm1kKKih6wxix83QElfHH3YD+URuGA0Bt
-         8z4K4efPLVklKuxfL+G8tcJAl3n0m8ChL2Z4fjHt8Uss47vtYMLgmZMYKdcH2H0i7Wkn
-         7vtqFfUOS8Toa35SCisMocrpjP4t0kPGdkMjun+oWK4CWwJHWG8K3kMNb55z1iQGRePj
-         we0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740581754; x=1741186554;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oocQ0fbbk+dYcG+8o2rJPHRghcOSBtECMM/3xI25Xs0=;
-        b=ZLMglcUmvKOU0SABdmfbNHx/AVmTDkZKGvJcnHoHexihH5mpueSD+yGnUgHTbHXStc
-         CnaEVeb436/UcjKjTWpUNmJSFdBaXe98K59M7o83ni8kW82QE2p/88keBFNO6CF3GYXp
-         WAvDcyb/09WGRqfsx9R9KyQ6m7tUba+MM7haC4GprH4hLd9YxlGDLYcZW6iT5CFcbTbh
-         9Muo7yjeUH6fvMyQH0op6J64no1n9DVbiqFCKTkd6TwkYic9JLHHpyh3KayZqoZkuy2J
-         +tpxmavtq8G5UhNxGEjQiVMWexNYFblBe73ANpIdVnU68cTudovGTYAqetzEHU72zZnq
-         VLVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpdaCqwRvEUUYamo4KuIfwkh//fn1qQYVztClD0woTnWzP42n2mFJOJ4wtmf0t8rymReLgNeOCbUo+UHuIme8=@vger.kernel.org, AJvYcCXeKVX+AcRNMlbfU/qe5xqW5E+yspsoFk7JpVExIR8z6ONlI1uL9yMbwXeI3M5WJrL1nJj4LxFDgiCADnBy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBuJuteK+z5P6qC1ggj4LuL3mqcGEOmXYhwuxB/ekutlYHGnj0
-	pfCb+SfPv5g8C1I6FRv13gaZRoHGAwkkK660UI9tj5dB6ZvUbkHbgjEldd01u1q/ntOJwGW9VJ3
-	mGhQnLpFv2/IeXOc2155tX+wx0EA=
-X-Gm-Gg: ASbGncuKhxzLJsKKRbwZ9LIT58c1bj5byx73Y/ukirgmSCVVH02I20C8wo+k73AY4Yp
-	ZKgjtt951H3OjbG/zpZA/vZ9+gdiHu60VYXuGRLD2Tr3u9P4cIug+k8N2wBUfE1iPjCF8oAaE8H
-	tiIPtJ5XU=
-X-Google-Smtp-Source: AGHT+IEwr1YXnoiZrxne6OHHnEmFMi5XjAExocD2439PvRUuxjM8MGlaORcc7Sw9f9Vsehx+BFssOco752kKMgOV07g=
-X-Received: by 2002:a17:90b:4c04:b0:2ee:f59a:94d3 with SMTP id
- 98e67ed59e1d1-2fce75eed74mr14141075a91.0.1740581753615; Wed, 26 Feb 2025
- 06:55:53 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PA7ANbA8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FT/0M1Pe";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="btdCGLCa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="elTkrsiY"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D99D92118D;
+	Wed, 26 Feb 2025 15:20:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740583225;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u8c/SKMg3JtgwWLl1Ox9ycf1Bsh5pep7haPN2C6vU5o=;
+	b=PA7ANbA8z4rpx5ilJ/eo6hltQbAZL9ESOr/kHThgyAADi4CgZFK7grtEaLs8GYMnuy5jMq
+	otgHfTku92nc4xIksvZ3xflc3WuPE08MHTMhmlOhBu49S5J8H7PQU4d+E/4DTqF5Z5Duvs
+	jVKxPha86ocI5BKn7/LGnU+x0xr99ow=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740583225;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u8c/SKMg3JtgwWLl1Ox9ycf1Bsh5pep7haPN2C6vU5o=;
+	b=FT/0M1Pe2Bww9+cQwX4r4b/LX6bnRfnE0fzals52RImAWaOTp+2p3RVmHzunz8Si6CGo2p
+	9J1QylVd0tZFHZAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=btdCGLCa;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=elTkrsiY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740583224;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u8c/SKMg3JtgwWLl1Ox9ycf1Bsh5pep7haPN2C6vU5o=;
+	b=btdCGLCaK/Qn0u+x4poHcAEULnZ01sh3PWPbMmOjPL5IhNtQWcOebwu59egiHupHjMF4uF
+	A4U/HY/6RPHV1dnbN2I9Uh2r2gVVDTLlEXw7NwOXUHeATB8Z0J0nBOcs8IjZI7AxpCg1y1
+	4ngUY2OaoRrtM7uELWUEmKd5CfAOnOY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740583224;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u8c/SKMg3JtgwWLl1Ox9ycf1Bsh5pep7haPN2C6vU5o=;
+	b=elTkrsiYYLsdz2tnZ9YckIAZAH7eyXl3fKcAYP5VX184CneZvktd6bKhi6NFvmPx5Pw1s2
+	H1pa5QuMihNJYHDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC5BB1377F;
+	Wed, 26 Feb 2025 15:20:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mOzHLTgxv2d1VwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 26 Feb 2025 15:20:24 +0000
+Date: Wed, 26 Feb 2025 16:20:23 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Naohiro Aota <Naohiro.Aota@wdc.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+Subject: Re: [PATCH] btrfs: zoned: Remove some code duplication
+Message-ID: <20250226152023.GX5777@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <74072f83285f96aba98add7d24c9f944d22a721b.1739974151.git.christophe.jaillet@wanadoo.fr>
+ <D7X1HAEVN3TO.Z7JG9SRUODCE@wdc.com>
+ <4cbdb517-2d4b-4f73-9822-a9c4ec794b54@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226085733.230185-1-colin.i.king@gmail.com> <PH7PR12MB87968F09CAC17487AD48AC0DB0C22@PH7PR12MB8796.namprd12.prod.outlook.com>
-In-Reply-To: <PH7PR12MB87968F09CAC17487AD48AC0DB0C22@PH7PR12MB8796.namprd12.prod.outlook.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 26 Feb 2025 09:55:41 -0500
-X-Gm-Features: AWEUYZlWFg3ahOUpyNGJhQerEe51HZ046Q_K1gV7V6JMdhPKUuBT6KNIpq1OACs
-Message-ID: <CADnq5_NvFJZT8y0aC_HQh4-6N8awZc97mvCHvOODxmnn2Jwq7Q@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amdgpu: Fix spelling mistake "initiailize" ->
- "initialize" and grammar
-To: "Zhou1, Tao" <Tao.Zhou1@amd.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>, 
-	"Deucher, Alexander" <Alexander.Deucher@amd.com>, "Koenig, Christian" <Christian.Koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4cbdb517-2d4b-4f73-9822-a9c4ec794b54@wanadoo.fr>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: D99D92118D
+X-Spam-Score: -4.21
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[wanadoo.fr];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_ENVRCPT(0.00)[wanadoo.fr]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Applied.  Thanks!
+On Thu, Feb 20, 2025 at 08:11:46AM +0100, Christophe JAILLET wrote:
+> Le 20/02/2025 à 06:55, Naohiro Aota a écrit :
+> > On Wed Feb 19, 2025 at 11:10 PM JST, Christophe JAILLET wrote:
+> >> This code snippet is written twice in row, so remove one of them.
+> >>
+> >> This was apparently added by accident in commit efe28fcf2e47 ("btrfs:
+> >> handle unexpected parent block offset in btrfs_alloc_tree_block()")
+> >>
+> >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> >> ---
+> >>   fs/btrfs/zoned.c | 9 ---------
+> >>   1 file changed, 9 deletions(-)
+> >>
+> >> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> >> index b5b9d16664a8..6c4534316aad 100644
+> >> --- a/fs/btrfs/zoned.c
+> >> +++ b/fs/btrfs/zoned.c
+> >> @@ -1663,15 +1663,6 @@ int btrfs_load_block_group_zone_info(struct btrfs_block_group *cache, bool new)
+> >>   	}
+> >>   
+> >>   out:
+> >> -	/* Reject non SINGLE data profiles without RST */
+> >> -	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
+> >> -	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
+> >> -	    !fs_info->stripe_root) {
+> >> -		btrfs_err(fs_info, "zoned: data %s needs raid-stripe-tree",
+> >> -			  btrfs_bg_type_to_raid_name(map->type));
+> >> -		return -EINVAL;
+> >> -	}
+> >> -
+> >>   	/* Reject non SINGLE data profiles without RST. */
+> >>   	if ((map->type & BTRFS_BLOCK_GROUP_DATA) &&
+> >>   	    (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) &&
+> > 
+> > Thanks, but which repository/branch are you working with? I cannot
+> > find the duplicated lines in btrfs/for-next, linus/master, nor
+> > linux-stable. Also, the pointed commit seems wrong too.
+> 
+> Sorry for the lack of context.
+> 
+> This is based on linux-next. In my case -next-20250219
+> 
+> This can be seen at :
+>   
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/fs/btrfs/zoned.c?id=efe28fcf2e47aa5142bff2c284ea7337b40901e8#n1666
+> 
+> The commit Id is the one given at :
+>   
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/fs/btrfs/zoned.c?id=efe28fcf2e47aa5142bff2c284ea7337b40901e8
 
-On Wed, Feb 26, 2025 at 4:13=E2=80=AFAM Zhou1, Tao <Tao.Zhou1@amd.com> wrot=
-e:
->
-> [AMD Official Use Only - AMD Internal Distribution Only]
->
-> Reviewed-by: Tao Zhou <tao.zhou1@amd.com>
->
-> > -----Original Message-----
-> > From: Colin Ian King <colin.i.king@gmail.com>
-> > Sent: Wednesday, February 26, 2025 4:58 PM
-> > To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian
-> > <Christian.Koenig@amd.com>; David Airlie <airlied@gmail.com>; Simona Ve=
-tter
-> > <simona@ffwll.ch>; Zhou1, Tao <Tao.Zhou1@amd.com>; amd-
-> > gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org
-> > Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: [PATCH][next] drm/amdgpu: Fix spelling mistake "initiailize" -=
-> "initialize"
-> > and grammar
-> >
-> > There is a spelling mistake and a grammatical error in a dev_err messag=
-e. Fix it.
-> >
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c
-> > b/drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c
-> > index 5b6bdabb8012..7b9c98be5b1a 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cper.c
-> > @@ -545,7 +545,7 @@ int amdgpu_cper_init(struct amdgpu_device *adev)
-> >
-> >       r =3D amdgpu_cper_ring_init(adev);
-> >       if (r) {
-> > -             dev_err(adev->dev, "fail to initiailize cper ring, r =3D =
-%d\n", r);
-> > +             dev_err(adev->dev, "failed to initialize cper ring, r =3D=
- %d\n", r);
-> >               return r;
-> >       }
-> >
-> > --
-> > 2.47.2
->
+For the record, the patch has been removed from for-next, and it was
+actually wrong, probably a result of some rebase conflict.
