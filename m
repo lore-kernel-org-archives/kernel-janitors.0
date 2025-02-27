@@ -1,98 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBC81D6182;
-	Thu, 27 Feb 2025 17:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF3026FA73;
+	Thu, 27 Feb 2025 20:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740678638; cv=none; b=nkyBrJuP/GMxvccaPddqie83VrgUrq/96/MGxueNdGPjiISH6LKc5hDhMb/yXYK8sk3hXzCr0roq0uuJTcGQWmkmrCh5/a+k6mljUDGxLz2ni7VTPCDyXuwq3YlxKLQNmJYtPD5YucJzD/wPZ3UxihxMTu48EgO8bGbf3nr/qwA=
+	t=1740687667; cv=none; b=UtCZQGtVi+xLN/gIErDLb/ufDhmlylG4oCguZOPM4bPRc+Uidp1oj3Uf7wWykeRTqCTZHjmWZIcupYQ3uWYtGQ81eJRng9tuQq3crz4owIeID8QGMfYCbrJu9oX5PgqG/M3pntjZRuT/TlV3S+eynWlFpM68QwLiRGd1/RO0OEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740678638; c=relaxed/simple;
-	bh=pl3n5q+dUJ7OFTCDYuNcKxD9PmvXSqWrktdB02TglCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=guuHV2QlRklyvLDy5sa/4syV6Q7cCQan+yfYs1pvnCBLSuJ8wfa55rHtQd87K9Pyc50PsKbqS4ud8XJFxr9ykaJXEOopi5y8Ln8nQeaYq2OWigGVLqzxuXmyaAoF2Vp5sU7J3Bpw0ZXcmKM8u/lVTzEVrTaQEv5dUmO0j2vudVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NLtlNYj1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740687667; c=relaxed/simple;
+	bh=zhgA8lTVYegivj3+EBhgdMTn2Pg98qesetiRioNRoMo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yo11p94UiS1s9gl3sfxoL2jINKKWeowEF1Yjsb3Uf229bbvm1gVYESnsbgkP7jpm3CWmaI/TXR8Yf/DY7jgMhq4v11m8kGfyRTW5eYquWQkk9TLXyXOoJVljxaa1N+IU86bfqsdpX058zcToJKMkADYyR+kXpKp9bifkyaWcI4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBHfbYVe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NLtlNYj1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 916C4C4CEDD;
-	Thu, 27 Feb 2025 17:50:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBHfbYVe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C91C4CEE4;
+	Thu, 27 Feb 2025 20:21:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740678637;
-	bh=pl3n5q+dUJ7OFTCDYuNcKxD9PmvXSqWrktdB02TglCo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NLtlNYj1s86GTe/TOqjMpmhUooZZfQFza8ifCBwFaGJVss4Y40eyXP+R2EVMFdab8
-	 0Tx58uPaLjmWAV7yuMNOh10gHOARwClh8Mq7IuqRyt7yG+opJp2duF+QrX4KV9CveT
-	 PztnDefqlS0MIec8x83p164Q7RrhpiWnZpmfvAMJQ7yB3tU+fbIwyhd9FnlKU2WSs1
-	 d8NDgBFmDVZ19s+ogcHZE6S/C6Ud4CXXJAs6dy7GQnEw11J6yprwGbtzJmSaWZkXtR
-	 km/oNuMLFxgjNgfWQgCoieTbK2DkH7FBYh58+uCBCR/Yx69HM8v5OPlx+KyJuDLwjs
-	 dqQiGWkgW4IvA==
-Date: Thu, 27 Feb 2025 17:50:33 +0000
-From: Lee Jones <lee@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Pavel Machek <pavel@kernel.org>,
-	Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH] leds: st1202: Fix an error handling path in
- st1202_probe()
-Message-ID: <20250227175033.GJ824852@google.com>
-References: <4afa457713874729eb61eec533a4674a51d1d242.1739985599.git.christophe.jaillet@wanadoo.fr>
- <20250220155834.GA824852@google.com>
- <307b6cbe-6079-4995-b395-b63de69edb4b@wanadoo.fr>
+	s=k20201202; t=1740687665;
+	bh=zhgA8lTVYegivj3+EBhgdMTn2Pg98qesetiRioNRoMo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FBHfbYVe2+Y9RRSmqefAlel/As32WxZhKbbPD3xR7XlI1ZpP03vvcbXDT47FbLzJK
+	 OOVkoxZn/4XSTDwy8lFv9RSdCOuOGqpGPbl+Jvv7FN02GTbGPBLuasboS7lilMipHX
+	 pnLJOxSPlD86U+3Nk4XilKgRG5w/dyxdcuo1hsWWC9G80wrblb0u4CXIMycaepKUzL
+	 s2plX5hvsMFI+dI5iLC4RwOcJs55yej/FVge1GVkgmmq+heiCIwpCzkGeMDBBw2lCk
+	 I+MOajgKy829ndtFsVDcK1YEiv1H+bz6V//+GhmtArln1+kQWr81qSDssHCqfy//H2
+	 Pjs//4GtZgsCg==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2c13ec72605so505011fac.0;
+        Thu, 27 Feb 2025 12:21:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUTiJwa7s3a7atAjcf8EAPAhdjbxMD4pQd4amBeSu8rr/zZzeViQwqd9zb69Uy8r+k1BF/UejXh375g5QG7@vger.kernel.org, AJvYcCV+yyGFoF0+3RLE4UgVoSdfqwSbCeuDCgDoAQqPN3384nCdTPxAassEzaCq8mpUJfk53s8qL2oWgY0=@vger.kernel.org, AJvYcCXO1n6WldVSRp3WYk1QBzqYFJjNSRrhyhQ+PnNRzyi5l8rnvLG1qfPEu13zIIXuRcqsXabZo/ivsrfKpBOpxHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqvKh1GqutQHzD3PfWnu1tCZ+izY3qroNXyLXYonONOSvH8R1F
+	qfinOT9w+cOQoLpX/VkUyxcXvC+cb7vkp73V4wbjRl/V3rkDiFO20qdXUmRTHmtKI2YksHG9JtN
+	7otFGLDWPvAvVneCi+rJiaSWoeCQ=
+X-Google-Smtp-Source: AGHT+IF96SqJIW4mVo1lyssliOdrmZiV4MWUl27EC9mWKW/Y+yznOetIfl7XasPSTISTnP3CvLcKZOXTKrbfxjeNK5M=
+X-Received: by 2002:a05:6870:9a1c:b0:29e:671b:6003 with SMTP id
+ 586e51a60fabf-2c17874d20amr387145fac.32.1740687664295; Thu, 27 Feb 2025
+ 12:21:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <307b6cbe-6079-4995-b395-b63de69edb4b@wanadoo.fr>
+References: <cceb7f8864c43f046cf1c19c3bbcc38a7a57adc5.1740426540.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cceb7f8864c43f046cf1c19c3bbcc38a7a57adc5.1740426540.git.christophe.jaillet@wanadoo.fr>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 27 Feb 2025 21:20:53 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0heBqYxm4GKN+qRD4Av0FBXQ_HvAhxqd7F+1Zeg9_YG8g@mail.gmail.com>
+X-Gm-Features: AQ5f1JqvOKeZYSCbqVhP6TK4aZ30CmAT7tomqX60PmVO52rKxjibULcDTdD4GQI
+Message-ID: <CAJZ5v0heBqYxm4GKN+qRD4Av0FBXQ_HvAhxqd7F+1Zeg9_YG8g@mail.gmail.com>
+Subject: Re: [PATCH] thermal: intel: Remove a useless operation in int340x_thermal_zone_add()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 23 Feb 2025, Christophe JAILLET wrote:
+On Mon, Feb 24, 2025 at 8:50=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> 'zone_trips' has just been allocated with kzalloc(), so .flags is known t=
+o
+> be 0. Remove the useless | when assigning THERMAL_TRIP_FLAG_RW_TEMP.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> This was added in commit cca52f696952 ("thermal: intel: Set
+> THERMAL_TRIP_FLAG_RW_TEMP directly")
+> ---
+>  drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c=
+ b/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
+> index 8dca6a6aceca..b43d848e66b8 100644
+> --- a/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
+> +++ b/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
+> @@ -143,7 +143,7 @@ struct int34x_thermal_zone *int340x_thermal_zone_add(=
+struct acpi_device *adev,
+>         for (i =3D 0; i < trip_cnt; i++) {
+>                 zone_trips[i].type =3D THERMAL_TRIP_PASSIVE;
+>                 zone_trips[i].temperature =3D THERMAL_TEMP_INVALID;
+> -               zone_trips[i].flags |=3D THERMAL_TRIP_FLAG_RW_TEMP;
+> +               zone_trips[i].flags =3D THERMAL_TRIP_FLAG_RW_TEMP;
+>                 zone_trips[i].priv =3D THERMAL_INT_TO_TRIP_PRIV(i);
+>         }
+>
+> --
 
-> Le 20/02/2025 à 16:58, Lee Jones a écrit :
-> > On Wed, 19 Feb 2025, Christophe JAILLET wrote:
-> > 
-> > > devm_mutex_init() may return -ENOMEM.
-> > > So this error should be handled in st1202_probe().
-> > 
-> > The start of a new sentence shouldn't warrant a line break.
-> > 
-> > > Fixes: 259230378c65 ("leds: Add LED1202 I2C driver")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > >   drivers/leds/leds-st1202.c | 5 ++++-
-> > >   1 file changed, 4 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/leds/leds-st1202.c b/drivers/leds/leds-st1202.c
-> > > index b691c4886993..4fc17d518292 100644
-> > > --- a/drivers/leds/leds-st1202.c
-> > > +++ b/drivers/leds/leds-st1202.c
-> > > @@ -356,7 +356,10 @@ static int st1202_probe(struct i2c_client *client)
-> > >   	if (!chip)
-> > >   		return -ENOMEM;
-> > > -	devm_mutex_init(&client->dev, &chip->lock);
-> > > +	ret = devm_mutex_init(&client->dev, &chip->lock);
-> > > +	if (ret < 0)
-> > 
-> > My assumption is that anything but 0 would be bad, thus:
-> > 
-> > 	if (ret)
-> 
-> Matter of taste. All other tests in this driver are "if (ret < 0)" or "if
-> (ret != 0)".
-> 
-> What do you prefer: consistency or concision? (my own choice goes to
-> consistency)
-> 
-> If you confirm concision, I'll send a v2 that also fix your other comment
-> above.
-
-Ah, I just attempted to apply the patch, but it looks like it's already
-fixed in ("leds: st1202: Check for error code from devm_mutex_init()
-call").
-
--- 
-Lee Jones [李琼斯]
+Applied as 6.15 material with edits in the subject and changelog, thanks!
