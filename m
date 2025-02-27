@@ -1,69 +1,71 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2052777F6;
-	Thu, 27 Feb 2025 22:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71A623E33B;
+	Thu, 27 Feb 2025 22:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740695676; cv=none; b=T0xDrm1AI3tpFN/cgiYrhmh/Ehr6yMY88v4L5gScxBqJauTSqbNMCOGTN/liKGTd+12E9u1z5KL2x8Npp+n1bS8SsoS4pSsv1AM2fYLuVHjh/wqfvNDBV2e9boPK3yq3WnQWBhJBacxRrndtWdT+9gVljQJlhPGM13pyrkrBKhw=
+	t=1740696046; cv=none; b=dnRb6yYGNuMufJFM6c7ieF79nhVSfjjV/gRL71rCKV7c9UN6Q1vDdDp5L/xRNj7+lnMo+xbamTsM3JiQhaLHJVPdtwSoPzSJpu3Al1zY+s4BpQ6DCq5w1pPOYFXOjXQN1fxIxxLV9Ba4MHhmtyvrdiEdbailrDxKLVqo/7Agj1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740695676; c=relaxed/simple;
-	bh=FPaspswSl4uwBOHTp91J8a1KvERimw8bN24yIugWVhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qWjOy6wU2XSWaELJ6/t87Xn8P0aECNKeZr+75RZufPkSLGqnoPSS/Aiw0FNAtQoGEDtfNe2wtCdCsP9FeforEnL8nfKoY8VyDfoYRCCYGG/z2LNCS5gB/sKx46NPMuxEu+Mew7jgAnK9CI88Fm9qKIe87s3wPj+DcZCpguaqXmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQhKqSFx; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1740696046; c=relaxed/simple;
+	bh=4FpztWJBkYzLbgpzrZ8kFBwYl/EaKs00lCTCkSKF1yQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c2V7rmJ5gNk1Q2M06eLw2M1e7/5LZ8GEbgKqUFPHW6hNK48lB8EdaKZvEozIe6XQiCSxMiVRPZYtCyHZwZzIqaKRTl79jpPKjSduoDwVCISMtM9FSiuSWbwDKnLZMfGhzuxWWxSm8Mg70IGAwnOl1uK+HGtE5rZvcMDEvcZPvw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXWwAvvQ; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQhKqSFx"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38f403edb4eso875854f8f.3;
-        Thu, 27 Feb 2025 14:34:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXWwAvvQ"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43989226283so10125625e9.1;
+        Thu, 27 Feb 2025 14:40:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740695672; x=1741300472; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740696042; x=1741300842; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/XkA2KJAYNcmLWwTXUNyznolPWUbVcPY7c2GesTrXU=;
-        b=cQhKqSFxrXv4NvtM9ghd/YXUHtl89mYieL+aeMP5jclftb+HAHBl0pYm/q+HsbPXZj
-         HTa9WN6dC1AabbqIUn6R1nVsigJR+xK5xQ2oz7H3sGpy7Vgx5L5ShNYfE1Hr35t96xD9
-         0TSqWz/+YaBG8vz7QZNWz0eFnSpy+ufHhvvNYiaU3SONOAna3taDNjH+Kv/9/9eJ6tbl
-         GUjbx094zGHMbDN+3J5YwuPbhLNimGB1RGw9albAOLd32erNim+fQqgsBj6d0blcbHjL
-         HJkcgQ2NzofmDVsmayM/hUPDIaixYNmVSvtg4tqPdoEps/xliCRf9uHZ62bCT3XTjQSq
-         5HUA==
+        bh=NUl8XE7+Pcoi1nYpApiKySL0TeiutYm0CffFrTI9E/A=;
+        b=BXWwAvvQrGvMIef/3qMddsNW150v0BgZDKGR3V58PnlwZ8qGXKKq5y4AykkoDUaiGb
+         mxMysUJ1IxsBBeXVHnyhsFzV8sE0c7xZVRicB0HFWYCfLmr84qzXL3O+sULnzoXDvMh5
+         0HX1C+8uDzDEMRIairmeY9mzWU/BVnUXp74o0A6XrpItd5nsGjcbOry0/pdja+uwNTCu
+         aadFOuZaa6ot99SCEXjq2oqa/eNmkvq2LYXyh9ViV8cvUZ5HO7Q2VnoPUeOJh2aL177n
+         +n5rQHHaJmKT4813y6Ypah0mt2WSB2s9jIrp6XnhZ6VbLTo4vvqmrJQbanDI77rppFWY
+         pO8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740695672; x=1741300472;
+        d=1e100.net; s=20230601; t=1740696042; x=1741300842;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=8/XkA2KJAYNcmLWwTXUNyznolPWUbVcPY7c2GesTrXU=;
-        b=uYyQoTUZRTB+dsGUn+t9awqT/YvmdrEMe1OfNW5LjvWgQB+jB7hSnkvWWq/136tRui
-         TVI1uaVUAO8PU4cQC4PK5G/ED9LqyL2N4k5+pdWM+GklofosWNDpDTsFw9zR1UJ+j5rh
-         hsg6GC5ijTDSdvaW4hgJ1kWEbwrvJkpA7o8Ok19YbwPVVGYfKM31uCckCNtqFPVob6Mv
-         F3Ms7NXd0S5+SYp6ERPAZOOK/PwctEitggbdEbprHAs5baL+8K2LW8qLPA92PiCt3f4n
-         zxyn+QKrHrWxpGOe64YI0mjCoy2qN69YtijITXv/veTohB+X1U1WdaV+LEdD/4FnejAS
-         G+ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVBpJtFaTIPrdLz9DSKahUIBSdrSHHaealOAjBc7T+6kpzBzpfLEjWyEkktIaDfUCYj6ycBG8csL4oLhVFX@vger.kernel.org, AJvYcCVJuu14lfIuJ8/MvJKY7UmvtLkMmVL7PsV52bvaiUa+D8FvIJxh1AMZ2IFjqO/12h4XTwfGBNitOaM0kA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwt0zmXehQLoin8GRM7ANtP/SdjeFFyS8lZnL405sKT0Puf54S
-	oQoC3Tnd6Ald3edm69smCiGBIUsEiVLI/qyiBosWL5H+nujv+IDh
-X-Gm-Gg: ASbGncshywY27OyKp+rDoN5GTHiscmsXtzB41EXOMQffq5BiN6fHamJN6CUMCKCysZ5
-	VqBqilKSGyDCtzrzZJe0Fbaw188pB9sT5NY3lIsLk7gGjegzPbsOSTVvwKBZ6QRdcRJ6lMrNcaZ
-	tQYw5FiniE0rQkxiX0aEwmXJgJuXvp3gUQqxjBysCD3OYjbQBfCJNqgDvtpPh56XomUQWP7H2Qk
-	+AK8c7ElxbCUKaTPLfR8nGEdrjfmlfq6bh/Rdq/2aYo0DJV8r7jRzKDfdgDec2YeSYgztOQpRNg
-	qgT9rIquU5vKQ37cKzrfgwDDLhY=
-X-Google-Smtp-Source: AGHT+IHmp7aj0LBvS0mAv2h7rO04GLgzP1+JdVv3lD8iVvcnXGZVgu3Vj8sP18PAE3gbuVvAtt8uZA==
-X-Received: by 2002:a05:6000:184c:b0:390:e100:9d39 with SMTP id ffacd0b85a97d-390eca35d3amr764268f8f.37.1740695672553;
-        Thu, 27 Feb 2025 14:34:32 -0800 (PST)
+        bh=NUl8XE7+Pcoi1nYpApiKySL0TeiutYm0CffFrTI9E/A=;
+        b=JVf7y4Tsdeesj/gvHacFJUxv6VET7woB+t8iN/nZFYhPqAcQEcRYC190H1clfKi7gE
+         JYLNW6Z7c3Ay0o4nY+LhP/1crynjSasotCyCVThgrVzK2gQwaBBm+jFuLfDLMJDZN+vc
+         PzH/1ntLp68T826rxA11joRsSZabmChFGifjzV++yZL2j4fKy35n81vAqvM5nQUs+4S0
+         pwDGT9et7i/zBy/heskDHoapN5pknY4RQhLCs6857WNGteSuhwv61iFu8tPPydBx1KnZ
+         GFat0zes+KN38hvZRXSY1gTosWKvqujflSUJDOTkkB6+BMtbOE062RrYSdqsfEX9soQn
+         QRXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0OPGAQnJthISaNo79g0ovTOo5IyqmEbualGJK+A/dQKfBbq0J3Zu3ZhvGuTMGcAtCPPfSa6Au3uikVV0=@vger.kernel.org, AJvYcCWSoZk/X9OtmPbK/ksnwk65plNTq4WWlJ0eqYbi9Jb+ajlcMg0E1QXwSLkuq0HGQPP4/StPkrsPSF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyRALnDWBT19Gk1vibt6mgsDXA9eIInAAzjSX/Y1t2fnF/WL1m
+	Pai45HWy4ewGV9pTOZ4m+CaCK8aou1WzZBvWjnlpiBwMtxoGc8/S
+X-Gm-Gg: ASbGncs54W1HRNL4GSZSR+JMSIYKmBUHs792IKxQv4tdsX6HmJLKkJRJ+Qhp5ZW/zPN
+	IV0sapIVdD34GVaP+YgA8fDepbCW6FIwLKsCxl0EeYpadxnqsAT0+da3ZGPi+NoYd8RDjnUtNTs
+	GLoC+ON+Xn784p3jQqPlFO9iWamVv6NgkRp5Pu/c5535vfpOqMk7Caerq+gIB7xh0tjztnljz6v
+	GgWa5zsO4JdZb+kTIqhXPbA0LOJhVsEPqf73Jkmbsb7GOwikUJwnoCDfHVnxPOG4DKf8bthbent
+	35sSQ9pveBXPk9xQm0Xh/BiUnQo=
+X-Google-Smtp-Source: AGHT+IHM6HEvjXh4zM4c1gmC8eykfelcPVykYPxPWzXLli1VTTBj6qkEd/hrQ+pc2XQ0Fu0UniZbLg==
+X-Received: by 2002:a05:6000:18a7:b0:38f:31fe:6d23 with SMTP id ffacd0b85a97d-390ec7d25edmr844668f8f.23.1740696041892;
+        Thu, 27 Feb 2025 14:40:41 -0800 (PST)
 Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e47a6a78sm3206567f8f.23.2025.02.27.14.34.32
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e484451fsm3340895f8f.63.2025.02.27.14.40.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:34:32 -0800 (PST)
+        Thu, 27 Feb 2025 14:40:41 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] HID: debug: Fix spelling mistake "Messanger" -> "Messenger"
-Date: Thu, 27 Feb 2025 22:33:57 +0000
-Message-ID: <20250227223357.659460-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] thermal: core: Fix spelling mistake "Occurences" -> "Occurrences"
+Date: Thu, 27 Feb 2025 22:40:06 +0000
+Message-ID: <20250227224006.660164-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,26 +76,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a literal string. Fix it.
+There is a spelling mistake in a seq_puts string. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hid/hid-debug.c | 2 +-
+ drivers/thermal/thermal_debugfs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index 541d682af15a..8433306148d5 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -3450,7 +3450,7 @@ static const char *keys[KEY_MAX + 1] = {
- 	[KEY_MACRO_RECORD_START] = "MacroRecordStart",
- 	[KEY_MACRO_RECORD_STOP] = "MacroRecordStop",
- 	[KEY_MARK_WAYPOINT] = "MarkWayPoint",	[KEY_MEDIA_REPEAT] = "MediaRepeat",
--	[KEY_MEDIA_TOP_MENU] = "MediaTopMenu",	[KEY_MESSENGER] = "Messanger",
-+	[KEY_MEDIA_TOP_MENU] = "MediaTopMenu",	[KEY_MESSENGER] = "Messenger",
- 	[KEY_NAV_CHART] = "NavChar",		[KEY_NAV_INFO] = "NavInfo",
- 	[KEY_NEWS] = "News",			[KEY_NEXT_ELEMENT] = "NextElement",
- 	[KEY_NEXT_FAVORITE] = "NextFavorite",	[KEY_NOTIFICATION_CENTER] = "NotificationCenter",
+diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_debugfs.c
+index c800504c3cfe..0cf26ea63370 100644
+--- a/drivers/thermal/thermal_debugfs.c
++++ b/drivers/thermal/thermal_debugfs.c
+@@ -319,7 +319,7 @@ static int cdev_tt_seq_show(struct seq_file *s, void *v)
+ 	int i = *(loff_t *)v;
+ 
+ 	if (!i)
+-		seq_puts(s, "Transition\tOccurences\n");
++		seq_puts(s, "Transition\tOccurrences\n");
+ 
+ 	list_for_each_entry(entry, &transitions[i], node) {
+ 		/*
 -- 
 2.47.2
 
