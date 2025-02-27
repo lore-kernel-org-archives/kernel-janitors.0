@@ -1,75 +1,77 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 4418FA47;
-	Thu, 27 Feb 2025 07:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153CF219A68;
+	Thu, 27 Feb 2025 08:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740641550; cv=none; b=XspravYnFUIiLxsMbAUZ8FxsTT/r4sqQKFwqqG59dR/iqLTpuRYkXfdfAV9/8nRsVU6h8+uujI7+51ho+plH57bNR8baWtOnqwX0KiJTNKd2ctsJVc4xzOTdaMR/y8IIuKZr/EBCz8hDB5uAozkel6rRZGq0qQHTK4RRypVygis=
+	t=1740643803; cv=none; b=CnPr2jeNv0aZU/QQ8a2EKCcA6FGZNrNfropAE2vfZTEghCPhOKNfvS2PdV8laIm0lQZq1FffUPf/pD3PQkrXqTwOTjJaM5oDbteYPIKSCGjgKD5/NXVQMpKPlADhsfdd112IYpZjDhJHvzX6wLUAnZnyWjsK3gDhWV7gKT+921g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740641550; c=relaxed/simple;
-	bh=M6lTo7scV5I/prrmI/U/RTzFfrkfzqV2OHcOv3mpg+M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Iiggtjv/Eu3+JnQ3aUAFMGQB/8QeMLjTTXpgAKKaQwd8DQj4Vvf+DjnnsDzpuk1KY7AEdryQGcg/+T7bvHqIX7v6oiQWXaiXhQkI0kVT6+ylz+pS+kW921twMy1jYVhT+DO5i+bbUWknOtO7foqgF1A2aZ927usrDpqs/4UslWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from localhost.localdomain (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 4392860260CDD;
-	Thu, 27 Feb 2025 15:32:14 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: lucas.demarchi@intel.com,
-	thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: Su Hui <suhui@nfschina.com>,
-	ilpo.jarvinen@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	michael.j.ruhl@intel.com,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
-Date: Thu, 27 Feb 2025 15:32:06 +0800
-Message-Id: <20250227073205.1248282-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1740643803; c=relaxed/simple;
+	bh=sT9FoMjjZ+j9C9C1Tm3d5T9KzPPeaRXmtqMNkoYoUj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LkVpSOutrmpOSbXNeuUJc3h7XOhq49mXxOWj294sK+w4+xPDI+V36UZ6sm8R9q2FtICwkBhgJgOhTAie1pClaSzl3j/ODRd67ceNbC+N9j02pnF5rGpiuYglXWwQSbl+A4SAHneLguIPYF/yzgEQp2orYG6ZwJ1u7MI2SOfJDTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaKzYk7J; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaKzYk7J"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17308C4CEDD;
+	Thu, 27 Feb 2025 08:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740643802;
+	bh=sT9FoMjjZ+j9C9C1Tm3d5T9KzPPeaRXmtqMNkoYoUj8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VaKzYk7JrOG0sraUOyAup/ViOy/o8eEZ32GYqu3gr5iu8ZGfEsIHa2JHLB11P1S9+
+	 /lnCU021TKUxBz0vqrFJE1gkin5JXTB0a6QmEVGT/Rhg2Atq2K5zjLfk9YxwUfR65N
+	 zwUJd3Kxxxy3ssBkp5uL1P1mSZCSvydJqGn74osNhQeR9lE/fNPcsRrILhs6fk40ds
+	 8JPbHg9niTHwetppsWcXEyl1J19T48xlqPenNYLl+1BrdJP714R9WFZ2rt5zIKvVaT
+	 euk0varEjqsfJzb2tCtznKeR2nUhjf2ursYTWD7c8h2b2M+RUyJJgfqxrkOpMOKF2W
+	 Xi4kAP39Jen4A==
+Date: Thu, 27 Feb 2025 09:09:58 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] fs: Fix uninitialized variable uflags
+Message-ID: <20250227-boxhandschuhe-gesichert-908c190a9634@brauner>
+References: <20250226223913.591371-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250226223913.591371-1-colin.i.king@gmail.com>
 
-When build randconfig, there is an error:
-ld: drivers/gpu/drm/xe/xe_vsec.o: in function `xe_vsec_init':
-xe_vsec.c:(.text+0x182): undefined reference to `intel_vsec_register'
+On Wed, Feb 26, 2025 at 10:39:12PM +0000, Colin Ian King wrote:
+> The variable uflags is only being initialized in the if statement that
+> checks if flags & MOVE_MOUNT_F_EMPTY_PATH is non-zero.  Fix this by
+> initializing uflags at the start of the system call move_mount.
+> 
+> Fixes: b1e9423d65e3 ("fs: support getname_maybe_null() in move_mount()")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-When CONFIG_DRM_XE=y and CONFIG_INTEL_VSEC=m is set, ld couldn't find
-'intel_vsec_register'. Select INTEL_VSEC to fix this error.
+Thanks, Colin. I've already taken in a patch from Arnd Bergmann
+yesterday. So this should already be fixed.
 
-Fixes: 0c45e76fcc62 ("drm/xe/vsec: Support BMG devices")
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- drivers/gpu/drm/xe/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-index b51a2bde73e2..7a60d96d2dd6 100644
---- a/drivers/gpu/drm/xe/Kconfig
-+++ b/drivers/gpu/drm/xe/Kconfig
-@@ -44,6 +44,7 @@ config DRM_XE
- 	select WANT_DEV_COREDUMP
- 	select AUXILIARY_BUS
- 	select HMM_MIRROR
-+	select INTEL_VSEC
- 	help
- 	  Experimental driver for Intel Xe series GPUs
- 
--- 
-2.30.2
-
+>  fs/namespace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 663bacefddfa..c19e919a9108 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -4599,7 +4599,7 @@ SYSCALL_DEFINE5(move_mount,
+>  	struct path from_path __free(path_put) = {};
+>  	struct filename *to_name __free(putname) = NULL;
+>  	struct filename *from_name __free(putname) = NULL;
+> -	unsigned int lflags, uflags;
+> +	unsigned int lflags, uflags = 0;
+>  	enum mnt_tree_flags_t mflags = 0;
+>  	int ret = 0;
+>  
+> -- 
+> 2.47.2
+> 
