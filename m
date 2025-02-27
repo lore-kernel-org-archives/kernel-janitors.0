@@ -1,68 +1,76 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A840271815;
-	Thu, 27 Feb 2025 21:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFC418FC84;
+	Thu, 27 Feb 2025 22:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740692880; cv=none; b=Yj4lV4PhOUby23Vd7LPFGTcxCD7duKM7rQXaA9jg6OcMqyfvFCjNk8FL7/EREtd7bbFQU6QcgTqZFyezhI5ifcRpxh2l0dq5p7kH9hl1/XNEu/jtR72ogJhEbkuSdL8vZnC4IhotXtCXnp5RiHaHEtcYo3XOx1DHu//5UB+qgiE=
+	t=1740693856; cv=none; b=quIfAQDx8qkjRkpjEHWfomuiRHcZDebciuNzILIqmyFT0nZHb8n2XMlP0YzWnB6+YJ8rBE4WQ97DdeljI98c2XhUxmvqqSYqM400m9JB67vLSeyfXA5FMyzMszURPdiKJ+LVwCDS+lcGuEMlgLgedvatEJ+47iKe/om9ymV3BrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740692880; c=relaxed/simple;
-	bh=BjqVqzhktYwhpoR5gD02U6D0iieURF7D5wZ0FkzbMXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fgRJQULQSpoG76Y1bnT5LUzQSgJtR1zHzngELETTuTlmGGstt+DrCyTgWWWBDv7bhGAOPm684dZjUQnlgBjULifnrCXZwLXhJ11rfeGmXgz1Al4NRVN5kJH6QAFWO4KIhT6Q8Q4x+LZTpmnnmx5dLW9dc4M3yvypo0LkXRn4pfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WUiKd4+x; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1740693856; c=relaxed/simple;
+	bh=xngXQqYEAcf/7AhQRNhKxM2ws1Kd8055O4/vXTYh1qg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VCv79byYN7VuSpsvj0HqA1WbvOc6qTOJuSgt19L1/aVvLr3f0rEMdwa3Q8NWALudiDxA1iuX4MaDqKXufi2TlcgB9tWq9MwzDaPZp/6ljmwyHsQiuhH8C4Fl7HFh91AKa/o0bj1RJYr4vptGnsdcrH1QZ3FMw54UtvUBVHHMolE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3r0tyFq; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WUiKd4+x"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso9910005e9.0;
-        Thu, 27 Feb 2025 13:47:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3r0tyFq"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-439846bc7eeso9648015e9.3;
+        Thu, 27 Feb 2025 14:04:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740692874; x=1741297674; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740693853; x=1741298653; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hPsgbgu3FIiYxP/zboORp1uv/rfrWPbLOG86PuABuH8=;
-        b=WUiKd4+xuu9Onkt4i9xlK0ujQSwuMrSN5rXsnedEGpkCKowR6W8tjlts/SdulES/Ot
-         f7JJC4zzIiow2xsiXTF05rX2CoMoEzh73sC3TpYJInmK99BCrxc7kn136HMlv7/CJbKV
-         IJaBSii55NnU6rXbeHPLYZchIJNcGVsOsU57oi0v1EF6lMgmcIxPZxsVpQbJdRGjFUwC
-         MiM8Lj+sF0rhrw9TeVgIBBlU8AvVo7+5bj3ddmKej2U6JBsylIXbEBE+KnCiB+oGGxxc
-         TileKH4Uv9f8Sz4r444i7t6P1DOD4+vaP7sGNZXgvhW0WIHdEyKCfkPFnPfMOXwF0dRH
-         UGAg==
+        bh=CTEICTXX0v/2ycsWLKp/kEJBl5CKbsp967v5/0zdLMY=;
+        b=I3r0tyFq9X6+3koEpAkWH74+MZndeCO6RBjQqlPKQrP3F0dMRFctjGgi/nOq4Fyri/
+         y0pGEoF/0IgQdgi0OJKbAISBm6USBt64OpOSQtiCyh1Uc3bwErgDFVDCo/wxFFBT7IfS
+         R3JD3TOXTncjFbvpHrrd6LQSmeIyqnpjCi/zwBsjqLILFlviY+jTfsIEcPiC7/P/AUhh
+         U+1UUAX45DgrAJ6x7qGT8tzWf+S0yv3FA8f2KcWmmjwT/yiccF6kuvsaLM9tqKkprnXe
+         lH51OhbCHxkBfZVtONF4qfqQN5kexVxMjFUtioL8pGfWkQWmgG0d7kiDEu76Uf0Mmhqv
+         /8FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740692874; x=1741297674;
+        d=1e100.net; s=20230601; t=1740693853; x=1741298653;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hPsgbgu3FIiYxP/zboORp1uv/rfrWPbLOG86PuABuH8=;
-        b=pYbyL+/rsnONT1Wgh2uVJeaBMU0un/juLREceEa7nM2IU/zFYytEq+vkNX9W9A1BFc
-         1LPP7389eDxqFjS8GZCwLy3yT+UAy2XkzmIq9AHW1tUylF9rWvsgtg8L/fAQvsB1JzYv
-         v3ZGwBpkXST6ZgCU3wogOJMbLwbU88BoQkuJocBKEcP2l/y5UQy+vKig3tjbK7Pwmzls
-         eFJNQAJouSYbvUQkY9DHKtUDPfPAON9A0u0V02LvEVslOnDEAyRVdidTHwnE2HafHpKf
-         IYnMcAcbG42UHPejcr9uzt2tCdNjpQPjFw92yzl32xrO4ZD87RLcMsazrqKsr1MYDz8i
-         OPOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTeAxk2X+1waZLvbKKVodWLjvd2R2+uckxT8xQts84otJIfHkgUuC2dumsIbadLi6rkWTOVPJkIdBeyO/jbA==@vger.kernel.org, AJvYcCXS/IZhpYhicFmGU3A1Cdryz3dyTHaDOrqHWx8Um3GGNlhcyGLZPPFgcg91SisPB1Il/YaBTe/8V5c/vlBz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVH9tTVDChoXJJVY+U+AaLYB8vNVqqKp+mk3umiWfoEE5mjLOy
-	Soj7+/Q7iOhqJsv3NWq95sZQMRzh6LFaf73M19pXwjfDvFOs8ruwAfyHEIbHO9I=
-X-Gm-Gg: ASbGncshFj/q2rai7FVu7tGFjlVS3Pl7wH6+8TCFpcTtbetARSaRDmL9LdJX47AQzRp
-	oLNS/qd1hBJOLAJzBg6trUP64VzrVI7ROAQOFaqiimg2nKkTQrEqZFjZislBDoPhu+fuMNIWEj+
-	pkP44jobQqvyx/7IYqdD1kK33q4fWEV5dfJhW4DZGbUHEIwmHr8u6m7A1AaGmanrlDlTSfv/cY1
-	32oeaPaPAeeu1ZJ3mbIkgUtTgUBn26xYeA5L4dVCk3siWLOUe9lqOi/k9Fklt3PAGoGVazkj0Il
-	Vzt4wPv7WNbnidXsegRG9fXMtuU=
-X-Google-Smtp-Source: AGHT+IFvRqWE6o8uWmYw6dawx6Taw5Dz2GijLOiouxcfaB8nbGuRuBCvHnRPMeIdpSEg8CrE/irs2w==
-X-Received: by 2002:a05:600c:1392:b0:439:98fd:a4b6 with SMTP id 5b1f17b1804b1-43ba629a811mr8661265e9.15.1740692874281;
-        Thu, 27 Feb 2025 13:47:54 -0800 (PST)
+        bh=CTEICTXX0v/2ycsWLKp/kEJBl5CKbsp967v5/0zdLMY=;
+        b=aRjVkor9ygC0FgRRZ/I1wpl7Falf/3ouwq4+ir+M5dwmjsFD5fRtfBBKc8xvKMtWGV
+         T/CMkXbhDG/6781TySz5KGYltLeT199JlbTkxpNODnU/ugAUlizbxvPFB+P1Bazdr6s9
+         DhqT1zPU5vJspGtuweIxLMzT929MvtKVbZMM4DoFyP8iuHn8XN8yUpxFMOKuJXSRH6EI
+         44bK6OdNS+9jdXuKp5PJQaukwMH2PQkJmvdJj4x5Zhk1buXK0i5zLp6YgowW8ussESvu
+         Fep2lD8K5CAelte2B7xMhlGkILXyyR0BZ9Vyp9HLOcTm7GdkJBQnt5LcTeZsHInJ0X9S
+         J2mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXrFv/hTlyhFe0iaXpkphP2NJL27wH1gqdKEHMypVlTNO52fMk1iFZfOqyJCvoLUTq096jLWyb1tDoDNWJwQujMw==@vger.kernel.org, AJvYcCVzppzRLWM6LTHgMAD7tSac8OKQ545hpKOznQO2g/dqFdHxQa8MocMXHuRHSXEqe8tVOiHnadDTU7IUQCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiuXdbyiZqdLtICQXgsv13ZsXp275i5wd9oLujVFlrMOmql+gw
+	75lYyV+AJXT06CGdjieyhsybf+sL5U5KZeZ+wV4LmAQw8HdA6IYy
+X-Gm-Gg: ASbGncu5EUS9Uh29+zCtJU6W/q9C0qCN0eFYlvBjXqJeSyKxowwlB17Zxx+1du4qvW9
+	EhE4OPqFPtmSyPf1Uu3inVuHgfF0p3WE8PcsL6BUh50wjzwNWCxzlt9nE96BGlzNf1IGxVVb7tZ
+	8aC4LDVi00F25uJn408u/472pwtlrc3zD4CR4vGzD7U+NqfZFhdIhoJHG8FBonqMwVMG1/9Hz8+
+	AuBWhlX9yS/KL5B3KIogEWf0X5znIE6d4ZWKx2zRe2/wexvB2lrj/sRF1IkV7eGSjJr+pQCU95o
+	CuIUH3gBblfSQ8Bv6qL2jtEHlLM=
+X-Google-Smtp-Source: AGHT+IHYQVSTiCOehgMLftDnItrbUgzcs+nCocHyjI2ZzAf9fDCP0/5iMgqxOIVpoWgvLX6RiklQrw==
+X-Received: by 2002:a05:600c:4687:b0:439:7b5e:820a with SMTP id 5b1f17b1804b1-43ba66e1baamr7596765e9.11.1740693852611;
+        Thu, 27 Feb 2025 14:04:12 -0800 (PST)
 Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba5870e7sm70221605e9.35.2025.02.27.13.47.53
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43b73718abcsm35271345e9.22.2025.02.27.14.04.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 13:47:53 -0800 (PST)
+        Thu, 27 Feb 2025 14:04:12 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>,
-	linux-bcachefs@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] bcachefs: remove superfluous semicolons after statements
-Date: Thu, 27 Feb 2025 21:47:19 +0000
-Message-ID: <20250227214719.653887-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] perf test: Fix spelling mistake "sythesizing" -> "synthesizing"
+Date: Thu, 27 Feb 2025 22:03:37 +0000
+Message-ID: <20250227220337.656384-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,55 +81,32 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are a several statements with two following semicolons, replace
-these with just one semicolon.
+There are spelling mistakes in two TEST_ASSERT_VAL messages. Fix
+them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/bcachefs/btree_cache.c | 2 +-
- fs/bcachefs/btree_io.c    | 2 +-
- fs/bcachefs/btree_iter.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/tests/mmap-thread-lookup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/bcachefs/btree_cache.c b/fs/bcachefs/btree_cache.c
-index ca755e8d1a37..23ca9cc18b56 100644
---- a/fs/bcachefs/btree_cache.c
-+++ b/fs/bcachefs/btree_cache.c
-@@ -521,7 +521,7 @@ static unsigned long bch2_btree_cache_scan(struct shrinker *shrink,
- 		if (btree_node_accessed(b)) {
- 			clear_btree_node_accessed(b);
- 			bc->not_freed[BCH_BTREE_CACHE_NOT_FREED_access_bit]++;
--			--touched;;
-+			--touched;
- 		} else if (!btree_node_reclaim(c, b, true)) {
- 			__bch2_btree_node_hash_remove(bc, b);
- 			__btree_node_data_free(bc, b);
-diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
-index 80a0094be356..8c8724173f0b 100644
---- a/fs/bcachefs/btree_io.c
-+++ b/fs/bcachefs/btree_io.c
-@@ -1919,7 +1919,7 @@ static void btree_node_scrub_work(struct work_struct *work)
- 	}
+diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
+index ddd1da9a4ba9..446a3615d720 100644
+--- a/tools/perf/tests/mmap-thread-lookup.c
++++ b/tools/perf/tests/mmap-thread-lookup.c
+@@ -229,11 +229,11 @@ static int mmap_events(synth_cb synth)
+ static int test__mmap_thread_lookup(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
+ {
+ 	/* perf_event__synthesize_threads synthesize */
+-	TEST_ASSERT_VAL("failed with sythesizing all",
++	TEST_ASSERT_VAL("failed with synthesizing all",
+ 			!mmap_events(synth_all));
  
- 	printbuf_exit(&err);
--	bch2_bkey_buf_exit(&scrub->key, c);;
-+	bch2_bkey_buf_exit(&scrub->key, c);
- 	btree_bounce_free(c, c->opts.btree_node_size, scrub->used_mempool, scrub->buf);
- 	percpu_ref_put(&scrub->ca->io_ref);
- 	kfree(scrub);
-diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
-index e32fce4fd258..168a6b7201f1 100644
---- a/fs/bcachefs/btree_iter.c
-+++ b/fs/bcachefs/btree_iter.c
-@@ -2717,7 +2717,7 @@ struct bkey_s_c bch2_btree_iter_peek_prev_min(struct btree_iter *iter, struct bp
- 	}
+ 	/* perf_event__synthesize_thread_map synthesize */
+-	TEST_ASSERT_VAL("failed with sythesizing process",
++	TEST_ASSERT_VAL("failed with synthesizing process",
+ 			!mmap_events(synth_process));
  
- 	/* Extents can straddle iter->pos: */
--	iter->pos = bpos_min(iter->pos, k.k->p);;
-+	iter->pos = bpos_min(iter->pos, k.k->p);
- 
- 	if (iter->flags & BTREE_ITER_filter_snapshots)
- 		iter->pos.snapshot = iter->snapshot;
+ 	return 0;
 -- 
 2.47.2
 
