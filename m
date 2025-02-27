@@ -1,77 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153CF219A68;
-	Thu, 27 Feb 2025 08:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C2FA59
+	for <kernel-janitors@vger.kernel.org>; Thu, 27 Feb 2025 08:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740643803; cv=none; b=CnPr2jeNv0aZU/QQ8a2EKCcA6FGZNrNfropAE2vfZTEghCPhOKNfvS2PdV8laIm0lQZq1FffUPf/pD3PQkrXqTwOTjJaM5oDbteYPIKSCGjgKD5/NXVQMpKPlADhsfdd112IYpZjDhJHvzX6wLUAnZnyWjsK3gDhWV7gKT+921g=
+	t=1740644247; cv=none; b=Fib0vUKMN6ihZej3KpthFDUvvWKjwlookkiiM183Cj+MygBkX/RDI5cUhIMX8XTSENW1rOoHhjRmeKziQxS6iI+sO7iPJS83b7GwZNK8Cfdvya+VPsNpgZBqAnAfrBK2jQKRulG3U1inDexK87FJAr4uN2jpPKoIVLdzphq/+1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740643803; c=relaxed/simple;
-	bh=sT9FoMjjZ+j9C9C1Tm3d5T9KzPPeaRXmtqMNkoYoUj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LkVpSOutrmpOSbXNeuUJc3h7XOhq49mXxOWj294sK+w4+xPDI+V36UZ6sm8R9q2FtICwkBhgJgOhTAie1pClaSzl3j/ODRd67ceNbC+N9j02pnF5rGpiuYglXWwQSbl+A4SAHneLguIPYF/yzgEQp2orYG6ZwJ1u7MI2SOfJDTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaKzYk7J; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740644247; c=relaxed/simple;
+	bh=HUyNiTnU+aOLznnW1m5zi/UsNeJTOoxstXeUp0gGLAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HSS1TJuHuvW6wPdtWluFv+UWbwVtyoDuMhISXeBQN2+ksBrIyvD6IHa20aJRtpImeden+wPbm5A1gj+oUyO1lmR2vh7TUE/i75OVISvjP789RyZpW/R34Tu8xXgqm0dhBvRIF74V96x5iXtd6NRCvGDYxKAcwhoLLKBQXGxtgJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gcZpFac2; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaKzYk7J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17308C4CEDD;
-	Thu, 27 Feb 2025 08:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740643802;
-	bh=sT9FoMjjZ+j9C9C1Tm3d5T9KzPPeaRXmtqMNkoYoUj8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VaKzYk7JrOG0sraUOyAup/ViOy/o8eEZ32GYqu3gr5iu8ZGfEsIHa2JHLB11P1S9+
-	 /lnCU021TKUxBz0vqrFJE1gkin5JXTB0a6QmEVGT/Rhg2Atq2K5zjLfk9YxwUfR65N
-	 zwUJd3Kxxxy3ssBkp5uL1P1mSZCSvydJqGn74osNhQeR9lE/fNPcsRrILhs6fk40ds
-	 8JPbHg9niTHwetppsWcXEyl1J19T48xlqPenNYLl+1BrdJP714R9WFZ2rt5zIKvVaT
-	 euk0varEjqsfJzb2tCtznKeR2nUhjf2ursYTWD7c8h2b2M+RUyJJgfqxrkOpMOKF2W
-	 Xi4kAP39Jen4A==
-Date: Thu, 27 Feb 2025 09:09:58 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] fs: Fix uninitialized variable uflags
-Message-ID: <20250227-boxhandschuhe-gesichert-908c190a9634@brauner>
-References: <20250226223913.591371-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gcZpFac2"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e058ca6806so869700a12.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 Feb 2025 00:17:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740644243; x=1741249043; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m83FfewmrcIOWT4jSZsPTdpYjRVnsXVlTkxFr7lMkMw=;
+        b=gcZpFac2mBRYJwPOBxppBLyuJjhrXtCrdPelDZTJjGDvOsHlH8Sg/ntcvyTJJHm22U
+         syCep4pFQOMh5J45+L5QztpU2gT2C9jZ591qHymtIAc50US7xutGGk33FjoSgVZM/Z+t
+         ZfrDydo9LGP5Gdz6mZFyeV7zr6D+15C6tgmxAbxg12q8gfrfUY3thp2Qzks2MgfYB9Om
+         HiXEhPxu+iZgUCeEY92CM/muKEX9qhQLaJoyknw3TxV3O34gnSxqaiom/rry+lp6pYFV
+         RMFMplno8x9g/XEMuZYgMsKO02h/Alti1XMVXq5e/b5wLuwLI8tqlXT3SvirrSJE2YRk
+         dBOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740644243; x=1741249043;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m83FfewmrcIOWT4jSZsPTdpYjRVnsXVlTkxFr7lMkMw=;
+        b=UAwxVXw4AStEZdfStGZyMltdo/ZDaCcbjzyJ1ODUN7QNsru6AesJAtAdtFB07rikqm
+         Q1GLAi2RnyeP2ahIJRl3dHTc0vQ65bLdRDVuR6STvZP5x/rbFbwnaZ7Y0D8gzFMtctve
+         uwRK4LoEUu804EXTFZUjmI1WpViHt4GcmtG8p9kQodu90I6+VrreVW7oA6aSN3K8tABB
+         jGUSEzqrCMdAXU+SbVLRNNzo1s1HBMg0uJmakNBsKHymUepeox9qALqInWsNkI7I6iVS
+         gt1DPn8bKxfR1JAFAPNiFaWn/E2O6Ee4GS19b3IQx1ZpdjFt5++o5Nbq3myTT1u7ddRU
+         p7xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUITfY4Evm7hndA6lVb9i6AFXXHLwpZu4Hh71MNb6dp3hqLaSPLfk/MvkBZ6F1cE4GlAp506u/WQHXooAsOU5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWAGI9GnT8jYea52DDZAmC5b/600oLWpgyeunW/g1YAyafaMDP
+	jhH2xfc4ZPBwRfF2YV2ZZ9ATBW5ZfycN1I1hlA0XV1uKwleTr+WYgWzDHpa2L5s=
+X-Gm-Gg: ASbGncsNFohlatAtCqy5AxL7wPMKZloe+InplXcw5k/sXsKEehz9jcO417kcQk721WM
+	nOgNmZWTkvKxN1RbJ440VGVHymICf7xV1uxjCnVuY5d0JekNh/FnQ26ilWmtLFsTlShcP8r7o9m
+	vVoXJ51KpQ0HXbBD+n+D+blK7ImSbcaRMVV8sqsoAQu07gDvN9LiqkPNxOO5qMbY7kwvBQnVWTY
+	S2oZkKJqeAyfVRuThNi03f/PEEq3PCo2NnxSfzNs7DGNx3MDikcxnOl3vrwoOiXSgMAmWNMC+3o
+	XMiILJEBEnp+YtADL+GMBkIHAiVOZ64=
+X-Google-Smtp-Source: AGHT+IEbSrUluaN/703N3zoDpsqy6bXDIk3HAXQAYyzGSL1JmFS4898+4YMi9izrmbhfSu0hCLM0BA==
+X-Received: by 2002:a05:6402:5285:b0:5e4:97bc:6577 with SMTP id 4fb4d7f45d1cf-5e497bc65dbmr10126655a12.20.1740644243331;
+        Thu, 27 Feb 2025 00:17:23 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4c3fb4384sm740341a12.49.2025.02.27.00.17.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 00:17:22 -0800 (PST)
+Date: Thu, 27 Feb 2025 11:17:19 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] [PATCH] gpiolib: Fix Oops in gpiod_direction_input_nonotify()
+Message-ID: <0f3ea3f6-8ae3-4352-b790-de0642edc4a2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226223913.591371-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email haha only kidding
 
-On Wed, Feb 26, 2025 at 10:39:12PM +0000, Colin Ian King wrote:
-> The variable uflags is only being initialized in the if statement that
-> checks if flags & MOVE_MOUNT_F_EMPTY_PATH is non-zero.  Fix this by
-> initializing uflags at the start of the system call move_mount.
-> 
-> Fixes: b1e9423d65e3 ("fs: support getname_maybe_null() in move_mount()")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+The gpiod_direction_input_nonotify() function is supposed to return zero
+if the direction for the pin is input.  But instead it accidentally
+returns GPIO_LINE_DIRECTION_IN (1) which will be cast into an ERR_PTR()
+in gpiochip_request_own_desc().  The callers dereference it and it leads
+to a crash.
 
-Thanks, Colin. I've already taken in a patch from Arnd Bergmann
-yesterday. So this should already be fixed.
+I changed gpiod_direction_output_raw_commit() just for consistency but
+returning GPIO_LINE_DIRECTION_OUT (0) is fine.
 
->  fs/namespace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 663bacefddfa..c19e919a9108 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -4599,7 +4599,7 @@ SYSCALL_DEFINE5(move_mount,
->  	struct path from_path __free(path_put) = {};
->  	struct filename *to_name __free(putname) = NULL;
->  	struct filename *from_name __free(putname) = NULL;
-> -	unsigned int lflags, uflags;
-> +	unsigned int lflags, uflags = 0;
->  	enum mnt_tree_flags_t mflags = 0;
->  	int ret = 0;
->  
-> -- 
-> 2.47.2
-> 
+Cc: stable@vger.kernel.org
+Fixes: 9d846b1aebbe ("gpiolib: check the return value of gpio_chip::get_direction()")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index e8678a6c82ea..d41812468e1c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2804,11 +2804,13 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
+ 		ret = gpiochip_direction_input(guard.gc,
+ 					       gpio_chip_hwgpio(desc));
+ 	} else if (guard.gc->get_direction) {
+-		ret = gpiochip_get_direction(guard.gc, gpio_chip_hwgpio(desc));
+-		if (ret < 0)
+-			return ret;
++		int dir;
++
++		dir = gpiochip_get_direction(guard.gc, gpio_chip_hwgpio(desc));
++		if (dir < 0)
++			return dir;
+ 
+-		if (ret != GPIO_LINE_DIRECTION_IN) {
++		if (dir != GPIO_LINE_DIRECTION_IN) {
+ 			gpiod_warn(desc,
+ 				   "%s: missing direction_input() operation and line is output\n",
+ 				    __func__);
+@@ -2851,12 +2853,14 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
+ 	} else {
+ 		/* Check that we are in output mode if we can */
+ 		if (guard.gc->get_direction) {
+-			ret = gpiochip_get_direction(guard.gc,
++			int dir;
++
++			dir = gpiochip_get_direction(guard.gc,
+ 						     gpio_chip_hwgpio(desc));
+-			if (ret < 0)
+-				return ret;
++			if (dir < 0)
++				return dir;
+ 
+-			if (ret != GPIO_LINE_DIRECTION_OUT) {
++			if (dir != GPIO_LINE_DIRECTION_OUT) {
+ 				gpiod_warn(desc,
+ 					   "%s: missing direction_output() operation\n",
+ 					   __func__);
+-- 
+2.47.2
+
