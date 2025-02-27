@@ -1,104 +1,92 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72493610D;
-	Thu, 27 Feb 2025 09:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860F42C6A3
+	for <kernel-janitors@vger.kernel.org>; Thu, 27 Feb 2025 09:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740647772; cv=none; b=FUjODXw1KwpatDBKK15G5UAmTZtCq65KHb5tnRR612jDodr0mHZH6ND5nfeX2iXUGpIUpxsUJJDpGjJQsvvv/XOd6ghjVsyt1jQSkz4VNzumUiatl+0v81OLPxNyBYj4ISZMJN2u1hBkshIAN5apiq+ok2OzKKDHJN1pS+W5ElI=
+	t=1740650286; cv=none; b=gT5OBxz+1ro6VoPlfz6r5ukGruPqLYK1vzV72xht2AlSpgB06jWTYEy2C0r1kt9GXXFdUb8rqFSU2dH1AFBY2845HFcpKfzR5638Y47bYiVk1IRePYD1dS8/QzHaKYI3VoLNRl1NASCqQbG07N3zgMlu5f+jo3m2qVPJ/YVP0pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740647772; c=relaxed/simple;
-	bh=yOsfABMZ0sE1ZHQj1FgKQRJ1VKmnNc9RYKwfEyQsWZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UpRVEWRBBCuTA+Gv8JwwS5my/YeUQzlJwo8LRWNUlJrqneMSbScRwDVzZeHRu7cvYWaAI+q7n3n7L7+ji+B87iIXrTsP7zzZFyw94JR6xgL+/ohdPT+3td5tKcBp8hC6SpU9uM5CesJHYjw9A9riI2+hNFkFfWCGmPsC2LL0/7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQOJVIe3; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740650286; c=relaxed/simple;
+	bh=Ge9fC7VXeXg5eotJVyxxvzY/sVzVFFuENY6NvoL9RQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9fX5EE5GyoAdXsyuecbua2V9tr3a9aFY8km4TqDeDJpQOFlsJEh+s2iVejvysknBtFp70zOW9rBZtnR5dQHkBTeJKdq7bDy7eTKqbTKYFV4lC0z9ex5iHmophCxWdIKYmc+oJiaijaNGcLPCK1RedRpxN5kO9K4xwJvuXiwhqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aD/y+JHs; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQOJVIe3"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390e3b3d3f4so227067f8f.2;
-        Thu, 27 Feb 2025 01:16:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aD/y+JHs"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38f378498c9so678240f8f.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 27 Feb 2025 01:58:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740647769; x=1741252569; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WFYMYntfI5RNwyhQrJtu6qewVIVsOL5AS7y8ehMaJFM=;
-        b=OQOJVIe3f4KrDcYbdJiGDh4mgWXilGopQ+BiJrJ2/EE81ULQI9QmjaLiOA30TxPCm6
-         pUJy0KaCLRN8yX/jAC/7LB/J6iQESoF9Yuqowucpw8udMnUYjtuOCuZ1rkZrMfDHeHav
-         JEIr/PIGNz/GjDkOjpvDguSB3g3x0/70QEaShK4CyzJTJWcYgBf+pOB0vWTIdQ9H+eqX
-         HEt5xI9sYrZuED8NK1Uxyw4VwgVvi9wJk6vD5Qd3Ble16WwA8Ckw+OQTyJnawRPHIvZV
-         uMUEgHxkLswRmBuEQ24zzJAMCynPyfNvyxbiVKa8CmsK3ohgOP0Vc3XxwdAI68JCDKcg
-         hOEg==
+        d=linaro.org; s=google; t=1740650283; x=1741255083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=luyiuzmIQ5J/UP1GJ3bUu38sxNpe1CL8R9HpytNsO4A=;
+        b=aD/y+JHszvXIiJEDTAyEKVx0eJc5jY8kpVmSx3dgLfD/s7TVozmasXOB3wQh6OhDFl
+         SkIDkAgBd2x9gNi/RgXd15USWU4oK/5SNSrSQ+VxrwTfYFI7FnEGYgHywmJSKE+HLP1D
+         alvuFN+6N7445PvFRLkJc/4rgV7iVFi19WLlV0Kcf2YImWVrRZvZDH4CTftPtjJ/fYAP
+         xoetbqfb86N/AIlJ+DNCJl1Iuo9r70IwEOixAro2AA5QEdIxcAXlBkIDCOMiJnIKSxCa
+         gBQQpEm+cCkMA4dY6jEEK1AnNdkGXEE47UGgNGdvyE4bl91vZfoRZP8wc/pZUfNf+Tel
+         FIAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740647769; x=1741252569;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WFYMYntfI5RNwyhQrJtu6qewVIVsOL5AS7y8ehMaJFM=;
-        b=e8dutXgh8ZyvXV8s/vT6rYvgQOzO6eAQQ6c/BpzEwpXKa5SjLyUYcEK2iksooV3wQ/
-         TYLPC8laksmPrCFecyEcUx+HWwaukbHDxViODeVQM0/lEk0THGS6eiMVz5WGVqZ+hIrI
-         Ja1TYQpoOhnUGx7EuEPGDHNLodjH5CbMYUkFqcleLOEgjr9bbY2QGa3CxlHiDQ+zEzyw
-         lTqxw6lrj+WJrF6Qw3GAkzOfIVc3oo8UKpHXY+gJUplH/8B3uIEu/ugMuT6OeTBJYS4G
-         WbOqZ1FZPYj6c3jwASP/bNYoubtSDa8MFJ7k3lbYKHnxEyD498oNvFSJksEi54c6CFoN
-         00lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHF0KJasmuWv88M5uT2UsOInhE4/NLFTfOJeEUPGmva6IGZg8PuVAkJRhPMeNjIdzS+sTVrL1/kxcfDuyW74bn@vger.kernel.org, AJvYcCWiwASnSZUoqF2MjjXIN4mEqCfYFnvrCcKpblS5/nUp4wM3BniivXY6b1ThjOgoBMO6IxOCCqEBYUNdA+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYEZ5IjhE4QHixBpg5FtwnRIoeCxmpZnDULRSwNKFosfTk75Iy
-	CkGbuZuHXRaJ2n59PYmJWbU6UCxo0QTnbjv1CaLiBcQa1OAYmT0e
-X-Gm-Gg: ASbGncvhel/1JjCGj6AMDjlmlYDdtDMOb5tUQVjrFg0vq98NBo7GtHwtELO5fuB1ok9
-	Zx+NJ/CnNRhecKheod+VQho2qq6Nr4R8wN9/e9n9EBgqxmbLr44pVehUHUJp+gh7g7NzxO1GPIa
-	oKsn3BcziWAjRfCzILaTfuxlCcCffLApjLjWGubsGan4GLcPY4Rrx/MkvgtWM+fR+VWjjyb+dPg
-	2YqwRLJFeLejcuzQmno6QS2p72Bl85NXkN5qb4IPxEKF+X9NzGWK/HG28N8BMRxjpIZdqMAmUJc
-	/OXrSlwWzHZoT+9ingfxA2JpfhI=
-X-Google-Smtp-Source: AGHT+IFAPTikd8GhfINysJU7hs90/Y2JHzQmgBsIhed/Xp8RlqinQ5hbzAaTGOM0p/I+9bU3S4ieTg==
-X-Received: by 2002:a05:6000:1541:b0:38d:d767:364 with SMTP id ffacd0b85a97d-38f70789915mr18817554f8f.13.1740647768502;
-        Thu, 27 Feb 2025 01:16:08 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e4844c0dsm1355881f8f.80.2025.02.27.01.16.07
+        d=1e100.net; s=20230601; t=1740650283; x=1741255083;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=luyiuzmIQ5J/UP1GJ3bUu38sxNpe1CL8R9HpytNsO4A=;
+        b=G5jEev+ot3WIFRpt18ZSWt3E/JER2h0/Jjm9r58Hw/cHHSNmq6zcDkKeKtKC0zCxOG
+         /MYdyuIobISXCWDOvL2g5pd1Neq5sRrKZMJdZZD/+0Hyd8ZxlsRGyB4WfIwO3jRCydwg
+         nhDWNARjjBzjLgtcuwiV8APJHGNsseluDDSKH1gBfIY3AGzZpwIf654S5fOCAncXKsZp
+         G0BGXZEu+WUlLLzg2FWYrb1xzpw96aoAbzy6FYYuMvUDoZK015chFy1cit7fKOIjlKdV
+         yxocA05zmnHpQ/dV/c8786ZW+NBmD66qpmGWxiKKCiTPRCkUn0JvwV0C6QuP+WrRZ1DM
+         /LbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7B30IM9fNOCOdfnsCa0Sw7Ehwzk6GjVJLjyvgmG953HtFWy7LZBB+2scojt+klv8ga704a0vl4jSGK5dFWug=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxRnq17x2YQMuG55uzcIpK7nTQDsqgIlwAcCVi6Nps2EYm9y9b
+	O5UeNTGx/RPr3bkXQagD56+VfdU0bFe0CeuBwu/OS1WloD0C0wVR1iNqqA9ylDY=
+X-Gm-Gg: ASbGnctzFTWWi+nqAqVmeGrwXJ7lpdLboPPa+a2mHwb6GIBD+NZgUX3NqgCvVOX9h21
+	U2qLUOdf53G5s79nPFvWat3aNd8CaHshLhE5xm8ucWcSFyhLW4fmkVrA0ymuVkbouD6/tByh1Yj
+	bGlsczIctkrD5XsKmr2bxIIrUMUQ9dHU/JsdDmY4ySFl4isfxClv6xcFJaFKQB8XbhNxS0CGk6Q
+	PIbZXS3oWy8pRfzAQZ6ifVxiyIDOHtM1jMmRSq65/oVywLVMWjWnhMzSU7fTR1fucIX0Z+I2D9U
+	xfH9zEwYtpadVip60KQ3BYl4TJ/oos0=
+X-Google-Smtp-Source: AGHT+IFKHbXxbAc2/iGdRn9hXwR8RAtENLAY1c57Ue5l0MtullYL2bqOmgHNPsi1xz1ARqmNqCIOxw==
+X-Received: by 2002:a05:6000:18ad:b0:38f:32ab:d4f4 with SMTP id ffacd0b85a97d-390cc5f58admr10673661f8f.4.1740650282838;
+        Thu, 27 Feb 2025 01:58:02 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf0c6ee70fsm95121066b.116.2025.02.27.01.58.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 01:16:08 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/x86/xstate: Fix spelling mistake "hader" -> "header"
-Date: Thu, 27 Feb 2025 09:15:33 +0000
-Message-ID: <20250227091533.599213-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        Thu, 27 Feb 2025 01:58:02 -0800 (PST)
+Date: Thu, 27 Feb 2025 12:57:55 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] scripts/sorttable: Fix resource leak on file
+ pointer fp
+Message-ID: <a7857c72-89ec-406b-8d66-d9e95657a6e0@stanley.mountain>
+References: <20250226224934.594983-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226224934.594983-1-colin.i.king@gmail.com>
 
-There is a spelling mistake in a sig_print message. Fix it.
+On Wed, Feb 26, 2025 at 10:49:34PM +0000, Colin Ian King wrote:
+> There is a resource leak on fp on an error return path in function
+> parse_symbols that causes a resource leak. Fix this by adding in
+> the missing fclose.
+> 
+> Fixes: ef378c3b8233 ("scripts/sorttable: Zero out weak functions in mcount_loc table")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/x86/xstate.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is in scripts/ so it doesn't really matter.  We're going to exit
+and release everything immediately either way.
 
-diff --git a/tools/testing/selftests/x86/xstate.c b/tools/testing/selftests/x86/xstate.c
-index 875777911d82..23c1d6c964ea 100644
---- a/tools/testing/selftests/x86/xstate.c
-+++ b/tools/testing/selftests/x86/xstate.c
-@@ -391,7 +391,7 @@ static void validate_sigfpstate(int sig, siginfo_t *si, void *ctx_void)
- 	if (get_xstatebv(xbuf) & xstate.mask)
- 		sig_print("[OK]\t'xfeatures' in XSAVE header is valid\n");
- 	else
--		sig_print("[FAIL]\t'xfeatures' in XSAVE hader is not valid\n");
-+		sig_print("[FAIL]\t'xfeatures' in XSAVE header is not valid\n");
- 
- 	if (validate_xstate_same(stashed_xbuf, xbuf))
- 		sig_print("[OK]\txstate delivery was successful\n");
--- 
-2.47.2
+regards,
+dan carpenter
 
