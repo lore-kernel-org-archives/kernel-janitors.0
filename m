@@ -1,71 +1,70 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71A623E33B;
-	Thu, 27 Feb 2025 22:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC227781F;
+	Thu, 27 Feb 2025 22:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740696046; cv=none; b=dnRb6yYGNuMufJFM6c7ieF79nhVSfjjV/gRL71rCKV7c9UN6Q1vDdDp5L/xRNj7+lnMo+xbamTsM3JiQhaLHJVPdtwSoPzSJpu3Al1zY+s4BpQ6DCq5w1pPOYFXOjXQN1fxIxxLV9Ba4MHhmtyvrdiEdbailrDxKLVqo/7Agj1s=
+	t=1740696684; cv=none; b=RBufhoA+p80t+7k+1MhSv7SHI2SEyR2h/1jkztsp905v7l3moSATros2WSNdvPnXKDPSmK3z4obRmi5iol88jgYh31pLKob2ZY4M3zzIJ3uJQ0OBi/GnVHzcQuIbRGmXeq+T+Qp92ueow6YWilpQyp6GAo53khNBBHsagLxgKgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740696046; c=relaxed/simple;
-	bh=4FpztWJBkYzLbgpzrZ8kFBwYl/EaKs00lCTCkSKF1yQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c2V7rmJ5gNk1Q2M06eLw2M1e7/5LZ8GEbgKqUFPHW6hNK48lB8EdaKZvEozIe6XQiCSxMiVRPZYtCyHZwZzIqaKRTl79jpPKjSduoDwVCISMtM9FSiuSWbwDKnLZMfGhzuxWWxSm8Mg70IGAwnOl1uK+HGtE5rZvcMDEvcZPvw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXWwAvvQ; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1740696684; c=relaxed/simple;
+	bh=ZNi7C6bEWTzQUwdQGL5EqHY5BUfHTwi74qKGhnSGiYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LaOIJYgJjiBoS7YsRflNH0aLwphUci0KEvD9hV0nt124z00O6fXRzoTMUBiJCFTf5aDPBqN4//MPFd2PGZLRZ6Z8mpiyKXxe9jblsunxa/DpVLBG36WcdC4sfUIqXDC1JrSttO8u7+a+jZlJemrZfvRAjUA5SoGm9jGW7A4+tYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsdqezS6; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXWwAvvQ"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43989226283so10125625e9.1;
-        Thu, 27 Feb 2025 14:40:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsdqezS6"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so10069475e9.3;
+        Thu, 27 Feb 2025 14:51:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740696042; x=1741300842; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740696681; x=1741301481; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NUl8XE7+Pcoi1nYpApiKySL0TeiutYm0CffFrTI9E/A=;
-        b=BXWwAvvQrGvMIef/3qMddsNW150v0BgZDKGR3V58PnlwZ8qGXKKq5y4AykkoDUaiGb
-         mxMysUJ1IxsBBeXVHnyhsFzV8sE0c7xZVRicB0HFWYCfLmr84qzXL3O+sULnzoXDvMh5
-         0HX1C+8uDzDEMRIairmeY9mzWU/BVnUXp74o0A6XrpItd5nsGjcbOry0/pdja+uwNTCu
-         aadFOuZaa6ot99SCEXjq2oqa/eNmkvq2LYXyh9ViV8cvUZ5HO7Q2VnoPUeOJh2aL177n
-         +n5rQHHaJmKT4813y6Ypah0mt2WSB2s9jIrp6XnhZ6VbLTo4vvqmrJQbanDI77rppFWY
-         pO8w==
+        bh=WMU+NZb2AVhk09uVzN7k+ZVKtf4IpbZeTSZv3DDk2aY=;
+        b=SsdqezS6Is+jwtBJtMIxYH/o1eRMpljnkeR1K0JE/pDVo3llt7wy1Ugv1OwTwMVvQh
+         GepGuEhODCVaPD6NuGpgDZx7YXsWtAfTBALDUwCXvMozLVBIocjp51SbbpQoeowvorQI
+         jBVsAgkpYZnGGofclNd181aSx2FMO9ASyFPJqr4wTFzLIOoDvKv5ynaWha6u/zpPxo4z
+         SCRWn9WAnDje3wUOf2qddCf86qeBMhZGwWCBw0ySFEEgl7VIxoO5xNTXt8KYOojz68Ar
+         Wbwd2yGE7rxiX1FAUTcYz/P2wMhQJdzy/liS31E83g1HIpkhJf8w027r5xFLbO7R3GEn
+         gInw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740696042; x=1741300842;
+        d=1e100.net; s=20230601; t=1740696681; x=1741301481;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NUl8XE7+Pcoi1nYpApiKySL0TeiutYm0CffFrTI9E/A=;
-        b=JVf7y4Tsdeesj/gvHacFJUxv6VET7woB+t8iN/nZFYhPqAcQEcRYC190H1clfKi7gE
-         JYLNW6Z7c3Ay0o4nY+LhP/1crynjSasotCyCVThgrVzK2gQwaBBm+jFuLfDLMJDZN+vc
-         PzH/1ntLp68T826rxA11joRsSZabmChFGifjzV++yZL2j4fKy35n81vAqvM5nQUs+4S0
-         pwDGT9et7i/zBy/heskDHoapN5pknY4RQhLCs6857WNGteSuhwv61iFu8tPPydBx1KnZ
-         GFat0zes+KN38hvZRXSY1gTosWKvqujflSUJDOTkkB6+BMtbOE062RrYSdqsfEX9soQn
-         QRXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0OPGAQnJthISaNo79g0ovTOo5IyqmEbualGJK+A/dQKfBbq0J3Zu3ZhvGuTMGcAtCPPfSa6Au3uikVV0=@vger.kernel.org, AJvYcCWSoZk/X9OtmPbK/ksnwk65plNTq4WWlJ0eqYbi9Jb+ajlcMg0E1QXwSLkuq0HGQPP4/StPkrsPSF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyRALnDWBT19Gk1vibt6mgsDXA9eIInAAzjSX/Y1t2fnF/WL1m
-	Pai45HWy4ewGV9pTOZ4m+CaCK8aou1WzZBvWjnlpiBwMtxoGc8/S
-X-Gm-Gg: ASbGncs54W1HRNL4GSZSR+JMSIYKmBUHs792IKxQv4tdsX6HmJLKkJRJ+Qhp5ZW/zPN
-	IV0sapIVdD34GVaP+YgA8fDepbCW6FIwLKsCxl0EeYpadxnqsAT0+da3ZGPi+NoYd8RDjnUtNTs
-	GLoC+ON+Xn784p3jQqPlFO9iWamVv6NgkRp5Pu/c5535vfpOqMk7Caerq+gIB7xh0tjztnljz6v
-	GgWa5zsO4JdZb+kTIqhXPbA0LOJhVsEPqf73Jkmbsb7GOwikUJwnoCDfHVnxPOG4DKf8bthbent
-	35sSQ9pveBXPk9xQm0Xh/BiUnQo=
-X-Google-Smtp-Source: AGHT+IHM6HEvjXh4zM4c1gmC8eykfelcPVykYPxPWzXLli1VTTBj6qkEd/hrQ+pc2XQ0Fu0UniZbLg==
-X-Received: by 2002:a05:6000:18a7:b0:38f:31fe:6d23 with SMTP id ffacd0b85a97d-390ec7d25edmr844668f8f.23.1740696041892;
-        Thu, 27 Feb 2025 14:40:41 -0800 (PST)
+        bh=WMU+NZb2AVhk09uVzN7k+ZVKtf4IpbZeTSZv3DDk2aY=;
+        b=MpvrzStpXQvFaINI/6EQJYTDI0eNc8vSqTTTjJ5Qet/v6QWLkPISSA60DwHgHk9O0z
+         ioDuBS4aGYumNWrPOA6RtuCFYjshcTnL1P00Tr0qu5lXAdXI5ECvFRlKrur/tUMMNIjf
+         ION+exDvDqRESIiZFFF59CaguX43jK4i2kB9ofdCTm7wXWZkzkjRTFtH/wKnpNHKSN5A
+         X1BF0lc+i/I2ya0II5EeH8gef33MpO2NRQTl2unILjha/VcPtY54/5LmgArJpso0lrxA
+         cuj1bZqwpMb/q0vO3CamnQzgtwgZNO1bFvjSG6BK1dzjwCOhVD/VRDA2CncaHz0fZk2r
+         zedA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRhmZR/wisiGV+cx0a8twkT6lx+B1YPwIrmE0lNQv3MDaTfh41g6MuyZlF4rcDCw+IzSgHcbpe7a1U2w==@vger.kernel.org, AJvYcCW/64BrlhyJJTI5a5FEJp8GE6Wq5o2X+InkwGvW34VyXFxVxe2hUF92HqrCfkj2YKPxSA1xt6wdKlq7eIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4egEdupzxAPcRwsHiNemglpKac3CWC4cj8TVep4hr424uqSUk
+	jHDhZTA2CVWBaHVyCmb65k+ptPMkvpg5VWl8waRo1mu9pWQ/ldMEutoJ5sDppfw=
+X-Gm-Gg: ASbGncv8gbp9xBZRWKHh4DRHtxJyOcG/bVE7aVMlZnfC+42ZakjD/soq536AVeSjp8U
+	+qDk+DiCy8J2hEpZ2Uh5eRg1/UslimQSz+Ixrvbuui6wBXeKwCYN5CEaVd046HIiIOMmjEJbcG9
+	3BSZNp5vx0w4wbSDADIVDkWXHwtzcD7HmlqLM2oYcziUfrbnB61g7RQFhLtkJrYEy2Epejx9yFK
+	Zd+x8l/xIeya3zY2yTEupOTPaXwNciRt0Y0sQaWnAMMR76/98NNHZWAzZg+k3NHx2gZwqv2ZE5A
+	ABol+sAPgCxD04dSH0e0MzQ7vog=
+X-Google-Smtp-Source: AGHT+IHPqkfBSHNgZwgyytyFDMty3HvWbsqx8cQXA84xBSInA6L2qPeZF8jWee0m6ovCoUw5FTOGkg==
+X-Received: by 2002:a05:600c:502b:b0:439:9828:c447 with SMTP id 5b1f17b1804b1-43ba7d6635cmr1864125e9.17.1740696681215;
+        Thu, 27 Feb 2025 14:51:21 -0800 (PST)
 Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e484451fsm3340895f8f.63.2025.02.27.14.40.41
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba58760bsm66555595e9.38.2025.02.27.14.51.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 14:40:41 -0800 (PST)
+        Thu, 27 Feb 2025 14:51:20 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org
+To: James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	linux-scsi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] thermal: core: Fix spelling mistake "Occurences" -> "Occurrences"
-Date: Thu, 27 Feb 2025 22:40:06 +0000
-Message-ID: <20250227224006.660164-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] scsi: lpfc: Fix spelling mistake "Toplogy" -> "Topology"
+Date: Thu, 27 Feb 2025 22:50:46 +0000
+Message-ID: <20250227225046.660865-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -76,26 +75,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a seq_puts string. Fix it.
+There is a spelling mistake in a lpfc_printf_log message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/thermal/thermal_debugfs.c | 2 +-
+ drivers/scsi/lpfc/lpfc_hbadisc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_debugfs.c
-index c800504c3cfe..0cf26ea63370 100644
---- a/drivers/thermal/thermal_debugfs.c
-+++ b/drivers/thermal/thermal_debugfs.c
-@@ -319,7 +319,7 @@ static int cdev_tt_seq_show(struct seq_file *s, void *v)
- 	int i = *(loff_t *)v;
- 
- 	if (!i)
--		seq_puts(s, "Transition\tOccurences\n");
-+		seq_puts(s, "Transition\tOccurrences\n");
- 
- 	list_for_each_entry(entry, &transitions[i], node) {
- 		/*
+diff --git a/drivers/scsi/lpfc/lpfc_hbadisc.c b/drivers/scsi/lpfc/lpfc_hbadisc.c
+index 18c0365ca305..8ca590e8469b 100644
+--- a/drivers/scsi/lpfc/lpfc_hbadisc.c
++++ b/drivers/scsi/lpfc/lpfc_hbadisc.c
+@@ -3524,7 +3524,7 @@ lpfc_mbx_process_link_up(struct lpfc_hba *phba, struct lpfc_mbx_read_top *la)
+ 	if (phba->fc_topology &&
+ 	    phba->fc_topology != bf_get(lpfc_mbx_read_top_topology, la)) {
+ 		lpfc_printf_log(phba, KERN_WARNING, LOG_SLI,
+-				"3314 Toplogy changed was 0x%x is 0x%x\n",
++				"3314 Topology changed was 0x%x is 0x%x\n",
+ 				phba->fc_topology,
+ 				bf_get(lpfc_mbx_read_top_topology, la));
+ 		phba->fc_topology_changed = 1;
 -- 
 2.47.2
 
