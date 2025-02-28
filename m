@@ -1,41 +1,39 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E02D1F4CB1;
-	Fri, 28 Feb 2025 17:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1454D17A5BE;
+	Fri, 28 Feb 2025 18:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740764958; cv=none; b=HYrwctqsEc9U45oOlkx5Y0H8rZuJ3hrSNxaT/WGr1e28D213JzpqJPdA8B59+1Y2JSNz2qGYJPIdhprIbpCwmaOQDQhstMb0Cq+C1hZcB19p8Fr08zuxS23P4LPEGhPSyj9ahbFNDTk9jhMyRGki6PIJug4vTid9LkF2wbVo/ws=
+	t=1740765780; cv=none; b=f8yhTM5yvVta1GW7jC/FMlf9O2UKoBqsP6RX8sZujUnEg4a/U1UgUX2Uv/A7KBYUYfEIqxP18Aazbv84uVuqWkmr/a/1KhWz7zu60ZSX7FjKqTdGk3myEVse9o6wZkBQCb5ErPcJS2JhR5sWu/2MajVYBMAopk0YT3CkX4wecSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740764958; c=relaxed/simple;
-	bh=08K4zbL4moVh6XPPzT6eKUWH2fqmPJidrieCbWuG0Qc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fcWQH67Ufx/+PniHsi7l43/EclwfQGxhzToBgWz8ZFZ1Bnw3GYREWju/01SicdLQ79+ih+ZhOew6odf5bWVGN2nrjO62ZRa95zvwVRAW+2M/UH2oTPECeTwPQq6eiA5XnFuLcZIdWSc6aipVWAqC+0Joh9+9AbCLZT7GHwO1df0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=natalie.vock@gmx.de header.b=gzCsLIq5; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1740765780; c=relaxed/simple;
+	bh=G1RdgFYwYiv8OZYyj0ZW5nrkjWK977pB0/fDGk9nHiM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=AF+vtP4K+XRr10u2rna+LrdIfvWiHm7NDXa89EuYMNSnFg3Bev1bILFzhYTqAZ/A/3P1IE0VYM8OkX9N54++RFHGt9D7GM027qFrznR689xvg854a2UE5UX32OJKWg805jTI2MlgJQgvke4KGS0eJvBt4TxW1q3XliU8B+1uS4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=w4EP1Dr4; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=natalie.vock@gmx.de header.b="gzCsLIq5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1740764953; x=1741369753; i=natalie.vock@gmx.de;
-	bh=TysCmGGP5Rt/4MMj9mBlLj3WIXNFtvvwb0fijWQQBEs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=gzCsLIq5mLpcIiVtJIo9uJa0WDhblgB+5wiIy3xTh/0vsJ3I/RSt+zyaYn/++IUU
-	 VqzIYI0e6nkqtioBiHP4Svt4TDsr6AJXhZaAr0JgjSEt6IZ2fB0aXvrByS8HYcFeo
-	 bDo/i8NKbsYhEr+E8cfj0O+uYmjL1iNxHgVIQvG347P01zXaeyny003e+nHjNBpF/
-	 krEE6HcwQSD4zsExoJ0J8ZE7Qj/GgHo0xNnlrmCl7K1K/EyxmloMu42eo1m49iHlb
-	 Zvz2cEarSE4/smBnOp67Oy84YBNZZc17FVle5EqXqhEGPL/a4z/hA3QmlZkcZ4esW
-	 JQYnGiHF0mw+KkrH9A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.3] ([109.91.201.165]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MRTRH-1tbbdU07oT-00U8Ps; Fri, 28
- Feb 2025 18:49:13 +0100
-Message-ID: <642022b6-ba71-407c-99d0-fffb58df2be7@gmx.de>
-Date: Fri, 28 Feb 2025 18:49:12 +0100
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w4EP1Dr4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740765768; x=1741370568; i=markus.elfring@web.de;
+	bh=eK4M2CFdXyu5HI4LNXAJHZUld6l0gBUVOZFtbpGEcuM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=w4EP1Dr4nX7i1ypthZxZaqC6R8RKbvjT1tbSR5Sd9XcTggZJ3CoAP0PdZGtijFog
+	 qKBQ93iiZHBzuSendP6hW5q76+n9GTq82pY8GYjCZOq2BXSVAEZlcRDok++N0Xsw1
+	 jHboR3FEhgJqt+OmZJMs/cHOb6X4eiPCsssSi5NlgRWFkkDMZgPKVSQqkr1TEm5DV
+	 VBR4j56vbl3P/0W/MrbjntSs3oNTaTf76kNW821GJOkC9yG+ZWngWnIwaKeT8PRoe
+	 B+YKtAJ05q9X4UWRUzX51IQ5GXUIdqMuQ9ZMa3LO7obSvyrj51R+2S0KjskuBSCCw
+	 Didtat45J3kGDz+ltA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mv3UY-1sx4XI2bgG-00rzh6; Fri, 28
+ Feb 2025 19:02:48 +0100
+Message-ID: <d1a384c9-f154-4537-94d6-c3613f4167bc@web.de>
+Date: Fri, 28 Feb 2025 19:02:43 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,86 +41,83 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/radeon: Simplify maximum determination in
- radeon_uvd_calc_upll_dividers()
-To: Markus Elfring <Markus.Elfring@web.de>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+To: linux-riscv@lists.infradead.org, iommu@lists.linux.dev,
+ Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+ =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Robin Murphy <robin.murphy@arm.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Will Deacon <will@kernel.org>
+Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
  Qasim Ijaz <qasdev00@gmail.com>
-References: <225be170-472d-40c1-95ed-71b452740ae7@web.de>
-Content-Language: en-US
-From: Natalie Vock <natalie.vock@gmx.de>
-In-Reply-To: <225be170-472d-40c1-95ed-71b452740ae7@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] iommu/riscv: Simplify maximum determination in
+ riscv_iommu_init_check()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pfjZqJ9EAd9/+f5S1bPNi20hb76HzRttQuCU8sST9HqzSn3C5EQ
- YEs7SXMxt0jTQWTKzWgcvwRstllrbmjOkBTRP9r0411JXNu3ZiQDzbMwLFF1Ztaibu0bNh7
- CvIOpWCvo9N/Ac7iGI1c1ITI6zHbPGQLoLE8hizfh2Xd3/zqizzTeXD8CIxbkwvUU0gIepP
- nvS8WyRp4QRl+dup8enkA==
+X-Provags-ID: V03:K1:JhTdCVQrTH3pRqWkfDnqBWlut2oSUyDj0pt7WEcCMTNueMxWxYg
+ JvvkBvFN/0ZMbF4W2dISPA1soxLiP4NNwwKMA/XAAj0qbmlpcKLANJy0EcVwmA+40xn5CP2
+ Ad4v/QnlvWdYFNJAieE/IZxdvGE/obOvtYYLKbkwdsVUwewbDqnvqVsoES1Zo4mxIgSgk1Y
+ xm0ZqezCcfCzQcgo0/teA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Uc1rwjwZJ8A=;tsNj3Qj3va+BSO8M3orHrkhF7lM
- 0gQ4cbk7A6tp5MK6F8nZFkC5ilAnJgcuIcEetDyHMKbQKSZyMFRYy7CU0lA+0Q65TlR8PtbLF
- 84QHor1XOL27bglb1DoJDSPKqKSnj1fcMjsqbS7cAZv3W6oXbgX1DobiCTc4jc1Oha0vv1yxs
- 9fPgqUy5UBxge7s//45E9BabSCMMq1y3w33g9fCm/uTfAxdKkxCUvIGP16IL0INy8mE12V/8h
- TumUxqf3B6xt6ICw+8SFMZxvcNlas6PaF3CnjU1Rr3TfyVdkGSc+pngGEfOjFgagaSiLbU8wz
- Nzq3aJwk3tVaxEfqyK7C3TUA6nwSrzlfuaAuat8Z5sEkGMtrCaEiYz6Ft4PyCUqK3l4fFiBIO
- 2cmaOl45duPyx73r1caEFe45cZBJXweQ1N0cqoetP/TpwST3oKi4bXOTqfX0QAXFAgJACvfru
- GcAXR/Vn03+JybR0Ie08aDIiJ+2SutWtOnqY0Rc1WmOi4IqzzwbKsMMmRwc1ctHMd5p+fycc9
- nT5LAvzyy12iTydnS5O3FE3NIiwTPU6TM4Gv8yiYRwdFEGmxW6KX2xdVRu+qVln6mF14jctOt
- Q+LOLHHSqqZhLHFSCnMkP/lGTG+8b5qYZKarKgpDhXIjr6xwLj1bSOkz8qCpkAV5TNCjhhVBK
- kyFHsGW7xzLsKtiMKf8C+KexbXWP9PZ4XPSq2ycJ89K51xbRnse7bmnC5QkZmzljZcZIJIVXh
- aFZwwDsJ7Z6zegPWJdEJUUU8jLFnvHKCReQ6QjGHORUzFSIrdhcSJk6DlK6JFQYJ8Am0KLAo7
- x5/dSdyvMS1NY0pV+/cjPPd6ggWHUw3IU3CHkmZ9ywimEA6ediLmnkZ18e//zkpR9eQgbxiBC
- AEtyTCoVnZeyXVRqMl/cHRTy2jnvTexBYhrvlcZY7/9SuIv9IeL14SvdQ4o+4xvG0iGQwFWag
- 949zE1NzkhDwIxA8xmRVjM/gxVmM/u0QdOTwDa96kSnOE5m9wY5g0EkCF50JFChHqbcWdF5GB
- aoKv8EtHS9J4IYzKRJ2SNgg5YDP4Arn4TSU5vV0VaL7e4Ojtt5FVAcaXjawiE14DmfzXZ6BOU
- ASOm4hGix7foCrQh+lSs28PWLsqtNDRG73kxc6tPPDjX4DhFSik3Xmhp13nhpn8c1WiyYKOAJ
- Iay3QoS9vkCUdfyKkz+RmdzOScAscclgyGAGociNcsjA4zvOJZziitlPOL7fuik8Z+DVnGntY
- Y0WxNre7gb5KOLJdFbic7jRTI4t0Hh3vhPjyuisEFsa5Qc/iM89Zs24T1cuE/mRO5h3gZufot
- 2UhKTL7FxnaWbTJBPOaSMKzI3wQEoH0KfYRNXYJ/uPB7YUtKXeu4pktrBl2Uk6WvUJOvRrq89
- Xi9MQN1czbTSKqSXpLfAra/i1SWrTyqxtI8ba1LELYBKlEk9kgd5ONsLWp
+UI-OutboundReport: notjunk:1;M01:P0:eSSW5lU399U=;I50OgSrD9TkwusxDqXip34QlRPb
+ VRJrx5LDHhRSjIqkw/dYopfM+HANiY0G+c3eLx3BBLrU4nQf1wK6Ptv7B/wPsWy5zdPVSEaX9
+ vUYVYZ4+zKZ2Z1gfTMeC7rFSSCxoyFou0DDz9SNV58CgbpSfEz+CKe4KzKAbgiQ6gWn9lfx72
+ cJz4a14T07W/ywdQuJzzg16lvIMdEXUqDD20UFkxjbeB4/xNR5++coD0wxX1U57pKGwNdGDRt
+ W3ktG+3W1r/HGf0S4eEtGLAxtUdlCveX59LZ71UNmXihu+lQ//h7iJdxykLIrbDYzZtMM4MJs
+ tPFOqhSKNGKtA+/1RfOilWLER/eXI/QIlbyajgEc+Zd6vlhNMsl6fHwHFeAZJNTlISnqNRoo3
+ alKI1FaOjkJplEb1U0TRzVPRJFYjQvN/SKZdOLfKD+fTDFTNHR64TMvNgy9WUOIH3S9Lh2xsk
+ um961lNiFYHwMckYF3IlZIXVeHfDF8q6ilw73XHxgJclefs+Q6FWQZklPg+6TCc2csBCGt/Xm
+ +wOFBdzcbWxIeKumkd3Z5StntIryfQFSOgEWtSivspwH9WMOxpobSHU6gEC7nMMbOlJVj205N
+ a7xjRMSxNl7GX6YxMv36bt0Pf9LEiYzyhIyk6FxBb2CQglnNhYZd+Zue4WJIpsJ0mhFoxw8DX
+ kADH+IRlGlQzGC77mh1IcyXV6PDhiuvnukjb/6oadLVP5tLMFPogFYiZK9T/wB/9pQpoCa5+k
+ uOO4LUjDC4i01UB4LLO1Lfp5Gge6TxKg/XorK3U8+VvfDpg0vMHYDa/0wiRu8ykBvVQD4JI9p
+ fKCamJC/+mc0rG/pAjcjd+zj+pUQby6FHHfif+p0YVKa2fuSAPk5aZC6u9o/aVeBTUalTL/8G
+ usJDKebWf+t7CCa78fWXpnFYMmO9CQMjUL7mZvnC0D2LZArag8gKINplrxUrrkU3P3Bw3XJmp
+ G4+qlRUcmolGOx1rcvbdw06ac1J2kFZmb3dhe/ygt4nv4WvKNnPp4TOrElPZuWKOXPzhygvDi
+ vDICyLwD6btuw0Bok8dMsjBiCbSSaVVFz8TyVkInur1ZOHsOJC3Huh2OWdYFBNTXvS618/Bnf
+ SdoUi5c6NfseHwMEX2RJS3YaLVvj0fFEjXOeElxU3rfLP2Db8ho3epAZOQfZ1g7NAdE0MMfc7
+ G7ohwNc9erqsRiugD275jtlTJXJjKCIzcu6UjDsNs7/LaJMOpopJDX8Rc2PIjO/iphLlE2ZgV
+ 8uP57d8MaQfkB92jb9sEv2OV41ZHukzpyA4f/2o+0VtxPvvhjwQdppRQ8f64zTZKnCAm+pjGr
+ XLYiWWlCOWzrBAW3PXqokkrcktaepxR39XsZJcc+ctjmrwSb8iWYzx18ucRR+Zg2MLdYQ35j/
+ p6ZWo825qxiSkH3qyufQVpd35UuSWAzxDbzhp4FFf0dxZQ90Uj2yYmtJikARBYOg8RfiRHVr2
+ Mz8SVkw==
 
-On 28.02.25 17:36, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 28 Feb 2025 17:32:45 +0100
->
-> Replace nested max() calls by single max3() call in this
-> function implementation.
->
-> This issue was transformed by using the Coccinelle software.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 28 Feb 2025 18:56:00 +0100
 
-How about something like "this change was made" or "this code was
-transformed"? Coccinelle didn't transform the issue, it transformed the
-code to solve the issue.
+Reduce nested max() calls by a single max3() call in this
+function implementation.
 
-Cheers,
-Natalie
+This issue was detected by using the Coccinelle software.
 
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->   drivers/gpu/drm/radeon/radeon_uvd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeo=
-n/radeon_uvd.c
-> index 058a1c8451b2..ded5747a58d1 100644
-> --- a/drivers/gpu/drm/radeon/radeon_uvd.c
-> +++ b/drivers/gpu/drm/radeon/radeon_uvd.c
-> @@ -961,7 +961,7 @@ int radeon_uvd_calc_upll_dividers(struct radeon_devi=
-ce *rdev,
->   	unsigned optimal_score =3D ~0;
->
->   	/* loop through vco from low to high */
-> -	vco_min =3D max(max(vco_min, vclk), dclk);
-> +	vco_min =3D max3(vco_min, vclk, dclk);
->   	for (vco_freq =3D vco_min; vco_freq <=3D vco_max; vco_freq +=3D 100) =
-{
->
->   		uint64_t fb_div =3D (uint64_t)vco_freq * fb_factor;
-> --
-> 2.48.1
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/iommu/riscv/iommu.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+index 8f049d4a0e2c..31d20016a0df 100644
+=2D-- a/drivers/iommu/riscv/iommu.c
++++ b/drivers/iommu/riscv/iommu.c
+@@ -1588,10 +1588,10 @@ static int riscv_iommu_init_check(struct riscv_iom=
+mu_device *iommu)
+ 		       FIELD_PREP(RISCV_IOMMU_ICVEC_PMIV, 3 % iommu->irqs_count);
+ 	riscv_iommu_writeq(iommu, RISCV_IOMMU_REG_ICVEC, iommu->icvec);
+ 	iommu->icvec =3D riscv_iommu_readq(iommu, RISCV_IOMMU_REG_ICVEC);
+-	if (max(max(FIELD_GET(RISCV_IOMMU_ICVEC_CIV, iommu->icvec),
+-		    FIELD_GET(RISCV_IOMMU_ICVEC_FIV, iommu->icvec)),
+-		max(FIELD_GET(RISCV_IOMMU_ICVEC_PIV, iommu->icvec),
+-		    FIELD_GET(RISCV_IOMMU_ICVEC_PMIV, iommu->icvec))) >=3D iommu->irqs_=
+count)
++	if (max3(FIELD_GET(RISCV_IOMMU_ICVEC_CIV, iommu->icvec),
++		 FIELD_GET(RISCV_IOMMU_ICVEC_FIV, iommu->icvec),
++		 max(FIELD_GET(RISCV_IOMMU_ICVEC_PIV, iommu->icvec),
++		     FIELD_GET(RISCV_IOMMU_ICVEC_PMIV, iommu->icvec))) >=3D iommu->irqs=
+_count)
+ 		return -EINVAL;
+
+ 	return 0;
+=2D-
+2.48.1
 
