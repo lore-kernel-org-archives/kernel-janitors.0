@@ -1,138 +1,107 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEFA1C3029
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 13:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3A31C3029
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 13:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740747835; cv=none; b=EP2OneGWzA+g/W4TLBsG6Z+EDY2mCOzTuhmOaPBZRGSrPcvXSYU4PsK6mGXx485lkG3qbCr9Ln6vgkCck6mNzyQ8jFOuPYJz4sl+IXEZ5qHvwXyvQ3xkEEfkpPvaxAyR7oHQrvJ76DUr0xFOmdKYzTqT+n4D853AuW+uM+nNmEA=
+	t=1740747859; cv=none; b=pVfIXpQ6hBzN8T1oaGbsCZQo3FbuZdx9VUVIZXtetEMxJ3MZle/QQ1Va9BXFSOxjsxdDAzC045K4ggU2FNMwOcQqu9gBN15dfeWZUHQ+sonZevxeJOi0g99wSuyeGOvs81yr9TiSlH2MzvITYJyi28IIGTf8daEHIZ571DSVKZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740747835; c=relaxed/simple;
-	bh=Z8rGjEwAbkQIKDGpIgchx0Zd6LwZtQmZVWPouVyY5Tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LDsxoQvivqfxKkg/9aXjNv/mUoItZ7LNuU1pfkv3LgPHIArY00LpvL4AvZS4uXVYpuICSIcz4xIvdw1pGQH5borNmQpsR4MWZtRnKuvoT9pk32ErZ5LNccTwrCEhb0QOfO8jyJ7mH7p3cwfUnNdEpIOxruQoj8MJ7W9hGB7ycxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rYeDt1yY; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1740747859; c=relaxed/simple;
+	bh=VhPyMoEJWSHzL635uSgBkZm3dqp5Xsq94bQLc3MM460=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GaKlyiMFrzYyz/q04H7O2mHAqTgFZ6T3nYL6k9CszO5XfBSdnSZdoaA7zeGCTY81zFf/87Cn77oJqucc6OBLEpz4PClIoauAePOGwAF4xGWgPttdk4hUdBrgxJZbc9rFZIt/q8p7wryc/6fBd2K+1zgr/7/JkF9TVtZjYG1k//o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q/cro2no; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rYeDt1yY"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abbb12bea54so389207666b.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 05:03:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q/cro2no"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaec111762bso366204566b.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 05:04:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740747831; x=1741352631; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O1trOWLfDHP4Lned1Ql8h/v5AxbpHf6CxozuPbBuR2Y=;
-        b=rYeDt1yYp8TRWQlyv/1WOgwNdTFiHjsN4qf70XLnziYZMlypo+0sBYTbjA/PPzUxJT
-         LJuGD4br2HWN3rlYuLdanl96GMbQlmYNUvJ2oDihL9ftMABophzYNU1UQefe8MRxfiPw
-         Qi/wQtzgWW/UEoABmT/qnULU1kQJ0HJmEc9HjBtKz0gA90J22U6Bfi5ri4y06OlrjjCV
-         vnYwmbt4roDaK6aiJ6fnTPxYONpuY5hJmrHs/LM3ySilM1URWf0h/3JcO5pEHS2Vv5Lm
-         r/kQEa+bgjlqYVY7JDonOztK0RfPLDU5517AdEvszoDrieM+ZovmQOZo09PXwHsOFFYD
-         JOvw==
+        d=linaro.org; s=google; t=1740747855; x=1741352655; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=10Fkhp5xsWvMhzDZ9Hnkhm34939uK3s6cg26798CuOw=;
+        b=q/cro2noUaTTqpexN6t86qhlX7eBZntO2OL3xf6hjUUA7x1l+DBXMWpcsrPX0WrKXX
+         y1DZeespD+Tm8P618HqS7YwoK7162gR6V+cUnJiRCKrtHv4ZWE9KUsizpNiK488rv1Vt
+         6FqTS7NSlBK0aUMGIERJ1Ur2sjunPUOdlglO/8RPUzXPDm316dtr/ccbBAF7jv2v2EcM
+         3+Wk+6oBC+4hyWwP/TixxqmnIvJlvGrJttt5OIPSLEkuhhxcAdoUwhdDjED094hk7fap
+         MQIjpS+9N09Qn3chD1xUrJ0yUZzqB+rXMtVTmbD/V0Q0JhYYjcPuCaTVqmtCQTawT7C+
+         8doA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740747831; x=1741352631;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1740747855; x=1741352655;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O1trOWLfDHP4Lned1Ql8h/v5AxbpHf6CxozuPbBuR2Y=;
-        b=UG0P5DZhdoNV1NNQ0WlsG2/66L8WDaZ+dNe21k5wWKGU98FRgni55iEUtAiFTvfPgv
-         Pl34uZVxZw4zCfthVjqnbfGK3DrS1kvm05X0H/Jz+YzlBeJcCm+YDetz7dva/bfCwpq0
-         X2lIercJQ31JGTetNuRF676lsZaQDszZP4s5dslYmOV3/K9KX5fDKBJYHFWEZfDVgyxS
-         nFpWbvfpdrg5ERN3k8olldM/S1doa60HpwrtKQcVxNubogWHa6YcINt9o51c6jq97mtd
-         nmuKqMjOex4+cnvyvvb2iz2sVYD3LtEMXpbfZZLx35005MwzBbGtSCt/ryxeezzdbjN0
-         u6VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXLI4HoltPQ0V6qT9QOMt8QAoIOvaKH4bmNGI10i7O5N03npMslwWCKLGP2/D/aGa8gOaTawnd2k2jztCGAR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw53FrsH7D287TShvTb50bDoXzX6bLBz01klbHwYOxYq2duUhYg
-	2t+9yf3fraw+gY385i52vuvMQTwlM1neS56IG8onsNlfp7dJeddyXEGuJkMs7FY=
-X-Gm-Gg: ASbGncsfnE2kvRyVDlKhPytKaEqHas//gvswYRIr6xasVvhbwfdQ0jT/ocb2rQIcihd
-	3dQLPMtsi1Fypy5V0a8cJJmaGlOI8niS5NxdO5/zLlkPLLLJkmlFtnqGORTOzjHQD4SQLDoyXcM
-	B6uJvGnyMRHd5iNTvz3aTvlVg7JfoWVgMNik5PZBaq8fco1P9jBCiGsBdwQWwsP/x/w6L0jXwKq
-	slwWimEInMeV4k7j2eWzbJdYIqRfij/h/00X/n6oAmJ5stOKBG0L0zhOY2ptoA06v3T/wC6Ar8a
-	N4fG7uD/hQ5w+TIQL0F8Z9IS8NRYHEU=
-X-Google-Smtp-Source: AGHT+IGI0U1QQ6xl3jx/qP6oyTFFJ0RWte83MkP/j58HtoWMmmQKVFraR3Usn8taD2oS4b7G6pMqgA==
-X-Received: by 2002:a17:907:9450:b0:abb:b092:dad9 with SMTP id a640c23a62f3a-abf265b809amr329695066b.37.1740747831479;
-        Fri, 28 Feb 2025 05:03:51 -0800 (PST)
+        bh=10Fkhp5xsWvMhzDZ9Hnkhm34939uK3s6cg26798CuOw=;
+        b=Kfmp4xepGmtWKV8jJJlFFFRp6qAMxMywPygde1B/JjuC6nKqQbwfipx9d2FPFB5fxT
+         C+8gsYVxl+5Tcng3hLFk4BcqzUCa1S53JpMt1vdnz6u2g8eK6PYhtQz2GED+nWIBn2ys
+         swIfD55CIH/TaCZNg2h+U9mAB5qEakhUdN3OXQpvFkbN4nI96FkciBKOV6jP4gnmCvAZ
+         YVD9Wyoo3lFm67gFKGMFw1rs/qhFuv40uE41mxlSZmb9Km/f6k1FBPFqCwC63b837bMi
+         tsnLu2iTAzscjjHnktnNznc2NeurXuMIgC1r7uQIsA97K9ZPGDcT5XiOjtA0wicojYtz
+         IVjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+eFAZUCPjzBbcuQ/tNdPtsIWd8RImR5IDTU3bPhToTz6LxQNs6Ni3wjVgD/mX4chPH9vPxVYuo8zx+o1Kick=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYcdPD4qU9lBTjgAjJirABLRRipXjMn0bmftfp7IQVGO48ZIl/
+	GvgIHvJvD6lGVecHig6fM6yH0YPv4Pk58DsZwTd5c2kupnVEZnprlJdtVaRt8wU=
+X-Gm-Gg: ASbGncvpWl5eYW6gYGxEa4kqCNVENAsixUtyGAsQrqRZctYPVzcuB+jFKg4l/UkNa3S
+	m7sInlnV8WNFjsJplyxlxYmNA96HLTvQU+y+2FCAuHD+OIwNNWt2XdgdxnpIdgilhzPn0qPUSwT
+	pYVVH2sN7QjOMiSYGIWlCIslvePI7t7ERQ2mOF4E6BDvNH4sjpy90ctAk/fuQ94d4yQHjh/4GYi
+	np9BdahPcQPtnwmOIzkJA+bMxgo+fS3mDCLl0hwlHzZEjUFbbS9P8lDDQNMhpFFViHWoZsI73oi
+	Gp3vTlYQGQDd+Txo9uHEmGLaCDDyNvA=
+X-Google-Smtp-Source: AGHT+IEUt1hmwix/p/NTJLkhDfTeZ90IH3mBi7jSL6LBqNJkRYtj0rKm6mJr2PdW+AYQwRFhzgJHvw==
+X-Received: by 2002:a17:907:3fa7:b0:abb:b31d:778f with SMTP id a640c23a62f3a-abf25fabb6amr318360466b.20.1740747855227;
+        Fri, 28 Feb 2025 05:04:15 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf0c756f6csm290365066b.141.2025.02.28.05.03.50
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf0c0ba408sm286438866b.37.2025.02.28.05.04.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 05:03:51 -0800 (PST)
-Date: Fri, 28 Feb 2025 16:03:47 +0300
+        Fri, 28 Feb 2025 05:04:14 -0800 (PST)
+Date: Fri, 28 Feb 2025 16:04:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] gpiolib: Fix Oops in gpiod_direction_input_nonotify()
-Message-ID: <254f3925-3015-4c9d-aac5-bb9b4b2cd2c5@stanley.mountain>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] [PATCH] gpiolib: Fix Oops in
+ gpiod_direction_input_nonotify()
+Message-ID: <084aad2a-83ae-4027-a934-797f53962256@stanley.mountain>
+References: <0f3ea3f6-8ae3-4352-b790-de0642edc4a2@stanley.mountain>
+ <CAMRc=MeF42NeNJ_kR7H7oJsCHt=grTtN=c-3RbjFhX=uRQ5X9w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeF42NeNJ_kR7H7oJsCHt=grTtN=c-3RbjFhX=uRQ5X9w@mail.gmail.com>
 
-The gpiod_direction_input_nonotify() function is supposed to return zero
-if the direction for the pin is input.  But instead it accidentally
-returns GPIO_LINE_DIRECTION_IN (1) which will be cast into an ERR_PTR()
-in gpiochip_request_own_desc().  The callers dereference it and it leads
-to a crash.
+On Fri, Feb 28, 2025 at 12:06:24PM +0100, Bartosz Golaszewski wrote:
+> On Thu, Feb 27, 2025 at 9:17 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > The gpiod_direction_input_nonotify() function is supposed to return zero
+> > if the direction for the pin is input.  But instead it accidentally
+> > returns GPIO_LINE_DIRECTION_IN (1) which will be cast into an ERR_PTR()
+> > in gpiochip_request_own_desc().  The callers dereference it and it leads
+> > to a crash.
+> >
+> > I changed gpiod_direction_output_raw_commit() just for consistency but
+> > returning GPIO_LINE_DIRECTION_OUT (0) is fine.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 9d846b1aebbe ("gpiolib: check the return value of gpio_chip::get_direction()")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> 
+> This doesn't apply on top of v6.14-rc4, could you please rebase and
+> resend? Thanks for the catch!
 
-I changed gpiod_direction_output_raw_commit() just for consistency but
-returning GPIO_LINE_DIRECTION_OUT (0) is fine.
+Sure, of course.
 
-Cc: stable@vger.kernel.org
-Fixes: 9d846b1aebbe ("gpiolib: check the return value of gpio_chip::get_direction()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: Rebased on top of v6.14-rc4 to make this easier to backport.
-
- drivers/gpio/gpiolib.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index fc19df5a64c2..3aee877c8aa1 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2740,12 +2740,14 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
- 		ret = guard.gc->direction_input(guard.gc,
- 						gpio_chip_hwgpio(desc));
- 	} else if (guard.gc->get_direction) {
--		ret = guard.gc->get_direction(guard.gc,
-+		int dir;
-+
-+		dir = guard.gc->get_direction(guard.gc,
- 					      gpio_chip_hwgpio(desc));
--		if (ret < 0)
--			return ret;
-+		if (dir < 0)
-+			return dir;
- 
--		if (ret != GPIO_LINE_DIRECTION_IN) {
-+		if (dir != GPIO_LINE_DIRECTION_IN) {
- 			gpiod_warn(desc,
- 				   "%s: missing direction_input() operation and line is output\n",
- 				    __func__);
-@@ -2788,12 +2790,14 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
- 	} else {
- 		/* Check that we are in output mode if we can */
- 		if (guard.gc->get_direction) {
--			ret = guard.gc->get_direction(guard.gc,
-+			int dir;
-+
-+			dir = guard.gc->get_direction(guard.gc,
- 						      gpio_chip_hwgpio(desc));
--			if (ret < 0)
--				return ret;
-+			if (dir < 0)
-+				return dir;
- 
--			if (ret != GPIO_LINE_DIRECTION_OUT) {
-+			if (dir != GPIO_LINE_DIRECTION_OUT) {
- 				gpiod_warn(desc,
- 					   "%s: missing direction_output() operation\n",
- 					   __func__);
--- 
-2.47.2
+regards,
+dan carpenter
 
