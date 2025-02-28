@@ -1,72 +1,68 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906B0253F13;
-	Fri, 28 Feb 2025 08:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACF1254863;
+	Fri, 28 Feb 2025 08:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740732869; cv=none; b=ppyw2psa8n0DTuJvqYPQrlTz4Q0ifqLkRsZ9JywJEoFd4YYAfCuVhysT6Iw9j78N0F32/U0LvkyHtLj2hmjaedOMCMu8/NnjAlu5xO06JnDT/FdlQo8rrXKf4hBDmEArExmJuGDkDpACRqHGFup+SbFhx/4dZQwAFObwlTmi1gM=
+	t=1740733065; cv=none; b=mTGVQLqBe5bNzNk786N5717aL3epfs/K/VxaSrRxdVEEQpMJ0Tv5D8Pp1jN5ZGevxRUgLHr79LPjfP+nt0EimWJmOGL7l4pFxvRFfEvRg3sD6bsLaFmMh1khDipyUkfpUTnSq/DewYfJzFamBUvLh4vEI8iqBj1Le/lwC6CpyOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740732869; c=relaxed/simple;
-	bh=ZvK6C2oIFOBpbz7tsIqs78gU5UkTLIzkwpiUI4de2Js=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CifNkzHycDNIgj6mfXh64oVvsLL3fvxULftQ5KJ2OiTPIIIMH/tmZ+vo0bz+4ceAn7Fjonl+Ls2aOuYeRfyBDejz0qg0OEKTvqtN655RBjBmYcjuQdrCKV1KcE91ayXUVddOqCdYasZKc9nA2AAmHZA56jaUmEMsWYnnxyt30dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkY93gCW; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1740733065; c=relaxed/simple;
+	bh=8ApnVxOAIku1y1NGlqRF2zzBzpu0NT4/22VcCwtbvmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TOw/A2ERpOL7oUMIHmx7bQvWBjHJSIlD2iVcESE9GBSo9LF3QvIRx0H2/cPOF0/+TgZqvn71MV5GQ8cXQHnGYT32KhQ9okjpI+hFfiDSSFiCx4x7hFelUAeUn5O01UpXq3JCFoPNHxyNeSrqt/BniYkXqw0Clb/twGilqqvWokI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXk9K5pG; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkY93gCW"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so11930905e9.1;
-        Fri, 28 Feb 2025 00:54:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXk9K5pG"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390e3b3d432so1252064f8f.2;
+        Fri, 28 Feb 2025 00:57:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740732866; x=1741337666; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740733061; x=1741337861; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4PU3VROE0VC3jFwJOOb4ASIIAwndMW9ZvNWHPQLq2Hc=;
-        b=OkY93gCW2s85y2Zw2SCqr9xrdZ2PFfGwYfNDDBAyiefuixoUP4/XS/CXaSUvbXKsm3
-         BxDYqkpSjSV7/TbBms1O/70qCsB4/xjUkkEGMtuk5zlA5CA1roHtQlMlE10aJrOQePu6
-         h+X00j4wkR5z3SGjKZYkByR2j+OHtdNjU22r1Nyq8VV0FwboDo5tEz+ieVmPpUk4jsLZ
-         NUwqkJXkjNemz3JifF8P003fmnvTsLVF2lbHTA/v1Z4A9zVm5sYFNNAB0YAtyJaiohbQ
-         BN7Wf1So3GVX+/mVXLCu3/gmuzx0+jYzz2RrZB4nkX8pR+rct8Wf8hBR9TgczvdPa73T
-         PH1w==
+        bh=YOOGOHp/kT32Ubbsvrda4rp5OvOxGdyciA4qun4jkHI=;
+        b=UXk9K5pGGB66PuEhqMqJR/XYNNAuJTdG106fsDbr673ZPvj3hxiw42pjL8QcqGoPxu
+         2udnywUZjprLJfNQ4r/WXJSAjGpQsgICwTXWlxfuA/jMQvHHQSDdiLgUTrReq6sB2938
+         70b9sfNstUp554pxgkrPICDJv09+JWzrTUmAYEj8VuhKum/H0e8ZYAm41OoRmFgZa7pM
+         TqJzuwRDfh74SzgZkcrkVCh965YcSUpXAilna8PjcUS2YuW760IjqN1BjNL6089wMKHI
+         V8rzWx8sbIeI2E2D2LYcmq2F02bb65Rcf0Xf1+0m9IWvr/0K1QBQOb/e3Ta/OYNcZu/C
+         z6Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740732866; x=1741337666;
+        d=1e100.net; s=20230601; t=1740733061; x=1741337861;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4PU3VROE0VC3jFwJOOb4ASIIAwndMW9ZvNWHPQLq2Hc=;
-        b=YUS/9axDljZ0l8mundNFGcZGgsFczl5R1jsvW954+WnM+EP4wsUb+28e/jUS29ODZo
-         6oqQbbzzH24Yh4hC+LDKcnM42N2pl0FtSTsUhqYzB7EjbYGpbqZNsC+Z0lElQiFlGYi2
-         molEhl8TqSKIFbnk7dVUH60S+ntls0FhJuIpm07QAQW6/00+kUyAQbemTe0HxUkHc4/J
-         GlvHKoSxWb9m8EdQ7Dd5rHwsB1CKmqBJ+bPJudnMUQ8OJjZYZYJE8x8hDOM152+mqrji
-         DiO8hFLKom4U6T9frmYqsDzhFZgoS9RuLVxXpTymz+PKFwoAcbJ6vxYhkXy5139uI+X8
-         E11A==
-X-Forwarded-Encrypted: i=1; AJvYcCX+9a/A+FQkBejji7LY8wtrdicZaHQdZwyBTXe6S+xxV41pwYYoa/ivNg3R4SpF3kOMkybr4Q9f0njrags=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyD+6IOkiuHBb6z/kxiBcfa2NKHz0wsWC410cHUZgNnrIWKBPc
-	IM+ZmgTECie3+DJVssRSIQb+BpkLHZgQDYdAQJzzUTs1RklxHj91
-X-Gm-Gg: ASbGncuwAjxwjNPntA3BSOC3aW65rRNGB8YjVGD3dF1CgIf0frpMGXhSViyo7GGl0/Z
-	Hf797Gg4oT7SLcxWn20iLeB6lXJTLA2acpah8kl3eV8ufk0Vg6TZaPGIllhMWM1Ljg2KbsDQ87O
-	qjsdGKtDZIdm27YchraAXV9jwd/mW3/UPC7VOzAafE8CKjo4f+GwRWCk8GxDXUXDs0BF1J3YAoM
-	+3ISP8N9tFb7yVeCTOuBSnud3R8qaQLLDDDuV5EW8RIhC361Ey5b4dCk230lm6p09EQ514ElSE8
-	zURNM3ivl0f2s1QDlUNREnBqUrY=
-X-Google-Smtp-Source: AGHT+IFdN9QWjQoWfvRrcmLYLHSNfLWzrvfKg1j1asn0+L35lErLU+3cgXYWH8XIqwOdFUt4mobwmQ==
-X-Received: by 2002:a05:600c:4193:b0:439:9384:7d08 with SMTP id 5b1f17b1804b1-43afdd934eemr55383815e9.2.1740732865675;
-        Fri, 28 Feb 2025 00:54:25 -0800 (PST)
+        bh=YOOGOHp/kT32Ubbsvrda4rp5OvOxGdyciA4qun4jkHI=;
+        b=nLz+nYnHrxGYzurTQ/X9aNKNF01//u6F4VsNbWarl0Ubk7vBnHF77K9PIUtUndHZf+
+         Ii3oOhfBdWg0NtIL91MzNMtW1ue1Ykl5dcLPa0gCX8TOf3LbELIGf0ZLrw7Sa/3uHaQi
+         567ekdJfexXrgW9niNUk/5hasGf+Q73cIJkIZmcT6iQCgIa509sj7/VNnDlJ8u2LbQt8
+         ROjMIiOvzseIDfu2aafEOQa47nEqJcYqJH/xs4oE/YOnsOyHyj9Rj926i/VfvAQxfGdg
+         5CEoi0jEGhd66sUFVCg0f6XkaibokJgfuGq+wuF5r2RZ6m5qoqevKiDBItfzeqrVJdYH
+         lh9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjEVuKMH16mzCK7sT4iXPSSoE/kvMZG7Eby4KY8YuBwdQnvue7lzahtZ7cMWhQnc2bhfavlX2BQEqRVfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKCgNfggeLDijU4RalbOhFFzRmZAwXgZP9gBbYERxs7nvIw8SI
+	qEQlCw7kRxwGP1JctsLsXl0KM5/ZBSnImiXLZ2AJWAqGUSb01Z2/
+X-Gm-Gg: ASbGncsqSbs51MKrJNBi3yx06pfHjyOCEsZ2J2epLaMomBlpfCCmFiY727qi7ciWc6h
+	Al54w3TfbLTVWedMU9WTmVdIIniHJhAiIVV85nfDQcqoh4Q6li2K8BrLNvFGqYcu9VFlgKGXrmE
+	53xXYlySpjr663mkAnPzyhBIark7QomYCZ/iooEINxbOEnC1RrB6N/phtJG34TRsFGWBkK9j6y8
+	vVhe7JUJENq3Z/ywYu8bYGAknpj4aS+aPC2MTOIlG6L6sR744+VsU7KTNcJe9rlJYKEcSHG+g2+
+	PVsq2WFZZkuVeuQUpRitm8elYrw=
+X-Google-Smtp-Source: AGHT+IHh1cn5sBB+ae6U8u5TgIgCJ1b8UOf6j64PpB4BLf31Gp1M6o46xk83F0wVo1aSC8clSYk29A==
+X-Received: by 2002:a5d:5f84:0:b0:390:eb06:d6bd with SMTP id ffacd0b85a97d-390eca41380mr2114817f8f.34.1740733060559;
+        Fri, 28 Feb 2025 00:57:40 -0800 (PST)
 Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba5871d8sm79843175e9.37.2025.02.28.00.54.25
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e479608fsm4611706f8f.14.2025.02.28.00.57.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:54:25 -0800 (PST)
+        Fri, 28 Feb 2025 00:57:39 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	ntfs3@lists.linux.dev
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/connector: Fix spelling mistake "provded" -> "provided"
-Date: Fri, 28 Feb 2025 08:53:50 +0000
-Message-ID: <20250228085350.678446-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] fs/ntfs3: Fix spelling mistake "recommened" -> "recommended"
+Date: Fri, 28 Feb 2025 08:57:03 +0000
+Message-ID: <20250228085703.678824-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -77,33 +73,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are spelling mistakes in drm_err messages. Fix them.
+There is a spelling mistake in an ntfs_info message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/drm_connector.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ntfs3/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index 5f24d6b41cc6..9cf347f70643 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -2525,13 +2525,13 @@ static int drm_mode_create_colorspace_property(struct drm_connector *connector,
- 		return 0;
- 
- 	if (!supported_colorspaces) {
--		drm_err(dev, "No supported colorspaces provded on [CONNECTOR:%d:%s]\n",
-+		drm_err(dev, "No supported colorspaces provided on [CONNECTOR:%d:%s]\n",
- 			    connector->base.id, connector->name);
- 		return -EINVAL;
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 920a1ab47b63..d0d3214d3688 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -1293,7 +1293,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbi->volume.ni = ni;
+ 	if (info->flags & VOLUME_FLAG_DIRTY) {
+ 		sbi->volume.real_dirty = true;
+-		ntfs_info(sb, "It is recommened to use chkdsk.");
++		ntfs_info(sb, "It is recommended to use chkdsk.");
  	}
  
- 	if ((supported_colorspaces & -BIT(DRM_MODE_COLORIMETRY_COUNT)) != 0) {
--		drm_err(dev, "Unknown colorspace provded on [CONNECTOR:%d:%s]\n",
-+		drm_err(dev, "Unknown colorspace provided on [CONNECTOR:%d:%s]\n",
- 			    connector->base.id, connector->name);
- 		return -EINVAL;
- 	}
+ 	/* Load $MFTMirr to estimate recs_mirr. */
 -- 
 2.47.2
 
