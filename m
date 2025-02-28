@@ -1,71 +1,70 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9B725A2C5
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 09:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8362256C8A
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 09:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740735350; cv=none; b=u0CxXgQDS8bFQgQ2NkERoWSNxFvb167l6hc0O1lF6tWluthesdli8SPcpl3l0GxY6ARQoiAAWgV56EkvCkSKKqG8CZGdv/P0KPmhNcb2fP6YtVZ0hyadXG3M7bZ8AVPhjcHSusJ6FcBHRbWMitnHjhyMdq7kv5gh3qKypq0NPYk=
+	t=1740735409; cv=none; b=TBvaR4FTtTdJjHenfmhNpfQMNXuqtnq5zTReYmF4qGHMknHXJqvg9aWPmrcUfWND3ICbSmXpgt0v7+peiHIXy8Emy6Mb2dcTYH5+xm9ZxtIxIgYTcDu2DU50iY5Ad85Kug6ttR6xT4IuNHTSCZvaDaeQTy7pXd9+wiIsrRRXH2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740735350; c=relaxed/simple;
-	bh=5wwhbu7yvxb8Pu+sWhd2Bfw0yE+/Lbj4gK2wMJKPvhY=;
+	s=arc-20240116; t=1740735409; c=relaxed/simple;
+	bh=7OAvh2FzEJjI/bPOiRm69JhriGa3UZoS0poO7GliqrA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YSDY5xFxeBIJGejjEF2TI3XNTekCpEk+oncMTrmtyOMnoXxXrDpKRXuQHlEtr4GnYJaq2bOD/0vaKn1i4m6ENQpl3oQ1BiTnZV4XHrL9/dhRqms9Xe0wZBPmG9q+s6zpMnyG+qF5jaHVgE2MhryMRoNKWv2EubS5YyVC5wQrbrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S2nTcNqb; arc=none smtp.client-ip=209.85.218.53
+	 Content-Disposition; b=F94+7XtDS0Dra2cQcIpvdABi0fd6uWKjulDyMF5jJ/5PUGwoIO/B0opxKc8PLXbhqPMu53OJRisqja5ork/qcyOR5I/FVAgYO7B3BBff0V8FgBsgGHJr/AjlxtA1hP/2OkOlODOl0UXcoglggWhx8L43dp0zZ3PBqSa8BkpbOo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jbx/IKtM; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S2nTcNqb"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaedd529ba1so208652266b.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 01:35:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jbx/IKtM"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so3571719a12.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 01:36:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740735345; x=1741340145; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740735406; x=1741340206; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EAD6FYOZHQiIZ5qOdMszeXmFSAsXwpOb7J/vlvlF0S8=;
-        b=S2nTcNqbD08AgxKWtjNavPRZncz9w+yhc3VXgTadPiS8aT++vZnTP4tb2PZhFSnrtZ
-         rDOk6gXPxctH/P9ZS1C50GLw8m39VJtozc8ifmQLUW1goyKWkmYhPpMAn4eW6rZBHgfW
-         LYqUybHkCSkyL4M9GHWbDp/NNZM3whGS3V5ZSw/qgxpJDqF/UU9y43aQDblTZqG3CXcG
-         FvTAL5/qYiUf9Xh6u2zgyBx5H4uu46ZHQpeV7ilf98Kg3EQpbYoUOK0ikOkZziqbc/ok
-         Nc1pbzhr0YMQRoRmMCgdP7vc0RbbypR4LLDOIc7ho9SLFqG+Yk2ZNT8e3ONtXdNOTIX3
-         AGSg==
+        bh=Ai/hJtxYnguTomii4SP20m0cifXXwklqa40fjptgdsQ=;
+        b=jbx/IKtMNwFb0YjMoUsqedagbGbpoZEJ+WOfrS3YCsBaxPB/SsBo7W5KgliICxLZ3Y
+         2S0HVkBgyMUnhcWh/tciWvTO5BPhU2gSeODj22nnO0BJ+gmmZyBETxEmuNwGtNcEbEMs
+         yov/fhSNdYh+fKhh6K9HolZC1D2ij2/JXpTcUWRJm6+ilzSia4ZcgWJYJuTLPCDZIQ8z
+         DnFG62suXh5s3vgEpWbXQcVGvIXrGHyr2t5KIMhMpQUHPWNGzf0qrUCKRW75+kNUMOiX
+         A0mIlPeRGuArWPQVNFaIO/hiKDRwu3ekH1GJ0rje9384yNFiDciMfnZfZC8VPHEh/MKp
+         uFtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740735345; x=1741340145;
+        d=1e100.net; s=20230601; t=1740735406; x=1741340206;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EAD6FYOZHQiIZ5qOdMszeXmFSAsXwpOb7J/vlvlF0S8=;
-        b=KusWOUY3ZCfVhc3DHkFf0BWIeA57hYeJfbzkYnTiHKvD4VwXPKZ3HR4Vp8snwPoUgv
-         whtp7OyZg+9aPZapEF4DQ2/wwDxU6YIwFIkrp1hw040cUvaZWNTCHPNOhYjyQ1MoX5sM
-         9Vpzz8t8MqPOFUCbjP9yA/jLJkypLV5pH75Q7eqhdkVQOlau6TBz1efwrmwbOFvsDzj8
-         aU2kM+N5uj6m1nGZfbQPvkfPaqbBL4lzg67NhUagxZQlEsmDBxyxZKCYUUHJu1QlcBXE
-         fpaw+vTptj5h4dTJ9MgjC4ecG7f+IUptqLiCeaefLKrf6oLL9MdEzWAaC0ShcTAqKHcA
-         fVjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ1ozHWGs4d6S00RFGpshzZ7MlkdIqyJ4QM1uOVmpPqkITThtsrRxZz6KXmMPYD/89Cud0Px8h3lGZODdVr1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx39SUk5FzGJIdStoaP1johVs0But/OwV457YMsF1JifqEPlp5N
-	nM/XoL2H0ti7S2Duq/KrNLnce7N+67+/D7lYd/yDOZ6q1fP6ufwGAOTcvlCXtRE=
-X-Gm-Gg: ASbGncuLNGeTd0GgB3IPnfHWQjrmGYKweD/Ir6M6RVwOQbFnTD84a83UbHeW/FWTDZD
-	JDj7lKGyJQgRUU4yrYeF1+rR+nK8TMoTxWzkNXUQpWywy52jO/Tao4y6zHXF8+janZXHHONZ5ED
-	OAPABOSI064eLbHhfFqCIDSSk6zFqFzX3LKb4+CFujZx0r+xI5HhLXWBaeg+8dSij4uhiYVZ9OW
-	UFGNbwvZMfpv6C5BSTZy2MpQL/kj6kqJOW14WTgolnnjMve9prUQMhPDXRmUh1FdQdxk9+MHDb1
-	GVHS+D4OWGuZHEsou0g6VPnnjBtqqOu+8Tt+RuNIevdLgKHG/w==
-X-Google-Smtp-Source: AGHT+IGnFx7Ob6v6SoU+/gvpn5S5yHkLF9q6yTrtLPmDhB8HE6n8VTxo2kQ9zk5VwAQD4u4VOZdwTg==
-X-Received: by 2002:a05:6402:50d0:b0:5e0:818a:5f4d with SMTP id 4fb4d7f45d1cf-5e4d6b628aamr6127584a12.28.1740735345024;
-        Fri, 28 Feb 2025 01:35:45 -0800 (PST)
+        bh=Ai/hJtxYnguTomii4SP20m0cifXXwklqa40fjptgdsQ=;
+        b=M2N30dlcteQ8FNfk7gAVZ/0jUIMtwhOsE7Mq3NatUKyDDAob3kZbYjbPeOHr6rjSWs
+         /H2XJ82MUzGX3aksEeTwu+LywbRMOMdiQwKH4mk7YjIx9xEBowKnEufTRY5Gc7dpdyAK
+         nTM1qdrJco16qUM2u0uTBp3vfZr6uZ890/GLcJVcm2++q/cLc6m7bYXoAnnTFWigWnPS
+         Ms210nH+IagBI9QETXH/ptMeYfYXh41vI7C3YtYywzz8JPe5qMwlsS6yudA1yBuhbaQS
+         GwdgEMB3OKqkOblBT4J9rRuGdvcyNvb43UV8Q/Xz+9jtDvRAvGjoWvJBq8F1tUPIlyiC
+         iAvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBrFCgMamD7brwWTXyh+t9b61adD7/A8QQeenwkw+nxK38Elz1Vinn4UEZikyCdEOt5cuQgpFE3ZV/zJzBTR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJbSTk5Hn+KOj8HACk/2t5A+TO+0kIqaYUI1dFozVuxDh5IXUO
+	O1nAXVF4fWvk8baYdMvJXggtY1ewvA7vkMFipEyFGZOQY8O0vixm8wH7sHoGZXg=
+X-Gm-Gg: ASbGnctuGK0bD4zvDaskRYMo2jXf1peore3q9xwq+vMyHbZt5O3k8naEOSDRrfoQmhv
+	3k6LoAFiiffa6PMS3z6bjgdtS2gP4fKz26zL2vxMp0CHjQhRIflBOBCIdSDT1iOJnrhdQ8YFX/W
+	yByyMP4CORXy1kcWOfF/NIOEE9Fyf35W7CWKrWLu5hdr0gNaXU5QwYyPcfuJFYOOIdTBPCRHhGW
+	TIGCnjIGFitGHn4YzDMEWLY5XyghWrQkH9tgMZKZn5Pt08xHrTSSarTB3y+EvYNsLeFP5VJWlp3
+	AZq/JJxYLO+nu/+Or65fOBBNwyB0yL4=
+X-Google-Smtp-Source: AGHT+IGm7vDtQOlmQzD7ukOLgUjBw4xij3s9uP3Fz/LVXmcLAJBxgStvGxHWCueyPd6neqkamka0Xw==
+X-Received: by 2002:a05:6402:280a:b0:5e4:d6aa:82ed with SMTP id 4fb4d7f45d1cf-5e4d6aa8563mr2073071a12.12.1740735406137;
+        Fri, 28 Feb 2025 01:36:46 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf42c16af2sm1976966b.116.2025.02.28.01.35.43
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4c3bb7386sm2278113a12.43.2025.02.28.01.36.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 01:35:44 -0800 (PST)
-Date: Fri, 28 Feb 2025 12:35:40 +0300
+        Fri, 28 Feb 2025 01:36:45 -0800 (PST)
+Date: Fri, 28 Feb 2025 12:36:42 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Esteban Blanc <eblanc@baylibre.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
 	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] iio: adc: ad4030: fix error pointer dereference in
- probe()
-Message-ID: <cc67cee7-9c65-46d2-aae3-f860fc3cc461@stanley.mountain>
+Subject: [PATCH next] iio: adc: ad4851: Fix signedness bug in
+ ad4851_calibrate()
+Message-ID: <f5e260e9-d7a8-4dae-b7ea-f1bbb1760e60@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,42 +75,41 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The intention here was obviously to return an error if devm_regmap_init()
-fails, but the return statement was accidentally left out.  This leads to
-an error pointer dereference when we call:
+The "c" variable is used to store error codes from ad4851_find_opt()
+so it has to be signed for the error handling to work.  Change it
+to type int.
 
-	ret = ad4030_detect_chip_info(st);
-
-Add the return statement.
-
-Fixes: ec25cf6f1ee3 ("iio: adc: ad4030: add support for ad4632-16 and ad4632-24")
+Fixes: 6250803fe2ec ("iio: adc: ad4851: add ad485x driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-There is a second Smatch warning which we may want to fix as well:
+Btw, in ad4851_write_raw() there are some checks for negative but
+the multiplication could still wrap and turn negative so we might want to
+add an upper bounds as well:
 
-    drivers/iio/adc/ad4030.c:397 ad4030_get_chan_scale()
-    error: 'scan_type' dereferencing possible ERR_PTR()
+    drivers/iio/adc/ad4851.c:826 ad4851_write_raw()
+    warn: potential integer overflow from user 'val * st->osr'
 
-There's not error checking on iio_get_current_scan_type().
-
- drivers/iio/adc/ad4030.c | 4 ++--
+ drivers/iio/adc/ad4851.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
-index ab5497c8ea1e..b7caf7e89710 100644
---- a/drivers/iio/adc/ad4030.c
-+++ b/drivers/iio/adc/ad4030.c
-@@ -1014,8 +1014,8 @@ static int ad4030_probe(struct spi_device *spi)
- 	st->regmap = devm_regmap_init(dev, &ad4030_regmap_bus, st,
- 				      &ad4030_regmap_config);
- 	if (IS_ERR(st->regmap))
--		dev_err_probe(dev, PTR_ERR(st->regmap),
--			      "Failed to initialize regmap\n");
-+		return dev_err_probe(dev, PTR_ERR(st->regmap),
-+				     "Failed to initialize regmap\n");
+diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
+index 1ad37084355e..98ebc853db79 100644
+--- a/drivers/iio/adc/ad4851.c
++++ b/drivers/iio/adc/ad4851.c
+@@ -492,11 +492,11 @@ static int ad4851_find_opt(const unsigned long *field, unsigned int start,
+ static int ad4851_calibrate(struct iio_dev *indio_dev)
+ {
+ 	struct ad4851_state *st = iio_priv(indio_dev);
+-	unsigned int opt_delay, num_lanes, delay, i, s, c;
++	unsigned int opt_delay, num_lanes, delay, i, s;
+ 	enum iio_backend_interface_type interface_type;
+ 	DECLARE_BITMAP(pn_status, AD4851_MAX_LANES * AD4851_MAX_IODELAY);
+ 	bool status;
+-	int ret;
++	int c, ret;
  
- 	st->chip = spi_get_device_match_data(spi);
- 	if (!st->chip)
+ 	ret = iio_backend_interface_type_get(st->back, &interface_type);
+ 	if (ret)
 -- 
 2.47.2
 
