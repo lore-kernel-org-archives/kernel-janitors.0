@@ -1,120 +1,112 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C517526FD90
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 16:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872E527424E;
+	Fri, 28 Feb 2025 16:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759614; cv=none; b=LecqrNO+c/a6cnk4dMkM2pid463RCrRRgqBYKFyz0RDyqRnG4LxhJNbqr/mvNdzzo5y3eXI4qvMKAJHaecKP1iBlWMhwuvFYYFF+xNg08ZYJwdPYHROpUocabsxMapAXfSbnJJVsBaRMHfZCHI/A5NlV2Ymf4PmikQCZdoRGUoY=
+	t=1740759845; cv=none; b=YrIt8P1V5+mjKojhM1pb3T/vMFLs2ScIHvBtnRABImPbJvVjLlirqbEx3ZIzfW/++2aoWF8GiNHMia8CpekBWfibIR5nlojxjxRfPOSNRpZjTxudExlHgrJMUNdFrbDIPPnwp45OaEWT21X/jwCobvXeAfVjANA9z2rxdTIyA7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759614; c=relaxed/simple;
-	bh=h2gE6rUUyvcemVgUP1W4tCsojyay/YimUNqH0KvLJIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HzR3t/5jw9cOhoma0Ws8KC6soG1heMOJICR85A+rsk1yyVT/BZ1C8A1gkzwIJHY9Aj/olVdfgvCB0O/wbKnL6L+zwZOugvCwfHsxVBEIXpsXFxIwfshZTLVvAr0AEyxTNj+DE+orIHsaG41sm5uH3icX6tpXbbOh20AsoVfwSKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=cDqxIvV9; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+	s=arc-20240116; t=1740759845; c=relaxed/simple;
+	bh=B3WjmkvjpILdVi2j1q5otuhwVoDcjg9HxmWCQJcB5kc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=lSmI2aLpK2Hf3hbvKOUxE58C6SZrJK2ua/na5TlcJiAcS9EPwHtnX7A+Ijyz3qqyTjzwfgdwDgkwKuTnH1MGe6NfrbcXVLO1WO0LRTRaKF5B8o5UE7aWBRXoH9KFJV7iUyLm1ZZG15kTSkxRI/WXpK9fasG9PPiwefBqXvvt7Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fJo3LuEK; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="cDqxIvV9"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fe82430bb4so603155a91.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 08:20:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1740759611; x=1741364411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FgeRbDBZj/Kmr7MOY4QlYhLgpNtskrfBfuQ+fdrrXK4=;
-        b=cDqxIvV9oFafs1O12JzqSvSnSyugQjC9Q4p62fkrwOI/2w+8Z1iN133/Lp+byJRWAD
-         n8koxidpdvhj8dxZV6nrvKzfD8QAlcMLKeQORCbHpa87JHZuU7K4VwrQZn9uny0zJJKo
-         3cQxK8SeaM4p+MSQpoOb+IIGzESbYU4JprIjl9b3JhcjnjPwl5Abm1BP3l/Q1+0dmYWU
-         WlYeLjflXG1Gvzk1832VfpYMwdINxbqUTEJWFnf+83WFUI37ldGd7peC7Dru6O+D7LGs
-         7Iafm2gBQb7dQxg4tbM74TX7ZleY7x3FUIstQLDHp5fgiagsE0phCwgy5FTKETniNEig
-         MlQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740759611; x=1741364411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FgeRbDBZj/Kmr7MOY4QlYhLgpNtskrfBfuQ+fdrrXK4=;
-        b=ms/KKmIs2jOSSxra1d/QPVwOSFUKr3ssrysVjSSTczWZ867dO0L8tGb28xjMOrc6Yb
-         ltlsqTL2my3PXleCH//VOAqIk+eJsDFKo/jVmvHO4JE1YhC0zhgvrBK4zut62mk9yXdV
-         9tT5cc8qMZeT7la712Lhz9upWMXEPE7Klqs9LHQwY3+sKVUf5ymXvQNb6Mv37KIE9D7H
-         WlY6Gq/yu4GH8z3dTDxL9l8EudI6qouGr9fJJgAUJScejJL3nB/G1S4F1eNcgdPdiMPS
-         0TvfJ13XYOC4ZGSiiBQP0payqroNQzA2MSzJwfaEsADMoMK2gTcu8nJjjBCAvPkO7yTy
-         TlLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUN3gbcCHEEmXSc7vxroRzPYkJEXYTYCZp/oDlimNSx1nbFoRq0iad1h6w4njsEvDfTHr4W03dwGc12SRmZaDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZF0sRzj/ChO8wzcZ+MPIkZ2Lvljad7196wnWpwIeM11uARumU
-	PXH3DLixP469KmzZE0PQ/fSByT0yOQZIELlmsc/V2CmInhZsO3JomLtw7JOPS4oDtk5qbvtAYKA
-	6go0haV2O0ZUG28kfx2grVycYu39OEAsLQkh3eg==
-X-Gm-Gg: ASbGncsALBpU2zqKX2xDDxtO7t2vpjaP1dbgSk3Q76LLrY7p+1+iz9rIOqIA52iBXLQ
-	inrhvMHiSaLzkRAyO/n00tR6wY/v9/yqzrOPeIElaBd6y5i7B/9PhYNk/VBVRON/KzXLpcd5q4B
-	BKXuhsMA==
-X-Google-Smtp-Source: AGHT+IGrPFexLq2p08fvEV+7vi1y3CJa/f7XRnyFy9qcLiZdIYOI/25rvbAAY8P6RNV0DwhkcTgV3GIHP6AtdYEir/o=
-X-Received: by 2002:a17:90b:1d02:b0:2fc:25b3:6a7b with SMTP id
- 98e67ed59e1d1-2febabf856bmr2465912a91.6.1740759610894; Fri, 28 Feb 2025
- 08:20:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fJo3LuEK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740759839; x=1741364639; i=markus.elfring@web.de;
+	bh=wc+tFxfogX72xbNQ0v+6GhtULwhFug+e+zNf2YFFKo4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fJo3LuEKKv4cLVspEqgirzgxy6OV5JKEWseS7Tq0fsMgFIp0mZ3tjMzobZTGV5O4
+	 vUDAGs4KdCgyHtsewTD18QXYzIN1uoIkK6IKtNgN1iD36/rN1dwxGhGajtpjbDub8
+	 +dFpJyyJpU5Iaa3alOIZsBD9exvXPMMEvuGkdFD1csqDCfARVCrYKeYqSSvw9tWCj
+	 NMiuJP3Pa/ShezrpYEJEn5fR6zORVmWwfPX4Vq/kNlmTlwLZ3J4Lu/ltujULlPaeC
+	 M89VE0ob3sxFm7ol8aIpJvB6EJobdWfbG2oZA53dIe/hUpJmRoyr4wQDgn9IMCDhn
+	 nUVX+zOpGusYtBqNhQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBjIE-1u07yl3FCW-00BBlj; Fri, 28
+ Feb 2025 17:23:59 +0100
+Message-ID: <ecc5cb7f-b28f-4055-ab60-26e76f65685f@web.de>
+Date: Fri, 28 Feb 2025 17:23:58 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
-In-Reply-To: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 28 Feb 2025 08:19:58 -0800
-X-Gm-Features: AQ5f1Jp0gEH4Qx2IhSi_EgMbX05yYyRpMAompI303gVwrEuEcTt5M__EGuq2aTo
-Message-ID: <CADUfDZroCBhuJbc2jMsQAKhMZF9y3Ye5zowhusbUFqOdaA7PZQ@mail.gmail.com>
-Subject: Re: [PATCH] nvme-tcp: fix signedness bug in nvme_tcp_init_connection()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Qasim Ijaz <qasdev00@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm: Simplify maximum determination in drm_ioctl()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mtxLx4Ax1FUZU0kM7TZ4SiveHNkV/rUL0KOhNRHh8RY9UxBqp1I
+ thNtRttuKCR7wGyEGJatzlGi9eqsLWJGSJnHFNGnZc/S+x8fmzZdBTbtJsKOF8sEfmg2kRe
+ beiDUviEFQc9UOmXPAhjmATdSB+jgKYs1/9xJlyaFRsi2T/s8UU/NkabH8mZLKoO50w9m94
+ is2dnoNeZBMBIu8CUU1Fg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Er3HrmsjsRo=;ZQ96CCkkQWB0stB8LJGyzZH1TBf
+ Kux5qvPEP+biUfF0IpuJ/zEHME6gGpk5ii3bWNcUuFxeq021CvRYr/QYVrqo7luCakHmPpqkG
+ pvrRw3rkg0e+Bocmuhd/S5rLJfY8+q311mDUL92MG+afyPSoDgTeHPrVu6WvvMSVSh1L7wYpR
+ DBP2W18jx8navSPIdH9GBOGVK4hvzmycwYcTaHFCApoytxa7DKasZmHdsyAgWAHb+6YhyYSiU
+ hpcm2iaifRfVSRGF0bbIGG7I1B9DSxUJZ8407UfOTIU8O/sPVzRZB3MHn6jVRjGLJ54hl+djw
+ fWsuKaxyKKFtFUUich99KOhGWowpPFTXyQR3wIJUalacM/vuAFR8X/GVUTO7IbNibMHWfZSYE
+ FgP2XXrg3R80vo0NfUF7t037ZNC//M3n1YnFILAc3tWkGVDiCp2VH3dtdxEHn/esHfF+GPddT
+ xn43Gtt5sgzuvaDMk013c+OHbdC+tUPCRJqs5ThiSAlZGcZTMHNF2Wdbx21RY52DzFIL8exrk
+ PgE9ylAjiyxaR8s0PMZ4eBctGGYQgokMTBgDvvv0i39fqTCksxi+PxZdNiEJnuIBSC/vzjIaI
+ 7rBDoX07l7PIU7CVjoDCjGKgrEZwSq9DyDsQ1Az9kCEioRYqIrGuDmNiz0z86ogEjbXxmHXYO
+ w0jDy5zdsO7P8b+UbHX6AlmVDRonihcpIV35+hxXQxByr3MMorhJlIbdO1Xla6RovAuTEM5Xz
+ m+yrVTiP7nQXj9oPtCQ1+x79I1Jz8PTXRlVOs2r+sSxF/IcKX6ct5KbCaEmDLqZ+JXS2lEKWd
+ 9uIKSoH+OYS2xqGAs4sXDH2LTFno/5C3iHH94z2s70qKElqeSraN4RYTnsNrZR922wjxjY+DS
+ eGXbyimCf8GAqDnGHcwYPtyBUquLfWq906iCkTA+/6QSz2icpp8d9qqVPRc0swJfiMY6iRQr8
+ fpsGFW7dmEmdcBzZMxLvX5HivoOEmCJYu82esII1JqNicbDJecqh78dR7OQwuoLgoqMhrvlof
+ Bh+GRwEoj+rhqarphPn8n5azn6ncVPcRfGL8oSXI/WmPs+KoiGGLDPlNzoDZZYJaoQgtOMrij
+ ze20HWyXdd0I86pSzQNrH+jXFaoI0L8SIC6k9Lfo0gRey5y7zcUlY/ealfq7Fe6vSeSlnpU6M
+ cEyamN87lvTuKZoEPvs6b6sy1MJm56NIdkHQo38jpaOUVEMjIMYCzj58PyeK7/5l8xqJrvpQv
+ 8xjEAtGLFi1708Z8qPLUyaEmtDjFMsZygsGPfFNwZCrbgNwkn2m3mbVQ6amUWbUUH2JxOe7qq
+ E24hlwcclIg2BwfCdSmWyiotkfVwJy1l+N7Gj1NCBq7J3bVEu86Ib9l6cvbjeXrGAEFrmxOt6
+ tXG3KuhVen6PhTwmM+V6oDWAD54cz1nUllDlgBeNtmotjN8H2tJWM7d378jRB7tFNS/NedR/4
+ kmCi/Vw==
 
-On Fri, Feb 28, 2025 at 1:39=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> The kernel_recvmsg() function returns an int which could be either
-> negative error codes or the number of bytes received.  The problem is
-> that the condition:
->
->         if (ret < sizeof(*icresp)) {
->
-> is type promoted to type unsigned long and negative values are treated
-> as high positive values which is success, when they should be treated as
-> failure.  Add a cast so to avoid the type promotion.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 28 Feb 2025 17:18:07 +0100
 
-"so as to"?
+Replace nested max() calls by single max3() call in this
+function implementation.
 
->
-> Fixes: 578539e09690 ("nvme-tcp: fix connect failure on receiving partial =
-ICResp PDU")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+This issue was transformed by using the Coccinelle software.
 
-Good catch, thanks for fixing this.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/drm_ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+index f593dc569d31..115a8eb0d8a5 100644
+=2D-- a/drivers/gpu/drm/drm_ioctl.c
++++ b/drivers/gpu/drm/drm_ioctl.c
+@@ -856,7 +856,7 @@ long drm_ioctl(struct file *filp,
+ 		in_size =3D 0;
+ 	if ((cmd & ioctl->cmd & IOC_OUT) =3D=3D 0)
+ 		out_size =3D 0;
+-	ksize =3D max(max(in_size, out_size), drv_size);
++	ksize =3D max3(in_size, out_size, drv_size);
 
-> ---
->  drivers/nvme/host/tcp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> index 8a9131c95a3d..361b04ec5b5d 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -1495,7 +1495,7 @@ static int nvme_tcp_init_connection(struct nvme_tcp=
-_queue *queue)
->         msg.msg_flags =3D MSG_WAITALL;
->         ret =3D kernel_recvmsg(queue->sock, &msg, &iov, 1,
->                         iov.iov_len, msg.msg_flags);
-> -       if (ret < sizeof(*icresp)) {
-> +       if (ret < (int)sizeof(*icresp)) {
->                 pr_warn("queue %d: failed to receive icresp, error %d\n",
->                         nvme_tcp_queue_id(queue), ret);
->                 if (ret >=3D 0)
-> --
-> 2.47.2
->
+ 	drm_dbg_core(dev, "comm=3D\"%s\" pid=3D%d, dev=3D0x%lx, auth=3D%d, %s\n"=
+,
+ 		     current->comm, task_pid_nr(current),
+=2D-
+2.48.1
+
