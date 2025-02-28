@@ -1,39 +1,39 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872E527424E;
-	Fri, 28 Feb 2025 16:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614EA254861;
+	Fri, 28 Feb 2025 16:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740759845; cv=none; b=YrIt8P1V5+mjKojhM1pb3T/vMFLs2ScIHvBtnRABImPbJvVjLlirqbEx3ZIzfW/++2aoWF8GiNHMia8CpekBWfibIR5nlojxjxRfPOSNRpZjTxudExlHgrJMUNdFrbDIPPnwp45OaEWT21X/jwCobvXeAfVjANA9z2rxdTIyA7w=
+	t=1740760624; cv=none; b=AilXdkTheQvVcdIZ7XyScRZODxBYL9dcla7ssLXq5oqKnf47dqJddoiV5jf5QvVfeg76u2cYGaVnLgw6k4Wlfr1ypK+BOBqeDnFsoxFBTsuNGvwvmhawD5A47ZNVg3MAXhmJXVM1vVzIiMMcrxMh+jdR0q54uPD55HkqN56Xu3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740759845; c=relaxed/simple;
-	bh=B3WjmkvjpILdVi2j1q5otuhwVoDcjg9HxmWCQJcB5kc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=lSmI2aLpK2Hf3hbvKOUxE58C6SZrJK2ua/na5TlcJiAcS9EPwHtnX7A+Ijyz3qqyTjzwfgdwDgkwKuTnH1MGe6NfrbcXVLO1WO0LRTRaKF5B8o5UE7aWBRXoH9KFJV7iUyLm1ZZG15kTSkxRI/WXpK9fasG9PPiwefBqXvvt7Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fJo3LuEK; arc=none smtp.client-ip=217.72.192.78
+	s=arc-20240116; t=1740760624; c=relaxed/simple;
+	bh=UcdzUFgY64qhkR/FTBBvQ+8/NVzky6HoTCKp1K6d2DM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=tAjx7PSkQDs1wfsFf4sqieaDAIHZgjiiYQah04VTw08YPEd+TJy1/giw93yoplw/GEi0U6Z6FjzeEZh6MoUWFD9MYobPEP3AvOFXq2ADunMJityYofuHXUCFgOsoyp5oK3wxoIhfTehQ8R9trh+SvQOhMFGGPjl1NNqBnnLvZpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=crjVsU99; arc=none smtp.client-ip=212.227.17.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fJo3LuEK"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="crjVsU99"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740759839; x=1741364639; i=markus.elfring@web.de;
-	bh=wc+tFxfogX72xbNQ0v+6GhtULwhFug+e+zNf2YFFKo4=;
+	s=s29768273; t=1740760611; x=1741365411; i=markus.elfring@web.de;
+	bh=P3aAi1K30diMwcSyotdSLBi8iQUEl+hDB2tmHvN4WgM=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
 	 Subject:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=fJo3LuEKKv4cLVspEqgirzgxy6OV5JKEWseS7Tq0fsMgFIp0mZ3tjMzobZTGV5O4
-	 vUDAGs4KdCgyHtsewTD18QXYzIN1uoIkK6IKtNgN1iD36/rN1dwxGhGajtpjbDub8
-	 +dFpJyyJpU5Iaa3alOIZsBD9exvXPMMEvuGkdFD1csqDCfARVCrYKeYqSSvw9tWCj
-	 NMiuJP3Pa/ShezrpYEJEn5fR6zORVmWwfPX4Vq/kNlmTlwLZ3J4Lu/ltujULlPaeC
-	 M89VE0ob3sxFm7ol8aIpJvB6EJobdWfbG2oZA53dIe/hUpJmRoyr4wQDgn9IMCDhn
-	 nUVX+zOpGusYtBqNhQ==
+	b=crjVsU99nW/CZBMET6nlxo5P5Ve71G2x3ctFqiGmxnvi7FsxwgfQXyv5sn6OWVsb
+	 x4qIMcrgrPve+oNy2UrDX5r6tSg0n1lSWr+zn5uco0QIgDtF+27/LMp+dXSoSRyS2
+	 5CMin+pvn3H63SnHPS1vPtrLOaEIURSr+hsFC5kieFfAA0rPDZpeH+tb67yq+02AJ
+	 SLaehROwWbAceE2iVSDbnQ/l6015TwXCK9FmDiRiYd7eQsnK2PUIcHEMlfCfZN7uk
+	 5MQQwEL21T+XVl81aMuZRHZZK8OcXMkSw42rTjlB9PBChlON+Ylqkpj/KEjiVzmt6
+	 D946/tidGDGJjMRPYQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBjIE-1u07yl3FCW-00BBlj; Fri, 28
- Feb 2025 17:23:59 +0100
-Message-ID: <ecc5cb7f-b28f-4055-ab60-26e76f65685f@web.de>
-Date: Fri, 28 Feb 2025 17:23:58 +0100
+Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSZHv-1th5Lf3hO5-00Hx7y; Fri, 28
+ Feb 2025 17:36:50 +0100
+Message-ID: <225be170-472d-40c1-95ed-71b452740ae7@web.de>
+Date: Fri, 28 Feb 2025 17:36:49 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -41,47 +41,48 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
 Content-Language: en-GB
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
  Qasim Ijaz <qasdev00@gmail.com>
 From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] drm: Simplify maximum determination in drm_ioctl()
+Subject: [PATCH] drm/radeon: Simplify maximum determination in
+ radeon_uvd_calc_upll_dividers()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mtxLx4Ax1FUZU0kM7TZ4SiveHNkV/rUL0KOhNRHh8RY9UxBqp1I
- thNtRttuKCR7wGyEGJatzlGi9eqsLWJGSJnHFNGnZc/S+x8fmzZdBTbtJsKOF8sEfmg2kRe
- beiDUviEFQc9UOmXPAhjmATdSB+jgKYs1/9xJlyaFRsi2T/s8UU/NkabH8mZLKoO50w9m94
- is2dnoNeZBMBIu8CUU1Fg==
+X-Provags-ID: V03:K1:pQnRLfx8v4G9J+knpTzjK8SoUNS8MlolvSv3lkROWsw5FtuoZvC
+ jejqbXK5eiAEUA/Wy3nz448SRf7fWzTID2DWCqDZk4gpGPTOppr9sNw80VIGYfnyk/hBve/
+ MNEtXyvm5MDb4NTUi0brMno2VkKUjZLkPkSn3SG1mbtIUZ6Zc5zQUgAJJVWUt6893KWyP0h
+ fhxSENApa2wuLnjbLweRA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Er3HrmsjsRo=;ZQ96CCkkQWB0stB8LJGyzZH1TBf
- Kux5qvPEP+biUfF0IpuJ/zEHME6gGpk5ii3bWNcUuFxeq021CvRYr/QYVrqo7luCakHmPpqkG
- pvrRw3rkg0e+Bocmuhd/S5rLJfY8+q311mDUL92MG+afyPSoDgTeHPrVu6WvvMSVSh1L7wYpR
- DBP2W18jx8navSPIdH9GBOGVK4hvzmycwYcTaHFCApoytxa7DKasZmHdsyAgWAHb+6YhyYSiU
- hpcm2iaifRfVSRGF0bbIGG7I1B9DSxUJZ8407UfOTIU8O/sPVzRZB3MHn6jVRjGLJ54hl+djw
- fWsuKaxyKKFtFUUich99KOhGWowpPFTXyQR3wIJUalacM/vuAFR8X/GVUTO7IbNibMHWfZSYE
- FgP2XXrg3R80vo0NfUF7t037ZNC//M3n1YnFILAc3tWkGVDiCp2VH3dtdxEHn/esHfF+GPddT
- xn43Gtt5sgzuvaDMk013c+OHbdC+tUPCRJqs5ThiSAlZGcZTMHNF2Wdbx21RY52DzFIL8exrk
- PgE9ylAjiyxaR8s0PMZ4eBctGGYQgokMTBgDvvv0i39fqTCksxi+PxZdNiEJnuIBSC/vzjIaI
- 7rBDoX07l7PIU7CVjoDCjGKgrEZwSq9DyDsQ1Az9kCEioRYqIrGuDmNiz0z86ogEjbXxmHXYO
- w0jDy5zdsO7P8b+UbHX6AlmVDRonihcpIV35+hxXQxByr3MMorhJlIbdO1Xla6RovAuTEM5Xz
- m+yrVTiP7nQXj9oPtCQ1+x79I1Jz8PTXRlVOs2r+sSxF/IcKX6ct5KbCaEmDLqZ+JXS2lEKWd
- 9uIKSoH+OYS2xqGAs4sXDH2LTFno/5C3iHH94z2s70qKElqeSraN4RYTnsNrZR922wjxjY+DS
- eGXbyimCf8GAqDnGHcwYPtyBUquLfWq906iCkTA+/6QSz2icpp8d9qqVPRc0swJfiMY6iRQr8
- fpsGFW7dmEmdcBzZMxLvX5HivoOEmCJYu82esII1JqNicbDJecqh78dR7OQwuoLgoqMhrvlof
- Bh+GRwEoj+rhqarphPn8n5azn6ncVPcRfGL8oSXI/WmPs+KoiGGLDPlNzoDZZYJaoQgtOMrij
- ze20HWyXdd0I86pSzQNrH+jXFaoI0L8SIC6k9Lfo0gRey5y7zcUlY/ealfq7Fe6vSeSlnpU6M
- cEyamN87lvTuKZoEPvs6b6sy1MJm56NIdkHQo38jpaOUVEMjIMYCzj58PyeK7/5l8xqJrvpQv
- 8xjEAtGLFi1708Z8qPLUyaEmtDjFMsZygsGPfFNwZCrbgNwkn2m3mbVQ6amUWbUUH2JxOe7qq
- E24hlwcclIg2BwfCdSmWyiotkfVwJy1l+N7Gj1NCBq7J3bVEu86Ib9l6cvbjeXrGAEFrmxOt6
- tXG3KuhVen6PhTwmM+V6oDWAD54cz1nUllDlgBeNtmotjN8H2tJWM7d378jRB7tFNS/NedR/4
- kmCi/Vw==
+UI-OutboundReport: notjunk:1;M01:P0:IoqzqYMsVKE=;8IMPCWVo7UO+jbp8zxoV4K9CIxH
+ WUT5+Lqmgwmg9nmcLw7B62FBoZSApUZoLbTAR08MqOnYrR8NIPjp9H3hVMDqGbXcF1aZWmfh4
+ 9DJRGCpInmZXDQmzmF0QLWtBhjeD7nZcwTabq/nthTdMszLW7jtGpixi9g+/UIradL1uPk+Un
+ 8CKHNaCau95MOeD2QdI31+1Xu4OopBONfv5QhYKzH4qRYuBxuIAdhKzAtrRmgS6uVIatXLvy1
+ zFN0nJHP/Xf8ouS4JzlVspTzNCQjen8K7495sn52gU4Q8xdZ+35q+Qk8/8tFxvW0hB849yGHs
+ nPyZd0yxVJl9X3u9gdxtXibEeVrth5sUHVCRspdBF9JVAwuafg+Tjm0/6afVMYgvZx3ifCir1
+ i11NcSYwA1Do044NNc0slPpIenXy9SOClbe+MzyyhZhRJRURrsXs+cPbzilwO6g1z0y2mFroS
+ g8RTkPjpNf0+bjVyjtZPNNrMzRQmdmxGtL4LAeMRGksCAW6z1DlglCcGLGGSrXC84QabDukpQ
+ vLcbn/izySG8Em5eBzNFfD5eRctBnH5fjY0Rq1BJHpSO9kv9hUr2o/tvTR94rXGsC0qpdA0y0
+ IXNMY7vDiW3TCoOFiSAaQiXVagS3lEyW9af+Vm5LtntRizcm/Bi0/r0U3yomEQpOrHTP1N82V
+ Dwzdht/SZUWDz85cvDj9AbGj9UZAnMkuD0SPaJY4KlreyIqDM4Dgjd8g7OAKKNZ3Vex3oMpM5
+ OTunsUnTg4uj7+QG5wlcPmn3AZQ4Ui5dpMWdUdCO9NYHoSi9+VCL60J4VoCqGWdP1/dV+H771
+ a7+wyQSedToNCdNfc3/VuWxVdqcXEvxMKmvD3Y50JONzJyV7cdnZ3R4swNo4qA2bp/MMdixZC
+ 1xz2af6rOp4rtK/wUT5mfbk2Re1wpccXrZXl42RPI+T+S8o01DuUcZ4sqOfc2cwB8xQlzL2Fd
+ +OxUKL0u1lap4P71NQ9Ff2MnMgLtCoT408b4/7nTl8KF0evcN3GZsn5T/N7WL9Dg8dvrUj7va
+ vBEivYCkNtF23WB2PttWtQZMS0LwiDZ4DyyWdpGsGPg1tNRsvPBxoAb5L4zFJ93IQ2PcYMdsq
+ rXrKccO9wGsLZI47/FUf0ClRHNfUpVJO5yRJ/G26YdvBXb2Dxg9aFnGA6bOrEOdN1VRWlfa/6
+ QXg87qVTASNpsvb1iuSXUadOGUDMl0/rUumy6IWUTffs5ySH9FBAwMyx01meX2y2gcBQLE2GC
+ LxpIO/8N5+ammdtWZLxtb1+xzFZ82eusr4uMbyOFatsQZbX//2IEWCJU/u85y4YCqrb/StABr
+ NUGd5KblsU8y+nFupKcH72vo+HijS5+6PV5Mwc0lVH49vg2HHA006eDF7X0fxqqFkLG27+Y2a
+ vnvANt8zRWDhTpU8NZO0aY2CyJCoS6Xhqg1r5qDMgmjS4bU0lzcdsPndYTV4ifzBIXZH2hY0b
+ 3x+GMY8rBnsiXlSRihqzpU2pUyUs=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Feb 2025 17:18:07 +0100
+Date: Fri, 28 Feb 2025 17:32:45 +0100
 
 Replace nested max() calls by single max3() call in this
 function implementation.
@@ -90,23 +91,24 @@ This issue was transformed by using the Coccinelle software.
 
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/gpu/drm/drm_ioctl.c | 2 +-
+ drivers/gpu/drm/radeon/radeon_uvd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-index f593dc569d31..115a8eb0d8a5 100644
-=2D-- a/drivers/gpu/drm/drm_ioctl.c
-+++ b/drivers/gpu/drm/drm_ioctl.c
-@@ -856,7 +856,7 @@ long drm_ioctl(struct file *filp,
- 		in_size =3D 0;
- 	if ((cmd & ioctl->cmd & IOC_OUT) =3D=3D 0)
- 		out_size =3D 0;
--	ksize =3D max(max(in_size, out_size), drv_size);
-+	ksize =3D max3(in_size, out_size, drv_size);
+diff --git a/drivers/gpu/drm/radeon/radeon_uvd.c b/drivers/gpu/drm/radeon/=
+radeon_uvd.c
+index 058a1c8451b2..ded5747a58d1 100644
+=2D-- a/drivers/gpu/drm/radeon/radeon_uvd.c
++++ b/drivers/gpu/drm/radeon/radeon_uvd.c
+@@ -961,7 +961,7 @@ int radeon_uvd_calc_upll_dividers(struct radeon_device=
+ *rdev,
+ 	unsigned optimal_score =3D ~0;
 
- 	drm_dbg_core(dev, "comm=3D\"%s\" pid=3D%d, dev=3D0x%lx, auth=3D%d, %s\n"=
-,
- 		     current->comm, task_pid_nr(current),
+ 	/* loop through vco from low to high */
+-	vco_min =3D max(max(vco_min, vclk), dclk);
++	vco_min =3D max3(vco_min, vclk, dclk);
+ 	for (vco_freq =3D vco_min; vco_freq <=3D vco_max; vco_freq +=3D 100) {
+
+ 		uint64_t fb_div =3D (uint64_t)vco_freq * fb_factor;
 =2D-
 2.48.1
 
