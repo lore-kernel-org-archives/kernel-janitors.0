@@ -1,108 +1,97 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 8BA9A1537C6;
-	Fri, 28 Feb 2025 03:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD188241CB5;
+	Fri, 28 Feb 2025 08:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740713634; cv=none; b=pL2hoRYywdBWi8QfKIIHkm2ejjlLwD6UYJr18IVMBlCFQP1vxErTGC8G7zNU7LxSXNH2nJkCspJC+PghCKtX8lCGTjkeT2A/w38fIjZGHV2nn7Bgd6DLc36xvk9kJYmiWs2DbAWhXH7zUg0jAMgLN1vgHwlvQi24iEAnzTfwX2s=
+	t=1740730816; cv=none; b=cGs2gCilM7yhXxCFLXbD4WfBI/m8WXRtOdJ18Ju4J3ryvXrIfsEP5yyRJGvAw01gyBI0y0qIHcUJJRM+viKY8jZYrbkOjs8cXr5Fsh4rvYsHhtRaxaB8a1vMGl2jke9lxh90FH6nOFU2/gDdTayttos9ZuvHQR6zLAZga+/E6RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740713634; c=relaxed/simple;
-	bh=AHm/n/8RcSSdh+IDJcTVv4Ek0BXyFxh/FX29wdXfajo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=mVSvYvlh3BRX5NsHi0eg/VZaKDTFNTQbNAKzw9AAWs/nHwtt/6kUh31wVORIjDyqFBpqLT0P4tCHxFftx2wnbedAZPJ44XEruBwJhGI3FdwJtOZBK+6Z+T27Qmbd69oF/+yXQwyQ1kFYoBbLmcoQ9xh5caw+ZsnIcPPV2OkEtIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C9C7B60A7A1EB;
-	Fri, 28 Feb 2025 11:33:44 +0800 (CST)
-Message-ID: <558dba45-28e2-f8b0-f478-5b22c33c4fd6@nfschina.com>
-Date: Fri, 28 Feb 2025 11:33:44 +0800
+	s=arc-20240116; t=1740730816; c=relaxed/simple;
+	bh=UoYB/trv8Iol0MuUUKBG5qPWot2+WIDQonMIAwMDczI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IgYoeL8Sdi6zlnhc/c7ZmOK33Ey1HgyB+GE6Mh/X7N6yTdAisvqk9hsusqcnmb1q4GSxP+fiexPFsppM09bqL9H0cnduLJJHYcvdDiPmqk2cK5yLabKyVBlR/axPwAyPueIOBYuotN+h1aa11nfvlKAEcyr8oaM1U2PoefbnLLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=feH99N/c; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="feH99N/c"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso18672115e9.1;
+        Fri, 28 Feb 2025 00:20:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740730813; x=1741335613; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sPge7hJBFTAy8hBIjP18QmIC3VRabllYYNmaNi1fIfE=;
+        b=feH99N/c6b3yr5lA5lUsxwTYApKInOIidaiKq2cQFKulgkOT7TgwIdIervjUS27s/D
+         oUiChYQdbyCFAuTt/bC3TE7X04kfXoDaaHwia7yGFkAQPRBYQS2xN+I/PJpIZ8YjepiG
+         9OJ5eL+gzL6Ts9xljEj7J/hxAI+j6L1nm0eFcDe4yu4YcEJPIJOR6KSb+lqOp82KR9hx
+         6qJIOdT7YfIvdGRNQqglFeAvOCgihVIXoh8oO3HQfe/SKny5AGQPhTAS3R5fJjGiKodX
+         Q2+XoWxPNkeh5p05UBVxhfoYdpWWpxbDDIOz7memt8SY7wgKJ9KCEKjBIJl4eR8q1ZUA
+         7efA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740730813; x=1741335613;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sPge7hJBFTAy8hBIjP18QmIC3VRabllYYNmaNi1fIfE=;
+        b=Sqo/Oz4LrC7uAsZcfvXHRF4mhCp2xPgciLYMAfkjkIJ7l++CMCCdc65rOeBwDrh2c4
+         AdMMb2Gd2/LwEnmabNV0vG+ePiJyVIrBVIOCQkLMprbuEwhEvaKPQJTQ/pKdohRApeNv
+         /FFAXz/+pK3ozmz/zZ2/Bhb7xqd5fPD+SPNb353D+g+cg/28PG8qicKMw6f50K2dwyQS
+         2D4bkZu1NAwim4tjxgmcaj8vV693TM/TABwD/kfK7HwrM7PIarHQyUF5fiqi6S57p2F6
+         JWCUgIcHxEWi3U3hV/verc56mLsSyC9amHe9SExq3NrkDKTNF7a9HCBj+Mo89FQN9yUR
+         03Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWS4dChe2Y3kRiFCoxjnePeRldtPx2vJzfzslW2xymlyV1sF3HKwXUymGoynx2MYlpLBdHF2nDT6T+Kw9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJgPNDQLNlhDcYD/61wuf4XmzrvjoY7D1/3Y+zqim//ahxT1N1
+	iz06gMaBAkhY5HWhm+oKmmQubdwcimczj9u83lj7I+5uVTnYBNKAXAp5A6SQcDg=
+X-Gm-Gg: ASbGncskRT5lrJuxbj9aeCKkeAq7bor6jzSwS4TTzWbvPRwf/HTn9jRI/ReVE7jkqAh
+	ApdHrE9MkTN5DBIJqmkdlwtwCaDzJ0u5eQ+eREa+iwfOWnhw/oaSwSoHTb1YdaTbm6lrQ8zqd7F
+	OTlK3sIyjP7+71zfzpYbuZZ75bpcgnOnthkGbndhcaQO6b7nuQdyupfP9G2wKvYECy8GU8/8Y1I
+	B6K/ZK1bXc59/XL6RXzTYv+SlKelI22E4f99KFUK2RCiSkM6Ztta1XZBd1m7T2XE3axLRDzQBne
+	6wyh5rVaEOPxPgVZMQwhBBcoKTQ=
+X-Google-Smtp-Source: AGHT+IF4wqDn0bWt72AMDVpq0SAkVtQs1nZiW788ghlF7P5exRytaopy9FghXRWiJbTb3ReocT2sWw==
+X-Received: by 2002:a05:600c:4f12:b0:43b:8198:f713 with SMTP id 5b1f17b1804b1-43ba66d9e7emr19590375e9.4.1740730812888;
+        Fri, 28 Feb 2025 00:20:12 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e4796600sm4404636f8f.20.2025.02.28.00.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Feb 2025 00:20:12 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Huisong Li <lihuisong@huawei.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] soc: hisilicon: kunpeng_hccs: Fix spelling mistake "decrese" -> "decrease"
+Date: Fri, 28 Feb 2025 08:19:36 +0000
+Message-ID: <20250228081936.675072-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
-Content-Language: en-US
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
- Jani Nikula <jani.nikula@linux.intel.com>
-Cc: thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, ilpo.jarvinen@linux.intel.com,
- andriy.shevchenko@linux.intel.com, michael.j.ruhl@intel.com,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <bwirms6gvkvu7guxlzmmlbxb3df6qctuqedarccqer4lsu3ehx@5n3jg2ujryxb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 2025/2/28 00:03, Lucas De Marchi wrote:
-> On Thu, Feb 27, 2025 at 03:32:06PM +0800, Su Hui wrote:
->> When build randconfig, there is an error:
->> ld: drivers/gpu/drm/xe/xe_vsec.o: in function `xe_vsec_init':
->> xe_vsec.c:(.text+0x182): undefined reference to `intel_vsec_register'
->>
->> When CONFIG_DRM_XE=y and CONFIG_INTEL_VSEC=m is set, ld couldn't find
->> 'intel_vsec_register'. Select INTEL_VSEC to fix this error.
->>
->> Fixes: 0c45e76fcc62 ("drm/xe/vsec: Support BMG devices")
->> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->> drivers/gpu/drm/xe/Kconfig | 1 +
->> 1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
->> index b51a2bde73e2..7a60d96d2dd6 100644
->> --- a/drivers/gpu/drm/xe/Kconfig
->> +++ b/drivers/gpu/drm/xe/Kconfig
->> @@ -44,6 +44,7 @@ config DRM_XE
->>     select WANT_DEV_COREDUMP
->>     select AUXILIARY_BUS
->>     select HMM_MIRROR
->> +    select INTEL_VSEC
->
-> intel_vsec is an x86 platform driver. I think we probably want to add a
-> config that depends on INTEL_VSEC rather than selecting it like this.
-> At the very least we need and `if x86` and also make sure the driver
-> works without that part.
->
-There is a recursive dependency between INTEL_VSEC and DRM_XE:
+There is a spelling mistake in a dev_err message. Fix it.
 
-         symbol DRM_XE depends on INTEL_VSEC
-         symbol INTEL_VSEC depends on X86_PLATFORM_DEVICES
-         symbol X86_PLATFORM_DEVICES is selected by DRM_XE
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/soc/hisilicon/kunpeng_hccs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-So if using 'depends on INTEL_VSEC', we should remove 'select 
-X86_PLATFORM_DEVICES', like this one:
-
-  config DRM_XE
-         tristate "Intel Xe Graphics"
-         depends on DRM && PCI && MMU && (m || (y && KUNIT=y))
-+       depends on !X86 || INTEL_VSEC || INTEL_VSEC=n
-+       depends on !X86 || !ACPI || ACPI_WMI
-         select INTERVAL_TREE
-         # we need shmfs for the swappable backing store, and in particular
-         # the shmem_readpage() which depends upon tmpfs
-@@ -27,8 +29,6 @@ config DRM_XE
-         select BACKLIGHT_CLASS_DEVICE if ACPI
-         select INPUT if ACPI
-         select ACPI_VIDEO if X86 && ACPI
--       select X86_PLATFORM_DEVICES if X86 && ACPI
--       select ACPI_WMI if X86 && ACPI
-
-The 'select X86_PLATFORM_DEVICES' is introduced by 67a9e86dc130 
-("drm/xe: select
-X86_PLATFORM_DEVICES when ACPI_WMI is selected"), so both ACPI_WMI need 
-to be changed.
-
-Another choice is using 'select INTEL_VSEC if X86' and no need to change 
-other things.
-Any suggestion for these two choices?
-
+diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+index 8aa8dec14911..828ec8fec5d7 100644
+--- a/drivers/soc/hisilicon/kunpeng_hccs.c
++++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+@@ -1476,7 +1476,7 @@ static ssize_t dec_lane_of_type_store(struct kobject *kobj, struct kobj_attribut
+ 		goto out;
+ 	if (!all_in_idle) {
+ 		ret = -EBUSY;
+-		dev_err(hdev->dev, "please don't decrese lanes on high load with %s, ret = %d.\n",
++		dev_err(hdev->dev, "please don't decrease lanes on high load with %s, ret = %d.\n",
+ 			hccs_port_type_to_name(hdev, port_type), ret);
+ 		goto out;
+ 	}
+-- 
+2.47.2
 
