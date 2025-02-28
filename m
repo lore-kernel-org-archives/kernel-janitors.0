@@ -1,78 +1,69 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384262505B0;
-	Fri, 28 Feb 2025 08:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62A88F6B;
+	Fri, 28 Feb 2025 08:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731606; cv=none; b=OM3p3E4+P+tevhNTS+Rrj85zoKVozwhCaz8Q2iqsXsjxtwbJbuQ37YqvJ8jfPmJDbwEZNJTkpodo0XbZIoKZnmTsMumQ5U5mpTDmw6n/wUpfXYbSNUUf8hQjLBKBIh7k38/Qd5mO327doo89QlfamlDRhbB85/DOeREDpcfCuyo=
+	t=1740731830; cv=none; b=g9kSwfOPf971uoj7ocGwG1Ll/p7nTlJxUkWkpVo/+Bcs3mJ+Ub326XNYfAJ+adL1Tfbr+e0b4/Snb5O0dQvG7fnrWTkJjzgst02qe6wxwOBnqXvzEUcGDk9bY9RwhwX++BZ5CjMk16GYSRbE1zLnEcf32kef8mGq7CtKacFpVcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731606; c=relaxed/simple;
-	bh=LRCy5Q6xrGTrkxnCGNdgxl18T95wjYXYomd6Qcd8JpM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O+G1qyaPyCFUo0+1nJt6rR1seg3QfqkdTnPwAbN+mcbQQY/dMz3N7EYzRmIIFQB0c7pfYIMZWLQTRT4wPVOo4AEecHAne/YQRPaQ/uYRomIzMIXN+7aZ61ysNkKk8Nmieonn7GO0/Ggb5yVkH4wSOw8cpkSOVg/d9IOf/c9yraw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vk1t9kI8; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1740731830; c=relaxed/simple;
+	bh=iHiRNdH+KFNaZqiPcYsSwcL8n4jnbuJvjPdyjBAQp+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CUp18qG7Y/9Z8kFgTABm+6ejh5Pos7LMHGvVmFMxTm66b7sQi9qigQMdqyMBKsOrblIkzoRBKm72Yhq7BEX9/cvUoRbOeggaCfrKBx9uqVeKmE+Zi9kxOBIryf1MAiOb1ertzOLkrIYAuKSmT5CCnH/NJVFncqQ6RooC0ujTEGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRieokzY; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vk1t9kI8"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so11888405e9.3;
-        Fri, 28 Feb 2025 00:33:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRieokzY"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43aac0390e8so11930465e9.2;
+        Fri, 28 Feb 2025 00:37:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740731603; x=1741336403; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740731827; x=1741336627; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=altOlD5OfS9XMQsr9JEVj89aEfRHMr4jhcpHBqrXJ/0=;
-        b=Vk1t9kI84Jc9I8KCv57ch9YcjkHl+Ldespo6RzhK4cU3OSQYsB4jKgOnPHPWFmNsO9
-         r4SWJUq8tjFtrhXvjCBcYsDgHAxoILZ3tlf2e4Fr54djkwI1MoUN6OO/7aAz+mBduxYu
-         dwVBw+S+i8VsXKLsLx7t/J178aGaUUA5hzxNK7AAe1/dQLw4zkyGxsSJ7P6iGN+jTAYy
-         OzrOU89W/Buz3e6oaJaJj32Hnm7RXdC4bgi/n1yya2M1j77YH9g5feLZeV79bYIUZkkj
-         tJY9/S/LVZeg1PAcla4yjtrhK7ORXZr/0oJuVjSTwCRbHZlto2bP+YbtsnML5Fu0FD7s
-         nNng==
+        bh=PX9T+rP9CC7EvLoe0Jx75LYBu203Hhbldl2vmfUt5nQ=;
+        b=nRieokzY2nUkpnL6CsU/tslULZb8mDFMokngozG4zGnZzvQ6IggtVPj/2D9L5FQAub
+         liudCqSM+sTbWPUZXCq5/Ymmpz/z0C0ooPoDqW2uF4NG4eH5LBxVOslWjc5hsZAqU6Oi
+         TWTXxYiwcrjc4o1xRUkr6zM5gmyDQLQjO4inT6ufTFwLmj+kz5t3JQxO2jxYlXwb6sfg
+         yvpmjArVBFkWRAFPsx2yCPo9Xff1puQvvVvGdBw+pyk8LsoSyKoUQLD/OIdV/DKouVmw
+         /QgrsE3Fy/GiZvOIaLZ7SHZBMXYbbkBiIemRAbOjbSsJZ4f7I7fxqFFsy3lFosDMdrJv
+         EDbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740731603; x=1741336403;
+        d=1e100.net; s=20230601; t=1740731827; x=1741336627;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=altOlD5OfS9XMQsr9JEVj89aEfRHMr4jhcpHBqrXJ/0=;
-        b=KZtq7OxR+vzmW/BW8ikfGm4IiO6I2AN53JRerJrSy1p2VznMMgLhrFxolNF3a20TYn
-         WZuqN7IHhLWhxoLz4P7/TSzD8oocD7uqKWHLwnGC7UxE3y8lPLeSUQWr7s06hAxxmV0E
-         cTG86gI6uXfzL8qfRXL5i63D4DTw3DvxESIvemom0wjuRJ864g1MUXGBKGHrme2Bd8Ck
-         B9DroNnRPXwOgJ6VnsdcQrwRImuKTf0zUyzRb5BmmuVAOgfOWm5ODByalxL2j18f5hlR
-         N3YoxFGPD4RCCj6izfNXMYE3yMZs20AeX2CeQOuzVMl25GQSu7mCmMGntDJzW3ElWh5s
-         JgSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKcggbB5Uq1SORfy0L/0exsOaTlRCE64ei/BGMnEkTXz7xuRi95dvZJvawlqDd7Gu1si5oao8bwyG+lY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhg//eLXJzc08IY86ysAddSAFidDtOR660lTqitA5Ly136zixS
-	R/q51gw/XRAd0Kfzt3xsZ2dho/HC7FxxZv3ElDnY3vihmc0LLTrL
-X-Gm-Gg: ASbGncsOewJNKdueuu03z2WuR2pvOWTCnsGtz9J01k8tE5d1g2xnxnuPq9BuenLnAtF
-	dMTLDnlzVr3dN1ICKz1kI3JaxPqqFYaLq8DjYhihkrklJXWIKw2RmnIS0v6b7liK0zwlNfPBsbW
-	oniJI4TfnUCaEhuhz5lU36G/D4ahXiudpFVk8vDvD8BaGvgjL0uj3Sovliogs8+Wpe/kZoS1AE9
-	TmFsugdLzxtIrpgky94/35giYSn4aZkisrXAzmDRD4x/tb4DI0QWHfSW+5EapbNvST9mkPUUaZb
-	2MWpfgpclyHbYthv5Fli9He2hhs=
-X-Google-Smtp-Source: AGHT+IFow7FUOytG/ykCncfTbL0sB2LYY5hKFmRDCWNXGIyfl+KPtU4kWQ6hYwmvBGNpZfuJxe3aQQ==
-X-Received: by 2002:a05:600c:3b0d:b0:439:88bb:d02d with SMTP id 5b1f17b1804b1-43ba66da7eemr16388845e9.2.1740731603153;
-        Fri, 28 Feb 2025 00:33:23 -0800 (PST)
+        bh=PX9T+rP9CC7EvLoe0Jx75LYBu203Hhbldl2vmfUt5nQ=;
+        b=Q7LE7/miljwoi7XQUls4CF16GCWpg+T+poPV2do9dqh13HTdfzAylpFBXMKMt7U5al
+         1dKuhYPJDHGAJD19y22KN5NqoPKXwmdrVW6pUE207VpyVqF/HgjNUy3c0w/CPESK5bbz
+         pPafbNZCe8uV1FQ/uBBr9VRLFaPH8o5WNBt7VRmjOnUUWHQyYZybeYiIAmHzmpsE4DtY
+         z5bQ6gI8DR12KGHWeyieF2Q3cOw8ffAfsFqlKfy2EeUq+pOnZ872kxlCaWC7fvNf6eAB
+         hO4XfaiXAc/LubBMlh7P2Y+5t3JhSjOhMIzzJBuYHHQpaH83IAqj8dE+tdQyFv+ohbfr
+         A8uw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmk/NoBkqPEzuGJK7qu9hgWPpZHxxAKeoUGp9sHo+B0c/oezOz0Er95o4/y8ZPdeAmG0s6zPhzPZY1Y2E=@vger.kernel.org, AJvYcCXYHKraDvOxwJXDoRqfNoJIJxrtwdlPsc6ud4e6STrdxa99BSFIxVLDB7WoCYpJYTRGerCJNlJXyq37dKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBnn5T9zrrSHR1/jX52bi8s6nuw8Rcjh2bf5a4JRo1F/2U5sOu
+	GNQ7IXxYC+r2UfWiAobuf2+XfOrKYl4pFJsjrURCw5Wp0qsQvHpg
+X-Gm-Gg: ASbGnct7Zuzxa36MMzkXkk/2G1YHz/jaR5CdXOrFv4xL77tH8aXnfZSQjl3Y/j+BZtb
+	zin7K4UZeAaz9vj9/NTtEYZ6C3txsZiP7qPSTx9/tCp69WyGVQQ8mfT/wmcp56Dm5jP7wwodFYI
+	S9AwsTPvEdgA9NlGDEqQB9NLr9nvIhc4TgzaOesrxBHbrdI9B1HIJoHc7qSX/fNnAN4XCWgwBr5
+	kvyZfVC4K+sGjCC3+cx7gFscp0M9xVxl/32xqF5/rJy/cKUUJQEPflh6QOiMJX6aLYAwdCW14Kl
+	Wd9Xsn/0aI9DIHYd/Vk0BnVJjGI=
+X-Google-Smtp-Source: AGHT+IGKtBXnAxwKr6WSIpLjGkowwxL79Uai/VAiCI3qG0ApVeeVhNw9AiVdWLtob5QmA69nC2ljIw==
+X-Received: by 2002:a05:600c:4ed0:b0:439:8ec2:a9dc with SMTP id 5b1f17b1804b1-43ba6771538mr18212775e9.31.1740731826920;
+        Fri, 28 Feb 2025 00:37:06 -0800 (PST)
 Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43aba532b2fsm79801705e9.10.2025.02.28.00.33.22
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ab39ed2a6sm65936305e9.3.2025.02.28.00.37.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:33:22 -0800 (PST)
+        Fri, 28 Feb 2025 00:37:06 -0800 (PST)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/bridge: Fix spelling mistake "gettin" -> "getting"
-Date: Fri, 28 Feb 2025 08:32:47 +0000
-Message-ID: <20250228083248.676473-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ALSA: es18xx: Fix spelling mistake "grap" -> "grab"
+Date: Fri, 28 Feb 2025 08:36:31 +0000
+Message-ID: <20250228083631.676877-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -83,26 +74,49 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a dev_err message. Fix it.
+There are spelling mistakes in dev_err messages. Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/bridge/sii902x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/isa/es18xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index 2100a687096e..914a2609a685 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -887,7 +887,7 @@ static int sii902x_audio_codec_init(struct sii902x *sii902x,
- 		lanes[0] = 0;
- 	} else if (num_lanes < 0) {
- 		dev_err(dev,
--			"%s: Error gettin \"sil,i2s-data-lanes\": %d\n",
-+			"%s: Error getting \"sil,i2s-data-lanes\": %d\n",
- 			__func__, num_lanes);
- 		return num_lanes;
+diff --git a/sound/isa/es18xx.c b/sound/isa/es18xx.c
+index 59c784a70ac1..e35c727a52fa 100644
+--- a/sound/isa/es18xx.c
++++ b/sound/isa/es18xx.c
+@@ -1735,27 +1735,27 @@ static int snd_es18xx_new_device(struct snd_card *card,
+ 	chip->active = 0;
+ 
+ 	if (!devm_request_region(card->dev, port, 16, "ES18xx")) {
+-		dev_err(card->dev, "unable to grap ports 0x%lx-0x%lx\n", port, port + 16 - 1);
++		dev_err(card->dev, "unable to grab ports 0x%lx-0x%lx\n", port, port + 16 - 1);
+ 		return -EBUSY;
  	}
+ 
+ 	if (devm_request_irq(card->dev, irq, snd_es18xx_interrupt, 0, "ES18xx",
+ 			     (void *) card)) {
+-		dev_err(card->dev, "unable to grap IRQ %d\n", irq);
++		dev_err(card->dev, "unable to grab IRQ %d\n", irq);
+ 		return -EBUSY;
+ 	}
+ 	chip->irq = irq;
+ 	card->sync_irq = chip->irq;
+ 
+ 	if (snd_devm_request_dma(card->dev, dma1, "ES18xx DMA 1")) {
+-		dev_err(card->dev, "unable to grap DMA1 %d\n", dma1);
++		dev_err(card->dev, "unable to grab DMA1 %d\n", dma1);
+ 		return -EBUSY;
+ 	}
+ 	chip->dma1 = dma1;
+ 
+ 	if (dma2 != dma1 &&
+ 	    snd_devm_request_dma(card->dev, dma2, "ES18xx DMA 2")) {
+-		dev_err(card->dev, "unable to grap DMA2 %d\n", dma2);
++		dev_err(card->dev, "unable to grab DMA2 %d\n", dma2);
+ 		return -EBUSY;
+ 	}
+ 	chip->dma2 = dma2;
 -- 
 2.47.2
 
