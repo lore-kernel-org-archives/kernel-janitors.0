@@ -1,104 +1,80 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ABD26F469;
-	Thu, 27 Feb 2025 23:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7057F182;
+	Fri, 28 Feb 2025 00:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740697424; cv=none; b=REwWBJuwkXTx5FlbJyKT7wtFji3UKf2qy34lwAipeLMTccD4LnqQpa1tM07y7uEI2nflHq0ViU7MwTRuPxUJt4jiTC9XmTEuGRliOnwR1pxJ+8FIx0lAABXy/5NbI6peeVYkm3W57DuY5zrVLr1vUNZXvel+sLWwJjnIPRrXbKw=
+	t=1740701284; cv=none; b=L75UdoCCPKxN8hcgDEu6oFEXWH7C4JZMpjUn6gGbzbqiJTcaottS9cD4njw8kr1Zp0oitqz3oQUG4Y3InlWkpb+DevIgfQXnmN8GwpZVrl26LZkkqzXqShVPvvk0oDeQy9PrddEeAMbqRMxtel7jUz7s7eSC7BUSi+DWDRbB20Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740697424; c=relaxed/simple;
-	bh=0iT8jAYbTIV6/JT+rArq6GBtNxLmL5SGdbTXp05TjXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jtxiC980zEwYEbU8RdAIuJ37GUCKbfXVzJRhfuIFWHNxjf4JM59MDRo6WeOCzOtaQ/lcSU7A2tZG+pLvDoJQ/xDgzVtwdcX7XCwVrp4oWWyM7q4rMeiy+t802ET7hawTv4lQInj9yBzcNGzdruQsdDDau5LWuD4Jd1o7Gxd4fIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRpQX/iv; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1740701284; c=relaxed/simple;
+	bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J9BXJStMwgOTaExmYCIkHVnrSwdQjv0U8LSGnK5103yK4fl2k6PIKGshwC03r712ieCRUzWr2pqXp6AM+iMKVHUY+LGgbR1leLkjwdJeN41kU90HpfWQ2yjJETs4F6Szn/bv0Mg7Od/THbnmRU5o4FAYemrLvaUISiOc/h9nJ5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fS9KUTfS; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRpQX/iv"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4397dff185fso13391485e9.2;
-        Thu, 27 Feb 2025 15:03:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fS9KUTfS"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e53c9035003so1201620276.2;
+        Thu, 27 Feb 2025 16:08:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740697420; x=1741302220; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k2YPodslC9xBCdYDOuo4n6OjeMEfkunhm0xpWdMwxIc=;
-        b=RRpQX/ivm47wrAeBfbXMS8KPbUuDWKgGLMXh8UIa851J6UIVzEQaQ+81NJQROA17O0
-         +KIdG0R3qm5qx2aDdWFIl7WXxUe6TA8En7ufcp7/+DCgMtTlJWpn+5w9rg4+iiC6LvNX
-         aDFqsRfQV/dltPcEq1nuSi0Ejuj+giNl+/ixJhyFM1/JPLTU3Ekp1vgVp8axEMabHrXP
-         PaDZ1rCYKC1ut7t8Jlnnfm30GQPTNMWgYl61ih0ve/kxQacT242YZbhXY8sv5Kcdkw/C
-         qS8bAydytjo3RYDqaeRnS0hZnuukDCxRzqcDhJ2/fopnP+whlCTyT525Bj3syBUfvgCu
-         Qp4g==
+        d=gmail.com; s=20230601; t=1740701282; x=1741306082; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
+        b=fS9KUTfS5FoJ6QY9Gpjw/Bjf2dXuC8UPlucAmaNgEO10HCmi07RS+n6qunPmJIRsNn
+         ZXYgYMz9LKob5oA1CZgk1yKj2jCZVXoksOyrccaYHhmAcGymTwQ26UYbhtaXN0Je+BpY
+         5EJUDR8LS9+k5Q7YID6cq6Qj672weyoeSHWq2JPr90ozo/c2lKs2GuNuaFvQaJpAIw6R
+         MTgfE30qDFft7wXJIuvvhfbuAiIxAYKe7avPkmFaXJSJ1/xY1YkH17z56YGfyM6BptHM
+         6okSKXssVkDQRKFPmAaFfKIOr0oahFYR9K5c7HQv+jzFhrUCTnpkb/716uex5GgInWWG
+         M4Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740697420; x=1741302220;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1740701282; x=1741306082;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k2YPodslC9xBCdYDOuo4n6OjeMEfkunhm0xpWdMwxIc=;
-        b=JbwbTVj0TL5MhD/Y6B5bYqT56Yde8MF/dhLhmFqmPOeuvgDZ4iA8eDV3zblxoLH7S0
-         +BecXtKde6S6Y3Y+hpXo3qcVujujmHRRaX8Cx6P09Fct4f4awUKmbAfPfuGqaKjzwjXe
-         n2QreHNwubKlAPaCnRCItw+B0SK1pZfFOZdpInMJf10oLyM7H2kkOIlm5MctltyyW5a0
-         /BEV7lHkD6bcVsAQ0IzQq7iCFrKIC5sKcqfzxj40dUpkZ8fANVvY3n8ltsrm0wRUWQtg
-         PynfcZzqmj0Kp2UmHQsHKnk25+Ze2LTg867/+1dA/n4vz4zDEqreF4SPdZ2ZjqDisXiW
-         1Mjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuc11ck380BfqEfOuEOzOo3Rx/7cS8M5ZrgHWSuE9EGrpfWKB8RIV68UY0Plm6YGY/56a5NtFVWY/UF9OA@vger.kernel.org, AJvYcCWIxLsO89g8mpMKMrMCQ+HTdzu8WRheawETWVmLehSGKubsNH4G59Zsx54IR6aaqRHOAvrHtuELZuKQJDUyah5K@vger.kernel.org, AJvYcCWWkk39OM+0Nen4JBcVXdPWgubzT8YypgRVOp14fMvpbxz5P6cDBgiFHR9YM2hK4AtaNJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEyBLZkVZoEU3YyBAuK6TwX1oQY5GLxhP31FqIzQ4KCzjC7Um4
-	DFwpI58fAX/zgea9hyKfOAOYEaUCXuVzEY8QlYN/rEzBG0AC0YxG
-X-Gm-Gg: ASbGncvDajIXb7Zceb8PlkOYIDNliCENyFJ/m4D95itx6RqOMrhBtsjIj/6g0xKn0TD
-	bSMmCDczkZgtllZlyKVDD7v2IYrxJ7JbxnWErWpgNEejJoKZHNfKIqNsxE9/7H3/dCHb5CWWcmk
-	OLvACNZt+gtATvWSA/xAlTRScpx8QOhu04wErYD7yVDa0N4MjWLTAdpizTPAQaAn2Znko7mY2gE
-	sGvZ8cM8GpoYNWpT1F35fJL17473HmptUTdvDcT5BXdvgaCy1az9cr9S6Afa23CS6Kz13LiXKEN
-	4JR32LcLMFk4jaPUug1mjFbrmkQ=
-X-Google-Smtp-Source: AGHT+IGcaB+hVpAE6LBoJnhlL/n+Tz4TaOAFX4qtUtqkkdfljnpRgZpXncHbzLr1fz6F1NkHPqjcJQ==
-X-Received: by 2002:a05:6000:20c6:b0:390:e3d7:11e3 with SMTP id ffacd0b85a97d-390ec9bccc9mr642887f8f.22.1740697420443;
-        Thu, 27 Feb 2025 15:03:40 -0800 (PST)
-Received: from localhost ([194.120.133.72])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e47b6cd8sm3285274f8f.44.2025.02.27.15.03.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Feb 2025 15:03:40 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] KVM: selftests: Fix spelling mistake "avaialable" -> "available"
-Date: Thu, 27 Feb 2025 23:03:05 +0000
-Message-ID: <20250227230305.661761-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.47.2
+        bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
+        b=MW0VJMO+X8IWGqMNQBFEiU1wJTelKWyyy0rUEQ8t5G11AN7FcqDtifndqfmH0mSor1
+         nG2hU1QDu6zG4SqH/Ypn5rQYTyAqx86y6VABS3HP673AT5SLpo+kpnVdHJwi4gYXLRtT
+         JTrhYsq8rq3FnyZNXPrYJLg/Y5d0c06KxQnIhWqtdtJkKmOfzNSiGO92kHu01O5Per/d
+         zBMGKvnzAhSk6eIf0iVJ8Hz/R+S4a87Qcg1QApQb2NfFKEcrFd/KZ96oZ3Aazgk51Qhm
+         iTHSArIcvRWeVgw57j0B2b9P1IFkzX6z0yqipUByG6mc2fN2b5wwtq+9JehVE5f3AoEd
+         soEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCL7jV5lWjDKmt01ZFVvFZQpsaN9xMeehVbg2AL0UDT8JbOIK0HI3LqXoDQipMDHqSrTO4hyNMtVY9csykgJg=@vger.kernel.org, AJvYcCWLcwo17Q+mcFofW4rysfGMb1faG0Tt37AJPxLOhB8EfBa5OqQJjxz7swK8eA0xrFBcgSWSbh9/k620XQ==@vger.kernel.org, AJvYcCXRZvKuTxv0EDCECikTuPJyhcZd4etiKOC9j1YLTa5oiKGGW7SgXa5Myu03otGB7mPiF9qvCLQVJ0lFDKp2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFYxIRyLdZGzA18zcdJlZTZaZhB9rCS03Jfh+dLe3g5kdtwcwE
+	hElUdGrzO2MT31XSVDbUg2E6FcYfS+P0txQGBlHgu1D1CVpR6lrZG+uvrFtW0tNg+VuOS3lYbIp
+	LwOki8zTvlJ9Y9fQQ2N0thy1ZTvfdAU68
+X-Gm-Gg: ASbGncs83AWGWz4ic5p16yAlUbYpUNamavmeAl4mTJ9mGpHXR7AXX3Shcyl1WJmRS0W
+	XnC63zzyphTNrtypiBu4g1MOvhXKvt9fB7cZtnIc0uJrWJLPzb1r3B5hL9OrQrg0EYJuuDnYx2S
+	6iN2Z4iCzG
+X-Google-Smtp-Source: AGHT+IGEhr/ZHicSGTtEZuhJ6N3SlIjOb86zqjKxfzWPrTvqCQ+fJHYyCtXANdyhaVHo3KkaXMpGjOTZqO4d64PrQNs=
+X-Received: by 2002:a05:6902:2745:b0:e60:b17c:4252 with SMTP id
+ 3f1490d57ef6-e60b2f2ec28mr1572454276.44.1740701282378; Thu, 27 Feb 2025
+ 16:08:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250227225046.660865-1-colin.i.king@gmail.com>
+In-Reply-To: <20250227225046.660865-1-colin.i.king@gmail.com>
+From: Justin Tee <justintee8345@gmail.com>
+Date: Thu, 27 Feb 2025 16:06:58 -0800
+X-Gm-Features: AQ5f1JqUtukwNG-_koyH808F6r_s3Zf95w-09IXYBwR0i-b82eV5Oszn61Fuqls
+Message-ID: <CABPRKS_WubBn_1wN+bKi+xEHw02ankvzx3FBzpbafmxPb8AGAA@mail.gmail.com>
+Subject: Re: [PATCH][next] scsi: lpfc: Fix spelling mistake "Toplogy" -> "Topology"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Justin Tee <justin.tee@broadcom.com>, James Smart <james.smart@broadcom.com>, 
+	Dick Kennedy <dick.kennedy@broadcom.com>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, linux-scsi@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-There is a spelling mistake in a ksft_test_result_skip message. Fix it.
+Reviewed-by: Justin Tee <justin.tee@broadcom.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/kvm/s390/cpumodel_subfuncs_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks looks fine.
 
-diff --git a/tools/testing/selftests/kvm/s390/cpumodel_subfuncs_test.c b/tools/testing/selftests/kvm/s390/cpumodel_subfuncs_test.c
-index 27255880dabd..aded795d42be 100644
---- a/tools/testing/selftests/kvm/s390/cpumodel_subfuncs_test.c
-+++ b/tools/testing/selftests/kvm/s390/cpumodel_subfuncs_test.c
-@@ -291,7 +291,7 @@ int main(int argc, char *argv[])
- 			ksft_test_result_pass("%s\n", testlist[idx].subfunc_name);
- 			free(array);
- 		} else {
--			ksft_test_result_skip("%s feature is not avaialable\n",
-+			ksft_test_result_skip("%s feature is not available\n",
- 					      testlist[idx].subfunc_name);
- 		}
- 	}
--- 
-2.47.2
-
+Regards,
+Justin
