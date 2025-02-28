@@ -1,80 +1,108 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7057F182;
-	Fri, 28 Feb 2025 00:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 8BA9A1537C6;
+	Fri, 28 Feb 2025 03:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740701284; cv=none; b=L75UdoCCPKxN8hcgDEu6oFEXWH7C4JZMpjUn6gGbzbqiJTcaottS9cD4njw8kr1Zp0oitqz3oQUG4Y3InlWkpb+DevIgfQXnmN8GwpZVrl26LZkkqzXqShVPvvk0oDeQy9PrddEeAMbqRMxtel7jUz7s7eSC7BUSi+DWDRbB20Y=
+	t=1740713634; cv=none; b=pL2hoRYywdBWi8QfKIIHkm2ejjlLwD6UYJr18IVMBlCFQP1vxErTGC8G7zNU7LxSXNH2nJkCspJC+PghCKtX8lCGTjkeT2A/w38fIjZGHV2nn7Bgd6DLc36xvk9kJYmiWs2DbAWhXH7zUg0jAMgLN1vgHwlvQi24iEAnzTfwX2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740701284; c=relaxed/simple;
-	bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J9BXJStMwgOTaExmYCIkHVnrSwdQjv0U8LSGnK5103yK4fl2k6PIKGshwC03r712ieCRUzWr2pqXp6AM+iMKVHUY+LGgbR1leLkjwdJeN41kU90HpfWQ2yjJETs4F6Szn/bv0Mg7Od/THbnmRU5o4FAYemrLvaUISiOc/h9nJ5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fS9KUTfS; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fS9KUTfS"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e53c9035003so1201620276.2;
-        Thu, 27 Feb 2025 16:08:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740701282; x=1741306082; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
-        b=fS9KUTfS5FoJ6QY9Gpjw/Bjf2dXuC8UPlucAmaNgEO10HCmi07RS+n6qunPmJIRsNn
-         ZXYgYMz9LKob5oA1CZgk1yKj2jCZVXoksOyrccaYHhmAcGymTwQ26UYbhtaXN0Je+BpY
-         5EJUDR8LS9+k5Q7YID6cq6Qj672weyoeSHWq2JPr90ozo/c2lKs2GuNuaFvQaJpAIw6R
-         MTgfE30qDFft7wXJIuvvhfbuAiIxAYKe7avPkmFaXJSJ1/xY1YkH17z56YGfyM6BptHM
-         6okSKXssVkDQRKFPmAaFfKIOr0oahFYR9K5c7HQv+jzFhrUCTnpkb/716uex5GgInWWG
-         M4Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740701282; x=1741306082;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jUEZoOE+I/HL6qmkqpRxBAW840EWU6rM2MCD09k8aQI=;
-        b=MW0VJMO+X8IWGqMNQBFEiU1wJTelKWyyy0rUEQ8t5G11AN7FcqDtifndqfmH0mSor1
-         nG2hU1QDu6zG4SqH/Ypn5rQYTyAqx86y6VABS3HP673AT5SLpo+kpnVdHJwi4gYXLRtT
-         JTrhYsq8rq3FnyZNXPrYJLg/Y5d0c06KxQnIhWqtdtJkKmOfzNSiGO92kHu01O5Per/d
-         zBMGKvnzAhSk6eIf0iVJ8Hz/R+S4a87Qcg1QApQb2NfFKEcrFd/KZ96oZ3Aazgk51Qhm
-         iTHSArIcvRWeVgw57j0B2b9P1IFkzX6z0yqipUByG6mc2fN2b5wwtq+9JehVE5f3AoEd
-         soEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCL7jV5lWjDKmt01ZFVvFZQpsaN9xMeehVbg2AL0UDT8JbOIK0HI3LqXoDQipMDHqSrTO4hyNMtVY9csykgJg=@vger.kernel.org, AJvYcCWLcwo17Q+mcFofW4rysfGMb1faG0Tt37AJPxLOhB8EfBa5OqQJjxz7swK8eA0xrFBcgSWSbh9/k620XQ==@vger.kernel.org, AJvYcCXRZvKuTxv0EDCECikTuPJyhcZd4etiKOC9j1YLTa5oiKGGW7SgXa5Myu03otGB7mPiF9qvCLQVJ0lFDKp2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFYxIRyLdZGzA18zcdJlZTZaZhB9rCS03Jfh+dLe3g5kdtwcwE
-	hElUdGrzO2MT31XSVDbUg2E6FcYfS+P0txQGBlHgu1D1CVpR6lrZG+uvrFtW0tNg+VuOS3lYbIp
-	LwOki8zTvlJ9Y9fQQ2N0thy1ZTvfdAU68
-X-Gm-Gg: ASbGncs83AWGWz4ic5p16yAlUbYpUNamavmeAl4mTJ9mGpHXR7AXX3Shcyl1WJmRS0W
-	XnC63zzyphTNrtypiBu4g1MOvhXKvt9fB7cZtnIc0uJrWJLPzb1r3B5hL9OrQrg0EYJuuDnYx2S
-	6iN2Z4iCzG
-X-Google-Smtp-Source: AGHT+IGEhr/ZHicSGTtEZuhJ6N3SlIjOb86zqjKxfzWPrTvqCQ+fJHYyCtXANdyhaVHo3KkaXMpGjOTZqO4d64PrQNs=
-X-Received: by 2002:a05:6902:2745:b0:e60:b17c:4252 with SMTP id
- 3f1490d57ef6-e60b2f2ec28mr1572454276.44.1740701282378; Thu, 27 Feb 2025
- 16:08:02 -0800 (PST)
+	s=arc-20240116; t=1740713634; c=relaxed/simple;
+	bh=AHm/n/8RcSSdh+IDJcTVv4Ek0BXyFxh/FX29wdXfajo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=mVSvYvlh3BRX5NsHi0eg/VZaKDTFNTQbNAKzw9AAWs/nHwtt/6kUh31wVORIjDyqFBpqLT0P4tCHxFftx2wnbedAZPJ44XEruBwJhGI3FdwJtOZBK+6Z+T27Qmbd69oF/+yXQwyQ1kFYoBbLmcoQ9xh5caw+ZsnIcPPV2OkEtIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C9C7B60A7A1EB;
+	Fri, 28 Feb 2025 11:33:44 +0800 (CST)
+Message-ID: <558dba45-28e2-f8b0-f478-5b22c33c4fd6@nfschina.com>
+Date: Fri, 28 Feb 2025 11:33:44 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227225046.660865-1-colin.i.king@gmail.com>
-In-Reply-To: <20250227225046.660865-1-colin.i.king@gmail.com>
-From: Justin Tee <justintee8345@gmail.com>
-Date: Thu, 27 Feb 2025 16:06:58 -0800
-X-Gm-Features: AQ5f1JqUtukwNG-_koyH808F6r_s3Zf95w-09IXYBwR0i-b82eV5Oszn61Fuqls
-Message-ID: <CABPRKS_WubBn_1wN+bKi+xEHw02ankvzx3FBzpbafmxPb8AGAA@mail.gmail.com>
-Subject: Re: [PATCH][next] scsi: lpfc: Fix spelling mistake "Toplogy" -> "Topology"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Justin Tee <justin.tee@broadcom.com>, James Smart <james.smart@broadcom.com>, 
-	Dick Kennedy <dick.kennedy@broadcom.com>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, linux-scsi@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
+Content-Language: en-US
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>
+Cc: thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, ilpo.jarvinen@linux.intel.com,
+ andriy.shevchenko@linux.intel.com, michael.j.ruhl@intel.com,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <bwirms6gvkvu7guxlzmmlbxb3df6qctuqedarccqer4lsu3ehx@5n3jg2ujryxb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Justin Tee <justin.tee@broadcom.com>
+On 2025/2/28 00:03, Lucas De Marchi wrote:
+> On Thu, Feb 27, 2025 at 03:32:06PM +0800, Su Hui wrote:
+>> When build randconfig, there is an error:
+>> ld: drivers/gpu/drm/xe/xe_vsec.o: in function `xe_vsec_init':
+>> xe_vsec.c:(.text+0x182): undefined reference to `intel_vsec_register'
+>>
+>> When CONFIG_DRM_XE=y and CONFIG_INTEL_VSEC=m is set, ld couldn't find
+>> 'intel_vsec_register'. Select INTEL_VSEC to fix this error.
+>>
+>> Fixes: 0c45e76fcc62 ("drm/xe/vsec: Support BMG devices")
+>> Signed-off-by: Su Hui <suhui@nfschina.com>
+>> ---
+>> drivers/gpu/drm/xe/Kconfig | 1 +
+>> 1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+>> index b51a2bde73e2..7a60d96d2dd6 100644
+>> --- a/drivers/gpu/drm/xe/Kconfig
+>> +++ b/drivers/gpu/drm/xe/Kconfig
+>> @@ -44,6 +44,7 @@ config DRM_XE
+>>     select WANT_DEV_COREDUMP
+>>     select AUXILIARY_BUS
+>>     select HMM_MIRROR
+>> +    select INTEL_VSEC
+>
+> intel_vsec is an x86 platform driver. I think we probably want to add a
+> config that depends on INTEL_VSEC rather than selecting it like this.
+> At the very least we need and `if x86` and also make sure the driver
+> works without that part.
+>
+There is a recursive dependency between INTEL_VSEC and DRM_XE:
 
-Thanks looks fine.
+         symbol DRM_XE depends on INTEL_VSEC
+         symbol INTEL_VSEC depends on X86_PLATFORM_DEVICES
+         symbol X86_PLATFORM_DEVICES is selected by DRM_XE
 
-Regards,
-Justin
+So if using 'depends on INTEL_VSEC', we should remove 'select 
+X86_PLATFORM_DEVICES', like this one:
+
+  config DRM_XE
+         tristate "Intel Xe Graphics"
+         depends on DRM && PCI && MMU && (m || (y && KUNIT=y))
++       depends on !X86 || INTEL_VSEC || INTEL_VSEC=n
++       depends on !X86 || !ACPI || ACPI_WMI
+         select INTERVAL_TREE
+         # we need shmfs for the swappable backing store, and in particular
+         # the shmem_readpage() which depends upon tmpfs
+@@ -27,8 +29,6 @@ config DRM_XE
+         select BACKLIGHT_CLASS_DEVICE if ACPI
+         select INPUT if ACPI
+         select ACPI_VIDEO if X86 && ACPI
+-       select X86_PLATFORM_DEVICES if X86 && ACPI
+-       select ACPI_WMI if X86 && ACPI
+
+The 'select X86_PLATFORM_DEVICES' is introduced by 67a9e86dc130 
+("drm/xe: select
+X86_PLATFORM_DEVICES when ACPI_WMI is selected"), so both ACPI_WMI need 
+to be changed.
+
+Another choice is using 'select INTEL_VSEC if X86' and no need to change 
+other things.
+Any suggestion for these two choices?
+
+
