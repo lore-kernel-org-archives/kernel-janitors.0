@@ -1,127 +1,116 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379D41EF399;
-	Fri, 28 Feb 2025 15:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7670A26E65E;
+	Fri, 28 Feb 2025 15:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740757219; cv=none; b=q6MYQlmb4cbZ6MDbGrLEXFmU7WAVIU2FaBxyEXpKl6SonfHpazihzRxQH61/TnbwO3K57aQ5SzqDpJm7Yhi4pxvw/Y+RaUMo6/mVrvFACpD+nbjmoltGe8vgxxrh5KqkZ3qibIqYH7yqjw8ghKKAKy6NY4yZWl/EfA7yECmluY0=
+	t=1740757570; cv=none; b=oxGwaR4TJoF1zCXmr8OIqZPEUYcKTZhqYzGrKY9elXGm+7W/GgjcQFzDJ2ufiaSX/a0sBZ3ttMPtIspVJC1mrcd3+kvc6+6L+jCqK6yfMCJjvQa/My37ElXu/32T84AuJdep/oWdJ7MmPXW77zNwSRo06lHW+V2Hh3+rLyWSqzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740757219; c=relaxed/simple;
-	bh=BXOzIHUOpOHsCvlUE8Qy8dskrhm3JfsLTNMADgoTtzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H1beCx7LGqVvHOcxe7lLbtfVCYwMjTerze1I+N4gnAerQ7fyaeK01gFrckuWwPP4pD1LEj0WW/NBh5Bm4qIPGnUf1yWZsESKNGv3e2Hjd3g6sXqqGLJwLg9JB1qHQcTpCnCxIVOWCcEVPQ1STp1s0XSRe6NNhMj/7f7w6gmCInw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LHCAWw9B; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740757570; c=relaxed/simple;
+	bh=8IQopWHm6FnmITJWNw781M0yNWl2ypmgTscJ7Kr/PNU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=sl1UE59s8vmBQmpdN7SxypfCSqYoitUD/lEK+OlBd4fyoPFW9bamLxai2uyLFGbSpPv1ZGRIN3VDtICLGasoSW9y4JvWMcxFs4+Fa8yle4XrVKNS2R/rokOhfKYAbNhuXLvJ1h8hmX/NJ1uy75vISsIG562ksW+SxibPszv/Q+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SbnsfFdh; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LHCAWw9B"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-438a39e659cso16195075e9.2;
-        Fri, 28 Feb 2025 07:40:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740757216; x=1741362016; darn=vger.kernel.org;
-        h=content-disposition:mime-version:reply-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tgzz89QFJHmXhY1sSg+X8U7Vwg3R1lkBYkgmHqZQDbM=;
-        b=LHCAWw9BL3uKnaELOXRw7VD4Otcv3JmV+LEBG2lyldZg5Qvh9DHAmmXb78B+X29mK5
-         FuumU1bLJuD/bG4d+NiWkmbaHGL2kEH20CV2qaQMRXf+jQ9FlQiduzGYkX0twtvknRnt
-         pxciK2kiDeenIgv2AoK+BbMziEnONZXdxqR4PZQc6ZxcgOTj7EYmsW1QNvS5fWqqnEGK
-         pj5/Xz8/eYeFIRoMrh2GUd/hUK+BhDqQ/xqOLd8wiXYrKqRzWi3K9XiKoiUGC7lHbfHP
-         2Yg6eTMbGNsWWBbvB4nk8tbQZMN5WhvLuAN+5FlXHiWAjKdqTTEwex/jAq+R/BktI8ZW
-         AaZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740757216; x=1741362016;
-        h=content-disposition:mime-version:reply-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tgzz89QFJHmXhY1sSg+X8U7Vwg3R1lkBYkgmHqZQDbM=;
-        b=BCPhZAF55CNmx+PValMH56wG33ErcNPkMEkIqJ0E9gyve6E8zSW9WyB//MQuGqVtF4
-         gCxwkRAs1u/fSpt656wRQAExG9LVjJPqeSbrBsl1ZXzQSIIaLZ6dwW9gCyitcKzYSfOO
-         7pPy9Nb2HqgJjjkCaQFL6ks9IkO5fzR8jAZIOK6ts9RXztHP6AwER4CEoXpaC2EPH1vj
-         iKtNjyrtdalT+ezULtnAOsvy+QJcgUXoh1FdJ2EyKBj04lcYKWCAx7J9PbGhoia2nMcL
-         17a9+V9Qun7pH8ZxNXKvAL288G3PYF9BtIubKWEjGwx3L1itphFlcvNttIJ05N2PxsCW
-         0W4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ3YkqIE75GSGlpwM0pNPdzdL/1W7oUVUQjblV3IKpSoManjp+gqFnXE0IPIMiE6fR0/NzilFuOYG1xci7@vger.kernel.org, AJvYcCWc1RHCz4ZPpnYfomGUhuMtvKqHqot0ZQ0NB0bF066oi+hJduuabilXh4sHZPbz1tmB3PM5SOTs/OtU+T+H4u8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytmHYhCJD89jA7dkzglUzfQP7ORa32e3ofmjkfdOyvwQ8Md+Cj
-	BSvk9VKMiHNp1UMJnzhp2NlpZZi9bQy75Gxd5RikX0A7HBwaZJqV
-X-Gm-Gg: ASbGnct2sz3uHFWZ3l6a1guc5zHAUiRmsb7M8FTrcyM1+K+6+6Srfw0Ff3V2kptUdb2
-	HHtzfnDTHEuOYSxzv8o3Pzi2OeI+aEu5yiPdQj44wdHRwUQWgy8g/wsGslCV3vwFws9oPkkvCus
-	5Robp0z6Ekjp8ZLt5eT1qYPCDXvdhWDn6ECB1qkz5GpIOTorx9iYSIV1xfVijMsPYiAho4donJv
-	bLYf7XEGw68jLcDURWSqTF5Tl/ehX/RecOy4hAmmeHuPvgdr+8rPUNVOsmmVpMONJK0OjwnMLE2
-	C2AXJ9JrEjKhLyM9sFVeDY59a07hng==
-X-Google-Smtp-Source: AGHT+IGPSVUOeko+sYWDW6v4Fk76nwc9rp77WGtOYQjUn6oL04KY6kEqoN+K5Blkf6pIJY/a+PCS4w==
-X-Received: by 2002:a05:600c:a48:b0:439:a1c7:7b2d with SMTP id 5b1f17b1804b1-43ba66da31fmr32425595e9.4.1740757216086;
-        Fri, 28 Feb 2025 07:40:16 -0800 (PST)
-Received: from qasdev.system ([2a02:c7c:6696:8300:3c09:d865:e332:1c03])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73717230sm59064235e9.19.2025.02.28.07.40.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 07:40:15 -0800 (PST)
-Date: Fri, 28 Feb 2025 15:40:05 +0000
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-nvme@lists.infradead.org, Christoph Hellwig <hch@lst.de>,
-	James Smart <james.smart@broadcom.com>,
-	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] nvme-fc: Simplify minimum determination in two functions
-Message-ID: <Z8HY1RX5-SOjYOdx@qasdev.system>
-Reply-To: 6b6d7ad3-7d25-4cf2-ab96-ddeed341599a@web.de
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SbnsfFdh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740757555; x=1741362355; i=markus.elfring@web.de;
+	bh=GcdKCf558++2vu5m7gIvfuqBTLz7S1RpSdIWX3ae9fw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SbnsfFdhW5jTuCxG/+o+fQpa8DZjfYpCvwKFf3/cO5On9c6K96EB6TeYFh1D8ROa
+	 QCHBJfjOiXycNzVdwXWTC4n4WvT/HeSj2Pb/RK3d6wmIXnO9rsc/psktkbenByghN
+	 shDn+jQAQQY728s8A1/W2wa/GNGeC0XwkVqam/Z6zUXaQfFgE+BZ+dAdLypdGTNVk
+	 0hzHYLQUxJlB/+cSXNuOFckS28hBKc5q3Uzm+585XLrOR5CFuMf/akzRl4JC49m7M
+	 MHHWbhwrpHM92Gybxtk5YlnSHgqRlyy0QmRFtLgEDxQvy+/n/JK6OKt4vbceLhUrQ
+	 UmdRpciY6+OTfTxLTA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MS17h-1thfiL4BYZ-00Umnj; Fri, 28
+ Feb 2025 16:45:55 +0100
+Message-ID: <9574279b-6e02-467c-8e0f-28a037e061d9@web.de>
+Date: Fri, 28 Feb 2025 16:45:52 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ Alex Deucher <alexander.deucher@amd.com>, Boyuan Zhang
+ <boyuan.zhang@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>,
+ Ma Jun <Jun.Ma2@amd.com>, Simona Vetter <simona@ffwll.ch>,
+ Sunil Khatri <sunil.khatri@amd.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Qasim Ijaz <qasdev00@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm/amdgpu: Simplify maximum determination in
+ si_calc_upll_dividers()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6tzxbNamT2aPgHgoiVfifWqE5cSnMfgN/z4TiYhCFMyrRahLu1+
+ q1i3Zv9l20qaiEfl5hKVEsg41xdcfWn2gpa1qMuyaE9kc8GlSzbmTnWeLflPgmUBNei33vn
+ YUb0xv7PyLuJlxYeIcRKtOi2iRIgPxqAtCgCxCM3c+mRJmAr+W/Hf4nNuA1hv97DM9t6a0o
+ eFHJegx6AhnsXQ9OilIhA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZdKYDLN+kv4=;ZFxF5BPUHWUwNdqiiACgOJWBYyG
+ gO8sor5zJIKViHfqrneKHESVNSNV+y9z+yvkJO00DpYDWblKdC+pxcZGXnZT1TKL/pwyuLLwW
+ YK5XPDuncIEICBU+5fzYE868aYHs80ctGTl8Kkk+dhKecH8q0GWHR3+ICJAh9N33SskzzTN6M
+ xt09JDJiITzlZId52nz3OuaVoP3kZXWNuTOAZlNEYGC0p8b169UcJZdEDn+ru6JUANK8v2YxR
+ MVRKaeDUVWQlZ+aXFhVTopd43MwGw+xWYpJI2lYW2QwDLSBvmcGpMhv/qcIsFFl9v8r/uLDXr
+ 2coqzl2zcIp3A7qIrPxZYZQmixfBm2Xd8yKQkZj0bHwudlaYxUDaB4gaaV9FtXS2+1V2gplTM
+ KMola5cy2v5UWOI1GDMROwjMJ76pxux8ZfVPArjVL4gopNgDFVSDy8XuB/Zzv8JcM3XU6Kf0p
+ lIIOEaS71t+fXlio/n8wc+JyD9iQq4jtKFwn4+UqSDiWO+0kZsQG7e4WGEpIhxGZODC0ut7Gu
+ Qvqd1TaivBx5YOYmKWfwSykOlmQ7q1zqQupZ+89O2k8i3Zu6LdlzI3PL2EqxfwVyOjT7XEe88
+ F7VaoR6kvJhZUG0V/3XEtDl1V7hpyi5ec3wGu3LjsgJopsBhSDs5x91sFbyyte9tdybmGYRI2
+ f7dfp9PiDDmyWfNNGdXVnVFeT0gaVg0IytJlP9GnUj398lOXOUx0OXNJt3eJrLU9APHkGWJXM
+ SXG/eD+9AWF9eb7hTsc7ODusPXPBOHuuBU5RVRcnwPNNhBsaAnLQUBfTdR4hzahVHaj6ePVlF
+ kmRkBKea9IT1Tl6kdcmlDL0tvu0kyetzgqP+VH6cS0NZ++KVviVI63QDJnAZ7MLct1hl+yMSu
+ 4RoB6UA5AvdoBoNPLQhFlv7c3ngtSG8k7k+RteS93gjCzvKRTWUeomQq+B3Bw35n1WSBoMvRJ
+ 7vkYth4Zq2MHTu33iNiFaWLmE81eU5wCayR2vU8w2fM5YRqjDRxQX3PxLneIFLfd+sC84FOxD
+ Hqr1NNx4sbH5hyRuz1qrycb9QIHrIrWl5utpFrzh8WbwMX1Awe2U5Ys5a3qHZK7ZHMhxuXlV9
+ MAhWqlwsag77eCbtenV6oAQnf+0n+68JNB6mJOiWfYmqUDEfRVyOjqqJZp4j8NybXzmwjFblD
+ rUgyw+5Jhr5Tatw9CmuJBpV6ycny3yeKI8oJlZfTBIY+V326v0W1vXcx/6miFrZyiW9ahB35s
+ /e8slKIH6e7wv0FEYALKM1/oR9qGxAR25hgsWzXdq5VRdGXdWkefupd9sLPWxnoYkS0ABXW/i
+ z0ngooFx+a31S3uZNW6Dy94psh5Zq67hSkoPnKvWmdJuzGNe9sEoAIZs+W7zk5IpbpR/KVSmU
+ V4zyg9DunJszsYTgas116Htq+K7dYiGYOg2cPMPRTbT5/xOxZJRphQwtraxiVjxx8jqVSSzrT
+ kGKrFMA==
 
-On Fri, Feb 28, 2025 at 01:45:21PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 28 Feb 2025 13:38:38 +0100
-> 
-> Replace nested min() calls by single min3() call in two
-> function implementations.
-> 
-> This issue was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/nvme/host/fc.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-> index b9929a5a7f4e..6eed3ecdbaf6 100644
-> --- a/drivers/nvme/host/fc.c
-> +++ b/drivers/nvme/host/fc.c
-> @@ -2858,8 +2858,7 @@ nvme_fc_create_io_queues(struct nvme_fc_ctrl *ctrl)
->  	unsigned int nr_io_queues;
->  	int ret;
-> 
-> -	nr_io_queues = min(min(opts->nr_io_queues, num_online_cpus()),
-> -				ctrl->lport->ops->max_hw_queues);
-> +	nr_io_queues = min3(opts->nr_io_queues, num_online_cpus(), ctrl->lport->ops->max_hw_queues);
->  	ret = nvme_set_queue_count(&ctrl->ctrl, &nr_io_queues);
->  	if (ret) {
->  		dev_info(ctrl->ctrl.device,
-> @@ -2912,8 +2911,7 @@ nvme_fc_recreate_io_queues(struct nvme_fc_ctrl *ctrl)
->  	unsigned int nr_io_queues;
->  	int ret;
-> 
-> -	nr_io_queues = min(min(opts->nr_io_queues, num_online_cpus()),
-> -				ctrl->lport->ops->max_hw_queues);
-> +	nr_io_queues = min3(opts->nr_io_queues, num_online_cpus(), ctrl->lport->ops->max_hw_queues);
->  	ret = nvme_set_queue_count(&ctrl->ctrl, &nr_io_queues);
->  	if (ret) {
->  		dev_info(ctrl->ctrl.device,
-> --
-> 2.48.1
-> 
-Hi Markus,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 28 Feb 2025 16:37:00 +0100
 
-I have already submitted a patch for this twice in the past:
+Replace nested max() calls by single max3() call in this
+function implementation.
 
-4th Feb: <https://lore.kernel.org/all/20250204201256.117194-1-qasdev00@gmail.com/>
-13th Feb: <https://lore.kernel.org/all/20250213221622.81457-1-qasdev00@gmail.com/>
-> 
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/amd/amdgpu/si.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/si.c b/drivers/gpu/drm/amd/amdgpu/=
+si.c
+index 026e8376e2c0..2a255fb15768 100644
+=2D-- a/drivers/gpu/drm/amd/amdgpu/si.c
++++ b/drivers/gpu/drm/amd/amdgpu/si.c
+@@ -1726,7 +1726,7 @@ static int si_calc_upll_dividers(struct amdgpu_devic=
+e *adev,
+ 	unsigned optimal_score =3D ~0;
+
+ 	/* Loop through vco from low to high */
+-	vco_min =3D max(max(vco_min, vclk), dclk);
++	vco_min =3D max3(vco_min, vclk, dclk);
+ 	for (vco_freq =3D vco_min; vco_freq <=3D vco_max; vco_freq +=3D 100) {
+ 		uint64_t fb_div =3D (uint64_t)vco_freq * fb_factor;
+ 		unsigned vclk_div, dclk_div, score;
+=2D-
+2.48.1
+
