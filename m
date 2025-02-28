@@ -1,73 +1,74 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB3F2566E9
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 09:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372FF2571A9
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 09:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740735456; cv=none; b=UpBsQOBOugi0swcXqEIMCU3p7dnA7/QTBfqcFAQuXjCyXkhWNjpqa8igX7CbRg4jI/BphKPDfRE+ae3O1CH/w35Cpydo58shIH5DblpzYlFyonHa6O/CucFuSGCDZyYnQBbln+WUQHMa8fYdU0szSl59HA7KdBRv/jWMFM+py9A=
+	t=1740735505; cv=none; b=XHLEIzyqscsYvclv+aACzXLYQ7k91KvLEJfcuPEgZxSge8xARRzv7y2ePDsjySad/iGLlRFeFMmrP+Hzt4/6h5++yn5Rx2Cy5XGKPo8bo3UvUCo22SjlJS1BWG+LP300+Nyp81rHdC+LwdBj0L3ft3P//XAXlV4roEZ5pjtOH+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740735456; c=relaxed/simple;
-	bh=mXhku7IHghHzgD5uOXEgBnRnYCvInJFCk9RjXNz+DvU=;
+	s=arc-20240116; t=1740735505; c=relaxed/simple;
+	bh=cXXYLWxWcETYA3JP92xi9LGJX/+09zhX17UC5Rt7H30=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pei0LhaUNs4CtNjqh4HmHRlYXIzl6B3JAr+UQbIZ7TTJ5m43GOT0SAjUopmrsbebH6zpo4FEiLU/rcI6YLMFjcgjy/q0Hug+jy1jtjhgjWMxQB/LqVcRkI3m7AFWW/lnCOha5vU0ICakjQZCZG3afC28AzfuTTwa/UB4dYV+2jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RShMBrKZ; arc=none smtp.client-ip=209.85.208.51
+	 Content-Disposition; b=VyFSNHWc30ZWZ6of1hXRx81bpd7eo2z5Oh7elrUgyOvRPwgNJNHZRY/rVqUOUWSjRpXDbPXCs3oTUdfNo8ts3fmJGeOeGMzooPZEvhzovmyYfPPTC1t3E+C3oKqLVHRw1bOpUeRhuAJgig/F/AYq4m5OPamWHL2wGHC2N4EuJzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fSkqxvqY; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RShMBrKZ"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4b410e48bso2859075a12.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 01:37:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fSkqxvqY"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dec817f453so2783984a12.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 01:38:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740735453; x=1741340253; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1740735501; x=1741340301; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=AF5nsT/tqJ0sa2KfZr17M52RbC0HR9O1oH21NA6kGQc=;
-        b=RShMBrKZa4frQH1WfVRbDnLv0oUQPpVhAi4h8RWZTs9uX2YvDH9G5WQeTpu4aMTAYF
-         LO/H34ljYqumzEW39GOSL/mnyekQiCtaMgHPygeub9nbXEE44OHDu9eBqTG0KEmUSEVC
-         huMMPzwhi/sbG6V1TxocxBfZuY1iFRVOFSthB4o0GKKWUAuXJq+h6CgJViLcxwsNOFJl
-         JYnCuZYbJh0V6NIfQS+IjsOYRqC+4skk6h+fny+vaaGwtWX3D3sbKgfTyH2jVmuYZJHM
-         JJBEWwvtYDDFShhwc1FTiB+rYl2Cou2aqkEn/MxWzC2athtDFbD9zDn80tdrKsiqANpJ
-         c0ug==
+        bh=kAbBHBzTpenwYQ3xIDx+RFfsaRXN6FerVlZhMl5YALM=;
+        b=fSkqxvqYgyT28bH4q5/3FMvvvx4m53sFPcRW4zaQ0pV1TpSDLjpmAbrf9nYcHa0a3y
+         Y86bm0cBb0jKIP+JJqyQSK8eyvJSHpRgNY+S7G6SbB1Cn+/ZkFDA0B7SGpWg0lu0uYEy
+         RuT8h9LXu43yKRfYbL1Akh6EbSIGpctzE20ETHwUDKtqbnXtI5ySDeRsxvJvP16mqVd1
+         BZbWU8Cmk/lQ+BU6eWbVkim6vBBXijo2UiSR2mtcO790h1XQmjxHT3zs+kozPGfc7oRo
+         dRSyz/ZBoZovtnxmYtG8GvZQbi/3Fo70+I0YWW6nnqRLXWFdx965uQDivlTpTIh5m8iU
+         q05A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740735453; x=1741340253;
+        d=1e100.net; s=20230601; t=1740735501; x=1741340301;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AF5nsT/tqJ0sa2KfZr17M52RbC0HR9O1oH21NA6kGQc=;
-        b=tZD1NkVGIGu1bK3exebNwOxk4ojnlIJwzgZOeXSgkXPydlcs/pQRKSlGnat1iX/gRQ
-         fKg2FPxoxl9ZWJu/ryQ81Ungf7KMF79aRYoqU3PgdPSGbR7k55qC25hAPraQe2cE6OVp
-         8hPELDH7KJJ+hwmSJ8FhKmq3cBibvcrPabRA7hhz13QomLvJCAGmQMLnq/iRHxtmu/BJ
-         E+Xn5p3yoebPNhNea22kbmikRPlm3EYHBeOtQZu/a7BbmbAFeeZdRHTww5JGq8ZonsBL
-         S3cKwljR3rE5UlROiqEbF/E/MebFnoO+f+1Ib5ijbHLl3OiMp8JkwlFa7Rgsn6URFbrs
-         ivgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4rry+XRVgrLX+VRBx7955UDNL+IHHX6JQX/lT+UWRVUvnA26W9DadZrU2E80V2uie/E/DvAcnfBO/aWGHu54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTONZD+5hd2dezz6Da4uxPHTjV0Jcw1ecFEkcNwpv529R9kY9W
-	USJyh5uYtQWonkToeNHNk3E3m/yf+VlVswaqejWFaY5eYY+0epBZw/H0DNMBPmg=
-X-Gm-Gg: ASbGncsDgbZ7NB8r83Z+leZNon2B+yPrOGcvzrl3qbH4d8c+NkrlJBa0Ej5F8mRpQDh
-	xqOAqUv3Z5dhgoeHeKTtxLxlz7gNhYNlX15Dl5uLUiSHgrLKwI0xb4mEifG3dufPi8UZUZfJLz0
-	RSBu15JLT1lE3pm4JR6/NEP2fBm8p3d5l1uzh103xrzvYxrtpSAGuS3JUPL16ShaK2ktIw4JG3g
-	OBCxtnh4IYG5A0opZp7STjPc9ZCG49DzrSZ0m9MC4tj7ePNbNMwXIy40II0tLd8o130T/R56avY
-	xt5+XyreI/wED2nnd2261N3e5okpL5c=
-X-Google-Smtp-Source: AGHT+IH0rbUhLFGAEfY+tGINt28wIT6ZI81UIlrbwU1hKXYL7titFBMGZMuaFvwZupi/juouiULxXw==
-X-Received: by 2002:a05:6402:2813:b0:5e4:9348:72c3 with SMTP id 4fb4d7f45d1cf-5e4d6af105cmr2172188a12.10.1740735452591;
-        Fri, 28 Feb 2025 01:37:32 -0800 (PST)
+        bh=kAbBHBzTpenwYQ3xIDx+RFfsaRXN6FerVlZhMl5YALM=;
+        b=ThfwLXCv35IfJmev4wLTpvhTb9BlLV7Fvzb1nTsSxMFXbRTNUAOeT8SW7+HjonwVmi
+         E7pO2yl6oKmSrEy/zBlipnTpiU6fas1djF8KZkSnKPjgZB8hJshW3q1AxeCYw09SMRAp
+         DWSccd2KBRkNRkFJvx45R9yNgtuUSZyrCywJ+SpSISrMEor7ni6it7zoQWXG/PBRx8SA
+         8q9jInlE2Jmo2KgYUXeQFDzGv7Ax6yO5LU7dgMLkN0i5BKl7mCgRSVsDcSMSZd9lRNhx
+         GAh/IEjmJV9Ekf6Y7IGryzP7k0FqJhBxrVlbFON7zh9OCi7Sm2IRJx0p+3bRFqqn6606
+         i0ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVpCmpHwsdYmG0iFuu6Jq4xZ2gsNo32dM2CuEWpPYLLRFwBH3Z7rA/xD0koulrr4BMRJ7Wk/icHJ/+lC17n+J0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziadNHtZHgYqw7rV/69t5yWyhbrx3opChitlcgCmKB8Oiox2TK
+	Mu8aNt/qq2/IR19a/TkdsXadC4hTGW2fMwc8GA95y5eP6pNMxG57oUk7+3gwffI=
+X-Gm-Gg: ASbGnct2umWMWemyd42+wee5a39cydQjLmQ8p2lG1OxneQo9lnleDcCvUoKGjXJ1Caz
+	HDW56SDmvmT4eSK+rEQMn0Vd61QHcwgAkNPYgqrV4tJ4I++HXUtVT61iCE+G0ojzuu4V3zvxUcV
+	Ix3jFT1ZSmnrt8qB2VOh8nsU0A+m80Cfph1oOIHyoWRMMXne2vEV/a6NUI/JMRKpZsPRf134fZf
+	WYTEV86Q0slBjj5eHegKXGkhpVi0nk6fh18r9byyzVz4WmDep5oATJZgvdvALaVtuGwExOrDFbR
+	KDEGi6ncQUiNb8fWR7+aCLsoVmcBLik=
+X-Google-Smtp-Source: AGHT+IFG/wAFc+7a3BTiB3lyA+ckJ1OhlFHzEfmEQnuDRhG6Sr2tZqzqalibYqvITqld8TmExotXDg==
+X-Received: by 2002:a17:907:2d8a:b0:aab:9430:40e9 with SMTP id a640c23a62f3a-abf2659d531mr240459266b.32.1740735501401;
+        Fri, 28 Feb 2025 01:38:21 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4c43a4e26sm2229958a12.66.2025.02.28.01.37.30
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf0c0dc5ebsm263013666b.73.2025.02.28.01.38.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 01:37:31 -0800 (PST)
-Date: Fri, 28 Feb 2025 12:37:28 +0300
+        Fri, 28 Feb 2025 01:38:20 -0800 (PST)
+Date: Fri, 28 Feb 2025 12:38:17 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Cc: Sathya Prakash <sathya.prakash@broadcom.com>,
-	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] scsi: mpt3sas: Fix buffer overflow in
- mpt3sas_send_mctp_passthru_req()
-Message-ID: <02b0d4ff-961c-49ae-921a-5cc469edf93c@stanley.mountain>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/vc4: hdmi: Fix some NULL vs IS_ERR() bugs
+Message-ID: <a952e2b4-d4b8-49ac-abd9-9967c50f4a80@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,30 +79,76 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "sz" argument in mpt3sas_check_cmd_timeout() is the number of u32,
-not the number of bytes.  We dump that many u32 values to dmesg.  Passing
-the number of bytes will lead to a read overflow.  Divide by 4 to get the
-correct value.
+The devm_platform_ioremap_resource_byname() function doesn't return NULL,
+it returns error pointers.  Update the checking to match.
 
-Fixes: c72be4b5bb7c ("scsi: mpt3sas: Add support for MCTP Passthrough commands")
+Fixes: b93f07cf090a ("drm/vc4: move to devm_platform_ioremap_resource() usage")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_ctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index ff8fedf5f20e..063b10dd8251 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -3017,7 +3017,7 @@ int mpt3sas_send_mctp_passthru_req(struct mpt3_passthru_command *command)
- 	if (!(ioc->ctl_cmds.status & MPT3_CMD_COMPLETE)) {
- 		mpt3sas_check_cmd_timeout(ioc,
- 		    ioc->ctl_cmds.status, mpi_request,
--		    sizeof(Mpi26MctpPassthroughRequest_t), issue_reset);
-+		    sizeof(Mpi26MctpPassthroughRequest_t) / 4, issue_reset);
- 		goto issue_host_reset;
- 	}
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index d20e5c53ba75..37238a12baa5 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -2928,8 +2928,8 @@ static int vc5_hdmi_init_resources(struct drm_device *drm,
  
+ 	vc4_hdmi->hdmicore_regs = devm_platform_ioremap_resource_byname(pdev,
+ 									"hdmi");
+-	if (!vc4_hdmi->hdmicore_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->hdmicore_regs))
++		return PTR_ERR(vc4_hdmi->hdmicore_regs);
+ 
+ 	/* This is shared between both HDMI controllers. Cannot
+ 	 * claim for both instances. Lets not convert to using
+@@ -2946,33 +2946,33 @@ static int vc5_hdmi_init_resources(struct drm_device *drm,
+ 
+ 	vc4_hdmi->cec_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "cec");
+-	if (!vc4_hdmi->cec_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->cec_regs))
++		return PTR_ERR(vc4_hdmi->cec_regs);
+ 
+ 	vc4_hdmi->csc_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "csc");
+-	if (!vc4_hdmi->csc_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->csc_regs))
++		return PTR_ERR(vc4_hdmi->csc_regs);
+ 
+ 	vc4_hdmi->dvp_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "dvp");
+-	if (!vc4_hdmi->dvp_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->dvp_regs))
++		return PTR_ERR(vc4_hdmi->dvp_regs);
+ 
+ 	vc4_hdmi->phy_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "phy");
+ 
+-	if (!vc4_hdmi->phy_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->phy_regs))
++		return PTR_ERR(vc4_hdmi->phy_regs);
+ 
+ 	vc4_hdmi->ram_regs = devm_platform_ioremap_resource_byname(pdev,
+ 								   "packet");
+-	if (!vc4_hdmi->ram_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->ram_regs))
++		return PTR_ERR(vc4_hdmi->ram_regs);
+ 
+ 	vc4_hdmi->rm_regs = devm_platform_ioremap_resource_byname(pdev, "rm");
+-	if (!vc4_hdmi->rm_regs)
+-		return -ENOMEM;
++	if (IS_ERR(vc4_hdmi->rm_regs))
++		return PTR_ERR(vc4_hdmi->rm_regs);
+ 
+ 	vc4_hdmi->hsm_clock = devm_clk_get(dev, "hdmi");
+ 	if (IS_ERR(vc4_hdmi->hsm_clock)) {
 -- 
 2.47.2
 
