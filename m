@@ -1,126 +1,105 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FDD1D555;
-	Fri, 28 Feb 2025 13:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCCA4A07
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 15:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740749060; cv=none; b=IP+8vZEw5lEiHKgJN2+BHKbYvQtv7l+Y7KJFOdqIXw+Yf2+/VewZGxHu2qfTqUhzarBf24WiNVT3VZOejCu9VSM59Ue+RimNsuEZJg0/mX5hpFZPRn6T06NTsn7duIEoiEUuwrJYWnjFaLKcHBmiXS1VpRv6yvlftYZdDeOv4dg=
+	t=1740756765; cv=none; b=L1BJw4VPbpL378p5ULQv7soRcQ4+roDobLA+WxgNGoV/DlARIytHI6QVxhTaINYzqlRA5H4HrmHALMhwD3pZs7BI8lOYmRC0mmNdPzMdE+wjiE0k/01QZZev1xzF3CsQflxJTX21iRM+OqHQgCcr8FqPbW3UTi4MyBo2SFs8x70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740749060; c=relaxed/simple;
-	bh=HG9HTlvNGdnmHBqM51K38WxH2I4QiN6sibvcf6Rzxz0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YNbrf1BOnGYbop6VWKGhHleG0RSd30wlZ7loS40F6xrUlzRJ/vYnYFxIWgVlzqfdYdP6FCr38+qlv692Wm8XOLO2AuNKylelqlgsuFd6hjSdgXON7WPHf4suCwrRV8xvCtRlx77QxptTLu2M0Hj1/GybLY8ZiCP/fMWTBZ1DGBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHmBQBEE; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740756765; c=relaxed/simple;
+	bh=DMQqRiGujJ4dSNfxS4EszoUvJrU/f3c6wp4L0gFxA/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hyEJiB3e0hUp+AAohTFdWMzNtYRAC5/5dPYRoaFpLF4b+kwm6tQbAisX4orvrX83aD93SBnZbwfVQh+HzHA+g05x1kGG1o0I+pZjo1hM7K1qLj09OROWq0aw+hq+oPAebuKm6WBdHax6uhLRnZJ7aBI4r/yufraZYS3f/K6Mrfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tT3ygLZi; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHmBQBEE"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so13819175e9.3;
-        Fri, 28 Feb 2025 05:24:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tT3ygLZi"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4398738217aso20340665e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 07:32:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740749057; x=1741353857; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Rh8KIR0lZBR/NWLa9Q2ihKE6Abv28L63gVdOYLJNiB4=;
-        b=RHmBQBEE21OPJuWY5Q7mZj85f/vgYnbXDF/kXfGzgPS9ksDuuAnLAVhp4nW6d7C+60
-         y+UoirWY6HJHRzCOhd7KBv600/xYFw+cy7WF/Vr3TJfXO5brcTUCjzdCG/FIQU5GgYrI
-         AiKsZLA2iimXOso/7QOYAuyh/qiv6p90V57GgpUSCOqEU7BCBQUTusm9ClHWJj6htEKT
-         IFD31EsCH269r5WGFSigHYCUC131VbnodvcV37Cu3F5GyjeWo6GcFdcNaD1mwLfCZ/um
-         5ny824hu4pjww71wsGpz2ZW9S5QobbQCIh5N9rOXIfRXsr6Vl1PYGR0ynYkpPXYDUtKn
-         RSvg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740756762; x=1741361562; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tMUKsvaouG0UB9E7Om23QceA3c5sBw0tPBAVm+Fn34s=;
+        b=tT3ygLZiONfl3UfMLqz+khFnxP2zBq2c3aVV5fUHzPcIlgRi5JWVvEMedXURhtm/6K
+         6nVAs54U82l/Rlp+yQXB5DqzQ7gvlesqVckxRixZ0nTyr1uyUoqh2DarM6X+ex/m181V
+         CGftwBPEEiPX/BI3xnw1K71Wnm47fmxy5hx6SPkdrUkqi1sR1KlhDUwLwcvZHEgbGOPm
+         o/Ac5xA6yjOVtkeHVyYtbQT68Zf0JP2OQnZj/A6NNR6xV+oYX+S3dS0odzLzZaWso/1X
+         yN3VfMqBpRO4IZ/01LSv2bM23CCovRpwQ/Rnq7IWFs6PdTB5psAAlucR367dU+PMqamP
+         HlxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740749057; x=1741353857;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rh8KIR0lZBR/NWLa9Q2ihKE6Abv28L63gVdOYLJNiB4=;
-        b=MzGkLWwA++MdMy1VwwhFhVxBTDNv68vLHxmJ1imtBBj2bNb78sJagVaKxrXWIIvUT/
-         M/x+itVUF/1GQAgGuVzCV6k9js4JWKvXl8u05+TSWd2mADITfd0wIkdphoGlajF2UnNf
-         /L/tXf8m/vFjAxrAS0tRtG/oWmK7vHUZhpR5kcv6VUoiH4+S8oncHUZI8ZsUksyUxpII
-         eiWK05bAw/DC9XzAwsIPoEIC9RW2/yJ4J32+ewxxp5qeOJsd6whOTENHpfNwL/A3B77x
-         De0BemelNWdgO9MAtJdFNITYek/TB9FZeoHQdlaJiIQCu51rOXBUtwApLsR/1hEL5SDj
-         OIgA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9W5sdJpisc9r3GQ3BF8NBaLtzSIdcruyaKRu79krbSMxie+66HAtOHHwiNme+AIfY72R4IC/vyUTLTduTlKw=@vger.kernel.org, AJvYcCV7EWh8D7Jt+c1R3eGplEyvEuq7Db7AXBeG0JW5o4yMmm7A9r+6Z4AgiqQtoY2K8ZdoKyxGSbiZwkF7eOCS@vger.kernel.org, AJvYcCWvcLvJ1IfQO4RJu0LjJtPVtohstZLZPAq6lnvACPKXwYfmos/2GsqYE/h6tx4AAW0XAmh/Azli8BKu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJpPaefoD4+YMlRHbjshU4PIGEI5FOU96vpTdJxe4ex+eU+MFg
-	kc0H0kQN+2LzU9xsopTUph5aclomf+Q+UbZK0Ozn6LTy+jtKsX9OY6YCvY0Lqdo=
-X-Gm-Gg: ASbGnct+2bNL4fUCBTudXkjSyc+mGMfnBG3ZKsIfZQPYTjZKZcL9zCM+1UWdGuQ620L
-	rNkkE7oOH3s+1ekUXB9FqcnZTrRl2UPJkvVdyo1rdby2ooH6KpaNLhn2FXWwwdodAUAjVdzzXLo
-	JjL9EqUYpMe3BxeB+9by8fX9Na3OQ1TbOmjkAHdHKqiYxuM2TLwHvQUJKIzWjVNpxO8y4BNBu+o
-	rrDGqlb0Q1nXntNHMkkDaqso1kruu5LrmXy7erf+YqEJXWG4ltTzw7HBKHPrjpJbMPCh7Z5zCl6
-	xQ6ltOkAFo8RV/0yq6nSi7Bpi5t+WTfxXuSlVsyIrdfjc92uGK2Pw9MxQipe68Go/eUBNUfdXg=
-	=
-X-Google-Smtp-Source: AGHT+IEGfJ5sKNQtVz6Z/8Ld/0MZOUkjiLJZQs6Vz+xwpBmJkJ27m7qiHcjdTNbX4nHkCuWmUFSidQ==
-X-Received: by 2002:a05:600c:35c3:b0:439:9377:fa17 with SMTP id 5b1f17b1804b1-43ba67085e7mr28001065e9.18.1740749056725;
-        Fri, 28 Feb 2025 05:24:16 -0800 (PST)
-Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5711dfsm88512065e9.27.2025.02.28.05.24.15
+        d=1e100.net; s=20230601; t=1740756762; x=1741361562;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tMUKsvaouG0UB9E7Om23QceA3c5sBw0tPBAVm+Fn34s=;
+        b=vF46Za6717emv/ApZaBfXMyckkFoxHzK8Mxy8+C+9GzYxnPKEIyYusmQUd4xYoM9IU
+         bJ+aEGYVljMLC/7+UEsddBxgdASw8NbU35wSvcQoFtXZ8cTEmJ2ROpafadY7/d0BKCOr
+         LNTr+krv9Xi21Ix1Yts+oIOr65D1aaVNH5FO5gqdXY2mTkwQoo51EaO2xbL8xuiksW72
+         xHRLdYTl1D6m7VyxeU11p8N5HKhQTIJvrAZpwiO+SHizoZNeFELzC3jKziu4LDBa0GzN
+         T9hAKchYcbsWxvIu/UUlQH4JWeTKZlRvqp9INqSsFgHZvJvfL5P/5+wmFqKV7Uzkxgu6
+         l8Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvw860BecRKLVgSoX9oFUQoduJx4WIHeMM0aDSAa99li/uO+QtiBTMnNS7l5EnYFOxmsAfAQ8HC4qzCugBgwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyena3cDINk378PuZY4GzqgyFkAFEJoSStBhylt5jadLiBSBWrT
+	PH63O3EQ1We419X3JiOmQ1jO4R3AufveaCtAIdnZHJF+/LysP7fGLOW8sXbwse8=
+X-Gm-Gg: ASbGncsIehawWBvqoqFgZHMvvuRAykgDIfquAiHuerElj+llWcLUhbTPU203zmMjw3t
+	fSzjqeSbJFfQHDBhbXtGSPs8PNWo+Zk0PGU3vaKaQ8CiRD4k9xBHUgg4RmSEzTAsuSDjarCi6uB
+	Mi2HB2oVX06IidGptkczn7TrMAMEE740IWLCdX9uGpt2enqpo9CpcR82S2BF90B4ALbjxzw3c41
+	+VYqs86jJYT9D8Cq2kC6mwm9wIyrNE7YlidJoBfM/8SdCE+qZoTDLqJwqYlJBZfLJX7LGO34SvF
+	vGx7CMAAL5Frr6ELciaOyEsRCA==
+X-Google-Smtp-Source: AGHT+IH7Ob5jHWVnFM8sBJW6D5pRWYa1Oj4+ZIyL7NLAPOb1b1HXP7i5h+shOUEsYUZZ/iItiE5YOg==
+X-Received: by 2002:a05:600c:3590:b0:439:33dd:48ea with SMTP id 5b1f17b1804b1-43ba66cf24emr32434295e9.2.1740756761832;
+        Fri, 28 Feb 2025 07:32:41 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:20b1:5ded:f332:cacd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b7a28bcfdsm59852675e9.40.2025.02.28.07.32.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 05:24:16 -0800 (PST)
-Message-ID: <5fa78e957fc85fa134cea5fa68b21b56c6173a44.camel@gmail.com>
-Subject: Re: [PATCH next] iio: adc: ad4851: Fix signedness bug in
- ad4851_calibrate()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Antoniu Miclaus
-	 <antoniu.miclaus@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
-	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+        Fri, 28 Feb 2025 07:32:41 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Date: Fri, 28 Feb 2025 13:24:20 +0000
-In-Reply-To: <f5e260e9-d7a8-4dae-b7ea-f1bbb1760e60@stanley.mountain>
-References: <f5e260e9-d7a8-4dae-b7ea-f1bbb1760e60@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 
+Subject: Re: [PATCH v2] gpiolib: Fix Oops in gpiod_direction_input_nonotify()
+Date: Fri, 28 Feb 2025 16:32:40 +0100
+Message-ID: <174075675438.58699.5156226276115874344.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <254f3925-3015-4c9d-aac5-bb9b4b2cd2c5@stanley.mountain>
+References: <254f3925-3015-4c9d-aac5-bb9b4b2cd2c5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-02-28 at 12:36 +0300, Dan Carpenter wrote:
-> The "c" variable is used to store error codes from ad4851_find_opt()
-> so it has to be signed for the error handling to work.=C2=A0 Change it
-> to type int.
->=20
-> Fixes: 6250803fe2ec ("iio: adc: ad4851: add ad485x driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
-> Btw, in ad4851_write_raw() there are some checks for negative but
-> the multiplication could still wrap and turn negative so we might want to
-> add an upper bounds as well:
->=20
-> =C2=A0=C2=A0=C2=A0 drivers/iio/adc/ad4851.c:826 ad4851_write_raw()
-> =C2=A0=C2=A0=C2=A0 warn: potential integer overflow from user 'val * st->=
-osr'
->=20
-> =C2=A0drivers/iio/adc/ad4851.c | 4 ++--
-> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
-> index 1ad37084355e..98ebc853db79 100644
-> --- a/drivers/iio/adc/ad4851.c
-> +++ b/drivers/iio/adc/ad4851.c
-> @@ -492,11 +492,11 @@ static int ad4851_find_opt(const unsigned long *fie=
-ld,
-> unsigned int start,
-> =C2=A0static int ad4851_calibrate(struct iio_dev *indio_dev)
-> =C2=A0{
-> =C2=A0	struct ad4851_state *st =3D iio_priv(indio_dev);
-> -	unsigned int opt_delay, num_lanes, delay, i, s, c;
-> +	unsigned int opt_delay, num_lanes, delay, i, s;
-> =C2=A0	enum iio_backend_interface_type interface_type;
-> =C2=A0	DECLARE_BITMAP(pn_status, AD4851_MAX_LANES * AD4851_MAX_IODELAY);
-> =C2=A0	bool status;
-> -	int ret;
-> +	int c, ret;
-> =C2=A0
-> =C2=A0	ret =3D iio_backend_interface_type_get(st->back, &interface_type);
-> =C2=A0	if (ret)
+On Fri, 28 Feb 2025 16:03:47 +0300, Dan Carpenter wrote:
+> The gpiod_direction_input_nonotify() function is supposed to return zero
+> if the direction for the pin is input.  But instead it accidentally
+> returns GPIO_LINE_DIRECTION_IN (1) which will be cast into an ERR_PTR()
+> in gpiochip_request_own_desc().  The callers dereference it and it leads
+> to a crash.
+> 
+> I changed gpiod_direction_output_raw_commit() just for consistency but
+> returning GPIO_LINE_DIRECTION_OUT (0) is fine.
+> 
+> [...]
 
+Applied, thanks!
+
+[1/1] gpiolib: Fix Oops in gpiod_direction_input_nonotify()
+      commit: 64407f4b5807dc9dec8135e1bfd45d2cb11b4ea0
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
