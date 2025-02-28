@@ -1,118 +1,80 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ECC27CCF8;
-	Fri, 28 Feb 2025 18:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AABC1DFE14
+	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 23:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767599; cv=none; b=qPpfLZOPK39hDNSlF6n4Qwk0isY2wGFT19ZlfOdtdIpJmQbuVZUXrji7YbZzroKpHqDGPlxILfr5OjSmqMgRImHclvfdEwlQh5JuoXGceJ/xPlCrjMvLn+fOzx0OB0cbRLNpt80R9Hd6HJcwjIO4CzJCutjuWlZ3IhhJRskm89M=
+	t=1740786064; cv=none; b=llUBASWfXn1AOWdZBUiLBWPCp9LVMvyMbSbBogw7hffHj/6C/fF2MomVIA3r1zFWf5CkHFXyW7tuygrWpfQw4DmsUhSSiZVm8ebF1RKTHOjCG80OjDp7c0TxLZtn/cp/ceApHms3uUYl+EMRebLk08NaGiAlr+oqjo0k6V7pF0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767599; c=relaxed/simple;
-	bh=ycf2bl0VWoTizsmfs43ud2ZmBfVJT6nFjvpBPE74YXs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=vE7vmjqxxQE37uIEDsiZ68tSk1Gp7n737RIyXHJKVfFkeImL/OEO8WhfTIfOPugLvoDRQSB9Jdye1GhZx8U8+WKlqBmtOnqtUSsY8f9Ep0o26oeJ646anOI/hLRi7xRoaQeWtIHjCvPhf/MiDnvKbrfsuLn1ewmMudiRPMkrMuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GH0WjZvW; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1740786064; c=relaxed/simple;
+	bh=czHtOKFbuWT4IFwIXGB3dzoMikaoJb8csCThNc+R2Tk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=DiRXFFrql7NIahTPFFe1r2sLu68Z7LklvzrqdmdpHV9B+XXqZYJPGXsEpg4iQlYYRAWb+jgIHkAW44lWNJnxgsp9u/miIueRGGD9w5q65xNBew5KQMCnDdNL644xX+/X3q1r42bR544WX78BYKElGxJJlDzXNdDT55+ecjgf9O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qot7tse1; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GH0WjZvW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740767593; x=1741372393; i=markus.elfring@web.de;
-	bh=P+/3PbJZn1fNerf6m6udrxAYpGzCGltY+949KWMWnUA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GH0WjZvWMDfzdKS7OGG50dI/ZnB4XKn2xj7wBB+HvIjlSAqvIBI/W6AyxzwAW2e7
-	 4eFiwlbVyhexJ0r4kiLtFvkStqvmIS31nKqjNOWTLYL36yGIQS6ylhaN6UkmeFchr
-	 vtz7GX0iynSmP4xjp5hfGoTOr4cO+K8NNz7ntVb7CwYKcd/08saQFbXX2rSXDgU93
-	 zIYmE5m0XLpZh1a0SkGuNrmA71CzWTA5H0gth1JHThAgJlOYm3ZRKdsfQXSFUCd8F
-	 t7U/zYV74uQ2UlvtPUYCWEsI/FVh/ehq7fKHwGWGZEXhM2hlQVT42gOkpb/mc5Kzl
-	 VGC6eNj/UztHACqCbg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnFyI-1tOxcT2sOC-00i452; Fri, 28
- Feb 2025 19:33:13 +0100
-Message-ID: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
-Date: Fri, 28 Feb 2025 19:33:10 +0100
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qot7tse1"
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2feda472a4aso137249a91.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 15:41:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740786062; x=1741390862; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Rd2zkA90OfrPC56kZ5TgBkpFyoSsKiSMEhRKLUnwKE=;
+        b=Qot7tse1Mzw2ETR/1mp9X6jcUp3fC+TzmauBU+FMS/A0f65iDRuWYD1LCpZ1K9oVDR
+         GrMlgrZlt7755lqwkJHquj/f59KFVmaYV7JDFxWSfk2CUBEUvVPfYMnLldrs/wKCWFZP
+         /1zaWQkSapYbGWlPOXGjPwyNhS3m8RLgLjNaDWKJgVT1LNiLVbJSv4GJfMmLnwMj8mwp
+         DUQyQtouu9TRfoVvXxd1Fsckj6BM1ZkV/Fid5MX0c5tXcqllCFAKy5T2UJYZILKNQIp0
+         XQD8SZMM8I1Ovzqdz0TOhOXo7Ki5kH5JD4CNYOsNCBUtleB9W/AZcHyYEig+onmi191p
+         a85Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740786062; x=1741390862;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Rd2zkA90OfrPC56kZ5TgBkpFyoSsKiSMEhRKLUnwKE=;
+        b=vc4po9co7ghECDbpd9RYpvba4ksx/fZITpkMlbuw1rmGxgPLIaWkQBP6ap4475GHW2
+         nNg0Vm4hrTJU0bKC8sgWFqDYY5Q52coPWFecJZVS4uAsv/Tcp4KyOmHLQMDnD0vJrcXD
+         yGecp5J6ABgXMC5nPSbMfhnp1THwJk+Pk+QLJI88j1N9zGoy0e+AtjNR8kPqz2Pe+X4A
+         5RP5+0oP1SBM8ffgsnt5mRhmXz7zYPuqfyhSGMhVm1c7wvInUZu4AN3J79huqc4Q0sIH
+         dlABTK8Ae2PkeCVmeW/4aI/WnoRpcovw+zqTXsrWa6wNPy5COEdrpnjLWU1bhrqdbLk/
+         CuEg==
+X-Gm-Message-State: AOJu0Yz6XUzog7eOVl4FI3XCR8I0yVcu5ipbmBF400LX2hht9IK4Ho+I
+	jcHlrI7+3sV44vojyTCnFPznhDV2nui+0jMyDnooKCKQ2a+Fcfazr32kJSzD8iU20O+kDxOfJWn
+	25A==
+X-Google-Smtp-Source: AGHT+IG7CvYyko2UbVPuAkNZZPDFMXpjB4wXlD6Ru8cf7no7JS4XUdhwodgR3HqRriolKmpqFez0BPUdclk=
+X-Received: from pjblb1.prod.google.com ([2002:a17:90b:4a41:b0:2fc:1158:9fe5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4acb:b0:2ee:a583:e616
+ with SMTP id 98e67ed59e1d1-2febab3e417mr8593663a91.9.1740786062022; Fri, 28
+ Feb 2025 15:41:02 -0800 (PST)
+Date: Fri, 28 Feb 2025 15:40:30 -0800
+In-Reply-To: <20250227220819.656780-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-tegra@vger.kernel.org, linux-mtd@lists.infradead.org,
- Jonathan Hunter <jonathanh@nvidia.com>, Lucas Stach <dev@lynxeye.de>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Stefan Agner <stefan@agner.ch>,
- Thierry Reding <thierry.reding@gmail.com>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Qasim Ijaz <qasdev00@gmail.com>, Natalie Vock <natalie.vock@gmx.de>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] mtd: rawnand: tegra: Simplify maximum determination in
- tegra_nand_setup_timing()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hWGNMTeSFiMmmha5RneunFk1Fm60pvlO4UxmgUHnGkA2Qz8LPAX
- AlAGnXxSQrhN/iURP92oQy69SzFM7LWzFoIyX038jdfHsUaVzZfJtK6GX/EgS7IN+R3Vlub
- SWVfWfm3Nwxzo+ZgOE8agHY3UPPcJp3NQylvg/WfH4SN9BLpM1SwHDb/g6F2LAicne8EjH9
- rs3qMX50pqLMH/7nvOPUw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mma6z8WXO8A=;Ch2aVyeui5h/mnQ9HePSBuxvJC2
- 7XXdJh1HWUW7j+i750YByjCpVJsVmTs/dzKMbcfSK3OUUMPRKBcgqFSaPZzItEcYniwJvm3wp
- ih9T4pw24nzwWj8YL5vzYipAqp9h40WFQeyAeO4X3xYpYi5dL3CPju6psH2v9qsudha6fleMA
- rZv59kyrq0odiTrP9P78umRkJIxkdUZhb7zyhw9ehahsl6IqAFd5R67Ku89jpmXJ47A3O2nAe
- ZZ0FnbJWfkH4Pv4WAdeXhfSbjx3TlNQhnRgMX909AzO/O9aqSNSAf4PadX0MA7I7MJB5lBYI5
- g8C7TMSB2IdiOw7NjWZNa+rh4Hp7Qlcx4QOICYmaKzXW6qZ09PdZSvZ2PnbB2mHEz8QxIGrCo
- RQM2O4AXLrMaZ+6Ytrybgq7ETd3+0x/DnK3khs0gavKX1pvcvtaExA7dF4kO2ofgt34GEOJg7
- 00yhC+DbLNMliUImRNtJeiwPn6mC1WG7zhwp70olRjs8Stl+MB7bOMOt8axS0k90Db37zI1AA
- XAPuMBRfAP25PHGqyB+AkHKM83hI6uXjvWj/JWEs7Q8twMqFhvTotyGJt90adRgbRYOZiQ5TH
- VaJax72H/QOK/w81jxfoozfIy2Ch/XfZpGLgz2doIDMh5ORAwdguEorYH0gnaOqwbZlmwEKr0
- GHiYS78LcjXieU9dtTTUsLrmIW+JNhCvobwU8CEM5vZMFWI/4yjMjtr6SuMWFb2X6VVeylbq9
- j6XFjaCIPwVR/PRLPcoKb582Yepi4Bs4wGdEllrINGYjmqiIUX/yDOfVQnLgWt+9Ab4c90C0c
- sxkovclFpKVB3vj+hxkCKr3Z5o5Eln0tjUkKQOHOc06cKn8880IvoTLRdmsbwzNibDADxpaqU
- q24ut6O5gDN9f+5/LsbDyd1YNnH+08V9otIlRulIp3cAD6+x8nVy4vdSKZqgiWcMc47tKKjy9
- +1bv6LTI1crQ9SeK9ckXlGGvNeNJreSzQ5Ew1+/XvZeJK1jZurujNNM5Gb8chdtgIFoIHrCkK
- EbetAQ2wN8F3GPZ963qBRM/amlMmZ97gaKHJS0vBediC9b5kCgdZJCy4RQIvXU6Tr0+G3OwP6
- mJf/C/B97/fIUOcRQ/UC7x+Pgn0nm2o2Ku/6AC730RbUpNrYtL+8TQpPmgWss9je6t7wQTnvb
- eE28rnxTKHInsQg3Ah4nBNkZZs15xh6G6RDzSFcWuE9XZhOBZd7xzor+l45ST/ws/nq3iT6lh
- x4ocTXZR11G2UlPfv14hBo7eh1859zDGQzsXGhZrMW6fbxMatHTY2b6LT0W1bftqfpncO7/Re
- i7hEOIWTP973s7LH+POd55SQZd4HYpyfL515nSYLVXo3G9XrHPYpmwOhDDgZzOHzBFv7/DJj1
- snd3/EZZVYZhrOMLyQdQvFfURHHAr3XXDXW6RiHplhoETVue/WpaD9J5xGGOoy/PawDLOPuN0
- GP9SihA==
+Mime-Version: 1.0
+References: <20250227220819.656780-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <174076278043.3736049.13548260851648046331.b4-ty@google.com>
+Subject: Re: [PATCH]][next] KVM: selftests: Fix spelling mistake
+ "UFFDIO_CONINUE" -> "UFFDIO_CONTINUE"
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Feb 2025 19:19:45 +0100
+On Thu, 27 Feb 2025 22:08:19 +0000, Colin Ian King wrote:
+> There is a spelling mistake in a PER_PAGE_DEBUG debug message. Fix it.
 
-Reduce nested max() calls by a single max3() call in this
-function implementation.
+Applied to kvm-x86 selftests, thanks!
 
-The source code was transformed by using the Coccinelle software.
+[1/1] KVM: selftests: Fix spelling mistake "UFFDIO_CONINUE" -> "UFFDIO_CONTINUE"
+      https://github.com/kvm-x86/linux/commit/75418e222e30
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/mtd/nand/raw/tegra_nand.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegr=
-a_nand.c
-index 7f9eb5f042a7..c03f11e5e18c 100644
-=2D-- a/drivers/mtd/nand/raw/tegra_nand.c
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -793,8 +793,8 @@ static void tegra_nand_setup_timing(struct tegra_nand_=
-controller *ctrl,
- 				timings->tRC_min), period);
- 	reg |=3D TIMING_TCR_TAR_TRR(OFFSET(val, 3));
-
--	val =3D DIV_ROUND_UP(max(max(timings->tCS_min, timings->tCH_min),
--			       max(timings->tALS_min, timings->tALH_min)),
-+	val =3D DIV_ROUND_UP(max3(timings->tCS_min, timings->tCH_min,
-+				max(timings->tALS_min, timings->tALH_min)),
- 			   period);
- 	reg |=3D TIMING_TCS(OFFSET(val, 2));
-
-=2D-
-2.48.1
-
+--
+https://github.com/kvm-x86/linux/tree/next
