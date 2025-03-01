@@ -1,110 +1,105 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58EB23F39D;
-	Sat,  1 Mar 2025 10:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E464223F37C;
+	Sat,  1 Mar 2025 18:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740825067; cv=none; b=VkWAII8fC04mjq8I6AJQZiODkikU79y7On+zecsJuQV0oGEOshEvRCtZ81NY5+jLK66MO8WwNIEL5CKIQ9oujjzmysoF4fumVL9IwawA5UQFXwk/r5NyB7GhyEoc6sdWkfz0hIzL+0QqQdmWHU/oBHhe6Wv55bvm+KWkIQLfZPI=
+	t=1740854657; cv=none; b=aeTa3hDl9BsH/rH4t+2V21/v8dXeZovFSMRanGO+G5E2XNmrsooafXwuTcHUTO1WMLDulCrKokmBF2qOR3SHSf1TOiA9zcu4Ej8ncauSaoX8/OVpLG3gB8UTRYgBkchFWSkmPsOpjmjtlT57a8EDbe0rLHqHsZT3621ca4JoAkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740825067; c=relaxed/simple;
-	bh=VHktwuBA++pwcSNLwBq2O+4R7yu0UuumXB+RZgWa7j8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OCbtY32Y462Lka2FZbtMMb0w23rc4no9HVF5xO7HbVV+khNB2chezC2aqKu5sgjk8vmeMhKe+D0wN5gvErnVTOqNf9vG2C2klrixlxeUIMLHHTxj0QohHfJF6wiPgKFeCkpszVSFZl5F5nkUzZlsXSlPQTpopcoN4Z8y0FXec0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=v/OQ8Ejq; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1740854657; c=relaxed/simple;
+	bh=T433eUfkMrUo1Wprk9rrV953OoJLM5qrhVCq/CAQvvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E6rCKDQSlDIwifyJfdGXgoaArQBQ+fCktdmDs14Q645+ws1ImjUZ+PHEvblHrCVng0rzBohAwP9/dG+gm9lVnCkNt0TLCM7LOCy0SFWEmhYooBupQvHAQOg8Ykv0htMAOZQkr3axozY1mmHL5bNw/nn2BuB1ntnVAsFgy26DypQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=k+8qDxWv; arc=none smtp.client-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="v/OQ8Ejq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740825054; x=1741429854; i=markus.elfring@web.de;
-	bh=CAz6gCbtU7uFvGCm74xUODE01eBeWF9wvK2nZ3gFNuw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=v/OQ8EjqpAC+fpc2bPxegcZJQyxu0f1sxiwnHzaa4MRGgrSjKR5AYczeD2oWk1j0
-	 fDpH710NRlirtXrxj8/fhxTI+CKF2tufdt0e5xpl/zBkJoQ3mP/09MIaX4XgQOhfN
-	 fruZFmZa122DEUX1gn/RkTDPj6VrTaO+r7EwNLPmD2p25xyP90v9TAw7tDYJmp0rV
-	 2rTKV+jEpwC1rwlN+0VQq1oen7EDeHtMgSXLY0rxfpvn4qcOBc6C1wT1QX0LfV1a7
-	 oooh6bu3qNqww7gvigyRyo8KYrjwhcn7j+v2glEsqtH5bvTpoFxkBq3T+589RNxlH
-	 3WYZmNH182wVF272eg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.42]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MqqPN-1tSRZP0ew5-00hX7u; Sat, 01
- Mar 2025 11:30:54 +0100
-Message-ID: <2b6b0608-136b-4328-a42f-eb5ca77688a0@web.de>
-Date: Sat, 1 Mar 2025 11:30:52 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="k+8qDxWv"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id oRndttkZclzKeoRngtwIir; Sat, 01 Mar 2025 19:43:02 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1740854583;
+	bh=kivS0j5YlRBr/NK4eTwHFGgQZng6nDYYZFuu6CKvKgs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=k+8qDxWvuRHPkPZSB2Uaccu3gZfp77O4E/sYM+P8NRjnFIP9uUEBpkZnnl8u2eLb0
+	 6u9jmR90VAlyT42PfnGwq6/ow/Z5G8leuU/sJcLobMZQx7EKgn0EA9NJl0a98hrIaj
+	 p1Kqk2pAh6hBPiyiz3pUYbck45ud5clerjXjAjZtW6nZTk/z+CObM5SUXuZ0am009R
+	 RM3PoxRvMxQ4c/cRkX8hVZsZS0jATFscJ65ZBBss8PWxXV1QxgSEsR/8wQ1ICC1vb2
+	 u1uEdqniDswEcUwN1sor0UR1reugBes7qeTI2cA7mwsIEOAbVFoO10SmEw786nALoz
+	 ob14oIapN5qpw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 01 Mar 2025 19:43:03 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Shawn Guo <shawn.guo@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Jianguo Sun <sunjianguo1@huawei.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH] PCI: histb: Fix an error handling path in histb_pcie_probe()
+Date: Sat,  1 Mar 2025 19:42:54 +0100
+Message-ID: <8301fc15cdea5d2dac21f57613e8e6922fb1ad95.1740854531.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-xfs@vger.kernel.org, Carlos Maiolino <cem@kernel.org>,
- Chandan Babu R <chandanbabu@kernel.org>, "Darrick J. Wong"
- <djwong@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Qasim Ijaz <qasdev00@gmail.com>, Natalie Vock <natalie.vock@gmx.de>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] xfs: Simplify maximum determination in xrep_calc_ag_resblks()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+uXaeMbeeE6tg5gjSaNZQEIIlZxoeGmI5TYUpyTw3Zs06EC7Rif
- hHaAq88tnokWoUVYdTb2/zu6O9JTGEktmpd+RorkxZ8S7Zs6vGEUnV4WruGi/AMewFvoQaD
- qmJnCjWB6vAGoPWPADj+Jr3BAtZkXUTUpGEcLMqqfhPWfrwx5S5lp+jxugvh3mByS+rePIc
- PaeieieZrJEQLQqRslvqQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:kYXFuJDlFLY=;43Hm3a7/Zzg2fw/uTjqH/VN/YJd
- vk5kvNmvHjq+muvIRuShn/lytb6qGNihPYbExLlD33BQAfuFI9/MGXzbtmn7yMyyjdT8/hxMD
- gqzmGXH32GKLTFAzEnRS1C2Om6ELjSEoyRQslglMn7bKGpG/eTptkksBT4GTBq0qOVx/e57jv
- /l1fKSVBCBTmWI2OSdNHQEklxRxnO8xP1WNoySr7gKySkk3fJqsUZDHKXiYzIDpjivvSb4vPp
- OXE8oU1mSw1i3OkqFgvuvoU3oHc9Ir27xrzMHxB+TAiIw5nJXdSVzJRO/Kq2H6hh1J5q8MpLH
- heV/fnPFlv+PEICG2XpUZzzyveW8XR3OBjCvoPVu9/J2/jT/WMtIsxm08qSS1A9h6Of8qFRir
- Bmrka0kj2HETm5NZrrQHoRU9eKPnmS06yjwTgaByXq6qz7Tg0fEpiZ9J/rNN+YrpvAimLOHlf
- 4/kLoRvDqdUIJ2NDEuap+Cv1AESiLRVfMAGu9kBG5+zGU1KnWjX+VDJc23QWwV7vDfOsMrzt+
- aou+o5+x+pEgPKn9xYDZ36cigkz2TPREDa+3fnKMiRKkejRQSAELxRihpNFPjLHoJCA3j9/Y7
- kqHNOdaPld1KzN8iphSuXSQatscaXxNmVnENn1jNQqcGu8Gr/VEdGtGnnLhms6LEGNCgmi8cN
- 04AOqnlfkXs1/kfErl8FLd/UMAZA1QSn/kEHGV4p0IWQTalAUlTXCysIsAc+/cRK9ul+lVBuc
- 3rX48Z2oJWwL8SZu34dPLl00vKL9LB572DPfsC435XGJweEk3bHFZFcbBGd/6eHKXYJqMvNO3
- s7jbreh/b2ZbnbLC61DRPrBRHVH1G8PekUeJ2RXviKSIwvPgg/UzOvLNNAXpViIyelgyFUg+K
- cZQWC6CN3eigW4uDLx/N32jLORVlOhkjs4CUywXkW+w3hjUhq1h5EGs7BMIV4C3rcPsGLQgVv
- pfCXBXAaAm6DEzse2hDnGAXt3+24lAEH3PtoMf05v9D7bt6x4/5auAueaWAxHr2Y37/gQp2+G
- KGoXVFVlYJoq81KpA4J7IiM0SjHVem6kqa1fX1ywDFGbAp2bcCgCKVW+rIbh5NLs3Urw2v3E/
- WROhUynDxpn60ygWw0oukAJDz8c7vRvUG+2R3SOzHARQN3vIXqumzLmQ6FyO2wDLKdw30dq6M
- dtMq1IAiupOUQhjxEFXTGtE/H08qkQ8fioUkgiGEWr1SBXp5R81z1FUU7q/7759S/opsgat93
- bNiPNzlD8HYyaFiHLocKpFJQ0JGsiTEgEW3TfIS4jpKJxJOPy8WI+5YsRLxavk3ssEV9T34ko
- shbCfvohkjmNm4AC3N6hNHliH8Ygvl5viphKWMwdHYYomPGejjuWRZ75UcY5x2ylvNmEQOdjd
- Qm0GaiqJfu+AFaxtrBsgi4hxYOtKDkZk0jW7Pemx+qSgNf+QAGSHVwUirUbfYTwJ2KE0/cycD
- qtsNK9A==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 1 Mar 2025 11:24:52 +0100
+If an error occurs after a successful phy_init() call, then phy_exit()
+should be called.
 
-Reduce nested max() calls by a single max3() call in this
-function implementation.
+Add the missing call, as already done in the remove function.
 
-The source code was transformed by using the Coccinelle software.
+Fixes: bbd11bddb398 ("PCI: hisi: Add HiSilicon STB SoC PCIe controller driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+This patch is compile tested only.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/xfs/scrub/repair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It is also completly speculative. Review with care.
+---
+ drivers/pci/controller/dwc/pcie-histb.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/scrub/repair.c b/fs/xfs/scrub/repair.c
-index 3b5288d3ef4e..6b23a3943907 100644
-=2D-- a/fs/xfs/scrub/repair.c
-+++ b/fs/xfs/scrub/repair.c
-@@ -382,7 +382,7 @@ xrep_calc_ag_resblks(
- 			refcbt_sz);
- 	xfs_perag_put(pag);
-
--	return max(max(bnobt_sz, inobt_sz), max(rmapbt_sz, refcbt_sz));
-+	return max3(bnobt_sz, inobt_sz, max(rmapbt_sz, refcbt_sz));
+diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
+index 615a0e3e6d7e..63b701881357 100644
+--- a/drivers/pci/controller/dwc/pcie-histb.c
++++ b/drivers/pci/controller/dwc/pcie-histb.c
+@@ -409,16 +409,22 @@ static int histb_pcie_probe(struct platform_device *pdev)
+ 	ret = histb_pcie_host_enable(pp);
+ 	if (ret) {
+ 		dev_err(dev, "failed to enable host\n");
+-		return ret;
++		goto err_exit_phy;
+ 	}
+ 
+ 	ret = dw_pcie_host_init(pp);
+ 	if (ret) {
+ 		dev_err(dev, "failed to initialize host\n");
+-		return ret;
++		goto err_exit_phy;
+ 	}
+ 
+ 	return 0;
++
++err_exit_phy:
++	if (hipcie->phy)
++		phy_exit(hipcie->phy);
++
++	return ret;
  }
-
- #ifdef CONFIG_XFS_RT
-=2D-
+ 
+ static void histb_pcie_remove(struct platform_device *pdev)
+-- 
 2.48.1
 
