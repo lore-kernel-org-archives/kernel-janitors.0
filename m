@@ -1,80 +1,116 @@
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AABC1DFE14
-	for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 23:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0461C1F21;
+	Sat,  1 Mar 2025 10:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740786064; cv=none; b=llUBASWfXn1AOWdZBUiLBWPCp9LVMvyMbSbBogw7hffHj/6C/fF2MomVIA3r1zFWf5CkHFXyW7tuygrWpfQw4DmsUhSSiZVm8ebF1RKTHOjCG80OjDp7c0TxLZtn/cp/ceApHms3uUYl+EMRebLk08NaGiAlr+oqjo0k6V7pF0M=
+	t=1740824318; cv=none; b=NUTBNqcAIDfpd+bg/i5mwniDtQMVOt64VKMH+ad6KmNbtRrP/vsIO9TDS4lBRWQIwk0hxdEsu/0eNesAOZ36UQmMDFmMIjU1DLGEVqCD+4LXSHZ6bswbMnCsT1nMJXwXkyklnj1KxnQuUmneiBbcLu9BAA4DKT4tgiLw5V0MsBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740786064; c=relaxed/simple;
-	bh=czHtOKFbuWT4IFwIXGB3dzoMikaoJb8csCThNc+R2Tk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DiRXFFrql7NIahTPFFe1r2sLu68Z7LklvzrqdmdpHV9B+XXqZYJPGXsEpg4iQlYYRAWb+jgIHkAW44lWNJnxgsp9u/miIueRGGD9w5q65xNBew5KQMCnDdNL644xX+/X3q1r42bR544WX78BYKElGxJJlDzXNdDT55+ecjgf9O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qot7tse1; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+	s=arc-20240116; t=1740824318; c=relaxed/simple;
+	bh=Tih7/m1jCU6zo9dbLTjV9xhUlYXnOFqFkJ/TPENNJOs=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=C8Qhs4OzNqR6/Xu18EtodO/f07/Od9wFfqyEU6wt1smPdcf1q0v8xvKW0jRUiyer7kvwL2bH48uwcHq7NBmjOvfCI6NIaAlpdpbC6dd7lOpjgCDMeHTvh8/q84kvWafHjjrbEdStnDN078dI8XHsu0l++yVUmkytr8jr1K0kqpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wFEEFKU2; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qot7tse1"
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2feda472a4aso137249a91.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 28 Feb 2025 15:41:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740786062; x=1741390862; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Rd2zkA90OfrPC56kZ5TgBkpFyoSsKiSMEhRKLUnwKE=;
-        b=Qot7tse1Mzw2ETR/1mp9X6jcUp3fC+TzmauBU+FMS/A0f65iDRuWYD1LCpZ1K9oVDR
-         GrMlgrZlt7755lqwkJHquj/f59KFVmaYV7JDFxWSfk2CUBEUvVPfYMnLldrs/wKCWFZP
-         /1zaWQkSapYbGWlPOXGjPwyNhS3m8RLgLjNaDWKJgVT1LNiLVbJSv4GJfMmLnwMj8mwp
-         DUQyQtouu9TRfoVvXxd1Fsckj6BM1ZkV/Fid5MX0c5tXcqllCFAKy5T2UJYZILKNQIp0
-         XQD8SZMM8I1Ovzqdz0TOhOXo7Ki5kH5JD4CNYOsNCBUtleB9W/AZcHyYEig+onmi191p
-         a85Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740786062; x=1741390862;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Rd2zkA90OfrPC56kZ5TgBkpFyoSsKiSMEhRKLUnwKE=;
-        b=vc4po9co7ghECDbpd9RYpvba4ksx/fZITpkMlbuw1rmGxgPLIaWkQBP6ap4475GHW2
-         nNg0Vm4hrTJU0bKC8sgWFqDYY5Q52coPWFecJZVS4uAsv/Tcp4KyOmHLQMDnD0vJrcXD
-         yGecp5J6ABgXMC5nPSbMfhnp1THwJk+Pk+QLJI88j1N9zGoy0e+AtjNR8kPqz2Pe+X4A
-         5RP5+0oP1SBM8ffgsnt5mRhmXz7zYPuqfyhSGMhVm1c7wvInUZu4AN3J79huqc4Q0sIH
-         dlABTK8Ae2PkeCVmeW/4aI/WnoRpcovw+zqTXsrWa6wNPy5COEdrpnjLWU1bhrqdbLk/
-         CuEg==
-X-Gm-Message-State: AOJu0Yz6XUzog7eOVl4FI3XCR8I0yVcu5ipbmBF400LX2hht9IK4Ho+I
-	jcHlrI7+3sV44vojyTCnFPznhDV2nui+0jMyDnooKCKQ2a+Fcfazr32kJSzD8iU20O+kDxOfJWn
-	25A==
-X-Google-Smtp-Source: AGHT+IG7CvYyko2UbVPuAkNZZPDFMXpjB4wXlD6Ru8cf7no7JS4XUdhwodgR3HqRriolKmpqFez0BPUdclk=
-X-Received: from pjblb1.prod.google.com ([2002:a17:90b:4a41:b0:2fc:1158:9fe5])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4acb:b0:2ee:a583:e616
- with SMTP id 98e67ed59e1d1-2febab3e417mr8593663a91.9.1740786062022; Fri, 28
- Feb 2025 15:41:02 -0800 (PST)
-Date: Fri, 28 Feb 2025 15:40:30 -0800
-In-Reply-To: <20250227220819.656780-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wFEEFKU2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740824314; x=1741429114; i=markus.elfring@web.de;
+	bh=JqgvWhDeBxn3+761cHTwCzYRQ8hleuaweJ38cwLMrf0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:From:Subject:
+	 Cc:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wFEEFKU2thEBQiFzEdHl8tSvuoTMkCt4bE7IlLwC5/aw5mYmakxzlTGLctD/gH/+
+	 V+um6iDS0uxVctT6lrXfnaF396XIgNe+DvcV6+kWjgfkcjp8qiGTvNdgPcYa3lOr6
+	 F3aEEzGX3Gl7zIiV9reYkvarbvIVd233PqFV7Q8RszxUV5CxFr0WchP738yWW9EAW
+	 Js4YhG19aZ9uqQ9Qwse7DngX+3nOs7jdwY13qNSp+P9j80sR+jkfy8GnOkXnBtN47
+	 w/hXnkx0CeRPsL7ip8I7Q83xJYg57YUULq9wzgA2/yo4tBFODCfhZRAlUhYWCLvYe
+	 AdEzBQg16Ltv6ZR/iw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.42]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1McZnl-1tIXmj0VbR-00hdl0; Sat, 01
+ Mar 2025 11:12:44 +0100
+Message-ID: <cbbc2dbd-2028-4623-8cb3-9d01be341daa@web.de>
+Date: Sat, 1 Mar 2025 11:12:31 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227220819.656780-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <174076278043.3736049.13548260851648046331.b4-ty@google.com>
-Subject: Re: [PATCH]][next] KVM: selftests: Fix spelling mistake
- "UFFDIO_CONINUE" -> "UFFDIO_CONTINUE"
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Brett Creeley <brett.creeley@amd.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Shannon Nelson <shannon.nelson@amd.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH net-next] ionic: Simplify maximum determination in
+ ionic_adminq_napi()
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Qasim Ijaz <qasdev00@gmail.com>, Natalie Vock <natalie.vock@gmx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:iAZ5wQXshMe1auUfVTMOjSnfhKROyESDT79eO6OuARkv2ggeQ7p
+ +3J7+DAdHZZOHg1Gufq6YUBoZZSyZpqvkPlcUzpVDhNv3vyT5SnSarfmOkbmzrcDM6S+yGL
+ 2suFLHJOTPMXsEuNNRtjvACJuDX810LCHyiLLt32NCJZARpKZtKfZLPldGXFhld3xqGGxGd
+ hKpHlT36i5IFJ3IV+CpiA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1RdTme0JumA=;zJ7GmkLyjP0ZpFdUxYl5KacwGZk
+ fyCTfDztGHJ3Iis9Xpdlwpi00SkJ6h0VLeVIXOo0mRpPd3yl53AyCwbYpNVP/oSwOcpNwkZtN
+ uIXXf4efz7/SkhSyB2UVnOpRsxN4DW/sPlJg/dnDdamTVudT6UiPzebbIGKPT16/HKDCSzz7E
+ A8i4H8nKAJA2qQWlIowbzm4LLT91Zw0Zus0Uv2IoNb+seBQrO3oQHxuj9+X6G7xW0C0IXzCnc
+ 7oAYcKHoC/f40b+Rs/FJPLN1AfBBjRSxCPYmck+yoquyBI8FMCnHejiBtwmASR7zDWVi1BEyI
+ XhZ/WhC81zR38+WA03bTSDM0EauaKqmwo1N6t52+CSe9L7P9QKpvjeS6OUgxgEd0K3LkTZQkj
+ LS/KYpQa1FQuQ0kKyLaYPDXK6MDY6pbExgf7xV3IUXxWqkK02uxjMSXTJbyXWIzTVi5afDuGy
+ NZfBXzbFV7bmNtdtaEVluSIC9+0sKEMKcVRmVb04Vk/iWYGIKPB78HqUekKqUwJ+NfCM9q28J
+ 4uOrijAWYTQ7TmATwoC98HkADkoAaLAtCJMJzAMYs46hMZkCg2CumnWpKSx9tcTogddL8vjWK
+ X0+DXdIRgeTCJ1oKgoDtxDmTVQgTqaSieHtrUt80UymLv+kkCQeeLykpEerjEPLund4Mw/oJI
+ u8AOsk5cdh3GDinjDKMuAZ4AS/tDAur/tMRJoV/Z1vfKKspmX6+J2P4yCVl1Zfxs9qJEoHHvD
+ XqBU7LSKycjsIN8ghdX0/kTw03OrZR1tC1CzTINu4p5k5jYPyuFzRDFr4ee33udfM+WXtbBaL
+ EgnVcKSQV+Vh6rYtig1Uxb1FZTSA56oz1O8lYhbhXM7DoDuc4dw0qx4HSCdgH7gWtoS9hG5K+
+ WxpOkz1mNEmd/ouy0bhuGlSxTneyfad8EWPFu8DHv6K1yORXUezI5Me/KfY8X7oWDEFOekdpB
+ MsQ0Zw7FvzwUZIlbx39gmHV8aF7UL130bYW5qLBPp/Zu0UCYe/ikzVXlWG5yK+m33Rwjf5euy
+ lZI6NSxWVVAq3pA/HhJGog/a4dS4VHe9qQiNWR6mJTQdbGC/V76ro4z1iEP2hIHQ41BZV5vRL
+ UYPBiqWXid2TRtUYHYwd2C6BJCZkteSscrD/IXhnQgpV0p1HAR+uBk/6StGeXDsuZw7+iFpM3
+ dGMTCUAAagqUuBH3WlAquJmzrprLezi/RXauFB27rdKUl6ZnNOAygcPAJIrzTVxGT4ulQq328
+ mzbEWfYzG+j4hsmnTmzu9p/KQWClTwLRzPozq5NYc3Itbh7r5+1qUkjJwP/b9snb27hZTFRgd
+ w5aCCI9g3H9x9/inkqdDsuz9DfcbxOixuebb4tntFQnQX7UuOpqre64KQHrQ0BNzbxrg9+2aM
+ sLoKyWcGsAhkiDdZPadFi25ALJv8TJheeYe7d02I+Q/RG5F3If5QpF3EFtb3PYaYctzDwDcy0
+ IvWciIA==
 
-On Thu, 27 Feb 2025 22:08:19 +0000, Colin Ian King wrote:
-> There is a spelling mistake in a PER_PAGE_DEBUG debug message. Fix it.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 1 Mar 2025 11:01:28 +0100
 
-Applied to kvm-x86 selftests, thanks!
+Reduce nested max() calls by a single max3() call in this
+function implementation.
 
-[1/1] KVM: selftests: Fix spelling mistake "UFFDIO_CONINUE" -> "UFFDIO_CONTINUE"
-      https://github.com/kvm-x86/linux/commit/75418e222e30
+The source code was transformed by using the Coccinelle software.
 
---
-https://github.com/kvm-x86/linux/tree/next
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/net/ethernet/pensando/ionic/ionic_lif.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net=
+/ethernet/pensando/ionic/ionic_lif.c
+index 7707a9e53c43..85c4b02bd054 100644
+=2D-- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
++++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
+@@ -1242,7 +1242,7 @@ static int ionic_adminq_napi(struct napi_struct *nap=
+i, int budget)
+ 	if (lif->hwstamp_txq)
+ 		tx_work =3D ionic_tx_cq_service(&lif->hwstamp_txq->cq, budget, !!budget=
+);
+
+-	work_done =3D max(max(n_work, a_work), max(rx_work, tx_work));
++	work_done =3D max3(n_work, a_work, max(rx_work, tx_work));
+ 	if (work_done < budget && napi_complete_done(napi, work_done)) {
+ 		flags |=3D IONIC_INTR_CRED_UNMASK;
+ 		intr->rearm_count++;
+=2D-
+2.48.1
+
