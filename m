@@ -1,44 +1,40 @@
-Received: from mxd.seznam.cz (mxd.seznam.cz [77.75.76.210])
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB0A1C174A;
-	Sun,  2 Mar 2025 17:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.75.76.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A635EEB3;
+	Sun,  2 Mar 2025 18:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740937863; cv=none; b=uVBFVLdve3o2zwgYF+2pFh2IyvbLsCy8pBUoXlEi5+O3WupX5WlhzSpDXLmSZ0XEDEyjBLzHqLZtuL3DEQpN3z7oKN9SQVsI2OsHNKMVuUOuFAzLfo+/wk1/4Co0ynAM9SqK9ODzfjFRJ2thZZa7JqjlMgh7uKcIkqWb03x7IiQ=
+	t=1740938548; cv=none; b=LiKcPPJ/tc5WXQNWlaKgq4KheI5Ht+O7niPptjntClGgNiiksC3kEN8cG+R2jBCnvQ8tAnjbKt6A4/zJcdVKMeqj12k89x1UPLPtwK0B4QsY4AIVyLbHP/DayHk2PJ3rbd0t9Pe9lngn9GQ9FVGaFsYrgdYGMO5ETZtHQHBk1/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740937863; c=relaxed/simple;
-	bh=ICAxiJHnVQwCRmL5zZ4EFvYM72/ECGdWdm5L5gBE8Gk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szfl7rs54JIbI5Sgkc8hjCNx+bnnavEWW7+dUjb2jY3p1bdLRxvxZeOoSscukDu/uK6hJy6r9ctabrh4IFnPy1pzUou9mLshkVbdvVmkGgVxQ1RSo8NIn3kfeis28Dtvp9C7byn4NY/m0Im1xLjfAkx06+XL3pgxL9Yc//ONbdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seznam.cz; spf=pass smtp.mailfrom=seznam.cz; dkim=pass (2048-bit key) header.d=seznam.cz header.i=@seznam.cz header.b=Dzin1JeI; arc=none smtp.client-ip=77.75.76.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seznam.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seznam.cz
+	s=arc-20240116; t=1740938548; c=relaxed/simple;
+	bh=w7pInXUMxeRCoZ2OjuoISbCmQ/FrSGspyqheYwWQPaI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OxJMI5CAzrzVcRwjxoyKv43RznUxdRNmpmvEbfvh6DTZPatiMiOyOuJiQ6GPfEK8MP5eMrnGs8GEbhjLsdKE/3cCsB8+AIrug+46CaD0hVALhucMww5ACFxe5wdBYG1FHqHhh7OJqCj6s7CxM+l7UOS5ezpYy9Q0VyNI/ymRdLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=h2up08QI; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seznam.cz header.i=@seznam.cz header.b="Dzin1JeI"
-Received: from email.seznam.cz
-	by smtpc-mxd-6786f7f9fd-wrmb6
-	(smtpc-mxd-6786f7f9fd-wrmb6 [2a02:598:96:8a00::1200:712])
-	id 2d0c3500760261692ca5f95e;
-	Sun, 02 Mar 2025 18:50:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz;
-	s=szn20221014; t=1740937856;
-	bh=WkqVeVDjwGLX/zODAkt/FUNn6SDbwu2B0XHW4KyKjSE=;
-	h=Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:
-	 Content-Language:From:Content-Type:Content-Transfer-Encoding;
-	b=Dzin1JeIU49gZzMI7noPE/iBmf/IOlq2D3GM+WC4CYBD8VQXmypyE9EeKGiSsLrK9
-	 tWQYxWDgmC6v+mxiedrqtuBaDXPq84W8qcYy1TT3cirJCGdpylJbA/kCYCPfIgNXno
-	 +c+Do4ieFp07PQ7SNYRhF6VUDNc0/AXu6eZKmalYhIgTj4RB4qzs0rRVKdAECgrwSw
-	 LtuM+lmLD1y/26PemPr8brza44jbarZdHRiMD9YKK3QsA5C0E70AwIVLtBE9rBLbjJ
-	 UXYk74JZlCeKZq572jaSLts9fdoS81JGxlN8Jzy3jK3QdSnlOzU8TkwC5/z4JzNGEx
-	 eDq/WHJV28/5Q==
-Received: from [192.168.0.240] (ip-111-27.static.ccinternet.cz
-	[147.161.27.111])
-	by smtpd-relay-dd695557-59gb8 (szn-email-smtpd/2.0.31) with ESMTPA
-	id 6deb8026-90ad-450f-828a-6caf96f3825f;
-	Sun, 02 Mar 2025 18:48:52 +0100
-Message-ID: <164b21fb-2ba9-42a4-9964-5e4f051df37a@seznam.cz>
-Date: Sun, 2 Mar 2025 18:46:37 +0100
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="h2up08QI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740938533; x=1741543333; i=markus.elfring@web.de;
+	bh=MP3CYzbV4SLNXkeRjkm2gxZvCS4zGhZS71CY4NKnxwI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=h2up08QIJuNb1Kkw0qGRSRFBUPboD0Ub7SIZPSxUI2KWX2+iPnmaCE2XPGO89HtS
+	 cNuf2uGnSN+bjQ4yNLYFFjnzWMdk2XOuFPHvkghRARAh89YHYqRkMMX6UmJDMlTAi
+	 2ZTmR6jBvPYRAs1BmaByCeWOWrs8ug20ZpgsZBq25LwgjVlG4Up2tLkcJ1OPEzcbY
+	 5U+cdisLvQpkif79YywhvTbI7g6eg03dWQRJ/44cjQrgsAqcbEMHuA3YeX7TIYEQ9
+	 2dz/sLBQP+XZWbHAaVUF+VdHQ89pzq2xcocye2X3c6a9/VPVmBq+WqQqNK8SzxHFj
+	 OzxskVb+FjK1sQBudw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.30]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1My6lX-1t4EN01Q23-013zow; Sun, 02
+ Mar 2025 19:02:13 +0100
+Message-ID: <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
+Date: Sun, 2 Mar 2025 19:02:12 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,96 +42,91 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] bus: qcom-ssc-block-bus: Fix the error handling path
- of qcom_ssc_block_bus_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, andersson@kernel.org,
- konradybcio@kernel.org, jeffrey.l.hugo@gmail.com
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <cover.1740932040.git.christophe.jaillet@wanadoo.fr>
- <1b89ec7438c9a893c09083e8591772c8ad3cb599.1740932040.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Michael Srba <Michael.Srba@seznam.cz>
-In-Reply-To: <1b89ec7438c9a893c09083e8591772c8ad3cb599.1740932040.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH RESEND] video: au1100fb: Move a variable assignment behind a
+ null pointer check in au1100fb_setmode()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Antonino Daplas <adaplas@pol.net>,
+ Helge Deller <deller@gmx.de>, Thomas Zimmermann <tzimmermann@suse.de>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Yihao Han <hanyihao@vivo.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
+Content-Language: en-GB
+In-Reply-To: <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TA4NVn2grx0TTOq+nzTZct2Bwfp8ZWwFKVUFcX47RfI2TKfL2rK
+ /lq1ef8WZ7BXECt83hHAzIbRJxKqvX5etXT8NFjr+BzmG/sxrpz4YLDxfiGW8MYfepISiwY
+ 4M5F+UHew6eP9V0utctkTURC9D5iH86InNPUrfABaTSVVi8pQtZ/7UDkI/1VmSPRGflRPQU
+ rpm7Y05RQfml7v0//HEZw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:y5CMX5amRq4=;e0gSeyKW42FBSDp3F0Aw8wCZz4N
+ 55ufKUCo6pZS2keF9nDhZ+jUZ+pqAp40YFIZErcE0e+atIPcI0Te6s30bBbEI91vyNx4F4Bj3
+ VPAIw/jHkoay0ILKWb4dLBknnTKTpXfqiOZF2YMx0jKwQwDqSKzfAwitck02QqY8T6vMKO+VJ
+ 7yYr7YAvjo2OSbBA+J9aeVPQn3nUvJf3YVG09HNZNlxZNolpXhIf5BE+Vak2/SBByLcG/mOb6
+ 6CILsxh6aabiQgkoOe12nPl4rhVXI1Rul69L6QmN3JPpiWFrajplnWj+vS12sxW4nvWXYZzce
+ 523/EskMWbDW4AeLXtAzzwgUQgEbx+hFhUFzp8SmWIcCyr5Tonx19TMfE4EiEIY1YrCxRVRS6
+ fQq+ODh2blFdmLWb00CyBTDKSqQMd61KK7ofE4wPL4DBD/jybpz+xl9qzX2WL0AOnW53PgCwk
+ VQ1XDYyQZyWUKBM3d9ya5spuC4ELmiBIi1R/4qb4Nmxga4McMUzjpFUSrFXFUaUf96WKI3ygQ
+ W9iG954K4FJ3k1OK0h5Lwx0Gk+kXV4hQIf9MeSRVnZhDfosQHWB+j7YKs0qPrVW+Ir0rhRRtK
+ Vxhe9UJYww6r9fCX+LFi003/vl0w8PExDQYQEZphr5WZvYGXZsjf+nMSvsx9btuFdiSX+6yV8
+ FQ7dzunwy58CYH04Mlu8iurU8Tz+1BHA3Xrk21vTGrktMpU14VjvXfJFMb76tWoNlro+6WjQ/
+ quRP7zLMVU3aYr1kuU3qpwYY6WszJfkTBu0/K5M0Lf62tDknOfZSRheJD+gHgLvgtm88ZoAiF
+ nYYZmf9ri99DUoJkAw8Rhls2YbP6PyE0dbWBgLIPHjVdpS5+/Rb8gmNI6PWpfkK7p8+jp+UOk
+ imu2w+q/HIKAabBP2zsQYtXpWgeXtETovhmvt8uMbKES4bl/2NDWQSehMOHcZiq9wvguy+G+9
+ D37LxYoQvg4X2nyz1VaiPsTbRuZuuL0CIAc0cO03bAMn4wkoPuJxQJOEdyf/7uJSorfoAUljw
+ VE3g2/i4oCDAriLG24lr8nxunrFM5oXLoHk6ZVV16uIt1uKv7rq2x/E/zGvRv8VPOzreh6lkl
+ tNWaZFuoWj9tjdxdgXO1FPHSTCGzX329w0ld5I9tehjWAVyxmfpoJLncoxL8kCLPYUSi8S38y
+ rw4DdFHBMr+Q3ZgDfz6DP5ai30q+Fm0yuHsG08McZbRhiWaN9LEOC83SxcqKpsTpBoLPIHR/G
+ hoCqDmhuRcD4055QzEzE3Tmcr8jR9DlUBUGJkDjW4Xx8F0LrlxxiOSdT3fD7gLhuGE2JVOh8l
+ OQA/eWXC36Ycyjt83NR4zJ1uAPC09scM4j3nR7nx85WzKLi5jHv+GpdFN656SNHc03DBWNxZz
+ 6eXM0S8PA7R4UCbVB+kOTW4bEfQYQYH6EQh7d8xfMalhYu99GFiZ6W3SJFcq3h/t9sGOBk7N7
+ ncJpTUg==
 
-iirc it took me quite a long time to figure out the correct sequence for the bus to come up, so I'd be careful with that indeed. Sadly I can't easily test this on the original device right now, when I have time I want to upstream support for sdm845 which I could test more easily, but the sdm845 case is simpler so idk if testing on that would be sufficient.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 13 Apr 2023 21:35:36 +0200
 
-On 02. 03. 25 17:21, Christophe JAILLET wrote:
-> If qcom_ssc_block_bus_pds_enable() fails, the previous call to
-> qcom_ssc_block_bus_pds_attach() must be undone, as already done in the
-> remove function.
->
-> In order to do that, move the code related to the power domains management
-> to the end of the function, in order to avoid many changes in all the error
-> handling path that would need to go through the new error handling path.
->
-> Fixes: 97d485edc1d9 ("bus: add driver for initializing the SSC bus on (some) qcom SoCs")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> This patch is compile tested only.
->
-> It is also speculative. Power management interaction can be sometimes
-> tricky and I'm not 100% sure that moving this code in fine.
->
-> Review with care.
-> ---
->   drivers/bus/qcom-ssc-block-bus.c | 31 +++++++++++++++++++------------
->   1 file changed, 19 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/bus/qcom-ssc-block-bus.c b/drivers/bus/qcom-ssc-block-bus.c
-> index c95a985e3498..7f5fd4e0940d 100644
-> --- a/drivers/bus/qcom-ssc-block-bus.c
-> +++ b/drivers/bus/qcom-ssc-block-bus.c
-> @@ -264,18 +264,6 @@ static int qcom_ssc_block_bus_probe(struct platform_device *pdev)
->   
->   	platform_set_drvdata(pdev, data);
->   
-> -	data->pd_names = qcom_ssc_block_pd_names;
-> -	data->num_pds = ARRAY_SIZE(qcom_ssc_block_pd_names);
-> -
-> -	/* power domains */
-> -	ret = qcom_ssc_block_bus_pds_attach(&pdev->dev, data->pds, data->pd_names, data->num_pds);
-> -	if (ret < 0)
-> -		return dev_err_probe(&pdev->dev, ret, "error when attaching power domains\n");
-> -
-> -	ret = qcom_ssc_block_bus_pds_enable(data->pds, data->num_pds);
-> -	if (ret < 0)
-> -		return dev_err_probe(&pdev->dev, ret, "error when enabling power domains\n");
-> -
->   	/* low level overrides for when the HW logic doesn't "just work" */
->   	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mpm_sscaon_config0");
->   	data->reg_mpm_sscaon_config0 = devm_ioremap_resource(&pdev->dev, res);
-> @@ -343,11 +331,30 @@ static int qcom_ssc_block_bus_probe(struct platform_device *pdev)
->   
->   	data->ssc_axi_halt = halt_args.args[0];
->   
-> +	/* power domains */
-> +	data->pd_names = qcom_ssc_block_pd_names;
-> +	data->num_pds = ARRAY_SIZE(qcom_ssc_block_pd_names);
-> +
-> +	ret = qcom_ssc_block_bus_pds_attach(&pdev->dev, data->pds, data->pd_names, data->num_pds);
-> +	if (ret < 0)
-> +		return dev_err_probe(&pdev->dev, ret, "error when attaching power domains\n");
-> +
-> +	ret = qcom_ssc_block_bus_pds_enable(data->pds, data->num_pds);
-> +	if (ret < 0) {
-> +		dev_err_probe(&pdev->dev, ret, "error when enabling power domains\n");
-> +		goto err_detach_pds_bus;
-> +	}
-> +
->   	qcom_ssc_block_bus_init(&pdev->dev);
->   
->   	of_platform_populate(np, NULL, NULL, &pdev->dev);
->   
->   	return 0;
-> +
-> +err_detach_pds_bus:
-> +	qcom_ssc_block_bus_pds_detach(&pdev->dev, data->pds, data->num_pds);
-> +
-> +	return ret;
->   }
->   
->   static void qcom_ssc_block_bus_remove(struct platform_device *pdev)
+The address of a data structure member was determined before
+a corresponding null pointer check in the implementation of
+the function =E2=80=9Cau1100fb_setmode=E2=80=9D.
+
+Thus avoid the risk for undefined behaviour by moving the assignment
+for the variable =E2=80=9Cinfo=E2=80=9D behind the null pointer check.
+
+This issue was detected by using the Coccinelle software.
+
+Fixes: 3b495f2bb749 ("Au1100 FB driver uplift for 2.6.")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/video/fbdev/au1100fb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/video/fbdev/au1100fb.c b/drivers/video/fbdev/au1100fb=
+.c
+index cb317398e71a..fcb47b350bc9 100644
+=2D-- a/drivers/video/fbdev/au1100fb.c
++++ b/drivers/video/fbdev/au1100fb.c
+@@ -137,13 +137,15 @@ static int au1100fb_fb_blank(int blank_mode, struct =
+fb_info *fbi)
+ 	 */
+ int au1100fb_setmode(struct au1100fb_device *fbdev)
+ {
+-	struct fb_info *info =3D &fbdev->info;
++	struct fb_info *info;
+ 	u32 words;
+ 	int index;
+
+ 	if (!fbdev)
+ 		return -EINVAL;
+
++	info =3D &fbdev->info;
++
+ 	/* Update var-dependent FB info */
+ 	if (panel_is_active(fbdev->panel) || panel_is_color(fbdev->panel)) {
+ 		if (info->var.bits_per_pixel <=3D 8) {
+=2D-
+2.40.0
 
