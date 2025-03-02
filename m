@@ -1,71 +1,79 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E651D7982;
-	Sat,  1 Mar 2025 23:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6681E47AD
+	for <kernel-janitors@vger.kernel.org>; Sun,  2 Mar 2025 14:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740870973; cv=none; b=cRCMcRUFMTsLg937f2soi9rBx/nwAj+SFaEvjeJt/9IutKJTQ6D29i5wWma8o2GbkY3sB+hlYuFqyGQSh2oYdGZYae1CmAcRKEA+30gRYOY49gusj3Yba9evadFHyCYx/wr+8YwTR5F2Rv/UYC5K0r5auwuTXrE8xphBeCBRESk=
+	t=1740927580; cv=none; b=f3Hd0DAVDA26cyGF7LKoE+260RqKB/KVY1wZIyOGAdezYZssrg3iyQSJ1PPFTbL7GMdDo309Gj8uOvjvx1PZYD5xvsqQ+hkzif8EBqbjjd1h1LMT8UIi9lKjE/a9yXd/BBsGScXNG7sP2RtmTa2KjjVlkiKpRLR65mQmVL3HQwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740870973; c=relaxed/simple;
-	bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e7PThw5pmu/hcz/EamG3w77TXcZL+WR3Owy3gpcq2iYwDD8z8wGHVhNJbI0mN7Ao7BOiPHZgex2T3njMbvtXc2Oh2atgSHmFvV2kgjZCnoYznX6yKGvv6wrTqjkPEXPjNzVDQ/ti1Kot71Y9VYnMZ115y3wTJHQ/ih3mlV0dWME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390e3b3d3f4so1552464f8f.2;
-        Sat, 01 Mar 2025 15:16:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740870968; x=1741475768;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWpDQmZNg8zKVk12QskQ7NNS05C4fI/JmZBKLdKyu8Q=;
-        b=FzUSJ2xu6pUSmUF0zAFFDG74KhvMoJEJR4X/h/5D5GdaCmOOBAJN3TAzlJOQobLMdU
-         xV2cRxWYqkC56j9q7/zgEv3fp+dhhRey/IMZ/vfBONVgiYnjJfQJ/owEx64CBXLWrUTM
-         N2C++sz/OaYX9tR+PVSUiF7WWSdr2MvLyZQhx4LUnimV3zSMtQLa6Go8XWbYFr3x+fc3
-         YsAi9hMxCXtDUrWGvEIpMwUritnrpB5pWO4R+74K/r4TNeNz3/t/EkaOYflvTfUbfg5r
-         w4M+Vj+dXIpJvUs2xgq9t/94tkzxA5KFOY3Ggda2G9HQTBbSk1x6wUyBgQB2d5uR5nu9
-         rs0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWRw2HecGows7BpKk6dZdVyFJvo4tu6RdBJkHYriTIgSLMO1UWp+nAaoa5pJSBpkkaaFu1mThp6h97jQN2taF0=@vger.kernel.org, AJvYcCXPmV0Unxgs33OVqwTWuOsXrJaIFAtpU7w/OG2yP4nO+JrD7/020K8EMziUd42fOiExLw6WuTQ0VlVtjfX3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxyOS+70M9SfuefSlVR9wQYhp+zzHid8ZmlMnP6/iCzadCm/z7
-	+k9awMyZq0ATwATYoHZK8AcZiXuHnqjeuCl+MpPJIRgdMFdxNLY9
-X-Gm-Gg: ASbGncuyUz9RLjlDW+W2KOhPEeUDYreotN868JWTtpEQcmWoORJ/1bRV+g3DCf2Y9GU
-	N/pX+i79qebscmP788RvgzEmbL8SOoVrsN9k37TE9EDQ9nJh+d9rK3oxva/k8zgiuYGd+NZxgTg
-	6HEhDmNj8am52m3FCOfv41lPzjSxyNzi5qZuQH1B+D9RrHL9eXQ7Nln5WI8g2nJqYkSMxlYD5cl
-	0fKZC9HwI2Sc6SsrHMNtMz5EpR/nleLqtgRJni4uEBt/RIwYb6f0EvCUHQ+dyTdUn6oB9DC/ad7
-	D15toy33d6IbSkxxm6vPkxkNS94FFGyYmK3YAJhTwQjyrSonwlBO1nNh4ALs30ACFhij/IVZheN
-	XC7G3
-X-Google-Smtp-Source: AGHT+IHPLd9+jiab01w985BywzrEuE99VxuwkdCg02g97bwTjyXFL7H2etMm7iPNU0L9KED/95Jb5g==
-X-Received: by 2002:a5d:64a6:0:b0:390:e48a:3869 with SMTP id ffacd0b85a97d-390ec7c8e54mr8198941f8f.11.1740870967855;
-        Sat, 01 Mar 2025 15:16:07 -0800 (PST)
-Received: from [10.100.102.74] (89-138-75-149.bb.netvision.net.il. [89.138.75.149])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47965e8sm9428853f8f.1.2025.03.01.15.16.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Mar 2025 15:16:07 -0800 (PST)
-Message-ID: <ddc3b589-909e-43ea-a02b-7d0b26d730ec@grimberg.me>
-Date: Sun, 2 Mar 2025 01:16:05 +0200
+	s=arc-20240116; t=1740927580; c=relaxed/simple;
+	bh=vG5djXaFhKK3CzDRSFtUV0aHIyTlukv5vBOR74eFVik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SxpGzphTET3fm4iVt63Blw+7aJ2IwtcbmUISAFbWYMynGB9WZZN1l2VYOyWne35bHJskp+VO03xI1arMm4NjIeykK4vG0L4SgecTIguf10tOW/NP01/xjvSxFXXYaVhlzz6by+iGjLzVvqv4FjG7zWUA1ECetvydjJ89bXZF3V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=N5rXtFnP; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="N5rXtFnP"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id okmqtJVk70yWRokmut9O82; Sun, 02 Mar 2025 15:59:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1740927569;
+	bh=CHITz2+YWVCqZNH8zM0mCk4OaRmTsJ9xq+F0/7AL1r0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=N5rXtFnPdciX4yYY/+OAbDtQWCPVFXb0Q7ZwJp8RQBxYKLhiMBfbZELmQBspi2cz1
+	 UQfhmOdjvcCKk8TTVQw3QfKhcIjwpXFb15L44d4zDcZYuBJTEK7MFXW2pCFKjXAzEe
+	 cKfqVLg6T7j+bKTKCacfO0894mvXRItoyqSZ1g1o9VfvgmqHCef9O9EUCkv+Orl6Tu
+	 kPikree9OBxPQRsJkIMX31J6B4IZUIQWWkmEb0fDkWhYRi8rUCNLBZ2LG4lbPcRT1S
+	 7XITGjy/ij66aTeP0D4yYEFD8PvqSHCBm+EEM8FpQBDp/8wCUKI6iMIACeYJh0ei05
+	 BGeJgUR0rJwkQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 Mar 2025 15:59:29 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	naveen@kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 0/2] powerpc: gpio_mdio: Simplify gpio_mdio_probe()
+Date: Sun,  2 Mar 2025 15:59:14 +0100
+Message-ID: <cover.1740926808.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme-tcp: fix signedness bug in
- nvme_tcp_init_connection()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
-Content-Language: en-US
-From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+While wondering if it was correct to call mdiobus_free() in the remove
+function and only kfree() in the error handling of the probe, I
+arrived at the conclusion that the code could be simpler here.
+
+Patch 1 uses mdiobus_alloc_size() instead of a hand written
+mdiobus_alloc() + kzalloc(). it also uses the devm_ version in order to
+save some LoC (and answer my initial question)
+
+Patch 2 uses devm_of_mdiobus_register() to completly remove the .remove()
+function and save some more LoC.
+
+Both patches are compile tested only.
+
+Christophe JAILLET (2):
+  powerpc: gpio_mdio: Use devm_mdiobus_alloc_size()
+  powerpc: gpio_mdio: Use devm_of_mdiobus_register()
+
+ arch/powerpc/platforms/pasemi/gpio_mdio.c | 41 ++++-------------------
+ 1 file changed, 6 insertions(+), 35 deletions(-)
+
+-- 
+2.48.1
+
