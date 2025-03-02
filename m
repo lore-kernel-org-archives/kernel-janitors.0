@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BF6EEB3;
-	Sun,  2 Mar 2025 20:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB384288B1;
+	Sun,  2 Mar 2025 20:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740945629; cv=none; b=qKTYp8YFwEX3Vtw/7tPRb65fI+PrXCLbr6hVZlYc1ZJH/7OxVDdUfIMD64UN1hfX+1yc2OG6Nxw26yI+gZJLMURhXuIeKyO2OuWYdDwrSrPAMwneF4upWJRuqt8pcebrtOfc+FpiYSW68gCzS9Bv5FEYAaKDd2sLILVda8Fx+Y0=
+	t=1740947437; cv=none; b=I5Gje6zcz9Rhi6b84MxrL9leUifBAFxlqPJL+LvqlfEC0fAFJgBLnlt8XjYZcpdw+zgN3jk6mv4Xp4yngszk7nr857bcuHNmuqy2ijm0QMZGqvaNR0XCfhNEOt+FwLx2QnOsQqhMnN0czH8aCRs0v2nrVlkudUyuxcXXFneEMeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740945629; c=relaxed/simple;
-	bh=rQJAsaw63xqBWE1U1BqvEkVbAuOOdMfZwM5g9uuw/j0=;
+	s=arc-20240116; t=1740947437; c=relaxed/simple;
+	bh=qu5KI8fMONBhzkGxAIHlBQNJ7CFJHqifoEwRmhHdgvA=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ID9OTXEpnsgxYecImZgjl6GfMPUUsO+xhwo6Z9JhBjHIOafdAXv2SwHThNB31TzMhFzOIVRW6X2z7nqrIdM2XtILnU5Zzy7wVS7wN7HJeWVMP2uFxnkfL2WsbN/LTO3XttWauRRM79phrIX3oXFeQfTHKKP8gobztslhJAo3UQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TjUD8dAl; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=PZWSzLLcmAhLQU4EYspFGdVYbq/IPMfrJH2uF6nwQgp5ayiTy3VxpseqbOmc8Iw9UK8B9yf+SDzQC3f/fH40H+7hyNFB55ub6KEC+2XocEsLotOZtwfPLMBI/j703a0JEeRz+iVl7x8H5T/w4EC28Y/kibZ2F99ieVh1Z7TJE4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KjHb07zs; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TjUD8dAl"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KjHb07zs"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740945612; x=1741550412; i=markus.elfring@web.de;
-	bh=j8978AGK4OcGB6MWNg+Th/WIqtnKJPRM1f6P4S0eQJs=;
+	s=s29768273; t=1740947430; x=1741552230; i=markus.elfring@web.de;
+	bh=t03/rLM9FaNUTzDcuwCiZRSRsDm9yDnbuOT4YqKcuUI=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
 	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=TjUD8dAlKI/EZfWuj+uvbI73b1JtsALaP3ZYRqmru9UTTWBr+4TCOiMEL8zuhJfe
-	 NfALfXKiirp0eXUKs5A8fQIX2cRD+2IC+txPOaouKhPSw171e8T4rxJsb5MWA532H
-	 BsD147SAfJJjCbKvj+RUjSVxdUndGceZtnNvcW2PzldwLHoyfYFtXUgKu5V7DuBzB
-	 81ESLxKcAXlsCem7uhyeWHULJ4cuNMebH1cN3K3ymQnoi1/UmSIIFf9ZMFg8QgPDM
-	 3kbd4YuSHLeOQDgeG6fVJr3rTSrGPxfBGSLs9P7igoFCyvdb9chG43azfAozkqtDc
-	 vv7cqnYevrm1GvBMYA==
+	b=KjHb07zsBfKJpgfl64Y7NEN2CovaV+QPdTEU3U5b8HypgSfj/LY1GmhfBqm1U2Od
+	 Q+CZVrXWjRGvt+0Lrq/cmXontkm5Xm/+zgMeotWeBWGITbZrvLNLFD67UfYe4PJfs
+	 fXvUutsoj13p4l6Qj/TJ7kx/D9edZWZut4SG/D10Lxosg5nJ4RIt44Jl2vKt3KdZA
+	 IJq4hIn1GZEBOJ6d5qHQohUp1Gb4g3zekpuYCy40x0/QeMstPIaVZSpNZjL1XwG1s
+	 bVx42f9+UiC/EhWxidBedJ1zceEWKPtdPXqcLwMDHx9UbgyKQubJZx5egdpuOWfWe
+	 STH2lqbmZ9c3ZbAbVQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.30]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MG996-1u34Zb3Xqu-00Cw1n; Sun, 02
- Mar 2025 21:00:11 +0100
-Message-ID: <774e0b8b-5013-422f-a9aa-4f8c4d5ed17d@web.de>
-Date: Sun, 2 Mar 2025 21:00:10 +0100
+Received: from [192.168.178.29] ([94.31.70.30]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MOlwp-1tdb8T1ROh-00Uw3f; Sun, 02
+ Mar 2025 21:30:30 +0100
+Message-ID: <08fe8fc3-19c3-4324-8719-0ee74b0f32c9@web.de>
+Date: Sun, 2 Mar 2025 21:30:27 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,90 +42,94 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH RESEND] usb: dwc2: gadget: Move a variable assignment behind
- condition checks in dwc2_hsotg_handle_outdone()
+Subject: =?UTF-8?Q?=5BPATCH_RESEND=5D_tipc=3A_Reduce_scope_for_the_variable_?=
+ =?UTF-8?B?4oCcZmRlZnHigJ0gaW4gdGlwY19saW5rX3RubF9wcmVwYXJlKCk=?=
 From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, linux-usb@vger.kernel.org,
- Ben Dooks <ben@simtec.co.uk>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Minas Harutyunyan <hminas@synopsys.com>
+To: kernel-janitors@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Jon Maloy <jmaloy@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Tuong Lien <tuong.t.lien@dektech.com.au>,
+ Ying Xue <ying.xue@windriver.com>
 Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
 References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
  <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <10e10996-d53d-0733-6d90-a04f251812ba@web.de>
+ <624fb730-d9de-ba92-1641-f21260b65283@web.de>
 Content-Language: en-GB
-In-Reply-To: <10e10996-d53d-0733-6d90-a04f251812ba@web.de>
+In-Reply-To: <624fb730-d9de-ba92-1641-f21260b65283@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PVLaUZ7MZzsJHTPMWeyqNci21CUz7+lc4RwBkiERpobTfFK1Rp2
- P7q0rPRSFIFxRRAE/B1dn71jJyPUl3pmTUeZ1JUxLJ4g1BbF34zy+AFH3qkNJJQh+72NzFA
- 70cU8Lu0ZLMlRdaoJFml01vhhybjPjaF5DlRpTf/Cl6lRjxc66saooBaehARDoB/0ENtgEv
- Yue5V4rt4gCDEnpwC+eDw==
+X-Provags-ID: V03:K1:/FibXadHneYGmAU6eIftjav2n1PX9JJV/0o1094/4mzs4YX73ZT
+ RGDGo8GNthY0AZ8lx8FIHi6QHRC/guk94wbYT6BXKibSlqnB6AoZviyXW4tvaywOIzIXZfG
+ FtG59s7INUZYU+nE6n5o548/Qmj3uN//G2fzNVngxWNNRJcMf1vlVohaGe642J0H90g+28u
+ zAFXpRpACnEKLFSZgJY5Q==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KQb1UWhkZEM=;JEJ25Nhe7DhuYtqdRJ36Pf/j15d
- Xb0TZMJsYDSVfImiNprrxurJpbxhQLJnsmUDX/cpGlj9gldTtGtlmYUlcIn3KllgryObmxlXs
- va5NZYdeV8sMBRSkOuVv3bD8SqTnHlOSfxlDSHYdwqDGUr8zehynZsdzh5blOWAAq5tL7g6LR
- 9lVlXGPKoD5d/0GZV5kSGrFiMS+gyg6zld9bG5D++A9riWmeERKrTuc0bPiDUtG00Iz1hXH1a
- +KRAVasJr6M2tLTrGrRd3kheLUE2BcU+C88FRslmLxW4sFfoabw6oROUstnmlnihrJnxZRjo7
- axm93qw0svEdodUcbUPDaunxmh0z3440bBDaLn/EKJM7e7qf7gI8JlsYVR2nNsBuulEUwScIO
- p7R2E0EbFIhvG7nbDa8vKxIhWKAEr/39Z2ldTO5jDTLiHINygRrE+91B++pbPuAAUi3OEJ3Vr
- Hhk8QYX0pGtw1QFS8Wy+ZnV9nW3yUf4wsqehiamOZSIHaz3qLPiKbRDJdSelHMLcn5F83zTr6
- FNSBn3xkMJ6KfBTwHS+7/6qGjAqb9I7NQcUcGKJq05KWqak3LU3RU2ZHhsyvT3xA5bMNsDZiQ
- T+nKQyufJBwjohWlpj8Mlb0jSZWRcO6GH9ncn/l4rGnccyB19RcUYW6r//tyergv2nPe57z7I
- +/2FJMqxSLoKq6i6Qe2Dk5aO6gyDTFUtoAsKsKSJ3lDqrxXPE/GrHdQ6yRAxk9EHi2NcanZHQ
- 6jhiTy0J1s1uRSIP8uAsRSROoLPEEclWe6jXGBCdzcGzvpeJ64jHN2ZdSEoGR9k+GzNHdgwjm
- iJzGVPfl3eQdyVpH2km/dpbukEGtmSEqhW4SkxKUB3Sb9iGdP6S4S6FwLo5tvKbu79IY5h7yD
- Jcnv426lHQbUGWlyVpl+qMwCliY5d9CZuoDGXow7xg1We9glooCDjsE/F42hvVY5DLLSleEfe
- AoQ2xQ60JCAujba9uOIYTXrBWvN8asxYAr3nGYAjCUHr/77qXdKyl5Ql7n76tPHPAq4ZH57gD
- LdXUbEgTAyd1HCFd8WjXmG/A0tcbuV+ctqNnERdvVkhlO6KUIcJTTK6RyHGUvTK9dNDv6b1UW
- DAFdfEi00RR8k+t9ySFqRbTZjQkT+HuRFchErn7yQDXbD5qgvpwMu6dK3n4Vi18CW65qKIAxn
- t2FwVfCn3Cp21QaSp4safsgTQ0agGNDE9NFKgvARHpCDOeVmAZk95GNF3Ls4GOaIi3o6DyR+S
- 33mRSQYxJrnmZ6dEYKU9mbVY84AjM+U01nRJyswnwX7Yp3Zvyl3VfDHmb0fFfmAbTWoN8T3lG
- VPMgIyrZegV8cZiGvXQ4IrHpuCFovZXIcu0tcqZB28C2xi7cdIOymd8Lm9asg0azJouG6lm+W
- WBD6ywmpmSfcx2k9XXB18vK4Ck4A02J8c3N1HXLjXYgGYy/g1QpsTbb+Chxo7WJ46vYjQD/SO
- tpY/L4z1h83QJakWYogNdeALisvI=
+UI-OutboundReport: notjunk:1;M01:P0:HfsN25LJsaA=;VIrrRgS4ncXO7iy+hD6iUtBt+bN
+ BUe1tb8yhRkBVWsE8D/CuIWzfW1zSZQ0RcExrmpuBHM4ZKOH6lIkq/yYujLP/wAruqJ7eHRiX
+ 2duxGSXMYciSixYEG73TCtvxMMfKcBsxNKCVM7AVQ9EYgOxKLskUA0ah+LSGhUGPSM8I4vuLz
+ Q73MjDowI4jFHWD37W6zC/QfDivAyWPL/sOkKzOleWZ52TkfQTn4smEpidzsQVrfBpIbWeBJ1
+ 9SFTt3713LPLRXnBA8vglR38wWI20PDlSLqEvMr7uYwt5B/yFhwEO1t5eXps2IvxrnHsvDo7R
+ nFuSrcnNJpBCH4WyvpAyr9f6XbumAbgnPQci3RIrGMlX+c4eoea8jK7zQmKYrSGL0xoJEhqB8
+ 7Z1af6JDSMUKzQkPONBvDm5F5G+Qk+UPbOUso2T55MLzM9pBbOZzSYtxSQOr8ejbnPllGoMd7
+ D56PYHHFdkrN4CxTZ0Nt2gHR2RV249BvcRhI/NA7G5xOmwTBzNTDor9fz0d+7oOLLBhiORj0d
+ oJwONMxqg4Aqj9clb5R0su7jd8S7MEBaNqjJGWYAEApB4qEsvIo4NjE+oz52KpSvZL12ROjz+
+ 9CKcuRycUSXcpqaMcHU4FLEwAQKey/XVKNAjwq2at7LnvI8/ADlUuycOXmoWS0X0u5iXl6D1N
+ emFVvN8e5bJUmmgGBWCR2TJ3/w71ZmreC16T6t6DVok8zuoEQCunliY8v1uYySa8+ylBXI7Ue
+ /b+RpX7oVqRA8Bhp2AXXtuBTstPpzmUmDC3ObfvLpTRLWGqEIDRzbD1+A/0HuRpaYm7eskikZ
+ uXek1qEgN/JpUqZit7eZM5y4ts3DMR2Tl6gnGrXtq1WgXaseBwWPUcYkLkCwN+wECm2p+8IB6
+ 5aBthztPX2MWRYfUDejWEhlkUnCeQXczvy+Z3B9iR1qWJJUNGz0WPHctm7hC1BZaTqvNvXlWy
+ g3OcShZigPrxrXXvcT2s2uyamUnHxAHrKjFKHVcPGNG3T/g+UFc5SxDd4Kh9qoksdALBBKOsz
+ mzB7qZfPo8zyBydGhe6a60Tn4O2HEZ2PRyKLgfGYqgp99lQpb5J4T5s/oYdF9lb20eu8dykCF
+ Q8NBcjX9hbUM3qz9IfaF19KCnuXQVOxecGrscPRbo9wMwWvC4TEjxnAa3+Z+qwbE371MwrMtz
+ R/R+A2amH5pWDC+a5zt6BlZGhs6zqlkUVRrRuBJNbnXVsQhVRU1LbURl+j4ij3KVn/Wh8o+YW
+ UnPxrN2PL1U7crglFAS/tZzE7RLUjWI1HMlPo1BWDgp8REKeUCZnYpks5PAmFNONZWs6kLBUG
+ Y1MSyuzPvwMh3VAUgvlD5zwdgXdrmcv0SNjQsOd+tzGPGLKjSXMr2noo/PVwomcgHonbi3hle
+ PN9FR0h276FnYqe0bby0PGGStSD1RqJiu1oQRJfajILkAUsSm0vFCM9F/OJAcSk81Qdb8eX9e
+ biNvoqhd3JcmXpE1UQIIRoB4ZPj4=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Apr 2023 20:06:25 +0200
+Date: Thu, 13 Apr 2023 17:00:11 +0200
 
 The address of a data structure member was determined before
 a corresponding null pointer check in the implementation of
-the function =E2=80=9Cdwc2_hsotg_handle_outdone=E2=80=9D.
+the function =E2=80=9Ctipc_link_tnl_prepare=E2=80=9D.
 
-Thus avoid the risk for undefined behaviour by moving the assignment
-for the variable =E2=80=9Creq=E2=80=9D behind some condition checks.
+Thus avoid the risk for undefined behaviour by moving the definition
+for the local variable =E2=80=9Cfdefq=E2=80=9D into an if branch at the en=
+d.
 
 This issue was detected by using the Coccinelle software.
 
-Fixes: 5b7d70c6dbf2 ("USB: Gadget driver for Samsung HS/OtG block")
+Fixes: 58ee86b8c775 ("tipc: adapt link failover for new Gap-ACK algorithm"=
+)
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/usb/dwc2/gadget.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/tipc/link.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index 8b15742d9e8a..cab04816dd6c 100644
-=2D-- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -2389,7 +2389,7 @@ static void dwc2_hsotg_handle_outdone(struct dwc2_hs=
-otg *hsotg, int epnum)
- 	u32 epsize =3D dwc2_readl(hsotg, DOEPTSIZ(epnum));
- 	struct dwc2_hsotg_ep *hs_ep =3D hsotg->eps_out[epnum];
- 	struct dwc2_hsotg_req *hs_req =3D hs_ep->req;
--	struct usb_request *req =3D &hs_req->req;
-+	struct usb_request *req;
- 	unsigned int size_left =3D DXEPTSIZ_XFERSIZE_GET(epsize);
- 	int result =3D 0;
+diff --git a/net/tipc/link.c b/net/tipc/link.c
+index b3ce24823f50..5aa645e3cb35 100644
+=2D-- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -1973,7 +1973,6 @@ void tipc_link_create_dummy_tnl_msg(struct tipc_link=
+ *l,
+ void tipc_link_tnl_prepare(struct tipc_link *l, struct tipc_link *tnl,
+ 			   int mtyp, struct sk_buff_head *xmitq)
+ {
+-	struct sk_buff_head *fdefq =3D &tnl->failover_deferdq;
+ 	struct sk_buff *skb, *tnlskb;
+ 	struct tipc_msg *hdr, tnlhdr;
+ 	struct sk_buff_head *queue =3D &l->transmq;
+@@ -2100,6 +2099,8 @@ void tipc_link_tnl_prepare(struct tipc_link *l, stru=
+ct tipc_link *tnl,
+ 	tipc_link_xmit(tnl, &tnlq, xmitq);
 
-@@ -2408,6 +2408,8 @@ static void dwc2_hsotg_handle_outdone(struct dwc2_hs=
-otg *hsotg, int epnum)
- 	if (using_desc_dma(hsotg))
- 		size_left =3D dwc2_gadget_get_xfersize_ddma(hs_ep);
-
-+	req =3D &hs_req->req;
+ 	if (mtyp =3D=3D FAILOVER_MSG) {
++		struct sk_buff_head *fdefq =3D &tnl->failover_deferdq;
 +
- 	if (using_dma(hsotg)) {
- 		unsigned int size_done;
-
+ 		tnl->drop_point =3D l->rcv_nxt;
+ 		tnl->failover_reasm_skb =3D l->reasm_buf;
+ 		l->reasm_buf =3D NULL;
 =2D-
 2.40.0
 
