@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2AF1FAC4E;
-	Mon,  3 Mar 2025 12:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1691E521B;
+	Mon,  3 Mar 2025 13:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741006117; cv=none; b=KzbstEfAxrIb5vS0o0fnQyX8Cq27ttwQBTUCOBHGtn9W+4KBJjS1synppz69QlDA7Ru8jXj7auMBfCNepvP+xOKQrBrMe8tor4p9HZfp9Pvluz+kICD/oRpWvn244nW+qvzqGgiKckRtNxuhH078+dYzKoYIfM0xtkUKOPh8zmA=
+	t=1741007089; cv=none; b=cpMyCf+gUDsC6WBIGjZgyDZfN7UE7fdYAkATO83fODmPtbw0r43gUnPcwA3g7BsZZG4YpkXctPHmumkEp6IwfxH/a8y9XDOAlFwbZcSzeUaWilZZsmCfu33s2rdsM8XAcFxfkP+DA6kc+mh3poLYcd3J3yZA8FmsoqCoRHFj1lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741006117; c=relaxed/simple;
-	bh=vE62cNe2KoL17yydbWraoAltyL2ROTOgUVAKIHQTTqc=;
+	s=arc-20240116; t=1741007089; c=relaxed/simple;
+	bh=bK2QYxfhL69EA5hm+p1hxMIpBV4AYdVsRtMU8Btuowc=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=t1a+/tSlPVBDe4tgwBM9awzrbJudS4xO0wuMQdIS9/+Vjhh/GooDZ7Yt/gCsGeohX4pe2VlOi4jr5e0ouredk8Rske7I1yfi6BVR/ujEcAepbGtIQi31NT5kY2mPOt1vmHNctC+Qvz04kg4zskWs8YoMjfID8gryLDT3+p3J3to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qilV5SWc; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=dG1fwNcCz69IlVFD6gjYVU4A70DR9UEhlrKHVC4iNgWq54We9QdhddqVZazhr8MhEpa7Ncy6bfS31h1oWYgnXlWyWjGO7g1ndfLytl+MvUzBWakz6hHezOMyGfDz1lM+uWeJlsW9Zn1+JzXFBe4WjTWOO/JOJr4H7U01+9089ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VUOQXwyk; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qilV5SWc"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VUOQXwyk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741006105; x=1741610905; i=markus.elfring@web.de;
-	bh=gqKAvU34fJc3/7+256tAvca+dZqwxT9FoB+Y/pUL0JA=;
+	s=s29768273; t=1741007051; x=1741611851; i=markus.elfring@web.de;
+	bh=ZefGaaDikQnjs1LGtmcyi6zUvqK48gTikrVFialZuG8=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
 	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=qilV5SWcI/niSBpj5G75O5iTuDg/+Cb6KbdV2T0WQCshsFiqyiqkzRDE9gPKkSW1
-	 6jOH7qZxOuoAGBBcp6Jn9JfvZ7dQmpYUczsO43MOXRva3c9WYIoKEeF0npdGBTYTA
-	 9ep884/FmR82+HHgx1MLmVU9zBxzexzIAAUqN/51xCSxybbiAB+dCQMuVFO+BbA7c
-	 16bdmYjCqnLvIqcyq1x02jzj2WWnEFeprQ5TvFhjo+RHw4Q7keyZgQba/KDvBeFli
-	 RWRUKN6Xt21EX9vQrMB/AZMKYHpO0OXk5KpnwXeTZFZ5gmbsYjzFiwH35OESxp5qm
-	 7Mrtbdt2rqr3JhVXiQ==
+	b=VUOQXwykHDmRACVU8X33Rt1uW0UUPZiZAC3Wcg0Y4VnTpWz4BJHox8LC2q2aKGj3
+	 /mteEDNZVtYMlJSp50eLAIXVzEQLyajTwhoQZ8gMklF1Fbplz20+4rl9bh8voktCh
+	 7cEYgDwORv85DsKoYhyMiLyQD9/mtqoDk/a6zvi5VYslE9kHUVMJn5N9HurQ4F4tP
+	 5oVv4t8BOx3GfzzP/nkB85IB/UxtjUUx2/CoLb1UzVdyetd4DHwEikdRx3/L0wiJj
+	 21HPZDsF/vGDINJjIVvDtdhH8IrYJpCcLChljjeT/Ck9u+8UwVzVNcTsPuCaLYiBV
+	 I9OSbhrL7JEIcdruKw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Md6tr-1tG1aE02d9-00lOxD; Mon, 03
- Mar 2025 13:48:25 +0100
-Message-ID: <6ce29de5-7b94-483e-973e-0c3834609281@web.de>
-Date: Mon, 3 Mar 2025 13:48:23 +0100
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mpl0r-1tTkt42vvR-00eFMs; Mon, 03
+ Mar 2025 14:04:11 +0100
+Message-ID: <535ce5e9-9ad0-4a8e-9fc2-0e759417d1b5@web.de>
+Date: Mon, 3 Mar 2025 14:04:08 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,89 +42,112 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH RESEND] drm/mm: Adjust input parameter validation in
- DECLARE_NEXT_HOLE_ADDR()
+Subject: [PATCH RESEND] iwlegacy: Adjust input parameter validation in
+ il_set_ht_add_station()
 From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Nirmoy Das <nirmoy.das@amd.com>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+To: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
+ netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Johannes Berg <johannes.berg@intel.com>, Kalle Valo <kvalo@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Sriram R <quic_srirrama@quicinc.com>,
+ Stanislaw Gruszka <stf_xl@wp.pl>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
+ Simon Horman <horms@kernel.org>
 References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
  <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <a3329002-827e-d53b-8a4e-860342eb18f7@web.de>
+ <d90b8c11-7a40-eec4-007d-3640c0725a56@web.de>
 Content-Language: en-GB
-In-Reply-To: <a3329002-827e-d53b-8a4e-860342eb18f7@web.de>
+In-Reply-To: <d90b8c11-7a40-eec4-007d-3640c0725a56@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:D38SucaZNBKs7tEQhlDqhSG7xYr9j5tje3qi3M1lHirwvz9lNK/
- EEaa206Azua6NNlfPGrZrEiGp4siO0BjKscbAtEyG2Hady6vziJAZ7ob0J9lqT6pMmJe6Te
- KsYjsHlNRoLULY+K3S85k1qsd9tWyzDM1iEsd3FgOeP4UAr7s1RLdhipjJ1IWeQLoL6QE7d
- tUDSD3PRGWFQ08mJXUOeQ==
+X-Provags-ID: V03:K1:jymu+Pr/1TM+UE1JmuPUEORIpf2+qiF1lVGAScvypt9vYK8bt5v
+ idl/iM8PTR6GeLd8dQ/PV/NBe0QVMImhaGA/no3YROXP3+O/ZMOy4OehC8kK1NC2wLPrUvt
+ mJEk30C10DOjyID6CK8aBMgsaNMkOjtScGq/Ry79uPBtaLQhcIZOOcMSxwHv5KgFjxKOoBL
+ v2j/MsWi3yyovatcuxhRQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eVhm+A3HKkY=;fxGNwlYvbjWv7R7tyd29xzeVelY
- t//nfjhtpE/AURKbpEmGeGRBM+ezia+BS/KlGiuhTRgB3f6MqSg7qLTdOWAi7hplisfv0ATkU
- cGEGdvjDzYmpy7ZLrQlNDCIfpZ9eiOP5qT5BHbnG7YVsKA4gOOj3UIF4xNJZRpoB9yvyLP4rj
- 15IvO9UjwCqnnCRtBAw8BhuuptiphgX86ByR277M2ZizjFabGCCbY39M7aZO+rQaSlw4MbsER
- 27vJ9RcCMFTH8yZuTutuIMJCLxMJWC9uQFKbDhUZbre1QWst100ZcY7B1X7jDxEkUGeOh7Ba7
- EG0NsEDeaH0coNrnYrad54qo8RvJNTX9ET9vNWkE36QQX006W3k89CNYpg479EJO0OFHtmm4P
- o3TWINb1F5DcxAziX/K9OD8QSoZEmuY/brcinjxJ/l7QQwsleAVFDHVvU9eNfCK2zHsuwjY07
- LOHjgEOWrjqsrAldaYI8RrqN+ti9+uTO6+leW8TDlren4KttSAeHxXqJbBAtpuSSJv+TPpMzh
- /JqvcL+YzQUv56pUWSUAgiGBp64Y9oulq/Q0GquNl/1qA5ohyKsnas00M/dGWbWh7mOOvBwUd
- eHofm6uZiJPXZv2kqbf/3edzoP53TGodOjI0LtGU0A+eIhym6ebpRL1/OmyDfGsVXd/DQMl3P
- /Vs6m9afMLCB002iqWTT2EqdenHKb/DzrtZfVhe9WD7Z0Hs4Z1vTKUtTHx1ZKmu/jivOFxmrL
- 8UfWA07NDbfdFW8voUiP5J7POoBcmUjpxaO8PabCe51n87JjcDWC3YkGV+VJBwkmZeUi2arGY
- gNsupFFoCLOpP5glv453kPx3i9onBH12QY6yRDPWEW5YHkrm9H+xkSl3eOE3Ic/RTtb1v8Ctp
- dCvndEjhaWA6yBDLFlYh0DjmEbnXn2xHJrSu1GArIeSjXmnw2SypWAvqIgvSL1SWOlSpZ9y6a
- ocHx18s2fIRb3g6vnG7kwlg0kcQFn4M9fzTbAgjdeQ8JagsgdnKgtG0fJBWSeCAplVWES+5JD
- ayNzLvavZHZtC8IusgX9PMYLBXM9yNBJJIxLTP7yBvgnRhxObIqcA3ESE216KwD7ze2ODprGl
- w1b6OaLvG8CfKWHEjNME/4cI7l7YbU90Zl8Op6nspYhnYVKS+/P7AV+y7Tohl0QVsEbzBpBh+
- LxBNK8F5iQ20o0WCNz/OCUwp89oDzsqSlrBLCWxHnY9JH6I6JlYTir+WZHJk2af7Pt154JZUM
- KBunt+7j482Ia26x80efTJpP6Ouzc+O/QlLPE00YVJCrL6LXVXKxdBWD6gxK1qKIXVD7Vwbuv
- N07rRm+vyAKDb2i+6VEfmU9YWYIftbtxw2GqOe92B5QnEMkmX7tVryr+cqP/KYqoNxnGMq42a
- Mnh3oA+mJpSasCf704f9zdBCjkqED+vyrk+h1sOQsqd2veBVbl5QokTh8O1/0p+83Gt0k/I6P
- 25+970WbwPWrgsaUW3kOQXhWir4g=
+UI-OutboundReport: notjunk:1;M01:P0:uVOiMT9twh4=;NMDytpay6lIFj3dsqdE/Z4Yl4c/
+ t592kNeaCLxQJXeAmgukVFmcI623zCrOqNmZIWtsJOfMWfm+KPzGUaD+bukKKNt9QupSsprUS
+ eryIqHbO+P/CgFsCs1cljKSTsUodBNmNHfg77J9K9QBRh1hdQXs5hXrrQgcECr0ih/FdOLxp9
+ 2fDlGbiCR7yzXHW+wCiZk3bhQRf5T4E3x+UwpNZ2rsn+jtnlk9EEAKZpv7gtmJjOtKZt1dB1p
+ yQ8kYbxeBgbcZLAFMz6ospRvWCf2B3lWMZcCRiWipObsYtnM50kFRxxFFeEXih2S2+HWHG69w
+ hnd0HWQW5MbxO96aDIAvpIFGWFcPGDY9DGArE8VvtUuOeRH/jk7A/AkqBpJ5CymTc22IvTRH9
+ 8zdrwBZMhC4SDK8KWAbiALVy6j7y1nOQrNX89TgvE3oTACLW1/uAkP1+A2N3jPMtRyF9CZKtA
+ jbLt6Fvk+0inAjpbIzXZyA05rNpP2SnBvm9cXlQGWe+/D5xoNx6cmX2vi3QNLxndGhhTWWIUO
+ G2yu6Gp7Y5vZAllrjWB104TQ754TBOIZPJi7LmnCAJ3j9ej471RsuyRpHiI81YYff01NJva9d
+ rsSTkuTeucTVezfTplviL/cLvGGGqIYzTqDWPhYaMPElMWJAyJEmFtpvfxceZYMA3t6nvDdEZ
+ l+qWL5NbV0cdTRnnXXMCzpQztkXihe/fnS+sKq8DwJORqkMr18CUKj5t52cu4114jpS9E0d4r
+ IhdFDt6gq9jRO7dADQtmHKsBAnMnjLcDK3VsJxUlaDYefXnQCGNdSrQmAEtUupKnKL0ESYJSM
+ W+xqVwjbpQqGdyKGwi9xfI+wCpAxx5Sg/McPGYwVFJjKNhsv1TyDqwIZqt1JNvHQKvuTxAk5x
+ FQ1LdHN7h+4+K31L9Uv/D0bjGxvNzAzkC9nXad5AZ8VZWc2+OS47kOkSeRbY9auS4jZfQCi9B
+ 0K5eXCYA6BCFP+JwYOWe7B2dWfhx7rFft289lQFW2cuhThgcSJk/aD7KGMORPxbRqhMem2iNE
+ /Aqj2uDhNAZvQOlK/zulc6hWf0Q4ckiBnN96Q704GV988t+wFWn54jXGUbHODCfM17hBs2Suv
+ wrfLBztoieDegRtA6YBhegRCL/EG1WhaB1AkEbA4y+r07nC2JkJWBVvll11IyjtLdfIn7jCSz
+ pvCsN5ZljvPq3QXxY9wQTCArITqU8afvoGTFGXQbgFDG4zTO9MKk7iauXDiMQXn9IXv3Aju3u
+ etaLLjGHpdY1L6t7AvuuDo9XbPTuJy3wYJXWsYI1EZqrtwrWZnJZaIsGkuojCz88m4mGL9tJ6
+ WTviBm2dVQrszANHsNdjCfWLuRyhDTiMmRiD5s9tvYImRQs87/tkZQ0E2XCfA3FcPoZ2JVx0Z
+ Jzxe5c4toDudXb1oe93JEGuRP3EMfJjmXDLdg3e/p7uwvAOIwB5PwuInPuBnhLLYC2XgNNixo
+ iVdIJYNXq3AFU7mVU129qBvfhyk4=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 17 Apr 2023 11:26:34 +0200
+Date: Wed, 19 Apr 2023 18:35:55 +0200
 
 The address of a data structure member was determined before
 a corresponding null pointer check in the implementation of
-the macro =E2=80=9CDECLARE_NEXT_HOLE_ADDR=E2=80=9D.
+the function =E2=80=9Cil_set_ht_add_station=E2=80=9D.
 
 Thus avoid the risk for undefined behaviour by moving the assignment
-for the variable =E2=80=9Cnode=E2=80=9D behind the null pointer check.
+for the variable =E2=80=9Csta_ht_inf=E2=80=9D behind the null pointer chec=
+k.
 
 This issue was detected by using the Coccinelle software.
 
-Fixes: 5fad79fd66ff ("drm/mm: cleanup and improve next_hole_*_addr()")
+
+Delete also the jump target =E2=80=9Cdone=E2=80=9D by using return stateme=
+nts directly
+for two if branches.
+
+Fixes: 046d2e7c50e3 ("mac80211: prepare sta handling for MLO support")
+Fixes: e7392364fcd1 ("iwlegacy: indentions and whitespaces")
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/gpu/drm/drm_mm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlegacy/common.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mm.c b/drivers/gpu/drm/drm_mm.c
-index 8257f9d4f619..95c316aa36e5 100644
-=2D-- a/drivers/gpu/drm/drm_mm.c
-+++ b/drivers/gpu/drm/drm_mm.c
-@@ -389,9 +389,13 @@ first_hole(struct drm_mm *mm,
- #define DECLARE_NEXT_HOLE_ADDR(name, first, last)			\
- static struct drm_mm_node *name(struct drm_mm_node *entry, u64 size)	\
- {									\
--	struct rb_node *parent, *node =3D &entry->rb_hole_addr;		\
-+	struct rb_node *parent, *node;					\
- 									\
--	if (!entry || RB_EMPTY_NODE(node))				\
-+	if (!entry)							\
-+		return NULL;						\
-+									\
-+	node =3D &entry->rb_hole_addr;					\
-+	if (RB_EMPTY_NODE(node))					\
- 		return NULL;						\
- 									\
- 	if (usable_hole_addr(node->first, size)) {			\
+diff --git a/drivers/net/wireless/intel/iwlegacy/common.c b/drivers/net/wi=
+reless/intel/iwlegacy/common.c
+index 96002121bb8b..8f6fd17b02a8 100644
+=2D-- a/drivers/net/wireless/intel/iwlegacy/common.c
++++ b/drivers/net/wireless/intel/iwlegacy/common.c
+@@ -1863,11 +1863,15 @@ EXPORT_SYMBOL(il_send_add_sta);
+ static void
+ il_set_ht_add_station(struct il_priv *il, u8 idx, struct ieee80211_sta *s=
+ta)
+ {
+-	struct ieee80211_sta_ht_cap *sta_ht_inf =3D &sta->deflink.ht_cap;
++	struct ieee80211_sta_ht_cap *sta_ht_inf;
+ 	__le32 sta_flags;
+
+-	if (!sta || !sta_ht_inf->ht_supported)
+-		goto done;
++	if (!sta)
++		return;
++
++	sta_ht_inf =3D &sta->deflink.ht_cap;
++	if (!sta_ht_inf->ht_supported)
++		return;
+
+ 	D_ASSOC("spatial multiplexing power save mode: %s\n",
+ 		(sta->deflink.smps_mode =3D=3D IEEE80211_SMPS_STATIC) ? "static" :
+@@ -1906,8 +1910,6 @@ il_set_ht_add_station(struct il_priv *il, u8 idx, st=
+ruct ieee80211_sta *sta)
+ 		sta_flags &=3D ~STA_FLG_HT40_EN_MSK;
+
+ 	il->stations[idx].sta.station_flags =3D sta_flags;
+-done:
+-	return;
+ }
+
+ /*
 =2D-
 2.40.0
 
