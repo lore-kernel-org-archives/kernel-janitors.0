@@ -1,109 +1,130 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B638202F9F
-	for <kernel-janitors@vger.kernel.org>; Mon,  3 Mar 2025 12:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2AF1FAC4E;
+	Mon,  3 Mar 2025 12:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741003340; cv=none; b=iOFAEo3y6XW31LQ/wMXghjNH1amX1ZEN64esnCQ6Lg0LqzGEjiVrDF00MamQ3YcInA9z9KVrmEsnAQmAONVre3/R9fDxtHkz3Ttzoq1RKaIgfTytdlWzZX8KUTFZ+kwT8q3ZMsV9XqxQd/Npe9Y/kU+FhUsf1exLnWwv09pZo0c=
+	t=1741006117; cv=none; b=KzbstEfAxrIb5vS0o0fnQyX8Cq27ttwQBTUCOBHGtn9W+4KBJjS1synppz69QlDA7Ru8jXj7auMBfCNepvP+xOKQrBrMe8tor4p9HZfp9Pvluz+kICD/oRpWvn244nW+qvzqGgiKckRtNxuhH078+dYzKoYIfM0xtkUKOPh8zmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741003340; c=relaxed/simple;
-	bh=uWrqL7qwHJ1xRe81W1yZdqN0xrTeQwVstuEoqTp4vdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m5E96fS2FRd9LevXLr9tgv/yilCCvYKbdxA71cA68knxQiYx+k1WAJ8b7XSCqwVKBdS1v94SI6By/Rm1JbU29MVSOJZKLUNfQrZPPjiX7IDEw40AJR0iDxjCGIx885xDepTU26f8m/Zw/SZ9c1aPqyRccwfnd/6y8Wla+ewPxvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J+z8GQ6K; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741006117; c=relaxed/simple;
+	bh=vE62cNe2KoL17yydbWraoAltyL2ROTOgUVAKIHQTTqc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t1a+/tSlPVBDe4tgwBM9awzrbJudS4xO0wuMQdIS9/+Vjhh/GooDZ7Yt/gCsGeohX4pe2VlOi4jr5e0ouredk8Rske7I1yfi6BVR/ujEcAepbGtIQi31NT5kY2mPOt1vmHNctC+Qvz04kg4zskWs8YoMjfID8gryLDT3+p3J3to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=qilV5SWc; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+z8GQ6K"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso2174486a12.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Mar 2025 04:02:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741003336; x=1741608136; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FvjfazhXAUkX+q9ADQWctMmDsHuSAcb7Kglrffn5CF8=;
-        b=J+z8GQ6KzwxpWwpV3YGxkzqQikDOY63gQurQH/Y/cL8OWNZA0azkubadKmtksdtqYc
-         xU+gyI2iFllMV41ktZAsoFx6JyWM+JIlRLkVcyVsSNcwrfCqYXqikeJpr7XPutD6LMLW
-         HENRTHMLZF48To0S3r/rpJLovnqUzJLhiJzyv6140a+OaqK+E9lX9/2tEmys/W9gYAYX
-         wqFYDqbDkKSqk5stsLKfLF8p+o25nsxJxkcq6OBfHKa6Wc5jXQZnnjTJnjlhfK0XgbAG
-         jY9JcMXhq9BB2LjMMI7FUIrkqpnSVpHfR0L7z6q/GJICdSX24UnNlUG49pN+M7GrYq4p
-         o2Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741003336; x=1741608136;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FvjfazhXAUkX+q9ADQWctMmDsHuSAcb7Kglrffn5CF8=;
-        b=HrTHUqVtC+un+V4fRA8vhkIwZLpFPTdxwPJp6xJcVbrUhDkBaTECghqPTO6xZLMkq5
-         hxhzGjjxhJr8OkKzJp1SnddJRP3z1+GwTRmBRcLA1RCbe6iXUvc2UVKtWDS3ADR/oMam
-         R+HYg1PM/CTOlwkOcdhNfY9w6f3ZB3QdRae8W60MDm1X8X/fGzz9LNaXxCdmQ9dLpRMY
-         jRciyJ6i4kO9Fd4BsiAV6EEc2upCEKlQrDro6YBxQISzk9nrlC8y2zYUKUuuUFmFMlJs
-         6+MBxpd7cb01A1EaFAmTFXbX5bEzm8amy9o1Y99nVzna5/ja2vw1So7J2GWvBsH2DfO8
-         ofoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBmeev2f99n9rklJQiZoiwq3DxXc/5FkBh4waq7CVvNpiyYFvo4jaCEWjWgDO2qpHS1LuGAinmTQgrb3VT3o4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZDEnGzUE+HKKZ3eUPSR8VOzmZGUGlq+kEXlSwUUkDR/Tf6GB5
-	drIaf+I1nY0iNa92xwqBLz9PXzeZLxHg73nrXj9IXzZGC2o/RJMLMQ/VrbVdMXQ=
-X-Gm-Gg: ASbGncshTXdrfPsLlvZubibV5bZgjQEKB8cjbWdPi3IjpNK0Mx2cttrYuYtzhFInNcr
-	SsaqXgAZcmKEzKYTFDJ7rtHeklB/D9eZfuPXjLbheNx4WYDQfZ3jUTHBsjmqhT+uA+/8T2vzDaL
-	rt6PJYiQASG4/f87THOmmYlNc7blxKJil95A7DVX9IbzazuCkBdK3vblq3XazpA9GVfqnO49LAR
-	w4cXZ3Ext1x9bwIRLrE7AvquTl81qk64Er45dp8TgaoL2FdREFlsUAhUjrK1gorhqTkn1j2sHaO
-	a03AoQc3oScMuJHhUz3ZxswJdp7x5oT0rfqLVtpDyuMN3/6Veg==
-X-Google-Smtp-Source: AGHT+IEVLpvwi6O6OBs0WN+GyOzE3jpuGJmps4EUiNQjjGbXYoZLIY4WBBNb3SuJAGnkmtz62ElidA==
-X-Received: by 2002:a05:6402:5190:b0:5db:f26d:fff1 with SMTP id 4fb4d7f45d1cf-5e4d6b62c36mr13405841a12.21.1741003336577;
-        Mon, 03 Mar 2025 04:02:16 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4c2f408cdsm6696931a12.0.2025.03.03.04.02.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 04:02:16 -0800 (PST)
-Date: Mon, 3 Mar 2025 15:02:12 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ahmed Zaki <ahmed.zaki@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: Prevent use after free in
- netif_napi_set_irq_locked()
-Message-ID: <5a9c53a4-5487-4b8c-9ffa-d8e5343aaaaf@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="qilV5SWc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741006105; x=1741610905; i=markus.elfring@web.de;
+	bh=gqKAvU34fJc3/7+256tAvca+dZqwxT9FoB+Y/pUL0JA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qilV5SWcI/niSBpj5G75O5iTuDg/+Cb6KbdV2T0WQCshsFiqyiqkzRDE9gPKkSW1
+	 6jOH7qZxOuoAGBBcp6Jn9JfvZ7dQmpYUczsO43MOXRva3c9WYIoKEeF0npdGBTYTA
+	 9ep884/FmR82+HHgx1MLmVU9zBxzexzIAAUqN/51xCSxybbiAB+dCQMuVFO+BbA7c
+	 16bdmYjCqnLvIqcyq1x02jzj2WWnEFeprQ5TvFhjo+RHw4Q7keyZgQba/KDvBeFli
+	 RWRUKN6Xt21EX9vQrMB/AZMKYHpO0OXk5KpnwXeTZFZ5gmbsYjzFiwH35OESxp5qm
+	 7Mrtbdt2rqr3JhVXiQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Md6tr-1tG1aE02d9-00lOxD; Mon, 03
+ Mar 2025 13:48:25 +0100
+Message-ID: <6ce29de5-7b94-483e-973e-0c3834609281@web.de>
+Date: Mon, 3 Mar 2025 13:48:23 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH RESEND] drm/mm: Adjust input parameter validation in
+ DECLARE_NEXT_HOLE_ADDR()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Nirmoy Das <nirmoy.das@amd.com>,
+ Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <a3329002-827e-d53b-8a4e-860342eb18f7@web.de>
+Content-Language: en-GB
+In-Reply-To: <a3329002-827e-d53b-8a4e-860342eb18f7@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:D38SucaZNBKs7tEQhlDqhSG7xYr9j5tje3qi3M1lHirwvz9lNK/
+ EEaa206Azua6NNlfPGrZrEiGp4siO0BjKscbAtEyG2Hady6vziJAZ7ob0J9lqT6pMmJe6Te
+ KsYjsHlNRoLULY+K3S85k1qsd9tWyzDM1iEsd3FgOeP4UAr7s1RLdhipjJ1IWeQLoL6QE7d
+ tUDSD3PRGWFQ08mJXUOeQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:eVhm+A3HKkY=;fxGNwlYvbjWv7R7tyd29xzeVelY
+ t//nfjhtpE/AURKbpEmGeGRBM+ezia+BS/KlGiuhTRgB3f6MqSg7qLTdOWAi7hplisfv0ATkU
+ cGEGdvjDzYmpy7ZLrQlNDCIfpZ9eiOP5qT5BHbnG7YVsKA4gOOj3UIF4xNJZRpoB9yvyLP4rj
+ 15IvO9UjwCqnnCRtBAw8BhuuptiphgX86ByR277M2ZizjFabGCCbY39M7aZO+rQaSlw4MbsER
+ 27vJ9RcCMFTH8yZuTutuIMJCLxMJWC9uQFKbDhUZbre1QWst100ZcY7B1X7jDxEkUGeOh7Ba7
+ EG0NsEDeaH0coNrnYrad54qo8RvJNTX9ET9vNWkE36QQX006W3k89CNYpg479EJO0OFHtmm4P
+ o3TWINb1F5DcxAziX/K9OD8QSoZEmuY/brcinjxJ/l7QQwsleAVFDHVvU9eNfCK2zHsuwjY07
+ LOHjgEOWrjqsrAldaYI8RrqN+ti9+uTO6+leW8TDlren4KttSAeHxXqJbBAtpuSSJv+TPpMzh
+ /JqvcL+YzQUv56pUWSUAgiGBp64Y9oulq/Q0GquNl/1qA5ohyKsnas00M/dGWbWh7mOOvBwUd
+ eHofm6uZiJPXZv2kqbf/3edzoP53TGodOjI0LtGU0A+eIhym6ebpRL1/OmyDfGsVXd/DQMl3P
+ /Vs6m9afMLCB002iqWTT2EqdenHKb/DzrtZfVhe9WD7Z0Hs4Z1vTKUtTHx1ZKmu/jivOFxmrL
+ 8UfWA07NDbfdFW8voUiP5J7POoBcmUjpxaO8PabCe51n87JjcDWC3YkGV+VJBwkmZeUi2arGY
+ gNsupFFoCLOpP5glv453kPx3i9onBH12QY6yRDPWEW5YHkrm9H+xkSl3eOE3Ic/RTtb1v8Ctp
+ dCvndEjhaWA6yBDLFlYh0DjmEbnXn2xHJrSu1GArIeSjXmnw2SypWAvqIgvSL1SWOlSpZ9y6a
+ ocHx18s2fIRb3g6vnG7kwlg0kcQFn4M9fzTbAgjdeQ8JagsgdnKgtG0fJBWSeCAplVWES+5JD
+ ayNzLvavZHZtC8IusgX9PMYLBXM9yNBJJIxLTP7yBvgnRhxObIqcA3ESE216KwD7ze2ODprGl
+ w1b6OaLvG8CfKWHEjNME/4cI7l7YbU90Zl8Op6nspYhnYVKS+/P7AV+y7Tohl0QVsEbzBpBh+
+ LxBNK8F5iQ20o0WCNz/OCUwp89oDzsqSlrBLCWxHnY9JH6I6JlYTir+WZHJk2af7Pt154JZUM
+ KBunt+7j482Ia26x80efTJpP6Ouzc+O/QlLPE00YVJCrL6LXVXKxdBWD6gxK1qKIXVD7Vwbuv
+ N07rRm+vyAKDb2i+6VEfmU9YWYIftbtxw2GqOe92B5QnEMkmX7tVryr+cqP/KYqoNxnGMq42a
+ Mnh3oA+mJpSasCf704f9zdBCjkqED+vyrk+h1sOQsqd2veBVbl5QokTh8O1/0p+83Gt0k/I6P
+ 25+970WbwPWrgsaUW3kOQXhWir4g=
 
-The cpu_rmap_put() will call kfree() when the last reference is dropped
-so it could result in a use after free when we dereference the same
-pointer the next line.  Move the cpu_rmap_put() after the dereference.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 17 Apr 2023 11:26:34 +0200
 
-Fixes: bd7c00605ee0 ("net: move aRFS rmap management and CPU affinity to core")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The address of a data structure member was determined before
+a corresponding null pointer check in the implementation of
+the macro =E2=80=9CDECLARE_NEXT_HOLE_ADDR=E2=80=9D.
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 9189c4a048d7..c102349e04ee 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -7072,8 +7072,8 @@ void netif_napi_set_irq_locked(struct napi_struct *napi, int irq)
- put_rmap:
- #ifdef CONFIG_RFS_ACCEL
- 	if (napi->dev->rx_cpu_rmap_auto) {
--		cpu_rmap_put(napi->dev->rx_cpu_rmap);
- 		napi->dev->rx_cpu_rmap->obj[napi->napi_rmap_idx] = NULL;
-+		cpu_rmap_put(napi->dev->rx_cpu_rmap);
- 		napi->napi_rmap_idx = -1;
- 	}
- #endif
--- 
-2.47.2
+Thus avoid the risk for undefined behaviour by moving the assignment
+for the variable =E2=80=9Cnode=E2=80=9D behind the null pointer check.
+
+This issue was detected by using the Coccinelle software.
+
+Fixes: 5fad79fd66ff ("drm/mm: cleanup and improve next_hole_*_addr()")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/drm_mm.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_mm.c b/drivers/gpu/drm/drm_mm.c
+index 8257f9d4f619..95c316aa36e5 100644
+=2D-- a/drivers/gpu/drm/drm_mm.c
++++ b/drivers/gpu/drm/drm_mm.c
+@@ -389,9 +389,13 @@ first_hole(struct drm_mm *mm,
+ #define DECLARE_NEXT_HOLE_ADDR(name, first, last)			\
+ static struct drm_mm_node *name(struct drm_mm_node *entry, u64 size)	\
+ {									\
+-	struct rb_node *parent, *node =3D &entry->rb_hole_addr;		\
++	struct rb_node *parent, *node;					\
+ 									\
+-	if (!entry || RB_EMPTY_NODE(node))				\
++	if (!entry)							\
++		return NULL;						\
++									\
++	node =3D &entry->rb_hole_addr;					\
++	if (RB_EMPTY_NODE(node))					\
+ 		return NULL;						\
+ 									\
+ 	if (usable_hole_addr(node->first, size)) {			\
+=2D-
+2.40.0
 
