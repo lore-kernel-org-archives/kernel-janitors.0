@@ -1,41 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E100C1C8FB5;
-	Mon,  3 Mar 2025 08:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D8A1F190E;
+	Mon,  3 Mar 2025 08:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740989731; cv=none; b=g0N88FdjwsOv25CeBv5/JTni/RZ87c4jWouG8HzC/Pk30UCS4XDwxqR6w/bhghHbp1Zj+rrVeDVwU8niqDURce3Po9K6a2ZvpiaQiogoB9wxoFu5oqYkjQEX1AwoCQ7czWvKNlpoWUSvGiU3O61io9mZXo+grUHyWT533OyWvao=
+	t=1740990191; cv=none; b=NtY3V1uKyVUjGnFEfFZ//HFQ6Vh2hZUevvMdOssRIaHDzv+CMdeqHi0aWFdg3cP+wKkZeESQ6XhK4I5t7FeSyAdAqHEmFj1iG1ZrGKJPj9+pyVFYcxysuZItspxjwGmPg84hSL1PA2/sh/cjJKInO+KKwQvGkKRALcMy1JArO6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740989731; c=relaxed/simple;
-	bh=C+FdRvhtkVZnGaaa2bGtGDngNfD2yjN7+GvSLwFeCRQ=;
+	s=arc-20240116; t=1740990191; c=relaxed/simple;
+	bh=YRq6oVQqeCdHKG5sea7pdbS+m9m7qFjktB2rPbJHuI8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JZURCTaxC6Rz7LQ7rhDA2O9nlD0PuarAxRUd+JavykjutzYoqtareHoVn5iCmXdf0m6NyBeOhR7DO/AA1ZqpdCA7XpROqtjgOVkUyMxcO5/3SiFBikP5Wyg0WG3X+okpCn9kWFYrmAQiUZVLUcaIoEBuI8pCGxoDlErhBupkCRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sa3oqQFX; arc=none smtp.client-ip=212.227.15.14
+	 In-Reply-To:Content-Type; b=ecmIYiUT/CtRLt5I/ihH2P+sq6Qox0xYjOTSnQ87KOjCyJJRlprRJzCoP184+9dFXxKkGdD79AsH8Wd4GKX9DOLjmdNs4HfYB5Rf/FK1f2JRam1/jtUcz6qqeM4zrts2wdVNU9Mmb3TteUH7ObDuxWYHz0qXUNbFexFth3Uk6IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IHyrl3N8; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sa3oqQFX"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IHyrl3N8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740989726; x=1741594526; i=markus.elfring@web.de;
-	bh=C+FdRvhtkVZnGaaa2bGtGDngNfD2yjN7+GvSLwFeCRQ=;
+	s=s29768273; t=1740990183; x=1741594983; i=markus.elfring@web.de;
+	bh=pQr1WZ548ecZB3xoVxnsW4k7x9sHO8xZY4WGSA4vMwU=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
 	 References:From:In-Reply-To:Content-Type:
 	 Content-Transfer-Encoding:cc:content-transfer-encoding:
 	 content-type:date:from:message-id:mime-version:reply-to:subject:
 	 to;
-	b=sa3oqQFX1K2fQENnZAtmV2Ls/aPlRJf7KVvq08Kbwdu8bhEu9tt2+Vdm8x2FeHov
-	 a5xtfQ+T1eBzrnW6sLurLTKrV+wbphXYHxzBLePh3vSS3+1Fo17+k7melT+wTeoDe
-	 dHwq+iLPhgRsRCmA0oj6wwVYTL2J/lIq9TpjdinHNI8C593aSG1Oeyxdh+XSagV6x
-	 V9okUZEw5t9MkcxIzsQz/+wyuBXYJGuRyT+CMfuQ/gjKIiDwSMVGmV1ARN+gldLvB
-	 CdIZt+PToF26Byj3YVlZ4+xbUBgubl1BGOC3GgNHW861FSln4UPnDsW4PyFrOZERU
-	 IMs4eCavpmBGVLLR6w==
+	b=IHyrl3N8nH/24Fv2D59sEna66ZDL6YcZx1VuTjYlv8zOxC6kfM+Hn4Dzqg9oOzhK
+	 k9S3xBw8V19ADKeFb8D3lG1/azmFLeKXxgimfL7aEDePqPgOHLVTnnfV3HD4g8lB+
+	 D0yD8Bpby1Hsx41T/KE7FS5tuurVvcN4IPMx+jAvLghHyhLTuaycUqNc76zK7fAM2
+	 t86Dcok96zxz7qU2Z3t3iLdw/Ba76G2fKm5qXt8jj8XmcBe0T/bQFMUx89AePKhS2
+	 XkXbdtVyhEYb+AVxIM3BtgNxnEA9+LzWOH4sqNwmxqT+ZkcP7lH7dvxU/MbuKO6TY
+	 m1mxmHHEoDMS++nMlw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M9ISh-1tsbSD388V-0019Kz; Mon, 03
- Mar 2025 09:15:26 +0100
-Message-ID: <12050afd-ab60-4bac-bd25-0c3cc925b38b@web.de>
-Date: Mon, 3 Mar 2025 09:15:14 +0100
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zs0-1t1bHv22Fw-0171x0; Mon, 03
+ Mar 2025 09:23:03 +0100
+Message-ID: <64725552-d915-429d-b8f8-1350c3cc17ae@web.de>
+Date: Mon, 3 Mar 2025 09:22:58 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,73 +43,65 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND] drm/msm/dpu: Delete a variable initialisation before a
- null pointer check in two functions
+Subject: Re: [RESEND] qed: Move a variable assignment behind a null pointer
+ check in two functions
 To: Dan Carpenter <dan.carpenter@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Archit Taneja <architt@codeaurora.org>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Jeykumar Sankaran <jsanka@codeaurora.org>,
- Jordan Crouse <jordan@cosmicpenguin.net>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
- cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+ netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Ariel Elior <aelior@marvell.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Manish Chopra <manishc@marvell.com>, Paolo Abeni <pabeni@redhat.com>,
+ Ram Amrani <Ram.Amrani@caviumnetworks.com>,
+ Yuval Mintz <Yuval.Mintz@caviumnetworks.com>, cocci@inria.fr,
+ LKML <linux-kernel@vger.kernel.org>
 References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
  <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
- <54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
- <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
- <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
+ <f7967bee-f3f1-54c4-7352-40c39dd7fead@web.de>
+ <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
+ <Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
+ <325e67fc-48df-4571-a87e-5660a3d3968f@stanley.mountain>
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
+In-Reply-To: <325e67fc-48df-4571-a87e-5660a3d3968f@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:l61V0/AxxnfLP2CwSsghwK08nUFAsuRp8A9xZrnTeiVv24ZQ/3i
- G3RqnUSDyuxhHQZurimb7PiKwXU+E3AYQdbSIZXeIB08KV04ZaIwwV6knwRGWgTrx/XbTMg
- CBbyohY7P+EBXFxvTLfoNgfYBAMIogVtGwuVEb013+xJ6c0saMHuLXFWDU4EPclYOhKB/Ey
- tGrwZLuNRsk+/ZLmwQalw==
+X-Provags-ID: V03:K1:FYo4KR0DHw8kUBrjrDdkOAm8f/u2tVyaWSQA2DnGNc9JQQ86MDa
+ bwKKYeavDxHfWlkAduCnA25E+m3vTJHha1KI0SBitDv5vFfARQ5dauvVrFkfEwldr6cbXGt
+ rQCLvY3oVIof17p3AwBXCexkZzFqAr/NbbgHPUCe435Or7d5J5W3ZbwPWaQ1l8mwih/Qifp
+ C0Slqd/P/qBIyY3LvcXTQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+dEdQWoQ7kU=;IasLY5SUCezkQ/oK2dlxCFJnD1K
- EJ01spAXIy6+nudFKoE9Ket7tA810fP2bclD61wzlHRGOv4tQIHAjxmFEE2d8kFXsN+a/mPkG
- FEVtu9wjQZHMXgKSMoC5BPZoDpkzD/U1ZXB1CUWPUuDB0pv7RJq5r/R6B12AP1OMXzCfTU9JD
- HQKL7MyACkb/xotarJowiXBcVEu/6aHj1Zp36NpLfQeCQEVhsprW05XRB6zJS5J5Glc6AS3Ie
- uc4MkOzsy8XU3/HU4AS+inJMduJnuSWrdSxzFrNSMYND/jnPk5zOirakBHoh1yny/3+M6oDeY
- 9Atayo8H9W9OCjxR6DcXcnhUTdAlzZrMlUm9pZKpxtatC3AgFgv1XDDOKcf4yaidQ9xLSr/rn
- +GqCxAvIKhT+dR3vCubnYfZPN8xmkJxyPgqRYueCCKSBxhqvTzfYv7IKEMxImJWM5wpQvo5fz
- mgt/io8nxznlCpVV1uZl7qtzsUkOrletjiSuj0aOdQp87vlnvem0wTUWyqLiITCi6Y2NFcZgY
- +OASaJoFYY3kXCTYlhJWCHe6qXguImSMFZ4YobohpinTpKWiZbTw2cZikfKH6z1fCdTrMd/xA
- 2jj47hfyTHRDcT1ViLdRrZrNumqNOBggSDj/wCDaLFVXlGV/vZIqRvo5SfOZqDiWj2KMmQnJL
- bwM0Wis7oqvKHx4WWYMpArgPX9Yv4aNySc+wg4M689OM3e+3vDQBUG+N9LF1C3MC7LGGyoG5f
- N7xOGsxwTbTlwpJiRk3BjZjdOFgdZgLfzg6gkZQSG6ABrJrKTP6l/K0Po2QG61tOmeRXILOoy
- 5r1UjE9ozIkmxKQhxRgrZn44y1hHW6/Sx+wb0hm402OQx/ZQ6aA6dlhiYdGICGYHGpcTlmExg
- 9K8IAbsr4QQpm7X1hHLtmrxfU7NoUzLGnU5twl0X2YskzuQlhbprv4pq3PliEkqOKgWHKnYaI
- uxDhPlHk3d0UbaV9ognngBO09PQe20k8Cv0i9JB9PkWhY7LySQe01zHatFls93m4uTyZDBkx7
- ButtyGSLIyuqZrDn32SlKwjM/H3LhvbD/nAVfC0nDv5QxMgrPd9jQXhi2vAmsm7j/5rveS5ut
- 4zIqLIODlafpEp/zwlGAqFZBpXsHIDgfS+HgKLLI3wzft0e46RCZ07BYVVN8aJSC54MVKdORR
- 5DOOgieAt6BNAtTj8hAXKQas//8niv2v7DbX2AFyatHBiySgO2uhFDUnOrXGlgvVoQPMgOdFm
- xNgbzehk63lnxFNhe3Y2yOuKjXmbhUFzrz4Ojv0zdX7bZdZXJwJM+SklDknLXtWtfkHvT57jt
- Qs2Q0HSAVP2jzgt785f8S4Woib/Cznidc0aV/A9Zb9zQJ0H8XYRoAUMO83x4+9gEFPgIXeDOP
- ZbqiAAcogIiZv76m3m2cgXepNh/SPn4ffLOmgAUFkyH/UmqOi7sgcs3Zv1buxi1Si7rTdgDOH
- +r3VzdjatZdYYDqtQCigjk2oylo8=
+UI-OutboundReport: notjunk:1;M01:P0:RCqRm2Eproo=;ZlnPkZrhZ60vOLSzosM2YPI9Wto
+ 3AmsBSv9KLN+XyU0X1LyjqAKQErpWV7K6f05wETBTPAZ58PzopnFENYzawmjl1X/VJKmGLojS
+ 2gI2KS0iET6vrphGGHhXKi1Hzd7UTG7Lj39AHYffLz/t1iUOGLHlOWsI8GFWdwmBzMhOxZ936
+ jYsVdJjPsUKRoTMKQOvziv+Mix+NSl631TqKmwCd8F3MqQRsafqZN/j8A96UMPA+u/hWgspI/
+ 9BFmyqSk8N+rtYm6BbOlqYeGPM6dm7F+s8L/R04JR0fGXVLPmWHCtci/efVhlIZ2VKj0Kt1Cy
+ MZ5iIzxadso6cB0Eh2vnv/jnbWdxxK8JvKB32CK7PFz7BOC72Um0Mdx4Mwb4iGPgdCU3Ef/5o
+ 4VWXjwFQaDqGBf9oxZkyIK92y24Ybyj5px1tl3SEoN2GsyFXt4LYjQSTJlgKtcHant1XcaBKd
+ z9T23ZxWcLPomObRfxz9YgU3ddGaCWfX1CD5eabzjnXNeBYkB7V19WFsf5M4Bh4mxYjbF+g9B
+ dOPVAUUiWwzOjW9oT4gBl2m4nlOvthkrYx+2uERqnvVmuNCJFkcIdyhNUHIeWtbo4riP+coH8
+ o2bMu7Yj4Vt2tMl1Xx+uJ702p61Z9m2sh28JanSW+YB1ReG8jWmulP6cex8cFvIf5YgpmPceM
+ z2kn9sRul/TcxXewJUsiZ4fdBQxO3nj5o6W0vDB/3zkQtBcFs80op67pZc4ARQYIZKGCFwcZv
+ YWV8xMIHVpy4+ByUeiwCpSwlACl6HLN49KVgXKgR738RfUxjcFwe8DoaJlywHbGDP2j8einMB
+ tzEb+f9Emed0rVpPoyce8yguveZDnEPDQcXWDkkXblFxKzP7A8wFsbkMM7mgi04hIt+b0W6Do
+ ot/IgkptfQSXr70rj0yADvh9OsOfeTw9qnm34ZW0xSPk/laeR6qCudvliP9ZI5EIlUpp7ynW4
+ IalZfSiycRjcPxf20I/4YC3YpTkeOf6YBbfQCTnQ7CnB5Uv8gDVrG2mwGlJsh91ew8AQVxPjU
+ ZN4fqMenZfLLuUHdrURqhYgHJcUYdTIiRjEsM09zj8qgylPtdJfrLSN999h5uF2rsvUK6ZfZH
+ QxNmHT2jYTH4y7BkMNEpMYBNwfVV0aexJkcfZJFuuMAp9kxLqy6GV5CsI+K4IsDtvzyjqum2v
+ yYZ/H+KLAoXzWRB60R4NCTPpVyRzW4u7m8hqQOEa2Hs1diHLgvYsaaHnDCycHT25ag/Dc5oJV
+ ALfintfOGP14oHY+hM0pjag4b1Z5c2gCfof8jFqfEbzRoSDAJwJtLnqVzKMwX2cxWYRy6GUG+
+ lr/aBRLLD+XwerMop4uYGSUXvpDHJzevnvAOL+/dx5nGQez9eJiTFeV3qXsk8DR+lTcqBijvd
+ JvvjGhM4eJ6sY8FOKdVMKc46vz5mYYJCU3jp9EwmyKr9e0Nm9G7IDXFqT+M9NgKMnptPfcxZ7
+ 447OJIA==
 
->>> The address of a data structure member was determined before
->>> a corresponding null pointer check in the implementation of
->>> the functions =E2=80=9Cdpu_hw_pp_enable_te=E2=80=9D and =E2=80=9Cdpu_h=
-w_pp_get_vsync_info=E2=80=9D.
->>>
->>> Thus avoid the risk for undefined behaviour by removing extra
->>> initialisations for the variable =E2=80=9Cc=E2=80=9D (also because it =
-was already
->>> reassigned with the same value behind this pointer check).
+> The assignment:
 >
-> There is no undefined behavior here.
-Will any software development concerns evolve further also according to
-undesirable null pointer dereferences?
+> 	p_rx =3D &p_ll2_conn->rx_queue;
+>
+> does not dereference "p_ll2_conn".  It just does pointer math.  So the
+> original code works fine.
+
+Is there a need to clarify affected implementation details any more?
 https://wiki.sei.cmu.edu/confluence/display/c/EXP34-C.+Do+not+dereference+=
 null+pointers
 
