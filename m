@@ -1,75 +1,196 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693581C9EB1;
-	Mon,  3 Mar 2025 19:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954932343AB;
+	Mon,  3 Mar 2025 19:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741030872; cv=none; b=ByKdGSmimiP5QFIB56olwtYQX5iTE5w1j1WdkAAQmRQL5FhPK9hNYrvA9A5wmm5bPfWNXGoHtE50441K55TEJmzriReRdb8C4OVJbY//iFYCx0Heu2E2Lqj+s8T2SrZ4/+yC6rXk+sR8WoJyJhh0HMWADg9AFXv/YwkyhM9Ecj4=
+	t=1741031558; cv=none; b=JwFjRYNa1aKOVYuiVTlbEf9u0j2IWgCEt25YXRM9EG5iuAWy0HL8JY8mV3OxSrN8yBrRrVZwL2IxaAwo0KHUqdX4YKaAG1TN7xcVnXHpQVA3jGh2FIRi+nFzO6rmv8GycDoyiGat6bS0t0bqWFBG+0zjZE3njLuXXET9mT4a+Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741030872; c=relaxed/simple;
-	bh=KZ7XHt3siA+yNszSiXHA6b2kocbImvk02r3QUZ/DZZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f6QmaJpLfiKhJ321TEe8/umjG5/5+LqyuIAjTeUd4xo0gk7q/mil8HVYtZ7uCQO3n1uEILaFtjA7knoNCe4M6oK+0MK4O3AZ4aFPgNnil9zv50NrcIIzQRCZ2DzKfrqEvmZpVyW4a3he8pEihBABvJ0Y+8xGrismTdJ0CI2smng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j4R/4wfq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741031558; c=relaxed/simple;
+	bh=/5kL6lkfSoy6jZ4mv2VO4LHLoCr22zO2W5GVelcms+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=F43WFoPk95ogE5SjvK/+n0DPZ+WOwnx5o1U+omEzD0WQIIeAh6TMHbFEoNiy1pvDd0QklJDTlL3Z02e3EYRsAOf3H2wKCRZ1YMTRBD6lL0XjjAbb41ZbDYFiri42OVKU7jSp57uPUAl6wQr+eC65cm4IsyV0N3PaMOO7NlGpRw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ppJFF5nc; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4R/4wfq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 726B8C4CED6;
-	Mon,  3 Mar 2025 19:41:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741030871;
-	bh=KZ7XHt3siA+yNszSiXHA6b2kocbImvk02r3QUZ/DZZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j4R/4wfqdlrIGvmcugqLfadqwrTOGhj7dTagqcKlM/tk0jdSaoHVHBi5NoHg/J+y6
-	 2KFr/inmJ3UqWjEeYw+YYmQRr5G59RaZxbjV2H+TQrTVVL4RnjU1vYJyneFxFuSbcW
-	 wc7nBI7LXcCvC6j708R2cjA6L7Dj/r1YRsS4Z+v9hJ0CvbBRDla/G6qWowhMfVCmMY
-	 cvnl/DVYxMqxHe8biHWokNOEAx/gE2dN5chjNK17bYd0WzE0l6IJx8W6X+1Vy3Uk7K
-	 o8hM7ZcIqrjiedyi2XMAWIZxlGo+TG4NubYoUedcd26BrriSqAucab1v6bmVXMl1bb
-	 NV0ZC/Fnj+zgg==
-Date: Mon, 3 Mar 2025 20:41:06 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Simona Vetter <simona@ffwll.ch>, cocci@inria.fr,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] drm/nouveau: Add a jump label in
- nouveau_gem_ioctl_pushbuf()
-Message-ID: <Z8YF0kkYLlh1m5ys@pollux>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <8f785de5-ebe2-edd9-2155-f440acacc643@web.de>
- <809905c6-73c0-75a6-1226-048d8cb8dfda@web.de>
- <684bfc0d-7e1d-40f1-b1b7-d6ed64fcd8b7@web.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ppJFF5nc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741031542; x=1741636342; i=markus.elfring@web.de;
+	bh=p/1y8E3y+CaOKzyRHNzCHL74cbkCQAfumb6We0o3vWU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ppJFF5ncblNd32Rn6q0Nz7PhAQF9Y4OjPI9faI7Oe/EEIQSgv8rlWW23u6lTpbK2
+	 Dh/3VibQbUt9Lap/9o2j+VQsM7nz5zfqY1JbQBZ53lJDGYCdYuIxD78zXlM0M08Ee
+	 4MeXITMuSQbZ4PyjDjsMJCY9Evx3nHaukhPmj2u32jMRSBOsaOn59d7591iAhcPgH
+	 riCkgnxJgGXi5vruwtTQRvS2o4HWrpNXutF8R/ieMQQoc9GOYAXPb0LJayz9wzdKK
+	 LSKAuM+YUv1DHxpMnCIzIPPPO3wJx46USo0f6HeKw77KNH050goMBSW2K9duxaPkp
+	 Dy8efTxGc3Y/+ObsIQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MIL0C-1u1LRC1jV6-00Aj73; Mon, 03
+ Mar 2025 20:52:22 +0100
+Message-ID: <fb65b3c3-00b2-4c33-8ab1-8e60b4159c3f@web.de>
+Date: Mon, 3 Mar 2025 20:52:19 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <684bfc0d-7e1d-40f1-b1b7-d6ed64fcd8b7@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH RESEND] ufs: Fix exception handling in ufs_fill_super()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, Agathe Porte
+ <agathe.porte@canonical.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Andrew Morton <akpm@osdl.org>, Evgeniy Dushistov <dushistov@mail.ru>,
+ Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ Jesper Juhl <jesper.juhl@gmail.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <9d975625-672c-ab81-2e78-c3fa48747913@web.de>
+Content-Language: en-GB
+In-Reply-To: <9d975625-672c-ab81-2e78-c3fa48747913@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YsISSegg3lcQ3hmqRzFgdivEeAVL0GWFjbgRAsPOJh7cfonv/eR
+ /ZRmIN+xHxCwxcEuyGHP+l+dYl+M3uf2p5OSoES/URxruvATvajdjtbaqd9DTP/NRX49EVN
+ ic7+wrTwsrXf7WhAjOkXOLAE3f+i6+XR1dZ14C4WhLaWlf1nm3xldhro1VJ+bBntnsv3F5t
+ 6vps+sy62rHMU8Q0hwmAQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:V1/6gYigggU=;L3OHYIdZuntwDgsrHAQo83kdWle
+ D5fCV9moqOaiq+5g/sIBBsbr5AwFlbQZ4d6rSpdm4QOmA5oxExd5NLbMfEdtD8AGljB69cEy1
+ NlgDe12wGcW+Pg4/onP+NRvDf5gFkIpWw3AyR364O6l4uD7632YJv1Bc9w/ACiEFi39FzZLjA
+ vQo8eVhThiFlRIvhofvVUo7t24IBGJsTTW1skl3AiIidH2DvqUQtfgyVTrXiIYWHNs6ecvous
+ aCbGoVgC8f5sdYOvLdBVgqtAMaKSX1QdAUGNZmBdsclWzpv1KOX5cCgOaFD5j0p2GODrP8Q4+
+ AWc4EfvsdtczAy85JS6ORkSzhC3RToKg5qnhmK+ge2iu52KnA4iHs1A2YnQygF8Aidsr73gOZ
+ WNzErbfnw3i+/SNSbkg7RHIlVohflQ2yZRIitQ/q9WXYahuFCcV0rWf8x3AM2AtLfZsWJNV9i
+ iey3ggzIm6zMAYQ3lsbC593vTzNgNcH+WXjesNIX0k5vx4/9klOmlb2AJMn8J9owgfzmzFZqg
+ G2g93Olpu5XImJFN0nGytMyK+yNhaq0s2CfYYgtB44+6hTQdxM+D+eqY0+6OzPFyGuf5lqMyc
+ 249dTbPsM47ntMLwmiQiyNnfk0xV6zUl7f1zeo2kAlZMe7Jo0v0WVaemvEUHNE5gHsjA+vBNG
+ +qlxZAx+jizgqVrHxwet6QHs/U8N/CUq7FbVQ63NYSdr1zTfoKvEGeNQi9DSxTB0h/ro9mwdu
+ hh8em2EyO9IjmcJdvTe3/M0YqJGhfAujhLuL2rgOHJl5MceuxN8EfIS27fy4aLGI5CPtiwa4d
+ hoJ77z25Qmy6c5synXJd5UP/HinYEghMlo5bj9n1ZFg1G351rlyJZvUjlB+TyE5d2fzpwNUKE
+ uV1S0lElH7CmIfrXRBlV33srHkZyVmiJRpk+x1OA8EQjuJgfkBJZ1Mx6DWeSDRptjbjYI18+P
+ H/Rh0e66D10p+7RPJfXAzPql1gGxRQvNvjTNWqWT+KBsooOH3bwBI6DQn35hDEF0LdbkyL1ci
+ vacyLCSMk5IXuESOKmP0Ya+lQaq1lHt2KJ6cQxRnzKNfKg9TxKVEOyvQKWzyRfXGCeRzhuhQC
+ gugoBjFMaqOpfIpqTQoe+Qkb64Pi2tAARHrrkXNHLDG0GnoWHVdzjaMPKehHYz7foXEYULVgK
+ qBqhfuwvwD+OdGcou+xFoK5Q2tlvnxjBhaiqNjN75ll8mX4yLb+5qtlWuZ95R+arvfbVEicvG
+ ZcnCfSnz8PMYNQAN6gLOdVb/oh8JLJeT7JNb7cZGkdhKOXbc64+WYQojQv5ysjJiVjbaHIbBP
+ Gp0FrM3oBW9UlUuz0sJ0iOuzEvIP1IEUrpPaSbBPhCiv6qO81sRLJZm94zDyRfBFmECm8ZsA+
+ YmN4rGapGZ5u0JA9cWKEif0p4eOPVF5kaWwmn10+KOJi+d/QkypB+nvPUmnePLtxs5C7ofb8r
+ vAOJVFmNq9L/ItoMWlL3kjLEaMCc=
 
-On Mon, Mar 03, 2025 at 06:49:07PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 5 Apr 2023 18:38:54 +0200
-> 
-> The label “out_prevalid” was used to jump to another pointer check
-> despite of the detail in the implementation of the function
-> “nouveau_gem_ioctl_pushbuf” that it was determined already in one case
-> that the corresponding variable contained an error pointer
-> because of a failed call of the function “u_memcpya”.
-> 
-> Thus use an additional label.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 2be65641642e ("drm/nouveau: fix relocations applying logic and a double-free")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 22 Mar 2023 21:50:45 +0100
 
-I'm not entirely sure, but I remember that we had this discussion already.
+The label =E2=80=9Cfailed=E2=80=9D was used to jump to another pointer che=
+ck despite of
+the detail in the implementation of the function =E2=80=9Cufs_fill_super=
+=E2=80=9D
+that it was determined already that a corresponding variable contained
+a null pointer because of a failed call of the function =E2=80=9Ckzalloc=
+=E2=80=9D
+or =E2=80=9Cubh_bread_uspi=E2=80=9D.
 
-Can you please send patches from the same address as indicated by your SoB?
+1. Thus use two additional labels.
+
+2. Delete a redundant check.
+
+3. Omit extra assignments (for the variables =E2=80=9Cuspi=E2=80=9D and =
+=E2=80=9Cubh=E2=80=9D)
+   at the beginning which became unnecessary with this refactoring.
+
+
+This issue was detected by using the Coccinelle software.
+
+Fixes: f99d49adf527 ("[PATCH] kfree cleanup: fs")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/ufs/super.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index 23377c1baed9..017653c36080 100644
+=2D-- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -789,8 +789,6 @@ static int ufs_fill_super(struct super_block *sb, void=
+ *data, int silent)
+ 	unsigned maxsymlen;
+ 	int ret =3D -EINVAL;
+
+-	uspi =3D NULL;
+-	ubh =3D NULL;
+ 	flags =3D 0;
+
+ 	UFSD("ENTER\n");
+@@ -821,7 +819,7 @@ static int ufs_fill_super(struct super_block *sb, void=
+ *data, int silent)
+ 	ufs_set_opt (sbi->s_mount_opt, ONERROR_LOCK);
+ 	if (!ufs_parse_options ((char *) data, &sbi->s_mount_opt)) {
+ 		pr_err("wrong mount options\n");
+-		goto failed;
++		goto free_sbi;
+ 	}
+ 	if (!(sbi->s_mount_opt & UFS_MOUNT_UFSTYPE)) {
+ 		if (!silent)
+@@ -836,7 +834,7 @@ static int ufs_fill_super(struct super_block *sb, void=
+ *data, int silent)
+ 	uspi =3D kzalloc(sizeof(struct ufs_sb_private_info), GFP_KERNEL);
+ 	sbi->s_uspi =3D uspi;
+ 	if (!uspi)
+-		goto failed;
++		goto free_sbi;
+ 	uspi->s_dirblksize =3D UFS_SECTOR_SIZE;
+ 	super_block_offset=3DUFS_SBLOCK;
+
+@@ -984,13 +982,13 @@ static int ufs_fill_super(struct super_block *sb, vo=
+id *data, int silent)
+ 	default:
+ 		if (!silent)
+ 			pr_err("unknown ufstype\n");
+-		goto failed;
++		goto free_uspi;
+ 	}
+
+ again:
+ 	if (!sb_set_blocksize(sb, block_size)) {
+ 		pr_err("failed to set blocksize\n");
+-		goto failed;
++		goto free_uspi;
+ 	}
+
+ 	/*
+@@ -1000,7 +998,7 @@ static int ufs_fill_super(struct super_block *sb, voi=
+d *data, int silent)
+ 	ubh =3D ubh_bread_uspi(uspi, sb, uspi->s_sbbase + super_block_offset/blo=
+ck_size, super_block_size);
+
+ 	if (!ubh)
+-            goto failed;
++            goto free_uspi;
+
+ 	usb1 =3D ubh_get_usb_first(uspi);
+ 	usb2 =3D ubh_get_usb_second(uspi);
+@@ -1291,9 +1289,10 @@ static int ufs_fill_super(struct super_block *sb, v=
+oid *data, int silent)
+ 	return 0;
+
+ failed:
+-	if (ubh)
+-		ubh_brelse_uspi (uspi);
+-	kfree (uspi);
++	ubh_brelse_uspi(uspi);
++free_uspi:
++	kfree(uspi);
++free_sbi:
+ 	kfree(sbi);
+ 	sb->s_fs_info =3D NULL;
+ 	UFSD("EXIT (FAILED)\n");
+=2D-
+2.40.0
+
