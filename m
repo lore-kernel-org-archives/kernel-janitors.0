@@ -1,159 +1,104 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4119E1F9F72
-	for <kernel-janitors@vger.kernel.org>; Mon,  3 Mar 2025 10:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0A71F37C3;
+	Mon,  3 Mar 2025 10:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999227; cv=none; b=Sd3eaT/HZXYrPbbxJfrhICPBf5YMRs2lOirFUkAr4gWYHBaoorwDG3IH+qZdycviRRVJKK58w4K5ckyu94iwJNYHpaLE2XFcRMd4c4AWb7cr7yeMhAP5CIGDCivAVcLdTMwBdWxFRnTNMqCJ/oHxK+/F7sITdSjxDRKsIkev70A=
+	t=1740999378; cv=none; b=St9g6DQCXsRyXUoyLtI+yLyQSExIvO6m6/K5FTcX3EHMqIkB5scFAHBB2mfJVUVj262dnfa2e9Kf11rIq0WJaseKRBaFFE6wrwzL1OAtvnRDPaOhme8KT/GcmgLKCbKhOTIT4KE3PO0aVrQMKB9LzXx+dP8RmzGZ+h9/gPiS55s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999227; c=relaxed/simple;
-	bh=Kj3rTWIoDmPt+SLfBxnJONe1BtBMU+vHFup+WxsAQuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E00wejY6/WFym9yPOnwkX+mzIRyobMUrB0r29QAi1u6DmMwbQVKRA1QSjpHEE4+GlBIkC76udrbBTeXty+OXY4U0g7xd8JFtWUOEgNlDc8LOqV7FwJyBv5x4m7cRgJWb3akh8lf+PCbTjfETh9HP6cAKKcFSnz5TS+TN9Vl4ESM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wMw6IyjF; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740999378; c=relaxed/simple;
+	bh=lBXrJLLzgvlev6TtlXIqmm8RMpCy7Hx/6Ebgcbn2DXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oAgpDgqzfojt7T/qdwIU3t4Mb/hKtQyx9fET54Viu744SqCbSJxDWkkK4LRao0IPCFsajiKS3HZnt7LVtvxme8OGFFwU24aaFztrqCBDEshSZuQU7lEeXtCUoGFmBJHXv5cFI20eFATFQx5Q8zz3+YqN80vf/3IKoO7gqIL6Yd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=xCtcY2W1; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wMw6IyjF"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e4ad1d67bdso6723468a12.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Mar 2025 02:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740999223; x=1741604023; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gSR1fSju11GwT3CmV4RSTFrBeqMpZeqjsL4Nu+lUL6I=;
-        b=wMw6IyjF1vxftNpwe3TiSYPJorx0sH1PenG75GdY8cZ3SGYvNdyoY65gyx1fwqGgq3
-         ccKosqU9GeKwLs+tn7feTXe96ARw33I00otRm55hQYokhl3hnMLdUfivY1aOkLFLD6C/
-         0arSEXxWRvqwl6ZcAqiwNrkYyv1GJlBtLo9obA/ntCpDrZ6/r53LPK8BK2UaiNa50v+c
-         irXlpOwMkmZtoWawPh/0Ur8DAdwXZg9mJ2Yi1X7G0tGFa+yNjFqq8Qm4O8FmUTT+mX7t
-         umnUJw43gjFW+5eEvl7ftYizOoaLde7Yzc4cMOp5NA3gb0avHVW+ceQlfxsaB8ncnaBZ
-         0W+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740999223; x=1741604023;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gSR1fSju11GwT3CmV4RSTFrBeqMpZeqjsL4Nu+lUL6I=;
-        b=qMQOwwW5rPbFhpk10SysokDN9fsvwpFueZstlOWh7+eHRToMzh4zR6OyS7c2lvqVzf
-         t+N2htrlXpZ9LiQmoXlTNvCKisg6uR2kUOi+jp1MeZgNH+/AmxYTgruzoDkUyqXvjokl
-         Uwh91b+RSOlMuVjYH5yF0ug9MAF3Njbt58wvIFmuc53Y5P1vb3nmIQVIc550Nc/fZaq4
-         6KOUYlAtyZoWzPZzYQSpA4Rgkls+bbKwJVAE4EeteLv7FZIrInPcUguO9JF2he1ze2xj
-         UTZgGTP95ClVvlyisX+RYVO7UVeuEo3cJmSX4iCKZpZZjH+U4xyqmALr93LpwGqPEpBe
-         2WvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoZfCD6YJSFpIYmXj1B3/1dAzVcmkuWDJdyzdzxWnothboxRqead1w3NXO5FhWB/M+3ZBNAnuyYOJAoT9RIT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yytpi3xu52B8EuvJacLkymYoJSqHQOWCSQ0TqRy9BF+QvvTn9VK
-	PK2XgmbNz6uJQABn7zpu+u6bWxh9puQG8xJ5vf+BwfFksV1WqyQXTUeVGKLYuNM=
-X-Gm-Gg: ASbGnctXL6bzV9drqYVOIGQ87rbftARqwQCkNfqmEESjVGp02R1eSE+UYPwx2C5rciN
-	4df04FY5HiyTQ89k2iHxkkLWEk5dG5awRIG/2LmaLyETvsa4n4N05tOkV9wQQt4mP536mQGJuZ/
-	wS9Wc/eAcZzI9tweqImeFNP7USoaDjRTMrkFowPQT1RuGyrSsOzcfIvcZgftBvBcw5Z+aahNzuS
-	ivoNU7p4z7JTYkbafjvI1DQ2M85YR3rpJi9koizYWUHY10vpnWRQS/FopTMJmnM7drHrzYEJmJ0
-	dtbbZroHAt0VednWOssTXBYY6DRlXqMIrz+04bnp3z7+qPaUkA==
-X-Google-Smtp-Source: AGHT+IF878WM4Ac0lwU3U8jWhqiDwhdQ1OhLRZrdD2ubBpWef4yPS0ciLaeLOsRMTVQEjBD/4tiTTg==
-X-Received: by 2002:a17:906:7310:b0:abf:13cb:c411 with SMTP id a640c23a62f3a-abf25fabbaemr1560894766b.18.1740999223509;
-        Mon, 03 Mar 2025 02:53:43 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf55e88748sm421511766b.54.2025.03.03.02.53.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 02:53:43 -0800 (PST)
-Date: Mon, 3 Mar 2025 13:53:39 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	Antonino Daplas <adaplas@pol.net>, Helge Deller <deller@gmx.de>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Yihao Han <hanyihao@vivo.com>, cocci@inria.fr,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] video: au1100fb: Move a variable assignment
- behind a null pointer check in au1100fb_setmode()
-Message-ID: <47c37d1a-5740-4f48-ac0f-635d8b6f51b2@stanley.mountain>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
- <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
- <ugymllbkcsg22ffgyofvkquh5afbvoyv2nna5udmy3xfhv2rjz@jhgghzldzm4u>
- <eebf8c0c-7a6a-405f-aaab-2a8a8c2bd91f@stanley.mountain>
- <hwk2nf62owdo3olxrwt5tu7nwfpjkrr3yawizfpb3xn6ydeekx@xwz7nh5ece2c>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="xCtcY2W1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740999351; x=1741604151; i=markus.elfring@web.de;
+	bh=27Xfm2szNcVPGdaV+AvjRGIZQra8NDa1xE51q3tnc0c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=xCtcY2W15t/CLVk26dzklV2eCVer80egCefL/fUIV2wx4QdhRrg4oOQe3FRb6KcW
+	 LvU4QP442D+ZwsRfG1pIS47gCY1klL4dBJg51rBqrBwJTqUCguPE5+TyN5+g70Ls6
+	 22HFMGK6kUbaQ5LlEuxvIC2eNfpYDAoFTEIsjQKUkhXS+IxiHJUBJ3Ufycpq02RBh
+	 +87ZBZrM0h18zODGxZt9tbnXIUJZftq7H/pZ+HoTMch//N05tRjT15kMLU275nBbx
+	 GVNEwDV+VPOzax6mMpMo6e85bZZzI24bCT5EKekTF8o7O0LS/ioPLXnJvTgiukTO/
+	 FOc7bCukc8s3h9Nz9w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9431-1tAcNM0uCl-00xRN5; Mon, 03
+ Mar 2025 11:55:51 +0100
+Message-ID: <0193ac44-e858-4aff-a50f-dd95dbf3de5b@web.de>
+Date: Mon, 3 Mar 2025 11:55:49 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <hwk2nf62owdo3olxrwt5tu7nwfpjkrr3yawizfpb3xn6ydeekx@xwz7nh5ece2c>
+User-Agent: Mozilla Thunderbird
+Subject: Re: mtd: rawnand: tegra: Simplify maximum determination in
+ tegra_nand_setup_timing()
+To: Miquel Raynal <miquel.raynal@bootlin.com>, linux-tegra@vger.kernel.org,
+ linux-mtd@lists.infradead.org
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, Lucas Stach <dev@lynxeye.de>,
+ Richard Weinberger <richard@nod.at>, Stefan Agner <stefan@agner.ch>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, Qasim Ijaz <qasdev00@gmail.com>,
+ Natalie Vock <natalie.vock@gmx.de>
+References: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
+ <87pliy9yyv.fsf@bootlin.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <87pliy9yyv.fsf@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Wr8t/rf8kDyQbUAB23eYrBcTdp7zAiyaAsPFXa6sJC3K5UfvK8C
+ a7ievt+qpohXG+NyGGuCKYWMcDs16VuaRGzm3w+k9mjG4hjieQ9hgX/FgaHUpN/UlsDceeQ
+ anlOSPDmsx3S+mDKz1KD/4vXHjYr9r0huaRAEu7Cg4O8MIrZZeQDJ0I2WW6K9unNYYt5Zfi
+ 9QymYDu3N70lGrEb3oLIQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:lFy4vFRmfeU=;B/ycTgtncXwBkYgLSABhyNZnMAK
+ j/RlJzECcJzdvzsQz8yjBmntc7XWrQZ9sXZo2XZBu2ZBWxGPne/l8ebM/Qnv4zADLmlWdvVvA
+ RAYEmbDc4kXr0GAh16w6mSzg8SWrImH2vkAKQt7a0s0DxihRWxsJAnpzL18EEwj9BkL/EHERE
+ PpfXT3yzb46J8oeBXzqjUIu4GXaYBW1b5PoLcMKwRNTpk6bIrQWtl9iE2plsoJTRFpTLAPaI/
+ xXEaP0j/Z/1lFJbs7Ntffwg28B1k1A/5cIrxy1soEBdjYdMbywH/l+KdwVzVDAUK5c8qgTaSA
+ FAXo8SWk22al7EWl9Wp7QF2nK8ncTZ5OQdhgSGfJM3W5d7EtrcUYF+nb+eWv8Llul0a0Ky8co
+ j8ZWE7j11dddu/ip8e2Y8zRFjGPYz93a8RW9ZttfwO8Mpu89GI82d4xG4YXloX7kRdpV5N1BA
+ uv6+WhAlR/ros3YEPIlX14cdnuOlZH5Tu1QT1WFQ7a4AtqekLy1b5ism8fvIkh7UgZBavsSdY
+ FUqzjfqvZO1qLDw9VDToCW/U8njv31rfj4DFWEXKqRcztuDmXtjg6narK/9fkOhyUVAeoJ8hP
+ mCfG8P28nvnfFDq/JnPdhSC/G2HbedcZYU43onqwGYm4QQ1IiooQdI/jCBcRtCfCsCmInqkij
+ EDNp9D0qXcm9B1PqrckdjWN3A2UtnvMhVTnEcvSlV6jLV4KqMBCXyzCKZ8o6rBg6eGfNlQPtx
+ p1v//peu7N0y9p4RlWtbAjV+c5DY30oe/JhBTvJjGFlfwkr+n3gVzXBbkZQd/fnQos6C1bpoR
+ 4m9Zd83lnU7Sze9DapIQ8Gw64jNoVctGprwqbepXi0vnsM82KqoYt8Br+i4xekpO0pEuVk/1R
+ rTQyd3Ljhc+z19urihw1U6yatR40NuZwrf1VE5DdLq6Vd+5INPu4XFspbKIIlFFNA+bF8/VC4
+ zO1JS/Orir/w6zJLfqPYq43zjmR0eTV5Em3fO5q1uXC1TTGTtL240njSQJgkOxN6T+CUXS37n
+ ZyVGMf+OKFvEUDsO1lNFGQMqwt2R+Bj64C+3dz6Yk0OyPpvDm2d0lSEBr3hYSI49RXGrMBMhe
+ 52Yvqpssjyl6AniEfF582XkoCXAkE7VzBCdLuHteA5S0l/ApQhAyPxZ0znDPseMUJ2KwBu8wf
+ 8h1TR+iDoPIDBwhgFHx+o8O9yTlkIsoslczSzFe8TKUmlX9R0KMwjPXTSe8YFsgZPJf+MT0QQ
+ PjPKebE2xJHg/yModKyDn3KYOGHkE+w0zjvOY84Nga/RrZAfeTzByeiw5G+BRLGkgPvCOiBVG
+ 5Pt3mWoRo08d3YV2iGU/7FCAtxcgK6x6UGSaK+nTZEHRXzkRv+TFSvked46fQf1RqucU/9ayf
+ /xSqBkI6wRUL/k4mMYwf17O5cFJLHm/hbPTuxqXI93DFIyqaOTYQcKAmyuOdWngAl2xQ09brm
+ q8l+j+zCcM9F8CAMNMcpGw/85Ngk=
 
-On Mon, Mar 03, 2025 at 11:30:46AM +0100, Uwe Kleine-König wrote:
-> On Mon, Mar 03, 2025 at 01:08:29PM +0300, Dan Carpenter wrote:
-> > On Mon, Mar 03, 2025 at 10:19:06AM +0100, Uwe Kleine-König wrote:
-> > > Hello,
-> > > 
-> > > On Sun, Mar 02, 2025 at 07:02:12PM +0100, Markus Elfring wrote:
-> > > > From: Markus Elfring <elfring@users.sourceforge.net>
-> > > > Date: Thu, 13 Apr 2023 21:35:36 +0200
-> > > > 
-> > > > The address of a data structure member was determined before
-> > > > a corresponding null pointer check in the implementation of
-> > > > the function “au1100fb_setmode”.
-> > > > 
-> > > > Thus avoid the risk for undefined behaviour by moving the assignment
-> > > > for the variable “info” behind the null pointer check.
-> > > > 
-> > > > This issue was detected by using the Coccinelle software.
-> > > > 
-> > > > Fixes: 3b495f2bb749 ("Au1100 FB driver uplift for 2.6.")
-> > > > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> > > 
-> > > Acked-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-> > > 
-> > > Should also get
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > 
-> > > to ensure this is backported to stable.
-> > 
-> > It's not a bugfix, it's a cleanup.  That's not a dereference, it's
-> > just pointer math.  It shouldn't have a Fixes tag.
-> > 
-> > Real bugs where we dereference a pointer and then check for NULL don't
-> > last long in the kernel.  Most of the stuff Markus is sending is false
-> > positives like this.
-> 
-> I thought a compiler translating the code
-> 
-> 	struct fb_info *info = &fbdev->info;
-> 
-> 	if (!fbdev)
-> 		return -EINVAL;
-> 
-> is free (and expected) to just drop the if block.
+> I am sorry, I do not see what gets simplified. max(max(a,b),max(c,d))
+> looks simpler than max3(a,b,max(c,d)).
 
-If you dereference a pointer then it doesn't make sense to have a NULL
-check after that because the kernel would already have crashed.
+You would eventually like to express that a maximum should be determined
+from three (or even four?) values.
+https://elixir.bootlin.com/linux/v6.14-rc4/source/include/linux/minmax.h#L147
 
-In 2009, we had the famous tun.c bug where there was a dereference
-followed by a NULL check and the compiler deleted it as you say.
-And then, it turned out that you could remap the NULL pointer to and so
-the NULL dereference didn't lead to a crash and the missing NULL meant
-the kernel kept running happily.  The remapped memory was full of
-function pointers to get root.
 
-We changed min_mmap_addr so that we can't remap the NULL pointer and
-we started using the -fno-delete-null-pointer-checks compiler option so
-that it wouldn't remove the NULL check even in places where it didn't
-make sense.  We also started doing more static analysis.  We've also
-tried to randomize where functions are in the memory so it's trickier
-to hardcode function pointers.
+>                                        Does it bring something in terms
+> of optimization?
+Corresponding effects depend on various factors, don't they?
 
-A couple years later we had another bug where it turned out you could
-still remap NULL.  I forget how the details.  No one wrote an exploit
-and it wasn't publicized as much.
-
-Anyway, none of that applies here, because this is just pointer math.
-
-regards,
-dan carpenter
+Regards,
+Markus
