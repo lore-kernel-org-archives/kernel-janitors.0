@@ -1,82 +1,109 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37281F37D4;
-	Mon,  3 Mar 2025 11:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B638202F9F
+	for <kernel-janitors@vger.kernel.org>; Mon,  3 Mar 2025 12:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741001138; cv=none; b=UPJC/6mHI/cP9DeZgia2GqZ5U/xJroQ9+nIP0f0v/Ppd0kkI2MGkwfyhoRNuUFKWi2oSzOfIq85PetnB7OPN6hoI2Pg8DsJ5+9EoPQBsLH+Itds0OyAdzJHvAeKAEX3qXDdNPFkOxSOVfb09zX4bx4APB0z2eG1zifqVvac7Goc=
+	t=1741003340; cv=none; b=iOFAEo3y6XW31LQ/wMXghjNH1amX1ZEN64esnCQ6Lg0LqzGEjiVrDF00MamQ3YcInA9z9KVrmEsnAQmAONVre3/R9fDxtHkz3Ttzoq1RKaIgfTytdlWzZX8KUTFZ+kwT8q3ZMsV9XqxQd/Npe9Y/kU+FhUsf1exLnWwv09pZo0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741001138; c=relaxed/simple;
-	bh=B40IpQiU2fM+pVK7wquDYMb2HsNMGEC55LxsvTQcN4s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IzS22qoe88HmZwRs+lvORiXIr204KmlfnswER8YXk5NmDs1hx9mhxYbMP5LhvLbDXO6QJeadJMp9GRutJ+L+j3hHotvW2IwdXjWtM2Cw1hVAyZ9Fjg2qsCKAfO0yrMl83E3kIvWw+36lWD3JBGlKIacwBfKNYOBemouy4iGy9bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BkjwN4/t; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1741003340; c=relaxed/simple;
+	bh=uWrqL7qwHJ1xRe81W1yZdqN0xrTeQwVstuEoqTp4vdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m5E96fS2FRd9LevXLr9tgv/yilCCvYKbdxA71cA68knxQiYx+k1WAJ8b7XSCqwVKBdS1v94SI6By/Rm1JbU29MVSOJZKLUNfQrZPPjiX7IDEw40AJR0iDxjCGIx885xDepTU26f8m/Zw/SZ9c1aPqyRccwfnd/6y8Wla+ewPxvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J+z8GQ6K; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BkjwN4/t"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7F1F54341A;
-	Mon,  3 Mar 2025 11:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741001134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B40IpQiU2fM+pVK7wquDYMb2HsNMGEC55LxsvTQcN4s=;
-	b=BkjwN4/tsxmaO4+R7FAMmi485T6901iwWzyz1XQv40fA/bnC1/8MfN0e/DtKEnYmbV0ZQx
-	KTmsVFoZYp5BJfaliwDBG7BiQMIAQE5waOKMctsSOMnNTH2uVUlSbiw1yo/8ZKIGIAjLQx
-	zeIwltgkKYWLfJxx+9yo363ujP5Q8P86Ay3D01CuyCz7yBe19ek8111LbZHSc20hFTnXbO
-	VoyWopf8T38LsZw0kFjnFpnVUWgNeCdqFqigmaBt+qXT5gkWRhSIZ8Zo+AMheKoN4h6AZR
-	ZGxSBCQJkP7TX2uzMASAIOf5LCcrdPEzxhv3Iz2FOSZOd59fB2p/3zg9xNuMBA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-tegra@vger.kernel.org,  linux-mtd@lists.infradead.org,  Jonathan
- Hunter <jonathanh@nvidia.com>,  Lucas Stach <dev@lynxeye.de>,  Richard
- Weinberger <richard@nod.at>,  Stefan Agner <stefan@agner.ch>,  Thierry
- Reding <thierry.reding@gmail.com>,  Vignesh Raghavendra <vigneshr@ti.com>,
-  LKML <linux-kernel@vger.kernel.org>,  kernel-janitors@vger.kernel.org,
-  Qasim Ijaz <qasdev00@gmail.com>,  Natalie Vock <natalie.vock@gmx.de>
-Subject: Re: mtd: rawnand: tegra: Simplify maximum determination in
- tegra_nand_setup_timing()
-In-Reply-To: <10afda2a-4c52-47a8-bdfd-4bfd7bd9cb34@web.de> (Markus Elfring's
-	message of "Mon, 3 Mar 2025 12:15:25 +0100")
-References: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
-	<87pliy9yyv.fsf@bootlin.com>
-	<0193ac44-e858-4aff-a50f-dd95dbf3de5b@web.de>
-	<87h64a9y04.fsf@bootlin.com>
-	<10afda2a-4c52-47a8-bdfd-4bfd7bd9cb34@web.de>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 03 Mar 2025 12:25:33 +0100
-Message-ID: <878qpm9x02.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J+z8GQ6K"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso2174486a12.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 03 Mar 2025 04:02:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741003336; x=1741608136; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FvjfazhXAUkX+q9ADQWctMmDsHuSAcb7Kglrffn5CF8=;
+        b=J+z8GQ6KzwxpWwpV3YGxkzqQikDOY63gQurQH/Y/cL8OWNZA0azkubadKmtksdtqYc
+         xU+gyI2iFllMV41ktZAsoFx6JyWM+JIlRLkVcyVsSNcwrfCqYXqikeJpr7XPutD6LMLW
+         HENRTHMLZF48To0S3r/rpJLovnqUzJLhiJzyv6140a+OaqK+E9lX9/2tEmys/W9gYAYX
+         wqFYDqbDkKSqk5stsLKfLF8p+o25nsxJxkcq6OBfHKa6Wc5jXQZnnjTJnjlhfK0XgbAG
+         jY9JcMXhq9BB2LjMMI7FUIrkqpnSVpHfR0L7z6q/GJICdSX24UnNlUG49pN+M7GrYq4p
+         o2Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741003336; x=1741608136;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FvjfazhXAUkX+q9ADQWctMmDsHuSAcb7Kglrffn5CF8=;
+        b=HrTHUqVtC+un+V4fRA8vhkIwZLpFPTdxwPJp6xJcVbrUhDkBaTECghqPTO6xZLMkq5
+         hxhzGjjxhJr8OkKzJp1SnddJRP3z1+GwTRmBRcLA1RCbe6iXUvc2UVKtWDS3ADR/oMam
+         R+HYg1PM/CTOlwkOcdhNfY9w6f3ZB3QdRae8W60MDm1X8X/fGzz9LNaXxCdmQ9dLpRMY
+         jRciyJ6i4kO9Fd4BsiAV6EEc2upCEKlQrDro6YBxQISzk9nrlC8y2zYUKUuuUFmFMlJs
+         6+MBxpd7cb01A1EaFAmTFXbX5bEzm8amy9o1Y99nVzna5/ja2vw1So7J2GWvBsH2DfO8
+         ofoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBmeev2f99n9rklJQiZoiwq3DxXc/5FkBh4waq7CVvNpiyYFvo4jaCEWjWgDO2qpHS1LuGAinmTQgrb3VT3o4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZDEnGzUE+HKKZ3eUPSR8VOzmZGUGlq+kEXlSwUUkDR/Tf6GB5
+	drIaf+I1nY0iNa92xwqBLz9PXzeZLxHg73nrXj9IXzZGC2o/RJMLMQ/VrbVdMXQ=
+X-Gm-Gg: ASbGncshTXdrfPsLlvZubibV5bZgjQEKB8cjbWdPi3IjpNK0Mx2cttrYuYtzhFInNcr
+	SsaqXgAZcmKEzKYTFDJ7rtHeklB/D9eZfuPXjLbheNx4WYDQfZ3jUTHBsjmqhT+uA+/8T2vzDaL
+	rt6PJYiQASG4/f87THOmmYlNc7blxKJil95A7DVX9IbzazuCkBdK3vblq3XazpA9GVfqnO49LAR
+	w4cXZ3Ext1x9bwIRLrE7AvquTl81qk64Er45dp8TgaoL2FdREFlsUAhUjrK1gorhqTkn1j2sHaO
+	a03AoQc3oScMuJHhUz3ZxswJdp7x5oT0rfqLVtpDyuMN3/6Veg==
+X-Google-Smtp-Source: AGHT+IEVLpvwi6O6OBs0WN+GyOzE3jpuGJmps4EUiNQjjGbXYoZLIY4WBBNb3SuJAGnkmtz62ElidA==
+X-Received: by 2002:a05:6402:5190:b0:5db:f26d:fff1 with SMTP id 4fb4d7f45d1cf-5e4d6b62c36mr13405841a12.21.1741003336577;
+        Mon, 03 Mar 2025 04:02:16 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e4c2f408cdsm6696931a12.0.2025.03.03.04.02.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 04:02:16 -0800 (PST)
+Date: Mon, 3 Mar 2025 15:02:12 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ahmed Zaki <ahmed.zaki@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: Prevent use after free in
+ netif_napi_set_irq_locked()
+Message-ID: <5a9c53a4-5487-4b8c-9ffa-d8e5343aaaaf@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelledtudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepofgrrhhkuhhsrdfglhhfrhhinhhgseifvggsrdguvgdprhgtphhtthhopehlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvsehlhihngigvhigvrdguv
- gdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehsthgvfhgrnhesrghgnhgvrhdrtghhpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 03/03/2025 at 12:15:25 +01, Markus Elfring <Markus.Elfring@web.de> wrote:
+The cpu_rmap_put() will call kfree() when the last reference is dropped
+so it could result in a use after free when we dereference the same
+pointer the next line.  Move the cpu_rmap_put() after the dereference.
 
->>> You would eventually like to express that a maximum should be determined
->>> from three (or even four?) values.
->>
->> If there was a max4(), why not, but in this case I don't see the point.
-> Do you miss such a programming interface so far?
+Fixes: bd7c00605ee0 ("net: move aRFS rmap management and CPU affinity to core")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ net/core/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No I do not.
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 9189c4a048d7..c102349e04ee 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -7072,8 +7072,8 @@ void netif_napi_set_irq_locked(struct napi_struct *napi, int irq)
+ put_rmap:
+ #ifdef CONFIG_RFS_ACCEL
+ 	if (napi->dev->rx_cpu_rmap_auto) {
+-		cpu_rmap_put(napi->dev->rx_cpu_rmap);
+ 		napi->dev->rx_cpu_rmap->obj[napi->napi_rmap_idx] = NULL;
++		cpu_rmap_put(napi->dev->rx_cpu_rmap);
+ 		napi->napi_rmap_idx = -1;
+ 	}
+ #endif
+-- 
+2.47.2
 
-> Would you be looking for corresponding software adjustments?
-
-Not necessarily, unless there is some performance improvement.
-
-Thanks,
-Miqu=C3=A8l
