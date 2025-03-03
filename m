@@ -1,137 +1,98 @@
 Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7373F1487F4
-	for <kernel-janitors@vger.kernel.org>; Mon,  3 Mar 2025 09:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C84AD27;
+	Mon,  3 Mar 2025 09:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740993554; cv=none; b=tffQEA24vHYyNnU2INpmjKQtQx1zHFnvl/jHoBShGdabO/rzlC3/jMzt5QqMzpiOyBwRSyb3Sc2IuzZjvxJIysUC4fR/R4vDn/aV5qMhF9B/aa7LVAE4tu841WJWuUolbbv9VCVzQ8SKhtWi7WX/tmUqIz6po3Kj2KsKzTxv+mI=
+	t=1740994143; cv=none; b=XZfNcY3dyR4pHbxRgX0WLHKLQOZ7mI4c8T8wxOR69wuE+yP2pRIyzyzK6JtmeCcmFOrVswJYv+yvFocjpRJN2ser2SVBWPvPhQLt7wCkYPVX1Iq32wxNu0eozbHYSMHDzunN5g6mjdF1Mqn/aFzwKFHtVVL2da+jh/UV63zaK/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740993554; c=relaxed/simple;
-	bh=gcNOncFZdUs+yNeq8pr7D0R7rzSHI/mcL2lr8MRssiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYKXA8Y65cBkXW6dHjVBAjmgQeENI9TPIzp7fgPBuyV5EO/NoDWb8UGMaxCeA3+XS3WxL9DMf9z37pheNazRBoOyRaQ2Y9rxWbbsTmkc4ggIITBy2NPDa70kT1SCWUlFSxxLrNWj83IW7pqDHR716mdlvmWrQfV1MAWJpj1nnQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BHgGP/K4; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1740994143; c=relaxed/simple;
+	bh=ui3R14myRdZwTTXue/QIbtIVVhsxfritmC1MAYwUXZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QSh7Ju8zWbKeBFWaHnrubJdRk1iv8pBERHFMDGGGy+lzGDDH2G5ICwmXsyvuiHFG74tXrZHXeqTvDkxuuoKUmqBcWBOhlcYPjaOquxz0ES4sHmNFdOOSfN+W9cGmSYKl2SMg2OH9x9WbHDCu5anJ7C5SXQj3IthNzdziR3YqpKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cEVa/RxL; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BHgGP/K4"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439950a45daso26015775e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Mar 2025 01:19:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cEVa/RxL"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439946a49e1so26154345e9.0;
+        Mon, 03 Mar 2025 01:29:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740993549; x=1741598349; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gcNOncFZdUs+yNeq8pr7D0R7rzSHI/mcL2lr8MRssiE=;
-        b=BHgGP/K4nfJ/+0PZMEd7uq47PGl6fzMKFzRRPA/1V9tDi0suGuZEDNjahH74gfunp5
-         ryMjFzwtwl89eNIXUsxnJUIQGK97jDbunaNAJP4Wx/XBPSgctO3vubEsDpXZhDbZbrzH
-         XO+vmbI5liCz9gtRGr3OL9MMbZSN+tpuLzsTCUgB/98pzw1ruE9uVN26fYvzGrmPFNEA
-         G+jc5IGla6jQgJWi/5hmXvVZy0USDaggJo14+1hn2wgX2JHjpj7PnTfRnpNgp29muADJ
-         K0Z2kOB5ulLsn/Cj9J5/iSAhMXh9iXyWD7wAh646kqvfVYqq5EbviFU1rHtHo8GWETcQ
-         gWtA==
+        d=gmail.com; s=20230601; t=1740994140; x=1741598940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hjzg0yBHDp5xJiHuoo+8NOoe8pSEpfgs6lM2e2fa2dA=;
+        b=cEVa/RxLioFyRDgXGpUPiPoARTJWRwGXwUC5Hs/m3TfuerTrWCEzc0ai8F4njvBXyY
+         WGXukGD3qtM8h7MWIQnq9UeVf63wDP5P6M7YAc4z6FVEPwgRdZbgo5txGjXZ/4V4hv5N
+         oCznZXPhbklYMZVYcF2w6+w7b8nxBCfysZQCsmzX6XItAwAr4vFwwh6k4SZQDsVbTMpG
+         52rpiqxJvT+74nSOIf1bQsuTRL2Uk0+So/g1RHHuA9D4M/j2HxsdV0N6Jktn2I1aG9da
+         POmCxYNTqXwEUJ8J3O2XgsizVa71BilDbBJuVcgvCkAk/FAVkOBa1U/KzK9fUDId67+g
+         EMDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740993549; x=1741598349;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gcNOncFZdUs+yNeq8pr7D0R7rzSHI/mcL2lr8MRssiE=;
-        b=O8Br7zGTOWMIcTBmbtcCCYAJ2pgSleG+1gMqLlFihTl3BlxVFPCuR0Rxb44uakbD/i
-         xvBhGVm7Pj46RAGNLkro/EJSNXVBrVAIutuv6OXIf8uQKQFvY5TgkciOkTr4i4ZVPCku
-         FP5QfQ+hShbV8tPcn+dH8WpcPSslZbOLK8N8YRHqHvy3Eyh+yQYBI92lUxzwYogH6yL/
-         XUg48u2qHbc8Y5QgmJECfT8ai/URnoE2g9ERKlwnOxQPVfeQfzrqiCLLmVELOiHXLn/y
-         DwF4xYXU/pPv1in5iFuUZ+q/W6TEihqVFDlkMPG691z3ioa63orPTUrCyt9gt/XTUnba
-         2WlQ==
-X-Gm-Message-State: AOJu0YzNgE+bYc24hF+T7YYa+jj65SOHwtddJUpMkrcPXVoYI5T1wPRy
-	hw8izjkZi8uZLy4M1YQle3rstUkjBSB3TcflViJaGKHg8WqxynV/eYWjwG0m8iA=
-X-Gm-Gg: ASbGncv9fBZURZ4jRAT2gUpy+T6wTamE10jgsvKteTIvU3EBK5qeyQjU0H3JIsccHhI
-	MH8fPTYUVLXY7FdquLKIEOPeYbdzINAWL951gp8ar4voaFsXfl/h+qYr85MUG8AGA2vqEo+PSzN
-	xbg2Mw+QyRRneC8Yp4C+IjQerVfEvtmRWPWPbIF+qFtmAP3Nu2to41wmLMrcKHL5L3rewAoYJUC
-	SsjFpqjekYMGD1ABSbfMqiTc1g6xsbMEN5dB/RbQKz1EsCOH7RalgFM7RD1V3LqTO5bV7kUuORz
-	EgQTZ2A3zrKE2qzOzJyRCIrMEJDmRfVr7DPHRRLynmrToJIBVQPr52YUUi8TEwrXosdWPS+u/Nu
-	IP9DlZ/rA3QdCyYR6TXfkA2NyHw==
-X-Google-Smtp-Source: AGHT+IEgqURih64QQq878LAlpoiWUHZ5SF6g+OaiNjsjRHNfpFnMktBq587o0TTR3FHczDy3N5hAQQ==
-X-Received: by 2002:a5d:47c3:0:b0:38d:b610:190b with SMTP id ffacd0b85a97d-390eca377a4mr9441525f8f.46.1740993549456;
-        Mon, 03 Mar 2025 01:19:09 -0800 (PST)
-Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6a87sm14038348f8f.32.2025.03.03.01.19.08
+        d=1e100.net; s=20230601; t=1740994140; x=1741598940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hjzg0yBHDp5xJiHuoo+8NOoe8pSEpfgs6lM2e2fa2dA=;
+        b=AMA/JcI0gQOGGSwjrCcuZqaTgFvJhBB2MUTHNgeKV8pD/bgCPT6/E4FY4rsjlXbPm0
+         wcpGj40aZ0bA2QKEv2stjb/1P+OS9DpVhib2uITK7lu9M9vZKx+mgkrLyjqtdlKOFmyR
+         SPDOVTe3MxWdfZlMSQnQODVv+28ETFchohIB5cBqpkm1997IB4hwcwP2ldP6NWdBjWJD
+         pNO1uHM8Xg3F7Sw/h0ISOx5su34XnwR1QGhrztJdmPVIl4HFbv6QiHdgkgGxju0o137w
+         bkyyxZI30EczEetNrAxT7zA0HS4D4DAEZb4vYN4BDNCjqD70A+Ulu2x/87JqsvHw2oIw
+         5LBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUx9Xde+sCI/dHgSczOOf4NM2OI3zvq2u4OO67JnUwZtUnHgD/mDGyQZ8jbnH615uUPVDEwh4gZ24iL@vger.kernel.org, AJvYcCV65LLrOtRotzCn8usiP9yw445UAwZ+T8XJBoN0HDgM0G0+Neiuxxa3ZeS7mEo0ywbZCh1mYicq2+GU5iMn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf3svnNPSxZXOL3YAvH8XfJ3RoDz6BxPYEFMLegIfgjNWZSJr+
+	yB3pG8xtXSI7O6GTfuekhPvcrN4imginBp+p8orKDpmKamzD2Zra
+X-Gm-Gg: ASbGnctVdCNtEebzBwP5lI/noVchQ7iO9kceJCQk5iqmRwiC9whqFCC0BicVZ7z10ET
+	7ciwwJLrUDYC9ZT4Q2relWI2gcbOG8Ez6F2V+iNEbd2QI2mjzGiik15A4BSL+CycgHeU++q+hG1
+	2cjrUv2YntVs2sV0XIXi4UV4FIVtPRsHDFE9paYkaV97XLDEq+r2SkUq2NjmZb/5uK5bb3OyZen
+	jVZGJo96Spz/J+3cL9lRvafpwYhlZBia9AvX2y0TZlMQTqcQhNtr/N9x3QrFKingVY3LBslQFBu
+	Ux0z5IRjckM2bEmEPQVAFK17YB5iNrJu7AuWPJSxrw4Cjw==
+X-Google-Smtp-Source: AGHT+IFOvnLknIuCVa048FB5fDiu5+2tclMleviAhfjB9S+evUys8Sh8gS6S8nWHU/unGvITK9WJWA==
+X-Received: by 2002:a05:600c:3505:b0:439:8cbf:3e26 with SMTP id 5b1f17b1804b1-43ba66d5659mr95783095e9.4.1740994140122;
+        Mon, 03 Mar 2025 01:29:00 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bc1b5db02sm30694895e9.19.2025.03.03.01.28.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 01:19:08 -0800 (PST)
-Date: Mon, 3 Mar 2025 10:19:06 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Antonino Daplas <adaplas@pol.net>, Helge Deller <deller@gmx.de>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Yihao Han <hanyihao@vivo.com>, cocci@inria.fr, 
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] video: au1100fb: Move a variable assignment
- behind a null pointer check in au1100fb_setmode()
-Message-ID: <ugymllbkcsg22ffgyofvkquh5afbvoyv2nna5udmy3xfhv2rjz@jhgghzldzm4u>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
- <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
+        Mon, 03 Mar 2025 01:28:59 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: pinconf-generic: Fix spelling mistake "paramers" -> "parameters"
+Date: Mon,  3 Mar 2025 09:28:26 +0000
+Message-ID: <20250303092826.318638-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b5ssf4zg6xgpebyg"
-Content-Disposition: inline
-In-Reply-To: <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+There is a spelling mistake in a dev_err message. Fix it.
 
---b5ssf4zg6xgpebyg
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND] video: au1100fb: Move a variable assignment
- behind a null pointer check in au1100fb_setmode()
-MIME-Version: 1.0
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/pinctrl/pinconf-generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hello,
+diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
+index ecb7bc175283..d67838afb085 100644
+--- a/drivers/pinctrl/pinconf-generic.c
++++ b/drivers/pinctrl/pinconf-generic.c
+@@ -262,7 +262,7 @@ int pinconf_generic_parse_dt_pinmux(struct device_node *np, struct device *dev,
+ 	}
+ 
+ 	if (!pid || !pmux || !npins) {
+-		dev_err(dev, "paramers error\n");
++		dev_err(dev, "parameters error\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.47.2
 
-On Sun, Mar 02, 2025 at 07:02:12PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 13 Apr 2023 21:35:36 +0200
->=20
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the function =E2=80=9Cau1100fb_setmode=E2=80=9D.
->=20
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for the variable =E2=80=9Cinfo=E2=80=9D behind the null pointer check.
->=20
-> This issue was detected by using the Coccinelle software.
->=20
-> Fixes: 3b495f2bb749 ("Au1100 FB driver uplift for 2.6.")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-
-Should also get
-
-Cc: stable@vger.kernel.org
-
-to ensure this is backported to stable.
-
-Best regards
-Uwe
-
---b5ssf4zg6xgpebyg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfFdAgACgkQj4D7WH0S
-/k6Ubwf+PAWfTbo0e8l6pPMYDWTrIlWDVs6P8JwsxmPeNHmuw2L+6JmiXLUt4r8K
-BVOnwleXuUC4G/EKeAKqCwELLweDzt6QsmUWLUCsc6MWiQ1O3QDCv13Fty9auThY
-kk47fq5PjnBwjmIVoMGXAgkBlbRg7kL3mHisr4Znw6RGM/T4kW4GGSSRKBNUDTy3
-3zTnFrB5Yu6Kzu4JeU34zrCMxKAvQQoBWC61PkTfjcagCj/XrRG86KI818e+6ZPr
-P65IgsUOVTGAFKASeg4ZDgvdvaMnvoOH2w4RENMNeHuYWCe4wJaW/bn5brGZq1eP
-MJFndsnaHk7DCh94RiyWcyZ7veHiLQ==
-=VPpv
------END PGP SIGNATURE-----
-
---b5ssf4zg6xgpebyg--
