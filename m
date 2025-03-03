@@ -1,143 +1,67 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575711F19A;
-	Mon,  3 Mar 2025 13:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7C120F095;
+	Mon,  3 Mar 2025 13:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741007905; cv=none; b=UJJWiUWktX4xwiPojMYMvc8iZRAuk/7GoWfha53iwNqWs32mv1Exxwm81VhR4+UdYayJciREXYx96TXh9LEs9LM9FvnVnIjQO3jSgIGpSzUsWpZedgDVub1IM/Oq9t63+3GdSSYEzHrP4y8A2LCMtjzAV4IHupTF8De2cb3PPqo=
+	t=1741008330; cv=none; b=hkHxhp6FykX7hdR3oatkJ1PNeHrZ7hp8XXADJwRsoP++5Hp4iSwWHY6cKoloXh259Cg/qMvI9lvvYlNx4SlT3aEGSPmhSx1qjAJbZlDo0uXiDB0qdvooogfDMVQhzbNo0JMmSbDZLz+re0m62dLEkjwAX4qa10E+QlDG4ZBOxug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741007905; c=relaxed/simple;
-	bh=jMjxzuU5ybybM0n8xvB9Cmcz8tDPN1BHkYcTdsgjICY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VmXFfhMjxRxTbx9v1w99aU5J5FoElwbkbkqKlMmD4c80H2RpiK/B46vgQre1bSVwul/ef7pIF4IkhcXTnE1jlXYVhy49+whZAEqZ8gNY30fqykIWnqBW9iY5FOAyxXYtqvKM6pYZe3Osg/2NqkQmWqe/EB6D0os17w+9SmZz1ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pMWhQSZ7; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1741008330; c=relaxed/simple;
+	bh=wdhoR6ywow1PwN5lQx32sLFLsyyGs0zWpCWAU/kybBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qlaji457fPF8gj4ElLj9PWF8WrqM32BFAmDLd5EiIVtIXal1RfTP8rE3+GLNv1dm2ZDsZDQVbqiakC3MSgkyFeegRaiT9rlXkId9faQRsQFDi78yjOONmhzWu7VODmU7gwCGavRb9cVOtzxS/5ncd/J8xTCQk2ERrVCYBTkf85w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AE2vC9EL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pMWhQSZ7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741007901; x=1741612701; i=markus.elfring@web.de;
-	bh=haP3YnQ1hTaM4n45Pmancys67feBgEgblRKSuXDvr1A=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pMWhQSZ7mmW6WnDrAnSZ/723yKkMZsWgqcHn2JYzn1A2XzjyBQm/ik2Ej2mC1NQH
-	 GS13QOP1KrUfaS9mzQLNqpYvcAXt+ZrVgZNDc8I985hG21SwlbBCjbbyuHewMB0j2
-	 RfUayrlNt2Wq4kVnJ7kkrs/JOnFoliDCRErARsIXSntPWj7AN7XGGIEdC//pfHwBe
-	 C65KCMh/qrJaLbD5iw/e5SYFHMqa8zoI5j6/qFfTybG52f5DLtpbv2CDqt02CG0fl
-	 5XvG3fzPCoxLs+DE5EQh32/D4va8BUxB+HX1cOrQEgmk5eC+PfTdnHTOkS0zaZd89
-	 eX2aliMELA8jm5EZnw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N9LIO-1tAIuH18K4-00yGaQ; Mon, 03
- Mar 2025 14:18:21 +0100
-Message-ID: <22e24ec8-283f-49e9-b7b0-555e8113c250@web.de>
-Date: Mon, 3 Mar 2025 14:18:18 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AE2vC9EL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D43CC4CED6;
+	Mon,  3 Mar 2025 13:25:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741008329;
+	bh=wdhoR6ywow1PwN5lQx32sLFLsyyGs0zWpCWAU/kybBw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AE2vC9EL+ZJH5AFoHN1UKXS2gOyOcmx1+SvK2w7Uf2aPcon+J2diYucaWf2XPXKan
+	 6alVVReitG6Nqb8N9a5rWIhA0l+8EFEeGooHKwrojhEEvPQ6QmbIoxfhqX2VOql2A2
+	 VWMWrNTPzQDiUqOKGak5WVDbOzkwb1rpNxFueUhlZ4QRKxYWDKzXYLdL8WQbni7F3P
+	 6nKKRi71wdGzy6RSYizLyBewg1tf6Goi0NWhiwTlmwdwzMQBy5Xo7GuwfHAN8KG6Pf
+	 c3ZA1llyqOzFf73lnYpdou3nwcRy+hiRbRQHZXN1b4bifkaIO3RGbO1O2/H9S0V8oN
+	 xvC8zztWQrV7g==
+From: Maxime Ripard <mripard@kernel.org>
+To: Anusha Srivatsa <asrivats@redhat.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/vc4: hdmi: Fix some NULL vs IS_ERR() bugs
+Date: Mon,  3 Mar 2025 14:25:25 +0100
+Message-ID: <174100832301.41636.4338334342828265261.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <a952e2b4-d4b8-49ac-abd9-9967c50f4a80@stanley.mountain>
+References: <a952e2b4-d4b8-49ac-abd9-9967c50f4a80@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH RESEND] iwlwifi: Adjust input parameter validation in
- iwl_sta_calc_ht_flags()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, Benjamin Berg <benjamin.berg@intel.com>,
- Gregory Greenman <gregory.greenman@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
- Kalle Valo <kvalo@kernel.org>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Paolo Abeni <pabeni@redhat.com>, Sriram R <quic_srirrama@quicinc.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
- Simon Horman <horms@kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <9cb634c8-d6e6-32bc-5fd6-79bf6b274f96@web.de>
-Content-Language: en-GB
-In-Reply-To: <9cb634c8-d6e6-32bc-5fd6-79bf6b274f96@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:klaLpxqRowNpOLqo5TgPE5pwLuOQZxsO7wlnEJEJTMtovuceQzK
- 9j5rbUI7I/TUnJK5L4CF9gFQ/eXeg/hblRTs/rM+HoQQF+nLiHgvC/yTerLULFGe/c3bjBb
- MarWJxxg7QLtmxPmtF6LdNp6dF/otzHpWAAhCXfm4i7bDtKLPYB1jL9ij0B0MigrfUOTzCo
- MJ5lJiYrKHkil1c2EPwtA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8hjet2llDHg=;XzADO0IesvNkdn8ez1GDiDig+Fz
- zTe+5Ine+8o3lhtscOx2xxi399ryECeYZas5pCUHajSWwa2tGmdwuInMoma4aFSTyAtiZPsT8
- Td3ElBtGnXvSZPt2JqexXGkv2th3KLL4Ksn6WUyuSs60H4HXN0PkhqDUMGBc3RB5t4JF7sQfT
- m1o7WJsk8vTAsrhDgRw1ZvFiCqEML2kYSTkJex2XIqjQ7lCXtgVEdfA14+qsl+FdpQOFHFT/0
- b6el7Rh3ECXRN/hJH96cfwNPbCIUxZNeVXegFDlQXhDnDNlIjz5iMEr8q/CX2O6m+X3x2yYFY
- v2amNEe2oyJROYUyGCzI9IHecp5McECXojybvKBRSdSrXxH1rT2B1GTvCNZGg3aqVC6GY9wQs
- YJjK1j4mQC7OdbxrjNQj05YszK8t98EsRL9YXExRvbylVnGj68YlKDuZmdRITkNUEB6NhOXrt
- 9ENDovRTtJiy67JzRlDE3pKxcPiMHfNPJeMuEO5DpxC2Ca0NPuuq6joFmFz6u1tny/f6gGFvF
- CwLnm6PYRtyXliEVUEn3UUSmDQTz8qyhLs1YDiBIlfeHeZxOaCMscP4YmSn09lyxFef31utby
- 9e/uuey3/Jb0I+EZMPUlcH+R23S6MB5gWQ3dFKyQa0f4IypJ389rcODASgUmiXOj5yJYd1u6h
- 18/XyDfamrCdIDiv8Licz9/xCiJNJ8IcJteTAMtttm7VFfDjpwlNTvnHVsyP+l+s4ArmONhUD
- XczPFTFaUcmcyFNmNE1+Jf4oEaB8JHXup56yNPoPdXUB6O5mvI/uRDflz8PPQDB3cDowMDC2K
- fJI5d8OkAD38Lr2Y7HnRdBtpy4YiG/JvLBoDMiMdwdwjku861gIE4yA9KZ5atkEG8iZsiVQNG
- Fp5RrdyblFAmPqP+tokyt0D02ZaqcVWwaXCJxBtF/bom3uKwkcFeZajNEHvzXJeRimFFxuRSx
- iTVGaRkdxNOJpP/dncIAe+YYdMSVbCcaPK8BtL5BgehI9VSW730Q+I8Geqoovlt5z0r5C3SyP
- Sg3sMcN6rbx4eRDJOjdxC7OxPDQ+wq98GAyjOCXUT5kRlB8+qBGyQ4xtCwdswHicA1amiAULB
- mb7YvyaJRDSVf6JNK115i3QuY5Btciqw5FVf4+X7UmnoDROerESuHj38PUsb1WoBhg9Z4hItd
- egqapByLzxK/qytebvoMt39/lcwCM9K6VqwRXThr3O/FQk5pmyrSkJsa96UD7aS19COdjUN3C
- 8vJyHRwOqwn4h0JhsvpgBpMZbA7Xobq7zhjU+IPlCtOJcCB6ycaFsFgxPk6Z/XVY8nh8gT89k
- cYx7F5B3JDlXk6E1236nBVcknM7JRLrPnkZ/LEGDzy9wvDplvGK301Ntv0TxPsf3//NbNRc3M
- q/WBsCJCPfXChuIyUY8QNUwh8NbKe56CRjUR3vHSvZctplmyU9Hat8/WJ2yOkA43RHGhLrvre
- NgFLOXuXjSyn+3kQuRcx4J6xC2XA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 19 Apr 2023 19:19:34 +0200
+On Fri, 28 Feb 2025 12:38:17 +0300, Dan Carpenter wrote:
+> The devm_platform_ioremap_resource_byname() function doesn't return NULL,
+> it returns error pointers.  Update the checking to match.
+> 
+> 
 
-The address of a data structure member was determined before
-a corresponding null pointer check in the implementation of
-the function =E2=80=9Ciwl_sta_calc_ht_flags=E2=80=9D.
+Applied to misc/kernel.git (drm-misc-next).
 
-Thus avoid the risk for undefined behaviour by moving the assignment
-for the variable =E2=80=9Csta_ht_inf=E2=80=9D behind the null pointer chec=
-k.
-
-This issue was detected by using the Coccinelle software.
-
-Fixes: 046d2e7c50e3 ("mac80211: prepare sta handling for MLO support")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/wireless/intel/iwlwifi/dvm/sta.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/sta.c b/drivers/net/wi=
-reless/intel/iwlwifi/dvm/sta.c
-index cef43cf80620..74814ce0155e 100644
-=2D-- a/drivers/net/wireless/intel/iwlwifi/dvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/dvm/sta.c
-@@ -147,7 +147,7 @@ static void iwl_sta_calc_ht_flags(struct iwl_priv *pri=
-v,
- 				  struct iwl_rxon_context *ctx,
- 				  __le32 *flags, __le32 *mask)
- {
--	struct ieee80211_sta_ht_cap *sta_ht_inf =3D &sta->deflink.ht_cap;
-+	struct ieee80211_sta_ht_cap *sta_ht_inf;
-
- 	*mask =3D STA_FLG_RTS_MIMO_PROT_MSK |
- 		STA_FLG_MIMO_DIS_MSK |
-@@ -156,7 +156,11 @@ static void iwl_sta_calc_ht_flags(struct iwl_priv *pr=
-iv,
- 		STA_FLG_AGG_MPDU_DENSITY_MSK;
- 	*flags =3D 0;
-
--	if (!sta || !sta_ht_inf->ht_supported)
-+	if (!sta)
-+		return;
-+
-+	sta_ht_inf =3D &sta->deflink.ht_cap;
-+	if (!sta_ht_inf->ht_supported)
- 		return;
-
- 	IWL_DEBUG_INFO(priv, "STA %pM SM PS mode: %s\n",
-=2D-
-2.40.0
-
+Thanks!
+Maxime
