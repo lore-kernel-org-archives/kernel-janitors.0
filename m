@@ -1,139 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F6520D4E9;
-	Mon,  3 Mar 2025 13:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A71433AD;
+	Mon,  3 Mar 2025 13:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741008538; cv=none; b=lACIjILmPK4ltEX3S075WZVSbQKTrawnSDDQ/n4YSbqiTb0dPVjFtFzNhOZhugZqpmzfjSeYqwMh7nk3B7g6+qmqimHgAhPO9n8L+XRnO3gBtxjgypaUyvVfHhM3stdKsTjbtF0fraA1H0cvOSxx7DG2KI/bu4ekEde6c20b/tE=
+	t=1741009476; cv=none; b=IBCk9FY4/EoZgwPJAAB9pWoLLIhHFulzGUhXiOoCmPPFPB16j+myJ9R+quADt0S9Y84tg/825xuMoNkDsYuHoJMqOh6STf+4VlqPcAFf5MJO0PLjxLe+1Uss6NQ/FJ3zpmjZXxDdE6JBLDxk044nVFG5X665gX1QV6ySMv7qUwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741008538; c=relaxed/simple;
-	bh=pU75ZWR55ytSqTfFyBXoZ15CdXjjZybmf3hZAq7hNZA=;
+	s=arc-20240116; t=1741009476; c=relaxed/simple;
+	bh=jqfOiRqnAXplxdji1HrpGQSwrxDKjUaXrPc3szCmQa0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NYFbzmjhJQorDYQHPrWJQFT2i9XyqLQJq3Ebggy726LWg0c2G+gBimdUskbhQmjkwfRTxvn9CJgTmfRRCtpVonNPjFFjSzrOFYOBrpKqMluNt3JxASKhlxizfia5xQA8G81m9Asp+47yc6zlY8Kdj0hXIM/ihpz9k5Bkc8tgsrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvovLgDu; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=LIr76QWXFHiKit6v1bGYlMjfBGmJkk3++j8r5NuoVjuVImSNkin9sFrgUa+g2UNp1s8v0BFKIkTQZdTjZPgyIJrLyVzDETCNznJKC+slwm9utI4GBZyBNB64PuG6xz6r4LivG4j+ZGiVPPca88JJMVj1ktFPvbFMwtAR7l6Ap/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oum4DxEG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvovLgDu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3CBC4CEE9;
-	Mon,  3 Mar 2025 13:28:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oum4DxEG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60540C4CEE9;
+	Mon,  3 Mar 2025 13:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741008536;
-	bh=pU75ZWR55ytSqTfFyBXoZ15CdXjjZybmf3hZAq7hNZA=;
+	s=k20201202; t=1741009475;
+	bh=jqfOiRqnAXplxdji1HrpGQSwrxDKjUaXrPc3szCmQa0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fvovLgDuT8SSv3WCPvLaVtJ0pBNwyRk6mFp31yKWnf+m8GRu7OhSOpELYlOpzrLNN
-	 sqdAotELtlVNYxz7k6QnZtcBAlyXprLJPPsSicGaETkDSeNYREsV4LGPuE+zQwUzJU
-	 vJeo0lTRXJn33MqW9GSE1LA10t2CBcSeWWF/JJxdzVejirlmdmXYvnfYsJ3fudmtQ9
-	 7K9jdg92q+5e6jsT3P3a5357wIHHlB6QY+ZKso/Q1+ndSWBnoPz83uRD/qG8ERufGH
-	 tPdnoGpo5d5sWXgFI4mByp/QiN7oufWU1SvpUPzn8zcBQhD/Ssc50B2bSIWu3/5php
-	 wpKCziGZrfnaw==
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ff04f36fd2so1544616a91.1;
-        Mon, 03 Mar 2025 05:28:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW/eoIwD3AV0Au9x9/jvyRF2bi5goMQB1iXQYsfZmhYGX80JyTmYYMPRRjr0zUtCv8bBukEpNmpofLRjngcQw8=@vger.kernel.org, AJvYcCXfXOGJ3Dpo6WLE7ZuT95Gwrkqo3G0uYnEgofjJHM1mUgZ+wNLId4m6UiExepu1xKkXvmFX4TJHFyIUDmeX@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRUty2VSDjPBpoR6zyi4mUIgUo+Ohx9MQ5Iiwa09HxxtJP85EX
-	7o05HiXumopNeuYMcww8qfOxcyjTYyQKqAMmk7gGwTy+sNUbDpFGrTmK6xwfSRmZ4DQN08OnCOi
-	vmdUFEEE5fcG7amDvgRZaBP1+bA==
-X-Google-Smtp-Source: AGHT+IHEdNW1OchHMbLS1cCfwrEs+3MwI78VEpSMNYRCH8bFSj4YHOZdW6AmaLLo8nvW04MvVqNc2fV4NRzXAOPbwh8=
-X-Received: by 2002:a17:90b:3d4e:b0:2fe:b9a2:fd3b with SMTP id
- 98e67ed59e1d1-2febabf8336mr20713936a91.30.1741008536294; Mon, 03 Mar 2025
- 05:28:56 -0800 (PST)
+	b=oum4DxEGA23Ji3l9PGJoX+hetDFdP8pxRiw/01i3Pm7dAKdAV3GVqAgVjcFtZCKso
+	 lIhbJe38IDq39u7PADiw+rISxbEZUl+X30lsE8fMUfpxpBw0MJIVuH6eMzzICUXVjP
+	 +D5pQZ2BfeiCAKIrEH9aTOaon8qDJAycl7S69yhVoidDd3Ilxzf7HXlDyQkMJf3PQe
+	 IO41crZ7BPtIey2Sm+nilftDdAZfMLoCAxMtRR5fMwRI0J5KpWnGoa0CDIu2KURclx
+	 gQVL1yayPwsC+uwfbLjfpV5zVvLod47TPdbe55h9Y49ay6w7UpTRT6NeaEBI4l6nCu
+	 sx5WNuJbtVIRA==
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-6001126782fso287415eaf.2;
+        Mon, 03 Mar 2025 05:44:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV6S/+tfH/6a/PO3Sk0cxP9M2/yzHzd20yggzrIXaeC6gDOCc3F5/+3YpBtfBUEwpO9pP5Ml6rJ1KZ+PmL3@vger.kernel.org, AJvYcCVD3mGWdLBoK28yzkhQViKa/yvO3UulAI3EcS6iKtHeeR4WRYiDKh8/oIPfSYCzol/7B8xPglhQQzM=@vger.kernel.org, AJvYcCWIXk1ccEDMD/22Zgwb/EECika5MxT7bHOfQsxze4f/lW0XrXrpZgJ0N9tPHSleqr7jUmRK+cwAy1vhp2n3+04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJTETqijOnjfojyMgOEM0CE/I37xiGsAdpD/bmNpKKElvcKLgl
+	4SZjeH7jC8N4Y6RRCT5ydM2FBJxTOSy5oP1A3NRboymIUJ+xhmrb8ILit/4li+kQXfRmchQ/3En
+	wjQkNBvYY93zFYUYjAbxkWE0bS8Y=
+X-Google-Smtp-Source: AGHT+IHKNAsvrzUN5/D3Oec6lBmqniTtsZ1eC6Gc9PfhKYulRj8KWLyG0IpHqpe1LiC5jsXNbRAU3QgEieX1TzaEmQQ=
+X-Received: by 2002:a05:6820:1690:b0:5fe:9dd0:b9f5 with SMTP id
+ 006d021491bc7-5feb35e7343mr8718596eaf.6.1741009474727; Mon, 03 Mar 2025
+ 05:44:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b754a408-4f39-4e37-b52d-7706c132e27f@stanley.mountain>
-In-Reply-To: <b754a408-4f39-4e37-b52d-7706c132e27f@stanley.mountain>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Mon, 3 Mar 2025 21:29:43 +0800
-X-Gmail-Original-Message-ID: <CAAOTY__KF=9Pp=3PAnXG5WCPX4Hxkfd391eBu0dfhO-wz9dWqw@mail.gmail.com>
-X-Gm-Features: AQ5f1JoEyaQUFZqrdcQEIsbOBWMKKKZ_mrsKmQyi0xWBpqur_M_EISNLxHKjU88
-Message-ID: <CAAOTY__KF=9Pp=3PAnXG5WCPX4Hxkfd391eBu0dfhO-wz9dWqw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] drm/mediatek: dsi: fix error codes in mtk_dsi_host_transfer()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Julien STEPHAN <jstephan@baylibre.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Mattijs Korpershoek <mkorpershoek@baylibre.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20250227224006.660164-1-colin.i.king@gmail.com>
+In-Reply-To: <20250227224006.660164-1-colin.i.king@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Mar 2025 14:44:22 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i7XyP6gRaSf60pzG2eSjFWVgMzhxkz-BVsGM8DzRT8LQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqRSXd5ved2nOIwbYdoVZXe62gNWNwALmByeSCpjwB5ouH_k3yJmmh2NbU
+Message-ID: <CAJZ5v0i7XyP6gRaSf60pzG2eSjFWVgMzhxkz-BVsGM8DzRT8LQ@mail.gmail.com>
+Subject: Re: [PATCH][next] thermal: core: Fix spelling mistake "Occurences" -> "Occurrences"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Dan:
-
-Dan Carpenter <dan.carpenter@linaro.org> =E6=96=BC 2025=E5=B9=B41=E6=9C=888=
-=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=885:36=E5=AF=AB=E9=81=93=EF=BC=
-=9A
+On Thu, Feb 27, 2025 at 11:40=E2=80=AFPM Colin Ian King <colin.i.king@gmail=
+.com> wrote:
 >
-> There is a type bug because the return statement:
+> There is a spelling mistake in a seq_puts string. Fix it.
 >
->         return ret < 0 ? ret : recv_cnt;
->
-> The issue is that ret is an int, recv_cnt is a u32 and the function
-> returns ssize_t, which is a signed long.  The way that the type promotion
-> works is that the negative error codes are first cast to u32 and then
-> to signed long.  The error codes end up being positive instead of
-> negative and the callers treat them as success.
-
-Applied to mediatek-drm-next [1], thanks.
-
-[1] https://web.git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.=
-git/log/?h=3Dmediatek-drm-next
-
-Regards,
-Chun-Kuang.
-
->
-> Fixes: 81cc7e51c4f1 ("drm/mediatek: Allow commands to be sent during vide=
-o mode")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/r/202412210801.iADw0oIH-lkp@intel.com/
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Mattijs Korpershoek <mkorpershoek@baylibre.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> I sent this patch earlier:
-> https://lore.kernel.org/all/Y%2FyBC4yxTs+Po0TG@kili/
-> but it wasn't applied.  I've changed the commit message a bit and added
-> new tags.
+>  drivers/thermal/thermal_debugfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_=
+debugfs.c
+> index c800504c3cfe..0cf26ea63370 100644
+> --- a/drivers/thermal/thermal_debugfs.c
+> +++ b/drivers/thermal/thermal_debugfs.c
+> @@ -319,7 +319,7 @@ static int cdev_tt_seq_show(struct seq_file *s, void =
+*v)
+>         int i =3D *(loff_t *)v;
 >
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediate=
-k/mtk_dsi.c
-> index d871b1dba083..0acfda47f002 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -1015,12 +1015,12 @@ static ssize_t mtk_dsi_host_transfer(struct mipi_=
-dsi_host *host,
->                                      const struct mipi_dsi_msg *msg)
->  {
->         struct mtk_dsi *dsi =3D host_to_dsi(host);
-> -       u32 recv_cnt, i;
-> +       ssize_t recv_cnt;
->         u8 read_data[16];
->         void *src_addr;
->         u8 irq_flag =3D CMD_DONE_INT_FLAG;
->         u32 dsi_mode;
-> -       int ret;
-> +       int ret, i;
+>         if (!i)
+> -               seq_puts(s, "Transition\tOccurences\n");
+> +               seq_puts(s, "Transition\tOccurrences\n");
 >
->         dsi_mode =3D readl(dsi->regs + DSI_MODE_CTRL);
->         if (dsi_mode & MODE) {
-> @@ -1069,7 +1069,7 @@ static ssize_t mtk_dsi_host_transfer(struct mipi_ds=
-i_host *host,
->         if (recv_cnt)
->                 memcpy(msg->rx_buf, src_addr, recv_cnt);
->
-> -       DRM_INFO("dsi get %d byte data from the panel address(0x%x)\n",
-> +       DRM_INFO("dsi get %zd byte data from the panel address(0x%x)\n",
->                  recv_cnt, *((u8 *)(msg->tx_buf)));
->
->  restore_dsi_mode:
+>         list_for_each_entry(entry, &transitions[i], node) {
+>                 /*
 > --
-> 2.45.2
->
+
+Applied as 6.15 material, thanks!
