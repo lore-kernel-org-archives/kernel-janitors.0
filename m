@@ -1,103 +1,82 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36B51F0E44;
-	Mon,  3 Mar 2025 10:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053F81F4281;
+	Mon,  3 Mar 2025 10:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740998221; cv=none; b=BOWZwKCW2x1NufVGcQ1q4D+SiNGXA9PxrGL+8EZUD/rngKMUrtmqUzYl64uuBGZFcCQqglRCsPNUynaROCmlbPi/kHiKXwnSoBfr91xDGQfu5WOc9PG5W/KuozQ/y3KGzQqugrShK8anKpcxZUjX37NLix6dV0nMqrL/OQ8695A=
+	t=1740998589; cv=none; b=KFwbEY+kQtzSuYt3sKY11Q05n+O7roDheEOOZPslfWvDV10N/D6yqgUyAA8swN7RW5BprNStu9e0rP6wX65W13bELjXdU8mjGzeWIHC0EDd4P1qN9PdpnTaVYLy+QXtsLqYW9MD3q4OHe8YQKqBsziBl0VbuTHQOnuNV7h+u/Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740998221; c=relaxed/simple;
-	bh=Gd1dlzOdtFDhJaQmIY23pfMlDTcKoNMpTpwfvcXDjhY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U0VDRw/gYgJqDq6BtHMb1Dxw9XaDgBddOszfmmmXofXkb6LvBsZnuQfqQPefHi8cTLx85XfLhzeUztW1m5pvIEQLa1KVzu0TVGNs+D85Pt5Pe/mJwgWbGbdn+tT9U4xykEO5E1QCdpz6OyNavcgO3fkuVUYe4bKJJj9D4EBU7y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=syaRRWYg; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1740998589; c=relaxed/simple;
+	bh=jowEScGafDqHehCuuxXQ5RRiB4vq3Q0DU122NO345r8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=vE4h9ZV6a/LfCwug9mW8hWzK9ep21CAMenwzbgSn1JrquIme1UoU7N33iXQOnIiaqK1wWGgYKnUkRrEFUIoutQQLvCKeDNdTF9wFKMplMPGiVRTYgR4/TrA4wldKvotr+hxQ3D91lW0PYCdg/Zs7lZtbm94rTBo05JjhWtkzbaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZTbOFcm1; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="syaRRWYg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740998190; x=1741602990; i=markus.elfring@web.de;
-	bh=3I1wcV88eyEZRxUAaJIlfqeblDAV/oemtgH82LOxxOs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=syaRRWYgiccYmjw9qtXIAxcZR+keMGcrCcJdHVt3VXZv09UXatyFGPrquv2NFk2k
-	 8rkHgHgD2g7XPO0fprbnhkv5tiw9dbQ7kToh8TeUXF2qrzl0gPkszu7S1y9QYT0uJ
-	 EdrUOqUsU3gcsYd0migjTQbC7m89boUFAQ3arY3U+U5KpxRsvuuWXw6Fqn+/vXIJA
-	 /JB1W7WK4mstuz12wAav1C8lfgxLH90kLihkhaM9hRy3pxFLl9ufqxjItLQCiJ9e2
-	 y1+sB5ANVpnTWI2WPIHiytD9OZD1+m6CkUMSnBiYSD9OnWFy50JqU5cd91m+dhzyx
-	 NPWiJzd8UiFK0dXpCQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mc1VL-1tH5qj13Ed-00i7EN; Mon, 03
- Mar 2025 11:36:30 +0100
-Message-ID: <82bce096-271a-43a7-a2cf-95b48669ce3c@web.de>
-Date: Mon, 3 Mar 2025 11:36:28 +0100
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZTbOFcm1"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 85D9F4419B;
+	Mon,  3 Mar 2025 10:43:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740998585;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jowEScGafDqHehCuuxXQ5RRiB4vq3Q0DU122NO345r8=;
+	b=ZTbOFcm1NXHdDGcFApkbQVn+GvCtY6pHznZmCM/8Fpoza1+dDfDUmHpHWoXfXcn73CYtNz
+	AHMEa1NG0lWQlgUao5wKITGBs/mTFO6CSGThHPHwXSzF2tFHcG90iptSiEYE15hoNhcTQg
+	ZmDz3AEcStB4ZIBqxO41pPZQ8Hvc8EtEeryqPnl6gYMmOZN8sGND4gQv3IX9M8cK7OdmJ5
+	Yip2F0tgDeWDZwtY1/jYiRsym2VbJhJgGholjkEeLmP1L/8orwNOfD1Ures6wK8eIzP1MZ
+	B2H3omjy5L8SC7aL3rquCzr8n2clDF2oeOgcb89rFgnEs5EVck2SApYr7xdcyg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-tegra@vger.kernel.org,  linux-mtd@lists.infradead.org,  Jonathan
+ Hunter <jonathanh@nvidia.com>,  Lucas Stach <dev@lynxeye.de>,  Richard
+ Weinberger <richard@nod.at>,  Stefan Agner <stefan@agner.ch>,  Thierry
+ Reding <thierry.reding@gmail.com>,  Vignesh Raghavendra <vigneshr@ti.com>,
+  LKML <linux-kernel@vger.kernel.org>,  kernel-janitors@vger.kernel.org,
+  Qasim Ijaz <qasdev00@gmail.com>,  Natalie Vock <natalie.vock@gmx.de>
+Subject: Re: [PATCH] mtd: rawnand: tegra: Simplify maximum determination in
+ tegra_nand_setup_timing()
+In-Reply-To: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de> (Markus Elfring's
+	message of "Fri, 28 Feb 2025 19:33:10 +0100")
+References: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Mon, 03 Mar 2025 11:43:04 +0100
+Message-ID: <87pliy9yyv.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: video: au1100fb: Move a variable assignment behind a null pointer
- check in au1100fb_setmode()
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Antonino Daplas <adaplas@pol.net>, Helge Deller <deller@gmx.de>,
- Thomas Zimmermann <tzimmermann@suse.de>, Yihao Han <hanyihao@vivo.com>,
- cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
- <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
- <ugymllbkcsg22ffgyofvkquh5afbvoyv2nna5udmy3xfhv2rjz@jhgghzldzm4u>
- <eebf8c0c-7a6a-405f-aaab-2a8a8c2bd91f@stanley.mountain>
- <hwk2nf62owdo3olxrwt5tu7nwfpjkrr3yawizfpb3xn6ydeekx@xwz7nh5ece2c>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <hwk2nf62owdo3olxrwt5tu7nwfpjkrr3yawizfpb3xn6ydeekx@xwz7nh5ece2c>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vdcLTwaxRRUTNKgdh3PAdhRaE7ojz7Hr9lnrj+MHgE+1lORdgI3
- LdUTlDAHkrkILlfVtj8Y+FWZ7efdKmsh7dpqRFXHOeHBR7Y2LJkXflzI4TeVUHOA+5S6WK7
- ducSX12HIESWGnfoCyf5qkT0mmHMrzlzrSiA2hi/nzhZG/O60wWcTcMWWLl8EQv29pU76Qj
- NN4uq50yUWCyJv4fhWAoA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6QNZLrdoyzo=;Egynd8vm+A0h2t4Qd75YIb7BLKe
- VujM9TYK15+bBtsLBJI53tpI65Z4qlFAJE3j27GIjFsUKW3YLbe6Ml7tsNYhWq8ZZsczz9FB8
- GMgmVT7galXa2FAsES6Vm4e2mqhxh0T3k8okb1CE+oz0zcBelDXH4X9hHRPZ1WDYzTiQC+1/z
- 7Z5yA++/5VTizt5XBCfRe/Rk8FeecqeV0tcUrfMcbedMFJKyTXkXRBUWvB8jl7wAhKuvOHv28
- wUjJ57e6/oJfNchJKaGwkHrqYalUgvcfgrUav1YLTB/ZErIiAu/InyQjaNaOhNf921AxS1wP5
- KMTvBhrB/jNUGhvB2Vu7g9T0Aa/LponvTTVJb/MjQslfUhKEtB22JiQuRW5QJNgsTqIt9TpGF
- voUzCyoJJ73UnuH0qQiyrQEvJeOt4D6ysgXc0D0T0ejvSXqaFQGThYmdqBzF08OkuAlgTE3FN
- QXyUsQDZYK+Ao9gsml6vzF04hcH9wcN07W8jvrRtE858AYpo9mLff3+MFwSWQZZjbw7IU2Ktq
- sGlcfJn+LLnNRNA6YGrs/gnE1mXZHia8aZKJIroUHOufq12kNdJJ1aOVn8xeE9EPa+2TM9jwF
- u+zQINKT/giAGzWtl9aUo1Y1Q7JiIOCG5IOMB3imAzbWn+uEvxyI/aTdCKRcVMjJ/Jpnb/i09
- ukl/8yYwNFnYUmFcYWwgxhnpdW2QIXRmXNs8gZAAKnZ7H6fhXsKb76SBsMtLek+gUQygi1FYl
- AwMiQuxAFmWA/BoG2wyx81eB2y2oqsRlGOsPB7eN+2/YA9P/XtvoRZHpfQzW9NaJHm2mMJr+E
- d0wLekUgx0m8tzDUOEhzK01OzEb0PpogQ4vbf8/zNshffO+iAHCCwe++RmaEr/NW6DoCJVGGZ
- AKHyuqFG7EsegodcRap+TSO5amIhA8eAvb3iyCEiCX4YEsB+UHKavrceeuvoR5n1yngXui2sV
- hTS4uTTfeGEdC0HARsj/h2tJn4PsmkEv8/pKaZ3SEjCLSNU/I7QnRbUHt++MIoCI94mmOVtEe
- wyLH6sQ8rowX/WWh7heBZrI8klsxOA6k2q+OavDc3UnIdAw9WV7Ob84tjlCdlljYGmNUs2QzN
- FaDVv/RLFHixOjpF72nSHnDzZubHXNSAdJE4rNufcPYv3x8d/W47Xs8T/4HEkG21KwW6dcw8O
- sQY4I8H8lyn+SDBhynfhsFODV7w3PYs8bRWeoBsy4Thg57EEIn1XW1DX9BVp9xzuvRQWr8et1
- gZnVkpmWZt2ChNp1QP5hzUUxp3w80ANE4R7MFUwdqzCcsIsrvT/qmZGAqhkujs3bjZTvU3fN1
- UphLrxY+3rSfMzlIUG7KBA0/qJk7CRVuCSSyYE9I1xX4TovyKtV6Eg0u7YzHHi7u1Cdzr0u2C
- VONrsep64vb7vqsMn4mZSn12IFGLP0O6anM3zoxd0XapdR8G+0iHCECWBHeAXsw1ODFMGcnro
- /v/p4Ag==
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelkeeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepofgrrhhkuhhsrdfglhhfrhhinhhgseifvggsrdguvgdprhgtphhtthhopehlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopeguvghvsehlhihngigvhigvrdguv
+ gdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehsthgvfhgrnhesrghgnhgvrhdrtghhpdhrtghpthhtohepthhhihgvrhhrhidrrhgvughinhhgsehgmhgrihhlrdgtohhm
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-> 	struct fb_info *info =3D &fbdev->info;
+Hi,
+
+On 28/02/2025 at 19:33:10 +01, Markus Elfring <Markus.Elfring@web.de> wrote:
+
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 28 Feb 2025 19:19:45 +0100
 >
-> 	if (!fbdev)
-> 		return -EINVAL;
+> Reduce nested max() calls by a single max3() call in this
+> function implementation.
+>
+> The source code was transformed by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Is such a null pointer check still relevant for the discussed function imp=
-lementation?
+I am sorry, I do not see what gets simplified. max(max(a,b),max(c,d))
+looks simpler than max3(a,b,max(c,d)). Does it bring something in terms
+of optimization?
 
-Regards,
-Markus
+Thanks,
+Miqu=C3=A8l
