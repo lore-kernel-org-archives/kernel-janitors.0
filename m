@@ -1,69 +1,85 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E573B156237;
-	Mon,  3 Mar 2025 06:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5676F1E8338
+	for <kernel-janitors@vger.kernel.org>; Mon,  3 Mar 2025 07:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740983123; cv=none; b=jptR9CLIB1f4bD6ynToC4fW2XOmGdaG/0JNyaHCHFrseuPIlWnkec+Z3pufuJhBzEVTKZ4bTXVAq5EjJWJafECLABPhNgDq4d0QtvgeCDSv3H8850OSl5hPo5lll3iYy/bH5ZbJM4xdBU0Il9kFqaW9ERSAV5HP7qgJCdOoGkpM=
+	t=1740986054; cv=none; b=i2JBtu2K8hU6OYkNo8oq7I1jAktEEQAu3KVfTU4jvugLpiNDZFsUCh/Rb845VEF+O61caBEJsJzWompHY6HS1mg9jM1d4hVyovUjKN3pdogcA5RCCAZdQ45TesHGwHJRZbYjmJb9m4X2Q6KPGGNjO1wEm3uOOPu6hzaQI/fgStQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740983123; c=relaxed/simple;
-	bh=QddSmenzJXUSnQaTPXNrQkvUIido0PcI4/XhapFbIgs=;
+	s=arc-20240116; t=1740986054; c=relaxed/simple;
+	bh=Hln+g5OCHrAMOq/+1aDVAlOsgByEM+bWM9zySDltuR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/RtzjlEePbYZAFqzdADr20LVsMfTcsiWH2eHRUaELqZYT6qgfmxhl4hZSemQdbPl+Ay2bzcSmuyZRjNtDWtYQyKqTJeqrlo5YV4Tk/lUj+D1BY03CuaDZ/cDDHD6n02xSA1loS6aFU1dOEOrIZrIxg5mVMiR4RfobZQr0RJjlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ddOg2Yci; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHYtVqA2LgE+n98yhdCz4a6qsOjVvQnaagXueQcIqqfsYbDHFydHgyPGrUWlpgM5E3/dMvyEV/mi7dF9IG4l2SFK9RxFvlFdsMKXy0c+Q8t/F8f+GUSr3hkrYS4ZsrvRgPLq9Qz8EWruCJgFAbEDhmueaMo10mhGpnYnosf9rqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lo5jZC3i; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ddOg2Yci"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740983121; x=1772519121;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QddSmenzJXUSnQaTPXNrQkvUIido0PcI4/XhapFbIgs=;
-  b=ddOg2Yci2CI/3HVVQKAtUnoqkWqdlACHdcDAYbmcDOrFxR/2b70nf4Ay
-   9Q4q8RvMZlduq31hE86gG96U0uw0Cu9HrEBgMr1R+oLxaymq+1m91G1GX
-   XmIjkW2P6cPM/GqoR2gEskD0GX6nAd8km5ALsrUSwtJLsDB76a2XHZ/pE
-   pi+1eR0LzCzPxEVadePOJH1oocG2D84s3DWUAsgt3FJa/SitHPe7zCXVS
-   yBphN9Zy6pGxOF21aIvHMNzSeKIJJNt+ppfn1SNOKdZLgOZWn6djsWsjg
-   JVs/7FILgtgLpcJeLTLGYl1kwcdBFFoaL95gRtCBTVHHBK6bFN6AMWsUs
-   w==;
-X-CSE-ConnectionGUID: TseWQg3+RViOLV7uhMH0eQ==
-X-CSE-MsgGUID: PslcPE0JTF6oPbNdRAX2kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="41966654"
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="41966654"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 22:25:20 -0800
-X-CSE-ConnectionGUID: VhVfEy7fR6607pYneT8zZQ==
-X-CSE-MsgGUID: PiQGcvOfTbSSRhc5EXnUYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,329,1732608000"; 
-   d="scan'208";a="123065041"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 22:25:17 -0800
-Date: Mon, 3 Mar 2025 07:21:28 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, netdev@vger.kernel.org,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Ariel Elior <aelior@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Manish Chopra <manishc@marvell.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Ram Amrani <Ram.Amrani@caviumnetworks.com>,
-	Yuval Mintz <Yuval.Mintz@caviumnetworks.com>, cocci@inria.fr,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] qed: Move a variable assignment behind a null
- pointer check in two functions
-Message-ID: <Z8VKaGm1YqkxK4GM@mev-dev.igk.intel.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lo5jZC3i"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e058ca6806so6541233a12.3
+        for <kernel-janitors@vger.kernel.org>; Sun, 02 Mar 2025 23:14:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740986050; x=1741590850; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8RROaO6yARYWUmuYiLttBRg0vezrYJsF0zsoMASJ+Y0=;
+        b=lo5jZC3iAcg9TiASEN+02v8tjNCnIVO65YHcjQRfQveoHu178Vz4pycEF2VX+IMf1N
+         qVjKOMdtBeG1S5LjTzJrESdeRo8xG0RwJnTyUMV5NV3DfAMSh3hUdACUGlxF7uuqzvuV
+         q1Mtm38cTmfNA3U0vbvUKUONHRBoOI+RDB4J73PWf+7ikbFfIAZVliX3S3ZJh/uBpSfQ
+         csU6x/97ZIR9KzXPZ6JMwqWZjeT8NFz6VqvWxH2fplDnXAOIEVAtR3CtiAiscZUsdZ9n
+         zwSBDpFAFoxZ3XJYliPKS/+AjC0Fs1eROjFVnqa1BAmBdok7E+48ekfPKMlPham2XFXA
+         aRvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740986050; x=1741590850;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8RROaO6yARYWUmuYiLttBRg0vezrYJsF0zsoMASJ+Y0=;
+        b=qUtP5G2a6alz0/LXwTLpLw+5OfoQq8SZrADGDQtmPv0hjgF5iJSOdncEZygLvweeKg
+         pj0FcUIPEw7ibLbTtZ3fEilSZgeoWdAgNeFeCc2KoP6kmKQaRl7fICKPlfF7U5Icgpfv
+         d/Q1nZbQoFxRBeq8KeZWlqke/b23KmAnJABa37vxL3211rueK3jktPXRLtG5pvgtnZdh
+         8Kk2kg7SZmvDhOG9ANGGfdBogW6njh0opQP4W27g0rRWesRIGz2bJcvNKIBeo/sz0IhB
+         oimg3lJEPOu1mJifyMCK7IpYdR6IiNphkWvHGh5eiOTOUFQzApr/oM7sWxUkDPA5bwVx
+         XIFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNzXwrvTkIeozh/LvnUF0IAwgSdZUkKZUhOB0HrrHKUGZQKT0i+fiSqY+0ptvZKGxqVwyj8J/ig76EJctZ6dg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlw4ufKlCjH2i621To0j6LunRWrGCncuhGhM9S8HJ+94FJDuFe
+	FXrOJdTqTCbbQH+s/MK/SCTQ2gou/bvASXMCQSYduAl4ApVtSueXBX/S3GPzfic=
+X-Gm-Gg: ASbGncuY+3MIBtgG8bk7ItqRBXBpEKjq91WcKUH6HDJgJvwJSFv8/Ud4R70ZEkTf5ar
+	e51scRpt1SxJMdVgP7edu2Q7+G9bMnMTzDyTDjrnNiWYy14AHdObQqvBjeUX9jyNuEmn8yvmanN
+	YGdVfgxn9WuTSOZEXMYtupPJpF8QGoDMHUA32ypUIePhZ5038/DzbOTOBPr6dj40lF2Xruv/2sw
+	YE0nSqim+We1Xc3Xax6mXrmM3ncxTPepMaImDl9iDt9EPYrbHhQudhOMSKvwwx5yqaoY+UDkA2j
+	pEP7HEKvkoaDgmV4WIkL//yEbLJe3elF3gjBYBfVSrXb0mmlDA==
+X-Google-Smtp-Source: AGHT+IEny668UimPZ3R6dx4axvviTs297S1IJ5VK/kkx2SxfpDGI4c5Rl/7By42IdqNYV74cMm4sFA==
+X-Received: by 2002:a17:907:980e:b0:ab7:b250:aaa with SMTP id a640c23a62f3a-abf2682f996mr1554838466b.54.1740986050266;
+        Sun, 02 Mar 2025 23:14:10 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac1dd6fd870sm60633966b.70.2025.03.02.23.14.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Mar 2025 23:14:09 -0800 (PST)
+Date: Mon, 3 Mar 2025 10:14:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
+	freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Archit Taneja <architt@codeaurora.org>,
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+	Jeykumar Sankaran <jsanka@codeaurora.org>,
+	Jordan Crouse <jordan@cosmicpenguin.net>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+	Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+	cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] drm/msm/dpu: Delete a variable initialisation
+ before a null pointer check in two functions
+Message-ID: <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
 References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
  <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <f7967bee-f3f1-54c4-7352-40c39dd7fead@web.de>
- <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
+ <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
+ <54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
+ <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,78 +89,38 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6958583a-77c0-41ca-8f80-7ff647b385bb@web.de>
+In-Reply-To: <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
 
-On Sun, Mar 02, 2025 at 05:55:40PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 11 Apr 2023 19:33:53 +0200
-> 
-> The address of a data structure member was determined before
-> a corresponding null pointer check in the implementation of
-> the functions “qed_ll2_rxq_completion” and “qed_ll2_txq_completion”.
-> 
-> Thus avoid the risk for undefined behaviour by moving the assignment
-> for the variables “p_rx” and “p_tx” behind the null pointer check.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 0a7fb11c23c0 ("qed: Add Light L2 support")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  drivers/net/ethernet/qlogic/qed/qed_ll2.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/qlogic/qed/qed_ll2.c b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> index 717a0b3f89bd..941c02fccaaf 100644
-> --- a/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> +++ b/drivers/net/ethernet/qlogic/qed/qed_ll2.c
-> @@ -346,7 +346,7 @@ static void qed_ll2_txq_flush(struct qed_hwfn *p_hwfn, u8 connection_handle)
->  static int qed_ll2_txq_completion(struct qed_hwfn *p_hwfn, void *p_cookie)
->  {
->  	struct qed_ll2_info *p_ll2_conn = p_cookie;
-> -	struct qed_ll2_tx_queue *p_tx = &p_ll2_conn->tx_queue;
-> +	struct qed_ll2_tx_queue *p_tx;
->  	u16 new_idx = 0, num_bds = 0, num_bds_in_packet = 0;
->  	struct qed_ll2_tx_packet *p_pkt;
->  	bool b_last_frag = false;
-> @@ -356,6 +356,7 @@ static int qed_ll2_txq_completion(struct qed_hwfn *p_hwfn, void *p_cookie)
->  	if (!p_ll2_conn)
->  		return rc;
-> 
-> +	p_tx = &p_ll2_conn->tx_queue;
->  	spin_lock_irqsave(&p_tx->lock, flags);
->  	if (p_tx->b_completing_packet) {
->  		rc = -EBUSY;
-> @@ -523,7 +524,7 @@ qed_ll2_rxq_handle_completion(struct qed_hwfn *p_hwfn,
->  static int qed_ll2_rxq_completion(struct qed_hwfn *p_hwfn, void *cookie)
->  {
->  	struct qed_ll2_info *p_ll2_conn = (struct qed_ll2_info *)cookie;
-> -	struct qed_ll2_rx_queue *p_rx = &p_ll2_conn->rx_queue;
-> +	struct qed_ll2_rx_queue *p_rx;
->  	union core_rx_cqe_union *cqe = NULL;
->  	u16 cq_new_idx = 0, cq_old_idx = 0;
->  	unsigned long flags = 0;
-> @@ -532,6 +533,7 @@ static int qed_ll2_rxq_completion(struct qed_hwfn *p_hwfn, void *cookie)
->  	if (!p_ll2_conn)
->  		return rc;
-> 
-> +	p_rx = &p_ll2_conn->rx_queue;
->  	spin_lock_irqsave(&p_rx->lock, flags);
-> 
->  	if (!QED_LL2_RX_REGISTERED(p_ll2_conn)) {
+On Mon, Mar 03, 2025 at 01:01:40AM +0200, Dmitry Baryshkov wrote:
+> On Sun, Mar 02, 2025 at 09:56:00PM +0100, Markus Elfring wrote:
+> > From: Markus Elfring <elfring@users.sourceforge.net>
+> > Date: Tue, 11 Apr 2023 18:24:24 +0200
+> > 
+> > The address of a data structure member was determined before
+> > a corresponding null pointer check in the implementation of
+> > the functions “dpu_hw_pp_enable_te” and “dpu_hw_pp_get_vsync_info”.
+> > 
+> > Thus avoid the risk for undefined behaviour by removing extra
+> > initialisations for the variable “c” (also because it was already
+> > reassigned with the same value behind this pointer check).
 
-For future submission plase specify the target kernel
-[PATCH net] for fixes, [PATCH net-next] for other.
+There is no undefined behavior here.
 
-Looking at the code callback is always set together with cookie (which
-is pointing to p_ll2_conn. I am not sure if this is fixing real issue,
-but maybe there are a cases when callback is still connected and cookie
-is NULL.
+> > 
+> > This issue was detected by using the Coccinelle software.
+> 
+> Please don't send resends and/or new iterations in response to your
+> previous patchsets. Otherwise they have a pretty high chance to be
+> ignored by the maintainers. Use a fresh git-send-email command to send
+> new patchset.
+> 
+> > 
+> > Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
 
-Anyway, with heaving this check for p_ll2_conn it is good to move
-assigment after this check.
+Remove the Fixes tag.  This patch is fine as a clean up.
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-> --
-> 2.40.0
+regards,
+dan carpenter
+
