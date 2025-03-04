@@ -1,82 +1,215 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B94A29AAE1;
-	Tue,  4 Mar 2025 16:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277C3298CC1;
+	Tue,  4 Mar 2025 17:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106769; cv=none; b=jkLORh4bybKJqqbG56KjvsETTMXv0zNSBsQm6szVok1jKr6TYAvvJ0S2/mGCf10QIbgFpSDgnSf2vCxLFxIQYGiMynvARiCyh6p/fWLxS0ZxhURWO62zVKMDVvQTTldoQsi7l9+rYfY9kPeFgl2zf5/8tAOCYr/ZMH7z068FTJs=
+	t=1741109938; cv=none; b=VEke9novfsu5CjWmI0IT3JvgJFWuD/HJKJxpsZ5Jr4zcUWde9oVvVb2BkjTaAgAnda4BQcqu62BKd3BSaMUUnlwVzTR3d8F0UOEKb1cdf+qODM2yVwBfTOFe8CTil7jx/nism2UPgfD0WYf3jrajPd9IZQIITfnz5yG3p7s9c5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106769; c=relaxed/simple;
-	bh=eoJB3OLgTrk+lA8oBYKJiwXc8eqZCVoHFloR0SzQllY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vEEw57u7R+0F8J3MnPeeA+XeqnYWdqoMMIYR80JT1Nkhe2OqaUc2C7Vu+0kj4KMd3NE0app9KVX/XxQGwntXjtFxYHuVsQ3xgbLSBNGZIKUjuFXSMkl9URZHNh0zEkNzR4QApktfAZ+kUxkAlleFvmXtFXmPgaXWjerOYy9ciZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxI2Hw/e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741109938; c=relaxed/simple;
+	bh=JcIEw6KHcvbGFWY/0MJdcq8fBRZHDsPWigmoQd9FeNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tW8w+Y27hwnqzFBjwgFnmPYPhF4MK/nlTbkZK97xtqb2DYBqHjrnrsIaQilrTDV69H0oIB/lLg5w6joJ1iUEAKnRUok1hmT/UOBIN/xG64VkVW55eaO3cnax0y1M3tqywELR34YijFN7COYaiMUZUQP9EhFaUM33bG4FoZwNeO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XOx6Yb7+; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxI2Hw/e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C5D3C4CEE5;
-	Tue,  4 Mar 2025 16:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741106768;
-	bh=eoJB3OLgTrk+lA8oBYKJiwXc8eqZCVoHFloR0SzQllY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XxI2Hw/ea4eI+SoFuS3K0cKmjGZ3ZtNccc4VskQyfpMe9NvMF1jUiRpqZ5JXH6WOz
-	 xTW+Xqi2T0wkOQvH8nU/K8EGesDgQdsAp9TjhaDz+K2V5VtF3s1ggT95YSVYgoGSw4
-	 kybnoo9e4Isp3EZrQi39i1S2GZ+KuKZs6XyH3STW0z3iP5VX/Q+P11pvaELXqQ15ON
-	 hlr84h6hwEx3deXvRLoHlOqbvXrJjXsT7iMd1HtwcCDxHstS3mGb/YT4RjDpXvltMU
-	 xrguuGDPBPlcgTpmDwe4jPyfRk6QyUFJ+WpucTNsm9STEu6fgv5p4pDfqJN2uPlqXW
-	 2QIon9Rrb9LUQ==
-Date: Tue, 4 Mar 2025 17:46:05 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/vc4: hdmi: Fix some NULL vs IS_ERR() bugs
-Message-ID: <20250304-adaptable-monumental-octopus-a8ea0e@houat>
-References: <a952e2b4-d4b8-49ac-abd9-9967c50f4a80@stanley.mountain>
- <CAN9Xe3R-nyCcTRhDTeWFrW9EVnpdRG2Nyz=qjiYB0pzFM3NxWw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XOx6Yb7+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741109922; x=1741714722; i=markus.elfring@web.de;
+	bh=Hd9f8ED3HYtNlKnYfy25W10wkR5BfmeLn5PDLRGCvhI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=XOx6Yb7+IjmoN5q4fcTKsJB+3gujW96dnAJ5aO8w/VuhhfToF6Yyj3OAjexSOV1z
+	 /1Y56MEQqGhbvmO6qGspVIHmG/N+bKTKCu6/uSunZGZSosyU18KCKt8nRNM8rjmBd
+	 NEr6FAOCB/ZUHA/StjNB8ZJbsHKGWDmvuJkzeSec/Binljzwqg9DBeEOV/UYygfQ7
+	 G/hYlJM4ALSxq+FZxR4IMvGYYgWHRTZTDjXisYlL+Mmx29JxLjJ3EWR22GlWe2124
+	 ekn5/GeOG8nIyLyzjJTzJfBXFbaZhdkiUA4RF0EKl27yyjd82g6ixf6y2mckMuzMU
+	 IYvzksEVziE/kjlPCQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3oz4-1t7h213Slc-00tCqt; Tue, 04
+ Mar 2025 18:38:41 +0100
+Message-ID: <df3ce733-955b-45f3-98bd-04ddb2200eca@web.de>
+Date: Tue, 4 Mar 2025 18:38:40 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="jmdly7fe3anaxwwp"
-Content-Disposition: inline
-In-Reply-To: <CAN9Xe3R-nyCcTRhDTeWFrW9EVnpdRG2Nyz=qjiYB0pzFM3NxWw@mail.gmail.com>
-
-
---jmdly7fe3anaxwwp
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] mei: Improve exception handling in mei_cl_irq_read_msg()
+To: kernel-janitors@vger.kernel.org,
+ Alexander Usyskin <alexander.usyskin@intel.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tomas Winkler <tomas.winkler@intel.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <00589154-00ac-4ed5-2a37-60b3c6f6c523@web.de>
+ <b7b6db19-055e-ace8-da37-24b4335e93b2@web.de>
+ <MN2PR11MB40930A824DF68F96A93E1B7FE5859@MN2PR11MB4093.namprd11.prod.outlook.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <MN2PR11MB40930A824DF68F96A93E1B7FE5859@MN2PR11MB4093.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH next] drm/vc4: hdmi: Fix some NULL vs IS_ERR() bugs
-MIME-Version: 1.0
+X-Provags-ID: V03:K1:J8W2iKNW1YOzbAMnhs59UwrQGwR1Hh6yGO7inTnU14zkOAupzCK
+ d9+IIn2FAt4eO1oHC3z0rvCCtO76XilZNUr1lBfotSduoQwvEqx38iZzNgjRdkkhSCCTMxv
+ /iCGdqvvWQaq/fp7ERjtHjiJxLxvtaIvmJyGO2Dw3iOMpzV5Vfi+jtTOFfzzhzJYbb1d6gs
+ B8iVPlkbih15zmTVSCN3g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9YBNIMP3MJY=;n42+oDqLo6wQnlInoPCWZ53JWo5
+ vPe0g1v1iPVJVBX3lQZCBBo4GdaNfkkvbyNuW7p4HKVKEHhtsg5uUwbyt/Q34o1KYLvAOM1H9
+ Qs0XMuEYA2IOs92Ki8qAi6MaYVo1RZpyoZ2MGNLZex+fFPatCaCne8GEdEkwFyUkhZa84lozW
+ kDCIIZdyunnQcONNQKEbIHQEU/t68T0at36ufZKM2TLG6tvw1hNm7VdLpIt3w870yB+A6fucR
+ 0Ql4a3Tc9QBOK4C2poBvuJtWV4zdOm6atgfQWV4Srn8tVubzf6hbgJiMWFbJdqUqw2tBmUsSI
+ 0xq9uM21sbD0ZBsThh2rXqZAd9BJKHzwIO+7T8LTeOyjwu1xyy1BN4iQrLijIg/aHC4t3HhIy
+ loT5cQSrxTLpBWGlZ5fXBMZvfzbLHRGpgosv/2OZb6bJGDtFJwYGzTV3tYsG6vDiHS8q43OBz
+ e61SWjNma9oWJB5hjLvDJprWHuGUdet2S2I+jYZ/g8iWCE6xOBONbbY9J5AUgRzYawIsvn1Sa
+ 9NmuoW2bDkCQknfp0wXVtGG4tSnJVTbzJ47sZQulpNs3EeHhfHd8kJpUEx7P2M7UcxlmOSraE
+ q0BXphasgMPkrQRtb1wAc/qMDCmLGo8NnUYccIpiopb3WeICO/4Uwqd1nzXtiMYMpkgI4zJrR
+ uTgLP9R79sZE1oGNu4S3GsLEQIwIkNeqjz9kWInZnoM+jIP51lMVuZUy3HVDIEWHIBRhDIs2C
+ gUJWovKziPfY0zBttTcEErKPN0SIbOYie0VHIZCXU0dNPUM2Usrmf33Dfmb3Ys3qTr5f2sIvK
+ Fnu47GsMyn66L2jA8uK49OVNXBE4q+KjHzwApPyGKIG0bK5grn4YZa0SdHqKXC0Rkg+a2/XQo
+ dLR29QShm9g6wc4GLFsoNB6glL3+gAHei6RtWjPdFKvwJpsCETPQthDHCKSwurzXeTE9d2gfV
+ skCtC0LLA3tBC20bDzN09FXfqSBVkmbZ+Ki/YOuXfW1QqyE8jtK6aZLNw0oIG+YDUsld6/9AN
+ kZNr1K8giDfPH/GlcY/+Kabdcf1zn+Xw03gkAPD2vY2NVZJwxTr/WlnHBPKZxssl9oWdzHDrr
+ nTXFMV1MygKQ3eB/9OqixtP/5d8YH6NUZKuSqfpIIWq+Eu40HJs1rGKnO7jXY4DmCIlJrJTGu
+ RsaLoLPZjLTrnerPNNta0NOhF9KoAJYMHiPho2N114oTn5YAvrTPYt4A8dAjBckWlxHZmjT1e
+ JjfSvH4Ni69m+i7AXJncxOF+E52bJi2fsJa00f1ra/wxoFa1dKAtCbb8P5F4YfxZH3F8EF3mK
+ NlgGXkoILh07ipFN7p/A4ClS90MbeTm9JEzDryOuAIbO3fdDcacov46zCiD9Vbcpxg5z9PBSh
+ vjpxyzEAimIMFbZmHkBmSOj+HR2dbusYfCkLyIyELEzt2eKUWZRcBB+6OxV0QDGGa2Bzq9lJm
+ zM8e/nA==
 
-On Tue, Mar 04, 2025 at 10:22:29AM -0500, Anusha Srivatsa wrote:
-> Thanks for the fix. I shall revisit the rest of my series.
->=20
-> Reviewed-by: Anusha Srivatsa <asrivats@redhat.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 4 Mar 2025 18:11:05 +0100
 
-It's already been applied
+The label =E2=80=9Cdiscard=E2=80=9D was used to jump to another pointer ch=
+eck despite of
+the detail in the implementation of the function =E2=80=9Cmei_cl_irq_read_=
+msg=E2=80=9D
+that it was determined already that a corresponding variable contained
+a null pointer.
 
-Maxime
+* Thus use an additional label instead.
 
---jmdly7fe3anaxwwp
-Content-Type: application/pgp-signature; name="signature.asc"
+* Delete a redundant check.
 
------BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8cuTQAKCRAnX84Zoj2+
-di70AYC6ULd7dct3xCYAhUfz5uJpVATAd7zazZggq/xnzOI2jlTCF4qgyYPwrYew
-KYdyTE8BgMZZK7VY6cp70tbWDArNUO9U0wES2zr7mCr3dAutBqpCvO2EYu6hlbSL
-5cbIq5Uu5w==
-=Jmp5
------END PGP SIGNATURE-----
+This issue was detected by using the Coccinelle software.
 
---jmdly7fe3anaxwwp--
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+V2:
+* The summary phrase was adjusted a bit.
+
+* The Fixes tags were omitted.
+
+* The change suggestion was rebased on source files of
+  the software =E2=80=9CLinux next-20250228=E2=80=9D.
+
+
+ drivers/misc/mei/interrupt.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/misc/mei/interrupt.c b/drivers/misc/mei/interrupt.c
+index b09b79fedaba..af5f01eefea4 100644
+=2D-- a/drivers/misc/mei/interrupt.c
++++ b/drivers/misc/mei/interrupt.c
+@@ -136,7 +136,7 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+ 				cb->ext_hdr =3D kzalloc(sizeof(*gsc_f2h), GFP_KERNEL);
+ 				if (!cb->ext_hdr) {
+ 					cb->status =3D -ENOMEM;
+-					goto discard;
++					goto move_tail;
+ 				}
+ 				break;
+ 			case MEI_EXT_HDR_NONE:
+@@ -153,7 +153,7 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+ 		if (!vtag_hdr && !gsc_f2h) {
+ 			cl_dbg(dev, cl, "no vtag or gsc found in extended header.\n");
+ 			cb->status =3D -EPROTO;
+-			goto discard;
++			goto move_tail;
+ 		}
+ 	}
+
+@@ -163,7 +163,7 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+ 			cl_err(dev, cl, "mismatched tag: %d !=3D %d\n",
+ 			       cb->vtag, vtag_hdr->vtag);
+ 			cb->status =3D -EPROTO;
+-			goto discard;
++			goto move_tail;
+ 		}
+ 		cb->vtag =3D vtag_hdr->vtag;
+ 	}
+@@ -174,18 +174,18 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+ 		if (!dev->hbm_f_gsc_supported) {
+ 			cl_err(dev, cl, "gsc extended header is not supported\n");
+ 			cb->status =3D -EPROTO;
+-			goto discard;
++			goto move_tail;
+ 		}
+
+ 		if (length) {
+ 			cl_err(dev, cl, "no data allowed in cb with gsc\n");
+ 			cb->status =3D -EPROTO;
+-			goto discard;
++			goto move_tail;
+ 		}
+ 		if (ext_hdr_len > sizeof(*gsc_f2h)) {
+ 			cl_err(dev, cl, "gsc extended header is too big %u\n", ext_hdr_len);
+ 			cb->status =3D -EPROTO;
+-			goto discard;
++			goto move_tail;
+ 		}
+ 		memcpy(cb->ext_hdr, gsc_f2h, ext_hdr_len);
+ 	}
+@@ -193,7 +193,7 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+ 	if (!mei_cl_is_connected(cl)) {
+ 		cl_dbg(dev, cl, "not connected\n");
+ 		cb->status =3D -ENODEV;
+-		goto discard;
++		goto move_tail;
+ 	}
+
+ 	if (mei_hdr->dma_ring)
+@@ -205,14 +205,14 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+ 		cl_err(dev, cl, "message is too big len %d idx %zu\n",
+ 		       length, cb->buf_idx);
+ 		cb->status =3D -EMSGSIZE;
+-		goto discard;
++		goto move_tail;
+ 	}
+
+ 	if (cb->buf.size < buf_sz) {
+ 		cl_dbg(dev, cl, "message overflow. size %zu len %d idx %zu\n",
+ 			cb->buf.size, length, cb->buf_idx);
+ 		cb->status =3D -EMSGSIZE;
+-		goto discard;
++		goto move_tail;
+ 	}
+
+ 	if (mei_hdr->dma_ring) {
+@@ -235,9 +235,9 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+
+ 	return 0;
+
++move_tail:
++	list_move_tail(&cb->list, cmpl_list);
+ discard:
+-	if (cb)
+-		list_move_tail(&cb->list, cmpl_list);
+ 	mei_irq_discard_msg(dev, mei_hdr, length);
+ 	return 0;
+ }
+=2D-
+2.48.1
+
