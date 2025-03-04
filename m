@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DFA1FA243;
-	Tue,  4 Mar 2025 20:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6720265639;
+	Tue,  4 Mar 2025 20:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741119293; cv=none; b=Eve2Tf/7h+W8i01sQJzDgaxKEhRSG1AvHIOLr4pz+PMLZORwODQmsSrXRZMus3b4McS4oGcl7XToJkv+NA6QSeCVygOnv/LSuVf8ao9Tlsi+jnzsE4II1t7BR6Ma4Wr8JJISLfDOQDz0qUauSu8FfhNBMULay7BzPjPTr8M0fpc=
+	t=1741121131; cv=none; b=N0dprVUnKCmsP7P8s5YS5f4vIgT3T8p81e2j4pQ95CP+iKNixjyA9Tcm3ONy1ZHqgQTgNcC5qxi1NkvboATLaFGlEu2ZRmdgoU+JazJWWY2+aWohBUd8lsJWO5TcKycho7LXNpfy3bMoc9Rbb4BSsKTVblUJ2LCZNf59s6GQ3mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741119293; c=relaxed/simple;
-	bh=/SdYLvXLxxIr6edsKxmHtDYVasPB2NFy7RBgCPOacpc=;
+	s=arc-20240116; t=1741121131; c=relaxed/simple;
+	bh=oao6VfbwNj8WG3JQ/qDYHHTP/jtD7RI6kqWRj5K7Ezk=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SILih+8KHVb27tNoYa9xl6YnwRKPYYxjsTTJ47N9ReBfOiSTkw0KzOTygtDxCBCoOW66wLvhIjgEmza0UICFzo4tgPWD/F52DUCfWYHLzEGZQw1B65l6bI2NcfvG9LoZZ/8cCCoXi1Li5ox3KIseGLQqtkb73diuqBK480UTeQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLsm/bUb; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=lNm7Zr7J/+5fxTjLReHwqRoQMN0I54qSmmIrbkbqwdeRK6s3IXLS9nnBP0nH08Nag/nfXTbt2vaqCHNIdSBFnN3Kh4QtlI/KUPPsTjSPFYn4RtxI+DmcirxCGoktN9sZYVFVMOA3cqfUGXaBySiSWuztKG3LCvo8AamQSKKHd6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUO98Ekm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLsm/bUb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED3A3C4CEE5;
-	Tue,  4 Mar 2025 20:14:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUO98Ekm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB253C4CEEC;
+	Tue,  4 Mar 2025 20:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741119293;
-	bh=/SdYLvXLxxIr6edsKxmHtDYVasPB2NFy7RBgCPOacpc=;
+	s=k20201202; t=1741121131;
+	bh=oao6VfbwNj8WG3JQ/qDYHHTP/jtD7RI6kqWRj5K7Ezk=;
 	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=QLsm/bUbgYtZ4Smh3LmXG741wWsRjlcDu/nvmBl9dkVABrEM1myVTfKiyv9fcuBO4
-	 AFYGzh1Lq3TkXnG5TEDpJ4F94P7MO9UzJz2xQx3gTdokdX4Cwl3ygoufalKPtxU1H5
-	 h4/Lg4ubu3jrO8/f5Zp8qzDEkSaWNit7tvUTEfGKhJdIsO1VTlnGmZknZAEIvGjQVA
-	 +W8nmZgkC5IpLg8TxH7i14Q4E9+yTSfRFzDm5EcICGRjmUTnMyX007u70uaCCEidk1
-	 /m0rOXFBlsFbys5VktXghpcZw3H/4LtRGtiSheBJgNNnw9fS/djwmIpA13LLN8nuGN
-	 DbAn1OQF/q4Xg==
-Date: Tue, 4 Mar 2025 21:14:50 +0100 (CET)
+	b=FUO98Ekm4GETHKN2lQCvVV41G+1Rr6W3Sjf9Ntv0UJ7IDn3gtjNOK6sUncHrg5NST
+	 JgcPfTZUtQlX9rT7wiSei1WtwBGCzS3za24noLSyW/kowatT54D2kdzuq2iAHGFa/L
+	 Gu1FychK+vScu2mbmyFc5SaVJHzlgG99Eh0hUQGlU5A21O92QtsNTBSjSxYS6IDG5e
+	 9Wf44kHxvJZxGHfPOOJpePM/x9vELxQToC45xnNY/idElK7+NvkWpcbftXnYna2F8I
+	 buKxK1Fzhk0mPSuOqeYeLEqiqxTU5yKpI049e2IKqtSGTsq1BlJ/akElXUaJsVBJmd
+	 8LQbkytM8pxNg==
+Date: Tue, 4 Mar 2025 21:45:28 +0100 (CET)
 From: Jiri Kosina <jikos@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Arnd Bergmann <arnd@arndb.de>, Benjamin Tissoires <bentiss@kernel.org>, 
-    linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] HID: lenovo: silence unreachable code warning
-In-Reply-To: <4585c11a-3e85-4f26-b1e1-0aad5e05706d@stanley.mountain>
-Message-ID: <4r6151p3-6q5p-1915-64o3-oo505p6674qp@xreary.bet>
-References: <4585c11a-3e85-4f26-b1e1-0aad5e05706d@stanley.mountain>
+To: Colin Ian King <colin.i.king@gmail.com>
+cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] HID: debug: Fix spelling mistake "Messanger" ->
+ "Messenger"
+In-Reply-To: <20250227223357.659460-1-colin.i.king@gmail.com>
+Message-ID: <9358pnrn-o1q5-o744-5sn6-347881q75780@xreary.bet>
+References: <20250227223357.659460-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -44,19 +44,30 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 
-On Thu, 6 Feb 2025, Dan Carpenter wrote:
+On Thu, 27 Feb 2025, Colin Ian King wrote:
 
-> In theory, this code used to return 0 if CONFIG_ACPI_PLATFORM_PROFILE was
-> disabled.  It's not clear if that was a config which would actually boot
-> so we've removed the CONFIG_ACPI_PLATFORM_PROFILE ifdef.  But now the
-> "return 0;" statement is unreachable and static checker tools complain.
+> There is a spelling mistake in a literal string. Fix it.
 > 
-> Delete it and pull the else statement in a tab to silence the checker
-> warning and make the code a bit more clear.
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/hid/hid-debug.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
+> index 541d682af15a..8433306148d5 100644
+> --- a/drivers/hid/hid-debug.c
+> +++ b/drivers/hid/hid-debug.c
+> @@ -3450,7 +3450,7 @@ static const char *keys[KEY_MAX + 1] = {
+>  	[KEY_MACRO_RECORD_START] = "MacroRecordStart",
+>  	[KEY_MACRO_RECORD_STOP] = "MacroRecordStop",
+>  	[KEY_MARK_WAYPOINT] = "MarkWayPoint",	[KEY_MEDIA_REPEAT] = "MediaRepeat",
+> -	[KEY_MEDIA_TOP_MENU] = "MediaTopMenu",	[KEY_MESSENGER] = "Messanger",
+> +	[KEY_MEDIA_TOP_MENU] = "MediaTopMenu",	[KEY_MESSENGER] = "Messenger",
+>  	[KEY_NAV_CHART] = "NavChar",		[KEY_NAV_INFO] = "NavInfo",
+>  	[KEY_NEWS] = "News",			[KEY_NEXT_ELEMENT] = "NextElement",
+>  	[KEY_NEXT_FAVORITE] = "NextFavorite",	[KEY_NOTIFICATION_CENTER] = "NotificationCenter",
 
-Applied, thanks Dan.
+Applied, thanks.
 
 -- 
 Jiri Kosina
