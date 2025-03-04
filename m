@@ -1,127 +1,110 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4951FCFF8;
-	Tue,  4 Mar 2025 12:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18CD202974;
+	Tue,  4 Mar 2025 13:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741090412; cv=none; b=jGstIcfOhhmR3+m7ZOpv+rwSjLX30UL9mTeWFcBYkTzxZ6bW+S861ZDryOABkZ6OGjNeCSzyiRhTAr9+jdPIRvP5Z6Eg/ueg1KM30rrtTqNy1zJHFZui+77NJEztZAIPXcX8xrm8HqfvzZFIkfA0GZZzrFG19idKFt4gjatSr68=
+	t=1741094038; cv=none; b=AJ/QWbbf3eAfFXQ1exj/9vtbyFKP2zRFCJ0PGMe8Iu23TaLRuJySr1rjSSW30cjFGQHVez/6NYtawcfMA9kXQCwqBebMZZDlQNw02AFyHv0h8p4w3HXilhB8Sw461HVUE98i7cVyM+xqyufUobk/WK9I5QDICMjZI1yKa9loCgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741090412; c=relaxed/simple;
-	bh=7ST/V5T4ufxfAK6zfRrOh7zOoHPojg42a5i8W4jN7d4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GevOanvOmpRauPLpdDL8NnOmrZt2Xo4jMP3fTNAXjOnb8QeHKYEA/eQo4TPtULWWtmh4JYDovHIpZWGMkz+K/UDpKvoyBgQFUk9NcBSG7mOeaRijYtYT3H01cZFk6a0xqkLQ1jAbaLxWcjt4KYIFj1HQJy/751aamooG/JpJjGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m8DaGVaq; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1741094038; c=relaxed/simple;
+	bh=ko8x7nXq9/vzwLbMrAAmg57HdZ0vk6zRRFPCu6remI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e/dbG4kyjP2Oq3iflr3+FotBt8LLbJifHTkCbyClgr4aM370jPP3gVXJFDl8P2TcxDI6BOlXXuwITcc2OzRYoer0LQSIE2mLb55QcLimxN2YD/lY17e0nxj0OB3aXoj0eht/bod00AkmH8Zp5n4qwWns5tLkjqrfGiVTyX+ocP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urBNGoIe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m8DaGVaq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741090405; x=1741695205; i=markus.elfring@web.de;
-	bh=8jLjvIsrxt1ztOb88CQZSdoEqMwJ+liiQTGsFG0knkg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=m8DaGVaqUR1LtPhqrf1AwI4q/Paf4BbEkZ/0RJ1p7izz9zjemsm41mUIOFArfEeB
-	 dRutbmbaAPP2jbZs+NZ/sTJDfQSmSYb4G3J0KC8m04gDc2BBo+5QtLwjDBMhRSI/w
-	 2jhmvzyVA+b7GNTCJQItAdBQJrnAfzcXIraTZd74MQ2OPxk3mgElaP+9SmQXYZ3XT
-	 a6QBqEH7xgLk/dsOK7bIyawoVFueN0wJ7U21p/uZcn7g+E77o1JrWrn7hNOTkhMOt
-	 Ez2K25lNPZMfRPkvFHEwoahP2iU0iLYDMZPoj/rP81olT1wPknW7AuA0ocOE9I93c
-	 UVO/kjqj47ltPe++Ng==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N45xz-1t7TWu2fgX-00tTfp; Tue, 04
- Mar 2025 13:13:25 +0100
-Message-ID: <5b73ab68-fab6-417a-a410-69efc1f7b97b@web.de>
-Date: Tue, 4 Mar 2025 13:13:20 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urBNGoIe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46E0EC4CEE5;
+	Tue,  4 Mar 2025 13:13:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741094038;
+	bh=ko8x7nXq9/vzwLbMrAAmg57HdZ0vk6zRRFPCu6remI8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=urBNGoIeWygwRfnI73T1Zq1iOYee7M/qtQZnV7h9r9eRmVI5G/1KTGjq5y5qz4NEr
+	 9fL8YJUhIg6yxaezJ5V2QQpXY1DUb9tIG+SY20zeXiUjZbrLHDwDQqA3RfIsGYc3wp
+	 pJ8mjltULVmHR4M495kkEXMb8zTkMKnwp+FitIBBR31MoJfPyWkfP8CCOL6CzDNITX
+	 nkbB/DlVUSpA9GVFzDyb3AnX8Iut++XZVW/wI6RzSxdPpzdvd0lrNrzIREr45WCMKu
+	 mXzaKGQ8xHHM4UIZl58gTeaag+jpGQM85wWmJdGyih7YDJUkNoXdN+pEaVrEWXs4Bg
+	 0jiFWmOa9bgew==
+Date: Tue, 4 Mar 2025 13:13:44 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Antoniu Miclaus 
+ <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich  <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] iio: adc: ad4851: Fix signedness bug in
+ ad4851_calibrate()
+Message-ID: <20250304131344.65211155@jic23-huawei>
+In-Reply-To: <5fa78e957fc85fa134cea5fa68b21b56c6173a44.camel@gmail.com>
+References: <f5e260e9-d7a8-4dae-b7ea-f1bbb1760e60@stanley.mountain>
+	<5fa78e957fc85fa134cea5fa68b21b56c6173a44.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-perf-users@vger.kernel.org, Adrian Hunter
- <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@redhat.com>, James Clark <james.clark@linaro.org>,
- Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
- Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Gaosheng Cui <cuigaosheng1@huawei.com>,
- Jing Zhang <renyu.zj@linux.alibaba.com>, John Garry
- <john.g.garry@oracle.com>, Kajol Jain <kjain@linux.ibm.com>,
- Ravi Bangoria <ravi.bangoria@amd.com>, Rob Herring <robh@kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] perf pmu: Improve exception handling in perf_pmu__lookup()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0OubccCHVQhlmpwYMG5xgA/CpBovpnSMBDhgzGtKvcLodpvCVjd
- VqbpdJSMLP727VOxVDRFqTa7ieI3lWFBqdLirfvGSDsXjpeqeZSzddm+wkoQno+V1oR5Do5
- Bazzdp8/wrunUSWLQzG/tbbr2v47fUW1nEyuVByHstsBDwTmSIKWr9dy/oZUwHx5a6otk3C
- BieYAzx5syD0OIo7dY9gA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wGbjeNQv/YQ=;IGWOgLk/VsQNZnnrc02749sWvfa
- RBmVLo188gAN3iXeOtKsuvoP6j0/VTAsyBYaHEaofzpwMjjRe6pegkMnYVsIs2BM46mCVDQbJ
- XEAqGS1gMhXix76bwPn9FXT+aVDPh3ZJ8SWoyxC/H7CKfd+bu3GREk0HSW4F48G/uh07VBLLN
- 6BBp02djnUI5OuNwxP/3LnQzOpNKvjN23l2BDr/ghdXu1WWn/L0fuo9IHUfNvrTuZ1fjlIMnC
- 204T1ZC5wJO12AEtH3WSi/Uiclt7VIdKxT2IUryrMdpX3wh9TcSIhbBYBmJVBWvWrmoWez0a+
- 0YYMZLprLm53rIChiZE7RpF9qGBh2wfQkWByczIiRpaRd7F4tuM4w3lziTMSv6ubeUXCTSk4v
- 9z6Il+n/fZMFBzbfs4PK1ZCRdjoI8Eliv/hfpXVos2lyKf+KeAAEevn7BFrRTDuVXo3CN/YGr
- 1djPxLr14h2CToLIUl36W9kKgYtt8575cud/WtYpNFZCV9TTVPnbG1UhZKxHE3n1DaTJ4A0Bs
- f87wUGHYXtkXUAglGXL4H7IqwcCCsxRHpWciQN0WBpVsa6dcl8P4xb7DXgjgEiym7pc4vHAnv
- O5Z5rFDpfEHBRfCVcK/2pEcrUwasMhVhadI8g8wUDQDPE5LNvPeHENfcHIVWIvshJPrIBiL2I
- tDzUl42tsCBVDxq8lkvn6zoGl0Jj1v1c0viAYvKakwhYUQs1i/Nuo6Dr30TIoEn9idN//sTKq
- nBvCIFC6M/viJYz0TbMABFMyR+X88qhtoWTVUWMhhTIQyQ+8l983Ll4IQetzvdcIuJIK8Pw/w
- vu8IV6/NSecArB7d5vtkrGBN+7+qzzWXQHLBbLjlXemnqtE/757bR59p+EfcMZix5Ki5hETr7
- 6NJLduv7dw4E4yDUXVZ9xtkCa8szJWqkf/YI8OMOPAY3EaVsuuXGohcTLanr4Fr5QoR8/JdV7
- iUoMJ50D58iupu3qkdJICV0o2JGYb6g9sfOCrae1ieC3qe4ytSPyLO65b8T167oNZHFAo/pcV
- wGE9CsQCXeq2Z+fzLMn/5U3ppBO+8+06oVr2UNkjDcVHAqyjr8HHombdDJT6OUMCY38PiywuM
- IWDLVkj2IP1fETmqr2QN/1k25gA5bQjlMHMkulsc0WKPBP6gzN9WPWpQtXo0MUKlHZdqheS8+
- In27X3uDIIT2qyru+Lg9XIXtoHJBR3Yf6u7qfxkSrv+ZTYuUtt+sDQjiqIAKc21nsi9LNjSQ+
- donvfUyvD2IBBu9sbIWPuAQ7+PL1nLmhUpF82R8OlQcePXxQ6CDj50b4+Zd6UvpaszA1pLMGv
- RiRag6MVOK3ZQZ89fkTKuzPVehk3cwSUQQC4WkIdSplhcQB8Cl8suGC/6WWHRK1Yp7qLuIq4l
- 9W0XTjf3DE5D37lTnKRXpwqDGN7wLZvEZNlyb9TpoMbERmcK9jHsELBM7OF4FSgykglErvBjy
- uCLpMZAToikZ4pKccUDE0YCYnlSM=
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Mar 2025 12:55:05 +0100
+On Fri, 28 Feb 2025 13:24:20 +0000
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-A zfree() call is not helpful after a failed strdup(name) call in
-this function implementation.
-Thus use an other jump target instead.
+> On Fri, 2025-02-28 at 12:36 +0300, Dan Carpenter wrote:
+> > The "c" variable is used to store error codes from ad4851_find_opt()
+> > so it has to be signed for the error handling to work.=C2=A0 Change it
+> > to type int.
+> >=20
+> > Fixes: 6250803fe2ec ("iio: adc: ad4851: add ad485x driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+Julia + 0-day / coccinelle caught this one as well but seeing as you
+were both first to report and you sent me a patch I'll just apply this one.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- tools/perf/util/pmu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Applied to the togreg branch of iio.git.
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 57450c73fb63..74eb46390233 100644
-=2D-- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -1107,7 +1107,7 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *=
-pmus, int dirfd, const char
+Thanks,
 
- 	pmu->name =3D strdup(name);
- 	if (!pmu->name)
--		goto err;
-+		goto free_pmu;
+Jonathan
 
- 	/*
- 	 * Read type early to fail fast if a lookup name isn't a PMU. Ensure
-@@ -1155,6 +1155,7 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *=
-pmus, int dirfd, const char
- 	return pmu;
- err:
- 	zfree(&pmu->name);
-+free_pmu:
- 	free(pmu);
- 	return NULL;
- }
-=2D-
-2.48.1
+>=20
+> > Btw, in ad4851_write_raw() there are some checks for negative but
+> > the multiplication could still wrap and turn negative so we might want =
+to
+> > add an upper bounds as well:
+> >=20
+> > =C2=A0=C2=A0=C2=A0 drivers/iio/adc/ad4851.c:826 ad4851_write_raw()
+> > =C2=A0=C2=A0=C2=A0 warn: potential integer overflow from user 'val * st=
+->osr'
+> >=20
+> > =C2=A0drivers/iio/adc/ad4851.c | 4 ++--
+> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
+> > index 1ad37084355e..98ebc853db79 100644
+> > --- a/drivers/iio/adc/ad4851.c
+> > +++ b/drivers/iio/adc/ad4851.c
+> > @@ -492,11 +492,11 @@ static int ad4851_find_opt(const unsigned long *f=
+ield,
+> > unsigned int start,
+> > =C2=A0static int ad4851_calibrate(struct iio_dev *indio_dev)
+> > =C2=A0{
+> > =C2=A0	struct ad4851_state *st =3D iio_priv(indio_dev);
+> > -	unsigned int opt_delay, num_lanes, delay, i, s, c;
+> > +	unsigned int opt_delay, num_lanes, delay, i, s;
+> > =C2=A0	enum iio_backend_interface_type interface_type;
+> > =C2=A0	DECLARE_BITMAP(pn_status, AD4851_MAX_LANES * AD4851_MAX_IODELAY);
+> > =C2=A0	bool status;
+> > -	int ret;
+> > +	int c, ret;
+> > =C2=A0
+> > =C2=A0	ret =3D iio_backend_interface_type_get(st->back, &interface_type=
+);
+> > =C2=A0	if (ret) =20
+>=20
+>=20
 
