@@ -1,40 +1,40 @@
 Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8225C2620EC;
-	Tue,  4 Mar 2025 19:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C995B77102;
+	Tue,  4 Mar 2025 20:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741117819; cv=none; b=L0HErzCwekEYxfB398xhV/iRZv8SsAfDwUdtliVFJN+42IX6f85hxqsOqLL/SAtfqlLxJL3li7X74PGmZvWjwI/setl1WETzj/+n34dQ/iFTWFPXaRhnAsIzluY9qs9GODUVif4BS9VlbHUnadkns8OqV5By2vFeZRoGxTZS//k=
+	t=1741118787; cv=none; b=XUMRlsDZIDJWNQ5IS6HfEEmJyUgdl/9zfPDuzK6Kq4h62XpVC8nbzh9tiX8MYw2mpxZIyw/GIJATED7SC2q4eQzUx00zCENHchDWaEzd01jjpKyp+Brf/MpOCjI8SZMUyJ9867NcDA5lre9G7I37Z5rMXWFnRnClWTYkILSKij8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741117819; c=relaxed/simple;
-	bh=TGI/H3hK5ajdkkVDdKQRezZi/m186Hn9w32Ho0mio2o=;
+	s=arc-20240116; t=1741118787; c=relaxed/simple;
+	bh=8YfGuytvRA+WiZ8U62DQi02b42kFgx41p4zWhjiFA90=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=L5YkqjuYQ9UBaf6zelX6YmVrpHCrD2Vg4LD03Skq3gdeDd+l6k6Q4rERkqD6KUpOgU8MZm4kt4xtALUF5gr6EFtysxJAub8zNmGWpng2EXcjMhA8v5r8vFLKDX+tsHmYw914U8MikplJnE4I7SwOg3UFYgikSO7LzSjqHbNSoVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=IfLlcfo4; arc=none smtp.client-ip=212.227.17.11
+	 In-Reply-To:Content-Type; b=MCwDGIyKUGpmzgFohNKRax/3pX02zVt+1riIMHjRhOqHN+MimAXH2Dsi4cung6sIuEasb9KKEkWJ+OyE+ENyPj+0AfxrwV9AZFHJfjnDKQwP8STm0C1LWXsbVrWUubvrVdXwcsKHSkmI92OPs5IK3ftHw+D1w7H99iHX+YSlA8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LGo3cuhA; arc=none smtp.client-ip=212.227.17.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="IfLlcfo4"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LGo3cuhA"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741117809; x=1741722609; i=markus.elfring@web.de;
-	bh=NAqioDBnaCR/fX3O979gDdxkodeOLW6s/eR0SCVTizo=;
+	s=s29768273; t=1741118762; x=1741723562; i=markus.elfring@web.de;
+	bh=CLyLqQ9mG2OYA4h8XYSBVwHU4gZu0CSL953Y+TKJ5ew=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
 	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=IfLlcfo42J6gUsPkkOw3qJ+P+aVUjMY8LFIo+hLRmyVLiYH7E3HdddzmsNr7rVFT
-	 6FhfK3ifb+4POy3hwuBOohSZb/+e5oMcg4ySc6XCKVMgKvCkWZRMGhxu5jS5Zm1wl
-	 fUizJdnxNoUXnaZNko6/mtILCHpgb5CYTphcYFvTgMHDA6Hz3sstnp4UZ9LvyiWgC
-	 AnKNcWTRyvCxZaCrKZW86ivZZnEFrR8I+GuvZLC0TPTkrjR+btE2lsnZ2yEyzyhRA
-	 QHD/AsCw0gpaqOu1YxiwWsK19XjYblydIMUjrU2tbVUTn7nlVbCPjteJ/aEUe0+r6
-	 qpb4yqUXxsELWdNq4g==
+	b=LGo3cuhAXykSeTsKONdUxTw39/NeJ+Qnf4CVYXkQRa1IhniSsZ7HZmEfUaQAj1GF
+	 PHmPOBx23eFJqhVW3qg60CjUZxscRK6eUkCcsjAWk2++WZJ6mJt02tj5s0LnjNL3u
+	 c3mvvkSzonq4DVidZZSi+yrd5Fdw9xqyctk+/xERDfzB/47pk8oTFt1HGZf+xMOL0
+	 xC2p8x5aYURgGVWDdHgC807kMft1Duzbu/ewK/p8RIoOu6gaR/AIeVwKOpE+ji90u
+	 FACNBn6oTR3lkdH0S671AKPDvjVooShoAdqmnenla2xMH162FqlG+WLwE5Pxiktoi
+	 dGtw0OCpZCZXlOKkRw==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M9qhD-1tsYwn4A0D-004pJK; Tue, 04
- Mar 2025 20:50:09 +0100
-Message-ID: <f7d11fd7-6b41-4dbd-b7dc-518fe6e6426f@web.de>
-Date: Tue, 4 Mar 2025 20:50:06 +0100
+Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MPKB5-1td59T1Lw5-00WJ26; Tue, 04
+ Mar 2025 21:06:02 +0100
+Message-ID: <15374d0b-ac50-4eae-8d94-c870a7c918e6@web.de>
+Date: Tue, 4 Mar 2025 21:06:01 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,59 +42,55 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH RESEND] bbc_i2c: Fix exception handling in attach_one_i2c()
+Subject: [PATCH RESEND] irqchip/partitions: Fix exception handling in
+ partition_create_desc()
 From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, sparclinux@vger.kernel.org,
- Andreas Larsson <andreas@gaisler.com>,
- Christopher Alexander Tobias Schulze <cat.schulze@alice-dsl.net>,
- "David S. Miller" <davem@davemloft.net>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: kernel-janitors@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
 References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <21e58abb-f215-b9b7-ffe8-236dd40c6bd2@web.de>
+ <15fa53e5-916f-dac8-87fb-9cb81021418c@web.de>
 Content-Language: en-GB
-In-Reply-To: <21e58abb-f215-b9b7-ffe8-236dd40c6bd2@web.de>
+In-Reply-To: <15fa53e5-916f-dac8-87fb-9cb81021418c@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WpWmttFFn8Qub64QBVtRj6aRk7IDFd3+w6lJR6TrfK8BSH156Ot
- hu6UopotRXDpps5+KITM05hQRO91neMEUKBl4E/Pw6c6uVCiQ284/JDE3tl1f+wn3w6lmEe
- d3QuaT3UgtFYU3zm9I+FuqJLOxJY2XWMQ5sHa/OHspiTepFl0WmgNdmPd13G5yEd2wu1kJP
- hGq6cT++PrBjIxK4z51fA==
+X-Provags-ID: V03:K1:DXfXVMh3BB0Y7aScUQseE1/ISmriUWWViY8FQyEhmx0RY1npwoy
+ MwYFgnmqefCE3QPIq2MKXZZb5k6v9mbvYIwgem1BzFzoOf/0rd/6D59ILDFulKOnu8D8XiO
+ 6N41aBtg4CykvjvwMcihwaTxo/0IVBgd1Samxc2pU1XpyWoOmerpTtRUOVOID4F25lo17C1
+ tXQiLf2HK9UblWPjTqyBA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yKktvz9VDmM=;6q/3gbhSNL/sHrPhjt7U2GB+w7U
- vSfEZeDYNAzI8t/grqY9Q3Ww8qIwQBLwtwOuN7hKhmoEJyNI3eqXvMrhlW6Neiq5pcfL0irOe
- zBqEe2HkcqbQ6dt7s8iTxt6tup12+QeN8PoOdvZBIzfxsmPb6F40AOiwe8WBWe+IY/jp4nk30
- Z8RTadRfn6MuP3i1g9DHm5pMpwdAeEScZuIFFvS2MGBdwtKroUUH3PrJpcpc3gElkBFeEXmCf
- F3eSOGTIteRBfTYeO1I4QcCl8HSxLpmsTqzOgUuj8MBVL/qiFL47Lk9y3jF7N1yLMVQasQUaJ
- z0DP7w/Pi77yCZaXf1DsEADgeRjgoGausGvzwrtTE66o8SHwEJ2q9IRjxxF9tuVQJjuBGJSUj
- X4PnTOJ7oK4yrU0JuPmoNZq6PQ3NZeCuhyi8Kuk9GdZk142+2aVpf5821PrfKm+um6yWr3RvF
- +MXFdtN53AEMuHbZD+JPROskKiDQHADgvjTdwV+MIzNUbP0AZvVu6uX8EAZwRVDjnord6cUnp
- NAmFxnwvpXwk6Gmz2d7X5R0KWOhLkYlny1vjVlwq8Hb/NV7AZqjscqf5pnBIAzPfjOioHKVec
- qFAMNKCOSlqgVbBZ+4Qxhbk4jkfGe6ifMDScFxMmo0tCV0WKIasYpPOGeuZ+JsrFvIcCOFzZE
- 0FbdCG3DkMzMaOP79kJUrLG7qs4bepuXUURm1oOIeBy9M1CVJb9cT3Vs6akKKpO2oEm2x2E24
- MJJDNGpRWuVXXm8jWRlNEP+utm15nN1j3frwEKvISCfGyxXrmKix2UULVhHU6siPNXsQaSI9H
- VD/u/Z4WThkuTMvD5NjcqexBdHoohH292FJL4rFO2wNH8BOayV2tPLuUKiJ2uqhlVV3Ir3DJv
- d+R9xigG1mM0SaVBVRcSoqNYnFpi45uAVQeQLjKCwlEIn7RWOLNeDMTCWcOMd398u51QCgyyU
- YttK1vWd/boZVkEUe5+3NZSk/d0GQl5rAw9U4E5Q73hhKsiuvGX03nX8+oI/He0hST+65CEtA
- 5iaXQhmH44nmqLdUH9RPeWdSXu/pHe1g4TXOJu6HbuSZGel9yhIfaPk0AkqcwM4bwgb85IwEC
- 2AdDPkLdixNKpgJS4Q7iYNwErjqjbsv2ep+w/jmTwXffxX3rAzeTca8BEoZWd91ipdDME+9nC
- xWecGi4mXqzfDW8p98GS/Lzml+RcABxEF/ZIIdhKJWrdRFXWnXIhcgDLQIIAeYx1mCsNo/Ddd
- tNDtrvjHQanztPSDcQS1RzBkALmMp/dEZmZFfmkduuE45f4vany5Efx9jKnNC5diFmd/zIYql
- T2mfgaQoo86yPWyO+WmUy06/0Bq/f9tiscQdpnKRgakcDKmq5crk4Q5+70G7QLU11E/QpJx6M
- qQ1pRcB9m/j2+ICHeExgEUmN8wwvjIZOkCWQzYwsnrrZItL0VSB9f2sO1mxMugWhDqZNV+j/v
- t3nSEg19mZvhlcpKG9vmlkol28fM=
+UI-OutboundReport: notjunk:1;M01:P0:FTmyyT3rHvE=;fzyggJSmQzfEyN9pXi/rgdPINLF
+ yaVsOEUccpvxrIG/+NeGb4m2FuNh3PHB0Ai9dAW5b0v/Keefjwfx+g4XhllV2eMNQLNiq7ia+
+ WHnKHAvRM+OJDRAn1YL9bxvEDM8A412Q144ORpL6A07pCxprVHmL9EXsTRxJDrXvZN361JQkD
+ zya0GGSSxTF7TJvKs2hafavg34TdxwEyou5eDDSs5gIRysSW23VQxORezCT8mDa9ixhmdUGM6
+ o6iimqjovHU/xZiG5nmoWwRRSNtfTK3db8crULMfnNUrJSUr4aIFpI9vC1MTYp9A2xjq+5yS9
+ zPtdffJU0+0CXSFEnZ26en6R009NSjrPHI6cw6KgAkZjq8DAKXRTqQmlwoMdAsoo1Qrgh4wXt
+ myXsZzPwxUNBkBL0/cb0FQtZyI0qKt4QWvY50TNGJYh7G8rf6jmXTvg35MxPesGqTenK3+rLc
+ kfmIhimaFeQJW+lBF5G0SLMGk7GKe1TYCHZOXqMxuChyjGv8Sq9WDimCew0p1yMSA1KNO4Slr
+ IuH4ougC/8bGLW55C1ybSlXLKWEDo5gMykYq5p+QVjj1s08RYP9LdGa89eX/HOl5da41bOh13
+ bhunuCANprpP78QL2EZq48euLJOgjlYiyv+/T8baN1Qf+tWBVz1udNJEJCCB0FW4YhaDz+GTt
+ yr+MZ/3MTysQDJMmbhRUMBMgewK7+0h8N2gllC5HFSFaE9La4xv0OcpXBPZ42KvIrlMqsyKgm
+ +3pODzwLVanl1wu53HaIKL3gRXi1F6kDO4M+mMviLy1kNoKTFfAYQBqVnKYCt1FwiCJPaq7yz
+ /M/bCx+/yJqe18eeiBRigIDh7W+Vy3B+CPrcegkexGIoIAHQ8V0Wmbm57LvnVfKLvPrwSzVT6
+ HPwu7Ckspc9U6ivLdv1bUBvWAqg3zFzbSeiNuLsR+37JgAcHxMA01xEtj1MIzago5lFnlm0pR
+ Ulk0RUhjyGxJGR7+0P2qkzgPFCH6XepN1m1uVchW7QqJvpfwobTCeS8TNJa+CZiftiAFqUX1Q
+ MblwmcXT6lggbYq/MF1bvuwViPaVtcHXZ6SNjbZ5j5HDRKJMHDeVkiSvJBe3R3qOUICRSeQpJ
+ Q/XVnKDgblgMPL+9vy/RKD+aFkAnw4aqMojl0BFXEk4RQ1Dy86m5RQnZHSJKCJESWItghnjPe
+ kSwrk8oDnA5NzJEcu+Kg4UK2PtVAsh9v28gtCS7ZLZBkQSVRozRzB0Fafv2n8FU2shwwOeG++
+ MErNDWaI9ouifYey0RqpuGch+6P4X+gH3SdOdDf7u+S2PHNjgVKAPZEk21EvwhzEw/WVVe8oh
+ c7MzYdzsxj857jXwCFKJgLApHivVVy937qXKTCQxxUAEjOLfSTi6+UuDDNcOn/X6EnMgr5bAG
+ vd4xWuJEIEg7KcAN07OG7YYhs51t+Uy7u8m4pU1cEuh5WUqHcaY/7aKCraRB7wlJCzDh1m8vN
+ XtVPykMbytJM7CXL0FxvOl6iQqQ4=
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 21 Mar 2023 21:12:29 +0100
+Date: Sun, 19 Mar 2023 21:38:47 +0100
 
-The label =E2=80=9Cfail=E2=80=9D was used to jump to another pointer check=
- despite of
-the detail in the implementation of the function =E2=80=9Cattach_one_i2c=
-=E2=80=9D
+The label =E2=80=9Cout=E2=80=9D was used to jump to another pointer check =
+despite of
+the detail in the implementation of the function =E2=80=9Cpartition_create=
+_desc=E2=80=9D
 that it was determined already that a corresponding variable contained
-a null pointer because of a failed call of the function =E2=80=9Cof_iorema=
-p=E2=80=9D.
+still a null pointer.
 
 * Thus use more appropriate labels instead.
 
@@ -103,60 +99,46 @@ p=E2=80=9D.
 
 This issue was detected by using the Coccinelle software.
 
-Fixes: 5cdceab3d5e0 ("bbc-i2c: Fix BBC I2C envctrl on SunBlade 2000")
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Fixes: 9e2c986cb460 ("irqchip: Add per-cpu interrupt partitioning library"=
+)
 Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 =2D--
- drivers/sbus/char/bbc_i2c.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/irqchip/irq-partition-percpu.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/sbus/char/bbc_i2c.c b/drivers/sbus/char/bbc_i2c.c
-index 537e55cd038d..03e29f2760b2 100644
-=2D-- a/drivers/sbus/char/bbc_i2c.c
-+++ b/drivers/sbus/char/bbc_i2c.c
-@@ -306,19 +306,19 @@ static struct bbc_i2c_bus * attach_one_i2c(struct pl=
-atform_device *op, int index
+diff --git a/drivers/irqchip/irq-partition-percpu.c b/drivers/irqchip/irq-=
+partition-percpu.c
+index 8e76d2913e6b..80e1c73af87e 100644
+=2D-- a/drivers/irqchip/irq-partition-percpu.c
++++ b/drivers/irqchip/irq-partition-percpu.c
+@@ -212,21 +212,21 @@ struct partition_desc *partition_create_desc(struct =
+fwnode_handle *fwnode,
 
- 	bp->i2c_control_regs =3D of_ioremap(&op->resource[0], 0, 0x2, "bbc_i2c_r=
-egs");
- 	if (!bp->i2c_control_regs)
--		goto fail;
-+		goto free_bus;
+ 	d =3D irq_domain_create_linear(fwnode, nr_parts, &desc->ops, desc);
+ 	if (!d)
+-		goto out;
++		goto free_desc;
+ 	desc->domain =3D d;
 
- 	if (op->num_resources =3D=3D 2) {
- 		bp->i2c_bussel_reg =3D of_ioremap(&op->resource[1], 0, 0x1, "bbc_i2c_bu=
-ssel");
- 		if (!bp->i2c_bussel_reg)
--			goto fail;
-+			goto unmap_io_control_regs;
- 	}
+ 	desc->bitmap =3D bitmap_zalloc(nr_parts, GFP_KERNEL);
+ 	if (WARN_ON(!desc->bitmap))
+-		goto out;
++		goto remove_domain;
 
- 	bp->waiting =3D 0;
- 	init_waitqueue_head(&bp->wq);
- 	if (request_irq(op->archdata.irqs[0], bbc_i2c_interrupt,
- 			IRQF_SHARED, "bbc_i2c", bp))
--		goto fail;
-+		goto recheck_bussel_reg;
+ 	desc->chained_desc =3D irq_to_desc(chained_irq);
+ 	desc->nr_parts =3D nr_parts;
+ 	desc->parts =3D parts;
 
- 	bp->index =3D index;
- 	bp->op =3D op;
-@@ -348,11 +348,12 @@ static struct bbc_i2c_bus * attach_one_i2c(struct pl=
-atform_device *op, int index
+ 	return desc;
+-out:
+-	if (d)
+-		irq_domain_remove(d);
++remove_domain:
++	irq_domain_remove(d);
++free_desc:
+ 	kfree(desc);
 
- 	return bp;
-
--fail:
-+recheck_bussel_reg:
- 	if (bp->i2c_bussel_reg)
- 		of_iounmap(&op->resource[1], bp->i2c_bussel_reg, 1);
--	if (bp->i2c_control_regs)
--		of_iounmap(&op->resource[0], bp->i2c_control_regs, 2);
-+unmap_io_control_regs:
-+	of_iounmap(&op->resource[0], bp->i2c_control_regs, 2);
-+free_bus:
- 	kfree(bp);
  	return NULL;
- }
 =2D-
 2.40.0
 
