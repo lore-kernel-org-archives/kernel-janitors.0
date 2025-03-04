@@ -1,111 +1,86 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674B81F12E8
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Mar 2025 07:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE031F3B8B
+	for <kernel-janitors@vger.kernel.org>; Tue,  4 Mar 2025 08:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741071672; cv=none; b=r5ebWcjFWnXl84/vzv6+6hnYxhyhxJyXk3GVwkEi7/2sEw3f/3ZwEnBAOrkKkDSj6cFJbCOX1Sj9bDmkB7glXWDgX2+54JY4e5h9IH29+I/H0z/H2rSNZqyQbLDsKLg4bSVGT7/fNqqbSRSkYJQXy+OD89YSisBPP5R30ErPX7w=
+	t=1741077608; cv=none; b=lnMGcIPzl+uV0cpG/UHvO0dHTu1vZ43xl/ZC0AofUJdL42dK6Og5JQAqYPQxSLHlz0k0a9DPJT8rqdhw3ZQ7nOlUsD5YDzB58W/NuBtqU4/0uoPwLlH4vT6t3g6JkGVO4LHgDb5jFt1MZ6S9532WqT9Y1EoploNCWiN2OnJe99U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741071672; c=relaxed/simple;
-	bh=WeoK4O4lNVf1jf3RL4kog/vPaezBLPVB+yX+IBUebZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WFwW5PnxnTnoMwCWxM+yX7pAWdmAPVgD5NINHzM272khDsVdfYVAc/T7CIiGd6Up+M24uT2jDSSPAtV9TlePnX9SBJf1Zhjxlc8EroofPPX0KApvaJ4992smR+GnKmHnlpVtzUldVgv6beYzkgGFzcq2ofqj16+GGDMNx0myCTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bttbGjI/; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1741077608; c=relaxed/simple;
+	bh=YK/v+HTjGEFPbEINjripCBl0YEaMvBdXG3vSD9bGu5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NfGkaSdmOoUVSEtzAind9mLjf5Zs+GDCcyfWyK8T08yfcMlcBdlN6sOZRgw+/H2mWDBOsL7fs7d6eCNKznDgyH30bjDnZLPFIazvV21C32CEXA0U3a3PlTn1j8Kyy9tdsRoWFmkv+fYHpGaAyHQYJSUnL43Tfacfiu+2pSrph80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lcMJYJWc; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bttbGjI/"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ac1f5157c90so66237166b.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 03 Mar 2025 23:01:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lcMJYJWc"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6f77b9e0a34so41947887b3.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 04 Mar 2025 00:40:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741071669; x=1741676469; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YSdQFiVMCrS5O9/EkwHKFfamzvbURyk8m93xw+1w4DU=;
-        b=bttbGjI/lzJoQgfS+9oM+r1NK1li9VyzHlDLSFOdLfzAf99CG19nCgKM857n7GJk6l
-         u3+jngiwt8+oocMkzXMHdPV/vUB5JOeyZG/JLby/CcKvSG3bK0pWmp6CrGmXbUPV0qM+
-         07RTbCdlR3nKJhd4g5tPB+a/HhtQdCz60AM7lq7liLkSmgfqll7lmxCOha0aQb0MsJGc
-         +Oy6BXgcNKRz1whpBO1mK/+XE6+5aZTwMri9neFB5V55fgxIzNa4rYBSTFCyV14olXEr
-         4ViqicwViIqVBlmz0auqOVpzKETchpYvKympwTdY8wbMULfHVvtfa2Gq2Q6zg1p/46v4
-         zPAQ==
+        d=linaro.org; s=google; t=1741077605; x=1741682405; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YK/v+HTjGEFPbEINjripCBl0YEaMvBdXG3vSD9bGu5w=;
+        b=lcMJYJWcyFv/O1o3KqIUHZv9hFomU32mdKnoZULCveMCmgTXFYma84DF+muqVNQ8cb
+         Ye8eGspmkhIBsgvhUtb3rpGFykGmTo3RQEeOTatfe9uumuD/gupiV4IVHZ1HlbqQY/NU
+         +DOzgujaNkqonuHs2g8DxQnusiMHqFSu0NkTAukXEkrrgpibNQtoCW6Ehqnw1lPLILcE
+         TrTSGDQ4vNZr3Jx/QBr/fBMFBVTH//OcnUAVj1md4uN92UFT1UFe4weaMSPVDZBXZJ8X
+         KRySWc8JREgxXvUqx1eRtGf1TCl2Ud/xLIj4zi8XImHlK61TgywozZC0mKkmwpHCjDAJ
+         0qLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741071669; x=1741676469;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YSdQFiVMCrS5O9/EkwHKFfamzvbURyk8m93xw+1w4DU=;
-        b=M+etr1zjHtyvsrgaisq3hjONdzbQ+hV7Xgp3TvhZ4O9vBQESdPMlIs5ueJEY3VaH9f
-         fFqLOYPdE6u7Yz/av/TEhsjkZJtFwqftwxtEbfr15ISJV5lllic0zggXRqclVBExaV0b
-         pxYUdTIbcGhNA94iqkSBTIRT5JxReHs+XamJvYvAg2boOHdrTPFkqwUmjgmDQhfptZ/3
-         TKtEZJwZ1sZm+6ar2fQDMGj55nzoC6tHc9Ida4o6T6CovVArJQ9B5BPuOb5Zns2bBq6l
-         TCHazrLWY4smfierTlxSIrCsS65qwQjrOO5EY9x8i5jb0BLixjWf7LO/rFAWwmFPkr/I
-         wxIA==
-X-Forwarded-Encrypted: i=1; AJvYcCX22bymkKhOMIRxK2DStYwNbYVxaNQEu9gaW7JQ+xHoWDNQ4175C1h/SHwjuyCacJCD/9ubgqqsbpsG4pFQMqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2Gh++PrUY4YBrzsJAl3tRkkMPowem3nc/o9FzsK6y7zg0tt0Q
-	RzH0V7bYTHDMa8XtIHX/9iAzOWgwlkjwuDHNx+GQLRFeyXZUhcRVjJEio9n1168=
-X-Gm-Gg: ASbGncu61Mzi7wnG2gdBRJAm7Os74142o2wydDPqMdohYDx/Emco2soW+b7Emuw7m0n
-	tlX4elcOHkmdtrTFAl0r41yxyll8CBLr5Vy7I37Hg4EFfpoZETb5rbHcWs1oeOyl/8Sq5J7G9YJ
-	9MIp8iXgvdbSZkTbHdqDDWxl98hv2nLLpTijQ/JjNK+agJh9D8zmwJCM7mJ5c75ZIH6Us8PFY4x
-	FR2LLpWfnziYW7Vlqew7Bsr6wvdUgPlXUislacQVuMWTmOumW/bZWmDxZKgIuVo2eWg6DpGgCYV
-	MkQayxrGYwhx3VKUgWbT3jAzJAHa7P9CJt6m3zoDzPtyvbRS2w==
-X-Google-Smtp-Source: AGHT+IGxyBW63fSgEIDkdKmUigp27y49JS7UkTA+NZOY+d9+or8SnPNDX/CPFO1XI+oWKppLDaoD5Q==
-X-Received: by 2002:a17:907:86a9:b0:abf:6424:79fa with SMTP id a640c23a62f3a-abf6424d073mr1083370966b.28.1741071668220;
-        Mon, 03 Mar 2025 23:01:08 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf7981482csm286996066b.122.2025.03.03.23.01.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 23:01:07 -0800 (PST)
-Date: Tue, 4 Mar 2025 10:01:04 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ahmed Zaki <ahmed.zaki@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 net-next] net: Silence use after free static checker
- warning
-Message-ID: <Z8alMHz89jH3uPJ9@stanley.mountain>
+        d=1e100.net; s=20230601; t=1741077605; x=1741682405;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YK/v+HTjGEFPbEINjripCBl0YEaMvBdXG3vSD9bGu5w=;
+        b=ELWoc+zy9LrIKiDs7JYqD6oW9H9pKoUtu5IG3tDWfGiC38ck6v3srtCVXYYbodLDqn
+         lecPPgn2AsWEq7lavgzsLmsgLyiXagU4sT84btQUwXbAL8lybn9bSOokThfF8m/2F8B/
+         WtIwbeIvkJY3HGG2d4OGOoksERRspMNZj5PYai4CZOngr/JedmoQSl7p+5XHc0y9Xc0q
+         PX4I41+CSqqny70cdEOhrHdQncAD/E+aZ1GCrLN9QvqXopCqQtYg+sW7lNG+s2qnjaNU
+         3c8/aryp48ED0qsgjsDklOWSAA5IoXgxsfJuredoe4MaDzvwJqBujJNHRcbKt6uvwyCa
+         0F2g==
+X-Forwarded-Encrypted: i=1; AJvYcCX4vj/5IQU/H0OHclITo4Lv+zL/9kD4JU5txYX49z2C78q+Ex8GE5rRqwxWwKnq+Dr/Nz4JepJDjogQUSV6qvw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc61EmK308PNHp2da3LUux6CpTEKYTx9Aw7ZNgI6w5RTwRzHea
+	+Fq/dx/SoppwnDhu68hm8wxrGcoP0lQjau5sH4yeia873Jo7YzQeIVbxC8b3K7gOtxoACy1Kl2O
+	x7VNtWn9UuHIUxeF9ODZvcif+4Y0BD/n4gCs5lxMH8sw279WC
+X-Gm-Gg: ASbGncsg6ez5r+gAtH7iHDeTMpNjiDPEgUVBuS0fzkJausi7jltD2zYd7naJGFHtmkq
+	2FOghMDtdnIksw41N9vAT1j9NXXYhOWVs+oCvmfQEb3HRXN645A5uQXA4fjCXee1xTjJGyMn5YZ
+	Xca4/fDpz4lq0HzlgNqittnHecjA==
+X-Google-Smtp-Source: AGHT+IHzjcSCOgliNPgzEIfJP4zRqA+GXbH1gcPHEqHVdjToORnVLP+q+n+ER/rA0dxnmWxFxju94KxpZdoxEUjQw0w=
+X-Received: by 2002:a05:690c:3387:b0:6fd:4521:f9d7 with SMTP id
+ 00721157ae682-6fd4a1b5ad8mr221954587b3.24.1741077605393; Tue, 04 Mar 2025
+ 00:40:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250303092826.318638-1-colin.i.king@gmail.com>
+In-Reply-To: <20250303092826.318638-1-colin.i.king@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 4 Mar 2025 09:39:51 +0100
+X-Gm-Features: AQ5f1Jq2rfvBPsQCyevIyKgnAdZxW9QavsIRuyb9v_d9Hj7plbiOg3wN5ZMKg3c
+Message-ID: <CACRpkdZwjOWTJioAY92LwmEGmqZJHu3d6foKNbtVmNDN1h_cFw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: pinconf-generic: Fix spelling mistake "paramers"
+ -> "parameters"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The cpu_rmap_put() will call kfree() when the last reference is dropped.
+On Mon, Mar 3, 2025 at 10:29=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
 
-Fortunately, this is not the the last reference so it won't free it
-here.  Unfortunately, static checkers are not clever enough and they
-still warn that this could lead to a use after free on the next line.
-Flip these two statements around to silence the static checker false
-positve.
+> There is a spelling mistake in a dev_err message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied!
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 9189c4a048d7..c102349e04ee 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -7072,8 +7072,8 @@ void netif_napi_set_irq_locked(struct napi_struct *napi, int irq)
- put_rmap:
- #ifdef CONFIG_RFS_ACCEL
- 	if (napi->dev->rx_cpu_rmap_auto) {
--		cpu_rmap_put(napi->dev->rx_cpu_rmap);
- 		napi->dev->rx_cpu_rmap->obj[napi->napi_rmap_idx] = NULL;
-+		cpu_rmap_put(napi->dev->rx_cpu_rmap);
- 		napi->napi_rmap_idx = -1;
- 	}
- #endif
--- 
-2.47.2
-
+Yours,
+Linus Walleij
