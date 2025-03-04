@@ -1,41 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6720265639;
-	Tue,  4 Mar 2025 20:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E9A156C76;
+	Tue,  4 Mar 2025 20:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741121131; cv=none; b=N0dprVUnKCmsP7P8s5YS5f4vIgT3T8p81e2j4pQ95CP+iKNixjyA9Tcm3ONy1ZHqgQTgNcC5qxi1NkvboATLaFGlEu2ZRmdgoU+JazJWWY2+aWohBUd8lsJWO5TcKycho7LXNpfy3bMoc9Rbb4BSsKTVblUJ2LCZNf59s6GQ3mc=
+	t=1741121271; cv=none; b=bii/wVGR0hGgMJyCWLBgvpQiaG90tSnEjAbr0ThxH223faXmFAbiYUf+wg64JcWoEWgOUurNQwDwWgMtGfk3BakBDiFxfyBEkssPD32Uqe43Fyd5+c1Uc3GU0pjrBFGQae5I6nv3176UHb85UAQIDCWnzBsffR+gei7cxNsmwhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741121131; c=relaxed/simple;
-	bh=oao6VfbwNj8WG3JQ/qDYHHTP/jtD7RI6kqWRj5K7Ezk=;
+	s=arc-20240116; t=1741121271; c=relaxed/simple;
+	bh=8YjeZC0STAUEMN8Yn7Msxcjr0MuyyeihkUkLSg6nhMc=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=lNm7Zr7J/+5fxTjLReHwqRoQMN0I54qSmmIrbkbqwdeRK6s3IXLS9nnBP0nH08Nag/nfXTbt2vaqCHNIdSBFnN3Kh4QtlI/KUPPsTjSPFYn4RtxI+DmcirxCGoktN9sZYVFVMOA3cqfUGXaBySiSWuztKG3LCvo8AamQSKKHd6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUO98Ekm; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=FvJJW8Dx6xO6z4n0TNk/WiOSfmjbHd7SVKLUm2JvPv6Pehzpy634oX3fx270DwHLr79oFPSpRDQZidKyoSLyaaLyRcbBfo54AN8SDpTSFgi/ATk/YFod3GZbAyuIp3nuMMTEkURtlZk9Z//BfYe0xcSSSs1xT6voyKO/cfOlDNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAwy1Ndl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUO98Ekm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB253C4CEEC;
-	Tue,  4 Mar 2025 20:45:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAwy1Ndl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A42C4CEE5;
+	Tue,  4 Mar 2025 20:47:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741121131;
-	bh=oao6VfbwNj8WG3JQ/qDYHHTP/jtD7RI6kqWRj5K7Ezk=;
+	s=k20201202; t=1741121270;
+	bh=8YjeZC0STAUEMN8Yn7Msxcjr0MuyyeihkUkLSg6nhMc=;
 	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=FUO98Ekm4GETHKN2lQCvVV41G+1Rr6W3Sjf9Ntv0UJ7IDn3gtjNOK6sUncHrg5NST
-	 JgcPfTZUtQlX9rT7wiSei1WtwBGCzS3za24noLSyW/kowatT54D2kdzuq2iAHGFa/L
-	 Gu1FychK+vScu2mbmyFc5SaVJHzlgG99Eh0hUQGlU5A21O92QtsNTBSjSxYS6IDG5e
-	 9Wf44kHxvJZxGHfPOOJpePM/x9vELxQToC45xnNY/idElK7+NvkWpcbftXnYna2F8I
-	 buKxK1Fzhk0mPSuOqeYeLEqiqxTU5yKpI049e2IKqtSGTsq1BlJ/akElXUaJsVBJmd
-	 8LQbkytM8pxNg==
-Date: Tue, 4 Mar 2025 21:45:28 +0100 (CET)
+	b=mAwy1NdlF7TFfwDvD6XFBEiD+hhzSfNDiL4q6vvOwZy/a8rqaxkcd6S+nf1PYjhWk
+	 M3kumpeNG2hlfR9nITKN2aqVMAdfJ3TYJ3O2OYnQUIIhK2j2IRJ0dghNI5oYJtoyL0
+	 DSjBDB31Hef1L3daRIAiz5xPhNFNi0SCO1mdNACwwlM9xSlMW5R9SEVNBbPqgkAaSY
+	 a19X4rQ7876IBtxkbOfw4wKjbKCYgMjAJKGJ2XrhgfCkDhWitjKisDHKkwognaVxBy
+	 OqZQaUo5M6j9KhnTtK/qtCAnidlELKkPPAI5uqZr9GcbGrBjZFSDPNc8JOXWQyCI2D
+	 a/GoUrolGagMg==
+Date: Tue, 4 Mar 2025 21:47:48 +0100 (CET)
 From: Jiri Kosina <jikos@kernel.org>
 To: Colin Ian King <colin.i.king@gmail.com>
-cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org, 
+cc: Even Xu <even.xu@intel.com>, Xinpeng Sun <xinpeng.sun@intel.com>, 
+    Benjamin Tissoires <bentiss@kernel.org>, 
+    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, linux-input@vger.kernel.org, 
     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] HID: debug: Fix spelling mistake "Messanger" ->
- "Messenger"
-In-Reply-To: <20250227223357.659460-1-colin.i.king@gmail.com>
-Message-ID: <9358pnrn-o1q5-o744-5sn6-347881q75780@xreary.bet>
-References: <20250227223357.659460-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] HID: intel-thc-hid: Fix spelling mistake "intput" ->
+ "input"
+In-Reply-To: <20250228084139.677391-1-colin.i.king@gmail.com>
+Message-ID: <771711n0-rnp4-4n94-ps74-481n3nr2sr99@xreary.bet>
+References: <20250228084139.677391-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -44,28 +47,26 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 
-On Thu, 27 Feb 2025, Colin Ian King wrote:
+On Fri, 28 Feb 2025, Colin Ian King wrote:
 
-> There is a spelling mistake in a literal string. Fix it.
+> There is a spelling mistake in a dev_err_once message. Fix it.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/hid/hid-debug.c | 2 +-
+>  drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-> index 541d682af15a..8433306148d5 100644
-> --- a/drivers/hid/hid-debug.c
-> +++ b/drivers/hid/hid-debug.c
-> @@ -3450,7 +3450,7 @@ static const char *keys[KEY_MAX + 1] = {
->  	[KEY_MACRO_RECORD_START] = "MacroRecordStart",
->  	[KEY_MACRO_RECORD_STOP] = "MacroRecordStop",
->  	[KEY_MARK_WAYPOINT] = "MarkWayPoint",	[KEY_MEDIA_REPEAT] = "MediaRepeat",
-> -	[KEY_MEDIA_TOP_MENU] = "MediaTopMenu",	[KEY_MESSENGER] = "Messanger",
-> +	[KEY_MEDIA_TOP_MENU] = "MediaTopMenu",	[KEY_MESSENGER] = "Messenger",
->  	[KEY_NAV_CHART] = "NavChar",		[KEY_NAV_INFO] = "NavInfo",
->  	[KEY_NEWS] = "News",			[KEY_NEXT_ELEMENT] = "NextElement",
->  	[KEY_NEXT_FAVORITE] = "NextFavorite",	[KEY_NOTIFICATION_CENTER] = "NotificationCenter",
+> diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
+> index 7373238ceb18..918050af73e5 100644
+> --- a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
+> +++ b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
+> @@ -107,7 +107,7 @@ static int quickspi_get_device_descriptor(struct quickspi_device *qsdev)
+>  		return 0;
+>  	}
+>  
+> -	dev_err_once(qsdev->dev, "Unexpected intput report type: %d\n", input_rep_type);
+> +	dev_err_once(qsdev->dev, "Unexpected input report type: %d\n", input_rep_type);
+>  	return -EINVAL;
 
 Applied, thanks.
 
