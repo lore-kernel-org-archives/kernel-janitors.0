@@ -1,144 +1,82 @@
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316692080F4
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Mar 2025 16:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105203; cv=fail; b=pQAGiHeMp6gGZU1OtWBdU1rrMgeV+3CR7uKKNxV+nLyqnhHbacbyjeHUVrAfnx9bH08MwWBzyF5j+yrpveiYg710iPRP3aaZdqwKUdRU7wK4dxTNJyVTUGo2pN9tvcRcHJ2+DGEeJvBZlVhIs5bzRgo8TiuTj5ts/rCtwnKE6VY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105203; c=relaxed/simple;
-	bh=Nz0QSW8xpqBQu9NgpTPdq1gpJYGAwudPcn+IwIuP8mA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MizyyyobxggkUTEiiY5rGHYgs4FWCS91SaxmoQ1CS1sWK80VFCbr2l5erAP+ssF9Iq9P8TS9HcBuUmq7tcI5+wnBwCJ5utlJCWsgHpIlAuqcH7GdDN4Hcw91mVP09JCvF44WeTP8WB1x1xZW5mIAkDVXLLkbWzfsMfZ6o1LlBog=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=none smtp.mailfrom=cc.itu.edu.tr; dkim=fail (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=flAqJQ5P reason="signature verification failed"; arc=none smtp.client-ip=170.10.133.124; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; arc=fail smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="flAqJQ5P"
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 5C06540D9761
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Mar 2025 19:20:00 +0300 (+03)
-X-Envelope-From: <root@cc.itu.edu.tr>
-Authentication-Results: lesvatest1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=flAqJQ5P
-Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gnX53ZnzG2q4
-	for <kernel-janitors@vger.kernel.org>; Tue,  4 Mar 2025 19:17:36 +0300 (+03)
-Received: by le1 (Postfix, from userid 0)
-	id 4CD7342746; Tue,  4 Mar 2025 19:17:27 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=flAqJQ5P
-X-Envelope-From: <linux-kernel+bounces-541380-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=flAqJQ5P
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id C4462436AC
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:32:30 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 41F182DCE1
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 13:32:30 +0300 (+03)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E0F169222
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 10:32:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA951F2BA1;
-	Mon,  3 Mar 2025 10:30:44 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8A41F1905
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Mar 2025 10:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B94A29AAE1;
+	Tue,  4 Mar 2025 16:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740997834; cv=none; b=I5uLvLqFdptlSz+B1FwMiQEW6tkYDmo3BJWuHq6eCxLsr8edTuqXzZTyeaGVg5D+3BUFV4SrmmKQ5DSI9B0Ze94PHzAIVmW4nn37qjgvr98Fex6jEdHRtTOCL+6+WljM+8jnhhu5NT84FqOhIqldNUY0br69WN22zNM9kKs4dpY=
+	t=1741106769; cv=none; b=jkLORh4bybKJqqbG56KjvsETTMXv0zNSBsQm6szVok1jKr6TYAvvJ0S2/mGCf10QIbgFpSDgnSf2vCxLFxIQYGiMynvARiCyh6p/fWLxS0ZxhURWO62zVKMDVvQTTldoQsi7l9+rYfY9kPeFgl2zf5/8tAOCYr/ZMH7z068FTJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740997834; c=relaxed/simple;
-	bh=Xd6jeKSTgIZFdafSVXZ/PdjL+vCFnUo1AZ/RbpdFGNw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ka07ZgNjog9B2G12Dk48BC397zemyzti4c3PKIXzGBnF1v/PcM91Zy6fJSymKF6QvPnzgOW5G4cLgnReMLR61t/3Xa9793i5JV0wUdxiNni99tHKNTPQ9X0D8NqQcMXW8URHz6WAEQnyKs077i/hm5x3TVBT03vQCWrxeRR5Amw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=flAqJQ5P; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740997830;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gR6zLqRG9S1za/uF+nzi2msUOEjaoJGIhx4NU2xJ4k0=;
-	b=flAqJQ5P7bHVRs4k4HIxmVb7ZmmqFL8kFQoUA+kvIrVzsmoDKpolSOwvima/A/sZ8bGO84
-	iURXi4TpwXJesUAzOFH+PQrH4/365xPrDTbYTtMNqBSGYBaWQ+Dh76G1mgTSbIlJq+EL2n
-	TAERKDp157VjIp73e8BSy8KzhK4r3dg=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-194-dbu1oVJVONOrbeNN23fqFQ-1; Mon, 03 Mar 2025 05:30:29 -0500
-X-MC-Unique: dbu1oVJVONOrbeNN23fqFQ-1
-X-Mimecast-MFC-AGG-ID: dbu1oVJVONOrbeNN23fqFQ_1740997828
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5e4987b2107so4363108a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 02:30:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740997828; x=1741602628;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gR6zLqRG9S1za/uF+nzi2msUOEjaoJGIhx4NU2xJ4k0=;
-        b=MM7CeR36KGirDi87ET2gdDE9nRTdx1maqYtfKboCqd9myRULfihBG4sLrtZ7Bbsb2s
-         1xUSAnERzNSLnBo/1EFJKdqEuujUU2JL6jkneF5Ly+BUv95MFerZ4WL7H5MT9Irjg9pQ
-         7rimjeFoLSo2cimjo6teavZDZ8Qm/CYVkLoLD0jOra/fEkPshYaHE+SGTn/SHB5vjjwg
-         txtaa9FEg1qGqAmWSewOxCqtyDwQ6dYKmO1B1llucBFUFUG/wqffyaoKuYa93SyIsip6
-         BJ8SdQiHSqmuXDRDRg4Rf8v//GuhuzEJajIWLFfJ/BmCNZya6Wa8D25T9f1tqTJ+TRO7
-         TlIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZxX5cxkG8387zlBRcwaixvdurnIUsEUgYDaXlg0pGWNKw5ntq8O2LRbFgp/7vmleUS2oJ1iLseht6GL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyuJkNhqnho5Pr1lLWVw+DemRyRqzBjYdxyuWzq2tYinPCbD5w
-	H6as+C2i1kutvlXk4CJ40VI7Z21TT7mJabcrlMqgGOx30aefIvLwYl41bfi5Cvlze4fsn/+aBQi
-	HfzsBiHpqqtpu36tJclfyG24d2+/azi871mQODcnhqYlIrZQ2Bop/xhkBmKuAJQ==
-X-Gm-Gg: ASbGncuIVKtj8uEZSm/t0GXmCdbsEY0xrNTzBv1lXdw9zvLMmRblraeL1MHgyFuzetT
-	nWH0q+LW29nyW+desA+7X/f1elGRtLrxmm2sZgT50Eh3/xspODVdAIW6efe6Ycf18uu9DZ01KXB
-	OrCH/5quHOqsKMCaRlIVBSFqGiDRZThhVI/mQ0dh6Ll0ja31fS4lnkg+l6LSm0aVKS9t6s6xBW8
-	VDXBpAKO8o2SOkETEASs9mbXm2WAc/j7k4JUJo43y/yG24eIzTPjXjgzobLD2W6oVdV3SKUXiN6
-	o+yfVb+bK8BKfT20AUWLZjxOGkbU+UvcI5EqfJw7ez4WWichjT3O/n0JOHOJd9Q=
-X-Received: by 2002:a05:6402:528a:b0:5e5:437c:1daf with SMTP id 4fb4d7f45d1cf-5e5437c22a7mr5160410a12.16.1740997827216;
-        Mon, 03 Mar 2025 02:30:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFWOtveprrubC5jzCtCbdOt9xXXQloZV5gJJWnE6GooHlcrYwBVrf5NDmW5ksFomjWCc6RdKg==
-X-Received: by 2002:a05:6402:528a:b0:5e5:437c:1daf with SMTP id 4fb4d7f45d1cf-5e5437c22a7mr5160377a12.16.1740997826443;
-        Mon, 03 Mar 2025 02:30:26 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb4bd9sm6630165a12.33.2025.03.03.02.30.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 02:30:25 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] media: remove STA2x11 media pci driver
-Date: Mon,  3 Mar 2025 11:30:22 +0100
-Message-ID: <20250303103022.374705-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.48.1
-Precedence: bulk
+	s=arc-20240116; t=1741106769; c=relaxed/simple;
+	bh=eoJB3OLgTrk+lA8oBYKJiwXc8eqZCVoHFloR0SzQllY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vEEw57u7R+0F8J3MnPeeA+XeqnYWdqoMMIYR80JT1Nkhe2OqaUc2C7Vu+0kj4KMd3NE0app9KVX/XxQGwntXjtFxYHuVsQ3xgbLSBNGZIKUjuFXSMkl9URZHNh0zEkNzR4QApktfAZ+kUxkAlleFvmXtFXmPgaXWjerOYy9ciZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxI2Hw/e; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxI2Hw/e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C5D3C4CEE5;
+	Tue,  4 Mar 2025 16:46:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741106768;
+	bh=eoJB3OLgTrk+lA8oBYKJiwXc8eqZCVoHFloR0SzQllY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XxI2Hw/ea4eI+SoFuS3K0cKmjGZ3ZtNccc4VskQyfpMe9NvMF1jUiRpqZ5JXH6WOz
+	 xTW+Xqi2T0wkOQvH8nU/K8EGesDgQdsAp9TjhaDz+K2V5VtF3s1ggT95YSVYgoGSw4
+	 kybnoo9e4Isp3EZrQi39i1S2GZ+KuKZs6XyH3STW0z3iP5VX/Q+P11pvaELXqQ15ON
+	 hlr84h6hwEx3deXvRLoHlOqbvXrJjXsT7iMd1HtwcCDxHstS3mGb/YT4RjDpXvltMU
+	 xrguuGDPBPlcgTpmDwe4jPyfRk6QyUFJ+WpucTNsm9STEu6fgv5p4pDfqJN2uPlqXW
+	 2QIon9Rrb9LUQ==
+Date: Tue, 4 Mar 2025 17:46:05 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/vc4: hdmi: Fix some NULL vs IS_ERR() bugs
+Message-ID: <20250304-adaptable-monumental-octopus-a8ea0e@houat>
+References: <a952e2b4-d4b8-49ac-abd9-9967c50f4a80@stanley.mountain>
+ <CAN9Xe3R-nyCcTRhDTeWFrW9EVnpdRG2Nyz=qjiYB0pzFM3NxWw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="jmdly7fe3anaxwwp"
+Content-Disposition: inline
+In-Reply-To: <CAN9Xe3R-nyCcTRhDTeWFrW9EVnpdRG2Nyz=qjiYB0pzFM3NxWw@mail.gmail.com>
+
+
+--jmdly7fe3anaxwwp
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gnX53ZnzG2q4
-X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741709871.80348@VJztF/ySZNuSBBrGYbe1Lg
-X-ITU-MailScanner-SpamCheck: not spam
-Message-ID: <20250303103022.9KccXBPQf5q-0ljIDw__xvX1RtvRcYFVulSy8CsXNLQ@z>
+Subject: Re: [PATCH next] drm/vc4: hdmi: Fix some NULL vs IS_ERR() bugs
+MIME-Version: 1.0
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Tue, Mar 04, 2025 at 10:22:29AM -0500, Anusha Srivatsa wrote:
+> Thanks for the fix. I shall revisit the rest of my series.
+>=20
+> Reviewed-by: Anusha Srivatsa <asrivats@redhat.com>
 
-With commit dcbb01fbb7ae ("x86/pci: Remove old STA2x11 support"), the
-STA2X11 Video Input Port driver is not needed and cannot be built anymore=
+It's already been applied
+
+Maxime
+
+--jmdly7fe3anaxwwp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8cuTQAKCRAnX84Zoj2+
+di70AYC6ULd7dct3xCYAhUfz5uJpVATAd7zazZggq/xnzOI2jlTCF4qgyYPwrYew
+KYdyTE8BgMZZK7VY6cp70tbWDArNUO9U0wES2zr7mCr3dAutBqpCvO2EYu6hlbSL
+5cbIq5Uu5w==
+=Jmp5
+-----END PGP SIGNATURE-----
+
+--jmdly7fe3anaxwwp--
