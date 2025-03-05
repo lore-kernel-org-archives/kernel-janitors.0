@@ -1,134 +1,124 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FACE1519BD;
-	Wed,  5 Mar 2025 14:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC09924BC18;
+	Wed,  5 Mar 2025 14:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184259; cv=none; b=atgagzA1GyTz/fN43ixIN4VxLAXhxososHJEz1RZ0jdO5yvAiddLmD+WMsH9NqZRiC0RRwOaoYesHoUjJqLeN9oPHCQmUk5uype9pvUuj+c7DJv1peSGRtRTfLMEjCJOdbv900Vn6l+LYjgqalY/NUy0CwN/xVwcarpXYOBlJz0=
+	t=1741184452; cv=none; b=Alp6AqohuF0yaYyqoOpibynLW5EX2pS4SGsgpb80z7qWbCJCkkKpar1xwprwaHplQ1eU0hkdPIwCL9Qg1NRIioO5k4cN/h4J3Hn0qvIxA0FOkzVXYRiTciRWA2qm3fIvi7QC5Be/wdjTN6LxyuyCSUWm+x3pGzlEFxYERQ8AW8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184259; c=relaxed/simple;
-	bh=szqbKH7W9vbz4ovkEVsJkbRnb9ADDfH2Na4Vmjiwx4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OdhdmTvmfoD+YKI/eiuKG/HMrVtFxA9Wh/yfYbFt8pBaxQ5q5+O449yzUYfhBxOJoUuPSbjVx7s74ZtBLi/JXsB9D7o/JR1MyxKz1xzmFUL2/cOGIb/N5F6qXvUSacuXwkrHzhcObe4R3DwKcsoDhtMUObrjumy027Hd1nDvr9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MG7RhF0m; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741184452; c=relaxed/simple;
+	bh=xpcQbs4tyQQ+SW3I3wZ517Ns00JpxHyOOR9gZd4k3L4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMkS7Y2wL+xiZrlprRuWCwkG7dE6laCuUaT7zn3br6H35B5BXW0QrmSVq5ZiLXCOyGfei9gNPS4VMy9owiNGS3gcLL1wfTpqqIrZcFH2nRGlzEUYhpvArgNga72oqipUaq4NBpXOL6Z8xWoODTsjAnzeahJMmTCzfo63t/5NZr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OlThstys; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MG7RhF0m"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bcc04d4fcso12767595e9.2;
-        Wed, 05 Mar 2025 06:17:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741184255; x=1741789055; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BvAmhIp672FcTh8QydCVgJQ9OGkof1lTKDgnIKxGf1A=;
-        b=MG7RhF0mrpLyoJ1UdLoHjN0rvOp0+QJWOpYybZY5QtvllNYLqxQB+LI5BTmLzEBMm5
-         Jw7lbAAvdjzGrTdxXp7qLki07iLyATNsKbhdFXR0dwIHqwEfZQ0Yc1OyXv5xgRFU2ywa
-         9+PpcTmURwmTw2zkCZjtLGgUzOsMqd3rZEUjhnq5AR9q/vfY60qsx9IWsSQvAHe6tiql
-         1IZnkQqFJ0EiI0b/5mK4GYaGBrqRlFi/P0mZ00CjKA828tJkRyrjGlxY/V7/5jt/e5Vw
-         OogZrcQGIn9bxSV8pNsX2/hhLHzzAGSgRJ4cUJ1MjPcQTWVaLTU6OlOysdUEV/SrzNe9
-         gc1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741184255; x=1741789055;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BvAmhIp672FcTh8QydCVgJQ9OGkof1lTKDgnIKxGf1A=;
-        b=YC+HIbr6WUpV9aaAkwhkJx4WRF6254jod4v4GQXyO7oDL2tS/NyMix3JfngYF8sP/v
-         IXsMjm+N+HrFcqoPBpPrI0YmJUqrm/kd+hHvESoGGuswEbtR9IHUEjV9FFuAHC/3Se6O
-         JiNnSja/9G+ZftngUTjBpU8IR7acbMYD7CyoJnp5NJA+y2323ZHG0xdY4cK5Fu3oThLF
-         QVsAkkLf1la4l7TqPKYZq4YPo0UqEOGgjSrWtrsvclP2m6Gq5iWhMHTZT2Dd718u1a2o
-         5iKjFHCOWSEUQnwP0yLkfGv2YrE1ztQ9OftgewkgS60WUidZ6RATVsaHe9J1aIa+BKdN
-         bRYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUCCz/alWfxNJsDOJYO2bM7FI5S4f4rt8oE0ScvTbd1R/cazAi0tguEpdCtCOb/ZNqeAUIZ1+WbaHIaH2R@vger.kernel.org, AJvYcCVOhfilVoZJnAYGzq9w6TKTmtFwwCIOaAxbXS9Hr7B1MoExbvLGE6nOMgrc7p17bbt5v2shg8nR7HLqrY6GUQ==@vger.kernel.org, AJvYcCVn9qM2u7UKWt7kz12Wt2HQk9jISMuV407lDOaLFXkyyz87ybnNiwtY5sqUl04nLSI0gQjE28ElcBcmb4rfQII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYPX/q4nN8jcqQeAzrWeu5Cq3oCJ0+dJIHxNdtcWVYivDdRt0Y
-	kqqfGJ/D0AThqcNgXsAcGauzM5J5S788NfTIVnpOzcxNaOcR/YEA
-X-Gm-Gg: ASbGnctrTrxd1b/jYje6ilMTHt5QzkEBKIf8YPoVIECrZLsAtM/v+K6ZFbXdZP7oIxU
-	Ydk3IRJOxvFk1NLm+gGYalWUwJtSvujso3M40If09cwhrEeWJ++DAKl0y8FR4T49Bb03M2vzP/e
-	MIeVsPyMCFsMd+rsuJlo7Zon1q8rFkIVUOEgZOVA9rqiMItnY4HJrtT/pZYK3ACr/KHxlxsTxJ8
-	elDRB8SLcegPPDlBsO3GIXesFqhiUSHno7nZiBx4VHT79IccN+m0+ou4+jWKbSWvruQNsSnRgE5
-	2UJY1qXYSWxCEhyg8xrMu+qCN58G5hUi2QpiLItV2GzQCg/CUMKXq2bpyAr/Ui2xP3YvU5mMQya
-	d9ScUCfA=
-X-Google-Smtp-Source: AGHT+IHvrbtQypROMlLTHn2hwI/hJh1CATinBr60gY+FLSdoAnk3R75qGQ0/XKEyAvFG+ldQ1Dh+tA==
-X-Received: by 2002:a05:600c:35d4:b0:439:9f42:c137 with SMTP id 5b1f17b1804b1-43bd298f9fbmr29484425e9.11.1741184254319;
-        Wed, 05 Mar 2025 06:17:34 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4291ffbsm18687465e9.15.2025.03.05.06.17.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:17:33 -0800 (PST)
-Date: Wed, 5 Mar 2025 14:17:32 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, kernel-janitors@vger.kernel.org,
- freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Archit Taneja <architt@codeaurora.org>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>, Jeykumar Sankaran
- <jsanka@codeaurora.org>, Jordan Crouse <jordan@cosmicpenguin.net>, Marijn
- Suijten <marijn.suijten@somainline.org>, Rob Clark <robdclark@gmail.com>,
- Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>, Vinod Koul
- <vkoul@kernel.org>, cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Clarification for =?UTF-8?B?4oCcdW5kZWZpbmVkIGJlaGF2?=
- =?UTF-8?B?aW91cuKAnT8=?=
-Message-ID: <20250305141732.26b91742@pumpkin>
-In-Reply-To: <4c489b64-4c25-43e3-90d3-37f2f335d665@stanley.mountain>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
-	<1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
-	<13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
-	<54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
-	<k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
-	<29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
-	<e665514b-5a62-4afb-b267-7c320e4872af@web.de>
-	<4c489b64-4c25-43e3-90d3-37f2f335d665@stanley.mountain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OlThstys"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741184442; x=1741789242; i=markus.elfring@web.de;
+	bh=C1xWGzwYPulTit0Q4OqYEAYIGUZud3a18Yr5KId4AB8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=OlThstys6j83TWzkyFcMswl/GOTcM3VEpAu3qt2qK287aJw8yBDslqMH3mQ/imIc
+	 ynQHBbnKQG5Ku/za3XWJ5+m3vA/mZH4zv/KYgsSIHBDHSgA7/u7mxkHI9WuyaXFH+
+	 uCOkNJq52SDtbgZ/26funprLFb4NWXM8wuA3/+OQHNl5A9761SFHclRVPxQflTdws
+	 4RMzskm0NStsYCiPDTo/wZlPopdK1S+5b+wDDYy8uD2xPyKTJXaSkF3TmeymsJi8C
+	 w8WQEPCUwEB9J04At8isQwHb9dQy6u8ztBApGfpf4LXZyixHJC30zN1OWrm/jnAZt
+	 sMqhz2G6D4M2sdfkXQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MN6Fj-1tZX9L08H7-00I6c4; Wed, 05
+ Mar 2025 15:20:42 +0100
+Message-ID: <20a1a47c-8906-44e8-92e6-9b3e698b1491@web.de>
+Date: Wed, 5 Mar 2025 15:20:41 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] RDMA/erdma: Prevent use-after-free in erdma_accept_newconn()
+To: kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
+ Cheng Xu <chengyou@linux.alibaba.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kai Shen <kaishen@linux.alibaba.com>, Leon Romanovsky <leon@kernel.org>,
+ Yang Li <yang.lee@linux.alibaba.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <f0f96f74-21d1-f5bf-1086-1c3ce0ea18f5@web.de>
+ <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:K5YWpl1afCIz0GSstMdQrjpKFA5E9zL+d6oUnGlMOn9oeASRXMM
+ cxOSbYvrdMcL5omgjTJmGrvhAgOtgemjkpRpepr+oDPbfmNlOhHZBpyRHqrh7cZ7doD1Ioy
+ EiDLvYTClCslBiG7DVhc9QPEG9vvNLD9gmYVv1EgQCmnXuJaR/anSsQ/o/eDgMZV1CRGZay
+ k0BnV2DvSPWrF3Z170RuA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gkDAiXcZH1k=;xz6JkpFjlNnnbsnyId4VAAQBYB9
+ gj4Beb6FayFHM+1bAX90V/bSG3/gQmPupHRKxKzdED9+llmecmGpdQnrUTdasLiJ7oQ/8PEaQ
+ zn+NaH5ZETr5WC0U47QwQQFrwZn/poog0ZDEUs2AKFsHlyMGMQ6sO2pYhHXbQsWZZ4qXIiyhv
+ bgKWlf1CJPC/2AuLxrk0WZWIBF6Hs0yG68fbjCFl1o8KXdutMD/LufdhzdhZdjdZaNnAWU2QJ
+ yWyFLulaOpFNT0fHwx+AgrGJbEKigSIPLM3Du9kYJYBy3h9rQDjdx9vQGClDCs9Q0BiVoxVH+
+ 85AGZPGzYGhK8kgZuaO02XX8WaP4Rsf9WZpc4weY0A5Hw+atGKJnJUQ4nSMLnZLO6qFOfz/Zc
+ 1Nx6ezUnWDFFyQffJOKJJpX6R0RA2IrMjXvvojeJAKytVrk8nx+c/9rKw/LQmOnLYKts+lo9B
+ /Uc1aLKXi6oaHYE/XaMG5cuLyrwUwVBVrE7UH2J1eoF8wNsQDWRYYSj03nw5yaPivMsTPX/sE
+ EGuhlXedguV7tvfa4yS5LQDZc6XlGWcxEOFFpTmxhHUCygUr002AQtANhzNA7TfytfSP0Sk0H
+ qrQpVo6c8qNk/TyARLXSwrFOs/cq0Idb86qSZjD/OK5x/VlKCGyDuZrkhBdTGC9uUKj4UgU2C
+ h8XYp0qRz/hpf7mmgEHR50eiBnG4AFCzZ3rNRvrOhONSOvkIlvW5JO/UH/Bp3ySsMWRVcGHqT
+ wgIFVGOUrCdB1tErrx5DBJ+aruL7TQhouko8vWxlz5r7tvyD84TFi8B/PneQEc6MTIskZm9Xs
+ o4vL91KQ/rqLx0e2aKQyLHVEV6wkRwfx0nha+UF//r9sXleqZ+0bmUZm+WDRSo/5xg9vUt0FQ
+ +0k9RUnnpILrviowSwiwSQ8vqHAd2ZyLAWSigXVca6ZC3ZI/JekwWPSAhdmzO89j/k6wLV+5F
+ iPmj4Ud9diSnNOqarGsbbTJo4oR1UlgIm34w2aaAdEnAhbNcBmKLtZCpH2g8ZhiGBSRmY5/M5
+ lnsTAGHxnIISkPnULX/RcI8UlS47DRqE+WVky3nRng1SGq3V8tM0ibq7QgnAOtq48L3tIpOPm
+ xBjJXJp28BArO2+pkH+SVh45iDfnzwQfqjNuFPEfxK66aK5RaNb1+QvTL3L78DDj9/+LMSdi8
+ KbL8JvI8pa0CDu6YxCRBcK71mnnhq0i/LuLMATBifXFX6UAfGDcTpkAXcfMFsQqOcLlgErtqx
+ t3Mt9dbeEQe4YZnomN9dKlTX2QE+r8aneg8h7XiRCjEItR9Itp2UYgqA65mRuIe547q0/fAz9
+ go/TF8a/wRy7S89tN567WnVAp08wKSMMPcJFL/lw2s6UyuEvq8SnApJJDLt31+AmWV71H3XdP
+ FHtEE/450w7P9JH+VL220PGPgt6m2BkYgMYmWUOwBSaKYmj6V87D/NO7OiZwNsDvrJJ/5d0Kw
+ sw0WY6+fVlliAzq2pP77dif5eDBk=
 
-On Wed, 5 Mar 2025 11:51:59 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Mar 2025 15:07:51 +0100
 
-> On Wed, Mar 05, 2025 at 09:40:43AM +0100, Markus Elfring wrote:
-> > >>> The address of a data structure member was determined before
-> > >>> a corresponding null pointer check in the implementation of
-> > >>> the functions =E2=80=9Cdpu_hw_pp_enable_te=E2=80=9D and =E2=80=9Cdp=
-u_hw_pp_get_vsync_info=E2=80=9D.
-> > >>>
-> > >>> Thus avoid the risk for undefined behaviour by removing extra
-> > >>> initialisations for the variable =E2=80=9Cc=E2=80=9D (also because =
-it was already
-> > >>> reassigned with the same value behind this pointer check). =20
-> > > There is no undefined behavior here. =20
-> >=20
-> > Is there a need to improve the wording precision?
-> >=20
-> > There are words which denote a special meaning according to aspects of
-> > the programming language =E2=80=9CC=E2=80=9D.
-> > https://en.cppreference.com/w/c/language/behavior
-> >=20
-> > Dereferences of null pointers are treated in special ways. =20
->=20
-> This not a dereference.  It's just pointer math.
+The implementation of the function =E2=80=9Cerdma_accept_newconn=E2=80=9D =
+contained
+still the statement =E2=80=9Cnew_cep->sock =3D NULL=E2=80=9D after
+the function call =E2=80=9Cerdma_cep_put(new_cep)=E2=80=9D.
+Thus delete an inappropriate reset action.
 
-And the 'fun' starts because NULL isn't required to use the all-zero
-bit pattern.
-Regardless of the bit-pattern, things like (void *)(1 - 1) are valid
-NULL pointers.
+Reported-by: Cheng Xu <chengyou@linux.alibaba.com>
+Link: https://lore.kernel.org/cocci/167179d0-e1ea-39a8-4143-949ad57294c2@l=
+inux.alibaba.com/
+Link: https://lkml.org/lkml/2023/3/19/191
+Fixes: 920d93eac8b9 ("RDMA/erdma: Add connection management (CM) support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/infiniband/hw/erdma/erdma_cm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Of course, while C allows this, I doubt NULL has ever been other than 0.
-(It was 0 on a system I used many years ago where the O/S invalid pointer
-was ~0.)
+diff --git a/drivers/infiniband/hw/erdma/erdma_cm.c b/drivers/infiniband/h=
+w/erdma/erdma_cm.c
+index 1b23c698ec25..e0acc185e719 100644
+=2D-- a/drivers/infiniband/hw/erdma/erdma_cm.c
++++ b/drivers/infiniband/hw/erdma/erdma_cm.c
+@@ -709,7 +709,6 @@ static void erdma_accept_newconn(struct erdma_cep *cep=
+)
+ 		erdma_cancel_mpatimer(new_cep);
 
-I know Clang has started warning about arithmetic on NULL.
-I wonder when it is going to start warning about memset(p, 0, sz)
-for anything that contains a pointer - equally invalid.
+ 		erdma_cep_put(new_cep);
+-		new_cep->sock =3D NULL;
+ 	}
 
-	David
+ 	if (new_s) {
+=2D-
+2.48.1
+
