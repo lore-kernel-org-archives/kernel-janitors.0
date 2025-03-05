@@ -1,106 +1,138 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF2A24BBE1
-	for <kernel-janitors@vger.kernel.org>; Wed,  5 Mar 2025 15:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62292E3383
+	for <kernel-janitors@vger.kernel.org>; Wed,  5 Mar 2025 15:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741190013; cv=none; b=p4wZ10cnHLkOFcX6qijvHRCRuwRxvZQ0KdLnYMvgxAJVxAuEZ+qK0sm3ChuG+5zu/nu2bgo0LANoApD7piV9SCCBcrx91En1BDKR3s0hLvC5PsiR0D1AohjdI1MQE82DK40Jqfm+nuE90+2udQBjR5IHGTfrGpEBdmXnmg+fIRs=
+	t=1741190302; cv=none; b=USSzJsGGHKMIMkcHFyptHdDu7bv1ZygPW/yotnrkXjT95rQCraaJ24btU41o0qeQxtiADhG0ZNDZSZ6Sy9W+3FjG/z22DXAaobQipa6/0iDhydaunfvM3NNKQjnZRaioTkgo2urr+kC51mx3UieygeJ74IN1AKI2eGd3NhN4m5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741190013; c=relaxed/simple;
-	bh=7pugq9Q0HrD0WFy5Cy7xHVcUHRDsYuQl+Ilp5KZtAgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C1R26GZErANGb+tLr4Ypw68tz6ERRJVuLBK50Kp1IMOGgAHIFDb9k66uatx3V303RioLVLXTeinwybwkZb6/qGVSf8e7GAvH+xMtm2c63tH2bZcINufni4rkm04AQj3t+JlMG6uRSwNNveIWNEoUAoCe6HxYwC12Itq0eWBsS9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rFCUIxZj; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741190302; c=relaxed/simple;
+	bh=bYuWvTnxcH9cu35HRFKPtJkB8o67RKS5wYWWIeSxv70=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FfmWuYeWFHJHl5K1Q9JPqSkLiNxs+jvaHnXkk32jrAxcgTSk2uN0Kusv2fiCj4+pILs7+Qgai/awytMV3uJ77YCKe3ee8md7+kqDms2dclZ5MNxoDimDYvZoARVWdiLw7sNBUCaJBHWBYFNjgZq8DkATcD/Ut2r39yNab9dgkvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Y2gqTApg; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rFCUIxZj"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bd5644de8so8397685e9.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 05 Mar 2025 07:53:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Y2gqTApg"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f2f5e91393so1977176a91.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 05 Mar 2025 07:58:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741190009; x=1741794809; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=95chebkxx5uPpuk8Hf/uN1bb/WBC6Ds7j8DqJcXx7/c=;
-        b=rFCUIxZjwzGncw+CJ8ac0yOnBxwosI+HlPG4hdlWTffVVOJ2Y9HKgp/qgGnFUDUwRE
-         CB8w+WHFjdGDAJoXgep8bFA0Yw40X8jbbjQ0+SVzMn9MaQ8WVSwEW9CwUCTKvIgvFHsl
-         7Wxc7WCH80enkOsVwm1RJ8Q8eL8OlvDMReiHYr14RfWCZb+IJGZbaHx7NMO5fC4LbnSk
-         o2gLZrHAS00uk2UHuhlfhBazO4AjzZHswfxQW39OQhLhNScoVY3ruSNJ2byJGN/I4W95
-         Pv4+KPOnBjRmw8cjxm5JWY+MaYe5RuBkXVHnpLJUJdphZqzG+e1tLK0PjY3ASL5h6oMO
-         pbXw==
+        d=purestorage.com; s=google2022; t=1741190299; x=1741795099; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YYMU1ONvumZN07XPBCtkjUrstfEAtCPPddr7Hfo9Atk=;
+        b=Y2gqTApgoVu023lcE28ic24Z/iILnnSBvedaOlwJ+l4XsHdOMokBtTFXwUg7lFmMvO
+         BwQM2Ors3A7bASOcF6yaOmn6M+1J0OYG1lMVm7untLeN0EwJFC2qhFjypaoxzXvlxgEi
+         KqegLmZaTWnHmYMfwEOFmjAfFecqwcXbA5LBKvIfIz6A1FxDDV9TSt9l9eFXKSS1iLjE
+         plJmFsB2LKf5QBQMDjkf1t0T1SCGd3ukHFu0ySIyJyK58F6DmpRv68TOD0sVw5KH/JFo
+         hV/GYN9rZiLvnZThK3WRZEQ/QTm2K3JESfSjc41U24NGLI8a13bfJtoS0/HQ9gIyxhXQ
+         Z7oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741190009; x=1741794809;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=95chebkxx5uPpuk8Hf/uN1bb/WBC6Ds7j8DqJcXx7/c=;
-        b=e42mBqrVKYd6CG3iDRKp59Re9asxEjyrmDYF/wPTwYnLdYjP+GqC/8riBAMgz9TM0O
-         cVpoxxmCM9eawnGovMfpzuclNLyP/Nk6FISRIWKEofJoX09ucbUWa3QgxavqIXhGYH/i
-         9IpjYCjiHwRMV8QHhgxX++1Wjxve1vcvVLFSO7sIFIVxIkP+Wr2orfiuhAMW2Y6+xkSu
-         giMd59JZTpWm03TTyb8HbNMGb9BZTLoA/d14jySt2YEjSUJjeBRuAoXIvAQjj6GkcA/P
-         b+6Ee/UGdE9x55GmhWbcPAytekkU46eICs0pyEiBfyUa7/Wq6u+nts2R2o80Ptz26olF
-         51zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTEDAEQ0S/XW4askZcpq57T08T45vLfdwLZD8izdNXK6dIM7SCX8G0yLDbPn5lD+Hye243Nm5W5MnzZxTJdTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmNy8MWEhT2XZxAN+D69zVWfaPycBrBAO3xw85nOqnwiWZAYLW
-	wIdr6Ns4p/wQ8/JmjOBO1Pgl4qlgytnQCmb2e56+2qcViyygQ4119eYQPQo5muE=
-X-Gm-Gg: ASbGncsuSj7gF3Pi6BwoZ9HxHXIrRqTrGH6SbObchj+ZmkzQf8967saIqiW7X6CViFC
-	5bpzADtNmr+aW3I8lMXCPHXma6pC+46OCBpgCYYABqjm9t20Gov3rDgKbY45UWClWC/W/vAK4YQ
-	7EmnOO+NaseeAPqGZ5z+6a1aMiefDRs+fMIdFRmvM8y0PZfMcxWhbkDK6qCFdCtXn1AalTxKe68
-	7oRL8SQ1+WNBts3WfrDem+h2butCS4btuC2BtaqGahgG2DnhL6GyXAC3tDm9u8lovmRAozwqPWL
-	D8L8+J1EoDS2LJRSxHwqmfzvIGMBbJgnmisLupVkJsyw+uvWCA==
-X-Google-Smtp-Source: AGHT+IG46qG9NZg5asWLlzpx5UNbKVYGM9zYolGfR5W2sKaY9Lf5cmP+PeNKMAFOBaBivIz2363Meg==
-X-Received: by 2002:a05:600c:198f:b0:439:9ee1:86bf with SMTP id 5b1f17b1804b1-43bd294309bmr36486625e9.7.1741190009583;
-        Wed, 05 Mar 2025 07:53:29 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd4291ffbsm21180345e9.15.2025.03.05.07.53.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 07:53:29 -0800 (PST)
-Date: Wed, 5 Mar 2025 18:53:26 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jeff Hugo <jeff.hugo@oss.qualcomm.com>
-Cc: Carl Vanderlip <quic_carlv@quicinc.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] accel/qaic: Fix integer overflow in qaic_validate_req()
-Message-ID: <820aed99-4417-4e4b-bf80-fd23c7a09dbb@stanley.mountain>
+        d=1e100.net; s=20230601; t=1741190299; x=1741795099;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YYMU1ONvumZN07XPBCtkjUrstfEAtCPPddr7Hfo9Atk=;
+        b=OGj80AsXjCp+64xjozhWI+24+uPWBg2t1PF3vwbGV5GrXp9eMh/B8FZD1vOmAWR2oe
+         vMSzYTcvkQ42q4j/bNvKWw6PxH2KM8OWgCWxv3tONsMaKlVsiaQxCB0ilNQmLEB8avF6
+         HjFER+NRpXV+PrN/D/6Tqa3fxUH3+ZvrFuk5pY5Qy84BGIFRH6dlHrYdKG1MWWZ18+bQ
+         E6+FfaO67OAMH58GuaF7cQawi+s12tghiBlXztSsMlUFoj7XbxHDlyVleMnXdiAY9Uoq
+         G6aIcAzPw2eAuzyK5kl8GuNGeZJiEaeDRbLOXD0jeWSAD3dkqm2h/wC+8LJi7OsAGTzK
+         YhBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1wLvitfvO9SveBqzvaE3t/GkSMlq2OvK77fw4qgtBpewVafmWE0hST8R2wV6WYPOwQEAYV88Stz7SM1Y/Dk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK3NeEg4YLG0eOQOFRU2/HLPqGVNcg2a5S3WRrtwn+z7k8TBbN
+	SIxxBNP/B+Sg5mgT4eXIHmTHSuQzsVl9ppeyipG969D4f+obZV5q+FtqNrziOFaycDlBDPKLh4S
+	BhENFrSruhdvrimzO/cL88rs0AHrN5EK2a1AvkQ==
+X-Gm-Gg: ASbGncuqSa6azxN3bZ//3e2saBmZdv154OGzTRfd8e7Mfm6WesImoJylads4rrrAcSu
+	Brzps9pxa+H9qC+u0RPSpmBXHDEMG8ifmMAvq/hGPl0ZtYTLdVqWLwuxrTe5FUjIKpxvSgXzow5
+	v5UI2VQfKXF/Cl65DkXEQvzYLyoTU=
+X-Google-Smtp-Source: AGHT+IE039RKehIzWkPoz9Pwq8myqyy+FZsujwKtDDyBFn8FwGJVt10BuBtMIRgg7fWx3zw0WYibWGpIpl/Q2cToPds=
+X-Received: by 2002:a17:90b:3848:b0:2ff:4e90:3c47 with SMTP id
+ 98e67ed59e1d1-2ff4e9041aamr1711334a91.4.1741190299046; Wed, 05 Mar 2025
+ 07:58:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <d3661d33-096a-45e3-8304-1123fd031527@stanley.mountain>
+In-Reply-To: <d3661d33-096a-45e3-8304-1123fd031527@stanley.mountain>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 5 Mar 2025 07:58:07 -0800
+X-Gm-Features: AQ5f1JpSLtbPYSGimhA0YnzX_t62kjsBmHrLeI4W_9M3JJL8fO_onDsebrkT6Ww
+Message-ID: <CADUfDZphhneo1g7TSpCh4iNW_PjgyuM52Nm3mVQrG5PSzDUnnw@mail.gmail.com>
+Subject: Re: [PATCH v2] nvme-tcp: fix signedness bug in nvme_tcp_init_connection()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-These are u64 variables that come from the user via
-qaic_attach_slice_bo_ioctl().  Ensure that the math doesn't have an
-integer wrapping bug.
+On Wed, Mar 5, 2025 at 7:53=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> The kernel_recvmsg() function returns an int which could be either
+> negative error codes or the number of bytes received.  The problem is
+> that the condition:
+>
+>         if (ret < sizeof(*icresp)) {
+>
+> is type promoted to type unsigned long and negative values are treated
+> as high positive values which is success, when they should be treated as
+> failure.  Handle invalid positive returns separately from negative
+> error codes to avoid this problem.
+>
+> Fixes: 578539e09690 ("nvme-tcp: fix connect failure on receiving partial =
+ICResp PDU")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+> Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
+> ---
+> v2: Change the style.  Add the Reviewed-by tags.  (I will feel really bad
+>     if I introduced a bug in between v1 and v2 and cause everyone
+>     embarrassment with the R-b tags.)
 
-Cc: stable@vger.kernel.org
-Fixes: ff13be830333 ("accel/qaic: Add datapath")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/accel/qaic/qaic_data.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Still looks good to me.
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
 
-diff --git a/drivers/accel/qaic/qaic_data.c b/drivers/accel/qaic/qaic_data.c
-index c20eb63750f5..cd5a31edba66 100644
---- a/drivers/accel/qaic/qaic_data.c
-+++ b/drivers/accel/qaic/qaic_data.c
-@@ -563,7 +563,8 @@ static int qaic_validate_req(struct qaic_device *qdev, struct qaic_attach_slice_
- 		      invalid_sem(&slice_ent[i].sem2) || invalid_sem(&slice_ent[i].sem3))
- 			return -EINVAL;
- 
--		if (slice_ent[i].offset + slice_ent[i].size > total_size)
-+		if (slice_ent[i].offset > U64_MAX - slice_ent[i].size ||
-+		    slice_ent[i].offset + slice_ent[i].size > total_size)
- 			return -EINVAL;
- 	}
- 
--- 
-2.47.2
+>
+>  drivers/nvme/host/tcp.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+> index 8a9131c95a3d..b23ce31df97d 100644
+> --- a/drivers/nvme/host/tcp.c
+> +++ b/drivers/nvme/host/tcp.c
+> @@ -1495,11 +1495,11 @@ static int nvme_tcp_init_connection(struct nvme_t=
+cp_queue *queue)
+>         msg.msg_flags =3D MSG_WAITALL;
+>         ret =3D kernel_recvmsg(queue->sock, &msg, &iov, 1,
+>                         iov.iov_len, msg.msg_flags);
+> -       if (ret < sizeof(*icresp)) {
+> +       if (ret >=3D 0 && ret < sizeof(*icresp))
+> +               ret =3D -ECONNRESET;
+> +       if (ret < 0) {
+>                 pr_warn("queue %d: failed to receive icresp, error %d\n",
+>                         nvme_tcp_queue_id(queue), ret);
 
+This log line is slightly less informative now if a partial PDU is
+received, since it will log -ECONNRESET instead of the number of bytes
+received before the connection was closed. But I think that's fine.
+
+Best,
+Caleb
+
+> -               if (ret >=3D 0)
+> -                       ret =3D -ECONNRESET;
+>                 goto free_icresp;
+>         }
+>         ret =3D -ENOTCONN;
+> --
+> 2.47.2
+>
