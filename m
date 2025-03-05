@@ -1,44 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E9A156C76;
-	Tue,  4 Mar 2025 20:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E2C14658D;
+	Wed,  5 Mar 2025 01:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741121271; cv=none; b=bii/wVGR0hGgMJyCWLBgvpQiaG90tSnEjAbr0ThxH223faXmFAbiYUf+wg64JcWoEWgOUurNQwDwWgMtGfk3BakBDiFxfyBEkssPD32Uqe43Fyd5+c1Uc3GU0pjrBFGQae5I6nv3176UHb85UAQIDCWnzBsffR+gei7cxNsmwhk=
+	t=1741136779; cv=none; b=eu9Upymr3bOWJ6ZKiwPJqXDRG8/b0Tz9yQm7Galg+GrGTX3WIe8+5KNtvoht+2Og/bPiL6nMo+RsYwgcIa8Mx8psL7nB5InNBIJnOwwREcX+exKyn5O4+Qj7GhgoWsgOib3Fl1Bdt/3lqyMrJC8uNIYT8qTHovD5T9u+rcoizsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741121271; c=relaxed/simple;
-	bh=8YjeZC0STAUEMN8Yn7Msxcjr0MuyyeihkUkLSg6nhMc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=FvJJW8Dx6xO6z4n0TNk/WiOSfmjbHd7SVKLUm2JvPv6Pehzpy634oX3fx270DwHLr79oFPSpRDQZidKyoSLyaaLyRcbBfo54AN8SDpTSFgi/ATk/YFod3GZbAyuIp3nuMMTEkURtlZk9Z//BfYe0xcSSSs1xT6voyKO/cfOlDNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAwy1Ndl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741136779; c=relaxed/simple;
+	bh=NFjI1EHuABG7s0eSffnKl9hWTBsGsWfNfqbWCI+12aw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GSSkFnJFrncatiXg51OPdR/nPea2D4YXYaoR8LQ1i+cxcTVFCI06oWIBVrT8GJgp2dIKZ2bVfhSDnAIftclvBeV5MrbgdRqy1d1Tm+0ALGBJ7L2fGs5neOAAFKZXrpicsjya9s8MuA5n9XpoXYIHb9hq9zUX1ng/bYB7pqildgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tuf4utLm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAwy1Ndl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A42C4CEE5;
-	Tue,  4 Mar 2025 20:47:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tuf4utLm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED5BC4CEE5;
+	Wed,  5 Mar 2025 01:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741121270;
-	bh=8YjeZC0STAUEMN8Yn7Msxcjr0MuyyeihkUkLSg6nhMc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=mAwy1NdlF7TFfwDvD6XFBEiD+hhzSfNDiL4q6vvOwZy/a8rqaxkcd6S+nf1PYjhWk
-	 M3kumpeNG2hlfR9nITKN2aqVMAdfJ3TYJ3O2OYnQUIIhK2j2IRJ0dghNI5oYJtoyL0
-	 DSjBDB31Hef1L3daRIAiz5xPhNFNi0SCO1mdNACwwlM9xSlMW5R9SEVNBbPqgkAaSY
-	 a19X4rQ7876IBtxkbOfw4wKjbKCYgMjAJKGJ2XrhgfCkDhWitjKisDHKkwognaVxBy
-	 OqZQaUo5M6j9KhnTtK/qtCAnidlELKkPPAI5uqZr9GcbGrBjZFSDPNc8JOXWQyCI2D
-	 a/GoUrolGagMg==
-Date: Tue, 4 Mar 2025 21:47:48 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-cc: Even Xu <even.xu@intel.com>, Xinpeng Sun <xinpeng.sun@intel.com>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, linux-input@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: intel-thc-hid: Fix spelling mistake "intput" ->
- "input"
-In-Reply-To: <20250228084139.677391-1-colin.i.king@gmail.com>
-Message-ID: <771711n0-rnp4-4n94-ps74-481n3nr2sr99@xreary.bet>
-References: <20250228084139.677391-1-colin.i.king@gmail.com>
+	s=k20201202; t=1741136778;
+	bh=NFjI1EHuABG7s0eSffnKl9hWTBsGsWfNfqbWCI+12aw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tuf4utLm8wRDgL8Ga/dAwN/B4O1akbW0V7KqoyMrYlnTCA3HsOqhdlF+q6dZE3fyC
+	 M+vtntkhBDwypJ47u9mTKkTTEak1aJhZoJmycUpXto+hg37CXryNameXS8Pmn3i8t+
+	 nB4tJvZLHLc+E+OCEnwl5tDBsr5/0uRHnH1GJWPnODYUev2VHMU8Y3A9P6+a57nXOi
+	 uvcQ/Ev4AjR3vP4VtJeyWccPql7mjFErbHFnohmR9va3Df5vxxyIGnJ5+6+YQGHKaj
+	 5BUDLSBxF1DLDsYO0KAPrmz7CHS26TR1ymkJU6x/Dmp5JXoU/tjJJGdKtYtj2wp7r7
+	 Yy0KSyjhZvR1A==
+Date: Tue, 4 Mar 2025 17:06:16 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, Brett
+ Creeley <brett.creeley@amd.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jacob Keller
+ <jacob.e.keller@intel.com>, Paolo Abeni <pabeni@redhat.com>, Shannon Nelson
+ <shannon.nelson@amd.com>, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org, Qasim Ijaz <qasdev00@gmail.com>, Natalie
+ Vock <natalie.vock@gmx.de>
+Subject: Re: [PATCH net-next] ionic: Simplify maximum determination in
+ ionic_adminq_napi()
+Message-ID: <20250304170616.22763ca3@kernel.org>
+In-Reply-To: <cbbc2dbd-2028-4623-8cb3-9d01be341daa@web.de>
+References: <cbbc2dbd-2028-4623-8cb3-9d01be341daa@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,31 +48,10 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 28 Feb 2025, Colin Ian King wrote:
+On Sat, 1 Mar 2025 11:12:31 +0100 Markus Elfring wrote:
+> Reduce nested max() calls by a single max3() call in this
 
-> There is a spelling mistake in a dev_err_once message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
-> index 7373238ceb18..918050af73e5 100644
-> --- a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
-> +++ b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
-> @@ -107,7 +107,7 @@ static int quickspi_get_device_descriptor(struct quickspi_device *qsdev)
->  		return 0;
->  	}
->  
-> -	dev_err_once(qsdev->dev, "Unexpected intput report type: %d\n", input_rep_type);
-> +	dev_err_once(qsdev->dev, "Unexpected input report type: %d\n", input_rep_type);
->  	return -EINVAL;
-
-Applied, thanks.
-
--- 
-Jiri Kosina
-SUSE Labs
-
+max3() is literally a wrapper for max(a, max(b, c))
+This patch is pointless.
