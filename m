@@ -1,138 +1,77 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62292E3383
-	for <kernel-janitors@vger.kernel.org>; Wed,  5 Mar 2025 15:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A57E24FC1A;
+	Wed,  5 Mar 2025 16:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741190302; cv=none; b=USSzJsGGHKMIMkcHFyptHdDu7bv1ZygPW/yotnrkXjT95rQCraaJ24btU41o0qeQxtiADhG0ZNDZSZ6Sy9W+3FjG/z22DXAaobQipa6/0iDhydaunfvM3NNKQjnZRaioTkgo2urr+kC51mx3UieygeJ74IN1AKI2eGd3NhN4m5Q=
+	t=1741191011; cv=none; b=S6zpv8idVzaLEEkSgxV3jK8K+V54+XgqMfdXVGkf/1Dzif8GKSa8UmHlBItEODO+cfHCrIiuXaurR5XAlW+l8cRBkMqtZ/FF04fmuTedei+y1BI+gIqfyJg8N4U5KJKpo76rkWW25gQjLXscaN6t/YcIWvOItrt09kXmzho85XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741190302; c=relaxed/simple;
-	bh=bYuWvTnxcH9cu35HRFKPtJkB8o67RKS5wYWWIeSxv70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FfmWuYeWFHJHl5K1Q9JPqSkLiNxs+jvaHnXkk32jrAxcgTSk2uN0Kusv2fiCj4+pILs7+Qgai/awytMV3uJ77YCKe3ee8md7+kqDms2dclZ5MNxoDimDYvZoARVWdiLw7sNBUCaJBHWBYFNjgZq8DkATcD/Ut2r39yNab9dgkvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Y2gqTApg; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Y2gqTApg"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f2f5e91393so1977176a91.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 05 Mar 2025 07:58:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1741190299; x=1741795099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YYMU1ONvumZN07XPBCtkjUrstfEAtCPPddr7Hfo9Atk=;
-        b=Y2gqTApgoVu023lcE28ic24Z/iILnnSBvedaOlwJ+l4XsHdOMokBtTFXwUg7lFmMvO
-         BwQM2Ors3A7bASOcF6yaOmn6M+1J0OYG1lMVm7untLeN0EwJFC2qhFjypaoxzXvlxgEi
-         KqegLmZaTWnHmYMfwEOFmjAfFecqwcXbA5LBKvIfIz6A1FxDDV9TSt9l9eFXKSS1iLjE
-         plJmFsB2LKf5QBQMDjkf1t0T1SCGd3ukHFu0ySIyJyK58F6DmpRv68TOD0sVw5KH/JFo
-         hV/GYN9rZiLvnZThK3WRZEQ/QTm2K3JESfSjc41U24NGLI8a13bfJtoS0/HQ9gIyxhXQ
-         Z7oQ==
+	s=arc-20240116; t=1741191011; c=relaxed/simple;
+	bh=tQxIso6zdyCPRW3ea4lNOub/x+vWYMWUlcYeaXspf/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLqYj2HgEw/U94wPt9Od1gNoLf0rEHlaBJmjcxwgnEoLQ2TcKvOW1ZE24hWHk8SSkluplfj+rg9daINx5Y7dH7dFbZyU8mtzHkKpSFIfYrzq0961Ln/LoMYwMdbuz9TPhc3wH5On0nRfruAO5CEI+7dAGmbE1PilHNnuKvtMovI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2234bec7192so129731115ad.2;
+        Wed, 05 Mar 2025 08:10:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741190299; x=1741795099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YYMU1ONvumZN07XPBCtkjUrstfEAtCPPddr7Hfo9Atk=;
-        b=OGj80AsXjCp+64xjozhWI+24+uPWBg2t1PF3vwbGV5GrXp9eMh/B8FZD1vOmAWR2oe
-         vMSzYTcvkQ42q4j/bNvKWw6PxH2KM8OWgCWxv3tONsMaKlVsiaQxCB0ilNQmLEB8avF6
-         HjFER+NRpXV+PrN/D/6Tqa3fxUH3+ZvrFuk5pY5Qy84BGIFRH6dlHrYdKG1MWWZ18+bQ
-         E6+FfaO67OAMH58GuaF7cQawi+s12tghiBlXztSsMlUFoj7XbxHDlyVleMnXdiAY9Uoq
-         G6aIcAzPw2eAuzyK5kl8GuNGeZJiEaeDRbLOXD0jeWSAD3dkqm2h/wC+8LJi7OsAGTzK
-         YhBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1wLvitfvO9SveBqzvaE3t/GkSMlq2OvK77fw4qgtBpewVafmWE0hST8R2wV6WYPOwQEAYV88Stz7SM1Y/Dk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK3NeEg4YLG0eOQOFRU2/HLPqGVNcg2a5S3WRrtwn+z7k8TBbN
-	SIxxBNP/B+Sg5mgT4eXIHmTHSuQzsVl9ppeyipG969D4f+obZV5q+FtqNrziOFaycDlBDPKLh4S
-	BhENFrSruhdvrimzO/cL88rs0AHrN5EK2a1AvkQ==
-X-Gm-Gg: ASbGncuqSa6azxN3bZ//3e2saBmZdv154OGzTRfd8e7Mfm6WesImoJylads4rrrAcSu
-	Brzps9pxa+H9qC+u0RPSpmBXHDEMG8ifmMAvq/hGPl0ZtYTLdVqWLwuxrTe5FUjIKpxvSgXzow5
-	v5UI2VQfKXF/Cl65DkXEQvzYLyoTU=
-X-Google-Smtp-Source: AGHT+IE039RKehIzWkPoz9Pwq8myqyy+FZsujwKtDDyBFn8FwGJVt10BuBtMIRgg7fWx3zw0WYibWGpIpl/Q2cToPds=
-X-Received: by 2002:a17:90b:3848:b0:2ff:4e90:3c47 with SMTP id
- 98e67ed59e1d1-2ff4e9041aamr1711334a91.4.1741190299046; Wed, 05 Mar 2025
- 07:58:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741191009; x=1741795809;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rmm65+uA+Kw6OHf7ipiynKZVxICJEHzaO0o95amWfmM=;
+        b=nqaq/hQ5jbkva+iKterslzZiUJWOUjgEx64UU2IdLqD22FNxQ0EK1Y4PYb755l4FFN
+         Z39u72l09Kii6QjShOQcNaDFQe/m5T78abnKkkzPrHrr0HlZ9zwsswzw0njL53Mq+FSa
+         3nn0OFfZ2C3bcS2h0AGYo2By6MEoI86LB7v33N+uMvAONol809CdR+8OmjpV2RdrgG5m
+         z+OQ+jxb5EHXqfOEG1lsughLpFl05I3dw+cw5dv2NR53Gr177XXprDGPkeHmWsTEc4+w
+         Q5bBXovkouaV3Y0inLak431n+jMpKaVsNnt8KQf+i6ltx4VbsnV+kwioaZimyW7/woOX
+         pyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqV6MWfqnVLVGKlMCbZ5N9MH8hiwDrpYL/beY2DK45mKfQj825B9urD4bYQg9b9AZhOCEkFU5yAfO5vUFJRP8=@vger.kernel.org, AJvYcCWSIGljxjL6Q4RpSnw7JHmoLF5ds/sao1bRxp3Qk5nz3tUZSPjYZ5JoIn54heV5rojBDaqq3dsCF4xc@vger.kernel.org, AJvYcCXpcJ95hLp7uRHXAcm/qW2wK6WVqiIfKBZ+O7NA1Qppe0K9kHfpsuhl5SLff4M6xeYN3x8rUP/6FaaLMiCa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+8on9RhDHU95A77NCTgmFMfJurvCiJ9CR2FxoaZyHG9ksvzOH
+	qe4veoD9g8G+JV97zwNoxV2e4AMSuQcCjAviIkJ7vXiU1dUk3eG6
+X-Gm-Gg: ASbGncvlpw2oYhyrH7ddnIX6pcPMPWd1Tp0Ijv789KQ10chxsZvPEAgT4Sw/QiovXJ5
+	4cuVOto1nfDPAHf8x128LqVXNyFhpW9LfPWEbdwEb+BaGOB0u2IFqx+HyhMhYcOELncTYwnrH4T
+	8qhInUvaF17Tk660KiWmqDFw9S6j0N3GWGbLebHO6cqp1cmSRYTEQgO3QNtJ0HO7TdDoKZ6D/jY
+	Lnjq6ISOf3E2DGOzH0FSE9UtGBUlYUjLFBsV0aiRnRvhmdYInTiIw2pzmh5STixOMEo84Vd1K0Y
+	6N5q17ywWPblHUlVt66QwKs7yHj9UnVc3a5pkeJQF5896k8g8Bj3EqVMsFQG7a+/02OMEr30dk1
+	pcvE=
+X-Google-Smtp-Source: AGHT+IHYzu2Hg17Iv+FAPzzj+vp4OtCZufp8iYDa3P2grWwais5vrBs1hTqGVRTHFIBVqoc2TiyA+g==
+X-Received: by 2002:a17:903:19c7:b0:223:3b76:4e07 with SMTP id d9443c01a7336-223f1c66784mr69929345ad.4.1741191009308;
+        Wed, 05 Mar 2025 08:10:09 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-223501d2901sm114816735ad.30.2025.03.05.08.10.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 08:10:08 -0800 (PST)
+Date: Thu, 6 Mar 2025 01:10:07 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Vidya Sagar <vidyas@nvidia.com>, Frank Li <Frank.Li@nxp.com>,
+	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: ep: Return -ENOMEM for allocation failures
+Message-ID: <20250305161007.GI847772@rocinante>
+References: <36dcb6fc-f292-4dd5-bd45-a8c6f9dc3df7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d3661d33-096a-45e3-8304-1123fd031527@stanley.mountain>
-In-Reply-To: <d3661d33-096a-45e3-8304-1123fd031527@stanley.mountain>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Wed, 5 Mar 2025 07:58:07 -0800
-X-Gm-Features: AQ5f1JpSLtbPYSGimhA0YnzX_t62kjsBmHrLeI4W_9M3JJL8fO_onDsebrkT6Ww
-Message-ID: <CADUfDZphhneo1g7TSpCh4iNW_PjgyuM52Nm3mVQrG5PSzDUnnw@mail.gmail.com>
-Subject: Re: [PATCH v2] nvme-tcp: fix signedness bug in nvme_tcp_init_connection()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36dcb6fc-f292-4dd5-bd45-a8c6f9dc3df7@stanley.mountain>
 
-On Wed, Mar 5, 2025 at 7:53=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> The kernel_recvmsg() function returns an int which could be either
-> negative error codes or the number of bytes received.  The problem is
-> that the condition:
->
->         if (ret < sizeof(*icresp)) {
->
-> is type promoted to type unsigned long and negative values are treated
-> as high positive values which is success, when they should be treated as
-> failure.  Handle invalid positive returns separately from negative
-> error codes to avoid this problem.
->
-> Fixes: 578539e09690 ("nvme-tcp: fix connect failure on receiving partial =
-ICResp PDU")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
-> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-> Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-> ---
-> v2: Change the style.  Add the Reviewed-by tags.  (I will feel really bad
->     if I introduced a bug in between v1 and v2 and cause everyone
->     embarrassment with the R-b tags.)
+Hello,
 
-Still looks good to me.
-Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+> If the bitmap allocations fail then dw_pcie_ep_init_registers() currently
+> returns success.  Return -ENOMEM instead.
 
->
->  drivers/nvme/host/tcp.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> index 8a9131c95a3d..b23ce31df97d 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -1495,11 +1495,11 @@ static int nvme_tcp_init_connection(struct nvme_t=
-cp_queue *queue)
->         msg.msg_flags =3D MSG_WAITALL;
->         ret =3D kernel_recvmsg(queue->sock, &msg, &iov, 1,
->                         iov.iov_len, msg.msg_flags);
-> -       if (ret < sizeof(*icresp)) {
-> +       if (ret >=3D 0 && ret < sizeof(*icresp))
-> +               ret =3D -ECONNRESET;
-> +       if (ret < 0) {
->                 pr_warn("queue %d: failed to receive icresp, error %d\n",
->                         nvme_tcp_queue_id(queue), ret);
+Applied to controller/dwc, thank you!
 
-This log line is slightly less informative now if a partial PDU is
-received, since it will log -ECONNRESET instead of the number of bytes
-received before the connection was closed. But I think that's fine.
-
-Best,
-Caleb
-
-> -               if (ret >=3D 0)
-> -                       ret =3D -ECONNRESET;
->                 goto free_icresp;
->         }
->         ret =3D -ENOTCONN;
-> --
-> 2.47.2
->
+	Krzysztof
