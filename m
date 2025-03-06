@@ -1,112 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DE97E9;
-	Thu,  6 Mar 2025 10:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF97018A6B5;
+	Thu,  6 Mar 2025 10:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741255519; cv=none; b=kgE7nnG6oiRTj6vXPiXN92ZYIJFc88PmCHaImEheeqFjlsI8SeaE7BI9EAKG8DVRP1HhcpfOsZeVLw88tjH7RNjHfmmaKzLK6tPqTsLVY1wKHTVf8q7isP1bsuzAZy0/2RfjUUSkNTYD+tb8z/VNdivPZjiMM9eaeFO63aviIh0=
+	t=1741256926; cv=none; b=HYlTiKnLV9zAUn+KhFSyhlxKJ779hQaKL5bJNhilRCCw9AI4+AJOKskoEwLD1Y6VaPO51Inj6G0vNv0NXORPXfLrQ25YvhBUHwq0qJyo3EDqBVR4m+TmeUJrMDv0kq2bQsYhjtYqKjaISnzMFKk40Vz6oAfUv+3Dz1jed1Dqv28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741255519; c=relaxed/simple;
-	bh=DQX5lg3HEIkDGfIdaCFSobFn9jNWVFULDjoXWXHvXzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LA9pZQXMH5hZJEYKFrWRLsD5moSwrcaaLN+/8LJN0rjuvOgUnaZBcFSTurg+Jvf25wKz40S6lZBAlN4V78vDd2fIIcSJW5qCZ0Bnw0/Do2/XI62heFK+oH/Uqtz0E9CdN92/cd/ukRh4S0Pq2AInMOKDTSEPq8DNjpJGndBwHJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dza/0pup; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741256926; c=relaxed/simple;
+	bh=syoPIVjbFQmqD3mbzC8x+6wk935HiQWfR8keZLGGyIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=vFhRWH/znf7+yKd7QFcMysRTDxPpNMKNxW0HANiVz+Eskqb4hSX5be6qaJorTNyVvrHGNlbNuCdWQrVmroAho/wf2O803QeOm1M16kGtybslGe6lMVjbw5XZY/+i/0+BJtlMldDmFwDZ1EzNlBF/HlmxVqTM62s4TI6dyQh0XMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wfBPq9TJ; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dza/0pup"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78383C4CEE0;
-	Thu,  6 Mar 2025 10:05:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741255518;
-	bh=DQX5lg3HEIkDGfIdaCFSobFn9jNWVFULDjoXWXHvXzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dza/0pup0UtKgDNsoV7kH1Bxb3D4inSmojbSpyY8HhQSReuuy6MNyosFgweLQaK56
-	 2bIbbHloa0QK/XCmDFzpuADNpbh/LrFlKMTIP/+V2HJojOR0J/qpX6JOoxZm+Iftw8
-	 DKF1XYQBl/m1aB25xTIUdZUiSqsKxmR1tAa97rw0vze24u5ucmzoAL0segs9rPEjgC
-	 Url/qLypDRF0zl45dvzrObMkJYOELtv61lb5/RVVLTGeHBFwrVj+1STaAEKDKW/hyk
-	 YTueA+5s8kU9pA0KYH6PRO+HPRKfhKYLZuq3Jcmf79HNjPFbUILbvnvznfkAg66D8W
-	 vmw9GJu8s6Sfw==
-Date: Thu, 6 Mar 2025 11:05:16 +0100
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] net: ethernet: Remove accidental duplication in Kconfig
- file
-Message-ID: <Z8lzXDc8V09hz7k9@lore-desk>
-References: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wfBPq9TJ"
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526ACxeE029564;
+	Thu, 6 Mar 2025 11:28:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	rZJvAb4lK5uj98yPaFX83j04iTuIZ3/ioDN8111skDE=; b=wfBPq9TJ5MvlEFn3
+	mZA90YzxSdloBvCkeNRJhxamXLJU4+sZWPZqkSOZtK8iTa3ICqGl4deYzBahNLuR
+	EuaSEgCCGqEH72P7AUtfBIS/yh+5tq9pptsgmrEJG67FjmPos7s/Cw2fc0IrG9UH
+	4Quo29IpeYsJGvIfNqT0UcKZ15C5QD7CvB4KlhraJ2FbRo/9xg4JADacOHbihn98
+	fX3fSWjEMbCIhLE3TctrV8AW/ieOEWsYCBSjxheqssJvx1XnGDmqxniM1osO1oJd
+	yODNHZ3DoLCdq2cPMo/h4B9u6wfOyKwZw+p9SCG0j9E+i3YEjzWlnt127bYg3c4I
+	5zIVpQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 457286kh4n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 11:28:32 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1C3BF4007F;
+	Thu,  6 Mar 2025 11:27:33 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 665CD51A119;
+	Thu,  6 Mar 2025 11:27:00 +0100 (CET)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 11:26:59 +0100
+Message-ID: <f681046c-449f-42fd-8c97-36c459fdb3e6@foss.st.com>
+Date: Thu, 6 Mar 2025 11:26:58 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XigoDoLbpCnqzKzj"
-Content-Disposition: inline
-In-Reply-To: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] spi: stm32-ospi: Fix an IS_ERR() vs NULL bug in
+ stm32_ospi_get_resources()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Mark Brown <broonie@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
 
 
---XigoDoLbpCnqzKzj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mar 06, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->=20
-> Commit fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated
-> folder") accidentally added the line:
->=20
->   source "drivers/net/ethernet/mellanox/Kconfig"
->=20
-> in drivers/net/ethernet/Kconfig, so that this line is duplicated in that
-> file.
->=20
-> Remove this accidental duplication.
-
-Thx for fixing it, it was in my backlog.
-
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
-
->=20
-> Fixes: fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated =
-folder")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On 3/6/25 10:48, Dan Carpenter wrote:
+> The devm_ioremap() function returns NULL on error, it doesn't return
+> error pointers.  Fix the check to match.
+> 
+> Fixes: 79b8a705e26c ("spi: stm32: Add OSPI driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/net/ethernet/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
-> index 7941983d21e9..f86d4557d8d7 100644
-> --- a/drivers/net/ethernet/Kconfig
-> +++ b/drivers/net/ethernet/Kconfig
-> @@ -21,7 +21,6 @@ source "drivers/net/ethernet/adaptec/Kconfig"
->  source "drivers/net/ethernet/aeroflex/Kconfig"
->  source "drivers/net/ethernet/agere/Kconfig"
->  source "drivers/net/ethernet/airoha/Kconfig"
-> -source "drivers/net/ethernet/mellanox/Kconfig"
->  source "drivers/net/ethernet/alacritech/Kconfig"
->  source "drivers/net/ethernet/allwinner/Kconfig"
->  source "drivers/net/ethernet/alteon/Kconfig"
-> --=20
-> 2.48.1
->=20
+>  drivers/spi/spi-stm32-ospi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+> index 8eadcb64f34a..a544d7897edf 100644
+> --- a/drivers/spi/spi-stm32-ospi.c
+> +++ b/drivers/spi/spi-stm32-ospi.c
+> @@ -835,10 +835,10 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
+>  	if (rmem) {
+>  		ospi->mm_size = rmem->size;
+>  		ospi->mm_base = devm_ioremap(dev, rmem->base, rmem->size);
+> -		if (IS_ERR(ospi->mm_base)) {
+> +		if (!ospi->mm_base) {
+>  			dev_err(dev, "unable to map memory region: %pa+%pa\n",
+>  				&rmem->base, &rmem->size);
+> -			ret = PTR_ERR(ospi->mm_base);
+> +			ret = -ENOMEM;
+>  			goto err_dma;
+>  		}
+>  
 
---XigoDoLbpCnqzKzj
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ8lzXAAKCRA6cBh0uS2t
-rNAtAP9V+Q8UNILqo204AczQON+hWYW+Nxp3hNLk/WODmD+jVgEAyLr8ClMd7Y3l
-NQlj7zTHYDTTZvu0Wg6HnRtRR6MiSww=
-=vhTP
------END PGP SIGNATURE-----
-
---XigoDoLbpCnqzKzj--
+Thanks
+Patrice
