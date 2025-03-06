@@ -1,78 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814202080F0;
-	Thu,  6 Mar 2025 09:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E0B2E64A;
+	Thu,  6 Mar 2025 10:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254759; cv=none; b=oI881fNh6fdOz/XPJ0ldPcOOfMCYvOuok1q1L7puHOTnEzRtH7MaozAeCtxq6sGR/PFYIOqVSPqDlpfPVFycCkJq0A7pNYnH7cDtEs+raBZ/2BaXHVNTlqsgsH6sTeBPAqIXVjDwb1TuWT9OdjOPo0GaPSOEQv4iOdw96HJTxOg=
+	t=1741255434; cv=none; b=nu+TgNMgrJk8+XX69iIDbYihGwH6lm3E6IfKZ/lC+9XDZbqeAJXbW/4JNk2uPOW5PVX1YhzMfuCCVwK0WHtsHnGiRDoWrMRJuu50h9A4EuA/2aDxHheJZuGEbYF/AQSljuxsIfmWjKUS+YbQEHokwZRw8BxjA3laTNcLQY3qCYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254759; c=relaxed/simple;
-	bh=CZq3ZIiiIO3KJSoi7XFRrR4N3fgTxVqRNIbNeAnLObc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q1CF+8VawLxZGHfU8Bnkzw4nNqxaZIaPNq9daqEJ1Lmgk7pn7WKOD3RU+snWEkNIOE40+bbQZyFL0XWsoe2YbNnKGgeumLCPvUrriW/AliLaCvu06B78XEudpGx0UEOwHiP+Y9rE91kSdoemIlT2+KxWDYtRbPOcydk6jdMHSxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfzJjKLp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741255434; c=relaxed/simple;
+	bh=Wbtc/VWtrwzW/JVi9BqzKa6DRXsMZV5G0xEJdfogr7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n75iGnQWlj22S2nbS/9KchTYm5am+kfnLb5qCNCGDX4xW2fqMM2oqbDdHTw8ZtZKXxS+CL6d8fAeUdIwmCy/G09lXbqXq+cKfOxYLI9QfF/Z7BmQnYxwFeweda+SnHblYhTogzSIsm6X/csCjTs4v5DkYww8j/3jphh3fI95k48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eL7ogPBm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfzJjKLp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8DC7C4CEE0;
-	Thu,  6 Mar 2025 09:52:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eL7ogPBm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5EE8C4CEE0;
+	Thu,  6 Mar 2025 10:03:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741254759;
-	bh=CZq3ZIiiIO3KJSoi7XFRrR4N3fgTxVqRNIbNeAnLObc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LfzJjKLpUauOHQOSsJPWkR26g54iwnljlL1k2F/GKOt1/m3Xt8VrHV1fn3X/7G4WB
-	 xdDZONBCBW3ugY2hHDhcsqx7FeesKCzCXmt1uWd2nFpl0hoSWfbRCJvyvwnSHjP3ok
-	 xdBjEwMW5TQAamykSD9VflIJpEaPUrKqOut3FVeAKMcrJs4D/N09A4B7Ga+P3cpiug
-	 guV+gOLrO5iCwFUNosFZVgufn2R0Mtp5lkvqnezpMxEDVdn7bc61AQ4/u5BhFpHBrn
-	 9pda319Lov7cV6fk6eaiFH+yrtqBbC1i29sg3CAIs4tqETOEOPy6wDQZfAsr3a4X1d
-	 iEsphS7+PiJdw==
-From: Christian Brauner <brauner@kernel.org>
-To: David Disseldorp <ddiss@suse.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Christian Brauner <brauner@kernel.org>,
+	s=k20201202; t=1741255434;
+	bh=Wbtc/VWtrwzW/JVi9BqzKa6DRXsMZV5G0xEJdfogr7g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eL7ogPBmqNtZhXSP2IlPVYn13/1pqa/WpjYcZRaScouvKdz1xomjpm/Sj20/ICuIH
+	 x6myFplC/GBDhmrOPh0MA5I9tMdR0TMSClxUncPXR7LaBCGt1+c5j+Wz7fLsdzAywj
+	 gXWS/S1Cn6yqreVd99geuhCIFMjj3nsc+zqqxfYkT/3VxOTzQNk/2bRONIWle54j+S
+	 yoeGpSja2USCNPp2aeSbAXP+e5jyCU3RBNkXxtyMegig5uUJqOogPgdwMAArXShMO5
+	 JZTTOIw58PPdJZ3dQXeD9L2lrR5jNgjkVjDwf45K6jepKCHlrtvEyXiU14s0X+n2qq
+	 23kVvHWO+KdMQ==
+Date: Thu, 6 Mar 2025 11:03:51 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] initramfs_test: Fix NULL vs IS_ERR() bug in initramfs_test_data()
-Date: Thu,  6 Mar 2025 10:52:26 +0100
-Message-ID: <20250306-steganografie-gummihammer-4de754136e69@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <a4ed49c0-e92f-4fa6-b1b2-32749f551724@stanley.mountain>
-References: <a4ed49c0-e92f-4fa6-b1b2-32749f551724@stanley.mountain>
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust entry in AIROHA ETHERNET DRIVER
+Message-ID: <Z8lzBx-A3372P8Pv@lore-desk>
+References: <20250306094636.63709-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=994; i=brauner@kernel.org; h=from:subject:message-id; bh=CZq3ZIiiIO3KJSoi7XFRrR4N3fgTxVqRNIbNeAnLObc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSfLEiy8z816/OCggUJOoZnHovssrs/9dyJntkyaveer 9pgHTrvZUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEhO8x/A8XepGa68np55Ax kYt3dta8OwLlTHb7tqleXMvQ4qgmIcnIMHFmxJqt7S9E8xcEZ5i3dPkcFJz+5lWiLeeclq8cJ79 1cQMA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5lTqbbBiqNaWNbWm"
+Content-Disposition: inline
+In-Reply-To: <20250306094636.63709-1-lukas.bulwahn@redhat.com>
 
-On Thu, 06 Mar 2025 12:48:40 +0300, Dan Carpenter wrote:
-> The filp_open() function returns error pointers.  It never returns
-> NULL pointers.  Update the check to match.
-> 
-> 
 
-Folded the fix. Thanks!
+--5lTqbbBiqNaWNbWm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated
+> folder") moves the driver to drivers/net/ethernet/airoha/, but misses to
+> adjust the AIROHA ETHERNET DRIVER section in MAINTAINERS. Hence,
+> ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about a brok=
+en
+> reference.
+>=20
+> Adjust the file entry to the dedicated folder for this driver.
 
-Applied to the vfs-6.15.initramfs branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.initramfs branch should appear in linux-next soon.
+Thx for fixing it, it was in my backlog.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 37fedd2a0813..f9d3ff8b4ddb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -726,7 +726,7 @@ L:	linux-mediatek@lists.infradead.org (moderated for =
+non-subscribers)
+>  L:	netdev@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/net/airoha,en7581-eth.yaml
+> -F:	drivers/net/ethernet/mediatek/airoha_eth.c
+> +F:	drivers/net/ethernet/airoha/
+> =20
+>  AIROHA PCIE PHY DRIVER
+>  M:	Lorenzo Bianconi <lorenzo@kernel.org>
+> --=20
+> 2.48.1
+>=20
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+--5lTqbbBiqNaWNbWm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.initramfs
+-----BEGIN PGP SIGNATURE-----
 
-[1/1] initramfs_test: Fix NULL vs IS_ERR() bug in initramfs_test_data()
-      (no commit info)
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ8lzBwAKCRA6cBh0uS2t
+rAW3AP9Ap1HMYdHGy1e7oc/z4Mvd9W/lBms+ZnwVsLYo6Ql/AwD9Ezb0TReXGZzU
+RbjBQYkv0msYfWFjjkurfgOZgwdj+Ac=
+=QIY1
+-----END PGP SIGNATURE-----
+
+--5lTqbbBiqNaWNbWm--
