@@ -1,120 +1,108 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C59209F55
-	for <kernel-janitors@vger.kernel.org>; Thu,  6 Mar 2025 09:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E623D20ADD1
+	for <kernel-janitors@vger.kernel.org>; Thu,  6 Mar 2025 09:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254486; cv=none; b=Hfr9aQJRFbg9/foMP6vAq5pm693i+DLIT8BtuFWz+djCIfIVQXTSvIb5FvX03GvBKsjDF92eSQhTO4AWw941S6RWU6i0DX02Fa7pYZb9gpn0kVsBEPCWxPU43AhNFU/4P9MwGLDz7miVkNvRaSJNw7wHEG1haXUDutrxryTT4Ko=
+	t=1741254521; cv=none; b=TOdvE9h1kUSDQ2SxEUGokM0k9/EKUZlAtc9BNmiAJ5u1gL2+Zv5onwDzSY9+gC0tHYrZsHuDboEYGvigKf0k3PWBncCFVttBXEy/jQNakL93SaiP/KVkJML0KjrVQntcL/Emj5jUvNoxN6uLvhEgaYHhQQiVgYhpA41QcGNTamo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254486; c=relaxed/simple;
-	bh=3ho3qGo1lVmXuX2dMlnltG2fGWa3E3AUvtUOA6OLNpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TogEIEaKacvjzo3TeMwdOaMBZkdXWFhrdxnJx5ix7ZMn34iFPF/HM0YizS+/KK6t88oIJSDglFDuksddYJHaBMP+PxefEGfDjCBZpi+tujPay/1jucQpVo3mjp8Ht78gsMxwyCYmlXohVOPArq7UK9JNYuG2serYYnvBN+chDqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bOhR2nlo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1741254521; c=relaxed/simple;
+	bh=RJEAUzoNnPjXojDrx1lfGnTyV5utsglqX5RvWoQNM3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lZfcVUjRzkvpdomObbYi5LyrdgdIx508H3fOLieK+FibrY3aP/59Pb6uhF3R6Nc8aBgrRHhz2fG6FTByUTQtkWPJeqaAEyFoM/Gfdu8wgSOiF3kRHmE4OXLtzEs6IkkTqT+XonYtvozaa7nzdGjcAPdlx1nmmOkLzyNeMBstMJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xeP4T/se; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bOhR2nlo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741254483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qhoIeIC0J8+KZetLEFZda/wAPxtts5eJjpdjM7DSGkg=;
-	b=bOhR2nlo4ahUXchJLlAeLIwfSc/EDcYHFrCuS2JzQLr9bv5IDNlYf7DAksyQGbRy4XxByq
-	zsZWw8ZMmXcrICmFdcPjDmNiUIot9Pu7s/avIGVtvW7aXXYdBveuBpOKxIAt0BsGrXiyAK
-	yShl7ZFeG0/9dz0tLO9T7iVbXVpBs4s=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-266-jVFUjHFFNOWqrxRaKGOFGg-1; Thu, 06 Mar 2025 04:48:02 -0500
-X-MC-Unique: jVFUjHFFNOWqrxRaKGOFGg-1
-X-Mimecast-MFC-AGG-ID: jVFUjHFFNOWqrxRaKGOFGg_1741254481
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-390fd681712so215771f8f.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 06 Mar 2025 01:48:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xeP4T/se"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-391211ea598so296742f8f.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 06 Mar 2025 01:48:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741254518; x=1741859318; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dYb6T/3vLosF9o5q+Y5UiX2/6xC2fpf9CrlM4eItM9w=;
+        b=xeP4T/se9LH8ndz4Z61G3FKvdCQlcnEL7DSi6csfa3TbdnIlLsFbivnOiwI1Du52kx
+         cwfkJNoXXCMgUIMq933n/oyyXy4rgdFz1TGw+s2SsEbe0aUc8QhlUl2kTOF8V5N6lqfd
+         96TSlKT3SbAGge8aINCkOHiekbL4M+Q1BJcoqclUmJEUya1DnT8wrPp8R36aurMHnWkT
+         zgtps8ModMJYBrO4Qzabx8Z39Z7KocHwtDoikxTZH2lV+4pwCWRP5k5wqyqHyzuQEdj1
+         8zdZeThdz4AdE+0qfmgpqpSFdofGm9EZTZ1DcNyAHe4H46CPrFMa06AWTZQndp8ndWM6
+         bPcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741254481; x=1741859281;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qhoIeIC0J8+KZetLEFZda/wAPxtts5eJjpdjM7DSGkg=;
-        b=kOVRjTSXQalQSC3fyxqPQm7vxIDdpsflpy0jaBSaGh/UAhXWLkc9zCnMzhnnBLts3K
-         lDMyeuxBrFeWo+UkNOD4gV3I9vn1/c4bwNdhr2xUTJXptvyP29LUyHV/pJPoPwPx78AF
-         PMjk0e0ra0LK/4tT6SmpsRtuJV1cHLaJAhqkTkcFYBVd+tYo2uuNfMQscsnJFRX0SzAz
-         O9/xPP2iZDm8V1Q7/ZXKZbEDarXwjdJDXxp0nggrV1qO/t7gH24CpeWW8v20dVM7QX54
-         M4rMDhBeLH5PhsFuIVKIx152UbYHNTKSANW29iRix5p9MbTgbLmAa4MXAmRr/gT0yiDf
-         5+1w==
-X-Gm-Message-State: AOJu0Yz36OIIwkQGXSHjK4J0z/QUVBFxzFsKLssLxM+Qq6TgBlMVPk2u
-	eKeqIlQ66qgopAaBHCtdKMIdtmgsONPOW0m8osvRB7huP3SzP3wowsCFScRYrOpXBA8Fhp5j57o
-	7kq4fGMmFE/tr0wVf0zFe5pgNUgd7lyr4cPDlMnSjv6RqxzdZHBR8EbSPanq/gvSsGg==
-X-Gm-Gg: ASbGncvCyFqb3ryBTkCqBof0xLXhl9n8u3dwzHZxgf52euC8EcyniaQMMF/G3f1sY1C
-	W1ZOEJ6Av36l9Fw4o30S4t86NuHNPSTI4sbzAMduC7sECx4PCW4Dome2ofl94P71/QUXBZfTva5
-	f9kbpODuHDa7Vv/cNbRYtZjy+YCYmciAMyEi0z/tCJch69qA7GTQYe8bweJw12X8M8PM0MfqGiR
-	ek/lRHCuqhcwVVhYtDFnOvREj+fYwzGgOvLC7EXauYDQdbS1+wzircjthgcB1b7FKQh/DL9vvG7
-	DNQTZzsurLIycdPimhKbVhfub/HNwiICDlhMlFcou9rPayaVetTBeJyGo+CO3EU=
-X-Received: by 2002:a5d:5850:0:b0:391:4f9:a039 with SMTP id ffacd0b85a97d-3911f7400aamr6723546f8f.16.1741254480850;
-        Thu, 06 Mar 2025 01:48:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEaiIHXbccL0gmNV8J9au35MPia1hghbbM07U8lOSRBfu151n9eSAZV97mDiHYuec/YepoOoQ==
-X-Received: by 2002:a5d:5850:0:b0:391:4f9:a039 with SMTP id ffacd0b85a97d-3911f7400aamr6723518f8f.16.1741254480467;
-        Thu, 06 Mar 2025 01:48:00 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c10437dsm1507462f8f.99.2025.03.06.01.47.59
+        d=1e100.net; s=20230601; t=1741254518; x=1741859318;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dYb6T/3vLosF9o5q+Y5UiX2/6xC2fpf9CrlM4eItM9w=;
+        b=MiD79pSTEHdzGabm7U4LsLOQKMHd5rS992EsRPSdNhfPuB1fWPpzqRHTDMJzkyRbGQ
+         KpnsxLpROq1sPY5JwZXvYEeZlOmWBDwot4w7AILEpcEpz7ZuAMEziIhqbZzgHWzmdqIo
+         LGYsg0KF01SLMuZugeZlx/cw3Q+YxjuNfn2c5BZy8aGUZPmi7bK6d/S+hd+8VdJW1GTc
+         D81uAeqi3XAxlAjxqq6gMBLmjgq5gzmxkNUmipSAwHqaBbOj0O/ZxW3djBjEJERPkiwO
+         GJpUhh7Ta046b9VIExqjsOia8E9gBpr1pgpugH04cAhk+D47wVjskbmadDzAa62H8IGJ
+         wbLA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+OUltkx/z5Bc/HdnTT6wguqVndYu3aF1UJWTlxwezjeRLGFAie9fpkNszkYy8ee0bQC7XFsValnnLaOx2FVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3qN4flRTf44EWCJBPjQTfif72r6dyM6vdrOtp/5jodThg73LP
+	K0yReMxcAeHc8TA94ZwiNdRuFYjBIk53awCGJXeJzfAUETl9WM2oYE2HWfn3lUE=
+X-Gm-Gg: ASbGnctrF1cr/8OVFeFc7ZBSgHftUBSG0hUrKUGJ9Mls+cj7qbnuqCGK2Nl1TUCZRKr
+	3u9ed00XHPMiUkbA5Mrcx1bf0N/YxHIdC5N/Gfj/9p0SIOUgHe8RmZeIRHj7dOmMUNlKXKhGjw3
+	ioO2VnLDWin6gZ225Xh+/mXWl/dRScBC9XLTiE9dfr5mOIlJwod82bL2pYDes8pNp5I8jVlEuYr
+	sKDDbaF/S77WLMfMgw9lxzP/L0NjiRc9uk0hrwiT2A5BqsbzrRRl+bQIKr+DVC31idoc31LVr1E
+	RSyauLpsqeIJauPtgumf56Arak/mZdoMSExed0VS1qIZeGbEnA==
+X-Google-Smtp-Source: AGHT+IFBd/ryvsqo4SuH5AoV+P7wyT4wM81i1izptWSUavGGlpTSK4T7eUmgeLPy3GMlZioDo8QvWA==
+X-Received: by 2002:a05:6000:10d:b0:391:225:9521 with SMTP id ffacd0b85a97d-3911f7bd8b2mr4846113f8f.38.1741254518181;
+        Thu, 06 Mar 2025 01:48:38 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfba66esm1527318f8f.18.2025.03.06.01.48.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 01:47:59 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] net: ethernet: Remove accidental duplication in Kconfig file
-Date: Thu,  6 Mar 2025 10:47:53 +0100
-Message-ID: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.48.1
+        Thu, 06 Mar 2025 01:48:37 -0800 (PST)
+Date: Thu, 6 Mar 2025 12:48:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] spi: stm32-ospi: Fix an IS_ERR() vs NULL bug in
+ stm32_ospi_get_resources()
+Message-ID: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+The devm_ioremap() function returns NULL on error, it doesn't return
+error pointers.  Fix the check to match.
 
-Commit fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated
-folder") accidentally added the line:
-
-  source "drivers/net/ethernet/mellanox/Kconfig"
-
-in drivers/net/ethernet/Kconfig, so that this line is duplicated in that
-file.
-
-Remove this accidental duplication.
-
-Fixes: fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated folder")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Fixes: 79b8a705e26c ("spi: stm32: Add OSPI driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/spi/spi-stm32-ospi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
-index 7941983d21e9..f86d4557d8d7 100644
---- a/drivers/net/ethernet/Kconfig
-+++ b/drivers/net/ethernet/Kconfig
-@@ -21,7 +21,6 @@ source "drivers/net/ethernet/adaptec/Kconfig"
- source "drivers/net/ethernet/aeroflex/Kconfig"
- source "drivers/net/ethernet/agere/Kconfig"
- source "drivers/net/ethernet/airoha/Kconfig"
--source "drivers/net/ethernet/mellanox/Kconfig"
- source "drivers/net/ethernet/alacritech/Kconfig"
- source "drivers/net/ethernet/allwinner/Kconfig"
- source "drivers/net/ethernet/alteon/Kconfig"
+diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+index 8eadcb64f34a..a544d7897edf 100644
+--- a/drivers/spi/spi-stm32-ospi.c
++++ b/drivers/spi/spi-stm32-ospi.c
+@@ -835,10 +835,10 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
+ 	if (rmem) {
+ 		ospi->mm_size = rmem->size;
+ 		ospi->mm_base = devm_ioremap(dev, rmem->base, rmem->size);
+-		if (IS_ERR(ospi->mm_base)) {
++		if (!ospi->mm_base) {
+ 			dev_err(dev, "unable to map memory region: %pa+%pa\n",
+ 				&rmem->base, &rmem->size);
+-			ret = PTR_ERR(ospi->mm_base);
++			ret = -ENOMEM;
+ 			goto err_dma;
+ 		}
+ 
 -- 
-2.48.1
+2.47.2
 
