@@ -1,103 +1,127 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 90CCE29CE1;
-	Thu,  6 Mar 2025 01:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6A91DDC18
+	for <kernel-janitors@vger.kernel.org>; Thu,  6 Mar 2025 08:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741225046; cv=none; b=l8hw+UsZxT25O1PUQOt85se2gxqw57HvCWa4gUjAt85JSz4g54Mm5b8D142FJpb44H8nnawuM+C+G/c8lZK5blUvNEO20FCS7X2pjAXET2vTSFfwL5VZCw8Tx761dvkdQm3SrqkUl+f0BDx1KQ9WHzuzSkyAXCObpkBnrhyzybE=
+	t=1741249787; cv=none; b=CL/rfmitxw/i/Xr2mkUcsfBuXuKI6yuayMsDCVCHksZPvCL2KiIvw3oH5RPb+MmNA7EKBkrKGJW15NK9TBQHuWQOTDcAH/r/LKrbEbkkhY1rElXDdV0pmqaq/iwWpcEH6BDEh/ioErX+Sy04uQ7l7tkYxTOFo7D3KNCzwr6FRuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741225046; c=relaxed/simple;
-	bh=AQ473aGUrvEwyByEq4GhG/NQv/VqJHKabUeulEps/RM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=myH/36ESo4ccAyzUDrlmUnzHQV3B/HrEb8K7kFzpjxuN1mfuzlEKerXFZFDjr3pM4fbx1Gs6AFWu4TmisoehrwB33lvYDiOhDY1HCGa5MIzHTsHYtv1w/hxN+qiqDylLOoZsdJahphFKRVv8D/aezA8yPkqVEgm2HIqSi07I4Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 11774604A4FAC;
-	Thu,  6 Mar 2025 09:36:48 +0800 (CST)
-Message-ID: <cef18438-4cb3-f69e-f3b9-200151b2eb4c@nfschina.com>
-Date: Thu, 6 Mar 2025 09:36:47 +0800
+	s=arc-20240116; t=1741249787; c=relaxed/simple;
+	bh=wtG1oKSJAOuDknBTbFDOoeKnnb40g7SgXZ5I9FQ0WCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rLK5bEFbJGCfm/nqzaAiOKLVrohm1DOGk7nvc//pj5JncZmWE16Cf20k9uRDZ3Xi0RNSkOZa01ZJ9oktlAh0UzclcmHAgoEZoZeku7mHsvdBicJfMnVhtUU/RtydXNIi9ZHeoKrzTh4xFLws5A6Q+V9cJcjMnFMjIw4BZDB6wVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XXfwkgA3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jCH9fmmo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XXfwkgA3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jCH9fmmo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XXfwkgA3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jCH9fmmo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XXfwkgA3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jCH9fmmo"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1414521197;
+	Thu,  6 Mar 2025 08:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741249777;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8Tq6YPS4TftQq9OwgBOkmkBhHIrJU5fJDLp1YsnDHk=;
+	b=XXfwkgA3V1md+yLWuDDYcrCfZPU2FlZQM0HrJAnUFJpxJw2ysLw0Ay0HfS2j8BjMATo3DU
+	HiF8WayCzKvJPqM1O5/cK8TyM4mUTHKwkC2voLGKAzUhvBrkCjF36KcUwtG212huJ0k7V9
+	FLWz/eWB304EBzh/SMjT3iURrxJa0sE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741249777;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8Tq6YPS4TftQq9OwgBOkmkBhHIrJU5fJDLp1YsnDHk=;
+	b=jCH9fmmoR1GVrCee03hxs45BZ4FPx7wytHtV17jaaOIikaXom3jnD/wEQqkXIKrMeETKoz
+	oJcYMk/OnPC9xAAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741249777;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8Tq6YPS4TftQq9OwgBOkmkBhHIrJU5fJDLp1YsnDHk=;
+	b=XXfwkgA3V1md+yLWuDDYcrCfZPU2FlZQM0HrJAnUFJpxJw2ysLw0Ay0HfS2j8BjMATo3DU
+	HiF8WayCzKvJPqM1O5/cK8TyM4mUTHKwkC2voLGKAzUhvBrkCjF36KcUwtG212huJ0k7V9
+	FLWz/eWB304EBzh/SMjT3iURrxJa0sE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741249777;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8Tq6YPS4TftQq9OwgBOkmkBhHIrJU5fJDLp1YsnDHk=;
+	b=jCH9fmmoR1GVrCee03hxs45BZ4FPx7wytHtV17jaaOIikaXom3jnD/wEQqkXIKrMeETKoz
+	oJcYMk/OnPC9xAAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E680213676;
+	Thu,  6 Mar 2025 08:29:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MTIEN/BcyWePAwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 06 Mar 2025 08:29:36 +0000
+Date: Thu, 6 Mar 2025 09:29:35 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] btrfs: return a literal instead of a variable
+Message-ID: <20250306082935.GH5777@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <2b27721b-7ef9-482d-91bb-55a9fed2c0f7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
-Content-Language: en-US
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, rodrigo.vivi@intel.com,
- lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com,
- ilpo.jarvinen@linux.intel.com, andriy.shevchenko@linux.intel.com,
- michael.j.ruhl@intel.com, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, mripard@kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- tzimmermann@suse.de, airlied@gmail.com
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <202503052153.gQnXU123-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b27721b-7ef9-482d-91bb-55a9fed2c0f7@stanley.mountain>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2025/3/5 21:15, kernel test robot wrote:
-> Hi Su,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on drm-xe/drm-xe-next]
-> [also build test ERROR on linus/master v6.14-rc5 next-20250304]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Su-Hui/drm-xe-Select-INTEL_VSEC-to-fix-build-dependency/20250227-153437
-> base:   https://gitlab.freedesktop.org/drm/xe/kernel.git drm-xe-next
-> patch link:    https://lore.kernel.org/r/20250227073205.1248282-1-suhui%40nfschina.com
-> patch subject: [PATCH] drm/xe: Select INTEL_VSEC to fix build dependency
-> config: loongarch-randconfig-001-20250304 (https://download.01.org/0day-ci/archive/20250305/202503052153.gQnXU123-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 14.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250305/202503052153.gQnXU123-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202503052153.gQnXU123-lkp@intel.com/
->
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
->
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-mgr-test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-bridge-test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-region-test.o
->>> ERROR: modpost: "intel_vsec_register" [drivers/gpu/drm/xe/xe.ko] undefined!
-> Kconfig warnings: (for reference only)
->     WARNING: unmet direct dependencies detected for INTEL_VSEC
->     Depends on [n]: X86_PLATFORM_DEVICES [=n] && PCI [=y]
->     Selected by [m]:
->     - DRM_XE [=m] && HAS_IOMEM [=y] && DRM [=m] && PCI [=y] && MMU [=y] && (m [=m] && MODULES [=y] || KUNIT [=y]=y [=y])
->     WARNING: unmet direct dependencies detected for FB_IOMEM_HELPERS
->     Depends on [n]: HAS_IOMEM [=y] && FB_CORE [=n]
->     Selected by [m]:
->     - DRM_XE_DISPLAY [=y] && HAS_IOMEM [=y] && DRM [=m] && DRM_XE [=m] && DRM_XE [=m]=m [=m] && HAS_IOPORT [=y]
->
-Thanks for these reported, this patch has some problems and is discarded.
+On Wed, Mar 05, 2025 at 06:01:57PM +0300, Dan Carpenter wrote:
+> This is just a small clean up, it doesn't change how the code works.
+> Originally this code had a goto so we needed to set "ret = 0;" but now
+> it returns directly and so we can simplify it a bit by doing a
+> "return 0;" and removing the assignment.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-As Lucas's and Jani's suggestion, there are some other solutions, but I 
-can't
-make sure these solutions won't generate such building errors like this one.
-So I want to use some tools to make sure this dependency is absolutely 
-right.
-I saw there were some thoughts about kconfig-sat[1], maybe it can help. 
-I guess
-using SAT is a nice solution for this problem, but I'm not famlilar with 
-SAT.
-
-So it need some time (maybe more) for me to send a v2 patch.
-
-[1] https://kernelnewbies.org/KernelProjects/linux-sat
-
-Su Hui
-
+Added to for-next, thanks.
