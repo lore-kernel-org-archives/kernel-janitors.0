@@ -1,101 +1,86 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3178D20C005;
-	Thu,  6 Mar 2025 12:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B452211A2A;
+	Thu,  6 Mar 2025 16:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741265782; cv=none; b=jRnV74NAwrZbpUbM5UOuayf0bkYraM634aXfEOw45V3fdZz97U4EjUWtJnw9mZpiis0dfa8cqi8JS2Hj170URPeW9k0Zeh27+RIRaSEh39NDMtt0/FoenHlBLkQNZd1pu++Tl5nGGg9cm+SVk1ZWGmKHtN8rX4n5+pssXfK06Cs=
+	t=1741277442; cv=none; b=imrsCciLKZmHXYGNsXIo8i4EFlEEC09RVIAiq5Vkn83U9Nr4IWw+WWg3F6eCfnY4FRADj6lp0HO2iQQf2LwzRIu/L6iMj6vbPFyc0XwB8610IR/cbFSig7YvDeKPdx5j591LTqBGzQLqjoHOotv0ZNh2Ybo9tk0IzZOqe1ofhdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741265782; c=relaxed/simple;
-	bh=f2QtvPy6r04TsWQAZ7fY9Nfn8lhUfdUSIfPRUOUAA2U=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LBWfSBQlVx9WxzzLgDySfkErGOuNBnGEk7nKrHvhw8siEz5LcLVZGVesP1ZOwpdi6lDfKIARkwVnq3hrr6oXuHcwUuARZjfH4TOcsh6DY3b7lHMlxjB9GcabFMSQc6W/XNoRPaJhrySzav08VWfAczUO9ji8s64AvakF2tc18oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=puFo5LP1; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1741277442; c=relaxed/simple;
+	bh=dO5KuEHT5N6JPz0mZT1IGgNKs9grKUWa+Hx4+yx3kc4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tzq5kf39wsFuO3rKle4j8s8rfFBS8vg5tYGsxi6VsK4YyIualovMDnYSDvCmrvksughsCC0kx8FJKYtaiyZsE3FNuergUUDXvoj3bQ+yHJwLD//1ulDbRFU1PQCu6Kcbx7bfyLs3c/8J0RUaoNnOok4WoFQxHnGz0s04p7wIDCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCqBfell; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="puFo5LP1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741265767; x=1741870567; i=markus.elfring@web.de;
-	bh=lEO/H7U6mflERQ8ZtSb9y/xEZwt5K4DW1neaihbZZT4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=puFo5LP1f2bRljUx7EVazQ5Yw8M5e0ZG4ogCQOMPPfyFrmPQjvrJOk4ukdsHFEZq
-	 mVA1a3OG9LLt6OX8lWkk7D0YgHbv3V3TK7e+S44VLgowincXqIReR+yR/jiNJ3ZMW
-	 q5r6MZLSSSQ8WFHRoNSWTddupeVsWW0kELHG8NZ/5Ip70XoWabvtH8r4fveGwsi1X
-	 Sz7t3jnUR44RW1DH9hLG+lUkMtYfiDRmXL1j0exicEV2IxqmRUkeR+q4XhDWUD9ke
-	 mK+2j+xca+nHga2HFLwgtY8y16oavECBRAFmmjeyJueW+7tMjOrN7Pb38N0RllhXR
-	 ONtsArI2BkiB+rFLyg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.2]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MK574-1tY5O501Lq-00QpQ1; Thu, 06
- Mar 2025 13:56:07 +0100
-Message-ID: <ad735fa0-2352-4905-b8a6-a1404db08b9e@web.de>
-Date: Thu, 6 Mar 2025 13:56:05 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCqBfell"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E12C4AF09;
+	Thu,  6 Mar 2025 16:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741277441;
+	bh=dO5KuEHT5N6JPz0mZT1IGgNKs9grKUWa+Hx4+yx3kc4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=JCqBfelle7bd3f+VaMdYkAAJYOLVyqPuRy+iagi9Fuw7JAId6/MsywpvuUBHTwnq1
+	 KvNpYZCs3czm870bWeKDTn0jRE0gxCsoMYcIrC5aYwe5zx/2k9GYF0rw9epTuSDhUV
+	 S0lLbFRV6Ur7yI9KI0CV5CJguD66+/7N1mtPAc6kcrNYarmwS6dTZSHWzB2SZhLc0f
+	 Z+lCGPXOl3bMpSMFPt078zrZtRfxTWL2o3ldBZqMbFYKHtYm4jHknp88vi7GI+GY8V
+	 BuL7zfDzeiyVfRUcZqHoX0TT6Yh8JmS0UYqTnAGpkX09C/tWXrJzOM7bg+FSs6SCkt
+	 wmh0cJSryQ2bA==
+From: Mark Brown <broonie@kernel.org>
+To: Patrice Chotard <patrice.chotard@foss.st.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-spi@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
+References: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
+Subject: Re: [PATCH next] spi: stm32-ospi: Fix an IS_ERR() vs NULL bug in
+ stm32_ospi_get_resources()
+Message-Id: <174127743980.139137.18227484559909848489.b4-ty@kernel.org>
+Date: Thu, 06 Mar 2025 16:10:39 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Cheng Xu <chengyou@linux.alibaba.com>, linux-rdma@vger.kernel.org,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Kai Shen <KaiShen@linux.alibaba.com>
-References: <20250306120440.72792-1-chengyou@linux.alibaba.com>
-Subject: Re: [PATCH for-next] RDMA/erdma: Prevent use-after-free in
- erdma_accept_newconn()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250306120440.72792-1-chengyou@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:IVhrD0F1k4zaNs9E3KnMn5Yc2YYOK5Wse+hGYaaSweIjdFC6pfp
- +stD+fbBdrQmTktuk35mgku5VYzlTOoTcbrMBbaD2ysaHzHWQBaDw8tHPfmURg+BBHVFYBk
- qulXVyu822C+rE1tLBqB/1hcVl3G8ovGXtG02eAD+4HINkXl2ArBiukCv1a7mDrW90tTfOS
- PJ54Ej88FEUwCMpyzzeqw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LbNJ6i1pJ0M=;s2tJIblZYmsoXA3jLF2eLxLV5iJ
- zlb4nCov9pw90zwt1AsLNn247qGj177u03eWF81ez1zXzA3haKpJ9Q9MXUuopVGQxFRoDTG49
- 1ly9zqTX1fgxiK/Z88ESppFNiR+SDPB5nbNNfs7eScnK88tML2YnncQSsbdF/coUak7XwUSCi
- 5HBlGW8r4/ztdhJIv/73Uifo14zjrbee5Duy1kM14TcHf7JpAfExMlkGa+mxhtLtoj/nSFUgE
- G04SydSSzKQmLeKZGdfsB3FEslS6rtOFDYouZF1f+JPTILnxrInqD8yqXznGgQoLel77OwYkG
- nJUZHttVXIMX6sTlCC8giiT0HwrsLUOzUm1rY3iTzSdJ5VOaGBbPunB0FIYGdfV5itoarz0jZ
- VD6TgFYJrH04u9PnHym6BTfJ3OjI80ethjgnWvZqbBvSc0hNJ7CN7xtvpwZdC0qHdQqKUAJVm
- LlUvrGUjXytKuyF7uCO/pvIg68I3kPcMAEBccxB13ZicT3kgp9lUiyP3R1V/91pA0JNuj2vMF
- b0h0pvmli4iRvklx/ikuJ0/AB7EtOfG7wUNPQLpoiuD1s+dFpVvXzMUxejQHj6eNtJMCuPjbv
- xKHfDYOE6bSKoZvt7zOm9chM2rEtr5Z309PEnRB6Jbf4VLQL95enGEPO1rldvx517vIy3bzCg
- 6VRiOzOPd4BwWCRIENuyhAXtQ0AQ4k9jZ+9X2X3YGEAZwCmURe5NbbjxkUoUPTv2m+EZ336uS
- kVSzlSrTDctM79ezc1EwliTsMtSdo2+EtmkF5z2f8Gg/nZRxrR1Acr+4tArw9arLXD1ToWJuh
- KtL+qrTCiN1NRFYJg0NPtfrkgARHk87OF16xUVp1AAWNWnPRAQ52rPtOBVTfN/n5c7R/Re1bP
- tG0Lb1AmYkwlI8C/sPn4tp1rOBGk1MncBLih8A7IITrz+rom7GkY933LQ5hmKCWiFDZRIMWJJ
- x56J21PZcip4/8LxuRSeur+z1jYRll5MI7qZk2dyLB1byJWG4IJjnJwy1VaQLiYOiLb+MwdpI
- u3FemPqvvc3lflx654dKrugyZUV/4v5Mbobl/S6K+uYsIpx+i1fllRhNH0o/e1uzWbaKC0P2W
- 8SwfB0xQKtz1/0qu8YzvZJiNNky+SwLdDJxx6sCp9esCV3AyCpsakjOu3X0+7hJtZaWDfNkaR
- LAWf+in1Lj8os2oSNdQyl+CfTe2/DgLuzu1kThQkAHK2fE1bOvoUN03s4tsMoTNLGH2upR9EG
- zyH2NcW/aSda07FFmUGSg2/Cjxj2Uk2zNJK6P1rdu6bs+zuabnh4KnEc2jwHQXnQXOvuah08O
- mbXnzqmEOaMJ6npsB7O+4odg4+RFwldCrqh+YnSTcS+fjNJJjUXm3L+fwqsawBia09GBmagXp
- dqQsUsjWs2ti2x89FjZIzS+x1lmZhMGUgC7pBNXeWmB+4ZV5Qsewnhf8oQWNpyxUNZ9f0Xqf0
- LPPP2Ww==
+X-Mailer: b4 0.15-dev-1b0d6
 
-> After the erdma_cep_put(new_cep) being called, new_cep will be freed,
-> and the following dereference will cause a UAF problem. Fix this issue.
+On Thu, 06 Mar 2025 12:48:34 +0300, Dan Carpenter wrote:
+> The devm_ioremap() function returns NULL on error, it doesn't return
+> error pointers.  Fix the check to match.
+> 
+> 
 
-* Would a change description be nicer without an abbreviation?
+Applied to
 
-* Will any additional tags become helpful?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-  + https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc5#n539
+Thanks!
 
-  + See also:
-    https://lore.kernel.org/cocci/20a1a47c-8906-44e8-92e6-9b3e698b1491@web.de/
-    https://sympa.inria.fr/sympa/arc/cocci/2025-03/msg00075.html
-    https://lkml.org/lkml/2025/3/5/1100
+[1/1] spi: stm32-ospi: Fix an IS_ERR() vs NULL bug in stm32_ospi_get_resources()
+      commit: 7dfc9bdde9fa20cf1ac5cbea97b0446622ca74c7
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-Regards,
-Markus
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
