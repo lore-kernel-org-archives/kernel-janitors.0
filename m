@@ -1,110 +1,103 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02311A8F97
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Mar 2025 09:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339867; cv=none; b=doOo6E/bEZmZJc7LRUqB1Zv9joENdPK74V6SsYLfNp6jwLnvVVIdPTk/Ve6Ha52az7CpWJazvOaSpVxna/nmk3G03LUHaRmamRG8xNIZJOU9mGjsPp5qyircipxmfm33gFZad/4xr1/Zc83nJFD5ddrvI7KNMl4SDKciqjD3B2A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339867; c=relaxed/simple;
-	bh=0clyfl35KjfOEHzeeZP6agmpTPeexmG9vqN3A0Y5WQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZD2mu9ont8jQ+MfZBapByBbuxLqcgWZGkJ+KESohXl3RUPhPYDwRjZol91c6quu6UYzn6rkw3SU+2WQzZOcowq9xUTo/Q327rpXWj7uZdOPXOuEOVS8S36fPcUKmPFKYaCXPBy9MJcJQ1uatww7VqbU+pmNRhoyhRV4HXm23bCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RNJAT/D1; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F2520AF8E;
+	Fri,  7 Mar 2025 09:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741340240; cv=pass; b=Q2kmUazO69ey6noWARE0mPiu5h+QiAcg03VsJw6Re03EXxucfepFnwL5ChvLnyVWB1s+2U1sylYPhNbKDcKZmCxnUq6ypJyUcxoq8un7XrZGa+0wK0L3ggwjNqAW8d3SZL7Oc6+GlKt+FP4wixXvRBS0PAHqw7k7UY8pSgqBYK8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741340240; c=relaxed/simple;
+	bh=pv53MAeGjoiFQqNXLiXE3et0/Lq/9AMSnZ1akEuS9fY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uyjcpJGrKHjOEFWOCsHZrDArKCNaW1QZCAgDyrhmNREWMHSwiEFIcQ27PqSDm928ucJ6ABWn/JehL9WXNK3b3IISSI9gQAP16t00TUO6TYO7ZxO35tsxtfThOVOwXJUcxKtsKDiJaurqpGO6NAH3ASFBJxIQROCsSo2z2Rzk1rs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Isuo3D/7; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RNJAT/D1"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3910e101d0fso881559f8f.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 07 Mar 2025 01:31:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741339864; x=1741944664; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UuKtV48t1X7LVR4XRl12tQehYIh96gIBPvAMlUyvJ9c=;
-        b=RNJAT/D1soU1CFiP6IVla6knNceGmgRaR3NiZ7pyRJn4+U1Nn9aLcoTN+lvyQpJ3Kn
-         F6Fol9WwLqnwYhzZ4g1pcANv5MUBtmC7OxWeNMpYFyxN0HK3VyW9P4U0eGBOUt8+NNaW
-         oEgBC1XZoaayMqTHgqeJwTcGHrJt4ys8O8d9BXLOVDRhKT+WGvR27lJptgv4xNIpWowQ
-         xN9QAZAMZNApIPkb+i85b9fKXrfvjCNuRnDAjjNUnevKAu1BmJxTjMuGZRUnrBtcVWJw
-         8wsooTUwEeLZHH/p7l+Wsj2ISK23dPfjTTvPWzNx9xMEtfNdRwZHTvfVrAq8nzUbLRRt
-         KW7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741339864; x=1741944664;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UuKtV48t1X7LVR4XRl12tQehYIh96gIBPvAMlUyvJ9c=;
-        b=H4iYdeU4FpoALPOZRBxmEAeVBj3487Zi31WJBIPs0TMVc2dhgp7CzAwTK6SF4FtktR
-         Shk6ZiRm+Agej+SdT6TINaN6O2uURDYTaCINKOgnG6hd4x8W1yOQyCC4Kg/rhXCNyzVc
-         H3dyKZhlmnoBRUz4zvzPMUhz3t0w1Uq2Krzl047fFJPbgW9WQ7ggb4GSMU7b5vq4cs4b
-         6PL9DuW5SSFISgcFXmFTYQyxUPIk7ROvV0xOpA86g2E7wJDkpVLdoYbcFgfg+mf8T6kU
-         3R3GkpQmzfoSlXJguy+1Axjb13YRH/wKpw4qo1Abh5mtccIsLIg0GKii4GPKmfXapPCo
-         FKoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQO6j/qOElT36yHmpsA05zG2v1cjqawmjN9DWALe4d9DE45J3/5dO3BEGDAjL8cCeQhme54hnQAewpgASNkEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6cdXRFpFE1n4/MmqOSx7M0ZLl2LSmxu3AliBdIZXPd5C6MpM3
-	NFea7KUZ+Fibh6uXPdCV1H7IdWA4Rp62LZa/nxPkYYPiHl+aIHKaa1K9YqL3Uv4=
-X-Gm-Gg: ASbGncu9IiPPeF6YIkltf6kqz2/9kiMBTKix2DMGA9Qmr1glPidR/+xU1cYOihMfx5z
-	41QtrmSWf1Iv159SqKbg8xN7EAnB15PeHAS4BWAfHcnjRj8s1atSntbEB7NU1YcJ9j2/yQh+Vvp
-	oGcQ6fXnNB68sHLCBsmPmh4tl5rHh2lr/W9gFpPzs1qf0G5dJK6LhwYaOYe1fp5jl7F9k2NDb04
-	6+v1JmuGBg43MiehU0l0cE7LkrIh9hcFR5ZPEZa8pTS+FjUzK3JoNwOexXJCLxpP1L6vgg1Yhvg
-	T3+CofC1I7rDBGQF5alRzxoTj3ZnhsTkCZGBtAHjU6P2UI9dgQ==
-X-Google-Smtp-Source: AGHT+IHGgil9XvvJ/78/5L3MyKGSYheLPT+najegLrndXP1vKPLf/Ab1cHu+/RbdCgsBcMvfznnH8w==
-X-Received: by 2002:a05:6000:402b:b0:38d:e401:fd61 with SMTP id ffacd0b85a97d-39132db746amr1441891f8f.49.1741339864000;
-        Fri, 07 Mar 2025 01:31:04 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2f39sm4690339f8f.80.2025.03.07.01.31.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 01:31:03 -0800 (PST)
-Date: Fri, 7 Mar 2025 12:30:58 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Janne Grunau <j@jannau.net>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Neal Gompa <neal@gompa.dev>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm: adp: Fix NULL vs IS_ERR() check in adp_plane_new()
-Message-ID: <14a845e8-54d0-45f8-b8b9-927609d92ede@stanley.mountain>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Isuo3D/7"
+ARC-Seal: i=1; a=rsa-sha256; t=1741340213; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LYn6GIfaYZWzF9ZNCaSaO5N4jS556vayGz8aDkSwTRms0GvGo0Dq2PfFKzTi4X+hNufsEJofnDDbprWO4vZt4477W5PqRDlQ1V0NLjcSrdRU7aFqgSYBC92bzshh3CnERcTb0fGTcyU31HpRXcCikeWutfltVtnHdclSpj+z+QI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741340213; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=d/Gjk0QUCFk/jfd1542mqf2c43lGASS+o4NBP40gzk8=; 
+	b=RILGbO9cZBPbbM6hWcg0/gXSlG+onA91RFRf5wDZAdE0fepPAu/wbt8825YDEPu8wEpPVB8nwY8GdPEClm07SUpSvLiH2kza2wUU4aUudJYa9cGzMk9+5uGNNywXxrBGo0l0h5obOPSo49ycUtkvmI3yud32L6+KNTqK+fBcBl0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741340213;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=d/Gjk0QUCFk/jfd1542mqf2c43lGASS+o4NBP40gzk8=;
+	b=Isuo3D/7EwZDxPar3A4xxpmP6m0I2xSx/rpw+WYoYyQ3J9+uwhaw9Xup3U8W7p3v
+	W//U8EYMVsMAj0CH1uSKaSWWB5RUEcqLPY5eZUrVh0oAe6jYSevGD/BtSp7WDX6d4uH
+	TRFIpsm6UusxdNLGLt2lk+eUXjwtipcJzFhf/mRQ=
+Received: by mx.zohomail.com with SMTPS id 1741340210750445.0809904130947;
+	Fri, 7 Mar 2025 01:36:50 -0800 (PST)
+Message-ID: <54d5eef8-66a9-44aa-9e9b-0324d6fee46d@collabora.com>
+Date: Fri, 7 Mar 2025 12:36:47 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] media: synopsys: hdmirx: Fix signedness bug in
+ hdmirx_parse_dt()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Shreeya Patel <shreeya.patel@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, Dingxian Wen <shawn.wen@rock-chips.com>,
+ linux-media@vger.kernel.org, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <7ec94789-305c-4de4-b477-c0eb839170e5@stanley.mountain>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <7ec94789-305c-4de4-b477-c0eb839170e5@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-The __drmm_universal_plane_alloc() function doesn't return NULL, it
-returns error pointers.  Update the check to match.
+On 3/7/25 12:30, Dan Carpenter wrote:
+> The num_clks is set this way:
+> 
+> 	hdmirx_dev->num_clks = devm_clk_bulk_get_all(dev, &hdmirx_dev->clks);
+>         if (hdmirx_dev->num_clks < 1)
+>                 return -ENODEV;
+> 
+> The devm_clk_bulk_get_all() function returns negative error codes so the
+> hdmirx_dev->num_cks variable needs to be signed for the error handling to
+> work.
+> 
+> Fixes: 7b59b132ad43 ("media: platform: synopsys: Add support for HDMI input driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> index 4ffc86ad6c35..e0d3fed87a92 100644
+> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> @@ -154,7 +154,7 @@ struct snps_hdmirx_dev {
+>  	bool hpd_trigger_level_high;
+>  	bool tmds_clk_ratio;
+>  	bool plugged;
+> -	u32 num_clks;
+> +	int num_clks;
+>  	u32 edid_blocks_written;
+>  	u32 cur_fmt_fourcc;
+>  	u32 color_depth;
 
-Fixes: 332122eba628 ("drm: adp: Add Apple Display Pipe driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/adp/adp_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-diff --git a/drivers/gpu/drm/adp/adp_drv.c b/drivers/gpu/drm/adp/adp_drv.c
-index 0a39abdc9238..db36807005a6 100644
---- a/drivers/gpu/drm/adp/adp_drv.c
-+++ b/drivers/gpu/drm/adp/adp_drv.c
-@@ -232,9 +232,9 @@ static struct drm_plane *adp_plane_new(struct adp_drv_private *adp)
- 					     ALL_CRTCS, &adp_plane_funcs,
- 					     plane_formats, ARRAY_SIZE(plane_formats),
- 					     NULL, DRM_PLANE_TYPE_PRIMARY, "plane");
--	if (!plane) {
-+	if (IS_ERR(plane)) {
- 		drm_err(drm, "failed to allocate plane");
--		return ERR_PTR(-ENOMEM);
-+		return plane;
- 	}
- 
- 	drm_plane_helper_add(plane, &adp_plane_helper_funcs);
+Would be also good to return the original error code. There is no need
+to check for the < 1 clock, it should be the < 0 check. Can be done in a
+separate patch later. Thanks for the fix!
+
 -- 
-2.47.2
-
+Best regards,
+Dmitry
