@@ -1,112 +1,139 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9398420B817;
-	Fri,  7 Mar 2025 10:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741341682; cv=pass; b=CCincWxAYJmusKq+f54acsg09z5V16Haug7VnuYzc+IxW0rjgEmRj0YSl5/6qdkzPoArLpJe+S1eOUtYW603N1lqmZj6HffaKEWnqo3Gz83+8YonyPBgwumdp9Ys/kzOd9QqaixZvLy6uIdKaA0wr6DJtrFPRQSCRGvF/Qv9IPs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741341682; c=relaxed/simple;
-	bh=V4s/rswC7HPrkBCAtPLLzEKWE8tbXG4tCfjCFe0500o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qRA2xSBipP51higWuBkFdZWPBHcYXORVyzDYNFkTvYNcqjI6GkB9DF+2R5C0XsYQz6Zv/2yZv/ygNkvlNKJudDUoYl3PODh7D3AADy9F41xxAp1qdtEmkVZGmJk7TCAezAY6GU8OsY/CPGwMfunzOZTkR38gvD+hFQMj0MtijvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=DHoy5Af/; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584DD21A928
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Mar 2025 13:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741355027; cv=none; b=U3aQxxZHbHIQcCdXkDyhyulePDoIgyboS1lW3tLnpc25xAjxN8dRpghqZCClJDnATDBGPG+SlAUINtfmdyO2uZgeUMAz+4xwyjZcuAlE+LwcEcoWph0Y1X2o/lUJ1M9gidRwuPE0wJf3Umr9t04neCfETWh7xy3AErOS8wWlCZM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741355027; c=relaxed/simple;
+	bh=iQePSQa/VmIkiEWwwOhGq4x3G6rNZ0WRU2gH91xIhuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nFdUZ5lm+fWBBm0oaXFDY7Wf/HLXNXR1iGsDui1TC77MNsABsMxnQrY7pRZrHYHbtnFcpZsHswYf/CQDzPG9SdY63vVkn5yky4dNuxrXQenWqQ3ZyteZ54fa2pgW4YdeDfFq3+K3N/VG12ciRS/8CUHQDC2dlbvzo0ilgHsKuQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C++tD6am; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="DHoy5Af/"
-ARC-Seal: i=1; a=rsa-sha256; t=1741341655; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dlcC+es6VPHa/QEx9X2dCNTAY09Q7FS8BoJX7UZBfTZqfRdBs74KwUj/T++1wrx1veoL8vK63P7coG0WlW+3l7eKmCIF5Gs4lDlp/38BL7Xd+lKko+8Ea2ftOv1fKt8kZru9iDbAlfDxZMMClYyeh3INTDU9YhwTzuuudJ+gf2k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741341655; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=RJOi53fsGtFdOR6hzMLI0jBU/Sbetef1Mgy4rx019g4=; 
-	b=iIhhMrf7uNCWVNIXdacxU9n8rppUS/rhEz/RyioOOtykZ+yKdP20BSQUMWdrIJib8EB0KFCFEFMz0GigJq1pcRmkYm8uqO+iwFJVnF+vY8fy52FWd55vzgRKJSEwfJtPgExaPzWfKFJJ89IuXECeL7TT4ozQT1kWv3t4moGE2J0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741341655;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=RJOi53fsGtFdOR6hzMLI0jBU/Sbetef1Mgy4rx019g4=;
-	b=DHoy5Af/+RSr9lehmGyRUvfPOHulFdbMnNSs47ZK5VgyVP9ZV/XneKmLg+03pwb9
-	xjiXRlWi9JM/GH17bM45M1Kbv5mYlONTpKvFuxwLKVx+72JO2jGhOUSqKPZFzCyBnCi
-	ehQzSte/I40hfuPYk4plKtb53T3gl2yrM34Z4tik=
-Received: by mx.zohomail.com with SMTPS id 1741341652743592.2169906435839;
-	Fri, 7 Mar 2025 02:00:52 -0800 (PST)
-Message-ID: <47f84b59-0ddb-4386-bc8c-2752d240fdde@collabora.com>
-Date: Fri, 7 Mar 2025 13:00:49 +0300
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C++tD6am"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3912c09bea5so1369018f8f.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Mar 2025 05:43:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741355023; x=1741959823; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IwXZSVA9uDfpaltBI3c28B0VNZvXdvxIpnZGzFzKNI8=;
+        b=C++tD6amL/AwLpodyfao4oJGIcCZn7m33wOCffq7R++CQWwrVbV8qLF68uvhBDMzmb
+         8GsMJYlDglbeDp95BAg6HfTBJOAR+1LoNuLZdJCuSvMrw63OJnm3CVu3raKrqt61DExV
+         K1o8c9h+QR6nM6SQZX+kcCOHME8Z0hr5ORMqg6Y73kSp6vIFHT+TB83FUyMcIlmwvY55
+         rSBCWhzxMshv9QLlYNcEC8WwlvdEo5DqTjTRaQT29zFinGTp1wpIPCcW/TFMi285vKo0
+         7bseFJ/c6jGFUq0g3iPZMfJrEj99Sc+FhwF+VVSN2RDwNmc3e/C9qZvnXXnTMHXuKaFU
+         RT9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741355023; x=1741959823;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IwXZSVA9uDfpaltBI3c28B0VNZvXdvxIpnZGzFzKNI8=;
+        b=q+ph6k073EB4I9oIlA8UzynOQM2cnzzdDjxK5lDwFeCOszng5eQ/QFxdSwqXMFYiIl
+         U2qq1w5Ba3WpofiTZBddRQ0d48CGTZuUXhM7AciRHkUj46kfP2KxRInTC1NM3pSXt1C0
+         F9PVxjfDnuaAgbDuPAdvbFvFiUokSGUyAAEXyvMsE0k3LqiA3IvLDkZRkixcliz6gQxT
+         vb/AMeaiU51OPwvhdFjUjc010QhR7qduSeqiHHtcw8nEtoBxZO/O5/b6dsUVEmrz1+cy
+         2rKleepNOPRq80SFG/QUNM3zE6cghI+SWFTaLPWurkgmZBAvD2QWFqFyA17w0XuftHBc
+         EdjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLptoJdnkB/Q0cGatK4nBcn3CtCt7cOrdr1hFyJxmWRQRCqCbQNW5MX73hpPrvyzK3+xThloLKgvGPZKTpJxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycddWAfvj9LAUovsZlt5+6VUfVZ2u6JDyZzZ2wIzrUHZkWGzpM
+	k5KIeo6dgGLmfGccy93BTSZeAmeRYNLQ3elD7TuLI4/GvKQF1DW5M5G1M31JLZM=
+X-Gm-Gg: ASbGnctngZF3BMOPNsiX0qdrRUvJD5tzsCD8ECTkrB7qNa/nucW9uLsaeXCLs1OfgNs
+	97ry9t4JdwrxJqc222D0rS0STAyYCId9SiaQDwsg1cmqFSUzWlN8ehCVXAd5lIRN49TGike3sST
+	33FqwSKZ1gJXOGnWHVh16HM5BZuWAZbvGlx8bT40uB/T2u8qLHAEy1arot6IO3s4cB5CIPiCPxw
+	/O7vVXHfTZ48+ypWiGqecVwg743b1Vchsl5ap9bUuBGAtzatgA0ke5moF/ubCoYkiSwUDqNNr3I
+	I6PtSrnXi5i0QhEM7mX3tm3/bBRD5U5RFeUpfqePgQz03ih0dg==
+X-Google-Smtp-Source: AGHT+IFa2alqSGIKkLzzt+zL9Pg3YSFMY41VPpSwlcRRoSojAy2L3BjwP/rTiiK3+AR7CB/I2TIHig==
+X-Received: by 2002:a5d:648b:0:b0:38d:badf:9df5 with SMTP id ffacd0b85a97d-39132d1fc83mr1919454f8f.17.1741355022100;
+        Fri, 07 Mar 2025 05:43:42 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e1d67sm5380042f8f.74.2025.03.07.05.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 05:43:41 -0800 (PST)
+Date: Fri, 7 Mar 2025 16:43:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: less size_t please (was Re: [PATCH net] xfrm: fix integer
+ overflow in xfrm_replay_state_esn_len())
+Message-ID: <f5100325-4b43-446c-85c0-6e3535305af6@stanley.mountain>
+References: <03997448-cd88-4b80-ab85-fe1100203339@p183>
+ <1ee57015-a2c3-4dd1-99c2-53e9ff50a09f@stanley.mountain>
+ <3c8d42ca-fcaf-497d-ac86-cc2fc9cf984f@p183>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] media: synopsys: hdmirx: Fix signedness bug in
- hdmirx_parse_dt()
-To: Hans Verkuil <hverkuil@xs4all.nl>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Dingxian Wen <shawn.wen@rock-chips.com>, linux-media@vger.kernel.org,
- kernel@collabora.com, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <7ec94789-305c-4de4-b477-c0eb839170e5@stanley.mountain>
- <54d5eef8-66a9-44aa-9e9b-0324d6fee46d@collabora.com>
- <4a50949d-e472-4942-9152-3e5a54c6b076@stanley.mountain>
- <51d0781b-1da4-46c6-b772-718d7833798e@collabora.com>
- <a4f08c9c-b74a-486f-915d-6b0e06e22d7b@xs4all.nl>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <a4f08c9c-b74a-486f-915d-6b0e06e22d7b@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c8d42ca-fcaf-497d-ac86-cc2fc9cf984f@p183>
 
-On 3/7/25 12:58, Hans Verkuil wrote:
-> On 07/03/2025 10:47, Dmitry Osipenko wrote:
->> On 3/7/25 12:45, Dan Carpenter wrote:
->>> On Fri, Mar 07, 2025 at 12:36:47PM +0300, Dmitry Osipenko wrote:
->>>> On 3/7/25 12:30, Dan Carpenter wrote:
->>>>> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->>>>> index 4ffc86ad6c35..e0d3fed87a92 100644
->>>>> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->>>>> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->>>>> @@ -154,7 +154,7 @@ struct snps_hdmirx_dev {
->>>>>  	bool hpd_trigger_level_high;
->>>>>  	bool tmds_clk_ratio;
->>>>>  	bool plugged;
->>>>> -	u32 num_clks;
->>>>> +	int num_clks;
->>>>>  	u32 edid_blocks_written;
->>>>>  	u32 cur_fmt_fourcc;
->>>>>  	u32 color_depth;
->>>>
->>>> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->>>>
->>>> Would be also good to return the original error code. There is no need
->>>> to check for the < 1 clock, it should be the < 0 check. Can be done in a
->>>> separate patch later. Thanks for the fix!
->>>
->>> I'm not very familiar with th edevm_clk_bulk_get_all() function and it's
->>> not documented.  But clk_bulk_get_all() does return zero, so I can see why
->>> people would be confused.
->>
->> We will take care of it, thanks again.
->>
+On Thu, Feb 06, 2025 at 08:06:55PM +0300, Alexey Dobriyan wrote:
+> On Thu, Jan 30, 2025 at 07:15:15PM +0300, Dan Carpenter wrote:
+> > On Thu, Jan 30, 2025 at 04:44:42PM +0300, Alexey Dobriyan wrote:
+> > > > -static inline unsigned int xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
+> > > > +static inline size_t xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
+> > > >  {
+> > > > -	return sizeof(*replay_esn) + replay_esn->bmp_len * sizeof(__u32);
+> > > > +	return size_add(sizeof(*replay_esn), size_mul(replay_esn->bmp_len, sizeof(__u32)));
+> > > 
+> > > Please don't do this.
+> > > 
+> > > You can (and should!) make calculations and check for overflow at the
+> > > same time. It's very efficient.
+> > > 
+> > > > 1) Use size_add() and size_mul().  This change is necessary for 32bit systems.
+> > > 
+> > > This bloats code on 32-bit.
+> > > 
+> > 
+> > I'm not sure I understand.  On 32-bit systems a size_t and an unsigned
+> > int are the same size.  Did you mean to say 64-bit?
 > 
-> I'm confused. Is Dan's patch correct or is more work needed? If more work is
-> needed, then I prefer to have a single patch correcting the devm_clk_bulk_get_all()
-> handling.
+> It looks like yes.
+> 
+> > Declaring sizes as u32 leads to integer overflows like this one.
+> 
+> No, the problem is unchecked C addition and mixing types which confuses
+> people (in the opposite direction too -- there were fake CVEs because
+> someone thought "size_t len" in write hooks could be big enough).
+> 
+> The answer is to use single type as much as possible and using checked
+> additions on-the-go at every binary operator if possible.
 
-Dan's patch is good, please merge it.
+In the write_hooks examples, we fixed those by moving to size_t.
 
-Propagation of original error code that I said about will be additional
-improvement.
+64bit types are safer because 2**64 is a superset of 2**32.  Anything
+which can overflow 64bits can overflow 32bits.  So obviously 64bits is
+safer.
 
--- 
-Best regards,
-Dmitry
+But it's surprising the extent of it.  We avoid using ulong types in
+UAPI because it's a headache for 32bit support.  So normally we get
+an u32 number_items from the user.  That's 4 billion.  It's a small
+number and it's actually pretty hard for it to lead to an integer
+overflow on 64bit systems.  The struct_size() function is basically
+not needed if you're on 64bit and you declare your length variables as
+size_t.
+
+The rest of the kernel has an assumption that sizes are saved in size_t.
+The size_add() and struct_size() macros rely on it.  In networking there
+are a number of functions like sock_kmalloc() which truncate the size
+parameter to int and they just make me itch to look at.
+
+regards,
+dan carpenter
+
