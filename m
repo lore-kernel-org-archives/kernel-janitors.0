@@ -1,77 +1,74 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584DD21A928
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Mar 2025 13:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD16921A44C
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Mar 2025 13:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741355027; cv=none; b=U3aQxxZHbHIQcCdXkDyhyulePDoIgyboS1lW3tLnpc25xAjxN8dRpghqZCClJDnATDBGPG+SlAUINtfmdyO2uZgeUMAz+4xwyjZcuAlE+LwcEcoWph0Y1X2o/lUJ1M9gidRwuPE0wJf3Umr9t04neCfETWh7xy3AErOS8wWlCZM=
+	t=1741355051; cv=none; b=pGj2lIXcIgWMLjCQU/V16vAm68iFMV5JzRUacIQJ2TlVtA+4MuIBcT4G181SuOJDLu+ziY9JnntMWE/o6kpipq3PcDF3jg56HRVxji/cS0Y2OhSw2ii79FQt3jrWQEq3+v7tnZSMSYCvtwETrF1bQ1B5jGkOr7AyRL7TuIzvHLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741355027; c=relaxed/simple;
-	bh=iQePSQa/VmIkiEWwwOhGq4x3G6rNZ0WRU2gH91xIhuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nFdUZ5lm+fWBBm0oaXFDY7Wf/HLXNXR1iGsDui1TC77MNsABsMxnQrY7pRZrHYHbtnFcpZsHswYf/CQDzPG9SdY63vVkn5yky4dNuxrXQenWqQ3ZyteZ54fa2pgW4YdeDfFq3+K3N/VG12ciRS/8CUHQDC2dlbvzo0ilgHsKuQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C++tD6am; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1741355051; c=relaxed/simple;
+	bh=gCKy6Z6IWQUo4NVubERjekOLQ8tO2OPPYqCEFVEa+7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RsS8UHtGPEKz8L+Og3fBrP+poYkRWMkx24XnFsrfUtFewsqkmHESSGs0zV7z8K4L7x/FZs/sbs2qscaqWykxvq8YTGnP1I4/wwtjGGHm7hGB+qPS1G5kDMmH/uBdOYuixfZZd0OTlQJqTJVseObgX7jp336QA2Q4nxQ9S1Bbj7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oQim2+LC; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C++tD6am"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3912c09bea5so1369018f8f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 07 Mar 2025 05:43:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oQim2+LC"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43690d4605dso11496555e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Mar 2025 05:44:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741355023; x=1741959823; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IwXZSVA9uDfpaltBI3c28B0VNZvXdvxIpnZGzFzKNI8=;
-        b=C++tD6amL/AwLpodyfao4oJGIcCZn7m33wOCffq7R++CQWwrVbV8qLF68uvhBDMzmb
-         8GsMJYlDglbeDp95BAg6HfTBJOAR+1LoNuLZdJCuSvMrw63OJnm3CVu3raKrqt61DExV
-         K1o8c9h+QR6nM6SQZX+kcCOHME8Z0hr5ORMqg6Y73kSp6vIFHT+TB83FUyMcIlmwvY55
-         rSBCWhzxMshv9QLlYNcEC8WwlvdEo5DqTjTRaQT29zFinGTp1wpIPCcW/TFMi285vKo0
-         7bseFJ/c6jGFUq0g3iPZMfJrEj99Sc+FhwF+VVSN2RDwNmc3e/C9qZvnXXnTMHXuKaFU
-         RT9w==
+        d=linaro.org; s=google; t=1741355047; x=1741959847; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HKa+tQTLZjzXmIzy+CrH4sUBisOXOqgtBvJQGN22yDs=;
+        b=oQim2+LCLRfTmtd6zEOlGS6EGN4zQu2iGCQ4ks5rZT6WQBb4rO6CkM+0XC+16PUpAB
+         iTfImXdnBmzmyDQkmllG4mIOBNPNeApdB5OyZNeN9RU9WDGBMdnT7gb5BKHsNQn4yg8r
+         fq3MdkB7DVq8GPgvndZMKVNJU3EEmB0npichZlDvAqvs02EI6p+Xx7KUhlM57tI2iXsi
+         WhtpmomlbstYWS+R3V+42MrUl0GUq+BK1nCxqUDXv3UEAct56aEVGC1yaIXLXTIMll+T
+         cg/rxV5bha2T1F/YkPZu/tZLzri2FP+6JCl7ywPcwqsiCyDNf4b5e3OSkOZP4X8nnBC8
+         Kf4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741355023; x=1741959823;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IwXZSVA9uDfpaltBI3c28B0VNZvXdvxIpnZGzFzKNI8=;
-        b=q+ph6k073EB4I9oIlA8UzynOQM2cnzzdDjxK5lDwFeCOszng5eQ/QFxdSwqXMFYiIl
-         U2qq1w5Ba3WpofiTZBddRQ0d48CGTZuUXhM7AciRHkUj46kfP2KxRInTC1NM3pSXt1C0
-         F9PVxjfDnuaAgbDuPAdvbFvFiUokSGUyAAEXyvMsE0k3LqiA3IvLDkZRkixcliz6gQxT
-         vb/AMeaiU51OPwvhdFjUjc010QhR7qduSeqiHHtcw8nEtoBxZO/O5/b6dsUVEmrz1+cy
-         2rKleepNOPRq80SFG/QUNM3zE6cghI+SWFTaLPWurkgmZBAvD2QWFqFyA17w0XuftHBc
-         EdjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLptoJdnkB/Q0cGatK4nBcn3CtCt7cOrdr1hFyJxmWRQRCqCbQNW5MX73hpPrvyzK3+xThloLKgvGPZKTpJxk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycddWAfvj9LAUovsZlt5+6VUfVZ2u6JDyZzZ2wIzrUHZkWGzpM
-	k5KIeo6dgGLmfGccy93BTSZeAmeRYNLQ3elD7TuLI4/GvKQF1DW5M5G1M31JLZM=
-X-Gm-Gg: ASbGnctngZF3BMOPNsiX0qdrRUvJD5tzsCD8ECTkrB7qNa/nucW9uLsaeXCLs1OfgNs
-	97ry9t4JdwrxJqc222D0rS0STAyYCId9SiaQDwsg1cmqFSUzWlN8ehCVXAd5lIRN49TGike3sST
-	33FqwSKZ1gJXOGnWHVh16HM5BZuWAZbvGlx8bT40uB/T2u8qLHAEy1arot6IO3s4cB5CIPiCPxw
-	/O7vVXHfTZ48+ypWiGqecVwg743b1Vchsl5ap9bUuBGAtzatgA0ke5moF/ubCoYkiSwUDqNNr3I
-	I6PtSrnXi5i0QhEM7mX3tm3/bBRD5U5RFeUpfqePgQz03ih0dg==
-X-Google-Smtp-Source: AGHT+IFa2alqSGIKkLzzt+zL9Pg3YSFMY41VPpSwlcRRoSojAy2L3BjwP/rTiiK3+AR7CB/I2TIHig==
-X-Received: by 2002:a5d:648b:0:b0:38d:badf:9df5 with SMTP id ffacd0b85a97d-39132d1fc83mr1919454f8f.17.1741355022100;
-        Fri, 07 Mar 2025 05:43:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741355047; x=1741959847;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HKa+tQTLZjzXmIzy+CrH4sUBisOXOqgtBvJQGN22yDs=;
+        b=W12kcxBdYzilPwhJZcs05AJAJSzcTP4K69/zVTjg55KvjtEfVGXtX7iFm4jkDsfCJM
+         ghBynAuHWsScmLUs/+0fsRN1Hdm725nU2eAVR83DfBFwgskvsKDaxvvaNs+bhzptHjj9
+         NdoArqBhk8Q45Jfdqxc7EVvTTU9eLu/UGdt4euW5UvaKm5rl2/zSpEvYWdCfPC5RNdPb
+         HmUppSEEKTz32hPTPuL8+uOo7YZV/8L07v2ZfngxJ+8qUWXz/+nelm6Dxkxv+XlCfNy4
+         xTiRIRoZaSN8m3b72AWgOPPDQ/QDMIuct58FrQefctMo36smHKoTevCZx/FqBj7yTt/Q
+         wfRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZRwTeEWUABje41P45+vtiv/7SF/yOTV45/C7Ac5+4GZZNDVGZ+XjlWPX3QkjxV4ayvZeRmU9DMjzq5PCTKlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkoGoCEPqKH5TWWMAC4v6nKsK1ruBohKweJww+e1KJmEjg2Fsv
+	1hb5VgzeaUoc1Ww3wA9Y/Gus2oMLUXaOTVw/T9HMPMcH6bllWR7MejEsh5xTMbc=
+X-Gm-Gg: ASbGncuIdXj6lMtjNfjf36OR80HCrF/JnkAs2wWrGzGbE+NoFUegUTaX+k90ofWQkCK
+	AjsNUOohNiaJ8cpYDNvl9dZkYLmtSrTk0Gr9BNIR/rnd4h55z9SaGjy/IHA/N50eZzMYv7LF3TN
+	z0XeidJlEFFcKz324XZqBgpoEO3Oeq+csy9maeYJIUOY+dviLgjLXznDfKP9HPXLLgK/Z1ceYmB
+	E/zqKeEpjQQ+cfkAo/YbAI7HR/3avXJbyXfx+LbYlR/OFysRUmvZIMyZ58ipf4m8O7RtnJ0I8tj
+	ANILG+Syg3+Jy/I9y6105IDHKuj1FSIJWMQU225IIYJyVELErA==
+X-Google-Smtp-Source: AGHT+IFsPIR6Knj/ewMaXqXh6YdH08dtxvFyv6VA9rK7sxf3+pKbD8o9J6/llsPPYAyuvcsP8pwyQw==
+X-Received: by 2002:a05:600c:1c10:b0:43b:cb96:3cda with SMTP id 5b1f17b1804b1-43c68703f84mr21047775e9.28.1741355047048;
+        Fri, 07 Mar 2025 05:44:07 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e1d67sm5380042f8f.74.2025.03.07.05.43.40
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd41c7cc7sm86543445e9.0.2025.03.07.05.44.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 05:43:41 -0800 (PST)
-Date: Fri, 7 Mar 2025 16:43:37 +0300
+        Fri, 07 Mar 2025 05:44:06 -0800 (PST)
+Date: Fri, 7 Mar 2025 16:44:02 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: less size_t please (was Re: [PATCH net] xfrm: fix integer
- overflow in xfrm_replay_state_esn_len())
-Message-ID: <f5100325-4b43-446c-85c0-6e3535305af6@stanley.mountain>
-References: <03997448-cd88-4b80-ab85-fe1100203339@p183>
- <1ee57015-a2c3-4dd1-99c2-53e9ff50a09f@stanley.mountain>
- <3c8d42ca-fcaf-497d-ac86-cc2fc9cf984f@p183>
+Subject: [PATCH net] ipvs: prevent integer overflow in do_ip_vs_get_ctl()
+Message-ID: <6dddcc45-78db-4659-80a2-3a2758f491a6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,60 +77,57 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3c8d42ca-fcaf-497d-ac86-cc2fc9cf984f@p183>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Feb 06, 2025 at 08:06:55PM +0300, Alexey Dobriyan wrote:
-> On Thu, Jan 30, 2025 at 07:15:15PM +0300, Dan Carpenter wrote:
-> > On Thu, Jan 30, 2025 at 04:44:42PM +0300, Alexey Dobriyan wrote:
-> > > > -static inline unsigned int xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
-> > > > +static inline size_t xfrm_replay_state_esn_len(struct xfrm_replay_state_esn *replay_esn)
-> > > >  {
-> > > > -	return sizeof(*replay_esn) + replay_esn->bmp_len * sizeof(__u32);
-> > > > +	return size_add(sizeof(*replay_esn), size_mul(replay_esn->bmp_len, sizeof(__u32)));
-> > > 
-> > > Please don't do this.
-> > > 
-> > > You can (and should!) make calculations and check for overflow at the
-> > > same time. It's very efficient.
-> > > 
-> > > > 1) Use size_add() and size_mul().  This change is necessary for 32bit systems.
-> > > 
-> > > This bloats code on 32-bit.
-> > > 
-> > 
-> > I'm not sure I understand.  On 32-bit systems a size_t and an unsigned
-> > int are the same size.  Did you mean to say 64-bit?
-> 
-> It looks like yes.
-> 
-> > Declaring sizes as u32 leads to integer overflows like this one.
-> 
-> No, the problem is unchecked C addition and mixing types which confuses
-> people (in the opposite direction too -- there were fake CVEs because
-> someone thought "size_t len" in write hooks could be big enough).
-> 
-> The answer is to use single type as much as possible and using checked
-> additions on-the-go at every binary operator if possible.
+The get->num_services variable is an unsigned int which is controlled by
+the user.  The struct_size() function ensures that the size calculation
+does not overflow an unsigned long, however, we are saving the result to
+an int so the calculation can overflow.
 
-In the write_hooks examples, we fixed those by moving to size_t.
+Save the result from struct_size() type size_t to fix this integer
+overflow bug.
 
-64bit types are safer because 2**64 is a superset of 2**32.  Anything
-which can overflow 64bits can overflow 32bits.  So obviously 64bits is
-safer.
+Cc: stable@vger.kernel.org
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ net/netfilter/ipvs/ip_vs_ctl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-But it's surprising the extent of it.  We avoid using ulong types in
-UAPI because it's a headache for 32bit support.  So normally we get
-an u32 number_items from the user.  That's 4 billion.  It's a small
-number and it's actually pretty hard for it to lead to an integer
-overflow on 64bit systems.  The struct_size() function is basically
-not needed if you're on 64bit and you declare your length variables as
-size_t.
-
-The rest of the kernel has an assumption that sizes are saved in size_t.
-The size_add() and struct_size() macros rely on it.  In networking there
-are a number of functions like sock_kmalloc() which truncate the size
-parameter to int and they just make me itch to look at.
-
-regards,
-dan carpenter
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index 7d13110ce188..801d65fd8a81 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -3091,12 +3091,12 @@ do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
+ 	case IP_VS_SO_GET_SERVICES:
+ 	{
+ 		struct ip_vs_get_services *get;
+-		int size;
++		size_t size;
+ 
+ 		get = (struct ip_vs_get_services *)arg;
+ 		size = struct_size(get, entrytable, get->num_services);
+ 		if (*len != size) {
+-			pr_err("length: %u != %u\n", *len, size);
++			pr_err("length: %u != %lu\n", *len, size);
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+@@ -3132,12 +3132,12 @@ do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
+ 	case IP_VS_SO_GET_DESTS:
+ 	{
+ 		struct ip_vs_get_dests *get;
+-		int size;
++		size_t size;
+ 
+ 		get = (struct ip_vs_get_dests *)arg;
+ 		size = struct_size(get, entrytable, get->num_dests);
+ 		if (*len != size) {
+-			pr_err("length: %u != %u\n", *len, size);
++			pr_err("length: %u != %lu\n", *len, size);
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-- 
+2.47.2
 
