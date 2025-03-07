@@ -1,72 +1,75 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF8F20AF69
-	for <kernel-janitors@vger.kernel.org>; Fri,  7 Mar 2025 09:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02311A8F97
+	for <kernel-janitors@vger.kernel.org>; Fri,  7 Mar 2025 09:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339823; cv=none; b=hLrNwN3NPbI6NtC2Jq8fHAI1v4qXU9pxwsgCMmwo6BFzFS2YoYSC1tnH/JQb0i+L5VeiSaiDC2LPraNZSnJ0mnHd9h5zbkv8s6LVzsMaMRp4scUksIjKN/cw0zVPo9NnTok2f+IWLzt5YE90lRLrFupbYtNKy9tHzWc5EC07oj0=
+	t=1741339867; cv=none; b=doOo6E/bEZmZJc7LRUqB1Zv9joENdPK74V6SsYLfNp6jwLnvVVIdPTk/Ve6Ha52az7CpWJazvOaSpVxna/nmk3G03LUHaRmamRG8xNIZJOU9mGjsPp5qyircipxmfm33gFZad/4xr1/Zc83nJFD5ddrvI7KNMl4SDKciqjD3B2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339823; c=relaxed/simple;
-	bh=Ai4u6jucrFJEo5fiJus6WWtKhesRZx/NrT2YEqPhK3o=;
+	s=arc-20240116; t=1741339867; c=relaxed/simple;
+	bh=0clyfl35KjfOEHzeeZP6agmpTPeexmG9vqN3A0Y5WQI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dZiV6Rdy9nWorVBKaQ4G8a+2nCJhjD2c55oqQ0Uxl7N2BTUYmex8jhyhVsPs29idBKpxPN5faSoQ1r4fETe66Xdf2zo94p9qvvEkhFpjR6n+pci0jH+PyGlW0PEn3nGoqCaUcUfq1oR4U4g7KSmfK+RvPbzGsZprO+N7GgcPkfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VDsWTn4q; arc=none smtp.client-ip=209.85.128.46
+	 Content-Disposition; b=ZD2mu9ont8jQ+MfZBapByBbuxLqcgWZGkJ+KESohXl3RUPhPYDwRjZol91c6quu6UYzn6rkw3SU+2WQzZOcowq9xUTo/Q327rpXWj7uZdOPXOuEOVS8S36fPcUKmPFKYaCXPBy9MJcJQ1uatww7VqbU+pmNRhoyhRV4HXm23bCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RNJAT/D1; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VDsWTn4q"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bdc607c16so12557205e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 07 Mar 2025 01:30:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RNJAT/D1"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3910e101d0fso881559f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 07 Mar 2025 01:31:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741339820; x=1741944620; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741339864; x=1741944664; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=93blEQmxjswWheyXHKesIB+wQzCMQvJ6bucP/eSHntw=;
-        b=VDsWTn4qx/JCgvdN9+TYPTjaj1IZ+ww8uk5lWdsZfzUDSYO35B0i/UrnmwcpGuLlzq
-         stNmTrMd+H8HdhIhGKIoIGCBBd4fM5cqfXSnHoZKmOreAgstZJKAwfgq5IpJ9DxjE6h2
-         wcVK/EVXam2bnd7hN77O+idKL4VPLZeuhOyKx35EQijix/IZl1uqMnJrwZWDINkCQEi3
-         1CacdI896HKUOHOMs4B/DupEi4O2zManKuxUt0dQh9s0qA7aE7eUap2T/iqT/j2h4peA
-         tgTt1BSqYYUZlILhzX41d/Z9Lg5ajWUXVKBwFf0MpcW+F03WlcNqOTGiW+MAgedH5uJb
-         bX+A==
+        bh=UuKtV48t1X7LVR4XRl12tQehYIh96gIBPvAMlUyvJ9c=;
+        b=RNJAT/D1soU1CFiP6IVla6knNceGmgRaR3NiZ7pyRJn4+U1Nn9aLcoTN+lvyQpJ3Kn
+         F6Fol9WwLqnwYhzZ4g1pcANv5MUBtmC7OxWeNMpYFyxN0HK3VyW9P4U0eGBOUt8+NNaW
+         oEgBC1XZoaayMqTHgqeJwTcGHrJt4ys8O8d9BXLOVDRhKT+WGvR27lJptgv4xNIpWowQ
+         xN9QAZAMZNApIPkb+i85b9fKXrfvjCNuRnDAjjNUnevKAu1BmJxTjMuGZRUnrBtcVWJw
+         8wsooTUwEeLZHH/p7l+Wsj2ISK23dPfjTTvPWzNx9xMEtfNdRwZHTvfVrAq8nzUbLRRt
+         KW7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741339820; x=1741944620;
+        d=1e100.net; s=20230601; t=1741339864; x=1741944664;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=93blEQmxjswWheyXHKesIB+wQzCMQvJ6bucP/eSHntw=;
-        b=UVL1tqSI1WbaOAWe13ImTVfNzD5UzpipfFYotfE1fKJHHuEddIJ/VvdSekQSvsnvrH
-         67n849TZCrQdQgOq3vqLrucZT3msyjoamIEkpdJ/LUuOdB4dtbHIZhCr0PvrOmkjaRGu
-         r+1bvqygn1m6rwMPZcpQ0XkHElhYvet+l9DpFrcjQakC8KMWiftHdFoS7uohjqTOFx3G
-         wCqpWhm1Hi2H7dXgy9LDSv+KyPrbG6xZA1WqNt5bFI0HC2QLrGnP0GIsmvGAGAhL33e8
-         JGj59TX25kTLMStMUj4Wye5ZT3zumLxTBNnAtewPkB43D4ygRNtW82zD5Ze4YyKe4rvG
-         cDpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSrTUKTDcnmK3oAqsgCPAaF77DB12OLPSzP0qTNupxc2tR6SFcReb1hbqsRyoDA8373HlrGUj/L+WIDPOOU88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD2NGY4IGM1CKRPUTwlgQKXVCEranzYavXBUKO5026KNzdSsoE
-	vErcPv+SwvlaLdFJnBRuFaH+kgtgSfgW75J3YaZP2Z9n56JSUzOVG3zEWQv/6gU=
-X-Gm-Gg: ASbGncu56x4Rv702ovIscSQx8F4j/D5BBkCH0VrT4XdFK1vYAqIkQH8RbN/9JMOwOj1
-	mHn9h06nLezqlQAKLwcEoS6yNiumaF1bQ8h4gJCTvDACZqwzpHLNhEA75/5d80OojNwDTMI4jRF
-	+r9LflZuI/NLAcLLWqdWFrYuZZx2CvoVxtDxWzD3VXDoe5dmoecKNty+gd7epXKFqSvTQbdhK20
-	VqjZnIwQLw/f1g+/FZDPVzZwkf5rItOYTti/iLfSOs3Ex49aSoqO328oN4jbLpPD64/wh9SMs+L
-	6kE1jImOoF1NXi9hZzfNQgkbW6Lsubg+7hpctpoIzbmu7uefyQ==
-X-Google-Smtp-Source: AGHT+IF7W0BZOmIMpa6aTO/bUCCYodrmELNE8zettIHxeBxOTGRaV6zmqbl8WqRyoPh3IyqfSxwMVQ==
-X-Received: by 2002:a05:600c:8a8:b0:43b:ca39:a9ca with SMTP id 5b1f17b1804b1-43c5a60e07amr22236695e9.16.1741339820010;
-        Fri, 07 Mar 2025 01:30:20 -0800 (PST)
+        bh=UuKtV48t1X7LVR4XRl12tQehYIh96gIBPvAMlUyvJ9c=;
+        b=H4iYdeU4FpoALPOZRBxmEAeVBj3487Zi31WJBIPs0TMVc2dhgp7CzAwTK6SF4FtktR
+         Shk6ZiRm+Agej+SdT6TINaN6O2uURDYTaCINKOgnG6hd4x8W1yOQyCC4Kg/rhXCNyzVc
+         H3dyKZhlmnoBRUz4zvzPMUhz3t0w1Uq2Krzl047fFJPbgW9WQ7ggb4GSMU7b5vq4cs4b
+         6PL9DuW5SSFISgcFXmFTYQyxUPIk7ROvV0xOpA86g2E7wJDkpVLdoYbcFgfg+mf8T6kU
+         3R3GkpQmzfoSlXJguy+1Axjb13YRH/wKpw4qo1Abh5mtccIsLIg0GKii4GPKmfXapPCo
+         FKoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQO6j/qOElT36yHmpsA05zG2v1cjqawmjN9DWALe4d9DE45J3/5dO3BEGDAjL8cCeQhme54hnQAewpgASNkEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6cdXRFpFE1n4/MmqOSx7M0ZLl2LSmxu3AliBdIZXPd5C6MpM3
+	NFea7KUZ+Fibh6uXPdCV1H7IdWA4Rp62LZa/nxPkYYPiHl+aIHKaa1K9YqL3Uv4=
+X-Gm-Gg: ASbGncu9IiPPeF6YIkltf6kqz2/9kiMBTKix2DMGA9Qmr1glPidR/+xU1cYOihMfx5z
+	41QtrmSWf1Iv159SqKbg8xN7EAnB15PeHAS4BWAfHcnjRj8s1atSntbEB7NU1YcJ9j2/yQh+Vvp
+	oGcQ6fXnNB68sHLCBsmPmh4tl5rHh2lr/W9gFpPzs1qf0G5dJK6LhwYaOYe1fp5jl7F9k2NDb04
+	6+v1JmuGBg43MiehU0l0cE7LkrIh9hcFR5ZPEZa8pTS+FjUzK3JoNwOexXJCLxpP1L6vgg1Yhvg
+	T3+CofC1I7rDBGQF5alRzxoTj3ZnhsTkCZGBtAHjU6P2UI9dgQ==
+X-Google-Smtp-Source: AGHT+IHGgil9XvvJ/78/5L3MyKGSYheLPT+najegLrndXP1vKPLf/Ab1cHu+/RbdCgsBcMvfznnH8w==
+X-Received: by 2002:a05:6000:402b:b0:38d:e401:fd61 with SMTP id ffacd0b85a97d-39132db746amr1441891f8f.49.1741339864000;
+        Fri, 07 Mar 2025 01:31:04 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfdfdb9sm4709196f8f.27.2025.03.07.01.30.18
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2f39sm4690339f8f.80.2025.03.07.01.31.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 01:30:19 -0800 (PST)
-Date: Fri, 7 Mar 2025 12:30:16 +0300
+        Fri, 07 Mar 2025 01:31:03 -0800 (PST)
+Date: Fri, 7 Mar 2025 12:30:58 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shreeya Patel <shreeya.patel@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Dingxian Wen <shawn.wen@rock-chips.com>,
-	linux-media@vger.kernel.org, kernel@collabora.com,
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Janne Grunau <j@jannau.net>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Neal Gompa <neal@gompa.dev>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	dri-devel@lists.freedesktop.org, asahi@lists.linux.dev,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] media: synopsys: hdmirx: Fix signedness bug in
- hdmirx_parse_dt()
-Message-ID: <7ec94789-305c-4de4-b477-c0eb839170e5@stanley.mountain>
+Subject: [PATCH next] drm: adp: Fix NULL vs IS_ERR() check in adp_plane_new()
+Message-ID: <14a845e8-54d0-45f8-b8b9-927609d92ede@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,35 +80,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The num_clks is set this way:
+The __drmm_universal_plane_alloc() function doesn't return NULL, it
+returns error pointers.  Update the check to match.
 
-	hdmirx_dev->num_clks = devm_clk_bulk_get_all(dev, &hdmirx_dev->clks);
-        if (hdmirx_dev->num_clks < 1)
-                return -ENODEV;
-
-The devm_clk_bulk_get_all() function returns negative error codes so the
-hdmirx_dev->num_cks variable needs to be signed for the error handling to
-work.
-
-Fixes: 7b59b132ad43 ("media: platform: synopsys: Add support for HDMI input driver")
+Fixes: 332122eba628 ("drm: adp: Add Apple Display Pipe driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/adp/adp_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-index 4ffc86ad6c35..e0d3fed87a92 100644
---- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-+++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-@@ -154,7 +154,7 @@ struct snps_hdmirx_dev {
- 	bool hpd_trigger_level_high;
- 	bool tmds_clk_ratio;
- 	bool plugged;
--	u32 num_clks;
-+	int num_clks;
- 	u32 edid_blocks_written;
- 	u32 cur_fmt_fourcc;
- 	u32 color_depth;
+diff --git a/drivers/gpu/drm/adp/adp_drv.c b/drivers/gpu/drm/adp/adp_drv.c
+index 0a39abdc9238..db36807005a6 100644
+--- a/drivers/gpu/drm/adp/adp_drv.c
++++ b/drivers/gpu/drm/adp/adp_drv.c
+@@ -232,9 +232,9 @@ static struct drm_plane *adp_plane_new(struct adp_drv_private *adp)
+ 					     ALL_CRTCS, &adp_plane_funcs,
+ 					     plane_formats, ARRAY_SIZE(plane_formats),
+ 					     NULL, DRM_PLANE_TYPE_PRIMARY, "plane");
+-	if (!plane) {
++	if (IS_ERR(plane)) {
+ 		drm_err(drm, "failed to allocate plane");
+-		return ERR_PTR(-ENOMEM);
++		return plane;
+ 	}
+ 
+ 	drm_plane_helper_add(plane, &adp_plane_helper_funcs);
 -- 
 2.47.2
 
