@@ -1,77 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF8917A2E5;
-	Sat,  8 Mar 2025 03:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38FD196;
+	Sat,  8 Mar 2025 05:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741405819; cv=none; b=AW+i4vxZP/XuCd4b69Xz9JMQU9NSeBF3iXNujXj+uk+SmjOb0u3OKV9JPOnYUcc9MyJqlUEwv2zSEwgmKuaZqTyPp7exkEw/v2jwyXWHG/7MR8Y02FxwtnmfGKwcKa/6ZmJOoI0mh7BdYoZ+rjhD9TP7DImpfIn8pvwP2BrGbBw=
+	t=1741412600; cv=none; b=TjquYUcYwiNU3ySVwblkl7QGgxUdjrxUD5ICZhLcripnptrWKQ6RrHF1zmkR1qfEvPRsCrJpoL2ZYIih26GOx/bjhzdugCcHu7MO3jKZDaUdaJvVqxDk8ajXriZDgAFNLSy5BYX8k0JZ5TUZ/IvdZpgC+GAmeYdTBALwDzsPurc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741405819; c=relaxed/simple;
-	bh=90XLQP1hM4lN1DT85WNI8TXL1Gf8VrJWS4VLcv9kReM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ltVoyvc8I5Hv1RLGmghvJlv2kQSb2Z4+gYQsIaA1hEUvB3eEe7mRD2H9/GDzdjzkqHKmuUpqatXt51Ofber8mb+1J7jEQdhKbhOJA8jvPodTNucCvSUOYr9isXms9FiBSKRedMH9FNdIu9cJP1ab7rv4vuqfDaFqJCoS/ENXl0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Msrd4WTy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741412600; c=relaxed/simple;
+	bh=vPGcIo+dX3lU5SKzUanCaLNZJi70a7dPvGebYotrBic=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UJqDIBC+XNMaJ2/q9Wawwq5X98uxsz+ajSTurV/NwfxU35QZzm41C0YYv82oVhWsCvRzL5hMXnW3u2rKnuEAxBItfbRIHtSUMNDjkve/ESSR5Pc50ulCpppWaF0CC2JZuW5tg3OCV6EV48wUdrgp2DbYrevh0AjG5bJa3+t4GIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ix6KklKK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Msrd4WTy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9981EC4CEE0;
-	Sat,  8 Mar 2025 03:50:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ix6KklKK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4043AC4CEE0;
+	Sat,  8 Mar 2025 05:43:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741405817;
-	bh=90XLQP1hM4lN1DT85WNI8TXL1Gf8VrJWS4VLcv9kReM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Msrd4WTyjJYCVAm2trYa7zpd8T+d32HzKL9SB+a0MbE9kHIJ+hfG3Mv6OsoCbrC7r
-	 vNyXksBxsxKNujo+vjsLr4gdm1kc+OF568RDSl3xl6zr6tGJEPH0IohvkQl8snFZ7D
-	 zVafk/hWzpNBE01dyV6+hQ+adTYmoKKnNUvCkwwpI5exfZXxqDdKcQp4uYsDnN+knM
-	 2qwV2BTiyp8tjDQAvoXZgqz77afEOIUt6KLrd+tDCxa30l1OsCWc49ewcy4cZ7jUg7
-	 MTQnrYqlQlwOT9x225uYQrtKz4RI/LQgoodIQFRxEJpzqa6ce4BtnEFY+2ep1Oa785
-	 gt16IGzGF/Smw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70AD8380CFFB;
-	Sat,  8 Mar 2025 03:50:52 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741412600;
+	bh=vPGcIo+dX3lU5SKzUanCaLNZJi70a7dPvGebYotrBic=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Ix6KklKK61+5qR20kJBOLEDRiMmMcGmlqIoqN3pQimEZaueg+N+2BkzFlLnXUoNg/
+	 wKyaHV+uWtIMAYq3MUHH5XA5nSk8AY3VqbKErJVUJbZyAXYHKFr0r7Ad/fVml1KJj6
+	 rbTJwv28aMJm9UhT4Y9fJ5pZVjMa8C+SHDVpoY2ghH0Zsau/GrvaB9qD8rK8M/jP+6
+	 xDtmgGYj4BLZmP8jy1L0QGGJ6hlnYMHFaUILsKORfyPBxD5wA52RM97Blnv4WxvJkj
+	 WzsHNajL6A11Wx3FObOkr/nWq4d26UKnwmOSKa9MvuqgUrCoxJOOsMmlOzZHBpFxV5
+	 yD0ZIp+Xo5I3w==
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/msm/dpu: Fix uninitialized variable in dpu_crtc_kickoff_clone_mode()
+Date: Sat,  8 Mar 2025 07:43:11 +0200
+Message-Id: <174141256285.1924437.97313316814458618.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <f8ba03dc-0f90-4781-8d54-c16b3251ecb1@stanley.mountain>
+References: <f8ba03dc-0f90-4781-8d54-c16b3251ecb1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ethernet: Remove accidental duplication in Kconfig file
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174140585098.2568613.2283385624839221581.git-patchwork-notify@kernel.org>
-Date: Sat, 08 Mar 2025 03:50:50 +0000
-References: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
-In-Reply-To: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: lorenzo@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, lukas.bulwahn@redhat.com
 
-Hello:
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu,  6 Mar 2025 10:47:53 +0100 you wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Fri, 07 Mar 2025 12:29:39 +0300, Dan Carpenter wrote:
+> After the loop there is a check for whether "wb_encoder" has been set
+> to non-NULL, however it was never set to NULL.  Initialize it to NULL.
 > 
-> Commit fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated
-> folder") accidentally added the line:
 > 
->   source "drivers/net/ethernet/mellanox/Kconfig"
-> 
-> [...]
 
-Here is the summary with links:
-  - net: ethernet: Remove accidental duplication in Kconfig file
-    https://git.kernel.org/netdev/net-next/c/e2537326e3b6
+Applied, thanks!
 
-You are awesome, thank you!
+[1/1] drm/msm/dpu: Fix uninitialized variable in dpu_crtc_kickoff_clone_mode()
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/1b9d131a098e
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
