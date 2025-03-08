@@ -1,286 +1,158 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCD61DB122;
-	Sat,  8 Mar 2025 19:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC3715749F;
+	Sat,  8 Mar 2025 21:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741460641; cv=none; b=ncflCNlrttDBnBXkqQVjWE4Ss+618qho37T2fRvx8q2kQfrEPEUn/Bi7ptwvD2X9cdQ00ihnb6YNAfeVW8Z9LjUwOb/OWupkUuj9kcrdWrmoJQZT7A8ulOcTNjGMSKm3tfE9zjXM8ZNxNaYhubiNqCatxMVksICPiHNA7li+nbA=
+	t=1741469214; cv=none; b=eY1ymoNfcQxZ4lvcMyiVx0l6pJlVG1ZNxBg1Dzr4SwH2M7bsrUnmk+//NkkypEyBGTjM2ugXw32DsVC0R5UtuVCEMRz83/ilRYat7FSkRD8Xh6hiQ36OZWyazKFkk3phrJEUmx4VQjE9nYlHB/ROlBNYEUsNTtEdxPAO5L49oQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741460641; c=relaxed/simple;
-	bh=+rxHqt446zRcVp/SCTQfHaohEqfDFE3SarBqTFs0xy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LyTZwDF5Mtzstac5raDf89lSc1i96pIwkMSa/TJouw3Eo84DZtK8dU1WAdQO/hxwv+Kewr8ggizx/ps4c9HdZiuTYFVmGht1do80IzrLtinnul4T8Kji3garFWzZNj6W45Yy3PTXhCpZaigXNMCwCFtIou9zt7NKb6k7XbyDjnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hY00UVYT; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1741469214; c=relaxed/simple;
+	bh=I3lgknlUNHEVj5zQIxnyrNmsL7ozdFmzN3m8RrWc3IY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GH7l+KxLn81gPbE44UkZX6laFGhH9ITw9T3bqsslheQTaFbhdWsbsya5Tl4c3gzaP36Mfb/51cZhaNNpO7Qz6IaBtYVywKTqdW0ZZBniS4iAV+l+StMKKU0ra01NJRj9twnAsIHvAnutACUJXWyiRnvGaSkmmvk4QSEhOTM66bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=nJLiYOtE; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hY00UVYT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741460640; x=1772996640;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+rxHqt446zRcVp/SCTQfHaohEqfDFE3SarBqTFs0xy0=;
-  b=hY00UVYTAO3BTX7uTiXxnvL+d2yrJhK2osKlaKQxtGotYc08az+5FYin
-   HGZdwu0GvnWugXBxJjESYuP2dU4n1rgFtBhz31q6Gb2pdRRy+bJH5dm//
-   tgBKtApi3NXDUDL7475w+Lc8Kqypztv3NCYi7ubIbqafbO3JIUC9zCN1O
-   Wxr5zDH4ORK/ZdfOOGvjaQ4dzXOM2gzIz9tlHxGeEIXGLvuAFnjMx845i
-   rrcVRH446zxvVUHkj+0polxk36azNAJcyH+BparwjXbxdP1/FUTCyKkHn
-   LPW4reqqi5z5HBnh4oV+JwKPtSvkTzhlzg0Qonu29cId8nuam8JFk1m3/
-   Q==;
-X-CSE-ConnectionGUID: Cll8ojllRWup3CVeYar1bA==
-X-CSE-MsgGUID: m+d7Qls7SOGmaIrtS3nx8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11367"; a="42690740"
-X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
-   d="scan'208";a="42690740"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2025 11:03:59 -0800
-X-CSE-ConnectionGUID: 1Cr9wz4dQZCCRWNT40jMKQ==
-X-CSE-MsgGUID: E7ZWhpblThK2hTv2JJbWzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,232,1736841600"; 
-   d="scan'208";a="120087334"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 08 Mar 2025 11:03:55 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqzSi-0002Dk-2a;
-	Sat, 08 Mar 2025 19:03:52 +0000
-Date: Sun, 9 Mar 2025 03:03:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dan Carpenter <error27@gmail.com>,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] ipvs: prevent integer overflow in do_ip_vs_get_ctl()
-Message-ID: <202503090225.vNvZGEfz-lkp@intel.com>
-References: <6dddcc45-78db-4659-80a2-3a2758f491a6@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="nJLiYOtE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741469178; x=1742073978; i=deller@gmx.de;
+	bh=I3lgknlUNHEVj5zQIxnyrNmsL7ozdFmzN3m8RrWc3IY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=nJLiYOtEuyeBzySCFjZPIrvPJ8eyyEzeD+LS9cW2GNzQQy9DWAiQ5GWnEXcAciQK
+	 RtefVBGnQ51QiTURxE5t+7taYANYxH5ai87pa2jRiL0EdLwiK2ogN+wb4D0VDSKkk
+	 WOO//TkWS5XlaoJm3XoMkOLObbF/88VcjsLTZebbPJPWRXmQxpwOa0b5zswsDZTw8
+	 8npz5rHSFCpl7OJoXH6HSCVlEF4HcVAm+wTmPmeLdoYIfwDJ8Mbqu1lZmGFyJQlS/
+	 OleETEH98QNg4EXkWplOo6MrL3FPU02037eDLhWbe/saqoO/Utro+9F6iiexq//8F
+	 l1ug5DjTfW4PZAEY3g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.173] ([109.250.63.121]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MjS9C-1tOofA1oKI-00gN93; Sat, 08
+ Mar 2025 22:26:18 +0100
+Message-ID: <f3e36573-e370-4f70-94d8-7a240d366e60@gmx.de>
+Date: Sat, 8 Mar 2025 22:26:16 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6dddcc45-78db-4659-80a2-3a2758f491a6@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] video: au1100fb: Move a variable assignment behind
+ a null pointer check in au1100fb_setmode()
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Antonino Daplas <adaplas@pol.net>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Yihao Han <hanyihao@vivo.com>,
+ cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
+ <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
+ <ugymllbkcsg22ffgyofvkquh5afbvoyv2nna5udmy3xfhv2rjz@jhgghzldzm4u>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ xsFNBF3Ia3MBEAD3nmWzMgQByYAWnb9cNqspnkb2GLVKzhoH2QD4eRpyDLA/3smlClbeKkWT
+ HLnjgkbPFDmcmCz5V0Wv1mKYRClAHPCIBIJgyICqqUZo2qGmKstUx3pFAiztlXBANpRECgwJ
+ r+8w6mkccOM9GhoPU0vMaD/UVJcJQzvrxVHO8EHS36aUkjKd6cOpdVbCt3qx8cEhCmaFEO6u
+ CL+k5AZQoABbFQEBocZE1/lSYzaHkcHrjn4cQjc3CffXnUVYwlo8EYOtAHgMDC39s9a7S90L
+ 69l6G73lYBD/Br5lnDPlG6dKfGFZZpQ1h8/x+Qz366Ojfq9MuuRJg7ZQpe6foiOtqwKym/zV
+ dVvSdOOc5sHSpfwu5+BVAAyBd6hw4NddlAQUjHSRs3zJ9OfrEx2d3mIfXZ7+pMhZ7qX0Axlq
+ Lq+B5cfLpzkPAgKn11tfXFxP+hcPHIts0bnDz4EEp+HraW+oRCH2m57Y9zhcJTOJaLw4YpTY
+ GRUlF076vZ2Hz/xMEvIJddRGId7UXZgH9a32NDf+BUjWEZvFt1wFSW1r7zb7oGCwZMy2LI/G
+ aHQv/N0NeFMd28z+deyxd0k1CGefHJuJcOJDVtcE1rGQ43aDhWSpXvXKDj42vFD2We6uIo9D
+ 1VNre2+uAxFzqqf026H6cH8hin9Vnx7p3uq3Dka/Y/qmRFnKVQARAQABzRxIZWxnZSBEZWxs
+ ZXIgPGRlbGxlckBnbXguZGU+wsGRBBMBCAA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
+ FiEERUSCKCzZENvvPSX4Pl89BKeiRgMFAl3J1zsCGQEACgkQPl89BKeiRgNK7xAAg6kJTPje
+ uBm9PJTUxXaoaLJFXbYdSPfXhqX/BI9Xi2VzhwC2nSmizdFbeobQBTtRIz5LPhjk95t11q0s
+ uP5htzNISPpwxiYZGKrNnXfcPlziI2bUtlz4ke34cLK6MIl1kbS0/kJBxhiXyvyTWk2JmkMi
+ REjR84lCMAoJd1OM9XGFOg94BT5aLlEKFcld9qj7B4UFpma8RbRUpUWdo0omAEgrnhaKJwV8
+ qt0ULaF/kyP5qbI8iA2PAvIjq73dA4LNKdMFPG7Rw8yITQ1Vi0DlDgDT2RLvKxEQC0o3C6O4
+ iQq7qamsThLK0JSDRdLDnq6Phv+Yahd7sDMYuk3gIdoyczRkXzncWAYq7XTWl7nZYBVXG1D8
+ gkdclsnHzEKpTQIzn/rGyZshsjL4pxVUIpw/vdfx8oNRLKj7iduf11g2kFP71e9v2PP94ik3
+ Xi9oszP+fP770J0B8QM8w745BrcQm41SsILjArK+5mMHrYhM4ZFN7aipK3UXDNs3vjN+t0zi
+ qErzlrxXtsX4J6nqjs/mF9frVkpv7OTAzj7pjFHv0Bu8pRm4AyW6Y5/H6jOup6nkJdP/AFDu
+ 5ImdlA0jhr3iLk9s9WnjBUHyMYu+HD7qR3yhX6uWxg2oB2FWVMRLXbPEt2hRGq09rVQS7DBy
+ dbZgPwou7pD8MTfQhGmDJFKm2jvOwU0EXchrcwEQAOsDQjdtPeaRt8EP2pc8tG+g9eiiX9Sh
+ rX87SLSeKF6uHpEJ3VbhafIU6A7hy7RcIJnQz0hEUdXjH774B8YD3JKnAtfAyuIU2/rOGa/v
+ UN4BY6U6TVIOv9piVQByBthGQh4YHhePSKtPzK9Pv/6rd8H3IWnJK/dXiUDQllkedrENXrZp
+ eLUjhyp94ooo9XqRl44YqlsrSUh+BzW7wqwfmu26UjmAzIZYVCPCq5IjD96QrhLf6naY6En3
+ ++tqCAWPkqKvWfRdXPOz4GK08uhcBp3jZHTVkcbo5qahVpv8Y8mzOvSIAxnIjb+cklVxjyY9
+ dVlrhfKiK5L+zA2fWUreVBqLs1SjfHm5OGuQ2qqzVcMYJGH/uisJn22VXB1c48yYyGv2HUN5
+ lC1JHQUV9734I5cczA2Gfo27nTHy3zANj4hy+s/q1adzvn7hMokU7OehwKrNXafFfwWVK3OG
+ 1dSjWtgIv5KJi1XZk5TV6JlPZSqj4D8pUwIx3KSp0cD7xTEZATRfc47Yc+cyKcXG034tNEAc
+ xZNTR1kMi9njdxc1wzM9T6pspTtA0vuD3ee94Dg+nDrH1As24uwfFLguiILPzpl0kLaPYYgB
+ wumlL2nGcB6RVRRFMiAS5uOTEk+sJ/tRiQwO3K8vmaECaNJRfJC7weH+jww1Dzo0f1TP6rUa
+ fTBRABEBAAHCwXYEGAEIACAWIQRFRIIoLNkQ2+89Jfg+Xz0Ep6JGAwUCXchrcwIbDAAKCRA+
+ Xz0Ep6JGAxtdEAC54NQMBwjUNqBNCMsh6WrwQwbg9tkJw718QHPw43gKFSxFIYzdBzD/YMPH
+ l+2fFiefvmI4uNDjlyCITGSM+T6b8cA7YAKvZhzJyJSS7pRzsIKGjhk7zADL1+PJei9p9idy
+ RbmFKo0dAL+ac0t/EZULHGPuIiavWLgwYLVoUEBwz86ZtEtVmDmEsj8ryWw75ZIarNDhV74s
+ BdM2ffUJk3+vWe25BPcJiaZkTuFt+xt2CdbvpZv3IPrEkp9GAKof2hHdFCRKMtgxBo8Kao6p
+ Ws/Vv68FusAi94ySuZT3fp1xGWWf5+1jX4ylC//w0Rj85QihTpA2MylORUNFvH0MRJx4mlFk
+ XN6G+5jIIJhG46LUucQ28+VyEDNcGL3tarnkw8ngEhAbnvMJ2RTx8vGh7PssKaGzAUmNNZiG
+ MB4mPKqvDZ02j1wp7vthQcOEg08z1+XHXb8ZZKST7yTVa5P89JymGE8CBGdQaAXnqYK3/yWf
+ FwRDcGV6nxanxZGKEkSHHOm8jHwvQWvPP73pvuPBEPtKGLzbgd7OOcGZWtq2hNC6cRtsRdDx
+ 4TAGMCz4j238m+2mdbdhRh3iBnWT5yPFfnv/2IjFAk+sdix1Mrr+LIDF++kiekeq0yUpDdc4
+ ExBy2xf6dd+tuFFBp3/VDN4U0UfG4QJ2fg19zE5Z8dS4jGIbLg==
+In-Reply-To: <ugymllbkcsg22ffgyofvkquh5afbvoyv2nna5udmy3xfhv2rjz@jhgghzldzm4u>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:C5tFhocLZ9Cyr0RTz7xybHr6k+B+bg56GkUhvUtn2P48DOT9VQ8
+ 2ilqi6Jqg7GmYQIoh6ClwZDuCRL0WWZRrAQwRbdrxhQK63qFlL0gaG+/f8fia+eaMkXGU9A
+ SO80u3O5Y0nmNDYVKqIxLBaNDsnQj/qTO78b5lgcvNSYrAGGCL/JVL0Iktn6ZzL/x1fJkOK
+ 3ULv/tX0hZkF//Rog+YQw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IwnKJ7EsMes=;exxIbdJWGIHqteW1BHQ05ATTbTm
+ Edycjeh0/Zqx8anVn1blG014GtWPCy4ni9+8MaZpsG3EFCByj5PALrxy3834xNVV1pfuS5/mH
+ OsbyvKQOkAKK6B70B4iKpX/fzzxqFNa2f1xWLbClFUZ+BWG9BxrvF+f2ULHraVwZHpDnqVp1I
+ kuG9CwbFfV1IaHRT4R9xPRsnVM30rhA999B2IUZjkW0ZJXvOG92fUwsxVXz5SqDky+jDAtIFC
+ nYhzhz5B/rK++zpGQIyrN0Z3JeGIGmWnr+cdnDeYnJ2Xi9eK2wm0JAnPESyQiz20qm2Q9lFue
+ CgrHAknrlf1BtyM4yDAUVHI8vFnBDbVEBBhJ++d1oQPlP8Kl42RogXW82euoN4l2xR5xDMSst
+ Km4Ik9Ws14OZ6RPJsT4Ikc+uWazxgNXjIy/KiMBj/l9QWzg1UNNldu8p2hjgbe4kgjXf78k4V
+ 1/QfXZt+1pTu7shmrG/H8T76/KNtTvtsywyOKT4jEUua72oXt1HPC0uva0IyWggKNnjvN6T70
+ vZCdwXVdkqn0b343qfYEIwBF3jFOwbfaZGf5oZ0VSmUy8rl+l+lkMCO60+u/r2hZgUlmg271w
+ GH9ESdjFrtxV6b/MIpzLLM+2ak1XuUQkWgx20KFr+nVyTIy5k8Lx4tILhyC2QeiZKBMiXOSb2
+ KmKa84YUXWTOSupoybYT/EeYlG4M59lbM2qSbN3PNQSJN7aEa7x7KJ0aR4wAUdq2CpxupNMbc
+ 8T4ckFwnmqRrbansF93YmSpg1MRbRFeA0zhYnsSIBs80YF/p4UNQOfSIk3uGR3pmHw+dvXSJk
+ Uuu9SqLgNAG4f0LFESMxJuiDiPpAK4i/n4Z8w/3JxyW3h93jGataM8q1r/jW+1pwFYMr/iUsf
+ MSVIVUUbt+RXesDh39rTP44OUKVRTjsy6CEYKPhWUh71+CdtDbvfEEobY2/xjlK9fdwJm6SLd
+ C26CC2m6rUggzXJGPjwUjZnLVeO+spzQtgUXx6/1+DQT88XfWosO2xr1MWMkCsTCG7Vss5hR+
+ whEqtGaMdmmjLR0cllR9ULfsaLOQJZMk2qSeF4C2mSBKU+vyNyHv+oKi77xvgdAIFKuhwgjMs
+ sb7q4KLXboTHuO/W9VYujSwIepUDfhtpx7G+Bwa+vhl14oWULMsJItSBhXkIhpp5c5ade48W9
+ 9lUPudvOb4kxcDNfNx3sxscnUpxewPrX5hlkrjJcG44aZtCpHJi9w095wFujbLYIU6fIncJdu
+ /1AwEWg2sy15FeDzSJ3kDtbk5EI08uhHbPjGgZFvgHaoT1LNP8nAqjP1jxnxn986CFwEK4pym
+ OMPBEee1G3BXaYGQ2GoFuwMyUbslE1vhHFWBIlPUg8x0QRA1yJ/mrMn+1Q9YbaCiPjs+TwEkV
+ 7yUdWbeFWefTABSSzs/QU0yxp6vdqa8+dMdTRkllZCILNeMOQBklkprm3f
 
-Hi Dan,
+On 3/3/25 10:19, Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
+>
+> On Sun, Mar 02, 2025 at 07:02:12PM +0100, Markus Elfring wrote:
+>> From: Markus Elfring <elfring@users.sourceforge.net>
+>> Date: Thu, 13 Apr 2023 21:35:36 +0200
+>>
+>> The address of a data structure member was determined before
+>> a corresponding null pointer check in the implementation of
+>> the function =E2=80=9Cau1100fb_setmode=E2=80=9D.
+>>
+>> Thus avoid the risk for undefined behaviour by moving the assignment
+>> for the variable =E2=80=9Cinfo=E2=80=9D behind the null pointer check.
+>>
+>> This issue was detected by using the Coccinelle software.
+>>
+>> Fixes: 3b495f2bb749 ("Au1100 FB driver uplift for 2.6.")
+>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>
+> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
 
-kernel test robot noticed the following build warnings:
+applied to fbdev git tree (with minor modifications to commit
+message and without stable tags).
 
-[auto build test WARNING on net/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/ipvs-prevent-integer-overflow-in-do_ip_vs_get_ctl/20250307-214537
-base:   net/main
-patch link:    https://lore.kernel.org/r/6dddcc45-78db-4659-80a2-3a2758f491a6%40stanley.mountain
-patch subject: [PATCH net] ipvs: prevent integer overflow in do_ip_vs_get_ctl()
-config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250309/202503090225.vNvZGEfz-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250309/202503090225.vNvZGEfz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503090225.vNvZGEfz-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> net/netfilter/ipvs/ip_vs_ctl.c:3099:40: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-    3099 |                         pr_err("length: %u != %lu\n", *len, size);
-         |                                               ~~~           ^~~~
-         |                                               %zu
-   include/linux/printk.h:544:33: note: expanded from macro 'pr_err'
-     544 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:501:60: note: expanded from macro 'printk'
-     501 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:473:19: note: expanded from macro 'printk_index_wrap'
-     473 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   net/netfilter/ipvs/ip_vs_ctl.c:3140:40: warning: format specifies type 'unsigned long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-    3140 |                         pr_err("length: %u != %lu\n", *len, size);
-         |                                               ~~~           ^~~~
-         |                                               %zu
-   include/linux/printk.h:544:33: note: expanded from macro 'pr_err'
-     544 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:501:60: note: expanded from macro 'printk'
-     501 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:473:19: note: expanded from macro 'printk_index_wrap'
-     473 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   2 warnings generated.
-
-
-vim +3099 net/netfilter/ipvs/ip_vs_ctl.c
-
-  3012	
-  3013	static int
-  3014	do_ip_vs_get_ctl(struct sock *sk, int cmd, void __user *user, int *len)
-  3015	{
-  3016		unsigned char arg[MAX_GET_ARGLEN];
-  3017		int ret = 0;
-  3018		unsigned int copylen;
-  3019		struct net *net = sock_net(sk);
-  3020		struct netns_ipvs *ipvs = net_ipvs(net);
-  3021	
-  3022		BUG_ON(!net);
-  3023		BUILD_BUG_ON(sizeof(arg) > 255);
-  3024		if (!ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN))
-  3025			return -EPERM;
-  3026	
-  3027		if (cmd < IP_VS_BASE_CTL || cmd > IP_VS_SO_GET_MAX)
-  3028			return -EINVAL;
-  3029	
-  3030		copylen = get_arglen[CMDID(cmd)];
-  3031		if (*len < (int) copylen) {
-  3032			IP_VS_DBG(1, "get_ctl: len %d < %u\n", *len, copylen);
-  3033			return -EINVAL;
-  3034		}
-  3035	
-  3036		if (copy_from_user(arg, user, copylen) != 0)
-  3037			return -EFAULT;
-  3038		/*
-  3039		 * Handle daemons first since it has its own locking
-  3040		 */
-  3041		if (cmd == IP_VS_SO_GET_DAEMON) {
-  3042			struct ip_vs_daemon_user d[2];
-  3043	
-  3044			memset(&d, 0, sizeof(d));
-  3045			mutex_lock(&ipvs->sync_mutex);
-  3046			if (ipvs->sync_state & IP_VS_STATE_MASTER) {
-  3047				d[0].state = IP_VS_STATE_MASTER;
-  3048				strscpy(d[0].mcast_ifn, ipvs->mcfg.mcast_ifn,
-  3049					sizeof(d[0].mcast_ifn));
-  3050				d[0].syncid = ipvs->mcfg.syncid;
-  3051			}
-  3052			if (ipvs->sync_state & IP_VS_STATE_BACKUP) {
-  3053				d[1].state = IP_VS_STATE_BACKUP;
-  3054				strscpy(d[1].mcast_ifn, ipvs->bcfg.mcast_ifn,
-  3055					sizeof(d[1].mcast_ifn));
-  3056				d[1].syncid = ipvs->bcfg.syncid;
-  3057			}
-  3058			if (copy_to_user(user, &d, sizeof(d)) != 0)
-  3059				ret = -EFAULT;
-  3060			mutex_unlock(&ipvs->sync_mutex);
-  3061			return ret;
-  3062		}
-  3063	
-  3064		mutex_lock(&__ip_vs_mutex);
-  3065		switch (cmd) {
-  3066		case IP_VS_SO_GET_VERSION:
-  3067		{
-  3068			char buf[64];
-  3069	
-  3070			sprintf(buf, "IP Virtual Server version %d.%d.%d (size=%d)",
-  3071				NVERSION(IP_VS_VERSION_CODE), ip_vs_conn_tab_size);
-  3072			if (copy_to_user(user, buf, strlen(buf)+1) != 0) {
-  3073				ret = -EFAULT;
-  3074				goto out;
-  3075			}
-  3076			*len = strlen(buf)+1;
-  3077		}
-  3078		break;
-  3079	
-  3080		case IP_VS_SO_GET_INFO:
-  3081		{
-  3082			struct ip_vs_getinfo info;
-  3083			info.version = IP_VS_VERSION_CODE;
-  3084			info.size = ip_vs_conn_tab_size;
-  3085			info.num_services = ipvs->num_services;
-  3086			if (copy_to_user(user, &info, sizeof(info)) != 0)
-  3087				ret = -EFAULT;
-  3088		}
-  3089		break;
-  3090	
-  3091		case IP_VS_SO_GET_SERVICES:
-  3092		{
-  3093			struct ip_vs_get_services *get;
-  3094			size_t size;
-  3095	
-  3096			get = (struct ip_vs_get_services *)arg;
-  3097			size = struct_size(get, entrytable, get->num_services);
-  3098			if (*len != size) {
-> 3099				pr_err("length: %u != %lu\n", *len, size);
-  3100				ret = -EINVAL;
-  3101				goto out;
-  3102			}
-  3103			ret = __ip_vs_get_service_entries(ipvs, get, user);
-  3104		}
-  3105		break;
-  3106	
-  3107		case IP_VS_SO_GET_SERVICE:
-  3108		{
-  3109			struct ip_vs_service_entry *entry;
-  3110			struct ip_vs_service *svc;
-  3111			union nf_inet_addr addr;
-  3112	
-  3113			entry = (struct ip_vs_service_entry *)arg;
-  3114			addr.ip = entry->addr;
-  3115			rcu_read_lock();
-  3116			if (entry->fwmark)
-  3117				svc = __ip_vs_svc_fwm_find(ipvs, AF_INET, entry->fwmark);
-  3118			else
-  3119				svc = __ip_vs_service_find(ipvs, AF_INET,
-  3120							   entry->protocol, &addr,
-  3121							   entry->port);
-  3122			rcu_read_unlock();
-  3123			if (svc) {
-  3124				ip_vs_copy_service(entry, svc);
-  3125				if (copy_to_user(user, entry, sizeof(*entry)) != 0)
-  3126					ret = -EFAULT;
-  3127			} else
-  3128				ret = -ESRCH;
-  3129		}
-  3130		break;
-  3131	
-  3132		case IP_VS_SO_GET_DESTS:
-  3133		{
-  3134			struct ip_vs_get_dests *get;
-  3135			size_t size;
-  3136	
-  3137			get = (struct ip_vs_get_dests *)arg;
-  3138			size = struct_size(get, entrytable, get->num_dests);
-  3139			if (*len != size) {
-  3140				pr_err("length: %u != %lu\n", *len, size);
-  3141				ret = -EINVAL;
-  3142				goto out;
-  3143			}
-  3144			ret = __ip_vs_get_dest_entries(ipvs, get, user);
-  3145		}
-  3146		break;
-  3147	
-  3148		case IP_VS_SO_GET_TIMEOUT:
-  3149		{
-  3150			struct ip_vs_timeout_user t;
-  3151	
-  3152			__ip_vs_get_timeouts(ipvs, &t);
-  3153			if (copy_to_user(user, &t, sizeof(t)) != 0)
-  3154				ret = -EFAULT;
-  3155		}
-  3156		break;
-  3157	
-  3158		default:
-  3159			ret = -EINVAL;
-  3160		}
-  3161	
-  3162	out:
-  3163		mutex_unlock(&__ip_vs_mutex);
-  3164		return ret;
-  3165	}
-  3166	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Helge
