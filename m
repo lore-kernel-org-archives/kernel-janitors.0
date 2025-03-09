@@ -1,107 +1,79 @@
-Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A40217F42;
-	Sun,  9 Mar 2025 19:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D312153FE;
+	Sun,  9 Mar 2025 19:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741549911; cv=none; b=E3wd57bCpsgq3cMhTkX6Y5R3dBrAIfsH0RktlfsR+BARkU0caDY7mpr0MJqEU4WhbL0qVWgKsw8ww+n4ybU0Sf+xBeQ8Jk/jB4vm0ktdQTKnhGQ7vFDuSOk8toiKlrqeiWYXaL0jDfwGtODBjcGbBRn0UlNmwrdDdVo3+c57Tjw=
+	t=1741550301; cv=none; b=DWowIkpZe9m0QFBeMdhQ4hW03PV+iNK3CYlQoVeAIVJaQmAyA3jxTQTNhuIBf2p4eVXh88SYBy0udqiUrqIJ81z7Xl7qRjB8mLdK5Mjc7YqcUNVmuz0+eP1Yjrsg53OEAgvVBASM8lSM7VdvzLK6bbvnpfV0S49n0nTrsuwfin0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741549911; c=relaxed/simple;
-	bh=+jO5twca9jEdjcoV5X5VejjUeqqOSwqkonGG/PX4nTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q6D8tR2PI26PIX1AMrD+EokbeF62eCR/7S8EomBiBQcYW2vvt7+oVK3bMD+vPQqSPtLwu+cCoE55innNQweVgvAuzCKpzxA4uPkmYVHHKK442TNHnyycVJXdkFc/wnOa3XmvexQ3xu9IJDUtauBXjYWf3qoW6FC9pHaU1kpCX6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JeZlAY/J; arc=none smtp.client-ip=80.12.242.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JeZlAY/J"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id rMfStEMN9MM9VrMfVtoTfu; Sun, 09 Mar 2025 20:50:39 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741549839;
-	bh=lYvhddHrYeYAvSLWvys+NZYI+RN2FTr1+xT08fZxfBc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=JeZlAY/J4k6udFDppGa5Wumb1g7E6MiGmYEdmUHwJEWbAvbqTYWm25LEUWb9Zz82u
-	 HjdAOyJYdawf2B5Jog+XR82kpQYuirA8EE1gnaoQ0ch39OAqXsZ2/MHN4Hldcg6JgL
-	 LamWGcfteZtZrPtRlgZ6OvNSOCQ6gfDVPBc3+aMmFDAiKHl4J38oYU1AReitxudLaR
-	 hA8dfMeOZyVvSN2nv9zX0xA+FMeCSZdqgKh899jh1wyDJt9f4LuBRDF2xFvrHTHY/6
-	 ySSD8WTxhgFNi+U6IFCShjV4Kgf2LoDlcfsAJkF71pgw33sZZhTGEN0MptRKBrxXrB
-	 +4hzvtB0KN7ew==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 09 Mar 2025 20:50:39 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Dimitris Papastamos <dp@opensource.wolfsonmicro.com>,
-	Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mark Brown <broonie@opensource.wolfsonmicro.com>,
-	patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org
-Subject: [PATCH] ASoC: codecs: wm0010: Fix error handling path in wm0010_spi_probe()
-Date: Sun,  9 Mar 2025 20:50:28 +0100
-Message-ID: <ee39ba19b8c4c157ce04e06096a8f54016831959.1741549792.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741550301; c=relaxed/simple;
+	bh=aXzEzP4nvnAA1X6LEib1caGu5KzMtEqt5jFmUF4BA/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NcO6PlfmSuzl/7Ftm0FFk1Jv34OY2618JOvQ3F8M5K7vYQYGSjLkJWrqGTHkXrAVsubXZHK5nlEtZ8xzm6qrE+HGewTcqNW/lp2hyGdqr0jBxHyy4uxLh9utrfnwtlTloUchNu32tbUSb9l4z3WtT2BZTWsD2t7uDZCxGSDBhBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22548a28d0cso29306895ad.3;
+        Sun, 09 Mar 2025 12:58:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741550299; x=1742155099;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PrW1K7Q/sHmi0cS97DO4Ujkj+4GSIS4/uU/BzaRl4ws=;
+        b=SHWsH0EEhErumx2YDC438Ru6j0PlzyX36xg5ftn5uO0rE6vocUsmWEDhP2X+EhRUTm
+         NgdamlGwGLz2wwsK35GgLKePjWpLGJYsepyFS2i0OY01L+o7pv2JfIcd7ZExmN9NF0GR
+         409oQmvBhsq2Ke7Y6+bZ0GCMKN5rCZ3e6o92FDFTlxZhWXx+edtqNFR8UkeZWbqdoZb0
+         6mb7V5nX42QmdhMZsDCgtBeUjpyZ/YwQbcCfrHJKKwF81+io+UW1OZf34waULibaWA5C
+         ofRpUpt/BXb8gKd18X4qm5rvMGJwqLBqEwd7CrdtDpm5qSunglmm+TsKtkE614h/Y01I
+         zZlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUl28bTwQhpK9zHv+U/o/j2S9xU/tmGNfbe14cmZXZ2t9zvy9AVfd8RVjD5ZUnGR3h4QoD5xuu/vLEj7H1XqcA=@vger.kernel.org, AJvYcCVcHbocQAiZFwGuUIRWxKbFZccHmFHcTO6I6uSWYNd10bpGpIUVsLq+dOtjHdfbrWDxeMu+emAQjwU4@vger.kernel.org, AJvYcCXCHgXGzc2ob/HXmpVPwbsbn5yDfm41gtRrqX4BE0bY1b9dA00HEXhHa1yD+j50LGu7GWG4xydOorN56IFP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzoz6HGH5JOmFqrRyqckkjJVwezhUQUnotRm5fiIezf/2BILZAe
+	EXZpUcRWVz4aEr3VpEtWWTwoQBgjE7F/um5aSAG80uiSXYz3WdRL
+X-Gm-Gg: ASbGncsHbf+dkQxrc3Mu32DOWOsaNB8gbhQ/ScJjK79shXTM0MhirGAR+IxnA4Z3GNp
+	Mb6kHeAbaelaHkts90I9/Q3E+I6krHjjFEfiQNzk6ognaeSq4zHMfxEoEvPiSO09NLmprKHzKJm
+	Xtv/I+0B3YDmBqYUvg+HweHzWTjIU5h3gtMUVV1eXUPLY4E4hDqx+kRHaYC5qUgAv8u+fW7IVsu
+	sQIbXNXtARi+2ZxJkjpWuZ3t5+ziioLcAHbaMRGaGQrkzJasPCSHXk4PlQ3ScdgNfnN7hSxW7bE
+	tEN9jwXU7t6keV81LWsvNF2YI5K8eekVRSOUvaxY+Dvl697UWjzgkDyKF0FIf14yfOsPxy3dROJ
+	hFeE=
+X-Google-Smtp-Source: AGHT+IHyfPmNSOR8icPEXXCJvJSrjEib1yTDS++gcUqpBqBN55R3pRS/FHcInNEqgE9JyhndmxB58g==
+X-Received: by 2002:a05:6a00:8b16:b0:736:ab21:8a69 with SMTP id d2e1a72fcca58-736ab218c97mr13280368b3a.0.1741550298881;
+        Sun, 09 Mar 2025 12:58:18 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736ac1997c9sm5078881b3a.113.2025.03.09.12.58.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Mar 2025 12:58:18 -0700 (PDT)
+Date: Mon, 10 Mar 2025 04:58:17 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Shawn Guo <shawn.guo@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jianguo Sun <sunjianguo1@huawei.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: histb: Fix an error handling path in
+ histb_pcie_probe()
+Message-ID: <20250309195817.GA3679091@rocinante>
+References: <8301fc15cdea5d2dac21f57613e8e6922fb1ad95.1740854531.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8301fc15cdea5d2dac21f57613e8e6922fb1ad95.1740854531.git.christophe.jaillet@wanadoo.fr>
 
-Free some resources in the error handling path of the probe, as already
-done in the remove function.
+Hello,
 
-Fixes: e3523e01869d ("ASoC: wm0010: Add initial wm0010 DSP driver")
-Fixes: fd8b96574456 ("ASoC: wm0010: Clear IRQ as wake source and include missing header")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- sound/soc/codecs/wm0010.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+> If an error occurs after a successful phy_init() call, then phy_exit()
+> should be called.
+> 
+> Add the missing call, as already done in the remove function.
 
-diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
-index edd2cb185c42..28b43fe4dc32 100644
---- a/sound/soc/codecs/wm0010.c
-+++ b/sound/soc/codecs/wm0010.c
-@@ -920,7 +920,7 @@ static int wm0010_spi_probe(struct spi_device *spi)
- 	if (ret) {
- 		dev_err(wm0010->dev, "Failed to set IRQ %d as wake source: %d\n",
- 			irq, ret);
--		return ret;
-+		goto free_riq;
- 	}
- 
- 	if (spi->max_speed_hz)
-@@ -932,9 +932,18 @@ static int wm0010_spi_probe(struct spi_device *spi)
- 				     &soc_component_dev_wm0010, wm0010_dai,
- 				     ARRAY_SIZE(wm0010_dai));
- 	if (ret < 0)
--		return ret;
-+		goto disable_irq_wake;
- 
- 	return 0;
-+
-+disable_irq_wake:
-+	irq_set_irq_wake(wm0010->irq, 0);
-+
-+free_riq:
-+	if (wm0010->irq)
-+		free_irq(wm0010->irq, wm0010);
-+
-+	return ret;
- }
- 
- static void wm0010_spi_remove(struct spi_device *spi)
--- 
-2.48.1
+Applied to controller/histb, thank you!
 
+	Krzysztof
