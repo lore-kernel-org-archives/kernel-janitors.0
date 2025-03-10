@@ -1,71 +1,72 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBB2227E86
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 10:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6A5228CB8
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 10:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603654; cv=none; b=d88GX//Rp8J1Oc7G7sG6yO5L4GY8vKbfDe/jL1aEJk712mbI5tVjorkELHs/cCCiUfEgXx0IihIB9MqC9yJOSHto847IVziXWlP6FiU8Mse2vsoYE6fWd/y23kXdEt3HBUQkO6EAX2B2EcUx/Z7dQsMXRKpQwTF/NlhMOL0g2QI=
+	t=1741603688; cv=none; b=rATzY7Wao9P71ZWixUUc1kWfUXSYpl5jw0Bb7oZocRhsvyiOYAhvo8jTLlHsBdX5NfU7VrWjXMHvabkmXHdlE1oSJDA67xevqE3I1bFSnrbr4AhfwJmnmMM3J0PiufmxqY7PMZBahkKuX60F05irRs7xApG4laS2fI2kRmpdOTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603654; c=relaxed/simple;
-	bh=jdP/eKZQYM28TtBJS491PMB9Uu5FsjtBa5QxRx4Jcxs=;
+	s=arc-20240116; t=1741603688; c=relaxed/simple;
+	bh=ezePfKdiVomBp6Nu0vENgcyh212zJvF8/6B93fEyRqo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u9BuMZrEuuPStx+w2vqc5ZIXX1jZNjk6o2rlO0fluOVR5BfeK2Fh6foCYrS25lfeRsz3ziankiBdoEZU1XQe5f/fWgXgiQ3+RT0giFY10D5HlU44Jcm3mKB8+upw05D4ImfhMBLdGecJDnAAVJUKco1jiLLKB/XESo1S9b1Z2vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RElzG8fW; arc=none smtp.client-ip=209.85.128.51
+	 Content-Disposition; b=UukCt8KoNVXRnkZLg4aSo3N+hNeUBOsTf+erO9OsFeghPjterSgZHc4oajQiMGH/lUKfHDiYKVabl2oIWpuvyXUTxctgUGJtwzcPqi1O1FJzLqSlQuN0BCLl61hw0tTfGf2i80IMlvoHTmL2zj0fW9GES/lZf0lMZdGzEanyga0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KOoo+PAd; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RElzG8fW"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso6581045e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 03:47:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KOoo+PAd"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so4760815e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 03:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741603650; x=1742208450; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741603685; x=1742208485; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=sR/CcMTKsdlA9AlU4rM5jg8thXN0o1ZO9YRyBCXqGLI=;
-        b=RElzG8fW9AMZ7UESFP+oQnWFlfRSRHj7BQ3Ja3SlkAmIIBEiH3lofJq3dvOmGCBaLL
-         DA2rz4g6kQJHTilwfLEG2n/t0n82xJV8HPPcYBaRy4YdImak1KGdgWpjXglL9v8QpPTN
-         V0SuegDTqn+qiW5P6xiYLqxsK+CzWyubuiOrLJXXYLYyh3k47CyO9vEiBxblgQc+egn7
-         sAZEPysH2euzmVdywy6iF+23cqykP2xYDUZYUpQHnXf7G/0xG3mn/NhyFevSI96asuZU
-         Zd9v5fzZSPuMyRDkhIqIyCJ/7pkUBNQj0Qs6Q7TrPVDbI0UI1IRlx9N0cH1EhSr0Pvp+
-         xqnA==
+        bh=E0yircpCo/QVU3P+N7sKYScgPv6naVVovFtBRlbgD6Q=;
+        b=KOoo+PAdvWYa2/1thUQHnSVgyLB9AJq2/pBagS62WEQkqE7IVuCiv4oq+dkl22iDX9
+         Dqd99AM0bMNsRTor0H0T8NRVN2GcUQuyrCLn/hSYA0xonlbIfcMd2ImWaerXjycmVa/u
+         nlm+jRvOdmwq9/CUL3Fa7IqV6gF1Bf50eDLVciP71+y3Sl2IMXD6ad24eOJ2g4gENxtW
+         KPyk5BQ+UUNKj+hhKy4OAva20BdiDQvvZ9UZGLXa4WJIElgEyGcZY6lQdshSCTNAYNKY
+         lyuhsFEXg0y7nfJv1cTgqMbZa+I93Taz/oKXuchZ4aM9w3+OlDIQlqRnRDmEiN+OJfSX
+         kAqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741603650; x=1742208450;
+        d=1e100.net; s=20230601; t=1741603685; x=1742208485;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sR/CcMTKsdlA9AlU4rM5jg8thXN0o1ZO9YRyBCXqGLI=;
-        b=teExvsUZYef09g2nIcCOforKx060DACWuaE5eP8fiBXKgbhdpX4/qyfjlb/0ML0yMv
-         xvZwWR2BwZBbB+Qa9+IKZAp4Qw1gJ9STikW4EbOerNE81GNaSgEkNzCjuPjb0T3dYBm7
-         vyqGq3gz2Hq6Ftp9fiIy7uPipAqrmNkZWyoktQR/IUt/G5HkdnC3Nf0vY+ddEi8eK8Be
-         i2//Jh/IwiCLjVwGIIT4eMkI1ubSSHHTrFmkDtbAr249PEnGCClTUrvk7T4si2+042Rj
-         wU4TI+UkAbBP6dgrJRsC0QCTqEiblXM3RX5WKisEo9E8gSCOuYnZH6ohCdnIMaMB9OA9
-         dSdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgMCcKCMHGHApVw5hWC+J3XWG14B1/7Ml8Pgb+56vdDuy1RrKxptGMHALjOrFynjCmXDE8v9Lu57SsyRUXHYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV57dTZXisTbookqxkOwOYisxiQeOirGU6qo0ZTEl13F13E6bS
-	RjohOKuF8pettr0lIBffK2OsBMhPPZO2jPjQrwdeqj1HVdmyFkmGc+hUEO4CEf8i9SeRd22AvEu
-	D
-X-Gm-Gg: ASbGncvDOCH94NAg7jfNt7lKqSXi4saA21g7l2jFiT/SQNkohbAfQz9cC36Henm6SiC
-	vu8d+UwHrS8iklP0EBIaHj7GSELiqDYNxrvPSVBxnd84sqNfX3FlsQKCZskyFNZrE0NbMvjG6P9
-	wWGdgU303FC5Ghgckl3gPvIpZBYw/MbFdcilXuRxjgEaBKM+M8Us8Nnb54vmUn+JKtaQtTCCW9I
-	WfU4C7q3dxLy8Di9mKfReyyltWlXmM06FlzPinzeNtCzRp+AkGGFDarX8fdBrIBwMDSpTDFOnlA
-	ZthITvKKqQEwaKcJ7dGMTuplENVZLPLVYU/twTsK6bFvsvEWK6RybuX3GA2Y
-X-Google-Smtp-Source: AGHT+IG8QM+WxzxCzm0SZiOEb6aIF64Be3WE+Zs9nuUEYTEOzCjQ3A3RPLHlKVFRDpcen2hFRlv+hw==
-X-Received: by 2002:a5d:5f45:0:b0:390:fb37:1bd with SMTP id ffacd0b85a97d-39132da8e47mr7295090f8f.46.1741603649926;
-        Mon, 10 Mar 2025 03:47:29 -0700 (PDT)
+        bh=E0yircpCo/QVU3P+N7sKYScgPv6naVVovFtBRlbgD6Q=;
+        b=NryqxCEzsU4oxfy2RW9FITHKggTiB28kN8QiavCdLfyWXZB8YBDU2iMWfl34ICztds
+         6iMu1W2vDyyWq1xFKzAfbx+f3gc/PuaJ74xYZKlhT9wQoBmTXgbg9V3v4rbY3dp7CxCf
+         DBMBY83ARdr4B/Kyqta07VpaLEpGmcCL4wf6JRCaH6O2Kx5i+YxXUv5oEL5iZFMvVwsu
+         tVskuAvfKlt9RufqxPmMpdprJ+a0rFDx1wToASimgPmM3eiHPYWFKwMc/U/rqNTMNYdZ
+         YacOqHKFRmCF59ZMLjRNmzJq2se2J7+HQihDy/TLiwlwEPztHo3Lj0A4FuzFfq/A97kd
+         JxlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXE3D7khY5jpVJSMV4pT8dCpn5R1glNklb8ztqIdMKD2PIkJ7DA9jBln2hlovv4NXwtSuXmXC8dx6c3Twbnayo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhyDh1CnaO4z2d79ufA4NqtaZV4EeqW8exYpk6r1NWHyXgIllc
+	qwX8oQHh2uQ+lfllE2FNyhR/URofp0b34yXLU7rtMtbGGCqDqLrOlD3QpY2A+ik=
+X-Gm-Gg: ASbGncs2yIKB8qhfEjmM3frCXoVmMmC1aS1JbHkuT+V84BShUnwpy6kGGOPMZNtmaLT
+	hZFpyUddiFlRkm/jYYnwS9ma88SIoMdBTDXeJ5Ka8wMnXaUeWv9kC1JIRwJbOyTO/LmfoNkoSyM
+	GHK6LvnIGeacnlLsn8lgGvUlsbfIEb8tTuZe6Z1G2cVAUk982rQadCmSxIrPXcyujkzSBILhVVe
+	y6DD6XrqUKfNufQUDg1Tv1WnybYR2OYI18/SyXmn2yfhqdji6NLaFgm6jv0j2mBb1Whic1BLyXa
+	cxXPbMb/8oO1YemjiGaKeYoqfU4BFRVc9eVRixJJqcd9V8IQjsGEOZiZor+S
+X-Google-Smtp-Source: AGHT+IFlBbMsdDkibGs+3E90ni36pDU1DtBtQx2GYLaxL8v3OUzQ9CG7PxwMtpFknCcyL00KBQQ92Q==
+X-Received: by 2002:a5d:47cb:0:b0:390:df83:1f22 with SMTP id ffacd0b85a97d-3913af390a9mr5568803f8f.25.1741603684736;
+        Mon, 10 Mar 2025 03:48:04 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c01952dsm14227332f8f.45.2025.03.10.03.47.28
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2bb7sm14676793f8f.63.2025.03.10.03.48.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 03:47:29 -0700 (PDT)
-Date: Mon, 10 Mar 2025 13:47:25 +0300
+        Mon, 10 Mar 2025 03:48:04 -0700 (PDT)
+Date: Mon, 10 Mar 2025 13:48:00 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Felix Kuehling <Felix.Kuehling@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	Himal Prasad Ghimiray <himal.prasad.ghimiray@intel.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amdkfd: delete stray tab in kfd_dbg_set_mes_debug_mode()
-Message-ID: <ece8324f-0d58-4c83-adca-7187f730c56f@stanley.mountain>
+Subject: [PATCH next] drm/xe: Fix uninitialized variable in xe_vm_bind_ioctl()
+Message-ID: <4a74b296-8b51-4dab-a2f1-69919da1ca62@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,37 +77,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-These lines are indented one tab more than they should be.  Delete
-the stray tabs.
+The error handling assumes that vm_bind_ioctl_check_args() will
+initialize "bind_ops" but there are a couple early returns where that's
+not true.  Initialize "bind_ops" to NULL from the start.
 
+Fixes: b43e864af0d4 ("drm/xe/uapi: Add DRM_XE_VM_BIND_FLAG_CPU_ADDR_MIRROR")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_debug.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/xe/xe_vm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_debug.c b/drivers/gpu/drm/amd/amdkfd/kfd_debug.c
-index 12456c61ffa5..ba99e0f258ae 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_debug.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_debug.c
-@@ -357,12 +357,12 @@ int kfd_dbg_set_mes_debug_mode(struct kfd_process_device *pdd, bool sq_trap_en)
- 		return 0;
- 
- 	if (!pdd->proc_ctx_cpu_ptr) {
--			r = amdgpu_amdkfd_alloc_gtt_mem(adev,
--				AMDGPU_MES_PROC_CTX_SIZE,
--				&pdd->proc_ctx_bo,
--				&pdd->proc_ctx_gpu_addr,
--				&pdd->proc_ctx_cpu_ptr,
--				false);
-+		r = amdgpu_amdkfd_alloc_gtt_mem(adev,
-+			AMDGPU_MES_PROC_CTX_SIZE,
-+			&pdd->proc_ctx_bo,
-+			&pdd->proc_ctx_gpu_addr,
-+			&pdd->proc_ctx_cpu_ptr,
-+			false);
- 		if (r) {
- 			dev_err(adev->dev,
- 			"failed to allocate process context bo\n");
+diff --git a/drivers/gpu/drm/xe/xe_vm.c b/drivers/gpu/drm/xe/xe_vm.c
+index 22a26aff3a6e..d85759b958d0 100644
+--- a/drivers/gpu/drm/xe/xe_vm.c
++++ b/drivers/gpu/drm/xe/xe_vm.c
+@@ -3287,7 +3287,7 @@ int xe_vm_bind_ioctl(struct drm_device *dev, void *data, struct drm_file *file)
+ 	struct xe_exec_queue *q = NULL;
+ 	u32 num_syncs, num_ufence = 0;
+ 	struct xe_sync_entry *syncs = NULL;
+-	struct drm_xe_vm_bind_op *bind_ops;
++	struct drm_xe_vm_bind_op *bind_ops = NULL;
+ 	struct xe_vma_ops vops;
+ 	struct dma_fence *fence;
+ 	int err;
 -- 
 2.47.2
 
