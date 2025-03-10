@@ -1,77 +1,74 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B766226CF9
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 10:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C02227BA5
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 10:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603714; cv=none; b=aSon+XA6uqm/WqyUxfInLIq1ocGaH3Nl4oBXWLYRoztEdbfy/NJhjxHHf9XYU6anacDxwRKA59tq7YaVBnunhDFQfMpLLa+9+0M727BRHPZeqfbF0JEkr5FkOvRmdeZ8C/9G2Z/ebYBdd2S0NJEkPBh4YZg+pMtrUdc45CI1RZo=
+	t=1741603726; cv=none; b=o8h3WX8JflV/HGLH0k225r5sgxYMvM0klWDWDumVDbG0X50CmS99lGGroD5/Xp4FZQXeYIAVqXv9d8RrvK0typkcAHi+LiSP5CU/N+U+iHIjgd8ccm1xwbslRwEhLU3Y5xXViUVAKzUPlETAJM07BJfDLMn2fxg4uXpF7mfJKtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603714; c=relaxed/simple;
-	bh=j4PdO1nu/lOtJhos8w8kwuTN7slIzAII22YRob34W3M=;
+	s=arc-20240116; t=1741603726; c=relaxed/simple;
+	bh=ThNQa8FfIWCfCjBqxfnY7Y6HddW97gUTMSNhwoQo/9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Sehyhu9H5talFPvWK7QXBqNlm8MkaoIAJBaya5UStX87AgIjzMLKNIWNHiTNGklBi74vENFRnHafMSQbGHuhi19iMsodo1fX33vngMnL8I6uapYo3uP0Q0qKjXpR+oUZlzPoFOaqz0chMoAaiEedOvaFct8AVEszEIb7ZDXbCQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fUwfjXp9; arc=none smtp.client-ip=209.85.128.49
+	 Content-Disposition; b=cHIGovU101HJLo1nl3zAkOolXFNE8a4nsLDHQNr+0B6htPDpxO5tUDw4P7YuYzsfX4d7zxknkpg2NlfuzT6mQnpeXxIRtOoDn4Uq1m7EORmCjeEMilghsJD/iUVAQtcK76esQJIGmb8lguF3w00woJJjHMr7QijzJKBvKNe2bLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QCwiqut4; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fUwfjXp9"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so1991285e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 03:48:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QCwiqut4"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso23270545e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 03:48:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741603711; x=1742208511; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741603722; x=1742208522; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RcnXFhBJsspPY81aHKEpyHgRpt8kbK5A2y07Uh+g33g=;
-        b=fUwfjXp9rTFdMI/2jYh2Pa4duCMDN49sgIGYlm0TwNFFy9a2ZRTS1uw6F7bbhYyEkC
-         pJuLv97Ai/ibsz6KBsSfEs1Lj8NBHFuNj26D9ZQortapRgDfYqUulw9Dwd8Ow2KC8Kv+
-         MVRhXW97OTq31uq3smzJpBlNW6UYZXcfifMl+eQsDrItmIFsYp36ykLVMsit6d8QJliy
-         T9upNRfJYVkUTkpkuu++VOD6xK8AFFVhsCwfcAVZq676v/8S2UTS/QgfqkZMl2iqA5/1
-         OsvjAjBK2YVa2t90rOnyIrPoFig+tTS6NVMsYSVb1IbPJFbf5J+R4gm2eCvS1mGXhw6g
-         FGrA==
+        bh=P4FBTBE+KNOkM+Qcs2aGG4D+zzTC9l6YOpjrjTql9Ko=;
+        b=QCwiqut4grrDAhnmpyyWOGtoPFSLlO6LwON7v336QIUYd6H34bIxpWF1qu4Cj5u6Gu
+         D4exXJWcPTqAN/BTxUscdwV4Tm6W162STr8QWJGPyWznqJXEMllOCwgQ8Q1XegGwhWXQ
+         Kqf0pjumGWzC6WkyHEgyvIlWbXhHLrN0zUfSBYSvuUOHtumBcwWb2kDmez9mYMwadwze
+         j7Cpr8cnrCvJj4ZbGQ5G1/KnnSwSP+pgnJvTbnW6SRYt3RNzppGwxwXkOudvDzqChLZI
+         uAKKBdNTbqIiIpvT3FPBiuKdJh7ETxQ+G2J3OR1wWDvb+m6WQuisczeh/lYtUjtw3zs7
+         /zpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741603711; x=1742208511;
+        d=1e100.net; s=20230601; t=1741603722; x=1742208522;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RcnXFhBJsspPY81aHKEpyHgRpt8kbK5A2y07Uh+g33g=;
-        b=uVp5tHKrjyQzEEL6/BKFXd4qcq8xnRVwzHWyNelqr0AFYv3g67A1IrrttMTufHxV2M
-         OxRJpzhzxF+ih2Uz9htOYTJa19ozcClZD9hW6Y506ypC/S2zySDtrfnll1l9RENtx+th
-         tgrC5cDD+/Q0rlVHG/tTYFnsMPp/nRdm3YAQBV+ZMGXefOFPO58Ny8v3foaOHXcltYD/
-         h5ZlAakTzErlLbVnHihbC6xWmJo8nrGEFlQeyy/7o0P0Nf1KbOa1ts6csCxM3PZY+70y
-         ev6isDHKIDYBi/bEBn1/QpdfQrCQ/B4Cy26kqr4m00fFi0r/xyt1PC69Mr3Q5mD1o+Ny
-         f6xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXj2tgyxoannYmVbKlPJJ+AZKKNr1GYoONmm2sQQpqFgaCJDzhxfb9mqIuDm2RjVYdq7h6Ts2Vm391AFCmq6A0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP2misG6PeZ5j8QZbt6iA2A3En8ggvmVGRVqKehLbXXj3gSEaS
-	QQ+QvtHudr2j0XZhnKbZ3SDZ9EIkFr2EGvisg1M3snqnE6Wei/CyEk/AiH5Mqcs=
-X-Gm-Gg: ASbGncvX8IoREvCrcRpuxqYrPowi/e2mNj0kDaexMfpa6EPBUMyG+DeJvtOUJh5Jn7u
-	ZAkZjx9Ox5f/4CbGjJpIrHBSmeKe3JYp0Ih+sDWlsrojFcmLXBVSapxAkASs4M94W1JpMpNUQiQ
-	ky5OL8TJfqLgec64UVpQNiGmlaCgk9vFz5QGAEJnH7fHNDUHW8/nkTlY7Cw6kA37OusMKimg5mt
-	qoWWSqR8b9h8XxSwf5LXjkONF1YOBLXWKY06MhdG70VVcgwrdmM4gWQeL7umZHEvU4An0sS0i3C
-	6d7j7BeBWctOVwKlGEIWfRK1PTCW9oQdBpgStRSxDBdqpyWapg==
-X-Google-Smtp-Source: AGHT+IEvyQMgaUHnCuYCt+OpJiqkHIstn9Ui2odq4PjFQ9lNSszLbzPKWSr7S0YVwsCBZMsm/36JQg==
-X-Received: by 2002:a05:600c:470d:b0:43c:fab3:4fad with SMTP id 5b1f17b1804b1-43cfab351c6mr15054385e9.16.1741603710881;
-        Mon, 10 Mar 2025 03:48:30 -0700 (PDT)
+        bh=P4FBTBE+KNOkM+Qcs2aGG4D+zzTC9l6YOpjrjTql9Ko=;
+        b=vBWMp3Jel+dw+MyZIrzlyGS13UfTcsI2p7NPcaP32GQtIP45ddFgCh8j8GoBIgRbL0
+         VEEeRzqIQma56j/H5FFIOFweQVddd0tTlKqgnBhqSBSpWZSPY+pwd/0nCvJ/g58afbBa
+         QC1W7FOVXfDYOs0lT7lBL9DiSNRWiaKSQ54h4DDZHSuCOWw9b0xPysrVe0PjbC9+XVNN
+         ZBY8s6U0iY2CxwJim1UdbdJ4V0RtuQONw9IARKgjRCgq8dcn6pToGQaRoDdtbRKRRTEa
+         K3BihnBZ4liOkSoBG6SKzrjHNrIarM64Ily8xveVdAuTpTgG8FNRh80gkSB4KM2B+10d
+         8s1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUqETITZi90fdXik6LW43z/pNPm70C58ndQqatGOhhxQJeCjGBPdHjFDfDvfQFgZ5iH5H4Jlm/fV6XXjKuS4pM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyYdmHsUj3/kDOxtZGvz6OVnCAHL5GscoEHwzho504qD+Mb61m
+	iVlpdUKNn8x4XaSIJ6yvhcjTeY/IPTzlvx7Mxc/mOmCUmRqVXBgFBUetXsPy3Gw=
+X-Gm-Gg: ASbGnctBAra1ZJmYUEZ/hke0R/Ze8uAKNyw99hikKUYI2ldRjWVfazZXULQsq92LEQS
+	BeS2Z6haSFG+fvOzLuqaTri1DjWDNRvquwUY8UXY9UZugrkk8honciZg8jcVygiCggJYtPJGyA8
+	8vxzSW+7SZW71EMheMnuvQMEATWemp5sBGbiOGnL99KR1JpbiiR0eztLb0KEPJ/TeYLLKP5eneh
+	qdOG0dx2aUTWMsK2deEDUOQOOdFcH3/cBk61Sr9KOc5zRRrfJOU9w0wC6gNx7HlJnOdQ9n3KWrX
+	rXLi1S9209y8h0DEurBcPRqn3Qzy66pR5dhqeDB8N0cT5kUtdA==
+X-Google-Smtp-Source: AGHT+IETFwDZNdnH20Q7Y3z4UlrnseZbh1WDkk70tSsdvhJaGXXT+NyRi65tIbPyOgQrBEERRB/G5Q==
+X-Received: by 2002:a05:600c:510d:b0:43b:c0fa:f9bc with SMTP id 5b1f17b1804b1-43c601d93e7mr74449995e9.12.1741603722155;
+        Mon, 10 Mar 2025 03:48:42 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43cf27f8ef3sm45737585e9.11.2025.03.10.03.48.29
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ce3f573f6sm57354855e9.0.2025.03.10.03.48.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 03:48:30 -0700 (PDT)
-Date: Mon, 10 Mar 2025 13:48:27 +0300
+        Mon, 10 Mar 2025 03:48:41 -0700 (PDT)
+Date: Mon, 10 Mar 2025 13:48:34 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Felix Fietkau <nbd@nbd.name>
-Cc: Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net] net: ethernet: mediatek: Fix bit field in
- mtk_set_queue_speed()
-Message-ID: <eaab1b7b-b33b-458b-a89a-81391bd2e6e8@stanley.mountain>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] pinctrl: bcm281xx: Add missing assignment in
+ bcm21664_pinctrl_lock_all()
+Message-ID: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,31 +79,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This was supposed to set "FIELD_PREP(MTK_QTX_SCH_MAX_RATE_WEIGHT, 1)"
-but there was typo and the | operation was missing and which turned
-it into a no-op.
+The next line checks if this regmap_write() failed, but it doesn't
+work because the assignment was accidentally left out.  Add the
+assignment.
 
-Fixes: f63959c7eec3 ("net: ethernet: mtk_eth_soc: implement multi-queue support for per-port queues")
+Fixes: 60d69769c851 ("pinctrl: bcm281xx: Add support for BCM21664 pinmux")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-From static analysis, not tested.
+ drivers/pinctrl/bcm/pinctrl-bcm281xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 922330b3f4d7..9efef0e860da 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -757,7 +757,7 @@ static void mtk_set_queue_speed(struct mtk_eth *eth, unsigned int idx,
- 		case SPEED_100:
- 			val |= MTK_QTX_SCH_MAX_RATE_EN |
- 			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_MAN, 1) |
--			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_EXP, 5);
-+			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_EXP, 5) |
- 			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_WEIGHT, 1);
- 			break;
- 		case SPEED_1000:
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+index 7c8f8bd7da12..9ea20fde3a24 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm281xx.c
+@@ -1498,8 +1498,8 @@ static int bcm21664_pinctrl_lock_all(struct bcm281xx_pinctrl_data *pdata)
+ 				rc);
+ 			return rc;
+ 		}
+-		regmap_write(pdata->regmap, BCM21664_ACCESS_LOCK_OFFSET(i),
+-			     0xffffffff);
++		rc = regmap_write(pdata->regmap, BCM21664_ACCESS_LOCK_OFFSET(i),
++				  0xffffffff);
+ 		if (rc) {
+ 			dev_err(pdata->dev, "Failed to write access lock: %d\n",
+ 				rc);
 -- 
 2.47.2
 
