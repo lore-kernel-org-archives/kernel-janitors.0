@@ -1,130 +1,122 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6872DA930
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 13:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E030222A1E4
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 14:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741612650; cv=none; b=MD5tWp3j9CmIxrUvbcohmBFlI/RMjllH4xZ4IPrG79yCEDGqIkGjdE8UzeFABJpURrpgL5Hy5PAxgnvafLSzM3P/sSbl3+4SHo/ePnO7816rkIhTSwXLSm+DrKxskYqu20u/7TE4Wuxb19+A/BRaRJCTC07f9fdws8njt+xr9f0=
+	t=1741618330; cv=none; b=LM2IevSxJqYY+E6O0s7D27FbwTFTu6HGfR8sTW9zs/WM0Lej9QNn4qXsuYoo2WM1M3pvxNehVf6MEXa1SglHRKJTQjxADszvnDQ8upEBJeuY6zlZdXSTg9ETpeyUWGcM195NQyt0PXHjgh8e4DDsYYPjz8lEdTvIxB06+pP6tSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741612650; c=relaxed/simple;
-	bh=mGnN7BFzBc1uRQ30QCiMw5aQuRpMADs6X0AFsOMKRRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MQ3g7MaaTi8IZ8um3secXQ2hk9q06Oha/H0DCNHaH2Us3ID/9ifgrTB7XVKmFEmqXmw0O+okEtM0vTXts9H8ZgsXgPToXLKDFUZJ1SOGqschZIwePGeqbFDBM3Hcufk0txAO+TolPG6PYBYzjx+SnOCfLH+Z9+QUdvsmKmZsNYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=U3CdV5B9; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1741618330; c=relaxed/simple;
+	bh=La8fa582+cudZWU7EBZb+kiU11zXIyrob0PJV2PXjfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZ6Rt04nlaGxwV2HoSNcm/0/zEOM7EJ2lrTvDcSqKDCU5BNvEAHYuQ/44Ym1BPdtkhOaFavt+S70cVucHkboz20n4MnsmcubAG3bNZZuYaqQVNmThQR5529tdr0VP1cHNa1cn1pyAYmorKVRyL9LD6nzm1X3flwIezfDWzLARs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KFd9FhJa; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="U3CdV5B9"
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-72b7f553de3so58667a34.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 06:17:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KFd9FhJa"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfebc343dso3706775e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 07:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1741612648; x=1742217448; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hVV9pYsXZmqC1J6J4fTFIaqWY5CQDoFFEox0FbshQk=;
-        b=U3CdV5B9AYfiUIYVPD41IOQJUvlGtt5v4h4BxLGGpCa3/pvc/B6b5jqG+R67sZCzWn
-         6RrPVk93QRFO2dtoxWffhjXZBsZq+jBHRN2KaoTJcq01Yy6Z49GQL1UkeE2aYU0Ow9id
-         qlR2kW1FE916IiuYE9FjYXQb5jv+/HdTngwCc=
+        d=linaro.org; s=google; t=1741618327; x=1742223127; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oJhmOti6S9aSxHFcfgWlRYy87Ur6fs4aWozpDuFk45g=;
+        b=KFd9FhJapk9LSPrTSWPYVYrj9OPaxtDOWFbamAr2nAK3v58lTN7B1G/K5ZL/s6+++r
+         Ej66R0z7uvendhA6TlVMinoHfN91/7IQfe36jmXtlxy62nz44IqciyX6wdOLXT0dIOkj
+         59kDKpM7uYwhvFNKmFd/4qv8kevkUtZq1xhGXaNMZYvmvyIUHd6mBTJYdkyBo//EDdEX
+         7dS41EdawFpgPDo7Av8GqU1gbK2iqC+O6YjxlXVpZDkUP1SBBZ94U+beNZx9e5ngdl3T
+         R4PA32rtAdERI02fVx4CEnQYQr+qhb5QgFIwheqvM/c1Sek1g0esxv+hXFD6Aal95DQS
+         9hmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741612648; x=1742217448;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hVV9pYsXZmqC1J6J4fTFIaqWY5CQDoFFEox0FbshQk=;
-        b=so3Wr0cjf1+66pLKhvvNRTuE+AxdSLfJPHi7ISQ+rARRlbKLx/LZTUOpyt/VZ5yiPk
-         Z7AJL9kQ1k1OYGfC9vDKvJNqHdkYEdlYs2EYQMMKKgRjlLdGLrpDj2oNqdxcjKSl69vn
-         7ghl1Gc28JEF8dRBT8oHB+oKeVXkZ4rLjOYcpw9Aruwli25a/0k+0s0YBdd0fKHzq+wf
-         1Uze8sGIr3akgECmk6lfLOZcWrXrxrGWzne1D8vIUqgvrQS0D1EaZYHkcXX6To3+soIO
-         oyBtqQ8VjQ8QvOh/HY4FSEtVL8VR40b/5yCacI2UOdW3lniI3ERyNLAEBkxS2J86sG41
-         eC6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUXbPJMIrCRaNyivTTAvTdpZvI7QbJmC0mfOxJbpTs3TifbapqDi3i1oU1RN5qFQsFoabmLKw9fTqRfP2JlkWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMpbxqhqmM61zKM7zE7q+cGL/IZhYfg3KLrpNky73IxRM148sA
-	WQIU6SPUDQiT03QOP6Goau7NsaC5oX4+njLsctvS3cIS37RFIYK5Xga7XliAnQ==
-X-Gm-Gg: ASbGncsIqRcixU5Tw6Dvbr/SSlkcwIgSRTZdKRylog+O+C87ziGurKRNID0S0FrEzEV
-	jloJKQMDx1K8XrVOnDBcnpkU2zJ4HsPu0MFCVbYIHr6Xkp8xCrJ/19fJZDF8SBuMSrKebueNBIX
-	UNOwC8CURC6XyJDpiMQyazrgMeyDGIuXUOwexSbk6aNNeqSi1+Fj2Yevr6+d26dc8nIxGldvrhL
-	KMRkYUR7fVxjc7j5SCnoIuPTKuB/ULE3TiInU52mT64cHMB+GOJIhWlukw4hAir98YCCOZ19SF2
-	D4EaFqVGWfWWXrDl02JVR2Bgc/xfADbRTfCuoUR41UtTOZgzw/Q3/W1ocM9U4+2SzKwhETHPRcl
-	uUKA2coHR8kZbxaTr1hw=
-X-Google-Smtp-Source: AGHT+IHOtYVjKASEmQbKJvWKm4BF6A5oOWYMfkeEhMYVuALyNuSXIsPApVmHGXH1sFnX9s2IVJE9HQ==
-X-Received: by 2002:a05:6830:3498:b0:72b:95e5:edab with SMTP id 46e09a7af769-72b95e5f050mr450321a34.1.1741612648382;
-        Mon, 10 Mar 2025 06:17:28 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c2d1b00173sm207615fac.19.2025.03.10.06.17.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 06:17:26 -0700 (PDT)
-Message-ID: <c55f5485-0a32-4745-98a0-d620e4a2c4f1@broadcom.com>
-Date: Mon, 10 Mar 2025 06:17:24 -0700
+        d=1e100.net; s=20230601; t=1741618327; x=1742223127;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJhmOti6S9aSxHFcfgWlRYy87Ur6fs4aWozpDuFk45g=;
+        b=iOGLHaxQeHQNyXi+Q7s+dVF67Q7imY0rxK9Xvxjzeia89GKQDqNUNFumzeeiUq6W5Q
+         ZUjUY0s2qo/VF317FnEd2wW/9dq7UmkC3rUvhC3gswUwnV7leZxzrRk7EpEY+lQ6OII7
+         KP90+MilzjLlqHZn4oyGxPUIOEtbDTaF3RIYNMLypMGKCutln/b5t42NgQeigxOtC0Bg
+         yCwQD0fGRdG+zLlYyJVwVgEPzjCCCBhxAT0YUgHpQNmBdD1HTNUYiQ1077xUiywhYj+r
+         Pt/jsu/QHWZ2irP3urm6cq9kOYI7CqpAP85lW8bR5cqSaWRRIaTgRP6YB1ZPEQVs2VQD
+         qeZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4JGEI54ekfJgjtQES+hIVUpoadUflIldkdr+ptMfc2/YzYf8JJkm8xCBaLwQ+YTsWoyHwqrurmCikxZCvQXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3k78r24tnVpFndoxpjtfLbKkkyHPj4jatcABYDEvc0wMxO3Wa
+	bhSvbCluJ92k4RPq2rAb0ws/67e5MOiKSNlJfmw6ANyocNIjK/vxEyqZB0grtvw=
+X-Gm-Gg: ASbGncsJnsXUO+fPfckFnZWXlYTh+a0q3EHGPrYxwhj2kGz76Pqnxa7oweXVUaiKMIG
+	eGLE5C20G/UunAcAc1Z8NR1cTVG7H+9ET4jz9AgtNaZzIoH5s9GLENI3eLXpq/wlOBtJCkmwXge
+	k04CDw5XpZCz151KP0By6cOfEaKUQDI/ipTZwS3GSWIDlHUcDgCravbSzyP1nBYaDIQKHv+U1KI
+	b5QnnqF0HaUiQ2TETA/2q6aTs+4xQBA8k4CcnxtZ7H3t9euPdC1mShEfIQV6tw8rmcrmQiZOySi
+	1PnH8jjUezGOxDk2NjleZIucomRGttu9rcazEG5RVwfAxYLhCA==
+X-Google-Smtp-Source: AGHT+IEWXxlykPP+DK6XBhySTuz9TVLUo/1Ocj0YrcVL3sXXqxgbc5YK7TpnRor10s4o+P6MhNGnfg==
+X-Received: by 2002:a05:600c:1c2a:b0:43b:c95f:fd9 with SMTP id 5b1f17b1804b1-43c5a5e9074mr106986775e9.5.1741618327226;
+        Mon, 10 Mar 2025 07:52:07 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43cef25f075sm63882915e9.28.2025.03.10.07.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 07:52:06 -0700 (PDT)
+Date: Mon, 10 Mar 2025 17:52:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Patil Rajesh Reddy <Patil.Reddy@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	platform-driver-x86@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/amd/pmf: fix cleanup in
+ amd_pmf_init_smart_pc()
+Message-ID: <4a14c0a5-d6f8-4df9-b947-a0d3c3ef02b3@stanley.mountain>
+References: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
+ <32c6c456-94f0-f077-040c-09f67d60953a@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] pinctrl: bcm281xx: Add missing assignment in
- bcm21664_pinctrl_lock_all()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Artur Weber <aweber.kernel@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <32c6c456-94f0-f077-040c-09f67d60953a@linux.intel.com>
 
-
-
-On 3/10/2025 3:48 AM, Dan Carpenter wrote:
-> The next line checks if this regmap_write() failed, but it doesn't
-> work because the assignment was accidentally left out.  Add the
-> assignment.
+On Mon, Mar 10, 2025 at 02:43:51PM +0200, Ilpo Järvinen wrote:
+> On Mon, 10 Mar 2025, Dan Carpenter wrote:
 > 
-> Fixes: 60d69769c851 ("pinctrl: bcm281xx: Add support for BCM21664 pinmux")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > There are a couple problems in this code:
+> > 
+> > First, if amd_pmf_tee_init() fails then the function returns directly
+> > instead of cleaning up.  We cannot simply do a "goto error;" because
+> > that would lead to a double free.  I have re-written this code to
+> > use an unwind ladder to free the allocations.
+> 
+> Thanks Dan,
+> 
+> Could you please amend this with the information of what is getting 
+> double freed, it took considerable amount of time for me to figure out.
+> I assume it's ->fw_shm_pool ?
+> 
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Yes, that's it.  Sure, I can re-write that.
+
+> > Second, if amd_pmf_start_policy_engine() fails on every iteration though
+> > the loop then the code calls amd_pmf_tee_deinit() twice which is also a
+> > double free.  Call amd_pmf_tee_deinit() inside the loop for each failed
+> > iteration.  Also on that path the error codes are not necessarily
+> > negative kernel error codes.  Set the error code to -EINVAL.
+> 
+> Maybe I should start to consistently reject any attempt to use 
+> cleanup/deinit helper functions instead of a proper rollback. It 
+> seems a pattern that is very prone to errors like this.
+
+I do not like deinit functions.  They are so hard to review.  But I
+detected this bug because of a Smatch warning:
+
+drivers/platform/x86/amd/pmf/tee-if.c:540 amd_pmf_init_smart_pc() warn: missing unwind goto?
+
+regards,
+dan carpenter
 
