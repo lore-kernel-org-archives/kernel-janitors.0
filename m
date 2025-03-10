@@ -1,102 +1,193 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FEB229B0B
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 10:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8C822172D;
+	Mon, 10 Mar 2025 12:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603934; cv=none; b=HUWCV4UaZWKcwSdwEMEecsU5a5TxCUBMLYcfe5WGk2ytux40eNnq3XT5wR9h2mzEwmY4aOTbrCMZpFag7Nn/0gveKyaP8pZPMQHtjk3XQhAmJI1ka3C9dEyYx7AdJMSV9LKfgeVg3e+oK2Nzbo9pwJoBOpJw6wKuhJaoU4Jj6fc=
+	t=1741610640; cv=none; b=b56Gtpq6no/yvXTlp50hgaa9ik0qj7xukjq2PMzeJ88hh2KypyZfJDuQ/xnVv4jKptY8chIWx1SsSb2Zk5nzQTPu6hiUREyoKWVW4d2ZLYmZRyXN+N6fz7kpdi1WS1bh3b4ZPywnXj1XieKtRVYO+dMdKF5M0pETpugqxAVc5i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603934; c=relaxed/simple;
-	bh=vVKnwODUdAiwe/gid9w0DRJv5TpgZa3pSP8IVebCvGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fqtSyXzL0cp0nlOAfD5ooDmOSxXRe+tXiWj7PFE9BqORrIfidaj+JIS/ID8tcoijiKUMbpNSoLyIwDSoDWtxnUvbVzybZqpkyu6kfmlj77wF7L+yypmHZLSpC6BYoEoA5n7Hnf3nZMRv+bcpVdjyTJyMSQwAXCoYsgQ/WLiCVbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QhNEV+Ds; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741610640; c=relaxed/simple;
+	bh=itK42hXJovQ7FgvIGOp3LK5q0cp2Lj+aDQwPYA0OCOE=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kO8TiXSINAgBrHr1ZSExEJGWF0rkgWrDbU500iEdAfv8M0AT8xHZNhuV6zeUbs3tFBlsFNxur7Rq8fuejum/ZrnZK8N30nWCDP2N8xhtdYXB60JoVZs+l39xliWP/QTstLqhH0mZ5x8ngRKRUs0VXlYuSD8Jp+1XrP39jaiSuh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k27IqJEy; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhNEV+Ds"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso42607745e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 03:52:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741603931; x=1742208731; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T60o6gi3usu2ntppRywUa3E8NpwOZr/s4pv7rr3CEFs=;
-        b=QhNEV+DsQHmMFF/3V3N/rzgReacxeQcne8aEUk2tC7Vas5wbteFmTJWVIIfrPdSN5f
-         TWcvtXZaHO8jm9WeefqnmRybkZOkTs2gRfhfMJpoIXDB0bQiO8kGnbJMXGSK2RNQKe9D
-         XnG6PtuUl5c8a87o0PF7REyKQY1LBHCm+B0DmDED6kwpu7pNBgHO9CU540QBGHa/Ga9R
-         N5i5f9pyZZrvJT/WOH0dOp48s2L2Ermc5yM8SXVzikbQrJKg/MZLvKSKq+stou4J5kDO
-         LXz46UB8l/egDb2ug+8B3ylcNRNkLqdrkkzXDCsI7XugvvYXUwWx4mmQtpr7tgXUJvfU
-         qUYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741603931; x=1742208731;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T60o6gi3usu2ntppRywUa3E8NpwOZr/s4pv7rr3CEFs=;
-        b=RyFnhD3BlOTUat+oTlYvrdiolPz6rbB1CaUmmmJxyvPNYC374D59c2xTQ0MbVmZTeK
-         ASBTAGO9WYT2/SkpLKQMMjQREVVoS76wZ+vldiV4k/YHhehiii285s2zB+73fx0cQv+3
-         VPLYMOaiBXnFB75PLPbsCPjT/h1hqUcFb0iK5zDZn1KYqBAzWgd7euM/tudBb4wT5Mkg
-         qocwwkRUuvF0Dc7MMgz04xItEcHSQbn66FtCy6c/31ltMB/HVgtJlm0xC2DQagV09kLk
-         oo/1ympb+GsybvbCLVi4JX6bx1q8O+oaXG1TahJvl4IInOoaGsZ1/Va50Vmuw1oHyy8t
-         Kh7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVAA3wjkdokJZA0Ac9EQcw9HaSs0kbvwrhh14OAdmXUBzQxC3IntTLWHCGBbvia7KgtQQDOh/QHXtnTDCVyfPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIrzzC8kkqpQHIDkQ/b0cTcBjoPuYPAtQe1u5RVdCLnYQTuMt5
-	qNnc/fKja0vfVP+AClreYDjnoq6EKqv3I5gXLZqWWCQfFpEY4pAMHrMZXovBZQg=
-X-Gm-Gg: ASbGncvof0AXdapUW7wpsA5DBDXa32ZqDjVR+bkRtfIAlTFcy/Ea0mY6XfS104bv2oh
-	Rh3q+f40NuhKTLY8WClhQlOe1MF3xuVeOY7NCemhEQzyMc90pig/gV+GWvKoTa5SIo824zFTtzo
-	V81mN9xSJIwDMZTvjWGEfrFwicN3l/WHz3/2mfC2RkKXCnfDTs6QPiFeZEAEy6Et59nyQV6sXvM
-	yrulFG6ItGP0mPDfEHtZj9KNCgHZWG7QaNQylARwBgvDy5ji+ORXykw4ft5nSbhvdzzNakmEkfM
-	/2oNN7QtEk/NaXLzxQPh/tVAr8U/5PNjw717KeV2mGYrx/iWSw==
-X-Google-Smtp-Source: AGHT+IG9NsSyCGpPSYGknbpw3bJVRYQjo38717W7yKTXqETR+ruZNlHceeFZwXiH5qt7jRD0fRgUGg==
-X-Received: by 2002:adf:cb01:0:b0:38f:3245:21fc with SMTP id ffacd0b85a97d-39132db1fdamr8297936f8f.50.1741603931088;
-        Mon, 10 Mar 2025 03:52:11 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2bacsm14468396f8f.78.2025.03.10.03.52.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 03:52:10 -0700 (PDT)
-Date: Mon, 10 Mar 2025 13:52:05 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] pinctrl: amd: isp411: Fix IS_ERR() vs NULL check in
- probe()
-Message-ID: <617f4c77-7837-4e24-9f4d-620ecfedf924@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k27IqJEy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741610639; x=1773146639;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=itK42hXJovQ7FgvIGOp3LK5q0cp2Lj+aDQwPYA0OCOE=;
+  b=k27IqJEy6tv+RuAOTYkNYHhYwHTVXn6k90re4R70ueZvTqMP17giCjRn
+   7zwb9fmwatiS7jd8gWCenJDv51m5nD9uB8a9WL4L070/Vp4BWtUa8/tUw
+   oJQjqJL8Myg6TVYfZWRMCzu1R/S1urlxX+D2kZpJ8BZCQa335xBUD61F9
+   fA6SpFrpF9lW52aSb5LrvzKqSLSnjg2ATRjf9n/IesU8bmEs+M4WRVJrm
+   KYC4b3XsnJwkgXDvVOTjxZw3PKQeYOyIVHihkNat/9c7ULmLC0W5NYdUs
+   tRy/zpLHxJiV+gXgXE/6CGzeBmFAEto9iotAJtxlygHONYqAbOGimszDi
+   A==;
+X-CSE-ConnectionGUID: 1aDPYXqLTy6Bo3EyCnSDhg==
+X-CSE-MsgGUID: Uyu1VEKMQ8G5S0/Z6mtiuw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="46389628"
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="46389628"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:43:58 -0700
+X-CSE-ConnectionGUID: kacdkcfmSJCeL3HCWhhDpg==
+X-CSE-MsgGUID: 4C8DnNblQ0y/k9Q3Nm/FPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="150931819"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.59])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 05:43:55 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 10 Mar 2025 14:43:51 +0200 (EET)
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    Patil Rajesh Reddy <Patil.Reddy@amd.com>, 
+    Mario Limonciello <mario.limonciello@amd.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/amd/pmf: fix cleanup in
+ amd_pmf_init_smart_pc()
+In-Reply-To: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
+Message-ID: <32c6c456-94f0-f077-040c-09f67d60953a@linux.intel.com>
+References: <43ad5358-f5b2-4cfc-85b4-e7ab8c7cf329@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset=US-ASCII
 
-The platform_get_resource() returns NULL on error.  It doesn't
-return error pointers.  Fix the error checking to match.
+On Mon, 10 Mar 2025, Dan Carpenter wrote:
 
-Fixes: e97435ab09f3 ("pinctrl: amd: isp411: Add amdisp GPIO pinctrl")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pinctrl/pinctrl-amdisp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> There are a couple problems in this code:
+> 
+> First, if amd_pmf_tee_init() fails then the function returns directly
+> instead of cleaning up.  We cannot simply do a "goto error;" because
+> that would lead to a double free.  I have re-written this code to
+> use an unwind ladder to free the allocations.
 
-diff --git a/drivers/pinctrl/pinctrl-amdisp.c b/drivers/pinctrl/pinctrl-amdisp.c
-index ce21ed84b929..9256ed67bb20 100644
---- a/drivers/pinctrl/pinctrl-amdisp.c
-+++ b/drivers/pinctrl/pinctrl-amdisp.c
-@@ -183,8 +183,8 @@ static int amdisp_pinctrl_probe(struct platform_device *pdev)
- 	pdev->dev.init_name = DRV_NAME;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (IS_ERR(res))
--		return PTR_ERR(res);
-+	if (!res)
-+		return -EINVAL;
- 
- 	pctrl->gpiobase = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(pctrl->gpiobase))
+Thanks Dan,
+
+Could you please amend this with the information of what is getting 
+double freed, it took considerable amount of time for me to figure out.
+I assume it's ->fw_shm_pool ?
+
+> Second, if amd_pmf_start_policy_engine() fails on every iteration though
+> the loop then the code calls amd_pmf_tee_deinit() twice which is also a
+> double free.  Call amd_pmf_tee_deinit() inside the loop for each failed
+> iteration.  Also on that path the error codes are not necessarily
+> negative kernel error codes.  Set the error code to -EINVAL.
+
+Maybe I should start to consistently reject any attempt to use 
+cleanup/deinit helper functions instead of a proper rollback. It 
+seems a pattern that is very prone to errors like this.
+
+> Fixes: 376a8c2a1443 ("platform/x86/amd/pmf: Update PMF Driver for Compatibility with new PMF-TA")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/platform/x86/amd/pmf/tee-if.c | 36 +++++++++++++++++++--------
+>  1 file changed, 25 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/amd/pmf/tee-if.c b/drivers/platform/x86/amd/pmf/tee-if.c
+> index ceaff1ebb7b9..a1e43873a07b 100644
+> --- a/drivers/platform/x86/amd/pmf/tee-if.c
+> +++ b/drivers/platform/x86/amd/pmf/tee-if.c
+> @@ -510,18 +510,18 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+>  
+>  	ret = amd_pmf_set_dram_addr(dev, true);
+>  	if (ret)
+> -		goto error;
+> +		goto err_cancel_work;
+>  
+>  	dev->policy_base = devm_ioremap_resource(dev->dev, dev->res);
+>  	if (IS_ERR(dev->policy_base)) {
+>  		ret = PTR_ERR(dev->policy_base);
+> -		goto error;
+> +		goto err_free_dram_buf;
+>  	}
+>  
+>  	dev->policy_buf = kzalloc(dev->policy_sz, GFP_KERNEL);
+>  	if (!dev->policy_buf) {
+>  		ret = -ENOMEM;
+> -		goto error;
+> +		goto err_free_dram_buf;
+>  	}
+>  
+>  	memcpy_fromio(dev->policy_buf, dev->policy_base, dev->policy_sz);
+> @@ -531,13 +531,13 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+>  	dev->prev_data = kzalloc(sizeof(*dev->prev_data), GFP_KERNEL);
+>  	if (!dev->prev_data) {
+>  		ret = -ENOMEM;
+> -		goto error;
+> +		goto err_free_policy;
+>  	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(amd_pmf_ta_uuid); i++) {
+>  		ret = amd_pmf_tee_init(dev, &amd_pmf_ta_uuid[i]);
+>  		if (ret)
+> -			return ret;
+> +			goto err_free_prev_data;
+>  
+>  		ret = amd_pmf_start_policy_engine(dev);
+>  		switch (ret) {
+> @@ -550,27 +550,41 @@ int amd_pmf_init_smart_pc(struct amd_pmf_dev *dev)
+>  			status = false;
+>  			break;
+>  		default:
+> -			goto error;
+> +			ret = -EINVAL;
+> +			amd_pmf_tee_deinit(dev);
+> +			goto err_free_prev_data;
+>  		}
+>  
+>  		if (status)
+>  			break;
+>  	}
+>  
+> -	if (!status && !pb_side_load)
+> -		goto error;
+> +	if (!status && !pb_side_load) {
+> +		ret = -EINVAL;
+> +		goto err_free_prev_data;
+> +	}
+>  
+>  	if (pb_side_load)
+>  		amd_pmf_open_pb(dev, dev->dbgfs_dir);
+>  
+>  	ret = amd_pmf_register_input_device(dev);
+>  	if (ret)
+> -		goto error;
+> +		goto err_pmf_remove_pb;
+>  
+>  	return 0;
+>  
+> -error:
+> -	amd_pmf_deinit_smart_pc(dev);
+> +err_pmf_remove_pb:
+> +	if (pb_side_load && dev->esbin)
+> +		amd_pmf_remove_pb(dev);
+> +	amd_pmf_tee_deinit(dev);
+> +err_free_prev_data:
+> +	kfree(dev->prev_data);
+> +err_free_policy:
+> +	kfree(dev->policy_buf);
+> +err_free_dram_buf:
+> +	kfree(dev->buf);
+> +err_cancel_work:
+> +	cancel_delayed_work_sync(&dev->pb_work);
+>  
+>  	return ret;
+>  }
+> 
+
 -- 
-2.47.2
+ i.
 
