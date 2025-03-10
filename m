@@ -1,72 +1,77 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6A5228CB8
-	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 10:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B766226CF9
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 10:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741603688; cv=none; b=rATzY7Wao9P71ZWixUUc1kWfUXSYpl5jw0Bb7oZocRhsvyiOYAhvo8jTLlHsBdX5NfU7VrWjXMHvabkmXHdlE1oSJDA67xevqE3I1bFSnrbr4AhfwJmnmMM3J0PiufmxqY7PMZBahkKuX60F05irRs7xApG4laS2fI2kRmpdOTM=
+	t=1741603714; cv=none; b=aSon+XA6uqm/WqyUxfInLIq1ocGaH3Nl4oBXWLYRoztEdbfy/NJhjxHHf9XYU6anacDxwRKA59tq7YaVBnunhDFQfMpLLa+9+0M727BRHPZeqfbF0JEkr5FkOvRmdeZ8C/9G2Z/ebYBdd2S0NJEkPBh4YZg+pMtrUdc45CI1RZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741603688; c=relaxed/simple;
-	bh=ezePfKdiVomBp6Nu0vENgcyh212zJvF8/6B93fEyRqo=;
+	s=arc-20240116; t=1741603714; c=relaxed/simple;
+	bh=j4PdO1nu/lOtJhos8w8kwuTN7slIzAII22YRob34W3M=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UukCt8KoNVXRnkZLg4aSo3N+hNeUBOsTf+erO9OsFeghPjterSgZHc4oajQiMGH/lUKfHDiYKVabl2oIWpuvyXUTxctgUGJtwzcPqi1O1FJzLqSlQuN0BCLl61hw0tTfGf2i80IMlvoHTmL2zj0fW9GES/lZf0lMZdGzEanyga0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KOoo+PAd; arc=none smtp.client-ip=209.85.128.50
+	 Content-Disposition; b=Sehyhu9H5talFPvWK7QXBqNlm8MkaoIAJBaya5UStX87AgIjzMLKNIWNHiTNGklBi74vENFRnHafMSQbGHuhi19iMsodo1fX33vngMnL8I6uapYo3uP0Q0qKjXpR+oUZlzPoFOaqz0chMoAaiEedOvaFct8AVEszEIb7ZDXbCQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fUwfjXp9; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KOoo+PAd"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so4760815e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 03:48:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fUwfjXp9"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so1991285e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 03:48:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741603685; x=1742208485; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741603711; x=1742208511; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=E0yircpCo/QVU3P+N7sKYScgPv6naVVovFtBRlbgD6Q=;
-        b=KOoo+PAdvWYa2/1thUQHnSVgyLB9AJq2/pBagS62WEQkqE7IVuCiv4oq+dkl22iDX9
-         Dqd99AM0bMNsRTor0H0T8NRVN2GcUQuyrCLn/hSYA0xonlbIfcMd2ImWaerXjycmVa/u
-         nlm+jRvOdmwq9/CUL3Fa7IqV6gF1Bf50eDLVciP71+y3Sl2IMXD6ad24eOJ2g4gENxtW
-         KPyk5BQ+UUNKj+hhKy4OAva20BdiDQvvZ9UZGLXa4WJIElgEyGcZY6lQdshSCTNAYNKY
-         lyuhsFEXg0y7nfJv1cTgqMbZa+I93Taz/oKXuchZ4aM9w3+OlDIQlqRnRDmEiN+OJfSX
-         kAqA==
+        bh=RcnXFhBJsspPY81aHKEpyHgRpt8kbK5A2y07Uh+g33g=;
+        b=fUwfjXp9rTFdMI/2jYh2Pa4duCMDN49sgIGYlm0TwNFFy9a2ZRTS1uw6F7bbhYyEkC
+         pJuLv97Ai/ibsz6KBsSfEs1Lj8NBHFuNj26D9ZQortapRgDfYqUulw9Dwd8Ow2KC8Kv+
+         MVRhXW97OTq31uq3smzJpBlNW6UYZXcfifMl+eQsDrItmIFsYp36ykLVMsit6d8QJliy
+         T9upNRfJYVkUTkpkuu++VOD6xK8AFFVhsCwfcAVZq676v/8S2UTS/QgfqkZMl2iqA5/1
+         OsvjAjBK2YVa2t90rOnyIrPoFig+tTS6NVMsYSVb1IbPJFbf5J+R4gm2eCvS1mGXhw6g
+         FGrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741603685; x=1742208485;
+        d=1e100.net; s=20230601; t=1741603711; x=1742208511;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E0yircpCo/QVU3P+N7sKYScgPv6naVVovFtBRlbgD6Q=;
-        b=NryqxCEzsU4oxfy2RW9FITHKggTiB28kN8QiavCdLfyWXZB8YBDU2iMWfl34ICztds
-         6iMu1W2vDyyWq1xFKzAfbx+f3gc/PuaJ74xYZKlhT9wQoBmTXgbg9V3v4rbY3dp7CxCf
-         DBMBY83ARdr4B/Kyqta07VpaLEpGmcCL4wf6JRCaH6O2Kx5i+YxXUv5oEL5iZFMvVwsu
-         tVskuAvfKlt9RufqxPmMpdprJ+a0rFDx1wToASimgPmM3eiHPYWFKwMc/U/rqNTMNYdZ
-         YacOqHKFRmCF59ZMLjRNmzJq2se2J7+HQihDy/TLiwlwEPztHo3Lj0A4FuzFfq/A97kd
-         JxlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE3D7khY5jpVJSMV4pT8dCpn5R1glNklb8ztqIdMKD2PIkJ7DA9jBln2hlovv4NXwtSuXmXC8dx6c3Twbnayo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhyDh1CnaO4z2d79ufA4NqtaZV4EeqW8exYpk6r1NWHyXgIllc
-	qwX8oQHh2uQ+lfllE2FNyhR/URofp0b34yXLU7rtMtbGGCqDqLrOlD3QpY2A+ik=
-X-Gm-Gg: ASbGncs2yIKB8qhfEjmM3frCXoVmMmC1aS1JbHkuT+V84BShUnwpy6kGGOPMZNtmaLT
-	hZFpyUddiFlRkm/jYYnwS9ma88SIoMdBTDXeJ5Ka8wMnXaUeWv9kC1JIRwJbOyTO/LmfoNkoSyM
-	GHK6LvnIGeacnlLsn8lgGvUlsbfIEb8tTuZe6Z1G2cVAUk982rQadCmSxIrPXcyujkzSBILhVVe
-	y6DD6XrqUKfNufQUDg1Tv1WnybYR2OYI18/SyXmn2yfhqdji6NLaFgm6jv0j2mBb1Whic1BLyXa
-	cxXPbMb/8oO1YemjiGaKeYoqfU4BFRVc9eVRixJJqcd9V8IQjsGEOZiZor+S
-X-Google-Smtp-Source: AGHT+IFlBbMsdDkibGs+3E90ni36pDU1DtBtQx2GYLaxL8v3OUzQ9CG7PxwMtpFknCcyL00KBQQ92Q==
-X-Received: by 2002:a5d:47cb:0:b0:390:df83:1f22 with SMTP id ffacd0b85a97d-3913af390a9mr5568803f8f.25.1741603684736;
-        Mon, 10 Mar 2025 03:48:04 -0700 (PDT)
+        bh=RcnXFhBJsspPY81aHKEpyHgRpt8kbK5A2y07Uh+g33g=;
+        b=uVp5tHKrjyQzEEL6/BKFXd4qcq8xnRVwzHWyNelqr0AFYv3g67A1IrrttMTufHxV2M
+         OxRJpzhzxF+ih2Uz9htOYTJa19ozcClZD9hW6Y506ypC/S2zySDtrfnll1l9RENtx+th
+         tgrC5cDD+/Q0rlVHG/tTYFnsMPp/nRdm3YAQBV+ZMGXefOFPO58Ny8v3foaOHXcltYD/
+         h5ZlAakTzErlLbVnHihbC6xWmJo8nrGEFlQeyy/7o0P0Nf1KbOa1ts6csCxM3PZY+70y
+         ev6isDHKIDYBi/bEBn1/QpdfQrCQ/B4Cy26kqr4m00fFi0r/xyt1PC69Mr3Q5mD1o+Ny
+         f6xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXj2tgyxoannYmVbKlPJJ+AZKKNr1GYoONmm2sQQpqFgaCJDzhxfb9mqIuDm2RjVYdq7h6Ts2Vm391AFCmq6A0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP2misG6PeZ5j8QZbt6iA2A3En8ggvmVGRVqKehLbXXj3gSEaS
+	QQ+QvtHudr2j0XZhnKbZ3SDZ9EIkFr2EGvisg1M3snqnE6Wei/CyEk/AiH5Mqcs=
+X-Gm-Gg: ASbGncvX8IoREvCrcRpuxqYrPowi/e2mNj0kDaexMfpa6EPBUMyG+DeJvtOUJh5Jn7u
+	ZAkZjx9Ox5f/4CbGjJpIrHBSmeKe3JYp0Ih+sDWlsrojFcmLXBVSapxAkASs4M94W1JpMpNUQiQ
+	ky5OL8TJfqLgec64UVpQNiGmlaCgk9vFz5QGAEJnH7fHNDUHW8/nkTlY7Cw6kA37OusMKimg5mt
+	qoWWSqR8b9h8XxSwf5LXjkONF1YOBLXWKY06MhdG70VVcgwrdmM4gWQeL7umZHEvU4An0sS0i3C
+	6d7j7BeBWctOVwKlGEIWfRK1PTCW9oQdBpgStRSxDBdqpyWapg==
+X-Google-Smtp-Source: AGHT+IEvyQMgaUHnCuYCt+OpJiqkHIstn9Ui2odq4PjFQ9lNSszLbzPKWSr7S0YVwsCBZMsm/36JQg==
+X-Received: by 2002:a05:600c:470d:b0:43c:fab3:4fad with SMTP id 5b1f17b1804b1-43cfab351c6mr15054385e9.16.1741603710881;
+        Mon, 10 Mar 2025 03:48:30 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2bb7sm14676793f8f.63.2025.03.10.03.48.03
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43cf27f8ef3sm45737585e9.11.2025.03.10.03.48.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 03:48:04 -0700 (PDT)
-Date: Mon, 10 Mar 2025 13:48:00 +0300
+        Mon, 10 Mar 2025 03:48:30 -0700 (PDT)
+Date: Mon, 10 Mar 2025 13:48:27 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Himal Prasad Ghimiray <himal.prasad.ghimiray@intel.com>,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/xe: Fix uninitialized variable in xe_vm_bind_ioctl()
-Message-ID: <4a74b296-8b51-4dab-a2f1-69919da1ca62@stanley.mountain>
+To: Felix Fietkau <nbd@nbd.name>
+Cc: Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net: ethernet: mediatek: Fix bit field in
+ mtk_set_queue_speed()
+Message-ID: <eaab1b7b-b33b-458b-a89a-81391bd2e6e8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,29 +82,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The error handling assumes that vm_bind_ioctl_check_args() will
-initialize "bind_ops" but there are a couple early returns where that's
-not true.  Initialize "bind_ops" to NULL from the start.
+This was supposed to set "FIELD_PREP(MTK_QTX_SCH_MAX_RATE_WEIGHT, 1)"
+but there was typo and the | operation was missing and which turned
+it into a no-op.
 
-Fixes: b43e864af0d4 ("drm/xe/uapi: Add DRM_XE_VM_BIND_FLAG_CPU_ADDR_MIRROR")
+Fixes: f63959c7eec3 ("net: ethernet: mtk_eth_soc: implement multi-queue support for per-port queues")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/xe/xe_vm.c | 2 +-
+From static analysis, not tested.
+
+ drivers/net/ethernet/mediatek/mtk_eth_soc.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_vm.c b/drivers/gpu/drm/xe/xe_vm.c
-index 22a26aff3a6e..d85759b958d0 100644
---- a/drivers/gpu/drm/xe/xe_vm.c
-+++ b/drivers/gpu/drm/xe/xe_vm.c
-@@ -3287,7 +3287,7 @@ int xe_vm_bind_ioctl(struct drm_device *dev, void *data, struct drm_file *file)
- 	struct xe_exec_queue *q = NULL;
- 	u32 num_syncs, num_ufence = 0;
- 	struct xe_sync_entry *syncs = NULL;
--	struct drm_xe_vm_bind_op *bind_ops;
-+	struct drm_xe_vm_bind_op *bind_ops = NULL;
- 	struct xe_vma_ops vops;
- 	struct dma_fence *fence;
- 	int err;
+diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+index 922330b3f4d7..9efef0e860da 100644
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -757,7 +757,7 @@ static void mtk_set_queue_speed(struct mtk_eth *eth, unsigned int idx,
+ 		case SPEED_100:
+ 			val |= MTK_QTX_SCH_MAX_RATE_EN |
+ 			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_MAN, 1) |
+-			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_EXP, 5);
++			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_EXP, 5) |
+ 			       FIELD_PREP(MTK_QTX_SCH_MAX_RATE_WEIGHT, 1);
+ 			break;
+ 		case SPEED_1000:
 -- 
 2.47.2
 
