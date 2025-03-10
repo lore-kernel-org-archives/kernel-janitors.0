@@ -1,122 +1,106 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6F72046BF;
-	Mon, 10 Mar 2025 07:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F475226D1B
+	for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 10:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741592958; cv=none; b=o5zuJNXQ+QC4vDrxZCXv6jWo+xAP08PuWYoaATndfkLvxC2Hnm/Pqfc6E58oRQFfAg6udeup1I+CL8ChOO63Bg8G8ckz+pfJjzHMQw7k4NsQty/fVXyUg0LKLhNWuOdLla+rkf0usgETzydQkk6jy4p8vxR7PiLWeV6+X4PE9qo=
+	t=1741603630; cv=none; b=hmSp+EH7P53WY7QkYmMNz/vjtbhj3nkFfHF9ryf6Fuv+nS/p22kaG/T+ia6/adSDs1vT4fNnVpcurg3StKGaXhzK4aTGi+fo9IxjdOYISagJCdq8KT4cNoJ5YJkSg47BpPzISgN+ykEm40v3YR9SnIaZnHlM2TnSzEb4Wu+5O/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741592958; c=relaxed/simple;
-	bh=N5vzuCqcFyx4s8ct6bBbLFzZ/cGlLfNv8yq43DhYwqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBoG/klIYvm2K4e4L/9j9x/x8YplwrZHb4WDQl17WA/Ic3g+8URUHXA0AF7X+LzlElQELuhGbwKxlSrS1knK+/3cAyEMfnY0kFxcTxlxhcON54J4i/WlNMIfs+O37s2kfVCTmXlZXE4yxMAYsmACK1WnUKLDVvztG0G8uMzth4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ORGCS5kC; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1741603630; c=relaxed/simple;
+	bh=/XxoIMfAipEC21vhmED/mbxFc1B/+YiyisaMqIYoFhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QTJTvqRgDxx6wdaFRgiHjMiI4a3YDyGNGcCt8h5rhM68CEx0XivFGNT9WX9lhxlhw+xndZWOpQMQrDkN2ZULtkbBDk6mUJb3BpoOJGE9U1qaRkVKv7iGw1/X5s2BZhP1zumYEezJbs9pzBSYk+T8VlKJyotErH+4ES9FBoiPrIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mfpf2Ycf; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ORGCS5kC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741592957; x=1773128957;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=N5vzuCqcFyx4s8ct6bBbLFzZ/cGlLfNv8yq43DhYwqY=;
-  b=ORGCS5kCt7/d1NnittRksrrSDitGimf6RQtPDHXjEQPQATlb+zVAFj1C
-   HAV0yHXmZriT/hWmnhkdZ8zrPnXcitoM5jSitcv7Tl79Xk1TjK3Zvz22B
-   sJ/UeEa1rmsMUNmDE9SqL0ga3dNyFexObDzgp85m7DG6HlZz5eDELkCwJ
-   PuBtXlaNlpPNxKy0v92O5EPO63cp0u+B+p7uhKpXHgDd4OofST3ipwm70
-   HLk5QxshPrBgsC63fpb0jgpyAzmcyofhkIy/jxey7ZNLlK3+L2F6DECs8
-   ZhU/X2PFcuJ8bcl4539x0aibY91Fa0lS0d4qoB6PP7tfcS7RAus6S2mjp
-   w==;
-X-CSE-ConnectionGUID: Z4JckrfXSlmVPGUcg3SNMA==
-X-CSE-MsgGUID: 8/x8UJPUSlaYx+sqtDoA1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="67935590"
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="67935590"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:49:16 -0700
-X-CSE-ConnectionGUID: 6nFhWA4IRh++edvRyVpZOg==
-X-CSE-MsgGUID: aWDNEfwgQN+tKR30BSI3BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
-   d="scan'208";a="119870467"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:49:11 -0700
-Message-ID: <2a333cd4-6ec3-4d80-9d80-ba2add234da8@linux.intel.com>
-Date: Mon, 10 Mar 2025 08:49:07 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mfpf2Ycf"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bdc607c3fso23803915e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 10 Mar 2025 03:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741603627; x=1742208427; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dxe2UdMnuICWXIR/40yTHRWRgSj119FGmCYLgFhERXk=;
+        b=mfpf2Ycf50Q86FMyR//PXr8vgQzPaysv5Fl1Uvbn6nKTzT0chNwJckKN5AS3Gz6UX4
+         F4k3lwLMvHzvZeudG83vwYgEdi0C9piiN1Y5kUSuK9mzqq8cdkwT5+u+UoRxFB4cN9qg
+         9mOvAaK4VnYA/ogwXZetucF9Bos9vKWwUrPYnKwsYVIqJ8OAggnIndpuKgZBUcIzrqqx
+         FDMui0aWAgtCvDH65d1ZC6WpObbIfCU1duafRT5xBX5UPcKXnrrTPJ32ElDs5bpDPPUh
+         gdEA07lIj0c3eWYjNAoxmEgRMk4I2atetK0Vch/oh1/89foZMFBb49iijT1wTatHNPmo
+         eF4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741603627; x=1742208427;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxe2UdMnuICWXIR/40yTHRWRgSj119FGmCYLgFhERXk=;
+        b=KGu/AY4oeX5ePZKa0SXXO6L15vw4QMIJjfXOGGPkqqGNDlP+CKiji4yb25DymlFA49
+         d3cwrNeWVq7oUjy0AAr87gwk+YhsNNgxlHFyle7Qd9k3U+3wCUx34KhSPfDNKtRwmML8
+         7S/5M9eAzrl4tFyZtjRLtu25mfgaD9r4QCaDSZB0/qXfrT847rSm/v3E6jF+k8PUCCoK
+         TX5VcI4by9h1ytYFip+/XWes/YuYH4R4Ocg8sMTbNZ3RoVxYNLyAArH5cxK27yLpxGnO
+         iMtteo4nuVtCip1br0aQy9g6e6NxSzKjbAA1ulvfNAQoDcoZJBCmHmqNWikvZrlWgwFp
+         iqSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrm1rr5qQhAZ8v5uQCmnxJI+fa3XLmz+cA2uJIJ0Ughe4XraLbrHpZulWPc5zK6HSMsH28RZP83tbhXnfQyGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY2A2Y0YMlt7W2YVRk420uaDC8Qd7b6LQ4YtYfzM09At8tOvre
+	9CsTucHblKbxkuX9dwqFvO6gscKl/Au2BDCwxDIWwKXwndFK3Eaeh/Uj4eoz4/A=
+X-Gm-Gg: ASbGncuLOt7JhNf4iBa7gvetyFQPAmnUvlyY35a6r27m2H+X9Ya/RyULSSl178Z9qQq
+	v6Ta3o/YggDBvzbh/KGxCyXbEfKKgC53J+vXZCjNqYzPP1DuYaAfr6jFGAEO/VFa7HgaqWh2XR4
+	sV7p4/xXfcMDGpuRjzDly0QNAa7S16TNTkP0nsU0BTMgQQjm5l33vrUt8eZWHeFiXLnWYGQy0iA
+	oDCsVssCLcL91gStkzLpr5RVi5Mf0WBiTSfK1yEGFy9yALeszN7ra9ZaVxBxvKpH3YiTD/2C5HL
+	lA1n5fpY9hI41V+cfqwfxgE4MY7ES7B4xwOtJ3djcChSpFkt6Q==
+X-Google-Smtp-Source: AGHT+IHZYEMjLRapPZhjVBke2kOIMDf3xY9p9R2H2E6KyfQ0Ja2SOjNPA2cXqXY6FK9cu+NqkjeCfw==
+X-Received: by 2002:a05:600c:474c:b0:439:9b19:9e2d with SMTP id 5b1f17b1804b1-43c601e1393mr91960565e9.16.1741603626942;
+        Mon, 10 Mar 2025 03:47:06 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bdd8dad73sm142867745e9.19.2025.03.10.03.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 03:47:06 -0700 (PDT)
+Date: Mon, 10 Mar 2025 13:47:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>, Jack Xiao <Jack.Xiao@amd.com>,
+	"Jesse.zhang@amd.com" <Jesse.zhang@amd.com>,
+	Tao Zhou <tao.zhou1@amd.com>, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/amdgpu/gfx: delete stray tabs
+Message-ID: <92b9d527-fa20-4e4d-a4ce-7c442df9df0e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: codecs: wm0010: Fix error handling path in
- wm0010_spi_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Dimitris Papastamos <dp@opensource.wolfsonmicro.com>,
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Mark Brown <broonie@opensource.wolfsonmicro.com>,
- patches@opensource.cirrus.com, linux-sound@vger.kernel.org
-References: <ee39ba19b8c4c157ce04e06096a8f54016831959.1741549792.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <ee39ba19b8c4c157ce04e06096a8f54016831959.1741549792.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 3/9/2025 8:50 PM, Christophe JAILLET wrote:
-> Free some resources in the error handling path of the probe, as already
-> done in the remove function.
-> 
-> Fixes: e3523e01869d ("ASoC: wm0010: Add initial wm0010 DSP driver")
-> Fixes: fd8b96574456 ("ASoC: wm0010: Clear IRQ as wake source and include missing header")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only
-> ---
->   sound/soc/codecs/wm0010.c | 13 +++++++++++--
->   1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/codecs/wm0010.c b/sound/soc/codecs/wm0010.c
-> index edd2cb185c42..28b43fe4dc32 100644
-> --- a/sound/soc/codecs/wm0010.c
-> +++ b/sound/soc/codecs/wm0010.c
-> @@ -920,7 +920,7 @@ static int wm0010_spi_probe(struct spi_device *spi)
->   	if (ret) {
->   		dev_err(wm0010->dev, "Failed to set IRQ %d as wake source: %d\n",
->   			irq, ret);
-> -		return ret;
-> +		goto free_riq;
+These lines are indented one tab too far.  Delete the extra tabs.
 
-typo? riq -> irq
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->   	}
->   
->   	if (spi->max_speed_hz)
-> @@ -932,9 +932,18 @@ static int wm0010_spi_probe(struct spi_device *spi)
->   				     &soc_component_dev_wm0010, wm0010_dai,
->   				     ARRAY_SIZE(wm0010_dai));
->   	if (ret < 0)
-> -		return ret;
-> +		goto disable_irq_wake;
->   
->   	return 0;
-> +
-> +disable_irq_wake:
-> +	irq_set_irq_wake(wm0010->irq, 0);
-> +
-> +free_riq:
-> +	if (wm0010->irq)
-> +		free_irq(wm0010->irq, wm0010);
-> +
-> +	return ret;
->   }
->   
->   static void wm0010_spi_remove(struct spi_device *spi)
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+index a194bf3347cb..984e6ff6e463 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c
+@@ -2002,8 +2002,8 @@ void amdgpu_gfx_enforce_isolation_handler(struct work_struct *work)
+ 		if (adev->kfd.init_complete) {
+ 			WARN_ON_ONCE(!adev->gfx.kfd_sch_inactive[idx]);
+ 			WARN_ON_ONCE(adev->gfx.kfd_sch_req_count[idx]);
+-				amdgpu_amdkfd_start_sched(adev, idx);
+-				adev->gfx.kfd_sch_inactive[idx] = false;
++			amdgpu_amdkfd_start_sched(adev, idx);
++			adev->gfx.kfd_sch_inactive[idx] = false;
+ 		}
+ 	}
+ 	mutex_unlock(&adev->enforce_isolation_mutex);
+-- 
+2.47.2
 
