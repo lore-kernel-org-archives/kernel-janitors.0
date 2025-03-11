@@ -1,84 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94374184F;
-	Tue, 11 Mar 2025 17:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F96F26039B;
+	Tue, 11 Mar 2025 17:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741713446; cv=none; b=QNSpvB55NnPMXbRV3jlnFVadMvmd2mu5iXkgb3Z5cTtj+wXX5nnKYrxwD2AdteOc6SYxq3DOX1cyG7MTwfZcWKZA/5cYt8YzLvKBXiFoMiF+tz8LZP5AZEEYActOLI4fEgF9lYuIJFQMmPv4Lg9j20KGBnasR+49C2SZeHHLfgI=
+	t=1741714470; cv=none; b=L6Csj8MHybSqKTM5MpJ7hSXOdpV3HGrcmVV/T4BY1tbxBLtlHIBImS1+TofS1DGviB6k7iI0Mdm5S4PdNpmhggppW1xMu1Go2Ssq91Yv/b+6GmcsRayKmCYNgkmMPWa6WdLDrQaeqvMarAmHyGPb0mU3EBEcAUlnMZFfLwy/VjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741713446; c=relaxed/simple;
-	bh=RdfYl4n2/9SgcMMHHzjpqeg67v0PMk9cjFox8uwI04E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RWu2wky/8/Recp5yRFE/dBHwmHRRmnDEjqx217RVTH+T9xvqc81w6y2Qr6mfBY77iGXa2fjo7X8US4COx1rqCHzLT9u3CyWWAhmmUxidH2HVXXqPWSvRnuTP+sP2Ja0rX1sezTm5o5fGmX1P7SUlwy7aI2G/47Mr0Myt5q5IaS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRe4HbNG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741714470; c=relaxed/simple;
+	bh=FYR5p1YX8aGi/KqE25+xJQ1RPhbTI2Blq3jqxZem+PQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U2Tzecx5RZ0+AEscEnvGBgxTlVS3KRJs6ZBD8bmIQW5s2VRHumAhIrTM2N/RnL1Qvc1D76u3vx7tWetHb9zgIrUhqG3hgQO8JQaNI7zcwIHCIMXglw7s1b5cs36m4ucEMqbTrmMPkivAOy2UwpMu6QizcJvt5q2kxpE9vdFAP/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hy7flkrU; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRe4HbNG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CCFC4CEE9;
-	Tue, 11 Mar 2025 17:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741713446;
-	bh=RdfYl4n2/9SgcMMHHzjpqeg67v0PMk9cjFox8uwI04E=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=CRe4HbNGIPbAqili4lACHIPgh+PthkDcZheWnoZep6Z74Ex7lU4FknU3yPZ0xP0UZ
-	 3ynHWYbuUBdeSmYYDXhyYWrr3oQ/48Jk49j97heh0/bOfGk8nJOT9KTsyEyGFVVFwn
-	 XUEg8azh8iFUF11K4utyyzsJvjQFQInn6kAaUYM5hEMGE28UAKXWP8BuC/fLSpQTiv
-	 yA1OSNzne3y6NNtYwv/LA3An3aNytW6sxxog8b/vD+LGUNk6OpBXSyvGuCOki1i/ZF
-	 1VQ/GHWLxWwVEQWw9uNFubcDcqmudDJwHOaTZ+IyuqjLJCg1qyIE8UwSL6Q1xjtojN
-	 WqggFxvs3ZWdw==
-From: Mark Brown <broonie@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <2f4b0a0b-2c03-41c0-8a4a-3d789a83832d@stanley.mountain>
-References: <2f4b0a0b-2c03-41c0-8a4a-3d789a83832d@stanley.mountain>
-Subject: Re: [PATCH next] spi: spi-qpic-snand: Fix ECC_CFG_ECC_DISABLE
- shift in qcom_spi_read_last_cw()
-Message-Id: <174171344440.214660.8181081504120181390.b4-ty@kernel.org>
-Date: Tue, 11 Mar 2025 17:17:24 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hy7flkrU"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so172253866b.0;
+        Tue, 11 Mar 2025 10:34:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741714467; x=1742319267; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uF1UtyMLzd/FNPDV0GABgsjA1Fxs5QvrOIcxO2UeUh0=;
+        b=Hy7flkrUY6Np2fml4HFago6S8SzG3SOTwOE+oUKrAOHIuuwoNtXEAI2+c/3y+fW8xq
+         6H0qXWgyuOArAJKMMOMzAOnRmqGk+LXGPnb6Pu5IQUldZCFCeUirGDfOHB9vtyVesVlI
+         JNqlXJ4ADJtYe+Fy4n8oztCe/Us3vz++Ppuaha64C7YueUwm0E6gC0aqRRa4bHp4rgp+
+         m++WZIyQy5k+3i9e2Bx5yr2k4tLRLVR7LApBsQyyZCDYToUQtfLAgRTOf379AjKSMkHJ
+         4CNa4o4nGVEcORI2eaDWyBAU8A96ANYPJxvU9mb6RUh2QuWEUuBxx+jEzmdsxrfi93bE
+         jYqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741714467; x=1742319267;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uF1UtyMLzd/FNPDV0GABgsjA1Fxs5QvrOIcxO2UeUh0=;
+        b=RoMxk2vO43hZtVl8LlYJWbV1BcFuyugh2IW7oGZh4n/rkzAMOAq5lQQUyhBMKDaeZ8
+         IvKiwvuxm2RyZiTZjEII9HqWuSP06NPOxmrm7PjpROwvXVjnFXSupelgEKO56aMQxPmX
+         muKfTMUeZr7yimRitQxWVXWKd5tQ9j98yQTNRQnK8DC9lXZVV8W6p2F3wmTmXAb8BdGK
+         yQD1DoYgjODsFmcrAlfcLbvcjJ9rE6eAJ0NZHAywcGNGYqwblr13soeF0r6him+sJohN
+         qgjeAzHJpF17rYwZ4yeRjugoaFqKetqLqMR7NF3bSOpZuGMaXlvPxTDTttSpAul9I9hF
+         OSKA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/m9LPMNCHjcGveSF38Z26VQGyZRjy51ekzu3Qrs/go758pWQjt1HFtL0l0ZW8NWeg1yXE/ycIaZH0cziw@vger.kernel.org, AJvYcCX5RghF39QY1ISqWwCnCc6ZGtqATVyQru2wxNBWNshYbkBdCrtYvRT7ZS50cIiPoezsiFx3v+h7yN/qfIOm4/Y=@vger.kernel.org, AJvYcCXJ+iO9NGpGb/Lq0idfrDNRbsofqzpWefQep1DzqJTwqi0lwT65bknb1FHOa8UM2lWZQnQzG39SBDloWA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQRRoMP0ir5gBSjER+YBRQGsNRNgfKHzRMFZUvF5392GFf9sHw
+	WNYg0yo5KSTYtvMtyAD+tiA9R6g1qrFFVbi9Nziiga8qXLwogY6EAs2qRg==
+X-Gm-Gg: ASbGncusc2bXRZN4jgTetx2EM4XwD8YG9ZNsnB9r8W3jK32gLoZ/jqk7JNGjF4EtoGS
+	didRiSfvxq4aBC5bGnLpcGe3gsl8poyTJtTvNUYeXqw0fz5YM5QfzOnsVuePY/d15xMWizIwwqf
+	KSxjxhAMhO8ZdRNzfaDRz9Fb7c/DUDXGQ0n3mgk2nMTMZO/On0EDvdeLaTVq/5hihGQ5Pe/1T4x
+	MFRj1eVpKf6je++xEuuLJjCcuhgRXGq0yYHHSiXsF3tJNQbcFIB0vAB28YcSJAjHqGWod5ZG4bl
+	jtCtPICl+MQn+Ypd4abwSl4Gq+ohHh3vATM/crRz0qcxOwksNCZMskSAdDXx2du2jNJHBgOalxf
+	69wdR9NO1o6P5G4Rp26447w==
+X-Google-Smtp-Source: AGHT+IF1cEXKSEStwKqwH/g7+VlE7YBwRrOlCvluK30s9+aYFAfsg1dGkVTnUYOyp9nlYt++njiE0Q==
+X-Received: by 2002:a17:907:970d:b0:ac2:b9c8:b7ba with SMTP id a640c23a62f3a-ac2b9c8b83cmr642529266b.10.1741714467029;
+        Tue, 11 Mar 2025 10:34:27 -0700 (PDT)
+Received: from [192.168.50.244] (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac282c69e89sm540028866b.167.2025.03.11.10.34.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 10:34:26 -0700 (PDT)
+Message-ID: <8b8b9074-8828-4477-93e0-32be63688d05@gmail.com>
+Date: Tue, 11 Mar 2025 18:34:25 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] pinctrl: bcm281xx: Add missing assignment in
+ bcm21664_pinctrl_lock_all()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
+Content-Language: en-US
+From: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
 
-On Thu, 06 Mar 2025 12:40:01 +0300, Dan Carpenter wrote:
-> The ECC_CFG_ECC_DISABLE define is BIT(0).  It's supposed to be used
-> directly instead of used as a shifter.
+On 10.03.2025 11:48, Dan Carpenter wrote:
+> The next line checks if this regmap_write() failed, but it doesn't
+> work because the assignment was accidentally left out.  Add the
+> assignment.
 > 
-> 
+> Fixes: 60d69769c851 ("pinctrl: bcm281xx: Add support for BCM21664 pinmux")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Applied to
+Acked-by: Artur Weber <aweber.kernel@gmail.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: spi-qpic-snand: Fix ECC_CFG_ECC_DISABLE shift in qcom_spi_read_last_cw()
-      commit: cf1ba3cb245020459f2ca446b7a7b199839f5d83
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Best regards
+Artur
