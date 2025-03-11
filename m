@@ -1,79 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C374B1DEFE7;
-	Mon, 10 Mar 2025 20:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4051E884;
+	Tue, 11 Mar 2025 01:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741639209; cv=none; b=bMXSwOe+iN4xVRfL1HFVH1tbUdiU+Hih0m7RmCNrNh4NkmLQevnjdJOulJJhD5KMGFG3xGuqh4DXkGs8kCZ2XvuO84YWQCmv7njFeR4huNKRk44i+TJ87ji/kq+fAuATMmHo2LD4xF/x25OUivyE9EUN1rhvxUPPSJS0Cyb46bk=
+	t=1741655988; cv=none; b=AwAdqpo9abu0RJrpFbhGpVp9820cAWxu9DuiCsggbcDcE27rJ+Dnq8GFaEyxTMxUye4NEEwoS/GSaSzHLV0FTBjkSRjYMGACN/u4DChwN5RFof01Gr49JKQ/Qfbe6kocbOMEjmNi3zoiifux4OZs3DKairNpUGC6G/FhVv4n0jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741639209; c=relaxed/simple;
-	bh=mzi6YTCCkVyl0WFrGQ3Nu4sAhX4Qm2Bqn1ozXtQ0AjI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Y95ufWpsnQH6oOTGbdnec/Td+74bUojTqDkxn9CLZJ74tsVXDcLOEbZB711HCqMLmqYtRbH4sW73cmbl3HelWgDbC/01LXd9Kk3IScw85gfwGXjRRTr95T0u8Y45GQHHRsXHuPiwTvVKJdpBuyw7sJJkCkQWr45abW8BG6hhPVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5v+qJjr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741655988; c=relaxed/simple;
+	bh=rTqHHYLQ+sLMJPphzfRmxf9QvVpR3MH91nI7WYKTYww=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dXX6XExAekIWO2cBOsiO3mslgKbXVGjPqEmR07LvQK00p8HIBNdRXeFPOm4lpSh7iy+O3cQJVwBGBp322dBr2Q+gvGBoCsr8NAIyLFHMPkW59fSM7FtNO4/248BOKrgzAYh9vlJC2eeqRjDH758iTJzTOdbovviypQQwycrmOj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eilK/cS9; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5v+qJjr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A048DC4CEED;
-	Mon, 10 Mar 2025 20:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741639209;
-	bh=mzi6YTCCkVyl0WFrGQ3Nu4sAhX4Qm2Bqn1ozXtQ0AjI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=n5v+qJjr1j5sJuh2S26te73xS0ebtvETJRtDaUvwI4LdnmTSRQNZ5GfSiQliojyPW
-	 DsnPMFeVrN02VjahMqQh9Z1YuaJc5P+if4UYhbB30su9VKNV8JeDcGVCcZvbi3IpyQ
-	 AoIhb+EoFzTIf/f12hjiynWE0XTcdHcJXb5Fn0IM366XuUwAKYrfOqXHCeFELa7lAz
-	 x/uJ5kFzMcYaC4fzAAicHtxDg/wsg9bi4J/r6vC0hvHLuCl1laYkXrLzK1ZgRKNvCG
-	 YTe5O3d9Gf1IiHK8Q3v8tY76yoxocTO1u8K59RmI4QZDJQCHVVGS2CpBoAGJcpCFa6
-	 6JQQXqunL2D8w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF43380AACB;
-	Mon, 10 Mar 2025 20:40:44 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eilK/cS9"
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52ALg378017132;
+	Tue, 11 Mar 2025 01:19:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=G7383/S4kPf8w4D/I7+seLsXapoaCtol+ueVbvvihLw=; b=
+	eilK/cS9nPRoCySQ3eS6NkMDzUtWg2ZzDmuuS1VkAiUJc5iXJ5dCLl5o2W9KYvf5
+	2APYMYRFvZQuluHb9KoYp7RwBfrVtZWMnvQ02Zw0r/l+lSvED71b6P1ONG+il3vE
+	+aLqs0jlkfVOLpM+ouJdEJy0tVH2US7JeClsE6Da3KPCDdz/1ZHUchHu90CUjRGg
+	v8KyU/GdCE2Ho+l7LeGRuk3AxdPZ28Hz4iQxorfiIEJezAIWbTvkaAADeJ7LdcmQ
+	XFrHL0+1ylncLC3fwY2Uz/zIuIZf5tRoEafAF5wJCvDhXjFR8S98UjDs6X7nA1Fc
+	mPU+T19L3NVdtuEuWoCD5A==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 458cp33vvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 01:19:43 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52B0J0Fl015052;
+	Tue, 11 Mar 2025 01:19:43 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 458cbencmp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 11 Mar 2025 01:19:43 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 52B1JfrA014960;
+	Tue, 11 Mar 2025 01:19:42 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 458cbencm8-3;
+	Tue, 11 Mar 2025 01:19:42 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] scsi: mpt3sas: Fix buffer overflow in mpt3sas_send_mctp_passthru_req()
+Date: Mon, 10 Mar 2025 21:19:02 -0400
+Message-ID: <174165505009.528513.9443974041520237075.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <02b0d4ff-961c-49ae-921a-5cc469edf93c@stanley.mountain>
+References: <02b0d4ff-961c-49ae-921a-5cc469edf93c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] eth: fbnic: fix memory corruption in
- fbnic_tlv_attr_get_string()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174163924349.3688527.16911619738250606292.git-patchwork-notify@kernel.org>
-Date: Mon, 10 Mar 2025 20:40:43 +0000
-References: <2791d4be-ade4-4e50-9b12-33307d8410f6@stanley.mountain>
-In-Reply-To: <2791d4be-ade4-4e50-9b12-33307d8410f6@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: lee@trager.us, alexanderduyck@fb.com, kuba@kernel.org,
- kernel-team@meta.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-11_01,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0 spamscore=0
+ mlxlogscore=884 malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2503110007
+X-Proofpoint-GUID: H_wJcusWPBbd6UpruPxP6lDjzaIuBxXP
+X-Proofpoint-ORIG-GUID: H_wJcusWPBbd6UpruPxP6lDjzaIuBxXP
 
-Hello:
+On Fri, 28 Feb 2025 12:37:28 +0300, Dan Carpenter wrote:
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 7 Mar 2025 12:28:48 +0300 you wrote:
-> This code is trying to ensure that the last byte of the buffer is a NUL
-> terminator.  However, the problem is that attr->value[] is an array of
-> __le32, not char, so it zeroes out 4 bytes way beyond the end of the
-> buffer.  Cast the buffer to char to address this.
+> The "sz" argument in mpt3sas_check_cmd_timeout() is the number of u32,
+> not the number of bytes.  We dump that many u32 values to dmesg.  Passing
+> the number of bytes will lead to a read overflow.  Divide by 4 to get the
+> correct value.
 > 
-> Fixes: e5cf5107c9e4 ("eth: fbnic: Update fbnic_tlv_attr_get_string() to work like nla_strscpy()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> [...]
 
-Here is the summary with links:
-  - [net-next] eth: fbnic: fix memory corruption in fbnic_tlv_attr_get_string()
-    https://git.kernel.org/netdev/net-next/c/991a1b09920b
+Applied to 6.15/scsi-queue, thanks!
 
-You are awesome, thank you!
+[1/1] scsi: mpt3sas: Fix buffer overflow in mpt3sas_send_mctp_passthru_req()
+      https://git.kernel.org/mkp/scsi/c/0711f1966a52
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Martin K. Petersen	Oracle Linux Engineering
