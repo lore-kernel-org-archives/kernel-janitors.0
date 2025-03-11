@@ -1,77 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9195B25DCFA;
-	Tue, 11 Mar 2025 15:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94374184F;
+	Tue, 11 Mar 2025 17:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741707599; cv=none; b=phUbCG8+AzVJ/GFTuVHb7QsLMpYJ1mG//6WXoY5ueaSD1zsxxXsZ4sbhacwoT4up4lpRsnX0mDBr17dlCFz6p8m2fDAAXmS/h8ToP8vaAhyoOBuq0iCXniFTCtzbCXpcKyXiWzBCHrjUk0Q26RSlGmf8BHt46pVMDvknrqu6Awg=
+	t=1741713446; cv=none; b=QNSpvB55NnPMXbRV3jlnFVadMvmd2mu5iXkgb3Z5cTtj+wXX5nnKYrxwD2AdteOc6SYxq3DOX1cyG7MTwfZcWKZA/5cYt8YzLvKBXiFoMiF+tz8LZP5AZEEYActOLI4fEgF9lYuIJFQMmPv4Lg9j20KGBnasR+49C2SZeHHLfgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741707599; c=relaxed/simple;
-	bh=0xS63COg9IolEiawfiarzZAPZOEOB7gam7z/7loFwdA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GBgTp55J19GSUuNWyOxUthKb2isamotdfnT2lOaOlyP0VKYMtUZWbXDWapNpC5eH7nM11COkfoRLHGuTxhnhv4lgikuY9WWKfCbvh9l/4v0kPruVUEpilURkPYrgPR6G62nEt4lvjq4IjqLCCIdgdovQ6yX1DrBPsmM2Kj34E4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRFiBvTQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741713446; c=relaxed/simple;
+	bh=RdfYl4n2/9SgcMMHHzjpqeg67v0PMk9cjFox8uwI04E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RWu2wky/8/Recp5yRFE/dBHwmHRRmnDEjqx217RVTH+T9xvqc81w6y2Qr6mfBY77iGXa2fjo7X8US4COx1rqCHzLT9u3CyWWAhmmUxidH2HVXXqPWSvRnuTP+sP2Ja0rX1sezTm5o5fGmX1P7SUlwy7aI2G/47Mr0Myt5q5IaS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRe4HbNG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRFiBvTQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D0DAC4CEE9;
-	Tue, 11 Mar 2025 15:39:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRe4HbNG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CCFC4CEE9;
+	Tue, 11 Mar 2025 17:17:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741707599;
-	bh=0xS63COg9IolEiawfiarzZAPZOEOB7gam7z/7loFwdA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=LRFiBvTQ5HlRY06f7s85fH51/CsBWh3RvPKKdSewOjyY4ZCf3Lr/zAjyrMQFlT4kt
-	 JSeFqBcFqiqEGANcvGvarsnj4MkALW5sBlhL4xqgBDvR4A68oh5aB159y1nRO1PkgW
-	 T31iZUtREkwphJeyBRI5a5MbPU5sbIFfmGS4XGa6VPDGT9R2D7To5Z3xpbfdie2HyM
-	 bSYad/lZXiQMRbdb/Rw5yqnLpgCsmVEIIqLV67v4xNwLznmxkImRacViCVHT6LNZah
-	 w0qRYgRDLSgMdCRvgSzvzOBH4AyThmgXGl1GdXIQMNnlnG/NyKzo+UEW1jyTq1A9Ww
-	 YARAbvj6DQq6Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE002380AC1C;
-	Tue, 11 Mar 2025 15:40:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741713446;
+	bh=RdfYl4n2/9SgcMMHHzjpqeg67v0PMk9cjFox8uwI04E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CRe4HbNGIPbAqili4lACHIPgh+PthkDcZheWnoZep6Z74Ex7lU4FknU3yPZ0xP0UZ
+	 3ynHWYbuUBdeSmYYDXhyYWrr3oQ/48Jk49j97heh0/bOfGk8nJOT9KTsyEyGFVVFwn
+	 XUEg8azh8iFUF11K4utyyzsJvjQFQInn6kAaUYM5hEMGE28UAKXWP8BuC/fLSpQTiv
+	 yA1OSNzne3y6NNtYwv/LA3An3aNytW6sxxog8b/vD+LGUNk6OpBXSyvGuCOki1i/ZF
+	 1VQ/GHWLxWwVEQWw9uNFubcDcqmudDJwHOaTZ+IyuqjLJCg1qyIE8UwSL6Q1xjtojN
+	 WqggFxvs3ZWdw==
+From: Mark Brown <broonie@kernel.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <2f4b0a0b-2c03-41c0-8a4a-3d789a83832d@stanley.mountain>
+References: <2f4b0a0b-2c03-41c0-8a4a-3d789a83832d@stanley.mountain>
+Subject: Re: [PATCH next] spi: spi-qpic-snand: Fix ECC_CFG_ECC_DISABLE
+ shift in qcom_spi_read_last_cw()
+Message-Id: <174171344440.214660.8181081504120181390.b4-ty@kernel.org>
+Date: Tue, 11 Mar 2025 17:17:24 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: Fix error code in chan_alloc_skb_cb()
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <174170763351.128681.166862015675971254.git-patchwork-notify@kernel.org>
-Date: Tue, 11 Mar 2025 15:40:33 +0000
-References: <2144b990-e584-4f77-a3be-5987b56d051a@stanley.mountain>
-In-Reply-To: <2144b990-e584-4f77-a3be-5987b56d051a@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: jukka.rissanen@linux.intel.com, marcel@holtmann.org,
- johan.hedberg@gmail.com, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-Hello:
-
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Mon, 10 Mar 2025 22:46:56 +0300 you wrote:
-> The chan_alloc_skb_cb() function is supposed to return error pointers on
-> error.  Returning NULL will lead to a NULL dereference.
+On Thu, 06 Mar 2025 12:40:01 +0300, Dan Carpenter wrote:
+> The ECC_CFG_ECC_DISABLE define is BIT(0).  It's supposed to be used
+> directly instead of used as a shifter.
 > 
-> Fixes: 6b8d4a6a0314 ("Bluetooth: 6LoWPAN: Use connected oriented channel instead of fixed one")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  net/bluetooth/6lowpan.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
 
-Here is the summary with links:
-  - Bluetooth: Fix error code in chan_alloc_skb_cb()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/3144ba2a70e6
+Applied to
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
+Thanks!
+
+[1/1] spi: spi-qpic-snand: Fix ECC_CFG_ECC_DISABLE shift in qcom_spi_read_last_cw()
+      commit: cf1ba3cb245020459f2ca446b7a7b199839f5d83
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
