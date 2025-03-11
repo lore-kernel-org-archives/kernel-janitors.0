@@ -1,98 +1,95 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F96F26039B;
-	Tue, 11 Mar 2025 17:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F7E1D514A;
+	Tue, 11 Mar 2025 17:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741714470; cv=none; b=L6Csj8MHybSqKTM5MpJ7hSXOdpV3HGrcmVV/T4BY1tbxBLtlHIBImS1+TofS1DGviB6k7iI0Mdm5S4PdNpmhggppW1xMu1Go2Ssq91Yv/b+6GmcsRayKmCYNgkmMPWa6WdLDrQaeqvMarAmHyGPb0mU3EBEcAUlnMZFfLwy/VjI=
+	t=1741714781; cv=none; b=tEI9KbvsGMc20Ehv9ujmuU+U8UP4sxyER3/B6YkNcWlNZm2t3tV1pO9yxVvOrdB6D2WC9uW7YM5GqSGkJknziPGhF8PnjYnN8YlRvY/48RNxCc4BhuCmIN5ky25bwxtKeGNyaooqqiCt06D9CkGUwher2sPG13gDpFK8gVZE+Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741714470; c=relaxed/simple;
-	bh=FYR5p1YX8aGi/KqE25+xJQ1RPhbTI2Blq3jqxZem+PQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U2Tzecx5RZ0+AEscEnvGBgxTlVS3KRJs6ZBD8bmIQW5s2VRHumAhIrTM2N/RnL1Qvc1D76u3vx7tWetHb9zgIrUhqG3hgQO8JQaNI7zcwIHCIMXglw7s1b5cs36m4ucEMqbTrmMPkivAOy2UwpMu6QizcJvt5q2kxpE9vdFAP/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hy7flkrU; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741714781; c=relaxed/simple;
+	bh=kv+WwmqbGUNvAZ6GSHtKuPsxWSYd7YbvpRYthTPZg+M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pZeHnQ55nLoL4fWHxmPPW4UwFKba2ZXeZNPX57oAh9FQgzu79N/KQKTazrefjyfd0VnJO4HSGoSbOligQrGdQZQWbTPp5dAsqs37fbCIpLFz7qoqLZ5+97ZWJISYp49IoRM/gY99Ae7gjPWW+ehTeUW9R5/AMBd+tcyXqF89M4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cH/02nWr; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hy7flkrU"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2bdea5a38so172253866b.0;
-        Tue, 11 Mar 2025 10:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741714467; x=1742319267; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uF1UtyMLzd/FNPDV0GABgsjA1Fxs5QvrOIcxO2UeUh0=;
-        b=Hy7flkrUY6Np2fml4HFago6S8SzG3SOTwOE+oUKrAOHIuuwoNtXEAI2+c/3y+fW8xq
-         6H0qXWgyuOArAJKMMOMzAOnRmqGk+LXGPnb6Pu5IQUldZCFCeUirGDfOHB9vtyVesVlI
-         JNqlXJ4ADJtYe+Fy4n8oztCe/Us3vz++Ppuaha64C7YueUwm0E6gC0aqRRa4bHp4rgp+
-         m++WZIyQy5k+3i9e2Bx5yr2k4tLRLVR7LApBsQyyZCDYToUQtfLAgRTOf379AjKSMkHJ
-         4CNa4o4nGVEcORI2eaDWyBAU8A96ANYPJxvU9mb6RUh2QuWEUuBxx+jEzmdsxrfi93bE
-         jYqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741714467; x=1742319267;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uF1UtyMLzd/FNPDV0GABgsjA1Fxs5QvrOIcxO2UeUh0=;
-        b=RoMxk2vO43hZtVl8LlYJWbV1BcFuyugh2IW7oGZh4n/rkzAMOAq5lQQUyhBMKDaeZ8
-         IvKiwvuxm2RyZiTZjEII9HqWuSP06NPOxmrm7PjpROwvXVjnFXSupelgEKO56aMQxPmX
-         muKfTMUeZr7yimRitQxWVXWKd5tQ9j98yQTNRQnK8DC9lXZVV8W6p2F3wmTmXAb8BdGK
-         yQD1DoYgjODsFmcrAlfcLbvcjJ9rE6eAJ0NZHAywcGNGYqwblr13soeF0r6him+sJohN
-         qgjeAzHJpF17rYwZ4yeRjugoaFqKetqLqMR7NF3bSOpZuGMaXlvPxTDTttSpAul9I9hF
-         OSKA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/m9LPMNCHjcGveSF38Z26VQGyZRjy51ekzu3Qrs/go758pWQjt1HFtL0l0ZW8NWeg1yXE/ycIaZH0cziw@vger.kernel.org, AJvYcCX5RghF39QY1ISqWwCnCc6ZGtqATVyQru2wxNBWNshYbkBdCrtYvRT7ZS50cIiPoezsiFx3v+h7yN/qfIOm4/Y=@vger.kernel.org, AJvYcCXJ+iO9NGpGb/Lq0idfrDNRbsofqzpWefQep1DzqJTwqi0lwT65bknb1FHOa8UM2lWZQnQzG39SBDloWA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQRRoMP0ir5gBSjER+YBRQGsNRNgfKHzRMFZUvF5392GFf9sHw
-	WNYg0yo5KSTYtvMtyAD+tiA9R6g1qrFFVbi9Nziiga8qXLwogY6EAs2qRg==
-X-Gm-Gg: ASbGncusc2bXRZN4jgTetx2EM4XwD8YG9ZNsnB9r8W3jK32gLoZ/jqk7JNGjF4EtoGS
-	didRiSfvxq4aBC5bGnLpcGe3gsl8poyTJtTvNUYeXqw0fz5YM5QfzOnsVuePY/d15xMWizIwwqf
-	KSxjxhAMhO8ZdRNzfaDRz9Fb7c/DUDXGQ0n3mgk2nMTMZO/On0EDvdeLaTVq/5hihGQ5Pe/1T4x
-	MFRj1eVpKf6je++xEuuLJjCcuhgRXGq0yYHHSiXsF3tJNQbcFIB0vAB28YcSJAjHqGWod5ZG4bl
-	jtCtPICl+MQn+Ypd4abwSl4Gq+ohHh3vATM/crRz0qcxOwksNCZMskSAdDXx2du2jNJHBgOalxf
-	69wdR9NO1o6P5G4Rp26447w==
-X-Google-Smtp-Source: AGHT+IF1cEXKSEStwKqwH/g7+VlE7YBwRrOlCvluK30s9+aYFAfsg1dGkVTnUYOyp9nlYt++njiE0Q==
-X-Received: by 2002:a17:907:970d:b0:ac2:b9c8:b7ba with SMTP id a640c23a62f3a-ac2b9c8b83cmr642529266b.10.1741714467029;
-        Tue, 11 Mar 2025 10:34:27 -0700 (PDT)
-Received: from [192.168.50.244] (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac282c69e89sm540028866b.167.2025.03.11.10.34.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Mar 2025 10:34:26 -0700 (PDT)
-Message-ID: <8b8b9074-8828-4477-93e0-32be63688d05@gmail.com>
-Date: Tue, 11 Mar 2025 18:34:25 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cH/02nWr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741714780; x=1773250780;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=kv+WwmqbGUNvAZ6GSHtKuPsxWSYd7YbvpRYthTPZg+M=;
+  b=cH/02nWrJ5/0trGF3xk5H31DCm9kiMXtf0KJprTtsMC3T/BzQ98XQqhV
+   zbjy6cYj++Mr+jf02AKyjfTcKmBvj1/a1iUJvxo0EOdF9jaOtbrWDELqv
+   lrTRHqhEFldQ1NRBzw4FmRJwBle8d0ehfpGVWmZlkSGakdqqoF0H4U4Fj
+   IKzrMBCW7T5n3oiRTsFUj8HNCKYKHI2T3Y5bNI4Vr9H6YT9WHIfGiJlos
+   oOe3WlzP5j05NAjhDCpNx42X7K8qMghwLiSd/Lof5V0amvR1No8cf/vD6
+   zT+WJ/GI1pKknCrigXPb3je0oRPNOXbhVKVbtNzLksKNwkpVAf8/mfeYY
+   g==;
+X-CSE-ConnectionGUID: 1eNGaYU4QCypM6VAm/4K6Q==
+X-CSE-MsgGUID: w3lOysZGQ+evXyLkHiRQpw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11370"; a="54151993"
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="54151993"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 10:39:39 -0700
+X-CSE-ConnectionGUID: lukZ3jFvQKqbjZc2kJGWfw==
+X-CSE-MsgGUID: 81yNK9BARMSc9B197TEYsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,239,1736841600"; 
+   d="scan'208";a="143583704"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.251])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2025 10:39:32 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+ Patil Rajesh Reddy <Patil.Reddy@amd.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <232231fc-6a71-495e-971b-be2a76f6db4c@stanley.mountain>
+References: <232231fc-6a71-495e-971b-be2a76f6db4c@stanley.mountain>
+Subject: Re: [PATCH v2] platform/x86/amd/pmf: fix cleanup in
+ amd_pmf_init_smart_pc()
+Message-Id: <174171476741.1715.12385728122456798855.b4-ty@linux.intel.com>
+Date: Tue, 11 Mar 2025 19:39:27 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] pinctrl: bcm281xx: Add missing assignment in
- bcm21664_pinctrl_lock_all()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
-Content-Language: en-US
-From: Artur Weber <aweber.kernel@gmail.com>
-In-Reply-To: <dfc15d59-7fa9-4f96-aacb-37c3df6d420d@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 10.03.2025 11:48, Dan Carpenter wrote:
-> The next line checks if this regmap_write() failed, but it doesn't
-> work because the assignment was accidentally left out.  Add the
-> assignment.
+On Mon, 10 Mar 2025 22:48:29 +0300, Dan Carpenter wrote:
+
+> There are a few problems in this code:
 > 
-> Fixes: 60d69769c851 ("pinctrl: bcm281xx: Add support for BCM21664 pinmux")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> First, if amd_pmf_tee_init() fails then the function returns directly
+> instead of cleaning up.  We cannot simply do a "goto error;" because
+> the amd_pmf_tee_init() cleanup calls tee_shm_free(dev->fw_shm_pool);
+> and amd_pmf_tee_deinit() calls it as well leading to a double free.
+> I have re-written this code to use an unwind ladder to free the
+> allocations.
+> 
+> [...]
 
-Acked-by: Artur Weber <aweber.kernel@gmail.com>
 
-Best regards
-Artur
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform/x86/amd/pmf: fix cleanup in amd_pmf_init_smart_pc()
+      commit: 5b1122fc4995f308b21d7cfc64ef9880ac834d20
+
+--
+ i.
+
