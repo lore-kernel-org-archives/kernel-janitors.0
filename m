@@ -1,144 +1,123 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F81C240604
-	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 15:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965091E3DE8
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 15:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741792525; cv=none; b=eUgEeCWrsb9l4wAZrTcD29cbHXXPtLpQ8IyntrB3aPum58brP2wbMREXtxPDKxf4q/MwTO4fk2b2IaHerg8PoEG/aEUYADSbfeHSqevEsN1D5yv/LdsD/zGfcBnn1w+aP0BfTkeC9ri4wp0n2Knn/FUIRslGNjge8+UxKqz6NLs=
+	t=1741793105; cv=none; b=hnnY18/EBYL+WsPbNIvjM3iOBep27vx+HK6s8tArVpEWGPY9LgmYIFd4TIdqrA62JVKB/eKmRnjmL9XIZnCMfQvFlK9nwliKXvV4MUjpdtETeFUvowzEcfCaK6aYjvg2GX4FwpuNeZ12lWxcQ03BOhxEmlioW5093XXVcAimOCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741792525; c=relaxed/simple;
-	bh=rQCyYo1q5LlHeQmc/jvBgqAwBqok1aeeDQVozDHX8OE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pRucFLLLB1F5DFUGqTZU6auyO2XF9ODNUMjE4ARL3t5x4OV4zV5b3gXVaMxluQsac+6oDV7qvqxv7xsKb12uVbEVtrt05IbOuKxuka3/Po21jxRfmSN26qRnlEuB6FMr3LYVk17IqMR8mYzgtv0Vd7U2381f1qWH/BWHWdvJIHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZNiITNCF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1741793105; c=relaxed/simple;
+	bh=Emp6Z3aIQvwk7fgn4fyq/ADmvkKqA6pgqsXlO4s06/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m79tzAulbk3lJnQxO5hl2edJWKUK3mTA5dAOapGlTNbbfr1HfuDVhULWRkOSdjZu5l612MicDElaFoQqa7dDDBAAFMREXCWCVPU9s3GZVk7lfqBDF5FEqFYfTHRPr2vUohwW2AFsdyhkbrlsOqWcpVRXmVuMIp2SVIj7tJ6CDOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EJLSYGBx; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZNiITNCF"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52C9rl45013547
-	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 15:15:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sX4AAf7m5Hmzy6uxAgPsldQmewUW0wWhuO0d0xDGmO8=; b=ZNiITNCFHf76RD2d
-	BJkcFBoTieDJGgtaZS2gQ2IZlTyTr5pKwG0dBaC9+MDHtzlXyajYlBG/DwOIvm6s
-	pIBfhL8TylWKsX6J49MiXrMFfDkqVRykdaZcG2hdMJuOMHW+ZdO5JSrbcOqaMo/C
-	EO3B64YRsoEMyk56ct9O8CZkbbPLqgQE0kb9bLU4ZRi9A/ZvCVQBMDDWBlI/ebBn
-	AldGDf1exSUTGX/hZh2eN/VHbsnP8om+07/D5DtYenSgPRns1XWrNLJHiGkP1Nq1
-	Au+trOHPDMvWDcwyNE+8zOyNiZoLyHOGJKFKOaba66q8+TkHKKhQJVZpfLohO4Ub
-	8R1u8A==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2njuc5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 15:15:21 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-223f3357064so108499225ad.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 08:15:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EJLSYGBx"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3913cf69784so4921321f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 08:25:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741793102; x=1742397902; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fLzKPMExXtwTBCfsr8dbxK/LiBLIFtL0pBVuR4STJfg=;
+        b=EJLSYGBxA0Gl6eQ60LDZb/afzU9576enjDJ6bpfkzzd/V1MPVl+Zj4k97gZw398DUo
+         h+mo/0/QqIdOXXQvXs2n450nr5KuUwsKL10AGQ6fLuxWgNQrpPBYPjAk3FEHI4BYkZow
+         RdgkPh1rMrEWCmdnbGjmy+AXhzU9DFUNYAQJcbHRicdHEppoGnwJx6DJAXaMIsxrlTuX
+         xvR3yQDPGaW4nOJjj1H6ejwMJV3lCczXVW0A3z2O05UUr977Ryltld26jwmjdMY+okdd
+         IlEv42cQ5dcenJSrY4CrfhQEX4wyMlFqmi8hqMyGZRI8fhwCk74/DoKiBAE9kwYi2L3f
+         ChtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741792521; x=1742397321;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sX4AAf7m5Hmzy6uxAgPsldQmewUW0wWhuO0d0xDGmO8=;
-        b=vvvk7M5W/799ARxJfsxbRf8ouiXlqJ2U6bSzfKiWUAdE/7VubKyP8N6HMZFsW/pU17
-         86p9URXZ72v6ZL00IsP8od3JASgtVovWOEGiWaKs86Bvpe6RuMsODt4kYZqBFZTHp//+
-         VmzQG2PQc8RguLdYun+K6dsAIone+9kdl4SbWn7Z9fsqSxPEAS/Juv/g27QkyxtQD0KD
-         KtMEpHDE4il2Qzue/Y+99F+eqnfNyeRtJ3hYkGNoU7dJ9NCQGFfIcRBA17oNrbQR2WMl
-         8SZhvKIkR4ftC0ETCVknMyiHPKueESgfMG5cJdNyBWqec+0vDgvKv3UdupS5tZS9zHqj
-         74Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6XYpG2W57RxFHCJss33YoUDY1puFajBJwng4pw2G2G811KnBEIgQww43rvh7VOLnw/+UwgIvAYVgBLyCR/8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEdyzxoT7GSHRI2Z6bk0ew1OvbI+5olMf7/Ybhytpkfp0Y56Wi
-	b4VvGhDvRQL92EuokcJbwvpoqtszo9en9n8mT+Afb9ubfwXZJqswh3m+Vdct2ufL3ARC8fWzKwX
-	03dVuVgUIgelAnrHYnzbMI1FxZp+Wwmp+oNX9C+LZ80XhWyIcYlHoIW0jxJeHPGRcwpc=
-X-Gm-Gg: ASbGncvjutAKrwUR0FKv0xBWmrldB1dt93Tsq2EuQHl2+CcEiB/lKLsDQRvKv4XZ3z7
-	fzjNWmkYZDsF9E2jX42jm5I1lsmrWAC+HxFt5jiwSD8LKSAd1fMJEOvn1frqqhrvvINZlm13Alg
-	cpxqJZwJuUmzQ1pMONm82RTiDleacRuyaAx1wbu/NN9XdtCi9UeTM7NW2j2Hq/jZoSrQY3PmXFJ
-	hj63U3Nxuy2L9ZSGqPj3PDBUksf9I1twnhCH0WPlSG4orPPeRn0l/XxoJRqyLwMYIRwqZgDwywH
-	e/H6PT/NfXwoHLtIIdow3UExfOvy2L3MK6bpDN04uYV7j4pWDE3eaix2+u0LTWWZjIhdcHQ=
-X-Received: by 2002:a17:903:32c5:b0:224:249f:9734 with SMTP id d9443c01a7336-2242887ecd7mr325197725ad.4.1741792520678;
-        Wed, 12 Mar 2025 08:15:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOdNtgjzF0uLcKmrq8uktA9l8TaPAfGY6t6+ICMeOkLWYWs6gFJGHlW3ZY4NQTKvR6YiogdA==
-X-Received: by 2002:a17:903:32c5:b0:224:249f:9734 with SMTP id d9443c01a7336-2242887ecd7mr325197275ad.4.1741792520273;
-        Wed, 12 Mar 2025 08:15:20 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736c78389d7sm7863261b3a.4.2025.03.12.08.15.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 08:15:19 -0700 (PDT)
-Message-ID: <a21610ae-e155-44bc-bcc5-b9b8b1c8cbd1@oss.qualcomm.com>
-Date: Wed, 12 Mar 2025 08:15:18 -0700
+        d=1e100.net; s=20230601; t=1741793102; x=1742397902;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fLzKPMExXtwTBCfsr8dbxK/LiBLIFtL0pBVuR4STJfg=;
+        b=jZYzQMg8F9g+pXWOq2JE5UYW4nL1gxU8n3Ixjj8PNu38r7U4y2HwnH/VlQVpMxvUge
+         t3bvxZRMobauqEWEFRuODgs6JUBMZmQTOjRe8Zq3lTmqd6YuMNxfwPDoHEwoiPqhGjB7
+         crvTFlWKXNA8QasaPbLd6J6OXkI02cNn8krFHGLx77sJS7U/aexSStq470eCJKA9CguC
+         z3dxNoin460sXCIFd0UXpVdTAUTiH2aCSEVgX1esnZ9tHfR5zFNjeOTSlCYJ7zjACBdL
+         5VqffzrrV7jD0MPF8ICAa8IdGO58iAQtQxPYEC+dwTkhY/Hhmb0NT4gFLECt886vkdx9
+         3wUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOpwdl+bKheKn7c4lai2o2HQmk7nIxwyglk5CvBqjTnidFxXbAC0/eB7ot4sRvvo+A7eLLADN+21V5xAmpNp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGNLD87YExI8OgHJJq+zz+n1iTeorCwP2m3ZBGQw/hYOKhs7H0
+	nPlnshFaT+ZURJQFiO2zXdqdUJarEBofThxIjaCNg4w4Z5ZUB4gLibKENiwY6bo=
+X-Gm-Gg: ASbGncuY2Lto1IgHVXacjpn6m0ohsy7FC0RWBBbqQkN2oCfSJcfQKvJu9jGfP34Yil8
+	UOYonY4N3nWi8OGrUubGURWt1/up6OavucClOVsh0C8XGlYNtcn9j23eucSkZE9kaEsM6zwHOfV
+	R4Lw5D+/dIHafmeBjpbI0QumEMNHQfAsFh+/0KQqA6jb6lddrGmwDR/Dzz4206kzcaNvohFVHNm
+	B/GLfgPNnvMiFEqxTCEO3L5DXSGXANN+KClUHk3LUXTDHv2nhR+TtoVZ31vxeTC76PArQDkXFWx
+	GxoZcXaJp91Om8idNwxKBXstZQSdOS3fveSpPS0+5bvHNDzLrg==
+X-Google-Smtp-Source: AGHT+IHn215KXGxBksWYO6IGqlkECpcXD3aN6+wMQCz0c2YurmIv585IQFuPkM2YCeNe5QHeih3GEA==
+X-Received: by 2002:a05:6000:1849:b0:391:158f:3d59 with SMTP id ffacd0b85a97d-39132d21141mr22108859f8f.15.1741793101874;
+        Wed, 12 Mar 2025 08:25:01 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d0a8c5cbfsm23813665e9.30.2025.03.12.08.25.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 08:25:01 -0700 (PDT)
+Date: Wed, 12 Mar 2025 18:24:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Avraham Stern <avraham.stern@intel.com>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	Daniel Gabay <daniel.gabay@intel.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] wifi: iwlwifi: Fix uninitialized variable with
+ __free()
+Message-ID: <341d748f-55ae-451b-983a-ca9684d265b7@stanley.mountain>
+References: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
+ <a21610ae-e155-44bc-bcc5-b9b8b1c8cbd1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] wifi: iwlwifi: Fix uninitialized variable with
- __free()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: Johannes Berg <johannes.berg@intel.com>,
-        Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Avraham Stern <avraham.stern@intel.com>,
-        Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
-        Daniel Gabay <daniel.gabay@intel.com>, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=M6hNKzws c=1 sm=1 tr=0 ts=67d1a50a cx=c_pps a=IZJwPbhc+fLeJZngyXXI0A==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=-Q16Wm--JIC0Ijc-Z3AA:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: UGahQXkQJ-4Ek-3CHvFaPZYgGuWRkNDy
-X-Proofpoint-GUID: UGahQXkQJ-4Ek-3CHvFaPZYgGuWRkNDy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 malwarescore=0 bulkscore=0 mlxlogscore=836 clxscore=1015
- phishscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 adultscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503120104
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a21610ae-e155-44bc-bcc5-b9b8b1c8cbd1@oss.qualcomm.com>
 
-On 3/12/2025 1:31 AM, Dan Carpenter wrote:
-> Pointers declared with the __free(kfree) attribute need to be initialized
-> because they will be passed to kfree() on every return path.  There are
-> two return statement before the "cmd" pointer is initialized so this
-> leads to an uninitialized variable bug.
+On Wed, Mar 12, 2025 at 08:15:18AM -0700, Jeff Johnson wrote:
+> On 3/12/2025 1:31 AM, Dan Carpenter wrote:
+> > Pointers declared with the __free(kfree) attribute need to be initialized
+> > because they will be passed to kfree() on every return path.  There are
+> > two return statement before the "cmd" pointer is initialized so this
+> > leads to an uninitialized variable bug.
+> > 
+> > Fixes: d1e879ec600f ("wifi: iwlwifi: add iwlmld sub-driver")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/net/wireless/intel/iwlwifi/mld/debugfs.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
+> > index c759c5c68dc0..1d4b2ad5d388 100644
+> > --- a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
+> > +++ b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
+> > @@ -556,8 +556,8 @@ iwl_dbgfs_vif_twt_setup_write(struct iwl_mld *mld, char *buf, size_t count,
+> >  	};
+> >  	struct ieee80211_vif *vif = data;
+> >  	struct iwl_mld_vif *mld_vif = iwl_mld_vif_from_mac80211(vif);
+> > +	struct iwl_dhc_cmd *cmd __free(kfree) = NULL;
 > 
-> Fixes: d1e879ec600f ("wifi: iwlwifi: add iwlmld sub-driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/net/wireless/intel/iwlwifi/mld/debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> hmm, I thought the recommended convention was to define __free() pointers at
+> the point of allocation. cleanup.h explicitly says:
 > 
-> diff --git a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
-> index c759c5c68dc0..1d4b2ad5d388 100644
-> --- a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
-> +++ b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
-> @@ -556,8 +556,8 @@ iwl_dbgfs_vif_twt_setup_write(struct iwl_mld *mld, char *buf, size_t count,
->  	};
->  	struct ieee80211_vif *vif = data;
->  	struct iwl_mld_vif *mld_vif = iwl_mld_vif_from_mac80211(vif);
-> +	struct iwl_dhc_cmd *cmd __free(kfree) = NULL;
+>  * Given that the "__free(...) = NULL" pattern for variables defined at
+>  * the top of the function poses this potential interdependency problem
+>  * the recommendation is to always define and assign variables in one
+>  * statement and not group variable definitions at the top of the
+>  * function when __free() is used.
+> 
 
-hmm, I thought the recommended convention was to define __free() pointers at
-the point of allocation. cleanup.h explicitly says:
+People do it either way.  I'm agnostic so long as it doesn't have bugs.
 
- * Given that the "__free(...) = NULL" pattern for variables defined at
- * the top of the function poses this potential interdependency problem
- * the recommendation is to always define and assign variables in one
- * statement and not group variable definitions at the top of the
- * function when __free() is used.
-
->  	struct iwl_dhc_twt_operation *dhc_twt_cmd;
-> -	struct iwl_dhc_cmd *cmd __free(kfree);
->  	u64 target_wake_time;
->  	u32 twt_operation, interval_exp, interval_mantissa, min_wake_duration;
->  	u8 trigger, flow_type, flow_id, protection, tenth_param;
+regards,
+dan carpenter
 
