@@ -1,108 +1,109 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEEB252906;
-	Wed, 12 Mar 2025 15:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1851C2580ED
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 17:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741794150; cv=none; b=KMhNx4TjYfJznXEfTqjMPlHKDyJH5qB4XeCygOAGGt9aGeZU1hYUQXju5Tk1+9zZYJRcpoMNCrfjDf3jC+qelkivJc/Kb9C9NWYGwSJ65jWDr5toCJgRErtXW6PYEa//BqHvPEpbFZLQQKWzvgm236mYw/NFwzY4OFY6/Q8zOug=
+	t=1741800080; cv=none; b=nXNs42EarK8usj5UmKYeh623atqbPE06v2QKdBGtqsY5OJklqQfuLtitaugVBt9W0JM1Wl7CAZn88wtMD31RqF7LW0EmsmsIE1IYDMMwpa2vbjMKpRmDps+MDszQvWQ6qs3O5WVRj3Opj2WR4L6zmGxMikyFdIrz4psZZDeF6y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741794150; c=relaxed/simple;
-	bh=TPokZkAfZoE3j1ReraRUjF3yXEY6rHEC7KL8G+9L1lw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=tnsGhpUZiXAYllHYhNtm4zMONIeAdM+KLh0/q+H4i+nYPfwYxV8n/UZwwxWM6We1Z7qBVKHNslqCZdTcQiGYGiuGChE6lS4e3xHp6XJ6otekrBMCgkfvXyNxkkK6In6xmt8IoBKQ228l++Er0eE/Gxb4dFMkAJGsmXn5RIgM8xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=BD82QXbJ; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1741800080; c=relaxed/simple;
+	bh=wjnq/u21AuKdRgrNZm75J0lF8ufWmfGo4o4NzXDo8ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ehKXuxJzICwvAlHujRTpzRJq/399TQTfdx0sFcaNqL4uD4rjmpDiwIIfFnBVOvQLNbbbn2W46P5nNaQL+TxMXp4qaRvBOs4tc+9xYafFiMTySPkjFL4bQUJxv8fc/jQmxS58hCMssKoMxDxyGIz1GKy4pKDALmeGoUDfoTVyKAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=troX6rnO; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="BD82QXbJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741794142; x=1742398942; i=markus.elfring@web.de;
-	bh=WaZqZA26uQBOohPg9do+Xiwkxafj6Jb1roW9F5p+eoE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=BD82QXbJxi0fCDcWS37HOPkwr/iWAfhVZqV526dK2+uABCh3Z+ghcf/1Eeq3hHaj
-	 l6MKsPWzIOepMZtK++I20m5JjOCMvC5NGmtVssX8c8MnOZqzhIDyiPSIueZ0zTLOy
-	 1YTmEGO2MB5i+MxW2u10zkNy95Y4M86ttRfOYK+KhJfOxFg7mf7Isn6uNWi3+5uPh
-	 7F0Ow9a+dWxSAAI7teMQgV5Z3OfCgrIuRKz1aGL1jpzyNVGAx+FBj4m9lRO9zFUdw
-	 UCrLReO1KfKzdWP6CpAfDfCK2IqMUIkkD2+9dWsofPinitDEgOLArZKxuGtjmFcAU
-	 1S1kMSSnf8IYbIXGuA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.19]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjgT9-1tUHcT1EQl-00iXt9; Wed, 12
- Mar 2025 16:42:22 +0100
-Message-ID: <1b32cd5b-aa46-4a23-bd21-908196c4bab3@web.de>
-Date: Wed, 12 Mar 2025 16:42:18 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="troX6rnO"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3912baafc58so82190f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 10:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741800077; x=1742404877; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HB9xS8FxfigF4WYPPRbbcyxASGClaI6fGW/tpj8nUVs=;
+        b=troX6rnO482hE4d2rEQdQiinHkcPuf3jS4eVdVQqoSyMj84BMwyxpA8uIxZF9E9ic2
+         Qk/dvynGMlLj16cBYY70WyHusatcx2/362aLln3GnrnYlvdWRxckWs53pMKIcdYFH435
+         l4qJT7p6ytgpdWwlN+CcU8VFUHHl935bxRlbJos2BRmL4jPdqLZylrk0VoSNwCbUiAFo
+         03N4zhciH9p+DB9oRUXcSKtsu0t+7iIPWsW7YE+zrg1+JYsczy6JUaUrbsL6FY3ip3q3
+         OxY7FtYamqGi8HmskmjwY8lK/Nm+A+Ylrb6d217HixvV3OCYCZjyfJsb93IF7vtN+MiP
+         INvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741800077; x=1742404877;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HB9xS8FxfigF4WYPPRbbcyxASGClaI6fGW/tpj8nUVs=;
+        b=KZ2SgruOmuXDomIGFHNsJwmwavGHkOPv+LrVmIiHga/LMnCXBGOAxnYhaD8+nJW/4M
+         +TlGxqpmbz4HgC8wv7f71glDOKVUFhtomHhenKT48GE3mHglm1pJBZJ+c+OZcuoaRmaf
+         Hi9opjGf0d/pahhPG3sBoJVvv8QurBUoivzXpa1rbmJs0la82dHE0WIeh388uPBsHu/4
+         Jg+eySjbwWXEEBRk0WiLtnOTx2oYDvt3A+rrXHxUFS61SDIwLukw4CglfQlsWK7hFl16
+         j03vdbbBffQQpl3VswwRxpFASlSo9npzh9uQ85XGSfbw+d9i9KHSV0n084cL4aTgKVyl
+         Ivow==
+X-Forwarded-Encrypted: i=1; AJvYcCWsUJ4t/r5we5HMIXC8Gq7YR21+DHP/Mq2hyO1Pz2M26mPSbnX6cXWNsAu/yG8H0qtDW8ATZBQMtvcezsYOOAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBaov2ndTO5qaZZBXP11ppSlrO4qh8YeG8utVBG/LsyWlpjSKq
+	lExaRPp0lUQQqwP1f2lFZCKJGfELZ/oPuevUhr80Fam11qf+wsT03YA0YWiEz/o=
+X-Gm-Gg: ASbGncvqpE4+A/+xMAzlk9/zPGEPe1RqoKatpgeMouIXrS2DvkyAENTgJqNVtMc3esU
+	DuWr79OskgY4Iml73TpotXaOMtwa6JfMYHdZH5lIAza5dTiYhRkj+Myy6yaIUGbXVumnyEPEDdy
+	qutX9NChTzJ9N1xT7rBAWdDJ1bzRxnxjuZce3ZY0bK5ubmnfJwz2o0xjZU8UcVGKbUrFdQvzUiW
+	QUUzwKMsMtPRmMdBDQbjHFiruxyrcvPkXosjY5crcqEC6oY9asWjMDsMFTK9kg4RHS4W9Bv0+pp
+	n5PMkFN7VpMY3trbkzFIMu7iZA/ZEPE03B3l8rn3LZmWEsEhHA==
+X-Google-Smtp-Source: AGHT+IHj/Sj6ykxoYXb50k6xZbXFvzcbHYh/wf0blrf/4M8wSJId+CUZ1HfJtS6QVZFmpy/JDyUI5Q==
+X-Received: by 2002:a05:6000:1448:b0:391:487f:280b with SMTP id ffacd0b85a97d-391487f29camr12619009f8f.10.1741800077411;
+        Wed, 12 Mar 2025 10:21:17 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2bb7sm21940643f8f.63.2025.03.12.10.21.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 10:21:17 -0700 (PDT)
+Date: Wed, 12 Mar 2025 20:21:13 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] xfrm: Remove unnecessary NULL check in
+ xfrm_lookup_with_ifid()
+Message-ID: <2eebea1e-5258-4bcb-9127-ca4d7c59e0e2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Dan Carpenter <dan.carpenter@linaro.org>, linux-wireless@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
- Avraham Stern <avraham.stern@intel.com>,
- Daniel Gabay <daniel.gabay@intel.com>,
- Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Johannes Berg <johannes.berg@intel.com>,
- Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>,
- Yedidya Benshimol <yedidya.ben.shimol@intel.com>
-References: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
-Subject: Re: [PATCH] wifi: iwlwifi: Fix uninitialized variable with __free()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZKn6UwdQ7UztrBsRGLjm+ca4mdIDBz6ZIt6nxP7D4JggU3nZlzw
- UEQUN/Wj98FPk9MV1N9kULAR77SHX9ppJEXhBTOTcs2xezzOtuXvKVQuFj0UMbXBMhLAtT3
- zQCc7BA4LdNpJaRa3mNWIXUU4GMzZezlcI5XVOxIqlvh9jzJ051Y/58SSUE1UlBRrOXcdbB
- mXComGHHd91yq/BSF8T4g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4YdC1FvAU2s=;FfUd+3nLn4V2x+hw2Q7N77b+awZ
- oog8iL0es+oX3MNBLgTbwYYcFf0XOXqYpBvFPQAbNO/PUm0yFgN9emfUPeSWjDTBXFSisLRXU
- Rmi/wm2xIqkhu8TCYug/Cd9+PIRrqi+1c6jiibiK2I6qQp5vcDxm+24AbF/N343PfzFtLAB9j
- 8dpYlJknJTuPV/bOi+oHJA2x0m4KVpJ9GxTxCYyj6BtP3SDQxzmJHZDd9gp9BfQoHyQbs6L20
- ovgx+UQIL6Rv3baHvDFGOsJkp+GsebwJ3zrZBr5tdef7kidb/b1slgIdr2AcP7ph1bcCPgagg
- CNFCegveB+dsNrdOIy3rlmNPOaWHlvazILo8d1jALg2D4pRyLoBH0PdagjTelpVuPn9L8Gblp
- 69fEeX8e0Fg8Zjpjjt/CxQJhTXzWTqetJwCu0+j6adpBe+hT6oz5Djn96CU7QPs5jdzE6kHWQ
- qexiJ9enWNfhVpMlKmfhUITPw8ny9zWHJo2bizUFLOIWrquK/aK/t0VW5JU3XDteFYQMXU+wP
- ZAHsBKqP4PT7Ra9KBS11sstqvMX0TY9McquNsaTZsNSPaU27B8scKqB7dL/3TYAamLGlkhsiv
- EhGv3ABeioWpmtyYLYBkbhH8h4aomKJd01WOHtFE5DraraxXYdwX3kLvDf1Tc3YgxeSf62ie3
- Y28onvGP+jVITvNk729NUDl7xf6peKmfua+tOdBrHS4kGXgNLcqwP3JB0Q7SPNdy5faMWfTKw
- BF+wRiVuBCQQgtxYhvkk+cWEjMQdxaBAuvEPRRXPf2SMyAI8adZPpdUoC3tVUr287jN3Spn9U
- STWSfunnZZETWeb7JrjZ3ZGt74rWV3MBjOqpZQZCPB1LMSYLOwIDlWsqR2bJ/begwGPBeKH59
- E5uiQdrLkcwtUHB+VvnH0rk0lagq3vU8zBkRyA26U80/aO//NV+tP/37JOkGZo7RRnsuem7ZG
- laM1u3ZIUixD5aCFgTm40JFkXVlZGREWimIs9Gpc2XqoOZONH7whnpxjueyl03/BPPELG5Y4d
- Ly1NGqSoQlBjvKgowph59KcWDRCZAsDrM+gTiNcLw4WD6ZM4/yzJ3iQKHtIn/Xy/IHdhVm6ZJ
- ONvcn5GzyGD8JydBWSrJWe4YwZ21hotuVq0/FONsDs2O4/wyXHZSZhtIhV7Y2beP88KkJTJPp
- ApZNymzCZ+vXy9aX6efTKZWMHaP6eyFa0V4nAMFfgYHRKZmC3PaNtac2H9hJ0C1GgSQBhLoHR
- YZDwQG06m9DY6ioEwq/k86owLvy72ffQztiy6VNw87dI8ypaqootCxyr8pHrTtXdNJtvojugD
- ++7ncx2Xaw+n4MgDEkHjpm9FtrpNmXEhlfnAPOUlf7kDzA8B1k7Yzwgiyowx837F+ntMSuoRs
- pbKaFLU0Nv13tkRh2oo1r+ORfz0zCJBKbTvzJglJinjxmbo42jht0YCuOmC4T3/XZrOvVvTQG
- ilfvNv0yp+VvEGi0ct6qqGfjdrAhksbYB93fV8W1ggR0uwNyT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-=E2=80=A6
-> +++ b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
-> @@ -556,8 +556,8 @@ iwl_dbgfs_vif_twt_setup_write(struct iwl_mld *mld, c=
-har *buf, size_t count,
->  	};
->  	struct ieee80211_vif *vif =3D data;
->  	struct iwl_mld_vif *mld_vif =3D iwl_mld_vif_from_mac80211(vif);
-> +	struct iwl_dhc_cmd *cmd __free(kfree) =3D NULL;
->  	struct iwl_dhc_twt_operation *dhc_twt_cmd;
-> -	struct iwl_dhc_cmd *cmd __free(kfree);
-=E2=80=A6
+This NULL check is unnecessary and can be removed.  It confuses
+Smatch static analysis tool because it makes Smatch think that
+xfrm_lookup_with_ifid() can return a mix of NULL pointers and errors so
+it creates a lot of false positives.  Remove it.
 
-Can it be recommended to reduce the scope for the affected local variable =
-instead?
-https://elixir.bootlin.com/linux/v6.14-rc6/source/include/linux/cleanup.h#=
-L129-L133
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+I have wanted to remove this NULL check for a long time.  Someone
+said it could be done safely.  But please, please, review this
+carefully.
 
-Regards,
-Markus
+ net/xfrm/xfrm_policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index 6551e588fe52..30970d40a454 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -3294,7 +3294,7 @@ struct dst_entry *xfrm_lookup_with_ifid(struct net *net,
+ 
+ ok:
+ 	xfrm_pols_put(pols, drop_pols);
+-	if (dst && dst->xfrm &&
++	if (dst->xfrm &&
+ 	    (dst->xfrm->props.mode == XFRM_MODE_TUNNEL ||
+ 	     dst->xfrm->props.mode == XFRM_MODE_IPTFS))
+ 		dst->flags |= DST_XFRM_TUNNEL;
+-- 
+2.47.2
+
