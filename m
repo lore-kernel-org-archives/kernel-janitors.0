@@ -1,102 +1,144 @@
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6344614601C;
-	Wed, 12 Mar 2025 14:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F81C240604
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 15:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741790933; cv=none; b=r++8pnKVd2UhzBv8ae0koYWCPjYJw77u858//pU9b1WrhKV7LaCF6k0nzlknMSoPZAFwY0OplTf/OYSxAs9UHa1T6txJNl8jTSRtfth8mGVrYxERMD0jh4FRbXxW3duyaRsHxFw7hcy/RCxWYNkfJrGaMhgVle70PSVRJlZq788=
+	t=1741792525; cv=none; b=eUgEeCWrsb9l4wAZrTcD29cbHXXPtLpQ8IyntrB3aPum58brP2wbMREXtxPDKxf4q/MwTO4fk2b2IaHerg8PoEG/aEUYADSbfeHSqevEsN1D5yv/LdsD/zGfcBnn1w+aP0BfTkeC9ri4wp0n2Knn/FUIRslGNjge8+UxKqz6NLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741790933; c=relaxed/simple;
-	bh=rhkReZw7ouylU250M0RZbXomCucOdddV3/DWLIwvQV8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jc48fyOIJvrwESw+MdFuNdbZcy1wZ5e7LM1MgRPn5jjf0TCxNZRiEslgx0bSLFZr7U+JKOKW3b9vh815vk/IQscU8PtO8cq5gaj2ZsmybnOuwgEklShK76MHPBbryUrmf2oT/boxqGodi5Df++blY0c2nmq1YVcJ2Hyfeo+lg5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=pKwSiXFL; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=haaOsYYi; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+	s=arc-20240116; t=1741792525; c=relaxed/simple;
+	bh=rQCyYo1q5LlHeQmc/jvBgqAwBqok1aeeDQVozDHX8OE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pRucFLLLB1F5DFUGqTZU6auyO2XF9ODNUMjE4ARL3t5x4OV4zV5b3gXVaMxluQsac+6oDV7qvqxv7xsKb12uVbEVtrt05IbOuKxuka3/Po21jxRfmSN26qRnlEuB6FMr3LYVk17IqMR8mYzgtv0Vd7U2381f1qWH/BWHWdvJIHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZNiITNCF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="pKwSiXFL";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="haaOsYYi"
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 9EC3D60288; Wed, 12 Mar 2025 15:48:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1741790929;
-	bh=y+PELDLVlWxQuQQQUIVwHopabwrUkoFrP7Uybc+xikk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pKwSiXFL1FVAnJDcDjsqs+JFmGuEpOVTtrfXgXpuNVGKGJ56rUQdkfNyx/DUHeuuC
-	 Hp3UIuYh5QETVves9ZkRrSKPQVuqbAwHqKuHBJf8dKQOSzUQfajFwwJrDqDPlZeHGg
-	 UXu8GUIFEYmw824qmcFA1X6BY+1SmShMX3GgDwtxBDR74AYjaGKzMX9KFVlt1s9+nE
-	 3fT6NLGFnRHcODTkZ7NKu1rKr875AxrDx5PnpVNoRYYQlF5d3tsljlR637i5Gyc7Pu
-	 u+ETn35swNxmOhaWzOtIQWa4tGm4tJAAjEOTE55fd8C9I92iwLNqgTVISvCUAuY5eD
-	 GpP1vuTyKPZgA==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id 32FA96026B;
-	Wed, 12 Mar 2025 15:48:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1741790927;
-	bh=y+PELDLVlWxQuQQQUIVwHopabwrUkoFrP7Uybc+xikk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=haaOsYYiszm5BNqkrBwcNDYbVafIv5yGwG9uJEQTPQ5yOWKwmNqMS4qzYYMlO3xuW
-	 mrlBgS4dU+m7nLYmFdJaMZPzfNH+YjgrKT22ilJn5atLlF+BS/uTVZKfYXNbKtwJhC
-	 9OP3O28FEq2+TSXOa25a50XgPQ96FZ06o/JUkOlCt323I30VzVDyE59z6mMDdZmQsr
-	 RnMOI/IsubIFC4oseJd9zbWkGLoNoVlsoG1c18WxAod6+zDbvvAhcZplXOpVWiI4it
-	 knpukeWvTHY0VX+AG5v3jkORntuCkQRUpH85UQP7dFgmwbEGIl5Q0p4jX0Jt7+3iFP
-	 gS1pwrGKCE/WA==
-Date: Wed, 12 Mar 2025 15:48:44 +0100
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Julian Anastasov <ja@ssi.bg>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Simon Horman <horms@verge.net.au>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 net] ipvs: prevent integer overflow in
- do_ip_vs_get_ctl()
-Message-ID: <Z9GezONZJ_sDuwFy@calendula>
-References: <1304e396-7249-4fb3-8337-0c2f88472693@stanley.mountain>
- <262d87d6-9620-eef4-3d36-93d9e0dc478c@ssi.bg>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZNiITNCF"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52C9rl45013547
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 15:15:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sX4AAf7m5Hmzy6uxAgPsldQmewUW0wWhuO0d0xDGmO8=; b=ZNiITNCFHf76RD2d
+	BJkcFBoTieDJGgtaZS2gQ2IZlTyTr5pKwG0dBaC9+MDHtzlXyajYlBG/DwOIvm6s
+	pIBfhL8TylWKsX6J49MiXrMFfDkqVRykdaZcG2hdMJuOMHW+ZdO5JSrbcOqaMo/C
+	EO3B64YRsoEMyk56ct9O8CZkbbPLqgQE0kb9bLU4ZRi9A/ZvCVQBMDDWBlI/ebBn
+	AldGDf1exSUTGX/hZh2eN/VHbsnP8om+07/D5DtYenSgPRns1XWrNLJHiGkP1Nq1
+	Au+trOHPDMvWDcwyNE+8zOyNiZoLyHOGJKFKOaba66q8+TkHKKhQJVZpfLohO4Ub
+	8R1u8A==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2njuc5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 15:15:21 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-223f3357064so108499225ad.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 08:15:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741792521; x=1742397321;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sX4AAf7m5Hmzy6uxAgPsldQmewUW0wWhuO0d0xDGmO8=;
+        b=vvvk7M5W/799ARxJfsxbRf8ouiXlqJ2U6bSzfKiWUAdE/7VubKyP8N6HMZFsW/pU17
+         86p9URXZ72v6ZL00IsP8od3JASgtVovWOEGiWaKs86Bvpe6RuMsODt4kYZqBFZTHp//+
+         VmzQG2PQc8RguLdYun+K6dsAIone+9kdl4SbWn7Z9fsqSxPEAS/Juv/g27QkyxtQD0KD
+         KtMEpHDE4il2Qzue/Y+99F+eqnfNyeRtJ3hYkGNoU7dJ9NCQGFfIcRBA17oNrbQR2WMl
+         8SZhvKIkR4ftC0ETCVknMyiHPKueESgfMG5cJdNyBWqec+0vDgvKv3UdupS5tZS9zHqj
+         74Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6XYpG2W57RxFHCJss33YoUDY1puFajBJwng4pw2G2G811KnBEIgQww43rvh7VOLnw/+UwgIvAYVgBLyCR/8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEdyzxoT7GSHRI2Z6bk0ew1OvbI+5olMf7/Ybhytpkfp0Y56Wi
+	b4VvGhDvRQL92EuokcJbwvpoqtszo9en9n8mT+Afb9ubfwXZJqswh3m+Vdct2ufL3ARC8fWzKwX
+	03dVuVgUIgelAnrHYnzbMI1FxZp+Wwmp+oNX9C+LZ80XhWyIcYlHoIW0jxJeHPGRcwpc=
+X-Gm-Gg: ASbGncvjutAKrwUR0FKv0xBWmrldB1dt93Tsq2EuQHl2+CcEiB/lKLsDQRvKv4XZ3z7
+	fzjNWmkYZDsF9E2jX42jm5I1lsmrWAC+HxFt5jiwSD8LKSAd1fMJEOvn1frqqhrvvINZlm13Alg
+	cpxqJZwJuUmzQ1pMONm82RTiDleacRuyaAx1wbu/NN9XdtCi9UeTM7NW2j2Hq/jZoSrQY3PmXFJ
+	hj63U3Nxuy2L9ZSGqPj3PDBUksf9I1twnhCH0WPlSG4orPPeRn0l/XxoJRqyLwMYIRwqZgDwywH
+	e/H6PT/NfXwoHLtIIdow3UExfOvy2L3MK6bpDN04uYV7j4pWDE3eaix2+u0LTWWZjIhdcHQ=
+X-Received: by 2002:a17:903:32c5:b0:224:249f:9734 with SMTP id d9443c01a7336-2242887ecd7mr325197725ad.4.1741792520678;
+        Wed, 12 Mar 2025 08:15:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOdNtgjzF0uLcKmrq8uktA9l8TaPAfGY6t6+ICMeOkLWYWs6gFJGHlW3ZY4NQTKvR6YiogdA==
+X-Received: by 2002:a17:903:32c5:b0:224:249f:9734 with SMTP id d9443c01a7336-2242887ecd7mr325197275ad.4.1741792520273;
+        Wed, 12 Mar 2025 08:15:20 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736c78389d7sm7863261b3a.4.2025.03.12.08.15.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 08:15:19 -0700 (PDT)
+Message-ID: <a21610ae-e155-44bc-bcc5-b9b8b1c8cbd1@oss.qualcomm.com>
+Date: Wed, 12 Mar 2025 08:15:18 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <262d87d6-9620-eef4-3d36-93d9e0dc478c@ssi.bg>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] wifi: iwlwifi: Fix uninitialized variable with
+ __free()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Cc: Johannes Berg <johannes.berg@intel.com>,
+        Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Avraham Stern <avraham.stern@intel.com>,
+        Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+        Daniel Gabay <daniel.gabay@intel.com>, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <f7c17a7f-f173-43bf-bc39-316b8adde349@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=M6hNKzws c=1 sm=1 tr=0 ts=67d1a50a cx=c_pps a=IZJwPbhc+fLeJZngyXXI0A==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=-Q16Wm--JIC0Ijc-Z3AA:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: UGahQXkQJ-4Ek-3CHvFaPZYgGuWRkNDy
+X-Proofpoint-GUID: UGahQXkQJ-4Ek-3CHvFaPZYgGuWRkNDy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_05,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 mlxlogscore=836 clxscore=1015
+ phishscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 adultscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120104
 
-On Tue, Mar 11, 2025 at 07:50:44PM +0200, Julian Anastasov wrote:
+On 3/12/2025 1:31 AM, Dan Carpenter wrote:
+> Pointers declared with the __free(kfree) attribute need to be initialized
+> because they will be passed to kfree() on every return path.  There are
+> two return statement before the "cmd" pointer is initialized so this
+> leads to an uninitialized variable bug.
 > 
-> 	Hello,
+> Fixes: d1e879ec600f ("wifi: iwlwifi: add iwlmld sub-driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/net/wireless/intel/iwlwifi/mld/debugfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> On Mon, 10 Mar 2025, Dan Carpenter wrote:
-> 
-> > The get->num_services variable is an unsigned int which is controlled by
-> > the user.  The struct_size() function ensures that the size calculation
-> > does not overflow an unsigned long, however, we are saving the result to
-> > an int so the calculation can overflow.
-> > 
-> > Both "len" and "get->num_services" come from the user.  This check is
-> > just a sanity check to help the user and ensure they are using the API
-> > correctly.  An integer overflow here is not a big deal.  This has no
-> > security impact.
-> > 
-> > Save the result from struct_size() type size_t to fix this integer
-> > overflow bug.
-> > 
-> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> 	Looks good to me, thanks!
-> 
-> Acked-by: Julian Anastasov <ja@ssi.bg>
-> 
-> 	Pablo, you can apply it to the nf tree.
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
+> index c759c5c68dc0..1d4b2ad5d388 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mld/debugfs.c
+> @@ -556,8 +556,8 @@ iwl_dbgfs_vif_twt_setup_write(struct iwl_mld *mld, char *buf, size_t count,
+>  	};
+>  	struct ieee80211_vif *vif = data;
+>  	struct iwl_mld_vif *mld_vif = iwl_mld_vif_from_mac80211(vif);
+> +	struct iwl_dhc_cmd *cmd __free(kfree) = NULL;
 
-Done, thanks Julian.
+hmm, I thought the recommended convention was to define __free() pointers at
+the point of allocation. cleanup.h explicitly says:
+
+ * Given that the "__free(...) = NULL" pattern for variables defined at
+ * the top of the function poses this potential interdependency problem
+ * the recommendation is to always define and assign variables in one
+ * statement and not group variable definitions at the top of the
+ * function when __free() is used.
+
+>  	struct iwl_dhc_twt_operation *dhc_twt_cmd;
+> -	struct iwl_dhc_cmd *cmd __free(kfree);
+>  	u64 target_wake_time;
+>  	u32 twt_operation, interval_exp, interval_mantissa, min_wake_duration;
+>  	u8 trigger, flow_type, flow_id, protection, tenth_param;
+
