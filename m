@@ -1,107 +1,88 @@
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD032405F9;
-	Wed, 12 Mar 2025 12:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772E8242923;
+	Wed, 12 Mar 2025 12:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741781190; cv=none; b=LtcaPFMQmFT3mLeeXozHgwOUJDlBf1GRMIfe35RHhr7jmrqqvoLqywoe51cgcfdNUY40tZKvIzpTtqpmir7gEFGf//LJytAFnFZZxl3fBsAq8ENt4J4lM9W/S0tLs3Bovusdv1dEqqe3Av/C+IJIek8BQZsd2bWHQLwDYiQXQds=
+	t=1741783182; cv=none; b=Lo+9+RPvCrgrMiMyxn1CCPBjEDWMz+RklKTd5jTNhGoPPvB3KLeMbEZT0eZjA/rsgZX6oFzRowXWGQrT3KIcSzrhwdbmwdnMcvNrXZ8AU65iUKmDUfqzzPmyojbcn7D0oGVKVSKIRtvu6VaHL6/jPQApwDiEyTZQGotvcRAqWCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741781190; c=relaxed/simple;
-	bh=xypOKUIiqk37jy40fQBLrtEj4ywFYn2sLMjN0PvYc7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fnUqLHZL31CpP+yU+DVxYq91FMpajQ1aiaNelAX/ULMQMrUzOrO5jxiAN8dCOuE/+9GqIE0142WBDWOBZDCE30utHhrhiz/fQATWcTNtAoHfkYSRqWEcAp1wfMrNFR/g+IuLOZyhmhdCVEsbMX2kBy6yu+D0Z7evL+voV6NjRUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UpuxB3HX; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741783182; c=relaxed/simple;
+	bh=H3HybGaUKBS9YrAf0ND7xXzJkEyXkytMuuP5BxOuzL4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m9EbCVmjnxhRmmD9exVVUf0SSJvD5HYUBQLY/ldMl3sFWmjFsl5VqM8wZYw7pA6XINWHdr9lx/aLWkv5+UGmbEmAEVtXkd9t0mvFECm6ZgHoS1fPF9aajX2+7xYb25mdlgIurucWgNK0O3+iZ7AYs7hMqTyEDtm4Azq8HPaJKDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uz99a8UG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UpuxB3HX"
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-856295d1f6cso443979139f.3;
-        Wed, 12 Mar 2025 05:06:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741781186; x=1742385986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=16gsqJtrWLlbGGVWtxUyKdKAGo91B2+znh+1e9ptq4Y=;
-        b=UpuxB3HXAddcBhCSCqQGiOrDlhx0ftbI8O6MrsJITRpXMLSDpKtoueZl5GS7sC0e+0
-         KUlAJWatNgtRx9TA7wkDKlW9Icy6DDuS8oQG8lb3yRH8dWrZYEunp8BXtlZM67jLqQZa
-         lFQcN8gxSNpWeFQ6HYVr3bxXi1tKO9pgirTj/to8Mk37zWGzEoiFrA6p++0QA3MMVNNu
-         W7AC3y1R3UYkzF+WQew9nJ52Lexij7A+n8oabungGdiZ04Mr19cabys5DboPsNo8s4Ov
-         AICu87TWnmCJoJoAE3QBwhuRocrnEfTwIJzORqE9UJWxopdvT+ZYNXVkCRyykJir7IwD
-         OLig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741781187; x=1742385987;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=16gsqJtrWLlbGGVWtxUyKdKAGo91B2+znh+1e9ptq4Y=;
-        b=sHpOc8pojz704JcIGhkOWIo1wKU7rV25N7sUpg/U8ad83crmBuIrYZPPrXEp5PPh0f
-         8gmgPbR7DLlC4vY9ueNUoltqnUk8tuxJUrA+H/uGTzo7s9s1EbxbPVsF/VXFxcKkL0ls
-         9K+g1PrCuY9/oqFyHFiYfbBcs74FJ7OQUnR7EsfCKrB9wO6ondA+bkDoM120bKHrtUey
-         uAcic0N3VAxJNISeSarBgrfKqcHw+Ecc1xEhk083xpT75owY1ZR/8CSN+qQW/X9ohcAZ
-         /+2gH66emPeIjBR8c1vnGd+YBvZNFBw5D0oJ6YKR888YGgt6UvjvRvV0bkQFywxxLYBs
-         lFTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDtwE0gEIrbT5DgOEnOFaemQJ47wyheXcbIP3QbWYxzT84TTxfr7dmqL/Rs254XZY0j5qGWDVvPXLgsD7T13Y=@vger.kernel.org, AJvYcCXDWG8YsvelB2zm0Uvw70JsF8KIXEHqwzPB2X+XvxqZPzc1ko3tZ/K9N0tLtviNIah48A2P5ATuzHYsRyxW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8HaamcmDC0oi3N8Ap5nfUbLcR77xtSSZhFJc72JHBCM2Yuwxq
-	FwgJ90hV0JRibW+Hoeqz4XFqdMdclQQnhFqX+Ren9yKBGFU64BZka/dCzcsDHnu4GOckUIewJdo
-	phaZcNtwIZbJUp62oaXGwZtMisMU=
-X-Gm-Gg: ASbGncvfIQX6bsnfSGpN/lgVDmkNcZSJ60PoB0Qgc55eCeDuq0QmGJ355HxsT4t1oZ/
-	jgFXSX4+1574Pr1+qteSXn4vWVf81CeMiHALtBSMHjeddq+erl3DxeAya/PdC+LTMtknWP4X5Zq
-	yDEu6TNmJ9n9oBNL4gMFwJ2eJ4
-X-Google-Smtp-Source: AGHT+IGEsF+C5/vNm1H8T7WVPIYrmKDWuNPTJo1w2pmsEdpJ5Y2WsTAbWNetSHDpvj9YFbr4sOBl42eeBtR/jJ1a3Xg=
-X-Received: by 2002:a6b:f20b:0:b0:85b:35b1:53b4 with SMTP id
- ca18e2360f4ac-85b35b158fcmr1451553539f.12.1741781186554; Wed, 12 Mar 2025
- 05:06:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uz99a8UG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E64CC4CEE3;
+	Wed, 12 Mar 2025 12:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741783181;
+	bh=H3HybGaUKBS9YrAf0ND7xXzJkEyXkytMuuP5BxOuzL4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=uz99a8UGQoTNYfNUu1cSAzael/QVMI439kJK8QuEDN2Mn+CR90x1u1l/jdbWvGr05
+	 6zQNVA2Irl8MgLfXQ4HGPXcjGAHUexQzMT2YqRC8mDTmQzuQD4Tg3ufntP8kAqHLE5
+	 p8JVecBYxzGEM0P0M/mlljtGV24Xo3A+fvgHQkA0GPj1BA86s/YcGSyrupC1p5yMm9
+	 b0h6QypHDraX5O2eJV7aA0BGtOYJzlQu8YPZK6xgcnej0PXwDj9sjeIXoOyn830zGf
+	 OnMAoOYKX92D0+fdwslo05WLy1JHcz8/OcmSLcJ2/hnDLTP+Rx03piBnuJpTcLVaF6
+	 pbJIlVce0wQKw==
+From: Mark Brown <broonie@kernel.org>
+To: amadeuszx.slawinski@linux.intel.com, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Dimitris Papastamos <dp@opensource.wolfsonmicro.com>, 
+ Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ Mark Brown <broonie@opensource.wolfsonmicro.com>, 
+ patches@opensource.cirrus.com, linux-sound@vger.kernel.org
+In-Reply-To: <5139ba1ab8c4c157ce04e56096a0f54a1683195c.1741549792.git.christophe.jaillet@wanadoo.fr>
+References: <5139ba1ab8c4c157ce04e56096a0f54a1683195c.1741549792.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2] ASoC: codecs: wm0010: Fix error handling path in
+ wm0010_spi_probe()
+Message-Id: <174178317936.22408.8969809539586039270.b4-ty@kernel.org>
+Date: Wed, 12 Mar 2025 12:39:39 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ed5089eb-fb83-4c69-9835-dd64735b8a73@stanley.mountain>
-In-Reply-To: <ed5089eb-fb83-4c69-9835-dd64735b8a73@stanley.mountain>
-From: =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date: Wed, 12 Mar 2025 13:06:13 +0100
-X-Gm-Features: AQ5f1JozYbhjkOmitxRJRrSxuAPTbJrtddEsFZS-Y5mUWrui6-xHADVYvGOMyYI
-Message-ID: <CAHpGcMJ4HTSRzqEWpVDDZi66Y86LRKCob9PAkMFfZBWdpUDU5w@mail.gmail.com>
-Subject: Re: [PATCH next] gfs2: Fix a NULL vs IS_ERR() bug in gfs2_find_jhead()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Andreas Gruenbacher <agruenba@redhat.com>, gfs2@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-Am Mi., 12. M=C3=A4rz 2025 um 09:33 Uhr schrieb Dan Carpenter
-<dan.carpenter@linaro.org>:
-> The filemap_grab_folio() function doesn't return NULL, it returns error
-> pointers.  Fix the check to match.
->
-> Fixes: 40829760096d ("gfs2: Convert gfs2_find_jhead() to use a folio")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  fs/gfs2/lops.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/gfs2/lops.c b/fs/gfs2/lops.c
-> index 3853c422040b..0fd3b5ec7d8c 100644
-> --- a/fs/gfs2/lops.c
-> +++ b/fs/gfs2/lops.c
-> @@ -530,8 +530,8 @@ int gfs2_find_jhead(struct gfs2_jdesc *jd, struct gfs=
-2_log_header_host *head,
->                         if (!folio) {
->                                 folio =3D filemap_grab_folio(mapping,
->                                                 block >> shift);
-> -                               if (!folio) {
-> -                                       ret =3D -ENOMEM;
-> +                               if (IS_ERR(folio)) {
-> +                                       ret =3D PTR_ERR(folio);
->                                         done =3D true;
->                                         goto out;
->                                 }
-> --
-> 2.47.2
+On Mon, 10 Mar 2025 18:45:36 +0100, Christophe JAILLET wrote:
+> Free some resources in the error handling path of the probe, as already
+> done in the remove function.
+> 
+> 
 
-Applied, thanks.
+Applied to
 
-Andreas
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: codecs: wm0010: Fix error handling path in wm0010_spi_probe()
+      commit: ed92bc5264c4357d4fca292c769ea9967cd3d3b6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
