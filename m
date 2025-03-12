@@ -1,127 +1,185 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E275B23BD15
-	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 10:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D981DD9AD
+	for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 10:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741774832; cv=none; b=sRREkLy8P56/HBXMTk5A8AkHVlH/S4/brDKBplyIkJqcfADlrsckAz0CMJ/5x6DXKDDqyCuo4t/8LPWQhuZ3XwbdX2NSXGo36mBearzTiE82+RWasZyVN9ZysOk07hMgS/vu2HbBEnekMB6L3nJ4/TSd1wywXFVhvmYa8jMW+kE=
+	t=1741776415; cv=none; b=lKvkkDgTgeYh15uo2Bx9XCvJH5i3TuJ0+mokdIS8YldBQC6Z4efIi+nB2rLiNyomkOBdNcr9BwjrG4mD2rzuvJsDrR6OUHjQ3Ds3AgtUM4mD47tgqjw9AwxG/TR1aEeJBJSf348pdJpesE6O/qS4w1hCWovxPNoM7XFXsZOkZ0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741774832; c=relaxed/simple;
-	bh=kVD1cBOvbcjfuLGnWQGwAsJLPrywxdLU+w4aBmi2vMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oCWf2HddfxtBhpuN5anhJGptRK7XlDfgWozseiNVJgM+jL9IQ/3q5Vr+3uwK2e5R+/InaRq95KXF4Lhfx0cC/og6pfCkaK1syVSng5F+uIqUOzWW/QxtOxF1mtwKgONZekw6HDDg6WxEboKMzpXV1D+NeOpTJZ9xoHoEE6MP0l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fdhyS6by; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1741776415; c=relaxed/simple;
+	bh=DNEcuPsj+qi3Wnj8L4nF8fNAnK0CaTO8BtviCLKYIc4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=egLH1xIYmU7IgPdKioP+tI5CGpEQ446uXCpdi0tYXzahJHHwOp2L18GMnOOlRpUe+chP4ivE4PP4n2IdVLSdnjHLT8k9ziqVIjCstqJHp9jAq4XUatWRy0DPdy8ZQNELN39H/Y0rtfqwY/62wJH8ykm1wahklgqVkwjngifvh5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a8NswOF9; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fdhyS6by"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741774829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=h0Yr5Vgm7RUBCb/M+U5Z8BVsZiNBVB+EPPiJ4rqIWDA=;
-	b=fdhyS6by15tZnEiIss0zjnherR7EKzyJ8RO2EVOGvlAREz1j/6L9iNPkC96siIqld2+bme
-	nodkwvdTPz6c1mSQcxRCOvf3G1ectoEQ2um01P2ktTAb3sO//Kvh1RGYkNVZxsgcWgozB4
-	YkWrPZKjBICaKBiBZ23CqUwH9iVmb5A=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-537-3SqVAc69PBSlYK82vgp0kA-1; Wed, 12 Mar 2025 06:20:28 -0400
-X-MC-Unique: 3SqVAc69PBSlYK82vgp0kA-1
-X-Mimecast-MFC-AGG-ID: 3SqVAc69PBSlYK82vgp0kA_1741774828
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3912539665cso318184f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 03:20:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a8NswOF9"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso70321155e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 12 Mar 2025 03:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741776412; x=1742381212; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PlCdoqnuy1rzQZsJE5kNcyighHEqrB9PSElkNCee3L8=;
+        b=a8NswOF9m72UOcPpIEabVkHIJICCSLi+frTGSsxGN9+4AxirUXptKiQdYwgHau8WqQ
+         Nqx2C+UaicUrUnxCp6Yxo1tZuTeWV1A34rFoHW5edY76Q4E/ZXLdFY15U0eqpIknqQZv
+         fFHn9ACF2NK+ci/jim8ZIOS51gnSIT7/1Mq4KP8ntuXQ4v3j+nbmV9hHxvrrDXHTwM4X
+         PKdkavfvkHZYWRGFZ1pH5t6bIvN2LiaZf3ivrfmSbB+A9bqkeCl61kDSXbPNjnmcJ5B0
+         zh87p4tfbvhH6AtJhlrdbJx5udOAHDSk+7pG17kPtVzzNZuADWvH9ucbVMw9VxMqhElT
+         Sujw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741774827; x=1742379627;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h0Yr5Vgm7RUBCb/M+U5Z8BVsZiNBVB+EPPiJ4rqIWDA=;
-        b=AKkJwIg9U6WXIu3rHH4OIikjrSd1tcU94e/k+VXZXuEip22yRB1uE1JvLKPB/liF91
-         Wzx8iB7IIgIL7fTmgjKFqwA11OkIDgIC1Y7fgWTG39BwSXkaKwP8t6Cr0XeQgyIRgrcF
-         S/OEXA5mISd/CUZyTOx5rCbdAN8DXGc8mNpF66j7bpiASmLC5RxlHXFbbhizK/LUrMyh
-         XvBPgWuwRFEefj7RTrXbt3ybNuQJTI43mEEZJqu7Ld+M2uP/fkKmm7WlXs9B0AC/bbHY
-         ewwk7KuSGHkSYunWQQoxh5F8IZfZb459CvBiO5/+sBT/AWEtl+qdHnpt4pKCTANTjUt/
-         Dq3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXHBNYDMo9BCB5T2qYz8AJS5kE+ZvVOHZkl4kkidcMJhbRXSty+CA1zeKWtZPhd+kPgVbE8FmrlKQRdb/gjPmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNYBWzYIiziwjFjc7ft+xB+vXDrMrVzogBQxWBbxcnUOc3db2z
-	cRy6s1MF5HcigVGwB/QHabcymgL1E32VG04BWnEkUhW6GR7YBt0Bh7LTLHqZmt2IhWOjiLngq1x
-	IwXxk3LLedbfoCydEJ8Jw6Dbu/5Eo23SzKlsjMcVbuEBBnnmXvQvMSFalff0SJiGk+rl2PW2EWm
-	um
-X-Gm-Gg: ASbGncuM7KgdYx7jx0wHjrPDa/2k0b7kW/gbuG3k4Wr0W0/Q2bG4Y/zKYkvzxCPRfWn
-	50S/ajKBCN2Z0sjKYFDtjBpDMqP+wlMHQkZ0w96f67jsMILwZ/kMYNdCR6O7MQxi1rbUyFQzrID
-	dPgHOYEvwCngyYpFNOkvEdQt8kB54zfYfZl9/uPEmFo7HnK+aKic3IpFCnHaLnDHjTpBWKkNdy2
-	a0iGDh/n0jpVDnEscXUb5q9UIJqykIG9tl8DhIqCdFFswyHSD+OhZ/GQnCIymLwXnxtQubPgSPT
-	epZqjQ2HjU2GtTL7MTuDkLyvGoPDlF2+DG+jQKjUHNYjaM1hADFVr0zOFZYn1KU=
-X-Received: by 2002:a5d:6c65:0:b0:391:98b:e5b3 with SMTP id ffacd0b85a97d-3926cb6442fmr6821006f8f.14.1741774827292;
-        Wed, 12 Mar 2025 03:20:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFy2Q1sDAMgAbiGTwr0193U6ouUjNnUZZOSZ5Aaw1xNFil+VycgOfWKIaXwNWW/V12c4oR4JQ==
-X-Received: by 2002:a5d:6c65:0:b0:391:98b:e5b3 with SMTP id ffacd0b85a97d-3926cb6442fmr6820992f8f.14.1741774826959;
-        Wed, 12 Mar 2025 03:20:26 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2eecsm20457196f8f.79.2025.03.12.03.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 03:20:26 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Frank Li <Frank.Li@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Cc: Stuart Yoder <stuyoder@gmail.com>,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH RESEND] MAINTAINERS: adjust file entry in QORIQ DPAA2 FSL-MC BUS DRIVER
-Date: Wed, 12 Mar 2025 11:20:18 +0100
-Message-ID: <20250312102018.215018-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1741776412; x=1742381212;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PlCdoqnuy1rzQZsJE5kNcyighHEqrB9PSElkNCee3L8=;
+        b=LfR6+/wJwPsZvJCMXnSkn9+R70H6jL9s3n+Vlmgfv42zfLlLbYa2UCbQRuxwRm1WqS
+         6PBuHc0JBjM+4FclG5aUHrKa71xRQYwdLG2MQxBC9kEMdKKhYpNFO0fiV6181J+s/Fq2
+         VvAxX1zSkZz9P26AfZ40wRKdpaGHTggISYLRbke8IA3PaP9rn3zmj8fy7EKQj6Zj4Cr3
+         +JihW69+xMJ71e4o+4YwtDSTjnDVhU33DTpxGQC/AMkCotptMG9oSxZXOHj0Znh7WYcq
+         HvGQcVKke+GaLs5n/8oZuxKEq8zfYTev4m+tbxPEiOALAog++28IzV3UGClN4n/rcqkV
+         Eo1g==
+X-Forwarded-Encrypted: i=1; AJvYcCV8yUXNV2IxOUuJMUrdmelAwbIh0DcumpxZP2DR4YoiWBb+dvpvxTsHxZVRKma23xatXdT8WMJ42wt+ZdSmbkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4Clo+gYfuNdVcghFBi0FZMkTNJszGE9uLBzwSLifVKAeWhWiK
+	yB23/wg0dyFgqxQt6CINSNC4IgrJfj6wLUbbxxgW/ACaCH6UpkKnsI++JIxzdq8=
+X-Gm-Gg: ASbGncsfFjSJId5Fj3byM1tHzj0MVrv/O4xmCcvqZ69ddSy8qiviVquCXvQTsa6wwhZ
+	nER30tTT63I8Sy+H/akwQ9dKdNfuqsjlleZpflFKk4TkkkrxbgpcekT40lv3FW0Y5LRZN9GX3+5
+	pLQWBQfpS6z5Qr+1ehJpiaQLWVmpzOPndB3NmbpOqs7Qxy+JKqVALptuzfBA9jRqLZj98TbqQDl
+	MslB7cH6VM66s1DziYs2VWLzaAD234LziQZDTkFiWqyqMALcdLeV6mwVH/gQYu7z/CyFySr2pfM
+	geiELUA6wqxwrWEOn/SIsgvQkGcKQkV56MtRNaVbZVR0Dw9AJPtn8g==
+X-Google-Smtp-Source: AGHT+IHEYJN4xPkzICEY1jso6wVewx65u7jQrXPP1xJLeTxQL55K5z0VSuFkgMOyPntNnn+Hd4A7Gw==
+X-Received: by 2002:a05:600c:5618:b0:439:9a40:aa0b with SMTP id 5b1f17b1804b1-43cdfb7e4b1mr156156805e9.25.1741776411989;
+        Wed, 12 Mar 2025 03:46:51 -0700 (PDT)
+Received: from [192.168.1.247] ([209.198.129.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2f44sm20474280f8f.76.2025.03.12.03.46.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Mar 2025 03:46:51 -0700 (PDT)
+Message-ID: <bed04866-a477-498a-b33a-a631759733e2@linaro.org>
+Date: Wed, 12 Mar 2025 10:46:50 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coresight: configfs: Constify struct config_item_type
+From: James Clark <james.clark@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ "coresight@lists.linaro.org" <coresight@lists.linaro.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+References: <1011717e5ed35ec12113a0d8c233823e820fb524.1723368522.git.christophe.jaillet@wanadoo.fr>
+ <d8164311-83e7-4fb0-ab82-90e1a2762b01@linaro.org>
+Content-Language: en-US
+In-Reply-To: <d8164311-83e7-4fb0-ab82-90e1a2762b01@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Commit 78fa0d19a50a ("dt-bindings: misc: fsl,qoriq-mc: convert to yaml
-format") converts fsl,qoriq-mc.txt to yaml format, but misses to adjust the
-file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
 
-Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-broken reference.
+On 12/08/2024 10:12 am, James Clark wrote:
+> 
+> 
+> On 11/08/2024 10:30 am, Christophe JAILLET wrote:
+>> 'struct config_item_type' is not modified in this driver.
+>>
+>> These structures are only used with config_group_init_type_name() which
+>> takes a "const struct config_item_type *" as a 3rd argument or with
+>> struct config_group.cg_item.ci_type which is also a "const struct
+>> config_item_type    *".
+>>
+>> Constifying this structure moves some data to a read-only section, so
+>> increase overall security, especially when the structure holds some
+>> function pointers.
+>>
+>> On a x86_64, with allmodconfig:
+>> Before:
+>> ======
+>>     text       data        bss        dec        hex    filename
+>>     4904       1376        136       6416       1910    drivers/ 
+>> hwtracing/coresight/coresight-syscfg-configfs.o
+>>
+>> After:
+>> =====
+>>     text       data        bss        dec        hex    filename
+>>     5264       1120         16       6400       1900    drivers/ 
+>> hwtracing/coresight/coresight-syscfg-configfs.o
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested-only.
+>> ---
+>>   .../hwtracing/coresight/coresight-syscfg-configfs.c  | 12 ++++++------
+>>   1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c 
+>> b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+>> index 433ede94dd63..213b4159b062 100644
+>> --- a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+>> +++ b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+>> @@ -160,7 +160,7 @@ static struct configfs_attribute 
+>> *cscfg_config_view_attrs[] = {
+>>       NULL,
+>>   };
+>> -static struct config_item_type cscfg_config_view_type = {
+>> +static const struct config_item_type cscfg_config_view_type = {
+>>       .ct_owner = THIS_MODULE,
+>>       .ct_attrs = cscfg_config_view_attrs,
+>>   };
+>> @@ -170,7 +170,7 @@ static struct configfs_attribute 
+>> *cscfg_config_preset_attrs[] = {
+>>       NULL,
+>>   };
+>> -static struct config_item_type cscfg_config_preset_type = {
+>> +static const struct config_item_type cscfg_config_preset_type = {
+>>       .ct_owner = THIS_MODULE,
+>>       .ct_attrs = cscfg_config_preset_attrs,
+>>   };
+>> @@ -272,7 +272,7 @@ static struct configfs_attribute 
+>> *cscfg_feature_view_attrs[] = {
+>>       NULL,
+>>   };
+>> -static struct config_item_type cscfg_feature_view_type = {
+>> +static const struct config_item_type cscfg_feature_view_type = {
+>>       .ct_owner = THIS_MODULE,
+>>       .ct_attrs = cscfg_feature_view_attrs,
+>>   };
+>> @@ -309,7 +309,7 @@ static struct configfs_attribute 
+>> *cscfg_param_view_attrs[] = {
+>>       NULL,
+>>   };
+>> -static struct config_item_type cscfg_param_view_type = {
+>> +static const struct config_item_type cscfg_param_view_type = {
+>>       .ct_owner = THIS_MODULE,
+>>       .ct_attrs = cscfg_param_view_attrs,
+>>   };
+>> @@ -380,7 +380,7 @@ static struct config_group 
+>> *cscfg_create_feature_group(struct cscfg_feature_desc
+>>       return &feat_view->group;
+>>   }
+>> -static struct config_item_type cscfg_configs_type = {
+>> +static const struct config_item_type cscfg_configs_type = {
+>>       .ct_owner = THIS_MODULE,
+>>   };
+>> @@ -414,7 +414,7 @@ void cscfg_configfs_del_config(struct 
+>> cscfg_config_desc *config_desc)
+>>       }
+>>   }
+>> -static struct config_item_type cscfg_features_type = {
+>> +static const struct config_item_type cscfg_features_type = {
+>>       .ct_owner = THIS_MODULE,
+>>   };
+> 
+> Reviewed-by: James Clark <james.clark@linaro.org>
 
-Adjust the file entry in QORIQ DPAA2 FSL-MC BUS DRIVER.
+Ping. Just found this one hanging in my coresight branch. Still applies 
+cleanly.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
-Original patch was sent 8 months ago:
-https://lore.kernel.org/lkml/20240708075124.73522-1-lukas.bulwahn@redhat.com/
-
-Patch was not applied yet. No modifications in this RESEND patch other than
-rebasing it to the current linux-next tree.
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 67bfd9109535..e6609b78998d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19578,7 +19578,7 @@ M:	Laurentiu Tudor <laurentiu.tudor@nxp.com>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- F:	Documentation/ABI/stable/sysfs-bus-fsl-mc
--F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-+F:	Documentation/devicetree/bindings/misc/fsl,qoriq-mc.yaml
- F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/overview.rst
- F:	drivers/bus/fsl-mc/
- F:	include/uapi/linux/fsl_mc.h
--- 
-2.48.1
+Thanks
 
