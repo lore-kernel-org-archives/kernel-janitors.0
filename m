@@ -1,60 +1,42 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826DF18DF65;
-	Thu, 13 Mar 2025 13:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515F5267717;
+	Thu, 13 Mar 2025 13:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741870860; cv=none; b=J1YI8Q9v5kJRBfWQmalkBiYQpR7hvlPiS+h/5Udn2JDPbPRlZHo/crRUvbBNSZooGX8/yd8YUITLXjMLneXk/tQNye0HAdlY4CBeajY304NbCu1xS8SC/Jyja/d38grB113t2uh9myEdrO+n/kOSNXEzdkLp92Rf8gUGBtNa8aQ=
+	t=1741870919; cv=none; b=uRCqsWRgi5qk1qzmIiBZxGzOwUXFtZl8QayseJJ/TVMtKvpgdMlopcCe+GfO52mkFYPeGdIgXaVMvW2ouji+NamOLrAkET9+SZ2H68+ZfHIuvscW3nwOhZTSb+lXKi8edB0xhMHlY/Ak5HB14FUuU7x5aboWRTNWLHQsKbxyW3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741870860; c=relaxed/simple;
-	bh=SDYy/g2KE1CiW0cC7LQL6eKyByrj3fUGqqCT9sOLOeM=;
+	s=arc-20240116; t=1741870919; c=relaxed/simple;
+	bh=qnJ0veSCFOWj9TUdAVLHnl9bnvjlXhzIeGXuDk0MMZM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dRoS8i0rrSIZD7aqWCnBLUZW8xFppLIvqeI93U+jfEQwd/3IkaNPRKAwYo0oqqyWSnTGZegHn26yLKyPj1fgqEe+I/35HqU7SvRPZk685ODwXUk2zoddaclcA5bOM8PYU62guzf2NiOzJk/ZL9OxUFoCbXPySwY+N2concCIC7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QU4Fotet; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 MIME-Version:Content-Type; b=WXHUoWifD3SexDUHAAQ9eZbU72QMgyuMNJbG0EmiTbZCkf1fFF/czTLUJZhFlClG2wg5glsHKz1nkPjnM43Uo4c7/SNu0a9+B/1Kah9nIdrHs+8LyJLq3QtwkxFZmie4XRcE6zeybZk9N7EsuNBtlQIlllTGMRW48jJ84SiAS3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4mGiUXD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QU4Fotet"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741870858; x=1773406858;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=SDYy/g2KE1CiW0cC7LQL6eKyByrj3fUGqqCT9sOLOeM=;
-  b=QU4Fotete3aSlLhWRxRWsuZ+eqoJaeu/6j8zNcGuCcDQdDEyUPBEz4bO
-   3z+r+0wylV/9mjNjDCEbB5Y/hMBU7+TtqmOIYFUwcmu//9dl5jbjt/6pl
-   6qABbcdQyXeG5oF/d9PGU6zrXA0fiFOMob2SmKGZBU5pvEZJ6K6LfeNnN
-   NpagZlICNIv3qtfQoGpgNzc5owqCJUFJWrBq9zYMLMEX1IUUHOG4eMec8
-   QhAra5hvUPqTat2Yh6P6mypeTT6Xg+B9kpMMbZIbRmOhAQoFs+qWnyHCh
-   Hovy0qNq2uuexM2zBTf03z/Vk/gY+cIc6EPR72OwrqXM6x6HPpt/c84ut
-   Q==;
-X-CSE-ConnectionGUID: qx9Dc7SjRO+m4IGiGJL86A==
-X-CSE-MsgGUID: pejiSxEUQaOXL7moxmL5BA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="68339388"
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="68339388"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:00:57 -0700
-X-CSE-ConnectionGUID: NMLPc5kETuKAqeCw1Q37hA==
-X-CSE-MsgGUID: 0/NCzJHxQa+dS5ZIXO/7Yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,244,1736841600"; 
-   d="scan'208";a="121157649"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.195])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Mar 2025 06:00:55 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, 
- Sanket Goswami <Sanket.Goswami@amd.com>, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <65e2fffb-a1cb-4297-b725-661d6b790a05@stanley.mountain>
-References: <65e2fffb-a1cb-4297-b725-661d6b790a05@stanley.mountain>
-Subject: Re: [PATCH next] platform/x86/amd/pmc: fix leak in probe()
-Message-Id: <174187085032.11107.7565915146990042639.b4-ty@linux.intel.com>
-Date: Thu, 13 Mar 2025 15:00:50 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4mGiUXD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22D1C4CEEF;
+	Thu, 13 Mar 2025 13:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741870919;
+	bh=qnJ0veSCFOWj9TUdAVLHnl9bnvjlXhzIeGXuDk0MMZM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=i4mGiUXDfM0rqmSSdZMWqaIAGOGYcj8csDy7wc4apsR7+hXLSNmu6vdsdZ1txxhIt
+	 i9goWcbZ6VcoBXqG3KCPOrmDuggufZUa9aR2goG/Nqjwi0MawvtAZxceodasICp4T8
+	 QD8wGn428XJJh9YW70LRoNIJhYBnL1vtBeqEBpsu1PfmtKllNT/GIFGGYDdYR7sM+k
+	 H0U7t37u2rYFOmsH5hiKe8pi3+/cZ+e7o7gWkMErcCTLae2EnYFHg2enrL7BEC/dym
+	 LpJfYmFAGphN/MHtCMM+PWc/ZSk9KHWXwSrDh7TlyyRsJWQfou0NK4ztNHhN9dnLc8
+	 1UAq+zG+lfyuw==
+From: Lee Jones <lee@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>, Lee Jones <lee@kernel.org>, 
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org, 
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+In-Reply-To: <a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com>
+References: <20250303100055.372689-1-lukas.bulwahn@redhat.com>
+ <a15bb180-401d-49ad-a212-0c81d613fbc8@app.fastmail.com>
+Subject: Re: (subset) [PATCH] mfd: remove STA2x11 mfd driver
+Message-Id: <174187091774.3628407.5991715723719010902.b4-ty@kernel.org>
+Date: Thu, 13 Mar 2025 13:01:57 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -62,25 +44,28 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-510f9
 
-On Wed, 12 Mar 2025 11:31:57 +0300, Dan Carpenter wrote:
-
-> Call pci_dev_put(rdev) before returning.
+On Mon, 03 Mar 2025 11:17:22 +0100, Arnd Bergmann wrote:
+> On Mon, Mar 3, 2025, at 11:00, Lukas Bulwahn wrote:
+> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> >
+> > With commit dcbb01fbb7ae ("x86/pci: Remove old STA2x11 support"), the mfd
+> > driver for STA2x11 is not needed and cannot be built anymore.
+> >
+> > Remove the driver and its header file.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> > ---
 > 
-> 
+> [...]
 
+Applied, thanks!
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/1] platform/x86/amd/pmc: fix leak in probe()
-      commit: 01db3d1ff43aeedeaf11c8bc9d09493ec00c8f4a
+[1/1] mfd: remove STA2x11 mfd driver
+      commit: ba97b3e383c9c8a51afd6358efd120a0ece527cd
 
 --
- i.
+Lee Jones [李琼斯]
 
