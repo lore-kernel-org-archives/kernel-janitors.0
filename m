@@ -1,98 +1,87 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED271F560B
-	for <kernel-janitors@vger.kernel.org>; Fri, 14 Mar 2025 10:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207901DA617
+	for <kernel-janitors@vger.kernel.org>; Fri, 14 Mar 2025 10:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741947830; cv=none; b=mW935xL3/u2hkcEv3JKUL2AqV6FQzvFqisV4fi1y3VPZXtiFu9DgQoV354Ii9Vf490rePjV/s9aFD7ywsvb3KL9nWS4fI4H5r0QF0n72VVkDLuNg17erkaUd7VS6FIlyntLIx3vI09DPLIRjcatxweWrMZiPV4O1KHV5kXpqOPU=
+	t=1741948485; cv=none; b=G6mAgBiYJZJ/IM4aZB7jeNmfzFZ3ZuH+1YgDrWYRL0HV/l4LtbWzB3nqKsgbEIhFrGNx27pUpgl0qSsFzUCT4URaw7BThC9OmO6YGZRLOOLcUcUjPzRiuFSOmlpgRDPsASyNBoQaEjw83lPLbS3PODcIQi5n2arKfozLnCLNvU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741947830; c=relaxed/simple;
-	bh=RwHUEFoZdZgr03VzPBr+9AJlrYW+0SA1AtDcxQ3ZAZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bjuwhzi2Mf1LPfZFPAFhMSjA4nttnpxxYXtBSmLvWdismA1DaR0d/oLUrUjeke8zUBQApKNWJKwcmdbYijh2kXRu1q6G11wRzSQ4APiHDdBfjst2eNBVNuBEay9f053v+RftN1ZZhka6qLhrIVt5UIKHEBkG9Sw+CFYagQSHoTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=X7tJSFf3; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1741948485; c=relaxed/simple;
+	bh=aL0gXB6mSCGXve79f+GXoCVzELUaAGFZyR3q5Z30UuU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T2Hb3TybPMH4wMqd1RXsATd0RZRohYawqEFdYkisdAaqJbfYcHaDIMeAvLJlHtAEK7k9RZifRDMFxiQZy/F0bamd0pjn/JOYMzvtLofddu/RT+aFCYbofCDOiM4QUyB455jTTH3j7IxoSsE05YbRCqqil2ASXnxyHReHm/wLlps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L/8FmuL3; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="X7tJSFf3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=KOdn
-	diPExjl+FV5Q9Mr9rbep06b2nMpNWpnD6VJnwWM=; b=X7tJSFf3/OEnN2fA1JBU
-	aVFoIp2lPIQsYltmlPAl1547gtlMmdtYZMSx6F0O5e6HGu6v78Ez7q5z8MOAGKhZ
-	BCSVXmxWgGByV0m3X6giowwqoc6FAqTU2asB+FL7HIVmF3BcNMF36jzm/TKdWBWC
-	oAY/s6uMAwjp4kUOtcV27+qdmSytoEgO821tOcRhUlIkdEFm1jTlyBbVs9gMQFxA
-	D4mit4drKyItMNOaEXI7QT96VjQPjYUGGA3YpVDWPRa4OuHE99+6EbvjPAdUtwUv
-	niRkJdgnvcpt4CzL8AeJEjS2R6B7TiBKYwU175G7qMmZsNO1erOscSRdbTGnR1GW
-	Dg==
-Received: (qmail 1971825 invoked from network); 14 Mar 2025 11:23:43 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Mar 2025 11:23:43 +0100
-X-UD-Smtp-Session: l3s3148p1@1a041UowRowgAQnoAFsPACcmk70XhM+l
-Date: Fri, 14 Mar 2025 11:23:42 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] mmc: renesas_sdhi: fix error code in
- renesas_sdhi_probe()
-Message-ID: <Z9QDrs367B_aQZtn@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-References: <dc39e555-8ef7-4a39-9253-65bcf3e50c01@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/8FmuL3"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so2125549e87.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 14 Mar 2025 03:34:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741948482; x=1742553282; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uXFlL4FEs/n/rX4YOPitVgbikcIXGJdQJLDY1EsOF8w=;
+        b=L/8FmuL3f1IHAid3EGYNfElweO601ecHo+1Xs6kAHjAqDaMrX8RnRwhJHnRkW1u4T7
+         1bF3g9xNOYrP7h9Ku07UmrBhNuZDp10f1xLsOTRlSmMGgf12qGno7CZatu2NousSrdl5
+         yNh5PSJ7FoGDYymPiJeLnEQB7M7PicuOwQD+CIqrT6rII4dgBAgam/EaC3qxArCON+av
+         J686h58ZpUUcLYHRyNdgSdmzYEhCB08ETmwCaIs1fBoJ7IxviU0HFF0qtSKBdhzz6rGx
+         DUwGpcals95bLPjjY1du+n0B0XECrl9vvA4bH38+slQwu+mF6/4fzccPAPZSL77OWSZf
+         ZSHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741948482; x=1742553282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uXFlL4FEs/n/rX4YOPitVgbikcIXGJdQJLDY1EsOF8w=;
+        b=OWcQV65NwN0rOTDcnKKDR2uWB+pQa+a5ccZCw0zd5ngSal8ghU31w3SGYWHXEYi4kL
+         jYnjOdZJk59cZG6z+FfCcM/W255UBF/36rGTyCtNypJy7QoPpqB1vQ73JzJMC4nQBP47
+         nS89t6s+83jRPjvrvIsjJk1/fdct5kkJNLD4FpPViysppc8h9WL86dz6FqQveSJduHfs
+         lA7F92JBBLgzoXBiXvuBVKc284SQ114m+glfchq7wcFuI8FZ5VBI+0NDpRiZe15ztw3G
+         Dhb9/n8mkJjQ9/1I9JTrlOlllyJ2LdVhSpOhGfKI99X+48yXcU+Sjx6ca17HKKgYV5/9
+         Ym3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV93JwZlW4MVCDKHQf1Xu+srWtDjPCtVwB0Rj/Kf1uYWye+5pQATh42MxkAHE3jL+dLtgsCYjj03Y1RvRHgb/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx6TA5JYqpFpCAHXRxuAu+PpNop45v/inFpp3zkkbw7hFZy5Zv
+	SXQYF/59fIyLHR0OCMAnzhdAEHdiphfVXZj+8ZM9lYhTZEmS5weZGSaadl2oKF1n9sCb44HhWi1
+	MRKwozYNRK1ibCTRGy6dBPMShqWanrEd6xyaYuA==
+X-Gm-Gg: ASbGncucIv16f5NFx9JwBz2bujuQWdYr0duiPCAn1i7nEmQ4t39ODDGsVVV7M3iXqje
+	DHLfOaCxxWMcyrdU7FMcHLeW4vlhEd7/FGnoa3zZOVKaXHoZpC5OMymJAcacqnl9LJP1gJjqg3q
+	XY7M65embw+8CMxNZWJW0YTLQ=
+X-Google-Smtp-Source: AGHT+IH59Nam3QzVYLK/m6Rs0Q0Qn2HE9pRubALNnpoj2NMRzj++gf0khsat6J38n/8gCO1y3XF2MUrlrRs2zD0uS3w=
+X-Received: by 2002:a05:6512:398c:b0:549:31e4:9ea with SMTP id
+ 2adb3069b0e04-549c3c9897amr675717e87.52.1741948482182; Fri, 14 Mar 2025
+ 03:34:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="akDpcFiVA4/yEH+2"
-Content-Disposition: inline
-In-Reply-To: <dc39e555-8ef7-4a39-9253-65bcf3e50c01@stanley.mountain>
-
-
---akDpcFiVA4/yEH+2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <617f4c77-7837-4e24-9f4d-620ecfedf924@stanley.mountain>
+In-Reply-To: <617f4c77-7837-4e24-9f4d-620ecfedf924@stanley.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Mar 2025 11:34:30 +0100
+X-Gm-Features: AQ5f1JqMDr8pDqL2jIXtFwweqNigXKcsgGd2oHbNPaqU9RFqX-TDqejST3Ot0yI
+Message-ID: <CACRpkdZkpJR--x=qgzXVmRsSexobBV9eRyQ0BecGZ4+dNBcXQg@mail.gmail.com>
+Subject: Re: [PATCH next] pinctrl: amd: isp411: Fix IS_ERR() vs NULL check in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Pratap Nirujogi <pratap.nirujogi@amd.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 14, 2025 at 01:11:09PM +0300, Dan Carpenter wrote:
-> If devm_regulator_register() fails then propagate the error code.  Don't
-> return success.
->=20
-> Fixes: fae80a99dc03 ("mmc: renesas_sdhi: Add support for RZ/G3E SoC")
+On Mon, Mar 10, 2025 at 11:52=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+
+> The platform_get_resource() returns NULL on error.  It doesn't
+> return error pointers.  Fix the error checking to match.
+>
+> Fixes: e97435ab09f3 ("pinctrl: amd: isp411: Add amdisp GPIO pinctrl")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Thanks for this and maintaining smatch!
+Patch applied!
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---akDpcFiVA4/yEH+2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfUA6sACgkQFA3kzBSg
-KbZBVg//Vv3KxGo7LNJe7xCPbiK+z7jY79lgea8ocpbXOhTkEBy0uCP02hAnNrY8
-J99c53f+TENuFdD0zQQtyUvkJ2REO84PiQDUqWG1lGAbAMU7eFErsxSUM756pemW
-e1ytRQtDhcMPWcFKQ6ddlqyidw+42noOtBAYwx1DssHtYtNGJbEcyk477TncD1d2
-p1k4wcA7oYjUBxJpuAQOQPlRYUG/o5fMqkKCwaNsAByhYN5gaxVB7oxmcCv0Z7kB
-J81Xb16R3nZioqT9P5iSYVdHY6vIhQrqJG8LP/iRKQ0P+0+sED2WKy/9N0P4WUuJ
-okReenUz6jlQw30FU5UQ74zkIlx+BFJocsE3CoUhLapX7ijGSkWRDI8UEZKxQZ9k
-GXouiVVO2/1ezHtxrQYOh67HrsmLf8o4q7lGocN4QSGDCLLIl8GolOiPc9Yn0NbQ
-jtfwWlqxYwa2ByIMEe0mbq4pmbR+orf2qvCcpISks4ZkNhAV1KSgyQRAFo4eDSer
-Kb/zOea9Os57p3vvjBgSshggSReOdgY9PpTK0dTOoLf7aXye3meP68Bzftp/ZhbZ
-KA2fRajscilEJRdfiwb+v6nSQtGu16AS9424F1zCVYhjUf9dQ34RVcGx9eYanY2o
-BR2L8zISSWh5DRFJuHNjuYHbAtEun0t2kzY/kTrCZ/hKOAKiLes=
-=lOCa
------END PGP SIGNATURE-----
-
---akDpcFiVA4/yEH+2--
+Yours,
+Linus Walleij
