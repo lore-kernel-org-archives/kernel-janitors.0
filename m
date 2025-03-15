@@ -1,112 +1,86 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9358B1A2388
-	for <kernel-janitors@vger.kernel.org>; Sat, 15 Mar 2025 10:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE572E339D;
+	Sat, 15 Mar 2025 17:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742033071; cv=none; b=ahmdC3vu3v6B98A88upj3j5BKV0L+/z5JHTrDbBPRYR+0cSBpK9AOPVsA+H2acHND8D3VaFyjS3ncdHx8Ec15h6vz2KEuft1pFPRi/mbs55zcGJtw0D3k5vtD2L4eqpKPtyMFXFtJhpKnKZx5sa+Jf81MQum48Rih0AtLmPr2Uc=
+	t=1742058118; cv=none; b=AqQNdcxn9M3zyFgwT1TnInYN6E7AUEOK4dOh88qxWti5TfPDVORz6RjzWW1cTdEV1us6A+5u4MbmDEptvIrYJIdzuyvTSW7ZMlSi1NEqAaIXmtsVSFiofrfSW5YM8r7bMkQzuOnYil8hhIMSTWOE+5CsWBtmNfoHmIO3j5qaMts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742033071; c=relaxed/simple;
-	bh=Jzfw4uS+2xNHSt7CL1zvCanecwXZCQddc4jFWIgRqxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s1i3JRnFE3E5GvnYNLnvbaMoqj2ShfCyca17JS24qVFK0eNPAUXB5ibbOSg155+XJsqbT0gGYGwsHfdP+k644e3lotFboURucxx1Cj76AGlcobiZyb11t3Q5L/11e9z0TZzAffFzWkysM7wSmaGyFBxPTbLNPaX+vcRYNHs960M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r2wa5mKL; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742058118; c=relaxed/simple;
+	bh=qsvDZBFJn+k2AhxkKXFKL3KNzYjE0N21z/rxR3lsLo8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tCcXwA0Vko/VvGylB9iM7zRjlptfHzXdhTh/SDOiDuiNJSdKn6Sut1XNH7M61XxiP5SNyq6cmqdUJy0zKk+e1zMIk8nn1L9AAXsiQVHS0RFQAXfVb4NkQ4J/NLDx6jDbq+gUUGODWPFqM70MoQf5x11zoQmQTXkmwo4//oTyWM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tXIJc2nM; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r2wa5mKL"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so2563975e9.2
-        for <kernel-janitors@vger.kernel.org>; Sat, 15 Mar 2025 03:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742033068; x=1742637868; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Ome34xzBD6ytuYkcLvh0hzc1tsMwWzkshxKre3ePFs=;
-        b=r2wa5mKLhJJvxdKhng2a0DPJKyBFH/H6HWY/AXEwv9ak4OS4SVbGlGxAwJ10UEIGZC
-         6ImPZUBk5gQOd6ZBZjNwElFLjEh3mdfOXj6HEMttysQ6scvRI0uP/CTiMuFHggvVIUPW
-         df4nuFdEYYCauO/9tOD7MRxt4cFMW7l2Eub+DBf0rXlZqO3bKq8Inytt27qQZXmw/CQ/
-         Bj/kdFAELlqYU7mbQOqkPuDL+wmrIjRLw8qX8+sN4vLuXpw7DZPsyD4M0m2mh8BNTbJm
-         u3/ltC2CiTz1/STc946lTd1UhPE4d2Mc8r9hzcceuE0K26IOiWtO+IqmzMzNehwMN3M/
-         4nNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742033068; x=1742637868;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Ome34xzBD6ytuYkcLvh0hzc1tsMwWzkshxKre3ePFs=;
-        b=VLqV2JdkcVhtNLPWrykLS7SZV4/9/66iWzt0NUG+rrRcQdh6F4sQ+C0CAl1w68oq/i
-         Cjmr99q6FC+i0Z4aeu932yXfkqJRUfngr6S0m4xuG57Wb+qxaAFamVDbLOKMASHL7S/r
-         fX+j1/yl5RiFZ+iX7kdifnKAC0u/LAoF79AR5fyeSAJvOcbszJrfcroXXlJvczWZvPbf
-         liTzSzkGxC6ZJ1LcEHnrLkmZpOMyI7KLdADxqpp7UtJRv42LJ3pmWR4oDrI26/TLmzIK
-         VRahQkytThVcpnlT7rvhRl+avoovB5HOea3C4d1lXrSUy4+Q1U2m+Y9GWR/rWoiByidW
-         OFsg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+E5zsA7F4dZq7i78m8EzFiAli7EdB7VWIV0oVCBQPRiUyFjdxoJ9D8uRWWrshMVTYQySBmMPGxngjt70dkmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0eMbIEv2JYxMbgO7UsFV+7Vt05Ga8PXbFrMXScNOpkEWG3pkY
-	mkYvejuRIBQ17ZAzDF4+G0VXUnyW2A49hcTkmeHPIkfW4m2O2KRa74vX6tvFwmg=
-X-Gm-Gg: ASbGncvYsqwG7Mb6i7ljgIex4fGs3dBTzRQRxgiKqdiPxdTjVHSVme0llnQOZRjhZIr
-	NHstKlPKV2CYE1zpIDYpn7wEBRwk9V4nSkY4pRyNUvnYUkPWTWpTbwzL4DWknc2XpErZB3VoE7d
-	BrnitMaS3WCg2hRgrGDwK67xjyQ+GmraVldZgWmHDwzuNio9wAOTd0tO1RYOQCQbxSOY1/plD9e
-	ywzaMmp804gYmhbgjQ+4kcSu0/xxr5J0Gizf1Bdn0NumtQaWsIm9OIXitjuxa0jFhlZvJx7SsVr
-	l6FPiaVrwE1vEq6E9AgbQU7Y81WZhe/RVkZOn7fewzS0tzfZFTPtxo1Jn7L3
-X-Google-Smtp-Source: AGHT+IGe3a17ib1rZeRVb9c77roGjaqcKEfvjE/17j/FdHz+4lRmpBlGIjmzzYo/ezgUaqKEpaF2wg==
-X-Received: by 2002:a05:600c:3515:b0:43c:f5e4:895e with SMTP id 5b1f17b1804b1-43d1ec622ccmr51862355e9.1.1742033067870;
-        Sat, 15 Mar 2025 03:04:27 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d1ffb6292sm45076095e9.1.2025.03.15.03.04.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 03:04:27 -0700 (PDT)
-Date: Sat, 15 Mar 2025 13:04:24 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] firmware: thead,th1520-aon: Fix use after free in
- th1520_aon_init()
-Message-ID: <f19be994-d355-48a6-ab45-d0f7e5955daf@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tXIJc2nM"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id tUs8tc2fuYvuMtUsCtRRfC; Sat, 15 Mar 2025 18:00:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1742058033;
+	bh=u2hd/aiDIzivl8fJWTXxpfToEX5iwbckZhgnX/3wwy0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=tXIJc2nMwfBAUeQG7gEuPtRhM2ohL971lvAiI/fr0v44zTwOZdAhikGq2mtn63Y9m
+	 TByQo/Bemw6NS/qx0crPBllC+TxhSWkpHma109hZjtmDRBVcXJN1ec4bg3iImXw3nJ
+	 cenhrxZt01HFXlX8YbwTIp6Qm4PXUTPPJdMfhIHQFj2+hTtv9rECVlVW5QhXbCQ1o/
+	 B9KQKaTk52cwp23MPLSjfeO1Cq284SXlRizmJMSvOErpSCAvzRVp7IkZIS3xKbjnBo
+	 McfR50wSdVi7N/ZUEo3hh/xp6KsPAm8/9nVxd2ugZyjOv3hSzTuAbIjPTW56W+PkIl
+	 rwdGilaDthDxA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 15 Mar 2025 18:00:33 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Shawn Guo <shawn.guo@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pci@vger.kernel.org
+Subject: [PATCH] PCI: histb: Remove an unneeded NULL test in histb_pcie_remove()
+Date: Sat, 15 Mar 2025 18:00:36 +0100
+Message-ID: <c369b5d25e17a44984ae5a889ccc28a59a0737f7.1742058005.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
 
-Record the error code before freeing "aon_chan" to avoid a
-use after free.
+phy_exit() handles NULL as a parameter, so there is no need for an extra
+test.
+This makes the code consistent with the error handling path of the probe.
 
-Fixes: e4b3cbd840e5 ("firmware: thead: Add AON firmware protocol driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/firmware/thead,th1520-aon.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Follow up to commit d8dba4a635bc, where the NULL check from the patch in
+the Link: was removed when applied.
+---
+ drivers/pci/controller/dwc/pcie-histb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/thead,th1520-aon.c b/drivers/firmware/thead,th1520-aon.c
-index 4416e9bbf854..38f812ac9920 100644
---- a/drivers/firmware/thead,th1520-aon.c
-+++ b/drivers/firmware/thead,th1520-aon.c
-@@ -203,6 +203,7 @@ struct th1520_aon_chan *th1520_aon_init(struct device *dev)
- {
- 	struct th1520_aon_chan *aon_chan;
- 	struct mbox_client *cl;
-+	int ret;
+diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
+index d84e46ca4490..1f2f4c28a949 100644
+--- a/drivers/pci/controller/dwc/pcie-histb.c
++++ b/drivers/pci/controller/dwc/pcie-histb.c
+@@ -432,8 +432,7 @@ static void histb_pcie_remove(struct platform_device *pdev)
  
- 	aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
- 	if (!aon_chan)
-@@ -217,8 +218,9 @@ struct th1520_aon_chan *th1520_aon_init(struct device *dev)
- 	aon_chan->ch = mbox_request_channel_byname(cl, "aon");
- 	if (IS_ERR(aon_chan->ch)) {
- 		dev_err(dev, "Failed to request aon mbox chan\n");
-+		ret = PTR_ERR(aon_chan->ch);
- 		kfree(aon_chan);
--		return ERR_CAST(aon_chan->ch);
-+		return ERR_PTR(ret);
- 	}
+ 	histb_pcie_host_disable(hipcie);
  
- 	mutex_init(&aon_chan->transaction_lock);
+-	if (hipcie->phy)
+-		phy_exit(hipcie->phy);
++	phy_exit(hipcie->phy);
+ }
+ 
+ static const struct of_device_id histb_pcie_of_match[] = {
 -- 
-2.47.2
+2.48.1
 
