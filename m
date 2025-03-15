@@ -1,86 +1,115 @@
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE572E339D;
-	Sat, 15 Mar 2025 17:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B7B199938;
+	Sat, 15 Mar 2025 20:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742058118; cv=none; b=AqQNdcxn9M3zyFgwT1TnInYN6E7AUEOK4dOh88qxWti5TfPDVORz6RjzWW1cTdEV1us6A+5u4MbmDEptvIrYJIdzuyvTSW7ZMlSi1NEqAaIXmtsVSFiofrfSW5YM8r7bMkQzuOnYil8hhIMSTWOE+5CsWBtmNfoHmIO3j5qaMts=
+	t=1742070587; cv=none; b=cfnbTiwvJh9kLk3zhNDG78xfeHEAF3drmMRCVahoH/0/FuLnpnL0iXAY7iHx3Tk1CUdmYfCegwyqm07RhIalSTxvbl8Fx68RGixFqk7dd/Y+VEmNM6zhhnwMtXMIw4rrlHbpbgRlva5ne27LgDNP0wCJvcgox9Fky+w/p/sCIJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742058118; c=relaxed/simple;
-	bh=qsvDZBFJn+k2AhxkKXFKL3KNzYjE0N21z/rxR3lsLo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tCcXwA0Vko/VvGylB9iM7zRjlptfHzXdhTh/SDOiDuiNJSdKn6Sut1XNH7M61XxiP5SNyq6cmqdUJy0zKk+e1zMIk8nn1L9AAXsiQVHS0RFQAXfVb4NkQ4J/NLDx6jDbq+gUUGODWPFqM70MoQf5x11zoQmQTXkmwo4//oTyWM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tXIJc2nM; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1742070587; c=relaxed/simple;
+	bh=bESWuJ+Itq4oJ3aJ397TS7MjXGGRBg/L2tRAqVurZDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RxB6hooOSISDUw0pL59WzWZYXgjGorGSNBRxAREDwW+K/Iskkh0p6mNgxnoDBlBE9T4BViYa+bp3Gut1qCj+NSwb636Q9A8wmT5LrhQqf+bae0Qa4GyH1akm6jIP6ycnvx+Qlpkix07/+azHLLSpyK9j5QIbgWRhSPtoAy/YLuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=mFXn99Ra; arc=none smtp.client-ip=4.36.192.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tXIJc2nM"
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id tUs8tc2fuYvuMtUsCtRRfC; Sat, 15 Mar 2025 18:00:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742058033;
-	bh=u2hd/aiDIzivl8fJWTXxpfToEX5iwbckZhgnX/3wwy0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=tXIJc2nMwfBAUeQG7gEuPtRhM2ohL971lvAiI/fr0v44zTwOZdAhikGq2mtn63Y9m
-	 TByQo/Bemw6NS/qx0crPBllC+TxhSWkpHma109hZjtmDRBVcXJN1ec4bg3iImXw3nJ
-	 cenhrxZt01HFXlX8YbwTIp6Qm4PXUTPPJdMfhIHQFj2+hTtv9rECVlVW5QhXbCQ1o/
-	 B9KQKaTk52cwp23MPLSjfeO1Cq284SXlRizmJMSvOErpSCAvzRVp7IkZIS3xKbjnBo
-	 McfR50wSdVi7N/ZUEo3hh/xp6KsPAm8/9nVxd2ugZyjOv3hSzTuAbIjPTW56W+PkIl
-	 rwdGilaDthDxA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 15 Mar 2025 18:00:33 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Shawn Guo <shawn.guo@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pci@vger.kernel.org
-Subject: [PATCH] PCI: histb: Remove an unneeded NULL test in histb_pcie_remove()
-Date: Sat, 15 Mar 2025 18:00:36 +0100
-Message-ID: <c369b5d25e17a44984ae5a889ccc28a59a0737f7.1742058005.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="mFXn99Ra"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codeweavers.com; s=s1; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=mAKXnqJdcH8Ooug16GzPe92yZG0ErD4qlNwxhet2A7Y=; b=mFXn99RaEtHUudZVObKDbdlTmq
+	FBMJCw+/XUVWe7xPrLtGWFsAwhPIe60dqcnwi+EelHfoD77tnpxoeUymYy3VBZ7P1+FRNN2BhNb7F
+	CTWpTUoIGFSBoRA2B8lowtdw+Zqouw8+WVbz5Pp1q6/GHjFJ6/AUmWlBCwiWTzbavYBz2JybdFcc+
+	l9MKQNFyng6a5XVsnfqK2q8OOFkX31Eo8r9HytnlNaDGOmzYm35eJMC1UrAN8+Fbiow+P4EIvacDh
+	LeUY1lAAWkmNpXPJH+w0rhxk3wdmt6wMiFp+MFIjHXNvbL24jm1ojbn9CnGFF4ebP8a0hDj+S6YJ6
+	57ChAsKQ==;
+Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.localnet)
+	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <zfigura@codeweavers.com>)
+	id 1ttY8d-00HXBc-0q;
+	Sat, 15 Mar 2025 15:29:43 -0500
+From: Elizabeth Figura <zfigura@codeweavers.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Su Hui <suhui@nfschina.com>, shuah@kernel.org, wine-devel@winehq.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject:
+ Re: [PATCH 1/4] selftests: ntsync: fix the wrong condition in wake_all
+Date: Sat, 15 Mar 2025 15:29:43 -0500
+Message-ID: <1961744.6tgchFWduM@camazotz>
+In-Reply-To: <f86c7af5-9e7f-41a0-a357-6a356fdeb0b9@stanley.mountain>
+References:
+ <00d17d6d-19c9-4431-a3ac-c0f767c533d4@nfschina.com>
+ <2051560.PIDvDuAF1L@camazotz>
+ <f86c7af5-9e7f-41a0-a357-6a356fdeb0b9@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-phy_exit() handles NULL as a parameter, so there is no need for an extra
-test.
-This makes the code consistent with the error handling path of the probe.
+On Saturday, 15 March 2025 04:39:46 CDT Dan Carpenter wrote:
+> On Fri, Mar 14, 2025 at 05:13:50PM -0500, Elizabeth Figura wrote:
+> > On Friday, 14 March 2025 05:14:30 CDT Su Hui wrote:
+> > > On 2025/3/14 17:21, Dan Carpenter wrote:
+> > > > On Fri, Mar 14, 2025 at 03:14:51PM +0800, Su Hui wrote:
+> > > >> When  'manual=false' and  'signaled=true', then expected value when using
+> > > >> NTSYNC_IOC_CREATE_EVENT should be greater than zero. Fix this typo error.
+> > > >>
+> > > >> Signed-off-by: Su Hui<suhui@nfschina.com>
+> > > >> ---
+> > > >>   tools/testing/selftests/drivers/ntsync/ntsync.c | 2 +-
+> > > >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >>
+> > > >> diff --git a/tools/testing/selftests/drivers/ntsync/ntsync.c b/tools/testing/selftests/drivers/ntsync/ntsync.c
+> > > >> index 3aad311574c4..bfb6fad653d0 100644
+> > > >> --- a/tools/testing/selftests/drivers/ntsync/ntsync.c
+> > > >> +++ b/tools/testing/selftests/drivers/ntsync/ntsync.c
+> > > >> @@ -968,7 +968,7 @@ TEST(wake_all)
+> > > >>   	auto_event_args.manual = false;
+> > > >>   	auto_event_args.signaled = true;
+> > > >>   	objs[3] = ioctl(fd, NTSYNC_IOC_CREATE_EVENT, &auto_event_args);
+> > > >> -	EXPECT_EQ(0, objs[3]);
+> > > >> +	EXPECT_LE(0, objs[3]);
+> > > > It's kind of weird how these macros put the constant on the left.
+> > > > It returns an "fd" on success.  So this look reasonable.  It probably
+> > > > won't return the zero fd so we could probably check EXPECT_LT()?
+> > > Agreed, there are about 29 items that can be changed to EXPECT_LT().
+> > > I can send a v2 patchset with this change if there is no more other
+> > > suggestions.
+> > 
+> > I personally think it looks wrong to use EXPECT_LT(), but I'll certainly
+> > defer to a higher maintainer on this point.
+> 
+> I'm not sure I understand what you are saying.  Are you saying that we
+> should allow zero as an expected file descriptor here?  I don't have
+> strong feelings about that either way.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Follow up to commit d8dba4a635bc, where the NULL check from the patch in
-the Link: was removed when applied.
----
- drivers/pci/controller/dwc/pcie-histb.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Yes, my apologies for the ambiguous wording. That is, EXPECT_LE looks more correct to me than EXPECT_LT per se.
 
-diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
-index d84e46ca4490..1f2f4c28a949 100644
---- a/drivers/pci/controller/dwc/pcie-histb.c
-+++ b/drivers/pci/controller/dwc/pcie-histb.c
-@@ -432,8 +432,7 @@ static void histb_pcie_remove(struct platform_device *pdev)
- 
- 	histb_pcie_host_disable(hipcie);
- 
--	if (hipcie->phy)
--		phy_exit(hipcie->phy);
-+	phy_exit(hipcie->phy);
- }
- 
- static const struct of_device_id histb_pcie_of_match[] = {
--- 
-2.48.1
+> Putting variables on the right, Yoda speak is.  Unnatural is.
+
+Yes, I certainly agree with this. I wrote it this way in the first place because I was following some other example, I forget which.
+
+> I did a git grep and the KUNIT_EXPECT_LT() just calls the parameters
+> left and right instead of "expected" and "seen".  Expected is wrong
+> for LT because we expect it to be != to the expected value.  It's
+> the opposite.  We're expecting the unexpected!  It would be better
+> to just call them left and right.
+> 
+> regards,
+> dan carpenter
+> 
+
+
+
 
