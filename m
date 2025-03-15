@@ -1,72 +1,70 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265C617799F
-	for <kernel-janitors@vger.kernel.org>; Sat, 15 Mar 2025 09:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9358B1A2388
+	for <kernel-janitors@vger.kernel.org>; Sat, 15 Mar 2025 10:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742031594; cv=none; b=LY20CAhbK581eaYqr809hYrnFyVYWEMEGBkbTMee4mgGd+DlWRY0tA1qqYhkkpEdnHT1WmFmqqesKEiNY0jHIoO9oWpA2hma76QY0pQRS4b+8/uCC6qZNqqw5/pQIQGhe0a4o8wzGVtuXOcVn53rUTLDAa9IR3F+fk1T39ApYDk=
+	t=1742033071; cv=none; b=ahmdC3vu3v6B98A88upj3j5BKV0L+/z5JHTrDbBPRYR+0cSBpK9AOPVsA+H2acHND8D3VaFyjS3ncdHx8Ec15h6vz2KEuft1pFPRi/mbs55zcGJtw0D3k5vtD2L4eqpKPtyMFXFtJhpKnKZx5sa+Jf81MQum48Rih0AtLmPr2Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742031594; c=relaxed/simple;
-	bh=sq47Oh+DTt8mQvgg0HAPCaqwqq5A7Wu/avEExEqpCoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2U6Z+U7KciXbXGNxHGmQAehFFdVe2ByG6yACsbgmdBQT560ejEg4QluuXpXLPTzeLWGw0QLHGGM7dVJAdjXuYlcMSgPUCVI73tAYIOjpT69mJ+3+gegOaAYSKItG8rOVdIIuusZz5uE3pEibvczdYpQKdKEb10jnSo+Aj3djhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I7WhZ8hX; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1742033071; c=relaxed/simple;
+	bh=Jzfw4uS+2xNHSt7CL1zvCanecwXZCQddc4jFWIgRqxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=s1i3JRnFE3E5GvnYNLnvbaMoqj2ShfCyca17JS24qVFK0eNPAUXB5ibbOSg155+XJsqbT0gGYGwsHfdP+k644e3lotFboURucxx1Cj76AGlcobiZyb11t3Q5L/11e9z0TZzAffFzWkysM7wSmaGyFBxPTbLNPaX+vcRYNHs960M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r2wa5mKL; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I7WhZ8hX"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-391211ea598so1625754f8f.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 15 Mar 2025 02:39:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r2wa5mKL"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so2563975e9.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 15 Mar 2025 03:04:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742031590; x=1742636390; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MpprGEUK/a4fpAj/8Aqk/exRNk0cc1umgsVYwo9fvxM=;
-        b=I7WhZ8hXXiqD+MUPmqpTT4nqbja3m53jEhDWy/TUOr4nPcTaKpR6vb84Q21mRT8xot
-         7WPm9MYvqmv+AE3a3UbLdRC9IQdG8UOkZR1uFqXCZR0jHSExIhQf1qbKQKPmWhrkh0CJ
-         l9uN0gNRY3woedydz/t/MVNL5gztPNBTOfzPgmoI7dU32Mpitejv71t50DxQ+1sj7198
-         lFfeDTg+Hu9ALLHmvXozpY1AtZQUlW3gYUJW42A1b/xcNQpCWYvM/CdKRKxPdGS22dbD
-         7jx2LmYo0t13WaKoa8elQzyMDQ7uXB9zYzIWh+GGjFQG9Xsy6uHLwvRu6vUo9Y2YwfGZ
-         zyJg==
+        d=linaro.org; s=google; t=1742033068; x=1742637868; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9Ome34xzBD6ytuYkcLvh0hzc1tsMwWzkshxKre3ePFs=;
+        b=r2wa5mKLhJJvxdKhng2a0DPJKyBFH/H6HWY/AXEwv9ak4OS4SVbGlGxAwJ10UEIGZC
+         6ImPZUBk5gQOd6ZBZjNwElFLjEh3mdfOXj6HEMttysQ6scvRI0uP/CTiMuFHggvVIUPW
+         df4nuFdEYYCauO/9tOD7MRxt4cFMW7l2Eub+DBf0rXlZqO3bKq8Inytt27qQZXmw/CQ/
+         Bj/kdFAELlqYU7mbQOqkPuDL+wmrIjRLw8qX8+sN4vLuXpw7DZPsyD4M0m2mh8BNTbJm
+         u3/ltC2CiTz1/STc946lTd1UhPE4d2Mc8r9hzcceuE0K26IOiWtO+IqmzMzNehwMN3M/
+         4nNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742031590; x=1742636390;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MpprGEUK/a4fpAj/8Aqk/exRNk0cc1umgsVYwo9fvxM=;
-        b=ZPG1K15IlY4Y7e6JREJuRhaLQS0Ka5sdq1QzrRbw1qMoxEOdTtKU3Lnx/ixAiW5MYD
-         15rUq7EAm8gCzB5B0QQSYyMYQDlndQF9duybcx3giTTp26oN8VEA5eu7eNtCbsWyo+3c
-         +b0Qux/4OqXcZAdHBkXsZK8C+ZfDwBEl0zFcKmqxdffIxtytWerOujv8CyxrQsxMNVww
-         NNX2JA8uTlVfl1Ni4FrT1HseT9xRhh7eag9YINw7lBDuCzp4E55IMF9DuBoghOFpL78+
-         ZIqw+wfkwYs7HtDJSnOVzXLY4Z1iB/7GkgU7ReXkbQdgNhBxh7e3ar39NpcQJ6UG4/EA
-         bVMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtxuU2bVGyjAPMzD7jVexM9JB6SX8EO4wRJVHn9IUF7V9Axczrx6/zaHQn/6p+1j0koBgzsa/ZUbp9S+Z9wQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI6UbSFtbV+HQOalaptS9gD58Iyhi09JHl+Mx9Y5TUsYpASrRM
-	EbkB4bvvQ2lPYcWX+0tTz4Zy7CRmk2ZYii6TZhQEBYCUMifRSgARyucME+QLTB4=
-X-Gm-Gg: ASbGncsdF7ev7CeEKkxWB1ko+o8LWFC+B5B0jZoZQjUSpUYi6RIl7tg8dQTt2i/Rosv
-	hDNqpHEwhLBvn0O5rxTu1lg7au3Q3t8xfCm0w0RhHqVe0jattO6vq3ADCQ6qQlSBF1hS5pwpwWH
-	XbJuhex1AsFBsJZ6RfBav+v/3gvdlILI7wRNxxNQfX6poXLyZbTQOUBG6ysl5ILzdUzpU8hNvH9
-	LedzFaX0PSeOzw96UVzOFqQnY3WR23xlxVqDkHJFGL2cP3FhrqRkotK9prszXp7IKkMgp9JvOTq
-	0JvYIvMxWLO5ePAUfwLbNDOnvewSn06nQQQ9lZAiAVwjy2YxDA==
-X-Google-Smtp-Source: AGHT+IFWe+lGcd8hOfySiAmaHi5FuBTMwIsDk2czxA5eUnLjOHnRjuiXJKnQtaEEiRnhc7xs3djV9w==
-X-Received: by 2002:adf:a2ca:0:b0:391:23e7:968d with SMTP id ffacd0b85a97d-39720d47d2fmr5370083f8f.47.1742031590443;
-        Sat, 15 Mar 2025 02:39:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1742033068; x=1742637868;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Ome34xzBD6ytuYkcLvh0hzc1tsMwWzkshxKre3ePFs=;
+        b=VLqV2JdkcVhtNLPWrykLS7SZV4/9/66iWzt0NUG+rrRcQdh6F4sQ+C0CAl1w68oq/i
+         Cjmr99q6FC+i0Z4aeu932yXfkqJRUfngr6S0m4xuG57Wb+qxaAFamVDbLOKMASHL7S/r
+         fX+j1/yl5RiFZ+iX7kdifnKAC0u/LAoF79AR5fyeSAJvOcbszJrfcroXXlJvczWZvPbf
+         liTzSzkGxC6ZJ1LcEHnrLkmZpOMyI7KLdADxqpp7UtJRv42LJ3pmWR4oDrI26/TLmzIK
+         VRahQkytThVcpnlT7rvhRl+avoovB5HOea3C4d1lXrSUy4+Q1U2m+Y9GWR/rWoiByidW
+         OFsg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+E5zsA7F4dZq7i78m8EzFiAli7EdB7VWIV0oVCBQPRiUyFjdxoJ9D8uRWWrshMVTYQySBmMPGxngjt70dkmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0eMbIEv2JYxMbgO7UsFV+7Vt05Ga8PXbFrMXScNOpkEWG3pkY
+	mkYvejuRIBQ17ZAzDF4+G0VXUnyW2A49hcTkmeHPIkfW4m2O2KRa74vX6tvFwmg=
+X-Gm-Gg: ASbGncvYsqwG7Mb6i7ljgIex4fGs3dBTzRQRxgiKqdiPxdTjVHSVme0llnQOZRjhZIr
+	NHstKlPKV2CYE1zpIDYpn7wEBRwk9V4nSkY4pRyNUvnYUkPWTWpTbwzL4DWknc2XpErZB3VoE7d
+	BrnitMaS3WCg2hRgrGDwK67xjyQ+GmraVldZgWmHDwzuNio9wAOTd0tO1RYOQCQbxSOY1/plD9e
+	ywzaMmp804gYmhbgjQ+4kcSu0/xxr5J0Gizf1Bdn0NumtQaWsIm9OIXitjuxa0jFhlZvJx7SsVr
+	l6FPiaVrwE1vEq6E9AgbQU7Y81WZhe/RVkZOn7fewzS0tzfZFTPtxo1Jn7L3
+X-Google-Smtp-Source: AGHT+IGe3a17ib1rZeRVb9c77roGjaqcKEfvjE/17j/FdHz+4lRmpBlGIjmzzYo/ezgUaqKEpaF2wg==
+X-Received: by 2002:a05:600c:3515:b0:43c:f5e4:895e with SMTP id 5b1f17b1804b1-43d1ec622ccmr51862355e9.1.1742033067870;
+        Sat, 15 Mar 2025 03:04:27 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395c7df3419sm8214531f8f.9.2025.03.15.02.39.49
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d1ffb6292sm45076095e9.1.2025.03.15.03.04.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Mar 2025 02:39:50 -0700 (PDT)
-Date: Sat, 15 Mar 2025 12:39:46 +0300
+        Sat, 15 Mar 2025 03:04:27 -0700 (PDT)
+Date: Sat, 15 Mar 2025 13:04:24 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Elizabeth Figura <zfigura@codeweavers.com>
-Cc: Su Hui <suhui@nfschina.com>, shuah@kernel.org, wine-devel@winehq.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/4] selftests: ntsync: fix the wrong condition in
- wake_all
-Message-ID: <f86c7af5-9e7f-41a0-a357-6a356fdeb0b9@stanley.mountain>
-References: <00d17d6d-19c9-4431-a3ac-c0f767c533d4@nfschina.com>
- <2051560.PIDvDuAF1L@camazotz>
+Subject: [PATCH next] firmware: thead,th1520-aon: Fix use after free in
+ th1520_aon_init()
+Message-ID: <f19be994-d355-48a6-ab45-d0f7e5955daf@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,51 +73,40 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2051560.PIDvDuAF1L@camazotz>
+X-Mailer: git-send-email haha only kidding
 
-On Fri, Mar 14, 2025 at 05:13:50PM -0500, Elizabeth Figura wrote:
-> On Friday, 14 March 2025 05:14:30 CDT Su Hui wrote:
-> > On 2025/3/14 17:21, Dan Carpenter wrote:
-> > > On Fri, Mar 14, 2025 at 03:14:51PM +0800, Su Hui wrote:
-> > >> When  'manual=false' and  'signaled=true', then expected value when using
-> > >> NTSYNC_IOC_CREATE_EVENT should be greater than zero. Fix this typo error.
-> > >>
-> > >> Signed-off-by: Su Hui<suhui@nfschina.com>
-> > >> ---
-> > >>   tools/testing/selftests/drivers/ntsync/ntsync.c | 2 +-
-> > >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >>
-> > >> diff --git a/tools/testing/selftests/drivers/ntsync/ntsync.c b/tools/testing/selftests/drivers/ntsync/ntsync.c
-> > >> index 3aad311574c4..bfb6fad653d0 100644
-> > >> --- a/tools/testing/selftests/drivers/ntsync/ntsync.c
-> > >> +++ b/tools/testing/selftests/drivers/ntsync/ntsync.c
-> > >> @@ -968,7 +968,7 @@ TEST(wake_all)
-> > >>   	auto_event_args.manual = false;
-> > >>   	auto_event_args.signaled = true;
-> > >>   	objs[3] = ioctl(fd, NTSYNC_IOC_CREATE_EVENT, &auto_event_args);
-> > >> -	EXPECT_EQ(0, objs[3]);
-> > >> +	EXPECT_LE(0, objs[3]);
-> > > It's kind of weird how these macros put the constant on the left.
-> > > It returns an "fd" on success.  So this look reasonable.  It probably
-> > > won't return the zero fd so we could probably check EXPECT_LT()?
-> > Agreed, there are about 29 items that can be changed to EXPECT_LT().
-> > I can send a v2 patchset with this change if there is no more other
-> > suggestions.
-> 
-> I personally think it looks wrong to use EXPECT_LT(), but I'll certainly
-> defer to a higher maintainer on this point.
+Record the error code before freeing "aon_chan" to avoid a
+use after free.
 
-I'm not sure I understand what you are saying.  Are you saying that we
-should allow zero as an expected file descriptor here?  I don't have
-strong feelings about that either way.
+Fixes: e4b3cbd840e5 ("firmware: thead: Add AON firmware protocol driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/firmware/thead,th1520-aon.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Putting variables on the right, Yoda speak is.  Unnatural is.
+diff --git a/drivers/firmware/thead,th1520-aon.c b/drivers/firmware/thead,th1520-aon.c
+index 4416e9bbf854..38f812ac9920 100644
+--- a/drivers/firmware/thead,th1520-aon.c
++++ b/drivers/firmware/thead,th1520-aon.c
+@@ -203,6 +203,7 @@ struct th1520_aon_chan *th1520_aon_init(struct device *dev)
+ {
+ 	struct th1520_aon_chan *aon_chan;
+ 	struct mbox_client *cl;
++	int ret;
+ 
+ 	aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+ 	if (!aon_chan)
+@@ -217,8 +218,9 @@ struct th1520_aon_chan *th1520_aon_init(struct device *dev)
+ 	aon_chan->ch = mbox_request_channel_byname(cl, "aon");
+ 	if (IS_ERR(aon_chan->ch)) {
+ 		dev_err(dev, "Failed to request aon mbox chan\n");
++		ret = PTR_ERR(aon_chan->ch);
+ 		kfree(aon_chan);
+-		return ERR_CAST(aon_chan->ch);
++		return ERR_PTR(ret);
+ 	}
+ 
+ 	mutex_init(&aon_chan->transaction_lock);
+-- 
+2.47.2
 
-I did a git grep and the KUNIT_EXPECT_LT() just calls the parameters
-left and right instead of "expected" and "seen".  Expected is wrong
-for LT because we expect it to be != to the expected value.  It's
-the opposite.  We're expecting the unexpected!  It would be better
-to just call them left and right.
-
-regards,
-dan carpenter
