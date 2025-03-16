@@ -1,107 +1,82 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB3F11185;
-	Sun, 16 Mar 2025 08:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE028156C79;
+	Sun, 16 Mar 2025 11:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742115093; cv=none; b=mKXV51gmoTK8aVQ5Jy9WGZAhVOF73WLaZThdQ7SpgJD45qw5gggl9WRr8NlwBIxS88HkQs2KbVFGD8C+H3GLvfcIxSeGpP/qUC2tRZbJfL7C3ZzFFkLUnzX+39k30+D9HpKr14d6mQ7kaeVe4eXvyeekfHTXWj5mAgr3hZnc9LQ=
+	t=1742126251; cv=none; b=qVxWL8uA7uHDbEx57A2KBeGyI9rih+Kk4QokkGAJ+goLztnIcuQLz2B/wRIbKv687+/Xc7aMXsSGu1w7/xl/l4xRt3Q/SvVQEAUbk2UoUs+mr6stAZt1fMa/YC28WL12hpmzz6FMsfg1IGcqHAscdofF8m0+VPECwajB8iDKAyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742115093; c=relaxed/simple;
-	bh=vAff0aee3rul/N7q848YKkFuTPRfb8ln1tKjMsKXO74=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=aMs6dEcr/y0AfPF2Bbav2SFf61yKT33YTneAo1EH5YomQAHamIw3BDNOIu7zMKKLUiu8ufaO8btn7nC+t3cULxi7wiYjlkvaLbaN49e03teHR5OWLw1ueiDHb547MmH8QUseZhLcTLIbE8ntlpICKbrQ2KCR/y6jWRVxsEKXNSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kFF1x8+K; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kFF1x8+K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1742115052; x=1742719852; i=markus.elfring@web.de;
-	bh=vAff0aee3rul/N7q848YKkFuTPRfb8ln1tKjMsKXO74=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kFF1x8+K7f1TIYXk0J+TiVaWSoeXR/8crYCPBZT7nQqSx+9n/KRHGSaflWlhV3SL
-	 rF0raJ2ppRNwHcmqeoJXyh/GP1iyajQfaWxBN0nRBgpsySmexLFXUG2yU4iGVfwmc
-	 hwo8kVkskaKkZ4GzOj72GjBlLK+lrT1fTg2ebchAPk0OpOQ4m/UJq3zX0B3apz7Lo
-	 pza84namq0tJ5k/hKW0c+1w9YoMMqhN9r913vl38cJ84eoL7YnQiJTvCle73jfXM3
-	 oI5sDjFOUZGWg/R+X5A5V3cwQomhe89YjU3rpgrB6rZD2yE893yyMXmItS0c7qH9r
-	 y3/22mPeosHnm9NYyg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.60]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MPrLN-1tXW870xxT-00MepM; Sun, 16
- Mar 2025 09:50:52 +0100
-Message-ID: <aa403b90-5479-4beb-92f5-d8f33773b923@web.de>
-Date: Sun, 16 Mar 2025 09:50:28 +0100
+	s=arc-20240116; t=1742126251; c=relaxed/simple;
+	bh=2WF/LbKitrWCBqXXi1nhQ7fkqFR9nNo/2lMHL7NRV5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m3Li7JusO9Na0aiVbSF+iBxTJXNb5ImIeqzyLeXutrZcsUWVA6/JQz0gXwG1aLBXyqSHKwFk+bCyvR3N/z/5Gp1I4wiQTxKMsJ1h/MqgXo+p7OWz0tV3jWk1Ydcey5m5V5PeA62gUeKlB5/sFFDYVmwSW5oSMi6vaBKKVBFLeBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2254e0b4b79so83761285ad.2;
+        Sun, 16 Mar 2025 04:57:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742126249; x=1742731049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F5ZPUuGLWzPE3DEGuxQdFm1d6rNLeHLFFd3OHs6+QQU=;
+        b=UCA+cZVs/MuzuCgHR8xyoA/JTmFN/qDVrSQd/H9DeQG4UOhyrdQ9XLgSr+innv14zE
+         uBghM5dDuEZaxC117ad7+KIV0JZqP6MnFq/WvLO4d+9cDP5Mc3UxURomf0GwhDwgoWPS
+         KsPCu7cE3ZYSGdJ3G7Z64FtLTSBo8bvVEhKAi2Xfhiw8mN2oqQ4pQNxpxvQyA5dDnr3D
+         nrnPMqXy2W0ByFUsCOo9qWaM0+ZWsyxXxLwsqMrRM0fAo20mAX0ITBuLLfO5N4AvH/as
+         giMPzXA7/d/XkU/hh6SvJoU2rR6OEvU45OpEWJq83GJGhESJw8RHcU0gJMlatGeU3IBV
+         hWvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsLDN3XCR2OxbLFilXUDR/pg/4YvEflqtP9uppBvm0aZANO7vz5vpdtrMyh+ACwuAwWTfhxODN3HV+AMbk@vger.kernel.org, AJvYcCVY1O1e/7JS8RbDf8u7LSYS1BOwRE94OENjwUbkKuBL+2P/WPaaAA0Zg8Ij40+/12hYn4dd0EnvfGT1iSPON7U=@vger.kernel.org, AJvYcCXVm3+fCHEaVeCjRTIxW0pH/8Q3NqFy0FZUWlsfe7pw4DsjITxbUnGh8oOx0lEuM2A/49oAeJol/YXr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzP6fGcogcvuI7skBQn4MuyfafonQTd3ckH2pOQHv2sDbM2TTt1
+	rv9MsePr82jSvrWSOXqRjjChfCWkbeDVZA0V6vSIGp6vg5Ic7VBL
+X-Gm-Gg: ASbGncsPmIZvs0XN1WuuLW93w0RzfxvPLI6PpIa61jooob0mG5Pi4MFtAA5mMFGKlRN
+	scBNMK7FWhJr76Ik04DJg6yIZaJ5IUCDNiaubUot1Y0R+WTOsvDdFuoSX1cs7NIC4XmqDWax1vS
+	i2/D442jD5OBzyVoK3oN1/AGnKWR02j53eQoVqTeKf8vJesGIQNX3BxUqdX+K61b3hTnAlbfxDk
+	PgUMLmiwwv1s+xvyIUB35iilN625mlmvtpNxFpBLJDNKUzMlBNIfhsEvARJ0FcdByp8nn7YmGAJ
+	x9aAMNiKhxSPosy2yOFRbBveToGGCY6Cj3UOWvdesCAt4dn35cJC/n8UoY/ZL7hgeepVu2abfoo
+	jCoo=
+X-Google-Smtp-Source: AGHT+IEQUgd9b03NsYUaj6vePK7+aFkFyLwaesjtcXEgi2/cqXOUtR6mlOUWm/CB/nd0+pkmYkP/oQ==
+X-Received: by 2002:a17:903:2391:b0:223:619e:71da with SMTP id d9443c01a7336-225e0b23b6dmr122934195ad.49.1742126248842;
+        Sun, 16 Mar 2025 04:57:28 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c68883adsm56844685ad.47.2025.03.16.04.57.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Mar 2025 04:57:28 -0700 (PDT)
+Date: Sun, 16 Mar 2025 20:57:26 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Shawn Guo <shawn.guo@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: histb: Remove an unneeded NULL test in
+ histb_pcie_remove()
+Message-ID: <20250316115726.GA3021602@rocinante>
+References: <c369b5d25e17a44984ae5a889ccc28a59a0737f7.1742058005.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Thomas Gleixner <tglx@linutronix.de>, cocci@inria.fr
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Andrew Lunn
- <andrew@lunn.ch>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Chen-Yu Tsai <wens@csie.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Gregory Clement <gregory.clement@bootlin.com>, Guo Ren <guoren@kernel.org>,
- Herve Codina <herve.codina@bootlin.com>, Huacai Chen
- <chenhuacai@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>, Jiri Slaby <jirislaby@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Samuel Holland <samuel@sholland.org>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Talel Shenhar <talel@amazon.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>
-References: <20250313142404.896902416@linutronix.de>
-Subject: Re: [patch 0/7] genirq/generic_chip: Convert locking to guards
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250313142404.896902416@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xy3Yson5TdObRf0N/SURy+6vxAvi28ZaIz75v4YI+eFy9jMgCnf
- Nzzrrbxs9TbdI8aNEkVBN0pm/+AjvKzYWB35d3jBTmQCen2t/NcOLq74GfuHRBR5kInFWYF
- /BY7ks2CCn5+dNXw9Lxc1g42YDcW3mTycO4d+sHuwHv0GjKRzUd/gz9q6ar+IY/nlbPY+ia
- TH3mSFg1etUtX5E8SV8VQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:51w44oArk1o=;k+F4f3IFOUW1k/lwqjQc2MCr+q5
- A7JWSZqr9NWA3sEmtLYW67m4maYYgRRtB7g/jcYBfDm7ATQJ0eeR387AIrXQZ3yzW7c0oYfkL
- lJ2bEKewl0Cs3JCXcS6PvkORhnIt0dYXnBdyeZigCCy3GLDnqtHp/dQG1leoyTeq0nQrKogdc
- WZUlAwux3ZMVD9rNRPNDaO+MmczK0ZQZFOysIWd6Vzd/MlmOUtP7WY6I+qoV1U0DACjEjyhEE
- 4kiC/3vVW80/iszCy2hnCXoGuh9v4aTPaa627iFeOMd0fz8KNoTlIOd5tOCrSvW0QMlTFoJ+p
- FpVfzq9gqDUKxhFQ3p5HHdGDaeQf5OODQcFC/84lxCVA1KlzNDhyb6N4mWvJQ3QJ43zYqQb3/
- 8E+SsMWc/yWB6XrhXLqjvAGy6SdjD7zYXqZJ8I0D0Us6V+YIVsIo+srYTz18+m59zQW2jSsIa
- 1iHC+MCEYo9+FyM+C1al50f4JqH+BOg/kuJQnilpoNZ+S8Wc0J1Gxb65YDAswG9u3S7Z+YEay
- MA20Roj3WrvPdHC/HcRGi221ctojkkC/Tix8geBr7mfHN7KA0RowqLyPtaSl5abuvNtzzTYjH
- +brQRKH/BwcRWoqaOpiFDCnkHJ9XB9n+CpSsJSjWvYVDWxAYfacmz42XHL9vvxZa8x6Trmvgv
- iwR+u/5g/AdrCQwXgCetoftuB/gAC3I2qY0BtDqwxebA6aliwipsu/qLn+GKLdmH0xBwLs4hE
- +QkNlZkbNlLcGBbxZCjx0UWx13lMpIrDUx/L6eiSWDuei1vUhP0gpLnS6ecML5n+5IBJLj12L
- yymOc3QXUwmnzQJvdReDmBhcc/ucOtl8NPzkDQZdn0yh3netXZ/2//9OwMH9+1YCMWK85ECUO
- MV8At6h0JQYzIKRwyY21aVa9lqCQuHUc+2ASib2DxOQg58/VTImbYAqahEK6HU0a7Ve44Alyy
- bM7iyP2oT2XwfxJCgKMOJ4IktJ3L5cdCzI/8n1eB9je5LvLDJFSWLI+Tf6Ic/hQhnr8NlB+7b
- Zu4FYw5vjdGCr73mj8h7eQKBCyvAMZn5aWWryYFVrGvGZXTjNLrCd6jpYJL15TqcVy8Xtmxe+
- ZPKKoRL97+bdWl2LRcEECsyGreOtln9dFvpcF4M/n4ZP8WgahtAszgWsM4PWdjkbQ8yRtO4dW
- CyhAIJPXmbXN2nsgltIqTlDJ7z8LmGD8uBKHws6/EXGw3xMlm5MP6Hteq22+AXcOoTKO8Ytao
- KTkaZRtTJQT+ysvHSKLi6xwueOIjLblW5nmkAkg76NulgrG+dS/MpB6vURfOSj//XRGHOtFK9
- T0XBTi5HwFwesqkrthpC253M+vKLSwL6Z2y95OIE8qTlbD+I2R4SOMBPTNMrkp5ebYjFAZcy8
- P1RPI3UAMfmvn5nzPN47C6Q9xdWGvPTTyoj8zYJ0zv+Fa+bNZYfLjnhuQ9/OTxlEGjE/ooQ50
- xtRwWaun4IFJ3FNJUZLFHpiiKYZTOVrJuxRlg9mkxQuwi8/Bp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c369b5d25e17a44984ae5a889ccc28a59a0737f7.1742058005.git.christophe.jaillet@wanadoo.fr>
 
-> The following series converts the generic chip locking to lock guards,
-> which reduces code size and improves readability.
->
-> The conversion was largely done with Coccinelle.
+Hello,
 
-Would you like to share any more from your evolving collection of scripts
-for the semantic patch language?
+> phy_exit() handles NULL as a parameter, so there is no need for an extra
+> test.
+> This makes the code consistent with the error handling path of the probe.
 
-Regards,
-Markus
+Thank you for the due diligence here!  Much appreciated.
+
+I squashed this patch against the changes already on the branch.
+
+Thank you!
+
+	Krzysztof
