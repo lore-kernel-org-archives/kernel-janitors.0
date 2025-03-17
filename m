@@ -1,76 +1,83 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5823245036;
-	Mon, 17 Mar 2025 14:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC3D22CBFC;
+	Mon, 17 Mar 2025 14:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742222136; cv=none; b=ujy3XTjQzU/DUKqg7yLPjIqch7bS1+Dx1zB1Yq6UsDSzzRMBXFMJ8rmF1n8VpboF458XJKo7CBtV4iNNfFdQjjCBWgFs6LAu5R/s9+AwNDPAWxQL+es1ZPnfpvootlbDVMriklCewJtl48gy7R0N0m+s8HfC6gwmqnW5kxcVzMc=
+	t=1742222806; cv=none; b=ZwVBJS24b0JnUggX47t8ORF7D2tDvANH3Cnura3HsT14p+zR3cLEbxDOiIHbDnmp6okXLWOUeFpycp+qoYMKv56j/ZMvKCS6hOFe/gQy50VGmFHX5nyJ9jH2vKtEo2z0IFu4aR+eC/Bc6SrQ5iKLsFgjNKM7XGJCdfzwXuR6HwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742222136; c=relaxed/simple;
-	bh=Os/3OUI8KCcOIG1iOxmuXB6ZFpAj0XoaeG61qBtx0NA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tQ1TmoAbjMWPxrP11SgiBg+0Uae59+6klbP2ZlY2IgHeoT+Czd9wie0eO8N/vOMlIFcCuBFILWxjIE70CWDYgTHzTKmFvVlxyNEtoQVVtIAcaKIambSi4a/pmyW0fuO0WA36eiHKns3yGXz2+jAjT02OxBX9L+++slzUvnXBQPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X33WEUha; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1742222806; c=relaxed/simple;
+	bh=KEmS1iazSZ7MW4u0s0WffWWZI/F30vXJvZhHvLypmnE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=abbccbcLnyw+OyvafPwypjNd4Scc3Gf3EPk8u4N3XeFW+vN6uBoFjBaJcvyxrq9fYHoAqBi04RAU2DCvnm63gOifVKgSS6uRFSWiigXq7ZqAtkmX8DzJycNH4z6QcfNqhNJVNSnjSVb5H71kaB4iR3uvTw/SH/gxjmr5UKUc/c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HcN0nLDs; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X33WEUha"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39133f709f5so2720114f8f.0;
-        Mon, 17 Mar 2025 07:35:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HcN0nLDs"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390fdaf2897so4255071f8f.0;
+        Mon, 17 Mar 2025 07:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742222133; x=1742826933; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742222803; x=1742827603; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w87Zh3I28Z1+Sqxqq72rJtkODwwHBc+MVhcgl8wWLzQ=;
-        b=X33WEUhab50tJOI/mwwnSQZGmqv1CRhRTg1NjUWfGiQo2MXxiFoqW5PzPMtTihkojd
-         GdOT8QYVCJ+ph/1AG+8r3qW15QNnjiRmJBNyablQfzootPOb76e2iCkjOY8GicP923Af
-         Cy172UBERuS590u56BgiAFD2a7HN0gfq7tAVkDpmzE63AaZ76024RgsDANcC61B8ZxT1
-         cnldEF2OiRnnH8b0nCN3H5N4zstJWV4eD+iGhJBInU4b/T+Nzco3pUCxLlEEK3ai1Xk9
-         Em1tiQcK6AWumBNocYhYyIP/W5dxctsrBJZgaG9RDojB0FqkI4TzGyEbld7aRipNmdPP
-         7PrQ==
+        bh=HEE7cJguboNfIM/ImN+bEQAuxRuRsoshNhnvPdF6CRk=;
+        b=HcN0nLDs4AimQH8YzhjWDKN+y9adOGi233YcpIQ1Xq4+xeojr1emNBp9inuBnrTJtF
+         vSyxe9mmnq7RFJ+Qk/0xJ90TwQXAVWc40oNS7m5r8SbdAE1XnV752dVxUczzYT6vVKN+
+         x1qGQHM0KXQk0pthbSIS0Adt0JfPBIh3/kNIM4EL5L1TABB0/VDj4+v0yyWOuYF9+vlL
+         QLU4tSDkrj41TqjEeU9veyPiYWCtUufwwt1XVzldoz1HBpK64yXRUT8Y/b/v/R60mXWU
+         4+n9rrncSnrX1fOe2xyER6coUpr2TTbTBiAbWaAi2y/yLXheuAJ5jM/t1EjV/hPG7M+f
+         TTxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742222133; x=1742826933;
+        d=1e100.net; s=20230601; t=1742222803; x=1742827603;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=w87Zh3I28Z1+Sqxqq72rJtkODwwHBc+MVhcgl8wWLzQ=;
-        b=J6tBfWOVc4OHYwQoC5+q5AcUILZwL5126HtXUkF+yMsBNbD/XBGUjBxhvgEIjJq/2t
-         q5FYbL3VzTBFfTrNL1l5w4hE/OExw+nTPQICy0vHOPy/qdgMZBfDf4+WXnBByUjL/XwG
-         XGmGwKZatDQXEj/Pj+oZDInP+hhhuuRo8CdrxNJ6cPynEBky1iEQ0vkXoRKOIL+4Rn3O
-         832RoFfAUSrv+f95drX6DU7UfFq+HJE/DLmG+SRqXPL3io4BxrVdwVZFh0AJuAOKr6XH
-         +h+q/q0+ocE49sQgAKbPTHJGTkZ98sVlVjqIYEjojwVhv85Z+3Nr4a2I+00M8foz5wsP
-         U+rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg75F7xYOMdVZJJKHhNrnb0dHLhmkRiTQ4Naqhlelpf6/PztlImjlLzvQdqib59l8Kzr2wQEacurIlONE=@vger.kernel.org, AJvYcCW40msMrNuC89cH2wXUNCMN+fQ7721Uqoak6nNadyDsEOQa4exl24oq5Fz2VsxsjsWzfUjAeoG5VqQ3@vger.kernel.org
-X-Gm-Message-State: AOJu0YySME+JfqiOEtfTurxsX/K0/SQ3nNwDsqsq/87yneAkE15nIgF7
-	5zECWcmNKq6nyJG6bfLTJmt1lc07NQm+Xle0p2N1l6bFxGhiJzo0
-X-Gm-Gg: ASbGncsJeRYWLgs0Aqve/9uO9N8lSNNU7viViW32sFbybMRrmVmNjsBy7PrmvYM6VZo
-	/M/l9geGGg4idyu6u/2YcVQUVmdws9b9Nso9Xy37l1eo+QDDd6MFRX6j1y5phyUQ3T9+RhS9giD
-	EGlx00iZVRghB9PBeoBcStFM3FcF4Lq+3mtPyhom8HTI24vZKiZ/2O20pSSsCybsisXgKgqQX3J
-	Tth0i4HTbltMmQFcI+A6jcxOwCSHmgh3pa2jU7VaEuuaT92SqOMjxWUUB7uHcpPY0ls8CeVYv+L
-	nKEfvyYF2kksxgCUrUBCwmLgErnztSsLS9nb6naefFhEkw==
-X-Google-Smtp-Source: AGHT+IGj2U95C2D/UDRSgWDo1hfyu3+i9z8iABs6gkm9zWiBp79gxMqCjLlCuVAE4sL2PJ8+U38jmA==
-X-Received: by 2002:adf:a348:0:b0:391:401f:bfd8 with SMTP id ffacd0b85a97d-39720584500mr11131524f8f.55.1742222132717;
-        Mon, 17 Mar 2025 07:35:32 -0700 (PDT)
+        bh=HEE7cJguboNfIM/ImN+bEQAuxRuRsoshNhnvPdF6CRk=;
+        b=NlfdUWAyqwhLoruDHrgJGldwtkTP+PITT/vShtid1E8fXLNZBKdSFqrpKTFU+X1he6
+         +WJrbdXsr8zbCcbU06MG9EIn4uy7hjtSVZZUJBkrddn6k4WpvcuDALV61iLSH1GiURy0
+         yhHAp1VXa2N79puW7uQIpTgJ+lCdeEbL3Ws/NE8EKKDzT82oUuZJfMmM9nNzJMB3N5E4
+         Mmv3PaC7T1b03rDIejhlDKTD7VQnGYB9Jk/5x5dytoKqMSf2faXu/ApF3qHT76SgBj+w
+         gViwprkk9zMAl0vGBOf7vf7gvT2znux5y0WnemC27uZXH2fwdNb6SeP8oB6607qTXyq1
+         trFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDJTGnZVPtyv4BVyGnig+glYy4hnrysSv5f51cmcUBLjXETxQNJu6sBfCbYMC9qhTJB37XNaQ4Y7ipXKc=@vger.kernel.org, AJvYcCWcPiUUF9q66ZKl92LgRZJQLKVW+JEJJ/CsoKii6KYNY186R8uuc3U4qWLEHgd3y1kjNzfL3zcW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3Z/H997Dav0uWHHLSbt1HGNgcjgH/3bIQ+mKcO5gz7kEfHwLG
+	Is3W6xOYiXNwcLyHDMUy+ljoArdfVErHxSxg/8160A+eNu5VVKut
+X-Gm-Gg: ASbGncvQm96ZRw21QYePwTkW7DtXVQTVlxTasRnJCXnCKvs1p1/GdRMY2fVFumqw6Ng
+	OS5snhzzhaS1kjIekxTiRD+q6WKfoUFJwkne0dplErl+JVsVa1+909Jb/A6NxYJrxJIsrTrUYzX
+	VcMczzSBpYI8nhtIFvkFflqwhynU1EZQHs4oolWs0Vj8kjTInf7fhFjiKnMzEY8m8LD7dlloThX
+	gHd4AsFoOKBjEdAGp8y4Jv+OcspZjV8exs+WgkjNHt02GvGuLfTJ6jOgX6kmbauAbDZ4yyGPQzu
+	AESJTw09B36aGIxkzB/zSoM4uurSrDwZp4Y9fptLaU0K4w==
+X-Google-Smtp-Source: AGHT+IFivRZ2EUR5/RimYhdOCuEzRooY6An887/W/KkgBBJttW2RvsoNsxmtBckobWqWYaquB0gK1w==
+X-Received: by 2002:a05:6000:18ae:b0:391:40bd:621e with SMTP id ffacd0b85a97d-39720398fe7mr13511129f8f.44.1742222802524;
+        Mon, 17 Mar 2025 07:46:42 -0700 (PDT)
 Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb40cdd0sm15208107f8f.77.2025.03.17.07.35.32
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb7ec14bsm15130948f8f.100.2025.03.17.07.46.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Mar 2025 07:35:32 -0700 (PDT)
+        Mon, 17 Mar 2025 07:46:42 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] PCI: brcmstb: make const read-only arrays static
-Date: Mon, 17 Mar 2025 14:34:56 +0000
-Message-ID: <20250317143456.477901-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ice: make const read-only array dflt_rules static
+Date: Mon, 17 Mar 2025 14:46:06 +0000
+Message-ID: <20250317144606.478431-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -81,29 +88,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the const read-only arrays data and regs on the stack at
-run time, instead make them static.
+Don't populate the const read-only array dflt_rules on the stack at run
+time, instead make it static.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/pci/controller/pcie-brcmstb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/intel_memory_region.c        | 2 +-
+ drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index 8b2b099e81eb..d258b571f642 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -832,8 +832,8 @@ static int brcm_pcie_perst_set_generic(struct brcm_pcie *pcie, u32 val)
- 
- static int brcm_pcie_post_setup_bcm2712(struct brcm_pcie *pcie)
+diff --git a/drivers/gpu/drm/i915/intel_memory_region.c b/drivers/gpu/drm/i915/intel_memory_region.c
+index d40ee1b42110..7f4102edc75b 100644
+--- a/drivers/gpu/drm/i915/intel_memory_region.c
++++ b/drivers/gpu/drm/i915/intel_memory_region.c
+@@ -62,7 +62,7 @@ static int iopagetest(struct intel_memory_region *mem,
+ 		      resource_size_t offset,
+ 		      const void *caller)
  {
--	const u16 data[] = { 0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030, 0x5030, 0x0007 };
--	const u8 regs[] = { 0x16, 0x17, 0x18, 0x19, 0x1b, 0x1c, 0x1e };
-+	static const u16 data[] = { 0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030, 0x5030, 0x0007 };
-+	static const u8 regs[] = { 0x16, 0x17, 0x18, 0x19, 0x1b, 0x1c, 0x1e };
- 	int ret, i;
- 	u32 tmp;
- 
+-	const u8 val[] = { 0x0, 0xa5, 0xc3, 0xf0 };
++	static const u8 val[] = { 0x0, 0xa5, 0xc3, 0xf0 };
+ 	void __iomem *va;
+ 	int err;
+ 	int i;
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+index 1d118171de37..aceec184e89b 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+@@ -1605,7 +1605,7 @@ void ice_fdir_replay_fltrs(struct ice_pf *pf)
+  */
+ int ice_fdir_create_dflt_rules(struct ice_pf *pf)
+ {
+-	const enum ice_fltr_ptype dflt_rules[] = {
++	static const enum ice_fltr_ptype dflt_rules[] = {
+ 		ICE_FLTR_PTYPE_NONF_IPV4_TCP, ICE_FLTR_PTYPE_NONF_IPV4_UDP,
+ 		ICE_FLTR_PTYPE_NONF_IPV6_TCP, ICE_FLTR_PTYPE_NONF_IPV6_UDP,
+ 	};
 -- 
 2.47.2
 
