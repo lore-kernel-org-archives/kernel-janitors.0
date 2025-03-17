@@ -1,113 +1,121 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70F0208AD
-	for <kernel-janitors@vger.kernel.org>; Sun, 16 Mar 2025 14:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5D8DDC1;
+	Mon, 17 Mar 2025 01:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742134862; cv=none; b=YQyKGQ7v+0+l7upjOxOrkQ5i1ekJ5NQXRxqdfH6FwY3JucDNdMdbyioBJ9od9X1IO5S4sQRIWcSF534MN2ze0ZuHegJrKYEDesDNT9m0ZePYDqcQ9D+QUQpGjcjgMkbv9C2NHbN0kiC3cbHBIIOHRPz8oPTkI/K0g1kA78+43Ds=
+	t=1742173676; cv=none; b=umi+IrYKxTlwpsnpUxeKz4pODu8/tVq2a1jw5uaXKzhxZkJVtTnOqH52CMtPgR8MTI4GHaMEMcWsQeUA6MS/6sXEjMdkZ0oIxECLeI3yk8W90y4ii4/tXKJCAOtjoALDc6oRstbyw0Su1KFBKZqnFxExFdEEufTHeb81BTkR6WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742134862; c=relaxed/simple;
-	bh=aX15elzBfzM4qmYjRk4JQXVRSIns/ntJViqVRDf2BOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tIrltCuirCii3CiYLi6Ow1wjPLOw+uoroC96VB9chJ7HI2sPi2IQ62c1vpQa8hogAVcs4Bc8RuaJ8bhshXqsSuXOYn19u30gm8PwSBX9fQ+JwxWB0gDwlgjGvh1omyv1JEIZBZfo1BGFVYPDvUBABgVc2S/ZhooIr7Q4bdVwalo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jmc79cY2; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742173676; c=relaxed/simple;
+	bh=eVlJJeAEPTqZGlSmG4PweD35CbpEft7MnShb+VU0e20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lKuCfnfoyODbFymJzSZEsiXzohBAbMIlfsNfptFZTazvRbTEpTFUr1VS5FSIGkVAra+Sq1ltPi+cDBrx0A3ZTscm2oG/ColsaAcUlgvqzE48wI4/nB14D3Znm6C42UpnP2kniRSxqJzQMNJZZ1FGu4sFPd3TXEBzu/q9LVRqlDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c/gFpKfG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jmc79cY2"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso12861255e9.0
-        for <kernel-janitors@vger.kernel.org>; Sun, 16 Mar 2025 07:20:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742134858; x=1742739658; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JUBU31zWgTKBtgMae2gOeiKWDb462tD5YrmtMJoO2xs=;
-        b=Jmc79cY25+MUCYmr7DJU+PXm3rTW/lEYJbnBa1p1u3jamrXUexEr58R30Q4+fMEAE0
-         /7muLwVMY8MCttKIA0xTLb6E2Jbn+AdjpjjkCp3mFXixi8EgPVuDS0HBWeh/6eObQ+UK
-         hTPeIcNo5jYBsEoPhlkXYykCQ1uI6kzUevsQGpbC86nEHWzhBKzeSez+TIjQ3+GCzrxa
-         2qC7yFuzwOLZzujXSHJ9b2Z/w8hG5Yp5OwVI8F1SOTNqXALGWR26TxXwOemQW5s1CLSA
-         TK9XimT+w9eEyxOkAc/W7L2TJ3UlAIXgsgzCIzgmOBtKJ+yulZNuRiOkoxupX05vXH8v
-         j/Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742134858; x=1742739658;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JUBU31zWgTKBtgMae2gOeiKWDb462tD5YrmtMJoO2xs=;
-        b=twTROViFAwUFu6IqorqijJbFDk8yRRQcIo/CPiHrfSGCbJFhENoiIu3dPdQFCUqfh2
-         aZMUn4AzgwZzX3/nPw3AN6EwuVRt6aJ6MA33r+jpNc1FjDc/HXtyiyc9FgMyUVvloUTz
-         5NnGe7jxAPnniVdJcJFiDxlWNL5g63IF+1+eg3TtjktFjLSHTz/eLeFgY5R5VmJ+S+q+
-         xXFPIYdKRBTbogNFBXkraPuSyhDH4fo4u2yFa9tzeCfmgEVSsL8YrqxNmXMUmZNmYAee
-         Ir0U8P+THXxG9bU42EzfCNKo0/8cIHjkq5hw+1vLBylYAUT3EQ76h4dsVwCLBnTGNmNU
-         L7Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUPmhZklwBSOS99ZFw/xI9GkglbIVtaky6O8GVG14a82X5zLOad8YiUuUeOPaywhlGb8FSov5Mfj6bR+itCtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvfT2pVzQE1s2dHcTwD2fYDvK45MEgPKqlwyeD0XeilD0rgqxC
-	DUy/q+aKPTAJVh1o3Kjosb3Q4KqrsSkkhMu+NDin7oRRdauAWYWI051HYK/WkGA=
-X-Gm-Gg: ASbGncuFujkE+/HkD2UYViWjmnPsSYQtguJjRvfh6Kr65ZtKoSbbIu3g6BrgdBIiV3K
-	m3HxYmbY4HZNTrbz/6w3Ffvt0wuihL5rLTxY6D7MqN3tCctFgigb7lKqHlwiRSfBakOanim8rJP
-	yieB9/wcm2GK29O05B35ah2+ETO4JF46IvCYKq3+ADwc0geieVbknsuGr3ZAB6dLMKUIeiLit1t
-	RNjHeI6PXzSAveU82HRuaPkjNO2xhSB2Sho2u2VZ5Ui2SsAK5pmooNzE+PMzlciQ5XfmfEeqWu5
-	p3vtuaTO8g9ds2lBx5h5PYmLVs4wydnyaUAM5JHLWiEa1T0N+Xt7a5M4q2Ob
-X-Google-Smtp-Source: AGHT+IH96kaFw1QLJUYn/w7ubUS3GRAHrcTkVQ5/aTCb0028F1HTQS+Kq49584fZ58voveSQBvqDqw==
-X-Received: by 2002:a05:600c:3399:b0:43d:2230:300f with SMTP id 5b1f17b1804b1-43d2230311bmr87482185e9.0.1742134858143;
-        Sun, 16 Mar 2025 07:20:58 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d1fe659b3sm77842155e9.34.2025.03.16.07.20.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 07:20:57 -0700 (PDT)
-Date: Sun, 16 Mar 2025 17:20:53 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-riscv@lists.infradead.org, kernel-janitors@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, Drew Fustini <drew@pdp7.com>,
-	Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH next] firmware: thead,th1520-aon: Fix use after free in
- th1520_aon_init()
-Message-ID: <80b2d3dd-208e-4e2c-8b17-297be797084c@stanley.mountain>
-References: <f19be994-d355-48a6-ab45-d0f7e5955daf@stanley.mountain>
- <d90c0678-d2ed-4e77-901a-fdbab7dfca71@web.de>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c/gFpKfG"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GMnG6v022761;
+	Mon, 17 Mar 2025 01:07:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RIet347e3GWnzM1H4Y30FN8VVgKlGoW5rVSE091wsH4=; b=c/gFpKfGHk+HO73/
+	Z7psbsYTlv+5MfHzvaWmaDyslGGNcohkyumBR+GqKdJ9I2S/HjmPkN9hguaLvuSF
+	/rE40kiiuFSy6iRIzvaEojJycqH8ghsfBjnyaeM4AzxXiedGaFNHuu4GPDky0Hpy
+	fx65umNRCN9FHjdFR1W5c/MaT2IurX4IoKj2MwmFxAo90Nt9NL71UUStyllItNE/
+	zLuqrM4hMkHK1YWgCfQIrLR5eT4PKiVZEuTMY5ARBINnv946mvelijbTdTqn53Q5
+	tkn3guecSKqs9b+YapgIOmVb8pKb0o3cfGXge8FtyVya6I3UpUQ4FzUlLVgrrQmV
+	IJTs1w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d2qm2vjx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 01:07:39 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52H17Nvv013921
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 01:07:23 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Mar
+ 2025 18:07:20 -0700
+Message-ID: <f4d4a369-427b-4fb3-9d49-84f2a0f45aff@quicinc.com>
+Date: Mon, 17 Mar 2025 09:07:08 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d90c0678-d2ed-4e77-901a-fdbab7dfca71@web.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] Coresight: Fix a NULL vs IS_ERR() bug in probe
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <dab039b9-d58a-41be-92f0-ff209cfabfe2@stanley.mountain>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <dab039b9-d58a-41be-92f0-ff209cfabfe2@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Y-L46RjjSH9nusEJriuMfgahcfNtLGCc
+X-Proofpoint-GUID: Y-L46RjjSH9nusEJriuMfgahcfNtLGCc
+X-Authority-Analysis: v=2.4 cv=DLWP4zNb c=1 sm=1 tr=0 ts=67d775db cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=G3qhXeVNgz9aKr77KdUA:9
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-16_08,2025-03-14_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 adultscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1011 mlxlogscore=999 phishscore=0 bulkscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503170006
 
-On Sun, Mar 16, 2025 at 01:05:08PM +0100, Markus Elfring wrote:
-> > +++ b/drivers/firmware/thead,th1520-aon.c
-> > @@ -203,6 +203,7 @@ struct th1520_aon_chan *th1520_aon_init(struct device *dev)
-> >  {
-> >  	struct th1520_aon_chan *aon_chan;
-> >  	struct mbox_client *cl;
-> > +	int ret;
-> >
-> >  	aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
-> >  	if (!aon_chan)
-> > @@ -217,8 +218,9 @@ struct th1520_aon_chan *th1520_aon_init(struct device *dev)
-> >  	aon_chan->ch = mbox_request_channel_byname(cl, "aon");
-> >  	if (IS_ERR(aon_chan->ch)) {
-> >  		dev_err(dev, "Failed to request aon mbox chan\n");
-> > +		ret = PTR_ERR(aon_chan->ch);
-> >  		kfree(aon_chan);
-> > -		return ERR_CAST(aon_chan->ch);
-> > +		return ERR_PTR(ret);
-> >  	}
-> >
-> >  	mutex_init(&aon_chan->transaction_lock);
+
+
+On 3/14/2025 6:55 PM, Dan Carpenter wrote:
+> The devm_platform_get_and_ioremap_resource() function doesn't
+> return NULL, it returns error pointers.  Update the checking to
+> match.
 > 
-> May the additional variable (for an information) be defined only for
-> the affected if branch?
-> Would a smaller scope be more appropriate here?
+> Fixes: f78d206f3d73 ("Coresight: Add Coresight TMC Control Unit driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/hwtracing/coresight/coresight-ctcu-core.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> index da35d8b4d579..c6bafc96db96 100644
+> --- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> @@ -204,8 +204,8 @@ static int ctcu_probe(struct platform_device *pdev)
+>   	dev->platform_data = pdata;
+>   
+>   	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+> -	if (!base)
+> -		return -ENOMEM;
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+>   
+>   	drvdata->apb_clk = coresight_get_enable_apb_pclk(dev);
+>   	if (IS_ERR(drvdata->apb_clk))
 
-There are some variables which should always be at function scope and
-"int ret" is one of those.
+Thanks for fix it. Looks good to me.
 
-regards,
-dan carpenter
+Reviewed-by: Jie Gan <quic_jiegan@quicinc.com>
+
+Jie
 
