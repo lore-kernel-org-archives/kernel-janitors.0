@@ -1,40 +1,43 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015CA230BDB;
-	Mon, 17 Mar 2025 10:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BD3238169;
+	Mon, 17 Mar 2025 10:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206089; cv=none; b=hySssBZAQWMATmeFlRRu0ytoIIQXfUYYYDtC5aqOZZ1TarH6cv58kWF1VWiJm/GDcyV2R1jcTBUH1l+WJcbaqXL9uhhAWWl+EzEwBTfiFSarbO7ybmnuMkLqKG95v8503R/ZUa2rTJZjIoi30CNiH/PWdk56KnMdLK4yafQ08sc=
+	t=1742206670; cv=none; b=dMB+21gawcitMM0bdh9nySzbeFbYfYptUvWDSCzcP7dcdjfXTCWityABjZbl2XlV9lB77PEtheDWJoD0/Po9GVvVNDg8nOyqfiUNIfSiNjILdQGnR7+cI1rhXAJpB8q/sR+zgrVdU5uwWnKLw5ylkjIpJ2I842DOQHYbVt7ItME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206089; c=relaxed/simple;
-	bh=/a0FhVFZG9wWuI/osDIaEmYGVWYA6H7zYENYT75LbFw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HBOZSpQ6nYVS5afXAPV8V1mxsxsXgVZaufLSwao/GfpMveHgG90BT+nODeo3t0uLJADOcv9C3hvOI4Eo3pF2n8lC0cQKUwFYW+C2gYEj3tzeNjDp+a/zEfsa/TzQG+mCPBmUS29aajAGm5QsVpw5mmvSqbZoS7sOiIbC5RxI2Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E3F313D5;
-	Mon, 17 Mar 2025 03:08:15 -0700 (PDT)
-Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D944B3F673;
-	Mon, 17 Mar 2025 03:08:04 -0700 (PDT)
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-To: Jie Gan <quic_jiegan@quicinc.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] Coresight: Fix a NULL vs IS_ERR() bug in probe
-Date: Mon, 17 Mar 2025 10:07:56 +0000
-Message-ID: <174220604251.188899.14799232628969384481.b4-ty@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <dab039b9-d58a-41be-92f0-ff209cfabfe2@stanley.mountain>
-References: <dab039b9-d58a-41be-92f0-ff209cfabfe2@stanley.mountain>
+	s=arc-20240116; t=1742206670; c=relaxed/simple;
+	bh=Zc1s02Paz9PewXxLMWtam4EKd2uwWCrlzwljHdP8Ztk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ltGkGIiNLVjZUCPPkerzj+7ddxz7UDCPCd5CspporHUzPlrynePdFLOC1sKDXir83cQsyaco9BY43UZab3Zh+jdEZEbl9IO0p4hV+JPFJgJz5c9JsIcBA7gQPW0w6APPmWPJf2IcVLPu494ZDmJdgOY55ep/xD1T3cpuwt6yiqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rO73L1cg; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rO73L1cg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A15EC4CEE3;
+	Mon, 17 Mar 2025 10:17:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742206669;
+	bh=Zc1s02Paz9PewXxLMWtam4EKd2uwWCrlzwljHdP8Ztk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=rO73L1cg3HvgBQiwOEen/BkKsKLD30Uts+s1MkWynyTRfW8akKez4qEtZNgPG2hDm
+	 lgfahYgC6BIKcUNtCwZCXu/qM8b7N38JT3flKJELxQkUN91SMhqpqRNzqc4GDz5eDb
+	 oA+CHwcFHA7nCOBfTKyINig+OInqvMIm5ytuqjQjYkbmLud6kMHLhiIqzn1BNpEsTe
+	 NnW0cJrXVNkZffpXOrAsp5SDIbWu4bJLgG2pjk0EB/2LtFXemVYmc6RxN1ZFRVBQvH
+	 OoV9kQxfZ6arhyl9W5CXvZshGSntCHL+9UrFoIHM+KQr/Lj3Im44yeRvdkWXvIIyF8
+	 26DKS/VbalzBQ==
+From: Mark Brown <broonie@kernel.org>
+To: Venkata Prasad Potturu <venkataprasad.potturu@amd.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <3dad80cb-e177-45aa-97ac-df9c98a47d94@stanley.mountain>
+References: <3dad80cb-e177-45aa-97ac-df9c98a47d94@stanley.mountain>
+Subject: Re: [PATCH next] ASoC: amd: acp: Fix leak in acp_pci_probe()
+Message-Id: <174220666776.86423.15767893414939503196.b4-ty@kernel.org>
+Date: Mon, 17 Mar 2025 10:17:47 +0000
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,21 +45,40 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-
-On Fri, 14 Mar 2025 13:55:10 +0300, Dan Carpenter wrote:
-> The devm_platform_get_and_ioremap_resource() function doesn't
-> return NULL, it returns error pointers.  Update the checking to
-> match.
+On Fri, 14 Mar 2025 13:11:43 +0300, Dan Carpenter wrote:
+> There needs to be some cleanup on this error path.  We can't just
+> return directly.
 > 
 > 
 
-Applied, thanks!
+Applied to
 
-[1/1] Coresight: Fix a NULL vs IS_ERR() bug in probe
-      (no commit info)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Best regards,
--- 
-Suzuki K Poulose <suzuki.poulose@arm.com>
+Thanks!
+
+[1/1] ASoC: amd: acp: Fix leak in acp_pci_probe()
+      commit: 02026aabaa8225bd7dfdcb8ae106453e002cb0a8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
