@@ -1,107 +1,109 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB564225A22
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Mar 2025 10:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5823245036;
+	Mon, 17 Mar 2025 14:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742208724; cv=none; b=aqVM0mwUaGb5U2CQDEAuOZVQ9FqEZyDSN84L2gXglwFyiDJLu0UIebLxIIK9NV4cc/dpSuCmyl35Zl0DJ5DqogNDhgLQmLdIH9DCgASx3M0kVmMwu8b+Bc4nF6bp4uqtL52Nz9naw4zxIH8AXt13LT6Yka7zylW4gap7njOG2vA=
+	t=1742222136; cv=none; b=ujy3XTjQzU/DUKqg7yLPjIqch7bS1+Dx1zB1Yq6UsDSzzRMBXFMJ8rmF1n8VpboF458XJKo7CBtV4iNNfFdQjjCBWgFs6LAu5R/s9+AwNDPAWxQL+es1ZPnfpvootlbDVMriklCewJtl48gy7R0N0m+s8HfC6gwmqnW5kxcVzMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742208724; c=relaxed/simple;
-	bh=sVFBQhrcAWlKClBKcDG2mFfwLfjULiYni95nXG0ePBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jV19+CnZr+Zs9ycOWTfkLQ/tig6FtFSqanLT2WascaJbtqBkzaQZ+26eFikpzJ1mJs/L6Wo07VcR3mDR/PnMhXWp3sxK53jKnDKW2JlibZNQvCUIlVj7mGPn68LO5P8WiqnwdvEshZTymQVueiIINwTUdOcVN95NuuE+lFbOTKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D66pzehu; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742222136; c=relaxed/simple;
+	bh=Os/3OUI8KCcOIG1iOxmuXB6ZFpAj0XoaeG61qBtx0NA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tQ1TmoAbjMWPxrP11SgiBg+0Uae59+6klbP2ZlY2IgHeoT+Czd9wie0eO8N/vOMlIFcCuBFILWxjIE70CWDYgTHzTKmFvVlxyNEtoQVVtIAcaKIambSi4a/pmyW0fuO0WA36eiHKns3yGXz2+jAjT02OxBX9L+++slzUvnXBQPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X33WEUha; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D66pzehu"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ef60e500d7so32497307b3.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Mar 2025 03:52:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X33WEUha"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39133f709f5so2720114f8f.0;
+        Mon, 17 Mar 2025 07:35:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742208721; x=1742813521; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lr2110cYvl7za6wMxgJOpzLaRT8Ay8EQwITnfCfbHks=;
-        b=D66pzehu7JjmisGcpM+PY/lt7nkC8+5BWDRvHzgojKASojlVMPp6/n/lEFo00Uo5LA
-         e3CHUMiorFtneyLasmIzP3+Q3qgruehLFG25K1WcAioU4IikVcFrBwSkHlWfzEkCZRvf
-         qvcISQEO5s12xvHcNTNFHdi8+uoRtwGGDOgSTM9M37m5eMg7hDU/HtIKIOC555msoI8W
-         kDxO7YqWAztr1TC5GviuxT0n+iYyNdHcay86vKxj6WBX8m6jI3iAFePLr4U2C5Kc9RM3
-         Z8lhSVcCfRVW4dmwHhWkOMX4lZC9p3UH2+7W6PHBNW6xt4epaDp7gNAIg4qkPwnWZtiM
-         9g+g==
+        d=gmail.com; s=20230601; t=1742222133; x=1742826933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w87Zh3I28Z1+Sqxqq72rJtkODwwHBc+MVhcgl8wWLzQ=;
+        b=X33WEUhab50tJOI/mwwnSQZGmqv1CRhRTg1NjUWfGiQo2MXxiFoqW5PzPMtTihkojd
+         GdOT8QYVCJ+ph/1AG+8r3qW15QNnjiRmJBNyablQfzootPOb76e2iCkjOY8GicP923Af
+         Cy172UBERuS590u56BgiAFD2a7HN0gfq7tAVkDpmzE63AaZ76024RgsDANcC61B8ZxT1
+         cnldEF2OiRnnH8b0nCN3H5N4zstJWV4eD+iGhJBInU4b/T+Nzco3pUCxLlEEK3ai1Xk9
+         Em1tiQcK6AWumBNocYhYyIP/W5dxctsrBJZgaG9RDojB0FqkI4TzGyEbld7aRipNmdPP
+         7PrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742208721; x=1742813521;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1742222133; x=1742826933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lr2110cYvl7za6wMxgJOpzLaRT8Ay8EQwITnfCfbHks=;
-        b=U5B3K80F7x6ZTixgAUrg/U7gIuoi7JO1663l8y4ld08Eq3iZY7oeTuJzl729tQkwWf
-         WRTZOy0UVUpNmHmNDpzOW5W3fv+12GVwrdl/iiFIsOdwvpLFepjtD7edEWo1GRi5dSa7
-         4olyiUBpqXixh0zeKpUiIgucZa+OQrq1+A7vxDnSnqAX4Pk6ShnFwlXL10V1w+fWWBtg
-         cLD6CBKfbE7tUoC6cFCGZTSuUauqIpTAbcAUBQZsSq86nf/eefnf11W4TvRvsAd8uvpL
-         EBLWt3V+XRcYevxZ+8TiRzmNHcS8cZjYNylpWRpYKuF50/QW3bQeD1yi6OdzUkPUxPU3
-         weRg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7PQ7aXmdQySnR4ZzaaXFreVDnkzGodTZLYl2TpzVeEoW6Ea4L5MaL8gN4fbymCNoyZhYFZm8yiHBj5hh0k+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3MkHZqehBU+Z8vvJkj5zke06Zog+FuQRym8xqese8ZO6eZ7FN
-	HmYxMFIVUtKKH6CTpiqPbC3HjYuscEtfbIOi9RPbTzG9XAGu6b1OOKAqy/0p6Hq6cIxRf8hcRXC
-	i3GGLpw5oX5ygjkyXzTjKX3sZ0IHy8YJCLFrB/w==
-X-Gm-Gg: ASbGncvoA2HllITCFAUBrFjKRmZDfCL3LM8AzLHjxFIMCohDwGrJAtPFZ5qcN17wC+D
-	z/NRxQ2T9D4W5yjaZLqs9YPDfcXD12xRxjQNIvE9CL/ZwYNojnbMv8qD6PTEZOiZrTdUtzg/QVe
-	54VgDlJXHVSAoMlavBpepGRpkF8as=
-X-Google-Smtp-Source: AGHT+IFf7X3movNjHtqdVTvAfIHVx7pgogDuutwiMoW5qPqhCnfU9dayLqxs4JjWyA9VJmoQdVD/1A6kQ2keCggN8U8=
-X-Received: by 2002:a05:690c:46c6:b0:6ff:26eb:fadd with SMTP id
- 00721157ae682-6ff46074375mr148199567b3.26.1742208720778; Mon, 17 Mar 2025
- 03:52:00 -0700 (PDT)
+        bh=w87Zh3I28Z1+Sqxqq72rJtkODwwHBc+MVhcgl8wWLzQ=;
+        b=J6tBfWOVc4OHYwQoC5+q5AcUILZwL5126HtXUkF+yMsBNbD/XBGUjBxhvgEIjJq/2t
+         q5FYbL3VzTBFfTrNL1l5w4hE/OExw+nTPQICy0vHOPy/qdgMZBfDf4+WXnBByUjL/XwG
+         XGmGwKZatDQXEj/Pj+oZDInP+hhhuuRo8CdrxNJ6cPynEBky1iEQ0vkXoRKOIL+4Rn3O
+         832RoFfAUSrv+f95drX6DU7UfFq+HJE/DLmG+SRqXPL3io4BxrVdwVZFh0AJuAOKr6XH
+         +h+q/q0+ocE49sQgAKbPTHJGTkZ98sVlVjqIYEjojwVhv85Z+3Nr4a2I+00M8foz5wsP
+         U+rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg75F7xYOMdVZJJKHhNrnb0dHLhmkRiTQ4Naqhlelpf6/PztlImjlLzvQdqib59l8Kzr2wQEacurIlONE=@vger.kernel.org, AJvYcCW40msMrNuC89cH2wXUNCMN+fQ7721Uqoak6nNadyDsEOQa4exl24oq5Fz2VsxsjsWzfUjAeoG5VqQ3@vger.kernel.org
+X-Gm-Message-State: AOJu0YySME+JfqiOEtfTurxsX/K0/SQ3nNwDsqsq/87yneAkE15nIgF7
+	5zECWcmNKq6nyJG6bfLTJmt1lc07NQm+Xle0p2N1l6bFxGhiJzo0
+X-Gm-Gg: ASbGncsJeRYWLgs0Aqve/9uO9N8lSNNU7viViW32sFbybMRrmVmNjsBy7PrmvYM6VZo
+	/M/l9geGGg4idyu6u/2YcVQUVmdws9b9Nso9Xy37l1eo+QDDd6MFRX6j1y5phyUQ3T9+RhS9giD
+	EGlx00iZVRghB9PBeoBcStFM3FcF4Lq+3mtPyhom8HTI24vZKiZ/2O20pSSsCybsisXgKgqQX3J
+	Tth0i4HTbltMmQFcI+A6jcxOwCSHmgh3pa2jU7VaEuuaT92SqOMjxWUUB7uHcpPY0ls8CeVYv+L
+	nKEfvyYF2kksxgCUrUBCwmLgErnztSsLS9nb6naefFhEkw==
+X-Google-Smtp-Source: AGHT+IGj2U95C2D/UDRSgWDo1hfyu3+i9z8iABs6gkm9zWiBp79gxMqCjLlCuVAE4sL2PJ8+U38jmA==
+X-Received: by 2002:adf:a348:0:b0:391:401f:bfd8 with SMTP id ffacd0b85a97d-39720584500mr11131524f8f.55.1742222132717;
+        Mon, 17 Mar 2025 07:35:32 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb40cdd0sm15208107f8f.77.2025.03.17.07.35.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Mar 2025 07:35:32 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] PCI: brcmstb: make const read-only arrays static
+Date: Mon, 17 Mar 2025 14:34:56 +0000
+Message-ID: <20250317143456.477901-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dc39e555-8ef7-4a39-9253-65bcf3e50c01@stanley.mountain>
-In-Reply-To: <dc39e555-8ef7-4a39-9253-65bcf3e50c01@stanley.mountain>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 17 Mar 2025 11:51:25 +0100
-X-Gm-Features: AQ5f1JpqClchOclXJ-ISZPJXO2_ekcieYheM6YIoLWy4nEFQ2I-b44apFo7Ppjc
-Message-ID: <CAPDyKFpO0a+hg0HrgXm0yv0p5JwMrD3aMN43boM73JP-EMpDWw@mail.gmail.com>
-Subject: Re: [PATCH next] mmc: renesas_sdhi: fix error code in renesas_sdhi_probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-mmc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Mar 2025 at 11:11, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> If devm_regulator_register() fails then propagate the error code.  Don't
-> return success.
->
-> Fixes: fae80a99dc03 ("mmc: renesas_sdhi: Add support for RZ/G3E SoC")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Don't populate the const read-only arrays data and regs on the stack at
+run time, instead make them static.
 
-Applied for next, thanks!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/pci/controller/pcie-brcmstb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+index 8b2b099e81eb..d258b571f642 100644
+--- a/drivers/pci/controller/pcie-brcmstb.c
++++ b/drivers/pci/controller/pcie-brcmstb.c
+@@ -832,8 +832,8 @@ static int brcm_pcie_perst_set_generic(struct brcm_pcie *pcie, u32 val)
+ 
+ static int brcm_pcie_post_setup_bcm2712(struct brcm_pcie *pcie)
+ {
+-	const u16 data[] = { 0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030, 0x5030, 0x0007 };
+-	const u8 regs[] = { 0x16, 0x17, 0x18, 0x19, 0x1b, 0x1c, 0x1e };
++	static const u16 data[] = { 0x50b9, 0xbda1, 0x0094, 0x97b4, 0x5030, 0x5030, 0x0007 };
++	static const u8 regs[] = { 0x16, 0x17, 0x18, 0x19, 0x1b, 0x1c, 0x1e };
+ 	int ret, i;
+ 	u32 tmp;
+ 
+-- 
+2.47.2
 
-
-> ---
->  drivers/mmc/host/renesas_sdhi_core.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index 396fa2816a15..fa6526be3638 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -1178,6 +1178,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->                 of_node_put(rcfg.of_node);
->                 if (IS_ERR(rdev)) {
->                         dev_err(dev, "regulator register failed err=%ld", PTR_ERR(rdev));
-> +                       ret = PTR_ERR(rdev);
->                         goto efree;
->                 }
->                 priv->rdev = rdev;
-> --
-> 2.47.2
->
