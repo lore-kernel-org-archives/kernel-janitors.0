@@ -1,22 +1,25 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 56AA3DF71;
-	Mon, 17 Mar 2025 01:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E40E3D6A;
+	Mon, 17 Mar 2025 02:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742175238; cv=none; b=GkU2igZQnL4b87Ar4O5G5Wy9MXKcZq6bCzNl81G7hwM2qeVETu7CKIrpXQAIbZwuku7+KBu3u1d8NYY8ywf2Dkl74Ba2WAoz7GzjgXyhRmNUMXaWZ1kl8SMx5rkqEE1k8QYyilITb/wFNU1OdBILHsb88qm+a4UU0f5chpS7hDQ=
+	t=1742177623; cv=none; b=Vj750767x6ZXPL0E0pioGa7a56SRh7UuCSD4irY7BGShO8b0sJdICHdfdPNz9AKaKg0w/tuOnBuGHywLU0he6DLMNUNv8X4Fajcl7ZsRTSErVNVZHRRwRxbWrDTuTnGAdz31zp3DLeBdX7yVokNkPN0+vDGx5DtyylMNGLrA4Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742175238; c=relaxed/simple;
-	bh=7mLWhIaj0gljG+t/JUlukM9ob5yv5rUFn/dW4zETZfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=OIQR46DN7+cmLNPsG8jEv2Tt+tyi2U1KgsKLf0CU+YjxMnOOryCJryFLi02PNDWRDBrwvSpPZ7CIDVHNJkEY1yYJ/Mo5Jf3L26V6Y33KQJ615gCNE85gk2FkX0XmuNLv1M+kgOOqdjHFRQuxFEgQfkheE5BG73fQt0L1GV+0NX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id F32BC6019982F;
-	Mon, 17 Mar 2025 09:33:42 +0800 (CST)
-Message-ID: <5d5caaea-4031-44a7-932e-2cf3f6fa4d6e@nfschina.com>
-Date: Mon, 17 Mar 2025 09:33:42 +0800
+	s=arc-20240116; t=1742177623; c=relaxed/simple;
+	bh=YfNwa41wrkrqag74tI1PFC+5fccxZcnx0yDp1vQgfEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T4itPKeedx7XoM+WBIqdq84sfbadK6QlVDRublB0H6r1j8cYAoS4EKvgv52QNERYIzCbf1+jYSiZLgShmsr2gmoI+xKkhuaW8QQKSF5pbzO0dunWdfvckqaZl6m1+jom8+QxAL8TWql7sdBhyQUMSx54Xvk75L2+rtCidY4qBHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1741213D5;
+	Sun, 16 Mar 2025 19:13:49 -0700 (PDT)
+Received: from [10.162.16.153] (a077893.blr.arm.com [10.162.16.153])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 191513F673;
+	Sun, 16 Mar 2025 19:13:36 -0700 (PDT)
+Message-ID: <a636ce0d-a5cf-4718-9d39-1a6e74bdea5f@arm.com>
+Date: Mon, 17 Mar 2025 07:43:33 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -24,59 +27,48 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] selftests: ntsync: fix the wrong condition in
- wake_all
-To: Elizabeth Figura <zfigura@codeweavers.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: shuah@kernel.org, wine-devel@winehq.org, linux-kselftest@vger.kernel.org,
+Subject: Re: [PATCH next] Coresight: Fix a NULL vs IS_ERR() bug in probe
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Jie Gan <quic_jiegan@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <dab039b9-d58a-41be-92f0-ff209cfabfe2@stanley.mountain>
 Content-Language: en-US
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <1961744.6tgchFWduM@camazotz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <dab039b9-d58a-41be-92f0-ff209cfabfe2@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2025/3/16 04:29, Elizabeth Figura wrote:
-> On Saturday, 15 March 2025 04:39:46 CDT Dan Carpenter wrote:
->> On Fri, Mar 14, 2025 at 05:13:50PM -0500, Elizabeth Figura wrote:
->>> On Friday, 14 March 2025 05:14:30 CDT Su Hui wrote:
->>>> On 2025/3/14 17:21, Dan Carpenter wrote:
->>>>> On Fri, Mar 14, 2025 at 03:14:51PM +0800, Su Hui wrote:
->>>>>> When  'manual=false' and  'signaled=true', then expected value when using
->>>>>> NTSYNC_IOC_CREATE_EVENT should be greater than zero. Fix this typo error.
->>>>>>
->>>>>> Signed-off-by: Su Hui<suhui@nfschina.com>
->>>>>> ---
->>>>>>    tools/testing/selftests/drivers/ntsync/ntsync.c | 2 +-
->>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/tools/testing/selftests/drivers/ntsync/ntsync.c b/tools/testing/selftests/drivers/ntsync/ntsync.c
->>>>>> index 3aad311574c4..bfb6fad653d0 100644
->>>>>> --- a/tools/testing/selftests/drivers/ntsync/ntsync.c
->>>>>> +++ b/tools/testing/selftests/drivers/ntsync/ntsync.c
->>>>>> @@ -968,7 +968,7 @@ TEST(wake_all)
->>>>>>    	auto_event_args.manual = false;
->>>>>>    	auto_event_args.signaled = true;
->>>>>>    	objs[3] = ioctl(fd, NTSYNC_IOC_CREATE_EVENT, &auto_event_args);
->>>>>> -	EXPECT_EQ(0, objs[3]);
->>>>>> +	EXPECT_LE(0, objs[3]);
->>>>> It's kind of weird how these macros put the constant on the left.
->>>>> It returns an "fd" on success.  So this look reasonable.  It probably
->>>>> won't return the zero fd so we could probably check EXPECT_LT()?
->>>> Agreed, there are about 29 items that can be changed to EXPECT_LT().
->>>> I can send a v2 patchset with this change if there is no more other
->>>> suggestions.
->>> I personally think it looks wrong to use EXPECT_LT(), but I'll certainly
->>> defer to a higher maintainer on this point.
->> I'm not sure I understand what you are saying.  Are you saying that we
->> should allow zero as an expected file descriptor here?  I don't have
->> strong feelings about that either way.
-> Yes, my apologies for the ambiguous wording. That is, EXPECT_LE looks more correct to me than EXPECT_LT per se.
 
-Got it, I think there is no need for v2 patch that using EXPECT_LT(). 
-Thanks for your feedback.
 
-Su Hui
+On 3/14/25 16:25, Dan Carpenter wrote:
+> The devm_platform_get_and_ioremap_resource() function doesn't
+> return NULL, it returns error pointers.  Update the checking to
+> match.
+> 
+> Fixes: f78d206f3d73 ("Coresight: Add Coresight TMC Control Unit driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/hwtracing/coresight/coresight-ctcu-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> index da35d8b4d579..c6bafc96db96 100644
+> --- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
+> @@ -204,8 +204,8 @@ static int ctcu_probe(struct platform_device *pdev)
+>  	dev->platform_data = pdata;
+>  
+>  	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+> -	if (!base)
+> -		return -ENOMEM;
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+>  
+>  	drvdata->apb_clk = coresight_get_enable_apb_pclk(dev);
+>  	if (IS_ERR(drvdata->apb_clk))
 
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
