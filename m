@@ -1,74 +1,90 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E40E3D6A;
-	Mon, 17 Mar 2025 02:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDE451C5A;
+	Mon, 17 Mar 2025 02:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742177623; cv=none; b=Vj750767x6ZXPL0E0pioGa7a56SRh7UuCSD4irY7BGShO8b0sJdICHdfdPNz9AKaKg0w/tuOnBuGHywLU0he6DLMNUNv8X4Fajcl7ZsRTSErVNVZHRRwRxbWrDTuTnGAdz31zp3DLeBdX7yVokNkPN0+vDGx5DtyylMNGLrA4Sg=
+	t=1742178468; cv=none; b=Ze/ZUeFJMIH/PF4SaoM8syLnk1Sw7jU4x9QDXfvO38MlJHm+ANLk165zGZfuxnaUt6bjb35XFQN1V50AmQsCutwOR+kjv0kkNlnFAGemwaVdZHlKUlYeeczdW33fJbKaA4itQsXKm4hBScdN0EL8mgyi2onYK9K0MuNyPGFbFMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742177623; c=relaxed/simple;
-	bh=YfNwa41wrkrqag74tI1PFC+5fccxZcnx0yDp1vQgfEU=;
+	s=arc-20240116; t=1742178468; c=relaxed/simple;
+	bh=mUzG+ik7zIOlXc8Gp465g6xDPDL5Ez55ulzZYdJhjHc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T4itPKeedx7XoM+WBIqdq84sfbadK6QlVDRublB0H6r1j8cYAoS4EKvgv52QNERYIzCbf1+jYSiZLgShmsr2gmoI+xKkhuaW8QQKSF5pbzO0dunWdfvckqaZl6m1+jom8+QxAL8TWql7sdBhyQUMSx54Xvk75L2+rtCidY4qBHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1741213D5;
-	Sun, 16 Mar 2025 19:13:49 -0700 (PDT)
-Received: from [10.162.16.153] (a077893.blr.arm.com [10.162.16.153])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 191513F673;
-	Sun, 16 Mar 2025 19:13:36 -0700 (PDT)
-Message-ID: <a636ce0d-a5cf-4718-9d39-1a6e74bdea5f@arm.com>
-Date: Mon, 17 Mar 2025 07:43:33 +0530
+	 In-Reply-To:Content-Type; b=TV6VTroD4odZCQ+HkBzFs1lI+qO/OBMc2q1GzJ7FUNZ5zdM3C6PcEz48EbIFQt4D8J4Adw2UzaDhIwvbE8KZOykimw2SLUJGJqbUwGsJv+qs37W6bvj6DHQ7U2sT2yQ2G1X3w8LYalVmJKYEC8/c1u3gatmuepDgq26hq7nCEnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qLF6FJz4; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qLF6FJz4"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1742178454; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=EJ8I6/uv4gDuHu2hvbLCTYuIGGwSQNob954hSFwxMc0=;
+	b=qLF6FJz40MncyjKiyeTOctQcBe9lw6wNbxfVXX5WmU1DW+eR3w0WtQK73jk15YE0r83aTvIWxT/TV8VmueBEEvP5V0tPK+v7qLMztzQeUyUgVGIJW8iT5yS4zLe9dRvj0lTGU8IRx68yTAQbed59/knRH09Yx5n4u81Y+xyvqwQ=
+Received: from 30.221.64.192(mailfrom:chengyou@linux.alibaba.com fp:SMTPD_---0WRXrLf._1742178452 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 17 Mar 2025 10:27:33 +0800
+Message-ID: <67a12e7e-51ff-36bf-a575-b77c09b56110@linux.alibaba.com>
+Date: Mon, 17 Mar 2025 10:27:32 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] Coresight: Fix a NULL vs IS_ERR() bug in probe
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Jie Gan <quic_jiegan@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <dab039b9-d58a-41be-92f0-ff209cfabfe2@stanley.mountain>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.15.1
+Subject: Re: [PATCH v2] RDMA/erdma: Fix exception handling in
+ erdma_accept_newconn()
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <dab039b9-d58a-41be-92f0-ff209cfabfe2@stanley.mountain>
+To: Markus Elfring <Markus.Elfring@web.de>, linux-rdma@vger.kernel.org,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kai Shen <kaishen@linux.alibaba.com>,
+ Leon Romanovsky <leon@kernel.org>, Yang Li <yang.lee@linux.alibaba.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <2e9ae1d6-4bbb-470f-957f-bb6ea2e0829e@web.de>
+From: Cheng Xu <chengyou@linux.alibaba.com>
+In-Reply-To: <2e9ae1d6-4bbb-470f-957f-bb6ea2e0829e@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 
-On 3/14/25 16:25, Dan Carpenter wrote:
-> The devm_platform_get_and_ioremap_resource() function doesn't
-> return NULL, it returns error pointers.  Update the checking to
-> match.
+On 3/13/25 8:10 PM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 13 Mar 2025 11:44:50 +0100
 > 
-> Fixes: f78d206f3d73 ("Coresight: Add Coresight TMC Control Unit driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> The label “error” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “erdma_accept_newconn”
+> that it was determined already that corresponding variables contained
+> still null pointers.
+> 
+> 1. Thus return directly if
+>    * the cep state is not the value “ERDMA_EPSTATE_LISTENING”
+>      or
+>    * a call of the function “erdma_cep_alloc” failed.
+> 
+> 2. Use more appropriate labels instead.
+> 
+> 3. Delete two questionable checks.
+> 
+> 4. Omit extra initialisations (for the variables “new_cep”, “new_s” and “ret”)
+>    which became unnecessary with this refactoring.
+> 
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Fixes: 920d93eac8b9 ("RDMA/erdma: Add connection management (CM) support")
+
+
+I think this patch does not fix issues, so fix line is not needed.
+
+Thanks,
+Cheng Xu
+
+
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  drivers/hwtracing/coresight/coresight-ctcu-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-> index da35d8b4d579..c6bafc96db96 100644
-> --- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-> @@ -204,8 +204,8 @@ static int ctcu_probe(struct platform_device *pdev)
->  	dev->platform_data = pdata;
->  
->  	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
-> -	if (!base)
-> -		return -ENOMEM;
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
->  
->  	drvdata->apb_clk = coresight_get_enable_apb_pclk(dev);
->  	if (IS_ERR(drvdata->apb_clk))
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+<...>
+
