@@ -1,107 +1,117 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE20202F8E
-	for <kernel-janitors@vger.kernel.org>; Tue, 18 Mar 2025 12:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BE920C006
+	for <kernel-janitors@vger.kernel.org>; Tue, 18 Mar 2025 12:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742299424; cv=none; b=WbhUExuSfWY/6io1N3kVUe2RzOt3rEyjJD76jNkKC+lZEydJHTq5ExALkesjFxPSDlVHjDx8FdmxyVOFo3Hy+m486IXRY0PiLNl32+sgSWj0nj2bCd1f1ukOQdyp665kp6wsjxZuoqZW34EN7UlJk3DY+27hCVdGUsDskrILXIM=
+	t=1742300096; cv=none; b=XZ43CMmeK+8JQOYS9y01xe5zuWIhHd/Tvg8c9BsOcQwpKxosSxd35qhcSOZpR5XcDgBGqCH6YKKJQpwhWDPZB+3K1/4aivkQ1Cdd9Hj+ceQHrIHRs2VpODPjO8PnJIVaNs1PnDAZDTIK3qaqL39WcrlrHQi3GA7IX5wgCIQNHN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742299424; c=relaxed/simple;
-	bh=r9W2oByKMjCUexc+U6zWTeAxEfds9Y3CGAAEJo7W7kQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8DTNqfGCYCYGCaaUbhRzd55YPeMij8c1swp8lsq5yRXKi4fyrr0fhy2c0bCGaYK8ZIKKjSX29TPrNL5/IRYZSwJ+8OAi08+dy0qCTF8chHGwThooVqiui9mt/kAeBY0FZ4H8qfTqi+budjRVPXNeGfL6Pvvhn7cxJphkNNboFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JbTLrSD6; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1742300096; c=relaxed/simple;
+	bh=Om9LWwSZhRbR5uwbIwSklW+JTUXChFeYWNKsyZInKxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U6ydAzMcqlbDKp5fgJT4nEjGWmvxkR62OlSgrKAwNuNLZK5J3OuBgjmr78qdUw2+rRX7/+l/weoK3xOBiE0ZyRsPfP0kGGEPYMtGQgBnNstZAtDPKJ7zkFqyuwSlFazoc9ryMiInHIzHnSiKXJh5Clfsewkugo8pnuKltTjH/6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kbD2D1MP; arc=none smtp.client-ip=209.85.128.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JbTLrSD6"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39149bccb69so5491330f8f.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 18 Mar 2025 05:03:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kbD2D1MP"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ff37565232so45292027b3.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Mar 2025 05:14:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742299421; x=1742904221; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EIvZ3Wp+90RhosIdCp8kn3gSMcgQFE9Tp7I7nCfwJ0E=;
-        b=JbTLrSD6rcyk0Tvz2JPLTKXj9kN7vzhkbj9R+pYYpJyhgizGjU9UREYU0VwnTyKHBC
-         YDu5DMjV9NMqrgqbFXRkWUVIqBxowYo9UVenN+BHyQJIuiUYD0cwB8vpNYP2j33Rp088
-         C5tq0qkFOvYI8z2E15p3agM5pYfU6JewIIuMIe9GsZZbhFzmjb1PX4/1quhDxGaGrwTQ
-         BoQvCQMLxDAn+Y035nfJ8Jd+tbCxOBURAYkAtoajCYbvDEDENTiXpvG/a7L1vMcU5adA
-         PY2ytl6YL0BjvLyn3wNSffmJzr8kNJiNjDzqJSJ9AHUppmKYTVA5/gqM6ZU/bp/WWC+E
-         U76w==
+        d=linaro.org; s=google; t=1742300089; x=1742904889; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1/y8nwDFP5hJBBvbUUG0QfBtnCqzgdSuPLHojeq2gsc=;
+        b=kbD2D1MPMjnW9DfW0jfJ86/dLJ/M8uNfxysUkdpSPPvkZ+4vK1ertxocA1zmXH7h+f
+         wiJAsKSNLeYcpNB1O6S43mFFgCnUP1hUyCfln5WNt0Z2+f7mW1s4uHkzX4gfIBomQk46
+         EsJzKkrgbNglXfmls5Ld9b9aNfyBTZcXyRGha06ywVV620f0MaIoLCDO9V3QTCFhspRZ
+         /O0RAROWYaZwUJZAk6dthBYRy+O8mkt6kwNuahlYhdBACkuPATyuV668LqLM4QRuzc8r
+         awYvaudAa1x2Hk+Fva3RnWWWfzJs+cbxwl2UaBHEHHylI+5S+tI8TmcyV9jGxjjk6yC2
+         fkPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742299421; x=1742904221;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EIvZ3Wp+90RhosIdCp8kn3gSMcgQFE9Tp7I7nCfwJ0E=;
-        b=TFzKTalaQNS7HTDpUaNaI+VZFVvs6NwfEUg3E58HsqTXEW3CFtf3epbYB7jGIjdCfg
-         Om668FG+a/HB9fl2Rm5NXPVS437bJjVG4RwKE7+7fjKyiFTiQWju/oDNG2mueQiNxE/t
-         OpPrgfY7WQVZa4/0Ck3AY2WpqhnbHDLPdGcWickLgt4ASD31o1jhtnkpEADGPvGyqKV1
-         SFalz4eQpe+UKSQsZEWEMe+sKxGerkl4pLxRQIGQD4c9fI39cPRbxdrt/fSKYXqP2lMQ
-         hAQaIMyuCy3U5kT1HCcytYSBhpn6ZkAAFarQmhZj/8sMRmElzda/ntkhjGLdjDvs0lBF
-         wKzA==
-X-Gm-Message-State: AOJu0YyKp3IEQ++Jfs37upXuJg7X20UDaXpiMrLye7fkTJi37yWZ9sPD
-	IoXwdpzWXNUPN0tIbcUpG3aCohVhHbuC4DIPzhwRRFZvcL4XOkhkTvZFDA8CR6Y=
-X-Gm-Gg: ASbGnctmXR7mswPhBW86hbSU1w5vlLZlt2IVtnJQuPuRk/jlSkty3JvO4Bkn9fsDNlJ
-	HEzQfXtG7wjoSPYNc7AGwuWcrYy81FZB2a6BFoeJ65bC8wXyA7NnJGp/91RuTA1s8kVRX9Px3tz
-	ObovKD1ID4xA+2KfMvLUYMQfWKdk8zDtgQ/9HmV1B3u0lT7obgnIE5WdfqbYRQ20bn+UCa3BGvL
-	8GPE1aCEGRFSHNjM58CgUt8uDFMvCq/Y0MAauBoP+RV0ssiDEhUeWgecUee0dkOQWdYiPfo3TNQ
-	mfeehAB/VpagDX9XsUsohQo9TDMeFmxzB8vNwamY9Mqadhn1ng==
-X-Google-Smtp-Source: AGHT+IFpsBv5twsMP6fmrTzI785OG9MT2p6MsEQHUu8xAsUGZO1uS02mqQn/S4PSHW3veon64U20Lw==
-X-Received: by 2002:a5d:588c:0:b0:390:fbdd:994d with SMTP id ffacd0b85a97d-3996b47cab3mr2750146f8f.27.1742299420841;
-        Tue, 18 Mar 2025 05:03:40 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395c8e43244sm18330917f8f.60.2025.03.18.05.03.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 05:03:40 -0700 (PDT)
-Date: Tue, 18 Mar 2025 15:03:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, linux-mtd@lists.infradead.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, cocci@inria.fr,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] mtd: cfi_cmdset_0001: Fix exception handling in
- cfi_intelext_setup()
-Message-ID: <7eee35fe-0d88-4f38-b381-1ea2ee4a4715@stanley.mountain>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <3675f707-bff0-3caf-29a2-b99e5b9c6554@web.de>
- <d7b2c8ac-e052-4b93-964b-4cc58a459ba0@web.de>
+        d=1e100.net; s=20230601; t=1742300089; x=1742904889;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1/y8nwDFP5hJBBvbUUG0QfBtnCqzgdSuPLHojeq2gsc=;
+        b=wUXjeMM5SWcYWdKyhWMsl7k4m7o3+AcrpXkDLFkwoiJpLfZ5j877iuZwMYfMA2csMS
+         bYrge6Mi6mRkPWdy1hFq75Lehq/5PneEL+KN5o/mYa7QvbnlSyDiIKVYbCvfA4UV7qsU
+         qtATLWirEfubqQfi5x2r71dhPs/BzBhVcjreBlJufb1kvxgSM5xS5762zsn9EBAzzuFO
+         f5+RTdnF9fsQ8p2iTLiyaiOHcAjv1a8oI9vuL93Mar2tPPQbpe3Fl9geuX7KsIvPxts9
+         PEKIl5g4mSwgQ+r6ELBhiMJ5OVuC5nUXUuwF1hGjlZUQ7H6DHSO981Y0tqqMOoZNU0Ke
+         3rqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8K3kd09ZGXjhBEpkbBXwbMA14xuGEyix5ZcacXhvMNUoN38FnZ4eSgcgnu13an1bvGUytVX0hRasZMe8Tp4M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwniC1TZLDYZEaOM0x5IG1RhVnl2GOT0TiW3dWpM0zFBykss5+p
+	BGGDUqRQyV6gCqpF7yEcfkMUwJkT6/kZ3uPGnVg6/IslMdche1mZEbm/KLASLq+z0LukJPFcjuV
+	YmFi7xYnMuw2UCgyKCZDpevuIhiO81BbVxJDdjg==
+X-Gm-Gg: ASbGncslK8MjCqf+yp2DTZRZtsaYX/PVbjdxP8gqr97pmfR6Jk5gk+nVT1EwU2HaTqh
+	U5FzV3IvIIugNJ68rwmgSAds9mkR80hKFgElu6WDu73pIAGAwS/Cc6GNfcfP2cBvNMFYWbl5RiW
+	VDIS8aLhmjMp787JxmJJLk3Ad5pkA=
+X-Google-Smtp-Source: AGHT+IEb+NzrbCeNRdPzm3xEMtkofIje/IsnUYw+kILlbfLc0DlZPY9+TQaCk80CJVoK/tOOND9xyncng+d5HjDNmyU=
+X-Received: by 2002:a05:690c:6ac4:b0:6f6:7b02:2568 with SMTP id
+ 00721157ae682-6ff460529d9mr218205717b3.32.1742300089569; Tue, 18 Mar 2025
+ 05:14:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d7b2c8ac-e052-4b93-964b-4cc58a459ba0@web.de>
+References: <f19be994-d355-48a6-ab45-d0f7e5955daf@stanley.mountain>
+In-Reply-To: <f19be994-d355-48a6-ab45-d0f7e5955daf@stanley.mountain>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 18 Mar 2025 13:14:13 +0100
+X-Gm-Features: AQ5f1JqEJzBTaaSWFDJFRns2Qyn4YifFIkvKDJuCkDwbsG7HAzOkL1ON5MzrQiw
+Message-ID: <CAPDyKFo8hyTJHZVLTAVXe2EW4FCPPLm39WWwpjOCqzUQnfNJ3Q@mail.gmail.com>
+Subject: Re: [PATCH next] firmware: thead,th1520-aon: Fix use after free in th1520_aon_init()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>, Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 04, 2025 at 08:21:53PM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 21 Mar 2023 20:13:51 +0100
-> 
-> The label “setup_err” was used to jump to another pointer check despite of
-> the detail in the implementation of the function “cfi_intelext_setup”
-> that it was determined already that a corresponding variable contained
-> a null pointer because of a failed memory allocation.
-> 
-> * Thus use more appropriate labels instead.
-> 
-> * Delete a redundant check.
-> 
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On Sat, 15 Mar 2025 at 11:04, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> Record the error code before freeing "aon_chan" to avoid a
+> use after free.
+>
+> Fixes: e4b3cbd840e5 ("firmware: thead: Add AON firmware protocol driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Don't use a Fixes tag for cleanups.
+Applied for next, thanks!
 
-regards,
-dan carpenter
+Kind regards
+Uffe
 
+
+> ---
+>  drivers/firmware/thead,th1520-aon.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/thead,th1520-aon.c b/drivers/firmware/thead,th1520-aon.c
+> index 4416e9bbf854..38f812ac9920 100644
+> --- a/drivers/firmware/thead,th1520-aon.c
+> +++ b/drivers/firmware/thead,th1520-aon.c
+> @@ -203,6 +203,7 @@ struct th1520_aon_chan *th1520_aon_init(struct device *dev)
+>  {
+>         struct th1520_aon_chan *aon_chan;
+>         struct mbox_client *cl;
+> +       int ret;
+>
+>         aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+>         if (!aon_chan)
+> @@ -217,8 +218,9 @@ struct th1520_aon_chan *th1520_aon_init(struct device *dev)
+>         aon_chan->ch = mbox_request_channel_byname(cl, "aon");
+>         if (IS_ERR(aon_chan->ch)) {
+>                 dev_err(dev, "Failed to request aon mbox chan\n");
+> +               ret = PTR_ERR(aon_chan->ch);
+>                 kfree(aon_chan);
+> -               return ERR_CAST(aon_chan->ch);
+> +               return ERR_PTR(ret);
+>         }
+>
+>         mutex_init(&aon_chan->transaction_lock);
+> --
+> 2.47.2
+>
