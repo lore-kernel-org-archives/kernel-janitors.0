@@ -1,126 +1,115 @@
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07179191F8C
-	for <kernel-janitors@vger.kernel.org>; Mon, 17 Mar 2025 18:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B650190497
+	for <kernel-janitors@vger.kernel.org>; Tue, 18 Mar 2025 08:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742237441; cv=none; b=LBYT9gc4F8TyBPOov/qhxoTfokJBrXUOuWWXiYL6vb4HZuDyCYOM14/2WEx84S0g3WpCx6QokRYjta8w7haisEsMKR7zA9/wF/WUXUSDdIeJxUSTtONWuww6j5HPOWVHRcaghh/yXibmi4KlQioB1s30n0AJaVAz8qEHTrVwVhg=
+	t=1742285363; cv=none; b=cDv/8oU3BOhcRtMkUPH8LoHHXufbWzz4jqade2GXjTLh8IBnn6zn/hGGCVvkFT8D2JhABHEPWUgNf7ThOB3KHxlHEsrgg+3MuYl+mbeVpFpqO02cuuHbzA3QxWlbzr21kgalQz9dIoBJCazLGJzbY6vxUQYHcmjWrOpPCYQ4HYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742237441; c=relaxed/simple;
-	bh=iWJ4xAGHyAnE6QbuCInfzYRvbLTef5OOVfOJYBo5i+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VHYrKU5dFe/4omItv1T4/+0UZRRWJ1ydUNaDn25YE5UKOzNNB+X1wKhT6oDcOSqaWc76qeVmq5wxfToZNBTwiBlsPuI+rRtBhcx4frYjCRAO8WSbrhP29+aWJW/r7K+G3Ww9jUdxv/NuR3S1yexbQMGVcBk0WY2ffLwSAYtU3iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=W5dmuvfI; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1742285363; c=relaxed/simple;
+	bh=7Mp3l5IFx+cBU0LtsyIxw8lHW6ZgPBAyf3KkmP0Weno=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FQqObrbdhV2MS9a2Yh+4KgFEA9kZCkeqVfIBT8LcA/i2N3tL/uEJe0m6yJ/0adFdksuHkAE33C0DQbIsWZyDPDouLiFDZ/Tgc9FC51AoSHTcsNrDEp9e1zQc/kdsivJj+ccJo39KjiQwDk0DYC9cemuoV18CKzZ+lAs6l27AAK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E/zPgJgD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="W5dmuvfI"
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-60009c5dd51so1110753eaf.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 17 Mar 2025 11:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1742237435; x=1742842235; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=y9YporYfSyQzR9fHjG0FSGyAoboGZe4a/zGZZOFS0qU=;
-        b=W5dmuvfI/IIBtciftBFwehHACOIXudYVpuUFeVXSX7iu1VsU65VuvKOn60qdWydB3N
-         BLFusKmTI+kGWN6jHuGTneG509Y7vm0UH76paHNfgPYkp65KP9fP2GEcFQda3qvlDwrz
-         gAr2q8CUKbEDj0gzoogstJKyX0Udgn9jtlXGk=
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E/zPgJgD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742285360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1MOPIMVq4RYa2Qlhwo2paVsAS+Ja31+A7+LmeILgDQA=;
+	b=E/zPgJgDHfhUUb/vDdgC3ywtQLqhMCbiAqfEH87am/HHCVVDq+US5iGZWsz7GPjSz+py+X
+	yj7hpryiDRgwPJa0RzEyGcLsgOPPpQbFeYMr3t1AU5NW2RSXKtNZWTYGOSywNjSCeP+lsB
+	ePF2rFHosTf8lvHgY6SWtMQsRvKCvv0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-sIRJey-LNvWhxzssJOTWzg-1; Tue, 18 Mar 2025 04:09:19 -0400
+X-MC-Unique: sIRJey-LNvWhxzssJOTWzg-1
+X-Mimecast-MFC-AGG-ID: sIRJey-LNvWhxzssJOTWzg_1742285358
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43cf44b66f7so21487755e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 18 Mar 2025 01:09:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742237435; x=1742842235;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y9YporYfSyQzR9fHjG0FSGyAoboGZe4a/zGZZOFS0qU=;
-        b=xEMPiVBkzpWw5GLhJ+gMimGyVL/vZxl7mIWJ5nSksxOhLseTn6Vdh+0BFkBEJylPE9
-         x6GRpe/NUim23R/9WoSMLQnXSCa9LifCqI/megiT4lUv4aQROFlQLbKH7bXt6pOtYJsy
-         S1qK2HvN/+K00LQOnBR/l5w3DtyQY6wXdAIdqbNbAX+nCz2kITcta7aNyJO8cf7ggP9k
-         C3dq6rM3v/ryAAAjd14Gbof9jDsULlpN2P9MkDHMtS5t8M8dP4tgP2nIxvpl7oX99Ipi
-         YWPrrtCcoh0L7uDCUviX5+GH4dr7SyeB5/K2cjkdqTiLrr/0Go3FIkJhaNP9g5CQVeW9
-         TQEA==
-X-Gm-Message-State: AOJu0YxKYYcjUPgKd9oy67K6CmvJ8Yi0m/zFT6JKg5xqRnX2jRau77go
-	c+Qz8pH50WZFl3cPPNJaXZ5LOuuaE8PBosvconA7JqCN3xqonQ6A1pa8lLQE0g==
-X-Gm-Gg: ASbGncuMUL2TM2WKbUHIThTkoE63I8rGJDnrDBOl3ixvS1Pyz8zBwX3JkqUHrAjMmDL
-	Q/91aN2epW2TPfVCrX/c3cb/mLBjV/kM7tjwJcxQXFo/76MLDNgA6DLkwhp3f36CxPUjvgxMoGi
-	ZYsqxOPx2NYL4OXtMI1jRkrukPPgP52i/cbqF4J12sKEz0W0BQaDKrkV3aABTrmyg9fcqwEoO/o
-	xaxts+29al1UfukiTh6aBKnRx/KE0FPMWGd8jozO5vG9Fjfd/GX7RIwBitN2Br2zGO0p5gUjC2l
-	DUnUkIDPNLMnaasu3s28zRAd9Sc7jiwdypWmuCJ6OGoePf9VPvG7wgvBlB1wz+bfvqgj6rUSm5O
-	SiXf75E3c
-X-Google-Smtp-Source: AGHT+IGxL8qq8K6CPc1NqDH20ecuw/Yp8JNEr5ICv2xc9Jo0XclrfeIZlq6cbKg4apj7kSkvgGBfPw==
-X-Received: by 2002:a05:6808:2289:b0:3fc:11a6:7433 with SMTP id 5614622812f47-3fdf0646c85mr6999830b6e.36.1742237434979;
-        Mon, 17 Mar 2025 11:50:34 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3fcd452130fsm1887803b6e.14.2025.03.17.11.50.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 11:50:33 -0700 (PDT)
-Message-ID: <60ee6fd4-1cc6-4d77-8359-9215e1d604c3@broadcom.com>
-Date: Mon, 17 Mar 2025 11:50:31 -0700
+        d=1e100.net; s=20230601; t=1742285358; x=1742890158;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1MOPIMVq4RYa2Qlhwo2paVsAS+Ja31+A7+LmeILgDQA=;
+        b=UW56ClPGaqyywxjOs4nc86/Sf3O/NOmRRTOSDvUK5raUy5n83zX1C7X0v7CR4gk+ZK
+         Id4Nq2lPbcc3b5GbkoCPRnIk0YthzubGWC0HAXsSSfjZXEv8IE+sciNMTQdlC68/c0sH
+         1Kj6VDQYhqANgEYKYLKYIKQinlTieYScVD6JM6B9/VWejmOKEpIOKbtR3HzrzTUThjlg
+         psWMAmKri3ExE9HDapAtxSy3VHIj6kdKGReCdRD4qus5FlxOP38p5GOXGQChaoh+nZ3h
+         AgZLv+fZMeHjVT5TL1FW2xm+SqcADuTQo9wvnAQ31PrU8yVZMp79GKTc+XhrOCbCZZ+C
+         UxMQ==
+X-Gm-Message-State: AOJu0Yw6pCRmPqMgQr91vg6iNQHtPkcYqJwVqoSHFnm8SnoHfFb0jDYX
+	wXW+CY2C6dpQ+hBWNRGIkG7OGlS04fiKX04LG6O96tcZfOupA5Uv3e5bhSeSS+wiJx+hoAFEhX2
+	0xHoJQcNV+B16d3izEc/b7NJSq7BW3e7xG3GAyOp0Pion2Zqq1p2eJNAbUAlaOFoN0w==
+X-Gm-Gg: ASbGncs4z8PNnJHpECuEr4A+lxaNwXDRwKjRWH4FxXQgA3aoPI3WIdOMagasyNKMkkV
+	Be7U99tUAZV0EXkHubiRJZ2bXE334TcYkC6E0YwEwRh7iVY8bbddHtj71j+U7SBHswKnXhrmjyV
+	cbVvQUoFJ2e9Qk9uZ7QVzT6oY3ght9/V/SIoxWFB+SgR4dztuvA37rqBrN8yy15bXhhs2in+d7o
+	C8858m0B7t7E4moFO5o9PBNR7MEqcc2NrnApxraWa6RGz2HFkSsnKADaj6cCjMVdrYCKQB+l/u1
+	N2Pw8rWl02R7Wumlqeu0PHLtn218xiFvo7r26MPFTX4X3epZi21Sar2OTi+gKIc=
+X-Received: by 2002:a5d:64e2:0:b0:391:3d97:bd33 with SMTP id ffacd0b85a97d-3996b44670dmr2495607f8f.13.1742285357969;
+        Tue, 18 Mar 2025 01:09:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTLxf1mjfmE9kJO903aRfrs3DFnwMwFBN6shttc0uogtpGRU10VKPtw6/ONRx4vNAinDz/MA==
+X-Received: by 2002:a5d:64e2:0:b0:391:3d97:bd33 with SMTP id ffacd0b85a97d-3996b44670dmr2495582f8f.13.1742285357554;
+        Tue, 18 Mar 2025 01:09:17 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395cb318a75sm17490878f8f.76.2025.03.18.01.09.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Mar 2025 01:09:16 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Maud Spierings <maudspierings@gocontroll.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust the file entry in GOCONTROLL MODULINE MODULE SLOT
+Date: Tue, 18 Mar 2025 09:09:13 +0100
+Message-ID: <20250318080913.31455-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] PCI: brcmstb: make const read-only arrays static
-To: Colin Ian King <colin.i.king@gmail.com>,
- Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250317143456.477901-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250317143456.477901-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/17/25 07:34, Colin Ian King wrote:
-> Don't populate the const read-only arrays data and regs on the stack at
-> run time, instead make them static.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Commit 8f1cc5242544 ("MAINTAINERS: add maintainer for the GOcontroll
+Moduline module slot") adds a new MAINTAINERS section referring to the
+non-existent file:
+  Documentation/connector/gocontroll,moduline-module-slot.yaml
+
+It intends to refer to the file with the same name in
+Documentation/devicetree/bindings/connector/. Adjust the file reference to
+the intended location.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 561d394cb210..92af00cd0eee 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10022,7 +10022,7 @@ F:	drivers/media/usb/go7007/
+ GOCONTROLL MODULINE MODULE SLOT
+ M:	Maud Spierings <maudspierings@gocontroll.com>
+ S:	Maintained
+-F:	Documentation/connector/gocontroll,moduline-module-slot.yaml
++F:	Documentation/devicetree/bindings/connector/gocontroll,moduline-module-slot.yaml
+ 
+ GOODIX TOUCHSCREEN
+ M:	Hans de Goede <hdegoede@redhat.com>
 -- 
-Florian
+2.48.1
 
