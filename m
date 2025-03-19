@@ -1,59 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0341DE898;
-	Wed, 19 Mar 2025 12:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6394A254AE4;
+	Wed, 19 Mar 2025 12:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742386175; cv=none; b=Mnx4Ubepps8p4kF3HzEKZJZl8xqGbXKnrWnL06qFMOJPuL+wd87Kl40MgXKBg/kB3yBiuozrAQ/Zuvvl1xoae6JTIRAApmKYmXTClzvk2cUrY21phG3BFD4jxa/2jjHBBWDDWrlJgDmXTiiwvSqaMc9vXM6EgpgvnZ4N0w0MVhE=
+	t=1742386504; cv=none; b=agylEmLAJLERoYGUcHFik/sk/uYFtKaUPy6ha3aE0ECgzF7095nvkoocvTX+n8DocxUcnTST3Dtcz4tH0ES4r2pQ7CSRMTX/W5Xl7tV7/vPF9keXWQZaAaAQ/W/rye4Ox9DZk37oWvbU/gszA9Hcvb0h7DLp4aIJUwingqfRZdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742386175; c=relaxed/simple;
-	bh=5OumFdPxqei/mYuFbS8INHe10HrU5KI5NWKgRIG9/0Y=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=F8RpAu8mnQDsji8bV4/Y3yJw1sV3o+3odAA218Za6jk7NVA6mOUAdj0TJzs0a4+VfzKr4jGG0vkOKwAlm++2/1rGg40gCQyiNKrgaMTXNnhPTG5RDrN49B4L//vGPeCqW+YEEJ010P8Ns9Ikk5HH9Vf/eH39rp30KtDq4/Jy4Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kpv5dZ2X; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742386504; c=relaxed/simple;
+	bh=iVBAeEdmO5RxhpnsDC583W/lzWPAdfNq7iwNnkT1hPs=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=DR0pm8m9r2xwcou3MmmNS7562YhRdUaL/S7d/rlS1xJzhj5xDQfpN00AMhbY0sl4/dZCL0aK+Dw/pCfLwkwx/PDix6GlLFDIVpF6+Pu89TBYimnrGhDSwJw4KTEQo3pBWWRnKwpqGkzC5DYEZGN+Vm0nyC05C58va2W9QmfWVYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K8e8zMqR; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kpv5dZ2X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D475EC4CEE9;
-	Wed, 19 Mar 2025 12:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742386174;
-	bh=5OumFdPxqei/mYuFbS8INHe10HrU5KI5NWKgRIG9/0Y=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Kpv5dZ2XM4qyeFOsIpVFyyaQjsd+sIzvCL7Q5Zf9NUNJfayZg9TY/nY9N/HuXezT4
-	 klXZvNC7XQPW+woXP3mhqpUm606uwt2uid9YDP3TOXpLQaWQ//xtLTnxWEKAkcFE6e
-	 huNf1qYWkWRBKhJN9CMKgsDwhmBFjQAfa97Rt2mVnxrxPZ+cowJy9fpDMLZF7xu5Kd
-	 XnCN/LeEBEs5UnQ70gnYERTt4FcnWCLYM3bOvdNvQAbaFkpT3JJwGaSrU5coGnAUzC
-	 783aUWzmznb5OrZ+OBpoNXID8R13K0LOt0lGWjTP3XZ49v8SjgKwIucuPZeY+WaPPX
-	 Tv3bJpi43w0eA==
-Message-ID: <8a0b4a75-5527-4246-ac7e-353a2ff8c8c4@kernel.org>
-Date: Wed, 19 Mar 2025 20:09:31 +0800
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K8e8zMqR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1742386503; x=1773922503;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=iVBAeEdmO5RxhpnsDC583W/lzWPAdfNq7iwNnkT1hPs=;
+  b=K8e8zMqRa+q5nL/7PelrTi74Pt3yfGzhoxtf8UmqPb7xmlTk6WrOHSxG
+   aOswvzQX6fZv9wextmGiAABvCOxssGuu8Z+FdAfUxDwlvRYgBmLOJXeQw
+   qcTsTkn+cj7HjfL0PUvS0oq0VSDVkCPJyb03htWakKz6yz6QWPwCGUqpS
+   V7S3cL6mp8mvdkNJLnnsp/OQGNU0Myv2XK+Bng760VV9syY4zs2l1Y5+r
+   MttA64yhez+WBjHUceCxLSdLOVnXxcFQCN+wo+KvewzPhgHNVVxkjTch8
+   1N22MzuV+l1/iF9X59I79cC+KROdPJuwUVRQLYqkShlqsM/6M5pHYIb3R
+   Q==;
+X-CSE-ConnectionGUID: nlk+/9U3QX+0N6YgW3HFhw==
+X-CSE-MsgGUID: R+4HMFlbQdW5Eomp7U3NAQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="47220905"
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="47220905"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 05:15:02 -0700
+X-CSE-ConnectionGUID: FwK72CK3QIuh2cODDD7pfw==
+X-CSE-MsgGUID: WjdfvLQUQFKr9+feqPuVKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
+   d="scan'208";a="127408039"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.21])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 05:14:59 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 19 Mar 2025 14:14:55 +0200 (EET)
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+cc: Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, 
+    David E Box <david.e.box@intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+    Chao Qin <chao.qin@intel.com>, 
+    Choong Yong Liang <yong.liang.choong@linux.intel.com>, 
+    Jakub Kicinski <kuba@kernel.org>, Netdev <netdev@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH net-next] MAINTAINERS: adjust the file entry in INTEL
+ PMC CORE DRIVER
+In-Reply-To: <20250317092717.322862-1-lukas.bulwahn@redhat.com>
+Message-ID: <f224cd8e-2330-8c69-dcb1-7953017d9ff1@linux.intel.com>
+References: <20250317092717.322862-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] f2fs: remove redundant assignment to variable err
-To: Colin Ian King <colin.i.king@gmail.com>, Jaegeuk Kim
- <jaegeuk@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
-References: <20250319113011.791319-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250319113011.791319-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-423036490-1742386495=:10063"
 
-On 3/19/25 19:30, Colin Ian King wrote:
-> The variable err is being assigned a value zero and then the following
-> goto page_hit reassigns err a new value. The zero assignment is redundant
-> and can be removed.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+--8323328-423036490-1742386495=:10063
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Thanks,
+On Mon, 17 Mar 2025, Lukas Bulwahn wrote:
+
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit 7e2f7e25f6ff ("arch: x86: add IPC mailbox accessor function and ad=
+d
+> SoC register access") adds a new file entry referring to the non-existent
+> file linux/platform_data/x86/intel_pmc_ipc.h in section INTEL PMC CORE
+> DRIVER rather than referring to the file
+> include/linux/platform_data/x86/intel_pmc_ipc.h added with this commit.
+> Note that it was missing 'include' in the beginning.
+>=20
+> Adjust the file reference to the intended file.
+>=20
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+> I think the commit above is in net-next, this patch is to be applied
+> on the tree where the commit has been added.
+>=20
+> Jakub, please pick this minor non-urgent fix. Thanks.
+>=20
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 96ae7f628da4..9544a4e84f99 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12069,7 +12069,7 @@ L:=09platform-driver-x86@vger.kernel.org
+>  S:=09Maintained
+>  F:=09Documentation/ABI/testing/sysfs-platform-intel-pmc
+>  F:=09drivers/platform/x86/intel/pmc/
+> -F:=09linux/platform_data/x86/intel_pmc_ipc.h
+> +F:=09include/linux/platform_data/x86/intel_pmc_ipc.h
+> =20
+>  INTEL PMIC GPIO DRIVERS
+>  M:=09Andy Shevchenko <andy@kernel.org>
+
+Acked-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-423036490-1742386495=:10063--
