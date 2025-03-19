@@ -1,69 +1,74 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876622139C9;
-	Wed, 19 Mar 2025 11:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F2F254AE9;
+	Wed, 19 Mar 2025 11:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742383852; cv=none; b=ExJ7qgEicoiWvipt9u+zQ/F3wmMk9HF+8CgycI6wkqhiU8UqvwALfARpTRGvELTW95XzQJfX1J3VCMMGldeVxFK4yU/XMEHa1JT7pwwU0cRsflNlPLzpxbnPCPzgbE//wGJH9l6iE0DDs7X1lcgzsNBVV7EI52LU6Jl81iRgTxw=
+	t=1742384645; cv=none; b=pgREXnxA9v/qxExt0jqj0J06pWsvhodvEB96NeqbkZ8/orVZKND7LNHT2ORP6kUIYSVE0hGQ2SYCuvtxqC31MH8J+Tp0NnPaTAhrvblhBw82FKFM4y0ex82j3O1/AYdN5WAgXEtQVhx1NO5OP0R9Ih0v/yy45Iyjs4i3F6xil9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742383852; c=relaxed/simple;
-	bh=kV6soY466Hq5cTykIAP0+tJMSIZ4kgRgf5/TnJoV54g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V1NFrAWI02djb2NSxpHBeHAFuuVfkvOpg0bbDzkD7lm3EGnKJ2dqN7LnvHcszln4vqw513KKyuPLHIJGVm9q12fs0DrS/OZwLe3oiIr1rKienS36iyDci7q9yw544JBSsxqLawimvHy50Wm7WxdAIbj3PagypgdwI38ccwFyuNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bma8YtMb; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1742384645; c=relaxed/simple;
+	bh=+pSipfeI+B+vV/e1XnG3T5gmVUXNbL9HXdZf0Q9JU0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ExSShk2YtSoYlnRZ+c01mGfJBd9Et5qJDu6th3fXbJbvAqZ26DbqdjHWp1t8D7w3cHNkVgV2v9s1vWx4mz+VJGd80IDvIQ+Ze6AuZd1nzAlqXwv3wCjmviArx3WeCCT9aYhvgOu77TMbslPCqRNQsnE5+4u0RXu9AI8wDr67/h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTd/qYAY; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bma8YtMb"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso6104574f8f.2;
-        Wed, 19 Mar 2025 04:30:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTd/qYAY"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so20945195e9.1;
+        Wed, 19 Mar 2025 04:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742383849; x=1742988649; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742384642; x=1742989442; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KStnGMg2Go+m3NSHkQmKCGIajR/m7piuOFNQJozw3ks=;
-        b=bma8YtMb4EyBVJ0h2PC8jtJfZwuhfuajbVi4W3bAn5VE3x2EczjjIRTGoFLm4TPRLE
-         JkzgZBfxQeFcHNgFPQtUlmvfglxDSw+AZUVWB2b/iaT2e/iV7T/TVu+AcxH/QEQILPZL
-         Tv0U20IPUzc3/f1yDSmU1nTo/96l6cXOk6vJegs7WaFzoVbiQ95mu09LNG+HWkrXepxu
-         xqm953WzGz1slcOT+u+Gc+RGq1xtGw/647poODFOaVzDrYCR4X80xB+Rva/uUL1PiUCq
-         RRE7HHykga5Gg5V4EWS1WlawzUp2azxC2RxB2BHIrqBMUO2RKu0UdoL9FrHTb14GMxSj
-         aldA==
+        bh=QL7BS25s4toe0J9QffAsg3Jfdyw2hfEy684XAQsMWEw=;
+        b=GTd/qYAYsIlL2ctFtLMhS59T4kVxXo0Es7ltNs7nvldVCsdDVWVg8mXRHE3s24XQYS
+         NIj/GvHIypqvxyVn+UKvYYYq0rD4PJ3QQ8Hl+RYt5fw26lGkEVToK01hJgHjtk0uuBCf
+         uvzXF5QIuOrDQJOV9R8aGO02718b60yIL2Oo50HBWmiAn/eq1yDzv7v5H+64JH6sg5uO
+         K1u/nfSArkJmFkBtXp51KhpgLmogbd5tDH1WIt1SpgV4iiI4EpIeM6BNwi5+H4+kdVKo
+         0haCO8UZdGif0KPg5Dlas54aNE2btzmXnzhHkvBbe9ual4NSj0ZlOYzwacriwFAyr9zf
+         PzwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742383849; x=1742988649;
+        d=1e100.net; s=20230601; t=1742384642; x=1742989442;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KStnGMg2Go+m3NSHkQmKCGIajR/m7piuOFNQJozw3ks=;
-        b=jzbPkTM59GtlKMOaNw3tsuQcyhkNZHzWe7aIhIqqz2oZJYLielv9vtnlF2PfYe6PeH
-         Ea+mED0q5Xe8ZxaLWVavRzc7a7aYkDlrQC1V4w+kwjhBcC3D+hoNOccBZqftJ1GUBX+r
-         CzNCbDUlwqCohBwV+qdvL4+0FY95/FnGnFKuv71iWi2fFYGE9o6lgBy68FGphl6EQv0o
-         6DPTqMB6w7sWGTWkeJBwlZUJrvRT9YUi1oQ03Lm02EPxIkrOwh/xtMP5tzrL7gxoCMck
-         iZQq8ptDaVfxWhQAgjdJdUn7mC1+/TwUvtT6/H76Vh7/qQDAMUZhSoRWzhmHe6n9ygUg
-         msjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCMUqM6Yg4lpziSrHuy7Z2vIQyijlGseRNsNqVaJF05QSwTRvD8CEIRnRaiVT08oLpAI2gAavOu3q+K1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3sQE0WTRkshQK3oCE3QVvRG3vq/wCOT/pQ8B/KQtfeGIwutnL
-	MVX/om+3CX9+6WH/DpWI6/eoeq3JMMO1C6jpfGJdksPtcbzgbfGN
-X-Gm-Gg: ASbGncunclbO7KYtfLqw3gVWf8luiqY7wN6gzKFmNS7SD+XkeDMXhpBRVnRx+SRe/Et
-	S0cE+U4XVdS2HRIJdjtbSpTChI6LD7G2Uaiy5ROV8sH7/SURYBI7Tt2++YQCqQxftWh+QNRncLQ
-	GeskRnV8w180ZbIBbHGzFhwyH7PWz8RWv5RCGGzh6eBWxIcNDKMxilDA1wLMDM/qkPXD/FWvpjm
-	w/iIa2ccjVNVzd+oM/HeWZuACyWQwrOTlczpGGHEgyo65Htaia8wpoBL/BRa5QDoGpgCU8E7RzP
-	oVmnejY5t9a0nXvJtlxu7A/zB9l604JjU5zm4FgFCTyj6g==
-X-Google-Smtp-Source: AGHT+IG14lFngV9AvZzc6XvwZHyRbIa6UyKgqajD69XgSsqas69DdBfaLeNr6zGtd461P7paU9u2mQ==
-X-Received: by 2002:a05:6000:1f8e:b0:390:df83:1f5d with SMTP id ffacd0b85a97d-39973b3005amr2831957f8f.35.1742383848680;
-        Wed, 19 Mar 2025 04:30:48 -0700 (PDT)
+        bh=QL7BS25s4toe0J9QffAsg3Jfdyw2hfEy684XAQsMWEw=;
+        b=hu8FH2mgXgYsqcdVHr8f4BZMKPjkePTX6sfOLFtVL2rZk2QLpW6pLoo97DPlEhMatC
+         DkvyEoCK+9A31+ZGh5drr+AoPqDQxtaTQoTMFaRPkP6kSSBK50eIlq5K0HmJ+kBZYBPw
+         YZjaXckG0rqBm4/xsKBbV6YW3NhF+K4IN5RyBsUSY5N8rUL0mfK7/zdhU37DE+ONeBf0
+         SVyUyhiGUIYEejTyo6CHmjoBlowCuYxiVQq47H0LZMZSJPzPvcwWQkzCoivXuqqoiD33
+         jIiFkawMX3y4xUumLNkS1JSBh0mSoxX+b8gbimA41N9KEwXz3yIlUXoIxHxbGYtzy59o
+         Vbrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAh4Pi0C8S/jnmsNI2BQA54bhG/mKgxFqNcEZmDMm5p/p2Zi/wLsd+nDaajThXBZ1NHi2Y3Oxb+o0=@vger.kernel.org, AJvYcCWjYrTPal7/kzgX+hJzIYSenrQ2YDrkZc135ITJF27UIfLwUmtElcqp/JW8J51kQ05dnQPTMh2Nd+rn6qU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDw8oi7EHp20yOjuCIYrJEFZOFoyD2DZuifC2wMdYRXqN3vOu/
+	uJNege+qi/7eDpO+mGVw4TpU3LiPhR529EK4Gmg4PnncqtM/rmGIBudFG+D1B7w=
+X-Gm-Gg: ASbGncu6XcDtENNlUhVNVjsszjhv2QIp948sVEno7cgCLIzrW3ey8nG5tfWONLYjtz6
+	8xheJnBaBOu5/WWBqaMQBfVKAOlX9dupR5byupmdVbIxAaR6Ntpk1NQEWpCvH2TgKef+6p6s9xq
+	cdbOCrR0N9Lk/VFDs8CBExreggVnIP2UX7IemfnPhggg035LukzlhSy6NMxnWVUHZZVEg0khjDm
+	1rSD1MAi1NN1X3OChP+syDPum+l8V6eh7tvHlZyN39rx4h8/lJV7AFdboghRsEn2qDP2Q02eYPF
+	Rushc5StZoChCbqE04X4NjGcbZwt4sTOEGYxcPooo1bArw==
+X-Google-Smtp-Source: AGHT+IF7L7ygVo4N1A7Gdl1rTjfOLv0RMXKxqf4sN48Uize/BfTL/jm4QDLk58FaYcYVgIEsKDxf8Q==
+X-Received: by 2002:a5d:5982:0:b0:399:71d4:a2 with SMTP id ffacd0b85a97d-399739c1524mr2483183f8f.14.1742384641961;
+        Wed, 19 Mar 2025 04:44:01 -0700 (PDT)
 Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d440ed5e0sm15821935e9.37.2025.03.19.04.30.48
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-395cb40cdd0sm20819122f8f.77.2025.03.19.04.44.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 04:30:48 -0700 (PDT)
+        Wed, 19 Mar 2025 04:44:01 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	linux-f2fs-devel@lists.sourceforge.net
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	linux-pm@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] f2fs: remove redundant assignment to variable err
-Date: Wed, 19 Mar 2025 11:30:10 +0000
-Message-ID: <20250319113011.791319-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] PM: sleep: Fix bit masking operation
+Date: Wed, 19 Mar 2025 11:43:24 +0000
+Message-ID: <20250319114324.791829-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,27 +79,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable err is being assigned a value zero and then the following
-goto page_hit reassigns err a new value. The zero assignment is redundant
-and can be removed.
+The mask operation link->flags | DL_FLAG_PM_RUNTIME is always true which
+is incorrect. The mask operation should be using the bit-wise &
+operator. Fix this.
 
+Fixes: bca84a7b93fd ("PM: sleep: Use DPM_FLAG_SMART_SUSPEND conditionally")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- fs/f2fs/node.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/base/power/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 5f15c224bf78..37c76bb19a8c 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1497,7 +1497,6 @@ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
- 	if (err < 0) {
- 		goto out_put_err;
- 	} else if (err == LOCKED_PAGE) {
--		err = 0;
- 		goto page_hit;
- 	}
+diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+index ad50018b8047..ac2a197c1234 100644
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@ -1836,7 +1836,7 @@ static bool device_prepare_smart_suspend(struct device *dev)
+ 	idx = device_links_read_lock();
  
+ 	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node) {
+-		if (!(link->flags | DL_FLAG_PM_RUNTIME))
++		if (!(link->flags & DL_FLAG_PM_RUNTIME))
+ 			continue;
+ 
+ 		if (!dev_pm_smart_suspend(link->supplier) &&
 -- 
 2.49.0
 
