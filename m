@@ -1,120 +1,104 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6394A254AE4;
-	Wed, 19 Mar 2025 12:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105681DFE8
+	for <kernel-janitors@vger.kernel.org>; Wed, 19 Mar 2025 12:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742386504; cv=none; b=agylEmLAJLERoYGUcHFik/sk/uYFtKaUPy6ha3aE0ECgzF7095nvkoocvTX+n8DocxUcnTST3Dtcz4tH0ES4r2pQ7CSRMTX/W5Xl7tV7/vPF9keXWQZaAaAQ/W/rye4Ox9DZk37oWvbU/gszA9Hcvb0h7DLp4aIJUwingqfRZdI=
+	t=1742387469; cv=none; b=rDyMTTdPycHAjCc6uz6tu/YylfnGd+HUtz569uf9/9K1hOCDjDO2Wj+GF3wdnTJeCPwhT9x67ziRaTySzifQxgJFwvt85GL0hilAG4R3/5WpfsowQeO2S4LsfvfaN6SQ6veaQxeYsDV/L7vKkkW7An/lFFaKn7Efp1EOQKvGjs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742386504; c=relaxed/simple;
-	bh=iVBAeEdmO5RxhpnsDC583W/lzWPAdfNq7iwNnkT1hPs=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DR0pm8m9r2xwcou3MmmNS7562YhRdUaL/S7d/rlS1xJzhj5xDQfpN00AMhbY0sl4/dZCL0aK+Dw/pCfLwkwx/PDix6GlLFDIVpF6+Pu89TBYimnrGhDSwJw4KTEQo3pBWWRnKwpqGkzC5DYEZGN+Vm0nyC05C58va2W9QmfWVYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K8e8zMqR; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1742387469; c=relaxed/simple;
+	bh=8Zl6EbMiBAInVqz4phQnB5mGB+cjBHeRcD82DosQexw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCiH14oJRT0LcpPk0qvWo0nHwAhVpFi5bcZDjukGPb6PQPT4S5eWPOxFLRJSMElYb4N/ZrbNkwU0XKy9hv0Ie87s8IPo9JraKG5TMkIcTlcORD57rAn47D3jhkVA9jSiLB84Ye3dIqOkDk4EyJ5IzkzCQ2I8KNWhUhFuXqrBQrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W/pYHM4+; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K8e8zMqR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742386503; x=1773922503;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=iVBAeEdmO5RxhpnsDC583W/lzWPAdfNq7iwNnkT1hPs=;
-  b=K8e8zMqRa+q5nL/7PelrTi74Pt3yfGzhoxtf8UmqPb7xmlTk6WrOHSxG
-   aOswvzQX6fZv9wextmGiAABvCOxssGuu8Z+FdAfUxDwlvRYgBmLOJXeQw
-   qcTsTkn+cj7HjfL0PUvS0oq0VSDVkCPJyb03htWakKz6yz6QWPwCGUqpS
-   V7S3cL6mp8mvdkNJLnnsp/OQGNU0Myv2XK+Bng760VV9syY4zs2l1Y5+r
-   MttA64yhez+WBjHUceCxLSdLOVnXxcFQCN+wo+KvewzPhgHNVVxkjTch8
-   1N22MzuV+l1/iF9X59I79cC+KROdPJuwUVRQLYqkShlqsM/6M5pHYIb3R
-   Q==;
-X-CSE-ConnectionGUID: nlk+/9U3QX+0N6YgW3HFhw==
-X-CSE-MsgGUID: R+4HMFlbQdW5Eomp7U3NAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11377"; a="47220905"
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="47220905"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 05:15:02 -0700
-X-CSE-ConnectionGUID: FwK72CK3QIuh2cODDD7pfw==
-X-CSE-MsgGUID: WjdfvLQUQFKr9+feqPuVKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,259,1736841600"; 
-   d="scan'208";a="127408039"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.21])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 05:14:59 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 19 Mar 2025 14:14:55 +0200 (EET)
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-cc: Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, 
-    David E Box <david.e.box@intel.com>, Hans de Goede <hdegoede@redhat.com>, 
-    Chao Qin <chao.qin@intel.com>, 
-    Choong Yong Liang <yong.liang.choong@linux.intel.com>, 
-    Jakub Kicinski <kuba@kernel.org>, Netdev <netdev@vger.kernel.org>, 
-    platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH net-next] MAINTAINERS: adjust the file entry in INTEL
- PMC CORE DRIVER
-In-Reply-To: <20250317092717.322862-1-lukas.bulwahn@redhat.com>
-Message-ID: <f224cd8e-2330-8c69-dcb1-7953017d9ff1@linux.intel.com>
-References: <20250317092717.322862-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W/pYHM4+"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso31920755e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 19 Mar 2025 05:31:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742387466; x=1742992266; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=APw5roZ0SwNdDnAV7zjswJlLE3ojquwnF9XsXaCcy8U=;
+        b=W/pYHM4+wpNm2aLeQsDJ+9dDyht9BloZjtFQUC6pVPVEjp+5Pe9fAMWkL3xnx9OtZs
+         uR8pvnFGU6xvFre4qhOxhvoyMmufAmw3l/H2bkZfAaOvWqqKZua2mODoSxEz4wLPBNvq
+         A+uCogZ4/uyKWyt6Fd2ibI3NcqHq8d1JjP7sQkhlgLlPiTRvpjnobAn8m7iONVADy2lx
+         SoCIx7d15Z72AZlbxNqd8GtbuYWtIanyTSGhn8JuI+Kc2esMvaDDVeHMR+8iyYSiQm5w
+         dghvDBiTCihe8Chp+h6WDFflCanR636EcvLXoJ03rWTBkwnrt54ycvuoG6qHD1XXKthW
+         m1lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742387466; x=1742992266;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=APw5roZ0SwNdDnAV7zjswJlLE3ojquwnF9XsXaCcy8U=;
+        b=VN6oN79U7NY7FXOc0OxrIcaXOJC5dd/HZVYs9Y4O9CMnLThPzlJis+GVzp58f/ByOT
+         XYTwJpxMIa4lzI5dmBE5hHRhwIfvbG0XNdgrodKKqF7Xb8ikzrdJwOKl5Y8h4C5F4jU0
+         udybcSVTn9IZLKr0Q4+Pya2QbY/bqs/atkGOf2iDKaIO0+9OQiuO+7iFv4l1x0zXUuop
+         hmuv2JS8jAS1NmOgW4N8M3v4E3V0j+UTpv9lF64kwycHsIVoRmfUNO0yVVPyQkQ80YIp
+         waU3Qi7MR+pp8+FY9xPyCibt5lW/m5lRyzQXgLA0vVnnQmZBLsD62vNfDUQQMrNyp3Z/
+         YJRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVc7wxOZvVGJcLYJ+a9U0r5BPignE/52pJbC2LJ3xDN/51rP23cyyYBCd18es7+1kqSi2WeJ5l3SU1ojDGcye4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVRd+/TQz2j4GDXzYE/TlwM34kU/bo10D6787jpLMR5IUnrORT
+	HxHR/IFe3zWrxcA3+5ucobvV/rqJ9sYc9OV4GmfAakDftAmtN/HY8fUD27Q1R8M=
+X-Gm-Gg: ASbGncvXlwHMjvfzQofbrwmEFYSXcp+mDAvUyK4iv43oGpwgYSPR2jC207SDxvNjD9E
+	gX1bqUfM5QB1RrYXAiwHb5ArmWCXJyWuGdVjHrvsHrjKPixru81ENZimeghSe56nNVfG/T/NbyE
+	XKiVJB5cjb/dwILIuOBe+vx+iKLBdtSTDd90VZHLftpL6b3xuWmNNMws1CZHaLyCgXtW6Jo2ID8
+	NinBXqLPFdTRN7iX0pQ7Gfo1iiSs9qBPQJIkuqo/def6HTmY0v5hXUOu4jDk4723Ww5wUopxx9L
+	S7RYutz4HvnveAh1B+fXJP4njnfuw1tHxZ6974XeeLFsGFbezQ==
+X-Google-Smtp-Source: AGHT+IH5gBq2KWLgBq7WpJUU07oAE/+qUjAOTHRdyHSwsN6mzL5qmAYtEHrU8HiKf7wPT/AHNvl3+A==
+X-Received: by 2002:a05:600c:c115:b0:43d:563:6fef with SMTP id 5b1f17b1804b1-43d43bee99emr13202575e9.21.1742387466306;
+        Wed, 19 Mar 2025 05:31:06 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d43f43cbasm17403325e9.9.2025.03.19.05.31.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 05:31:05 -0700 (PDT)
+Date: Wed, 19 Mar 2025 15:31:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] f2fs: remove redundant assignment to variable err
+Message-ID: <a9c06462-5fd2-4724-9d44-0285f281ecec@stanley.mountain>
+References: <20250319113011.791319-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-423036490-1742386495=:10063"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250319113011.791319-1-colin.i.king@gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-423036490-1742386495=:10063
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Mon, 17 Mar 2025, Lukas Bulwahn wrote:
-
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->=20
-> Commit 7e2f7e25f6ff ("arch: x86: add IPC mailbox accessor function and ad=
-d
-> SoC register access") adds a new file entry referring to the non-existent
-> file linux/platform_data/x86/intel_pmc_ipc.h in section INTEL PMC CORE
-> DRIVER rather than referring to the file
-> include/linux/platform_data/x86/intel_pmc_ipc.h added with this commit.
-> Note that it was missing 'include' in the beginning.
->=20
-> Adjust the file reference to the intended file.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Wed, Mar 19, 2025 at 11:30:10AM +0000, Colin Ian King wrote:
+> The variable err is being assigned a value zero and then the following
+> goto page_hit reassigns err a new value. The zero assignment is redundant
+> and can be removed.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
-> I think the commit above is in net-next, this patch is to be applied
-> on the tree where the commit has been added.
->=20
-> Jakub, please pick this minor non-urgent fix. Thanks.
->=20
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 96ae7f628da4..9544a4e84f99 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12069,7 +12069,7 @@ L:=09platform-driver-x86@vger.kernel.org
->  S:=09Maintained
->  F:=09Documentation/ABI/testing/sysfs-platform-intel-pmc
->  F:=09drivers/platform/x86/intel/pmc/
-> -F:=09linux/platform_data/x86/intel_pmc_ipc.h
-> +F:=09include/linux/platform_data/x86/intel_pmc_ipc.h
-> =20
->  INTEL PMIC GPIO DRIVERS
->  M:=09Andy Shevchenko <andy@kernel.org>
+>  fs/f2fs/node.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 5f15c224bf78..37c76bb19a8c 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1497,7 +1497,6 @@ static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid,
+>  	if (err < 0) {
+>  		goto out_put_err;
+>  	} else if (err == LOCKED_PAGE) {
+> -		err = 0;
+>  		goto page_hit;
+>  	}
 
-Acked-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+We could remove the curly braces as well.
 
---=20
- i.
+regards,
+dan carpenter
 
---8323328-423036490-1742386495=:10063--
