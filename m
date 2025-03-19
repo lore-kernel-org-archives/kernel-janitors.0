@@ -1,85 +1,100 @@
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D307E1
-	for <kernel-janitors@vger.kernel.org>; Wed, 19 Mar 2025 07:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9AA1AB50D;
+	Wed, 19 Mar 2025 10:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742368327; cv=none; b=Ulh5gd/ifPtCGedjTLAcEfR+Z+cwA4dzu8pYPiWAu5jvhA3xICsq4LrpbKOIKZQOeCc8I0jkRvqyalZD1V21mc9V/Ha32+FHY4qopcbZ1nFyf9xEKy9pFSOUTQvovwX3+A/ZWMGluFVvKGgu+oF0YifozNL/atUG5fADiuhjDqY=
+	t=1742381554; cv=none; b=on8WxoteXQKqEoYTyHui8drkCqSo9HR70rNKDlJ7OKJVJ2cI6qCjOMqDCm+/HybCva9Vy3RnZMElJyN2cC5zmuolvX7F1YPy4ChV1V5ACuHJrM8/UdjXS9MoscPyeJHZl3W/W3/1LZyxeSYlmPKwMIzC/LGQd5gTYHmmBvstqyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742368327; c=relaxed/simple;
-	bh=gAPl73nB1/HYJwqwFsCBDZYKVaVTHM6tgFaD9NMhd5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HVUE6pwcMy9HSJsoJkVhXHy3IPQ+bd92JTLvb4nbzM7PsH9EFhZICZNdk8/dj4Q1anDXYzHicQNLhZB7IAROUPF3r2xB69wbrz4Vv9lUvaQ4ABWk3LVrdJvPwlETKecoUS9RGZrrPrNyRCH9TUyut//SygC6chxjX1KtqAbWyMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HAdDviIa; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1742381554; c=relaxed/simple;
+	bh=+5eTk3CDk04yPhTVw10VH3x7l3f52TYJyRYILkkWgC8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IA9kwcJBeLww+6Lio/qt0IsMMtnWt13PFqYnMFiRGwzkqynhDIjNLz7vh+IhZ2onVhrwVOmZBC6+J9IHP6uMB4TlL5qt9Th0OhNPL7oWB9Xp3/UPcTzL6njkUet9m//zHCcfjKZfWD7jwRhBhk5lfQShtNZa8ZKrFz/huxv3Row=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cT+MkH9s; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HAdDviIa"
-Message-ID: <f12442a9-c8b9-4cda-9f15-3a3091250685@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742368322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c39d0sN46EFBdX+bBun70+OOV7ydvqD1sY/1k8B9HpI=;
-	b=HAdDviIadASHNtZvPD7I+l54Z0VOHEPJKwl/00sC8cHoHPixbKKBQy9vyjAtJwLIMFSk5F
-	8ERkpGaixDqRgPZA1f3+yGQx+N0lg03O26ASCDjAB1M6HpESUCQAzPVx1bc7yhPPi3s7vr
-	fGs9+D5ijxQ4CtWFgpkaylQJCWKHKpc=
-Date: Wed, 19 Mar 2025 15:11:10 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT+MkH9s"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so25888515e9.2;
+        Wed, 19 Mar 2025 03:52:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742381552; x=1742986352; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gkfEnVzrLtFpzAFUzBpVtGSfYkdoQzRCMy1gAhvRfu0=;
+        b=cT+MkH9sLhSDuyQGwBaAMQcry+YWAToe9ibchiZ/2S55PtdcsjIxpJUkN2tdCkfkAP
+         U1qq20lNbWjRDurGFAIJGpouhbXiPDNFtCQEsmH6MwsNmLd7Wu8qsfgOBaFnkrFFZH1G
+         nEr2ngpP66kHleFwXwkdZtNhInIYHQMs7rC1l9gQZCK+mtVgyjFBMpEWyiUjbCyErajM
+         cWgyLM3wGqsogK9/2xroLzYr9/fpWcg4ZticicVkExBStAqlGA+r+ZYQUGXrPYyhaCmL
+         NmWCbOl93ql8a0h48dQI8heaWlxZjs2UAiqPa19s1Up5GvtpK5nCpRFL9oM0OQmz6bBX
+         sU9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742381552; x=1742986352;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gkfEnVzrLtFpzAFUzBpVtGSfYkdoQzRCMy1gAhvRfu0=;
+        b=hRo0QyFGu92Z6jIBNvjhQZox14DnvcybpMnUI9hm2nqndkl8TxUE5hsQJXZ7d/nof1
+         bdCv9YR7SWCE8i7cmcZ8FfSIqlQOko1sdyu7CvKCgHvzkJbX6sgwtMreATyY0kuEhRD1
+         PANe3/R7fi/DvUSWE7v7Q7n8RCi4JmhTTyuqpTatQmUs709DjNiczrN7yQEfRyFAe/UA
+         rNxS70qADRqRVFBNfp1YVFdrSEZP0tZIYpdD5IVpcu0l7QxDsKQtMoBW/Xk/3LjTx4gF
+         BdmUF1Fz+ZfXqx+hMgEgH54taiUp4+Ogy7FG+edR56JFynxq80GxQKjWC+0jjVLBBNDw
+         R60w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuw/VBOqZzoI/9/w9+F0/thCWaJeBq9AepOWVLMXBCObcgEW7cCZYtdpGzxJq+LNPAXQThDEg0jpmnCP0=@vger.kernel.org, AJvYcCV4zl3TZ9JBkEGg9UEzOXjJwvf1Sc7gjDUDuTT5yG0GSFzgdnvyhw7JYC3TEzz/uhC5PQJ1n7eU+9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEdn4iSBCDV6wZgLJ1ntjmmQa2ltQD+sY3Bi3+13QB0tvPkCi0
+	/yXhdN44mRD0JDsMut1cyW+KDymtRHkr5PpohW7qY2I7caa3mUU/VAJjDLNQ
+X-Gm-Gg: ASbGncuMBr5b6K0ciTev1vO0Mz2AG3Apne5CficaNFBieqc7+7tNH5IFdCSsLXsBh/Z
+	rqXaNvW4Ilr7hH20eDh6saNY98HzCM2B4u3qZg0/6DZkTqiZPneqaRGEd8p5hBiilWzjWOAS6Ty
+	kK8OG3znD21yGE+740HWxem2LlaVEOm25cfEWD909oKv9e9LjfM7lkwuhe23Th74Kb6dAFpAgyG
+	KXoKcPG+wqCQtJ9uC+8iPBSHKUu6gsacbYmLDu4WRTDxNeQX5ZPs7XdXH4shHsuL9Z/zsRtVjqH
+	WRWQsD6gHR1cZXcMitzpbzTWvuywaR0LCnHAelivRXmjPw==
+X-Google-Smtp-Source: AGHT+IEd9/0IBL8t/0Qgn7szi4bB58I7aKT97sS07YD26qyjHn0iSKVmrOiygpfZeBPPbAcam7oG7w==
+X-Received: by 2002:a05:600c:1d85:b0:43d:cc9:b09d with SMTP id 5b1f17b1804b1-43d4384218amr20157315e9.20.1742381551448;
+        Wed, 19 Mar 2025 03:52:31 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d43f43cbasm15017845e9.9.2025.03.19.03.52.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 03:52:31 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sebastian Reichel <sre@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] power: supply: rk817: remove redundant null check on node
+Date: Wed, 19 Mar 2025 10:51:53 +0000
+Message-ID: <20250319105153.775155-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH next] pinctrl: tegra: Fix off by one in
- tegra_pinctrl_get_group()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Prathamesh Shete <pshete@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Peng Fan <peng.fan@nxp.com>,
- linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kunwu Chan <kunwu.chan@linux.dev>
-In-Reply-To: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2025/3/19 15:05, Dan Carpenter wrote:
-> This should be >= pmx->soc->ngroups instead of > to avoid an out of
-> bounds access.  The pmx->soc->groups[] array is allocated in
-> tegra_pinctrl_probe().
->
-> Fixes: c12bfa0fee65 ("pinctrl-tegra: Restore SFSEL bit when freeing pins")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/pinctrl/tegra/pinctrl-tegra.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index 0246acba7703..11ecbd6a9b2a 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -306,7 +306,7 @@ static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *
->   {
->   	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
->   
-> -	if (group_index < 0 || group_index > pmx->soc->ngroups)
-> +	if (group_index < 0 || group_index >= pmx->soc->ngroups)
->   		return NULL;
->   
->   	return &pmx->soc->groups[group_index];
+The pointer null is being null checked immediately after it has
+been assigned at the start of the function and not changed afterwards.
+The subsequent null check on node is redudant and can be removed.
 
-Reviewed-by: Kunwu Chan <kunwu.chan@linux.dev>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/power/supply/rk817_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/power/supply/rk817_charger.c b/drivers/power/supply/rk817_charger.c
+index 945c7720c4ae..1251022eb052 100644
+--- a/drivers/power/supply/rk817_charger.c
++++ b/drivers/power/supply/rk817_charger.c
+@@ -1088,7 +1088,7 @@ static int rk817_charger_probe(struct platform_device *pdev)
+ 	rk817_bat_calib_vol(charger);
+ 
+ 	pscfg.drv_data = charger;
+-	pscfg.fwnode = node ? &node->fwnode : NULL;
++	pscfg.fwnode = &node->fwnode;
+ 
+ 	/*
+ 	 * Get sample resistor value. Note only values of 10000 or 20000
 -- 
-Thanks,
-   Kunwu.Chan(Tao.Chan)
+2.49.0
 
