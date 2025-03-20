@@ -1,97 +1,93 @@
-Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866D779C0;
-	Thu, 20 Mar 2025 06:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742452429; cv=none; b=tXOF4OvS6vYu40uh9hffB8p8xpLBxsLVhrpnnMfhJLO88cBxUoHjgVhPcrPF0tfc+KtlKcV8Ezp2zFjgGMJKLxCDE1N/ITSnQUQJrRvo7jYLBU0AoXfCUgq/v2qjejHKxgNoCs71EGdSkyY8+SvX83yydkfTjWuPcou6TKejzJU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742452429; c=relaxed/simple;
-	bh=QAVBfWL/QQ+rfHFwIL/4sUAVNzP8ijfEWYr3lCs0Tsg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aRfqQbJYJbSXEF6PwQclSndgKKTLzyeYnjXujqLO7GyvmHbFrzWsYvDaQJ2i16EQ5TwLynjztfkZ1pVqFMQ/qssu/SwCR7uFop3+ua+q9PtZc5RYDadG3StyDEwrOpxQ2bMCjjwEBpMBAbXr/B8/37j81xI6CzAvKgKA3h0Gwtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=QFzhULmp; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="QFzhULmp"
-Received: from localhost (localhost [127.0.0.1])
-	by mx1.secunet.com (Postfix) with ESMTP id 21A4A20842;
-	Thu, 20 Mar 2025 07:33:44 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from mx1.secunet.com ([127.0.0.1])
- by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id IYu-L1oO3jEt; Thu, 20 Mar 2025 07:33:43 +0100 (CET)
-Received: from cas-essen-01.secunet.de (rl1.secunet.de [10.53.40.201])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mx1.secunet.com (Postfix) with ESMTPS id 8B8FD2053D;
-	Thu, 20 Mar 2025 07:33:43 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com 8B8FD2053D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1742452423;
-	bh=aUtjrSlGYzCQRqioCHQMti5eOAymsTMwRqiJFqyLSFU=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-	b=QFzhULmp0AaMIv937HICxO915+/CeOdn1MryJjOOnxsElC1NSNpCMwRJ7hfRY5nzE
-	 zRQimot2ypGNpuktqIw1EqePMoMVkd9zwuE51qqYHsv2hsL0fid/TeTezL6U4cTR/F
-	 UC09NZa2g4dNil3Uyc4HsgcQNOuSmnTdkLKImlqTl0HqYTgQN6PVoqbAxqwvxxfyiE
-	 aBOzT8U2mDJi7PiqdB3jsybgUNt8P+kTxvOATAzOP1l6iyW0x2Qc2v5DScHBby3oyh
-	 mPv7SIy7C3hTQpOcvk9eWJblnlyTLr+nRqMaZbrEDYmdcxRLHBfQ7xtj/DJqh/7w3r
-	 uY24hdgfSfmYg==
-Received: from mbx-essen-02.secunet.de (10.53.40.198) by
- cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 20 Mar 2025 07:33:42 +0100
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
- (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 20 Mar
- 2025 07:33:42 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-	id E84B631806B3; Thu, 20 Mar 2025 07:33:41 +0100 (CET)
-Date: Thu, 20 Mar 2025 07:33:41 +0100
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Paolo Abeni <pabeni@redhat.com>
-CC: Dan Carpenter <dan.carpenter@linaro.org>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Simon
- Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH net-next] xfrm: Remove unnecessary NULL check in
- xfrm_lookup_with_ifid()
-Message-ID: <Z9u2xZmNRyJiehVX@gauss3.secunet.de>
-References: <2eebea1e-5258-4bcb-9127-ca4d7c59e0e2@stanley.mountain>
- <6365c171-5550-4640-92bc-0151a4de61a1@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D407320B7F9
+	for <kernel-janitors@vger.kernel.org>; Thu, 20 Mar 2025 08:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742458416; cv=none; b=HdD51EUGiLQq56obEPJm/X5Ua/Jv/Kh3BOtgkEvvV4eWqFUaLp4KcVOUTWgEtfrrcseEOkjuBleKHanPby8AJvTWqkGqe29gb4GE1B0SQQKfTZ27wvwF26B94CcrD5yXnZTWN3CSkyB1Ibt5crE3GvYIecYC4xCe7f0ZLaZuW88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742458416; c=relaxed/simple;
+	bh=6Ji1RBIOpRF3KKxjONADrWSLZ8hGYxB9lOHKQd1SPN8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bvSl8xU2+TjWUgUrSbyIKTlPAVITkU7U1HbbTdyemz2AXKJgjgXbbo3+vp1OQTh6Y37y6xFdp9fpJ1FAu0UTozQjdGVwFPw2LFfohoAihooypBPrUUmKmhEZ/GrQbX0lyflBR4VQJSYkBMqwP3UvfNA6QOyPRk+KMK0r7t5RsbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nWhxWzso; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nWhxWzso"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54acc0cd458so683371e87.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 20 Mar 2025 01:13:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742458413; x=1743063213; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FH/3f5Dac1JZ7PB6fCTYluQ28FDUu14YKXsBxY9FGQg=;
+        b=nWhxWzsobggiluwJCxbDVfDnPmsDCfvAABhSrHVU5Iw1vBbjUXA1W/RkeIUwka7q0N
+         i37OH3tnLf1Na42ip7whz+23z+xpuTwg0QViQMQwueWsGXdEWqesVJxYMqg+TJdEVK2I
+         5G0wFEosfn1XtAEaq7eRrnQPdXuUE00Uhqhr3tGOZgfcTOKv2Ew2yHN5BudbFdfaAwaa
+         NdTs6KcEJNc9SB6rTscuRJwz4pfJ8tHKnYRvx1+n98L8LOa35gjHvGaFZOMYrA2xQpbJ
+         n/RbxVB+RmoqP9WaTzEpBCtVho8h9QnZmSRDU8/VtvbnKWUWA1ynSRyBGrAvJ1QkgRaB
+         AcNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742458413; x=1743063213;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FH/3f5Dac1JZ7PB6fCTYluQ28FDUu14YKXsBxY9FGQg=;
+        b=uyRGF1NCS1WA1SiHNHYiYtW0hT2kTj/cnmSm4b8G7tgCo57t0pbvmRpt7zZbgqdLk+
+         PGEbcxoYULY/Ls2H3XVuNAYp3ZIRlRjitk9Fgd/Tkys2aYnKOiaRoRs47PafYnSQ0Uas
+         Tu/Bo9WDOh4AHm53P+hOD2S8JCyixpTpDmw3U9XzQ8ah6599I45O7tMGoMrFU717HCBF
+         Zm7sLze2icYXwpvh2nFkbgZSTS1XlwmoBGP3EmXGI2e5RfTU7o0tGND7VpcqnL+nTC3O
+         2LRlvreFDImLeKw2ViG/VX1UFptPneY6lo+EVGkYeMypD9pK3QUYkqvkhhKKirJfq2NY
+         HWJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq2XPkKUyOVUKY8MYS9zUzQShB4lElJzoEj35GKN5gSG9ZQJEY9W+F9L1W+zSJfExgVIh/lGO5ertKAvlfkks=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg45eORLIjHi5LXNT8WiBXr2qro2GLh7JhOTWw0K0rJ2bwpO2Y
+	WvfU9wmRn5Myrf/zC+R7oklSkCJQBjxSg74xHtG51UsC/UDaDUhVZuKZXWqCZxt1XKsyhulByvj
+	fwM2oXtVb0qnXMOtEr+fFr5/yfbCqkA0VcSBPQw==
+X-Gm-Gg: ASbGnct4AFGyEz9DPRerCOI+a5Bzv59g5aOs11Tvcr4hIco25peYtFNKIlL3FyzBKZW
+	HyfI/kCdte/61Imc/GNuzl4/7T4d+A4RQYnLcUv/ihec/VtzK7OcKbPTDlWqKguJLzy/8TcNbvQ
+	hpVKXsB4tTz8wfZ5TA5zkfhN8=
+X-Google-Smtp-Source: AGHT+IHlRAMm6DHFmGnX4O6qtM7WU7UfemcO1DW0vJWDefpFUiW/wKer02pkqfNiLKCodEdnMprWlIdw9ApK2Vl4254=
+X-Received: by 2002:a05:6512:3d27:b0:549:b0fa:6733 with SMTP id
+ 2adb3069b0e04-54acb1fc7f6mr2205401e87.37.1742458412840; Thu, 20 Mar 2025
+ 01:13:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <6365c171-5550-4640-92bc-0151a4de61a1@redhat.com>
-X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
- mbx-essen-02.secunet.de (10.53.40.198)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+References: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
+In-Reply-To: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 20 Mar 2025 09:13:42 +0100
+X-Gm-Features: AQ5f1JrO8Xfjg5ntIWbaCB7qZbTiTVkH-WMLNIyd4WNCkBTjqRZTBB1zv4h7_O8
+Message-ID: <CACRpkdY1NhHQ43L+pAoC6EC_ydJKY2u+P=nhNAgo_Gw9McNngw@mail.gmail.com>
+Subject: Re: [PATCH next] pinctrl: tegra: Fix off by one in tegra_pinctrl_get_group()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Prathamesh Shete <pshete@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Peng Fan <peng.fan@nxp.com>, linux-gpio@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 19, 2025 at 06:38:49PM +0100, Paolo Abeni wrote:
-> On 3/12/25 6:21 PM, Dan Carpenter wrote:
-> > This NULL check is unnecessary and can be removed.  It confuses
-> > Smatch static analysis tool because it makes Smatch think that
-> > xfrm_lookup_with_ifid() can return a mix of NULL pointers and errors so
-> > it creates a lot of false positives.  Remove it.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > I have wanted to remove this NULL check for a long time.  Someone
-> > said it could be done safely.  But please, please, review this
-> > carefully.
-> 
-> I think it's better if this patch goes first into the ipsec/xfrm tree,
-> so that hopefully it gets some serious testing before landing into net-next.
-> 
-> @Steffen, @Herber: could you please take this in your tree?
+On Wed, Mar 19, 2025 at 8:05=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
 
-It is currently sitting in my testing branch and will be merged
-to the ipsec tree by the end of the week if no issues were found.
+> This should be >=3D pmx->soc->ngroups instead of > to avoid an out of
+> bounds access.  The pmx->soc->groups[] array is allocated in
+> tegra_pinctrl_probe().
+>
+> Fixes: c12bfa0fee65 ("pinctrl-tegra: Restore SFSEL bit when freeing pins"=
+)
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Thanks Dan, excellent find.
+
+Patch applied!
+
+Yours,
+Linus Walleij
