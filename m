@@ -1,93 +1,76 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D407320B7F9
-	for <kernel-janitors@vger.kernel.org>; Thu, 20 Mar 2025 08:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5122425B;
+	Thu, 20 Mar 2025 09:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742458416; cv=none; b=HdD51EUGiLQq56obEPJm/X5Ua/Jv/Kh3BOtgkEvvV4eWqFUaLp4KcVOUTWgEtfrrcseEOkjuBleKHanPby8AJvTWqkGqe29gb4GE1B0SQQKfTZ27wvwF26B94CcrD5yXnZTWN3CSkyB1Ibt5crE3GvYIecYC4xCe7f0ZLaZuW88=
+	t=1742464798; cv=none; b=hYH7UgOCb+jZGq62ox3lBIPP+5wXfayWmQz+Wt1/sZIwdahPJRgy7vUmB4kEw5DXOqBjJXRM/qLQkd/elADvgAbS2T8IBDv2Hu09HWSmthiCT4vOj+/kcz9uekd7Kc1jQ1oxJWe8Un6/wuMHERvIgqvjXAdfkqwhpOTdV9WMaHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742458416; c=relaxed/simple;
-	bh=6Ji1RBIOpRF3KKxjONADrWSLZ8hGYxB9lOHKQd1SPN8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bvSl8xU2+TjWUgUrSbyIKTlPAVITkU7U1HbbTdyemz2AXKJgjgXbbo3+vp1OQTh6Y37y6xFdp9fpJ1FAu0UTozQjdGVwFPw2LFfohoAihooypBPrUUmKmhEZ/GrQbX0lyflBR4VQJSYkBMqwP3UvfNA6QOyPRk+KMK0r7t5RsbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nWhxWzso; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742464798; c=relaxed/simple;
+	bh=JHVPGjbrK99QJOWfsmyy8xMj7QmPUXBvpiMALzqWhIY=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Q8Im5EFuTaFj7ZfQ7MPBEWexR+g6UIOx6lduFsQ/dVu5EeNfmUTe4tOnPEpvqW/iuXYfqcgVZtbV1eMQOkjxPpq93eaUXh36yDxcR3tsdxEgnATw5M3i3YNBdHY/ggWctV1GP/Ktn4hIbmMq4u83iMRiw36vCOHY29Hr/ZT3wjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S7xCSoK+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nWhxWzso"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54acc0cd458so683371e87.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 20 Mar 2025 01:13:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742458413; x=1743063213; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FH/3f5Dac1JZ7PB6fCTYluQ28FDUu14YKXsBxY9FGQg=;
-        b=nWhxWzsobggiluwJCxbDVfDnPmsDCfvAABhSrHVU5Iw1vBbjUXA1W/RkeIUwka7q0N
-         i37OH3tnLf1Na42ip7whz+23z+xpuTwg0QViQMQwueWsGXdEWqesVJxYMqg+TJdEVK2I
-         5G0wFEosfn1XtAEaq7eRrnQPdXuUE00Uhqhr3tGOZgfcTOKv2Ew2yHN5BudbFdfaAwaa
-         NdTs6KcEJNc9SB6rTscuRJwz4pfJ8tHKnYRvx1+n98L8LOa35gjHvGaFZOMYrA2xQpbJ
-         n/RbxVB+RmoqP9WaTzEpBCtVho8h9QnZmSRDU8/VtvbnKWUWA1ynSRyBGrAvJ1QkgRaB
-         AcNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742458413; x=1743063213;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FH/3f5Dac1JZ7PB6fCTYluQ28FDUu14YKXsBxY9FGQg=;
-        b=uyRGF1NCS1WA1SiHNHYiYtW0hT2kTj/cnmSm4b8G7tgCo57t0pbvmRpt7zZbgqdLk+
-         PGEbcxoYULY/Ls2H3XVuNAYp3ZIRlRjitk9Fgd/Tkys2aYnKOiaRoRs47PafYnSQ0Uas
-         Tu/Bo9WDOh4AHm53P+hOD2S8JCyixpTpDmw3U9XzQ8ah6599I45O7tMGoMrFU717HCBF
-         Zm7sLze2icYXwpvh2nFkbgZSTS1XlwmoBGP3EmXGI2e5RfTU7o0tGND7VpcqnL+nTC3O
-         2LRlvreFDImLeKw2ViG/VX1UFptPneY6lo+EVGkYeMypD9pK3QUYkqvkhhKKirJfq2NY
-         HWJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUq2XPkKUyOVUKY8MYS9zUzQShB4lElJzoEj35GKN5gSG9ZQJEY9W+F9L1W+zSJfExgVIh/lGO5ertKAvlfkks=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg45eORLIjHi5LXNT8WiBXr2qro2GLh7JhOTWw0K0rJ2bwpO2Y
-	WvfU9wmRn5Myrf/zC+R7oklSkCJQBjxSg74xHtG51UsC/UDaDUhVZuKZXWqCZxt1XKsyhulByvj
-	fwM2oXtVb0qnXMOtEr+fFr5/yfbCqkA0VcSBPQw==
-X-Gm-Gg: ASbGnct4AFGyEz9DPRerCOI+a5Bzv59g5aOs11Tvcr4hIco25peYtFNKIlL3FyzBKZW
-	HyfI/kCdte/61Imc/GNuzl4/7T4d+A4RQYnLcUv/ihec/VtzK7OcKbPTDlWqKguJLzy/8TcNbvQ
-	hpVKXsB4tTz8wfZ5TA5zkfhN8=
-X-Google-Smtp-Source: AGHT+IHlRAMm6DHFmGnX4O6qtM7WU7UfemcO1DW0vJWDefpFUiW/wKer02pkqfNiLKCodEdnMprWlIdw9ApK2Vl4254=
-X-Received: by 2002:a05:6512:3d27:b0:549:b0fa:6733 with SMTP id
- 2adb3069b0e04-54acb1fc7f6mr2205401e87.37.1742458412840; Thu, 20 Mar 2025
- 01:13:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S7xCSoK+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6A7C4CEE8;
+	Thu, 20 Mar 2025 09:59:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742464797;
+	bh=JHVPGjbrK99QJOWfsmyy8xMj7QmPUXBvpiMALzqWhIY=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=S7xCSoK+SKBqe+ug07/ECujXSW3vvgvduMfZ6ZwlgbWKzJaCseyW7eqGsELOq7xVY
+	 vRf7ZB+zyIJmEZxxJ4sYJ+PiHnCt6COK6uuZNwTcqcnvb3ZrnEE35/e3Swp3JEs/Kc
+	 R0+MVtSJg96namWwECGei9E3K/rVeSzp2if+hLjyWqtUQeQhjL5GpDTkAXUY7tFmu0
+	 jtoGVzSSR4rjleWI0YygW/wQFLZZ0D5oMQkNZMudcUiZpt36SmKrFSq6id0av3YID5
+	 ErlagU2x5DTDLJ9vE1MWSfxeWEJgaCQu3xzJPrZ3ahraAlYNkvwj60PfRJxq7oNHY3
+	 3I+L4HKSU+HfA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 728653806654;
+	Thu, 20 Mar 2025 10:00:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
-In-Reply-To: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 20 Mar 2025 09:13:42 +0100
-X-Gm-Features: AQ5f1JrO8Xfjg5ntIWbaCB7qZbTiTVkH-WMLNIyd4WNCkBTjqRZTBB1zv4h7_O8
-Message-ID: <CACRpkdY1NhHQ43L+pAoC6EC_ydJKY2u+P=nhNAgo_Gw9McNngw@mail.gmail.com>
-Subject: Re: [PATCH next] pinctrl: tegra: Fix off by one in tegra_pinctrl_get_group()
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: atm: fix use after free in lec_send()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174246483327.1379185.13947915144750276532.git-patchwork-notify@kernel.org>
+Date: Thu, 20 Mar 2025 10:00:33 +0000
+References: <c751531d-4af4-42fe-affe-6104b34b791d@stanley.mountain>
+In-Reply-To: <c751531d-4af4-42fe-affe-6104b34b791d@stanley.mountain>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Prathamesh Shete <pshete@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Peng Fan <peng.fan@nxp.com>, linux-gpio@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Mar 19, 2025 at 8:05=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+Hello:
 
-> This should be >=3D pmx->soc->ngroups instead of > to avoid an out of
-> bounds access.  The pmx->soc->groups[] array is allocated in
-> tegra_pinctrl_probe().
->
-> Fixes: c12bfa0fee65 ("pinctrl-tegra: Restore SFSEL bit when freeing pins"=
-)
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri, 14 Mar 2025 13:10:57 +0300 you wrote:
+> The ->send() operation frees skb so save the length before calling
+> ->send() to avoid a use after free.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  net/atm/lec.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks Dan, excellent find.
+Here is the summary with links:
+  - [net] net: atm: fix use after free in lec_send()
+    https://git.kernel.org/netdev/net/c/f3009d0d6ab7
 
-Patch applied!
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Yours,
-Linus Walleij
+
