@@ -1,126 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB821D5ADC;
-	Fri, 21 Mar 2025 17:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A24322B8CF;
+	Fri, 21 Mar 2025 17:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742576674; cv=none; b=IT32SJBGTEBonZYzEmCJi6QJQzGPedqXi0Vv8CxI9fHB0eRchP0XoVA8wquTLGEHnDHi9l8Byb9WJgQJ12QcRHR66RjVMHXdW5eNWRENzaISsA2a5qzgzQHCGhTcf+58gCWopWDau6AhMWVdwoaLbPLXmmADSfoGaQnXFy9JvI0=
+	t=1742576928; cv=none; b=c503eaRUgBCjgAq4sFZFoZYumqlLMdCM5BsgDISMn4+qGBQ7GfvbleEniZfIiVhZpZYsZ/sdxqRYmm+ynVcedjXSKLPyjcjDTNqLnItONkDpWHjQ/0Vdi6qLQ/ktO0zki4FJ2nj/ctupGN3c2VNwEUIN7V6FZGBaUPvzvya3O20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742576674; c=relaxed/simple;
-	bh=4BIhvc3+qX0OSvURR+5GbIbaBgN0H4vLEDwiLUkmYk0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EFqHb+Ag8sl6+ZU2tZWO/aaM3NdBL4bSC1ugsiUfUw1MVWCfsmDfkC1KqJyUlvFo/Y5d3kcOfpwHMEURML5K9QiXPSYR9T5cBTqfFYY/payoQz+VuFlnl3l/iGPVuxvpgC8Lg6AxH7SzA7hCfEIuWMCqJxyq9kD4jaNk/EtMpwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8gXM74F; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742576928; c=relaxed/simple;
+	bh=ue+qpndRbnQIzc5aNIoYHd/I40V3i7kVLhxEB5EcUO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zj/r0hSJneC7iv07j1eiQRasRLZO5Jn2rEKo+IFzSHLxfW8E+QEpXl5mZw2Kq4AO29LWKWovRpMLGaEUUdbf74J2OAb/3wK2f9mxzXIJoQhLVZnq0sttVXvJl0FRy/M5fOQzs4H+/a9EwR6ie7tTwvVxJxN/gZy1sc/cQk+282A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=q0aF4oSL; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8gXM74F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D58BC4CEE3;
-	Fri, 21 Mar 2025 17:04:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742576674;
-	bh=4BIhvc3+qX0OSvURR+5GbIbaBgN0H4vLEDwiLUkmYk0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r8gXM74F/+FGR0yRaBVaczuaUVE0HAnVuuKBIGwW1wkvw57XgJlAzu5Txf+qOg1yU
-	 Pm1KKfAGtuXFjrY2VX+79XtObxfKBwV/wCQDl5/J/oiNix0bXDH6oll9RRVBVYK3zk
-	 Wlb6hHOE8FhyDF/V4ggnKrje+iy/YKeb8AVrdDl2JnFBEFIPpYAAWgaRZpHay70pRo
-	 u0noL0xozzR6HommJQd7dnQKAQOhT30qDW891zYRxQPM2tZvNAb+mWzqeJvf2mYBn+
-	 wNmpsGilzTsHBW7YEyPi79Z7T/Bjh+n4vYrQEnNDCzZvGvd+4nzwyGipOFSEKg0MDL
-	 cutBPKbjuLuIg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tvfnL-00Frrz-HD;
-	Fri, 21 Mar 2025 17:04:31 +0000
-Date: Fri, 21 Mar 2025 17:04:22 +0000
-Message-ID: <87cyeaqprd.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ricardo Koller <ricarkol@google.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Andrew Jones <drjones@redhat.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] KVM: selftests: Fix a couple "prio" signedness bugs
-In-Reply-To: <ca579322-dc9d-4300-bd74-7e9240e930c7@stanley.mountain>
-References: <ca579322-dc9d-4300-bd74-7e9240e930c7@stanley.mountain>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="q0aF4oSL"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=rwsJ7KxnNGB85Kzql5aBpB16nToZe3gP5eTNRWMHdQs=; b=q0aF4oSLerS/auoS6KFBVj+xiA
+	A3Mk3DHaREzMedV/GQNe5jEg4VnqUUMhmgLLTtR6HpsjffkFMU0wvA2P+MlrAma/E2v4LNn/tR+xZ
+	l+zEeCTgkyPQgUmyXsi2kO63KbyGCWYqg0b/2PwwJexFRJK+AAXWjSADJtb5Mi0zmv62vCso9Yiv7
+	s1npM5Siaq3ahMq8atgqnYwpJIInpKnIqomrF15Nnu4favedSObOu0OYxgOtMiZaoH+IT0WBUV1s0
+	T6obiNiv4shlo6ogn5UV1LXMDSMODHLfjrkh/7uOvlEqPwHKQCQRsxL43zl1ZtYU6JNnjlEvVJtgx
+	HRf67xDw==;
+Received: from [192.145.10.73] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tvfrA-0003Qo-2G; Fri, 21 Mar 2025 18:08:28 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Heiko Stuebner <heiko.stuebner@cherry.de>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] phy: rockchip-samsung-dcphy: Add missing assignment
+Date: Fri, 21 Mar 2025 18:08:26 +0100
+Message-ID: <2181342.OBFZWjSADL@phil>
+In-Reply-To: <e64265a4-9543-4728-a49f-ea910fccef7c@stanley.mountain>
+References: <e64265a4-9543-4728-a49f-ea910fccef7c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: dan.carpenter@linaro.org, ricarkol@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, pbonzini@redhat.com, shuah@kernel.org, drjones@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
 Hey Dan,
 
-On Fri, 21 Mar 2025 14:32:53 +0000,
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> 
-> There is an assert which relies on "prio" to be signed.
-> 
-> 	GUEST_ASSERT(prio >= 0);
-> 
-> Change the type from uint32_t to int.
-> 
-> Fixes: 728fcc46d2c2 ("KVM: selftests: aarch64: Add test for restoring active IRQs")
-> Fixes: 0ad3ff4a6adc ("KVM: selftests: aarch64: Add preemption tests in vgic_irq")
+Am Freitag, 21. M=C3=A4rz 2025, 15:36:14 MEZ schrieb Dan Carpenter:
+> The "ret =3D " was accidentally dropped so the error handling doesn't wor=
+k.
+>=20
+> Fixes: b2a1a2ae7818 ("phy: rockchip: Add Samsung MIPI D-/C-PHY driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+oh darn ... thanks so much for catching that
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+
 > ---
-> ---
->  tools/testing/selftests/kvm/arm64/vgic_irq.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/arm64/vgic_irq.c b/tools/testing/selftests/kvm/arm64/vgic_irq.c
-> index f4ac28d53747..e89c0fc5eef3 100644
-> --- a/tools/testing/selftests/kvm/arm64/vgic_irq.c
-> +++ b/tools/testing/selftests/kvm/arm64/vgic_irq.c
-> @@ -294,7 +294,8 @@ static void guest_restore_active(struct test_args *args,
->  		uint32_t first_intid, uint32_t num,
->  		kvm_inject_cmd cmd)
->  {
-> -	uint32_t prio, intid, ap1r;
-> +	uint32_t intid, ap1r;
-> +	int prio;
->  	int i;
->  
->  	/*
-> @@ -362,7 +363,8 @@ static void test_inject_preemption(struct test_args *args,
->  		uint32_t first_intid, int num,
->  		kvm_inject_cmd cmd)
->  {
-> -	uint32_t intid, prio, step = KVM_PRIO_STEPS;
-> +	uint32_t intid, step = KVM_PRIO_STEPS;
-> +	int prio;
->  	int i;
->  
->  	/* Set the priorities of the first (KVM_NUM_PRIOS - 1) IRQs
+>  drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c b/drivers/=
+phy/rockchip/phy-rockchip-samsung-dcphy.c
+> index 08c78c1bafc9..28a052e17366 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
+> @@ -1653,7 +1653,7 @@ static __maybe_unused int samsung_mipi_dcphy_runtim=
+e_resume(struct device *dev)
+>  		return ret;
+>  	}
+> =20
+> -	clk_prepare_enable(samsung->ref_clk);
+> +	ret =3D clk_prepare_enable(samsung->ref_clk);
+>  	if (ret) {
+>  		dev_err(samsung->dev, "Failed to enable reference clock, %d\n", ret);
+>  		clk_disable_unprepare(samsung->pclk);
+>=20
 
-I think this is going in the wrong direction. A GIC priority is an
-unsigned 8bit value as per the architecture definition.
 
-So the type used by the test the first place looks wrong (it is too
-wide), and the assertion is pointless.
 
-Thanks,
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
