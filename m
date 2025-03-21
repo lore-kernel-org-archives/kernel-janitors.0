@@ -1,85 +1,122 @@
-Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B4B2C181;
-	Fri, 21 Mar 2025 02:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742525197; cv=none; b=qmXAt5bx33iCFrrEvGEx0ZcAL89CPGMTiZgBapUKq9nMPBsXYnoqPI7IKCh1oNzCl8YtAl6f0HXTe4nxBBtRRvqPmnvbtE7GIyHQinC6dpP4AqW3RUKsjMgy5IR8afZjTo4ia+FKgv/IkbauTGAz0XbQJtxeXRDipGDyyciZYyQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742525197; c=relaxed/simple;
-	bh=5YFJ4sppFasaMWh5wwmJ+8tCZ1UMVZfTqS2zO2n+C7U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oHhU5WP3xsx8aEj9p6LZpwPMoTgvkbZ7A4xWfaHtkj69o1v3062aYDnblRJZ5fZT0afNsMXeqEn+qpw/M/5RLQnhV00ziMZbhCZI+NZ4neQlr7ocpbexMtygeRoqegdrFYJSEBlLUWjb5RrGiz5a+9nmymVeeBqwT7T7DPgPNaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=e0AOYVyK; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="e0AOYVyK"
-Received: from localhost (localhost [127.0.0.1])
-	by mx1.secunet.com (Postfix) with ESMTP id 46ABC2080B;
-	Fri, 21 Mar 2025 03:46:26 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from mx1.secunet.com ([127.0.0.1])
- by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id s33V_ZTdOBfI; Fri, 21 Mar 2025 03:46:22 +0100 (CET)
-Received: from cas-essen-01.secunet.de (rl1.secunet.de [10.53.40.201])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mx1.secunet.com (Postfix) with ESMTPS id F258A206BC;
-	Fri, 21 Mar 2025 03:46:21 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com F258A206BC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1742525182;
-	bh=B5J9/6SKPE0aNLeeNrIjy//GiyE0yPhks94Qv1Dw1fI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-	b=e0AOYVyKCVjeFxSit+/Dta/0OqbwtDrLGopMxtLH86E9GsYj2L+4hg15zw5VrNHIx
-	 T7QMhZdLb8IRHbg7XnAuL+Q1jy0PKLVfH/nPEPCw9h9CafWGXzIQtN4KWZvVH4BgVv
-	 0A+41B92txTHi0NeT+fDsU1jabdQM35A22nSixxlpS1TZ6WikJRa3EYzToGiqpUuxf
-	 e0g4vyz3J0RdAFfbP3xdn/WhUiLNexPvDhdJG/94TEd28UUEkw1SDzLfoBuUrKoQi+
-	 nQg7pYJT71/1wSMsM7s9olVB2czTxYlo6r5U0ASD/cDw88YXW/4xmuXPS7OK5g5Oas
-	 7TuQVL+HPi53A==
-Received: from mbx-essen-02.secunet.de (10.53.40.198) by
- cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 21 Mar 2025 03:46:21 +0100
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
- (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 21 Mar
- 2025 03:46:21 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-	id 99DDD3180202; Fri, 21 Mar 2025 03:46:20 +0100 (CET)
-Date: Fri, 21 Mar 2025 03:46:20 +0100
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
-	<horms@kernel.org>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH net-next] xfrm: Remove unnecessary NULL check in
- xfrm_lookup_with_ifid()
-Message-ID: <Z9zS/HL/5o+Yd7t3@gauss3.secunet.de>
-References: <2eebea1e-5258-4bcb-9127-ca4d7c59e0e2@stanley.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E30815CD74
+	for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 14:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742567579; cv=none; b=hp6B4eT72CiEorUZX/KHfE8YZakwgdMNGtxARvhA7lH4qvkiosXzkVk90b4Au/tpDAJQ1CpkyMSKrLT1WXdTsIlxzkqD86rnGfiXz0r9Q5mAOHOf/ndz7ZLmdEap8iLGOFPHMIYeTfa9gBeRrjrQBARFkJe6oHCBLbPre4K/2LE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742567579; c=relaxed/simple;
+	bh=+LDlUo8we7HXs412riW2XVXscOex6Sq1qjsJfiM5m7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=a0gHZOk8a+MeWp7xShIlmKMVOVUqtvJO4F4xbj7cT/dyOlvyi4C0Az8pgFqANovhoHJO6229ZgFN/4tk+C22YUzxLJ4/1/Dj5sLcdmKVEIWyKeMnee2SOfZEMmLrIvh8NRigi7EcXgVo4Wg+qfu3IrfpAzAFDrX3RuHfhUseEQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kFi/D4Yz; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kFi/D4Yz"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfa7e7f54so12816105e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 07:32:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742567575; x=1743172375; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MzFQfhx5F8dx0RL9AvvQYwg76iw5NXa4lMy+vsdeqMg=;
+        b=kFi/D4YzOt770w/wvjc7ZyU62UJBn2euObrJKUlP60/QTnDz0WjYNyRKXyenjj3+d+
+         8AZk3BM6HBEhEuboEEWBdaPijot2KJk1R+mOkr/H2hAabQl1NOd8ELA/Kl6wLzjp3oCE
+         IQS4KvAYfhJhHX3vNTbRQ45jI04kVFtmuoFZ4sBeuddZ/kmc1iXJHZwePNhOfdULDkny
+         SkrHecAg8qF0Y1r4LiI6qYbEg7biHopf4dE11IDR31/F71iIP9Wf7vCeaN5gGqCnh9Af
+         KDhGkmBACtb8vNrH4I8mFFoVQUwY5gm059dGJMQT/7vZ7WJhZiJQdq1vWCauE8RtREL1
+         t0Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742567575; x=1743172375;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MzFQfhx5F8dx0RL9AvvQYwg76iw5NXa4lMy+vsdeqMg=;
+        b=wTFo39Hy+nHf76bzB6Mdrsg3NTTYoL3IeX66R11hjefM+NfD3rgvhneQ3zyk2wPOQk
+         TOoZH7dMPrTy8n4zscaN989mXyybj8fYy1wCFrUtjlFjK/na/OZA04Rwh+jSLKXqUwUS
+         uaABF1qNPK/Gk45JY31J+YvlEyl+tUCfGsnWlh3V66kEfNzswZ8EjpRtSKnT2/taTiE5
+         5mxr++Os4MiDYy4pNXzD99Gfc5Qel2cWK9wkcuD7/WS/vzZQPwe7bBjGQ3B78fo5UNsv
+         +hRmlw5FXb+e4xwjaMF7u6G0QySa7i2bmuXXBtfUBrksk5SKiv/8rmy3cMZLSH4SfUEj
+         QOTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxn46pnEyv52gXHYfaHJzjb2LYxW+h4G+DjZGhIZnCVnK7P8zy8h8VtgBy0iKZ48Blb09o8HfU7MUaC59sZ6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3D3T2utD2HCCzXVxTsbGNmM7r2f5njL/4pGABu/HhHKRtc7JQ
+	v50cU6QvE8x56xdPyGgIIXuIAK4azePz3gSDuOnBGL6+D1th9VDqMHelBTtjRSg=
+X-Gm-Gg: ASbGnctMRIoQ1f6IzCzBk9979pXCECqX5VHZRAfq0+Pc6yUM8byyNpOlf3OpuqHke1b
+	6Lp/A4N+hXaTxcAOVyB6PyoBXFrIoS6VafP5eA3DVLB9Fhwv0mfko+Vp0hrrzO4Lp4joSTsLjGX
+	+GqLExPwzSHDbvCBZ+ZSHWefKROLofqKeqY1BKH/TRvCheMSP9IZoRWHnRt9oo+ituKdxy7W99M
+	CzTdN5Saxguze04Lnaf8oo3y9OSZHqzUgCqimAp1JUJ6xHKpzqQ+sYQiFKUsCFBjTcdQ9m39I9H
+	8dEAvk23ZZzS83Smuej/JtCF6q1dv7EdLcptMPOc7fcwiiM6xQ==
+X-Google-Smtp-Source: AGHT+IFdHgCx4C5nFq7a41Rl1TdfpLB7mC6eqzVe1FxFvJX3eQdkfF3U3LPtyEx8bVlfn1VSsrBleA==
+X-Received: by 2002:a05:600c:1c02:b0:43d:5264:3cf0 with SMTP id 5b1f17b1804b1-43d52a08ed8mr22225315e9.11.1742567575525;
+        Fri, 21 Mar 2025 07:32:55 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d4fd27980sm28845345e9.21.2025.03.21.07.32.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 07:32:55 -0700 (PDT)
+Date: Fri, 21 Mar 2025 17:32:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ricardo Koller <ricarkol@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Andrew Jones <drjones@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] KVM: selftests: Fix a couple "prio" signedness bugs
+Message-ID: <ca579322-dc9d-4300-bd74-7e9240e930c7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2eebea1e-5258-4bcb-9127-ca4d7c59e0e2@stanley.mountain>
-X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
- mbx-essen-02.secunet.de (10.53.40.198)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-Mailer: git-send-email haha only kidding
 
-On Wed, Mar 12, 2025 at 08:21:13PM +0300, Dan Carpenter wrote:
-> This NULL check is unnecessary and can be removed.  It confuses
-> Smatch static analysis tool because it makes Smatch think that
-> xfrm_lookup_with_ifid() can return a mix of NULL pointers and errors so
-> it creates a lot of false positives.  Remove it.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+There is an assert which relies on "prio" to be signed.
 
-Applied, thanks a lot Dan!
+	GUEST_ASSERT(prio >= 0);
+
+Change the type from uint32_t to int.
+
+Fixes: 728fcc46d2c2 ("KVM: selftests: aarch64: Add test for restoring active IRQs")
+Fixes: 0ad3ff4a6adc ("KVM: selftests: aarch64: Add preemption tests in vgic_irq")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+---
+ tools/testing/selftests/kvm/arm64/vgic_irq.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/arm64/vgic_irq.c b/tools/testing/selftests/kvm/arm64/vgic_irq.c
+index f4ac28d53747..e89c0fc5eef3 100644
+--- a/tools/testing/selftests/kvm/arm64/vgic_irq.c
++++ b/tools/testing/selftests/kvm/arm64/vgic_irq.c
+@@ -294,7 +294,8 @@ static void guest_restore_active(struct test_args *args,
+ 		uint32_t first_intid, uint32_t num,
+ 		kvm_inject_cmd cmd)
+ {
+-	uint32_t prio, intid, ap1r;
++	uint32_t intid, ap1r;
++	int prio;
+ 	int i;
+ 
+ 	/*
+@@ -362,7 +363,8 @@ static void test_inject_preemption(struct test_args *args,
+ 		uint32_t first_intid, int num,
+ 		kvm_inject_cmd cmd)
+ {
+-	uint32_t intid, prio, step = KVM_PRIO_STEPS;
++	uint32_t intid, step = KVM_PRIO_STEPS;
++	int prio;
+ 	int i;
+ 
+ 	/* Set the priorities of the first (KVM_NUM_PRIOS - 1) IRQs
+-- 
+2.47.2
+
