@@ -1,89 +1,126 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5511F33F6;
-	Fri, 21 Mar 2025 16:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB821D5ADC;
+	Fri, 21 Mar 2025 17:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742576032; cv=none; b=ndzCuyRfUUesP3QTOJzo1yBTcq/tloJB7Eq0Udz1J9qSY9w8wevS7GG+njFJlgOXyi2ZyQuC8+06kocKSP69xaVqhS8q15G10SQ5Tl82a1c6pFhEZGyfWsggV3Vz8EnAi6otwI+DoNEz3oIlIzA5ysrpoawLQBokN3Fz3vqM5qQ=
+	t=1742576674; cv=none; b=IT32SJBGTEBonZYzEmCJi6QJQzGPedqXi0Vv8CxI9fHB0eRchP0XoVA8wquTLGEHnDHi9l8Byb9WJgQJ12QcRHR66RjVMHXdW5eNWRENzaISsA2a5qzgzQHCGhTcf+58gCWopWDau6AhMWVdwoaLbPLXmmADSfoGaQnXFy9JvI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742576032; c=relaxed/simple;
-	bh=xuJm0HidAoKCnfhW1666JHCJSDxcYwFRLD2LCiqgF2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QatxP4D0Rra+Mfn3uJrsl/2vIBd7c66YvIK3vq5zOwZeMCoi2iGRQILqCsIwyWzJVJCekl6EOVTIgPTZYLSdCkV5JXLl8F9osCyQuniLwcxC/0UUwbKhI8S/4pH6MUHewNK8iB2+oCeaNiSBdDD5AfHJTY12bFJbkHCLkuwMZ4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HVQ+YsqO; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1742576674; c=relaxed/simple;
+	bh=4BIhvc3+qX0OSvURR+5GbIbaBgN0H4vLEDwiLUkmYk0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EFqHb+Ag8sl6+ZU2tZWO/aaM3NdBL4bSC1ugsiUfUw1MVWCfsmDfkC1KqJyUlvFo/Y5d3kcOfpwHMEURML5K9QiXPSYR9T5cBTqfFYY/payoQz+VuFlnl3l/iGPVuxvpgC8Lg6AxH7SzA7hCfEIuWMCqJxyq9kD4jaNk/EtMpwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8gXM74F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HVQ+YsqO"
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BA974202538B;
-	Fri, 21 Mar 2025 09:53:50 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BA974202538B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742576030;
-	bh=Duhj4TbM5w1MlE9r7LL9/Dhla+NioJQGxxo6x7CC9bA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HVQ+YsqO6ehTWh31vb+VHSj1QeTFi4EoW56Ph5X0g6i2U4I9Fg7FTJ3FKIn7LYgME
-	 MLJ9tk4UOzhhGWD/7l0Xi+KPFd8bO19hLrDm4nqx1qUGyJwE4uKDRCYrA7hiTrFVTa
-	 DwtJLbUcaAnqFWDTszZgRPkktSHujZYTfNAeuDsI=
-Message-ID: <38525f8a-823c-4a79-ac55-68a2ef569a85@linux.microsoft.com>
-Date: Fri, 21 Mar 2025 09:53:45 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8gXM74F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D58BC4CEE3;
+	Fri, 21 Mar 2025 17:04:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742576674;
+	bh=4BIhvc3+qX0OSvURR+5GbIbaBgN0H4vLEDwiLUkmYk0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r8gXM74F/+FGR0yRaBVaczuaUVE0HAnVuuKBIGwW1wkvw57XgJlAzu5Txf+qOg1yU
+	 Pm1KKfAGtuXFjrY2VX+79XtObxfKBwV/wCQDl5/J/oiNix0bXDH6oll9RRVBVYK3zk
+	 Wlb6hHOE8FhyDF/V4ggnKrje+iy/YKeb8AVrdDl2JnFBEFIPpYAAWgaRZpHay70pRo
+	 u0noL0xozzR6HommJQd7dnQKAQOhT30qDW891zYRxQPM2tZvNAb+mWzqeJvf2mYBn+
+	 wNmpsGilzTsHBW7YEyPi79Z7T/Bjh+n4vYrQEnNDCzZvGvd+4nzwyGipOFSEKg0MDL
+	 cutBPKbjuLuIg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tvfnL-00Frrz-HD;
+	Fri, 21 Mar 2025 17:04:31 +0000
+Date: Fri, 21 Mar 2025 17:04:22 +0000
+Message-ID: <87cyeaqprd.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ricardo Koller <ricarkol@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Andrew Jones <drjones@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] KVM: selftests: Fix a couple "prio" signedness bugs
+In-Reply-To: <ca579322-dc9d-4300-bd74-7e9240e930c7@stanley.mountain>
+References: <ca579322-dc9d-4300-bd74-7e9240e930c7@stanley.mountain>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] Drivers: hv: mshv: Prevent potential NULL
- dereference
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Praveen K Paladugu <prapal@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <9fee7658-1981-48b1-b909-fb2b78894077@stanley.mountain>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <9fee7658-1981-48b1-b909-fb2b78894077@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: dan.carpenter@linaro.org, ricarkol@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, pbonzini@redhat.com, shuah@kernel.org, drjones@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 3/21/2025 7:35 AM, Dan Carpenter wrote:
-> Move the NULL check on "partition" before the dereference.
+Hey Dan,
+
+On Fri, 21 Mar 2025 14:32:53 +0000,
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 > 
-> Fixes: f5288d14069b ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
+> There is an assert which relies on "prio" to be signed.
+> 
+> 	GUEST_ASSERT(prio >= 0);
+> 
+> Change the type from uint32_t to int.
+> 
+> Fixes: 728fcc46d2c2 ("KVM: selftests: aarch64: Add test for restoring active IRQs")
+> Fixes: 0ad3ff4a6adc ("KVM: selftests: aarch64: Add preemption tests in vgic_irq")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/hv/mshv_synic.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> ---
+>  tools/testing/selftests/kvm/arm64/vgic_irq.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/hv/mshv_synic.c b/drivers/hv/mshv_synic.c
-> index a3daedd680ff..88949beb5e37 100644
-> --- a/drivers/hv/mshv_synic.c
-> +++ b/drivers/hv/mshv_synic.c
-> @@ -151,13 +151,12 @@ static bool mshv_async_call_completion_isr(struct hv_message *msg)
->  	rcu_read_lock();
+> diff --git a/tools/testing/selftests/kvm/arm64/vgic_irq.c b/tools/testing/selftests/kvm/arm64/vgic_irq.c
+> index f4ac28d53747..e89c0fc5eef3 100644
+> --- a/tools/testing/selftests/kvm/arm64/vgic_irq.c
+> +++ b/tools/testing/selftests/kvm/arm64/vgic_irq.c
+> @@ -294,7 +294,8 @@ static void guest_restore_active(struct test_args *args,
+>  		uint32_t first_intid, uint32_t num,
+>  		kvm_inject_cmd cmd)
+>  {
+> -	uint32_t prio, intid, ap1r;
+> +	uint32_t intid, ap1r;
+> +	int prio;
+>  	int i;
 >  
->  	partition = mshv_partition_find(partition_id);
-> -	partition->async_hypercall_status = async_msg->status;
-> -
->  	if (unlikely(!partition)) {
->  		pr_debug("failed to find partition %llu\n", partition_id);
->  		goto unlock_out;
->  	}
+>  	/*
+> @@ -362,7 +363,8 @@ static void test_inject_preemption(struct test_args *args,
+>  		uint32_t first_intid, int num,
+>  		kvm_inject_cmd cmd)
+>  {
+> -	uint32_t intid, prio, step = KVM_PRIO_STEPS;
+> +	uint32_t intid, step = KVM_PRIO_STEPS;
+> +	int prio;
+>  	int i;
 >  
-> +	partition->async_hypercall_status = async_msg->status;
->  	complete(&partition->async_hypercall);
->  
->  	handled = true;
+>  	/* Set the priorities of the first (KVM_NUM_PRIOS - 1) IRQs
 
-Thanks for catching this one!
-Wei could you please apply or squash this into the driver patch?
+I think this is going in the wrong direction. A GIC priority is an
+unsigned 8bit value as per the architecture definition.
 
-Thanks
-Nuno
+So the type used by the test the first place looks wrong (it is too
+wide), and the assertion is pointless.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
