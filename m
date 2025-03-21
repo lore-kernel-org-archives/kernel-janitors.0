@@ -1,72 +1,78 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE8B1D86DC
-	for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 14:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEDC22ACFA
+	for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 14:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567781; cv=none; b=s3zK0w6zruGIkEguvTrJVyuTaqyiDcGIoF2GBc+V0vlNucIHpcHdVEESXkV5kjGe+ZLaDLZkw1pd2APwKAuQWHPGWupHlr6dtHUXGqxBUL7XxSCBIJtP07NOivf+gVjYJ77f/bKlvVYfpLz/b55uEDLT/HgA7PMXeT3CHwsEqE8=
+	t=1742567785; cv=none; b=gsjE0qjicrxvGM3dq1upymzhStw4bhw3GZOIrWTA+pbcLuky+oiHWWiIPJqo32MIGgbysmRaM30LYmDBU2n8ezjkfEht6OY4dFtN7uRmWXIPXxbjsoHkzZKZ4pfhbJfH7BTLa/nXCPQ77pgL+9YJhr/yxjHmhaWaNAzKfRX4YjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567781; c=relaxed/simple;
-	bh=3tfB7n6h6FyjzlUtea67REfTN8UJaPakhNxFywAX3RE=;
+	s=arc-20240116; t=1742567785; c=relaxed/simple;
+	bh=kBJwR7yqL0mQVL1xW7vBVyuWNi2t1Nj7PNvDRyuKSQY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=e9Ql+dQKq1IlU/hID5IbcIKs9Tq4hiXHWjPMLIBxkkEn/t+bCC/DBN4SBRyjK6YQ7kWMW7J+ko/1hebPi2RNhXNcnpZCqZ5efaM++Chhq3qQCHh1CXLX/lJ0UVgZtNBcYY110mPpOLijwjawdhyelBH42JMZnQDfa1dglClnloA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gAgsI+Ml; arc=none smtp.client-ip=209.85.128.43
+	 Content-Disposition; b=gj5QReygQCP4dsLMEMYZ/CK5FHUeM7FLxoyGEP1H0vgWIi7E90MTTeGbh4OE4xlAH+eDeTF2ZQNR1HMu2FfS2p+gsDJzLWPrZk0ifVzox2ZdYS0yd/VXwd7gLM5Id5rdnEWxtSigFEYx/Ps3lvXCkDfivaRT4oRfNPZmj+wrC5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M1VScosh; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gAgsI+Ml"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso13077355e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 07:36:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M1VScosh"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3912e96c8e8so1265280f8f.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 07:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742567777; x=1743172577; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742567781; x=1743172581; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ra/8DYijPPPXyKfJwTLkvfoC8/C3kF5QcCpYx+TRQN4=;
-        b=gAgsI+MldgL6BzP8q/MVf5j2hAX1Ju7qvQqmSJqGeUxb1RNOza1VfIeq1vUbPXwAwY
-         3HGjWPrJZpc/uGkyR2pAQzR89QwaqjEX6cYcY5BBGlo2MFCyayrrNSkccst010KeL6xj
-         CtJqkEKapG0Vwbu+Lm7KeHaTCMf1nLzVIzNClWiBAKH43ZhginSjtrbDYJps4juKBFFI
-         Gwj2engaRBsxyPehZq2371o4zocX+/nhpIRf7O4JxmE0rGrxMir9STw6oSdwBqXSqPjC
-         cAk097QBBzUi1F0oOOs5iGfHXkZ4nccONfKSgst4Zukn6SzXDuBPYCElVc8QNURwcz7e
-         UvhQ==
+        bh=3fsDQxf7sE00cNo/2u31jHrQzeoPoyXMSlWbib8RZb4=;
+        b=M1VScoshw+SzSRL9dSsBDwgqmKiVUXUX/wNZn4vO40SOggGpt4LN1lLwk4SUfqLm8h
+         uitZ9sqUaa1QZXRERNeiLY58GmfJywy9HhRpqzMFAehMQeDylWxCPuL5jHD1U22vljkW
+         hxOYoin7/4JzMNFpVXRkk50aUh+GurSB9uBPOCDYv+vmFNdk5W3SuOsV6u+Rsmt6v2rV
+         O2FYG6jHIDgtZtrTo5B7At1HHZaRS3BGYyEdyEh017NxrDX869tHLvnc4rfSk4eiMVnA
+         lbE/pnJhhIFpOlDK81hEoJKPYGwHU3kjzgpGGmQumW9cosK6eAz+tY37kXfaiYVlid/a
+         qt1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742567777; x=1743172577;
+        d=1e100.net; s=20230601; t=1742567781; x=1743172581;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ra/8DYijPPPXyKfJwTLkvfoC8/C3kF5QcCpYx+TRQN4=;
-        b=HRp/sPa3yDs/N/zvyptUqyMxeIEMSCxv4WGuBbHNd4UIub/mfrmLqBr/K8VPs05OGj
-         lyEIo9JDbit4/pqv8+EA5IZXLI3Jjw/IOImS7lrI1dfEgcSJsSpGWDQwfzPIzujbaCRh
-         ydYRoDCBcEMDdDNm9Dfr+UtrcujeE+GxOochqB7z2fwM/QdfqRnoiHFa0hrJQLY7oFcC
-         sRG9tRlg9yNpxkwQOEiQSiuaJ5NG5OiX/HbTrB/ynmb8QhPbNfQ3wb1CBnxOHaxyRV6R
-         IFTAEYkjkHa2zhqdeREOyAfPZFCP/HTu+9wLHkzDlk1OPEMLLHM8IDtkf/EqLUEwpmp3
-         t0tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7X9AOEn27hn+zNjF0J3KJ7LQZcBLasFQWVuRoaMAHTOLPL7IQzaamZ37kQxD/tcwgxkOHGmYzCh2qayDcU9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPOg/HbxwBABNUGuxcTQAOMblhzTt/fTnU1ibf4pplRe0gn50K
-	1G16F6KWk5OEUDMWhK+UB5xJultO6YBW0+yR7skbjn0umugvH4fZmHAOmZC6dyw=
-X-Gm-Gg: ASbGncuvDMiR0BOrTHXcordzmWQ3ucXWRKMtBmll3bwNlugFWg0OpS4tv5yDfXaoIbQ
-	o8zp0tEH6lOLgMZiOHJpYSMKPQI8lcWXxOQ3bTlDpWhp3UBJ7XIy5V2EU/9StNBY0wdRlWW2Qey
-	7KC5RRbEsGs1lqiNiva37r1UcsRfI7Dds7IScUf9wBtCuTI1TBvWCg6SxZqE/99EBwTkyfuKYgK
-	WvSOBRYp1AhNCeMwV0+Vi65Ima6IxcG+9FQjF2Z37T0Z3qQh3vgaBkHtlTMVtLHyJjb1Xz39cHI
-	CP+4YDkSuNSE48zyEub2H2+9DWnWQglJlsHD6cUFhjmEbAiA7g==
-X-Google-Smtp-Source: AGHT+IEBLRuGXXY3Hg/ewdBvYCF4zvDlD21Rbhn+1Z3hKO681e8YV9SPfJqpV9SZgDhIe4keKF4QkQ==
-X-Received: by 2002:a05:600c:8719:b0:43d:53c:1ad6 with SMTP id 5b1f17b1804b1-43d50a4ae7dmr28254255e9.26.1742567776837;
-        Fri, 21 Mar 2025 07:36:16 -0700 (PDT)
+        bh=3fsDQxf7sE00cNo/2u31jHrQzeoPoyXMSlWbib8RZb4=;
+        b=lPXLRQ/B8J82504dDNraeHV/hmmYKFGTShiUeZ9nC2pUywDypE3feyBsWWXgJofu22
+         7k7Hth5iD7jrAC54/cLK4jYLaVU2mH00fsuqMREVPhPYLs7mewXxutWTTET600+Dfawu
+         nZsVQU6S/+qi8iMcvlSGRT+xhlvfOnbKaTulur/xqkm4O+ezcPF6MbYZfaq8SrGUOE7t
+         S6YLoJVEWiqZV9tdgMVaBIzqGZ+6a4mDW8QlqMtxPiIVm5Nj1NabG1cfXMDcUxOoEnRp
+         91X5OjkDlR+FbH/Lq0nM1Ejbmbx9TD4C00SQUTPsLGEMBASKm13A/zh/OMrlT2QTkk48
+         9bdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXL3MlpTTmCKUFS48eByfxMKTb0kxy4Pt1JJkJmalrSyg7QOs82I9A30tJiSpaJIxwIgOt83ixh+KhALBhG/os=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0lyrPLFqzW06mZcx9BB1u8APQDzgk8z2veVZoWtxAsymbvfq/
+	Q6pOcm2BAW8TpI2uzxkRdbgLnORbCbCCbJf5yvocrTECeN3KG+Zv0FJo1mXcCfo=
+X-Gm-Gg: ASbGnctLpQyKEJ8j8NN2k/tVj2hHnjbXaaHqcK/K8ENFhLAX//4SPXspZ83I7WPT9d/
+	Bc5iKbdyy2KBQ2UFm+ob6Vsp2K7oQOmqGFYrNFdcB9urQeYpSuI5oTOUHk28IgQBtGHKZ5DfWhD
+	oNxyqVPpzbLXfzSTw4jRK13sS1ZHFFCU8ObNebeXdUX2ga4I99CrZ/dFT3wVflLjbaP9gkGRc0W
+	g3oE0bocgPieQwIc2uXO+tExi8nfnXj5Whb47eEeuRphD++/nXSvwe8Am7Oo3nKlf4LCvWD3kel
+	3kGKHDEQRv53FKvcwaVz3SBipNdeZu0+P08HN1Zmh2o3c1oGEA==
+X-Google-Smtp-Source: AGHT+IEgYecXG1++S76XR+sJROCwf96bxZG3f1zzap9S0mQvYbpTt9wv6b4eLg8AyhHlqK1JOitUsw==
+X-Received: by 2002:a5d:64e4:0:b0:38f:355b:13e9 with SMTP id ffacd0b85a97d-3997f8fa36emr3786610f8f.15.1742567781323;
+        Fri, 21 Mar 2025 07:36:21 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d4fceafacsm29121045e9.6.2025.03.21.07.36.15
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d4fd277d5sm28710235e9.19.2025.03.21.07.36.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:36:16 -0700 (PDT)
-Date: Fri, 21 Mar 2025 17:36:14 +0300
+        Fri, 21 Mar 2025 07:36:20 -0700 (PDT)
+Date: Fri, 21 Mar 2025 17:36:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Heiko Stuebner <heiko.stuebner@cherry.de>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] phy: rockchip-samsung-dcphy: Add missing assignment
-Message-ID: <e64265a4-9543-4728-a49f-ea910fccef7c@stanley.mountain>
+To: Lubomir Rintel <lkundrak@v3.sk>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/bridge: chrontel-ch7033: Fix precedence bug in
+ ch7033_bridge_mode_set()
+Message-ID: <20c0422d-b4fc-4ec7-b3e5-4c4679f499f5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,27 +83,47 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "ret = " was accidentally dropped so the error handling doesn't work.
+The problem is that the bitwise OR operation has higher precedence than
+the ternary expression.  The existing code will either set
+HPO_I, VPO_I, or "mode->clock >> 16" but not a combination of the three
+which is what we want.
 
-Fixes: b2a1a2ae7818 ("phy: rockchip: Add Samsung MIPI D-/C-PHY driver")
+Fixes: e7f12054a1b9 ("drm/bridge: chrontel-ch7033: Add a new driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From static analysis.  Not tested!
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c b/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
-index 08c78c1bafc9..28a052e17366 100644
---- a/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
-+++ b/drivers/phy/rockchip/phy-rockchip-samsung-dcphy.c
-@@ -1653,7 +1653,7 @@ static __maybe_unused int samsung_mipi_dcphy_runtime_resume(struct device *dev)
- 		return ret;
- 	}
+ drivers/gpu/drm/bridge/chrontel-ch7033.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/chrontel-ch7033.c b/drivers/gpu/drm/bridge/chrontel-ch7033.c
+index da17f0978a79..1b858a8ced57 100644
+--- a/drivers/gpu/drm/bridge/chrontel-ch7033.c
++++ b/drivers/gpu/drm/bridge/chrontel-ch7033.c
+@@ -404,9 +404,9 @@ static void ch7033_bridge_mode_set(struct drm_bridge *bridge,
+ 	/* Input clock and sync polarity. */
+ 	regmap_update_bits(priv->regmap, 0x19, 0x1, mode->clock >> 16);
+ 	regmap_update_bits(priv->regmap, 0x19, HPO_I | VPO_I | GCLKFREQ,
+-			   (mode->flags & DRM_MODE_FLAG_PHSYNC) ? HPO_I : 0 |
+-			   (mode->flags & DRM_MODE_FLAG_PVSYNC) ? VPO_I : 0 |
+-			   mode->clock >> 16);
++			   ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? HPO_I : 0) |
++			   ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? VPO_I : 0) |
++			   (mode->clock >> 16));
+ 	regmap_write(priv->regmap, 0x1a, mode->clock >> 8);
+ 	regmap_write(priv->regmap, 0x1b, mode->clock);
  
--	clk_prepare_enable(samsung->ref_clk);
-+	ret = clk_prepare_enable(samsung->ref_clk);
- 	if (ret) {
- 		dev_err(samsung->dev, "Failed to enable reference clock, %d\n", ret);
- 		clk_disable_unprepare(samsung->pclk);
+@@ -427,8 +427,8 @@ static void ch7033_bridge_mode_set(struct drm_bridge *bridge,
+ 
+ 	/* Output sync polarity. */
+ 	regmap_update_bits(priv->regmap, 0x2e, HPO_O | VPO_O,
+-			   (mode->flags & DRM_MODE_FLAG_PHSYNC) ? HPO_O : 0 |
+-			   (mode->flags & DRM_MODE_FLAG_PVSYNC) ? VPO_O : 0);
++			   ((mode->flags & DRM_MODE_FLAG_PHSYNC) ? HPO_O : 0) |
++			   ((mode->flags & DRM_MODE_FLAG_PVSYNC) ? VPO_O : 0));
+ 
+ 	/* HDMI horizontal output timing. */
+ 	regmap_update_bits(priv->regmap, 0x54, HWO_HDMI_HI | HOO_HDMI_HI,
 -- 
 2.47.2
 
