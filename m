@@ -1,73 +1,72 @@
 Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75411D61A2
-	for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 14:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5171D6DDD
+	for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 14:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567757; cv=none; b=GI+u0Gyimtb3WV9K7gW6SUkA7qSbJAIkRBhlMLFp2qMLP8/ame4RHd35I2HCOkSNkrfHyheCEvr70qx86KD6KyY5goO9QFmHjpZexNZLhpkNBxp3KFWtF4Gl5VZHCSA55x8q6p4zt0Xulukuep+K4ogC2f55sAi4Mi99b537qcU=
+	t=1742567762; cv=none; b=hwHm1XpnGas88VvNCXe1sAKTSnxft0p0UxQHBZG21a8x2hcE2LEvzh8XxGHlhZhMl7slkqNfBaTPO8fSNW7z7Yb3JNJvHzQrWn+8g/sJ0fbggZXb7VsGoexqhHDyu60Q9NUJO/Hzhz30HfuY4x2ylSO5ts9LvZyQkvOBF16JMA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567757; c=relaxed/simple;
-	bh=zewkcsreTAIYS7PHyX+Qg+PK84VPiklh12ShuEBHSeo=;
+	s=arc-20240116; t=1742567762; c=relaxed/simple;
+	bh=LssPVw/eR8tGwu63BhqsF4eAyNkjrVfgd8RLy+IzfH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OMRGXHvwn6HtyDIeILDMo0sI9aIpxe4eYSBF4zgC0jCWoWmf3PwY9DrFjnCwTefaY3gwyrm0qRAnYEZtRUUJQ2J8woWrEIJ28PraM8blUFxeyZuS81zmx1BnhC1QAsT+LVsfgsIV9KcTSnkf9G2WC0Jfwj1n5+zmL4uVqcSb8y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DKE3+r+4; arc=none smtp.client-ip=209.85.128.41
+	 Content-Disposition; b=BjtmXa+CdwofKzT5LrJ43IZkDE8LUX3AmIeWSPNd4lPz6CNlf9v6ftSCxwAK7a/tv/yVIvM7nuD8EjAFAcXivDdzYri5ckPWo+qVVxr5LT43bxi9TF6ayU4IlI464i+M54YMwtAelga/aY8t1EHmyThsVEcOqNQIggsgxeM3zMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R8/GRT1B; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DKE3+r+4"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso15202355e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 07:35:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R8/GRT1B"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so14110375e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 07:35:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742567754; x=1743172554; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742567758; x=1743172558; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jhrcb/mTWviEZZ7YzcelEEpsaZNAgBebPczHwX9f7os=;
-        b=DKE3+r+4X2pN1mTf4btc6K08Jo6IBxqc3fpE8DwsT/Yjhj56lj0mnxHHQl6Pql8O2H
-         1q0hy80hyInP532X4gjbVhyvUkdfJFyovESh5SvYvpkblbmYJVeH/+txxwsXqFo5k1Xo
-         54oEdae/1/htQzyra5WMWQTvYh1qsbXdE/5f/fQ6yhpPUmgT0opOdP93vc8f2uCbAje+
-         fbmzhJ+nOr+SdF2tH/jkM4T81ErOGYcDZlK9rhChgsAFXXUQ20hTj+0t1I9CVHa/uxl4
-         5AeezBxjoke9jayxqCawXNiKDp5/T3P0Texjic96WmjmmzCG7Rb5aBQHzKe1cp8+iVKw
-         5ZrA==
+        bh=RU2ONVmom1Z3vJLSCiuLTOfrELMOd3Zg4NSQXvpae6E=;
+        b=R8/GRT1BGQ6etup3OoW79D89S7ELHnl7rQJDrqraU8AyBo1PfBJqsXDU1SPhIMuocD
+         F2JxCuuj4s0aBtGRXIFoRNBHM0bOrBzc0Rz8q8OXGC3AKteD5zblXdx+ap3L1s1dg86/
+         3Gq4SYnT5jriyqdWfDTC+2pLQn08cqFO8na8PmjTJTvb/keqys6VIosnirHGzQJ9YLW0
+         ZssI4Z8d7CYNR26OuKi5coUEfuo035epotMQH8SSkIGwNUy9QCgdW4TNAhr6m1GjmlmN
+         jU5X+NN/F8NeAUiEK9lw/+wccIfu7w/GvHHgY0SmSuKjMQ6lCX/6R0/3Hs4iaEF7yYK+
+         iwrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742567754; x=1743172554;
+        d=1e100.net; s=20230601; t=1742567758; x=1743172558;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jhrcb/mTWviEZZ7YzcelEEpsaZNAgBebPczHwX9f7os=;
-        b=DS8SUbA8qdYgnCOewLjlZ89zAhuchB8AtllI6aW5oNTrurKmhpWThUQxYE9nhTD9rM
-         ThDbwFt1PegOYfCHojbTOe9bm+ctjYzMJWli5SiL5YDewfzCCqugxaMoefGva3zGVx5M
-         +kd9/89eGHTM7OtJPJVo6n9zEGfVKkk/hZ6Ei8FNyBXIDpA+kbyhLKeMkTf0K8Ap6u1M
-         n6TfIqC/vllRCNnWdS/elcRj5w39e9rfY+tN4bCIybFpQgViO6WGZfoISgNyuFADoghh
-         O5aYwTjDf3iKhjSonz7DypRdYrwqEJx7KHccmBweC+PCCOw5nxUjrA5DEhJqIkeM0hFv
-         Ts/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6tB2f03dkGZtIQvV9ZtwPQd/55R1394YEFPbG95w0nbzv14IHL0oMmQoQaLkD8uAT+0OJnPSoMr+jZa7Fops=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRkZ5krJv2pkisjnNlQGrYtPVxnb4j/N0Y61pQpiYRsL0lICY3
-	4SnQRrTUnqYLyQATY7uFa+SqPml8QVM/8WnbZX2DWaxQjinJ0GOvWhd5/XTtZ7o=
-X-Gm-Gg: ASbGncturtt6dw5VXgWJH6rO+/dnEz0XtWZiGo0kHSw4SyoCbfWZnTc5y9UUYSl1A/L
-	VFj275nJvcy9aBR41D17l7rAjcI2tmABNJeQd9PELYyyTTt+ths/AI/iMcNfPLFtNKsBIQ6/3y0
-	jfNshDtrUlneX3VszpTdlo2alTsGbsrDKXw7xJ0rbgUCJ6jwwKUiCyiQ00XF+HDw8JYNmMPd+tM
-	4495b4+88Y4tk2lmviCHZb5YfzOKyazCFenwl3Dst63z/4HQW4ruYcXIHArmHl59uccXE9FXIIU
-	/0lamzTiS13HfPuqocwX659B0M6oqdwjOj2nf5oI4ZrVGn5jWDNaYldjxu1i
-X-Google-Smtp-Source: AGHT+IFTlIYuugJCayoKps7oOfO+nEY2lgoAtdOqm9RkYPvK6VO/88fiHmYrMJaHHiCsISy8+YmeUg==
-X-Received: by 2002:a05:600c:1548:b0:43c:f513:958a with SMTP id 5b1f17b1804b1-43d509f4d23mr32282675e9.13.1742567753912;
-        Fri, 21 Mar 2025 07:35:53 -0700 (PDT)
+        bh=RU2ONVmom1Z3vJLSCiuLTOfrELMOd3Zg4NSQXvpae6E=;
+        b=cvLJazCMfcecfTvwSG8Vc9eCvfBHRs+2louH6GuJjy/bFHHItje3RX4YoumKlydg/D
+         jQ811VuR1tT0wdEMg02UKvdhRSSQjAWNVylSUio8RWkjfF10elxkgnBfijgDK8Avr+pT
+         VGIsLRQXfZb57hFbesOpvEdLJ8VhSnG8rGyKb3v6VqwEn0u6Nrv+udAoG17ZI6gRZpet
+         sXaIeV0C7r/sDoxPvMwp73LQQR0rMdoHyND3cUhtYS20WGSiKKkgxMVoLQGiVxf32xfZ
+         gN2qrG6cXwLSOjdaOxD6MN+yiw8sb1dlRyBQP9fCxkPhmRwnZYniUEROhbLEWCSJ9Bvs
+         +j3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUaniWySrKFtuCzcHamVz12e7nMKMHVC3GIFpNdDm0maqDZn5YO4cO9+vV7Ns8zr3gLXr3+rPwFAZRfejQUraw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9suQukxNcfo22cIzEi1G38yOPdIefOpNQrMye/npMbWxS1xF1
+	ktWiXdF3IhJkcC69BVLoUScEIdNUlwSZVA4CjppXLQqKBy3ZAnsSpogLTsp2t7c3Qv8N/ECCZgA
+	f
+X-Gm-Gg: ASbGncvVT2dihNfbDwvx2+GX+nHJQaute6K/LdMt1ybmjEQOd5bbFHT36r2J3aQuIYc
+	3qRgo5npEH8XMVYQi2glh41UeA7H5MeUscOS23pddcz7p0lFMgFWnl64uDcgJxZHQ7mM/aRqHS6
+	b05wPJwUZ9tycpi8RUPv1q1wC6ZPPApmB/p6PUFqw8c0a5KwVUH2kOOIcwro2qskIkoJV5tI/m/
+	p3jSiLHtlC2x0MYNICbD110wMd83pFmrkQ7969bXKQe35zfCxjN47HFSO7A0DdShaY4N8fP8DZ+
+	76XD0NlgDlgw/RX+wBWKWW3HW08Hk6S0P82YOJKBb3Umt0vhva15JhOE35ff
+X-Google-Smtp-Source: AGHT+IFGThZO/X4twcqLKIJCHzcz08tvoomZPsI1WRvkfM0Dku3p8STs9FB5aANY+T8q/jr+pTEbmw==
+X-Received: by 2002:a05:600c:3d85:b0:43b:c0fa:f9dd with SMTP id 5b1f17b1804b1-43d50a3c017mr30528695e9.25.1742567758200;
+        Fri, 21 Mar 2025 07:35:58 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d43f43ed6sm79077865e9.13.2025.03.21.07.35.53
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d440eda26sm79621195e9.36.2025.03.21.07.35.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:35:53 -0700 (PDT)
-Date: Fri, 21 Mar 2025 17:35:51 +0300
+        Fri, 21 Mar 2025 07:35:57 -0700 (PDT)
+Date: Fri, 21 Mar 2025 17:35:55 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
 	Haiyang Zhang <haiyangz@microsoft.com>,
 	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
 	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] Drivers: hv: mshv: Prevent potential NULL dereference
-Message-ID: <9fee7658-1981-48b1-b909-fb2b78894077@stanley.mountain>
+Subject: [PATCH] Drivers: hv: mshv: Fix uninitialized variable in
+ hv_call_map_stat_page()
+Message-ID: <fac96458-fdb9-4166-94bd-f1d135abc6ba@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,33 +77,43 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Move the NULL check on "partition" before the dereference.
+If the hv_do_hypercall() succeeds on the first iteration then "ret" is
+not initialized.  I re-arranged this code to make the loop clearer and
+to make it more clear that we return zero on the last line.
 
 Fixes: f5288d14069b ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hv/mshv_synic.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/hv/mshv_root_hv_call.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/hv/mshv_synic.c b/drivers/hv/mshv_synic.c
-index a3daedd680ff..88949beb5e37 100644
---- a/drivers/hv/mshv_synic.c
-+++ b/drivers/hv/mshv_synic.c
-@@ -151,13 +151,12 @@ static bool mshv_async_call_completion_isr(struct hv_message *msg)
- 	rcu_read_lock();
+diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+index b72b59a5068b..a74e13a32183 100644
+--- a/drivers/hv/mshv_root_hv_call.c
++++ b/drivers/hv/mshv_root_hv_call.c
+@@ -733,7 +733,7 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
+ 	u64 status, pfn;
+ 	int ret;
  
- 	partition = mshv_partition_find(partition_id);
--	partition->async_hypercall_status = async_msg->status;
--
- 	if (unlikely(!partition)) {
- 		pr_debug("failed to find partition %llu\n", partition_id);
- 		goto unlock_out;
- 	}
+-	do {
++	while (1) {
+ 		local_irq_save(flags);
+ 		input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+ 		output = *this_cpu_ptr(hyperv_pcpu_output_arg);
+@@ -756,11 +756,11 @@ int hv_call_map_stat_page(enum hv_stats_object_type type,
+ 					    hv_current_partition_id, 1);
+ 		if (ret)
+ 			return ret;
+-	} while (!ret);
++	}
  
-+	partition->async_hypercall_status = async_msg->status;
- 	complete(&partition->async_hypercall);
+ 	*addr = page_address(pfn_to_page(pfn));
  
- 	handled = true;
+-	return ret;
++	return 0;
+ }
+ 
+ int hv_call_unmap_stat_page(enum hv_stats_object_type type,
 -- 
 2.47.2
 
