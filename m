@@ -1,76 +1,77 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D93154426
-	for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 14:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD5D1D5174
+	for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 14:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742567737; cv=none; b=I6YE7TSiILI7EIm7zh0+wFe4Mwdh3qshWQe5PlCMN1YavdZppryIQCgNBR8c/Tu8N0aV6GtckXL1YZ+B6kfWY+ao3F/kRoNAwGXBYR8K44GAuN93YGcPixwDca64q2LgerJ0PJaqSB6F5nJCihE4RMy874vGr0ncndegje7S59w=
+	t=1742567742; cv=none; b=MFLLti12dbzCX9MPS/y0ifD72/+XDE9jUMVNPGlcFxH+7pXDuHcfd3noCI0T9gP9Q4V8qsRQKpfQHbwERQzHmoFouTjxlevEHDhZAWdZepIK9X2/8L3b9NmdVmjgqnOfeD0eakkEYSKFRwZVYcld5gcGisapDzTCtvbUxqkThLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742567737; c=relaxed/simple;
-	bh=jOvj8sUhQOnWWb9RP/PYMDVrKj4dgjPG61k1ISynHeY=;
+	s=arc-20240116; t=1742567742; c=relaxed/simple;
+	bh=2fWMldJmgwMUu39tdUGRd4PbG+rFiQ2bc0jCTZUfh8Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=p8Vy1BoCWxL9h/PVYWlluREZlZHnJlqLoajyFs88RKFstz0q/pbhnUOBeXeL0XxrtgbEJkarPw687ufZe8dKCTFiybEFKTe+gQMIpbMXNIFbbneBw07SNH/IbNN18b2uUFvK1pHV8aimWCXFbnY5gycFZamwnWhJAH2rMWFOYes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IHAc0U9f; arc=none smtp.client-ip=209.85.128.49
+	 Content-Disposition; b=CLOQUkRyO1mUPUsYwe8i/xl5SliNTV8bPYBN/4v3mpC8cT87VK5ibkICgAuNwDCO3daxyGJQ6+fKAvI3XoJ0VRK5qSUC3KzWV7AhTQ0Wiyvdcs57B5gG1AEbzJnsAVuIQ6lX+WBvr48CXvPVJkV5tk13hIvJiv7PSCWpfMG+UFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aAAaP09q; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IHAc0U9f"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso19557435e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 07:35:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aAAaP09q"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3996af42857so2085090f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 21 Mar 2025 07:35:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742567734; x=1743172534; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742567739; x=1743172539; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ePP2nkQSnuEG/AnhVnMeNi8KNMe79AtuZeTxXxzHFJo=;
-        b=IHAc0U9f3RG6Wwpu6N7vtMeH50i8WZeu58gJXcBTFuzGgAs4nWodu4GIxCbxrgDrEP
-         juIpsWWU2hi+7KrGOSNBBIQKLP8Zf0RuwkK90NngLHL8xZBLL4+lnYQ9oZSpJu6prA8w
-         prdaO63mRm03h/Psi34Dyxe+M7oyth3aoSDuHFI/HcqyM2klwC+1Nx+X6l4JVjavHTOH
-         mSx9S3QA0oSNpRF/VgyDQIssDDEis8DW2ENXhqNQIORqfvv7O7xn2+S5rB5vJHtgg9A1
-         skyY/tCiX3pF9qBw55rk/2hqwdXBby261+F5XiUZOTL+4mii0IUU/WXazhDHWh0WVPo7
-         3egg==
+        bh=3PPRppdrVJ7KjI6wixZGEvPAU+S5utOovE0gqiXmI0c=;
+        b=aAAaP09qNuJblyS4TtpIdwnKa8aYrpNyeRhPqWeeQSFO1f1eE5c3k14Jfel0LkSBt6
+         nnHwpvKWEjjnlv/FrgIIssRMLWtVqaesxqr3QGq2scm76uwOzd5Mimg3A3tXp7KUFheg
+         /IxbIZrjbJ3fFFND1LK9ItekDVG9YLnDNxCDFpmj/Wf7nfj5+X3Dl+66kdXpblOoMVuE
+         2cDroYA/mKt+8c8nvYo/+7Z5cYjSoJPDEoqCw4/G7VCK0vfMXHOUncYJ2yfNmagirg9M
+         JhpNhJVr64SWvBeCMiIOiLbxwunGI0E4Mc0eDThYfIT+TLk+P1xB23RnJrxPT7hO0JcQ
+         nuxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742567734; x=1743172534;
+        d=1e100.net; s=20230601; t=1742567739; x=1743172539;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ePP2nkQSnuEG/AnhVnMeNi8KNMe79AtuZeTxXxzHFJo=;
-        b=ruHixfK9rMBSYyu0SGtZQ10Y6aKwETDrYdGs09+dRXBM3p2t5q+T5bk3yuWB2q1zPA
-         F0fCswl/vK45hJ0KtgAC0z3ccAxo+BmDeQaNydURLsFw/DCagvMxxzPMysa0pN1bKXiA
-         88ovC2obo/6rWS5tGO+bbTv4b4mN9OHbBJf7YFrbLiDxYGTxFWUjWtbwPiSZqN3qFl4Z
-         6z1rO/qDem4kNYQszMMODoY1ScBYeIn1jKMdOTbzuYU0g0VQ4Km5RY2yF4I70KMQMOqf
-         jXyGk7x3PGOw4CVtWiQXGCN2wbii9MsrlM0Fn5GeFoY2EdMbbRIEdYgGEgD2aw1Pt4e2
-         roUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRunOQ9+7WdpCj3jIgYcPlPb4KVMO2pUNmDbjV8OJBZHsLCWleytnLXh6SZAGP5tUx0xhjwZwPDdTv562ezlE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ2DLrlIESY7GwMv0P5SaX52tmyS6i9HcruRhgLHFzqi95UN8/
-	nIjMQ6l+VxCmiTuokL8L7/iOy8w28lvPSxXlIGHLA2ZjcV3uSc7Nt8ViXhOfeVUEkjomJVxOV0v
-	I
-X-Gm-Gg: ASbGnctXL4wX9N0PzQoCQeoQFJii+eta+xqKnb9qJLsMGupWGXZraOWSHVlx/BBUvfr
-	1I96LHgMfWH2HOIJ3meaWUtKBzqv0htqmXu+bzkqXvRy7HMSrWBe0GNfqy06WmxEDNSATE9krbg
-	wOeiLFRJEOpfmPyNylz1HEWr1zPD4a6NeizTcaj7TwcVwNceCtBx23H3YPOhEk0QD5FOE2Y6F3y
-	SPnZS8xSN43lbNqNmXQ4uMiX0kssmzMrUdXxcYMWgrB23blT8F1lR9ewqqAhrX8/dfCYHILBU/z
-	oEROTMW5GbeC2kW2fgzUM+3Vp5uZ+u3Hld6R11VE0Cop7/Fi3g==
-X-Google-Smtp-Source: AGHT+IHo3Yc3MCPOadC9UN49uSmHsJsixyIQa4snXxSgTEg4SRqx8S+qcU3YVR3JJisZ0M7ofeV/DQ==
-X-Received: by 2002:a05:6000:1842:b0:392:bf8:fc96 with SMTP id ffacd0b85a97d-3997f8f8be6mr3252239f8f.4.1742567733638;
-        Fri, 21 Mar 2025 07:35:33 -0700 (PDT)
+        bh=3PPRppdrVJ7KjI6wixZGEvPAU+S5utOovE0gqiXmI0c=;
+        b=sH3Awc95OFIr2KC28gPXvGJzeHGxY7tDce296+vkyOKWdRh1bmhB/iqVijDDunLWY1
+         2qw8wi4kN+oYIKc0pB6/tAH/GWwz7PyHuRd+2j+eZDlyCbyXas/H2xT4iKbB2/UObkGv
+         SrNBzljFNBWjJCO++AoS6V18U/O6uVeO2LzfgXSMKm4zcV6/gCEKTfKCA8HYyZGAe8u+
+         FNx0AWRwbjVeOUKU6zxes1gGmuZ63LC6nnn7u32TDDZuzFWcTlbCEXBie/Boqjt8RJq1
+         DePrZb8nVrs9z0aSdMSExi/S3ovAys/6fBez1PgNHzp24yh5oErBjlVTywoKM+GvyyP/
+         kiPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYe1yNNxzFR1AW4jm0aPMhae1JkTHw+AoBzAYV7y22lju8579Ke98NAclAoBd7gLDzsw5xPVyc5e/lCilnJyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLGuutMUwbNifNv3OTnPQmlA8liXvEijazLDEBhktiugPAwgpH
+	i6BGyjQCSLL6iGtFsXoGIZRKYy4+5eD1ZBR5Ypw3wjslOM0vT/p4xLmUWZ/niCQ=
+X-Gm-Gg: ASbGncs1dkHknPoA2tYpjy9LKG7F8RYeySHQx+wSnvpVG6nZDGVc0c8u9TL+0D4xIP2
+	/wnMYXkMsau+OYqSoWkhK1UsHzjseb1yz8GfDOQcR5fkDkJE5hb+a/dHnOjbXUsWx/M2ZiUDwGs
+	BAsj9YtgmQ5EQ5uzPyE3DX7HmeA1KVS7B2M5ffDox86Y/p8bj0/IWceA2QCZOErew0Za3xqMT1g
+	dzLt4IS5ntjXzPy8jrQI1L7Sebdkq4XfnTwhHVA9kRfbh53S4GqqWm2zN1V/0SU1QdMDVPNPnVb
+	M34cbjZ8MT2++4XnpDqCWolUT5518SCETbhtNoB2cRhmBvZMFw==
+X-Google-Smtp-Source: AGHT+IF2afE+amq9nc4FEedeUCaZRhGRjLvVfJvTuEgevNOAdUUfdZR/acRzOI2V9GG7bPnUNFsa8Q==
+X-Received: by 2002:a05:6000:1fa9:b0:390:e9ee:f27a with SMTP id ffacd0b85a97d-3997f93e053mr3439159f8f.28.1742567738601;
+        Fri, 21 Mar 2025 07:35:38 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9eff6esm2504188f8f.100.2025.03.21.07.35.32
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9b26a6sm2493540f8f.44.2025.03.21.07.35.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:35:33 -0700 (PDT)
-Date: Fri, 21 Mar 2025 17:35:31 +0300
+        Fri, 21 Mar 2025 07:35:38 -0700 (PDT)
+Date: Fri, 21 Mar 2025 17:35:35 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Roman Kisel <romank@linux.microsoft.com>,
-	Jinank Jain <jinankjain@microsoft.com>,
-	Mukesh Rathor <mrathor@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] Drivers: hv: mshv: Fix uninitialize variable in
- mshv_ioctl_passthru_hvcall()
-Message-ID: <97036225-597d-4a2d-8f51-7310757b9929@stanley.mountain>
+To: Shayne Chen <shayne.chen@mediatek.com>
+Cc: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Peter Chiu <chui-hao.chiu@mediatek.com>,
+	Bo Jiao <Bo.Jiao@mediatek.com>,
+	Howard Hsu <howard-yh.hsu@mediatek.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] wifi: mt76: mt7996: remove duplicate check in
+ mt7996_mcu_sta_mld_setup_tlv()
+Message-ID: <fde7246b-08a2-4c2f-b2dc-c3fd0e6b300b@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -81,35 +82,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "ret" variable could be uninitialized on the success path depending
-on if "is_async" is true of false.  Initialized it to zero.
+The "msta_link" pointer has two NULL checks.  Delete the second check.
 
-Fixes: f5288d14069b ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hv/mshv_root_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/mediatek/mt76/mt7996/mcu.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
-index 29fa6d5a3994..b94d8fe0f691 100644
---- a/drivers/hv/mshv_root_main.c
-+++ b/drivers/hv/mshv_root_main.c
-@@ -151,13 +151,14 @@ static int mshv_ioctl_passthru_hvcall(struct mshv_partition *partition,
- 				      void __user *user_args)
- {
- 	u64 status;
--	int ret, i;
- 	bool is_async;
- 	struct mshv_root_hvcall args;
- 	struct page *page;
- 	unsigned int pages_order;
- 	void *input_pg = NULL;
- 	void *output_pg = NULL;
-+	int ret = 0;
-+	int i;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+index ddd555942c73..03539e20f5c5 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7996/mcu.c
+@@ -2242,9 +2242,6 @@ mt7996_mcu_sta_mld_setup_tlv(struct mt7996_dev *dev, struct sk_buff *skb,
+ 		if (!link)
+ 			continue;
  
- 	if (copy_from_user(&args, user_args, sizeof(args)))
- 		return -EFAULT;
+-		if (!msta_link)
+-			continue;
+-
+ 		mld_setup_link->wcid = cpu_to_le16(msta_link->wcid.idx);
+ 		mld_setup_link->bss_idx = link->mt76.idx;
+ 		mld_setup_link++;
 -- 
 2.47.2
 
