@@ -1,90 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480C022B8BD;
-	Fri, 21 Mar 2025 18:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAD242052;
+	Sat, 22 Mar 2025 07:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742581500; cv=none; b=QvYnvj8K8KvdwJcK+3dZXSKnPVDwXjDAkgP6l2UWQcUrerhPU9bJXGRVMelxsIq4ZwEzIBtWihpAjzZfQHOCD+ydF7TwPrt9ohKIbxutGHzLQHBsASJzwKTXThWLnMYupXvh5ulES2DOWQ7DqlpEOX5qbyBZvTT2dxjooABqw3M=
+	t=1742629636; cv=none; b=aRCytsDBQ82h8r6nsE8VspB0rWTYT33wGcq0sqFHXhCrbioja8bq9WCHdGIcsPqsDKvrVBsW5dgcFPYlaDpOkuqDtIJGImsp4Va58e8jCbhvPoB5td1dgc5dPrLyv/rWd8dQdY7zXIzmf+8UpduqU3SY85RJ32y1fJdG3krpNPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742581500; c=relaxed/simple;
-	bh=tuPORlnJJGXXGYoBoU7VqjD4PIV9k+XGJ3BUeOaEKM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcCPw5U42UqYhc6x/VKTDvOglkj+gcG0Runz3qPOs1B6G2zl9i21pCSmRv0EqDQdscaj+QJV1p+7YSwBk2GUPu0xhNqNz7vCVslNklgdr8dSkmbsHGChKl8JUP/U0i6x+GOuxB1LhcA8vxQZP7Mb4uNDf6sHInX49swq8IGgjyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tggeLW+o; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742629636; c=relaxed/simple;
+	bh=UHZUiU7dX/pHyv2rf9ZLUJy55sZsJfVgQiY2q7zHZ4Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzbRJ9ppgsaQjt/s/l9NyDXw/mwEytuMjYpwvseXaCcQrogLxxtzfVYAtRi1bKIGng5zH2lbN9GchJDMXbmp0LCdRj0sFAQoDd7VxYPiBYPGoTZl+EwUuQUO6LqEAtRG5NPKe1gpApV3RoRSH5vewkIzdi/lMOhvWdTjILnuUcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lwja6jsP; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tggeLW+o"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 732D3C4CEE3;
-	Fri, 21 Mar 2025 18:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742581499;
-	bh=tuPORlnJJGXXGYoBoU7VqjD4PIV9k+XGJ3BUeOaEKM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tggeLW+o91EZTace/qoK//L/NIrtdgTkAihRQ3IXmS2e0uw9GBPPkfLmWFYZGmWaQ
-	 d1B0GPoJKftHzFMe8TAr4J/BA7qFKw8yZRNT72pLNlucCIDcMqCL37cJsaAoLBGvfr
-	 ciw579TF+/zD+mXRcVhIMLqkjxVNX2wMNMNkN5eSECl2ttXcO8JMzTeZKWSxJ/9Toi
-	 dROW4O3gPZMABAhWTctDH57jkobAdINnCCuWbRh1v5kalK3FjbzbxvSZeGEZwHBmN7
-	 Ug5/Ir84f56zwvrXxcVdAVo/QviYeczxNWTZW2wxIW3VqrYwwB3DonO9oaQxEZD5cg
-	 USI6swkDhuEyg==
-Date: Fri, 21 Mar 2025 18:24:58 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Dexuan Cui <decui@microsoft.com>,
-	Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] Drivers: hv: mshv: Prevent potential NULL
- dereference
-Message-ID: <Z92u-g59fWeMgwoJ@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
-References: <9fee7658-1981-48b1-b909-fb2b78894077@stanley.mountain>
- <38525f8a-823c-4a79-ac55-68a2ef569a85@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lwja6jsP"
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id vtYItzm9oIuduvtYLtKJNN; Sat, 22 Mar 2025 08:45:58 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1742629558;
+	bh=uUTkOo9pR0pRDuNpO1u/nY/LzT8p5BQ72XTrVx+PzRg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lwja6jsP0K9ctAIcLIPFCWAzjNXFLhgavOlijF0hQ8QlXi3BYwl529X2dTnmne593
+	 4xt9F1vw2orB8xd1SijYGg7qVb9kd4LkWGwruocfSj/U9ZtwxA6of80IW2tTXjAJQ6
+	 pJH/RFNMiwOGy3aieYGhwWidjSeyZqskcNMZvU2Gu9IahXywx5HouZNoepUSki8Qaw
+	 9zZ0JtfB1UY7Z5//Y4uZnj5s8jpuJKNxxGRE5tbp8OrmkF5URjyYLXgNk2BRvVKk0K
+	 F6BmXZGRIiKA+3YNRjlViUL68QxClyDv8dvc7WYYBH8u+J1LJQF4U9mj4al+ev7AhM
+	 zhU8CkAT3w1NA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 22 Mar 2025 08:45:58 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Oder Chiou <oder_chiou@realtek.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Bard Liao <bardliao@realtek.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: rt5665: Fix some error handling paths in rt5665_probe()
+Date: Sat, 22 Mar 2025 08:45:49 +0100
+Message-ID: <e3c2aa1b2fdfa646752d94f4af968630c0d58248.1742629525.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38525f8a-823c-4a79-ac55-68a2ef569a85@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 21, 2025 at 09:53:45AM -0700, Nuno Das Neves wrote:
-> On 3/21/2025 7:35 AM, Dan Carpenter wrote:
-> > Move the NULL check on "partition" before the dereference.
-> > 
-> > Fixes: f5288d14069b ("Drivers: hv: Introduce mshv_root module to expose /dev/mshv to VMMs")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/hv/mshv_synic.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/hv/mshv_synic.c b/drivers/hv/mshv_synic.c
-> > index a3daedd680ff..88949beb5e37 100644
-> > --- a/drivers/hv/mshv_synic.c
-> > +++ b/drivers/hv/mshv_synic.c
-> > @@ -151,13 +151,12 @@ static bool mshv_async_call_completion_isr(struct hv_message *msg)
-> >  	rcu_read_lock();
-> >  
-> >  	partition = mshv_partition_find(partition_id);
-> > -	partition->async_hypercall_status = async_msg->status;
-> > -
-> >  	if (unlikely(!partition)) {
-> >  		pr_debug("failed to find partition %llu\n", partition_id);
-> >  		goto unlock_out;
-> >  	}
-> >  
-> > +	partition->async_hypercall_status = async_msg->status;
-> >  	complete(&partition->async_hypercall);
-> >  
-> >  	handled = true;
-> 
-> Thanks for catching this one!
-> Wei could you please apply or squash this into the driver patch?
+Should an error occur after a successful regulator_bulk_enable() call,
+regulator_bulk_disable() should be called, as already done in the remove
+function.
 
-Thank you Dan. I squashed this fix to the original patch.
+Instead of adding an error handling path in the probe, switch from
+devm_regulator_bulk_get() to devm_regulator_bulk_get_enable() and
+simplify the remove function and some other places accordingly.
+
+Finally, add a missing const when defining rt5665_supply_names to please
+checkpatch and constify a few bytes.
+
+Fixes: 33ada14a26c8 ("ASoC: add rt5665 codec driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ sound/soc/codecs/rt5665.c | 24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
+
+diff --git a/sound/soc/codecs/rt5665.c b/sound/soc/codecs/rt5665.c
+index e0d1991cffdb..bcb6d7c6f301 100644
+--- a/sound/soc/codecs/rt5665.c
++++ b/sound/soc/codecs/rt5665.c
+@@ -31,9 +31,7 @@
+ #include "rl6231.h"
+ #include "rt5665.h"
+ 
+-#define RT5665_NUM_SUPPLIES 3
+-
+-static const char *rt5665_supply_names[RT5665_NUM_SUPPLIES] = {
++static const char * const rt5665_supply_names[] = {
+ 	"AVDD",
+ 	"MICVDD",
+ 	"VBAT",
+@@ -46,7 +44,6 @@ struct rt5665_priv {
+ 	struct gpio_desc *gpiod_ldo1_en;
+ 	struct gpio_desc *gpiod_reset;
+ 	struct snd_soc_jack *hs_jack;
+-	struct regulator_bulk_data supplies[RT5665_NUM_SUPPLIES];
+ 	struct delayed_work jack_detect_work;
+ 	struct delayed_work calibrate_work;
+ 	struct delayed_work jd_check_work;
+@@ -4471,8 +4468,6 @@ static void rt5665_remove(struct snd_soc_component *component)
+ 	struct rt5665_priv *rt5665 = snd_soc_component_get_drvdata(component);
+ 
+ 	regmap_write(rt5665->regmap, RT5665_RESET, 0);
+-
+-	regulator_bulk_disable(ARRAY_SIZE(rt5665->supplies), rt5665->supplies);
+ }
+ 
+ #ifdef CONFIG_PM
+@@ -4758,7 +4753,7 @@ static int rt5665_i2c_probe(struct i2c_client *i2c)
+ {
+ 	struct rt5665_platform_data *pdata = dev_get_platdata(&i2c->dev);
+ 	struct rt5665_priv *rt5665;
+-	int i, ret;
++	int ret;
+ 	unsigned int val;
+ 
+ 	rt5665 = devm_kzalloc(&i2c->dev, sizeof(struct rt5665_priv),
+@@ -4774,24 +4769,13 @@ static int rt5665_i2c_probe(struct i2c_client *i2c)
+ 	else
+ 		rt5665_parse_dt(rt5665, &i2c->dev);
+ 
+-	for (i = 0; i < ARRAY_SIZE(rt5665->supplies); i++)
+-		rt5665->supplies[i].supply = rt5665_supply_names[i];
+-
+-	ret = devm_regulator_bulk_get(&i2c->dev, ARRAY_SIZE(rt5665->supplies),
+-				      rt5665->supplies);
++	ret = devm_regulator_bulk_get_enable(&i2c->dev, ARRAY_SIZE(rt5665_supply_names),
++					     rt5665_supply_names);
+ 	if (ret != 0) {
+ 		dev_err(&i2c->dev, "Failed to request supplies: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	ret = regulator_bulk_enable(ARRAY_SIZE(rt5665->supplies),
+-				    rt5665->supplies);
+-	if (ret != 0) {
+-		dev_err(&i2c->dev, "Failed to enable supplies: %d\n", ret);
+-		return ret;
+-	}
+-
+-
+ 	rt5665->gpiod_ldo1_en = devm_gpiod_get_optional(&i2c->dev,
+ 							"realtek,ldo1-en",
+ 							GPIOD_OUT_HIGH);
+-- 
+2.49.0
+
