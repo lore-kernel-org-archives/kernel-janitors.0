@@ -1,95 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C19136E3F;
-	Sat, 22 Mar 2025 14:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15BE8837;
+	Sun, 23 Mar 2025 12:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742652529; cv=none; b=ZNNbun64xPAWfz3Z7bwhdoGvsgZTNFlJcqtC3rjatv1pcxWiVmeq94z4Hd9oVHIg3vc3M2FimN/rY8ICv65mi8hEwRtelhW5+xZgKVDPOLj2886ZjkQc9N5LfIyPQYlDSTjRPOEbfLWA5UXbY3R3q/3sXCb39V09MF4K8MbVGGE=
+	t=1742733488; cv=none; b=e8kB6EuFG4455dokc/wE5SLnuNzBHoiWJLwRIrngb1FusN8iQ9J1xTMc8ZLoJsNGE/S/AyqqZ+TKVcopaJxdV9iBlV/BnJCDg9Jwa2G+MkCU9c6ASjzm3eLgkLeWKKCZ7IL/t/uzDFtquqVhIaBH1IBema76V6csOW9JwbTza8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742652529; c=relaxed/simple;
-	bh=UPyBpCOWjm/FS1Xt3gE2s1PNYp+YG301nB1MfAKOL5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aA6GP7TVOcvVD73emBal1ltkmIxnYA/oEZjSDfOlfgk5ATRCHRJ65isgMbgAr0a24wGTBgS+a01cc4QnakEHUBCgKNJninXp5jIfXXcg07KWr+CzK55CX1w9jMHoikE+RUTwgZDL4nIhUS6A6Svsgt06Z03H/VJMxaZ58YdHMjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LtbQ2tGf; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LtbQ2tGf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5B1C4CEEF;
-	Sat, 22 Mar 2025 14:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742652529;
-	bh=UPyBpCOWjm/FS1Xt3gE2s1PNYp+YG301nB1MfAKOL5c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LtbQ2tGfS/qFX4RDMarzf6IaBFU5+4H4rKrRLtCsK7a3TMEE5mRCRwTn3ubnp4MLJ
-	 gv07XjN+7N0usk6S15rV+GmWiIgp5dsA5+KF67LQcKYlMuGm923p9ZRYLYP83jebG2
-	 O/jMvrwvzH7zKGLAreys/nNZ9p7xM5EQyowknbF6oXIVq9FQZ95KM5q9dETUx8C/N7
-	 E9/toNs59qgdypXEkQilDeZ/A0ETv3KQZXYVZX9VgfOsJG9TTY9/+/CMx1AIUTPoQY
-	 lBntJMyI5xxrsrm+SuOLf7rM897b2UIGbcM7zv+aM+FjVD3kFd8VgnQTqM3ufGEhxm
-	 sPCAgmPFKPKVw==
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2c239771aeaso1564282fac.0;
-        Sat, 22 Mar 2025 07:08:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVNbRxWGgbB/B674Pprcg4AWm68EoPx0fn6Yk/qsrnhEbzd9MbbwGDJgz1Pcul31+AqL4ozTkPpsnOdmhWF@vger.kernel.org, AJvYcCXBdLkGlDyOu8/LnAJoS3x+A3u25AWjgcxLc/+lK/tCZ46hvbTm0HHym4EB5aOwzXmm+POBSVVc6V0=@vger.kernel.org, AJvYcCXp2TpccaEl1nhfkPkdxik9Fy966xffVblGiCxRNOJq6lczL9+Dqg8qT0f1L/7JWDJKeVhCryj2v7Q2seswo3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWMGmTUFs1fS6GMX4TKvHqdvdEjNdJoGwsNIxkQ4QJ5WkVhMEI
-	zemIFYkwRvuqBqDqN5VhxlFRfs7NXNRviz3ycTtd5+BrH/Ju0RQeWg5vaI5yHz5rsTlDU2mT8dc
-	bGMj/8rI/6TZved68pD7BUF6j5XI=
-X-Google-Smtp-Source: AGHT+IES+M/gjJlLwL1WKnI+mUUdyNPBme5LxRjvL71HviRwsC4pon9Lk8wDI39I6mFqjecCjnMbVqB0GPd00BllLqE=
-X-Received: by 2002:a05:6870:2102:b0:2c1:4090:9263 with SMTP id
- 586e51a60fabf-2c78054a98dmr5431053fac.35.1742652528282; Sat, 22 Mar 2025
- 07:08:48 -0700 (PDT)
+	s=arc-20240116; t=1742733488; c=relaxed/simple;
+	bh=gA8XX+4Wy9hIS4lNmW/BtZEXbkmSjEyOc1jU+4viVgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j3rkgch4/qReyy5j8Vk7snuF5UQ3JjLgJiH2bND1Us/r326LZN7KI9Wfce48hH1ZYTTHB5bBO5Ce4QiVuHu05hjexlArf+ajQyV4dVovWk38rxWLvkiWtoFgR3tORNzWN3Nyb/XcmTYXm1lfMcIfo1COS/oJhjAIDEZrmqRo84k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-301493f461eso4171040a91.3;
+        Sun, 23 Mar 2025 05:38:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742733486; x=1743338286;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1HnWB9RWsVBWnpOBg5WEW3ASvl2XaM92u6YTY3vFQTs=;
+        b=rJS/6JTn9hFhtxbB5Dj571H0qOwVW9pbNmqbYISVOnfWBu7+Nhs5zDrLJ9dUqEJ4IS
+         fShaOsnQiZGBqZEZ/l/A9AIbIoYY5pH9Lap/ER4r6cOaCMRmzxcbns2HYaHvv1S1s/IH
+         qdKN8gpbPsZbsyxakpA2VjeRWgj3z1aassiIJSSM6PMbFwlw4NF46UUjniIxIvfdw7yS
+         /dwn2rpyfbVgIjefxtkn65t7SGg2fu9Uh4St1VJAbIN96QbpTxLNj3JS6ML31MOACzqN
+         gpjSYqBT6+se4A/sJuEITs8i+pG1YCOjuMHS+qKfSy6+ad1NprHof5OMwKXnF0LL3DSL
+         CyUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGsxH9hyjPhpqg7vHtAuvRao5UC3Qi45zWBF+OgddViCLsPoXRfMpb5zppgZQPHQd6udXPyzfZq3C+JmfDl8M=@vger.kernel.org, AJvYcCW39MoNU0L/z6C1UzwDn1EYKDdSliUu/bCKkI3bCAgazKzSmi7irJ8VVyUPExLqx4o50fuas1/aB2TmxMz6@vger.kernel.org, AJvYcCWm4i60D09tEZDTgGQTS42/zMcLgdVGXGCtegI6EHvG/W3co0K6s4tdjut68GzoHtje6OwKmz5LF6/w@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/F/ZPiUA5f5HvNaenep1FD/tQw3bJEbp7SvkxOj8zKt68PKtb
+	a9v2X0nPtMcVrGQjOtBX7B5Vz44iQvoRGK6cOpv0i0+olRI18mJK
+X-Gm-Gg: ASbGnct00aQP9Dewsv3QTPyhdhioFA6Sdfoe6Ds5jF58pBENoSxWsBIDTiFnsLwwz+c
+	JLRUwkABTHoEhuP8v4e/rtEN+WWDvSByEN4SDuqhAnZDkJPBCycSNUL8DKZhVROi0r+6qHylnCd
+	GpiNWhqwLbrimR/IsBNjI/51v7Z6Gb/fFE0UxORklolkSG4y9+Ii+rYMUm5L6eRAOewtbPmCAgl
+	h8sQm5VF3ahIDODymxd9lZDBBw0IV/kubag8rvV7m0EQzxLIcdZVec/1DudVzUyGvbPhwTPuqMS
+	gH5TfIpmaqRfdVFFkLwiU3mkdCRpmvGJmwf+mPzQNcXDcaEPspaGUJW6LCPEDzeXq9GjRMXIzH+
+	csmw=
+X-Google-Smtp-Source: AGHT+IHrLv6luYgfmwyuvu1tJl/93WMsciSS4yr4NNbis4gxiGP2i8SnSlB7c290PtylAh3xnlTSFA==
+X-Received: by 2002:a17:90b:3d8e:b0:2ff:5ec1:6c6a with SMTP id 98e67ed59e1d1-3030feaadb4mr17480277a91.18.1742733485859;
+        Sun, 23 Mar 2025 05:38:05 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3030f7e9d86sm5844767a91.37.2025.03.23.05.38.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 05:38:05 -0700 (PDT)
+Date: Sun, 23 Mar 2025 21:38:03 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] PCI: brcmstb: make const read-only arrays static
+Message-ID: <20250323123803.GG1902347@rocinante>
+References: <20250317143456.477901-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250319114324.791829-1-colin.i.king@gmail.com>
-In-Reply-To: <20250319114324.791829-1-colin.i.king@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 22 Mar 2025 15:08:28 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0j6W5j=t7MrXhwNCpgyzSU6CWvwmMMqkrcvwtBJcvbKzw@mail.gmail.com>
-X-Gm-Features: AQ5f1JogXZ8FhOFKdvPEe-JYR1bB-SdOrlk4tytB_UQTzadiW_CQulWHishPOe0
-Message-ID: <CAJZ5v0j6W5j=t7MrXhwNCpgyzSU6CWvwmMMqkrcvwtBJcvbKzw@mail.gmail.com>
-Subject: Re: [PATCH][next] PM: sleep: Fix bit masking operation
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Pavel Machek <pavel@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317143456.477901-1-colin.i.king@gmail.com>
 
-On Wed, Mar 19, 2025 at 12:44=E2=80=AFPM Colin Ian King <colin.i.king@gmail=
-.com> wrote:
->
-> The mask operation link->flags | DL_FLAG_PM_RUNTIME is always true which
-> is incorrect. The mask operation should be using the bit-wise &
-> operator. Fix this.
->
-> Fixes: bca84a7b93fd ("PM: sleep: Use DPM_FLAG_SMART_SUSPEND conditionally=
-")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/base/power/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index ad50018b8047..ac2a197c1234 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -1836,7 +1836,7 @@ static bool device_prepare_smart_suspend(struct dev=
-ice *dev)
->         idx =3D device_links_read_lock();
->
->         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_nod=
-e) {
-> -               if (!(link->flags | DL_FLAG_PM_RUNTIME))
-> +               if (!(link->flags & DL_FLAG_PM_RUNTIME))
->                         continue;
->
->                 if (!dev_pm_smart_suspend(link->supplier) &&
-> --
+Hello,
 
-Ouch, thanks for the fix!
+> Don't populate the const read-only arrays data and regs on the stack at
+> run time, instead make them static.
 
-Applied.
+Applied to controller/brcmstb, thank you!
+
+	Krzysztof
