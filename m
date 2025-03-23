@@ -1,40 +1,66 @@
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCBA27452;
-	Sun, 23 Mar 2025 18:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476E824B29
+	for <kernel-janitors@vger.kernel.org>; Sun, 23 Mar 2025 22:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742753432; cv=none; b=adWgIceu8LreT4apeq+q0044eoiRDL1fYBiPt21gwvw8C0+nyDzVFSVYWeVs/GLA25FxOGaA672UX2Iy/TryV1/lHtEWcQ03S9d5N4XQgXzQ5bf288cPFR7uKqFigxG2opQxywB8diMxt93igWPZualPDv2bXvOOzJEwWt6a7MQ=
+	t=1742767538; cv=none; b=iruOQvQbKAVw1uFNQyxwwumt85osQ2x8P+kl/FkJ1/Y+jXDhSaWJMCAteSjnSyLMEQDdBbiBfYhWrcK4nQOHLYeA6TDkUZu9WybEmxoMz6DwWdBS4t+Z14CSjK+27oCdE82ioSQwh9skMekBk7u1MKgJSVFDopf/0IWfyN/BeSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742753432; c=relaxed/simple;
-	bh=0SGq6OSE+vSulCHu5kl1qv4hinnRfdlAm6vhArLGlBo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sE+Ged5nvTp4SBL48Ay/D8k5pi6aDA3uWDSg2ienfr2HBe5AwZKdsyxRI8LyVMk/gxazXrRl15A8OjBwvk/23MhnUyNdf2qwfU/9p++nQbMoH1jVodlCYnV1H7cQu7Bkq7WabNd6sA17bamcqJK1x/9gm8+TOEH34Sodb4YYKt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OelJyDht; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1742767538; c=relaxed/simple;
+	bh=r/CoD5XmtMpwNiX0LLYeiQn36Tx+HgpAlWQZYih3lB8=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:References:Cc:
+	 In-Reply-To:Content-Type; b=TrVK7GXDYldGueLVOS7UkehwHfMyywFffIOCqxYKFGu3NF64TKiKXmn8cEUPrrZKbJ+2cCsklb/CQOIKGChpd8XLC8ZyK3YPNDPiyTCaZY18MXLuLRu/5BsZjpJqLZBwanFDbZwWRBjm+dqSpcyqRn16m1Ps7WGrYWCtYvpLN6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ncOoY0A+; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OelJyDht"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id wPdZtqcs4vQV0wPdctbi88; Sun, 23 Mar 2025 19:01:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1742752895;
-	bh=zp3UcKJhUjE7ySXeU2dEz0mIKPMzZc8r54esOzKpgeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=OelJyDhtUiXn/3ZG0LOI5TjhwxvoaXoK9D1LUxe7j9eMo7tyWD+Si2DSO2zHRbynE
-	 8E18tkmJ1GiiQuKPDzLThmDhtE6TTjrdNI1edhccNt6tPcfIN9Xmwr3O3UMyflNSYP
-	 mlxRUzsl5jps9W+KhAyT6AiVmkDkPH7fmeEE3mv/L5EtmPq7C1q84INnpvO6//bpdm
-	 cWI4ORMUWlw2FcMDY9foxevsA6WfP7rCkr7ChmR8+CyaSlqmip9jZr+SLNQTbUc9JN
-	 Pn6urrO6ViumWpAlyYxfRPfY7FIqe+/Kpu9jElZ/ItY2E3MRkICnAK4CjqYJ1h0euN
-	 1y//Erg9ytZVA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 23 Mar 2025 19:01:35 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <b212955e-eac6-4eff-b666-5a830e9d1537@wanadoo.fr>
-Date: Sun, 23 Mar 2025 19:01:29 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncOoY0A+"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so487678066b.3
+        for <kernel-janitors@vger.kernel.org>; Sun, 23 Mar 2025 15:05:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742767535; x=1743372335; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:organization
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qv3ehsHFVN2/X29UoY1qZEyzVsEZP4Z/AO70/pcJ8w4=;
+        b=ncOoY0A+GpRlcO0NAyg4NIrWMIkj6SF6ezTlyNI5Nu9SijtoNCW6pF7FY1qYUcMIYU
+         Xlse/96yOFynHTzpvyQSmNoie2suEnnCHWuWVnZ6INhZ7nKSCodWA2U4uPDSCrgCf6xA
+         mF8rIJ/ukSn9Nyu9h4esxeiuAFAbONjjBCBhyTlEdFCu0enm5Win1GvhDLo7MkbIgH2w
+         JMZbymOtZuE1Mwi2huj+0EVgAih+aU0iS2c/8+rbJmFyLalc4tRXSCUh25Q/+oK8g6gZ
+         5rpzdLY/aPDf6rEAQlFvX9UhvrqcMrh7pZLOQxbPbUKlk/60NTklyx/DpwJV0ZWm/f7M
+         aE4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742767535; x=1743372335;
+        h=content-transfer-encoding:in-reply-to:cc:organization
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qv3ehsHFVN2/X29UoY1qZEyzVsEZP4Z/AO70/pcJ8w4=;
+        b=pMTPBO9mqZC8agm4NO+etZlv6AY8/JBPZ6W+agk3sQEiIznGjrhxzxcx1iVBIK+Dvv
+         NUFZ1ZBuFpIqZAkhptSzjGXMFHSPgCqLViHpkd1PH6BN5jvCxbHXM43e4RLntiKTPRV3
+         VRSK9KDj0JVWHuLEBt+kQsfzGBebLpy4TJ04RaXRSwsYcFMDh1etDcniXngGLP8ZoM2E
+         r72ztHrwqmE3Fqt+ZnZHuRqLYt0iWwBmP36D+aWg7f85ecq9HqkJMAnmKkQhGlE3TFUT
+         Xs2omD/tUqYkPW7IhkI3yqclruK2DCexFGAfSlu7VSXY7EcZgPYnxvvHQcj35FhMjpwQ
+         02kg==
+X-Gm-Message-State: AOJu0YwLSaAQqM8n3ETXmstPlhotMvWDhBhv/hogfruXsUiDPLtu4yQ4
+	uE3XSuuAjL66HLatUzsHmymICTsxGpkPS+vqAZPjAfNViJ1+7w+cz7B5ew==
+X-Gm-Gg: ASbGnct6dyrAu5mA1l/6nYSspM1VyOHl96TlTMGz/5Km7azKFoJ0JtU3K6CQx+bM34l
+	UfW1uUtP97mbMVCAsVSC7W8ZZIV9pMb2VMhyV3IHVOoxTHhURvqV9dwgV5vw06VB53akyhY4nUY
+	aKL6xU4dxW6oFYfvGleIfksnCQiRhykYtXMAVmP1GKfmod8FbNy/TcgkhIxparUO5ULICnbYQ8P
+	agOKIVOJU8BTJhrjjO00gtPHWtQFADaNSI6UdEx8i9TxtvoRsAyvF8yHEzgoJflDlpcsRXFfGkW
+	p4KvEOjh1LyvnZ6vQmrtWRJXsPfUhVTy6IcboIuC7pPNg1+QGNBNxHzC
+X-Google-Smtp-Source: AGHT+IH4lXH1IfKm/hUQQZdXyRE72ooQ6ABreQDpalA6Nsar+cyYskvVWwPw50+7NacDzQ/y9Nv9iw==
+X-Received: by 2002:a17:907:3eaa:b0:ac1:fb27:d3a2 with SMTP id a640c23a62f3a-ac3f20b8790mr1094544566b.5.1742767535222;
+        Sun, 23 Mar 2025 15:05:35 -0700 (PDT)
+Received: from [127.0.0.1] ([193.252.113.11])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac6964189b3sm117362166b.3.2025.03.23.15.05.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Mar 2025 15:05:34 -0700 (PDT)
+From: Alexandre Ferrieux <alexandre.ferrieux@gmail.com>
+X-Google-Original-From: Alexandre Ferrieux <alexandre.ferrieux@orange.com>
+Message-ID: <e62f4dad-1eec-41e4-b65b-18f4da1865df@orange.com>
+Date: Sun, 23 Mar 2025 23:05:33 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,55 +68,41 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/xe/svm: fix dereferencing error pointer in
- drm_gpusvm_range_alloc()
-To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthew Brost <matthew.brost@intel.com>,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
- error27@gmail.com
-References: <20250323124907.3946370-1-harshit.m.mogalapalli@oracle.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250323124907.3946370-1-harshit.m.mogalapalli@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: [RFC BUG] Send queue accounting of AF_PACKET is always zero
+To: kernelnewbies <kernelnewbies@kernelnewbies.org>
+References: <19556e673b6.d391a14a1768755.6078484140038889868@mcqueen.au>
+ <2025030208-magnetism-talon-996b@gregkh>
+Content-Language: fr, en-US
+Organization: Orange
+Cc: kernel-janitors@vger.kernel.org
+In-Reply-To: <2025030208-magnetism-talon-996b@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le 23/03/2025 à 13:49, Harshit Mogalapalli a écrit :
-> xe_svm_range_alloc() returns ERR_PTR(-ENOMEM) on failure and there is a
-> dereference of "range" after that:
-> 
-> 	-->     range->gpusvm = gpusvm;
-> 
-> In xe_svm_range_alloc(), when memory allocation fails return NULL
-> instead to handle this situation.
-> 
-> Fixes: 99624bdff867 ("drm/gpusvm: Add support for GPU Shared Virtual Memory")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/all/adaef4dd-5866-48ca-bc22-4a1ddef20381@stanley.mountain/
-> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-> ---
-> This is based on static analysis and only compile tested.
-> ---
->   drivers/gpu/drm/xe/xe_svm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/xe/xe_svm.c b/drivers/gpu/drm/xe/xe_svm.c
-> index 52e04e7e343f..a79df8cf1f36 100644
-> --- a/drivers/gpu/drm/xe/xe_svm.c
-> +++ b/drivers/gpu/drm/xe/xe_svm.c
-> @@ -80,7 +80,7 @@ xe_svm_range_alloc(struct drm_gpusvm *gpusvm)
->   
->   	range = kzalloc(sizeof(*range), GFP_KERNEL);
->   	if (!range)
-> -		return ERR_PTR(-ENOMEM);
-> +		return NULL;
->   
->   	INIT_LIST_HEAD(&range->garbage_collector_link);
->   	xe_vm_get(gpusvm_to_vm(gpusvm));
+Hi,
 
-Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+When sending raw ethernet frames over an AF_PACKET/SOCK_RAW socket, "ss" always
+reports a empty send queue, even when it is obviously full of packets.
+
+The root cause is that packet_snd() never updates sk->sk_wmem_alloc, which is
+the counter used by "ss" for the send queue occupation. All other socket types
+end up calling something like:
+
+   refcount_add(SOME_SIZE, &sk->sk_wmem_alloc)
+
+Unfortunately, the way it is done is extremely varied across socket families, so
+it is not immediately obvious to a newbie where to add this increment, and
+associated decrement on skb free.
+
+I'd appreciate any insight on (1) perhaps why it is deemed unimportant to do
+send queue accounting for AF_PACKET; and (2) if it is just a bug, where the
+incr/decr should take place.
+
+Additionally, an explanation of "tpacket_snd()" vs "packet_snd()" would be very
+welcome, as the former does proper send queue accounting, while the latter doesn't.
+
+Thanks in advance,
+
+-Alex
+
+
