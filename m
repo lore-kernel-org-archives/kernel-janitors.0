@@ -1,73 +1,71 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417E325D91A
-	for <kernel-janitors@vger.kernel.org>; Mon, 24 Mar 2025 10:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB0225D91D
+	for <kernel-janitors@vger.kernel.org>; Mon, 24 Mar 2025 10:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742813495; cv=none; b=jf4MwXO2SvyPLb6k/PFmI923UeGNIEBz4VEmzAeu5KSeSTYPq2XJyyyy/QN0XbsvHn6M9nN5Jx8IyEnORv0AgsfVC/4bYUfi4aHsz8+w2V6wQXjcINQZHiPlsp3op4nRu5V2pcw2PkLLUIf69NjUUU3Tzw5SloXTQaf/4uNj54E=
+	t=1742813626; cv=none; b=O0nSPzhBgS9jMOHOyy9qXIDTuq8phveOqDQbrXS9+O6sSWkTSupMZThc8ObgWyiSzkl/n4w9c5ipgRnNS//jZOG6gvtXSxMvjyt4hm5X8XDXXMVyBTOMioYAgtP3LPPHXMxvx0vu1dRIAGzVMbhoV+hPgmtN5aJgJoyVfoa4xoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742813495; c=relaxed/simple;
-	bh=DcUNwbRdPnow83kHtle77XVYOEVPg7rrZhWsXAiAdvQ=;
+	s=arc-20240116; t=1742813626; c=relaxed/simple;
+	bh=KjVsYB/6NbKNMWPMw7dJEN7gZajXIZf6BXVWnnRlI4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=T3X6dSlBhIjSJItVvWxEoC47DOwMmLrQKs5xHX9LmzwObSHQPG5X9PU2IQgdqdHhYdNG07Xp7UjzazKxiZIle+iLkWTnFeT+I0ACoJd184awqIP261gkBequ+TiZ32m9U843ax/zY0QRxuv3v+JrFHp2R9B/b1ursmDUUzGEm3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t6Tsjqmr; arc=none smtp.client-ip=209.85.128.54
+	 Content-Disposition; b=GpikAH40jzCoTzotnyw8x/g8sa6jeWF/0pTNjyYo5IOMQD2Y+6orerWUzRwYtUo69iGSeS6qcysCtGvwPlW4Pwa1uIkYRMielo30G6O7ZSbM0+G8AzX8BG2eAB8IQYsDi9G0XFy1wqsLvJmXSYNj0WLifPFyBaEONxWyYxnY59U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u2gRqq4x; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t6Tsjqmr"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so27579185e9.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Mar 2025 03:51:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u2gRqq4x"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3914a5def6bso2478452f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 24 Mar 2025 03:53:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742813491; x=1743418291; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1742813623; x=1743418423; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9XBugaXb0XfXOq/Pw2aaFS10qYW8sYB+YovrYm1of0M=;
-        b=t6TsjqmraRQZ1DQ8ONd6zW7pki7uVKNfXUwsL437JhTlQwqIq0RMdRbyNy4xytvPEl
-         7oD41CupVEoD0yVlTN+zsc8lDK4JSZv03fEa5+YyTQECNbuIalkO8qgUidVKQ8XhrUjq
-         iWtf2yOs/xKPqby6UBGvZye3JN/RFVOpTHpp++r/ObWVy0T/5zqtBlLXT2sU5LQvIAaQ
-         9YrQc8qipWXkSlMOUMTv/Yxp7skz/IE+me6yF4s3M9SIgPOsm700JAY5gGsm2XORpbNd
-         DTtgSbybDr1T8zFKoS7NcXg6xD17e7tDcaPBS8OmNU8EiXT8qubAlBCljZwucTpnPWL0
-         WbCA==
+        bh=zRBBC5Y50DbrnY2KR5VRMIecYWoom7fg1aMey6lzMKw=;
+        b=u2gRqq4xM612zQdS3dWg6nQFyzVa10fpHoXTlO+kz3hITmqKAZlltof+qevYCZ1yxc
+         DV7eFO3UBTRQPVJoJX5GctNElfwrB/8r1X1KTQZLK0gOkm7bckrrVzotx6dINS/XVwnZ
+         SL38Bav8DEUU+4sfETBxHyFD6RnFeQU2NgogmtM45SvtDHtpVPlCUZ3BO21xaKS5v/ge
+         AFimaf+puDTnpaAH7gamOUoRo8sU2bZoPZ979FRnhrJyxskeaPQTBEka7QWQmPkPXwrX
+         socKWRgglXcGkyrVx74vBkV8gYLs1JDuyAyOXWrr1s6sl7m8TkdLdqOw7YQYQNGDIgfr
+         n48A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742813491; x=1743418291;
+        d=1e100.net; s=20230601; t=1742813623; x=1743418423;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9XBugaXb0XfXOq/Pw2aaFS10qYW8sYB+YovrYm1of0M=;
-        b=eRuS2ukeyhZrDhB6KW/FY1CwitS4HO2W1T9xkRpk0+Jpw3j2HalbjSAFihMCjsgniT
-         vExK7GFP1g3XKGgNt2gUYtouUlb1KQv759u2xE7KMPs1IYXc4MFzBz+o2qpgq2CSeOci
-         3zlxIwFbLqeD3mu/j9MH/LXXtKjnUF8xPykZPh72UUeqtAPqscX0G5bQyir322JTZmSS
-         1pjVgUQibXTLIWWhwlh9b+vRslmrsD4N2G7HjkLy5/Yz41VWFUuKOpgrfyxWoQS3s/Br
-         EMTaMruI0S8EIjP1SLIacITz2k4m45c39P7AmteBl2wbPXqEzXxKFU8sRnZfZCfByP7c
-         qk/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVCKv/AbgYeyPfGJpliqg0a7jX9/iE/wrXPgx+z516VxMvJsiUnPVVoisA+zY0jRhuoszeP+PWS+rUzy1thZYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ9rLgSK6PV+AWvQTT8xkhaYTFfH6RJ4M2dZxYslQuGLTlKFkr
-	MBlcGLP/a4UQanr1uMU0vuvzv72xrwB3/UMY04R/cl71nGOOpzxIoVZdNwUytOU=
-X-Gm-Gg: ASbGncsTih6MwJjn4tKfD/vvZGe5M7zIJrU0ual6NV2W2rssV0zvdsGdFLf6N9TWKBL
-	0AhLdR4KnDr4TAS3nJ2PNnub+521f4a0NHOjN1Nph5HmesX47Jm+7YLc1udH209NUG+3ovDCv/t
-	buMYZbFeqIjZm6+9KXdPAtogJWluOnKOwR9PKn5C3e9xfFTzYCh6q/S26OlKR4sjA3u2tAeWKOf
-	/tIs0vRnl1eUV/sRFBNCpU1L0L/AlqwJHcEOcRy92n+QG/cXMDuoDnee6kcZNUEOUCHVLQW5oGp
-	HKi3m/cVXlAoUeiIwm0Wccr0X2bVuIeEjKJntGskoJtR04eRwg==
-X-Google-Smtp-Source: AGHT+IExcAE5hR9WRBPjbbJe1A3tT2LgZRn6kn5d7CfZGvAe25QU3/LL5pLa+ilmFxLgUVsdLqKbPg==
-X-Received: by 2002:a5d:64cb:0:b0:391:42f2:5c7b with SMTP id ffacd0b85a97d-3997f8fea8bmr12460729f8f.16.1742813491455;
-        Mon, 24 Mar 2025 03:51:31 -0700 (PDT)
+        bh=zRBBC5Y50DbrnY2KR5VRMIecYWoom7fg1aMey6lzMKw=;
+        b=hBaL7B7HroWlRTL6hDskRQvvoVcBraOKJGBeR44WEvV5VGR1Yf8YkXxry47ZdITo0a
+         k+wkU9prGKEgOhVpNq5Ll7UFyqbs0bH9ZZpu9axKBN766xFp3uJvqlWkGwApxnYvYGkM
+         Q3G4k1aS3HmuRLVELdVWUtz0ShHhUeX5cZky121DvALayzJVBmvw+VqZfmH0acyj1WE1
+         SJ17QXlsOsJkQuSiVnIrVmt7wxsaIWJW2KM2w9yEGKOkhjkWO4yNCvixAiTGmnvOdnUL
+         /0G/1TylL6vSGd4CEp3gm2zDNICeVaI7jH+6+sECz4oT07NIOzxWe/xPSXbhmfy1CmIn
+         AggQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiM19/sru9fZ0ZuddeLrHlsI+HacKuWCsXgxXfPo/fhH/STixT1m+FsDXATjrWlBgASqTUUee2s5JHixTw734=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwocuYUruhiKJwy/L559AsyCs9IOueHF2qDsnC+imz1SM37pKH0
+	Q0w1ocZb8xWLquNy9lcatOnRlrCRGcH2LOIea/U6l/matp7jdjegN/+g1XPbVFA=
+X-Gm-Gg: ASbGncuS8xAOcdryS359Th2aCFme2kyJyyZB9VzNC/P9zNZGxMabZjfOhU/3fMCybjp
+	DS+XE5IJ9rs+O9OZok6TVWtrsrndoeT6W+LT558a4xTM98Lid4nCftIX0NoL97h8o8fk3628be5
+	R/rF2vWC+tE+oJNa00uerB0SWc012kRkmWnsZhqYVNf8zstk5Zhrs3ABvkTzM74G+TQ2HRXqRzD
+	HXxWNC0Nrb832HlgJ5XY9e8ENoETut1BHhbeVJDwHMyRoU8XvUGzzmlELWAOl+eBeRBMtFsamIh
+	AZ2vKl9H9KtrORWyJPdU/NUGOFQ1DYOMdo6YbRXbPP+GnkWjNw==
+X-Google-Smtp-Source: AGHT+IG6+X0RvQWAACJrJUGE18q5oXGZ8dddeugBl2ClpDLyua8TAmKdOcrERT6mZXU5Gy8dfa/gpw==
+X-Received: by 2002:a5d:588b:0:b0:38d:de45:bf98 with SMTP id ffacd0b85a97d-3997f8ef175mr10199407f8f.8.1742813622782;
+        Mon, 24 Mar 2025 03:53:42 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9e65casm10745004f8f.69.2025.03.24.03.51.30
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9b260fsm10435247f8f.43.2025.03.24.03.53.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 03:51:30 -0700 (PDT)
-Date: Mon, 24 Mar 2025 13:51:28 +0300
+        Mon, 24 Mar 2025 03:53:42 -0700 (PDT)
+Date: Mon, 24 Mar 2025 13:53:39 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>,
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Pankaj Gupta <pankaj.gupta@amd.com>, kvm@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] KVM: x86: Check that the high 32bits are clear in
- kvm_arch_vcpu_ioctl_run()
-Message-ID: <ec25aad1-113e-4c6e-8941-43d432251398@stanley.mountain>
+Subject: [PATCH] KVM: x86: clean up a return
+Message-ID: <7604cbbf-15e6-45a8-afec-cf5be46c2924@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,43 +76,27 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "kvm_run->kvm_valid_regs" and "kvm_run->kvm_dirty_regs" variables are
-u64 type.  We are only using the lowest 3 bits but we want to ensure that
-the users are not passing invalid bits so that we can use the remaining
-bits in the future.
+Returning a literal X86EMUL_CONTINUE is slightly clearer than returning
+rc.
 
-However "sync_valid_fields" and kvm_sync_valid_fields() are u32 type so
-the check only ensures that the lower 32 bits are clear.  Fix this by
-changing the types to u64.
-
-Fixes: 74c1807f6c4f ("KVM: x86: block KVM_CAP_SYNC_REGS if guest state is protected")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- arch/x86/kvm/x86.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/x86.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c841817a914a..c734ec0d809b 100644
+index c734ec0d809b..3e963aeb839e 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -4597,7 +4597,7 @@ static bool kvm_is_vm_type_supported(unsigned long type)
- 	return type < 32 && (kvm_caps.supported_vm_types & BIT(type));
- }
+@@ -7998,7 +7998,7 @@ static int emulator_read_write(struct x86_emulate_ctxt *ctxt,
+ 		return rc;
  
--static inline u32 kvm_sync_valid_fields(struct kvm *kvm)
-+static inline u64 kvm_sync_valid_fields(struct kvm *kvm)
- {
- 	return kvm && kvm->arch.has_protected_state ? 0 : KVM_SYNC_X86_VALID_FIELDS;
- }
-@@ -11492,7 +11492,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
- {
- 	struct kvm_queued_exception *ex = &vcpu->arch.exception;
- 	struct kvm_run *kvm_run = vcpu->run;
--	u32 sync_valid_fields;
-+	u64 sync_valid_fields;
- 	int r;
+ 	if (!vcpu->mmio_nr_fragments)
+-		return rc;
++		return X86EMUL_CONTINUE;
  
- 	r = kvm_mmu_post_init_vm(vcpu->kvm);
+ 	gpa = vcpu->mmio_fragments[0].gpa;
+ 
 -- 
 2.47.2
 
