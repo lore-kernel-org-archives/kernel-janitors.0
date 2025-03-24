@@ -1,102 +1,161 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB0225D91D
-	for <kernel-janitors@vger.kernel.org>; Mon, 24 Mar 2025 10:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1B11DFED;
+	Mon, 24 Mar 2025 12:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742813626; cv=none; b=O0nSPzhBgS9jMOHOyy9qXIDTuq8phveOqDQbrXS9+O6sSWkTSupMZThc8ObgWyiSzkl/n4w9c5ipgRnNS//jZOG6gvtXSxMvjyt4hm5X8XDXXMVyBTOMioYAgtP3LPPHXMxvx0vu1dRIAGzVMbhoV+hPgmtN5aJgJoyVfoa4xoE=
+	t=1742819444; cv=none; b=J9cPETlUKjWXox2CEcZplJTuC8kziPprrzdqpmm6/WE2wa7s1qqxWgW1jGCEHRZrGFh50SfIDQHqtGs5d5lW5BqyYOeqQXRRLEj3+u26rhfpn5pOue8i8N4qM0Ij4vNnwLS3KixGqWzxXLCZ8jCoHHCJUIRkOJz1gN7W+6uuKMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742813626; c=relaxed/simple;
-	bh=KjVsYB/6NbKNMWPMw7dJEN7gZajXIZf6BXVWnnRlI4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GpikAH40jzCoTzotnyw8x/g8sa6jeWF/0pTNjyYo5IOMQD2Y+6orerWUzRwYtUo69iGSeS6qcysCtGvwPlW4Pwa1uIkYRMielo30G6O7ZSbM0+G8AzX8BG2eAB8IQYsDi9G0XFy1wqsLvJmXSYNj0WLifPFyBaEONxWyYxnY59U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u2gRqq4x; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742819444; c=relaxed/simple;
+	bh=fwimp8HseB9UwFHpwn7n1zBpMN61kwe5isolz4he/D8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U+Ogc2P7wrKIwIeyTAoukQxpBu0xfsUAhBgZfsS4tfQw6kIVxEmV0Ya+sMfPZMC7Gsy3jAI6lHeTKsc1MnOj615sxOpjUBjoU02JDCnxjbI8L4d6WFS+zvDaurGda3MF51NYDXT/+8yYJkikw+Q4WaY4ahKIw5MExJgXma/0Ez0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dOZUti1m; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u2gRqq4x"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3914a5def6bso2478452f8f.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 24 Mar 2025 03:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742813623; x=1743418423; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zRBBC5Y50DbrnY2KR5VRMIecYWoom7fg1aMey6lzMKw=;
-        b=u2gRqq4xM612zQdS3dWg6nQFyzVa10fpHoXTlO+kz3hITmqKAZlltof+qevYCZ1yxc
-         DV7eFO3UBTRQPVJoJX5GctNElfwrB/8r1X1KTQZLK0gOkm7bckrrVzotx6dINS/XVwnZ
-         SL38Bav8DEUU+4sfETBxHyFD6RnFeQU2NgogmtM45SvtDHtpVPlCUZ3BO21xaKS5v/ge
-         AFimaf+puDTnpaAH7gamOUoRo8sU2bZoPZ979FRnhrJyxskeaPQTBEka7QWQmPkPXwrX
-         socKWRgglXcGkyrVx74vBkV8gYLs1JDuyAyOXWrr1s6sl7m8TkdLdqOw7YQYQNGDIgfr
-         n48A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742813623; x=1743418423;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zRBBC5Y50DbrnY2KR5VRMIecYWoom7fg1aMey6lzMKw=;
-        b=hBaL7B7HroWlRTL6hDskRQvvoVcBraOKJGBeR44WEvV5VGR1Yf8YkXxry47ZdITo0a
-         k+wkU9prGKEgOhVpNq5Ll7UFyqbs0bH9ZZpu9axKBN766xFp3uJvqlWkGwApxnYvYGkM
-         Q3G4k1aS3HmuRLVELdVWUtz0ShHhUeX5cZky121DvALayzJVBmvw+VqZfmH0acyj1WE1
-         SJ17QXlsOsJkQuSiVnIrVmt7wxsaIWJW2KM2w9yEGKOkhjkWO4yNCvixAiTGmnvOdnUL
-         /0G/1TylL6vSGd4CEp3gm2zDNICeVaI7jH+6+sECz4oT07NIOzxWe/xPSXbhmfy1CmIn
-         AggQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiM19/sru9fZ0ZuddeLrHlsI+HacKuWCsXgxXfPo/fhH/STixT1m+FsDXATjrWlBgASqTUUee2s5JHixTw734=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwocuYUruhiKJwy/L559AsyCs9IOueHF2qDsnC+imz1SM37pKH0
-	Q0w1ocZb8xWLquNy9lcatOnRlrCRGcH2LOIea/U6l/matp7jdjegN/+g1XPbVFA=
-X-Gm-Gg: ASbGncuS8xAOcdryS359Th2aCFme2kyJyyZB9VzNC/P9zNZGxMabZjfOhU/3fMCybjp
-	DS+XE5IJ9rs+O9OZok6TVWtrsrndoeT6W+LT558a4xTM98Lid4nCftIX0NoL97h8o8fk3628be5
-	R/rF2vWC+tE+oJNa00uerB0SWc012kRkmWnsZhqYVNf8zstk5Zhrs3ABvkTzM74G+TQ2HRXqRzD
-	HXxWNC0Nrb832HlgJ5XY9e8ENoETut1BHhbeVJDwHMyRoU8XvUGzzmlELWAOl+eBeRBMtFsamIh
-	AZ2vKl9H9KtrORWyJPdU/NUGOFQ1DYOMdo6YbRXbPP+GnkWjNw==
-X-Google-Smtp-Source: AGHT+IG6+X0RvQWAACJrJUGE18q5oXGZ8dddeugBl2ClpDLyua8TAmKdOcrERT6mZXU5Gy8dfa/gpw==
-X-Received: by 2002:a5d:588b:0:b0:38d:de45:bf98 with SMTP id ffacd0b85a97d-3997f8ef175mr10199407f8f.8.1742813622782;
-        Mon, 24 Mar 2025 03:53:42 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9b260fsm10435247f8f.43.2025.03.24.03.53.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 03:53:42 -0700 (PDT)
-Date: Mon, 24 Mar 2025 13:53:39 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] KVM: x86: clean up a return
-Message-ID: <7604cbbf-15e6-45a8-afec-cf5be46c2924@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dOZUti1m"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1742819426; x=1743424226; i=markus.elfring@web.de;
+	bh=rEc55otJf7ICHqncJghVecmxsSzuMVTiFLZWCZNGMhU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dOZUti1mOauygq02eBbZVYKvluyQZkNV411tWE/zylGK3jVjNS3xBo2CgSMcaekE
+	 lacXA0kOSvpPNJ9lBt/WqD40/Fair9hngzFZ111XUuFNdosvC+DJ8nhDtkDlOiRFX
+	 FUl/kraIQ2VrojgN/euMb7emLq/Cvu80VKYiEEZWRKpTwju9bW/8WswvprT30r/CU
+	 GJ5dIYqzOJRXz+WHP74K2a8Q4s3NNSoFIyH+HKcUjc4UcLOMck/8+I4RVyIHqszkU
+	 ecfuk0QQqIoKzl7bpr+0DIJALw9w9iao0RvlaKwWEdpzP0Dwapxz9M0VwW8d1On8K
+	 7OLObY2Cb8sdnm4UiA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.33]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzCEB-1tAcny3Y1b-00wEH6; Mon, 24
+ Mar 2025 13:30:25 +0100
+Message-ID: <40a0ddb2-a2dc-4637-a899-65b84065032b@web.de>
+Date: Mon, 24 Mar 2025 13:30:24 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v3] mei: Improve exception handling in mei_cl_irq_read_msg()
+To: kernel-janitors@vger.kernel.org,
+ Alexander Usyskin <alexander.usyskin@intel.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tomas Winkler <tomas.winkler@intel.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <00589154-00ac-4ed5-2a37-60b3c6f6c523@web.de>
+ <b7b6db19-055e-ace8-da37-24b4335e93b2@web.de>
+ <MN2PR11MB40930A824DF68F96A93E1B7FE5859@MN2PR11MB4093.namprd11.prod.outlook.com>
+ <df3ce733-955b-45f3-98bd-04ddb2200eca@web.de>
+ <CY5PR11MB6366D07A7F302780A87160E6EDCB2@CY5PR11MB6366.namprd11.prod.outlook.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CY5PR11MB6366D07A7F302780A87160E6EDCB2@CY5PR11MB6366.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oYYaUm0Hjzq9rr1Prs6gbeOzoVeO8auNDeOvHd8eS/g88fO3NLT
+ qlzYAcUnP+Hgyiql+tSUJwVAYj55QpbsYJ+YkMMV8nmAK3KGoUxaZe8hzWnLs4lcuONzfY3
+ HVCzxlWFFU/YPOUXDhuv1YDkSEklurYIoX588pFhm6WoPFJtnLh9FEh4q32VpqNE2bS8nLY
+ nbjKxNI5DbPhS1LVyP8Hg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ybipT1OztxQ=;1HSNSUDbDwk97whTFPLjzBeRR05
+ TMm3V9CSwlbB/NQ04y1Ot/sTP1/bDKdeSDHfNh2lyw16Njdbl2b6WnZG/a9QPkfp0/nIkQf8S
+ yQvMoiQG6GvO8W2pQ6f0/xqVdNV0mn+YErYFPtWfoyJwkF8MtcGur0AaAu9P4Xem4U7AgRt4/
+ Ofv+rGMPKdSGuxRX4NzjmNVoakhJsgUX+Bn/HZ4CD7FyJN+HixJLOy/XKjis6QrTp5pp9mf3p
+ 7DOBaW4/7qPh/786ep94tpR6ooQuNe1KwYLBD+rJbeKtWU1XIoLwRDegTUV/ePEB5ScDlvGB2
+ gm0gTYTVooJwsNQOZittHTPZViVqaups9123++7dzMAMkfzBO2UCkviJMj/6P+E51J+zVPCWl
+ Xrim8o2feea/hiAvIOrmGthNT36bfe/PgAF5eCB+InXzOJrTUmOGUij3pAY4YUfPZANaytZY1
+ N2m4grtdjcI368MzOW90PIGWRaT/q5Os7zXAdSS5PSN3HROApWaHyezaQCsX2yLWH1Qs16X7A
+ 5eg+UFvXAXSeUFKdSyR7tWw7fAtAfkDWRanyqF1dujbzD5zuDTwX78xUCpJApKMrHF+qEfoFQ
+ +NpUBh6GbNDfLzF21O5+MoReycfzVeWNGNZD+P7s5LaZQ0P8UNS7np4Elq4e9otjdLpfdMRLJ
+ 3ViJev7ArNB1PyGUnHUD0K6W3GB8TjQKT+yIWuW9/s2xfSzlDQ9BFyYgN3JsQQLVK4PWfOGw6
+ QvfblnKBEbzMykveAoBvS92PGDGRJTQQ8qn9mpQhAYGmjQ6Zv/jsPSQCaK/rvnFmKUBmfBy82
+ PZ1IYVYjAU+7Q5rE4RKpOC/3h6zRBhps7D/i2Eh9GDQhHbkHdQmwDUE9seGnxKye3oeC6Kw1i
+ NoOcNW1YNtxNyM6AAuEolGELyNQI3zNLKUbxi0oyuxs+LiBmGCV0yxc3DX9UBvUUQgBBf/H1I
+ Hbt+SdPCLBMHIfJxenzfmICwwkWZ34Cj50QRvBqOgiUGc4/MeAm9i6waYc3M/6pxSxerPT/qz
+ 6htkPat1UD2im+ODB3zisBGUKW5TxKHwtdva9y1nJH1hDNXgwKSyPCrlRIEqsD6tt/w1SBBM7
+ XCplEXHOzoT3EhmwPi1sETM8j4Vbl0cj/SmcoqOwujkY6hDbkkwUHAHjmjBzls1KVmtq1UHBG
+ y+uppdySMXjTVubmqI1KX4FzVjYjxmZUnsOjMPY6m46anHvLm+U4Mu5qJzrsEJy2WzmmD60Mc
+ /NCbE10b/a3ch4i7kKVnoVUr4uv+ZaKJRitObEapghTD7m7UKIir0h6zRJUGh4M9ykgUojEXB
+ zg1/m4GJGo3AKmX0cc++OvoK5C7EBq3pxSkM7LSmLj3SFOmfxyM7Ob44IySaTRskLHKubwC3m
+ Qe+MysPSJvMb4qNQdgb2qn3va1zskPIv2BErt4HvHjIM8cqXT+1NCXL6QkFEc4DVfIDKv9ME3
+ 7j03QZ0e0ovjHPFMWGlHkAIMI4WeZLkYsEnFaBeAu8ttmuBeiFoXPqVCDhu7l4lwFNKXfYg==
 
-Returning a literal X86EMUL_CONTINUE is slightly clearer than returning
-rc.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 24 Mar 2025 13:05:12 +0100
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- arch/x86/kvm/x86.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The label =E2=80=9Cdiscard=E2=80=9D was used to jump to another pointer ch=
+eck despite of
+the detail in the implementation of the function =E2=80=9Cmei_cl_irq_read_=
+msg=E2=80=9D
+that it was determined already that a corresponding variable contained
+a null pointer.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index c734ec0d809b..3e963aeb839e 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7998,7 +7998,7 @@ static int emulator_read_write(struct x86_emulate_ctxt *ctxt,
- 		return rc;
- 
- 	if (!vcpu->mmio_nr_fragments)
--		return rc;
-+		return X86EMUL_CONTINUE;
- 
- 	gpa = vcpu->mmio_fragments[0].gpa;
- 
--- 
-2.47.2
+* Thus use an additional label instead.
+
+* Delete a redundant check.
+
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+V3:
+The label selection was adjusted according to the naming preferences
+of Alexander Usyskin.
+https://lore.kernel.org/cocci/CY5PR11MB6366D07A7F302780A87160E6EDCB2@CY5PR=
+11MB6366.namprd11.prod.outlook.com/
+
+V2:
+* The summary phrase was adjusted a bit.
+
+* The Fixes tags were omitted.
+
+* The change suggestion was rebased on source files of
+  the software =E2=80=9CLinux next-20250228=E2=80=9D.
+
+
+ drivers/misc/mei/interrupt.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/misc/mei/interrupt.c b/drivers/misc/mei/interrupt.c
+index b09b79fedaba..78a01b402ea4 100644
+=2D-- a/drivers/misc/mei/interrupt.c
++++ b/drivers/misc/mei/interrupt.c
+@@ -116,11 +116,11 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+ 	if (!cb) {
+ 		if (!mei_cl_is_fixed_address(cl)) {
+ 			cl_err(dev, cl, "pending read cb not found\n");
+-			goto discard;
++			goto discard_nocb;
+ 		}
+ 		cb =3D mei_cl_alloc_cb(cl, mei_cl_mtu(cl), MEI_FOP_READ, cl->fp);
+ 		if (!cb)
+-			goto discard;
++			goto discard_nocb;
+ 		list_add_tail(&cb->list, &cl->rd_pending);
+ 	}
+
+@@ -236,8 +236,8 @@ static int mei_cl_irq_read_msg(struct mei_cl *cl,
+ 	return 0;
+
+ discard:
+-	if (cb)
+-		list_move_tail(&cb->list, cmpl_list);
++	list_move_tail(&cb->list, cmpl_list);
++discard_nocb:
+ 	mei_irq_discard_msg(dev, mei_hdr, length);
+ 	return 0;
+ }
+=2D-
+2.49.0
 
