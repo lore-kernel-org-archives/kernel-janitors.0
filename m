@@ -1,81 +1,69 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16009264A82;
-	Mon, 24 Mar 2025 17:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A67C13AA3C
+	for <kernel-janitors@vger.kernel.org>; Tue, 25 Mar 2025 01:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742838001; cv=none; b=lhctGcuV+HejKwW6Mrah6A0h5dp53ALVy5jbAwf6jjiDdp7Md3Ux46wkn/K2lT48bMOJli2T7mYIJ/Bpj+wEIz7B3+gDWXNlJYXWdMTJLW2BA3AxM6VWWxMPgUmmkLWndcfJ8hVarh/OZHRpVMxadNQFgog1nsrtNqNmVSd4nco=
+	t=1742866429; cv=none; b=WNSHrOBGdcdzXMBtMiUAnq4+3h8zMD9vohridnMhyg1IioR8w2ZvCgF5a7F6W0KpUEHcdDRDYAF2IoCTEwv+wMRQiOBeIuExZW3vEfhjLrzdQT9FORnN/7V3ZLpy/5H63M2yP23SdoPwOLIt7M6EzkdnQJ4ABFvCN+mMnCWZL40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742838001; c=relaxed/simple;
-	bh=0h3fEpcG2h6vwvSoH1vLGxdZ+ohIYB6B1qTUxw1rpi4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=CeoR4e+ZYbgFvEuQDpS5m/001A5yL3HL+SCXNCFwZcVHOCIXc/dx2/aNbWJnAPhzuHEbSz3pos1xFeUlIMMyI6dtvIsxziEibC+7z/dQrSCyftC3DlWnKDn7Qit61LAWUwkUrvNVLE5FNrpTODPJ+11qSnKHwPPC2inA0i7Zoyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZAE83rU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742866429; c=relaxed/simple;
+	bh=ntUEVsSD2dBd9PjmRGgfmtLZCpmt6tlv84fv+DULk4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sYsDl06IHxo90HfmB/iNOp80QRaQyxqci66ayNbXjjSAnpVGr+/cOpTHrJ4Z4xLl426pSrNK1iafl3C5sypas8iD5CfYVGXBTuF4qMuK5oB24KbgvaqTFhVPaHUNqd2c5UI6aqHiqv+rO6mKIZTH93fSGSBp8xRaYVun5B4O3M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w/z1pPlJ; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZAE83rU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0013C4CEDD;
-	Mon, 24 Mar 2025 17:40:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742838000;
-	bh=0h3fEpcG2h6vwvSoH1vLGxdZ+ohIYB6B1qTUxw1rpi4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VZAE83rU2ecbwSpVIYvv4e8JplIj11RHcuiKPpFnc/EscujBHB1xwEoqadeA/gSMu
-	 gF7o/LcKPUDksoAWvIC7N7r5fqLb2Lao8vr2k1iV9af/hCFciuzOOP0Dy3OQWqG1XM
-	 J1gqJQa7hj6qlS7dOsv6fEjWUW/qcLkziUaNK1zp7yNrrQy79ek33QuOTZgg5Tnwph
-	 /tSV5tPQs8hNY4CfQ2wsMWA0MGQNi5u48Kr2COVP2gQKbLSZBuLQ91RFCYT/RUQanG
-	 aRN4k8zgJLRwZNr6SOhDVTaq9+1vJBlaIN4bazM0TNJRoO3YA71tm4sJi1u8gaM+M+
-	 of1yLauXpYNFg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 344CD380664D;
-	Mon, 24 Mar 2025 17:40:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w/z1pPlJ"
+Message-ID: <8f20cfb0-3257-430f-8660-016f10f86c7d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1742866424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ntUEVsSD2dBd9PjmRGgfmtLZCpmt6tlv84fv+DULk4U=;
+	b=w/z1pPlJa12AAbZ8a+Kn3gV/PMDAmNirV+LZ+cEdqwIzaL8C9NQ0potDTdCsmiyhxtU49c
+	yuzfEdWRdWg7Ze04Xgaljc97jHxTYBP6FX+7VNzSU6f80+l6Oafsma+FwC6Eo2ytq+NYek
+	wY7ugz+0KewGtQYKYcsTUv5EY+FoauA=
+Date: Tue, 25 Mar 2025 09:33:01 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH] workqueue: Fix incorrect error return value in
+ apply_workqueue_attrs_locked
+To: Markus Elfring <Markus.Elfring@web.de>, Ye Liu <liuye@kylinos.cn>,
+ kernel-janitors@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Lai Jiangshan <jiangshanlai@gmail.com>
+References: <20250324090748.753195-1-ye.liu@linux.dev>
+ <32e08068-164b-4642-aedb-3c7a1658406f@web.de>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <32e08068-164b-4642-aedb-3c7a1658406f@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] MAINTAINERS: adjust the file entry in INTEL PMC CORE
- DRIVER
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174283803703.4111679.16944875339662746816.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Mar 2025 17:40:37 +0000
-References: <20250317092717.322862-1-lukas.bulwahn@redhat.com>
-In-Reply-To: <20250317092717.322862-1-lukas.bulwahn@redhat.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: irenic.rajneesh@gmail.com, david.e.box@intel.com, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, chao.qin@intel.com,
- yong.liang.choong@linux.intel.com, kuba@kernel.org, netdev@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, lukas.bulwahn@redhat.com
-
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 17 Mar 2025 10:27:17 +0100 you wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit 7e2f7e25f6ff ("arch: x86: add IPC mailbox accessor function and add
-> SoC register access") adds a new file entry referring to the non-existent
-> file linux/platform_data/x86/intel_pmc_ipc.h in section INTEL PMC CORE
-> DRIVER rather than referring to the file
-> include/linux/platform_data/x86/intel_pmc_ipc.h added with this commit.
-> Note that it was missing 'include' in the beginning.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next] MAINTAINERS: adjust the file entry in INTEL PMC CORE DRIVER
-    https://git.kernel.org/netdev/net-next/c/fd88253605a4
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+X-Migadu-Flow: FLOW_OUT
 
 
+在 2025/3/25 00:10, Markus Elfring 写道:
+> …
+>> This patch ensures …
+> See also:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14#n94
+
+Thanks for your feedback. I'll update the description accordingly and submit
+a revised patch. Do you have any other suggestions for this patch?
+Is it worth submitting?                                                     
+
+Thanks，
+Ye Liu
+
+
+> Regards,
+> Markus
