@@ -1,36 +1,37 @@
 Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986EA14AA9
-	for <kernel-janitors@vger.kernel.org>; Sat, 29 Mar 2025 07:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB5A179A7
+	for <kernel-janitors@vger.kernel.org>; Sat, 29 Mar 2025 07:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743234434; cv=none; b=gv8+PWmkbwLedyowvmkEQeksmSqG4V79OhHltveUa7vXCjhATdVFxDDVWssOxiByu3OnH2qyo9Jup/TgGkDOnDaEYK43Dti1uzSEWjUcujTw0pT/ve4nI7NyuOF2jkXJO8bn4EGyFhDgw5fTeZSk1GO8vKT+xnibjftHuacuDIY=
+	t=1743234900; cv=none; b=cdOQs7+FWgNlPgsno3YiH1fNbcW3DVLTkZsv0zCjIFotFD2XNS4Ghl/25Boo/Ct3GjLW7QYYeqz67VxPiv6EV7tdkVjNaZkzDGTiZt5RnIt5ucEPvdWTQswXa7QOvtXuE//KrNHb0AX0bWlHCQVy9NSBAgrp8SQT4tpMN7ASNvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743234434; c=relaxed/simple;
-	bh=KUq+S/t4WrAFvMZFqMNpOggywnaeM8gzImkObNF9H1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FuQ1C5SVPJiB6LJvYjBV1+QZicWIwIC2w/nsP69v4gT+s04WnHqNHkojyBLjv27ehHMOG0FB1vLJ/y2ehnoEkgubd+J7HSfCM2UXuEBhgYsnT1eb3J1t/NYYbPH1DG99vZkG22Oq9JStFfAYyz80OYnHhDNAVkIuAKelA7ZUzMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gy4O+eYw; arc=none smtp.client-ip=80.12.242.25
+	s=arc-20240116; t=1743234900; c=relaxed/simple;
+	bh=duZT+wz2v9SXSXUndHbCY9Wa4VglcZG5ovPv+XecIc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KMfKM9WjwT+yY0zxfjdTPHEaUYXFKvIzP+1ReEhYOcQ+utslIfgujJyYIC2uUxh+jv6LgaJRKB4wVJvDtb99BvGmv95vN/4KgWm3Rrb9sJRSd+njhRklIAj4ZcLGCXL+/Geg8aVrVGLKep2Wx+lmdiqx7lqHq+DdwCHj4ev9nf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gMqSk2Sb; arc=none smtp.client-ip=80.12.242.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gy4O+eYw"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gMqSk2Sb"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id yQtAtsN3Ol9slyQtDteVKf; Sat, 29 Mar 2025 08:46:01 +0100
+	id yQtAtsN3Ol9slyQtbteVkC; Sat, 29 Mar 2025 08:46:23 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1743234361;
-	bh=LRG0jHcVlijLslM+LJD/Jnii6JM0NbQiCR69GjeZ8mg=;
+	s=t20230301; t=1743234384;
+	bh=388xrznfvx3yUimg5kNws/DNZuCQE1j80sB1rbo3xPc=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=gy4O+eYwmJf9m3g7OtbpyC6UcHKkCQR4bB/LtTj48AIu+zl4DBhclguesg3S/JgCw
-	 hUSmuc2k9UrmFGIV0MuEXVOf1DgbAoY3I5qkcD4TJgBwew6gCAS4dFdI0JHrb1EQ7o
-	 FVep+OfD2SKaeN5Kq5Ulk1gnD57ZRrKM1fGiPucQqLxZwGD8JgwAU91JK6RSydbSkP
-	 vmnFVB4AuwKVgeB153oeaYhj+Mbfx2VIH9I8ZY+kHczuLfsrGeBhcpbkSuDv/t8Fcw
-	 gknMYgJewt1OTViCw7LLmQcik+IEbfA2LIKI3teQe1BOf2irs/3y+QSgIkyrIJTruR
-	 2T3dbBYQH0Zlg==
+	b=gMqSk2Sb96QmihcEfm2HH+vPYGVUcku53uvdvYXABZH++CMEHLYHCGS41nAOtVnnx
+	 hdyCnNSeMgSTKbDo0nmbONgBqUrLnruKolB7Coxuy+XgG4J0Csg1vAd7+ll5rte7hI
+	 DIXcQva1JvEQL8EjYqZiP80ZnqjZa/sf3rFqMCZZ0IxAYheyrfpOTNXxe81LbG/LE7
+	 Te4kQ0JvtSWczjdjEoFS3qzrlVba4EXxKUgoj53l71j3b5KwrSpCi2AhIjqczF7C2H
+	 YF9yRqYzzb5RaMTSgWtnZ+l0N0vZFBVGc0uNLf/91tG0HuMbKEZMSnG/Dr44kf5Mti
+	 YujWgPBiN4FMw==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Mar 2025 08:46:01 +0100
+X-ME-Date: Sat, 29 Mar 2025 08:46:24 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: lee@kernel.org,
@@ -44,10 +45,12 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 0/4] mfd: exynos-lpass: Fix some error handling paths
-Date: Sat, 29 Mar 2025 08:45:44 +0100
-Message-ID: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 4/4] mfd: exynos-lpass: Fix another error handling path in exynos_lpass_probe()
+Date: Sat, 29 Mar 2025 08:45:48 +0100
+Message-ID: <d224865a16b50498279b044a819e1e187d01bb28.1743231856.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -56,38 +59,48 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This serie fixes several issues related to error handling paths in
-drivers/mfd/exynos-lpass.c.
+If devm_of_platform_populate() fails, some clean-up needs to be done, as
+already done in the remove function.
 
-I've split it in 4 patches to ease review, but could be merge in only
-1 patch. Or only (3 and 4) could be merged, as they are related.
+Add the needed error handling path.
 
-Patch 1: Fix a leak in the error handling path of the probe. It Should
-be straighforward.
+Fixes: c695abab2429 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+---
+ drivers/mfd/exynos-lpass.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Patch 2: Slighly unsure of the order of the code. In the probe, we
-enable pm, then lpass, so should we disable lpass, then pm?
-
-Patch 3: Is just a preparation for patch 4. It makes patch 4 more
-readable.
-
-Patch 4: Fix a leak in the error handling path of the probe. It Should
-be straighforward.
-
-
-All these patches are compile tested only.
-
-Christophe JAILLET (4):
-  mfd: exynos-lpass: Fix an error handling path in exynos_lpass_probe()
-  mfd: exynos-lpass: Avoid calling exynos_lpass_disable() twice in
-    exynos_lpass_remove()
-  mfd: exynos-lpass: Move exynos_lpass_remove()
-  mfd: exynos-lpass: Fix another error handling path in
-    exynos_lpass_probe()
-
- drivers/mfd/exynos-lpass.c | 31 +++++++++++++++++++------------
- 1 file changed, 19 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
+index 7fd8585ba35a..9f2601e4e583 100644
+--- a/drivers/mfd/exynos-lpass.c
++++ b/drivers/mfd/exynos-lpass.c
+@@ -118,6 +118,7 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct exynos_lpass *lpass;
+ 	void __iomem *base_top;
++	int ret;
+ 
+ 	lpass = devm_kzalloc(dev, sizeof(*lpass), GFP_KERNEL);
+ 	if (!lpass)
+@@ -143,7 +144,15 @@ static int exynos_lpass_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(dev);
+ 	exynos_lpass_enable(lpass);
+ 
+-	return devm_of_platform_populate(dev);
++	ret = devm_of_platform_populate(dev);
++	if (ret)
++		goto err_remove_exynos_lpass;
++
++	return 0;
++
++err_remove_exynos_lpass:
++	exynos_lpass_remove(pdev);
++	return ret;
+ }
+ 
+ static int __maybe_unused exynos_lpass_suspend(struct device *dev)
 -- 
 2.49.0
 
