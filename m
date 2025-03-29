@@ -1,56 +1,47 @@
-Received: from smtp.smtpout.orange.fr (smtp-25.smtpout.orange.fr [80.12.242.25])
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C0D18BC36
-	for <kernel-janitors@vger.kernel.org>; Sat, 29 Mar 2025 07:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2592B18BC36;
+	Sat, 29 Mar 2025 14:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743234922; cv=none; b=G2aQU7Qr793AQDl/Xge+RjttqE5slNaES89IpGmGg2RUzWQPxdReoBkqRbK3vzsO1BF59/Cd6hTxnOq8FrKJct8x3zmv7Vt6NVqXiRqLqpFwlQ7Cy0P7/MKsarE+Kc8mGXGet9pnHOuSlycCFGxERnJrWWFry+sh6j9g1xUPERo=
+	t=1743259022; cv=none; b=VsZccMWsz5wdzguG43nVVS0yZhaeC1khSsQ/5PZ70abPMAWzkv1Z154V2F6aN5/7d9gMjPoaHPrT3R9XNXTtgLBkDUdze+vtQy0q3rN+b4DJLA3xqk2xubKRkv3j7iRL+GzsBslyAQgpAB/grRdInM+4RtRuuXbMCnr7pulHwNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743234922; c=relaxed/simple;
-	bh=gdAiGcHA9ACA8gEU5ZV3breg3WLc8uWPyOoly+XVgws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VXE1sWrC+6RulKnNwjG/Qm8ZTf3QfH1h8mxxuW/5LCrKnFxLz7M15pfOwFvCdePrDPzoi+I20KWVjZfj/1xVKw5BQTi1Ky1vWVXlaVPg19wa9x+bTWZvi34pnvEVib4Gjx/f/G7X2q4shvS/xXzetClaSxfiErZeuosyUz7AGIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=a7IGOrxC; arc=none smtp.client-ip=80.12.242.25
+	s=arc-20240116; t=1743259022; c=relaxed/simple;
+	bh=narW4DL49Jfu6r70biWpPMSTaDKMbdo98AXOU7GetK0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PasJEDzjxVs8Yw9RuUMXpRbZmUIbMAlHts3ckNVxxZMjG5rwj6XNZvbUgLnJO4LjQ67nk/LF/nXILNRadERD3Y+35Ewz4f5Q2EEApysrN0ZRDeAJDhecafAC2nASaNBBpylFhHoufCmIK1O4DO8cjEHphlkyNLvtJzLVgm15XV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HmTj8p2G; arc=none smtp.client-ip=80.12.242.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="a7IGOrxC"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HmTj8p2G"
 Received: from fedora.home ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id yQtAtsN3Ol9slyQtPteVWL; Sat, 29 Mar 2025 08:46:11 +0100
+	id yX9Rt6hgnncIDyX9UtEY0S; Sat, 29 Mar 2025 15:27:13 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1743234371;
-	bh=lxG5GpmIEqwoUGwr9bKBwNL+mtU3l6sCszbqj7Kxf5k=;
+	s=t20230301; t=1743258433;
+	bh=ADABkbaZEHdGim0QqXmBBlzaCc4f6um2BWPGM6bOKCw=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=a7IGOrxC3ED9Gj0NKMZBuUpb3nmtMAW5WTnV5xDlQida/pNILs6MYQAfcCUYl8jQM
-	 HfhLvVpPiVOa65RHj8V97d82otML7mK/Agj6jM1g/GbYix2BhHCk06AmNZ8ZS35N5E
-	 i0Dab7gM3eqHYuAHh0pQqEMy1EACDJ5TR0cGvsM2laAi16LGag3xSdGI5o8VZHs0ie
-	 dblxMUNIl8nkxDiCiftaPx+yCk1iz3XGYyl+xaym2Xr0XQxjy7grz0hFjFLpxsgIs2
-	 LvU6T4Yfs1eeXMX1tRVZeX1eq849X2xJbjUH8TVGamh+KvvSL4s/mHXcYiD4Duknyr
-	 ALJWB3QkNN4OA==
+	b=HmTj8p2G4sa1u2FzH9Lo/fkM+EYzhO75GFBdqs7auZQPSB1KeuOLuwqGsR/KfX+zS
+	 hqIP0XVa6ljiI9jkd0OMYLXx1ezZPXjgm5ap7H5lKKoU1LJnBhMp2XALIGQXBkZjDp
+	 DD0MRMqcLNaCODa0pPUo7FGbbfKP5HwEknUz25lNnBYTt2VsDW24OVQQQXBYmVsHJD
+	 LmB+4Gyc3bWWOtIn85eSBo/Vfr/Bqbl51t7pM/gJs3qMnWv2X3phRV9yIBOx+iOC5u
+	 RhcWp7GwqwLMpLMMFtXJR3HzyCqjv2Sx1pWyS1ljgoob3UBHF2TKIPljnjkjB+oX+Y
+	 yad9SK9zjIiXQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 29 Mar 2025 08:46:11 +0100
+X-ME-Date: Sat, 29 Mar 2025 15:27:13 +0100
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: lee@kernel.org,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	s.nawrocki@samsung.com,
-	beomho.seo@samsung.com,
-	ideal.song@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 1/4] mfd: exynos-lpass: Fix an error handling path in exynos_lpass_probe()
-Date: Sat, 29 Mar 2025 08:45:45 +0100
-Message-ID: <d125cbc479f1fa838ed0ff25f0e11d25f382e9d4.1743231856.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: flexcop-i2c: Constify struct i2c_algorithm
+Date: Sat, 29 Mar 2025 15:26:42 +0100
+Message-ID: <2f61177c9f2a0b5a03994f3f94132ace9fb45e47.1743258328.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1743231856.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -59,46 +50,43 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after a successful regmap_init_mmio(), regmap_exit()
-should be called as already done in the .remove() function.
+'struct i2c_algorithm' is not modified in this driver.
 
-Switch to devm_regmap_init_mmio() to avoid the leak and simplify the
-.remove() function.
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
 
-Fixes: c695abab2429 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   6645	    216	     16	   6877	   1add	drivers/media/common/b2c2/flexcop-i2c.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   6721	    160	     16	   6897	   1af1	drivers/media/common/b2c2/flexcop-i2c.o
+
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-The .remove function was added in commit c414df12bdf7 ("mfd: exynos-lpass:
-Add missing remove() function")
-
-Compile tested only.
+Compile tested-only.
 ---
- drivers/mfd/exynos-lpass.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/media/common/b2c2/flexcop-i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/exynos-lpass.c b/drivers/mfd/exynos-lpass.c
-index 6a585173230b..6b95927e99be 100644
---- a/drivers/mfd/exynos-lpass.c
-+++ b/drivers/mfd/exynos-lpass.c
-@@ -122,8 +122,8 @@ static int exynos_lpass_probe(struct platform_device *pdev)
- 	if (IS_ERR(lpass->sfr0_clk))
- 		return PTR_ERR(lpass->sfr0_clk);
- 
--	lpass->top = regmap_init_mmio(dev, base_top,
--					&exynos_lpass_reg_conf);
-+	lpass->top = devm_regmap_init_mmio(dev, base_top,
-+					   &exynos_lpass_reg_conf);
- 	if (IS_ERR(lpass->top)) {
- 		dev_err(dev, "LPASS top regmap initialization failed\n");
- 		return PTR_ERR(lpass->top);
-@@ -145,7 +145,6 @@ static void exynos_lpass_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	if (!pm_runtime_status_suspended(&pdev->dev))
- 		exynos_lpass_disable(lpass);
--	regmap_exit(lpass->top);
+diff --git a/drivers/media/common/b2c2/flexcop-i2c.c b/drivers/media/common/b2c2/flexcop-i2c.c
+index 1f1eaa807811..21edf870d927 100644
+--- a/drivers/media/common/b2c2/flexcop-i2c.c
++++ b/drivers/media/common/b2c2/flexcop-i2c.c
+@@ -209,7 +209,7 @@ static u32 flexcop_i2c_func(struct i2c_adapter *adapter)
+ 	return I2C_FUNC_I2C;
  }
  
- static int __maybe_unused exynos_lpass_suspend(struct device *dev)
+-static struct i2c_algorithm flexcop_algo = {
++static const struct i2c_algorithm flexcop_algo = {
+ 	.master_xfer	= flexcop_master_xfer,
+ 	.functionality	= flexcop_i2c_func,
+ };
 -- 
 2.49.0
 
