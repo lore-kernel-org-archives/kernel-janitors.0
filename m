@@ -1,100 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2DC1AAC9;
-	Thu,  3 Apr 2025 08:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3093597B
+	for <kernel-janitors@vger.kernel.org>; Thu,  3 Apr 2025 11:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743667249; cv=none; b=cfEWaXprhO8TRxzKOqojVWSMb6NpauSsE6NfRhc1hVfWPRmafp5AwSX1Pq04nImtjmvaTfAHBDVQYPiwlWKZKL1zbkn1acP3Bk8esfyBWp9+/iIqyCR5n/u9LqIVXb+RhITr1EFV8PznIoVrQ9+svPVxd3zXVqnk44vA/POo+lk=
+	t=1743680828; cv=none; b=SlHSAL904iEgM/KeH3TmOq0H9n5lt/gVqtRkWCDui/JbhBnGW0vQ+u8CoBRhgQweUrSzt9P0Xz3wOvJya1Gt4HC7NVK5JfQwvIHrivTWwcedCDl8yWuHYOOgACmhsxy7jShIUiYVAa0Nuw8EYDzg/3eNYKwnzoVbQSjhMfPpxCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743667249; c=relaxed/simple;
-	bh=OcpLJiwgybP4ohaSbygs08WEiRWpDE5aV0XSWIRmEPQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ZFP1LMsIkHPmPNeozepWoRfqougRjpTor8Ek7Jh8e3dKV0ZQ6tg2PVBKmHHOjBRfmuBpdBUSuqRX8ZMuriXA3RXRtVZuzvqftTvK+Y3egSWzE1vvf0Q8XGpPqJOjakmQ6UIz96lorgTkZrH7QTAaosgBxpCmhYpPD9Nus6VK38E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ppe1MS16; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1743680828; c=relaxed/simple;
+	bh=bVCLsaxLXWbChut3pmQ9NWbwS6gpz4qyTGWJxKtSsVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L8QLTvtrcQQ+ZzHQA9eMx8O9LiS/kEjWol41OjtxspqMsbKrqeqFmBX1uREYzRlUR+zFYDNz60W1l3HcOQYuvpEFi/HEcfpdv3fuPXEpJo+d5WvX+D7kC5M6DbyvhFR0RKA+KIOaJYMFr+ePaYDZgCmAGRJvprB/NB4d17oF+Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MqVpCI2m; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ppe1MS16"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC89C4CEE8;
-	Thu,  3 Apr 2025 08:00:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743667249;
-	bh=OcpLJiwgybP4ohaSbygs08WEiRWpDE5aV0XSWIRmEPQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Ppe1MS16aGT4ga8Jo7wnDMVJFhBuPkbFEe1eL3jQHDSPJOGeh7/DvGSuog0gos4Tc
-	 U0krqRIq45QxU+Di/EWbpVWfSM+TwjWdk4isGJYaggbwxGUwxtMQsyIxzv5ZqwwmgX
-	 hJmsip3VYS6sAI9s8cMNc+W+WkPNXE3toDDbTn806h713yIWhKr2YUa72UYDA00Jqx
-	 /nEyHQAeQY8QclEFUkgTUMUK1UFncxh58N3MiDSeEtISECzAL3dgkX5Y/fr8SLpnCR
-	 fUh3QJijsL20hgd5ZrqcKqFd/wx6xA21qGxZ9h3pPsxcg5opt8k0wTg3rXqzZpmWRb
-	 fEvDm+d+lTvZA==
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MqVpCI2m"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5339s9o9025753
+	for <kernel-janitors@vger.kernel.org>; Thu, 3 Apr 2025 11:47:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=aGDDQ0jFQhPbqbOdDbGahC5H
+	PEzlI0t4a/oQTJyUEaA=; b=MqVpCI2mqWZp8Lj0wC0y/WMu8WD/S5b1LcuxFpno
+	GEwxvFPt8DgXb+0YAkVXre9vkPId3PV4Jj5tYfd1vDK0rhZL/eg0ad99GpaJw165
+	uJW0nya9aAYvd7tHD4UrVgohOn9M3fJi6IIN2ybVM9Sh5RZniPcklh8bUXUD+y77
+	C9cDQYwcxme3wepARo9Q4lvoBRGaJJQcuFz6GE399d0IzUSUJUkbySk63ZDh0Xa/
+	2hZA6ccQj6EpAUiLzy2wA6kuqVUDWaxUZxsuu52UF7Qnp5+Fe00I4rTsb++kQynB
+	mmv5SAiFi6WITFVZvGzPUTh8E+n6po2sJJZCaa6o+f91gg==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ruadvwnw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Thu, 03 Apr 2025 11:47:06 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5d608e703so131361285a.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Apr 2025 04:47:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743680825; x=1744285625;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aGDDQ0jFQhPbqbOdDbGahC5HPEzlI0t4a/oQTJyUEaA=;
+        b=CJIInE0JBSnjMN2sqJEZT0+6oB6Vo5BlDeZxto0ffuVcOL1ZtDuGKToiCRH6qYScMc
+         L9/cmP829Vh/NQy4AAsAHe6KIsNxDbUI5IDKkB2REuGrPEDUMympNbZROv9P09JVXZrm
+         WOC+XbK9L3VMo/p4W/NcFVEnzCIkH6wXLKLgzjP3cZdr+Ch6jGaXkCyXXTkvAOOtjGz/
+         cj3O45CXiFe2XiEF1jSeb1ipAwNaSep4VGxUamxsZ4wqdYqRca+zYJ7Oy9Rij+Eo5KU8
+         e1QxH8EswPX4WLdEAsvKtP70P1m3Y9SaxH9cxfx4z/fEPqS7ak0h7sxsF/i14rnJG0Sc
+         TFnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBOayxoqyVTzabkEKZqf5z8ATd2fgvjE1admQtvr2CFbISym8KOfv30jfmB/wF8pByz6UvgD0PAN3ZTvoBeSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyW66od6pmlfccDBF9E6V1vD+REy8TSzw1E/y1PCfHF/kUyRmk
+	Om2e4icR3fRzqGo3jzRt/QP9guYEKPWuL2koaDCp9zRT5UAeJ5Lipca3R2C+KxiDFOinX4uwF6s
+	PtQINlIhPDt19voSTe4DiSabCkYNcF6WOtKt+fCpuZiMoaQ/pRec/O0aND1jRF7UBJAQ=
+X-Gm-Gg: ASbGncsKsErMN9aKpcy7+2nGgkfpDT90/I+Uf2sZtxNX4vbfAKJY9XgYgDcms/9FYLw
+	qDd2ZoGB/N4tFCRud0Vh9NVGXEZZsCfwE6Tx+0+ipUsB2DHX3Ie3LXgRJj8pTfrSqEyUtTRx+qa
+	/cylKhVF2s4mdvrbvAA5HrJiL/ATLtA2kYQ+9H/giWFKEXgn85Ryucn9o5oC2FKWTRcFYG38/OR
+	o7EHygwpPsusCyl7fEP/m4kH+SG0pmvQAaVA9kAXD+J4tOYvoixm2Uh87Z6vhvWulF7wGQE9dUa
+	bhUJJlk5V51lz0CMC0teko4OlPUn1Iwe3n73dqr0/8yyoJqwXXldc5rE2x7fnfUOlm1IHk/Hfs0
+	1xQ0=
+X-Received: by 2002:a05:620a:4081:b0:7c5:4adb:7819 with SMTP id af79cd13be357-7c76df69886mr231438685a.16.1743680825054;
+        Thu, 03 Apr 2025 04:47:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvB3vmejuvkvpwELxt6ofgBobQEqwcfxb76F9Sa70Rld/6kujkTtCtv4H2O+UpMOZfBwLcHg==
+X-Received: by 2002:a05:620a:4081:b0:7c5:4adb:7819 with SMTP id af79cd13be357-7c76df69886mr231436585a.16.1743680824698;
+        Thu, 03 Apr 2025 04:47:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e5ab9easm134722e87.38.2025.04.03.04.47.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 04:47:02 -0700 (PDT)
+Date: Thu, 3 Apr 2025 14:46:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom_wcnss_iris: Add missing put_device() on
+ error in probe
+Message-ID: <3zxqrofeg6b4xewituh3aesixmlirwuy5mvzng74y7srr57i26@xw2w3rvwk2pg>
+References: <4604f7e0-3217-4095-b28a-3ff8b5afad3a@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250402111347.409795-1-colin.i.king@gmail.com>
-References: <20250402111347.409795-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH] crypto: eip93: Make read-only arrays static const
-From: Antoine Tenart <atenart@kernel.org>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Christian Marangi <ansuelsmth@gmail.com>, Colin Ian King <colin.i.king@gmail.com>, David S . Miller <davem@davemloft.net>, Herbert Xu <herbert@gondor.apana.org.au>, linux-crypto@vger.kernel.org
-Date: Thu, 03 Apr 2025 10:00:45 +0200
-Message-ID: <174366724527.4506.2393301557013834716@kwain>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4604f7e0-3217-4095-b28a-3ff8b5afad3a@stanley.mountain>
+X-Authority-Analysis: v=2.4 cv=VI/dn8PX c=1 sm=1 tr=0 ts=67ee753a cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=-lOYY9mtbGAmBqhMW_wA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: Nm9y7A2fVX6Xy8kjN-AE_IiLi0gzlj3U
+X-Proofpoint-GUID: Nm9y7A2fVX6Xy8kjN-AE_IiLi0gzlj3U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-03_05,2025-04-02_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 adultscore=0 suspectscore=0 impostorscore=0
+ phishscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504030048
 
-Quoting Colin Ian King (2025-04-02 13:13:47)
-> Don't populate the read-only arrays sha256_init, sha224_init, sha1_init
-> and md5_init on the stack at run time, instead make them static.
->=20
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Reviewed-by: Antoine Tenart <atenart@kernel.org>
-
-Thanks!
-
+On Wed, Apr 02, 2025 at 01:59:51PM +0300, Dan Carpenter wrote:
+> The device_del() call matches with the device_add() but we also need
+> to call put_device() to trigger the qcom_iris_release().
+> 
+> Fixes: 1fcef985c8bd ("remoteproc: qcom: wcnss: Fix race with iris probe")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  .../crypto/inside-secure/eip93/eip93-hash.c   | 20 +++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/crypto/inside-secure/eip93/eip93-hash.c b/drivers/cr=
-ypto/inside-secure/eip93/eip93-hash.c
-> index 5e9627467a42..528d5bd864c9 100644
-> --- a/drivers/crypto/inside-secure/eip93/eip93-hash.c
-> +++ b/drivers/crypto/inside-secure/eip93/eip93-hash.c
-> @@ -97,12 +97,20 @@ void eip93_hash_handle_result(struct crypto_async_req=
-uest *async, int err)
-> =20
->  static void eip93_hash_init_sa_state_digest(u32 hash, u8 *digest)
->  {
-> -       u32 sha256_init[] =3D { SHA256_H0, SHA256_H1, SHA256_H2, SHA256_H=
-3,
-> -                             SHA256_H4, SHA256_H5, SHA256_H6, SHA256_H7 =
-};
-> -       u32 sha224_init[] =3D { SHA224_H0, SHA224_H1, SHA224_H2, SHA224_H=
-3,
-> -                             SHA224_H4, SHA224_H5, SHA224_H6, SHA224_H7 =
-};
-> -       u32 sha1_init[] =3D { SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4=
- };
-> -       u32 md5_init[] =3D { MD5_H0, MD5_H1, MD5_H2, MD5_H3 };
-> +       static const u32 sha256_init[] =3D {
-> +               SHA256_H0, SHA256_H1, SHA256_H2, SHA256_H3,
-> +               SHA256_H4, SHA256_H5, SHA256_H6, SHA256_H7
-> +       };
-> +       static const u32 sha224_init[] =3D {
-> +               SHA224_H0, SHA224_H1, SHA224_H2, SHA224_H3,
-> +               SHA224_H4, SHA224_H5, SHA224_H6, SHA224_H7
-> +       };
-> +       static const u32 sha1_init[] =3D {
-> +               SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4
-> +       };
-> +       static const u32 md5_init[] =3D {
-> +               MD5_H0, MD5_H1, MD5_H2, MD5_H3
-> +       };
-> =20
->         /* Init HASH constant */
->         switch (hash) {
-> --=20
-> 2.49.0
->
+> This patch is based on static analysis and has not been tested.  Please
+> review carefully, etc.  Another option would be to call device_unregister()
+> 
+>  drivers/remoteproc/qcom_wcnss_iris.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+-- 
+With best wishes
+Dmitry
