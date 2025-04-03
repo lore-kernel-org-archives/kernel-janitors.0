@@ -1,81 +1,77 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3093597B
-	for <kernel-janitors@vger.kernel.org>; Thu,  3 Apr 2025 11:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE1924CEF4
+	for <kernel-janitors@vger.kernel.org>; Thu,  3 Apr 2025 12:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743680828; cv=none; b=SlHSAL904iEgM/KeH3TmOq0H9n5lt/gVqtRkWCDui/JbhBnGW0vQ+u8CoBRhgQweUrSzt9P0Xz3wOvJya1Gt4HC7NVK5JfQwvIHrivTWwcedCDl8yWuHYOOgACmhsxy7jShIUiYVAa0Nuw8EYDzg/3eNYKwnzoVbQSjhMfPpxCY=
+	t=1743682436; cv=none; b=bbGxY9/uPF+kEPB7PGDdr++kzilzP6g50PIC68CNA3sxOH1d/io+WfNETXiCeNL7FmpR7oxujY5UpIxu7NLwOil6px93QW/Dwah8OHoIxiich995CJcPO205j6ltTOp5THnbWL6TdJ6g5R9VadzTupl6nKSmboQhiC1QiUyNWpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743680828; c=relaxed/simple;
-	bh=bVCLsaxLXWbChut3pmQ9NWbwS6gpz4qyTGWJxKtSsVM=;
+	s=arc-20240116; t=1743682436; c=relaxed/simple;
+	bh=dMh+PH2DOFIYTZ2nD33jFFijdt4/YdxCeBsnRsmq0o0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L8QLTvtrcQQ+ZzHQA9eMx8O9LiS/kEjWol41OjtxspqMsbKrqeqFmBX1uREYzRlUR+zFYDNz60W1l3HcOQYuvpEFi/HEcfpdv3fuPXEpJo+d5WvX+D7kC5M6DbyvhFR0RKA+KIOaJYMFr+ePaYDZgCmAGRJvprB/NB4d17oF+Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MqVpCI2m; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUUV8aXEZwsDnJH9jKhhjj4Azs6UX2MuLht3tVPXdOd1hY0uKRN1FzcXfhIYV7SBLiWmiJ0AN/TDQ9Swt44yBlckC5eNnMdp7/S9aS9WHb0w2Vj+zYiGcv17mz+hAVHQWJTMMX0cn2esQMoTLvqCn0UAiRjJZxW1VXeAvMQ3eQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TFArq9NE; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MqVpCI2m"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5339s9o9025753
-	for <kernel-janitors@vger.kernel.org>; Thu, 3 Apr 2025 11:47:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=aGDDQ0jFQhPbqbOdDbGahC5H
-	PEzlI0t4a/oQTJyUEaA=; b=MqVpCI2mqWZp8Lj0wC0y/WMu8WD/S5b1LcuxFpno
-	GEwxvFPt8DgXb+0YAkVXre9vkPId3PV4Jj5tYfd1vDK0rhZL/eg0ad99GpaJw165
-	uJW0nya9aAYvd7tHD4UrVgohOn9M3fJi6IIN2ybVM9Sh5RZniPcklh8bUXUD+y77
-	C9cDQYwcxme3wepARo9Q4lvoBRGaJJQcuFz6GE399d0IzUSUJUkbySk63ZDh0Xa/
-	2hZA6ccQj6EpAUiLzy2wA6kuqVUDWaxUZxsuu52UF7Qnp5+Fe00I4rTsb++kQynB
-	mmv5SAiFi6WITFVZvGzPUTh8E+n6po2sJJZCaa6o+f91gg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ruadvwnw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Thu, 03 Apr 2025 11:47:06 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5d608e703so131361285a.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Apr 2025 04:47:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TFArq9NE"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so552473f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 03 Apr 2025 05:13:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1743682433; x=1744287233; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iU6vhdM1OwZrAPd+i9V1VxGRpqECj+EW6TIAG2RUe28=;
+        b=TFArq9NEeR22gxILhLQ3IkEHdJDJ4ExJL93Kc96TRdPo8Uvnu003RaG884gh2CcO4z
+         +LRZktsORrH6qMoVvll9+DvnuOGAmOqTehbMkdAE8NRnZ75B1FxCfizsYi3QTZe1GuMF
+         pQTxK8cP84Y3UHvfII5NvVLQZv4WWZ6IF4qmo8u0byl/khYXgo3yag5MzS8R578JB1eM
+         TDZiRbyyYgvKEyJF99olbKQo/GZFsheHrULy4TysP1oiRes3ZxO37U/Mv10Fgp2sAm7H
+         ff+rVuVok6j+4AW3IHarMTnSNCT2XiO7EqH5TvmWPlJ7iWrgMeH3nAnhLQBXgnfgGB3R
+         1YJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743680825; x=1744285625;
+        d=1e100.net; s=20230601; t=1743682433; x=1744287233;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aGDDQ0jFQhPbqbOdDbGahC5HPEzlI0t4a/oQTJyUEaA=;
-        b=CJIInE0JBSnjMN2sqJEZT0+6oB6Vo5BlDeZxto0ffuVcOL1ZtDuGKToiCRH6qYScMc
-         L9/cmP829Vh/NQy4AAsAHe6KIsNxDbUI5IDKkB2REuGrPEDUMympNbZROv9P09JVXZrm
-         WOC+XbK9L3VMo/p4W/NcFVEnzCIkH6wXLKLgzjP3cZdr+Ch6jGaXkCyXXTkvAOOtjGz/
-         cj3O45CXiFe2XiEF1jSeb1ipAwNaSep4VGxUamxsZ4wqdYqRca+zYJ7Oy9Rij+Eo5KU8
-         e1QxH8EswPX4WLdEAsvKtP70P1m3Y9SaxH9cxfx4z/fEPqS7ak0h7sxsF/i14rnJG0Sc
-         TFnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBOayxoqyVTzabkEKZqf5z8ATd2fgvjE1admQtvr2CFbISym8KOfv30jfmB/wF8pByz6UvgD0PAN3ZTvoBeSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyW66od6pmlfccDBF9E6V1vD+REy8TSzw1E/y1PCfHF/kUyRmk
-	Om2e4icR3fRzqGo3jzRt/QP9guYEKPWuL2koaDCp9zRT5UAeJ5Lipca3R2C+KxiDFOinX4uwF6s
-	PtQINlIhPDt19voSTe4DiSabCkYNcF6WOtKt+fCpuZiMoaQ/pRec/O0aND1jRF7UBJAQ=
-X-Gm-Gg: ASbGncsKsErMN9aKpcy7+2nGgkfpDT90/I+Uf2sZtxNX4vbfAKJY9XgYgDcms/9FYLw
-	qDd2ZoGB/N4tFCRud0Vh9NVGXEZZsCfwE6Tx+0+ipUsB2DHX3Ie3LXgRJj8pTfrSqEyUtTRx+qa
-	/cylKhVF2s4mdvrbvAA5HrJiL/ATLtA2kYQ+9H/giWFKEXgn85Ryucn9o5oC2FKWTRcFYG38/OR
-	o7EHygwpPsusCyl7fEP/m4kH+SG0pmvQAaVA9kAXD+J4tOYvoixm2Uh87Z6vhvWulF7wGQE9dUa
-	bhUJJlk5V51lz0CMC0teko4OlPUn1Iwe3n73dqr0/8yyoJqwXXldc5rE2x7fnfUOlm1IHk/Hfs0
-	1xQ0=
-X-Received: by 2002:a05:620a:4081:b0:7c5:4adb:7819 with SMTP id af79cd13be357-7c76df69886mr231438685a.16.1743680825054;
-        Thu, 03 Apr 2025 04:47:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHvB3vmejuvkvpwELxt6ofgBobQEqwcfxb76F9Sa70Rld/6kujkTtCtv4H2O+UpMOZfBwLcHg==
-X-Received: by 2002:a05:620a:4081:b0:7c5:4adb:7819 with SMTP id af79cd13be357-7c76df69886mr231436585a.16.1743680824698;
-        Thu, 03 Apr 2025 04:47:04 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54c1e5ab9easm134722e87.38.2025.04.03.04.47.01
+        bh=iU6vhdM1OwZrAPd+i9V1VxGRpqECj+EW6TIAG2RUe28=;
+        b=ct/ixTwKx31zJ1/DSIhugrp98CeuUSId7fiO2FnBb5pQboXc0/2MoLMNRS06whyP6G
+         g9jTUa9oakL3UqbOLwbv1yqBioa8Gzuy6Ck3I3yxfKzZ4ivZbT+2SNTma/A3HzCtPKne
+         PM0eGGDRcrqvW0hRNDP2EsFOWZt+Wc6mySMAxK+QACnABPveYewJ0TRGk5ZaeUZx0qBV
+         piFO/uLuDpflsAOyPV+C2fu26IjUhKsUu4Vq4hnaKXjfgdC/kCeDsLLEah71w7t+ehcm
+         G23PXq4XD78Hhqb3LI/xktvqMVtwv/QO82fp2ZZPSMaSTAl4tffQ1oV9DSC7mBhjnQ9G
+         66bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqPnvKfhebcY/71bE0qGCxeL5MKU9loy4tD5pH9o1v3N634Cyqhj8bCLPGu6TCUeLfdFucTtwuOnX0JGD/Q0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSvJfSTj4mtw/M2VGRsgkXnaVoBrNwj+Q4XFZb0jO/xIzvqTkg
+	LuxxxHlsGZFY5/siEPQBwVwMy0Rqt/o52Sqx2PDOuOohmU8MP0szYfBphj1k4SY=
+X-Gm-Gg: ASbGncvpNp3URc47V3t9vnXR9U+OQh/y7xFQWwSJU6CTi6pp/bt8fvB/u/hVkPKkSKb
+	xiQUySPmyktpuLtACbV0HzHY/jjSphZEbwjM2m3TuxFMmXTq7e2hhM7Zog5x+tLv0TZGu0WCfmj
+	XTSzs7TQbFtuMgVpb9VnN6EToKXukbWjp4R5PFf06Rc+/UUfqYBHjB7e+IEsR4SSd//Q1mkC2Rg
+	y/YWFa9C0eC2XvlQHphQac2qBvcjgPJJGBvH/Dwsh37ooipdewM50sD3fxwgzKArjOqu0iBUhhV
+	zXE8/zkx+SVB7DcIDVpBH9+A9zDd41MzbnOGCzUOsaJ89cp9KA==
+X-Google-Smtp-Source: AGHT+IGLHzdFOx5S+wASF4XaTudHsSa7tKhdihI+harwoyguW1Z/pMadFg3DBe4cRW/G7uF6fS9A7w==
+X-Received: by 2002:a5d:64c3:0:b0:390:e8d4:6517 with SMTP id ffacd0b85a97d-39c120dd02bmr16086596f8f.21.1743682433218;
+        Thu, 03 Apr 2025 05:13:53 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c30096cc1sm1641886f8f.5.2025.04.03.05.13.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Apr 2025 04:47:02 -0700 (PDT)
-Date: Thu, 3 Apr 2025 14:46:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom_wcnss_iris: Add missing put_device() on
- error in probe
-Message-ID: <3zxqrofeg6b4xewituh3aesixmlirwuy5mvzng74y7srr57i26@xw2w3rvwk2pg>
-References: <4604f7e0-3217-4095-b28a-3ff8b5afad3a@stanley.mountain>
+        Thu, 03 Apr 2025 05:13:52 -0700 (PDT)
+Date: Thu, 3 Apr 2025 15:13:49 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/vc4: release firmware on error paths in
+ vc4_hvs_bind()
+Message-ID: <87fea3e7-7abf-4849-a616-26d1df715408@stanley.mountain>
+References: <8305d098-bd28-45e6-acda-29e629dfccc9@stanley.mountain>
+ <CAPY8ntCtAdWg1yN+DgxRe3np4Nu3aDUrrdqe4Q9WeqJMtbrrAg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -84,37 +80,67 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4604f7e0-3217-4095-b28a-3ff8b5afad3a@stanley.mountain>
-X-Authority-Analysis: v=2.4 cv=VI/dn8PX c=1 sm=1 tr=0 ts=67ee753a cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=-lOYY9mtbGAmBqhMW_wA:9 a=CjuIK1q_8ugA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: Nm9y7A2fVX6Xy8kjN-AE_IiLi0gzlj3U
-X-Proofpoint-GUID: Nm9y7A2fVX6Xy8kjN-AE_IiLi0gzlj3U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-03_05,2025-04-02_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- priorityscore=1501 mlxscore=0 adultscore=0 suspectscore=0 impostorscore=0
- phishscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504030048
+In-Reply-To: <CAPY8ntCtAdWg1yN+DgxRe3np4Nu3aDUrrdqe4Q9WeqJMtbrrAg@mail.gmail.com>
 
-On Wed, Apr 02, 2025 at 01:59:51PM +0300, Dan Carpenter wrote:
-> The device_del() call matches with the device_add() but we also need
-> to call put_device() to trigger the qcom_iris_release().
+On Wed, Apr 02, 2025 at 11:34:58AM +0000, Dave Stevenson wrote:
+> Hi Dan
 > 
-> Fixes: 1fcef985c8bd ("remoteproc: qcom: wcnss: Fix race with iris probe")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> This patch is based on static analysis and has not been tested.  Please
-> review carefully, etc.  Another option would be to call device_unregister()
+> On Wed, 2 Apr 2025 at 12:00, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > Call rpi_firmware_put() on these two error paths before returning.
 > 
->  drivers/remoteproc/qcom_wcnss_iris.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Ack that there is an issue here, but it seems easier to me to move the block
+> 
+>         max_rate = rpi_firmware_clk_get_max_rate(firmware,
+>                              RPI_FIRMWARE_CORE_CLK_ID);
+>         rpi_firmware_put(firmware);
+>         if (max_rate >= 550000000)
+>             hvs->vc5_hdmi_enable_hdmi_20 = true;
+> 
+>         if (max_rate >= 600000000)
+>             hvs->vc5_hdmi_enable_4096by2160 = true;
+> 
+>         hvs->max_core_rate = max_rate;
+> 
+> to before we make the devm_clk_get calls. It has no dependencies on
+> having retrieved the clocks, and hopefully means we don't get the same
+> type of leaks creeping back in in future.
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Yeah.  That's a good cleanup.  I will resend.
 
--- 
-With best wishes
-Dmitry
+regards,
+dan carpenter
+
+> Thanks
+>   Dave
+> 
+> > Fixes: 2fa4ef5fb943 ("drm/vc4: hvs: Create hw_init function")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/gpu/drm/vc4/vc4_hvs.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+> > index 4811d794001f..41e9d0aff757 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_hvs.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+> > @@ -1678,6 +1678,7 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+> >                 hvs->core_clk = devm_clk_get(&pdev->dev,
+> >                                              (vc4->gen >= VC4_GEN_6_C) ? "core" : NULL);
+> >                 if (IS_ERR(hvs->core_clk)) {
+> > +                       rpi_firmware_put(firmware);
+> >                         dev_err(&pdev->dev, "Couldn't get core clock\n");
+> >                         return PTR_ERR(hvs->core_clk);
+> >                 }
+> > @@ -1685,6 +1686,7 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+> >                 hvs->disp_clk = devm_clk_get(&pdev->dev,
+> >                                              (vc4->gen >= VC4_GEN_6_C) ? "disp" : NULL);
+> >                 if (IS_ERR(hvs->disp_clk)) {
+> > +                       rpi_firmware_put(firmware);
+> >                         dev_err(&pdev->dev, "Couldn't get disp clock\n");
+> >                         return PTR_ERR(hvs->disp_clk);
+> >                 }
+> > --
+> > 2.47.2
+> >
