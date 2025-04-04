@@ -1,138 +1,187 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5800B190679
-	for <kernel-janitors@vger.kernel.org>; Thu,  3 Apr 2025 16:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432CB18B495
+	for <kernel-janitors@vger.kernel.org>; Fri,  4 Apr 2025 08:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743697584; cv=none; b=Q1lghXZpXSQxrKPFPbenly+O+hPNwnfnw9TA9GWop9OObUKvmmd4EQWiIZ429sTz4GurDJ6IJpjCSh95FyBXpZkOY/btASkJaPvoYQ4jJPKBFaOCtayEK7YgI12mQzwGloIFDrfTrHIIROf0ztRdDQKlyl0GIWFYMnJlPDEqPr8=
+	t=1743755268; cv=none; b=NhdUSJnZo/YD0l2ehzquA213CDuEsDG07Qtf8kmB/VQC/1NbI2hOU4fpLDRMFq/P0eL+sslxq3DlUd6Dz0yzfYTp+SOgXZ6/yYxdfBGRKKWe4ZUVnvhjfe1rgO4cy6+kiuKcyOoF4JeRjOJ3Lcku5+fbqTEfUMmI9D95EHeIO1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743697584; c=relaxed/simple;
-	bh=+s8s3iJwvgJFaiQIGmpy8fRqd2r8FfQyKC/ROUIwOkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q8Ohz2rwP2eAzYkdoBkzTDKbYtyUcZ5rTr3SHH39WcQX/wgiLONEIXdlk2RLjybUmcBXhqhC8/sVL5BqQOsJJnDtEvobrEKoZMs09Fwz+Ki3TrbVgZKFBBgWu/AM5bbbx2JgZyMMsiZzerRiF2tJgZcVx69aRxaI5fz+n+6iRco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=tgsxo7Lc; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1743755268; c=relaxed/simple;
+	bh=6J59qiE2/DyR8bp12iRSJ3b4eCHXTbUSaacflaSE4Jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2J7FmsEzkun9XmU83urucIcAN+LnyHmNUvrL6oWeqhG36xmc5Y8awfNE7GXnVTeafmRE7K2a/rhRwwY9FndpoGNu+t1PSEQJfsjz+Nh3uE46w7YiOvFOrEdD370kwIxQKVNfspebGcUgUf7UbzRD75J7+ydVwpehT+j03GYY4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eVY6lAo7; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="tgsxo7Lc"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6f6ca9a3425so13620787b3.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 03 Apr 2025 09:26:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eVY6lAo7"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39129fc51f8so1407089f8f.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 04 Apr 2025 01:27:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1743697580; x=1744302380; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gm8Etobzk8cCk6jshrfzA7BBUoXgq8Cf4UsElyUuFB0=;
-        b=tgsxo7LcZTdvY+zIoAEc6qjvQDNyrDG+Y1WwmkZIxQ8yzNNgnbZxdl8nP7w4GddLc2
-         vCv2YeH4OAGSc7VlvzX8Y36KKdQQhlBeNMM76yw/Lkfd6uiLc6YNog8IoXwxi005mrVm
-         6buLxH2oNBplZYHYfiAaKF1dK5L6S64Spzb8tT2X5L+vNaaA9Hk8jXMH7HRvCBsDRLhq
-         MNnSqk5qWD+uiLHE7qUFdn6fcfpo15f8sMdQoI6VFUR+WEGAECeSTs8cl9YjSJj0OnwF
-         b+gxqZF1MJDMjxo9jJLPXdp/17vbd8YBV1KWORzO5lngPWhfkPckdR1wmW0n7lBMlB/K
-         lEbQ==
+        d=linaro.org; s=google; t=1743755263; x=1744360063; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DJa0y5uHqB+uXYxg4Ee5P8Mqg/g0/KhhIdf1SuA6v4A=;
+        b=eVY6lAo7hqueymdGO2mdjSexjzxtDzQEKqNPrKBPhgQBYIvNNaw8XHuRFY6p+ZYoo2
+         QFnOfowEhaBIQNj3DrG4iUIc5ckQRfNrVn28dvpYCCwAhBGmsVMNTP5ggBGdTpVtjV7X
+         FgMpVAnsGlH/t4LqAQlY4FTmRaONUV5yuIgRnhB5kLa3DaMtQqW/VXuRcy6LUWVp157/
+         eVb2F2P9xgDLZtcwhhHL5X4oabKmoWkr88QC5KXwncM8nPgxzStN5yNYjHH+nPvLBOM9
+         d1qCy5b1A7ZCZqBKqMWpPdc4tpP8feSrJ/RDV2ygKOKB0dnapGzV69iqmOn+xfDN1c5a
+         EcqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743697580; x=1744302380;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Gm8Etobzk8cCk6jshrfzA7BBUoXgq8Cf4UsElyUuFB0=;
-        b=W7BT51Kny/lV4lQUIuZ2IbriRJ1WxqalYiPym5cNUnw/uBB2m73nKuR/mpKnVgEjCu
-         MTKILNbClI7G2A4kHTZj34cS8ljxqKzZllsAD4M6ZBdQl98aCgsxOGKkl7yGjP11QcpO
-         CHZ8Hr6UFftgzSfNBn21uHL9vAvCwXqwMVSjOw7i1fl9jeWzu4F6hsbBJDnbJ8mf+LYj
-         910KzQ1ckDKQcAKoeeqYDKUqUgupV6HS/JjCXRh2H8YxoGQIXHIupBHhnCDTAxDXu5V4
-         z3bjzPHVcRy0vISWEZJXmXAvWHodK5JNvT7JoC4erD8SACk9S7JZmiex5xtmjwA5uWE2
-         azBg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6j2BdhxT75YFZan8KeY/OS/9HMn9TsFWDaf9bEExO8VZRCUvct9z/rySqeZpfhwYwf8Eac9FkSUzezosZYNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+AssSqFvdoXQPptysehi2+lSAkKg7HD/T9jRB9CIDvoesNoS4
-	Luj/Pl1oJwfsY5+98DTO01DeQnXQErkO3tF3uI/jcYIAuY1N/u4i/27EDcsj50fuveGm7RlRDm8
-	m54nlODeBSeHiSRiNLyJncFfHlYGP0AmHhlZDuQ==
-X-Gm-Gg: ASbGnctoe+HED8qG3UoL31KbeXaCPx43GMiLMGm95YKLv8g6C7nS67YzF36AmcIFBAj
-	migK45iDYBbCao/+ey9aEWZuVquEiX3W53TsoH+yTPu1juQFuM+AA5NapjTmzMdvX5ZS4MJquvO
-	7CF0iHA71ROXEmK/vtfq8x1rWYINzXD9jyD4KVZ6Q9JLZKjNUt8YS8axZYcisVgOcizXmu
-X-Google-Smtp-Source: AGHT+IGs/lOpJlBNxZfkClJkSSGiTQDpBO7ne5t+K8sFSvFVEpfHXiFzI6JjuxfYULF42IuuaAUSHa6+5r5ZRFQKL/0=
-X-Received: by 2002:a05:690c:a8b:b0:6fd:4849:62da with SMTP id
- 00721157ae682-703e1581140mr850257b3.22.1743697580267; Thu, 03 Apr 2025
- 09:26:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743755263; x=1744360063;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJa0y5uHqB+uXYxg4Ee5P8Mqg/g0/KhhIdf1SuA6v4A=;
+        b=YIcra1J67+Iig48bqzhKMWsopXrvgpuChs1ytcH3UtwjzrNSxkafCCUIOM7SRIQcDy
+         qfqW/jR7NvmbwjrZjs34dxRhTJSJiY0je+tElBBK1F0YvE9Gzv27qCphNckJ0bcw2IGq
+         sqIrI99xdL/u2GwLBQcmS6H/K+LQP60ZEeaI/UDDWhKjVvtpDEhLIuLRykPk/hGkaQa9
+         9rUzyU6J0K0vYQQ8yTQrA22Vb0l1+OOPGp80vLyQ9DdImRqkE4qg1WW9sm6+oKooYSF6
+         oRtn1/9fB1Tpjcne3hP/8DFFwVhri7EC+GHf3YfnLrqyDQ4aKYxxRARQ4zqD3svnSicm
+         ynqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjQe/NCq3Uunl8fJEHKKQ/Eu2o29MajIIIjGFlHxARmTm5spBCOLBBD0bSPbMM7r+WJIQ4b9j8whEu3F2MZSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEdyckuGoNU+KrI5MYU5D3IlKdTzYVRaOYzQdAQygj8kC0Aniy
+	QDNxvxZAQAayh8r9gFSw4riMrrPrdOahR3b8xacAT3iAhN7eYE1M9jZZFEcUdZM=
+X-Gm-Gg: ASbGnctpidJxYvm62Rl6eqdEOXRtdHe3N+C8kAWOKCyTCJvluI7QkAM0MRiqXWGKFmp
+	ZDyT0E6LwUWMJvnry9oqkN/9OZPng/8e8T/zWZxPH2/JRng4vtJQ3eoOt9somlTYjevJTSZ3YP4
+	kLzy7qCD9LPk12dZs++VmgfB6Sryb2gn+tqUFx/Nxgri+IaYa7epaD2miW5e5I4QKIjzOpiBbPO
+	wilc5WlsEbnSIo+scXYuP3m+TmdknxQw3SgxTyBabLM1Iksj+34Uwme3my+R/vB2qrV/4gP+pBR
+	mG/Rbytze4SJFBEyQ62qSFiVrgD8I9IYmNn7Bk61hgdo4qIOUA==
+X-Google-Smtp-Source: AGHT+IG+NDQDuY7wpbCJM2rLv7MTUqbCkkmKdHj5rYcXcQpcsNWGZu7a+1mkk53652ueI0HgxX47pg==
+X-Received: by 2002:a05:6000:250a:b0:391:12a5:3cb3 with SMTP id ffacd0b85a97d-39d0873fd19mr1619780f8f.3.1743755263387;
+        Fri, 04 Apr 2025 01:27:43 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39c3020dacfsm3780694f8f.72.2025.04.04.01.27.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 01:27:42 -0700 (PDT)
+Date: Fri, 4 Apr 2025 11:27:39 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Rob Clark <robdclark@chromium.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Gustavo Padovan <gustavo@padovan.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Pekka Paalanen <pekka.paalanen@collabora.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] dma-buf/sw_sync: Decrement refcount on error in
+ sw_sync_ioctl_get_deadline()
+Message-ID: <03c838ab-3bc8-4e5a-9f0a-331254701b0c@stanley.mountain>
+References: <5dbd6105-3acf-47ad-84d6-2920171916ac@stanley.mountain>
+ <0e832ed8-9692-43ba-869d-8db3b419f3a9@amd.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ee4989e2-f55e-4d09-8a0d-306b78b9c9d0@stanley.mountain>
-In-Reply-To: <ee4989e2-f55e-4d09-8a0d-306b78b9c9d0@stanley.mountain>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 3 Apr 2025 16:25:55 +0000
-X-Gm-Features: AQ5f1JpvJpXj_gh69LgHu7W2pAa3-WCUx4V9ie5tB7F6PHPJUleIgDiNR0yj7Fo
-Message-ID: <CAPY8ntCCvXObQ_7GNwjqNMB-=1ucy9WsipvptgvPxk3p2R3Ryg@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/vc4: release firmware on error paths in vc4_hvs_bind()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0e832ed8-9692-43ba-869d-8db3b419f3a9@amd.com>
 
-On Thu, 3 Apr 2025 at 13:14, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> There was a bug where we should have called rpi_firmware_put(firmware)
-> if devm_clk_get() failed.  Really, it's better and more readable to
-> move all the firmware code together so that we can release it one
-> time.
->
-> Fixes: 2fa4ef5fb943 ("drm/vc4: hvs: Create hw_init function")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Mon, Mar 31, 2025 at 02:02:44PM +0200, Christian König wrote:
+> Am 31.03.25 um 11:45 schrieb Dan Carpenter:
+> > Call dma_fence_put(fence) before returning an error on this error path.
+> >
+> > Fixes: 70e67aaec2f4 ("dma-buf/sw_sync: Add fence deadline support")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> >  drivers/dma-buf/sw_sync.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
+> > index f5905d67dedb..b7615c5c6cac 100644
+> > --- a/drivers/dma-buf/sw_sync.c
+> > +++ b/drivers/dma-buf/sw_sync.c
+> > @@ -438,8 +438,10 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
+> >  		return -EINVAL;
+> >  
+> >  	pt = dma_fence_to_sync_pt(fence);
+> > -	if (!pt)
+> > +	if (!pt) {
+> > +		dma_fence_put(fence);
+> >  		return -EINVAL;
+> > +	}
+> 
+> Good catch.
+> 
+> I think it would be cleaner if we add an error label and then use "ret = -EINVAL; goto error;" here as well as a few lines below when ret is set to -ENOENT.
+> 
+> This way we can also avoid the ret = 0 in the declaration and let the compiler actually check the lifetime of the assignment.
+> 
 
-Thanks for the respin
+I had some issues with my email and it silently ate a bunch of outgoing
+email without saving a single trace of anything I had sent.  I see
+this was one that was eaten.
 
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Unwind ladders don't work really well for things where you just take it
+for a little while and then drop it a few lines later.  Such as here you
+take reference and then drop it or you take a lock and then drop it.
+Normally, you can add things to anywere in the unwind ladder but if you
+add an unlock to the ladder than you to add a weird bunny hop if the goto
+isn't holding the lock.  It ends up getting confusing.  With that kind of
+thing, I prefer to do the unlock before the goto.
 
-> ---
-> v2: Use a cleaner solution
->
->  drivers/gpu/drm/vc4/vc4_hvs.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index 4811d794001f..06aedd906d74 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -1675,6 +1675,17 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
->                 if (!firmware)
->                         return -EPROBE_DEFER;
->
-> +               max_rate = rpi_firmware_clk_get_max_rate(firmware,
-> +                                                        RPI_FIRMWARE_CORE_CLK_ID);
-> +               rpi_firmware_put(firmware);
-> +               if (max_rate >= 550000000)
-> +                       hvs->vc5_hdmi_enable_hdmi_20 = true;
-> +
-> +               if (max_rate >= 600000000)
-> +                       hvs->vc5_hdmi_enable_4096by2160 = true;
-> +
-> +               hvs->max_core_rate = max_rate;
-> +
->                 hvs->core_clk = devm_clk_get(&pdev->dev,
->                                              (vc4->gen >= VC4_GEN_6_C) ? "core" : NULL);
->                 if (IS_ERR(hvs->core_clk)) {
-> @@ -1689,17 +1700,6 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
->                         return PTR_ERR(hvs->disp_clk);
->                 }
->
-> -               max_rate = rpi_firmware_clk_get_max_rate(firmware,
-> -                                                        RPI_FIRMWARE_CORE_CLK_ID);
-> -               rpi_firmware_put(firmware);
-> -               if (max_rate >= 550000000)
-> -                       hvs->vc5_hdmi_enable_hdmi_20 = true;
-> -
-> -               if (max_rate >= 600000000)
-> -                       hvs->vc5_hdmi_enable_4096by2160 = true;
-> -
-> -               hvs->max_core_rate = max_rate;
-> -
->                 ret = clk_prepare_enable(hvs->core_clk);
->                 if (ret) {
->                         dev_err(&pdev->dev, "Couldn't enable the core clock\n");
-> --
-> 2.47.2
->
+free_c:
+	free(c);
+	goto free_b;  <-- bunny hop;
+unlock:
+	unlock();
+free_b:
+	free(b);
+free_a:
+	free(a);
+
+	return ret;
+
+regards,
+dan carpenter
+
+diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
+index f5905d67dedb..22a808995f10 100644
+--- a/drivers/dma-buf/sw_sync.c
++++ b/drivers/dma-buf/sw_sync.c
+@@ -438,15 +438,17 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
+ 		return -EINVAL;
+ 
+ 	pt = dma_fence_to_sync_pt(fence);
+-	if (!pt)
+-		return -EINVAL;
++	if (!pt) {
++		ret = -EINVAL;
++		goto put_fence;
++	}
+ 
+ 	spin_lock_irqsave(fence->lock, flags);
+-	if (test_bit(SW_SYNC_HAS_DEADLINE_BIT, &fence->flags)) {
+-		data.deadline_ns = ktime_to_ns(pt->deadline);
+-	} else {
++	if (!test_bit(SW_SYNC_HAS_DEADLINE_BIT, &fence->flags)) {
+ 		ret = -ENOENT;
++		goto unlock;
+ 	}
++	data.deadline_ns = ktime_to_ns(pt->deadline);
+ 	spin_unlock_irqrestore(fence->lock, flags);
+ 
+ 	dma_fence_put(fence);
+@@ -458,6 +460,13 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
+ 		return -EFAULT;
+ 
+ 	return 0;
++
++unlock:
++	spin_unlock_irqrestore(fence->lock, flags);
++put_fence:
++	dma_fence_put(fence);
++
++	return ret;
+ }
+ 
+ static long sw_sync_ioctl(struct file *file, unsigned int cmd,
+
+
