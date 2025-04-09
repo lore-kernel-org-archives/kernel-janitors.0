@@ -1,96 +1,112 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7A025DCE9
-	for <kernel-janitors@vger.kernel.org>; Wed,  9 Apr 2025 11:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E80B266B71;
+	Wed,  9 Apr 2025 14:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744197162; cv=none; b=aMT+H5+Kl1412MAFup97+SPKZpV9p8UJtSP5RVoZpxAZn7JFxffnmNuPiLMV3MREhqgso/EPOjJv110obrAr4U+NPbJyHaGDfDMkzrLETBL0z5HHKLfPcewYZGY6mxTjkzSTe5HV3wq3uCdqQ0lM8WWuaGrSnN2IqxyxrFXxpTY=
+	t=1744209106; cv=none; b=QGYJFmRTYtz9u9xAzvMFuanvchVI/0YKbLTV5PaAgoM/ZuoKPGzpRt0Ut5gEFuZsg3nTSA/hsdfA5XyibwxmmNfQVl7OAMvBxmHhsq+tP0l+mOLjjHTyBpWBLCocdBoRsKZqosM00P57iPkmVJnUMf0tKcQGF8dcb1rtlXcqQhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744197162; c=relaxed/simple;
-	bh=Z3WABlsB1UGI85o/kZMzF0WpD59YSXlr7X6B5QRZKZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMBX9NL8U8Ju0pt5YEgSAvj2BRWJNdA7YF2MoqxtxOtYJ9GqvGg79ZJ27EX75fotqBitjGsULRU1al4cE9OnXjgUkGELXxrASa2h9GwayqGYa3RR6zIgGjFb2Bjv8Lmu7/c3L/tB4C5R8urJB+M2wYL/JKTOckWy4KeO+PdNucg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YN9ANTEh; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744209106; c=relaxed/simple;
+	bh=kehAxItDvgtX+tKg7TkyId9CAXsLYlIqEI/xXHXIkZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G47Ugdz+czwmlxPXCNCM1P4e0t6a1hNtVmg/RNyNVX7JSNnVuusqSbkOS54MSPGP49anr3F/Aa1QK0qSw3iFV+mNuXPCFcJUVobr6Avv4iW9ul6M8sxlOmkYUwnbaek1bfXR6T0dS6X5Df8wEiRKldIrnGGgmKCMwVftN7QzMiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1MhdMu5; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YN9ANTEh"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-399749152b4so3613632f8f.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 09 Apr 2025 04:12:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1MhdMu5"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so34962115e9.0;
+        Wed, 09 Apr 2025 07:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744197158; x=1744801958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mipIJnl4yQ6XlD74FRUZU7GUyWJ8NwjpLfWewuTaQrM=;
-        b=YN9ANTEhJdOtNckiXq4MufqvBj6BKGMTQW/HT5yFV5FsuSh/Y9u9UqbGzGBqQtlazN
-         dk3/YmJrW8Ey8bkBhu1kvJ5hM/35WfR+ecOnb7GB55FY6LmVu6jzLY/Kmstlr1NIG9qX
-         C1XM9/6WUhJtHlPgJdoocCGArB/Bk8GzoghhofAi2cb6B2atzJ+bND0JEQ1TDwLv01ig
-         SsS09nKRrrJZW05ZddI2Y2K6k7REO9cYmBO9E/hsRHo7g3UBPHgx16A+SAzSVZL/i808
-         2A3WBTPYQtfwCFChzu00it96cuuXhhAKTMQpAsI2EjGTodbkVsiCAIsn+ht6HL+OrPEI
-         t98g==
+        d=gmail.com; s=20230601; t=1744209103; x=1744813903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xAx3Sy8VitFS5n0m7xguZIFBZ5naFd5vtkTxSJ/vHOo=;
+        b=M1MhdMu5885dAQbwg+5pZbQJGtMKBiROCqASM3V+0QT2t+cmEQpq1wU6QN0bL5HW0G
+         JkJ1VB2P0+SOiAAHmvAQNAy5Veb0Sqe+FcmzPEVEO4JR0MlVZZkxTfjyzsSjkjSgUJJC
+         HYNLAEvBhYjQQF3u2zJwF1EY9QE6I2g6EbcL31h8Zwx4lW6MkA7a7BlnZDvaeIHqKqB6
+         nEElSXBWWraq8URYcpA6BfWyqcZemQglV0dtxZnX6st+aKwRxPo3/xsxfjB99v09JV2q
+         a9CzZFjycSSaj9id2dti7bQFGXJ55gp/slL7wh37Fm3L2K8zIMfiNxBpdwyobbn2Y7B9
+         EBNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744197158; x=1744801958;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mipIJnl4yQ6XlD74FRUZU7GUyWJ8NwjpLfWewuTaQrM=;
-        b=sl+OZeFKPJcQmHuSBsVTfy0iy7zhCwKJLo4xdp+zibyzKUwUHLvG4DTGjlyg65N6qP
-         FcqHb2Rh3xlDmPp2PgRL7PZvGcgase7rHw/XnkWsoLO+DFlxHol2joCaJOMkBUER+nM+
-         GJUOeEICMtQe4pDBd6dm6QszL18FsCeCcmzN/XM8WExM/UuwK2d4U/p85/pj8Hk321NK
-         iA5P8HuQN6AFcw0cZHhFzUQBm/BalQ6qjuqwuPdiW+fq/0dK381xWGRjVb8OW4NX70jz
-         VTm4nBfLK+PFpIiEAbM03Fxu87dR+sh+8llkN1pUhzwFaMBkRZ+A5ZrZqW5Y0Y9Ydo3n
-         v9cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDdcSXQq+37PPkR1+NxjzjJ6ORl5T2XqOCovpbM2HKIgNAxvkSL07GecGtOXVAn6ekH9E2iRtXEMl0EQjqawA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO7lhCnJwDOA7Y/i+E0hHmriWgNfVyCDYc0I0PS4TUGGGrCfGB
-	BDTxItYJwno5RUPr1SViDZc45pomepMcM7PSgBwVRZ2THeCW7sLcqhN31/ZFyFY=
-X-Gm-Gg: ASbGncu5LB20NAVNUI4juuVxeTYaH92dd26Mri+CjReg12rh0v8EN8GYcvm216zW/VG
-	cdfZ6yDNCQ0AJifzrGIpMVO+Z9Ixf5QlGbknRZkQKypUsFCRDTKJOXP0NMcYWSo7t59R+7qb/ct
-	1FoaPp80eDaeUttN87nCSzMZWz58rz3COVQCggI2XAusMLtqo8m+ktDJ+BsXdWGUPwQdBuxQuyA
-	h14S9UYwDMpfJyAtg4yO2kX20U+0Z8nZQUNILCGoJXlvGF/OiUS2/x/GXy+YRTRHKtKR4BvaaVI
-	wIGyjutIKBKPFVq5sJtCSkgJVUIdYUCBwKXbRj5pIPx7bHYk5wm2COpr
-X-Google-Smtp-Source: AGHT+IHfn0sTQ79iQ/7T8zc7UTi7ax1XoigXfd8iHlhWM9zbTWV8ADTloCpAqHEZS/cwllSwzMqp4Q==
-X-Received: by 2002:a5d:64c9:0:b0:391:2eb9:bdc5 with SMTP id ffacd0b85a97d-39d87ac56a9mr2016059f8f.23.1744197158492;
-        Wed, 09 Apr 2025 04:12:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39d893fc88dsm1309695f8f.81.2025.04.09.04.12.37
+        d=1e100.net; s=20230601; t=1744209103; x=1744813903;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xAx3Sy8VitFS5n0m7xguZIFBZ5naFd5vtkTxSJ/vHOo=;
+        b=PmZL7yMWScVHJZXXwKHU4yBFRIhcSR7ykx13YVboEbEn6Y3mTkIe7Qz35lEg+EMclM
+         huDRACxnPzzWPevK5fQ54HSfh6ncpJdozlqvW+MaCGCgiG8Ct9WdlWAw8YlxNzbO7+UY
+         IcFZgPjAGCE2dbGCXRUzgYwkRQRs/UlPSd0bpS+9y/8eschdAC3+70NYlKyZS1851vVp
+         lnKQ5qzlWpQC8axfzQuD/zjPkwxVGVU/EQacIz1Pa5LKKg2n+ytOU7Oroj26Par1miWL
+         wL1Uf+3dhWX7CvVkZladnRxaz6h8AN4IAI9tNmBgH+JTLbW6syQ3IEBYUijqkJFNkiyr
+         Y40w==
+X-Forwarded-Encrypted: i=1; AJvYcCWyYNh7Y0IggkDpZoqQkqBF+njcAL/zfSey3Qk25w4RX6scwK8739zu3Xq5sZRjkjqTC5BuuoIM1z9VV9ig@vger.kernel.org, AJvYcCXfEuZmrErwb/XvkrET7bOQk9VJ12ayVl0metN5NPrPH7/jlOfJQ1jmVMbZLk7WlVW8fmoU3Gu+Pij9twSl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMS2XsgLE5ZtvX0HydO/Apx4YUR+7dOLu7hscmA9Olm8wCl05Y
+	qd6mOWG9X/UDxEwN99wo+0kwir9C8iCciwBUwVdFRPUL/P3m0qI5
+X-Gm-Gg: ASbGncsGgtkjfq2IGl8JEn2oEAuPBtCoBD8JTelE87qgHQpztTkIDK7uxNuRdwZcwP4
+	N06wz+xvdlxhQgol6JVHHVM2XrzG/7FYILv6l5+q3a1D0FWX+2J6/H/fnsa9r7gnpEIrfV0ONiM
+	bBtuk0wUmKcgJUNQQSyoaiMUzwbEz2OVKsNNT7auAeUbS41fa8ta1B1S2F3gE5yKHOM64pE+XQh
+	M4chH3LIQx4tF/2pvaejvMc1hU0WmNR8rQWT87k4en9QllMXJyKkbK8MkW1T3WnLT6d95/mY20O
+	Mu/MoP12v4zbGD/YwGnXLpqCebSHhJnJl/BQBgY0EA==
+X-Google-Smtp-Source: AGHT+IHxJbg8rbvWk3qrs1dFCbH1e7U/BsmqoTWA9z90R/ywpZLV/p8qzON3hSGVMyTQeN+VuaWIeQ==
+X-Received: by 2002:a05:600c:1d05:b0:43c:f513:9591 with SMTP id 5b1f17b1804b1-43f1fe16b84mr20419385e9.14.1744209102563;
+        Wed, 09 Apr 2025 07:31:42 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f2338db0dsm18889835e9.7.2025.04.09.07.31.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 04:12:38 -0700 (PDT)
-Date: Wed, 9 Apr 2025 14:12:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Brian Geffon <bgeffon@google.com>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] zram: Fix uninitialized variable in
- zram_writeback_slots()
-Message-ID: <e858f6aa-7593-47f7-9bf1-64a747a2e0ed@stanley.mountain>
-References: <02b8e156-e04f-4ab3-9322-b740c1f95284@stanley.mountain>
- <osj54aiqi3b3dtgyfituj6tqpar5s7trkkx7hytfozl4cifc63@mu7bb5pyse2n>
+        Wed, 09 Apr 2025 07:31:42 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] select: do_pollfd: add unlikely branch hint return path
+Date: Wed,  9 Apr 2025 15:31:38 +0100
+Message-ID: <20250409143138.568173-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <osj54aiqi3b3dtgyfituj6tqpar5s7trkkx7hytfozl4cifc63@mu7bb5pyse2n>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 09, 2025 at 08:10:22PM +0900, Sergey Senozhatsky wrote:
-> On (25/04/09 13:58), Dan Carpenter wrote:
-> > The "ret" variable is only initialized on errors and not on success.
-> > Initialize it to zero.
-> 
-> Thank you Dan.
-> 
-> > Fixes: 4529d2d13fd1 ("zram: modernize writeback interface")
-> 
-> This is still in mm-unstable, mind if we fold the fix in?
-> Or I can send a v4 with the fix applied.
+Adding an unlikely() hint on the fd < 0 comparison return path improves
+run-time performance of the mincore system call. gcov based coverage
+analysis shows that this path return path is highly unlikely.
 
-No, problem.  I understand how mm works.
+Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
+a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
+shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
+performance improvement.
 
-regards,
-dan carpenter
+Results based on running 25 tests with turbo disabled (to reduce clock
+freq turbo changes), with 30 second run per test and comparing the number
+of poll() calls per second. The % standard deviation of the 25 tests
+was 0.08%, so results are reliable.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/select.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/select.c b/fs/select.c
+index 7da531b1cf6b..0eaf3522abe9 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -857,7 +857,7 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
+ 	int fd = pollfd->fd;
+ 	__poll_t mask, filter;
+ 
+-	if (fd < 0)
++	if (unlikely(fd < 0))
+ 		return 0;
+ 
+ 	CLASS(fd, f)(fd);
+-- 
+2.49.0
+
