@@ -1,112 +1,107 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E80B266B71;
-	Wed,  9 Apr 2025 14:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD4C1482F5;
+	Wed,  9 Apr 2025 15:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744209106; cv=none; b=QGYJFmRTYtz9u9xAzvMFuanvchVI/0YKbLTV5PaAgoM/ZuoKPGzpRt0Ut5gEFuZsg3nTSA/hsdfA5XyibwxmmNfQVl7OAMvBxmHhsq+tP0l+mOLjjHTyBpWBLCocdBoRsKZqosM00P57iPkmVJnUMf0tKcQGF8dcb1rtlXcqQhc=
+	t=1744211918; cv=none; b=ZAHdSFdg6xNVe9mDMdASGlHPlIBBIS+L4ZgLlMMhO0RoOAZlp5UFO3XV3vIa7uckHTsNRn88KluE2nsQgXb0pf0s/77h8iuvQq6zGrHErGUH8aGMczoLlpkOCJ8PzB0RBS8TyER3Iy21eFfPYI3zGgJ/n5GLocrT9ZHsaFm/ylE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744209106; c=relaxed/simple;
-	bh=kehAxItDvgtX+tKg7TkyId9CAXsLYlIqEI/xXHXIkZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G47Ugdz+czwmlxPXCNCM1P4e0t6a1hNtVmg/RNyNVX7JSNnVuusqSbkOS54MSPGP49anr3F/Aa1QK0qSw3iFV+mNuXPCFcJUVobr6Avv4iW9ul6M8sxlOmkYUwnbaek1bfXR6T0dS6X5Df8wEiRKldIrnGGgmKCMwVftN7QzMiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1MhdMu5; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1744211918; c=relaxed/simple;
+	bh=uViSNOAqAkmUraE/cJ3HBL1B127TQ8IrrZ680tfIqa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jstc3qorrCrZt9qkEyx+jJ3ySlSxTjHy32hqBR6bd9ukQzpmKfZXGbAEH/c8tBYVjawK0qlqFYL3mRmnwFlw+3ejDB8QTCyTWqM05Pgw8j/GPcdS1K2SnfrloQuC6XFQMqBvQRzOYxJ5lqlfHN/iOTjbCPcBiZOpGut2J46jHDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jyh/lUEU; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1MhdMu5"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so34962115e9.0;
-        Wed, 09 Apr 2025 07:31:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jyh/lUEU"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39ac56756f6so5814031f8f.2;
+        Wed, 09 Apr 2025 08:18:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744209103; x=1744813903; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xAx3Sy8VitFS5n0m7xguZIFBZ5naFd5vtkTxSJ/vHOo=;
-        b=M1MhdMu5885dAQbwg+5pZbQJGtMKBiROCqASM3V+0QT2t+cmEQpq1wU6QN0bL5HW0G
-         JkJ1VB2P0+SOiAAHmvAQNAy5Veb0Sqe+FcmzPEVEO4JR0MlVZZkxTfjyzsSjkjSgUJJC
-         HYNLAEvBhYjQQF3u2zJwF1EY9QE6I2g6EbcL31h8Zwx4lW6MkA7a7BlnZDvaeIHqKqB6
-         nEElSXBWWraq8URYcpA6BfWyqcZemQglV0dtxZnX6st+aKwRxPo3/xsxfjB99v09JV2q
-         a9CzZFjycSSaj9id2dti7bQFGXJ55gp/slL7wh37Fm3L2K8zIMfiNxBpdwyobbn2Y7B9
-         EBNw==
+        d=gmail.com; s=20230601; t=1744211915; x=1744816715; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lGKy6jggFaaAC/3IEsCxAnoHmSQ+hWKoUuhM5yojB78=;
+        b=jyh/lUEUMXjodMiPtgY7ZlrlZ5zeRkqbtV9XTnlT5KyBCnsWGk/emTJpDVf+sNwuGJ
+         KPp5FNJOlSIy45ciFBSWtHg0Ge0xaYQbHKQJ57V2DvldixxRilA7D4MGn3QUba62yxtI
+         ENKrME6gmPVv8V0esZ8Es9gByAskdXTrBy9SRqIiQLp1TbXlnKukpnA5ejbgAmp5Il5n
+         aNprz1C2FPz34ZTsT1KyiedkNjReTxPZZd/K5W6dTZl7Sk32REvF4C5uwl1FXopS6w1l
+         kS7XNRvRNS/2+CREW6TQDgGE8NmkuItHPOqm/giAT4QGSgLHboatRhLqzOtYBmwGfNGN
+         iRrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744209103; x=1744813903;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xAx3Sy8VitFS5n0m7xguZIFBZ5naFd5vtkTxSJ/vHOo=;
-        b=PmZL7yMWScVHJZXXwKHU4yBFRIhcSR7ykx13YVboEbEn6Y3mTkIe7Qz35lEg+EMclM
-         huDRACxnPzzWPevK5fQ54HSfh6ncpJdozlqvW+MaCGCgiG8Ct9WdlWAw8YlxNzbO7+UY
-         IcFZgPjAGCE2dbGCXRUzgYwkRQRs/UlPSd0bpS+9y/8eschdAC3+70NYlKyZS1851vVp
-         lnKQ5qzlWpQC8axfzQuD/zjPkwxVGVU/EQacIz1Pa5LKKg2n+ytOU7Oroj26Par1miWL
-         wL1Uf+3dhWX7CvVkZladnRxaz6h8AN4IAI9tNmBgH+JTLbW6syQ3IEBYUijqkJFNkiyr
-         Y40w==
-X-Forwarded-Encrypted: i=1; AJvYcCWyYNh7Y0IggkDpZoqQkqBF+njcAL/zfSey3Qk25w4RX6scwK8739zu3Xq5sZRjkjqTC5BuuoIM1z9VV9ig@vger.kernel.org, AJvYcCXfEuZmrErwb/XvkrET7bOQk9VJ12ayVl0metN5NPrPH7/jlOfJQ1jmVMbZLk7WlVW8fmoU3Gu+Pij9twSl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMS2XsgLE5ZtvX0HydO/Apx4YUR+7dOLu7hscmA9Olm8wCl05Y
-	qd6mOWG9X/UDxEwN99wo+0kwir9C8iCciwBUwVdFRPUL/P3m0qI5
-X-Gm-Gg: ASbGncsGgtkjfq2IGl8JEn2oEAuPBtCoBD8JTelE87qgHQpztTkIDK7uxNuRdwZcwP4
-	N06wz+xvdlxhQgol6JVHHVM2XrzG/7FYILv6l5+q3a1D0FWX+2J6/H/fnsa9r7gnpEIrfV0ONiM
-	bBtuk0wUmKcgJUNQQSyoaiMUzwbEz2OVKsNNT7auAeUbS41fa8ta1B1S2F3gE5yKHOM64pE+XQh
-	M4chH3LIQx4tF/2pvaejvMc1hU0WmNR8rQWT87k4en9QllMXJyKkbK8MkW1T3WnLT6d95/mY20O
-	Mu/MoP12v4zbGD/YwGnXLpqCebSHhJnJl/BQBgY0EA==
-X-Google-Smtp-Source: AGHT+IHxJbg8rbvWk3qrs1dFCbH1e7U/BsmqoTWA9z90R/ywpZLV/p8qzON3hSGVMyTQeN+VuaWIeQ==
-X-Received: by 2002:a05:600c:1d05:b0:43c:f513:9591 with SMTP id 5b1f17b1804b1-43f1fe16b84mr20419385e9.14.1744209102563;
-        Wed, 09 Apr 2025 07:31:42 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f2338db0dsm18889835e9.7.2025.04.09.07.31.42
+        d=1e100.net; s=20230601; t=1744211915; x=1744816715;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lGKy6jggFaaAC/3IEsCxAnoHmSQ+hWKoUuhM5yojB78=;
+        b=rvBP8LG4htj2rqf1x94TK1pGX2V3GSFFrmlGFuVKAe34UbyugYyt5OJ2+OfmtS18NE
+         HnTaeuQF4TY7Je1/0DF1P/jqbBWI1qV+AGHUoMxRQQkw1VH6kodcqmO4lF13lU4wOYmG
+         eYs8DxBh/nW6idrFjZU1CGYKiKlwde1cXIj/9WXwkusgHd3Uo8U7zTWCPVl9bR/Lrynd
+         Q76zyX0oKtX5Rb67nd+AFmWGACpM22TTEhcnyHq69HAN3gma2CcancYAvqOhO9o9+Kqz
+         rUsMJWcrO7MjvCQuo+7gCG8qBO3u/VezbJwBrlIcuFiBfcJ3sCo0+aU9+ypswK2Vj8Ad
+         ASFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWel++a2OA7xxrHR7843PKborGbt0dGuzLi63p9pSnJZEHOiEXDlOiBv92LFlzEkyphx8G4cV6MwACOnpyp@vger.kernel.org, AJvYcCX0OVvzCMec4dhhR/tNPG+IliWfokSBIJHZaVOG2N7SaIgoajdFaydASIovaXr3Xl+RfmZ1nMG9BE2TFhtcguY=@vger.kernel.org, AJvYcCXQpRF2vF0LYhadjis22FfgMmgty3RtW6O1ISIQkWTz1UjX5WskxWjXOS3NHNkEsHx8dtYO4KqW5e5Rx03hew==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyrkKFdaLaGzjfQxtf1mIbc0J9dDVRwyPVZJWaiieOdT3K0PIo
+	RQcQFXY7C5C9h+T8eKsNJvrBMc8P4yoNyfuPwL4V/CI8X5cAR3LH
+X-Gm-Gg: ASbGncs8TFBlPHbsFjBz8UOCRJ0ffdzb5rVQRK2V+CMZm4ORCsJCDjv/lyMEbjbgwDS
+	Imo2WpqCcRGcNA1OQgzna9E3pFG20uot/exdn+8PsFEhZLmeaPrK8KsDggwH+iqv1BHHA8z4tGo
+	K46RJCEPKSqOos3CS0D3Cw5g78ZjFMky3h7Ke7bNsW7cUCN0qhEvTQXVhQ5akXgrnie32MPMCIE
+	EEBTDXcb0chQ6kyGd1+0ym8LEjS7KKZlOCGPBT39nMFMddDueO8Gapz0Yy5cZG7zzAWwc2LTDM9
+	81rcF9QF+zT3zQVtYWLrr7VkRMFMRJr8U1KXm06dMAFCRdF1UE7hzxVZ
+X-Google-Smtp-Source: AGHT+IHrWEeUbn/ofyzKeGsGVmMQyyF7VSvjS6DBt2BYcu1AMBMUwUXtdCBz1agZtaaqRgeeGIh58g==
+X-Received: by 2002:a05:6000:2aa:b0:391:158f:3d59 with SMTP id ffacd0b85a97d-39d8852ecc6mr2918176f8f.15.1744211914798;
+        Wed, 09 Apr 2025 08:18:34 -0700 (PDT)
+Received: from f (cst-prg-17-207.cust.vodafone.cz. [46.135.17.207])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d89402a08sm1881192f8f.100.2025.04.09.08.18.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 07:31:42 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] select: do_pollfd: add unlikely branch hint return path
-Date: Wed,  9 Apr 2025 15:31:38 +0100
-Message-ID: <20250409143138.568173-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Wed, 09 Apr 2025 08:18:34 -0700 (PDT)
+Date: Wed, 9 Apr 2025 17:18:26 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] select: do_pollfd: add unlikely branch hint return path
+Message-ID: <llt32u2qdjyu3giwhxesrahsh5a2ks6behzzkjky7fe7k6xync@pvixqbom73il>
+References: <20250409143138.568173-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250409143138.568173-1-colin.i.king@gmail.com>
 
-Adding an unlikely() hint on the fd < 0 comparison return path improves
-run-time performance of the mincore system call. gcov based coverage
-analysis shows that this path return path is highly unlikely.
+On Wed, Apr 09, 2025 at 03:31:38PM +0100, Colin Ian King wrote:
+> Adding an unlikely() hint on the fd < 0 comparison return path improves
+> run-time performance of the mincore system call. gcov based coverage
+> analysis shows that this path return path is highly unlikely.
+> 
+> Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
+> a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
+> shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
+> performance improvement.
+> 
+> Results based on running 25 tests with turbo disabled (to reduce clock
+> freq turbo changes), with 30 second run per test and comparing the number
+> of poll() calls per second. The % standard deviation of the 25 tests
+> was 0.08%, so results are reliable.
+> 
 
-Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
-a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
-shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
-performance improvement.
+I don't think adding a branch hint warrants benchmarking of the sort.
 
-Results based on running 25 tests with turbo disabled (to reduce clock
-freq turbo changes), with 30 second run per test and comparing the number
-of poll() calls per second. The % standard deviation of the 25 tests
-was 0.08%, so results are reliable.
+Instead the thing to do is to check if the prediction matches real world
+uses.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/select.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+While it is impossible to check this for all programs out there, it
+should not be a significant time investment to look to check some of the
+popular ones out there. Normally I would do it with bpftrace, but this
+comes from a user-backed area instead of func args, so involved hackery
+may be needed which is not warranted the change. Perhaps running strace
+on a bunch of network progs would also do it (ssh, browser?).
 
-diff --git a/fs/select.c b/fs/select.c
-index 7da531b1cf6b..0eaf3522abe9 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -857,7 +857,7 @@ static inline __poll_t do_pollfd(struct pollfd *pollfd, poll_table *pwait,
- 	int fd = pollfd->fd;
- 	__poll_t mask, filter;
- 
--	if (fd < 0)
-+	if (unlikely(fd < 0))
- 		return 0;
- 
- 	CLASS(fd, f)(fd);
--- 
-2.49.0
-
+I have to say I did not even know one can legally pass a fd < 0 to poll
+and I never seen it in action, so I don't expect many users. ;)
