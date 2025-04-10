@@ -1,152 +1,114 @@
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF8FEEB1;
-	Thu, 10 Apr 2025 22:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676F8EEB1
+	for <kernel-janitors@vger.kernel.org>; Thu, 10 Apr 2025 22:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744322803; cv=none; b=de/m4+zBrRAxMB4cmPRiXQMXSZIYF4k3lNDqIFFloJZgXd3OCkMCwUPDdQhgKmupKJG0N3FV2K6upATi4cXc2CmpAp8yPLMTe9rhP7wRarvvSmHvduAxhaW1ZWQ4T1UmqhNtI5lZsrcvX6Sys4+IBRZQ3wMvWRc0z7alFBaQ1DI=
+	t=1744323419; cv=none; b=jqCEWLNXeIv4lQNIsOOKPO5Fy8mX194GjFzAtjsmaO5hBDvMneTwSMkjgGolxSJyW9sySEFl5tdzL0UvzB3jlN3Rxi5LdAVYuecYJStrnYr4oFeVS2hCeM2gXpkNcFinM35YD873SXin7oHv8TA51YldXcJZIiiORna7Az+eM7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744322803; c=relaxed/simple;
-	bh=Jg6gNx0r4xnCZfOCVulJh/x/Sje4lcCTJVNC7IIghvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iBAp7M0im+qMEvjo2Vk92yPBf/pyKrt+2twepE/TfLaC/cQSOks24vv6O/u0syXNdkoDr6KGCfSld1eaMxQr66Mpvie7laG1DrdtXz6yHEg9SuThqmLVUJprKv16C5/u2SxysvjvLVqohfD+/pIiSPETHsu7LIzmKfnikk6qXqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2D93DAW; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744323419; c=relaxed/simple;
+	bh=HFP9qPj8dyOE3lqE3Pe0T3S7rWACXve/V2CTd1pqhCc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rwxuyZ2IeaHzSLadcYbh5V9Q7Pz1VPb1nd01pQ7ojvV2DmQB9MU+B9IxOBPWYN230Ws3OjSbHpMWMRQkvZ8oV4w5TC9GIv25eog3ftGCMAOgNudj0jwOD05d2tK6u7/RSCzRKRzejsMH9MmQfcXNPLlvNZiqeERQ4nI+4uDA36k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fsCz9ImP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2D93DAW"
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3cfc8772469so4875225ab.3;
-        Thu, 10 Apr 2025 15:06:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744322801; x=1744927601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E7ICNZV18cZHr2vbkLA3GpRwRAJQKYpv6Yp1RF0PmOc=;
-        b=a2D93DAWH5ZUJ4GdDEveCrIRRFH1J/cagI9KLZVuzPVx9ZeAHdkoBpn6biPU/IpejA
-         tiZcjkf9CtsFRfRjNQAilzyyVuBtnYCkdDw3ChpI/CBSJXDjnV4x2f08uxTD8z1zcO8j
-         syAg447XrMmMAcrlQGNMYsfzzErIH8ONSZhMi77dUEw3MPEiGNpR4pmVsOqBuLbzd7Zn
-         W2I4z4RnWtJpWiud6peIki4jYI4BrXPvHwLNkizYyAVxvyFZgxJVbRlgTCNa4qBhfrxx
-         IOwPzH+osp3ahb/NWVnfqwo+6c+w7LwUIPFrZZX5qBqunhLNSkgv2KACMFEfs3GcTSyp
-         ZDmQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fsCz9ImP"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AGXe2w032136
+	for <kernel-janitors@vger.kernel.org>; Thu, 10 Apr 2025 22:16:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SlD2Zoqck4pcF7VZMBOHU/52fauKubtGQptlE1KvI3Y=; b=fsCz9ImP98FsJt01
+	ASFcaidgTI8xN0WzSjLgQk2ozYggU+2fa2BXmRSCgo3b9J67QXlm03nEChTMn6mK
+	Bo3cpQIsU4gwA+Ls23trtcC0TGgdrDoQ0r1fC18gAqpfHejLjXu5l9LI0kpKX/di
+	lxWxmnHK6r7PZrYLv5Ro6WZTZ7Pp1VddGk3CVqqG8w7L0380ZxgcJfclQlaadTRx
+	guB/S+VXx5JlGHgUB8gjSjlPqPz7BKcgTAS/9rznOWIQMk+fFwKXXFN3moMrYKLd
+	jyoJcrY3hHioBBLdDczXT8iPgMW2iFfM/qxB46DYQWU2yoXmPdZHt1MTe6LcnkeB
+	sM5JnA==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twpmgccn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Thu, 10 Apr 2025 22:16:56 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-af51d92201fso1556689a12.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Apr 2025 15:16:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744322801; x=1744927601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E7ICNZV18cZHr2vbkLA3GpRwRAJQKYpv6Yp1RF0PmOc=;
-        b=mJxtg59x3BQiVLNAH3lh9hQGKEi+ZxzyuALWA1Ct19f9naXT8Tbq7nOGJQ3P/3NtBE
-         e1jVY2uMlCc5YwTRqvBYPxY8ouAnO5CPwsISDlAS8o4wUOdlk/YtM2MB/ErLGVtW3Q5P
-         q/URQUvQnlSlZfLa04YWHHC6g1TyH86nK0l6XEntpZfJI7bzSnhZJ6aaj+qNBEVxxLmX
-         Bix22/6iV/zAKaMVA80qa7nsTd3C02wPvEA4XGcNBezhr+RonwGORAH/0OXvbfiuqRLe
-         0tY/9NItfaTYdIlForMaKE0P/MoIL0oHPr3P1D8o3VpDSfL/QOXsxSYmnudyw5J+vWX1
-         q0yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKhEMN+oC34j1B//OgF3nJDzAfnZi/LhTWJlz2/cgvGMH2m6QgX4neNH2yeGp7/1sQWVyYter9oynel8LJrTg=@vger.kernel.org, AJvYcCXZP1b4MygSb/k3JCGCRcZ4nAbAtmhst8C19Snf7+VqkjB8/taB8L+wMoRaqvAPsD10ER9JhF8hz3hs5ZBU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5yO8CYGRd3rlgjdIlmxToTGD4C/cxTvdMe+fALUXUNN9EsRnD
-	VAn2pmncHZ3dK9v04+GR9EU3RaGxpAYTJvmp6fpvWQLrdZHshUY+mnNBrueXyg3BmAVXvwU+TMm
-	50Dtwa/o1oOf5kOLjW1ZmtV3alhg=
-X-Gm-Gg: ASbGncvXkR1YFlnzTMBoiNPbRouKGF6PHsrHpna4U8+1JumJiugaEQ7jVzQQq0X0wqQ
-	RbO9/zs/ho0gqk1sgs/SQnoXyMrDijFb42SE+5ICXS5vAgh0aEHtMueS/Ho/O22cfAXff7tpi2N
-	Z+t5OKfhwAU1kmaCIuB/HryBSIt22bkyFQdPgtg3rFkrStmcX81Z1MwKTu
-X-Google-Smtp-Source: AGHT+IEPRpH3UqQvP2ZHQTbc4I7CWqGnc1U/KINkDJ4Z6Yy1t8pFZOhHpeJPZSPZN4Ye+gf4xD7+v/NgFyUWDrafl80=
-X-Received: by 2002:a92:c261:0:b0:3d3:e284:afbb with SMTP id
- e9e14a558f8ab-3d7ec2276f9mr6044675ab.11.1744322801057; Thu, 10 Apr 2025
- 15:06:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744323415; x=1744928215;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SlD2Zoqck4pcF7VZMBOHU/52fauKubtGQptlE1KvI3Y=;
+        b=b354wVPgOM3ugZ+rGhqK4ujAYK2yKBl+2T7NJ18BLxnEyJoWGIZiF+9F5jjyqcCMfV
+         0jwnD0e/1ErXvPpFn37feIi07C3QjeK87XLL7GeoKqkuZMn1dcEZhhgLEMEIW3PI79wO
+         mRLU3dXlrlg1+fBmSDsxUY8utbNjvwtyU3d4Rm6RSfFmcS+3iddgqZbEv5kDPF5EiEJn
+         L/USjf07uljXkA36qKRBUnujhFhQ3flLMJxU/lKl3NR5B9ekDri5Ry7NPpSZE5Htnvdq
+         kiAyb3R1PrQ88NY5rPYm5ZxsUUwV/CaYr3WX9BbPR+dfHbWXpnCxGA8WsTrDA0iypK06
+         chBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWplVDR2nqTpNboMPqIhZkpO+b+uIPA8ePpX1vl+88umYCXBuxLFBlhfPNzxOJpHbBUjKGJ1VgV/KB+p0+b2g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7irPGJNIkhYBAIsE0HuV8DqRx4XiBQWMoSJxkYbuuK+qKUt/Y
+	0ifovhxvEjrYnXML41el5YczA74fNxJ+Oq/ASAwhp40f+n6rrcNJ94n696FAmf2qZxCA/tjOh/E
+	bYv1EGG0My9kj071XpQz+yoW0eSvNMqBGCrFTzd2YTAMawOLESz6KbI9i+lIDUhiO5Dk=
+X-Gm-Gg: ASbGncvUjyEYjyBkRban0/iLfo6ekkLVR2bskyCDbdjD3WG/DicuaTbllWa/ISBle/f
+	9OTH2tf+KBHaFF3+sLYHnKUruLJp2p5C8fKQWJHCc5GKlp5jWPWCJ6d+BBN+1cX9lwjV8W081wH
+	Jej+DQqNUoVrUWslHUO4Qqo5Pa/Lzs/J/ZFcI79Q509qei5Ixo7FkOLiH8Ennl7TkWlrcFSDmej
+	bned7oocuA6QVjkccKSbIPIxO3j7n9vpx0/3IEP14xwLqOqQVFZYt1eMWcqC/2r5PvUXcT+kiIv
+	0CFrx1eok6msW8Rd53X6vPt5bmfflJ8BHyCy92EANDnAzJ+QfReX3VrNUXjf4Gugi2+SLGNuQln
+	Zv8+s
+X-Received: by 2002:a17:90b:2743:b0:2fe:b174:31fe with SMTP id 98e67ed59e1d1-30823624700mr846384a91.2.1744323415422;
+        Thu, 10 Apr 2025 15:16:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3q3badw0zIeHRu251yR5zxmnm+DYdPJGS2wgnmZo8bCO06H0BLiRjTFsUKI1g39u/REbl2w==
+X-Received: by 2002:a17:90b:2743:b0:2fe:b174:31fe with SMTP id 98e67ed59e1d1-30823624700mr846343a91.2.1744323414953;
+        Thu, 10 Apr 2025 15:16:54 -0700 (PDT)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd1859e9sm4265767a91.43.2025.04.10.15.16.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 15:16:54 -0700 (PDT)
+Message-ID: <23e31f9f-4465-45c1-8919-c5d43034d33e@oss.qualcomm.com>
+Date: Thu, 10 Apr 2025 15:16:53 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c715ef30-9d91-46f3-8a0f-1039f3d25e7d@stanley.mountain>
-In-Reply-To: <c715ef30-9d91-46f3-8a0f-1039f3d25e7d@stanley.mountain>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 10 Apr 2025 15:06:28 -0700
-X-Gm-Features: ATxdqUGor6TYjFwFif4Nt2sCrEKfvSFfALNnIVB1JHLShlwtHgWuM9y-gnK_g3U
-Message-ID: <CAF6AEGshmGO0AAD3ndz-gN32r+xf2u=7gyf9aXbkZyb97AUXdA@mail.gmail.com>
-Subject: Re: [PATCH next] drm/syncobj: Fix leak in drm_syncobj_import_sync_file_fence()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rob Clark <robdclark@chromium.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] wifi: ath12k: Fix buffer overflow in debugfs
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Dinesh Karthikeyan <quic_dinek@quicinc.com>
+Cc: Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Ramya Gnanasekar <quic_rgnanase@quicinc.com>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <35daefbd-d493-41d9-b192-96177d521b40@stanley.mountain>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <35daefbd-d493-41d9-b192-96177d521b40@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: WWp3HfSHT1Xu_SX0qvKg-_JQT4tNVCy-
+X-Proofpoint-ORIG-GUID: WWp3HfSHT1Xu_SX0qvKg-_JQT4tNVCy-
+X-Authority-Analysis: v=2.4 cv=MpRS63ae c=1 sm=1 tr=0 ts=67f84358 cx=c_pps a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=e70TP3dOR9hTogukJ0528Q==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=eavArjg6gjGuu_xFX0IA:9 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_07,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=736 clxscore=1011 priorityscore=1501 impostorscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
+ phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504100162
 
-On Thu, Apr 10, 2025 at 9:33=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> We need to cleanup if the chain =3D dma_fence_chain_alloc() allocation
-> fails.  Now that we have multiple error returns in this function, switch
-> to using an unwind ladder for cleanup.
->
-> Fixes: c2d3a7300695 ("drm/syncobj: Extend EXPORT_SYNC_FILE for timeline s=
-yncobjs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/drm_syncobj.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.=
-c
-> index 636cd83ca29e..c136d0c772dc 100644
-> --- a/drivers/gpu/drm/drm_syncobj.c
-> +++ b/drivers/gpu/drm/drm_syncobj.c
-> @@ -745,21 +745,24 @@ static int drm_syncobj_import_sync_file_fence(struc=
-t drm_file *file_private,
->  {
->         struct dma_fence *fence =3D sync_file_get_fence(fd);
->         struct drm_syncobj *syncobj;
-> +       int ret;
->
->         if (!fence)
->                 return -EINVAL;
->
->         syncobj =3D drm_syncobj_find(file_private, handle);
->         if (!syncobj) {
-> -               dma_fence_put(fence);
-> -               return -ENOENT;
-> +               ret =3D -ENOENT;
-> +               goto err_put_fence;
->         }
->
->         if (point) {
->                 struct dma_fence_chain *chain =3D dma_fence_chain_alloc()=
-;
->
-> -               if (!chain)
-> -                       return -ENOMEM;
-> +               if (!chain) {
-> +                       ret =3D -ENOMEM;
-> +                       goto err_put_syncobj;
-> +               }
->
->                 drm_syncobj_add_point(syncobj, chain, fence, point);
->         } else {
-> @@ -769,6 +772,13 @@ static int drm_syncobj_import_sync_file_fence(struct=
- drm_file *file_private,
->         dma_fence_put(fence);
->         drm_syncobj_put(syncobj);
->         return 0;
-> +
-> +err_put_syncobj:
-> +       drm_syncobj_put(syncobj);
-> +err_put_fence:
-> +       dma_fence_put(fence);
-> +
-> +       return ret;
+On 4/9/2025 4:01 AM, Dan Carpenter wrote:
+> If the user tries to write more than 32 bytes then it results in memory
+> corruption.  Fortunately, this is debugfs so it's limitted to root users.
 
-I suppose you could just initialize ret to zero and collapse the two
-return paths?  Either way,
+I've fixed this in the 'pending' branch:
+WARNING:TYPO_SPELLING: 'limitted' may be misspelled - perhaps 'limited'?
 
-Reviewed-by: Rob Clark <robdclark@gmail.com>
+https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git/commit/?h=pending&id=b49ee0380e07efa34bdc4b012df22842b7fe2825
 
->  }
->
->  static int drm_syncobj_export_sync_file(struct drm_file *file_private,
-> --
-> 2.47.2
->
+/jeff
