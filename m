@@ -1,76 +1,74 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EB61EE004
-	for <kernel-janitors@vger.kernel.org>; Thu, 10 Apr 2025 16:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4099C1EE7B7
+	for <kernel-janitors@vger.kernel.org>; Thu, 10 Apr 2025 16:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744302321; cv=none; b=pf5LG9dKWLu8Pel6/Gg3w9xQSQhgGYV+HXbSsln+BxR5y73crCe7wDyajVvvdQ1oSXA3ph5MtFBK35Rr4F3Hiknpr9boLBSeN1YS8CjhcE+cz1GRyS9JnwYs0P3tDh5/BvCOPVzfR5uuBSYMnrXdq08uFzcYeptLLvYbJwQ3yxY=
+	t=1744302364; cv=none; b=lbJqaAQxRz/O3emzdfhv9igcwQSYx91tKPov1iU/fqVWbJawkw5xzFxk8uTTibX3nHaH+BWB0SJh4iGZPCvNXCCjZlf1t0xvPsSNqtwY5ekDxBA/ZWEGJ61xazyV6biIDsSLdVXylZc+EJi5BC5P/t9eze7EPVJCItNw6HFIVZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744302321; c=relaxed/simple;
-	bh=Xyqh31/up32k9QyjvOp1tbHBRtZxHnBYUmmh3lPeV3Q=;
+	s=arc-20240116; t=1744302364; c=relaxed/simple;
+	bh=qdNQpt1IxuK26bC1rgtZNTumpElowFEQmphU0VoR6QU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Gs+EBk4F6t6aiQ6uAwPcG+lwD1fLvbxDlM9ng+Ho9sewcf2vCnsEB3rB2iFSb+ntcHustpQKfKBCiALoHvLCCDq25gpY+j6COuwAedVD/DywpLrq2ynGiv9xkpBSCnKsMVE6ez4GL1ea80SNR6Eb+Rl0oNsnU6hNxUdIKIxkSeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ineRWtWX; arc=none smtp.client-ip=209.85.221.41
+	 Content-Disposition; b=sbAO1/MQO+S6sfuAe17yJedQCDYlz09xOwRQc9y4kMxs9TwP2AV6IOpDEobOjznG2HHMIp90ULIcxRaFeQm4TLyqfPpKxPJaYM9FtBoji7NDUVwCVYm2EIHzbFVuXutrrxpW5p2d9B2sHMiooYIzpOQ9tQb9ScS0MxgKdwRXDw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C56gbxfp; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ineRWtWX"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39c266c1389so655221f8f.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 10 Apr 2025 09:25:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C56gbxfp"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so8978935e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 10 Apr 2025 09:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744302318; x=1744907118; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744302360; x=1744907160; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wB7GpXUjol0KQ/YbX53LBVb2Ev80ElCPLnkY+8Zk89U=;
-        b=ineRWtWXQW7mvtsTlMk6+UVf38cq23wMxvihzK7sCHY+qm6x6JJsG994OH4HzFeruY
-         P3IB5HIyR2d0DaKYeVZlYhJGqYSWN8JgK3m9UBSIyPFD8I+D7pZY9JVI8qeQ0pbrDhVu
-         LTZU3q9S9xD8zF5om89+oRB6cwYoyAbnh6QhwUNPPrjAz+L7kkcwmtVBJfJ1lpV8OW4Y
-         RV7+fdra4lWO0XVH8yG6CK9iWb18iHuUZNj3BaU1EjR7vFqH9lsuFNL2cZIsLNt1ha7F
-         1nzzOe5fw/gc15YvscoFdkO7twPQFYmp+0u77le3tUURLG9WNyuGn2kVGwlCXa74YjKQ
-         4bCw==
+        bh=4B/rb3eqZsvw3yjsS1uWgq6RoSmyPvIP2UaYAZZK0nc=;
+        b=C56gbxfpcxB8JnIIr4uckCEX7zTTl1+4ICtPmtdXZZBBg8R/MV0LZzhMjcpfHfUacn
+         gRKRvJNRn9BegvxN3UqUc8XTFTIugyQnCeocolbUxifHOPt+vwLH+CI6wemlarfh6XvN
+         2QlqYSg3saQ70oljbcqln+h80O6eDeNbYosvGBzv/Mv8yXG9FphZxEprWX6Z4c/lVHy4
+         p0tgE53fyQRjj6jb9U66QmbFAn/nUx245Nsc7NtMdCFxf5ciMNkDcBg5FRk0xajVmEbk
+         //CJ6/ibTeycHRbvplJmFOx6ByrRvqHX6i2E4S+7abmMIzJ+Z2/KnOz01ApR/MfphYCu
+         5aZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744302318; x=1744907118;
+        d=1e100.net; s=20230601; t=1744302360; x=1744907160;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wB7GpXUjol0KQ/YbX53LBVb2Ev80ElCPLnkY+8Zk89U=;
-        b=ARgJuqspIWenP+Rc3tdYOKOMJLlT/IphnKVI1Mifr3SQag0XhCnESjtZlFSFGE2pKQ
-         xnBXPM6pIO17f+dXOjW41QKTI6l1JmHkvmkseWd567Zc8lFj6bByzWDhwGcj+XmWAx+1
-         s+0e8cT5BKRVQpbcyZtMFgQALGcGDxV16s7TUT9pWTrjUAkBMdZ2XEty7I4ooSmqbbZC
-         FZZnHMwY0wEG9OOwk7x6Gnb0E+quIzF0jwzg5wLPvEez2A1V0+O6XTZepsDl5/sSiVRx
-         bv0nXwcrYKcF4er2oOd3lUyMNPQeJqnIrO9UMrpXly/UY3SHfrdDrIhQwtU9OYvB7Z2f
-         mLOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUto3YdGhFB0PRK0IcnvB1hyByAJ44UAINR4qZOXsObE0cr4bEOyFVY7cLT9NaFca+weDUs0bo6+QetCHNenqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwluSJbwxztxEEQV2d4YczPxZJvjfC98ZmK/dMuVPBlk9XuN9p8
-	mgPf6L1D0xmuxWTaDswlBM+KmK5xcupA1qOBz4/qUsFBKDBJr1JWOXM+8DlUsv8=
-X-Gm-Gg: ASbGncu/Ez2A6I/BJ7kiqsDu3UfBgRkTYBzzGx+hVhTRTeKsJZ6ffcsCKGq4WMNNXoi
-	jerAUFUYvXkWqUUzc/Q2FNBy/veBW0kNGEJosX8l1MSbmj9q3WOVOCnc8asyaoXcYCX97W+6/A+
-	scQOJZqakfIMY5c34bzLTbrbUp1HneapxSgbEBCGkCvdZcaaKkBbIkMlKSlyF9MnausaoolCdfP
-	3QACfNOC3Ez3T41nCwjZuq+SwH0QPUZycT4YAl+L1Rra5QLMIpqR6NOJylF1juRVqotcm1RqlSx
-	LB6rd2HNjFg0oXs8yEQtCSrXFnFhrqhkT3WGKZr7P/B9iw==
-X-Google-Smtp-Source: AGHT+IFeTZmUdQ2vt1x1tnJcXZclhQ5dTgbaFR30GmeNzwyzvcpuB5z3WB17x7rprpf4keTp6EzbIA==
-X-Received: by 2002:a05:6000:2903:b0:391:4999:778b with SMTP id ffacd0b85a97d-39d8fd522b7mr2970676f8f.28.1744302317763;
-        Thu, 10 Apr 2025 09:25:17 -0700 (PDT)
+        bh=4B/rb3eqZsvw3yjsS1uWgq6RoSmyPvIP2UaYAZZK0nc=;
+        b=gQUYrMTd5OsypudbszX4Bx9iXW950L+5NR+dBgWjaWAzqPmj6/+QFrxmx3IFF7rP3k
+         zDtrmMxaMkOh37rySa9bqIz36gnplHznk8P0CyUmv+kDvDNGNE6D+kIvUjCB8XrrhPZr
+         ioc80DMs5gZTwnhiscU+QI2Lp/E25a4FXIGLok1kT/yjuMzbwZsqRJdWAXezJj3x2j49
+         VVDebDuMAJvnLymmchtAyaXsOzf2hPugT4IESrohQV/sbLnutzJ5A+C7zUVtk2qcEuOC
+         Xz99BRnfaIpHBKQ9KzkhtYbwcI5TQq75MAzRo4CRXHahpzy1Rvk9q74jfZIGLpV13IAQ
+         GpMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdnYcrraBsi6R+k6R5YWWzzB43d9rkeSjABHerTpQ8Xkp7PMqV6v6lTbdksjpcElBo/OLWADNZe+fsRFMmE0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGjr05YA6HKzvRf3GnEiSQEVEY3LxtVLdUzCdvB06zwYv8M+a7
+	gK3dyrKn+jfwVuxEz8TtrAxT9bipumgvWkg/AckitJO/AZ7697iUUkLFbIE05Tw=
+X-Gm-Gg: ASbGnctDAGxBwRAVu2X81YPSKk3SUJDy6R50M+cM5l4HDZhGBLW9Bh07Q/n4xkXxBpo
+	m6LOTBWMFc1jid3Qrp1aCv5oVlZMeYhMTnVd7lAyCvbRELA9q40O/gtVB1JK5wYoCAc6FdW9w6I
+	IxIWdkoyvV9wp/whsC28iqC2TJoZZFlUSJnIgl1ZJdSRTTPm9XOVVTPHtSukwUX7+GA3oj0+piY
+	DuFzDm7LVtJt3b4NkJMZ2zlK3q0jNJHRdJMUv08A5n5COmkHFIXCWNls3m5hiiprhwotxNJE7Vt
+	3vsksUucnFe96t/VYDtcRlAODNN1nBY4HwsqIs3h7CkkKA==
+X-Google-Smtp-Source: AGHT+IHlDUACoR6HuZ5lIjnATvfRIBZPmJdAtBlTqtWbFzHfLPmS+68O7mhgc9NM65uSvBvM+8cTrw==
+X-Received: by 2002:a05:600c:19d0:b0:43e:afca:808f with SMTP id 5b1f17b1804b1-43f2ffa2ee7mr34541075e9.31.1744302360514;
+        Thu, 10 Apr 2025 09:26:00 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39d89362fd6sm5398648f8f.16.2025.04.10.09.25.16
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39d893773c1sm5166880f8f.24.2025.04.10.09.25.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Apr 2025 09:25:17 -0700 (PDT)
-Date: Thu, 10 Apr 2025 19:25:14 +0300
+        Thu, 10 Apr 2025 09:26:00 -0700 (PDT)
+Date: Thu, 10 Apr 2025 19:25:57 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Baryshkov <lumag@kernel.org>
+To: Rob Clark <robdclark@chromium.org>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Imre Deak <imre.deak@intel.com>, Lyude Paul <lyude@redhat.com>,
-	Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-	Suraj Kandpal <suraj.kandpal@intel.com>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Abel Vesa <abel.vesa@linaro.org>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/display: dp: delete some dead code
-Message-ID: <de03fbc6-ca8d-4d3d-b80f-d1235b2b346f@stanley.mountain>
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/syncobj: Fix leak in
+ drm_syncobj_import_sync_file_fence()
+Message-ID: <c715ef30-9d91-46f3-8a0f-1039f3d25e7d@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -81,56 +79,63 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-We re-worked this code a bit in commit af67978ee37e ("drm/display: dp:
-use new DCPD access helpers") but there was a little bit of stray
-dead code left over.  Clean it up.
+We need to cleanup if the chain = dma_fence_chain_alloc() allocation
+fails.  Now that we have multiple error returns in this function, switch
+to using an unwind ladder for cleanup.
 
+Fixes: c2d3a7300695 ("drm/syncobj: Extend EXPORT_SYNC_FILE for timeline syncobjs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/display/drm_dp_helper.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/drm_syncobj.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
-index 57828f2b7b5a..f38b4dc14e1c 100644
---- a/drivers/gpu/drm/display/drm_dp_helper.c
-+++ b/drivers/gpu/drm/display/drm_dp_helper.c
-@@ -3570,7 +3570,6 @@ EXPORT_SYMBOL(drm_dp_pcon_frl_configure_1);
- int drm_dp_pcon_frl_configure_2(struct drm_dp_aux *aux, int max_frl_mask,
- 				u8 frl_type)
+diff --git a/drivers/gpu/drm/drm_syncobj.c b/drivers/gpu/drm/drm_syncobj.c
+index 636cd83ca29e..c136d0c772dc 100644
+--- a/drivers/gpu/drm/drm_syncobj.c
++++ b/drivers/gpu/drm/drm_syncobj.c
+@@ -745,21 +745,24 @@ static int drm_syncobj_import_sync_file_fence(struct drm_file *file_private,
  {
--	int ret;
- 	u8 buf = max_frl_mask;
+ 	struct dma_fence *fence = sync_file_get_fence(fd);
+ 	struct drm_syncobj *syncobj;
++	int ret;
  
- 	if (frl_type == DP_PCON_FRL_LINK_TRAIN_EXTENDED)
-@@ -3579,10 +3578,6 @@ int drm_dp_pcon_frl_configure_2(struct drm_dp_aux *aux, int max_frl_mask,
- 		buf &= ~DP_PCON_FRL_LINK_TRAIN_EXTENDED;
+ 	if (!fence)
+ 		return -EINVAL;
  
- 	return drm_dp_dpcd_write_byte(aux, DP_PCON_HDMI_LINK_CONFIG_2, buf);
--	if (ret < 0)
--		return ret;
--
--	return 0;
+ 	syncobj = drm_syncobj_find(file_private, handle);
+ 	if (!syncobj) {
+-		dma_fence_put(fence);
+-		return -ENOENT;
++		ret = -ENOENT;
++		goto err_put_fence;
+ 	}
+ 
+ 	if (point) {
+ 		struct dma_fence_chain *chain = dma_fence_chain_alloc();
+ 
+-		if (!chain)
+-			return -ENOMEM;
++		if (!chain) {
++			ret = -ENOMEM;
++			goto err_put_syncobj;
++		}
+ 
+ 		drm_syncobj_add_point(syncobj, chain, fence, point);
+ 	} else {
+@@ -769,6 +772,13 @@ static int drm_syncobj_import_sync_file_fence(struct drm_file *file_private,
+ 	dma_fence_put(fence);
+ 	drm_syncobj_put(syncobj);
+ 	return 0;
++
++err_put_syncobj:
++	drm_syncobj_put(syncobj);
++err_put_fence:
++	dma_fence_put(fence);
++
++	return ret;
  }
- EXPORT_SYMBOL(drm_dp_pcon_frl_configure_2);
  
-@@ -4044,7 +4039,7 @@ int drm_edp_backlight_enable(struct drm_dp_aux *aux, const struct drm_edp_backli
- 	if (ret < 0) {
- 		drm_dbg_kms(aux->drm_dev, "%s: Failed to write aux backlight mode: %d\n",
- 			    aux->name, ret);
--		return ret < 0 ? ret : -EIO;
-+		return ret;
- 	}
- 
- 	ret = drm_edp_backlight_set_level(aux, bl, level);
-@@ -4192,7 +4187,7 @@ drm_edp_backlight_probe_state(struct drm_dp_aux *aux, struct drm_edp_backlight_i
- 	if (ret < 0) {
- 		drm_dbg_kms(aux->drm_dev, "%s: Failed to read backlight mode: %d\n",
- 			    aux->name, ret);
--		return ret < 0 ? ret : -EIO;
-+		return ret;
- 	}
- 
- 	*current_mode = (mode_reg & DP_EDP_BACKLIGHT_CONTROL_MODE_MASK);
+ static int drm_syncobj_export_sync_file(struct drm_file *file_private,
 -- 
 2.47.2
 
