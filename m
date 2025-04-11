@@ -1,83 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749511DE3AD;
-	Fri, 11 Apr 2025 13:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D70429AB16;
+	Fri, 11 Apr 2025 20:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379840; cv=none; b=chksWaUGaBR2gO0PvpnSrIAGkt7/e/4WDAmwH74WwB58tSCtsVF2QqdN7SsV0/tBskOjhA4kcF5y91ksA3uh3JuG1tRTK/4e6yIySddMl4EGifRqnHTgEsFTG+sFwwOo+1lg8ZqNJK4ZSOMSJVTLipQWXketZwMRS+DFn9q5ihM=
+	t=1744404256; cv=none; b=JH36IRhmwZwXrNOTYpKXxGaRtJ/xMtKd+4zaxX4mDhm7vqVF05Jib2/oYVECyl9L98FXlWLjEjA7oJIDGu0qMomQyJfA0nGoJ3yykwnRKxFVql4QIFuVg1wkoVg92b6uWKe8oZwUhYphOX6NlZk4naomIF6uBoAnBkYv7Spuap8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379840; c=relaxed/simple;
-	bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=;
+	s=arc-20240116; t=1744404256; c=relaxed/simple;
+	bh=ArzkR0jpaFqHXVe3C+l5JXr+B9OrfNxZZX7vXYV2pVk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O0JA+SouY+MaLBCnSotk8GoeExNzA63b0xB0lcO1quP063pV4fe+TTfITQJq9s76kOtSXam/eLTik3hBQ0Ev70MRscUxxZVwDJclSj7M/VA7Z7zUN7BWxJQWaISfHcSLZaJih4JoHWutVDG7L5QNkTzPhHEiQaoc6bpnasvI8YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjGwgNWp; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=Sf4p76TcsNQrD+g+WE/oS11k2+b3NmTunhMAldRbl7eb0yHHwiPo1W+zRMS/RYSYzcw7OXMo54rK11nW7hPDbGlAkBqlCWQ9w7aiLA16/LKNk5v2gHIRcag4BGBP3W3nTYYlYuqU8CSXs0D8HH6i2rReMYaK4K52YpZfoAg+0kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/zZGzMU; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjGwgNWp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F932C4CEE2;
-	Fri, 11 Apr 2025 13:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744379839;
-	bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SjGwgNWpLqKXJ7hxrOOKyBiP4jfyg4aSH17c6SY7YXbTNsW3gck1hVnsYlbjf0s27
-	 96MrP2z/YMKmfbl2DmNlJ3RlfjnS9dIERZIho2fPOVfzo8sMW9aeLfApLcrQ7oCBY6
-	 SZ5dXY/jl5j+F3qdZFsGLxm0KnGiOvm2wyKXklzVTkcKxBBoBHuuyJaQgQUHjfrMzs
-	 DqmC6auq8y8QR8FuLBtHHry4OPPaLI0NsTwHGb2PTcCv/eXm5vTvvsV7OveYeyvgob
-	 Hj5wN0dcHqGbB5b+Mph0fSSC8OnuEfEtrvs9C1BPsPkfuPvDdxTR6mtQ+kDPa16acW
-	 QQOZrZ81yL1Nw==
-From: Christian Brauner <brauner@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/zZGzMU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744404255; x=1775940255;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ArzkR0jpaFqHXVe3C+l5JXr+B9OrfNxZZX7vXYV2pVk=;
+  b=D/zZGzMUMjltbJXhUBlUtJJInH8QMgCC8Dht6wuIptQFiXrPjVRZt0/Y
+   Q0PhVNUSv3e77/hJD54UTEoukmbp2AGvSschlR3pYZdgXQjNjWLf2Rrru
+   9wFmPIGUxi21oXr/VEZ5fBQmKUtXkufQzi7mVwLrvWpKzbo6ZoUn8WWi2
+   gyDvMA9NGUGcmIRZOZRpjfDDK9dCWIKqkb/pbtWc5utk5j3coKP7MnYic
+   mzOoP3L4Lw4tf1YSUPGlrxnAiBN26lSxd18W3MhD1rjVfrVKrdwgtrFX4
+   +nsIFjRsddyONkm8H458YXGwGGN5yj3hYMNM9dOd/rBk6ADEPpmb8jPO5
+   Q==;
+X-CSE-ConnectionGUID: 3YMm6SuoTwuXllsr0hRsUw==
+X-CSE-MsgGUID: TgtkDMz0Qe2EBZ1ilnffwA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11401"; a="45103908"
+X-IronPort-AV: E=Sophos;i="6.15,206,1739865600"; 
+   d="scan'208";a="45103908"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Apr 2025 13:44:07 -0700
+X-CSE-ConnectionGUID: 2SJQ2noATS+NBEaJZRlG6Q==
+X-CSE-MsgGUID: BLU5cVZaSIqLXNckHiNJVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,206,1739865600"; 
+   d="scan'208";a="129241826"
+Received: from anguy11-upstream.jf.intel.com ([10.166.9.133])
+  by orviesa010.jf.intel.com with ESMTP; 11 Apr 2025 13:44:07 -0700
+From: Tony Nguyen <anthony.l.nguyen@intel.com>
+To: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	edumazet@google.com,
+	andrew+netdev@lunn.ch,
+	netdev@vger.kernel.org
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+	anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
 	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH][V2] select: do_pollfd: add unlikely branch hint return path
-Date: Fri, 11 Apr 2025 15:57:08 +0200
-Message-ID: <20250411-lerngruppen-kojen-823467ef0e54@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250409155510.577490-1-colin.i.king@gmail.com>
-References: <20250409155510.577490-1-colin.i.king@gmail.com>
+	Rinitha S <sx.rinitha@intel.com>
+Subject: [PATCH net-next 11/15] ice: make const read-only array dflt_rules static
+Date: Fri, 11 Apr 2025 13:43:52 -0700
+Message-ID: <20250411204401.3271306-12-anthony.l.nguyen@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250411204401.3271306-1-anthony.l.nguyen@intel.com>
+References: <20250411204401.3271306-1-anthony.l.nguyen@intel.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=brauner@kernel.org; h=from:subject:message-id; bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/lN/Fu+z3D645ysvdW6ts3VtyDt8P6p2wXMctz/j4r g/tMVM2dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkXi0jw5XlTA+e3dfY9zso MTow9pWR15UO213nNT7wTWI6srkjwIThf17nubXFHx8ouYacvm23Qm9feeDn6MhL5QtaFpRdWbW cmw8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Wed, 09 Apr 2025 16:55:10 +0100, Colin Ian King wrote:
-> Adding an unlikely() hint on the fd < 0 comparison return path improves
-> run-time performance of the poll() system call. gcov based coverage
-> analysis based on running stress-ng and a kernel build shows that this
-> path return path is highly unlikely.
-> 
-> Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
-> a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
-> shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
-> performance improvement.
-> 
-> [...]
+From: Colin Ian King <colin.i.king@gmail.com>
 
-Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.misc branch should appear in linux-next soon.
+Don't populate the const read-only array dflt_rules on the stack at run
+time, instead make it static.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Tested-by: Rinitha S <sx.rinitha@intel.com> (A Contingent worker at Intel)
+Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
+---
+ drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+index 1d118171de37..aceec184e89b 100644
+--- a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
++++ b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+@@ -1605,7 +1605,7 @@ void ice_fdir_replay_fltrs(struct ice_pf *pf)
+  */
+ int ice_fdir_create_dflt_rules(struct ice_pf *pf)
+ {
+-	const enum ice_fltr_ptype dflt_rules[] = {
++	static const enum ice_fltr_ptype dflt_rules[] = {
+ 		ICE_FLTR_PTYPE_NONF_IPV4_TCP, ICE_FLTR_PTYPE_NONF_IPV4_UDP,
+ 		ICE_FLTR_PTYPE_NONF_IPV6_TCP, ICE_FLTR_PTYPE_NONF_IPV6_UDP,
+ 	};
+-- 
+2.47.1
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.misc
-
-[1/1] select: do_pollfd: add unlikely branch hint return path
-      https://git.kernel.org/vfs/vfs/c/5730609ffd7e
