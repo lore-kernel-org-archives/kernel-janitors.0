@@ -1,118 +1,105 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1532519005D
-	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7337D1519B8
+	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 14:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744431858; cv=none; b=GvQyKISOoHAAy6X6c0CabeJbE2gzgQA5sAioBV3DmBCBJWH99YVCsIAu37nxtwPHa5vuUWQKJnzylF4XPPMJYEN9dUyNy3z2/p7B0Ij/5873myHiJWS9Zg4kvwz3cmQ/2VIMCdajVIHBf2mb0jVVSYz4chDzmxmmC9euChU5mpk=
+	t=1744468127; cv=none; b=cW0fZ3glx5PJQIozGu0UR6wo3msnfyQFrnPIgkM5trVkhyGm7g6AKNvo2YuD/8WohypYHZ0ulUSjdqMzX2lWoKhWS/uJP0Bafqa2SuTC3zD8YUdkTYeqSy3ytsZRdFCC2COsc+clgQN1W4zh8vNzdtCdH51KRyuQcksj1MYWCSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744431858; c=relaxed/simple;
-	bh=oaLfSJxSzeJR9Rtek8qj1Vt4DB0A3q5t/ljDNAQbLK4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JBFbalW4w49I0ykuD4bwz6G1YLfJj2onzpQQEHUw7VBXGw6zaEQe7N57R2NbPDeEFANpPFAP13oPaHmOzKf+DMPVAnPjN7XG58T+cnx6pSpcM+4Br3skrI/sbFRNAf07yQiANow/hiYPT/AcIZ/y86cMDmmCRQFrrvP89K6S8rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QBpxb7U9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1744468127; c=relaxed/simple;
+	bh=Q4Xi4+EuBWmatlDXOmN20GwswDKxKmLUhLfT7gpY0hM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RtbDZXOMnSdLER97DGPfoDCjMlIl00BmImZi4rVtN/+ZM5ZtnF8EWAbqoFpf+1a2IsQjikcLUEdCWdJ3Pn/6NsRB7kTD6nq+Xf+VmuVL74y8W//Txx2EhK3Y6QkRaOpZZX+NK9q3Fw1I1bGWWD86wwX2wLzaxZzJeY3AeLpjg4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=djrcA9oJ; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QBpxb7U9"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53C3jaRU007465
-	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Yltj8V/FaVbMSn3d0Z2qwwLYdmKBWgYnuTV92lGPDnk=; b=QBpxb7U9Mn/ZY0IW
-	QUjlFwrAc6rBkpKJ/KwtkZYNv9p0UuJ9zZOO9E/x217M+Xn0YUgajqZKCIYTjV4r
-	CfvUkQpXXExzx5cx4Pt2sa8xdKuQfn8Tp8xISy1OhOQadjHre8iXTpVpWfshPg2S
-	PRljKOAdcQA4PuGWr9rZWjQ7i8NOIdR8kU+qsg3n2ppyWqHQJwNuiTIvLShfghtX
-	LhlJY+10/9gpHWoGi6+Y1cxfoEjbvKOjzWVJLxlU6W3bxOHD1Y4rzORgTil6QyZN
-	7iZ5GRPj8Qky7uQFnA6/UPqYFEOnyJBzDxnUL8KCfDRlvalu3KDo6toQApVBiuqr
-	hyd6zg==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yf4v84vs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:16 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2254e0b4b85so21038595ad.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 11 Apr 2025 21:24:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="djrcA9oJ"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39129fc51f8so2365643f8f.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 07:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744468124; x=1745072924; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Yug8Lg77jkFOaaSI2hhnGA0YoGthbaYjMrZs5RGYQTk=;
+        b=djrcA9oJvz9bClgvpxto1kzf6YLvfDHxBu2JwvylLQVg4ANvAt26mricfETIIaDmBc
+         Smz0anvwR1+2bRG97KkarvBg+1zlnV2IPSGx7Os558R/ua5sy18E2T+wxQn+HL477iB5
+         TqME0tIqJDrq3jSj5LhgK80IM8tCpN0Lgv4efP6FzGRL3WbXsHP+eHgUUt+BnD5MWPOl
+         eEcGflERTq2eKTfzd7uMPdexc8Rj86nL4FRXQjorjvoOopSLLHRxWbQ1ERla2zD4rmCM
+         TdYhLL8cN2ZbqfBLfOiPyFIcD97tByoiU7YH18gVlbht42FvCDkvospAU/SzojiCDu1g
+         3LQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744431855; x=1745036655;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yltj8V/FaVbMSn3d0Z2qwwLYdmKBWgYnuTV92lGPDnk=;
-        b=Wxm8RoIw5Tzopsze+vylrqYdcitN8kWm8CSG4HoP9sv1EltUrKVdJuQXaervI8OjhB
-         Q0d+O1skZ/PynGJy/VJ7lQe2Sp5GG+glcKlPSMOWw5TxaOwKmf2btMtiGUch+5UvpSZA
-         +4oYOpUHfn1LAAkHrwy1MW1pd5qCpUywWEqIUhEfWOyeCX6lkBBSX7lsC2YU2OfwrV4z
-         ekeEgmkjp9sIXoIFOrzAfyEk9N0tUJ45xRs2WJVlVyi8tg8lZzUCb4fxOfd3TnnCo4Fw
-         fQrfoSZOrmlJqj8WIXogODvOdDA0otRegMuy44xjz4eAr1VAaIUb/Hk79mNkw2hjg+aH
-         jkGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwAfdI54D/cynA/t35ATP+ov/SrqHDUDZcM59nAT0wdJB1VCUSNUjmstjzMqhOhcSUusQ9tZfZ0BbhzNYM+uc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylLd/dO//MetkPlmTi8G8bU+OVSY61p8ZhhmuLbEIkOv2++eeQ
-	xzmq0pqT7xQxBH+UBLBYMnZpIRSiP2rZWpbOMbAJEnPyCxA89DXCfVVAMqqYF4TDmxk030F4CZp
-	qmjuSrEYgJDNj+dUjaoTlqGM+Vl6NI3ztB97FcDokzZY/V/Tq1k02Al0LXrhA1DObYBY=
-X-Gm-Gg: ASbGncuU5bJ9orCELXf2ugpJAOoaXaj70KHO+0eaylc0sJrV47nQTHDe85XL+Ge1y8L
-	AutkZK2c8WKhbjMoq9qD8TGFXBnOLtOnEyVkcTApOn05iJI6K/Xu/SpNn2q/oIJIowBlxbyKz7x
-	kUDn6q7Jqb69h7gH1rKOUu+qjGjslFP5SVIll1K2gnIbFMqR2vEmXGKASznxkAckbHqeA0SxEu+
-	QlvaAShNAhKr9FCSztY9j7m2c6DIWDQrJFeOp9OlQeLCsqE05RNnu94qvBnm0lgpZUP8747e1ph
-	TomgzSb7xLqwBMnYNHfiSvKAlJKn3OcWBDaUuCIuKKqTs99o
-X-Received: by 2002:a17:903:2d0:b0:215:9eac:1857 with SMTP id d9443c01a7336-22b6943010fmr130686885ad.5.1744431855275;
-        Fri, 11 Apr 2025 21:24:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEaF/ZdumqPMm7Lo9UgIJs3LlV557WY/BkCBFOJHRD5je46M0dwSnCadkd518sE39kMcv9Fcg==
-X-Received: by 2002:a17:903:2d0:b0:215:9eac:1857 with SMTP id d9443c01a7336-22b6943010fmr130686505ad.5.1744431854652;
-        Fri, 11 Apr 2025 21:24:14 -0700 (PDT)
-Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd11e643sm6829912a91.12.2025.04.11.21.24.13
+        d=1e100.net; s=20230601; t=1744468124; x=1745072924;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yug8Lg77jkFOaaSI2hhnGA0YoGthbaYjMrZs5RGYQTk=;
+        b=w8KgtAJUouO53rM6sGusflpB6J6/PMiHAem3K6/x/L2bjplcu1jOR4dfbhGekIrV2I
+         ETom97WJkHyIMIufa6AI5l9dmrKXUbzaRtesi1mbUB4koVFVvR0FaASz3QNwMO09CYK/
+         kNx5CCXCtbPiEYq9VEVjUhJvOgzMG522ZqLt7k/PxcKnYyN9fm1h7lP+tXG7AW7UqthB
+         D6qt8Sovy/2YXNb+1LojzZEMmKTgF/MO6uWuidhg6Omo5zWNwr1oMfXPGxL0VTtnoMGZ
+         Sm2uWF311m5NXqU/YuBSevsjD72jyfyaFq8xrVlJKs+g/Q6Bp3ri7unYT1AqX2ntrRoE
+         sGVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg/9TNy8J1+Ed6O7LGDQDPpzFDFfZuJlMqlPXwvvsgKTvTgZ86btTFJVad6rVT7q+zNfjCghSSdNer9RTp1A8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHc6e+mtrVQn7QKNtyf6rloqR251FBQtp3xhQ1OT2K+D2dJ65L
+	Gs9O1QdsknsjP0EWOuYxT0LD02zNVYAXtt27rpQ4FE3iIX+P38FVPIhmIhiBzxY=
+X-Gm-Gg: ASbGnct7qobssy7nfz6OuYtL0aca+EneqWMl0PIRlwyMbcReMtS8SyQkFphazAcWIGY
+	tTk3zV/hG5DRLVGnHFWI2KcksnHu11Wlri/AtcMiUjrWBY4Pmpjt85aZ7vfwuYRsKsRwTitScr4
+	uLNizIOogT/9A1AfXufI4jLShioTOIfbn7rMhy5dda9FuJDQFtvDY8KqyywJQQWC0ihbPsAFDao
+	tyFPNr2a6tLM5OWqkZSFCtEo8jYm9C3uMxVz3D0BDqgxvcJvOpFv1ufsSD1QctYQhLJFMrOcO8+
+	Wkr9bPzg3U5Czns8pfCwp0iRbKoW0aPj6W3R9kOdEJgXfgX2d7oM8nRu
+X-Google-Smtp-Source: AGHT+IH34D5glm0+0TkKdRd2QqYl+pfjKMVxmTngaZruRkPsk03mWnWy81pDX8UHh5AZeQmoxzxDVQ==
+X-Received: by 2002:a05:6000:2507:b0:390:e311:a8c7 with SMTP id ffacd0b85a97d-39ea51ecbecmr5651152f8f.5.1744468123668;
+        Sat, 12 Apr 2025 07:28:43 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae96c074sm5086157f8f.28.2025.04.12.07.28.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 21:24:14 -0700 (PDT)
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-To: Dinesh Karthikeyan <quic_dinek@quicinc.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Ramya Gnanasekar <quic_rgnanase@quicinc.com>,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <35daefbd-d493-41d9-b192-96177d521b40@stanley.mountain>
-References: <35daefbd-d493-41d9-b192-96177d521b40@stanley.mountain>
-Subject: Re: [PATCH] wifi: ath12k: Fix buffer overflow in debugfs
-Message-Id: <174443185385.2972989.16898377871566470788.b4-ty@oss.qualcomm.com>
-Date: Fri, 11 Apr 2025 21:24:13 -0700
+        Sat, 12 Apr 2025 07:28:43 -0700 (PDT)
+Date: Sat, 12 Apr 2025 17:28:39 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Yadav, Arvind" <arvyadav@amd.com>
+Cc: Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Arvind Yadav <Arvind.Yadav@amd.com>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/amdgpu: Fix double free in
+ amdgpu_userq_fence_driver_alloc()
+Message-ID: <344bcc64-bf13-4726-8530-48eca7d643d1@stanley.mountain>
+References: <5ff4d367-b5bd-40ae-9529-56d08ea6c1d0@stanley.mountain>
+ <92b7d28e-6103-4c76-17dd-6ae94552a043@amd.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
-X-Proofpoint-ORIG-GUID: 4bmcEnWup6jtVUoIbhQnc-vYQb2AaOYv
-X-Authority-Analysis: v=2.4 cv=IZ6HWXqa c=1 sm=1 tr=0 ts=67f9eaf0 cx=c_pps a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=WD2RVSGR4ZOmZR8fVjQA:9 a=QEXdDO2ut3YA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-GUID: 4bmcEnWup6jtVUoIbhQnc-vYQb2AaOYv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-12_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1015 malwarescore=0 spamscore=0 adultscore=0
- mlxlogscore=601 mlxscore=0 bulkscore=0 impostorscore=0 suspectscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504120029
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <92b7d28e-6103-4c76-17dd-6ae94552a043@amd.com>
 
-
-On Wed, 09 Apr 2025 14:01:25 +0300, Dan Carpenter wrote:
-> If the user tries to write more than 32 bytes then it results in memory
-> corruption.  Fortunately, this is debugfs so it's limitted to root users.
+On Thu, Apr 10, 2025 at 10:29:31PM +0530, Yadav, Arvind wrote:
+> Please change this also instead of 'goto free_fence_drv' just return err.
 > 
+>         fence_drv = kzalloc(sizeof(*fence_drv), GFP_KERNEL);
+>         if (!fence_drv) {
+>                 DRM_ERROR("Failed to allocate memory for fence driver\n");
+>                 r = -ENOMEM;
+>                 goto free_fence_drv; // this should be replace by return.
+>         }
 > 
+> ~arvind
 
-Applied, thanks!
+I noticed that when I was writing my patch as well.  I'm always in favor
+of direct returns, but it makes the patch confusing to add this unrelated
+cleanup...  I'll send it as a separate patch.
 
-[1/1] wifi: ath12k: Fix buffer overflow in debugfs
-      commit: 8c7a5031a6b0d42e640fbd2d5d05f61f74e32dce
-
-Best regards,
--- 
-Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+regards,
+dan carpenter
 
