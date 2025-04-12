@@ -1,85 +1,82 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE71C18CBFB
-	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1532519005D
+	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744431857; cv=none; b=C9mzYaSi8Pj6HKC1bPUXJsKQQsM/jR+1l1gHyvBsKp2C9MJBoayl43ceX6ffW5xbFM85iV0PzePrQO5E10vnoRPLMHPXntZAA8vGuFu4aKKggsXKisOqFwPVo12RS7Y/AoYt4Ev54xLk9sQWmt22EH4j7yDnoI7jECg8u6MBX20=
+	t=1744431858; cv=none; b=GvQyKISOoHAAy6X6c0CabeJbE2gzgQA5sAioBV3DmBCBJWH99YVCsIAu37nxtwPHa5vuUWQKJnzylF4XPPMJYEN9dUyNy3z2/p7B0Ij/5873myHiJWS9Zg4kvwz3cmQ/2VIMCdajVIHBf2mb0jVVSYz4chDzmxmmC9euChU5mpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744431857; c=relaxed/simple;
-	bh=Yj6vLAghIl9hgFKLcSqkN5ChCX2Rcmh+ckIl0ZLDWj0=;
+	s=arc-20240116; t=1744431858; c=relaxed/simple;
+	bh=oaLfSJxSzeJR9Rtek8qj1Vt4DB0A3q5t/ljDNAQbLK4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XKcI/WjeikpVF8xmW1SyxA4vbE3s1tz13Qcz5jVnLlOQnrWVpRsNehFLKQIuWWbyrjRDyYewEsLGN+yaWxH5a01hORiWF/DoWQu05ZFE/BS6/814Zt7CMM/Dv562Yiqur0U+ipC4+n1K+cTu6WkAhwkgi6yBhGXis84bKd1kM+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MgCxZjSM; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version:Content-Type; b=JBFbalW4w49I0ykuD4bwz6G1YLfJj2onzpQQEHUw7VBXGw6zaEQe7N57R2NbPDeEFANpPFAP13oPaHmOzKf+DMPVAnPjN7XG58T+cnx6pSpcM+4Br3skrI/sbFRNAf07yQiANow/hiYPT/AcIZ/y86cMDmmCRQFrrvP89K6S8rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QBpxb7U9; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MgCxZjSM"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53C3l5mv005496
-	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:15 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QBpxb7U9"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53C3jaRU007465
+	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y6c+VvP2BLTiwbJsNHMC/15PFH6qteRzoX5JMy9RgRs=; b=MgCxZjSMPZWyGEUa
-	iQZhwJx3i736vBATTTWnSetpe9NCFPZy5N7N7onaSof1Ixe8ejb0mRuJrXj5D3Z0
-	G/24FoC0sjMTpiz5/1mA6Q3ie5HSzbiwoD+kliJpL4FzcPK2fy1V880pFbUhVl0v
-	dfO/SCQ/xh5+9JFMFHGMo9T5kb0XsTb2wo5ojo4EN9SSXWHnK0Gs4H5747NjLV4t
-	hrwzfr/yphVU4XCdf1+Vrdw/SaO76jl0+P76Oy1nG6z9hFsTinILbpMJ0mraSShu
-	6AimK4zuUtxPTm4NNmk8vPdFPVCatPUqKFaPZI25J14cYvNgQFKq7ST/2qQ/PxYV
-	D3/XkQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ydvj08dw-1
+	Yltj8V/FaVbMSn3d0Z2qwwLYdmKBWgYnuTV92lGPDnk=; b=QBpxb7U9Mn/ZY0IW
+	QUjlFwrAc6rBkpKJ/KwtkZYNv9p0UuJ9zZOO9E/x217M+Xn0YUgajqZKCIYTjV4r
+	CfvUkQpXXExzx5cx4Pt2sa8xdKuQfn8Tp8xISy1OhOQadjHre8iXTpVpWfshPg2S
+	PRljKOAdcQA4PuGWr9rZWjQ7i8NOIdR8kU+qsg3n2ppyWqHQJwNuiTIvLShfghtX
+	LhlJY+10/9gpHWoGi6+Y1cxfoEjbvKOjzWVJLxlU6W3bxOHD1Y4rzORgTil6QyZN
+	7iZ5GRPj8Qky7uQFnA6/UPqYFEOnyJBzDxnUL8KCfDRlvalu3KDo6toQApVBiuqr
+	hyd6zg==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yf4v84vs-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:15 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ff6aaa18e8so2380797a91.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 11 Apr 2025 21:24:15 -0700 (PDT)
+	for <kernel-janitors@vger.kernel.org>; Sat, 12 Apr 2025 04:24:16 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2254e0b4b85so21038595ad.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 11 Apr 2025 21:24:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744431854; x=1745036654;
+        d=1e100.net; s=20230601; t=1744431855; x=1745036655;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y6c+VvP2BLTiwbJsNHMC/15PFH6qteRzoX5JMy9RgRs=;
-        b=dpmQFHdWknnDmq+15lIA2Ti1eCHSGsb7hc/bFVSPc7L0zYHUMT6YhRSEgljai0OkND
-         rBz+Iocz3xBIuYBpGavo36V98mpinOe9vgpJplHRcfqIwdSpgUes34RhLJs8mp3CNhOW
-         6ofm2HH6P7TtSovGQpnniSqOB6OdtnJqT+0QOBoijcSFa7BE9wSKJR/b4UgHFcxCN/fF
-         KVz2KivEgIxphNzMuMhhhyxWlEVrozJlFSiTLcbJoQMIhr2F/8PMr4Zyyfu+5vKUI3lE
-         ojDSVWeivmwp2rhAoq70MSB6rQXmr9FCpCXsBBp1d+eWwaaLzcpcM9lQjeQCJOGYrKh9
-         /sFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdij6h+p9Hgq/s505ge6s9yIPsehfARvAC9GevA6xPS27la1+GLQe0zHVVkfEOHOXSainC/okpaf72+3cYiTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVRNEo2zIARSZE4YuZqW9X6NcPk5XBYs5rDo0JAZJoLRHeSxL9
-	9uEuQN2ev/xppGBZTsHSWWRN5HonnFfGBEEyrI+1iFrWfn0iTZdsddtHVPWNTpUhX8Z1GWrh+nn
-	C7hk3gnPsm+j6Il5UnyMe1rjClw4aKI2gMALCeoROje0kG6k/rhxHC0fTXEdAgWjYQwQ=
-X-Gm-Gg: ASbGncv9QGZB5HXH/T95Hi/gc7+Zj3cmLzxwf+r3/eCTDNw0+eN1rN+4bjkukXRB1Vg
-	iwQWf00e9+4a6m/O8e2GEYm+CrXrJxnMWMXpggNM8l641ZfewgV1q4IGRpACZu/Zh8wNtjJVZk4
-	LRUOdZ0jXFeCR4Dnpe0g+q5saLvnGpG/q6ilMtxyosvPWKWGc84X7NocX2xfFz1atbygOh1iHAd
-	fxKiA35QlgaT1QZR8WUD0MuEZXSkqUZqcSbO4v5tqAu/L6lhjZ8DKnJfe+lCc9QQWPcDW0rV17e
-	8nHPYRgVz1xpp0hikzs95KFouISpXzQC6el7xFO5by0vepzK
-X-Received: by 2002:a17:90b:2752:b0:2ff:5e4e:861 with SMTP id 98e67ed59e1d1-308237b52c1mr7682573a91.24.1744431854211;
+        bh=Yltj8V/FaVbMSn3d0Z2qwwLYdmKBWgYnuTV92lGPDnk=;
+        b=Wxm8RoIw5Tzopsze+vylrqYdcitN8kWm8CSG4HoP9sv1EltUrKVdJuQXaervI8OjhB
+         Q0d+O1skZ/PynGJy/VJ7lQe2Sp5GG+glcKlPSMOWw5TxaOwKmf2btMtiGUch+5UvpSZA
+         +4oYOpUHfn1LAAkHrwy1MW1pd5qCpUywWEqIUhEfWOyeCX6lkBBSX7lsC2YU2OfwrV4z
+         ekeEgmkjp9sIXoIFOrzAfyEk9N0tUJ45xRs2WJVlVyi8tg8lZzUCb4fxOfd3TnnCo4Fw
+         fQrfoSZOrmlJqj8WIXogODvOdDA0otRegMuy44xjz4eAr1VAaIUb/Hk79mNkw2hjg+aH
+         jkGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwAfdI54D/cynA/t35ATP+ov/SrqHDUDZcM59nAT0wdJB1VCUSNUjmstjzMqhOhcSUusQ9tZfZ0BbhzNYM+uc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylLd/dO//MetkPlmTi8G8bU+OVSY61p8ZhhmuLbEIkOv2++eeQ
+	xzmq0pqT7xQxBH+UBLBYMnZpIRSiP2rZWpbOMbAJEnPyCxA89DXCfVVAMqqYF4TDmxk030F4CZp
+	qmjuSrEYgJDNj+dUjaoTlqGM+Vl6NI3ztB97FcDokzZY/V/Tq1k02Al0LXrhA1DObYBY=
+X-Gm-Gg: ASbGncuU5bJ9orCELXf2ugpJAOoaXaj70KHO+0eaylc0sJrV47nQTHDe85XL+Ge1y8L
+	AutkZK2c8WKhbjMoq9qD8TGFXBnOLtOnEyVkcTApOn05iJI6K/Xu/SpNn2q/oIJIowBlxbyKz7x
+	kUDn6q7Jqb69h7gH1rKOUu+qjGjslFP5SVIll1K2gnIbFMqR2vEmXGKASznxkAckbHqeA0SxEu+
+	QlvaAShNAhKr9FCSztY9j7m2c6DIWDQrJFeOp9OlQeLCsqE05RNnu94qvBnm0lgpZUP8747e1ph
+	TomgzSb7xLqwBMnYNHfiSvKAlJKn3OcWBDaUuCIuKKqTs99o
+X-Received: by 2002:a17:903:2d0:b0:215:9eac:1857 with SMTP id d9443c01a7336-22b6943010fmr130686885ad.5.1744431855275;
+        Fri, 11 Apr 2025 21:24:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaF/ZdumqPMm7Lo9UgIJs3LlV557WY/BkCBFOJHRD5je46M0dwSnCadkd518sE39kMcv9Fcg==
+X-Received: by 2002:a17:903:2d0:b0:215:9eac:1857 with SMTP id d9443c01a7336-22b6943010fmr130686505ad.5.1744431854652;
         Fri, 11 Apr 2025 21:24:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3bEjufM8uvzXi2R+XKSYAounBYRf966QbZ07aJvDs1jVqVY+2eE0x4NE/tknOoj+yN8R4Qw==
-X-Received: by 2002:a17:90b:2752:b0:2ff:5e4e:861 with SMTP id 98e67ed59e1d1-308237b52c1mr7682536a91.24.1744431853719;
-        Fri, 11 Apr 2025 21:24:13 -0700 (PDT)
 Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd11e643sm6829912a91.12.2025.04.11.21.24.12
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd11e643sm6829912a91.12.2025.04.11.21.24.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 21:24:13 -0700 (PDT)
+        Fri, 11 Apr 2025 21:24:14 -0700 (PDT)
 From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-To: Sowmiya Sree Elavalagan <quic_ssreeela@quicinc.com>,
+To: Dinesh Karthikeyan <quic_dinek@quicinc.com>,
         Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jeff Johnson <jjohnson@kernel.org>,
-        Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>,
-        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
-        Balamurugan S <quic_bselvara@quicinc.com>,
-        P Praneesh <quic_ppranees@quicinc.com>, linux-wireless@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <937abc74-9648-4c05-a2c3-8db408b3ed9e@stanley.mountain>
-References: <937abc74-9648-4c05-a2c3-8db408b3ed9e@stanley.mountain>
-Subject: Re: [PATCH next] wifi: ath12k: Fix a couple NULL vs IS_ERR() bugs
-Message-Id: <174443185268.2972989.9053090958982417610.b4-ty@oss.qualcomm.com>
-Date: Fri, 11 Apr 2025 21:24:12 -0700
+Cc: Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Ramya Gnanasekar <quic_rgnanase@quicinc.com>,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <35daefbd-d493-41d9-b192-96177d521b40@stanley.mountain>
+References: <35daefbd-d493-41d9-b192-96177d521b40@stanley.mountain>
+Subject: Re: [PATCH] wifi: ath12k: Fix buffer overflow in debugfs
+Message-Id: <174443185385.2972989.16898377871566470788.b4-ty@oss.qualcomm.com>
+Date: Fri, 11 Apr 2025 21:24:13 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -89,32 +86,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.0
-X-Authority-Analysis: v=2.4 cv=ZIrXmW7b c=1 sm=1 tr=0 ts=67f9eaef cx=c_pps a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=0MIO4mkLTHUyxov_fOkA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
- a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-GUID: xbSLqQZQ1fT20dpnfRcbLBqm_7ejA3_x
-X-Proofpoint-ORIG-GUID: xbSLqQZQ1fT20dpnfRcbLBqm_7ejA3_x
+X-Proofpoint-ORIG-GUID: 4bmcEnWup6jtVUoIbhQnc-vYQb2AaOYv
+X-Authority-Analysis: v=2.4 cv=IZ6HWXqa c=1 sm=1 tr=0 ts=67f9eaf0 cx=c_pps a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=WD2RVSGR4ZOmZR8fVjQA:9 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-GUID: 4bmcEnWup6jtVUoIbhQnc-vYQb2AaOYv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-04-12_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- clxscore=1015 priorityscore=1501 bulkscore=0 phishscore=0 mlxlogscore=738
- spamscore=0 impostorscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 spamscore=0 adultscore=0
+ mlxlogscore=601 mlxscore=0 bulkscore=0 impostorscore=0 suspectscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2504120029
 
 
-On Thu, 10 Apr 2025 19:26:16 +0300, Dan Carpenter wrote:
-> The devm_memremap() function returns error pointers on error and the
-> ioremap() function returns NULL on error.  The error checking here got
-> those flipped around.
+On Wed, 09 Apr 2025 14:01:25 +0300, Dan Carpenter wrote:
+> If the user tries to write more than 32 bytes then it results in memory
+> corruption.  Fortunately, this is debugfs so it's limitted to root users.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] wifi: ath12k: Fix a couple NULL vs IS_ERR() bugs
-      commit: 4703416d0fb993f7505025667f868f6981a5f7ab
+[1/1] wifi: ath12k: Fix buffer overflow in debugfs
+      commit: 8c7a5031a6b0d42e640fbd2d5d05f61f74e32dce
 
 Best regards,
 -- 
