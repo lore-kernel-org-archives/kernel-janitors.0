@@ -1,73 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DD05674E;
-	Sun, 13 Apr 2025 22:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744584958; cv=none; b=XE3yEdY8nQTygeKoIhYEJFpZ01KmuLokzZY9a6scHsKYQWmAZj52uft4fizzUrIMG7CbL/aZeZTFabyPkKZIOXAnQzwe1a9cxY7kPVY7wN17OgntjxOYXNO3fFbZwwFbGt6cSE4J51LQKjBTFs8yjwc4txxPqqoLTblQBFrNQbI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744584958; c=relaxed/simple;
-	bh=1QKrSgD2Dmvk73S/lVnbOYbsyjUbYbhdFMpUj7ufyXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nG8QexSRHjhBvv7hvWFtugOgV5ptZXw/MIM0qJ029ijM4pJXAPRlXmR7dWuIFjQ8kx0EjZ52Wgp4aOnKMu7XjMD5BJnm8929xdT8eiWd0iQPnmkKntfsv4Uq8HwT1AAivxSclusEtrB1qhlv9u1xcm87mr4G2hab6Cp8n4Zzxfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4A0r+ud; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32293FF1;
+	Mon, 14 Apr 2025 04:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744605542; cv=pass; b=Gxv+RT+ZKsXWOxJzpowGuzj1+pfmQtO7Zupp5VpxtrbxH5PiJB01FjytHgw2Wnbeu3ypwFQ5hPOfmXCjo2d5Swr4cOyWjFJ8+TExWKND+xJhjlFcA/N07tQfy03pJFnvjLzx7H+m+icBSW2GmHEhSjVckeUta0IQrkoOdEHnBp0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744605542; c=relaxed/simple;
+	bh=revkaF5jZeZ0D4TMUY3medQgAbQjvH1GxuuwuJDs54w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mhp1Tdo/9JELQewDXXPzZ+mOl/dpMWhuUpAyh+gvbx1cXYUfHDl6TTFOCUuCwkUF5KenQgjyx0zGhb9qvO75V+xuPw3Ah/M0fwKuRNnNTBV0wbb8FUVrlhBSI6Chcwn6TWTT1nGGcnwJ7PkeFLUFMYSB9oDwFDBF2k6ZrtjD7Dg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=YKQ4hnXo; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4A0r+ud"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42E21C4CEEC;
-	Sun, 13 Apr 2025 22:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744584957;
-	bh=1QKrSgD2Dmvk73S/lVnbOYbsyjUbYbhdFMpUj7ufyXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n4A0r+udN7p2QfSNip0X5r6kKEWG9tsPX4EdE1qCMw4qkiXKBqZ8bB2tHshfiZv1k
-	 VDOTgxjd53rkfeLWyi+0WOzpqcVE5eqqTUbtkSVDSScAOB8R7DfZNWBEKPSIk2iTrH
-	 tvQLn+Uh0jAfdiQdOurFbyM/iTCjLzugrEpTyiSRzjQjeqGQQ0Yjy3v3623mZRx3TM
-	 h/5NgE8cCjrhdOUCJzTO/zGUF6MhxEcJsECczu5IWWbrse6n3w+YxrjJ8xH1lRmbII
-	 2zxv2asIsqIjcB0jEPBH0vhm62IG8y/NYpAmDd5FyMUs7pB8acb313Invws7mEnP1F
-	 AC9COLh/LtCQA==
-Date: Mon, 14 Apr 2025 00:55:53 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] i2c: rzv2m: Constify struct i2c_algorithm
-Message-ID: <qykqy3nqly7bpsv3zmju4ts4xmcgnhduohdnaeka5zivljouoh@epyb5f36bbfk>
-References: <537d93441ced53bffa6553b8ec93d007e64cb9a5.1743258995.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="YKQ4hnXo"
+ARC-Seal: i=1; a=rsa-sha256; t=1744605524; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cxsbN5I+FD/f3hzAXVDMR3yruvDtVo8P/ndb71+diOFSVhAWr3dBRAjYvI9q8HBtDGPOgYYOBZfniqatPi3mGXWHjExt7cdNTOY0bIc26HcYZalQWt02yeF1E/Qp8xr7kUH1/EQjTN0hYJdFn8gcrNAe15vObUFrF4LEGtvq2Wg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744605524; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=EILnKTFBtT06iKZc5zhyMS+LeBMEqFCBv0ihJOCmGQc=; 
+	b=Vt4Z2/JZhsd0+PRZmM1koLbREwIlpRCrZMTHH5Ta3l7YO9f1oy7lHTOMdv8XMqlHZbWsT5XHKvh7jix87XfRQqzRiOQoaHBnuMBuNMkH5RmoU19f6FLQrprz3lchdst4aPjsTGG4p6wtaZrEvXQwq57cy69+lvxsvm53z/ogGPA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744605523;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=EILnKTFBtT06iKZc5zhyMS+LeBMEqFCBv0ihJOCmGQc=;
+	b=YKQ4hnXo9qyVlYaC4bcsnpMy1XKXiETTBKFrIjFH/D21NBZ7t0hgtfRViHJKuQTe
+	ZGs+UlflXt5q/gxaHA3WxSGCWVWsMyJXCUUXDTbDLmjcCIZAXZcnaEYP5wTBmabGIqI
+	sVxwDo8z1zX3L4/u+GoL+KmjoLfA/85YTUoDemf8=
+Received: by mx.zohomail.com with SMTPS id 1744605522312493.91832637456594;
+	Sun, 13 Apr 2025 21:38:42 -0700 (PDT)
+Message-ID: <0d62e6b6-0535-4157-b742-d6a608b776ab@collabora.com>
+Date: Mon, 14 Apr 2025 09:38:36 +0500
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <537d93441ced53bffa6553b8ec93d007e64cb9a5.1743258995.git.christophe.jaillet@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 11/15] ice: make const read-only array dflt_rules
+ static
+To: Tony Nguyen <anthony.l.nguyen@intel.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, edumazet@google.com,
+ andrew+netdev@lunn.ch, netdev@vger.kernel.org
+Cc: Colin Ian King <colin.i.king@gmail.com>, przemyslaw.kitszel@intel.com,
+ kernel-janitors@vger.kernel.org, Rinitha S <sx.rinitha@intel.com>
+References: <20250411204401.3271306-1-anthony.l.nguyen@intel.com>
+ <20250411204401.3271306-12-anthony.l.nguyen@intel.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20250411204401.3271306-12-anthony.l.nguyen@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Hi Christophe,
+On 4/12/25 1:43 AM, Tony Nguyen wrote:
+> From: Colin Ian King <colin.i.king@gmail.com>
+> 
+> Don't populate the const read-only array dflt_rules on the stack at run
+> time, instead make it static.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Tested-by: Rinitha S <sx.rinitha@intel.com> (A Contingent worker at Intel)
+> Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-On Sat, Mar 29, 2025 at 03:37:07PM +0100, Christophe JAILLET wrote:
-> 'struct i2c_algorithm' is not modified in this driver.
+> ---
+>  drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   11027	    646	     16	  11689	   2da9	drivers/i2c/busses/i2c-rzv2m.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->   11107	    566	     16	  11689	   2da9	drivers/i2c/busses/i2c-rzv2m.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> diff --git a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+> index 1d118171de37..aceec184e89b 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_ethtool_fdir.c
+> @@ -1605,7 +1605,7 @@ void ice_fdir_replay_fltrs(struct ice_pf *pf)
+>   */
+>  int ice_fdir_create_dflt_rules(struct ice_pf *pf)
+>  {
+> -	const enum ice_fltr_ptype dflt_rules[] = {
+> +	static const enum ice_fltr_ptype dflt_rules[] = {
+>  		ICE_FLTR_PTYPE_NONF_IPV4_TCP, ICE_FLTR_PTYPE_NONF_IPV4_UDP,
+>  		ICE_FLTR_PTYPE_NONF_IPV6_TCP, ICE_FLTR_PTYPE_NONF_IPV6_UDP,
+>  	};
 
-merged to i2c/i2c-host.
 
-Thanks,
-Andi
+-- 
+Regards,
+Usama
