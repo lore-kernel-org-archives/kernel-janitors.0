@@ -1,70 +1,81 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D8C13D;
-	Mon, 14 Apr 2025 09:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A691F1506
+	for <kernel-janitors@vger.kernel.org>; Mon, 14 Apr 2025 09:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744622675; cv=none; b=Qi3+XMKXt4q0FoPd572ehnZb+GiBP4OoCvihaY0/I73uPTTCwFP6LRih+h73uwp0VGGWEAcGN+I0PrzJNKk0RHxyC1HOrfeI19dUOYjBW7ucryQxhPV4BadvVJlax2S/jjX7f1Dm037pSVtcKTkGSGkft5po3haOnF0YFGezd3Y=
+	t=1744623093; cv=none; b=GfTdrhY2ZpEkZ9R/d3OFVJSpeRlyXZfX9NqSRJ0YxXxnhdDPRhNajI6YLp+GMyUa9bvyg/Jnqm3seOQ9GT2e9z4sF2ZmfLsLP/Wo+0m2rRNg9uzb7gzpFw1qy8x7MuuokwCK2hHv5wzztRor/2C5CiSRvmtHNIcGOzFMWh7VkPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744622675; c=relaxed/simple;
-	bh=agTCgMoSAjEhU2SJdZ9IyLmvMRHBWqSCUMYVX1x+tbY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mhe0YpFHRupgwC1xRkI4YRJIbSWUmVZT+64d4nz5JEQCZqDK8+JmUhBkxAWZPYQTkgxu0edH6kFudmGa9Q4AVWY0Nq+B/I17i2N7FX45hQb0MqE8GFGQtv04DphVVunLgVvVjW+978donkuxLPn1q5LTnLrFAsxypAVKFoK9Ibk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSOjll3b; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744623093; c=relaxed/simple;
+	bh=WEfGh8/JZ50VI42QY/UzDVj5QGsc8xf1TZieBe4ZvGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CrdVFFAGD196xev88lam40l5AvvWSxMXtHsPzwCx7frCtDWJQkDqXY+ADr8APx5kwbm6KPZFkahYEybiEEuBCiHMe5mFGB/3rinFZTM+L8U48y5IhaXqc/+tauNJ7fsrFKniGh1SGdg3hEITHY4UCeneofO+mtb7wboi02HqJmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I4w4J0fh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSOjll3b"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so34355585e9.3;
-        Mon, 14 Apr 2025 02:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744622672; x=1745227472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xzue1Jqf/6PZMYk21IFwYXYNC/Y+Ds8648fAr55/H5I=;
-        b=WSOjll3bfqGOL/IjTDFaKJFg901NdMT5hQivaNKEqqQPc07u6Sj5/GWM29PKI92WUR
-         T8QJDW74rrtja9rQ7WDjzEoHOMFcXQnufsSBQjXP+9oxDcl1DppojYEK84GHWXM3aApk
-         6tMjyLscMu5Req2voS7+EscPuBSAg1Fk1jEieRpQztmgQNxvNcVI7ITWgrXXna22DOBB
-         SOYyPbN04sESDP/djRQcf2KQ+qek5pYAh43Lo0/8MwtEFS8hJjdFNjoXxllCR8bY3ZKS
-         yTgjWFD7vJou3COVixwXC/+WPp/czoeoHeOuMC3tV0vIx8yfxaGx8bHK3W0ct2ILTwgN
-         i3xw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I4w4J0fh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744623090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DcJtOZqqmGG/GNqQfI/h8Deen7z+Z9B2I6ayBe0ZS9Y=;
+	b=I4w4J0fheEb+HP0y4eGTI+SmOI7vVmTGUrdOiacerSQFKZCgXDMyKZtTZV2N3CdoLuwF3P
+	nEpGxmLaz/KXrseemqnsJ8ZWLwlssLkj91tQSXlgv5blumfR1dI07+s2LmACPqwzpMbNbH
+	Q67R3ZExJ+udw2+tJ0z61fsejOa5h+k=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-372-mGUCUDyzOZWxaJqFHB4Ydw-1; Mon, 14 Apr 2025 05:31:29 -0400
+X-MC-Unique: mGUCUDyzOZWxaJqFHB4Ydw-1
+X-Mimecast-MFC-AGG-ID: mGUCUDyzOZWxaJqFHB4Ydw_1744623088
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3912fe32a30so1657234f8f.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 14 Apr 2025 02:31:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744622672; x=1745227472;
+        d=1e100.net; s=20230601; t=1744623088; x=1745227888;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Xzue1Jqf/6PZMYk21IFwYXYNC/Y+Ds8648fAr55/H5I=;
-        b=kiKxPrsd9wFnPj7F/ivFcb1IXC9jVfncrUkYjl/dWW9YEwrK2OXt1PA9KXGPRx3iKW
-         8dsBWFCTiJlD3D2AZvytuq4iVzp3xo12pG9qKF4bAO63oTwjp63sK0nvNqPmfxNtva/s
-         FGJc7+rIaw43YH1qjQiinPCoyXtoJ21sW+JFla7++o/bX7X40RJLUbWUTh/ExrsldmTv
-         DtqTh6No2PvUdjyLilV0wwaAMeF2r1pxSFHbCrc5i5NRU509DL+EiqLKmfUOdM6TRU0r
-         L978CZsqpoVsAc/QMAbINJpfx6MFHVdcTG3EPeisEy9KM1a+9TNRNz3enHlJAOIHEpU5
-         Z/hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSJRjjKtmScc/MCeQtFM9AoMoyOXteu4OIXyIbNc8K1ilUFPVFcpabB6n+lFk5sT70cPjj0TLadTnrwi2u@vger.kernel.org, AJvYcCVZzMl1j09XT6lyJGn9ucx2qSolIR2pVNesWNZrYT+v/UMYYMWd9zmll7uJbo9kh0xNbgnn6sWGbITn0TLP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr/FwDToINVFzCXNhYiU3chRKl7OrWdxMozdmFLl74ZYxKGTNF
-	C36fvg+vU2m2Sp4AVrYfHTPrv/nZTRP36f96JQtPGKgUQLjSaeDv
-X-Gm-Gg: ASbGncvhDAFsYzK4AeDuX5npZvgt4r1OWJzM2s26+gXM8Psw5eQPWL34apJPXfOngwo
-	miGnyKWTGi6KCTIfeV+D2uje0azgDi7o1fghJ+42YDgmceaV55rSlzsOkpuLZ0/3LG1ai9P+MIh
-	WEdLL2V1M4dzoXwlN/ZiP59zxucWU5kXWsnGqx+GnaJYFzGgpPyvgO5ratjSLU8b0YoSsTPhhGf
-	9tz+LdqJj8GQh+cyfEWO7PFOgpYJoD9VUjUclghcWyNqifrZ4aBahXvY3DjN2c5NoLSu2Za2Wu9
-	bvbizVkH9me5cAYitdSzWtbMIkTr0aGadolmMltRAqMhclXgrHYT
-X-Google-Smtp-Source: AGHT+IHtWY6E+K4K+bXtvTUnA8A+xDFVvz/cd8uuterYyuoV91+43oLtXfRw8mAVEcC4tqjNcP+mAA==
-X-Received: by 2002:a05:600c:46d1:b0:43c:e9f7:d6a3 with SMTP id 5b1f17b1804b1-43f3a93d697mr94168135e9.13.1744622671428;
-        Mon, 14 Apr 2025 02:24:31 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f23572c4esm172954905e9.26.2025.04.14.02.24.31
+        bh=DcJtOZqqmGG/GNqQfI/h8Deen7z+Z9B2I6ayBe0ZS9Y=;
+        b=gioHecGVl4Fvpdkyta8IpvR3FBi6zfhLWCCmShlxhtw/z4RaJIlpTQoRvSj3RdA2u2
+         wXOcQb0j1L2YSDI/47dc2Xgqm4dhFjlp/L9Uto4ZrHqLt24ZLjgtIgpqTM1pHz0Wr11L
+         BYfbWuJ5DEeJV392BZbNyCeldKh+8DE+4O79xkwmS65bAfo6bZQ/zD1CzupeeAXas/0M
+         J2g9F6M6UvKJ5fhOlRDRxns61Wn/Yka6qY0QRpBZ1I+WGHehEeVcpUtTTQlsrkYlB9If
+         IAazomNYvCml67GSyVPxSuu/r80ebz13WDp4sGrd3nZxg1LYuodx5y+UQ+blOpSq/tUC
+         n34w==
+X-Gm-Message-State: AOJu0Yz3wkvkJd+ikitfDkF0dNVKVh5gkJQ6XqQp3JPE58QzC3Vu0aWG
+	5dUSB3BetvqsgJyW+vw0qLPR5QJ/k+t37lwii0NazDpF0WzRGAlh6mvP6bFwhoF+4OdGle4slBh
+	I0u/bCxZHHjVxvNZoL2M52x1RkV7vF1NfSdncNhroEIYBsmEdqkqqvCJTVXZyIx/84w==
+X-Gm-Gg: ASbGncum/Qoe0BtYKCCMnykY2yMZpHLaxcshCxPRudbJeYksOkFRXcgd0xiGYybYdmJ
+	feCAYpJ3RjKE3l7Sy1qosI3NE3BMyXLmffXrKNtM92JbTc0zp2G5zwkb35bnv+fQeUCbCo9/AgC
+	8k4L0VDmTJqyKhszZhAVrhW12mt8TYirBk7AWxBnU4xZW319EA6Kst01kTvkbwlepYjqUr7lTPz
+	U7S0bxVaVvwNQ1XWMbZL9rcJ+mQASEOoyd/6xPt9vc9ZhAKEbXsLx43uMl18u1yKHlDi37f3ZAq
+	WeUIXmwBnWoR+aipHVvIs3IOm/p7SoodozhDvNNcGF6N2iyp+IcwmkUD6Q==
+X-Received: by 2002:a5d:6d8f:0:b0:39c:dfa:e1bb with SMTP id ffacd0b85a97d-39eaaecd89amr8181811f8f.42.1744623088002;
+        Mon, 14 Apr 2025 02:31:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFIf80qJHQp64UqJH+NY2wPEKUU4CFrtiWzV4xC6O7YO6zvGgMGZVZiou6pYI9qUGO0MpoZFw==
+X-Received: by 2002:a5d:6d8f:0:b0:39c:dfa:e1bb with SMTP id ffacd0b85a97d-39eaaecd89amr8181783f8f.42.1744623087487;
+        Mon, 14 Apr 2025 02:31:27 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233a2a13sm169193675e9.10.2025.04.14.02.31.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 02:24:31 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org
+        Mon, 14 Apr 2025 02:31:26 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Frank Li <Frank.Li@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Patrick Havelange <patrick.havelange@essensium.com>,
+	devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] select: core_sys_select add unlikely branch hint on return path
-Date: Mon, 14 Apr 2025 10:24:26 +0100
-Message-ID: <20250414092426.53529-1-colin.i.king@gmail.com>
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in FLEXTIMER FTM-QUADDEC DRIVER
+Date: Mon, 14 Apr 2025 11:31:24 +0200
+Message-ID: <20250414093124.19683-1-lukas.bulwahn@redhat.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -72,41 +83,36 @@ List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Adding an unlikely() hint on the n < 0 comparison return path improves
-run-time performance of the select() system call, the negative
-value of n is very uncommon in normal select usage.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
-a 6.15-rc1 kernel built with 14.2.0 using a select of 1000 file
-descriptors with zero timeout shows a consistent call reduction from
-258 ns down to 254 ns, which is a ~1.5% performance improvement.
+Commit b7549ed5edc6 ("dt-bindings: counter: Convert ftm-quaddec.txt to yaml
+format") renames ftm-quaddec.txt to fsl,ftm-quaddec.yaml in
+Documentation/devicetree/bindings/counter as part of this dt-binding
+conversion, but misses to adjust the file entry in FLEXTIMER FTM-QUADDEC
+DRIVER.
 
-Results based on running 25 tests with turbo disabled (to reduce clock
-freq turbo changes), with 30 second run per test and comparing the number
-of select() calls per second. The % standard deviation of the 25 tests
-was 0.24%, so results are reliable.
+Adjust the file entry after the conversion.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
- fs/select.c | 2 +-
+ MAINTAINERS | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/select.c b/fs/select.c
-index 0eaf3522abe9..9fb650d03d52 100644
---- a/fs/select.c
-+++ b/fs/select.c
-@@ -630,7 +630,7 @@ int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
- 	long stack_fds[SELECT_STACK_ALLOC/sizeof(long)];
+diff --git a/MAINTAINERS b/MAINTAINERS
+index af3537005de3..661419d7c71b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9216,7 +9216,7 @@ FLEXTIMER FTM-QUADDEC DRIVER
+ M:	Patrick Havelange <patrick.havelange@essensium.com>
+ L:	linux-iio@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/counter/ftm-quaddec.txt
++F:	Documentation/devicetree/bindings/counter/fsl,ftm-quaddec.yaml
+ F:	drivers/counter/ftm-quaddec.c
  
- 	ret = -EINVAL;
--	if (n < 0)
-+	if (unlikely(n < 0))
- 		goto out_nofds;
- 
- 	/* max_fds can increase, so grab it once to avoid race */
+ FLOPPY DRIVER
 -- 
 2.49.0
 
