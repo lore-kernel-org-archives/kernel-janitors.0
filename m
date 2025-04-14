@@ -1,118 +1,82 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A691F1506
-	for <kernel-janitors@vger.kernel.org>; Mon, 14 Apr 2025 09:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DB325DAE8;
+	Mon, 14 Apr 2025 10:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744623093; cv=none; b=GfTdrhY2ZpEkZ9R/d3OFVJSpeRlyXZfX9NqSRJ0YxXxnhdDPRhNajI6YLp+GMyUa9bvyg/Jnqm3seOQ9GT2e9z4sF2ZmfLsLP/Wo+0m2rRNg9uzb7gzpFw1qy8x7MuuokwCK2hHv5wzztRor/2C5CiSRvmtHNIcGOzFMWh7VkPM=
+	t=1744625093; cv=none; b=DAejPPqUvoLaBNXnBfTu/07Qb3SAhI/hZoiBKu5EjZCHWvRbCUGkDO94jSVD6PjzdIbmaXtTdDJpmEoJYFpqjqRpJOaFG0Nk6mB9P1ir1VFp00kdi1B3YaTCrFaBiqD/WyptlpRNDoOeKTOH0x29fkwePernfielYqY9iKwHd1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744623093; c=relaxed/simple;
-	bh=WEfGh8/JZ50VI42QY/UzDVj5QGsc8xf1TZieBe4ZvGo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CrdVFFAGD196xev88lam40l5AvvWSxMXtHsPzwCx7frCtDWJQkDqXY+ADr8APx5kwbm6KPZFkahYEybiEEuBCiHMe5mFGB/3rinFZTM+L8U48y5IhaXqc/+tauNJ7fsrFKniGh1SGdg3hEITHY4UCeneofO+mtb7wboi02HqJmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I4w4J0fh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1744625093; c=relaxed/simple;
+	bh=gruAiv2P1YYiqXyfzoaPnkaggXJ0sX1fRdxIf7A/6lQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qn26GLjunbNfgJN65P/25cb2sXQTNWc7kgKqr+l4UUHnNwh4sG1hosj18dnJjForlZzqoj0/XmTgOvzsC7661z7fAepRgkPGSycJ85qPxWgRZSQddNZX9Ub0RfgnKKCjucavYFHT/ZEE5n1EMqDGR7zqzJbHddbmuxJDVSWFSKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1VMecFN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I4w4J0fh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744623090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DcJtOZqqmGG/GNqQfI/h8Deen7z+Z9B2I6ayBe0ZS9Y=;
-	b=I4w4J0fheEb+HP0y4eGTI+SmOI7vVmTGUrdOiacerSQFKZCgXDMyKZtTZV2N3CdoLuwF3P
-	nEpGxmLaz/KXrseemqnsJ8ZWLwlssLkj91tQSXlgv5blumfR1dI07+s2LmACPqwzpMbNbH
-	Q67R3ZExJ+udw2+tJ0z61fsejOa5h+k=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-372-mGUCUDyzOZWxaJqFHB4Ydw-1; Mon, 14 Apr 2025 05:31:29 -0400
-X-MC-Unique: mGUCUDyzOZWxaJqFHB4Ydw-1
-X-Mimecast-MFC-AGG-ID: mGUCUDyzOZWxaJqFHB4Ydw_1744623088
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3912fe32a30so1657234f8f.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 14 Apr 2025 02:31:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744623088; x=1745227888;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DcJtOZqqmGG/GNqQfI/h8Deen7z+Z9B2I6ayBe0ZS9Y=;
-        b=gioHecGVl4Fvpdkyta8IpvR3FBi6zfhLWCCmShlxhtw/z4RaJIlpTQoRvSj3RdA2u2
-         wXOcQb0j1L2YSDI/47dc2Xgqm4dhFjlp/L9Uto4ZrHqLt24ZLjgtIgpqTM1pHz0Wr11L
-         BYfbWuJ5DEeJV392BZbNyCeldKh+8DE+4O79xkwmS65bAfo6bZQ/zD1CzupeeAXas/0M
-         J2g9F6M6UvKJ5fhOlRDRxns61Wn/Yka6qY0QRpBZ1I+WGHehEeVcpUtTTQlsrkYlB9If
-         IAazomNYvCml67GSyVPxSuu/r80ebz13WDp4sGrd3nZxg1LYuodx5y+UQ+blOpSq/tUC
-         n34w==
-X-Gm-Message-State: AOJu0Yz3wkvkJd+ikitfDkF0dNVKVh5gkJQ6XqQp3JPE58QzC3Vu0aWG
-	5dUSB3BetvqsgJyW+vw0qLPR5QJ/k+t37lwii0NazDpF0WzRGAlh6mvP6bFwhoF+4OdGle4slBh
-	I0u/bCxZHHjVxvNZoL2M52x1RkV7vF1NfSdncNhroEIYBsmEdqkqqvCJTVXZyIx/84w==
-X-Gm-Gg: ASbGncum/Qoe0BtYKCCMnykY2yMZpHLaxcshCxPRudbJeYksOkFRXcgd0xiGYybYdmJ
-	feCAYpJ3RjKE3l7Sy1qosI3NE3BMyXLmffXrKNtM92JbTc0zp2G5zwkb35bnv+fQeUCbCo9/AgC
-	8k4L0VDmTJqyKhszZhAVrhW12mt8TYirBk7AWxBnU4xZW319EA6Kst01kTvkbwlepYjqUr7lTPz
-	U7S0bxVaVvwNQ1XWMbZL9rcJ+mQASEOoyd/6xPt9vc9ZhAKEbXsLx43uMl18u1yKHlDi37f3ZAq
-	WeUIXmwBnWoR+aipHVvIs3IOm/p7SoodozhDvNNcGF6N2iyp+IcwmkUD6Q==
-X-Received: by 2002:a5d:6d8f:0:b0:39c:dfa:e1bb with SMTP id ffacd0b85a97d-39eaaecd89amr8181811f8f.42.1744623088002;
-        Mon, 14 Apr 2025 02:31:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIf80qJHQp64UqJH+NY2wPEKUU4CFrtiWzV4xC6O7YO6zvGgMGZVZiou6pYI9qUGO0MpoZFw==
-X-Received: by 2002:a5d:6d8f:0:b0:39c:dfa:e1bb with SMTP id ffacd0b85a97d-39eaaecd89amr8181783f8f.42.1744623087487;
-        Mon, 14 Apr 2025 02:31:27 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233a2a13sm169193675e9.10.2025.04.14.02.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 02:31:26 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Frank Li <Frank.Li@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Patrick Havelange <patrick.havelange@essensium.com>,
-	devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1VMecFN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C60C4CEE2;
+	Mon, 14 Apr 2025 10:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744625092;
+	bh=gruAiv2P1YYiqXyfzoaPnkaggXJ0sX1fRdxIf7A/6lQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=R1VMecFNtXrF88nRgXzVAyFg4aQtUR59dLErSB+wh/LhZIkUrnAZeZ4erzWDsUTyX
+	 RK0SrkNv8HeXjH3ClYkMftKNWOKrwk/DUtBTJAmLza3t57tO+XqzChyXhDrmT1yBgJ
+	 K130eGDBwRmA7/uZaxe31sux+jQCH63dobjzQGxIYIl2ec4ctcLDaBoWxoRLM2Hluk
+	 CeA8C338DNSS+KGZ0Xg1i8KBErRjZQ26dqDGVyjOChHFx8E+dO45LwfNZdM9Q3csMc
+	 rL1Dz95EeCfmH03S3c7zzayBGG0jSbDj2ekt11yuNvFK9C4w/5OMaHUJixqOlQdTl4
+	 7CHXczIaooKEg==
+From: Christian Brauner <brauner@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in FLEXTIMER FTM-QUADDEC DRIVER
-Date: Mon, 14 Apr 2025 11:31:24 +0200
-Message-ID: <20250414093124.19683-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] select: core_sys_select add unlikely branch hint on return path
+Date: Mon, 14 Apr 2025 12:04:41 +0200
+Message-ID: <20250414-desolat-bauindustrie-7a705d36a1d0@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250414092426.53529-1-colin.i.king@gmail.com>
+References: <20250414092426.53529-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1339; i=brauner@kernel.org; h=from:subject:message-id; bh=gruAiv2P1YYiqXyfzoaPnkaggXJ0sX1fRdxIf7A/6lQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/ubt/5+wLtzXP67C8uFznMLduzuvtls8VYtIZvxz+c Il/j0Xyx45SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJuMYy/LP1+6vx/41eg5zI 5s9LO91aV0SUzDrvfnjzHruH+yJX+ysxMtzb0Zo7r8nTqTTOZsGHh7Ieho3mnpPXzJuZOPnQEVu JZC4A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Mon, 14 Apr 2025 10:24:26 +0100, Colin Ian King wrote:
+> Adding an unlikely() hint on the n < 0 comparison return path improves
+> run-time performance of the select() system call, the negative
+> value of n is very uncommon in normal select usage.
+> 
+> Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
+> a 6.15-rc1 kernel built with 14.2.0 using a select of 1000 file
+> descriptors with zero timeout shows a consistent call reduction from
+> 258 ns down to 254 ns, which is a ~1.5% performance improvement.
+> 
+> [...]
 
-Commit b7549ed5edc6 ("dt-bindings: counter: Convert ftm-quaddec.txt to yaml
-format") renames ftm-quaddec.txt to fsl,ftm-quaddec.yaml in
-Documentation/devicetree/bindings/counter as part of this dt-binding
-conversion, but misses to adjust the file entry in FLEXTIMER FTM-QUADDEC
-DRIVER.
+Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.16.misc branch should appear in linux-next soon.
 
-Adjust the file entry after the conversion.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index af3537005de3..661419d7c71b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9216,7 +9216,7 @@ FLEXTIMER FTM-QUADDEC DRIVER
- M:	Patrick Havelange <patrick.havelange@essensium.com>
- L:	linux-iio@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/counter/ftm-quaddec.txt
-+F:	Documentation/devicetree/bindings/counter/fsl,ftm-quaddec.yaml
- F:	drivers/counter/ftm-quaddec.c
- 
- FLOPPY DRIVER
--- 
-2.49.0
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.16.misc
+
+[1/1] select: core_sys_select add unlikely branch hint on return path
+      https://git.kernel.org/vfs/vfs/c/7732f21402b5
