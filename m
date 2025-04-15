@@ -1,72 +1,70 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBE428DF06
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Apr 2025 10:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98504288C88
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Apr 2025 10:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744713951; cv=none; b=ke2OERJdSIwta/1pOBW79vZgTw1zAvASV7Hr+GI/o6hqBNLASo9ykdujfa7h03TxYIHVESucQ/6saAZrHXfWxdUdRIxzQ+8dALTpeM5Ejuvt/oM/RPy2v9CNnR1jPWPoS+tnyxK6uTGv8y+/EJAuLMgXM1iqZ2BaT7ztBPsGN0I=
+	t=1744713966; cv=none; b=UZWsJ2h+uUA++x8eRTKxZZjCms7AqP99axdFO8dSLE6RAA7BPAajeQXXJzUt+1Lf6rRHoc0Oex80DPm3lKsISWaW7XYEFsxD1ERdtw1gOj6HpeIXaF+IGRJv3O6C6VRfNj8DDvxqU0rWXNlQvu0XFoliHYH2ImiD8qyxCO/wA9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744713951; c=relaxed/simple;
-	bh=MkCBu/XB5S4UUYAmw3Gyngrhm/WGqXfyy/Hj2WV/rQE=;
+	s=arc-20240116; t=1744713966; c=relaxed/simple;
+	bh=62EDoSV5fr/+NmDoX0H93net+ojkqMEqG9Aj1TnT+E0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QZ0QE+ogYvST2oAZomfOwb2m5Ptrk9LIh+PLznUpeBfcZw6Wdouvu6gq3GPaWTkPN29Q3i4CV8qxlZDa+gYWdIn4EZhrVuFfxNeo6P7P09b/KKT7Xqa7fQ6Bdfm2tvhzq3DxFz97PhGeJFT9L2QcLFqO41zIaFVtupMCZcjzCXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=InTuCRu+; arc=none smtp.client-ip=209.85.221.50
+	 Content-Disposition; b=sqcPB0Y/5LuaXAvKJwYwZD6zokuiDP1xImu+Rf5YlLGsFounfskB1gShD16hXV9pMcU7tVVKPRSuKuaSab0CokYjQ4eeoTHtcfTn7O/GUxvbyyZ1nw/uftk91uEOW4kGrNThxvpTfuP06fWy94B2jVyGpHJKfh5gK70ItQTtHmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P8gLzSIr; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="InTuCRu+"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c13fa05ebso3220777f8f.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Apr 2025 03:45:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P8gLzSIr"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so46879885e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Apr 2025 03:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744713948; x=1745318748; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744713963; x=1745318763; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xfLErGzwKv4hpi/TJi9E3D/+txmgLZVczCQXE26h5hU=;
-        b=InTuCRu+3SX/lQAxKFv0mXZDuqoOH2r1OVTXc7UJn/DTOPEuFlDT28J9+hpgHOhYDv
-         qcbI1LW7C6rtPWPqQGtaKMn2vlRSyLlmsIZFjUDI3uw/v6G6J5IQ3fCYyFyUfVAM6wOa
-         QPYw4bCyMKkUySYLRISRq/9vPP1mqzYmvTR/k6kS4Uyt7LRuBuh7HxX4LIjbrolcAJCI
-         VkHJKoRlxR49QYtNa/c38Zyk8szu7030Q1UgMmv0Mwn2n0axiXoV2DJo1KCN/ytQ/sO9
-         KMYChaIObe2IArzW8/Cm2hYlZPqzLMeHYR/2suDXVzPPrq+wy/4EZPH2BFldhkbTJJp6
-         vl5Q==
+        bh=YQaWyRKtoMYOuzjQi/UaY0dF/POie1UHEF8CXbYiDJk=;
+        b=P8gLzSIriEwqcJ3SVK3V3MDz0sb633Mpg390yEMZwLxYtGg6hPNq+JeOAe1cEtRf37
+         cVvQ3/YZFsPKRj9dyDEMgssZEPu8UWdO3zBVeByD+q6XXaX9HRPO6FmAFtOuKxDQsO2T
+         j+tzG83mpWZ85mIG1siSq0HbqrXCBF51vRvM0PpfUNZNdi28NcRWlTb0lmX+b3kmNozL
+         zWAp+NzOkQagGKX3o9ur46YYxY+HckOopzaoFwVAtNmv+NhktDamB/CGa+e3H9NJn+Nj
+         bYe8F+3MOUKEjnr/lEQA+bGBCzROZuWWD1E63sDgyFn8yfSAn5DNIK0FgSZOuBaF67Ys
+         zmBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744713948; x=1745318748;
+        d=1e100.net; s=20230601; t=1744713963; x=1745318763;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xfLErGzwKv4hpi/TJi9E3D/+txmgLZVczCQXE26h5hU=;
-        b=cBzcvFFUYGS6SBCLHSvhmxdYrUkAibpgjHQ6d/HxgYr0cnbF6UAYwJX1+Er79kL54R
-         U2Sw8YiQ+x9c6McOmYGD/aqDbN5LD1r1pD2VrsKKjXiH8/MLjR0ETHB3ZGdsMzbEWXnY
-         EJSZxwWGKLM1zvD/6ehhm4AN3+TmLZmDfbjrDllpMjz6+KxloBlHYpkG9uh2rEVHBV41
-         MHeG1JhH/RMGwZGiJutzETreKsMsSVJKCnv/WNA7U/9Qt7KJ4KRoGvdSTmclIMp0zkmb
-         MzwaaDJKxnafd6pZCP8CL2t9WFMwi/1UK6u9YgOlTWKUGcjbuR3r46r50jWqsAItJB2f
-         Qm5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWBN4s8BWCKt2NV5RWff9DtS4JiQHpIC2vaWIOZ4lEYgfwM+hM8fqQhy/oPv861aiuv7F1j4r4FhqB/hkMi9ZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCPh24rGAZP51RgCW1Jl8LK4jS+M+wuvMrnBUixni9GeMDt7yo
-	MH+eFt19sjEZrCXdpnxQWhke/gGpr8ktbG58lyecFi4flSN+5ssyLgxI02z3pHE=
-X-Gm-Gg: ASbGncuFl2mu+1w5tnMTEHQJBm//JqalxSzDqxQo+5taYNUNs7WGZTASdPATeYZp6pB
-	u2xvgTYwFAVxwbK7rDJLZZC7nsPLekr9QLx23rjLVWdwl4Zxh6q+XCeJgQZibWA6C774OsM25oL
-	6GxCI94Sga74Ry/jklrJKObF9lSUo8u7nhKZ+D3deqHZP/W9mbyHhEf1xLR6b5Lc1YS8Gpuhyzg
-	jGBojljWWndhTyMoYYI7NMgKmvtBKfasEj/prMFxXNvGlGHWGnBBuSEDuParjrXeIbC6TXqJ8q0
-	8OPTT7mn+0uBdqpxegAdHjYb0SfoDfVSR0UIvVxb+wwTcg==
-X-Google-Smtp-Source: AGHT+IGCbFvyMPpLY+0TGJvec6wuV9t2NMPKNxUjFnVVx7rsRSV6GaToQxyKYgw2SV0wouSpipDAuw==
-X-Received: by 2002:a05:6000:210b:b0:39e:cbc7:ad2c with SMTP id ffacd0b85a97d-39ecbc8a256mr7695306f8f.25.1744713948166;
-        Tue, 15 Apr 2025 03:45:48 -0700 (PDT)
+        bh=YQaWyRKtoMYOuzjQi/UaY0dF/POie1UHEF8CXbYiDJk=;
+        b=RtcOwQuGK4bjczJLppJBgByHmmxDG11nMq0Qt2ursvYO7ELg0CYlQ60njz18lcTCZt
+         qLA9AxvsLdv93OpWz/C7thaOt2xLT7Jh+azCHbc3vBhX3wHK6BdAEwHaNKSvEd58wbTq
+         6Kfq67RK8kbfs4nwGAmhHNH2Q9WiA0J56qGMPZ/eexlfs/RLx3Tt0Zmxn9W7JcFaELBn
+         3jD+r6Ma9V+QVF34RMKdDDjGX3699zrFcRvvCyYoCjt7XW2+eSwVnPV1mqr0e9ZCpiPU
+         /hEgI10nn0bL7v8bwxGd+6aVQJJT61GBZ88r819SUs2jnCyAOBRfChraCHLogMDGmzxU
+         WJZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXK7BuUCqu5HZ+Uxr6H2KdaPkHMJQ5/XFXw1u6JlYaYgjvapGXSR6czE8rjrFUdB5z3pTtCL1PBP/skCo7PFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWHuz6+bCllOIPz5/NwUB3kQbIj8PlZbkpvhsWGI5t0roAser9
+	pqxo5kO1Wn6xWLQRQyJGOsSd54Vh8Lzq2m8LShqDuKX9Nxpn7OFDqwRo2KW61Ks=
+X-Gm-Gg: ASbGncvRRhsrigzcXhXhVTMDqKMVwGZiSS741hJguTFFfZwMC3AA007IJ3SD71zSwPz
+	QHc8458bYJNPwcd1q537+d3llbwpV9jYcKL3/Zo4NFRaZHsVzRPN6By0m8bZPKLaiJstGyqNtrP
+	ngzV/6FLpo/6PpM4TxJozh62lPQAx9hV4AY4d6pUAVQvdGvAf0O1Wtv6Qrv5KHOaIJWg/Yy45tc
+	yNkU9U4xRRx7m/3DpZKxIHFItUYwLR+9nvk6QHaAaDmFLf64rupFq2O+/nyTkfRYRSJwzJlXe+R
+	6bQW591WvL3tR8kgdY5IEtujHCh4SASoMsgTNHrGPgFpeNFhfYCCY02h
+X-Google-Smtp-Source: AGHT+IF9J6YTfX5akGPjOT/s3VBMw222DuUVaFgs0VJ6eOUCfIE607Qv0sYxi3xUVj+vgeq2WWXWzA==
+X-Received: by 2002:a05:600c:1e28:b0:43d:7a:471f with SMTP id 5b1f17b1804b1-43f3a959967mr143990565e9.18.1744713962777;
+        Tue, 15 Apr 2025 03:46:02 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eaf447777sm13613520f8f.100.2025.04.15.03.45.47
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f205ecb8dsm207835665e9.7.2025.04.15.03.46.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 03:45:47 -0700 (PDT)
-Date: Tue, 15 Apr 2025 13:45:44 +0300
+        Tue, 15 Apr 2025 03:46:02 -0700 (PDT)
+Date: Tue, 15 Apr 2025 13:45:59 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
+To: Wesley Cheng <quic_wcheng@quicinc.com>,
+	Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] ASoC: qcom: qdsp6: Set error code in q6usb_hw_params()
-Message-ID: <Z_442PWaMVoZcbbU@stanley.mountain>
+Subject: [PATCH] ALSA: usb-audio: qcom: delete a stray tab
+Message-ID: <Z_4458uUI3LURa8M@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,31 +75,26 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Propagate the error code if q6afe_port_get_from_id() fails.  Don't
-return success.
+This code is indented one extra tab.  Delete the tab.
 
-Fixes: 72b0b8b29980 ("ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- sound/soc/qcom/qdsp6/q6usb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ sound/usb/qcom/qc_audio_offload.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6usb.c b/sound/soc/qcom/qdsp6/q6usb.c
-index 274c251e84dd..adba0446f301 100644
---- a/sound/soc/qcom/qdsp6/q6usb.c
-+++ b/sound/soc/qcom/qdsp6/q6usb.c
-@@ -74,8 +74,10 @@ static int q6usb_hw_params(struct snd_pcm_substream *substream,
- 		goto out;
- 
- 	q6usb_afe = q6afe_port_get_from_id(cpu_dai->dev, USB_RX);
--	if (IS_ERR(q6usb_afe))
-+	if (IS_ERR(q6usb_afe)) {
-+		ret = PTR_ERR(q6usb_afe);
- 		goto out;
-+	}
- 
- 	/* Notify audio DSP about the devices being offloaded */
- 	ret = afe_port_send_usb_dev_param(q6usb_afe, sdev->card_idx,
+diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
+index 5874eb5ba827..8b096f37ad4c 100644
+--- a/sound/usb/qcom/qc_audio_offload.c
++++ b/sound/usb/qcom/qc_audio_offload.c
+@@ -379,7 +379,7 @@ static int uaudio_send_disconnect_ind(struct snd_usb_audio *chip)
+ 		} else if (ret < 0) {
+ 			dev_err(uaudio_qdev->data->dev,
+ 				"failed with ret %d\n", ret);
+-				atomic_set(&dev->in_use, 0);
++			atomic_set(&dev->in_use, 0);
+ 		}
+ 		mutex_lock(&qdev_mutex);
+ 		mutex_lock(&chip->mutex);
 -- 
 2.47.2
 
