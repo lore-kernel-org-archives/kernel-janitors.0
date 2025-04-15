@@ -1,81 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E933024EA92;
-	Tue, 15 Apr 2025 11:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9047628469B;
+	Tue, 15 Apr 2025 12:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744716994; cv=none; b=pHUpTlOhsme4VY745g0sx+McIUAEzjakexSPzk/jsP0Zz6vTgtIjOUmyLKwjoP1eiv9MkB7X3Yowr7sKjYvti/6X8yr6lTCAP6sDpiAYBOUV4jcTAHvYcyrYMSlDJmlAaM/OZRK0lxdI8EZM4/A2UVznK5/dgejwlfh71BGoYb8=
+	t=1744719396; cv=none; b=uWnDbbF2pKBrBArPZFohStH9ilQ/fxicw54AFRATVwtvmEPcPNERIokbcsW/5k+o5uSr7KblrUUJ68xfJ0OAVbe0grqD6Cffr85HKjPyUNErvAzT79hjJhMMA7dxfHAxNjpW8BXBXRZHXLf7oVcR5MmZBj7unIOjLBr3qv3mCOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744716994; c=relaxed/simple;
-	bh=zYw/vdaimYA3Upb8KBVp137mIE1oGE0jaozGlgSCVhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E4IulDGE1HcPSKufmZGK3xgsSBICjtO3QRQ8c0dkqZKNzgyy5qiu8lNrjuxQ15uVh8c+s+p4ijQheF3f5oUU9+JAmdcyUoHEt+q2sM64j9AwQ7PmM6pFMfJ4srNE/YbCo03GcFfuZdaBJQpex0cvMbwVb0Dio/pw4WoZvXkZLDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/tvx7Sa; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/tvx7Sa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 392A5C4CEDD;
-	Tue, 15 Apr 2025 11:36:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744716993;
-	bh=zYw/vdaimYA3Upb8KBVp137mIE1oGE0jaozGlgSCVhA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E/tvx7Saipwh/ViZ0+Uk1eu4Rwsjf+uyzf29ONH8NM7k0rsVEfEL+c1HRH+VQ0UGN
-	 vj6PT3VGxnmDFZ5xArv5HAchUrn2VH1v0Jf7a3hEYZk/kdQrk8hP0nCzaAbltw+n40
-	 5wCyjpDQGBCNrnV4ttsHbkrOzt4LuclzMX1H6xrsVreWRgJ/huXeXiSj8TV5rtLSc7
-	 2gKDsQhPc8VYFhshqdL5FdvVF9OB2Cdb04WkkUZnr0VQ4oVaWUXa+U23GHAtJ/UC4y
-	 /vgY++g7AnXdDczUf5cBzR5mbxffO41Uljh4rudIDmI8qNz8h5zlScIdfDu3PfXLKn
-	 Q2ZNF8vFDNvKg==
-Date: Tue, 15 Apr 2025 12:36:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Wesley Cheng <quic_wcheng@quicinc.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] ASoC: qcom: qdsp6: Set error code in
- q6usb_hw_params()
-Message-ID: <78caae4a-03d1-4992-9a06-1e2a9aef81ce@sirena.org.uk>
-References: <Z_442PWaMVoZcbbU@stanley.mountain>
+	s=arc-20240116; t=1744719396; c=relaxed/simple;
+	bh=Jalx0jktLdqJ0meoKTF6WfsBEnJQ1W/zMyKteV/2hQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KMrta1jM5czRbux7MlPFqqHEv5KA4tbLaXE3A+S1trw2t19W0kBNm+osouszP05UXoecG0CQVXmF1WG+e8Yvad3GgaA+0W84F6JhKZUxOnOclFAqac5gCYVq/uSOpVDT3F2R7RfoEOdwkiXP6feex+mVFUNjF0YbrXKX1IEPhbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.238])
+	by gateway (Coremail) with SMTP id _____8AxCGoZTv5n+wa+AA--.53053S3;
+	Tue, 15 Apr 2025 20:16:25 +0800 (CST)
+Received: from [127.0.0.1] (unknown [223.64.68.238])
+	by front1 (Coremail) with SMTP id qMiowMAxTsUVTv5nuiqDAA--.38838S2;
+	Tue, 15 Apr 2025 20:16:24 +0800 (CST)
+Message-ID: <5bf96932-330c-483c-9a09-e84b73cd14ca@loongson.cn>
+Date: Tue, 15 Apr 2025 20:16:20 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EtkMv+Yd9poVtEEu"
-Content-Disposition: inline
-In-Reply-To: <Z_442PWaMVoZcbbU@stanley.mountain>
-X-Cookie: 10.0 times 0.1 is hardly ever 1.0.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] pwm: loongson: Fix an error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, Juxin Gao <gaojuxin@loongson.cn>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <6965a480-745c-426f-b17b-e96af532578f@stanley.mountain>
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+In-Reply-To: <6965a480-745c-426f-b17b-e96af532578f@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowMAxTsUVTv5nuiqDAA--.38838S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Xr17uryfKFW8XFW5trWUAwc_yoWDKFb_uw
+	1I9rnrGr1DAr1qk34avFWfAFW2vFWUZw109wsrtw4Iqa4vg3Z5tFyrXrs2gFnrXr4fAF98
+	X39rJryIk34rAosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbz8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02F4
+	0EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_
+	Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
+	WUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcDDGUUUUU
 
+Hi Dan:
 
---EtkMv+Yd9poVtEEu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sorry for my late reply and thanks for fixing my cheap mistake.
 
-On Tue, Apr 15, 2025 at 01:45:44PM +0300, Dan Carpenter wrote:
-> Propagate the error code if q6afe_port_get_from_id() fails.  Don't
-> return success.
+On 2025/4/9 19:00, Dan Carpenter wrote:
+> There is a copy and paste bug so we accidentally returned
+> PTR_ERR(ddata->clk) instead of "ret".
+>
+> Fixes: 322fc380cea1 ("pwm: Add Loongson PWM controller support")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> ---
+>   drivers/pwm/pwm-loongson.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pwm/pwm-loongson.c b/drivers/pwm/pwm-loongson.c
+> index 412c67739ef9..e31afb11ddd7 100644
+> --- a/drivers/pwm/pwm-loongson.c
+> +++ b/drivers/pwm/pwm-loongson.c
+> @@ -211,7 +211,7 @@ static int pwm_loongson_probe(struct platform_device *pdev)
+>   	if (ddata->clk) {
+>   		ret = devm_clk_rate_exclusive_get(dev, ddata->clk);
+>   		if (ret)
+> -			return dev_err_probe(dev, PTR_ERR(ddata->clk),
+> +			return dev_err_probe(dev, ret,
+>   					     "Failed to get exclusive rate\n");
+>   
+>   		ddata->clk_rate = clk_get_rate(ddata->clk);
+Thanks.
+Binbin
 
-Acked-by: Mark Brown <broonie@kernel.org>
-
---EtkMv+Yd9poVtEEu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf+RLsACgkQJNaLcl1U
-h9AXdgf+IwDP2ZCdt/nG4LuHCXIKTYeSCPzb7phKoetBsQzxgY060qKGTzb+hP2m
-B4b2qLp/anvUI4vm4PJItrJTZ0TI6jMcRR1KeLp+GAZajhpdvPgDChKSeR+OxPAT
-ksup73zUE8UcU/qCuBTod0S8ltsdFGuR92j2Vs+pU9j9wGkggpzUDMb4frP4TdzA
-st/81o2uODDR60IcxRXPEcnX042EG7ZYvi1d33HUL2qZ48BbFJ8iVaq4uhu4xTaK
-KLjhfojUmIjfQgZ9FGvHkvrH3sXYXAKfxNyCapNB6gMe7Lh+QrXNYg5SOicp0FFw
-AW28j3oUVgszTzdoOopsnO54fKDNew==
-=A9o9
------END PGP SIGNATURE-----
-
---EtkMv+Yd9poVtEEu--
