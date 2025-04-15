@@ -1,70 +1,60 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98504288C88
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Apr 2025 10:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB7928F52A;
+	Tue, 15 Apr 2025 10:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744713966; cv=none; b=UZWsJ2h+uUA++x8eRTKxZZjCms7AqP99axdFO8dSLE6RAA7BPAajeQXXJzUt+1Lf6rRHoc0Oex80DPm3lKsISWaW7XYEFsxD1ERdtw1gOj6HpeIXaF+IGRJv3O6C6VRfNj8DDvxqU0rWXNlQvu0XFoliHYH2ImiD8qyxCO/wA9I=
+	t=1744714408; cv=none; b=rOhECZlqcCHazPEwhOtvsaD+gzVs5nt2fCpFXV4cwfVGUJgUynxtl27l+d09v5s8ts88pN91AVirrVLJ2WqvUd/46CsxnpzxLd6x8L1mgd9KMKOh3iMvpzBzsfA5bITt8qS8b+m16NAlC+JSpyXlazLzZiWtqojBDaQwdgqDfBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744713966; c=relaxed/simple;
-	bh=62EDoSV5fr/+NmDoX0H93net+ojkqMEqG9Aj1TnT+E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sqcPB0Y/5LuaXAvKJwYwZD6zokuiDP1xImu+Rf5YlLGsFounfskB1gShD16hXV9pMcU7tVVKPRSuKuaSab0CokYjQ4eeoTHtcfTn7O/GUxvbyyZ1nw/uftk91uEOW4kGrNThxvpTfuP06fWy94B2jVyGpHJKfh5gK70ItQTtHmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P8gLzSIr; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744714408; c=relaxed/simple;
+	bh=VX0wWt7bMqD9bUsByc+tN/8oYkNBL3uj3eMZ1AatQDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kDCq75Q8xywMVqgZfeeCz8uWLu+IhdWMFIQkg5Me6fGg0MA1ZS94+QTjntwol1OtPTAwGofM70Sl7N/ukii+UcM9bF1FGct+BdnGQ6aYce7rkVl1rit/8HmwUcmsevv7ukZBpdntoZsU/VFUzMH8cewE65LOU7brYcYC0QXb++w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A46QmxFU; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P8gLzSIr"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so46879885e9.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Apr 2025 03:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744713963; x=1745318763; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YQaWyRKtoMYOuzjQi/UaY0dF/POie1UHEF8CXbYiDJk=;
-        b=P8gLzSIriEwqcJ3SVK3V3MDz0sb633Mpg390yEMZwLxYtGg6hPNq+JeOAe1cEtRf37
-         cVvQ3/YZFsPKRj9dyDEMgssZEPu8UWdO3zBVeByD+q6XXaX9HRPO6FmAFtOuKxDQsO2T
-         j+tzG83mpWZ85mIG1siSq0HbqrXCBF51vRvM0PpfUNZNdi28NcRWlTb0lmX+b3kmNozL
-         zWAp+NzOkQagGKX3o9ur46YYxY+HckOopzaoFwVAtNmv+NhktDamB/CGa+e3H9NJn+Nj
-         bYe8F+3MOUKEjnr/lEQA+bGBCzROZuWWD1E63sDgyFn8yfSAn5DNIK0FgSZOuBaF67Ys
-         zmBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744713963; x=1745318763;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQaWyRKtoMYOuzjQi/UaY0dF/POie1UHEF8CXbYiDJk=;
-        b=RtcOwQuGK4bjczJLppJBgByHmmxDG11nMq0Qt2ursvYO7ELg0CYlQ60njz18lcTCZt
-         qLA9AxvsLdv93OpWz/C7thaOt2xLT7Jh+azCHbc3vBhX3wHK6BdAEwHaNKSvEd58wbTq
-         6Kfq67RK8kbfs4nwGAmhHNH2Q9WiA0J56qGMPZ/eexlfs/RLx3Tt0Zmxn9W7JcFaELBn
-         3jD+r6Ma9V+QVF34RMKdDDjGX3699zrFcRvvCyYoCjt7XW2+eSwVnPV1mqr0e9ZCpiPU
-         /hEgI10nn0bL7v8bwxGd+6aVQJJT61GBZ88r819SUs2jnCyAOBRfChraCHLogMDGmzxU
-         WJZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXK7BuUCqu5HZ+Uxr6H2KdaPkHMJQ5/XFXw1u6JlYaYgjvapGXSR6czE8rjrFUdB5z3pTtCL1PBP/skCo7PFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWHuz6+bCllOIPz5/NwUB3kQbIj8PlZbkpvhsWGI5t0roAser9
-	pqxo5kO1Wn6xWLQRQyJGOsSd54Vh8Lzq2m8LShqDuKX9Nxpn7OFDqwRo2KW61Ks=
-X-Gm-Gg: ASbGncvRRhsrigzcXhXhVTMDqKMVwGZiSS741hJguTFFfZwMC3AA007IJ3SD71zSwPz
-	QHc8458bYJNPwcd1q537+d3llbwpV9jYcKL3/Zo4NFRaZHsVzRPN6By0m8bZPKLaiJstGyqNtrP
-	ngzV/6FLpo/6PpM4TxJozh62lPQAx9hV4AY4d6pUAVQvdGvAf0O1Wtv6Qrv5KHOaIJWg/Yy45tc
-	yNkU9U4xRRx7m/3DpZKxIHFItUYwLR+9nvk6QHaAaDmFLf64rupFq2O+/nyTkfRYRSJwzJlXe+R
-	6bQW591WvL3tR8kgdY5IEtujHCh4SASoMsgTNHrGPgFpeNFhfYCCY02h
-X-Google-Smtp-Source: AGHT+IF9J6YTfX5akGPjOT/s3VBMw222DuUVaFgs0VJ6eOUCfIE607Qv0sYxi3xUVj+vgeq2WWXWzA==
-X-Received: by 2002:a05:600c:1e28:b0:43d:7a:471f with SMTP id 5b1f17b1804b1-43f3a959967mr143990565e9.18.1744713962777;
-        Tue, 15 Apr 2025 03:46:02 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f205ecb8dsm207835665e9.7.2025.04.15.03.46.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 03:46:02 -0700 (PDT)
-Date: Tue, 15 Apr 2025 13:45:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Wesley Cheng <quic_wcheng@quicinc.com>,
-	Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A46QmxFU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1744714407; x=1776250407;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VX0wWt7bMqD9bUsByc+tN/8oYkNBL3uj3eMZ1AatQDM=;
+  b=A46QmxFUg8FyEJyST0d7uhqBhs6kQKqn33pA6LvqpMq2QycZfaaGmX3/
+   xIkqVJMLpHlvNlmv8O8WMjuMxBfEZZsOOWZi9Ogo4xBUmksySmDUX96WE
+   C9ojM98S7DH5yr4Ar8/MDD5k/ToLtc2yTm0U6XfcjoycucTJRrGOyTfJS
+   h1riORgH6oA5zEW6zBKpsnzYZsWm9zenqZTK8nsjxr6WDiw69UQpih4XB
+   uTeOPOtiqAW9G6QiP0LgUEakEvgUaBKX+RvVaYxR85iuquoC0QrPcm7WG
+   jMAil0O1yMc0vgJstLt3uA1mx/EZqKne8qZSNTls3N2Ew0bp8MsSeQL/x
+   w==;
+X-CSE-ConnectionGUID: 7mPV8F2SRu2SGPAK6lEaDQ==
+X-CSE-MsgGUID: jtshkiSVSKupDnocrpMh4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11403"; a="57208920"
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="57208920"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2025 03:53:27 -0700
+X-CSE-ConnectionGUID: A9iQzyZvTyaZpPYzhsod5g==
+X-CSE-MsgGUID: UTw1h2zgTXGM8W/TNRaWmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,213,1739865600"; 
+   d="scan'208";a="130055440"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by orviesa006.jf.intel.com with SMTP; 15 Apr 2025 03:53:23 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 15 Apr 2025 13:53:22 +0300
+Date: Tue, 15 Apr 2025 13:53:22 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Andrei Kuchynski <akuchynski@chromium.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
+	Benson Leung <bleung@chromium.org>, linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ALSA: usb-audio: qcom: delete a stray tab
-Message-ID: <Z_4458uUI3LURa8M@stanley.mountain>
+Subject: Re: [PATCH next] usb: typec: class: Unlocked on error in
+ typec_register_partner()
+Message-ID: <Z_46or5827D8xKm3@kuha.fi.intel.com>
+References: <Z_44tOtmml89wQcM@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,28 +63,36 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <Z_44tOtmml89wQcM@stanley.mountain>
 
-This code is indented one extra tab.  Delete the tab.
+On Tue, Apr 15, 2025 at 01:45:08PM +0300, Dan Carpenter wrote:
+> We recently added some locking to this function but this error path
+> was accidentally missed.  Unlock before returning.
+> 
+> Fixes: ec27386de23a ("usb: typec: class: Fix NULL pointer access")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- sound/usb/qcom/qc_audio_offload.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
-index 5874eb5ba827..8b096f37ad4c 100644
---- a/sound/usb/qcom/qc_audio_offload.c
-+++ b/sound/usb/qcom/qc_audio_offload.c
-@@ -379,7 +379,7 @@ static int uaudio_send_disconnect_ind(struct snd_usb_audio *chip)
- 		} else if (ret < 0) {
- 			dev_err(uaudio_qdev->data->dev,
- 				"failed with ret %d\n", ret);
--				atomic_set(&dev->in_use, 0);
-+			atomic_set(&dev->in_use, 0);
- 		}
- 		mutex_lock(&qdev_mutex);
- 		mutex_lock(&chip->mutex);
+> ---
+>  drivers/usb/typec/class.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 3df3e3736916..67a533e35150 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -1056,6 +1056,7 @@ struct typec_partner *typec_register_partner(struct typec_port *port,
+>  	ret = device_register(&partner->dev);
+>  	if (ret) {
+>  		dev_err(&port->dev, "failed to register partner (%d)\n", ret);
+> +		mutex_unlock(&port->partner_link_lock);
+>  		put_device(&partner->dev);
+>  		return ERR_PTR(ret);
+>  	}
+> -- 
+> 2.47.2
+> 
+
 -- 
-2.47.2
-
+heikki
