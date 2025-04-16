@@ -1,73 +1,52 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B27023959E
-	for <kernel-janitors@vger.kernel.org>; Wed, 16 Apr 2025 11:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C861221FDC;
+	Wed, 16 Apr 2025 11:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744801798; cv=none; b=N8suPldWXOOblhf1RG75q6GHbWUz5s9V02Q9vN1E91upX5kcQDAxePLpzng7cH3Xe7mwSJZOZCotZGMUbnkk+Vl4egKno+w4uffyafixN3R2IQe3BqA5ineGw5sG6tE7qE9sy/oqcjNSHO/ctbkaGg7u4AaBKW+GYIDVYDO2Xqw=
+	t=1744802825; cv=none; b=d9EnvhbZ8DmZRO6zrVGueA0X6ind2PUg5h/qg1HS/MWnEC6FAue0oGxROwTSRo8wKPF7bl3EMmmhbydeuhlvycw5qyRVJnPm9ju5X76EOdbrzU12UEW7EX9JbCPWnvrktC/OkL9p+ijE7hHlnjZ1OiCT0Azekjk9pbK4HeNwtgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744801798; c=relaxed/simple;
-	bh=N300ZpabVRj6F4flL8Lfrs8xgF7O+jgFOpCvVDz4jH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uYpJaLqYJwn2e6KLtXsGz6rqBXXr4NbV2Yq/OQooekq+X8YdXs5OWxcvbzGLx1PZfe9NcZZ9efE/XG/KiEUhG8iTjPEm/b4S34ezlsGWbqnEw1hafIvy4v6ofos0UUcFLVxHJV9mJJakOMszJkhhY/HD2Xbf7ZaHzE+SmdcnJzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DuDwEREC; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DuDwEREC"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39c266c2dd5so5879116f8f.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Apr 2025 04:09:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744801795; x=1745406595; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uUVn1E+5MASZtQAbRE/tz2lbT/kj3f2AwNu2uqycOxQ=;
-        b=DuDwERECZX0nUED+9+NujIw+A2beToU3fyaa8eXcft6lO+jp+kPOgPq7F31HXa7l9a
-         XPM93rbFlwG16nQAv/+ng4suDAKiSkD3/CfNow3+YYjUmY3JJVEN80pfjyk5lDCkBwkK
-         G5Qu66G70QhKi4ttbcbHWFbyuYWtfHnezgWcSU5EjNpog0Y01QyLUhfkp3O8Ul8/m7PE
-         FJy56mZiZIO8SQ7ZbRrfrV14fpvHVcqrGSm6bvdAJm0Iv04IXkQlaWAew0RhDd9cg+yU
-         AaVx7M1b2IdhxLZBTfWYXtsOxB7PTy+uXaRxLqQqDZEL5cXj9e7t/mzNQmFVTskO5Z2V
-         L2AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744801795; x=1745406595;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uUVn1E+5MASZtQAbRE/tz2lbT/kj3f2AwNu2uqycOxQ=;
-        b=wGv+BMKEduAWFSlyV9FBDahUPhwAWKYyYtxfFTi3Te71QkGaVJObM0zHyoyCZWLe1m
-         mFuxnvqCf5AGN1YS4pdTLukaSAznCRS/TEjbS0CFSjz8g4OgmAp6XXfLZe/CpcBwbD+m
-         XmAiGjdylYxZn+Ugr24Rx/ocq7rUBnKfuZj3czEHf3BXH6GtfXDgwLqppp09uKRQhTdE
-         4so5Z2Nm+w6fskKB9tu2asWDCa5Of9TrU/+dCNMO8Z+vY8Ej9fQfcpElg4qoC6Mfhp7B
-         JmQOqlsocLwlHWMN6HMbq6EXKxmUlCd2myxIiSV4iiezQnHcdlUR7PxmQik3lLII8D61
-         AWNw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+mr/gW+0dzl8c7yeqWgSsIDkg+oqSQo2WMQc/2+TBrbr73ZKSppXCjl0eJBB5bLsx8XSUaeoO4x8P4em/Ooc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1Y0toCpLkAMnmFXX5NbQI7xulgU/u4rsczCYSLhkjYK7hJTWt
-	tZnmaJUFE84zUxsVUQzf2Ugy7ul03/Ts8qh0jcdjtuCYhW9WLGPHP8V8ou0HXkg=
-X-Gm-Gg: ASbGnctlEdHAldgUAriBxeXHG+gIzWcBbKzEgS12xvgRRCum64TQNpEyuWdVYJuYxY8
-	UPd8Qf4EBPYs3J7VD8ua6KkDXK9QBiuC+NhmAn3XNQ3FnQ7LLz9lFeqOxkCvzVVEhLeunpdD2B8
-	/9sdplYUf2BK2t2uiyQpeXXPGTHLPotmTeYuM68fjBXpn7pfay+mHh2zzxLBBtVjGJfxm9Rlz9s
-	IE6v+RIAlKMDZs+lA91KAVq0HNz0jiAEmagXibc2Rt3DiOJyEvi/nYPUq33CxO39bI+xs/50e7i
-	425a5LQV0L6GQm1cSNkJheLmXbjybZTh+TyvT4P8P0zduw==
-X-Google-Smtp-Source: AGHT+IGnbNlOdz2yVZBXGlqvERaHySPWwtoWVnzqqpbftBIEbIEdovohdZb+YF7/4pgI9k2rY2uGfA==
-X-Received: by 2002:a05:6000:248a:b0:391:2bcc:11f2 with SMTP id ffacd0b85a97d-39ee5b10fb5mr1551778f8f.1.1744801794634;
-        Wed, 16 Apr 2025 04:09:54 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eaf445742sm17013298f8f.95.2025.04.16.04.09.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 04:09:54 -0700 (PDT)
-Date: Wed, 16 Apr 2025 14:09:51 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Marc Dionne <marc.dionne@auristor.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1744802825; c=relaxed/simple;
+	bh=98d1DazeTGeaIZptiNcIburiw/CHNUg1DwaYADTKS+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5gBo6v4yTh0MolUiPdc2zgwTlDOZ5yutDEGeSO8ti2WdZyH11hVdBGJnoQwI1a4TL5vFageLEx2wKg8cYXebqMDDoBRYjX9OlLR9jIUfBWtBCm/KGsw6b+4mjQM+4GPV+PThbbFPrQpvdHev0YCTZxxohO5M25bafIiGf72GJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: fcN8r1ixQ2qAD/lHrXCiNQ==
+X-CSE-MsgGUID: cpiDv62AT7GxpkCaHiMhbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11404"; a="57711676"
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="57711676"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 04:27:04 -0700
+X-CSE-ConnectionGUID: tWNrAjUfSAyMDyiqv4Ti9Q==
+X-CSE-MsgGUID: TE6fxFmKTzi0+ZNEL17EiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,216,1739865600"; 
+   d="scan'208";a="130459644"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2025 04:27:02 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1u50uw-0000000Cpsh-3qeg;
+	Wed, 16 Apr 2025 14:26:58 +0300
+Date: Wed, 16 Apr 2025 14:26:58 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] rxrpc: rxgk: Set error code in
- rxgk_yfs_decode_ticket()
-Message-ID: <Z_-P_1iLDWksH1ik@stanley.mountain>
+Subject: Re: [PATCH next] iio: dac: ad5592r: Delete stray unlock in
+ ad5592r_write_raw()
+Message-ID: <Z_-UAozhav-hMFrT@smile.fi.intel.com>
+References: <Z_-P7bsD3KL5K25R@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,33 +55,18 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <Z_-P7bsD3KL5K25R@stanley.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Propagate the error code if key_alloc() fails.  Don't return
-success.
+On Wed, Apr 16, 2025 at 02:09:33PM +0300, Dan Carpenter wrote:
+> This code was converted to use guard locks but one of the unlocks was
+> accidentally overlooked.  Delete it.
 
-Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-It's not totally clear if these patch prefixes are real things or just
-a cat walking across the keyboard.  "rxrxpc: gk: yfs-rxgk"  Really?
-We expect people to believe these are real?
----
- net/rxrpc/rxgk_app.c | 1 +
- 1 file changed, 1 insertion(+)
+Yeah, looks like missed one.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-diff --git a/net/rxrpc/rxgk_app.c b/net/rxrpc/rxgk_app.c
-index 6206a84395b8..b94b77a1c317 100644
---- a/net/rxrpc/rxgk_app.c
-+++ b/net/rxrpc/rxgk_app.c
-@@ -141,6 +141,7 @@ int rxgk_yfs_decode_ticket(struct rxrpc_connection *conn, struct sk_buff *skb,
- 			KEY_ALLOC_NOT_IN_QUOTA, NULL);
- 	if (IS_ERR(key)) {
- 		_leave(" = -ENOMEM [alloc %ld]", PTR_ERR(key));
-+		ret = PTR_ERR(key);
- 		goto error;
- 	}
- 
 -- 
-2.47.2
+With Best Regards,
+Andy Shevchenko
+
 
