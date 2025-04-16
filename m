@@ -1,134 +1,109 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A15C1632D9;
-	Wed, 16 Apr 2025 13:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1DF1F873B
+	for <kernel-janitors@vger.kernel.org>; Wed, 16 Apr 2025 14:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744811720; cv=none; b=rxSL4tx+xt8J77qn7w2bcyqIHmPTM1Za1BrNPcksL8hf7J/wZyzRwniel2HPq0LRW9St4DuNfoGcAFlHhupNCkSMZeLlWVTf3JSGzNXTjNU9sHTpuyTNMZ3K5fTeX8J97tib2eRwDJBM46UX2QixSY/cfjKgnhC0fNuBI6LX3bU=
+	t=1744812773; cv=none; b=T1PdSABwOH/cWnXSuF0e1x11tB7ZcP19B/G7z3qIN1v+BBuNJMRAoQqLOWaB82rFBIF84LSV1g87q5ud+iqwTiebS7xzKqNHL1VjJip9kv+2ghGLoBtb+lUynM62yrAwGBwVQGcGXGNsIzuU1RRvZzGfDgfVxL18ne4ALy+DbQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744811720; c=relaxed/simple;
-	bh=qiiPvQ61c24fg6gBHjzzz6h25Gsizp7JLH/JcH8CRkE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ALfrvFrYO11VdBbhbMPzEKRVX+gdw7DDwjcQtWhLzbT1XxdQJxEYM4Etm2xTOPh2M+OB6cp4w83nruHBLnIK/t1B3NFWB4wOk6lhbEMHrEXZX8Zqu21lKM5QtV3yj7FGTO80y6plqjJ1QCjYmafsjWDTqUEPqSjzm0VaHTe/0mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hUeoYsD4; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1744812773; c=relaxed/simple;
+	bh=XTkntqDwePYCb0luiS2lGmMOslSaMPOKVqshcejczDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PFHPvAYq7rsMjrsuej1Wa35Z7GyrQAmswsQ8MK5H76wqH1ziUiuXe/pg5OObNcU/6AgRKvuvgzM2woSPyZwvcvbyUtCr0UZd9G8OO9g4ubIAu548hzX9btOl/ple+Gyv+varlG8wZfBuV4jhrG9tthFQzMEIJo3DRl7thqMaguU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TY4PgM1K; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hUeoYsD4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1744811708; x=1745416508; i=markus.elfring@web.de;
-	bh=eC/SvlKaPq929tASfXDXWJPFipkuKbLgk927TAfU1lE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=hUeoYsD4WrHWeqb9nlNpT1YI9rtZCR+Yr+lzpTox1B4vGiL0yLMejlYUON32yQBA
-	 JDmx3WWRWJNJmB67M/M/2Ag+PPNOqe9mv8RN6dkTTRi33Tb+tfS0Uv/chJBzABL1o
-	 CRcyebprVOVM/p0v3il9eOkld2iili+0XIio2TJYeJ7ZAIWpvipSavU7Iv3MmpWjm
-	 lWRfw5XUQ9LHpcweD7IXBoL6XxWJHcGJiVeT7QFxyY8li7IVJd5wL1BuQcdUAUEEl
-	 fxuTxWSCAlW+bqmPOo5zvCOhxjLDjg6qkozDI/BB+FhGqg6XW566abZFsHoQmTbV4
-	 OBzTizD7yhVDjBD2kg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.13]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mv3US-1tEBYp3KEa-014W1o; Wed, 16
- Apr 2025 15:55:07 +0200
-Message-ID: <1145f48a-658b-4745-a8b3-724f33c3f1ee@web.de>
-Date: Wed, 16 Apr 2025 15:55:06 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TY4PgM1K"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f490727a11so2976056a12.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Apr 2025 07:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744812769; x=1745417569; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZMTVb3pZE6oHhA0d7W1SxUDzw2vnyZ2X+M+C9eM56o=;
+        b=TY4PgM1KfaShKUCbyX8HFFo774fz2AkxuG6Jju0esbmx2rV51BlG9AZD4JKuo+xeBR
+         MDpv0aYKAOwI+5RHBE5OI8E0rElv/hL6Nn6UJx+PZs63A2m+j1dW2FiC0GtPD49GY+qG
+         xVgBSbCCNdn3O8N315LimcJLVIKai4VlzBFhWVwvhQfUqgfPS8DMqB7B5kL3vDwSADo5
+         tsBW5n8rWH7xrwcuW5m+7TN1irh1fBObtNEiAcimR8+vXXKjUEhN7nrtdoWQh6ndwfkX
+         kqqSf5vfB6jEkun/pLOGMrY6glyZTEFBt7b9pON5h2qnIzlonZIOWKPJQNyg5GVl3DI3
+         DkeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744812769; x=1745417569;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TZMTVb3pZE6oHhA0d7W1SxUDzw2vnyZ2X+M+C9eM56o=;
+        b=NM7DVK5Sf+vkB0TAzUSiwMuK5XnLSbKaGbF85Q1XE4mFUovAgZf6pc/7EDos0z33Mr
+         Rt/vjzGc9iNrRzgic/Ul2RSGSTkMEEnbSXhIKyn3tR8FNARbiBogh0iZ6iTnImD38VJz
+         67kATeX+iVKUIdwdK54V7jFgRlX2Gie9CkQp/s+ocyA7LHc0FMVfjvYiBCAUk3E06+Q5
+         27ST3LyiDs1LHPH6lscJupgKuRorTmy10Uq1xuMaSrHulqFfp04mCc2UdcKVea4J5706
+         8+Bc2Vh9xcWNJU2UYP1MTUdmLfCO5mMcNJqe8+RJojWS5p/6jRqnIvWrWX3mUPED2bzY
+         XTow==
+X-Forwarded-Encrypted: i=1; AJvYcCXW70f1qDdmq9onTezRdL7E0Zw4xtzd+H/KcmXVZrtVSyQG77OKjZZ5GWp+gc6kUWN4jpfVeavZ94EF/vKmCxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO+0k8ztkrjMhAH0q7OaYImwoAz4iFb9dsqxtXKluJRq6f4X5m
+	2BN8AsDNpaO2JKLkGVV3b0gCNl/KYAAMqvrMv8fA+WbIFugNWJK1qZWnQ2jq4QY3cIhvghVeV+u
+	MKy5PejARYg8LQb2qUYzoZdiHeS1LzuLTvCdjzw==
+X-Gm-Gg: ASbGnct5256GvTJIxGdd0MGKHK7XV1aDQlqrOhrjDdHa31miFHt6IfVM28TyzGS0+Rm
+	/bJ4E2MH6x+xGp4NvCOyH58FEtX4OFkYAfG/fVITVFgqdMzGb0UWDWjfELbrMRc4GGJ3VEYn1hu
+	FI9vhyPRFJmWKLyzLJw4okXifg5z3a/ROWrIqNr2uE3P/osoHLWjEHw1Y=
+X-Google-Smtp-Source: AGHT+IFKh78VHVMJondHG+OsJwidPfNrFauRyCcIsVgg2sFjRBzYe5AIwmVRBEBBtiTUMeOMLDkaj0i2I1JGEUQ+Qgk=
+X-Received: by 2002:a17:907:3d9f:b0:ac2:cdcb:6a85 with SMTP id
+ a640c23a62f3a-acb429839b2mr140366666b.22.1744812769573; Wed, 16 Apr 2025
+ 07:12:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-To: kernel-janitors@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
- Shawn Guo <shawn.guo@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Chenyuan Yang <chenyuan0y@gmail.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] irqchip/qcom-mpm: Replace devm_kasprintf() call by
- devm_kstrdup() in qcom_mpm_init()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:INKt8jcYG20W0shtP2ChpmFpFIdIPjQqMchHMamk80DQkbVO7/t
- UhtTxsN6OKVCGk/mWprmPeL2VO4y0lU2qKilCgpYVDJuQ+QuVPL2bkcsRcsFprS5Zd5kP3l
- A7ppaurbSYmw2l04GmL/fMiVfH/6O3EBhDyJawcaH36oUw4AxhE7g0/p4Q3+GiL7SDxOs14
- /bY0mEutYb0iln4/NtQCA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Y7CfnHNsijE=;liOPZVzq3SFbfQcXZbd7WYjeHxF
- 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
+References: <Z_-P7bsD3KL5K25R@stanley.mountain>
+In-Reply-To: <Z_-P7bsD3KL5K25R@stanley.mountain>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Wed, 16 Apr 2025 16:12:37 +0200
+X-Gm-Features: ATxdqUGQSIwu5i_6p0YPHLy3HbMNhNvwue3TIyNU5eKcYhwj52asxFGUhRcPQLE
+Message-ID: <CACMJSesQ1NZZ5jHy=h6eaRyV+-FaRpzVKtfnycv_5Z4YXJ+o-Q@mail.gmail.com>
+Subject: Re: [PATCH next] iio: dac: ad5592r: Delete stray unlock in ad5592r_write_raw()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 16 Apr 2025 15:43:46 +0200
+On Wed, 16 Apr 2025 at 13:09, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> This code was converted to use guard locks but one of the unlocks was
+> accidentally overlooked.  Delete it.
+>
+> Fixes: f8fedb167ba4 ("iio: dac: ad5592r: use lock guards")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/iio/dac/ad5592r-base.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/iio/dac/ad5592r-base.c b/drivers/iio/dac/ad5592r-base.c
+> index 217a8a88818d..5f2cd51723f6 100644
+> --- a/drivers/iio/dac/ad5592r-base.c
+> +++ b/drivers/iio/dac/ad5592r-base.c
+> @@ -324,10 +324,8 @@ static int ad5592r_write_raw(struct iio_dev *iio_dev,
+>
+>                         ret = st->ops->reg_read(st, AD5592R_REG_CTRL,
+>                                                 &st->cached_gp_ctrl);
+> -                       if (ret < 0) {
+> -                               mutex_unlock(&st->lock);
+> +                       if (ret < 0)
+>                                 return ret;
+> -                       }
+>
+>                         if (chan->output) {
+>                                 if (gain)
+> --
+> 2.47.2
+>
 
-Use a devm_kstrdup() call instead of a devm_kasprintf() call
-in this function implementation because only a single string
-should be copied.
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The source code was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/irqchip/irq-qcom-mpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-qcom-mpm.c b/drivers/irqchip/irq-qcom-mpm=
-.c
-index 7942d8eb3d00..d3e398e03d3f 100644
-=2D-- a/drivers/irqchip/irq-qcom-mpm.c
-+++ b/drivers/irqchip/irq-qcom-mpm.c
-@@ -414,7 +414,7 @@ static int qcom_mpm_init(struct device_node *np, struc=
-t device_node *parent)
- 	genpd->flags =3D GENPD_FLAG_IRQ_SAFE;
- 	genpd->power_off =3D mpm_pd_power_off;
-=20
--	genpd->name =3D devm_kasprintf(dev, GFP_KERNEL, "%s", dev_name(dev));
-+	genpd->name =3D devm_kstrdup(dev, dev_name(dev), GFP_KERNEL);
- 	if (!genpd->name)
- 		return -ENOMEM;
-=20
-=2D-=20
-2.49.0
-
+Thanks for spotting it.
