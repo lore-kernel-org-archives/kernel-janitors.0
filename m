@@ -1,110 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337E6E571;
-	Wed, 16 Apr 2025 05:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11FDC347B4;
+	Wed, 16 Apr 2025 08:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744781062; cv=none; b=FC+2FT9zAI8Wo+makn7rGgQ8UAI0/yAHfL3C230l0uaSGJ4E28139fwfgFkARURAghJcbBmo3mVoZEvrjPacKhrhpRNULAZXjlIEtkCZo0ZOZB2+6KX9hdZXTWfur4uYvD82xoeJFrFJHOet0a8WczOD3+bgDB3xPhOzYjn+b/g=
+	t=1744791133; cv=none; b=gNxdaVoCaRq2dB3HZwW/P7OdKUhEl/Q7xL9W6PrbxNnh4MZkaA9o/+No/k9l1EMQa8zdGKhWqmjl6fVCB9J9dmwaQ/7jyxYttmT8ybqgcsZaF1oYVNM2o8G6dw9WOuI1bIsEpFpHEzfgYguAdXyQEQUozyhM67A2PTaF6pz/dps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744781062; c=relaxed/simple;
-	bh=cKllk8vD4eaxEJ2Tc4nn29nj7GJhMYpArHkxkZWFHqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQh22BMUeOZlTy6BQ7xe1e4/wtXfZ7519tpPuRpPrXUNmSNWymAiyuBXEpBBXH3I0B6RjHLH3SP85iTy2mEjDX5IqNkGzT+W8OMUdClkyNlV7R27aR3Okg0FWpIajCQhi6lQlhxk3PV3dwxKmSUvIS2Rljwp0Qu1J6B7U3siUO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/Aih0xs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744791133; c=relaxed/simple;
+	bh=Jc22Eo0VO10sOvqqMAho7ArsbLj2o1xB+/q3mFoXE5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RE/umGDhuH+Zo2O58fM7drpGN02Wa6IjNzP/UsHPslZMlmOn+owKf5I/HBaL7XL/C4AVHhO6Ikg6VeBzoHKkcqmf2Oon9CGlOeItNF6wZoB5k9b/gxIv1jTD7lYja6kC2as3BDt3UFh9pDAlrwvlJTRqcIxBoRnoIuxwXGUfeCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wlg43VpF; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/Aih0xs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F7BC4CEE2;
-	Wed, 16 Apr 2025 05:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744781062;
-	bh=cKllk8vD4eaxEJ2Tc4nn29nj7GJhMYpArHkxkZWFHqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J/Aih0xsdUZ4w+dvVu9dR2anmJdnujUqE99aZDXHW6BnTkzeTq9+FvKzD5j0+lR0C
-	 HrXlYpyi+3sySf+rmNZ2igqpL+lDyGH4W34iq7OgUFzw0cDOn19V8zr+dp3YN4sJDT
-	 GmOvftUtjP+rk3qTHexjHMqLzR6gdeSLtzcBWysiFDBbZ5k/Kfrh8Ocu4Yhvjh4mWT
-	 DS1/Zkjn79eGrcq6cCTO/xLi2V8TW/aiSxdySu9QfxFD8g1znpLhUgOzyLL5PcUydm
-	 kqLjAmQdVxhftdj8KGmsxwxIxh42cpHBXMQtYYhf5McBqLEdtY2pEp76VWRplBJXzs
-	 YoO3IHD6kcLBQ==
-Date: Wed, 16 Apr 2025 07:24:18 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Juxin Gao <gaojuxin@loongson.cn>, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] pwm: loongson: Fix an error code in probe()
-Message-ID: <7apoevpcxrsi7u345otb6cna3k3khhiwlmoitgilu6f3bv6mtb@jdvlox57u3cu>
-References: <6965a480-745c-426f-b17b-e96af532578f@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wlg43VpF"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-391342fc0b5so4823426f8f.3;
+        Wed, 16 Apr 2025 01:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744791130; x=1745395930; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7xbSwOnHJcl5ihilpvmWsdE0abLroLqOUSXNDhR1Fz0=;
+        b=Wlg43VpFcWtKxVjoww5c9JPAhYyrCNo13TO2iXQ5jznCXz7W/gJ59fIfM1kzCb8sgs
+         SpE4pm/rwaLlj89/BRWVRW5RAOv3cwQYdGp7p8IgWj4qSjtObwq4XlAxkOGpy6dHbbq+
+         zGb+Sufd9JNOzrEwJu1+u68CNQHQmRvJf7Okt2fuP9AtRlQUNOAhaj7XFudil52D+PZC
+         O6Nf7OOX0PsZt5mJX/EmjV6IYS4lHrp5kp2hyBArJ8Wittl36kP8C7Qiwg6Py/huj3ZT
+         +cc+oqLGqFZhLWZPz7OOIPAwx9pKIzVnYMHP/TPRd4wbCXBpiCwrEF8+w2DpKmABG/ii
+         8UOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744791130; x=1745395930;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7xbSwOnHJcl5ihilpvmWsdE0abLroLqOUSXNDhR1Fz0=;
+        b=Q78+Ccjj4MempSxk/KZMbKbhjmqB9r0jsDTr9Gmsdky0POnEKTnOp2hpgO7HrPQr7J
+         Vvym/GeZeT3SBAKHQIwUgP+caIH82XYR8/LxmNCehyPame9CGz3qvwXDChkyC/m8ktkv
+         EN5NR6iR4TbPoq3S7OepWe+cg66kk2bMsgliDUn0t9QfGXOhJbwLikQqgN2axs1dP2V9
+         jCONgRGy5VRRuzUBfmSfxqILJAIVLaOkny97Yfsk4EX08V8g9O/RPYJ0gLtRMO2kdgyc
+         kGBwA+PqW+fiUvreD+4IPe+b3xUCOwe9SxHLKz3EBov02CUFL8o4xc47gJblW5BZiOeT
+         WhVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDlNBTI0hgjTgBVOYpzMBZ8L7nlHMB6rsXyJHGVpq2w5untT6NZt4depe4ER5ZyRlIXh2hsdO/jtXUTCc=@vger.kernel.org, AJvYcCUVfiNZWmlt/w2Jfn156INONIB9wx+2surWlLD2jUlew3io+UIxeh/1E0YhnLAqXMjS5cPdRWC0zpSAciE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyu2lQLtFnxKp+n+O4y547PRHRAvI77yZBsEn+U6AqYOGOTHl4
+	HFJfs+7Mh6jRL8aH+H1NcDIPi8WT5BCWr1eHhjgMfDcuOvBXY1K8
+X-Gm-Gg: ASbGncuHVf92QT4+8uk0lzxObuqyLCFBLqmrNLqfM3OPg8olrVmUq3M7RXw1c+lJ0Da
+	4JpN63IDbA71ardQq3MNMj1E4XHOnYrvxvvxd3DvGXD0zYVVjRY0LiCNQEUS+dpy0bKX0oYUzKn
+	qZ6RLYoOpK+WrquavcpyDgJbTbt8dgbb1/naF0PH2wI63KipwhQD7aB81zJtSouYC7cvmXSftIe
+	nSnyO18KKVMIMdeVqe7MPZkp7kM4RNjr0eDyLw9XLDMLXYutNLg1pNKnp6N98Z6uEIDDDQJUs6g
+	1dbqyzAUE7vcHZ1JbrebjbAo8brIp4xZXRUNHbx6+YdaDueCfWCP
+X-Google-Smtp-Source: AGHT+IEDl5aW4j2p/KlZbpeZlOW6+VxaFPlwv9s2ZrvxmOyoPDUS0nugUIKBDD6JvePtOuISefvMqg==
+X-Received: by 2002:a05:6000:2911:b0:399:6dc0:f134 with SMTP id ffacd0b85a97d-39ee5bad76emr774209f8f.51.1744791130000;
+        Wed, 16 Apr 2025 01:12:10 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eae9640a9sm16555399f8f.10.2025.04.16.01.12.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 01:12:09 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ASoC: cs48l32: Fix spelling mistake "exceeeds" -> "exceeds"
+Date: Wed, 16 Apr 2025 09:12:04 +0100
+Message-ID: <20250416081204.36851-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mqula3fkor7hottj"
-Content-Disposition: inline
-In-Reply-To: <6965a480-745c-426f-b17b-e96af532578f@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+There is a spelling mistake in a cs48l32_fll_err message. Fix it.
 
---mqula3fkor7hottj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH next] pwm: loongson: Fix an error code in probe()
-MIME-Version: 1.0
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/soc/codecs/cs48l32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hello Dan,
+diff --git a/sound/soc/codecs/cs48l32.c b/sound/soc/codecs/cs48l32.c
+index 4e2bc09773cb..8fd0df671730 100644
+--- a/sound/soc/codecs/cs48l32.c
++++ b/sound/soc/codecs/cs48l32.c
+@@ -1802,7 +1802,7 @@ static int cs48l32_fllhj_validate(struct cs48l32_fll *fll,
+ 	}
+ 
+ 	if (fout > CS48L32_FLL_MAX_FOUT) {
+-		cs48l32_fll_err(fll, "Fout=%dMHz exceeeds maximum %dMHz\n",
++		cs48l32_fll_err(fll, "Fout=%dMHz exceeds maximum %dMHz\n",
+ 				fout, CS48L32_FLL_MAX_FOUT);
+ 		return -EINVAL;
+ 	}
+-- 
+2.49.0
 
-On Wed, Apr 09, 2025 at 02:00:20PM +0300, Dan Carpenter wrote:
-> There is a copy and paste bug so we accidentally returned
-> PTR_ERR(ddata->clk) instead of "ret".
->=20
-> Fixes: 322fc380cea1 ("pwm: Add Loongson PWM controller support")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/pwm/pwm-loongson.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pwm/pwm-loongson.c b/drivers/pwm/pwm-loongson.c
-> index 412c67739ef9..e31afb11ddd7 100644
-> --- a/drivers/pwm/pwm-loongson.c
-> +++ b/drivers/pwm/pwm-loongson.c
-> @@ -211,7 +211,7 @@ static int pwm_loongson_probe(struct platform_device =
-*pdev)
->  	if (ddata->clk) {
->  		ret =3D devm_clk_rate_exclusive_get(dev, ddata->clk);
->  		if (ret)
-> -			return dev_err_probe(dev, PTR_ERR(ddata->clk),
-> +			return dev_err_probe(dev, ret,
->  					     "Failed to get exclusive rate\n");
-> =20
->  		ddata->clk_rate =3D clk_get_rate(ddata->clk);
-
-How embarrassing that I didn't spot that during review. Thanks for the
-fix!
-
-Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-with Binbin's Reviewed-by tag.
-
-Best regards
-Uwe
-
---mqula3fkor7hottj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmf/Pv8ACgkQj4D7WH0S
-/k4RNQf8Cc3mcurLaW/Yv9UGm/iXtfVECvExlonj8/rQA0LyWM4zuns7YsA0olfZ
-uJhCsED71FCS6yfbh2lplRjK8Znh241XQg/A5WoUW4/KIV7iUX4DlU+bkLofYvE4
-A0xtgtId1t6q/C5xuiweOBJjIT+kzn6fJpiKlQ6O2cZTSnPO7hi8NK1dPi2Z4DLb
-AIN6gIrq0/uhGJd6SST2m8/9+6YJ8tKSXSH+/XUuDjloHoE11d8C+d5xOE4b3mTM
-9va96XUQAP6ky3XtExiHadlosqpnYxZ7iOWZrARYmAkHLBREpwjmnKWQ1cb5OatY
-VLE9FsdIE31LqaxRjknt9lZOQjBnJw==
-=aE/z
------END PGP SIGNATURE-----
-
---mqula3fkor7hottj--
