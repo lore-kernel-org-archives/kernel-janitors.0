@@ -1,44 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358F3224AE3;
-	Wed, 16 Apr 2025 18:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714A6347B4;
+	Thu, 17 Apr 2025 16:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744829685; cv=none; b=uH/yrj5dR5nAVksz5xne+HWGTN+/joxMIEGgOj7jZswtdXSs44tZl+c8h2Y1lJ4zitPGY4PizSdZZRWplH8W+9mM9eToL/+JZrjoEGtW/z+ZpWvNl2BJOn71FNRwaSOWn436KeUUX5kKJTygLS4B8CJJjco7Rpsj6aeUQuCS0ZI=
+	t=1744906276; cv=none; b=Ekdmh8D1uMYIi/z1VIQx+5pfceiAMYUYyAkpkcx5cx3QrifS8xg9NTGaoYMaBnBs/qUGXIIs5oJdVP3DpyfEg/ctV9C0k6M9z+9R4q5eX+v3dd357du6m1Tlq+kowMdZXz7CmN4UNVSivKn8wV4Ljt5DlAfxPSjNypSj4dUYtio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744829685; c=relaxed/simple;
-	bh=d+pzbqFI70uNctwUefK5DbeSTUReKOKmGsluFpLn3hc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Bh3BUAecAKDZ7u/qte85dglU1+N5df51OZ6v8QrxRgCveFORrY+aKtzvH1hePtlKsnfkxK1MiOnYLIqBQkrTl+UJt+kGzm6qlswUykE7Jac4HrGlVXS5y4XHUQKCyerfWk93kTocw9AMKQSSlb0Sgzq171x/O8rOgfq6vptUiHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bd9IAI3l; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744906276; c=relaxed/simple;
+	bh=0JvHSv/zBfDwIrbND3HHsM5lPGuyvdsrhZLlK7Q+Jbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UQn2ZNRfKxDqPN/b20ZAKGa3w5WfJwZrTXsGtg3wVoyYZZgfzlssYj+0k5HE0x5wQCDK6muUxHbAcpvhBpAW4UCyVyhvukSb99DzKNDB8JZi569baSiuhTeqoA4P8uVVdNZGPzoY6PI07s3HeQdD/U4AvEBa2FdCmae0c1Z8fSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXqz1snV; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bd9IAI3l"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13969C4CEE4;
-	Wed, 16 Apr 2025 18:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744829684;
-	bh=d+pzbqFI70uNctwUefK5DbeSTUReKOKmGsluFpLn3hc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Bd9IAI3lWfIdFpjUP9shQkuTn3h/SjtOOTEXovelsT4Y+rJAyUR+5bbPzmxr3GCta
-	 3fVCb8dIZLyK6RKw6nZyXtydMY+L4bzXvBrImoe9GKmNw1Vwe5IHMKf5aeA8k5GFmB
-	 GIcgs7dY8Eb9FF83WnRCWQjrmYA0huOJnoaWGWC4sRbMUzIOKO3mcRQ8BssRldZ8lT
-	 f9stJ94i5mo9NUr9VkpLeHHZVE78Lz7683i2NXUc+7FSvDUntqUUOTOtv1N5bP/o9p
-	 Is92sMwyGdtoJXWq0n81b+RgXVc4ULR8nXvhNcuPTmMQKPyWeztGn9iclOtgm/+WiD
-	 1u1vi4R0ydYqg==
-From: Mark Brown <broonie@kernel.org>
-To: David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- linux-sound@vger.kernel.org, patches@opensource.cirrus.com, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250416081204.36851-1-colin.i.king@gmail.com>
-References: <20250416081204.36851-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] ASoC: cs48l32: Fix spelling mistake "exceeeds"
- -> "exceeds"
-Message-Id: <174482968283.823707.1904803455286479988.b4-ty@kernel.org>
-Date: Wed, 16 Apr 2025 19:54:42 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXqz1snV"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso1476451f8f.1;
+        Thu, 17 Apr 2025 09:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744906273; x=1745511073; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0YoOig2NlT2ugypUY7ub3Z8t3Ukg5TG35rVUrcVY94k=;
+        b=UXqz1snVxb38BHKOg0Z1g4pFXIGQSb7UYvrKkorIWYzefCoQ2IDmwqlcsZmqWJvg3T
+         UXl0HHxo+XlYNohcHlRJnPsiHOY685jblq3kLA9qOtQyR7xlBsKa5e2zIM49I92I1W+l
+         fH/1lLpwZiM7UhDzCPJCWwdGl4SritH11Vu+LMWpN4lyf+F9PSbw66QUf79BqoEPruuG
+         wgStIPD3vxU9KylrMvqiVYANRkScEnpCuikAa0zBsWcbnrRSCtIEUD5yDyssAO6Puaup
+         CqESYGAuuvevBTkr+9moUJRua0RHxeb0lp79Qp2b2kuQnvK+NuZUCudvvPpszOuVBbb+
+         BjcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744906273; x=1745511073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0YoOig2NlT2ugypUY7ub3Z8t3Ukg5TG35rVUrcVY94k=;
+        b=QJHqIPY1GsmMyIrCdEPR6UtNAABv4OUsRXGoEQ3ij3De7V+VgXklPUJNMZvjBCvsLN
+         hmPSjt5Qpmhja126zNvxdV72qv+BNW35UX3vyo/g4F3PjMgfBYQTSkZRPXbg7KNLrn+2
+         GJcBmIhWh9xft9vjfBFL9e9YqPFkYSG4Dc+0uwqNh67fcWS38JgVDwzQRlUAublv1qyN
+         m4rXFT5kZQAQU5+29KKDqqaMV00JjDGPq0fgvPmXgyUmhTXZi5bc4bkYTr/wjSmv3nwJ
+         5y8F+kUUY0MmSpQrY4ErvrbMzhptX3lgM9o+HpScaCRHJSmks4gAQeLQZII+6m6y0Isi
+         J3fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhPagfcGDeTqMJD2MPNXomOFyWEbSaqP7xrJzIqPeeaOqg+aGIUxg8cwJBgK+KiF9jkvql4/mPcHPACQz0eLVNOM4=@vger.kernel.org, AJvYcCX1zaqkrwHWZhRWgY36diizvsMXNkpTPCMnUctPgLMBVII9rDuLyLRPC3rHTkNEDsM+ImsEtG2p@vger.kernel.org, AJvYcCXO2t6j9RVlFHCfvtU/jaYGdU2yoZzIe4Wfb1IeH1NF6DGqcF9YtXvT6Y7xdUdTeenJhMyyQNtximB7XxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKsOIiCxi7znK3b0jxe7RepCJ1Wk/U17N7StD+sNdkeF5H9b12
+	53xfpZeu+77CWnRHJLNbtof+EjN2SN+T0ktXU15NIeaGjAad/DN4
+X-Gm-Gg: ASbGncvF8sAv1ekJpxYNx9WDrBxSa2Ety+yBKpdNBAoMM/ES2a7Fz6NXeCOMhIsiYh0
+	po0OiXQPcdpHKILm5NZ0nFzOnRC4VxHw9yuoPfKpXdmfFaUj/j97amA3p5FVPLoGCGjpCNmKzy8
+	gaBl4XlBlLdDy5LXNfTK1lyLJrWjy1XqSH7vJa0zNMEtee6cULYiyC5GyZZgcBefIzuEO+semQs
+	fVHMWisUPqI6A7vBjQNQyoEbZ7hKBK1z1Z2v5VhoLRbxB9xD2hbipduYLs2GoqgEXop04JS4ZQs
+	LZB4MiSEzz5SRldJX5mIbIuYvYol8n1bf8r++JnYWQ==
+X-Google-Smtp-Source: AGHT+IGC8XUS3Me7ine70yCjc2tBMhV+dBWz5fKYCdIg5NPTsQPgafcB1x+Wut8kapX6DuF22rs8gA==
+X-Received: by 2002:a05:6000:2a84:b0:391:21e2:ec3b with SMTP id ffacd0b85a97d-39ef9cc594fmr361937f8f.3.1744906272540;
+        Thu, 17 Apr 2025 09:11:12 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39eaf43cd69sm20426895f8f.80.2025.04.17.09.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 09:11:12 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-renesas-soc@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: dsa: rzn1_a5psw: Make the read-only array offsets static const
+Date: Thu, 17 Apr 2025 17:11:06 +0100
+Message-ID: <20250417161106.490122-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,39 +78,32 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Transfer-Encoding: 8bit
 
-On Wed, 16 Apr 2025 09:12:04 +0100, Colin Ian King wrote:
-> There is a spelling mistake in a cs48l32_fll_err message. Fix it.
-> 
-> 
+Don't populate the read-only array offsets and md5_init on the stack
+at run time, instead make it static const.
 
-Applied to
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/dsa/rzn1_a5psw.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: cs48l32: Fix spelling mistake "exceeeds" -> "exceeds"
-      commit: 7ed50dc550b0a3bad82f675aaefd8cd00362672d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
+index 31ea8130a495..df7466d4fe8f 100644
+--- a/drivers/net/dsa/rzn1_a5psw.c
++++ b/drivers/net/dsa/rzn1_a5psw.c
+@@ -337,8 +337,9 @@ static void a5psw_port_rx_block_set(struct a5psw *a5psw, int port, bool block)
+ static void a5psw_flooding_set_resolution(struct a5psw *a5psw, int port,
+ 					  bool set)
+ {
+-	u8 offsets[] = {A5PSW_UCAST_DEF_MASK, A5PSW_BCAST_DEF_MASK,
+-			A5PSW_MCAST_DEF_MASK};
++	static const u8 offsets[] = {
++		A5PSW_UCAST_DEF_MASK, A5PSW_BCAST_DEF_MASK, A5PSW_MCAST_DEF_MASK
++	};
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(offsets); i++)
+-- 
+2.49.0
 
