@@ -1,48 +1,54 @@
-Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6161F585C;
-	Thu, 17 Apr 2025 22:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0C020FAA4;
+	Thu, 17 Apr 2025 22:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744927901; cv=none; b=a6+T2PEiCqErUqteArkPu8wlzxAeQk37Ku8M2ibk1LkDbJZl3OtxGqvDieLfqyTtss2x9lK4nTrN96JvB1zI+8DDeAMipfWM1H7Zpl7djUAx3JUr2xgTL9LTFLZblHQu4RdWp0oeXNXBIX/l52AB2fsrIDUQAAdmzExlz0wt1qQ=
+	t=1744929436; cv=none; b=WcE3I0dfb/XewB6Z6oKkZYRH1KiYpECR+zyumM7GfCCVV78pdIFv7Ah35qMJuHnUauCHIo4RQK/fN/VIsu4VPnig3Ch4FrJoo27dmnFnpgps6BgC6vyoXINKvGeeGR9r2mE90jXYJftgWRXAybHeECpDvMoT4wcCXiExpwMZxW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744927901; c=relaxed/simple;
-	bh=PE+TjdUopxSp8BkidKGkIbGWLaP1+fCPSat8nwKEV50=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M4dt2yTraRmPbV7VE4GgVBfht3KR4cdQMfeO0NbtaQGtQMq71dD/RboBUngIVR4qt6FN4P33OvIw2DGyQb8zIzKRP62aLcpN3OkjuX/FBwOsh3QeW4VZwx1Xez001/GKJjdB77ZJ/44Iz9gGdEcFyfPUlaTih68VGXJH+oOgmmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Sb4W16iu; arc=none smtp.client-ip=80.12.242.81
+	s=arc-20240116; t=1744929436; c=relaxed/simple;
+	bh=0C1IbJciboKJBLSmDSL2zFC6VQpBwexg4CkdM4KE5v4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhlqRurXOmp8ttKP4VmbNm74z7WvLH9HLTYGej8XCkSsKeUSAmFxqbJ+CVxvAomwHeumXKq5OC2yNa/ooDl5CP5i0r2ANw50sFAT9nRFxY7ezZNHReOj5lc6OEbYevnQo9vCywv216x36xSp3V17CfKDXj1TTqzN/uMMl7pzsIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=A3bMACpV; arc=none smtp.client-ip=80.12.242.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Sb4W16iu"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="A3bMACpV"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id 5XJDuPve2ZSWC5XJHufye6; Fri, 18 Apr 2025 00:02:15 +0200
+	id 5XiQuDWqjETiN5XiTu2OP2; Fri, 18 Apr 2025 00:28:19 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1744927335;
-	bh=jtp8GYhjZseAjbyWNNzA/7uP91uP4NjtvHa4qyzcjGA=;
+	s=t20230301; t=1744928899;
+	bh=s81pV5jIkn/GlgtQ08lcgCCxshbcpxyENaufyDqFoXU=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Sb4W16iujH9X2qQIj0Drugo+28BaX6cz1IW1IjU0SCgR/iHoMQkIOcGRqYmIggfbt
-	 lIJDs+oAbaDbpe+8J000u+0+cdGbQxmRCsZh/aCcDXfCFHLf6IMtYyLpLSSxCff9Rd
-	 orAFpHvZmZRJGoMmwYDsXhFgIhHw//k+C/75XTuqIRwtqNzN5nzvIf1k07qt2UHT9u
-	 oaGsXg6VSZfTxeuxDVMJebvlSS1RWesZXDyAhP6KMfGrPK/ebbcFIHkNzVymdmbslr
-	 ChExic6tYWiafGJo6GECbLwX8xksxi2cohEtMVnBagrCaLYNZEpXYU+UCqsxZo7u+b
-	 eBYKZ7UWHCMrQ==
+	b=A3bMACpVFPDO5ND/TN1ebf1eXSQbRYcajI4fSEkK2EuoyaXRJJCMQ0DKuRg2pLwbo
+	 VS1SzNTDU/QGlLRK48q+hfy70nXkrjVOqvXJKy6cLUbuEmyYjeKVb4yZiNp4q4xI9z
+	 b0dPos/V77rW4wUyHfKM78m5ODsUUU5X9kN0umDf6ayTHUVAoBfriVwuJe26uXzeSx
+	 IUjLF5Hup2fcvgXBmGKCEY1Oslxt/Kb+scpWif99qpgTVtRXPtI6FNJkgekmY1blZT
+	 Bj0fQxlre8TwyfBdis+sqsWCTNYZkwGVlZXi4+paEie7bjPRQMN1PR2mw+jQefOL/+
+	 jJjypGAjhMriA==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 18 Apr 2025 00:02:15 +0200
+X-ME-Date: Fri, 18 Apr 2025 00:28:19 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Felix Fietkau <nbd@nbd.name>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Shayne Chen <shayne.chen@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org
-Subject: [PATCH] media: amphion: Slightly simplify vpu_core_register()
-Date: Fri, 18 Apr 2025 00:01:58 +0200
-Message-ID: <e59b3387479fcdaa4ae0faf9fe30eb92a8f6034b.1744927294.git.christophe.jaillet@wanadoo.fr>
+	linux-wireless@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] wifi: mt76: Remove an unneeded local variable in mt76x02_dma_init()
+Date: Fri, 18 Apr 2025 00:28:01 +0200
+Message-ID: <e86d5602bdd8b6bd22258ee69536992f39470bf5.1744928865.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -52,59 +58,28 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-"vpu_core->msg_buffer_size" is unused out-side of vpu_core_register().
-There is no need to save this value in struct vpu_core.
+Remove 't' which is unneeded since commit f3950a414143 ("mt76: set
+txwi_size according to the driver value")
 
-Remove it and use a local variable instead.
+This slightly simplifies the code.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/media/platform/amphion/vpu.h      | 1 -
- drivers/media/platform/amphion/vpu_core.c | 7 ++++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/media/platform/amphion/vpu.h b/drivers/media/platform/amphion/vpu.h
-index 22f0da26ccec..1451549c9dd2 100644
---- a/drivers/media/platform/amphion/vpu.h
-+++ b/drivers/media/platform/amphion/vpu.h
-@@ -162,7 +162,6 @@ struct vpu_core {
- 	struct delayed_work msg_delayed_work;
- 	struct kfifo msg_fifo;
- 	void *msg_buffer;
--	unsigned int msg_buffer_size;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c b/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
+index a82c75ba26e6..a683d53c7ceb 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
++++ b/drivers/net/wireless/mediatek/mt76/mt76x02_mmio.c
+@@ -174,7 +174,6 @@ static int mt76x02_poll_tx(struct napi_struct *napi, int budget)
  
- 	struct vpu_dev *vpu;
- 	void *iface;
-diff --git a/drivers/media/platform/amphion/vpu_core.c b/drivers/media/platform/amphion/vpu_core.c
-index 8df85c14ab3f..da00f5fc0e5d 100644
---- a/drivers/media/platform/amphion/vpu_core.c
-+++ b/drivers/media/platform/amphion/vpu_core.c
-@@ -250,6 +250,7 @@ static void vpu_core_get_vpu(struct vpu_core *core)
- static int vpu_core_register(struct device *dev, struct vpu_core *core)
+ int mt76x02_dma_init(struct mt76x02_dev *dev)
  {
- 	struct vpu_dev *vpu = dev_get_drvdata(dev);
-+	unsigned int buffer_size;
- 	int ret = 0;
- 
- 	dev_dbg(core->dev, "register core %s\n", vpu_core_type_desc(core->type));
-@@ -263,14 +264,14 @@ static int vpu_core_register(struct device *dev, struct vpu_core *core)
- 	}
- 	INIT_WORK(&core->msg_work, vpu_msg_run_work);
- 	INIT_DELAYED_WORK(&core->msg_delayed_work, vpu_msg_delayed_work);
--	core->msg_buffer_size = roundup_pow_of_two(VPU_MSG_BUFFER_SIZE);
--	core->msg_buffer = vzalloc(core->msg_buffer_size);
-+	buffer_size = roundup_pow_of_two(VPU_MSG_BUFFER_SIZE);
-+	core->msg_buffer = vzalloc(buffer_size);
- 	if (!core->msg_buffer) {
- 		dev_err(core->dev, "failed allocate buffer for fifo\n");
- 		ret = -ENOMEM;
- 		goto error;
- 	}
--	ret = kfifo_init(&core->msg_fifo, core->msg_buffer, core->msg_buffer_size);
-+	ret = kfifo_init(&core->msg_fifo, core->msg_buffer, buffer_size);
- 	if (ret) {
- 		dev_err(core->dev, "failed init kfifo\n");
- 		goto error;
+-	struct mt76_txwi_cache __maybe_unused *t;
+ 	int i, ret, fifo_size;
+ 	struct mt76_queue *q;
+ 	void *status_fifo;
 -- 
 2.49.0
 
