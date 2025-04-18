@@ -1,83 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB4813FD86;
-	Fri, 18 Apr 2025 16:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA8B1C3306;
+	Fri, 18 Apr 2025 17:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744992193; cv=none; b=PQM+YqgQIDSd3TfisvKd0AmJ+QeBAqE0a69DmgLbbuzz+6A2GUqfrt5mZyAncOfu2kU8TYMs8mJvfNweex6QhoOJNxCGbP5dCFITdrV4ilU5+UVSxbGRz3j6LugQ6GWXYjt+hHx36ClOhZnyelGl/1Q9DZlTiKkvPzJpVSFNx/Q=
+	t=1744995649; cv=none; b=m9h0ilNXyDWi4xaa1WM/Al6tpUTrNvxeu78AEX8H6gdny0TcYT+QoeqCFQT3SoDlIILTIwjyyOuz/ovMMaPjlhGG/evmG0hSgO/fysYV6I2zYPw0IPebaPhXlKNRjlvxoldfwpIXaJksWangj35MSygECyEJQSKt2kh5I4CZiY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744992193; c=relaxed/simple;
-	bh=/LA7vUXrPtMNDgc3KGNGasHazkFHhPDx2AIfeBrixOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VnDYRntwRueUOHdeqtMj1OWkdGhe+Pr9K/l2Zazz4QN4hIzwqZphiav5X1dOZ2x6uTMmTufmZlZzdfhHrcUJmZghSXINgWNNEjAPUdybuhhcH/t1b41ielRPc5LDmhWA0z+tsnzea28Ya5/WCr/IXBydC1S2JdP9jGNUrUQDUA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9s1orij; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744995649; c=relaxed/simple;
+	bh=KN5qU6sNgXb/lB3tOKNCKsgEQKT9PjlafHKBd6uAs1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABacL+nnkE0Ha23CSF0p3XPMFqnq9EIhTcYtUg+TtzFvEuTxTLZUqzhN9Z9Np4bYrt74yoAIy4Jo33mkgS+NFJgEl8cfN/jeyZrfrtRQJrSEHl+N4bpOR3+uW6nLY87X7NuczI+WKrUJFLPPiq4iR1PXpnfgB0WBljT12oLfoOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oyRmt8ta; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9s1orij"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61FADC4CEEA;
-	Fri, 18 Apr 2025 16:03:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyRmt8ta"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C740C4CEE2;
+	Fri, 18 Apr 2025 17:00:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744992193;
-	bh=/LA7vUXrPtMNDgc3KGNGasHazkFHhPDx2AIfeBrixOw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a9s1orij+EPupf1XRsOw7yRk6tPsIWpo1YpYq9IYLMDYwFIZAa9JqaIjVDPPhh/R8
-	 xjo+yc4loFBxSt3kVu2aEm8MIDA1YTqq6C8yEJGw2QIb2JFxIQ77P+QgnwrQWHsBxm
-	 0dDTJrgLtWMSYZVyhQdGvBuREU0hFuAP/HTi1rfxk1gKx+oxbuJMjOz3jkM5bCWJGE
-	 wLKVT6iCToFJVIIRjMpHtLCVQj5nFm3EZ4uuO9lHmxVKmBGFUFddT5pus9yewn62eo
-	 6MfQqdhqyac80jssrA2bHjsls2ayY7YSG8h0GbVV2qc/CR2QnN06VqI7+Zg/uNpWDU
-	 c9GGXDeE9r+Ig==
-Date: Fri, 18 Apr 2025 17:03:04 +0100
-From: Jonathan Cameron <jic23@kernel.org>
+	s=k20201202; t=1744995648;
+	bh=KN5qU6sNgXb/lB3tOKNCKsgEQKT9PjlafHKBd6uAs1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oyRmt8ta0EKg/VIkuao40EQIX29eTgTxTMHT47FwGRw6sK6rjLOi0yFgnahdMHnac
+	 t75NYzMpEKgXmLTEcH6w/nQWeq6k9RlDuqIs+VX54Pcd+gsgo7eRC2UIpzPUOHtCUv
+	 Yoz8uUigK67i0brdGb8AgogwQkGEi9QdVefE58LK4iIDVXU+zmrOmzd3CCRNlFPxZy
+	 D43WFaaRe1aIWBNGOhwcXEDbSFFAVcao8R58IJ0rFno3oseIqaxU3m3LqIe5XeuqIB
+	 +ba6bR7WYGKDL1Y4oObnIpOk2RkClsABc5WwRHQPf8HUTqLsOsEMO7lSL5mDgbTAGw
+	 4puU/kpivKT/A==
+Date: Fri, 18 Apr 2025 18:00:44 +0100
+From: Simon Horman <horms@kernel.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, David
- Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] iio: dac: ad5592r: Delete stray unlock in
- ad5592r_write_raw()
-Message-ID: <20250418170304.7a7efb8d@jic23-huawei>
-In-Reply-To: <Z_-P7bsD3KL5K25R@stanley.mountain>
-References: <Z_-P7bsD3KL5K25R@stanley.mountain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-afs@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] rxrpc: rxgk: Set error code in
+ rxgk_yfs_decode_ticket()
+Message-ID: <20250418170044.GB2676982@horms.kernel.org>
+References: <Z_-P_1iLDWksH1ik@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_-P_1iLDWksH1ik@stanley.mountain>
 
-On Wed, 16 Apr 2025 14:09:33 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-
-> This code was converted to use guard locks but one of the unlocks was
-> accidentally overlooked.  Delete it.
+On Wed, Apr 16, 2025 at 02:09:51PM +0300, Dan Carpenter wrote:
+> Propagate the error code if key_alloc() fails.  Don't return
+> success.
 > 
-> Fixes: f8fedb167ba4 ("iio: dac: ad5592r: use lock guards")
+> Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Applied. Thanks.
 
-> ---
->  drivers/iio/dac/ad5592r-base.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+...
+
+> diff --git a/net/rxrpc/rxgk_app.c b/net/rxrpc/rxgk_app.c
+> index 6206a84395b8..b94b77a1c317 100644
+> --- a/net/rxrpc/rxgk_app.c
+> +++ b/net/rxrpc/rxgk_app.c
+> @@ -141,6 +141,7 @@ int rxgk_yfs_decode_ticket(struct rxrpc_connection *conn, struct sk_buff *skb,
+>  			KEY_ALLOC_NOT_IN_QUOTA, NULL);
+>  	if (IS_ERR(key)) {
+>  		_leave(" = -ENOMEM [alloc %ld]", PTR_ERR(key));
+
+Not a bug, but it doesn't seem ideal that _leave(), which logs a debug
+message, is called here and with a more general format in the error label.
+
+> +		ret = PTR_ERR(key);
+>  		goto error;
+>  	}
+>  
+> -- 
+> 2.47.2
 > 
-> diff --git a/drivers/iio/dac/ad5592r-base.c b/drivers/iio/dac/ad5592r-base.c
-> index 217a8a88818d..5f2cd51723f6 100644
-> --- a/drivers/iio/dac/ad5592r-base.c
-> +++ b/drivers/iio/dac/ad5592r-base.c
-> @@ -324,10 +324,8 @@ static int ad5592r_write_raw(struct iio_dev *iio_dev,
->  
->  			ret = st->ops->reg_read(st, AD5592R_REG_CTRL,
->  						&st->cached_gp_ctrl);
-> -			if (ret < 0) {
-> -				mutex_unlock(&st->lock);
-> +			if (ret < 0)
->  				return ret;
-> -			}
->  
->  			if (chan->output) {
->  				if (gain)
-
