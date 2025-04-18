@@ -1,82 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA8B1C3306;
-	Fri, 18 Apr 2025 17:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D6B22D4DD
+	for <kernel-janitors@vger.kernel.org>; Fri, 18 Apr 2025 18:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744995649; cv=none; b=m9h0ilNXyDWi4xaa1WM/Al6tpUTrNvxeu78AEX8H6gdny0TcYT+QoeqCFQT3SoDlIILTIwjyyOuz/ovMMaPjlhGG/evmG0hSgO/fysYV6I2zYPw0IPebaPhXlKNRjlvxoldfwpIXaJksWangj35MSygECyEJQSKt2kh5I4CZiY8=
+	t=1745002227; cv=none; b=Y+JW0TqHwUc5PdPqS3JcLBgBauQ/deUQq9Ou6G30KXPf8vkR6tGk7FynTT/q8yR+bCX51RWhDLPINVWUgqf7s0Ta3mtQkDSqVdf316yK1MB4KLJwDfJ+QTY8GVds8HSHSlS6zm+MaU3wYIdJGIp9fnSZNFQqP6eP05Qcy8lVUoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744995649; c=relaxed/simple;
-	bh=KN5qU6sNgXb/lB3tOKNCKsgEQKT9PjlafHKBd6uAs1Y=;
+	s=arc-20240116; t=1745002227; c=relaxed/simple;
+	bh=vZL3hJyh6vFF/o6xtjG6d/xD0EdW0x3J5+2caPucxzA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ABacL+nnkE0Ha23CSF0p3XPMFqnq9EIhTcYtUg+TtzFvEuTxTLZUqzhN9Z9Np4bYrt74yoAIy4Jo33mkgS+NFJgEl8cfN/jeyZrfrtRQJrSEHl+N4bpOR3+uW6nLY87X7NuczI+WKrUJFLPPiq4iR1PXpnfgB0WBljT12oLfoOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oyRmt8ta; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=TRXIRz0PCew6QF6J90jJ3hwL0xlvA8sdL3NABkDVYEpJDMGED6vXVt1mrDI++aBZfLZtIZYV+pEUGiFZPaIkXkQ6VKrxiX92HmYtspmiP7yARAs00UjC5bJTaf06k2//aogxUBzMHSvAOgWznXPtzROQGbfc77Anjkdjnxw2hu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=laDqaqR1; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyRmt8ta"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C740C4CEE2;
-	Fri, 18 Apr 2025 17:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744995648;
-	bh=KN5qU6sNgXb/lB3tOKNCKsgEQKT9PjlafHKBd6uAs1Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oyRmt8ta0EKg/VIkuao40EQIX29eTgTxTMHT47FwGRw6sK6rjLOi0yFgnahdMHnac
-	 t75NYzMpEKgXmLTEcH6w/nQWeq6k9RlDuqIs+VX54Pcd+gsgo7eRC2UIpzPUOHtCUv
-	 Yoz8uUigK67i0brdGb8AgogwQkGEi9QdVefE58LK4iIDVXU+zmrOmzd3CCRNlFPxZy
-	 D43WFaaRe1aIWBNGOhwcXEDbSFFAVcao8R58IJ0rFno3oseIqaxU3m3LqIe5XeuqIB
-	 +ba6bR7WYGKDL1Y4oObnIpOk2RkClsABc5WwRHQPf8HUTqLsOsEMO7lSL5mDgbTAGw
-	 4puU/kpivKT/A==
-Date: Fri, 18 Apr 2025 18:00:44 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	"David S. Miller" <davem@davemloft.net>,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="laDqaqR1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=vZL3
+	hJyh6vFF/o6xtjG6d/xD0EdW0x3J5+2caPucxzA=; b=laDqaqR1cw4dPfzqNTdB
+	cqyyF4mFm3xVLxlvZeOBUVxYIRdOQlTYp/T1iqL+tnyxXR8UmarFx5WOi1bILSjD
+	cHvyC2clf37L1rFB4fCq7QoK76iHqA18GExPABFY1MS74y1hQ3ovurP4905ATCTn
+	YBuoVgij7VskR4tKDfItYDPT72tHTBZhqq5A223yqvLgUtlTUHBka5wAUUsTzyxb
+	621QjCb5ST88AM6phgqIpExSC6wdQ50+dZMUIEk5TwYfjM2gXw4Rr/DCUl8VV0Ss
+	+j3GmCRrp6NRFbgExHWry7Qz2excDU3g2dqyiOhkesQJk7pyUn3jtiDA9LbbqgyL
+	PQ==
+Received: (qmail 1504095 invoked from network); 18 Apr 2025 20:50:19 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Apr 2025 20:50:19 +0200
+X-UD-Smtp-Session: l3s3148p1@7opr/REzIscujnsE
+Date: Fri, 18 Apr 2025 20:50:19 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] rxrpc: rxgk: Set error code in
- rxgk_yfs_decode_ticket()
-Message-ID: <20250418170044.GB2676982@horms.kernel.org>
-References: <Z_-P_1iLDWksH1ik@stanley.mountain>
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next][V2] net: dsa: rzn1_a5psw: Make the read-only array
+ offsets static const
+Message-ID: <aAKe60hldaTKWu3X@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-renesas-soc@vger.kernel.org, netdev@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250417161353.490219-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JMX6Ix78kIrznwRS"
+Content-Disposition: inline
+In-Reply-To: <20250417161353.490219-1-colin.i.king@gmail.com>
+
+
+--JMX6Ix78kIrznwRS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_-P_1iLDWksH1ik@stanley.mountain>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 16, 2025 at 02:09:51PM +0300, Dan Carpenter wrote:
-> Propagate the error code if key_alloc() fails.  Don't return
-> success.
-> 
-> Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Thu, Apr 17, 2025 at 05:13:52PM +0100, Colin Ian King wrote:
+> Don't populate the read-only array offsets on the stack at run time,
+> instead make it static const.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Works on my RZ/N1D-DB + EB.
 
-...
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> diff --git a/net/rxrpc/rxgk_app.c b/net/rxrpc/rxgk_app.c
-> index 6206a84395b8..b94b77a1c317 100644
-> --- a/net/rxrpc/rxgk_app.c
-> +++ b/net/rxrpc/rxgk_app.c
-> @@ -141,6 +141,7 @@ int rxgk_yfs_decode_ticket(struct rxrpc_connection *conn, struct sk_buff *skb,
->  			KEY_ALLOC_NOT_IN_QUOTA, NULL);
->  	if (IS_ERR(key)) {
->  		_leave(" = -ENOMEM [alloc %ld]", PTR_ERR(key));
 
-Not a bug, but it doesn't seem ideal that _leave(), which logs a debug
-message, is called here and with a more general format in the error label.
+--JMX6Ix78kIrznwRS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +		ret = PTR_ERR(key);
->  		goto error;
->  	}
->  
-> -- 
-> 2.47.2
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgCnucACgkQFA3kzBSg
+KbYmYg//Rxa4VNXB3C1prQNThWW3XX72xsHW1tT9FXDJQOfnS6/L/SKfxf3k4kTy
+UvNuwQHTfX5dW7wO9enukphTnxEGQWyBVnsMu23PWHi5s4r3fIxBQ+sGCTUKxVAS
++MzLcmJ6ckgHAjaoAx0kebID6p+ueqgl3vCwaev3cf+vpG78xdt6PNPTaSHL1U9Z
+jJmNYv4KfD1w7/Am5TXBbDFAe5NXKAMgO+HJTkhh34IpeBZs5En6xZJkQfRyDwfz
+AavYRj6+vJQ+yFunuMahLq6d7QW/sEqMXOBp65iQtfYHwfk+kKbGoY4OBXGKSObc
+NwTHmyvEIj5oIIzgDdbq98HhJv68m9VoSFSFoerCdQMIxFSUnOcwkNj4nvjUp4k4
+qPdFcBcaR+89cY6oSkKO8AXOQgiLevwKzCa8pB+88I4Tfbs9aPWDqQW7XVttzEqz
+zs2n8pn9AaXuqdH6tqLJDqZHgmR7w60l55xBKRu+vIBLmDhMKlttXwI7nxijRJnA
+AaGRr+wvEuZNGolVuKtJsapwLj+ms9AjETLoSwVK8WliQT6C7DU5pL6aMJiUPY0H
+L3vJ1wvvFLs2d+mGB4oJoynZhPG/hBN2yQlo6vb6Bat/Ghs6lJJPwjN2RhP4Hne2
+lxpob3gJajN5ASZKvmEIr7QAbGbiYUDTS0YgNlU9nLP2NqpDufY=
+=qRNC
+-----END PGP SIGNATURE-----
+
+--JMX6Ix78kIrznwRS--
