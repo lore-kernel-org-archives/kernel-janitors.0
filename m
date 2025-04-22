@@ -1,92 +1,73 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E085A29CB4F
-	for <kernel-janitors@vger.kernel.org>; Tue, 22 Apr 2025 22:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D24C1F7586;
+	Tue, 22 Apr 2025 22:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745360511; cv=none; b=ZRcpLTLg/0vits7FZBfNzh2vmMqLPdS7l3ebhDUvYZ2Y5s6HKEiXMZxS1rI7guuaYj9CbiwgGKE5YD5G9UJEVo2aSZWBRrtL7EDVyEMX+7PJ74QlADXhTI3iqM4DvbxHz6NaaJ0rdlEgnEKG49fDbokbzPUqXCz87wZLXNTsCD8=
+	t=1745360621; cv=none; b=NGGzbRsS+po88X6O9NUtc3GZvQohDFVeeNEeWnvNc/Wso6ZMVVPwTGlGkf0gkr5IJKdwZEvT/BYcXH4w8kPVdiRKss2qgGX6JnnnXFdP27D4TTuQXRU1TiysOUqNZAPZKgYkjqYfOp5qwMU5+2WwlzT0fCdhwSlt7T6wQRlhet4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745360511; c=relaxed/simple;
-	bh=UsjQTI9DWmo6U6QiJHMG3Ibvb6nvqmDeHDkJXkSvevI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E76MNtj8TEFEP6tPKoiRvWA2/CzUTEwVtC41mlp0n5atNee344bNgUR0OclaHCAGd5r87ZXH8nZ0o1ByunU6bdfw0QykhnRzd1+ksIheBoLZluJE5BTegLDJ4l5R60t7Bcv5MLfnKlTvj/N6UOxKjBk8D/IyozYQSv366ZcT9iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YHWN2RQt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1745360621; c=relaxed/simple;
+	bh=9F0zXgeVp5ifvUS64b0moRpsXnPlfbW4N8IurGNDaLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i3qg3LRxQ2rJ6Wx3jNbwGAn3PGZJsG+IQZGW5GA+Z+udDdKROZf+g6J4TxiMy8jubaWFfyda1/9MZvHFql2UJp+252s0JLADq7BEGVUro9anbT5ojG5s3jGdmEQMdkTHm3npBmIFrcN1sAmaogLMr8KLiC7QuEJ+12T/3mwCYsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=naLod7FL; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YHWN2RQt"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53MKqEnn000677
-	for <kernel-janitors@vger.kernel.org>; Tue, 22 Apr 2025 22:21:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QFVnrpWb050fxv5AMU0KXMBJxaS68SUI9iug+FP01ew=; b=YHWN2RQtHNBMCJyD
-	EYzx9fM5u9uwFTy6s+Nsav9rJpeYHPqbqLNF7mlqS8ucurabTU06FST6MJo02txz
-	MdFM1bpQuAsNBtrvW1gb3XcfpvWr+owKEZzFUX2FudDC7Ko+eWpsfosaX1/RXAa/
-	IcawMPcfhbAQlDw4eF44JMjm6Hcrfe2zaNo/Pp8RoeN6gAp1gfOgL6KoNa4SBf5r
-	rf9IkTd5oMZjDlSEDUUHR2u3Tho0wQGH8VZmdrSX7Sw3O7UX6HND7Bmvwgyjc4tl
-	ysJLLbLMA1WBH18a52TlT9DZYKEgX5zysNd8kbTIw88XuK+i5yjfuQ7FYO4g5EPu
-	1Q+tYA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh1055d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Tue, 22 Apr 2025 22:21:48 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c572339444so878505685a.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 22 Apr 2025 15:21:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="naLod7FL"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso43014195e9.0;
+        Tue, 22 Apr 2025 15:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745360618; x=1745965418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mpjNdoT0vNqdUgGK2l3zCpCt4Cszl2krvQ+lX887CvY=;
+        b=naLod7FLBQSzdr8eWLEjgCsNCeFBEJzXhs23awyFA07+4fcTSWTjUt0sYhBPKaByNA
+         ycFk/Jp8BSAosQ54wwjXuTD0k+B7qV/L6RoacX8NnxcTbBwK4tJUplPUoSUnwe1jESx6
+         ps6fz1wQyMK5W2uB/3+A1qRsRU6uSFB3kbmVymrLVo5BTLgInGwfm7iY+mTAuFT+qyyU
+         7P6n+s8uyAYSkup7uTy399/NOg93cXlXAoSMUfr/34fX4X7HxQzBY8zaVl6ltYqzxh4Q
+         AGhu1th8Sjnl4JvWvUkY/NQc5pCGr+qaAO53e8I5nUJJrthNX5wclgT6Pg/MM3XeeM04
+         UrjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745360508; x=1745965308;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QFVnrpWb050fxv5AMU0KXMBJxaS68SUI9iug+FP01ew=;
-        b=Uc01jBSt2LWrOI5pGXbZPn4OEGglaEEzs9e9fw9O4lO9QOyzIerXF2B+xi8mVC0IqN
-         W+vGo/m1DOnojkusFh7Tcyznc5tqeZlJ88tOwaW8zLCLTQ590ESjQnULsakWUi0y01TS
-         qlF7Ru+w5D1fKQzrR7L6J3Iyd7yZXfvoRsFyVmb1FfALE+LnV0kwTrDH4EzWFDd4M0HK
-         ejDMEs+jnW8MDkZbmB5vNaobfR8QfvCIQcz/peq4DGL/SMKEDnoNXAAy/BuD42kWYxWJ
-         kBeeI571+oW3f6/cj5wkuoR8JssI5uKLbGS7GA3rleXkYx9SoAZG1JjOWAy4ggfprwwZ
-         5j5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUG2xG0I2mxs7XNiXglC3IKFGeRt8qP7QHsbXAfrIh+KHd993thn9eWlFmYjRUhSUUa1bh+mYtOQD8tCbwNyIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbxQlOFse+fQ6NzWcj3qt+0NvZiWnZh2YRMN+B1HMxxrLM48aC
-	HO5jz3C1CIQRjzyu5f3VH6S7VshUiPQs0aQ1podfi412/2wNmsin3R46DPgwUuq4DkZHaPG7Vco
-	nSOZYugQCPELhmOOqJMYDMw9XB5VQbiQo3OXy2888k+RKQTIfKRdgJnB3oP1cZWYIZVI=
-X-Gm-Gg: ASbGnctTPjdEerCYfKEXsvkNxSRdV1vsX2tOineIehTltj0N1EPEokqw1y+E9Pj1Gwg
-	NLC8oqxx3QVZlPCo4Kue/CVPoa0uSSINPICIEoQghimMeK4uMeYt6T/gu5YfyLRAxrv1kF0ETIs
-	Zcs8/ybOgMuKH3gvivN9JcVM31y3AHRlNwz7ErM9dclKhK8hC79UKriF2/ESH35EQVbPHHzGZ7U
-	Gi4847NbhEr3XKdGguNjsL+2ZrOPGSoYWxWi8j7Gwxqy5EAAzBX3kHjPVTLfTVBaUfUcPYLO+u+
-	QFYAi6KswvN4tcV4q/1t2kfa1E4v/dYIi2S55PjrC9BKNzrIzERDM6cYELAMOUZH2McvMzgCnz9
-	LneVeUaQok4gySLkecaEhgAcB
-X-Received: by 2002:a05:620a:2586:b0:7c5:96b4:f5e5 with SMTP id af79cd13be357-7c927f849a9mr2413026485a.13.1745360507823;
-        Tue, 22 Apr 2025 15:21:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOiwKU9TBLfD8mAj6HNCGwIQ6VsntnnuJ4wlLR80zdOsb9Oy9RmdN6FhXt95pYuyHYSfsmlg==
-X-Received: by 2002:a05:620a:2586:b0:7c5:96b4:f5e5 with SMTP id af79cd13be357-7c927f849a9mr2413022085a.13.1745360507403;
-        Tue, 22 Apr 2025 15:21:47 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-31090822ecdsm16630271fa.85.2025.04.22.15.21.46
+        d=1e100.net; s=20230601; t=1745360618; x=1745965418;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mpjNdoT0vNqdUgGK2l3zCpCt4Cszl2krvQ+lX887CvY=;
+        b=RLO5aT9mujciwCAvPBg9lF8e74nMQsrP5iNd0myJHNtAStyNe9cQHDoGNcY4hlsZAk
+         WU8ncSoujjViZdlC1/Z4DoxwucoLon821aGCKCfNztLJ697G7olrSYPKdkKrPVAsTuiV
+         6dgyborfCrPrwYKFjqu6sL6n7zFp75iE0mQtThuaQb0XjnvLhoASX+mOoOqApm+Jkqks
+         yRo5oaZn2+xirdBIre9PD5jkXfiGDtTBqSJYquu5WdR7bqNqpFvkTakh8jlK0xFD6xF+
+         n4a6/zrthe1MHiT3YVLj/bRUsxhg2lzja50VAaXHnvnbEbSLcnRpWjtLnwHCgB2FANdc
+         0R/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqkXbX/+7pxY8TeZtJcA0rBkSDNkwm2Gk2WwLKm3GszorvzzWH4aWbnqbB3lvwXpg/0OyL5uTPyyUQnv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEP3PhuWbuv597in1jWj0xQqhxAh8nngD7DQghIbuEfWpff+DZ
+	vWA8tdwqF63gcUoYAUYWjlXGkkQqnV5YZW1lNAQ71bA9MqUyKryD
+X-Gm-Gg: ASbGncsPZPnqIBRuerV6dJuoxlQ5XbYIbGMxE7MjE9FV5uTqwB68lUKsi0dnuNY07yU
+	kdPdRayQcZWGPSrCntlAFrV6AkrOqLHsEEO5xA6hiigs52xH5/v/uNymCVRvYet6AcZuLEiDdH7
+	32EXoNBrKdzOvnu8PU2CypgG04v4CeZ+YKeO1IyAo3dmmtSAeD068FwEIqToOrHIh+zNt9mJpBp
+	ypNNvIYVPqJeOug8nYfq1DPdYcaLfaB9MIhT8PLJCXDZWSVo1b52iSn71oNeewAK4A99vG6eHTh
+	oQ3lyj8VKxrEVWrd5hX0vdhTvMXsnGpOMcjwQ/1L/A==
+X-Google-Smtp-Source: AGHT+IFNDZhu8PiiePLkH2v9nNw6Q1B+/qYMU/BJuoKYhmX0pDLtcnAunVa0MgmlqxO7csezXTThXQ==
+X-Received: by 2002:a05:600c:1990:b0:43e:afca:808f with SMTP id 5b1f17b1804b1-4406ac3d219mr164938315e9.31.1745360617706;
+        Tue, 22 Apr 2025 15:23:37 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa43bee6sm16391632f8f.45.2025.04.22.15.23.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 15:21:46 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>, Dmitry Baryshkov <lumag@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2] drm/bridge: lt9611uxc: Fix an error handling path in lt9611uxc_probe()
-Date: Wed, 23 Apr 2025 01:21:45 +0300
-Message-Id: <174536050030.3678509.7013496889543262628.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <f167608e392c6b4d7d7f6e45e3c21878feb60cbd.1744958833.git.christophe.jaillet@wanadoo.fr>
-References: <f167608e392c6b4d7d7f6e45e3c21878feb60cbd.1744958833.git.christophe.jaillet@wanadoo.fr>
+        Tue, 22 Apr 2025 15:23:37 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/display: dp: remove duplicated check of ret < 0
+Date: Tue, 22 Apr 2025 23:23:30 +0100
+Message-ID: <20250422222330.90736-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -95,36 +76,29 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: W3eDE8Ordvm6bIhUGAFMagPZNYXRx7Nr
-X-Authority-Analysis: v=2.4 cv=OY6YDgTY c=1 sm=1 tr=0 ts=6808167c cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=Epe2dFrVDL3RtkqF-aAA:9 a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: W3eDE8Ordvm6bIhUGAFMagPZNYXRx7Nr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIyMDE2NyBTYWx0ZWRfX1Wa6N+oAcoE0 Nqjz8yzQYAKql1+DgAfpsBy1OzWLLK51NDkvlz6wovyQye89yFFXgw11ihiK+tfczJI8l/I5lFs BqxsA4Oviaqa1m7LE0zlsrpVkiB2K09ZKzD9RzK7I2jx/98NLZLWgHx0vcVO1dxdCkRoZUPNcOM
- uhXeC4Oogi9q9Ex9MFnv8DDzH3da9lnqY+40Oeb2G3SWnAHlH1qF0dfXo5xFMfx4I5opDAigWvo DwJETpKGrOkEZdul6GBK5+KnowRRdn3OKAMYY+WpnEM/LCyT14lI2wN7/94hj0EPoybK2HDRlqm EZOPsBf1O7nZGI+d2c80MjUiEBi37kxZ6LyFwqBX0rQlWoJXzOErp00mb0acVMoSTi3IEgujP6P
- BwClUgznrzQmAJBBc0eGH5PGL+M1GpOiWfIZgdrF+eqoHCQ3/sA6yV+QYg+5SWvfuGjpisqc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-22_10,2025-04-22_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 clxscore=1015 malwarescore=0
- mlxlogscore=999 phishscore=0 priorityscore=1501 spamscore=0 adultscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504220167
 
+There is a redundant duplicated check for the condition of ret < 0 inside
+an if block that also checks for ret < 0. The ternary check is always
+true, so remove it and replace it with just return err.
 
-On Fri, 18 Apr 2025 08:48:16 +0200, Christophe JAILLET wrote:
-> If lt9611uxc_audio_init() fails, some resources still need to be released
-> before returning the error code.
-> 
-> Use the existing error handling path.
-> 
-> 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/display/drm_dp_helper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks!
-
-[1/1] drm/bridge: lt9611uxc: Fix an error handling path in lt9611uxc_probe()
-      commit: b848cd418aebdb313364b4843f41fae82281a823
-
-Best regards,
+diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
+index 57828f2b7b5a..af62d99a0d94 100644
+--- a/drivers/gpu/drm/display/drm_dp_helper.c
++++ b/drivers/gpu/drm/display/drm_dp_helper.c
+@@ -4044,7 +4044,7 @@ int drm_edp_backlight_enable(struct drm_dp_aux *aux, const struct drm_edp_backli
+ 	if (ret < 0) {
+ 		drm_dbg_kms(aux->drm_dev, "%s: Failed to write aux backlight mode: %d\n",
+ 			    aux->name, ret);
+-		return ret < 0 ? ret : -EIO;
++		return ret;
+ 	}
+ 
+ 	ret = drm_edp_backlight_set_level(aux, bl, level);
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+2.49.0
+
