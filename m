@@ -1,72 +1,71 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAE11FECD4;
-	Tue, 22 Apr 2025 22:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5A01F4C89;
+	Tue, 22 Apr 2025 22:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745359597; cv=none; b=kty3rIbeYqSKUpVgbUgljbAj6eim3Lft2zOMeDPKFuRIBFdDbw/bLv/HYET5zc+oAXZxlaUgU8hH9SaCRYDLaehexQSH+Ggfnf6wxlb7L1GJWYD6AYmZF9YriaeDAGC0Jx4jVCYR6s5NVra7LDPBUQB3jbpngVcYbi5rF4kkhsM=
+	t=1745360026; cv=none; b=lJwbTthOkkbiMocCnR7cK2kyW0fNJt0jkMjacoG/vzcH9Z86ASJ+lbjhvP5iOY01caAZ4In4ds7ftrePLhqeDvGh53i6rK6qUfx+IvqD1bjic/I9ljR6icqPH8+DJpTbcKG3gV+fABz2Kvd2sVDjUtKIbiYGZCarnzGJO0qeV04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745359597; c=relaxed/simple;
-	bh=tuZFH+YPbz0RM6eaajURU9+Pku8ZR4mHrVLcvtwZPFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cHWeeW0emSNN+bytNqmdg0n0oXSVW3R7CqpJn0eOYUbBO3UzkwKnFFZvsss4Jr/EW2ceqAiCqiwksGCXBicFJRzITs91frtHAzYK+jJ9T8MrbOiMxWUn3atxuVubdP68FhNEAnwVqQ2gAId6qrozaaN+IqMDwbm24CcoSQlWsC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PM/Eidah; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1745360026; c=relaxed/simple;
+	bh=2obRGwXlBRysm8AbFOXoZVE94f6Ml0lcT+OEatZK84U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sDaoxybj1zKQV6fkyApWCeTDNoIyywKtG1PCIyjEJtB2N/VF1Mqibimg7yQaTQODO5u4xj78GEIz3FJCn7NLjQLBuldvcKoTPBmcnHLowE5mQI52nG8WN6NSzvRnodnTZC4gIZ8sSVpt3V+cMmBkv/PWzzdPWZCOqg8LYeXn3Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mpl6YTk2; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PM/Eidah"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3914aba1ce4so3819498f8f.2;
-        Tue, 22 Apr 2025 15:06:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mpl6YTk2"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39c14016868so5720062f8f.1;
+        Tue, 22 Apr 2025 15:13:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745359594; x=1745964394; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745360023; x=1745964823; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YB1xGX6pFG9S33G4DkDnszbCcY9UyskbeFRbPxNa7a8=;
-        b=PM/Eidahx44lS+gRr/0Eenv/3sUG4UN28FXEMdqM4iT14AgFHTJyBEqbqf1ixGiSgD
-         3VarNT6XZcrJJQNWEVrSS9i1TLaEULHMvHcbTjyfh1CsTz3P1+VaRSZhij3XDgfdD/Gn
-         ec1NDygz+1iM9k9v4zsy6aJSsxZXBOE+dVrqq3iWV4f9Kc6xujDVEvFjCCSQW3jztOel
-         o2lw36hkoM+97eCW7uQa8jF9QPY2KJ9tCkNed40zTk49fE5fLS+idYbY+Zo5/9etECtv
-         1hA+nsTne+0iJpdS8MJTcjFYJSQQIoEFO2E/+BgyFrGIHWa0SddPr0tzsFJ58Zle+JVg
-         zZ8w==
+        bh=iwTLs8vyjaixVoEy0LGRFn0VHa9cgDvSb9/8SZSpeMw=;
+        b=Mpl6YTk2pg4Vn5ZO7hE7Yv68o+juiXYZfXO8+/JI+xI+8hsQ+J8Sy3wE1wG1BJn1HE
+         nOQLuRlAeotBX1YRz90V09aU4HuVpxAClAzJI3/DrGRFM40Gggi89LYxI6MqTtFY1pic
+         CvzIkJ9SSbDu96rcLRkXucx8FEpJPlFNVjPWPm7G0wVXNjE3ADZZhBX4/9A5I+q0+EwX
+         ck1KLb76tE6w6CgIy023rceU3SVqW3+GCZv3FwUAMBl4oP0tleK74U/CwI23ue89ey25
+         pYsRQrCcm7n31Hhi8aCxKbW7LIuvBO+knGKogemjtNZaTXJzcnUCbLLLYHVvrec0kqi/
+         L/Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745359594; x=1745964394;
+        d=1e100.net; s=20230601; t=1745360023; x=1745964823;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YB1xGX6pFG9S33G4DkDnszbCcY9UyskbeFRbPxNa7a8=;
-        b=r5BLPJ4RcxPIu220H3g2bYocyOWJJQ7FsSc9Mnzl3J8yLDPniOZo/p94ii2SwTna+Y
-         U6uV/68Gf+gug8U9YQo7NjUUzVf+72ip+sVwXW4jbo4d5goenBehZEhnXKXSbUMJ1GeF
-         ga3cQWrFP7di7szrlX/OclAS1wVsAoW5dcnx7mV9RCni0SumYLxF+8gCmx5Xvl27elbF
-         DyQ8YxXfLA1Jn8NiM9FqOWKvjfrZRhxXsivtqaNbqNRCwoFC1j0Up5vY7NFuIklKuF6v
-         BMTkw5OGR7qWERwaGRLU8W5dBX+bbDSLl5GZ50SB1Ti6jLgy9kEW77cvI5NZzEArU1RM
-         1aug==
-X-Forwarded-Encrypted: i=1; AJvYcCXKGNdSoJZqaa3Cr5I0M37KgWbFE7eks2wJrOFSJ1q1doEMwONVLcirsw+EEkbHpjpHjHcI7RZZqdg3g6o=@vger.kernel.org, AJvYcCXb9LOI9Z4UQHNkn2d6kdmXdhMvMyJ2ZVnm8OjzNSvg5GwZYI9yKCZ9wOK/XNTVK5gQeRfhR7m4ueWWXJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIPr7thwoqptWaHxvU9MYRqBzW3yOjdd4Rm2GTHabgYM3b8IM9
-	SnsF6GkHwpUM8zgrwKJ083NCAVNa+ChqpBAR8XKE5czKaXDnBa6b
-X-Gm-Gg: ASbGncsCfscWYwolrmYe+HmSAlu3ndnxlZI7xjE2VTVu28l4bXwAJRpWvDNVULTm/D+
-	SRhH/RzPdUsq3ni4NdzPizFTs0lw0F9YNa3K23TVLE5LP3ESnpYObAL7zmhLNiH44biIJE573mA
-	C9GIMpoal8c3jMtZBdFsvBUWMcSXA/TyJpvV273hzcryRi6n99/3DlAGCNBefBqMIjgZIB2tBLl
-	6dJCKcymRms/te/pwFt5KoLAF/8vwlOd98eey6/QHAzg/mXEj2+tfqsjf3fbbaNd1toxClphsE7
-	axoh91UsqsmyJWsNCH9iHegUxWw91WPi/zqiM5x/vw==
-X-Google-Smtp-Source: AGHT+IH2d7yNdQ11WUghNAhzaCdxOoKDBGRwo65j4Mt/Dnv6ia1u3FQoAdvO8VkKfmMezO5hiFWzuw==
-X-Received: by 2002:a05:6000:2509:b0:39e:e75b:5cd with SMTP id ffacd0b85a97d-39efba2c98emr14484631f8f.3.1745359594331;
-        Tue, 22 Apr 2025 15:06:34 -0700 (PDT)
+        bh=iwTLs8vyjaixVoEy0LGRFn0VHa9cgDvSb9/8SZSpeMw=;
+        b=e7rl0cNGb8RhSvlSC1tEd56rnCCZR1BnFWuAfeossuGK4l52pB41ddtJBdQ/bvFb9P
+         i6gg5of3Fh9GJZm3nwPcYh98orHZdxYKB0A1y+8TaER0ZqFLGwqugXeGgroyFaLlBtjY
+         DW18cBQ5kYv2qWEsMYR8zzvuSOPHF8j4vRrBUq3xeQCRWOcf3UhsKAf9yTe31w/0Ekcr
+         oOr5wgkjNBn20y3L+u+XgQhF3JjBCc5UnRXYeBm/O6qNb3GdRX5UGwKSGyXUPRdi/rNu
+         7A2xUWY3TikMUXYgmAZ9CC5yJLMsjGg2sd7/7Imp441AE2gIwG9YtlFFH4cZQHwc6Da+
+         ydIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ+cKPSJCzPPPqOHSKDh2H09VNZbGevNXX5mK4P/oLiC/a1xb1aJnQ/6hKS93k7jQ8wD3QTCNHKXuM7ZaHWTPbcuIn@vger.kernel.org, AJvYcCX1SqKljIblU907l6p2F7QFcKwpplIl5rZ79/bBwJCx1QCKIs2iFbZWGQ/+F72HTr4LyEO6nLM1y6HS1mQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztL8bhCsYyF2imrV+sgXX8fxvjij+hRjYgP1FDaes0F8+VpVt4
+	KZ0nRriHcU8Do65TxWFN67PWieUWGBqe7H3l5Blu4ItIMLoJEIdY
+X-Gm-Gg: ASbGncuVJWRlN+tLbmpXO9zZau76497r97rYpEJJiNohlTcawSrOEqbXki/GqXDRlro
+	4LXiolmvIPMYVa4V9YrTTq1yT7gWoT6FSdF34AIll3T/fzPREZyRtuP3ASBqVJcxH38ObZQQsUo
+	mpXQA/TXz1oA1FWcwH4dDY0HhjW96r+CTutJVODrnMsxFZdui6yj9A3sqne0yhqbtvBmoxzBi7l
+	shYq1+b+ann9d0YRiBH25z4T7pywa5s/ttFvjm7PAEYnHpOeyRD0pKNzs6ijQFrKfX29atlOogo
+	uq4uzu2dr6VK4l0jz/CECfLpIAGixOg/qKeb57SJ7w==
+X-Google-Smtp-Source: AGHT+IH5ULUWPnGyzZaHR77dCGEg5eVgzbcwRGCPylIqEYuZnUp99wTWpNNkTECMJ238M4dGfJjdfA==
+X-Received: by 2002:a05:6000:4903:b0:39c:1257:cd41 with SMTP id ffacd0b85a97d-39efbb1a9e3mr15222553f8f.59.1745360022636;
+        Tue, 22 Apr 2025 15:13:42 -0700 (PDT)
 Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa4207afsm16716557f8f.12.2025.04.22.15.06.34
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092d16ca2sm3239815e9.8.2025.04.22.15.13.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 15:06:34 -0700 (PDT)
+        Tue, 22 Apr 2025 15:13:42 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Sumit Semwal <sumit.semwal@linaro.org>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
+To: Steven Rostedt <rostedt@goodmis.org>,
+	asami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] dma-buf/sw_sync: remove redundant error check on variable err
-Date: Tue, 22 Apr 2025 23:06:27 +0100
-Message-ID: <20250422220627.89077-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ftrace: Fix null memory allocation check
+Date: Tue, 22 Apr 2025 23:13:35 +0100
+Message-ID: <20250422221335.89896-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -77,30 +76,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The variable err is always zero at the point where it is being
-non-zero checked for an error. The check and error return path
-are redundant and can be removed. Issue detected by Coverity Scan
-static analysis.
+The check for a failed memory location is incorrectly checking
+the wrong level of pointer indirection by checking !filter_hash
+rather than !*filter_hash.  Fix this.
 
+Fixes: 0ae6b8ce200d ("ftrace: Fix accounting of subop hashes")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/dma-buf/sw_sync.c | 3 ---
- 1 file changed, 3 deletions(-)
+ kernel/trace/ftrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
-index 4f27ee93a00c..ef3fda792749 100644
---- a/drivers/dma-buf/sw_sync.c
-+++ b/drivers/dma-buf/sw_sync.c
-@@ -437,9 +437,6 @@ static int sw_sync_ioctl_get_deadline(struct sync_timeline *obj, unsigned long a
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index 61130bb34d6c..6981830c3128 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -3436,7 +3436,7 @@ static int add_next_hash(struct ftrace_hash **filter_hash, struct ftrace_hash **
  
- 	dma_fence_put(fence);
- 
--	if (ret)
--		return ret;
--
- 	if (copy_to_user((void __user *)arg, &data, sizeof(data)))
- 		return -EFAULT;
- 
+ 		/* Copy the subops hash */
+ 		*filter_hash = alloc_and_copy_ftrace_hash(size_bits, subops_hash->filter_hash);
+-		if (!filter_hash)
++		if (!*filter_hash)
+ 			return -ENOMEM;
+ 		/* Remove any notrace functions from the copy */
+ 		remove_hash(*filter_hash, subops_hash->notrace_hash);
 -- 
 2.49.0
 
