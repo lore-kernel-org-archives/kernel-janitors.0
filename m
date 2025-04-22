@@ -1,112 +1,123 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA3C201269;
-	Tue, 22 Apr 2025 10:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD891E9B39
+	for <kernel-janitors@vger.kernel.org>; Tue, 22 Apr 2025 10:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745317596; cv=none; b=UnFKQZkKRyIDD41QrlmKMY+uYPB430XeAW1vwkYkXqI8HYRBW+XaI4InPuPiNwFtW/PiM/EvX8NI8+CEsfSOtGqFWlTTpLWg/LBaNTXRrJf0aN1YyUJCQGd7vTQObgji5G7sDiyNGagTSgeCSGtZDUZnQFmBoem1hk/No6URtTo=
+	t=1745318293; cv=none; b=AyXIKyJzw+r2CvKwNDQetfV0e8GP4X31Bh1Ba22LY7yI39qAaa+RdCFqz1U8XAambRqj3yqVG5O0nh+VAOC4214Uu8CDtTd/Kr5cvtXiP31FVLRDbIsa1HLEDu47Bb1D5UU5L+uKcJZqq7AUchVSrpmc46FAoh7u/ZN2m8bAo2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745317596; c=relaxed/simple;
-	bh=btBzp+xYQxHrCHa5D6AUqBm9PwFyuEjXykYSmRONzTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=obrYCU5M3KxH3F5d2+Nlxyy/ubMM0VJVWLE3+0uQaCIN8D3YDAdUcFpacoLAFC3zfIAgjbbiFgzNlUsgS2hB5PQGxIsNtpyBH4Y5MP1GYPMgEX+jNOKCB7WoifuH01EF839x2rkX4y8g0IEoZ86IfemsxnpaJaKWO7XVyho1Nec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a17yDEH+; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745318293; c=relaxed/simple;
+	bh=Z6c8uzRwUL9CRemIiGxumCOt8oUxWa50U/RnhdvAm6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RUZixHolmUViYOGfaXYBm+zawNWmw1kyx7H8bTOcj6m1oBYTuZbh5L+8HowRmCq64597HihWF0CyDEko+YAzZftQvku2kshMSRsMBb3gXtkUfs9xfl5vEjiidDDjP/hBh86JG8EEKnh7J3o0QSbHO8ksz1AM904pF/44AXFLVeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UYuN729t; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a17yDEH+"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso36237975e9.0;
-        Tue, 22 Apr 2025 03:26:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UYuN729t"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c14016868so4911551f8f.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 22 Apr 2025 03:38:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745317593; x=1745922393; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g7SxF5DbGT5htrrk5YgOA+scpYjVb9Z25iQ9Uytxx0w=;
-        b=a17yDEH+yoaouNZ3wuohHcljK0zCccPt9KgL6oifXlKjCiH0F1GSSqWf1hVK/ySxap
-         Bd+nE3pnGa1f8tjU//+HURVqFtCANb+N1nShWUB5JpUY2IuDf0I5cYvCnSky8o55xWjN
-         zr4VrldLCjqBK6NFahxVJWoUMkbdeq3h+P8CnEHAOYqIN+Ngm4PTq4c1nYiXwL0ay2dt
-         3dAVMGzlH8+3HpZCiaVHjY/WQcLF+PqQWSC8MmYt41oXAveZgPvQBVvr0YBPTlYTdJQn
-         Hj7yFCfr57I4/m/97Tn1+Isw3mQdUnniG17a4ORLaGcBukZh2+PRIxhuvaLzH5T9++sR
-         +vFw==
+        d=linaro.org; s=google; t=1745318290; x=1745923090; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x36ME9YCkgctStKKRl+yxhgMtdLAC+ajKdEDhmCB47Q=;
+        b=UYuN729tFlE1b8gcMDPRHDaj6XCStLAeknCXmSw9t2PY2JATnzPR7wgDb/lcx05szA
+         gEKhuB/Utg3QLnUrAFNc12rxX40Rk0Peqkn/aButFChd8H27MmOifIWb5OMcX4WbkvyL
+         I9VGZyUiVOJM/Vn60QAfhEensSwrU9yF5EGBi3I2b6n8/PcbMDjE+wCboRG07VB2edIW
+         1P8NgpH4UolZBqshO8zke2RMZeL8MWDKWQakg19FJjCO9RWl1KcIu2qL8mqIL0aRu20Q
+         IbyWkwu5Bk1JSZXwDMyFeLnOONPmFd7D8LoTFGxt1cYaEQAOp3eHQzzmPj4+BfGr1qKP
+         U7Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745317593; x=1745922393;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g7SxF5DbGT5htrrk5YgOA+scpYjVb9Z25iQ9Uytxx0w=;
-        b=UhSEe/FH3csRXbfrQyfmz8drIhXJq7AXUF6hyjRFZJNkOW8wXH2SZ0drbDY5D/6K7d
-         wkOCkNZ8DiN1kWKKi+zrun9RCVTafBUk5bGYzYa60owXf2rHKoV/hrJAyyXpzOFbCi+B
-         nx3LsH0I9rj0Z3oEySrptFiAHcb/z3gl9oSgTINMZDpuI+bishIH8+KLtPc1E171Je2L
-         bWQMNHH3aqkZnUeHarPMdtgir/LplciIfwMwFVz7bAnE8iH8gFYz6wL1BF9oMg0qGRqI
-         5LlBCzsUWSkXfiURQCzvd6JgIacD0eoFUFXddSMFhIEhyOA9ak+r9p3wcEHSjLJdQ2Ve
-         n2gA==
-X-Forwarded-Encrypted: i=1; AJvYcCWN3mP59fixzRDBB11w27DG1J/AWc0TsOvcZI+FqXgeEKslGoV7b8d1RdclMvmkLcRNCNxvnV4G6bDKNHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbh4Ji0fD4VD7puRElaXw5t6xr7znTvnz6WcMY2ZOEOSvmP9TW
-	h/WeZt0WMDmhD0snE0JefY4e6Lw8WsS5GEOlpZqdCfW+RrhSHgJSMAZMTvjMTZM=
-X-Gm-Gg: ASbGncvgPQnnJNk7yv4vGnf2E96Buasip4qRCljFasDMcp0dLZahGKN3DFJXsHD+69A
-	H4PjfNqq+OCsQDN9rSddZgAy/Cq/8JMNr3QAjYrG/tJ7AEFKbZna/vM7L2CigmTDfhdrprU7cHg
-	TRITT5XpNzz7wCiw+5qUgMJvNfM11ApjIi3Jhzt6NzICkbkn/azVSVEpoJAyz4s/qCRKWdi5ldl
-	oJXzvzzpCMx4KqcGd7wodXBUCyTsNbWlmmdDw8aVNL1Iw2V6fngzdOGruZTuCjfrUD6xpxd72jv
-	/uJXB+TyjJ4QV7b/1JFrbyIVV510UuOTOOWiqYT15g==
-X-Google-Smtp-Source: AGHT+IGlq5aQo6biEBoKrYltKM02BlS5tU2XYCn2QzFs14ArIDjnApRfpVJZzbfhnaPVk4Nsu5WREQ==
-X-Received: by 2002:a05:600c:4ecc:b0:43d:db5:7af8 with SMTP id 5b1f17b1804b1-4406ac0f3c0mr111465995e9.21.1745317592548;
-        Tue, 22 Apr 2025 03:26:32 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4406d5acccdsm165855825e9.11.2025.04.22.03.26.32
+        d=1e100.net; s=20230601; t=1745318290; x=1745923090;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x36ME9YCkgctStKKRl+yxhgMtdLAC+ajKdEDhmCB47Q=;
+        b=Y38orGM/TkSYfj4LEO/78FDqCfAnTiLGSEddTqGlWdS06OvbM1Zwuwd5U6nL8r4Z0r
+         UWzmSkNLHUUd39iYyIQeofU5snIc0WeCp1kZ/aeYdSYod4zsRf90+jFKm7VVEUQtKkFO
+         /y+p8Jdrh6FVAJ4oiQjoiH4COYFronARCrF9DDw8EMLhHL9qf4TZBLmn+ybtJl+1QJ0v
+         jIH4BpWirU5kOGdTFrQEEmwHu3PEiF+w7zq56qG306/iXunEis98TtexwmzInZbATdPN
+         H8FcXM01DYcaK5CGBMaarACW/RAJ+yQ3//uCtbMXTL/g8r0m21hR6CIfO4/Eon0tBTan
+         7tJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeUHc6JGvwUffZ4XXLDQBp0ugYzO8u7CpEesbQBe/KQiKwy17dR3KFXkEOFwv6u4LhL9r8zYhNFS0/CgAojm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRzPe9ecRJC9azh6HMRei9uPSF0wp41MCBX8GCm7CyPXNepRq+
+	nI5cFBETAFbovRy1alHuPX6McCj1xB9I6utL6AekIchA+DJ2V5HD1jCiS14C7EEtGfqGeWrg8F/
+	I
+X-Gm-Gg: ASbGncscQf6HQeFF/MH7YEkptRWC/1CqAroZOGnmhizwOW0DVZIvIxVeMGTo9B/ZVUT
+	Ufmizyb0awL9j0+NqjVXrRm1gA6/yS8FJuBNDSOQjv9rXeRNbjcI5+RgiVXF5x6Wocwlvibd5S4
+	WVwWbo0exR0M616nJ7Vk7vN/OAJFpPHm1hSRhjlPRXvVMoRAJomHSJWk6/fwjZZ4joQRW7hXMsQ
+	cC1eqgSS/ErhWZ2B8KYbvwbouhki9GcxLsphVaEbhdqxf6SLOs6OINWDibidQX+idQoNZ4PZ+WG
+	UFBppPByjER3LljAxaFW1FM9GapZuSvFo0k2sS7AIoB/3w==
+X-Google-Smtp-Source: AGHT+IHmdZrRl8dVYpwJVQVgKnWXt370mTD794FHi8G5zh54eb5aEDf4XYuBmeYKL/FdPLvQGd7cdw==
+X-Received: by 2002:a5d:64a5:0:b0:391:4914:3c6a with SMTP id ffacd0b85a97d-39efba5c644mr10470205f8f.29.1745318289843;
+        Tue, 22 Apr 2025 03:38:09 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa421c79sm14615464f8f.1.2025.04.22.03.38.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 03:26:32 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amdgpu: Fix spelling mistake "rounter" -> "rounter"
-Date: Tue, 22 Apr 2025 11:26:26 +0100
-Message-ID: <20250422102626.29965-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Tue, 22 Apr 2025 03:38:09 -0700 (PDT)
+Date: Tue, 22 Apr 2025 13:38:05 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: sj@kernel.org, akpm@linux-foundation.org, damon@lists.linux.dev,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] mm/damon/sysfs-schemes: using kmalloc_array() and
+ size_add()
+Message-ID: <2713f419-760b-4ccc-aeed-de9c4c899506@stanley.mountain>
+References: <20250421062423.740605-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250421062423.740605-1-suhui@nfschina.com>
 
-There is a spelling mistake with the array utcl2_rounter_str, it
-appears it should be utcl2_router_str. Fix it.
+On Mon, Apr 21, 2025 at 02:24:24PM +0800, Su Hui wrote:
+> It's safer to using kmalloc_array() and size_add() because it can
+> prevent possible overflow problem.
+> 
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  mm/damon/sysfs-schemes.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
+> index 23b562df0839..79220aba436f 100644
+> --- a/mm/damon/sysfs-schemes.c
+> +++ b/mm/damon/sysfs-schemes.c
+> @@ -465,7 +465,8 @@ static ssize_t memcg_path_store(struct kobject *kobj,
+>  {
+>  	struct damon_sysfs_scheme_filter *filter = container_of(kobj,
+>  			struct damon_sysfs_scheme_filter, kobj);
+> -	char *path = kmalloc(sizeof(*path) * (count + 1), GFP_KERNEL);
+> +	char *path = kmalloc_array(size_add(count, 1), sizeof(*path),
+> +				   GFP_KERNEL);
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/gfx_v9_4_2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Count is clamped in rw_verify_area().
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_2.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_2.c
-index d81449f9d822..c48cd47b531f 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_2.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_2.c
-@@ -1547,7 +1547,7 @@ static void gfx_v9_4_2_log_utc_edc_count(struct amdgpu_device *adev,
- {
- 	uint32_t bank, way, mem;
- 	static const char * const vml2_way_str[] = { "BIGK", "4K" };
--	static const char * const utcl2_rounter_str[] = { "VMC", "APT" };
-+	static const char * const utcl2_router_str[] = { "VMC", "APT" };
- 
- 	mem = instance % blk->num_mem_blocks;
- 	way = (instance / blk->num_mem_blocks) % blk->num_ways;
-@@ -1568,7 +1568,7 @@ static void gfx_v9_4_2_log_utc_edc_count(struct amdgpu_device *adev,
- 		dev_info(
- 			adev->dev,
- 			"GFX SubBlock UTCL2_ROUTER_IFIF%d_GROUP0_%s, SED %d, DED %d\n",
--			bank, utcl2_rounter_str[mem], sec_cnt, ded_cnt);
-+			bank, utcl2_router_str[mem], sec_cnt, ded_cnt);
- 		break;
- 	case ATC_L2_CACHE_2M:
- 		dev_info(
--- 
-2.49.0
+Smatch does a kind of ugly hack to handle rw_verify_area() which is that
+it says neither the count nor the pos can be more than 1G.  And obviously
+files which are larger than 2GB exist but pretending they don't silences
+all these integer overflow warnings.
+
+>  
+>  	if (!path)
+>  		return -ENOMEM;
+> @@ -2035,7 +2036,7 @@ static int damon_sysfs_memcg_path_to_id(char *memcg_path, unsigned short *id)
+>  	if (!memcg_path)
+>  		return -EINVAL;
+>  
+> -	path = kmalloc(sizeof(*path) * PATH_MAX, GFP_KERNEL);
+> +	path = kmalloc_array(PATH_MAX, sizeof(*path), GFP_KERNEL);
+
+If we boost PATH_MAX to that high then we're going to run into
+all sorts of other issues first.
+
+regards,
+dan carpenter
 
