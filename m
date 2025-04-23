@@ -1,98 +1,121 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB2726D4F6;
-	Wed, 23 Apr 2025 08:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40B84A3E
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 09:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745397322; cv=none; b=sISeXJgiG6zr6tZwqAdvh7/bCx25wcQwLtTjD+xKSgM9gtwD3AXgtF0KXMVcky68VfNN2MdkM2fSDBXOId1011hm7jSHUG8bWUf+fdBLMnHaMC2hgP/MmLoxOjSykmRSVAz3aMIk4WXAjOCI2HbAhz1Ok+BvC/TRFyJl6J+0Umo=
+	t=1745400721; cv=none; b=Gfoe7V9HaDPGVNxr7P4Yk3ZNj2tiuw4soDDReKc4KYU6yoFAbdBC6iTfDqgfb004xvms+wZLbIEKgDpB0NAZs9bvAt6uzbtdQ6+XSzskRA+W2UUW6Jq4hLnp/9WhaGjRDldGYT9pPDbkrBd5P9u5ED+XxU3VXZpROPXJ372iluw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745397322; c=relaxed/simple;
-	bh=BZSLijxSXMIiXrMszqB3BP92kAcntEir0dS6YlGxXnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IOjDzryE9CAlf9CQMY1C+6ccpLS1X4Qi47b5AE3jDqicJc51o0U3Cin2EZ+GLC1QbNkHLq+yH52xGgIVpnHAKf8raU3ctl7ZCbKuv+B8rkk3an9xQredbk5oAtgzWywN+ozICwhQF/YU1YAOKNvQbITHLO0rBgZiBpoKSLkoyxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hT9a5pGD; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745400721; c=relaxed/simple;
+	bh=cnjftqRTix1Iq4pNd26G3m4Fq6fJQhDX3rKnWMPwe/c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=snt6xL8483Zn6EE0aPKsAaEGQnOOr1WoP2LEX9GuQXovIjBbNdtILLaBznsg6dxx6To4F9/VuBlFe708D8xhsQ93p0E3nvW52F3amxZmNi+KE4NveH9QBU5nAue7mb0kvrCImQPJXb1E07JZcUje90jTx/3P3PUQVjSqtcaWYOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=P9K/UdFI; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hT9a5pGD"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c31e4c3e5so4191001f8f.0;
-        Wed, 23 Apr 2025 01:35:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="P9K/UdFI"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-39c30d9085aso4646517f8f.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 02:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745397319; x=1746002119; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MsqunO9lss/uBzeiIi4q3QDIiMQHRXAesVvljbjm2ZY=;
-        b=hT9a5pGDmKHJ3LB/pYIbp31pmxgbdYvmxkrxlHunRsVyQmyyascqRwapaYXiEJ3+le
-         fxON6MrJAMb1sbD4mR9A+MerAIdjotwQrUiRI4DO1fGu5YuYMpmuJ5LBbxe6R9fA9b2z
-         JLJdITa1AVmbShhz2tPh3EB0fPQmnxIthd4eoMrnIHlgYztkSGqR65XGxRG6Pryil8vQ
-         eOtIDpKfvw4JeA4a8wI0Ddl0qKSY+68jy8cxU7nPOG2fPAdhEzXpy6F2x8ok5tYZpOYK
-         S245A2FxvJOHQKHQ7buSzYNhAAfPUhgB2B2bshTM97T9VZ0pGSi64Je70NQZVK5Gdpg1
-         5O+w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1745400718; x=1746005518; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=p/ibIxkHiQKL+uy9WgHCoDI8gDfvMqpX6jxocIOb2Ak=;
+        b=P9K/UdFIJVhjamib2bLQMQc4Au7N4eY32dATE4WJFLvDgW4AXPly0uv1tiHgdOwWgq
+         R4A8xDWBFBLPdylSx1QG4pXeWtSRxjc+uS+w3ZCLNSFDUsHwyc1A7Iim/wiNGpPtXLFG
+         LelfAfxCJtbRPO8MuCc0GcS4IvlLQrz5Nb2UKb/B+m6AEm1dMHLBgGFP4bSTj7IZH7wc
+         8s+wTzPc4V6XWSeBtLCGjRnNpfzAAHCyJIWor26IDenCK2Nf9y7KSjb6akcIkc10XXS+
+         9NzWQOxDnvz+4QKrORJ9+AiXtGEfkHDTTRv2r6+++WGlRnqDK2TowucXN0zt6985ZpgV
+         Pvqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745397319; x=1746002119;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MsqunO9lss/uBzeiIi4q3QDIiMQHRXAesVvljbjm2ZY=;
-        b=oevYDj14rZsysqKNKG2vPuIbU4XsbmHKLw/7zrl6uxBGA2AuhXL5uCONZtRgJ9qFOu
-         N+ZpfAuQB9lBvkbsIqZLTUExWO/sN3Z8c4x3nRNzYFwDHyh5drmCvpfgy73Qg/8SPESx
-         sCU7B2AncxErC/rE1sV0HL2BmbZYYypc1TRnNcmBD76plgh+ZrOp12CZiINWKmSUnmS4
-         h5ol4SLZIYluQTTf8DFIhAMkFsGuwmPcj+51DHny0D7vQjr00s+NR/486VpObTQJIN9l
-         /dZXWoRtNsYFscgbWxg9x3T29liqoCH8pB/bWRUK6AVTxdjgRq3MXSeeQA8nlpVD6h6X
-         rGmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTsCjA+IZL0UiTqozXwGVXSJnuUgg7etdTJYoiU6iMYlgf/fQzeaBCpgaWegDrnYIthoLYLax+sDfuKPs=@vger.kernel.org, AJvYcCVD1wjv6yAvGITN359Ov1y4Tayzl3ZOrVXoAJYOwla+DSrn+kHdMGhx4NiwINxE9d4rEKUmprnOLDTR5wwirW65@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlcItChbbWd3UGrQ4rJtBYsu+VQGWsdsL2yfxDjcgFYOKLfBQx
-	1H6/uS9nzSXnjZl6RayO7MPDEpznbWBG5g7EjgJgn2chpDt8ME/2
-X-Gm-Gg: ASbGncssUBPrmlTpwKZ3K7p63lP7BkWKdy1Eukr7KiyRJwjFs1W0WKy9GgpSEDv+oed
-	fqtqwGi0Ec0pkK8htvrIR6EM3FPo1Eg8L//o2jPMY69rDqH+LeHkFS0rbic4S8qQgLXIXmzbJtM
-	vbR3MVSx+welrApXV7b0Nevnw0M3fTnMNnjgQAI0+b0ntoHM8/FQN/cQ/mXTpnpsE9OzseMks5A
-	GCfuzKjMAzcHLQzcoOtF35Vh1Ux71JVLk1UKxkDzuX0nFRrrvaptAFkwCVgBL78ckRwDuUfkDSv
-	hdkRurCbMX+ITeACpy0t6oQJAaKxcW+p9vegaGQboyfBioacVJ7s
-X-Google-Smtp-Source: AGHT+IHq+qc9wzwJk0+h6l/1r7L8EKtIf1dbPpgU53Uopd7ij6Jpyj36OOnzVIYCr9XQy8gtMHHv3w==
-X-Received: by 2002:a05:6000:184c:b0:38f:4d40:358 with SMTP id ffacd0b85a97d-39efba39a4amr12792668f8f.9.1745397318513;
-        Wed, 23 Apr 2025 01:35:18 -0700 (PDT)
-Received: from localhost ([194.120.133.58])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa4a517dsm17742256f8f.100.2025.04.23.01.35.18
+        d=1e100.net; s=20230601; t=1745400718; x=1746005518;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p/ibIxkHiQKL+uy9WgHCoDI8gDfvMqpX6jxocIOb2Ak=;
+        b=vJoUvdglI1g8CR3pgGVnIl3SO4DZICJ7R43IXj347fMRMfFEICK9JTVJBz32on+mZ2
+         TyNZSKF3cSTcJlzxrFJ3HKFJKlXJfPIH4f3MUnSxN3GfglvUoZwEgVE8jjwKjnvUT5ON
+         RJMqQT0SVN8hNqVNM0FQpQBi3MtvBpUOwhVQ3JOJ4NG7HGR1Fg2Boy9pMefFPhHdq+aH
+         PvvS3bkhXjZHHTOok4OuuSN00YXyqWkNzBRq7JFTyC48E1vWX4u3cyJ+NkIXr4JVJyZE
+         +qJR1SgT3hffdqJcD5c3b/xmTswnqkDIYwNECE910aLOsl9L9DSNsra4Cf2H+0iXooj9
+         0UYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCJFJCysaLOd+1RErbhLOxDynYuItOtJqAh1Bq2Owgw5MeA5O0u1A3aWtbUxh14N72OeXYUDreTbj4kCoaAVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBM3NSyRf7mvSknt4h6sfQwaH4m2p0z1ntFIz5hDpL2Pxl3kKp
+	yYLmsEIGkU8gRy5PQZlgpj/XhjBb5jev8y8RoaDGEa+xTDcMiBrwTPQl8xK9Xd0=
+X-Gm-Gg: ASbGncvnsWtcC8ljzEI2HYHPVsCR8vB+tXgAWViTLNt2fmcYCDm77zvzXKe/hHb5YAs
+	lsvx0xVQXsW9fUbjtoIZPAUVmMYfaB51zftaoidsqGSrikmX5AqXKBDhkpwYfozlZ1JRHoiw/TY
+	G5WchD14pY0q+OFYwaMaAWSlMuGUISFAGsUjT/Qq2Cx8aSWLxxYywv+414RfiJuoLG1wYDlNlAi
+	V0eflYH9tVIFvHOqlimefPB+n1a4DzlXMHv30xXTwBiv5gEijVigmOLi+mHc7+I+k4zkG4mwIMX
+	3UMlfAsF53n7stNAOAEeXnLRoURrkIYEWiJBpv6M
+X-Google-Smtp-Source: AGHT+IFg6enZe+1trj27dPXdi1sR5KVmpei5QX91LSKw+3qUguME3MQq9BDTJG3uhoa8q4Oe51KzZg==
+X-Received: by 2002:a05:6000:228a:b0:39d:6f2b:e74d with SMTP id ffacd0b85a97d-39efbae02a8mr16225715f8f.39.1745400717823;
+        Wed, 23 Apr 2025 02:31:57 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:cf73:b178:1f43:c630])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa4206fasm17848060f8f.2.2025.04.23.02.31.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 01:35:18 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/perf_events: Fix spelling mistake "sycnhronize" -> "synchronize"
-Date: Wed, 23 Apr 2025 09:35:11 +0100
-Message-ID: <20250423083511.139896-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Wed, 23 Apr 2025 02:31:57 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Dave Ertman
+ <david.m.ertman@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  Leon
+ Romanovsky <leon@kernel.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
+  Danilo Krummrich <dakr@kernel.org>,  linux-kernel@vger.kernel.org,
+  kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] driver core: auxiliary bus: Fix IS_ERR() vs NULL
+ check in __devm_auxiliary_device_create()
+In-Reply-To: <aAiiLzqVulfGDPsl@stanley.mountain> (Dan Carpenter's message of
+	"Wed, 23 Apr 2025 11:17:51 +0300")
+References: <aAiiLzqVulfGDPsl@stanley.mountain>
+User-Agent: mu4e 1.12.9; emacs 30.1
+Date: Wed, 23 Apr 2025 11:31:56 +0200
+Message-ID: <1jzfg7nrzn.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-There is a spelling mistake in an error message. Fix it.
+On Wed 23 Apr 2025 at 11:17, Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/perf_events/watermark_signal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The auxiliary_device_create() function returns NULL.  It doesn't return
+> error pointers.  Update the checking to match.
+>
+> Fixes: eaa0d30216c1 ("driver core: auxiliary bus: add device creation helpers")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/tools/testing/selftests/perf_events/watermark_signal.c b/tools/testing/selftests/perf_events/watermark_signal.c
-index 49dc1e831174..e03fe1b9bba2 100644
---- a/tools/testing/selftests/perf_events/watermark_signal.c
-+++ b/tools/testing/selftests/perf_events/watermark_signal.c
-@@ -75,7 +75,7 @@ TEST(watermark_signal)
- 	if (waitpid(child, &child_status, WSTOPPED) != child ||
- 	    !(WIFSTOPPED(child_status) && WSTOPSIG(child_status) == SIGSTOP)) {
- 		fprintf(stderr,
--			"failed to sycnhronize with child errno=%d status=%x\n",
-+			"failed to synchronize with child errno=%d status=%x\n",
- 			errno,
- 			child_status);
- 		goto cleanup;
+Thanks for catching this mistake Dan.
+
+The thing was initially setup to return error code. Greg asked to
+simply return NULL on error and I forgot to re-align the devm variant.
+
+So I think the fix should be to check for NULL as you did but return
+NULL too so it is aligned with non-devm variant.
+
+If you wish, I can handle a v2.
+
+> ---
+>  drivers/base/auxiliary.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+> index 810b6105a75d..61b876d90b7f 100644
+> --- a/drivers/base/auxiliary.c
+> +++ b/drivers/base/auxiliary.c
+> @@ -491,8 +491,8 @@ struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
+>  	int ret;
+>  
+>  	auxdev = auxiliary_device_create(dev, modname, devname, platform_data, id);
+> -	if (IS_ERR(auxdev))
+> -		return auxdev;
+> +	if (!auxdev)
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	ret = devm_add_action_or_reset(dev, auxiliary_device_destroy,
+>  				       auxdev);
+
 -- 
-2.49.0
-
+Jerome
