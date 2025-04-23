@@ -1,124 +1,105 @@
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29C2701B7;
-	Wed, 23 Apr 2025 13:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D782413B5AE
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 13:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745413549; cv=none; b=OjYdPBG71aBM7+Iou7HYf9YuSWC/BTQVAnsSho3TVHq+jWfGuU+YMjhkoDasXCuGiBKwtYLHs4BQu6IeEOKPjfWPDmf2nwa0S/2kJoaD7dBd1iWhQ9sMNfEyJkdoJ7+HCihqFlNdxKUnedNu2lhC/s6ZCxjCzxHFm9sPRtPc244=
+	t=1745413711; cv=none; b=p9YRpdPLP5kxCv2EwFCAq5OOCVUucnm/VOagNtKjKuQB3CUy04aSd12rZm/Ko4n/3ZxmtxhNMcmkHBoM9q+f73k2YSeT0itVGeBiDirXSoMWYeKtnCvjwb+y9f+A1vtpVvPVweWj6YolXxq2I9qycRdhu6F2g67NYUD394U+hL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745413549; c=relaxed/simple;
-	bh=RcgQTUHQ+Pl7003DZJD+mnP7u8UiOqqBTHs7cX83a+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Eojc8d+Bqq9/HmgxnuEHVqZSYUyAIaFfHe3+K5/auwXDBbsmmAlggc7CD1CcMI3zJ9wboFCF1JoSrd6ZSKMudADZa8kscPs5QW53Le01b81XL/1Be+Uu2z/zzYDQgs49KcowRCickJmFbKnM89HuoKASoOLeSk7TtNsXD63+PxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DHBv1N3y; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1745413711; c=relaxed/simple;
+	bh=V/euKjCcP+EuEZclJHRJqQhL8BiXIhmeGbSZ3k59g8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y2i1rMLTQnOEFZeCvDp1XGR440DeBXFgSwKwRFj8ZCBXp60mP5hmDIQPoS6Tkyl7JtC4jVUDTa+ngrOoakXSdb5YTo/a2zWK9+kY2bcInWonnE+RWVRHIylvn01Qy9o187PlVZopgWK11c+v3racAn8L4OL1iaw8sqQD+qw8H1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SJzUmGty; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DHBv1N3y"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 40DEE1FCEC;
-	Wed, 23 Apr 2025 13:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1745413544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a7aC+Unu0bxBebacdFme4H9z3bxAWup925qXizcBc+k=;
-	b=DHBv1N3yynrOyPyxrdijD6lEG1jabNBCfFJU4BIgfUXE2lcqDbbbEf1zhdtrjQ7iSYLKUs
-	QgylcTwkSmf4QM/jgukMBqr42/AjKMF5ILXOwhCjuhQVCuhilO/d8bJjaQPoIFLdRDF0oj
-	93ycOniN6NhTkyE/SQIJVQIjzrNQkVz1hVypI6RNO15LrCECnZJVGMESv/OjBYrn65Isa1
-	/wdWGDgg/QUVgQslGxI+kCASASTjZkSns3AK2jXKVA3w/R6tizYk46Pm6QaF7ovP0d8FvC
-	Hp0RTR/AaLCRZ5YztZi4tyVGUD3eQ3dGqSWu//W7AiN8G8YhXlbTd6l/rhKXYQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
-Date: Wed, 23 Apr 2025 15:05:38 +0200
-Message-ID: <1923319.16XuQ88jBL@fw-rgant>
-In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
-References: <aAijRtGLzKLdwP0-@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SJzUmGty"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39ac9aea656so8104804f8f.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 06:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745413707; x=1746018507; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5aKGWU/nxQJ1g/GQXjmzKsRQAC1mEWy7RzAyyaBKhic=;
+        b=SJzUmGtyqzzENuVu84/gZk73SHdxNhwQToDUfBYEUBJ/yFZmEfZ6yIkSdIhVLRyqnP
+         52V7TYA52s6nu3Y5LbqZoKgeKertnyzdz1lQCPOWPcEVXzcsOCRp40AZksCoVNaL5joI
+         1ELg0C6/4QP/RjHdPcvrWeipHyNTjyRfNuxH06c+2S/gdpx2n9Tx5rbOZWgpshgkRqWy
+         bNuJTTgF61hxrYYIf4KKiASwZEdkVCHPC/bgv0l24ypnLgtgaBcbpeytCuhnAVJxZ9dU
+         86CMsMi+rP/ycDizRebXzJopVIdokBt3d2KQ2JPnTLHRePco0IFIY8r8pYt5KY+jmIcl
+         JLCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745413707; x=1746018507;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5aKGWU/nxQJ1g/GQXjmzKsRQAC1mEWy7RzAyyaBKhic=;
+        b=N2wxr1ZJPZxjdrmLXZ81ZEfiVi59YXQ7pLYYzGd70jDhiiWwM1A+JzNmbnO7lQBzx9
+         gZO+Xgivow84E2KDZ/6SlTIuFxpHWkOKVEtU0fkEnnlV9kGIJ3hiLBk/jrIRfubM8mc5
+         xjz/Ge+3XjoykMuQvfQBlncy+cotT0IpPgIdJ6DcvCaOCLPPPpM23vIDLCcj70h2IFPK
+         sk9PmC9hyCQxx0ml0FlTss9tsCoOaOzA4JGAJ2prutCZKJCCcTuv1NZ0jej0zTkTo//D
+         OAo1x7kl1U4Wp1OmYVbnRIoq4/7TTxljE720QIILA/m0fCpXC4h3jRwriVAFccX8UHhp
+         fqHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWViU91lCGMbdgmtpdwNk5lvbX4v69KGUreexXI1d+W0wRHkdLhkRDo5lD48YDjMPiQwbFUlI3cmSm2xgB8GAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx46VpcZb9FPkGQos9ejr6hwm9dzTLZJc3ZhpfzTFvy9380Ozju
+	7CM/K/rm5pqaPunxAS3Q4VJljtpnWJOBTfjnQOvw4vwTDtoTni+kangHhs8Ajvc=
+X-Gm-Gg: ASbGnctoKEQt/A4uAM3GxnJJI5rjNxBeWdADlcDehvjlZCEo9n183AUVY9MjXvpnBSw
+	0JPfFg1q+JVLBIwAW5ajy25tZng3R0GUTlx/FVBa4L8qcejPrLIwO5mBkXRm5/O+RnDR0Sng+4W
+	rvfcbbAAFJsiyurr63MDg6z8Y1mJuCk/Jgt2j7spafpRXVjDHKV3B8nziqjaV1/41rTkxBLJnS5
+	iceYKsQ2hcVaal0AcvPtzfwqYeqf54MpiCd52+9j0OV+LuxEZVK283d41YaYd7YVIlAa1M39iCi
+	Gn9XRPvwZLNKW3BEzZNrW14q0VtgOsZ2GmoFeMgSFlrkrp3JxkwNCs38
+X-Google-Smtp-Source: AGHT+IHFDE6RSxpVFbftFmRUuMMe1z1mFI84VXLmNBo24gUTBGerWwkyU/8c7yGJzERf6IPYsxhjow==
+X-Received: by 2002:a5d:64ae:0:b0:38f:30a3:51fe with SMTP id ffacd0b85a97d-39efbad2f6emr13262250f8f.42.1745413707142;
+        Wed, 23 Apr 2025 06:08:27 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa43330esm18445115f8f.21.2025.04.23.06.08.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 06:08:26 -0700 (PDT)
+Date: Wed, 23 Apr 2025 16:08:23 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Wayne Chang <waynec@nvidia.com>
+Cc: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] phy: tegra: xusb: remove a stray unlock
+Message-ID: <aAjmR6To4EnvRl4G@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3153738.SdYAi8KGqb";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeeiieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeikeekffdvuefgkeejgeefhfdvteeuhfdtleeiudehieeludelvdetleeggfffffenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrn
- hhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheprghnughirdhshhihthhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: romain.gantois@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
---nextPart3153738.SdYAi8KGqb
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
-Date: Wed, 23 Apr 2025 15:05:38 +0200
-Message-ID: <1923319.16XuQ88jBL@fw-rgant>
-In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
-References: <aAijRtGLzKLdwP0-@stanley.mountain>
-MIME-Version: 1.0
+We used to take a lock in tegra186_utmi_bias_pad_power_on() but now we
+have moved the lock into the caller.  Unfortunately, when we moved the
+lock this unlock was left behind and it results in a double unlock.
+Delete it now.
 
-On Wednesday, 23 April 2025 10:22:30 CEST Dan Carpenter wrote:
-> The "port_id" is used as an array index into the struct fpc202_priv
-> priv->addr_caches[] array in fpc202_write_dev_addr().  It's a 2 by 2
-> array so if "port_id" is FPC202_NUM_PORTS (2) then it's one element
-> out of bounds.  Change the > to >= to fix this bug.
-> 
-> Fixes: 1e5c9b1efa1c ("misc: add FPC202 dual port controller driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/misc/ti_fpc202.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/ti_fpc202.c b/drivers/misc/ti_fpc202.c
-> index b9c9ee4bfc4e..4e1871870769 100644
-> --- a/drivers/misc/ti_fpc202.c
-> +++ b/drivers/misc/ti_fpc202.c
-> @@ -370,7 +370,7 @@ static int fpc202_probe(struct i2c_client *client)
->  			goto unregister_chans;
->  		}
-> 
-> -		if (port_id > FPC202_NUM_PORTS) {
-> +		if (port_id >= FPC202_NUM_PORTS) {
->  			dev_err(dev, "port ID %d is out of range!\n", port_id);
->  			ret = -EINVAL;
->  			goto unregister_chans;
+Fixes: b47158fb4295 ("phy: tegra: xusb: Use a bitmask for UTMI pad power state tracking")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/phy/tegra/xusb-tegra186.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
-
---nextPart3153738.SdYAi8KGqb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmgI5aIACgkQ3R9U/FLj
-287sTRAAhGdCDX6fkbP3CN7e8zSAnAe60jWHF4tgsI/gul+Oq84ouZ1RpameFWPj
-bXrNk+5u/PgbIqYydcshqRgGwlKVgYMi4B8qEyvemETp1p/i3ClXhxm8w1JML/Fb
-rzJkrY/oRVKimTIXGv9k3RmeEkubGeYgGpNZ2LUBCsPiSMjkmk8WNnwTtCbUh9XM
-Qsskh5W8TWtswRc+RB16xHTzr11BM3EI19uPxnfPRJsTb+rVwAn0wktkTf7G5WYb
-2nKJ7Rp9ji93xet5Bgu2ZL3owyE3zn8qdZOiz7vWDvJMSFZV+tz9Z84abU4EZqf+
-KINf2mhNH7Fftp9wY7ZO2eTG4DOt25Ua6UXEbvIFc31Tiwwpv7xyX8orFpU79+IV
-7lpOdbR5n6R5nnn54kjbi+37Ws4lFUcn9GAVxUeNlR3SHFriWKmMtG9LhtonFtgM
-JEA3GQowSUgW3CF+XmAwgXrOwh0WCMNm/OUtb/jEtO+EmRxLbh6EXto9hTl4U/SR
-ffLA0ZS2wMlMIMDqrP/aFGIuSbzAxMjZfB1kKaBh/DvmHZ4W54E7J+wdBGWfy/mh
-fhRCuo0ykjh7kyBvfs0KNv+iq6PEAxj03bO/TYbU0XR8gwOY/dLCUjk7UHuBsy+Z
-QE76BPu4TRTUtGjQ3Zyd+siKVItB+FBDNy2pjy/KnEPpkiZMoOY=
-=u/4n
------END PGP SIGNATURE-----
-
---nextPart3153738.SdYAi8KGqb--
-
-
+diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+index cc7b8a6a999f..23a23f2d64e5 100644
+--- a/drivers/phy/tegra/xusb-tegra186.c
++++ b/drivers/phy/tegra/xusb-tegra186.c
+@@ -656,8 +656,6 @@ static void tegra186_utmi_bias_pad_power_on(struct tegra_xusb_padctl *padctl)
+ 	} else {
+ 		clk_disable_unprepare(priv->usb2_trk_clk);
+ 	}
+-
+-	mutex_unlock(&padctl->lock);
+ }
+ 
+ static void tegra186_utmi_bias_pad_power_off(struct tegra_xusb_padctl *padctl)
+-- 
+2.47.2
 
