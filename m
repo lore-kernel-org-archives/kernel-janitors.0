@@ -1,73 +1,72 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B161026F47E
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 08:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010A2280CD6
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 08:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396278; cv=none; b=t3DsPMm9gzdzx9V7RmQ1HGQ5U9jyFiuwrjUSmEVZ+Sk4zBVWMCIanuJ4tTMEgD5CrlCgHECXx/KEJDAGYJrm59esZiDIKoJFfOBhSAPlGhDtbfi7KV9VXrZBABlyEg1AMoN3bgxjOD49FBbTZqE0JnDHJiHic4FwA1iLV+T7RSc=
+	t=1745396487; cv=none; b=gmQKt7jB1BKM+TSOg8Ji6RdSbmaHszmYkQ7MLgCaVy9a9iPwC9m07KtL5piuGykYMpb2cyRnRfJY/29CEox2ljYobGt3l3XYNk7D+c9ydhr1pBMcZ8lA07UYejW/q/Cj+M5y7QeWrnk5P7U8CgSARV8li3YP1pIYVT0f2GREEUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396278; c=relaxed/simple;
-	bh=oj5Razb0evj7qw4mlQSndhKoTaML66NQzQjFs2IHgj0=;
+	s=arc-20240116; t=1745396487; c=relaxed/simple;
+	bh=0XEqfSAxlPY5os2nxDoIwRW/AGhrDkurjFzqdCvEZyo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hEIzZcphdKfIEAKNlobfP/9lTe8RbcLoZ634bSc2B4T/0lKsKGU1TqLh7RSuXsL08sl5kM7l3Opap0p06Im8nf3i7Pna5tUHXOMm9fDAuXbRCIgw3wLqNOa4ADJW8BPml/BMXzUywUF7YvQPwA19rrNyobxXoP+UsvDsoPycZpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nbNcV99f; arc=none smtp.client-ip=209.85.221.51
+	 Content-Disposition; b=R1ZyAvk1Id1np/QYUX07NWERDnR1nMJOMQGj0ZRHBKYsiA8jW04WBX7nrs+NdFTah3Y/Mvm87LQ/jzWKuUJeJuEiNUJWDnfJnod4vnKGcRc5rkIUSSMdN4DwfKpdmvNDGUUVe+ECOKH8lVUCYqeLVgQI2x87ZMcxko0xet0VxfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ozVjPv2E; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nbNcV99f"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39ac9aea656so7684559f8f.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 01:17:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ozVjPv2E"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so55235095e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 01:21:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745396275; x=1746001075; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745396482; x=1746001282; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eJlsow9pFCETuSY99miJym+mwybzmiktgCsSrbNRcQE=;
-        b=nbNcV99f3Ge2+RvsUzIS+KXozOhDCyHgqrm4E0UY94qA3WuYLz2Q/f0v1sd2+FuMYe
-         Px3UQxcVCOyl2VNRaXMyjMgZ72CDecXBDkzmAJRsdrcbFGJEKy9AAxh/U8pVbfxT3LL7
-         e2MS8TuChfC8UTgMVl/cjGsYX6VXv8AkzhxtrqzWT0zyoEEskVITY4QAylOVC/LzQ+K2
-         0SX2ukAr6f/vmdcYGCRv37h8UD4FyZ+G2IWQH4bcdMliRJKANS2vdcQ+z8MOxPFbJUsl
-         /KiKzOR4W2Gdrl8+lNWMQBweHNdtCoEetjWyzoO4XSZuypi9M+Ap68L6uN+k02n7vCgw
-         eAWQ==
+        bh=c8gf1/v5lhBj3nTJ7U9oiBRoFIhc/ib+8WshbuHJPe0=;
+        b=ozVjPv2EvWvqWbFFDCuonjx+z/Lz6ZvSEDHCzbc5Nvo+TyqVBFmVK+BbmUqi/H3Roe
+         8mPR5AVbtjfD26khBXumkCKjd5Yv1A3qg54Ko8heYdQIVHzLZJybbGQTuheMHwEd7Q0l
+         NmNyldolTZZOnMFRAZtKu3M7tpiBIOIybRD8GRFeh2H7QoBAHY1UavFQnH0HtiCWdP+P
+         /mOdAoGQp7ux3IY0XL46ZC6WYYicT3i2l4cScUfeCWsxl36nF3mDrCVnNMiVQGN56+Qv
+         VThP5gs7A8TtKPNPWZem3XjY4fAM0ZZBqEtl91bUCwxLrAFIQo4S6puIRaCg2Enhzvf0
+         +B+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745396275; x=1746001075;
+        d=1e100.net; s=20230601; t=1745396482; x=1746001282;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eJlsow9pFCETuSY99miJym+mwybzmiktgCsSrbNRcQE=;
-        b=L7qW4lz4hjZuuduy7hvGlgkCfjFUfHN35rcAUZDMd8T5qxfq3mPRh6v2xGiJ1yHm90
-         fbqbm/EEV8ENNojecsff5V/h6Jg3vk3xQKGpYwbFDQ+aKWVXfJ/GaLxuCZGNHj183Yp6
-         eeIyrbvYYhUHL2jVCOd1wRi4talRJP1NIYdvf1d/jNZcHwWYMBmjjw4/qfmAMEAurMOH
-         +8jeo6/rZzhdYen4FhmxRHU9ddofaVRapfAvdWvJgtx1eW8CHnYyy3Dd8xGzSu+Mzocf
-         InqaNljROlEclUgZPLYy1CItYRzviaaVrvSuJ7OK/00tnfx1G51kinNdoCQM4Vq7uayQ
-         OTPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlHSBvS15013rd0RGQfrAuO8YPUG0j++rANlC78ct4SFSqFJPew0UH9zCScaNN+uB/YATqDmtPVYufwdTMtPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1NT9Uu8DV4Da0dCSdRTioW4NTyzGukIwSpMzLPI7PxdTOu4wA
-	wG+ZPQFNRzH07wczo46u9irZPiF0dMwZ8zJFGg/amgRLbXmTGa7HjGiqjVRZhOjfV7aMDiawU+H
-	n
-X-Gm-Gg: ASbGnctEi7dJRxVyBvPFLI0ZagU5mCIKNgD83MxsL49YjXWp1XYPfiYL3ZPo0baQiMZ
-	yKDHxAk5MuIUsQNdvkFphIoZNnFNlt48TbzvS+F9QJC5bZH1/COHqqNkHYeaYijLNNT285puZm8
-	5AY6L7sYReRDtFCNSeig0qCbCWnTxK+AUzeecIi599lZCc7ZFFizIIL0pv2zAxMaBslJSAPOGDb
-	W1ByFzhqWMtuVjlgypBWrsb+C/aUSlg5VgWkYZVZl3ywDsXnsamNSlk/B52c3UUyLoRbuo8MyAO
-	W3gELJSbdcf5M882rcBcy/QezJBDxj/DehneBF4gSMC2dA==
-X-Google-Smtp-Source: AGHT+IGFDsGRWEWEl41iqXxk8aBjeIQESD7eXixSYt8kxgOh7t6MkCbRrpyXFS7pLyu3bxpPdPkSyg==
-X-Received: by 2002:a5d:584e:0:b0:391:41c9:7a87 with SMTP id ffacd0b85a97d-39efbaf5562mr15384290f8f.51.1745396275079;
-        Wed, 23 Apr 2025 01:17:55 -0700 (PDT)
+        bh=c8gf1/v5lhBj3nTJ7U9oiBRoFIhc/ib+8WshbuHJPe0=;
+        b=w5EKpNmoHDQCgu2SHUcHYJYU/RSD2fGvydjvsWOZrVTRcio/4bkb+5RmoJMCdcqm1C
+         GR7FDJevZ7hpbijHUa6+r3Ku1s0nJ295sOIyerJvG74K5RNz8gAif/M8hjlxS5sTnDbm
+         85OtRbJegsjRL7clMhFG+YiahOA8Zob3vjCn0+TE2E/g+qLbNXbLrbCQpQs8lYcTx461
+         N2jeLjZ14ZOrvuMgV7OXnlccehqvVKISqewgqjBB+YZvGcicq2gW09b+Brtanl6I1tZX
+         jZ1cGmoaWsaTl9TaDJrgmJgj3Dq+paOJZH7DfkZrqFcl6SV9RWV17BhhRPZX3t/zSiyF
+         QgEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBXoNSHRWwgT4uKUatHicfOWLbeKIQbDb1LJRe5M9aZqbib1y/nWYb4AzugU7pykvmLYwj5yZGtWmBlA2Y0H8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDfxCX4ponXqCkyZpftJl34miLW5pyZ06crmkQOiN19R78AnID
+	G+EdaFtCDx/3UfbDXFkCuawfuXcwl3bFEAZrsDTYJG27wYMJGCRAE/FSz1h5p12uXnW9U1dbuG5
+	c
+X-Gm-Gg: ASbGncu1FVFDinUAtINc1nDxXuONuhpPYiyrPOOFRFCv/u4u0YV7gvoZSe/4EARQfD8
+	3RxG3KJVkOibD7zsnmy5cLpAUOUMsqPoK7Jl15spn9pFLp2p33ej1uGz165YrN+BjILXsqv4bCo
+	euGtpSaboCxRkpFRPoJVCyCBelLqoc/jsQ1Fge4A4VpDFCLhi7KAigo8jbD8mbmZYfI7EXORpeY
+	B4G5aI+oovEZDdNnrHKcZE8E8BybZLdKvRfTrq/q3a4WPqkRpFfksoHjAYU1MrkCjCr1h9YCA3W
+	zJLhsThRF3alpDQBX2Ry3vAJXymvVuHvFw+v1yEglpD6Bw==
+X-Google-Smtp-Source: AGHT+IHWYSrmnac2ZIJgkK3CcnsC+6t1hYnQGT7QpTZYVmOgik/OcS5nSxSw/Lh3KD6scYknsYVhAQ==
+X-Received: by 2002:a05:600c:3c85:b0:43c:f64c:44a4 with SMTP id 5b1f17b1804b1-4406ab98242mr134584375e9.8.1745396482254;
+        Wed, 23 Apr 2025 01:21:22 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa433170sm17690531f8f.25.2025.04.23.01.17.54
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092db2bd5sm16760175e9.26.2025.04.23.01.21.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 01:17:54 -0700 (PDT)
-Date: Wed, 23 Apr 2025 11:17:51 +0300
+        Wed, 23 Apr 2025 01:21:21 -0700 (PDT)
+Date: Wed, 23 Apr 2025 11:21:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] driver core: auxiliary bus: Fix IS_ERR() vs NULL check
- in __devm_auxiliary_device_create()
-Message-ID: <aAiiLzqVulfGDPsl@stanley.mountain>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] i2c: Fix end of loop test in
+ i2c_atr_find_mapping_by_addr()
+Message-ID: <aAii_iawJdptQyCt@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,30 +77,47 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The auxiliary_device_create() function returns NULL.  It doesn't return
-error pointers.  Update the checking to match.
+When the list_for_each_entry_reverse() exits without hitting a break
+then the list cursor points to invalid memory.  So this check for
+if (c2a->fixed) is checking bogus memory.  Fix it by using a "found"
+variable to track if we found what we were looking for or not.
 
-Fixes: eaa0d30216c1 ("driver core: auxiliary bus: add device creation helpers")
+Fixes: c3f55241882b ("i2c: Support dynamic address translation")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/base/auxiliary.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/i2c-atr.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index 810b6105a75d..61b876d90b7f 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -491,8 +491,8 @@ struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
+diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
+index d5aa6738370c..1aeaecacc26c 100644
+--- a/drivers/i2c/i2c-atr.c
++++ b/drivers/i2c/i2c-atr.c
+@@ -240,6 +240,7 @@ i2c_atr_find_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
+ 	struct i2c_atr *atr = chan->atr;
+ 	struct i2c_atr_alias_pair *c2a;
+ 	struct list_head *alias_pairs;
++	bool found = false;
+ 	u16 alias;
  	int ret;
  
- 	auxdev = auxiliary_device_create(dev, modname, devname, platform_data, id);
--	if (IS_ERR(auxdev))
--		return auxdev;
-+	if (!auxdev)
-+		return ERR_PTR(-ENOMEM);
+@@ -258,11 +259,14 @@ i2c_atr_find_mapping_by_addr(struct i2c_atr_chan *chan, u16 addr)
+ 		if (unlikely(list_empty(alias_pairs)))
+ 			return NULL;
  
- 	ret = devm_add_action_or_reset(dev, auxiliary_device_destroy,
- 				       auxdev);
+-		list_for_each_entry_reverse(c2a, alias_pairs, node)
+-			if (!c2a->fixed)
++		list_for_each_entry_reverse(c2a, alias_pairs, node) {
++			if (!c2a->fixed) {
++				found = true;
+ 				break;
++			}
++		}
+ 
+-		if (c2a->fixed)
++		if (!found)
+ 			return NULL;
+ 
+ 		atr->ops->detach_addr(atr, chan->chan_id, c2a->addr);
 -- 
 2.47.2
 
