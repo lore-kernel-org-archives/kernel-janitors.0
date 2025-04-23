@@ -1,69 +1,71 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C645289359
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 08:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9C728A1EF
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 08:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396641; cv=none; b=Ba/pYK4SiDAznmXcSqjI9APK8rkg36kglu3JnjBLBLm8YkCrTb9erPL0PBn6wiO4QTM4/NDuh4BnlUE0IQhYVDIggojeQgOsU78kvBZwE5diaesfXJQfpyOjmzpFTsXvYY4/TqSboNkDnKa/iDfxC5GV01xb7BrlUWddka9ZqAM=
+	t=1745396706; cv=none; b=JPdAPD3G+OlyTPs3TL7EE6ZcXjvlIrkKoNAQlaUxb9E+zqSrbWmo+f0pd+OMwG3IkXJzsL5wR6UclJGqR0dnwV8Y4fEWTjDtaQZFamZizQ+P3QV9oGJIVa67bX6tngw9X92RZRG6gFVrtOJwKuHLbgiRIP1QW4zEjx+DPDzPVO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396641; c=relaxed/simple;
-	bh=9AoM/AIPb3N4elSC5sH2DHMkFgmxak1AJlaKm7usVmc=;
+	s=arc-20240116; t=1745396706; c=relaxed/simple;
+	bh=mgXUK5sj3c48J4YiMVHK3z4CVDEbhjTcZXmPRxa92T8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AjEJODZClq0+Paxldg5KtAFXp+uoW0XfhYVeSSUWA0FbhFVIuEm9dWwOoyxw4f1SSECC0M2qi1yE+gffZu9OfIZG+0aGUvbvnMsSu6gh4dTdIP9kQQPIpv57vuKJJosyRp1J1yWCMm5i1CZ/NOaK/8Kx9H8SbY45HscAwRtIXf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j4NijQWT; arc=none smtp.client-ip=209.85.128.42
+	 Content-Disposition; b=C8BVgdvuMXTu7WcFbc027aN/T03rimMOqmuvyn6nM/jR2SNSs2hDwEuS10WoXjpdNV7jwsHi+a22vjiJXl1I6DOx3v+CQJ/ZXLOxbCL77auc9JfXTl9ZSvBovK53c24sNgLn4jiUGjvRGPdmBZyzqW+mE8afqoadlhp4Pk9dd04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GE5MI48a; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j4NijQWT"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf58eea0fso29233745e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 01:23:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GE5MI48a"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4394a823036so49642505e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 01:25:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745396638; x=1746001438; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1745396702; x=1746001502; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=y01SW2UsKHrmSkBJiFRdXdGr5Bt5eDkwEO8sgbkacPw=;
-        b=j4NijQWT3Gg1tDJocMoFEem4SPvLpQNMi3fnLglvwIhwRm06Ip/qae0ZxWvzzh55Gh
-         EhYRxQzZj90KqHQ4+Ae07w+kCu0BAZEj4+VdXZg35PXNGRzV3miI6t6OIRWnbU+bQkJR
-         ABNtMCpXYSdB6g1bEQdzWBJTbSXW0Q+xtlxCSDaegFVTC+d6rN6N3xopJEBu25/7tveI
-         UMfl4ksJpz5FTbqR9+UfCqTlGh4Oey1A8XHo5/EwBCV3XJ8gLgYwvS0mRs6OfWJUZJei
-         TdfG8elIZnZswCnnVM0OCBXUrxPZCwnLHWHFO8qdoJ+Oe0CqXcMi8tYdW8luSz5OLmSK
-         vhKw==
+        bh=mZ2BajsrO1xtArLAi+wn8MeS8GL5ES9k/0bb/t3RE8U=;
+        b=GE5MI48a5yIvjSRhhHdHCAmI6xFRH0DpJlny4WaHda8yUi9QAKaAGi2zWMZIzOiOCT
+         nTrgJjZCXkbIfjJIWRg4wSubem3KsHSU9fnfm5ywBWJXdpHS+DR9FFFKk6OLbYc4nb8x
+         tWmTGrdL+a++spLgrTU1Kv+i/yiAR2OlyQ72PV9uVdBtYDqkwP4cNPoYlCUTChl80PgI
+         y+mWupJdUY2mL4u4gUhvvLABPPvEQIedRY93ZK5Behxv/Ea/SkCL6CIKSPMlYwtY+f+7
+         iCnw9KQ6NTOVvbF6+AEehMnl2N2sf9SWhoSExbIS2wPulcYXVIb2ZjoU+Zu8LeyMJVzy
+         CiIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745396638; x=1746001438;
+        d=1e100.net; s=20230601; t=1745396702; x=1746001502;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y01SW2UsKHrmSkBJiFRdXdGr5Bt5eDkwEO8sgbkacPw=;
-        b=oXd6U7V/XTloO4sWQwlVTd5nOqDQdzv/NjpVwRsnoSpJepE7JrLeA82K1vB2eQY+0t
-         DQAsfQjKuaUf3tJZQD/PAf3JKCdRwc0uh1maApSBNQeDfCKAdkFyYC0CLFDUOShYLwX1
-         Mjny8+NHZhb8Q11S4N9/vXZZQLAJ6fYpQVWRVLcwR7Mj6UcKUKIeccOkQg25KDqT1pJN
-         iwNONXRDrU2pmBLjyFsTQ76gzFwixsXpuvZVSFEGo69A/fIQKWjlA0kxyoaTioUGM0rT
-         1nEVOw1aMS3DgUjnJRh05kT4eazU/3LbdNYfzeDiGrCL6hlb+KnyeJBR/IHSWOQJKpyU
-         +E0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVaZZUP3bV6OSFgzCKeQcwrRngwv/uZDQb31uQ1saK8zQVLLEuqmhCj5YEPh5yae/O1vjF47c4gpgIzomqpuFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDWoxW93Dq5CwopKWD3NSq1ghPW/XrO3yxQc38pGjaK2oA7oEA
-	pwH7/wGK1HmApd35bBDz0JKxQRsziKUKTqkU9wLjCpLJncAP+4WqWQG9SSRXckw=
-X-Gm-Gg: ASbGnctfYLd25jOXMlYKJUVHd/VLZV6OygfRqaVC03iTXRO6rD5rluMP13FBsr3S6aZ
-	siyCOrEP9Hgs3n7nn1FiknghtH2PmglU6JFkyQw+Ku/O7BDcn9zex3GAaJQ6MI6t3+8igWeZO/E
-	lXMFV2zkEwnCKKqlPYUDwZ3BizhWYwuZa8aegGCgQdEszm3weFU0X1iZYvOtA6TjCJbAH8L3xFP
-	ywudsDx1IzpDRCRQ+oxirIA7gRVz3LG/VRrflwyqnfV/yLkPMpy7Jl1fCpYmoZew/sei6CgX0NJ
-	4I341Q69xYc/kirpaG49fTBHxcNY4TdOGZTBGMRtnsDcFbcfQHUgtH2u
-X-Google-Smtp-Source: AGHT+IECPr27/stUCSI1PWk+UsjbUIKYWkA1fnIwKTwVRmawMohMG5diVeFjOVyCEZb5VbXMG1aMDA==
-X-Received: by 2002:a05:600c:4e52:b0:43c:e6d1:efe7 with SMTP id 5b1f17b1804b1-4408efbaebemr33514505e9.26.1745396637683;
-        Wed, 23 Apr 2025 01:23:57 -0700 (PDT)
+        bh=mZ2BajsrO1xtArLAi+wn8MeS8GL5ES9k/0bb/t3RE8U=;
+        b=rbGG8dar8irmS+cs3OMI0FD0SCXyzrrzFtJi8EGFgEYMf0U4SNoR5MK3VUrMIrR1mT
+         IV1LbJS15KUdPGmZIMgPnNKC/EHnvczaOl4BKoNl5zEQJCnI142+GNypQmsVESKiJwHl
+         7VGcFxoFTrqg64I/08roF7Ypb98HkAAVqPHvKtaiVFunelcA85NKoX+LXJu2WoDC7AHF
+         ygIpNquRVSckrcVvonfU9+thjmpB2eBVWLiT8RXoQs6Nsh/5BOLi8oMv5mwm+7HXe8L9
+         phTB7hntGTof/tV4uZRXMwqRLGAbbA5jqbOkzxan8pgbB6iG+ojiZV+NfhOtm5jj8qfE
+         Ybzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUOeMOo69nTnb1rhaTgDvafVLApkCQRHDft9k4qa8ZIU4bJkiO/yaK9SlD5VeGqPi84/W97Bj/0KiWAek+Hu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkIs/RXQXEiKEc9XtAqxV6fdV3tb50biD+q7JGG+7Dq5QYz3UG
+	5v8HhB71n6aoD20SnSmvK6ITBbb/ztTnLFuuywgaofQaUJ6kcUiZH6hnX8+NAVQ=
+X-Gm-Gg: ASbGncvf3uwnjhuDffZ69jeJsRjNLvP1N7aXUYCK9KBMz/ZUVcScPfo/4LTo+zruL4a
+	9SAPRmqUm7gijOl7vNhZ+ZsMcroWzni/4STLU2oiHuYAloGm2gJWGXiKmU4vFYvsByI5cjz04AS
+	dQDOkWfeC7KQLinYjcaNVduY22LCsGIF31Xka8p6FcQFimH3OV7ExCcc1JxTwt1SGX7x49wkDZ4
+	XDQ27bXMoxfdx9HcSU664QyCd65jGWJA/rdQavlw8omDIRmPVu6PaZ60xbFvCiDZjR1WWYWNl/m
+	S05K0XZJ47seQQWsUafWdOp5qYAMBgli+naJ7tNRkeQiww==
+X-Google-Smtp-Source: AGHT+IEOsr2GYu8CB0C6z+X52cXEurZZkRfa4SYjeQ2F18Db0W+Om64FqFyMx1yp67irQ95BN9CpFw==
+X-Received: by 2002:a05:600c:a009:b0:439:9b2a:1b2f with SMTP id 5b1f17b1804b1-4406ab8144bmr182156015e9.3.1745396702371;
+        Wed, 23 Apr 2025 01:25:02 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092b0a52asm17463555e9.0.2025.04.23.01.23.56
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39f069df9fcsm12706005f8f.16.2025.04.23.01.25.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 01:23:57 -0700 (PDT)
-Date: Wed, 23 Apr 2025 11:23:53 +0300
+        Wed, 23 Apr 2025 01:25:02 -0700 (PDT)
+Date: Wed, 23 Apr 2025 11:24:58 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Honggyu Kim <honggyu.kim@sk.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>,
+	Gregory Price <gourry@gourry.net>, linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] usb: dwc3: qcom: Fix error handling in probe
-Message-ID: <aAijmfAph0FlTqg6@stanley.mountain>
+Subject: [PATCH next] mm/mempolicy: Fix error code in sysfs_wi_node_add()
+Message-ID: <aAij2oUCP1zmcoPv@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,42 +76,36 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There are two issues:
-1) Return -EINVAL if platform_get_resource() fails.  Don't return
-   success.
-2) The devm_ioremap() function doesn't return error pointers, it returns
-   NULL.  Update the check.
+Return -EEXIST if the node already exists.  Don't return success.
 
-Fixes: 1881a32fe14d ("usb: dwc3: qcom: Transition to flattened model")
+Fixes: 1bf270ac1b0a ("mm/mempolicy: support memory hotplug in weighted interleave")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/usb/dwc3/dwc3-qcom.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Potentially returning success was intentional?  This is from static
+analysis and I can't be totally sure.
 
-diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-index d512002e1e88..b63fcaf823aa 100644
---- a/drivers/usb/dwc3/dwc3-qcom.c
-+++ b/drivers/usb/dwc3/dwc3-qcom.c
-@@ -740,15 +740,17 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
- 	}
+ mm/mempolicy.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index f43951668c41..0538a994440a 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -3539,7 +3539,7 @@ static const struct kobj_type wi_ktype = {
  
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!r)
-+	if (!r) {
-+		ret = -EINVAL;
- 		goto clk_disable;
-+	}
- 	res = *r;
- 	res.end = res.start + SDM845_QSCRATCH_BASE_OFFSET;
+ static int sysfs_wi_node_add(int nid)
+ {
+-	int ret = 0;
++	int ret;
+ 	char *name;
+ 	struct iw_node_attr *new_attr;
  
- 	qcom->qscratch_base = devm_ioremap(dev, res.end, SDM845_QSCRATCH_SIZE);
--	if (IS_ERR(qcom->qscratch_base)) {
--		dev_err(dev, "failed to map qscratch region: %pe\n", qcom->qscratch_base);
--		ret = PTR_ERR(qcom->qscratch_base);
-+	if (!qcom->qscratch_base) {
-+		dev_err(dev, "failed to map qscratch region\n");
-+		ret = -ENOMEM;
- 		goto clk_disable;
+@@ -3569,6 +3569,7 @@ static int sysfs_wi_node_add(int nid)
+ 	if (wi_group->nattrs[nid]) {
+ 		mutex_unlock(&wi_group->kobj_lock);
+ 		pr_info("node%d already exists\n", nid);
++		ret = -EEXIST;
+ 		goto out;
  	}
  
 -- 
