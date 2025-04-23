@@ -1,97 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F2419AD8B;
-	Wed, 23 Apr 2025 12:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA29C2701B7;
+	Wed, 23 Apr 2025 13:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745412073; cv=none; b=REwxqBWcyayAsimcgGxXdw3JVW9fXAcuQqMzTmDNaDZQrx/JXdkd/4aUJzT/AAf3MgYdg/rG5qfpm6fUbsOpSw637s8tSbYB7TJeFLqKbB4e/tP+/nLcmYrx7vxy9JGyZ06DPj1W8rKHeBd8iiE4JO1XMnud2i4rdPo6Ce+RndQ=
+	t=1745413549; cv=none; b=OjYdPBG71aBM7+Iou7HYf9YuSWC/BTQVAnsSho3TVHq+jWfGuU+YMjhkoDasXCuGiBKwtYLHs4BQu6IeEOKPjfWPDmf2nwa0S/2kJoaD7dBd1iWhQ9sMNfEyJkdoJ7+HCihqFlNdxKUnedNu2lhC/s6ZCxjCzxHFm9sPRtPc244=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745412073; c=relaxed/simple;
-	bh=vuPHSXDYGJIDkCqEVb7xzubmHAFjmIAu6deVCTDXe5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zt/mBxGeStUmVYx1lXlNMam3e6mjsqs7n1w2wOm/ZYaJ2HE4dNBk8hsaBSvzgAJOP0RuswKuniRsaHLL9iXpVOs1nbjLXnyBiy5Z1X6uPzZr4t6C9LjCvX8jdAdT/p19OzcFLRsvHmrcDDmS7Ek4QDOZ17WwFbPfrIXT6UdkCs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDH4MpuZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745413549; c=relaxed/simple;
+	bh=RcgQTUHQ+Pl7003DZJD+mnP7u8UiOqqBTHs7cX83a+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eojc8d+Bqq9/HmgxnuEHVqZSYUyAIaFfHe3+K5/auwXDBbsmmAlggc7CD1CcMI3zJ9wboFCF1JoSrd6ZSKMudADZa8kscPs5QW53Le01b81XL/1Be+Uu2z/zzYDQgs49KcowRCickJmFbKnM89HuoKASoOLeSk7TtNsXD63+PxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DHBv1N3y; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDH4MpuZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0FC1C4CEE2;
-	Wed, 23 Apr 2025 12:41:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745412072;
-	bh=vuPHSXDYGJIDkCqEVb7xzubmHAFjmIAu6deVCTDXe5k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SDH4MpuZmgQybX1eY37H/yKYnZhDg6DAis3McprvezR9yjHdpSgM2sn1I2aE9x1AB
-	 xIGpL0+YBtK5II54K4yMp6WWpNcX7HxtM0+FHw4xhtzqVF22nFmM0ZOCQffQ9ZvIIW
-	 zlrtKxncSH83B/Y3id0o3PCZ7zXwDPhkv7LnjhtVfncL3y1c3h/j6rCosB5gqlu2Au
-	 Jpxy+N29g3AE6P+Sl9Nh6Sohr9boBRizf1CkAHWtFKCe+hiBmTV/vlTn3iZhmWyusC
-	 Sa4RlgUGvnkE/aLBq2ArHOWsV8fYIV6i1BWi5hQeY2olu0dwCtQLZ07TgMimOk7SJr
-	 72ekoDy3dr1Bw==
-Date: Wed, 23 Apr 2025 07:41:10 -0500
-From: Bjorn Andersson <andersson@kernel.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DHBv1N3y"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 40DEE1FCEC;
+	Wed, 23 Apr 2025 13:05:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745413544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a7aC+Unu0bxBebacdFme4H9z3bxAWup925qXizcBc+k=;
+	b=DHBv1N3yynrOyPyxrdijD6lEG1jabNBCfFJU4BIgfUXE2lcqDbbbEf1zhdtrjQ7iSYLKUs
+	QgylcTwkSmf4QM/jgukMBqr42/AjKMF5ILXOwhCjuhQVCuhilO/d8bJjaQPoIFLdRDF0oj
+	93ycOniN6NhTkyE/SQIJVQIjzrNQkVz1hVypI6RNO15LrCECnZJVGMESv/OjBYrn65Isa1
+	/wdWGDgg/QUVgQslGxI+kCASASTjZkSns3AK2jXKVA3w/R6tizYk46Pm6QaF7ovP0d8FvC
+	Hp0RTR/AaLCRZ5YztZi4tyVGUD3eQ3dGqSWu//W7AiN8G8YhXlbTd6l/rhKXYQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] usb: dwc3: qcom: Fix error handling in probe
-Message-ID: <al4hz5pukil2mc263cyzq5atm4gdjn6v2kdanayhd7edfueidu@obr7h7365w2w>
-References: <aAijmfAph0FlTqg6@stanley.mountain>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
+Date: Wed, 23 Apr 2025 15:05:38 +0200
+Message-ID: <1923319.16XuQ88jBL@fw-rgant>
+In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
+References: <aAijRtGLzKLdwP0-@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAijmfAph0FlTqg6@stanley.mountain>
+Content-Type: multipart/signed; boundary="nextPart3153738.SdYAi8KGqb";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeeiieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeikeekffdvuefgkeejgeefhfdvteeuhfdtleeiudehieeludelvdetleeggfffffenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrn
+ hhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtoheprghnughirdhshhihthhisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Wed, Apr 23, 2025 at 11:23:53AM +0300, Dan Carpenter wrote:
-> There are two issues:
-> 1) Return -EINVAL if platform_get_resource() fails.  Don't return
->    success.
-> 2) The devm_ioremap() function doesn't return error pointers, it returns
->    NULL.  Update the check.
+--nextPart3153738.SdYAi8KGqb
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
+Date: Wed, 23 Apr 2025 15:05:38 +0200
+Message-ID: <1923319.16XuQ88jBL@fw-rgant>
+In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
+References: <aAijRtGLzKLdwP0-@stanley.mountain>
+MIME-Version: 1.0
+
+On Wednesday, 23 April 2025 10:22:30 CEST Dan Carpenter wrote:
+> The "port_id" is used as an array index into the struct fpc202_priv
+> priv->addr_caches[] array in fpc202_write_dev_addr().  It's a 2 by 2
+> array so if "port_id" is FPC202_NUM_PORTS (2) then it's one element
+> out of bounds.  Change the > to >= to fix this bug.
 > 
-> Fixes: 1881a32fe14d ("usb: dwc3: qcom: Transition to flattened model")
+> Fixes: 1e5c9b1efa1c ("misc: add FPC202 dual port controller driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-
-Regards,
-Bjorn
-
 > ---
->  drivers/usb/dwc3/dwc3-qcom.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>  drivers/misc/ti_fpc202.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-> index d512002e1e88..b63fcaf823aa 100644
-> --- a/drivers/usb/dwc3/dwc3-qcom.c
-> +++ b/drivers/usb/dwc3/dwc3-qcom.c
-> @@ -740,15 +740,17 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
->  	}
->  
->  	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!r)
-> +	if (!r) {
-> +		ret = -EINVAL;
->  		goto clk_disable;
-> +	}
->  	res = *r;
->  	res.end = res.start + SDM845_QSCRATCH_BASE_OFFSET;
->  
->  	qcom->qscratch_base = devm_ioremap(dev, res.end, SDM845_QSCRATCH_SIZE);
-> -	if (IS_ERR(qcom->qscratch_base)) {
-> -		dev_err(dev, "failed to map qscratch region: %pe\n", qcom->qscratch_base);
-> -		ret = PTR_ERR(qcom->qscratch_base);
-> +	if (!qcom->qscratch_base) {
-> +		dev_err(dev, "failed to map qscratch region\n");
-> +		ret = -ENOMEM;
->  		goto clk_disable;
->  	}
->  
-> -- 
-> 2.47.2
+> diff --git a/drivers/misc/ti_fpc202.c b/drivers/misc/ti_fpc202.c
+> index b9c9ee4bfc4e..4e1871870769 100644
+> --- a/drivers/misc/ti_fpc202.c
+> +++ b/drivers/misc/ti_fpc202.c
+> @@ -370,7 +370,7 @@ static int fpc202_probe(struct i2c_client *client)
+>  			goto unregister_chans;
+>  		}
 > 
-> 
+> -		if (port_id > FPC202_NUM_PORTS) {
+> +		if (port_id >= FPC202_NUM_PORTS) {
+>  			dev_err(dev, "port ID %d is out of range!\n", port_id);
+>  			ret = -EINVAL;
+>  			goto unregister_chans;
+
+Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+
+--nextPart3153738.SdYAi8KGqb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmgI5aIACgkQ3R9U/FLj
+287sTRAAhGdCDX6fkbP3CN7e8zSAnAe60jWHF4tgsI/gul+Oq84ouZ1RpameFWPj
+bXrNk+5u/PgbIqYydcshqRgGwlKVgYMi4B8qEyvemETp1p/i3ClXhxm8w1JML/Fb
+rzJkrY/oRVKimTIXGv9k3RmeEkubGeYgGpNZ2LUBCsPiSMjkmk8WNnwTtCbUh9XM
+Qsskh5W8TWtswRc+RB16xHTzr11BM3EI19uPxnfPRJsTb+rVwAn0wktkTf7G5WYb
+2nKJ7Rp9ji93xet5Bgu2ZL3owyE3zn8qdZOiz7vWDvJMSFZV+tz9Z84abU4EZqf+
+KINf2mhNH7Fftp9wY7ZO2eTG4DOt25Ua6UXEbvIFc31Tiwwpv7xyX8orFpU79+IV
+7lpOdbR5n6R5nnn54kjbi+37Ws4lFUcn9GAVxUeNlR3SHFriWKmMtG9LhtonFtgM
+JEA3GQowSUgW3CF+XmAwgXrOwh0WCMNm/OUtb/jEtO+EmRxLbh6EXto9hTl4U/SR
+ffLA0ZS2wMlMIMDqrP/aFGIuSbzAxMjZfB1kKaBh/DvmHZ4W54E7J+wdBGWfy/mh
+fhRCuo0ykjh7kyBvfs0KNv+iq6PEAxj03bO/TYbU0XR8gwOY/dLCUjk7UHuBsy+Z
+QE76BPu4TRTUtGjQ3Zyd+siKVItB+FBDNy2pjy/KnEPpkiZMoOY=
+=u/4n
+-----END PGP SIGNATURE-----
+
+--nextPart3153738.SdYAi8KGqb--
+
+
+
