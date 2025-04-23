@@ -1,142 +1,98 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626322749DE
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 08:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB2726D4F6;
+	Wed, 23 Apr 2025 08:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396752; cv=none; b=SX6jAeMUMBRh9DeAPD0ZMwbi2h/qS8CANYjKtw+TdY71uzQqGIRLnpLiHiI4+f+PzE7cwU/xAA77+sEtPpAh7XJHTW0zAtBGf90f4qStOG9kqePzmaqGAYG2E9LbE4KGEjrPYPRcuzF3yuwBdAJ+CvorYimTkWngG3wMmLZDJaU=
+	t=1745397322; cv=none; b=sISeXJgiG6zr6tZwqAdvh7/bCx25wcQwLtTjD+xKSgM9gtwD3AXgtF0KXMVcky68VfNN2MdkM2fSDBXOId1011hm7jSHUG8bWUf+fdBLMnHaMC2hgP/MmLoxOjSykmRSVAz3aMIk4WXAjOCI2HbAhz1Ok+BvC/TRFyJl6J+0Umo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396752; c=relaxed/simple;
-	bh=wQUGCqIwRiCAJNXe0S9/0jDLS0hUb0JxM7vV3/rRgZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=I16sathtDmXNTQNY0uTKF5LIURZYNrQm5tnC024fITXBngMDPDRzTzKowsR4+lqOzb6FlyG0N78mRBKUUQKDPZbx0KcQ9RtWOVfhBujo97QMC7uGalRGmFLgN49SLMRkLAi6NzfdYcZeXxFL1oJgluAGrIPSZDrev9ZrozlU/PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BAsvJnjw; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745397322; c=relaxed/simple;
+	bh=BZSLijxSXMIiXrMszqB3BP92kAcntEir0dS6YlGxXnk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IOjDzryE9CAlf9CQMY1C+6ccpLS1X4Qi47b5AE3jDqicJc51o0U3Cin2EZ+GLC1QbNkHLq+yH52xGgIVpnHAKf8raU3ctl7ZCbKuv+B8rkk3an9xQredbk5oAtgzWywN+ozICwhQF/YU1YAOKNvQbITHLO0rBgZiBpoKSLkoyxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hT9a5pGD; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BAsvJnjw"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so29548965e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 01:25:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hT9a5pGD"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c31e4c3e5so4191001f8f.0;
+        Wed, 23 Apr 2025 01:35:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745396749; x=1746001549; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cumGuXXvzB6S1IWSanPpei3FWjhooa/wauPws9AXZMY=;
-        b=BAsvJnjwzoAkxcuLXHA1BM0GCT/wHzvjFhm8BZeZ/YQzJMPaMBFFDQbnHVFb78dyHR
-         CUhalt6fOqeehz5J1vIvEtvGbaurhcd958BHjTRaX32stVNFggwVrm7RX0tba6Z4DyJm
-         5p6coI2CS4uN06MHhi/60r9Imerhsexv3HxvinrgcxnPbDqpVyeBEVEkgNEd0O7O7z6f
-         lwPzdMVRCTqh8Uo8P5JHkM+1aXxwHYI+cUdJKnZSmHXeFE+gZwDgDtw4o5wM3E9jIQ6x
-         wh9V+tC6E26Q+fxEW1UzAPQxjmDUf5+lZdOw7zuMqtzG+B4IuQ4z3LhwCN2Qniyq/IAk
-         1uPQ==
+        d=gmail.com; s=20230601; t=1745397319; x=1746002119; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MsqunO9lss/uBzeiIi4q3QDIiMQHRXAesVvljbjm2ZY=;
+        b=hT9a5pGDmKHJ3LB/pYIbp31pmxgbdYvmxkrxlHunRsVyQmyyascqRwapaYXiEJ3+le
+         fxON6MrJAMb1sbD4mR9A+MerAIdjotwQrUiRI4DO1fGu5YuYMpmuJ5LBbxe6R9fA9b2z
+         JLJdITa1AVmbShhz2tPh3EB0fPQmnxIthd4eoMrnIHlgYztkSGqR65XGxRG6Pryil8vQ
+         eOtIDpKfvw4JeA4a8wI0Ddl0qKSY+68jy8cxU7nPOG2fPAdhEzXpy6F2x8ok5tYZpOYK
+         S245A2FxvJOHQKHQ7buSzYNhAAfPUhgB2B2bshTM97T9VZ0pGSi64Je70NQZVK5Gdpg1
+         5O+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745396749; x=1746001549;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cumGuXXvzB6S1IWSanPpei3FWjhooa/wauPws9AXZMY=;
-        b=v0djt0Om7cQDWpQwmbiG5HXV9ZD1t12yqrppEk1GMne5YiJkWcrEjTyw87gVS0QKRr
-         zNYvLrf3gWtmqOi1wCv4WyYs66Mq6RTdnK+AirmBJzF4x8OCMob7i6CU23u+jvmuxLqm
-         wDlIJ2nlB8sd2pIGWCTtToZI+Y5CpCN2k5wYjdrvyqA2qCYK4sbq3eLXLgyPqDIUzWuX
-         Jq6WyhmaXXYYI2Bcr9RKY7cwsNSKtUuIJJyaDM5D6TXwxD+3IjfdoCZJB2O/uh096ItD
-         nkL6c7St0dlfMY2u8PvHN9sL/gsljlQH4BJ0cbPAUPQwtJbvKrEF0EqGdC9yqduftkhq
-         W1IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeGFqQUaDQTiUfh5vPWXizl3OIM7aVGOs//aKMt9ccVDwd0VMfvyaWhvbgFOb0NFfy27nKxvh6qCWVpcqTkho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSsQVcbER6ovxB26uxZkxnRMsMiZU8PeVn0wN1tMsTMjMrM251
-	k/RSGFn2516zqX0osEdd7N9H/bcQXgdZiIUfLvleLRgV3PWTQPXCnqAHa7DrlAw=
-X-Gm-Gg: ASbGnctd83XFRLc2p8IN0eChWE2oiMcfz9Ja2TG2rxjNP1q8Z5v1fQEcjVlMzgwOm39
-	oU4VpW1NZo3m0dO3ULRm+BmRHE03ffdGeHJjU/NH0j3XYoASVl5rdqEmeexSP6AIvgqqUyZDejO
-	ckF9/6O7l0ifhSdhw4ziCVhOtT+Uip2nTfEk3ISjNHLXqZqCPERDP/ahZwYbAr6hXrtNJsNy1c2
-	zMEYIJ6aZz835WwFP4a0h5ZVm8rSwsMFW+GRt8WRjP+mmeCXgRUq5dWczWQ8R5cQRWVvnCEIQ5S
-	hQIVaRhqQes0JQx3qZFOWJCn3lFWgrw0QuITIbnNQmj2EQ==
-X-Google-Smtp-Source: AGHT+IFpRv76nP4pFCeRNrK8Buzz7/miJML9dPdQu84BHUP/kQP8XSQQSLgAkC4W9foMctxFScbIbQ==
-X-Received: by 2002:a05:600c:3c9d:b0:43c:f8fc:f69a with SMTP id 5b1f17b1804b1-4406ab676fdmr165779985e9.4.1745396748678;
-        Wed, 23 Apr 2025 01:25:48 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-44092d179cfsm17268355e9.4.2025.04.23.01.25.47
+        d=1e100.net; s=20230601; t=1745397319; x=1746002119;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MsqunO9lss/uBzeiIi4q3QDIiMQHRXAesVvljbjm2ZY=;
+        b=oevYDj14rZsysqKNKG2vPuIbU4XsbmHKLw/7zrl6uxBGA2AuhXL5uCONZtRgJ9qFOu
+         N+ZpfAuQB9lBvkbsIqZLTUExWO/sN3Z8c4x3nRNzYFwDHyh5drmCvpfgy73Qg/8SPESx
+         sCU7B2AncxErC/rE1sV0HL2BmbZYYypc1TRnNcmBD76plgh+ZrOp12CZiINWKmSUnmS4
+         h5ol4SLZIYluQTTf8DFIhAMkFsGuwmPcj+51DHny0D7vQjr00s+NR/486VpObTQJIN9l
+         /dZXWoRtNsYFscgbWxg9x3T29liqoCH8pB/bWRUK6AVTxdjgRq3MXSeeQA8nlpVD6h6X
+         rGmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTsCjA+IZL0UiTqozXwGVXSJnuUgg7etdTJYoiU6iMYlgf/fQzeaBCpgaWegDrnYIthoLYLax+sDfuKPs=@vger.kernel.org, AJvYcCVD1wjv6yAvGITN359Ov1y4Tayzl3ZOrVXoAJYOwla+DSrn+kHdMGhx4NiwINxE9d4rEKUmprnOLDTR5wwirW65@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlcItChbbWd3UGrQ4rJtBYsu+VQGWsdsL2yfxDjcgFYOKLfBQx
+	1H6/uS9nzSXnjZl6RayO7MPDEpznbWBG5g7EjgJgn2chpDt8ME/2
+X-Gm-Gg: ASbGncssUBPrmlTpwKZ3K7p63lP7BkWKdy1Eukr7KiyRJwjFs1W0WKy9GgpSEDv+oed
+	fqtqwGi0Ec0pkK8htvrIR6EM3FPo1Eg8L//o2jPMY69rDqH+LeHkFS0rbic4S8qQgLXIXmzbJtM
+	vbR3MVSx+welrApXV7b0Nevnw0M3fTnMNnjgQAI0+b0ntoHM8/FQN/cQ/mXTpnpsE9OzseMks5A
+	GCfuzKjMAzcHLQzcoOtF35Vh1Ux71JVLk1UKxkDzuX0nFRrrvaptAFkwCVgBL78ckRwDuUfkDSv
+	hdkRurCbMX+ITeACpy0t6oQJAaKxcW+p9vegaGQboyfBioacVJ7s
+X-Google-Smtp-Source: AGHT+IHq+qc9wzwJk0+h6l/1r7L8EKtIf1dbPpgU53Uopd7ij6Jpyj36OOnzVIYCr9XQy8gtMHHv3w==
+X-Received: by 2002:a05:6000:184c:b0:38f:4d40:358 with SMTP id ffacd0b85a97d-39efba39a4amr12792668f8f.9.1745397318513;
+        Wed, 23 Apr 2025 01:35:18 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa4a517dsm17742256f8f.100.2025.04.23.01.35.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 01:25:48 -0700 (PDT)
-Date: Wed, 23 Apr 2025 11:25:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Marc Dionne <marc.dionne@auristor.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] rxrpc: rxgk: Fix some reference count leaks
-Message-ID: <aAikCbsnnzYtVmIA@stanley.mountain>
+        Wed, 23 Apr 2025 01:35:18 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/perf_events: Fix spelling mistake "sycnhronize" -> "synchronize"
+Date: Wed, 23 Apr 2025 09:35:11 +0100
+Message-ID: <20250423083511.139896-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-These paths should call rxgk_put(gk) but they don't.  In the
-rxgk_construct_response() function the "goto error;" will free the
-"response" skb as well calling rxgk_put() so that's a bonus.
+There is a spelling mistake in an error message. Fix it.
 
-Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- net/rxrpc/rxgk.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ tools/testing/selftests/perf_events/watermark_signal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/rxrpc/rxgk.c b/net/rxrpc/rxgk.c
-index ba8bc201b8d3..1e19c605bcc8 100644
---- a/net/rxrpc/rxgk.c
-+++ b/net/rxrpc/rxgk.c
-@@ -440,8 +440,10 @@ static int rxgk_secure_packet(struct rxrpc_call *call, struct rxrpc_txbuf *txb)
- 		return PTR_ERR(gk) == -ESTALE ? -EKEYREJECTED : PTR_ERR(gk);
- 
- 	ret = key_validate(call->conn->key);
--	if (ret < 0)
-+	if (ret < 0) {
-+		rxgk_put(gk);
- 		return ret;
-+	}
- 
- 	call->security_enctype = gk->krb5->etype;
- 	txb->cksum = htons(gk->key_number);
-@@ -483,7 +485,7 @@ static int rxgk_verify_packet_integrity(struct rxrpc_call *call,
- 
- 	hdr = kzalloc(sizeof(*hdr), GFP_NOFS);
- 	if (!hdr)
--		return -ENOMEM;
-+		goto put_gk;
- 
- 	hdr->epoch	= htonl(call->conn->proto.epoch);
- 	hdr->cid	= htonl(call->cid);
-@@ -505,6 +507,7 @@ static int rxgk_verify_packet_integrity(struct rxrpc_call *call,
- 		sp->len = len;
- 	}
- 
-+put_gk:
- 	rxgk_put(gk);
- 	_leave(" = %d", ret);
- 	return ret;
-@@ -594,6 +597,7 @@ static int rxgk_verify_packet(struct rxrpc_call *call, struct sk_buff *skb)
- 	call->security_enctype = gk->krb5->etype;
- 	switch (call->conn->security_level) {
- 	case RXRPC_SECURITY_PLAIN:
-+		rxgk_put(gk);
- 		return 0;
- 	case RXRPC_SECURITY_AUTH:
- 		return rxgk_verify_packet_integrity(call, gk, skb);
-@@ -969,7 +973,7 @@ static int rxgk_construct_response(struct rxrpc_connection *conn,
- 
- 	ret = rxgk_pad_out(response, authx_len, authx_offset + authx_len);
- 	if (ret < 0)
--		return ret;
-+		goto error;
- 	len = authx_offset + authx_len + ret;
- 
- 	if (len != response->len) {
+diff --git a/tools/testing/selftests/perf_events/watermark_signal.c b/tools/testing/selftests/perf_events/watermark_signal.c
+index 49dc1e831174..e03fe1b9bba2 100644
+--- a/tools/testing/selftests/perf_events/watermark_signal.c
++++ b/tools/testing/selftests/perf_events/watermark_signal.c
+@@ -75,7 +75,7 @@ TEST(watermark_signal)
+ 	if (waitpid(child, &child_status, WSTOPPED) != child ||
+ 	    !(WIFSTOPPED(child_status) && WSTOPSIG(child_status) == SIGSTOP)) {
+ 		fprintf(stderr,
+-			"failed to sycnhronize with child errno=%d status=%x\n",
++			"failed to synchronize with child errno=%d status=%x\n",
+ 			errno,
+ 			child_status);
+ 		goto cleanup;
 -- 
-2.47.2
+2.49.0
 
