@@ -1,116 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689FBEEAB;
-	Wed, 23 Apr 2025 16:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CC428467D
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 16:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745426034; cv=none; b=CWusHeHQ/yWh3gyrT0afk4Jdg5HzxDsp4GIwaMIgiHH3grL8rkOxOa4tD9SYzeAj0iFCCcjbjN4qPOCHBqZjTJdFtkSBo5T+yBOYu6wFCGwCbZ+WJolZhtFgOmLx4nwXFqgciHBgj9u3yNONgw6XSTNmnc4mlrj4TPeGsSIPxz4=
+	t=1745426036; cv=none; b=Kzxan/sJpRbP5rPpbLrJKCS8eX8lt3YETVHJ2+ygvRl09IY8yxHtqPewpVm3/2432V3rVSUjYD37RNo2hL1/I/ZcUc5OFff+i5yCcyc+HMGyzr+UirBAB6aIEDYr+zjpXP+gHJQeR/Nbez2QbXAp5tF9HEiKKBSAWS2+OSaK6Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745426034; c=relaxed/simple;
-	bh=hOyUu0pImrYreJA4V4WZnnkWM6YpzzOiZblnlSREHVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gDsne3mEFu9I3IZz4JStbnvJb5eI6KiYSznYsNeyFkEqq4qlbHG/dSGQnted3soog+H1Nhc2sy8sZpbZjOmBrz+t5mV0NPcq5ShJzLeuFA7cBMkNSJxi6t3i8EOigrqKb6ElQc22RqLfyiBFP/ElAOJB6GoiYaNZQlIKonySMyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cv4HlPyR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745426036; c=relaxed/simple;
+	bh=gLkrQieopHW+FJ7kdxKuJoCxNzN9q1pf7XZqJP/rXJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dR8LI5um7OMGzZlKqXscRhvZm9Bc5j6G2ZYyEQ7NcZbYGBjskvVVhiLgduVEtq0vm44VywsdTljFmcf0w6VzAuSM9bho9KedxvPTgVKoIL8gVntqrSJFOEnIJjZGyAK0xozVlrdYXGDuHBv3MUJE0ShTHHVG7LkHdyIpOp6qZQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Q8Y4OnPV; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cv4HlPyR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E997C4CEE2;
-	Wed, 23 Apr 2025 16:33:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745426033;
-	bh=hOyUu0pImrYreJA4V4WZnnkWM6YpzzOiZblnlSREHVo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cv4HlPyRr3sTKmq/NqoIDVmRJhecyaGyqg/TW7+zcFXNMJp73s2y9HE9nJrxn9kiS
-	 tNrpF1bVfnnJRhW7XejEVfjiXkNLxwDpznGtsHtRXJxI7r9BH0vPo2BV9Th0bH3ewy
-	 3Vamoa95BGd+A17FxlSZMLg0EA8O6COhw6Mgz3ICs68BGa+kTuM2u1KlsRkiv6tI9e
-	 /F5idRG2nBqU5wbfRg3ZDgkZsZ97Z/+YJ3zmABI8FU7yNO0O1qa6xqhG1yHYQH3V6t
-	 xOhtnSU2Xu9M8z2/xWdGLzLz2wjzZd/Dc1JOqnm5vT50PK9dY5c9ozP2OiMKcmm5Au
-	 5OFqrPRns7xDA==
-Message-ID: <6af9145e-2682-43d6-8315-223c26c69e18@kernel.org>
-Date: Wed, 23 Apr 2025 18:33:49 +0200
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Q8Y4OnPV"
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c5f720c717so138292085a.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 09:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1745426033; x=1746030833; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bCNtGsQ5GiTaIBuJArPjLavQ92rjl64A1xom0cF912I=;
+        b=Q8Y4OnPVmQzjpEF1Wfu2y72HlfSp8TpnmhHxWrLTRVWpfuUdlcAK0O1vuiZMxrLjkg
+         4I/iX/pNpYQuU9Y0UxbEnIT+bDpEOQVvxd3seS7JjKzrsjMbrrhpRam4Wic3wgyUOGik
+         mk+T+4OjRoPFUrSeK7xErD8qVuTqZwFRcs13vcRL3J9hU0wbIvUHpGbxJbLcmb1ZY9Ss
+         43hG2ssunwGao8LN70up8rRK5KC2FAVPWELeFF1E6rDph9FIzeV+BTOXjNwXl4rLOk6D
+         l99Rw6XNT35qVAhaA9JZidbg/uN97nspYhhZExklyDeVoEVoUsRc/kO76TP419adZc5+
+         13gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745426033; x=1746030833;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bCNtGsQ5GiTaIBuJArPjLavQ92rjl64A1xom0cF912I=;
+        b=HOwJiho46pCoy53gxXqxV0YmLuGvWeZHg4PtdYyZVm7Md/kobJJ8K+o0F11uZ2GrEA
+         T3c2K5sy+uE+CNYbPv/f1MlbhVj2i1uyWSATHgmwdXHtul0u6V75e7qB3qbaF50IUjIp
+         eK3pyZlh0Et2S4n9h4ZBZSVxrdc52i52OK/ps3Q+fbrz7QjtKSUTw/unn8WhVqCT6PuY
+         M+a+qsmmSkANtw3KluM4z8GkV9QYrI8+dIJSWeVcO7wtZZs7QjMehRhibwWr3gGbSpyP
+         BXDd7EEnZad7kcjL0HLBKwiEUALoDd9JljSqWcMJ7ctx8vmaPu09LENP777/rpgViF9a
+         OS1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVR4cUgbhJfHs9pw0wFPxjK1F5T+ZQ6nV45qRLgej7K/FoRxZDynJ6GSokOKkrIos6D3S2wISlUePzCY/4RTjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyepXJm97+TczpZXHpvBKT/JfHzNQJfQO4FK3h4+7OS0uJZWDxP
+	wjJSO9eJraNWKDywAual1+U6/qLecJdCRDNGNULJALkHLjcWpZ6vEt1NeZDHfqE=
+X-Gm-Gg: ASbGncvZbHvYaPOr9ZfLrLwrf+os02wTqzknWIFBxy2JfWxgbVgRp+QtOTonsjrgyDf
+	i01Uu5fYG73DPTvwpWcXIBIyKlV/CD/Y8j0xSBE1+m/G4/S6YCgkGMOxnAijhOfzZqhtMXIRnWS
+	zWD1dNVAQY5dlgq345otLNxRcN3McBJxm198GM/8lhOuQ3AxewOnWb2rT7ybOdGNzfDOus5oe2O
+	23jyOwmekFS4Hz53kxRSDZoKKbh9DEVSSsmkJLUZ0ymbuMl4e3QUi9KWF7G+d15kBru7wszAKIB
+	dGLhXqYMgSeWFw1uGlb7OVLe/++WR8GtY1MqiA7aCya6/Loy+POx4tj/0/feycG4EPAuZ91TBeI
+	po5iiqrV0Zg/+a/dJoAueBq9jl2kHNmIxRw==
+X-Google-Smtp-Source: AGHT+IEXXa/SP1vcBYCngnvdcxcDUG3M7rtCWaP8VHBCa5k1RUmFf/E+UnlXZTp1S7EeoNVsSxUnVw==
+X-Received: by 2002:a05:620a:d86:b0:7c7:a536:66d1 with SMTP id af79cd13be357-7c94d813726mr525145285a.6.1745426032758;
+        Wed, 23 Apr 2025 09:33:52 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925b6e10dsm697314785a.108.2025.04.23.09.33.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 09:33:52 -0700 (PDT)
+Date: Wed, 23 Apr 2025 12:33:50 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Rakie Kim <rakie.kim@sk.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Honggyu Kim <honggyu.kim@sk.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] mm/mempolicy: Fix error code in sysfs_wi_node_add()
+Message-ID: <aAkWbsmFW2dbRwhk@gourry-fedora-PF4VCD3F>
+References: <aAij2oUCP1zmcoPv@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] mfd: exynos-lpass: Fix another error handling path
- in exynos_lpass_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, lee@kernel.org,
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com,
- ideal.song@samsung.com, beomho.seo@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <cover.1745247209.git.christophe.jaillet@wanadoo.fr>
- <69471e839efc0249a504492a8de3497fcdb6a009.1745247209.git.christophe.jaillet@wanadoo.fr>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <69471e839efc0249a504492a8de3497fcdb6a009.1745247209.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAij2oUCP1zmcoPv@stanley.mountain>
 
-On 21/04/2025 17:00, Christophe JAILLET wrote:
-> If devm_of_platform_populate() fails, some clean-up needs to be done, as
-> already done in the remove function.
+On Wed, Apr 23, 2025 at 11:24:58AM +0300, Dan Carpenter wrote:
+> Return -EEXIST if the node already exists.  Don't return success.
 > 
-> Add a new devm_add_action_or_reset() to fix the leak in the probe and
-> remove the need of a remove function.
-> 
-> Fixes: c695abab2429 ("mfd: Add Samsung Exynos Low Power Audio Subsystem driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 1bf270ac1b0a ("mm/mempolicy: support memory hotplug in weighted interleave")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> Compile tested only.
+> Potentially returning success was intentional?  This is from static
+> analysis and I can't be totally sure.
+
+I think this was intentional to allow hotplug callbacks to continue
+executing.  I will let the SK folks who wrote the patch confirm/deny.
+
+If it is intentional, then we need to add a comment here to explain.
+
+~Gregory
+
 > 
-> Changes in v2:
->   - Use a new devm_add_action_or_reset() to fix the leak in the probe
->     and remove the need of a remove function.
->   - Update the commit description accordingly
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+>  mm/mempolicy.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index f43951668c41..0538a994440a 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -3539,7 +3539,7 @@ static const struct kobj_type wi_ktype = {
+>  
+>  static int sysfs_wi_node_add(int nid)
+>  {
+> -	int ret = 0;
+> +	int ret;
+>  	char *name;
+>  	struct iw_node_attr *new_attr;
+>  
+> @@ -3569,6 +3569,7 @@ static int sysfs_wi_node_add(int nid)
+>  	if (wi_group->nattrs[nid]) {
+>  		mutex_unlock(&wi_group->kobj_lock);
+>  		pr_info("node%d already exists\n", nid);
+> +		ret = -EEXIST;
+>  		goto out;
+>  	}
+>  
+> -- 
+> 2.47.2
+> 
