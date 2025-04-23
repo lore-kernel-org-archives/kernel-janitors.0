@@ -1,73 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E989B16A395;
-	Wed, 23 Apr 2025 13:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C09E269B07;
+	Wed, 23 Apr 2025 15:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745414812; cv=none; b=qrYQ/GgbzaT2ccYfvPLGHjfdak9cKWzBTO5jVDjOuDxhcfbOxdNcY93Htt29gIuCGfk6uw5BJg1bDjYdOP+bATKinlIMnUAY/oH4s0tgeuS0jaqjyYCGIWo6LMZJaBtBp1ydki7hM+8Rr7mFvAqjlicexOvDt5Y4QPb4/SKtUs0=
+	t=1745421960; cv=none; b=tD5zdLH8j+bSPUT/LAxV9z2HpjV84cW9IPlPLjdppJxXqx8rIRX8n/qBOpnJOvKCq3t/382kQn0qyADAAN3hAyqzsAjfcM8OvL7B57561FQsHepg/yCbEa6zVdJPC1FXrEBWnCyFbF0r2FU0rxafm3iF+MAoz9m4XGF9UXqeins=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745414812; c=relaxed/simple;
-	bh=ZVqzRttcfT44U4tb9DruvPTg3zDxigqmf/1pQtxNob4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sf8iUqmhdjhuXLeq2cCFVNT2KsogWQogRiiGZQ0hxDVbdpbEHIij7l71ghNkpF0f0xR17BMyo2UCkrMpUTpsvwJTHS64zdzfQ596Q2aT0CwygI3akMWz8m5AAoOBYAmiR7bsm8Dmk/c+ouRUnBf8n3n8L1/q0sVLVjE8BzwAkY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gd0qip6b; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745421960; c=relaxed/simple;
+	bh=INrfsL5a4oNfla3t87AtDrtEZA6P9pD3Y1KMeBn8v8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a6osjUvjZXupPRWfaq1eRMQ8kcq6VZWFdnxZh19C0s5aBNiL0e1CGNHZCCadQ+yN51025fXo+7y5A+YSLv++2dswLCbTJqfcvS3zdkR54DevqrykAXp0Hf91XDV+wvGO5YAEJXHLDyS2XBH6uztj5bp3h0AVFbiP1l513WrJHb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=j3VNi9QB; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gd0qip6b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B69C7C4CEED;
-	Wed, 23 Apr 2025 13:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745414811;
-	bh=ZVqzRttcfT44U4tb9DruvPTg3zDxigqmf/1pQtxNob4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gd0qip6bI1Bq9LNJD/Aw9V2BfbakRZsUYw5CqG33bAT4vMhhvzcoUtB/w59Ii49HP
-	 HQg6N+2VR8GFkMJCvwtpqaPnD/radDXkuNlOudBirh01JEhBfoQ6xvTewPlK12tZJe
-	 OoYXscb07cFV4zMCrFkIR4tA1Add4x8jYx2mCPy8Lmo+GH8nLN6/Zm109wgygQAiIJ
-	 NX+ZQGTd+foa1cq4F5zdngK9XTb9E4rTKYOnzNkk0NLFNIgjUf+1vaHRX+G6GPVKLV
-	 nfFxkjvUfHOfEbnndPbJAxgHG53ErS0wNzYAYS8x74wp+JkCQqx1M+jriVWzFmD/AA
-	 9UhxZOoD8btTQ==
-Date: Wed, 23 Apr 2025 16:26:45 +0300
-From: Leon Romanovsky <leon@kernel.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="j3VNi9QB"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C70642E7E;
+	Wed, 23 Apr 2025 15:25:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745421950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=st7lZ8Kg7+fFmKzdoX7+TUPm4yX7fggkC5jew7GSJiI=;
+	b=j3VNi9QBxYEGcAlKGWWGTzaSDpNqziHkcC1gfJ5VIKnNwW0OGL6wropPwA3i0N343/+JIS
+	xbpn5tTExQdJtZNb393GYZQi9ugeVanTj9iw0eAodNMPmo4GCyHK72f+i/09J9hTDhKUgk
+	pDSiu3stDrSDKgM3DePvYhMs41Bf7WXfP0JIvJjwEjpQ3KjdoG96OwHk0ciVSkmUHlAf+D
+	trH2z/iSUu7uPDr9S2UBlENk+fp+wQEkmuh60yyIPfM9mZTC9h0qbsEHm4i+wIQAQXD2tF
+	1vnIk9lMuruo1JEer6aOApGeaFKjviS/8yd/Xegxshx66VGYHs73zWhu26xdMw==
+From: Romain Gantois <romain.gantois@bootlin.com>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 next] driver core: auxiliary bus: Fix IS_ERR() vs NULL
- mixup in __devm_auxiliary_device_create()
-Message-ID: <20250423132645.GI48485@unreal>
-References: <aAi7Kg3aTguFD0fU@stanley.mountain>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject:
+ Re: [PATCH next] i2c: Fix end of loop test in i2c_atr_find_mapping_by_addr()
+Date: Wed, 23 Apr 2025 17:25:44 +0200
+Message-ID: <2427370.em1n7HOibB@fw-rgant>
+In-Reply-To: <aAii_iawJdptQyCt@stanley.mountain>
+References: <aAii_iawJdptQyCt@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAi7Kg3aTguFD0fU@stanley.mountain>
+Content-Type: multipart/signed; boundary="nextPart6847964.XYie2Kq9gB";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeeileehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhvdelkeevgfeijedtudeiheefffejhfelgeduuefhleetudeiudektdeiheelgfenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsr
+ ghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopegrnhguihdrshhhhihtiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On Wed, Apr 23, 2025 at 01:04:26PM +0300, Dan Carpenter wrote:
-> This code was originally going to use error pointers but we decided it
-> should return NULL instead.  The error pointer code in
-> __devm_auxiliary_device_create() was left over from the first version.
-> Update it to use NULL.  No callers have been merged yet, so that makes
-> this change simple and self contained.
-> 
-> Fixes: eaa0d30216c1 ("driver core: auxiliary bus: add device creation helpers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: Originally I just updated the check for auxiliary_device_create()
->     failure and returned ERR_PTR(-ENOMEM) but obviously the
->     auxiliary_device_create() and devm_auxiliary_device_create()
->     functions should return the same thing, NULL.
-> 
->  drivers/base/auxiliary.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
+--nextPart6847964.XYie2Kq9gB
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Date: Wed, 23 Apr 2025 17:25:44 +0200
+Message-ID: <2427370.em1n7HOibB@fw-rgant>
+In-Reply-To: <aAii_iawJdptQyCt@stanley.mountain>
+References: <aAii_iawJdptQyCt@stanley.mountain>
+MIME-Version: 1.0
+
+Hello Dan,
+
+On Wednesday, 23 April 2025 10:21:18 CEST Dan Carpenter wrote:
+> When the list_for_each_entry_reverse() exits without hitting a break
+> then the list cursor points to invalid memory.  So this check for
+> if (c2a->fixed) is checking bogus memory.  Fix it by using a "found"
+> variable to track if we found what we were looking for or not.
+
+IIUC the for loop ending condition in list_for_each_entry_reverse() is
+"!list_entry_is_head(pos, head, member);", so even if the loop runs to 
+completion, the pointer should still be valid right?
 
 Thanks,
-Reviewed-by: Leon Romanovsky <leon@kernel.org>
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart6847964.XYie2Kq9gB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmgJBngACgkQ3R9U/FLj
+2871fQ//TfmeOZvEIWC6A2EzUO9buEh2zcpMTi0ecsPmxf9aEk80ctJIjMSahC2H
+YRh/Asxe4TBJ5J+/e/mpn98MBJeyV3/BDOXTv/GuY8rYoRE9Ypgz5FdY3Wi/tD9W
+kOFu9sb/CANhiLE+LxpmNXN+TemxRy9RRnrO7+Dh8fdKCgo+TLKMcUr4dbkstg6y
+x07E0u+OFAIdezHlxX2CIJtNLoPLjZ0jN22lZk7ahI/dMNdBDJQBkFVWq80MXVzv
+QXtglFL72nVr7kWbmjS99xuMouw1TNAQS/63OqxTxZRj8Y+dHr/dfAQRVD89J0aR
+bD0is183oOadueUQD4QnPpXc/PPYNbHSjhipg1b5vvNgbh46x/vw7RGPpCM8RzDH
+VC+KoCrIskK5Yg4Wi/g+34MDlhnvU0ADy0nBbvFv6YGPhVKcFt7XuP4BuFsVjuhk
+oFya6BFk4jI66itCWTi7+yzY/9c+8uPA7Nh9D4ak2YtoOhR6mI0lxUhvR2nyOkWM
+4KDiUty4qaxBGHmguRsg0kXUapxFRqXKyK3wP/NRc4tovcTRU5Xux/1HWcEWhXFh
+S4n6H7aYsSO2J3YcjQcxcKP2GD1BtxozvxWMLeauAiRb51jtINV2tgBrk5kdpgvX
+AhnN/HLrBAjOm9EQXeEZrpbXT3ddCttlR2+7x2eSx+FBd6uuQgg=
+=qIns
+-----END PGP SIGNATURE-----
+
+--nextPart6847964.XYie2Kq9gB--
+
+
+
