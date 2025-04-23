@@ -1,93 +1,103 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986CC26B0B6
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 10:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FE5FC08;
+	Wed, 23 Apr 2025 11:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745405999; cv=none; b=ncQ0wBjoZBg4ETjXyQ2D65TC2WT/I0/SR7TOpyl7nHrKZOFHBd4QkZ4S/KPnGqNdXrPdlYM5G9kQHPVwSIzOSMj949mdub9ceuvst9GbZJ2YJ40Yi4qfFscuBNcTYmhf8g4stwoS+y9n7CRsL2fDCY9vQocE/Q2ogYAocwS+7n8=
+	t=1745408249; cv=none; b=nYjFosT4XeANYXU71+rAAjS6GtA5JPvJ2GL1F5F1yE2w7ek/OiMbYagICl/gLlqCzLv8YvKJ7rgoJ4QmX+bjfZ66tuuqgvtQeUYj2dkGgoNiFJj4kRzLpLIddus6zqsiwmg/LgEXhbFmZaFjfylJe/Lxd8g41bG+wNrcD4UPhIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745405999; c=relaxed/simple;
-	bh=1yGreJeglvKuZD0fGUj7A/qJS7yybhnwZk+WL1e6ipU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SSLUrf53ELrm3OtLhb+ECX1PJdZ4JHcyeuP7d043yqafVmT5R2LqyFnOSFpUTE6x/Dp9mcT4fnt9edC1UPFd4kypnu9mZMkOp/su9Ucvr3ocpgPpct/MjRIOvTJBsA8olV+ilsDT0f+d6VeCyyO4wHU/J4u+u8Kb9PC3KnGbsAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cy6m4utv; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745408249; c=relaxed/simple;
+	bh=ZOYMbzEXP8RLe+8yWrKjk75zGEZAVkvv3WQseXJv0cQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YUIAh0xzBT0Ib9VYPo0XyJgDp3sAIGckBla2XNkuGgoMIuCpSd/eK3rMbfAHajRw3AtNKsmUp9wTQz/HdP4T8nu0Lv9wqcIIUk/rhaGbixOY5G/+pM6H++qZJm7hQkGbFiULA22eoJhUlR29+SorKRtaykAqPW47pRqq2uu8oKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFRKD46K; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cy6m4utv"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-549963b5551so6741374e87.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Apr 2025 03:59:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFRKD46K"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-39ee57c0b8cso6121145f8f.0;
+        Wed, 23 Apr 2025 04:37:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745405996; x=1746010796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q3cEhVrVTg0kZTdvS2evoNFsbjUG4Yiqw/nFRP9UnlM=;
-        b=Cy6m4utvPD+xBdA8LKOxfUSQIZ5rteDxmHyOiMvSAxr53hJvFrTIx/474M8UqPF5cU
-         8GNQifmjLVE6I+R/JOP1C17I8iACQC+byTCBSyoU7seymtXbPQRKyCRBVDwHN+9L4tUM
-         pxxTTrL0NnQLdWLb4W/MyZ3Hhg8NCl72xBThZtmkBh5jQhcLS86knf8AohtXOxRKrMhe
-         Rgz5wQwE/4lH8FB/8fsLqEX/Kd4FUBP6Aqo5IJ0bzOKnw4EjZCvyXTJwkPl86jaJB7cs
-         pbIooZVG0ZM9ldKfe/9Icuc+KbHA6y1jBX1fWPgPTHuLDn/ufuIgkO4hSZYcM2oUpsLv
-         q+lw==
+        d=gmail.com; s=20230601; t=1745408246; x=1746013046; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sOaslwO/iDwgRO6fHWCqrlxeNb4sZEAWfunB5Ekm3Yw=;
+        b=CFRKD46KAxCSY0GnRw3hpSW2CTnMcs+t5+zUcvTICIm595UnYv+fNvGC1IaEWX2VGj
+         G8Yerid3y+63qAbNBjy5Z91GmvWrdZaFzsz7iXIKQo8UInPK+QIxyUX3BZN6LouKsZ6x
+         hR2/zdMHFzkhz4UMykPFcwPAFF6EOwjs3AM7YU1NVLs0shtnkNmiWaJ907yPuKrsGD41
+         bnhN0CSgvJtG25s533hJ3HfDRh87ZOZzt1EYdjgbHI//bSZn1DXHi+Cqni1sz7+R5qsD
+         2qYxxaNnRHHMID4Ppbw1f7UyUu+V85p8bILHVUxHxj+R5tdktrDpMm25oApGpF9RqMeU
+         ag3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745405996; x=1746010796;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q3cEhVrVTg0kZTdvS2evoNFsbjUG4Yiqw/nFRP9UnlM=;
-        b=HdufmFupFRxWo5gQSQo5qZbgsxZr5awIeuwDmTmT4Lz7Dl1PnVpGPnfcR0cSjvTZvY
-         OSysTgZrnRvPB0vqWTtOGE0YP2L+2SoQDOb31IiIEk8LP0sMwYk6kAplzw8hElPhPFoF
-         jGcMvBHGubxBdgpGiLlnqhvcp9gM9yn8y5lg5bxlXrz5xC9Fq2olUTpNbgw1sHimxfpK
-         Z59QwMLFetJJkhqBUp/dllK7iw36vcAalwVMZvRtNOrQcWk8bXDTxdyVnVR1yE10iD/i
-         YzMbAhQe5MlnGYfLydutZc46+wfmp58jh8NrZjit4KBH+7qGMyYkrUi/UKBOWH1TmgEo
-         Zhmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlyVLiIAoULV8UvEIGX/Q2XVRajH+kF4+8i26nbH1cXFzitvGejLwmSTGHN5ytwsOqes8+1IxJyCZsWOPcYag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR7LWcpg2tmn2pyAtKtKq87vUaxghuR1R9oHX1NhUt4CFJpraD
-	RAitAg5es6NeZipVoFOpmVDcERmShBV5tP1MPn2Xg8ouiMYy8reiV1ZH6ERLLQ6WyxSzUkFoV4n
-	V6vTYBVhxYaZO9Jl6sIuTuHBpi330bCwVqjIPFA==
-X-Gm-Gg: ASbGncth8e5uW3tHqDF+egNMKVuyMEz7kJv7Q+sKijsHQ27nuEvmgDChFfBt/7PuHBK
-	pO5nK5QbdOhkXZmmXlo3rbU/vZxp9KUxA853/mvsTEwYpngHmeSTEVJBl+i4ldRq44nQol1zr9L
-	wxspraD3FdnmjSoLFyHwvjdA==
-X-Google-Smtp-Source: AGHT+IFtzLtF0BmAxKelCLV2/wocCla2vyxucaLxjvgEw30Sch51eBsux5LzRyNp/HGiwEeiD7kURWUr//rXX69Cxn0=
-X-Received: by 2002:a05:6512:318c:b0:54b:117b:952e with SMTP id
- 2adb3069b0e04-54d6e66cbefmr4418385e87.55.1745405995686; Wed, 23 Apr 2025
- 03:59:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745408246; x=1746013046;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sOaslwO/iDwgRO6fHWCqrlxeNb4sZEAWfunB5Ekm3Yw=;
+        b=ACYaAK8cWKihFAcJvUKTR2pwhutWHqm2J7YMTIoSEVs6dPScAoToHtdf2Rsy7AQnbx
+         eqrTM5s7SYlgz0zkmMOQBNK1IC+ANgw2VRPojCfISGA4qMuOgSuBFuYiSHzzW0o4c9zQ
+         +ebTMubYIGYeypQiEE+hFCAPvrJwS5gY2RJjHMC2uX1hlcsi0LM3HAnoWZ2vBGSq1IGx
+         hq815QSHqzBlBowR3BNdL7VecHPkRjcULaYHWwItSiIkWtFaHv8BRtY95FW3I2iO4hDS
+         CUVppMFi4YTNUSu6UAn083mZsAH2ciEWgn2Bvx6idIQrSkVRn6T4QkcbNCQF12aih6UE
+         UKmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ+w8ahaAOeaWCjBxujFKzv7z9xHuhBeLR1T/tF1LHngzybhGrpvizLQULxGL5YUrEK7qwB/MIBAMHbFM=@vger.kernel.org, AJvYcCVpbCVTde6MIACnQ/zLCt6aOsAKtfSVcavgfCIZ9VzHJZ5Nb0Gihg7ExleBTuw07cHjGvNN8XMr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/3sZFMVp1LwJMFx6fiST35JO4Rtx0U1+7dQLPLU/TZYu/rUT+
+	G1aWvU6pCykERHSyJNr6QcZ5rFvVqWXK7StdMhNGAvD/1xQpP7jp
+X-Gm-Gg: ASbGncv6Gmqr9CjhmDZziqNX9kuuhBwtRCDXtOA0908q1/f7guph0yvnmbdqNKSPr2S
+	LEMJsMgWtNo/Wb4Fy93eeIjTYe/zeA/aqYTsVb2441PcHBiakezqC0OQ2F3nml63W0odOE9rYYC
+	v3mZ5eaQ84k2FjCqgTZKR/gnuXlu2u3K6sMSohh0QMh7sdthJtmXgeH5GMad8SEaha+Yaqd/NBa
+	M/U62SwxS64DnNi1bS1kvzbyztrK3+3EJ49gL2vJgMEUB/X9/7jpAWlCL1CFTsRTXq5ztH1ejcC
+	KCAq2g+oWe8FcqejddhYanuYi2MUImLGlRsRxm14aA==
+X-Google-Smtp-Source: AGHT+IHSoaSXaAgj53jWAGtI7Z7mMkdXhhLo9jTahymT0NfSoVyVjCueixP+i4S5vMsc6dh5pNJwhw==
+X-Received: by 2002:a5d:6d88:0:b0:399:737f:4e02 with SMTP id ffacd0b85a97d-39efbad2f10mr16252645f8f.39.1745408245796;
+        Wed, 23 Apr 2025 04:37:25 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa43d22esm18699323f8f.52.2025.04.23.04.37.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 04:37:25 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: ip_gre: Fix spelling mistake "demultiplexor" -> "demultiplexer"
+Date: Wed, 23 Apr 2025 12:37:19 +0100
+Message-ID: <20250423113719.173539-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aAijc10fHka1WAMX@stanley.mountain>
-In-Reply-To: <aAijc10fHka1WAMX@stanley.mountain>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 Apr 2025 12:59:44 +0200
-X-Gm-Features: ATxdqUGhq-8Df0lmzkXAKLmMqiEIc6uB0ArJmTsIwn6uONHy8hOiVyiU37DBzSI
-Message-ID: <CACRpkdbLwZuFKqLvdkuCodQrNb5h-W9567eA4CLOP1FrV+PbZA@mail.gmail.com>
-Subject: Re: [PATCH next] pinctrl: mediatek: common-v1: Fix error checking in mtk_eint_init()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 23, 2025 at 10:23=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
+There is a spelling mistake in a pr_info message. Fix it.
 
-> The devm_kzalloc() function doesn't return error pointers, it returns
-> NULL on error.  Then on the next line it checks the same pointer again
-> by mistake, "->base" instead of "->base[0]".
->
-> Fixes: fe412e3a6c97 ("pinctrl: mediatek: common-v1: Fix EINT breakage on =
-older controllers")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ net/ipv4/gre_demux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch applied for fixes as a fix on fix.
+diff --git a/net/ipv4/gre_demux.c b/net/ipv4/gre_demux.c
+index 6701a98d9a9f..dafd68f3436a 100644
+--- a/net/ipv4/gre_demux.c
++++ b/net/ipv4/gre_demux.c
+@@ -199,7 +199,7 @@ static const struct net_protocol net_gre_protocol = {
+ 
+ static int __init gre_init(void)
+ {
+-	pr_info("GRE over IPv4 demultiplexor driver\n");
++	pr_info("GRE over IPv4 demultiplexer driver\n");
+ 
+ 	if (inet_add_protocol(&net_gre_protocol, IPPROTO_GRE) < 0) {
+ 		pr_err("can't add protocol\n");
+-- 
+2.49.0
 
-Yours,
-Linus Walleij
