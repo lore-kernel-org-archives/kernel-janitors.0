@@ -1,88 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120A721CA13;
-	Thu, 24 Apr 2025 10:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BF237717
+	for <kernel-janitors@vger.kernel.org>; Thu, 24 Apr 2025 12:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745489696; cv=none; b=nzv61VOJzyxuivTGgFWyvO0oOKBLAp326JUsK0RXnE+776IpOqDGO3EN4zxgTPvnNp9F71dcDZUBW/WPaGYpnuP0j/YrvD05mjX+O+BukcTCCh42Pw8dva5qZ+xe6LpxBWiR6KDe5fX8O0FzIANcdG98GpuCcPXlluFRkqRNicM=
+	t=1745497608; cv=none; b=CoNLewmg8ceJ3lUq1L3ogbLRFIEQVvuHhWhqYnFk4t5M1kBCPs5MumVnM3dU3aMKsXW3oyLteYlE06Xyw14MluH0KDb2ZSTQeTB5L8fztYekq6TyxKQ5ah3vGD9tR277AItAfC7/ftMzbhwtynwBMlc0vKoZKYdGWImD44ZA0ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745489696; c=relaxed/simple;
-	bh=E5UI0CVSy6DoDprHrksDqyZf635QWcYPf5CaMvXPIrc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CRIvigIyo1YzXfAk5eBr2U5UmMNRPUwzWJbKSxnL/zX+7TdQJU+ipvFRmGMy8CLao0b1m4LjU1M3bL70nfA+/jGEXmellF2bUZyjXNTiw+ngnwQF0BidZtAJeNGkcvoywuFB1tqjiiaPQ8w/QFcqQhvKJIc8AoThPsH0Pk4sR4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRlNWegz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745497608; c=relaxed/simple;
+	bh=qH94Zg8HHuTGEsjzE7t/Q/Z/oX9xV89qxY576wt/+Kc=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=EFxwBVBqC1yw7wM3hhwWb1LaocR2E490RnaXkjnBxTDqTSrTDTeWA81xLM6VQz68xlgXrn0xualuIjpmdiWenThgPj/gjtp7jP8wW9nxzYZ8f+JN7FsFt6dA/icWDtBth8jKzOZYVXOEiRle445ANPNJdIoGt9wLbIgy5SgAoG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=easqI5iP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRlNWegz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254ECC4AF09;
-	Thu, 24 Apr 2025 10:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745489695;
-	bh=E5UI0CVSy6DoDprHrksDqyZf635QWcYPf5CaMvXPIrc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=lRlNWegzoqapSfpLgg1akO8Z/vOBBihVc1VP373ssjBiKfpF0dLuOjkWv6fP7JpCI
-	 AKlya5f+R0r20GFrRQMVZ2icUhCUFevgvsRSb9z3Eye15MCr/lt8DgMT8++lVj4PnX
-	 vP59sSL5Zz/pgEGrPwCFz8Ov5HDrYXJAaXmUJi8rcMcO/n827jHjlYxFOTI2vpWAZA
-	 f/cxDVmEGnTWjXm4ZqF12FraFJ17wq3sljBAnnMCj0sbzLnWd91GgrbYWYtVuhLOte
-	 8Awy6esl7kxprcJTW+ATaywYgi8UNGnOPrH7ZCImQifCKcD+4KgzXGVlj2ziUGs3Hn
-	 lTHEFAg7lL6MQ==
-Date: Thu, 24 Apr 2025 12:14:52 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-cc: Even Xu <even.xu@intel.com>, Xinpeng Sun <xinpeng.sun@intel.com>, 
-    Benjamin Tissoires <bentiss@kernel.org>, 
-    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, linux-input@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: intel-thc-hid: intel-thc: make read-only arrays
- static const
-In-Reply-To: <20250402112129.410320-1-colin.i.king@gmail.com>
-Message-ID: <r2p8863o-795s-851p-22q8-1082r2rq3rq1@xreary.bet>
-References: <20250402112129.410320-1-colin.i.king@gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="easqI5iP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745497605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QC/L5dA3dOSeibATP2lFtsY0DYuXP89RpuDsJDZIFBQ=;
+	b=easqI5iPGQ89u/EZ+7g2mY+zg6xpXC5W94ghh+vIbJ0pd1aT+p/TPa1T7EeXEBL8Xy3uva
+	iV/e1hFlmJhtYbnJxn3VjXl3ogY5nnKwyfa/axyjGDanm8vodBmhrhE7txYCEWAXRR7utZ
+	WXahvKXSryarPeINRzjQpg1h9F6JVSM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-204-6G4aEBPBNemdl7lnN7eo_Q-1; Thu,
+ 24 Apr 2025 08:26:41 -0400
+X-MC-Unique: 6G4aEBPBNemdl7lnN7eo_Q-1
+X-Mimecast-MFC-AGG-ID: 6G4aEBPBNemdl7lnN7eo_Q_1745497600
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D049A195608E;
+	Thu, 24 Apr 2025 12:26:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.16])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B89A21956095;
+	Thu, 24 Apr 2025 12:26:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <aAikCbsnnzYtVmIA@stanley.mountain>
+References: <aAikCbsnnzYtVmIA@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+    linux-afs@lists.infradead.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] rxrpc: rxgk: Fix some reference count leaks
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3113807.1745497595.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 24 Apr 2025 13:26:35 +0100
+Message-ID: <3113808.1745497595@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, 2 Apr 2025, Colin Ian King wrote:
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> Don't populate the read-only arrays frequency and frequency_div on
-> the stack at run time, instead make them static const.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c b/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-> index 4fc78b5a04b5..c105df7f6c87 100644
-> --- a/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-> +++ b/drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
-> @@ -1121,7 +1121,7 @@ EXPORT_SYMBOL_NS_GPL(thc_port_select, "INTEL_THC");
->  
->  static u8 thc_get_spi_freq_div_val(struct thc_device *dev, u32 spi_freq_val)
->  {
-> -	int frequency[] = {
-> +	static const int frequency[] = {
->  		THC_SPI_FREQUENCY_7M,
->  		THC_SPI_FREQUENCY_15M,
->  		THC_SPI_FREQUENCY_17M,
-> @@ -1130,7 +1130,7 @@ static u8 thc_get_spi_freq_div_val(struct thc_device *dev, u32 spi_freq_val)
->  		THC_SPI_FREQUENCY_31M,
->  		THC_SPI_FREQUENCY_41M,
->  	};
-> -	u8 frequency_div[] = {
-> +	static const u8 frequency_div[] = {
->  		THC_SPI_FRQ_DIV_2,
->  		THC_SPI_FRQ_DIV_1,
->  		THC_SPI_FRQ_DIV_7,
+> These paths should call rxgk_put(gk) but they don't.  In the
+> rxgk_construct_response() function the "goto error;" will free the
+> "response" skb as well calling rxgk_put() so that's a bonus.
+> =
 
-Applied, thanks.
+> Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class=
+ (GSSAPI)")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
--- 
-Jiri Kosina
-SUSE Labs
+Acked-by: David Howells <dhowells@redhat.com>
 
