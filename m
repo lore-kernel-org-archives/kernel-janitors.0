@@ -1,176 +1,139 @@
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C6C10F9;
-	Thu, 24 Apr 2025 06:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFFF1A2564;
+	Thu, 24 Apr 2025 06:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745474702; cv=none; b=OPHHuJtvmUXXbjgHGzWdzHBBk45P2tCqwDBZFXjmrCpLy0mchTiW88qA/ogcZ1trr8RuwcpK01JcrZBzb9VG2K/eOMidmE4Bu2Ys92n/eMF9Rxk2BhGqIbcKwl5Vy67XrdLv3K+ltjp/t2qa5Qrt6fv+e+o5M2HevD2tKO2ez8c=
+	t=1745476350; cv=none; b=RsnXpOISgR2JF1i8bGPhqmCZ0xOmim/80yNpEqjJSy9hM8BBA+C8HAphz0MBfGz5C39WChMvhNs9au8sI+8DQoYfMqULUxrhkZot3sHO0nbWSpkystHdNa7pfOKLm36vXZDTtMf7zgUnrIOXBFCeo/TKt4zqWks+NpkdZN1WjO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745474702; c=relaxed/simple;
-	bh=i2u8zuCKv51bDN98k6jWDIxzDRzneW0aGwAYIsTJhrU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e8xpBp9JcK+qgb8lpnsZXImgDH1OTs607yJshOi41EFCQrtn6AObMq3qV9iA7zIXolqo5qRVHdT2k5YyijUIU2k7OMu68KSSRHnEseQBQnAZxtHWXO3Rgmod36B4QczV1UiSTWWIkFi3m09Bxg+T6R6nflzFSsJ9S+CfrxTfs6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-b5-6809d0fac5b7
-From: Rakie Kim <rakie.kim@sk.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rakie Kim <rakie.kim@sk.com>,
-	Gregory Price <gourry@gourry.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Honggyu Kim <honggyu.kim@sk.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	kernel_team@skhynix.com
-Subject: Re: [PATCH next] mm/mempolicy: Fix error code in sysfs_wi_node_add()
-Date: Thu, 24 Apr 2025 14:49:36 +0900
-Message-ID: <20250424054942.120-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <aAkWbsmFW2dbRwhk@gourry-fedora-PF4VCD3F>
-References: 
+	s=arc-20240116; t=1745476350; c=relaxed/simple;
+	bh=liyLOHEfidVTyWtRf+MLB60Y1iLLOVmBw2oiN28abxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O7li+0Z8ufPrS7IsLkoPIf6AYiItJyXI+YLCnGk0GhWh4sDHdlvDuvxDHrj6vTWVD0UzOJKcZIE2iKCj52YKotDW7FJNM+CnJBJGpDpy9dbk16+Sl98JTSNeGlGEQxVoyFWSIGAXoZmMeD8Y2ktcN/cEZyQFrxwzyPUp1EUu+vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=J0WOX4ef; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="J0WOX4ef"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 93EE59CE;
+	Thu, 24 Apr 2025 08:32:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1745476344;
+	bh=liyLOHEfidVTyWtRf+MLB60Y1iLLOVmBw2oiN28abxY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J0WOX4efldDHhA54s9NegRnXYRg4BEGkNNnyX3Ki6WBkH6IfYCP4iJeQMQgTbf3ZN
+	 1haGrB6KgxZ1q+oLXFeaeRNG99mHtD3RCbc+DF9KYGo4kQ9gM1iOtTdVPeBFf/oy98
+	 Emgkqk5Pag9o6Yg8m4loaLH9EffMIOLCJbwdPh6c=
+Message-ID: <9cd0c3cc-9f3c-4a3e-9080-c832def8f317@ideasonboard.com>
+Date: Thu, 24 Apr 2025 09:32:22 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC9ZZnoe6vC5wZBmdnWlnMWb+GzeLDvFZ2
-	i+lTLzBa/Lx7nN3i+NZ57BZbb0lbXN41h83i3pr/rA4cHjtn3WX36G67zO6xeM9LJo9Nnyax
-	e9y5tofN48SM3ywenzfJBbBHcdmkpOZklqUW6dslcGX0nJrDVHBRpqLj3xLmBsblYl2MnBwS
-	AiYSz04sYYGxf3/4xtbFyMHBJqAkcWxvDEhYREBH4t/fyUAlXBzMAveYJD5N/sYKkhAW8JVY
-	/B/CZhFQlTjQMwFsDq+AscTaa9/YIWZqSjRcuscEMpNTwEziypkikLCQAI/Eqw37GSHKBSVO
-	znwC1sosIC/RvHU2M8guCYEjbBL9m5qgbpOUOLjiBssERv5ZSHpmIelZwMi0ilEoM68sNzEz
-	x0QvozIvs0IvOT93EyMwkJfV/onewfjpQvAhRgEORiUeXo+7HBlCrIllxZW5hxglOJiVRHh/
-	ubFnCPGmJFZWpRblxxeV5qQWH2KU5mBREuc1+laeIiSQnliSmp2aWpBaBJNl4uCUamDU2XG4
-	9dU8D4+kE2+fiMX+PrK4k8fozdmLi1OWdyWfMLx4VdlZYX2kXfXLtTXMKWz1uXZSlekftHMl
-	pZY4ng51uP56rVj4l6xl1y+sui94+0Rv/Ocr3Pu/31r8Q08m6MCze42fw1et15Tar/ZSZwHn
-	tBpOlUkfLDxM/z65GMhy5HvSxO9npxXyKbEUZyQaajEXFScCAHQKOGFgAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsXCNUNNS/fXBc4Mg4WzdSzmrF/DZvFhXiu7
-	xfSpFxgtft49zm7x+dlrZovjW+exW2y9JW1xeO5JVovLu+awWdxb85/V4tC156wO3B47Z91l
-	9+huu8zusXjPSyaPTZ8msXvcubaHzePEjN8sHt9ue3gsfvGByePzJrkAzigum5TUnMyy1CJ9
-	uwSujJ5Tc5gKLspUdPxbwtzAuFysi5GTQ0LAROL3h29sXYwcHGwCShLH9saAhEUEdCT+/Z3M
-	0sXIxcEscI9J4tPkb6wgCWEBX4nF/yFsFgFViQM9E1hAbF4BY4m1176xQ8zUlGi4dI8JZCan
-	gJnElTNFIGEhAR6JVxv2M0KUC0qcnPkErJVZQF6ieets5gmMPLOQpGYhSS1gZFrFKJKZV5ab
-	mJljqlecnVGZl1mhl5yfu4kRGLLLav9M3MH45bL7IUYBDkYlHt6AJxwZQqyJZcWVuYcYJTiY
-	lUR4f7mxZwjxpiRWVqUW5ccXleakFh9ilOZgURLn9QpPTRASSE8sSc1OTS1ILYLJMnFwSjUw
-	hjw1Maue+a36s6xElYGFvVfvNus2kYk6Nivl3Xar2f5uO7pelnn9Fnd9s5bVP3lPuUk3r97h
-	IuKbs/H4xVPMgdzHtu4/yCTsMT+pJSmlcUrP2S1zwtT+s62zO3PV/x1r3rMupyvPQievnfLQ
-	vpY/4+FsZq+HG0NaeP0XnNkUPeE957cY41wjJZbijERDLeai4kQApDncKlUCAAA=
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] i2c: Fix end of loop test in
+ i2c_atr_find_mapping_by_addr()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Romain Gantois <romain.gantois@bootlin.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <aAii_iawJdptQyCt@stanley.mountain> <2427370.em1n7HOibB@fw-rgant>
+ <a22d74b9-06b1-4a4b-9c06-4b0ff7f9b6c2@stanley.mountain>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <a22d74b9-06b1-4a4b-9c06-4b0ff7f9b6c2@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 23 Apr 2025 12:33:50 -0400 Gregory Price <gourry@gourry.net> wrote:
-> On Wed, Apr 23, 2025 at 11:24:58AM +0300, Dan Carpenter wrote:
-> > Return -EEXIST if the node already exists.  Don't return success.
-> > 
-> > Fixes: 1bf270ac1b0a ("mm/mempolicy: support memory hotplug in weighted interleave")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > Potentially returning success was intentional?  This is from static
-> > analysis and I can't be totally sure.
+Hi,
+
+On 23/04/2025 20:29, Dan Carpenter wrote:
+> On Wed, Apr 23, 2025 at 05:25:44PM +0200, Romain Gantois wrote:
+>> Hello Dan,
+>>
+>> On Wednesday, 23 April 2025 10:21:18 CEST Dan Carpenter wrote:
+>>> When the list_for_each_entry_reverse() exits without hitting a break
+>>> then the list cursor points to invalid memory.  So this check for
+>>> if (c2a->fixed) is checking bogus memory.  Fix it by using a "found"
+>>> variable to track if we found what we were looking for or not.
+>>
+>> IIUC the for loop ending condition in list_for_each_entry_reverse() is
+>> "!list_entry_is_head(pos, head, member);", so even if the loop runs to
+>> completion, the pointer should still be valid right?
+>>
 > 
-> I think this was intentional to allow hotplug callbacks to continue
-> executing.  I will let the SK folks who wrote the patch confirm/deny.
+> head is &chan->alias_pairs.  pos is an offset off the head.  In this
+> case, the offset is zero.  So it's &chan->alias_pairs minus zero.
 > 
-> If it is intentional, then we need to add a comment here to explain.
+> So we exit the list with c2a = (void *)&chan->alias_pairs.
 > 
-> ~Gregory
+> If you look how struct i2c_atr_chan is declareted the next struct member
+> after alias_pairs is:
 > 
-> > 
-> >  mm/mempolicy.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> > index f43951668c41..0538a994440a 100644
-> > --- a/mm/mempolicy.c
-> > +++ b/mm/mempolicy.c
-> > @@ -3539,7 +3539,7 @@ static const struct kobj_type wi_ktype = {
-> >  
-> >  static int sysfs_wi_node_add(int nid)
-> >  {
-> > -	int ret = 0;
-> > +	int ret;
-> >  	char *name;
-> >  	struct iw_node_attr *new_attr;
-> >  
-> > @@ -3569,6 +3569,7 @@ static int sysfs_wi_node_add(int nid)
-> >  	if (wi_group->nattrs[nid]) {
-> >  		mutex_unlock(&wi_group->kobj_lock);
-> >  		pr_info("node%d already exists\n", nid);
-> > +		ret = -EEXIST;
-> >  		goto out;
-> >  	}
-> >  
-> > -- 
-> > 2.47.2
-> > 
+> 	struct i2c_atr_alias_pool *alias_pool;
 > 
+> So if (c2a->fixed) is poking around in the alias_pool pointer.  It's not
+> out of bounds but it's not valid either.
 
-Hi Dan,
+Maybe it's just me, but I had hard time following that explanation. So 
+here's mine:
 
-Thank you very much for analyzing the issue in this code and for
-sharing a detailed patch to address it. Your review is greatly
-appreciated.
+The list head (i2c_atr_chan.alias_pairs) is not a full entry, it's just 
+a struct list_head. When the for loop runs to completion, c2a doesn't 
+point to a struct i2c_atr_alias_pair, so you can't access c2a->fixed.
 
-However, the current behavior of returning success instead of an
--EEXIST or other error code was intentional. I would like to explain
-the rationale for this choice and would appreciate your further
-thoughts.
+For the patch:
 
-The condition:
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-	if (wi_group->nattrs[nid]) {
-		mutex_unlock(&wi_group->kobj_lock);
-		pr_info("node%d already exists\n", nid);
-		goto out;
-	}
-
-is triggered in the following two cases:
-
-1. If `sysfs_wi_node_delete()` fails:
-   - This function only performs `sysfs_remove_file()` and frees
-     memory, and these operations do not fail in a way that would leave
-     the system in an inconsistent state.
-
-2. If `sysfs_wi_node_add()` is invoked multiple times for the same node:
-   - While repeated additions for the same node would indicate a
-     potential issue in logic, simply skipping the redundant addition
-     does not cause a functional problem. The original sysfs entry
-     remains valid and continues to work as expected.
-
-Therefore, I chose to return success in this case to avoid interrupting
-the flow unnecessarily.
-
-Also, as you pointed out, even if we returned -EEXIST here, it would not
-change the runtime behavior. This is because `sysfs_wi_node_add()` is
-called from the following memory notifier:
-
-	static int wi_node_notifier(struct notifier_block *nb,
-				     unsigned long action, void *data)
-	{
-		...
-		switch (action) {
-		case MEM_ONLINE:
-			err = sysfs_wi_node_add(nid);
-			if (err)
-				pr_err("failed to add sysfs for node%d during hotplug: %d\n",
-				       nid, err);
-			break;
-		...
-		}
-		return NOTIFY_OK;
-	}
-
-As discussed in prior reviews (including suggestions by David
-Hildenbrand), returning NOTIFY_BAD on failure can interfere with other
-notifier chains due to NOTIFY_STOP_MASK behavior. Hence, we always
-return NOTIFY_OK to preserve consistent hotplug handling across
-subsystems.
-I would sincerely appreciate it if you could share any further thoughts
-or concerns you may have regarding this decision.
-
-Rakie
+  Tomi
 
