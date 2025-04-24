@@ -1,85 +1,107 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BF237717
-	for <kernel-janitors@vger.kernel.org>; Thu, 24 Apr 2025 12:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80F227B519;
+	Thu, 24 Apr 2025 13:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745497608; cv=none; b=CoNLewmg8ceJ3lUq1L3ogbLRFIEQVvuHhWhqYnFk4t5M1kBCPs5MumVnM3dU3aMKsXW3oyLteYlE06Xyw14MluH0KDb2ZSTQeTB5L8fztYekq6TyxKQ5ah3vGD9tR277AItAfC7/ftMzbhwtynwBMlc0vKoZKYdGWImD44ZA0ys=
+	t=1745500332; cv=none; b=E87VPE76DL+5mOd76Tz7daeyyZMaAQZ028bkW2OaAlCT6lZvtsBiHMHU3z3VE+hrF3II5Azs/PdSkzclDShBPD29/hhdJDA/QGxkO5ESueIpNkC/0gg5SR9RrceCm7YfC6wZQfZ1pATXiUcaXfMCKoz3dIvTwMHXL6Ng/9r0Hw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745497608; c=relaxed/simple;
-	bh=qH94Zg8HHuTGEsjzE7t/Q/Z/oX9xV89qxY576wt/+Kc=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=EFxwBVBqC1yw7wM3hhwWb1LaocR2E490RnaXkjnBxTDqTSrTDTeWA81xLM6VQz68xlgXrn0xualuIjpmdiWenThgPj/gjtp7jP8wW9nxzYZ8f+JN7FsFt6dA/icWDtBth8jKzOZYVXOEiRle445ANPNJdIoGt9wLbIgy5SgAoG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=easqI5iP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1745500332; c=relaxed/simple;
+	bh=3nDIo3joo5hDVTDe483xOqxeAtcmcvJP1s4R1Z4rnhY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YgpVA89ApQkYAOrFscvh6RVYgYtgnA6Bp5FZE27bR0PO94y2l2RBplDzmnNLuBfoKkxpFRZORxvx3Npx0OoOE0XKVTz9A/tkZ5xDVaG6Y9ZsnAD7xOEkYJhA/ch0TuehdLhnRlQsCxYAwD67u6GvfPF8oUp30jvpSvs1cQWshko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4Syi+n9; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="easqI5iP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745497605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QC/L5dA3dOSeibATP2lFtsY0DYuXP89RpuDsJDZIFBQ=;
-	b=easqI5iPGQ89u/EZ+7g2mY+zg6xpXC5W94ghh+vIbJ0pd1aT+p/TPa1T7EeXEBL8Xy3uva
-	iV/e1hFlmJhtYbnJxn3VjXl3ogY5nnKwyfa/axyjGDanm8vodBmhrhE7txYCEWAXRR7utZ
-	WXahvKXSryarPeINRzjQpg1h9F6JVSM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-204-6G4aEBPBNemdl7lnN7eo_Q-1; Thu,
- 24 Apr 2025 08:26:41 -0400
-X-MC-Unique: 6G4aEBPBNemdl7lnN7eo_Q-1
-X-Mimecast-MFC-AGG-ID: 6G4aEBPBNemdl7lnN7eo_Q_1745497600
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D049A195608E;
-	Thu, 24 Apr 2025 12:26:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.16])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B89A21956095;
-	Thu, 24 Apr 2025 12:26:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <aAikCbsnnzYtVmIA@stanley.mountain>
-References: <aAikCbsnnzYtVmIA@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    "David S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-    Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-    linux-afs@lists.infradead.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] rxrpc: rxgk: Fix some reference count leaks
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4Syi+n9"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso4826135e9.3;
+        Thu, 24 Apr 2025 06:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745500329; x=1746105129; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9S606ivdk88pKEWaj7Kpt7XGN1MosTx0xtmJbQ+tj1Q=;
+        b=Q4Syi+n9qn3uggM8XXWTyfrqLqtevw0yu0DbazFvy0BjgaZcdObTn4Mhh7a05ckVvL
+         nSd+eo+fCLsIh7LttrQLwB2wXO3kUUeu/9ipRMUUcwyjUjAzzw2WHiR7Md4/vysgARI9
+         C51LLYuwo6PZDR3Zs3QJOW89eYuf7U+M+18Q74BoOjFoKnpLkOuspon+FlOfhklRQLbA
+         v0RyxieC7I774aFwCVPEEvHITWd+6zgWXfmDBsKdtivrsFCVlcxXWXfm5Sqr1zZFQ63j
+         K+PqrPkfXabapIaMbDHVNtOrVhPUQRDsIRCmtZwFd07p1LCALAFVNnx7yDQaIr4jcQFl
+         6WOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745500329; x=1746105129;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9S606ivdk88pKEWaj7Kpt7XGN1MosTx0xtmJbQ+tj1Q=;
+        b=tWAOJENjReVB549Bu2f4bXOlZNzhd070GM1v7uvdKPS88PUDx50TQm118MZOpsx5+H
+         l7bmJyqowSkFES6+p0BdM1sjolBoda4cy2slbgDNBObB8fPN3usIBYRslE4eZ8XuuAHH
+         ByzjqkCh8XNJPvYFdwB+Kepgzda8eg3pCWbBYAVM5sBoENoAGP+v4PbJ5108JvihlzJ+
+         LK4xrI68bqTpgdma/3rl7p8PM5kAom+rAHu56nZbBmJxt3uFZUIrp/oS4SQymhtBT+MJ
+         moiPZMmZ8nja3AadImOmFpNLNvBLnMarjqQRWu5SWD66mbIgybNPht8mQEq6LG9g0cxM
+         BdDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMuCbRqAjrcj/LU8m6rseXtLAzWppKjGTcxhdIlbSStfzLNJtj0wUQOvqb+XUG8PVibnqRfZ5PlOHH4Q+F@vger.kernel.org, AJvYcCX7hNFGcsifRMgkIDE+i2XtBRsbFR7q50b6R9d56tVooBrz/OUaxSjfXjMM9BVVEiXVjvwANxFA3z3P@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjDrv0pcFfiGEXnZy6e8DQxp7A+/ndTdndhF+Fxhk5EM/7X2dt
+	euWVOuOD79+LIhH9mGv+cPKUbrbF/B+cb4doApDKvzFF/6mb6znn
+X-Gm-Gg: ASbGnctAjjs+8rENI/sele/389YN4c2R/K0QwQqs1eg8R6tTetBfWv7qPkzbufXaA1o
+	3qzIVBTmcrVg5EELHEfP4Hgd83ruF3uaw6bkaIwEALdjdjR3r5sYC7ioj9iW3/VfiVoBs1YiwJs
+	7HE4/loZrk6FhhOfeOxR2FoyQHQzSHkJyihBrqxWkSPWIcUuGBCbhbI7ort0QU+kpEBiLJjAe4g
+	/E3qiOWRFC835ZqC4yOODhWJOTfJQ6Wj48jiniCmoo+wrSc+NmWN9W+/rQocjwdBVPjU5FBvwyE
+	WgHPORYWPObNQP/tcxQ2buP61YIXKkYqt85FRmT16w==
+X-Google-Smtp-Source: AGHT+IH0jSQHUGWaZfvxTiF+/uEGoyp/1xBue+C21lwbotQk56PUX5CrmPAC7ibihDDtERNxvnwjkQ==
+X-Received: by 2002:a05:600c:5007:b0:43d:fa59:cc8f with SMTP id 5b1f17b1804b1-4409bda56c9mr24344935e9.33.1745500328918;
+        Thu, 24 Apr 2025 06:12:08 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a06d4be673sm2030014f8f.23.2025.04.24.06.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 06:12:08 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: mediatek: Fix sizeof argument pctl->eint->base
+Date: Thu, 24 Apr 2025 14:12:01 +0100
+Message-ID: <20250424131201.157601-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3113807.1745497595.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 24 Apr 2025 13:26:35 +0100
-Message-ID: <3113808.1745497595@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+The sizeof argument is incorrect when allocating pctl->eint->base, it
+should be *pctl->eint->base. (Generally, the size of void * is the same
+as void ** so nothing is breaking in this specific case). Fix this.
 
-> These paths should call rxgk_put(gk) but they don't.  In the
-> rxgk_construct_response() function the "goto error;" will free the
-> "response" skb as well calling rxgk_put() so that's a bonus.
-> =
+Fixes: fe412e3a6c97 ("pinctrl: mediatek: common-v1: Fix EINT breakage on older controllers")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class=
- (GSSAPI)")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Acked-by: David Howells <dhowells@redhat.com>
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index 8596f3541265..4c2b72a3543a 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1017,7 +1017,7 @@ static int mtk_eint_init(struct mtk_pinctrl *pctl, struct platform_device *pdev)
+ 
+ 	pctl->eint->nbase = 1;
+ 	/* mtk-eint expects an array */
+-	pctl->eint->base = devm_kzalloc(pctl->dev, sizeof(pctl->eint->base), GFP_KERNEL);
++	pctl->eint->base = devm_kzalloc(pctl->dev, sizeof(*pctl->eint->base), GFP_KERNEL);
+ 	if (!pctl->eint->base)
+ 		return -ENOMEM;
+ 
+-- 
+2.49.0
 
