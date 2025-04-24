@@ -1,101 +1,137 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEAE1B0435
-	for <kernel-janitors@vger.kernel.org>; Thu, 24 Apr 2025 07:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5659510F9;
+	Thu, 24 Apr 2025 07:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745478168; cv=none; b=nas2JFREUd/k4FlT7MARXuVoVod7ibEEFlI0pPJ8MhRhYPTnfpHPe7GRlHH0WV8teyDzdR56EXjtPLmvEe+9XceEy635aV8lM2AKD/At9sCVU1EO7BfYyC1KGEB+SMJW8VERff5pvKz98VnGLckIClwnsz+4VDbWCT2auepRfMU=
+	t=1745478649; cv=none; b=cRbzJAyCmBaE15ZbceoUVU3eVCkPFA3+o6d5NMgSj3n+2pMCu3kOcPXX4i5kFV0d3WOYe4PMEjQanovpCcaXz/dGhM7XNV11YfOYHCIGdzW0QwXD38mVp5HoEJG9PTaWqYnWiU2SSw9kESJwL5WpcWrAa5NgAmsw5YXSl2hfZjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745478168; c=relaxed/simple;
-	bh=CsVdIY8q46bTxLPbuwJ8cUP2eUiwXdsgC6RMjJcwonY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TI/0HymAjBcUzoOYnIXb5P/Uhy9gTCwarp398k/qXMgASEI+9xSrEFsf/8SBnPZ2SeRzOgiX0/bf/Vgpq8s/TFYRzig6vlyEGtbc1EnRgAHbzWDrXX3gicM4CiH7iaQyWY2FJ6Fo4aEhfgTEGw4NMeB2zQLruLblXgAbE+aTLZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PbFclHgN; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745478649; c=relaxed/simple;
+	bh=t+K0ESiXzCsl44QHMLJtE1n+4hg/PkQFOPFvd9iGyuc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LvQXhNELiZCGjEvlOSsdLDU6OmrMzve0awBIJSwCPy95dXMlh2mdJLCSXJB8cvRMgjPhcX8XPZzlLw+Ny9pq2rL/7XP+pmzQyLkuD4ICyem/vxBw6Ra0lPaV3vM1M26vVpGzuJ0OaHRDNP3SZlOOnRelX8LUFyRkRkHv5tcL+Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RRBIE2FG; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PbFclHgN"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ace3b03c043so104903266b.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Apr 2025 00:02:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745478164; x=1746082964; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=atZ0zH+QTHFPwFIGyoJZTZ335IopbqtcRNNIDzNruC4=;
-        b=PbFclHgNjB6RXMecnfIP+Z73qquzU3VIwvxcMjTs4FsrIcbOh/LblRF3NUS4LZfc5y
-         ZpCZ8iSj72X1+S7rKtKjYOgzEwam5ASSq7FmFQsu6+NEUUwFI3PDrHuua6eXGQ1eENHH
-         +gUZzwTVtO4p4o8zLhYjoXOqoCTIZjdwq43dKKMkroVaj5O7OTlYMIiWPClNx9icGA/O
-         6M8yEnilRKLdmNngmnbBLtndXiezGTt++7R6Yf9ACl4E41Uq90JqzIU/pNtYPgrLHSUd
-         3DH5g+7z9OR2JE8v1AsfAXbLN5xHzWveov22VvaN38zQrDfdX6aZNyzEC6IK+/wLUwPR
-         s2dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745478164; x=1746082964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=atZ0zH+QTHFPwFIGyoJZTZ335IopbqtcRNNIDzNruC4=;
-        b=GjlQzI/lKCuF/SLGhI7GpD37b/qnmwB1SFYF/cqkfO4Qn6UDJVag22sAqM48GJSK8T
-         K8exop7iuhNqMnfJ0OD6llDXJghFF1R5e6b7Je/h6u/GzMqSooLwuSbpHcB3H+z4oNFu
-         83BeEHMqxpG/WX/xluHF/47/CrRMIGgi3eAqficDSf6s/wGQdPorDQiCuadei+MiOCLx
-         TIvQGVNLz48EYBHRL6QsK+5irsrdZa796prv2Nup73VvbIUWukV2DmJAryFtgWAEHfVh
-         cYalE3uOHcYdSNdNrTcsUHhCE6Kq/r3vVYk+SlbILiP0dH8mCMLsWWtZPPKG4WuBETVI
-         WxXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUD+GqyVCubPbIKzl3TWRpqn/cNPq08NUq6LJ0/qO2Az4CSs/91NXR7oKyh05/lIFSuLCVjj127F6sfBFabSOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuGjikUF6v9CKfxDWkIZZ1yAkaX05Zrt7s0WyaKVdRdggwNnMO
-	b2ZMKqoasFmDINUZjepcYzjCH3ALr1Pp0hVf8pqJenP9bH99kGkJqF1s0y5iN1o=
-X-Gm-Gg: ASbGncvSzWTgKyJ6P8ZOXi4E16FwBpXzfBvd+r/IZEJz1NkmgLrZKMkxzbdoNXCb3Fb
-	Pa/0EzPQG6crwgOHErylJ3mN2KpqumCR/uY+ijCfzFNECYT3AEx7cB/dO5EWsg/6fw3z6Ar/sSi
-	wsaKZ9ono5E51gUh8j8AlN5hoylNs+3RF9I5wVYcgkzfXJ8c72CBaipy7WZE5zr1b/95uVq2eVa
-	obto81XusVGx1gzCFRMvnzS/axcLZApBuYgWLMgy/OuD8bOO7rBV4cnyBdEPoayO7+m7y6Aehcc
-	GAOxNR1Paz7AVZZlU31tM7dnOHHmUjX/5a3OzA==
-X-Google-Smtp-Source: AGHT+IHRRXGrXUDu3+rG3nESpdOVayw7JgdtjaocMACREgykhsz0BZozqMiy2x1NiHc65DNK79egqw==
-X-Received: by 2002:a17:907:97c1:b0:ac7:95b5:f5d1 with SMTP id a640c23a62f3a-ace57494ecemr146858866b.42.1745478163982;
-        Thu, 24 Apr 2025 00:02:43 -0700 (PDT)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace598f6b97sm57765866b.75.2025.04.24.00.02.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 00:02:43 -0700 (PDT)
-Date: Thu, 24 Apr 2025 10:02:40 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
-	Frieder Schrempf <frieder.schrempf@kontron.de>,
-	Marek Vasut <marex@denx.de>,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
- __qcom_smd_send()
-Message-ID: <aAniEGwKKRUieo5G@linaro.org>
-References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
- <aAkhvV0nSbrsef1P@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RRBIE2FG"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BEA6743A57;
+	Thu, 24 Apr 2025 07:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1745478644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ls6ZOwr4X07+mFxbErQdmry+CO4o/SQ2lrx34X9QQTE=;
+	b=RRBIE2FGJdwYRYGLOTx1+qCnf8F/EKYhYO66/Phh3rBBsU7Sm7K3d4FwxTzxfu3pEaP8zA
+	N1LaVgnsNvsX5eSgFrkjccYzmxUWQ0tVj7ubeBRvVq2E8rUMVgsf+qHk/SbkIb1oGRkrcf
+	36aRsLbmScl4x3KCQCny5ulOX84AI924X01GPoReJDQuPHyKR54IhOatvaOMeG2C96IAsC
+	pzh5oR9CuACWcJF35qS9rJTXFVzC2ZGePcT3FKKHQqujSfo7WP/0+0ZadxcyYIRda8XlAd
+	ZdiI8dTQM/UvG5r3k2yAr2kx/f3VENswIkuLQVvvf2XXAKuxE9iyTzW9MAOQxg==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject:
+ Re: [PATCH next] i2c: Fix end of loop test in i2c_atr_find_mapping_by_addr()
+Date: Thu, 24 Apr 2025 09:10:43 +0200
+Message-ID: <2778486.mvXUDI8C0e@fw-rgant>
+In-Reply-To: <9cd0c3cc-9f3c-4a3e-9080-c832def8f317@ideasonboard.com>
+References:
+ <aAii_iawJdptQyCt@stanley.mountain>
+ <a22d74b9-06b1-4a4b-9c06-4b0ff7f9b6c2@stanley.mountain>
+ <9cd0c3cc-9f3c-4a3e-9080-c832def8f317@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAkhvV0nSbrsef1P@stanley.mountain>
+Content-Type: multipart/signed; boundary="nextPart12651876.O9o76ZdvQC";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeekkeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhggtgesghdtreertddtjeenucfhrhhomheptfhomhgrihhnucfirghnthhoihhsuceorhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeikeekffdvuefgkeejgeefhfdvteeuhfdtleeiudehieeludelvdetleeggfffffenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhifqdhrghgrnhhtrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtoheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrt
+ ghomhdprhgtphhtthhopegrnhguihdrshhhhihtiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: romain.gantois@bootlin.com
 
-On 25-04-23 20:22:05, Dan Carpenter wrote:
-> The "ret" variable isn't initialized if we don't enter the loop.  For
-> example,  if "channel->state" is not SMD_CHANNEL_OPENED.
+--nextPart12651876.O9o76ZdvQC
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Thu, 24 Apr 2025 09:10:43 +0200
+Message-ID: <2778486.mvXUDI8C0e@fw-rgant>
+In-Reply-To: <9cd0c3cc-9f3c-4a3e-9080-c832def8f317@ideasonboard.com>
+MIME-Version: 1.0
+
+On Thursday, 24 April 2025 08:32:22 CEST Tomi Valkeinen wrote:
+> Hi,
 > 
-> Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> On 23/04/2025 20:29, Dan Carpenter wrote:
+> > On Wed, Apr 23, 2025 at 05:25:44PM +0200, Romain Gantois wrote:
+> >> Hello Dan,
+> >> 
+> >> On Wednesday, 23 April 2025 10:21:18 CEST Dan Carpenter wrote:
+> >>> When the list_for_each_entry_reverse() exits without hitting a break
+> >>> then the list cursor points to invalid memory.  So this check for
+> >>> if (c2a->fixed) is checking bogus memory.  Fix it by using a "found"
+> >>> variable to track if we found what we were looking for or not.
+> >> 
+> >> IIUC the for loop ending condition in list_for_each_entry_reverse() is
+> >> "!list_entry_is_head(pos, head, member);", so even if the loop runs to
+> >> completion, the pointer should still be valid right?
+> > 
+> > head is &chan->alias_pairs.  pos is an offset off the head.  In this
+> > case, the offset is zero.  So it's &chan->alias_pairs minus zero.
+> > 
+> > So we exit the list with c2a = (void *)&chan->alias_pairs.
+> > 
+> > If you look how struct i2c_atr_chan is declareted the next struct member
+> > 
+> > after alias_pairs is:
+> > 	struct i2c_atr_alias_pool *alias_pool;
+> > 
+> > So if (c2a->fixed) is poking around in the alias_pool pointer.  It's not
+> > out of bounds but it's not valid either.
+> 
+> Maybe it's just me, but I had hard time following that explanation. So
+> here's mine:
+> 
+> The list head (i2c_atr_chan.alias_pairs) is not a full entry, it's just
+> a struct list_head. When the for loop runs to completion, c2a doesn't
+> point to a struct i2c_atr_alias_pair, so you can't access c2a->fixed.
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Ah I see, in that case thanks for the fix Dan!
+
+Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
+
+--nextPart12651876.O9o76ZdvQC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEYFZBShRwOvLlRRy+3R9U/FLj284FAmgJ4/MACgkQ3R9U/FLj
+286FVQ/8DWmGsioZ0zngygJdrvQPd3X3Sf3Kd/9u0lB5kzV4sTCbc3yY5dug60Jm
+ol0peHRedrLQCyudxFWTnjkM/LTgdZ7plaUtOJox8tvPD1lyvcfGLwzl67xM+7Re
+PMqhyZNB2tClFQpUC7/buQjJdo5MzOZSmbl3TtLzz0+NB0sCeVw6XwIqvc+KWz92
+QfP7Ni8X65mdqWuT4faAAV0PCkZeBknh8v1He6MnKsjXxOaJ0yO/6IUYUl8COJS/
+22CIjOHNI3ZgfDzg11bEDI/qaHbuuWv7Ke1np6wLyOhD26sqoCP5TQUGA7Fw/c+H
+V0TQB/08nW13SDHdtB6LgbnCvri59paDJM5gMyUwVMxYOLHPN3u+VXIxSpRc/6aC
+1N62+xZ7SRf/TkoEfxeZILnQib5m8GyvjR1PRhMi7QIgdXFfbH+g2j/BTNQmup/0
+1o7Q+Z90Hi3OSoR5Bviktk8eLh00C0H+pPk7V03b0oh4xx7KVzGXYikeIV9jp/+U
+gkzeLCCVAFjM2wm/DYwGos+Ys2zNWUjb1C7KJlCP2Fl/JGCQO9txPO1BZ3pRrRyf
+/oXcI5tpTj3x5oZpuIdPZzpOZjS4LvHojFkvUBNFP3JO9r8GHaLeoA4X+UknqN1r
+gH73eOfSbUFAPDwDiuOG3hxte9WOdKiIZ8Fcb6pRgk+p9HnCDHs=
+=pYya
+-----END PGP SIGNATURE-----
+
+--nextPart12651876.O9o76ZdvQC--
+
+
+
