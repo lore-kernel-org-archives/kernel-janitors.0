@@ -1,75 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD9D21ABA3;
-	Fri, 25 Apr 2025 19:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1435D230BC4
+	for <kernel-janitors@vger.kernel.org>; Fri, 25 Apr 2025 22:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745607669; cv=none; b=KfM0LdIOZqi4TY3yHvKkslyP3c4w07NTL5dxIkbUXe9Yb6I4NxKrdQ1KPm5WJQIjMkNK13HUWtsf5o2jzWUIR8ygyHtggWieLSKJeT7LQ9COwJK0j5M5PD9lf4IdtbHNgiSZqXm6LW5vnGVddynPLgCsT6PTVgvKcRSBUsFNCo4=
+	t=1745618957; cv=none; b=BUHuhtsnW8JVrJK/2xlcFZMPzYgkWlslavduKP3FgtOfuE7kOwvYLCAZIdm3+rbE6HaJGv7uS4TBnGjPXzR6GuESKN7biohHdEpE7cFAUe7qly5JUNdHaW0VntCZDmw4Vboezy+2q/4yNWT8o0R7+nFaHwuJ+B5/BzCZqW2A3rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745607669; c=relaxed/simple;
-	bh=sjmhzgsqWETwophXCqtGaKo6D1zvvhXPRVPxckUmT1Y=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=s252QDnnCuHVIQiXi3GK9uWwic9bJVivpOdIeumIl5aSKwSLRmKX0cCSGf9nrscMfxD19RZGq5oWGriCE9xkyrNqd5BIvg1H6wivJqfeo8Iyf1EOP/0INfuxZBnCy5i2dQRxYzgHEnO252l1MGh/ZZ5FueYv0dP/qTDJtL25bTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgYkJmcN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745618957; c=relaxed/simple;
+	bh=D6uCt3M5nUftHdnO587l7uapyumvFCQFOaKN0b6Chh8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KjS0OtoMKxgqhltBrjtt85OJ39x12qVh89ZxwZ8pkIWNcieA0V/hy/VcOMc7lNrP82nLtfCQ1We+uV8cXc3D3a7jUZJecjH6SWZOayHDbMJsG3SnC07nKmi8SNrsqMsttypHS3+7KlLmK7+pjxaz+it2XZKYdd0ozGfSxhy4gCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XN0VELUT; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgYkJmcN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82437C4CEE4;
-	Fri, 25 Apr 2025 19:01:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745607668;
-	bh=sjmhzgsqWETwophXCqtGaKo6D1zvvhXPRVPxckUmT1Y=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sgYkJmcNcSthBpK+HLDtDU0GcFzWt85RypmK2CF70OPnnf1jW8tyKcNwCCStyAJll
-	 g82YHx5JZoiSwFGba07l333iFw0YhC4NQPcyxQRz1rwh0No6RvUs3B0p4JaL53cYJJ
-	 9zPhiYDQh2tf389NNbDzrMefFu1IShE/8AfC3oYp9hfQVCyAKho1hIORxsHtyEevZE
-	 KKqxE7rRRn8BRRtOAu32EuvCLeP5ZNsUakfatF/jb9YXOC9CMFeZZVvxlwmThHE/0F
-	 UfNxc+ik13LM8D84vnEyAlurBVqaJikwLzAGD9pQRIv/wv3VWM95eG+wrLK3mqFGbW
-	 yHNLpIVO88pVg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71178380CFD7;
-	Fri, 25 Apr 2025 19:01:48 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XN0VELUT"
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-73bfc657aefso1824282b3a.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Apr 2025 15:09:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745618955; x=1746223755; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e2GzbD4EGM+CSzFK8kCRHdpCdCIIlXbfHT6y+sz5OQE=;
+        b=XN0VELUT76uH+yHhm5VB59A9ZY8rET0N9w5MW4DIgDsBg7s0w5hheyybtqhdr/P+qd
+         RmjzDAcg4tiGcj9/gfIOGGK73MtAAbIuB0YqxT/sVV6lTRvdYeqMm1UOpLYQY9dBRSxY
+         FAFbjcBOom32ftQ6uLZVpKRGLncVqorMPWpfEpiZLXVtGXPVlVK7g7S1721HBeNSFCXv
+         X4qQMBKkHwOeMnUrE9fQgDxvgSF+eohtdWurMTObYEDeMcT5cOnUar10NDo8Yfno5bjl
+         rx+wn3MipWjvG8kYFZMbMcHIWAcm1ffqZvbEUItHOd6xYiAvnuzvpAb2AUjQLLnWQ9+D
+         L6EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745618955; x=1746223755;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e2GzbD4EGM+CSzFK8kCRHdpCdCIIlXbfHT6y+sz5OQE=;
+        b=RkQoak1wr4mcq1m5Rfpv1d4JCrFRHIrbDsQUnua2y76ldWf8VUXQn/W2AUdocbi5nt
+         34y9QVBeG3qTP3ALN7k8cP80/C9O+LOXYKYJvW9ExIbV0Hnw+kD5y9PCHKfyx+Ik7Zox
+         DOIv5zSTsnqDkOocIG1twDjSxIOq11r5nAcesnT6S7vFheI3dR4PJwlVJCuIu/IbUEv0
+         Ocfmt3MpCD2Ws7XckIOjsEDdV+2t5n31h2V2F3CX3YnvAnrIVDVjRkIEOxB+CJA+ZaNJ
+         P7IQBqvAhMJFjfjqCHXThZsP2wsURGOHGH6TSx4XCQvtZb+WMoYh1Lkaei60XYXO/RoL
+         RUQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvVesAbobJfI4gLi9d9zJmHVKdoWvgrGCCfeMgYhRI6xuOAR+a/aMYjQXgq9DspDJs3HPvmka5nzHnbGDyMLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4ieSOmn48fPNRKunzYie8f84usWKoFXnOoQhv47fa6ctSwIc2
+	HUWB1D6az3rZ1WhnVZJJFp2udoE4Zy0swhccP4DAvMkSKLF2d31Ntrd0E7VvRmc/XthK8GAkh/W
+	Cyg==
+X-Google-Smtp-Source: AGHT+IEFA0r9U63O0zZjEatvnLlSDLoztxBfWPQXiWY/NYkA4ig26Zev691zUOoFw1e1JFnipYoUwsgVtv8=
+X-Received: from pfbna13.prod.google.com ([2002:a05:6a00:3e0d:b0:732:9235:5f2])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:9299:b0:736:6279:ca25
+ with SMTP id d2e1a72fcca58-73fd9043a02mr6057722b3a.24.1745618955316; Fri, 25
+ Apr 2025 15:09:15 -0700 (PDT)
+Date: Fri, 25 Apr 2025 15:08:55 -0700
+In-Reply-To: <ec25aad1-113e-4c6e-8941-43d432251398@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] net: ip_gre: Fix spelling mistake "demultiplexor" ->
- "demultiplexer"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174560770704.3803904.4220032486638113159.git-patchwork-notify@kernel.org>
-Date: Fri, 25 Apr 2025 19:01:47 +0000
-References: <20250423113719.173539-1-colin.i.king@gmail.com>
-In-Reply-To: <20250423113719.173539-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <ec25aad1-113e-4c6e-8941-43d432251398@stanley.mountain>
+X-Mailer: git-send-email 2.49.0.850.g28803427d3-goog
+Message-ID: <174559663411.890078.15043837914578345884.b4-ty@google.com>
+Subject: Re: [PATCH next] KVM: x86: Check that the high 32bits are clear in kvm_arch_vcpu_ioctl_run()
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Pankaj Gupta <pankaj.gupta@amd.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 23 Apr 2025 12:37:19 +0100 you wrote:
-> There is a spelling mistake in a pr_info message. Fix it.
+On Mon, 24 Mar 2025 13:51:28 +0300, Dan Carpenter wrote:
+> The "kvm_run->kvm_valid_regs" and "kvm_run->kvm_dirty_regs" variables are
+> u64 type.  We are only using the lowest 3 bits but we want to ensure that
+> the users are not passing invalid bits so that we can use the remaining
+> bits in the future.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  net/ipv4/gre_demux.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> However "sync_valid_fields" and kvm_sync_valid_fields() are u32 type so
+> the check only ensures that the lower 32 bits are clear.  Fix this by
+> changing the types to u64.
+> 
+> [...]
 
-Here is the summary with links:
-  - [next] net: ip_gre: Fix spelling mistake "demultiplexor" -> "demultiplexer"
-    https://git.kernel.org/netdev/net-next/c/4134bb726efd
+Applied to kvm-x86 fixes, thanks!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+[1/1] KVM: x86: Check that the high 32bits are clear in kvm_arch_vcpu_ioctl_run()
+      commit: a476cadf8ef1fbb9780581316f0199dfc62a81f2
 
-
+--
+https://github.com/kvm-x86/linux/tree/next
