@@ -1,121 +1,119 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C8422B8C1
-	for <kernel-janitors@vger.kernel.org>; Fri, 25 Apr 2025 06:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3623123BF91
+	for <kernel-janitors@vger.kernel.org>; Fri, 25 Apr 2025 08:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745561198; cv=none; b=Hr9jr+k10KvCIWatWirBx/37cAZPob+ddXWEPLC+K9nu42SbyJUe+F1syk3lJt0j57ninGJvOnv/ScdLuYUXsnTTA/Rk59j75wFPo2y+ZuttkjYWssIAQQDPMweXSlOOJ48nYSwNq5v3GD1pBidYf4EsRviz0pqRzXjqHLERxjo=
+	t=1745569081; cv=none; b=TxLZu99tfKtxTNwbcFUhTpxe4NFv0kw6Y5Y/oaIY+aOZ2jKDnjhPhNDYP4EVjkoPuRgoZNSSjKXxjkrmgkwccnueSyLl9dG+f8zNKqwxxkf962K1Xd6dqA2d+PkK7civdSw7g+KKhhaqySnutky8vxMeoDOpV8TbGT+j0Ie/BJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745561198; c=relaxed/simple;
-	bh=CpBT/GJTl/qOHB8XXefQW8z5QInEFr8XQOgxoGfmDlU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BZQfzfYcSQ7J89AZvRWyRxPfPxJQnTQ2ZaIcPKrjZediXk5dDIq2AYJkNQOfpMaOllVHp6Kma0Ef1hxDgH7zcuxLpmlmM1yZTD2qWEO1vvs3RflHbdcqTJ+UWT65RP418HobW3GAA7Enl7Tv05JDHYOhUMQHB1WLRrzW0L3Ynq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RFtSTVxY; arc=none smtp.client-ip=209.85.221.169
+	s=arc-20240116; t=1745569081; c=relaxed/simple;
+	bh=ockCoErXJYNNWIE4F1OGfTdTciM14pc2rGFj8KF/fos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZi9iDYFKvJ4LIxL1rbhYHpdH9L2JmeCBS8XXOs/NiT04bPIURNJbhyZ7lXtE/GdSmRNEsF+1rI/b390AGB6H7rKwSNWbaHXhAL0AmHdkVnk9nKKtUEOrtDBNPpnTCwxZMNlv1aSoQIkzKG0Fn34pioQMKUii5DQFIhdth89JuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i8KCNbjb; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RFtSTVxY"
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-51eb1818d4fso2533782e0c.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Apr 2025 23:06:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i8KCNbjb"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso8986545e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 25 Apr 2025 01:17:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745561195; x=1746165995; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ajgJc89GPboKToxuB8Pj0D0uNjRPDnR6q+9b48EFZ2E=;
-        b=RFtSTVxYzNOCGv2rnwTHN+3CiPKXQBATPCXeP6dr7gaQRpBhBoalnkY+LbUx0sk0K0
-         uyWj5fDaidv+PnkUuO8tbvCDnuKmBCzQIZWOz1hEBc76bo18OqEBD5Oss8u10URqGgRQ
-         BMs/R/kC1OEknsAsU25OZXJvGLGWnmeq+yhLXDIU5LhKz4jUdWSM0/q/rcBT1Vb5UIYp
-         yibnkVOsVcZ4vQj/iAJ+eQ3TvnlV6RbQDIgst7u5CJ7Rlkd6Q4jQmnIFsYxEr9SWwjN/
-         NmYo42eVBTKO60T5mAo/Q11+g3gVoJLKhg4TExj0Wq0SNGr03vP1PeV/Gv6UA8BHCwAk
-         PWsg==
+        d=linaro.org; s=google; t=1745569077; x=1746173877; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pIik2Dicc6zrNNPkgRyVhu5BjNjWoGlcqMwS0QNX8Sk=;
+        b=i8KCNbjbmdKc4sIjtJQPP7WgaU8u7kgQvvJRDHolwlBVdzQNI9ZnLo81t6/elcoa2k
+         NUlaEF7k01WJT916nRHvbKnszFcNNlbw4nove37EEIIoXPLw0S1h0mJH8J4phPb1gJWx
+         Zku/gMC7L32R8ibcJfkj+eBWyLn8Pi3MnTJaD8XIOEkBoP/VKl2cA+/9OSwvILIi+mjn
+         fBW9W5Utg7nbmYjM3S2POgZQ9q3w6nsPAsh7LvqS1oNUGJe7cOTruTBSDuzPveswgDoz
+         td+zByLQKPBhOzRw1zB+EAhdDTeJJstKvhOYG8JF0hDcUkSVrjefeA5c1msW6+gwu+w0
+         hZxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745561195; x=1746165995;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ajgJc89GPboKToxuB8Pj0D0uNjRPDnR6q+9b48EFZ2E=;
-        b=nXSfiepSzOO/+wkxe4BU6004g445pwtYhuUV1otk7s8xz04ui9SaFfEVsg4k2T3t9j
-         1wRxsI5Q9/jL8ldOdDHNdZ7L9+gh2kMYN5pieZERY1LjB6C3uowML2g9axR0CpY1YWED
-         5devzDJzj7DsFzqKdGyKrt3F2nED1BFxigDGGc8q+LzNzQMovUR3TVsX0OqbrIniTh9L
-         h0FYiJc5xkyQIoz1DslzDkov4kjL3eFHzSIId4w1raRd8LWz99hTkGCMnZsJYhI1Oiib
-         sdGRxcGfLP56hWuE2bmgbUTnkzk2Cwb6pvbNQGxbVFagYTl3lQoKCKp0BEFbssW+MUsq
-         Sc7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWf9y56A6EcLL8HvyJJ6iM362zdx6uWU0Eh/WvZJ0skZe08YN5Hsxzhk1VobpG+UPJuAddIfSYMg3PeLpcnDD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8nG+/r5/ZUTVOUZC6fhapvnfbfMSr9F8FFb5DC+By+C1/KPbw
-	ExmAF/hcVzS0Zbs6zH7xvl4YiAbphFhjPvMUz3mUbieddQnEsiEaMjG0NmBdYIG5lnbFQyu+P+I
-	KOd76qEv2V6fu0OGhNRZ8VG0GtSAhm1auWwtW8g==
-X-Gm-Gg: ASbGnctvRwsVbuWJta7mJDoLYE3bZYdjE4oKvoScpmESMtQcNs0RfCWJqEPqS12Uvi7
-	UzbyfRWeNEiEAZBoA9ga0eqwH1Lto3JkdfyeUzpZd5ypbwpi2ZgPaC77r3P92kPeKpHm8uGPmH6
-	55xPLi6LHy+FqQ4yGqPJ8EIQZSywD/Rz3dxh3V8C/Tio88HZYaMYJo34RL
-X-Google-Smtp-Source: AGHT+IHk3Sh1recRtL0I0FAiNETtYwurKFY0CJ0FDTy8w0bAg/KMEvL/1tmqPiwb61pQkrz7JWUirq46fq8oitTFWfU=
-X-Received: by 2002:a05:6102:3e87:b0:4c1:9526:a636 with SMTP id
- ada2fe7eead31-4d543fb6341mr362655137.15.1745561195672; Thu, 24 Apr 2025
- 23:06:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745569077; x=1746173877;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pIik2Dicc6zrNNPkgRyVhu5BjNjWoGlcqMwS0QNX8Sk=;
+        b=IQ1gJIIJoSB1aMxMDVAyM8neL94KVlCpm0Jvkq6utgFFchZna9MaVYLEq5GVfU239Y
+         7KBq94LcSASwCFENF7pa7HBxiQN08Sh4AMyOT9v0dZZjPjDU5MBwZ2DRRkcO5URgnOu3
+         otaIOdK2e5QFQM8Mc5t7g/mIkCCyhnmZdRdtrHLxi+CppK00MLuezq1ode2hiY0FgNJl
+         vxZQZEcTNz+GjtaQX4jq/wvhuXTab6rteVkfG0fvUWUSOmwXCp1TchIUnxKzM0QxTb6x
+         UmbeR0M/0Lmax9vMDnW6P4oBCFkgKgCo+w8Ey5+0l4mEPVw8DrWWZhqVGHEJjaGRX1zK
+         J4Og==
+X-Forwarded-Encrypted: i=1; AJvYcCU72M1wAAE+QXocO9cj2XFl4OXectsQsjEaG3TRW+CCG5wn8vJocY+4KH6/Jm/tqowTw0Lej9WgJUSmPT5bGOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz66o4uo1CWl5yu0rahR/8+FHG70v2+9IqBJ2Ht8eRV0b/2fEQH
+	Gwv3Qm1nuDIg1SMXebn5YtXFdCYg45wgI+7r/4oXBCzQCL4vFNrYDDJJRYUc+1A=
+X-Gm-Gg: ASbGncscB9YFbPlfeI/2Oq1aF55AjGO8CCqRh1WzoZivZ687XUsjM6lcFYTl6sQOWgM
+	2EWvjQLKJ+yZB7BuUnEZpBohlh0r6bf2NkaCUJy0mgBOZPfCX10Id0seyzrdGyuXL8vyW02Gsws
+	I9k9sKC4KF1tdWfdak12/yaX3+ALzvV62vGTvkAEO3bQGSjfD/yM+qPgc/NssWYljNzufIEvBha
+	2N+RTaCDTjaKD3elU19sTdYDc0KVrLFyRlKp1JtyZkLy1usCy1XoU9mcxieKVuKroWJIIU1kz3C
+	qjDntJmcKAvHmxOYvQY6JdTbK32OtJUKwja8YE/vpvVxfw==
+X-Google-Smtp-Source: AGHT+IFtIhw338SCwM97fT8DE36JSktmwAws0V+m2whiTCc2WvjhYcfxYH8N3RZVkd/V19BgPW5uag==
+X-Received: by 2002:a05:600c:3d0b:b0:43c:fc04:6d48 with SMTP id 5b1f17b1804b1-440a6346aabmr12093055e9.0.1745569077572;
+        Fri, 25 Apr 2025 01:17:57 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a073c8d1a5sm1671072f8f.13.2025.04.25.01.17.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 01:17:57 -0700 (PDT)
+Date: Fri, 25 Apr 2025 11:17:53 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org, patches@lists.linux.dev,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org,
+	Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Marek Vasut <marex@denx.de>,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in
+ __qcom_smd_send()
+Message-ID: <1cb8c180-a93e-4d5d-a17a-6452dd154801@stanley.mountain>
+References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
+ <aAkhvV0nSbrsef1P@stanley.mountain>
+ <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYs+z4-aCriaGHnrU=5A14cQskg=TMxzQ5MKxvjq_zCX6g@mail.gmail.com>
- <aAkhvV0nSbrsef1P@stanley.mountain>
-In-Reply-To: <aAkhvV0nSbrsef1P@stanley.mountain>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 25 Apr 2025 11:36:24 +0530
-X-Gm-Features: ATxdqUHyh1sPNfszHFCKsjMSGrXxYsTXLBiYXGTypFcI7J1MgDaUy852FfJYen0
-Message-ID: <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
-Subject: Re: [PATCH] rpmsg: qcom_smd: Fix uninitialized return variable in __qcom_smd_send()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Frieder Schrempf <frieder.schrempf@kontron.de>, Marek Vasut <marex@denx.de>, 
-	Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYu1GagoVWnhNFnknWf0_zk-O+5XQXDiL-XUdt8knhJYaQ@mail.gmail.com>
 
-On Wed, 23 Apr 2025 at 22:52, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> The "ret" variable isn't initialized if we don't enter the loop.  For
-> example,  if "channel->state" is not SMD_CHANNEL_OPENED.
->
-> Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> Naresh, could you test this patch and see if it fixes the boot
-> problems you saw?
+On Fri, Apr 25, 2025 at 11:36:24AM +0530, Naresh Kamboju wrote:
+> On Wed, 23 Apr 2025 at 22:52, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > The "ret" variable isn't initialized if we don't enter the loop.  For
+> > example,  if "channel->state" is not SMD_CHANNEL_OPENED.
+> >
+> > Fixes: 33e3820dda88 ("rpmsg: smd: Use spinlock in tx path")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > Naresh, could you test this patch and see if it fixes the boot
+> > problems you saw?
+> 
+> Dan, This patch fixes the reported problem.
+> 
+> Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> 
 
-Dan, This patch fixes the reported problem.
+Thanks Naresh,
 
-Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+I left off your reported by tag as well.
 
-Links:
- - https://lkft.validation.linaro.org/scheduler/job/8244118#L2441
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
->
->  drivers/rpmsg/qcom_smd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 40d386809d6b..bb161def3175 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -746,7 +746,7 @@ static int __qcom_smd_send(struct qcom_smd_channel *channel, const void *data,
->         __le32 hdr[5] = { cpu_to_le32(len), };
->         int tlen = sizeof(hdr) + len;
->         unsigned long flags;
-> -       int ret;
-> +       int ret = 0;
->
->         /* Word aligned channels only accept word size aligned data */
->         if (channel->info_word && len % 4)
-> --
-> 2.47.2
->
+regards,
+dan carpenter
+
