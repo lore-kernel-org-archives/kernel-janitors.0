@@ -1,68 +1,94 @@
 Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id AF70BA55;
-	Sun, 27 Apr 2025 02:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 46E5E2512C0;
+	Sun, 27 Apr 2025 11:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745720186; cv=none; b=S9HKC/fjuX8aq4/ROXCPDfyreQZflkGiFwaLabcLyvB69zINlhXrat5GBT7rhaAJpilxA92mMCrZ0Sgb3fA1LPDhw0a4YhqDWqFK/uVf/jmN+o0mQUAHcCEqFaGTuKKkr6aGYYnZghnUiU7PdhVDifXRCIDaKD2SsTtlikAPKTc=
+	t=1745753744; cv=none; b=s81hyC1Jyg7Lhs8gp/AGgfMlr6wMCEJpOnrAiS2WSMec7yoRl9q++hbc7Jh6JJF2qMl3fnBTHKTxyzKdrPOX7tVC9lVLcJg4wgifrFRNfuvTMFCEmils/pHZUwUztHK2GK7cl3Wf85nGZ3foXQvyZJgnpnWaHpQ4l+H0DnmOR7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745720186; c=relaxed/simple;
-	bh=/q0FRE+v1qPsc0eFD8lo0CCwkZ5YXnSjk3zedmKHqR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=ffleMR9OJhZcwAbGiD/9vgAlKzXiFsK2DipAvVdf4D3BPIfwiTu0vy+grnRQoxCJu49cWsT5jSKyAyojQvVns/IHA4kWbbZYbSnnENvc2+ZGW03+PkTup6PhTZr8ZLEYNxzAV/MhZvtn6AvpQlrzyJDsCrOnEAmFlbuWJIPBCJM=
+	s=arc-20240116; t=1745753744; c=relaxed/simple;
+	bh=QOLVD4XARfihC0BVLJ9ka6TW3KW0UYOgHaX04+ZAmNs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=DEd6wOfwkU8q2E3RgPwn9WRzrTB7fxEghfoHUIlQ74vPWJKZd2RH0SLeHR0VWc37GIAVXQ05WB03VlrhlNQ0zmrrh+6wtCqJQrdSiINCOBYHA9rUCfkIuOT1yspSzNAoVi3L8yxYrTeWqPTDBlivwYE5X806WvAHxO8rEd/G7GQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 24EBC60171E8E;
-	Sun, 27 Apr 2025 10:16:00 +0800 (CST)
-Message-ID: <d306f10c-457e-493e-8d06-6d9bd90485ea@nfschina.com>
-Date: Sun, 27 Apr 2025 10:15:59 +0800
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 5661D60196435;
+	Sun, 27 Apr 2025 19:35:38 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: 
+Cc: Su Hui <suhui@nfschina.com>,
+	tglx@linutronix.de,
+	eahariha@linux.microsoft.com,
+	geert@linux-m68k.org,
+	anna-maria@linutronix.de,
+	ojeda@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 1/3] time/jiffies: change register_refined_jiffies() to void __init
+Date: Sun, 27 Apr 2025 19:35:28 +0800
+Message-Id: <20250427113529.1473800-2-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20250427113529.1473800-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] alarmtimer: switch spin_{lock,unlock}_irqsave() to
- guard()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: jstultz@google.com, tglx@linutronix.de, sboyd@kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Language: en-US
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <1ec38ba3-000f-4e26-b18f-95ffb3583836@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025/4/25 21:04, Dan Carpenter wrote:
-> On Thu, Apr 24, 2025 at 10:48:20PM +0800, Su Hui wrote:
->> @@ -230,15 +226,15 @@ static int alarmtimer_suspend(struct device *dev)
->>   	ktime_t min, now, expires;
->>   	int i, ret, type;
->>   	struct rtc_device *rtc;
->> -	unsigned long flags;
->>   	struct rtc_time tm;
->>   
->> -	spin_lock_irqsave(&freezer_delta_lock, flags);
->> -	min = freezer_delta;
->> -	expires = freezer_expires;
->> -	type = freezer_alarmtype;
->> -	freezer_delta = 0;
->> -	spin_unlock_irqrestore(&freezer_delta_lock, flags);
->> +	scoped_guard(spinlock_irqsave, &freezer_delta_lock) {
->> +		min = freezer_delta;
->> +		expires = freezer_expires;
->> +		type = freezer_alarmtype;
->> +		freezer_delta = 0;
->> +	}
->> +
->>   
-> Don't add the extra blank line here.
+register_refined_jiffies() is only used in setup code and always return 0.
+Mark it to __init to save some bytes and change it to void.
 
-Will update in v2 patch, thanks for the suggestion.
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+v2:
+ - No change. 
 
-Su Hui
+ include/linux/jiffies.h | 2 +-
+ kernel/time/jiffies.c   | 5 +----
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+index 0ea8c9887429..91b20788273d 100644
+--- a/include/linux/jiffies.h
++++ b/include/linux/jiffies.h
+@@ -59,7 +59,7 @@
+ /* LATCH is used in the interval timer and ftape setup. */
+ #define LATCH ((CLOCK_TICK_RATE + HZ/2) / HZ)	/* For divider */
+ 
+-extern int register_refined_jiffies(long clock_tick_rate);
++extern void register_refined_jiffies(long clock_tick_rate);
+ 
+ /* TICK_USEC is the time between ticks in usec assuming SHIFTED_HZ */
+ #define TICK_USEC ((USEC_PER_SEC + HZ/2) / HZ)
+diff --git a/kernel/time/jiffies.c b/kernel/time/jiffies.c
+index bc4db9e5ab70..34eeacac2253 100644
+--- a/kernel/time/jiffies.c
++++ b/kernel/time/jiffies.c
+@@ -75,13 +75,11 @@ struct clocksource * __init __weak clocksource_default_clock(void)
+ 
+ static struct clocksource refined_jiffies;
+ 
+-int register_refined_jiffies(long cycles_per_second)
++void __init register_refined_jiffies(long cycles_per_second)
+ {
+ 	u64 nsec_per_tick, shift_hz;
+ 	long cycles_per_tick;
+ 
+-
+-
+ 	refined_jiffies = clocksource_jiffies;
+ 	refined_jiffies.name = "refined-jiffies";
+ 	refined_jiffies.rating++;
+@@ -100,5 +98,4 @@ int register_refined_jiffies(long cycles_per_second)
+ 	refined_jiffies.mult = ((u32)nsec_per_tick) << JIFFIES_SHIFT;
+ 
+ 	__clocksource_register(&refined_jiffies);
+-	return 0;
+ }
+-- 
+2.30.2
 
