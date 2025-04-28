@@ -1,73 +1,59 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 46DFF250C1B;
-	Sun, 27 Apr 2025 11:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB254623;
+	Mon, 28 Apr 2025 00:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745753745; cv=none; b=gQqJLHMjKL4dl1nX2n8DZUGJn6lK2hgmqCOznT+M6UlPYWfF4SzHG/vVm/rAbwTk1aDBcFNI5nEbGxEkwumbC6bEhVDpCa7fZsVONOrgFBkMTZpxCX62SWJaqvqvG8iBVU5suIoKLr+E/RMiZoH7tlpq6EmQirvZsNKDQxmDeeY=
+	t=1745799660; cv=none; b=LFq8qDzWYfX4Ow6JP3cHROTRgJeKAxPtP8aEB7ob9ylDN2FoQvOis/FLESpSSd3lG48eadwTPq0hj045jENlSfIi9jVcPCtWbKKaP9Z4gMAANsxXN6537F6O2yvfPm9lNxAawtuC9msJBZEr2LGb72BwtGgnfbk9obWnXZowBz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745753745; c=relaxed/simple;
-	bh=zxQTEz/XdBY5l0leyKw4SwbwYncF+kiPd4MampvnMsw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=J5pQaQJAITCkp6T2pGWjeMwqI0eWhaRkuGZiy6AxjjJtVh6Hg/oqzfXWaRc+rLFmeqBcSFJO4qdkPVEOkGbH0DtNpvQ7JPioDDfcGfs8/jWPcBJIT5qLUbPuCXhmuUL34q9MMe3N96fQiby86XawcYwMf3F6zLoriHELuNIF5pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id EB8556019643E;
-	Sun, 27 Apr 2025 19:35:38 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: jstultz@google.com,
-	tglx@linutronix.de,
-	sboyd@kernel.org
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 2/3] alarmtimer: remove dead return value in clock2alarm()
-Date: Sun, 27 Apr 2025 19:35:29 +0800
-Message-Id: <20250427113529.1473800-3-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250427113529.1473800-1-suhui@nfschina.com>
+	s=arc-20240116; t=1745799660; c=relaxed/simple;
+	bh=Mxmm6OSm0KCuNa6NaZX4AtZ+skV9h8LKyFNJT6tIPyI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RPM1s1RxNZJPgmDVZnxw8ScMurGFFIs27/n8igXNh/9ZG0MBWuFTTe61W6Cgb570Z9m6feeRogITb9jeoBN1nJRy1PtjOSEDQ99mGDhjDRcSFE4Fs4xZZIM5JTYGPvItPlAOr/tJTRnd4S5nj9tmFU3KoQL5ywytZOqSo7La/KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31D26C4CEE3;
+	Mon, 28 Apr 2025 00:20:59 +0000 (UTC)
+Received: by venus (Postfix, from userid 1000)
+	id 1002F1808BE; Mon, 28 Apr 2025 02:20:57 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ patches@opensource.cirrus.com, linux-pm@vger.kernel.org
+In-Reply-To: <0edde57b691db7f920d121fdbd5ebc3fb24f30f1.1743787625.git.christophe.jaillet@wanadoo.fr>
+References: <0edde57b691db7f920d121fdbd5ebc3fb24f30f1.1743787625.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] power: supply: wm831x: Constify struct chg_map and
+ some arrays
+Message-Id: <174579965704.310722.16935712011735151878.b4-ty@collabora.com>
+Date: Mon, 28 Apr 2025 02:20:57 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-'clockid' only can be ALARM_REALTIME and ALARM_BOOTTIME. It's impossible
-to return -1 and callers never check the value of -1.
 
-Only alarm_clock_get_timespec(), alarm_clock_get_ktime(),
-alarm_timer_create() and alarm_timer_nsleep() call clock2alarm(). These
-callers using clockid_to_kclock() to get 'struct k_clock', this ensures
-clock2alarm() never returns -1.
+On Fri, 04 Apr 2025 19:27:38 +0200, Christophe JAILLET wrote:
+> 'struct chg_map' is not modified in this driver.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+> 
+> While at it, also constify a few other arrays.
+> 
+> [...]
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
-v2:
- - No Change.
- kernel/time/alarmtimer.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Applied, thanks!
 
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 0ddccdff119a..e5450a77ada9 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -515,9 +515,9 @@ static enum alarmtimer_type clock2alarm(clockid_t clockid)
- {
- 	if (clockid == CLOCK_REALTIME_ALARM)
- 		return ALARM_REALTIME;
--	if (clockid == CLOCK_BOOTTIME_ALARM)
--		return ALARM_BOOTTIME;
--	return -1;
-+
-+	/* CLOCK_BOOTTIME_ALARM case */
-+	return ALARM_BOOTTIME;
- }
- 
- /**
+[1/1] power: supply: wm831x: Constify struct chg_map and some arrays
+      commit: 883730c192b5cf9d72cabefd83bfb3dcd1aadb6f
+
+Best regards,
 -- 
-2.30.2
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
