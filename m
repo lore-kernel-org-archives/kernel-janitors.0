@@ -1,101 +1,85 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAD2221719;
-	Tue, 29 Apr 2025 16:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB701FE468;
+	Tue, 29 Apr 2025 17:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745944753; cv=none; b=lcFfBb3oSyAFwHIhLNHkNpRkjjozWdz+tAVAR3g8kstmCH39xEo7xLfs1PG5+8f5bG3GTyOxd8R5jHFPnmTXCFdghbrKne0cwMb6r8vfGvTQ61hIFZseOHw0ZAwM6XvtIonCbNwFaASLlHSF54UCUOlbzN4zV4DiYUu9jhozfk8=
+	t=1745946122; cv=none; b=UjHEizojCOtkk6KHp3huHU4JPcsxmJtSIMjyaNxzsyU1cj65xvhG61V1AgvV/D2VdBf9FYBSt6njGW5/pPHkK2iy8vcmRds88WhtPhmTfodNh3OLty3979mzUic8aA0+0SQ6EfnBFeoLuhJbEfWIvMCmoeSSFoZzQKaRcjlfyx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745944753; c=relaxed/simple;
-	bh=9cnUo42bVH6Ako8kUSAekQfAcAXta7oVIeRa+ZeBl/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UAhK8gltHnYRrREniE15dg9RbaffCUDqUY1Tl6XpEMG+Kme8Wex59dnVVNYslyvUSmwxUbx5eEGntNz5MvKxeYXpqKItJX+N1HQ5bMeFqH7XQIbsSes1w02gH9c+YCN+GXfgadl9Dfd8M8Z5zETvQHarSfGwZ3/SrsuUXwvEjyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsAeS7Ww; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745946122; c=relaxed/simple;
+	bh=UEkt5WGSXYQvSrj/tJVMJ3ZmSGMiLlkeeePBbDmWQvU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pdadVAyIjktBgdNBwvnCINqvYCXsQLwLnVfuSN9iwspb4gBHAogstCTUs2riiZwkVvrZLORR1vx8EHrsZ/0eBe1NehpQ5VO40iWTwhzEghANBzwqcl+3cKFQIXyb7VlkyEIq3JnDQagAg/QFopyLmVXWoePU8JuBXyPtwjG5vTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F9TFKZbM; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsAeS7Ww"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so24545865e9.1;
-        Tue, 29 Apr 2025 09:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745944748; x=1746549548; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OfxB7ueWMJHOfVdTrigCt7WRfmfJvpUb5F90S4PMLb0=;
-        b=YsAeS7WwWTyz21+32JfiE165puqWH/VjGlL5wbqgRIJPJs2uLOGKFarDyFeIoW8jrf
-         SbxubVVh7SAZf8RGom2JM01EYQIKY22XhcAAhFCV+UppkTqGW49ldz1N5coIlWYaL2YH
-         CxE8VC0mXDJgJJjrOOzNaCtjicAntuvpRWE3idZsV6UNIyQ8jHMhEphxrjJ4xhwjQXN4
-         NhTmSLBWcgHCtzyIjwJGfhNBpi78tTqV8gnZug1/IeKE++qdqRw3ioi+UquPEZiopJj+
-         VlMWJ+U0VFTr4W+9GC+cUasFXqGLb06dphHhnHZpX9JkUoEOk32CGIETv0bkWJpy012P
-         5jmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745944748; x=1746549548;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OfxB7ueWMJHOfVdTrigCt7WRfmfJvpUb5F90S4PMLb0=;
-        b=STe8OFGepwyc5ZmtcdPlyvDGNtQ2SKddhPGFqZuoiXUaq0tWW39we40CcV7RMoMq5h
-         XiizInKmDwGk3USQkZLZPs7LeONxVlMA0N77Jahlt0Ti5ZQbr567HBsE/hLtBTxfe3fS
-         WDPuQtcVxa+Eome2uXgGcAsxzq0BqvtzpwZoNkM2G5CTTwyWaB2l+/HRep+tEl2zlvHJ
-         ZY3fQkh6NHx8TMUcsrtkooYjg8+jUApStCZ/Pcp82WoXINU3iexc09QgcBrvEXfXg2Pg
-         ukpleBEOzoMEbxPvsSL9ZHGzYK34inMy4z4UYBFN0hspx9IDUydM+IhzhJX8vZcc9pcG
-         Uxvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWP6YYFgffzVSst6ks6YZkHY2yOYABdFvM1C7NGm7TB3OHielRJreWa03ZFvE3JHFXoA8ooNE9ARNDcU+DAYSk=@vger.kernel.org, AJvYcCXHMFITRnuJaD/4QhUPTyre2CZXqUwpg/4lBqVJkvik2RWS7B4EQn0oMG+CEw83xJERgDbizIQUXJzeF3RT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbEtFSQjA091k8MLDuhm0nrR68OGxjQfgtWZIRHdv21sXULDKK
-	b3tIp7JuyOP4NpYkcGB8IW88kdKhjvJ901qCEFePTwTgjkcCvWnA
-X-Gm-Gg: ASbGnctzn3Q1Ot8arVnU2pL94kMI2QRejpqnmxCqXlcO7QOPxh+6S/gx62z9TI+Uq3b
-	dUm7Aa+IUyxSrfaVXMXwNwueKnxwz0iHB27Q+oNP097W6vh0UxQTywzPSs+vcGRmZgiw5+/dwII
-	9/LmxQYrlLFv2vZ6pUyeCdXxh02LFVG77iQbx4qdGAlL/rIzOc4NkZZ8mTh0LrXdaElzR+IZBxf
-	7MrpKvgO2Hf7sSkxYxuabQbIzP9mNVu8NtdUXkbVR1KCw8jeHlw83fvNgSShgq60szEHpsoNzr4
-	FPlRRqjCo906dMuMpbyFP69JAgkagRyeh5/wm8Q19A==
-X-Google-Smtp-Source: AGHT+IEwn1kuyd7yIBmkob/jd/orK5Et2W92kV3id4CopJGSgQ+gR90AEwMrSeL1WSrlpBwGddY34w==
-X-Received: by 2002:a05:600c:c0f:b0:43d:563:6fef with SMTP id 5b1f17b1804b1-440ab848800mr113084645e9.21.1745944747617;
-        Tue, 29 Apr 2025 09:39:07 -0700 (PDT)
-Received: from localhost ([194.120.133.77])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4409d2d8479sm200434295e9.29.2025.04.29.09.39.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 09:39:07 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] tpm: remove extraneous space after newline \n
-Date: Tue, 29 Apr 2025 17:38:59 +0100
-Message-ID: <20250429163859.823531-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F9TFKZbM"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 9oK5uzDoOb5lz9oK9uPjhr; Tue, 29 Apr 2025 19:00:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1745946049;
+	bh=F9SrGWAxJKe9RnpLjvmH/WwUmHGMElfgW78kguoJoKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=F9TFKZbMcxhHo0HzvT5zzL6G89DZ3HvzchtLhCcsy7RSb6oPPBBhZGZMArXY0qa8q
+	 joZupnhHBtF2nyRE1JUkzezyTSBtUOwOO4k7vhvGS4vUMedhxMmlcCVHLoPXvSeD9F
+	 Gni0mQVm7T2vHiwvxDJ6ulvPJN9wXMJ4oXprw7IhLL8bj5amyOsS5dEukYP1p4yRSm
+	 Q7GQ1v9XShL4CfLXhI7+HbkL30GhV/W9GXGgIHE/gnXlRicecNao5OAIUsQ9QZnh9E
+	 LRiwFAh4riiFays8bFX93jLI+lVOoe/QkrTeR6CQpryXu04EGNVgEv01l4vAjGVcxv
+	 q1sZla6MhWKpg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 29 Apr 2025 19:00:49 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <9ca8a48c-dc5f-4c4d-a829-c94107d852c2@wanadoo.fr>
+Date: Tue, 29 Apr 2025 19:00:45 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] tpm: remove extraneous space after newline \n
+To: Colin Ian King <colin.i.king@gmail.com>, Peter Huewe <peterhuewe@gmx.de>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250429163859.823531-1-colin.i.king@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250429163859.823531-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-There is an extraneous space after a \n in a printk statement.
-Remove it.
+Le 29/04/2025 à 18:38, Colin Ian King a écrit :
+> There is an extraneous space after a \n in a printk statement.
+> Remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   drivers/char/tpm/eventlog/tpm1.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+> index 12ee42a31c71..566f4df58d48 100644
+> --- a/drivers/char/tpm/eventlog/tpm1.c
+> +++ b/drivers/char/tpm/eventlog/tpm1.c
+> @@ -258,7 +258,7 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
+>   
+>   	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
+>   	if (!eventname) {
+> -		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
+> +		printk(KERN_ERR "%s: ERROR - No Memory for event name\n",
+>   		       __func__);
+>   		return -EFAULT;
+>   	}
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/char/tpm/eventlog/tpm1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi,,
 
-diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
-index 12ee42a31c71..566f4df58d48 100644
---- a/drivers/char/tpm/eventlog/tpm1.c
-+++ b/drivers/char/tpm/eventlog/tpm1.c
-@@ -258,7 +258,7 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
- 
- 	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
- 	if (!eventname) {
--		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
-+		printk(KERN_ERR "%s: ERROR - No Memory for event name\n",
- 		       __func__);
- 		return -EFAULT;
- 	}
--- 
-2.49.0
+kmalloc() is already verbose, so I think that the whole printk() could 
+be removed.
 
+CJ
