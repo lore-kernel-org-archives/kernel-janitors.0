@@ -1,63 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4605276046;
-	Tue, 29 Apr 2025 06:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8AB27CCD7
+	for <kernel-janitors@vger.kernel.org>; Tue, 29 Apr 2025 08:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745907367; cv=none; b=pcu8g8/hkgmxA7q1D/hBy8c1UtPSk9Vx3SCO7HO3qUd42lv56lnmUyaLtsol/kCmlgaH8LFAcWTNm7Ro1/XM5AJqtURPgEY++++aETA4iVPfhxa4JMIzMLMtJ1Un2bwjSTw5zmTjid7nXUe9h7HKxilHFAcZKqWbZ9+KUE4AzlM=
+	t=1745915945; cv=none; b=HP765C0HkE4uYnab1n6kx7qbM6PiwlUWpZhkMu3UKpZdkqWk/OeYfvPNBYEgRMww62TZbKgsJUX1E9vRKlifEK9ofQHLIIbO2CQFGe47M6kTQrMphjznixihMIYjaYMtM58D6iUhj3dlPw/aXtRTrpHjdtlMuds9dabOZzdHKJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745907367; c=relaxed/simple;
-	bh=oyeXyN7fnpjRZjowKm5X0d/XENf9UP5i7hKi/3hn5bQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PuN59QRBXdgURsiVkl0YU3SZzgxLUftYkvkFYKSFtFIYwoivzl8765trR2EKtbJ9JTGppg+jLzRJ9Hfir7MnDXMTMdBiwp2MLj8AwOOhKWDeXxJURfhgFEm9L9+Cj6EcjrESF8Htj63uVylrlondwylxXxMYNYZcYs9rWgFoUCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqYlT4kR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745915945; c=relaxed/simple;
+	bh=WJvHqnebj7+LXJjSH0Mss95pSFkkrTByr1+7aZOP8NQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eWczg8P6ruBatvNaPFrtgccy/G4Y6EjKechh5Zc6wVafcqKqyNPAxZp2CFD/idIpoXG5ZyIMLW29uvcxFfHoIu1OTeJuGWsbt0zniw0thiqpqdygUnoVd4Z08Cwe7vRQMq8R+dSZdJkxmAuQyxC+AVgaiDxypBNU00BRaSPuIKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KdjReSTG; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqYlT4kR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B982FC4CEE9;
-	Tue, 29 Apr 2025 06:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745907367;
-	bh=oyeXyN7fnpjRZjowKm5X0d/XENf9UP5i7hKi/3hn5bQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WqYlT4kRH9qmHpwzLGbxsr7NANEuuxo8ITxvw/K6IU7gkIVg3nNgiUCmHoRmWOSov
-	 qJz0EQYq+e9fjczGjcBg7kfOUM66HxFx9nkWcDR3C/UzifUgGakr2yrGl6fWQhOtj1
-	 uxUMzDt4Np/CjXCycbqnithkwajYtt52GC9daMqiUmXPnrJDlZklotZBTAWbB3S0Q/
-	 NZD33Tb/BBTwKh1kr7KooEEridwO6S2sKVwfzs7I3M2kWfKeJfPF7qV8FkFsUdjHQk
-	 XmHikRR0/KazWE6WYrJEaFBEdiUPdap1wGiNYvs4Xcds14N7LbqRzv9msxp6L4auAe
-	 LmK6bkyGPH+TA==
-Date: Tue, 29 Apr 2025 08:16:02 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Romain Gantois <romain.gantois@bootlin.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] misc: ti_fpc202: Fix off by one in probe()
-Message-ID: <krkppjdlgtcc7h7pg4e7vvwe46hu44jv2cngp3g63dx55rrbdb@frztorpfnfdf>
-References: <aAijRtGLzKLdwP0-@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdjReSTG"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30db1bd3bddso57838081fa.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 29 Apr 2025 01:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745915941; x=1746520741; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WJvHqnebj7+LXJjSH0Mss95pSFkkrTByr1+7aZOP8NQ=;
+        b=KdjReSTGBvgTpmFex89UFPtuKi0R6caIge7o2xrES9RIix3CJeOEdOZGFMcpVi6bPR
+         d8brQ8PDTpRDM6cE8RVQa6TF7RxLAgPzJag29qIfiwR3Y0xs5zEO3lNpYq71Nbg28iAm
+         7NsitqsynazK/p3V61iGztigWAiSMFQahcXHVlGikOI9ty0SWSyUZc7dhM/RONiM40ju
+         c9EGjywhnwtNmhooGGNg+ki/eQIvRLaY8hJapLNLc59yeN/NFawHKSCQkj4CgZ3NJA9o
+         OLbWwamhYtKZrCTeumQd+vildwSN/hCrdb3KFPidi/RRwBRUfVw3s52ZUzuHNEEMVYmK
+         pQ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745915941; x=1746520741;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WJvHqnebj7+LXJjSH0Mss95pSFkkrTByr1+7aZOP8NQ=;
+        b=Eqyd0Gio6nnFmfXGSaKG4uTZlQaI56zfvZGsrcjyfB+qUbE+mlKNXqsVC2+hX3LAMa
+         Mks/BMFAuK03p0Omd9s56X4Ds1x+A2fWFMajIGixZwwfNu+Y01OoLXFg3J45npYN9I+V
+         mFxbp9MYf6sp/wVREUb1SAmsomhNpimpULKQ5eoMf0kRb1QfEhp1lLauHh5jFJXpoj3d
+         eDxkh+9cddluYwtxA1MVNXF0Iiaxjy8ZU+95Yy35hmwm5/CD9N3HbB8Re7Ic8ZDZr/Ct
+         0jK3WVmzV/iKX1CO+7PLBDHYIg0adILI02wSYcNbuFf9IIq4sh+UZJg0CLujk2vARPAC
+         ljeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVt2Ay/XysSZSaL8/5Q3arbyWBj84+Z660hd7+cDTvST5JcxScdiHEtWpBaxDrmVEJHwjCDWsXI+H+XKQzbDjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8+IVog5MJ8MRE0/UR5PsTtL/sJZld/UJutiQ0yCE2qKlucHI0
+	xAKHOX3RAxWTvfd8roEuigdFED1kloJmEqB8upFJsPrr/3OZR/MxRuMogm7E/oEfduOIkFKpfKU
+	C8jQwpGtlQzd+P9f4quGj4k27Oz1dU7U/AktDlQ==
+X-Gm-Gg: ASbGncuwUHjAXyaiMPg9cbPdUZuRfq2DnDYCdTe8/Iii+CPxQ679IH2v5vnn3EasW/B
+	kZw+66I3LCbh1grDAvt+3PSOu0ISC/weVXBUvwvx1D83ir/IVpKC+uLWiv/t6ZaLV4xlJm9vB1h
+	6snwzm2TUnQHOdAWQV/yDALg==
+X-Google-Smtp-Source: AGHT+IHkuz+Fr/AzkwRns1/8PwMuipfYmUnKsBB7y+2XYRW44rUzmChg+OFPShozfJlNPd9b1oQDGXqsThys/IDroaE=
+X-Received: by 2002:a2e:be88:0:b0:30b:c569:4665 with SMTP id
+ 38308e7fff4ca-319dd7960aemr40874831fa.29.1745915940769; Tue, 29 Apr 2025
+ 01:39:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAijRtGLzKLdwP0-@stanley.mountain>
+References: <20250424131201.157601-1-colin.i.king@gmail.com>
+In-Reply-To: <20250424131201.157601-1-colin.i.king@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 29 Apr 2025 10:38:49 +0200
+X-Gm-Features: ATxdqUGYIHeg8-bt7mFBhXIoGyjQbbgQkhokYrl1ZFztjgdxtKATBXtQXvjtsjU
+Message-ID: <CACRpkdZf1KgnYKXbCWEWZA4Cd748HBHDh6Y6f2OD3Oyshoe6YA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: Fix sizeof argument pctl->eint->base
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+On Thu, Apr 24, 2025 at 3:12=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
 
-On Wed, Apr 23, 2025 at 11:22:30AM +0300, Dan Carpenter wrote:
-> The "port_id" is used as an array index into the struct fpc202_priv
-> priv->addr_caches[] array in fpc202_write_dev_addr().  It's a 2 by 2
-> array so if "port_id" is FPC202_NUM_PORTS (2) then it's one element
-> out of bounds.  Change the > to >= to fix this bug.
-> 
-> Fixes: 1e5c9b1efa1c ("misc: add FPC202 dual port controller driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> The sizeof argument is incorrect when allocating pctl->eint->base, it
+> should be *pctl->eint->base. (Generally, the size of void * is the same
+> as void ** so nothing is breaking in this specific case). Fix this.
+>
+> Fixes: fe412e3a6c97 ("pinctrl: mediatek: common-v1: Fix EINT breakage on =
+older controllers")
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+The mtk eint handling has been refactored fixing this issue in the
+process (AFAICT) so the patch does not apply to my devel branch.
 
-Thanks,
-Andi
+Yours,
+Linus Walleij
