@@ -1,140 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D0E10942;
-	Tue, 29 Apr 2025 14:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAD2221719;
+	Tue, 29 Apr 2025 16:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745936536; cv=none; b=pSPoak20WIbYQLSJ42mkLC5GUPfrJigl7KP+KIX+govOrG0uiHuU9i3E/mcoKsL1ocTvaoajuRxPWBGCNE05kOSWm/C5Ym92c5MdmnZ2PnL12rVrlvI+R/2VKIU4Xvw467WFlqUhjQSoiN9tM0wwRiiSCWZdWiVAjBQ5mZZDISc=
+	t=1745944753; cv=none; b=lcFfBb3oSyAFwHIhLNHkNpRkjjozWdz+tAVAR3g8kstmCH39xEo7xLfs1PG5+8f5bG3GTyOxd8R5jHFPnmTXCFdghbrKne0cwMb6r8vfGvTQ61hIFZseOHw0ZAwM6XvtIonCbNwFaASLlHSF54UCUOlbzN4zV4DiYUu9jhozfk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745936536; c=relaxed/simple;
-	bh=Hn26jb1aZXYejporzmo9DyB26YCJ0sQN1ZLh9FSFMwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e11xzp6JOz45eu2VhwixyI2im84q1JD67J2FUSoOW4UhJY0daTsGjO0W7xDFAoetrOG1N8s2fQZmsgUk+/nmcVNT1NyaLzTvK0rfJgn0Wrb0OtBIGMyDmckO5t4eEcIvTEQGpd799/FXYjRRG40mwzCNxHUjMU1zbPV2uO+2smM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=poAzvqd9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745944753; c=relaxed/simple;
+	bh=9cnUo42bVH6Ako8kUSAekQfAcAXta7oVIeRa+ZeBl/E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UAhK8gltHnYRrREniE15dg9RbaffCUDqUY1Tl6XpEMG+Kme8Wex59dnVVNYslyvUSmwxUbx5eEGntNz5MvKxeYXpqKItJX+N1HQ5bMeFqH7XQIbsSes1w02gH9c+YCN+GXfgadl9Dfd8M8Z5zETvQHarSfGwZ3/SrsuUXwvEjyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsAeS7Ww; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="poAzvqd9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B844C4CEE3;
-	Tue, 29 Apr 2025 14:22:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745936535;
-	bh=Hn26jb1aZXYejporzmo9DyB26YCJ0sQN1ZLh9FSFMwY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=poAzvqd9eURiN3jHfL6W1FWeIh2XPHdSkTOF9+NePUCEE0nzrSuN1fjK3bW/7ZGwy
-	 Ir9/VDJas1weKrZiNqb6UU/su4AjVwwtrL8sl48e55NyCHfHCF8wO38ljtClLcA5uI
-	 EaLQwyZ2k88ED96kVWNRgqY0sZMPwnq6p/SHSYXo6AtoLiMOmcukV03EhbfElFnd9o
-	 N/lFzou9P83ffhnPzX/isaPcgPwHRhnmzT9G/iq8P8BB4qDQS8K65z42MtijnppqFR
-	 /FHkzILlOymDkVoEtFLSsK0XLe4KZ2EXAll0Y/ncxY1nSCK8vwxbpIEsUByFzG9lX3
-	 3JE9LbbW+xNEQ==
-Date: Tue, 29 Apr 2025 16:22:13 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] net: airoha: Fix an error handling path in airoha_probe()
-Message-ID: <aBDglZH4VaBlWU2a@lore-desk>
-References: <f4a420f3a8b4a6fe72798f9774ec9aff2291522d.1744977434.git.christophe.jaillet@wanadoo.fr>
- <aAJFgqrOFL_xAqtW@lore-desk>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsAeS7Ww"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d07ca6a80so24545865e9.1;
+        Tue, 29 Apr 2025 09:39:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745944748; x=1746549548; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OfxB7ueWMJHOfVdTrigCt7WRfmfJvpUb5F90S4PMLb0=;
+        b=YsAeS7WwWTyz21+32JfiE165puqWH/VjGlL5wbqgRIJPJs2uLOGKFarDyFeIoW8jrf
+         SbxubVVh7SAZf8RGom2JM01EYQIKY22XhcAAhFCV+UppkTqGW49ldz1N5coIlWYaL2YH
+         CxE8VC0mXDJgJJjrOOzNaCtjicAntuvpRWE3idZsV6UNIyQ8jHMhEphxrjJ4xhwjQXN4
+         NhTmSLBWcgHCtzyIjwJGfhNBpi78tTqV8gnZug1/IeKE++qdqRw3ioi+UquPEZiopJj+
+         VlMWJ+U0VFTr4W+9GC+cUasFXqGLb06dphHhnHZpX9JkUoEOk32CGIETv0bkWJpy012P
+         5jmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745944748; x=1746549548;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OfxB7ueWMJHOfVdTrigCt7WRfmfJvpUb5F90S4PMLb0=;
+        b=STe8OFGepwyc5ZmtcdPlyvDGNtQ2SKddhPGFqZuoiXUaq0tWW39we40CcV7RMoMq5h
+         XiizInKmDwGk3USQkZLZPs7LeONxVlMA0N77Jahlt0Ti5ZQbr567HBsE/hLtBTxfe3fS
+         WDPuQtcVxa+Eome2uXgGcAsxzq0BqvtzpwZoNkM2G5CTTwyWaB2l+/HRep+tEl2zlvHJ
+         ZY3fQkh6NHx8TMUcsrtkooYjg8+jUApStCZ/Pcp82WoXINU3iexc09QgcBrvEXfXg2Pg
+         ukpleBEOzoMEbxPvsSL9ZHGzYK34inMy4z4UYBFN0hspx9IDUydM+IhzhJX8vZcc9pcG
+         Uxvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWP6YYFgffzVSst6ks6YZkHY2yOYABdFvM1C7NGm7TB3OHielRJreWa03ZFvE3JHFXoA8ooNE9ARNDcU+DAYSk=@vger.kernel.org, AJvYcCXHMFITRnuJaD/4QhUPTyre2CZXqUwpg/4lBqVJkvik2RWS7B4EQn0oMG+CEw83xJERgDbizIQUXJzeF3RT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbEtFSQjA091k8MLDuhm0nrR68OGxjQfgtWZIRHdv21sXULDKK
+	b3tIp7JuyOP4NpYkcGB8IW88kdKhjvJ901qCEFePTwTgjkcCvWnA
+X-Gm-Gg: ASbGnctzn3Q1Ot8arVnU2pL94kMI2QRejpqnmxCqXlcO7QOPxh+6S/gx62z9TI+Uq3b
+	dUm7Aa+IUyxSrfaVXMXwNwueKnxwz0iHB27Q+oNP097W6vh0UxQTywzPSs+vcGRmZgiw5+/dwII
+	9/LmxQYrlLFv2vZ6pUyeCdXxh02LFVG77iQbx4qdGAlL/rIzOc4NkZZ8mTh0LrXdaElzR+IZBxf
+	7MrpKvgO2Hf7sSkxYxuabQbIzP9mNVu8NtdUXkbVR1KCw8jeHlw83fvNgSShgq60szEHpsoNzr4
+	FPlRRqjCo906dMuMpbyFP69JAgkagRyeh5/wm8Q19A==
+X-Google-Smtp-Source: AGHT+IEwn1kuyd7yIBmkob/jd/orK5Et2W92kV3id4CopJGSgQ+gR90AEwMrSeL1WSrlpBwGddY34w==
+X-Received: by 2002:a05:600c:c0f:b0:43d:563:6fef with SMTP id 5b1f17b1804b1-440ab848800mr113084645e9.21.1745944747617;
+        Tue, 29 Apr 2025 09:39:07 -0700 (PDT)
+Received: from localhost ([194.120.133.77])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4409d2d8479sm200434295e9.29.2025.04.29.09.39.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 09:39:07 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] tpm: remove extraneous space after newline \n
+Date: Tue, 29 Apr 2025 17:38:59 +0100
+Message-ID: <20250429163859.823531-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Cs66MFCPOyZ/spK5"
-Content-Disposition: inline
-In-Reply-To: <aAJFgqrOFL_xAqtW@lore-desk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+There is an extraneous space after a \n in a printk statement.
+Remove it.
 
---Cs66MFCPOyZ/spK5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/char/tpm/eventlog/tpm1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > If an error occurs after a successful airoha_hw_init() call,
-> > airoha_ppe_deinit() needs to be called as already done in the remove
-> > function.
-> >=20
-> > Fixes: 00a7678310fe ("net: airoha: Introduce flowtable offload support")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > Compile tested-only
-> > ---
-> >  drivers/net/ethernet/airoha/airoha_eth.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/eth=
-ernet/airoha/airoha_eth.c
-> > index 69e523dd4186..252b32ceb064 100644
-> > --- a/drivers/net/ethernet/airoha/airoha_eth.c
-> > +++ b/drivers/net/ethernet/airoha/airoha_eth.c
-> > @@ -2631,6 +2631,8 @@ static int airoha_probe(struct platform_device *p=
-dev)
-> >  		}
-> >  	}
-> >  	free_netdev(eth->napi_dev);
-> > +
-> > +	airoha_ppe_deinit(eth);
-> >  	platform_set_drvdata(pdev, NULL);
-> > =20
-> >  	return err;
-> > --=20
-> > 2.49.0
-> >=20
->=20
-> Hi Christophe,
->=20
-> I agree we are missing a airoha_ppe_deinit() call in the probe error path,
-> but we should move it above after stopping the NAPI since if airoha_hw_in=
-it()
-> fails we will undo the work done by airoha_ppe_init(). Something like:
->=20
-> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ether=
-net/airoha/airoha_eth.c
-> index 16c7896f931f..37d9678798d1 100644
-> --- a/drivers/net/ethernet/airoha/airoha_eth.c
-> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
-> @@ -2959,6 +2959,7 @@ static int airoha_probe(struct platform_device *pde=
-v)
->  error_napi_stop:
->  	for (i =3D 0; i < ARRAY_SIZE(eth->qdma); i++)
->  		airoha_qdma_stop_napi(&eth->qdma[i]);
-> +	airoha_ppe_init(eth);
->  error_hw_cleanup:
->  	for (i =3D 0; i < ARRAY_SIZE(eth->qdma); i++)
->  		airoha_hw_cleanup(&eth->qdma[i]);
->=20
+diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+index 12ee42a31c71..566f4df58d48 100644
+--- a/drivers/char/tpm/eventlog/tpm1.c
++++ b/drivers/char/tpm/eventlog/tpm1.c
+@@ -258,7 +258,7 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
+ 
+ 	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
+ 	if (!eventname) {
+-		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
++		printk(KERN_ERR "%s: ERROR - No Memory for event name\n",
+ 		       __func__);
+ 		return -EFAULT;
+ 	}
+-- 
+2.49.0
 
-Hi Christophe,
-
-any plan to repost this fix?
-
-Regards,
-Lorenzo
-
->=20
-> Agree?
->=20
-> Regards,
-> Lorenzo
-
-
-
---Cs66MFCPOyZ/spK5
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaBDglQAKCRA6cBh0uS2t
-rHX6APwIvo/4Y3dZRr6TbMAZgufdsaVik6rZZyhOrTPpqe6ybwEAhi4Y5iLOE9C4
-os6h8aHQ7FIIGzhvOp1QYkFsEvZ0TQI=
-=ylrk
------END PGP SIGNATURE-----
-
---Cs66MFCPOyZ/spK5--
