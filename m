@@ -1,112 +1,103 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851912629F;
-	Wed, 30 Apr 2025 08:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20B3839F4
+	for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 08:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746000050; cv=none; b=A1K7Utqmo/z6lFUbmL4tH8IYoZmv2JvVI6x3XS34JgLbsXKt+8O0JcyeMOQ/BqbMyP24vzoc/5GdjAyy264u5ABm/CcaZLSvXdFudSDNkwDM1SerKquqbOShjnyN5EQmZL6AukQHqD3aMADoyhlBS8F356XatE9xnIzMfPEIeck=
+	t=1746000092; cv=none; b=dwH5R98sjzR6HYWT1b7oIUW1OtEch1AH6gEPbDbCBXK5OYRxUSo0QAs48F6kOSR+r8lfssDSCwsr8B/eAfqxaZ+gAqxVERciB32bk4ln/yt+Nzyx81NPa/q9z/SlYau3lUyOdyGdRijWeFqzI8o45+yhKYogbHHaOrzZST3Ktow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746000050; c=relaxed/simple;
-	bh=YmiCW6q7DJwXf/OrdKqtYEugswdEJMRSv9cvj3V7CA0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZDyiXM3P9AiMBexZ0W4zDBQZ42WCu3iw8e2fm40zuZmSfdBXr9BCdbLmf7HDVnupnryxrno6Blgg6zlzakELaCyCrugzvVIVDep9jfqBWbGXUnlOZWpyxxgdn6dCy/MdhtJT8R5FBqdZRO3Q2DGxeoglZT+AxzBQc3fn8i8WJus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rty926Vx; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746000092; c=relaxed/simple;
+	bh=Y3M4/XazFS4JvfwkyeTT5R0L6rzIdjKz52NtK4YKQm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uvjxzK344D4K8NDjQs6P76S3xJeFn48XBGcHChqBtWueb88pLcxkuH5CaHwGl4lByIhqo469fa18V3bHrjDBRt9hWFpIYQ49zA9s0Ei9khZaMdyUbh23acE55eZjlT+w28g+6W2KnQBA7cq9osub/PrF/jR+vI2KxgZImrR17Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PWFDrQmm; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rty926Vx"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfe574976so47884935e9.1;
-        Wed, 30 Apr 2025 01:00:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PWFDrQmm"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394a823036so67981285e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 01:01:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746000047; x=1746604847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9K6mDCECT8W3Bovw6myYDbhmO8/mbagCIk0F1CteZwg=;
-        b=Rty926VxVvsySFTXWzBpPYm6Ch/Npog9O0cHX1FXuVdGAhfCzq739aS9MFV4G2HzR9
-         tJ0PM6P3/eFu3aZt2/ZWI5JcsolpFn3VwUoh3h3lLpf4vIloYP6C/YIq8O/oEtT7I93+
-         GOigyXbFxdjb0Abd1V4AQYrosLUvkNvi7yqe31nXqx6U/ryqeiSWMf0gm+2j4uG36Ltp
-         l1BY8XKaPF35k1TSjX2oV7IxFdo34Yy9e5F42q4XKCCdd6m9WrToUtHrLSUDLg5xVLHC
-         GaD+QwZjx/4jk6ItwJ3Mu1/GQ4BaLc6vZVrBmf6g60+AiPuj++PLOJ26bLeMK/AIZ2qH
-         /zVw==
+        d=linaro.org; s=google; t=1746000089; x=1746604889; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XVsI8LQZj8BwCLrRgRJ4kPnlB5Zuoj8Y+TGCFkKkR4M=;
+        b=PWFDrQmmt05SQIAgbofflHWch6k1udxDTnOz1iBMY3ws/BfOs77aYC1ZEPcFRxIoIY
+         JiRiH8Cx4KKf+JUJrgUCcO20uxv1dSArGASouEZiuuPXD2UUg+M0cOWWNvNkcvQZjxvT
+         vN11H4ySY9neBVliRfqioR8qqsDt2IQ/CrkD4p6qqQgEFYgxxcghIE8qOWi+UM6EZArB
+         EchQYKffuZTTEz7zZodUcaN+Mu2+k7VgFqRc1wt6nveRkwghS9904oxm3Z9RT7M1XW2p
+         iD5NGrKpWKQvnGzdphPQrXLRJ6YBj2XU9ZTZi/RPk4zlHRi5AXFcJu3SW5isQWjAgKNe
+         k1KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746000047; x=1746604847;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9K6mDCECT8W3Bovw6myYDbhmO8/mbagCIk0F1CteZwg=;
-        b=iQme3y4lyDqEN0KjesPFMi0C5D84jtAQiOOwya/8G6blCTZhxYA2RNNXTnKQeYZbkJ
-         wH3yANtnfR7aH5Iuvd3CSXazR1oJ+Fv6sobJX24mAl7t1fedp4PTkdI3ADZJD8CMnVyW
-         3mIqFnatzKd28wpotLtLUlDCw6ribVuMTR6764ST7Px5OkMv68ahn1aL8Rvz+Wx9SSVw
-         6cyeAlX9y2Dw9N2yjmzisOLqJZPcuv6CWUFm006cTvVmO25EB7/Yi4R6r4gTEnTqmZPw
-         rKj6fkpkd8nHQY+g8+8vgKdN2DJNkR+x3TMSdnfdR+kSim5UTdgNAuemV9/ssBe9nnPI
-         +MPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAaqvYZnmtfK3BW6bTMGCR9v/TnuyMyrODucqc8Ny3ttHnU7Yc3s5P7mVtum4s171EPiYnhqV/naFnEDPjlEo=@vger.kernel.org, AJvYcCXqr81048WROV9veVgua8teQ220zIwZtf7BlB76bOR/e0EJVGAezigFBvQnDh38bO8Z9qSEa+YPA3Dfp4kw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4ipc0sjLKT2Ex29i2xtsCe7wNFjGYCYK46S1yLqrE9ABBXJoS
-	ZzRZVocUtqFxA5383BtQTjFqhKOL5376naiJLM96hIpvBawcPFGv
-X-Gm-Gg: ASbGncsR1PZc0PtAUfdmqFDT6KT+/8k0Y9Ms7INvdibkL95ux7YQTQ5FvApL/XOJleG
-	f24pz6xg0Q0ZzvbyXPBSyIIawJTqoMwyWcz34c9js/+Gbpq5Degsb8KoA8MhPpnEF9Fd4vo4heA
-	5NBwqC2lntutAGdmhh54LPUN4Xcr4YupObNSIkyySkRfIkjeLkstka6bLNU67z4xs3MLKuTvG/B
-	49fbOO4VTZ7CLhpB7EQ+Mf6Zle4IQ3YrVFHA0KIt5ZuZnMdsa1TTQ7oiAXNNqUW/bPTFAyfZiXN
-	tb2Lx8bIcbTRVm8I4a0vYAovCviBscJ5OtrdAtvJpg==
-X-Google-Smtp-Source: AGHT+IEk1a/o7E5nFPRynA4tKzjO97Pglf5ne9r4g+R9H1XPl6ea21/dzuWLNACGIfTAB9iVw9P43A==
-X-Received: by 2002:a05:600c:a4e:b0:43b:c95f:fd9 with SMTP id 5b1f17b1804b1-441b1f30682mr18772175e9.5.1746000046481;
-        Wed, 30 Apr 2025 01:00:46 -0700 (PDT)
-Received: from localhost ([194.120.133.25])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2af2922sm15356535e9.17.2025.04.30.01.00.46
+        d=1e100.net; s=20230601; t=1746000089; x=1746604889;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XVsI8LQZj8BwCLrRgRJ4kPnlB5Zuoj8Y+TGCFkKkR4M=;
+        b=Ukqmk5CgI1JBXv/0Ra0/yeRNn9XKrm+CokLV4zmkDtyDPWwPpsHZ6m/SNpCjIiDrxm
+         z/114ANEfucRYB2VznNf82bCnxtDlXFERKA8ATbX95gdr43c100k1YdymAYVaZ1WdVDX
+         nT4/ANr/5IXg1z7PrpEgCCDVns7/UiFsjbkkdCsu36IfUUwie3nMDeKGVCMARoJMV7yi
+         NEhZBYu77bPPSI2kQZgk06cZv77itbTpRV0dt3rzWTpIxaucHfcRxQkiWAAz7AlrNdvW
+         PABucp4niYEe7lioAer7EYVuj7ZLu2HEydL9hrlM6JDfkfkhWict/cDNRyAo9sjk2Aug
+         A38w==
+X-Forwarded-Encrypted: i=1; AJvYcCUBEFt6VqCwpY/FMOcADen+QhzswXL8NNeZBDYCfu1bi8cyTQpNDY4gAbcaVkizqWgzg8vGgogtVMPO3Haj/08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyziO8MKUDxcFqhjhtlA6KDuVuJMlXK1dVRNUryxGz/HVQDuYG7
+	cXJ54bl1BaKpeRpN1Djnne4Rv4PRcnIj49fM7nIYVpoi6ZZcyIMzlbrBkvmW/Tg=
+X-Gm-Gg: ASbGncuItmqNMjgwryDz/7gjxchuieDk06I5SuegIJOaqcpFIFHgN3yNfS8e1okIToP
+	APpCm8SGd3gfOvh5zu7P8trYyHsNdNgqxi0xqqOC6Xqw6/FLqVFsIRC7KOJYDWxKuEJO1ic+zjb
+	vxWg4Ce7N9rdEgnCQD7ySwL+qSLz240Okm+mzktAJzeD25U/dWdn/vVhamWvxhVIXiN6F0OJhY1
+	I5rY9VZSlnpwBkXWerRKITvfRHIB++WLIrfYxUI8mhbp6cvmLYMRkOnCtkbLPcZ+3ToKfbDooov
+	pSm3pb7JWqwAFmN63H11XnlcgMSWnw2aSSV3R5VLuNvKFQ==
+X-Google-Smtp-Source: AGHT+IGSWw5YzFLfOEVeGZ2sMxce5ruW0SonDB1/HWE46YfPkACQqdVyQiIV6naiuky8x9154Y7AYg==
+X-Received: by 2002:a05:600c:35cc:b0:43c:f470:7605 with SMTP id 5b1f17b1804b1-441b1f33a80mr15531415e9.12.1746000088903;
+        Wed, 30 Apr 2025 01:01:28 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2b5951asm15364615e9.0.2025.04.30.01.01.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 01:00:46 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: remove kmalloc failure error message
-Date: Wed, 30 Apr 2025 09:00:37 +0100
-Message-ID: <20250430080037.848396-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Wed, 30 Apr 2025 01:01:28 -0700 (PDT)
+Date: Wed, 30 Apr 2025 11:01:24 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Arvind Yadav <Arvind.Yadav@amd.com>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/amdgpu/userq: Call unreserve on error in
+ amdgpu_userq_fence_read_wptr()
+Message-ID: <aBHY1IPONYHyybrf@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-The kmalloc failure message is just noise. Remove it and
-replace -EFAULT with -ENOMEM as standard for out of memory
-allocation error returns.
+This error path should call amdgpu_bo_unreserve() before returning.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Fixes: d8675102ba32 ("drm/amdgpu: add vm root BO lock before accessing the vm")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-V1: remove trailing space after \n
-V2: remove entire message, originally just removed a trailing space
-V3: replace -EFAULT with -ENOMEM
-
----
- drivers/char/tpm/eventlog/tpm1.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
-index 12ee42a31c71..773e9e537991 100644
---- a/drivers/char/tpm/eventlog/tpm1.c
-+++ b/drivers/char/tpm/eventlog/tpm1.c
-@@ -257,11 +257,8 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
- 	    (unsigned char *)(v + sizeof(struct tcpa_event));
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
+index be068e8e37d1..57169a8224be 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
+@@ -373,6 +373,7 @@ static int amdgpu_userq_fence_read_wptr(struct amdgpu_usermode_queue *queue,
  
- 	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
--	if (!eventname) {
--		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
--		       __func__);
-+	if (!eventname)
- 		return -EFAULT;
--	}
- 
- 	/* 1st: PCR */
- 	seq_printf(m, "%2d ", do_endian_conversion(event->pcr_index));
+ 	mapping = amdgpu_vm_bo_lookup_mapping(queue->vm, addr >> PAGE_SHIFT);
+ 	if (!mapping) {
++		amdgpu_bo_unreserve(queue->vm->root.bo);
+ 		DRM_ERROR("Failed to lookup amdgpu_bo_va_mapping\n");
+ 		return -EINVAL;
+ 	}
 -- 
-2.49.0
+2.47.2
 
