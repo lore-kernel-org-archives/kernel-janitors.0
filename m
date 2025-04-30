@@ -1,133 +1,86 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AB713AC1;
-	Tue, 29 Apr 2025 21:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734DE248F50;
+	Wed, 30 Apr 2025 00:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745960682; cv=none; b=W6N83ePIpIWUcUIzjhnK65lC/JzYdvm28vjymeXKXr/pqalAKHTw94SRwsaRchRwIZm4ww4OInuKjr94neAm1N4VPrQEscYxfqaVeK73lFpitnER3B8xssBujAS+twarciad4z/o5cf2sLW8dTqAoqaPz9caZF+W7kyM+4Wpjjo=
+	t=1745972221; cv=none; b=r4Q9zh5mXH9o1gPJ0g92WshephWj/OMQHTfcJ+OSjtAnzYPLts+q7A+hUghwD6GwCdkM0jarYLGFXRLdOcFB/9DKgr27I+2L1TqTazpnc55QaMUAhkyy7y/cxiUQXcoRp1DMWKJtOhZI8rFpaym4xLy7xjgQCadmTK7lUz9Ok+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745960682; c=relaxed/simple;
-	bh=9MN7EzPl8Ix41M3eTmAMrKzzZ19Zdur1bzdSLBkorjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oEJ3tlSO7AaguX4Huz3UrclCQtKTYsqhitU3uYh5SXzN1rfk4D+bjy+xRd3I3MsGji+mJJ5gpHWU3Q4y8FapUQz/8iCWuISWHuouOCsaDsNRirmksnPYfovTkVrogwC2JHbQLK7hawIWxM/okezn9Fmqpy7hiVTtKD5TSRKmtFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=E9f552v1; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1745972221; c=relaxed/simple;
+	bh=aK9F9nwIdg1FphfT+Yfjld5zvSum/rAfg7pCxAMkINY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IO7r1IM6+9IRKsvlR9kVKX65JVV7UDkxjVsMwx/Dm1ZGckFMTO+Hvglw/01wbWkRGWP5IbS7/PU33a5tFR92SywjYcatUnRwHa7WNhNY/Dtf+3xpYjCFzMUvy+EHjAW2mLpHSJ1mzDW0P2FcJgC5VYcekY4y1mQx+DBLKlxCWXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2qmY2zJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="E9f552v1"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 9rzNumpcYN5mI9rzQuMyVC; Tue, 29 Apr 2025 22:55:47 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1745960147;
-	bh=NqrZP5JivyxldFmAi4UVOQoQCnpE7WmY52m/wQ8PrDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=E9f552v1eFs2M5RxbiunKLS2gnnjSGCo6hzrEh6jaPK03065K+1nT5dkBAszEdjKw
-	 AI7xqWuvhsHem6Nx4H3rcjsJjPr4H96CMKKa4y457EgNOCUnZXzkrERuC1M4FRE3JW
-	 dDRKGu7+CG3ebjSU4g+UPa7cel34II0iYK8xkp7mp7bzgahLXjhqrUIzQy5NEDaxHB
-	 cvVaEyaeGmOV/NVfldXu6B0KHjLejiTB+i6UdaBwqg41vpfyHsVQAh/hCFnnDPcL9S
-	 eS+6vHW+diXwf6syIkCNoKqXzhQh6lO4XWGs9GOGdq5JdkmQ9hZzvCyaPdVPhEzYsU
-	 CVV4zdRpzrBFQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 29 Apr 2025 22:55:47 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <85758958-0e67-4492-a9e0-40f25c554e8c@wanadoo.fr>
-Date: Tue, 29 Apr 2025 22:55:37 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2qmY2zJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643AEC4CEF1;
+	Wed, 30 Apr 2025 00:17:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745972220;
+	bh=aK9F9nwIdg1FphfT+Yfjld5zvSum/rAfg7pCxAMkINY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f2qmY2zJxR+ibK/Gxzvt5dyIAIgHEFb0wJlpCM1untRcEPWw80nYDj9aUM9LmQCTO
+	 lZMeo4qtAnYSRYO2HTwMS1dzOLylqleohStMuC5Oyqe5LZdl1JUkNhNHN0jO0Oyz9a
+	 6sQdEs5JxrYXJvueCGqanCFfEGPzCrRPVZGSOYjL/euAFpfKnkp31PCG8JRDf9Neuc
+	 DI8GsQL1+afXp9PUy9ic1RtHK/PbmlWXsZ3CUMCbVbN9SeWZDZACSxiucdE5CGHTcN
+	 OP8Tc+9y5Pd5/+g4+P5Ts4nNF4XLGI8BFtKNj4/adKwW2mNEWt7mEzDuG8CVf8waKs
+	 QMWDPQrJCcIIA==
+Date: Wed, 30 Apr 2025 01:16:56 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] regcache: Use sort()'s default swap() implementation
+Message-ID: <aBFr-OJlWHg5a0Lj@finisterre.sirena.org.uk>
+References: <20250428061318.88859-2-thorsten.blum@linux.dev>
+ <edab112f-9449-4862-8f8a-0beae136e0c6@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: airoha: Fix an error handling path in airoha_probe()
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org
-References: <f4a420f3a8b4a6fe72798f9774ec9aff2291522d.1744977434.git.christophe.jaillet@wanadoo.fr>
- <aAJFgqrOFL_xAqtW@lore-desk> <aBDglZH4VaBlWU2a@lore-desk>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aBDglZH4VaBlWU2a@lore-desk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NFTx9axBbIHKVfre"
+Content-Disposition: inline
+In-Reply-To: <edab112f-9449-4862-8f8a-0beae136e0c6@web.de>
+X-Cookie: Well begun is half done.
 
-Le 29/04/2025 à 16:22, Lorenzo Bianconi a écrit :
->>> If an error occurs after a successful airoha_hw_init() call,
->>> airoha_ppe_deinit() needs to be called as already done in the remove
->>> function.
->>>
->>> Fixes: 00a7678310fe ("net: airoha: Introduce flowtable offload support")
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>> Compile tested-only
->>> ---
->>>   drivers/net/ethernet/airoha/airoha_eth.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
->>> index 69e523dd4186..252b32ceb064 100644
->>> --- a/drivers/net/ethernet/airoha/airoha_eth.c
->>> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
->>> @@ -2631,6 +2631,8 @@ static int airoha_probe(struct platform_device *pdev)
->>>   		}
->>>   	}
->>>   	free_netdev(eth->napi_dev);
->>> +
->>> +	airoha_ppe_deinit(eth);
->>>   	platform_set_drvdata(pdev, NULL);
->>>   
->>>   	return err;
->>> -- 
->>> 2.49.0
->>>
->>
->> Hi Christophe,
->>
->> I agree we are missing a airoha_ppe_deinit() call in the probe error path,
->> but we should move it above after stopping the NAPI since if airoha_hw_init()
->> fails we will undo the work done by airoha_ppe_init(). Something like:
->>
->> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
->> index 16c7896f931f..37d9678798d1 100644
->> --- a/drivers/net/ethernet/airoha/airoha_eth.c
->> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
->> @@ -2959,6 +2959,7 @@ static int airoha_probe(struct platform_device *pdev)
->>   error_napi_stop:
->>   	for (i = 0; i < ARRAY_SIZE(eth->qdma); i++)
->>   		airoha_qdma_stop_napi(&eth->qdma[i]);
->> +	airoha_ppe_init(eth);
->>   error_hw_cleanup:
->>   	for (i = 0; i < ARRAY_SIZE(eth->qdma); i++)
->>   		airoha_hw_cleanup(&eth->qdma[i]);
->>
-> 
-> Hi Christophe,
-> 
-> any plan to repost this fix?
 
-Hi,
+--NFTx9axBbIHKVfre
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll send a v2, but I currently don't have time to look at it.
-Will need a few more days.
+On Mon, Apr 28, 2025 at 11:00:46AM +0200, Markus Elfring wrote:
 
-CJ
+> Would the following source code formatting become applicable?
+>=20
+> +	sort(defaults, ndefaults, sizeof(*defaults), regcache_defaults_cmp, NUL=
+L);
 
-> 
-> Regards,
-> Lorenzo
-> 
->>
->> Agree?
->>
->> Regards,
->> Lorenzo
-> 
-> 
+Feel free to ignore Markus, he has a long history of sending
+unhelpful review comments and continues to ignore repeated requests
+to stop.
 
+--NFTx9axBbIHKVfre
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgRa/UACgkQJNaLcl1U
+h9CyyQf9GfxP0Cy0bZ97n/ofMRRGMjpH6U3zALBxa2zXqCorH55hSQsEfUQRCfXJ
+UzR/jIdXczE7jdyZEQm+psDrDJegAOkYD2AWrLKF5U417evMcXcusr3chjfX2o4u
+0so9BBw4bpk3PAZMWlv5LadCc7gH/wJDfzPxOO59CO+pWTr3pwIpiotPYx5jDM0u
+KQ/VKWDOGyGXYGEvU+rA71pXDHV1Y+SSF9NehOS9zasrCiYxeXEjVTXABs61sYba
+6vjBWO9eIFXPurZ1fqkK7AbdtTq1UM6TleP293zosRUm+jw+DU9pAjb7OvTktbs9
+qyP6k5NsV9SweDj/sj6uIg2TCvUpyg==
+=siGj
+-----END PGP SIGNATURE-----
+
+--NFTx9axBbIHKVfre--
