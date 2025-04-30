@@ -1,89 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2759216396;
-	Wed, 30 Apr 2025 08:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6341F2A8D0;
+	Wed, 30 Apr 2025 08:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001656; cv=none; b=I2TVjHSw3NRC49eH6fFxoIMIgOrhn3+3hEyT8TgVeLzFFOI11R8ouoVEJaG507/joVBtqDesdXRecFy1NgDhxZtQNiUp/5AQbbMyw8IN3XTue8Mf6RejCreY1PhVPlQsM9CePFONFM63JliSA/bePm+BdFjOFnGQ9goVm/7JtW4=
+	t=1746002087; cv=none; b=LQKHbzKHXGmGLbUGcLc95dKvIK+yA8S1DwN9ElPTXZdQYfRFa8lst6uyaafCIyS+Fw/s80S+9tiYF9Nj1P4Ga1TslfUnvp+ul2P7nsVrgkszsFd8OXFC3BeEzWoIBqUzWhpI8ZmsZXp+K1a9cqFmSxY1J3B9hAyOm8GXDYcAkIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001656; c=relaxed/simple;
-	bh=LqgULXMn2OyWwJLPaUxW4p+pmAtTcodjOr6gIWycDbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pQPYlPzem3NPu6L8GPX3qEGfoHDXc+K7SgE7Z9+k3AQdu/UD5Fdnk07GSDLTVDvoqOpc9Rmc9UFWPCc+tr+kjqMGgBSMStTO092fMs1XGfMbzSVI/CP0SC0hzBdHXQ/x3fjCEOlhjPONrAxFGcoFSkpAtOy3wtpczaDmB1TnLC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpa15Cv1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746002087; c=relaxed/simple;
+	bh=UnYWe9kS0tbtlW+ZD6CrLdA8tcTFve6dkf/Mz8gxI1s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T7w+LbJ2DpVRvQF55U/+5ppnreK7ZfOjBngKtXwpMNTpBd7CgKBk8sSG1kMap8fhsQ+f04vdKG81tdQhhpL12aNWZv4e4GyVSA1unKj6G6oG1+OYODPZGM8ZifUrhMr8HZ0LyQmZi2vBSgBJTivH6U7nDXX2Ob+y1tFlBqrGIu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NES86Moc; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpa15Cv1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41046C4CEEA;
-	Wed, 30 Apr 2025 08:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746001654;
-	bh=LqgULXMn2OyWwJLPaUxW4p+pmAtTcodjOr6gIWycDbM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rpa15Cv1sCbu2xoxGPHppbxoSLDA8kNuFTUwv46xpaKvcgLZn1UMAvK0qQQK61XSw
-	 beEXZMF1er+tMT0mxtRKYwVehz9un+tP0kgugJOOnFuZpdiqB4F3m+INLfBqiN5f7e
-	 jZF1QiYK6uksqcLEe6AjpTHC/HhDD70EZNJs7x2I7/kTJwzMJWcMsaEvHZueC/ATFE
-	 oSq7arl/q/VoO3C/991+EadMx3pju1a2GPqwNsWytNPlpfcQJKGjTqlxer/RusH5uG
-	 7dQscE5lKIAVnCW/s4eolz8bBl4m0dBZKNgCEih1dRwh9pcZz/4h4SirUhoFUtf2Hi
-	 oKwaKBjXhIYbA==
-Date: Wed, 30 Apr 2025 10:27:29 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-xfs@vger.kernel.org, Chandan Babu R <chandanbabu@kernel.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org, Qasim Ijaz <qasdev00@gmail.com>, 
-	Natalie Vock <natalie.vock@gmx.de>
-Subject: Re: [PATCH] xfs: Simplify maximum determination in
- xrep_calc_ag_resblks()
-Message-ID: <wv2ygjx2ste2hfusgp7apsp76wufeegrd26kdkzqmergwhwfqd@spof2npy32p5>
-References: <oL08RYG1VC2E9huS2ixv9tI5xAJxx88B60-95yE-8PIDHIdkDkYdqKhA9T_qDEoFzv4qGpCn0M0WtI3JV3f5EA==@protonmail.internalid>
- <2b6b0608-136b-4328-a42f-eb5ca77688a0@web.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NES86Moc"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43690d4605dso53301125e9.0;
+        Wed, 30 Apr 2025 01:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746002083; x=1746606883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OMUYWfUGXzGMBrrk4yB89sthiGGaTwLPzgNP1Z3b+8Y=;
+        b=NES86MoccYEC1GU+mwUNnEZfPMEhB5UGxrN7qIrfkoBDXUDZGW10YtSBxUvWoFnmXd
+         ZNn6KngOmJqaEKUUQXn3Ydp8HbQUslc3IuX7Z4ohne47BdZbLkRW4VkIyHExZQJVdDZ0
+         Nlk8f1+5SlOph70A/JT2AiupxA6e4fjFIEnu64BnwGREM+pwQoAI97fXLYpguKotVkKU
+         seQtv72g27pPtY82YgyLiNZiRBeuB14h010Xr9ViHGeMmD5JGKWbfHhutHjMxIlcu1ZS
+         tIQSZG4qiURXefRRpvkd8wTIfdN68QfzphGBPdI89oId2DxtBOiF/bOZuqg46hSkJ4il
+         jECA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746002083; x=1746606883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OMUYWfUGXzGMBrrk4yB89sthiGGaTwLPzgNP1Z3b+8Y=;
+        b=T/2QznYY77VZ06uBT+7zpGJbZFFITuKecX1YcH7BMu1uhUlfbM+EZmmhWHI26IkCoc
+         mzwvT+ERXIe36IEZWirB+jOIUpGcnzXPeNMzbN6QfDHUxH5k7g31fgOTJXnTHgXElWRC
+         Y2kX3pTPGLjgshCtQWjyyzFeqVf5M+1gXpF3O+bJo53szbJVYnrzwZ8ZuQE9Hw0p9RBU
+         pyMQs7uPG4YyxxknrX3ekdNxdrQ7xrOQ8zBCBx+dU0nhHaJ2xzx4E/GcS6Y+faKC/Bxq
+         J9jEetoGr2T3WFGEW8ljl0NyAoFkVeTHw4Rzr7H0yO7A8MOWdrfyCfN9g4UpDDiQYTei
+         dmcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUM31Nw9f6EzEHlSm5Xvta17wFWNkeva5qXYZdTnQ+FsofGopsvImIe/hiILmuETeS3+0d3W8+5/+Ka0jzn@vger.kernel.org, AJvYcCXBVvoKNDLKMTp1crAwZgd+uU7DmRrKu4Bdmc+fjb15vpa8ReEk9nY3LcPYJ12EthKXcUZsx7bll5TC5Z39E+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLRCjLY2Ay4o+uUTKxuMkbPinYZDkp58ap3uG31KkBq9VD+Uri
+	Rk3VcN4WVkjPTv1TzILFnXgOljwP5Ogsh2ud8bU8TFPccM//nGvF
+X-Gm-Gg: ASbGnct5u/BKENCGihD/YBKytN4JmIXpXBG1ZJ9Gllt09CaQwLHmHC3HxKZMfsfhnnD
+	dEFRg5zaLvLwlA7ZcF2nWHe0D7pZk4vAdeqqBMFN5CokwU0cVA9UyMm/FZmUf8EoNeEh/S++VHv
+	Tov52l1mX+aUP8LxAkx5U8y4/arIHm5nIyYv4ctQ4l2gFs9GK8X6zZr5+LNW/Yt5gmKtSVjGz9d
+	ie4bkPGcYdDurY08MEAlCl+Vb+uDjzkrYZOpREkWWkvvNcs6gYY2HHsidxIuZVq1PLewxKgkJO8
+	9RuAkThLCAKclIXwLzn5Ya/IKfzdWkqTxl68opwjsw==
+X-Google-Smtp-Source: AGHT+IEQMS/RL4C5UdU30+j5/UxnzZDQOdloHncizZ181zgcG4olTGvWOXNWY8o3mrgUKo2UMzbnPg==
+X-Received: by 2002:a05:600c:19cc:b0:43c:e7a7:1e76 with SMTP id 5b1f17b1804b1-441b2634d59mr13824145e9.1.1746002083636;
+        Wed, 30 Apr 2025 01:34:43 -0700 (PDT)
+Received: from localhost ([194.120.133.25])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2b97293sm16222245e9.2.2025.04.30.01.34.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 01:34:43 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next][V4] tpm: remove kmalloc failure error message
+Date: Wed, 30 Apr 2025 09:34:35 +0100
+Message-ID: <20250430083435.860146-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b6b0608-136b-4328-a42f-eb5ca77688a0@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 01, 2025 at 11:30:52AM +0100, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sat, 1 Mar 2025 11:24:52 +0100
-> 
-> Reduce nested max() calls by a single max3() call in this
-> function implementation.
-> 
-> The source code was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/xfs/scrub/repair.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/xfs/scrub/repair.c b/fs/xfs/scrub/repair.c
-> index 3b5288d3ef4e..6b23a3943907 100644
-> --- a/fs/xfs/scrub/repair.c
-> +++ b/fs/xfs/scrub/repair.c
-> @@ -382,7 +382,7 @@ xrep_calc_ag_resblks(
->  			refcbt_sz);
->  	xfs_perag_put(pag);
-> 
-> -	return max(max(bnobt_sz, inobt_sz), max(rmapbt_sz, refcbt_sz));
-> +	return max3(bnobt_sz, inobt_sz, max(rmapbt_sz, refcbt_sz));
+The kmalloc failure message is just noise. Remove it and
+replace -EFAULT with -ENOMEM as standard for out of memory
+allocation error returns.
 
-I have nothing against the patch itself, but honestly I don't see how it
-improves anything. It boils down to nesting comparison instructions too, and
-doesn't make the code more clear IMHO.
-So, unless somebody else has a stronger reason to have this change, NAK from my
-side.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+V1: remove trailing space after \n
+V2: remove entire message, originally just removed a trailing space
+V3: replace -EFAULT with -ENOMEM
+V4: send correct fix for V3, actually return -ENOMEM
+---
 
-Carlos
+ drivers/char/tpm/eventlog/tpm1.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
->  }
-> 
->  #ifdef CONFIG_XFS_RT
-> --
-> 2.48.1
-> 
+diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+index 12ee42a31c71..e7913b2853d5 100644
+--- a/drivers/char/tpm/eventlog/tpm1.c
++++ b/drivers/char/tpm/eventlog/tpm1.c
+@@ -257,11 +257,8 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
+ 	    (unsigned char *)(v + sizeof(struct tcpa_event));
+ 
+ 	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
+-	if (!eventname) {
+-		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
+-		       __func__);
+-		return -EFAULT;
+-	}
++	if (!eventname)
++		return -ENOMEM;
+ 
+ 	/* 1st: PCR */
+ 	seq_printf(m, "%2d ", do_endian_conversion(event->pcr_index));
+-- 
+2.49.0
+
