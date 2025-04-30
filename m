@@ -1,89 +1,73 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE441E9B3D;
-	Wed, 30 Apr 2025 07:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 6376C1DFE09;
+	Wed, 30 Apr 2025 07:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745996703; cv=none; b=m9sWXfxOOKABAQ6PNDRHlNuQ1RHXS+coCNwOU9Uc7+j8q4wrrMNlKu9sg3kMfBJq6BiXt4vb0qSS8QpnjmPvRFOQr2h9ayarqr4Ue99UhovwEcwNcLa4A7WR2cd43GvtdTcOdICQF9A2GLKrK8ax8dOnWq96WYc7B8AeA3OZaQc=
+	t=1745997592; cv=none; b=YOFreC2W3kCa0lwQT06ryF84V0+aPPPTirIZdJOJ6xR+HAvK1xoUCVDIi3tB4wf2Aux4nvjx881Q6eCZC36cDwjE+8uXAnsVHsMEEQ2MZoGheJBoKHAqAoSY/dLH436fG2jGT2pdXfJhTHSfAUjEAAvmJuz0cjkNGTlCSEY1Jfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745996703; c=relaxed/simple;
-	bh=0jJcPCJLt1KylRRbiG+MEfiP1omyEpl/8MqQSoM3n98=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QpNJJcrwhphn24iJcdSvqOz6fRtmyMGOXT+RnVQhkHy3wZ1ZcqkVo3294jgm3cmVoQlVPZ2uPR3hRc4imhWbm2EEW6XOsprhDYHyliBLHSX7+ylV0QtJ2OJx9+Y06eLk2TqA/5nFWJdr6tQ5ct3iqPUSEPjksmu2bgP1wwgoLCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3iADWnQ2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6bmFkrE2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3iADWnQ2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6bmFkrE2"
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745996700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tCsrSDsvTkK6SkgYIF70bN0EWs2t+iSvSFadkoJDcpg=;
-	b=3iADWnQ2nOBGlvCt8hTukwWjnOAGXqhyOUiwAHQrdkoUtoQQ0JSiBIe9QdbtvgmJyLfzJR
-	jazIuyC0zcHe5j6DM59FfZt4agY+CKhGDckHIkFFeXB9X6ruya7y7L+DM2ZQOfia3Zkosx
-	K8DY8dKJqIRzvjKOcsEDrylo1ZDfjMXdVTkSYnHDJuAGBr9fEWHhIbudHG737P9s9phn6d
-	t4Ar4QtVmLkuJ1uwLgefBMooIk94PNUDOGEDggf/mMieLPS9PUI1otcdg2BcCUpUeXylzY
-	95UD42MOKlN8tXlxs1Xr23VCE8rpoAT5N0B14u9+T7C+0u45DpXmNODaSYwcCA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745996700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tCsrSDsvTkK6SkgYIF70bN0EWs2t+iSvSFadkoJDcpg=;
-	b=6bmFkrE2r1IbzapO/qhl/dL3kdb9A+nB4Sj6qSMouFf109CjNTFhAOBVWWRjt4jALQm8Ju
-	bduDF6/x6CBO6IAw==
-To: Su Hui <suhui@nfschina.com>, jstultz@google.com, sboyd@kernel.org
-Cc: Su Hui <suhui@nfschina.com>, dan.carpenter@linaro.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] alarmtimer: switch some
- spin_{lock,unlock}_irqsave() to guard()
-In-Reply-To: <20250430032734.2079290-4-suhui@nfschina.com>
-References: <20250430032734.2079290-4-suhui@nfschina.com>
-Date: Wed, 30 Apr 2025 09:04:58 +0200
-Message-ID: <87v7qmp1t1.ffs@tglx>
+	s=arc-20240116; t=1745997592; c=relaxed/simple;
+	bh=asyKUuyUZ9C0o/uQdF7lBLo5mFr0FF/pBL+vIGX9a8k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=Wx2Lxz9Yj+xkKI8LNy3Vwo3IfQx6pZ+mHiSeBRG0POcqO31y6fB12COW0Orpj5OyyYkWrMkfLY7ut8+9572gL+vODTwwpSMmZ6zpYj+pQm/FZSMz5bcoQxXmwt6R06LKGBxHCb8DiYmVUeMGaitjinisAQATQNfqo6gLN9tOrlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id D376F602DF0D9;
+	Wed, 30 Apr 2025 15:19:42 +0800 (CST)
+Message-ID: <6608ee51-0dd9-45d9-ac17-a4e9b736ceb3@nfschina.com>
+Date: Wed, 30 Apr 2025 15:19:42 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] alarmtimer: switch some
+ spin_{lock,unlock}_irqsave() to guard()
+To: Thomas Gleixner <tglx@linutronix.de>, jstultz@google.com, sboyd@kernel.org
+Cc: dan.carpenter@linaro.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Content-Language: en-US
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <87v7qmp1t1.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 30 2025 at 11:27, Su Hui wrote:
-> -	spin_lock_irqsave(&rtcdev_lock, flags);
-> -	if (!IS_ERR(pdev) && !rtcdev) {
-> -		if (!try_module_get(rtc->owner)) {
-> +	scoped_guard(spinlock_irqsave, &rtcdev_lock) {
-> +		if (!IS_ERR(pdev) && !rtcdev) {
-> +			if (!try_module_get(rtc->owner)) {
-> +				ret = -1;
-> +				break;
+On 2025/4/30 15:04, Thomas Gleixner wrote:
+> On Wed, Apr 30 2025 at 11:27, Su Hui wrote:
+>> -	spin_lock_irqsave(&rtcdev_lock, flags);
+>> -	if (!IS_ERR(pdev) && !rtcdev) {
+>> -		if (!try_module_get(rtc->owner)) {
+>> +	scoped_guard(spinlock_irqsave, &rtcdev_lock) {
+>> +		if (!IS_ERR(pdev) && !rtcdev) {
+>> +			if (!try_module_get(rtc->owner)) {
+>> +				ret = -1;
+>> +				break;
+> This really reads odd and relies on the internals of scoped_guard(). I
+> actually had to look at the scoped_guard() implementation to validate
+> it.
+>
+> The whole thing can be simplified to:
+>
+>   	scoped_guard(spinlock_irqsave, &rtcdev_lock) {
+> 		if (!IS_ERR(pdev) && !rtcdev && try_module_get(rtc->owner)) {
+>   			rtcdev = rtc;
+>   			/* hold a reference so it doesn't go away */
+>   			get_device(dev);
+>                          pdev = NULL;
+> 		} else {
+>   			ret = -1;
+> 		}
+>
+> No?
+Yes, it's simpler and better.
+> No need to resend. I fixed it up already.
 
-This really reads odd and relies on the internals of scoped_guard(). I
-actually had to look at the scoped_guard() implementation to validate
-it.
+Thanks a lot :).
 
-The whole thing can be simplified to:
+Su Hui
 
- 	scoped_guard(spinlock_irqsave, &rtcdev_lock) {
-		if (!IS_ERR(pdev) && !rtcdev && try_module_get(rtc->owner)) {
- 			rtcdev = rtc;
- 			/* hold a reference so it doesn't go away */
- 			get_device(dev);
-                        pdev = NULL;
-		} else {
- 			ret = -1;
-		}
-
-No?
-
-No need to resend. I fixed it up already.
-
-Thanks,
-
-        tglx
