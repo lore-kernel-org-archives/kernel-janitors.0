@@ -1,69 +1,68 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FB01EB19B
-	for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 08:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E862320F
+	for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 08:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746000401; cv=none; b=DKBKC5mWP3DAnc/HTABcMucchc746SsSoZ/rWKHs/+29EpMb8U/jB9tEGqbdOYxIwSK3CKOmgCMkbtWSNKEAwFSVPCJDRxIVeAZ5K8UL/GUqFqLBIh9ci4YDjo0RgFoHVhFeI4SmbJN54ZiU4Xv+ke665cW7pbSS/2gqkRx9pFk=
+	t=1746000447; cv=none; b=TmbTXDd+rva/SgpLjJ5NXyMRVj4udn2s5dkv2pOIuQXRn+w/bXvRSJVrZ5U3Zuxns84IlRcynxBHeIQiz5Tu/zf2VYqAa21bLrNpYoFLvPU/+bRANkP8MsGdwI3dZxemy0t3iPxHyGbeGFZFIJS+Wuh2KrnyyIZeGw1Gb8LI7XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746000401; c=relaxed/simple;
-	bh=99+kCDIITBMCpmDZvnmLUTjaZZ6LPqCubOvj04JEBtI=;
+	s=arc-20240116; t=1746000447; c=relaxed/simple;
+	bh=TwBAWvhA2LMsfzhyPe3YteWvIvV7NRQQgO+b0MIyY2g=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WnIFsMC9E/zxW2tsBlgWntd+QkHCYOBRw1nN3j2Sl6D2OuU5RrNEaQBvpZzGN7HYtVbpPyiQyW5Hh7JZBds4U4yiEYMx0xKenKRuljkSp6K5Cla7KSX1ToSPzsB1dSEqB6P3Ky0FmpFx15lRTcyDgMh9TLgbfB7mgXpRsA6lB/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QkipsDXr; arc=none smtp.client-ip=209.85.128.51
+	 Content-Disposition; b=PbKcwOg7djaWmHS3v4m3etD2Xqb/U0ggmJWUK10/1mZc+nVGicRvW2+WqpjPcGaVYtnJL/669pmHch2WrA+3g2TVfvsKuHvridSVZK48mAAEWyFi83ZB+4K1c2Lb3UJwgIYPaDRpyUSGMyEts+dn+/sM1vUMcmddCVYxoqgMQgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hU94Xi0V; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QkipsDXr"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43d0782d787so42734855e9.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 01:06:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hU94Xi0V"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43edb40f357so43561395e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 01:07:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746000398; x=1746605198; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746000444; x=1746605244; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JaBtCb/6XVAvBecubHAVnnEpXRtXlY0yxjWDApUS/CE=;
-        b=QkipsDXrVNvE6qclzrfPGxtpF7ikYP30XwL1H89kwa4VsZnDEKgc/x+2+35NS7uiUg
-         G6k+s8yg41e6PA6gcmdztdAUPo7S//ULJybdRx1b/GZpFyFOE3RaQhiSZ18+7p1vNB6H
-         O/SNCRHsP2fxfvnM3XF+FQjJRRlEpk0Le9I2ETcf5u4qAcdksRpM1yLSAkqe8B30s4cM
-         WKOH8/+7xJsExW8uHaqQlMwc2qV/KXFp0nSnrloRCb8araKgfb8d7ueHsk454HN7t06r
-         u7EKoPvILkDNxxcYM3QHsw+klEdejpKZradDhmy0E0AHGMaHqP831SfDnmiKATZeK9Me
-         UE+g==
+        bh=uc9OCM7ZIzJpNzeChHt6JK3Q3WLBO25WpfMZPcs6ME4=;
+        b=hU94Xi0VZ1VYHLijxt+hy0dhmt+OGjjL/bmcMkTMS5IA0+V04UBj6y/JHuDEyBN5Yg
+         t3e0x+8LRgy71mJZSwNrdnMwewNasb7SKcCt4XkfMn7Ar5GhYdfh7HlQyyuHpzuLTlbQ
+         ikG54sfa13kbbbKbX+C1CgJdWY1SJk+N99uBrmlIRolKabm4Td6iXtNuFdwg4nD9mw99
+         4rvsQklhXAikRXcwMokReJ1cjZ2TF12jKGF+Adb4KBUwQN46GFa0ASPL3I+FTDIgMRk4
+         Qd93TSZlKWjqlbgdztkyE/S7r39kJZFdMle6/gy1lG2lPA4c3NK2JdDrpSGbPpWx/bV+
+         nbRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746000398; x=1746605198;
+        d=1e100.net; s=20230601; t=1746000444; x=1746605244;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JaBtCb/6XVAvBecubHAVnnEpXRtXlY0yxjWDApUS/CE=;
-        b=CNgYoPlBqNyf/07853KHBumTGyFDfnnKHE8qW5cIOFa5P+MtxMQo7YSLM8JOj3Cwib
-         45VkqgnshbwyTqR85rukKzVhG4E5Ot19fINYyVaMhVeMq15ZZ3xpTf3XDGIljeeqc5W3
-         EnLIcvdJtAYdGsjXvXRAmoE3lAba3vz8oEQ5eI0IFpaaq2028z1R+NTajfEpNthIzIhF
-         8jHHwv+aaD6/X2DJjNBV27BVnEcZGrmJViGkMJrc729lt2OagbHdxNJGtRKjJH0ppxz5
-         ZjrJ4j9B5vJcoydMQtyGRwr1nHbJHcbVc2hqfC0SRlmCwlVLb67EGMyTUW3RtUCwQLv/
-         9OVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXah948J3C76aEXZFNyFIQnYdBz25/Cuoss1QzjKF+SvjHrYEhhxohoLrPSQGnq7901bMa2WLymS+nzQkt71Zs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg3qfkGe0LFr84qUcaCgY7QFy75QcD53ffZNvYv8pvxUoMH9p3
-	pXQT/lDu2Z7c3TcwtHeiZUD13zUCwdNbR22VC7djlyvsUXl04IdCpJyAXgr5v2Y=
-X-Gm-Gg: ASbGncvbdbjKcl+V9U+A+3QyYzNAYbh/THZGCuNy5UeSsT0tzRIDn9Jw2l3hASUV6gh
-	pXxNFWOfOtlDEnCEIgo4z6GKMzPTh9g++Tvh289qL0DNF0M+bVDD0pr5zAI91O77F+UdUPsokB6
-	6oxaBleaOsj3b2tw1EBiLENDuv0Y8PtRrZ7irJqg+iMyHL4l1SsqFuekKcZo8LwIXytANn+gmhu
-	RTyBt7xewS98qm/vQQaWDpBmZWGQAYlReFEo0Yh+V86WTrmrf1pAr3dW/UTwv2JRo52lvVP8BwD
-	AILTXD+tP7vED4sSwsgwl26a0OpLzQmQLvf7/z5h4YQuDQ==
-X-Google-Smtp-Source: AGHT+IHP+atkeWPXnPct3xYEf+jUQ0S7DQqC5h4qJD0wJmpfwo3S07LKuBCrJm3Z9SrRTQ8TUMm+ag==
-X-Received: by 2002:a05:600c:502b:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-441b1f30736mr19057575e9.4.1746000398163;
-        Wed, 30 Apr 2025 01:06:38 -0700 (PDT)
+        bh=uc9OCM7ZIzJpNzeChHt6JK3Q3WLBO25WpfMZPcs6ME4=;
+        b=VFGxOH/U5WIW3qqqeh11JEZ2U3VG+IopG0OYqwB3q5Sz3Kj95n7g97ypSl33pW0LQe
+         acUHdnQi3VvzTodBQi5LVfg5fAaIG51FzdTt2c1YHjCgIZmqIQYLIiTydCsNa6H4neWM
+         kk4lTZhrvjEXfpvTtDIRAw4ycCP0hbZBi49oQBy7r8Kt1R560PdZwIhX7vCHPcJuT1YL
+         Nrh5ObrVROc7cCOZvlaj008UkeS5dEwsYW6opGiyGr/NSCj28H2BkK3qC0/gjW6LLLB1
+         X4VMMHdBPhyB85Kdzvt0v/AKOx1F9vcrUdfNoPQqYh8PEvpTbPEBng2yL0gAzKRKl2Y1
+         XRnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbC2lmUpt69pZVxgexn2ycW76q3kGDUpm4HM6MUyrzyp1ZzYSoXBRuCsaBm4qvQIJ7gAQzqyXagH2vGSM6jRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXNC4Flb9Ubj5QaSbaaJEQOhlzawzSGGLyYNLL9oq83g5V6qMl
+	/ZPMSNe4XgvDlWupqSmuqN4CG51F6nrNQzdGWD8txUSB9l+jCL/iaOpEN6+J6hM=
+X-Gm-Gg: ASbGnctq/EbOlj2ZWrJblRtZZfXNTX17runIBuUeS/l3XWH1bfnsXGN35fwWdhVjENt
+	eHMd38W/Li1+jl+oZX1hDLuWK71uiLPOTWLA+X97bdAG30jPkh83vCIOV/yqIosX83szksV6JS7
+	jk+nVKPLR9SHcbYsxQV/TrNqRE9Js9D16wLptAVgydN7Gn20b+8vphohEVt11AmF+rCNdgMGIKs
+	dBPti7tpXZLy9070h3KjYn/ytpcjwnko9P7vFS+TCUr0cKSxH/zFq3Fd1ZCIPU+LuH5TEIuehJk
+	I4TAZPIaoaw9UV/bBGDKRO6+W1hT8+hvAfNAvsZAqEO+RQ==
+X-Google-Smtp-Source: AGHT+IHu/zka1ZNTIDULuYu0Lh1rRpwgaoOIaY8sTkizKLpXGbJF9/FHIhltJWjgeRoIv/Od3HWxDQ==
+X-Received: by 2002:a05:600c:4e8f:b0:43c:fceb:91a with SMTP id 5b1f17b1804b1-441b1f35811mr16919135e9.11.1746000444147;
+        Wed, 30 Apr 2025 01:07:24 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2bbbedfsm15173965e9.26.2025.04.30.01.06.35
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2aecc20sm15588745e9.13.2025.04.30.01.07.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 01:06:37 -0700 (PDT)
-Date: Wed, 30 Apr 2025 11:06:32 +0300
+        Wed, 30 Apr 2025 01:07:23 -0700 (PDT)
+Date: Wed, 30 Apr 2025 11:07:20 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/nouveau/fifo: small cleanup in nvkm_chan_cctx_get()
-Message-ID: <aBHaCM66pXaP84ei@stanley.mountain>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] OPP: core: Fix loop in dev_pm_opp_sync_regulators()
+Message-ID: <aBHaOOE8xHTsMap2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,28 +73,39 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-"&chan->cgrp->mutex" and "&cgrp->mutex" are the same thing.  Use
-"&cgrp->mutex" consistently.  It looks nicer and it silences a
-Smatch static checker warning.
+We accidentally deleted the if statement in this loop during a cleanup.
+Add it back.
 
+Fixes: 5330d0dab736 ("OPP: Define and use scope-based cleanup helpers")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/opp/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
-index 7d4716dcd512..f5cd7f7c48b4 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/fifo/chan.c
-@@ -104,7 +104,7 @@ nvkm_chan_cctx_get(struct nvkm_chan *chan, struct nvkm_engn *engn, struct nvkm_c
- 	if (cctx) {
- 		refcount_inc(&cctx->refs);
- 		*pcctx = cctx;
--		mutex_unlock(&chan->cgrp->mutex);
-+		mutex_unlock(&cgrp->mutex);
- 		return 0;
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index fc9874946453..f56ddae35ef2 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -2889,7 +2889,7 @@ int dev_pm_opp_sync_regulators(struct device *dev)
+ {
+ 	struct opp_table *opp_table __free(put_opp_table);
+ 	struct regulator *reg;
+-	int i;
++	int i, ret;
+ 
+ 	/* Device may not have OPP table */
+ 	opp_table = _find_opp_table(dev);
+@@ -2906,7 +2906,9 @@ int dev_pm_opp_sync_regulators(struct device *dev)
+ 
+ 	for (i = 0; i < opp_table->regulator_count; i++) {
+ 		reg = opp_table->regulators[i];
+-		return regulator_sync_voltage(reg);
++		ret = regulator_sync_voltage(reg);
++		if (ret)
++			return ret;
  	}
  
+ 	return 0;
 -- 
 2.47.2
 
