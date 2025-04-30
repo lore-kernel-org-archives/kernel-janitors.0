@@ -1,109 +1,89 @@
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FF917E0;
-	Wed, 30 Apr 2025 06:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE441E9B3D;
+	Wed, 30 Apr 2025 07:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745996316; cv=none; b=Htb5y6H5OKa8IFOCLmMNadbYSgz+frkJ4GOMxgPEZSKRbEJkzpFSZH6TTu9iqvWOaeFD/X2awpRayUs6RdZcqEDASIoVMk7AkTiWmHusvz4cJd7QpwM4xW6jdNKr/cB3bg1l0NPIQ9Zy/PkDMXCvDTtnoqTHKAqhA5DEwB0eXPk=
+	t=1745996703; cv=none; b=m9sWXfxOOKABAQ6PNDRHlNuQ1RHXS+coCNwOU9Uc7+j8q4wrrMNlKu9sg3kMfBJq6BiXt4vb0qSS8QpnjmPvRFOQr2h9ayarqr4Ue99UhovwEcwNcLa4A7WR2cd43GvtdTcOdICQF9A2GLKrK8ax8dOnWq96WYc7B8AeA3OZaQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745996316; c=relaxed/simple;
-	bh=7CUhpQ9+zIhyv0GvZjAoVHD9ajVOAIWKqnDgeOZSAdA=;
+	s=arc-20240116; t=1745996703; c=relaxed/simple;
+	bh=0jJcPCJLt1KylRRbiG+MEfiP1omyEpl/8MqQSoM3n98=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=N77b7B/MEHkXupArjD94LmRy3q0IxvMZOMg8cCRT3L5kCodwseV9/pDwiruWqzxSjRdUoXvFpBPTjgmWAc3pz4GVWUl9yeK+OSSUCocmK0vWo/0+KmE8XwGBqI259c2vFiqEbOVOCVEDdI+5KYcDVM+y+snssd6tqz0zaLpnCbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WQPZ9YhE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xh7ZqCgV; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=QpNJJcrwhphn24iJcdSvqOz6fRtmyMGOXT+RnVQhkHy3wZ1ZcqkVo3294jgm3cmVoQlVPZ2uPR3hRc4imhWbm2EEW6XOsprhDYHyliBLHSX7+ylV0QtJ2OJx9+Y06eLk2TqA/5nFWJdr6tQ5ct3iqPUSEPjksmu2bgP1wwgoLCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3iADWnQ2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6bmFkrE2; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WQPZ9YhE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xh7ZqCgV"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3iADWnQ2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6bmFkrE2"
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1745996313;
+	s=2020; t=1745996700;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UBgDD27NsLa3RNSfaO8xNkStzEbW1eu3yXOUdjUkJfA=;
-	b=WQPZ9YhEzgOWDJ04IOSVvahwwt2m/mtd68TP/cYb8lUMTtj1sbLgxpdrhcnuRjHlCxlajZ
-	RQPpyaMjbNzZExn/43jyVw0MAV60M5VCE+4Wla824MHBvGRA026q/DqGtVI6aguWauKgU6
-	Jb9CjTM3USxThLTeIGWmw8Ti+15vSum/QX5iGVHQ59R0y8AcF98uiae783qs37yUXMsm8v
-	h4ze8g5PfcEVaBW2LGi1d3e+z5xHowbj8Fu8Dj4PJX+EQJYphGea/2bYykvksBDjpc80sE
-	b5IPR9TLPaxz8OGCfzNsVbnU21G2R2tG8uexUhKwTF/O6gcDj6MteWd/X3mJaQ==
+	bh=tCsrSDsvTkK6SkgYIF70bN0EWs2t+iSvSFadkoJDcpg=;
+	b=3iADWnQ2nOBGlvCt8hTukwWjnOAGXqhyOUiwAHQrdkoUtoQQ0JSiBIe9QdbtvgmJyLfzJR
+	jazIuyC0zcHe5j6DM59FfZt4agY+CKhGDckHIkFFeXB9X6ruya7y7L+DM2ZQOfia3Zkosx
+	K8DY8dKJqIRzvjKOcsEDrylo1ZDfjMXdVTkSYnHDJuAGBr9fEWHhIbudHG737P9s9phn6d
+	t4Ar4QtVmLkuJ1uwLgefBMooIk94PNUDOGEDggf/mMieLPS9PUI1otcdg2BcCUpUeXylzY
+	95UD42MOKlN8tXlxs1Xr23VCE8rpoAT5N0B14u9+T7C+0u45DpXmNODaSYwcCA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1745996313;
+	s=2020e; t=1745996700;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UBgDD27NsLa3RNSfaO8xNkStzEbW1eu3yXOUdjUkJfA=;
-	b=xh7ZqCgVTbQ7h+QZGKcm2N9MxrIQp+fmQ2rvlcWtJlgeoQD09XcMYs1UPk7bBOsKVRtB/O
-	ucKcWBDz5gBIW+Bw==
-To: John Stultz <jstultz@google.com>, Su Hui <suhui@nfschina.com>
-Cc: sboyd@kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 3/3] alarmtimer: switch spin_{lock,unlock}_irqsave() to
- guard()
-In-Reply-To: <CANDhNCq0yOXRF+6_JaMYo98o5uKP_af+UXJcJmzuFvX63RdTaA@mail.gmail.com>
-References: <20250424144819.24884-1-suhui@nfschina.com>
- <20250424144819.24884-4-suhui@nfschina.com>
- <CANDhNCq0yOXRF+6_JaMYo98o5uKP_af+UXJcJmzuFvX63RdTaA@mail.gmail.com>
-Date: Wed, 30 Apr 2025 08:58:27 +0200
-Message-ID: <87y0vip23w.ffs@tglx>
+	bh=tCsrSDsvTkK6SkgYIF70bN0EWs2t+iSvSFadkoJDcpg=;
+	b=6bmFkrE2r1IbzapO/qhl/dL3kdb9A+nB4Sj6qSMouFf109CjNTFhAOBVWWRjt4jALQm8Ju
+	bduDF6/x6CBO6IAw==
+To: Su Hui <suhui@nfschina.com>, jstultz@google.com, sboyd@kernel.org
+Cc: Su Hui <suhui@nfschina.com>, dan.carpenter@linaro.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] alarmtimer: switch some
+ spin_{lock,unlock}_irqsave() to guard()
+In-Reply-To: <20250430032734.2079290-4-suhui@nfschina.com>
+References: <20250430032734.2079290-4-suhui@nfschina.com>
+Date: Wed, 30 Apr 2025 09:04:58 +0200
+Message-ID: <87v7qmp1t1.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, Apr 24 2025 at 16:59, John Stultz wrote:
-> On Thu, Apr 24, 2025 at 7:48=E2=80=AFAM Su Hui <suhui@nfschina.com> wrote:
->> -       spin_unlock_irqrestore(&freezer_delta_lock, flags);
->> +       scoped_guard(spinlock_irqsave, &freezer_delta_lock) {
->> +               min =3D freezer_delta;
->> +               expires =3D freezer_expires;
->> +               type =3D freezer_alarmtype;
->> +               freezer_delta =3D 0;
->> +       }
->
-> I'm not necessarily opposed, but I'm not sure we're gaining much here.
+On Wed, Apr 30 2025 at 11:27, Su Hui wrote:
+> -	spin_lock_irqsave(&rtcdev_lock, flags);
+> -	if (!IS_ERR(pdev) && !rtcdev) {
+> -		if (!try_module_get(rtc->owner)) {
+> +	scoped_guard(spinlock_irqsave, &rtcdev_lock) {
+> +		if (!IS_ERR(pdev) && !rtcdev) {
+> +			if (!try_module_get(rtc->owner)) {
+> +				ret = -1;
+> +				break;
 
->> @@ -352,13 +347,13 @@ EXPORT_SYMBOL_GPL(alarm_init);
->>  void alarm_start(struct alarm *alarm, ktime_t start)
->>  {
->>         struct alarm_base *base =3D &alarm_bases[alarm->type];
->> -       unsigned long flags;
->>
->> -       spin_lock_irqsave(&base->lock, flags);
->> -       alarm->node.expires =3D start;
->> -       alarmtimer_enqueue(base, alarm);
->> -       hrtimer_start(&alarm->timer, alarm->node.expires, HRTIMER_MODE_A=
-BS);
->> -       spin_unlock_irqrestore(&base->lock, flags);
->> +       scoped_guard(spinlock_irqsave, &base->lock) {
->> +               alarm->node.expires =3D start;
->> +               alarmtimer_enqueue(base, alarm);
->> +               hrtimer_start(&alarm->timer, alarm->node.expires,
->> +                             HRTIMER_MODE_ABS);
->> +       }
->
-> Similarly, this just seems more like churn, than making the code
-> particularly more clear.
+This really reads odd and relies on the internals of scoped_guard(). I
+actually had to look at the scoped_guard() implementation to validate
+it.
 
-I disagree. scoped_guard() is actually superior as it makes it
-visually entirely clear what the actual scope of the spin lock protected
-code is. That's the whole point.
+The whole thing can be simplified to:
 
-Especially in alarm_suspend() this would end up with a mix of scoped
-guards and open coded spinlock regions. That's obstructing the reading
-flow.
+ 	scoped_guard(spinlock_irqsave, &rtcdev_lock) {
+		if (!IS_ERR(pdev) && !rtcdev && try_module_get(rtc->owner)) {
+ 			rtcdev = rtc;
+ 			/* hold a reference so it doesn't go away */
+ 			get_device(dev);
+                        pdev = NULL;
+		} else {
+ 			ret = -1;
+		}
 
-I'll bring them back for consistency when applying the series.
+No?
+
+No need to resend. I fixed it up already.
 
 Thanks,
 
         tglx
-
