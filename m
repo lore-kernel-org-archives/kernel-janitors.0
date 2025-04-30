@@ -1,40 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019531EB5B;
-	Wed, 30 Apr 2025 15:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB73264F80;
+	Wed, 30 Apr 2025 16:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746026693; cv=none; b=SwIoWoP7jJtPk8M6Cg/Qhw3h5D5I7Co9+pM2SnE9uLieWMQp8tIG+aEaJFRUJ3yScQ0GpHFV5KPH6PKdmqJBPDco2ONgPXnBnQCH3vYCYZt2sMq75E+AjfAyMyAs87qHewDA92oTSeHwBZ/cg4O+utnKWEE/7mGAENKG7Ipmtsk=
+	t=1746031839; cv=none; b=AdZYQ6sDtTNCfIlmTu5Tnr9S4ew3u3sqAtQrteeMz15ad7YXdg7ZxrUZZLUuaW1BzvlyEvC6hou7isTfH3kpph8TtRy3+6qYPSTqgmoi/1B6MOPswUeQRyp0vCZGqPdHben8g5aW74k8tsr8QZcAUgDY3ZUP/mYNmg6kzyoTXHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746026693; c=relaxed/simple;
-	bh=SnEoU/saBPoKvnEQ7FuO0rhZTMGCnIWkqfHAccy41Cw=;
+	s=arc-20240116; t=1746031839; c=relaxed/simple;
+	bh=7FLyNQqLAXLRXt+26yk0XhCNT6yZ4k2r44O6UnXDvrY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M2aggUx75Ft02G5UlDiGlj/cPq+6Pqfl6Inaic4ksyX2BBXvnHs8YGGEzGJIG3KIZLS1cL61d1miXwYPwCSZ9u3cCe9m0oTVenigmpZOO3A2aLY2RIoy4WXJHsR/A4/3hzc2sNm5TPmwVKe9hCEd438XKr/dKH1ftAGHdsvqI1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxd8CmGo; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=T6vAH/7a4GCsDcK7gVpuXcXr3Qk/d7b6cNtOkEMVSM3HVNpn9yrKuTjKA7AYTyjotd4GISpf/w0h8BhDBBqZyvimYEYDoItiLwN3rNuKHWb51n5pCorWzVIBvjn0h4iCwFzlv1EhHvR71WC+qwdvnAdd/acIaM+BNHZjKEdqr48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJ4EWD9b; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxd8CmGo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC883C4CEE7;
-	Wed, 30 Apr 2025 15:24:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJ4EWD9b"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F7CAC4CEE7;
+	Wed, 30 Apr 2025 16:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746026692;
-	bh=SnEoU/saBPoKvnEQ7FuO0rhZTMGCnIWkqfHAccy41Cw=;
+	s=k20201202; t=1746031839;
+	bh=7FLyNQqLAXLRXt+26yk0XhCNT6yZ4k2r44O6UnXDvrY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lxd8CmGofxwCWfvmQjXSUv/XjcNvEV8Y5t3G2RAMjDPqKDqlCCeXQ4e6ox9W81UvW
-	 Dn7RVdXSlQE57DavBXnVyvTrQh6Je1GKU43U7VarIy2YLMEVE6hbgSlxl8ABwjLWxJ
-	 KdbjTWmLpBanWAn2VdfEtUnqMaVq4xQ1lhaLO3/XKjqzu5zspooA0EBdQqgFr54igx
-	 mQGj8BJ2Z593+D7tsHEPjlkJTcdIRiiAUiQDUADaGaxU5gOXkRSgRdzv3ncLTGi1kP
-	 M71lcjj2yNHCZI6SPHcPC+s6PjSZm9jHpmqL+UpDTXwS42iSJ7oHAh4Ew2Q/BWbtav
-	 LSutI56ixyCmQ==
-Date: Wed, 30 Apr 2025 18:24:48 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next][V4] tpm: remove kmalloc failure error message
-Message-ID: <aBJAwAg_92fZ-how@kernel.org>
-References: <20250430083435.860146-1-colin.i.king@gmail.com>
+	b=OJ4EWD9bGkACtycMYEy7H4W8INkGUBV1aN4iL6c3IZ0Qrl11jhh65CIau8EoPUBx1
+	 79KkOd8bIfhnNEJZsyqDBEtsU7n4QFUd7vEgSvmiN9ebp/ptwk/1dp9/QOwZMugdHV
+	 GmQEmfc/BfSZyDb79vGi1/zMRCaZdQaz/0MGKHYk4twpjsrB9SrmkogR31MmRGlhaI
+	 W/qbCpXoNVdI1vdAReStSJ6ISkif3fsveqeAbnvqZI9J989O80ghwVxMEHpOZ1wgMk
+	 +cKVoxU1krTDnJ9rucm4rI0hhsZPNDrSbqSuyCIZmpR7OWULr2ARmo/Hxos+IV5xtk
+	 Y6ylLSAo9YwJw==
+Date: Wed, 30 Apr 2025 09:50:37 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Satya Tangirala <satyat@google.com>, Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] dm: add missing unlock on in dm_keyslot_evict()
+Message-ID: <20250430165037.GA1958@sol.localdomain>
+References: <aBHZ4puON8GNK0vw@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,48 +44,23 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430083435.860146-1-colin.i.king@gmail.com>
+In-Reply-To: <aBHZ4puON8GNK0vw@stanley.mountain>
 
-On Wed, Apr 30, 2025 at 09:34:35AM +0100, Colin Ian King wrote:
-> The kmalloc failure message is just noise. Remove it and
-> replace -EFAULT with -ENOMEM as standard for out of memory
-> allocation error returns.
+On Wed, Apr 30, 2025 at 11:05:54AM +0300, Dan Carpenter wrote:
+> We need to call dm_put_live_table() even if dm_get_live_table() returns
+> NULL.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fixes: 9355a9eb21a5 ("dm: support key eviction from keyslot managers of underlying devices")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> V1: remove trailing space after \n
-> V2: remove entire message, originally just removed a trailing space
-> V3: replace -EFAULT with -ENOMEM
-> V4: send correct fix for V3, actually return -ENOMEM
-> ---
-> 
->  drivers/char/tpm/eventlog/tpm1.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
-> index 12ee42a31c71..e7913b2853d5 100644
-> --- a/drivers/char/tpm/eventlog/tpm1.c
-> +++ b/drivers/char/tpm/eventlog/tpm1.c
-> @@ -257,11 +257,8 @@ static int tpm1_ascii_bios_measurements_show(struct seq_file *m, void *v)
->  	    (unsigned char *)(v + sizeof(struct tcpa_event));
->  
->  	eventname = kmalloc(MAX_TEXT_EVENT, GFP_KERNEL);
-> -	if (!eventname) {
-> -		printk(KERN_ERR "%s: ERROR - No Memory for event name\n ",
-> -		       __func__);
-> -		return -EFAULT;
-> -	}
-> +	if (!eventname)
-> +		return -ENOMEM;
->  
->  	/* 1st: PCR */
->  	seq_printf(m, "%2d ", do_endian_conversion(event->pcr_index));
-> -- 
-> 2.49.0
+>  drivers/md/dm-table.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
 
-Ya, I think this make sense.
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+But that's an awfully error-prone API.
 
-BR, Jarkko
+dm_blk_report_zones() gets this wrong too.
+
+- Eric
