@@ -1,110 +1,113 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6F07DA93;
-	Wed, 30 Apr 2025 14:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE241DE3BE;
+	Wed, 30 Apr 2025 14:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746022633; cv=none; b=URSA7ND2forC6fK7V4Xmvo7q0/5f/6QV+O2nZE99e81fgV+rCDR62QTM2XsxbsisvcJ+7WqsYRM90dPsxEPI5gR7WXpVtQ1k1zDggNc0PNk7R3pA6a3LSvEUBU0rwmFkEk7vrl5jYQvTs2Qu7PAWMfnlaVDSdxL7eHSr8wXqV6w=
+	t=1746022863; cv=none; b=WVeq/506iO1B5ct2cU+lae7WvT+g8K1jd3iqVec3OKEeo8eRIeDNFRle6EytMICfmn2BgpwfYQaiPkcM5oxiWY94uer+urc0JbZqoMuqR168anD2eksa2atcKz7YnclvJD30jjcXPlxhW3MfP4SkX4eHrcAQ1HbRdugMQ03sXMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746022633; c=relaxed/simple;
-	bh=eIw6SH0Y7++EZ68fl2aw6J3KtI5DkruKCG9Ypkwvl2U=;
+	s=arc-20240116; t=1746022863; c=relaxed/simple;
+	bh=UXWimaLZ5rlbWA3qCs+ThqOdPLSxTpPVlEAtkEpyYYo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RdTx35Cc5shVBsousaNfI3AiviA5dkkwTfqUWj5tZNP33UWS9CUAG7WKgJqBERdN7Qv8ym8N4FLs5k/bPvj14T7RIXmkKNI3NmLM4w0Pdf61e/f1BnFjYUmrIkxb1Y2NeqnR6AuMP5htTjj+w5Sk5JhIBhgxcG7dveM+JDQHNqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9dgfoHn; arc=none smtp.client-ip=209.85.216.45
+	 To:Cc:Content-Type; b=Vo5dIdKQFCYHU3ZBCSvM2Hm8qFnrLgyPfCRCRg03a1/9OPBgdvdW+J6XPSFdJ9pHXeuQf7+VrGzaYwjeEBM4xDPU8hiNZcvNRRrWOptzYNKoppj9kHxYnAivnyPbyewPpUxuVAbZLfs66igadDnBLFFuIN7LOQV6iPpmEwmZs8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jvUccf+L; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9dgfoHn"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-308218fed40so677300a91.0;
-        Wed, 30 Apr 2025 07:17:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jvUccf+L"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-301a6347494so835611a91.3;
+        Wed, 30 Apr 2025 07:21:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746022631; x=1746627431; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746022861; x=1746627661; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WSlVXVVMvz31qCvWMPBMvG74WqaN+y9IYmd4m+IHQyY=;
-        b=T9dgfoHn/sOL5kTGbvSj2YUc8NWomDD+fqWWHqx7zQbKadXHnEPRQXCDtb+OwqjpET
-         3BP2mOgpxRkYtAckgYAjT1jiUr5ENOQRKXGZgTomB3SPttOp2ZQoEVoRnPxpCO9M1gYG
-         f+NcS2ilT7mEQgNibwljVg/9SF8eJ+O25upuuG46LB3FrPNsAJCX7vvypEBXxiYMLuW3
-         17i7MjTxbwvLqQyTQsmS4aJN2vQpYnlPImo6qUYcMaKJ0TpJPY3V8F0qkTvpiDjf4oRs
-         S1qZTBvxdkxpjmtYOeJ/uW7NS2vJSGz5d8VlkEHvD/ZmCYtFLmjz7wNOimm10+ejgvyq
-         TUyw==
+        bh=sZmQwZmxB+/0iwMhAswU29lyI7OcK6uMy67401DmTrQ=;
+        b=jvUccf+LE946I63TYEsW5uoSBp3K3/M0GMYI/d13sh2N9sFrDQAyFMdxQlaPqfoM18
+         nF+9fjbidVY1Mjsp0sP+48vGkTeIa7MepMJM/N5erFMeaf0FRG+cPqvwZAY9LDK1L5T8
+         3JjPZYZrrBU/R/Wzs0jpYZEMsSlwHLH0p5Y2kkTZf2tJQiUMULvu6+AvFtmAjjVyfkpO
+         2pvbMSNIGfrfaR7EqS/DTLRYuRSn5AwjEXhJRMnAhmRi3RWy0sLiyR5+PqHpyz/HfrSe
+         Psl56ULyYqyAz2mVe30s32oDhwJgha8gfnYIjMqBfy1eATxW49Jzko/hqX4unvvIUlBe
+         c1xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746022631; x=1746627431;
+        d=1e100.net; s=20230601; t=1746022861; x=1746627661;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WSlVXVVMvz31qCvWMPBMvG74WqaN+y9IYmd4m+IHQyY=;
-        b=RUiDOfFFokf1eFmW14zuRQxfbF5dZln62+NF3vbj/mAz/pvuBtoB++VxA0z0xDBqP+
-         nVgpH60A5W9CDjCb0o/qCxT7xKQDwa/0WvXwVQeL9EqBADS7/o9jfqABn/s47AmoGFSx
-         0udaiomn5WO03qu7H89+dMC14ebSXcEcjPu+zbOcw7zW65tNSHum//LKl7TaMPuh+s4M
-         blaS9+w4lvNoYkHZ1qvBPoLv6j9WHpTcdmePYTMFuOVFSh10qBqXyourRrbSoWrmiZVx
-         BTV6+sA408PCYZ35w46+3dXNB0x/eUSaZgqop+6RbWSnjXeZ488+euS4vk78HaI9ojaQ
-         QycQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiBlHewxXDj7TpYQMhBlwac8FZVd9LZvlxyGqL5vdkljYeXG2GeKfOV7k1VHz3dtFCg7aURMh9iZp3nZeGcYI=@vger.kernel.org, AJvYcCXzjD5rmO7BZA6pJCbfireYyq57YRpX57BskbCCPbD7W/DPJOMYOlhyyvFXWM5qKCeb9BoMWZtqRoM6qelK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeMDHBqfsmSDbVubKhulzdY14AAqA6FNm9G8hjF/2RHpQE2o04
-	snjg3oPRAvfNw8EFw6JdNVGtTv8RVmAetptrKjPSFweRrg5q0wAQbAKPd6DM+UEXS2YdxBi1Stj
-	Bh5sR7BQFB4p7dxALKbcTgm4fN7s=
-X-Gm-Gg: ASbGncvPqd4r9yYeK/CVV21tmr2O8LeH50reE+0yq7OqBzZSgFAcwChwFzGIeBrq80q
-	v+lDruGDod4VZ6sZSDwURt84UX6u9NXtMpZhbjai9GxoLTJfo55P8y4w+AWk6QVpS8TDxco6c59
-	TyY7neZYXuGkjDRx4xknqqcWVJK0+CvoMt
-X-Google-Smtp-Source: AGHT+IEsfJs4pvbYzJLHEbrtPsBpdHlb9L4LbI8uQIA2ApHhlUqkt00XJv91Tvsb80npmYzja/ty8yI1I+/ccdOAIK0=
-X-Received: by 2002:a17:90b:4b8c:b0:2fe:a747:935a with SMTP id
- 98e67ed59e1d1-30a34a77995mr1572249a91.4.1746022630946; Wed, 30 Apr 2025
- 07:17:10 -0700 (PDT)
+        bh=sZmQwZmxB+/0iwMhAswU29lyI7OcK6uMy67401DmTrQ=;
+        b=V9qTS6Rl8RCFmwCRZZbX0P1hoelTsSW5hhMBmM62psfU/NvDLZgB7tcoL7xquhV+ea
+         a7JK8seC7U9rW0t4HyhrkVX/dMFTgV90PAnCYAuZphVGWkXEhTierbFPxosVDTVirRRJ
+         zr9PjRxDyrE4u6XshfTcGdVnO7s3EL/WZJyYlHrCNiKHrpk/4vstj1gBSNaJtXyq0Rkv
+         GgOJ3xbY/xq57qq2yhKMBErocCsQBJmXue6Qieis1UMy8lJCG2Q46uWeULmhjJZI1C07
+         HRy6uYWixDRpxy5A8HckucuuOAzUIdwC/QqFT6hyVfBnzdHQ7FQ9BvhpmLn3f25NIYbz
+         psGw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9jnoR01WVhTp5GL8VKfD1UWqMZO/XJqVVl5PcrruEry7pY7c/ZxZxXHeqj1s2PfcJRZjI8uS+6hv/JvkbWD4=@vger.kernel.org, AJvYcCViGy0XYH7POkSD3Gn+qYncqE3m598VnbzKQ53G9DN0d+JDuK30G+20eDGDF1enfVUeNQKDkT7CDL0Eusiy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuHi5j5j5Z9UjsgqA00dd7KSXC5vuNE5MYgx60cVHfSo+rqLoO
+	3YTlZtoB1R7yB499Ynv2C0EnTWu2OtbS9nxK2TLlLHCWu+NgZLpbermgPszBULezPfIqbDdRCdi
+	BBhUDGhGOFobHh7JC+1buSpT18mg=
+X-Gm-Gg: ASbGncsmHHTFQR5O6gj0CcJ4Ji64U6d+hPdljskb8eb4M51pCe72ytnED6js36JBJNA
+	yzKUdR8WCtKNz2Nt9WcN+fThDUesdHU3aVK0KVyZ2CVmpp3110VQmuiPHiv9Z2y2nWDfPwKeoJr
+	WNjR0CJTY4EosttIfblen4DOKw3GxZ13lh
+X-Google-Smtp-Source: AGHT+IHrRGSCtx7yYWpJEIC2bzjI16vhGr+WvXakgytHAWV7umJvxRTzyd+RXip4iCHcc3z9o9KqkLvAU+fqkw7MRxw=
+X-Received: by 2002:a17:90b:1b52:b0:2ee:acea:9ec4 with SMTP id
+ 98e67ed59e1d1-30a34a7903fmr1258142a91.3.1746022860936; Wed, 30 Apr 2025
+ 07:21:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aBHY1IPONYHyybrf@stanley.mountain>
-In-Reply-To: <aBHY1IPONYHyybrf@stanley.mountain>
+References: <aBHZuejTTKkdnGaZ@stanley.mountain>
+In-Reply-To: <aBHZuejTTKkdnGaZ@stanley.mountain>
 From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 30 Apr 2025 10:16:59 -0400
-X-Gm-Features: ATxdqUFaSbipfJtE5jKOtwie3btM5g0OcKmN5NYnJ-guEp-HRyAs3L7vBIggiks
-Message-ID: <CADnq5_OTeCQ3v5xQP1KOT=Oa7vRxDpjiNLn69Gg8TZaikNLpaQ@mail.gmail.com>
-Subject: Re: [PATCH next] drm/amdgpu/userq: Call unreserve on error in amdgpu_userq_fence_read_wptr()
+Date: Wed, 30 Apr 2025 10:20:49 -0400
+X-Gm-Features: ATxdqUEB0H-Jbi4I5kCfhljTEmMnfaxoRCMWULH3c0gZNlkLYq2fJo8Njqfwsus
+Message-ID: <CADnq5_O0CmTSScncQ5kV=BciZdEZ+D_THNEis+Lfy1ENPJ-+pQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/userq: remove unnecessary NULL check
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Arvind Yadav <Arvind.Yadav@amd.com>, 
-	Shashank Sharma <shashank.sharma@amd.com>, amd-gfx@lists.freedesktop.org, 
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Shashank Sharma <shashank.sharma@amd.com>, Sunil Khatri <sunil.khatri@amd.com>, 
+	Arvind Yadav <Arvind.Yadav@amd.com>, 
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, amd-gfx@lists.freedesktop.org, 
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
 	kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Applied.  Thanks!
-
-On Wed, Apr 30, 2025 at 4:08=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+On Wed, Apr 30, 2025 at 4:13=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
 .org> wrote:
 >
-> This error path should call amdgpu_bo_unreserve() before returning.
+> The "ticket" pointer points to in the middle of the &exec struct so it
+> can't be NULL.  Remove the check.
 >
-> Fixes: d8675102ba32 ("drm/amdgpu: add vm root BO lock before accessing th=
-e vm")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Applied.  Thanks!
+
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c b/drivers/gp=
-u/drm/amd/amdgpu/amdgpu_userq_fence.c
-> index be068e8e37d1..57169a8224be 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
-> @@ -373,6 +373,7 @@ static int amdgpu_userq_fence_read_wptr(struct amdgpu=
-_usermode_queue *queue,
->
->         mapping =3D amdgpu_vm_bo_lookup_mapping(queue->vm, addr >> PAGE_S=
-HIFT);
->         if (!mapping) {
-> +               amdgpu_bo_unreserve(queue->vm->root.bo);
->                 DRM_ERROR("Failed to lookup amdgpu_bo_va_mapping\n");
->                 return -EINVAL;
->         }
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/=
+amd/amdgpu/amdgpu_userq.c
+> index b0e8098a3988..7505d920fb3d 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
+> @@ -631,7 +631,7 @@ amdgpu_userq_validate_bos(struct amdgpu_userq_mgr *uq=
+_mgr)
+>                         clear =3D false;
+>                         unlock =3D true;
+>                 /* The caller is already holding the reservation lock */
+> -               } else if (ticket && dma_resv_locking_ctx(resv) =3D=3D ti=
+cket) {
+> +               } else if (dma_resv_locking_ctx(resv) =3D=3D ticket) {
+>                         clear =3D false;
+>                         unlock =3D false;
+>                 /* Somebody else is using the BO right now */
 > --
 > 2.47.2
 >
