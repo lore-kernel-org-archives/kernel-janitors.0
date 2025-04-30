@@ -1,107 +1,104 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7651DE2B4
-	for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 17:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD812690CF
+	for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 19:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746034817; cv=none; b=HCL3kD3G6CN7JSc3GG1xsP2d9Dt3EIFK/NLHfwChYV3UhOiJ4yLRjsxL0IaHjy4E/ENPq1kzcPKojPn3HfFWJ5Y6/HFqqK0zQNoLOwxBPACzR/Bn0qpM4hEtrnC7DuxXw2wT2bDgrlLZXyD69CRlCIviX55E1UU4Fv8pQV0hvFI=
+	t=1746040638; cv=none; b=WZTvDtdRjEQfeXocDJQJS1upQF1ARnRZcVMMsSf89/51PNwiss8YBvGyAZK8PsWT8t3OlkLl1z4y7DrCzjdjYvOA/iTs2EP0+bSXmQFbgxQl3cDu2AvvXDFZesSHK+Q1yYQQioW30TygqHcfGVE9WTfDbijoDpC5JeShFUyDN/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746034817; c=relaxed/simple;
-	bh=NDzeKYPe2I8Yfoh+f4eSw99RP2htupFat6fSOf0y+Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S9E4v+niNZALfuxka5r30mukhsCwGCgOUJHX1bdRg2C/2aPy7/2v2DkEq+pwPrvBCODmAy3j5Q4Le/KQXRPt1ngsEAoZdC/WdIqLBTMRNog23Wq6hx4G2K2+8PomeBE1FK5naRMBGlkFwspcVc4M1t4cvwvTkzQAqbIIdCORpqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gP87IG3t; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746040638; c=relaxed/simple;
+	bh=WE3U9M6bFtNqTnlRCzpMfoMFofIWbXyu0m0xU2AgNKI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=MRAVImHjA9QqKgmq4INUF34pdZfKJ3MxrL8wpS+oLTNwXcYxHMxU0hAGQRvIM9ox83xGdc4h4w34Kcu9427ciE7QZ8WUbz5LKp04WPiUN04B+hUdlrjpsIzsdcI2XHLLHHvTflSxIVBsfmIJ/Zx+g130hZIthlWH9VehRywVDYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eHmopTOC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gP87IG3t"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso99475f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 30 Apr 2025 10:40:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746034813; x=1746639613; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTI+NTQY1S5fmWs9NCsPjnEhqIDgFiuLJ0sQ9mVO6og=;
-        b=gP87IG3tzLQfE/9/oZlAJ2LJ+9D2gddvbiu323SYtZkJ2xTboQwRMxJx69Hf6r32nf
-         CN9dvCM/fdtkQxNEhsdjT0A1kZzqE5voHnThBobnlkEmgS02cb8dqL7968BDoWdiqjOJ
-         WBygYEcslwcPT6UXaKLYezu2C4Pocv2/Fex1q/lMimExLagdypHe1dgFkTmiEC7gWWP7
-         wJOtF7dtoEvkUUsJhtr3mU8foK1zbp2TCzx8sTqaZ2kImpbjZzUdVNaF66sHOpL6dl7z
-         9LIi9EQHYJCL1bTDS8pO9gZgKivbzzAhNk5HbrP47+jz8peMEY/yDsjFFNXvPcppVjKO
-         HmRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746034813; x=1746639613;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fTI+NTQY1S5fmWs9NCsPjnEhqIDgFiuLJ0sQ9mVO6og=;
-        b=sheNEpX26pMwsb+Kb2YdfUGWG8yn4+vrKk8uBwjJdBpYTfESd0v2U4v5QfXmmYdUMA
-         nx+wgEM8QKQyI5gIycvevt2BtiqQfWSoQXanaf/ijpt8K4IwrGTToPinZOitGpHxtpAp
-         V5BTJJzibgEw6BsMQQA6KZIwIdfxfNN9Oi1feG7qBfULqSiH5JKnmQozOy316erudlL/
-         Gd2i8LCU7bjutxVP2lWhtwbkAUaU0vQf4aBMHOt8M6eYpjSDR5g68Ta1nMwB7v/X/RPx
-         D8hMuJvaDUaOfHRl6pRQL7Z3+O3itcjTpXcQf2FkwfirOeGgZ81rpDBgmrL7kgCItyke
-         wHuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmD+kZKErIEcSBgIzmgl1r1nbncp3b5BFj9zMu2XVApekRrb/IMAU3zqn3hhr+vWz7D2+2BEPDkB45666ghbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz3tKdzbLb+kNypJTgm1Q/pkLy5YR678xePdGCXRbXzMRkk5q+
-	ieUz63jBtVlZ3BIGXym4RdvO/LkqtSkOMqjEGnKFnfYQlyykfNAbCPA+CQBOwEA=
-X-Gm-Gg: ASbGnctZotyAQopQ28ued7Iojn+lyaDH5c35Z8mFsP7iS0sovt38yIttk8t4Ks/gNAR
-	fEFPN+eubjS7ES6vr2fomwp1A77DLJGeUDPMDWgudlWLj+HOpGwqKJmrTZmRyeRxhWb/+Mdwk96
-	Ebxa1NstM+5IVqnIdCqwgnyAtIRHaGiTPqZxjCmKIs4IFuluo44rxEfDOSypqhypatsXg0OeTSk
-	KV5VSj0dfWI8vaGcAPfxYJUcd3VSrUT/8DJPs7A/2zKyP10WcRgAb4BLWyC7nC2h4LkWDvLcazh
-	7YvyFr3bT49jMPhodxYzEzSFuN5pjwgc16WUIkmZ0y0wwA==
-X-Google-Smtp-Source: AGHT+IF1nO2qpvxe8YcGotQpsDAI9G2//rj00Y8Vv2gR//T8UoGu6ib91X10edaNaTJyuRE9TTivJg==
-X-Received: by 2002:adf:ee0a:0:b0:3a0:831a:8fef with SMTP id ffacd0b85a97d-3a092d00c42mr301702f8f.22.1746034812866;
-        Wed, 30 Apr 2025 10:40:12 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a073cbf04dsm17858905f8f.52.2025.04.30.10.40.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 10:40:12 -0700 (PDT)
-Date: Wed, 30 Apr 2025 20:40:09 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Satya Tangirala <satyat@google.com>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eHmopTOC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746040635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qcJbYty0ZuARoMmKQQUrWafrtx6uU8ln7Eiw3EBt3kw=;
+	b=eHmopTOCmYUOEjVWFk4ywDoN6f8FoDUFprTgDH8CRB1mrLsp8UC89fxjPhDHJs3NKWVjel
+	XY+Osj1gy0SWakdMZEZQ+GuSwYA+nR15+pEhqSzR0wfyxwqHwZRcr9rU0kMoqi1FQ7iqGZ
+	7R+hzQCi+2x4ADWutbgV9QIVQoFPm4I=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-664-sshOLpprMcSD7bfy4TRoSg-1; Wed,
+ 30 Apr 2025 15:17:10 -0400
+X-MC-Unique: sshOLpprMcSD7bfy4TRoSg-1
+X-Mimecast-MFC-AGG-ID: sshOLpprMcSD7bfy4TRoSg_1746040629
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1C6251800878;
+	Wed, 30 Apr 2025 19:17:09 +0000 (UTC)
+Received: from [10.22.80.45] (unknown [10.22.80.45])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 82504180087B;
+	Wed, 30 Apr 2025 19:17:06 +0000 (UTC)
+Date: Wed, 30 Apr 2025 21:17:01 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, 
+    Benjamin Marzinski <bmarzins@redhat.com>
+cc: Eric Biggers <ebiggers@kernel.org>, Satya Tangirala <satyat@google.com>, 
+    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] dm: add missing unlock on in dm_keyslot_evict()
-Message-ID: <aBJgeV7pZ7Q47OCb@stanley.mountain>
-References: <aBHZ4puON8GNK0vw@stanley.mountain>
- <20250430165037.GA1958@sol.localdomain>
+In-Reply-To: <aBJgeV7pZ7Q47OCb@stanley.mountain>
+Message-ID: <cad25513-31c4-5895-cfc0-b9c7dce4ce08@redhat.com>
+References: <aBHZ4puON8GNK0vw@stanley.mountain> <20250430165037.GA1958@sol.localdomain> <aBJgeV7pZ7Q47OCb@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430165037.GA1958@sol.localdomain>
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Apr 30, 2025 at 09:50:37AM -0700, Eric Biggers wrote:
-> On Wed, Apr 30, 2025 at 11:05:54AM +0300, Dan Carpenter wrote:
-> > We need to call dm_put_live_table() even if dm_get_live_table() returns
-> > NULL.
+
+
+On Wed, 30 Apr 2025, Dan Carpenter wrote:
+
+> On Wed, Apr 30, 2025 at 09:50:37AM -0700, Eric Biggers wrote:
+> > On Wed, Apr 30, 2025 at 11:05:54AM +0300, Dan Carpenter wrote:
+> > > We need to call dm_put_live_table() even if dm_get_live_table() returns
+> > > NULL.
+> > > 
+> > > Fixes: 9355a9eb21a5 ("dm: support key eviction from keyslot managers of underlying devices")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > ---
+> > >  drivers/md/dm-table.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
 > > 
-> > Fixes: 9355a9eb21a5 ("dm: support key eviction from keyslot managers of underlying devices")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/md/dm-table.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 > > 
+> > But that's an awfully error-prone API.
 > 
-> Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+> Yep.
 > 
-> But that's an awfully error-prone API.
-
-Yep.
-
+> > 
+> > dm_blk_report_zones() gets this wrong too.
 > 
-> dm_blk_report_zones() gets this wrong too.
+> Ugh...  dm_blk_report_zones() is too weird for my static checker tool.
+> The checker is looking very specifically for error paths with missing
+> unlocks.
 
-Ugh...  dm_blk_report_zones() is too weird for my static checker tool.
-The checker is looking very specifically for error paths with missing
-unlocks.
+Ben already tried to fix it in dm_blk_report_zones (see the linux-dm git, 
+for-next branch) - but his fix is incorrect because the "if" condition for 
+dm_get_live_table and dm_put_live_table differs. I'll update his patch to 
+fix this mismatch.
 
-regards,
-dan carpenter
+Mikulas
+
+> regards,
+> dan carpenter
+> 
 
