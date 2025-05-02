@@ -1,46 +1,51 @@
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B448C156C63;
-	Fri,  2 May 2025 14:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13D619004A;
+	Fri,  2 May 2025 15:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746197315; cv=none; b=VI3VD2BWZUkYPEePjk0qQ6aC6IrXyBcHIb/DJdyByxCDuEarxdelWN3dVVLjHMyCaoDkS+T7IQ/gm2TxcaW79wmnHhg3vhBgwcdPTow5tCR+j9jBov7WfSPxy8V2wI7nVyRlnCD+7cJZBuf5ybbfpefG6J6a2eH2qENZa1jkKDY=
+	t=1746198050; cv=none; b=eLU4udB7R0dfkf4GTXyuzdJJyfnkpylmWBeSM3RwVAlAce3eOfnzhCgk6hae9F05CO2yu8f6NEdgEpYILY9nBpPFQdCHXmBt8G+XhHbc6nFaGwXymViL1/7CbizlaUYc5nT5cge1Of+uCNbNGCQXRYq02+RzdyI9+HoA+Dib3iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746197315; c=relaxed/simple;
-	bh=aMDQ00u2wosG5a5L/sZxauH/kaOwW41FVU7iQGC3+zI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jqKLSutoJ3CD6eVDsTmpC2DptRXX0nyU9aMHaEBOGpXQcpGrWTFbxMdwye0ujDUDuWw8zv0j8/IJqHp/IEqnoXk2PvY/2uCR3hXe/KDS90jfGiUlDZNzn+di/kNrezCkSA8w4LoydUW5aCsihh1dLoXLifWh9PXp0ECN2BAyarc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JkeJGGuL; arc=none smtp.client-ip=80.12.242.27
+	s=arc-20240116; t=1746198050; c=relaxed/simple;
+	bh=dC2Y1O5qazKCP6X5USs05T/PU1V9Nks638uqbD9EaB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VfZaZ8r4vU8XDtUim3jtO+pB3jSSIzOYYyVRI8xLGU2AbA+/Vc6y3NRZ8YIKXL7KnLJhka25GeW5tD5BJ8i6SHBqTbKHgRsM0ido8LwE6Ak/qOvD0QH0TFsP7DofCXkabzQJqxtbGIAVqVpwf/FUfgMdTyGPd/cPKaSNR5gkpp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sjMryabD; arc=none smtp.client-ip=80.12.242.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JkeJGGuL"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sjMryabD"
 Received: from localhost.localdomain ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id Argfun5tGUaXGArgjuvzTQ; Fri, 02 May 2025 16:48:29 +0200
+	id ArjhuI7RsSMUrArjkuJEbc; Fri, 02 May 2025 16:51:38 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1746197309;
-	bh=z7PvPH21b7p3LF3KjHizHHBNzX3Lf8Zcuuw5tyiAQ20=;
+	s=t20230301; t=1746197498;
+	bh=WjZ/X+9NMMif7OyiK71JbAQs+u2dkiGWcjzAyUuvLBE=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=JkeJGGuL2VRUic3wRhPh5uUEyrYHXa/Jp5uzt28yvzkWr57tMrBLHBbn6E+vRQFOR
-	 W0RI0+cwQR4ux3soIwWrnfPidVj8bAysRfcChbt3rXIXT9Ug5RyryzpQN225BMP/uU
-	 CgbcSZZXvETgmRq5xjR2LgNnTbK/FMaMijBDncBlbr4KJL38jINVxVhhCs5GbhVWRA
-	 aFEatJnJ+kwS9iginwqRefNIknwAwpBm5FbnMH1t/HDCzBubv2Q1LNeP8f3IN0xVri
-	 cHphIVwdOxoxQSoV91t1kxc4c5laWUQ8BF4LQ44E67aAuj9OsZsPjX9ZP2OSM1P/Yd
-	 TOk3OK2626AFw==
+	b=sjMryabDPp3Mn5I/w6t+4ZGxjGnRvLA5GTEcOeCkqKLheOAxYapN5MAMkZERbzquh
+	 TkCOBHPRIJY0b0AdgrebihxkMK9OS5ca+C3UAruXgUiU8tyCtQIr5b/HqjiU5yOrvG
+	 096tcr91wUm/QjeEqQNG+V9DXmZiZX8DIaBeJkNYUg/PMGF6E1Nu5wT1tHKWfilj7B
+	 lX+LtLMti9wgy+KcXXg+PTOrfu/koKViCBjKbeeUzzAB9AEqIoEzqeQUvxifp6aXsf
+	 JixqSrCg5LUJA9LSqN4VgX3WQ78XEVSeRikJSXAOwLkzBgb7haJwUjNA5/WMDJYeNi
+	 snSrYBV9RGG9w==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 02 May 2025 16:48:29 +0200
+X-ME-Date: Fri, 02 May 2025 16:51:38 +0200
 X-ME-IP: 90.11.132.44
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sebastian Reichel <sre@kernel.org>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] power: supply: rt9471: Simplify definition of some struct linear_range
-Date: Fri,  2 May 2025 16:48:09 +0200
-Message-ID: <0da94193c5f8b35fa98f25a852d74b841670bd6e.1746197233.git.christophe.jaillet@wanadoo.fr>
+	linux-leds@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] leds: rgb: leds-mt6370-rgb: Improve definition of some struct linear_range
+Date: Fri,  2 May 2025 16:51:22 +0200
+Message-ID: <1ce4245107e0a51dce502a007a69899bda018d5f.1746197460.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,36 +55,44 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use LINEAR_RANGE() instead of hand-writing it. It is less verbose.
+Use LINEAR_RANGE() instead of hand-writing it. It is more robust, should
+the layout of the structure change one day.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- drivers/power/supply/rt9471.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/leds/rgb/leds-mt6370-rgb.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/power/supply/rt9471.c b/drivers/power/supply/rt9471.c
-index bd966abb4df5..e7f843f12c98 100644
---- a/drivers/power/supply/rt9471.c
-+++ b/drivers/power/supply/rt9471.c
-@@ -192,12 +192,12 @@ static const struct reg_field rt9471_reg_fields[F_MAX_FIELDS] = {
+diff --git a/drivers/leds/rgb/leds-mt6370-rgb.c b/drivers/leds/rgb/leds-mt6370-rgb.c
+index ebd3ba878dd5..c5927d0eb830 100644
+--- a/drivers/leds/rgb/leds-mt6370-rgb.c
++++ b/drivers/leds/rgb/leds-mt6370-rgb.c
+@@ -199,17 +199,17 @@ static const struct reg_field mt6372_reg_fields[F_MAX_FIELDS] = {
+ 
+ /* Current unit: microamp, time unit: millisecond */
+ static const struct linear_range common_led_ranges[R_MAX_RANGES] = {
+-	[R_LED123_CURR]	= { 4000, 1, 6, 4000 },
+-	[R_LED4_CURR]	= { 2000, 1, 3, 2000 },
+-	[R_LED_TRFON]	= { 125, 0, 15, 200 },
+-	[R_LED_TOFF]	= { 250, 0, 15, 400 },
++	[R_LED123_CURR]	= LINEAR_RANGE(4000, 1, 6, 4000),
++	[R_LED4_CURR]	= LINEAR_RANGE(2000, 1, 3, 2000),
++	[R_LED_TRFON]	= LINEAR_RANGE(125, 0, 15, 200),
++	[R_LED_TOFF]	= LINEAR_RANGE(250, 0, 15, 400),
  };
  
- static const struct linear_range rt9471_chg_ranges[RT9471_MAX_RANGES] = {
--	[RT9471_RANGE_AICR] = { .min = 50000,	.min_sel = 1, .max_sel = 63, .step = 50000 },
--	[RT9471_RANGE_MIVR] = { .min = 3900000,	.min_sel = 0, .max_sel = 15, .step = 100000 },
--	[RT9471_RANGE_IPRE] = { .min = 50000,	.min_sel = 0, .max_sel = 15, .step = 50000 },
--	[RT9471_RANGE_VCHG] = { .min = 3900000,	.min_sel = 0, .max_sel = 80, .step = 10000 },
--	[RT9471_RANGE_ICHG] = { .min = 0,	.min_sel = 0, .max_sel = 63, .step = 50000 },
--	[RT9471_RANGE_IEOC] = { .min = 50000,	.min_sel = 0, .max_sel = 15, .step = 50000 },
-+	[RT9471_RANGE_AICR] = LINEAR_RANGE(50000,	1, 63, 50000),
-+	[RT9471_RANGE_MIVR] = LINEAR_RANGE(3900000,	0, 15, 100000),
-+	[RT9471_RANGE_IPRE] = LINEAR_RANGE(50000,	0, 15, 50000),
-+	[RT9471_RANGE_VCHG] = LINEAR_RANGE(3900000,	0, 80, 10000),
-+	[RT9471_RANGE_ICHG] = LINEAR_RANGE(0,		0, 63, 50000),
-+	[RT9471_RANGE_IEOC] = LINEAR_RANGE(50000,	0, 15, 50000),
+ static const struct linear_range mt6372_led_ranges[R_MAX_RANGES] = {
+-	[R_LED123_CURR]	= { 2000, 1, 14, 2000 },
+-	[R_LED4_CURR]	= { 2000, 1, 14, 2000 },
+-	[R_LED_TRFON]	= { 125, 0, 15, 250 },
+-	[R_LED_TOFF]	= { 250, 0, 15, 500 },
++	[R_LED123_CURR]	= LINEAR_RANGE(2000, 1, 14, 2000),
++	[R_LED4_CURR]	= LINEAR_RANGE(2000, 1, 14, 2000),
++	[R_LED_TRFON]	= LINEAR_RANGE(125, 0, 15, 250),
++	[R_LED_TOFF]	= LINEAR_RANGE(250, 0, 15, 500),
  };
  
- static int rt9471_set_value_by_field_range(struct rt9471_chip *chip,
+ static const unsigned int common_tfreqs[] = {
 -- 
 2.49.0
 
