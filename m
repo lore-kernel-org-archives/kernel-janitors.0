@@ -1,138 +1,165 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A622045B5
-	for <kernel-janitors@vger.kernel.org>; Fri,  2 May 2025 07:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFE0253341;
+	Fri,  2 May 2025 07:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746169842; cv=none; b=lAugtTVpoxwWQSzfArmDJLk8jBH8Y78IdZGSAdSFDBuEbgExQnBdnUt9FBtyQSkuFugv66jCHa1MBrYQV1vnnMi6cJNq/Zjo5tYTuyikDkRKV5a67DRgyI2DIMqefNDrbdAn76shLZDMig1MiDSdKJxuLAse4gd9i9N47NZM4FY=
+	t=1746171620; cv=none; b=OaiZD7Qtt7BJTc/mK8ypUkCn2DwO/sDCSxg0z1VlWHi9QGUhIOftJWaDFXZmUJoEXDrMAZAXM5f4vHT+SDdKIeD5lImwEgE3hJitWwJ4f0SvGvbVEBs2bJDedyujSRHL/ftGfv1b22ZSxR6VsJj2zAFJRzzcEnHlPlxAodID48k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746169842; c=relaxed/simple;
-	bh=NOKG86xB+yiOqLT5qbBkeKjZjQudUxm/RQ7ECo4ZOts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G8pOlQTzi4ztWE97h81d0O5pXA1bf0bJOD5K6H5JhYLtNc0A7MdE21Gi611/Q1TzKuC/sco3uTySxuLUuKiCPvDnR4UOkc4rwgz1ShnRYRqEEtWgqPkI/yk7zoRjWOJR2Q9zIrndl8Qgsnv0PF39k76e7XZuOOVpAlvC7dTWJrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j1CPYNUe; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j1CPYNUe"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfe574976so9652685e9.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 02 May 2025 00:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746169837; x=1746774637; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U06ss2HdcwirNeiqMijvgDAm/dg/vsq1Q1L1rApoCb0=;
-        b=j1CPYNUeaFrevX+Y+5ItBuZOVeknLeLGq4+dJP5cqpfPTlY2Dn+FFqd/fqNhHdyJh3
-         nw+0qu4/P9Cp05SgjqSTMoC0QFVgEuaNodVoGZFQtYBeVrbPoZ9DTB/GT6oYzfp0Hp4S
-         q3qDqQV6sazxwm+kxTP/rAxaBm+17kpj0Je/tQxKOzKxcIlzAMZWR3wKrODrwcS7lViD
-         AjTNMb2r0/zx3wqI10YfEwaFGaTg9wMy7Hrow1LnJXSQA4k5HfI7nJY6Jb0NI6RnRw5i
-         RklfuYYIvuKVdtump5NbCJe5ayM+gJ1fbKD4qQwfW9SOLSFHDK/r+S8o+gkBz6rR2B5P
-         JZiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746169837; x=1746774637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U06ss2HdcwirNeiqMijvgDAm/dg/vsq1Q1L1rApoCb0=;
-        b=VQdy39SBdXdpZzEjkCXm4vijb4ndf7RYoUVwAXiP9jqtV6++RZn7rXXdrL+I0JHbFK
-         2r0f0ZhjqcFe2rF1qRkVYpqM9E9VVx5f54ujVYqqbv5RsopmcMvqURLPHkDyyEhv450u
-         z2Dn88ljY9QqOHggFy1pAjtCqOUc9ekhZqFLavZUJ4nz4gKFYnOZzmLy1/+Pog5U39Fp
-         /93vauIcdYCvHnLixyqU4wR8xjAXfkHqX3N45Wb9R98WULB7Mxe6KzNrOd931BcpZOBQ
-         eHm121kI3osTDPHHY11uXhMkS3JSHQFRn465mOZNJlBfGJnV/E1F1yDsqax8vnelCnvw
-         tfrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUs5ThSkq8B9X0FECpfCr+MitIgIq7g/RFmUeeP9Z0k7J0dqP4NAnP19ObHEUStg2dykIccB2Fy+kGrswxILq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfuVdHYJ1uBLLuUG7TAjqCyiKb/8w997QBdKzABJp2eGNy58RI
-	VQrVL9rd7ZbT7itun9wf0qEBQ2GGGjoxBoSBzEsVzKYThINRgiSu2ZTZ+dNVAd0=
-X-Gm-Gg: ASbGncsJQdFRu8tf9KmSa37zCx4pzLy8md1FIGZrne0ki+1BKnKvSp5kvGsoxHJWRk9
-	/XIPhLT/MGuPOABQBVmTVsI7Sp1BDDqV0o7KqYhMhl6nBbiFb048MDWtdClcQwpuAcih/gb+JFB
-	Okm4wilKrtWxFapvDhYAsA7fQAYeOl2pqkRQ/cDrPWOAeuQgaIC8lEkmkx/NsZ2jBfxrkN7vvKW
-	AbU0pZhhvJVsIbV6sQIvJMfbghO57fBVIV8gXZV6ob80FcffwMgCIs8XdAqZ+QgEpQO8xlaOvnj
-	YFyTIXksTVrkVlOAF88SU6+gIvDS5zTC+h/3DmVLlKL4yg==
-X-Google-Smtp-Source: AGHT+IHtNfp9BE0awULIWqLBT0upZss91Y/YU3Wv6VlCY1VbHPu43hU9YAJA4Xe2Y6q9r/3mhLUIjA==
-X-Received: by 2002:a05:600c:4710:b0:43c:fa24:8721 with SMTP id 5b1f17b1804b1-441bbeda9d2mr12759135e9.17.1746169837547;
-        Fri, 02 May 2025 00:10:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099ae7cc6sm1328988f8f.55.2025.05.02.00.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 00:10:36 -0700 (PDT)
-Date: Fri, 2 May 2025 10:10:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Honggyu Kim <honggyu.kim@sk.com>
-Cc: Rakie Kim <rakie.kim@sk.com>, kernel_team@skhynix.com,
+	s=arc-20240116; t=1746171620; c=relaxed/simple;
+	bh=ANeXMIq7oCEv2onm05uCRDU26/jiOnkVKXXL8vAnXAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jdDXaj8WZuBGVAzgmjCx9712ynO8wxQMUYo3/FXkH8vlPRcYssLc5sT6Fa0hPQpvWe83JPLvrbPIwo2XlDr5xcSGyCIn63fPZfNjay9pCG3fpQFgAquRoUHT/rUxboOE2D31GuwjSBQ3ucZLwpX0CxVJYz4UNi6WxtjjcmWjNkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-af-681476dea69f
+From: Rakie Kim <rakie.kim@sk.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Rakie Kim <rakie.kim@sk.com>,
+	kernel_team@skhynix.com,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Dan Williams <dan.j.williams@intel.com>,
 	Joshua Hahn <joshua.hahnjy@gmail.com>,
-	Gregory Price <gourry@gourry.net>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+	Gregory Price <gourry@gourry.net>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Honggyu Kim <honggyu.kim@sk.com>
 Subject: Re: [PATCH next] mm/mempolicy: Fix error code in sysfs_wi_node_add()
-Message-ID: <aBRv6RmQf7vNZQMJ@stanley.mountain>
-References: <aAij2oUCP1zmcoPv@stanley.mountain>
- <9837bbe0-d494-43bb-8e92-8cbf47a32b68@sk.com>
+Date: Fri,  2 May 2025 16:40:02 +0900
+Message-ID: <20250502074010.153-1-rakie.kim@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <aBRv6RmQf7vNZQMJ@stanley.mountain>
+References: 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9837bbe0-d494-43bb-8e92-8cbf47a32b68@sk.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC9ZZnoe69MpEMgwuz1C3mrF/DZvFhXiu7
+	xfSpFxgtft49zm5xfOs8doutt6QtLu+aw2Zxb81/VgcOj52z7rJ7dLddZvdYvOclk8emT5PY
+	Pe5c28PmcWLGbxaPz5vkAtijuGxSUnMyy1KL9O0SuDL2PjvOVrBUumJZwzGWBsYZol2MnBwS
+	AiYSMxb+YIKxp748ydzFyMHBJqAkcWxvDEhYREBH4t/fySxdjFwczAL3mCTO/r/LDpIQFvCV
+	WPz/GyuIzSKgKtH7exkjSC+vgLHE1xn+ECM1JRou3QMbzylgILFx+zcWEFtIgEfi1Yb9jCA2
+	r4CgxMmZT8DizALyEs1bZzOD7JIQOMEmcfX9aajbJCUOrrjBMoGRfxaSnllIehYwMq1iFMrM
+	K8tNzMwx0cuozMus0EvOz93ECAzkZbV/oncwfroQfIhRgINRiYc3oEA4Q4g1say4MvcQowQH
+	s5IIb4wBUIg3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfyFCGB9MSS1OzU1ILUIpgsEwenVAOj
+	rNjed+uZX9xUnNQt52lepVWddfBhFcchyfI9LorWHaoTwlb4dvpdNGW7sJG97UfyR9YFCzYd
+	e7i01lvFdsWWibOD+aKFE1wrld+vOKZ24zivG1vhiYtiHMGLNjubPD7w42cM87L1blEtcezh
+	H8NM+FMan3+7IZvImWauXNG/4fcHnoCKp3+VWIozEg21mIuKEwEokfb7YAIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsXCNUNNS/demUiGQVeLnMWc9WvYLD7Ma2W3
+	mD71AqPFz7vH2S0+P3vNbHF86zx2i623pC0Ozz3JanF51xw2i3tr/rNaHLr2nNWB22PnrLvs
+	Ht1tl9k9Fu95yeSx6dMkdo871/aweZyY8ZvF49ttD4/FLz4weXzeJBfAGcVlk5Kak1mWWqRv
+	l8CVsffZcbaCpdIVyxqOsTQwzhDtYuTkkBAwkZj68iRzFyMHB5uAksSxvTEgYREBHYl/fyez
+	dDFycTAL3GOSOPv/LjtIQljAV2Lx/2+sIDaLgKpE7+9ljCC9vALGEl9n+EOM1JRouHSPCcTm
+	FDCQ2Lj9GwuILSTAI/Fqw35GEJtXQFDi5MwnYHFmAXmJ5q2zmScw8sxCkpqFJLWAkWkVo0hm
+	XlluYmaOqV5xdkZlXmaFXnJ+7iZGYMguq/0zcQfjl8vuhxgFOBiVeHgDCoQzhFgTy4orcw8x
+	SnAwK4nwxhgAhXhTEiurUovy44tKc1KLDzFKc7AoifN6hacmCAmkJ5akZqemFqQWwWSZODil
+	Ghg3bQ6ymbd+m/2uVduqH+beTcwXVE67vVbaYF7tvHXFUnISbR1NR59M4A8Vi/oczOIkfOoy
+	i2D8lmy9vooi8UPTWjyzRQuKNt7X/Kmf/Z5zzccF+741m31Q/s0c6+H1nXlx3e43XOyyWw/O
+	FK0UEGQ6wNqQOa9qpnhmdInRKrlrh7hmtD/c5qjEUpyRaKjFXFScCACWzsRDVQIAAA==
+X-CFilter-Loop: Reflected
 
-On Fri, May 02, 2025 at 03:46:21PM +0900, Honggyu Kim wrote:
-> Hi Dan,
-> 
-> On 4/23/2025 5:24 PM, Dan Carpenter wrote:
-> > Return -EEXIST if the node already exists.  Don't return success.
+On Fri, 2 May 2025 10:10:33 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> On Fri, May 02, 2025 at 03:46:21PM +0900, Honggyu Kim wrote:
+> > Hi Dan,
 > > 
-> > Fixes: 1bf270ac1b0a ("mm/mempolicy: support memory hotplug in weighted interleave")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > Potentially returning success was intentional?  This is from static
-> > analysis and I can't be totally sure.
+> > On 4/23/2025 5:24 PM, Dan Carpenter wrote:
+> > > Return -EEXIST if the node already exists.  Don't return success.
+> > > 
+> > > Fixes: 1bf270ac1b0a ("mm/mempolicy: support memory hotplug in weighted interleave")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > ---
+> > > Potentially returning success was intentional?  This is from static
+> > > analysis and I can't be totally sure.
+> > > 
+> > >   mm/mempolicy.c | 3 ++-
+> > >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > > index f43951668c41..0538a994440a 100644
+> > > --- a/mm/mempolicy.c
+> > > +++ b/mm/mempolicy.c
+> > > @@ -3539,7 +3539,7 @@ static const struct kobj_type wi_ktype = {
+> > >   static int sysfs_wi_node_add(int nid)
+> > >   {
+> > > -	int ret = 0;
+> > > +	int ret;
+> > >   	char *name;
+> > >   	struct iw_node_attr *new_attr;
+> > > @@ -3569,6 +3569,7 @@ static int sysfs_wi_node_add(int nid)
+> > >   	if (wi_group->nattrs[nid]) {
+> > >   		mutex_unlock(&wi_group->kobj_lock);
+> > >   		pr_info("node%d already exists\n", nid);
+> > > +		ret = -EEXIST;
 > > 
-> >   mm/mempolicy.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > Returning -EEXIST here looks good to me, but could you remove the above pr_info
+> > as well?  I mean the following change is needed.
 > > 
-> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> > index f43951668c41..0538a994440a 100644
-> > --- a/mm/mempolicy.c
-> > +++ b/mm/mempolicy.c
-> > @@ -3539,7 +3539,7 @@ static const struct kobj_type wi_ktype = {
-> >   static int sysfs_wi_node_add(int nid)
-> >   {
-> > -	int ret = 0;
-> > +	int ret;
-> >   	char *name;
-> >   	struct iw_node_attr *new_attr;
-> > @@ -3569,6 +3569,7 @@ static int sysfs_wi_node_add(int nid)
-> >   	if (wi_group->nattrs[nid]) {
-> >   		mutex_unlock(&wi_group->kobj_lock);
-> >   		pr_info("node%d already exists\n", nid);
+> > -		pr_info("node%d already exists\n", nid)
 > > +		ret = -EEXIST;
+> > 
+> > We don't need the above pr_info here because we delegate a warning message to
+> > its caller wi_node_notifier().
+> > 
+> > This can close another warning report below.
+> > https://lore.kernel.org/all/202505020458.yLHRAaW9-lkp@intel.com
+> > 
+> > If you apply my suggestion then please add
+> > 
+> > 	Reviewed-by: Honggyu Kim <honggyu.kim@sk.com>
+> > 
 > 
-> Returning -EEXIST here looks good to me, but could you remove the above pr_info
-> as well?  I mean the following change is needed.
-> 
-> -		pr_info("node%d already exists\n", nid)
-> +		ret = -EEXIST;
-> 
-> We don't need the above pr_info here because we delegate a warning message to
-> its caller wi_node_notifier().
-> 
-> This can close another warning report below.
-> https://lore.kernel.org/all/202505020458.yLHRAaW9-lkp@intel.com
-> 
-> If you apply my suggestion then please add
-> 
-> 	Reviewed-by: Honggyu Kim <honggyu.kim@sk.com>
+> Rakie Kim was pretty confident that returning 0 was intentional.  Btw,
+> Smatch considers it intentional if the "ret = 0;" is within 5
+> lines of the goto.  Or we could add a comment, which wouldn't silence
+> the warning but it would help people reading the code.
 > 
 
-Rakie Kim was pretty confident that returning 0 was intentional.  Btw,
-Smatch considers it intentional if the "ret = 0;" is within 5
-lines of the goto.  Or we could add a comment, which wouldn't silence
-the warning but it would help people reading the code.
+Hi Dan,
 
-regards,
-dan carpenter
+Thank you for taking the time to review this code and point out the issue.
+I believe there may have been some confusion related to the behavior in
+previous versions.
 
+In the latest revision, the `wi_node_notifier()` function that calls
+`sysfs_wi_node_add()` has been updated to always return `NOTIFY_OK`,
+regardless of the return value from `sysfs_wi_node_add()`. This ensures that
+no memory hotplug event will be blocked by our notifier logic.
+
+static int wi_node_notifier(struct notifier_block *nb,
+                            unsigned long action, void *data)
+{
+	...
+	switch (action) {
+	case MEM_ONLINE:
+		err = sysfs_wi_node_add(nid);
+		if (err)
+			pr_err("failed to add sysfs for node%d during hotplug: %d\n",
+			       nid, err);
+		break;
+	...
+	return NOTIFY_OK;
+}
+
+Given that, it is appropriate for `sysfs_wi_node_add()` to return `-EEXIST`
+when the node already exists. Since the error message is already logged by
+`wi_node_notifier()`, I agree with Honggyu's suggestion to remove the
+redundant `pr_info()` statement as well:
+
+-		pr_info("node%d already exists\n", nid);
++		ret = -EEXIST;
+
+Once again, thank you very much for your review and for helping us improve
+the code.
+
+Reviewed-by: Rakie Kim <rakie.kim@sk.com>
+
+Rakie
+
+> regards,
+> dan carpenter
+> 
+> 
