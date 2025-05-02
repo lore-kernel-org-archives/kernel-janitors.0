@@ -1,71 +1,73 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EF919DF4F
-	for <kernel-janitors@vger.kernel.org>; Fri,  2 May 2025 08:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E36D22A819
+	for <kernel-janitors@vger.kernel.org>; Fri,  2 May 2025 08:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746175177; cv=none; b=JTyYpmMwadM+YxIVX/XR9Fkor75f6aYIw4+an6191WBOoPaRU9cDuRRcEiuEL8ejHNq/ehKX/qb7iRlOkztm93xRCWdpSjoy9k9LedAbKkrqyzMCL0mUigC7lnJxHrIvonvqV0GHCxKSkqD3MhjKcI+Zvf87W1fS4OtI5yDmzC8=
+	t=1746175223; cv=none; b=dFsWDjZmlJxRKf0WYjoeClq7wo0BgdDHC75wqMXRBfqNmvgJWGlfOZ85vi+W5Ouzddf1QkYjNYNXEK27m9MCTGjl+57ODZjtk8J3scoWVpPsFPJaaw6KdCXUHV7f8HPGZkf151CIi0bTn/JX7uTxmEr34JjBcHHBPJIcdlOH2u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746175177; c=relaxed/simple;
-	bh=Fc6VGyglFbCU4Zg5Mw2hQNZJJof9kthAbyW2Wut9M2I=;
+	s=arc-20240116; t=1746175223; c=relaxed/simple;
+	bh=4GwIMV2g6kYQJfYrG026JnY99HzIdumMHujNiN5PFkQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dOVUnR4C/19z/C2ICXje3LIVcTjpqpxblCIaSu6z6wfKghu586JqINxpOUSLsQuAoEGw59kjpeEUcJo30i+2hwkZ5H8mNUVBd/yzSZH5q75KU7k8QwGPFmHhh2BksfEaHnTZ+fwlZ2+KaAflK4sBOh8+QFyO7i+iPbz3w4NuFLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pgkeSmGo; arc=none smtp.client-ip=209.85.221.41
+	 Content-Disposition; b=SyeZLDmuw14f244jW1JbD3hwrrBPSqN8fYPyj97h+6yJE+GN1xrPEfbfpM4xBVt3iNyV0gq5FPFRvr2UX/MdGiYehBMxIsZDSWUmVCCy5d3hj25V/g0YXcVbUOHV48D+ov+xxqTQfBvjoSnQRjq1E3TPccaro+5ko1+y9vpBjAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e59c++Xo; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pgkeSmGo"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39ee5a5bb66so955535f8f.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 02 May 2025 01:39:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e59c++Xo"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39ee5a5bb66so956098f8f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 May 2025 01:40:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746175173; x=1746779973; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746175219; x=1746780019; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=YTp1n3CXi4d/IkYoP7iNGIaUGP0jg9QVzJw7i5UhA5Y=;
-        b=pgkeSmGoxGb3NfuIJob4Qla0scUPSMXoTsndHmbdmjevpXYIfbDx4MAZn4oT6YbLOm
-         xw0IrMORmI9j9tflWnq3tb+KApmrfvvNjN5AQhARq+w+0R5nmLM9mnMKFqCS5XJPyHxo
-         ZGy4DKfP0RBUJXBZsDPWD3ETQHuMl8oOD/lLf24/i+dn38TW/79l2ayYffez7wkm2LB6
-         E0vFUMDR1QP3WqhZwGzws5jaC+Bu7ylByJz58gdyGInOUsMUythMtSzs2KESFQncXLsF
-         nIyZ795yXc42yqI0ohwTiiqGI0EFaOaE6ACA90QLsHmK26oLqIN//JN+vcHHfpJhFdED
-         g1UQ==
+        bh=dfPxHK34iqz0YjaqRlpXE1B0HpLY07y212OEUguH+Us=;
+        b=e59c++Xolau9uKv5LXFDx7H/lPOQPzpuTp6hpnqxJpjBP3r/6dkH7pML7nyqFlfn7l
+         Jk9/LaWBFyRpGjwX+0y252PGjgU0fHW9O+EAnDdsKcS+/ptq/AcWcAXVvAtbdsIJDb7Y
+         vVomeIxKb7xYf/rNXMt1cj7WsGh8vVB7QzHDCZ+ab6x10LRy3eE4MyAFi+5k84PIfmI0
+         ONasA/QKpHbEb98VZfvj2oGw0VVNU00wT6jhsF0ZuXm2QBT1NFCNA52O0JedBVmOzIjz
+         K0U9JrMW1BJxHD3SeCos7d84A6Rb2oW0ayxKd0j7Y5nZSDVcmFYB0qTbolcKsLYoFZvC
+         7sfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746175173; x=1746779973;
+        d=1e100.net; s=20230601; t=1746175219; x=1746780019;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YTp1n3CXi4d/IkYoP7iNGIaUGP0jg9QVzJw7i5UhA5Y=;
-        b=LC1qBEbzwnV0vGm0wl42+mj4v0/HsRe+InKya+GPul7Nin4zmNaEqjSdNRx6SRxVOn
-         w14Y2BUYViIIzOvm0DKdsPMF3ZC37ZssJeZFlbiWl8D5qAxLJvoXwXt5jvhJkus6O0By
-         Pec1EJ5OCpPX6UzsK5lZZdtsR/mL3WxlnKd07ARVrrQCbEIgbrqlyEriz+h1V2Xx8fnf
-         l2oPje/bhVCqc6WlJHhNV+J9jLXkwXbdBvMu7zzF1Io0dF5RyUDM3aBawcJXUl8JLDYk
-         CBxa/Vh9PAdkQR6PrwWVjqkiq0BgwV4WC5C7hQkTjc0VySEkyGrY4lOpi8w7DW7DYP6o
-         AlXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhSCi8pI7KafSZZwCbwgIIo+tbEh+EKE6uoRwTPe7UlLHT5wUdeysrmV8EgR2k7iPblJnzS0nueFbtSuUKxBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWP+Lr5jOPgALRdvSu2NHXR+9FP3q4/GUcosbksZ9DvoBkuKTL
-	p4anlFnMOr5gU8r/y+OZw1ZkOUzUebuIimvMVXO6R7RItcpJ5kMr9/KLJxbxriM=
-X-Gm-Gg: ASbGncty/JqGz0NGxA+t5K03OhUdHqbeIgM3sH/YDUAaLLvoB0/FnCby+INLgZeroRh
-	Hok3zCcpn5r3fERoDf7ZJ7FnHS2OKmblPkAUkeHsnqv6nPYxPa6sx5kJ2WRiDWdqcf6uVsyfGly
-	A1THf+YX58G9aKSKn+kmSMPvH6waeFK1X2Ow0SJTQH3kUtjqxjQxZI+vNJXfRyZazXcu2bltvBs
-	huFw/f+VZMKfSkzAbyBfg18XTuOCr9hAsqA0YnhJnWBHuzNH8jporRIcvWZQQx3Xs4QiciRTLTn
-	AKeRJ5SmWAxLvEY3VqKP96dDjp6TLeghLRF2XodsRDKfEg==
-X-Google-Smtp-Source: AGHT+IGb74sv8hsGiSyin0BDmnbpMA2IZnPZBnAg8xwnjuUfYCPDX9NlYI/bGPAEUyHsmHQ+F3zSMg==
-X-Received: by 2002:a5d:588b:0:b0:39c:1f10:ba54 with SMTP id ffacd0b85a97d-3a099adeae2mr1444276f8f.35.1746175173327;
-        Fri, 02 May 2025 01:39:33 -0700 (PDT)
+        bh=dfPxHK34iqz0YjaqRlpXE1B0HpLY07y212OEUguH+Us=;
+        b=e07WVuxKogtXhKmvlCqTFZW6tXro2SoTAOeM3hu0UMlJJ2dbhbcyJaugOp7seXg4+c
+         4C9a6P34hQGk+6l52oBV3Nf0D0abVFdm2PETJCiTdgF9/DlHwwKRE4E5M1Ym9ylHAOEr
+         EFu6zRpfpLUvMUB0oU9YRnqnbECr6OQr9lyubRM1Huq9IP6iqP1dl0kuMfKSty8V//5e
+         H/AGHN2/R1eyCRY2Y9mRnTO+tnNJr/upA21PS98BNnT6ROnUGl4pT3dKVksiBp3sg33B
+         0ttT7pYKQA1p0j4kDvOh7dw/SS3xRd80Eeyf+7y06MbjG009P/LMkmWZDK/SXFJG/OX5
+         AkSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEPoDLcca0NAGu07w+ObSTWFMln4Eq+Y34QnbotK1yVj/Pxhz93XXPrmgkBjV+KGrNS5LsbC5UB4v/49U1Xdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBlMd7AUMH7mHkoFjhXMu9zeDbeeYj8nlmnqqExR8MtZP+hvDj
+	Ldop0IQy40lVGVLZhHIhX0NdGJVGXDtchfigag+OAl/CXS8fTR/nPVBGephvhgY=
+X-Gm-Gg: ASbGncv4+3VUsHnnyXNh7mwlOgJ19kgi0R3DL+yE+JhQuICwJXIQ31XrJjk9CB26bmv
+	KxlVOhyYR3x3w1Ebwd9ChpRNkbM3dwnnVyEybEV71L9aB31IduOzL9M/Bdc9vnv8Gk07FKPGLQ7
+	AQ8W9uXwLtt8L2F0JLeb5Agkg2/Ectf1JssEmtPyUzOerQlPXohdSjBGoqLuLoxvXP229rw8xSb
+	8DS+NyCdHusJ7+huhypGty71cwp7mBLOy7Gz4bRbwd62KT/k2YA3AcIoeON3ISniatbb7rCDnvF
+	fPxVYksWslyUbwzED5iVPM/5ucWQAXrGDs6+Gh7YMwA/Sw==
+X-Google-Smtp-Source: AGHT+IHreIZwzg9TVSTEmBpk2mrA1QNuEKFUEw+ZtdCxQ4dopKGMwZ9mLqKa2D9lb6EAzaR8gqchzg==
+X-Received: by 2002:a05:6000:1446:b0:391:2f2f:818 with SMTP id ffacd0b85a97d-3a099ad46a2mr1385443f8f.9.1746175219587;
+        Fri, 02 May 2025 01:40:19 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099ae0d2csm1473852f8f.2.2025.05.02.01.39.32
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099b0f118sm1482225f8f.78.2025.05.02.01.40.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 01:39:32 -0700 (PDT)
-Date: Fri, 2 May 2025 11:39:29 +0300
+        Fri, 02 May 2025 01:40:18 -0700 (PDT)
+Date: Fri, 2 May 2025 11:40:15 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Keguang Zhang <keguang.zhang@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: Derek John Clark <derekjohn.clark@gmail.com>,
+	=?iso-8859-1?Q?Joaqu=EDn_Ignacio_Aramend=EDa?= <samsagax@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] mtd: rawnand: loongson1: Fix error code in
- ls1x_nand_dma_transfer()
-Message-ID: <aBSEwag_ducqOwy7@stanley.mountain>
+Subject: [PATCH next] platform/x86: oxpec: Add a lower bounds check in
+ oxp_psy_ext_set_prop()
+Message-ID: <aBSE71VKfBlQg_fZ@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,34 +78,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The "desc" variable is NULL and PTR_ERR(NULL) is zero/success.  Return
-a negative error code instead.
+The "val->intval" variable is an integer which comes from the user.  This
+code has an upper bounds check but the lower bounds check was
+accidentally omitted.  The write_to_ec() take a u8 value as a parameter
+so negative values would be truncated to positive values in the 0-255
+range.
 
-Fixes: d2d10ede04b1 ("mtd: rawnand: Add Loongson-1 NAND Controller Driver")
+Return -EINVAL if the user passes a negative value.
+
+Fixes: 202593d1e86b ("platform/x86: oxpec: Add charge threshold and behaviour to OneXPlayer")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-It's hard to know what the patch prefix should be here.  Ideally when we
-add a new driver we would use the patch prefix for the driver.
-
-Tired: subsystem: Add driver XXX
-Wired: subsystem: XXX: Add driver for XXX
-
- drivers/mtd/nand/raw/loongson1-nand-controller.c | 2 +-
+ drivers/platform/x86/oxpec.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/raw/loongson1-nand-controller.c b/drivers/mtd/nand/raw/loongson1-nand-controller.c
-index 6a369b1c7d86..8754bb4f8b56 100644
---- a/drivers/mtd/nand/raw/loongson1-nand-controller.c
-+++ b/drivers/mtd/nand/raw/loongson1-nand-controller.c
-@@ -371,7 +371,7 @@ static int ls1x_nand_dma_transfer(struct ls1x_nand_host *host, struct ls1x_nand_
- 	desc = dmaengine_prep_slave_single(chan, dma_addr, op->len, xfer_dir, DMA_PREP_INTERRUPT);
- 	if (!desc) {
- 		dev_err(dev, "failed to prepare DMA descriptor\n");
--		ret = PTR_ERR(desc);
-+		ret = -ENOMEM;
- 		goto err;
- 	}
- 	desc->callback = ls1x_nand_dma_callback;
+diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
+index 4b48f4571b09..de70ca7e8493 100644
+--- a/drivers/platform/x86/oxpec.c
++++ b/drivers/platform/x86/oxpec.c
+@@ -582,7 +582,7 @@ static int oxp_psy_ext_set_prop(struct power_supply *psy,
+ 
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
+-		if (val->intval > 100)
++		if (val->intval < 0 || val->intval > 100)
+ 			return -EINVAL;
+ 		return write_to_ec(OXP_X1_CHARGE_LIMIT_REG, val->intval);
+ 	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
 -- 
 2.47.2
 
