@@ -1,165 +1,109 @@
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFE0253341;
-	Fri,  2 May 2025 07:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EF919DF4F
+	for <kernel-janitors@vger.kernel.org>; Fri,  2 May 2025 08:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746171620; cv=none; b=OaiZD7Qtt7BJTc/mK8ypUkCn2DwO/sDCSxg0z1VlWHi9QGUhIOftJWaDFXZmUJoEXDrMAZAXM5f4vHT+SDdKIeD5lImwEgE3hJitWwJ4f0SvGvbVEBs2bJDedyujSRHL/ftGfv1b22ZSxR6VsJj2zAFJRzzcEnHlPlxAodID48k=
+	t=1746175177; cv=none; b=JTyYpmMwadM+YxIVX/XR9Fkor75f6aYIw4+an6191WBOoPaRU9cDuRRcEiuEL8ejHNq/ehKX/qb7iRlOkztm93xRCWdpSjoy9k9LedAbKkrqyzMCL0mUigC7lnJxHrIvonvqV0GHCxKSkqD3MhjKcI+Zvf87W1fS4OtI5yDmzC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746171620; c=relaxed/simple;
-	bh=ANeXMIq7oCEv2onm05uCRDU26/jiOnkVKXXL8vAnXAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jdDXaj8WZuBGVAzgmjCx9712ynO8wxQMUYo3/FXkH8vlPRcYssLc5sT6Fa0hPQpvWe83JPLvrbPIwo2XlDr5xcSGyCIn63fPZfNjay9pCG3fpQFgAquRoUHT/rUxboOE2D31GuwjSBQ3ucZLwpX0CxVJYz4UNi6WxtjjcmWjNkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-af-681476dea69f
-From: Rakie Kim <rakie.kim@sk.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rakie Kim <rakie.kim@sk.com>,
-	kernel_team@skhynix.com,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Joshua Hahn <joshua.hahnjy@gmail.com>,
-	Gregory Price <gourry@gourry.net>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Honggyu Kim <honggyu.kim@sk.com>
-Subject: Re: [PATCH next] mm/mempolicy: Fix error code in sysfs_wi_node_add()
-Date: Fri,  2 May 2025 16:40:02 +0900
-Message-ID: <20250502074010.153-1-rakie.kim@sk.com>
-X-Mailer: git-send-email 2.48.1.windows.1
-In-Reply-To: <aBRv6RmQf7vNZQMJ@stanley.mountain>
-References: 
+	s=arc-20240116; t=1746175177; c=relaxed/simple;
+	bh=Fc6VGyglFbCU4Zg5Mw2hQNZJJof9kthAbyW2Wut9M2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dOVUnR4C/19z/C2ICXje3LIVcTjpqpxblCIaSu6z6wfKghu586JqINxpOUSLsQuAoEGw59kjpeEUcJo30i+2hwkZ5H8mNUVBd/yzSZH5q75KU7k8QwGPFmHhh2BksfEaHnTZ+fwlZ2+KaAflK4sBOh8+QFyO7i+iPbz3w4NuFLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pgkeSmGo; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pgkeSmGo"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39ee5a5bb66so955535f8f.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 02 May 2025 01:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746175173; x=1746779973; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YTp1n3CXi4d/IkYoP7iNGIaUGP0jg9QVzJw7i5UhA5Y=;
+        b=pgkeSmGoxGb3NfuIJob4Qla0scUPSMXoTsndHmbdmjevpXYIfbDx4MAZn4oT6YbLOm
+         xw0IrMORmI9j9tflWnq3tb+KApmrfvvNjN5AQhARq+w+0R5nmLM9mnMKFqCS5XJPyHxo
+         ZGy4DKfP0RBUJXBZsDPWD3ETQHuMl8oOD/lLf24/i+dn38TW/79l2ayYffez7wkm2LB6
+         E0vFUMDR1QP3WqhZwGzws5jaC+Bu7ylByJz58gdyGInOUsMUythMtSzs2KESFQncXLsF
+         nIyZ795yXc42yqI0ohwTiiqGI0EFaOaE6ACA90QLsHmK26oLqIN//JN+vcHHfpJhFdED
+         g1UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746175173; x=1746779973;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YTp1n3CXi4d/IkYoP7iNGIaUGP0jg9QVzJw7i5UhA5Y=;
+        b=LC1qBEbzwnV0vGm0wl42+mj4v0/HsRe+InKya+GPul7Nin4zmNaEqjSdNRx6SRxVOn
+         w14Y2BUYViIIzOvm0DKdsPMF3ZC37ZssJeZFlbiWl8D5qAxLJvoXwXt5jvhJkus6O0By
+         Pec1EJ5OCpPX6UzsK5lZZdtsR/mL3WxlnKd07ARVrrQCbEIgbrqlyEriz+h1V2Xx8fnf
+         l2oPje/bhVCqc6WlJHhNV+J9jLXkwXbdBvMu7zzF1Io0dF5RyUDM3aBawcJXUl8JLDYk
+         CBxa/Vh9PAdkQR6PrwWVjqkiq0BgwV4WC5C7hQkTjc0VySEkyGrY4lOpi8w7DW7DYP6o
+         AlXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhSCi8pI7KafSZZwCbwgIIo+tbEh+EKE6uoRwTPe7UlLHT5wUdeysrmV8EgR2k7iPblJnzS0nueFbtSuUKxBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWP+Lr5jOPgALRdvSu2NHXR+9FP3q4/GUcosbksZ9DvoBkuKTL
+	p4anlFnMOr5gU8r/y+OZw1ZkOUzUebuIimvMVXO6R7RItcpJ5kMr9/KLJxbxriM=
+X-Gm-Gg: ASbGncty/JqGz0NGxA+t5K03OhUdHqbeIgM3sH/YDUAaLLvoB0/FnCby+INLgZeroRh
+	Hok3zCcpn5r3fERoDf7ZJ7FnHS2OKmblPkAUkeHsnqv6nPYxPa6sx5kJ2WRiDWdqcf6uVsyfGly
+	A1THf+YX58G9aKSKn+kmSMPvH6waeFK1X2Ow0SJTQH3kUtjqxjQxZI+vNJXfRyZazXcu2bltvBs
+	huFw/f+VZMKfSkzAbyBfg18XTuOCr9hAsqA0YnhJnWBHuzNH8jporRIcvWZQQx3Xs4QiciRTLTn
+	AKeRJ5SmWAxLvEY3VqKP96dDjp6TLeghLRF2XodsRDKfEg==
+X-Google-Smtp-Source: AGHT+IGb74sv8hsGiSyin0BDmnbpMA2IZnPZBnAg8xwnjuUfYCPDX9NlYI/bGPAEUyHsmHQ+F3zSMg==
+X-Received: by 2002:a5d:588b:0:b0:39c:1f10:ba54 with SMTP id ffacd0b85a97d-3a099adeae2mr1444276f8f.35.1746175173327;
+        Fri, 02 May 2025 01:39:33 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099ae0d2csm1473852f8f.2.2025.05.02.01.39.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 May 2025 01:39:32 -0700 (PDT)
+Date: Fri, 2 May 2025 11:39:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Keguang Zhang <keguang.zhang@gmail.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] mtd: rawnand: loongson1: Fix error code in
+ ls1x_nand_dma_transfer()
+Message-ID: <aBSEwag_ducqOwy7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLLMWRmVeSWpSXmKPExsXC9ZZnoe69MpEMgwuz1C3mrF/DZvFhXiu7
-	xfSpFxgtft49zm5xfOs8doutt6QtLu+aw2Zxb81/VgcOj52z7rJ7dLddZvdYvOclk8emT5PY
-	Pe5c28PmcWLGbxaPz5vkAtijuGxSUnMyy1KL9O0SuDL2PjvOVrBUumJZwzGWBsYZol2MnBwS
-	AiYSMxb+YIKxp748ydzFyMHBJqAkcWxvDEhYREBH4t/fySxdjFwczAL3mCTO/r/LDpIQFvCV
-	WPz/GyuIzSKgKtH7exkjSC+vgLHE1xn+ECM1JRou3QMbzylgILFx+zcWEFtIgEfi1Yb9jCA2
-	r4CgxMmZT8DizALyEs1bZzOD7JIQOMEmcfX9aajbJCUOrrjBMoGRfxaSnllIehYwMq1iFMrM
-	K8tNzMwx0cuozMus0EvOz93ECAzkZbV/oncwfroQfIhRgINRiYc3oEA4Q4g1say4MvcQowQH
-	s5IIb4wBUIg3JbGyKrUoP76oNCe1+BCjNAeLkjiv0bfyFCGB9MSS1OzU1ILUIpgsEwenVAOj
-	rNjed+uZX9xUnNQt52lepVWddfBhFcchyfI9LorWHaoTwlb4dvpdNGW7sJG97UfyR9YFCzYd
-	e7i01lvFdsWWibOD+aKFE1wrld+vOKZ24zivG1vhiYtiHMGLNjubPD7w42cM87L1blEtcezh
-	H8NM+FMan3+7IZvImWauXNG/4fcHnoCKp3+VWIozEg21mIuKEwEokfb7YAIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsXCNUNNS/demUiGQVeLnMWc9WvYLD7Ma2W3
-	mD71AqPFz7vH2S0+P3vNbHF86zx2i623pC0Ozz3JanF51xw2i3tr/rNaHLr2nNWB22PnrLvs
-	Ht1tl9k9Fu95yeSx6dMkdo871/aweZyY8ZvF49ttD4/FLz4weXzeJBfAGcVlk5Kak1mWWqRv
-	l8CVsffZcbaCpdIVyxqOsTQwzhDtYuTkkBAwkZj68iRzFyMHB5uAksSxvTEgYREBHYl/fyez
-	dDFycTAL3GOSOPv/LjtIQljAV2Lx/2+sIDaLgKpE7+9ljCC9vALGEl9n+EOM1JRouHSPCcTm
-	FDCQ2Lj9GwuILSTAI/Fqw35GEJtXQFDi5MwnYHFmAXmJ5q2zmScw8sxCkpqFJLWAkWkVo0hm
-	XlluYmaOqV5xdkZlXmaFXnJ+7iZGYMguq/0zcQfjl8vuhxgFOBiVeHgDCoQzhFgTy4orcw8x
-	SnAwK4nwxhgAhXhTEiurUovy44tKc1KLDzFKc7AoifN6hacmCAmkJ5akZqemFqQWwWSZODil
-	Ghg3bQ6ymbd+m/2uVduqH+beTcwXVE67vVbaYF7tvHXFUnISbR1NR59M4A8Vi/oczOIkfOoy
-	i2D8lmy9vooi8UPTWjyzRQuKNt7X/Kmf/Z5zzccF+741m31Q/s0c6+H1nXlx3e43XOyyWw/O
-	FK0UEGQ6wNqQOa9qpnhmdInRKrlrh7hmtD/c5qjEUpyRaKjFXFScCACWzsRDVQIAAA==
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Fri, 2 May 2025 10:10:33 +0300 Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> On Fri, May 02, 2025 at 03:46:21PM +0900, Honggyu Kim wrote:
-> > Hi Dan,
-> > 
-> > On 4/23/2025 5:24 PM, Dan Carpenter wrote:
-> > > Return -EEXIST if the node already exists.  Don't return success.
-> > > 
-> > > Fixes: 1bf270ac1b0a ("mm/mempolicy: support memory hotplug in weighted interleave")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > ---
-> > > Potentially returning success was intentional?  This is from static
-> > > analysis and I can't be totally sure.
-> > > 
-> > >   mm/mempolicy.c | 3 ++-
-> > >   1 file changed, 2 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> > > index f43951668c41..0538a994440a 100644
-> > > --- a/mm/mempolicy.c
-> > > +++ b/mm/mempolicy.c
-> > > @@ -3539,7 +3539,7 @@ static const struct kobj_type wi_ktype = {
-> > >   static int sysfs_wi_node_add(int nid)
-> > >   {
-> > > -	int ret = 0;
-> > > +	int ret;
-> > >   	char *name;
-> > >   	struct iw_node_attr *new_attr;
-> > > @@ -3569,6 +3569,7 @@ static int sysfs_wi_node_add(int nid)
-> > >   	if (wi_group->nattrs[nid]) {
-> > >   		mutex_unlock(&wi_group->kobj_lock);
-> > >   		pr_info("node%d already exists\n", nid);
-> > > +		ret = -EEXIST;
-> > 
-> > Returning -EEXIST here looks good to me, but could you remove the above pr_info
-> > as well?  I mean the following change is needed.
-> > 
-> > -		pr_info("node%d already exists\n", nid)
-> > +		ret = -EEXIST;
-> > 
-> > We don't need the above pr_info here because we delegate a warning message to
-> > its caller wi_node_notifier().
-> > 
-> > This can close another warning report below.
-> > https://lore.kernel.org/all/202505020458.yLHRAaW9-lkp@intel.com
-> > 
-> > If you apply my suggestion then please add
-> > 
-> > 	Reviewed-by: Honggyu Kim <honggyu.kim@sk.com>
-> > 
-> 
-> Rakie Kim was pretty confident that returning 0 was intentional.  Btw,
-> Smatch considers it intentional if the "ret = 0;" is within 5
-> lines of the goto.  Or we could add a comment, which wouldn't silence
-> the warning but it would help people reading the code.
-> 
+The "desc" variable is NULL and PTR_ERR(NULL) is zero/success.  Return
+a negative error code instead.
 
-Hi Dan,
+Fixes: d2d10ede04b1 ("mtd: rawnand: Add Loongson-1 NAND Controller Driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+It's hard to know what the patch prefix should be here.  Ideally when we
+add a new driver we would use the patch prefix for the driver.
 
-Thank you for taking the time to review this code and point out the issue.
-I believe there may have been some confusion related to the behavior in
-previous versions.
+Tired: subsystem: Add driver XXX
+Wired: subsystem: XXX: Add driver for XXX
 
-In the latest revision, the `wi_node_notifier()` function that calls
-`sysfs_wi_node_add()` has been updated to always return `NOTIFY_OK`,
-regardless of the return value from `sysfs_wi_node_add()`. This ensures that
-no memory hotplug event will be blocked by our notifier logic.
+ drivers/mtd/nand/raw/loongson1-nand-controller.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-static int wi_node_notifier(struct notifier_block *nb,
-                            unsigned long action, void *data)
-{
-	...
-	switch (action) {
-	case MEM_ONLINE:
-		err = sysfs_wi_node_add(nid);
-		if (err)
-			pr_err("failed to add sysfs for node%d during hotplug: %d\n",
-			       nid, err);
-		break;
-	...
-	return NOTIFY_OK;
-}
+diff --git a/drivers/mtd/nand/raw/loongson1-nand-controller.c b/drivers/mtd/nand/raw/loongson1-nand-controller.c
+index 6a369b1c7d86..8754bb4f8b56 100644
+--- a/drivers/mtd/nand/raw/loongson1-nand-controller.c
++++ b/drivers/mtd/nand/raw/loongson1-nand-controller.c
+@@ -371,7 +371,7 @@ static int ls1x_nand_dma_transfer(struct ls1x_nand_host *host, struct ls1x_nand_
+ 	desc = dmaengine_prep_slave_single(chan, dma_addr, op->len, xfer_dir, DMA_PREP_INTERRUPT);
+ 	if (!desc) {
+ 		dev_err(dev, "failed to prepare DMA descriptor\n");
+-		ret = PTR_ERR(desc);
++		ret = -ENOMEM;
+ 		goto err;
+ 	}
+ 	desc->callback = ls1x_nand_dma_callback;
+-- 
+2.47.2
 
-Given that, it is appropriate for `sysfs_wi_node_add()` to return `-EEXIST`
-when the node already exists. Since the error message is already logged by
-`wi_node_notifier()`, I agree with Honggyu's suggestion to remove the
-redundant `pr_info()` statement as well:
-
--		pr_info("node%d already exists\n", nid);
-+		ret = -EEXIST;
-
-Once again, thank you very much for your review and for helping us improve
-the code.
-
-Reviewed-by: Rakie Kim <rakie.kim@sk.com>
-
-Rakie
-
-> regards,
-> dan carpenter
-> 
-> 
