@@ -1,116 +1,100 @@
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDF119D891;
-	Fri,  2 May 2025 08:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D16256C8A
+	for <kernel-janitors@vger.kernel.org>; Fri,  2 May 2025 14:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746175642; cv=none; b=ITU4YuqEPl6EAiqqC3ynwKMplCq/JLWTtuS69CEzYPHmfJRzMIZiJGshVFBzmG987JFPLG3A/7v20QLzhzAaRDpVeeXD9zc+xI8LwAKfaTDCWyyj/NV3/U613IDLDdc7RlkDRm8dXQu2B42lZmA3OoT8ia/GtYtGa2osgjC611M=
+	t=1746196836; cv=none; b=nv2hgaNMYEW+LdLuZ1DQ5MRcgvo8QE3WnDFcS9FfO1SpMz2ZgVvqC9C+mW31WcZOTK8Dl4lrwXdN2tK7HqXVAd1O5YV6ckQxDFXuiFXIyrdv0UkB6cKJVH44NfTGHO0vkhbnZrJjvMkZmby10CRrT+7rCCpeH3JoJQC5Fy+XJPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746175642; c=relaxed/simple;
-	bh=9jBEmF43nusgTr6KyTmUAJm0NR2nhBaGOUcA3wtOdK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KcMolMnSQSgAFBfFYFmnYA7kkxrMCu8AMNRl5J6RrLrbxFxPetH1Iti8Ett3NlpDzV3A2OY5WLxpmIH8O5Is3ZvkwT//o/sQPo3r2Fhq40UvHoJiOWoFKtKdTJ6+vecdgE2kpRDSRG1N/Yn22sWeQA43wnxmxPDBA4gik3Szaww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Ayhuehes; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+	s=arc-20240116; t=1746196836; c=relaxed/simple;
+	bh=39dqUcCyMzTRb5cdM8I0FifJ7XYO5FNlhwLMdUzWL7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lyUypWbywhxaNY1BpJYRsOlhaq6mokmWwHGlYiQQJsqTNHTDYbRZoPeL5Oc9OSsPLFukxcG1TGUFI6t3fu8FC42ECCxVA8jyWH7MbjJIZhE4DALIZ7zNRGsMX0X2oqkDDMRGxGFErEKoAAPBbXVqKDv+dJ/LQeL1JElyQV5JU7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Q2WY/Vwe; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Ayhuehes"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 7CF532E08A45;
-	Fri,  2 May 2025 11:47:03 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1746175625;
-	bh=ohQ4wDME3+jOfuoNUWNuty5n8n/agiEfl/vn/jqYItw=;
-	h=Received:From:Subject:To;
-	b=AyhuehesFwovsPSmR0MZyoajTVTni2qhfxW79mnN8YToxlRWDmJJBV0IghempDIt5
-	 WcMMsTieq/Eiiqx6VAprgIR1wTaeSqM+YmJg4Bexcm9Bfttzeq7u+8L1PX9MKuzesI
-	 rWLGXwZSkEindfsVPjfwa2Cah+hxn3rFhHI866Sc=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f180.google.com with SMTP id
- 38308e7fff4ca-30db1bc464dso15256371fa.0;
-        Fri, 02 May 2025 01:47:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCUJpjb3GOKGsRjLO8EbwOVnurMkxC2pSpvzArouscXIlko06xsFYS9YEFZCiJUjCozWz1lMpadK79VhSqjh@vger.kernel.org,
- AJvYcCVe9M0f0CoEOJTEwtXiUwNMaulCYvgfzyzqfxPR+O2YtEGoNeb7Y6nJC76sQWTyGmJIy1ItEVgQLqoobx7dDJW8VVxIpQ==@vger.kernel.org,
- AJvYcCXmhjZbrQKVYjl0FbhvUC9iP/YRgkP/5sC+yetLlQTlB5BAmRsiz1fvBMLciraWHHeSg25UhzIEtVGSNlXrmNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP6x0m8MRq8Oa+HxC/+0xS1X9blFYk6RDRTxDGi26++3/Auf//
-	fEmZg69mePFyBRhpO/JnfhaZVoYlBeIRHV/fq+paS4qxUuPVKrurMc1FofnGq0aDo9oHFDHis7x
-	IghiD6tRnf5ncDemivspXbJpEDcA=
-X-Google-Smtp-Source: 
- AGHT+IF2KuGQUkaQynK7BvHDDgcmIvf+dtrqh24xlrv01gfQDql9QFAC3rjArY5rugDsp4TPyfbzCFjBGU71NHrcUUE=
-X-Received: by 2002:a05:651c:543:b0:30b:cb10:3a20 with SMTP id
- 38308e7fff4ca-320c5be287emr5435431fa.32.1746175622620; Fri, 02 May 2025
- 01:47:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Q2WY/Vwe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=cWF0
+	S/1MBrwO3AaGE2PAgjZIEyMy68anUlG7dJSs91g=; b=Q2WY/Vwe8J5D1vT9P09U
+	8kKZDCQVALh8zn4acmMb0P353LbK/DV16VFKsOyhoTa24bqe4HVGyxPX9Gg5P3SV
+	uVM1eMjeNCHIgyV7ZIClCSwCQEXrP4qJkrLZoxKP5bNahGCfQO4XJsjCBDQA+LX0
+	jkg5A+r9oKPYXKvZ2VVdc7vmkJBhK3VSdQRlQ4it39CYUMPebVl3L4+GwVOO9zPw
+	PUSMmFKKEonwan+zaHt1gIMpH5O8swr/584+RY6dFNkiFyLy0iO3tlO2TtytHbI3
+	DDwue0PkH/NOab1elzrRqjYtF3zzKcL2hdornlSy1k276CcAcpt0nW5uizfgc0X3
+	Lg==
+Received: (qmail 1483228 invoked from network); 2 May 2025 16:40:30 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 May 2025 16:40:30 +0200
+X-UD-Smtp-Session: l3s3148p1@C7HKISg0ioAujnsd
+Date: Fri, 2 May 2025 16:40:30 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Romain Gantois <romain.gantois@bootlin.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] i2c: Fix end of loop test in
+ i2c_atr_find_mapping_by_addr()
+Message-ID: <aBTZXsMJK3lsiUiU@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <aAii_iawJdptQyCt@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aBSE71VKfBlQg_fZ@stanley.mountain>
-In-Reply-To: <aBSE71VKfBlQg_fZ@stanley.mountain>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Fri, 2 May 2025 10:46:51 +0200
-X-Gmail-Original-Message-ID: 
- <CAGwozwFcLKRZv9_cGacJSEmOZ30CaQzS75_Vfb1DDWaNBXUvzg@mail.gmail.com>
-X-Gm-Features: ATxdqUFHSB-iugiUyjDoWuzAutbINVAvgH5CdPUAvbLxfNlUcPpwyQ8n87sJuWg
-Message-ID: 
- <CAGwozwFcLKRZv9_cGacJSEmOZ30CaQzS75_Vfb1DDWaNBXUvzg@mail.gmail.com>
-Subject: Re: [PATCH next] platform/x86: oxpec: Add a lower bounds check in
- oxp_psy_ext_set_prop()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Derek John Clark <derekjohn.clark@gmail.com>,
-	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174617562406.8474.1202650304836171656@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CJGHFGT6dwZtPHAX"
+Content-Disposition: inline
+In-Reply-To: <aAii_iawJdptQyCt@stanley.mountain>
 
-On Fri, 2 May 2025 at 10:40, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> The "val->intval" variable is an integer which comes from the user.  This
-> code has an upper bounds check but the lower bounds check was
-> accidentally omitted.  The write_to_ec() take a u8 value as a parameter
-> so negative values would be truncated to positive values in the 0-255
-> range.
->
-> Return -EINVAL if the user passes a negative value.
->
-> Fixes: 202593d1e86b ("platform/x86: oxpec: Add charge threshold and behaviour to OneXPlayer")
 
-Reviewed-by: Antheas Kapenekakis <lkml@antheas.dev>
+--CJGHFGT6dwZtPHAX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Antheas
-
+On Wed, Apr 23, 2025 at 11:21:18AM +0300, Dan Carpenter wrote:
+> When the list_for_each_entry_reverse() exits without hitting a break
+> then the list cursor points to invalid memory.  So this check for
+> if (c2a->fixed) is checking bogus memory.  Fix it by using a "found"
+> variable to track if we found what we were looking for or not.
+>=20
+> Fixes: c3f55241882b ("i2c: Support dynamic address translation")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/platform/x86/oxpec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/platform/x86/oxpec.c b/drivers/platform/x86/oxpec.c
-> index 4b48f4571b09..de70ca7e8493 100644
-> --- a/drivers/platform/x86/oxpec.c
-> +++ b/drivers/platform/x86/oxpec.c
-> @@ -582,7 +582,7 @@ static int oxp_psy_ext_set_prop(struct power_supply *psy,
->
->         switch (psp) {
->         case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-> -               if (val->intval > 100)
-> +               if (val->intval < 0 || val->intval > 100)
->                         return -EINVAL;
->                 return write_to_ec(OXP_X1_CHARGE_LIMIT_REG, val->intval);
->         case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
-> --
-> 2.47.2
->
+
+Applied to for-next with Tomi's description added, thanks!
+
+
+--CJGHFGT6dwZtPHAX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmgU2V4ACgkQFA3kzBSg
+KbYizQ/+NjG++zs7zSh4UTa3D4bQq/KDsq4uK1Lzg5zgy2VNhdkp4gGR5RXuCCO9
+UMifyNKEE0NDNInI8xIPc4LA8YtC1inlB7j53dFisRMXDw0KDdFyCtcYT7tG+lcI
+209Tc/mpnB1UgbF/LxE6Uj6xuDSWlxdsKENByJ7mBiJEBK162HYe273VHc3m1UjE
+dhAK8Y46mMXLwJ9U3XuXh5NVox9suQxeBxtO927yKAGLEzrAhm25Io3u5crwbXbp
+pg8jA9+NwTd+RYmlwmqS/Z72CxuLWaJX+T3623KPeiJOo4Fhet7nRcOD3w/CmFHH
+G17P3tXboDcoVuu7E15Db/QVg2JN4JdsseuMx/K+wBkn9geOguiZ2ltP5IeN3DyJ
+4gS8K3UMxgmUrW2oDlQhAYr2sEBjoBI2sVNtXIfXGSbA2C8ag4lwlhhDcd3IMyI7
+bF0gDj3ZmGR4I5ZluA61oTm7+9y41WUhtPELO4WrvPHx2WTtmYex69EqTdnKTdG8
+U+4IvQMPmdYdauA5Skr5fexF03cNhZ7WwQUMJM2CSJyA7dufnvzt9jYH9PyLc4ez
+HlRVG28nb0mOZ3TWOlqb4RIrYHbFEFJdHx31gitvb62xSNVHKRP08k3Z1qdFtR6A
+Cl4xQ/Q//y0ZbqmJmebrOBxi5ylxeFcbMkWmpkOQhx4Qz2is3Po=
+=8SXg
+-----END PGP SIGNATURE-----
+
+--CJGHFGT6dwZtPHAX--
