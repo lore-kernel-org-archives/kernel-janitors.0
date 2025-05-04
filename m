@@ -1,124 +1,81 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFB919755B;
-	Sun,  4 May 2025 09:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D056643AA8
+	for <kernel-janitors@vger.kernel.org>; Sun,  4 May 2025 11:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746350419; cv=none; b=NKodBsijMXOlm0/HoevvVBWpb3urtp0sNZI21g22jDYgQAMJyvTKCKhbPv06AdY6SgKvwFvbIWu3jb/L50X5/xO2eCQX1MGr1igHvWN0FGUKs1Qf1Cd6Xd/51VtohYTWxaaCxBVeYcXeW5gUQHVUYr5fPsEaCn1gw4Cgs9Ej0uI=
+	t=1746358254; cv=none; b=DwcYLZacusS/Yrpl4NwimYCS7e6JGTbK4SYnLsuPsvvpEEOz51ibPykqSh6i8NhiMZaQ8/2U5EAi+wIa5nW2SYss0I50jQdoeZ499dChQkSBBV+RyznkiYvSSBz+wtAbKod/ElOFxBsa8vbJ0ZtMSGOEYI4UbTmYa50isxg+tbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746350419; c=relaxed/simple;
-	bh=z0gGa+NmC7XPJY4PUSFXFROOY84Xqh/y2X250hFRGSY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W3fMePOxBi4TqKKdDZsTWPmMsBcqv6TWGK79uLSx4wq5D+R5NpJCjZuPbgSMBJiULMxH1Y7z/eNAkZOrSKTcz6eiGfJz1PywYVDFQZFnI4OyDlhoYYZ860SljV9gqt3hhtPz2tWxyMGxy/TzmUlnQyZk8ohr5J3HoX+mNM41dY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRC6zdVS; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746358254; c=relaxed/simple;
+	bh=Ht81KqRFYdhj6o3Gw8ymvJM+JmwvnLJV/L0dXKOReK0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=i35/fM8VGuwjdYaW/IsERRInNXhFGO9bxnDxH/lmbIp9rmL2gZvTDGsY+gLXNGg06bexVSCYw+avsTLiu6IKvkgvcyMt9OIF+rp3N9o93cMfwn8ENtnwy8FfOuEX83IwdhT9YKAZkEVNuRj/07KOn7DP55uo0lOQW13sO4/NNr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bCsMjljQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRC6zdVS"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39efc1365e4so1494178f8f.1;
-        Sun, 04 May 2025 02:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746350416; x=1746955216; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=miVLsPyv3tGgvpJpIN6lHdQtrfQb64+k98bN+2tbbJY=;
-        b=NRC6zdVSZkmMwJMACqXS8aZPzYv/XlgFn9RLKQUX978nOq44LoT4swaE2uyZ8MOi0S
-         FmBuR/21n/V3p5b/WlQlHWJSQem2chUII4lvofHGBU6dmw3uOczJmiqeo7p46ZAOYUPB
-         kJ29OnM3xe2HuvZHHeI8BGiHeklIPH+0wdGaUJb3k6etJGxJWuLGrM2WiuXbZsW1EiYi
-         g7iGFwqn5r8Ev0sCQFTye5JZT+jv8m0l5kVYFeopei88VfW0Of+N3HhwI9Pp8+J44/D6
-         lwsFT2huc+X8F/i5KuDrbcgruh4/5qj6pOiqL6Z83LBdocC0sZoOvRr5kj7ni64NSDam
-         +LyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746350416; x=1746955216;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=miVLsPyv3tGgvpJpIN6lHdQtrfQb64+k98bN+2tbbJY=;
-        b=tItQJsW3JIYcM6/VMNqA2NiIUj7KIZHwxcw2m8I0ZpUh5qLyWlCY0z8yAUghY3VkhC
-         Ec5PxbroF/wK8cJJwESHF/MetvTwTQfbgR2n3hDegRvh8QeC+WDVt7IYIUnkHvZ+BAS/
-         x8/L2heyyT4Tmw7FQ8J7ykAsmkwFZl9/FeiyRgeNErzrnc7eqjvc9UUipfQo8BEpjnPK
-         iGYCPJPvk5r1nEsnXi0d8hvN6qS+ZuWpyFh+438eot+TW3qPLzCfGj2GA50P/tUlTEYD
-         zJPIQUl0TTZR0yqOoQfPWkpc14zr3giSUDw9R6Gz84yNo23qZ8zPqCOM3YoRwzxRDtQ1
-         vFwA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3S9hAEX49R7AR7aCeK1P+9VcoDkEVe+feBjrUJU3+W9zC9PUBAKSCL5iFLaOePc5DtCemt7zl9866@vger.kernel.org, AJvYcCU7AcIzC8u2wgPFbnP/Vy2si9ktO/zcclQ2a399Y+OXV+wzRrjZZKnLzJ7ICIkCEA1+BI8CCEfesbb7aPRE@vger.kernel.org, AJvYcCVq84Q1Y9FrLqgJjfLp0elfurk3PizJ2PXOh9iFk7GlQbgO/BBvudgKFwWsC5ILWN9fID8iVWmf8eei@vger.kernel.org, AJvYcCXsHLnqePpYvhvTctAXDAkhxaaRT1cJoqry8D9/xCr8dT6VULPZWmCLSeoFMY5E6gUOY07CzzPyr7oO1jU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTYRHuImgi8875BIRdrMP8+nruo6jmDLnDni9ZSvlRbtEN6oqO
-	13Lvw5Q/xV8IZB+zU+bxyn67zcEq70oLRJodw+Lw3k82nefYa6EKJQI/2kFB
-X-Gm-Gg: ASbGnctPuLHYz46ABoYzIjEtQO1cHBq2URRbP3cFDmZQYQFO+u1+D4loTweNDdkOcid
-	SW3DBcuay1IODSVH6v4vKTrizshhATR2Tw3uQx/vQQpPT7sKiBL90RJLhPLFHsspOv2rjWqVNY3
-	aR22w8t2gJ8vvdiXLfzeHkKqoeu2xCxTFZ7wRbCIN1f+Ej29FONkZ0YtosUT2wZrpmJIe/cO3dW
-	3LRYdlNHSwMZ+h0iQsvC7bqBLVPjG3yGiN2E40T5cvgNeGkcA5Xdmx6D71+isKKCjAiRDVPTve4
-	+OA/rg05NLUZgRz+7GjlBYKspOB5cvNrHC71IvdbY+wja5Biy+GbpAp7Z0xTpFH+916E8htPDl0
-	pPcgDuGg6X4PsRDk=
-X-Google-Smtp-Source: AGHT+IEFinYmjn7z7MpKaUt4ZnpD4pRPE9D6E6BnLTvFrA9opflM1PbE8AjFJncdEBVVTQSsE8u1zw==
-X-Received: by 2002:a05:6000:40cd:b0:391:4873:7940 with SMTP id ffacd0b85a97d-3a099aef847mr6699348f8f.54.1746350415418;
-        Sun, 04 May 2025 02:20:15 -0700 (PDT)
-Received: from ?IPv6:2001:818:ea56:d000:56e0:ceba:7da4:6673? ([2001:818:ea56:d000:56e0:ceba:7da4:6673])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b0efbfsm7168302f8f.69.2025.05.04.02.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 May 2025 02:20:14 -0700 (PDT)
-Message-ID: <62b78d8c53429438fd7dfa83c07df3576f91eef5.camel@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: rectify file entry in ADP5585 driver
- section
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Laurent
- Pinchart <laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-input@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas
- Bulwahn <lukas.bulwahn@redhat.com>
-Date: Sun, 04 May 2025 09:20:38 +0100
-In-Reply-To: <20250504041040.40421-1-lukas.bulwahn@redhat.com>
-References: <20250504041040.40421-1-lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bCsMjljQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746358251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EazkyjVOz4TwmCMWeSQ28sdm9rYVdcferzElC0nH0h8=;
+	b=bCsMjljQl9WOizq/ZftzdOwihgJyPRZpogz55zmqJ/3Jei3j8YK2dFzcoGIQovIVY8AecY
+	79sVJo3Q0fM8bv+6itxV6RAnTsCuR4pdZXzjOEzuxrq2z1H/ok3E8YRTcS3uo5iPwq2ck2
+	pQxCpiNNoaMrPINuOcLSBwurzaJfCcw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-459-MF_yTTSgMg6Urhq-ULfCDg-1; Sun,
+ 04 May 2025 07:30:50 -0400
+X-MC-Unique: MF_yTTSgMg6Urhq-ULfCDg-1
+X-Mimecast-MFC-AGG-ID: MF_yTTSgMg6Urhq-ULfCDg_1746358249
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C13671956087;
+	Sun,  4 May 2025 11:30:48 +0000 (UTC)
+Received: from [10.22.80.45] (unknown [10.22.80.45])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 077EB195608D;
+	Sun,  4 May 2025 11:30:45 +0000 (UTC)
+Date: Sun, 4 May 2025 13:30:42 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Benjamin Marzinski <bmarzins@redhat.com>, 
+    Dan Carpenter <dan.carpenter@linaro.org>
+cc: Eric Biggers <ebiggers@kernel.org>, Satya Tangirala <satyat@google.com>, 
+    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] dm: add missing unlock on in dm_keyslot_evict()
+In-Reply-To: <cad25513-31c4-5895-cfc0-b9c7dce4ce08@redhat.com>
+Message-ID: <fbc26327-d14d-f049-d62e-babaab0e9750@redhat.com>
+References: <aBHZ4puON8GNK0vw@stanley.mountain> <20250430165037.GA1958@sol.localdomain> <aBJgeV7pZ7Q47OCb@stanley.mountain> <cad25513-31c4-5895-cfc0-b9c7dce4ce08@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Sun, 2025-05-04 at 06:10 +0200, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->=20
-> Commit a53fc67a1e21 ("Input: adp5585: Add Analog Devices ADP5585/89
-> support") adds the file drivers/input/keyboard/adp5585-keys.c, but then
-> refers with a file entry to the non-existing file
-> drivers/input/adp5585-keys.c in the MAINTAINERS section ADP5585 GPIO
-> EXPANDER, PWM AND KEYPAD CONTROLLER DRIVER.
->=20
-> Make this file entry refer to the intended file.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
 
-Hmm, look here [1]. That patch was wrongly applied, the series needs more w=
-ork. I'll
-see if I do not forget to fix this in the next iteration.
 
-[1]:https://lore.kernel.org/linux-input/20250502083055.GG3865826@google.com=
-/T/#m1dc8ca24c89b3b111992f388b67e17842c89d7c1
+On Wed, 30 Apr 2025, Mikulas Patocka wrote:
 
-- Nuno S=C3=A1
+> Ben already tried to fix it in dm_blk_report_zones (see the linux-dm git, 
+> for-next branch) - but his fix is incorrect because the "if" condition for 
+> dm_get_live_table and dm_put_live_table differs. I'll update his patch to 
+> fix this mismatch.
+> 
+> Mikulas
 
-> =C2=A0MAINTAINERS | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b21363fdbf4d..1401209d06df 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -550,7 +550,7 @@ L:	linux-pwm@vger.kernel.org
-> =C2=A0S:	Maintained
-> =C2=A0F:	Documentation/devicetree/bindings/*/adi,adp5585*.yaml
-> =C2=A0F:	drivers/gpio/gpio-adp5585.c
-> -F:	drivers/input/adp5585-keys.c
-> +F:	drivers/input/keyboard/adp5585-keys.c
-> =C2=A0F:	drivers/mfd/adp5585.c
-> =C2=A0F:	drivers/pwm/pwm-adp5585.c
-> =C2=A0F:	include/linux/mfd/adp5585.h
+I fixed it in the Ben's patch "dm: fix dm_blk_report_zones". Ben, please 
+review it - it's the patch 37f53a2c60d03743e0eacf7a0c01c279776fef4e in the 
+linux-dm repository, for-next branch.
+
+Mikulas
 
