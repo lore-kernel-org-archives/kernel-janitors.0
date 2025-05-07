@@ -1,89 +1,95 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C37C35280;
-	Wed,  7 May 2025 15:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0DA2C9D;
+	Wed,  7 May 2025 17:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746633346; cv=none; b=dO0pcEfHZGvhK+9+Uf5WDD6ta64utaxis4tegMEIcR9wX/ERa5p4Y4uBBFMUNl4rpOfOhGJW3xpFmwEgV3hoFepsPoTZSjYEcQP2KPt4cBFbF72KlwDei4CIWMENs2sMiBo5w3h20MtG6PbqPXk69AvVGN/Fq4RuF8nIHiDsHSo=
+	t=1746638198; cv=none; b=SimvnoTYKme2PtMoC7vDIWBnbcWp7coLQptYK3TuozEkLByZCyHaYCe4AiAduZs3nnh3j1eLlwLzqJB2VMeIl9DHjWlwGwrc1BAoY7kLjQMCrqW2gZfPCrz/aQdNLUG8ySlV6Pb0BpBohSIKXucbiXb8on/jhVpjzu+Pw3I+xaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746633346; c=relaxed/simple;
-	bh=Z4fQvV7zezeHfycJsfh6wCxmtWY4lou+a1O/Gu2oekI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a+amCV8blvFswMpih7bs8NvGjOhBUVNuHuSZra7DOLID1OGUY4VEzr0BO40BRcVvJTNQ93NqzaxfPLnvTcrgsXzo3goNj17O5C/vGk3hgQ/ElRzAcSeaq8IVB+0ZqEAW6CLDZhzjmwIoeyck2MDW0HtiSJZTihbQYE+Wsc1YIVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMH/7GGO; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746638198; c=relaxed/simple;
+	bh=ZkVo3XCJP7aTzyXcH76H1fv7+RhSJ+RWRQ4A7ntDDkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nmmJNr859P3MVvQVJZX+Ce6UmxA2qxbO1WQX0NrgJPkv0QDgQ66Q39kszSWPWgbVc6j/GpZk2bs2OMeTuVpnIqYowJuuUVwAdOBOBb6sNYHTMKXVPgN/ngLjdHq20u5DV7VeX0kM10+uROh8/Mpb+e690h9BUqt1cXm6WXc1q60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CYrxyyYm; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMH/7GGO"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-736c062b1f5so119684b3a.0;
-        Wed, 07 May 2025 08:55:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746633344; x=1747238144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7J+6P0/W2PtnIeQklrtsaIQt1IvAWvL+QcuunOlVT+g=;
-        b=RMH/7GGO7gP8Aq6CpahEu62pE8E+dPHnVI8Go5aygeZKfpdf+4EN/yez8vyZB3oTWQ
-         tR1+LIJbz5uwmq1zKcY+TfnaAFxV+pslbLHC8h2r3+gujcV6q8TwNwG7SM3OzSyqXQ5s
-         /eChQdEn5HhRVZsytQjzH29hYAwc6uC3rd0C5PBlZJYV2pQ1rAeziCpnkckOHOSkhYRf
-         Xqxzh+8EZDgyNRwX3Yvk+H3P5UJxZ7ImRduLbdhZKrwjLZeC9smN0HzHMu9f0bJbNUz4
-         9Ib4Tq0PB58kk8M0i5/+TLwf+m+MeOmSNaPOCA3QQl+8kf8JLcXp10rBivOA2UMd+6pj
-         mG/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746633344; x=1747238144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7J+6P0/W2PtnIeQklrtsaIQt1IvAWvL+QcuunOlVT+g=;
-        b=q8/IuP6iN32ygwQ7fKDOsIZT85XUVCqg3R1rfS/9Bqru4qZonv//s/6985UEPOqGUF
-         sm+fXi8O9hWozkvCA2wUfYTXkeDWVSc7t4zvA03EXkIx7qpnYkTbbSYAwNp9/xHS1keI
-         4vTvgROcMxhmNxBvWvOy92Az/N56DyAEBk/H3E7pE2zH/CMNrXxx/cih3BmNfHV6v3Yj
-         y1TOeva1gSQF9LDkCg8BKu6XkXE+Kh95ZIcytnmEw9Ficu8KJSmMyxt2RubiRjbTmgKD
-         wYm+Il6i8m31xfPhpE936Cb8scxU8boHyviWXWcKJ9+YlbautDBfQMyqTiFAPY0HTGE1
-         wyiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd5AFZKAtsV1eQCC2TEcwgW2pR4MywZKmhT05a0hBnQlmTLMwmH315tR+hNTOIuOLt5wNkS0506ShfhyDp@vger.kernel.org, AJvYcCWZmDEyTkuEmmieMexGt5HlPr19+dQhkjAUF8ikjXNcYkivto9uQhvjUodeDciun/Uh4P0H5kkZ0epM@vger.kernel.org, AJvYcCX/T5xfwefUxkM4OjHQcaEO4TzqizEx46hwkeuVzsOlBANyyRm+ILVB3QWXsNlgXseELa/N7gdVVPfkelNFd7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd16UM1d/UxO5mlBwuAvcyy6QSSoK4AhCOp6NHwsN1Kwa9hg6f
-	mAGYEF/XjrYafAXKRhrS3yJeP6IL96B1T8AsNk3VrU+4O+GFoLZuHTxQBlipYmHjigL9dt9jMej
-	eEcobBLmzm+PzsiSimISt489qsmQ=
-X-Gm-Gg: ASbGnctQ7PpNQIAj6RBYgJFEwebZAGTUlHE+J+VhDZ7pIftJP+n/5+Ta2dGG9OGacOZ
-	F1KUZr0WpPlfEUFaJsU1oewg7855mkdGzozwSDts0E+BWYyYbY0av9Bh3XVex/UUs1SRNo1/RLj
-	qYegTqezEmFmP5Xk3t7Jm25pk=
-X-Google-Smtp-Source: AGHT+IFFMkn/R9L4nCo4z35Kpikbtn3CUO8rkl3sHeyVF6TcYFb5B1vcS2HKUvJV8otqPiLKe0iyeiZSe2hc+9vurHI=
-X-Received: by 2002:a05:6a00:410c:b0:73f:f816:dd7f with SMTP id
- d2e1a72fcca58-7409cfd9dc8mr4242607b3a.15.1746633343639; Wed, 07 May 2025
- 08:55:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CYrxyyYm"
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id CiMZuIeFmUxKYCiMZu1ZE6; Wed, 07 May 2025 19:15:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746638121;
+	bh=+0ykhHojT69RVsplWj2aWmMhC2Tvr/5jv5CrtnYrBuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=CYrxyyYmDhGIsB+Jw6pW2GT3o3WBA3xZRhDDOWlq+w59EOAguncrEpZcckWkHXMpQ
+	 8QypKOdWozn98LZuru+X1XOqgh5QIErAzwPaU7mdbVpCc7hxUDVKpcwYMqhP2brWVc
+	 NZUp4wfr5nvQ/7bZfF2xW1qb5obV9NrK+mUo21+CV71vJIJQBqTs9a+6Y8vhILYFtw
+	 nIloVyZ9409AHoETMb7uChjbS2UQlHQZ4zwLLSbmGanux47j0QUs1dl9AwGguNHPdf
+	 BqQGXkEgGTm0LYxNPqpZzLQb0FfXBXW4cLDucZ1W74d5g76GRrFIZmdoJ8Xe+1XIGI
+	 j0dIfmmtIgbrw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 07 May 2025 19:15:21 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <5ab1af21-ebe4-43a4-bb70-fa25c442e24f@wanadoo.fr>
+Date: Wed, 7 May 2025 19:15:18 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aBtZFLFlr0slcYSi@stanley.mountain>
-In-Reply-To: <aBtZFLFlr0slcYSi@stanley.mountain>
-From: Gyeyoung Baek <gye976@gmail.com>
-Date: Thu, 8 May 2025 00:55:32 +0900
-X-Gm-Features: ATxdqUHlwff0xDQnDUy2qyTLeOnosqcRlN4DKZfqoeV7iLCnewEnV1wpLavy37Y
-Message-ID: <CAKbEznv074pBjgYUAwe4CFBv8=qRVUOp+1NrasGDqH6vyDJOgQ@mail.gmail.com>
-Subject: Re: [PATCH next] iio: chemical: mhz19b: Fix error code in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] ASoC: rt712-sdca: remove redundant else path of if
+ statement
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Oder Chiou <oder_chiou@realtek.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+ linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250507140907.255562-1-colin.i.king@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250507140907.255562-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 7, 2025 at 9:59=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> Return -ENOMEM if devm_iio_device_alloc() fails.  Don't return success.
+Le 07/05/2025 à 16:09, Colin Ian King a écrit :
+> There is an if/else check where the else part is executed if
+> adc_vol_flag is true, this else path checks if adc_vol_flag
+> is true (which is a redundant second check) and the if path is
+> always taken. Remove the redundant check and remove the else
+> path since that can never occur.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>   sound/soc/codecs/rt712-sdca.c | 8 ++------
+>   1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/rt712-sdca.c b/sound/soc/codecs/rt712-sdca.c
+> index 19d99b9d4ab2..570c2af1245d 100644
+> --- a/sound/soc/codecs/rt712-sdca.c
+> +++ b/sound/soc/codecs/rt712-sdca.c
+> @@ -1065,12 +1065,8 @@ static int rt712_sdca_dmic_set_gain_get(struct snd_kcontrol *kcontrol,
+>   
+>   		if (!adc_vol_flag) /* boost gain */
+>   			ctl = regvalue / 0x0a00;
+> -		else { /* ADC gain */
+> -			if (adc_vol_flag)
+> -				ctl = p->max - (((0x1e00 - regvalue) & 0xffff) / interval_offset);
+> -			else
+> -				ctl = p->max - (((0 - regvalue) & 0xffff) / interval_offset);
+> -		}
+> +		else /* ADC gain */
+> +			ctl = p->max - (((0x1e00 - regvalue) & 0xffff) / interval_offset);
+>   
+>   		ucontrol->value.integer.value[i] = ctl;
+>   	}
 
-I missed that devm_iio_device_alloc() can return NULL on failure.
-Thanks for the patch!
+Hi,
 
-Acked-by: Gyeyoung Baek <gye976@gmail.com>
+apparently the same pattern is in rt712-sdca-dmic.c.
 
---
-Regards,
-Gyeyoung
+CJ
