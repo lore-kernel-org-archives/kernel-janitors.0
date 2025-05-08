@@ -1,111 +1,101 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C61278173;
-	Thu,  8 May 2025 14:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BDE2741CB;
+	Thu,  8 May 2025 14:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746715812; cv=none; b=ZjL94g5jG6qSURCKXO+LYCd07AtVwklNqvHuS0J0A/WNf4Ng6aqhoj4WUEF591z/aefFz9oUbIAiXvet+9D+hX4Zfoe5DEKSwHHrVXSG3pbRPVq+GSbQicfTguDvSp95QG7yjPw53WWSaP8/ZKG8NwNIWNiT8i+hxGFbxg9Y6lw=
+	t=1746716064; cv=none; b=Pz+Ny7IsqS3iI76F9DR+sJ8vlpdIM4834FiUcGDfcFDGXsLktIJRLdhTMpsWy8QOazbITbtvtv06L5Ukf6aZGvUWh2cA+Z2SoEHQiA3LY6NgnLsKS1LJFE5hJgydhEZxEaQz+DyGN30MSmm/ug/RqYfSfXl6IO3EJQujgvx3O+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746715812; c=relaxed/simple;
-	bh=h5JXwZOrZjX1PiuoSkTRy/HM8infmDLDEeWmTc0QT+I=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GeXNEIjYXDs5FkTY8JJZM2bmAsju2h5jbCEu0Fzp407xcwuikLKuQBrw1Z72xwyj7Zcx6EDmEfiLM9XKWA2u04+bpYayzgCkWOIQsWXgxY/HdHUIH8rQZx0QE1dtImkLFjOzlhyyEKvCcTW4q85D5ts92Fq9MzC5tYi4+E3gQsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fSwf3JFO; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1746716064; c=relaxed/simple;
+	bh=1ONmakleqe1plbdupt6Kh9XABBF1Eeb8V1otE18wMtU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Br5ugbvAn1z8sICMUcVTAYMRVaqJd5Q8ClUdHurmsE08pemezTUKJCJP7KM/pOkP9dZVBBY6xtQxx5Dj3YN4gVmuEKDP2bIqZeqs64jDW3wOUv7HCADn1vBoQhcofVj8py6pK7Qp2vdV7Aev/qcF0IGTTKQNMJk1dUa8tHSL+cA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=K5JwIVyr; arc=none smtp.client-ip=80.12.242.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fSwf3JFO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746715811; x=1778251811;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=h5JXwZOrZjX1PiuoSkTRy/HM8infmDLDEeWmTc0QT+I=;
-  b=fSwf3JFOyZvtgk+PMYUex29plHDbggCRuXBM0YnCgsNKYiUEYZ7+IKiX
-   8XP2zoGWHfW457L6GdH4DKNPy3pGj7+ZEnhesKPapmmvO9MmI20b/OqMc
-   Aeb0iWuPBw1LH0wZhGeON/Ochb+0+GeGTg+ll5zuB8BFDdht2eWeDpCn8
-   Er0fiYW0nqy0X2iZFlPkuHk23QY4Xp+j76hN/QDml54QcyzeIqHnK14DS
-   2MOpW3jaUQarhNTFQUGKdByolw1H8W1bMz6yNZkJhvR+m9O/NA7kx1MjC
-   BJSU9UCQP6FMfA8iSuIkDNP4YR4eLUc8C4HrTDkcwJClH/g022Sp6qouu
-   A==;
-X-CSE-ConnectionGUID: 35iQnzwWQ3W1+iIJ6FkciA==
-X-CSE-MsgGUID: vKmsQEf3S5Cl8o9LFPmaHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="73884241"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="73884241"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 07:50:09 -0700
-X-CSE-ConnectionGUID: zXAHobs+Q6q9wnLF4V6+mg==
-X-CSE-MsgGUID: G3Hb/OH3RYmzU02WnU80EA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="136270799"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.196])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 07:50:06 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 8 May 2025 17:50:02 +0300 (EEST)
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-cc: =?ISO-8859-2?Q?Micha=B3_Kope=E6?= <michal.kopec@3mdeb.com>, 
-    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
-    kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: rectify file entry in DASHARO ACPI PLATFORM
- DRIVER
-In-Reply-To: <20250507075214.36729-1-lukas.bulwahn@redhat.com>
-Message-ID: <de8baa52-3d31-b3da-07ba-73bdbc3e8469@linux.intel.com>
-References: <20250507075214.36729-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="K5JwIVyr"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id D2cYuomdl816KD2cYuwCQe; Thu, 08 May 2025 16:53:12 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746715992;
+	bh=vArwvLV+DEZKEL8y1k44EnYo/gsnysUUsECWxXjPHCQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=K5JwIVyrFl6zcwMB6BQ36dIsDj2X5gjjP4iZB+SlpYmP2JtaxFRgYzcbuoxDx1kMf
+	 QLsUE9nuRN4/kfeaOUkxWp9QjFslP7RYi0QCKfkVL8uaHvkszJcd8FH3S+B56O17L0
+	 KzhGx6eyeL9rpqlvzvfh8mkXyQ7CYuMdw5sk6J2DiaQ+8XvshmxNa+0MsWQ4p+yfGF
+	 2ECs5s8RVo4S1Qq5oMu9neMacarqYYtV7I+HJ1nFMw4TSOh9IeeOD537YlRCJwMFIq
+	 GL1qcyEJUg1GFSwHDD5PzXriZSLsDQ2DTF9pGQ1CVtlbNEMv96yhLfyf67tWowAdXX
+	 bMubNTgI5UJ3Q==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 08 May 2025 16:53:12 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v2 1/4] net: airoha: Fix an error handling path in airoha_alloc_gdm_port()
+Date: Thu,  8 May 2025 16:52:25 +0200
+Message-ID: <5c94b9b3850f7f29ed653e2205325620df28c3ff.1746715755.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-2101696879-1746613595=:949"
-Content-ID: <d44eb777-e7a6-e946-8cfa-8a6f050dbc7c@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+If register_netdev() fails, the error handling path of the probe will not
+free the memory allocated by the previous airoha_metadata_dst_alloc() call
+because port->dev->reg_state will not be NETREG_REGISTERED.
 
---8323328-2101696879-1746613595=:949
-Content-Type: text/plain; CHARSET=ISO-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <fb6249b1-c18b-b376-2862-7876133daee7@linux.intel.com>
+So, an explicit airoha_metadata_dst_free() call is needed in this case to
+avoid a memory leak.
 
-On Wed, 7 May 2025, Lukas Bulwahn wrote:
+Fixes: af3cf757d5c9 ("net: airoha: Move DSA tag in DMA descriptor")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Changes in v2:
+  - New patch
 
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->=20
-> Commit 2dd40523b7e2 ("platform/x86: Introduce dasharo-acpi platform
-> driver") adds the platform driver drivers/platform/x86/dasharo-acpi.c and
-> a new file entry referring to the non-existent file
-> drivers/platform/x86/dasharo_acpi.c in section DASHARO ACPI PLATFORM DRIV=
-ER
-> rather than referring to the file added with this commit.
->=20
-> Adjust the file reference to the intended file.
->=20
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 34a55e3ff863..82e7b053ea76 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6576,7 +6576,7 @@ DASHARO ACPI PLATFORM DRIVER
->  M:=09Micha=B3 Kope=E6 <michal.kopec@3mdeb.com>
->  S:=09Maintained
->  W:=09https://docs.dasharo.com/
-> -F:=09drivers/platform/x86/dasharo_acpi.c
-> +F:=09drivers/platform/x86/dasharo-acpi.c
-> =20
->  DATA ACCESS MONITOR
->  M:=09SeongJae Park <sj@kernel.org>
+Compile tested only.
+---
+ drivers/net/ethernet/airoha/airoha_eth.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-I've folded this into the original commit.
+diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
+index 16c7896f931f..af8c4015938c 100644
+--- a/drivers/net/ethernet/airoha/airoha_eth.c
++++ b/drivers/net/ethernet/airoha/airoha_eth.c
+@@ -2873,7 +2873,15 @@ static int airoha_alloc_gdm_port(struct airoha_eth *eth,
+ 	if (err)
+ 		return err;
+ 
+-	return register_netdev(dev);
++	err = register_netdev(dev);
++	if (err)
++		goto free_metadata_dst;
++
++	return 0;
++
++free_metadata_dst:
++	airoha_metadata_dst_free(port);
++	return err;
+ }
+ 
+ static int airoha_probe(struct platform_device *pdev)
+-- 
+2.49.0
 
---=20
- i.
---8323328-2101696879-1746613595=:949--
