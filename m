@@ -1,74 +1,70 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE920E314
-	for <kernel-janitors@vger.kernel.org>; Thu,  8 May 2025 06:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB08218ABD
+	for <kernel-janitors@vger.kernel.org>; Thu,  8 May 2025 06:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746685592; cv=none; b=ozxjF6QqkHzru7RGBaxsW0FORQIOm4jAFm2RTbVtcQLpZiTz+KaOYywiaDqgUi8jcbSQI5gjYgiLFJd6xn/0cYcEjDDzn2om4v7qi4gIeL3D/Cv7inXawGAW4gyvOj01F/0sHqCh4ajgikqvGU05tw8P8DsxFYKYxh8K+BQHFfQ=
+	t=1746685771; cv=none; b=OTIRN9LW0OxMo7ec5ye+z5R3Hog+TeQSVI91aq6Ma/tHebRupgaxN06EG+Rjv4K+811h36ceNVlzluBvztTmuZwz+7/Zia7+4rIXMdnL4B+P7i4w7YM9xuW9CWwXln2DVCWmST8yh/7mLzr7BJyoW38Ij7ZHR3QSiXvylSNXFto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746685592; c=relaxed/simple;
-	bh=RDPgm5xhma7QFLB18+5pqsvzgjikpNdaONSF0MiESTo=;
+	s=arc-20240116; t=1746685771; c=relaxed/simple;
+	bh=nvAOftu8RZvdo9jR+7uDcoM7mg78LNDiZJ9RZTqBFTU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UwiJ+Vb2KfWCBdzOC4Zr6S7qCHsrRN5TV6sFMwIfOTRQIyJNymnTn7sJXwXAYtqAD9XYqAtB/A6W/5AzQfr2AtKxMjie9vXWkMmrxhv0O731u23fAFY8E1t5ibXOaG3o5KVk1Ai5gIJLemgGELQiVZx8dim9ybqPYiQKvWjoQEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fnS3IeSp; arc=none smtp.client-ip=209.85.128.46
+	 Content-Disposition; b=Pn2JsZGGcWlBfVDZqhOyltOXmom4ZasiWiDF1lZsbrl8nrvKtVw3OeMQlYqbMYUkuBCHezhoELcbskdFrFaC3jvqvY/9ILxtaFFvd2isuOY1DiY9kM6Wd6LgqjbjrsP51ISu6gkaGaA3YTLwETP/MnCxYy+DLXVjfIOzxnaEArw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ASRF76rU; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fnS3IeSp"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so12337425e9.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 07 May 2025 23:26:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ASRF76rU"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so2550195e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 07 May 2025 23:29:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746685589; x=1747290389; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746685766; x=1747290566; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vrj9ukkKygc1G8rKTTqLX2onZSR0aOFlnCDnYrntq9Q=;
-        b=fnS3IeSprMBvRYeEMrUA2d8rKUtOZPD13FDaKWxGfIhU0WsZJvvVdKDKQMf5+7e1t5
-         v206AGlMvxUm1T6Bq4Hf1SxlVefN01MJn3cmlFpGswzHy4PsPxeTo3UXlQUARs56Q3nb
-         OkA223MdQu1harumoYixuEKA/lywl0gWJ6fn8JfhBiZTRmMrqMMy8mRBflCnZeuIP8rs
-         noPQ0JBL0wTO7hbvdVyDo+VfAVwkxwA0/+2O5V2oiD1zIyQ1nDZo/uv0FYhwpnFLBxKE
-         87M4bZgooqdYCK4kK1L17GSuoucVq7LSHeeV5KZq7oFG2xCaKeT/4qHtXKLIn54QOxr2
-         CApQ==
+        bh=2/4bzmi3WeEDbTzTrWnva98EY9qxtiVDbKUh9os0Wng=;
+        b=ASRF76rU+oOGWhmnMMxRGZPnXK3rtLnBpRXUFejEdLp/KYAJz7st/87ui6hKnwKPGM
+         36BW+WiFnPeDBVY2OqpmuvgKQqXQhCV/7zEFMsADo2SWml1qUuQQrkZCse7aM6dHEgT6
+         Os90z5dDV/Clw+nbCQ+MQXP0FUACBP30g3XpaPqfwV713B7mjxY5LvDP181TOVlGtYKH
+         +8SFcxinreTVILfiLJ+46xvvKZJ7I8Ex2/wcgNY297BjX7DSl9k8KGvzL/EwLJyDFEck
+         Sa6OuiWz+4QbQqCd/3jguzgK3ile1yzNkYT9RB0Tf9tOBKFxl53vAZONNZGcQWAmJv+B
+         neLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746685589; x=1747290389;
+        d=1e100.net; s=20230601; t=1746685766; x=1747290566;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vrj9ukkKygc1G8rKTTqLX2onZSR0aOFlnCDnYrntq9Q=;
-        b=f5BE92HoaLsiPkTdUDDAgM0hxPGeehIFbabgPbKW5ukv2tM82IGHfc+mOV5R2FfP4Y
-         Rxmu8GOsgVCjOgJH30qIm97EBoUPknQ5l2bSpCIQaPfqgL6UCwJNhbprthc6HJL5S7XB
-         /I6hTPwoo6oHoVQ7s+YkPORtI/ynmtNpiYulmzj35WoitLlZWRYJnrv/2FSW56vCbJtH
-         5YqcFOqtWS0r9oIQIim9hNCmzUlT9QFGMedaCGbTWBixvZzwqn1nfjoRDFoGO5UdUoVP
-         FsnSHm03c9eheCkWVbb6N9B/IDKr6KvBsNCb2+Mx0k5bzYTBUopHzF2i0yX9hvWD5xjW
-         R7pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXV510WOAvcnjWPInz8GUHL9AEL7vcLsAwZOQn+KrCPkYfvjd7R/E7byEKm6vOrsJ/Q2U4+Sk+s8k51lawBB3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyzrbfvkYsAi0Vk+Epl2uDMj/YlHgahDOGJYZ01RRcS91LOir0
-	Nv/LNjo5/Ma72VBzXRnqdRSw/CoeHUlW4/Bo1903g238b607SXidmiAqFOjhi2o=
-X-Gm-Gg: ASbGnctqr3tSXrhoAlpFh6WF+I1wtQJgkeP2HY1Z0SIs+MP3YAYSnsaB9cB1x1sE404
-	ZFDrgXGogHqZgx8u2XM8V04vCAFJ+WTeA0H0SltEj2PvXTKIoIELISg7KmMo6mBb52PYVUllMsU
-	md3p+OijFQGdq3VZTRi4DUUmGP2BnWwuWOWDY6UO4jXt1hB9eUakJ+HlmurDTcsQUroRCJuhu7D
-	cqmbRkXnibJsN1NxZ0a3d4ZGArnGdtzUC6p7IGW2xHp+n4mZh7LXQJeWI+J7Q7verbsNH1lRI0h
-	lEkRxvUF2C+wmhTERI0m9y1bKKMFDFpdTn1fWjdBoAIHTQ==
-X-Google-Smtp-Source: AGHT+IFAMx7JUFXY3xA7TDuVFEdfH0Qfm/mO3IujmuFv9MragYBfI8mgTfu7zRm8OHQ8pIMC9sOyhA==
-X-Received: by 2002:a5d:64ed:0:b0:3a0:b138:4810 with SMTP id ffacd0b85a97d-3a0b99171ecmr1632328f8f.17.1746685588890;
-        Wed, 07 May 2025 23:26:28 -0700 (PDT)
+        bh=2/4bzmi3WeEDbTzTrWnva98EY9qxtiVDbKUh9os0Wng=;
+        b=LuQkbRWKDlNLYU/lR2gu0qsOtuEXZXSXPPObY3eRvUcsvlDn4jDcMu2LNcgqh6oj4C
+         nGJo6r3k3YxEz3ta4W12gMl+U+g5B9FVbEOwhCq4IwBs6ntnuPp/Dg+xkSBJpJCktwny
+         qrXibt+WGtNYKCFvTvFdOiTa4XvwN0rRhFFWLfxC1KMdole38IODfl9JIg/USV79fMKx
+         R12sWQpytZTmBpGuuCRVWDhfReIUUN15jMP8o0hjqQikLk7zHHAUb5/gcQNwcg7wJwyt
+         tboiL8B5gMpvL2BOreWX+65btv9HdmY3qXe/wvqznGyPU/E6+w7dJzIAICSNRuFH04O2
+         sU/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXfPeukhjuFi7WqEX8eKeG1ZNjxtxLK/44YSrZzgHeuaPTxiZq2m+aF+5cjYqoKW/IoMsWmIKxTPSMMMwDQjGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb/VAi+pyv0ZmQXN03tbUok+s4pjDvSEin9lSJaegshsNulruI
+	vqdiFhOfCm07+/IWO7WmUbpiWcaepZOxjxqK3OuzUdKCnyjkOGl8hhKYsW6/j+A=
+X-Gm-Gg: ASbGnct2JMJbUV54/F6vN1PAg6Nw5Y4p+YUOsHGKJoD8uJq3TEr5ZvZW0stJaZ1/BCH
+	DHnIe2/SH5UVxlg+WkTmdUXrFbmk3DgRM8w0hjRrHbweJL4eBBaYMi968FqoCvIlHceJuZgSBHc
+	MebEeHjY5k2J7GixbhtwQHeckciL/ijzIVxutlveWJrMoWtBUjy6qTZ3tH37oPkLv2whn5MnUsI
+	0Ok/yGe1EItxm4fZhClf0GdjpUQT5JvbliNatTaNR7YfzUlO66g37yrQghAzsa7zSrl+xFEUXzl
+	Ct67JgrZAGJmgYSevpX9+0zME1mdrFa0CLLrDes2ZyDxUA==
+X-Google-Smtp-Source: AGHT+IED9IVqI1ICbHb0y7mZgDW+1JcDLNkQqI9Ufmww05m3kDmPH3IE5qhfjUZINH4pYQlMToViTA==
+X-Received: by 2002:a05:6000:430d:b0:3a0:b8b0:4418 with SMTP id ffacd0b85a97d-3a0b8b045f4mr2297566f8f.50.1746685766494;
+        Wed, 07 May 2025 23:29:26 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099b178absm19380008f8f.97.2025.05.07.23.26.27
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a0b81a1b9asm2527467f8f.0.2025.05.07.23.29.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 23:26:28 -0700 (PDT)
-Date: Thu, 8 May 2025 09:26:25 +0300
+        Wed, 07 May 2025 23:29:26 -0700 (PDT)
+Date: Thu, 8 May 2025 09:29:23 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Laurent M Coquerel <laurent.m.coquerel@intel.com>
-Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	George Abraham P <george.abraham.p@intel.com>,
-	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
-	Karthikeyan Gopal <karthikeyan.gopal@intel.com>,
-	qat-linux@intel.com, linux-crypto@vger.kernel.org,
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] crypto: qat/qat_6xxx - Fix NULL vs IS_ERR() check in
- adf_probe()
-Message-ID: <aBxOkY99jQF7q-7M@stanley.mountain>
+Subject: [PATCH] pmdomain: core: Fix error checking in
+ genpd_dev_pm_attach_by_id()
+Message-ID: <aBxPQ8AI8N5v-7rL@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,30 +75,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The pcim_iomap_region() returns error pointers.  It doesn't return NULL
-pointers.  Update the check to match.
+The error checking for of_count_phandle_with_args() does not handle
+negative error codes correctly.  The problem is that "index" is a u32 so
+in the condition "if (index >= num_domains)" negative error codes stored
+in "num_domains" are type promoted to very high positive values and
+"index" is always going to be valid.
 
-Fixes: 17fd7514ae68 ("crypto: qat - add qat_6xxx driver")
+Test for negative error codes first and then test if "index" is valid.
+
+Fixes: 3ccf3f0cd197 ("PM / Domains: Enable genpd_dev_pm_attach_by_id|name() for single PM domain")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/crypto/intel/qat/qat_6xxx/adf_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pmdomain/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/intel/qat/qat_6xxx/adf_drv.c b/drivers/crypto/intel/qat/qat_6xxx/adf_drv.c
-index 2531c337e0dd..132e26501621 100644
---- a/drivers/crypto/intel/qat/qat_6xxx/adf_drv.c
-+++ b/drivers/crypto/intel/qat/qat_6xxx/adf_drv.c
-@@ -156,8 +156,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+index cd4429653093..ff5c7f2b69ce 100644
+--- a/drivers/pmdomain/core.c
++++ b/drivers/pmdomain/core.c
+@@ -3176,7 +3176,7 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+ 	/* Verify that the index is within a valid range. */
+ 	num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
+ 						 "#power-domain-cells");
+-	if (index >= num_domains)
++	if (num_domains < 0 || index >= num_domains)
+ 		return NULL;
  
- 		/* Map 64-bit PCIe BAR */
- 		bar->virt_addr = pcim_iomap_region(pdev, bar_map[i], pci_name(pdev));
--		if (!bar->virt_addr) {
--			ret = -ENOMEM;
-+		if (IS_ERR(bar->virt_addr)) {
-+			ret = PTR_ERR(bar->virt_addr);
- 			return dev_err_probe(dev, ret, "Failed to ioremap PCI region.\n");
- 		}
- 	}
+ 	/* Allocate and register device on the genpd bus. */
 -- 
 2.47.2
 
