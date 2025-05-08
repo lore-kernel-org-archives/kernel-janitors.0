@@ -1,40 +1,40 @@
-Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+Received: from smtp.smtpout.orange.fr (smtp-75.smtpout.orange.fr [80.12.242.75])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7A518DB01;
-	Thu,  8 May 2025 16:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89A127AC47;
+	Thu,  8 May 2025 16:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746720093; cv=none; b=D470tNCy3SS+I+GNwlr32fvLPOBUFbwCiH7GmbDVarNgBLT5VpTcWoNgx/ps1dRhSkBKYYdR3hE2QVc7EhfI7KrDpPC9+QyhPur6dvJcM+qyuG/1UWK/CvaIzN2G1RQlL827C0NOhl2Ohvmx6aeBh8kFLF7bs9TO/HFruPYNZio=
+	t=1746720402; cv=none; b=kwODx6550o+AoqadTZycxs9MYexyJ6Ov4BhEbfUmnUmvbEgDOlgVdwffBVbcH6QVXYXwEx9vkQBldcnJ1g7nUsXuWyBtbdji8uXAsxFDHr3h2Eel0u0K5CMhKBxKjed53Uff4S6Ie60Gb3sTghHtqb7k1jg8BnchRSO9G+iLqdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746720093; c=relaxed/simple;
-	bh=FoMJWdZ1VZoh+VgPlUDE0m+2XpvQAGKfgx71UtqClrs=;
+	s=arc-20240116; t=1746720402; c=relaxed/simple;
+	bh=ZXF39FFw9bSaoaPc3UbH1V0LnHSE+53rFY6xbOMm1J8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=camXouZYDMK11ZeUtK7ks8cHJRAVEF+gui+WFOeBlc3b10A8IWbFTg8ERDCWnzDLq8b0oqJjfkBrtoW+bn9oaVZAwBHXOr3A/NT18m0CbflrAH1oIwiUgnIzbAhKbGzQsOz0XVjYa6raqxB/PmHr2WKvocVGWqY99FnykI5Gk0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BWEKViV9; arc=none smtp.client-ip=80.12.242.69
+	 In-Reply-To:Content-Type; b=hnI6xyUSom4D70YzdnXbgVurcvYzVLVDq2ag3xhxIdaoaUXLxmRANi4vJaFMYFlitQdborq2oGFettSJSbD4sEAaj64apsiwjMEsqMvoDBT+lMK23rZ/fdsWCJbEW6SiWuTGqL1VYC1RSkhJMOUas90o6DjKjsKANB4Tm6T7mMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ATwY6ABM; arc=none smtp.client-ip=80.12.242.75
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BWEKViV9"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ATwY6ABM"
 Received: from [192.168.1.37] ([90.11.132.44])
 	by smtp.orange.fr with ESMTPA
-	id D3fTuFhAsh9deD3fTuUC05; Thu, 08 May 2025 18:00:19 +0200
+	id D3kUuhiTn5oOhD3kUuQpGk; Thu, 08 May 2025 18:05:29 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1746720019;
-	bh=VkGBMQgjeGBCArxNyqBLEp0bu3yaKzmfKDbWpDOIDV0=;
+	s=t20230301; t=1746720329;
+	bh=i3Zcprdv1SvQj0eiycKQXI51YCMEuANQ9KWCXytXxLs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=BWEKViV9LpG1HaJR0L1DVXeLeQZazyjHC14DAaINZvMXNWG4ClO8+K7ZgNGHD6bx7
-	 kO84ccrRyDSX6Y5vwBLgupmSSoAZx9QT0GyvgxQxL1JR7s0k6e2kiu/4uJujpB0f79
-	 w43JX7RmvYk8GJ32Yzil07MPI4pHxG/KJ2aqFiqRGLSR1bj8uD8ZwNTrvEpl+yf+u/
-	 /LGuBf7uWyvyxDOXT7g9qR8BOYIe9NufZ9J/3h/lFS3iFjPp3WbxWQr8/7WOxlKZ5B
-	 uXmZMP9fusoaopK7pCI+GdS84hFTQJAOnPHU31hf79+b0l2dYZtBKeP32ugC/b+I7n
-	 LrJFIySFD5WDQ==
+	b=ATwY6ABMjL9h2bymt7e78pl9aKcyh+EW5/LzWCMpLnKdY3A2MnCK2IfN54Cblz188
+	 frUSBSmFo3Mlo+ZWoWEk6Gk6woIflGmSyUb+BEg9JuLGXjzvWEzbQnuhtX9xd8xDN3
+	 1HcGPT8iZJNsZH964+0wBxoS09nQ7HOhHtgS4XMixHUiF8qDVtN16RE8zjFEUeMmve
+	 l9oD4xuiMRY97u+tI1uWtlIPxAgUeGkX1KFYAfUQmJNZp/7IAeCnt6EPJpwUU34YfO
+	 /xiXGagHB/5+fIGOLgaCdeSONbXd0FhUslqS+faTY2gQ/df8VyzjbAtPlQZ4qoOPXS
+	 1G/utI/oMG2Kg==
 X-ME-Helo: [192.168.1.37]
 X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 08 May 2025 18:00:19 +0200
+X-ME-Date: Thu, 08 May 2025 18:05:29 +0200
 X-ME-IP: 90.11.132.44
-Message-ID: <aeab63d4-9740-4213-86c3-ca975762046e@wanadoo.fr>
-Date: Thu, 8 May 2025 18:00:15 +0200
+Message-ID: <68149c51-ba75-4f0f-a86a-bd810d47d684@wanadoo.fr>
+Date: Thu, 8 May 2025 18:05:26 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -42,7 +42,8 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] net: airoha: Use dev_err_probe()
+Subject: Re: [PATCH v2 1/4] net: airoha: Fix an error handling path in
+ airoha_alloc_gdm_port()
 To: Lorenzo Bianconi <lorenzo@kernel.org>
 Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
  <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
@@ -51,20 +52,22 @@ Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
  linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
  netdev@vger.kernel.org
 References: <5c94b9b3850f7f29ed653e2205325620df28c3ff.1746715755.git.christophe.jaillet@wanadoo.fr>
- <1b67aa9ea0245325c3779d32dde46cdf5c232db9.1746715755.git.christophe.jaillet@wanadoo.fr>
- <aBzROQyQ_5oHmYr3@lore-desk>
+ <aBzOaiU6Ac3ZTU-4@lore-desk>
 Content-Language: en-US, fr-FR
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <aBzROQyQ_5oHmYr3@lore-desk>
+In-Reply-To: <aBzOaiU6Ac3ZTU-4@lore-desk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 08/05/2025 à 17:43, Lorenzo Bianconi a écrit :
-> On May 08, Christophe JAILLET wrote:
->> Use dev_err_probe() to slightly simplify the code.
->> It is less verbose, more informational and makes error logging more
->> consistent in the probe.
+Le 08/05/2025 à 17:31, Lorenzo Bianconi a écrit :
+>> If register_netdev() fails, the error handling path of the probe will not
+>> free the memory allocated by the previous airoha_metadata_dst_alloc() call
+>> because port->dev->reg_state will not be NETREG_REGISTERED.
 >>
+>> So, an explicit airoha_metadata_dst_free() call is needed in this case to
+>> avoid a memory leak.
+>>
+>> Fixes: af3cf757d5c9 ("net: airoha: Move DSA tag in DMA descriptor")
 >> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 >> ---
 >> Changes in v2:
@@ -72,39 +75,66 @@ Le 08/05/2025 à 17:43, Lorenzo Bianconi a écrit :
 >>
 >> Compile tested only.
 >> ---
->>   drivers/net/ethernet/airoha/airoha_eth.c | 21 +++++++++------------
->>   1 file changed, 9 insertions(+), 12 deletions(-)
+>>   drivers/net/ethernet/airoha/airoha_eth.c | 10 +++++++++-
+>>   1 file changed, 9 insertions(+), 1 deletion(-)
 >>
 >> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
->> index 2335aa59b06f..7404ee894467 100644
+>> index 16c7896f931f..af8c4015938c 100644
 >> --- a/drivers/net/ethernet/airoha/airoha_eth.c
 >> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
->> @@ -2896,10 +2896,9 @@ static int airoha_probe(struct platform_device *pdev)
->>   	eth->dev = &pdev->dev;
+>> @@ -2873,7 +2873,15 @@ static int airoha_alloc_gdm_port(struct airoha_eth *eth,
+>>   	if (err)
+>>   		return err;
 >>   
->>   	err = dma_set_mask_and_coherent(eth->dev, DMA_BIT_MASK(32));
->> -	if (err) {
->> -		dev_err(eth->dev, "failed configuring DMA mask\n");
->> -		return err;
->> -	}
+>> -	return register_netdev(dev);
+>> +	err = register_netdev(dev);
 >> +	if (err)
->> +		return dev_err_probe(eth->dev, err,
->> +				     "failed configuring DMA mask\n");
+>> +		goto free_metadata_dst;
+>> +
+>> +	return 0;
+>> +
+>> +free_metadata_dst:
+>> +	airoha_metadata_dst_free(port);
+>> +	return err;
+>>   }
+>>   
+>>   static int airoha_probe(struct platform_device *pdev)
+>> -- 
+>> 2.49.0
+>>
 > 
-> Can dma_set_mask_and_coherent() return -EPROBE_DEFER? The other parts are fine.
+> I have not tested it but I think the right fix here would be something like:
+> 
+> diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
+> index b1ca8322d4eb..33f8926bba25 100644
+> --- a/drivers/net/ethernet/airoha/airoha_eth.c
+> +++ b/drivers/net/ethernet/airoha/airoha_eth.c
+> @@ -2996,10 +2996,12 @@ static int airoha_probe(struct platform_device *pdev)
+>   	for (i = 0; i < ARRAY_SIZE(eth->ports); i++) {
+>   		struct airoha_gdm_port *port = eth->ports[i];
+>   
+> -		if (port && port->dev->reg_state == NETREG_REGISTERED) {
+> +		if (!port)
+> +			continue;
+
+I think it works.
+
+We can still have port non NULL and airoha_metadata_dst_alloc() which 
+fails, but airoha_metadata_dst_free() seems to handle it correctly.
+
+CJ
+
+
+> +
+> +		if (port->dev->reg_state == NETREG_REGISTERED)
+>   			unregister_netdev(port->dev);
+> -			airoha_metadata_dst_free(port);
+> -		}
+> +		airoha_metadata_dst_free(port);
+>   	}
+>   	free_netdev(eth->napi_dev);
+>   	platform_set_drvdata(pdev, NULL);
 > 
 > Regards,
 > Lorenzo
-> 
 
-No, it can't, but using dev_err_probe() does not hurt.
-
-Using dev_err_probe():
-   - saves 1 LoC
-   - is consistent in the function
-   - log the error code in a human readable format
-   - generate smaller binaries (can easily be checked with size)
-
-So, even if "unneeded", I think it is still a improvement.
-
-CJ
