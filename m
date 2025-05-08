@@ -1,45 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66139272E6F;
-	Thu,  8 May 2025 14:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFF527510F;
+	Thu,  8 May 2025 14:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746714779; cv=none; b=gDjrB58PVRGlwN+4fLJG9+aoPGkgONCZTOmnAFp45q+EkYhofJOj5B9YidUhD8rkjVydFoKHJ9XiQ8Vd+LmGExAdiVutCd6ZjL2B6kx3IepyFLt9Qc/LZF1UPDW7EPIl0123Ct01BPGt5yg/tE3DnhQfS9MaTW+A6dR+I/N57Rw=
+	t=1746715142; cv=none; b=kKC74CtPR1eW636zn5XfVNw62Woz5uHeJzS2bUSj19hu9wFMF6+IQ80NvndDiLHMX+LKdNht0f54Hi6CTMBdKjguLLRTqp35S4731j32sIfGBgFKklFjgvByQ+avH+NMpBynLByP4p3cfWSMUlTcEc0oeOUZdabs6Jm+o7fF9Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746714779; c=relaxed/simple;
-	bh=NxGW7N90fDSOJso1seyJ02kkBD8Q8q5t1i2zP+DewbQ=;
+	s=arc-20240116; t=1746715142; c=relaxed/simple;
+	bh=PzzI3I14PiyWPXZh+l4DtbAgHiPoWtQFR/ogfgbK28U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=UazF6K9vUodirN12VAXy8dgdDf3yXKqrZ33j1xoy0Yu14zngPiMTTKZ6qSTKsqjJEUxRNou7qzhYPiYXmIh+QEmz7j5ARUqozDVjg4S7RPSB16bVhWieu0CFT+gkddru78c3KwwA+xCOqNysZkN4cHddXxyTlgZQO8ywNMtzc0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNphbLh+; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=thPI8+Hj0+bSDyY9xWfnMiQzV7FvzwOx5qUUSYvVcoA0ibkuyvt5YlUnAzvUP2GdZUXYReS3dnR/vr9AL236ie+rikLI9aWqtvyE5luOp20xnlQh6xLOPc2mH5f3iWVHWc3NV+zR/vqfGHllCyBVlMkgVKc0Bweqh2DHhCGr5qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Np/3PiOt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNphbLh+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03CB0C4CEE7;
-	Thu,  8 May 2025 14:32:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Np/3PiOt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA768C4CEE7;
+	Thu,  8 May 2025 14:39:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746714778;
-	bh=NxGW7N90fDSOJso1seyJ02kkBD8Q8q5t1i2zP+DewbQ=;
+	s=k20201202; t=1746715141;
+	bh=PzzI3I14PiyWPXZh+l4DtbAgHiPoWtQFR/ogfgbK28U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FNphbLh+p/iHJGO4w1vz+b+pnDN8vnpU1X/khuU1FqyyQqtMF8Y1NNiPwv50TXq2+
-	 i2OnOQOsktJSkWMGlwy5A3v0ZMJq8dIL0eu0FoFnI09BpNRyGNQtrbQadE3Ntnb6iU
-	 h5kTmoFA0Us1pEpAkjaZHi/aK08Dbid9571r64KdpvzwrjBNS9Ymq1Gj17EIhNibG/
-	 AZIbeLlwbBS4g/VsrQWCHrLbAuckzEPF22Ylxm7Uh40BseiZbMVk13qwgXp/F+0SXD
-	 J571fk6toXXaiG/oWU9+r4ZdIxqermazZoszKU1xDFJ18NW31t93n6QedfYRL/u/Ic
-	 LMeywq/Uv1/TA==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-In-Reply-To: <1ce4245107e0a51dce502a007a69899bda018d5f.1746197460.git.christophe.jaillet@wanadoo.fr>
-References: <1ce4245107e0a51dce502a007a69899bda018d5f.1746197460.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: (subset) [PATCH] leds: rgb: leds-mt6370-rgb: Improve
- definition of some struct linear_range
-Message-Id: <174671477676.2472260.13790392166774211195.b4-ty@kernel.org>
-Date: Thu, 08 May 2025 15:32:56 +0100
+	b=Np/3PiOtH7WRUC7ghcr+8mxSxM87tlsPb8xswco289hDTNBw2renrGaHzVYoqTX7f
+	 cKQYrtmmY/4h9e+IcwomvP2n2K1B2mBYhjRXIg/uwe2cahUXtSt/0CTqLgsIeJPtjp
+	 zRgP4CZFbLm4wT+wsDXuFB1ABPF5hF6g7jEFCWpN4YC2llGQh7C7xOreY7+tW9agcu
+	 nupmg89aPURBlTH/X6XV8BQQ8ebRlSn7NhUasK7LmpHfCwxYpBAOq3SUPyZdNh+MnF
+	 p/DzRuTYzYF+kZu6OLkzgd6zsK1wqRgNnffrzBfj6mOYth4e3NQzF1vjOMJbWATequ
+	 wwqh3+2+APSFA==
+From: Mark Brown <broonie@kernel.org>
+To: Oder Chiou <oder_chiou@realtek.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.com>, 
+ linux-sound@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250507140907.255562-1-colin.i.king@gmail.com>
+References: <20250507140907.255562-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: rt712-sdca: remove redundant else path of
+ if statement
+Message-Id: <174671514005.7345.2238491722713316258.b4-ty@kernel.org>
+Date: Thu, 08 May 2025 23:39:00 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,20 +44,44 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-39345
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On Fri, 02 May 2025 16:51:22 +0200, Christophe JAILLET wrote:
-> Use LINEAR_RANGE() instead of hand-writing it. It is more robust, should
-> the layout of the structure change one day.
+On Wed, 07 May 2025 15:09:07 +0100, Colin Ian King wrote:
+> There is an if/else check where the else part is executed if
+> adc_vol_flag is true, this else path checks if adc_vol_flag
+> is true (which is a redundant second check) and the if path is
+> always taken. Remove the redundant check and remove the else
+> path since that can never occur.
 > 
 > 
+> [...]
 
-Applied, thanks!
+Applied to
 
-[1/1] leds: rgb: leds-mt6370-rgb: Improve definition of some struct linear_range
-      commit: 4e055c846de470cb4a9bf4be0811c7d624785abc
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
---
-Lee Jones [李琼斯]
+Thanks!
+
+[1/1] ASoC: rt712-sdca: remove redundant else path of if statement
+      commit: 8147e75bd5f0977f6d389f6cdb4f10956cc3d88f
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
