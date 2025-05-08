@@ -1,77 +1,74 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE3119D080;
-	Thu,  8 May 2025 04:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE920E314
+	for <kernel-janitors@vger.kernel.org>; Thu,  8 May 2025 06:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746680027; cv=none; b=tSJKbDvZm6MNWV3wM7zD0EcKHDqDYtp24OB1regZPd+ziM/k0L+JzP6oWH5kZ4FbqSOL23btzL00S++CVsSF4kZjKa2Mgr6MfUvpYzdTHDqWKN72+s2aK82uhi+RcOYmzjG3xwIenBoLKKt/XmHPf0qJ3JT0OaW89+uDUQuOePM=
+	t=1746685592; cv=none; b=ozxjF6QqkHzru7RGBaxsW0FORQIOm4jAFm2RTbVtcQLpZiTz+KaOYywiaDqgUi8jcbSQI5gjYgiLFJd6xn/0cYcEjDDzn2om4v7qi4gIeL3D/Cv7inXawGAW4gyvOj01F/0sHqCh4ajgikqvGU05tw8P8DsxFYKYxh8K+BQHFfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746680027; c=relaxed/simple;
-	bh=Rqlhl8scJWK1KFRqpMadZ1k19G5+0GHAMj4w2ohm/zY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+QyUD7rDJKj35W5pYfg1+EK1AQbwQAMgE9ZXnD0ob9ytBDm0BP5Aemtxay2ri9P9mkZyRWKPRFQ2YBgR1lWWYhyOsgKEXPms6clZB2HF+fL2OnBIc8b3fyirGqXM2Uru5zJgkhLDtbW9qD1C3Dp3q46YYDMhu/DYVusOhzgGiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JK1qOFm9; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746685592; c=relaxed/simple;
+	bh=RDPgm5xhma7QFLB18+5pqsvzgjikpNdaONSF0MiESTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UwiJ+Vb2KfWCBdzOC4Zr6S7qCHsrRN5TV6sFMwIfOTRQIyJNymnTn7sJXwXAYtqAD9XYqAtB/A6W/5AzQfr2AtKxMjie9vXWkMmrxhv0O731u23fAFY8E1t5ibXOaG3o5KVk1Ai5gIJLemgGELQiVZx8dim9ybqPYiQKvWjoQEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fnS3IeSp; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JK1qOFm9"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22e70a9c6bdso10574875ad.3;
-        Wed, 07 May 2025 21:53:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fnS3IeSp"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so12337425e9.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 07 May 2025 23:26:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746680025; x=1747284825; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CX+buwoA+SqSG7r/CEcjs5/GgQYEZL4oqoCzZ/o1bnQ=;
-        b=JK1qOFm9MrnBpyNHreQ+LXzI7/Go+N3vDZpbBXNeD3uhnD6+kpnoyfKUfiaSZ9phFB
-         sca+oAtzj5yrhEUYUAMZio8y16azdFy1nXGY9LC6XC0pQ2WN2WgrEW8+Usv1SxEiiIN7
-         z2AdtY2Fy/psFG8m+QSmWdymcyL8VnmkGcNzngixitcY4Xzn5w3f1cr4uclf7XfV9Ki+
-         XsfxRaEXWqKxigvwTEyc7cRZKRYunM3eKdCwM7F5PbpviAIJQgk//d2jbkMfiYcHdcFw
-         Eh15vmXiqiizPXZl271cd/BNvw2XePoOk6X/wpBbXw8KsMccC0i/CtyWOJanboC+Qt/I
-         kdrw==
+        d=linaro.org; s=google; t=1746685589; x=1747290389; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vrj9ukkKygc1G8rKTTqLX2onZSR0aOFlnCDnYrntq9Q=;
+        b=fnS3IeSprMBvRYeEMrUA2d8rKUtOZPD13FDaKWxGfIhU0WsZJvvVdKDKQMf5+7e1t5
+         v206AGlMvxUm1T6Bq4Hf1SxlVefN01MJn3cmlFpGswzHy4PsPxeTo3UXlQUARs56Q3nb
+         OkA223MdQu1harumoYixuEKA/lywl0gWJ6fn8JfhBiZTRmMrqMMy8mRBflCnZeuIP8rs
+         noPQ0JBL0wTO7hbvdVyDo+VfAVwkxwA0/+2O5V2oiD1zIyQ1nDZo/uv0FYhwpnFLBxKE
+         87M4bZgooqdYCK4kK1L17GSuoucVq7LSHeeV5KZq7oFG2xCaKeT/4qHtXKLIn54QOxr2
+         CApQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746680025; x=1747284825;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CX+buwoA+SqSG7r/CEcjs5/GgQYEZL4oqoCzZ/o1bnQ=;
-        b=GflK8yUrwhp+iWnWmenH0pa3HG/Sp35y15EhV/OPtF59/vxdtqunwkU4BtE2f83IJS
-         qiF7ktP67rqTDc+pgujSmzMSNw+qY0BDpz8StcpdbEMT4C3zT7XSbGN1pzHdNpDQTLyF
-         ygBpD1iV/hhb7NXqk+WP7IAAZ7/kUCfTekytNFr1zePp3v8vl8myvB5NOmULRdpaxGvW
-         jYhczAdV3lmeWNyT5sNOgkU93gK1fd/COd2MbD3R9F952Op6pr/m2AvMxnJDCFy2x0tU
-         vLOQe7QHJxMxETdgmpSBDsvGACJUt4NK6LFg7iXmXeHI+De5bY3pjktqgsRALJjWC3WS
-         kp7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUXGiLqz3ZDY8bzv5BK1u3JB+lSYUkB6rlhnCcSHw8IfNlTec0CiAWHHeWhz6V4YtvIpIpBqolWvBiBLE+h@vger.kernel.org, AJvYcCUwL0VIM/VrzWpRwXFNWMgMpqf3hqr+MGHh9TL1lbRSNxnkze/3UEg6mnC/glbU2m4TU+i5jfEQU99tVbSvecU=@vger.kernel.org, AJvYcCXofX0dylYCkvnC7qcef0Bp6Uj3iQ0QmTHwmqx2o8CAMy9iuJCRJ+Fv6H6iBgxqddaN09nPKtLSHlqm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR7BI4QfEmHW/qbmrLVLD5uhnwjRTJ2kvzMfOt8ThIK1DYFLDh
-	geh9GVlAvIpj1f14GIewXTgdIXbi2oEWH3etYhbvglSCw91veGxP
-X-Gm-Gg: ASbGncty4CRvGNmDFdMMGWiAGB/boRyarWb/z8T8zUVWCsWovZ+F5ohsr6nLLtkK2O0
-	x8KYfXfTUCelORpP3GyOuNyMEDw2JoCcoa4fH8kzfFzzOnKH9ch4dKCkkLqAQYyL8+AykR/ffy1
-	IWfwjTYmvmFjCvPrjVAzQlirtPc+mH3Hmjwzd604kDI+r5e4buKlBFLbq71//2ogam+GlpSwl8l
-	2lMhUyoIEqklAOai/xErHT9rENvXXoLb+iTayVpryOk7qaOvwA/xuwYgGs+ct36Xs/gp1IpS70k
-	pnWUwUDoFb2duw6c0if3
-X-Google-Smtp-Source: AGHT+IF3yfQ3vEhkvHrsH76UO8Q6p2XlUioNaCrv8r5owADj/fqe0m8eUgPdCq40yC+V8F8mtSG/gw==
-X-Received: by 2002:a17:902:ecc4:b0:224:24d3:6103 with SMTP id d9443c01a7336-22e5ecd1211mr101208945ad.35.1746680025350;
-        Wed, 07 May 2025 21:53:45 -0700 (PDT)
-Received: from lg ([2601:646:8f03:9fee:9548:d4f6:7b28:38bb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e459e1677sm41921675ad.257.2025.05.07.21.53.43
+        d=1e100.net; s=20230601; t=1746685589; x=1747290389;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vrj9ukkKygc1G8rKTTqLX2onZSR0aOFlnCDnYrntq9Q=;
+        b=f5BE92HoaLsiPkTdUDDAgM0hxPGeehIFbabgPbKW5ukv2tM82IGHfc+mOV5R2FfP4Y
+         Rxmu8GOsgVCjOgJH30qIm97EBoUPknQ5l2bSpCIQaPfqgL6UCwJNhbprthc6HJL5S7XB
+         /I6hTPwoo6oHoVQ7s+YkPORtI/ynmtNpiYulmzj35WoitLlZWRYJnrv/2FSW56vCbJtH
+         5YqcFOqtWS0r9oIQIim9hNCmzUlT9QFGMedaCGbTWBixvZzwqn1nfjoRDFoGO5UdUoVP
+         FsnSHm03c9eheCkWVbb6N9B/IDKr6KvBsNCb2+Mx0k5bzYTBUopHzF2i0yX9hvWD5xjW
+         R7pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXV510WOAvcnjWPInz8GUHL9AEL7vcLsAwZOQn+KrCPkYfvjd7R/E7byEKm6vOrsJ/Q2U4+Sk+s8k51lawBB3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyzrbfvkYsAi0Vk+Epl2uDMj/YlHgahDOGJYZ01RRcS91LOir0
+	Nv/LNjo5/Ma72VBzXRnqdRSw/CoeHUlW4/Bo1903g238b607SXidmiAqFOjhi2o=
+X-Gm-Gg: ASbGnctqr3tSXrhoAlpFh6WF+I1wtQJgkeP2HY1Z0SIs+MP3YAYSnsaB9cB1x1sE404
+	ZFDrgXGogHqZgx8u2XM8V04vCAFJ+WTeA0H0SltEj2PvXTKIoIELISg7KmMo6mBb52PYVUllMsU
+	md3p+OijFQGdq3VZTRi4DUUmGP2BnWwuWOWDY6UO4jXt1hB9eUakJ+HlmurDTcsQUroRCJuhu7D
+	cqmbRkXnibJsN1NxZ0a3d4ZGArnGdtzUC6p7IGW2xHp+n4mZh7LXQJeWI+J7Q7verbsNH1lRI0h
+	lEkRxvUF2C+wmhTERI0m9y1bKKMFDFpdTn1fWjdBoAIHTQ==
+X-Google-Smtp-Source: AGHT+IFAMx7JUFXY3xA7TDuVFEdfH0Qfm/mO3IujmuFv9MragYBfI8mgTfu7zRm8OHQ8pIMC9sOyhA==
+X-Received: by 2002:a5d:64ed:0:b0:3a0:b138:4810 with SMTP id ffacd0b85a97d-3a0b99171ecmr1632328f8f.17.1746685588890;
+        Wed, 07 May 2025 23:26:28 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a099b178absm19380008f8f.97.2025.05.07.23.26.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 21:53:44 -0700 (PDT)
-From: fan <nifan.cxl@gmail.com>
-X-Google-Original-From: fan <fan@debian>
-Date: Wed, 7 May 2025 21:53:40 -0700
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Robert Richter <rrichter@amd.com>, linux-cxl@vger.kernel.org,
+        Wed, 07 May 2025 23:26:28 -0700 (PDT)
+Date: Thu, 8 May 2025 09:26:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Laurent M Coquerel <laurent.m.coquerel@intel.com>
+Cc: Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	George Abraham P <george.abraham.p@intel.com>,
+	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
+	Karthikeyan Gopal <karthikeyan.gopal@intel.com>,
+	qat-linux@intel.com, linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] cxl/hdm: Clean up a debug printk
-Message-ID: <aBw41HRNXEj3tgYG@lg>
-References: <3d3d969d-651d-4e9d-a892-900876a60ab5@moroto.mountain>
+Subject: [PATCH next] crypto: qat/qat_6xxx - Fix NULL vs IS_ERR() check in
+ adf_probe()
+Message-ID: <aBxOkY99jQF7q-7M@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,41 +77,32 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3d3d969d-651d-4e9d-a892-900876a60ab5@moroto.mountain>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Feb 22, 2024 at 09:14:02AM +0300, Dan Carpenter wrote:
-> Smatch complains that %pa is for phys_addr_t types and "size" is a u64.
-> 
->     drivers/cxl/core/hdm.c:521 cxl_dpa_alloc() error: '%pa' expects
->     argument of type 'phys_addr_t*', argument 4 has type 'ullong*
-> 
-> Looking at this, to me it seems more useful to print the sizes as
-> decimal instead of hex.  Let's do that.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+The pcim_iomap_region() returns error pointers.  It doesn't return NULL
+pointers.  Update the check to match.
 
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
+Fixes: 17fd7514ae68 ("crypto: qat - add qat_6xxx driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/crypto/intel/qat/qat_6xxx/adf_drv.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->  drivers/cxl/core/hdm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
-> index 7d97790b893d..0b1843631b26 100644
-> --- a/drivers/cxl/core/hdm.c
-> +++ b/drivers/cxl/core/hdm.c
-> @@ -518,9 +518,9 @@ int cxl_dpa_alloc(struct cxl_endpoint_decoder *cxled, unsigned long long size)
->  	}
->  
->  	if (size > avail) {
-> -		dev_dbg(dev, "%pa exceeds available %s capacity: %pa\n", &size,
-> +		dev_dbg(dev, "%llu exceeds available %s capacity: %llu\n", size,
->  			cxled->mode == CXL_DECODER_RAM ? "ram" : "pmem",
-> -			&avail);
-> +			(u64)avail);
->  		rc = -ENOSPC;
->  		goto out;
->  	}
-> -- 
-> 2.43.0
-> 
+diff --git a/drivers/crypto/intel/qat/qat_6xxx/adf_drv.c b/drivers/crypto/intel/qat/qat_6xxx/adf_drv.c
+index 2531c337e0dd..132e26501621 100644
+--- a/drivers/crypto/intel/qat/qat_6xxx/adf_drv.c
++++ b/drivers/crypto/intel/qat/qat_6xxx/adf_drv.c
+@@ -156,8 +156,8 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 		/* Map 64-bit PCIe BAR */
+ 		bar->virt_addr = pcim_iomap_region(pdev, bar_map[i], pci_name(pdev));
+-		if (!bar->virt_addr) {
+-			ret = -ENOMEM;
++		if (IS_ERR(bar->virt_addr)) {
++			ret = PTR_ERR(bar->virt_addr);
+ 			return dev_err_probe(dev, ret, "Failed to ioremap PCI region.\n");
+ 		}
+ 	}
+-- 
+2.47.2
+
