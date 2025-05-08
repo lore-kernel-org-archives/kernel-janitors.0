@@ -1,115 +1,111 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992F21ADC97
-	for <kernel-janitors@vger.kernel.org>; Thu,  8 May 2025 10:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A79E1FAC42
+	for <kernel-janitors@vger.kernel.org>; Thu,  8 May 2025 10:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746699321; cv=none; b=KbKa1+O1HLXn+qnvgRrR+LQyG6et3XE3MDNOkadIP4129V0vXfuZwVIbsbGR+Vqb4VNmSUZ9jyOa1HGR28+ir94kaWcNLzkIleResPpvPgN2MB3txZ/ieAMJjtIVfqZKmLwWqee4dVp2S6OU1VDWMyxQ+mjoVD2fFzZulw9QkbA=
+	t=1746700053; cv=none; b=HexmQ3ilIuyE6YxBdC72BRWPTi3fq1Txw1ztIplZRiCbNhdOTZxRpcLwdpjkmuvyoFm6ZW89E9vh8NNnP0Rn1rh1FbnSTISu5cdswkcR8ELyS3Ykg71GHeN3ZRhLYCPSpadcBhaYWTos8HVEmOb7FlFR1uRWQ8Dtt+yr+IW5+2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746699321; c=relaxed/simple;
-	bh=qhNsKNLNw5tmwB3UAIDERkC8dHitaFy99n00D7sMtvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dETJ3zycajtq8TtCMh98DCZuKmW32Yx7dRU4fBhPcDvjKcm2Y2Al6Bt9nVzydkTyjlTQkhDSp00vQMxweMMz8LrmJGPhOlMu0dcpLeWu1qvvT2vPmsfygAIIHvkrMszmRyc1DUEH0a3zJ9N59NvMNXmncmivh+r9T99ChQ0FIhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IEwe50iX; arc=none smtp.client-ip=209.85.219.181
+	s=arc-20240116; t=1746700053; c=relaxed/simple;
+	bh=Wg1tIXtF7cdE4BVkY3U542fb6E3QI2pSyqedPkcT3kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLFWoi+6cdulR7AQ/E5Y6X/Po6IaXSCJJkNq1vN9+ia3mhFxpksSojPcQvqXj5O+z2mTd7Ikgu+l8Evy7qRD5HFoDCizGTTsCf8ZshvbKkeKV4JwWALSJndA4RZUqV6zyYmmqGC3CdYUmsjt60DlnM6s/dg32DGfHSb/8tP4YGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a+KPeXe/; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IEwe50iX"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e75668006b9so901388276.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 08 May 2025 03:15:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a+KPeXe/"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a0b291093fso1180009f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 08 May 2025 03:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746699317; x=1747304117; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpNKcie2UhGLpgDU+EfoQWjK/q5dcvHwia1KJeJcP0Q=;
-        b=IEwe50iXy+VAW6dWq6aFlqUo6/kvIHAy5zsrJeV5WqOniEaizm+QpVTzvAtiDU6fLj
-         VHvWROTzS+NJBP0XBcFR1Q2WQFZ42nYEQqX9CMUJLqi7zfgFapgK7uu3vjY0YKQMYVy7
-         qNfh2G10V+io7+iwENa5VY2pkfyCiJRIuwbFv4qF+GNtJzUIxEc1Q5A/etLdxrcpA/9R
-         RAaehVuSzY0rP4mQM63SQfykZnPUpQgmErVoFTUSKooJPBL4DNhzzSWsQ+Pre6y0gDs9
-         u04RpUTzqqFGJ28r4LVrsYHtKSmJUJ/vtI9tEn8bn5CDuoDXLZn0gN9CFfd3Mjd9B5AJ
-         g1EQ==
+        d=linaro.org; s=google; t=1746700050; x=1747304850; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f3dXWdexBFnCh1V4T6e507rtdfn4YGQDtE6BBRQFdZA=;
+        b=a+KPeXe/9DHnfAFy4D/68GYC154UdUqFm46xqzdxZSw1NuAOVYOYqvFyFT2cis9Uo9
+         Gk29jFR8JpGHN4JL3WrXrKc7SiHR8RyP6qwn7TEprnt4r9OoKEbVGA5FMf7kolrzNNd8
+         zFDC6v4Y6fSoPeOSmT2/T91UlFODPQm+pplA3GAoVRYMm1L9u9GnruP/LxucRcqK+a2Q
+         pH4sfmg8IOERLd7ExCpgr4SLXilF8DGrGgt/dLbEnTor6BF983ZPG5NadqExVYcqk3Q9
+         8PTpBjC77/lp2X9BE+VuIdmvk6esXs+4vyd6bocPfBapyQwhfHrQBY1tLZ8a0MVABN5V
+         TXqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746699317; x=1747304117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gpNKcie2UhGLpgDU+EfoQWjK/q5dcvHwia1KJeJcP0Q=;
-        b=Yh9oHG5JlpK/9IKVfZYmKcd7FA1q8DrgNJvkMHQIC4DL38iWLrepJNxjtQUoBFarJ4
-         0m9OAMLMkzWuSsfvt5Fx06TuOQ+EuqoRBK90VzemaIbMake2KvzuqIScANUHPCnnR21V
-         M/gsiZzhX3tl3BCBkbKUKYb33V17eOd+aNAq3PYUKhU72yNRWpAjhuWaZlPafiygUc2s
-         5OFFpZHmzQj/Dvi6qV44mok6FUw0k/FFJla/YxyoY5RpHmuMYtp1qw35gptF4WYx26P7
-         EW7X2UUP5yN7p1OPwliJwg2ve+n+fMz9PJnwc1Q+m/OciguU1UmRk6LPi+6G2fAzYC20
-         N64A==
-X-Forwarded-Encrypted: i=1; AJvYcCXXKJx/TUwTiBQ/5gS2VRW2OmKBtqH+fFcyU/z/I/ZK7tcHqabFU1yxBkF6L5Cec8jAvo8lCfMejoaqnPgFHGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW0oVyAfHt5IytmzQH265obtUUmSpqtFlQkDKlbZ4y5wtQjbvy
-	LILawafTljV3MZBGgKOqgrt+dTcCPlqVOZw+qQJFff5iWBoVrc/pdQXcYhOOeNWmilvTzdAB7QY
-	dMJOYVJ5iVQ9BQ6rMTeV2KSx7IO785T1D4h+iEaA6WE1K/HB2
-X-Gm-Gg: ASbGncuJZI+RI2dLUSB7vgTvjNF3IAeQTGNiZAThu3PMsKMZTKdAfFhvMZ2b+wxyMix
-	xq367rVvjy8xVu/G9BFViCHEo8rMcp0kFGraJQRYF1OMdqG8gLce6OANrvWWGgTpHRaH24mICu9
-	xjhp8LhFNqzImaXZmfkUojgyQ=
-X-Google-Smtp-Source: AGHT+IFZR+3HdpndujRIwAKAXYMyHzJt6gQWJhlrflCknDzCNNPyqtjJEyMg55oFZwNVRamj1dH6embSLYS37XFNcDM=
-X-Received: by 2002:a05:6902:230f:b0:e73:1ff1:ca2f with SMTP id
- 3f1490d57ef6-e78ef6f7c55mr3056251276.32.1746699317373; Thu, 08 May 2025
- 03:15:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746700050; x=1747304850;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f3dXWdexBFnCh1V4T6e507rtdfn4YGQDtE6BBRQFdZA=;
+        b=rqZfjb1pUgfrYvm6TQ/pX6S79vvKmeheaui2tPyQ16JQ1ML7LDKB8hJIBvUYVWQRHi
+         7elkL5PozS2rx4ZlPcMZZeJBh3hQbJRHma1fQZyiHEukVDRkhpuaJccApMS5DrWW2X4M
+         Ri1uwLdguxSXyQxi2xjHRNKDWJYm+urPN7+a4/mTMgoAPe53yoEV6wRby+WkBFPnX/+R
+         TK9LOJcrEXXzvOR6wR/DFxiZn9L9fGdQnW2Wr2cRDS92robOP235NZidSfkJjzffpW7f
+         Io2lM//9+wsVZx8imn/78e0V3aO0ExT17147oaI0xMi+/6S77iEpv1ms0GPneqSWdLWJ
+         Kcfw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4b/eLkyHAHW+kpXfGWFutZdeKP41yyGP6URC1Z5u43YinzW0G4CL2Rds4ctkWTOW1R5Ty2nEh8RWZxSpFjcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzupwWDvqkQtaEx62BiGOT/rZ+aclgM0PLgMY9+J9BM+Z0i5b4L
+	B/MgmjgtNK1QAX4JvWySOn6dCGAHjUsejzcMEDpouPnr+qEDkEiKQQEYZhfmsnWl7z7jVy+q3TB
+	X
+X-Gm-Gg: ASbGncu9fuXoUfIjdbRFpTxtjTtHH7B29AX82o7vkyEuRgg6O31kyB7+3N3TJF4EdGe
+	ghRxC5qSLAjS+GH0J8G+lNxp1Eq2YvldkxSyZTS5Bk/TAwk2JPXxwlRyalC1rnbciNf3qreOsM4
+	8Hds8aH08Z34XTq/rG4QVT6geaKkDXIL8LnFnoLJWivTRA8AX1GxwW9XOfeSLg/9t5bAAlcpP5D
+	XuUA1Bcp9tcDzgwRB4V37v9Zfxb73RpvlMBBEtcXo2G6B8UhcfZCYGjUeGLhKadRhULChHLk1yS
+	WJwW1ntWk1jUOAoDHOHbF9wItkj/gz2OsI91Kf6PqeN6Fw==
+X-Google-Smtp-Source: AGHT+IGr7hK3xCuRso8I/G034nZ8utNO2zmismBg2hsAW4Uj0bzVouwQ2BDVypLguNpWtEPItYf4BA==
+X-Received: by 2002:a05:6000:2ab:b0:38d:ba8e:7327 with SMTP id ffacd0b85a97d-3a0b990e086mr2368417f8f.8.1746700049750;
+        Thu, 08 May 2025 03:27:29 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a0b47a8448sm5679359f8f.44.2025.05.08.03.27.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 03:27:29 -0700 (PDT)
+Date: Thu, 8 May 2025 13:27:25 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] media: rcar_jpu: remove redundant case statement
+ when c is zero
+Message-ID: <aByHDZyu0pptFUlK@stanley.mountain>
+References: <20250508100835.336240-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aBxPQ8AI8N5v-7rL@stanley.mountain>
-In-Reply-To: <aBxPQ8AI8N5v-7rL@stanley.mountain>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 8 May 2025 12:14:41 +0200
-X-Gm-Features: ATxdqUHgbU1sftWGZFEYCFbWV60qCjH22SvLEOP-bV81E5it0iQHN0cHPsZak-8
-Message-ID: <CAPDyKFoZiEAn8yT8a9VZqayR1=HPnMn+a51O3zUAUR3L6RXH=Q@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: core: Fix error checking in genpd_dev_pm_attach_by_id()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Niklas Cassel <niklas.cassel@linaro.org>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508100835.336240-1-colin.i.king@gmail.com>
 
-On Thu, 8 May 2025 at 08:29, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> The error checking for of_count_phandle_with_args() does not handle
-> negative error codes correctly.  The problem is that "index" is a u32 so
-> in the condition "if (index >= num_domains)" negative error codes stored
-> in "num_domains" are type promoted to very high positive values and
-> "index" is always going to be valid.
->
-> Test for negative error codes first and then test if "index" is valid.
->
-> Fixes: 3ccf3f0cd197 ("PM / Domains: Enable genpd_dev_pm_attach_by_id|name() for single PM domain")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Thanks for the fix! It looks correct to me!
-
-What puzzles me though, if this is a real problem I am sure we would
-have been receiving bug reports, don't you think?
-
-Kind regards
-Uffe
-
+On Thu, May 08, 2025 at 11:08:35AM +0100, Colin Ian King wrote:
+> The case statement where c is zero is redundant because the previous
+> while loop will only exit if c is non-zero or non-0xff, so c can
+> never be zero by the time the switch statement is reaced. Clean up
+> the code by removing it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  drivers/pmdomain/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index cd4429653093..ff5c7f2b69ce 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -3176,7 +3176,7 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
->         /* Verify that the index is within a valid range. */
->         num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
->                                                  "#power-domain-cells");
-> -       if (index >= num_domains)
-> +       if (num_domains < 0 || index >= num_domains)
->                 return NULL;
->
->         /* Allocate and register device on the genpd bus. */
-> --
-> 2.47.2
->
+>  drivers/media/platform/renesas/rcar_jpu.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+
+   612  
+   613          for (;;) {
+   614                  int c;
+   615  
+   616                  /* skip preceding filler bytes */
+   617                  do
+   618                          c = get_byte(&jpeg_buffer);
+   619                  while (c == 0xff || c == 0);
+
+Unrelated to your commit, but get_byte() returns -1 for out of
+bounds.  I wish there were a explicit check for that.  We end
+up hitting one of the "return 0;" statements depending on if
+we've found a JPEG_MARKER_SOI.
+
+regards,
+dan carpenter
+
