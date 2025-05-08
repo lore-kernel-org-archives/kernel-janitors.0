@@ -1,73 +1,72 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD542153DA;
-	Thu,  8 May 2025 08:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CC91C5D59;
+	Thu,  8 May 2025 10:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693942; cv=none; b=UWNqQx3yf5hQKxVDTWmRpQtpx5ISAgFuG6ZnBlBzz+t+xKRdD8X6QcMxwmxlIwr6Kf/Xba1BSOKmUUdPINUAI7ZwCzhGt/LbML1aOO+L+lu+ecQ6ukMUyffGOyTCJo3+mc9/lgUF9jBkQ/JRB4+2wZRwt/ZG32O1SIqAHF/Xd8o=
+	t=1746698930; cv=none; b=CFZY9zCiYH0bZPiX49Wli+LtpnE5tG0kZ3sgL36VeRacF1uEQb0GuC8SXhzspS4l3/BAwOrNqi0CIC2ws13HWpK/r8DZRx2ogfSYBwfoLxN0pz0akFbNQ9mNFu7o2ZcDFIivjTryoTsfT5TyEZfdTenIEuHs5J8PYw+lTCebceE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693942; c=relaxed/simple;
-	bh=1bNWQpvAZw2h4146M/a5cSVgUYygfrJDdqUT3sy4QxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RcfAuCzRbyMpx3em6RskYZw2GAht9Gz5chVia3N9lMZRdaC4VHyr17LBLrDKgGhrUZ4BX7IFooYIlMxDTqU0rHZhKwlST6AWVCgGQdDYUrfaTbgJTQWDcI4HSxgWZr2iwDkcxGOEIXiqqYy40bQlsCoZjMJBS5VnzHcSBg7M2Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/wKW6Si; arc=none smtp.client-ip=209.85.208.53
+	s=arc-20240116; t=1746698930; c=relaxed/simple;
+	bh=jE981OKiDJArMCxAhfbnrFBr0Jncd4SYmMkp9KmBFbM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ilyDa1O9HOL4rAHSmLbDxqokhwUqg4EyAq9WfxQPCFt3iPxLokki4SJon3XeUMu3ht95goKAS8h4dNV6Ela9dAaGYXcM2h0rDeNo5g8mmE8i4yUN+p1GBSeYlLitIDaJdI4nzCKb1ywGIvfTW5fhn/1yPBwbBO7YJODtpCXUI6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=etw+YE2v; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/wKW6Si"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5e8274a74so1063397a12.1;
-        Thu, 08 May 2025 01:45:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etw+YE2v"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso165124366b.0;
+        Thu, 08 May 2025 03:08:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746693939; x=1747298739; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746698926; x=1747303726; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WQbbYwiKIeSwnEfdIBvlGucq6uB6GiW1ELyN7NX3z8w=;
-        b=B/wKW6SifoTI4fLZd77qD5UDzHMdJB0BhBOMILCC+Ztx+JfIjz8udWyBUJE8sYkxoF
-         kvEsFePHUafOtVL+Y98DPo2J40+atkvdPhDTLoYilKHrKcG9xtpkZz5GQGmhrvQnZ8Ei
-         AWHGvXqNFmtEJ4yesPuAVDjie08Z04WbcnVOfBXttNyD11nm+A1zxgXBn3LlD3Ko9mZj
-         UETSfFpdMDJBmKk1UE+bGf07ugtR/WCejKk++9ooHj3sbsCfqlBfRawYYf1IXWiPEIfs
-         a1iGr9xhwiqqso1d8dFtxYrFZj+Uq6rnjqrjoASCsYCD8RAJ3d687TNvNQTyr6WNpdno
-         PKhQ==
+        bh=/yggcqTk0XsV8ZLZmi4xW1R5HqwyeXBRnVnXXBXzi44=;
+        b=etw+YE2vBje2Lylq0+flHZi/g9Fjg4V+7oFuJT9Hcbz2drH0w7DMp5JR6ZbqEyM442
+         9+6dF0s+3h4IVJ4p13unbm8aXdrT6s4l3Rijt6K3BqZSICMdSakw3wUy0Lva0c4ecMHC
+         5PfhFThKxzvb5UgNL3+VmjpJ4538LxBVTcFy71tjPsYTCX+115wiwzGSStY+afBrTQmX
+         f6ELSIwN4VX8t34Q/QBcsMpDd8e6vMnKSzDN1vPcPLMoFkdgcuuUJtLr9Js0igL9ryfS
+         Rz+SvPYeoIOuSjsgPaX2Rizg06T7raFQILznlknjaS0wIYCRAxUQ5k9XRt6XfUz8xpaS
+         CZVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746693939; x=1747298739;
+        d=1e100.net; s=20230601; t=1746698926; x=1747303726;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WQbbYwiKIeSwnEfdIBvlGucq6uB6GiW1ELyN7NX3z8w=;
-        b=bJM4WN4li/Az3IGW0uXfQ3rdIBFguEYvldR315JYwnos2ps9vZbYUgIPHxNApkqKV9
-         gm16f0Go7vHBvO3tNReAKCbTP7Jld71PL9KuHgUicVKgDn0ost+C9UT7lgEK1THt/OJ/
-         JTSuSVUAWFaVZpBNHA4J2cB00/3dfrY11N2xuM9lLVz0ytmmbtPff8bnQAHZs2VXG+WH
-         3UQplTvatWXoxQJPpNOKFOTfAoXrlmJ/tTynwrIrEhiEbqeaA/w3LicBS4P00Gmg2cDD
-         qUeslKi3T2rP1Rp8sfSG7uZjC1Lc+pRKqECMIFrRM0XZ9xY9DmSK50xsxYUmEZZwon43
-         4NQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdmQE39DxeOlp2eJC9qOgp7XJw3ca6ely5uF7HVAdoxp+pTrix5dPjalKvMap7MC5HpTH3lLsAsBf7ndc=@vger.kernel.org, AJvYcCWGIjsqJHrvTv8cnVgWf3RP0LrcHp14YcPLabLH5FagMytVaoznGfVwYVpfr6MENf23ap5dXoBbWDTfa3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz17f9YlqKO5wUlOtCl9QaTyZZ2iiiSIzxHd0I0jkL2MWL/MiI
-	Odu4nXpEWi9JrYNqh7g4vbBe5rIHyO3vOz+STCtJgb1nZxgcfzC0
-X-Gm-Gg: ASbGncvj+MVAeSiDrYmkLJ45gEpaNzxPtni5o4PMH+zk7XkVX65E/bie5NwEW5aX16K
-	s6g4LAC9OxCrOi8T/eo9DIqkQBNooNJpZG43D/nyAFFtefu1LC/tV/FJsiDbK9MCEdghx8Ke2Sd
-	keyaFV+qoI9i8FGANDyMsHFwvKUbFykLRTYpEwoGapJQYOF2oEYKG8Ahf/UwJvZCunHqx7FePth
-	CCmPSXsVcVJ57hrz4ag7qzsexkhDqVuerK3WEyedG3sSIYmMXArrOzV+qoJ2i1N4TlucXqkuNTA
-	Qh5nX/WA0/WkeY8PA/NlYbfVTj9bELwNizsd0Tm0cZlu6T6ZDA==
-X-Google-Smtp-Source: AGHT+IH24p67igfdoula/1tlisDjnAjfpuyudgDk/8KRPxpYnmMhfgAbgVxwh+zLalj7Cvnpz0xCWQ==
-X-Received: by 2002:a17:906:fe02:b0:aca:d5a1:c324 with SMTP id a640c23a62f3a-ad1e89ff513mr696332766b.0.1746693938830;
-        Thu, 08 May 2025 01:45:38 -0700 (PDT)
+        bh=/yggcqTk0XsV8ZLZmi4xW1R5HqwyeXBRnVnXXBXzi44=;
+        b=cQhYNFQcUZCb6KETnDbZi8jsNiFtG1WJ32c5vUIF5sVJG/iWrqRURACazFQ+Ddagfs
+         4qW3GI5Ddp1Y1HN477/h9el5VAkDKRANBBxnk5FqeGo7E9NzCX6e3F96MSWBIKYfO3Xa
+         +SC63Zwq0aY120L+1eoXDyRitzUaLSWmkVemPXu/yauJ2cLuC8jCX8a5cu8NGljp3w6e
+         fVjVAbHycLpjktfp9UBiZf+VTnwrL4Nx60jLIKw+wpr3BbHatYNY8SKeubas4HAB58Ik
+         JKtTSwaBvz1TyOGvmYfuNmVcntUzbyELYUsRuL1mCls2JKXiZix9kvkaM7ha7uPlHW1D
+         L3KA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxEAFFBc4FP1Rf15zCCHY+8xMyL4j23BRDA4JNSzD8iGf8gBZHC8V4ygCKsvSgLGiGLKnf4BxvpuDOH2loTzg9UsQ=@vger.kernel.org, AJvYcCWR5l/1K8E2yZXn7eHVXTFVT9zBVnmnBUzJOQ2N9CUW4D1NWbQe3exL2t6Rl3aY89k79u8IEfmWppCx+qg=@vger.kernel.org, AJvYcCXSoQExMa+wZk1BKObVlz31rskT5wjUixYCfnC/tGCXuIkZgLlll/fOeDjQyCHmTkwcM1hPH5hmbL43LEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIXkJYg8Rc/spb63KJidY92KOsn9bGQftuiNye1BbAAngDChb3
+	1WDbMw8QxKDLfTuXfjLigmlb0o9lM92zDptIybaK98S0kfE64091LJycM69dQvTOiQ==
+X-Gm-Gg: ASbGncv77bEbJNiSInpRn73zaiBsIAcKHFfMUgzJK+9wP99nD9rDrW4hkPb6JyNXaXn
+	ogXDnlrcXINk/396dLpkpv6bbU6HhiNK17NO6+gL86AnXzVXdA2P/tzp8ygauR04DLS1st+hMBY
+	KQvbN0/7LnFwmT7GOhdffeF6sGYBVdX19tZzxLbpDff0KZiwLDdPQB6Phkn8B3aMwbL1E6E5fXD
+	jnt9Lf2ZwZEE3SzmHxKbk5dbfbbnHsd7jD4GQpMqXwVPuiFig+cJC/BRVqkIBVq99cFhS3zboHj
+	N0iNVLSMWME1gRnNizTMq4gHRJZeFYjFPoZcmNc=
+X-Google-Smtp-Source: AGHT+IFLWNwEqwwL7ySlndzs3w8P+oDxqOxKWrfiQG9aG8cFcpataBaGlfldTtB7XJlIcIUGavdlKg==
+X-Received: by 2002:a17:907:a4ca:b0:acf:8758:50f5 with SMTP id a640c23a62f3a-ad1fe674462mr270453466b.5.1746698926348;
+        Thu, 08 May 2025 03:08:46 -0700 (PDT)
 Received: from localhost ([87.254.1.131])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad1eba4af90sm297000766b.112.2025.05.08.01.45.38
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad1894c0202sm1059131366b.93.2025.05.08.03.08.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 01:45:38 -0700 (PDT)
+        Thu, 08 May 2025 03:08:46 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Oder Chiou <oder_chiou@realtek.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org
+To: Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: [PATCH][V2][next] ASoC: rt712-sdca: remove redundant else path of if statement
-Date: Thu,  8 May 2025 09:45:27 +0100
-Message-ID: <20250508084527.316380-1-colin.i.king@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: rcar_jpu: remove redundant case statement when c is zero
+Date: Thu,  8 May 2025 11:08:35 +0100
+Message-ID: <20250508100835.336240-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -78,61 +77,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is an if/else check where the else part is executed if
-adc_vol_flag is true, this else path checks if adc_vol_flag
-is true (which is a redundant second check) and the if path is
-always taken. Remove the redundant check and remove the else
-path since that can never occur.
+The case statement where c is zero is redundant because the previous
+while loop will only exit if c is non-zero or non-0xff, so c can
+never be zero by the time the switch statement is reaced. Clean up
+the code by removing it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
+ drivers/media/platform/renesas/rcar_jpu.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-V1: Fix just for rt712-sdca.c
-V2: Fix for both rt712-sdca.c and rt712-sdca-dmic.c
-
----
- sound/soc/codecs/rt712-sdca-dmic.c | 8 ++------
- sound/soc/codecs/rt712-sdca.c      | 8 ++------
- 2 files changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/sound/soc/codecs/rt712-sdca-dmic.c b/sound/soc/codecs/rt712-sdca-dmic.c
-index db011da63bd9..4d044dfa3136 100644
---- a/sound/soc/codecs/rt712-sdca-dmic.c
-+++ b/sound/soc/codecs/rt712-sdca-dmic.c
-@@ -263,12 +263,8 @@ static int rt712_sdca_dmic_set_gain_get(struct snd_kcontrol *kcontrol,
- 
- 		if (!adc_vol_flag) /* boost gain */
- 			ctl = regvalue / 0x0a00;
--		else { /* ADC gain */
--			if (adc_vol_flag)
--				ctl = p->max - (((0x1e00 - regvalue) & 0xffff) / interval_offset);
--			else
--				ctl = p->max - (((0 - regvalue) & 0xffff) / interval_offset);
--		}
-+		else /* ADC gain */
-+			ctl = p->max - (((0x1e00 - regvalue) & 0xffff) / interval_offset);
- 
- 		ucontrol->value.integer.value[i] = ctl;
- 	}
-diff --git a/sound/soc/codecs/rt712-sdca.c b/sound/soc/codecs/rt712-sdca.c
-index 19d99b9d4ab2..570c2af1245d 100644
---- a/sound/soc/codecs/rt712-sdca.c
-+++ b/sound/soc/codecs/rt712-sdca.c
-@@ -1065,12 +1065,8 @@ static int rt712_sdca_dmic_set_gain_get(struct snd_kcontrol *kcontrol,
- 
- 		if (!adc_vol_flag) /* boost gain */
- 			ctl = regvalue / 0x0a00;
--		else { /* ADC gain */
--			if (adc_vol_flag)
--				ctl = p->max - (((0x1e00 - regvalue) & 0xffff) / interval_offset);
--			else
--				ctl = p->max - (((0 - regvalue) & 0xffff) / interval_offset);
--		}
-+		else /* ADC gain */
-+			ctl = p->max - (((0x1e00 - regvalue) & 0xffff) / interval_offset);
- 
- 		ucontrol->value.integer.value[i] = ctl;
- 	}
+diff --git a/drivers/media/platform/renesas/rcar_jpu.c b/drivers/media/platform/renesas/rcar_jpu.c
+index 81038df71bb5..6af154b41eb4 100644
+--- a/drivers/media/platform/renesas/rcar_jpu.c
++++ b/drivers/media/platform/renesas/rcar_jpu.c
+@@ -643,8 +643,6 @@ static u8 jpu_parse_hdr(void *buffer, unsigned long size, unsigned int *width,
+ 				return 0;
+ 			skip(&jpeg_buffer, (long)word - 2);
+ 			break;
+-		case 0:
+-			break;
+ 		default:
+ 			return 0;
+ 		}
 -- 
 2.49.0
 
