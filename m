@@ -1,97 +1,363 @@
-Received: from mail.netfilter.org (mail.netfilter.org [217.70.190.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BAF76026;
-	Thu,  8 May 2025 11:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.190.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBDC2153E2
+	for <kernel-janitors@vger.kernel.org>; Thu,  8 May 2025 11:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746703617; cv=none; b=A2k7FFtQNhf6IC6EHHcYshKMp2O5afqn/bXo4giISoAB3wnU0fkyryUuP6TlN8zHDT1gQN/74rDvfUiVMfAPjwxT3CTAUMrsx7/FKkg/LVf5jHVqM2OF6UHkOX1WzupOBsh1yH6XPPp28PtmzWqNGAEuUxPFrkEqR8Tw0r4M1S0=
+	t=1746704102; cv=none; b=g0y4w4RkbcotRmphJ+cNKzu9VY0gkV3JnIn0vvidQbWrCbwt3JN06sbuHw6tflIes/1vwlWQ1FrT+23UGLbPlm9h+nshCONFJ0/QdNI29XKaK7TLOsEhfn++NbQ41EcKMhB3MPYDZDtHVncaZaybGjYag2aX4IHBeJ8+yCbnoMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746703617; c=relaxed/simple;
-	bh=e2MhZEJpPEbV62HK5hxDqQC1GmZBIbPOwL64HD1Vhdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcI7yfUfZcPlPEjUum+FttUHtWeZQb7N/KRsm15FFQjLenzozlxRA35MaCjbv7oCGrAI+8jeM3yF5RNbXzsWikprI4ZX9XhZqUops0rxhKABuA1hKfZ0nZ/y/5VYWhdDZVBFwyEJbYr3pIXtPw8rFu3TZkktUPuqdLKSpv5lhQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=netfilter.org; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=Qij8LAZV; dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b=GZ2VOeFW; arc=none smtp.client-ip=217.70.190.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netfilter.org
+	s=arc-20240116; t=1746704102; c=relaxed/simple;
+	bh=oA1OiCMhmphQt5LlavV/Bcw1WuniQxuqjCoszOxphYY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wyf0jLSOjwyH+5A52M6Dhae/wcRD7AguQyKKsV9Ev5FuIctBIkz7hWrV0XaDTl35uxEHg+7VUtIjoLIY3nPCauMijAOVXN8k0I0csbSt1/k9E0ZENTDLJpA5BNNeI7ni2YUuZPrbaEZPHjnKidJCEzeyUDIbxlavZKql1DTvV54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FyI5oZEd; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="Qij8LAZV";
-	dkim=pass (2048-bit key) header.d=netfilter.org header.i=@netfilter.org header.b="GZ2VOeFW"
-Received: by mail.netfilter.org (Postfix, from userid 109)
-	id 680D8602A3; Thu,  8 May 2025 13:26:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1746703612;
-	bh=p/TXaYYX6FtVDhGllLhHq42M0ZrH70L0gdr7W/loawM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qij8LAZVXf7JqQL2yo7i2GHnkg3HamjoCiyMYe6QNlPkupE7e3yda/7PL1yEnan9+
-	 jB9xFH31NNSq/Uk/YM7bad6Dbi/PgaXzm6cgueQYk1kHj6skTOlNOzchYd2Ot7aqkO
-	 1OpMixRS836JCZzCX8aYaeCjRk9LK+tUpOazhJ3uJYkyiQJdjpl9UOlUfvZ/aK+V/D
-	 0nlkxRF5uJy5SQaoNzL16gnPZ6IZCLxSkDLwVxEO5Ee3v1196vx4u74wEHhKatZyHB
-	 MLkG/nRY1/yVKVgnMDuuHJXumxo3oRyQyeBQH0F9sZyF1/x/BkOeIb9F3rmZQfO1/i
-	 WNTNU+nShc4Nw==
-X-Spam-Level: 
-Received: from netfilter.org (mail-agni [217.70.190.124])
-	by mail.netfilter.org (Postfix) with ESMTPSA id 4F242602A3;
-	Thu,  8 May 2025 13:26:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=netfilter.org;
-	s=2025; t=1746703610;
-	bh=p/TXaYYX6FtVDhGllLhHq42M0ZrH70L0gdr7W/loawM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GZ2VOeFW0rSf4z0zMIzXD3049tX5/dsuud0MWZEjwNMurQmASFpoPAy9SjMFH+Hqx
-	 U0z+ZTuzMIhTGCmVHFmoncnz+/HM//98L/TqCzOlrrF3DMcCYcNgeq33U3kS8oWHsf
-	 YSb5YVPlpv4L9LT+1BdRRnYEZ+UhBI5jQ8EcaVwCHy5r9RpU5SCKx3zkY3U0tOe/W0
-	 EMWIaJUKCpiC0Q6sHqGJvXHQ7LZFY+FlQvIRGIdhHDpeuom2Jyy+JSSNHOscd1y9NC
-	 2VFIOgNQGWIvyzPfXx97tMHRldQtcBRyjetu0jCH2O/bHS2/7Q6p6yg8sl+Eg9GK76
-	 cjJvsW0GJ9q4A==
-Date: Thu, 8 May 2025 13:26:48 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] [NETFILTER]: nf_conntrack_h323: Fix spelling
- mistake "authenticaton" -> "authentication"
-Message-ID: <aByU-B19He-Ud7Iz@calendula>
-References: <20250227225928.661471-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FyI5oZEd"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e7569ccf04cso888187276.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 08 May 2025 04:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746704098; x=1747308898; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4I3mCeE7NaxK25rclKHFgvE1pFxuXrcbii3YouC46fI=;
+        b=FyI5oZEd7slpVzco9ViJfsAwtoZyQuAb2R492GKoVL5KJpNMVeGItCL7b5iLXpt6Mf
+         a2MHelWty3udeXcJ4GI3pkPvze1KuJfT64lhDdS3cUtRIK3KxGXpmxnXVAs6MUTUy79+
+         lv4AnGUpSm443rYSGV/83Uh4WY1TEpuegDuIcc4xVe+OA5jFCR+umiDDn5i6I8bxdxKe
+         QmseUZZMBBTtpfZ0dZVbFxndELZBUPZoskYG8exqTTG1ccRh+XAy08xODInS3mGQOnem
+         DMN+0yEhCxrCNilFMJ4sCIDU/GNf4itwRt/nAYVDqdywSapnumpspbakco3lZZ91Wv8q
+         +Vvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746704098; x=1747308898;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4I3mCeE7NaxK25rclKHFgvE1pFxuXrcbii3YouC46fI=;
+        b=CbKeN8gmsnipoNad8/dM0/77Y4+U814wBlzH0kbI4KUDhmWAggD/DnpquVq6I+nrGw
+         ball2Vw8ebfXKnrJemNhMRp5Oklrh14cksQX1i4VdetWfrPNC6FXU6wfwx/htxK4sBff
+         3XWO6wEhrMr4uOUs6UmObcoSUBKcmqQGWdYXWs8B1iIRuCKhkULgsLNDPNjat3tdl5ZW
+         8oOv2n3bu6GDxFNyEcWuW8QUUOC+g990wfPJofJL9LBlTILL4sPOWHVCrP4XfUKIOMm/
+         wOvxCNvbJIvCSppG4idJJwqeCIUJ28Tb9GujLcvS28yVuBoE0IXy5tLy24rHahmb4wWY
+         B+/A==
+X-Forwarded-Encrypted: i=1; AJvYcCV3hBjD3Mto2Adfvdhpgcq1Qof+hXYPLdTkARB/WcxLf7osF0ZO+feuUG7wWHVrf/u92/Q3XQZEs9n/rgeBBu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdiIt7F0d1QT7MXK+71FYKfx9RH39IhBm3wD4v4JI/U2l+bEVb
+	tJzxAMTOmcXgfvf/7Fsn1f9ev2ziXevDezy0qQqR+EDYwI5u6OPJK5rW+5WSjXBFEAbiwYSkY51
+	lTDAuIfe+gCWFivaz6dmQmEuT0cd9dfzqHoyXSg==
+X-Gm-Gg: ASbGncs6s0NcFcz+5uIDYI63gT5OnhbFmonGN+heffKTYbQ4m1DUSJ1ztH1ZnlIZDKl
+	Q3H2LCYsMuxd/jxyeYIsP9ZtvdvtKkjL2apm+Nuw7wzyRTFPXIPLeNSTslQTotIjcTm4hiG6dGd
+	rKaCZZbu77D5aBBWY7dNox4rvmLCQlBaPnIg==
+X-Google-Smtp-Source: AGHT+IFISwEmEaUPEIGkAw+pjWlFVBT86sEjNE/qTVOISvnuF8D1u+N13cESKrEtVLIEhG9cDQKZ22WKp9cDBmU869o=
+X-Received: by 2002:a05:6902:230f:b0:e73:1ff1:ca2f with SMTP id
+ 3f1490d57ef6-e78ef6f7c55mr3350492276.32.1746704097920; Thu, 08 May 2025
+ 04:34:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250227225928.661471-1-colin.i.king@gmail.com>
+References: <edc560afe2a8763c93341d161daeb8b33ba606c6.1746199917.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <edc560afe2a8763c93341d161daeb8b33ba606c6.1746199917.git.christophe.jaillet@wanadoo.fr>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 8 May 2025 13:34:22 +0200
+X-Gm-Features: ATxdqUFTyHds9ofNJKemjngwN8NRV53Nc2rYed1UjoRSW5B2VKN5wXgtKbJ3AXY
+Message-ID: <CAPDyKFpQPj8ky-QkOTgb0KQFoj+cP0EPE-uFu_MQozPC2vosOQ@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: amlogic: Constify some structures
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Fri, 2 May 2025 at 17:32, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Most structures in this driver are not modified.
+>
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers. (This is the case for see meson_ee_pwrc_domain_desc)
+>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>    text    data     bss     dec     hex filename
+>    8924    3832       0   12756    31d4 drivers/pmdomain/amlogic/meson-ee-pwrc.o
+>
+> After:
+> =====
+>    text    data     bss     dec     hex filename
+>   12396     336       0   12732    31bc drivers/pmdomain/amlogic/meson-ee-pwrc.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-On Thu, Feb 27, 2025 at 10:59:28PM +0000, Colin Ian King wrote:
-> There is a spelling mistake in a literal string. Fix it.
+Applied for next, thanks!
 
-I can see ASN1 h225 refers to authenticaton, not authenticaton
+Kind regards
+Uffe
 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  net/netfilter/nf_conntrack_h323_types.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/netfilter/nf_conntrack_h323_types.c b/net/netfilter/nf_conntrack_h323_types.c
-> index fb1cb67a5a71..4f6433998418 100644
-> --- a/net/netfilter/nf_conntrack_h323_types.c
-> +++ b/net/netfilter/nf_conntrack_h323_types.c
-> @@ -1108,7 +1108,7 @@ static const struct field_t _SecurityCapabilities[] = {	/* SEQUENCE */
->  	 _NonStandardParameter},
->  	{FNAME("encryption") CHOICE, 2, 3, 3, SKIP | EXT, 0,
->  	 _SecurityServiceMode},
-> -	{FNAME("authenticaton") CHOICE, 2, 3, 3, SKIP | EXT, 0,
-> +	{FNAME("authentication") CHOICE, 2, 3, 3, SKIP | EXT, 0,
->  	 _SecurityServiceMode},
->  	{FNAME("integrity") CHOICE, 2, 3, 3, SKIP | EXT, 0,
->  	 _SecurityServiceMode},
-> -- 
-> 2.47.2
-> 
+> Compile tested-only.
+> ---
+>  drivers/pmdomain/amlogic/meson-ee-pwrc.c | 78 ++++++++++++------------
+>  1 file changed, 39 insertions(+), 39 deletions(-)
+>
+> diff --git a/drivers/pmdomain/amlogic/meson-ee-pwrc.c b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+> index fbb2b4103930..55c8c9f66a1b 100644
+> --- a/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-ee-pwrc.c
+> @@ -69,27 +69,27 @@ struct meson_ee_pwrc_domain_desc {
+>         char *name;
+>         unsigned int reset_names_count;
+>         unsigned int clk_names_count;
+> -       struct meson_ee_pwrc_top_domain *top_pd;
+> +       const struct meson_ee_pwrc_top_domain *top_pd;
+>         unsigned int mem_pd_count;
+> -       struct meson_ee_pwrc_mem_domain *mem_pd;
+> +       const struct meson_ee_pwrc_mem_domain *mem_pd;
+>         bool (*is_powered_off)(struct meson_ee_pwrc_domain *pwrc_domain);
+>  };
+>
+>  struct meson_ee_pwrc_domain_data {
+>         unsigned int count;
+> -       struct meson_ee_pwrc_domain_desc *domains;
+> +       const struct meson_ee_pwrc_domain_desc *domains;
+>  };
+>
+>  /* TOP Power Domains */
+>
+> -static struct meson_ee_pwrc_top_domain gx_pwrc_vpu = {
+> +static const struct meson_ee_pwrc_top_domain gx_pwrc_vpu = {
+>         .sleep_reg = GX_AO_RTI_GEN_PWR_SLEEP0,
+>         .sleep_mask = BIT(8),
+>         .iso_reg = GX_AO_RTI_GEN_PWR_SLEEP0,
+>         .iso_mask = BIT(9),
+>  };
+>
+> -static struct meson_ee_pwrc_top_domain meson8_pwrc_vpu = {
+> +static const struct meson_ee_pwrc_top_domain meson8_pwrc_vpu = {
+>         .sleep_reg = MESON8_AO_RTI_GEN_PWR_SLEEP0,
+>         .sleep_mask = BIT(8),
+>         .iso_reg = MESON8_AO_RTI_GEN_PWR_SLEEP0,
+> @@ -104,20 +104,20 @@ static struct meson_ee_pwrc_top_domain meson8_pwrc_vpu = {
+>                 .iso_mask = BIT(__bit),                         \
+>         }
+>
+> -static struct meson_ee_pwrc_top_domain sm1_pwrc_vpu = SM1_EE_PD(8);
+> -static struct meson_ee_pwrc_top_domain sm1_pwrc_nna = SM1_EE_PD(16);
+> -static struct meson_ee_pwrc_top_domain sm1_pwrc_usb = SM1_EE_PD(17);
+> -static struct meson_ee_pwrc_top_domain sm1_pwrc_pci = SM1_EE_PD(18);
+> -static struct meson_ee_pwrc_top_domain sm1_pwrc_ge2d = SM1_EE_PD(19);
+> +static const struct meson_ee_pwrc_top_domain sm1_pwrc_vpu = SM1_EE_PD(8);
+> +static const struct meson_ee_pwrc_top_domain sm1_pwrc_nna = SM1_EE_PD(16);
+> +static const struct meson_ee_pwrc_top_domain sm1_pwrc_usb = SM1_EE_PD(17);
+> +static const struct meson_ee_pwrc_top_domain sm1_pwrc_pci = SM1_EE_PD(18);
+> +static const struct meson_ee_pwrc_top_domain sm1_pwrc_ge2d = SM1_EE_PD(19);
+>
+> -static struct meson_ee_pwrc_top_domain g12a_pwrc_nna = {
+> +static const struct meson_ee_pwrc_top_domain g12a_pwrc_nna = {
+>         .sleep_reg = GX_AO_RTI_GEN_PWR_SLEEP0,
+>         .sleep_mask = BIT(16) | BIT(17),
+>         .iso_reg = GX_AO_RTI_GEN_PWR_ISO0,
+>         .iso_mask = BIT(16) | BIT(17),
+>  };
+>
+> -static struct meson_ee_pwrc_top_domain g12a_pwrc_isp = {
+> +static const struct meson_ee_pwrc_top_domain g12a_pwrc_isp = {
+>         .sleep_reg = GX_AO_RTI_GEN_PWR_SLEEP0,
+>         .sleep_mask = BIT(18) | BIT(19),
+>         .iso_reg = GX_AO_RTI_GEN_PWR_ISO0,
+> @@ -154,39 +154,39 @@ static struct meson_ee_pwrc_top_domain g12a_pwrc_isp = {
+>         { __reg, BIT(14) },                                     \
+>         { __reg, BIT(15) }
+>
+> -static struct meson_ee_pwrc_mem_domain axg_pwrc_mem_vpu[] = {
+> +static const struct meson_ee_pwrc_mem_domain axg_pwrc_mem_vpu[] = {
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+>         VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_vpu[] = {
+> +static const struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_vpu[] = {
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG2),
+>         VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain gxbb_pwrc_mem_vpu[] = {
+> +static const struct meson_ee_pwrc_mem_domain gxbb_pwrc_mem_vpu[] = {
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+>         VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain meson_pwrc_mem_eth[] = {
+> +static const struct meson_ee_pwrc_mem_domain meson_pwrc_mem_eth[] = {
+>         { HHI_MEM_PD_REG0, GENMASK(3, 2) },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain meson8_pwrc_audio_dsp_mem[] = {
+> +static const struct meson_ee_pwrc_mem_domain meson8_pwrc_audio_dsp_mem[] = {
+>         { HHI_MEM_PD_REG0, GENMASK(1, 0) },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain meson8_pwrc_mem_vpu[] = {
+> +static const struct meson_ee_pwrc_mem_domain meson8_pwrc_mem_vpu[] = {
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+>         VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_vpu[] = {
+> +static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_vpu[] = {
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+>         VPU_MEMPD(HHI_VPU_MEM_PD_REG2),
+> @@ -198,28 +198,28 @@ static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_vpu[] = {
+>         VPU_HHI_MEMPD(HHI_MEM_PD_REG0),
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_nna[] = {
+> +static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_nna[] = {
+>         { HHI_NANOQ_MEM_PD_REG0, 0xff },
+>         { HHI_NANOQ_MEM_PD_REG1, 0xff },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_usb[] = {
+> +static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_usb[] = {
+>         { HHI_MEM_PD_REG0, GENMASK(31, 30) },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_pcie[] = {
+> +static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_pcie[] = {
+>         { HHI_MEM_PD_REG0, GENMASK(29, 26) },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_ge2d[] = {
+> +static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_ge2d[] = {
+>         { HHI_MEM_PD_REG0, GENMASK(25, 18) },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain axg_pwrc_mem_audio[] = {
+> +static const struct meson_ee_pwrc_mem_domain axg_pwrc_mem_audio[] = {
+>         { HHI_MEM_PD_REG0, GENMASK(5, 4) },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_audio[] = {
+> +static const struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_audio[] = {
+>         { HHI_MEM_PD_REG0, GENMASK(5, 4) },
+>         { HHI_AUDIO_MEM_PD_REG0, GENMASK(1, 0) },
+>         { HHI_AUDIO_MEM_PD_REG0, GENMASK(3, 2) },
+> @@ -235,12 +235,12 @@ static struct meson_ee_pwrc_mem_domain sm1_pwrc_mem_audio[] = {
+>         { HHI_AUDIO_MEM_PD_REG0, GENMASK(27, 26) },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_nna[] = {
+> +static const struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_nna[] = {
+>         { G12A_HHI_NANOQ_MEM_PD_REG0, GENMASK(31, 0) },
+>         { G12A_HHI_NANOQ_MEM_PD_REG1, GENMASK(31, 0) },
+>  };
+>
+> -static struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_isp[] = {
+> +static const struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_isp[] = {
+>         { G12A_HHI_ISP_MEM_PD_REG0, GENMASK(31, 0) },
+>         { G12A_HHI_ISP_MEM_PD_REG1, GENMASK(31, 0) },
+>  };
+> @@ -270,14 +270,14 @@ static struct meson_ee_pwrc_mem_domain g12a_pwrc_mem_isp[] = {
+>
+>  static bool pwrc_ee_is_powered_off(struct meson_ee_pwrc_domain *pwrc_domain);
+>
+> -static struct meson_ee_pwrc_domain_desc axg_pwrc_domains[] = {
+> +static const struct meson_ee_pwrc_domain_desc axg_pwrc_domains[] = {
+>         [PWRC_AXG_VPU_ID]  = VPU_PD("VPU", &gx_pwrc_vpu, axg_pwrc_mem_vpu,
+>                                      pwrc_ee_is_powered_off, 5, 2),
+>         [PWRC_AXG_ETHERNET_MEM_ID] = MEM_PD("ETH", meson_pwrc_mem_eth),
+>         [PWRC_AXG_AUDIO_ID] = MEM_PD("AUDIO", axg_pwrc_mem_audio),
+>  };
+>
+> -static struct meson_ee_pwrc_domain_desc g12a_pwrc_domains[] = {
+> +static const struct meson_ee_pwrc_domain_desc g12a_pwrc_domains[] = {
+>         [PWRC_G12A_VPU_ID]  = VPU_PD("VPU", &gx_pwrc_vpu, g12a_pwrc_mem_vpu,
+>                                      pwrc_ee_is_powered_off, 11, 2),
+>         [PWRC_G12A_ETH_ID] = MEM_PD("ETH", meson_pwrc_mem_eth),
+> @@ -287,13 +287,13 @@ static struct meson_ee_pwrc_domain_desc g12a_pwrc_domains[] = {
+>                                     pwrc_ee_is_powered_off),
+>  };
+>
+> -static struct meson_ee_pwrc_domain_desc gxbb_pwrc_domains[] = {
+> +static const struct meson_ee_pwrc_domain_desc gxbb_pwrc_domains[] = {
+>         [PWRC_GXBB_VPU_ID]  = VPU_PD("VPU", &gx_pwrc_vpu, gxbb_pwrc_mem_vpu,
+>                                      pwrc_ee_is_powered_off, 12, 2),
+>         [PWRC_GXBB_ETHERNET_MEM_ID] = MEM_PD("ETH", meson_pwrc_mem_eth),
+>  };
+>
+> -static struct meson_ee_pwrc_domain_desc meson8_pwrc_domains[] = {
+> +static const struct meson_ee_pwrc_domain_desc meson8_pwrc_domains[] = {
+>         [PWRC_MESON8_VPU_ID]  = VPU_PD("VPU", &meson8_pwrc_vpu,
+>                                        meson8_pwrc_mem_vpu,
+>                                        pwrc_ee_is_powered_off, 0, 1),
+> @@ -303,7 +303,7 @@ static struct meson_ee_pwrc_domain_desc meson8_pwrc_domains[] = {
+>                                                 meson8_pwrc_audio_dsp_mem),
+>  };
+>
+> -static struct meson_ee_pwrc_domain_desc meson8b_pwrc_domains[] = {
+> +static const struct meson_ee_pwrc_domain_desc meson8b_pwrc_domains[] = {
+>         [PWRC_MESON8_VPU_ID]  = VPU_PD("VPU", &meson8_pwrc_vpu,
+>                                        meson8_pwrc_mem_vpu,
+>                                        pwrc_ee_is_powered_off, 11, 1),
+> @@ -313,7 +313,7 @@ static struct meson_ee_pwrc_domain_desc meson8b_pwrc_domains[] = {
+>                                                 meson8_pwrc_audio_dsp_mem),
+>  };
+>
+> -static struct meson_ee_pwrc_domain_desc sm1_pwrc_domains[] = {
+> +static const struct meson_ee_pwrc_domain_desc sm1_pwrc_domains[] = {
+>         [PWRC_SM1_VPU_ID]  = VPU_PD("VPU", &sm1_pwrc_vpu, sm1_pwrc_mem_vpu,
+>                                     pwrc_ee_is_powered_off, 11, 2),
+>         [PWRC_SM1_NNA_ID]  = TOP_PD("NNA", &sm1_pwrc_nna, sm1_pwrc_mem_nna,
+> @@ -576,32 +576,32 @@ static void meson_ee_pwrc_shutdown(struct platform_device *pdev)
+>         }
+>  }
+>
+> -static struct meson_ee_pwrc_domain_data meson_ee_g12a_pwrc_data = {
+> +static const struct meson_ee_pwrc_domain_data meson_ee_g12a_pwrc_data = {
+>         .count = ARRAY_SIZE(g12a_pwrc_domains),
+>         .domains = g12a_pwrc_domains,
+>  };
+>
+> -static struct meson_ee_pwrc_domain_data meson_ee_axg_pwrc_data = {
+> +static const struct meson_ee_pwrc_domain_data meson_ee_axg_pwrc_data = {
+>         .count = ARRAY_SIZE(axg_pwrc_domains),
+>         .domains = axg_pwrc_domains,
+>  };
+>
+> -static struct meson_ee_pwrc_domain_data meson_ee_gxbb_pwrc_data = {
+> +static const struct meson_ee_pwrc_domain_data meson_ee_gxbb_pwrc_data = {
+>         .count = ARRAY_SIZE(gxbb_pwrc_domains),
+>         .domains = gxbb_pwrc_domains,
+>  };
+>
+> -static struct meson_ee_pwrc_domain_data meson_ee_m8_pwrc_data = {
+> +static const struct meson_ee_pwrc_domain_data meson_ee_m8_pwrc_data = {
+>         .count = ARRAY_SIZE(meson8_pwrc_domains),
+>         .domains = meson8_pwrc_domains,
+>  };
+>
+> -static struct meson_ee_pwrc_domain_data meson_ee_m8b_pwrc_data = {
+> +static const struct meson_ee_pwrc_domain_data meson_ee_m8b_pwrc_data = {
+>         .count = ARRAY_SIZE(meson8b_pwrc_domains),
+>         .domains = meson8b_pwrc_domains,
+>  };
+>
+> -static struct meson_ee_pwrc_domain_data meson_ee_sm1_pwrc_data = {
+> +static const struct meson_ee_pwrc_domain_data meson_ee_sm1_pwrc_data = {
+>         .count = ARRAY_SIZE(sm1_pwrc_domains),
+>         .domains = sm1_pwrc_domains,
+>  };
+> --
+> 2.49.0
+>
