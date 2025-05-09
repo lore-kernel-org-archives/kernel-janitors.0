@@ -1,153 +1,127 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616A629116A
-	for <kernel-janitors@vger.kernel.org>; Fri,  9 May 2025 12:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703BF28C84A
+	for <kernel-janitors@vger.kernel.org>; Fri,  9 May 2025 13:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746795255; cv=none; b=l5gzH5UADpkQKacxjZlDagpqkHMCz+Rw7ctESO0nOEKYtHS8vGyeFjC2AAGz3mVldPaLVfxYxcdyB3eKrEtSwlIBEiOdv6PtsGz8G8lI52ATI/o/nAMUztiWbTU7q+2CUnwUm6x2njgWEzWkGKgV3XhAZAPBGO5avOXyavBnU7A=
+	t=1746798040; cv=none; b=fhAgjdTdqBIilwBZegVJeCvQzh4w6Qo0YqIYEVqY3ivzdcpQJbnsx1xeWVTy23LSRYqMFDZVu1yhUqf8m3eoExOZNRy7T6HR2EJ12iC854zWZHRFgHpRLfDcOg/QK4dIlCxrsFXjMH7fyQxs1oD4c1Hmnsvp6UCdd2rVNkQr7Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746795255; c=relaxed/simple;
-	bh=jCvLiKDBVrY7WhfqZ7vj3Wj0AsNRlu7MvCd39Ug/Qfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4nAedfvro2LY40UFSt6dMHbRnfneS9+HWYj5QD0B32khoIKSTfdHAVX5UNJcPx3LhRhQ5QF73k9o3j2zm4eYbR0Iw1InbFYOdi6QSCf7hUXZ6887xhfRgc0Is8/zYXhECoCkh36LQu18qL/fZlDlaEBup3SDcDgpjxnvB5lpEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LZtT6A21; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746798040; c=relaxed/simple;
+	bh=6kh1EmvyaIMEv6qY2bKAXfovW6AsqQRIY19O2CY38EA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DryGAWgV6bENtYC/2USSOMCG09Q/kiTOZ9NXMGmoW+gWWmevMdESLAWLHaWg+FAKMh0KbUmV3bjnxFcOJjkXx7RSfVAQdXIvt3yJiW1ZYQDG/Uc5KKLN4NMZSeOQSx3K7NM0dpumgSgZANwgS8AcyY9gFOw+sCTd+zqhYf6Xylo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gjNkB4nJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZtT6A21"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a1fa0d8884so350527f8f.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 09 May 2025 05:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746795251; x=1747400051; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5p9hjrbIFYrH+im9JYFPC1IjA/TkM8LxznrYikn7MA4=;
-        b=LZtT6A21VfrSyFgsWL1NEDYyp631DTSzvdiY5y8nEVx9NTCw1uouW6aieKW1vlKV9S
-         OgGXoUpHmAZsOX/N3/73ssfg1R+fc9l6m5DzfKyNzD6DN17ZuFby2wYGEcaJjr24mIyO
-         wXOUFLqbPmfN6EtM/Sq/ZKU1EdEKYcH17U8qTUCfUs5JzmpqxDNSaJw+wLZ7zP37JguF
-         btmLscrxHxBahk5cWChpwwdZ/yWo2Ne46NBZSuAWrZF1eWnjcc1KSPcyE8fof4k4pTjR
-         iXAbDakDtB2kMVelABMLIRFc/9Y9aWBlZAIlY5UhVEiZ44Ra2PbNzRhDLJuucr+BN+8F
-         fNag==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gjNkB4nJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746798037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rbU/Ik2HFCaYPRnGL3BpFYVtUHthaf34xL/8Qjh8JzE=;
+	b=gjNkB4nJYMgojcVibeQ5SGVZ8XeO4Xc0u1A3bEjCmCMCsB/jahcrgxlSKIO1HqnvRWdOug
+	dHM2xtN3JdH8gXsXNc59/d/jfN/MX94O6rZ8i78gfR1GxORlGKe+u3skihmFxLTnyC3rkm
+	ziVS+MpIgrJK3WdI+ow0q6NGU+G195E=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-44-6s7KYmcrNfuq14qs8XoaNg-1; Fri, 09 May 2025 09:40:36 -0400
+X-MC-Unique: 6s7KYmcrNfuq14qs8XoaNg-1
+X-Mimecast-MFC-AGG-ID: 6s7KYmcrNfuq14qs8XoaNg_1746798035
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43eed325461so11107575e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 May 2025 06:40:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746795251; x=1747400051;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5p9hjrbIFYrH+im9JYFPC1IjA/TkM8LxznrYikn7MA4=;
-        b=uruQmXYhuGrb9hc7gRobIny1VlakWFkN/AL6+bh57j/k6T8rB1b/M//cYHVwgg9VJI
-         MErpaaRG8oJFtIhMk8cfCUx+ky5cWRMa4SMTPPwG0Zp1a/pDKzq4euMDl2RA7vUWQpko
-         xFRDOdpQCbxO99B+5yfqsEcKWm1bJ+M3ZcVOHXE+Hi7Iw1AJDQm8Wa9DPWjqcbkoyVIY
-         fpiXsMxf76dPed9iFx/VO4+iTRcEyS3FF8jGkC20B+TrEGdXX8XL/FxizF3c+1nEtoPO
-         az2rwsCITqIGKQJKLzqhJ3Uq1v7+dmUlBSRZwStdVY6rlxLJupxR/1CTz62zEh+tYF2p
-         /4eg==
-X-Gm-Message-State: AOJu0Ywyl3CvMjsUUYabpqP5Sxr8g487pIkoxqGlQsMF4OVB6cAJwcle
-	KqDcIc/QwVet5VYBhBKmiW1/QDEdELlOu5hQr6q50Hacf7cW58tsyUDk4GFEqPJRlyBWfARgK1/
-	1
-X-Gm-Gg: ASbGncv+Y0t1thUIA07BJGPvLzyEbdk0XD1fes7X299uUA5DSdo4pOdLUZV0E0O+Fee
-	SA062/yCc3TQws8+eiuqHZjxGtvI77pPzd11S352rBNtUKc6dTgqJ+Sfo+AlVmAfvVajhAhvqc/
-	RSYdI4FcnZzwL3/LZGQMgW1hpxmI+IxqghQGRf2x9a3b2/TR6gGyJYb8xPAiYQZWVBqM5Ft6c4T
-	qnZsvBVYuwLusrRtfV+zvaNY2pwJDivE0iywZoOvmAdFpNlp7IZTGGoCNfasTgwJeszcICcYAn1
-	9uUDJmLo8pG6poKY811EUvFY300nvzYvIDZPxq4IcP5m4w==
-X-Google-Smtp-Source: AGHT+IGN/h3ySaynydD/+H2o+/taaGnWRBx/kBXGgc+T+XaB/tHtMChCtfnOP4rk38pj3rS+z6JsWA==
-X-Received: by 2002:a05:6000:1449:b0:3a0:8442:2c48 with SMTP id ffacd0b85a97d-3a1f64a48ecmr2295110f8f.44.1746795251507;
-        Fri, 09 May 2025 05:54:11 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a1f5a4c5a4sm3127094f8f.81.2025.05.09.05.54.10
+        d=1e100.net; s=20230601; t=1746798035; x=1747402835;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rbU/Ik2HFCaYPRnGL3BpFYVtUHthaf34xL/8Qjh8JzE=;
+        b=ujFMEgkvwGXgBCtwkagNnez+eqGFg7ux2Fd3HOCt21Pm176CVfnsYPFcKW+yLUpA6H
+         6qCWy4Yi3sXq6elksf98cxTKJcZ7R2ZWv1iuvZPtFAN//qT+9Lw9vSm1RFwyO8LsG88D
+         u/DftNz/ly7HfCTAIhbmS7+/YmkJqwLGhll1sZtnGrUGBWwER0lM1snewUDqLub1+duS
+         K2ZXq6/AN3c8KYC+Shni3GbEIHH9xeyDbE5TwLyRLqllSP/TnIhuGdqHcYZ3tre3sK41
+         Va1oDY7LDP8LMonPbgD8GUz2IGm2pDtBn4whRRSOyXoAMcVwu9I+Lrh5TCd0mZUMrZ0k
+         XcFw==
+X-Gm-Message-State: AOJu0YxqgoNI3+qEKvqfeZ4yJJV0dhfHeyI64OVhOk0yXAiU+O+3ScPN
+	9+cuHniM6OSuMbctUZ79HR9Pmdxdxfm1Prnot0iIGu+xWit5jAWMvdOTpUSejJbxHxPepkEOE8X
+	UBTCIku5+NB6sF9ZPBxZzps8enk8h7VotEeE9xSZiEq5Eq5qyDGVz5AjAHwX3cuB+JQ==
+X-Gm-Gg: ASbGncscgiZgJc1oV8gq1ugQSDUIROhBYTKzNSYqXPkYXgdHe0v/ikYdqPaZ/5r82rz
+	YfjSq+5IuFdwkbTL/zDkaf63W5PRRZEq1ZXmtKK27UjdgKaFnQt+Ue/D40pprAsF16f1/P4rEwn
+	cZd/W7+zkH946FcisJckebVecVxU1TRtql2PLyCBRzIFtEGYzDeEzc/hl4coM4+6dEH5TFg+6I+
+	Yh1QwilHT9BEZ4mARrL5w+SxUCFl6Yl9FQMKPiYveF07N7scxe7+BJBd1tacbPiZrmBrSvK12EN
+	Jv3GxhgWemBYog7Zg5aFdf+CNOPtMgZa6jI1eY4EP3TrxfVD0VtwpS7NNg==
+X-Received: by 2002:a05:600c:6819:b0:43d:649:4e50 with SMTP id 5b1f17b1804b1-442d6d44db5mr30308855e9.13.1746798034805;
+        Fri, 09 May 2025 06:40:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8Kxh1nPeuAUwUqlxdH6k97wyjBuBL7pw2aJhhUSJalMBvgbkpXFDayp+M9yqixrKB3tLmdA==
+X-Received: by 2002:a05:600c:6819:b0:43d:649:4e50 with SMTP id 5b1f17b1804b1-442d6d44db5mr30308675e9.13.1746798034415;
+        Fri, 09 May 2025 06:40:34 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd3b7dc1sm71403735e9.34.2025.05.09.06.40.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 05:54:11 -0700 (PDT)
-Date: Fri, 9 May 2025 15:54:07 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: kernel-janitors@vger.kernel.org
-Subject: Re: [bug report] net: usb: lan78xx: refactor PHY init to separate
- detection and MAC configuration
-Message-ID: <aB367-jQMalNTDAr@stanley.mountain>
-References: <aB3E3qDVOHu6zBI-@stanley.mountain>
- <aB34YNRx4uV9MaBL@pengutronix.de>
+        Fri, 09 May 2025 06:40:33 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+	linux-coco@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: rectify file entries in TRUSTED SECURITY MODULE (TSM) INFRASTRUCTURE
+Date: Fri,  9 May 2025 15:40:31 +0200
+Message-ID: <20250509134031.70559-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aB34YNRx4uV9MaBL@pengutronix.de>
 
-On Fri, May 09, 2025 at 02:43:12PM +0200, Oleksij Rempel wrote:
-> On Fri, May 09, 2025 at 12:03:26PM +0300, Dan Carpenter wrote:
-> > Hello Oleksij Rempel,
-> > 
-> > Commit d39f339d2603 ("net: usb: lan78xx: refactor PHY init to
-> > separate detection and MAC configuration") from May 5, 2025
-> > (linux-next), leads to the following Smatch static checker warning:
-> > 
-> > 	drivers/net/usb/lan78xx.c:2842 lan78xx_phy_init()
-> > 	warn: missing unwind goto?
-> > 
-> > drivers/net/usb/lan78xx.c
-> >     2805 static int lan78xx_phy_init(struct lan78xx_net *dev)
-> >     2806 {
-> >     2807         __ETHTOOL_DECLARE_LINK_MODE_MASK(fc) = { 0, };
-> >     2808         int ret;
-> >     2809         u32 mii_adv;
-> >     2810         struct phy_device *phydev;
-> >     2811 
-> >     2812         phydev = lan78xx_get_phy(dev);
-> >     2813         if (IS_ERR(phydev))
-> >     2814                 return PTR_ERR(phydev);
-> >     2815 
-> >     2816         ret = lan78xx_mac_prepare_for_phy(dev);
-> >     2817         if (ret < 0)
-> >     2818                 goto free_phy;
-> >     2819 
-> >     2820         /* if phyirq is not set, use polling mode in phylib */
-> >     2821         if (dev->domain_data.phyirq > 0)
-> >     2822                 phydev->irq = dev->domain_data.phyirq;
-> >     2823         else
-> >     2824                 phydev->irq = PHY_POLL;
-> >     2825         netdev_dbg(dev->net, "phydev->irq = %d\n", phydev->irq);
-> >     2826 
-> >     2827         /* set to AUTOMDIX */
-> >     2828         phydev->mdix = ETH_TP_MDI_AUTO;
-> >     2829 
-> >     2830         ret = phy_connect_direct(dev->net, phydev,
-> >     2831                                  lan78xx_link_status_change,
-> >     2832                                  dev->interface);
-> >     2833         if (ret) {
-> >     2834                 netdev_err(dev->net, "can't attach PHY to %s\n",
-> >     2835                            dev->mdiobus->id);
-> >     2836                 if (dev->chipid == ID_REV_CHIP_ID_7801_) {
-> >     2837                         if (phy_is_pseudo_fixed_link(phydev)) {
-> >     2838                                 fixed_phy_unregister(phydev);
-> >     2839                                 phy_device_free(phydev);
-> >     2840                         }
-> >     2841                 }
-> > 
-> > Why does this error path only cleanup for ID_REV_CHIP_ID_7801_ where the
-> > others do it unconditionally?
-> 
-> This chip-specific condition in the cleanup can be used, but it’s not
-> strictly necessary - none of the variants introduce regressions. The
-> non-conditional cleanup actually matches the logic already used in
-> lan78xx_disconnect(), where phy_is_pseudo_fixed_link() is checked
-> unconditionally.
-> 
-> That said, the purpose of this patch set is to prepare for migration to
-> phylink, where pseudo fixed links won’t be used at all. Due to the
-> 10-patch limit, I’ve split the changes - the patch that removes pseudo
-> fixed-link support entirely will follow.
-> 
-> Nevertheless, I can send a cleanup patch that unconditionally jumps to
-> free_phy on phy_connect_direct() failure for consistency and clarity.
-> Should I?
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Don't do anything on my account.  These messages are only intended to be
-helpful, so ignore them when they're not.  People with questions know to
-look it up on lore and they will find this thread.
+Commit 7515f45c1652 ("coco/guest: Move shared guest CC infrastructure to
+drivers/virt/coco/guest/") moves drivers/virt/coco/tsm.c to
+drivers/virt/coco/guest/report.c, and adjusts the file entry in TRUSTED
+SECURITY MODULE (TSM) INFRASTRUCTURE.
 
-regards,
-dan carpenter
+However, commit b9e22b35d459 ("tsm-mr: Add TVM Measurement Register
+support") also touches that section, leading to some unintended state with
+the two concurrent changes of these two commits, i.e., entry
+drivers/virt/coco/tsm*.c is still in place, where it should have been
+deleted. Note that the existing file entry drivers/virt/coco/tsm*.c is not
+needed, as the files are after their renaming in drivers/virt/coco/guest/,
+and there is already a file entry in this section for that directory.
+
+Rectify this section appropriately.
+
+Further, commit f6953f1f9ec4 ("tsm-mr: Add tsm-mr sample code") adds
+example code to samples/tsm-mr/, but in the MAINTAINERS section, it refers
+to the non-existing directory samples/tsm/. So, rectify that file entry to
+the existing intended location as well.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6dbdf02d6b0c..e8a21d6f89f8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24991,9 +24991,8 @@ S:	Maintained
+ F:	Documentation/ABI/testing/configfs-tsm-report
+ F:	Documentation/driver-api/coco/
+ F:	drivers/virt/coco/guest/
+-F:	drivers/virt/coco/tsm*.c
+ F:	include/linux/tsm*.h
+-F:	samples/tsm/
++F:	samples/tsm-mr/
+ 
+ TRUSTED SERVICES TEE DRIVER
+ M:	Balint Dobszay <balint.dobszay@arm.com>
+-- 
+2.49.0
+
