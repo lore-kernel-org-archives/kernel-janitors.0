@@ -1,102 +1,129 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0036E28E5E5;
-	Fri,  9 May 2025 10:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D3328F507
+	for <kernel-janitors@vger.kernel.org>; Fri,  9 May 2025 11:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746787514; cv=none; b=nTxuq/QcdnAwT4TqWd6dWvjqLkumGKYmrN9wSpfsa3wQRZkJKIf7Ye0s1NHqLWwU5npY0GTs4gz/NFQ2hRArBnpXiJ2OnxMrKJ1AEIpt1rBjp+wiWCMCFClufJVDRo116ZuYws2e7A5jdBvT0MRGKf8RF+8nsahObxiSefvduJU=
+	t=1746788751; cv=none; b=KCu9JrIWA1Axd+cRFdBc7+6gmGR+uXUQadfnl3FreWnyeB2Ld+MN3VbkzuQLUknAXVgCEwCsL/2QBYSxbmTKxNmgF6k4e9d7+Yl8+GZbtqGGH8+gSUmIlM5gjbKfpXFE0wS+2ZgMb9yAT3IPqfycy8+xBi1y6Lcd1eGYSVyC+EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746787514; c=relaxed/simple;
-	bh=oOlUbRK9DpvwgrkBO+Rn9Cb8aoZaQB0qwhCMzOD/9Vc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LI5WWeI002JsZCuTgK345nlnjsg0KA3emUWyCd80QE5iYsSkIovW0Gnqm/X2iw5mn1Ni2RlVJkJ2Tu5J0dQQZzEJvdhpKgbZiiQhCl2AB8uIZ7qDSvdj8mAHRGxQbHPbzLabqByQ2CmaiLLZUzrRZEiB3hzvHEaoeTVNRQUtRY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jisk4ol7; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746788751; c=relaxed/simple;
+	bh=HtlxtTe7nrbfoONlv91HljKDl3ZjJxLieMuEZGdCo1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Mr3X7OrXLi0q2iq/99cd4KfVRp+mcp8EVRIhOA1ogcSFL5h1BtXhUESCvaAOzpr29G/hE3RYM+DTUyBkZC8K0aYYXFPeY0DTe0AGP0KRloEDvLYw4S3FtWWPcu3tNCcdmV5HVq+yExGxkB9MHKZ57RqDriw9TTzHqSZPOOZ/mgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lZsXp7D9; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jisk4ol7"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5fab81d6677so3698802a12.1;
-        Fri, 09 May 2025 03:45:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lZsXp7D9"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-442ccf0e1b3so20914455e9.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 09 May 2025 04:05:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746787511; x=1747392311; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CxPInF1T9LVjEkvLtOyhGto+ZvX/qrXq2sR90esUvWw=;
-        b=jisk4ol78Ms8NreIveiRyl/22p9xGNvby2ENr7pbxtr0UMbx+7dKTnK6s/T2Ff6P+b
-         uU2yLrjhL0xtFt1kwdPS97YBIaqqL3P3Vr8oD2QCxI9MbTGvJm0pTzPrn8AuG3e3Ns1E
-         46pLfDvO8zqleO51wD4rLw9mvqIhV5xOGwbNzk2dKQWBVRGsp2m8n5k+37Ya8vp34fI5
-         eOqQuG5/Bak2+uli9OrOGtcGAwyhMLVkiEK5nPtklzlTEsdTz8fif+QD8owPZqFfG2zn
-         u4a3ToprnOVSVgCRFQ8AIey3r2q1c5BmW62E4qDx5ke2KJ2YBDE6Y8S6YI4hYQke4x3B
-         Jb6g==
+        d=linaro.org; s=google; t=1746788748; x=1747393548; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=irxrEhweCUXCqGm1VUjTuBVxoEJgZZgYdEdb4JaFlBI=;
+        b=lZsXp7D95KXVzcde7g1yuRsj7nHKIvTgG01gyMaIZGQ2K6nMcKLoeUuZfiZg+j1PX9
+         ydhisSgcbeXQFEqYkuNuYJAXmTPa8ozAEnEYC9JFNJYcnuEpdvk6m94ZF8jTuKNTlKTy
+         W3X/2JS/TVfyDFGsepnHfpsxL5D0T+sC7nzBNc2tATxNCDzkWq5h36H1A5pywB2+Mi0h
+         GDyU6vCQd//l2GPAJPjgDe/p+gOwPC3tZIUrxxH6SmcGyYKciIM/67UymaYAiJkFyz49
+         tA2/pJj8y2bIGFfPpNf1rV5wJxcG160hOwYwXjHjDT1TJMPg14M8KJ9dgvQcOHTKf192
+         UQ4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746787511; x=1747392311;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CxPInF1T9LVjEkvLtOyhGto+ZvX/qrXq2sR90esUvWw=;
-        b=AwLPdXQXOma3jFZ0xRIP8BJCxGkHpYpEVPSY3ixyczvYlqlvU7sQW80ZrP1qyzrZ7s
-         a/toR4vZI3LYEh34AvZf4T/LYndb4SFl3YHHGoZ4WWYeXuai+U9i5fGfBJRpR+6jP7ID
-         XCVvtaW6qeyjCwrndIYNp+9mZaF1U2ieQekzVIy6kksX2XfuA++jJD2HdSySH3zXofZ0
-         uVrzD2MKH8vxsbYB0/d3dv4NTWkTQYNX3NGrg22XH52qdEGu8v5SG+IrM1bYep5vg9rC
-         oknXzAytG9JPKf2CGpLd1GkdWu4gG8vBEFB/KOBTDmplXaDqW2vzos7OdrHzHUKq+ALD
-         6sMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOfC7G6dNaqhDzTjZDrzAAv670Xxt7O1BBFIuBjSq9r/akTVpvAOmNlJr2eocUSFAvCGvSxV8b9Dxo2sI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Q+7BeXUblVTOMBRKvRtiBuXi16IAe/nycVl5GgCqkD+Tw6sd
-	0lMJfxgaor+PJWYjxC+eRKihZDlGloOCbM86LWSUnaUk9ZeP1V1uathXUgcL98IsdQ==
-X-Gm-Gg: ASbGnctzciMdPqvQQyvIMAYNLg90qpM6gj9e49OHo9i3ar0nmYORx9Lw1SrcNpSrkNL
-	9BBbAcGHxGKQpAv9iuCd6KaI8F7VfhfXuOGczFCMUSga5GDXMWWwZ9C5o29wRM557l+wv/RZS+2
-	cM6Fsk2pM/Qw7vqJfYkJ++9uoUf2gh8VfARn6Y68MfmRNZZVgJrxLjSO8h9/4Q+VLlJ9dMZ3qeS
-	1j6VTCJLJcvW75jU53/aCG8vh09mISBYYVbxqDMIKBT2BUAOJLdRjEbWx9xcK4Sb2gJHz6MHaJ5
-	r/hGnYauhl+MQkLDuPRcLB3JFQp3m6UuW42lmss=
-X-Google-Smtp-Source: AGHT+IGGLGNvENgsehRHPyd78blj4yJFAdejnjHHmOciST0qvwqR/4gxuUrwFEkkZ1cDCGVf1I/sgg==
-X-Received: by 2002:a17:906:99c2:b0:acb:34b2:851 with SMTP id a640c23a62f3a-ad219170650mr281983666b.44.1746787510903;
-        Fri, 09 May 2025 03:45:10 -0700 (PDT)
-Received: from localhost ([87.254.1.131])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad219853421sm129131466b.165.2025.05.09.03.45.10
+        d=1e100.net; s=20230601; t=1746788748; x=1747393548;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=irxrEhweCUXCqGm1VUjTuBVxoEJgZZgYdEdb4JaFlBI=;
+        b=Y74JsPWiG+hl+CwyXYFP6PU94yx+dF+hquUZIQ4VMdn9yAjDZnIVcyNXkGsHEXh2g6
+         m8ipOWSyqBiQz7hvUugCTcEHRLUXJE49Tdv2FMD0SicJyX2vibw6TNbMpK8GhUjeSZ6q
+         Vl1no4AJ7G2MxEeXebYnS4mUARCncf7JY7YwYahzOd7NzUJH/SdcuLrWBOsYeSpXu2oD
+         gsIplvg4uje5iB3A7LEmzWjDPeQyy6aQ0A3fBNB4X7+VxGnYZJSDDFhI6z518/XDH8IN
+         3lFOesbJR7xaJq46CG3wF+AlN5MNevDXFjVrtVxx2O/cQ7iXelVtoxYLRdIPTyG5v9H0
+         icAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAd/O6VrqIKvPJTj41fHIfdya4mthoH61pBYGvUOl7J+VNXbVaB+8HrtIp3IsUdIccStsrQjPbzuZhOFCjZbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkAG0ispmYM9BA2s58VoyqurJBH0c92aulD6ncI7zcpNrC/8sm
+	jM3KVLINixm2b7+UUcFHK3jlBvzfpXVwos0OlGIW1I7xwsDNHLD7yuqJT89eXwc=
+X-Gm-Gg: ASbGncuKLHXp4FHEuZCKR+M2WzilbUD6Utu3jKxBe89CYl4fzAku76LML7QUgkIPunZ
+	aFnMK6fL8cTrIxS16H+WRq0alefQzBpisW7DDVEDU0SjMdzXqBl+VrqQBq1nfx2LkE8+NShXFKs
+	JBXgmHdhzW0LhV1R+vhqDli2EmBXw5Ug4zcFHywpkyXV9H96EeIg6Fhg14I666ZDSQ7a8OJFx4A
+	cHJcQwN5cAyiPqL0AjQwGchKbhS/rn/eje98fo8tZ7IjoKuDKzwxoOdOG6/la52+tJntnCsuP2q
+	mOpHt9WcZIZmrmM6Pkdcf/6vuMe2xbWfbSGWhR24jHoSMg==
+X-Google-Smtp-Source: AGHT+IH+jBPAUs3aXz3zrzpBM/2GBSQQqn+LzvaGfSuxOybuE/QO/NbJAsghIVYoGpfZOS2NV7eWLw==
+X-Received: by 2002:a05:600c:8714:b0:43d:fa59:a685 with SMTP id 5b1f17b1804b1-442d6ddf58cmr18396045e9.33.1746788748089;
+        Fri, 09 May 2025 04:05:48 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a1f5a2d2c8sm2916601f8f.61.2025.05.09.04.05.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 03:45:10 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] memory: stm32: Fix spelling mistake "resset" -> "reset"
-Date: Fri,  9 May 2025 11:44:58 +0100
-Message-ID: <20250509104459.28167-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Fri, 09 May 2025 04:05:47 -0700 (PDT)
+Date: Fri, 9 May 2025 14:05:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 next] regulator: tps65219: regulator: tps65219: Fix error
+ codes in probe()
+Message-ID: <aB3hiEM0CB8m_X8m@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-There is a spelling mistake in a dev_err message. Fix it.
+There is a copy and paste error and we accidentally use "PTR_ERR(rdev)"
+instead of "error".  The "rdev" pointer is valid at this point.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Also there is no need to print the error code in the error message
+because dev_err_probe() already prints that.  So clean up the error
+message a bit.
+
+Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regulator IRQs")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/memory/stm32_omm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: Clean up the error message.
+    Also fix a typo in the Subject
 
-diff --git a/drivers/memory/stm32_omm.c b/drivers/memory/stm32_omm.c
-index 166baed0738a..bef7cf4391d6 100644
---- a/drivers/memory/stm32_omm.c
-+++ b/drivers/memory/stm32_omm.c
-@@ -173,7 +173,7 @@ static int stm32_omm_disable_child(struct device *dev)
- 		ret = reset_control_acquire(reset);
- 		if (ret) {
- 			stm32_omm_toggle_child_clock(dev, false);
--			dev_err(dev, "Can not acquire resset %d\n", ret);
-+			dev_err(dev, "Can not acquire reset %d\n", ret);
- 			return ret;
- 		}
+ drivers/regulator/tps65219-regulator.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/regulator/tps65219-regulator.c b/drivers/regulator/tps65219-regulator.c
+index b16b300d7f45..d80749cdae1d 100644
+--- a/drivers/regulator/tps65219-regulator.c
++++ b/drivers/regulator/tps65219-regulator.c
+@@ -454,9 +454,9 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
+ 						  irq_type->irq_name,
+ 						  &irq_data[i]);
+ 		if (error)
+-			return dev_err_probe(tps->dev, PTR_ERR(rdev),
+-					     "Failed to request %s IRQ %d: %d\n",
+-					     irq_type->irq_name, irq, error);
++			return dev_err_probe(tps->dev, error,
++					     "Failed to request %s IRQ %d\n",
++					     irq_type->irq_name, irq);
+ 	}
  
+ 	irq_data = devm_kmalloc(tps->dev, pmic->dev_irq_size, GFP_KERNEL);
+@@ -477,9 +477,9 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
+ 						  irq_type->irq_name,
+ 						  &irq_data[i]);
+ 		if (error)
+-			return dev_err_probe(tps->dev, PTR_ERR(rdev),
+-					     "Failed to request %s IRQ %d: %d\n",
+-					     irq_type->irq_name, irq, error);
++			return dev_err_probe(tps->dev, error,
++					     "Failed to request %s IRQ %d\n",
++					     irq_type->irq_name, irq);
+ 	}
+ 
+ 	return 0;
 -- 
-2.49.0
+2.47.2
 
