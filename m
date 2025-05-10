@@ -1,167 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1053D561;
-	Sat, 10 May 2025 08:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2B425A323
+	for <kernel-janitors@vger.kernel.org>; Sat, 10 May 2025 15:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746865217; cv=none; b=mEiIBvl+3mPtmH8G2P4AxGwFaTtxZDFoyDBbUAtqtt7/EByuZ5j4qqXOYOz8GtZJggC+29+uZzmYGKpqg3DF9Q0CGtSTNB9jLpwWBy+mXa126xjvSjilIp8b2zCtTWl1BrY1QeKmLE5NITtM1M1i9nIiU6iTgsWqxoW6WhpPtf4=
+	t=1746889942; cv=none; b=WobNdOfGKjS0aw3zD2BIyX8kC3H5z0NbY9dRb80XdPfFTsYI0VS2Vpjy86masn08/ppApqWbJ8j4nnDRCGhqDH+5FGSdwDUXQ4mEx2Tu+UJ924dmveswQqgN5bcvkSG2tueI0VIlyvyWfJqZ9I+KP9Dt51U1UdTNYhDlF1DG7hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746865217; c=relaxed/simple;
-	bh=w4KCtfNN++3rTxuFj1Y4PcCXB490W9C1G146sr8flJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sweLRFdF3Gql1sT7N7QCNTobXjLraTVY8cOHvRWwVa2qk0ws5bjgz6EFzQ7r2jKT+9d0/c02+fw4xGJg0ZLdmXjIIMZAf9SpdlCN7AxGay/nfO9w7wUps7u116x+9o0NyOKT+MG7Mq69j1HAkXeDc2mgMxM1iTsyVrmJGrnszsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ovsafr1I; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746889942; c=relaxed/simple;
+	bh=r7Ia15x0XoqRtxXrdZIvlpHfrZNhjtxmu/N4uHhXw2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eWWJvEvWeKyIp2UQKKBNSYmAnNH4r0/pjDRBPRtaY3N6sKG0USMlXKNcRntukAlNFtGw/PECHx9Pcae8mR3sGkZ35N19LKWUF8DzR9Q9Y3+5g26vziSThvvROk/uYwQsAF2EKccOJaynekbaGhtx98SYV0NNpUDnZHpANuH4kQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3ZMj6Ke; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ovsafr1I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0830C4CEE2;
-	Sat, 10 May 2025 08:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746865217;
-	bh=w4KCtfNN++3rTxuFj1Y4PcCXB490W9C1G146sr8flJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ovsafr1IoxltalBpWEdz0LRdhvqKYCKnVgsC+Vf1jGoTlQa8kTcrVqMddNZ9jxlGx
-	 NsSZnwuns+gK0X7hsYK5kHY7+tv3l0Nz8CjPhoYHdPXCF3678/kL56DbxnAtJ6Dm8c
-	 hfvz+XXtlGWevcAN0Kt/M/3Nm6tKw3+SIMuWThSODPIHMoli0nXWiNNMlaDGX2Cdhr
-	 yvaAnWPq/C34W7kk9VhP1ArPoAgmx/6aX4+j1kYOXdxwqId3K8uKrV8E3YIHbh4Oi9
-	 5Ka4dw3rSJqhJ7duWnZ8/z9zvwQ/1FT+Zn1pnpUQQ8NntaD1WvfQ+jZN8GZpIQwVD+
-	 PI7AGINwOgXzQ==
-Date: Sat, 10 May 2025 10:20:14 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] net: airoha: Fix an error handling path in
- airoha_alloc_gdm_port()
-Message-ID: <aB8MPkMYXWvoaA03@lore-desk>
-References: <5c94b9b3850f7f29ed653e2205325620df28c3ff.1746715755.git.christophe.jaillet@wanadoo.fr>
- <aBzOaiU6Ac3ZTU-4@lore-desk>
- <68149c51-ba75-4f0f-a86a-bd810d47d684@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3ZMj6Ke"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-af91fc1fa90so2503523a12.0
+        for <kernel-janitors@vger.kernel.org>; Sat, 10 May 2025 08:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746889940; x=1747494740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qa1gB13jXdCRMBhUTevQhMRSRHWuYjbEOHaj1K/fMvU=;
+        b=Q3ZMj6KeDLyHDxFUcThV9YqmgLmUTCKp0OHbTSAQT2vbpKaAVX7mr8UybeCR8oXBPB
+         K+rTdvvh/HTpNFfJ7SyigNJSdYfiBwARjEPYXiVivs9UAX/efO8zBdLX+7M6LlKQr9L2
+         XdANG8krVsDNY9DbnGJFsuk+XmSTWBt/38HTBPL8QRA8DDNq2HDSZsLcJl1B+cBfgsaG
+         LkcDMORvXpo79N2jLqzdpBVjyDFbvMjCMHkP9+CB39ReDid5v+4lmwAFuvS73DwPGxZQ
+         s8tMd7MFUA5Tn5EF3erOnKhbcXZSXCk2Lx52HQgJY71Py9YWVNk1ZeHiXHFEOyLXJc38
+         Dmsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746889940; x=1747494740;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qa1gB13jXdCRMBhUTevQhMRSRHWuYjbEOHaj1K/fMvU=;
+        b=cSxks9VuDUHoFtttnA8sQmOsONA32q2F0ZqYHk2iblsoV9hok+yaA36ibfVRJUIw8X
+         xi6sg7070ZmUabgw2S/RnLzyeLwHdt1t5pGAQpyrQA47tyb1OSdAOc5bepQYNKpt44ht
+         n8WRiqSHpq84Ckg1GbqUjvSKNH53tBnwMFnp+vu4UkJRXFfQ89GgIfgdGGTCh0TjCGVZ
+         4ekiNQv7Y/BAOxwr/AffRUKYLHTCemP6bmN+zbvDtXXVdJgefHkA7yWEAfKvSFnqnYXH
+         lb3HqDy3PzG8D1naN+wL1NdHJILkLqstjtOeid2KiB92WM6WwQt+D/g/ez2aHqCzGHZ8
+         kcxQ==
+X-Gm-Message-State: AOJu0YzDNV7A3Cu/FWot4TadbE+QZ3fqM/8DrhMdYeAPai/n9qkIc472
+	XZPnRnqZqDEHy2bAl3ZfD8cjWAR3tQwlJ3qqTPXs43cbNNXJXLaiy5fPiSBn
+X-Gm-Gg: ASbGnct7XZ4pkoU7KdTHRI5bmS6dhZ0TKMGo6CXB/W8rIWuId/gO75YqzwPTnwof2z5
+	3AWhaLfE3Xg8g1icglXgGHF97KTd4RIwn7Sj+B5pDjBaSY8PkrA6gT9ayI1GBCyEsgf+9v3ko/i
+	Vz9RE9ivc2a336kugVH2xvQ+ZXyux0h/+JpbkiBUrr5QBfC5J4U0FJ2i/txLPU/9rtXuNePN25Y
+	EX8/g5+gKBgW5J96PNDBBoF5E6shOaSgeDRxn82mnMOe8mUvOieQc6JkIl0QMy7P6D+5Fjde6uM
+	CykJHOrSZX5RveqR+k3tDtFz9NJ11d+dVB7qh/ZHyvbDpAte6r50jJ4sAuBwFhIP/44O+2lvbaI
+	=
+X-Google-Smtp-Source: AGHT+IETSH99FjiGWPlAyBYbrUcFE4wcBoHTh6Bjc/ZwvPF5Q4SDo1Mh7asV5nhpDAhdgUkqjWtODw==
+X-Received: by 2002:a17:903:2f88:b0:22e:6801:b9c9 with SMTP id d9443c01a7336-22fc8affe81mr91458715ad.8.1746889929842;
+        Sat, 10 May 2025 08:12:09 -0700 (PDT)
+Received: from localhost.localdomain ([223.181.104.76])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc7546aefsm34549325ad.37.2025.05.10.08.12.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 May 2025 08:12:09 -0700 (PDT)
+From: Viswanath <viswanathiyyappan@gmail.com>
+To: kernel-janitors@vger.kernel.org
+Cc: Viswanath <viswanathiyyappan@gmail.com>
+Subject: [PATCH v2] i2c: Fix grammatical errors in i2c_msg documentation
+Date: Sun, 11 May 2025 02:10:58 +0530
+Message-ID: <20250510204058.27258-1-viswanathiyyappan@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1vz8AGLIu0dXvB1F"
-Content-Disposition: inline
-In-Reply-To: <68149c51-ba75-4f0f-a86a-bd810d47d684@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Fix the following grammatical errors in i2c_msg documentation:
+1. Makes only sense in → Makes sense only in
+2. may have changed those standard protocol behaviors →
+   may alter the standard protocol behavior
 
---1vz8AGLIu0dXvB1F
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Viswanath <viswanathiyyappan@gmail.com>
+---
+ include/uapi/linux/i2c.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Le 08/05/2025 =E0 17:31, Lorenzo Bianconi a =E9crit=A0:
-> > > If register_netdev() fails, the error handling path of the probe will=
- not
-> > > free the memory allocated by the previous airoha_metadata_dst_alloc()=
- call
-> > > because port->dev->reg_state will not be NETREG_REGISTERED.
-> > >=20
-> > > So, an explicit airoha_metadata_dst_free() call is needed in this cas=
-e to
-> > > avoid a memory leak.
-> > >=20
-> > > Fixes: af3cf757d5c9 ("net: airoha: Move DSA tag in DMA descriptor")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > > Changes in v2:
-> > >    - New patch
-> > >=20
-> > > Compile tested only.
-> > > ---
-> > >   drivers/net/ethernet/airoha/airoha_eth.c | 10 +++++++++-
-> > >   1 file changed, 9 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/e=
-thernet/airoha/airoha_eth.c
-> > > index 16c7896f931f..af8c4015938c 100644
-> > > --- a/drivers/net/ethernet/airoha/airoha_eth.c
-> > > +++ b/drivers/net/ethernet/airoha/airoha_eth.c
-> > > @@ -2873,7 +2873,15 @@ static int airoha_alloc_gdm_port(struct airoha=
-_eth *eth,
-> > >   	if (err)
-> > >   		return err;
-> > > -	return register_netdev(dev);
-> > > +	err =3D register_netdev(dev);
-> > > +	if (err)
-> > > +		goto free_metadata_dst;
-> > > +
-> > > +	return 0;
-> > > +
-> > > +free_metadata_dst:
-> > > +	airoha_metadata_dst_free(port);
-> > > +	return err;
-> > >   }
-> > >   static int airoha_probe(struct platform_device *pdev)
-> > > --=20
-> > > 2.49.0
-> > >=20
-> >=20
-> > I have not tested it but I think the right fix here would be something =
-like:
-> >=20
-> > diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/eth=
-ernet/airoha/airoha_eth.c
-> > index b1ca8322d4eb..33f8926bba25 100644
-> > --- a/drivers/net/ethernet/airoha/airoha_eth.c
-> > +++ b/drivers/net/ethernet/airoha/airoha_eth.c
-> > @@ -2996,10 +2996,12 @@ static int airoha_probe(struct platform_device =
-*pdev)
-> >   	for (i =3D 0; i < ARRAY_SIZE(eth->ports); i++) {
-> >   		struct airoha_gdm_port *port =3D eth->ports[i];
-> > -		if (port && port->dev->reg_state =3D=3D NETREG_REGISTERED) {
-> > +		if (!port)
-> > +			continue;
->=20
-> I think it works.
->=20
-> We can still have port non NULL and airoha_metadata_dst_alloc() which fai=
-ls,
-> but airoha_metadata_dst_free() seems to handle it correctly.
->=20
-> CJ
+diff --git a/include/uapi/linux/i2c.h b/include/uapi/linux/i2c.h
+index 92326ebde350..aa751389de07 100644
+--- a/include/uapi/linux/i2c.h
++++ b/include/uapi/linux/i2c.h
+@@ -24,7 +24,7 @@
+  *   %I2C_M_RD: read data (from slave to master). Guaranteed to be 0x0001!
+  *
+  *   Optional:
+- *   %I2C_M_DMA_SAFE: the buffer of this message is DMA safe. Makes only sense
++ *   %I2C_M_DMA_SAFE: the buffer of this message is DMA safe. Makes sense only
+  *     in kernelspace, because userspace buffers are copied anyway
+  *
+  *   Only if I2C_FUNC_10BIT_ADDR is set:
+@@ -66,7 +66,7 @@
+  * @i2c_msg transaction segment, beginning with a (repeated) START.
+  *
+  * Alternatively, when the adapter supports %I2C_FUNC_PROTOCOL_MANGLING then
+- * passing certain @flags may have changed those standard protocol behaviors.
++ * passing certain @flags may alter the standard protocol behavior.
+  * Those flags are only for use with broken/nonconforming slaves, and with
+  * adapters which are known to support the specific mangling options they need.
+  */
+-- 
+2.49.0
 
-Actually, in order to be consistent with the rest of the code where a
-routine undoes changes in case of an internal failure, I would prefer your
-approach. Can you please post your solution in the next iteration? Thanks.
-
-Regards,
-Lorenzo
-
->=20
->=20
-> > +
-> > +		if (port->dev->reg_state =3D=3D NETREG_REGISTERED)
-> >   			unregister_netdev(port->dev);
-> > -			airoha_metadata_dst_free(port);
-> > -		}
-> > +		airoha_metadata_dst_free(port);
-> >   	}
-> >   	free_netdev(eth->napi_dev);
-> >   	platform_set_drvdata(pdev, NULL);
-> >=20
-> > Regards,
-> > Lorenzo
->=20
-
---1vz8AGLIu0dXvB1F
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaB8MPgAKCRA6cBh0uS2t
-rA/HAP9Zi1+4C2rxgiwNRJbwEjcF5j+ybpugyU0dEY4lrRu2EQEAybkmU3Kx+5HH
-BBgU9PCKsxYpYZbJameFHUNS4FU14AA=
-=nxAu
------END PGP SIGNATURE-----
-
---1vz8AGLIu0dXvB1F--
