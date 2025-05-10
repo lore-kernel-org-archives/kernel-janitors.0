@@ -1,108 +1,57 @@
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+Received: from mail.fastemail60.com (mail.fastemail60.com [102.222.20.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C5B2459F7
-	for <kernel-janitors@vger.kernel.org>; Sat, 10 May 2025 15:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43D2264F90
+	for <kernel-janitors@vger.kernel.org>; Sat, 10 May 2025 18:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=102.222.20.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746892650; cv=none; b=RnG97fcIRg9Nv0J1fhRSP/j/Nx6IW9O8rCYN5T6WwAqgFt2YP5f+sD2qyBKPUtSYS/KwNbUrm16i82l6oBY93IW0D67rVkxXII7LW36pW6+HRGQfhidXXjmkyIQHDGN3SaS882JdBWqXcEOWLFTfglmP46y3HKyO2omtjvzb7Fg=
+	t=1746901126; cv=none; b=uJ1fGuD1VUTj376Hplqc3Y5Ab/eoZMfRcJdcyohBRv+0KDvFBNRJMHK6SkKKeCDCg19Auv6xUIRiaFyoV1zoi+gzrZutvMCRFS6Rj0kJvvZfUGvf4kX6iitGS9Vx6Bz8fK0S9YgpDfYMS8XSiNgvCCQGfp2moWa07W1kx+uMeCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746892650; c=relaxed/simple;
-	bh=FQQK5W34RIBPsjpwJ9YOa2hCzQg34LdKieCcggOppRo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PguJQl1U2W/pjFFcH/8fPXnHyNHe759rX34raqbVsGHAGJjInjjIXIG31GehDVq7Yz+xbqMqQHOC5CauBj9jUpuMcoBXLc8Q0moPLjYlNKUF6bwQMmoZlUCWsGs0pQaTfdWwQwRVmzDkzX7T06WTotaf6m5tTaRoGe4BVLUB2T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=mgMHKa43; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1746901126; c=relaxed/simple;
+	bh=0kM12Ki2v7eI61I1WvQrX7nQw+DKE1uiGUA45uahRZc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L1+7LAuhZPspR9FRmug/gG5bvUepep19Fel6rWlu922w4iPYK5j57F1O6O02Jrr2m7WGfPsRbmL5+xWsZuv0d6xP1TM4GJU79L1REhKwmcTyNtR+upJmNFxb3KE3FOyD4byoe8BuMkMi6wAwYwQyRB8Rw4CRe5lta0rhCfJQvh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fastemail60.com; spf=none smtp.mailfrom=fastemail60.com; dkim=pass (2048-bit key) header.d=fastemail60.com header.i=@fastemail60.com header.b=m6UjGMUb; arc=none smtp.client-ip=102.222.20.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fastemail60.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fastemail60.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="mgMHKa43"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=6dB0joes4cRnLvB5pATgEVyfBfySFNvY9ktJVChk7co=;
-  b=mgMHKa430bhr/rDj01/42czksi0qCchDWil3fsTzvMZ30zuae7iP88eo
-   Sdh1RkRy02g2QNcW3ZLMSjVVVrQnQWg7i0esmwiv35DUX6/VOrgM3RdIL
-   tyDqR+OuB/rsBMOBo/VtiatdTexCQEXAUeJSzskh0yAkt1t92cOq95OCr
-   Y=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.15,278,1739833200"; 
-   d="scan'208";a="221410687"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2025 17:56:17 +0200
-Date: Sat, 10 May 2025 17:56:16 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Viswanath <viswanathiyyappan@gmail.com>
-cc: kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: Fix grammatical errors in i2c_msg
- documentation
-In-Reply-To: <20250510204058.27258-1-viswanathiyyappan@gmail.com>
-Message-ID: <alpine.DEB.2.22.394.2505101755200.5446@hadrien>
-References: <20250510204058.27258-1-viswanathiyyappan@gmail.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	dkim=pass (2048-bit key) header.d=fastemail60.com header.i=@fastemail60.com header.b="m6UjGMUb"
+Received: from fastemail60.com (unknown [194.156.79.202])
+	by mail.fastemail60.com (Postfix) with ESMTPA id 603928A9F3A
+	for <kernel-janitors@vger.kernel.org>; Sat, 10 May 2025 16:31:44 +0200 (SAST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.fastemail60.com 603928A9F3A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastemail60.com;
+	s=202501; t=1746887506;
+	bh=0kM12Ki2v7eI61I1WvQrX7nQw+DKE1uiGUA45uahRZc=;
+	h=Reply-To:From:To:Subject:Date:From;
+	b=m6UjGMUbfoUncoP1DZPhyxE5D5IKbSxtFWYznEek4xG0tO8kAjkXiXavV0CLVAkzE
+	 z5xNOzt8cGEBTa70z4kBGozPVlfVMSY/LyBY4ymxvCx64kiFyplaulh4zMGxuVHYkF
+	 nEtlST55leGt1EJEUe3mj80A62ElQ9NCUOqda6+mnIYJYkkrpg6q4k6OKPLQ0vNmFy
+	 Yjz2WVy/z2JL+SC3gths/YU8OcGKAs0KZAlYXrt1yGERKu1e0s0IxSN125mQjyS5GV
+	 4j626RbD0gDvYfu1NqKDN1qGHFBYxBVt7V0m47JCmRsaZBR4iU/ceBusMr6r5Jvg0p
+	 ewWYR/134Wt8w==
+Reply-To: import@herragontradegroup.cz
+From: Philip Burchett<info@fastemail60.com>
+To: kernel-janitors@vger.kernel.org
+Subject: Inquiry
+Date: 10 May 2025 10:31:43 -0400
+Message-ID: <20250510103142.0B0F227F2B906DAE@fastemail60.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-981299435-1746892577=:5446"
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (mail.fastemail60.com [0.0.0.0]); Sat, 10 May 2025 16:31:46 +0200 (SAST)
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Greetings, Supplier.
 
---8323329-981299435-1746892577=:5446
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Please give us your most recent catalog; we would want to order=20
+from you.
+
+I look forward to your feedback.
 
 
-
-On Sun, 11 May 2025, Viswanath wrote:
-
-> Fix the following grammatical errors in i2c_msg documentation:
-> 1. Makes only sense in → Makes sense only in
-> 2. may have changed those standard protocol behaviors →
->    may alter the standard protocol behavior
->
-> Signed-off-by: Viswanath <viswanathiyyappan@gmail.com>
-> ---
->  include/uapi/linux/i2c.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/include/uapi/linux/i2c.h b/include/uapi/linux/i2c.h
-> index 92326ebde350..aa751389de07 100644
-> --- a/include/uapi/linux/i2c.h
-> +++ b/include/uapi/linux/i2c.h
-> @@ -24,7 +24,7 @@
->   *   %I2C_M_RD: read data (from slave to master). Guaranteed to be 0x0001!
->   *
->   *   Optional:
-> - *   %I2C_M_DMA_SAFE: the buffer of this message is DMA safe. Makes only sense
-> + *   %I2C_M_DMA_SAFE: the buffer of this message is DMA safe. Makes sense only
->   *     in kernelspace, because userspace buffers are copied anyway
->   *
->   *   Only if I2C_FUNC_10BIT_ADDR is set:
-> @@ -66,7 +66,7 @@
->   * @i2c_msg transaction segment, beginning with a (repeated) START.
->   *
->   * Alternatively, when the adapter supports %I2C_FUNC_PROTOCOL_MANGLING then
-> - * passing certain @flags may have changed those standard protocol behaviors.
-> + * passing certain @flags may alter the standard protocol behavior.
-
-The meaning seems different.
-
-In any case, changes should go to the maintainer, and not only to this
-list.
-
-julia
-
->   * Those flags are only for use with broken/nonconforming slaves, and with
->   * adapters which are known to support the specific mangling options they need.
->   */
-> --
-> 2.49.0
->
->
->
---8323329-981299435-1746892577=:5446--
+Philip Burchett
