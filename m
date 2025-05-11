@@ -1,57 +1,113 @@
-Received: from mail.fastemail60.com (mail.fastemail60.com [102.222.20.253])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43D2264F90
-	for <kernel-janitors@vger.kernel.org>; Sat, 10 May 2025 18:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=102.222.20.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA881E2613
+	for <kernel-janitors@vger.kernel.org>; Sun, 11 May 2025 20:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746901126; cv=none; b=uJ1fGuD1VUTj376Hplqc3Y5Ab/eoZMfRcJdcyohBRv+0KDvFBNRJMHK6SkKKeCDCg19Auv6xUIRiaFyoV1zoi+gzrZutvMCRFS6Rj0kJvvZfUGvf4kX6iitGS9Vx6Bz8fK0S9YgpDfYMS8XSiNgvCCQGfp2moWa07W1kx+uMeCs=
+	t=1746996172; cv=none; b=EXfbE+WCtZcWpYSNVH63lKzMiJfQPenC2LzDUiJwvtqWkJagKGTZGivZURcQADOGled5kOXUE8vN4WzVOtmnJr3tv+peDgCAtzU0E/yyyr3Cl7YE9EwoGpa7ANtirCvEAd6Qkdx8DjdFhwDDjaoBtkRpIveOyuJ3s2MrEJxolVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746901126; c=relaxed/simple;
-	bh=0kM12Ki2v7eI61I1WvQrX7nQw+DKE1uiGUA45uahRZc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L1+7LAuhZPspR9FRmug/gG5bvUepep19Fel6rWlu922w4iPYK5j57F1O6O02Jrr2m7WGfPsRbmL5+xWsZuv0d6xP1TM4GJU79L1REhKwmcTyNtR+upJmNFxb3KE3FOyD4byoe8BuMkMi6wAwYwQyRB8Rw4CRe5lta0rhCfJQvh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fastemail60.com; spf=none smtp.mailfrom=fastemail60.com; dkim=pass (2048-bit key) header.d=fastemail60.com header.i=@fastemail60.com header.b=m6UjGMUb; arc=none smtp.client-ip=102.222.20.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fastemail60.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fastemail60.com
+	s=arc-20240116; t=1746996172; c=relaxed/simple;
+	bh=QO9Us24guXO7K1H3GL85QEqLXQSOyN8JKGmUgEofzWs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BfVyWhe1rKrNjLrBz0VONwWSFkykpXcAFe+cxOtV4ZMjXNWmSyEXSejhgrVRY2iGi22sBtez+4BJqVfnKYu509Si+6MSWVETkwbQX+EF4ZSc3HuzBa39cREpDICoVthpJy+9gT7Rwqo6TUBPak9Zx3bQz25v8ypLidx2z+PuUbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=P4EaMbCD; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastemail60.com header.i=@fastemail60.com header.b="m6UjGMUb"
-Received: from fastemail60.com (unknown [194.156.79.202])
-	by mail.fastemail60.com (Postfix) with ESMTPA id 603928A9F3A
-	for <kernel-janitors@vger.kernel.org>; Sat, 10 May 2025 16:31:44 +0200 (SAST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.fastemail60.com 603928A9F3A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastemail60.com;
-	s=202501; t=1746887506;
-	bh=0kM12Ki2v7eI61I1WvQrX7nQw+DKE1uiGUA45uahRZc=;
-	h=Reply-To:From:To:Subject:Date:From;
-	b=m6UjGMUbfoUncoP1DZPhyxE5D5IKbSxtFWYznEek4xG0tO8kAjkXiXavV0CLVAkzE
-	 z5xNOzt8cGEBTa70z4kBGozPVlfVMSY/LyBY4ymxvCx64kiFyplaulh4zMGxuVHYkF
-	 nEtlST55leGt1EJEUe3mj80A62ElQ9NCUOqda6+mnIYJYkkrpg6q4k6OKPLQ0vNmFy
-	 Yjz2WVy/z2JL+SC3gths/YU8OcGKAs0KZAlYXrt1yGERKu1e0s0IxSN125mQjyS5GV
-	 4j626RbD0gDvYfu1NqKDN1qGHFBYxBVt7V0m47JCmRsaZBR4iU/ceBusMr6r5Jvg0p
-	 ewWYR/134Wt8w==
-Reply-To: import@herragontradegroup.cz
-From: Philip Burchett<info@fastemail60.com>
-To: kernel-janitors@vger.kernel.org
-Subject: Inquiry
-Date: 10 May 2025 10:31:43 -0400
-Message-ID: <20250510103142.0B0F227F2B906DAE@fastemail60.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="P4EaMbCD"
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id EDVQuI5SpMKVkEDVQuUuGG; Sun, 11 May 2025 22:42:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1746996161;
+	bh=vq4pnI3/bwP4UzZRYsyqLZSR+Zib5+2trP04/UCsHps=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=P4EaMbCDQ3bULuHyvFRovLhrdNg2qPivYPuciFBS42Eufn3N5ZsRZ+09VR+cQbixn
+	 CJe+3jQcnQcZ+I6n5TFb+8fPmMgRtWDnnBh4NuEAtdkCcDxEon2gfyzhHYCqcXGPgN
+	 E+DvZq9FYmkaxrsCL6/ZXEjwPUS+l9uj4aQieRszLutRsrr29aP25gXEPr69pCflkk
+	 fyR/xPzAVSFYLZiJ4DxhWZXIeihUdFOtg8MXRdKqsTorRptuHdPZs0qxOREfBDtn96
+	 IVao7WPZ1wXUOpkgT3lo5WCEPjZZWerqpPqTL2Wdm+Xi4mVWBdDH3PFT111marZALO
+	 sJdRlmmWQsbiQ==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 11 May 2025 22:42:41 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Karel Balej <balejk@matfyz.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mfd: 88pm886: Constify struct regmap_irq_chip and some other structures
+Date: Sun, 11 May 2025 22:42:30 +0200
+Message-ID: <1681629840761e30494cb8920668710df60a81b8.1746996137.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.4 (mail.fastemail60.com [0.0.0.0]); Sat, 10 May 2025 16:31:46 +0200 (SAST)
+Content-Transfer-Encoding: 8bit
 
-Greetings, Supplier.
+'struct regmap_irq_chip' is not modified in this driver.
 
-Please give us your most recent catalog; we would want to order=20
-from you.
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
 
-I look forward to your feedback.
+While at it, also constify some other structures.
 
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   5032	   3304	     64	   8400	   20d0	drivers/mfd/88pm886.o
 
-Philip Burchett
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   5800	   2536	     64	   8400	   20d0	drivers/mfd/88pm886.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only.
+---
+ drivers/mfd/88pm886.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mfd/88pm886.c b/drivers/mfd/88pm886.c
+index 891fdce5d8c1..bbf9dd449d41 100644
+--- a/drivers/mfd/88pm886.c
++++ b/drivers/mfd/88pm886.c
+@@ -16,11 +16,11 @@ static const struct regmap_config pm886_regmap_config = {
+ 	.max_register = PM886_REG_RTC_SPARE6,
+ };
+ 
+-static struct regmap_irq pm886_regmap_irqs[] = {
++static const struct regmap_irq pm886_regmap_irqs[] = {
+ 	REGMAP_IRQ_REG(PM886_IRQ_ONKEY, 0, PM886_INT_ENA1_ONKEY),
+ };
+ 
+-static struct regmap_irq_chip pm886_regmap_irq_chip = {
++static const struct regmap_irq_chip pm886_regmap_irq_chip = {
+ 	.name = "88pm886",
+ 	.irqs = pm886_regmap_irqs,
+ 	.num_irqs = ARRAY_SIZE(pm886_regmap_irqs),
+@@ -30,11 +30,11 @@ static struct regmap_irq_chip pm886_regmap_irq_chip = {
+ 	.unmask_base = PM886_REG_INT_ENA_1,
+ };
+ 
+-static struct resource pm886_onkey_resources[] = {
++static const struct resource pm886_onkey_resources[] = {
+ 	DEFINE_RES_IRQ_NAMED(PM886_IRQ_ONKEY, "88pm886-onkey"),
+ };
+ 
+-static struct mfd_cell pm886_devs[] = {
++static const struct mfd_cell pm886_devs[] = {
+ 	MFD_CELL_RES("88pm886-onkey", pm886_onkey_resources),
+ 	MFD_CELL_NAME("88pm886-regulator"),
+ 	MFD_CELL_NAME("88pm886-rtc"),
+-- 
+2.49.0
+
