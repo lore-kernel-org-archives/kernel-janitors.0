@@ -1,113 +1,77 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86B7281531
-	for <kernel-janitors@vger.kernel.org>; Mon, 12 May 2025 13:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2D62AD0B;
+	Mon, 12 May 2025 14:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747057423; cv=none; b=lfUFp8DHPRK3lwiIWPZLvazeXaT6C4djm1ZJY0XC7bYcvbgULmS2xlcdzBnXDOwMXce+XSB/IH5TU0mHocodznFy8eSAmFNjIGEHHjphZzlaxvjDHyePWh4bxu3kBnc6QKZi4rVrTWVPQqIT+GVYoPhcRLeKXMGad8epSBahSXQ=
+	t=1747060150; cv=none; b=c3d+MlXn9M9Uy5LJX2WRlsas8e9StpzclizIJee5uMBoAMQyUrc+++oym8LV8qlSv8bNMB4y/CqpYYwu1FeiJVFZYL65dQhn1WhzVIiBhFj/UNF3k8CcaqFfb2kmh/OHncZ/rdxrExWv9wK5V61CBr/r6+eZPDkLltagN6en9Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747057423; c=relaxed/simple;
-	bh=DIkq7mdvxGhBOJFBrxOyEybYOHqdPTblIBg1vS+0Vmc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rU1nUik+bI3wBceg603LBYGy8mRouFnWMfQBAIQdPXsCZ4i60d7uJTDuu8LnJXtX8LQME1soI15Cq9gFYH1YtqwKfdJE0PMZcEQ308Q4e8N5Zoo8e2BGnHYf9Vj5WxlmZD8F4BkGYt71wB/R0pYKVurvNyQXKPBdMOZEZUW5Pkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lxrewr28; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1747060150; c=relaxed/simple;
+	bh=s25Ld9wvC0TwmKOQJz8UTvGzIPzuSGWY/ZfbRdJ9oig=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MQUeKavaL6bK3nFT+mcfCGjAqb46Dp+uj4M9RtHvP38nXmiB2lb8at0kfdeJBLOVutkvwN+Hzsld74evTB1Au8gHNUySUsic7EsaXa7rZpUJP1wiv6Eb5AMrb2DJlRVSq7BSJZ+QHaGr7QWqGUbRECZERABQvlEFS2p6z+fGuy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=C6t4/EmE; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lxrewr28"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747057420;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="C6t4/EmE"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CB5C71FCEC;
+	Mon, 12 May 2025 14:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1747060146;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kceEV5H6KvQLNqsOUbeqe5/B8K16InTUHSahrshNDTA=;
-	b=Lxrewr2814gA76BTIXhzlA50N2/wNCeTZeUkhfAPsE9mvRb6xsmo6pwFt2Me4t4nbCQ0tB
-	2eIpG5kwVUVX8i5mqhjZ1taP6y4ZxfePmvphcDbNbPBflMbW8qCl0OBh9l636tWbbh7u+D
-	aw92I1Cn2LoAo9XNeSNjJDY+HrOpP98=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-335-b3A5gtzMP02xCSKg6OIRiA-1; Mon, 12 May 2025 09:43:39 -0400
-X-MC-Unique: b3A5gtzMP02xCSKg6OIRiA-1
-X-Mimecast-MFC-AGG-ID: b3A5gtzMP02xCSKg6OIRiA_1747057418
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a202744565so674581f8f.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 12 May 2025 06:43:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747057417; x=1747662217;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kceEV5H6KvQLNqsOUbeqe5/B8K16InTUHSahrshNDTA=;
-        b=dxOG8CKbPFrj8KJGCle9xebtblQpnp8uMV7KGG7UwqPQQ2xCjg/ArXaBl/09kAjUYs
-         lAnHNFEQRWjs6rgUxKYI1n7bu0QLqZvGpSKa/MSs0+CJjko8i38JTPEPxy1/8pXoALzR
-         VelYSg/J3Y0i0PdRlBMWjqPxXOY/wfHcngLrrly1o/eYrkSrTfuzmoPma/akjxvK+6nP
-         cXqY2f1/NrrT/XSM10pVb5/2NMDG/muyGMG2gSP3XML9D8BKPld/hqD7J40KfY/kDnnw
-         8S7D9usPNfqOvSTHbJQZmlayHF6/FlnDXVO4Gzr6o072u3cMt9ak7PDNDyxjE634QM8Q
-         zTdQ==
-X-Gm-Message-State: AOJu0Ywn54/XixbYWbWdzyJjnQ+VHAnwtQoX/sWnTbmKTLNtyM0h/ZTE
-	YfizHjX2ukGSsSFnlN4AuIVaptjgI8Aol25npXc2bg1vxbUpwsUKoYXYF7JnpIfor0pNMPQLops
-	HUDwbAwTAfpHf/YZBOy1JE/B/ZQ2OylVkqj54tqFbYFDQz7LZaDeRhg4FOWSjYCD3Tg==
-X-Gm-Gg: ASbGncuWEP75mP0169FNLOC8qAQBG1pyG+YBxCD6pkuQREXc4ZsDbcPvU71h8I/r4iJ
-	8LWPfPErU5jcVx7Aqh2Wox8FtjIxdt1EeKDhNjNMj0TZiTPE0SRVRCJ0AkKFq1bytgPqc05Xggb
-	PvHBxmK7HJiu+8USEgu2bV2kNDSnIkaMujWJrkO7vtYmgpFxuDMiJRI+Nt9cjFkJBwqR5hUiHER
-	UveSnBh+8+SiyaTfKW+Bzlrh1O4nj7vt0aI3k8O+AU0S20zjTrf4sfhzb+K5ATp3dzRHv/dnxwU
-	Tpe0ejrwbQx4c40otTAO5vgeeU5ywFzbs2BtaPx5D/Pufdi75oZOEDeceQ==
-X-Received: by 2002:a05:6000:1885:b0:3a0:92d9:dbf with SMTP id ffacd0b85a97d-3a1f6a0fecemr9538722f8f.3.1747057417701;
-        Mon, 12 May 2025 06:43:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9GrRsQVcleOZ+a3jzIYyFjnvFHc9WWiVYWigIgCkWCb9s1ctlCszrZn/+QgiDGFa4grcYmw==
-X-Received: by 2002:a05:6000:1885:b0:3a0:92d9:dbf with SMTP id ffacd0b85a97d-3a1f6a0fecemr9538710f8f.3.1747057417366;
-        Mon, 12 May 2025 06:43:37 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a1f5a4c599sm12700074f8f.94.2025.05.12.06.43.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 06:43:36 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Mahesh Rao <mahesh.rao@intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in INTEL STRATIX10 FIRMWARE DRIVERS
-Date: Mon, 12 May 2025 15:43:32 +0200
-Message-ID: <20250512134332.36366-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5JO8FMyqvxtRo7A5Z/7iXBTLAs6G75BYMdiwJxV6g2U=;
+	b=C6t4/EmEjYn0Our7hR2cpogHfq1Ae26J+qPfs6SBCrdYYUyEzWWYMx5VNBkqz8t0AGh/Cc
+	nWbVZcNda2hCK3AtYJwyHqiq5MIsZJ/SepFTgipgTPBdih3UPT1HEHtSGxlz35OI/z+MM+
+	BmhABqguGHzRnVFd+rgNI6bp6Js0WHSZdCE/Y9z20hTn06S8jY2mxemqmeO201iHzsQ3+M
+	WKeItsVqcg7CQPRedpCTmLzSdDh4uV6qNHo0zktJYIF/wg68yzaR2raOD9zW9AF9kj2JTs
+	JAZ72rqGQz5G6rEKPVPwDpBkR1wZA1VFpge7t4d12akhJotRW/4/b+h9VAuf6w==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Keguang Zhang <keguang.zhang@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-mips@vger.kernel.org, 
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <aBSEwag_ducqOwy7@stanley.mountain>
+References: <aBSEwag_ducqOwy7@stanley.mountain>
+Subject: Re: [PATCH next] mtd: rawnand: loongson1: Fix error code in
+ ls1x_nand_dma_transfer()
+Message-Id: <174706014455.62075.9908160461728250420.b4-ty@bootlin.com>
+Date: Mon, 12 May 2025 16:29:04 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeftdduhedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehieffhfeulefgtdeltefgleevgffgheduledvheduudelgfehlefgheeivedvgeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrdegvddrgeeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomhdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehri
+ hgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghguhgrnhhgrdiihhgrnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhg
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Fri, 02 May 2025 11:39:29 +0300, Dan Carpenter wrote:
+> The "desc" variable is NULL and PTR_ERR(NULL) is zero/success.  Return
+> a negative error code instead.
+> 
+> 
 
-Commit fbfb64987062 ("dt-bindings: firmware: stratix10: Convert to
-json-schema") renames intel,stratix10-svc.txt to intel,stratix10-svc.yaml
-in Documentation/devicetree/bindings/firmware/ as part of this dt-binding
-conversion, but misses to adjust the file entry in INTEL STRATIX10 FIRMWARE
-DRIVERS.
+Applied to nand/next, thanks!
 
-Adjust the file entry after the conversion.
+[1/1] mtd: rawnand: loongson1: Fix error code in ls1x_nand_dma_transfer()
+      commit: 0d470c72bea4d9f4c24b304fefdc857979cb5ca0
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patche(s) should be available on mtd/linux.git and will be
+part of the next PR (provided that no robot complains by then).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 49826646c38f..2c04cce07a9d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12383,7 +12383,7 @@ L:	linux-kernel@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git
- F:	Documentation/ABI/testing/sysfs-devices-platform-stratix10-rsu
--F:	Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
-+F:	Documentation/devicetree/bindings/firmware/intel,stratix10-svc.yaml
- F:	drivers/firmware/stratix10-rsu.c
- F:	drivers/firmware/stratix10-svc.c
- F:	include/linux/firmware/intel/stratix10-smc.h
--- 
-2.49.0
+Kind regards,
+Miquèl
 
