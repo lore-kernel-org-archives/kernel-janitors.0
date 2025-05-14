@@ -1,122 +1,84 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51FF156C69
-	for <kernel-janitors@vger.kernel.org>; Wed, 14 May 2025 07:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD86215075;
+	Wed, 14 May 2025 07:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747206851; cv=none; b=le0Ri8EgUVCJoXy77HOgf0snPwjGHcMgizEITMo8mnWrj5bx9JWFZAh5FoFTw4xwiuzxJUcGbv4C+O/7n7SKCUh5q5gygQoexzZMRd4W8ZtoUiaeDDLkNrki5FI8HOXV6llTuh7mQn9CrNwbpM3IOFkiE0H3eyWaKJkj7T/b8zg=
+	t=1747207515; cv=none; b=SaL/qbwgdEEWZv9Og+ztMYOZItgmT+jEa0Tbde9Z4KgSwA7Ora17hAIxv7vNdLF306nnuNZboF6LtW9JCJaKF+DS2l8T9PWRWA6BRfV3RiDSHQZp0on4seNF3RhHiafDbGFX6z50ZNwBr7PiJ0Gsr3SloiFSlsj12rigMlJ6qaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747206851; c=relaxed/simple;
-	bh=OHBXANHyL8wcBVrw1yfldbqVN6opWC3OshMz6uT15OM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oWBvxAnvbIm1mnO3ujXgjTfvWi1h4UBWzn8w8QOCJZDDQ9n6SVVMSBLo+P8ogArm5cKg3bZM1CqWuqBVnsvaRX5XTrASEGukj2NMKTt34ZChARBj2JiXpbHjkSr96LLeQ/n2MPRtVk+/HSzMkd8d09WwHvMuGAU45gLPWfAR1qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OIGSYB5R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1747207515; c=relaxed/simple;
+	bh=BilRJ6f8t76bTmUmG4gNO1cINv8bzGBDa+3qwuJJbbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fx7+NfeqgzgLYpPdcWawF1SalHCB3BdrdkDwbPgs2bBisdDypNDmxlsp2TiQUG7I826BjSLTtuBIkCPMNlKOJFpeTbGg1vzwXhHan1aYbdNueQYTZvGEbnbvVuHOGbGPS23phLXFiIMifZxVTeQaHLs2cFhfMQN1yFToqHotr90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BlL1+zLr; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OIGSYB5R"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747206847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RhtvBP/MCitR1ftSZRMeSHLdRQ2xIQHL23q4ybZlF48=;
-	b=OIGSYB5R+2FUkRJavxF2wWiLeUHet+LNm6U3j0NoVHi6vJfYtl6tX/0CPieJDe61qLgTfA
-	OZOODWsa0tf9fyXxOnSefgOfIHQr5S5XnskE+cEPdHmqdjugHuuAkO5bF2IsoqRs3Caj+2
-	tJFalRS+0Cjgfp8sdwsoOiAp8nJxTlA=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-204-gXeVJZjPN-iU1K8xm6XTxA-1; Wed, 14 May 2025 03:14:06 -0400
-X-MC-Unique: gXeVJZjPN-iU1K8xm6XTxA-1
-X-Mimecast-MFC-AGG-ID: gXeVJZjPN-iU1K8xm6XTxA_1747206845
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-acf16746a74so723241366b.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 14 May 2025 00:14:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747206845; x=1747811645;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RhtvBP/MCitR1ftSZRMeSHLdRQ2xIQHL23q4ybZlF48=;
-        b=XvwFLhIvPVfO72dzY6QcGrJ5fKsD80gFMnR7g6ss890DITx/hxH9tgk+z4uXD6q3yD
-         vjb8wv9L48IrS2W/5MQnzPN+S5p9m/toUybNvNvscg2HUbJ/h3YNJ+wrA7j7quI7TGYk
-         Nr66JHKGMVoE1SFAi6KOgNUA21RM3TYoa8RIEytsUBt5btBgAZ1o9RIVm3dxO00E3RlW
-         LKbLjqn9k3LkjTt1V4WzqwD9J0b0PBV3ouyZFlbFyYZssJnhnDb6VTKZKcaobAdu+Scd
-         oQRkW03nEXFvIK6+nqj5hV+tE9N8MJTRGbDUPFinkKknev4vJwY+zKWe+dq+qOYKzzX2
-         WGQQ==
-X-Gm-Message-State: AOJu0YzilT1/ye9Egf/Gma9IhJH/DaCOtOed6mr1zpV8zxsKUSe5I7ju
-	fEpmSYQAPMS/8BBBRVvk0EdTjnYYa5RzhlAVcBf3eV7hmE8vr3mIHKm9i5Z6stiRY97WAYDKJ6g
-	MhZclsLiV+J7WeCV0HergYBGgCDTVJHDfH4VApWTORa7unL6HY079qkSQm2eDW5PLDg==
-X-Gm-Gg: ASbGncvT71OM11MTeYTx9LFWY7dJTnB1N1u7HMPlJf+sQTs/DqsqiSennEyY5+CTdGY
-	Y19Bm9ob6G+ihQVcWzLL4l4MVpIlge5SvbJsTjVE6BNh+z9FadVO2CgImOzj/atCqZyn1ByZoaT
-	ch/7X0dT5RgFeX1FfJ+GH26lFWLO5TTxysnmppPJjtxi+1pbqZZ4ReqFw8c2z58KbmjQ7n8TZrg
-	aN9rhzTmc/3eHNeDzjpNlNSQlUOVq36fWMTdninV/ZRY4Z/vs1KVJXI8EpOZvOyfStx+TBW34EY
-	bFKizP72J1U/Dr6qwwbskk+tPkg1OKV6/1Zu1KxTyukI1LHrecua+5JdCA==
-X-Received: by 2002:a17:907:1908:b0:ace:d986:d7d2 with SMTP id a640c23a62f3a-ad4f74c9000mr222005466b.49.1747206845221;
-        Wed, 14 May 2025 00:14:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxaAR2Q+5d92tWC9EC6K77qjGuYdoWqzESwAbtU31oqD51mMNX4L5oV+Owa01qzyfNoY/kiQ==
-X-Received: by 2002:a17:907:1908:b0:ace:d986:d7d2 with SMTP id a640c23a62f3a-ad4f74c9000mr222003266b.49.1747206844830;
-        Wed, 14 May 2025 00:14:04 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad23f5f6fddsm653162866b.93.2025.05.14.00.14.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 May 2025 00:14:04 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] apparmor: Remove obsolete config SECURITY_APPARMOR_DEBUG_MESSAGES
-Date: Wed, 14 May 2025 09:14:00 +0200
-Message-ID: <20250514071400.465055-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BlL1+zLr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747207513; x=1778743513;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BilRJ6f8t76bTmUmG4gNO1cINv8bzGBDa+3qwuJJbbg=;
+  b=BlL1+zLrMlqnPZm6QgntIrM533VcQyvGEBRDf1eb8MgujGlgdA/E3aIs
+   Lv4NaLy/MOG9bll5StccxBx6r8h0hH+HVHwzRlqUeJQ+b4xh1wt9UbYp+
+   AYx0hc6FB14OCpvL1oDPwn7r2+vf63+6ei1ORSWihcGKjw3nzb/A2uKKq
+   FJWKNjrh3EePkm2ISNzYI0EW/kDpOyZjTuyt/s2NZr5plqUVLvJdfNO/Z
+   mOBcM3TkdeC0vuM+syFjWGswZQjaThs+UlXmdsRLYEuvJ61kJrDC1gin/
+   8c8Iu28iG875azBhgJsLDIh4d2hNjAw+UR7VRxULM2pufQdsDgndvloUg
+   w==;
+X-CSE-ConnectionGUID: 5D8MoYKtSIuGaR7/6UeQoQ==
+X-CSE-MsgGUID: lGVNGCB3SNuW7D3U7XYoRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11432"; a="59747129"
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="59747129"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2025 00:25:12 -0700
+X-CSE-ConnectionGUID: ZqYaBnWjQwyzCriZP917pw==
+X-CSE-MsgGUID: RkVqje+FQ1eb7+rf2PELNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,287,1739865600"; 
+   d="scan'208";a="175083321"
+Received: from unknown (HELO [10.237.72.53]) ([10.237.72.53])
+  by orviesa001.jf.intel.com with ESMTP; 14 May 2025 00:25:10 -0700
+Message-ID: <6fe4e253-330d-4681-af89-834a045dd183@linux.intel.com>
+Date: Wed, 14 May 2025 10:25:08 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c: designware: Fix an error handling path in
+ i2c_dw_pci_probe()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Sanket Goswami <Sanket.Goswami@amd.com>, Wolfram Sang <wsa@kernel.org>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Nehal Bakulchandra Shah <Nehal-Bakulchandra.shah@amd.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-i2c@vger.kernel.org
+References: <fcd9651835a32979df8802b2db9504c523a8ebbb.1747158983.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <fcd9651835a32979df8802b2db9504c523a8ebbb.1747158983.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-
-Commit 71e6cff3e0dd ("apparmor: Improve debug print infrastructure") makes
-the config option SECURITY_APPARMOR_DEBUG_MESSAGES have no remaining
-effect.
-
-Remove the obsolete config option.
-
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- security/apparmor/Kconfig | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-index 64cc3044a42c..3cdea783b6df 100644
---- a/security/apparmor/Kconfig
-+++ b/security/apparmor/Kconfig
-@@ -35,15 +35,6 @@ config SECURITY_APPARMOR_DEBUG_ASSERTS
- 	  points. If the assert is triggered it will trigger a WARN
- 	  message.
- 
--config SECURITY_APPARMOR_DEBUG_MESSAGES
--	bool "Debug messages enabled by default"
--	depends on SECURITY_APPARMOR_DEBUG
--	default n
--	help
--	  Set the default value of the apparmor.debug kernel parameter.
--	  When enabled, various debug messages will be logged to
--	  the kernel message buffer.
--
- config SECURITY_APPARMOR_INTROSPECT_POLICY
- 	bool "Allow loaded policy to be introspected"
- 	depends on SECURITY_APPARMOR
--- 
-2.49.0
-
+On 5/13/25 8:56 PM, Christophe JAILLET wrote:
+> If navi_amd_register_client() fails, the previous i2c_dw_probe() call
+> should be undone by a corresponding i2c_del_adapter() call, as already done
+> in the remove function.
+> 
+> Fixes: 17631e8ca2d3 ("i2c: designware: Add driver support for AMD NAVI GPU")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>   drivers/i2c/busses/i2c-designware-pcidrv.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
