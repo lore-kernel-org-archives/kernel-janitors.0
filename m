@@ -1,75 +1,70 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A79025D532;
-	Wed, 14 May 2025 09:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D07C274FD8;
+	Wed, 14 May 2025 11:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747216222; cv=none; b=awx8ZqvDkut5NRXP5eKMaHwrUETsUdzc1jEqwVd4YEfQ3OCMQsyke5J0938dnghCGf77vxii8mWZFGBj8vIjyOTpCq2rf6zfryGQblSL0/8He43XGdUYd6+xS4UcKmRekWPFbebNPfJYJd3SyZ01MLDzfpMxu3ETPRUOp85Pgvc=
+	t=1747222311; cv=none; b=B77iiXDpK6glOKfcn/exfP4rQBRjibMD/TNWfOaRudy0EdX1lswDtDtNhRdC5wt3iavB0X3tudo9aacw4c15iX9vxGIgh8Sqkrfd8CIKRjBzfMyj0rzV7Egzajw3BErKet0tDy8zowaarn5LjeClT0M3cFgLMNe2Qcx14rX+1iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747216222; c=relaxed/simple;
-	bh=QwqOklaBfFJutW99xC+wN/w4YccIgFRU3Dw+1/TYFP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUN0ReRMCHV78gT/MciLn8HBPkmvfrFdmyvnMgbVLNrIxW4S4vWtlGbyCI3rg6j7+8kTr2me2Vzqoqz38C9yTsDPiYq3UPWK9uIWR5WgMNP/f/m8QlKs9iGXHJgYCAxIkA8hMNDc9LmL3dUarhwafc0/f1naSfg/UfhEmHxxZY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=sqs1Fuy5; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	s=arc-20240116; t=1747222311; c=relaxed/simple;
+	bh=TjHZy0Qfxt/73KW8i7sJ4rh5wCGHa3DkSz4VAJQCJ6g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=oHdPEyX/GrLPJVE0qq8ad4Ut/PozQRFuNEK1R01BPWE6jcq8DHkb8a7OX873uYRhJtdGUr2UvtM7za1ySUzCMAl9bK4vItmV0vSqxcjE0oHTrBARF3M1FIk5lvAKaK8DzkXynqvLELeP0O2rVlWrgpSTFAVbjpR+g+Nw4ChRZvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YB/8ByW0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="sqs1Fuy5"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=jtcA7X16BmiR/IJddjcp1JXHzW6I5BCr86J0rmb29Lc=; b=sqs1Fuy5mdu/oDqsqtz2rwDpXI
-	IsrNysRXdc2SmzCIKtwhSdIDbGA11SE6acVI6nuDmsCWUmRh6dl0GRjbrLXSshsg4Kf4Or5bb7Azu
-	uqL4+QeFQM8FH1tGGt/jyw/cHBukd02pae4/Ticyj2iZnAYXKLOyN0f6NOjkuzMSavMm4jmOvl6Rr
-	oX8fF3AaQzhBYOEfNObwGCT+tbXg9uW0DiGIM4shYDLp8Ul9agCS457vuRzcsXo9us53uTA+UyBaa
-	vXwYBKyccdAvYNi9vMsSy7q0srIDKvpZdGZUzQgvcAnO8EjCTFB8+rFpTHsUbW1f6QbXBw06cuXam
-	K9ysFj5A==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uF8kb-0060nU-1e;
-	Wed, 14 May 2025 17:50:10 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 14 May 2025 17:50:09 +0800
-Date: Wed, 14 May 2025 17:50:09 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Laurent M Coquerel <laurent.m.coquerel@intel.com>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	George Abraham P <george.abraham.p@intel.com>,
-	Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>,
-	Karthikeyan Gopal <karthikeyan.gopal@intel.com>,
-	qat-linux@intel.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] crypto: qat/qat_6xxx - Fix NULL vs IS_ERR() check
- in adf_probe()
-Message-ID: <aCRnUY1XfQPCpf_6@gondor.apana.org.au>
-References: <aBxOkY99jQF7q-7M@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YB/8ByW0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A74D9C4CEEB;
+	Wed, 14 May 2025 11:31:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747222310;
+	bh=TjHZy0Qfxt/73KW8i7sJ4rh5wCGHa3DkSz4VAJQCJ6g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=YB/8ByW00FbNFBueMKwnoMSXkVUdZ1lwH2w7mN/kBXoW4srl3mplbK9fPjF4daagl
+	 qTzcE8/fBtF1q0vw7oaBLgfrJkiBuhzksA6Ck26mrxehzkd9rulxq8RBYQc8ITaPlO
+	 OH2s5Xr1kQGhCgTDAk8FNxMqOidG+Pf0bqyZ5yrWynPoxPCFEERHNBcKprKiJktQR1
+	 5nLp/HX4ruV1ddcDZv7V7XhxVWrxoBnN/b2RRwfDAKhgaY+gIC4V16DL/K8kTMQzPH
+	 LULIOM1SZ1E8RUvbSrSOJFWoo/i/ploc3RUQC2oKSpbn+efWwOrA4cQxBYIitt8RLI
+	 l4gMkSqLvlP0A==
+From: Vinod Koul <vkoul@kernel.org>
+To: Wayne Chang <waynec@nvidia.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-phy@lists.infradead.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <aAjmR6To4EnvRl4G@stanley.mountain>
+References: <aAjmR6To4EnvRl4G@stanley.mountain>
+Subject: Re: [PATCH next] phy: tegra: xusb: remove a stray unlock
+Message-Id: <174722230834.74407.625250786881304963.b4-ty@kernel.org>
+Date: Wed, 14 May 2025 12:31:48 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBxOkY99jQF7q-7M@stanley.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Thu, May 08, 2025 at 09:26:25AM +0300, Dan Carpenter wrote:
-> The pcim_iomap_region() returns error pointers.  It doesn't return NULL
-> pointers.  Update the check to match.
+
+On Wed, 23 Apr 2025 16:08:23 +0300, Dan Carpenter wrote:
+> We used to take a lock in tegra186_utmi_bias_pad_power_on() but now we
+> have moved the lock into the caller.  Unfortunately, when we moved the
+> lock this unlock was left behind and it results in a double unlock.
+> Delete it now.
 > 
-> Fixes: 17fd7514ae68 ("crypto: qat - add qat_6xxx driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/crypto/intel/qat/qat_6xxx/adf_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Patch applied.  Thanks.
+Applied, thanks!
+
+[1/1] phy: tegra: xusb: remove a stray unlock
+      commit: 83c178470e0bf690d34c8c08440f2421b82e881c
+
+Best regards,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+~Vinod
+
+
