@@ -1,93 +1,82 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699FC1DFE8
-	for <kernel-janitors@vger.kernel.org>; Fri, 16 May 2025 09:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4F117B425;
+	Fri, 16 May 2025 09:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747386501; cv=none; b=uUQV3su4W2XjxNdAShz5+LLc5XLQiVuZC7GmtfCFKerNgCmihGD+GZsD4LStKcD3RFW/gwIJ8HUqc/O341mLR0l/gqIdl5591j22W3oQ8Cs9hSsgMcuHHbNnrrGDAjWwb41b/CgzcpWPIpVL5Ei5VowqopqTk8DGBegrxzFdTXg=
+	t=1747387689; cv=none; b=mOsTS9tpg7jwzMiFBINNHb8sNX6f8vXcQDGVG+qTpmSa+1NuXzNuwGgazg4XJ6+yHPPBXFy1UMxysyiXoU/XF7TW/Qf3dCU6MZNRgUc4u4N6yalwd9vQLDr664PtKtRVjsBaR/0JvY0JplUXqlydJMfRmxTWG7n09JV7IvYXIJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747386501; c=relaxed/simple;
-	bh=smaGGleEejxjqfAldEWMMPvLoqda4k+KzyETRx4MUAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UdBc31igVNCg/r1swVp6RKyfmR9VV72sVgLbZZt2ZL4OOa30Y9CGqvUmQ6W4VIv4OH9S6UTq4V31M689oyoqS5LVn71rVZ+ubXUbB6iMseMwrgbNYP8M0aD9EUMkW1ZamrWejpakcRJttuUprygWePBS91/HeVSX0ls9Pg6zQR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PZZgXL2P; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1747387689; c=relaxed/simple;
+	bh=dlDha9z2voc3K7ZndzuXEpZISD4Js5B+4bqJb6RluJk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rS7xTA3Ar+EJPRJFlIh76fnGPKOm6rhtKJZYksvqZq9QQ4rWU/rQMPgycfG/Mh9L7ng6c7shN+xyfMswisExa2JqUaG2PzXS/Nn2HKUesoihPdvZ1eHb4N5kMoNmPsnL44G3L2udeY5M/aYUWdbdaLYhCt48dzV9OeEeQv7wlIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MTDI9d0Y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LMLui3hf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PZZgXL2P"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747386498;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=AYzkMJfY9KpEMNakQSNDEXTnh5wG0ilXzHjXBYUiPEQ=;
-	b=PZZgXL2Pe+lSfqfTHISK0rvx898aJiU0hMhxss4PHVI+JHZQZC11Uv2m7wronosTr1BCrD
-	1nvPGpRMHz5rPGPTngXciKrIncOVMFRm8jT4HSA0z/zbZIwWUy/0CTWUycyS3Ckf3I4mlV
-	XfLAF8+9VblS1AqchUb/uOZDuWckpZs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-423-anTbUOMcNfy0SRlriodk9w-1; Fri, 16 May 2025 05:08:16 -0400
-X-MC-Unique: anTbUOMcNfy0SRlriodk9w-1
-X-Mimecast-MFC-AGG-ID: anTbUOMcNfy0SRlriodk9w_1747386496
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a1c86b62a8so1263942f8f.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 16 May 2025 02:08:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747386495; x=1747991295;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AYzkMJfY9KpEMNakQSNDEXTnh5wG0ilXzHjXBYUiPEQ=;
-        b=Pl/tlkhslrUyrHl/aBFYwwEJsrDOio+yU2bAIHonqfxY1UuhHqRWJc55kT7gGFw86J
-         vqATMQTXu+748ybZCGDww5U9UvhkkI/vb7R7TEvpMaHeJ6bg6I0nruI2AiTUCWgIm+Al
-         31mxk6asLpsQRJlj5Yk64FHBmnTqNkTqJ4LWyIINGHFn4sI0MOVoR/5mfCCcu2YT4cSs
-         HsaTrC0y8a0TTAnbxnaYbxQG61NLob8zXTEJNG70LMwYDXNLuC9LXwN6IH5jpebPwI2j
-         I/HbBNWDrOYt7Brr/nhL8IB3T+cfb6cg/1eW/UOLtSWjHrQm65bvwYTDBXtaRq8Vx4K0
-         AKFQ==
-X-Gm-Message-State: AOJu0YwGcE9/qldhnhV5zJ3bKagIIcw6PGX+J46/J948a9yA0/9l3qzv
-	QQRjFTzaDV+SzL04WDmV/Zbiw6teyxyRWQNVmi+lJX+bDfZfvbZekXIHkpC3UJFJfLEerdnLqNT
-	+1AL+8xPQg05830SiES5ioqg3ezZFRay0gocsx82RN6zciIVLuUfqhNGY8TfWme6G8rC2PA==
-X-Gm-Gg: ASbGnctibhRJBTXDAQiFp3F+Pieu/9p/0Jq/QNC7PSw5bvAT7CWQKHkJNhesIfmkpyC
-	HyHN3/3dMLZ+q+VD2GHd2ONSP08X8jPz2s+8sI7c1AokHjOwoPmo4UkYLAGSvMEHIkxl07PwW+T
-	femIhJf5FN33c4pa9ed9F7NnlUG/3SFhh8TEwpFBf0LBq6N0UllYcXwPkoHiW45Ck+sIHK6CjUS
-	xW6cGz7PqQvRJc2l/yWM9bfkdL9JbnuyMdEoUNmMxlQLDpWtKTqbP+KeIudJQAvtoH0cz0niSKZ
-	xkTmfi/Atnozb7btONKXZW+xkKSaqkpl0oOcsEc3cXUdtvWedsQ8tP2igA==
-X-Received: by 2002:a05:6000:381:b0:3a2:416:5bee with SMTP id ffacd0b85a97d-3a35c84eb50mr2432479f8f.58.1747386495659;
-        Fri, 16 May 2025 02:08:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEb12haYUakG/IdY2quJ/QV1V8uY/qi3mojQAr4ZbQvCmery+tNhbOyH5M+cPqRCFYDl6TMw==
-X-Received: by 2002:a05:6000:381:b0:3a2:416:5bee with SMTP id ffacd0b85a97d-3a35c84eb50mr2432453f8f.58.1747386495280;
-        Fri, 16 May 2025 02:08:15 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442fd583ff7sm25907005e9.26.2025.05.16.02.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 02:08:14 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] x86/mm: Remove duplicated word in warning message
-Date: Fri, 16 May 2025 11:08:10 +0200
-Message-ID: <20250516090810.556623-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MTDI9d0Y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LMLui3hf"
+Date: Fri, 16 May 2025 09:28:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1747387686;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNq/58C7E9N6itWByJdcWr2Jvl1DPdIstlbH/Sr6pkg=;
+	b=MTDI9d0Y7t2KbNfzLS34Rr9YLkerz3fWKux0rJTAudwq8Wdw7ztDh/39HDQmRQtADr6ZNw
+	s4BV3g3xdpJ5K5OtR2K2lGK5f+06brIHqCi4BluG8Mg3eq1Uj1vk6xm9YL/bvDJUT5Z9QB
+	3cW1t2MLQKl54gcRLs7d/JtqgrY+Mj5YFuaj10xjTgiyRs8OqxPro6x+zrMrWki/l0jdfk
+	0PrdHY557F19/NgUV4SJC6aJRTXZ6zBJcjDe7yPrGU8zK3+4DOsgxnaJYPnh4hBUOtqe7N
+	ajMglc3kMW9nF2sBPvDD3klteycObGxdoCUoYebVuS/uTNHqxcsnLDrrzpB88A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1747387686;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GNq/58C7E9N6itWByJdcWr2Jvl1DPdIstlbH/Sr6pkg=;
+	b=LMLui3hfuFH/TR4IXT/ZAn8gOu8qNRSk58PQlrBXtIQvPg/bbvGGNdtE/X0P5v2pGr3asB
+	IUzZ6aVTv1XZ5PCA==
+From: "tip-bot2 for Lukas Bulwahn" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/mm: Remove duplicated word in warning message
+Cc: Lukas Bulwahn <lukas.bulwahn@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250516090810.556623-1-lukas.bulwahn@redhat.com>
+References: <20250516090810.556623-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <174738768534.406.13532690829248851233.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+The following commit has been merged into the x86/urgent branch of tip:
+
+Commit-ID:     03680913744de17fa49e62b1d8f71bab42b0b721
+Gitweb:        https://git.kernel.org/tip/03680913744de17fa49e62b1d8f71bab42b0b721
+Author:        Lukas Bulwahn <lukas.bulwahn@redhat.com>
+AuthorDate:    Fri, 16 May 2025 11:08:10 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 16 May 2025 11:16:52 +02:00
+
+x86/mm: Remove duplicated word in warning message
 
 Commit bbeb69ce3013 ("x86/mm: Remove CONFIG_HIGHMEM64G support") introduces
 a new warning message MSG_HIGHMEM_TRIMMED, which accidentally introduces a
@@ -100,15 +89,23 @@ config options.
 
 Fixes: bbeb69ce3013 ("x86/mm: Remove CONFIG_HIGHMEM64G support")
 Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lore.kernel.org/r/20250516090810.556623-1-lukas.bulwahn@redhat.com
 ---
  arch/x86/mm/init_32.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-index bf5f68b49405..607d6a2e66e2 100644
+index ad662cc..148eba5 100644
 --- a/arch/x86/mm/init_32.c
 +++ b/arch/x86/mm/init_32.c
-@@ -566,7 +566,7 @@ static void __init lowmem_pfn_init(void)
+@@ -565,7 +565,7 @@ static void __init lowmem_pfn_init(void)
  	"only %luMB highmem pages available, ignoring highmem size of %luMB!\n"
  
  #define MSG_HIGHMEM_TRIMMED \
@@ -117,6 +114,3 @@ index bf5f68b49405..607d6a2e66e2 100644
  /*
   * We have more RAM than fits into lowmem - we try to put it into
   * highmem, also taking the highmem=x boot parameter into account:
--- 
-2.49.0
-
