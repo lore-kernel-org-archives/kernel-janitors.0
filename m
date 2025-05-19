@@ -1,87 +1,82 @@
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58691EE7BE;
-	Mon, 19 May 2025 10:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B381DE4FB;
+	Mon, 19 May 2025 11:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747648823; cv=none; b=QSckNOoDSDzo0K9H2+bLeezD70H2jBzho1mZJjTVSeRdE847pws6aFlUDCcMYAmwRhbgnRt4Ej+tEpdilOvgbtd3iYRJag1qtK89xhuXAwYo4hkZlmdnFGgUb8lTXzc6l5DitOsiCss3IjzI8J1hIF0OytxeH5Omft/zrUWLgEY=
+	t=1747652985; cv=none; b=SlKaR5f2pcA3HetOvwix4d+cfdo0pCqRfQZ/MZDa6hBFz9yb15lQ9X8PrrbrJcjC2DnUOnkldv1Gl1ii0FtJrCKHJNSBTwbFkeCK095UYOK3H6FLcUvYzfmqv6rJOASZXGbsBPub7b+PPiScACamK4N1PGg8EM4BZIb8JZ3q+38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747648823; c=relaxed/simple;
-	bh=HHSitiozwfNiWVJ06ieuIpL5bxaDJ1ifVhX7Rkvx2RI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Cc:Subject:
-	 References:In-Reply-To; b=cRAHTR7Uxks01PeY0gsVW81zFwdD1nCLbYa8wDzqTdyUrdcLij+IPx7gj8+0k3r2mdxa0+c/gMAXQlQsZ1R3eh5Pt4hJ86DxeTMR50cJ95ayNox4QyMaej9KelBFK1syqhRhKm1Ky4qVDZVrKddeQhsZnNDuByGahUTR6bnX4VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=BwXCJSTE; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+	s=arc-20240116; t=1747652985; c=relaxed/simple;
+	bh=y4ntHkQCP4Q2hIijIfddgLtb16Yzrq9xJ/8RIcvyu/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y5IJrmJvka3GOPH+kQXgIXXNxzAS0dQO6rcfdZavTrOzDxeN9VSQHbbaN068rlw1u2XbXiFduhkY+oxrZW4px8C9A0K9rP5eEuX2VtVIUL9hRWOBeXikg05LsCvDwzVAHfPBCeh2tXmEM1pPVDe0eWXW0LC3yf1xi2hKb574+b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CFNHHAqj; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="BwXCJSTE"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1747647245; x=1748947245;
-	bh=WfhZWsojv/52yaorrbcpAgqYpchyuwYJo8yoDgMhlv4=; h=From;
-	b=BwXCJSTEDpL1MB6EU3+T4TTgUdRe2xHgDia6xMGQWiL0yWikro1kO/rVfPf3MnFqM
-	 lro7yTrACWrFU9+MsCA2GOe/tyNay1lvwVbJgO35vf9YSANHNrd/20kSjf6KF7eYid
-	 /ues9juJZYfaCE3Ai21FMXwBni7XeJFieKKxiwBVhT/lUKQtWULjt9jBkJUGkfkxSG
-	 rjqyv8jGL1OLhUkkp1zAf2eCi6vyTABLzjQI35q2MV9gFkaFiBDXVDHFkCAUssYAA6
-	 yLhdZ93o2JV2reNrSJJjE+aFtKEWcNEjLcPZ3OjgKow52f5JN9vXZloThLjM14h7eq
-	 GFI6P3rhNrwPw==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 54J9Y333099263
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Mon, 19 May 2025 11:34:05 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CFNHHAqj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747652984; x=1779188984;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=y4ntHkQCP4Q2hIijIfddgLtb16Yzrq9xJ/8RIcvyu/I=;
+  b=CFNHHAqjdwTz4/ic0jprqMrCq+C6n/b4z7y83VX+XH5s35zNxtwXI/Te
+   BJ47J3L19w38ToG8mVfaQ/9jBr6Hzoe3eglmEC8e61PAZ01IojN61Sw88
+   ChCNLLTkZbqp/CPy4u4lbEbidPs0FCr8Y579b/QWCZAvD6g+rVKtSdbnz
+   IutLdARJwHP7dVIukTKtsGPiXnaeb7JOg2OThNrw7JduH+tkWGllgSm7y
+   UNRfBqtyFu13Onw8rneJTZqQYppxxC2bggK9N3iB+GAPErSdiLQjHd7uu
+   H0KRnZkqMjAwb5ltJsMDs5rzywfp1HUYhKxzzIkrEuHGsopqEvGJTESXZ
+   A==;
+X-CSE-ConnectionGUID: jKm9f5loQJ+w1xAcJv/Cng==
+X-CSE-MsgGUID: fz7ihnU/QGG5CsPrcSwR2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11437"; a="66961319"
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="66961319"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2025 04:09:43 -0700
+X-CSE-ConnectionGUID: GMjboc34Tzu4yAH3PHop9Q==
+X-CSE-MsgGUID: DOlxpAMTTZ+wQyelNCEa6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,300,1739865600"; 
+   d="scan'208";a="144590228"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP; 19 May 2025 04:09:41 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 1DCDA26F; Mon, 19 May 2025 14:09:40 +0300 (EEST)
+Date: Mon, 19 May 2025 14:09:40 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in GPIO ACPI SUPPORT
+Message-ID: <20250519110940.GW88033@black.fi.intel.com>
+References: <20250519065557.659674-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 19 May 2025 11:34:03 +0200
-Message-Id: <DA018S0Q8E24.2KK8DE7QWLZTX@matfyz.cz>
-To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
-        "Lee Jones"
- <lee@kernel.org>
-From: "Karel Balej" <balejk@matfyz.cz>
-Cc: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] mfd: 88pm886: Constify struct regmap_irq_chip and some
- other structures
-References: <1681629840761e30494cb8920668710df60a81b8.1746996137.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1681629840761e30494cb8920668710df60a81b8.1746996137.git.christophe.jaillet@wanadoo.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250519065557.659674-1-lukas.bulwahn@redhat.com>
 
-Christophe JAILLET, 2025-05-11T22:42:30+02:00:
-> 'struct regmap_irq_chip' is not modified in this driver.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
+On Mon, May 19, 2025 at 08:55:57AM +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit babb541af627 ("gpiolib: acpi: Move quirks to a separate file")
+> splits drivers/gpio/gpiolib-acpi.c into two files, gpiolib-acpi-core.c and
+> gpiolib-acpi-quirks.c, but misses to adjust the file entry in GPIO ACPI
+> SUPPORT.
+> 
+> Adjust the file entry after this splitting into the two files.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-increases
-
-> function pointers.
->
-> While at it, also constify some other structures.
->
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text	   data	    bss	    dec	    hex	filename
->    5032	   3304	     64	   8400	   20d0	drivers/mfd/88pm886.o
->
-> After:
-> =3D=3D=3D=3D=3D
->    text	   data	    bss	    dec	    hex	filename
->    5800	   2536	     64	   8400	   20d0	drivers/mfd/88pm886.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
-> ---
->  drivers/mfd/88pm886.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-
-Reviewed-by: Karel Balej <balejk@matfyz.cz>
-
-Thanks,
-K. B.
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
