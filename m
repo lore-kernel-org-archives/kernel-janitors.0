@@ -1,89 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758C02676DF;
-	Tue, 20 May 2025 09:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342E24C66A
+	for <kernel-janitors@vger.kernel.org>; Tue, 20 May 2025 14:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747732833; cv=none; b=lS7m/lR0hUGvXvJ9nqH2X0w9+mTNkXPhN1oAT27stvgKOj+xbq7ZUAIFW+uoi87Arpx9I93LwLcAHLmFQB8Jorw/92K5CR0o9KaAoMEuW8Cx+Xg3ya7SnzZRdgT1L4GzWs66FJJjmB5AGETgXnizHC4oYBmVz1Z3Uqqe45W76PM=
+	t=1747753035; cv=none; b=esB6zZNiCndSASK+j+PugbyIZzXztkK0x/Ui76JjX6o2CXUpuE8iw/AF43h7JoOW9K3BA+I09xFnL7ME0hH9KaHFpZn/IoVy0mcdX7UizS9Vps3KCl2OuwyJppH0ep8hNprfjmSWGQ8bHK5ap+wLCUmaJquduoMN8ywzwUYNqZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747732833; c=relaxed/simple;
-	bh=drmLNZREsEi2qwurO6x9+d7a7DiG6SJbsdoEHUKB2oQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CG2sc5VYkEz1LIui/7YMTBDI6f6k9teoxnw5NKzwgjkZQDNvMGBkKLwNymhhkptpJ4tnJMLV0y3VwMJPnGBQ6lbO/Jp8+QsNWNNmd8/R6h8U9KDr1O1hOFbuhnvzevvETr9FJAWOVoBWPf+smYw1cfQX8Zm1IWeRfxOYJTg5fdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4C1b21z; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747753035; c=relaxed/simple;
+	bh=LnU2HMu5FQVmbbV130tV8yW5KhXwrlRqqNXp4oAg6Rc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GlY6po5Fv8SiO8+jldV15tWkbHXzlq8X4iwOwvmpnTAfgC/Ii+2buqVE4LqR9eT6KdUwnwlfelqpV//gKdPCFGg3PgOxaC5EkRGI0NgsEOnow63J2sCxkMzdziZnfc5DnALVt5FlMJ4BkHRSd2mIMeidFW8wZm6tiH0u7zYRMto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TbG3J6Xu; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4C1b21z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BF7C4CEE9;
-	Tue, 20 May 2025 09:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747732833;
-	bh=drmLNZREsEi2qwurO6x9+d7a7DiG6SJbsdoEHUKB2oQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=U4C1b21zU3uzpfHHnbaMqpSOiiIiTNkSuUcm6CRIhplDoB4c+Yk5tCkg7Sgo9b73Y
-	 mI/Y/enOhxwT8WjiRg2ahQdK1J3KL3GPraHKqsUala59dOqUhEGVpsCoRd/iqPfkyp
-	 6Akp6WoIMvFrwjJqeBpFJlnp9YKm+//Oj3u8aEU5LGFnOEpeL0t6VWPVw7tNt4EsX2
-	 p6Huu5iTP5vRgw3cKlzad0hvT7anwzMvRrmcNhF8nlYGM/ZbJsx4qfLQXudby9zT01
-	 xeT48yVR66tADMN+pLKYbzBCSEzQNp8zX35OubBEO+ouUyBuorcP1F0X5pxXuSWOAy
-	 9bmJGif+nFvyA==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org
-In-Reply-To: <ef2a4b6df61e19470ddf6cbd1f3ca1ce88a3c1a0.1747570556.git.christophe.jaillet@wanadoo.fr>
-References: <ef2a4b6df61e19470ddf6cbd1f3ca1ce88a3c1a0.1747570556.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] regulator: qcom_spmi: Constify struct
- spmi_voltage_range
-Message-Id: <174773283210.19657.11607687696086405986.b4-ty@kernel.org>
-Date: Tue, 20 May 2025 10:20:32 +0100
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TbG3J6Xu"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-329119a3a8eso27779601fa.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 20 May 2025 07:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747753032; x=1748357832; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OirvPWyIXir2GaJImkb/fUid8xpI91V6lGP/kVK2Qzk=;
+        b=TbG3J6XuMRaAIiBm7Ar3LJnPr4XEZTpWEiete+YCjsPrTNje9GywxJVr5Wk6Z9PGEq
+         0OmPKk4S+mFozYZQ813aKMVyZnIJbqRf5lygOkaZRYaFh7LJTRejRPEwURX4GoFfjZvD
+         vfuat5Z0vsYtDSFBs/tzJxMsygQmX7/nyRBjWGEHIEzTSThU2yR6OzG5fouj4VSJy+75
+         ufT/5db6P9rknUq/ly+S2CRumc13R60lrZf8pjZ0ZYLycFAn3COzU7N3yKCK58DrnEc8
+         KY1p66G5HV9oRz3WI3hJ959QEjNT2Er+/SQ9mem8AaWEqv/Ha+0Q0qmo4ajL7LrFnLoI
+         /tHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747753032; x=1748357832;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OirvPWyIXir2GaJImkb/fUid8xpI91V6lGP/kVK2Qzk=;
+        b=dTSGaQIe6fZq1IFKTx0Kf0s+90mGp8RiZdcQNpH4Q9Ia/vTw03cnnD3U530hblvI4t
+         yP18fX3s8nLR0aWdpAiK5PWJkvuYwzIUF9e/u6+9ShDOuxSoz/9ipNG7/9JUx/b6mT5Q
+         PXUF6xfgjW1RS+wc9z4oO0sW8PzNSQEE08gEWWvQDNcS8mKlpgToxqe1fJtXf3O+ALqG
+         pQG2QeYXiDfIX11khVAslomlVdgB8ScII/j7FZrVKUMNJIWlcwjIStP1Qik08FYhEOX/
+         hGAcMqeaAoCAgOe22pFUzUYQ+zceRU6ye0N8ZmO+8q1xaS1my1063dgZo5kjGfay3pHi
+         x3pA==
+X-Forwarded-Encrypted: i=1; AJvYcCUL4eO6v6h7PMODRDz7beLQMyDbzPshiMXN1ljsmZKxEvLecZytmEdKQ/YZf5qcsM4c+gyvvxSsmtozQJrj9r0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRyy2XKdtX4lSdcAX80+cdpwbzjzQz6Nz1zR5lXc3xxJ+nf95w
+	GwLNaSVAUoCAqAv/BqXvHjXLAUoFFIk29AaC53dGcnCGzHt/plsTRyqnRthsoW28/FaHmXMDwNm
+	ZqbE9umgq9f7M0ZimlYjQpQxcTV/bSyygKs0EI/xJ
+X-Gm-Gg: ASbGncsTjnSApzuzp36k8SDoFSqwNRL+v4Irhv9TMosi6EdlVgDAIy418mEdsq2gD0I
+	J/HhI/+G+kbE2+4iTUNZvBNRhPPzsjps4U0SMoDSSRFkXAK1E7G12O3ujwS3bt1yO6ANhUzlzE5
+	5hMX9YTDgaXsTFV8u7xfV9xGzvzi/poYdb12kk4LP6PUckJRWcZVu86Wb6J7qPFY1vfnoRqjKuQ
+	W4fBaiAoWbT
+X-Google-Smtp-Source: AGHT+IHFbaYVWzc1ZO5BGosZBfzj44Zpo0rr1Dn5JGoDuJZkthl8WSCb7+ygGcUCz6PdtphRgmFsQlDrLdMxMmEMC48=
+X-Received: by 2002:a2e:bcca:0:b0:30b:f0dd:9096 with SMTP id
+ 38308e7fff4ca-327f8484885mr66095551fa.12.1747753032039; Tue, 20 May 2025
+ 07:57:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+References: <20250507133043.61905-1-lukas.bulwahn@redhat.com> <20250508164425.GD834338@ax162>
+In-Reply-To: <20250508164425.GD834338@ax162>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 20 May 2025 16:56:59 +0200
+X-Gm-Features: AX0GCFvIRljugCIcQbtSXjz8NxSFlDDJZ4BA92IeoXfPnXvtaGyqWo21owy367U
+Message-ID: <CACT4Y+a=FLk--rrN0TQiKcQ+NjND_vnSRnwrrg1XzAYaUmKxhw@mail.gmail.com>
+Subject: Re: [PATCH] Makefile.kcov: apply needed compiler option
+ unconditionally in CFLAGS_KCOV
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Lukas Bulwahn <lbulwahn@redhat.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 18 May 2025 14:16:21 +0200, Christophe JAILLET wrote:
-> 'struct spmi_voltage_range' are only modified at runtime to compile a
-> field, n_voltages, that could be computed at compile time.
-> 
-> So, simplify spmi_calculate_num_voltages() and compute n_voltages at
-> compile time within the SPMI_VOLTAGE_RANGE macro.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increase overall security.
-> 
-> [...]
+On Thu, 8 May 2025 at 18:44, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> On Wed, May 07, 2025 at 03:30:43PM +0200, Lukas Bulwahn wrote:
+> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> >
+> > Commit 852faf805539 ("gcc-plugins: remove SANCOV gcc plugin") removes the
+> > config CC_HAS_SANCOV_TRACE_PC, as all supported compilers include the
+> > compiler option '-fsanitize-coverage=trace-pc' by now.
+> >
+> > The commit however misses the important use of this config option in
+> > Makefile.kcov to add '-fsanitize-coverage=trace-pc' to CFLAGS_KCOV.
+> > Include the compiler option '-fsanitize-coverage=trace-pc' unconditionally
+> > to CFLAGS_KCOV, as all compilers provide that option now.
+> >
+> > Fixes: 852faf805539 ("gcc-plugins: remove SANCOV gcc plugin")
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> Good catch.
+>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Applied to
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Thanks for fixing this!
 
-Thanks!
-
-[1/1] regulator: qcom_spmi: Constify struct spmi_voltage_range
-      commit: e9be77134469df4a11da898bec2bfc137700a9f3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> > ---
+> >  scripts/Makefile.kcov | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/Makefile.kcov b/scripts/Makefile.kcov
+> > index 67de7942b3e7..01616472f43e 100644
+> > --- a/scripts/Makefile.kcov
+> > +++ b/scripts/Makefile.kcov
+> > @@ -1,5 +1,5 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> > -kcov-flags-$(CONFIG_CC_HAS_SANCOV_TRACE_PC)  += -fsanitize-coverage=trace-pc
+> > +kcov-flags-y                                 += -fsanitize-coverage=trace-pc
+> >  kcov-flags-$(CONFIG_KCOV_ENABLE_COMPARISONS) += -fsanitize-coverage=trace-cmp
+> >
+> >  export CFLAGS_KCOV := $(kcov-flags-y)
+> > --
+> > 2.49.0
+> >
