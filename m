@@ -1,70 +1,89 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201642609DF;
-	Tue, 20 May 2025 08:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758C02676DF;
+	Tue, 20 May 2025 09:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747731073; cv=none; b=tV9xOrqcYv7LCuekh21WohOBKZ756vHSeRavULRKDBHt6295ChA73wj56e78YDAzfBOFLZWRwvuttHXrTbgnZS8n5BeEcyhGVpQJ6tXGZqRcQoBEmm4u5b9NTdpx8J3GO+x8Bg5LsOeoUu4iceLTQZ6xWOz6tZfsCQ9zU2CQcj8=
+	t=1747732833; cv=none; b=lS7m/lR0hUGvXvJ9nqH2X0w9+mTNkXPhN1oAT27stvgKOj+xbq7ZUAIFW+uoi87Arpx9I93LwLcAHLmFQB8Jorw/92K5CR0o9KaAoMEuW8Cx+Xg3ya7SnzZRdgT1L4GzWs66FJJjmB5AGETgXnizHC4oYBmVz1Z3Uqqe45W76PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747731073; c=relaxed/simple;
-	bh=j7k9kuOSIr4GMcGXb1NEvatg55OF6bXsyRSdV1THpdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7654L12IiW1SCNr+NPcIriNXk+1zGADefXpo2urQKQv03M3kfPtg362HiiRNANJVY1pR4OGwCpULUbwL9KBIuDFuZlfHTlsOeRJ3ez7qhpwdXOk0D1rpn6mDgDcP5lPQPgTx6CsjJ0Ho6uMUaU3xfGtRD+2XvN51RNPfOMabak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FrbMJrWV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lkpzu8bg; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1747732833; c=relaxed/simple;
+	bh=drmLNZREsEi2qwurO6x9+d7a7DiG6SJbsdoEHUKB2oQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CG2sc5VYkEz1LIui/7YMTBDI6f6k9teoxnw5NKzwgjkZQDNvMGBkKLwNymhhkptpJ4tnJMLV0y3VwMJPnGBQ6lbO/Jp8+QsNWNNmd8/R6h8U9KDr1O1hOFbuhnvzevvETr9FJAWOVoBWPf+smYw1cfQX8Zm1IWeRfxOYJTg5fdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U4C1b21z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FrbMJrWV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lkpzu8bg"
-Date: Tue, 20 May 2025 10:51:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747731068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sAXUtQcpZUdkmC1TyAO0R3zmLqg2lXnELKr3jI8UqTo=;
-	b=FrbMJrWVtwaZ4FM8NVOo4EQFlSWaTo6S34mh5xeiqcv3gtjfXunzlDksn74PR99PW81JQp
-	ZBUbOLDBTEdX1JUIQeWsqecpGJ4IdjM+N9j5QBMYAvWYvc8tyNJlAOhlMCFpAn/KZe1JLp
-	DFQEORGKaDcPWlKn5XN8AsKMRETQMNTzDhAXbQ/RLLlNLTm7OaBM8Rfv7tsNNvXhdz9lqs
-	Pk2Q33XPVJpwbIHTFyeh6kdFRjZ1OLVPYmFUpWd3XzHSNhDEc5nIfeHytt1iiSj/m32b93
-	vbK8CxEg0UC1kDdFBggENZb67rGC3WQe+BROcl6+fRNOw6dYJtOoZANQ+6ZSEQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747731068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sAXUtQcpZUdkmC1TyAO0R3zmLqg2lXnELKr3jI8UqTo=;
-	b=lkpzu8bgx5D+G8io7SmMkkgzirR81Q8VcCw9KHkpokD7vixoQTI4qRzDNenN+8wUI6Vrby
-	dgrOXb2Pwia7hUAQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
-	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] selftests/futex: Fix spelling mistake
- "unitiliazed" -> "uninitialized"
-Message-ID: <20250520085106.-gdQ0Hnd@linutronix.de>
-References: <20250520080657.30726-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U4C1b21z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BF7C4CEE9;
+	Tue, 20 May 2025 09:20:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747732833;
+	bh=drmLNZREsEi2qwurO6x9+d7a7DiG6SJbsdoEHUKB2oQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=U4C1b21zU3uzpfHHnbaMqpSOiiIiTNkSuUcm6CRIhplDoB4c+Yk5tCkg7Sgo9b73Y
+	 mI/Y/enOhxwT8WjiRg2ahQdK1J3KL3GPraHKqsUala59dOqUhEGVpsCoRd/iqPfkyp
+	 6Akp6WoIMvFrwjJqeBpFJlnp9YKm+//Oj3u8aEU5LGFnOEpeL0t6VWPVw7tNt4EsX2
+	 p6Huu5iTP5vRgw3cKlzad0hvT7anwzMvRrmcNhF8nlYGM/ZbJsx4qfLQXudby9zT01
+	 xeT48yVR66tADMN+pLKYbzBCSEzQNp8zX35OubBEO+ouUyBuorcP1F0X5pxXuSWOAy
+	 9bmJGif+nFvyA==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org
+In-Reply-To: <ef2a4b6df61e19470ddf6cbd1f3ca1ce88a3c1a0.1747570556.git.christophe.jaillet@wanadoo.fr>
+References: <ef2a4b6df61e19470ddf6cbd1f3ca1ce88a3c1a0.1747570556.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] regulator: qcom_spmi: Constify struct
+ spmi_voltage_range
+Message-Id: <174773283210.19657.11607687696086405986.b4-ty@kernel.org>
+Date: Tue, 20 May 2025 10:20:32 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250520080657.30726-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On 2025-05-20 09:06:57 [+0100], Colin Ian King wrote:
-> There is a spelling mistake in a fail error message. Fix it.
+On Sun, 18 May 2025 14:16:21 +0200, Christophe JAILLET wrote:
+> 'struct spmi_voltage_range' are only modified at runtime to compile a
+> field, n_voltages, that could be computed at compile time.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> So, simplify spmi_calculate_num_voltages() and compute n_voltages at
+> compile time within the SPMI_VOLTAGE_RANGE macro.
+> 
+> Constifying these structures moves some data to a read-only section, so
+> increase overall security.
+> 
+> [...]
 
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Applied to
 
-Sebastian
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: qcom_spmi: Constify struct spmi_voltage_range
+      commit: e9be77134469df4a11da898bec2bfc137700a9f3
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
