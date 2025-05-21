@@ -1,82 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1271E26E176;
-	Wed, 21 May 2025 12:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76ED1A3177;
+	Wed, 21 May 2025 14:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747832074; cv=none; b=YZ6AegJUKKhg+PZ5G9zterLPDKaw9+HYHAekEo7oSU6Mj4C1oclvlYE9JZds2PiPK5TriKQ5PrNT0I9oKcN/fcYQEMw7344jrYfjohTFGqV2husmjitM5ViCBg6IfvqRl3xkv1wOPKSwdkkXjObzDDuhXm0ivo5DrISC5gn3vrQ=
+	t=1747836701; cv=none; b=eQaM6kh2sqdcqBIAqZ3VElCpx0gjuD5jYIBt2+LklWJW7Ws/WrSee9y118SUcyVi9hpcBhsxU8uurkSTxlCTOs/mrWrg8bHzSB7jBBrhhgliQRpC5AjH4OdaAdIwDjprJ5dUJcEM1fHn3ILTHd5+rxupfv0iH394RZWaYDCcfzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747832074; c=relaxed/simple;
-	bh=VMYoNOJ5wE9KwUkDnF09JicN3hKPriwy1qJHDvdDpM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eep9uhUoqtr7nTEGgLhJbCmteqqYukBuaN/h/fhvUjd9eZcFZFcs1TWD4vhLDwAO4XSokzL1V6hwS92DW2/ecce8Ctm6prqIFTO7oLsbGg4DXLOWVYEuR/0Y+u/3Nlvtb/LlDjSixbJuCSr+vqxpDEQ7BzUJBhv6VHSSM1HaD6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Gvp/ed8X; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747836701; c=relaxed/simple;
+	bh=Y9XHxQdDuto4VFvmv60457dHtHcsuL8SXMzckPVOcq8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=OH/NzDYhhnMrWa5mXxt3AC+nMhaUQ282l7fIPYf0bhuFOdcQ6hpNbSRoBXw3k72mDI+XslowLZs4PXsOxEjGEALvOzxU7PnVSqK5OSACO+Vpvr53EfgDieHBFVyE8Bl1Z03Y7C9WOaE2s/djc7ovvRnDu/8N0wfIz2sRy16qq1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UvgZO2tu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PHH2Z+0c; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Gvp/ed8X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D2AC4CEE4;
-	Wed, 21 May 2025 12:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747832073;
-	bh=VMYoNOJ5wE9KwUkDnF09JicN3hKPriwy1qJHDvdDpM0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gvp/ed8XwFy7sJSkMi+wEhLq2DrCdOEOZN1MX+cDd/vNe7AM6jKoFcB8WHBTJtPeN
-	 9mY3wzgC/Oc3LfowIQinrhDL6vabZVT4DQ47R0nXoeZcJ7mZ8i68f7WUmr3+mO7Umc
-	 GB/DTmAwF3mOWOpNgh+7YSV1JvWG/carnKG4dHE0=
-Date: Wed, 21 May 2025 14:54:30 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-spdx@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] LICENSES: add CC0-1.0 license text
-Message-ID: <2025052118-handbook-dowry-bae9@gregkh>
-References: <20250513115912.303082-1-lukas.bulwahn@redhat.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UvgZO2tu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PHH2Z+0c"
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D28781140115;
+	Wed, 21 May 2025 10:11:37 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Wed, 21 May 2025 10:11:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1747836697;
+	 x=1747923097; bh=HWI5tsYR82od73rLR1d73ZRHNmjGxzPzzskX0QA3T0s=; b=
+	UvgZO2tuvBQw0TC0wLcBMbIaCmRLaSFsHa9/dTz5feuYKCBVr2qs9zTLlOteaAiD
+	AnK0QeKl55BD1Cc+2oP3kjHyd0XO0n/gE4GvWixz+NrDkPRg7/oBuupv7RyfFNWM
+	z6ufvltMUieFZn6MSUmykUgK63xgRebVTFFiZJF48wnrX52ZGDNxMDfy0ssCmiNa
+	wjpc4aDVg8LBW5n4heQX6Aj4jiyhinE3JOwFuW/MOjC6aj4z4yKCazndrFcRAn30
+	WI4RpC7pU4u604aaj3vA2lQWcfSWJgJiLn5H8a9e891M9pCoSWrkuD8uysJEL8Tl
+	rJr5o8jiVVX5J2PlCvMzKg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747836697; x=
+	1747923097; bh=HWI5tsYR82od73rLR1d73ZRHNmjGxzPzzskX0QA3T0s=; b=P
+	HH2Z+0ctNahlhotZlDeSc1bTLxfrVE4EcA+rEHwZy9z3TSz2EgCo1osS0T0ypwfE
+	qJAIakV2j6kf4UC7/gpjXi8cxucb3HodxJIqCeUdnlOBxCQ1sPsGJlOiJLs7lkXZ
+	OGCM0KEA3niKf1i3MhrjKTRLroeIsgPX++HWC/eTtFi0mkwbY+lbd70pZOZMUpBQ
+	d1m46EH5u/thhMIqmD4ehuC5qge2C2j9xK/dmwy0gIZMjjV7cf+rOQX8HidRlJZg
+	XsYFnKKJB00Bqy0isV3JyrsLId2I9j3QMF4wowQHPgJm5dVA3ZdT8Y9o9f19aNKC
+	7O/rY3DYjJPuyDrvGBP8g==
+X-ME-Sender: <xms:Gd8taNJRtpAdQ1fn-VeX5nac47719thOgFLRag1XBeSrdxlOyv0erg>
+    <xme:Gd8taJKesTwfbHvYI8A1xdnyFnZ9agrTWGaukmHKpGYOew9OozAxVXfqWXw9dwwhd
+    yGvEscWXCy0BtXYisQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefvdelucdltddurdegfedvrddttd
+    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
+    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
+    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgj
+    fhfutgfgsehtqhertdertdejnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuc
+    eorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveff
+    ffetgfdvveefvdelhedvvdegjedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdp
+    nhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnh
+    gurhgvhihknhhvlhesghhmrghilhdrtghomhdprhgtphhtthhopeguvhihuhhkohhvsehg
+    ohhoghhlvgdrtghomhdprhgtphhtthhopehglhhiuggvrhesghhoohhglhgvrdgtohhmpd
+    hrtghpthhtohepkhgrshgrnhdquggvvhesghhoohhglhgvghhrohhuphhsrdgtohhmpdhr
+    tghpthhtohepmhgrshgrhhhirhhohieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnh
+    grthhhrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhv
+    rggtkhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhioh
+    hnrdhorhhgpdhrtghpthhtohepnhhitgholhgrshdrshgthhhivghrsehlihhnuhigrdgu
+    vghv
+X-ME-Proxy: <xmx:Gd8taFsIEC4GZHg5Hu8aA7VK2AQdHWupCHisjiHUC3T0zlNw_s2Ngw>
+    <xmx:Gd8taOa8HOf2g3NcRGP0_xBQfcS9_TSIBx7K163Y20Yr9_0EAxZp6w>
+    <xmx:Gd8taEbWPg1yILveN5vwcjTQY_Ex6Ob0CL8hRXtBlz3DivwI3SnrEA>
+    <xmx:Gd8taCC8stVoZjthgL3MSSmcYhqAY8sFJ-iTkMYG3TfDeLI_3diEsg>
+    <xmx:Gd8taK__j3JZ5GSiiKeqVDaDJGlTkAZ-3rraLt143UlbS8opPORdVkoQ>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 32C301060060; Wed, 21 May 2025 10:11:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513115912.303082-1-lukas.bulwahn@redhat.com>
+X-ThreadId: T2ad347d80e1d0ee9
+Date: Wed, 21 May 2025 16:10:47 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Alexander Potapenko" <glider@google.com>,
+ "Linux Memory Management List" <linux-mm@kvack.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>
+Cc: "Nathan Chancellor" <nathan@kernel.org>,
+ "Lukas Bulwahn" <lbulwahn@redhat.com>,
+ "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nicolas Schier" <nicolas.schier@linux.dev>,
+ "Andrey Konovalov" <andreyknvl@gmail.com>, linux-kbuild@vger.kernel.org,
+ kasan-dev@googlegroups.com, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Lukas Bulwahn" <lukas.bulwahn@redhat.com>,
+ "Dmitry Vyukov" <dvyukov@google.com>
+Message-Id: <61db74cd-2d6c-4880-8e80-12baa338a727@app.fastmail.com>
+In-Reply-To: 
+ <CAG_fn=XTLcqa8jBTQONNDEWFMJaMTKYO+rxjoWMHESWaYVYbgA@mail.gmail.com>
+References: <20250507133043.61905-1-lukas.bulwahn@redhat.com>
+ <20250508164425.GD834338@ax162>
+ <CACT4Y+a=FLk--rrN0TQiKcQ+NjND_vnSRnwrrg1XzAYaUmKxhw@mail.gmail.com>
+ <CAG_fn=XTLcqa8jBTQONNDEWFMJaMTKYO+rxjoWMHESWaYVYbgA@mail.gmail.com>
+Subject: Re: [PATCH] Makefile.kcov: apply needed compiler option unconditionally in
+ CFLAGS_KCOV
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 13, 2025 at 01:59:12PM +0200, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit cbbd847d107f ("tools/x86/kcpuid: Introduce a complete cpuid
-> bitfields CSV file") turns the tools/arch/x86/kcpuid/cpuid.csv to be an
-> auto-generated file from an input file maintained at x86-cpuid.org project.
-> The x86-cpuid.org project clearly states that the auto-generated file is to
-> be licensed with CC0-1.0 (see Link below). So, the SPDX-License-Identifier
-> CC0-1.0 in the file is correct as intended.
-> 
-> The spdxcheck.py script reports that tools/arch/x86/kcpuid/cpuid.csv uses
-> an Invalid License ID: CC0-1.0, though, as the LICENSES directory in the
-> kernel tree does not contain a file with license information for CC0-1.0.
-> 
-> Add a suitable CC0-1.0 file with the license text into LICENSES/deprecated
-> to make spdxcheck.py happy.
-> 
-> The directory deprecated is the best fit, by exclusion of the
-> alternatives. CC0-1.0 should not be considered among the preferred licenses
-> in the kernel, nor is it a license exception case or intended for
-> dual-licensing some copyrighted material. So, deprecated is the best fit
-> here, even if the license and its use is fine and it does not suggest to
-> actually deprecate use of this license.
-> 
-> The license text for the CC0-1.0 file was obtained from the spdx
-> license-list-data git repository (see Link below).
-> 
-> Link: https://gitlab.com/x86-cpuid.org/x86-cpuid-db/-/blob/v2.4/LICENSE.rst
-> Link: https://github.com/spdx/license-list-data/blob/main/text/CC0-1.0.txt
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  LICENSES/deprecated/CC0-1.0 | 129 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 129 insertions(+)
+On Wed, May 21, 2025, at 12:02, Alexander Potapenko wrote:
+> On Tue, May 20, 2025 at 4:57=E2=80=AFPM 'Dmitry Vyukov' via kasan-dev
+> <kasan-dev@googlegroups.com> wrote:
+>>
+>> On Thu, 8 May 2025 at 18:44, Nathan Chancellor <nathan@kernel.org> wr=
+ote:
+>> >
+>> > On Wed, May 07, 2025 at 03:30:43PM +0200, Lukas Bulwahn wrote:
+>> > > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>> > >
+>> > > Commit 852faf805539 ("gcc-plugins: remove SANCOV gcc plugin") rem=
+oves the
+>> > > config CC_HAS_SANCOV_TRACE_PC, as all supported compilers include=
+ the
+>> > > compiler option '-fsanitize-coverage=3Dtrace-pc' by now.
+>> > >
+>> > > The commit however misses the important use of this config option=
+ in
+>> > > Makefile.kcov to add '-fsanitize-coverage=3Dtrace-pc' to CFLAGS_K=
+COV.
+>> > > Include the compiler option '-fsanitize-coverage=3Dtrace-pc' unco=
+nditionally
+>> > > to CFLAGS_KCOV, as all compilers provide that option now.
+>> > >
+>> > > Fixes: 852faf805539 ("gcc-plugins: remove SANCOV gcc plugin")
+>> > > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>> >
+>> > Good catch.
+>> >
+>> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+>>
+>> Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+>>
+>> Thanks for fixing this!
+>
+> @akpm, could you please take this patch at your convenience?
 
-Thanks for this, I'll add it to the spdx tree now.
+I have applied it on the asm-generic tree now, as this contains
+the original broken commit. Sorry for missing it earlier.
 
-greg k-h
+      Arnd
