@@ -1,108 +1,102 @@
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EFD39443
-	for <kernel-janitors@vger.kernel.org>; Thu, 22 May 2025 08:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D9833DB;
+	Thu, 22 May 2025 10:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747903124; cv=none; b=AqfNWXbcS7+wBWBTAHi8VgphwXf9O2VmEtR+qlq1q3fMB6bUnvoHtTmBt12lByMcW0mDI5HdCpqXf6oIVuoe+8buPwD4mEtQ2iXGph4NfOFR5yl/qlpnHuwd143Wk5x/ldzae70z5p17Pp7L3Wl9CoXC9toDzdWOAn/IJNCIuzw=
+	t=1747911176; cv=none; b=VC/jLB22NrHZyBfWmK0+SScjOKvrjTIOfBSZRrgyoPLzCJBJm7tGl0YFUJyXE5CNBcJRsadNgEEXXsbQqiS2bffYDZyyuUfFEd8mlpolTCNrB9qLWBCnqvl4sl5PZap0mVghNxTK0XnQnxrGyHxGuuobuzoF8TUQZC9VE/qapoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747903124; c=relaxed/simple;
-	bh=K56au4wC7SajXotCQW+tsFDXuT8nbYN1Q28RXPF59x0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Ws0kgX73/JuA1KQG1k7qfD98gbL+ySmE8W9Yx9XQDy/pA8CDKx+zxP4owrSeWeZpzk328Cu3OMVb9CgPI8PyNTHxJMXh3LBgZowOKHW43LNjYU2gpBtsfvNOC22l4YoyXNlN06gmXrboo9tCjkPTmkCI/nZlC4Gl7aqR6UdjJaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=fail (0-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=ZHR68oSn reason="key not found in DNS"; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+	s=arc-20240116; t=1747911176; c=relaxed/simple;
+	bh=zKB0CIeVdSCddRrlGjAiKbibALkSxqSv1mysxrdExQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n8sp2NoyFw6o9Oun0f4GD62W4LzRdxk4pj0tppioGx1gU+PQIzMGLnYBeM+4Fm1jJSgh5nDRqAO2pNu9WvGFzlBKLKaXj3C9eG7Wkyh1hUQfzCndKlvb+SeVWZfDNedE3XwO9DMTjF9rS8Dgw2Kjyf/VevivgGF0tJUTQAVT+kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEU4Razo; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="ZHR68oSn"
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3dc87649822so14103315ab.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 22 May 2025 01:38:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEU4Razo"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-440685d6afcso83542145e9.0;
+        Thu, 22 May 2025 03:52:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1747903121; x=1748507921; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y/uztfpQFeRtAQ98xNCxi3LaxzIk4TybH/zbX7MUI9o=;
-        b=ZHR68oSnLODm+h7f2tQahzIVJE6MZmjAtjD8DRgXvRxLlACdRncldNfY0D7TTK8Fix
-         Ko61Ohf6oE3nGCYbJxN9M23Ygy3pqDcCnoXjQYv3Rk6hlkD7Peb6IXMaWeM0k6AsGGug
-         Vws+yVGaVgao0NTzFVosY0A2WKK0CSvXEL17SoDGhaxwwM0aWzK0D1A9nb0DpWs8ZAdE
-         XA1JBraavlKz0ZPKKf4oHN1bT+ADd7KJCr2VQs7QzOJ8i166/JDdhO044wsxVeMPz0/H
-         vV6GyzEelQeI82vB2DGLX67gPAkKVk6STznYmtyix74THwPY8MKzNz9e1tAZBTri7JH+
-         hkvQ==
+        d=gmail.com; s=20230601; t=1747911173; x=1748515973; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=POZn5cMRur2JoIRBO8c/Z65zsHmAuO3h0XzsNYJfMMo=;
+        b=CEU4RazoRDJJxloc6A25RcMctxC8glKVCZG39JxC2ZRkUz0Uf4ukloDzsQoV2ZkBUp
+         q+QlOmIhY8jTi0Yq9bFO0tRtuNpBg7aBLGKgvKlfAitM5xjRZAd5getTwy9H6IAPUPLY
+         PwhXPVGZd4G1dVO/UmPMaYXUvL/+aQL9uch3lBSB7g2g/NxS7dOwUAaE0PQMCDpscNHb
+         3DoSCSXzJa/MwkDnYVMgMRfggRbVge/uQa9zvkLqXYtuKb0KGX+Bv3JgO/mWeCyla/4s
+         kcdten0v3RP04CP/LqE7V1qjoAYLzTQSy58S9qSEvJjVQsdmWjAnYj/pLUV/NbGaKfZK
+         sjfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747903121; x=1748507921;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Y/uztfpQFeRtAQ98xNCxi3LaxzIk4TybH/zbX7MUI9o=;
-        b=fiZ/x0aTxCU8Xg2XNJMFozV8KBVSHpcvd2Po3TZWa7evJwMVwY48LKmtFYcZE09pDA
-         xTnQiogmkYrL0zIb2s3aFhP/o3bAfgkY5H1r0EioB/wmmxH+PBaE/KUCVLwLRYtWLMg1
-         4e+tQX+b2cDnq85u+s0+Su3b3ECfWsSDDqUnxl8AvgbcV1W8Q+RtW1jFXrRg307TNjsj
-         1uSrb+Aa3jsumDDc4c6GKInbCAlaTHqePyrqA9Ri5r6Sq4bhEhp6zwAOOgRuZUMxJP+K
-         fD77ODPJaKtX8iASMkbZ4CdqsYtqzMd+GGnwm582gQIyxMCoG9+zNprMIKHwv1o7YiMG
-         59Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoBzDjaQtQjsHGzTQWisGhxkrqrjGy9cL64EikGz68gYADECOZY+MJN041smkbHQg/0YGuW+GDYenQP06xAjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yypn2wfyhA9dbxC+eMQHpb1bh11pvHspIMNNCi0XPsH+OcAcDpL
-	WFIfRN0EkQ01ZZwR17cBweNT1Ph+LOlQ5G2b91P6dOrfOkZsSX615nadiQEp8pT3O6Y=
-X-Gm-Gg: ASbGnctDUahttwPdO1GLQxLVJ2n7VW9Pu6uzfwM2MhISgghjnlntoL2pI37o3fT54AH
-	l7uUu4ykLQHbJ+kwbGT2N4nbHKwYukV36rtGrlC55iEzE8/q4hc8QDyRMJmn3fyxsfViN518OtY
-	Z/75A6IR48vO9vK4z+EIehVC7EykZhm7vO2UiuWrGtbOldzcdoVIaM+LDI7jNd+xvGjMS8iSmVG
-	x5aWJBYemxX3zxqG+RoboSI/JtRwRtsacBYt7QzBwP1HwzeLObns2dmaMSXhRP488c7hPG/uVzR
-	yTg0yYWL5j8eGgawG81/TSrC3ukQJDx9d1GBsUr5AEVa9ILj
-X-Google-Smtp-Source: AGHT+IFJPp18bgyKIIAXxbSlRy13fkqwY4ZTlJBJL1sgW5kbEsOeh05bDQBncf9RJJVbBnvlEhStNw==
-X-Received: by 2002:a05:6e02:2187:b0:3dc:79e5:e6a3 with SMTP id e9e14a558f8ab-3dc79e5e8d3mr118701145ab.4.1747903121521;
-        Thu, 22 May 2025 01:38:41 -0700 (PDT)
-Received: from localhost ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc38a88dsm3083850173.15.2025.05.22.01.38.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 May 2025 01:38:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747911173; x=1748515973;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=POZn5cMRur2JoIRBO8c/Z65zsHmAuO3h0XzsNYJfMMo=;
+        b=gguqoYJCBNmwE21mhA1CVWvXQ1t+f/46ZC2dn6V1waBf4zmMtQjOtOnc43Xdn0881a
+         NG20WF94t33fPczIldQn/IWy6iYejuIEHaOOJxrBq9YUXx6kCG4SYgcw1MTnPjTVrt/Q
+         SVeYo4ZAcxSuWRa5m73RASwdc5V45mtcNyQUagE/WE9wcBX3Rij/zYveWhl7kaKLpf+X
+         VwXcgN3mVF3prIzOf8f/VslY7p5+xQe5jMFvv+O3/LdCyyKWq5GUZksy3ir+uDyhb8ih
+         zbvs68/vi9FXUywCjPQsxrHNavaMK21sKFniP50Zr4OS9vVwJfeDarTk++XQVMSc5Umj
+         IN4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVggDNi5p62wted2A15vxPvm3Rn/nREpuBdGqMsPIw2KAsUI3llrcqA9huVBPi360ublhKEvsPcDvvLIDiOTQjA@vger.kernel.org, AJvYcCW05+QsXjAVWe26/C3+KxBEOksSzL/mueeK45Fg9yW2ijalZj9uP0iSune2joj4gZv2C2eN0gFhu/LuOq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuF4CNfUNzl5muocOMF5nNvUjzLe4QDaOjZ2gYDIdXiRm6XJj2
+	kwgYFtgtqdwH9cFiM8h7/vFKVCQ/BskEhVmmaKIaGJbuJlDYYrr0V714
+X-Gm-Gg: ASbGncs/iQSbO3VCc5bt8kalXE81JRNYKZOHzu9gvYzPPpNehfRERIPAMzOwbjloC4O
+	D1lWSzw6KEMOY+3VCJEt9TFuNljRiWZUJL8KQIvj0O2B97fF9yHIysob5X1tMPKcHKuhfi40D0A
+	EjlBEUJGNABaE4WG6DjekELmyCdIi5/SQXR3EeSYOMT4dJpTTJwiAm3Ds6+/4WyLqXL3RXU6ox1
+	OOYkCtJ7YrTZBf59/fcyJl3D0Ae3YVwPj/49z9a2R9LQDfOqrmTkRu2v72RlozsaKgx8L7JDEIc
+	znHn9on7mPbZRFlDxseOnpth4cZZYVZa8+5bY2kGHJgfkHx5ng==
+X-Google-Smtp-Source: AGHT+IFoe3Jp7nsZr5IfKAHYwg+2QD1lpVGTPmThnKvRQ85d6HzvTmpaS3TjqdHESQRPlvAIpYV7qg==
+X-Received: by 2002:a05:600c:4e4b:b0:43d:45a:8fc1 with SMTP id 5b1f17b1804b1-442fefd77f8mr235249915e9.4.1747911172532;
+        Thu, 22 May 2025 03:52:52 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-447f6b29633sm107682075e9.8.2025.05.22.03.52.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 03:52:52 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/futex: Fix spelling mistake "manaul" -> "manual"
+Date: Thu, 22 May 2025 11:52:41 +0100
+Message-ID: <20250522105241.2761774-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 22 May 2025 02:38:40 -0600
-Message-Id: <DA2JY06Z0DWG.ZE80FEIJQV92@brighamcampbell.com>
-Cc: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] [next] selftests/ptrace: Fix spelling mistake
- "multible" -> "multiple"
-From: "Brigham Campbell" <me@brighamcampbell.com>
-To: "Ankit Chauhan" <ankitchauhan2065@gmail.com>, <shuah@kernel.org>,
- <linux-kselftest@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250501060329.126117-1-ankitchauhan2065@gmail.com>
-In-Reply-To: <20250501060329.126117-1-ankitchauhan2065@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu May 1, 2025 at 12:03 AM MDT, Ankit Chauhan wrote:
-> Fix the spelling error from "multible" to "multiple".
->
-> Signed-off-by: Ankit Chauhan <ankitchauhan2065@gmail.com>
-> ---
->  tools/testing/selftests/ptrace/peeksiginfo.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/ptrace/peeksiginfo.c b/tools/testing=
-/selftests/ptrace/peeksiginfo.c
-> index a6884f66dc01..2f345d11e4b8 100644
-> --- a/tools/testing/selftests/ptrace/peeksiginfo.c
-> +++ b/tools/testing/selftests/ptrace/peeksiginfo.c
-> @@ -199,7 +199,7 @@ int main(int argc, char *argv[])
-> =20
->  	/*
->  	 * Dump signal from the process-wide queue.
-> -	 * The number of signals is not multible to the buffer size
-> +	 * The number of signals is not multiple to the buffer size
+There is a spelling mistake in a ksft_test_result message. Fix it.
 
-Excellent work! This could probably be clarified further by fixing the
-grammar a little bit (i.e. "... is not a multiple of ...", assuming that
-is actually what is meant).
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/futex/functional/futex_priv_hash.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  	 */
->  	if (check_direct_path(child, 1, 3))
->  		goto out;
+diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+index 2dca18fefedc..0213eb0bb4af 100644
+--- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
++++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
+ 	join_max_threads();
+ 
+ 	ret = futex_hash_slots_get();
+-	ksft_test_result(ret == 2, "No more auto-resize after manaul setting, got %d\n",
++	ksft_test_result(ret == 2, "No more auto-resize after manual setting, got %d\n",
+ 			 ret);
+ 
+ 	futex_hash_slots_set_must_fail(1 << 29, 0);
+-- 
+2.49.0
 
-Reviewed-by: Brigham Campbell <me@brighamcampbell.com>
