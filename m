@@ -1,69 +1,69 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C171C32;
-	Thu, 22 May 2025 11:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2B128AB1E;
+	Thu, 22 May 2025 12:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747913729; cv=none; b=rcqpOXj04Gue9OXwNnmwMyDPpvHPPGAaQMoCCG5V9B0NbcmYEHYphQ7f4Hjt5s1IvfP1EUgnKLB800AHnAjGRCgjb4KuBKSmptw+oTvW6GfgmDzzqB5IKlr/dsuCK9r6sntRI50+cbKrA5X5+X8rDdFTJpKDNxwirVjuWFsKHqM=
+	t=1747916238; cv=none; b=LIftqxUifY4kk+T/NppkF0G5U+KUutDiMjl88Sl31t64N7WR6xDHF8lQTl716Erp4M/WtwM77P4Kk2+/PNXhkcvhj36Rvw/plqzKZYmqiFgn8RlMEXlBSWB5cLW0THNDE3jWEXH3oOuRiT/whueQzbTcOcbfO/xzKCgBaxf5k7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747913729; c=relaxed/simple;
-	bh=1mi/NDU0aKbsozc3jYCQAHLcdyjrMvttxybx/KU1JuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Aai0jTozsaPTyfmjeeUmeUc82Yi1M5F33OIztjSB40luvJ6Wc8digiWn0h5G6nl6VkI+SEyVgX+n9Gqz6PbkRNqUtNCMOI8fl3g4r9DalS5aYI6JFKglb6LO4eQwoX+uCCOTvr2tj0ERB7+vxarwUUz6D+oVr4mOw2Q46Dqh8Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CAgWslIJ; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1747916238; c=relaxed/simple;
+	bh=ybrI75a9RN1E/0+uLOs2ARYJ2nlAKkqM2SIhQcdDZ5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TbDEw3w5ba50VNd/EXarRDoLpcxgZQwu/K09JDKUtrpGfICIZ6cKrTO5zIIhqMsLCPEDQeT/DNo+UFOkQCOuMjItSrG2TYzN2VtQ0LvQNWMqWgFez846bBMJb9ju7EoWM7NqIjDS7kwW1X571WiBhxI9vi/EnT07T6Zn79XjPG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJU2l+/V; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAgWslIJ"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so48539275e9.2;
-        Thu, 22 May 2025 04:35:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJU2l+/V"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a064a3e143so4514832f8f.3;
+        Thu, 22 May 2025 05:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747913726; x=1748518526; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747916235; x=1748521035; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kLr3eAhXdgkzpChTY6FdqlkPivT9WEeZ1GLLVzMKFQs=;
-        b=CAgWslIJvm38lfrRFtN2RleYHaixCdf4HXDUlHILzes4k/+qlOpmDGgPx3WWKr/JpE
-         ERCX998o6jUHMdqLymy6MimY5Bo/geyzpPU7dBAtP3VNCXw98HdyQPt895QtuW2DnFtz
-         +YobyOqmtGOmONpDXSimnp96w3zh6EUl11fAdkywNj5MEVMfz5MS88Znhpy9QGoxc6zY
-         mvd3Ku/zSMpLJhaTO69iF6etQNAsmXWaJDJIsUpOKu0zL2HHR5ovhYCH7sFKVolqNbc5
-         O6y8AGVvQBOLsPWr7zPArFfB46V4Q5JbFj2VXGrTWZvroWX/v1cLlgEhkrZcl3kcftjU
-         Z/xQ==
+        bh=p4ccgbumLuRGNhw1wu4Pws8lLAmQ2dpUvbInDT1mq2k=;
+        b=SJU2l+/VPDBRYLTpjjOX/fEcsxGyI5Bd26TStpejM/zuJ8aVzRJzwSJvkiH5E7OapD
+         ZrQXraOq9r1de2NhMNyHW0ym2px761w1+nI+KUsKiHWfvCBCvtAiAXDu/QWFhfXInAjQ
+         3riDQZbTyKFEPefEMKqdSpghOWpZURWrYJXON/L255vz9+aAK0p/3qIZ1CZxyFbKmsgd
+         YEwlRDCxqQZ8NrOAFvrmUjIHWWe1OyCj5mkwW5NY3maPTi932yrVR3fzndNDzcGOP/y/
+         VeEgeTTgPplWAOvN6BtE3CRsKk8AHIi6Mk7Zf7DmM52hfhrZdQAYOeSKKc+nEhymXRfx
+         kAZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747913726; x=1748518526;
+        d=1e100.net; s=20230601; t=1747916235; x=1748521035;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kLr3eAhXdgkzpChTY6FdqlkPivT9WEeZ1GLLVzMKFQs=;
-        b=fEdnB7RNkAKmegIW+l/Wv06Mpf4NnskN76PYErLBu4/5ASyxhfo4+r2cn7+9qdllr5
-         hROTTV5w7aYmjWs3Arwj1hvYil+z7u2JWGoT4mVYprqekRuBwi3vo1fyZgM58eC9jE6T
-         FOfOWdVangFYozKDTkRz1EGhav1s/enCwfkA88j2AAr23ZRoUoKWmBVJNoaZq+VBmqYw
-         LeEiRhijYKitj4Pk1fKv5Rv+vtBikNW5hHQQ+Y0v5qKtSvE05mgfYtjhmersqjHAtjKE
-         FWclMei2YiUhEe96PUrrHoTt0koKzBsjx4JR+d8lSkHHsx+1IN6MQ3o2L+MdQtpQJAEt
-         dYHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVC4OlRmKle5ZknDPZ0qM8B06RQatPtuSJ+y9e9QavT4igCbQ0cvHEYdJQBDvpm8Y9v3lipvHG24ETyrVY=@vger.kernel.org, AJvYcCW53/hX2AKdqmE1dcb/ep9ldsfSgaahcTYuIjDcQOakzEcc/xkQ3JJENDrxExKP6e6C3qj4yoGEUfV17P8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhrF071p0yco9CzKEXOBA1waOM0sSAWis6SUaQ6z8bi97ovi0F
-	PKMwcUB/N3N5N2gIzVrHp+o4WvOrJZHbGq+fJXsBB77FhBD/WMM5gZII
-X-Gm-Gg: ASbGncsoewMxPMeYcV1V/CnjFPszAeGZmF5JjaOZI1UQoWnGgqP10fXJYqbxv+muRbD
-	c/+qk1cMnRjQkFQu5+jlaOAgwwHS3+PNz61b+m+B9c53LOQjViWAHsfuyaZxCQomY26t1rR9iy1
-	KJss630lXroZLxKvhxgnIycrgQtE0hA1c8DZfm9/lIiugtxMQevYLUZ3zL33AvcIxAptTPzAH3a
-	gSJElTCNpu/easedgjI00NucIWXJDFqt4BPMNQtpTuw0lSwi6NQlGxHduQdj9rJ3i/d6qKYcdlU
-	/kmN4svp/MrUCA2CU4vq0mXuiuZSoVf3BXCNnq0QsW6xT+TUhO4VxIRcVPq9
-X-Google-Smtp-Source: AGHT+IG35j29cID0hRVTZF2DdCxFefjSKCTDWxo9pbHWIK560K/Y/owNj1t5S4/NC4Dnby5ITiXM7A==
-X-Received: by 2002:a05:600c:37c5:b0:442:e9eb:cb9e with SMTP id 5b1f17b1804b1-442fd66f0cfmr223193225e9.26.1747913726173;
-        Thu, 22 May 2025 04:35:26 -0700 (PDT)
+        bh=p4ccgbumLuRGNhw1wu4Pws8lLAmQ2dpUvbInDT1mq2k=;
+        b=pXqfjaN/EBw8F24eyNEmygYZgrvPFOL8OE9HNSIp9Uprza6xG1NzG+HOTfoJN5vZNJ
+         IRM9Y9kEGVm4S6X6F9xrAilBJswwh/w5WACGv5SSFaRf7BODw7D/We3FkeSUFBUHgY3+
+         Kr1BygErdLOFtd1sjopjzJSYGHz9vPa8t/EaP0xzX4qTDVSJmgRJvmkuhRFG2y+sHN6g
+         eCBCF21xh3aRErlICTxSwJDx3f3rsMoiB0fnRGjfbMBUIx1r7RW1VQTIxGfnKpVcurqz
+         VU+U35rpN40chz+BdeWP4ZJDtaiQPGA4SPlP6zasBNB+CC5n/GYYVJn2DZsCdQi0wPw6
+         pDEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWj9V9y6sMOF+UITjgyZkMBlX5MBzQ1CE11CEknGgTb7AqzAM0afu+XrA6I4EcOxtV3ZT/hnFnldYXm1FUlDq8=@vger.kernel.org, AJvYcCXPyogreJXGMba73R240KsrkBK5htNWQz6SQhO6YQFpwSjRsgrqKldcSMZL24fuqmvi7I9Vn6jIkey4NRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAC32sU3RtXmdkK6kJt4YxnLRSXQQYCrb6AbFYYBO7HzluhK1Z
+	rCAdtSfHRl3I9HKrogOoN8ptMJueuIQXeu9kLLsCNknOKvFn5c+g7LMx5IU1lHm2Yo5LOA==
+X-Gm-Gg: ASbGnctaqJU5RKJuwH2256wriy3Vg9UMNRbEjRWRQlDBXH3s2dc82htYehueBu7Dh5x
+	3phOkJTHuvbiZKejomGfkonhXc0uPG8Z9aXNMxOBZMr/tfThi1UbcnhhnfZzQIcYEyUSVBG5jGd
+	TaZncptW1qWAnkXGbeswpUEajd4jtQgcaOHLwyAwYjwN2uNVXX5B68Pk8+Y5zjaDg/gB8PM59AQ
+	WL0zBkZFDeUTX8JUySduU8LKa9pVoaGiGyRQYou1XflrnRO0rsKUH/ZZUjiGWEWG1+AIFZvz0Gn
+	6x6d9RTiG07BCWpKbjJLfRiGxTJyuWED46+kuZDHHfUfD6akJON6nCsi72gI
+X-Google-Smtp-Source: AGHT+IFkOdZ+GSdpjX1YgFUwQ6nomqhDvBeozfmiqqIvQVXgOMOJmKj8zOCKqygDltErIiabx2znJA==
+X-Received: by 2002:a05:6000:2586:b0:3a3:6a58:6f99 with SMTP id ffacd0b85a97d-3a36a587093mr16305481f8f.19.1747916235086;
+        Thu, 22 May 2025 05:17:15 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-447f38142aasm99630045e9.27.2025.05.22.04.35.25
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca889a7sm23122754f8f.72.2025.05.22.05.17.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 04:35:25 -0700 (PDT)
+        Thu, 22 May 2025 05:17:13 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	linux-wireless@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: dvb-frontends: cxd2880: Fix spelling mistake "ts_clk_manaul_on" -> "ts_clk_manual_on"
-Date: Thu, 22 May 2025 12:35:15 +0100
-Message-ID: <20250522113515.2764759-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] wifi: iwlwifi: Fix incorrect logic on cmd_ver range checking
+Date: Thu, 22 May 2025 13:17:03 +0100
+Message-ID: <20250522121703.2766764-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,44 +74,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in variable ts_clk_manaul_on. Fix it.
+The current cmd_ver range checking on cmd_ver < 1 && cmd_ver > 3 can
+never be true because the logical operator && is being used, cmd_ver
+can never be less than 1 and also greater than 3. Fix this by using
+the logical || operator.
+
+Fixes: df6146a0296e ("wifi: iwlwifi: Add a new version for mac config command")
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c b/drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c
-index 0a1f3899d72c..9506d55eb83b 100644
---- a/drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c
-+++ b/drivers/media/dvb-frontends/cxd2880/cxd2880_tnrdmd.c
-@@ -1709,7 +1709,7 @@ static int set_ts_clk_mode_and_freq(struct cxd2880_tnrdmd *tnr_dmd,
- 	struct cxd2880_tnrdmd_ts_clk_cfg ts_clk_cfg;
- 	u8 ts_rate_ctrl_off = 0;
- 	u8 ts_in_off = 0;
--	u8 ts_clk_manaul_on = 0;
-+	u8 ts_clk_manual_on = 0;
- 	u8 data = 0;
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c b/drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c
+index 81ca9ff67be9..3c255ae916c8 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mld-mac.c
+@@ -34,7 +34,7 @@ static void iwl_mvm_mld_mac_ctxt_cmd_common(struct iwl_mvm *mvm,
+ 					    WIDE_ID(MAC_CONF_GROUP,
+ 						    MAC_CONFIG_CMD), 0);
  
- 	static const struct cxd2880_tnrdmd_ts_clk_cfg srl_ts_clk_stgs[2][2] = {
-@@ -1742,7 +1742,7 @@ static int set_ts_clk_mode_and_freq(struct cxd2880_tnrdmd *tnr_dmd,
- 	}
+-	if (WARN_ON(cmd_ver < 1 && cmd_ver > 3))
++	if (WARN_ON(cmd_ver < 1 || cmd_ver > 3))
+ 		return;
  
- 	if (tnr_dmd->ts_byte_clk_manual_setting) {
--		ts_clk_manaul_on = 1;
-+		ts_clk_manual_on = 1;
- 		ts_rate_ctrl_off = 0;
- 	}
- 
-@@ -1760,7 +1760,7 @@ static int set_ts_clk_mode_and_freq(struct cxd2880_tnrdmd *tnr_dmd,
- 
- 	ret = cxd2880_io_set_reg_bits(tnr_dmd->io,
- 				      CXD2880_IO_TGT_DMD,
--				      0xda, ts_clk_manaul_on, 0x01);
-+				      0xda, ts_clk_manual_on, 0x01);
- 	if (ret)
- 		return ret;
- 
+ 	cmd->id_and_color = cpu_to_le32(mvmvif->id);
 -- 
 2.49.0
 
