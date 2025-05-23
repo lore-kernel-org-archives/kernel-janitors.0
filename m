@@ -1,72 +1,73 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85379152DE7
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 16:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7603C130E58
+	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 16:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748016087; cv=none; b=YlruzsIuC3wht4u7BCASMDt0vTxdNKbHS+tNWoCSnUs2crNAS/aQxlTS0xFcH+KvStwpHbujqn4rlMDSJxQ17fUkK1TXhfSDVKES3te4xBByUsNXjeMZtNOD+rzKD/m+g+QkaTsw5t2opMpKbgQR5uceR3z1WrWHQOm48PX0nJs=
+	t=1748016365; cv=none; b=S/cFwY3U3DaF+NHFqwvuPhtyvGI5+VueRSZOyG1vdoME7yud0/lPlfwUXv18/goA9tVMkychSTQfVoMrEtEfZ0eAVLPeFx2u3oknCAarHwRR8IFV9/XV6Es01YSs4++GxxZNpUz8ovvUMrMRGxH3yu9NYALUAwk9N/4hTf7ISb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748016087; c=relaxed/simple;
-	bh=dqiZEMAaMAT+i+xQPPAltTkTCc/jQDjYHiWPdk7ovcM=;
+	s=arc-20240116; t=1748016365; c=relaxed/simple;
+	bh=jVrjFU+9I/Crz5h30CzwkjrvZVdhY6m4bkGyhy25dtg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=r5/xrR/VTMIqS6spuBG8pfY/JkLX3ORB+Xz2yVjQXv+GJH/uCN84+yd6a2I37O82AQGWYGRAnmixpe2m1JeD3dePgnIKXh6u/TBhqXyp+Bb+Gl3Bo3m5355KgeqhG7+91uQaLOnqdxV3nhgdPMKPAI2q02gHpivVaoHHIh3/Lcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bBi2hYdS; arc=none smtp.client-ip=209.85.128.43
+	 Content-Disposition; b=BqndvSki+ruKzAPPrdv1EbZ2gkWa30/uef87cvrz8CLVCAX81pSlpsvXtuzmc3olF1crMYxMe+D3M0rUkyWay691psusILXGQbOIUSj+G/1Py+0KDvo4TUWE7YdHMvGniftnidYcFHF2etTTnrJNAbJrzLwradPut3J6C/Yd5Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gaqZG0Yf; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bBi2hYdS"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so103303085e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 09:01:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gaqZG0Yf"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfdc2c8c9so57445455e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 09:06:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748016084; x=1748620884; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748016362; x=1748621162; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=15n3jb6X6nc1Ptss7d0u5htP58z40RIPOIkeUdClyjQ=;
-        b=bBi2hYdSaDB5q8+PD/DVueyD6u2Gt2C17hrXWWnurkaAzEL8JCBKUeZ0e1U2B+EmZ6
-         F2BbADLxsvsv9U5gCIxvPm42rapK2RM/l6lSUHCk+Mb5dtOmWnOE3diNOMFbGv7z2zvH
-         GcdcJ93l+QZfHTDVE3YG+s0PagS8os0Td3y7stPAB8tx8ntohA6c1tNl8ha92kValNsS
-         IYAoCphr/IlYSMLPReF5/LndzLnCV5Um/5+dvzVYNtUM+WdfvIHvI3lCz2NMF2ANo7C6
-         iCWYs5608QTdl679F5n/ib73AD46ZOy3cIyG6r83dvOpxjbdClpvNZLYzspelH/Mmves
-         Zu+Q==
+        bh=M3PqxfXynfBYuWj+aBPHCbylQDdPJlTEN/Ktqk3XEWc=;
+        b=gaqZG0YfQVTtXky9B6SERccgUHkTrRyRC5xRZwI33eRe5vJuE2mwzX6ubbyY8Ph2pU
+         4Ij/TRES8tMSqZMZtPgNzm/DygatYWqNQBSr+3mVUqooHobm+Fa8c00V+1OsfjKwuU4d
+         PzB623DktQA2teDISnhvbD2fSNHvHHZSxSXSPBUNDPbfE9I3WymojqFiuGksBaFyQmFx
+         q3QiM0fot+h200BCPja6MnyfgfEJ/VjI/qoD65PzMjQEme2BxyxbbD5z6V5EBjJpQe3m
+         aCRyEa+ay/jnd7pc0Xq3RczjKxUmv0YIE+UIKSrY2D3V8wBMcj5FlR1kjkJkBrQFF/3q
+         xeUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748016084; x=1748620884;
+        d=1e100.net; s=20230601; t=1748016362; x=1748621162;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=15n3jb6X6nc1Ptss7d0u5htP58z40RIPOIkeUdClyjQ=;
-        b=kmEr2b80OO/jA0Nyv6dAJuzf/RRweKXEWLbokJZ9UiNdM0fO/KWMLsKghXZ4KlOfwU
-         aprXCcJ4deFZhpUw/8FBIVDIQgKPdcSkmefi87JqCMviYekwi7p2rroIum0/grhug6HV
-         SIsgjO0SjnRm5pm2H2BnJ9rYrieoVgczDCLryRDLXl4aa+qPe7wy8cumPIBHX5K+MtWF
-         /EEvr3ZV6e3BMvdh3YxUaGfHc1LbKr36gx2WIQAB80vPt31C3dNw9klUS/ft7uKY9dbk
-         GTtftEC1+nVmJ9ptYEsdkQed8TzFoKcSKaQ8Aw3FzZSFbvkdJzciNZyW4eyXIOC/Xx+g
-         hZ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWrExDMUViSosVUH4i4YQXzYRpRstQ+IlE9l3x08Aq4U+TZJrb/wLUdg7KKnXye7VYU/7jP9muHYMh4vWH3gpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8t7tczc2L0HIhd2QFQP7XFM9KfNZCkR/Wj7YUW/n59RdCv5ja
-	s2ev3NsjShS3F//2+66MDpJmKVADCNDK6YnquXEX+3g1G/tUEs1bSfMJeaPGd4sdz0c=
-X-Gm-Gg: ASbGncscSGSJrCquSNZc6I+75PE1upwSDK8QbS7jkCU2CSp3l7eszKDQxki9w7/m1gy
-	SQ+7L/HfANgz8RBFnpvuCv5DK+Jfdth+MwqXQ8zXuVlCla8jkxdwDF3yZJdIFv4UKFxcsWpi6nE
-	PB5YY9SnvYFKzHVi204ceDJ3/pw7PgXp9jA62kfR2oZB/mR1YUhfIG3KU+ryjKGc2+vpFOcDIQj
-	fCSoVT4xs+D3EKVSub6ktgiOFM90tlWjM9j34kqf9PS8Ene8QAyDmv01Fc4662ob+JQPaBoDlqq
-	2S1gFW2BkUrpa4KEWJDEAakeuGq2EbeW9WCFjiRAnVydVx1ECsMk6iCN
-X-Google-Smtp-Source: AGHT+IF/THP6E9ZS/GCIatMYe54LeoFTYKNGEZBFtW+dbZFIBIbOWxAiwtQRKvPBgXMHhn/LPjXNiQ==
-X-Received: by 2002:a05:600c:1e1c:b0:43c:fffc:7855 with SMTP id 5b1f17b1804b1-442feffb6damr331857925e9.15.1748016083583;
-        Fri, 23 May 2025 09:01:23 -0700 (PDT)
+        bh=M3PqxfXynfBYuWj+aBPHCbylQDdPJlTEN/Ktqk3XEWc=;
+        b=a8oHtb6PQchph7F4tn8ur9haPczrhtrHoMon5gUh/dg9hlSdFZSvKlMeLOdQ2ce+QQ
+         WPZqn9PnNGfihSnOHkMiEHlaRv/JbKCUG/MKkAE5in49h1RL0OozLmyX0BWeeGuL/tXv
+         HmfNh6iheqdHf3gj4Quq93vMAHuB/D9tjW0R9Jia3+Vm59VMz9YwMgVneqjs5skSXH+m
+         VqEhuVyJVAW4NWZnqTdPDY80yKq6S9ZFRIdhs33iFDvpZB6ZLW7DtxX5gB+D/fRrLK2D
+         Vv213kDR8KRDsvleJ4V6WFCFmzJfNcOhAiwM9vYlTIIeTBYnrDhj2yQIiox+2wwAHOzl
+         z3nA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkW9Xfm3Ztl0D7uIuljxwA71UMzWWX+SX41YT1eeF53PhFGRxEzv21Yk+hzDtDJexNZjMC8iCkiaN6phHuTWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR9ITAPLgYumJ9IrNK88FM47qt0BMXxnhc4Wc9ZWwnk5JIpAoz
+	C1sTpbBK6cVJ/A4FyGB18X1MSMYo65K6jnx4DWV06uwhafvec4nitHQ3Kh8OMpa99Rs=
+X-Gm-Gg: ASbGnctsoTshNtY+nUiWsbi96ZjdE2WT9ogBV56nhsD7NmPiCOBNRiYbrXbvy3OG521
+	mruc6+oOyzfvKTHL1jeIiLCrsg512FVN6nQB9ViUAm1SuLnaeXIc+X5bOgLYMLITzg0+tD6I8Nz
+	e0SsLp8N/IXdKclQWRxbkkxaMDRQwnIimRJtCYqcuH1StC6BkG2ONfk3Ezb5C17aEeTEjpRJ2f7
+	shUboCw55RIJD0xLwkEYNM+cuE7ktgwPGBQtsdNDgdQxntJ9M9+udzvpxiS02r0HJJgqn7nbLid
+	XqgKo/7QDZ8IB9tjAo6Epb/Q6VSu5jbW6ugn4Krrugg2WxZwMhmrOfPT
+X-Google-Smtp-Source: AGHT+IFJ5XQsT7wDZaHxzFgw6dPrlGsnDhIqeTPzVlX0Fk5sLByi/O7PehwjP3rV11vD6uhtm2P9yg==
+X-Received: by 2002:a05:600c:548c:b0:43d:fa58:700e with SMTP id 5b1f17b1804b1-442fd6759c0mr247232745e9.33.1748016361628;
+        Fri, 23 May 2025 09:06:01 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a364d2636bsm24546310f8f.99.2025.05.23.09.01.22
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-447f73d3edcsm150813565e9.20.2025.05.23.09.06.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 09:01:23 -0700 (PDT)
-Date: Fri, 23 May 2025 19:01:19 +0300
+        Fri, 23 May 2025 09:06:01 -0700 (PDT)
+Date: Fri, 23 May 2025 19:05:58 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+To: Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Arvind Yadav <Arvind.Yadav@amd.com>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] coresight: fix indenting in
- cscfg_remove_owned_csdev_configs()
-Message-ID: <aDCbz3J5wibnW60S@stanley.mountain>
+Subject: [PATCH] drm/amdgpu: Fix integer overflow issues in
+ amdgpu_userq_fence.c
+Message-ID: <aDCc5kawU4cWj-Cx@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,26 +78,70 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Use a tab to indent this line.
+This patch only affects 32bit systems.  There are several integer
+overflows bugs here but only the "sizeof(u32) * num_syncobj"
+multiplication is a problem at runtime.  (The last lines of this patch).
 
+These variables are u32 variables that come from the user.  The issue
+is the multiplications can overflow leading to us allocating a smaller
+buffer than intended.  For the first couple integer overflows, the
+syncobj_handles = memdup_user() allocation is immediately followed by
+a kmalloc_array():
+
+	syncobj = kmalloc_array(num_syncobj_handles, sizeof(*syncobj), GFP_KERNEL);
+
+In that situation the kmalloc_array() works as a bounds check and we
+haven't accessed the syncobj_handlesp[] array yet so the integer overflow
+is harmless.
+
+But the "num_syncobj" multiplication doesn't have that and the integer
+overflow could lead to an out of bounds access.
+
+Fixes: a292fdecd728 ("drm/amdgpu: Implement userqueue signal/wait IOCTL")
+Cc: stable@vger.kernel.org
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-syscfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-syscfg.c b/drivers/hwtracing/coresight/coresight-syscfg.c
-index 83dad24e0116..6836b05986e8 100644
---- a/drivers/hwtracing/coresight/coresight-syscfg.c
-+++ b/drivers/hwtracing/coresight/coresight-syscfg.c
-@@ -395,7 +395,7 @@ static void cscfg_remove_owned_csdev_configs(struct coresight_device *csdev, voi
- 	if (list_empty(&csdev->config_csdev_list))
- 		return;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
+index 029cb24c28b3..bd79f105d77f 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
+@@ -430,7 +430,7 @@ int amdgpu_userq_signal_ioctl(struct drm_device *dev, void *data,
  
--  guard(raw_spinlock_irqsave)(&csdev->cscfg_csdev_lock);
-+	guard(raw_spinlock_irqsave)(&csdev->cscfg_csdev_lock);
+ 	num_syncobj_handles = args->num_syncobj_handles;
+ 	syncobj_handles = memdup_user(u64_to_user_ptr(args->syncobj_handles),
+-				      sizeof(u32) * num_syncobj_handles);
++				      size_mul(sizeof(u32), num_syncobj_handles));
+ 	if (IS_ERR(syncobj_handles))
+ 		return PTR_ERR(syncobj_handles);
  
- 	list_for_each_entry_safe(config_csdev, tmp, &csdev->config_csdev_list, node) {
- 		if (config_csdev->config_desc->load_owner == load_owner)
+@@ -612,13 +612,13 @@ int amdgpu_userq_wait_ioctl(struct drm_device *dev, void *data,
+ 
+ 	num_read_bo_handles = wait_info->num_bo_read_handles;
+ 	bo_handles_read = memdup_user(u64_to_user_ptr(wait_info->bo_read_handles),
+-				      sizeof(u32) * num_read_bo_handles);
++				      size_mul(sizeof(u32), num_read_bo_handles));
+ 	if (IS_ERR(bo_handles_read))
+ 		return PTR_ERR(bo_handles_read);
+ 
+ 	num_write_bo_handles = wait_info->num_bo_write_handles;
+ 	bo_handles_write = memdup_user(u64_to_user_ptr(wait_info->bo_write_handles),
+-				       sizeof(u32) * num_write_bo_handles);
++				       size_mul(sizeof(u32), num_write_bo_handles));
+ 	if (IS_ERR(bo_handles_write)) {
+ 		r = PTR_ERR(bo_handles_write);
+ 		goto free_bo_handles_read;
+@@ -626,7 +626,7 @@ int amdgpu_userq_wait_ioctl(struct drm_device *dev, void *data,
+ 
+ 	num_syncobj = wait_info->num_syncobj_handles;
+ 	syncobj_handles = memdup_user(u64_to_user_ptr(wait_info->syncobj_handles),
+-				      sizeof(u32) * num_syncobj);
++				      size_mul(sizeof(u32), num_syncobj));
+ 	if (IS_ERR(syncobj_handles)) {
+ 		r = PTR_ERR(syncobj_handles);
+ 		goto free_bo_handles_write;
 -- 
 2.47.2
 
