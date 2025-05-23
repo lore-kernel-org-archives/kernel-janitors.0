@@ -1,134 +1,133 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AF9202C50
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 21:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22B418E34A
+	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 21:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748036594; cv=none; b=P5gRABtdApPMSnfgr9vu54d4yXQhwFPYUafs9WSLYTC9i28fK+lkRKjGw1mSFtX4KgxrcDBaGjsCSXw3MgycpkmH2q6Go7RVMCNplNFwH4fKVe2a6fqFPs97sf7NIGegwRZzlMXDzqDCwTFK1GefB0C81MzmhT6nQQA8Pz9Nwmg=
+	t=1748036770; cv=none; b=owDOyhCb5+Ja5YyXr749MuTo4HwLIvYz7ynb04m9KxdzfzHnYhFJTIVHDp6FjSgXhurkA5XwB8fJF/2MFV0Vfn1BjkdPklLjCITK9rDCpcXKjlqZauEKw1+YKReJOfvYbgONvcNsmiftC/urtUYxBsSGZofIJ4ZirR3MRrpqjQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748036594; c=relaxed/simple;
-	bh=zmqc7w1XQdZKiY9duDOtn6FNuNtSt44PM697KAQVHGc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Lmegk+w4of7icuv0Vpx98hTXAmyKyFULCV5ZZj/0fwfNfAmqeDED6iRVUMGhz1FT1RF5qs/LXVCJ+680qYtqbbX+Bb1uAJvCkGIs5O0SRDnAX/PnTbR7vD0FsmLc7QGxXO0ucl/EOTd9th5L0vco6WqfWojZj0VdoNVj0iMfH5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nnPppKdC; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1748036770; c=relaxed/simple;
+	bh=A51K5xpUMPokLjesXE6eLxcMndNUwGr0B0lfZyozeKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3WUlojEgbIJTHYTnhIPPZRQwSoTpZX1OY+mfpDpnl5do1MwtH68wcBaDbwWKSvXGLbuNkwn9puqW7UJIvKKFNrzM8Xw/0mnmxvCOOPCcWyqplyO5b6eHrhiTxSYd2EqZY92IFDGd8WTIgDSvpYN/V6C8BIpft+xhC1Gov7kbQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PL1jbfw+; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nnPppKdC"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NAZDws013410
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 21:43:12 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PL1jbfw+"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NCiWtA006608
+	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 21:46:07 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	x+0WOrSLVzx1QmMfqvPr+uPofC1Unku8ELEwf6xozuw=; b=nnPppKdCeEdY/aTT
-	gObDXhuTLh6YVJWaP+otBQmd9IyrT5JDAuLQw4AATwIcQnAyK4aqbcTZZLDU+ptg
-	zHK5unRflPwBDMFaqjtUSsxAPdhbMEgRR63lQjKt0wDwsHhX2ZZTVok5KtPuDm/B
-	Gqs2faL/o3bOZpUP7ZbBTHbwDPDx+Imb41at8U1PkC4OHNfmIU6Ga0/OJjQL4l5A
-	ktfYgXe4HsQrOYxaicQYG+PW8adXCn3Wea1XwxDjZH+Gx34CUXENwREVOERKdGvF
-	Rqt+VTZpJCaGdudCQXuv0X5JdyNN4CXpJyP6zm9UJBjPaTCB8emUVG4Lar19llVd
-	IcHmZQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwh5kg0m-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=YG4viRd+J1gzU3tCz8abXTyB
+	kGIHyRuIeHUgXDp7eMs=; b=PL1jbfw+LKLtOs2zzBvEF0XU/8hYi6C0bic4cTPv
+	U+qDupbcgkokUUiF8pxbx1BBk957jn/MITWdwvjI1/oA4IniBzKpxovm1cXkJL6H
+	o0+ilAqG3AqauWdDUZxp7DdBcC6sl6qBgWR+J1eArlUYvpGPegiffFYffSL+vDi6
+	sFsaMCunWn8rxAGSTR1Kx+VbWWtp6bJFdc2QZFHDcYhCYBpDYbLMhzSjnuFsM/Ef
+	lZFg8aSCWJz84DpGq9/jpWIz4Q6wRKRY5TE3+CeavRpZhX+r9j2XcORnaoMzP3Qx
+	+y1E09AozHyVH1GJOHyO7DVyj8UYwMZVwJcNsXlj2TmsMw==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46rwf0ud8a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 21:43:12 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6f8cb4b1861so4391106d6.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 14:43:12 -0700 (PDT)
+	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 21:46:07 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5e2a31f75so81051585a.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 14:46:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748036591; x=1748641391;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x+0WOrSLVzx1QmMfqvPr+uPofC1Unku8ELEwf6xozuw=;
-        b=UkByXsqIXBTuScaC1EJ07pK1T/B9yrbHAQH4rGeDDfv1ABBPaeMPTFmmr7lMMQRF4f
-         kIEZKl5kySzm8lyxjfkbXYomoEVE/GDgerb7BOOfMiu7j0/r5FFI9HE2sSzN3SRKD0N2
-         kkR3ZB698y2mouK0lF17yQppFjDTHuMcm7sxzmn8K0mnMDCKhCXzPqwDQBrYqnQNeX0C
-         jBnsPYMwawr7IsQKU/o/VFTDq2pV20Iu85lHZWv20q8GsIWIacTrLbDmo1fo+kd5vtys
-         NklvFo61/o8ITVBsSO787vlAG6DUj4Sc6X0g9Qu12BTwNt7FrrUN0C6XLTj9x95kVmyN
-         vEIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjJh9GqwmYBcQ/hmDb1StxZazI6IDHadePlBmnqyyIp5WlmyfF/60RcCklGH7eR5Ew0vXge3mVzynIaBuPw9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSFT7h8e2x2O/Lq1vqOENlfUp0Z03V2TErJ5F2U8/S0K4krWXB
-	t6+hST8+PwuGy3ldZ1QyFhBeQ+2bbQi2iI26wXe/TL5whcPlCxRTLO0iWoMKwk8hsBhp07q9SxI
-	knGPY+0o1bK/V+Sx6tviqfrdnniE0av71hqiLrT10RFRQv0OSzaFXbA9YIw5B++s9QQMSKzI=
-X-Gm-Gg: ASbGnct2k1SpN0EDS2/F+B1A83odAykfEJYRYp++51bns5KxGoVWiLAxePEu2PLNFcq
-	qXqs1kVtOksJAG6Z9+sy7d1PWl9xN5jkdPMGxDv2RHVDE6EA3om9QzrN1C5eniHjk8LadkEBGYB
-	+duLKLPNAYu5T7D+cA6Op1PYy08gc6El4mNEy1TBYjM3rOWCIOc4qAToDXanoDuqT9yPgukzjde
-	N6FGNQ6d0E2a9PzwNVS1flYgCdqIxWYTWcNpC6u5wRzVsLx4ZLVNVTmlpyF06Xpa0m+VB7BFIdw
-	NrL/Kgy3xz5DI5vW9pRgUxdVDxaS+5wmtUgQLzuJej55yel20eyUiJAwMWe3fc8uzpC/n5JSVFY
-	+W0Yxb3fyTb9rgzSqbP6VpN7O
-X-Received: by 2002:a05:6214:20e5:b0:6f5:ea0:3c1e with SMTP id 6a1803df08f44-6fa9d16bd31mr20049136d6.23.1748036591299;
-        Fri, 23 May 2025 14:43:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFsIyi1DNeSV0ltsvQnqAPemiYB/XrfAMLNhKLi7K1DXufTbnvw9fGiXj1zZXip7xUmJkWnbA==
-X-Received: by 2002:a05:6214:20e5:b0:6f5:ea0:3c1e with SMTP id 6a1803df08f44-6fa9d16bd31mr20048706d6.23.1748036590929;
-        Fri, 23 May 2025 14:43:10 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e7018349sm4016945e87.142.2025.05.23.14.43.09
+        d=1e100.net; s=20230601; t=1748036766; x=1748641566;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YG4viRd+J1gzU3tCz8abXTyBkGIHyRuIeHUgXDp7eMs=;
+        b=S8mxyX1KzBqP44bmTEjpHIpSG9USUC4TWwUcdnaaA5y7SWHZ55QEHg7DAJdfdqH+9k
+         S7gD8DTo1ijTxA1F61ltxLTF5tnQZARrqXPK+o2X6pYB/Z90iKilSS+KqyWmi8Q8TtG3
+         oiG9mOPYwWjxwtvJJ7q8sagv3fWfb60mQ3pu7IRq8T0dQdtt2u9pJor7YCNMCgNWudQk
+         sBFofWlqtkgx+H9OlQpE8JZ2PS627wfmnM4dUJPtgIrIvWKtWAP813PJQMbRWtb0bIqC
+         zm8ZxBFEIH9wh+y7kJJkzaxxKKqz3voA/3gaQSeQLdu3I+clGZsl85Z0e7XwINjzy32d
+         kIqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZzVM2ia3unqicPgBmjJQnJ0b/Zmgx7MhnX+JcL4Boynm8sf3XUcMIuWf3wgimFXpLDo7YTf7lnQSqC3aInY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG2dOukUwdyc6VIMXDUQ0AIvO8CyptIrcBAzvGZWVxFKsGsU1D
+	p8mA4rm+z740P3wXNZzXr5qacnQucfuq23fZukWVBHFYdzbPPQRM79OhGMFoTEj4nZyUzdmc9Wl
+	iTOKbggdblsObmIlyipIe4Z0sMMF5QFHkJv09Qp66q+Tt9Huhxnkl6A63kYAjgayzjSFcGM0=
+X-Gm-Gg: ASbGncsKc/qU3aVESuBLwQNSUGVgG4mFx7aRNaiG6qv2TkKH2nzDaC564tJOxbMVPv5
+	ptiWzN3RFs0hhuHcwqWHKEcGHX+PpQwYZHmVUv32KGYrCv0VMuiB5jokP8uQJP0w7Vqw7W3QuhJ
+	BzhMGSgnRa3WcfSt4Hf6nQ0f6FJBIGrSr+GjZO0lqgYIX12VQssUnmOD6budaLK60iP1+KZYaY2
+	NvObcre80J/TzLjGfbTPFUKhgDzK77knEjK7zVXRR/lE1hSal6Y8rsiQILpSpQj5zJ/AErH6XJ6
+	Uz7SOobS+A4lcMBv3xn6WLoTc8iy3hk4+BCoeQlp3TUfxWnrjsU8q6N+7LHKaODeY0gwedv3QSA
+	=
+X-Received: by 2002:a05:620a:27c3:b0:7ce:ca97:a6bf with SMTP id af79cd13be357-7ceecc166b2mr146502585a.41.1748036766402;
+        Fri, 23 May 2025 14:46:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtKjp4VMExAhHDbSXwWDUa9R+2e6ssRs7xky+iVHD5hTNFkKSYPwh2y5Pdk3RKrIoEHeQZ1A==
+X-Received: by 2002:a05:620a:27c3:b0:7ce:ca97:a6bf with SMTP id af79cd13be357-7ceecc166b2mr146499685a.41.1748036766120;
+        Fri, 23 May 2025 14:46:06 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f34d56sm3971854e87.80.2025.05.23.14.46.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 14:43:10 -0700 (PDT)
+        Fri, 23 May 2025 14:46:05 -0700 (PDT)
+Date: Sat, 24 May 2025 00:46:03 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Arun R Murthy <arun.r.murthy@intel.com>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-In-Reply-To: <aDCdn9r_ZAUTRpWn@stanley.mountain>
-References: <aDCdn9r_ZAUTRpWn@stanley.mountain>
-Subject: Re: [PATCH next] drm/panel: nt37801: Fix IS_ERR() vs NULL check in
- probe()
-Message-Id: <174803658983.3675779.2609702556913509168.b4-ty@oss.qualcomm.com>
-Date: Sat, 24 May 2025 00:43:09 +0300
+        Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Suraj Kandpal <suraj.kandpal@intel.com>,
+        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Xaver Hugl <xaver.hugl@kde.org>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/plane: Fix error pointer vs NULL bug in
+ create_in_format_blob()
+Message-ID: <r3rars6vn5wubijcixmpb753dv7vrg7h6yukbpsgl2svn5pudq@xbnkzn6euh3u>
+References: <aDCdRKZHmCPwaJWp@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE5OCBTYWx0ZWRfX8cIvUK45en3i
- CsMQKYYo3I+rzXRmct1x3DJ7YPDOqzqhPsS9S5t4M5lynxzswWkH9ISYLE1qVHzNw0kXPREBDur
- VhGGcy/pXj7hi11oOo2dV3EHe33r1lQ3+TRMSDlmeXWq31BGyk9RNYugbh1l5W4h3pg3afYlca8
- DP63XQ7er5CJwC+/AyIfnZIZ336oyNqAr91lhLzUxxnIZw+HClbGiI5G/81H0sOMXx3Dy2/v92e
- I2K2rN/8AY9oWGp6SMvubxBT/ly9kcQ2XdSzcK+/xlnt4L5PR/CS1WYravOWE4mzxjIkOLYdwPE
- DRvd2wM0mVIMGvL5WTi2Sm3GTa2xXe4aMrDVSshU+LBxUjY25cbEyNlIj9ycqGf2h/RJGl5Bo39
- s44va/gxVywt+R/5b2xveZUHvpuus9vNfAozH0LNluIO3y1rw06LUKL+8UTP7ClFjYkPfkle
-X-Authority-Analysis: v=2.4 cv=XeWJzJ55 c=1 sm=1 tr=0 ts=6830ebf0 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=cxelKPMm3W1_tlv-AlEA:9 a=QEXdDO2ut3YA:10
- a=OIgjcC2v60KrkQgK7BGD:22
-X-Proofpoint-GUID: 9_1vM3fec1jldiv9LoU7JL8MQohUK-Zr
-X-Proofpoint-ORIG-GUID: 9_1vM3fec1jldiv9LoU7JL8MQohUK-Zr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aDCdRKZHmCPwaJWp@stanley.mountain>
+X-Proofpoint-GUID: _mttAfQYa6l5yxejfCr5ecU1voCQYw3k
+X-Authority-Analysis: v=2.4 cv=J/Sq7BnS c=1 sm=1 tr=0 ts=6830ec9f cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=2C2ebHZnuNSfagipGo4A:9
+ a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: _mttAfQYa6l5yxejfCr5ecU1voCQYw3k
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE5OSBTYWx0ZWRfXwC3XRFtd4Yen
+ uDo5hFOPBOSsEVeXXX0YvN4Yejg96aQVhrStjN7K9is4CypXP3dhVClKAYube7SN79pGU4xuTcX
+ m1Czp5eYUx+iOoNngUE9w5z4QJmA3DFOdObR7QiTzefJbsnI6OansNn9SAzEVzz/uT+AHLyDIKr
+ jTU4iceNE9mXuFKNsEHPWk65c3ULT9C9ApyDH6/0HX7kSHKZ8MRjUxHQPSiJRctbgGWBQO0EP8b
+ 7bHCryDzHW5cwdJZBfavNP7M4+msUUbQHa9S0z77BQ0edFqCP0BfW80OwFgsoUfSfhdmTT5hsvY
+ egpP1jMGAFaM2jRnnpC6P1BkYwI1ftTq+EuvOPhdZ0cRVsE2U1fM2TIAgzoogPzVL/X1EGpQ377
+ lxL/X3e5PYh7aEtMoJQ1num8zznK1nUliMi9HU7BXLPISI75I3Uv9XBAEJwv9o7bvhqALAas
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-23_07,2025-05-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 mlxlogscore=999 mlxscore=0 bulkscore=0 spamscore=0
- suspectscore=0 impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505230198
+ mlxscore=0 clxscore=1015 mlxlogscore=805 suspectscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505160000 definitions=main-2505230199
 
-On Fri, 23 May 2025 19:09:03 +0300, Dan Carpenter wrote:
-> The devm_drm_panel_alloc() function returns error pointers, it doesn't
-> return NULL.  Update the check to match.
+On Fri, May 23, 2025 at 07:07:32PM +0300, Dan Carpenter wrote:
+> The callers expect to receive error pointers on error but
+> create_in_format_blob() returns NULL.  Change it to return error
+> pointers.
 > 
-> 
+> Fixes: 0d6dcd741c26 ("drm/plane: modify create_in_formats to acommodate async")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/drm_plane.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to drm-misc-next-fixes, thanks!
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-[1/1] drm/panel: nt37801: Fix IS_ERR() vs NULL check in probe()
-      commit: 4673dec88da803fa23f1af9e04761683a30dd6aa
-
-Best regards,
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
+With best wishes
+Dmitry
