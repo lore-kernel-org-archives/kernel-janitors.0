@@ -1,48 +1,33 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91FEC2;
-	Fri, 23 May 2025 16:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E86223710;
+	Fri, 23 May 2025 17:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748017910; cv=none; b=ZTi/H6iM4cQ/79aPrQuEfnxZwiArCtlyela+TequxPqPcVMTZGxjrcSv6S268jq+pyFXj1s/37bbXteRLuK2fTlygOOzYBczmBn4epcRvS0FUy2a8IMdqQxJQ0U3T1FZpR2tKqWX3vqzk4ftldRX2cs4BgqLlzZBkb8LdLRbJEA=
+	t=1748019935; cv=none; b=ahDYGa+P5i+gpQJwJw5aY8Pn625BAW4SIlnn34vFPV6joR/armVARjwFSXgU57eSc2p+FmioKuMDbrMCenIdaSAcougwujlQb3S/BL8u1RJvqFCsSmiKXBVY/pF2TQ70X13uEEDq/ftSNmYU28BNVWHx7AktD7oQcsY/0TR9LyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748017910; c=relaxed/simple;
-	bh=soAT5mZi84ierpWzAHJRM96N2N0UFw9a+qmc9EgFlOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CDBUN/Y+XZ7DwK4rGS7BuLaPnoQSHNcA82iKY5hPfKFrMjJRhR+lHzCiPpQ/BP4djr/yNzVatn5MYC3ex7SD9AXKns21z4xLcVfjZHA2JyLJK9GD3wtuxihFGdLf0uGadxQa7y4kQ64w6grGRVcvI8ejqK8UUder9BGoLXnBIms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mtOl8AnF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1748019935; c=relaxed/simple;
+	bh=wHM0hYk4/TfjXFjxQlN2lj12jVqvOoCHu7Nwjv6UmL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZAeQ51Flda4MQ+fdsxThdjibfvJgNCBZNhPs4DsxMBAU2H61tr1iUpjUS+7uSHcv7dp2gnmN5aYgiNN5Kdv3eaujM8Pv7DN9Ag2fNVtNDfjYwq/mP7nG4jILqJBHFS2+x0x5zYiALPkV6Y1L9y37lPkPdRk9xVzxxD/jQ16le8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=neh/unFJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mtOl8AnF"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NFSlY9028753;
-	Fri, 23 May 2025 16:31:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	l/GrWp4HULjcDXYDW8Gpf3PiKQTF8RUOBLQlrUOZL18=; b=mtOl8AnFmq61+wmp
-	uKLg76S63Ks7G3gGRC1zmZ1B8UlAXDQ6MXDxWR9q+19ihrc2iOK3ogLGI++7VOwF
-	JKjq3teBGnbbca0ZRlB4MLlHypXj2KtBtNDfY6ckNaCehe0+Ji0JolVdofT3oP8/
-	RSgppDs5VdIUjfwpMIuJhETw3pm4BIGAQ7avczPCX5fRgdAN9OPN1bCVB73QuNjj
-	LZyU0m35bjEmHjizXv70K/HK/jCub7H/bUE/3g2ixRb69SZtAz23hK2c4e6EfPSc
-	eNZyVMaYTGSXdNpcClWvdtz1uZwtf2Hz7tzCg9Va+B3Gxr3MxMWAjRU42z0s2mk3
-	vHWCdg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46s8c299hv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 16:31:32 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54NGVWKm019916
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 May 2025 16:31:32 GMT
-Received: from [10.110.22.10] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 May
- 2025 09:31:30 -0700
-Message-ID: <bdd44c38-24dc-4775-88cd-c96696e6bb4b@quicinc.com>
-Date: Fri, 23 May 2025 09:31:29 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="neh/unFJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87755C4CEE9;
+	Fri, 23 May 2025 17:05:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748019934;
+	bh=wHM0hYk4/TfjXFjxQlN2lj12jVqvOoCHu7Nwjv6UmL4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=neh/unFJQzZUDbq87CUTvtQ9L/PeYT5Myt8nL6HftdLHKYq56KBLCtm4fh5KxqYUB
+	 nF9iUIKtxgbR5MBxf9jB+9NcUPOrDnZANeeVBCYdCOApdvXAZcUS1XnFyJOTf+YmsY
+	 0K7P7wo07fCEL/i2IlylhXZ7NvUCra8x4zEYBA2MBnbh+FNBmdW4JENIH/+7D9D7Ne
+	 q9Cnhn+Ywl7OcuvyhD3zlQ39Z/2quJm+wWhfOE+v5pAzi6i0NnCG+2nvxXgXC5wiy5
+	 Ns3VKOElHJuRCNvv9BTs2SJB2a1iThWKS41iP+bdxiQGaKf0qi/d1q1y2VDo0966C+
+	 FN6RTz/FPm94Q==
+Message-ID: <aa352280-6146-4cfc-9b80-1d8b02293b2e@kernel.org>
+Date: Fri, 23 May 2025 19:05:29 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -53,81 +38,74 @@ User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH next] drm/panel: nt37801: Fix IS_ERR() vs NULL check in
  probe()
 To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 References: <aDCdn9r_ZAUTRpWn@stanley.mountain>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
 In-Reply-To: <aDCdn9r_ZAUTRpWn@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE1MCBTYWx0ZWRfXx0q0YYhFtXxQ
- zVgrtrowFCrjpL3XfIOZ8uLoBMzCOK9dcnyHjwXQInvLiVItMheszQpxUsA8YaYijtpNqUR2nGG
- 5Y/NFgGXxaz0l0aSXAhKaPD3sQoCpPpUVN05dQB09ohWbXtywrkUMce5umFWJjVcwi7wdgCc3ch
- tdJvP/wg26BA+VXI0QWoj1xmHUGRPTacBwQOE7VkHIF1IzOlc7K+DM/WY2aiyOeQ7y9yLPsoPfY
- i9Y0LFzokA0CRWbFscCWijoMVZJ3922cTPvnAUh7i5r/ziA7bK7phgnbOIHcufHvvaev2f7zjcw
- hJVjFtAkrLVt8ji53vhPDxDkEYqnIRG9sVqGeidPe4ExNe98p1O7uzCAOxbN6FXz/Jyr7O1PFDH
- EAjDL/7np9BzbkCCQKzI3bdbzGWpobrydI37BkevAi7mqeWRRf/p7UTnrj4ORhoaALFFvUmU
-X-Authority-Analysis: v=2.4 cv=RIuzH5i+ c=1 sm=1 tr=0 ts=6830a2e4 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8
- a=COk6AnOGAAAA:8 a=XMHdZpqdGEBm9EcGwjcA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: l51ohz8uEy-T7YCnPHWwGRVsnyd7SAcg
-X-Proofpoint-GUID: l51ohz8uEy-T7YCnPHWwGRVsnyd7SAcg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-23_05,2025-05-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 phishscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- adultscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505230150
 
-
-
-On 5/23/2025 9:09 AM, Dan Carpenter wrote:
+On 23/05/2025 18:09, Dan Carpenter wrote:
 > The devm_drm_panel_alloc() function returns error pointers, it doesn't
 > return NULL.  Update the check to match.
 > 
 > Fixes: 4fca6849864d ("drm/panel: Add Novatek NT37801 panel driver")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 
-> ---
->   drivers/gpu/drm/panel/panel-novatek-nt37801.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt37801.c b/drivers/gpu/drm/panel/panel-novatek-nt37801.c
-> index 84d367eab058..d6a37d7e0cc6 100644
-> --- a/drivers/gpu/drm/panel/panel-novatek-nt37801.c
-> +++ b/drivers/gpu/drm/panel/panel-novatek-nt37801.c
-> @@ -257,8 +257,8 @@ static int novatek_nt37801_probe(struct mipi_dsi_device *dsi)
->   	ctx = devm_drm_panel_alloc(dev, struct novatek_nt37801, panel,
->   				   &novatek_nt37801_panel_funcs,
->   				   DRM_MODE_CONNECTOR_DSI);
-> -	if (!ctx)
-> -		return -ENOMEM;
-> +	if (IS_ERR(ctx))
-> +		return PTR_ERR(ctx);
->   
->   	ret = devm_regulator_bulk_get_const(dev,
->   					    ARRAY_SIZE(novatek_nt37801_supplies),
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+
+Best regards,
+Krzysztof
