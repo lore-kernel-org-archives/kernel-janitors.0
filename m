@@ -1,110 +1,133 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC24F28382
-	for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 16:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A91FEC2;
+	Fri, 23 May 2025 16:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748016599; cv=none; b=MvbFTRo1/Cc0BuZUGoNonjwRywD1fKqG4aHEhVWlgN03Hv+Iq/ZTc+M0iVlKn+cE5psYPjHrLOO5yUi4yzVFleKvL+IuWKT5lJzI+e4/vFQdVVRTQxwf/zW8Gkd8QeVRyGkv4OtNu/zdUG0WA/O45foBVaSwdEulV5cU41KifgY=
+	t=1748017910; cv=none; b=ZTi/H6iM4cQ/79aPrQuEfnxZwiArCtlyela+TequxPqPcVMTZGxjrcSv6S268jq+pyFXj1s/37bbXteRLuK2fTlygOOzYBczmBn4epcRvS0FUy2a8IMdqQxJQ0U3T1FZpR2tKqWX3vqzk4ftldRX2cs4BgqLlzZBkb8LdLRbJEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748016599; c=relaxed/simple;
-	bh=Ckf2jUAJFRz5XxW1A+FCrCqbO+DN3zf9KbfrM+7gGv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=llS/ypstC5QHKMLiC7Ci5KXtSkumwDq5poZSBJMxywvycTUgqIRWpuiOQ25lwsEe1jtqwUU43NuJxSvWVz7A2XUhv0bdSqH6pe7viZiQPa9Gz7XUfzTemR+ogY79Juj2QHE2pGGc5DVmwcxmb+uudeJVxkqgYYam5HBR2tq63l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jYS1q7tP; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1748017910; c=relaxed/simple;
+	bh=soAT5mZi84ierpWzAHJRM96N2N0UFw9a+qmc9EgFlOE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CDBUN/Y+XZ7DwK4rGS7BuLaPnoQSHNcA82iKY5hPfKFrMjJRhR+lHzCiPpQ/BP4djr/yNzVatn5MYC3ex7SD9AXKns21z4xLcVfjZHA2JyLJK9GD3wtuxihFGdLf0uGadxQa7y4kQ64w6grGRVcvI8ejqK8UUder9BGoLXnBIms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mtOl8AnF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jYS1q7tP"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf257158fso72471325e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 23 May 2025 09:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748016596; x=1748621396; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ui+xdwWINFM5L07zkqDWB9NaMyj6SNEWap+rmv8ceEY=;
-        b=jYS1q7tPXP7UeocYNmmABadjZxb3ZS9DMJXu4lDPBKbMe91D2irTJodV0J/u9pZUuD
-         xa7cSGXdDCaso/4gMN3dx8W1juxvu7l9tNFvkfazSZa+FRHLlRjo/RvZw1n3jUxQ05Z+
-         ML6XYWCfB4hcgJQzfC95HHtbUoQggyzSGNzr6Bu6BzM4RfxiRWZFpbMxZoZzKLeFGTfM
-         cFoSTnplqbHzncWl5hByAmf7pMQFOqhVMNRPQIYyj46PI5Qi2jCGydWkIKxJ6JRIaGwt
-         xBAQei1lS5EqxaN7P9Sh3H3vVqiqCVZUl6fNFnUX3WcTcf4cx9oJLUMTBCEMVR1pqBKt
-         72Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748016596; x=1748621396;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ui+xdwWINFM5L07zkqDWB9NaMyj6SNEWap+rmv8ceEY=;
-        b=mrR+np7cFH9x9SewwcZOAl8fSgvhyqEvst/MbjZh4aSxgOv25AkrlpbV4JEhnKu8nh
-         DeTn7amtZQ/Dqk4BwNeiaf5zhkZKK+itHngmtKxw6bLxZ/sG/JK5OulI5dM9yOMksxCs
-         nou41uV9+7Mc0OspEUpFarfZLvwo3hUIgXSZaWQ9TAyIv/8h32CMkUn2+cCI6W19Vd+O
-         j9y34ETxSXj/u03I8DUIiqz11nI9851vJCJw2vXTHPXjj4Cc1ezHCv6qf+P5lCdkxT5d
-         WRA/uAgqKaS4nl8MeSYEhRJsrwcjylRF2WU/UOYcLqdNwO4GNyOwXwuBMmH6Zql6xbOO
-         /GEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqSSsi+LC+DfpSvDyX8vYE4Tzlgh0S0bXuus1MDj7RMo0PilmEeqmXDe6JrVGle6EuJK4gBkME+7j0DuDoZm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqYoCUXfhHbgKXCBDXDz0zxaQawsz8xz78qtZSX6hdcGBM7+wJ
-	VaODtj1EdPUBSnvlUv6jZhISOaC7ta1FqfKt+UK4fsXl3wEDtjiJ40/YjSy08RzFMiw=
-X-Gm-Gg: ASbGncsB32B75cQHZ89KiIkq2IZDxn7QNHWVHtwPY/KnUVl75L8aSs9c4f5tSoUX390
-	8YU/QvF28BMU1FCpPxu87+41XEHMWsGlwbnZUgDEmlKbt2BMVynbNkEj98jmnC8eB3sA3Q9GpkD
-	5ot6q6u2oeECrpA7MPeUJecC412w1UGJw3p4lqdw+gqqJYE8jcvFvIA0UA9yt8vT87hJxjrA076
-	IalKF6+1uL3Zdg6bPOTFVWHSudPS1gH592iSimW1eawKRgcfO+YHIf0s78nCnatdnwSVK7Suc0l
-	ZBABtAacf0Ml9IYMWal0YWECYvdP7EEZFhJEuUFwwrBlM7g0XBxt+lXYPnjkpJV+tYw=
-X-Google-Smtp-Source: AGHT+IGqMESqzvP/96nvyjOYKe0RppaRLZiQpOwJY6/fZFSF8xVdTA+Yk7GHTTmFzbVLBQ3RWhPt3Q==
-X-Received: by 2002:a05:600c:64c5:b0:43c:ea1a:720a with SMTP id 5b1f17b1804b1-442fefdad81mr267539755e9.1.1748016596132;
-        Fri, 23 May 2025 09:09:56 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-447f78aeb8csm144108785e9.28.2025.05.23.09.09.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 May 2025 09:09:55 -0700 (PDT)
-Date: Fri, 23 May 2025 19:09:52 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Arvind Yadav <arvind.yadav@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Arvind Yadav <Arvind.Yadav@amd.com>,
-	Shashank Sharma <shashank.sharma@amd.com>,
-	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
-	Yunxiang Li <Yunxiang.Li@amd.com>, Frank Min <Frank.Min@amd.com>,
-	Kent Russell <kent.russell@amd.com>, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: Fix integer overflow in
- amdgpu_gem_add_input_fence()
-Message-ID: <aDCd0MrLste5b2HM@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mtOl8AnF"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54NFSlY9028753;
+	Fri, 23 May 2025 16:31:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	l/GrWp4HULjcDXYDW8Gpf3PiKQTF8RUOBLQlrUOZL18=; b=mtOl8AnFmq61+wmp
+	uKLg76S63Ks7G3gGRC1zmZ1B8UlAXDQ6MXDxWR9q+19ihrc2iOK3ogLGI++7VOwF
+	JKjq3teBGnbbca0ZRlB4MLlHypXj2KtBtNDfY6ckNaCehe0+Ji0JolVdofT3oP8/
+	RSgppDs5VdIUjfwpMIuJhETw3pm4BIGAQ7avczPCX5fRgdAN9OPN1bCVB73QuNjj
+	LZyU0m35bjEmHjizXv70K/HK/jCub7H/bUE/3g2ixRb69SZtAz23hK2c4e6EfPSc
+	eNZyVMaYTGSXdNpcClWvdtz1uZwtf2Hz7tzCg9Va+B3Gxr3MxMWAjRU42z0s2mk3
+	vHWCdg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46s8c299hv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 16:31:32 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 54NGVWKm019916
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 16:31:32 GMT
+Received: from [10.110.22.10] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 May
+ 2025 09:31:30 -0700
+Message-ID: <bdd44c38-24dc-4775-88cd-c96696e6bb4b@quicinc.com>
+Date: Fri, 23 May 2025 09:31:29 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] drm/panel: nt37801: Fix IS_ERR() vs NULL check in
+ probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <aDCdn9r_ZAUTRpWn@stanley.mountain>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <aDCdn9r_ZAUTRpWn@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDE1MCBTYWx0ZWRfXx0q0YYhFtXxQ
+ zVgrtrowFCrjpL3XfIOZ8uLoBMzCOK9dcnyHjwXQInvLiVItMheszQpxUsA8YaYijtpNqUR2nGG
+ 5Y/NFgGXxaz0l0aSXAhKaPD3sQoCpPpUVN05dQB09ohWbXtywrkUMce5umFWJjVcwi7wdgCc3ch
+ tdJvP/wg26BA+VXI0QWoj1xmHUGRPTacBwQOE7VkHIF1IzOlc7K+DM/WY2aiyOeQ7y9yLPsoPfY
+ i9Y0LFzokA0CRWbFscCWijoMVZJ3922cTPvnAUh7i5r/ziA7bK7phgnbOIHcufHvvaev2f7zjcw
+ hJVjFtAkrLVt8ji53vhPDxDkEYqnIRG9sVqGeidPe4ExNe98p1O7uzCAOxbN6FXz/Jyr7O1PFDH
+ EAjDL/7np9BzbkCCQKzI3bdbzGWpobrydI37BkevAi7mqeWRRf/p7UTnrj4ORhoaALFFvUmU
+X-Authority-Analysis: v=2.4 cv=RIuzH5i+ c=1 sm=1 tr=0 ts=6830a2e4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8
+ a=COk6AnOGAAAA:8 a=XMHdZpqdGEBm9EcGwjcA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: l51ohz8uEy-T7YCnPHWwGRVsnyd7SAcg
+X-Proofpoint-GUID: l51ohz8uEy-T7YCnPHWwGRVsnyd7SAcg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_05,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 phishscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 mlxscore=0 priorityscore=1501
+ adultscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505230150
 
-The "num_syncobj_handles" is a u32 value that comes from the user via the
-ioctl.  On 32bit systems the "sizeof(uint32_t) * num_syncobj_handles"
-multiplication can have an integer overflow.  Use size_mul() to fix that.
 
-Fixes: 38c67ec9aa4b ("drm/amdgpu: Add input fence to sync bo map/unmap")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-index 2c68118fe9fd..0ecc88df7208 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-@@ -58,7 +58,7 @@ amdgpu_gem_add_input_fence(struct drm_file *filp,
- 		return 0;
- 
- 	syncobj_handles = memdup_user(u64_to_user_ptr(syncobj_handles_array),
--				      sizeof(uint32_t) * num_syncobj_handles);
-+				      size_mul(sizeof(uint32_t), num_syncobj_handles));
- 	if (IS_ERR(syncobj_handles))
- 		return PTR_ERR(syncobj_handles);
- 
--- 
-2.47.2
+On 5/23/2025 9:09 AM, Dan Carpenter wrote:
+> The devm_drm_panel_alloc() function returns error pointers, it doesn't
+> return NULL.  Update the check to match.
+> 
+> Fixes: 4fca6849864d ("drm/panel: Add Novatek NT37801 panel driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+
+> ---
+>   drivers/gpu/drm/panel/panel-novatek-nt37801.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt37801.c b/drivers/gpu/drm/panel/panel-novatek-nt37801.c
+> index 84d367eab058..d6a37d7e0cc6 100644
+> --- a/drivers/gpu/drm/panel/panel-novatek-nt37801.c
+> +++ b/drivers/gpu/drm/panel/panel-novatek-nt37801.c
+> @@ -257,8 +257,8 @@ static int novatek_nt37801_probe(struct mipi_dsi_device *dsi)
+>   	ctx = devm_drm_panel_alloc(dev, struct novatek_nt37801, panel,
+>   				   &novatek_nt37801_panel_funcs,
+>   				   DRM_MODE_CONNECTOR_DSI);
+> -	if (!ctx)
+> -		return -ENOMEM;
+> +	if (IS_ERR(ctx))
+> +		return PTR_ERR(ctx);
+>   
+>   	ret = devm_regulator_bulk_get_const(dev,
+>   					    ARRAY_SIZE(novatek_nt37801_supplies),
 
