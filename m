@@ -1,80 +1,137 @@
-Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7FC4C98;
-	Sat, 24 May 2025 08:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B6128EB;
+	Sat, 24 May 2025 16:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748076946; cv=none; b=P5NJjnxAf6xDCGx4iI5BtXaauVyoaTssw7LDeiKrA6TuJSi4K/jI77feCL3m3nUBFLqiJZBrDT+5DGRIJpTgUSG26nkYS/2ANCq4jEQy8C6pwPJLiT7dhtf2KcxZATHGBBYZ+9TN5QndVCD7QCtf/Cb1++LjJU/TTFgPdS6bWmM=
+	t=1748102992; cv=none; b=l8ip7uQmWkxkE/GaN8pqkhTHPTnaRPAIRr814x1DXVzDJ8zFew0pqWRcwDIEClnqmCISW0psvaj4CVGPRiQl7jLISg/88uZ6Ity9CpiBzJE2cEbwP3MnNTl1suG4JUwvc4qJYuUv2W408kpvfGsqxlX3l5Qf8EGoxCoc+cmY7vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748076946; c=relaxed/simple;
-	bh=WMIY4j3Sgu5Ef+S2ioQ76hl0mDTM6xszXJq/KHGWE6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pNgib2GljiYKR+CW9v+c+nX1ghv9XHHDnzHafF4Zzpz9ZGgZS3+b3+qHGSc7SeDTbTBgfEHjXQQagHotuNOSYu13wf6SF4RgkFdkH2wieTVKBSunbN51tHlglcom6J06FMWsIfc1WVd8IvHtlrsXrBufvSBqDw3Dx2jKb/fG9LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=sTEdrC0D; arc=none smtp.client-ip=80.12.242.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1748102992; c=relaxed/simple;
+	bh=0pVO+6KQK+7gvYGZz1o8g2GLpTLjtwURPnQTls8/nhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=myiV+14Re/jbr5Y3LbU00szGxVVKCIxecXAFFzqeR/It1hp7aZ6V41Lu3NyY+AQdZjj6VLDTXfhnMF/XVA9P9LSz0a7p79UxSF7hORdnGN7dek/T+CerW4xwT6vCaBkyKG6AVL637oW7csrA+0p4h9Up0gllWKMRftzrajNPuBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nDRF+uYR; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="sTEdrC0D"
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id Ike6uMjyN9ZLlIke7uwbb3; Sat, 24 May 2025 10:54:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1748076866;
-	bh=XYBFJ9U8mLqbbc+8f0SAmMzl/oGwiW2pOKW6PfNaUxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=sTEdrC0DBn7oWtbnLgUXHImJiDKkX1AGajfKV0lWlBMrXZdL6Y3JiD+BcObayhREZ
-	 +SApgEFK+URDi5StLfr88TRbIIEh3kkQSI5ry/c7sSSshkuThg7/LD3URWldrnBa01
-	 boAEBYBhxkqTSXaj0aH3oWnmYJwFKcZO3NuPBjkqd60Yvk/kTRdasyY+KPhtfYpx8p
-	 hBJ0PPowjgqB8tgEEXS+uNtL7LbzNk7AcIAorHKE+3vsa0GsHxxqwwxFQMPkBiYQei
-	 ywwpfpYEEWB9OeW5ATKOOv6uZmG9FGGI1X08HufsOaOdIiFBPpoyEm7hXZDWjCcWpC
-	 r7dlaRNlq9IEA==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 24 May 2025 10:54:26 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <7ae4c256-b14e-4add-b5f1-8b861e853407@wanadoo.fr>
-Date: Sat, 24 May 2025 10:54:22 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nDRF+uYR"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54d6f93316dso1085765e87.2;
+        Sat, 24 May 2025 09:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748102988; x=1748707788; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Tb/w3rI6ziugmXcmP7HoKq767/fmZNaAMBdJDjrQVmE=;
+        b=nDRF+uYRT+gODrJ5CIeTbqF4Wk/i0Ys5vwRl2kBABcT4g3rNe2p8vFdpcOdRMp0ZA8
+         +gwSzEoiLQJX009KthA5vYH7fxUuOvRNL/U/kXbWlooHG4qHMQ0fjBDDCkjsdfWfjZgL
+         2gKa7mDXIryUfYBw3ZaTrAEoOsoONvbNNg9uWiPXVkLGQcBqnJl3sGev4FIjgSTbFUx8
+         9D7kCMSmP9HeLu1dgC2WD1kZ8HY8ffqokUCFut62/bBXqZZ8qQ8Y/KgFceKv+ymblGbW
+         /Gn0K19MVB3fWyZBts5Ygrrg6IGob4qDfE/uvuFfY21GXeuibeZEyEz+FQfVRY19rRih
+         /xoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748102988; x=1748707788;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tb/w3rI6ziugmXcmP7HoKq767/fmZNaAMBdJDjrQVmE=;
+        b=TjOfJKnh2wQAPrB++Q2T+61t+rgoZuM/RqNq4I8h8RXuODn1QlmlwH+T13TxDOoULa
+         YzA9VvrgQeNNv8IP56q1kVZTUPPIjivj5fIDiACJ2arkIwfZTXlq7lvnz345DQ6nXprH
+         Q02D8ruAM1d7O+NfvTsn5k1ec8s8tT9ZlccdXAJm9TeAgldta9thdQRxWNZ+GBzxcI9X
+         ACbFBhGHDMo6hYJrGh04yLu/oyl9I1uPI4ZtT6l9bADvXAt5C4DwI121OjsShGBrUb4w
+         63nINFN0D4TtHck8CHxpFW6ajK+abw6ZHhEXA6dewrCgLRW1o2ha8/ZyIhYXJJLwnhby
+         65fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSnyUPKoI30u23CfKwkWt2CEPBrZ+liPqYUSWi1ZJHG5dvBQT2bg6LiQwUag9DPs12esK0IDciVGL2sX+VHhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3wH0BIcl5X7WtiqPgltcUid3X+aZdC1s8XOWRHWDoPBAeEP2f
+	XPlGZtQGmdB9i3+VXhbJw4G8QQdvCOzmIEcqgReuYUfK8yp0BDdciUz4X+5SrZkv
+X-Gm-Gg: ASbGncuvro8SjggKQ9dZVWApJ1zuPC51Cv6BBf+e7+O8VMusJY0lUDQTy+7K12GMOdw
+	IEo+XTqamIqnF8PEq+G/rAZmCGAUWxQoEQE20nctT2P2dzh72z25MjHjIUm9ho3yY6ECocIHayi
+	Be7dVv4fIojWEg1TZsrNpnshMX+foajBQgwKsQ4K8PM2OnWpT7fJNd3LTOJxSKmu9mJZvajAg32
+	O/9p4QkEzmgNAowSU76epu8hBzn0r2LcjJVixtUM2dhR7L/MJ0GbXWRT7Pjn7pMePBrKS2oWPpG
+	Skn6HxvElnxSR/sb8HdVdHer0VOR0z/Jtp+oumBTAfLCCSG6IUMpikr2SqxTlkFFJ2BuSZGi6uN
+	FiMkr02/x2wvnLf9FGrw1vWqRk8ML6VPobF7nVviKYH0don3J3UaFjhus8XQ=
+X-Google-Smtp-Source: AGHT+IFFCyCqcSoZYJ3lm3zpXv+H1YStSbGf2ED6N2LRYYO17ovSBaD4YnLRHxY9kZDW9zOWK0DwNg==
+X-Received: by 2002:a05:6512:a8d:b0:551:db39:75c2 with SMTP id 2adb3069b0e04-5521c7a847dmr802226e87.4.1748102988075;
+        Sat, 24 May 2025 09:09:48 -0700 (PDT)
+Received: from Lappari.v6.elisa-laajakaista.fi (nzckegel0mtun0nsea8-1.v6.elisa-laajakaista.fi. [2001:99a:20b9:a000:aab0:f0be:4d4c:9e50])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-550e6f165c7sm4386195e87.32.2025.05.24.09.09.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 May 2025 09:09:47 -0700 (PDT)
+Date: Sat, 24 May 2025 19:09:46 +0300
+From: Heikki Huttu <heissendo88@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] staging: vme_user: add missing includes
+Message-ID: <aDHvSicbJpYBY-dn@Lappari.v6.elisa-laajakaista.fi>
+References: <aCZDHXJTyfJRseho@Lappari.v6.elisa-laajakaista.fi>
+ <2025052136-backstab-dork-de2d@gregkh>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] net: airoha: Fix an error handling path in
- airoha_probe()
-To: Simon Horman <horms@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org
-References: <5c94b9b345017f29ed653e2f05d25620d128c3f0.1746715755.git.christophe.jaillet@wanadoo.fr>
- <47910951a3fa3c3bd2a942210e821d9301362128.1746715755.git.christophe.jaillet@wanadoo.fr>
- <20250516201625.GI3339421@horms.kernel.org>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250516201625.GI3339421@horms.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025052136-backstab-dork-de2d@gregkh>
 
-Le 16/05/2025 à 22:16, Simon Horman a écrit :
-> On Thu, May 15, 2025 at 09:59:36PM +0200, Christophe JAILLET wrote:
->> If an error occurs after a successful airoha_hw_init() call,
->> airoha_ppe_deinit() needs to be called as already done in the remove
->> function.
->>
->> Fixes: 00a7678310fe ("net: airoha: Introduce flowtable offload support")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Wed, May 21, 2025 at 01:43:24PM +0200, Greg KH kirjoitti:
+> On Thu, May 15, 2025 at 10:40:13PM +0300, Heikki Huttu wrote:
+> > Header files use u32, size_t, dma_addr_t, struct device, struct list_head.
+> > Add direct includes to make the headers self-contained.
+> > 
+> > Signed-off-by: Heikki Huttu <heissendo88@gmail.com>
+> > ---
+> >  drivers/staging/vme_user/vme.h      | 5 +++++
+> >  drivers/staging/vme_user/vme_user.h | 2 ++
+> >  2 files changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/staging/vme_user/vme.h b/drivers/staging/vme_user/vme.h
+> > index 7753e736f9fd..55499b240dc3 100644
+> > --- a/drivers/staging/vme_user/vme.h
+> > +++ b/drivers/staging/vme_user/vme.h
+> > @@ -3,6 +3,11 @@
+> >  #define _VME_H_
+> >  
+> >  #include <linux/bitops.h>
+> > +#include <linux/types.h>
+> > +#include <linux/device.h>
+> > +#include <linux/list.h>
+> > +#include <linux/mm.h>
+> > +#include <linux/dma-mapping.h>
 > 
-> Reviewed-by: Simon Horman <horms@kernel.org>
+> If you are going to add these, please do so in a sorted way.
 > 
+> But really, why is this needed at all?
+> 
+> >  
+> >  /* Resource Type */
+> >  enum vme_resource_type {
+> > diff --git a/drivers/staging/vme_user/vme_user.h b/drivers/staging/vme_user/vme_user.h
+> > index 19ecb05781cc..297b25fab164 100644
+> > --- a/drivers/staging/vme_user/vme_user.h
+> > +++ b/drivers/staging/vme_user/vme_user.h
+> > @@ -2,6 +2,8 @@
+> >  #ifndef _VME_USER_H_
+> >  #define _VME_USER_H_
+> >  
+> > +#include <linux/types.h>
+> 
+> Same here, are you sure this is needed?
+> 
+> thanks,
+> 
+> greg k-h
 
-Hi,
+Hi Greg,
 
-I guess, that is patch should also be targeted against -net?
+Thank you for the feedback.
 
-CJ
+I was under the impression that it's generally preferred to use direct includes to make headers self-contained and avoid relying on transitive includes.  
+If I was mistaken, apologies — feel free to disregard this.
+
+Best regards,  
+Heikki
