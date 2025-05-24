@@ -1,51 +1,55 @@
-Received: from smtp.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B9E18DB0E
-	for <kernel-janitors@vger.kernel.org>; Sat, 24 May 2025 16:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBDC4A1E;
+	Sat, 24 May 2025 17:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748103623; cv=none; b=BWlOVllayZ+JRuigZMHl/x14e7ecqBO3CQV4FqxrlC2aDBpGmrGxIuu9JSxBMnhGYj5cuy8G87eFN+Eeb8nbq2My6BfEQFuPCLe7b02rYcK5hBZlZDVpE96UZj/W/4HtOju6kZThJP70/zDojFdd09SjYIc30wq8qahBVpNUOUs=
+	t=1748106061; cv=none; b=pVqWTmM7FU4P378jRolj3fLNDAjtVRxGpJ0oioOyMu4VuXitfGPQtKh77/1wAkdS3XmlwNEoJ7sjoPg7oqIpl5c5ffxwP/a974kG7+gZ4XMif4sLG85+cWt1X6az2OcSL2NRkrc1uyZ3FIYX0PeqCm3W5DwGtXNSfT73qnoVPCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748103623; c=relaxed/simple;
-	bh=65/KaLpzRs8gFo79tDMN4s4RnT6oxjpzQ5k2c/LetYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hPsRbj0QnyQ0VApnt1TBgGYDeHDxCZprAHRmkbpTpVzUttaLc9yAP9Tx4f/roHtQtDyEZiFRKjOAunR48h/vv9DA/HLR+GXH7V/vNidTmbNVqF1AuoOT4Gm1WCd8aq9CeRPhYoIKow5+GWafgOTw7zxy5FT6f6UuPA9IhYgxwnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p7MTcRsh; arc=none smtp.client-ip=80.12.242.71
+	s=arc-20240116; t=1748106061; c=relaxed/simple;
+	bh=q+HMSf4sbY/eOZnI4FaMXJ5LU41yeLrP7lIjqJsCRgI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PLR2lYx81O6DDu0GHBVn8IPxlUUuyH0BCTmbDtwLsuYwLyFOBXeoWSK6iE8Q97b1l9ntGqBX+5kBnUPPWgxBNhAqwl9ZCizM4TqAYuPsZ0z4V+U7/+KhvPpiYnhYKnn5z8+4KCXGYI+r4iiimj1XK23cn8BPB8ZxwAbpMPrN200=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bJC+f2Y0; arc=none smtp.client-ip=80.12.242.27
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p7MTcRsh"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bJC+f2Y0"
 Received: from localhost.localdomain
  ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id IrSUuI1zk7nctIrScuJnhc; Sat, 24 May 2025 18:10:58 +0200
+	id Is60uQbGt1n9nIs60uXgae; Sat, 24 May 2025 18:51:41 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1748103059;
-	bh=vp6GqdAP6pKVMGw4uZqtEavNsIsEsQuRgZ4ZJY92yNY=;
+	s=t20230301; t=1748105501;
+	bh=3/m2btaSoyNeCIlV4H3OiW8YIofhGOiWjmetp7MzqjU=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=p7MTcRshYZXU2FUZ8LbcvZzzx9ukOmAlM40uGp+htz7x8wmgzaYmxk9SJnNPUalxW
-	 x9Ut1N0XSwMvEcrcNLSPDid4mbP/0y/vuh0XKozpze2o75t9SelV7P0j0bwf+bgKIE
-	 DZVx8i8Zr8hS0ga7yrmRgFMrkRTvKciJeQJAgXGRUuJDrSEpT4jdb3F1oiea4R2A/n
-	 iCM8lBykzNT+Q9E79S8hCbEQJvZP31itIR2MNj1D56kEb95HM/STy7dUTkkp5ODbH9
-	 9BscOZAme61iYCGbutZmUUThbEHkYcRZEqZlHNAM6DjOvkIhyiCYFIwuwKAmEHitNl
-	 M5HBMdEBTqa0Q==
+	b=bJC+f2Y0+Km6Z52inhkP0hqQakFaXaHQchhVmoPPNindPDUK+LsBDzXhOItzj0wng
+	 lGXs0kgZaXgwVES2xLYHqAy35/IF+ezFHaQQMgE10IrqNCdL+N6GabyxUKX1RmqYEK
+	 wNRrX0brLSDDQRHV99QvAzKTpkWD5qzL7kem7Fwjtv8iRFbtZxIz3VqXwKWOQQaPX2
+	 lLWdfNJhBpmN9iXAwr+9EduLgncABqi8rinBjp9Q+3QcLneykVebwR38VJE7TRFavm
+	 NvkpcP4qUS4N2IKu8G3C7ph8agoraaUu3oY7z+qgzo1oBzbhVyTq9yWVdpLrM+22O6
+	 EK14idepQesOg==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 24 May 2025 18:10:59 +0200
+X-ME-Date: Sat, 24 May 2025 18:51:41 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <siqueira@igalia.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 2/2] regulator: tps6594-regulator: Remove a useless static qualifier
-Date: Sat, 24 May 2025 18:10:39 +0200
-Message-ID: <ebc53d4049ec19796ef07e1bb734de19a2814727.1748103005.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/amd/display: Constify struct timing_generator_funcs
+Date: Sat, 24 May 2025 18:51:25 +0200
+Message-ID: <7dd73263342c1093f3e86ae5841a53c1e3739b5e.1748105447.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <1446fb1938f3f38115be3e53f5dda3c8bb0ba5a1.1748103005.git.christophe.jaillet@wanadoo.fr>
-References: <1446fb1938f3f38115be3e53f5dda3c8bb0ba5a1.1748103005.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -54,40 +58,149 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is no point in having 'npname' a static variable. So remove the
-static qualifier. This is cleaner and saves a few bytes.
+'struct timing_generator_funcs' are not modified in these drivers.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  27949	  12176	     64	  40189	   9cfd	drivers/regulator/tps6594-regulator.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  27947	  12112	      0	  40059	   9c7b	drivers/regulator/tps6594-regulator.o
+Constifying these structures moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-Compile tested-only.
----
- drivers/regulator/tps6594-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is NOT compile tested, because apparently some .h files are missing on
+my system ("reg_helper.h")
 
-diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
-index 0193efb5dffa..51264c869aa0 100644
---- a/drivers/regulator/tps6594-regulator.c
-+++ b/drivers/regulator/tps6594-regulator.c
-@@ -563,7 +563,7 @@ static int tps6594_regulator_probe(struct platform_device *pdev)
- 	bool buck_configured[BUCK_NB] = { false };
- 	bool buck_multi[MULTI_PHASE_NB] = { false };
+However, I've checked how these struct timing_generator_funcs are used.
+They end in "struct optc->base.funcs" which is a
+"const struct timing_generator_funcs", so evething should be fine.
+---
+ drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c   | 2 +-
+ drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c   | 2 +-
+ drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c   | 2 +-
+ drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c   | 2 +-
+ drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c   | 2 +-
+ drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c | 2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
+index 81857ce6d68d..e7a90a437fff 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn20/dcn20_optc.c
+@@ -502,7 +502,7 @@ void optc2_get_last_used_drr_vtotal(struct timing_generator *optc, uint32_t *ref
+ 	REG_GET(OTG_DRR_CONTROL, OTG_V_TOTAL_LAST_USED_BY_DRR, refresh_rate);
+ }
  
--	static const char *npname;
-+	const char *npname;
- 	int error, i, irq, multi;
- 	int irq_idx = 0;
- 	int buck_idx = 0;
+-static struct timing_generator_funcs dcn20_tg_funcs = {
++static const struct timing_generator_funcs dcn20_tg_funcs = {
+ 		.validate_timing = optc1_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c
+index f2415eebdc09..772a8bfb949c 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn201/dcn201_optc.c
+@@ -129,7 +129,7 @@ static void optc201_get_optc_source(struct timing_generator *optc,
+ 	*num_of_src_opp = 1;
+ }
+ 
+-static struct timing_generator_funcs dcn201_tg_funcs = {
++static const struct timing_generator_funcs dcn201_tg_funcs = {
+ 		.validate_timing = optc201_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c
+index 78b58a449fa4..ee4665aa49e9 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn30/dcn30_optc.c
+@@ -357,7 +357,7 @@ void optc3_tg_init(struct timing_generator *optc)
+ 	optc1_clear_optc_underflow(optc);
+ }
+ 
+-static struct timing_generator_funcs dcn30_tg_funcs = {
++static const struct timing_generator_funcs dcn30_tg_funcs = {
+ 		.validate_timing = optc1_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c
+index 65e9089b7f31..38f85bc2681a 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn301/dcn301_optc.c
+@@ -109,7 +109,7 @@ void optc301_setup_manual_trigger(struct timing_generator *optc)
+ 			OTG_TRIGA_CLEAR, 1);
+ }
+ 
+-static struct timing_generator_funcs dcn30_tg_funcs = {
++static const struct timing_generator_funcs dcn30_tg_funcs = {
+ 		.validate_timing = optc1_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c
+index ef536f37b4ed..4f1830ba619f 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn31/dcn31_optc.c
+@@ -315,7 +315,7 @@ void optc31_read_otg_state(struct timing_generator *optc,
+ 	s->otg_double_buffer_control = REG_READ(OTG_DOUBLE_BUFFER_CONTROL);
+ }
+ 
+-static struct timing_generator_funcs dcn31_tg_funcs = {
++static const struct timing_generator_funcs dcn31_tg_funcs = {
+ 		.validate_timing = optc1_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c
+index 0e603bad0d12..4a2caca37255 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn314/dcn314_optc.c
+@@ -192,7 +192,7 @@ static void optc314_set_h_timing_div_manual_mode(struct timing_generator *optc,
+ }
+ 
+ 
+-static struct timing_generator_funcs dcn314_tg_funcs = {
++static const struct timing_generator_funcs dcn314_tg_funcs = {
+ 		.validate_timing = optc1_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c
+index 2cdd19ba634b..b2b226bcd871 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn32/dcn32_optc.c
+@@ -297,7 +297,7 @@ static void optc32_set_drr(
+ 	optc32_setup_manual_trigger(optc);
+ }
+ 
+-static struct timing_generator_funcs dcn32_tg_funcs = {
++static const struct timing_generator_funcs dcn32_tg_funcs = {
+ 		.validate_timing = optc1_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
+index 4cfc6c0fa147..72bff94cb57d 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn35/dcn35_optc.c
+@@ -428,7 +428,7 @@ static void optc35_set_long_vtotal(
+ 	}
+ }
+ 
+-static struct timing_generator_funcs dcn35_tg_funcs = {
++static const struct timing_generator_funcs dcn35_tg_funcs = {
+ 		.validate_timing = optc1_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
+diff --git a/drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c b/drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c
+index 382ac18e7854..ff79c38287df 100644
+--- a/drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c
++++ b/drivers/gpu/drm/amd/display/dc/optc/dcn401/dcn401_optc.c
+@@ -459,7 +459,7 @@ bool optc401_wait_update_lock_status(struct timing_generator *tg, bool locked)
+ 	return true;
+ }
+ 
+-static struct timing_generator_funcs dcn401_tg_funcs = {
++static const struct timing_generator_funcs dcn401_tg_funcs = {
+ 		.validate_timing = optc1_validate_timing,
+ 		.program_timing = optc1_program_timing,
+ 		.setup_vertical_interrupt0 = optc1_setup_vertical_interrupt0,
 -- 
 2.49.0
 
