@@ -1,52 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+Received: from smtp.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D41192D87;
-	Sun, 25 May 2025 12:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA01E282F1;
+	Sun, 25 May 2025 12:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748176374; cv=none; b=cnN9jEeMKAYKoDbTYss7eiFxgPIc9k8Sbkl0T6SJ6GNFAKpVz9WEUuhApyGmWKjcgvQGh+KyygDQRN1H9tlJ09hrhE1pV8V0UHJFXSAHJzQDynISKRhtE0HsuILMysZufUBoI6g41d27SIhf/WKt6zTKSy2Ng13+NrB88GSFFS8=
+	t=1748177277; cv=none; b=TssgCutxukK797K8SjL93V0beAACRfKsYWe2a8BFUGqPWz9SeYsp8HLya9bwK2Ppke3/J4xRNM7XoyVoF8lP0sk2AsXLiY1Dw503R2YKW8XqwseP/0Yib9iMExJ0R7K+uPYfrxaQ4HN/0kt6IDBB2BXVWeTli+TzeALiaK7R0io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748176374; c=relaxed/simple;
-	bh=Zm6sqqdLsuqM7CAR+q6ZjZWpT2f9BhhyD9qYALFxsnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ovo8nHtVl6QiciYK7Gq93Sezq+/ATHNMYcVuxaobkH7PAy+VyWW4HONNUiV359VUdgGDxmb6bZXa/PJwdAsoiSHpZ+0Bbar+F2IFrIex0ZyaktdmYgFi++JQsEdNhnDxWoxTu1uhOtRbqb0cg8dmYGfOgpBrjyPIJ2wOxF3LvHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ENMmL7kz; arc=none smtp.client-ip=80.12.242.17
+	s=arc-20240116; t=1748177277; c=relaxed/simple;
+	bh=1vQot9/YzyhwfQ5rlIMydUg7976pe3VNp8Zhz04gnOw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RPnwncjCtl42XdJyWReEYJ9leUUXt6gbuDhUeoqGODV+C3YUo8PJoMI3Fs+BctTkJjY7Q9i1lZRp+IPY0L8BO4q5NytxEpQMSPx7Cs2HJPUOXYGg5e2/CLbmumhiPLVCKzp8rLmGW63OpzjcVDTL8lDLxbS2j6XLX2HAAc8hQdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=drX6Cs4C; arc=none smtp.client-ip=80.12.242.77
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ENMmL7kz"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="drX6Cs4C"
 Received: from localhost.localdomain
  ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id JAWtu3FlrpEs6JAWuuNAR5; Sun, 25 May 2025 14:32:42 +0200
+	id JAlVuw6JcVLIhJAlVudBOf; Sun, 25 May 2025 14:47:47 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1748176362;
-	bh=ezOSH7DNNbrcR1DYR5Ht3MTrtxBGiOkFfZgULPq3ODQ=;
+	s=t20230301; t=1748177267;
+	bh=t4ZAoOZ0xwqjfOADCYoIsABzXUONI4tlDgJj0yx1w3M=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ENMmL7kzpGv6rNZQN7cEUa9d3mP8A8WR0med0d8Q53PjkvOPGSgTqUkN1a6mAlrTj
-	 oBQoZdtxm36eohIdFoSKZQsmOaU2NEK1cencEUC9tLRVk4MPKk4yeytrRnXwL5thl3
-	 TCoqig+9ziMj6RkrKH687W6L15XqGa2fB3cWmE9tnJ3Lf2UqPbkSKdTKzNdg6X5VWO
-	 a9EJlhdlO15hz4yJa0JBjTwqd2hRYDNeW3pqvRnRmwxlgEaNXB/TKNWfcm+P3rSV0A
-	 zF56VwhPHBWiieoP7E+Jm0cdQK/tcaIJvnl0rMZ8W+mCsyv6Xyg/WEWrkTPIKAyzIg
-	 xZkp/1EsKLvIg==
+	b=drX6Cs4C2NPnMavevuPimqZReakB9GyqqQInLlcBtzqc++Z+Qe4L/69xpxoPICzVc
+	 Fjbsn5UuN/9AOGIwzI1n4oKM6THLAZxxSgh5vwWlmyswHNeydiqFcelo7/DuTR22hA
+	 Tnk8wvWOQ9AUZE/6koGplCPOrMPkQE2QEmfMv9t8PnxDnFBzCQ6JK9tBGCDZfbYz7o
+	 cw8FN3XB4udwqEJnI60mvF6DL8/xJoypeXSXSD5KOpb+lA1RfMIr9+DTF0mQkMGTmp
+	 RJ3vH6QjkdLl1se7qB7KGYnlkog1H/GVjNLVrGKy9/9Rzde8yJDTfOUlxehrqrkCN6
+	 phyd0OS8pdN2Q==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 25 May 2025 14:32:42 +0200
+X-ME-Date: Sun, 25 May 2025 14:47:47 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: zhanghongchen <zhanghongchen@loongson.cn>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>
+To: Peter Kaestle <peter@piie.net>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] thermal/drivers/loongson2: Constify struct thermal_zone_device_ops
-Date: Sun, 25 May 2025 14:32:30 +0200
-Message-ID: <5f5f815f85a9450bca7848c6d47a1fee840f47e5.1748176328.git.christophe.jaillet@wanadoo.fr>
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH] thermal/drivers/acerhdf: Constify struct thermal_zone_device_ops
+Date: Sun, 25 May 2025 14:47:35 +0200
+Message-ID: <e502fadf2c6b24fc4ec3a7880533f7ca68429720.1748177235.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -62,74 +59,48 @@ Constifying this structure moves some data to a read-only section, so
 increases overall security, especially when the structure holds some
 function pointers.
 
-This partly reverts commit 734b5def91b5 ("thermal/drivers/loongson2: Add
-Loongson-2K2000 support") which removed the const qualifier. Instead,
-define two different structures.
+While at it, also constify a struct thermal_zone_params.
 
 On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-   5089	   1160	      0	   6249	   1869	drivers/thermal/loongson2_thermal.o
+  26422	  12584	    512	  39518	   9a5e	drivers/platform/x86/acerhdf.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-   5464	   1128	      0	   6592	   19c0	drivers/thermal/loongson2_thermal.o
+  26646	  12360	    512	  39518	   9a5e	drivers/platform/x86/acerhdf.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested only
 ---
- drivers/thermal/loongson2_thermal.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/platform/x86/acerhdf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/loongson2_thermal.c b/drivers/thermal/loongson2_thermal.c
-index 2d6b75b0539f..ea4dd2fb1f47 100644
---- a/drivers/thermal/loongson2_thermal.c
-+++ b/drivers/thermal/loongson2_thermal.c
-@@ -112,13 +112,19 @@ static int loongson2_thermal_set_trips(struct thermal_zone_device *tz, int low,
- 	return loongson2_thermal_set(data, low/MILLI, high/MILLI, true);
- }
- 
--static struct thermal_zone_device_ops loongson2_of_thermal_ops = {
-+static const struct thermal_zone_device_ops loongson2_2k1000_of_thermal_ops = {
- 	.get_temp = loongson2_2k1000_get_temp,
- 	.set_trips = loongson2_thermal_set_trips,
+diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
+index 4c3bb68e8fe4..5ce5ad3efe69 100644
+--- a/drivers/platform/x86/acerhdf.c
++++ b/drivers/platform/x86/acerhdf.c
+@@ -271,7 +271,7 @@ static const struct bios_settings bios_tbl[] __initconst = {
+  * this struct is used to instruct thermal layer to use bang_bang instead of
+  * default governor for acerhdf
+  */
+-static struct thermal_zone_params acerhdf_zone_params = {
++static const struct thermal_zone_params acerhdf_zone_params = {
+ 	.governor_name = "bang_bang",
  };
  
-+static const struct thermal_zone_device_ops loongson2_2k2000_of_thermal_ops = {
-+	.get_temp = loongson2_2k2000_get_temp,
-+	.set_trips = loongson2_thermal_set_trips,
-+};
-+
- static int loongson2_thermal_probe(struct platform_device *pdev)
- {
-+	const struct thermal_zone_device_ops *thermal_ops;
- 	struct device *dev = &pdev->dev;
- 	struct loongson2_thermal_data *data;
- 	struct thermal_zone_device *tzd;
-@@ -140,7 +146,9 @@ static int loongson2_thermal_probe(struct platform_device *pdev)
- 		if (IS_ERR(data->temp_reg))
- 			return PTR_ERR(data->temp_reg);
+@@ -426,7 +426,7 @@ static int acerhdf_get_crit_temp(struct thermal_zone_device *thermal,
+ }
  
--		loongson2_of_thermal_ops.get_temp = loongson2_2k2000_get_temp;
-+		thermal_ops = &loongson2_2k2000_of_thermal_ops;
-+	} else {
-+		thermal_ops = &loongson2_2k1000_of_thermal_ops;
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
-@@ -152,8 +160,7 @@ static int loongson2_thermal_probe(struct platform_device *pdev)
- 	loongson2_thermal_set(data, 0, 0, false);
- 
- 	for (i = 0; i <= LOONGSON2_MAX_SENSOR_SEL_NUM; i++) {
--		tzd = devm_thermal_of_zone_register(dev, i, data,
--						    &loongson2_of_thermal_ops);
-+		tzd = devm_thermal_of_zone_register(dev, i, data, thermal_ops);
- 
- 		if (!IS_ERR(tzd))
- 			break;
+ /* bind callback functions to thermalzone */
+-static struct thermal_zone_device_ops acerhdf_dev_ops = {
++static const struct thermal_zone_device_ops acerhdf_dev_ops = {
+ 	.should_bind = acerhdf_should_bind,
+ 	.get_temp = acerhdf_get_ec_temp,
+ 	.change_mode = acerhdf_change_mode,
 -- 
 2.49.0
 
