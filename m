@@ -1,120 +1,125 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7B4288DB;
-	Tue, 27 May 2025 07:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB731FBEB0
+	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 07:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748331506; cv=none; b=o7Gm6hM9WrnWa4KTuhfDOvlwuJxexdKHI7yb3+Up+mnrvddDCNhAQ0kMrX2G8xyIAhSs+8BiBlKYAm7aZbOGWCBzeVrhIp4eDEUX8fdLXwwwUKOk2f3iVH8XObAKmxwSzRow/69L60iw05dsGajBjJrr/D5vQUTZGskK22UzDO0=
+	t=1748331972; cv=none; b=AinKf9ltjyK1gLoGaHFE0kewWhXd8jGUJm2J7LBfVzGnrDmfkVF+aTKE4s3X84fIrONIwFhne8RfA4fh8/ItzHjNjpwJKYKwNUD9RMdIm/QZK4XBUP4Tqr/Y+prUKfmVemkZP7Vh/h4EeG1ZABICV68dzBKQGHDeoNRj4vNbyj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748331506; c=relaxed/simple;
-	bh=i690CQjuRjliu6SJ2bm4fdZsogyF2RzFSpwTyVOSEyo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dQRIf5I6mm7aXBq1utkAjpbc8PApW61x7+htBJL39+HmIqWV752UiuOtYrox8UwXbhUi+R1s0UCubSXFr9H2T5+dv8kZrgAySFZ8h6jRqtPLi4suZAfjxWjs5DAGiAgboS9iM223/n8TNuU4yWI2apuu4JPjTuk+LRMOVEjtLUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Oxnoi3Vj; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1748331972; c=relaxed/simple;
+	bh=QsdO+ZSurjfW+txHD96EQ4S874P9J1sRBPDp56cKBAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUV3ZU19igN56tdQgZkkp/lkfVIKAQ2gERRB/bJYGFUSPV01Cy1GI8R48UZRmKmiFqbjBRobX29g/niblscDrfXoBMAY/qOHDKJ/pOWonEMyfJeSlZIbYz5KN89483FKK5xBhvC4/Dduq+VONZBdkyZtxtiHhg8fKEKxfIwW2SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u6iX+igI; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Oxnoi3Vj"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 54R7cId251450466, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1748331498; bh=x/ATG9zs6W7XqSUAA4bWjhCLRx0nRfw2siWd57FWhc0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=Oxnoi3VjOMGzejapufOTkYDHiskwr/UNp8AN3YMz4X3El4EILiulJvYCcCUtE94Mz
-	 kEfwELD003mf4esntSyRIwsGeD6DtbjnQ8mgTk7UF38Xcl7l3W9ZwndDSipfYx+w48
-	 e7bPjdTtzwKpF43ROKqkvmblJV+SbuMW35dI9p+r9Rk64gREvoNC8A4wB0cDZ0JzQJ
-	 9wezHNH8bOs8ku03tpZG0bPoQrYdXPk4tCbM/UKSjmIkd0xcEtUZuNK/wkdFtBiSVn
-	 ri4OjcXJwUOjoub/eD+z9BdZnJxEs1Oi9ndF+yYq3vfyIy07gzOcvu0gQf0ItjmLJz
-	 mrgIcjkhEOB8w==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 54R7cId251450466
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 27 May 2025 15:38:18 +0800
-Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 27 May 2025 15:38:18 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 27 May 2025 15:38:17 +0800
-Received: from RTEXMBS03.realtek.com.tw ([fe80::dd06:104c:e04d:a488]) by
- RTEXMBS03.realtek.com.tw ([fe80::dd06:104c:e04d:a488%2]) with mapi id
- 15.01.2507.035; Tue, 27 May 2025 15:38:17 +0800
-From: Zong-Zhe Yang <kevin_yang@realtek.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Ping-Ke Shih <pkshih@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH next] wifi: rtw89: mcc: prevent shift wrapping in rtw89_core_mlsr_switch()
-Thread-Topic: [PATCH next] wifi: rtw89: mcc: prevent shift wrapping in
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u6iX+igI"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad572ba1347so513986366b.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 00:46:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748331968; x=1748936768; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2apj+2/E8vgrIKr+nA0N8eLInGCqIVYSVlwSMLdIif8=;
+        b=u6iX+igIMpZ5iCp2Ldk4WBlyLzRwbeIrg0Qi7WurmfELxe6RAwrpudgwgBoIo8Mo8m
+         EYxE6Mi1miA28wNdgNCDFxPqC8wAt9LkK5UqMkqBv2yZVFI/QRmScTh5b4JCvtDJpTTz
+         pguPuuMplmwYLz4U9JqrgtYz/IyD4b2lX83Z//QKcz9Q0TVPeTPbYgnj9kY9Il3HvIcG
+         CDPfxqaSuOyie2nLL3IenRk/pszEiSPbWmPpNA/hjXELbT+TN/cqWirKys+/3wRA3dTX
+         L0n6SnutayxsKXpy3bgRUedNXHBJg/rIUwKGCE4qRMcUQEE7g+zbFL5lddtgof4tn+Hp
+         g9gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748331968; x=1748936768;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2apj+2/E8vgrIKr+nA0N8eLInGCqIVYSVlwSMLdIif8=;
+        b=UP0t0hd/HcKpbXl/fiSAYG03kkD7pts5UgAVkHGhQCfj/14rZj4ilfJZmzbUffmdw3
+         BXcDg65gKA7WVTc4+SBwghIjPw8+mOxFKIa+do6pl2t143TRNGNf1NiEbuUhAJCuud57
+         NVxTi0AcVBpgcqKtxnjisBfizzfN793KWczwUkyj7YhQxP6h4hBtYOcae5euithd1KtL
+         7hKb92OOVisqO/E4lq5j0E6tcDwIbafqoId8mkoCyAgF4CUGrxQsTieFuICIB21RSm6P
+         Q+NoJg89RSNg9Z9Wbf0rDDG0Og6Nk3ewiHThSDYUNVTgBgIzvsn5RRK6KHaDMwX9V/Ug
+         nqeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVXPX8nv0z6SsazETacFHTaOxyQMKeujbmF0IcDOrjPtQzOCNsEss4NYoFAjL+XUnwx1tM75bgIsxDlU9fl0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYEGrU5dBCXbABk4/KkRtHJEBk2cFBxnlttdbRMkXS+zhT0hFp
+	d3SVjql13gpZOP3URji40tNns7IjnsP56wgMgInq6jwDcZS6UguX1ZXCP5FbsrtLn38=
+X-Gm-Gg: ASbGnct5oos2jT21rZeK1wSdTZNENkzp5XlKZUnpgJGqpAkpRRpqVY6JdSul5JqQLwW
+	BKybPeebe7dC53B4A68rQpQjihD8Fi8efLWr6ofwHv9qEUBq3bei3WKtv2e8dfYBAjxWzGLPlGL
+	5l6zsCnnvDM8OVf0pNfbKSzM5PTIcCNR51MScJ1txJoaZEIl/6LWNeshfdualcbak7pRSUKBpU+
+	Gowe77KKnVMgnOLktJfW77gJg5QohWbKxCHgBi0tbDvKSVPyspBD9N58Wig7pXTgGzWXlvPlG9I
+	DnHtOJ4iQPo+k27tX26JcCmrHIe0lrdT6aCPLFBzYAq+u4dgIkRi0fq4e8f6COyagn2LxZGJ6Uo
+	CnHp139JlJg==
+X-Google-Smtp-Source: AGHT+IHdr5lkHBNyQR2lwCI1Zx1yTjWeGBiSlBewwlacaL6tp/Bi3RSdo5x6f9SKZp3swZZHW87cBA==
+X-Received: by 2002:a17:907:72d0:b0:acb:b900:2bca with SMTP id a640c23a62f3a-ad85ade9eb1mr1043489066b.0.1748331968019;
+        Tue, 27 May 2025 00:46:08 -0700 (PDT)
+Received: from localhost (hf94.n1.ips.mtn.co.ug. [41.210.143.148])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad52d4ca3bdsm1794033766b.160.2025.05.27.00.46.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 00:46:07 -0700 (PDT)
+Date: Tue, 27 May 2025 10:46:03 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zong-Zhe Yang <kevin_yang@realtek.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH next] wifi: rtw89: mcc: prevent shift wrapping in
  rtw89_core_mlsr_switch()
-Thread-Index: AQHbzswfjeN9r26I10eoAov9FdTI97PmBnfw
-Date: Tue, 27 May 2025 07:38:17 +0000
-Message-ID: <582b5bc4c4434934838ae28d77b7f73a@realtek.com>
+Message-ID: <aDVtu6dpKfWOyBn6@stanley.mountain>
 References: <aDVUEHfa9q2zBD6i@stanley.mountain>
-In-Reply-To: <aDVUEHfa9q2zBD6i@stanley.mountain>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ <582b5bc4c4434934838ae28d77b7f73a@realtek.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <582b5bc4c4434934838ae28d77b7f73a@realtek.com>
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
->=20
-> The "link_id" value comes from the user via debugfs.  If it's larger than=
- BITS_PER_LONG then
-> that would result in shift wrapping and potentially an out of bounds acce=
-ss later.  Fortunately,
-> only root can write to debugfs files so the security impact is minimal.
->=20
+On Tue, May 27, 2025 at 07:38:17AM +0000, Zong-Zhe Yang wrote:
+> Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > 
+> > The "link_id" value comes from the user via debugfs.  If it's larger than BITS_PER_LONG then
+> > that would result in shift wrapping and potentially an out of bounds access later.  Fortunately,
+> > only root can write to debugfs files so the security impact is minimal.
+> > 
+> 
+> Thank you for catching this problem.
+> 
+> > 
+> > [...]
+> > 
+> > @@ -5239,6 +5239,9 @@ int rtw89_core_mlsr_switch(struct rtw89_dev *rtwdev, struct
+> > rtw89_vif *rtwvif,
+> >         if (unlikely(!ieee80211_vif_is_mld(vif)))
+> >                 return -EOPNOTSUPP;
+> > 
+> > +       if (unlikely(link_id >= BITS_PER_LONG))
+> > +               return -EINVAL;
+> > +
+> 
+> Since I think this problem only comes from dbgfs path, would you like to just add a check in debug.c ?
+> 
+> For example,
+> (based on 0 <= valid link id < IEEE80211_MLD_MAX_NUM_LINKS < BITS_PER_LONG)
+> 
+> rtw89_debug_priv_mlo_mode_set(...)
+> {
+>         ...
+>         switch (mlo_mode) {
+>         case RTW89_MLO_MODE_MLSR:
+>                if (argv >= IEEE80211_MLD_MAX_NUM_LINKS)
+>                        return -EINVAL;
+>                 ...
+> 
 
-Thank you for catching this problem.
+I'd prefer to add the check in one place instead of all the callers.
+We could check IEEE80211_MLD_MAX_NUM_LINKS instead of bits per long
+if that's more readable?
 
->=20
-> [...]
->=20
-> @@ -5239,6 +5239,9 @@ int rtw89_core_mlsr_switch(struct rtw89_dev *rtwdev=
-, struct
-> rtw89_vif *rtwvif,
->         if (unlikely(!ieee80211_vif_is_mld(vif)))
->                 return -EOPNOTSUPP;
->=20
-> +       if (unlikely(link_id >=3D BITS_PER_LONG))
-> +               return -EINVAL;
-> +
-
-Since I think this problem only comes from dbgfs path, would you like to ju=
-st add a check in debug.c ?
-
-For example,
-(based on 0 <=3D valid link id < IEEE80211_MLD_MAX_NUM_LINKS < BITS_PER_LON=
-G)
-
-rtw89_debug_priv_mlo_mode_set(...)
-{
-        ...
-        switch (mlo_mode) {
-        case RTW89_MLO_MODE_MLSR:
-               if (argv >=3D IEEE80211_MLD_MAX_NUM_LINKS)
-                       return -EINVAL;
-                ...
-
-
->         if (unlikely(!(usable_links & BIT(link_id)))) {
->                 rtw89_warn(rtwdev, "%s: link id %u is not usable\n", __fu=
-nc__,
->                            link_id);
-> --
-> 2.47.2
+regards,
+dan carpenter
 
