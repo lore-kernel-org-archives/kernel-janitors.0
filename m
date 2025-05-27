@@ -1,105 +1,94 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9C01DF254;
-	Tue, 27 May 2025 12:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8036C139E;
+	Tue, 27 May 2025 13:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748348131; cv=none; b=TE2aODfXTHIVF+g6yRJvWk22fkv5pVQAs4fhPqd8CNG2rgQbVOYHa99DGohmQbIEvUG4+/vUkg+Ww2VIspy62AscJWpehUrCNRNmF60mxdCNajdicz75YpooxsJxmnVd9XvkX7kcKbuHFCCMCx0o0lQ38NhvjhbyiD03Ck/LE04=
+	t=1748352079; cv=none; b=uSIGwVjgLhWjmsYhZn0CcvQx3y8lRTLGyMj7GVTEP2LzZ/tlzgnror8KrQT2DOS0T7GSCuKIVdVXKeu4HrX1INwjRc0V9rSSYDRUqP2RI/U5dk/leRt91XZBGrr9a0b2tV+1UFPczOChmnbuIlA6GNzzrLKEJBFWvpbvUooIofE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748348131; c=relaxed/simple;
-	bh=Uyg/JPpzodrTtnK0p+gK6gukgXtp5qciPTkzfWFyzh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHoluzsQtUYaYrTKEBsrdGSCYLbxshJkQrHChMyZ3cL7z9mqnmrDrznqhz2InJXXLvX31/aWZhba6pAwdS7cuRVP3JsP+ikQ9WEx/62Opa2EUNsL3QuVC9R67sL46PF0ZjMPc5K0JWOwGVaFhwpgiYNsdU7uKx+4uB6L7uewLZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BhtFY4o5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1748352079; c=relaxed/simple;
+	bh=fp9luBBetLAP0B/DgHuAdGyoO1Vry5JUr7H5DC4G4HI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iETVDwob/C286q9t3JpbjL7WMUKP/qdzhsUTnMIFwXMmySWJ9dORveMaTkYOkuxsWteh0Bgyp1y1huuJrBddmNsnG58ox1DQ6up+RO5w9LE4uPr9vA28uDwltV0eFgHIY0Snylj44W4k6jEJbubrvT70BwmwkCMVnylj/rSjQHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvSYCtDq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BhtFY4o5"
-Received: from pendragon.ideasonboard.com (unknown [145.15.244.208])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A507D2B3;
-	Tue, 27 May 2025 14:15:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1748348101;
-	bh=Uyg/JPpzodrTtnK0p+gK6gukgXtp5qciPTkzfWFyzh4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BhtFY4o5xKFll9hHm5rvN2HNJvHpk9PzNaslqGQ0jvJWehiGQMi44dPybUqo6t7kJ
-	 1wAiP04iIxOc8vsto4/kk/ekdcgrAMgIQdKIwYkyVUj3SaWaPOFSHLdz2M4NR9OkXr
-	 UOKPsbXR2X+IwC2f7NGVLBBYOX1UaZBpkYU80PbI=
-Date: Tue, 27 May 2025 14:15:22 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Cosmin Tanislav <demonsingur@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] regulator: max20086: Fix refcount leak in
- max20086_parse_regulators_dt()
-Message-ID: <20250527121522.GN12492@pendragon.ideasonboard.com>
-References: <aDVRLqgJWMxYU03G@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvSYCtDq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFCEC4CEEB;
+	Tue, 27 May 2025 13:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748352079;
+	bh=fp9luBBetLAP0B/DgHuAdGyoO1Vry5JUr7H5DC4G4HI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SvSYCtDqgahkC+5NUsg3f9lwPIdRRKsBkCr3P1gUQUXmFcwUjDnv5FY6Uvm+RT+U0
+	 6eoYz1korr1a+9BwDMEdgCl3M2Du0/gMjzQIb/3NYwDVbsr5sz0OU/Fi5CWuLGwIKn
+	 tgtwE/oNTr85+y9RNhZeN6tfHCxGLRmfy1C45rFWj9BZ758wCuUe8u8vNmNLi90a56
+	 sBWJN1RuNFN1RoWn6DABasgaMqD092fY7BGgluR4sEGyQXuVG00u11dzRQ7fqF+WPB
+	 O70jGDftMLfGXFZ12OrFFEcvcHn0Yv1bBN4D5x41T81f/tYf64rof0/tpoG9xwnmkJ
+	 dCr+hSusFc3FQ==
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-401be80368fso398453b6e.1;
+        Tue, 27 May 2025 06:21:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU5IJjAQ752QasvZw13Su0JfPl4ukOrNohlwYgXmUAIpbyVeZsO6dLm2JE99Hc0JyHQBgRjbOVACEJSWIlt@vger.kernel.org, AJvYcCUB2ipMIIHfctMD3epx4VNAhQ5Izi8vSvPOWSsKJoNCIHfEa6GeSgL3eOv2EA9Z4KeynbN1p7kVMVJXCg==@vger.kernel.org, AJvYcCVKoCkdb0KbYsLLrDkGh5zbFAdOCE/k9NZNQWoe16wjknvdVUFlYgacfRUPYuAig1ukSfF+vO4o8yIyIEsYPpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0SOUrjGU+SYEeZ9LkbxrJZGZAKkR54+HpyfcZXkYcGVrkUG8g
+	vOTkp/R2EO0wRSJ/givmwTvou0MCWRdNVg1Q330JQyKXtmMHnYZRZQvKT4NvgWR86ci2RET4jf4
+	CDACkTBldoSjkYdsOECFr3IKrcbnPyUQ=
+X-Google-Smtp-Source: AGHT+IGh97Bf/315jIDDLCVQau8WC5fWsBAGJ/xi73UpowPj2sPBAO+dga4Q2MnB2Vokwwb9oIyCR4/b7oelhXZX1dI=
+X-Received: by 2002:a05:6808:7006:b0:3fa:daa:dd8e with SMTP id
+ 5614622812f47-4064686c16bmr7438233b6e.35.1748352078738; Tue, 27 May 2025
+ 06:21:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aDVRLqgJWMxYU03G@stanley.mountain>
+References: <aDVRBok33LZhXcId@stanley.mountain>
+In-Reply-To: <aDVRBok33LZhXcId@stanley.mountain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 27 May 2025 15:21:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0im_642kBUqryy=70-+JikM+dhg=w=Shc3Df4HKPhDCsA@mail.gmail.com>
+X-Gm-Features: AX0GCFtQtSn0J7mIK2LqJJVYnxD13WNcOWk7YSKyky1S9-K_McoA751MogP26pY
+Message-ID: <CAJZ5v0im_642kBUqryy=70-+JikM+dhg=w=Shc3Df4HKPhDCsA@mail.gmail.com>
+Subject: Re: [PATCH next] ACPI: APEI: EINJ: Clean up on error in einj_probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Zaid Alali <zaidal@os.amperecomputing.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Jon Hunter <jonathanh@nvidia.com>, Ira Weiny <ira.weiny@intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
-
-Thank you for the patch.
-
-On Tue, May 27, 2025 at 08:44:14AM +0300, Dan Carpenter wrote:
-> There is a missing call to of_node_put() if devm_kcalloc() fails.
-> Fix this by changing the code to use cleanup.h magic to drop the
-> refcount.
-> 
-> Fixes: 6b0cd72757c6 ("regulator: max20086: fix invalid memory access")
+On Tue, May 27, 2025 at 7:43=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> Call acpi_put_table() before returning the error code.
+>
+> Fixes: e54b1dc1c4f0 ("ACPI: APEI: EINJ: Remove redundant calls to einj_ge=
+t_available_error_type()")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
 > ---
->  drivers/regulator/max20086-regulator.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/regulator/max20086-regulator.c b/drivers/regulator/max20086-regulator.c
-> index b4fe76e33ff2..fcdd2d0317a5 100644
-> --- a/drivers/regulator/max20086-regulator.c
-> +++ b/drivers/regulator/max20086-regulator.c
-> @@ -5,6 +5,7 @@
->  // Copyright (C) 2022 Laurent Pinchart <laurent.pinchart@idesonboard.com>
->  // Copyright (C) 2018 Avnet, Inc.
->  
-> +#include <linux/cleanup.h>
->  #include <linux/err.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
-> @@ -133,11 +134,11 @@ static int max20086_regulators_register(struct max20086 *chip)
->  static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
->  {
->  	struct of_regulator_match *matches;
-> -	struct device_node *node;
->  	unsigned int i;
->  	int ret;
->  
-> -	node = of_get_child_by_name(chip->dev->of_node, "regulators");
-> +	struct device_node *node __free(device_node) =
-> +		of_get_child_by_name(chip->dev->of_node, "regulators");
->  	if (!node) {
->  		dev_err(chip->dev, "regulators node not found\n");
->  		return -ENODEV;
-> @@ -153,7 +154,6 @@ static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
->  
->  	ret = of_regulator_match(chip->dev, node, matches,
->  				 chip->info->num_outputs);
-> -	of_node_put(node);
->  	if (ret < 0) {
->  		dev_err(chip->dev, "Failed to match regulators\n");
->  		return -EINVAL;
--- 
-Regards,
+>  drivers/acpi/apei/einj-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.=
+c
+> index ca3484dac5c4..fea11a35eea3 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -766,7 +766,7 @@ static int __init einj_probe(struct faux_device *fdev=
+)
+>
+>         rc =3D einj_get_available_error_type(&available_error_type);
+>         if (rc)
+> -               return rc;
+> +               goto err_put_table;
+>
+>         rc =3D -ENOMEM;
+>         einj_debug_dir =3D debugfs_create_dir("einj", apei_get_debugfs_di=
+r());
+> --
 
-Laurent Pinchart
+Applied, thanks!
