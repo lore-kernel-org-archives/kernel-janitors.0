@@ -1,78 +1,69 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08801E2307
-	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 05:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28457483
+	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 05:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748325346; cv=none; b=OqXAyDZExX9XIsOfBop8zZrNoNgu83WuGpbjtYZ0nRQ6DdYDqXNk625/gRiTfwnJ/vPwNx1PqdKePVMamRgon5veMCunXipk48MsKZqS67l8mxQhvK9r7L3tEQ+tONh6yiwfCqEmgEERbkZdKezPun437wv5uvA+MmZMUS974s4=
+	t=1748325400; cv=none; b=l7Z99R0nfbIeebPuFRozxb+QlRSNxclKGzAANQDBIFfs6/DANUqUzzuV2bv3cR7HDV5xNv28Vu6cniZh5hwWNUc3hFyDMfsBRsw23sp2L/cERwC7PF30x8xG/FvdxYWYxYpcvBrgnCZ5ZD0rjZnCUL6JePBqYLC9+QAWHD/mr0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748325346; c=relaxed/simple;
-	bh=xLVy8X8HnHvYCsIOMkpIYqzz4Og+J+/aGg17JBINL/I=;
+	s=arc-20240116; t=1748325400; c=relaxed/simple;
+	bh=S6lrD0Op5pKlWL71e8qgzke0xa2+KfIHREDTWYi7JZQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OInDf/jc4UNDg7StT9X/iHiF3m0b467lldOzBk0y7AfTX7gcrn/rzPrJBW6Bmi96gHLskdgXMmoLoHC0ZHwJ1rF2pE4968LOG5NT5q8IHUjj04B7yY5s2CwlSDTpPXSi0IJuZ8x8ah3ASYQ6Ak4Pu6cJp8NM55owFaqZrTUs9j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ref2N4pB; arc=none smtp.client-ip=209.85.218.44
+	 Content-Disposition; b=HpbaS2BgF44W/avfFSinBfykmqAFWZ01f0IsjLbP+hFlk2ca63xWn2fYfwde+YN95hweEZLM40Ht5hZVJgCGp9VX10ZYh0XJmEGcv7SOKmHEp3aB+A4vZzwdIcxrw8PG92UuSIdIHZ3O7/ltRWjMMlNWe4zcsJQayp4+5MoFu6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ooMo/78Q; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ref2N4pB"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ad545e74f60so388419266b.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 May 2025 22:55:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ooMo/78Q"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad5740dd20eso447869266b.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 May 2025 22:56:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748325342; x=1748930142; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748325396; x=1748930196; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=b95ydlmvcuSBT0t2+Bg2nsz8TCc7xZGDZD7y4UeqVe8=;
-        b=ref2N4pB4CB6osMPiMaWpw5mgU8Ymoy+df1hJJmenzwfaOcNz23D4OYrhojyr/U2HF
-         QXb7gw6z+90GduDJeCBAtvYHW2D5P7DYc/TVDpyZbvFafYAZ2RC1c9SKL/n7Wvo4LlIn
-         lrxQ6bdDOiPijky43/RBCwLmqSSaZjSMQrgWaA1UrDM+6k0AWCXBuikUGj0OILsutzbM
-         flZ8s/y0oBrXni+RXIsBTHT0AKvlDOz5WFLDK7WEUlZvYZo+c9B+ocWIUEyKOkhUVYqZ
-         ILXyJnEwXW3zWTI/uzt6qgcFtnTR7AStGAAgvwiic1PR0gTy0Hd0H2MBGHUbzVV8hlrU
-         xTIQ==
+        bh=1sqY5GIDGTtXFbbXu39XJwDlCZ5xKeuav8V3AHR7Qzo=;
+        b=ooMo/78QLU2KQR5tjALqxSXjmfUPnGjeDyTRyMlydIWW18ESCT2AuXgG12tTr5aDKy
+         t39E3RiMPYphlhlBqdbaoWjAL2bAt64Txuj6YxNGT0gzrFVgG5+dX7hff9qpJ5aOoYUm
+         qV5A5Jag9FalQUl5I6hJlH2o02Kh3ceLNz3RLD5cRhO9Inux8yW9QTgGCIhIFFaE9Kcg
+         eJa+6R+LHRmgIFYy6scyzS8euox7NrSamuoHF0hXg1P5FidjMAiynSp4yhUPavzXRNGu
+         gQGmXsZKrphloC4IL9uhKUHrIzTjl+1kY6SR4tSLuM0RyYYSEH4yGoM1jboK6GtHNDSM
+         fMpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748325342; x=1748930142;
+        d=1e100.net; s=20230601; t=1748325396; x=1748930196;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b95ydlmvcuSBT0t2+Bg2nsz8TCc7xZGDZD7y4UeqVe8=;
-        b=TzxfG/kHls8SCi+ysv0ZU2jRFpccnPFyMkhrwLWTy02hyAY9La6WIjCA1jH2YCtBNs
-         5LadRHnFuc00NlGrfSHvWzXvQY4OwswLgQteWYRuMt2+LCTXjkNeujdOTdF+jf2asEl+
-         gNOlK/Ge9hViHDNYNj4TFEt8UGVljzhdUFBGEDARdkJIJXPr7li1xu2fWBV6zFkL5taQ
-         AuOglOBTViRXIhkvqgpXIj8gyPiSV2yxpXgoYsrUnz9OMfSa2tU+9hjeNok7DSt5MegO
-         f357/ZC4xGk0RAQtae3az84iz880fh8lVBV84Bboel3P8T8LtRw8JtdNbdfZrp7NVuRN
-         6mLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUI98w+aktezWnOiheuftRTIIGWdZwkkqFIrrKyjo640HLUHmzNVaDhJOTDLXbiN/ZgaVSak8pV96yLwKLPbeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Qp9s8cBxC68QIHFNUnB3aeDSSXeniiwE/ANlfXEgViQa1zyD
-	jjnq3jKTRYbrwfEyM16qkSCD+q8pl4liJMXqgFyqtiO4v/GzlOAtKIbbimZi2SYPSgs=
-X-Gm-Gg: ASbGnculHXt0ltfd/iNfZK7IuJy47ZDHPQhXiSzObHAqM2m74G3sX0W4ejlSN3+dhd3
-	zPdD0eahWP2FKlPbJx5LKHtLLvLHd7FXocq4ohtAX28sqtU2yNHSIA/OppH9UGYmci4p2FcfpP+
-	4KRXVB3R8j9l9pLiBoiPCjWC1aGMTGSOWOCSmCqMzBjEH28w5e2jrU33wSDWAoVd2hsKLEu+kx+
-	hNNlCu3wyDIsnO/Sg75Pnhz2OLfzTXMi79fgZDBuDF5HN5UcSks87li9YK0jy1CXhkamPTNiSKs
-	ebJpzKNY4G2dP+FWDygS2jUDkBT4BPIWNNX0MdpXmkWiKSTvq6/xrfon53+549zAz1aJ1LN1yic
-	=
-X-Google-Smtp-Source: AGHT+IHqcQBdt4pdotySeS2C++hBmaCY98bm7d0B72bKSBSdU4rDUN6+enuY0scFyUJE6OpWFCvJpg==
-X-Received: by 2002:a17:907:f818:b0:ad4:d32e:b571 with SMTP id a640c23a62f3a-ad85b1bf8d5mr961844066b.24.1748325342055;
-        Mon, 26 May 2025 22:55:42 -0700 (PDT)
+        bh=1sqY5GIDGTtXFbbXu39XJwDlCZ5xKeuav8V3AHR7Qzo=;
+        b=nK+va6DYNSquAAPmOmjgw2E/hrNlt273IvVujxmXRVWyPnG8RANlWuvEP+yH0mNIwi
+         FsIwdIk9DnnGAD90lBlyWdcH8cvwK64B05Hz1O+LKuCmIOMiuCmXC8y6kD/fLgDWKvhO
+         /XcxKPY0QNXXz2vMWCPgjfaYfPlqofDMpKrjJaXUaPrM3I4X+nDLgiFgjMVCgUmZzQa+
+         upraIeXBQ1vWxa16gQgpvM8QnSNAECgLzeeBV/kZISGX/npfHIgydOVqPoi6j2rG939j
+         bwEeFtm1hlpW3McR4FmQKDa2RMbOHMFVaKmQ1vf5dxls9/mxPnuETh1H+Memh9V5L9wc
+         iugg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmY5r9I69Bw8NtvgQ/IlSbBnEzVEFovxCaTCJsRCfjrpYiNTuqzIANEqSzHHY4/bKFELmnm0Us6N3ZlImnWjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8ZARDCojNKNWVhGGweEkQwjmJB6Wf3lyxhFZSJdhJXAa2QCT2
+	Kbd0MyJfLMod6nXNsGAwogHC4SiRh+4SXHtB8vYgKtp5AcgvOPKhBuMVhs5joeRV1jM=
+X-Gm-Gg: ASbGncvWgjDxfcf9ZIC64JXpZumBAmLKlRukygHHgCxuBFT4gaokbjZ50DoUxD+f1hG
+	iN8IYZsTHcqJb9CUzuQwwsoLKWKC+2uhFtBTwv2UZCz7fKEVzYSNgdeapo8Wj8VhfrD/YOlW+x0
+	C/BJEM6Swokh9Y/M68ii1Ypf8P1pdvuwLDiAHkbnemix6xfjSQpdXSrQM/S/45xp7A9CDkIlrxr
+	OgVYs9PMkLYJLpjIJxaRAPXlbk6QNiO4LDKE4/9G3s5mjr+HdKMNa1zg/FTUVUI+YgFixf+2Pf/
+	e1EIn+oU1460JA7ugkMNN4kZK6zfbW2yA/b92CzHT0cPp6bv20x0Ta2uLic2NMve0P03h9AKJYZ
+	4DXr8xxf8Dg==
+X-Google-Smtp-Source: AGHT+IFTol4OTI7mtKP7rV/Mh6vlzvg43m7yooyV7FvKtcQVu98SoqAju8dLAhQhxa1PD6WLeSmTZg==
+X-Received: by 2002:a17:907:8dcb:b0:ad2:5499:7599 with SMTP id a640c23a62f3a-ad85b0d2777mr1008212766b.18.1748325396080;
+        Mon, 26 May 2025 22:56:36 -0700 (PDT)
 Received: from localhost (hf94.n1.ips.mtn.co.ug. [41.210.143.148])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad52d06e098sm1818489666b.59.2025.05.26.22.55.40
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad88973815asm94306066b.129.2025.05.26.22.56.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 22:55:41 -0700 (PDT)
-Date: Tue, 27 May 2025 08:55:38 +0300
+        Mon, 26 May 2025 22:56:35 -0700 (PDT)
+Date: Tue, 27 May 2025 08:56:32 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
-Cc: Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Deren Wu <deren.wu@mediatek.com>,
-	Allan Wang <allan.wang@mediatek.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] wifi: mt76: mt7925: fix off by one in
- mt7925_mcu_hw_scan()
-Message-ID: <aDVT2tPhG_8T0Qla@stanley.mountain>
+To: Zong-Zhe Yang <kevin_yang@realtek.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] wifi: rtw89: mcc: prevent shift wrapping in
+ rtw89_core_mlsr_switch()
+Message-ID: <aDVUEHfa9q2zBD6i@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -83,41 +74,32 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The ssid->ssids[] and sreq->ssids[] arrays have MT7925_RNR_SCAN_MAX_BSSIDS
-elements so this >= needs to be > to prevent an out of bounds access.
+The "link_id" value comes from the user via debugfs.  If it's larger
+than BITS_PER_LONG then that would result in shift wrapping and
+potentially an out of bounds access later.  Fortunately, only root can
+write to debugfs files so the security impact is minimal.
 
-Fixes: 8284815ca161 ("wifi: mt76: mt7925: add RNR scan support for 6GHz")
+Fixes: 9dd85e739ce0 ("wifi: rtw89: debug: add mlo_mode dbgfs")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Please review this one carefully.  I'm less sure about the second chunk.
-Also maybe we should just delete this condition or check sreq->n_ssids
-instead?
+---
+ drivers/net/wireless/realtek/rtw89/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
- drivers/net/wireless/mediatek/mt76/mt7925/mcu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-index b8542be0d945..16f3cc58a192 100644
---- a/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7925/mcu.c
-@@ -2866,7 +2866,7 @@ int mt7925_mcu_hw_scan(struct mt76_phy *phy, struct ieee80211_vif *vif,
- 	for (i = 0; i < sreq->n_ssids; i++) {
- 		if (!sreq->ssids[i].ssid_len)
- 			continue;
--		if (i > MT7925_RNR_SCAN_MAX_BSSIDS)
-+		if (i >= MT7925_RNR_SCAN_MAX_BSSIDS)
- 			break;
+diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
+index 49447668cbf3..7e5f87700941 100644
+--- a/drivers/net/wireless/realtek/rtw89/core.c
++++ b/drivers/net/wireless/realtek/rtw89/core.c
+@@ -5239,6 +5239,9 @@ int rtw89_core_mlsr_switch(struct rtw89_dev *rtwdev, struct rtw89_vif *rtwvif,
+ 	if (unlikely(!ieee80211_vif_is_mld(vif)))
+ 		return -EOPNOTSUPP;
  
- 		ssid->ssids[i].ssid_len = cpu_to_le32(sreq->ssids[i].ssid_len);
-@@ -2883,7 +2883,7 @@ int mt7925_mcu_hw_scan(struct mt76_phy *phy, struct ieee80211_vif *vif,
- 		mt76_connac_mcu_build_rnr_scan_param(mdev, sreq);
- 
- 		for (j = 0; j < mdev->rnr.bssid_num; j++) {
--			if (j > MT7925_RNR_SCAN_MAX_BSSIDS)
-+			if (j >= MT7925_RNR_SCAN_MAX_BSSIDS)
- 				break;
- 
- 			tlv = mt76_connac_mcu_add_tlv(skb, UNI_SCAN_BSSID,
++	if (unlikely(link_id >= BITS_PER_LONG))
++		return -EINVAL;
++
+ 	if (unlikely(!(usable_links & BIT(link_id)))) {
+ 		rtw89_warn(rtwdev, "%s: link id %u is not usable\n", __func__,
+ 			   link_id);
 -- 
 2.47.2
 
