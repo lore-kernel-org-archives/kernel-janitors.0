@@ -1,73 +1,75 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CE6D530
-	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 05:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5041D7E5C
+	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 05:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748324729; cv=none; b=R7zZrvlc/OJ95FLbdOJ48U/0PE+bFjAMt6GHHdaCmHxoHW6stdlCBXE0o2HmsxX8igZK1Y63H9j6BZua5Yb8MUqRaC5iaocihswK8h6PGzQjYefDsHLVIUKNcMFJVECcXx/H/g9kI8N5vZ5KDmj1hfgE+9DG8XcrQTiHh/FnNYI=
+	t=1748325108; cv=none; b=rqUB3HX4K4kLen258sd4Ate/md7fULD+l1ko3xBUy17ogwhfUhtMqQg35w8c6vHpPQAlX0gnmU0ZF5trQ2rscMv9ZqnCcgFLtyOZBAZ3i9cszpRxBfeJuSyI5BzD9/w9bJzM8/d3xVoEphAP1uK+teMWevTXFmpm/l8K9htLu30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748324729; c=relaxed/simple;
-	bh=0h4MToyMZi6FE1TFu8zlRTj8kxMLKoCJQR+vUO1Zo+U=;
+	s=arc-20240116; t=1748325108; c=relaxed/simple;
+	bh=FRU9W1+DS8rfpo6UNzEN6UMBg1u0Yz12fF9f8ZKM/kE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fF26qP8Sm0kFjO6TvFKPhddXCVLGdQiAbcYuFcilRJs4lK3rcfTbTuoEvbuC9zILIxzC3qKtit3DoJE44qvlQGEQgbwdUxNrqlHqydXpUrSSs49pxVK1pGrScKys0RP9wi9IUhCM/XNA23RBWofqg7iLmusJZtJGR5Fw8XIlpqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YegUEXrC; arc=none smtp.client-ip=209.85.208.46
+	 Content-Disposition; b=VOU1Gl6/3BGRkzwHNWJP4Mjtc8tpRZ/HCLfYtr4/Zbeoc2C9FIcCZfBndG+yjOf4EFdyWYUbbGR6IdK8/Vq3l9auKqaM3X8E+3XxDgZlz43VZTZ29SQSv2qcxE18qYpgGI+hJta5OPmODYRcYS9ZoTU834TOl/CJBLr9L9fMBLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bHBTFXVq; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YegUEXrC"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-604e2a2f200so2036039a12.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 May 2025 22:45:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bHBTFXVq"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so447401566b.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 May 2025 22:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748324726; x=1748929526; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748325105; x=1748929905; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vAdJ/cT5QBHscP2gZxi7G3d4bBHjxu/r9X+j+h7O9D0=;
-        b=YegUEXrCGIQjh0su9Hdvd5RsGyUAXucYqGSPwXRD9n9ujN8hiLfJphiBHbb+8WFRVE
-         1IG6HvCx4PonRVtnT4RBV+NbgCA8MRD22bAGex9ez6uwPFkftVJZ/M2O0KRWw4T1ME6f
-         yWQzDlapqSiAxFgT6jNqwE6RYyam0BOUQ4E2OYPN/+vDL+ZD4ickH4dMp2eBfl+VH/t1
-         F2EXV6Mw60czk5hkjRuYz7sx1B2Nno0+YQYp0ZXeyl7GHSka1CF4omxV4dwOJEftXHoe
-         NCLo5p2bARV/Ve2wVZObgVDARVMqSqJbsamIDZWvN4KDa8yIB3Zs92lPpfuOcnvwAA4U
-         V7dw==
+        bh=ZVp2NY7FohPgZU2Typ+0h2uamFavzqINb4M9GCUjHoM=;
+        b=bHBTFXVq7lydwB0QzS+hm0UM3cfkRYU8KwUkLGuYw2TcnPaOUTR13DvGMIXmoqNmW0
+         HA2S3B579S0TlaPnpVn6T31o4VgrKCs2yJXpOTDGwxNxKNBh5Hffe+Bp5do0pn+GjdgR
+         MpY0S9SaXpe5RFJEbnAdlLvQMlEKhCGG4bEzvW+a0/HC0o8ikkSUFjzTH1VKlodI4J1C
+         l5Q4C7TJGoPgeNKaJqg3pzlnzd0+cs0RzloH7ZxFCOrwLaQs4p6zoG21ZdvrPMWPYWyE
+         xmLtJaE+wHldpnrw3Y5Z2cJpuNTp3EJ3H5Aiz4sZGlXTfu8IaEpkray8s4svhPcYmgfv
+         +5Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748324726; x=1748929526;
+        d=1e100.net; s=20230601; t=1748325105; x=1748929905;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vAdJ/cT5QBHscP2gZxi7G3d4bBHjxu/r9X+j+h7O9D0=;
-        b=swGDioXk1+pdpJe1r4AdvUtLhSWBjv4b5L3uiJ9kX+rzuJ128gMGQb+Vpz3IriJa+h
-         cznB5mXDiLS+/aPJKu6QP7CTxb3bkd3FFLZwbKZ979OCPHqg/bjGaB/bchzRDt25GUox
-         lpePkNqtmNGYf7kjSi1FMQh7OgEt6UrgLLxklNy7QCp/ReYcAXxderGrCFgt5j4j0iOC
-         UjTMSJwD7Nqoen46vPe8X6wgDIZw59/lfWVTdz2ReOVbbg4IuGLfLj0x3OaGS2dR1Nx2
-         fiYo5spfwepns4+rQnpcBi8Id+nK0GmRT4zInqL7BfJkIfnczJfo4XWPA9YgRb587dbX
-         sqYw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+sF95u1JWR5sWtZHgEc861mBw4XPLF0fh0rirU3zjXnYz0QXyXj9gvV7ZTsNcohxXqz9r5315HD8/S8JksWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBGOasY7Ib9/0LgptCV7GWta3hdIahMMEs5/jmehiHBXoxhNLe
-	F+fHIn3+k/S6B4S50Gtf7g6LItmJlQC005dOSfLc8IkiZS32NPcBxliL44TJcj97+VM=
-X-Gm-Gg: ASbGncuBuGWWqdowHoY9Rzj3RExi31omLMRKX7alHvzWsM98nDjqSBN22GAsbm6Gjb/
-	206TnaLDUinXShXW0QWECvt/8MlbhRvzZNijCbDnzr4vdvVMw76wNMcLN8CP6Ypb7jzlAYa8GJB
-	MBZBgn5+tAsTc+xmmPMUsb70WdHpgHd0iDgXNm4dhlJ7A5PgYzo9XDW69T+/tkamXRkoBx/VzdI
-	3lSvrp8QA9haRilWkYeJhnSZQNR5ZoCI9JNgjGzPQsO/7FyKGg9Vk44CUUlaoXeHWz2VVyF60LM
-	Fpl3asiOz3tb9hJ3bT66Un7L44Vq3YntSiKrIZGF7uYOW5r+c5y9xlusi68IypIZANZSGr7ko0U
+        bh=ZVp2NY7FohPgZU2Typ+0h2uamFavzqINb4M9GCUjHoM=;
+        b=nLU7RKw56pQulifhUQ/uWod9i+ZCr79EhnBeo44TZ2v/vQPFsgNZzG8JjCfegPX1tu
+         lCg4O1UaM4715QgJ+qnn2t9VvNKiFvu4vECyhGJzPepQsfNoVl61QHDjDdiSMIy0cKqS
+         6ofYas/5wFqMHjeD2hIyVcftPPzzJD1Fl393Q8ba3fM6svUXbRTQCJBPaBfyIRA1ysq0
+         FFi86XlgTE2UAu0s1v9sEzqdFjropQU2WvjU3Ki3zIwakX9w366ToQX4ETY97Q4aqVyj
+         KkgYGj0clUHaYbTakBq18hlmeeHkdtuU2bs00gMC4FhukZpQ3gS8eStx23AtpBSAzIgA
+         ZQMg==
+X-Forwarded-Encrypted: i=1; AJvYcCV024VTkRcE7tSfVrhH5xZ5aS5aZUEtWs5JNm99Y+JZ9gspkYhOfF7seGQkMzMfh258imlvWx3o++5wv8/qiWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/rdZN4ETf5097uT4Pp6WYE7tkywVsLMIXK145wplBaNXbYdlz
+	+tWOHfah4gwoSveDBI09i9qhYAnGITtzG0aPpDdi4E8LdsbyWnswSYwR9WC/eJ7IDuQ=
+X-Gm-Gg: ASbGncsXZaUiPjsG/VAbz4DM9ekpBLWKAWDSNnh/xd3UKIUDK5TC7qOoM2yWS4QwzRH
+	IhtlDIL3T9U2S+HNt8izvTuVRO+4WMmTNEZEJXiayXHu1ouifsxLNTStj619bSGLe2CBj4fxIlI
+	IBnyXDKl9/lHEcnoL/ZuSXTr7XWen83867HlltO4GJ4fPqa6Gh3LLUYk1EMh44YgFFbapCtpnpD
+	BDXanSVSkwPxYUYpDF5Mg5H7Vx+6yoaCj89GzVesP1XDNy/LEnUsEWheV2Mo50eg4x2N233cViZ
+	nqGogb0UfemejBkgQnYsoAZF8caqYdGlekwTtthhUoE5jx/FYgm5BI2ONKVv/ghDsj+nTU5deSQ
 	=
-X-Google-Smtp-Source: AGHT+IFjfjGDL9+pR2wI6u63W8YFLk9uDG95aJV/jaoLvZt0KxL00PabZAJ4WGFqwimBN1PB88AkOg==
-X-Received: by 2002:a17:906:f58b:b0:ad2:499d:dfdb with SMTP id a640c23a62f3a-ad85b1bd259mr1048071866b.26.1748324725279;
-        Mon, 26 May 2025 22:45:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjsxqs/6jcL8C7UZ6kgwo4G0JpqJqenkT3mjexlsQRl4jPPZvuq7A6WGfuQrzvXuOSfE1M6A==
+X-Received: by 2002:a17:906:b84c:b0:ad8:883b:f10d with SMTP id a640c23a62f3a-ad8883bf140mr176024766b.34.1748325104785;
+        Mon, 26 May 2025 22:51:44 -0700 (PDT)
 Received: from localhost (hf94.n1.ips.mtn.co.ug. [41.210.143.148])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad52d047749sm1788284566b.8.2025.05.26.22.45.24
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad8908a54f8sm40467266b.63.2025.05.26.22.51.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 22:45:24 -0700 (PDT)
-Date: Tue, 27 May 2025 08:45:21 +0300
+        Mon, 26 May 2025 22:51:44 -0700 (PDT)
+Date: Tue, 27 May 2025 08:51:38 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] cpuidle: psci: Fix uninitialized variable in
- dt_idle_state_present()
-Message-ID: <aDVRcfU8O8sez1x7@stanley.mountain>
+To: Eugenia Emantayev <eugenia@mellanox.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Or Gerlitz <ogerlitz@mellanox.com>,
+	Matan Barak <matanb@mellanox.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net] net/mlx4_en: Prevent potential integer overflow
+ calculating Hz
+Message-ID: <aDVS6vGV7N4UnqWS@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,39 +80,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If the first cpu_node = of_cpu_device_node_get() fails then the cleanup.h
-code will try to free "state_node" but it hasn't been initialized yet.
-Declare the device_nodes where they are initialized to fix this.
+The "freq" variable is in terms of MHz and "max_val_cycles" is in terms
+of Hz.  The fact that "max_val_cycles" is a u64 suggests that support
+for high frequency is intended but the "freq_khz * 1000" would overflow
+the u32 type if we went above 4GHz.  Use unsigned long type for the
+mutliplication to prevent that.
 
-Fixes: 5836ebeb4a2b ("cpuidle: psci: Avoid initializing faux device if no DT idle states are present")
+Fixes: 31c128b66e5b ("net/mlx4_en: Choose time-stamping shift value according to HW frequency")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/cpuidle/cpuidle-psci.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/en_clock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
-index 3c2756a539c4..4e1ba35deda9 100644
---- a/drivers/cpuidle/cpuidle-psci.c
-+++ b/drivers/cpuidle/cpuidle-psci.c
-@@ -456,14 +456,13 @@ static struct faux_device_ops psci_cpuidle_ops = {
- 
- static bool __init dt_idle_state_present(void)
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_clock.c b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
+index cd754cd76bde..7abd6a7c9ebe 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_clock.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
+@@ -249,7 +249,7 @@ static const struct ptp_clock_info mlx4_en_ptp_clock_info = {
+ static u32 freq_to_shift(u16 freq)
  {
--	struct device_node *cpu_node __free(device_node);
--	struct device_node *state_node __free(device_node);
--
--	cpu_node = of_cpu_device_node_get(cpumask_first(cpu_possible_mask));
-+	struct device_node *cpu_node __free(device_node) =
-+			of_cpu_device_node_get(cpumask_first(cpu_possible_mask));
- 	if (!cpu_node)
- 		return false;
- 
--	state_node = of_get_cpu_state_node(cpu_node, 0);
-+	struct device_node *state_node __free(device_node) =
-+			of_get_cpu_state_node(cpu_node, 0);
- 	if (!state_node)
- 		return false;
- 
+ 	u32 freq_khz = freq * 1000;
+-	u64 max_val_cycles = freq_khz * 1000 * MLX4_EN_WRAP_AROUND_SEC;
++	u64 max_val_cycles = freq_khz * 1000UL * MLX4_EN_WRAP_AROUND_SEC;
+ 	u64 max_val_cycles_rounded = 1ULL << fls64(max_val_cycles - 1);
+ 	/* calculate max possible multiplier in order to fit in 64bit */
+ 	u64 max_mul = div64_u64(ULLONG_MAX, max_val_cycles_rounded);
 -- 
 2.47.2
 
