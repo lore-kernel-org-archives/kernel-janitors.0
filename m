@@ -1,74 +1,105 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 1B12C1C6FFE;
-	Tue, 27 May 2025 09:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9C01DF254;
+	Tue, 27 May 2025 12:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748337972; cv=none; b=g20Jo2FLtv9g/6lCGeaH+ndaZNJSR4eiezGKAg9/ozaKlR7cw+2IpysBhCA0Auaa96T5yOcGUCZeXPYvDx7qnX9gyz/8/0Xc3x/Ffrj5bf2HNlhGEl6citDq25SjY6ARYY7KiP7s9Hb6LMTgOC0Y8F9bcwyxUPMlUBOYEaokeps=
+	t=1748348131; cv=none; b=TE2aODfXTHIVF+g6yRJvWk22fkv5pVQAs4fhPqd8CNG2rgQbVOYHa99DGohmQbIEvUG4+/vUkg+Ww2VIspy62AscJWpehUrCNRNmF60mxdCNajdicz75YpooxsJxmnVd9XvkX7kcKbuHFCCMCx0o0lQ38NhvjhbyiD03Ck/LE04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748337972; c=relaxed/simple;
-	bh=Y0tfWQqJPflMwV31+TxJxuGsD+G7TzcUP6kJZXA2sec=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LfzzoCcetOn8qavY1VP71oSfnAZkQ1WxM6tYiueqRDNurNBJsMp0hMGCj3YDUB1vCxC6ETsW4fiw/DG6l2Y4FXMZMNoFC5ybJid1nnQkhmKLrrN1AOcVLNHz/MhA1NaBaLCrF+AL+szMvtZLzZzDlKoeNQzf7IgCq1xXnpz+e/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 9193960190ABC;
-	Tue, 27 May 2025 17:26:05 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neilb@suse.de,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1748348131; c=relaxed/simple;
+	bh=Uyg/JPpzodrTtnK0p+gK6gukgXtp5qciPTkzfWFyzh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHoluzsQtUYaYrTKEBsrdGSCYLbxshJkQrHChMyZ3cL7z9mqnmrDrznqhz2InJXXLvX31/aWZhba6pAwdS7cuRVP3JsP+ikQ9WEx/62Opa2EUNsL3QuVC9R67sL46PF0ZjMPc5K0JWOwGVaFhwpgiYNsdU7uKx+4uB6L7uewLZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BhtFY4o5; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BhtFY4o5"
+Received: from pendragon.ideasonboard.com (unknown [145.15.244.208])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A507D2B3;
+	Tue, 27 May 2025 14:15:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1748348101;
+	bh=Uyg/JPpzodrTtnK0p+gK6gukgXtp5qciPTkzfWFyzh4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BhtFY4o5xKFll9hHm5rvN2HNJvHpk9PzNaslqGQ0jvJWehiGQMi44dPybUqo6t7kJ
+	 1wAiP04iIxOc8vsto4/kk/ekdcgrAMgIQdKIwYkyVUj3SaWaPOFSHLdz2M4NR9OkXr
+	 UOKPsbXR2X+IwC2f7NGVLBBYOX1UaZBpkYU80PbI=
+Date: Tue, 27 May 2025 14:15:22 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Cosmin Tanislav <demonsingur@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] nfsd: Replace simple_strtoul with kstrtoint in expkey_parse
-Date: Tue, 27 May 2025 17:25:49 +0800
-Message-Id: <20250527092548.1931636-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+Subject: Re: [PATCH] regulator: max20086: Fix refcount leak in
+ max20086_parse_regulators_dt()
+Message-ID: <20250527121522.GN12492@pendragon.ideasonboard.com>
+References: <aDVRLqgJWMxYU03G@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aDVRLqgJWMxYU03G@stanley.mountain>
 
-kstrtoint() is better because simple_strtoul() ignores overflow and the
-type of 'fsidtype' is 'int' rather than 'unsigned long'.
+Hi Dan,
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
- fs/nfsd/export.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Thank you for the patch.
 
-diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-index 0363720280d4..1bc9bc20cac3 100644
---- a/fs/nfsd/export.c
-+++ b/fs/nfsd/export.c
-@@ -83,7 +83,6 @@ static int expkey_parse(struct cache_detail *cd, char *mesg, int mlen)
- 	struct auth_domain *dom = NULL;
- 	int err;
- 	int fsidtype;
--	char *ep;
- 	struct svc_expkey key;
- 	struct svc_expkey *ek = NULL;
- 
-@@ -109,8 +108,7 @@ static int expkey_parse(struct cache_detail *cd, char *mesg, int mlen)
- 	err = -EINVAL;
- 	if (qword_get(&mesg, buf, PAGE_SIZE) <= 0)
- 		goto out;
--	fsidtype = simple_strtoul(buf, &ep, 10);
--	if (*ep)
-+	if (kstrtoint(buf, 10, &fsidtype))
- 		goto out;
- 	dprintk("found fsidtype %d\n", fsidtype);
- 	if (key_len(fsidtype)==0) /* invalid type */
+On Tue, May 27, 2025 at 08:44:14AM +0300, Dan Carpenter wrote:
+> There is a missing call to of_node_put() if devm_kcalloc() fails.
+> Fix this by changing the code to use cleanup.h magic to drop the
+> refcount.
+> 
+> Fixes: 6b0cd72757c6 ("regulator: max20086: fix invalid memory access")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  drivers/regulator/max20086-regulator.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/regulator/max20086-regulator.c b/drivers/regulator/max20086-regulator.c
+> index b4fe76e33ff2..fcdd2d0317a5 100644
+> --- a/drivers/regulator/max20086-regulator.c
+> +++ b/drivers/regulator/max20086-regulator.c
+> @@ -5,6 +5,7 @@
+>  // Copyright (C) 2022 Laurent Pinchart <laurent.pinchart@idesonboard.com>
+>  // Copyright (C) 2018 Avnet, Inc.
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/err.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/i2c.h>
+> @@ -133,11 +134,11 @@ static int max20086_regulators_register(struct max20086 *chip)
+>  static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
+>  {
+>  	struct of_regulator_match *matches;
+> -	struct device_node *node;
+>  	unsigned int i;
+>  	int ret;
+>  
+> -	node = of_get_child_by_name(chip->dev->of_node, "regulators");
+> +	struct device_node *node __free(device_node) =
+> +		of_get_child_by_name(chip->dev->of_node, "regulators");
+>  	if (!node) {
+>  		dev_err(chip->dev, "regulators node not found\n");
+>  		return -ENODEV;
+> @@ -153,7 +154,6 @@ static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
+>  
+>  	ret = of_regulator_match(chip->dev, node, matches,
+>  				 chip->info->num_outputs);
+> -	of_node_put(node);
+>  	if (ret < 0) {
+>  		dev_err(chip->dev, "Failed to match regulators\n");
+>  		return -EINVAL;
 -- 
-2.30.2
+Regards,
 
+Laurent Pinchart
