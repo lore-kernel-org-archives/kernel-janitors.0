@@ -1,121 +1,128 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F6E1A256B
-	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 07:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCB81A0BD6;
+	Tue, 27 May 2025 07:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748332013; cv=none; b=KFoD50AqGb0AnoQqdStxXld6ZXA5MM7GDF6iG5jdOeK9ry0cJE8TO8V+8ZQFzXSSVyCnQLxQ8ntl9UmIubCTKUXQJBMa/8dWODjO7L/QhtaEoMfXQFyYtilBYy9wsy4+uhUSRoAT5JBZQEdncgtSXTSJl0Ll9cCLLh9Eh2emimU=
+	t=1748332703; cv=none; b=AU93OrM2HEhpc6ie8CerI+2GrsXovuO9GomDk9Yu6dcTw4zPKFACOtPGFtrUF9YyXmM6a11gB9v0HK6g9cc8N+aS8JAd885vVR0XJvP4GQAOVf2NiyzJxufjZdRKDLjnmiIAycSLcWstsnvKaJX4HTevJeNTkJQGcRNdmwXKh+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748332013; c=relaxed/simple;
-	bh=UU7+oRb86zVwx+HEnFQvsgq6dEP8Udyba5tT6b19DPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T3vBHFfPeXaksqwheN7+Pd4fEODKgFY413euJQyzRqTtKnkZaDj86LLcfWTtKNAusykPa/vFRXnfUhsDgUTNOdSs16NeP4Cf6rZLjI7Ug1ABCxXFQiz3yAtSwj02mjS85N5QHx/8uhlSAk+a/7Bh/SV2/XGyGJWPyEi+OHib9yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Im4qVtpx; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1748332703; c=relaxed/simple;
+	bh=9SFvgeOwKrobD4cRTqiopVNcOl4N2zjHLcRSyk72nmw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JVmsEhB4SHupxzqFo2yUwrxDTHDtA5a/WcFuVc9ll2jz6MNOi3Dd72zubiobx66zDjmH0O1DKMGHDCP/JTdZr0StCV9QOGPBnM7rAvHCmBLVtu83jO9U0qElHlR3qVpDGrGAjM9ix2TiW1OvHrSb3HGTovikjlr+iUAT4avwKQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=dBp0x28I; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Im4qVtpx"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad883afdf0cso207744566b.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 00:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748332009; x=1748936809; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGjUxtNR3mJ/2u7hranrVFwikwHAbHm/cRFgPsL7dCQ=;
-        b=Im4qVtpx+F4huEWmY0J0/WOS+oOH04KEMoGTiqfzBvF6fMNs9a/e0yXLwflVeV+tr3
-         406rYR0ZGeWtWAtiIqKULbuE6m6CWECUEaIXvExkepk3DaK5015n7vKsmtcug40Zc8ke
-         yBulrFiS1XB5zRlgoOZxJqKWfT4NX+En2PUQMgN1bMpdaK4a8gj4rtHUjuaVXNZ3NxlY
-         qT28V5k6SRvBGZvcqpraYlHW+m622tvZmyEaNAUcmA9YHFRhIYS1ioi12yTrbAPKaYdt
-         UdGo7cSPJ+fXLM5QaqThyxLTQLZfOqZkw4yFMIxUqgskVM2m1tHTpOX+gzjVVX1auloG
-         Tz+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748332009; x=1748936809;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kGjUxtNR3mJ/2u7hranrVFwikwHAbHm/cRFgPsL7dCQ=;
-        b=w3pMfM6v+Vn7KUWAXhXHg1haa9/HQg0B1S2zduTwwg9Ce+AlHhsaKTKe53h32jcbRw
-         4GWNWJQPnU//0XAE42Az80s2M82jW3ciDV52cLmzLoiT2sxUzP9QK64h/RJYpp4oDbyJ
-         SZAx9uqLuxH6WR7ioxbU+5ejuKYb5PGmO97GIIgAg8dDwJvw4sCylejsrJsxT2Kg+6Lu
-         m+JvxCnN9U3aPZlZW9qCtqqRJ5B5phStLdOFufbsICZ0cXFyG7FEDFM7ee2VT9HX6o2Z
-         c4PXbWpCYVoM6ehfCJ2Boi56so6uFD2/JFEbJ/1Jg4Fy0iJ9d625K9r8P8h+49YySgUS
-         Jizg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhGD/NpQIwFqk+jXKEt4OLYcBEwNo3v4/HdmWmN3tLhkOK7aBmoob8BbFsErwxMmHRUCYGk8YgeM0WpfKA+DE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNgd3rGM1xa8O2oDv5cMImy3IOrMlzACbUTEUngUDoVvP/yp5b
-	wLcn9WaeI8MrPUl4e3OSFuuLgLG9vePD4EgZuVexPkY5JyFDzY+xlszQz/kySO6ekqk=
-X-Gm-Gg: ASbGncuJB4TgFGNewdU62srIPs1CeiT+ivZarKOD8QniQi7cg296JbkkMyZ87617j+a
-	6m03KujUBpNdar/Gfx64CwUErGoaHn9ZzXRzaiMIaihvxLrRck2vm6KJVylTiDdzosaXz10PgE4
-	2wO3ixOZ6iCKxeKWXwZDce81i5cye3DvSRbk8Sk1PQavzPeA1r5wRpv04oL1i9sLHVWviZZAWEI
-	+5JBrgBL4a3UkG7+Hz499vxlHVG1vSerha6FhrDARgxBMVycEOi3XUm54TAn1AHuJAF9XQzHkdM
-	7VzQEeW9YpBun7RdBC+Mg27F/oz2NPNvEM/Z1konHrzRHvJxCHxgkezjS6t6nRG6lxWYUHmfM+0
-	=
-X-Google-Smtp-Source: AGHT+IEWcJvokDvwPgBmEe7nvuQpRK4D3ziJpdJh7OejYmQl2V009fIRSgH2jBGO0ZeLuhaFxXPszA==
-X-Received: by 2002:a17:906:dc8a:b0:ad5:1bfd:30d2 with SMTP id a640c23a62f3a-ad85b2795f0mr1165498366b.55.1748332008808;
-        Tue, 27 May 2025 00:46:48 -0700 (PDT)
-Received: from localhost (hf94.n1.ips.mtn.co.ug. [41.210.143.148])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad52d437585sm1789776266b.115.2025.05.27.00.46.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 00:46:48 -0700 (PDT)
-Date: Tue, 27 May 2025 10:46:44 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Subbaraya Sundeep <sbhatta@marvell.com>
-Cc: Eugenia Emantayev <eugenia@mellanox.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Or Gerlitz <ogerlitz@mellanox.com>,
-	Matan Barak <matanb@mellanox.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] net/mlx4_en: Prevent potential integer overflow
- calculating Hz
-Message-ID: <aDVt5LZe-jo7mVxt@stanley.mountain>
-References: <aDVS6vGV7N4UnqWS@stanley.mountain>
- <aDVqSjcpG3kvl-0g@b570aef45a5c>
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="dBp0x28I"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 54R7wE9611481514, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1748332694; bh=F3p54VaksFXXr0qjBndcI+PrSvsXrHVobFyMgUaaFIg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=dBp0x28I/UrGGDId/+nVBYwqKGd2VJW/WO5B04+lm8WP/6yhhKOuR0Uy5r5kzqdhH
+	 MhcWP+rdJ3oedmETjL5vmlsT/IyWC7V/0KARlHuWTGnW7RoEY+eYjE+y+8+O8E+9Ds
+	 eV0jyub97ppKhhFLYQtvpUzs6dkw+Puv0Q3zWQo+RUo+pfqX5fxAlnWGRkZ/Dob6bB
+	 JU6+idzrIBqCn5xYkOOMF3IubFCZHRpEXaWVrqJRnTQVeWskJgUwELtbHmrBTvnnwJ
+	 tUtpnFqAmynPHSelzNbZiymslkqz5+84RpaNyRpBKIqZPBbQAnl2b28l1iwoJuDHee
+	 HdCsn1HbhyEOw==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 54R7wE9611481514
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 27 May 2025 15:58:14 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 27 May 2025 15:58:14 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 27 May 2025 15:58:13 +0800
+Received: from RTEXMBS03.realtek.com.tw ([fe80::dd06:104c:e04d:a488]) by
+ RTEXMBS03.realtek.com.tw ([fe80::dd06:104c:e04d:a488%2]) with mapi id
+ 15.01.2507.035; Tue, 27 May 2025 15:58:13 +0800
+From: Zong-Zhe Yang <kevin_yang@realtek.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Ping-Ke Shih <pkshih@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH next] wifi: rtw89: mcc: prevent shift wrapping in rtw89_core_mlsr_switch()
+Thread-Topic: [PATCH next] wifi: rtw89: mcc: prevent shift wrapping in
+ rtw89_core_mlsr_switch()
+Thread-Index: AQHbzswfjeN9r26I10eoAov9FdTI97PmBnfw//+Mn4CAAIgNsA==
+Date: Tue, 27 May 2025 07:58:13 +0000
+Message-ID: <c70e23c6e9134f7e8b8791b5ece6baa3@realtek.com>
+References: <aDVUEHfa9q2zBD6i@stanley.mountain>
+ <582b5bc4c4434934838ae28d77b7f73a@realtek.com>
+ <aDVtu6dpKfWOyBn6@stanley.mountain>
+In-Reply-To: <aDVtu6dpKfWOyBn6@stanley.mountain>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aDVqSjcpG3kvl-0g@b570aef45a5c>
 
-On Tue, May 27, 2025 at 07:31:22AM +0000, Subbaraya Sundeep wrote:
-> Hi,
-> 
-> On 2025-05-27 at 05:51:38, Dan Carpenter (dan.carpenter@linaro.org) wrote:
-> > The "freq" variable is in terms of MHz and "max_val_cycles" is in terms
-> > of Hz.  The fact that "max_val_cycles" is a u64 suggests that support
-> > for high frequency is intended but the "freq_khz * 1000" would overflow
-> > the u32 type if we went above 4GHz.  Use unsigned long type for the
-> > mutliplication to prevent that.
-> > 
-> > Fixes: 31c128b66e5b ("net/mlx4_en: Choose time-stamping shift value according to HW frequency")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/net/ethernet/mellanox/mlx4/en_clock.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/ethernet/mellanox/mlx4/en_clock.c b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-> > index cd754cd76bde..7abd6a7c9ebe 100644
-> > --- a/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-> > +++ b/drivers/net/ethernet/mellanox/mlx4/en_clock.c
-> > @@ -249,7 +249,7 @@ static const struct ptp_clock_info mlx4_en_ptp_clock_info = {
-> >  static u32 freq_to_shift(u16 freq)
-> >  {
-> >  	u32 freq_khz = freq * 1000;
-> > -	u64 max_val_cycles = freq_khz * 1000 * MLX4_EN_WRAP_AROUND_SEC;
-> > +	u64 max_val_cycles = freq_khz * 1000UL * MLX4_EN_WRAP_AROUND_SEC;
-> 
-> 1000ULL would be better then.
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>=20
+> On Tue, May 27, 2025 at 07:38:17AM +0000, Zong-Zhe Yang wrote:
+> > Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > >
+> > > The "link_id" value comes from the user via debugfs.  If it's larger
+> > > than BITS_PER_LONG then that would result in shift wrapping and
+> > > potentially an out of bounds access later.  Fortunately, only root ca=
+n write to debugfs files
+> so the security impact is minimal.
+> > >
+> >
+> > Thank you for catching this problem.
+> >
+> > >
+> > > [...]
+> > >
+> > > @@ -5239,6 +5239,9 @@ int rtw89_core_mlsr_switch(struct rtw89_dev
+> > > *rtwdev, struct rtw89_vif *rtwvif,
+> > >         if (unlikely(!ieee80211_vif_is_mld(vif)))
+> > >                 return -EOPNOTSUPP;
+> > >
+> > > +       if (unlikely(link_id >=3D BITS_PER_LONG))
+> > > +               return -EINVAL;
+> > > +
+> >
+> > Since I think this problem only comes from dbgfs path, would you like t=
+o just add a check in
+> debug.c ?
+> >
+> > For example,
+> > (based on 0 <=3D valid link id < IEEE80211_MLD_MAX_NUM_LINKS <
+> > BITS_PER_LONG)
+> >
+> > rtw89_debug_priv_mlo_mode_set(...)
+> > {
+> >         ...
+> >         switch (mlo_mode) {
+> >         case RTW89_MLO_MODE_MLSR:
+> >                if (argv >=3D IEEE80211_MLD_MAX_NUM_LINKS)
+> >                        return -EINVAL;
+> >                 ...
+> >
+>=20
+> I'd prefer to add the check in one place instead of all the callers.
 
-Yeah, that's true.
+Understandable.
 
-regards,
-dan carpenter
+> We could check IEEE80211_MLD_MAX_NUM_LINKS instead of bits per long if th=
+at's more
+> readable?
+
+Sound good to me.
 
