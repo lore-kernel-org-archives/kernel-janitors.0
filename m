@@ -1,71 +1,73 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E99417A2F8
-	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 05:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CE6D530
+	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 05:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748324661; cv=none; b=CAxTOCWZaTfi4b7+uv7ct6rbhs0a+wnQIU+P4dxuO16dTdW6GVHSo0Fzn/Ta4ijW0G/5WQt6w0gBc8Ei/a2rxUkagn9CYjqQ0A7Mp3jkOVfdSCuAUGnE56ENQNeKojZci55kmw0lNhR8MgTkAOlX9FC5QDO4cLDeUxKZZHfsKyk=
+	t=1748324729; cv=none; b=R7zZrvlc/OJ95FLbdOJ48U/0PE+bFjAMt6GHHdaCmHxoHW6stdlCBXE0o2HmsxX8igZK1Y63H9j6BZua5Yb8MUqRaC5iaocihswK8h6PGzQjYefDsHLVIUKNcMFJVECcXx/H/g9kI8N5vZ5KDmj1hfgE+9DG8XcrQTiHh/FnNYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748324661; c=relaxed/simple;
-	bh=kyCBYxH7qeEldqqPRBTiasx1ddRJHWTby1mXwGA30Ck=;
+	s=arc-20240116; t=1748324729; c=relaxed/simple;
+	bh=0h4MToyMZi6FE1TFu8zlRTj8kxMLKoCJQR+vUO1Zo+U=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=G+A8ivo2KeBvf6dtxzvuOuczAr98SfyYo36qAVLqElMRI2vBufxJWviYzYydO2ywiamnQh8ANym1bh0qtyMWkzOgU/JsinIIY513hHLwHLOpve+no/fXpJh+Kk1/AZSybIouUZPTSxPBW9mLecd1zuVRvI/moNoauoAMsjiHoDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FRJdog+i; arc=none smtp.client-ip=209.85.218.51
+	 Content-Disposition; b=fF26qP8Sm0kFjO6TvFKPhddXCVLGdQiAbcYuFcilRJs4lK3rcfTbTuoEvbuC9zILIxzC3qKtit3DoJE44qvlQGEQgbwdUxNrqlHqydXpUrSSs49pxVK1pGrScKys0RP9wi9IUhCM/XNA23RBWofqg7iLmusJZtJGR5Fw8XIlpqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YegUEXrC; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRJdog+i"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ad1a87d93f7so468901666b.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 May 2025 22:44:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YegUEXrC"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-604e2a2f200so2036039a12.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 May 2025 22:45:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748324658; x=1748929458; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748324726; x=1748929526; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=eUL8lDW22vLb7RElzsLP3i8M2Oe2Xcske9JV5C/6kUQ=;
-        b=FRJdog+i5C9rTNFQQRXx1XIPcPhMCarQH045+DXvxAW54Kux5KP8mfk/0JyGrtMkBO
-         9/bZmw+FlznDOpdOCCFmp4HuWZ+B9NDtg5FkA/hV4F9gR3sZt5PTI7PlPhKU4Y9aEnfx
-         ZJTk/YURVKQ1rrd4/QU4pMwZ9ztNTQEs4BEQGbT11bUo1xS/qod57XCxAG6WwOOR06uM
-         nzHrbbXvYeGAkAcJtrgYN1cILl40RuPYuD6JTZPnMYOZzT76KAXCJjnA/6xL9LAWFfip
-         SfoeJ+VAJMy0DQAqd/yT7l4k+aJhnuqmHiCuLEANOVdxnB4P834CRLNtXubawAWBEgEo
-         bshQ==
+        bh=vAdJ/cT5QBHscP2gZxi7G3d4bBHjxu/r9X+j+h7O9D0=;
+        b=YegUEXrCGIQjh0su9Hdvd5RsGyUAXucYqGSPwXRD9n9ujN8hiLfJphiBHbb+8WFRVE
+         1IG6HvCx4PonRVtnT4RBV+NbgCA8MRD22bAGex9ez6uwPFkftVJZ/M2O0KRWw4T1ME6f
+         yWQzDlapqSiAxFgT6jNqwE6RYyam0BOUQ4E2OYPN/+vDL+ZD4ickH4dMp2eBfl+VH/t1
+         F2EXV6Mw60czk5hkjRuYz7sx1B2Nno0+YQYp0ZXeyl7GHSka1CF4omxV4dwOJEftXHoe
+         NCLo5p2bARV/Ve2wVZObgVDARVMqSqJbsamIDZWvN4KDa8yIB3Zs92lPpfuOcnvwAA4U
+         V7dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748324658; x=1748929458;
+        d=1e100.net; s=20230601; t=1748324726; x=1748929526;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eUL8lDW22vLb7RElzsLP3i8M2Oe2Xcske9JV5C/6kUQ=;
-        b=kYDlXEjGsQHFC0WfAlFG2PHi0UduuOhTW495rzBdxWwN18o5NW0p8/OjYVSzc6uPAH
-         ZnxTjMXLiTJyuhaAyLIS9hv0WXUUfb1XhpvWq2ReEAEuBGYE6NQ0IhCvRTtab/PPCnfb
-         6npwXMGW3gp599aWpdKo6GILGkQyT46HhHZ1Y8NUqC0aQ/i0gvzr5Hy+p77u5sn9zBLs
-         OmjPZBS11wH9rsh0uA+Ij2sPYpd61YxUmbAh/RZZaGRFpkx+8354FogsvYFC1GWe1PU9
-         eLoZYrqk4uCduLU1dbnr2cTjs1JQ9KG8zdpS/4GbzjSd2SgYbcVfltYPo6IziX9ycw0P
-         x5yg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4N79OqnJYbwF+0gt5j0D9moKXKi13zdNNuGp2oxIBKWhDWlGQMtCF5Jmu7laB7EXHmceuGCn9MPaVj4cMrU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM3hhwaWidEyIT81ZS455Gl6Z3rS4kFsFiZMTJcQ9v43SKdwID
-	3YfBKXh98R+HmjOZoshi/3H3mFyXSFn/mT1ox9+1hlJijL+ZhUy+kfaLLsiDMIGxDlI=
-X-Gm-Gg: ASbGncsJF0yEgfHWbzDEUzyKzG8PY40OWu+9yB3TaosF8znIs/lcjPA6mLAn2Fh4Jlo
-	S+QzUH5TX4/92X0d1g1tWTnfQ1UPvQwgCANWwQy2e3g8iq0txchrdnCvOEdwy0yn/1K0BdlAqze
-	ct8WcTp1m3nnbgHUzdhC/MRgzqIXWjmKWocfpiEwy2xXZVKw4Jp4S9EFc14DSHlAfDVB4vuj7EW
-	W51iAqq9EYPprjPu7xrpeZBl2DWF2Ad7+mAkzQoVIWiIjcTl2swYC6ICcOx/l3BboX+LxqLdt5c
-	ywnP/Ep1x9enoJxcej4Hy6bn7uEfRTguxDpM4iCUMidw5PDf8+IGHwLxfGsw5DIdYex6RcqKYWS
-	Q+tcHKAe7ag==
-X-Google-Smtp-Source: AGHT+IE46/UjJ5dKUXhWdkEtnSF7wnOr5rN4gbE3tyVKEXYOZCsNu8RVbstqI21IkhEz384O/W1Jhw==
-X-Received: by 2002:a17:907:7207:b0:ad8:9428:6a32 with SMTP id a640c23a62f3a-ad894286ce1mr15686366b.26.1748324658434;
-        Mon, 26 May 2025 22:44:18 -0700 (PDT)
+        bh=vAdJ/cT5QBHscP2gZxi7G3d4bBHjxu/r9X+j+h7O9D0=;
+        b=swGDioXk1+pdpJe1r4AdvUtLhSWBjv4b5L3uiJ9kX+rzuJ128gMGQb+Vpz3IriJa+h
+         cznB5mXDiLS+/aPJKu6QP7CTxb3bkd3FFLZwbKZ979OCPHqg/bjGaB/bchzRDt25GUox
+         lpePkNqtmNGYf7kjSi1FMQh7OgEt6UrgLLxklNy7QCp/ReYcAXxderGrCFgt5j4j0iOC
+         UjTMSJwD7Nqoen46vPe8X6wgDIZw59/lfWVTdz2ReOVbbg4IuGLfLj0x3OaGS2dR1Nx2
+         fiYo5spfwepns4+rQnpcBi8Id+nK0GmRT4zInqL7BfJkIfnczJfo4XWPA9YgRb587dbX
+         sqYw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+sF95u1JWR5sWtZHgEc861mBw4XPLF0fh0rirU3zjXnYz0QXyXj9gvV7ZTsNcohxXqz9r5315HD8/S8JksWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBGOasY7Ib9/0LgptCV7GWta3hdIahMMEs5/jmehiHBXoxhNLe
+	F+fHIn3+k/S6B4S50Gtf7g6LItmJlQC005dOSfLc8IkiZS32NPcBxliL44TJcj97+VM=
+X-Gm-Gg: ASbGncuBuGWWqdowHoY9Rzj3RExi31omLMRKX7alHvzWsM98nDjqSBN22GAsbm6Gjb/
+	206TnaLDUinXShXW0QWECvt/8MlbhRvzZNijCbDnzr4vdvVMw76wNMcLN8CP6Ypb7jzlAYa8GJB
+	MBZBgn5+tAsTc+xmmPMUsb70WdHpgHd0iDgXNm4dhlJ7A5PgYzo9XDW69T+/tkamXRkoBx/VzdI
+	3lSvrp8QA9haRilWkYeJhnSZQNR5ZoCI9JNgjGzPQsO/7FyKGg9Vk44CUUlaoXeHWz2VVyF60LM
+	Fpl3asiOz3tb9hJ3bT66Un7L44Vq3YntSiKrIZGF7uYOW5r+c5y9xlusi68IypIZANZSGr7ko0U
+	=
+X-Google-Smtp-Source: AGHT+IFjfjGDL9+pR2wI6u63W8YFLk9uDG95aJV/jaoLvZt0KxL00PabZAJ4WGFqwimBN1PB88AkOg==
+X-Received: by 2002:a17:906:f58b:b0:ad2:499d:dfdb with SMTP id a640c23a62f3a-ad85b1bd259mr1048071866b.26.1748324725279;
+        Mon, 26 May 2025 22:45:25 -0700 (PDT)
 Received: from localhost (hf94.n1.ips.mtn.co.ug. [41.210.143.148])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad88d0556a4sm62772266b.34.2025.05.26.22.44.17
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad52d047749sm1788284566b.8.2025.05.26.22.45.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 22:44:18 -0700 (PDT)
-Date: Tue, 27 May 2025 08:44:14 +0300
+        Mon, 26 May 2025 22:45:24 -0700 (PDT)
+Date: Tue, 27 May 2025 08:45:21 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Cosmin Tanislav <demonsingur@gmail.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] regulator: max20086: Fix refcount leak in
- max20086_parse_regulators_dt()
-Message-ID: <aDVRLqgJWMxYU03G@stanley.mountain>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] cpuidle: psci: Fix uninitialized variable in
+ dt_idle_state_present()
+Message-ID: <aDVRcfU8O8sez1x7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,49 +78,39 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There is a missing call to of_node_put() if devm_kcalloc() fails.
-Fix this by changing the code to use cleanup.h magic to drop the
-refcount.
+If the first cpu_node = of_cpu_device_node_get() fails then the cleanup.h
+code will try to free "state_node" but it hasn't been initialized yet.
+Declare the device_nodes where they are initialized to fix this.
 
-Fixes: 6b0cd72757c6 ("regulator: max20086: fix invalid memory access")
+Fixes: 5836ebeb4a2b ("cpuidle: psci: Avoid initializing faux device if no DT idle states are present")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/regulator/max20086-regulator.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/cpuidle/cpuidle-psci.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/max20086-regulator.c b/drivers/regulator/max20086-regulator.c
-index b4fe76e33ff2..fcdd2d0317a5 100644
---- a/drivers/regulator/max20086-regulator.c
-+++ b/drivers/regulator/max20086-regulator.c
-@@ -5,6 +5,7 @@
- // Copyright (C) 2022 Laurent Pinchart <laurent.pinchart@idesonboard.com>
- // Copyright (C) 2018 Avnet, Inc.
+diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
+index 3c2756a539c4..4e1ba35deda9 100644
+--- a/drivers/cpuidle/cpuidle-psci.c
++++ b/drivers/cpuidle/cpuidle-psci.c
+@@ -456,14 +456,13 @@ static struct faux_device_ops psci_cpuidle_ops = {
  
-+#include <linux/cleanup.h>
- #include <linux/err.h>
- #include <linux/gpio/consumer.h>
- #include <linux/i2c.h>
-@@ -133,11 +134,11 @@ static int max20086_regulators_register(struct max20086 *chip)
- static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
+ static bool __init dt_idle_state_present(void)
  {
- 	struct of_regulator_match *matches;
--	struct device_node *node;
- 	unsigned int i;
- 	int ret;
+-	struct device_node *cpu_node __free(device_node);
+-	struct device_node *state_node __free(device_node);
+-
+-	cpu_node = of_cpu_device_node_get(cpumask_first(cpu_possible_mask));
++	struct device_node *cpu_node __free(device_node) =
++			of_cpu_device_node_get(cpumask_first(cpu_possible_mask));
+ 	if (!cpu_node)
+ 		return false;
  
--	node = of_get_child_by_name(chip->dev->of_node, "regulators");
-+	struct device_node *node __free(device_node) =
-+		of_get_child_by_name(chip->dev->of_node, "regulators");
- 	if (!node) {
- 		dev_err(chip->dev, "regulators node not found\n");
- 		return -ENODEV;
-@@ -153,7 +154,6 @@ static int max20086_parse_regulators_dt(struct max20086 *chip, bool *boot_on)
+-	state_node = of_get_cpu_state_node(cpu_node, 0);
++	struct device_node *state_node __free(device_node) =
++			of_get_cpu_state_node(cpu_node, 0);
+ 	if (!state_node)
+ 		return false;
  
- 	ret = of_regulator_match(chip->dev, node, matches,
- 				 chip->info->num_outputs);
--	of_node_put(node);
- 	if (ret < 0) {
- 		dev_err(chip->dev, "Failed to match regulators\n");
- 		return -EINVAL;
 -- 
 2.47.2
+
