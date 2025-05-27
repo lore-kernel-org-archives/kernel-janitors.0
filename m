@@ -1,105 +1,118 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28457483
-	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 05:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653BB2AF10
+	for <kernel-janitors@vger.kernel.org>; Tue, 27 May 2025 06:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748325400; cv=none; b=l7Z99R0nfbIeebPuFRozxb+QlRSNxclKGzAANQDBIFfs6/DANUqUzzuV2bv3cR7HDV5xNv28Vu6cniZh5hwWNUc3hFyDMfsBRsw23sp2L/cERwC7PF30x8xG/FvdxYWYxYpcvBrgnCZ5ZD0rjZnCUL6JePBqYLC9+QAWHD/mr0Y=
+	t=1748328894; cv=none; b=EQ8YIXwPz8nz4MUPH8ZJs4WMfBC8YiOE52HXF1ZkR2gJSMG4/JxpsCntPjf94IZSwsXHPx2wFE+iQFR7Lb64OtTZVVlgPTlsZPvh3/9dUIKu2fcUK/XlJqbT+dWcTxJkWwOVAxKrx7ErvOkS94pT3xxob3LQJwnld0rKUJmNuAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748325400; c=relaxed/simple;
-	bh=S6lrD0Op5pKlWL71e8qgzke0xa2+KfIHREDTWYi7JZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HpbaS2BgF44W/avfFSinBfykmqAFWZ01f0IsjLbP+hFlk2ca63xWn2fYfwde+YN95hweEZLM40Ht5hZVJgCGp9VX10ZYh0XJmEGcv7SOKmHEp3aB+A4vZzwdIcxrw8PG92UuSIdIHZ3O7/ltRWjMMlNWe4zcsJQayp4+5MoFu6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ooMo/78Q; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1748328894; c=relaxed/simple;
+	bh=pueDU+2IVTTmzOG2Vomw35iAiyVvIagwvaJGKUbfBiQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RSfctngFSL/jVZ1fL2M/lu/OHEEOpLU58DT5wE63lTCfmyFKRJfGAItHwZSFJjVfHa17TTpg2i+Uxi1K2sKK8MDkcgjndge09tyw2704Szi6GMPi3168rQsW38dzNiSMWVCOLvW5c1FRGOT4agHFRK4dj/kQQ5N2/2rCd7el3hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EWTA4Sy5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ooMo/78Q"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ad5740dd20eso447869266b.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 26 May 2025 22:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748325396; x=1748930196; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1sqY5GIDGTtXFbbXu39XJwDlCZ5xKeuav8V3AHR7Qzo=;
-        b=ooMo/78QLU2KQR5tjALqxSXjmfUPnGjeDyTRyMlydIWW18ESCT2AuXgG12tTr5aDKy
-         t39E3RiMPYphlhlBqdbaoWjAL2bAt64Txuj6YxNGT0gzrFVgG5+dX7hff9qpJ5aOoYUm
-         qV5A5Jag9FalQUl5I6hJlH2o02Kh3ceLNz3RLD5cRhO9Inux8yW9QTgGCIhIFFaE9Kcg
-         eJa+6R+LHRmgIFYy6scyzS8euox7NrSamuoHF0hXg1P5FidjMAiynSp4yhUPavzXRNGu
-         gQGmXsZKrphloC4IL9uhKUHrIzTjl+1kY6SR4tSLuM0RyYYSEH4yGoM1jboK6GtHNDSM
-         fMpw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EWTA4Sy5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748328891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SVUV/9vsn38+LgyadSljJNqJbaXdm38PmYNVYcVKANU=;
+	b=EWTA4Sy5jW7FA4kFoOECr3Ykn8Hh0j3EZnMIDtT+92liYFZrTOeQvG5lYQV+FRnJKpmY/M
+	bofzqg+Gt1DXBKyvUpZWjXO/9CeFSdPBY2QU/v5CE39KbXGiYmGBFHgqFaadd5eqDPBUOO
+	7tWcHm2SlyqKsNvvVmfv0Lpr+eFRfp4=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-5COkmrlKM5WvT8P3CLtB1A-1; Tue, 27 May 2025 02:54:49 -0400
+X-MC-Unique: 5COkmrlKM5WvT8P3CLtB1A-1
+X-Mimecast-MFC-AGG-ID: 5COkmrlKM5WvT8P3CLtB1A_1748328889
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43eed325461so19032855e9.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 26 May 2025 23:54:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748325396; x=1748930196;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1sqY5GIDGTtXFbbXu39XJwDlCZ5xKeuav8V3AHR7Qzo=;
-        b=nK+va6DYNSquAAPmOmjgw2E/hrNlt273IvVujxmXRVWyPnG8RANlWuvEP+yH0mNIwi
-         FsIwdIk9DnnGAD90lBlyWdcH8cvwK64B05Hz1O+LKuCmIOMiuCmXC8y6kD/fLgDWKvhO
-         /XcxKPY0QNXXz2vMWCPgjfaYfPlqofDMpKrjJaXUaPrM3I4X+nDLgiFgjMVCgUmZzQa+
-         upraIeXBQ1vWxa16gQgpvM8QnSNAECgLzeeBV/kZISGX/npfHIgydOVqPoi6j2rG939j
-         bwEeFtm1hlpW3McR4FmQKDa2RMbOHMFVaKmQ1vf5dxls9/mxPnuETh1H+Memh9V5L9wc
-         iugg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmY5r9I69Bw8NtvgQ/IlSbBnEzVEFovxCaTCJsRCfjrpYiNTuqzIANEqSzHHY4/bKFELmnm0Us6N3ZlImnWjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8ZARDCojNKNWVhGGweEkQwjmJB6Wf3lyxhFZSJdhJXAa2QCT2
-	Kbd0MyJfLMod6nXNsGAwogHC4SiRh+4SXHtB8vYgKtp5AcgvOPKhBuMVhs5joeRV1jM=
-X-Gm-Gg: ASbGncvWgjDxfcf9ZIC64JXpZumBAmLKlRukygHHgCxuBFT4gaokbjZ50DoUxD+f1hG
-	iN8IYZsTHcqJb9CUzuQwwsoLKWKC+2uhFtBTwv2UZCz7fKEVzYSNgdeapo8Wj8VhfrD/YOlW+x0
-	C/BJEM6Swokh9Y/M68ii1Ypf8P1pdvuwLDiAHkbnemix6xfjSQpdXSrQM/S/45xp7A9CDkIlrxr
-	OgVYs9PMkLYJLpjIJxaRAPXlbk6QNiO4LDKE4/9G3s5mjr+HdKMNa1zg/FTUVUI+YgFixf+2Pf/
-	e1EIn+oU1460JA7ugkMNN4kZK6zfbW2yA/b92CzHT0cPp6bv20x0Ta2uLic2NMve0P03h9AKJYZ
-	4DXr8xxf8Dg==
-X-Google-Smtp-Source: AGHT+IFTol4OTI7mtKP7rV/Mh6vlzvg43m7yooyV7FvKtcQVu98SoqAju8dLAhQhxa1PD6WLeSmTZg==
-X-Received: by 2002:a17:907:8dcb:b0:ad2:5499:7599 with SMTP id a640c23a62f3a-ad85b0d2777mr1008212766b.18.1748325396080;
-        Mon, 26 May 2025 22:56:36 -0700 (PDT)
-Received: from localhost (hf94.n1.ips.mtn.co.ug. [41.210.143.148])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad88973815asm94306066b.129.2025.05.26.22.56.35
+        d=1e100.net; s=20230601; t=1748328889; x=1748933689;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SVUV/9vsn38+LgyadSljJNqJbaXdm38PmYNVYcVKANU=;
+        b=cOhdZsk7oF5lu8J+Sem3+/9HPSd0VJEeCvYgmUqTu202cWvghSnWrqPJpYvnjowyhh
+         6xVhpABNiWJ3RKRSSL6plEPXGq+BAyuh90Wsp1TkRoJgLC91Bvw5jDgW9wwK4ZE12mbN
+         Ry9bxshjauu74CFTs4Ev9K1IhzLZ9+vdmAzyqWy0w8QOn7JyvNEQ9HUrsPuZCP31H/sQ
+         4s5X75KZVLhGn5WMfddqQgriPez8iMEZXGg7TjrFB7pG1eEdfIydJ0dRUw81y11uYWX9
+         GIOuMt+rHSkGMn9JM5ZN52XwSvGill93Xy/4TAXKpK0RxdZAtV8VEIEI3FNAQkDq4lZX
+         LZ5g==
+X-Gm-Message-State: AOJu0Yz/y4On1vKRxMTwHWr+tFzkEe84LTV5IIfdj6lKzveT6POsNe4B
+	jRgTlkWGoongaJ0LvT+U6YmUzLPnmbGimeksB1FluEBxNbj8zrBlFBTPoyY8bIfIR+/VnD/NTLu
+	t5KwDbgXlEAhdiT2w06NjVm7/8/NDxYGMbNlVRkRxkxpTib3ZZWhp/2PWd9yUyhk5tkVSJA==
+X-Gm-Gg: ASbGncv/TFY2M2UY2HxfAyr8tqxP3+tzno5QbdC0Sj6djLbYOcxZwj6O2QIWEC+gjZs
+	V7jfFwDttZwOC7HRQeg4TCFeDykeXhSrCfSSJsHFlDvhfPHo8XYLWpsfWnxGEESd3/4LTFjaDYC
+	GqK/jcqks6RpgOFkGJRX5ggM/RIF1Nn6+TUkTmKeCdvheuy3A8P7vhArtuxHbKTu7P6kxninE2N
+	tr8RdOhIOBqa77mAxlmGxjTB/21cSCG25OTvvbGwCsiP1T/bLa2RzosWz+sbkjU44QaitTfba18
+	N2AQzzkqVD+uoQv+DjOgDkC1zY3lcMU8hoqNzS+jNV3+s9MimvCJ6vKVia8=
+X-Received: by 2002:a05:600c:8187:b0:442:f4a3:9388 with SMTP id 5b1f17b1804b1-44c939c1165mr82543245e9.19.1748328888623;
+        Mon, 26 May 2025 23:54:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEdvlq2u3HtOzGNrDrF6DdnIHv/xATBiGmzadzOCj185iZIcGz3tFT0jB+qadEvps/mZddgsA==
+X-Received: by 2002:a05:600c:8187:b0:442:f4a3:9388 with SMTP id 5b1f17b1804b1-44c939c1165mr82543105e9.19.1748328888257;
+        Mon, 26 May 2025 23:54:48 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:bf5b:f273:a506:f71f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-447f23c07bfsm260066835e9.23.2025.05.26.23.54.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 22:56:35 -0700 (PDT)
-Date: Tue, 27 May 2025 08:56:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zong-Zhe Yang <kevin_yang@realtek.com>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] wifi: rtw89: mcc: prevent shift wrapping in
- rtw89_core_mlsr_switch()
-Message-ID: <aDVUEHfa9q2zBD6i@stanley.mountain>
+        Mon, 26 May 2025 23:54:47 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Matthias Fend <matthias.fend@emfend.at>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in TPS6131X FLASH LED DRIVER
+Date: Tue, 27 May 2025 08:54:34 +0200
+Message-ID: <20250527065434.202622-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
 
-The "link_id" value comes from the user via debugfs.  If it's larger
-than BITS_PER_LONG then that would result in shift wrapping and
-potentially an out of bounds access later.  Fortunately, only root can
-write to debugfs files so the security impact is minimal.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Fixes: 9dd85e739ce0 ("wifi: rtw89: debug: add mlo_mode dbgfs")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Commit 0d12bb1a7fb6 ("dt-bindings: leds: Add Texas Instruments TPS6131x
+flash LED driver") adds the device-tree binding file ti,tps61310.yaml,
+whereas the commit b338a2ae9b31 ("leds: tps6131x: Add support for Texas
+Instruments TPS6131X flash LED driver") from the same patch series adds the
+section TEXAS INSTRUMENTS TPS6131X FLASH LED DRIVER in MAINTAINERS,
+referring to the file ti,tps6131x.yaml. Note the subtle difference between
+the two file names. Hence, ./scripts/get_maintainer.pl --self-test=patterns
+complains about a broken reference.
+
+Adjust the file reference to the intended file.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
----
- drivers/net/wireless/realtek/rtw89/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index 49447668cbf3..7e5f87700941 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -5239,6 +5239,9 @@ int rtw89_core_mlsr_switch(struct rtw89_dev *rtwdev, struct rtw89_vif *rtwvif,
- 	if (unlikely(!ieee80211_vif_is_mld(vif)))
- 		return -EOPNOTSUPP;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e20de38ffa54..0c4f0eb7f49c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -24518,7 +24518,7 @@ TEXAS INSTRUMENTS TPS6131X FLASH LED DRIVER
+ M:	Matthias Fend <matthias.fend@emfend.at>
+ L:	linux-leds@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/leds/ti,tps6131x.yaml
++F:	Documentation/devicetree/bindings/leds/ti,tps61310.yaml
+ F:	drivers/leds/flash/leds-tps6131x.c
  
-+	if (unlikely(link_id >= BITS_PER_LONG))
-+		return -EINVAL;
-+
- 	if (unlikely(!(usable_links & BIT(link_id)))) {
- 		rtw89_warn(rtwdev, "%s: link id %u is not usable\n", __func__,
- 			   link_id);
+ TEXAS INSTRUMENTS' DAC7612 DAC DRIVER
 -- 
-2.47.2
+2.49.0
 
