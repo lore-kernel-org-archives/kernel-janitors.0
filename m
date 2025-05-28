@@ -1,93 +1,79 @@
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C255E567;
-	Wed, 28 May 2025 00:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06F41C3BF7;
+	Wed, 28 May 2025 00:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748391920; cv=none; b=JwAKJVaGsB5Fc4WUUkszL2eCw1KExr7V8v9EZ8vdJgT8APX1bluy6sxougwSUdV3tT9XOImS3nJJzQIAWFvP1wqGlRNbJCWDksVplI9/EFg7GYrBvUaauEv9zsJyqc9HepEsy7WIDoH9+vMeYOMnbBl3OsxgsXEOJcTrMPEk+m8=
+	t=1748393399; cv=none; b=PmfOrIZ1bDoUUSvJm1AV7+S28M+M9bz9LZckvAwLwMAagj8Z2R9rJFTGK3W2j4fdPnmiyFcnsyKDCzvsWKf0ul9kjf6PK638ESM3SI8P2h1fGQsuN2Pnk4UkEsvSrFvchWRZfTQCNMniZoX7YsJFNGSEhg+PqzoXAZzFHusxjQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748391920; c=relaxed/simple;
-	bh=kycWT4ewyhl1bjll97d0SYZDsXrvE95yuJRILxtNkHM=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=TYUd3SPHCd61u1bwMKhrVrAx0ohohRsTNe1L2WKdRz/+M2C+yDQeeWG+p0eYi4kPsJhUO2Y7UCORENhDGmM0UXsMrQSAKGe0gBYhAaBRhP/82MvzZWdVeGd+uzd4aBVdGJjQzMN724dkAGjG0W9dphM8gDX+Fxtjm4EEUSbzsQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1uK4bS-00C8mx-0k;
-	Wed, 28 May 2025 00:25:06 +0000
+	s=arc-20240116; t=1748393399; c=relaxed/simple;
+	bh=CfqVPgulqZestb/yPNFJQru5z9P9asOFSloEWbORY3w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Bd784K20P6G+VZnt9BWkz5qkXaOuofHecoDGSfnAzlDoFRll5dddL6NmjqJxdhIk4H2QF/rzJQpv0pS9wbrrX4OeIXKlkOP95l3SS3YrXJbXP5Xqd/ifvjfjlXXGriBP2iYD5HK2OslB+CTyODkm6Voh0gSsuZ96yhjhuwcN2w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuKiHcdK; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuKiHcdK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17999C4CEED;
+	Wed, 28 May 2025 00:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748393399;
+	bh=CfqVPgulqZestb/yPNFJQru5z9P9asOFSloEWbORY3w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ZuKiHcdKz/TbDOo1ZDkFcDVIdEWmQ2y9oFEVDTbpMEZvSbQCMSAhq2x+IuTekBHNV
+	 9TOTPmEuX6FusfWxuabVwb1HktdypjecnZkPE414o2yw9Lh6bSrnQUh1RiKZcSNqpP
+	 dq1405TgknJ8AEppaPwwhqna13/e9tF8SAvpxkIDuC6tai/ztqX9HsS/rau9oF4O2w
+	 XKvH9vFynmjs1ALmWnH2h7XWrerKHuc2HCek8OG0ibgZBlYU5sfYKgyIRfqO7xRK2R
+	 Fn3emF/cJwIbOsanuLdHoXoEYznHuSIqwUtoab3u1kJKE4y8X6ehvxS9D8GmRLXU9h
+	 mpLwMoOvMibdA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71120380AAE2;
+	Wed, 28 May 2025 00:50:34 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neil@brown.name>
-To: "Su Hui" <suhui@nfschina.com>
-Cc: chuck.lever@oracle.com, jlayton@kernel.org, okorniev@redhat.com,
- Dai.Ngo@oracle.com, tom@talpey.com, "Su Hui" <suhui@nfschina.com>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject:
- Re: [PATCH] nfsd: Replace simple_strtoul with kstrtoint in expkey_parse
-In-reply-to: <20250527092548.1931636-1-suhui@nfschina.com>
-References: <20250527092548.1931636-1-suhui@nfschina.com>
-Date: Wed, 28 May 2025 10:25:05 +1000
-Message-id: <174839190520.608730.15461813542926388395@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 net] net: airoha: Fix an error handling path in
+ airoha_alloc_gdm_port()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174839343325.1843884.14339456243155225714.git-patchwork-notify@kernel.org>
+Date: Wed, 28 May 2025 00:50:33 +0000
+References: <1b94b91345017429ed653e2f05d25620dc2823f9.1746715755.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1b94b91345017429ed653e2f05d25620dc2823f9.1746715755.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: lorenzo@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ horms@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org
 
-On Tue, 27 May 2025, Su Hui wrote:
-> kstrtoint() is better because simple_strtoul() ignores overflow and the
-> type of 'fsidtype' is 'int' rather than 'unsigned long'.
+Hello:
 
-Thanks for the patch.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Reviewed-by: NeilBrown <neil@brown.name>
+On Sat, 24 May 2025 09:29:11 +0200 you wrote:
+> If register_netdev() fails, the error handling path of the probe will not
+> free the memory allocated by the previous airoha_metadata_dst_alloc() call
+> because port->dev->reg_state will not be NETREG_REGISTERED.
+> 
+> So, an explicit airoha_metadata_dst_free() call is needed in this case to
+> avoid a memory leak.
+> 
+> [...]
 
-The valid values for fsidtype are actually 0-7 so it might be nice to
-change the type to u8 everywhere and make this kstrtou8() but that isn't
-really needed and shouldn't stop this patch landing.
+Here is the summary with links:
+  - [v4,net] net: airoha: Fix an error handling path in airoha_alloc_gdm_port()
+    https://git.kernel.org/netdev/net/c/c59783780c8a
 
-Thanks,
-NeilBrown
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-
->=20
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  fs/nfsd/export.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-> index 0363720280d4..1bc9bc20cac3 100644
-> --- a/fs/nfsd/export.c
-> +++ b/fs/nfsd/export.c
-> @@ -83,7 +83,6 @@ static int expkey_parse(struct cache_detail *cd, char *me=
-sg, int mlen)
->  	struct auth_domain *dom =3D NULL;
->  	int err;
->  	int fsidtype;
-> -	char *ep;
->  	struct svc_expkey key;
->  	struct svc_expkey *ek =3D NULL;
-> =20
-> @@ -109,8 +108,7 @@ static int expkey_parse(struct cache_detail *cd, char *=
-mesg, int mlen)
->  	err =3D -EINVAL;
->  	if (qword_get(&mesg, buf, PAGE_SIZE) <=3D 0)
->  		goto out;
-> -	fsidtype =3D simple_strtoul(buf, &ep, 10);
-> -	if (*ep)
-> +	if (kstrtoint(buf, 10, &fsidtype))
->  		goto out;
->  	dprintk("found fsidtype %d\n", fsidtype);
->  	if (key_len(fsidtype)=3D=3D0) /* invalid type */
-> --=20
-> 2.30.2
->=20
->=20
 
