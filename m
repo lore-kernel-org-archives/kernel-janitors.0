@@ -1,102 +1,110 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCB71311AC;
-	Wed, 28 May 2025 02:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5E3269808
+	for <kernel-janitors@vger.kernel.org>; Wed, 28 May 2025 08:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748398857; cv=none; b=fBq8qWpwPPwPgzMO5e4E3kN5uiAKQKxTIn/9YZgWlLulOGKNF+PVuOakCMMaAofOKC3yyvgHWjNcP0Vf6CF3ifgMxy7ILLbR2ocCpE9ndyn2lG0m2LJJjBWW/JDjDy3Y7qSOU9Mton1uvTQRcBe8Hs1wHL5xOYUQ8cKC6f7Qcdw=
+	t=1748419870; cv=none; b=CsVUX0kL5GGEdJdHMl4Gi2Sgp6DkL/kOeKumXsvL1ruhlXGrbpxnstR+lfp67G26v2ryU3cijKpyIjPMN/p/iW5W0sOQBmJcWD8qTZSZKypmx8umWfinYp+wLYURmAe+5ECz7UnKPzDKSFCSG2XZqeAQyZ/0ofEN8a6JQWrufkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748398857; c=relaxed/simple;
-	bh=rnq56KFx0Is8OSJSjNOR/r9/YSClInV/6O0vDXiC+WY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kaVIXKsbaMs/Kv8PRx8We8mCtab1+PgBAdwjlwx0gWKYXQkDqYtX8LB31LJIH6KYH4fzA9hHNiqODtsyh+WIs7lsUa7BAQcW7WsEXjo4+iwwpcOZHaxufRESGa86R+vECp+Fvz255Wr82Cv80GWO5uYk59cgqZxpPEvMdrs9xtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WeGg8VQz; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1748419870; c=relaxed/simple;
+	bh=7QUgyPQ/T3YEWQ1/2Hr5qFcOiLCYY40HXCZ+In2rM/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jnOfZEAi+r4YAWtGMZazL6T7GR5kNtd3qFOxKL9fuo4wGLfKDyn+f4RgjxcEBDGIwHNtFtTNKx5o+gFnaca1zDlQZ+uOyZd9lrEyOD28Qv9JyB0iG7WWnSD7ga9+JLk8e0DpGm0ZZGR3b2rNvahd2oaNcyFvojGG/f59hiZ+cDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G2+4A5Z9; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WeGg8VQz"
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54S1g2Ok001517;
-	Wed, 28 May 2025 02:20:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=/dc9IIY7AVSR0AGd3xf1+XUQNqysZ2Wl+Y0EF/43L9A=; b=
-	WeGg8VQzCPMi1hnQJ1p6smOvlO4Nid0oDz918tMMDCaJHyuwrkK7uxp58bZCOkVX
-	wLhqmJgdVTSrKv9cpawDedoiSFoJE+KRaqqAncpbkXM+sOTcJX/xV2mp+Vaw6VRX
-	GfYp5+RHzgVr6pTsLMDQWlO3RL7FE6q5mk2L5WPpynuCMsfm4h1O2rvz05QPbd/l
-	avunZBkuosjgwhs4f4mX0PYN3HWNXUkIF28XpOQLjD51NrnA/oJVJElh4B/6pVIC
-	eoJgA6/gRjyOU/2NB2p6O92fHxOZyJnqX6X+hzavWhLISnfGWlQ9yBn0kKjI+/eU
-	lR0CqDn0smmiJ4UONkBg8g==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46v46tvvy0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 28 May 2025 02:20:54 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54S0bdgM021113;
-	Wed, 28 May 2025 02:20:53 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jgb21v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 28 May 2025 02:20:53 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 54S2Kq12017834;
-	Wed, 28 May 2025 02:20:52 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 46u4jgb21n-2;
-	Wed, 28 May 2025 02:20:52 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org
-Subject: Re: [PATCH 1/2] scsi: target: core: Constify enabled() in struct target_opcode_descriptor
-Date: Tue, 27 May 2025 22:20:16 -0400
-Message-ID: <174839736820.456135.9487503065269953423.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <4290cf1dbe100c1b1edf2ede5e5aef19b04ee7f2.1747592774.git.christophe.jaillet@wanadoo.fr>
-References: <4290cf1dbe100c1b1edf2ede5e5aef19b04ee7f2.1747592774.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G2+4A5Z9"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso33383215e9.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 May 2025 01:11:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1748419866; x=1749024666; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IFycvXrQUkiOkbhte5Aosw13hGKT4ZnQNkWJE4xdYxY=;
+        b=G2+4A5Z9oJpo9pzmKLIPI0tQdP/74hpa1KMgJ3nqG57sn+FxSeS/S/YVDlB5rOE6VA
+         Aw5gXJWFK+sadwjkSgPRsJwPxXH8tDyL9ykFTqpCA3ngSBMqjjB/P1eDI3hN6UP4wsKP
+         oBjSV0J4XBdKvF4TXfplRX8qPQ56a76JDq6z/U+5XtkWq3De+lVh9w4ULo2VhztQEz7G
+         JOQJdVNZ68CJjWVTrimCg6oj96Tt8CiJshkaTYWGrBtp2HHE4YoufdVThTVFkCtENzvC
+         Pv+syOXnxz1+BiiVF4UTbP/kZLzYXttimjPijf7WidxR1+tZXlkDEBSg/Pj/WfWyjlJ9
+         Bf+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748419866; x=1749024666;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IFycvXrQUkiOkbhte5Aosw13hGKT4ZnQNkWJE4xdYxY=;
+        b=hfok4g+VLgQrnriTUXL8aYGcBDZafCLRyfWNFdmXfTSYewiwwd8RAnvYvV7DKnFgNb
+         WYRiGoyUPowHTTbuhQS9yv5enUHBv/Z2oZrfpdqRTZH/xajLB7WNtsLYm4QRWW8o2Vgs
+         eH3sm+EGnkoBNpN4AV1ZC36Re69plGvyA/ciipbxgXE2YkvLG4SZWkkodhO0cerw34Gw
+         Njqyh743Ero319wzAwY40v+BqavgDTVnmyF2OHmGxqOOLuzOp1YNC7u2rpUsi6NlVpd2
+         sOy+ncEw7YdtsgfMDTpzr3EjrtZgac5HZcS/rKTP0e+INAOuT7pqDLDfIEVBIOJ93pdi
+         aa2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUGjLVLJXaBQuTnM/T4zDQFBR/VWjFI5xrAJX79GA5KACUcPDcPS8ZGzq7ASKw9B3y6ixkaRnXELEgnl995mlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhq3cdbO+3irpj9WVuBHpQz2vgT07EqF0LtcL1BEU1n9tjeI6u
+	LlBOiQDZAYJyxgft1kC+SFVQWRlYhJlP8cqdi8Ghi3OnKuoRDei0q9AHEOyiwWgrEGdDh4n//vk
+	VA/Rr
+X-Gm-Gg: ASbGnctOwpGZONQQy9YcdUF5kChKcxR4p2J8ZGh1ZVdUPqGeb+RAO9pMyNt2gG1fN6i
+	p1A3cvvfHWOiv988vTp4QlaniPMD16StugDvxT235buqdAP4ZPcoAe29II3YW0Lu2hKGDgWnSRY
+	JKkavnZsHRlTKRJz01sjGrpCMsOJPLKOzgPjbzqPHkd6zbzScAi0ZrQJAUiXvGqwnn3tXMPb3iP
+	f31FTkAer5r2KmdwZYmvJUAMVXPEdz9yLn4MsMGWLvTIAyzWYz/8ICSzYaJ7byd3wrZBnuy0vEH
+	cyWvwrhvRMw0yrJk83Vdf7ITh29JSXra2a2pZSaKjUNImll039l6wftB
+X-Google-Smtp-Source: AGHT+IHX4I0n+ZPz2LAonQ+C7wF0g3TSvB1a1pGhyeywpD5kz73HeVr28IbZeV7RGlLkbc8tETsEvQ==
+X-Received: by 2002:a05:600c:511f:b0:43d:5ec:b2f4 with SMTP id 5b1f17b1804b1-44c919e13d2mr163530375e9.10.1748419865922;
+        Wed, 28 May 2025 01:11:05 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-450787cc3c5sm9406215e9.31.2025.05.28.01.11.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 01:11:05 -0700 (PDT)
+Date: Wed, 28 May 2025 11:11:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zong-Zhe Yang <kevin_yang@realtek.com>
+Cc: Ping-Ke Shih <pkshih@realtek.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH v2 next] wifi: rtw89: mcc: prevent shift wrapping in
+ rtw89_core_mlsr_switch()
+Message-ID: <aDbFFkX09K7FrL9h@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-28_01,2025-05-27_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=956 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2505280019
-X-Proofpoint-GUID: BOIgbEkeXDbOR_0Bn7ndMZi1kNKxA3_b
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI4MDAxOSBTYWx0ZWRfXxyiL+/QAff1y mL/fwPTdWW3aK3zG8ij8DCG28Fon456awAtPaxqiQKq8SA/ojTcVHXVwSlZ3nZMmwIrMBoK7+Hg RqDMvE6d14bdmoViVZoKzSMuM1zP6t6QqjgBOtYXobyb71Q0/k3RREh1L2EpaYyD/JZVap5vSEM
- PRsulRLjGKcOu8iFleLAh24tJHdc1zER47tb3iyd/tDFUrWuAM7vIaaMxZGk+Q5VFFc1akJpLb/ d+VJeNyc6dkjbMZUCF6O2mbJe1u7xdC/rE34P2WwDH0/k2KdZRaSgP2Amx6eIcfGhHhXHoZuZep tdja4TKrwLF1fx/mXthnYOxC7ub2Ey21rSJHcEaHE8aYoHPWIw4wtMrMcknhObNpBgKqtzRvhYk
- U7I4GQV4AeHBZC5OOESM7n4p0YAEwNZwTxIH8ZePNjPau1FeGIeNmVgn9Fqrrte0ARXVDcK8
-X-Authority-Analysis: v=2.4 cv=VskjA/2n c=1 sm=1 tr=0 ts=68367306 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=6jzpHGfAOgaobE847SkA:9 a=QEXdDO2ut3YA:10 cc=ntf
- awl=host:13207
-X-Proofpoint-ORIG-GUID: BOIgbEkeXDbOR_0Bn7ndMZi1kNKxA3_b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Sun, 18 May 2025 20:26:42 +0200, Christophe JAILLET wrote:
+The "link_id" value comes from the user via debugfs.  If it's larger
+than BITS_PER_LONG then that would result in shift wrapping and
+potentially an out of bounds access later.  In fact, we can limit it
+to IEEE80211_MLD_MAX_NUM_LINKS (15).
 
-> Constify the first argument of the enabled() function in struct
-> target_opcode_descriptor.
-> 
-> This is the first step in order to constify struct
-> target_opcode_descriptor.
-> 
-> 
-> [...]
+Fortunately, only root can write to debugfs files so the security
+impact is minimal.
 
-Applied to 6.16/scsi-queue, thanks!
+Fixes: 9dd85e739ce0 ("wifi: rtw89: debug: add mlo_mode dbgfs")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+Use IEEE80211_MLD_MAX_NUM_LINKS as a limit instead of BITS_PER_LONG.
+It's stricter and also more informative.
 
-[1/2] scsi: target: core: Constify enabled() in struct target_opcode_descriptor
-      https://git.kernel.org/mkp/scsi/c/7f0047cb9d42
-[2/2] scsi: target: core: Constify struct target_opcode_descriptor
-      https://git.kernel.org/mkp/scsi/c/fd2963e729ed
+ drivers/net/wireless/realtek/rtw89/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
+index 49447668cbf3..3604a8e15df0 100644
+--- a/drivers/net/wireless/realtek/rtw89/core.c
++++ b/drivers/net/wireless/realtek/rtw89/core.c
+@@ -5239,7 +5239,8 @@ int rtw89_core_mlsr_switch(struct rtw89_dev *rtwdev, struct rtw89_vif *rtwvif,
+ 	if (unlikely(!ieee80211_vif_is_mld(vif)))
+ 		return -EOPNOTSUPP;
+ 
+-	if (unlikely(!(usable_links & BIT(link_id)))) {
++	if (unlikely(link_id >= IEEE80211_MLD_MAX_NUM_LINKS ||
++		     !(usable_links & BIT(link_id)))) {
+ 		rtw89_warn(rtwdev, "%s: link id %u is not usable\n", __func__,
+ 			   link_id);
+ 		return -ENOLINK;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.47.2
+
