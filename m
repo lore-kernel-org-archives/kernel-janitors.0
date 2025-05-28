@@ -1,75 +1,76 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70A3257440
-	for <kernel-janitors@vger.kernel.org>; Wed, 28 May 2025 08:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB322246778
+	for <kernel-janitors@vger.kernel.org>; Wed, 28 May 2025 08:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748419908; cv=none; b=J0I/T8oqLXQZebknLVB2zIYirVV5IwquyRRVMVvJeFgex+MuFmZ6M4EI36g+BcsFAJZhcJ/sNwOAO3IG4cFyQQSMbhCpFk4pNGW20NPkrRO1xaBSyUM+h41o+rO35KpK4Qm+OMyySqDVCxU/YMLgmDWWYNJ3RO+4ra0D17D3jQU=
+	t=1748419960; cv=none; b=ZMZlsNen4rZE/rKpALENacqmtiDb5WrPcM3UofFn8Bw7MIHr6i1t2gzI4O2zMsWiE4UIkzllzJPheKImZAXrQdBAAxMydAEcp90ygv5vGcdTljSOgxpo9AlphN6jCb2lg/bDCGm5tcebZZ3UzbPRcQhFslRsumR24M2dbdx7sP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748419908; c=relaxed/simple;
-	bh=vaHMQ2ZjJxntFZc5U5J5R37wyOU0aE1VASANrNBzvTU=;
+	s=arc-20240116; t=1748419960; c=relaxed/simple;
+	bh=zt6R3jp79fMZyuI135ZWhJCJrZHDPzn+vYfjefZ4MqM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nmD0wmBG0fyvo4wNfc4J7okIxjo+Sp6dK6BkJYQPP7ZGvtcCtdAdYe8ZxhYixz7kz1owgjGAlMhABHcVtm9ScZ/ZpN+17NUachgGqBp8e9k+wLCw2HUFSAql0MoYUoTE97UT2Du1JX7Cyk5EFgIewZVc3X2xQ+N36dQF2UpgRzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D+zUWDuL; arc=none smtp.client-ip=209.85.221.51
+	 Content-Disposition; b=Ymf5HLd4ACV+/tgf8+UFQlyMfZnkxeiwGjM8sgX+xUZZZvT+To9tx4s0H8pYh0Eg7v3R3lXkc+s+QO7y+mA7Eajmb1DjT8ENEwhrKcfMY52IAPt/KE0t4BrRirZHTIBLY1LzFafhrfaj6kOexvUvOzgeVHb0gubr+q6hU7gpedc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=daoEyNpZ; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D+zUWDuL"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a366843fa6so2630266f8f.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 28 May 2025 01:11:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="daoEyNpZ"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-442ec3ce724so34676445e9.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 May 2025 01:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1748419905; x=1749024705; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1748419957; x=1749024757; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=z/FCb16iLm7G0e3WCUiTZyQQx/X2uoabvGUpmWxpr2A=;
-        b=D+zUWDuLXuCSyHSpEM6Xa5G8GHzw1Fh0FidaHr98vmF0wMx7IPIeMMaEoBqjoTQ17v
-         FxN2bnHvAz8Z0Ijsxxi5ffVM7v9/F7lmfi6a63Cmgb3RfTU0o7qSAJIX5HQEWC5L/ioI
-         1FhqrHl7h9EDm6+enRbK4ao/QyyF+l7vaiABxGy+3ydVTbaYKV6XoXZxMaaqu747SDuc
-         F2/0qhrK6Wjs7khqLXCH/6SFvdDm8GP1z/6Fu1v2gYXF2BTj7MsDI4lo12DWRGHiL9tg
-         7Z6G4rFf3vBQgblbuvAdYaDBqpxhbzYOBKg3+eCEtHoQkV7ME6fPFFpN4VoCV2F6SE5C
-         kCxQ==
+        bh=Ha/P9I5FpO7is8f+c8Jo+hsQyuoifexQpWyES60Ve10=;
+        b=daoEyNpZLx83XtbnvXn8eVB11DEDMIYpPbCFCO80tEyhTsPyvgcNSV6q+xM1414uH4
+         zDtlzZuxhqLvTPp7XMvIWG3lQ4U6yWZ5zOFLVQwVL1VnG6GlKmJLF+mnilTRt2uV+gzw
+         Z5kfBadnknjqMDKj2m7WN5QdWBHhWNH62yYN47LFS2r4a+50QzcIbMOrsW6y9V7VQori
+         Q9lOjRgd8w0d1I+x2hm1dnztHtOtHz7rT4Ycg2e6ckceZawtOZTdCZCt7q7weh2m9Nb9
+         K6uO+ejqlm7bFFw/kzDpRpkCf1GBHSuN4iOl8fag5XGW/CQC2a6lDcqpXeXgNsXxLttr
+         3fIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748419905; x=1749024705;
+        d=1e100.net; s=20230601; t=1748419957; x=1749024757;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/FCb16iLm7G0e3WCUiTZyQQx/X2uoabvGUpmWxpr2A=;
-        b=JjRiaVN/X9Mp3yItKVcgmV70YL/1I3J8WtJSWnblIwImSoWRVubCa1Dgv6JhuJQP2e
-         TxnUyTxdGDe4uoiEwRM0zMK3SXn8teRI6P8tLB8/4e8pKtkHBTb9sm9MscHtzCYQKkQY
-         +hXFImPVJAUCvl7KuM2OjCQwtL6ElgBDPMiVnZvQfGYQBe21Onnqrl0RqgrJ0CoXr//2
-         Yxty+wqbUokUYshY6l34isHjDDNNuRyaWqH9trg0josPhRKPMGrwQWkH0cQ9NLOViMfq
-         iXERwqYDMs6eIKComPpsNFfwER8B9s258hlFMw9OrYiZGx++JQY7p1E0rHgdW0CaL1SW
-         aQOA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0czxZFX6McAf9LnFCu9YvXeP5KlURHc999KXjnTMPPvKq1wYHkywYnINYPIPuosKZ3Glibo3sVW+aQ8U+vCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzebXsQ+UU5+F6GU9xj/3NIwM0Zu9N5/wEK1Xya5DS9i8fZjNDU
-	8DtgGLEiTFmRMwwA1JA2dGzpaPqamL7Oi4Cmmg80Vqj9Tw8DKY2O106hBkvGLNgE3EA=
-X-Gm-Gg: ASbGncvkUfFs2Im9cAhmhyTMd//Qk45PObLIRybgfKP4gvnP1L3uzoFVgXhcqcOwzcF
-	QyrcjU5aGzN82gyMjIshWxgV9R7sb8W86c8BCadnG0nB5jiOhqGtfOklk9zQSgdWeRds3TOJjMA
-	Xxc245qQ2XSjHLz92CRE5dDewLPYvFIwvJl7BVZROjuDdfDgidaor/cIVMFBGknbjeEpFExBGaA
-	s3kg2Zorjn1noUwhvDPKki8UYuO8ve3H8UND0mXmQHRkEDYKCDGHYxZ7zNN5sXfL2ru5zbnkK40
-	xQcAEsEWYUEs2iBvSfbx6J0pDaf30kxDf9XhDB1dsYtdcChCBzyEc4rBjpfWW85srTQ=
-X-Google-Smtp-Source: AGHT+IF/wZakUcvuphAcq2wGl7JnOIxHt9unsVJgGESVrVbsKufI2U86TIxeSul0ISFVlHUGaRAdxA==
-X-Received: by 2002:a05:6000:2282:b0:3a3:6958:88dd with SMTP id ffacd0b85a97d-3a4cb436d3amr13082654f8f.23.1748419905264;
-        Wed, 28 May 2025 01:11:45 -0700 (PDT)
+        bh=Ha/P9I5FpO7is8f+c8Jo+hsQyuoifexQpWyES60Ve10=;
+        b=HBfpG4yBBkoM8iBKWX1YXR2ERpRSlZOpFdfbLK5XCYQePySEqY898pKOS7sLc5iQcT
+         1xSN362zAlVv9jAxIKLw8kRSmzT1Ja8GWo8k77dZQqpOsYBcggUffSWAw0Sm4z1DR+ro
+         qcsfkKM1tGCrTXxzQSsSyljAq9Moxt4KX6z18lvpeSNMuYJWyT4vwBJ2NuQgBll8sW3i
+         6DOKNufrDdsLscR4TwwlmTGPWsFrlIq+nJI7boKNmhrNAX2NtLZGK8Kvw5GVXZYUJsnZ
+         MCcNnQu0Lg9CX2Ch2tzLdN1Lvdein+VsUdQBz98gl+pfXq7hpUOXxXcmPbtpBmsXYZtV
+         Gvow==
+X-Forwarded-Encrypted: i=1; AJvYcCUxj7xW9dJnzWgzX9aRNtNm7dNMy0COfsxuFuCJ+ESvPAjoHnahinmRAZF/xG5YYRBmmNSaqhv23kZwVMTsecQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiXxtMJznRstYtwEj3HE9PpuxNBFrkBB+ItUQqCWTSzJsP/KsL
+	wp4vHnOzvv6uKI0g3dppNuypf+Kzh/eJxaAC/KUuV2uenPlM59/XpgTGt1OuacyiAGA=
+X-Gm-Gg: ASbGncvvP5ew8pHof2D87atGEgTceXUjwlBdemgcjEBjb8RAk9r0lIOkP7TM3MlTWUC
+	u0/UEf3vO1Wx+SG8YEU5NCFqcr+nK2IE2ZmWTSIaqJjwQavIJ5ka6/4KmcI9TVbISJu+MmWzfzu
+	PIq8KxPANi/g03Z0r3S3dCy+/4DLB12d53VXbuvoVXoXWK7JUUISuvppxC4CCOAsSoTSCJKC8tG
+	JxYJop0Ff8uVoHR5WgqDMDbd1k5f8BD+S7ysDY/aQkb9Pq3JXP3huR5afIXR8D3QrCB0dDgIOfA
+	LLRSPm0yHil7d6KGahu3SKLr9iuXdRGejc1bskWjmlVt9b7QwvjOp+29
+X-Google-Smtp-Source: AGHT+IHds3HlT5cEKDELP4HlaQKB3QeEr6bANTntVAcGev79jh49G1GwJ0hdtMaA7ScQTs3fhrDICw==
+X-Received: by 2002:a05:600c:8708:b0:441:d43d:4f68 with SMTP id 5b1f17b1804b1-45072560c18mr12730175e9.15.1748419956961;
+        Wed, 28 May 2025 01:12:36 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a4eac6eb45sm798948f8f.12.2025.05.28.01.11.44
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4507254b988sm9800675e9.13.2025.05.28.01.12.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 May 2025 01:11:44 -0700 (PDT)
-Date: Wed, 28 May 2025 11:11:41 +0300
+        Wed, 28 May 2025 01:12:36 -0700 (PDT)
+Date: Wed, 28 May 2025 11:12:32 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Li Ming <ming.li@zohomail.com>, Fan Ni <fan.ni@samsung.com>,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Yevgeny Kliteynik <kliteyn@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Mark Bloch <mbloch@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>,
+	Vlad Dogaru <vdogaru@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] cxl: fix return value in cxlctl_validate_set_features()
-Message-ID: <aDbFPSCujpJLY1if@stanley.mountain>
+Subject: [PATCH net-next] net/mlx5: HWS, Add an error check in
+ hws_bwc_rule_complex_hash_node_get()
+Message-ID: <aDbFcPR6U2mXYjhK@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,30 +81,35 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The cxlctl_validate_set_features() function is type bool.  It's supposed
-to return true for valid requests and false for invalid.  However, this
-error path returns ERR_PTR(-EINVAL) which is true when it was intended to
-return false.
+The rhashtable_lookup_get_insert_fast() function inserts an object into
+the hashtable.  If the object was already present in the table it
+returns a pointer to the original object.  If the object wasn't there
+it returns NULL.  If there was an allocation error or some other kind
+of failure, it returns an error pointer.
 
-Fixes: f76e0bbc8bc3 ("cxl: Update prototype of function get_support_feature_info()")
+This caller needs to check for error pointers to avoid an error pointer
+dereference.  Add the check.
+
+Fixes: 17e0accac577 ("net/mlx5: HWS, support complex matchers")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/cxl/core/features.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/ethernet/mellanox/mlx5/core/steering/hws/bwc_complex.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/cxl/core/features.c b/drivers/cxl/core/features.c
-index 6f2eae1eb126..7c750599ea69 100644
---- a/drivers/cxl/core/features.c
-+++ b/drivers/cxl/core/features.c
-@@ -544,7 +544,7 @@ static bool cxlctl_validate_set_features(struct cxl_features_state *cxlfs,
- 	u32 flags;
- 
- 	if (rpc_in->op_size < sizeof(uuid_t))
--		return ERR_PTR(-EINVAL);
-+		return false;
- 
- 	feat = cxl_feature_info(cxlfs, &rpc_in->set_feat_in.uuid);
- 	if (IS_ERR(feat))
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc_complex.c b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc_complex.c
+index 5d30c5b094fc..6ae362fe2f36 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc_complex.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/steering/hws/bwc_complex.c
+@@ -1094,6 +1094,9 @@ hws_bwc_rule_complex_hash_node_get(struct mlx5hws_bwc_rule *bwc_rule,
+ 	old_node = rhashtable_lookup_get_insert_fast(refcount_hash,
+ 						     &node->hash_node,
+ 						     hws_refcount_hash);
++	if (IS_ERR(old_node))
++		return PTR_ERR(old_node);
++
+ 	if (old_node) {
+ 		/* Rule with the same tag already exists - update refcount */
+ 		refcount_inc(&old_node->refcount);
 -- 
 2.47.2
 
