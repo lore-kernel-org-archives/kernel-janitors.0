@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06F41C3BF7;
-	Wed, 28 May 2025 00:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB25B1DF273;
+	Wed, 28 May 2025 01:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748393399; cv=none; b=PmfOrIZ1bDoUUSvJm1AV7+S28M+M9bz9LZckvAwLwMAagj8Z2R9rJFTGK3W2j4fdPnmiyFcnsyKDCzvsWKf0ul9kjf6PK638ESM3SI8P2h1fGQsuN2Pnk4UkEsvSrFvchWRZfTQCNMniZoX7YsJFNGSEhg+PqzoXAZzFHusxjQs=
+	t=1748395213; cv=none; b=RfRxRRQDtvmfpSzZjzWjqshOJL1KBKuh/ydU+MjC/t7X/Qi/vuAPNziOqLvh26EsmX7DtZyS+mv9UE8nEXvW5MPHjwlpWloSjXp8xGUjOBEOhBEqRilrrZwEq8DO45MxFfQs+oCihkQK6lkKo0knEwlpS2smYZR3ktqclMqSZ5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748393399; c=relaxed/simple;
-	bh=CfqVPgulqZestb/yPNFJQru5z9P9asOFSloEWbORY3w=;
+	s=arc-20240116; t=1748395213; c=relaxed/simple;
+	bh=4akuqYwc5gwUE+TauisypdxpPSXLUqxOE5xlU7KwFKE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Bd784K20P6G+VZnt9BWkz5qkXaOuofHecoDGSfnAzlDoFRll5dddL6NmjqJxdhIk4H2QF/rzJQpv0pS9wbrrX4OeIXKlkOP95l3SS3YrXJbXP5Xqd/ifvjfjlXXGriBP2iYD5HK2OslB+CTyODkm6Voh0gSsuZ96yhjhuwcN2w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuKiHcdK; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=QZVPVW56GZi9gZdr8wCN4HCjVmjnwlLyBxaYZpeY1bXz5lRgP+RcmVvD8vpG75b6sGFX/XtgrW+SHj0zsHfxS6BEeLf/PAuQrvHYHZHxAsGPlecaEQTgtnxuvG/WtQ6nQMMM079PWc90lhooUfRY/l1tw3u44aZHo6rAKv6puW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqHsfcCn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuKiHcdK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17999C4CEED;
-	Wed, 28 May 2025 00:49:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqHsfcCn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4980FC4CEED;
+	Wed, 28 May 2025 01:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748393399;
-	bh=CfqVPgulqZestb/yPNFJQru5z9P9asOFSloEWbORY3w=;
+	s=k20201202; t=1748395213;
+	bh=4akuqYwc5gwUE+TauisypdxpPSXLUqxOE5xlU7KwFKE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ZuKiHcdKz/TbDOo1ZDkFcDVIdEWmQ2y9oFEVDTbpMEZvSbQCMSAhq2x+IuTekBHNV
-	 9TOTPmEuX6FusfWxuabVwb1HktdypjecnZkPE414o2yw9Lh6bSrnQUh1RiKZcSNqpP
-	 dq1405TgknJ8AEppaPwwhqna13/e9tF8SAvpxkIDuC6tai/ztqX9HsS/rau9oF4O2w
-	 XKvH9vFynmjs1ALmWnH2h7XWrerKHuc2HCek8OG0ibgZBlYU5sfYKgyIRfqO7xRK2R
-	 Fn3emF/cJwIbOsanuLdHoXoEYznHuSIqwUtoab3u1kJKE4y8X6ehvxS9D8GmRLXU9h
-	 mpLwMoOvMibdA==
+	b=RqHsfcCnt/NKntPgtHc3h5+Gn589IHlBXUqpmpSOr3fiOX4j8mwvMtOnt19WZagCM
+	 hUtI/rz1Vv1nPfMfzY8vFu3j7LAlatJ9rNTNcE/YxkssVTh6Uf5JdZ4QyI+a6YVcTI
+	 /vRMEzmb8eEPnueSeETxEjjrjxjVFmyM5cOzlXTgbap82fydiQp1G8mn/TE5q/pwrt
+	 iCNSngB3JESqW4noLvMpiCWXlZW7BQSM9LKUP6hEC5l7Kh1m/pLWoaC+mjDX2beDPC
+	 tj4hEn3wWMZ4NTLe4f6xExUvf+NyUW9u/SAexAGG5jVSpRxi+OZAjFkwM2ymOKvGj/
+	 I5+Be5cT7NrXQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71120380AAE2;
-	Wed, 28 May 2025 00:50:34 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE004380AAE2;
+	Wed, 28 May 2025 01:20:48 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -37,39 +37,42 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 net] net: airoha: Fix an error handling path in
- airoha_alloc_gdm_port()
+Subject: Re: [PATCH net-next] cxgb4: Constify struct thermal_zone_device_ops
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174839343325.1843884.14339456243155225714.git-patchwork-notify@kernel.org>
-Date: Wed, 28 May 2025 00:50:33 +0000
-References: <1b94b91345017429ed653e2f05d25620dc2823f9.1746715755.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <1b94b91345017429ed653e2f05d25620dc2823f9.1746715755.git.christophe.jaillet@wanadoo.fr>
+ <174839524724.1849945.14055765173341143853.git-patchwork-notify@kernel.org>
+Date: Wed, 28 May 2025 01:20:47 +0000
+References: <e6416e0d15ea27a55fe1fb4e349928ac7bae1b95.1748164843.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e6416e0d15ea27a55fe1fb4e349928ac7bae1b95.1748164843.git.christophe.jaillet@wanadoo.fr>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: lorenzo@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+Cc: bharat@chelsio.com, andrew+netdev@lunn.ch, davem@davemloft.net,
  edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
  linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- horms@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org
+ netdev@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sat, 24 May 2025 09:29:11 +0200 you wrote:
-> If register_netdev() fails, the error handling path of the probe will not
-> free the memory allocated by the previous airoha_metadata_dst_alloc() call
-> because port->dev->reg_state will not be NETREG_REGISTERED.
+On Sun, 25 May 2025 11:21:24 +0200 you wrote:
+> 'struct thermal_zone_device_ops' are not modified in this driver.
 > 
-> So, an explicit airoha_metadata_dst_free() call is needed in this case to
-> avoid a memory leak.
+> Constifying these structures moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    2912	   1064	      0	   3976	    f88	drivers/net/ethernet/chelsio/cxgb4/cxgb4_thermal.o
 > 
 > [...]
 
 Here is the summary with links:
-  - [v4,net] net: airoha: Fix an error handling path in airoha_alloc_gdm_port()
-    https://git.kernel.org/netdev/net/c/c59783780c8a
+  - [net-next] cxgb4: Constify struct thermal_zone_device_ops
+    https://git.kernel.org/netdev/net-next/c/08f8bad0255c
 
 You are awesome, thank you!
 -- 
