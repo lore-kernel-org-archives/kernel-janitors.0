@@ -1,124 +1,70 @@
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681E4279789;
-	Wed, 28 May 2025 12:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8792827AC50;
+	Wed, 28 May 2025 14:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748435740; cv=none; b=VDOwsZcsSCu2lPo25nR/Qp28Uclj7Y/gI3ILMj/sP1Yb+z2du9dxFct2grXQxwPrwvWIjRpq2Yu7YD3XUVesv3NvZecOxVQP8zrf+uRCKo7ku9hBoX2BLB/ec731YqZ9V1/hwDVSw4R4c66MRNY1HTYabhqkffXc9Wqmxkc0FGo=
+	t=1748441409; cv=none; b=mKdoNDLRCgJhz8xldERMfx71esfHO++YmF1EpPteXRln80FvHVh36oTEI0F44gfvbZNCb3xcEX53abmkEQcq61S7lV2jYp0F3mFHz8dsXQsLKsGdjJW0Wt7Cy+BhtfLTclWOdIYsvMjiFVvmbyJF/bop4qXU0fqIrtbG9ssL1/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748435740; c=relaxed/simple;
-	bh=LYwqlBRi8ID882TZWjXAGZR8tgMQwuR55sVHt5Q57Jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XE0aOCnzh5tkALHM96V69hxdC6aV+tZ2CSJRbumEfX52mIh0xyjzy5GsODJ/3gWOEAknHZzekv6Ads+V1/MjMFKYwyEMMrx24YD/xPRn39loNrgEnfjQMGwIUUXpi9QSOxOurCZSfXz+0fteXVyohzxfX2rlzImXI6khHqHd2AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YPR4P/Zc; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1748441409; c=relaxed/simple;
+	bh=tC5NUiE+rCAqZQe8ytkJqWiWbf0cJ4RmDhgSv5rmL10=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JCnJSA8Qf9VKQWNNICDg7pnTUKeyiLVErRF8Wp8wl/uOHBRZ5oy+ME817krh3AjpDvRkXvnG+2rsvhA/Ce9QaY/5Xr7GbMo605hT1UmMSepIhUhbDINZhyKs/2ekmk6p5SCqZp6xL6QrubMhOAatpc/j5RfuPk0g2wPEAWyd2MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MmiVGNHU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YPR4P/Zc"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1748435735; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=54GRYqlSUhKavKBqRRsmmEctJpORh0vvFiJujpYJZXc=;
-	b=YPR4P/ZcdtSOJmHgDyIeIqEeYZUUPDarvb0rNWM9ERT0Q0wb1WBV14LS97BvChkztTtVvQMS6iWY8qGpzC1j8V2zYfmxcJDOGgagykTLYMz7W+anVVvQeruDxlCgkUtzk/8/ITL4d+fsFkuSQ+B65cuBdWu6VSc3AnzM3k0CEuo=
-Received: from 30.221.144.174(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WcDTszd_1748435734 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 28 May 2025 20:35:34 +0800
-Message-ID: <878ab848-c57c-422b-9694-264d43af7f7d@linux.alibaba.com>
-Date: Wed, 28 May 2025 20:35:34 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MmiVGNHU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E9DFC4CEE3;
+	Wed, 28 May 2025 14:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748441408;
+	bh=tC5NUiE+rCAqZQe8ytkJqWiWbf0cJ4RmDhgSv5rmL10=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MmiVGNHUf8M2wFf0WFu5cQVsZWiAoTUMRPcKVJj4gq4tdxkynu1mYKtHzS/aTcgtO
+	 wuUwAZkuMRN9m8g1mtX7OVoVBuNb/yoyuXPcbRTgjUXD2fm7bQxfjmCIp4iu7IZD19
+	 BwZGFJz7K7hFpXvPAGrgkm+PAKTvIwsJbBui5RHaNlh8bGNwRmKImKN1yDwGveVXxX
+	 odswcry/bsM4u8gxgUQNdHl29s/ibTUIexkndhwj2Wi138D1HPxVwhRTZZpwSEhQIS
+	 Pv7nm1Fgy/GOTLg7gN+ZB6tKqUgYRreaK0aF8pesT1oeaDEBw4ZfDVyhTceGLwhUQJ
+	 60WTLjrQk04lw==
+From: cel@kernel.org
+To: jlayton@kernel.org,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	NeilBrown <neil@brown.name>,
+	Su Hui <suhui@nfschina.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: Replace simple_strtoul with kstrtoint in expkey_parse
+Date: Wed, 28 May 2025 10:10:03 -0400
+Message-ID: <174844138406.135094.10722176151660746055.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250527092548.1931636-1-suhui@nfschina.com>
+References: <20250527092548.1931636-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: Replace simple_strtol with kstrtol
-To: Su Hui <suhui@nfschina.com>, mark@fasheh.com, jlbec@evilplan.org,
- akpm <akpm@linux-foundation.org>
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <20250527092333.1917391-1-suhui@nfschina.com>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20250527092333.1917391-1-suhui@nfschina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+From: Chuck Lever <chuck.lever@oracle.com>
 
-
-On 2025/5/27 17:23, Su Hui wrote:
-> kstrtol() is better because simple_strtol() ignores overflow. And using
-> kstrtol() is more concise.
+On Tue, 27 May 2025 17:25:49 +0800, Su Hui wrote:
+> kstrtoint() is better because simple_strtoul() ignores overflow and the
+> type of 'fsidtype' is 'int' rather than 'unsigned long'.
 > 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-
-Looks fine.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
-> ---
->  fs/ocfs2/stack_user.c | 15 ++++-----------
->  1 file changed, 4 insertions(+), 11 deletions(-)
 > 
-> diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
-> index 77edcd70f72c..0f045e45fa0c 100644
-> --- a/fs/ocfs2/stack_user.c
-> +++ b/fs/ocfs2/stack_user.c
-> @@ -360,7 +360,6 @@ static int ocfs2_control_do_setnode_msg(struct file *file,
->  					struct ocfs2_control_message_setn *msg)
->  {
->  	long nodenum;
-> -	char *ptr = NULL;
->  	struct ocfs2_control_private *p = file->private_data;
->  
->  	if (ocfs2_control_get_handshake_state(file) !=
-> @@ -375,8 +374,7 @@ static int ocfs2_control_do_setnode_msg(struct file *file,
->  		return -EINVAL;
->  	msg->space = msg->newline = '\0';
->  
-> -	nodenum = simple_strtol(msg->nodestr, &ptr, 16);
-> -	if (!ptr || *ptr)
-> +	if (kstrtol(msg->nodestr, 16, &nodenum))
->  		return -EINVAL;
->  
->  	if ((nodenum == LONG_MIN) || (nodenum == LONG_MAX) ||
-> @@ -391,7 +389,6 @@ static int ocfs2_control_do_setversion_msg(struct file *file,
->  					   struct ocfs2_control_message_setv *msg)
->  {
->  	long major, minor;
-> -	char *ptr = NULL;
->  	struct ocfs2_control_private *p = file->private_data;
->  	struct ocfs2_protocol_version *max =
->  		&ocfs2_user_plugin.sp_max_proto;
-> @@ -409,11 +406,9 @@ static int ocfs2_control_do_setversion_msg(struct file *file,
->  		return -EINVAL;
->  	msg->space1 = msg->space2 = msg->newline = '\0';
->  
-> -	major = simple_strtol(msg->major, &ptr, 16);
-> -	if (!ptr || *ptr)
-> +	if (kstrtol(msg->major, 16, &major))
->  		return -EINVAL;
-> -	minor = simple_strtol(msg->minor, &ptr, 16);
-> -	if (!ptr || *ptr)
-> +	if (kstrtol(msg->minor, 16, &minor))
->  		return -EINVAL;
->  
->  	/*
-> @@ -441,7 +436,6 @@ static int ocfs2_control_do_down_msg(struct file *file,
->  				     struct ocfs2_control_message_down *msg)
->  {
->  	long nodenum;
-> -	char *p = NULL;
->  
->  	if (ocfs2_control_get_handshake_state(file) !=
->  	    OCFS2_CONTROL_HANDSHAKE_VALID)
-> @@ -456,8 +450,7 @@ static int ocfs2_control_do_down_msg(struct file *file,
->  		return -EINVAL;
->  	msg->space1 = msg->space2 = msg->newline = '\0';
->  
-> -	nodenum = simple_strtol(msg->nodestr, &p, 16);
-> -	if (!p || *p)
-> +	if (kstrtol(msg->nodestr, 16, &nodenum))
->  		return -EINVAL;
->  
->  	if ((nodenum == LONG_MIN) || (nodenum == LONG_MAX) ||
+
+Applied to nfsd-testing, thanks!
+
+[1/1] nfsd: Replace simple_strtoul with kstrtoint in expkey_parse
+      commit: 901218eec3b10a773edcdca717dfe5bedde03f46
+
+--
+Chuck Lever
 
