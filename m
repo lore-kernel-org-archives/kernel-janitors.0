@@ -1,125 +1,115 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FC0243387;
-	Thu, 29 May 2025 02:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9A520B7EC
+	for <kernel-janitors@vger.kernel.org>; Thu, 29 May 2025 03:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748485308; cv=none; b=Nm9R2NpIbu8Z+qyxJKaFV2+kOf2SoagimpNuBaVGQ5ouANAzkbBxT72kA5VMvFonDNL0elpl1AQWb4hXERRVou8/jV0YhjDV/zbeWlKVQyWpkPGztogXzNvnYA3Lp5yl/sN4QkhqJgVWCRsUO2UYDwJLUZKhLIWUUfBNnhqHyMs=
+	t=1748489993; cv=none; b=cRASVc3C5KzHsKCjFWQ8yTEwo0WsNq+H3pvCm/aKU15Bj48K6AqT2C0u78+dncNSZNIM6r+yHM0VydgsscyPJLexKOETkb51eAESen9kMg014Eshi5q4oW1lNOkHyE8Pmb5I3OjcpP9bjWqdPp3w9EPyW1jxJNaN++J9E3oScZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748485308; c=relaxed/simple;
-	bh=mgm+/bEiD9yG2sJdPi+nwIxBjCYXaQjUqoKkWnjvJyc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jPR5ct8cmlnCAxqDidyyXqXp+TwQoPuW58NjMV5v/80u051kVg/4/y/lltB8rwkBqf7xKQEdwJZJxc5Sn3noOwO9Ys5N3CraGRYw98nl2+fTQsHirWYKxMjIKp3K+LyCeBNRw1PkS5bGTiReMR65NnqkzcJx7yyy6xaYIZ58WLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=lEWJVr+B; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1748489993; c=relaxed/simple;
+	bh=aW0RTWdvtM1w6UkkBNYoSa1kspYBY6nDibe+OrzxZuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UvFEGkGHLlZbB/ORXIet8asI04kP9hcnPEqP7eGSmO34k8fKUeyDj5Hdje4tV93W1CMVpBBJaxH7/qAKcMJP/p5DtPaBtl47FafTd8TrmULBiWmLFr4XYSrYYfNFn7axpTvPSjtXceVtm9yhSmcuBJQHAKaFta5WZtVI3mmFqAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X8xKvSrg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="lEWJVr+B"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 54T2LeFO2647071, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1748485300; bh=zqOZ6WIH3ajtZIqCrHC56N9OVYnhwGuSGQSjURs7DRE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=lEWJVr+BYedc5V6DRYoYdJpsN3Y3IW1t3nDHWg0IMIwBkI6X/BeFvjfpYlALU/FAb
-	 HJvxdx0gw7yPm4vqxhEwhns4pJYItGb4Qm4d/+DWlV8Q0vRaCmm8mWN59KcKpyqH+8
-	 L8wIYZcnxdQ61Nfix141BfYCeQ3Z6xCiMIuXL0Tu+VkPB87aFgomoj6FIr+FV0E7MO
-	 quOk5OZ3LjBmetb/RXW3lCjkMNG16eTICbQajUzHhLPa0dShsITSF5Wtqqu9HMmATM
-	 O7AnpZ+bz/PlLJevsiX8bXo3kejkKeEHMxoi3TJwmdRmlpAFOkIQjIM7v3e7szDlFm
-	 mmv+u1eDZV/jw==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 54T2LeFO2647071
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 May 2025 10:21:40 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 29 May 2025 10:21:41 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 29 May 2025 10:21:40 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
- RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
- 15.01.2507.035; Thu, 29 May 2025 10:21:39 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Dan Carpenter
-	<dan.carpenter@linaro.org>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH v2 next] wifi: rtw89: mcc: prevent shift wrapping in rtw89_core_mlsr_switch()
-Thread-Topic: [PATCH v2 next] wifi: rtw89: mcc: prevent shift wrapping in
- rtw89_core_mlsr_switch()
-Thread-Index: AQHbz6gTLKzSHyHrGEOZ0fuLbkUcwbPoWYyAgACHjXA=
-Date: Thu, 29 May 2025 02:21:39 +0000
-Message-ID: <bb4bc20d9f7346edb013f123051fc490@realtek.com>
-References: <aDbFFkX09K7FrL9h@stanley.mountain>
- <a46c420109f0440a987d28c531dd39d6@realtek.com>
-In-Reply-To: <a46c420109f0440a987d28c531dd39d6@realtek.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8xKvSrg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748489987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=w1X44SCuPTfj5D1IbAzKgKS5OuFXYEFBS/1q8JBmFyc=;
+	b=X8xKvSrgY0XeFzzFtBwXbExKKOs2rQmXFzyBOUqZHPzmUJOtQHTbzE2brKZei5trTXCkVK
+	durVu+sMXCwEUS/4bNPqYPgXB0asRzRbKqo4XM0s/SqA7OkeCWPsuIuxWeESJzvQCuKnKD
+	q2xJzbg+d8NofTYf1vPXpRoX3nWyC8s=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-632-8FKA2qi3P-K3v0xunuvslw-1; Wed, 28 May 2025 23:39:44 -0400
+X-MC-Unique: 8FKA2qi3P-K3v0xunuvslw-1
+X-Mimecast-MFC-AGG-ID: 8FKA2qi3P-K3v0xunuvslw_1748489983
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ace942ab877so37170566b.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 28 May 2025 20:39:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748489983; x=1749094783;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w1X44SCuPTfj5D1IbAzKgKS5OuFXYEFBS/1q8JBmFyc=;
+        b=IscNN64d60ISoid9WawuOeCAnE+D8yzHnW5T4k3T2XSN+v6oyzUESPMEr0zuY4JoPY
+         +9xPe1LhEE77+634GwfhcwH7jwR6PN8yNz6R7V+uZCg8VfY/uj6CwIit529UgxPKklGs
+         Y9VlcKcHjMEg+VNXKL3lPoU8oDPfVcTEIFt8NYJVUBexa0i1rJYiCjz8xrQo+lvHE6A3
+         yp0AK08zn2riRGL8kkRuAuAhNR//BnW8XPEurJf761ZCemsoXpg7T0VzQq+6hZvt7enK
+         iA8rY60WuWRneYwznc32nRiPiHgG2dfEuqg9a7aBzsHYzEsj2yfxIGlbGofmUen/e3D1
+         FCAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVM5nsaz9Sr6o05zh0pcta2/HRjYwrq0htREgUOg8HXkwhHvFyUFerQKTSyX18Oi1i2NFtqYogXsaHoLjilGTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4v3nEy7mUNeziy1eWPa+UbPxWU+wiR3QVEbZoC0p0dihpOaZf
+	ioHRC39bMzWaW99ebWQuOzHsAJcFTTB1LznkdVFmZrqfhE9++R+9GSLiYeGnd39BOnuhwVFFWRn
+	2iQs5ciIbMYoJi7ZCmy/zzrQwwPS3qXSw1bgEnURaEgHhc3UpjAumQkGWR8j0CljUtai3HUfx+A
+	Urww==
+X-Gm-Gg: ASbGncsp43a+BKQaXNcnNP5eT/mMnd2E32jFWq7afW43x5zskN39JE2nVwg6QzDTupg
+	VjIjsYbnvmhfVvb77CBqXsSgwwi290WV3ix8EQv75+kTGSjU0lg3eeF1pxDoveG9AaI8d1t1UEx
+	bLVFra6zPr319/Am7wD5DGi1d67Abm54h5ICLUywLPF8PdLHHXZuD7uY9sBeiv68je5wLLsClKa
+	NqQpwh93E4YPHRz/8tnfTS9HJwM88/dbgj+7IqLZVmwt57JpdIlNfuitcbcfIV3NH/88MD+KeVV
+	3vexoZDzaJHYYSILx1QgW3OR2u8DcjB08yCa4SDLozyLhnh1EVhQxu7//Q==
+X-Received: by 2002:a17:906:9fcc:b0:ad5:10d9:9061 with SMTP id a640c23a62f3a-ad85b2799cdmr1912493066b.54.1748489982849;
+        Wed, 28 May 2025 20:39:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGvpqqAZuFEZNhtkIGDjJnONQJ3hQN1ikYduqSMmBqKDYUX8JsBp/1HPjY5wTGLHJ5InFanQ==
+X-Received: by 2002:a17:906:9fcc:b0:ad5:10d9:9061 with SMTP id a640c23a62f3a-ad85b2799cdmr1912492266b.54.1748489982516;
+        Wed, 28 May 2025 20:39:42 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ada5e2beff7sm56525466b.111.2025.05.28.20.39.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 May 2025 20:39:41 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Akshay Gupta <akshay.gupta@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] hwmon: clean up Makefile after sbrmi driver movement
+Date: Thu, 29 May 2025 05:39:33 +0200
+Message-ID: <20250529033933.281845-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Transfer-Encoding: 8bit
 
-Zong-Zhe Yang <kevin_yang@realtek.com> wrote:
-> Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > The "link_id" value comes from the user via debugfs.  If it's larger th=
-an BITS_PER_LONG then
-> > that would result in shift wrapping and potentially an out of bounds ac=
-cess later.  In fact, we
-> > can limit it to IEEE80211_MLD_MAX_NUM_LINKS (15).
-> >
-> > Fortunately, only root can write to debugfs files so the security impac=
-t is minimal.
-> >
-> > Fixes: 9dd85e739ce0 ("wifi: rtw89: debug: add mlo_mode dbgfs")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > Use IEEE80211_MLD_MAX_NUM_LINKS as a limit instead of BITS_PER_LONG.
-> > It's stricter and also more informative.
-> >
-> >  drivers/net/wireless/realtek/rtw89/core.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/wireless/realtek/rtw89/core.c
-> > b/drivers/net/wireless/realtek/rtw89/core.c
-> > index 49447668cbf3..3604a8e15df0 100644
-> > --- a/drivers/net/wireless/realtek/rtw89/core.c
-> > +++ b/drivers/net/wireless/realtek/rtw89/core.c
-> > @@ -5239,7 +5239,8 @@ int rtw89_core_mlsr_switch(struct rtw89_dev *rtwd=
-ev, struct
-> > rtw89_vif *rtwvif,
-> >         if (unlikely(!ieee80211_vif_is_mld(vif)))
-> >                 return -EOPNOTSUPP;
-> >
-> > -       if (unlikely(!(usable_links & BIT(link_id)))) {
-> > +       if (unlikely(link_id >=3D IEEE80211_MLD_MAX_NUM_LINKS ||
-> > +                    !(usable_links & BIT(link_id)))) {
-> >                 rtw89_warn(rtwdev, "%s: link id %u is not usable\n", __=
-func__,
-> >                            link_id);
-> >                 return -ENOLINK;
-> > --
-> > 2.47.2
->=20
-> It looks good to me.
-> Thank you.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-I will add a tag during committing.=20
+Commit e15658676405 ("hwmon/misc: amd-sbi: Move core sbrmi from hwmon to
+misc") removes the config SENSORS_SBRMI, but misses the reference to that
+config in the Makefile.
 
-Reviewed-by: Zong-Zhe Yang <kevin_yang@realtek.com>
+Clean up that obsolete line in the Makefile.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ drivers/hwmon/Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+index 48e5866c0c9a..726ffd9f6a1b 100644
+--- a/drivers/hwmon/Makefile
++++ b/drivers/hwmon/Makefile
+@@ -196,7 +196,6 @@ obj-$(CONFIG_SENSORS_PWM_FAN)	+= pwm-fan.o
+ obj-$(CONFIG_SENSORS_QNAP_MCU_HWMON)	+= qnap-mcu-hwmon.o
+ obj-$(CONFIG_SENSORS_RASPBERRYPI_HWMON)	+= raspberrypi-hwmon.o
+ obj-$(CONFIG_SENSORS_SBTSI)	+= sbtsi_temp.o
+-obj-$(CONFIG_SENSORS_SBRMI)	+= sbrmi.o
+ obj-$(CONFIG_SENSORS_SCH56XX_COMMON)+= sch56xx-common.o
+ obj-$(CONFIG_SENSORS_SCH5627)	+= sch5627.o
+ obj-$(CONFIG_SENSORS_SCH5636)	+= sch5636.o
+-- 
+2.49.0
 
