@@ -1,192 +1,164 @@
-Received: from monticello.secure-endpoints.com (monticello.secure-endpoints.com [208.125.0.237])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7744A22CBE6
-	for <kernel-janitors@vger.kernel.org>; Fri, 30 May 2025 12:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD6A20E32F;
+	Fri, 30 May 2025 21:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748608994; cv=none; b=DWMQGhD9Hk988rZHqWku5t3HNgWdJnj+1BYo6SEecduqfLrNKYDLvjqTkqbRIMkU4gZjkZgoBFQNKxmftHU87klqsx6gFweo04mAbfFbb/qLeXFdruFm37DOnuCo2a5J+UK3LEETUASNzOcjeTENSERf4xKgTncXMBSAASt+HVs=
+	t=1748639235; cv=none; b=mfqN5IMHhlNLV2WlU7gv2AXH+5cPe3jK6+u114iqNZyUX46AQRxB4CtCLV868ZQ7V8v9QDnTwrNBr6Q5utLxq7UyXcqqsJefa5yQ1+MMP6MgkrMIWZM8eU8nEU2WTjop/XLQp1SP0E0EZaVWsqyGdZzx9XZ+EcK5uHMOQ69XFfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748608994; c=relaxed/simple;
-	bh=+RZMR1CHUJjiZB2USgqQn+XYmw90Jacjujr8YCIV2XU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tJ2wh77gQd/JAbeUISsjFle6SNGpGUh1OlWKA7pzWSBStrtj9l3DKi6v01h8feDf/M9jUfsEFxSioT5TVRvI0lfkdH90gNdN3tNfYCGoxaAgWa04AQvqWAgnQ9e/QwcOfByZsKuU4bdFy29uE/5T8T6WLxzTTRcbjAifF1Oa3vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=OYrjIPcz; arc=none smtp.client-ip=208.125.0.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
+	s=arc-20240116; t=1748639235; c=relaxed/simple;
+	bh=zWKhGvQJc31V8GrQgHLVQgv8G2mj2HyaSVbl7UYGb50=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t2VATcmWcocxW6EQKqY0Hvfn5ySUEgX4N4rHqOFEo8YwEuoHznDUqZeW+wMFWZcHBLro/76A1ZxQmQo/eEkc7jtxEo1onliINJQfOa1JD1NNvD2FbDQYhFy3rmAZO0ZdDEmKws334OCJ4FE4sD1pajq+AD+nU2DYBHsNLTTGlbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GaL2ZrPX; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="OYrjIPcz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GaL2ZrPX"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-30e85955bebso306863a91.0;
+        Fri, 30 May 2025 14:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=auristor.com; s=MDaemon; r=y; l=7383; t=1748608974;
-	x=1749213774; i=jaltman@auristor.com; q=dns/txt; h=Message-ID:
-	Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	Content-Language:From:Organization:Disposition-Notification-To:
-	In-Reply-To:Content-Type; z=Received:=20from=20[IPV6=3A2603=3A70
-	00=3A73c=3Abb00=3Adc7e=3A9c1d=3Ab0ad=3A49cd]=20by=20auristor.com
-	=20(IPv6=3A2001=3A470=3A1f07=3Af77=3Affff=3A=3A312)=20(MDaemon=2
-	0PRO=20v25.0.3a)=20=0D=0A=09with=20ESMTPSA=20id=20md500100473738
-	8.msg=3B=20Fri,=2030=20May=202025=2008=3A42=3A53=20-0400|Message
-	-ID:=20<f9f56006-8490-43cb-a622-6e95c3af1d24@auristor.com>|Date:
-	=20Fri,=2030=20May=202025=2008=3A43=3A00=20-0400|MIME-Version:=2
-	01.0|User-Agent:=20Mozilla=20Thunderbird|Subject:=20Re=3A=20[PAT
-	CH]=20afs=3A=20Replace=20simple_strtoul=20with=20kstrtoul=20in=0
-	D=0A=20afs_parse_address|To:=20Su=20Hui=20<suhui@nfschina.com>,=
-	20dhowells@redhat.com,=20marc.dionne@auristor.com|Cc:=20linux-af
-	s@lists.infradead.org,=20linux-kernel@vger.kernel.org,=0D=0A=20k
-	ernel-janitors@vger.kernel.org|References:=20<1f027931-8781-4c6c
-	-86c8-2d680b86974f@nfschina.com>|Content-Language:=20en-US|From:
-	=20Jeffrey=20E=20Altman=20<jaltman@auristor.com>|Organization:=2
-	0AuriStor,=20Inc.|Disposition-Notification-To:=20Jeffrey=20E=20A
-	ltman=20<jaltman@auristor.com>|In-Reply-To:=20<1f027931-8781-4c6
-	c-86c8-2d680b86974f@nfschina.com>|Content-Type:=20multipart/sign
-	ed=3B=20protocol=3D"application/pkcs7-signature"=3B=20micalg=3Ds
-	ha-256=3B=20boundary=3D"------------ms070404040307080304080807";
-	bh=+RZMR1CHUJjiZB2USgqQn+XYmw90Jacjujr8YCIV2XU=; b=OYrjIPcz2mS+v
-	UKf8oigoDEucVuVyZSBbZAZFVEW99Q6TAghGDMQGVtouShZq0Q0gDO0KCC+keW1U
-	38Z+EG/ZXdjg2yXrHh7XpyV3gpaujhWptPkFFvgP5Wyo7v3GtCZz6K/cH7wcWKFr
-	YZWnfSDWV2faa3NIUkWPi58N7mw4w4=
-X-MDAV-Result: clean
-X-MDAV-Processed: monticello.secure-endpoints.com, Fri, 30 May 2025 08:42:54 -0400
-Received: from [IPV6:2603:7000:73c:bb00:dc7e:9c1d:b0ad:49cd] by auristor.com (IPv6:2001:470:1f07:f77:ffff::312) (MDaemon PRO v25.0.3a) 
-	with ESMTPSA id md5001004737388.msg; Fri, 30 May 2025 08:42:53 -0400
-X-Spam-Processed: monticello.secure-endpoints.com, Fri, 30 May 2025 08:42:53 -0400
-	(not processed: message from trusted or authenticated source)
-X-MDRemoteIP: 2603:7000:73c:bb00:dc7e:9c1d:b0ad:49cd
-X-MDHelo: [IPV6:2603:7000:73c:bb00:dc7e:9c1d:b0ad:49cd]
-X-MDArrival-Date: Fri, 30 May 2025 08:42:53 -0400
-X-MDOrigin-Country: US, NA
-X-Authenticated-Sender: jaltman@auristor.com
-X-Return-Path: prvs=1245565365=jaltman@auristor.com
-X-Envelope-From: jaltman@auristor.com
-X-MDaemon-Deliver-To: kernel-janitors@vger.kernel.org
-Message-ID: <f9f56006-8490-43cb-a622-6e95c3af1d24@auristor.com>
-Date: Fri, 30 May 2025 08:43:00 -0400
+        d=gmail.com; s=20230601; t=1748639233; x=1749244033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oGXcmpHLGZ0cBPSg7JF2gv115I3EWj0stA1DKNfhXFw=;
+        b=GaL2ZrPXtPaDCqLl6Mpeszb2j2cVcuQMrQ44jn/7XJbzq58oxyYsIkdigKbMthBTpj
+         3avS0wO/GU4o3RiOAgcCMIX8RpUie4fyfkK+UtFd+ENqw8qY8yywlSLVe1ypCak9HZbJ
+         S7bOguPPqIzblDgFthEUzVxZiPHZCOjHMs+pxntTNb/DNe9cN+VhWnrLMZbjwZwWO2aB
+         KWCQK2d/xlNALriu4C6qJ9Iq1XdlGDxVKFHE6k09CmiaV5UyBkl/a8j1BtmbSoudKYAL
+         5SIXJq7Zq+wn90cbZ0Lr51fcGk3BMyr9Gfdveejt8Z0Gs4Og+Xexi7QvXhTcHCd1DCFs
+         Vgng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748639233; x=1749244033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oGXcmpHLGZ0cBPSg7JF2gv115I3EWj0stA1DKNfhXFw=;
+        b=qgRCVI+tflXoQuXJofaf/FBYizzu/Y2rFMfXhjTWEujJXSL8Y22DSG5LZ0cS+CBf5D
+         m8EaVK+5dSkYAKFW/MVnxWML0m/NZC0KDuv4JHpWFNpyJW9/xX8Dcvt4ldkmK4sq78NX
+         D5As9NtwB/x9T7BwHv4o4gWXFt+4GWw7mB4nbKX2X4g2jDZjJJI5UzBW3dHB03lQscv6
+         rxM+/SeIuAEVccKaLb6l4F42TMec03Iqjw3vmuujCDAO/C0/khmK0nM2jrswwY0Ez8i3
+         FDDxB5C/Zq0WhvncmQ6VASJQr4MFnGheXapP/rRZvbeywf/QIqKD1WfpDgr8yFORXTqB
+         4kbg==
+X-Forwarded-Encrypted: i=1; AJvYcCU86h6KteyOmZE+4kUzRsmXILYrKpibVxwRKbYgwxUeBYUhDfyDji4qiUIXCBI9Hh5BB+BxFUNqoTs0FSfW@vger.kernel.org, AJvYcCVcfsMkyuufgdCeZ3+HL8vPKRLNQIOk6lA5B/80p956us3L/AFmNs9mR+YLOza6TB16Jis5Bpk54c59cUWVWDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmBT7rOAq1rZKaF6wx/WkxMDKClYYwnUw9hE7ZEM2/s2vKpDm4
+	/182JU02hL6NVV5LPTgnAI4AmApZVgWEPxJqrLlQFh+HIj4kuIlsvM8/SMz+DGwU8+i8iA65Wc/
+	7XxvEwC4nZP87kjfCRnRkfDe/SVwzwMitew==
+X-Gm-Gg: ASbGncsQ3NG4WKrxbLeswv8wagzaKUIiSkF+fv5us6i5quLSdPGieJMmsqieb1WQcxe
+	dnWm/zR2VwsaiAmjsq0bIvsOB0yV/pCS8ts4LEvIUhRRzPjPSAe9N5WemQr7IjW+ycIXuYgr1pJ
+	mCWvjOxuwOUpDDfS22F9XN8i3AnJyfRdXqJA==
+X-Google-Smtp-Source: AGHT+IE39OkzWVKlWbuP41xFMtRiiUJFZAOfPL6ymnoyEmqEM70KUGsyUkK03lu86u+zMtXgYYeovXInIZXHdm9l9j0=
+X-Received: by 2002:a17:90b:1c03:b0:311:b0ec:135e with SMTP id
+ 98e67ed59e1d1-3124d37bf74mr2147906a91.2.1748639232681; Fri, 30 May 2025
+ 14:07:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] afs: Replace simple_strtoul with kstrtoul in
- afs_parse_address
-To: Su Hui <suhui@nfschina.com>, dhowells@redhat.com, marc.dionne@auristor.com
-Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <1f027931-8781-4c6c-86c8-2d680b86974f@nfschina.com>
-Content-Language: en-US
-From: Jeffrey E Altman <jaltman@auristor.com>
-Organization: AuriStor, Inc.
-In-Reply-To: <1f027931-8781-4c6c-86c8-2d680b86974f@nfschina.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms070404040307080304080807"
-X-MDCFSigsAdded: auristor.com
+References: <aDCc5kawU4cWj-Cx@stanley.mountain>
+In-Reply-To: <aDCc5kawU4cWj-Cx@stanley.mountain>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 30 May 2025 17:07:00 -0400
+X-Gm-Features: AX0GCFvPbUz9CBiEt7WQUPqZBhsAhDRNISBs7Xy5NYAVX-7I-ATyV23irUkz_3U
+Message-ID: <CADnq5_PGo3=S4A9Vy-8Sonx+NEYp47_OD9NK_LFO9q+Dbtwo0Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Fix integer overflow issues in amdgpu_userq_fence.c
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Arvind Yadav <Arvind.Yadav@amd.com>, 
+	Shashank Sharma <shashank.sharma@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a cryptographically signed message in MIME format.
+Applied.  Thanks!
 
---------------ms070404040307080304080807
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-T24gNS8zMC8yMDI1IDY6MjkgQU0sIFN1IEh1aSB3cm90ZToNCj4gT24gNS8zMC8yNSA3OjM1
-IEFNLCBKZWZmcmV5IEUgQWx0bWFuIHdyb3RlOg0KPj4NCj4+IERvIHlvdSBzZWUgYW4gb3Zl
-cmZsb3cgY29uZGl0aW9uIHdoaWNoIHdvdWxkIG5vdCBiZSBjYXVnaHQgYnkgdGhvc2UgDQo+
-PiBjaGVja3Mgd2hpY2ggd291bGQgYmUgY2F1Z2h0IGJ5IHVzZSBvZiBrc3RydG91bCgpPw0K
-PiBBY3R1YWxseSwgbm8gZXhhbXBsZSBpbiByZWFsaXR5Lg0KPiBJZiBwIGNhbiBlcXVhbCB0
-byAnMHhmZmZmZmZmZmZmZmZmZmZmMDAwMDAwMDAwMDAwMDAwMScsIA0KPiBzaW1wbGVfc3Ry
-dG91bCgpIGFuZCBrc3Ryb3VsKCkgYWxsIHRyYW5zZm9ybSAncCcgdG8gdW5zaWduZWQgbG9u
-ZyANCj4gdmFsdWUgJzB4MScuDQo+IEJ1dCBrc3RydG91bCgpIHJldHVybiBhbiBlcnJvciBh
-bmQgd2UgY2FuIGtub3cgb3ZlcmZsb3cgaGFwcGVucy7CoMKgSWYgDQo+ICdwJyBjYW4gYmUg
-YSB2ZXJ5IGxvbmcgc3RyaW5nLCBrc3Ryb3VsKCkgbWFrZSBzZW5zZS4NCj4NClRoZSBleHBl
-Y3RlZCB1c2UgY2FzZSBpcyBmb3IgdGhlIGlucHV0IHN0cmluZyBub3QgdG8gZXhjZWVkIDMg
-DQpjaGFyYWN0ZXJzLsKgIFRoZSB2YWxpZCByYW5nZSBpcyBkZWNpbWFsIDAgdG8gMTI4LsKg
-IFRoYXQgY291bGQgYmUgDQplbmZvcmNlZCBieSBzd2l0Y2hpbmcgdG8gc2ltcGxlX3N0cm50
-b3VsKCkgYW5kIHJlbHlpbmcgdXBvbiB0aGUgZXhpc3RpbmcgDQpjaGVja3MuDQo=
-
---------------ms070404040307080304080807
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
-BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
-MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
-MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
-YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
-xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
-fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
-EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
-9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
-IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
-BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
-BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
-My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
-A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
-L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
-bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
-aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
-YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
-ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
-dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
-MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
-gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
-eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
-WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
-utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
-Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
-a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
-AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
-Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
-AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
-wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
-15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
-o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
-3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
-VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
-CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
-dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
-L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
-5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
-dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
-eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
-YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
-dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
-Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
-dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
-bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
-CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
-bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
-0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
-6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
-QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
-Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
-db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
-rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
-UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
-p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
-MDGCBAEwggP9AgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
-A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
-ggKEMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDUzMDEy
-NDMwMFowLwYJKoZIhvcNAQkEMSIEIEHtazrotQtfQKM98IGgHgZs9aHalxnewBvwb910+Ju/
-MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
-MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
-AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
-dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMIIBVwYJKoZIhvcNAQkPMYIBSDCCAUQw
-CwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzANBggqhkiG9w0DAgIBBTAN
-BggqhkiG9w0DAgIBBTAHBgUrDgMCBzANBggqhkiG9w0DAgIBBTAHBgUrDgMCGjALBglghkgB
-ZQMEAgEwCwYJYIZIAWUDBAICMAsGCWCGSAFlAwQCAzALBglghkgBZQMEAgQwCwYJYIZIAWUD
-BAIHMAsGCWCGSAFlAwQCCDALBglghkgBZQMEAgkwCwYJYIZIAWUDBAIKMAsGCSqGSIb3DQEB
-ATALBgkrgQUQhkg/AAIwCAYGK4EEAQsAMAgGBiuBBAELATAIBgYrgQQBCwIwCAYGK4EEAQsD
-MAsGCSuBBRCGSD8AAzAIBgYrgQQBDgAwCAYGK4EEAQ4BMAgGBiuBBAEOAjAIBgYrgQQBDgMw
-DQYJKoZIhvcNAQEBBQAEggEAahvJzLJJEYu/fFClCYn3Hj4oG7C5VAAnXuSyf64cnUoNCr6D
-kV+jFPD844uaXneBKV50oxQ2oEaT7EEH67LfgilU/GRxg0vGC0pCnsAcplbSEUZxoSz6KHw0
-ktCBW4W1lwKN1mEh+NL3YHtT5NjsPBmBZxFXta6R1xdCU3bE7c1rWVCy6NGPQLMglgl37YbZ
-UEw8Kxn7WxruwkEcb8FbFZeupG4o5a1U0K7r1OunjOlLv8VcGaoo8iIixTVbOFpQEL0rB8Um
-cNxMDT6mJYDcAdGQQF+pNtXomqsTvul5iHmvE+eZJDVn5MEjieHHPK9fy+OFI4/dBpnhQIA0
-NxPajgAAAAAAAA==
---------------ms070404040307080304080807--
-
+On Fri, May 23, 2025 at 12:25=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> This patch only affects 32bit systems.  There are several integer
+> overflows bugs here but only the "sizeof(u32) * num_syncobj"
+> multiplication is a problem at runtime.  (The last lines of this patch).
+>
+> These variables are u32 variables that come from the user.  The issue
+> is the multiplications can overflow leading to us allocating a smaller
+> buffer than intended.  For the first couple integer overflows, the
+> syncobj_handles =3D memdup_user() allocation is immediately followed by
+> a kmalloc_array():
+>
+>         syncobj =3D kmalloc_array(num_syncobj_handles, sizeof(*syncobj), =
+GFP_KERNEL);
+>
+> In that situation the kmalloc_array() works as a bounds check and we
+> haven't accessed the syncobj_handlesp[] array yet so the integer overflow
+> is harmless.
+>
+> But the "num_syncobj" multiplication doesn't have that and the integer
+> overflow could lead to an out of bounds access.
+>
+> Fixes: a292fdecd728 ("drm/amdgpu: Implement userqueue signal/wait IOCTL")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c b/drivers/gp=
+u/drm/amd/amdgpu/amdgpu_userq_fence.c
+> index 029cb24c28b3..bd79f105d77f 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq_fence.c
+> @@ -430,7 +430,7 @@ int amdgpu_userq_signal_ioctl(struct drm_device *dev,=
+ void *data,
+>
+>         num_syncobj_handles =3D args->num_syncobj_handles;
+>         syncobj_handles =3D memdup_user(u64_to_user_ptr(args->syncobj_han=
+dles),
+> -                                     sizeof(u32) * num_syncobj_handles);
+> +                                     size_mul(sizeof(u32), num_syncobj_h=
+andles));
+>         if (IS_ERR(syncobj_handles))
+>                 return PTR_ERR(syncobj_handles);
+>
+> @@ -612,13 +612,13 @@ int amdgpu_userq_wait_ioctl(struct drm_device *dev,=
+ void *data,
+>
+>         num_read_bo_handles =3D wait_info->num_bo_read_handles;
+>         bo_handles_read =3D memdup_user(u64_to_user_ptr(wait_info->bo_rea=
+d_handles),
+> -                                     sizeof(u32) * num_read_bo_handles);
+> +                                     size_mul(sizeof(u32), num_read_bo_h=
+andles));
+>         if (IS_ERR(bo_handles_read))
+>                 return PTR_ERR(bo_handles_read);
+>
+>         num_write_bo_handles =3D wait_info->num_bo_write_handles;
+>         bo_handles_write =3D memdup_user(u64_to_user_ptr(wait_info->bo_wr=
+ite_handles),
+> -                                      sizeof(u32) * num_write_bo_handles=
+);
+> +                                      size_mul(sizeof(u32), num_write_bo=
+_handles));
+>         if (IS_ERR(bo_handles_write)) {
+>                 r =3D PTR_ERR(bo_handles_write);
+>                 goto free_bo_handles_read;
+> @@ -626,7 +626,7 @@ int amdgpu_userq_wait_ioctl(struct drm_device *dev, v=
+oid *data,
+>
+>         num_syncobj =3D wait_info->num_syncobj_handles;
+>         syncobj_handles =3D memdup_user(u64_to_user_ptr(wait_info->syncob=
+j_handles),
+> -                                     sizeof(u32) * num_syncobj);
+> +                                     size_mul(sizeof(u32), num_syncobj))=
+;
+>         if (IS_ERR(syncobj_handles)) {
+>                 r =3D PTR_ERR(syncobj_handles);
+>                 goto free_bo_handles_write;
+> --
+> 2.47.2
+>
