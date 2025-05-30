@@ -1,77 +1,75 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5485220F30
-	for <kernel-janitors@vger.kernel.org>; Fri, 30 May 2025 09:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 5D8582222C0;
+	Fri, 30 May 2025 10:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597587; cv=none; b=YnlsMB5ei4I6GLQxyx0wZiLI6J+8JwDv6ulFmj8+DntVTvZeeHY02k1NzSg+5+b1QSm46URLLYJSuoLiiR2X9rmEMy8AK0mX3VoCASmTFO3xuNIyvNVDxzUGEs61kApUX9Nrk2hTO3Nr/qH5xRBfB7QzjTMHF78NOImmGroIB6k=
+	t=1748600976; cv=none; b=U3YlOLK5Lw/qtNJd/Mz+60VQtGrvffPXFbMO+W6GDjkAI4R//vBp2/h2FEzX9uLjlz8QqpHo0qPqfzBV7q6D5Pw/41iBGXUZVyoMoQcP6SCBRlOQzF0gjCmqJxY1ezyIEfzrrzoA+jBse87dpMDGyIrKH9PRKktQy3KQGxQlRhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597587; c=relaxed/simple;
-	bh=HWBJBkrabhiA7Ms8ILFCAOOED9oIjHs3RLCzQ5lxjLQ=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=maIVeyWRXAOagonsXT1x8ZyLFdva+bNdfVxv/LS7ozae3rTMZ2VPrrhP3YTKm+iE7dFanJKWhrUHECdf/eSYJNnKcVax3UmgnTT1kyu87Aj/YMCbSS5lpXHY8I3z1OE7oHhlZC+mxW7fszNFRHyHGq7p6iwIGRgM0DVgiTY2rLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J5qRrh71; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J5qRrh71"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748597583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=htv9cZewB1UVDzHczYFZHahQGakMX4ZHGulof9YJI7w=;
-	b=J5qRrh71h3U5/76DrZMy67ABiEnEDguh2Hk8U+aEhmU/tkZ0HUMb2jO1vXxoMBWLqZBNY1
-	vZdv0IMayyBVX3ubq6pn3FXaVLUYp7yUPIXihXcOo7zaIgZ+ildPLQXoV8z7aKyGLf4m0W
-	dvyyd6G3r9BAEwRl5izfzufnT43GSps=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-154-IQ9cafIjNpmDcy6ghYPVkA-1; Fri,
- 30 May 2025 05:32:58 -0400
-X-MC-Unique: IQ9cafIjNpmDcy6ghYPVkA-1
-X-Mimecast-MFC-AGG-ID: IQ9cafIjNpmDcy6ghYPVkA_1748597576
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A80A18001EA;
-	Fri, 30 May 2025 09:32:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.2])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 136BD19560A7;
-	Fri, 30 May 2025 09:32:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250527084916.1699109-1-suhui@nfschina.com>
-References: <20250527084916.1699109-1-suhui@nfschina.com>
-To: Su Hui <suhui@nfschina.com>
-Cc: dhowells@redhat.com, marc.dionne@auristor.com,
-    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] afs: Replace simple_strtoul with kstrtoul in afs_parse_address
+	s=arc-20240116; t=1748600976; c=relaxed/simple;
+	bh=DB3MFKB2EWYDWs8y86REFzNC3zVqE1NTe3DLImhWNc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=l/uOqGExU5UhnC58YgRM6dv925fqntM9aLkaj6YmJ6NYvjhwbxiM44Cd5pml7gtUkb0OyH393b8/7O6Io2t3GOQW+7NJc4eCuqk2CjSsqkGKvxZnSEwl9Ox0bqsMnwfP+IyHq6PVrbjWNZpbsUl232vYtc8I9tUb2NKAfPG6xiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [192.168.43.55] (unknown [122.96.47.185])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 4D5D06024EF3F;
+	Fri, 30 May 2025 18:29:28 +0800 (CST)
+Message-ID: <1f027931-8781-4c6c-86c8-2d680b86974f@nfschina.com>
+Date: Fri, 30 May 2025 18:29:27 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <685977.1748597572.1@warthog.procyon.org.uk>
-Date: Fri, 30 May 2025 10:32:52 +0100
-Message-ID: <685978.1748597572@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] afs: Replace simple_strtoul with kstrtoul in
+ afs_parse_address
+To: Jeffrey E Altman <jaltman@auristor.com>, dhowells@redhat.com,
+ marc.dionne@auristor.com
+Cc: linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Content-Language: en-US
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 122.96.47.185
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <ea42a3fd-7ce8-43e0-a2d5-c5353070bfe2@auristor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Su Hui <suhui@nfschina.com> wrote:
+On 5/30/25 7:35 AM, Jeffrey E Altman wrote:
+> On 5/27/2025 4:49 AM, Su Hui wrote:
+>> kstrtoul() is better because simple_strtoul() ignores overflow which
+>> may lead to unexpected results.
+>>
+>> Signed-off-by: Su Hui<suhui@nfschina.com>
+>> ---
+>>
+> Su Hui,
+>
+> Thank you for the contribution but I do not believe this patch is 
+> correct.
+>
+Oh, really sorry for my stupid mistake. Thanks for your review too :) .
+> The second block is required even if the simple_stroul() is replaced 
+> by kstrtoul() as it protects against an input string which does not 
+> contain the optional subnet mask but has some other characters after 
+> the address.
+>
+> afs_parse_address() already has its own overflow checks following the 
+> simple_strtoul() call which is specific to the interpretation of the 
+> allowed subnet mask values.
+Agreed, it's my fault that I only see the pattern about 
+'simple_strtoxx(....)' and 'if (*p)'.....
+>
+> Do you see an overflow condition which would not be caught by those 
+> checks which would be caught by use of kstrtoul()?
+Actually, no example in reality.
+If p can equal to '0xffffffffffffffff0000000000000001', simple_strtoul() 
+and kstroul() all transform 'p' to unsigned long value '0x1'.
+But kstrtoul() return an error and we can know overflow happens.  If 'p' 
+can be a very long string, kstroul() make sense.
 
-> kstrtoul() is better because simple_strtoul() ignores overflow which
-> may lead to unexpected results.
-
-Overflow in what sense?  Are we talking about a mathematical overflow or not
-checking the text beyond the end of the number?
-
-David
+Su Hui
 
