@@ -1,126 +1,74 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id B818770838;
-	Wed,  4 Jun 2025 03:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A69D13A3ED;
+	Wed,  4 Jun 2025 15:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749008935; cv=none; b=sIWQlYcMoNQVA4RfvO52Q576zeZKfnfxSLD0P2yAMXz/gSE7xjFZXNioOCImal4gxYWUkjpenwrHF0XkODvVr+1ZWyflomQgRoKXgUwWJ6Mbjoeg5Age3fRgOP90HnpNc7DsyvdtK00njlb5wDbeen9MnaTc5eJTHZWiFvE4Du8=
+	t=1749051032; cv=none; b=rS1Ldh33QfzUHrIyTP4kpdiXXk53TvCbz53H3rxjouYZBkXC+f/ZL2zLSNd13bieumGu0ao1BEWinla0L861K7YnX3pw9Dr88x6Ze5cJynEbD3X/qFpXBXmVjYwTUmlaGn/PF+YR8uLm0O9ZtlqV4lu/Fl7LAZdv5lrlYfJCwZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749008935; c=relaxed/simple;
-	bh=p1azAzD1JQm81XfjGQoJVYO2dhg0xi6TF9uyuTGkfnw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ri1eeYXZbGXitgJ1RMhAJnS2b6vza8qGOqStRB8mfVS1c7Ue60PA+XU1Ghwdb6UMAho829CcmuXO50rCbkDgpE3Dk/3ZYh8XylZf3J4cfSXq+dQOposbV3diNQk3GpnQK6dSic5mHrsC95TPF065DPMKFN1vGaABZSWDX02kf/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id E26EB6018DA57;
-	Wed,  4 Jun 2025 11:48:35 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neil@brown.name,
-	okorniev@redhat.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] nfsd: Change the type of ek_fsidtype from int to u8 and use kstrtou8
-Date: Wed,  4 Jun 2025 11:47:26 +0800
-Message-Id: <20250604034725.450911-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1749051032; c=relaxed/simple;
+	bh=Vi54+MTJC05Rofk/bnZBllkeyCAg+RDLF5sCSBzbJX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IhZ/4An49FnljHR7w+O2evvCJ3oL9sGPeX0wBMCuguWUq63MmaDN/YzhwbWYC6RWckJbXY58LL7xBlQpZ5IWzwzEZ5f1AYDqmcROLnYUMWmXMd6Qx7leW13QOTPt4hYzZYufcA5cDlnnN9w/FxCkyQKltkaySIl3AXKiMuhQV7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: XAn1vIKZSOugyxDDoxv91A==
+X-CSE-MsgGUID: 9WauvoQcTZWIxlFkCMrSUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="61405822"
+X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
+   d="scan'208";a="61405822"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 08:30:30 -0700
+X-CSE-ConnectionGUID: TCxxyYDtQAC0rXI23RcsiA==
+X-CSE-MsgGUID: 6aKuB2ElR7OU4wLhtq26/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
+   d="scan'208";a="176180957"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 08:30:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andy@kernel.org>)
+	id 1uMq4D-00000003abB-1jJd;
+	Wed, 04 Jun 2025 18:30:13 +0300
+Date: Wed, 4 Jun 2025 18:30:13 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: adc: ti-ads131e08: Fix spelling mistake
+ "tweek" -> "tweak"
+Message-ID: <aEBmhUv-xpNgmv6v@smile.fi.intel.com>
+References: <20250603165706.126031-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250603165706.126031-1-colin.i.king@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The valid values for ek_fsidtype are actually 0-7 so it's better to
-change the type to u8. Also using kstrtou8() to relpace simple_strtoul(),
-kstrtou8() is safer and more suitable for u8.
+On Tue, Jun 03, 2025 at 05:57:06PM +0100, Colin Ian King wrote:
+> There is a spelling mistake in variable tweek_offset and in comment
+> blocks. Fix these.
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
-Suggested-by: NeilBrown <neil@brown.name>
----
-v2:
- - change the type of ek_fsidtype to u8 and using kstrtou8.
-v1:
- - https://lore.kernel.org/all/20250527092548.1931636-1-suhui@nfschina.com/
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-ps: I don't add the v1 patch's review tag because it's very different
-between v1 and v2.
+Datasheet doesn't give any special term for this, so I think the patch
+is correct. OTOH, the dictionary defines tweek as "A form of atmospherics
+(radio interference) produced when the high-frequency components reach
+the receiver before the low-frequency components." which is somehow might be
+related (like high byte goes before low or vise versa).
 
- fs/nfsd/export.c | 8 +++-----
- fs/nfsd/export.h | 2 +-
- fs/nfsd/trace.h  | 4 ++--
- 3 files changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-index 88ae410b4113..cadfc2bae60e 100644
---- a/fs/nfsd/export.c
-+++ b/fs/nfsd/export.c
-@@ -82,8 +82,7 @@ static int expkey_parse(struct cache_detail *cd, char *mesg, int mlen)
- 	int len;
- 	struct auth_domain *dom = NULL;
- 	int err;
--	int fsidtype;
--	char *ep;
-+	u8 fsidtype;
- 	struct svc_expkey key;
- 	struct svc_expkey *ek = NULL;
- 
-@@ -109,10 +108,9 @@ static int expkey_parse(struct cache_detail *cd, char *mesg, int mlen)
- 	err = -EINVAL;
- 	if (qword_get(&mesg, buf, PAGE_SIZE) <= 0)
- 		goto out;
--	fsidtype = simple_strtoul(buf, &ep, 10);
--	if (*ep)
-+	if (kstrtou8(buf, 10, &fsidtype))
- 		goto out;
--	dprintk("found fsidtype %d\n", fsidtype);
-+	dprintk("found fsidtype %u\n", fsidtype);
- 	if (key_len(fsidtype)==0) /* invalid type */
- 		goto out;
- 	if ((len=qword_get(&mesg, buf, PAGE_SIZE)) <= 0)
-diff --git a/fs/nfsd/export.h b/fs/nfsd/export.h
-index 4d92b99c1ffd..b9c0adb3ce09 100644
---- a/fs/nfsd/export.h
-+++ b/fs/nfsd/export.h
-@@ -88,7 +88,7 @@ struct svc_expkey {
- 	struct cache_head	h;
- 
- 	struct auth_domain *	ek_client;
--	int			ek_fsidtype;
-+	u8			ek_fsidtype;
- 	u32			ek_fsid[6];
- 
- 	struct path		ek_path;
-diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
-index 3c5505ef5e3a..b244c6b3e905 100644
---- a/fs/nfsd/trace.h
-+++ b/fs/nfsd/trace.h
-@@ -344,7 +344,7 @@ TRACE_EVENT(nfsd_exp_find_key,
- 		 int status),
- 	TP_ARGS(key, status),
- 	TP_STRUCT__entry(
--		__field(int, fsidtype)
-+		__field(u8, fsidtype)
- 		__array(u32, fsid, 6)
- 		__string(auth_domain, key->ek_client->name)
- 		__field(int, status)
-@@ -367,7 +367,7 @@ TRACE_EVENT(nfsd_expkey_update,
- 	TP_PROTO(const struct svc_expkey *key, const char *exp_path),
- 	TP_ARGS(key, exp_path),
- 	TP_STRUCT__entry(
--		__field(int, fsidtype)
-+		__field(u8, fsidtype)
- 		__array(u32, fsid, 6)
- 		__string(auth_domain, key->ek_client->name)
- 		__string(path, exp_path)
 -- 
-2.30.2
+With Best Regards,
+Andy Shevchenko
+
 
