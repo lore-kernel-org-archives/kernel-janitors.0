@@ -1,74 +1,103 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A69D13A3ED;
-	Wed,  4 Jun 2025 15:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060571A00F0;
+	Thu,  5 Jun 2025 06:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749051032; cv=none; b=rS1Ldh33QfzUHrIyTP4kpdiXXk53TvCbz53H3rxjouYZBkXC+f/ZL2zLSNd13bieumGu0ao1BEWinla0L861K7YnX3pw9Dr88x6Ze5cJynEbD3X/qFpXBXmVjYwTUmlaGn/PF+YR8uLm0O9ZtlqV4lu/Fl7LAZdv5lrlYfJCwZs=
+	t=1749106122; cv=none; b=PDDkIVIy7+Ihc18L2T8+Gv450pVK1QXKyEIm/dn9ZF05/KbIW6SGhsiRFnpyJvcCSfR9mxWamQludZrkkTHlkuseFCCAZ5uThiq8XROav/V9vr+8i038eUH3/F/1dC7JvoLHHo9g2Smw9UT4KyXDP7uUXvzIJgTXBXX0MThoGDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749051032; c=relaxed/simple;
-	bh=Vi54+MTJC05Rofk/bnZBllkeyCAg+RDLF5sCSBzbJX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhZ/4An49FnljHR7w+O2evvCJ3oL9sGPeX0wBMCuguWUq63MmaDN/YzhwbWYC6RWckJbXY58LL7xBlQpZ5IWzwzEZ5f1AYDqmcROLnYUMWmXMd6Qx7leW13QOTPt4hYzZYufcA5cDlnnN9w/FxCkyQKltkaySIl3AXKiMuhQV7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: XAn1vIKZSOugyxDDoxv91A==
-X-CSE-MsgGUID: 9WauvoQcTZWIxlFkCMrSUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11454"; a="61405822"
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
-   d="scan'208";a="61405822"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 08:30:30 -0700
-X-CSE-ConnectionGUID: TCxxyYDtQAC0rXI23RcsiA==
-X-CSE-MsgGUID: 6aKuB2ElR7OU4wLhtq26/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,209,1744095600"; 
-   d="scan'208";a="176180957"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jun 2025 08:30:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andy@kernel.org>)
-	id 1uMq4D-00000003abB-1jJd;
-	Wed, 04 Jun 2025 18:30:13 +0300
-Date: Wed, 4 Jun 2025 18:30:13 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] iio: adc: ti-ads131e08: Fix spelling mistake
- "tweek" -> "tweak"
-Message-ID: <aEBmhUv-xpNgmv6v@smile.fi.intel.com>
-References: <20250603165706.126031-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1749106122; c=relaxed/simple;
+	bh=v1VbwHn9X/vcgpehSlsORSX2h1I1ZC7wmEKLIY4Dtio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y6y3EVDFQbadbw1XuShlyU87tA5XntbN7QmxA3PLbrJWAWjs6CEgc1+wRCftE4eOhj5oAoPrBcVPmWYCi9Te+4TAmOnmo34I6sun+ZZQUmG3Kec609x0rxaHj0b4GngLjh+uLpt/XJIQ4ReuDQpXrldGa27C8IAjZcpekGAjtSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=LI9scScH; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="LI9scScH"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References
+	:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=vw3Uk3105LnqEXM8kkjyZCQuG6ZyTrE+YY65qSzjcI0=; b=LI9scScHpRzQVwEG4A4uDjhr49
+	6LbDw9dbugxOSGcz/8BfYC1xZqGbW8II8ipnio9no12FR8hV8l9NPyW8nxD4pNvPaxFRt9IN9UTE2
+	7uX122hebeivEf4yr/bsLoXxhYxV0VZrMwJkZw1LBOMDUdvINYVQ6A7grHBq5G71yEMw=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:62185 helo=[192.168.0.218])
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+	(Exim 4.93)
+	(envelope-from <matthias.fend.oss@emfend.at>)
+	id 1uN47t-00BsXS-Cj; Thu, 05 Jun 2025 08:30:57 +0200
+Message-ID: <ea382833-3782-4203-b31c-7f1a364f671d@emfend.at>
+Date: Thu, 5 Jun 2025 08:30:55 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250603165706.126031-1-colin.i.king@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in TPS6131X FLASH LED
+ DRIVER
+To: Lukas Bulwahn <lbulwahn@redhat.com>,
+ Matthias Fend <matthias.fend@emfend.at>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, linux-leds@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lukas Bulwahn <lukas.bulwahn@redhat.com>
+References: <20250527065434.202622-1-lukas.bulwahn@redhat.com>
+Content-Language: de-DE
+From: Matthias Fend <matthias.fend.oss@emfend.at>
+In-Reply-To: <20250527065434.202622-1-lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-On Tue, Jun 03, 2025 at 05:57:06PM +0100, Colin Ian King wrote:
-> There is a spelling mistake in variable tweek_offset and in comment
-> blocks. Fix these.
+Hi Lukas,
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+thanks for the patch!
+The filename changed during the review and I actually forgot to update 
+it at this point.
 
-Datasheet doesn't give any special term for this, so I think the patch
-is correct. OTOH, the dictionary defines tweek as "A form of atmospherics
-(radio interference) produced when the high-frequency components reach
-the receiver before the low-frequency components." which is somehow might be
-related (like high byte goes before low or vise versa).
+Am 27.05.2025 um 08:54 schrieb Lukas Bulwahn:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit 0d12bb1a7fb6 ("dt-bindings: leds: Add Texas Instruments TPS6131x
+> flash LED driver") adds the device-tree binding file ti,tps61310.yaml,
+> whereas the commit b338a2ae9b31 ("leds: tps6131x: Add support for Texas
+> Instruments TPS6131X flash LED driver") from the same patch series adds the
+> section TEXAS INSTRUMENTS TPS6131X FLASH LED DRIVER in MAINTAINERS,
+> referring to the file ti,tps6131x.yaml. Note the subtle difference between
+> the two file names. Hence, ./scripts/get_maintainer.pl --self-test=patterns
+> complains about a broken reference.
+> 
+> Adjust the file reference to the intended file.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Matthias Fend <matthias.fend@emfend.at>
 
+Thanks
+  ~Matthias
+
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e20de38ffa54..0c4f0eb7f49c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -24518,7 +24518,7 @@ TEXAS INSTRUMENTS TPS6131X FLASH LED DRIVER
+>   M:	Matthias Fend <matthias.fend@emfend.at>
+>   L:	linux-leds@vger.kernel.org
+>   S:	Maintained
+> -F:	Documentation/devicetree/bindings/leds/ti,tps6131x.yaml
+> +F:	Documentation/devicetree/bindings/leds/ti,tps61310.yaml
+>   F:	drivers/leds/flash/leds-tps6131x.c
+>   
+>   TEXAS INSTRUMENTS' DAC7612 DAC DRIVER
 
