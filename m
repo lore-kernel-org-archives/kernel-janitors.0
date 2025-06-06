@@ -1,73 +1,74 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3722728640C
-	for <kernel-janitors@vger.kernel.org>; Fri,  6 Jun 2025 09:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C9E2857EA
+	for <kernel-janitors@vger.kernel.org>; Fri,  6 Jun 2025 09:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749200680; cv=none; b=JDClAW1TozJWmMHzAN0qb9p87hvwRhsSM6B6N0sRXI1pLnzWblGRIpEP8fjloaY0fnFsyU4ZlaTsAtJUOzOp34aW5wLoH+HZRD+nkCgefjxf4aWoY8i4ESp5wDgeC4VkNZBxGCZuGCUrVWBFWlW69H8ecS3x7DcY4T5ovPkSvZE=
+	t=1749200697; cv=none; b=fih5WeKhq6BoRiOkfOW/CplKmy52BmXqiF37do44+8eOIxCmufOSkMyNpDrbAmfzS1Joc9T15MXCYmPysFGSn6/sIEOdk4MjROSZjBGGEXhkL09y8LdHLhOSyIh2f7NIEbBgvScw7Yx+obl+MwrCSqcWymZJyd7UEXHaV/lHRQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749200680; c=relaxed/simple;
-	bh=ITvBuxSeIAXDkBJEWGSGD5rlQvO64BrbWaK4vCuf/rQ=;
+	s=arc-20240116; t=1749200697; c=relaxed/simple;
+	bh=CfGvj7ncrPabLetrwNG8k5H0Ppg5o++CXB29qT1hAiY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KXibBjBGpPivZdARK3RnF8UYKH5jSN26VvUjW2wKnnSyfSyIxRGOGYyqGDGYFBGUWinpM5DWZbCG/9O3uCoTvKy2DF04gVavl6KAXXf+qLWO+cBnN4+1n7raUQlKcpNOkVJ3AVTCF+IyggRbYP6kB7Dh30IZs5hvR/RSvIW4BpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yr1l27W8; arc=none smtp.client-ip=209.85.128.42
+	 Content-Disposition; b=Kdc7gEKr3Wu4dFhRPrhgbkLxBl9L3XT9tb6CXdnQDLExszagwtCv/xVeGuIgqcvtmKneVqbkdI+1wlRsHHtEI42yTacQfCfYOxLnU/6kCJkugPEo73PuIe5D+2gjD7skw8Y7L7qW+uuDI05a/hrzGXYIPt+5h2o8cSArSAQI/Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X6zJ9Djs; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yr1l27W8"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-450dd065828so13776075e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 06 Jun 2025 02:04:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X6zJ9Djs"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so21395325e9.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 06 Jun 2025 02:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1749200676; x=1749805476; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1749200694; x=1749805494; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=S/emY2XS5cFVoX90o0NgZjiKA3eudgdKvmBzuNCnA9A=;
-        b=yr1l27W8cUM/Ij7/AcbfDzBETTN6LucQXjVhHwYsqs+I0cjoajpSHJcGu49FF0LdNd
-         UVDmZILBPMmJ/09mBBSgqLIC5ptsMLC691HSZYcXviFtfA5ZJ3rRDjQePX+vHwGci5m8
-         qcAaH+8V82AggiqR4EaO4xiFEDfft/CrRxya9h/7I8pUA6T6bJDKZa5JDhBRuKVbxMnM
-         VLra/shle7JRd/rtH1cCFkt41lPEIkY+dxoRT14Jp1wYyU3FFhofZ+WKXsR3k2PquYo6
-         bYQZA7+2CdXYJjWqL+bx/QNnh3tb+1fGYGeY5BrqO3U9dYt5iDu8e2Tix7jkz4OFSsiF
-         n2lg==
+        bh=u22QGRwwJcexG344pLAuyEqJQtDbVkBJOvRPUpkYyrs=;
+        b=X6zJ9DjsF5qprN7O0M0TfvQOs54j8gyvmlXk/7OcFqnIPBI01jJKfiC4e8olzgZBJ9
+         8CnmAv5efzcoJbQWvlht/gGiRl87WVonpbNq8s0Bs/1IbrStza1jfLhyOXVYgFoV0o9m
+         pqZY1hygRvmllFBPGz3snbK3ZmLkraNdr2KZTjU+xYu0RNLE/R69exeKNCdP33qfUHz8
+         oL3BCnXNdioKtd0/eIE/1jbDj7x7zL3y/obJ2Rf0+BhECKGb4Dam8YI5nMrxAGlB8gsj
+         rT0het3qF0XIoUGiqvxQOP1iAwiRW1pZbpn7IhtDtd+Ik2kD71L6kheF6RWYbAe0AvF8
+         WDuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749200676; x=1749805476;
+        d=1e100.net; s=20230601; t=1749200694; x=1749805494;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/emY2XS5cFVoX90o0NgZjiKA3eudgdKvmBzuNCnA9A=;
-        b=QijcGQFBiGreOxhsVPbcukDsh6jnUbF06XnpJPU+wRMs0XdJf9AaSVMxAT20FyiYFA
-         M4aCeKJnVH8FuZTOHsRA7AIFFtzmeJ2Doi/AojpOm4vWB16OxBU8zd/0kBVXS/ytl8Q5
-         VvUX94L3ZQppGsYBnQ1MyXr3ZNUa6Ymepp/pqVvtgGIgoiliQiWu7AeZuZ+jey7rtQVA
-         xy9BghCNREWOB+Hwr3xNbO6byaTREzGw5HBuXE6FdqGYC1+a7vJboQ9cjyTLQmCNZSZR
-         tR1eVDm8Emi1BnKns87VJF7SKn7pytZSNuVQ7zZ/hz8hqTg4kRKGCjH8i96mN4i9pC2r
-         LGkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVODyUyIUjPvA6nYBLzv0xNz7CHh9nhIgtIyxdBTti2DbU3XfdPIDHZGvZ3l0mp0wBUfR0I3ju83gfmEBtmszE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcbOkB1UkLXWwmt1dFGcvdB/gT6iFDhqWbuQKQIrETd7eL5yjT
-	iOPt6mC9uys4pxqIetYIuANt4qbiJINOxDqbEyvoQGjK/ooLhbsomxYgzLwTDGSczvw=
-X-Gm-Gg: ASbGncumunploI59RHIOTDSfsEKiB4o66R/GibGjAZzYn70HCYUyzuXrBDyWeZf1tqn
-	EF2IprMch9GoSdD5lPJX6RSiSt86e7RCq3nQWiSxfYMv+IiCEQ902O0RtIb/i15HhGb/R8qUpVE
-	H2yCAbj+sMVhj1QDamaxLzy8Yvv1Sxl+RhFQFAg4j1rqKatcLnarlQ5WBRBxczOjN7EZK8wJPvq
-	rEWqIrCzmWqh50M8M9SSJIMUD9bFycs88ZUYMWezsrLtMy7xvJ4XhMAshA5Z1umvi6wCpr0WvmL
-	WV+X77xRF+RmMdsAVkXAB/fbgmA3mHhqA/O5DcTB7gXZtEhczn7HexE7Hmol+eeamYO+6/sge3W
-	c1g==
-X-Google-Smtp-Source: AGHT+IFhA2vqyp8xEAIPBvNHsWP+ZzsHRKW0V5DhFiNi2JLK+60alY4CgxuHf71qdKGE0Cj1Xq0Z3g==
-X-Received: by 2002:a05:600c:6207:b0:442:f4a3:b5ec with SMTP id 5b1f17b1804b1-452013fd6b5mr27037065e9.4.1749200676516;
-        Fri, 06 Jun 2025 02:04:36 -0700 (PDT)
+        bh=u22QGRwwJcexG344pLAuyEqJQtDbVkBJOvRPUpkYyrs=;
+        b=jtpUnTFzwXCTGrHLtHWSkBUaNmZFnf1RNPCOLY1B8iopAW8EIEKJ+UvCNzL0sWjPss
+         KwY9bDkCQ6+eqNHeIgFK+Y0oPe2YmfwFhPkeTP5ta8SkSc+U+IpsRP3rWgjetiWUF1Es
+         HsWVmW8d70hgPj9pTx26rv27AvbHdI9XMb//cVvMtpOpA9gbp4S4Y71YhlQTRboWlEaV
+         /9yulSc9Y1lnRBGUFpyZW1ZO81yHapGTKt/ntL6HuxKi81JLqk7Yri6Zb+8KaUitI67P
+         ZKTHIqZpGLfoeLMlJo4xHgmf40YubJltdb8VLPSLt9LxOyWjdO4iFWoV8MtxPrrs5A3G
+         bOTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPuiyR1iXAnB++/dq+Y100XH3bE8KNPFP+M6UOAeYvuLT4uBWr+L3OMPupESsmp2zuoDSpim6oa3vPL67ciMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCRReHYyFCb5T8tr7IUEqwmatPwo81681T3eL/91P8wmEu/zmI
+	yo9wP3U6LXyWfUxux9FZ/VC/PfJJELR0H+2EA7FFLLs2GwETaKruJFWPhPC1ZJLrFUk=
+X-Gm-Gg: ASbGncsIKwEgU2ficRXoFQWZ/jDdeg+PCDGKtYhwB8kBN0St/xgWh90Id3NRorpuR71
+	ThjvxfeV3J2hBLeVn5O60uEcIAD0nKOGFzDJGhXBNI9n1tUzM2alwtQ71E8D151WrASeav2iLYo
+	YrXj2+WRxLK5g4+aFABFOVh8enlZk5nlSzDqK1I9gg6LlzQV+iINYqfCxzt97MrTMe9bxsev2Va
+	z0zrIjb0qPpIuh6t+uBs8XV0HiWoV493tN3kh4YIrFtCWIzzPvAcfbgI5LitDvvYaLWF1Q6Ph6j
+	vaXYPIMdpZT3gCf4adrCGjfkrWS/mPuc8vn0fsApckp6dPwlIAifNen/
+X-Google-Smtp-Source: AGHT+IGH8f3CnE94XpqqdfYVCG9k/7hxNJbSdjv+c/qZQ3TVj4IPHFuU+kXHjf6bXNo01qdvKdGN4w==
+X-Received: by 2002:a05:600c:871a:b0:442:cab1:e092 with SMTP id 5b1f17b1804b1-4520135f5cemr25871865e9.11.1749200693818;
+        Fri, 06 Jun 2025 02:04:53 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4526e155ce7sm14210735e9.10.2025.06.06.02.04.35
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45203e6e424sm17461325e9.0.2025.06.06.02.04.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 02:04:35 -0700 (PDT)
-Date: Fri, 6 Jun 2025 12:04:32 +0300
+        Fri, 06 Jun 2025 02:04:53 -0700 (PDT)
+Date: Fri, 6 Jun 2025 12:04:49 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@kernel.org>, platform-driver-x86@vger.kernel.org,
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] platform/x86/intel: power-domains: Fix error code in
- tpmi_init()
-Message-ID: <aEKvIGCt6d8Gcx4S@stanley.mountain>
+Subject: [PATCH] drm/i915/selftests: Fix error pointer vs NULL in
+ __mock_request_alloc()
+Message-ID: <aEKvMfJ63V7i-6xU@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,30 +79,35 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Return -ENOMEM instead of success if kcalloc() fails.
+The __mock_request_alloc() implements the smoketest->request_alloc()
+function pointer.  It's called from __igt_breadcrumbs_smoketest().
+It's supposed to return error pointers, and returning NULL will lead to
+a NULL pointer dereference.
 
-Fixes: e37be5d85c60 ("platform/x86/intel: power-domains: Add interface to get Linux die ID")
+Fixes: 52c0fdb25c7c ("drm/i915: Replace global breadcrumbs with per-context interrupt tracking")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/platform/x86/intel/tpmi_power_domains.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/selftests/i915_request.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/x86/intel/tpmi_power_domains.c b/drivers/platform/x86/intel/tpmi_power_domains.c
-index 0c5c88eb7baf..9d8247bb9cfa 100644
---- a/drivers/platform/x86/intel/tpmi_power_domains.c
-+++ b/drivers/platform/x86/intel/tpmi_power_domains.c
-@@ -228,8 +228,10 @@ static int __init tpmi_init(void)
+diff --git a/drivers/gpu/drm/i915/selftests/i915_request.c b/drivers/gpu/drm/i915/selftests/i915_request.c
+index 88870844b5bd..e349244a5fba 100644
+--- a/drivers/gpu/drm/i915/selftests/i915_request.c
++++ b/drivers/gpu/drm/i915/selftests/i915_request.c
+@@ -290,7 +290,12 @@ struct smoketest {
+ static struct i915_request *
+ __mock_request_alloc(struct intel_context *ce)
+ {
+-	return mock_request(ce, 0);
++	struct i915_request *rq;
++
++	rq = mock_request(ce, 0);
++	if (!rq)
++		return ERR_PTR(-ENOMEM);
++	return rq;
+ }
  
- 	domain_die_map = kcalloc(size_mul(topology_max_packages(), MAX_POWER_DOMAINS),
- 				 sizeof(*domain_die_map), GFP_KERNEL);
--	if (!domain_die_map)
-+	if (!domain_die_map) {
-+		ret = -ENOMEM;
- 		goto free_domain_mask;
-+	}
- 
- 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
- 				"platform/x86/tpmi_power_domains:online",
+ static struct i915_request *
 -- 
 2.47.2
 
