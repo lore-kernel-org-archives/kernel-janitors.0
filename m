@@ -1,82 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF31F25B1C5;
-	Mon,  9 Jun 2025 13:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C735D25B67C
+	for <kernel-janitors@vger.kernel.org>; Mon,  9 Jun 2025 14:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749476450; cv=none; b=liAXg8uKWS+f5dEmX5Zd0h6Z44W62jXjCuv100BRvJG1tBINMlCULjRKON4gf6FYBhlDDEPa3Y6csmwXHzZUmjsroUPN2AZh5KsQhhOm1FScWXn6OHvWXa3ZYPLu3fKbpORPH7m+wjQ9ZexKQ2K144oxo+wj/qZUS/q8RhP2QDU=
+	t=1749479152; cv=none; b=f7u7/XohYPIdFlLFroBqW58Q3L5/goESqota+4xMTXbnk3xKs6uXGMSC+XqIRXZA6oLnuAlyVwA1l/me2wD0C1kFuf0s9D9b5ZdltGwrauhAFBsn+UZDDwbvZgjvmpH9wfp6t9L+nA/NAKXiZSHu7xe/ATKG+fBVlVsrRa0L/wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749476450; c=relaxed/simple;
-	bh=F1aqTjBRQnFnGblh+To52pURYZgvRaaeerBAldcPAZU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=HVOiDcT4bgm34Wj9bx/+SWytdbLPz+r5R0kzNvDvxMNpHeDm8bV1i6Tce7iHTo8JTOeeLKMxiLLme6+nIHmE8bX0tY3YSo2JIJMtCXkL/mIJOIYOT10fJW0YxK5VkoWNPmlir3nhKAe8nq4llBQ9T8/gdM8GQxfF//8iEiKDJ70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODzXGffl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749479152; c=relaxed/simple;
+	bh=tpgFqrLkSn1DVjpGW60JOm0C0+VLH7tHHY59kM5bL/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m3zVrKNTG9D53iz6Tm/2m/DbMsbGhyUr8GSnckNCEOA9y8mSnNf3fH0bSEdKW/ADgdIdgz4/89pT2amq50Whp8uTgewe3HLpBLusOQc3WxBGZQjEy0WahSamfNZK0Cwr8p9HHtDWinB6VIq6xh6/4bWZYjFDSJ17Mpx/OaGkyGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AVeiup7S; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODzXGffl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3357C4CEEB;
-	Mon,  9 Jun 2025 13:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749476449;
-	bh=F1aqTjBRQnFnGblh+To52pURYZgvRaaeerBAldcPAZU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ODzXGfflEPD8LOudRwcQsaCG7o95VziaCkoFEJUD7pz90wvqScETgC/oNiSUMetZc
-	 Pg5kDnf/QBjDosYDz2rOcDYmPVjTFRjAco2lO2uti6XAfb2+5agYyhFUv71Ya346NN
-	 geEH4Yx1uZ9Y6btEvAq3+oAGt1OvLMGSy91gpe0HWvJqtrux76Y23joJLVv8Xw9ZAb
-	 iuHUAFWywEHXGefDv9RS6/W2T87dXXC9buXOzPIExHiznB7SURJ0x9zW64xXso9usx
-	 J0DWXlKcnb93SyL3r5wV+bsOaGZMgz/h/yQgkaizz5umP4NcAP1i50+tOATRzd8v+F
-	 Ym/2YpvL12CHA==
-From: Mark Brown <broonie@kernel.org>
-To: Thangaraj Samynathan <thangaraj.s@microchip.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <aEKvDrUxD19GWi0u@stanley.mountain>
-References: <aEKvDrUxD19GWi0u@stanley.mountain>
-Subject: Re: [PATCH next] spi: spi-pci1xxxx: Fix error code in probe
-Message-Id: <174947644859.127013.15989165632026703633.b4-ty@kernel.org>
-Date: Mon, 09 Jun 2025 14:40:48 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AVeiup7S"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e7569ccf04cso3562312276.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 09 Jun 2025 07:25:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1749479150; x=1750083950; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DHcPIW+FNlaQudxh/1xCvJS+KJ4L+7fwYUL5LAEe78=;
+        b=AVeiup7SMc5rGeff8WBHr25QSzFULA4reLpqGP9vvcJx0uas+s8tPcLx9zk5JCr9mZ
+         fqHTN0LDYxZFPRKr9SgEqQsKUFTdxOXsAQ9b5SEAsUrAfw/g1ZQhLSqjLTWVlnpVeOdP
+         u5aNFLsUtUtkqY4Sw2g41IaWtbHnOo3Ry07YhAtmgRwsGdUNEPXao26Ki1iNFMCD2xZk
+         8mJ0BUxg0tXFUciK17rHRtf8rDV5moBcza+7UlOMMU3KZFfhWunkEixvirixOpLpNGvs
+         Yyd4a1TUnqbZzJSzoAsBTcFXCFZ3Q+678snQ1DqVAW4o5GRmEC0V6rL39SP6ZmD8tTai
+         rZig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749479150; x=1750083950;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/DHcPIW+FNlaQudxh/1xCvJS+KJ4L+7fwYUL5LAEe78=;
+        b=vO9oHnKVMRqCtDUOTR27DWYU7urYYJK3C7s+KOL85hPvfoNjvKT1PXPigYa+NO8tau
+         BALrUaSvIA/43P+WG7GgP/6bBcd/ILzhC9tm1DCG9icegVG0R5p9xJQktoyLwKSO1KPR
+         SwsuLc5JTa5mM+OVhsRNRcFiNJYxEN8A0mpAJv1EuEW+jcmUI4qXGA3fkrp59a6MF/e4
+         cCnBJzJ4SMxH9qcxQAasmUwn5ypxMFQCEcKZHjEIiJQE2txgX7Qk1bSTmI3+5pEyO58W
+         lTSu+gWVvmdUukIWVLMDc2Z/REGiJnYym+K5itKUIWbvNT4JEheDhcXZUxlqwuai5XaT
+         gP4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsVQOr7CVEH0AoZfYUl90JprtFsBL4FruUeROxtKBm1iBfiU/bEosVz0fD6OzmW+CjZHNUqE98AkT5sy2m7Vk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs6H29d0qJa7963YYsmO2V7qmmoG7207qOtnQXbPvSYKIe+AsL
+	tVXlhr6gLExHDA5UFuUV72onWij6fH4z8r6cR5wcS+/lxEr8RGxqRmBEsGlhmPgl6CE3LT2yPir
+	mX86R6/MzuBHduJk5XrtgJe8n3/mh0Kg8I60Gif+lUA==
+X-Gm-Gg: ASbGncsEgmZm/gAdxiiXaho77E+fdcusH0yl0ACq1okVv6Z9leG67+smbLEskbNEBqu
+	i9eF1LP4IHKcg8x/C54t1tzXwtMeCz1a2HG3CSoBRfBH4SNLs41Sx/Bw81J0NW36npkJl15QmzQ
+	1ThhIt7RskTLchguykgiquIhOuysrFciK07Q==
+X-Google-Smtp-Source: AGHT+IH/Pnd5J+NF0FnDZghYVyvpxu7EjsURZfHbZf+7AxkvSsyWy0aeXxECpBSIWdWQ+pB3LafvHHvF9PpdbwIrqGk=
+X-Received: by 2002:a05:6902:2686:b0:e81:cfde:3d46 with SMTP id
+ 3f1490d57ef6-e81cfde4149mr9130040276.16.1749479149876; Mon, 09 Jun 2025
+ 07:25:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+References: <aDVTtQdXVtRhxOrb@stanley.mountain>
+In-Reply-To: <aDVTtQdXVtRhxOrb@stanley.mountain>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 9 Jun 2025 16:25:12 +0200
+X-Gm-Features: AX0GCFvaiXF4lOm-GilksSFMvid8SMz438Y_wsOtUwqxJmS3jsDnPCnS_PeSI8Q
+Message-ID: <CAPDyKFqMmOUsEWjE7X2oj0Nuc+FU6g_0p=+JCQ8xgGXJXNN-0g@mail.gmail.com>
+Subject: Re: [PATCH next] mmc: sdhci-of-k1: Fix error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yixun Lan <dlan@gentoo.org>, Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	spacemit@lists.linux.dev, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 06 Jun 2025 12:04:14 +0300, Dan Carpenter wrote:
-> Return the error code if pci_alloc_irq_vectors() fails.  Don't return
-> success.
-> 
-> 
+On Tue, 27 May 2025 at 07:55, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> If spacemit_sdhci_get_clocks() fails, then propagate the error code.
+> Don't return success.
+>
+> Fixes: e5502d15b0f3 ("mmc: sdhci-of-k1: add support for SpacemiT K1 SoC")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Applied to
+Applied for fixes, thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Kind regards
+Uffe
 
-Thanks!
 
-[1/1] spi: spi-pci1xxxx: Fix error code in probe
-      commit: 2b74aea6d078ade810a3b0f7d1bcfcba2eaad416
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+>  drivers/mmc/host/sdhci-of-k1.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-of-k1.c b/drivers/mmc/host/sdhci-of-k1.c
+> index 6880d3e9ab62..2e5da7c5834c 100644
+> --- a/drivers/mmc/host/sdhci-of-k1.c
+> +++ b/drivers/mmc/host/sdhci-of-k1.c
+> @@ -276,7 +276,8 @@ static int spacemit_sdhci_probe(struct platform_device *pdev)
+>
+>         host->mmc->caps |= MMC_CAP_NEED_RSP_BUSY;
+>
+> -       if (spacemit_sdhci_get_clocks(dev, pltfm_host))
+> +       ret = spacemit_sdhci_get_clocks(dev, pltfm_host);
+> +       if (ret)
+>                 goto err_pltfm;
+>
+>         ret = sdhci_add_host(host);
+> --
+> 2.47.2
+>
