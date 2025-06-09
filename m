@@ -1,41 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D60186A;
-	Mon,  9 Jun 2025 13:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F89525A352;
+	Mon,  9 Jun 2025 13:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749474019; cv=none; b=eWxWl7hk1JM5k1P2CrOfIn3qo2hADojkSP/0q25UaLhM9euVjvbtr/iKnvJEyfd+RYMV+yY87nZkJA5UzNAsLgO/wEUNv87SZhI+DlX4Znw9VM6QDD4pQhCKrovW30nPOgCfUoiZGMbZvcKGXznSeyJtKqqvrSL1TXrlb7oYLwA=
+	t=1749476416; cv=none; b=l4tgi90gWy6f0X7akoEH3779olHHwhGd8cAg+fFL8XSeAKuyfCJpGiEfL52NoYoxUeNksVCY4noo96+K5OnczeFyuvFpqeCB8LmWZn5IGv/TBa7M7hEp8+57vyGwGJ5Whbm2orr8xHU8f78s0x0e6u88K5syFQJm1gcM7moFL3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749474019; c=relaxed/simple;
-	bh=8xqtjXs2JiUMDJaCgvivPvCqJ3nTNZUBs+MImsIrDcw=;
+	s=arc-20240116; t=1749476416; c=relaxed/simple;
+	bh=X9XD4EFOdykRcFhrxrtSRa7vv6d3l9lZP9aiuTUFF+M=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tv1jhTZba9VRbAbjJEFbGuuJi9GITkqftlTHalPyLNh9TyHPTF7iPDPE2gQzIBocFkDQRjczXBbYLxPpaMX4NxbyNGO0CO28zbcsExkxGwB/vQZHBFP+q2bEjFffB4nnJ6Of2CJxbyZinq5KoKNIxGsPi3T/TPBXRos2qIAp++M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/BCq2SV; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=oH39N1S/B3FCgaLzVXV1ahHfnYybuoHHtd3lOmQWpZFriBfFioQkQPVtKXwmkskB/D/OqwHo8mMjZPbCbJsLxmPLl9cOP++PbGow0PpxAPfM/LuR51NOtwKqO014YH/9KO2l9uh9omf9LjiWT8jjCiwv3uaz1sr1EDKtBPbM810=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBm62lse; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/BCq2SV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42ADC4CEF2;
-	Mon,  9 Jun 2025 13:00:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBm62lse"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F713C4CEEB;
+	Mon,  9 Jun 2025 13:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749474016;
-	bh=8xqtjXs2JiUMDJaCgvivPvCqJ3nTNZUBs+MImsIrDcw=;
+	s=k20201202; t=1749476414;
+	bh=X9XD4EFOdykRcFhrxrtSRa7vv6d3l9lZP9aiuTUFF+M=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=S/BCq2SV32vpt+T++dWPnCy3OvK2x5PIr9fg94vF0+hnAX92zVDQ5RbDHSEXiZG3/
-	 s5CMWCKUxqQLePjmPOPZdsr47VMFX/73cGwM0cj2zEip1hzw9h6I9niKtj2Y+cKfkQ
-	 jb+hxz9LW+WbDumbedxkOCpCXgHAE7vyhAstRHrtvu0sQwKXfk0gHgBVrwEFpweiEx
-	 EnNNiuug54hZbEEKB5YF/gJyuQ0zMs9Gpy3g9qJrsHgKpMIMGTdWA0/6fyHFM3IbI6
-	 jJ/2WudiXklyRr1VoCxciB4jRxzHtCaggzuAZDNlsDQd6JPwrB7emcynkgHixmx9OS
-	 w6t/W442C8aGA==
+	b=IBm62lseXrAlWxrhAiW5V4GsDw9OWbep6hi0qSwy7hMU8L0y9sFm2mNVPJSqfNIu2
+	 FmRSnRVZ2JKvG+eYRI9yB6GgxbjEY/Jiq4dhVpkgC/JskwlexcfDS8Lt+2uT36Rjgl
+	 3nLHq7xZQWdwK1Cj6cttY1TF2xXjbdsmHOikKKrycR2VogzQZXI7D246l9ulu073VT
+	 tM5hnn//H22CIl/VuPYpoMpQMI2u2hww13RV8z1KRqIuzkaYTP/TGnCayiQea9eKeX
+	 Zu3Fr51dmUIafNMl4/YOLMd4/n0tDikElp5el1fB3qqSV5roL6LV+qFVSIdq9RieAN
+	 hXDK6kKbaApgA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <1446fb1938f3f38115be3e53f5dda3c8bb0ba5a1.1748103005.git.christophe.jaillet@wanadoo.fr>
-References: <1446fb1938f3f38115be3e53f5dda3c8bb0ba5a1.1748103005.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 1/2] regulator: tps6594-regulator: Constify struct
- tps6594_regulator_irq_type
-Message-Id: <174947401467.104992.10674300768376483889.b4-ty@kernel.org>
-Date: Mon, 09 Jun 2025 14:00:14 +0100
+To: David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Stuart Henderson <stuarth@opensource.cirrus.com>, 
+ Piotr Stankiewicz <piotrs@opensource.cirrus.com>, 
+ Qi Zhou <qi.zhou@cirrus.com>, linux-sound@vger.kernel.org, 
+ patches@opensource.cirrus.com, linux-kernel@vger.kernel.org, 
+ Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
+ error27@gmail.com
+In-Reply-To: <20250603214813.197346-1-harshit.m.mogalapalli@oracle.com>
+References: <20250603214813.197346-1-harshit.m.mogalapalli@oracle.com>
+Subject: Re: [PATCH] ASoC: cs48l32: Fix a signedness bug in
+ cs48l32_hw_params()
+Message-Id: <174947641193.126747.915802797193162530.b4-ty@kernel.org>
+Date: Mon, 09 Jun 2025 14:40:11 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -46,30 +54,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c25d1
 
-On Sat, 24 May 2025 18:10:38 +0200, Christophe JAILLET wrote:
-> 'struct tps6594_regulator_irq_type' are not modified in this driver.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   25645	  14480	     64	  40189	   9cfd	drivers/regulator/tps6594-regulator.o
+On Tue, 03 Jun 2025 14:48:13 -0700, Harshit Mogalapalli wrote:
+> There is a type promotion that can happen when freq(u32) variable is
+> comapared with sclk_target(integer), when sclk_target is a negative
+> value it promotes to a large postive integer which might not be a
+> problem in this particular case as the condition evaluates to false
+> when that happens, but bail out early when sclk_target has negative
+> error codes.
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
 Thanks!
 
-[1/2] regulator: tps6594-regulator: Constify struct tps6594_regulator_irq_type
-      commit: c266209eaef4fef863363557817f7d6a68314321
-[2/2] regulator: tps6594-regulator: Remove a useless static qualifier
-      commit: 9bb3c7df546aac38ea64c736a839ef2c75297631
+[1/1] ASoC: cs48l32: Fix a signedness bug in cs48l32_hw_params()
+      commit: 22188b9df60dde48eaba276da22062aaf8e12dfe
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
