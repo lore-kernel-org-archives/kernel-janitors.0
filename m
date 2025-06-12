@@ -1,86 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57782F432A;
-	Thu, 12 Jun 2025 12:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFFE19066D;
+	Thu, 12 Jun 2025 14:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749731610; cv=none; b=GItq5DDxRlsJEG3esghpltlH4jXEhg5ql9hod273tDGdnMfPBZqhimkNiivppDgaEeBzL7OiPdwWkBQazwUrgVJrBBYZG7toCijakxgzO7W6hpjFp0R4GfX2+OmisI+lIpLIZJAjON5NhKUYSWKJrtaVYMwJciqfwarJbUcnXdE=
+	t=1749737366; cv=none; b=WXxMoGgAqcaJTkvGiOSRpAGKjp+6giINapr8CrlE3rzFtgIXxS444NpRXduraYJT69Y6r134DNQ8xITp1HOjJYnLylhlll1Xm1teBeRZvu//NlHnbGgyLNedV9esZQhBcmkaenC+scE1wbOyVdapBIHRh6v0tLxgms3Sa36kF/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749731610; c=relaxed/simple;
-	bh=XHmQstvfanfzC7FHLXlVhn+/xiU+w0Rr72xmTwR0M/0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WttVojjXsAtD+0P0+XfiYWC72WyeJ6fQC3mGIU7HWf3o5TuQqIzS54avCoOoVVKSRW3H3F9J0KlYha3+G8mjoqq9CDCat8e2AzPQySSFht2mGIEObY4+DPEGAYYv9cqmKnDygh9S+eIIBK51gWDukOzTUiTfpRpQG1fXLKlwxwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzy2FMc7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749737366; c=relaxed/simple;
+	bh=kGaKNVsxpFzIz+WCZZnJXn4hE7TGZUw5e0te86QWm/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQXP+U+CA+B9yjihG+exa06dT2zn4Nb8nnAHpgsJyDJEYD4b9B2i9caJa0K51Utu3DLC+mjLiq0QKCMRH2Wbggavdc8mv7mYQ3bQICEtj9/Aw0/TCNt4ondL4QQ5t+TUF+6yhoqVn9H561gm86cn0/T2WbSMnfrS0h+UA6wO+JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VePziA9h; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzy2FMc7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FC6BC4CEEA;
-	Thu, 12 Jun 2025 12:33:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749731610;
-	bh=XHmQstvfanfzC7FHLXlVhn+/xiU+w0Rr72xmTwR0M/0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uzy2FMc79vbPGrR43FVIRsW3RKK2BWPs5tvdvyhHo3bDQ9dYV1OHot8dEKGiUkv5i
-	 Vqd0z7T4DoLAo0ylOfrW6XYtXff+4qksm5pM3IlbUma2a4N6zgutsOVo0gcn4BxX4P
-	 wZhj86qHv1QQJaiAPvNRQxw9YGjrzkiRp0jyXX1mjZ38k0/buFdv72Gj3J6YtwdeYW
-	 076BPvDjjiFIua3RTBbG+piMmTiimVwTcf26gBMTxO/YIobw71ZckdQmWjWvoaAHwy
-	 XXN4WEJU6aRr80V42EPitKowp3AuPZPS9nFYBQtBNu3i9hI2yu3LUOOxDxvwvzracR
-	 dDU2DcbQC2NXw==
-From: Mark Brown <broonie@kernel.org>
-To: Patrice Chotard <patrice.chotard@foss.st.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, linux-spi@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <aEmAGTUzzKZlLe3K@stanley.mountain>
-References: <aEmAGTUzzKZlLe3K@stanley.mountain>
-Subject: Re: [PATCH next] spi: stm32-ospi: clean up on error in probe()
-Message-Id: <174973160798.39704.11177150841033836429.b4-ty@kernel.org>
-Date: Thu, 12 Jun 2025 13:33:27 +0100
+	dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VePziA9h"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=GzirIYRqhqmK+GV4aZFnktzJiM51rywbvs1UUJO0Zhw=; b=VePziA9h3ZV+DLfm8PoHZoEqN7
+	CL5dTgj6W/pRgO5Mhs9mT7fstYxJhOUV16CfriLwI4r6zR0KLs+3r8hERv70HEjRQHWC/JiVBvnJy
+	AaaSwz83O7RQ3qbsBYDPIfUTW5ASyQRWZYjIQdABTaAWh68sm5P0u8/lgE5SxHW7Gs54EgGl53r0k
+	7IOBtdiOV2WoV6DpuqYDfjvWXYy0dTZN35WQDyAX3hQW3+dYTJUN4FH9uSWI1L6hlv722e0a244Wr
+	D3VXvw9jc045NmumDEFMpWh2DArXPm1y+1dRNf/Xaj1S/vhi26TWK39pKz2vGUv5b7QllDCeuNuwQ
+	pCmjMcDQ==;
+Received: from [189.6.13.79] (helo=mail.igalia.com)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uPicF-002f9i-AE; Thu, 12 Jun 2025 16:09:15 +0200
+Date: Thu, 12 Jun 2025 11:08:10 -0300
+From: Melissa Wen <mwen@igalia.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	Alex Deucher <alexander.deucher@amd.com>, Alex Hung <alex.hung@amd.com>, 
+	Aurabindo Pillai <aurabindo.pillai@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Dominik Kaszewski <dominik.kaszewski@amd.com>, Fangzhi Zuo <Jerry.Zuo@amd.com>, 
+	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Roman Li <roman.li@amd.com>, Simona Vetter <simona@ffwll.ch>, 
+	Tom Chung <chiahsuan.chung@amd.com>, Wayne Lin <Wayne.Lin@amd.com>, 
+	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, lkp@intel.com, 
+	oe-kbuild-all@lists.linux.dev, llvm@lists.linux.dev, cocci@inria.fr
+Subject: Re: [PATCH v3] drm/amd/display: Fix exception handling in
+ dm_validate_stream_and_context()
+Message-ID: <5ebybqjohsoz7qhsenufkpkkw52w6tgikkbrzpegwotmefhnpn@m2cnzvsfai7v>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <e6656c83-ee7a-a253-2028-109138779c94@web.de>
+ <ea0ff67b-3665-db82-9792-67a633ba07f5@web.de>
+ <32674bac-92c2-8fc7-0977-6d2d81b3257f@amd.com>
+ <da489521-7786-4716-8fb8-d79b3c08d93c@web.de>
+ <8684e2ba-b644-44c8-adf7-9f1423a1251d@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c25d1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8684e2ba-b644-44c8-adf7-9f1423a1251d@web.de>
 
-On Wed, 11 Jun 2025 16:09:45 +0300, Dan Carpenter wrote:
-> If reset_control_acquire() fails, then we can't return directly.
-> We need to do a little clean up first.
+On 06/10, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 10 Jun 2025 07:42:40 +0200
+> 
+> The label “cleanup” was used to jump to another pointer check despite of
+> the detail in the implementation of the function “dm_validate_stream_and_context”
+> that it was determined already that corresponding variables contained
+> still null pointers.
+> 
+> 1. Thus return directly if
+>    * a null pointer was passed for the function parameter “stream”
+>      or
+>    * a call of the function “dc_create_plane_state” failed.
+> 
+> 2. Use a more appropriate label instead.
+> 
+> 3. Delete two questionable checks.
+> 
+> 4. Omit extra initialisations (for the variables “dc_state” and “dc_plane_state”)
+>    which became unnecessary with this refactoring.
 > 
 > 
+> This issue was detected by using the Coccinelle software.
+> 
 
-Applied to
+Hi Markus,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Thanks for working on this improvement.
+Overall, LGTM. Some nits below.
 
-Thanks!
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202506100312.Ms4XgAzW-lkp@intel.com/
 
-[1/1] spi: stm32-ospi: clean up on error in probe()
-      commit: 83f066fac3c231e58e9adf3b307e96fee172dfb3
+As the patch wasn't merged yet, don't add these two kernel-bot-related lines.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+You only need to add these lines "If you fix the issue in a separate
+patch/commit (i.e. not just a new version of the same patch/commit)"
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> Fixes: 5468c36d6285 ("drm/amd/display: Filter Invalid 420 Modes for HDMI TMDS")
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+> 
+> V3:
+> * Another function call was renamed.
+> 
+> * Recipient lists were adjusted once more.
+> 
+> V2:
+> * The change suggestion was rebased on source files of
+>   the software “Linux next-20250606”.
+> 
+> * Recipient lists were adjusted accordingly.
+> 
+> 
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 20 ++++++++-----------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 78816712afbb..7dc80b2fbd30 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -7473,19 +7473,19 @@ static enum dc_status dm_validate_stream_and_context(struct dc *dc,
+>  						struct dc_stream_state *stream)
+>  {
+>  	enum dc_status dc_result = DC_ERROR_UNEXPECTED;
+> -	struct dc_plane_state *dc_plane_state = NULL;
+> -	struct dc_state *dc_state = NULL;
+> +	struct dc_plane_state *dc_plane_state;
+> +	struct dc_state *dc_state;
+>  
+>  	if (!stream)
+> -		goto cleanup;
+> +		return dc_result;
+>  
+>  	dc_plane_state = dc_create_plane_state(dc);
+>  	if (!dc_plane_state)
+> -		goto cleanup;
+> +		return dc_result;
+>  
+>  	dc_state = dc_state_create(dc, NULL);
+>  	if (!dc_state)
+> -		goto cleanup;
+> +		goto release_plane_state;
+>  
+>  	/* populate stream to plane */
+>  	dc_plane_state->src_rect.height  = stream->src.height;
+> @@ -7522,13 +7522,9 @@ static enum dc_status dm_validate_stream_and_context(struct dc *dc,
+>  	if (dc_result == DC_OK)
+>  		dc_result = dc_validate_global_state(dc, dc_state, DC_VALIDATE_MODE_ONLY);
+>  
+> -cleanup:
+> -	if (dc_state)
+> -		dc_state_release(dc_state);
+> -
+> -	if (dc_plane_state)
+> -		dc_plane_state_release(dc_plane_state);
+> -
+> +	dc_state_release(dc_state);
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+For readability, I would add an extra line here...
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> +release_plane_state:
+> +	dc_plane_state_release(dc_plane_state);
 
-Thanks,
-Mark
+and here.
 
+With that, you can add my
+
+Reviewed-by: Melissa Wen <mwen@igalia.com>
+
+>  	return dc_result;
+>  }
+>  
+> -- 
+> 2.49.0
+> 
