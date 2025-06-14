@@ -1,63 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6392E11BF;
-	Fri, 13 Jun 2025 15:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2BB256C7C;
+	Sat, 14 Jun 2025 15:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749829564; cv=none; b=P+E2O7ypIMn81oGKJuuMUDLgPsLNSjN3VXYvbqCIA1jf8IfbttMdd+asbU8bVWQ+UjoQACQLWi+7TzDGnqwvTZIHTtlyY3A2m9mEQ32GtWbGEzdtoohswS6bws4tQyQ+pxxJSZ9C0fVPR9W5SY+n7w22yD2X1kM4aRCbtVEEDks=
+	t=1749913253; cv=none; b=mbMKSiWtafLwhZi8YWV1Z6ln44twx19llURZQWsT48HjYDY2zsDKydgAxzkf/+kxpMWyCtG86AiFvP0LGgDDjpvEQv6v0DXeKzAJKpxfe1PXXxU6f6E+y1GI7gGj4/wr3dCCjl07ykXPxIg61V2457G6S/F7fNSH4AKPumJgjH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749829564; c=relaxed/simple;
-	bh=nOgmaHF835CDydrDSXIMKjIVAD7R+qO1Y1v6X7VmPQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uGPphqwhtlMWW6w97lKDjFuIwCMaoi9u9TdlzAVKcSxeLswQ0qCg35DGwa1X9q6iFmbIhWR/1vmSi9LkD+dFWLqfBtz1HrUxVlLF9maQAV61zouGUfwrXOV3eK+4f1hWqia7txfCRpte1BkW+YrVkyMEf6VaOcCtLiNuBGaDPEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIEs58QW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1749913253; c=relaxed/simple;
+	bh=pRoQVD1k8gddZ6eCyztA1dMVRZv+vLamQe7EhDenJNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p9xQPJFvMAderInUF8d8YtTcqBM7bBbexWJYL46JLsZzP1CYcLGVSIFaK1yUkQokWHZAIxS/r8MMYqbDz57fN4mykdgnDDDiwxYqFRzpgp6h/h7goC6adywScoCW2remN/skB1REx2JYPVEVT/T9wWXbs4ekOWuPrrJs7yv8NLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VGBsbGr0; arc=none smtp.client-ip=80.12.242.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIEs58QW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ED9AC4CEE3;
-	Fri, 13 Jun 2025 15:46:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749829563;
-	bh=nOgmaHF835CDydrDSXIMKjIVAD7R+qO1Y1v6X7VmPQA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vIEs58QWwvNcIIydKfkw6Bd+qZ+i+hMIXPj7yGbY/Xdjtc7OQS3/PSG1p8PTuZpAQ
-	 ee5oIJmeaLLOSAQfH468TYuvNid4UI9HzxO8KAy3M0/09d2t3H+ubMHpEEaOGVlIQb
-	 daEZm9/oR2C8Rms+ZwNWU0rdGPFGgMcTFlpq/rwctLhtKzPHlfsxuWotMeeKd0fdPj
-	 n17B2pqpXRoNc7jhvBSv2dpqSAqCLe6jWwD7DdiqEAtLA5477tW2EZiptxnpdGsJOa
-	 S4MQ4H5h9kv51T32Di/Vtj3NomyGUWLRd/abvXCxpHOGYvcEnPJKGc9i+81Hde1FZT
-	 GLqq/+bC+8nuA==
-Message-ID: <6cf12bdc-e84d-4902-bd20-b14c880a2996@kernel.org>
-Date: Fri, 13 Jun 2025 17:45:59 +0200
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VGBsbGr0"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id QSM3u88XaEYDLQSM3ueZb6; Sat, 14 Jun 2025 16:59:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1749913177;
+	bh=xaTlGEEhTijiMyHmtHzEn1Ywdg68fkcpPpcl21gOtVE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=VGBsbGr0tJUiVEfqjRlS5v/0u8O+rx/22kkMZr9d6QzPzgbY6EcjzYedaCldieame
+	 GlIjc4UvYFP+XH3plGYZcvxL320qAZlnNeX8RNovxA7rpJJukOfPw6BkFQuc5Cq2qX
+	 b2QXGTHBRBCcea+ADxTh3zzzuLNiX3iqS9UWBdsXnyvvb8mTAU0kksSQcyLRaVrPxU
+	 caifhl7X11UKggM6Z9pcbmJGc+MhQQ2E0ph5Wsda0EFDCSETR/tM9UuY0uDAe6Rr00
+	 9RHrftZvI6coO/KNyPiYEtb4WgzHNwwifneqo5y1RhCWylYsYAVNe+Jd58QTTxRrYW
+	 TjUjNFB8P2+gA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 14 Jun 2025 16:59:37 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Vignesh R <vigneshr@ti.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jayesh Choudhary <j-choudhary@ti.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-omap@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: [PATCH] i2c: omap: Fix an error handling path in omap_i2c_probe()
+Date: Sat, 14 Jun 2025 16:59:26 +0200
+Message-ID: <998542981b6d2435c057dd8b9fe71743927babab.1749913149.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/nouveau/gsp: Fix potential integer overflow on
- integer shifts
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Lyude Paul <lyude@redhat.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Dave Airlie <airlied@redhat.com>,
- Timur Tabi <ttabi@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
- dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250522131512.2768310-1-colin.i.king@gmail.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250522131512.2768310-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/22/25 3:15 PM, Colin Ian King wrote:
-> The left shift int 32 bit integer constants 1 is evaluated using 32 bit
-> arithmetic and then assigned to a 64 bit unsigned integer. In the case
-> where the shift is 32 or more this can lead to an overflow. Avoid this
-> by shifting using the BIT_ULL macro instead.
-> 
-> Fixes: 6c3ac7bcfcff ("drm/nouveau/gsp: support deeper page tables in COPY_SERVER_RESERVED_PDES")
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+If an error occurs after calling mux_state_select(), mux_state_deselect()
+should be called as already done in the remove function.
 
-Applied to drm-misc-fixes, thanks!
+Fixes: b6ef830c60b6 ("i2c: omap: Add support for setting mux")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I'm not 100% sure of the error handling path.
+
+Should pm_runtime_dont_use_autosuspend() be called after the err_disable_pm
+label? (to match the calling order)
+
+Also, should errors from omap_i2c_init() be handled?
+---
+ drivers/i2c/busses/i2c-omap.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index 876791d20ed5..5e46dc2cbbd7 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -1461,13 +1461,13 @@ omap_i2c_probe(struct platform_device *pdev)
+ 		if (IS_ERR(mux_state)) {
+ 			r = PTR_ERR(mux_state);
+ 			dev_dbg(&pdev->dev, "failed to get I2C mux: %d\n", r);
+-			goto err_disable_pm;
++			goto err_put_pm;
+ 		}
+ 		omap->mux_state = mux_state;
+ 		r = mux_state_select(omap->mux_state);
+ 		if (r) {
+ 			dev_err(&pdev->dev, "failed to select I2C mux: %d\n", r);
+-			goto err_disable_pm;
++			goto err_put_pm;
+ 		}
+ 	}
+ 
+@@ -1515,6 +1515,9 @@ omap_i2c_probe(struct platform_device *pdev)
+ 
+ err_unuse_clocks:
+ 	omap_i2c_write_reg(omap, OMAP_I2C_CON_REG, 0);
++	if (omap->mux_state)
++		mux_state_deselect(omap->mux_state);
++err_put_pm:
+ 	pm_runtime_dont_use_autosuspend(omap->dev);
+ 	pm_runtime_put_sync(omap->dev);
+ err_disable_pm:
+-- 
+2.49.0
+
