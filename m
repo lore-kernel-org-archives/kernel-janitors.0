@@ -1,103 +1,117 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895EE3595A;
-	Mon, 16 Jun 2025 05:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593501DB92A
+	for <kernel-janitors@vger.kernel.org>; Mon, 16 Jun 2025 09:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750053574; cv=none; b=PFfqLkdHEqf0Ng/pP+xjhbHzT80+JwZjc8h7/PlyOup+K9BYn4w1UwkowiFaerTst0f2fJPOuTKodtemwubkudsQUY3wRuw2qgrqVBtDyOte3DsDqKj/vU3r5JFddYxjQWlT4iscD/euV2EsEcBCuicOszV+qfMVeriigqCSJIw=
+	t=1750065607; cv=none; b=G4imhQjMgDH4FIQOkO9PNm7QIp0pwSmDSYH1PggVvHPhwIG4VuLCJIB3PanJaPrt4aTnP4Ct4K1AY0L9db+C7VRiUXeYlT1AfgfG+DVfL0RPR1nAjAxP0YJP6U/xXEGqHl9P8OykHZ1lBG0ODyyB7SGU2AuamZ/+qLAr35jJZGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750053574; c=relaxed/simple;
-	bh=zn33IrUM/tWWATil1wT/NEpCJynAT8CXNBbJ4+jat7o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QzMMxLdR6P3uVQQ3pAHQj+0Wd+Yu183em1F3N+HCK+nQEgDOawwHPBvCADGoOvqWmC4SD8ONewiebeg4+rV2bkdxT996AHvrk7i5KE6PNaA4Z1yXATq/vsIKbBqMUxdFGRF30e5pXrpPjnCe1jmufi/OVFJbTk9qVT8c2vd+NFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2GIYQmq; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1750065607; c=relaxed/simple;
+	bh=SNag/bOAXJOjhxBCZjBV9Gk10G61ThtijECgTvWYBlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lmms1f4Av4MZADKGC2mhSaYvej7RJqyA594GgKI6LL+YIc85xLsg4SyixqP8pCvNKGjowPJymQnO420mKjKM4yuGmve+PpkeCuFxdfTvED97IMD/Hn2Rbk53PpP1ZQIZCRrWJ6VT3+GZlU+iUnSL7zG3S3Be38/FIWOCZkwXzM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D7cLhWnR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2GIYQmq"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54b10594812so4044784e87.1;
-        Sun, 15 Jun 2025 22:59:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750053571; x=1750658371; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rYf/04Z2fZon29q7D3EZDuPp6iEeGkTJPrSyCprQpdA=;
-        b=A2GIYQmqXkH1dKq4z2fVr0awYYvj7h41mab5gCUwGTs8nKu9EhoEdsx2hsnukDnwOJ
-         NTtuQ3757lH6aNp/e2gyMtVfHAnSiwuKaT954aFd2Lf950vOd13w/eFSUFFapxKGCP93
-         3jhntX2gknRk5mVK5c9RZsq7Bfg7BnBCo5eGONryWzdy8pG/odEVuyEqv8l/wMIcxrOR
-         17iOtn7qu7Tc19XYUKxrjmzn2bM6R+fB8nMX+wyC4uVPSYcAmI+I3Te92mDSCI99zbgO
-         aogxS82IkIAxc1Vnu/hkZDY4QjuGZBhl5DBI2CEN5MtzB/Q2d+LRsr8KcI9Act78dD9o
-         5uoQ==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D7cLhWnR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750065604;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2aN38x2eQAv5g2zQkakGSr4DbNCLimCT3gIZvjNzrH4=;
+	b=D7cLhWnRBch5ZTobOTwZJEJBFCe8VqMIwv3BXJ5OHc/IU5vrSdObOC5NkjLQSHj0gK+WfW
+	1b+iSmtfk9kRyHYefglvu5SoAACg1yaLwZRIUfxQl0Hlx6WbeLQyo9fCUrkT6GxHl9ap6q
+	nR6bA1txtlVkPpgTmYalwLsJlSnnR5k=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-8aDaSmI0PiWa29g751BWaw-1; Mon, 16 Jun 2025 05:20:02 -0400
+X-MC-Unique: 8aDaSmI0PiWa29g751BWaw-1
+X-Mimecast-MFC-AGG-ID: 8aDaSmI0PiWa29g751BWaw_1750065602
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-acb61452b27so426534666b.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 16 Jun 2025 02:20:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750053571; x=1750658371;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rYf/04Z2fZon29q7D3EZDuPp6iEeGkTJPrSyCprQpdA=;
-        b=WCeqXGjrN4/dNg2/34zJL5rvDcd+l10ejovrEd7Iersz2w164EWhcz0K93QWsIwdH/
-         1q+y45EQuSW/euc/uuzluQqdVp+ngzpb2P9lGyf5Ekiuxh72+k/PbtM7cLkKU1C0MDqA
-         u6+pf2SfydwAk3wei2MoIqh0hOYCUJK89YBnYZSop9if8KpBSMdlek2FAO0h1tDPXz8s
-         ZjSpE/oTzSOy0ofGz9RZ42nmGR0bB4MdAKbOiDHRNQ15ce+RycVgLJjA3LrinZL4gHmU
-         C5SOmF33cApING9RuruHKBrc71U9tQAZsgpXlrzD4JNJHx5K/K8AFADLKB0VYLz6BM0k
-         MrFg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4lcNepZwx2CDjJ8xfodacnXwsAYSOn7f8QnHdYAPF+KHzVTKS9zvEJrit8zR5OJczgZSAMn2rGFw9ATxlHyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywovkbjo8kxxAUkvtyJv/FmllIIushQvtj8hiYZus41IDxwLyb5
-	59PWO9o+ProL9jP8Ybanlvm7YQo1sGLqA5MVJo03ENJP3zF7fRAau3+3
-X-Gm-Gg: ASbGnctqTs/XpxujidnEq9SnyWgotBhHGfMyWhmP7otGILfbS2Z5JONMGi5OQ8w7yDC
-	4FOMiKZKt1Q1qOt1tBf9mgSS3Q515vuEXAM6Uc4+wAwf/Qm8ZVOZeew5E9eKO8uPaIaeGXkXKms
-	mgJHAk5EgNM0gmPs/aV6kL+Attf1O8RIMyYmDnWK8RrUpf27jwA2DOjTb7RplQ1r+mrV+hMpWO3
-	W/RYzEdRxWmsiZKgWNJcy+1SmlDTEcRbw2IwI1yO7SEMPg1lE/zBJ5bqf1T1cYMHgnrQ6MzBFZ+
-	zyg51BmSbvnhq2CP6qJZcirlDBiwd0B900v67X9u6QoCnP4yhXZEWr31L5qUpPGZE+sljSaCXM6
-	HHuCSDxwKnzhTxtWHxzR2NuiTjRF584Zt2APILPWL/tWf7qUkIuVFQg==
-X-Google-Smtp-Source: AGHT+IE1qKV3L3K0JNorK/++Ay+d386HItnzNzUgJ7RO7B7L6SuyolmRUKaru4aVa/mIovuAkIdExQ==
-X-Received: by 2002:a05:6512:3d24:b0:550:e3de:63bc with SMTP id 2adb3069b0e04-553b6e8da9dmr2127132e87.25.1750053570418;
-        Sun, 15 Jun 2025 22:59:30 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1f793bsm1415202e87.228.2025.06.15.22.59.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 15 Jun 2025 22:59:29 -0700 (PDT)
-Message-ID: <5ff51253-d7fd-46c7-9cb9-b0af54120230@gmail.com>
-Date: Mon, 16 Jun 2025 08:59:29 +0300
+        d=1e100.net; s=20230601; t=1750065602; x=1750670402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2aN38x2eQAv5g2zQkakGSr4DbNCLimCT3gIZvjNzrH4=;
+        b=EKWNEoK0PJp7RYymEM0/0ORbB8Kuu0jVQfNlMQeOgdqqdzDZML/KQTA2nZGoH0AQ26
+         RN6upGn3FxnGURdUc4YOdmCD2KzL02O2mmfD+uClyUTOXu+SHNStxWyjAG75Pu6kncFv
+         p2TWsP2D7Yop6xZToe6KLIKEuyzmqPfUENKXkINT5G3QBdwyGcnt2scPtfzoriTcBQlx
+         UjNzonnMkdA8joaEQYPbl3wPWc8S418ZzoZhrDgAJc1U3qXBkMvGRaDVaO3Fa3Ayzp2X
+         tToKT5/3VBLlx+ebyx0yxX/IzzTvhTxzMSe4c0R7SEEAZf8P2m2JumVqxPyfbcR/cRY7
+         Iiow==
+X-Gm-Message-State: AOJu0YyLZ3hf9a9z0sHi7VjtkbW0LxtQ9scTQktNWFIXfF2aD7HYv3ne
+	Pq9PlPMa77MlZ37NiFGZAM586/17O48rfNVIstu2NeXdy2Zc4vvMaNA3Tl5d+v8kArzLyhCPfzZ
+	qUsYlW2fcQs5mBLxj+f1VImWThgvnw/W2DyF+uBqiQhijhIWf/IFGnFNsJlc02uXDSdxbtA==
+X-Gm-Gg: ASbGnctznqpxm9zpIu41neUhAP+b3VTphUwjgpjjrslZjd0DVdX9TvHcII8W55f7lm9
+	GpRpcRE+tuhrWGOVmIaA6SmcnGuJqL9Eqgs+Qgu7M9z7T1q1Y5cZUaK9uYFVn/qprUvnLwRw6Cf
+	iD30QWdcs2O1ARy9AhOT6PaELr6jpJIoWVIJpr4OpxjXgtn1bj8dt6AleqlUAdEARGHGyGvLryn
+	Ivtk+rHX4reZb8AFepvY0XjvyJsn5Le0tE2yl3ML1yAoyg0pwRMBIuUnZJT5D+WZl3rOJE0D8Dz
+	psBF884AAQHKY+JlUda1A/eFwc6gyhQP3uYieZ70ygjicFHV9r8itMiIE9ud0rspqoDs
+X-Received: by 2002:a17:907:1ca4:b0:ade:399c:7a9 with SMTP id a640c23a62f3a-adfad5447bamr709041866b.37.1750065601668;
+        Mon, 16 Jun 2025 02:20:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJKuhj5xyfGL3uzgbw9CuILR/QbgjEmvD0ydX72pNcFuNUu1+mxkyNoYCSx3RhwBrzPxddVQ==
+X-Received: by 2002:a17:907:1ca4:b0:ade:399c:7a9 with SMTP id a640c23a62f3a-adfad5447bamr709039066b.37.1750065601216;
+        Mon, 16 Jun 2025 02:20:01 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-adec81c5c3bsm626948866b.61.2025.06.16.02.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jun 2025 02:20:00 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Mark Brown <broonie@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Ciprian Marian Costea <ciprianmarian.costea@nxp.com>,
+	Larisa Grigore <Larisa.Grigore@nxp.com>,
+	Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>,
+	linux-spi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] spi: spi-fsl-dspi: Revert unintended dependency change in config SPI_FSL_DSPI
+Date: Mon, 16 Jun 2025 11:19:55 +0200
+Message-ID: <20250616091955.20547-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: rohm-bd71828: Constify some structures
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 15/06/2025 19:32, Christophe JAILLET wrote:
-> Several structures are not modified in this driver. Constifying them moves
-> some data to a read-only section, so increases overall security, especially
-> when the structure holds some function pointers. This is the case for
-> 'gpio_keys_platform_data' and 'mfd_cell'.
-> 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->     text	   data	    bss	    dec	    hex	filename
->    18161	  14112	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
-> 
-> After:
-> =====
->     text	   data	    bss	    dec	    hex	filename
->    22897	   9376	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Commit 9a30e332c36c ("spi: spi-fsl-dspi: Enable support for S32G
+platforms") reworks the dependencies of config SPI_FSL_DSPI, but introduces
+a typo changing the dependency to M5441x to a dependency on a non-existing
+config M54541x.
 
-Thanks!
+Revert the unintended change to depend on the config M5441x.
+
+Fixes: 9a30e332c36c ("spi: spi-fsl-dspi: Enable support for S32G platforms")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ drivers/spi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 60eb65c927b1..f2d2295a5501 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -647,7 +647,7 @@ config SPI_FSL_SPI
+ config SPI_FSL_DSPI
+ 	tristate "Freescale DSPI controller"
+ 	select REGMAP_MMIO
+-	depends on ARCH_MXC || ARCH_NXP || M54541x || COMPILE_TEST
++	depends on ARCH_MXC || ARCH_NXP || M5441x || COMPILE_TEST
+ 	help
+ 	  This enables support for the Freescale DSPI controller in master
+ 	  mode. S32, VF610, LS1021A and ColdFire platforms uses the controller.
+-- 
+2.49.0
 
