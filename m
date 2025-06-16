@@ -1,75 +1,103 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75FD2B2D7;
-	Mon, 16 Jun 2025 03:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895EE3595A;
+	Mon, 16 Jun 2025 05:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750046054; cv=none; b=HeFVSAK4K5kI7QqXiGRf0+7KH+4NP5NhELsvmYaWceIcvpottPJMwPLiL0DGcO8fUw7skAmRLoHu+KOqsJZ9nPkZk2baw8DMLKgwem3QZ+6qBvpxkuSB2qVh5tVg/0REE6A5OReLUqNpWij5NiBw9BWj254BILLDKsYLGAn5zyo=
+	t=1750053574; cv=none; b=PFfqLkdHEqf0Ng/pP+xjhbHzT80+JwZjc8h7/PlyOup+K9BYn4w1UwkowiFaerTst0f2fJPOuTKodtemwubkudsQUY3wRuw2qgrqVBtDyOte3DsDqKj/vU3r5JFddYxjQWlT4iscD/euV2EsEcBCuicOszV+qfMVeriigqCSJIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750046054; c=relaxed/simple;
-	bh=PV8rThs2JacW6Sd/SyCVh/lDg22Vnd7ArbAbo9rk4yU=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date; b=BjEXCfaj5yUyUmqiEl0JqfOYin8Zv8sGK8XuqDEkjbgbkfS2JP0z6PVWjhdvGQq2643tbMXO8LoE8i/hJ2l8A+mp1KQsWjX6CjAlETYtuc2xDu54+VFZG7oEyY4n6XWCc0ANwRyO4U9eMSzXR8kpEmEopLtIbFyfB9GrVW56exk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=WfJPTLxP; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1750053574; c=relaxed/simple;
+	bh=zn33IrUM/tWWATil1wT/NEpCJynAT8CXNBbJ4+jat7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QzMMxLdR6P3uVQQ3pAHQj+0Wd+Yu183em1F3N+HCK+nQEgDOawwHPBvCADGoOvqWmC4SD8ONewiebeg4+rV2bkdxT996AHvrk7i5KE6PNaA4Z1yXATq/vsIKbBqMUxdFGRF30e5pXrpPjnCe1jmufi/OVFJbTk9qVT8c2vd+NFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2GIYQmq; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="WfJPTLxP"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 55G3s8QQ14017165, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1750046048; bh=0rSkfoBswAcgu6JyvgpiC+RiDHtdMBEfWIfKopwSJvU=;
-	h=From:To:CC:Subject:In-Reply-To:References:MIME-Version:
-	 Content-Type:Message-ID:Date;
-	b=WfJPTLxPRapeH9+z9UQlLTpcDhwU7yBARME04fZVU0urYj8v1hkCsgyzPsorMr8fZ
-	 c4c2O1Vzg9xLGRvkUhcjTDt2D8HQviB+xWNhocYkzNglC2tW9jlypHNNbp+sa9QnGr
-	 NmVqhRU8ZNnu0DD4Sr5bYQwOaT4QMvz8EGF0ldhiz8Acmss7ncqiicezUTDcrqV840
-	 orhe5z09Xxg3FgxnvBmDOcVaps3ldX3HUAKKXAhuNd/jnr8L9LYWdHvY4EX1m41pfa
-	 Q/eNiDWIZTQFZ5wR4JqAuWlOiy/m56iX+pQPDg1Jye4o9z7AglWR5/zVc0+llzzQtG
-	 NXl/OmNumuo6w==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 55G3s8QQ14017165
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 16 Jun 2025 11:54:08 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 16 Jun 2025 11:54:07 +0800
-Received: from [127.0.1.1] (172.21.69.94) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 16 Jun
- 2025 11:54:07 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Colin Ian King <colin.i.king@gmail.com>,
-        Ping-Ke Shih
-	<pkshih@realtek.com>, <linux-wireless@vger.kernel.org>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] wifi: rtlwifi: rtl8821ae: make the read-only array params static const
-In-Reply-To: <20250611135521.172521-1-colin.i.king@gmail.com>
-References: <20250611135521.172521-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2GIYQmq"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54b10594812so4044784e87.1;
+        Sun, 15 Jun 2025 22:59:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1750053571; x=1750658371; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rYf/04Z2fZon29q7D3EZDuPp6iEeGkTJPrSyCprQpdA=;
+        b=A2GIYQmqXkH1dKq4z2fVr0awYYvj7h41mab5gCUwGTs8nKu9EhoEdsx2hsnukDnwOJ
+         NTtuQ3757lH6aNp/e2gyMtVfHAnSiwuKaT954aFd2Lf950vOd13w/eFSUFFapxKGCP93
+         3jhntX2gknRk5mVK5c9RZsq7Bfg7BnBCo5eGONryWzdy8pG/odEVuyEqv8l/wMIcxrOR
+         17iOtn7qu7Tc19XYUKxrjmzn2bM6R+fB8nMX+wyC4uVPSYcAmI+I3Te92mDSCI99zbgO
+         aogxS82IkIAxc1Vnu/hkZDY4QjuGZBhl5DBI2CEN5MtzB/Q2d+LRsr8KcI9Act78dD9o
+         5uoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750053571; x=1750658371;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rYf/04Z2fZon29q7D3EZDuPp6iEeGkTJPrSyCprQpdA=;
+        b=WCeqXGjrN4/dNg2/34zJL5rvDcd+l10ejovrEd7Iersz2w164EWhcz0K93QWsIwdH/
+         1q+y45EQuSW/euc/uuzluQqdVp+ngzpb2P9lGyf5Ekiuxh72+k/PbtM7cLkKU1C0MDqA
+         u6+pf2SfydwAk3wei2MoIqh0hOYCUJK89YBnYZSop9if8KpBSMdlek2FAO0h1tDPXz8s
+         ZjSpE/oTzSOy0ofGz9RZ42nmGR0bB4MdAKbOiDHRNQ15ce+RycVgLJjA3LrinZL4gHmU
+         C5SOmF33cApING9RuruHKBrc71U9tQAZsgpXlrzD4JNJHx5K/K8AFADLKB0VYLz6BM0k
+         MrFg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4lcNepZwx2CDjJ8xfodacnXwsAYSOn7f8QnHdYAPF+KHzVTKS9zvEJrit8zR5OJczgZSAMn2rGFw9ATxlHyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywovkbjo8kxxAUkvtyJv/FmllIIushQvtj8hiYZus41IDxwLyb5
+	59PWO9o+ProL9jP8Ybanlvm7YQo1sGLqA5MVJo03ENJP3zF7fRAau3+3
+X-Gm-Gg: ASbGnctqTs/XpxujidnEq9SnyWgotBhHGfMyWhmP7otGILfbS2Z5JONMGi5OQ8w7yDC
+	4FOMiKZKt1Q1qOt1tBf9mgSS3Q515vuEXAM6Uc4+wAwf/Qm8ZVOZeew5E9eKO8uPaIaeGXkXKms
+	mgJHAk5EgNM0gmPs/aV6kL+Attf1O8RIMyYmDnWK8RrUpf27jwA2DOjTb7RplQ1r+mrV+hMpWO3
+	W/RYzEdRxWmsiZKgWNJcy+1SmlDTEcRbw2IwI1yO7SEMPg1lE/zBJ5bqf1T1cYMHgnrQ6MzBFZ+
+	zyg51BmSbvnhq2CP6qJZcirlDBiwd0B900v67X9u6QoCnP4yhXZEWr31L5qUpPGZE+sljSaCXM6
+	HHuCSDxwKnzhTxtWHxzR2NuiTjRF584Zt2APILPWL/tWf7qUkIuVFQg==
+X-Google-Smtp-Source: AGHT+IE1qKV3L3K0JNorK/++Ay+d386HItnzNzUgJ7RO7B7L6SuyolmRUKaru4aVa/mIovuAkIdExQ==
+X-Received: by 2002:a05:6512:3d24:b0:550:e3de:63bc with SMTP id 2adb3069b0e04-553b6e8da9dmr2127132e87.25.1750053570418;
+        Sun, 15 Jun 2025 22:59:30 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-553ac1f793bsm1415202e87.228.2025.06.15.22.59.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Jun 2025 22:59:29 -0700 (PDT)
+Message-ID: <5ff51253-d7fd-46c7-9cb9-b0af54120230@gmail.com>
+Date: Mon, 16 Jun 2025 08:59:29 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Message-ID: <66d8a2d7-b933-414e-a741-054238b24777@RTEXMBS04.realtek.com.tw>
-Date: Mon, 16 Jun 2025 11:54:07 +0800
-X-ClientProxiedBy: RTEXMBS02.realtek.com.tw (172.21.6.95) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mfd: rohm-bd71828: Constify some structures
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Colin Ian King <colin.i.king@gmail.com> wrote:
-
-> Don't populate the read-only array params on the stack at run time,
-> instead make it static const.
+On 15/06/2025 19:32, Christophe JAILLET wrote:
+> Several structures are not modified in this driver. Constifying them moves
+> some data to a read-only section, so increases overall security, especially
+> when the structure holds some function pointers. This is the case for
+> 'gpio_keys_platform_data' and 'mfd_cell'.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>    18161	  14112	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>    22897	   9376	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-1 patch(es) applied to rtw-next branch of rtw.git, thanks.
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-9b550b98f0da wifi: rtlwifi: rtl8821ae: make the read-only array params static const
-
----
-https://github.com/pkshih/rtw.git
+Thanks!
 
