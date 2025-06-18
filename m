@@ -1,135 +1,106 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97C12E8DE8
-	for <kernel-janitors@vger.kernel.org>; Wed, 18 Jun 2025 12:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4621C6FE1;
+	Wed, 18 Jun 2025 13:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750251435; cv=none; b=t9RgYDPPKPUJ2ycAWpzfY8ITKuRrQearhdu4MIeFceEQ0td1QVQLQ6V9c8KHmh1leVLOsl4mql7rFnrvC7aCr6NpUo7z2+OfTPzGsbT6JQSfvfeIxPQdK9emmSZ9/WkRvEOTF/oV3liYvXTy2CyuteFUEbT3WTgFiTKyJMuViGc=
+	t=1750254871; cv=none; b=Dk3Q5F059VevOsNtdrn2pIRLOk6jnXLTQCACLcd/krYnN7zx1TVoJMDTcQIDOLmmn3NvtxsrkacBZKw0J1egKdqVGJg2IFqG00bnr0BrqVvgxBffwN13VyzcOnBXIwQaq/wGRs9t6F1AIcN7Q9o+I2NuiOuc1fxtbb3W/Xr4DH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750251435; c=relaxed/simple;
-	bh=3FYqq38fif/LxKqKHUHq3crgrlGF8y09qgJq5ooSqws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ddxyT4ElYzpGUJpxCEjAX/ibUTZ1LaBau6sBeb4GOx2SeymZq/55loxynjfPQ/dHV/ZMQGGRDL18rRLY97hukPr5kWQFF1oDGwy59tUv34YONcUqeXLeNul4/9P1SF0vISf7O6ssGTlUDQEin4p0plyi4PAG97tfX2FXxwK0yv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b7H9MyIT; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750254871; c=relaxed/simple;
+	bh=UKk//vSIWaJthUCrkf5IZytcjvhwxfOCufg0WdZ1FaQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qp3ZjO9nhwrDYUu9PuI9KHMNSMLd8ueuatW1cdtJiZeoqz2ytCcsFHqlQYrnrxEhOm5HdLZi+eDYx9acPbjGc502DzwaK3b7UDytLXcBz7u0ebVNLUea7fdAEsb5T7X7Z7HvYAPwXl2sgOQDiHY4jc4jNXNsyd1SbVhorCb/LSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aCwnS1L9; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7H9MyIT"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e824793a1cfso3238684276.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 18 Jun 2025 05:57:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aCwnS1L9"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so78815235e9.1;
+        Wed, 18 Jun 2025 06:54:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750251431; x=1750856231; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ImV2tWTmsy2q/yEr+1DaD06Foo/cyEMhoVGfzs5E01c=;
-        b=b7H9MyITUwy7yCriEiLoOO2l5RI7y6VMfnXqPYBZAxRaJfkOCg2GY//y9VFsQB0V6O
-         0vPcYb5Jy3ALKPNu9iPhZMPrv601Hd0//ZVH/TkU4GKxhPymQyTOFLagRCw1w6XlWSop
-         Y0S8b3dtAo9uMx9P4mn/uMWWNrF+/7CCocwr/UOY8ozpqBwnDusriN/rZIexYv8bZtWF
-         /kKRk3kcxJq9rkaiV/9s6W2ZyIxDeU3vjSk2H0L78iJnjDIXplks6z5ISWxqsW+IevC0
-         qTaE6AdQGpPMVxVmumNTkz3DBjPdV4XZaQWbyhDT62+zUdceA4MiTgcxaHWjUbTvpSpg
-         sq1w==
+        d=gmail.com; s=20230601; t=1750254868; x=1750859668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VsjqlWk6bmFlt9a3E9KK327lUQiY5+ZZ+i/JJjNAi0U=;
+        b=aCwnS1L9Qf0TzTSXXJNemiEsxWnDNOyKuzTIODgwGgqpaqlwC/8FVOp+E2SAx3cDz/
+         fOtCEQu8PB0n9FbG8+x8/pkxwwlLQvAG0FKBcxkAqeT/ha3rqsFJW/b/9nrnt2Jjc3Gb
+         ZBQSKT57ROSZaa8aDcevoauy87Saq95vTOpkm7xwZ9qdJp6m66/hRhUVwA/wtjcVOpO+
+         AeHXrCFvmSD/2CRSWLubsIlIEB642kiDVzff5dWzyDPy73FM56H24cLJLhd81I1E0v5p
+         nKPTCnSdmSJRXN2yOWMl46OEuKFagir5vh1qS6DBYnY/mso5wangTCxgplyj2WE0Ca2o
+         WuxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750251431; x=1750856231;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1750254868; x=1750859668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ImV2tWTmsy2q/yEr+1DaD06Foo/cyEMhoVGfzs5E01c=;
-        b=sYHTM2aUe6HwATNbRLAEBEgkVIKvc2pzPQIcutGvMpIAp7t1DapoQXX3/LPFZNFoJd
-         4OUbYFrjqTK/qp7/vb4A2qdlHCr62IOsghBewkgqyGMFL3QccqDyXI0d6bCrYFTpBE/x
-         4yIQ136oPfXALLpnuPiSXqRZ++qyi4M+zL+3xxMusgGgahRs96CklnK8bDtOPzlYD1ma
-         wdS3cUMW5G/uErNb9Q0UhNOYCN/RIy+IgR8ApiLbeKqNu1onRU0EaMvLzXA+Tu58/kYW
-         5tbqjfsM0I+pPDuTB+8pBgrSXLnxDcv0oNlJ8sygZPAtHoVKhtgSWiikmKkjWyQ5lqb/
-         uE0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVrv4z/kl7nO2OEjtdqES5JfOCjLlladn9tIXsArbjvlgdZ6MbfRrMqPaSWTmBZihfyGZH2cto9CjpS7/6hUuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTCLDE65idfr/aZ5SGURW8Ewej3ay9yHSfVgjnqNpNSIRPyem4
-	QybGvdCOAVr78qe1OUUZKq6HVHcuxr5gKpLJOAJnNa9Lv8NLZvz72ufnstj6nHEsvxidoCE0SQm
-	3yMyILQ/5IWeUnEYgH/3kLQWswQPtMPxSy1yxYASJhQ==
-X-Gm-Gg: ASbGncsBUcZDr6oohISvsHRM3M1AB30IVSjlnxtA6rMHBdEquaDkMbYlShbSucMfmL8
-	F1Jag3BgVwqmnZ5hdgCJ2Wt2s5T5hiCCBSWzZDfdfVT2VylzGRq1VidL9Ys/rjVp+6k3gUZvSPi
-	ii1utx0xrwl8V4cpTKGyjEDLXMkk78jA6Lkpl6qfCcs3LD0FgBRM3k7g==
-X-Google-Smtp-Source: AGHT+IEyQuheTBiE1KNn6YZq2gnYBnep5nmoSzdbAY5+FjuWnU41fcajc0wk6HzHKqHouIVNOHfqKE34E1wAn8AbOSo=
-X-Received: by 2002:a05:6902:108e:b0:e75:c2d7:53d6 with SMTP id
- 3f1490d57ef6-e822ac5c6e6mr24203748276.13.1750251431566; Wed, 18 Jun 2025
- 05:57:11 -0700 (PDT)
+        bh=VsjqlWk6bmFlt9a3E9KK327lUQiY5+ZZ+i/JJjNAi0U=;
+        b=xCwRO7f10Gt9dRG90XiXK2L5l0bZrZGu1KUOb4kUDIWiGmXjiG6njHxw1YlmoBIi3u
+         JCbJIs79vkWY1cVap7q9aeuXXrf1kiN3rGN/yWx9VjeX3R9xGnWyD++5OfeLjddXDCwb
+         yD4Xp6BtR0PVJI4bORxPrct1cSxZFeq3B9wuR2Nfz/O3HkDnZyOTNgUpNhSoJGcjBa0o
+         CVJLgEgHh3gddRTF9WMLNzDF6TBILXddhARE2tHp71nGWLIQ+JiUvqkZkcNWyI1SAvmc
+         khepJ51zWz9ofHY7hVMmm2BgVl3IroyXHoIZNX1AHqVXQHDhSEWZm6dhGxGULmMTTAiM
+         R1EA==
+X-Forwarded-Encrypted: i=1; AJvYcCW25HwrfKSfx5/8R2qVZul2sjKX9KdmJa3jTiWfnhj2NBbpyGuXcyIvAxp8oTmC2mcGyjLGpy0iuHEPA28=@vger.kernel.org, AJvYcCWmkVZyoPc2a7GQPyk74mwhHLBHIxuEn1ngFYQZauIJmxgg/XRJoVQNgHL9+8wuTHOsJ6Bs45o4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlCKmiDajd+lEVeGaJ8Uozcn96CIFu9J014hi5tCnNhm/2LMb7
+	DkTETy881u2WVuGiOStXGwxbJPqtu3c9TZ3i9CtoucIIWcMOHjo4+4CK
+X-Gm-Gg: ASbGncvVilBz4rr6nXfTcEoub/Kb+0nyEEmlKstBcAf1UsNvGrMDwYpQbFJVlv1jvhA
+	EL+UPC5Mqx8ynIoHTvcdSBZ7lJO5PQ9R7VSsX1pKhEbxqiklaIbp+3Lns6dqeRSXjg52ttksSrd
+	PK0ls3XCD2Cu9L8zt7OJv/hYUPU2Y9DrH4b3ejse0+gi6u1n91dRNu7O1DwftVqtGfoYStppL6E
+	V1QLyC3MSgXKLcilfGN5lztzEL2enJ0HFfJtH0+08l9KUMMYH5jmwqr5wC+hZELhOALnkFPS0T5
+	UrZAmKhbYmFwN5Sdrm2D2lPQGJkQDmNMvTMJfZYrTlFpKJ0yFs1Vr5t2d4j/
+X-Google-Smtp-Source: AGHT+IGK0BK6ayZuw30y2UmFGch38fYUMJhCpRBmDebTNO7bFXfxfhyJc3ld19M5sFBfc55vHw3/ig==
+X-Received: by 2002:a05:600c:698d:b0:442:ccf0:41e6 with SMTP id 5b1f17b1804b1-4533ca4e339mr182304675e9.3.1750254867610;
+        Wed, 18 Jun 2025 06:54:27 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4532e156e8dsm214525955e9.31.2025.06.18.06.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 06:54:27 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] igc: Make the const read-only array supported_sizes static
+Date: Wed, 18 Jun 2025 14:54:08 +0100
+Message-ID: <20250618135408.1784120-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606090802.597504-1-lukas.bulwahn@redhat.com>
-In-Reply-To: <20250606090802.597504-1-lukas.bulwahn@redhat.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 18 Jun 2025 14:56:34 +0200
-X-Gm-Features: AX0GCFtmn4waDQnDGcBuyuBWKSA5kWVg6aNQw87L31M-o6t6ciEMxOkcF-FE8sw
-Message-ID: <CAPDyKFoPdqfz-3+XAMpg23VzaLUZ6xXJvmknQH7pjNZLPq6eAg@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: arm: scmi_pm_domain: remove code clutter
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, Javier Martinez Canillas <javierm@redhat.com>, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 6 Jun 2025 at 11:08, Lukas Bulwahn <lbulwahn@redhat.com> wrote:
->
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->
-> There is no need to introduce the boolean power_on to select the constant
-> value for state. Simply pass the value for state as argument. Just remove
-> this code clutter.
->
-> No functional change.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Don't populate the const read-only array supported_sizes on the
+stack at run time, instead make it static.
 
-Applied for next, thanks!
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/intel/igc/igc_tsn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ethernet/intel/igc/igc_tsn.c
+index b23b9ca451a7..8a110145bfee 100644
+--- a/drivers/net/ethernet/intel/igc/igc_tsn.c
++++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
+@@ -431,7 +431,7 @@ static u8 igc_fpe_get_frag_size_mult(const struct igc_fpe_t *fpe)
+ 
+ u32 igc_fpe_get_supported_frag_size(u32 frag_size)
+ {
+-	const u32 supported_sizes[] = {64, 128, 192, 256};
++	static const u32 supported_sizes[] = { 64, 128, 192, 256 };
+ 
+ 	/* Find the smallest supported size that is >= frag_size */
+ 	for (int i = 0; i < ARRAY_SIZE(supported_sizes); i++) {
+-- 
+2.49.0
 
-
-> ---
->  drivers/pmdomain/arm/scmi_pm_domain.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/pmdomain/arm/scmi_pm_domain.c b/drivers/pmdomain/arm/scmi_pm_domain.c
-> index 2a213c218126..8fe1c0a501c9 100644
-> --- a/drivers/pmdomain/arm/scmi_pm_domain.c
-> +++ b/drivers/pmdomain/arm/scmi_pm_domain.c
-> @@ -22,27 +22,21 @@ struct scmi_pm_domain {
->
->  #define to_scmi_pd(gpd) container_of(gpd, struct scmi_pm_domain, genpd)
->
-> -static int scmi_pd_power(struct generic_pm_domain *domain, bool power_on)
-> +static int scmi_pd_power(struct generic_pm_domain *domain, u32 state)
->  {
-> -       u32 state;
->         struct scmi_pm_domain *pd = to_scmi_pd(domain);
->
-> -       if (power_on)
-> -               state = SCMI_POWER_STATE_GENERIC_ON;
-> -       else
-> -               state = SCMI_POWER_STATE_GENERIC_OFF;
-> -
->         return power_ops->state_set(pd->ph, pd->domain, state);
->  }
->
->  static int scmi_pd_power_on(struct generic_pm_domain *domain)
->  {
-> -       return scmi_pd_power(domain, true);
-> +       return scmi_pd_power(domain, SCMI_POWER_STATE_GENERIC_ON);
->  }
->
->  static int scmi_pd_power_off(struct generic_pm_domain *domain)
->  {
-> -       return scmi_pd_power(domain, false);
-> +       return scmi_pd_power(domain, SCMI_POWER_STATE_GENERIC_OFF);
->  }
->
->  static int scmi_pm_domain_probe(struct scmi_device *sdev)
-> --
-> 2.49.0
->
