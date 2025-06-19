@@ -1,71 +1,69 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5364A1D;
-	Thu, 19 Jun 2025 08:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FB02641F3;
+	Thu, 19 Jun 2025 08:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750321859; cv=none; b=GtoGiFZMYwP5VGLhgs8mmUZOkxX5KHxokaOFrLBu/dW7gCmQRrFaIBMvqVQK89mnH+RKd8kvx8AoPuzut6VxfloShj80iU6ADDGSESgNGPl7EVVBqM1NiENmDgpWCYof5389nS1XiC5TKP9mP+8ZCovCmZ8+N+mOGSpZ9FHdV2U=
+	t=1750322121; cv=none; b=qIPQ0Bk0vwf1ESwMgG7DnDiE52aIpQCXwjhDcasZvsj2a2JDmdVAZLlM/LyooR43FhPYhx9iWKK3IpZsgjItRkGZXaJjqC1Cq7h6cFbe5T93L0E1tudtgaz9L+K5vLs0wcJK5yi8HavFzV30r4uOKrIdmYL6tORQeq1SnXSjxMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750321859; c=relaxed/simple;
-	bh=5U1WxsatwH9pCFmpAeShXCBLm1r5I+NDtPeCRXqZVpw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mRayQ9KEewVOOZ82F1EEmdPqVrKrTVox54VuE/+8g8Ofw553w4rKe8gSlA0Mbmi7rME/DBTYYIwns9uMiAYWjucd9jH3CKSQ6h9RE/wdCrzhAkTy0AR9kmjBamDACtGwkLfRTv1VZOqXgWJRP/LNlGzZBBDsiB6H6wXLkS1ZpX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K0LWzaze; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1750322121; c=relaxed/simple;
+	bh=fnG3UYTBXQwWDGnKURkUlDJVYi+d9in9GWlEID8z8Sw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zpqof3kh56jPlzG6KW4POnclo7YtM4Ki7UEo/AN53TBwgmStrO9tKDAb8uPJIg9c7THHw/R/WzXWSv3be3RL+YNxqnbkBYyJVmKIrOjz+PATHNC+UccwBmH2zdy4TcbRBrLlb+wbxzNIJv9KmUmuyfxyzQWwWdI284vF1UQaGS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KW91+g12; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0LWzaze"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-450cf214200so4385615e9.1;
-        Thu, 19 Jun 2025 01:30:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KW91+g12"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4530921461aso4103925e9.0;
+        Thu, 19 Jun 2025 01:35:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750321856; x=1750926656; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750322117; x=1750926917; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1T6FrQp2okPwOD58MAho0evF8YiqmPgaoUsaoWni2dg=;
-        b=K0LWzazeK2rCTbFZMcSxY6kuWtGLS9/fyl1pZ3MWCKvOlyhl6bYc+0i0MOTOLIO3hy
-         pyTiaFSexrbmGc0WgkSpS0wJ7qVImr7bt+iz7Ib4MWM8i+VUDqw7fWci4xgPCAWMq5ZF
-         ZqmGfFo2cEFgv9RYgTu7ouwE8/HpfKBZifsKoIrIgkfpQVIwcn38sfzbA039WctulEIj
-         mUdbZgcPuAqxwDN3DGtyXHRaoJtqK5YGiigNgN7XwCJvAIPyhOU44RrJ+oa+lTPGwX0g
-         yVg32fo5JlSuiajSG76wu0NukcwWXNmkiZYf/hKpVqHaIw2hPQyNN/5tgyKwk/byk+Y8
-         re8A==
+        bh=f9nFCq9OfuG7pkBTDyjuTc6I9PQsj+gS8fWvj5scqkI=;
+        b=KW91+g12IeA4Londqj0ub1iv3g6O+Wpxvf+Lykz4/QxpaAGN0z2620c5EeMRvBRoYE
+         UKttHSmr4nq2DE3ODlgkYPm45GxrSgSeCEVflLU4FBFru90ifRJR16ArVwCCfWr0qlJm
+         fYn1G8B1AAGF83zIE6kdmOuwTLJqjyXjfgq8hAnGL8gEf0XAoEVNZ7nfJzRn+BZWuMTq
+         UOjlYBmpODktx0Me1MFpuRT8m1pnYXt6iOwLaKe1UpDQJmvrwJefNrdt7xS1lEUicxed
+         NNclaatKxchAFPqAhwhcxG67Kr8UuiHLtS/yPg6kgik2jFeBDfouEvTX5Hb+S8PZzuMY
+         CgWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750321856; x=1750926656;
+        d=1e100.net; s=20230601; t=1750322117; x=1750926917;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1T6FrQp2okPwOD58MAho0evF8YiqmPgaoUsaoWni2dg=;
-        b=KHm8g/5WRcHjMcj6ChtqUuKZH8MwZ02JmkGh08rbDLjhnGhnWbtYenrF4T3PpnPKyl
-         W1+cwlUxmZYTWfO701W+OxsitFXD92aAW6/ZJYroHOCT2o0NDR6IkSxh8jFcG7Iq6Diq
-         y8FOUjVFVHgGigc9NAGBV0tSRSPahfWDHLO9C54Atij+dsbhEo+iLpkcVOmZL/EmLdRb
-         1XFmH8clGQ89cu9edboKGPWmzbfnVyO8te5+H4tDXDrX9qPaSiZdUoBMNiC9lqXnyML2
-         n6uAtYzfy+zBlr+caQlFVvTwIkbTWwhb0DJujTQ6OknfjcF9L1XwcUO3PArhzK5dTE8e
-         wE5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUPKFeb/bosS0zHvDhZW3GpSgB9I/CZaq2vRAw98pn8+vzTF5R3gP6K6+ftG1yiJJgOl/dg6ed2jbg/EOVb@vger.kernel.org, AJvYcCUqx6SOE+cWG2td39lb8HC3Q88q0NozY7djxenzrshZaEbA5Z7x4Bjjig38g/HCBwrviWnPFL41ZBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdokKCCpEG1k+vnH+j+1Rcu+uPMQB8PN8NfNaGmnysf3bNsK67
-	qQ1zpJl03yPFhyqsIPZrCEwROqzxVQx+L8eLMNIM0Izq8RXP+aS894LJSSG6yp5fEWAlhw==
-X-Gm-Gg: ASbGncvdxRNwecJEbit5T3fWzaQdYv5XPME1bIRm8bKL8jT5i3Ix1Jw2wan2uQ4ck+b
-	HwlbZL44R20mExwrJBqF+ot6leE/yNZ5wVpYnJRGoiZpPgA8qh9Fe/fRdU+iXJ8QcgzYN+VdCDY
-	n5ahhyIM3QbNuGppa9pP7a0gvCdVYDH1UkwimLFZCap8evmkutpdL2ctV54eD4tmZf7shChtALp
-	ngWDNnG4M+Zg0qGui6IOFf/Jse5pQQIPRb+a/4UIK9KYcUSETpEzQS+0vkAFvpe/H+0olgO3wNy
-	Znb5y6Gcw8/lhRYGrcbTg/4pUwbLOTNZhtoECxeoWax+Kht67S9wyjXws5Bs
-X-Google-Smtp-Source: AGHT+IEQpQd/8hmEsQ9eRTPMz052eU5rjSLNmdJtdjr2u9+ZU4TSJSnOXYilvQhtflXrG48W5EC87g==
-X-Received: by 2002:a05:600c:1c02:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-4533cab540cmr174416875e9.20.1750321856202;
-        Thu, 19 Jun 2025 01:30:56 -0700 (PDT)
+        bh=f9nFCq9OfuG7pkBTDyjuTc6I9PQsj+gS8fWvj5scqkI=;
+        b=iL1CrjmYP0TjysAWejs38ORuPLvdH20OM/eVkK0phmYr3ZBDhekxXpJAPQ0OQ3pMME
+         ScNPa6cdLh1ZWo7A2jLLBPHmWNtus0LNpPCZjN/V5rg6+xpzz3OqylR4WjioixPo7c6s
+         mELmoMqy8bo+u5Vq3g1jbp0EwOF9rqPLEz1GFSdFzG/neTJaWCBPmN3NO4LK3gYMRULM
+         lp5M0mCFhVUz1Q7ElROjiLciFRaN+n8C97CTNvXVj3N6soPDAdzo7FaTFhhH3e0sbu4w
+         bfltI1wZSe1ldEuBmkOj0KvswoUp7OHAz/NOPvSyA+fXVFwsgP5Q1cCVZCLeOoTQLdjV
+         8tJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVSnP+P31uhi/6kFpXpQ/7LK/4o1tK0sPBHe2Tx01r32Nk0w9sBWiqdxwma9Gsvto9hbWZUDlzjLSj9g==@vger.kernel.org, AJvYcCVKTNLS4QlwDg25kbwyHcV4TM/n3CIP+nOs96zMuiUPhOIhsRDGrQbJ8KcVhYp57Q7Gie/inFZz6kwjRIma@vger.kernel.org
+X-Gm-Message-State: AOJu0YysBnR7lWI+V2zCazIFel2x04ckOAlxe25l7JK/RZg5Rcfuiknb
+	zF2bAsz6SkK06plJOaAonHZM2WVEemIWiWT9guaYKOkUt+U+WfIC95HE
+X-Gm-Gg: ASbGncuBwipm4ykCfDlVaL9W67blVqD3KLdCP8TMMpxghkCddUV2V6fsIyt7QuOPDg+
+	6Q8QRrvMP4x0wV86C0vXTMLJAIL5LABH596jYGq6DCRQxSifOoJ6dtChtXT3TRMeJWpv95svtbL
+	6FNyT94AwgXkrHOtRwv7zl2Fi/1ztHt6VQyit6d02w8+f4JTvLrRI/1VejNH0UIzca/s0f6zJmc
+	s5d/A/jRR19X+ppPBzHAS3rytw0zUYyya448BqNkCwrrEt2wpA2God3TGiRWxPdhXadjeKL7e0S
+	Yjn9hCxci2jDB3R0snq/z+35fE/YXv3yFAXiXjFFit3QNWmk2U9qxHYNBQ8t
+X-Google-Smtp-Source: AGHT+IEEnxlQVoOldWNtJDXkuWNQYZerflt41TaiDMPC57mF6/kf81w0B75l8q/ink35vX3K9wm/JQ==
+X-Received: by 2002:a05:600c:4e0d:b0:453:c39:d0d0 with SMTP id 5b1f17b1804b1-4533ca6905bmr206186135e9.13.1750322116820;
+        Thu, 19 Jun 2025 01:35:16 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-453599c9854sm27663455e9.1.2025.06.19.01.30.55
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4535e97a915sm21500195e9.7.2025.06.19.01.35.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jun 2025 01:30:55 -0700 (PDT)
+        Thu, 19 Jun 2025 01:35:16 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: moxart: Make read-only array div_idx static const
-Date: Thu, 19 Jun 2025 09:30:35 +0100
-Message-ID: <20250619083035.1835133-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] HID: uclogic: make read-only array reconnect_event static const
+Date: Thu, 19 Jun 2025 09:34:56 +0100
+Message-ID: <20250619083456.1835598-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -76,27 +74,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only array div_idx on the stack at run time,
-instead make it static const.
+Don't populate the read-only array reconnect_event on the stack
+at run time, instead make it static const.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/clk/clk-moxart.c | 2 +-
+ drivers/hid/hid-uclogic-params.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-moxart.c b/drivers/clk/clk-moxart.c
-index 3786a0153ad1..4d34d1d18dbd 100644
---- a/drivers/clk/clk-moxart.c
-+++ b/drivers/clk/clk-moxart.c
-@@ -58,7 +58,7 @@ static void __init moxart_of_apb_clk_init(struct device_node *node)
- 	struct clk_hw *hw;
- 	struct clk *pll_clk;
- 	unsigned int div, val;
--	unsigned int div_idx[] = { 2, 3, 4, 6, 8};
-+	static const unsigned int div_idx[] = { 2, 3, 4, 6, 8};
- 	const char *name = node->name;
- 	const char *parent_name;
- 
+diff --git a/drivers/hid/hid-uclogic-params.c b/drivers/hid/hid-uclogic-params.c
+index a6044996abf2..b3d56057cec9 100644
+--- a/drivers/hid/hid-uclogic-params.c
++++ b/drivers/hid/hid-uclogic-params.c
+@@ -1341,7 +1341,7 @@ static int uclogic_params_ugee_v2_init_event_hooks(struct hid_device *hdev,
+ 						   struct uclogic_params *p)
+ {
+ 	struct uclogic_raw_event_hook *event_hook;
+-	__u8 reconnect_event[] = {
++	static const __u8 reconnect_event[] = {
+ 		/* Event received on wireless tablet reconnection */
+ 		0x02, 0xF8, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+ 	};
 -- 
 2.49.0
 
