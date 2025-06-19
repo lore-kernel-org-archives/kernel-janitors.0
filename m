@@ -1,44 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFD52253A5;
-	Thu, 19 Jun 2025 11:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA60B21766A;
+	Thu, 19 Jun 2025 12:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750333688; cv=none; b=HtwiGbcoKr0XV5pnDxN4ER2qWUxiVQv4X//1rG8s+mL6L9b8plnLrBaoZZIKPZOajaD+nlBb/7JNP+Qcie71iYnsnIksJ8MaWJ1GDQMSOW+Y7e2Z3dVzOkOwzweDVL6zd/jIk1vrtxxEIbqHigCUfZUt+taP+4VOUWVGwfqVi1w=
+	t=1750334438; cv=none; b=EvREYaqn4g6qtLSr7xdat3CAC5i7yHEHgJ4DZSd9rjoSy0YZ1zTBhc4N3xV0IXn8CkrZsPPHF35Nmer+aav7xRggUqy4JCTliQLqneQal0YTmgrnDllTyVvHMLep9CYlXBnwF2sn9fO/BsaoWpD1NwuH6Ku3WBYULJKZ+R3V8MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750333688; c=relaxed/simple;
-	bh=JkXoITyKy8DmJddDXIx6xoQAWgCNh9p4zc7FYc0W9Gk=;
+	s=arc-20240116; t=1750334438; c=relaxed/simple;
+	bh=kmCqW5koqCl29E0W/fJKehqsVTLiCvKw5nrbHBBT3MA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L09yx8ZVqc4lF9g8m/ahJXC+bL03WFdnqlGVSmn8wIm+N9bAYVjUSUVpxAzsRqPih0nG0tnBW1gAzmd9S5kTNua7EwheVWD9HKNJTHYr5aRYh05FCUY3tkZCGrfpIfF0dReVylByUm7hQkyW1jotTzmKWvhg2LHnmIXHeugIT80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VK7zKQqd; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxii+IjoMXSn4paoW+Kfbzl510ZOHISUpZlaIbXyauNsd+AoScj1GIfEpweMh5zXnDMpR/bBGp37zN77CKuucoW9f9OFeBU4Bio4ycwQzg/Hx7nhqAWigyt8U4vtWUQ2JevfF7tbr8jRYByn8XatuIkWGRjwHgvLf+ieULXrXCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+T/SKZ4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VK7zKQqd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9965CC4CEEA;
-	Thu, 19 Jun 2025 11:48:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+T/SKZ4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51E4BC4CEEA;
+	Thu, 19 Jun 2025 12:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750333687;
-	bh=JkXoITyKy8DmJddDXIx6xoQAWgCNh9p4zc7FYc0W9Gk=;
+	s=k20201202; t=1750334437;
+	bh=kmCqW5koqCl29E0W/fJKehqsVTLiCvKw5nrbHBBT3MA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VK7zKQqdXUrQP186VowAQXek/ADtQwECyY0mbmnq+aSMNfgdV1gC52Ayzy0VVumwr
-	 g0JtdAkzwU9sewMZEYmjYeAuWtzzl8RkNgL1UhDmjivc7pl78JNRGS60lPNoKz45bi
-	 QfKKJwKkDD5bS4Fj50nv4M4ql+XChPv84QnXmscsvIFl5j/XoHak/iTMIUvMmUfqlR
-	 eWIxdiaEpr1lynZET5gsPQmDJ78+vXt6xpFhPdC/gVxix2AruS8jgPWQf4qkVxeBpO
-	 wVVd/Wr3LmjyMGR9c5buoky8o9JGyvSQ2GSl3b3cAjnj9sU+gbBd6FokGUdD3EEj/G
-	 2jPcr3w1irA0w==
-Date: Thu, 19 Jun 2025 12:48:03 +0100
+	b=H+T/SKZ48wC6gWxtyPrr5Z6zfkaAhPl8e5IFiAMJ9Ihxiq1Os2TF4bi1KPZ+CUs/F
+	 k/5Bb73FcWYP+cB6xlFbr8bT2TZatwTiSka3Ih1TjHeVh2E6PY6wUWVN6lLzQ2pBUF
+	 0IpdfFyNZbpypMYEX9GTvHK/Y//8i5ai89cm7TXNHByRMQtN2c4rPotjWZe0N66j0y
+	 d8ignNCpJJWuoopaU52z8F5vJuDoNzml8AiN2tLGYSfOU0mD9PRf9p+c219afidALM
+	 7f6u9aB6B0meip24Jzn4BrKepDfxadYvRBGV8LQ2DSQ5nbtumark/8rBh6C79C+p4T
+	 vO2l7RHhhGu0g==
+Date: Thu, 19 Jun 2025 13:00:33 +0100
 From: Lee Jones <lee@kernel.org>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: Re: [PATCH 1/3] mfd: tps65219: Constify struct
- regmap_irq_sub_irq_map and tps65219_chip_data
-Message-ID: <20250619114803.GI587864@google.com>
-References: <c4abceb95665e4363937a1f41588772f38c47411.1749998382.git.christophe.jaillet@wanadoo.fr>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mfd: rohm-bd71828: Constify some structures
+Message-ID: <20250619120033.GM587864@google.com>
+References: <d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -48,35 +43,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c4abceb95665e4363937a1f41588772f38c47411.1749998382.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr>
 
 On Sun, 15 Jun 2025, Christophe JAILLET wrote:
 
-> 'struct regmap_irq_sub_irq_map' and 'struct tps65219_chip_data' are not
-> modified in this driver.
-> 
-> Constifying these structures moves some data to a read-only section, so
-> increases overall security.
+> Several structures are not modified in this driver. Constifying them moves
+> some data to a read-only section, so increases overall security, especially
+> when the structure holds some function pointers. This is the case for
+> 'gpio_keys_platform_data' and 'mfd_cell'.
 > 
 > On a x86_64, with allmodconfig:
 > Before:
 > ======
 >    text	   data	    bss	    dec	    hex	filename
->   27413	  10272	    256	  37941	   9435	drivers/mfd/tps65219.o
+>   18161	  14112	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
 > 
 > After:
 > =====
 >    text	   data	    bss	    dec	    hex	filename
->   27893	   9792	    256	  37941	   9435	drivers/mfd/tps65219.o
+>   22897	   9376	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
 > 
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
 > Compile tested only
 > ---
->  drivers/mfd/tps65219.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+>  drivers/mfd/rohm-bd71828.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 
-Set doesn't apply.  Please rebase.
+Doesn't apply.  Please rebase and resubmit.
 
 -- 
 Lee Jones [李琼斯]
