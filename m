@@ -1,46 +1,51 @@
-Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6B272630
-	for <kernel-janitors@vger.kernel.org>; Sat, 21 Jun 2025 10:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED38146D65;
+	Sat, 21 Jun 2025 18:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750501832; cv=none; b=T/f9BXk4Xz7364w8K74tbnGgEcH8TxKoEs/pQmLdqm5VNITgyADIPxYVm1w37Jq6YFNwpuL0LHgWEZO5pgHFP5kSJi1X9FAj/y7DysRFCTeXRro0M8gL+0xGCUCklXeXaEuqPdayO1c/iIWdy5KxRxNGnuJ2IsxXp1OG4Jmj3wA=
+	t=1750530529; cv=none; b=ko693yBI4+sXYpowLKtXWdz+fGp9fUpL753Sj4ojJ2vEkb4AD8uluGge4Yu/apVmwmrPL0HFBrSStEdH6+2Rkrbs9HGeOeq7MLZl8xlhUoxR9P+OE2WcXZ2LxV2Ctg6U+9+vmDk2pt7F/Bkg6SFwscVyDvHO6xvdAchP/Um1AOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750501832; c=relaxed/simple;
-	bh=B6berukrUY7atvfgg8Oi6KVv1rAM7ebSCspc5Xr/FaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gqrM+MStJ0eahk5YdgYECnrho7iRZnYaJ33vHjpVGcYbatrrYwg9iP6dqbkQ+637bw4oRu32aiUauJpOES/3EKLqwKmOzl35SyuKXnVY8emlJxkl9cJelPdI+pdx3uPBrNwJ0jtoAaBn/ycUjHzIzv6BIbLaPybCspm9yvO/ONI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=a81aLC9a; arc=none smtp.client-ip=80.12.242.24
+	s=arc-20240116; t=1750530529; c=relaxed/simple;
+	bh=aPhV273jQXDI6VclobpxvyNuZGHOqAP3ytIxvWcNfuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h+9IU7YL1wCAz9Eorcf/vrRUoFjTaIycS/7WJFJXjGOzLwYaIpYkbMLO+jAMrW0wGCc2MS2WFqMhj5rWIPyOceJrXRoVTCrpU/HJ3P8/taz3E7hOCnIxXA1L8EFTr3sjxiYc7jJyQUAlYbNUnd7S+RWrTZOUDz4ythSM32Wy2ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BVD8tvKI; arc=none smtp.client-ip=80.12.242.27
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="a81aLC9a"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BVD8tvKI"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id SvUQuoKOu1trMSvUQuSbjP; Sat, 21 Jun 2025 12:30:27 +0200
+	id T2x9uOVJEqzgPT2x9uUjmN; Sat, 21 Jun 2025 20:28:36 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1750501827;
-	bh=srPzhV0CtF12Fq8y9js6136ymbzjkGO8KLu1ECLK52o=;
+	s=t20230301; t=1750530517;
+	bh=xRHV9Cb4AbfXmbtF7OmSOXe+Z8POfrjA3kJdmCN5cVw=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=a81aLC9aAZYGXvyOMqlWMXUB9cAxxmFWkkKn2No65hRc5jeFifrak6fSookrFvPwj
-	 wn4Fk9+wHSPlNL5endEkyzw7MKIfsD4q5W0HjRFEwTrtIUAzTkwOassgFnfG2i0Z2W
-	 ocB05EEei2i6AgWQQmc1dMSA1xj5SzvTqzVXewRunxNbEAfpGC07g+uB4spk5xm6Ov
-	 Pi4u666p7C+F3PRlmaYiPmawLk1p/VrUWa+hwQunhzV5qc4elEqRH4fagK9HEoxzYj
-	 a/pMFkONcj9BFzjzXmP6rghtDU7hL/vehrj4laCOr+ezjgSvcX7ShFDK2Hiiw7XWTU
-	 V7Ug2d9NLLJ3g==
+	b=BVD8tvKI0U2cY8wygGWMJHAlpsQ4oNHALpiK8eTQDcrhU1CF0j2M04/ugCFu1UDCH
+	 7vv8R2XW5X1ZOowjHiXCerU4bXxYJQ7GSqkZs8Mi2nbs6jNwY7EOTMwQpRhdogJhvP
+	 4kfj6XB7QameZ+EA/dZCqMbQ7jT+YewdqH29/OPJ8RfEowN9P2eQx7Timo2xlD/tEt
+	 rEaiU6gEYyVX7IoNgOdIrLOH02QYwuVaNIFqsICg6W9mMs10dO0GZId3QoHOCDecRX
+	 DuyqIIkelej/l+RZRQQ2VuN0H8Kp9JeqypQX4lkLLa/aodMNt0+/WIDvOyivuAzjer
+	 jg+hdOxjdDZKg==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 21 Jun 2025 12:30:27 +0200
+X-ME-Date: Sat, 21 Jun 2025 20:28:37 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
+To: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
 	Lee Jones <lee@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] mfd: rohm-bd71828: Constify some structures
-Date: Sat, 21 Jun 2025 12:28:38 +0200
-Message-ID: <037e28e587ae899da9acdb45c606d75ec61f858b.1750501700.git.christophe.jaillet@wanadoo.fr>
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-omap@vger.kernel.org
+Subject: [PATCH v2 1/3] mfd: tps65219: Constify struct regmap_irq_sub_irq_map and tps65219_chip_data
+Date: Sat, 21 Jun 2025 20:28:20 +0200
+Message-ID: <117946696551de41b706ea9b973a7ccaacea5178.1750530460.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -50,24 +55,24 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Several structures are not modified in this driver. Constifying them moves
-some data to a read-only section, so increases overall security, especially
-when the structure holds some function pointers. This is the case for
-'gpio_keys_platform_data' and 'mfd_cell'.
+'struct regmap_irq_sub_irq_map' and 'struct tps65219_chip_data' are not
+modified in this driver.
+
+Constifying these structures moves some data to a read-only section, so
+increases overall security.
 
 On a x86_64, with allmodconfig:
 Before:
 ======
    text	   data	    bss	    dec	    hex	filename
-  18321	  13952	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
+  27804	  10016	    256	  38076	   94bc	drivers/mfd/tps65219.o
 
 After:
 =====
    text	   data	    bss	    dec	    hex	filename
-  22897	   9376	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
+  27893	   9792	    256	  37941	   9435	drivers/mfd/tps65219.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 ---
 Compile tested only
 
@@ -75,63 +80,43 @@ Changes in v2:
   - Rebase with latest -next because part of this patch was already
     submitted by someone else, and applied
   - Update the numbers accordingly
-  - Add R-b tag. (v2 is the same as v1, without hunk 5 which has already
-    been applied)
 
-v1: https://lore.kernel.org/all/d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr/
+v1: https://lore.kernel.org/all/c4abceb95665e4363937a1f41588772f38c47411.1749998382.git.christophe.jaillet@wanadoo.fr/
 ---
- drivers/mfd/rohm-bd71828.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/mfd/tps65219.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-bd71828.c
-index 47e574a57077..a14b7aa69c3c 100644
---- a/drivers/mfd/rohm-bd71828.c
-+++ b/drivers/mfd/rohm-bd71828.c
-@@ -25,7 +25,7 @@ static struct gpio_keys_button button = {
- 	.type = EV_KEY,
+diff --git a/drivers/mfd/tps65219.c b/drivers/mfd/tps65219.c
+index f6387345457e..83b8ab4707c2 100644
+--- a/drivers/mfd/tps65219.c
++++ b/drivers/mfd/tps65219.c
+@@ -260,7 +260,7 @@ static const struct regmap_irq_sub_irq_map tps65215_sub_irq_offsets[] = {
+ 	REGMAP_IRQ_MAIN_REG_OFFSET(bit7_offsets),
  };
  
--static struct gpio_keys_platform_data bd71828_powerkey_data = {
-+static const struct gpio_keys_platform_data bd71828_powerkey_data = {
- 	.buttons = &button,
- 	.nbuttons = 1,
- 	.name = "bd71828-pwrkey",
-@@ -43,7 +43,7 @@ static const struct resource bd71828_rtc_irqs[] = {
- 	DEFINE_RES_IRQ_NAMED(BD71828_INT_RTC2, "bd70528-rtc-alm-2"),
+-static struct regmap_irq_sub_irq_map tps65214_sub_irq_offsets[] = {
++static const struct regmap_irq_sub_irq_map tps65214_sub_irq_offsets[] = {
+ 	REGMAP_IRQ_MAIN_REG_OFFSET(tps65214_bit0_offsets),
+ 	REGMAP_IRQ_MAIN_REG_OFFSET(tps65214_bit1_offsets),
+ 	REGMAP_IRQ_MAIN_REG_OFFSET(tps65214_bit2_offsets),
+@@ -455,7 +455,7 @@ struct tps65219_chip_data {
+ 	int n_cells;
  };
  
--static struct resource bd71815_power_irqs[] = {
-+static const struct resource bd71815_power_irqs[] = {
- 	DEFINE_RES_IRQ_NAMED(BD71815_INT_DCIN_RMV, "bd71815-dcin-rmv"),
- 	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_OUT, "bd71815-clps-out"),
- 	DEFINE_RES_IRQ_NAMED(BD71815_INT_CLPS_IN, "bd71815-clps-in"),
-@@ -93,7 +93,7 @@ static struct resource bd71815_power_irqs[] = {
- 	DEFINE_RES_IRQ_NAMED(BD71815_INT_TEMP_BAT_HI_DET, "bd71815-bat-hi-det"),
- };
+-static struct tps65219_chip_data chip_info_table[] = {
++static const struct tps65219_chip_data chip_info_table[] = {
+ 	[TPS65214] = {
+ 		.irq_chip = &tps65214_irq_chip,
+ 		.cells = tps65214_cells,
+@@ -476,7 +476,7 @@ static struct tps65219_chip_data chip_info_table[] = {
+ static int tps65219_probe(struct i2c_client *client)
+ {
+ 	struct tps65219 *tps;
+-	struct tps65219_chip_data *pmic;
++	const struct tps65219_chip_data *pmic;
+ 	bool pwr_button;
+ 	int ret;
  
--static struct mfd_cell bd71815_mfd_cells[] = {
-+static const struct mfd_cell bd71815_mfd_cells[] = {
- 	{ .name = "bd71815-pmic", },
- 	{ .name = "bd71815-clk", },
- 	{ .name = "bd71815-gpo", },
-@@ -109,7 +109,7 @@ static struct mfd_cell bd71815_mfd_cells[] = {
- 	},
- };
- 
--static struct mfd_cell bd71828_mfd_cells[] = {
-+static const struct mfd_cell bd71828_mfd_cells[] = {
- 	{ .name = "bd71828-pmic", },
- 	{ .name = "bd71828-gpio", },
- 	{ .name = "bd71828-led", .of_compatible = "rohm,bd71828-leds" },
-@@ -493,7 +493,7 @@ static int bd71828_i2c_probe(struct i2c_client *i2c)
- 	const struct regmap_config *regmap_config;
- 	const struct regmap_irq_chip *irqchip;
- 	unsigned int chip_type;
--	struct mfd_cell *mfd;
-+	const struct mfd_cell *mfd;
- 	int cells;
- 	int button_irq;
- 	int clkmode_reg;
 -- 
 2.49.0
 
