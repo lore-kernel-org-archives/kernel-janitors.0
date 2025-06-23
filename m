@@ -1,54 +1,70 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1108260572
-	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 14:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5DA24BBEC
+	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 15:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750689419; cv=none; b=VUPne/OC1k8GuC0ACB1zSPk4An4BL4piyMJ9PXL+sjNf/0WptMrPYgxfZWfvv9kncMOjTMeRjBgeAF8ycWIljnHNFD54Mt6JH0hyf5tQAVewHWb6ujfwpiaSrPohEaRmSqRVX6li7rkPcMp0sWFIKjhw6wsr3IO4GGrFkINYLT0=
+	t=1750691205; cv=none; b=UdxEZpdauibUc6WivLSqrfOe3YdGD99S4IUOgZJiouYvbAIH1LJySsHilKO3e2B4rOtF4BkMgV8IQnOC5IB5FJBGbCYyTNEVyZgQKisiklqj6fgF6OVpA+SxvR/2GwiNWVsK3mg61ECzvKLYTNTPC5wpf3XQW0zYEqQV6aHi7fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750689419; c=relaxed/simple;
-	bh=TT4MoMKaB9MPS3KddIglVsq+u9PxmLhN4vh8jjCffKc=;
+	s=arc-20240116; t=1750691205; c=relaxed/simple;
+	bh=wuFXrwwjjmEMgA8swF0EHEAsKQSn7YRia6AOViQcc2U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LThU25s+NSfHIuDszafz8GrzTh5dD4HVTjtk4r+bBNJ44yzYq1yV1gpPd2orKuNraIg1B7cGC0uyBT0BvzLduTlxmhHJz7uDSbHVZG/PzSiP+ky3FRLA0wLTr4apjYav8M7h5123iNQqXMtnIz5H13buPJ4pihJJbhJYnbfEFls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B2RkoV2m; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=rcnosvmBh2vwL0cR2aELfYqE3DoLpUxs2loxNsnB+wHPwhI0AZDmA/N0n+fQYm0i8n+hjO5pWofRYu0juvOxywc+pxARUSykPEjJutj2xRdfrXAhiAb/tCNTmisfdSdl8C+HzBfQ7pNYBeDKfknbqj2OrLeOmpitjpWlPfQ6a1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ofuqf63q; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B2RkoV2m"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750689416;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FoUo8AFa374U8mDLmsqMuBlqEBkyH8ANfZ6omhJKFpo=;
-	b=B2RkoV2myCBXoBdjdbH8L8Ldy3k78sbWpHXvU3nyBQNmAuHhyCm9Xc6Bu+F+pA/E9sYTuZ
-	T3RPvMMRatJ1ZMAMKkkusP8u0qeSwELKpIuGPCGv/idCnT1+LB4276OP1RmK1oKlDc0zYU
-	WtrIffoq6mDpztLW8IeLzaSfIo5O13c=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-551-7UR_P_yuPEaNfeJvmmCHwg-1; Mon,
- 23 Jun 2025 10:36:53 -0400
-X-MC-Unique: 7UR_P_yuPEaNfeJvmmCHwg-1
-X-Mimecast-MFC-AGG-ID: 7UR_P_yuPEaNfeJvmmCHwg_1750689412
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 112A7195608A;
-	Mon, 23 Jun 2025 14:36:52 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.21])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7B3CC30001A1;
-	Mon, 23 Jun 2025 14:36:49 +0000 (UTC)
-Date: Mon, 23 Jun 2025 22:36:45 +0800
-From: Baoquan He <bhe@redhat.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ofuqf63q"
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-40a4de175a3so2970023b6e.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 08:06:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750691203; x=1751296003; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P/j2ABvQkeCCIY5OdnUsm4f6l2yn5EMgYcd1gCoSvvo=;
+        b=ofuqf63qV7wvQ1Ggu+d1azimjAgztFr8vMiAndlSU8PajIHg2bdy6A5/5k8FU0A04o
+         S151GjJEFyoRNgLY4jvBj5Msu7/s+NYsyvbWUO+3gIbe+4+mYLVRn3/sU29LM50Xtug/
+         VP0OoBhYJsNvPXDmuKk6DWCYOhdW1SfnvGgvX+3DczM/Q81oFEHNd+g86CBBple0dfb9
+         de4xyS/XPxxMmY41JVBZyf+nOD3gjqe4FQgPf50DUsO1PTa4+EQE//YFmp+HxV5PBpt7
+         S2RSBYJvh/cHAIhZM9Eu81h5+DDf/1jw+D6hhFiw7vLpAdP4UEmal7pS+d2BHxIWXa0N
+         yyjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750691203; x=1751296003;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P/j2ABvQkeCCIY5OdnUsm4f6l2yn5EMgYcd1gCoSvvo=;
+        b=jO1hgHCg3wwvtDmC/YVroU/IRoRBgKxZ0PhQvIvqtsSgWjWsghL1MOpxEdQmHW19pX
+         cyAcm4yF2qyDDzNn3oesKpGjwpbRp/8WZ4FvKsOv8lK+e1Gl9oprk2kDHcweGoJ11ngu
+         sCkohKl8O7V4TKUHXzN9A6UEKJwffx616OMxH+2BocUhZY4v1mzAbGSZMkQvB6LAgw1z
+         xTatqNUXjDB1Cs9giJXxpVSjytD88cDtTw86mhFZ+4SpKfRHyjJXt9lRwcVnHv2/c2/s
+         1jvmycp0SAfjBptQ8WSsPUWgMDahzm5YABTfy47zTNwGCoJ7SaJyVwrODLTdSyX9o0Rp
+         8mjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjZq/y+loPG8Xcxsw9Cm26eT1UmuHySFBCkOSY96xDLeBh2/t2+tsrWrcXrhtCjuGlycfdoDdOeI6iDd099qE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk66A+mB006sdmh5lor+5jMYxIsjOBkf/iOqFbdSqg8koStULL
+	IGXKvNrLMiiwfnNCu2BoJM2N8alBUZWG2pe4ZtVVO+SlKgdrqQo3iE7WeSNM/yakfLs=
+X-Gm-Gg: ASbGncuh5az5+tVfAIV3lnMlAnzb272/3XpGqXEit8Qnj4ZXGecZvS7MOkbkRVCQc8m
+	PlspqTizyi5DfCwvmPN/AOYcgSCDz1eK7B+l9Pmz19flN/8fpHcumbZuWre/TpHchRbrY6/Vfsk
+	V5AuRP9FdaiaQEWC+HRAyYbGZ+pxblwwbTa37k/Mfb7ToVdSUN5YxZcrwGSYd10112A5SYsiGBO
+	OcxNne/HMaqBb0x2h3oeMWB1DDLAuJ5gW4CbD4vdgrMauWqBcQZDeLZFH+Lo5s7ilJmwdDh/FxG
+	m5FJGWqk1UwK6hrOhC4rJJkxvtcqBwB61pqYKy94Y5x/cekSeYBSm51cc+zf+i6fTqCYjA==
+X-Google-Smtp-Source: AGHT+IFnVBRfIjftIm0z+2nD3hcauMaTIzLigckSJhjmKqki1siCULVluA8fvloI9HOD+FViAKSc5g==
+X-Received: by 2002:a05:6808:1890:b0:406:7704:b2e9 with SMTP id 5614622812f47-40ac6fe36d7mr9778035b6e.9.1750691202870;
+        Mon, 23 Jun 2025 08:06:42 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6d394dfsm1419658b6e.43.2025.06.23.08.06.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 08:06:42 -0700 (PDT)
+Date: Mon, 23 Jun 2025 18:06:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Su Hui <suhui@nfschina.com>
-Cc: akpm@linux-foundation.org, vgoyal@redhat.com, dyoung@redhat.com,
-	kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: akpm@linux-foundation.org, bhe@redhat.com, vgoyal@redhat.com,
+	dyoung@redhat.com, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
 Subject: Re: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
-Message-ID: <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
+Message-ID: <33a9a2a5-a725-4ab0-865c-1d26e941e054@suswa.mountain>
 References: <20250623104704.3489471-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -59,17 +75,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20250623104704.3489471-1-suhui@nfschina.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 06/23/25 at 06:47pm, Su Hui wrote:
+On Mon, Jun 23, 2025 at 06:47:05PM +0800, Su Hui wrote:
 > There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
 > type from 'size_t' to 'unsigned int' for the consistency of data->size.
-
-It's unclear to me why size_t is not suggested here. Isn't it assigned
-a 'sizeof() + data->size' in which size_t should be used?
-
-The rest two looks good to me, thanks.
-
 > Return -ENOMEM directly rather than goto the label to simplify the code.
 > Using scoped_guard() to simplify the lock/unlock code.
 > 
@@ -89,6 +98,14 @@ The rest two looks good to me, thanks.
 > -	size_t data_size;
 > +	unsigned int data_size;
 >  	int ret;
+
+This was in reverse Christmas tree order before.  Move the data_size
+declaration up a line.
+
+	long long_variable_name;
+	medium variable_name;
+	short name;
+
 >  
 >  	if (vmcoredd_disabled) {
 > @@ -1490,10 +1490,8 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
@@ -133,6 +150,13 @@ The rest two looks good to me, thanks.
 > +		list_add_tail(&dump->list, &vmcoredd_list);
 > +		vmcoredd_update_size(data_size);
 > +		return 0;
+
+Please, move this "return 0;" out of the scoped_guard().  Otherwise
+it's not obvious that we return zero on the success path.
+
+regards,
+dan carpenter
+
 > +	}
 >  
 >  out_err:
@@ -140,4 +164,3 @@ The rest two looks good to me, thanks.
 > -- 
 > 2.30.2
 > 
-
