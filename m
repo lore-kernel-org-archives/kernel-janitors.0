@@ -1,157 +1,117 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64A952F88;
-	Mon, 23 Jun 2025 08:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6E31E0DD8
+	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 08:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750665935; cv=none; b=q2GlslfkYv3BY9Jy+uCMrK1VCzHpx7waUEEOdc0Yh1hlsSWefZnwF0NFTN6piQ90/QmZ4lSLochualE22Fls62iRIyV2B7jG9pB1l0xpyi3D0dvbpjqc8zS7h3U+K5bV0TzrDTzIlmllZkXDy8aWs7HsV37bwLRlyueXv/wsLwY=
+	t=1750666371; cv=none; b=JNxwQeCa5/NqB/Ub+2Z0psXXdVzMKstmc8LobhQRDEJzm1ACMOA0dQNNHol/V/xnwRAOypMbHJ7HM9/EFoZzNtSDbQY1Rm+I2x5Sv2kBYQ+AYfC++QWy/cYrXsGU45Dovx2r2ikQOOd4M7ZQkTB3fphZTrsnAz64658IBA19zGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750665935; c=relaxed/simple;
-	bh=NPasebUaAcEImAJDpuMO6PZ8PRDkik1d/ZK9eOZPx6o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:Cc:
-	 In-Reply-To:Content-Type; b=becDANpBcKlUN9QKtAzeS5xdyltOvV6Fl6v493vfEJPKnW6KdWSbnZwCG8o6b2Yws/3mMtl3NMF9Zil8hIb1SierEbNEnsjvGf+xTslfDRGgYDuFgEMBszCYKQ2LgpyrTufaRtWejWj+2u/7KGl9zQMXdK+5zIJiouUeZeoS6OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pwY4oUm0; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1750666371; c=relaxed/simple;
+	bh=gPbrjKfb3/t9+bJ97l2JcUsCeLq8NB/AHeQm+JnD8Tg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kY2CsEo6Elnbz+cN4rYZch4qxfjIE/bn50QiBXTRF4CdhnSO8t5AnLF8PKEJ/MrWQySWQkyAXYypdne4xG0V1svPvsvREK7AE+J3toWfjN2d6nTOt0vneTLE6LoCrAaCRKjeRj4wKVFySYqQn2V79UOEZx0WUKZdFstae/8vrVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SGlCjPcb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pwY4oUm0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1750665924; x=1751270724; i=markus.elfring@web.de;
-	bh=0CeWndhcNIl5hI2uPV3nNRmJbfN7h9Zt3nquQBuC0Ks=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 References:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=pwY4oUm0X8NLIU2rLJHYOoeWIpzQNf5qCqhTTVP+/0t+SwnpoGtMiQS+cjGJG3yl
-	 9KYRljd48Y9R3tmcF5zDL7m/5Za2HgbU2CsF7lkxpveecz2Li7LPtnFvi0qCJ51Tj
-	 oz7BCFvEmJuF4IFJHmz+lledSN5tJhNccU/nQGx3TVfVR6xeBlPZFR4N0v7VEyOGw
-	 HSB3GGBSryU/H0Gm4fjEjBreuTlPvKFBzLtbbl+I1ljcqaK/MdUPbcPeadICNzP6W
-	 Q1KXSHMJA9cuK/OlV1b/gml0aSHLZqaftG2JlPNtPeyRHHN/Hy0Q3T/8JadmbBSYB
-	 J3r+OMzPQUd9TYpALg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.229]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MyNwk-1ufvs81wrc-016rg7; Mon, 23
- Jun 2025 10:05:24 +0200
-Message-ID: <481faa1d-7171-4657-8dc0-c37b153e6eaa@web.de>
-Date: Mon, 23 Jun 2025 10:05:15 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SGlCjPcb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750666368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ely3LYIH5ApPb1uTkKRY78N4Y4FDOftaWbIcVrfOOjk=;
+	b=SGlCjPcbPLKG3IAuKS6FFl8T2XpArNqzwnp5cOau+jDwwHYzVQBFQ2nW4zxjVcvalTXg7c
+	EaI0ipAEe62eXL5cI7i8D5kF+OLM9vVA7vgVqL6H2bKuvJg9Sl1RmwWfnkgSdj/4AgIbh7
+	2Gn63Pbk4pxBnl/pohHYVdbx6uxwYZg=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-XJ_CokFYPMK6ypCzoWqQcQ-1; Mon, 23 Jun 2025 04:12:46 -0400
+X-MC-Unique: XJ_CokFYPMK6ypCzoWqQcQ-1
+X-Mimecast-MFC-AGG-ID: XJ_CokFYPMK6ypCzoWqQcQ_1750666365
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-606ee65164fso3460512a12.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 01:12:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750666365; x=1751271165;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ely3LYIH5ApPb1uTkKRY78N4Y4FDOftaWbIcVrfOOjk=;
+        b=UFTqubD2+AIAtAwNWzFVafW1ALRhoAw5w9NoRBPJRvmyCFNXTgYhuoNlN4M6A0Jg2H
+         oFJJy/RBguHIRarGMwfHqSc7nvoCW69ghLz2+DPX2OYhf4iOALxYQsYwAeLdq6tSizig
+         fIxej8hj5Q+SXUhT4YavQyVIVMtdZg554LMbnaEE+0iS/l4wwON/ZAuMNrxWmSHgo3jk
+         Dan1Z3YK67zzMkvCQS2Xs/QFF6akB7CysqqiYUUWHjsJJMAn81Ox6lJGp5hkrKhi4hl9
+         bO8TwvHzL3SsodTSo7JZFs1TKLYbJEnuiDHirdcxIF/846GAVzNYWgGG6L1k1RFD/zgI
+         UFeA==
+X-Gm-Message-State: AOJu0YzL/IeU+1BWS0G0VxECFGwXelPKHR3EvnW/dqmzb0pct5KFLp+i
+	XL0BqK/L1+la56EspFpwUqPIdm2Wr2hy66q2ewdtKknvF5kPCDz1A/wZKKd2EXBTku8wZxhDsVd
+	bukPGjhIaGmIuta79U2vrdURdaG9ke4iV5dmPtfH2inVIUDEGtfGdzT4cuDyUGA8eu+0eQg==
+X-Gm-Gg: ASbGnct9L3EI3taMrvfTHrj8Pb6gdU7bmwYqJUPC4PEXlRZJkbvUwgWZSfQ2X+B02sJ
+	o3l/h6EJJKV/304R2h69dF5DEPuF2bK/CstgOCESIqsPJOb6+NPskz8AkPDV74UQlinFiSpsiTg
+	Z9PG/qN01PcyCTjjVExjufi8wdeEXivK92Wp8boCKVygqjGDdfZYHX5/iuN6s5SrkEKB1ojDRRi
+	1nxnCHCPT3q6rYJ4A2743BoUaAm/XLLl+0Qk+qnOdAGLYVOFjA8KReuTyGwmbpM9R2As7rCXeYZ
+	W9/yOFsmhmWaPi5x6I1iP3Y6tA9ijF9Tiq+7TuqULBR7c6gDwckMW2eqRMeWKK/KQg0F
+X-Received: by 2002:a05:6402:2744:b0:607:6097:2f9c with SMTP id 4fb4d7f45d1cf-60a1cd1d0e8mr9228992a12.21.1750666365439;
+        Mon, 23 Jun 2025 01:12:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmSn5SEBbkY2WzQ8Wstprge0mliWZNTw4CyeFgF4x1e2Q598sLsTkhN06aRTXMr6PAByyRyg==
+X-Received: by 2002:a05:6402:2744:b0:607:6097:2f9c with SMTP id 4fb4d7f45d1cf-60a1cd1d0e8mr9228976a12.21.1750666365083;
+        Mon, 23 Jun 2025 01:12:45 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60a18c9769fsm5838013a12.40.2025.06.23.01.12.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Jun 2025 01:12:44 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Casey Connolly <casey.connolly@linaro.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: rectify file entry in QUALCOMM SMB CHARGER DRIVER
+Date: Mon, 23 Jun 2025 10:12:40 +0200
+Message-ID: <20250623081240.149446-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Passing code replacements by APIs (for SmPL)?
-From: Markus Elfring <Markus.Elfring@web.de>
-To: cocci@inria.fr, kernel-janitors@vger.kernel.org
-References: <2dc257b4-d310-47dd-90ea-9b081727be2a@web.de>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <2dc257b4-d310-47dd-90ea-9b081727be2a@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:MilD3xF2BpV/G3Yl0V/B62GKXM0vi87bwwAPv1k71aM7uonjTxf
- PhxboLO9VVpPUpcnZqXhJYsAgvJdnDeh1acHJpa/x/ivXWPw7S+rDhi9Eqkrj8dY/6KCM2d
- lvjBKEuQzUK+GEnxp6HcjWivJetfPN85vbnIkTkMbuYFJUmdDu+4MthYi3OAfFuEHiBlIXF
- I2NpZ9guKyRzxxUOYgwsw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fvz84xA5Omc=;U5cZQXExZgzxEV8r85OjEiAl5V8
- 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
- glpj8URqhziWtOBq8rHVNGSZIN+lPTl2RI/ofg==
+Content-Transfer-Encoding: 8bit
 
-> Desirable source code adjustments can also be generated into SmPL script variants.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Will any more software users get further development ideas from an SmPL script
-like the following?
+Commit 4deeea4b0741  ("MAINTAINERS: add myself as smbx charger driver
+maintainer") adds the section QUALCOMM SMB CHARGER DRIVER in MAINTAINERS,
+including a file entry pointing to qcom_smbx_charger.c. Within the same
+patch series, the commit 5ec53bcc7fce ("power: supply: pmi8998_charger:
+rename to qcom_smbx") renames qcom_pmi8998_charger.c to qcom_smbx.c and not
+to qcom_smbx_charger.c, though. Note that the commit message clearly
+indicates the intentional removal of the "_charger" suffix.
 
+Refer to the intended file.
 
-// See also:
-// https://elixir.bootlin.com/linux/v6.16-rc2/source/include/uapi/linux/usb/ch9.h#L472-L678
-@initialize:python@
-@@
-import sys
-x = {}
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-def store_data(action, input, code):
-    """Add information to an internal data structure."""
-    x[code] = (action, input)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 41f13ccef4c8..c76ea415c56f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20612,7 +20612,7 @@ M:	Casey Connolly <casey.connolly@linaro.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/power/supply/qcom,pmi8998-charger.yaml
+-F:	drivers/power/supply/qcom_smbx_charger.c
++F:	drivers/power/supply/qcom_smbx.c
+ 
+ QUALCOMM QSEECOM DRIVER
+ M:	Maximilian Luz <luzmaximilian@gmail.com>
+-- 
+2.49.0
 
-@find@
-expression e;
-identifier action, input;
-type input_type, return_type != void;
-@@
- static inline return_type action(input_type input)
- {
- return e;
- }
-
-@script:python collection@
-action << find.action;
-input << find.input;
-code << find.e;
-@@
-store_data(action, input, code)
-
-@finalize:python@
-@@
-if x:
-   sys.stdout.write("@replacements@\nconst struct usb_endpoint_descriptor *epd;\n@@\n(\n")
-   sys.stdout.write("|\n".join("-{}\n+{}({})\n".format(key, value[0], value[1])
-                    for key, value in x.items()))
-   sys.stdout.write(")\n")
-else:
-   sys.stderr.write("No result for this analysis!\n")
-
-
-
-Would you become interested to convert contents from any header (or source) files
-into more advanced transformation approaches?
-
-Regards,
-Markus
