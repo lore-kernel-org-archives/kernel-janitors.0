@@ -1,103 +1,112 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E615D22F740;
-	Mon, 23 Jun 2025 08:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id BCB12136988;
+	Mon, 23 Jun 2025 10:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750668093; cv=none; b=Q18H76dPPpIhxztbe01xKYi3NGzo8JiQIVqdkipldHggfbtlJPPusTFQilHOYN4oGmViIqowDNjbjLIng26GlRAdpNVOp8zjILVilD3LAVWHphtlxCxP2/CSziZa/5qyPW6x7eSsqbJynpzUsfFeaYtEsyXICm4AJHvau/RRdzI=
+	t=1750675665; cv=none; b=ZN4BRkW4fHKp/QBG8yIiUYHag3y31/ZRHUz8jgV+6EDIUNTBpsjNop8P0CtEee7JwwlN+aiDY40EZEMZubXIP28Y55F/lSnmRvfVQwnJNx3lcfrIFpWfsniBv8Z9o8U98sfKKzl5kCY6bgrLLUpnYQ+sLungg4Pn+La3kXNYeRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750668093; c=relaxed/simple;
-	bh=AurJu1LvUTnH1dazNNCf8+VuS1q+nbV1xk4e2/VsAUA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jqPJoM6DMud9e0AqCTGABqZRt8WTIdSQgld1H/NmV4MB+6u58x/JCZGYJwmulpN/Wb6PCJ2jkKAODEzut6XKYWbda7DS0lSIRmDIQHWzqN505I9c2NBAD46GmVhRJ7Am+FM/Q/I59oz8r4v7R/QDmWQ9ODBdzLzok7iAdm6SZi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGzIrfET; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGzIrfET"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a57ae5cb17so2136218f8f.0;
-        Mon, 23 Jun 2025 01:41:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750668090; x=1751272890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hFKfoFX+b0fWpj1OGuQAhMWHq/Trp5Rsum6TUT3TNh8=;
-        b=GGzIrfETEotmfM4+MnXQpLSvkgveLCOR3+ECidmBv3wNIbzqO+4QvtOPBXO8+LDJBb
-         0B7mZSeAMZbtffTOX9Ee8AlRf9jrwgCfkCwZnPUjrvOfJa1IxLe8ecNoG0MTWYe8tl+q
-         wLQ2XMsTCUru9/2teTxcnwuue9IM+wZQT1Nz+IC5bP9IR5GavpQVO7qPcbEx/RZkp28h
-         aZDFhG2DO+2pYv5zpWQD8+CQMxzaOEDDxGbO76S3fbBgdZvRPvRgKewGQ2XuOzSMVPEH
-         wRD7Wgy0X98Z76PEF9ssWbSwiSbcqXbl41lBTWjzkOyQHyAm9ji4OIjIzfRU20ZB28DK
-         /hZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750668090; x=1751272890;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hFKfoFX+b0fWpj1OGuQAhMWHq/Trp5Rsum6TUT3TNh8=;
-        b=lYeUVv+UqxJCrzAL30j1AWQ/K45M+wxJN93SzirWgrdOSSQ+XzqMaqq00YQZaMHVX0
-         KeeksjHMCmwmqEAwqbalYC0MyvEfRgro6kvRuvgBaUpxDEmyaOOWNVmnISkgJDW6ucv/
-         PpowcI+WqoI6rYnKOFHvxJmw1IMLajBI5e6y1gvCQlQTm069AqFqTay0OK0OJfw4FmaW
-         d7FgSW2icaVve66JlYmOidwW8o4dEipNxkd0q6xSAHMu5iGXwl7dTDd6QpAkg9V8J8PQ
-         mEm+ycpOQptReuxY0G77DZ5n6xRoW7JVgVEOIOTRcj6QyyAel+ZEvlil6e+d7nNDBfEj
-         g+wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHRFHZS3EVDZRQAoiM20UKKor2H9vPkIgFu1BQ3cH+LSZkRcTpPyXVAy/eVvEon064OCOYeE8lbOIpu/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfp9XBXbJmgwrSwtXre/mBvJsorMmBiQCeM1K98qmPen4kFQ64
-	HaFGuzGrb6E6OfxSXK7w7N+uDbQBnyOGDMmUFdK1+wpnmpahwGnLvfW4
-X-Gm-Gg: ASbGncvfzrYFRkljG+qKDVVV8eZUonRVOS0cVHF6qXfjjo0iL6d8TJlTL7upEmZY1I4
-	uGo3+xjGb/aHOttB/7O3buxKvX58/H+Fbrjp3HCA0Vf+LwLbhbJ2gN4yFKTUTEai/GgQmL6cTN+
-	TcHbAZlT3C3I9MGaSJAQkH7lAGFj/YzWwdFRt3GGMk28QqE4phcehHU7PKsN4fAfcB6OfTb4Tx9
-	9L3KWA/7ni0T+mycCBwtxmNHWh6EpWNe6cxTv/wYW5j1kwn7VGy8DY8mCLoktECMii8xa8OlONX
-	1i7PWMHaB5YIvhcbiZL3i0pKz32iNWIAoKv4AgFY/DrgL9Irndcrzy5sXjRJ
-X-Google-Smtp-Source: AGHT+IEg+Vrg4q7OXMVziKAkMdGsGKVcz2ch4jcR2RgQa7iyDmfJ9xV9plJ7R+MCae/mqCNaZWsqGg==
-X-Received: by 2002:a05:6000:1a8f:b0:3a4:f52d:8b05 with SMTP id ffacd0b85a97d-3a6d12d5316mr10912719f8f.35.1750668089889;
-        Mon, 23 Jun 2025 01:41:29 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-453646cb5ecsm105878885e9.8.2025.06.23.01.41.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 01:41:29 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/amd: Fix spelling mistake "correctalbe" -> "correctable"
-Date: Mon, 23 Jun 2025 09:41:08 +0100
-Message-ID: <20250623084108.29627-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1750675665; c=relaxed/simple;
+	bh=yY64zDwdRCY42XgnhSwxhXqXaXXDuygVgFzhpdlOqD0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=toLHrg2eUFl9XuEYAAeTcr2TQEHj7D7FkUuXinHJbpQgbvbsxtRiMB1uw5IKQQo4KbsGHkeUux9NhaSiT3lB40CC+psjrouVzYW1SV70u6chCB/97eg/cBVyfpRshHk7JLyNJjuM2UjaM5W0RLnkPthSmgxwhi8JljNzEUzL6ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 75C08602FE8D8;
+	Mon, 23 Jun 2025 18:47:29 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: akpm@linux-foundation.org,
+	bhe@redhat.com,
+	vgoyal@redhat.com,
+	dyoung@redhat.com
+Cc: Su Hui <suhui@nfschina.com>,
+	kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
+Date: Mon, 23 Jun 2025 18:47:05 +0800
+Message-Id: <20250623104704.3489471-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a pr_info message. Fix it.
+There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
+type from 'size_t' to 'unsigned int' for the consistency of data->size.
+Return -ENOMEM directly rather than goto the label to simplify the code.
+Using scoped_guard() to simplify the lock/unlock code.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Su Hui <suhui@nfschina.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/proc/vmcore.c | 33 ++++++++++++++-------------------
+ 1 file changed, 14 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-index 7f8fa69300bf..eaf95ee5148a 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-@@ -2281,7 +2281,7 @@ static void amdgpu_init_debug_options(struct amdgpu_device *adev)
- 	}
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index 10d01eb09c43..9ac2863c68d8 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -1477,7 +1477,7 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+ {
+ 	struct vmcoredd_node *dump;
+ 	void *buf = NULL;
+-	size_t data_size;
++	unsigned int data_size;
+ 	int ret;
  
- 	if (amdgpu_debug_mask & AMDGPU_DEBUG_DISABLE_RAS_CE_LOG) {
--		pr_info("debug: disable kernel logs of correctalbe errors\n");
-+		pr_info("debug: disable kernel logs of correctable errors\n");
- 		adev->debug_disable_ce_logs = true;
- 	}
- }
+ 	if (vmcoredd_disabled) {
+@@ -1490,10 +1490,8 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+ 		return -EINVAL;
+ 
+ 	dump = vzalloc(sizeof(*dump));
+-	if (!dump) {
+-		ret = -ENOMEM;
+-		goto out_err;
+-	}
++	if (!dump)
++		return -ENOMEM;
+ 
+ 	/* Keep size of the buffer page aligned so that it can be mmaped */
+ 	data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
+@@ -1519,21 +1517,18 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+ 	dump->size = data_size;
+ 
+ 	/* Add the dump to driver sysfs list and update the elfcore hdr */
+-	mutex_lock(&vmcore_mutex);
+-	if (vmcore_opened)
+-		pr_warn_once("Unexpected adding of device dump\n");
+-	if (vmcore_open) {
+-		ret = -EBUSY;
+-		goto unlock;
+-	}
+-
+-	list_add_tail(&dump->list, &vmcoredd_list);
+-	vmcoredd_update_size(data_size);
+-	mutex_unlock(&vmcore_mutex);
+-	return 0;
++	scoped_guard(mutex, &vmcore_mutex) {
++		if (vmcore_opened)
++			pr_warn_once("Unexpected adding of device dump\n");
++		if (vmcore_open) {
++			ret = -EBUSY;
++			goto out_err;
++		}
+ 
+-unlock:
+-	mutex_unlock(&vmcore_mutex);
++		list_add_tail(&dump->list, &vmcoredd_list);
++		vmcoredd_update_size(data_size);
++		return 0;
++	}
+ 
+ out_err:
+ 	vfree(buf);
 -- 
-2.50.0
+2.30.2
 
