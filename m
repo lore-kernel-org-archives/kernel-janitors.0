@@ -1,228 +1,112 @@
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9964C25F99B
-	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 15:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190CF286D46;
+	Mon, 23 Jun 2025 16:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750693655; cv=none; b=oY9AiQjmXWVxJUk3pCAxovqh1dVNC8mycs7TkpxBoeATK8MRsTuqKuXKAra4Ul3csi9D47BP6GfyXnxNmS8FFSZCMSoMtCRGijxYOhTfakySHwfFIhmCVtZaOp0CKrkOb6H9xmoHEO0XS3mTSO3q4cHajkbue4TuBKJV059Q6uE=
+	t=1750695865; cv=none; b=AegNYsjd5Ffc0gYGvxemKdJK8ao7SmR6Yn+Twudr/wk9Ldwd24IGuHzPw5zKfBhcCvy+s2AmPzGJtXNixwBNKaBpXG+f4uLXp3WzuuSphryypS/6Pg6sL9qEew7ajR0bjKLDHLWpHfg9IbA1pr47PCTtyP/5PZGKSDJc7J+tBIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750693655; c=relaxed/simple;
-	bh=EKG14ZOQzaaYGD3X0xzYAfmF2d6RXXI1/3I7QMJPo/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6MAb3lR+oWzjV80YK1V9Gnt7epccjT1QvtefaPeuaeaRlRb2GCA4CPxjC7Jeua+eR5Wdiwgmsv9W+K2r+/z1AtxOyj4jaJ6z1mBMo3UpxbQVjfCHyGVeeIIM3G3xYNnk5iZnig3YpGTuXyD1tkidcguRtJtTZMh8pQXQWICH+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UG5DegPJ; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750695865; c=relaxed/simple;
+	bh=cjdASwPYplbNZXNM+F4lhH/s/Q7yqAnn7Wae0U2HTpU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NEj0mhGAAonMiJxtyNFSuP6JrBBdRD/TTq4BvHR8iwUwkkHzcgtCRyNnkMjph3BxzlttJfWOHSRve1AS22oUB/LKjhgjva+iuLyMOVpAoR6trdSRYTCLFetJSWRcdGUIMku75hnzz2qT5IqvHwdy3vpHqutiAU788plnPMxRUps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W+OOPl54; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UG5DegPJ"
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-404e580bf09so874428b6e.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 08:47:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+OOPl54"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-237d849253fso6835795ad.1;
+        Mon, 23 Jun 2025 09:24:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750693651; x=1751298451; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e19ex1p/1LBOnXetMuCg5KYZZ6yY9+nHnj0I40BuyDg=;
-        b=UG5DegPJVq+xw1Nc4wanJ/3/PRJ0GCy0+gIuLP0s5v9DhBYWtThZIPoOLukvJclAB+
-         MFTYd2YJOu8sSj7ib6bJ556pVMUeAyHTRQpEaUumGGfl65PspzMllXH40nrQiDUVa7uM
-         io5RuJ4EVaqGfoUqxNQPCDi5Zd9Ai7kFnA2WPn3GDwUKCY3bDVDSK0nJpcVU9Cbhfryo
-         L09+Y4/TAMf2sWITydkotyU9Ne2eGo2oy/8hbBu4K/qP93MerRdokkuuSomYVYdYNceN
-         y3OanasJ6FODGWbMip5KAYLrptivE+573UC3MeAVXqZ0BlU/eZ5H5JwMatYtflaXu8gH
-         XKmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750693651; x=1751298451;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1750695863; x=1751300663; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e19ex1p/1LBOnXetMuCg5KYZZ6yY9+nHnj0I40BuyDg=;
-        b=VPQXmwtBZsm6qIakacGvK3FvPzOrDha8fNI6vsVos9N20wrJLxNiTXc0Eb5MHPO4Vp
-         olB1YPIGR1DLah9llSz35Pl+PZG1YqkVyWih2jeAQ+lrXKMdkHSfWq0kjM6zkx5YGGM4
-         DZ3NnyDYsoR1i06fY9Y4h+s8HLYrKuTwACtWyDZoFjzAfNNwYLVOQvcUUaC9km/QZhAZ
-         L/Pk5fp1Bedyb9nwPZap91VTZDDFOnASl+Vd6WLEJHb+8ehAtnIIbL6zIfwVAkKGZ0CD
-         H/WEZnTKRARIFUwnP81X3bUvXWtguJRaSorn7CNv1ShUHEgc/tk9PcLhkI3S7vjhn3LW
-         DAFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXu0t3wRnN/rzFLswg4AzpCz2BMFssb/WAh+4D6YZpMTz0TUZ2UASHi3mZrKLJq7iKTCm7XLThhEZ5NWDRoY7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwpFaFTkRhZFjDJtig6hZpsJxReh+MvGYHnOfoHQpB2d33pCoD
-	pW0yFiHhQszcrZixyW1B+ZnUs79LuTSotqB+QIjTLeYhs7GIfnuIX/mq7Is89iIFXBg=
-X-Gm-Gg: ASbGncuLLIPeaJEHWD2ypXKsfdEVuKUWwIiRXuh5GUzQXmOv07Wfzg09R56iH/M1SiF
-	ZeYHXeIIhcVKUPO2hOFGPeBnU4ssJW+vmUzsCXmYJAxEXZsZZEh9gVBJ8SVLmmN1A0zzeGjqAkh
-	K7sLKVHM16X1Tt4fdXCwqHezkHbVI8elR32yyJrb5AV91Aie4E8BG4IzA6Ad/7LUE/la2/jlgOM
-	eP0xqgdwI4w/eY/ae9haEU42hTwcAfNLjvIqS0nFrog9z/f+mez6hAsFR8VyMjte0pVbBGuYQml
-	/sqj1/VpcK6ZWYSHhK4seyDIsfEMSb1VeP/ZtXFdD7KiHCpxWJ/Qa2Xmxpt9BOqSYqwEaA==
-X-Google-Smtp-Source: AGHT+IEouOoMNRNSuGf/ZMWbMPa3V8T1EO2Pbz1snAOvKwdQBof5o9MTJimT5y50shcK8/7BDOdy9A==
-X-Received: by 2002:a05:6808:1717:b0:406:5a47:a081 with SMTP id 5614622812f47-40ac7053a9dmr10755047b6e.13.1750693651415;
-        Mon, 23 Jun 2025 08:47:31 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6cf03a7sm1411227b6e.25.2025.06.23.08.47.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:47:30 -0700 (PDT)
-Date: Mon, 23 Jun 2025 18:47:28 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Su Hui <suhui@nfschina.com>
-Cc: chuck.lever@oracle.com, jlayton@kernel.org, neil@brown.name,
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
-Message-ID: <148c69b4-4cf7-4112-97e8-6a5c23505638@suswa.mountain>
-References: <20250623122226.3720564-1-suhui@nfschina.com>
+        bh=1HXxEgsvpcVOGzEhHDysn3u3lzhqwIm266G2/TbSC1o=;
+        b=W+OOPl54v2eK6dqmF7J8kU/acCKGbz7fMW80Dfcoc4zAkoQYSNuoM6UdvdHuofPmaf
+         3B24jyF2WqQPceeiWgiVmbIHkOv4jcESgi3h033qzrDGjiIIRKW6OggssQLyXbvAISAJ
+         bLZpZ5owBh8LI7BWJ58aZPv/7zcTtTInUN3ImEAPoHddHbLZ9By3kvGgEUFPJOs/5csV
+         C7WEiGdb4AJgZcY9WBvyPPNIPos2ENVqRlzCeoJPfthjkZxX7UvfUhAjW5Y/QWdKoX5W
+         iCYG6lZjPYDn/603qxoSyV0GWn4Rdhuy6RJfLjUGvhzUpC/4XxF6HTx5y7yLnLaI7RsW
+         IWgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750695863; x=1751300663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1HXxEgsvpcVOGzEhHDysn3u3lzhqwIm266G2/TbSC1o=;
+        b=VrarXLY+UKIEBum4xsvF66OZYmssE/g5yo2JNI0zSL76GwWSTay2+Bi4tN323NW7E5
+         ZQ48OTuE7QWazEFUAa9ig9/lcwzoKJLlYKD8bHbqUblaWh7OUdS+dB2oHmAOAbXsfK/j
+         oAy6qGnXTIPaf3yL3KDar0ZBGC+t50nxsDr8tPWOYO0iFq22lAyUVok3zVbGM9F4aUxh
+         xeTEIxEXDCLg7Tsr581KZWGL9zfZeE8aM+PzCtitXNbswi+Cae5sKeqYmB2JGB3j+U7M
+         TCv0Yg+/P5wLmn8wEU4Oyd2mCw1IO3A6wPgXH9Df5R9PLwPuZ7VGZW+nWiiUdQ22YurH
+         37sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVO4wexkGdFAk+I/yyGLiBdK77pULXHda90qtuWn5nC+3rSTl1A6mRUuX4VzMd9UcZQiV3Aa9xIX6Mbg9e67Jk=@vger.kernel.org, AJvYcCWMl40vYVCj1ds4t3vKJtbH/owkOidpwtA84ZV6fDe9QIFdDsMTlM9rdWH2Sg0LvRllezd+HdWf25fRfhsy@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQFlvUBmc4kxtw22J5r6g6SFTi59E8+/0hYJaX6z/Xv5eUeh3X
+	CLWl4CCZMuyy1JY89aB6N5SJCFK830TG9vKuoUz8egr9yFPaHEXHOizpidwlu3EGplk0UZUbJ7Z
+	73/Tsb6FvYIDYs6zjB7oWwkSTS5SP+gD53w==
+X-Gm-Gg: ASbGncv1YEMDJnmBX/WVM+GAHWR3PyUlgz8fmNn7hk9iPiIi3oNYICrm+k6ORBDKOnI
+	3ocBTGgJiKpW9JcCFPgDYCI9i/GIwsVIbJjaNuxy6qV1U05QFfvge1EFmsLbeETuBYBf9i+/VZL
+	DVB8dv2n6jr/K2dkWTMurRq1Lrviz4Ly7h9wHfUj6cJWJO
+X-Google-Smtp-Source: AGHT+IHRBD5NsjWiDv+77SKSa7pKnaFs1NEZIqgFAICeUK481K54Myl2oxEEp7SX2igzgN7bTePX9jgv/Vq40226rOg=
+X-Received: by 2002:a17:90b:6c4:b0:312:e9d:4001 with SMTP id
+ 98e67ed59e1d1-3159d8f9d84mr7720373a91.8.1750695863302; Mon, 23 Jun 2025
+ 09:24:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623122226.3720564-1-suhui@nfschina.com>
+References: <20250623084108.29627-1-colin.i.king@gmail.com>
+In-Reply-To: <20250623084108.29627-1-colin.i.king@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 23 Jun 2025 12:24:11 -0400
+X-Gm-Features: AX0GCFtNfLLS8D_rr8yg1ilZOe8LQ0F3ff5f3iHikmyfb7k5C8NYRXQQOBwEkBc
+Message-ID: <CADnq5_Pnxgp92v+gKupG+8985d_NCU7kvO+VpC0b0yqoHoZa8A@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd: Fix spelling mistake "correctalbe" -> "correctable"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Mario Limonciello <mario.limonciello@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 23, 2025 at 08:22:27PM +0800, Su Hui wrote:
-> Using guard() to replace *unlock* label. guard() makes lock/unlock code
-> more clear. Change the order of the code to let all lock code in the
-> same scope. No functional changes.
-> 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
+Applied.  Thanks.
+
+Alex
+
+On Mon, Jun 23, 2025 at 4:41=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a spelling mistake in a pr_info message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  fs/nfsd/nfscache.c | 99 ++++++++++++++++++++++------------------------
->  1 file changed, 48 insertions(+), 51 deletions(-)
-> 
-> diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
-> index ba9d326b3de6..2d92adf3e6b0 100644
-> --- a/fs/nfsd/nfscache.c
-> +++ b/fs/nfsd/nfscache.c
-> @@ -489,7 +489,7 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
->  
->  	if (type == RC_NOCACHE) {
->  		nfsd_stats_rc_nocache_inc(nn);
-> -		goto out;
-> +		return rtn;
->  	}
->  
->  	csum = nfsd_cache_csum(&rqstp->rq_arg, start, len);
-> @@ -500,64 +500,61 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
->  	 */
->  	rp = nfsd_cacherep_alloc(rqstp, csum, nn);
->  	if (!rp)
-> -		goto out;
-> +		return rtn;
->  
->  	b = nfsd_cache_bucket_find(rqstp->rq_xid, nn);
-> -	spin_lock(&b->cache_lock);
-> -	found = nfsd_cache_insert(b, rp, nn);
-> -	if (found != rp)
-> -		goto found_entry;
-> -	*cacherep = rp;
-> -	rp->c_state = RC_INPROG;
-> -	nfsd_prune_bucket_locked(nn, b, 3, &dispose);
-> -	spin_unlock(&b->cache_lock);
-> +	scoped_guard(spinlock, &b->cache_lock) {
-> +		found = nfsd_cache_insert(b, rp, nn);
-> +		if (found == rp) {
-> +			*cacherep = rp;
-> +			rp->c_state = RC_INPROG;
-> +			nfsd_prune_bucket_locked(nn, b, 3, &dispose);
-> +			goto out;
-
-It took me a while to figure out why we've added a goto here.  In the
-original code this "goto out;" was a "spin_unlock(&b->cache_lock);".
-The spin_unlock() is more readable because you can immediately see that
-it's trying to drop the lock where a "goto out;" is less obvious about
-the intention.
-
-I think this patch works fine, but I'm not sure it's an improvement.
-
-regards,
-dan carpenter
-
-> +		}
-> +		/* We found a matching entry which is either in progress or done. */
-> +		nfsd_reply_cache_free_locked(NULL, rp, nn);
-> +		nfsd_stats_rc_hits_inc(nn);
-> +		rtn = RC_DROPIT;
-> +		rp = found;
-> +
-> +		/* Request being processed */
-> +		if (rp->c_state == RC_INPROG)
-> +			goto out_trace;
-> +
-> +		/* From the hall of fame of impractical attacks:
-> +		 * Is this a user who tries to snoop on the cache?
-> +		 */
-> +		rtn = RC_DOIT;
-> +		if (!test_bit(RQ_SECURE, &rqstp->rq_flags) && rp->c_secure)
-> +			goto out_trace;
->  
-> +		/* Compose RPC reply header */
-> +		switch (rp->c_type) {
-> +		case RC_NOCACHE:
-> +			break;
-> +		case RC_REPLSTAT:
-> +			xdr_stream_encode_be32(&rqstp->rq_res_stream, rp->c_replstat);
-> +			rtn = RC_REPLY;
-> +			break;
-> +		case RC_REPLBUFF:
-> +			if (!nfsd_cache_append(rqstp, &rp->c_replvec))
-> +				return rtn; /* should not happen */
-> +			rtn = RC_REPLY;
-> +			break;
-> +		default:
-> +			WARN_ONCE(1, "nfsd: bad repcache type %d\n", rp->c_type);
-> +		}
-> +
-> +out_trace:
-> +		trace_nfsd_drc_found(nn, rqstp, rtn);
-> +		return rtn;
-> +	}
-> +out:
->  	nfsd_cacherep_dispose(&dispose);
->  
->  	nfsd_stats_rc_misses_inc(nn);
->  	atomic_inc(&nn->num_drc_entries);
->  	nfsd_stats_drc_mem_usage_add(nn, sizeof(*rp));
-> -	goto out;
-> -
-> -found_entry:
-> -	/* We found a matching entry which is either in progress or done. */
-> -	nfsd_reply_cache_free_locked(NULL, rp, nn);
-> -	nfsd_stats_rc_hits_inc(nn);
-> -	rtn = RC_DROPIT;
-> -	rp = found;
-> -
-> -	/* Request being processed */
-> -	if (rp->c_state == RC_INPROG)
-> -		goto out_trace;
-> -
-> -	/* From the hall of fame of impractical attacks:
-> -	 * Is this a user who tries to snoop on the cache? */
-> -	rtn = RC_DOIT;
-> -	if (!test_bit(RQ_SECURE, &rqstp->rq_flags) && rp->c_secure)
-> -		goto out_trace;
-> -
-> -	/* Compose RPC reply header */
-> -	switch (rp->c_type) {
-> -	case RC_NOCACHE:
-> -		break;
-> -	case RC_REPLSTAT:
-> -		xdr_stream_encode_be32(&rqstp->rq_res_stream, rp->c_replstat);
-> -		rtn = RC_REPLY;
-> -		break;
-> -	case RC_REPLBUFF:
-> -		if (!nfsd_cache_append(rqstp, &rp->c_replvec))
-> -			goto out_unlock; /* should not happen */
-> -		rtn = RC_REPLY;
-> -		break;
-> -	default:
-> -		WARN_ONCE(1, "nfsd: bad repcache type %d\n", rp->c_type);
-> -	}
-> -
-> -out_trace:
-> -	trace_nfsd_drc_found(nn, rqstp, rtn);
-> -out_unlock:
-> -	spin_unlock(&b->cache_lock);
-> -out:
->  	return rtn;
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_drv.c
+> index 7f8fa69300bf..eaf95ee5148a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> @@ -2281,7 +2281,7 @@ static void amdgpu_init_debug_options(struct amdgpu=
+_device *adev)
+>         }
+>
+>         if (amdgpu_debug_mask & AMDGPU_DEBUG_DISABLE_RAS_CE_LOG) {
+> -               pr_info("debug: disable kernel logs of correctalbe errors=
+\n");
+> +               pr_info("debug: disable kernel logs of correctable errors=
+\n");
+>                 adev->debug_disable_ce_logs =3D true;
+>         }
 >  }
->  
-> -- 
-> 2.30.2
-> 
+> --
+> 2.50.0
+>
