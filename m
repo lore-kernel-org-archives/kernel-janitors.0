@@ -1,100 +1,107 @@
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA742253B0
-	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 22:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77BE70838;
+	Mon, 23 Jun 2025 22:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750717519; cv=none; b=V7YPgjf+hz9GTB2agKfiJo1A0EZJ5slnuXbLoATg/VoNJ0beFK4+vCSe5gKc85ErefydhPUZ/FoqJyaWXqa8jkHxwNLy1FZy87UhB2mpK1OvfRNl9fyDrC/1LMlXCRL1kYeeg+s6/DDr8+fxmlFgSV9lb11NPlMFjzfIM2FTNrk=
+	t=1750718151; cv=none; b=rnOY1OkeRrSTmCMoID8bkWuSQeK/95Zu3/r7OZ0YMTzCdsZsmnCsILLm35Y/LwIPZaYaSSM9ZiplWsrU6nbK51b5S6Pim8y+WymyLaj6sj61C0LXgorrzz2wU52tQMtZZRATDjKZE4Oimq1DKUcW58ZD5k8x9eQbmoHm+c02+j4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750717519; c=relaxed/simple;
-	bh=iSqfQdhhNrFUcXqgyYNd2M03410UI/DXw37Kxcdnpw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cAah8tfVM4bQSD4hQ9CtWDoKCnb0ukHRA+ZwJSKiM39z6RbG9seaotYYduelGpI6p+YU4J1ImTA4JwqJPdEJgK24lv80e5lYj7MWk+jjY4gzo5f0JWPbpADMh7fjoe5sxkYA9duq2yD2aDC1CMmKtZ3dknOQpQ998LmSO+iBJLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IrXt+LlS; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750718151; c=relaxed/simple;
+	bh=iPi9bgaQMxaCP6hQ9vj6jG/kXbnYCnKdFVPUYdbaBKU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t/Qay4GG5TUj2x1V/Xw5ersPfzbQXk0+w4e4w6zSeC1hl6nrT/hDmIKDKfYD97OZ8hh84uHdybDPHQrlu1gvjkcllUsWMPWsrOg0ZBiirdqM+2obkpt5VawttJkoWXC6oKz4C88d0kPdkDAXDFQGGL1CaZ9ZCyxy5Rzdj+2133A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BmziHJ3j; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IrXt+LlS"
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-408d14c7ebeso2974098b6e.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 15:25:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmziHJ3j"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-453426170b6so33831575e9.1;
+        Mon, 23 Jun 2025 15:35:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750717517; x=1751322317; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YurwFid4CmPM1zECZ7NAIyg8xcw24kM7tKeHyFwlZDY=;
-        b=IrXt+LlSxmPKwAhyJk5C6CjfpEX9I6oWgVeVt12x4fJ36lCI4p5sGh4hUQHsup7KXV
-         tH2XQFM46tjozQK9A4RX8SD/4OLMu+CKdHZzd7VVMSM/fmNV/gjaWbKfXy2sFKWNwqYZ
-         is5dI88r1mZLmemKAZZxHYDP07YcUWoU+Y6n+EeJczj5PmW3/v6+eooju0jstqXqj+Vb
-         xUslRJ2MxDA6D2WNJQY/tWNaE9r9h/mxCTGjOxxtOn2i0hHg63FdnxLXA9DQ3c15Sfh1
-         Y7OSTN+aZq00mjtbfZ7lVqxxF8PvQz4nApZtTdqVOTpOQepa3vk2qXlOcMtj/QQ4wWxC
-         W+xg==
+        d=gmail.com; s=20230601; t=1750718148; x=1751322948; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8X8+lYPNXJfIiqIH3VT7v0hy5MQ4DjDzji7la3F3Sk=;
+        b=BmziHJ3jHTf9d2pVu+IMXBplzjxxa4W1h4EDKWcAQF9cwKWik/U9S+MV0VLdQkEYJk
+         HY/lLSYQNOQWW77VsCsxJhhpvpZXcM+IyguX+9sfcdMqa9jUv6aKwNO7q8z39VqYqoZB
+         2mgP78mI0Ia7QQofdT+1noSfvwFKcFgT+alnsoQCDdeSp3ftbN0R4PF3yb7i1JVQ+GMo
+         vqGAfdeJ9AlStVwnJmOI7dNPgzcH6pIMCcu/YvvUSVOxZI/FgtEMPEJzUB2eTBa6YU6H
+         e5AQcLLs5uCOoc9ZhxLH3pcnWeSzxvzkeXGz8OjiyCXxp8w3NnAfja5V3gTO/2auJs2S
+         7HLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750717517; x=1751322317;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YurwFid4CmPM1zECZ7NAIyg8xcw24kM7tKeHyFwlZDY=;
-        b=GdydPvCz+5EWrw7Da722b99Pn2kV9fmUCCQcD71XtV3dlBOoT5vwuMJKhy4HbLnrWH
-         zt6YINcdy71zD08oWpvkrFxaIz5LhNTaYnwjUtZdVBt4ederU9ihoSy30jsqs8/F6crP
-         F6MSMJDBCtGKAhaH5hQEEjdUincCIZXEfWODqkOxJgMe1DgiZRJjYO5/EAg2cvNXAzuH
-         z0TgOf4iUcUdbArjjciyFp4fwSP0NxGnfOKPLcyrNkOYXis1Cj95HfKk6+HT5JNCh+Sj
-         /7LUNFLfPuHgHQGpY09iQ+GywMAtszHyBt5CmU2dYtsHhsOoylhGZtrF9lDONRRXXxfM
-         tB6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXf59kmPH7/O/rI17gJ9gsTWDIyjhIov7ZjKseYvYtFacqU1E3NLwHtLf73q4nGHkh3PlpEslp4jcH9fOQlnvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzwskRflYhAj4tGbt3L7047Y5AfWUZvhwzRf1/5TuSMTnjTHxn
-	wt6k28e9Iz87s+qkWKwbaVxleunNVHSP+wCcch4IH8rQwnFEJ+9d2Xu7aSK0e6yiHNI=
-X-Gm-Gg: ASbGnctmQma4KjzP75WOQtvjRtuBE2nAWuTsMAuv4nwSYTso+99RH3o3kYSLX66yBYt
-	cHdt0PLx61uTDKhM4VmQ5v5a+O3ukdjRvG+/mVtmlfcAMcUrRW7DnXdx/crpoj2jOF7bTMP7JRe
-	n0UdN+ZRbBsdz53eVOvXHB7BpWBa2Emz9xPKm7i34NGtH+r1lcHOtVRSjpTPRXXZQk2jspOqumU
-	gd3JTuGM3GvC3Su9m6U11HRPxRBPMT8rpgO+Vdaxj176i6/7RTI3um8fRLzwAczX/uIIyczxSiF
-	TlKI9jSdbLcEF9vkPfZ1W43cFm88cAE8ULsfSazLKfkZ4kIMUr5DCfj9H08R/l5MJCUu8g==
-X-Google-Smtp-Source: AGHT+IE91XZYWlprKGhHxRhe/CzOGIt6hPjcFJioO4ZNtu61oT2yO1/raktvIuwHoxAPy2DMwidNoA==
-X-Received: by 2002:a05:6808:2008:b0:40a:54f8:2cac with SMTP id 5614622812f47-40ac6fe3646mr10872876b6e.37.1750717517244;
-        Mon, 23 Jun 2025 15:25:17 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6d3b353sm1557857b6e.46.2025.06.23.15.25.15
+        d=1e100.net; s=20230601; t=1750718148; x=1751322948;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w8X8+lYPNXJfIiqIH3VT7v0hy5MQ4DjDzji7la3F3Sk=;
+        b=evh0IsK8/hMNc2HtAOnjbqBdIP8JizEeiB/bBU2CG5CHIxw6PYe9SWofFWeM/qoLeE
+         iZKmIzi2Embl6Xw/y/PCFMSEfKc3q+4m/ALb2ohmd8Q7KeSkLe5ExxlczWdER8+vTGkj
+         OcMfu0KVENyXROszwo+/kMhRK6qLV0Ppqy4zvtR4K0/ta+sPpAYs4RII4obUO2litEmL
+         qgfMpG9oNBnPysvhO5ta2MEfab8VJqfL9LcoQdz8/nTrj6CKNqAjT2wQkT1B9+rQja8p
+         QOrAp/G90s7w6DV7UaeQ1Edke7pJ1Ekp+rY/rhmewmR6rWKMCl/lHSiHubtnS8f40dch
+         LaVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrW892+IaLLV/aEGLoc2XrRO6CAiRcD6UYswGsa4Ps+ZHTw+6XuwtyCoI1tWmJOfRCHJAijhkdFHeIGfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeWMAbLosGQY+yBwAUEQQodanAcwe83DLO2uJ3BSg3QvrDvQo9
+	b+XrubcTLXoYiP4D05t8APp1Rn2kr7jr/rF9TtoldRV9ayc1tVE/cppg
+X-Gm-Gg: ASbGncvgksy3D1TPAXLNLXEBEKJ5lj/geJ1XtHQv2StghRf4eQ+GMJpRS6B7dUQPd8a
+	t6N5A1phhS3pBoJfGw0S18tl4neuhvGYMyFcz0k5biK4XXXe/cmy76qU2UxDgi2OPXkuImRtXhK
+	44OXBIKqi9GgByr36Ts7mbYVHOFri3kxGswhpCfa6hOedvsRCFFmxVAGqZlJUFww70SLVik2PWL
+	joKHI+8UDLxSW7rhsWPm+P/snruvebT7I2BUmQbzSjcehETrtrwJOHWo4YWvijfBw6mHzSRhAyl
+	CoNuz2olEll5doRVnOqKHudoUQBZdCOkUcCwB+JG7oSB7BFxcnhW7musJ1HZ
+X-Google-Smtp-Source: AGHT+IFZ8AJI3ew4IzWWU/Tkz1lnQ+LEc34WeS3W9X9qKZcysFcEpbE85v5c+G/NlHApltmH5vsaYw==
+X-Received: by 2002:a05:600c:458a:b0:453:92e:a459 with SMTP id 5b1f17b1804b1-4537ba90848mr6811445e9.16.1750718147995;
+        Mon, 23 Jun 2025 15:35:47 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4536470903asm125406135e9.40.2025.06.23.15.35.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 15:25:16 -0700 (PDT)
-Date: Tue, 24 Jun 2025 01:25:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Rubin <matchstick@neverthere.org>,
-	linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
+        Mon, 23 Jun 2025 15:35:47 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Zack Rusin <zack.rusin@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Ian Forbes <ian.forbes@broadcom.com>,
+	dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] staging: gpib: fix unset padding field copy back
- to userspace
-Message-ID: <cc005697-1911-485f-9c50-30442558851c@suswa.mountain>
-References: <20250623220958.280424-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] drm/vmwgfx: fix missing assignment to ts
+Date: Mon, 23 Jun 2025 23:35:26 +0100
+Message-ID: <20250623223526.281398-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250623220958.280424-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 23, 2025 at 11:09:58PM +0100, Colin Ian King wrote:
-> The introduction of a padding field in the gpib_board_info_ioctl is
-> showing up as initialized data on the stack frame being copyied back
-> to userspace in function board_info_ioctl. The simplest fix is to
-> initialize the entire struct to zero to ensure all unassigned padding
-> fields are zero'd before being copied back to userspace.
-> 
-> Fixes: b8394732ff0c ("staging: gpib: Add bit and byte padding to ioctl structs")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
+The assignment to ts is missing on the call to ktime_to_timespec64.
+Fix this by adding the missing assignment.
 
-The fix is good, but the bug has been there since the driver was
-introduced, it's only just now that the static checkers have started
-catching it.  Oddly/sadly Smatch doesn't catch this one.  I'll have to
-investigate.
+Fixes: db6a94b26354 ("drm/vmwgfx: Implement dma_fence_ops properly")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixes: 9dde4559e939 ("staging: gpib: Add GPIB common core driver")
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+index c2294abbe753..00be92da5509 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+@@ -538,7 +538,7 @@ static void vmw_event_fence_action_seq_passed(struct dma_fence *f,
+ 	if (likely(eaction->tv_sec != NULL)) {
+ 		struct timespec64 ts;
+ 
+-		ktime_to_timespec64(f->timestamp);
++		ts = ktime_to_timespec64(f->timestamp);
+ 		/* monotonic time, so no y2038 overflow */
+ 		*eaction->tv_sec = ts.tv_sec;
+ 		*eaction->tv_usec = ts.tv_nsec / NSEC_PER_USEC;
+-- 
+2.50.0
 
-regards,
-dan carpenter
