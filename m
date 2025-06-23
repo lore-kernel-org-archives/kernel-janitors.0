@@ -1,71 +1,72 @@
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5DA24BBEC
-	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 15:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956A3246BCD
+	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 15:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750691205; cv=none; b=UdxEZpdauibUc6WivLSqrfOe3YdGD99S4IUOgZJiouYvbAIH1LJySsHilKO3e2B4rOtF4BkMgV8IQnOC5IB5FJBGbCYyTNEVyZgQKisiklqj6fgF6OVpA+SxvR/2GwiNWVsK3mg61ECzvKLYTNTPC5wpf3XQW0zYEqQV6aHi7fI=
+	t=1750691501; cv=none; b=n+VMOuE1AklucahmBfhlTUIJK/1YJdTNmHY57DnnFABd0ofqLdH5TSvUuF2SeukjTXKig5qQjexXbmBmptNPq5Tfi+nsux0hOsTmSWAZnJnb18OzXapfmyNwSeolaSwGP5YJlepy8NSMRpUqLy4jIx1UFI1O7fnJROF8RxY0/jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750691205; c=relaxed/simple;
-	bh=wuFXrwwjjmEMgA8swF0EHEAsKQSn7YRia6AOViQcc2U=;
+	s=arc-20240116; t=1750691501; c=relaxed/simple;
+	bh=krRCsWrNfrKCxYOojzIZfOP3DZ0qa5HblAiRJBWE6Rk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rcnosvmBh2vwL0cR2aELfYqE3DoLpUxs2loxNsnB+wHPwhI0AZDmA/N0n+fQYm0i8n+hjO5pWofRYu0juvOxywc+pxARUSykPEjJutj2xRdfrXAhiAb/tCNTmisfdSdl8C+HzBfQ7pNYBeDKfknbqj2OrLeOmpitjpWlPfQ6a1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ofuqf63q; arc=none smtp.client-ip=209.85.167.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCh99IE0xjI0F0RghSQ3gWOGLJyY9ROO89jxJ9PX7Q3ozsTXzUsDgxh/2aEIRRQTSkUQK7OwvKZz1ZIT/HVbPLHARqvb4g84Ik4Q/uXLkRFiz4uC3RXxQYFF89vMKSBhI/pr/UYoi9eRBeqV/fVTx61lxH6xQzJJFD4W6k63wxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jx9eiCXX; arc=none smtp.client-ip=209.85.210.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ofuqf63q"
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-40a4de175a3so2970023b6e.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 08:06:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jx9eiCXX"
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-72c3b863b8eso3307480a34.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 08:11:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750691203; x=1751296003; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750691498; x=1751296298; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P/j2ABvQkeCCIY5OdnUsm4f6l2yn5EMgYcd1gCoSvvo=;
-        b=ofuqf63qV7wvQ1Ggu+d1azimjAgztFr8vMiAndlSU8PajIHg2bdy6A5/5k8FU0A04o
-         S151GjJEFyoRNgLY4jvBj5Msu7/s+NYsyvbWUO+3gIbe+4+mYLVRn3/sU29LM50Xtug/
-         VP0OoBhYJsNvPXDmuKk6DWCYOhdW1SfnvGgvX+3DczM/Q81oFEHNd+g86CBBple0dfb9
-         de4xyS/XPxxMmY41JVBZyf+nOD3gjqe4FQgPf50DUsO1PTa4+EQE//YFmp+HxV5PBpt7
-         S2RSBYJvh/cHAIhZM9Eu81h5+DDf/1jw+D6hhFiw7vLpAdP4UEmal7pS+d2BHxIWXa0N
-         yyjw==
+        bh=krRCsWrNfrKCxYOojzIZfOP3DZ0qa5HblAiRJBWE6Rk=;
+        b=jx9eiCXX3Vslax2aXpv0mV5A0jU0Ad72jbfxR2Q5ytUgdRI0Ny/3ef9MktkV0RQmKs
+         lSB5Qi5WwjZqRM1URaKDpcgfuKi8MAOt64/B7BAk35nw21stwYm/wE66/wr7EjA6Ey1V
+         79x1d9ikIViA5E1KQQ6EFy+tYUkzb3FTPGCEae8Cg0sPQdKHVmfoxRsRGTkyE0rZg7vJ
+         JQ45wD12/9gMpJh+jeYrqPC7LR6XQ5oQzpRuai6C4QjtGQ4c5JB57x2QxT5Mb72QgF2R
+         0S8X+LVBPSamn0JAroZNKE28lH4MUrkNfP4OxNi+7mGwKCftfHQ4QC05rhjUZdfuVhvf
+         23tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750691203; x=1751296003;
+        d=1e100.net; s=20230601; t=1750691498; x=1751296298;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P/j2ABvQkeCCIY5OdnUsm4f6l2yn5EMgYcd1gCoSvvo=;
-        b=jO1hgHCg3wwvtDmC/YVroU/IRoRBgKxZ0PhQvIvqtsSgWjWsghL1MOpxEdQmHW19pX
-         cyAcm4yF2qyDDzNn3oesKpGjwpbRp/8WZ4FvKsOv8lK+e1Gl9oprk2kDHcweGoJ11ngu
-         sCkohKl8O7V4TKUHXzN9A6UEKJwffx616OMxH+2BocUhZY4v1mzAbGSZMkQvB6LAgw1z
-         xTatqNUXjDB1Cs9giJXxpVSjytD88cDtTw86mhFZ+4SpKfRHyjJXt9lRwcVnHv2/c2/s
-         1jvmycp0SAfjBptQ8WSsPUWgMDahzm5YABTfy47zTNwGCoJ7SaJyVwrODLTdSyX9o0Rp
-         8mjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjZq/y+loPG8Xcxsw9Cm26eT1UmuHySFBCkOSY96xDLeBh2/t2+tsrWrcXrhtCjuGlycfdoDdOeI6iDd099qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk66A+mB006sdmh5lor+5jMYxIsjOBkf/iOqFbdSqg8koStULL
-	IGXKvNrLMiiwfnNCu2BoJM2N8alBUZWG2pe4ZtVVO+SlKgdrqQo3iE7WeSNM/yakfLs=
-X-Gm-Gg: ASbGncuh5az5+tVfAIV3lnMlAnzb272/3XpGqXEit8Qnj4ZXGecZvS7MOkbkRVCQc8m
-	PlspqTizyi5DfCwvmPN/AOYcgSCDz1eK7B+l9Pmz19flN/8fpHcumbZuWre/TpHchRbrY6/Vfsk
-	V5AuRP9FdaiaQEWC+HRAyYbGZ+pxblwwbTa37k/Mfb7ToVdSUN5YxZcrwGSYd10112A5SYsiGBO
-	OcxNne/HMaqBb0x2h3oeMWB1DDLAuJ5gW4CbD4vdgrMauWqBcQZDeLZFH+Lo5s7ilJmwdDh/FxG
-	m5FJGWqk1UwK6hrOhC4rJJkxvtcqBwB61pqYKy94Y5x/cekSeYBSm51cc+zf+i6fTqCYjA==
-X-Google-Smtp-Source: AGHT+IFnVBRfIjftIm0z+2nD3hcauMaTIzLigckSJhjmKqki1siCULVluA8fvloI9HOD+FViAKSc5g==
-X-Received: by 2002:a05:6808:1890:b0:406:7704:b2e9 with SMTP id 5614622812f47-40ac6fe36d7mr9778035b6e.9.1750691202870;
-        Mon, 23 Jun 2025 08:06:42 -0700 (PDT)
+        bh=krRCsWrNfrKCxYOojzIZfOP3DZ0qa5HblAiRJBWE6Rk=;
+        b=atpSJlk9KfeF+Oac20LOs8G+p5GPMJGs4q+1Gy7+Aa+3qA6Ymk91caIEG+S9KyEQF1
+         4cDdZ5Jrst6gHiXjT9zkTnCLfC+RybUQMeWUulGAJlnpxtIubdAHbdH9QgOmZuf/LGAm
+         P5COhF5HCp1BKj2SLBi+yBaM8Dan9dTXYnYW1Sg1QgUTmKXu/veBhpAw04UbNKDr5lzv
+         22U0YEwk5tE9OXePPxQZj5fNxw+t09ZBKzRKFV0j9oRdUKaqcBlSm6ZvGO5IDyRAOP3R
+         dKzS1Jr4DqQACUOs1jNp5T859YeHTkmEYEcm5IMUTxPMi/S93NJNHaxXxZeDp1TkmzXg
+         rQIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBd7Mj6/MPftHnX8iJDGApgn32KCzWL7v7fBu4cejqfxqwtmzSeF2g+2ioU3g4Ma4RzpmJyGZQPTmhDgoViYs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOjjsPv4HpXULdb+jh4DMG4BririiClqlOwWaXXY8plAnBw9qW
+	BeZE6snb9LOhjKCcAfnS7dNnCmiZa3VeXLcvU8mj8aMhjxNdCy/D2uXaLK4sbaE6seMZvs2zcCe
+	TIsXo
+X-Gm-Gg: ASbGnctuBdrhPOlHWnh93v0rm8tCgB+qbnMLT+HgKxWP/0IaPkYiFrw7nXIObI48v8d
+	XCYV8j2jSSBv/FbGtPI7gTuT/WtA7/7d/LpKpSexkvQihjNPWSurVVsWszQ/evHJc3T6/IFg8NQ
+	WofvYzNTYf5vvEf3EeGxuW345CuIKydDwTmZUvR/ahaW+/SAhETXX4nRfAf+Lcm2v+oXzb8ss7Q
+	Dg1GNxpEFNYaM7Ly7aglsVjq5GZLM6zeVeqUMCotlHmIUE2Kob2wHwH0pIG3jFaPrnxv6r7gIOt
+	DSXnlHOfPA3p5Olps0n4oDnk2p4ZVxshcmn9ND8wHWkUIOr2RXyofY63XG2WGCFeZSLNk+CwCln
+	eryKD
+X-Google-Smtp-Source: AGHT+IELirG4o2TKMYqFSyVKOGaMUS/Yaj+K5xx64PHXSKKKnC1whBUE4ptLC6neLxCCL6RXUWk6hQ==
+X-Received: by 2002:a05:6830:7010:b0:72c:3235:557d with SMTP id 46e09a7af769-73a92069c56mr9889012a34.13.1750691498690;
+        Mon, 23 Jun 2025 08:11:38 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6d394dfsm1419658b6e.43.2025.06.23.08.06.42
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a90cafee2sm1446021a34.55.2025.06.23.08.11.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:06:42 -0700 (PDT)
-Date: Mon, 23 Jun 2025 18:06:40 +0300
+        Mon, 23 Jun 2025 08:11:38 -0700 (PDT)
+Date: Mon, 23 Jun 2025 18:11:36 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Su Hui <suhui@nfschina.com>
-Cc: akpm@linux-foundation.org, bhe@redhat.com, vgoyal@redhat.com,
-	dyoung@redhat.com, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+Cc: tony.luck@intel.com, reinette.chatre@intel.com, Dave.Martin@arm.com,
+	james.morse@arm.com, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
-Message-ID: <33a9a2a5-a725-4ab0-865c-1d26e941e054@suswa.mountain>
-References: <20250623104704.3489471-1-suhui@nfschina.com>
+Subject: Re: [PATCH] fs/resctrl: using guard to simplify lock/unlock code
+Message-ID: <d07fe2d9-3548-43fc-b430-2947eee3145b@suswa.mountain>
+References: <20250623112540.3581675-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,93 +75,12 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250623104704.3489471-1-suhui@nfschina.com>
+In-Reply-To: <20250623112540.3581675-1-suhui@nfschina.com>
 
-On Mon, Jun 23, 2025 at 06:47:05PM +0800, Su Hui wrote:
-> There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
-> type from 'size_t' to 'unsigned int' for the consistency of data->size.
-> Return -ENOMEM directly rather than goto the label to simplify the code.
-> Using scoped_guard() to simplify the lock/unlock code.
-> 
-> Signed-off-by: Su Hui <suhui@nfschina.com>
-> ---
->  fs/proc/vmcore.c | 33 ++++++++++++++-------------------
->  1 file changed, 14 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index 10d01eb09c43..9ac2863c68d8 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -1477,7 +1477,7 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
->  {
->  	struct vmcoredd_node *dump;
->  	void *buf = NULL;
-> -	size_t data_size;
-> +	unsigned int data_size;
->  	int ret;
-
-This was in reverse Christmas tree order before.  Move the data_size
-declaration up a line.
-
-	long long_variable_name;
-	medium variable_name;
-	short name;
-
->  
->  	if (vmcoredd_disabled) {
-> @@ -1490,10 +1490,8 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
->  		return -EINVAL;
->  
->  	dump = vzalloc(sizeof(*dump));
-> -	if (!dump) {
-> -		ret = -ENOMEM;
-> -		goto out_err;
-> -	}
-> +	if (!dump)
-> +		return -ENOMEM;
->  
->  	/* Keep size of the buffer page aligned so that it can be mmaped */
->  	data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
-> @@ -1519,21 +1517,18 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
->  	dump->size = data_size;
->  
->  	/* Add the dump to driver sysfs list and update the elfcore hdr */
-> -	mutex_lock(&vmcore_mutex);
-> -	if (vmcore_opened)
-> -		pr_warn_once("Unexpected adding of device dump\n");
-> -	if (vmcore_open) {
-> -		ret = -EBUSY;
-> -		goto unlock;
-> -	}
-> -
-> -	list_add_tail(&dump->list, &vmcoredd_list);
-> -	vmcoredd_update_size(data_size);
-> -	mutex_unlock(&vmcore_mutex);
-> -	return 0;
-> +	scoped_guard(mutex, &vmcore_mutex) {
-> +		if (vmcore_opened)
-> +			pr_warn_once("Unexpected adding of device dump\n");
-> +		if (vmcore_open) {
-> +			ret = -EBUSY;
-> +			goto out_err;
-> +		}
->  
-> -unlock:
-> -	mutex_unlock(&vmcore_mutex);
-> +		list_add_tail(&dump->list, &vmcoredd_list);
-> +		vmcoredd_update_size(data_size);
-> +		return 0;
-
-Please, move this "return 0;" out of the scoped_guard().  Otherwise
-it's not obvious that we return zero on the success path.
+This seems fine to me, but I don't think anyone is eager to start
+reviewing hundreds of guard() conversions unless they're in new code
+or part of a bug fix.
 
 regards,
 dan carpenter
 
-> +	}
->  
->  out_err:
->  	vfree(buf);
-> -- 
-> 2.30.2
-> 
