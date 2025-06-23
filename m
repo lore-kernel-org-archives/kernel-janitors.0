@@ -1,72 +1,71 @@
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A5C7E792
-	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 15:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9964C25F99B
+	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 15:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750692153; cv=none; b=pM0bga4TkpzjBrp3fFoNXYNtgIDLqCaKRolbq/l3rjDQeK1U06zYPxndDGa7JmMfFYYijriD/jz6/UCSxAyD3RQD+/ac/pne9wgPC/8WaMTpGyETFFx3CM/ic0E4lAPCB3Y8apZHfILrbQmXl36pIiJUWj2/bEaPelikjU6jcdU=
+	t=1750693655; cv=none; b=oY9AiQjmXWVxJUk3pCAxovqh1dVNC8mycs7TkpxBoeATK8MRsTuqKuXKAra4Ul3csi9D47BP6GfyXnxNmS8FFSZCMSoMtCRGijxYOhTfakySHwfFIhmCVtZaOp0CKrkOb6H9xmoHEO0XS3mTSO3q4cHajkbue4TuBKJV059Q6uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750692153; c=relaxed/simple;
-	bh=hC9peFQk5TvNNRSqpIuY+epye1/M+kNum1ROmrB5xQQ=;
+	s=arc-20240116; t=1750693655; c=relaxed/simple;
+	bh=EKG14ZOQzaaYGD3X0xzYAfmF2d6RXXI1/3I7QMJPo/c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f42W7HyPAiZ90y8lQT0qtF0mO1lrKb3ag1U90vpSWjtsu5ZJOhRSWgl37ekOpVYgm/dsawbaizik0Z7XeMhB5zGAlUXt/oU/OmTW5dziW8uHCt0g7D+0YFVjSIvr1qEzIrVdySfYbPt/LH+taGpZmIVKQS453jZigE6wamifOfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mjsgMC/x; arc=none smtp.client-ip=209.85.161.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=X6MAb3lR+oWzjV80YK1V9Gnt7epccjT1QvtefaPeuaeaRlRb2GCA4CPxjC7Jeua+eR5Wdiwgmsv9W+K2r+/z1AtxOyj4jaJ6z1mBMo3UpxbQVjfCHyGVeeIIM3G3xYNnk5iZnig3YpGTuXyD1tkidcguRtJtTZMh8pQXQWICH+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UG5DegPJ; arc=none smtp.client-ip=209.85.167.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mjsgMC/x"
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-610cbca60cdso2800743eaf.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 08:22:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UG5DegPJ"
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-404e580bf09so874428b6e.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 08:47:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750692151; x=1751296951; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750693651; x=1751298451; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bTZ19GRi4KU0H2wNqBnaKkKrv7m6rpdyKuL2QkFh6uQ=;
-        b=mjsgMC/xD/7Nu42Lgf44FhzejT4T/f/JDGVCRMV/3hizQOfqv7Nmnrf3s4Rh8gb/Pw
-         CSExBLuoDGt4qh+QwFjy6n+w8gZHLhfIZ+085HpT06uJXGwug8J5FM0ialJCKFEblggE
-         kd/2/mOPQrPieF6u53cs3Z39hf4GQBu5a6f8JhvMjLATQ6dy+WLiMfyS+zqZCR/c4K2f
-         pH+1R5JQxEi+SbAdVLFp2Z5dkaHoRGMRs+fN8sPYHgVEB+49h6TWu+TJ6ncozrliVymC
-         LmJli29nXUns52jR4ZM6KmXDAeA6TtEhO1MGsL9ikZCuXSJGzfSZW2DPDyNdUbc7a5II
-         g/gA==
+        bh=e19ex1p/1LBOnXetMuCg5KYZZ6yY9+nHnj0I40BuyDg=;
+        b=UG5DegPJVq+xw1Nc4wanJ/3/PRJ0GCy0+gIuLP0s5v9DhBYWtThZIPoOLukvJclAB+
+         MFTYd2YJOu8sSj7ib6bJ556pVMUeAyHTRQpEaUumGGfl65PspzMllXH40nrQiDUVa7uM
+         io5RuJ4EVaqGfoUqxNQPCDi5Zd9Ai7kFnA2WPn3GDwUKCY3bDVDSK0nJpcVU9Cbhfryo
+         L09+Y4/TAMf2sWITydkotyU9Ne2eGo2oy/8hbBu4K/qP93MerRdokkuuSomYVYdYNceN
+         y3OanasJ6FODGWbMip5KAYLrptivE+573UC3MeAVXqZ0BlU/eZ5H5JwMatYtflaXu8gH
+         XKmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750692151; x=1751296951;
+        d=1e100.net; s=20230601; t=1750693651; x=1751298451;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bTZ19GRi4KU0H2wNqBnaKkKrv7m6rpdyKuL2QkFh6uQ=;
-        b=ZYtTGSmS5yYW6rxmtfZjwadDiI/DWjpsYpJpIfT955CFgNKHLb+TCur62YYEdVAnZ7
-         CApvjkIWLv2qiMsHm+EkY5PgWDgOK0ZMOZYmReZeBySmmRoJc055inkiIUkButVJmrp0
-         QRGBSF6ac99QuI7vOqWkAECMIj5kl8hUG0DPQ7AUxdLCqYnFhaEh7jITxmtgNVRRpNWJ
-         x+sFASbVwfB3+lA2fLPPWuFdApVUcMfpjofXvC7gdJxYnZq//jvPoP3D2IBQk36uHFJT
-         UQ7cwHuMPW14MM9/XMdnp1JzkLMW9SVxfLHAQZrVR0FlHO5IvKbaDRgQ8MQdok4fyY9T
-         2j2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVV6NcOhbZkbDGlVxDSfTGsXeY4VRj/rn1sV7gNwEIOvGkG04BwidhP5d4IHvvt00c0HxFx8v0m6stl5Af/R4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs7218NgqVBUYcghAcrvJ8VrykJx/ymM3PoUQkMZclne9L55gp
-	Q1kXTksmX5qiXlyQNKzgTIXbhQX3bwnK2hE7lIrVktoiJUDKx2rRfEWXqT319HpOeE0=
-X-Gm-Gg: ASbGnctG6TkWwhET+Ru145pu+ti6KK8sn0HDPJ0EWGXr3EI3LI997WBvwnne9es4OXp
-	B1O04teF3s942q/DKiVmV65iQOiO13joRghkRi/ph7I/v5SyWghUrJ5crtXED1Fdnj1ZvEMMyfL
-	BNR74OOVcWeKelaHUlJt53wISVGr+8pxwu4EGSMX6SrcC5rwBRwmCK5wqhiI+ibxJNY9M9inmK1
-	ew282DJemyid6cSBIcu8aEEXwAjjrlnjmeB+CYcJXN0iJAPMX/FsvPYi6N9yB8IDZRb/6YmZ2cM
-	BIZxF81NVg+SKqqGbJNreNDEMsJa12v52fExxUvK1CPvA+ZWp9h1Nl1vIRYBDh7Vc/nJmw==
-X-Google-Smtp-Source: AGHT+IFkGyVDoc+8SQ8rASYfcEKGGB/Oc5hw+KdWNqGCuf0XX49CDwKCA3KtlNIgbDKU0n0iNbw/gw==
-X-Received: by 2002:a05:6870:392c:b0:2ea:8091:41f2 with SMTP id 586e51a60fabf-2eeee55c8cemr8102044fac.19.1750692151278;
-        Mon, 23 Jun 2025 08:22:31 -0700 (PDT)
+        bh=e19ex1p/1LBOnXetMuCg5KYZZ6yY9+nHnj0I40BuyDg=;
+        b=VPQXmwtBZsm6qIakacGvK3FvPzOrDha8fNI6vsVos9N20wrJLxNiTXc0Eb5MHPO4Vp
+         olB1YPIGR1DLah9llSz35Pl+PZG1YqkVyWih2jeAQ+lrXKMdkHSfWq0kjM6zkx5YGGM4
+         DZ3NnyDYsoR1i06fY9Y4h+s8HLYrKuTwACtWyDZoFjzAfNNwYLVOQvcUUaC9km/QZhAZ
+         L/Pk5fp1Bedyb9nwPZap91VTZDDFOnASl+Vd6WLEJHb+8ehAtnIIbL6zIfwVAkKGZ0CD
+         H/WEZnTKRARIFUwnP81X3bUvXWtguJRaSorn7CNv1ShUHEgc/tk9PcLhkI3S7vjhn3LW
+         DAFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXu0t3wRnN/rzFLswg4AzpCz2BMFssb/WAh+4D6YZpMTz0TUZ2UASHi3mZrKLJq7iKTCm7XLThhEZ5NWDRoY7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwpFaFTkRhZFjDJtig6hZpsJxReh+MvGYHnOfoHQpB2d33pCoD
+	pW0yFiHhQszcrZixyW1B+ZnUs79LuTSotqB+QIjTLeYhs7GIfnuIX/mq7Is89iIFXBg=
+X-Gm-Gg: ASbGncuLLIPeaJEHWD2ypXKsfdEVuKUWwIiRXuh5GUzQXmOv07Wfzg09R56iH/M1SiF
+	ZeYHXeIIhcVKUPO2hOFGPeBnU4ssJW+vmUzsCXmYJAxEXZsZZEh9gVBJ8SVLmmN1A0zzeGjqAkh
+	K7sLKVHM16X1Tt4fdXCwqHezkHbVI8elR32yyJrb5AV91Aie4E8BG4IzA6Ad/7LUE/la2/jlgOM
+	eP0xqgdwI4w/eY/ae9haEU42hTwcAfNLjvIqS0nFrog9z/f+mez6hAsFR8VyMjte0pVbBGuYQml
+	/sqj1/VpcK6ZWYSHhK4seyDIsfEMSb1VeP/ZtXFdD7KiHCpxWJ/Qa2Xmxpt9BOqSYqwEaA==
+X-Google-Smtp-Source: AGHT+IEouOoMNRNSuGf/ZMWbMPa3V8T1EO2Pbz1snAOvKwdQBof5o9MTJimT5y50shcK8/7BDOdy9A==
+X-Received: by 2002:a05:6808:1717:b0:406:5a47:a081 with SMTP id 5614622812f47-40ac7053a9dmr10755047b6e.13.1750693651415;
+        Mon, 23 Jun 2025 08:47:31 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee8a8e5eb3sm1697426fac.32.2025.06.23.08.22.28
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6cf03a7sm1411227b6e.25.2025.06.23.08.47.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 08:22:29 -0700 (PDT)
-Date: Mon, 23 Jun 2025 18:22:25 +0300
+        Mon, 23 Jun 2025 08:47:30 -0700 (PDT)
+Date: Mon, 23 Jun 2025 18:47:28 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: Su Hui <suhui@nfschina.com>, akpm@linux-foundation.org,
-	vgoyal@redhat.com, dyoung@redhat.com, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+To: Su Hui <suhui@nfschina.com>
+Cc: chuck.lever@oracle.com, jlayton@kernel.org, neil@brown.name,
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
-Message-ID: <d60db71a-0b4f-4e7d-8c06-7493934aa507@suswa.mountain>
-References: <20250623104704.3489471-1-suhui@nfschina.com>
- <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
+Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
+Message-ID: <148c69b4-4cf7-4112-97e8-6a5c23505638@suswa.mountain>
+References: <20250623122226.3720564-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,23 +74,155 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aFlmfdajTOP5Ik9f@MiWiFi-R3L-srv>
+In-Reply-To: <20250623122226.3720564-1-suhui@nfschina.com>
 
-On Mon, Jun 23, 2025 at 10:36:45PM +0800, Baoquan He wrote:
-> On 06/23/25 at 06:47pm, Su Hui wrote:
-> > There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
-> > type from 'size_t' to 'unsigned int' for the consistency of data->size.
+On Mon, Jun 23, 2025 at 08:22:27PM +0800, Su Hui wrote:
+> Using guard() to replace *unlock* label. guard() makes lock/unlock code
+> more clear. Change the order of the code to let all lock code in the
+> same scope. No functional changes.
 > 
-> It's unclear to me why size_t is not suggested here. Isn't it assigned
-> a 'sizeof() + data->size' in which size_t should be used?
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  fs/nfsd/nfscache.c | 99 ++++++++++++++++++++++------------------------
+>  1 file changed, 48 insertions(+), 51 deletions(-)
+> 
+> diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
+> index ba9d326b3de6..2d92adf3e6b0 100644
+> --- a/fs/nfsd/nfscache.c
+> +++ b/fs/nfsd/nfscache.c
+> @@ -489,7 +489,7 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
+>  
+>  	if (type == RC_NOCACHE) {
+>  		nfsd_stats_rc_nocache_inc(nn);
+> -		goto out;
+> +		return rtn;
+>  	}
+>  
+>  	csum = nfsd_cache_csum(&rqstp->rq_arg, start, len);
+> @@ -500,64 +500,61 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
+>  	 */
+>  	rp = nfsd_cacherep_alloc(rqstp, csum, nn);
+>  	if (!rp)
+> -		goto out;
+> +		return rtn;
+>  
+>  	b = nfsd_cache_bucket_find(rqstp->rq_xid, nn);
+> -	spin_lock(&b->cache_lock);
+> -	found = nfsd_cache_insert(b, rp, nn);
+> -	if (found != rp)
+> -		goto found_entry;
+> -	*cacherep = rp;
+> -	rp->c_state = RC_INPROG;
+> -	nfsd_prune_bucket_locked(nn, b, 3, &dispose);
+> -	spin_unlock(&b->cache_lock);
+> +	scoped_guard(spinlock, &b->cache_lock) {
+> +		found = nfsd_cache_insert(b, rp, nn);
+> +		if (found == rp) {
+> +			*cacherep = rp;
+> +			rp->c_state = RC_INPROG;
+> +			nfsd_prune_bucket_locked(nn, b, 3, &dispose);
+> +			goto out;
 
-Yeah...  That's a good point.  People should generally default to size_t
-for sizes.  It really does prevent a lot of integer overflow bugs.  In
-this case data->size is not controlled by the user, but if it were
-then that would be an integer overflow on 32bit systems and not on
-64bit systems, until we start declaring sizes as unsigned int and
-then all the 32bit bugs start affecting everyone.
+It took me a while to figure out why we've added a goto here.  In the
+original code this "goto out;" was a "spin_unlock(&b->cache_lock);".
+The spin_unlock() is more readable because you can immediately see that
+it's trying to drop the lock where a "goto out;" is less obvious about
+the intention.
+
+I think this patch works fine, but I'm not sure it's an improvement.
 
 regards,
 dan carpenter
 
+> +		}
+> +		/* We found a matching entry which is either in progress or done. */
+> +		nfsd_reply_cache_free_locked(NULL, rp, nn);
+> +		nfsd_stats_rc_hits_inc(nn);
+> +		rtn = RC_DROPIT;
+> +		rp = found;
+> +
+> +		/* Request being processed */
+> +		if (rp->c_state == RC_INPROG)
+> +			goto out_trace;
+> +
+> +		/* From the hall of fame of impractical attacks:
+> +		 * Is this a user who tries to snoop on the cache?
+> +		 */
+> +		rtn = RC_DOIT;
+> +		if (!test_bit(RQ_SECURE, &rqstp->rq_flags) && rp->c_secure)
+> +			goto out_trace;
+>  
+> +		/* Compose RPC reply header */
+> +		switch (rp->c_type) {
+> +		case RC_NOCACHE:
+> +			break;
+> +		case RC_REPLSTAT:
+> +			xdr_stream_encode_be32(&rqstp->rq_res_stream, rp->c_replstat);
+> +			rtn = RC_REPLY;
+> +			break;
+> +		case RC_REPLBUFF:
+> +			if (!nfsd_cache_append(rqstp, &rp->c_replvec))
+> +				return rtn; /* should not happen */
+> +			rtn = RC_REPLY;
+> +			break;
+> +		default:
+> +			WARN_ONCE(1, "nfsd: bad repcache type %d\n", rp->c_type);
+> +		}
+> +
+> +out_trace:
+> +		trace_nfsd_drc_found(nn, rqstp, rtn);
+> +		return rtn;
+> +	}
+> +out:
+>  	nfsd_cacherep_dispose(&dispose);
+>  
+>  	nfsd_stats_rc_misses_inc(nn);
+>  	atomic_inc(&nn->num_drc_entries);
+>  	nfsd_stats_drc_mem_usage_add(nn, sizeof(*rp));
+> -	goto out;
+> -
+> -found_entry:
+> -	/* We found a matching entry which is either in progress or done. */
+> -	nfsd_reply_cache_free_locked(NULL, rp, nn);
+> -	nfsd_stats_rc_hits_inc(nn);
+> -	rtn = RC_DROPIT;
+> -	rp = found;
+> -
+> -	/* Request being processed */
+> -	if (rp->c_state == RC_INPROG)
+> -		goto out_trace;
+> -
+> -	/* From the hall of fame of impractical attacks:
+> -	 * Is this a user who tries to snoop on the cache? */
+> -	rtn = RC_DOIT;
+> -	if (!test_bit(RQ_SECURE, &rqstp->rq_flags) && rp->c_secure)
+> -		goto out_trace;
+> -
+> -	/* Compose RPC reply header */
+> -	switch (rp->c_type) {
+> -	case RC_NOCACHE:
+> -		break;
+> -	case RC_REPLSTAT:
+> -		xdr_stream_encode_be32(&rqstp->rq_res_stream, rp->c_replstat);
+> -		rtn = RC_REPLY;
+> -		break;
+> -	case RC_REPLBUFF:
+> -		if (!nfsd_cache_append(rqstp, &rp->c_replvec))
+> -			goto out_unlock; /* should not happen */
+> -		rtn = RC_REPLY;
+> -		break;
+> -	default:
+> -		WARN_ONCE(1, "nfsd: bad repcache type %d\n", rp->c_type);
+> -	}
+> -
+> -out_trace:
+> -	trace_nfsd_drc_found(nn, rqstp, rtn);
+> -out_unlock:
+> -	spin_unlock(&b->cache_lock);
+> -out:
+>  	return rtn;
+>  }
+>  
+> -- 
+> 2.30.2
+> 
