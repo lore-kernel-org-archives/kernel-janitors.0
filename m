@@ -1,100 +1,102 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id E9AEB2D8769;
-	Tue, 24 Jun 2025 14:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCAB23741;
+	Tue, 24 Jun 2025 14:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750774927; cv=none; b=P7hURd28nWaxG5IcboDA7esNadJJ6WjpCGUHlTyKZvKswnX6hPer5i7T0LPOcNDD1d5FcMUHOTV59KV8rFT/Q+khcKe1szwsLOSkNZCZ5QgIxX8ZZFddDvbw2CJnOEp19bViUaOuW5jU+eeD2AVTjpxe319ou3E8a3xvLT+Fka8=
+	t=1750775287; cv=none; b=j9WG4vON15GPI0XtYOIj4RRTfMQ9nT3eZ3Jl6mf2kOLDYT16P1xko9VEdND0VI3YQaNaD95DM1aEODaPbSwZoi8ETf9VPEUf+/exhPPaW1ShRVEUWKDg8PL7mPWySfKND/2AK5nUKOf436byEC36QP6En4xMffxLDlqrHCMiUDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750774927; c=relaxed/simple;
-	bh=2fyLteoMsAeRRTTISqANfVeGfJpdi/hsp5Xg5/qyOls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=ARIBkK6DAc928aD9tpHnpQ2rlQwi7F7/v/x38zbd0xdhTaLFk1H8y+1cCvzDpbVT07qv8qm2BIm3EnF4n0/8AF0hcQoZ037cVJiLRjRnGl71bTs7dlt1yXzrf1qHc6azR+jzUyKaJyBbshU4vWWAyCLDJUYxsWK9D74wsFou3Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 4DE02602EDAF9;
-	Tue, 24 Jun 2025 22:21:56 +0800 (CST)
-Message-ID: <99a15559-072d-4c45-b12f-b42b4884cb06@nfschina.com>
-Date: Tue, 24 Jun 2025 22:21:55 +0800
+	s=arc-20240116; t=1750775287; c=relaxed/simple;
+	bh=Y+hz6pOWMqXMvYs2L7W3FOPGg3Z5NPFgIsnld4FIlO8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QH/7wzRCXtAXm8r5ERvFB29lp6RBGOtC8F03XOnUbnFCNykd6fEEhE+YyLb6VhMxn9h+oQlbbL/T8RVhyHOooh+ai+YyeoyHQJPZAEEZ6T6RLiBSnbJfVZJ85HZYaa1Mfv9VMu0Nd5AQbqXgC1QT1i1DjKsBEtz65ViGPHVrLgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2317113E;
+	Tue, 24 Jun 2025 07:27:46 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A8B13F58B;
+	Tue, 24 Jun 2025 07:28:03 -0700 (PDT)
+Date: Tue, 24 Jun 2025 15:27:56 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Su Hui <suhui@nfschina.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, tony.luck@intel.com,
+	reinette.chatre@intel.com, james.morse@arm.com,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] fs/resctrl: using guard to simplify lock/unlock code
+Message-ID: <aFq12y2R/KV4UKyT@e133380.arm.com>
+References: <aFlvTt+GGSIqgOKH@e133380.arm.com>
+ <cf505dc6-c123-44fd-9ee6-5aac4764f905@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
-Content-Language: en-US
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>
-Cc: jlayton@kernel.org, okorniev@redhat.com, Dai.Ngo@oracle.com,
- tom@talpey.com, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <13630a14-d1b9-4c38-80f8-33d2de2ea00c@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-
-On 2025/6/24 21:41, Chuck Lever wrote:
-> On 6/23/25 9:31 PM, Su Hui wrote:
->> On 2025/6/24 08:19, NeilBrown wrote:
->>> On Mon, 23 Jun 2025, Su Hui wrote:
->>>> Using guard() to replace *unlock* label. guard() makes lock/unlock code
->>>> more clear. Change the order of the code to let all lock code in the
->>>> same scope. No functional changes.
->>> While I agree that this code could usefully be cleaned up and that you
->>> have made some improvements, I think the use of guard() is a nearly
->>> insignificant part of the change.  You could easily do exactly the same
->>> patch without using guard() but having and explicit spin_unlock() before
->>> the new return.  That doesn't mean you shouldn't use guard(), but it
->>> does mean that the comment explaining the change could be more usefully
->>> focused on the "Change the order ..." part, and maybe explain what that
->>> is important.
->> Got it. I will focus on "Change the order ..." part in the next v2 patch.
->>> I actually think there is room for other changes which would make the
->>> code even better:
->>> - Change nfsd_prune_bucket_locked() to nfsd_prune_bucket().  Have it
->>>     take the lock when needed, then drop it, then call
->>>     nfsd_cacherep_dispose() - and return the count.
->>> - change nfsd_cache_insert to also skip updating the chain length stats
->>>     when it finds a match - in that case the "entries" isn't a chain
->>>     length. So just  lru_put_end(), return.  Have it return NULL if
->>>     no match was found
->>> - after the found_entry label don't use nfsd_reply_cache_free_locked(),
->>>     just free rp.  It has never been included in any rbtree or list, so it
->>>     doesn't need to be removed.
->>> - I'd be tempted to have nfsd_cache_insert() take the spinlock itself
->>>     and call it under rcu_read_lock() - and use RCU to free the cached
->>>     items.
->>> - put the chunk of code after the found_entry label into a separate
->>>     function and instead just return RC_REPLY (and maybe rename that
->>>     RC_CACHED).  Then in nfsd_dispatch(), if RC_CACHED was returned, call
->>>     that function that has the found_entry code.
->>>
->>> I think that would make the code a lot easier to follow.  Would you like
->>> to have a go at that - I suspect it would be several patches - or shall
->>> I do it?
->>>
->>> Thanks,
->>> NeilBrown
->>>
->> Really thanks for your suggestions!
->> Yes, I'd like to do it in the next v2 patchset as soon as possible.
->> I'm always searching some things I can participate in about linux kernel
->> community, so it's happy for me to do this thing.
-> Hi Su -
->
-> Split the individual changes Neil suggested into separate patches. That
-> makes the changes easier to review.
+In-Reply-To: <cf505dc6-c123-44fd-9ee6-5aac4764f905@nfschina.com>
 
 Hi,
 
-Thanks for your remind. I will split these individual changes.
-It won't be too long, at the latest this week I will submit this patchset.
+On Tue, Jun 24, 2025 at 10:46:24AM +0800, Su Hui wrote:
+> On 2025/6/23 23:14, Dave Martin wrote:
+> > Hi,
+> > 
+> > On Mon, Jun 23, 2025 at 07:25:41PM +0800, Su Hui wrote:
+> > > Using guard() to replace *unlock* label. guard() is better than goto
+> > > unlock patterns and is more concise. No functional changes.
+> > > 
+> > > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > How were these cases chosen?
+> I chosen the code� that match with "*unlock*:" label.
 
-Regards,
-Su Hui
+Right -- that was what I guessed, but thanks for confirming.
 
+> > 
+> > I notice that this patch only handles some straightforward mutex_unlock()
+> > cases.  There are other opportunities in some places -- particularly
+> > alloc/free patterns.
+> Yes, as Dan mentioned[1], there are too many these patterns and I'm not sure
+> how
+> much value we can get to do this things. This patch is a try that using
+> guard() to
+> remove some� lock/unlock pattern and simplify the lock code.
 
+Agreed.  guard() is not a bad thing, but it's probably easier to use it
+cleanly when writing new code.  Backporting it into existing code might
+be worthwhile it it clearly makes the code simpler or fixes bugs, but
+these cases in resctrl feel like they don't bring a lot of benefit.
+
+> > Overall, I'm not totally convinced that backporting the guard()
+> > infrastructure into code that wasn't originally written to use it is
+> > always worthwhile.
+> > 
+> > If the code is simple, there is not much benefit.  Otherwise, there is
+> > a significant chance of unintentionally changing the behaviour of the
+> > code (though the exercise may be useful if it identifies actual bugs).
+> > 
+> > Either way, such changes will get in the way of people who are rebasing
+> > on top of this code.
+> Got it, it's ok to omit this patch. It seems this patch has not enough
+> value.
+> > FWIW, this patch looks OK though, and the diffstat looks reasonable.
+> > Since this code was recently moved into fs/, diff context noise may be
+> > less of a concern.
+> Maybe only for some complex lock/unlock code, guard() can bring some value.
+> Thanks for your advice!
+> 
+> [1] https://lore.kernel.org/all/d07fe2d9-3548-43fc-b430-2947eee3145b@suswa.mountain/
+> 
+> Regards,
+> Su Hui
+> 
+Fair enough.  Considering how guard() _might_ be used can be a useful
+exercise, even if the changes are not adopted everywhere.
+
+Cheers
+---Dave
+> 
+> 
