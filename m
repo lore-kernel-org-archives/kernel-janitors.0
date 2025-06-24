@@ -1,22 +1,22 @@
 Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id EB690487BF;
-	Tue, 24 Jun 2025 02:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 07F4B126C05;
+	Tue, 24 Jun 2025 02:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750731642; cv=none; b=iZPyFm+Hz0OHsk88kelR2hZiC5i4EHGh75eDTvVtL7XxHd9kcKoLwmmKfgEK93O51SU/Iv3UIGZlgog30aln4oTnQun9rR3/lnrl6KlwSoKgK2VElB6QE66hw6nLNdMVGAaK4vuxuFvEdYhpVRXYorn9fWHwCoKIzoYGGeRk4n0=
+	t=1750733201; cv=none; b=cvjdA5NIUloim45FPji44R1QvdQlMA9Z22ZuSFydNA6MzPiI0cqXeUbuuEQzN7BgyswhIXi5eHV3E63mNpDadj99vE/ju5hn6MKqwH6vGILgkGC6E7K0oOXE1XiIPVhuQp+HvCeEXSnaCFfQXEn8tjvIDALI+adCq2RFYjRtcqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750731642; c=relaxed/simple;
-	bh=zF9394emyJh88B0Ne709HIxYxnkIAYp0BQf2JAnhX2M=;
+	s=arc-20240116; t=1750733201; c=relaxed/simple;
+	bh=UirS17wDlN+uZS5OTCjvwZFQgaINVpMg2H+KdhloJ58=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type; b=eJf4bI7y/kd9y56CWDaEXVpfxR5IxZRycM9beqbjbGD6ItbQLS1dq8HRJT2k/eJMSW0KRX6ep0U+SJSWRlcz5HX/BlRs1pLJUzyB+lDGbx6YYKn0wAt20K3OARmBvlNdEjy8SH1f5RqCT0koW8DFRJRN7pUgLu7cqQK+1lCdf4M=
+	 Content-Type; b=BO7RYNHuML7C9s0L4pHeqipMnOWpb5y5FVBsCFPjGWlmZxM9qv07eJ0MFjT/xvPYoI8rK8MpkJnnhZBUgqUmtiA6243Zh8pIt5A9+eBLq3IuMzUJ8eMiexDpOYBMBoe8SYhi6jh/GCqRKx8mLL4+ghKEoze4nAogt7ikmK80hRo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
 Received: from [172.30.20.101] (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id DD45060108125;
-	Tue, 24 Jun 2025 10:20:35 +0800 (CST)
-Message-ID: <ac035aaa-f7b4-42a6-8f5c-e0a93faf5c6b@nfschina.com>
-Date: Tue, 24 Jun 2025 10:20:35 +0800
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id F201F6018E3FA;
+	Tue, 24 Jun 2025 10:46:24 +0800 (CST)
+Message-ID: <cf505dc6-c123-44fd-9ee6-5aac4764f905@nfschina.com>
+Date: Tue, 24 Jun 2025 10:46:24 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -24,99 +24,60 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/proc/vmcore: a few cleanups for vmcore_add_device_dump
+Subject: Re: [PATCH] fs/resctrl: using guard to simplify lock/unlock code
 Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: akpm@linux-foundation.org, bhe@redhat.com, vgoyal@redhat.com,
- dyoung@redhat.com, kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Su Hui <suhui@nfschina.com>
+To: Dave Martin <Dave.Martin@arm.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: tony.luck@intel.com, reinette.chatre@intel.com, james.morse@arm.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 X-MD-Sfrom: suhui@nfschina.com
 X-MD-SrcIP: 180.167.10.98
 From: Su Hui <suhui@nfschina.com>
-In-Reply-To: <33a9a2a5-a725-4ab0-865c-1d26e941e054@suswa.mountain>
+In-Reply-To: <aFlvTt+GGSIqgOKH@e133380.arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025/6/23 23:06, Dan Carpenter wrote:
-> On Mon, Jun 23, 2025 at 06:47:05PM +0800, Su Hui wrote:
->> There are three cleanups for vmcore_add_device_dump(). Adjust data_size's
->> type from 'size_t' to 'unsigned int' for the consistency of data->size.
->> Return -ENOMEM directly rather than goto the label to simplify the code.
->> Using scoped_guard() to simplify the lock/unlock code.
+On 2025/6/23 23:14, Dave Martin wrote:
+> Hi,
+>
+> On Mon, Jun 23, 2025 at 07:25:41PM +0800, Su Hui wrote:
+>> Using guard() to replace *unlock* label. guard() is better than goto
+>> unlock patterns and is more concise. No functional changes.
 >>
 >> Signed-off-by: Su Hui <suhui@nfschina.com>
->> ---
->>   fs/proc/vmcore.c | 33 ++++++++++++++-------------------
->>   1 file changed, 14 insertions(+), 19 deletions(-)
->>
->> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
->> index 10d01eb09c43..9ac2863c68d8 100644
->> --- a/fs/proc/vmcore.c
->> +++ b/fs/proc/vmcore.c
->> @@ -1477,7 +1477,7 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
->>   {
->>   	struct vmcoredd_node *dump;
->>   	void *buf = NULL;
->> -	size_t data_size;
->> +	unsigned int data_size;
->>   	int ret;
-> This was in reverse Christmas tree order before.  Move the data_size
-> declaration up a line.
+> How were these cases chosen?
+I chosen the code  that match with "*unlock*:" label.
 >
-> 	long long_variable_name;
-> 	medium variable_name;
-> 	short name;
-Got it,  and this 'usgined int' will be removed because of 'size_t' can
-avoid overflow in some case.
->>   
->>   	if (vmcoredd_disabled) {
->> @@ -1490,10 +1490,8 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
->>   		return -EINVAL;
->>   
->>   	dump = vzalloc(sizeof(*dump));
->> -	if (!dump) {
->> -		ret = -ENOMEM;
->> -		goto out_err;
->> -	}
->> +	if (!dump)
->> +		return -ENOMEM;
->>   
->>   	/* Keep size of the buffer page aligned so that it can be mmaped */
->>   	data_size = roundup(sizeof(struct vmcoredd_header) + data->size,
->> @@ -1519,21 +1517,18 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
->>   	dump->size = data_size;
->>   
->>   	/* Add the dump to driver sysfs list and update the elfcore hdr */
->> -	mutex_lock(&vmcore_mutex);
->> -	if (vmcore_opened)
->> -		pr_warn_once("Unexpected adding of device dump\n");
->> -	if (vmcore_open) {
->> -		ret = -EBUSY;
->> -		goto unlock;
->> -	}
->> -
->> -	list_add_tail(&dump->list, &vmcoredd_list);
->> -	vmcoredd_update_size(data_size);
->> -	mutex_unlock(&vmcore_mutex);
->> -	return 0;
->> +	scoped_guard(mutex, &vmcore_mutex) {
->> +		if (vmcore_opened)
->> +			pr_warn_once("Unexpected adding of device dump\n");
->> +		if (vmcore_open) {
->> +			ret = -EBUSY;
->> +			goto out_err;
->> +		}
->>   
->> -unlock:
->> -	mutex_unlock(&vmcore_mutex);
->> +		list_add_tail(&dump->list, &vmcoredd_list);
->> +		vmcoredd_update_size(data_size);
->> +		return 0;
-> Please, move this "return 0;" out of the scoped_guard().  Otherwise
-> it's not obvious that we return zero on the success path.
-Yes, it's better. Will update in v2 patch.
-Thanks again!
+> I notice that this patch only handles some straightforward mutex_unlock()
+> cases.  There are other opportunities in some places -- particularly
+> alloc/free patterns.
+Yes, as Dan mentioned[1], there are too many these patterns and I'm not 
+sure how
+much value we can get to do this things. This patch is a try that using 
+guard() to
+remove some  lock/unlock pattern and simplify the lock code.
+> Overall, I'm not totally convinced that backporting the guard()
+> infrastructure into code that wasn't originally written to use it is
+> always worthwhile.
+>
+> If the code is simple, there is not much benefit.  Otherwise, there is
+> a significant chance of unintentionally changing the behaviour of the
+> code (though the exercise may be useful if it identifies actual bugs).
+>
+> Either way, such changes will get in the way of people who are rebasing
+> on top of this code.
+Got it, it's ok to omit this patch. It seems this patch has not enough 
+value.
+> FWIW, this patch looks OK though, and the diffstat looks reasonable.
+> Since this code was recently moved into fs/, diff context noise may be
+> less of a concern.
+Maybe only for some complex lock/unlock code, guard() can bring some value.
+Thanks for your advice!
+
+[1] 
+https://lore.kernel.org/all/d07fe2d9-3548-43fc-b430-2947eee3145b@suswa.mountain/
 
 Regards,
 Su Hui
+
+
