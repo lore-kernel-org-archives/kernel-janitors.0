@@ -1,74 +1,73 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5A12550D3;
-	Tue, 24 Jun 2025 20:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAE92E9EB4;
+	Tue, 24 Jun 2025 20:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750795858; cv=none; b=iIO+mXWZcll45l0JKchCNpuZHpaPhxqmFzInl0SvbX42tcuJhrkmuSwqm5nW8XnoYN4Ud3s1htkGxP0d6HTaQwpjsSD4mXcGAX4YDqXuOBASJeQBlSg+ZlIP7bW4kwW0eGN03VYbDVchskX4HusTm0dRrhzlpGR1u7X17gGfveQ=
+	t=1750797002; cv=none; b=Gy7KCe82B2CBVaM5wbMiJlVjCXNrl28xOPBs2xQDrEKf7i0mzDz5SCMo4KoYWKFXHNlyI5ETPcftQzCJVAyq7C/TtxaYGObXFsAK2iXb59Se1nr0r/SYSlyJgv77zYFQUPHmDidY79VlgLy2LOpkaESlpCp5kZU3hIow7jmZfCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750795858; c=relaxed/simple;
-	bh=JlD2kJrgCeZ7ncyAtBQx8f8fxawQsSq8+cjsUKPRDLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AhG5sP4SJIdS1FDkzp2piD6s0dHbEIu6H80drsENtlqaAlHw1Pyr/ihl6NUBoYQ7t3NZwtLBQvu7OGj5QJ065tF8HEFgx5F/suFd1jwLlgnCGCDNHQsyFG9CmEUef0HEabpVFv7+O8HQ4cOf1dO+n/9otqRbPZNODZE0cG6aTgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cskvL3f6; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1750797002; c=relaxed/simple;
+	bh=G5jHjUAFPaNxb766dDm6aPO5ukHke3MtXDLhg1dG6YY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XC9S6faHHUJE5rk964vezRzv8mA5UK8/iDdTNsITNN3IzjW9aDT8CS/p+dmLRG1CTIDf8/jfMN2CfcV3U5D+4OT+49rqBn185tvzfWBKZIqzPYxu7eVPDYmNW1BdSI7SBngSI2vmYWwLrnwbOvYLHx4sMYyHMBxj3bbYgx3ybMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxnD+2w/; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cskvL3f6"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a525eee2e3so665927f8f.2;
-        Tue, 24 Jun 2025 13:10:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxnD+2w/"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3a6d1369d4eso588552f8f.2;
+        Tue, 24 Jun 2025 13:30:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750795855; x=1751400655; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1750796999; x=1751401799; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g+EJQwxgA1QAPlqaW5RHzy9qtr5q8oppkK//j8Vgygw=;
-        b=cskvL3f6LFMM2fnt4V+BA/ETAKf/k2YBuhDEzArgqW+CMZpUFUX08gCyjZ+fODaNGs
-         zYPazUwWnAFy+G1dcRGDcouzPwKUSAFvZubguCPMvzVTiewJapovB2+TzqfP1kGg7LI/
-         o92iPHrI1SzY8clVvuv0F+IfTpDhciz1fXKarY6i0fiCiQq40LW/kvQ8KZP0z5sdNmpB
-         QyYOsO0Kdpp6jWT0j+KIeHaRZ0o6aEG0IDHq08bOoJtgSYVYahFMTv1kBB7Th/M2UHxc
-         4HVOl/lwlj/Twfv4vvKe6L7u1SyEojQ7yLFGSGiZsw8owv0tapvg6ntxMCsRsGYK4D4n
-         tbcA==
+        bh=cc1cJV8t9VucNYTqwHrmhx6iEFKvUQnQDzRDdocCpb4=;
+        b=KxnD+2w/QDVTMYS+KSpYaZ3IPmwVMpqex88t5g31MygVz4ojgC5UX9lJUmUbQcGozq
+         WQ1qCQwORp1JQN3Gcdc9nTfaDJF/UX8p+J7/S22xD1NMB9BhCzo3dKPQJxzU7OL+izP9
+         XBdmPVjwKxeSdKovcwp6LowwXOjPWsizi5e8Hck7w1SVdJNK+De3Ts/1QmB8VMritpxG
+         2+JnrYaBqbOIjDR3RyrH4ih2bsn0fl040MISY1UYEmoKz0dMUdFG8TjqBsCnCweZHkj6
+         QZv8ejhi38h2yWibsQ4dBmo9PiPMSLPET8lwe9O7AUeaSIr6CLLujSy7N4c2UBgW58x5
+         +Fww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750795855; x=1751400655;
+        d=1e100.net; s=20230601; t=1750796999; x=1751401799;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g+EJQwxgA1QAPlqaW5RHzy9qtr5q8oppkK//j8Vgygw=;
-        b=T11mFuf3uKZ3eHOQy6Iy5sOwOF6LkPqXfXmx5JxESNRQKPOM3HdP+8G5FvHpBIDGfr
-         hlulwT8K27F2NAh6NwzKLp6EwoCJ9S3f22SfJqUYkxYYNdz6HaU9/QHc8lejgcw0iMo0
-         dbj0QBYZR0Gs2M9VMj9L6dZUNvQhsBFkNLT4xA0SWzvXeGIfFpBrYYFg7nEVZIhSKoWT
-         PUVhbwdrQhJwltTOE5j+OigALGmDIU/3bwN2OpWte/5L70hUpun34nrg06GztYnThXXg
-         89wIRfhF4pMQw2Q+iCm9JCuoMkfLpiawGwPdJ0c34syQXQQ9th+NoSX0V//sw08Vx68h
-         yqpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlnaSG++q6iZD32vXatgMWE3MBeOwdxxY7rzBihmWXIsMfyWm3UzbgxLbGeSPAIuiJbjCFSo52Pwq1@vger.kernel.org, AJvYcCXVP5wq7vZARLgJEgR4N1jc0biylhW6UwQi0KE1Vzf/h216mkvKROEBzBkqzLH68qhyR3SxcXQpYkE9NNmF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyotBhY6gGx1rydWin4ZBnOIqeiPPFAD3XavbPUBsp4tVFBwFQF
-	OiyX2yJ9IUJtsZpRhu0LKRx/VgH2weZDK48cU1+XsmQH52aOMRWRnkVyMESMtn32fyrKeA==
-X-Gm-Gg: ASbGncutI8AqgD3PeiJ97GaqWX7RHFAUvFapY1xfEHTRB6Zim0nlRvTnRhqNMsV9+//
-	/N5RosaZfNLy10YYlk62OwFDkJWoLVGp1nTaSIg2nc3qIo1nM4wlk/fY+NvKpVCNF6WQ8XkbAdj
-	j61UKW5t104Q9FuQvt2s9nDL0RPd38x2AlbaQOgKSWX9Bj3y5odn4rTSiWuAYKfYw8xiLavE4JY
-	jsa4cJwwVcGEELR1Grg4oNqlqMNJYqRXfYTaF+ZkpMye3jgIvdgcX4xuuLW0rMZF/E7Z8aYggov
-	HD/Ro9ba7v2+reTXYA7nTGwvgbkxrje8VEZP7VNTlIY9tfqXFuCcTG/9iIWj
-X-Google-Smtp-Source: AGHT+IFKjM+l9vmEEfDVCAbunK8mHOAF5id7fUaBlCgq+G5ofMcSJEX58QDiC6EEZnpWyYVpvcTOhw==
-X-Received: by 2002:a05:6000:42c6:b0:3a5:39be:c926 with SMTP id ffacd0b85a97d-3a6ed6647a5mr34940f8f.32.1750795854799;
-        Tue, 24 Jun 2025 13:10:54 -0700 (PDT)
+        bh=cc1cJV8t9VucNYTqwHrmhx6iEFKvUQnQDzRDdocCpb4=;
+        b=hmwQV6uIFYGe4HE1K4YP7URDcL/q5nKA723cxCVeGAndlerwXk5DZJnMIdEZsjoagf
+         BWBIRstS+G+eyuzFNoT8qROK8xivQ+pV9Lb0bvimCBvdVeveCj/++vD1m+8VG2UxEkCg
+         LlHszPIE+2q7y/eMuVXVtfp6aL3ivcc4q8rSYxnoWacdXKVqWmvFApNMqj1DrzJwo1Vc
+         ryb09SuWJIIw6pNfVPkxfMUZrfZlXA8YZcxQQowviaWhDQXV6zRnk8J9yBB6Zq8IzXbI
+         gwRXb7oifhFVwJwriYa4vhXOZZ9pXoOtUcZ0JkSHEOP+snZ/HbAo8V1Wlh4C3NhTxCvF
+         9UWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUADtnpzcDKzY30nhJ004k8eDDLHUlCsMXbrrTJiyxeiVqwLlevNlAeeEvYF9EI7J3k2MF6jshqk/m@vger.kernel.org, AJvYcCWXB+tSItltDj023XIhpp/iWojrZPv0+pFg4w0eCEsMFbgDKjQ6lHlBv8OqBVWipDMcs2xEVwxtLw8itrWM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnYHcpdOTQRhsqWP8OpcyGW7IfZbzGa/g5V3VHiCNLmUhxoUAG
+	FL4G2/woMRRKF+HuzBAzHb3H3DZjO4o+uMOgfUHgwIOlX3PXGJQUbguh
+X-Gm-Gg: ASbGnctk+S/Baw4REiK0P4xs9VdWsen3JtoH8x3mYL5Xhx87a48LDwC36b4PZMQo1en
+	M0RKYQ+WfeF2hovcv5qs4+pGbxqhmhIPlrnZGOwccmCNICTG4zweGlpeoyET8hNo/JqY6ahT+SK
+	88asyeL+SjMPE+0j2fNEvy2kvf29YL7a6z/rz9Tk3im3Uj0BS8S6TIZgK5+U/lhc0saiFy+ldFX
+	j/wOSOm+PG3E+RQpxgUBl2AHt3yYUcyU6rvCrHP55lqdVJfJ3ah3od2xwJj7MhDwdukuX/28sxs
+	6SJxScACJtGzvi9iIVPppaoP/186AO5ASjOApZMto/fcvY5agnrmhhd3MI/XhdvdF+HO/wQ=
+X-Google-Smtp-Source: AGHT+IHslSSf7KvDz7QkNZn4Jopu99GX8X8EENWK+B96+OCkA6cc2nKI3QeRmFM3Q4mtkbi5MWCS8g==
+X-Received: by 2002:a05:6000:4a0d:b0:3a1:fcd9:f2ff with SMTP id ffacd0b85a97d-3a6ed60c8d2mr137549f8f.12.1750796999442;
+        Tue, 24 Jun 2025 13:29:59 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45361461375sm169031595e9.14.2025.06.24.13.10.54
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4537c6e2f64sm13745905e9.2.2025.06.24.13.29.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Jun 2025 13:10:54 -0700 (PDT)
+        Tue, 24 Jun 2025 13:29:59 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
 To: "Rafael J . Wysocki" <rafael@kernel.org>,
 	Len Brown <lenb@kernel.org>,
 	James Morse <james.morse@arm.com>,
 	Tony Luck <tony.luck@intel.com>,
 	Borislav Petkov <bp@alien8.de>,
-	Zaid Alali <zaidal@os.amperecomputing.com>,
 	Ira Weiny <ira.weiny@intel.com>,
 	linux-acpi@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ACPI: APEI: EINJ: Fix less than zero comparison on a size_t variable
-Date: Tue, 24 Jun 2025 21:10:32 +0100
-Message-ID: <20250624201032.522168-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ACPI: APEI: EINJ: Fix check and iounmap of uninitialized pointer p
+Date: Tue, 24 Jun 2025 21:29:37 +0100
+Message-ID: <20250624202937.523013-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -79,28 +78,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-The check for c < 0 is always false because variable c is a size_t which
-is not a signed type. Fix this by making c a ssize_t.
+In the case where a request_mem_region call fails and pointer r is null
+the error exit path via label 'out' will check for a non-null pointer
+p and try to iounmap it. However, pointer p has not been assigned a
+value at this point, so it may potentially contain any garbage value.
+Fix this by ensuring pointer p is initialized to NULL.
 
-Fixes: 90711f7bdf76 ("ACPI: APEI: EINJ: Create debugfs files to enter device id and syndrome")
+Fixes: 1a35c88302a3 ("ACPI: APEI: EINJ: Fix kernel test sparse warnings")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
  drivers/acpi/apei/einj-core.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-index d6d7e36e3647..7930acd1d3f3 100644
+index 7930acd1d3f3..fc801587df8e 100644
 --- a/drivers/acpi/apei/einj-core.c
 +++ b/drivers/acpi/apei/einj-core.c
-@@ -909,7 +909,7 @@ static ssize_t u128_write(struct file *f, const char __user *buf, size_t count,
- 	u8 tmp[COMPONENT_LEN];
- 	char byte[3] = {};
- 	char *s, *e;
--	size_t c;
-+	ssize_t c;
- 	long val;
- 	int i;
+@@ -401,7 +401,7 @@ static int __einj_error_trigger(u64 trigger_paddr, u32 type,
+ 	u32 table_size;
+ 	int rc = -EIO;
+ 	struct acpi_generic_address *trigger_param_region = NULL;
+-	struct acpi_einj_trigger __iomem *p;
++	struct acpi_einj_trigger __iomem *p = NULL;
  
+ 	r = request_mem_region(trigger_paddr, sizeof(trigger_tab),
+ 			       "APEI EINJ Trigger Table");
 -- 
 2.50.0
 
