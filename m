@@ -1,143 +1,222 @@
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEA822173D
-	for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 22:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AACA2D;
+	Tue, 24 Jun 2025 00:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750719368; cv=none; b=NqW68vA/W6INsg5vfZ9k3t/ivum+KydyLD2LTz2CWAttcqffkz/wAC6Zj3v29sE0HkQX8uCSjzjzG4pYkEigr869pY3zdgb7n2GW1Y8jqQP5leB7tF405Lt3v1URL/Ns0P05+nc8J2PMxIcxv9MIxQVZtN6DUVO4n0VUboHx8Bo=
+	t=1750724367; cv=none; b=YPA6eTdybKNtfd4w6UwUUuXMhJBMXWrSAXjtR2ad1QHKp4NnGNYGEneGLWS+GMesL1WhzBvH1Fqr1RvmY5z7wpW5r+lmge02fswYLbaYN+UCBi5aOW9UF8xjQy07pMu21ASYH6HsmUYwv8eDloppbTxaTTJqZxGXKRiq+XQ5FQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750719368; c=relaxed/simple;
-	bh=gO+eL83KdifAzJPi0HCo9DgdX1PW4Hs4m00dnR5SKys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubm4HfZCumnuM3wAqRPG1Eea4MJKygQb01IHG3tZzs8aLF+Pk+a+s9wls/hnwAsH57gilMXFatGuJXSZEO/B6Ww6iN40bMMS4EiMLhkdJp16OzX6OpYQnWluW3jn5Ew+IZUcK4O2E9QUEN5SJtOlhX3cCJPvX4dj14E3DR6SMp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fK1qWRxx; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fK1qWRxx"
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-739dcdb012fso1295429a34.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 23 Jun 2025 15:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750719362; x=1751324162; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCYGlmL5zX2bvvlJbBCCxMvXekeyhiCldD5Z4r6oMog=;
-        b=fK1qWRxxFk8KoA9+HYzWPLHkjFtZFRBra9lBnYbWdMaj4sWY7PO4Yv4XgdxADr06iv
-         15RJv35vb9BlFUgT4Avxvj+Lt7HmEIUuzmY0anbU1z4TiVNB1kUstDgjR0iqF7EiGtPG
-         GaXPnKS+58dBGti5EI1tDKWNGYQNSaVcVx3NSZEXtaCrrL1hnZAuMJPmKhnSVd4jSRPZ
-         cDW8AtlLCS4QWUBy1LPBlDMEjvean8CV9/2ajPpaZIoWD9///VCoRytUTg55SaiIwytA
-         Y0vQb/nia6kOlXTKXSgwxC8/QbXSi++g9Moi0oJjrpQlCPBXXC8FSDNUdiDmCIXjiJKL
-         73AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750719362; x=1751324162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kCYGlmL5zX2bvvlJbBCCxMvXekeyhiCldD5Z4r6oMog=;
-        b=Dx0r+7UTv7L61wGIVgPkPqtHviiJhNrMRf/M6n83Hto/w0zH4oSzeXAundTPxlB+zY
-         6YGO6AiXO5f8LBX2LhBV4ALWNGSy5eG5CNHJe8p2tJ+JhZ3l2LTwzGyG8ZE/HsFCl3U/
-         v/pd9X5Hf3h1Wo6swfyqAj76Vo4lHUOG/wgy3eyL1oGXK8zQy4J8JwTKMX/pepBxkANC
-         N1f4ThqxH37KryiCLNQPlhd3HhJfCn/CbztI7uvmC6Ia9Dz4Jf+NIOCHPDvsSHe5EUBa
-         Z2p+aUVLXaiWVkE4tbFMe8ekRGspxJ0cCIsgGq6hxE+mBMoR+loJZW5sd31WzFK3GTcF
-         7JNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtxpDbdHo/10v7myRDBYlMbZ5dl7XTN0/LccO52KE6Y2NB4a7Xstpn4G2gI9eQze1vShM6uulGJqlLZCL/Ke0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/jJIyBa82/exXiNj0Dn7SovtjMvKmazbu0AOrWVQp04fEcnmS
-	jjyQOVk2SDTbbHwRODTrNNuHMygnf0BUKNbhiwntNUcEKtXRyLX0eXo3a2F4Unv52Ss=
-X-Gm-Gg: ASbGncvWpoEQVITz1KL57QT9FZRXIW5RGz68H9DXMSbCE/u+HPUYLA3WBoVtw6lrFj1
-	P/fyadtsN/IlcaTTkxkaG0JS/pmOGjkrsXzDyfEWR5uoyxFA+04NtatXENcBJ8r6pp2Ii4X4G3p
-	mda3AEOIckhUHqGj3oxgGv4fNyKtECdmXJCSZsz1ZZmSM/i14PjEc24l7occiuOsJVqA9hT1O/c
-	0ly0gqmhBeb7Hjno+h0paFplVhzX4rMoMcwk+INJvsa0MFqbhwztYOVgfYDM1Zq9FRToquCveU1
-	b3+ibAF04hJW/5l9pK9lrcY80TYnudb/1QbqjlPHGaJjNuFMRvn5hLq7h8YyTq6dO5Q0zA==
-X-Google-Smtp-Source: AGHT+IH2qJp3cfXp8vqsQfiwtJzTBVtR00oSUzJTlWLB1sUQjr8uuhV9Ojft3NeNTOmhlhWt7+2srA==
-X-Received: by 2002:a05:6830:8104:b0:727:3664:ca3a with SMTP id 46e09a7af769-73a91870a2cmr8528739a34.0.1750719361986;
-        Mon, 23 Jun 2025 15:56:01 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:8c3f:8b5f:5c74:76a9])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a908bc982sm1612798a34.0.2025.06.23.15.56.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Jun 2025 15:56:01 -0700 (PDT)
-Date: Tue, 24 Jun 2025 01:55:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Dave Penkler <dpenkler@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Rubin <matchstick@neverthere.org>,
-	linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] staging: gpib: fix unset padding field copy back
- to userspace
-Message-ID: <30c88178-173e-4432-ab2f-beb26ab9d0b7@suswa.mountain>
-References: <20250623220958.280424-1-colin.i.king@gmail.com>
- <cc005697-1911-485f-9c50-30442558851c@suswa.mountain>
+	s=arc-20240116; t=1750724367; c=relaxed/simple;
+	bh=PavnqtiwB/fsXssZwmJ6jM960QXao6ToQorgMfbx6B8=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=RTLCx9tVGU/f2zW7gWAdgfcqJBnde5aN91HcW8Gu3AcDDt+kbxt2nrys04z5m+A1cfSOD8lASouH0LMoEF5Pmq9tH6NkoGJ+LwfJSm5RYTRIMVHLVgtZxf2AUmZOxVnrKlvczEAVPaxtRIIfGGn57oMpm9hFj1sktYeyspANsV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uTrNf-003YDs-0I;
+	Tue, 24 Jun 2025 00:19:19 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc005697-1911-485f-9c50-30442558851c@suswa.mountain>
+From: "NeilBrown" <neil@brown.name>
+To: "Su Hui" <suhui@nfschina.com>
+Cc: chuck.lever@oracle.com, jlayton@kernel.org, okorniev@redhat.com,
+ Dai.Ngo@oracle.com, tom@talpey.com, "Su Hui" <suhui@nfschina.com>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
+In-reply-to: <20250623122226.3720564-1-suhui@nfschina.com>
+References: <20250623122226.3720564-1-suhui@nfschina.com>
+Date: Tue, 24 Jun 2025 10:19:16 +1000
+Message-id: <175072435698.2280845.12079422273351211469@noble.neil.brown.name>
 
-On Tue, Jun 24, 2025 at 01:25:14AM +0300, Dan Carpenter wrote:
-> On Mon, Jun 23, 2025 at 11:09:58PM +0100, Colin Ian King wrote:
-> > The introduction of a padding field in the gpib_board_info_ioctl is
-> > showing up as initialized data on the stack frame being copyied back
-> > to userspace in function board_info_ioctl. The simplest fix is to
-> > initialize the entire struct to zero to ensure all unassigned padding
-> > fields are zero'd before being copied back to userspace.
-> > 
-> > Fixes: b8394732ff0c ("staging: gpib: Add bit and byte padding to ioctl structs")
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> 
-> The fix is good, but the bug has been there since the driver was
-> introduced, it's only just now that the static checkers have started
-> catching it.  Oddly/sadly Smatch doesn't catch this one.  I'll have to
-> investigate.
-> 
-> Fixes: 9dde4559e939 ("staging: gpib: Add GPIB common core driver")
-> 
-> regards,
-> dan carpenter
+On Mon, 23 Jun 2025, Su Hui wrote:
+> Using guard() to replace *unlock* label. guard() makes lock/unlock code
+> more clear. Change the order of the code to let all lock code in the
+> same scope. No functional changes.
 
-Fixed.
+While I agree that this code could usefully be cleaned up and that you
+have made some improvements, I think the use of guard() is a nearly
+insignificant part of the change.  You could easily do exactly the same
+patch without using guard() but having and explicit spin_unlock() before
+the new return.  That doesn't mean you shouldn't use guard(), but it
+does mean that the comment explaining the change could be more usefully
+focused on the "Change the order ..." part, and maybe explain what that
+is important.
 
-We should still print a warning about empty bits after a bitfield.
-I bet fixing that will find a dozen bugs at least...
+I actually think there is room for other changes which would make the
+code even better:
+- Change nfsd_prune_bucket_locked() to nfsd_prune_bucket().  Have it
+  take the lock when needed, then drop it, then call
+  nfsd_cacherep_dispose() - and return the count.
+- change nfsd_cache_insert to also skip updating the chain length stats
+  when it finds a match - in that case the "entries" isn't a chain
+  length. So just  lru_put_end(), return.  Have it return NULL if
+  no match was found
+- after the found_entry label don't use nfsd_reply_cache_free_locked(),
+  just free rp.  It has never been included in any rbtree or list, so it
+  doesn't need to be removed.
+- I'd be tempted to have nfsd_cache_insert() take the spinlock itself
+  and call it under rcu_read_lock() - and use RCU to free the cached
+  items.=20
+- put the chunk of code after the found_entry label into a separate
+  function and instead just return RC_REPLY (and maybe rename that
+  RC_CACHED).  Then in nfsd_dispatch(), if RC_CACHED was returned, call
+  that function that has the found_entry code.
 
-regards,
-dan carpenter
+I think that would make the code a lot easier to follow.  Would you like
+to have a go at that - I suspect it would be several patches - or shall
+I do it?
 
---- >8 ---
-[PATCH] rosenberg: warn about uninitialized bitfields
+Thanks,
+NeilBrown
 
-You could have a bitfield where not all the bits are set.  Warn about
-that.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- check_rosenberg.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/check_rosenberg.c b/check_rosenberg.c
-index 22df8a3e5b64..80e15f2cf5ec 100644
---- a/check_rosenberg.c
-+++ b/check_rosenberg.c
-@@ -221,8 +221,12 @@ static int member_uninitialized(char *name, struct symbol *outer, struct symbol
- 	struct symbol *base;
- 	struct sm_state *sm;
- 
-+	if (!member->ident)
-+		return FALSE;
- 	base = get_base_type(member);
--	if (!base || base->type != SYM_BASETYPE || !member->ident)
-+	if (!base)
-+		return FALSE;
-+	if (base->type != SYM_BASETYPE && base->type != SYM_BITFIELD)
- 		return FALSE;
- 
- 	if (pointer)
--- 
-2.47.2
+>=20
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+>  fs/nfsd/nfscache.c | 99 ++++++++++++++++++++++------------------------
+>  1 file changed, 48 insertions(+), 51 deletions(-)
+>=20
+> diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
+> index ba9d326b3de6..2d92adf3e6b0 100644
+> --- a/fs/nfsd/nfscache.c
+> +++ b/fs/nfsd/nfscache.c
+> @@ -489,7 +489,7 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned =
+int start,
+> =20
+>  	if (type =3D=3D RC_NOCACHE) {
+>  		nfsd_stats_rc_nocache_inc(nn);
+> -		goto out;
+> +		return rtn;
+>  	}
+> =20
+>  	csum =3D nfsd_cache_csum(&rqstp->rq_arg, start, len);
+> @@ -500,64 +500,61 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigne=
+d int start,
+>  	 */
+>  	rp =3D nfsd_cacherep_alloc(rqstp, csum, nn);
+>  	if (!rp)
+> -		goto out;
+> +		return rtn;
+> =20
+>  	b =3D nfsd_cache_bucket_find(rqstp->rq_xid, nn);
+> -	spin_lock(&b->cache_lock);
+> -	found =3D nfsd_cache_insert(b, rp, nn);
+> -	if (found !=3D rp)
+> -		goto found_entry;
+> -	*cacherep =3D rp;
+> -	rp->c_state =3D RC_INPROG;
+> -	nfsd_prune_bucket_locked(nn, b, 3, &dispose);
+> -	spin_unlock(&b->cache_lock);
+> +	scoped_guard(spinlock, &b->cache_lock) {
+> +		found =3D nfsd_cache_insert(b, rp, nn);
+> +		if (found =3D=3D rp) {
+> +			*cacherep =3D rp;
+> +			rp->c_state =3D RC_INPROG;
+> +			nfsd_prune_bucket_locked(nn, b, 3, &dispose);
+> +			goto out;
+> +		}
+> +		/* We found a matching entry which is either in progress or done. */
+> +		nfsd_reply_cache_free_locked(NULL, rp, nn);
+> +		nfsd_stats_rc_hits_inc(nn);
+> +		rtn =3D RC_DROPIT;
+> +		rp =3D found;
+> +
+> +		/* Request being processed */
+> +		if (rp->c_state =3D=3D RC_INPROG)
+> +			goto out_trace;
+> +
+> +		/* From the hall of fame of impractical attacks:
+> +		 * Is this a user who tries to snoop on the cache?
+> +		 */
+> +		rtn =3D RC_DOIT;
+> +		if (!test_bit(RQ_SECURE, &rqstp->rq_flags) && rp->c_secure)
+> +			goto out_trace;
+> =20
+> +		/* Compose RPC reply header */
+> +		switch (rp->c_type) {
+> +		case RC_NOCACHE:
+> +			break;
+> +		case RC_REPLSTAT:
+> +			xdr_stream_encode_be32(&rqstp->rq_res_stream, rp->c_replstat);
+> +			rtn =3D RC_REPLY;
+> +			break;
+> +		case RC_REPLBUFF:
+> +			if (!nfsd_cache_append(rqstp, &rp->c_replvec))
+> +				return rtn; /* should not happen */
+> +			rtn =3D RC_REPLY;
+> +			break;
+> +		default:
+> +			WARN_ONCE(1, "nfsd: bad repcache type %d\n", rp->c_type);
+> +		}
+> +
+> +out_trace:
+> +		trace_nfsd_drc_found(nn, rqstp, rtn);
+> +		return rtn;
+> +	}
+> +out:
+>  	nfsd_cacherep_dispose(&dispose);
+> =20
+>  	nfsd_stats_rc_misses_inc(nn);
+>  	atomic_inc(&nn->num_drc_entries);
+>  	nfsd_stats_drc_mem_usage_add(nn, sizeof(*rp));
+> -	goto out;
+> -
+> -found_entry:
+> -	/* We found a matching entry which is either in progress or done. */
+> -	nfsd_reply_cache_free_locked(NULL, rp, nn);
+> -	nfsd_stats_rc_hits_inc(nn);
+> -	rtn =3D RC_DROPIT;
+> -	rp =3D found;
+> -
+> -	/* Request being processed */
+> -	if (rp->c_state =3D=3D RC_INPROG)
+> -		goto out_trace;
+> -
+> -	/* From the hall of fame of impractical attacks:
+> -	 * Is this a user who tries to snoop on the cache? */
+> -	rtn =3D RC_DOIT;
+> -	if (!test_bit(RQ_SECURE, &rqstp->rq_flags) && rp->c_secure)
+> -		goto out_trace;
+> -
+> -	/* Compose RPC reply header */
+> -	switch (rp->c_type) {
+> -	case RC_NOCACHE:
+> -		break;
+> -	case RC_REPLSTAT:
+> -		xdr_stream_encode_be32(&rqstp->rq_res_stream, rp->c_replstat);
+> -		rtn =3D RC_REPLY;
+> -		break;
+> -	case RC_REPLBUFF:
+> -		if (!nfsd_cache_append(rqstp, &rp->c_replvec))
+> -			goto out_unlock; /* should not happen */
+> -		rtn =3D RC_REPLY;
+> -		break;
+> -	default:
+> -		WARN_ONCE(1, "nfsd: bad repcache type %d\n", rp->c_type);
+> -	}
+> -
+> -out_trace:
+> -	trace_nfsd_drc_found(nn, rqstp, rtn);
+> -out_unlock:
+> -	spin_unlock(&b->cache_lock);
+> -out:
+>  	return rtn;
+>  }
+> =20
+> --=20
+> 2.30.2
+>=20
+>=20
 
