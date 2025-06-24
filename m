@@ -1,176 +1,141 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690952E62A1;
-	Tue, 24 Jun 2025 14:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689002D877E
+	for <kernel-janitors@vger.kernel.org>; Tue, 24 Jun 2025 14:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750776224; cv=none; b=a3Pff/isyShgm+BNDhLix6AFjw++udjnkbZQy+Nw/72AYmm45eV9LKQia3BCHktnTCWv+yoBEYHYlPXd0ZC1aYPJK2NkwLgaKAqxivK98wf79SMc2J5b4QurngEvQypRVmOW76mNiOXpZyMjkFE97RDUok/EjqsGj99dTm7PNLQ=
+	t=1750776587; cv=none; b=Cr1ujwvTDy3dfONzDMfy3+to2LhnQ8e1e+Unt1HqiQ5eg4pdXIbKy69I87zaZtLCcFbHqkrD6DrYdMjJy+XauNnIMLtiS45M43ae2/FfkuMmxGjzoA5Msvu9enhg4LCEnhc4K+rvc3MapVVgONTLmV73MeS8L8IQqQMK7eycGoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750776224; c=relaxed/simple;
-	bh=Y7BP8KdPd8H6cxd2c8dwNisTp7TEPtBxOSdosnEuTr8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jTcSBzOet8qWeFh2bHH4TxG1NpzZ3o7cPGTxTpAoplkXITvjOdeZK3q3wkESEOS+vslYOyGh/aCYqZWuvpJ4qzN37zghlMmzdp+5iWnfa4iFZ2NOHvIcOjCRFn1ZlhOV54JPgHfI87dRxgboIuWH1L5OqGKpgiAs3U0Q+CQBWys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=S3y6qg2Y; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1750776587; c=relaxed/simple;
+	bh=3PBHHUZgAT4HpCnmQF7y8YTzpCi6cJ8shRi+Dro0qp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sun72c7nA3rg1d9ze8tfa/eYLKaNKDO/LTxjLPI15+GmNrllOgXWfTCxfTaPDhO1h1lGzRiIQigxztkmOo05wJ/WxIT2BXjIs0ddL1GszL4D282JWFpiA8u1y3hwXgL6Z62tj1qEKhxaSke0Ia2kdh6prD9/+kzk7YojOanvHKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ohfbkb+a; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="S3y6qg2Y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1750776196; x=1751380996; i=markus.elfring@web.de;
-	bh=slW1HY6NogLYGpkBA3UndyleR92HTWdOgcZcNz1CxfI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=S3y6qg2YxQOAz4en194ljaCRjuxyoyAkS/MvRk/bPNjjCho0wCppuruhe09MS31q
-	 0CMp+nYPuPvdfcQ2v1cnuFmKz1BIrBSkQbk4izL9JAMXzHOyEQuaZsDxU+ww7VMkC
-	 j/rdygfiv7QUjphvS+hHKP5kx2EyMXC+Wf3sL8a7hm4mYcm2reif/tX6BJwUDGBJm
-	 SXdhoGWqTX8Qn3GVGha5+Mup9dahy+tbC7kaDB/JykmVbSWjXFEyBjtxHNOqHlC7H
-	 +JxWWMMbFfGT8tfUl4tOUuo7PFIj2ogDawhctLkPuZpwwg9cF8hcKLmjsCrRzncEv
-	 RjXGxcu5KA3ARjCA7Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.200]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MWi5i-1uEggu28gy-00Q4GN; Tue, 24
- Jun 2025 16:43:16 +0200
-Message-ID: <b4544835-2cac-4501-bcf4-6f105e3667d4@web.de>
-Date: Tue, 24 Jun 2025 16:43:10 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ohfbkb+a"
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2db9e29d3bcso181762fac.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 24 Jun 2025 07:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750776584; x=1751381384; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=f17suXwGZaWKYHNj2hVCx02g00hUtF+cxL8n4hLFrwM=;
+        b=Ohfbkb+aFhK5vUV0D/KEb93IXfquZAtN14F2Ud0xKskKLIGMTtPY9BAm1Wbhig2DlV
+         g++f1kStrEZOH0mRu9RhczN62kxc6ARWZ3AuBn16KodYGRNTYlFozSu9Y0cTahhLBZwn
+         KBsipaeRw5kcaYL9zpjunCYSsqV5rEduHAZy4VsSrt1nflaFjfx4PeaDjexjvdYslPTc
+         xCAXeuwU6oPMoYmEKoCvS0Q5Rr2MsSx++H4IeWnq6xFW56mc8nPoUW1ekDWz9mxRtDxy
+         guQaU2BnlsWMtipNUcbvqxAPuLHFYVfQPUYv22bgzaoOl1fLhPRaQMXGSAp26NkDVYtt
+         9EeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750776584; x=1751381384;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f17suXwGZaWKYHNj2hVCx02g00hUtF+cxL8n4hLFrwM=;
+        b=VSeyghCo0FXKV8bYXIG/IWmDTkbT3dtVcSAZx3jExLaD2s0DWFdnsYRKkE3k/RnlyQ
+         vThA+OI2FwgD2mcG92e4SYGP+7BRL/cKYtKBUvIW/XkRAIX/EMNnhLaVFba+LBVvyVpA
+         ExosxTmwZSxUYubj5KhJWvX8baC9Hx8pkpntjlZ3svfW6xvJKsVks890dSF1WqJrXP9e
+         oQz5Rz5LEmz5qyHIbUevIKncdpcqFRmiC84KY83cvcaExB9dAiT0TVS79MGaEUoyl5gF
+         HoMaqR71CCsMf8PWkZ3dbiLPE18f7TCl5hJ+cV+Vg8uQGUh2ZMwMo4QKnMMxZXR0apA8
+         0wNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCgqcMv3JF7zSlDfQpffopngPH9G+EmCKhw9odm6g3BBFvDD82mBsqkL+TcHv76mPIaHr6k01u0HHstXjVgaQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtrdDvesXGezsMNiV4B0XGMEfCs7DtD+tFV4/CI6s+evxOLb95
+	tk5D2+lzUAIAFWS+LSxzy5tUkD3q7JLUORQeBoXJSFlFhs/C371zNEia8eAe8oODXLg=
+X-Gm-Gg: ASbGncuYFR9ujUWFWfvk7xfgolFutdpT1VUW2lMGLyEeBwMiFNH1nPuAq93Wh9P8M10
+	HDIKjOf9dJoOSFRtc1Ll4xQp/rOEwvvjqkusghScolwtGKwMUB2iDoEYSQS6MD+yEowGjoQ/k1s
+	yPZgX7eo0FvlRErjoL7xZtLYvDR4J22xweV9OOm6jBftEzJChW8j9+mXmrrin6wjzgQicgucdvY
+	/yYT2ow56mdYv4iF7YCwSstV2KLEn+g3rR7nKfbGDZ9BQeTD6cZs4K0ZofHJnL+2atLiTyZBEtt
+	4n5NhN6C4jFxYw9wurgCSXJ88GyshbXdmpgix20tk7xu8sqnFLBjoN69/rcxI2UCEsCH76lOkey
+	zHWiy
+X-Google-Smtp-Source: AGHT+IFGsh98Xn7lqzpPwci6Ut5otRF4a95USgj4aytGS8PcOkey/dgiqyyjB95CmPN/YGSny0xhIg==
+X-Received: by 2002:a05:6870:a44d:b0:2d8:957a:5178 with SMTP id 586e51a60fabf-2eeee4db0d6mr11360058fac.21.1750776584495;
+        Tue, 24 Jun 2025 07:49:44 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:22c9:dcd3:f442:dd1d])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee8a8e5eb3sm2149846fac.32.2025.06.24.07.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Jun 2025 07:49:43 -0700 (PDT)
+Date: Tue, 24 Jun 2025 17:49:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: chuck.lever@oracle.com, jlayton@kernel.org, neil@brown.name,
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
+Message-ID: <7a156b03-c522-4e18-85ec-2c7ebfd97a42@suswa.mountain>
+References: <148c69b4-4cf7-4112-97e8-6a5c23505638@suswa.mountain>
+ <7975be21-045e-4b2b-9c73-79aba5b683db@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Al Viro <viro@zeniv.linux.org.uk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Yan Zhen <yanzhen@vivo.com>
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chen Ni <nichen@iscas.ac.cn>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] usb: gadget: fsl: Use usb_endpoint_type() rather than
- duplicating its implementation
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:I7qV3JknpoGbkjG1a5NsvY0sDnSX3fJTGBJC1TXjonrd3RCs2Zw
- cgUYPHMBS312n6EAGFi+WxAGdCU8b/AI9G7I1f6f1tuAS4GPbJf9Zn3XWmiY8qKVYzl+2PK
- 3uTr6yXTta/Fv3xqoGqaGkiAiaTgv9kRBS1BfrW7exkDhhJWEQQGVZnjZc84HSzczaYc1m/
- kCE/33R8XfEtc8b3YOwwg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:njaM1S0s3ZE=;/vbP6Fd1kSwSsr0GwcvLAImMc0p
- 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
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7975be21-045e-4b2b-9c73-79aba5b683db@nfschina.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 24 Jun 2025 16:33:53 +0200
+On Tue, Jun 24, 2025 at 09:45:27AM +0800, Su Hui wrote:
+> On 2025/6/23 23:47, Dan Carpenter wrote:
+> > On Mon, Jun 23, 2025 at 08:22:27PM +0800, Su Hui wrote:
+> > > Using guard() to replace *unlock* label. guard() makes lock/unlock code
+> > > more clear. Change the order of the code to let all lock code in the
+> > > same scope. No functional changes.
+> > > 
+> > > Signed-off-by: Su Hui <suhui@nfschina.com>
+> > > ---
+> > >   fs/nfsd/nfscache.c | 99 ++++++++++++++++++++++------------------------
+> > >   1 file changed, 48 insertions(+), 51 deletions(-)
+> > > 
+> > > diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
+> > > index ba9d326b3de6..2d92adf3e6b0 100644
+> > > --- a/fs/nfsd/nfscache.c
+> > > +++ b/fs/nfsd/nfscache.c
+> > > @@ -489,7 +489,7 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
+> > >   	if (type == RC_NOCACHE) {
+> > >   		nfsd_stats_rc_nocache_inc(nn);
+> > > -		goto out;
+> > > +		return rtn;
+> > >   	}
+> > >   	csum = nfsd_cache_csum(&rqstp->rq_arg, start, len);
+> > > @@ -500,64 +500,61 @@ int nfsd_cache_lookup(struct svc_rqst *rqstp, unsigned int start,
+> > >   	 */
+> > >   	rp = nfsd_cacherep_alloc(rqstp, csum, nn);
+> > >   	if (!rp)
+> > > -		goto out;
+> > > +		return rtn;
+> > >   	b = nfsd_cache_bucket_find(rqstp->rq_xid, nn);
+> > > -	spin_lock(&b->cache_lock);
+> > > -	found = nfsd_cache_insert(b, rp, nn);
+> > > -	if (found != rp)
+> > > -		goto found_entry;
+> > > -	*cacherep = rp;
+> > > -	rp->c_state = RC_INPROG;
+> > > -	nfsd_prune_bucket_locked(nn, b, 3, &dispose);
+> > > -	spin_unlock(&b->cache_lock);
+> > > +	scoped_guard(spinlock, &b->cache_lock) {
+> > > +		found = nfsd_cache_insert(b, rp, nn);
+> > > +		if (found == rp) {
+> > > +			*cacherep = rp;
+> > > +			rp->c_state = RC_INPROG;
+> > > +			nfsd_prune_bucket_locked(nn, b, 3, &dispose);
+> > > +			goto out;
+> > It took me a while to figure out why we've added a goto here.  In the
+> > original code this "goto out;" was a "spin_unlock(&b->cache_lock);".
+> > The spin_unlock() is more readable because you can immediately see that
+> > it's trying to drop the lock where a "goto out;" is less obvious about
+> > the intention.
+> 
+> Does "break;" be better in this place?  Meaning Break this lock guard scope.
+> 
 
-Reuse existing functionality from usb_endpoint_type() instead of keeping
-duplicate source code.
+Yeah, probably break is better.
 
-The source code was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/usb/gadget/udc/fsl_qe_udc.c   | 4 ++--
- drivers/usb/gadget/udc/fsl_udc_core.c | 6 ++----
- 2 files changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/fsl_qe_udc.c b/drivers/usb/gadget/udc/=
-fsl_qe_udc.c
-index aacfde06387c..6ee3da32cc4e 100644
-=2D-- a/drivers/usb/gadget/udc/fsl_qe_udc.c
-+++ b/drivers/usb/gadget/udc/fsl_qe_udc.c
-@@ -533,7 +533,7 @@ static int qe_ep_init(struct qe_udc *udc,
- 	/* Refer to USB2.0 spec table 9-13,
- 	*/
- 	if (pipe_num !=3D 0) {
--		switch (desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) {
-+		switch (usb_endpoint_type(desc)) {
- 		case USB_ENDPOINT_XFER_BULK:
- 			if (strstr(ep->ep.name, "-iso")
- 					|| strstr(ep->ep.name, "-int"))
-@@ -636,7 +636,7 @@ static int qe_ep_init(struct qe_udc *udc,
-=20
- 	/* initialize ep structure */
- 	ep->ep.maxpacket =3D max;
--	ep->tm =3D (u8)(desc->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK);
-+	ep->tm =3D (u8) usb_endpoint_type(desc);
- 	ep->ep.desc =3D desc;
- 	ep->stopped =3D 0;
- 	ep->init =3D 1;
-diff --git a/drivers/usb/gadget/udc/fsl_udc_core.c b/drivers/usb/gadget/ud=
-c/fsl_udc_core.c
-index 4dea8bc30cf6..19c74ba82e16 100644
-=2D-- a/drivers/usb/gadget/udc/fsl_udc_core.c
-+++ b/drivers/usb/gadget/udc/fsl_udc_core.c
-@@ -599,16 +599,14 @@ static int fsl_ep_enable(struct usb_ep *_ep,
- 	struct_ep_qh_setup(udc, (unsigned char) ep_index(ep),
- 			(unsigned char) ((desc->bEndpointAddress & USB_DIR_IN)
- 					?  USB_SEND : USB_RECV),
--			(unsigned char) (desc->bmAttributes
--					& USB_ENDPOINT_XFERTYPE_MASK),
-+			(unsigned char) usb_endpoint_type(desc),
- 			max, zlt, mult);
-=20
- 	/* Init endpoint ctrl register */
- 	dr_ep_setup((unsigned char) ep_index(ep),
- 			(unsigned char) ((desc->bEndpointAddress & USB_DIR_IN)
- 					? USB_SEND : USB_RECV),
--			(unsigned char) (desc->bmAttributes
--					& USB_ENDPOINT_XFERTYPE_MASK));
-+			(unsigned char) usb_endpoint_type(desc));
-=20
- 	spin_unlock_irqrestore(&udc->lock, flags);
- 	retval =3D 0;
-=2D-=20
-2.50.0
+regards,
+dan carpenter
 
