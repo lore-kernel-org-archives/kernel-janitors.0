@@ -1,158 +1,113 @@
-Received: from out.smtpout.orange.fr (out-69.smtpout.orange.fr [193.252.22.69])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987561C6FEC;
-	Wed, 25 Jun 2025 15:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2B22BEFE2
+	for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 15:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750866694; cv=none; b=BI/HkmLWv7BNLnGSbwjSlFR69iT3bTfbqElmKS4wqlsTemVA1F3pa5K2a4pI6eXaUQN1zWEwj3PQhFl/LjK4lKD+WNPlOQgLZCPklsoLFw9jSY8fhrHVdJc/k68kngnCGwYbWc8UxLQOH90+kIDpZTsNE618251sw0e9Zh6yX3U=
+	t=1750867135; cv=none; b=Vjr/sRv2nc41Qxw4JNx1IqdCWTUD9kvZuW0tP9QlnyQB6dn3W3AhSypc5D9l8TEY5AcWBQFPBz/5fkK1J4gLYUz5C55q/xt5PCRHy95T0jU6VjSlvND+LqNESMV4Zgd1MHFJmkN8EaCmi0GCu3lliGGsF7ab3DUqSIxSQqqywx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750866694; c=relaxed/simple;
-	bh=Lh+Fs56s5iuB2XZIAVcn4VB3LtPRtc9SeX5P0H7rWHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uzo14qj1OsifFJtg2KRp+C05eyUDMQiIZq2bAwbb45DKEC4F9tqYhwZ8tbjacfowPx7dKoUGvPmHorNQu180F6TUddRQws13TccBSTlIEjHWUveb58UxdRvppxCDM+RmpJnIhkF0POqFOiOH0HBxe5tWESqvbS/xh7dCS1maxAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SybvCI35; arc=none smtp.client-ip=193.252.22.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1750867135; c=relaxed/simple;
+	bh=5ivSU5P1ybOP4JXEyPg2b4KE7hth8e9XxndTgLMPwek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWgeAHBmS2d+FLsfk+h3aZpMZGgLL+7CbrzrC12rfYddAnB1KBXNocZTp0D5Mgtao4s0nlxS11BOu0MuQVm1uB301kjkH11XM1w9Fd3+/Pvnb7NJcVpntGnjI1M2e95x6zo0mDE8B8Dlzn74+mR/IBV6YLHg88dv+vkBpQYl2bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h4easKFl; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SybvCI35"
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id USPEuXvuXTg88USPFuIrxp; Wed, 25 Jun 2025 17:51:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1750866688;
-	bh=IJC95HDaDGixU28OmDl2k4GhpotG5diJ0LI0qo0ZsRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=SybvCI35aPVjgaOgNbURyu75B+S0oQlK1ctNa73vXLnVIUiQeybJuNDPZmLowoWZl
-	 lrPB/c2ss8AqNAy1BazEvRAVTTqOdnB+mX67OpJH7Hwl6k32HIAOsb2vVoKNAoZM07
-	 tBmDrHWwDVqZ2StB+c3WZjCpzLi/pBz8Ai9/YqZ28ITLEhUaL3EkWPIsYj0NF1dfhe
-	 lHh1eDVQ5IRS1iYq00yfian2TaWsQjV8tjiG4HpBKSGVDOHCX2MJjXSD/R1rctQtmY
-	 agOF+q3HSK/rrpLwuSsg2ro+UF2VaKR8XsiaPymrj/kvKHL2nWHfoCXkI8L7jJbdOX
-	 xhSNYuR/T2ZiQ==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 25 Jun 2025 17:51:28 +0200
-X-ME-IP: 124.33.176.97
-Message-ID: <c04376f2-6ab7-4256-8bdc-aa6ff3ea88b4@wanadoo.fr>
-Date: Thu, 26 Jun 2025 00:51:24 +0900
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h4easKFl"
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2ef493de975so40728fac.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 08:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1750867133; x=1751471933; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S50u2pGmO0FJNNUATSBkFdTyq4cP6tNm57kv4SYiUhA=;
+        b=h4easKFl3gNSZbbw3TX8q89MHFIeYi+sajm30MVRaNq97IZnerBVflGYVim3nf7WwJ
+         cf1tLbBxnM2mLfr1+EIybCkcwnGnP+ulxM347jWEBm0fOvBRkp+b8KDbulOMAqpG5oD0
+         dQjvOSmf6UBugRsp44Yp1Q6F5/Kl+A6e1P0Il+MCO2ejYdHIACS8PA0/rN9N86pVfQk8
+         R8BKM2D0Xt6oM03CRkWdE0n7BAZd8hFUpV37LPyqaB0MB2rHH1nairxKN5xPq3LZT2F8
+         bn6KO2pOyfBsSreyKWcbLFpId65ebd1ZizyvAtoyrL7id9YKrqfngvjgIsBeKGhjzLFm
+         yoyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750867133; x=1751471933;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S50u2pGmO0FJNNUATSBkFdTyq4cP6tNm57kv4SYiUhA=;
+        b=NVFsbLxj+xWCs3ONFS/NZ92KJy/IDzDSLWoyI5CgTNrCUj/U9utVksT6dR/isb/o9R
+         2eFb2jtmo8IAv6gJK9sBOqQZyqmf36ZCTdFDKNjpYzrzcsXHSajxqFqMy17B02f1U0fq
+         +4LNC3iNepfHkiUHTO6FFYOXPquKTZxoNenRkuyfKULxGfQfDM878/UN/4FIZWZsw+BE
+         jbTDwDyJaWzwB2VC4agk0DrS+L/sCXv3uCAuEtJjNC60xnBct60ZV6zDzF1pv8qg7h+J
+         fCNKodfvAsbjWoQSUpGOb4fe8Ub85XeigL6UK0EHW3coG+1pMJLBBceGjujg+l576nRx
+         vuVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTAAn+4U3Z3o4eTZpMWi0Q3+i0zUqATLrHzUGqn8Zfxh78m/t8z9QvgVw6RmGKuwU9r2iaPMxiXunADHHedJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZyplHsItVQ+uxBnGTP9KvItoEgobhz8OsgumOojE6oPX18Bh3
+	4mUan+RvwLdJ5y4dZYLNcv58FAvK0BKBQqA3kl4bkEaSPfyyPs6Ip3i+VKZjcKNKG4U=
+X-Gm-Gg: ASbGncssH99qpwq926aPv6Xzqvf3jndGDt1DAPI+iqbRdq2q5Muha9dHWeRS9DRLOQG
+	9t+4F8UqrI2OaaLytPDqWdIPKicb6aHsVlf7Zv/2/hFPcCW9qhNP20JjkP+bxgDMsabWZZCMyPS
+	AmA43LE2l0J+DXvZKnBschW4ekhq9egUIDdCpVuntPWJrYVmAf/c21LzubIHwjkdlB+SGF7oNqC
+	+YY51zGX1H6N6qGildSUPEQImXwIATicpSdL4eQXU1uyGGQO9Q7kTtSr9tosdeLQ666NUliGtha
+	1LBbfVnJs97brzgyUJWANXGJ7Gtq9k56NTpnbmfnIfSqy3QP8ba30+QlS5E1OS4WrTU=
+X-Google-Smtp-Source: AGHT+IFJT824h/fVUdrtP8VolwifhwFVWo0IkVtlZ5cdp9VZgCFy3WBGpkfdsvju1vACYv0c0xsXRg==
+X-Received: by 2002:a05:6870:8a0c:b0:2cc:3523:9cd5 with SMTP id 586e51a60fabf-2efb22133d1mr2422068fac.17.1750867133090;
+        Wed, 25 Jun 2025 08:58:53 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:3ee4:904:206f:ad8])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee8a8ea97dsm2626851fac.29.2025.06.25.08.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 08:58:51 -0700 (PDT)
+Date: Wed, 25 Jun 2025 18:58:50 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zaid Alali <zaidal@os.amperecomputing.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>, Ira Weiny <ira.weiny@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Sudeep Holla <sudeep.holla@arm.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] ACPI: APEI: EINJ: prevent memory corruption in
+ error_type_set()
+Message-ID: <738b8abd-5825-48cf-9c5c-697ae057ab79@suswa.mountain>
+References: <4d800ffb-fb1a-464d-adcc-2802187cfa9a@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] can: ucan: Use usb_endpoint_type() rather than
- duplicating its implementation
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chen Ni <nichen@iscas.ac.cn>, Marc Kleine-Budde <mkl@pengutronix.de>,
- linux-can@vger.kernel.org
-References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
- <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
- <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de>
- <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
- <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d800ffb-fb1a-464d-adcc-2802187cfa9a@sabinyo.mountain>
 
-On 25/06/2025 at 14:47, Markus Elfring wrote:
->>>> it seems that Coccinelle missed many simplifications.
->>> Would such software transformations become better supported anyhow?
->> Maybe?
->>
->> I am not involved in the development of Coccinelle and thus, I don't have an answer.
+On Wed, Jun 25, 2025 at 10:23:26AM -0500, Dan Carpenter wrote:
+> The "einj_buf" buffer is 32 chars.  Verify that "count" is not too large
+> for that.  Also leave the last character as a NUL terminator to ensure
+> the string is properly terminated.
 > 
-> This can be fine (in principle).
+> Fixes: 0c6176e1e186 ("ACPI: APEI: EINJ: Enable the discovery of EINJv2 capabilities")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/acpi/apei/einj-core.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> 
->> Nor do I have the time to read and understand the Coccinelle source code
->> to which you pointed me to.
-> 
-> I hope that more users can become interested in presented information.
-> I would appreciate if knowledge representations can be improved also for
-> better automatic data processing and corresponding transformations.
-
-A real quick search shows me that this ucan driver is not an isolated case. Here
-is an example:
-
-https://elixir.bootlin.com/linux/v6.16-rc3/source/drivers/media/rc/imon.c#L2137-L2148
-
-But it does not seem to occur so often either. So not sure what is the best: do
-a manual hunt or write a coccinelle checker. I let you be judge here.
-
->> My stance is that such static analyzers should never be trusted 100%.
-> 
-> This is generally fine.
-> 
-> 
->> The output is more an indicator.
-> 
-> This is usual.
-> 
-> 
->>                       And in this present case, a quick review made it very
->> clear that Coccinelle saw one simplification but missed two other ones.
-> 
-> Would you find another source code adjustment (like the following) more appropriate?
-
-Yes. What you are proposing below is aligned with my initial comments.
-
-> diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-> index 07406daf7c88..6c6cee3895c6 100644
-> --- a/drivers/net/can/usb/ucan.c
-> +++ b/drivers/net/can/usb/ucan.c
-> @@ -1352,17 +1352,12 @@ static int ucan_probe(struct usb_interface *intf,
->  	for (i = 0; i < iface_desc->desc.bNumEndpoints; i++) {
->  		ep = &iface_desc->endpoint[i].desc;
+> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
+> index d6d7e36e3647..e77c0d4b4ee5 100644
+> --- a/drivers/acpi/apei/einj-core.c
+> +++ b/drivers/acpi/apei/einj-core.c
+> @@ -826,8 +826,11 @@ static ssize_t error_type_set(struct file *file, const char __user *buf,
+>  	int rc;
+>  	u64 val;
 >  
-> -		if (((ep->bEndpointAddress & USB_ENDPOINT_DIR_MASK) != 0) &&
-> -		    ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
-> -		     USB_ENDPOINT_XFER_BULK)) {
-> +		if (usb_endpoint_dir_in(ep) && usb_endpoint_xfer_bulk(ep)) {
->  			/* In Endpoint */
-                           ^^^^^^^^^^^
-Maybe just remove this comment. After migrating to usb_endpoint_dir_in(ep), this
-comment is just paraphrasing the code and has no more reasons to stay.
+> +	if (count > sizeof(einj_buf))
+> +		return -EINVAL;
+> +
+>  	memset(einj_buf, 0, sizeof(einj_buf));
+> -	if (copy_from_user(einj_buf, buf, count))
+> +	if (copy_from_user(einj_buf, buf, min(count, sizeof((einj_buf) - 1))))
 
->  			in_ep_addr = ep->bEndpointAddress;
->  			in_ep_addr &= USB_ENDPOINT_NUMBER_MASK;
->  			in_ep_size = le16_to_cpu(ep->wMaxPacketSize);
-> -		} else if (((ep->bEndpointAddress & USB_ENDPOINT_DIR_MASK) ==
-> -			    0) &&
-> -			   ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
-> -			    USB_ENDPOINT_XFER_BULK)) {
-> +		} else if (usb_endpoint_dir_out(ep) && usb_endpoint_xfer_bulk(ep)) {
->  			/* Out Endpoint */
-                           ^^^^^^^^^^^^
-Same.
+Nope.  I put the parentheses in the wrong place...  Let me resend.
 
->  			out_ep_addr = ep->bEndpointAddress;
->  			out_ep_addr &= USB_ENDPOINT_NUMBER_MASK;
-> 
-> 
-> Can the functions “usb_endpoint_is_bulk_in” and “usb_endpoint_is_bulk_out”
-> be applied here?
-> https://elixir.bootlin.com/linux/v6.16-rc3/source/include/uapi/linux/usb/ch9.h#L572-L595
-
-Further simplification, nice :)
-
-I didn't see that last one, so glad you found what seems to be the optimal solution!
-
-
-Yours sincerely,
-Vincent Mailhol
-
+regards,
+dan carpenter
