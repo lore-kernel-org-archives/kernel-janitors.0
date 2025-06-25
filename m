@@ -1,102 +1,150 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAA325BF10
-	for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 11:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 18ACE25D1E3;
+	Wed, 25 Jun 2025 11:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750852257; cv=none; b=Kczbz+uLKTpnFUK1yO/xfxJ5510m9do52vV3Y4LRJeRxDR4MGvxp0L1rEuTSzfQpAr6W9U5V7pjwZoyhwwG7T23nQnQTJU7/lhyc5qrbXZh/hAmwa+MRH0WGpVEz0DXS92mv6uiPyeacK2Bxx7ooiQrldAZt5dpQ5qYgbXzj1SA=
+	t=1750852323; cv=none; b=ADTArwB+YmUnCmXW/ken6+a6DO+WkYMJalHP2qJV3QhWcwDh3wyH2S0e9GhS9E/wnz/1uzQicrUtrTm84r1/0aWSi5YGYJJ9xHTgh1s1oIoL1K5gNklCEfm2zzIedoSJJWypWr7RKYngcISnxaWM75VUFDj7m88FwBuFLzkV4GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750852257; c=relaxed/simple;
-	bh=ccKVrwIbREFXa4j7XcS1J1dbdZcxku7g36ksBtNIWss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZen7nF4BuzM0zw1YlOGTnvt0cSHQoC8IMCW1Xxye1l29P0QIRp/yPs1dOU4Nat9OEKZGE6PwpXVooZrlKWO7L1vIM1W/2Z7/yUb9mUdZZi8893ar5MqunVMQjrfsnUXuNMhEfA01vzNECbncKDoqHCyFnWodxYGJ2qTDnCQP8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YcZ6Rw2i; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YcZ6Rw2i"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2e9a38d2a3aso4907052fac.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 04:50:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750852253; x=1751457053; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AoutNGAerTcoF/aenrsm72CtVJG212QTVx4YhnzRYkQ=;
-        b=YcZ6Rw2iiUo0d/sP97IM92RZq4tDAZiQyKcL8QUOQfWN7APNa5yFR6WgvYJpTcRO/k
-         S5C8mFIwpiY9hGlsnCX8IpoXA4E+hwJDQ9ZnBjQJJpbDKW8aSXY2Jr7ugztdh3/9r3U2
-         SVaMIUAhZ/js61l9kg+xl1qSUPgJM/l9oW1qnQdwNbSEPbbHsg5jlxkzO9sV1K0F9qEf
-         zj1qp97U5caV+Vuw4Gk/FJcPXggzduj/RcbBX6K5QBdKR5dIC88zCA+UPqH/QD/lsrnd
-         PQOu6DqlA7U0ws6s7gwEpzFkbvWcXRdwvgMFtNIo7qoffzeyXXyZGepLQuh/BHqFFpbr
-         s9Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750852253; x=1751457053;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AoutNGAerTcoF/aenrsm72CtVJG212QTVx4YhnzRYkQ=;
-        b=p+pp3/LQfpOzVYF/04TShqYFx51Axma4tZI7ErwrSqgAgE5cVlzyJ9W4o2Tt2s5yCU
-         O9lAbSPrC7laavsZWzURVE0Iu3LiVKf+wqUgziNyvJ//I/hTqxIfwWcN5/movA2Yu3br
-         y/nHlbehcu8PRCGO5/cpssx67e3mfhIUczOpvgZa4iny9E/mo6HSQHm/h8RegVV3QL1g
-         H/abD9trymgA9eoPTKqaBzswiR5hzgT8nf8+NzjBzsJb0cIU6OzcJZAmRmeTTAmYXM8C
-         tvxnje3JA3sYv6KeOS/PcI9Hp4G5soROcDF4z+KMctTCwdvFem+qEwxcwmT2A22E6B7P
-         7cmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUASzanaYqH6h3RXTZ6b53R2rQfAedg1Ck4vbDZYIJ6i+vilLL+rhQPAPjZ/CgqL5RqNWIc+hC5RZkOST/gzUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYRpLKm0tg/knPOrhXehtrc81hEkA/pMnic95mBXCRrWGSg87u
-	IRyNAMk+SSDYGQAFgR4E8Nz1Je0BGXqg7cCwbQXywIVuRmge5+V+oxNkLvDzCszgfTA=
-X-Gm-Gg: ASbGncvLh+/QykaaeoTuoad0rE0jZhTu3XVHXyhlCm07md2ZJJxQ4eZ1hDVjRDmfUx2
-	niPIsoCADecXEbNNxvlvnBD+KkSjPd7ulIdouotUhFNLluPwBxk9+gPenPOlnmlYoushbCXbM+K
-	PYQ32FyRW4VqD0iEtl9qkMnkvQRKmp4+3XTXGyyAbD6LsX41C9yXbH3efYLwRencpH46z9p98l2
-	EpzlDVM5NqsHxDemp4lRx/ioD4EdlHtFZqONUiee8hmm3OkyfifjhBsxQQtxU3BcZ8zVsOmo255
-	BURWH0NhUE9FI+P4u4kmk4NdY40PBTFF+TPCS08mPz+ICP02lCR/vUu1c459E9honWQJGNvkSKm
-	X9lA5
-X-Google-Smtp-Source: AGHT+IHhifNSUvdslHEt+i0G2mhKHrYMYK7cb4RljD3ks4W3/ayaA/WwVBmac+YjncuYOBkqkdy7sg==
-X-Received: by 2002:a05:6871:2104:b0:29e:4ba5:4ddc with SMTP id 586e51a60fabf-2efb27645a8mr1809349fac.24.1750852253475;
-        Wed, 25 Jun 2025 04:50:53 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:22c9:dcd3:f442:dd1d])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2efbd439555sm185735fac.25.2025.06.25.04.50.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 04:50:52 -0700 (PDT)
-Date: Wed, 25 Jun 2025 14:50:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>, Ira Weiny <ira.weiny@intel.com>,
-	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ACPI: APEI: EINJ: Fix check and iounmap of
- uninitialized pointer p
-Message-ID: <ba07c097-80e2-45e2-b579-fe270c04fabc@suswa.mountain>
-References: <20250624202937.523013-1-colin.i.king@gmail.com>
- <31b6548f-8ff7-4bc5-8a2c-78a5a9d5eb40@suswa.mountain>
+	s=arc-20240116; t=1750852323; c=relaxed/simple;
+	bh=K4eNEdbMuwJkxmj8qBQgm+SCrYQ8WQ8B44GCUzPugwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=FM+zutLxcV6tSx0nLjZ5mCQxq+PoEBGVl6RhzC2NlA79Z1xMgjQibxQ9tTZpvdnWZ/OkmFcoNV3lAFFMdUWX0xln5L3b5Sqej2fNu7FsJRy/JZwXfPIRkminPHzCbH83t5Vvnz5X9GbrsXXWt62xGonHPZ5jy6xrnVAdhOgPLDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id C52676032FDF0;
+	Wed, 25 Jun 2025 19:51:54 +0800 (CST)
+Message-ID: <f1d71897-10d5-4069-87ff-9cb41ad642ec@nfschina.com>
+Date: Wed, 25 Jun 2025 19:51:54 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31b6548f-8ff7-4bc5-8a2c-78a5a9d5eb40@suswa.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
+Content-Language: en-US
+To: NeilBrown <neil@brown.name>, Chuck Lever <chuck.lever@oracle.com>
+Cc: jlayton@kernel.org, okorniev@redhat.com, Dai.Ngo@oracle.com,
+ tom@talpey.com, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Su Hui <suhui@nfschina.com>
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <175080335129.2280845.12285110458405652015@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 25, 2025 at 12:31:10AM +0300, Dan Carpenter wrote:
-> On Tue, Jun 24, 2025 at 09:29:37PM +0100, Colin Ian King wrote:
-> > In the case where a request_mem_region call fails and pointer r is null
-> > the error exit path via label 'out' will check for a non-null pointer
-> > p and try to iounmap it. However, pointer p has not been assigned a
-> > value at this point, so it may potentially contain any garbage value.
-> > Fix this by ensuring pointer p is initialized to NULL.
-> > 
-> > Fixes: 1a35c88302a3 ("ACPI: APEI: EINJ: Fix kernel test sparse warnings")
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> > ---
-> 
-> Good catch.  Apparently this isn't in my allyesconfig.  It's weird the
-> zero day bot didn't catch this either.
+On 2025/6/25 06:15, NeilBrown wrote:
+> On Wed, 25 Jun 2025, Chuck Lever wrote:
+>> On 6/23/25 8:19 PM, NeilBrown wrote:
+>>> On Mon, 23 Jun 2025, Su Hui wrote:
+>>>> Using guard() to replace *unlock* label. guard() makes lock/unlock code
+>>>> more clear. Change the order of the code to let all lock code in the
+>>>> same scope. No functional changes.
+>>> While I agree that this code could usefully be cleaned up and that you
+>>> have made some improvements, I think the use of guard() is a nearly
+>>> insignificant part of the change.  You could easily do exactly the same
+>>> patch without using guard() but having and explicit spin_unlock() before
+>>> the new return.  That doesn't mean you shouldn't use guard(), but it
+>>> does mean that the comment explaining the change could be more usefully
+>>> focused on the "Change the order ..." part, and maybe explain what that
+>>> is important.
+>>>
+>>> I actually think there is room for other changes which would make the
+>>> code even better:
+>>> - Change nfsd_prune_bucket_locked() to nfsd_prune_bucket().  Have it
+>>>    take the lock when needed, then drop it, then call
+>>>    nfsd_cacherep_dispose() - and return the count.
+>>> - change nfsd_cache_insert to also skip updating the chain length stats
+>>>    when it finds a match - in that case the "entries" isn't a chain
+>>>    length. So just  lru_put_end(), return.  Have it return NULL if
+>>>    no match was found
+>>> - after the found_entry label don't use nfsd_reply_cache_free_locked(),
+>>>    just free rp.  It has never been included in any rbtree or list, so it
+>>>    doesn't need to be removed.
+>>> - I'd be tempted to have nfsd_cache_insert() take the spinlock itself
+>>>    and call it under rcu_read_lock() - and use RCU to free the cached
+>>>    items.
+>>> - put the chunk of code after the found_entry label into a separate
+>>>    function and instead just return RC_REPLY (and maybe rename that
+>>>    RC_CACHED).  Then in nfsd_dispatch(), if RC_CACHED was returned, call
+>>>    that function that has the found_entry code.
+>>>
+>>> I think that would make the code a lot easier to follow.  Would you like
+>>> to have a go at that - I suspect it would be several patches - or shall
+>>> I do it?
+>> I'm going to counsel some caution.
+>>
+>> nfsd_cache_lookup() is a hot path. Source code readability, though
+>> important, is not the priority in this area.
+>>
+>> I'm happy to consider changes to this function, but the bottom line is
+>> patches need to be accompanied by data that show that proposed code
+>> modifications do not negatively impact performance. (Plus the usual
+>> test results that show no impact to correctness).
+>>
+>> That data might include:
+>> - flame graphs that show a decrease in CPU utilization
+>> - objdump output showing a smaller instruction cache footprint
+>>    and/or short instruction path lengths
+>> - perf results showing better memory bandwidth
+>> - perf results showing better branch prediction
+>> - lockstat results showing less contention and/or shorter hold
+>>    time on locks held in this path
+>>
+>> Macro benchmark results are also welcome: equal or lower latency for
+>> NFSv3 operations, and equal or higher I/O throughput.
+>>
+>> The benefit for the scoped_guard construct is that it might make it more
+>> difficult to add code that returns from this function with a lock held.
+>> However, so far that hasn't been an issue.
+>>
+>> Thus I'm not sure there's a lot of strong technical justification for
+>> modification of this code path. But, you might know of one -- if so,
+>> please make sure that appears in the patch descriptions.
+>>
+>> What is more interesting to me is trying out more sophisticated abstract
+>> data types for the DRC hashtable. rhashtable is one alternative; so is
+>> Maple tree, which is supposed to handle lookups with more memory
+>> bandwidth efficiency than walking a linked list.
+>>
+> While I generally like rhashtable there is an awkwardness.  It doesn't
+> guarantee that an insert will always succeed.  If you get lots of new
+> records that hash to the same value, it will start failing insert
+> requests until is hash re-hashed the table with a new seed.  This is
+> intended to defeat collision attacks.  That means we would need to drop
+> requests sometimes.  Maybe that is OK.  The DRC could be the target of
+> collision attacks so maybe we really do want to drop requests if
+> rhashtable refuses to store them.
+>
+> I think the other area that could use improvement is pruning old entries.
+> I would not include RC_INPROG entries in the lru at all - they are
+> always ignored, and will be added when they are switched to RCU_DONE.
+> I'd generally like to prune less often in larger batches, but removing
+> each of the batch from the rbtree could hold the lock for longer than we
+> would like.  I wonder if we could have an 'old' and a 'new' rbtree and
+> when the 'old' gets too old or the 'new' get too full, we extract 'old',
+> move 'new' to 'old', and outside the spinlock we free all of the moved
+> 'old'.
+>
+> But if we switched to rhashtable, we probably wouldn't need an lru -
+> just walk the entire table occasionally - there would be little conflict
+> with concurrent lookups.
+>
+> But as you say, measuring would be useful.  Hopefully the DRC lookup
+> would be small contribution to the total request time, so we would need
+> to measure just want happens in the code to compare different versions.
+>
+> NeilBrown
+>
+>> Anyway, have fun, get creative, and let's see what comes up.
+>>
+Thanks for the above prompt. I think I need more time to complete this,
+both for code and related tests. I will do my best with curiosity and
+creativity :).
 
-Never mind.  This is definitely in my allyesconfig.
-
-regards,
-dan carpenter
-
+Regards,
+Su Hui
