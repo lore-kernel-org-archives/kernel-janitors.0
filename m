@@ -1,64 +1,69 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135F72AD13;
-	Wed, 25 Jun 2025 07:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941781DE8A3;
+	Wed, 25 Jun 2025 10:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750835888; cv=none; b=EL9f//J6hTgCb/2rSe8bXU0NOfmACSJ+PVUwV9mfdeEAR8CJZXAj4nTSSQkpF7BYxBsYgxupZwtiYx81sDtWFiYNI7b0BUKPVsHVC5/kTjf131B2ggEB5fByMb5T4HkxA/dbOkrHnwArl/Xv7Pr647KW8OTIqaCEOxBY+MqEgCI=
+	t=1750846374; cv=none; b=YfgX96AsDD6QdBKx/BCFYOKWAw4SNhjWE1Nj6WPLIBF3iyEPo26GGz8dFp30lOvgTFoZF9zKXUc8al9ocbzr6glfJylXwOyiWQfEdwWZW1fAn/8TwI8Y9W3hG4vw1zPSCy58nW2kGGzblDsvNw0BJyycEdPY6mCztCjvGPH1ijE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750835888; c=relaxed/simple;
-	bh=iKWXxPllcv+kDsDc6lCT04TraBarrHjT/K6dlky6pdc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mXzUAiXof2hEHUSiGkKD3gqbgflNldKeRFWmg2vxLhp2vvJnw+cjbd0jxk11CAumqM7oYcrqhp4uNCFnkwwy1rfcWWbo9/VFPCMpJCuphRtPqrVuZlxdRAr2+hgN8Rk3RpLf5GmzJe+UKcqhcCiIv4faO0OCn8hNM2pcHlZsCLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=ekYrZvK4; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1750846374; c=relaxed/simple;
+	bh=eR0q+RNjFITK9YCpEg9fBMwnAYg3EaVMIJOV9Zmw3uA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=eFZbTFZf6onfvpTXA2K4Q1tH5WUUDQu57sPLuk0NMKBba2HLV0e+eoEjteG108ThIQRx8Hu4cZ+Gj9deFfDaUCybhk0tHmNLoTcPqeXUdfoyawz0OqBj/UATYQZpyP6h9Y8OrEup+LHyDq76BCWlHOBjrVgMyz6FqqPq6C12kx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wt6bqGxg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="ekYrZvK4"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=iKWXxPllcv+kDsDc6lCT04TraBarrHjT/K6dlky6pdc=;
-	t=1750835887; x=1752045487; b=ekYrZvK4NKaixBs9aXfJK4F69U4KoxaWY0m39gOpHyUt+v9
-	51uVodh1aOw1vbW0Z1+SUwERzCu+RKWx1jB//B5khvpo2wtrTmygtNLNlZNh0nFDrglCqrkow86Ns
-	MB8Kk6KT9a3Iv1/cjvh2dej/w7bnX+7m4N5wCCb443bvU6oVtnRQfOpH7Im7P+qN4/dcSuaPrYaO5
-	USLpiBRMYCdH57wL2Zk8FaFzoWltN86xXsBSGMRPkjwzi97mGhFHVUjl+YwcRek00VDnk3nwWjqK9
-	BrZxZ2xDW71j44U+o786kOLmD1pTPY2XHpvqBd2cElofJESGJkYN246ny2I9xxVQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uUKOI-00000009m2i-1eR6;
-	Wed, 25 Jun 2025 09:17:54 +0200
-Message-ID: <416d549a45650138ec9bff555fac2a98f916a188.camel@sipsolutions.net>
-Subject: Re: [PATCH v2] wifi: rsi: Use usb_endpoint_xfer_bulk() rather than
- duplicating its implementation
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Markus Elfring <Markus.Elfring@web.de>, linux-wireless@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
- Chen Ni <nichen@iscas.ac.cn>, Kalle Valo <kvalo@kernel.org>
-Date: Wed, 25 Jun 2025 09:17:53 +0200
-In-Reply-To: <9de5fb9e-bbe9-4f27-9370-1fff9e3c9fe2@web.de>
-References: <d04019cd-f782-4d81-97ce-3d70946e5c54@web.de>
-	 <9de5fb9e-bbe9-4f27-9370-1fff9e3c9fe2@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wt6bqGxg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395E1C4CEEA;
+	Wed, 25 Jun 2025 10:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750846374;
+	bh=eR0q+RNjFITK9YCpEg9fBMwnAYg3EaVMIJOV9Zmw3uA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Wt6bqGxgEM9AK914Ib+/cqaATn6qRbr0DhFZlohg/V6DezycPprn/XFVR3daLJ1fS
+	 FXO9owsM6qALErI+XjdfoKxANx6RHiEUGyJ894Jd2Z4XOM9uVwuEtw9Glx1V2A7Pm+
+	 AT7pwa0oCGpjTC9Fs4nD/XhK+jiclQYgr0IiYGr4tI+ikukrWVyUOcNNbxWFd2Y5iO
+	 FTI4CgaNISLjyqFS6MmxNESvAcFUdaw1+1hV6F9kXscFIezbpAjfjr6uXzB/keoh/j
+	 haxOl5q6vwnHTHw/jxnMuVT/kemtSBhEyWGzQGWeEmfRCUYRUureaOB9Ir/OiA9/E3
+	 DEeyZ5dDJ2a/w==
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr>
+References: <d56bac346e94ac91df16a775c59092d1b60efabd.1750005148.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: (subset) [PATCH] mfd: rohm-bd71828: Constify some structures
+Message-Id: <175084637296.4142064.14602531767494530713.b4-ty@kernel.org>
+Date: Wed, 25 Jun 2025 11:12:52 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-Given your past track record and clear inability/unwillingness to react
-to feedback in any reasonable way, I'm rejecting all of your patches
-without even looking. You can save us all the trouble and stop sending
-any patches.
+On Sun, 15 Jun 2025 18:32:48 +0200, Christophe JAILLET wrote:
+> Several structures are not modified in this driver. Constifying them moves
+> some data to a read-only section, so increases overall security, especially
+> when the structure holds some function pointers. This is the case for
+> 'gpio_keys_platform_data' and 'mfd_cell'.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   18161	  14112	    192	  32465	   7ed1	drivers/mfd/rohm-bd71828.o
+> 
+> [...]
 
-(And no, I truly don't believe for one second you actually _will_ stop,
-I'm just stating this for the benefit of everyone else.)
+Applied, thanks!
 
-johannes
+[1/1] mfd: rohm-bd71828: Constify some structures
+      commit: e905ffecc34f66c35c9d3209fe5b111686adc28a
+
+--
+Lee Jones [李琼斯]
+
