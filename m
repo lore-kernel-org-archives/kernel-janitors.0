@@ -1,119 +1,127 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A6F29C32C;
-	Wed, 25 Jun 2025 15:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6B51CEAD6;
+	Wed, 25 Jun 2025 16:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750867195; cv=none; b=UoTXf3/5mKODf0VdKEKSPiA2UNFN28KTZjmFbuZigylimlKZWodSG2wnFz8YoADur7lnie9EqK5Ws5JNZrRZto/xg8NfMZxPV+6Mz94jXv/7mz5a8f+N1wAkyXlX7m/i3H4KtmFo4zElIJlLo+uREyzj+hLRi6LQysf4yuQYFBY=
+	t=1750867484; cv=none; b=In92Kp7249E7LST1lHoiVLIQ2Bda820yqDz97LQVYJ6OSO2xxbUKs0oZ95NF6Xx6upmjDT5dC5wEZ5AiI0HvcrjGXok5yQdg7uOJrxpLoSfLymfNWwKz9wgTtJpYkmvC/j53Jh4/A76vxkfw1Hy5gI92WIwnVVS8Uv3YTwgyAGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750867195; c=relaxed/simple;
-	bh=Ph0MeFJ2SG94/VHLocJYdGNnfaMXzvuA/05zOXAqNd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DmDgDWO9s+uCIfevCNc4FNkOGOP2T0+EIvFsbo62KQCekfpJWOpeY7ml0VSopSlOZ/1Hhda+tDD+G2qu85IFaIBfz4BE18/hq34OgjgcmRG50t6YKhqfuC/Yl3G6JkWLAOIqJmvW57L8rYwcMC9h0HJqFptX7dplWPcJTZ42e/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1MTLO7M; arc=none smtp.client-ip=209.85.215.173
+	s=arc-20240116; t=1750867484; c=relaxed/simple;
+	bh=otHmhz9qKbneCAY/qZt+a5oqKkpxMdFANunIpnL3QQM=;
+	h=From:Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:To:
+	 References:In-Reply-To; b=tjbgi5NmjVGcFfST61KTiMXECSzrgTBNS94s0FA3Y1IZaugv3JMqvTa+MW0TcuxokMNiBbZcKGukKh/sJO6ha7ab694QEQjC7LA8tdermtjSdjc6Y37o+eAIrPdm6bTaMxKCBoeWY3Xa49z75/4y5giIEI1qw/D+UMSS+TgMUYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EsR3DsiW; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1MTLO7M"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b2700de85d0so1159576a12.2;
-        Wed, 25 Jun 2025 08:59:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsR3DsiW"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a6d1369d4eso1257493f8f.2;
+        Wed, 25 Jun 2025 09:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1750867193; x=1751471993; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1750867480; x=1751472280; darn=vger.kernel.org;
+        h=in-reply-to:references:to:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+v2S/Kr4IAe9nDhUjRoLqot9qoZr4r/hGrWQ5tIcEsU=;
-        b=M1MTLO7MbxVdSVpFjNpWI4BLpryWFII76xkbgFr2CntZiy9zNxJkpwHvW5WufBjkfa
-         p2JLKDv9PU3ixa/xtU68fB6lDcQuwnLTHiBQjRRjkRBgRYX4WvzDTM26FQP0h+21Cqje
-         mlldlyEtBI9jMP++CbMfczrI5lSnzb5TxS7gfUKiTMMOW2DiNEgn6KDsFQBR8o9Vx0Vp
-         7E3B8sl99diBzMnfxBf990yunESSHl2jDjzDqGVdyaUWcVk6m2nYMqRbQCKQWo+zYzZW
-         1XELBv5MmW2gIMNNM1+6N3FWzoMSqt+ZKcqqQ04lMmNULWlmllDG3SgdL1se96JdRjay
-         cubQ==
+        bh=uWKkFAFg9O1FS34EdKG7yTUZEGesEzF1QQfwKchWpik=;
+        b=EsR3DsiW9naBMEhfFJFIRcbn65r7nmtu2c3WXhVzW70Ro6sfrrZEwze+IrTgmRTISc
+         goXigzea1Xnm8lfHhEgxnrEJGUd+7YA2reRBV9bysHmFbVQPRSiZsoU9a2PfOP3nF8J8
+         te3KAlxd2Omnz7fg1a0TES2BPv25M1QNknnoCukhHjzbRP4JhANY/pRGuCSIMCWombSu
+         mA5pJ4ZjxXiIBRwEk+AU7TikGqmAwPHxkCHycF7gWMjMfheCsywcho3NTdYpWm4pxHuN
+         JGvQ9L5ASlzMiWlxwblC+3bLsdGPpN5N09Kc/KpS/+/pVzgnew78oB6uaD1cOBkyyuw6
+         CBlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750867193; x=1751471993;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+v2S/Kr4IAe9nDhUjRoLqot9qoZr4r/hGrWQ5tIcEsU=;
-        b=SgOcUE13vVB7samsKG9SXVq8uvrv5L5ccqtCiCz0jPgsYcRSfSyVMwipwCnxrwRcdx
-         ix/sKmBfkuP+cV1f8V2s2+lv2XMWs54DGFHghyd727Ef4bOCEhsahpU17rrT8FoiTegX
-         +tDhRx2F+reOwqS/OJZSeP7vXg8nKHez7JHX76I3YD5UVLJbqSeu/RgRsYfNkmUrHufO
-         iXK0UfUAYOmaUFiq+xWnH5BE5+Xb/0uRY62uAhlFg2C2eXe4qkA+cXLryWsGoLEJVSit
-         Lo8WfQVrVX3xtor3cXRp26uV/8gF3zqPfCt48ryVodr1n15RrhRHKn/d2dZwb88fHG3B
-         tQeA==
-X-Forwarded-Encrypted: i=1; AJvYcCULLfe11+HN1UqGlid/u2/CO97UPhwDHka8eMS2P3gpM/LO1oSM+z7k6Na4CAaCXn4GnONbxHdMU6MFyQW/g6c=@vger.kernel.org, AJvYcCXAnKkfe6bQCrckFKTKbtR8LarWqc5WszNdyhhvLkjASxE9lYmLRGutd06GNdQOgwj2IvYE7y1wQJ/TYgH/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz082RzMXm0BH+a60nFCLYqLkKo6tqBIb9IRmE2Sk45d/4I1AE/
-	mNia1i15Nuze88FX646lHP9ZZ3DoNQKcJ4Q9ZrsQ+lyx8/ZcsnqQyjy1M1eat+G09y7w9j3Epnc
-	w10CHz8v3uOyv8VFf1vtKPllDX4raShg=
-X-Gm-Gg: ASbGncu5YswHcWTWVin+s3jE4BoTX1z2pq/K1wq8pNWvKVbTgMORLOiayzRrAFxGn0N
-	VFJ8NBbUFpFGbxY+BnFyMOjJtWpJaV6aUyu1abxd32huDxEnFYSPHr+5EyfVGeyOQ/sRCaHHyOo
-	6cLBPYg7fFnrwCs3f3ZFCkMWd7yYgCrj+lk9qom0fKzxwv
-X-Google-Smtp-Source: AGHT+IFuT6Y2MPqukrRAc3faj2hOL8dGkyYsm1wkR1IX3QKkXPPSkzl7kk1IEFDhWlgxsK9U2auW/7vp0nqRH71ZfPU=
-X-Received: by 2002:a17:90b:5484:b0:313:2f9a:13c0 with SMTP id
- 98e67ed59e1d1-315f2614bedmr1762758a91.1.1750867193468; Wed, 25 Jun 2025
- 08:59:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1750867480; x=1751472280;
+        h=in-reply-to:references:to:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=uWKkFAFg9O1FS34EdKG7yTUZEGesEzF1QQfwKchWpik=;
+        b=CJB2n9qcz6KCg3yNUGOeY0M1sREOfo47Y4P+GX2eobSqaYz/WG7Bl6+82udIAJopxf
+         lU3Dawl9929xueVtyhx3XpUDliRum3QLp6HkifhdamqllxRqeuDif6n1m7Ycn0dysb0e
+         6oJlz1mQltlIt2qTSm3eSX7fWMeC18V6DcGJwEsO7x4uZ0dqmuk3kNBEgy4q/iEU9oMT
+         4OGfR/5syslh7U5dB6K8ZEBTwRqM6B75pOXjNJ1KEzr93zt2H8RVi3Gw6rBHpyiTddK7
+         da1gR4pkCf4GeCUQ6MjRUHTjhg7JMSaw0rxyRdCEEhUg7AFZpachjBLDSos9X8Wf1LAm
+         pOoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUni5mJwYcRxS29anFPWr+jhwnwqDV9Dvkj9umQGXhCGou12Dmpkwfwa08wIaC4sVsS4tTw3jsP9mrEq/U=@vger.kernel.org, AJvYcCW18uxb84uDUyecFAny8rQjkraKcDzh9J7ryHRGwKyTUnP4YHl+OPJ2cusYgp6i3PJtMNlMwIFMPJ1WF0oc@vger.kernel.org, AJvYcCWcZ8T0SZK1RChyBCOmtEsXHr/bJOPDTAfalN2QV2hrvsE3NhdJy/p6pyy1OKTgf9KM0WREwBXVURugbtxpbgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/lTKr13iQfr1VJyGyeh1Z2giZ+oz5K0k0br+E2jSsjMiZFjjJ
+	rrC8R2wX2iqYLwixWs4gDQzI5Ut/Uvqft4PhqbPRrmZ6Cet6WRPiLgvHQ7UT/OS0
+X-Gm-Gg: ASbGncvmLV4UsVdX1VH9Nje8a2AgTg+X3CYOOkoUeQM36yVfJdLkn3yKbOlZJWDawjX
+	O1MXCiM32x7+r2UCY/GhR9y8mbuIIi0l/SK0OobSdJrY//ldK/0MQ2Z+ChCRPOZcSywN7YWZ2NK
+	dUxBmOaq13mqQfLf3DxnAaVBhPw2x9CL2l6gij3J4kgR/g4f2nZtNYfnuwmT31kE3i/5aCLMFBx
+	qaxyoyKGKQIfNWfM1MUKDetyULqA41WHbqrXAz1nM5coXCo17ROij+a/GpsPJWVvacLz3XekMXk
+	o2UR5gijOYf4e29/Vo1pXXy5PmcwxysriBgORPuHS7N/B2+ZC2/GrPnJ1NtBvr2iaFMLk33V+ND
+	dSg8Sa2LfiPxp3S5NQu6r0Ip/
+X-Google-Smtp-Source: AGHT+IGwdBKEOpjpvucseGnRqSYsFTVnLPoA4uCi0Dyrn7S/hacATqeX4eEhHO0U4z09yQRUY40vHQ==
+X-Received: by 2002:a05:6000:230d:b0:3a4:dcb0:a5f with SMTP id ffacd0b85a97d-3a6f2e8e330mr249814f8f.16.1750867479407;
+        Wed, 25 Jun 2025 09:04:39 -0700 (PDT)
+Received: from localhost (a95-94-245-170.cpe.netcabo.pt. [95.94.245.170])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a6e8109e1asm4934842f8f.84.2025.06.25.09.04.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Jun 2025 09:04:38 -0700 (PDT)
+From: Rui Miguel Silva <rmfrfs@gmail.com>
+X-Google-Original-From: "Rui Miguel Silva" <rui.silva@linaro.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <5827884c-f269-4e38-8202-2a3fce280ae3@sabinyo.mountain>
-In-Reply-To: <5827884c-f269-4e38-8202-2a3fce280ae3@sabinyo.mountain>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 25 Jun 2025 11:59:42 -0400
-X-Gm-Features: AX0GCFsNtKODTPbjTsMx_0S5wUfauBMFZ6j-k85_DmOyWLCatMSUe3VcamgaBGk
-Message-ID: <CADnq5_P1i=GXfmbK4n44UWCLvoyQiwW4UPJFz+Mx4BHqmUbzrg@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: indent an if statement
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Frank Min <Frank.Min@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Lijo Lazar <lijo.lazar@amd.com>, 
-	Hawking Zhang <Hawking.Zhang@amd.com>, Samuel Zhang <guoqing.zhang@amd.com>, 
-	Asad Kamal <asad.kamal@amd.com>, Ying Li <yingli12@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
-	Pratap Nirujogi <pratap.nirujogi@amd.com>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 25 Jun 2025 17:04:37 +0100
+Message-Id: <DAVQPZC0K30N.308T7KKXHN7N1@linaro.com>
+Cc: "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Martin
+ Kepplinger" <martink@posteo.de>, "Purism Kernel Team" <kernel@puri.sm>,
+ "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Shawn Guo"
+ <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
+ <festevam@gmail.com>, "Hans Verkuil" <hverkuil@xs4all.nl>,
+ <linux-media@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] media: imx8mq-mipi-csi2: Fix error code in
+ imx8mq_mipi_csi_parse_dt()
+To: "Dan Carpenter" <dan.carpenter@linaro.org>, "Frank Li"
+ <Frank.Li@nxp.com>, "Rui Miguel Silva" <rmfrfs@gmail.com>
+References: <9b6c7925-c9c4-44bd-acd5-1ef0e698eb87@sabinyo.mountain>
+In-Reply-To: <9b6c7925-c9c4-44bd-acd5-1ef0e698eb87@sabinyo.mountain>
 
-Applied.  Thanks!
+Hey Dan,
+Thanks for the patch.
 
-Alex
+On Wed Jun 25, 2025 at 4:22 PM WEST, Dan Carpenter wrote:
 
-On Wed, Jun 25, 2025 at 11:38=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
-o.org> wrote:
+> This was returning IS_ERR() where PTR_ERR() was intended.
 >
-> The "return true;" line wasn't indented.  Also checkpatch likes when
-> we align the && conditions.
->
+> Fixes: 642b70d526ab ("media: imx8mq-mipi-csi2: Add support for i.MX8QXP")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Rui Miguel Silva <rui.silva@linaro.org>
+
+Cheers,
+    Rui
+
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_ucode.c
-> index d777c049747e..a0b50a8ac9c4 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
-> @@ -1400,8 +1400,8 @@ bool amdgpu_is_kicker_fw(struct amdgpu_device *adev=
-)
->
->         for (i =3D 0; i < ARRAY_SIZE(kicker_device_list); i++) {
->                 if (adev->pdev->device =3D=3D kicker_device_list[i].devic=
-e &&
-> -                       adev->pdev->revision =3D=3D kicker_device_list[i]=
-.revision)
-> -               return true;
-> +                   adev->pdev->revision =3D=3D kicker_device_list[i].rev=
-ision)
-> +                       return true;
->         }
->
->         return false;
-> --
+> diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/medi=
+a/platform/nxp/imx8mq-mipi-csi2.c
+> index 6501843ae72d..3a4645f59a44 100644
+> --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> @@ -966,7 +966,7 @@ static int imx8mq_mipi_csi_parse_dt(struct csi_state =
+*state)
+> =20
+>  		base =3D devm_platform_ioremap_resource(to_platform_device(dev), 1);
+>  		if (IS_ERR(base))
+> -			return dev_err_probe(dev, IS_ERR(base), "Missing CSR register\n");
+> +			return dev_err_probe(dev, PTR_ERR(base), "Missing CSR register\n");
+> =20
+>  		state->phy_gpr =3D devm_regmap_init_mmio(dev, base, &regmap_config);
+>  		if (IS_ERR(state->phy_gpr))
+> --=20
 > 2.47.2
->
+
+
+
