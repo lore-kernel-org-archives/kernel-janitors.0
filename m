@@ -1,76 +1,71 @@
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C3626B754
-	for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 15:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15A426B741
+	for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 15:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864922; cv=none; b=FIUL3mZYGej2sMROgcOAZXWwCdC5+MGjTe/mzLke8IVjJ+XDeiyt6dcIgSe3hsex51njNuRJsye3h8pgftUw1UcIzvNTOqD/HHcYYJ7C05iKsYS3ythUj49l1Rt1dgBiAQNr5idnW6NoSl04taEsNKWISDkpgbpYpijoKOtQBhQ=
+	t=1750864931; cv=none; b=mEE/TWlNy4/Ga2MfNv62OFw9kZMqh+fSPWwDq6wXzYRi4D/GX3W/1bLxOI4jYZ4kABixxBjZu6pKt5bn1Ca0iEqm3EG1XOucpONloxVD9lMPAsTTOv71Tuh5doxk2iv52AIO9/UEGqVtFF3YOLX00n1SqagY6rN6tnpTo1Hspi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864922; c=relaxed/simple;
-	bh=FsgbM/deKE5Nup1GimM/CJFPtZWBQLrcuUGL1PVwo50=;
+	s=arc-20240116; t=1750864931; c=relaxed/simple;
+	bh=T/WgMs1t2r6GpZznn+R0tQC4GQB69BnKFtR2iVgkMCQ=;
 	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
-	 Content-Disposition; b=cnI1nTbdOm1WTztoIr0gB35HyktX7poKcyv12gso1hvYKSor9PhFoR3PXqpN3F4oNAWiy629H/BVFIc3vF8RbsJ6nKYl6fmSNe64n/l4XrN1q1fqYGgRN3v2qKb3fBrnmEzWzTtUl8oHn8VU4svDivpi1glL4n3WfTHuH7f9a1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YvWb9N2M; arc=none smtp.client-ip=209.85.160.47
+	 Content-Disposition; b=IiZNMjJYWtZ3L2ZxOmVAPRiALMsVx+FJDLu9dGKaWVXfnRTGj81dJn3XyN2hqlOXJDtFKpIBuLD7/q0Ycy2B60uRfmjSACnJ8NyPZYydL/54nBBJ30Jl3O41yC9ennYzqcQffLuvRR/oRPKS9gTF1sy9nvw848y2PUXiYjT0yg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NWtTrG1k; arc=none smtp.client-ip=209.85.167.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YvWb9N2M"
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2ef461b9daeso22797fac.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 08:22:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NWtTrG1k"
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-40ab5bd9088so36343b6e.0
+        for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 08:22:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750864920; x=1751469720; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750864929; x=1751469729; darn=vger.kernel.org;
         h=content-disposition:mime-version:subject:cc:to:from:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Og1GMQOpzfwXI+0cF3jnX9BInwec7Spgn25VRzS7t+E=;
-        b=YvWb9N2MzLVbth02VojolWfIo28lbrtiMxmB3feP7xc+eh3/ULOzU4Iyqg+G2ecLHz
-         6bU8Je9Ng1Hbdel3GjCJX6eoOU/UiWOZMKxgfTEbbMJx+4cU6aTqE9Haj+q1k4LNluxu
-         1UIAyy1PlIuR3wYOD7yt6yCHcYoHahagM0e6pYeRnHiS+Zy3idaeb3XzUqYb++kt4QFt
-         qvnte7xDhYoXlGJGQTPeeN4cl7wxyuYC6SA2gUqhH9/HAGkSL3laParOVWZHaoK6DSN3
-         EqOkuru5qOtLqcB8gWYaHlbCtzbZzvvq70Aalwdfcgsmg4l2KC2lyvtPsXQG570Lk6G6
-         whGA==
+        bh=v7oc7DM7sUp9Q2g/4DgfS/ixOMuqC8G8HAAnnDTr+l8=;
+        b=NWtTrG1kG1OIjAVGUGyjezZPw/SzftN/pTuyohNdThOkXwWjoqtlxfZeZhaG4iEGYo
+         Ff/VjDH1pue4OfewT3cg4PMhwGfJJ4WBo6oKyYrX9D7gxbaUXaBDbVufUuEpXFoKVZxM
+         +qlfKUY7ymPNI6ekmnfZkV84ZLd/ZV5NgCIAnXg1cU7q89XzxuH5ptCYjrpuIWyj/NNb
+         h2gSX50tAkxlFRx4jnhLglb8Es+/xQBerR9448rqpfrLrzJoxKM0kXwNn1KNwG0VlGgv
+         MwKwkKyrND4DolM3yvxuHJWod4MzOlQwQf8ntSm3lralYY7wts18FnQs0W3oPi9kndY+
+         XE3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750864920; x=1751469720;
+        d=1e100.net; s=20230601; t=1750864929; x=1751469729;
         h=content-disposition:mime-version:subject:cc:to:from:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Og1GMQOpzfwXI+0cF3jnX9BInwec7Spgn25VRzS7t+E=;
-        b=eq4kYHjB9r8CO+SwnpCQl1tmkoQBu8tF8yuGUwBeLoSnUK/LdeBygTwntrA4ceKBLH
-         ObhAftTruzPBdKiRb+9OqTzSXjGUThZ2khMjC3LrvCmImPdSsVB1RQqo1Q5vWjOjg4t/
-         p3G+seBdO/npHGB5T7GO78lB3YAa4/FCElm7Jk+q1/xwfpjX02qTaon6LHaX44LYq20U
-         sewnNO2/eSpGJ7knSZK23x7AYIsjvhnRkXMr7iazh9KbxS47LJvSLTu0gVlFY+DxdOzY
-         hKIt/1f6+kQDcyd0ovspyIiNm6Rpa8QlYpckbtNAmBb1vYmhHnW1xV5YHgMz5vf57Zld
-         f8lg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/J7gsEjVHz3tlyuKun6shzlIEr5ADi3rOpjgEsNjLaYz9bkvLx04VlspfoEfdHmm/P9RAlFqYIiJKnIZHo7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySlKyZu9B4p6Y0ajEev22aIYoU+TfR/mJawjBi+28cT/qG5SVc
-	AQ1u0lIjFDXc0rwvjH50ebdcHrbIDwJ+ZfzAi+rqvfv0PQnhZVu9qmEiSLQOC73QQ/5Mz7dGKmb
-	YD9bY
-X-Gm-Gg: ASbGncunjK6wMEeMaJdROE4y+MfHI6q/N22j+KVuGa1W0ACl8UE04NWi7iSgtk80sFh
-	uQa7EyPKNgbEj/D+3/OK1qwcZQRIFAhoGbCrdya1CnVCY8+q5FoELkgpmr+z5H908/uldz7mpMp
-	4IfFu+Fpn6Nqx85Pftf8XwB5HvUbnFbauUid3QwbPlFCl4sucablDSRVt8nQ+naXNjFuaMhcq4R
-	twK7DkhKxC7SdvnZ7xAi7RuMu/c6LuRnR1AEBNSOgpxzo3K0XQG5m10cQly6gffqaZvJBTeITKe
-	IscJwoNxYph5VPj17MWdcC8iU9yhxGUZetsLIE8FX0kLDal/mG2EcpB6WOTy5FxXXxVXhw==
-X-Google-Smtp-Source: AGHT+IHjveoem5cNH6WAD1vk3qjNmqKvozrExi59Gv6OL5AFVt4hopks6BzgykjOruT+XmUJ/QJh/Q==
-X-Received: by 2002:a05:6870:b6aa:b0:2b3:55b3:e38 with SMTP id 586e51a60fabf-2efce2d2daamr69472fac.21.1750864919683;
-        Wed, 25 Jun 2025 08:21:59 -0700 (PDT)
+        bh=v7oc7DM7sUp9Q2g/4DgfS/ixOMuqC8G8HAAnnDTr+l8=;
+        b=vJ9LVezxz+5m6EvH0F7KhHoy/CGHwIy7pSFcAT0HQOkoVjgjlRUANChNIGxiSroLyi
+         plZluHkVFVa/pLPkWOo11Y7J2UEzDjzUFZSaviKnFF00LomHJg7dFLz2FalJov0+7n7W
+         pdFDKeSYmQHpH/3/3iq8iySd+tBHAhCj09LlTnoXZAWXEZe6QyqIDmy2gEbSiTijk2gE
+         rXL+PjftT+01J0oEeSoEwIfWewZ/uE0v5IQTBz4yUrdz/8IziGx+kG/d3sftnONVebiD
+         O7Hlx9EWkFM2shbqq9ymxRet/wG1YCINcUY1hxtRfIR8zforal6MgD9mHNEjGsxhy7ji
+         BA+A==
+X-Forwarded-Encrypted: i=1; AJvYcCW9oXJ1CkQTMc+HhRP2tM+A+xhUFGwqKYHn6yoWmbjFe0j2P48WUankdb2gXGSoiZQoEfovwJ/U/74l4l5WVf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz54UH2/sEXuJk53SD3SBp5bgXR0Sn0yqftzq0LkXweqwDR+ptA
+	u+fbZcVelxU8OVK8uvy4tJ+1xa39b2nHYfAsLxpT2mc67Rsn7OWRKUtxYua1rZNwrw4=
+X-Gm-Gg: ASbGncueb1b5KGx/31qBfqNRnxfOrxDJuugrsC7huftQHpmcPeMiqP76cn3Dkq0vGcM
+	7BC5oXvdj0v9xqINPBCQnA4eIb02JnHBSw3EMvyi3xKvBhjq+gKFTYDMd4MMzNnbckQOWGOTDNC
+	A+Yd4Tts5E1yMrZYfPzQX9GGDIeL+6l9P9GS05a79GT3hK//R9h3SV/Pl55bLnoEF1rmMZV3Mlz
+	qGS+Uwys5L4slzdur9lAGtdb1xKUB1UV5gutCxWp9qWVK4t+TjjMTtGPaUxv+1Eqlx8/ZN7hlo8
+	Rl01F9au4jQsfyeaXkQNP+wPKKz3cGFQ1vVgNJyqT7hEhNCVGE3HoRiSMMpm2UiJ2WUfRg==
+X-Google-Smtp-Source: AGHT+IGcFvEYPWqui0Yt0xXJPtapA6f/IqOEU7Zk6imoU5KH28ETem8+ya9bGVLKj6PAPIC1zVqo4A==
+X-Received: by 2002:a05:6808:1789:b0:407:77e9:a104 with SMTP id 5614622812f47-40b05762eb8mr3132816b6e.17.1750864928919;
+        Wed, 25 Jun 2025 08:22:08 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:1fca:a60b:12ab:43a3])
-        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2ef93691e24sm951547fac.19.2025.06.25.08.21.59
+        by smtp.gmail.com with UTF8SMTPSA id 006d021491bc7-6115b6d233bsm1689623eaf.16.2025.06.25.08.22.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 08:21:59 -0700 (PDT)
-Message-ID: <685c1417.050a0220.696f5.5c05@mx.google.com>
+        Wed, 25 Jun 2025 08:22:08 -0700 (PDT)
+Message-ID: <685c1420.050a0220.ae80e.9bfa@mx.google.com>
 X-Google-Original-Message-ID: <@sabinyo.mountain>
-Date: Wed, 25 Jun 2025 10:21:58 -0500
+Date: Wed, 25 Jun 2025 10:22:07 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Chris Wilson <chris@chris-wilson.co.uk>,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] drm/i915/selftests: Change mock_request() to return error
- pointers
+To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
+Cc: Johannes Berg <johannes.berg@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] wifi: iwlwifi: pcie: unlock on error in
+ iwl_trans_pcie_gen2_start_fw()
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -81,100 +76,32 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There was an error pointer vs NULL bug in __igt_breadcrumbs_smoketest().
-The __mock_request_alloc() function implements the
-smoketest->request_alloc() function pointer.  It was supposed to return
-error pointers, but it propogates the NULL return from mock_request()
-so in the event of a failure, it would lead to a NULL pointer
-dereference.
+We need to call mutex_unlock(&trans_pcie->mutex) before returning on this
+error path.
 
-To fix this, change the mock_request() function to return error pointers
-and update all the callers to expect that.
-
-Fixes: 52c0fdb25c7c ("drm/i915: Replace global breadcrumbs with per-context interrupt tracking")
+Fixes: aeee73e27f2d ("wifi: iwlwifi: pcie: move generation specific files to a folder")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-V2: In v1 I just updated __mock_request_alloc() to return an error pointer
-    but in v2, I changed mock_request() to update an error pointer and
-    updated all the callers.  It's a more extensive change, but hopefully
-    cleaner.
+ drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans-gen2.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/i915/selftests/i915_request.c | 20 +++++++++----------
- drivers/gpu/drm/i915/selftests/mock_request.c |  2 +-
- 2 files changed, 11 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/selftests/i915_request.c b/drivers/gpu/drm/i915/selftests/i915_request.c
-index 88870844b5bd..2fb7a9e7efec 100644
---- a/drivers/gpu/drm/i915/selftests/i915_request.c
-+++ b/drivers/gpu/drm/i915/selftests/i915_request.c
-@@ -73,8 +73,8 @@ static int igt_add_request(void *arg)
- 	/* Basic preliminary test to create a request and let it loose! */
- 
- 	request = mock_request(rcs0(i915)->kernel_context, HZ / 10);
--	if (!request)
--		return -ENOMEM;
-+	if (IS_ERR(request))
-+		return PTR_ERR(request);
- 
- 	i915_request_add(request);
- 
-@@ -91,8 +91,8 @@ static int igt_wait_request(void *arg)
- 	/* Submit a request, then wait upon it */
- 
- 	request = mock_request(rcs0(i915)->kernel_context, T);
--	if (!request)
--		return -ENOMEM;
-+	if (IS_ERR(request))
-+		return PTR_ERR(request);
- 
- 	i915_request_get(request);
- 
-@@ -160,8 +160,8 @@ static int igt_fence_wait(void *arg)
- 	/* Submit a request, treat it as a fence and wait upon it */
- 
- 	request = mock_request(rcs0(i915)->kernel_context, T);
--	if (!request)
--		return -ENOMEM;
-+	if (IS_ERR(request))
-+		return PTR_ERR(request);
- 
- 	if (dma_fence_wait_timeout(&request->fence, false, T) != -ETIME) {
- 		pr_err("fence wait success before submit (expected timeout)!\n");
-@@ -219,8 +219,8 @@ static int igt_request_rewind(void *arg)
- 	GEM_BUG_ON(IS_ERR(ce));
- 	request = mock_request(ce, 2 * HZ);
- 	intel_context_put(ce);
--	if (!request) {
--		err = -ENOMEM;
-+	if (IS_ERR(request)) {
-+		err = PTR_ERR(request);
- 		goto err_context_0;
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans-gen2.c b/drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans-gen2.c
+index 0df8522ca410..8ff23f3931c6 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans-gen2.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/gen1_2/trans-gen2.c
+@@ -546,8 +546,10 @@ int iwl_trans_pcie_gen2_start_fw(struct iwl_trans *trans,
  	}
  
-@@ -237,8 +237,8 @@ static int igt_request_rewind(void *arg)
- 	GEM_BUG_ON(IS_ERR(ce));
- 	vip = mock_request(ce, 0);
- 	intel_context_put(ce);
--	if (!vip) {
--		err = -ENOMEM;
-+	if (IS_ERR(vip)) {
-+		err = PTR_ERR(vip);
- 		goto err_context_1;
- 	}
+ 	if (WARN_ON(trans->do_top_reset &&
+-		    trans->mac_cfg->device_family < IWL_DEVICE_FAMILY_SC))
+-		return -EINVAL;
++		    trans->mac_cfg->device_family < IWL_DEVICE_FAMILY_SC)) {
++		ret = -EINVAL;
++		goto out;
++	}
  
-diff --git a/drivers/gpu/drm/i915/selftests/mock_request.c b/drivers/gpu/drm/i915/selftests/mock_request.c
-index 09f747228dff..1b0cf073e964 100644
---- a/drivers/gpu/drm/i915/selftests/mock_request.c
-+++ b/drivers/gpu/drm/i915/selftests/mock_request.c
-@@ -35,7 +35,7 @@ mock_request(struct intel_context *ce, unsigned long delay)
- 	/* NB the i915->requests slab cache is enlarged to fit mock_request */
- 	request = intel_context_create_request(ce);
- 	if (IS_ERR(request))
--		return NULL;
-+		return request;
- 
- 	request->mock.delay = delay;
- 	return request;
+ 	/* we need to wait later - set state */
+ 	if (trans->do_top_reset)
 -- 
 2.47.2
 
