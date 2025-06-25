@@ -1,113 +1,119 @@
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2B22BEFE2
-	for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 15:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A6F29C32C;
+	Wed, 25 Jun 2025 15:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750867135; cv=none; b=Vjr/sRv2nc41Qxw4JNx1IqdCWTUD9kvZuW0tP9QlnyQB6dn3W3AhSypc5D9l8TEY5AcWBQFPBz/5fkK1J4gLYUz5C55q/xt5PCRHy95T0jU6VjSlvND+LqNESMV4Zgd1MHFJmkN8EaCmi0GCu3lliGGsF7ab3DUqSIxSQqqywx8=
+	t=1750867195; cv=none; b=UoTXf3/5mKODf0VdKEKSPiA2UNFN28KTZjmFbuZigylimlKZWodSG2wnFz8YoADur7lnie9EqK5Ws5JNZrRZto/xg8NfMZxPV+6Mz94jXv/7mz5a8f+N1wAkyXlX7m/i3H4KtmFo4zElIJlLo+uREyzj+hLRi6LQysf4yuQYFBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750867135; c=relaxed/simple;
-	bh=5ivSU5P1ybOP4JXEyPg2b4KE7hth8e9XxndTgLMPwek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YWgeAHBmS2d+FLsfk+h3aZpMZGgLL+7CbrzrC12rfYddAnB1KBXNocZTp0D5Mgtao4s0nlxS11BOu0MuQVm1uB301kjkH11XM1w9Fd3+/Pvnb7NJcVpntGnjI1M2e95x6zo0mDE8B8Dlzn74+mR/IBV6YLHg88dv+vkBpQYl2bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h4easKFl; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750867195; c=relaxed/simple;
+	bh=Ph0MeFJ2SG94/VHLocJYdGNnfaMXzvuA/05zOXAqNd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DmDgDWO9s+uCIfevCNc4FNkOGOP2T0+EIvFsbo62KQCekfpJWOpeY7ml0VSopSlOZ/1Hhda+tDD+G2qu85IFaIBfz4BE18/hq34OgjgcmRG50t6YKhqfuC/Yl3G6JkWLAOIqJmvW57L8rYwcMC9h0HJqFptX7dplWPcJTZ42e/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M1MTLO7M; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h4easKFl"
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2ef493de975so40728fac.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 08:58:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M1MTLO7M"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b2700de85d0so1159576a12.2;
+        Wed, 25 Jun 2025 08:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750867133; x=1751471933; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S50u2pGmO0FJNNUATSBkFdTyq4cP6tNm57kv4SYiUhA=;
-        b=h4easKFl3gNSZbbw3TX8q89MHFIeYi+sajm30MVRaNq97IZnerBVflGYVim3nf7WwJ
-         cf1tLbBxnM2mLfr1+EIybCkcwnGnP+ulxM347jWEBm0fOvBRkp+b8KDbulOMAqpG5oD0
-         dQjvOSmf6UBugRsp44Yp1Q6F5/Kl+A6e1P0Il+MCO2ejYdHIACS8PA0/rN9N86pVfQk8
-         R8BKM2D0Xt6oM03CRkWdE0n7BAZd8hFUpV37LPyqaB0MB2rHH1nairxKN5xPq3LZT2F8
-         bn6KO2pOyfBsSreyKWcbLFpId65ebd1ZizyvAtoyrL7id9YKrqfngvjgIsBeKGhjzLFm
-         yoyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750867133; x=1751471933;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1750867193; x=1751471993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S50u2pGmO0FJNNUATSBkFdTyq4cP6tNm57kv4SYiUhA=;
-        b=NVFsbLxj+xWCs3ONFS/NZ92KJy/IDzDSLWoyI5CgTNrCUj/U9utVksT6dR/isb/o9R
-         2eFb2jtmo8IAv6gJK9sBOqQZyqmf36ZCTdFDKNjpYzrzcsXHSajxqFqMy17B02f1U0fq
-         +4LNC3iNepfHkiUHTO6FFYOXPquKTZxoNenRkuyfKULxGfQfDM878/UN/4FIZWZsw+BE
-         jbTDwDyJaWzwB2VC4agk0DrS+L/sCXv3uCAuEtJjNC60xnBct60ZV6zDzF1pv8qg7h+J
-         fCNKodfvAsbjWoQSUpGOb4fe8Ub85XeigL6UK0EHW3coG+1pMJLBBceGjujg+l576nRx
-         vuVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTAAn+4U3Z3o4eTZpMWi0Q3+i0zUqATLrHzUGqn8Zfxh78m/t8z9QvgVw6RmGKuwU9r2iaPMxiXunADHHedJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZyplHsItVQ+uxBnGTP9KvItoEgobhz8OsgumOojE6oPX18Bh3
-	4mUan+RvwLdJ5y4dZYLNcv58FAvK0BKBQqA3kl4bkEaSPfyyPs6Ip3i+VKZjcKNKG4U=
-X-Gm-Gg: ASbGncssH99qpwq926aPv6Xzqvf3jndGDt1DAPI+iqbRdq2q5Muha9dHWeRS9DRLOQG
-	9t+4F8UqrI2OaaLytPDqWdIPKicb6aHsVlf7Zv/2/hFPcCW9qhNP20JjkP+bxgDMsabWZZCMyPS
-	AmA43LE2l0J+DXvZKnBschW4ekhq9egUIDdCpVuntPWJrYVmAf/c21LzubIHwjkdlB+SGF7oNqC
-	+YY51zGX1H6N6qGildSUPEQImXwIATicpSdL4eQXU1uyGGQO9Q7kTtSr9tosdeLQ666NUliGtha
-	1LBbfVnJs97brzgyUJWANXGJ7Gtq9k56NTpnbmfnIfSqy3QP8ba30+QlS5E1OS4WrTU=
-X-Google-Smtp-Source: AGHT+IFJT824h/fVUdrtP8VolwifhwFVWo0IkVtlZ5cdp9VZgCFy3WBGpkfdsvju1vACYv0c0xsXRg==
-X-Received: by 2002:a05:6870:8a0c:b0:2cc:3523:9cd5 with SMTP id 586e51a60fabf-2efb22133d1mr2422068fac.17.1750867133090;
-        Wed, 25 Jun 2025 08:58:53 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:3ee4:904:206f:ad8])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ee8a8ea97dsm2626851fac.29.2025.06.25.08.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 08:58:51 -0700 (PDT)
-Date: Wed, 25 Jun 2025 18:58:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>, Ira Weiny <ira.weiny@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] ACPI: APEI: EINJ: prevent memory corruption in
- error_type_set()
-Message-ID: <738b8abd-5825-48cf-9c5c-697ae057ab79@suswa.mountain>
-References: <4d800ffb-fb1a-464d-adcc-2802187cfa9a@sabinyo.mountain>
+        bh=+v2S/Kr4IAe9nDhUjRoLqot9qoZr4r/hGrWQ5tIcEsU=;
+        b=M1MTLO7MbxVdSVpFjNpWI4BLpryWFII76xkbgFr2CntZiy9zNxJkpwHvW5WufBjkfa
+         p2JLKDv9PU3ixa/xtU68fB6lDcQuwnLTHiBQjRRjkRBgRYX4WvzDTM26FQP0h+21Cqje
+         mlldlyEtBI9jMP++CbMfczrI5lSnzb5TxS7gfUKiTMMOW2DiNEgn6KDsFQBR8o9Vx0Vp
+         7E3B8sl99diBzMnfxBf990yunESSHl2jDjzDqGVdyaUWcVk6m2nYMqRbQCKQWo+zYzZW
+         1XELBv5MmW2gIMNNM1+6N3FWzoMSqt+ZKcqqQ04lMmNULWlmllDG3SgdL1se96JdRjay
+         cubQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750867193; x=1751471993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+v2S/Kr4IAe9nDhUjRoLqot9qoZr4r/hGrWQ5tIcEsU=;
+        b=SgOcUE13vVB7samsKG9SXVq8uvrv5L5ccqtCiCz0jPgsYcRSfSyVMwipwCnxrwRcdx
+         ix/sKmBfkuP+cV1f8V2s2+lv2XMWs54DGFHghyd727Ef4bOCEhsahpU17rrT8FoiTegX
+         +tDhRx2F+reOwqS/OJZSeP7vXg8nKHez7JHX76I3YD5UVLJbqSeu/RgRsYfNkmUrHufO
+         iXK0UfUAYOmaUFiq+xWnH5BE5+Xb/0uRY62uAhlFg2C2eXe4qkA+cXLryWsGoLEJVSit
+         Lo8WfQVrVX3xtor3cXRp26uV/8gF3zqPfCt48ryVodr1n15RrhRHKn/d2dZwb88fHG3B
+         tQeA==
+X-Forwarded-Encrypted: i=1; AJvYcCULLfe11+HN1UqGlid/u2/CO97UPhwDHka8eMS2P3gpM/LO1oSM+z7k6Na4CAaCXn4GnONbxHdMU6MFyQW/g6c=@vger.kernel.org, AJvYcCXAnKkfe6bQCrckFKTKbtR8LarWqc5WszNdyhhvLkjASxE9lYmLRGutd06GNdQOgwj2IvYE7y1wQJ/TYgH/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz082RzMXm0BH+a60nFCLYqLkKo6tqBIb9IRmE2Sk45d/4I1AE/
+	mNia1i15Nuze88FX646lHP9ZZ3DoNQKcJ4Q9ZrsQ+lyx8/ZcsnqQyjy1M1eat+G09y7w9j3Epnc
+	w10CHz8v3uOyv8VFf1vtKPllDX4raShg=
+X-Gm-Gg: ASbGncu5YswHcWTWVin+s3jE4BoTX1z2pq/K1wq8pNWvKVbTgMORLOiayzRrAFxGn0N
+	VFJ8NBbUFpFGbxY+BnFyMOjJtWpJaV6aUyu1abxd32huDxEnFYSPHr+5EyfVGeyOQ/sRCaHHyOo
+	6cLBPYg7fFnrwCs3f3ZFCkMWd7yYgCrj+lk9qom0fKzxwv
+X-Google-Smtp-Source: AGHT+IFuT6Y2MPqukrRAc3faj2hOL8dGkyYsm1wkR1IX3QKkXPPSkzl7kk1IEFDhWlgxsK9U2auW/7vp0nqRH71ZfPU=
+X-Received: by 2002:a17:90b:5484:b0:313:2f9a:13c0 with SMTP id
+ 98e67ed59e1d1-315f2614bedmr1762758a91.1.1750867193468; Wed, 25 Jun 2025
+ 08:59:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d800ffb-fb1a-464d-adcc-2802187cfa9a@sabinyo.mountain>
+References: <5827884c-f269-4e38-8202-2a3fce280ae3@sabinyo.mountain>
+In-Reply-To: <5827884c-f269-4e38-8202-2a3fce280ae3@sabinyo.mountain>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 25 Jun 2025 11:59:42 -0400
+X-Gm-Features: AX0GCFsNtKODTPbjTsMx_0S5wUfauBMFZ6j-k85_DmOyWLCatMSUe3VcamgaBGk
+Message-ID: <CADnq5_P1i=GXfmbK4n44UWCLvoyQiwW4UPJFz+Mx4BHqmUbzrg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: indent an if statement
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Frank Min <Frank.Min@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Lijo Lazar <lijo.lazar@amd.com>, 
+	Hawking Zhang <Hawking.Zhang@amd.com>, Samuel Zhang <guoqing.zhang@amd.com>, 
+	Asad Kamal <asad.kamal@amd.com>, Ying Li <yingli12@amd.com>, Prike Liang <Prike.Liang@amd.com>, 
+	Pratap Nirujogi <pratap.nirujogi@amd.com>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 25, 2025 at 10:23:26AM -0500, Dan Carpenter wrote:
-> The "einj_buf" buffer is 32 chars.  Verify that "count" is not too large
-> for that.  Also leave the last character as a NUL terminator to ensure
-> the string is properly terminated.
-> 
-> Fixes: 0c6176e1e186 ("ACPI: APEI: EINJ: Enable the discovery of EINJv2 capabilities")
+Applied.  Thanks!
+
+Alex
+
+On Wed, Jun 25, 2025 at 11:38=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> The "return true;" line wasn't indented.  Also checkpatch likes when
+> we align the && conditions.
+>
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/acpi/apei/einj-core.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-> index d6d7e36e3647..e77c0d4b4ee5 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -826,8 +826,11 @@ static ssize_t error_type_set(struct file *file, const char __user *buf,
->  	int rc;
->  	u64 val;
->  
-> +	if (count > sizeof(einj_buf))
-> +		return -EINVAL;
-> +
->  	memset(einj_buf, 0, sizeof(einj_buf));
-> -	if (copy_from_user(einj_buf, buf, count))
-> +	if (copy_from_user(einj_buf, buf, min(count, sizeof((einj_buf) - 1))))
-
-Nope.  I put the parentheses in the wrong place...  Let me resend.
-
-regards,
-dan carpenter
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c b/drivers/gpu/drm/=
+amd/amdgpu/amdgpu_ucode.c
+> index d777c049747e..a0b50a8ac9c4 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
+> @@ -1400,8 +1400,8 @@ bool amdgpu_is_kicker_fw(struct amdgpu_device *adev=
+)
+>
+>         for (i =3D 0; i < ARRAY_SIZE(kicker_device_list); i++) {
+>                 if (adev->pdev->device =3D=3D kicker_device_list[i].devic=
+e &&
+> -                       adev->pdev->revision =3D=3D kicker_device_list[i]=
+.revision)
+> -               return true;
+> +                   adev->pdev->revision =3D=3D kicker_device_list[i].rev=
+ision)
+> +                       return true;
+>         }
+>
+>         return false;
+> --
+> 2.47.2
+>
