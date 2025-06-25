@@ -1,133 +1,107 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6E31DB15F
-	for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 17:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E7E1E102D
+	for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 18:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750873943; cv=none; b=kEDU8i9d6ES37CxEaGBDpPvxoPt/ZvteW70UfjbEOA1O5faPM/UpFvjShP3B2vnOPDzxkqpP/cYInsXrTANJECADwgFTaVOKVeSmfqcTphfnkj3MM2SLiS5rDMtHwC+zt5cZU6kg3orajLaMf4mhH4iy2tgMjPJraOOgQFdRvc8=
+	t=1750874638; cv=none; b=LMmplVQ0GtZXmw3zuRCiFKAL6U0D0wVHMzwne80YGENtRbUPbaCUM4WYGQzJVOpEr4bf+A5HYGwDOH6AxfCfSkur9wSV4OyQOWRqMfzXDjIp2tTaZtZBo23ap4oA/O9Y9pFXUNyb1bn0w0J713MsnqM5iZHp8beMl+gFKuiHL1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750873943; c=relaxed/simple;
-	bh=6eVnPygdGvcbyBklcxFdynuh820nikOauMfnNutbGV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H55rnkpfUWwNNmrQrSCdgBOtmiRAvpGzYSLGzBd+yIE0gelv0cgeQc5A7n6WZShp8IWym0NDroP4cmarKjG5i9HAHrbh0Mz2BpWPSvF3+X3Er5gdBJeCfbbr163SVZLniC/bo8LdD4lr+ecZCrWYiULR2eWRtewX09X2J8TMz3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hfl5uXtV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GEec/7xo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hfl5uXtV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GEec/7xo; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1750874638; c=relaxed/simple;
+	bh=kTOVzbJXVGmBvAGjVwIPoNLXCVX7LhoBr+zKdn7qsAg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OGOkTM5P9MJaIW2UHzJUor2L1O21nXMNAujPeRxtUMf0kcwPSr3MpZ5USuP7gnKD8Kb4vQ66XXIXegqieq8cwe8Z5ycrp8ARIEVYDGc6b5E03kePdYc0HT7ANCsX+Jg8lLCTaw5J9p4F4mQBkKx76KpYNWKawyKqETgFi4GaBLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZRLHZ2Yz; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hfl5uXtV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GEec/7xo";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hfl5uXtV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GEec/7xo"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9EE3F2116C;
-	Wed, 25 Jun 2025 17:52:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750873939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZRLHZ2Yz"
+Message-ID: <d72af2c1-2faf-46db-b212-0b800040c311@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1750874633;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x/hssygHw+m37RmPXPWJbRXpFWFXQ2itxK9rSA/a6JA=;
-	b=hfl5uXtVMJzn7ovOErbWUON+Hmntvg/ajAIFBchjl8ReCEflhjFcDbD4V1NRkwLI1SB3UH
-	zKetR3sw7N0/8y2ICGQ1pI1xYw9WFl03u6EmRC0PuoMZu8SY41YNYib1q+gEuTXGk9lsPu
-	f1YkL6YVE2YSl/WOUYoexJyq+ifdRvQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750873939;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x/hssygHw+m37RmPXPWJbRXpFWFXQ2itxK9rSA/a6JA=;
-	b=GEec/7xopnmhhPUqeK7gzwE5fRSXtecBMpSycdNr4kqhBc5jUIg1jJtJCesJFz6RFetCZn
-	LRnvdgR9GPPwNyAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1750873939; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x/hssygHw+m37RmPXPWJbRXpFWFXQ2itxK9rSA/a6JA=;
-	b=hfl5uXtVMJzn7ovOErbWUON+Hmntvg/ajAIFBchjl8ReCEflhjFcDbD4V1NRkwLI1SB3UH
-	zKetR3sw7N0/8y2ICGQ1pI1xYw9WFl03u6EmRC0PuoMZu8SY41YNYib1q+gEuTXGk9lsPu
-	f1YkL6YVE2YSl/WOUYoexJyq+ifdRvQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1750873939;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x/hssygHw+m37RmPXPWJbRXpFWFXQ2itxK9rSA/a6JA=;
-	b=GEec/7xopnmhhPUqeK7gzwE5fRSXtecBMpSycdNr4kqhBc5jUIg1jJtJCesJFz6RFetCZn
-	LRnvdgR9GPPwNyAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 210CB13301;
-	Wed, 25 Jun 2025 17:52:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id L+WPBVM3XGhMUQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 25 Jun 2025 17:52:19 +0000
-Date: Wed, 25 Jun 2025 19:52:17 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Harry Yoo <harry.yoo@oracle.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 next] mm,memory_hotplug: set failure reason in
- offline_pages()
-Message-ID: <aFw3UQpDoYKavFBg@localhost.localdomain>
-References: <be4fd31b-7d09-46b0-8329-6d0464ffa7a5@sabinyo.mountain>
+	bh=bmEOTc35qmXDcWHfJYLwaXjxVpRNejQ+x5gurD+FuPA=;
+	b=ZRLHZ2Yzhr9hA/kJDhbYSZquvZRJAZyVm37HS11+SLXa/PXi+soMKoTIObWca4ex53ha/7
+	i3I6NdYxXVlWLPhKwTHo8YPiNHg+4rXeiPmUEcGkjBYgvNq+wGQI9YkDc5svIXg+6AbdmC
+	zE5s3tODqmPisZegwo1fW3dLo8E0W1s=
+Date: Wed, 25 Jun 2025 11:03:49 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be4fd31b-7d09-46b0-8329-6d0464ffa7a5@sabinyo.mountain>
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email,suse.de:email]
-X-Spam-Level: 
+Subject: Re: [PATCH] RDMA/rxe: Fix a couple IS_ERR() vs NULL bugs
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Zhu Yanjun <zyjzyj2000@gmail.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Daisuke Matsuda <dskmtsd@gmail.com>, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <685c1430.050a0220.18b0ef.da83@mx.google.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "yanjun.zhu" <yanjun.zhu@linux.dev>
+In-Reply-To: <685c1430.050a0220.18b0ef.da83@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 25, 2025 at 10:32:04AM -0500, Dan Carpenter wrote:
-> The "reason" variable is uninitialized on this error path.  It's supposed
-> to explain why the function failed.
+On 6/25/25 8:22 AM, Dan Carpenter wrote:
+> The lookup_mr() function returns NULL on error.  It never returns error
+> pointers.
+
+Yes, I agree with you. However, this commit is intended to fix an issue 
+in the rdma-next tree. The corresponding repository is: 
+https://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git.
+
+Therefore, the subject should be: [PATCH rdma-next]
+
+This problem does not exist in the upstream Linux kernel.
+
+Other than that, I have no issues with the commit.
+
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+
+Zhu Yanjun
+
 > 
-> Fixes: e4e2806b639c ("mm,memory_hotplug: implement numa node notifier")
+> Fixes: 9284bc34c773 ("RDMA/rxe: Enable asynchronous prefetch for ODP MRs")
+> Fixes: 3576b0df1588 ("RDMA/rxe: Implement synchronous prefetch for ODP MRs")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>   drivers/infiniband/sw/rxe/rxe_odp.c | 8 +++++---
+>   1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
+> index 01a59d3f8ed4..f58e3ec6252f 100644
+> --- a/drivers/infiniband/sw/rxe/rxe_odp.c
+> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
+> @@ -470,10 +470,10 @@ static int rxe_ib_prefetch_sg_list(struct ib_pd *ibpd,
+>   		mr = lookup_mr(pd, IB_ACCESS_LOCAL_WRITE,
+>   			       sg_list[i].lkey, RXE_LOOKUP_LOCAL);
+>   
+> -		if (IS_ERR(mr)) {
+> +		if (!mr) {
+>   			rxe_dbg_pd(pd, "mr with lkey %x not found\n",
+>   				   sg_list[i].lkey);
+> -			return PTR_ERR(mr);
+> +			return -EINVAL;
+>   		}
+>   
+>   		if (advice == IB_UVERBS_ADVISE_MR_ADVICE_PREFETCH_WRITE &&
+> @@ -535,8 +535,10 @@ static int rxe_ib_advise_mr_prefetch(struct ib_pd *ibpd,
+>   		/* Takes a reference, which will be released in the queued work */
+>   		mr = lookup_mr(pd, IB_ACCESS_LOCAL_WRITE,
+>   			       sg_list[i].lkey, RXE_LOOKUP_LOCAL);
+> -		if (IS_ERR(mr))
+> +		if (!mr) {
+> +			mr = ERR_PTR(-EINVAL);
+>   			goto err;
+> +		}
+>   
+>   		work->frags[i].io_virt = sg_list[i].addr;
+>   		work->frags[i].length = sg_list[i].length;
 
-Thanks Dan!
-
-Acked-by: Oscar Salvador <osalvador@suse.de>
-
-Although.. we might be in time to squash it, right?
-
- 
-
--- 
-Oscar Salvador
-SUSE Labs
