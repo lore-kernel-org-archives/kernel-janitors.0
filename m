@@ -1,41 +1,40 @@
 Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8720C15689A;
-	Wed, 25 Jun 2025 05:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF971F37D4;
+	Wed, 25 Jun 2025 06:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750830490; cv=none; b=XHRDSHh3eun7A66pD+6N7oyOZm/BW6nWKIr8et8N70fYOntqh9jCbVAzTKkJQNtDO7cgJACRj85Rqbhybwyq9lyuKibFsqhQP7cHgweSHDkLQkDMP7YY20n+l6accbDMz4gcAYE282wkpQP8h+B2wdZ4g3R0gEPqjsInGLFwve0=
+	t=1750834523; cv=none; b=sAvbxYuttsU6ScmR39klzE+9vK+aZdPCjDWfjDrKAKfGViHveWlMVLUrLry1dpx0jfG1lDh2aUFKjkUV9vtQewEeeaa0PKb4oXzxnDTzMQgxjQCSCwrMKutmXyyvHg1krkmIhm08Mm+FXMQDlo4BQmIzup5xrEjRKQo+2UAROgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750830490; c=relaxed/simple;
-	bh=LwfeZ4YBfbX7u+XCuXRkWJ4I8hEJvbhkLjT3MWWuIJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aMYudNKtaW9WP1JT1O78gX8VSigECPtghjVE+PylRaGK9Cup8wmywAK81EYHgndN9N7judl3TMLjVV94N8eijjTNO/72cAY0YVxejvDjprfSIOmUDhoszG2eHWZ40dK9+l1sZ+S0/3plj2tE7WAG/NxUWc0VMMSQ+F+IeFkhg3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ft7xtHfG; arc=none smtp.client-ip=212.227.15.3
+	s=arc-20240116; t=1750834523; c=relaxed/simple;
+	bh=rrKZ1irw5yAVm4i9aB7BKAfnsmBuXw9it0NTlnvpSjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rv/PQcpJGShvpGQ/Cl/axJP5C1T+rRte8EA3goq8hSWNzuj2d/RIrRIF+3ZWMQuXumw8giJkYFJnTDJb7/AH6u9dkwYUZiBxsPq0u2tL4P69Zd4K6y6ty2TIGRVkOc6sxD9E21hGUC68UyUJym+qD7TPFWyKIaZHchm4mRmdcAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=p4mVLhWK; arc=none smtp.client-ip=212.227.15.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ft7xtHfG"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="p4mVLhWK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1750830473; x=1751435273; i=markus.elfring@web.de;
-	bh=Eg+6z0gZx1emXMQzNuPhRP+ehkS8Nrhi4jLASNM+jJY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ft7xtHfGz9gC0k89j8p5wW+wjfIpnEI44VsBriOlGQrb0wu6yCOjDOvij5NOCA2/
-	 M4s+gLB0yS2HW6iIVMZatsoWuFVK1ID9SkgG6gX5yQjO8bjlprc3e35Zw7zU8zzBI
-	 96pv4xvJTY1rJYAHv/Y/5E0/LmVQpc5Z7RZjXsMlpXw/pSFMh+j6+jAGaXRJRSUu0
-	 QIaElYz2qo2V6jEiXfRMwrHDTmdqsrigrj8PWwQbDT9GsfUE6NHCZLGntp+Dgct2t
-	 pAw2BgXmarcuHET/ArnvolOVw2japModSxIniYZ5iHy8N+L1ZLtbtJ8ez0VB5bh8W
-	 9ajBCOA9EDjvt1Q8Qw==
+	s=s29768273; t=1750834519; x=1751439319; i=markus.elfring@web.de;
+	bh=qIxvwagA5r9Vos0XWvHO/MalZBvADoeLlVXEg11hQjo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=p4mVLhWKaFvl2f4lSbktYxlpDcRgtEeq5Gpy49GiuM3UqQHzoJzo1FOEAgw+i6NC
+	 pknomE9oLmkKG5sGoMBY1EvLw5tpGsvxb6NxMragGqWlBsVIMQnXgDq78DCoPWoGq
+	 l7usK+oUAnZxCb8FJMoBa7zQrJOK/gOL3XSjsMzyA/zkrvXBlN37Fx1k8b3fiH1Y3
+	 ZgtNqsDbFwoThoJNTq3qbKwQxxIZYBrxYpo6fW8tcuVMN5TsmgqHyJ5l1aNygmk3L
+	 vdQbuPCixMKHxkjdUBV6qWmFBYPlm3ru7q6CqGDr9+bStxsjPV8wOBe3lSD9EYv7R
+	 FaCylo7QFZr6ahq1ZQ==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.29] ([94.31.69.192]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MnpGw-1v53n10ewE-00aarE; Wed, 25
- Jun 2025 07:47:53 +0200
-Message-ID: <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de>
-Date: Wed, 25 Jun 2025 07:47:39 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N1d3k-1usThm2ioi-00xBzK; Wed, 25
+ Jun 2025 08:55:18 +0200
+Message-ID: <9de5fb9e-bbe9-4f27-9370-1fff9e3c9fe2@web.de>
+Date: Wed, 25 Jun 2025 08:55:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -43,144 +42,121 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] can: ucan: Use usb_endpoint_type() rather than
+Subject: [PATCH v2] wifi: rsi: Use usb_endpoint_xfer_bulk() rather than
  duplicating its implementation
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Chen Ni <nichen@iscas.ac.cn>, Marc Kleine-Budde <mkl@pengutronix.de>
-References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
- <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
- <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de>
- <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
-Content-Language: en-GB, de-DE
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
+To: linux-wireless@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Chen Ni <nichen@iscas.ac.cn>, Kalle Valo <kvalo@kernel.org>
+References: <d04019cd-f782-4d81-97ce-3d70946e5c54@web.de>
+Content-Language: en-GB, de-DE
+In-Reply-To: <d04019cd-f782-4d81-97ce-3d70946e5c54@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xRcDTO9kEmM/LF+y8d6p+q9dpRhZnci3IBmLjUFjMhU9iUtsbPW
- j9OnPMmng6YYMaPsbEEikbx8zSUXtVLc3H5MPnT9JXWi3PF+VScn3OJePci6PxWy5O84bej
- 82/ZXTqVY3H2pyBY/wo7il2NdWtQnZXgxBqDQ54S0vohGQxQldxA6zH1z4Z9hinUilJFauJ
- wFEhslpQrEpez2BRqSpBg==
+X-Provags-ID: V03:K1:4LrI0Ok8MstTdwLoStYhEWx587AL9yyOz3vn1FnCBLI2nW6/T45
+ hGsIJAVY0or1AqmhSGhkIYI8ji1WuiJdKlPUbugPJ+8F5SfI6nGl5JYZQkhFyP6h43Z1gi2
+ EcMQ5ENWkngdGTwsITV1SOedJls5dWJWBmUE0LGzMEEOp8mv3Jay1dj0pcSTTlhsq1C/CVm
+ kBej+KS8nAIRV6T/Za54g==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TdJv0ryx+iE=;YBnUdEcqkjFd2agGqoSEXjS8MZW
- IbFCq/aPRJ+Nc1IIb99UU2Spr5Wzk8SosBupetbqY5279vwuNeyQZEa61zLNX4eSmVD1GP6UT
- wK9OJvlGxytMVE+3mZlLMuTyhDHFTRwsPzngZfyRbCbYtuHhF3NGt9s3elqz41D0ewgUTCwKe
- D9UTZUJ5YMsjBJMfYpCRj7/4lKXMfHwh2EXIbc3l6nXcwG4Yf+aK1xaV604RuoicmQGwaHzTi
- a5oTE/oRN7m+cOHghverlEPKYEyIk6uN2nQ4DzCTTcgZ4LG6qFbwfNTsa7luGJE9vBU2HwwIR
- CERDREBiGJ3CA8NnI4rsLIdgZmReKONZZ3PRo4r58oqYfZZ7pa8B10KKDeKwxG91sGPYMr+bm
- t2q4v7BzfxobMRCqsBTOKtccLYdS7ferCW/G+DwOyA+CIjPwqa+Wv6hfijqoeZT4CQpOROFLn
- nKWKChk1GCJO/BYYvWkctiOAPZf7o5psvwcCZE1ePVr9vvZrVW6d89JGyqAmh9/3Tr+A1ox5s
- kMEH9bgj1YFjMRrdwv2iKWDH09srsvcYIUYxWeW/NppajAq5qezI1SprLhpnLavvB/RWlj2Ze
- pj+XB4ZIVXYHtNXRTgqpNYKkBh5hq7qnRwQ4cTnZWnzsSk1GHJInzXyNyDQw4RwrSDBcSiAva
- eA0rtulGWmlSDmr4n0zmEo5Hzho4J4DhxtT6PLNglJfhZDuOD4y8td0paGz5PjX9PuRVOxa2V
- mhj1cPS7DTIhqcp+Eg6eEbsoHBQHtY/1AC1kXcFyObP5fyeipo9L40Di6aFiTQIobyRElqiDp
- OPBJzBj1+/xN+d0bqZ8Lelr8pKLk1NDteHQCbl7PyHdXKPnUEunlUzuHDBFxk2QWP2nJ5yNSF
- GNwK2V7gTjEne2bWQEWdwjvlanS3kTqOsukZcEbvh2uxWc1DVkyACsA5dKAcLZdIBdafYP/0/
- zUk7e0NNujY7pZNnKUtGOF/R4xlpVDIL8KvJXarQ8uJTFgA1YoQhChWa6Bb8YKYkZz7jgnNA3
- 1NR8pd83Vj/2+afjmvrmu3o3UM9yrKEyDcSARhPC2zpSgErFHAyNtRl+YlluJ2+pgUaN7Pcs7
- 4+lZlHEBLAQmk883GgZ3Cdi2+xbnA6ZtdgujwDX5e9JVB/4Qj2SPFeoidU/LNcxVzqCtn3fUC
- ZeGKPdzRK7iRUn9FsN+5UUjyPikwPIIQaKRL4Zv40uZfRTAM6xvTymL6kmfjxoETvUcQREVbl
- x5q1hb6zEfylfQPObVhjLQBJdpb6j3VEV8imguNE2dLCLI40JZ0+aBYvn1g74hdQczObOUC41
- g+8pVL8/D1z8tnkc8soAW5mEG+isHeTrQ588AOc7sdpnUQ133xVQ+ZfGLL09AhPot3dwLCmj3
- Dc7dKyUbWNGUTuRvA8HQCsmmVTJNMyjbnLuBv28jD1maoJRszStzFK2sdfF+FdgrW2Rp04O5x
- fa7XED39v4vJ6SfKinNS/pqKgGuH2tQVYGw5bYhlc6HQn4MbN+h0XEtclsJXXu3G7u/Img+FJ
- ZZFU8xKUtWCgZJM3RMyNcNd+w2HLITmprjwnu+P1Ta0lFSkC7R7RYMdi7/nZol3wzVPvZD2Sp
- p86SpS3JBqy9u+hKJPc9zm1TLan/ttQttBEkdkcAQWdIen6bJpPftrBA56p3dZEh9l/84YvY4
- P/4s3etYutIxxUOOxOHmmy0iMo8xCs+gmJx/rcNbZVtpZphpP1mlSEtCRTyIKJjws5zPNJE/x
- dYHeMzg2MPZDFesSvnMJrCB885eu9jqpB1FTk10SAXPgecNy15crCYtfKGTUfUyZOTrmoFJcD
- sV6WkNpwUxAYkFTSvnl+uFqjwQy95kScFmKcGU9UOW2THmZZBUGRbDWVXRko9OIEjTkk1bxDv
- gz9mBcI/V6uio70oAPie88u10s5QzZs4JakxbwPjC5u0QrVrFSdwG+0koH1pKZBH1Z8wF7FVi
- Kju058suD2sVBBm9+/2shxUzT8w7RCSt7E5IQOpY6LOs4akxs7WCJx3Wk+2qWCNARylFFAire
- Qybevi092KltNDe5N3IOzwoMGUhfoxSwMv6SloCu2VN73YHRomDMjay5gpSXpXiZqJRDJC/RI
- 8SCJYbXxY12uyBtaSJnVZAH8OaS29pq3Qz3mOb49Bf8lWy+Zk8Vbcf9T7Li6WREDRZ5y6QxbL
- YEHsuWggnaq7J4SieXq0ke8wGU0aKf5W9ze4MhICerklhtvduvFypRuMNFjXZlNlhHiQQHOUc
- 8Nk+eaWlx6IqWXht4N1QxR73yMM0VSF3Qkk/IvTWGnYKXQh1CRuZSEDghG/hTSN1dsVnSQooZ
- aR6MHh3qln1E5v4N0mom6LmxxPYwsgWEJNc/kAHhwymxXm3LGC9+3sqopaRF6wrhnEmfNqhTP
- EtcqWMsMMh/AT2cdsy92LpIpCTWNWnJquHGA+YGjQFjO98IJN7gECaiadHm7iH2VaqZlBE3oo
- ATdbdI0GZE7LF+Ri7z/qstQwQeCkZ5PaCXQclzj4jnN4O5ZRXUQtbfOsxJBjHEJ/WraU0KtYc
- q4G9UeDafMgJoDc4Pn8bAQpUnMJRLWdeg4Wn5qoxvVwPQzv1GiEhU6Cb422tl4v83kYey9K8O
- xurw9eT11XtKfrutxQDQk1rjteXOiHnjiHpkH/IBHz0JRm+rvj/vOP6K+nqon/bJO6QevnYeB
- zG3EFLQTsiIilfBb/KERCePupyCcb87bGKCIDB0l+w0E1wD+VdiSCzaJ0+iCBgXAy1bZNPkN3
- pekIlxFNEpMyk46ksYPyhAWPVZisuckzySHmo0YTHe2umG9rzg9GJIcgmMC+dCSBIFkNiPXb+
- UgA4yOAxvMUQDrImDdlWrvnyfAWYbDeVukl3sIiZoT4mos3lwb+1htjex8YRTjIaQOKqVLPsk
- BKfFlgQ0phCEB6EWAcF84g3MbSHaazCixqaBhdFa2vF+NSnBRqLk7zmGk5lK0YzktXUi6hfCA
- abXUQN1GC1a4IdRkghEEpsUW1UEvDgarpobfXZ/1HBWDqN4D/O9sqXBfqTIe7HxG9BcY9lIPL
- YBwmYy48qjYM9Ko9+6GO+4KBUj5Rjkm2TBVR/jowK9SstFaYal5hzcquQVjzUwriV8LxG882z
- FKcP214ehHHSojQA1NiViWWCjuOCxZVfcUkNGa5bVgb74AXR+y5cj9kPG9bUaJGy+wa6oY24i
- CT3OhCfp+Dr1FA4mTn/9s+BnHPyEekWAAHdf7aQD+/9iSEVwWCW0TE18bqYmg8yY31Vmc2vec
- BYPbuHoU7dbJoay9l6njeGdpfVtBHYtyS/CLIteISfhKGm6ULb1bDTn/5GXccPQzNdn4L1/8a
- dNUzPpYmwdrSAHwitwrD8PQ/7gYDskA64q4fok8R4ljc8j0R8p0bDznBRnYexPUECt0RKng1X
- puXazQ/4SlJQfwZ0yM33SyOFufvfZpjXUu7eX2L5KVVDJkKXcqDJccwdaUEwVW3H6RJIfuUQz
- NiQHoA3ZI00NZz5KFSQ+69cLu3teOtHrYVbZiChePU7ebsMq9BPdgIaRmoGaZOg8gYXs6BKwr
- e2j85R/3f15oVpOaO/IXHCa8zvaaj4LvN1K4lqDmAXd2dhGFyFD8ZPVbV2w3XTnVTQ==
+UI-OutboundReport: notjunk:1;M01:P0:JLD0F29C9i8=;+bd+Jj/F8ljuc56jPZCh3se8nlt
+ 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
+ k3VY0fXpKU2Wp8=
 
->>> it seems that Coccinelle missed many simplifications.
->> Would such software transformations become better supported anyhow?
-> Maybe?
->=20
-> I am not involved in the development of Coccinelle and thus, I don't hav=
-e an answer.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 25 Jun 2025 08:46:02 +0200
 
-This can be fine (in principle).
+Reuse existing functionality from usb_endpoint_xfer_bulk() instead of
+keeping duplicate source code.
 
+The source code was transformed by using the Coccinelle software.
 
-> Nor do I have the time to read and understand the Coccinelle source code
-> to which you pointed me to.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
 
-I hope that more users can become interested in presented information.
-I would appreciate if knowledge representations can be improved also for
-better automatic data processing and corresponding transformations.
+V2:
+Another change possibility was taken better into account for the USB API.
 
 
-> My stance is that such static analyzers should never be trusted 100%.
+ drivers/net/wireless/rsi/rsi_91x_usb.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-This is generally fine.
-
-
-> The output is more an indicator.
-
-This is usual.
-
-
->                       And in this present case, a quick review made it v=
-ery
-> clear that Coccinelle saw one simplification but missed two other ones.
-
-Would you find another source code adjustment (like the following) more ap=
-propriate?
-
-
-diff --git a/drivers/net/can/usb/ucan.c b/drivers/net/can/usb/ucan.c
-index 07406daf7c88..6c6cee3895c6 100644
-=2D-- a/drivers/net/can/usb/ucan.c
-+++ b/drivers/net/can/usb/ucan.c
-@@ -1352,17 +1352,12 @@ static int ucan_probe(struct usb_interface *intf,
- 	for (i =3D 0; i < iface_desc->desc.bNumEndpoints; i++) {
- 		ep =3D &iface_desc->endpoint[i].desc;
+diff --git a/drivers/net/wireless/rsi/rsi_91x_usb.c b/drivers/net/wireless=
+/rsi/rsi_91x_usb.c
+index dccc139cabb2..31707b543c19 100644
+=2D-- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -122,8 +122,7 @@ static int rsi_find_bulk_in_and_out_endpoints(struct u=
+sb_interface *interface,
 =20
--		if (((ep->bEndpointAddress & USB_ENDPOINT_DIR_MASK) !=3D 0) &&
--		    ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =3D=3D
--		     USB_ENDPOINT_XFER_BULK)) {
-+		if (usb_endpoint_dir_in(ep) && usb_endpoint_xfer_bulk(ep)) {
- 			/* In Endpoint */
- 			in_ep_addr =3D ep->bEndpointAddress;
- 			in_ep_addr &=3D USB_ENDPOINT_NUMBER_MASK;
- 			in_ep_size =3D le16_to_cpu(ep->wMaxPacketSize);
--		} else if (((ep->bEndpointAddress & USB_ENDPOINT_DIR_MASK) =3D=3D
--			    0) &&
--			   ((ep->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =3D=3D
--			    USB_ENDPOINT_XFER_BULK)) {
-+		} else if (usb_endpoint_dir_out(ep) && usb_endpoint_xfer_bulk(ep)) {
- 			/* Out Endpoint */
- 			out_ep_addr =3D ep->bEndpointAddress;
- 			out_ep_addr &=3D USB_ENDPOINT_NUMBER_MASK;
+ 		if (!dev->bulkin_endpoint_addr[bin_found] &&
+ 		    (endpoint->bEndpointAddress & USB_DIR_IN) &&
+-		    ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =3D=3D
+-		    USB_ENDPOINT_XFER_BULK)) {
++		    usb_endpoint_xfer_bulk(endpoint)) {
+ 			buffer_size =3D endpoint->wMaxPacketSize;
+ 			dev->bulkin_size[bin_found] =3D buffer_size;
+ 			dev->bulkin_endpoint_addr[bin_found] =3D
+@@ -133,8 +132,7 @@ static int rsi_find_bulk_in_and_out_endpoints(struct u=
+sb_interface *interface,
+=20
+ 		if (!dev->bulkout_endpoint_addr[bout_found] &&
+ 		    !(endpoint->bEndpointAddress & USB_DIR_IN) &&
+-		    ((endpoint->bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) =3D=3D
+-		    USB_ENDPOINT_XFER_BULK)) {
++		    usb_endpoint_xfer_bulk(endpoint)) {
+ 			buffer_size =3D endpoint->wMaxPacketSize;
+ 			dev->bulkout_endpoint_addr[bout_found] =3D
+ 				endpoint->bEndpointAddress;
+=2D-=20
+2.50.0
 
 
-Can the functions =E2=80=9Cusb_endpoint_is_bulk_in=E2=80=9D and =E2=80=9Cu=
-sb_endpoint_is_bulk_out=E2=80=9D
-be applied here?
-https://elixir.bootlin.com/linux/v6.16-rc3/source/include/uapi/linux/usb/c=
-h9.h#L572-L595
-
-Regards,
-Markus
