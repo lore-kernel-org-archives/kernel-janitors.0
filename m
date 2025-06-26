@@ -1,128 +1,241 @@
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6F02750EE;
-	Thu, 26 Jun 2025 11:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 9D87B17BA5;
+	Thu, 26 Jun 2025 11:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750936739; cv=none; b=Y05leEuSf7w5D9hevsCHP0x/KNw7SiHpsljNRgtVcbpmkKGWkhN8TQZ4eEHY0oMlItHYHysMMwSYt9D5r1LfdGl6PmPpPSosH8ShsaKQ2gT+z8Tbfb1HfRtTACo6z1nVkqT5lufNtmdgjZPz2VEHP7FGFdBkrum+HDbEdIDaZGc=
+	t=1750937549; cv=none; b=X5L3LBSWogT9M3njOeSEw0Jn36qtgx+gk4SkiIOGsBb/TM2N40MWFTbiGzuJ3A+7qAFlJD4qgHYAPla4O6hAazmADK/0IkzUsjoYqxFHvjyyGEPe3F/+iRBbhj1FRWBrL0DUG/Xz7mL/t171nDFuUtGxmuNVgVLyEXckjf+65Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750936739; c=relaxed/simple;
-	bh=tMY/QvE1RwQKfHEi+oTl/T3hBIkqTUHKT0qz5d8oUZc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NqQraGh9LSvzUEZ/8Ar85Uxx6NocpyeOzhLJuSw+aIVcmXozZjeEroy6kqlFk2VNiuFZUDAbmTOvSTiWtbJkDXHJs2cmI5Vqj2W3VVf9RBqi040vOQE53Imr0oTg1sVn3bYZ7HqqMbdrDU0B6VmCLiXmkllaK4csgjCMp3FXsfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AGwyVDkV; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AGwyVDkV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1750936735; x=1751541535; i=markus.elfring@web.de;
-	bh=ungKwFOtEzIYKnf/yhZWuG/t/MagGOMM96bsTQ1jq00=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AGwyVDkVszpIu4jZ5zemtB7nhBruYc5bAPXwnjyrr7bKU7BwCv2aUeD7FWUM8KIc
-	 XbePP/wTF5k4Rgc6zu3jCTvQ7bQG1CupRaeR8xPDFzHjLjxISTURUA/wA51/BJcPW
-	 ArTIfZEghSPzqlfihW2JlG7vGBpF25fSX4IzN9arUZOWzZH5XpxT2OxT6h/q5CdVL
-	 odQO2ptJL/KiCuN3lIZg/58jjY+U29i8mv+oqAKEimAQCU0vYU3H92eAJOVf36Ylu
-	 g0RiM0IJsBQ/09U9IeMIlvn6zJ5uBJ0WFXPeuarrhvrMCB/oZ6kojFVgubWeiw61o
-	 OYR1SWirlzcaqjZnxA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.202]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSIEs-1uJmII2m76-00LgRI; Thu, 26
- Jun 2025 13:18:54 +0200
-Message-ID: <5682c295-0c4a-41e9-bf80-fd14fd5c94db@web.de>
-Date: Thu, 26 Jun 2025 13:18:54 +0200
+	s=arc-20240116; t=1750937549; c=relaxed/simple;
+	bh=x3hbv6u2Gc8K1qdIMcGyBKxmfk7QoqqZZywR0+F1YQI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=aQd6Ef2F3AAKFPWteEsIDurKN6QYyK9Ouzsqr+v1HlxOaJOQkDq8UVa2m0dZkIG45VBSQbtDYnemHuHfjWeWVm8s4uDpD8uGYivv40kZ8Bo7im3aZdusIypm6Sy1opy7BvMdGklHoNoqFqqrqx4yX66Zd3lmD82k7MTsX5imEJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 92D0C604F663D;
+	Thu, 26 Jun 2025 19:32:15 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: jaharkes@cs.cmu.edu,
+	coda@cs.cmu.edu
+Cc: Su Hui <suhui@nfschina.com>,
+	codalist@coda.cs.cmu.edu,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] coda: silent the warning of marco UPARG
+Date: Thu, 26 Jun 2025 19:32:06 +0800
+Message-Id: <20250626113205.1152137-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Passing code replacements by APIs (for SmPL)?
-From: Markus Elfring <Markus.Elfring@web.de>
-To: cocci@inria.fr, kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <2dc257b4-d310-47dd-90ea-9b081727be2a@web.de>
- <481faa1d-7171-4657-8dc0-c37b153e6eaa@web.de>
-Content-Language: en-GB, de-DE
-In-Reply-To: <481faa1d-7171-4657-8dc0-c37b153e6eaa@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:WUmnOIsrbZmldbhsDvrqqPwFzwR8D07shP8Wv3Q1JkdxQbbend+
- RLA3Vdb5SGjKGKTfiF/1gm91RZmZy7PTx0Juinw5HBm9hoyCdDkO0tIPUJGpy1P6GsvGWex
- +nHiYNPMdVxfYnNPv61Evku8pKv7d1IpSbTQA0snP/P72ihmokDkTCOSi4/cX4un+HmsQyf
- veA6svSlrv+eZzGU8DqDg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WMbcRzyDllo=;m5JuxULKfomwhoM9nDCiZ+jejwZ
- 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
- OU2CTmLzSMckt9sTaeBXQJ/SzY9UznF4=
+Content-Transfer-Encoding: 8bit
 
-> Would you become interested to convert contents from any header (or source) files
-> into more advanced transformation approaches?
+When compile with W=1, there are many errors like this:
+fs/coda/upcall.c:115:27: error: variable ‘outp’ set but not used [-Werror=unused-but-set-variable]
+  115 |         union outputArgs *outp;
+      |                           ^~~~
 
-I demonstrated that expressions can be extracted from selected function implementations
-also by the means of the semantic patch language.
-https://lore.kernel.org/cocci/481faa1d-7171-4657-8dc0-c37b153e6eaa@web.de/
-https://sympa.inria.fr/sympa/arc/cocci/2025-06/msg00044.html
+There are two usages of 'UPARG', one using outp and the other not.
+Change 'UPARG' and add a new maro 'UPARG2' to silent this compile error.
 
-Now I am looking again for further software extension possibilities.
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
 
-1. I would like to sort found expressions by decreasing complexity.
+Ps:
+I found this when run "make allyesconfig; make W=1 fs/". After apply this
+patch, there is no error for whole fs/ directory. So I think this patch
+has some value for this reason. Maybe we can enable W=1 check for fs/ in
+default.
 
-2. Some expressions will probably refer to known function (or macro) calls.
-   How can corresponding identifiers be replaced by previously determined source code?
+ fs/coda/upcall.c | 34 ++++++++++++++--------------------
+ 1 file changed, 14 insertions(+), 20 deletions(-)
 
+diff --git a/fs/coda/upcall.c b/fs/coda/upcall.c
+index cd6a3721f6f6..7e44afcf6ffe 100644
+--- a/fs/coda/upcall.c
++++ b/fs/coda/upcall.c
+@@ -62,9 +62,13 @@ static void *alloc_upcall(int opcode, int size)
+ do {\
+ 	inp = (union inputArgs *)alloc_upcall(op, insize); \
+         if (IS_ERR(inp)) { return PTR_ERR(inp); }\
+-        outp = (union outputArgs *)(inp); \
+         outsize = insize; \
+ } while (0)
++#define UPARG2(op)\
++do {\
++	UPARG(op); \
++	outp = (union outputArgs *)(inp); \
++} while (0)
+ 
+ #define INSIZE(tag) sizeof(struct coda_ ## tag ## _in)
+ #define OUTSIZE(tag) sizeof(struct coda_ ## tag ## _out)
+@@ -79,7 +83,7 @@ int venus_rootfid(struct super_block *sb, struct CodaFid *fidp)
+         int insize, outsize, error;
+ 
+         insize = SIZE(root);
+-        UPARG(CODA_ROOT);
++	UPARG2(CODA_ROOT);
+ 
+ 	error = coda_upcall(coda_vcp(sb), insize, &outsize, inp);
+ 	if (!error)
+@@ -97,7 +101,7 @@ int venus_getattr(struct super_block *sb, struct CodaFid *fid,
+         int insize, outsize, error;
+ 
+         insize = SIZE(getattr); 
+-	UPARG(CODA_GETATTR);
++	UPARG2(CODA_GETATTR);
+         inp->coda_getattr.VFid = *fid;
+ 
+ 	error = coda_upcall(coda_vcp(sb), insize, &outsize, inp);
+@@ -112,7 +116,6 @@ int venus_setattr(struct super_block *sb, struct CodaFid *fid,
+ 		  struct coda_vattr *vattr)
+ {
+         union inputArgs *inp;
+-        union outputArgs *outp;
+         int insize, outsize, error;
+ 	
+ 	insize = SIZE(setattr);
+@@ -138,7 +141,7 @@ int venus_lookup(struct super_block *sb, struct CodaFid *fid,
+ 
+ 	offset = INSIZE(lookup);
+         insize = max_t(unsigned int, offset + length +1, OUTSIZE(lookup));
+-	UPARG(CODA_LOOKUP);
++	UPARG2(CODA_LOOKUP);
+ 
+         inp->coda_lookup.VFid = *fid;
+ 	inp->coda_lookup.name = offset;
+@@ -161,7 +164,6 @@ int venus_close(struct super_block *sb, struct CodaFid *fid, int flags,
+ 		kuid_t uid)
+ {
+ 	union inputArgs *inp;
+-	union outputArgs *outp;
+ 	int insize, outsize, error;
+ 	
+ 	insize = SIZE(release);
+@@ -185,7 +187,7 @@ int venus_open(struct super_block *sb, struct CodaFid *fid,
+         int insize, outsize, error;
+        
+ 	insize = SIZE(open_by_fd);
+-	UPARG(CODA_OPEN_BY_FD);
++	UPARG2(CODA_OPEN_BY_FD);
+ 
+ 	inp->coda_open_by_fd.VFid = *fid;
+ 	inp->coda_open_by_fd.flags = flags;
+@@ -209,7 +211,7 @@ int venus_mkdir(struct super_block *sb, struct CodaFid *dirfid,
+ 
+ 	offset = INSIZE(mkdir);
+ 	insize = max_t(unsigned int, offset + length + 1, OUTSIZE(mkdir));
+-	UPARG(CODA_MKDIR);
++	UPARG2(CODA_MKDIR);
+ 
+         inp->coda_mkdir.VFid = *dirfid;
+         inp->coda_mkdir.attr = *attrs;
+@@ -235,7 +237,6 @@ int venus_rename(struct super_block *sb, struct CodaFid *old_fid,
+ 		 const char *new_name)
+ {
+ 	union inputArgs *inp;
+-        union outputArgs *outp;
+         int insize, outsize, error; 
+ 	int offset, s;
+ 	
+@@ -277,7 +278,7 @@ int venus_create(struct super_block *sb, struct CodaFid *dirfid,
+ 
+         offset = INSIZE(create);
+ 	insize = max_t(unsigned int, offset + length + 1, OUTSIZE(create));
+-	UPARG(CODA_CREATE);
++	UPARG2(CODA_CREATE);
+ 
+         inp->coda_create.VFid = *dirfid;
+         inp->coda_create.attr.va_mode = mode;
+@@ -303,7 +304,6 @@ int venus_rmdir(struct super_block *sb, struct CodaFid *dirfid,
+ 		    const char *name, int length)
+ {
+         union inputArgs *inp;
+-        union outputArgs *outp;
+         int insize, outsize, error;
+         int offset;
+ 
+@@ -326,7 +326,6 @@ int venus_remove(struct super_block *sb, struct CodaFid *dirfid,
+ 		    const char *name, int length)
+ {
+         union inputArgs *inp;
+-        union outputArgs *outp;
+         int error=0, insize, outsize, offset;
+ 
+         offset = INSIZE(remove);
+@@ -355,7 +354,7 @@ int venus_readlink(struct super_block *sb, struct CodaFid *fid,
+         
+ 	insize = max_t(unsigned int,
+ 		     INSIZE(readlink), OUTSIZE(readlink)+ *length);
+-	UPARG(CODA_READLINK);
++	UPARG2(CODA_READLINK);
+ 
+         inp->coda_readlink.VFid = *fid;
+ 
+@@ -380,7 +379,6 @@ int venus_link(struct super_block *sb, struct CodaFid *fid,
+ 		  struct CodaFid *dirfid, const char *name, int len )
+ {
+         union inputArgs *inp;
+-        union outputArgs *outp;
+         int insize, outsize, error;
+         int offset;
+ 
+@@ -407,7 +405,6 @@ int venus_symlink(struct super_block *sb, struct CodaFid *fid,
+ 		     const char *symname, int symlen)
+ {
+         union inputArgs *inp;
+-        union outputArgs *outp;
+         int insize, outsize, error;
+         int offset, s;
+ 
+@@ -440,7 +437,6 @@ int venus_symlink(struct super_block *sb, struct CodaFid *fid,
+ int venus_fsync(struct super_block *sb, struct CodaFid *fid)
+ {
+         union inputArgs *inp;
+-        union outputArgs *outp; 
+ 	int insize, outsize, error;
+ 	
+ 	insize=SIZE(fsync);
+@@ -456,7 +452,6 @@ int venus_fsync(struct super_block *sb, struct CodaFid *fid)
+ int venus_access(struct super_block *sb, struct CodaFid *fid, int mask)
+ {
+         union inputArgs *inp;
+-        union outputArgs *outp; 
+ 	int insize, outsize, error;
+ 
+ 	insize = SIZE(access);
+@@ -481,7 +476,7 @@ int venus_pioctl(struct super_block *sb, struct CodaFid *fid,
+ 	int iocsize;
+ 
+ 	insize = VC_MAXMSGSIZE;
+-	UPARG(CODA_IOCTL);
++	UPARG2(CODA_IOCTL);
+ 
+         /* build packet for Venus */
+         if (data->vi.in_size > VC_MAXDATASIZE) {
+@@ -554,7 +549,7 @@ int venus_statfs(struct dentry *dentry, struct kstatfs *sfs)
+         int insize, outsize, error;
+         
+ 	insize = SIZE(statfs);
+-	UPARG(CODA_STATFS);
++	UPARG2(CODA_STATFS);
+ 
+ 	error = coda_upcall(coda_vcp(dentry->d_sb), insize, &outsize, inp);
+ 	if (!error) {
+@@ -574,7 +569,6 @@ int venus_access_intent(struct super_block *sb, struct CodaFid *fid,
+ 			size_t count, loff_t ppos, int type)
+ {
+ 	union inputArgs *inp;
+-	union outputArgs *outp;
+ 	int insize, outsize, error;
+ 	bool finalizer =
+ 		type == CODA_ACCESS_TYPE_READ_FINISH ||
+-- 
+2.30.2
 
-Regards,
-Markus
