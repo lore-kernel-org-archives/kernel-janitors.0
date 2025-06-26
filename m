@@ -1,74 +1,72 @@
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C3B287252
-	for <kernel-janitors@vger.kernel.org>; Thu, 26 Jun 2025 13:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5352028CF45
+	for <kernel-janitors@vger.kernel.org>; Thu, 26 Jun 2025 13:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750944106; cv=none; b=CsPK8u621vmm9SAqM5v5sdunv+bqTEp87ZsfkQMjteqeUHhCnymIgZmES0CLQOMT9OeW3W68E/kLkaf70keDjn1G0AN//Lj/xUfTN7pwzXSpD/Uxmex7pLpGfDjVaQybau3O+d/9z3z4fFQ8s9LR3noWYmvdqfvtp3FfBUKiT0E=
+	t=1750944289; cv=none; b=XTlheC0iFcJ0+y3NevKhMEsRJlOHV3asojmHGCk3njQAQXzW8uI7x/YTU6FGwbTW87/s31WMu9u1aNp3Aaa5NKV4bAuKVtSAYeZWDvtZVv2RmHglpS29gciZ7YOYSduJu3umJyudXNnG4lrJBYcDx9aInEuvb6bDeGQqT5v17Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750944106; c=relaxed/simple;
-	bh=d2ynvgpLC9KJpAzvF0WB5ZbHDMmgOpXwsY5NyyE8fxg=;
+	s=arc-20240116; t=1750944289; c=relaxed/simple;
+	bh=10uMTxglxknsiw2t3ZQh4FroAAiQNW+3m4lfHYqa4NE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GA98eiLYJjRZrGyYhVid6wmjDIOoyX54mWlS0hJarq/wUx3eu/X+vnIzLqNu3Bs/51cN5c89CQvhjCpZZGj2VmkFwP3NXuZEVAb7zpDtwJKN2Jbc4maUfV6Qgm8UAD22MB5FSgY/2s9ydO7sntJBq4PpsOwwsKWM97cPZ5XpBDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HD4GuiAG; arc=none smtp.client-ip=209.85.167.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=TT51QSeVEyYKpJ0PSjuXZ+c7dyynTkVZf4O3/qKLhvJroLaQH2joWUpNPxAtkh8NXfPvdsHluadeL3wN2+DSko51AawxP/Ev0JAdFz0bmCiCC225cMnxyiOsv/PWXJCGuwheGIN4uUHvPS+bFqBwkL4eEY+vJX2Ud2YKRAZxMpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K4zMmK/P; arc=none smtp.client-ip=209.85.160.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HD4GuiAG"
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-400fa6eafa9so663338b6e.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jun 2025 06:21:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K4zMmK/P"
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2ebb468cbb4so841682fac.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 26 Jun 2025 06:24:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750944103; x=1751548903; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1750944285; x=1751549085; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bOFVRCcBUw+mWK+/Dekm7KTQk+bIykTI3bUscdv9A2w=;
-        b=HD4GuiAGNq49KvM6T83C885B0zipbqFxxEVGRMbmbuW6qRSuaLdgmlAP7faMJKpYny
-         1ngzXEK4y90dAAWM+rDQxjP8eDVRUx9W7FScg6GTd300gZzJoo7qV5DszmTPiNQwQt9G
-         S/L5XQdfgHcSfv2ALF5LvX1B9DDd6+lc8dVejfw4SBYkzJOGE7bwQLMS+bsUpge2tXQE
-         o23rVZ2cIGoZciTTw+t9316b+MFiOVCazdL4csVh5YIAeAIi82BxGuR63XtUcjEoJ27y
-         aEFCX8DUCxa2gSq+6mMAfXar5EEb3pudqylUCz3aqcS25R7oH7EpAJ/mHMO5efUTnIFW
-         CtIw==
+        bh=QZlXkSD04zlKolE5r+OxRCc3dIBq/n6l6fhQYaRGqmU=;
+        b=K4zMmK/PpZJ4azhGeAaQBhjgVEqJqamRoMRpcyeRytdXTenaRYYzv3MYjqNjcr9AkG
+         NRY9t97mD2jozLp+7XfaliZhhNdEvrA+zncMd/AM/6SrUrUIuJLS00ttSIa08WUv2wLE
+         FbdXpDWZ+g4qdLQtoYmot1LKdMCbG2raltHnUnfQ9cEPSFA9m3+CXLdGdq5pCj5k6BsV
+         qr9u2//c4d0CtnnmI5ZQnCNMdkXj/ZDoHuHbGyxPxTnvHFI6u77a/0kTk9I90C49Ok1X
+         v3ZmzulW/dpXsYoOlI87JX7J7mfT23QqxYjdxJPyfxhYi9go1YIjg+sn03Z2TIUd3XJf
+         AWZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750944103; x=1751548903;
+        d=1e100.net; s=20230601; t=1750944285; x=1751549085;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bOFVRCcBUw+mWK+/Dekm7KTQk+bIykTI3bUscdv9A2w=;
-        b=nz2Qo5sFye2zNvUzcc/uAdxKlFh2eQOiwH6sambX45eo5hXv09kCx9MXBkYXHo2CfU
-         6rQ3wJGog9hJFkr8S/v6RydrqJWvEcdiFtxUW5Vjhpnd2f3Zt+VK6DXcBBkrB6fSYV2H
-         FvWjpCKu52/3GJxrJtaz4E8AUxVF29eOpSHmRvbSqHHDgTW5mO7/ZTYVXOJd7AYSv3wJ
-         mklg5vpaBGB6CTQ41k0IHESjRgHLBKN2Plh0VyZ/H+47gsmS/LqYYIgSwAy+h8dWgse0
-         aGIoYrgPwWAXTxjtua+ogg9soK/mk86mDnR0wdu1tQzoksgly9Sh2v5FAAYogD34XdPx
-         M8FA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1sCyX0vkVXJeV77LeX44A2L9G7QFla5lCJna0XrZk3E5OHx1O/k0ABfMnRXC3P0lG+PGF7cXZBmLiCwRb6GM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtGEVVdVG2Nk5mvgcg6jhI9c5bDThKNl7+Bt/orVeAscBBOHkG
-	9mYBHut2Ix4sxjdIqTmoJGxkHckqEDnyd31jmhGtIBlzmyrSZrgOjYjiCwZiqSaK6o8=
-X-Gm-Gg: ASbGnctxe5bkPxaZ6Jlj0aR2r3m/Yu0Ioq0HN598wur9fWPRqV8b75heEcDgWPFv0+v
-	YeNnMrVexZeAullA01vu1n8ZsVXnrMgQkva3hRk7QvCt3g0dquuBZPagWha7uQ0SeDEihalIup/
-	486QwzXdiiYcBxmY0f3ntNljyEk+dpQ5kc77bHycaX7CPLAsoEcDeeGis8AMNjiXuX6INK2RXeN
-	ujbZca0aqsR2wlTBMdpnx9peYNeTNhJxpFnV+aSAY1G2wO4C1Drre4eT5BkCPCUrwERa/aKfw2n
-	CLIeqeUGAYByCKfEeAo/JOmbf+XzPUU48QzcuM6NnKdLcQ7O70NNGyPqmukunYZ6R0Q=
-X-Google-Smtp-Source: AGHT+IGvz6gUhA5u66fVOK5ErmCf+/tRiLHCvux4O1ovgU9jkUorXeS90Wph1Qw856JXzjrMzzPw4w==
-X-Received: by 2002:a05:6808:ec3:b0:406:6669:f4c8 with SMTP id 5614622812f47-40b1c3bdc99mr2599256b6e.36.1750944103075;
-        Thu, 26 Jun 2025 06:21:43 -0700 (PDT)
+        bh=QZlXkSD04zlKolE5r+OxRCc3dIBq/n6l6fhQYaRGqmU=;
+        b=QkW+frJwbE++6iOfnO/ukBb6t0SjRuDZW+jYG8Q1of2vapNJj+bm7Kgh1V8wHyTbDt
+         TkRu1krHVv65T1w6w7LfaR/I8N5+PXXtYSywRQ4Qi2lUsz1Lsahw7KUmUOC8qGcwVRyG
+         uFLXX2E2hiX4ZU2mimbdGa1RzQX+y2IryO7I2F4OHmfbUW8Fss4klg0eZ8antCUrLG/5
+         JfsypAM7MXeoBTa1JFwnVUNNVS9b+jy3N40S8nA7/44bmJ7pBR729wEiWpacHx7P7G39
+         Aynf1WI7BnUnSNBbcaw3QBTLok6FARnmaj/BwSAOequ9IzYiSMgHtTiq3NcTmUEAuFha
+         OiWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1vPud7JzhsGlikfyN2NfdT1Dt8i/Lk+FcX83ZI2GhnUVtI1TaqzvAG18dUUeyLkSFxJGvhJpzZqGZli4/IPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyArMmAlfJdi3X0+zbVUSBpGVSOUez9e1yzLD0Flrrm0CstEN0k
+	0ButyAPZVODkdr7DbMCDE4uxtVuoy7N6eAswCX/wA7J4/wYFtceg59bpKNjKJ+mhT7g=
+X-Gm-Gg: ASbGncvWiy+mVO016GYfvQR+gwhGWzY1YujGVKIzmetIeozYHrsWoLWEYEgLObT5efs
+	zzxfHaqrSZxrug2LzCuH8xyfzxEmH3yuBPFa14My9hSqw5HriKydY3DoeQTnMmD3DaOO0CWQu3T
+	FzPmAZ7S93RQYIWGsH4FKg2PxSR3vVrq65pmj0qi9tJbkSNRvOym17+SgzSl7+i52roxjY58Xe/
+	cQDwwftSKLIFEE6LSjMv2hJHZOHksJ04P79AKrdGaym6znYJy7FHLyDsL6S6h41914xRt5Zd3r/
+	CjpKQMCrXVOEkoTYNZ0DcOHey3/9MYPXR+z/hfg+eCFFXGGBfiO24rsIRfV5Kggn45A=
+X-Google-Smtp-Source: AGHT+IGHmrXQmGgiM1O4FMJI4ioJnomDeQhk1q4uAMvdGJQNa+bA3kRfvZeSRk6fLbxwCVrLnDbVRA==
+X-Received: by 2002:a05:6870:898e:b0:2e9:11c9:1093 with SMTP id 586e51a60fabf-2efb27ce26dmr4871522fac.31.1750944285390;
+        Thu, 26 Jun 2025 06:24:45 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:3ee4:904:206f:ad8])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-40ac6c327c3sm2588372b6e.19.2025.06.26.06.21.41
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73a90c92150sm2575206a34.39.2025.06.26.06.24.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Jun 2025 06:21:41 -0700 (PDT)
-Date: Thu, 26 Jun 2025 16:21:40 +0300
+        Thu, 26 Jun 2025 06:24:44 -0700 (PDT)
+Date: Thu, 26 Jun 2025 16:24:43 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Prashanth K <prashanth.k@oss.qualcomm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lianqin Hu <hulianqin@vivo.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	Michael Walle <mwalle@kernel.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: u_serial: remove some dead code
-Message-ID: <81a704b2-56c4-4ea7-bcce-831ad2e4d070@suswa.mountain>
-References: <685c1413.050a0220.1a8223.d0b9@mx.google.com>
- <fde57cbf-4367-4741-8d67-b569ecb9dc61@oss.qualcomm.com>
+To: Su Hui <suhui@nfschina.com>
+Cc: akpm@linux-foundation.org, bhe@redhat.com, vgoyal@redhat.com,
+	dyoung@redhat.com, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] fs/proc/vmcore: a few cleanups for
+ vmcore_add_device_dump
+Message-ID: <e891bba8-9f67-47c6-8f84-a62abe35f837@suswa.mountain>
+References: <20250626105440.1053139-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,23 +75,17 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fde57cbf-4367-4741-8d67-b569ecb9dc61@oss.qualcomm.com>
+In-Reply-To: <20250626105440.1053139-1-suhui@nfschina.com>
 
-On Thu, Jun 26, 2025 at 11:53:05AM +0530, Prashanth K wrote:
+On Thu, Jun 26, 2025 at 06:54:41PM +0800, Su Hui wrote:
+> There are two cleanups for vmcore_add_device_dump(). Return -ENOMEM
+> directly rather than goto the label to simplify the code. Using
+> scoped_guard() to simplify the lock/unlock code.
 > 
-> 
-> On 6/25/2025 8:51 PM, Dan Carpenter wrote:
-> > There is no need to check if "port" is NULL.  We already verified that it
-> > is non-NULL.  It's a stack variable and can't be modified by a different
-> > thread.  Delete this dead code.
-> > 
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> 
-> Perhaps you could add Closes and Fixes tag, but its up to you.
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
 
-Fixes is only for bugs.  If I put a Closes tag, then I'd have to give
-myself reported by credit as well which is just being greedy for tags. :P
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
 regards,
 dan carpenter
