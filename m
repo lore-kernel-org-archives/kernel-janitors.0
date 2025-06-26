@@ -1,73 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CE71A8F94;
-	Thu, 26 Jun 2025 09:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4542298270;
+	Thu, 26 Jun 2025 09:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750929197; cv=none; b=HXAe01GoB+wUiRu+eIrRZvRFcCizGj/i467nrnlhoVLl1tvym60/qRXFxWhT/Nx77euYMQ7BF0nX9ZZozH++RhEAnXycIv06/5Kpfns02MWLhq6w+3mzEllF3Y0sl5fcI4DPDoa5hSyow30AnfiW7JTmC2MDxt6VTZ4mC3k0OEQ=
+	t=1750929796; cv=none; b=IAufElyMt0bQzgDp0t+jxaOV892lgcqjgizHhJ14M/0LFYzTPw4Ufs526eoqYwd+dMQvCWJgfG8WyNH7LJsqXay10wEXlWIdE7bniJzMPYtqTTJVx7fHkWyoSK0mCsoSZX+YqmWU2X81o20ESE5lNwBroyLM+fwzal3CjFvPtEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750929197; c=relaxed/simple;
-	bh=n8Qtg/STa8Iaorrpz35yWhThK6cB8msGjX+6mEcy6VA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ob3Idi9zNHzj2Spg9h8OscAh5GK/9+SbXy9Y5Rr0Uc/4vifnrpQ2LYZliwUr+4xL7ZQdOKu4Ae4e1FUhVlmG6t0owYMxFL05EK8++L5TrTQQ2klIATGQ/cvd554ZLe6FPb0ebRmsj9KWNDLnVxFgVK+oywthniDm6GAr0elD1Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uAEJpB6L; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1750929796; c=relaxed/simple;
+	bh=xQiDfG0JfAa1Tm6olW7FwTlbLbB1AeNI6j+Tvq5aREY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kkPlpBvg5o7KTa9G5lj0j6QPsI0ogzJU3Wjy2gSKHUI8i+du/uHPtqMSpo+KvlkNa9VOl6kl06mSujVUq/qKIffIR+/0uOF1MUZQzQOT7kTZ9UO1uVWKbGX0rttxlJoB9isyJjfut6X+VnrCFVYIIy5MjP0WSS+32ISQaPM1ND4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Aerx4SeX; arc=none smtp.client-ip=193.252.22.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAEJpB6L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EE7C4CEEB;
-	Thu, 26 Jun 2025 09:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750929197;
-	bh=n8Qtg/STa8Iaorrpz35yWhThK6cB8msGjX+6mEcy6VA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uAEJpB6LvdtC6YbDC77EcG8mbymv7LJbjNKj/BbZnSKeQWCtCkKcoa/RXsby3ULje
-	 bBdxpeijlycQfNzMPj7fG1rglxPWPhqTCqEwMZ6jPRiAJh2shbJ3cY+jfUr8Gu4GeD
-	 23nyhD/N6pMGnpK2F430/FeG6QXxAKnE0+sZlmqJ3DcqbQ0zS9IjxWzi8VJSJkO9ON
-	 laHwJNV7nhTyy4agHw76V5g1I0QnP2A+nDGFttEnMSdp9WLki1Fx1jvW47dGk/88PD
-	 GcfVt8nXiH3YVKa5nDTbyYpd7Nx6VKljJdBtZUu9L06YKLVxZL+4BCab/nZ44oCh5M
-	 YGxUzd+t3Hpbg==
-Date: Thu, 26 Jun 2025 10:13:12 +0100
-From: Simon Horman <horms@kernel.org>
-To: Subbaraya Sundeep <sbhatta@marvell.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Sai Krishna <saikrishnag@marvell.com>,
-	Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] octeontx2-af: Fix error code in rvu_mbox_init()
-Message-ID: <20250626091312.GV1562@horms.kernel.org>
-References: <ee7944ae-7d7d-480d-af33-b77f2aa15500@sabinyo.mountain>
- <aFzp70LaPoO0ukw8@822c91e11a5c>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Aerx4SeX"
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id Uip1uI3vBZOjKUip2uDRtA; Thu, 26 Jun 2025 11:23:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1750929791;
+	bh=/Xbc6kBGCyhNHHzNgJCbvuELoFJLHHCL5tuXaL6kLK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Aerx4SeXukHUIAul10z53hQ6zE5RDRA5rKvGxZbizaeJSnzmBSkbTb8ngF80oeRQS
+	 I4FdP//dTCWhpZ9L79T4HjDNgNTQfLDUp1QkEGjuMr1AYzuIFdJj6yJvAnhLlLdQ7R
+	 /1jLWOOU0gLfQHe7qrlck3YCs8DEtTxhxDQ9AyoFdkFNWDGrfa88cdj0ZxELPb96B+
+	 6cz/MkqBtFRXEm1Zu7egwaOP8na5cUexg29+fY2drgdYAKOmpNMggQjyxZfZvy6CBy
+	 yzi3MXCLWJZ0DyyfLWAFFT8wwJQYlcvFPPDItjwYgDpF0p4ZtKr+6/uqU69kaGPUFs
+	 y5OwrmwKTRfWQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 26 Jun 2025 11:23:11 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <57815326-740d-4053-8b85-c5e57d7cec90@wanadoo.fr>
+Date: Thu, 26 Jun 2025 18:23:06 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aFzp70LaPoO0ukw8@822c91e11a5c>
+User-Agent: Mozilla Thunderbird
+Subject: Re: can: ucan: Use usb_endpoint_type() rather than duplicating its
+ implementation
+To: Markus Elfring <Markus.Elfring@web.de>, linux-can@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Chen Ni <nichen@iscas.ac.cn>, Marc Kleine-Budde <mkl@pengutronix.de>
+References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
+ <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
+ <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de>
+ <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
+ <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de>
+ <c04376f2-6ab7-4256-8bdc-aa6ff3ea88b4@wanadoo.fr>
+ <7e6f8929-6665-45af-b01b-167a1aa80305@web.de>
+ <CAMZ6Rq+PEZWzxNYDODq-Rz_Y8T_XEihyZKoY-MYo6bn5ATaGLQ@mail.gmail.com>
+ <1e64bcef-33f1-4295-b91f-d4598b32b866@web.de>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <1e64bcef-33f1-4295-b91f-d4598b32b866@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 26, 2025 at 06:34:23AM +0000, Subbaraya Sundeep wrote:
-> On 2025-06-25 at 15:23:05, Dan Carpenter (dan.carpenter@linaro.org) wrote:
-> > The error code was intended to be -EINVAL here, but it was accidentally
-> > changed to returning success.  Set the error code.
-> > 
-> > Fixes: e53ee4acb220 ("octeontx2-af: CN20k basic mbox operations and structures")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 26/06/2025 at 16:22, Markus Elfring wrote:
+>>> I am unsure if the check reordering would be desirable for this function implementation.
+>>
+>> Ah, you want to confirm whether
+>>
+>>   usb_endpoint_dir_in(ep) && usb_endpoint_xfer_bulk(ep)
+>>
+>> is the same as
+>>
+>>   usb_endpoint_xfer_bulk(ep) && usb_endpoint_dir_in(ep)
+>>
+>> ?
 > 
->  Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+> Exactly, yes.
 > 
->  Thanks for the patch. This has been pointed by Simon earlier:
->  https://lore.kernel.org/all/20250618194301.GA1699@horms.kernel.org/
+> Commutativity can probably be applied in this case.
+> But the different execution order will influence the corresponding run time characteristics.
+> https://en.wikipedia.org/wiki/Short-circuit_evaluation
+> https://en.wikipedia.org/wiki/Commutative_property
+> 
+> The data processing order from known API function implementations might get priority
+> also at discussed source code places in the near future.
 
-Thanks for the fix.
+Yes. This is what I tried to explain in my previous message: that the short
+circuit evaluation may impact the result when there is an undefined behaviour
+but that it is not the case here.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+
+Yours sincerely,
+Vincent Mailhol
+
