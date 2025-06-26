@@ -1,285 +1,118 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D60E2EB5AB;
-	Thu, 26 Jun 2025 14:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750949718; cv=fail; b=txTG+8xv+LxPgjgU0agVlB8WmtjhpaxOWo5U+bnCp9tfggNq8BAP4xLSJGc9tsHCdayW4BokuYuCGf1Rt9EgHxvQQHaAKFDgZL5lMMTlygZdhUsOT6u5XjDb2KDtyQRDJyPopWBVbbgZn8JyY/hbQXI5GEVi48jabslGxEabbBM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750949718; c=relaxed/simple;
-	bh=YjHoCcB9EcPr0ZBc5XyzT1vsKNF4pyXLqmZiliUuULI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=U8g/DTo7AnmzpfXwu5wlFaFIzeopYEEEczeBqPiw4t+4BuLYbn46ARrDD+bBqqvGg6IRw5aqYOEIGho7UZayvHrSHQlBVQcXeNQ54LynqSfAtmLxgXZNgqg34oqIoDCyVtf9i5Ak2mryWAinfGSDZtjYIWMi0LM7EQBaGHtCiPQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kAyvnfkY; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kAyvnfkY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750949717; x=1782485717;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=YjHoCcB9EcPr0ZBc5XyzT1vsKNF4pyXLqmZiliUuULI=;
-  b=kAyvnfkYCiMEdaJQSSzRD1kguMRmbGI3Ec8M0XxyocCdKoR1+47QwCyZ
-   M7LK9apnQAoyxFDehfQ20NIBuNVjRxAz/PYCZbp+x5CoNjNrtY9cKqLcx
-   tQcxcL0oJuqrKe5d3jDIKmWQEaUUpIC4hsSQUYTlC7W7Vm+YRHq9JFn9y
-   T0PFQ2CYB9D1QXKhi16Nl86EIprHRSs+n/rpwy3P5hWy1oDAID8jcl6MR
-   KRtomKFlR4dxWT1LqmLfNQbeJ9t04vcgzLKsx2WctwPaltMsn/FqpaiS/
-   L54DuLXi39lHGfwzF7heI7QH7CykFUEsYmQLnnmW3VJRFtwyqK8tVIsEh
-   A==;
-X-CSE-ConnectionGUID: 3DDlgX3GTP6hseThfV3KTQ==
-X-CSE-MsgGUID: bnmsj/4SRVCK9vdkXljYBw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11475"; a="70818941"
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="70818941"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 07:55:16 -0700
-X-CSE-ConnectionGUID: Lm/zZcE4T8GO8McLmhYGLA==
-X-CSE-MsgGUID: AsL0/IwHRZiWUhrEa9XOpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,267,1744095600"; 
-   d="scan'208";a="156917700"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 07:55:16 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 26 Jun 2025 07:55:15 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Thu, 26 Jun 2025 07:55:15 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.63) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 26 Jun 2025 07:55:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GeWT1ZrVxAZOBA/BKGzv2LwlrfH9ClTfvZL2b4BIgvVg0f5yZKx/tWdblixv7ZtqANUKG+9fNTHdTi8LZOdTwJn8WxG1/JV6zi2DQBr5lGcM0YsVW7F2bqPvjeVUNISm/dYYC+z6xNxsaRrpk7bKOsDZjbShqdWCBEqxBb7U5yiEjF/pbUT4dKBEFnMnwH2Wkr8/zLEo/tWuGaJBYXpkxkhkitOY69ASThhE8To7alZKAJGixd0VduD7685AqTGuKzzC9tXoctxmIy3wFZP3b66MHfnqgz/0ptCBkBlWV+JlS9/rm7UfY8coEQV2thH9TU2P2mWAqSCx2jzUiGGrRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4nt0w5J1lVZy5NlQRP376tT/yAJXpdbhwShgzC/V/W8=;
- b=zNDdgHjhkydDbTES2EHVI66yRXEh87RHVGhi0knSKlcwN0+wROIbQ0MUfonsRjes9cYNQO1YKzAV+lxjptTJRCoMB9QsZzWV23SQTCrfs3Q/+79l5EcvudOkym+E4cXJAPKuTmwBg9p39YEyXB9SxTdB6494i7rKeNuhRgluat4ZjS86QvUNms4cCATpXRqirny7LxdHP4nfwJ07dDyLYZcT+sVvznD6KlzzAJbs89zOpmXy8EeeWAzRd0CXQMtGkE7WtsZmOkBRpwAyJZAaQOCRNiYDfS3DmbAZN8jb81JG2/JFQhC2DIYL0u5iWPvaWEYYycdLk5Y5Y0ocgHeckA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
- by IA1PR11MB6243.namprd11.prod.outlook.com (2603:10b6:208:3e7::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.17; Thu, 26 Jun
- 2025 14:54:59 +0000
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563%5]) with mapi id 15.20.8880.015; Thu, 26 Jun 2025
- 14:54:59 +0000
-Date: Thu, 26 Jun 2025 10:54:55 -0400
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Frederic
- Weisbecker" <frederic@kernel.org>, Chris Wilson <chris@chris-wilson.co.uk>,
-	<intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH v2] drm/i915/selftests: Change mock_request() to return
- error pointers
-Message-ID: <aF1fPx1U1f1h8_7F@intel.com>
-References: <685c1417.050a0220.696f5.5c05@mx.google.com>
- <aFw0VyNuV5twrHIQ@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <aFw0VyNuV5twrHIQ@intel.com>
-X-ClientProxiedBy: SJ0PR05CA0129.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::14) To CYYPR11MB8430.namprd11.prod.outlook.com
- (2603:10b6:930:c6::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527B228934F
+	for <kernel-janitors@vger.kernel.org>; Thu, 26 Jun 2025 15:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1750950374; cv=none; b=Ap9aHVfWE/GNFdO0jJ9DcrQ81N1I99mKnMDmxMc5ozmZvxUxERtg5Siw+jGvfg2xMYTt7f8lIinklAMwBrPEJzcIUrSu5cLjJUlmzqSKGedyhIFXJJYgjXYcpN4uaJBZQEk15puSRjiNiXl+v3VzO6WdYSzguzy8YeYh2zkuRME=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1750950374; c=relaxed/simple;
+	bh=GjyxDuLK1zIIyCnBbyEnronQ6F6eitBNZR17OVA4BrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h63D8CH4hYjMPvwDp7+jRo9rtgEOcsnNR9J8Fl9sBQ/aE26jQlvXPMBbOH4DaQzS0WHcrag8HhGzPhWEmMFKaOtGHSDsjG8Pb5yDbyO2j9anssoGbkvBYqU2p789JozjngUzCyzH1eFPlp+ZoBVqqQaChY1HzfliLvY2pKdpXWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uUoAz-0006sQ-3n; Thu, 26 Jun 2025 17:06:09 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1uUoAx-005T6F-1f;
+	Thu, 26 Jun 2025 17:06:07 +0200
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 24007431329;
+	Thu, 26 Jun 2025 15:06:07 +0000 (UTC)
+Date: Thu, 26 Jun 2025 17:06:06 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-can@vger.kernel.org, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org, Chen Ni <nichen@iscas.ac.cn>
+Subject: Re: [PATCH v2] can: ucan: Use two USB endpoint API functions rather
+ than duplicating their implementations
+Message-ID: <20250626-opalescent-tireless-locust-564d48-mkl@pengutronix.de>
+References: <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
+ <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de>
+ <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
+ <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de>
+ <c04376f2-6ab7-4256-8bdc-aa6ff3ea88b4@wanadoo.fr>
+ <7e6f8929-6665-45af-b01b-167a1aa80305@web.de>
+ <CAMZ6Rq+PEZWzxNYDODq-Rz_Y8T_XEihyZKoY-MYo6bn5ATaGLQ@mail.gmail.com>
+ <1e64bcef-33f1-4295-b91f-d4598b32b866@web.de>
+ <57815326-740d-4053-8b85-c5e57d7cec90@wanadoo.fr>
+ <e70a929f-a5c5-487e-9231-61b5423115db@web.de>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|IA1PR11MB6243:EE_
-X-MS-Office365-Filtering-Correlation-Id: 970f1bb0-b684-411b-5fa8-08ddb4c16c3e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?G8LtRyOMCB8ybaA4ssqXrCKy/lbDbbl0kVxFY5sGFjrYPx2ycHyTJntkr8ca?=
- =?us-ascii?Q?wI4D3W0k2lWHEsIeT65cI0WtbMhMPjumOrP2MqNzgzc2PiRB0fial5J7nChz?=
- =?us-ascii?Q?iibc5S+TNfgnM6erNV09EfPP/V5JFKq7g2Cq2ji4k9MN9CBfVIw/mD/wISS3?=
- =?us-ascii?Q?wMo/78xKePnaMt8n9t8HEgU2rCKvnApY1sK2nPimWF2V5A4yMP19L8yQe8KE?=
- =?us-ascii?Q?U95s2bJtggqF2b6sY84rNxaPDTG1lRPbESqbp067xe1lKft4H6DFlf8KLUjr?=
- =?us-ascii?Q?5CPZwB4tufpzE9WvHDTGjddi8q0w4XNoR0lr9WrOZssdaMTbHoViKRYj6mMf?=
- =?us-ascii?Q?sMI8WDY1PX3lgbiqa1AoFVoACHFeRuFkHwBGBsEXHvqHCR+Y2xXufLo8HOLy?=
- =?us-ascii?Q?Fw6l9YkROCQTxehg+y2JDW0n0pJxZS9rJHrkqXf5/V5kYAHQx5tmZUDrgXp+?=
- =?us-ascii?Q?AMsLjivzwpKQCy9h5xY5vLIpgGG0U7n6C9HKMq07Y4o4B1SjlDXcS2NZ/Ltc?=
- =?us-ascii?Q?Ypg2tET3U9Uu2B+fiZ8mNAPP9bb5K/ADxVnyujeGB7lYrJvvz+vosGtqioGi?=
- =?us-ascii?Q?ouMcwBjdgwQ2OejrSl0QgaauCeRqlLx2RI46+bhiP8K9XgrHHNMHmpMvhsIo?=
- =?us-ascii?Q?4QImpAf+tX1hTy+2z/0GfAJZgm/qOkzt7pOac1RyZ3aZyB/hsfMVtWstnFhJ?=
- =?us-ascii?Q?nOR/AkPHVjEr1LfyPJO+otB+HQVT3dHnfb3UtRozpubLuGaYe3uMCu1DzMf+?=
- =?us-ascii?Q?zWx28xiakvOqrXAxkIKPOLUt6bgBB+31RAHF0V75X23gwVmoEs1xytwEXAZa?=
- =?us-ascii?Q?kh/4uZU4jjjs74mu7p21c46/KBRkBdRm+UYFb71SQqGYpyI45vVPPeJJjwzK?=
- =?us-ascii?Q?yDoNlI1cxjY8N9QeYtY5NK7bgBfRlstG3JO9T+ODn8OKCBKnbXn9LfUs05YT?=
- =?us-ascii?Q?7eMrog0231QGDLtlC9T+xE10uKNyOw1XehwAdWYdq7Ekh9YPBkPLbKs4LXxi?=
- =?us-ascii?Q?xhUecS4KyLiDUg9DLWd0EHvjm6eStIj+T418l8QRHFHnVPAQ3eTQeGXBeX0k?=
- =?us-ascii?Q?VDCHwAFqvxwWE45yTkKJ1ZsXurx/TVuzEr0Dr3Wh/+3XB6zF8u9ajwQmHVCl?=
- =?us-ascii?Q?sbP16aRzDW2c7hnewkVAHD69jn0ONiGPPdnOLXRq1HCzbYN0m49epee1mbLf?=
- =?us-ascii?Q?gcMRhbo4J0kgTsxj5G0OFFJ+wEKQpNIs5F6n091KmZNtQkT4v2rPtKzSgHos?=
- =?us-ascii?Q?tKZTV2dvg4M6t4RXWAOpg/dajYG4L91dkZFKMs9hOyk1XPWHdbH9i9aq+4fb?=
- =?us-ascii?Q?EwYXxSeTPaafpYj7nsqWZpedOmOdGJL9NQk6sGljHHTts+AT2Oih18qYmeSI?=
- =?us-ascii?Q?C61yH6861zHTQ6jHcjzSBS5bHBlzbUdtQk4yAUY6orSnj9MWg7J56K1FXegE?=
- =?us-ascii?Q?QnKhjsIIwas=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?irM27ezjh6LLALWShwlVA0GvQZjkJJTZ0IWcx6pWB2R3QCnIAt/gQcAiZrgp?=
- =?us-ascii?Q?Cn++TBfzPcI+I80amZOjL6sgyiJ4PcRf0/GOsd0bgp6mbgGAm+M48kBhwpKy?=
- =?us-ascii?Q?zTryQNW7mSvetppufeKpmUQ31Np0V6jdZwzEkmQ10Ev1mlu7Vy1asm9tDsZr?=
- =?us-ascii?Q?mUZKtoNzwg6WrlFK+ArE4ULBO0UwHTyvTNxoKxKkW6repI8VmpZGoCD6WWiL?=
- =?us-ascii?Q?Apc0XZpalyHpfTHNcV2d3qi21HJT0R1jC+oSY7p0Fq/5lISU1L8HBwO0FYyU?=
- =?us-ascii?Q?4dCOk4LU9O/gU2kF1fjSwVRUsD/QJWjZ6dOgjDHV2P+cI54Etf/gaO+VFJvk?=
- =?us-ascii?Q?KZym3HLoBuRVrok4Ffkq12Hb+RlzHCHzGIECivft68QIy119mGb+69LJRJ/1?=
- =?us-ascii?Q?T0LL2rK0+OtOAbAkAKb3qtqTgupLi8/sC+UuCre1bVCJX5tOgec0UCHfGtNA?=
- =?us-ascii?Q?yOrb+xBL/+0tUeT7ebUPcYOyiQtjcpYF3Abs3bOm8Yk06MmLk4NaSENRnn8x?=
- =?us-ascii?Q?S18QJ46TkmRHCgPZJRnLW3tjxHogiCisgzmWVUdYn0Z3I0dYqO4NKfZ+oIIA?=
- =?us-ascii?Q?mrjtz+4ey4CBC16lvIdKKvXSunJ6HyewKcKu2jSvOUY9EM7vpXpeBb1PFZ00?=
- =?us-ascii?Q?L6y0H2Kft0aAUWRK3YiFTKQKYfuQnelf6YzGBgvV62b+zmqPR94esZ41rjyU?=
- =?us-ascii?Q?TSoP2fHYotQph0CfAY4yR3+Kyf5IjhrRVh5kzg9ZOEABouBHjFKlMZ6Q6dd7?=
- =?us-ascii?Q?OXVSyMpB228BkpgfXhJN6fXd/5ZuT1Kfa1Cglevb2XezhHr7vQcBiG4x+GOY?=
- =?us-ascii?Q?ImNEx5LESbY+AHCXj89fsC1WNaBK5TrKFa8jccoyLPkiurOXlERdLIvIthkI?=
- =?us-ascii?Q?PavZHj8FXGAFMzak9Kp9SLcDNo13MRrjTGkQR8D4JgWpSKhTEq31AWc7k8L0?=
- =?us-ascii?Q?jBBTb4qD0LnkFw3yryxziWrR3i3wH79/brLGtEopJTdhhJoc3Jq2zdv45Bn0?=
- =?us-ascii?Q?VwZHzEGqedPYshinV5PjCvt04uyhvblsBEigpbpVCCVjzvx6plhksSbI1gm6?=
- =?us-ascii?Q?rDgZrY83AZdXxAoi4BqQIwX68+YNgBOjyaQ6rxWjdaQkUIiDaC223WaF8RcI?=
- =?us-ascii?Q?1UzyAdgLXwjeejWip1jS/0csuQGGH0P4CscaMUs/0m64HZSGIapCkYpZRKRw?=
- =?us-ascii?Q?UJxBVQbJOomV2wpHqoaTYwTF2yJvK7KZzJFP+Lg7FjJh9S9bu/E1+Aq5vphU?=
- =?us-ascii?Q?FY5sfuIWOEfdhNwqi/ldZ/98p9qiZ4VTqzUleNu3TedvL168oL6hfO9EgnvW?=
- =?us-ascii?Q?TYr6GLg1ykEUn8t3Y8K/8CM5tXZypdBFEhg+LwQ70p8NWRBdAx2RG8kY1yvF?=
- =?us-ascii?Q?k6+5+xD2e3pVdzu2SjcICzcZAU8fGFc1c7rncLWDqCZXhAHlale3a9Kp5O3T?=
- =?us-ascii?Q?VOlne4Qe+7U63+dVbZkVSsUlB1mUoyHCmiVRMWBI9fp8EJ9cJI6hXdricrXl?=
- =?us-ascii?Q?qTQ7nixtJiP0lHjWWQYKx+VARqoJXnK2tsWBY7YoLUd3YOPfeSqDvjVok9gn?=
- =?us-ascii?Q?trLnaCDg8lv+yXholD8D3Xf2cwu2syWda+WFq7aO?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 970f1bb0-b684-411b-5fa8-08ddb4c16c3e
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2025 14:54:59.8083
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zr0NsQ1lU+w2ieVgrhU4JmXu8wQSJG4/ZHMYO6oeloNMNS/jPW8G00D2hjsJQInGmGf9X6v4BHfbvzVjtYXZyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6243
-X-OriginatorOrg: intel.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="edbne6u4w4n6o4ul"
+Content-Disposition: inline
+In-Reply-To: <e70a929f-a5c5-487e-9231-61b5423115db@web.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: kernel-janitors@vger.kernel.org
 
-On Wed, Jun 25, 2025 at 01:39:35PM -0400, Rodrigo Vivi wrote:
-> On Wed, Jun 25, 2025 at 10:21:58AM -0500, Dan Carpenter wrote:
-> > There was an error pointer vs NULL bug in __igt_breadcrumbs_smoketest().
-> > The __mock_request_alloc() function implements the
-> > smoketest->request_alloc() function pointer.  It was supposed to return
-> > error pointers, but it propogates the NULL return from mock_request()
-> > so in the event of a failure, it would lead to a NULL pointer
-> > dereference.
-> > 
-> > To fix this, change the mock_request() function to return error pointers
-> > and update all the callers to expect that.
-> > 
-> > Fixes: 52c0fdb25c7c ("drm/i915: Replace global breadcrumbs with per-context interrupt tracking")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > V2: In v1 I just updated __mock_request_alloc() to return an error pointer
-> >     but in v2, I changed mock_request() to update an error pointer and
-> >     updated all the callers.  It's a more extensive change, but hopefully
-> >     cleaner.
-> 
-> Thank you
-> 
-> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-and pushed to drm-intel-next
-Thanks again
+--edbne6u4w4n6o4ul
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] can: ucan: Use two USB endpoint API functions rather
+ than duplicating their implementations
+MIME-Version: 1.0
 
-> 
-> 
-> > 
-> >  drivers/gpu/drm/i915/selftests/i915_request.c | 20 +++++++++----------
-> >  drivers/gpu/drm/i915/selftests/mock_request.c |  2 +-
-> >  2 files changed, 11 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/i915/selftests/i915_request.c b/drivers/gpu/drm/i915/selftests/i915_request.c
-> > index 88870844b5bd..2fb7a9e7efec 100644
-> > --- a/drivers/gpu/drm/i915/selftests/i915_request.c
-> > +++ b/drivers/gpu/drm/i915/selftests/i915_request.c
-> > @@ -73,8 +73,8 @@ static int igt_add_request(void *arg)
-> >  	/* Basic preliminary test to create a request and let it loose! */
-> >  
-> >  	request = mock_request(rcs0(i915)->kernel_context, HZ / 10);
-> > -	if (!request)
-> > -		return -ENOMEM;
-> > +	if (IS_ERR(request))
-> > +		return PTR_ERR(request);
-> >  
-> >  	i915_request_add(request);
-> >  
-> > @@ -91,8 +91,8 @@ static int igt_wait_request(void *arg)
-> >  	/* Submit a request, then wait upon it */
-> >  
-> >  	request = mock_request(rcs0(i915)->kernel_context, T);
-> > -	if (!request)
-> > -		return -ENOMEM;
-> > +	if (IS_ERR(request))
-> > +		return PTR_ERR(request);
-> >  
-> >  	i915_request_get(request);
-> >  
-> > @@ -160,8 +160,8 @@ static int igt_fence_wait(void *arg)
-> >  	/* Submit a request, treat it as a fence and wait upon it */
-> >  
-> >  	request = mock_request(rcs0(i915)->kernel_context, T);
-> > -	if (!request)
-> > -		return -ENOMEM;
-> > +	if (IS_ERR(request))
-> > +		return PTR_ERR(request);
-> >  
-> >  	if (dma_fence_wait_timeout(&request->fence, false, T) != -ETIME) {
-> >  		pr_err("fence wait success before submit (expected timeout)!\n");
-> > @@ -219,8 +219,8 @@ static int igt_request_rewind(void *arg)
-> >  	GEM_BUG_ON(IS_ERR(ce));
-> >  	request = mock_request(ce, 2 * HZ);
-> >  	intel_context_put(ce);
-> > -	if (!request) {
-> > -		err = -ENOMEM;
-> > +	if (IS_ERR(request)) {
-> > +		err = PTR_ERR(request);
-> >  		goto err_context_0;
-> >  	}
-> >  
-> > @@ -237,8 +237,8 @@ static int igt_request_rewind(void *arg)
-> >  	GEM_BUG_ON(IS_ERR(ce));
-> >  	vip = mock_request(ce, 0);
-> >  	intel_context_put(ce);
-> > -	if (!vip) {
-> > -		err = -ENOMEM;
-> > +	if (IS_ERR(vip)) {
-> > +		err = PTR_ERR(vip);
-> >  		goto err_context_1;
-> >  	}
-> >  
-> > diff --git a/drivers/gpu/drm/i915/selftests/mock_request.c b/drivers/gpu/drm/i915/selftests/mock_request.c
-> > index 09f747228dff..1b0cf073e964 100644
-> > --- a/drivers/gpu/drm/i915/selftests/mock_request.c
-> > +++ b/drivers/gpu/drm/i915/selftests/mock_request.c
-> > @@ -35,7 +35,7 @@ mock_request(struct intel_context *ce, unsigned long delay)
-> >  	/* NB the i915->requests slab cache is enlarged to fit mock_request */
-> >  	request = intel_context_create_request(ce);
-> >  	if (IS_ERR(request))
-> > -		return NULL;
-> > +		return request;
-> >  
-> >  	request->mock.delay = delay;
-> >  	return request;
-> > -- 
-> > 2.47.2
-> > 
+On 26.06.2025 16:46:32, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 26 Jun 2025 16:34:26 +0200
+>=20
+> * Reuse existing functionality from usb_endpoint_is_bulk_in()
+>   and usb_endpoint_is_bulk_out() instead of keeping duplicate source code.
+>=20
+> * Omit two comment lines which became redundant with this refactoring.
+>=20
+> The source code was transformed by using the Coccinelle software.
+>=20
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Sorry, this patch is not Signed-off-by its sender.
+
+Please don't use existing threads for vN+1.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--edbne6u4w4n6o4ul
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmhdYdoACgkQDHRl3/mQ
+kZwCRAgAjj58DlDlSwFeLAshpJv805TpIGkS6gJB2osul46B81DwCkYLfEJ+9uXf
+PU8jBvSpvcw9iol10bXfBtOkkR/LbfRPInh68LeevsF5/d3MVzAQ3cU42cvUoHjk
+CC6CZJxeFeWrnB56wBPi/OJ6x6m2u7h2+5NTj3tRn3LBHOrfTkoDYTecpAQyYRnM
+kUFuJL2ZljwJhh8Oa17rsijGg3c+lGu5skXi96ZqwkuALa5OmrltZsHa6Zu4IuG0
+hCtgWzxFMW23pEP7hWHQQWvdiStZUhXdUyFASt/yGY9jeu+rFOpy1l8OoAn4JERv
+Lr4n/rKGhM8pv0zI/Sohc1ZmDPZO7w==
+=snTM
+-----END PGP SIGNATURE-----
+
+--edbne6u4w4n6o4ul--
