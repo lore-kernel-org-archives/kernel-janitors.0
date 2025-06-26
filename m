@@ -1,130 +1,146 @@
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C0E13A3F7;
-	Thu, 26 Jun 2025 06:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71EB1DE8BE;
+	Thu, 26 Jun 2025 07:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750919712; cv=none; b=P8uTkIEZ7Sg9WKCIDtrhb1h5qSF9gCJgw7EEl6D5mDFZRID7F5066JSPzh76E1hPkVqV/ojT5dJn1qTkhSDS9u3Vd/tFUSdxFH0Xwco43RQm3ZsCludn0DuLKLPKoj//okSYzCSuJ8WuI5aUqbzMyzAd253D202sW30y/tpsdSw=
+	t=1750922574; cv=none; b=YyNxJ+RkAqMMdI9LN5SF1niE8jCs2iNYg8m2ltkN4BAWoa8KJUD2zS9H158KGLb2Ftgc63gS9GCQCURcnIEYl5iZVD6QjYnUrUFv3sQmeskb2xf9QsMZ2hmc6NURnKmNrrH06G8B4IJakyGNZTUeSR/QBZ+GOwRfuc280p0ruOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750919712; c=relaxed/simple;
-	bh=kXEwt3IRU2NN6XR4T29MvS381DWcfgzy/ExFUQTFHXc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jwM1xhA3gsxrAxEp7JbBQ0f98jMOpZd1osm7i/AdXzz+I+MgED3WZY+8GGHa9WH6DKeqY+s27WidyWRa3lwiFtL0tMHhikn1nkki88HXu1fuQ9LkDk/CXnFnrLBrIx6PrFqsd4FIU6hrsXnLyZGBiQ7vlrH7YyAVcHm0K5HPw9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=g0m/wFnB; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+	s=arc-20240116; t=1750922574; c=relaxed/simple;
+	bh=xn5xGJTDX8CLgN3pQX67e9rZW+ZHFqb9uNcuHUdSfW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pU8A7HeTcFda9xiNFXWlfeKF/M/Il5iwxrv4pDNkfIbH8R9UxQZJ3lulqf6V5edWqJa8BVB4/3bAnNhxZA1z0ZU1tL8kVVRSGvKFLLREOHLuGyJEw6I2ARg3o+UBK/r1xs/hvwnTCAkbOTIj+Mg6jm2trnOr75310D3YBD0Y9ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cO4c5oaQ; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="g0m/wFnB"
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55PI6RxZ019763;
-	Wed, 25 Jun 2025 23:34:44 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=/6+WkD4QKS5qw/KRv6OC76vlR
-	Djj+Bgyl5FuINvA4tI=; b=g0m/wFnBbrUp46kQzthTvmNcQYmJSXvVQKnDUA8zl
-	V6x3qXfQQC1fmAQ3f6Z6Ovp1EQsOjcW/RL6Xanmjbx0HpCyLAL6Uarm0kdu+zEiT
-	bGPUvhTq/sVGqmIvrnjMqRLt+j3FfJ7Co7+TvrXBp2t8s/KdoGZzsL5A2//rQxhE
-	TfRa3gBopk55a+C0uNRDR6ObESX3x83YcOCAdkLuP/dPan9FBi35fEVNC4WCUEo6
-	Hr4+MFcv8xVjqh2pYId1WDG+YvBCjJEo84kKMO4vb+wPf1PSHLyyH0ZoOic7JN9C
-	2d/eT+oImf8+Kp95CpvsE64RgC1y/CLHHU9NrOlatAYVg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 47gp3q95v7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 25 Jun 2025 23:34:43 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 25 Jun 2025 23:34:28 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 25 Jun 2025 23:34:28 -0700
-Received: from 822c91e11a5c (HY-LT91368.marvell.com [10.29.24.116])
-	by maili.marvell.com (Postfix) with SMTP id 360CC3F7077;
-	Wed, 25 Jun 2025 23:34:23 -0700 (PDT)
-Date: Thu, 26 Jun 2025 06:34:23 +0000
-From: Subbaraya Sundeep <sbhatta@marvell.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Sai Krishna <saikrishnag@marvell.com>,
-        Sunil Goutham
-	<sgoutham@marvell.com>,
-        Linu Cherian <lcherian@marvell.com>,
-        Geetha sowjanya
-	<gakula@marvell.com>,
-        Jerin Jacob <jerinj@marvell.com>, hariprasad
-	<hkelam@marvell.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH net-next] octeontx2-af: Fix error code in rvu_mbox_init()
-Message-ID: <aFzp70LaPoO0ukw8@822c91e11a5c>
-References: <ee7944ae-7d7d-480d-af33-b77f2aa15500@sabinyo.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cO4c5oaQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1750922557; x=1751527357; i=markus.elfring@web.de;
+	bh=hHLsvSh4Eh45XDZ3IR1yDnB2tpn9jxt0fU65TXDdnZk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=cO4c5oaQoghtbWSHBByEZWmTN0ok6EMieFRpThEbaIIjpRahWn6k3G1apVDrKXua
+	 2YW6LgTNpHHy55TuBvBCaXoSCidA2i1WopvVba07sY35sw7UKNBcNnRfNzm+TjQwF
+	 7qcnR1ZEAg9ZIQrVlCwDpErNk/JTm7BM537KkvlV3jGPJHj4fqT0Ma2DsK7m6WE/x
+	 /C/DyH063YQnbK1OjzjxOCjsRPCb6f1/zq+13eUR49c0sU1Rt8kDi6d3w2aLg8TAp
+	 tCrxU9qoC9DP/iuWLTfbfDnziLOKes08gJnflSAWGv+1wX852jWixiFgnJ34l8wKW
+	 4MYiClGougRiIvHEBA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.202]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MElV3-1uXfrr33sp-004xvP; Thu, 26
+ Jun 2025 09:22:36 +0200
+Message-ID: <1e64bcef-33f1-4295-b91f-d4598b32b866@web.de>
+Date: Thu, 26 Jun 2025 09:22:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ee7944ae-7d7d-480d-af33-b77f2aa15500@sabinyo.mountain>
-X-Authority-Analysis: v=2.4 cv=AemxH2XG c=1 sm=1 tr=0 ts=685cea03 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=6IFa9wvqVegA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=M5GUcnROAAAA:8 a=BdBXECxqI82sMXVekp8A:9
- a=CjuIK1q_8ugA:10 a=cvBusfyB2V15izCimMoJ:22 a=OBjm3rFKGHvpk9ecZwUJ:22 a=yGmsW_zf-WRfUAWRrVPH:22
-X-Proofpoint-ORIG-GUID: rr-0S0kE2nnZrOVJiDy2RL4GxNgV0ymn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI2MDA1MiBTYWx0ZWRfX4hOtyfPTcBMi jtnd7kv0aVeZF+b8wCmCoLgKkaObtcZ5Er6sS9SKl8sDnGgC5Yz5WftEXCLRZLsTdIR+R9DoiMt 8TxxFvJs+FNThxbMb/QzOeVxQrQV7ThY6w4av1nSPkBrl2CBWG3g7ABC+45jhy2mVLM+QZqOTq/
- IH3C+biTBk/h5dG6SifF7mtXtB0B/zjtatYRerDEDtL3AZrWQHywwfX9OV69jMvVSn84HNVySbH GpvUEwEyiuOK3b9AYiL1+ZLsRbN5yUSNmFXIQ8D6EKWJ175dx1McANSXAYo81a+pu8rzcAu2VtA jm9RVmJhsROZ/cEyDNv5R9wIIpsKzWekEhT5gktLlYhH6NOPu3loQ9EnIKkvgn1sUnbr/k7b6Kf
- 5V7Kezg+ptIsEL3NweP8CGDzeavdGWx/SVDwrAidq5hPJbgRIQk3g8cUXMpuRrnKFj/ZiTIJ
-X-Proofpoint-GUID: rr-0S0kE2nnZrOVJiDy2RL4GxNgV0ymn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-26_03,2025-06-25_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: can: ucan: Use usb_endpoint_type() rather than duplicating its
+ implementation
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Chen Ni <nichen@iscas.ac.cn>, Marc Kleine-Budde <mkl@pengutronix.de>
+References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de>
+ <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
+ <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de>
+ <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
+ <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de>
+ <c04376f2-6ab7-4256-8bdc-aa6ff3ea88b4@wanadoo.fr>
+ <7e6f8929-6665-45af-b01b-167a1aa80305@web.de>
+ <CAMZ6Rq+PEZWzxNYDODq-Rz_Y8T_XEihyZKoY-MYo6bn5ATaGLQ@mail.gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAMZ6Rq+PEZWzxNYDODq-Rz_Y8T_XEihyZKoY-MYo6bn5ATaGLQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qH6guRNMh1V/bjtNkPumCT1nFNcmdGkHMRT3zsUqIyKHcDMciXG
+ CsLomwRwkSSkbFjMkpyGq+1tQ8SRbQ7QTA/mercj3Zac5bcpdqgJyyx9SuEROgnkAfS1UX+
+ RSpr9eFlD/5sXok+u+k4U7YMltjUU9ocHapT5ZzaFXtwnaQISYgud0hIYvFm0xcgPaB7Km+
+ xmM+YvhJltMaIv2uUNbMQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TsuQJnbwb8E=;Bjg3XX1+VE251eK+w3wW2nr3VNK
+ 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
+ vrfj30+kVZKu50q2JOBZZjKmesn7TaEo=
 
-On 2025-06-25 at 15:23:05, Dan Carpenter (dan.carpenter@linaro.org) wrote:
-> The error code was intended to be -EINVAL here, but it was accidentally
-> changed to returning success.  Set the error code.
-> 
-> Fixes: e53ee4acb220 ("octeontx2-af: CN20k basic mbox operations and structures")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> I am unsure if the check reordering would be desirable for this functio=
+n implementation.
+>=20
+> Ah, you want to confirm whether
+>=20
+>   usb_endpoint_dir_in(ep) && usb_endpoint_xfer_bulk(ep)
+>=20
+> is the same as
+>=20
+>   usb_endpoint_xfer_bulk(ep) && usb_endpoint_dir_in(ep)
+>=20
+> ?
 
- Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+Exactly, yes.
 
- Thanks for the patch. This has been pointed by Simon earlier:
- https://lore.kernel.org/all/20250618194301.GA1699@horms.kernel.org/
+Commutativity can probably be applied in this case.
+But the different execution order will influence the corresponding run tim=
+e characteristics.
+https://en.wikipedia.org/wiki/Short-circuit_evaluation
+https://en.wikipedia.org/wiki/Commutative_property
 
- Thanks,
- Sundeep
+The data processing order from known API function implementations might ge=
+t priority
+also at discussed source code places in the near future.
 
-> ---
->  drivers/net/ethernet/marvell/octeontx2/af/rvu.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> index 7e538ee8a59f..c6bb3aaa8e0d 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> @@ -2458,9 +2458,9 @@ static int rvu_mbox_init(struct rvu *rvu, struct mbox_wq_info *mw,
->  			 void (mbox_handler)(struct work_struct *),
->  			 void (mbox_up_handler)(struct work_struct *))
->  {
-> -	int err = -EINVAL, i, dir, dir_up;
->  	void __iomem **mbox_regions;
->  	struct ng_rvu *ng_rvu_mbox;
-> +	int err, i, dir, dir_up;
->  	void __iomem *reg_base;
->  	struct rvu_work *mwork;
->  	unsigned long *pf_bmap;
-> @@ -2526,6 +2526,7 @@ static int rvu_mbox_init(struct rvu *rvu, struct mbox_wq_info *mw,
->  			goto free_regions;
->  		break;
->  	default:
-> +		err = -EINVAL;
->  		goto free_regions;
->  	}
->  
-> -- 
-> 2.47.2
-> 
+Regards,
+Markus
