@@ -1,78 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6631A1F2BB8;
-	Wed, 25 Jun 2025 22:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410252B9B9;
+	Thu, 26 Jun 2025 00:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750889431; cv=none; b=uwUUBhZZH7wJHgHDmk8B86CKhReO8W8mTlk4Rm2I2iMLwEvc7n8Kc4zlz4fEo7nsO88S/Bd+/E/TDd55sp9G4GOsTa0zITDNFLPR3g79GKCoySH4AbPrhvhcdsAhb/unrXFBkpm8xfmJ2Ys2oTw8c9NM/uLNM61iAD1fl5PNiRg=
+	t=1750897279; cv=none; b=R3wKJgO5HGB4e4ARXtcPMnLOHcR+Dti37W3D+OSPFEFm+NsEqy22FXK4su2GvFu9yApb7LrxwWQ7fRtfVS/rDky2Q2yj1DImu744aEt8uhDvNy340LdpUk9lCUcoF5RhG2HPTjXY8YtOokRZLTTzydzisbQ9uzWFFxbP9JiMg2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750889431; c=relaxed/simple;
-	bh=cHdPmsE9AvG+FJPkM44ne16K/H/TUnLqw8O2dCdmVIU=;
+	s=arc-20240116; t=1750897279; c=relaxed/simple;
+	bh=U1ICztOIDUCyPeAYVX53i1F5GRZlw7dH50fsuIjkLmI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XyCCO1Hpw9GhACBG8fKazk3A420qxUmYOIU3t3uIm2nwippb5TWnCn8Fg9nuM3w1gVtpBTgpFJHLw/VTTVowueK28LGnybPFADpLXY/Q772hXKfD9UV4cUe+uwmterZ3pNxT2pC7Ts9s71WKp++7x+Imn6mEnJB09mM0B2U0QvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFlXopTv; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTLtgYuZMCZRCmD1x3rjkXyBWK2Ja0ecM9GmJYWlG6KQesYZKy0j+3oEqoM7sckHv8uTbtxFSPFYwWgtHNpuRlzMjWaqUqciFY03smxSkPBmyOA5FMFfpRAHJSHOy94+POOSGKhv39SxgEktwgwSgNlJ+MxpbgiC3TXcX+yRtLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DW7rl2da; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFlXopTv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16902C4CEEA;
-	Wed, 25 Jun 2025 22:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750889431;
-	bh=cHdPmsE9AvG+FJPkM44ne16K/H/TUnLqw8O2dCdmVIU=;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DW7rl2da"
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id AAF606AE;
+	Thu, 26 Jun 2025 02:20:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1750897257;
+	bh=U1ICztOIDUCyPeAYVX53i1F5GRZlw7dH50fsuIjkLmI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CFlXopTvSYtxKrT/20/8pYODYJYVwmbJBCPUTsR3AAgijtfGHIR+yZGVOwaC8XE6S
-	 grCPgg+qpaXcFbMqHsePXnh56uF57nRIRzEYnJVitphglwZOJXSAUrydVR60bdTczL
-	 /wpeGbS/WAk+gj2gYZVZvpytZmN9xdU4J4mp19TiGzUx4x/veDLTjY11KDW0RYL+DF
-	 eP/TDW/7HP0q/XBB3dP2w5Gq/x56ZMHytVo3WDNkQkkVaKrBOeSVGHELTzi0cYyUUO
-	 7Xk8wAai20pOdDt1PYSz54A/x51+ExqG+vM5YNIOfcy167tQaFU1kLB/pDiIbcUOi+
-	 +PTaWEf3TSEZg==
-Date: Thu, 26 Jun 2025 00:10:26 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>, 
-	Jayesh Choudhary <j-choudhary@ti.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-omap@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] i2c: omap: Fix an error handling path in omap_i2c_probe()
-Message-ID: <vhhxtsspywvuzkfgbn52hysghd6tdxhk32wv3wcnlqwhskto3f@h2bbhek3s4s3>
-References: <998542981b6d2435c057dd8b9fe71743927babab.1749913149.git.christophe.jaillet@wanadoo.fr>
+	b=DW7rl2daZtr9GyL34OOAorSXxnABGt1BELfCR3m6Rli6Ho56iZ1uyXW3JAfoo1Byu
+	 nP+ubCMj8+rQqwV7pJ4EG9J3KKLA/n2geVzeyvGa1Dlw48L7+L1hLIdvqPt13+w0Bu
+	 mosqxUW8pvYDXznMZFbMY2YNzwWC90l9AcaNysTA=
+Date: Thu, 26 Jun 2025 03:20:53 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Frank Li <Frank.Li@nxp.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: imx8mq-mipi-csi2: Fix error code in
+ imx8mq_mipi_csi_parse_dt()
+Message-ID: <20250626002053.GA12213@pendragon.ideasonboard.com>
+References: <9b6c7925-c9c4-44bd-acd5-1ef0e698eb87@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <998542981b6d2435c057dd8b9fe71743927babab.1749913149.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <9b6c7925-c9c4-44bd-acd5-1ef0e698eb87@sabinyo.mountain>
 
-Hi Christophe,
+Hi Dan,
 
-On Sat, Jun 14, 2025 at 04:59:26PM +0200, Christophe JAILLET wrote:
-> If an error occurs after calling mux_state_select(), mux_state_deselect()
-> should be called as already done in the remove function.
+Thank you for the patch.
+
+On Wed, Jun 25, 2025 at 10:22:32AM -0500, Dan Carpenter wrote:
+> This was returning IS_ERR() where PTR_ERR() was intended.
 > 
-> Fixes: b6ef830c60b6 ("i2c: omap: Add support for setting mux")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 642b70d526ab ("media: imx8mq-mipi-csi2: Add support for i.MX8QXP")
 
-merged to i2c/i2c-host-fixes. Thanks!
+I'll add a
+
+Cc: stable@vger.kernel.org
+
+to obey the media subsystem CI rules.
+
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
 > ---
-> I'm not 100% sure of the error handling path.
+>  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Should pm_runtime_dont_use_autosuspend() be called after the err_disable_pm
-> label? (to match the calling order)
+> diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> index 6501843ae72d..3a4645f59a44 100644
+> --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
+> @@ -966,7 +966,7 @@ static int imx8mq_mipi_csi_parse_dt(struct csi_state *state)
+>  
+>  		base = devm_platform_ioremap_resource(to_platform_device(dev), 1);
+>  		if (IS_ERR(base))
+> -			return dev_err_probe(dev, IS_ERR(base), "Missing CSR register\n");
+> +			return dev_err_probe(dev, PTR_ERR(base), "Missing CSR register\n");
+>  
+>  		state->phy_gpr = devm_regmap_init_mmio(dev, base, &regmap_config);
+>  		if (IS_ERR(state->phy_gpr))
 
-Yes, I think you are right here.
+-- 
+Regards,
 
-> Also, should errors from omap_i2c_init() be handled?
-
-Yes, if it fails it should be handled.
-
-Thanks for the two reports. Do you have time to fix them or
-can I go ahead and do it?
-
-Thanks,
-Andi
+Laurent Pinchart
