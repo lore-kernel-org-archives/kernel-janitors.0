@@ -1,82 +1,73 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1828528F95E;
-	Thu, 26 Jun 2025 08:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CE71A8F94;
+	Thu, 26 Jun 2025 09:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750926644; cv=none; b=lyyTtaYt87J6I5UQCLFl3OKyrDgqNi+/ON1P89aVFcp5WFEUECXAPSg/yYFW7h3qSwTfC+Vqgc2Nd2HxJhm61S55JIsccR2Z+6bwwRHjrF/nL/Y490QHb+KvzxhEYSC2/NAlYB5rQ7sWMMoc2kEmZgQDHqZD6Wo9jwkSe6vXdRs=
+	t=1750929197; cv=none; b=HXAe01GoB+wUiRu+eIrRZvRFcCizGj/i467nrnlhoVLl1tvym60/qRXFxWhT/Nx77euYMQ7BF0nX9ZZozH++RhEAnXycIv06/5Kpfns02MWLhq6w+3mzEllF3Y0sl5fcI4DPDoa5hSyow30AnfiW7JTmC2MDxt6VTZ4mC3k0OEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750926644; c=relaxed/simple;
-	bh=RVnpBzh8Pk5p+vp6PHEE6etS4VhqUXMMyitmtLtuxXc=;
+	s=arc-20240116; t=1750929197; c=relaxed/simple;
+	bh=n8Qtg/STa8Iaorrpz35yWhThK6cB8msGjX+6mEcy6VA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdPDa8amn2Wu/TdT2nk8NrvccPl2RRxlxG6XON4+5WNrKY9NNHStohWezGtIKVNPc+KnnVM37+BJtpG7D8z6Ix1r2wItifiGOEgtzQi7jkTPWJOE4CsBvl1HnDFuuy+sXaO+pmJGj1rmYqJ9Z/z8P6SRkbNt8NwGRqjNRmwYTaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JnZNiqDI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ob3Idi9zNHzj2Spg9h8OscAh5GK/9+SbXy9Y5Rr0Uc/4vifnrpQ2LYZliwUr+4xL7ZQdOKu4Ae4e1FUhVlmG6t0owYMxFL05EK8++L5TrTQQ2klIATGQ/cvd554ZLe6FPb0ebRmsj9KWNDLnVxFgVK+oywthniDm6GAr0elD1Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uAEJpB6L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JnZNiqDI"
-Received: from pendragon.ideasonboard.com (85-76-34-12-nat.elisa-mobile.fi [85.76.34.12])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 239736BE;
-	Thu, 26 Jun 2025 10:30:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1750926622;
-	bh=RVnpBzh8Pk5p+vp6PHEE6etS4VhqUXMMyitmtLtuxXc=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAEJpB6L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18EE7C4CEEB;
+	Thu, 26 Jun 2025 09:13:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750929197;
+	bh=n8Qtg/STa8Iaorrpz35yWhThK6cB8msGjX+6mEcy6VA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JnZNiqDIFGYXfGGL7aQWAxeqFgx9ZF9/ernbTltasxc6pNHH5rZWWn+9JbL7NaGuY
-	 5v5mc2tL3AKzjxAbtoVi+/CUOnZW3CMFstArDIP+baStQOkQHcXBpNGF36M0V/u5yC
-	 c21JZlXODDVrhJreiowp64kWXjd+/SQSo3huKuUw=
-Date: Thu, 26 Jun 2025 11:30:18 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: imx8mq-mipi-csi2: Fix error code in
- imx8mq_mipi_csi_parse_dt()
-Message-ID: <20250626083018.GB8738@pendragon.ideasonboard.com>
-References: <9b6c7925-c9c4-44bd-acd5-1ef0e698eb87@sabinyo.mountain>
- <20250626002053.GA12213@pendragon.ideasonboard.com>
- <473ad0ce-5180-40e9-b159-a6cfe77f792f@suswa.mountain>
+	b=uAEJpB6LvdtC6YbDC77EcG8mbymv7LJbjNKj/BbZnSKeQWCtCkKcoa/RXsby3ULje
+	 bBdxpeijlycQfNzMPj7fG1rglxPWPhqTCqEwMZ6jPRiAJh2shbJ3cY+jfUr8Gu4GeD
+	 23nyhD/N6pMGnpK2F430/FeG6QXxAKnE0+sZlmqJ3DcqbQ0zS9IjxWzi8VJSJkO9ON
+	 laHwJNV7nhTyy4agHw76V5g1I0QnP2A+nDGFttEnMSdp9WLki1Fx1jvW47dGk/88PD
+	 GcfVt8nXiH3YVKa5nDTbyYpd7Nx6VKljJdBtZUu9L06YKLVxZL+4BCab/nZ44oCh5M
+	 YGxUzd+t3Hpbg==
+Date: Thu, 26 Jun 2025 10:13:12 +0100
+From: Simon Horman <horms@kernel.org>
+To: Subbaraya Sundeep <sbhatta@marvell.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Sai Krishna <saikrishnag@marvell.com>,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Linu Cherian <lcherian@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net-next] octeontx2-af: Fix error code in rvu_mbox_init()
+Message-ID: <20250626091312.GV1562@horms.kernel.org>
+References: <ee7944ae-7d7d-480d-af33-b77f2aa15500@sabinyo.mountain>
+ <aFzp70LaPoO0ukw8@822c91e11a5c>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <473ad0ce-5180-40e9-b159-a6cfe77f792f@suswa.mountain>
+In-Reply-To: <aFzp70LaPoO0ukw8@822c91e11a5c>
 
-On Thu, Jun 26, 2025 at 03:32:50AM +0300, Dan Carpenter wrote:
-> On Thu, Jun 26, 2025 at 03:20:53AM +0300, Laurent Pinchart wrote:
-> > On Wed, Jun 25, 2025 at 10:22:32AM -0500, Dan Carpenter wrote:
-> > > This was returning IS_ERR() where PTR_ERR() was intended.
-> > > 
-> > > Fixes: 642b70d526ab ("media: imx8mq-mipi-csi2: Add support for i.MX8QXP")
+On Thu, Jun 26, 2025 at 06:34:23AM +0000, Subbaraya Sundeep wrote:
+> On 2025-06-25 at 15:23:05, Dan Carpenter (dan.carpenter@linaro.org) wrote:
+> > The error code was intended to be -EINVAL here, but it was accidentally
+> > changed to returning success.  Set the error code.
 > > 
-> > I'll add a
-> > 
-> > Cc: stable@vger.kernel.org
-> > 
-> > to obey the media subsystem CI rules.
+> > Fixes: e53ee4acb220 ("octeontx2-af: CN20k basic mbox operations and structures")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
-> Wait, what?  The original commit hasn't hit Linus's tree and it's
-> not marked for stable either.
+>  Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+> 
+>  Thanks for the patch. This has been pointed by Simon earlier:
+>  https://lore.kernel.org/all/20250618194301.GA1699@horms.kernel.org/
 
-I'm personally not in favour of adding Cc: stable on all patches that
-have a Fixes: line. I'll let Mauro defend the rule, and I'm happy to
-drop the Cc line and fix the CI.
+Thanks for the fix.
 
--- 
-Regards,
-
-Laurent Pinchart
+Reviewed-by: Simon Horman <horms@kernel.org>
