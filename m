@@ -1,110 +1,160 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out.smtpout.orange.fr (out-68.smtpout.orange.fr [193.252.22.68])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FC82F1FFE
-	for <kernel-janitors@vger.kernel.org>; Thu, 26 Jun 2025 00:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738F12F1FC6;
+	Thu, 26 Jun 2025 02:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750897976; cv=none; b=M41qx7fKl8iqc6ZTplKjAc6P1ZNA3XjuyCYuFqcrREaT9WeF92CAhrMsBWp03EpjHWo3fct6C6jlhYaZOS1l+yHXBr+tKNKwTLXpOOIjSGPei6Z+MtYZ0KT9MFRUpcdPb5NuGUUkzvqJ3pdz9tRZ951X2JiexZImhhBymOgLpts=
+	t=1750906061; cv=none; b=UZK7SegTyyZ5vuDRox/XwV8z1ojLPELUiAi5aNuv8+lOKNtMv0j58FpLOkvTR2YYQrusrDW3CF4DclztM342wqWquGa0RHpuWVQxpbsdLiJ71T1ChBQ7K3hbGIKPjcNzsG6KgR4nPbXaxtjOmFocc3op8ZRceBLb8+srkYHICi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750897976; c=relaxed/simple;
-	bh=yuoTVrvF7Uo1dzDLeghFSD2HNx+GhM8K2Rklo6JjyGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6+OkjrIujnZDslLcObJUp7cKUkwdWPv3OHQ9/j/ZkX8VsiRUOHD3Q+bcnWAMm5hSHz3PtpISZSlyNh4/Bw5YJbrNQtc3YMnS6CP5goQqil9slVPv6X/afScQW9P6OL4QfoHxNgmw+So2UnlVjxz3t5I1hfWbMyuSI2C4hzNJR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dMKXHNVZ; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1750906061; c=relaxed/simple;
+	bh=ScQib/iIummUOWXbX8F7fB94LmFMCLeWS/9/eLvbi8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=is9/3FCVugXEYj859d26AAqZybbtpxaJMdaLJhCczQRF0+4SmQOMA2813QMpMV5ET396mDO+BpM8K+6GTXBrgkNiK5Jg/zA3ImRfnX0Ux1mnm6qBoS1olLdEog1fylhLDvGN4BCycouXYFNmJ32/O5F/xKqu9irserB5Kyxgjoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AXKcreC2; arc=none smtp.client-ip=193.252.22.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dMKXHNVZ"
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2ef8dfb3742so65765fac.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 25 Jun 2025 17:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750897974; x=1751502774; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g8X6fN/sy8ZyQiJgaNrcn1RVnKjXmkhrDdFBrAUFDbo=;
-        b=dMKXHNVZhKFVsCXmMOW1hCZA2DaqVesh6vcx98QvuvpjWpSg78pyJ3vTkMUDZYov6Z
-         QDXZgRogS43Lgr5Jq3mMFxKELO2jPM0UpgHR1vADwCRYhK8L/OVmi4rPzG4kyR0HywJG
-         pnqM3hi3aN3fPTBIq5XRZRIU7UXA7S/W3+c3QC7teMhmc+A27h8rrSZOAqkoiA1IljDO
-         zN8tDc7Y9wr/wvtCNLNvjBr590Rm2BLLxj6RrOZihcoX3M6aoAGtLy7As+za9D7Xi+1L
-         ZvSGNLMWdfBtIojrsWoWjc1lYhwBWBRUOruynAA13WZqrzEqJKLTvm2DmU/3BOF1IGU+
-         332g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750897974; x=1751502774;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g8X6fN/sy8ZyQiJgaNrcn1RVnKjXmkhrDdFBrAUFDbo=;
-        b=E5QatbxnkjOfZgiql+aRLwBBRenVa6am7PB0ikvJxJMiQa//Q7fgfLWAByRzsTZMB0
-         rqez30gn9j/X8cdQpG85vyuwtFnikna8j7GmP/WKRNlBCymwNwu13+b2tHthgWYN9Hpw
-         n7C3SeTvAUT1zdMN2958VQ8BHkOUFa2EHgWfL0m1q+GWPMyb8tsLvuICIYpw4tfp8pZm
-         +uUA/TRXufS1YiwL6oDiEtCbAArnR7FFfNKsONWlvfubKIACXyELiy0LMPyPr4B3vTDd
-         uBZdBIVXkdXAfLvEqT4GC8n4eAG4IEEIrcwcuXay20ydsWsHNLo0KpwsD6SijnEldM9u
-         8eLg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/gESvDEn5PnsGlMC3vjIAQczWuK5DFFW3eoPvjoAayFHszeTgWWJWZ4mnx2+k0jvNuFkRj1Qf3Zdjp+imdWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuce1cTpwx8rln4b+E4i/uk3QOBDCrKVdiDJH+AkkyMEbwso/d
-	ZQWvvhuYGxrDz8wRHL0GiA+fY0v4TZaJkzfcx80vkgshjJFK2gmL73FL3i1H/Uha3Qs=
-X-Gm-Gg: ASbGncuSZlukARnJuQ/mSsG7ljFoCjX++OtmyKrBdhLu73t5GEnbB7ykb7DeY6iVhAX
-	sKBBgKREGHK+MktQx4sf7h72+6n8+BdgDPPRfOkmH1CpyVLXbDzZbFCuUz9toF/tl1kWAZQmMVO
-	4A3H0MO6av/wYPDfG/HY2CoPFvltjR4O3WNreQp/qC1N5ghjM+bI57/dxxqpd7egqNMLbSqO7cN
-	487f28f8PmqeKQkktUqFnHfzzPJzjf28R+qLC34P8TOyh5rz8SOmfUX2KijAQQJUpkDSZmINt7d
-	UdJ0R3pBAjO3haGuRZS5hM8s05LhDI8L5AMX1Bxrvt8rClbTD5HEIDpLWRdOAMKHgsE=
-X-Google-Smtp-Source: AGHT+IGgCT0aIt2Vk/6CBqJqabPF5GPEQRnBgXUMrXjo+VORvIfFnmUByQnjm3rxOduTuCu1c8Cv0g==
-X-Received: by 2002:a05:6871:330e:b0:2c1:650b:fc86 with SMTP id 586e51a60fabf-2efb213638bmr3538638fac.1.1750897974327;
-        Wed, 25 Jun 2025 17:32:54 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:3ee4:904:206f:ad8])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2efd50fbb67sm81975fac.41.2025.06.25.17.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 17:32:52 -0700 (PDT)
-Date: Thu, 26 Jun 2025 03:32:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: imx8mq-mipi-csi2: Fix error code in
- imx8mq_mipi_csi_parse_dt()
-Message-ID: <473ad0ce-5180-40e9-b159-a6cfe77f792f@suswa.mountain>
-References: <9b6c7925-c9c4-44bd-acd5-1ef0e698eb87@sabinyo.mountain>
- <20250626002053.GA12213@pendragon.ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AXKcreC2"
+Received: from mail-ed1-f48.google.com ([209.85.208.48])
+	by smtp.orange.fr with ESMTPA
+	id Uce6uBOZ4XsbBUce6uYh0i; Thu, 26 Jun 2025 04:47:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1750906047;
+	bh=V/WDGm52hjpGx8ncCcYjJQ6PVfKZmpK1IbtetFcAPZo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=AXKcreC2hdhLd56+Cey94Qh+dtSb4I1iZ4F7tzKufV3IjHBmxIB/b2JAISrtiqr8h
+	 AkiniknS7H5b/fs1p98bDforeC1c9oO+ZA2F2IFe66qb1pwyNFqER3fkfKfGNXdy/n
+	 9UPrhZyyOmVjK7Zt5jJeVgF1QKTMUu8usI0uZaJVMl1svvvC3bgcLtDKifZOM1MxaG
+	 sIguHRExXuyLw4yoJst0bcEuBBVF2RvoQL5tTjc6OLhnF5DTFJI+LOpMRJtvj8mz/E
+	 SQBIbsgbTtLqt142XCkiLZC9KBF3rCNTlms3VDvi40tOX5q/VKMLSSGdIzuXcEVVdA
+	 vWawg+qiYa/PQ==
+X-ME-Helo: mail-ed1-f48.google.com
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 26 Jun 2025 04:47:27 +0200
+X-ME-IP: 209.85.208.48
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60768f080d8so866660a12.1;
+        Wed, 25 Jun 2025 19:47:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+ohoYjU5M+e3OTzaId6wGj22wLl9pV4L2K8uT64VQ0VsSmswsh8b/oLKYhpfnclT15bt7C5SiqFg1yDOABO4=@vger.kernel.org, AJvYcCVs0mHN/eG6dylXrVECvQOp35vWuzuP0/7tP3SkwivbFNNYre+Ma6g9k7sCerFql0JCyVQ+dzYRLocpsoet@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6bwiaPtO/PbnP80vxpXo1d/B3I0soAoJrm8Vw8dF3dTBV5wac
+	FGmD38YgRpp74LoUb8hWRO8cGN0CjVa9ejxQL3pBmE05vHkoSxqWsH0cCYoyqDVgcErclhJHlos
+	8Fj6rSXHEhvoLluUDi15IQXM5gpVSzyM=
+X-Google-Smtp-Source: AGHT+IGrHj2tMbiZ2QeqZjQlXbTaO+MvqmYe6H6UjmXckgl2wWAV/SH/jd2Fj2A10MlMl3Fc5SZuuFIsEb6X+IB+Lpo=
+X-Received: by 2002:a17:907:7b85:b0:ae0:d54d:2d0e with SMTP id
+ a640c23a62f3a-ae0d54d3185mr115037266b.38.1750906046477; Wed, 25 Jun 2025
+ 19:47:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250626002053.GA12213@pendragon.ideasonboard.com>
+References: <48e217a7-b90e-4af3-b535-812c449dd3ba@web.de> <bf5442d1-34e0-495f-8a56-4e47f53ca4ad@wanadoo.fr>
+ <a7a00125-b393-4283-a7dc-6c80ced8e7e6@web.de> <c96a5d2c-0ee1-4e3e-a95d-d38a8f668feb@wanadoo.fr>
+ <0768a008-d4a9-41ec-bc47-1e7c63362296@web.de> <c04376f2-6ab7-4256-8bdc-aa6ff3ea88b4@wanadoo.fr>
+ <7e6f8929-6665-45af-b01b-167a1aa80305@web.de>
+In-Reply-To: <7e6f8929-6665-45af-b01b-167a1aa80305@web.de>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Date: Thu, 26 Jun 2025 11:47:15 +0900
+X-Gmail-Original-Message-ID: <CAMZ6Rq+PEZWzxNYDODq-Rz_Y8T_XEihyZKoY-MYo6bn5ATaGLQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxlciyP7y1Op9Ovh1hpCQMsTtZ2R8U4meStboJJffsNcUC2zhdd5dGfQGY
+Message-ID: <CAMZ6Rq+PEZWzxNYDODq-Rz_Y8T_XEihyZKoY-MYo6bn5ATaGLQ@mail.gmail.com>
+Subject: Re: can: ucan: Use usb_endpoint_type() rather than duplicating its implementation
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-can@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org, Chen Ni <nichen@iscas.ac.cn>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 26, 2025 at 03:20:53AM +0300, Laurent Pinchart wrote:
-> Hi Dan,
-> 
-> Thank you for the patch.
-> 
-> On Wed, Jun 25, 2025 at 10:22:32AM -0500, Dan Carpenter wrote:
-> > This was returning IS_ERR() where PTR_ERR() was intended.
-> > 
-> > Fixes: 642b70d526ab ("media: imx8mq-mipi-csi2: Add support for i.MX8QXP")
-> 
-> I'll add a
-> 
-> Cc: stable@vger.kernel.org
-> 
-> to obey the media subsystem CI rules.
-> 
+On Thu. 26 Jun. 2025 at 01:47, Markus Elfring <Markus.Elfring@web.de> wrote=
+:
+> > A real quick search shows me that this ucan driver is not an isolated c=
+ase.
+> > Here is an example:
+> >
+> > https://elixir.bootlin.com/linux/v6.16-rc3/source/drivers/media/rc/imon=
+.c#L2137-L2148
+>
+> Thanks that you pointed another implementation detail out from
+> the function =E2=80=9Cimon_find_endpoints=E2=80=9D.
 
-Wait, what?  The original commit hasn't hit Linus's tree and it's
-not marked for stable either.
+What I did here was simply to look at all the users of the
+USB_ENDPOINT_DIR_MASK macro:
 
-regards,
-dan carpenter
+https://elixir.bootlin.com/linux/v6.16-rc3/C/ident/USB_ENDPOINT_DIR_MASK
 
+and bingo, the very first user of that macro is the imon driver with a
+true positive. I did not check the other drivers from the list, but
+that is what I meant by the manual hunt: I believe that 15 minutes
+would be enough to quickly check all those drivers. Of course, doing
+it manually is a one time solution whereas adding the coccinelle
+script is a long term solution. Also, I am just sharing my thoughts. I
+am not trying to discourage you in any way, it is even the opposite:
+such initiatives are really nice! Even if I do not participate in
+these myself, I want to tell you my gratitude for your efforts!
+
+> > But it does not seem to occur so often either. So not sure what is the =
+best:
+> > do a manual hunt
+>
+> Unlikely.
+>
+> I am unsure if such an aspect would become relevant for a code review
+> by other contributors.
+>
+>
+> >                  or write a coccinelle checker.
+>
+> I would find it more convenient to achieve corresponding adjustments
+> to some degree with the help of such a development tool.
+> I constructed scripts for the semantic patch language accordingly.
+>
+>
+> >> Can the functions =E2=80=9Cusb_endpoint_is_bulk_in=E2=80=9D and =E2=80=
+=9Cusb_endpoint_is_bulk_out=E2=80=9D
+> >> be applied here?
+> >> https://elixir.bootlin.com/linux/v6.16-rc3/source/include/uapi/linux/u=
+sb/ch9.h#L572-L595
+> >
+> > Further simplification, nice :)
+> >
+> > I didn't see that last one, so glad you found what seems to be the opti=
+mal solution!
+> I am unsure if the check reordering would be desirable for this function =
+implementation.
+
+Ah, you want to confirm whether
+
+  usb_endpoint_dir_in(ep) && usb_endpoint_xfer_bulk(ep)
+
+is the same as
+
+  usb_endpoint_xfer_bulk(ep) && usb_endpoint_dir_in(ep)
+
+?
+
+In this case, that is OK. *Mathematically speaking* we have this equivalenc=
+e:
+
+  a & b <=3D> b & a
+
+In C it is roughly the same except if the expression has some
+undefined behaviour. The typical example is:
+
+  foo && foo->bar
+
+Here, the short cut evaluation of the && operator will prevent the
+undefined behaviour to occur if foo is NULL. And so, obviously,
+refactoring as:
+
+  foo->bar && foo
+
+would be a bug. In our case, there is no undefined behaviour on the
+right hand operand (I mean, if ep is NULL, the undefined behaviour
+will already occur on the left hand operand). So we are totally safe
+to reorder the operand here.
+
+
+Yours sincerely,
+Vincent Mailhol
