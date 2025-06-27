@@ -1,435 +1,120 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EA62746A;
-	Fri, 27 Jun 2025 01:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153292D9EF1
+	for <kernel-janitors@vger.kernel.org>; Fri, 27 Jun 2025 13:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750986381; cv=none; b=HRHdzCi+eTb8BTI5YhE441zyHBxvwUpQrnkBBqFI9rZ+YhLAfmnqxKfBtBYRynUHGgBdDweP3t7r91gB8nrp/pLj9MsNBQwCGzs35jJw5C0nz/2f7ir507w8ngPPgTWCaD1eca//75dPUjJYBb9PwZlL81juLLqwDVfyoYO/6Tw=
+	t=1751031903; cv=none; b=DciiTuxR/yBJZAwcrvQzbooAHacrOqi7o4JdDtUi5BkHpa0gXoDZfXMktR0btwZo8RA1CdXqdbpvvMkbux9V5Ul7WS7oAtR5f6O6Q/EZNc8nFJWaS/zzF9S8YwvTaUfEaWhNbcAEFtVO3u5BvOt09BGKw0p9agP1gJALJeWb/cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750986381; c=relaxed/simple;
-	bh=+G/t9+B65nWdGibqPQwfKA9JGs6zB4rCzJDnBF/Kous=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FrMPbfoW4B8b+7yycAv1trqoZMa7qmKrqgDzPRMBl8B55WPVaXC/diZKn+RSodXhSQ0Zh6z7B2mAZHbnu6IeWOar+oK/hxfpRqGCy5AeSfUVIhXvUIPNQ8sGmyhwWMY/EnlLqSzCuNuXAQYcPuiy/93vyjUXxtzWMe6zm+jUm40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaEX0Cw0; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1751031903; c=relaxed/simple;
+	bh=8bG3o5gRZA5FwgazcAq8PDL3/TF2VFfzR2zlNp78oD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aDvU0aXSvQZ9z4B65XBIClWgsWPl5UvBNYGzR5Poo82pjZvdLjCSPjdCOdzJZaXEo4XUwD/rN674zA7AENQXfgQNBcJLGBH2SnEREUEybkcU+ZUPnliMZLYkhPZwo951TuI5pCZou6zGdKvvhC/ziHuqY/59FiXw+nhGh2g0/4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GwtnV7uD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaEX0Cw0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750986380; x=1782522380;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+G/t9+B65nWdGibqPQwfKA9JGs6zB4rCzJDnBF/Kous=;
-  b=YaEX0Cw0AaCmPaDbtMWwnTIPm3qNEHcIZvDMTbjbS2Cnn/Dnz0OiO12k
-   tu1p74ldd2OX0OaQZcEbtK6RuynihZO2QK+9Y6Hq2g2TqBGYEdB4T4o90
-   uRa00LyDLS8pyW63WWV3va9M+GxETK+wG11bzaXIQOGewqxaCKwU+fBLW
-   W4d9fL9yFgHRz+H3ifTIflmyehh18njlRIp7tvmsRLDyKiQeUAis6jPuT
-   +1vg84a2mMxLNFzNobuVkGLCYD84xJUt+wFI8b/CYqXxjzxYYIKQNfFfU
-   thGsXxu6EOQIoXJecwx0fZTgXY2/3MYOgVH3NFWRNxt9T1sa3+klUOda7
-   g==;
-X-CSE-ConnectionGUID: gmc35tN6RtS8C59ZuzXX5Q==
-X-CSE-MsgGUID: yV1/kx7MTcexgM3RdY+wZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11476"; a="53023629"
-X-IronPort-AV: E=Sophos;i="6.16,269,1744095600"; 
-   d="scan'208";a="53023629"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2025 18:06:19 -0700
-X-CSE-ConnectionGUID: wEPlNzg9Qker8t5pQL+EYA==
-X-CSE-MsgGUID: YSqscLQrSFS6EmqJEU55cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,269,1744095600"; 
-   d="scan'208";a="153381319"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 26 Jun 2025 18:06:17 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uUxXi-000Vg2-2o;
-	Fri, 27 Jun 2025 01:06:14 +0000
-Date: Fri, 27 Jun 2025 09:05:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Colin Ian King <colin.i.king@gmail.com>, Kees Cook <kees@kernel.org>,
-	linux-hardening@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] fortify: add branch hints on unlikely
- fortify_panic paths
-Message-ID: <202506270831.FzLx5USH-lkp@intel.com>
-References: <20250625161221.295575-1-colin.i.king@gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GwtnV7uD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751031901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=sfCzCKZHgavpsXvy8TlJ0gEXh9QhrZFiByLFjuD7+iA=;
+	b=GwtnV7uD1KwppUiNHkxloz5KOJbLNR5eX9naqbTzqoIZt1+H+2Ap6Fc/GRWN6bgIUSvopQ
+	O4YSGx8ucSUdlC1LDD1DdiODVkYVXHkfN+45KLFwHAWmdiRdb038S3rZrnLN5c6QNuiInh
+	fe2xGXwVt0lD0ZAfjXqWmKb5iwHWqdA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-484-tbmzbwHSO7eZAw8DFJ1ZVQ-1; Fri, 27 Jun 2025 09:44:59 -0400
+X-MC-Unique: tbmzbwHSO7eZAw8DFJ1ZVQ-1
+X-Mimecast-MFC-AGG-ID: tbmzbwHSO7eZAw8DFJ1ZVQ_1751031898
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451ecc3be97so10333175e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 27 Jun 2025 06:44:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751031897; x=1751636697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sfCzCKZHgavpsXvy8TlJ0gEXh9QhrZFiByLFjuD7+iA=;
+        b=jWl2F/Sq9StPniZcKa3re+/311i1RdlQozWfrkYwzbJCQ1GJuBSl7Mu42NU4Ch4oiD
+         zgF2FFDSzonR7rL57EmN0E1h/WeNLce4xxZCzsT5anolu3DLjAhWhM2XzNKl+drRBJiC
+         YLcLg17Hcr1dN4zWmsHmdXyfEqQotuFKxBBMEIBWckrmDqEu5OhmyOZiiGX+odqgdAL4
+         Q1SjRKnntmGs0JN1KzvWvlxvOmurmpf7UoH5V7tgr9q+MoMz8/x164M21ZQHytXbimF/
+         AyKt2FCmvJJjic+tL76WRU+YVoRTOOskzy94nU+9zFOq/qwbLdABAle+s0NwNGJ/VzX6
+         9m0A==
+X-Gm-Message-State: AOJu0YyuAzHCJH7DpEcX+3hqUCgfV0D0exElAuhFb+gUXXikDGvf4y/x
+	5WyKMyCTIKnNesQsVCN+rEvcHNminiE1M10mOhKMuf/MupelXDieXaaTAacmE4Wuibvtd4u5EEe
+	TuefIosboAJRU240wl4U1x3suAXd0ylge5rBzsNyrGPYFmTmKQlITsFOkEONopQPcuXclaQ==
+X-Gm-Gg: ASbGncsoHQ63+4G8UfSZ7f4wo2IjOJCgHHXEur/NOLPoavxU1rS9HkPBulPN3p/FCkW
+	Q23c0IezNrOLKtJl7QSkynipyvM24BL3xAROAFguQJp4/IQ4Xj4OA3QrfbGVIVbmXWaVjTlfRjq
+	57qQcARKMxMspELHSP8jFEfQ4ScczmZt3H/YiGKv6f661bobhVjvU2FeGKBl49E5/eYT7zxDlXp
+	MB5Fcd7kMMO1RoiU30/z2Cafsb89Xy7YF1IK6Xx3G9beKXaMGIPkUeg3fHOfaN4+ErSJpKWDoxl
+	fJxso1AcLZ55JTBauHuTSGrwxNJXryPTyU5OYvUW2+gd204PuW5qfmzq4Qf/tHUNo51h
+X-Received: by 2002:a05:600c:1e0d:b0:43c:e478:889 with SMTP id 5b1f17b1804b1-4538edeb1e3mr43906785e9.0.1751031897534;
+        Fri, 27 Jun 2025 06:44:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5wO7lBzKmrbrRtSD3MlBN7myKwo/CLhGpeObS/nJo2QfYJbjf/v98tsfeefUPIC/qB8O98A==
+X-Received: by 2002:a05:600c:1e0d:b0:43c:e478:889 with SMTP id 5b1f17b1804b1-4538edeb1e3mr43906355e9.0.1751031897103;
+        Fri, 27 Jun 2025 06:44:57 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4538233bd14sm83028885e9.2.2025.06.27.06.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jun 2025 06:44:56 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry after renaming rzv2h-gbeth dtb
+Date: Fri, 27 Jun 2025 15:44:53 +0200
+Message-ID: <20250627134453.51780-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625161221.295575-1-colin.i.king@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Colin,
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-kernel test robot noticed the following build warnings:
+Commit d53320aeef18 ("dt-bindings: net: Rename
+renesas,r9a09g057-gbeth.yaml") renames the net devicetree binding
+renesas,r9a09g057-gbeth.yaml to renesas,rzv2h-gbeth.yaml, but misses to
+adjust the file entry in the RENESAS RZ/V2H(P) DWMAC GBETH GLUE LAYER
+DRIVER section in MAINTAINERS.
 
-[auto build test WARNING on kees/for-next/hardening]
-[also build test WARNING on kees/for-next/pstore kees/for-next/kspp linus/master v6.16-rc3 next-20250626]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Adjust the file entry after this file renaming.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Colin-Ian-King/fortify-add-branch-hints-on-unlikely-fortify_panic-paths/20250626-001527
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
-patch link:    https://lore.kernel.org/r/20250625161221.295575-1-colin.i.king%40gmail.com
-patch subject: [PATCH][next] fortify: add branch hints on unlikely fortify_panic paths
-config: i386-buildonly-randconfig-004-20250627 (https://download.01.org/0day-ci/archive/20250627/202506270831.FzLx5USH-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250627/202506270831.FzLx5USH-lkp@intel.com/reproduce)
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506270831.FzLx5USH-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/array_size.h:5,
-                    from include/linux/string.h:6,
-                    from include/linux/uuid.h:11,
-                    from include/linux/mod_devicetable.h:14,
-                    from scripts/mod/devicetable-offsets.c:3:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
---
-   In file included from include/linux/export.h:5,
-                    from include/linux/linkage.h:7,
-                    from arch/x86/include/asm/cache.h:5,
-                    from include/vdso/cache.h:5,
-                    from include/linux/cache.h:6,
-                    from include/linux/slab.h:15,
-                    from fs/ocfs2/dlmglue.c:11:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
-   In file included from include/linux/string.h:392,
-                    from arch/x86/include/asm/page_32.h:18,
-                    from arch/x86/include/asm/page.h:14,
-                    from arch/x86/include/asm/thread_info.h:12,
-                    from include/linux/thread_info.h:60,
-                    from include/linux/spinlock.h:60,
-                    from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/slab.h:16:
-   In function 'fortify_memset_chk',
-       inlined from 'ocfs2_lock_res_free' at fs/ocfs2/dlmglue.c:791:2:
-   include/linux/fortify-string.h:480:25: warning: call to '__write_overflow_field' declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Wattribute-warning]
-     480 |                         __write_overflow_field(p_size_field, size);
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
-   kernel/bpf/helpers.c: In function '____bpf_snprintf':
-   kernel/bpf/helpers.c:1067:9: warning: function '____bpf_snprintf' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-    1067 |         err = bstr_printf(str, str_size, fmt, data.bin_args);
-         |         ^~~
-   In file included from include/uapi/linux/filter.h:9,
-                    from include/linux/bpf.h:8,
-                    from kernel/bpf/helpers.c:4:
-   include/linux/fortify-string.h: At top level:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
---
-   In file included from include/linux/build_bug.h:5,
-                    from include/linux/bits.h:32,
-                    from include/linux/ioport.h:13,
-                    from include/linux/acpi.h:12,
-                    from sound/soc/codecs/rt1318.c:10:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
-   sound/soc/codecs/rt1318.c:1148:34: warning: 'rt1318_of_match' defined but not used [-Wunused-const-variable=]
-    1148 | static const struct of_device_id rt1318_of_match[] = {
-         |                                  ^~~~~~~~~~~~~~~
---
-   In file included from include/linux/dev_printk.h:14,
-                    from include/linux/device.h:15,
-                    from include/linux/extcon.h:21,
-                    from sound/soc/samsung/aries_wm8994.c:2:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
-   sound/soc/samsung/aries_wm8994.c:524:34: warning: 'samsung_wm8994_of_match' defined but not used [-Wunused-const-variable=]
-     524 | static const struct of_device_id samsung_wm8994_of_match[] = {
-         |                                  ^~~~~~~~~~~~~~~~~~~~~~~
---
-   kernel/trace/bpf_trace.c: In function '____bpf_trace_printk':
-   kernel/trace/bpf_trace.c:378:9: warning: function '____bpf_trace_printk' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-     378 |         ret = bstr_printf(data.buf, MAX_BPRINTF_BUF, fmt, data.bin_args);
-         |         ^~~
-   kernel/trace/bpf_trace.c: In function '____bpf_trace_vprintk':
-   kernel/trace/bpf_trace.c:434:9: warning: function '____bpf_trace_vprintk' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-     434 |         ret = bstr_printf(data.buf, MAX_BPRINTF_BUF, fmt, data.bin_args);
-         |         ^~~
-   kernel/trace/bpf_trace.c: In function '____bpf_seq_printf':
-   kernel/trace/bpf_trace.c:476:9: warning: function '____bpf_seq_printf' might be a candidate for 'gnu_printf' format attribute [-Wsuggest-attribute=format]
-     476 |         seq_bprintf(m, fmt, data.bin_args);
-         |         ^~~~~~~~~~~
-   In file included from include/linux/array_size.h:5,
-                    from include/linux/kernel.h:16,
-                    from kernel/trace/bpf_trace.c:5:
-   include/linux/fortify-string.h: At top level:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
---
-   In file included from include/linux/err.h:5,
-                    from drivers/regulator/pbias-regulator.c:17:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
-   drivers/regulator/pbias-regulator.c:136:34: warning: 'pbias_of_match' defined but not used [-Wunused-const-variable=]
-     136 | static const struct of_device_id pbias_of_match[] = {
-         |                                  ^~~~~~~~~~~~~~
---
-   drivers/iommu/mtk_iommu_v1.c: In function 'mtk_iommu_v1_probe_finalize':
-   drivers/iommu/mtk_iommu_v1.c:512:35: warning: variable 'mtk_mapping' set but not used [-Wunused-but-set-variable]
-     512 |         struct dma_iommu_mapping *mtk_mapping;
-         |                                   ^~~~~~~~~~~
-   In file included from include/asm-generic/bug.h:5,
-                    from arch/x86/include/asm/bug.h:103,
-                    from include/linux/bug.h:5,
-                    from drivers/iommu/mtk_iommu_v1.c:10:
-   include/linux/fortify-string.h: At top level:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
---
-   drivers/usb/renesas_usbhs/mod.c: In function 'usbhs_status_get_each_irq':
-   drivers/usb/renesas_usbhs/mod.c:195:13: warning: variable 'intenb0' set but not used [-Wunused-but-set-variable]
-     195 |         u16 intenb0, intenb1;
-         |             ^~~~~~~
-   In file included from include/linux/array_size.h:5,
-                    from include/linux/kernel.h:16,
-                    from include/linux/interrupt.h:6,
-                    from drivers/usb/renesas_usbhs/mod.c:9:
-   include/linux/fortify-string.h: At top level:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
---
-   fs/nfsd/export.c: In function 'exp_rootfh':
-   fs/nfsd/export.c:1029:34: warning: variable 'inode' set but not used [-Wunused-but-set-variable]
-    1029 |         struct inode            *inode;
-         |                                  ^~~~~
-   In file included from include/linux/export.h:5,
-                    from include/linux/linkage.h:7,
-                    from arch/x86/include/asm/cache.h:5,
-                    from include/vdso/cache.h:5,
-                    from include/linux/cache.h:6,
-                    from include/linux/slab.h:15,
-                    from fs/nfsd/export.c:15:
-   include/linux/fortify-string.h: At top level:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
---
-   In file included from include/linux/err.h:5,
-                    from include/linux/clk.h:12,
-                    from drivers/iio/adc/aspeed_adc.c:15:
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:598:18: note: in expansion of macro 'unlikely'
-     598 |         else if (unlikely(q_size != SIZE_MAX && q_size < size))
-         |                  ^~~~~~~~
->> include/linux/compiler.h:27:33: warning: '______f' is static but declared in inline function 'fortify_memcpy_chk' which is not static
-      27 |                                 ______f = {                             \
-         |                                 ^~~~~~~
-   include/linux/compiler.h:47:26: note: in expansion of macro '__branch_check__'
-      47 | #  define unlikely(x)   (__branch_check__(x, 0, __builtin_constant_p(x)))
-         |                          ^~~~~~~~~~~~~~~~
-   include/linux/fortify-string.h:596:13: note: in expansion of macro 'unlikely'
-     596 |         if (unlikely(p_size != SIZE_MAX && p_size < size))
-         |             ^~~~~~~~
-   drivers/iio/adc/aspeed_adc.c: In function 'aspeed_adc_probe':
-   drivers/iio/adc/aspeed_adc.c:493:65: warning: '%s' directive argument is null [-Wformat-overflow=]
-     493 |         snprintf(clk_parent_name, ARRAY_SIZE(clk_parent_name), "%s",
-         |                                                                 ^~
-..
-
-
-vim +27 include/linux/compiler.h
-
-1f0d69a9fc815d Steven Rostedt          2008-11-12  21  
-d45ae1f7041ac5 Steven Rostedt (VMware  2017-01-17  22) #define __branch_check__(x, expect, is_constant) ({			\
-2026d35741f2c3 Mikulas Patocka         2018-05-30  23  			long ______r;					\
-134e6a034cb004 Steven Rostedt (VMware  2017-01-19  24) 			static struct ftrace_likely_data		\
-e04462fb82f8dd Miguel Ojeda            2018-09-03  25  				__aligned(4)				\
-33def8498fdde1 Joe Perches             2020-10-21  26  				__section("_ftrace_annotated_branch")	\
-1f0d69a9fc815d Steven Rostedt          2008-11-12 @27  				______f = {				\
-134e6a034cb004 Steven Rostedt (VMware  2017-01-19  28) 				.data.func = __func__,			\
-134e6a034cb004 Steven Rostedt (VMware  2017-01-19  29) 				.data.file = __FILE__,			\
-134e6a034cb004 Steven Rostedt (VMware  2017-01-19  30) 				.data.line = __LINE__,			\
-1f0d69a9fc815d Steven Rostedt          2008-11-12  31  			};						\
-d45ae1f7041ac5 Steven Rostedt (VMware  2017-01-17  32) 			______r = __builtin_expect(!!(x), expect);	\
-d45ae1f7041ac5 Steven Rostedt (VMware  2017-01-17  33) 			ftrace_likely_update(&______f, ______r,		\
-d45ae1f7041ac5 Steven Rostedt (VMware  2017-01-17  34) 					     expect, is_constant);	\
-1f0d69a9fc815d Steven Rostedt          2008-11-12  35  			______r;					\
-1f0d69a9fc815d Steven Rostedt          2008-11-12  36  		})
-1f0d69a9fc815d Steven Rostedt          2008-11-12  37  
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d635369a4f6c..bff9651a9a94 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21271,7 +21271,7 @@ M:	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+ L:	netdev@vger.kernel.org
+ L:	linux-renesas-soc@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yaml
++F:	Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+ F:	drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+ 
+ RENESAS RZ/V2H(P) USB2PHY PORT RESET DRIVER
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.0
+
