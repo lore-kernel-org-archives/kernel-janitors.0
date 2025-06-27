@@ -1,216 +1,134 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6FF91DA61B;
-	Fri, 27 Jun 2025 17:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57802EBBA6
+	for <kernel-janitors@vger.kernel.org>; Fri, 27 Jun 2025 17:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751044709; cv=none; b=azsbb1mOVDAV9fMhaMZhpkSX+Y9U8CIW2bJW+k7tCeVXoP7ehx++3hCr2ORbscC9G2DvnCVMxLaFk1REHX05K3+P9NarGF2AEnX6vx93leNiUh4UWBbznxVPqwIYjrXaeyzOO4y4DuttsrkGJPxTBwCpiui6mKP0kKmmeg0yncI=
+	t=1751046940; cv=none; b=i7+Pu7NR+tqlrTu1FRibrcVTGr2+2EyM3J/3Lst+2LJvn+R2zMJmORyyL0QvEgilW83KXOzTDKlKVcDYH5dHeR87AZEJ8iouK6mbwEI+e0cBedw8x883scSEGKg/bFl28fi4YIijaZKxoS2IavohtmRCmc+ORoIBuY/oDq3tWfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751044709; c=relaxed/simple;
-	bh=qekrEVqL5xGZYqbqiBYa/pSYw69lavty2tkv5dhvUFU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PZ2ZeeKwIXzCGfrxy4BRV8TLPfE+5fC5i+vVo6dzwH20ipYs/8gdgT8Z6+ZNyECdRM7fCgZhchQIpW5AQb7GDMk/Jms51chzXW/tHZBSSGy8t00yttQgntlQcCEM2tLa6zus09jGJ3CjJduamGMIPz7qHPAM/+G5nA8nAy7mmH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LA+83kj0; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1751046940; c=relaxed/simple;
+	bh=sP55RcNGRtVXAqUW36R17TRg0JabtTdiLcEfMjXZ0rg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FRFi1sYKzdicaZFsuhDSoAASfMvPi4Cfog1JNHwep7kAlKxNVFfC+omTxLevtHLE+X9wUPjxMgLXSiYtGUPqMeWnO5Iqt/WribQKDGF25D+nG8n7Uv41zZiP0mBHeqmNI4hxUO1SoWMVyhNBi8aq/vUN+NIXv/d0HMEMmb1EiDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bktBNDHk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LA+83kj0"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id VCiOuiqRroUtIVCiOujFMI; Fri, 27 Jun 2025 19:18:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751044698;
-	bh=vZ0gXsMEUL07BRPgj8DtIwElSztAZLrFwXzdLM5hlqM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=LA+83kj0CfW1YPfcqXYO4cgzjLTsPpFen5MEjY/lDm1UN0o4nomUj/DhNkAcW2yyj
-	 zi8WiU146Sqk21qOUpTYC58RtWB+ViVQTBFJLF992oO4bMaC6DFIW+p7tTAKGB3rH/
-	 Wj0ZXTsJ26OWrIJjElAm806Sf0BbD1A0DsyFI+5zizNV7rZY7EzD6akezIiGoijp0W
-	 Dr+C0q/iKnlZUtu7itgXJOqNT7LFBtGsdK5zimb3SW7y4K2pMifiin1hgIaBhX4wAo
-	 xsMIfMyw466LRoYpSGoY0Zh/HkzL2h9NonFsMzj2RTV3qXioGikGUVopOVjFDDTudQ
-	 gJO25WEyQFHJA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 27 Jun 2025 19:18:18 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org
-Subject: [PATCH] drm/msm/mdp4: Consistently use the "mdp4_" namespace
-Date: Fri, 27 Jun 2025 19:18:03 +0200
-Message-ID: <6b9076268548c52ec371e9ed35fee0dd8fcb46ef.1751044672.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.0
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bktBNDHk"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55RBj1N8007346
+	for <kernel-janitors@vger.kernel.org>; Fri, 27 Jun 2025 17:55:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xhtPwHF0fTtys7QWflgWfeVzTXfKtMLTUh3g+imGqfM=; b=bktBNDHk6uXDTEkc
+	P3hPdPknqjLUHgdbQBnOxh0EkFLa3qjGh0hsd72BMxnmtzFKmSqT3MZn6H5wQFZn
+	esyndwzb/ajSbcEuCUFWD6HeppBAWxX45VTf5anMua3JjOjDl+mRUxlIT2fh8DNb
+	LFX7XX7JeuSDBYFs12oq1x0qRnbASgbjTqZmYwvKsNNPX9rzMduNHgdttdd4TY79
+	htJBfVjiXzKr++u0m8uUbvkV8dJgth9Zp6qf3fbyWl1ej16lGxZrKGOczkqGWWEO
+	qMsuPvV296TfDskYUzZ1Cu4EyhSKTYnjECJUlJ25z1D0BUiR4jJOgy6b2GMsZpN+
+	HWYIcA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47evc60tht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Fri, 27 Jun 2025 17:55:34 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6fac4b5f949so4924596d6.3
+        for <kernel-janitors@vger.kernel.org>; Fri, 27 Jun 2025 10:55:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751046932; x=1751651732;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xhtPwHF0fTtys7QWflgWfeVzTXfKtMLTUh3g+imGqfM=;
+        b=JckLEOYJiMydISwGp0nBEsFeMmoJUWxA3NR3QNlUFHqTphPsW6M3zloB9pyVjfoQgj
+         bg7Eo6pxg6sgXLCJ7Iqrv7ov9J//7+GNVqUpd5jNcpujL9xZbzA2eu+BgIxWGvn4pUB2
+         ldEq4aHRaDzPxSLAtckT5KOHR88wceaYVyvTTqIP9vajU2ydj+9qZO5df8up3u7psRLH
+         034x7IQFpnh7NinD2zvLvKVJB6nNULsrx9Cj/PNgdHJkzGSrtuO3NE/i4MADUv0z+JfP
+         +sUgUViMPnoe45DRzolyg3Y37k0Uh5MqB7bZXo43dMs/mB08eYGVN4EGCmOl5cxx9FH+
+         Q+wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAhd8bVET33ZDmBaO4NuLn9ARtDWK+sgY+gZuHmbiPM3AAhDQvy/5GS2wf/YUslKJ86tP3DWRuX8JBf6V/IJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyxc8x72XxhoEsn8xujHGCTh0zGoQ7FAXpkXIZ9TdRcaTl5La5
+	/sWbrOdWS+yQWIvsVdjBIIwEkjYbJwlT/HFky71L7AJC9cn8rNaffRphNkzOZxkQpZyvpUlm5Y4
+	5nj8ITVr2b8CTtka6a4nUocTT3lDB1e6Pbdeqx5aaAiaBMHFgfiYjPBVzUxeEqrzCdgMW2Fg=
+X-Gm-Gg: ASbGncuwdf1yHiQ2wdejo+rNw+6F5OLqgZrxGGIpVTa3Jn54KSKRWCSxB5okC6qOvNc
+	uBna0Vr1p0FoszXkfXEUNDihbV8nQuMAXanRv8QTZxfkWTNfE2+lm622R2Q1VXB+MXn0mFTLR9/
+	Gh49b8pv3Y8FGirJjS4Cz6m0f9lPSfL5RBVMuPwWWXWV2+dicdrzlNMwCD/Y23RrGOc5KgMcbtK
+	AmkjMfRlNoRj32YlcPKS80EMJxhd3pOunjxlFIH0P2Tzousc/g9KS//55B2k+/BmJbF6OsEtqYq
+	EfLhTTxNndq69YGy6dk8/cBuLh5og9VlrxHW0yXhPCKUaSeyx7dy9NyMNzA2SvLpHs/vOYbM25O
+	m40A=
+X-Received: by 2002:a05:622a:1a0c:b0:472:2122:5a37 with SMTP id d75a77b69052e-4a807390ff1mr1923021cf.4.1751046931756;
+        Fri, 27 Jun 2025 10:55:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjS6V7nSMnoKIToCQDAP4GKzUa5d91t9ousBqXncQjQ5eyhDeXwLOlzvN8i3GRTqy4F6YNGw==
+X-Received: by 2002:a05:622a:1a0c:b0:472:2122:5a37 with SMTP id d75a77b69052e-4a807390ff1mr1922741cf.4.1751046931099;
+        Fri, 27 Jun 2025 10:55:31 -0700 (PDT)
+Received: from [192.168.143.225] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-60c828e1a96sm1778182a12.19.2025.06.27.10.55.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Jun 2025 10:55:30 -0700 (PDT)
+Message-ID: <80912fb3-2af3-48b1-b81c-89bfcdb54841@oss.qualcomm.com>
+Date: Fri, 27 Jun 2025 19:55:27 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/mdp4: Consistently use the "mdp4_" namespace
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org
+References: <6b9076268548c52ec371e9ed35fee0dd8fcb46ef.1751044672.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <6b9076268548c52ec371e9ed35fee0dd8fcb46ef.1751044672.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: OWSIK9QA3C3Sg5vbLPh8tmCvD5hegFrP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjI3MDE0NSBTYWx0ZWRfX5if/MkD8PbMr
+ o4ZNGDYHtKmcC8Q8UMujYboVgUiKUTjTKHkDQawt6+8zt+Zofo5FM8ojfH3nCbscM2hKELZhMnD
+ LMSN2dtIBnDSEKV+XYS2IJhKVdKbXd+8o3UGcXZFM4vZrCJcJ5qovfvT6S5Ua36qbnn8t0jD4O7
+ kHGV+GAvo5AbCQ3ktyCncEMlny29g1sfoaboPY1YbwP5GyCAr7Rb7KIbtcQcj97c+4GgYIy20eP
+ Co7maeI2rNOT71N21VuSNMPgV/Qj/wX8Cup5AeLkL8YBJ0ff8yrZNu5meFywYwrOX4q9FecGLOr
+ +H7kHG0uh+WETEauZhefxKeJl93Jqo9bglYti0+dA5sIZ2L5yjX2Y29LlrLAAX6Aah1nOklhzS3
+ BbG2mVmxsAv/DHzVhtWtM314V+fwWe6qMDIQCd209+CBIEew7A9z+KFjjiRsLybbfuFuJ2C1
+X-Authority-Analysis: v=2.4 cv=caHSrmDM c=1 sm=1 tr=0 ts=685edb17 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6IFa9wvqVegA:10 a=EUspDBNiAAAA:8 a=5MiDvfStR0l9wvLywkEA:9
+ a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-ORIG-GUID: OWSIK9QA3C3Sg5vbLPh8tmCvD5hegFrP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-27_05,2025-06-26_05,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxlogscore=783 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 phishscore=0 clxscore=1015 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2506270145
 
-Functions and other stuff all start with "mdp4_", except a few ones that
-start with "mpd4_" (d and p switched)
+On 6/27/25 7:18 PM, Christophe JAILLET wrote:
+> Functions and other stuff all start with "mdp4_", except a few ones that
+> start with "mpd4_" (d and p switched)
+> 
+> Make things consistent and use "mdp4_" everywhere.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
 
-Make things consistent and use "mdp4_" everywhere.
+Nice, thank you
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-The change has been done with:
-   sed -i s/mpd4/mdp4/g *
-and the modified files have been compile tested.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Maybe the comment "/* TODO: do we need different pll in other cases? */" in
-mpd4_lvds_pll_init() can be removed as well.
-A similar comment was removed in mdp4_lcdc_encoder_init() in commit
-9c2f63da6a70 ("drm/msm/mdp4: register the LVDS PLL as a clock provider")
-
-This has been waiting in my own tree for years, and popped-up recently
-because of other changes in the same area.
----
- drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h      |  2 +-
- .../gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c |  2 +-
- drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c | 38 +++++++++----------
- 3 files changed, 21 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h
-index f9d988076337..9a1e4daa8e8d 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.h
-@@ -202,6 +202,6 @@ static inline struct drm_encoder *mdp4_dsi_encoder_init(struct drm_device *dev)
- }
- #endif
- 
--struct clk *mpd4_get_lcdc_clock(struct drm_device *dev);
-+struct clk *mdp4_get_lcdc_clock(struct drm_device *dev);
- 
- #endif /* __MDP4_KMS_H__ */
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-index 06a307c1272d..1051873057f6 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
-@@ -375,7 +375,7 @@ struct drm_encoder *mdp4_lcdc_encoder_init(struct drm_device *dev)
- 
- 	drm_encoder_helper_add(encoder, &mdp4_lcdc_encoder_helper_funcs);
- 
--	mdp4_lcdc_encoder->lcdc_clk = mpd4_get_lcdc_clock(dev);
-+	mdp4_lcdc_encoder->lcdc_clk = mdp4_get_lcdc_clock(dev);
- 	if (IS_ERR(mdp4_lcdc_encoder->lcdc_clk)) {
- 		DRM_DEV_ERROR(dev->dev, "failed to get lvds_clk\n");
- 		return ERR_CAST(mdp4_lcdc_encoder->lcdc_clk);
-diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c
-index fa2c29470510..4612886f0e49 100644
---- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c
-+++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_pll.c
-@@ -54,7 +54,7 @@ static const struct pll_rate *find_rate(unsigned long rate)
- 	return &freqtbl[i-1];
- }
- 
--static int mpd4_lvds_pll_enable(struct clk_hw *hw)
-+static int mdp4_lvds_pll_enable(struct clk_hw *hw)
- {
- 	struct mdp4_lvds_pll *lvds_pll = to_mdp4_lvds_pll(hw);
- 	struct mdp4_kms *mdp4_kms = get_kms(lvds_pll);
-@@ -80,7 +80,7 @@ static int mpd4_lvds_pll_enable(struct clk_hw *hw)
- 	return 0;
- }
- 
--static void mpd4_lvds_pll_disable(struct clk_hw *hw)
-+static void mdp4_lvds_pll_disable(struct clk_hw *hw)
- {
- 	struct mdp4_lvds_pll *lvds_pll = to_mdp4_lvds_pll(hw);
- 	struct mdp4_kms *mdp4_kms = get_kms(lvds_pll);
-@@ -91,21 +91,21 @@ static void mpd4_lvds_pll_disable(struct clk_hw *hw)
- 	mdp4_write(mdp4_kms, REG_MDP4_LVDS_PHY_PLL_CTRL_0, 0x0);
- }
- 
--static unsigned long mpd4_lvds_pll_recalc_rate(struct clk_hw *hw,
-+static unsigned long mdp4_lvds_pll_recalc_rate(struct clk_hw *hw,
- 				unsigned long parent_rate)
- {
- 	struct mdp4_lvds_pll *lvds_pll = to_mdp4_lvds_pll(hw);
- 	return lvds_pll->pixclk;
- }
- 
--static long mpd4_lvds_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+static long mdp4_lvds_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 		unsigned long *parent_rate)
- {
- 	const struct pll_rate *pll_rate = find_rate(rate);
- 	return pll_rate->rate;
- }
- 
--static int mpd4_lvds_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+static int mdp4_lvds_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		unsigned long parent_rate)
- {
- 	struct mdp4_lvds_pll *lvds_pll = to_mdp4_lvds_pll(hw);
-@@ -114,26 +114,26 @@ static int mpd4_lvds_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- }
- 
- 
--static const struct clk_ops mpd4_lvds_pll_ops = {
--	.enable = mpd4_lvds_pll_enable,
--	.disable = mpd4_lvds_pll_disable,
--	.recalc_rate = mpd4_lvds_pll_recalc_rate,
--	.round_rate = mpd4_lvds_pll_round_rate,
--	.set_rate = mpd4_lvds_pll_set_rate,
-+static const struct clk_ops mdp4_lvds_pll_ops = {
-+	.enable = mdp4_lvds_pll_enable,
-+	.disable = mdp4_lvds_pll_disable,
-+	.recalc_rate = mdp4_lvds_pll_recalc_rate,
-+	.round_rate = mdp4_lvds_pll_round_rate,
-+	.set_rate = mdp4_lvds_pll_set_rate,
- };
- 
--static const struct clk_parent_data mpd4_lvds_pll_parents[] = {
-+static const struct clk_parent_data mdp4_lvds_pll_parents[] = {
- 	{ .fw_name = "pxo", .name = "pxo", },
- };
- 
- static struct clk_init_data pll_init = {
--	.name = "mpd4_lvds_pll",
--	.ops = &mpd4_lvds_pll_ops,
--	.parent_data = mpd4_lvds_pll_parents,
--	.num_parents = ARRAY_SIZE(mpd4_lvds_pll_parents),
-+	.name = "mdp4_lvds_pll",
-+	.ops = &mdp4_lvds_pll_ops,
-+	.parent_data = mdp4_lvds_pll_parents,
-+	.num_parents = ARRAY_SIZE(mdp4_lvds_pll_parents),
- };
- 
--static struct clk_hw *mpd4_lvds_pll_init(struct drm_device *dev)
-+static struct clk_hw *mdp4_lvds_pll_init(struct drm_device *dev)
- {
- 	struct mdp4_lvds_pll *lvds_pll;
- 	int ret;
-@@ -156,14 +156,14 @@ static struct clk_hw *mpd4_lvds_pll_init(struct drm_device *dev)
- 	return &lvds_pll->pll_hw;
- }
- 
--struct clk *mpd4_get_lcdc_clock(struct drm_device *dev)
-+struct clk *mdp4_get_lcdc_clock(struct drm_device *dev)
- {
- 	struct clk_hw *hw;
- 	struct clk *clk;
- 
- 
- 	/* TODO: do we need different pll in other cases? */
--	hw = mpd4_lvds_pll_init(dev);
-+	hw = mdp4_lvds_pll_init(dev);
- 	if (IS_ERR(hw)) {
- 		DRM_DEV_ERROR(dev->dev, "failed to register LVDS PLL\n");
- 		return ERR_CAST(hw);
--- 
-2.50.0
+Konrad
 
