@@ -1,101 +1,99 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8B41854
-	for <kernel-janitors@vger.kernel.org>; Sat, 28 Jun 2025 21:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7649F4C80;
+	Sun, 29 Jun 2025 07:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751144958; cv=none; b=fisq3lmiqV6x8B678AQh2nFHKGUYVW3vHNr7oUA4VXt8wDLeppKPXz+vbIBa9OUeSjSPaqKKYQWMMhciIhZqn21PAgtuo35xoGSMd80xnoiN2dlHmX72jkL5ElCwL3MLQd3IfTG4Mi51GaWLr8BageqhL3UxMUvxQhXPdVaPt0Y=
+	t=1751181602; cv=none; b=jIGKgZvP62A9/A4LjiDGjdQwp1NZKNT2MpZo2DzzrxPY+0ZSV5iB5xE3jFoWuZpSuq+pYmmc/n0s3hIvI1duQzREjR0oX/J1XPT0RFUVQZ6btrjZCGIQmMePpjKsBvoVcsl9C6Kjcg+3WVlHGvgeN6VOSM8fa1WPpdMihDwtF0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751144958; c=relaxed/simple;
-	bh=vc1/lVb8JUVyQL9qoQ14PRjiknznvgL2E6symB8Q4M0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=tu7+upPQeLFw43zCM3xbEUjKNK0mJRT0GagB7TbNadsa2CJ7Kng113G5iA4t2QQKtZ2zAaIIeGdCFWtx8zuvXIv9GmlfwT00kTCPHswuRNK5jSqRBA4c9o2Cs1hla2bl0YJfesXXPpgwcgPl/4LI3zPNdBwO0hyQebxS/hwyAoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=EoRblP16; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1751181602; c=relaxed/simple;
+	bh=Wo44CvxUK/DfahvRn0+WY8Xf1xwyBQwlPsvZdyxyQ8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UyQQrjMwvNDev3/l2JFoiCYPRAcLqIxBS9ZwFEpXVohsMCDmPHh4dv/qd9gt085BgPPdyZcWGvJPRF03Ms0F6x6Bc5lyHyuJa5ir1axi/RI7JrRg/ywP4Fp8GydK0kD7qi5Cs0uaE95OB4BE5nhGxNixBiTZ2ScFXi3UpfNZ5Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=NbJ0zh/g; arc=none smtp.client-ip=193.252.22.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="EoRblP16"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=iXxpKJCmDxYZoe4HuGfjj/tUNPupH24O1DGD/41jixY=; b=EoRblP168R8fSN7dAY33/nj0gx
-	hRFLXl6ov/MrAtP5RlxVjYcw328+Ef/BY3vZLi3ceHJvrFwokIDUVRKDwDpBgH6AMDWrp3+ZAqLrC
-	CA7k8n9QDgMv7iOjZNpSO3gNRhpBCbESu7087SaT7BNsYHh5QmnwmeQfVjfN82poFHLqthtAwy2gU
-	5BAO8aa4scQP0DtA5B4qAbzg5N/SelH9vRzUoDzQKLyIxMvN2tyFqAf9ZUWbTFZoHR7AjIRLDuih7
-	VZuMRSjW6Je6N+l5a+AuujGlSrOLX23U0BUf9HXEUJ2oSTPED5jKOV12hroVm/msFbxeDohHRDC8k
-	hb7igLgQ==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:43654 helo=asus)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uVcnM-0000000DioL-3UX9
-	for kernel-janitors@vger.kernel.org;
-	Sat, 28 Jun 2025 17:09:09 -0400
-Date: Sat, 28 Jun 2025 17:08:59 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: I have a pile of potential janitorial work for interested parties
-Message-ID: <ebfb23a6-def8-24a8-8958-28213a3c0da5@crashcourse.ca>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="NbJ0zh/g"
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id VmKEuak3ewD4EVmKGug5zC; Sun, 29 Jun 2025 09:19:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1751181589;
+	bh=rUJ7oCkTqQPMxpbg/HTKmR5FrDTbJ5iEWLtJVaOPJnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=NbJ0zh/gT6n772n7ole3Bod4YQGiifFCw9PWUi4AQUboLcf8D1P0YE8ThW6u3JzyD
+	 O0uV23Jgy7/VOLNEKq2VfQ0Tn0mXCBI7uVZpxWoSh+VEknJv05hSeF8EDziXYr8JBT
+	 IwB63S0kkdjx2Rbl1K2Dyar9YwyLVb7oef6SQu7quiq5G8ZY686WbIwPrMUFlviQoC
+	 jNanhSyb9N1ovyZ2JZX4cMyO6zluVKffit7BkTT1qOXjYlLA6AbZ/IiDLLbxEPuuSG
+	 ZAL7vQYngRpni/9qCICBkgnjNEIHXAvomyji3tgfVHS9w9Lv6nD0lU7CFWgqVH64DZ
+	 Lpbj0tXzyN5pA==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 29 Jun 2025 09:19:49 +0200
+X-ME-IP: 124.33.176.97
+Message-ID: <c44cf0e9-9510-4fe9-aa67-edeaa1be6253@wanadoo.fr>
+Date: Sun, 29 Jun 2025 16:19:42 +0900
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] can: ucan: Use two USB endpoint API functions rather
+ than duplicating their implementations
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Chen Ni <nichen@iscas.ac.cn>, linux-can@vger.kernel.org,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+References: <0a675827-33af-4ec4-97dc-2e4523e41194@web.de>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <0a675827-33af-4ec4-97dc-2e4523e41194@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 28/06/2025 at 16:19, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Sat, 28 Jun 2025 08:56:51 +0200
 
-  Quite some time ago, I was immersed in a bunch of Linux kernel
-janitorial work, and I wrote a bunch of scripts that scanned the
-kernel source tree and identified obvious candidates for
-simplification and cleanup. I'm going to publish all of that to my
-website in the very near future, but just to clarify what I mean, let
-me provide a single example to see if this is still relevant, or
-whether I'm off-base.
+Your patch doesn't pass the ./script/checkpath.pl script :(
 
-  One of the scripts I wrote scanned the kernel tree for what I call
-"badref selects", those being entries in Kconfig files that "select"ed
-config entries that did not exist (probably the result of someone
-deleting config entries, but not checking to see if anything selected
-that entry). Such occurrences are not fatal, but they are obvious
-candidates for cleanup.
+  WARNING: From:/Signed-off-by: email address mismatch: 'From: Markus Elfring
+<elfring@users.sourceforge.net>' != 'Signed-off-by: Markus Elfring
+<Markus.Elfring@web.de>'
 
-  I just ran that script on the current source tree just for the
-drivers/ directory, and here's the output I got:
+  total: 0 errors, 1 warnings, 0 checks, 21 lines checked
 
+Please use the same email address:
 
-$ find_badref_selects.sh drivers
-===== DRM_DEBUG_SELFTEST
-drivers/gpu/drm/i915/Kconfig.debug:53:	select DRM_DEBUG_SELFTEST
-===== DRM_KMS_DMA_HELPER
-drivers/gpu/drm/adp/Kconfig:9:	select DRM_KMS_DMA_HELPER
-drivers/gpu/drm/logicvc/Kconfig:7:	select DRM_KMS_DMA_HELPER
-===== TEST_KUNIT_DEVICE_HELPERS
-drivers/iio/test/Kconfig:11:	select TEST_KUNIT_DEVICE_HELPERS
+  - To send the patch
 
+  - For the patch author
 
-This output suggests that those "selects" refer to config entries that
-do not exist, and so could likely be removed as janitorial work.
+  - For the Signed-off-by tag
 
-  Does the above make sense? If I recursively grep for the strings,
-say, "TEST_KUNIT_DEVICE_HELPERS", I see only that select statement,
-and nothing else. I'm assuming that means it's superfluous. If this
-makes sense, I can publish my scanning scripts and others are welcome
-to use them to find stuff that can be cleaned up.
+> * Reuse existing functionality from usb_endpoint_is_bulk_in()
+>   and usb_endpoint_is_bulk_out() instead of keeping duplicate source code.
+> 
+> * Omit two comment lines which became redundant with this refactoring.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> Signed-off-by: Markus Elfring <Markus.Elfring@web.de>
 
-  Thoughts?
-
-rday
+Yours sincerely,
+Vincent Mailhol
