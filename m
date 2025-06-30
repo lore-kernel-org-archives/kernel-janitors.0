@@ -1,53 +1,75 @@
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ADD3D6F;
-	Sun, 29 Jun 2025 21:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1557F2522B9
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 09:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751231277; cv=none; b=OSl3NqmGDHcv6onuPQidBlqG5mO6m7ZeEgrvfdoxGJmjJBIR023YDQy8F4KETCCNwt8HA//NXf3bt+xg358qydI6dpQ+stvIayOC5n5x574Q3JeQvXByPzJqGls3iuwX7+/hmaPWHJ8d+bHfpsLp/nca2EHOCCgAtj35t73Wvts=
+	t=1751275992; cv=none; b=s3arvwv1p6HQfWi6nE5MXa9ex0p42IYJuCSKbHCS8F5jJ3A2jmBdF0tpweYv0qUUGt8bbbT7ata+ts0gSpwclXcBywCC3mj+/3l1QiLR2pRIj+dE+qSYrUJy4S+NDmMknBFGMC2xq3P2rpzNJo1ziHKaBZxd3i3jHrEWVgNTu1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751231277; c=relaxed/simple;
-	bh=IKofi0z/34lvlEXdPoxgt/LEYmwJ0XbFBt1OJO1u/08=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hv2KNGIEOc8Hzooqo9XkW2pRt/QHF1d63CnlTqiZA7oCOv3tQ2sbuhB4+OdHvzwvfqrymPHLDBwsGQrGh98mHrs3TeHYDXC6V8qeMS8JPhzqHL8/phKNNuHQ6vtrErQ71WnZn1ET4x7C4HmTxuKI8uP3dsbfrbHIgIwfHU980zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=eccaXeAA; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1751275992; c=relaxed/simple;
+	bh=GBfVWqY9AcXGzxSgjir3k7Qn8sge+mlEZCJ1FKiOtq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZsdWAoTuQoUT6vDTAl93A9x8k8jZ0FA+afQKunMGk9MI7wnKMnLjgbmK3uOnQTuIfUhVt5gqYRttqrULUKkU7GNMYxy/MTffiYAc78C27ZorXgh23fumMdlGqu/RUcChMsK/TW47hTLzC01ukFb6BtQU5s9VYT2va/HOdnxRd3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hdH7V53G; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="eccaXeAA"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id VzEYuDauZBAWEVzEYuViuU; Sun, 29 Jun 2025 23:06:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751231205;
-	bh=oN1+0ceBwvNVnPdeWRjShc9rKMxoodAlltZcZme4N18=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=eccaXeAAiLaY+pmMDTZaKcrNIvicOfe0/j9jQFzMYuHY9WMXeWEyeTMAeiUZdAcge
-	 xSmm1jzHA/WombCIYKDHQWpipXUK9dm94u/bDgvEISkZ2r/kgZ/KpLoAubBcJ/VWGM
-	 AF6JA94PvBVhruofSxQ0aV/17W7hMdDuMU7vZkVNTa733tc3H3QTbtsA6RguXkx2sz
-	 yAju20voimcU1dgioH4++0qliEWEnqdfJvgdFUTMiNstWBKftbXMNOPi3RZw2uvxZT
-	 OLyZeAGiuqoonJVnYDm6wsdXo+4LtDWdYTo+LYX5kG/MEELgdgo1ZppGUqM01OEl5y
-	 AwZriaREJ7fnw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 29 Jun 2025 23:06:45 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Kurt Kanzenbach <kurt@linutronix.de>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	netdev@vger.kernel.org
-Subject: [PATCH] net: dsa: hellcreek: Constify struct devlink_region_ops and struct hellcreek_fdb_entry
-Date: Sun, 29 Jun 2025 23:06:38 +0200
-Message-ID: <2f7e8dc30db18bade94999ac7ce79f333342e979.1751231174.git.christophe.jaillet@wanadoo.fr>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hdH7V53G"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751275989;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5Mg84blWsqeCZM1rx30Sqk9a36QNNeE3gf1Ff/rDXI4=;
+	b=hdH7V53GmOkx9mejN727SHuq1HYW+gMgsjniLJDVBHMUgk1feHcoB04OSgfPVLd1mvLVo6
+	YGjOEh5ezF5TUzUsA52S38H06uPjCLUPEcgq4kAzSoDWKsfWYQ449wk/eDJNzHikZyBUz9
+	OzRRLgoCLTvQ2qofArli+sq7UWxWd0E=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-MgGhCxuJN4OH2SHtxgm99A-1; Mon, 30 Jun 2025 05:33:07 -0400
+X-MC-Unique: MgGhCxuJN4OH2SHtxgm99A-1
+X-Mimecast-MFC-AGG-ID: MgGhCxuJN4OH2SHtxgm99A_1751275986
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-451dda846a0so12403235e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 02:33:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751275986; x=1751880786;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Mg84blWsqeCZM1rx30Sqk9a36QNNeE3gf1Ff/rDXI4=;
+        b=DkQY65H4HLiuf3TCVOrD/sgc2P7j8ykHFUV2ZdM24Vm4/42jTg8QikBZxMjrFGOfjN
+         EVhIBepzBMdaIJYXAXQrGKDttQEYJq9LsgoUAHdRwrwfiS5bK8b6ztOpqkwsRjmrQUMZ
+         DdXgVgzg2KJkY29fCPwJeh25fI86X5P/uSo0Z4m4RZ5WV3eanv85EfyJmcFt0K+LZQwq
+         BlMiUy4QQ+4fdCsRMmXryS4QjNAx4WSPKbNFMMddbCpq8KJOKidk/iIwSqgKslD67fiw
+         y5fc0ii+HvNaGtZhWoiWDCjuX4UVUUV7UsQN+Er+709+esW6a7YtQYSGfQ/W0LLIfuTL
+         ojKg==
+X-Gm-Message-State: AOJu0YyytC/RztUX6PKiQXAT//ExOsbVS3bJ8f6H3JG5W08hBj99Ktud
+	CV/3AM2KoUChPdN+9d/c8360cNqwKCTFUgOMTFkEth9e1hC7oe94i8CIVJ7lZP5QPzkb32HNAr+
+	RG4es8/83wM25/SKRbVVYpjm1W4tNPMmMtTfs2VgRPR4l8fH/xwgMxoOlBGaI5qE7foOTyw==
+X-Gm-Gg: ASbGncupM5U04zvqZAcpL0kyjBZvJ7VbL8Lx+fyO6AAN95PX7qWPjypTSivJkBWBT/e
+	7LSH4csKYIL/du5kMvyX1tgUc107SG9JiLH6b7C2UqgiL/aMiCSN0SgwBT/Zg3nUwphHETsNl5t
+	ASDOAsSSusFxuFDem53eOUbTqBEwexcysP2ygkBzXVoGGtYysOoWrzzgpNj76axm/LnkRutuWi2
+	Arpvrf+DgLS9HJylnX6/VaS7qsw1Z1AZoD3lnat+XfYUxyx+JDlNMoKFpPzo9EwKWUsFhD546gK
+	pgBNQjH0dkvXd3t604tVkvbDTc6UeAN06gDxItUPTWtijrbjn/FY/ZQfJ/Afd9ZTmcPd
+X-Received: by 2002:a5d:5f91:0:b0:3a4:d6ed:8e2e with SMTP id ffacd0b85a97d-3a8fe4bd067mr10177620f8f.41.1751275986017;
+        Mon, 30 Jun 2025 02:33:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvReroVfwTS0iRMtwWomfow7Nd+A4hV3iAXfcOODiDhGfovJncwF8D9o5+4L00qrBVF9IdvA==
+X-Received: by 2002:a5d:5f91:0:b0:3a4:d6ed:8e2e with SMTP id ffacd0b85a97d-3a8fe4bd067mr10177586f8f.41.1751275985497;
+        Mon, 30 Jun 2025 02:33:05 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a88c7e76e1sm10081204f8f.16.2025.06.30.02.33.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 02:33:04 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] pcmcia: remove PCCARD_IODYN
+Date: Mon, 30 Jun 2025 11:32:56 +0200
+Message-ID: <20250630093256.175212-1-lukas.bulwahn@redhat.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,123 +79,254 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'struct devlink_region_ops' and 'struct hellcreek_fdb_entry' are not
-modified in this driver.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Constifying these structures moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+The config PCCARD_IODYN was last used in the config option PCMCIA_M8XX with
+its m8xx_pcmcia driver. This driver was removed with commit 39eb56da2b53
+("pcmcia: Remove m8xx_pcmcia driver"), included in v3.17, back in 2014.
+Since then, the config PCCARD_IODYN is unused. Remove the config option,
+the corresponding file included with this config and the corresponding
+definition in the pcmcia header file.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  55320	  19216	    320	  74856	  12468	drivers/net/dsa/hirschmann/hellcreek.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  55960	  18576	    320	  74856	  12468	drivers/net/dsa/hirschmann/hellcreek.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 ---
-Compile tested only
----
- drivers/net/dsa/hirschmann/hellcreek.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/pcmcia/Kconfig      |   3 -
+ drivers/pcmcia/Makefile     |   1 -
+ drivers/pcmcia/rsrc_iodyn.c | 168 ------------------------------------
+ include/pcmcia/ss.h         |   8 +-
+ 4 files changed, 1 insertion(+), 179 deletions(-)
+ delete mode 100644 drivers/pcmcia/rsrc_iodyn.c
 
-diff --git a/drivers/net/dsa/hirschmann/hellcreek.c b/drivers/net/dsa/hirschmann/hellcreek.c
-index 283ec5a6e23c..e0b4758ca583 100644
---- a/drivers/net/dsa/hirschmann/hellcreek.c
-+++ b/drivers/net/dsa/hirschmann/hellcreek.c
-@@ -1061,7 +1061,7 @@ static void hellcreek_setup_tc_identity_mapping(struct hellcreek *hellcreek)
+diff --git a/drivers/pcmcia/Kconfig b/drivers/pcmcia/Kconfig
+index dddb235dd020..660a95805524 100644
+--- a/drivers/pcmcia/Kconfig
++++ b/drivers/pcmcia/Kconfig
+@@ -250,7 +250,4 @@ config ELECTRA_CF
+ config PCCARD_NONSTATIC
+ 	bool
  
- static int hellcreek_setup_fdb(struct hellcreek *hellcreek)
- {
--	static struct hellcreek_fdb_entry l2_ptp = {
-+	static const struct hellcreek_fdb_entry l2_ptp = {
- 		/* MAC: 01-1B-19-00-00-00 */
- 		.mac	      = { 0x01, 0x1b, 0x19, 0x00, 0x00, 0x00 },
- 		.portmask     = 0x03,	/* Management ports */
-@@ -1072,7 +1072,7 @@ static int hellcreek_setup_fdb(struct hellcreek *hellcreek)
- 		.reprio_tc    = 6,	/* TC: 6 as per IEEE 802.1AS */
- 		.reprio_en    = 1,
- 	};
--	static struct hellcreek_fdb_entry udp4_ptp = {
-+	static const struct hellcreek_fdb_entry udp4_ptp = {
- 		/* MAC: 01-00-5E-00-01-81 */
- 		.mac	      = { 0x01, 0x00, 0x5e, 0x00, 0x01, 0x81 },
- 		.portmask     = 0x03,	/* Management ports */
-@@ -1083,7 +1083,7 @@ static int hellcreek_setup_fdb(struct hellcreek *hellcreek)
- 		.reprio_tc    = 6,
- 		.reprio_en    = 1,
- 	};
--	static struct hellcreek_fdb_entry udp6_ptp = {
-+	static const struct hellcreek_fdb_entry udp6_ptp = {
- 		/* MAC: 33-33-00-00-01-81 */
- 		.mac	      = { 0x33, 0x33, 0x00, 0x00, 0x01, 0x81 },
- 		.portmask     = 0x03,	/* Management ports */
-@@ -1094,7 +1094,7 @@ static int hellcreek_setup_fdb(struct hellcreek *hellcreek)
- 		.reprio_tc    = 6,
- 		.reprio_en    = 1,
- 	};
--	static struct hellcreek_fdb_entry l2_p2p = {
-+	static const struct hellcreek_fdb_entry l2_p2p = {
- 		/* MAC: 01-80-C2-00-00-0E */
- 		.mac	      = { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e },
- 		.portmask     = 0x03,	/* Management ports */
-@@ -1105,7 +1105,7 @@ static int hellcreek_setup_fdb(struct hellcreek *hellcreek)
- 		.reprio_tc    = 6,	/* TC: 6 as per IEEE 802.1AS */
- 		.reprio_en    = 1,
- 	};
--	static struct hellcreek_fdb_entry udp4_p2p = {
-+	static const struct hellcreek_fdb_entry udp4_p2p = {
- 		/* MAC: 01-00-5E-00-00-6B */
- 		.mac	      = { 0x01, 0x00, 0x5e, 0x00, 0x00, 0x6b },
- 		.portmask     = 0x03,	/* Management ports */
-@@ -1116,7 +1116,7 @@ static int hellcreek_setup_fdb(struct hellcreek *hellcreek)
- 		.reprio_tc    = 6,
- 		.reprio_en    = 1,
- 	};
--	static struct hellcreek_fdb_entry udp6_p2p = {
-+	static const struct hellcreek_fdb_entry udp6_p2p = {
- 		/* MAC: 33-33-00-00-00-6B */
- 		.mac	      = { 0x33, 0x33, 0x00, 0x00, 0x00, 0x6b },
- 		.portmask     = 0x03,	/* Management ports */
-@@ -1127,7 +1127,7 @@ static int hellcreek_setup_fdb(struct hellcreek *hellcreek)
- 		.reprio_tc    = 6,
- 		.reprio_en    = 1,
- 	};
--	static struct hellcreek_fdb_entry stp = {
-+	static const struct hellcreek_fdb_entry stp = {
- 		/* MAC: 01-80-C2-00-00-00 */
- 		.mac	      = { 0x01, 0x80, 0xc2, 0x00, 0x00, 0x00 },
- 		.portmask     = 0x03,	/* Management ports */
-@@ -1320,13 +1320,13 @@ static int hellcreek_devlink_region_fdb_snapshot(struct devlink *dl,
- 	return 0;
- }
+-config PCCARD_IODYN
+-	bool
+-
+ endif	# PCCARD
+diff --git a/drivers/pcmcia/Makefile b/drivers/pcmcia/Makefile
+index c9d51b150682..d16a0317ce43 100644
+--- a/drivers/pcmcia/Makefile
++++ b/drivers/pcmcia/Makefile
+@@ -12,7 +12,6 @@ obj-$(CONFIG_PCMCIA)				+= pcmcia.o
  
--static struct devlink_region_ops hellcreek_region_vlan_ops = {
-+static const struct devlink_region_ops hellcreek_region_vlan_ops = {
- 	.name	    = "vlan",
- 	.snapshot   = hellcreek_devlink_region_vlan_snapshot,
- 	.destructor = kfree,
- };
+ pcmcia_rsrc-y					+= rsrc_mgr.o
+ pcmcia_rsrc-$(CONFIG_PCCARD_NONSTATIC)		+= rsrc_nonstatic.o
+-pcmcia_rsrc-$(CONFIG_PCCARD_IODYN)		+= rsrc_iodyn.o
+ obj-$(CONFIG_PCCARD)				+= pcmcia_rsrc.o
  
--static struct devlink_region_ops hellcreek_region_fdb_ops = {
-+static const struct devlink_region_ops hellcreek_region_fdb_ops = {
- 	.name	    = "fdb",
- 	.snapshot   = hellcreek_devlink_region_fdb_snapshot,
- 	.destructor = kfree,
-@@ -1335,7 +1335,7 @@ static struct devlink_region_ops hellcreek_region_fdb_ops = {
- static int hellcreek_setup_devlink_regions(struct dsa_switch *ds)
- {
- 	struct hellcreek *hellcreek = ds->priv;
--	struct devlink_region_ops *ops;
-+	const struct devlink_region_ops *ops;
- 	struct devlink_region *region;
- 	u64 size;
- 	int ret;
+ 
+diff --git a/drivers/pcmcia/rsrc_iodyn.c b/drivers/pcmcia/rsrc_iodyn.c
+deleted file mode 100644
+index b04b16496b0c..000000000000
+--- a/drivers/pcmcia/rsrc_iodyn.c
++++ /dev/null
+@@ -1,168 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * rsrc_iodyn.c -- Resource management routines for MEM-static sockets.
+- *
+- * The initial developer of the original code is David A. Hinds
+- * <dahinds@users.sourceforge.net>.  Portions created by David A. Hinds
+- * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.
+- *
+- * (C) 1999		David A. Hinds
+- */
+-
+-#include <linux/slab.h>
+-#include <linux/module.h>
+-#include <linux/kernel.h>
+-
+-#include <pcmcia/ss.h>
+-#include <pcmcia/cistpl.h>
+-#include "cs_internal.h"
+-
+-
+-struct pcmcia_align_data {
+-	unsigned long	mask;
+-	unsigned long	offset;
+-};
+-
+-static resource_size_t pcmcia_align(void *align_data,
+-				const struct resource *res,
+-				resource_size_t size, resource_size_t align)
+-{
+-	struct pcmcia_align_data *data = align_data;
+-	resource_size_t start;
+-
+-	start = (res->start & ~data->mask) + data->offset;
+-	if (start < res->start)
+-		start += data->mask + 1;
+-
+-#ifdef CONFIG_X86
+-	if (res->flags & IORESOURCE_IO) {
+-		if (start & 0x300)
+-			start = (start + 0x3ff) & ~0x3ff;
+-	}
+-#endif
+-
+-#ifdef CONFIG_M68K
+-	if (res->flags & IORESOURCE_IO) {
+-		if ((res->start + size - 1) >= 1024)
+-			start = res->end;
+-	}
+-#endif
+-
+-	return start;
+-}
+-
+-
+-static struct resource *__iodyn_find_io_region(struct pcmcia_socket *s,
+-					unsigned long base, int num,
+-					unsigned long align)
+-{
+-	struct resource *res = pcmcia_make_resource(0, num, IORESOURCE_IO,
+-						dev_name(&s->dev));
+-	struct pcmcia_align_data data;
+-	unsigned long min = base;
+-	int ret;
+-
+-	data.mask = align - 1;
+-	data.offset = base & data.mask;
+-
+-#ifdef CONFIG_PCI
+-	if (s->cb_dev) {
+-		ret = pci_bus_alloc_resource(s->cb_dev->bus, res, num, 1,
+-					     min, 0, pcmcia_align, &data);
+-	} else
+-#endif
+-		ret = allocate_resource(&ioport_resource, res, num, min, ~0UL,
+-					1, pcmcia_align, &data);
+-
+-	if (ret != 0) {
+-		kfree(res);
+-		res = NULL;
+-	}
+-	return res;
+-}
+-
+-static int iodyn_find_io(struct pcmcia_socket *s, unsigned int attr,
+-			unsigned int *base, unsigned int num,
+-			unsigned int align, struct resource **parent)
+-{
+-	int i, ret = 0;
+-
+-	/* Check for an already-allocated window that must conflict with
+-	 * what was asked for.  It is a hack because it does not catch all
+-	 * potential conflicts, just the most obvious ones.
+-	 */
+-	for (i = 0; i < MAX_IO_WIN; i++) {
+-		if (!s->io[i].res)
+-			continue;
+-
+-		if (!*base)
+-			continue;
+-
+-		if ((s->io[i].res->start & (align-1)) == *base)
+-			return -EBUSY;
+-	}
+-
+-	for (i = 0; i < MAX_IO_WIN; i++) {
+-		struct resource *res = s->io[i].res;
+-		unsigned int try;
+-
+-		if (res && (res->flags & IORESOURCE_BITS) !=
+-			(attr & IORESOURCE_BITS))
+-			continue;
+-
+-		if (!res) {
+-			if (align == 0)
+-				align = 0x10000;
+-
+-			res = s->io[i].res = __iodyn_find_io_region(s, *base,
+-								num, align);
+-			if (!res)
+-				return -EINVAL;
+-
+-			*base = res->start;
+-			s->io[i].res->flags =
+-				((res->flags & ~IORESOURCE_BITS) |
+-					(attr & IORESOURCE_BITS));
+-			s->io[i].InUse = num;
+-			*parent = res;
+-			return 0;
+-		}
+-
+-		/* Try to extend top of window */
+-		try = res->end + 1;
+-		if ((*base == 0) || (*base == try)) {
+-			if (adjust_resource(s->io[i].res, res->start,
+-					    resource_size(res) + num))
+-				continue;
+-			*base = try;
+-			s->io[i].InUse += num;
+-			*parent = res;
+-			return 0;
+-		}
+-
+-		/* Try to extend bottom of window */
+-		try = res->start - num;
+-		if ((*base == 0) || (*base == try)) {
+-			if (adjust_resource(s->io[i].res,
+-					    res->start - num,
+-					    resource_size(res) + num))
+-				continue;
+-			*base = try;
+-			s->io[i].InUse += num;
+-			*parent = res;
+-			return 0;
+-		}
+-	}
+-
+-	return -EINVAL;
+-}
+-
+-
+-struct pccard_resource_ops pccard_iodyn_ops = {
+-	.validate_mem = NULL,
+-	.find_io = iodyn_find_io,
+-	.find_mem = NULL,
+-	.init = static_init,
+-	.exit = NULL,
+-};
+-EXPORT_SYMBOL(pccard_iodyn_ops);
+diff --git a/include/pcmcia/ss.h b/include/pcmcia/ss.h
+index 7cf7dbbfa131..89aed99bfeae 100644
+--- a/include/pcmcia/ss.h
++++ b/include/pcmcia/ss.h
+@@ -227,12 +227,8 @@ struct pcmcia_socket {
+ 
+ 
+ /* socket drivers must define the resource operations type they use. There
+- * are three options:
++ * are two options:
+  * - pccard_static_ops		iomem and ioport areas are assigned statically
+- * - pccard_iodyn_ops		iomem areas is assigned statically, ioport
+- *				areas dynamically
+- *				If this option is selected, use
+- *				"select PCCARD_IODYN" in Kconfig.
+  * - pccard_nonstatic_ops	iomem and ioport areas are assigned dynamically.
+  *				If this option is selected, use
+  *				"select PCCARD_NONSTATIC" in Kconfig.
+@@ -240,13 +236,11 @@ struct pcmcia_socket {
+  */
+ extern struct pccard_resource_ops pccard_static_ops;
+ #if defined(CONFIG_PCMCIA) || defined(CONFIG_PCMCIA_MODULE)
+-extern struct pccard_resource_ops pccard_iodyn_ops;
+ extern struct pccard_resource_ops pccard_nonstatic_ops;
+ #else
+ /* If PCMCIA is not used, but only CARDBUS, these functions are not used
+  * at all. Therefore, do not use the large (240K!) rsrc_nonstatic module
+  */
+-#define pccard_iodyn_ops pccard_static_ops
+ #define pccard_nonstatic_ops pccard_static_ops
+ #endif
+ 
 -- 
 2.50.0
 
