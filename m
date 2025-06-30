@@ -1,120 +1,113 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1E11F2BB5
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 20:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7471DB125;
+	Mon, 30 Jun 2025 20:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751316228; cv=none; b=qxHuyJ1JiXXBDDIhCvRGPH2AydIko3BN+mL1y2chZaykhzNRMJ79oJALEGGVSLdTZEfCXeLJWcCCz3ONZXYe7Hm2yPBsvE7+ZE2pCkOJgSyr3PyBI7Cz0JkRNNYST52WtXog5odbJf4etBedVdu1hU4voP9wSFZPcaLMm0gpdLs=
+	t=1751316248; cv=none; b=heIprK2W8xNYoZOMunPocend7zkoT/shgtQdGAECj6p46MhLo5qrzGOsG+4SYw/cBLb3MeYlEAMV5B27WQZkmU45yKhXBNWyBf5BqMdzi1Ar61BewJOYr//sSpYEzSomLwB+tbg++cVVWBp1J3N68PvbXXgQhzRCyvVjcDn7APE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751316228; c=relaxed/simple;
-	bh=Hl2+BuTIsRx5YflGhLK0Qu87p9i0fcNT+oAY3LuiRHo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LYDHSscPemVHvC+gMTXUvCXUODkGJx5MgwylOQKUrRYbau49rEmykzEphnhsm/W4KcNmnh58GMD3TJuJfTGlrBqyUEZsTAfGcVvOLUQekCY5ZgvYbhTslWWuWzfTjxVKdlXd1wqwl8Z07Q7IuOYLgm4LOnJLKkbf4DcStnCDY0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=rVmEdNFg; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1751316248; c=relaxed/simple;
+	bh=fJ9Omhbf3gY9igah+t3oj+rQpDdG4CzeMw7aL4HSHHY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ufd7Oxlfomj5wjWPJV+IoWJBcw7SbVfitqrTnk9g4pEqHtxlbVdX1TKB5uMN71JTwOHq51//ZH2rBX0QQbm+46DFShCo6EFdu5buO4rYXD6+QkXF97teofVJXPywS0AEV/7O7vV1jBEv6IR76iG8Vd93X7HR4iZBDyvWweJ2G9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=rlAa3eTM; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="rVmEdNFg"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
-	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=XRiXNMk+Eywrh4b/g8zccXTSLou0XxOssRWcHFu/K1g=; b=rVmEdNFg17WFytgekuzmZnslN+
-	X02OL99vfP27r/7m8zx5i2a/AxWfI1/WVsBZN5sW3AaOg+CAaa3uxSH2t+at5e6armTviCl3vnG0P
-	rvy4BAK0jpApaHLvS6844jES0u6k8jYluTNyKgGTewrojtQHQCAp2ZBQbohk0uB/+sLBsCnyFINF1
-	daId5lVEMKF+ZrELxpRQqGWI2LRuBEltK+p/enaDRTZtw/7hO961Upt1iFoxt+F4o7oBLnv++2haa
-	EEOqA2G9J0aK2CZBtCNpwTJPCkh7zGFQvR48sp7oYW/ofzZg2+twYYQFnmsmJLrMjcZ1xy4wRTlZD
-	FOaQrV7A==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:39068 helo=asus)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uWLLq-00000004KvK-1w7I;
-	Mon, 30 Jun 2025 16:43:44 -0400
-Date: Mon, 30 Jun 2025 16:43:38 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="rlAa3eTM"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UIER08016451;
+	Mon, 30 Jun 2025 22:43:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=selector1; bh=AQKCJ04siddRBG+IxS9aOk0K
+	rq1ez5qBC2vqbCHaW2I=; b=rlAa3eTMj2MhjAVRNMno0xIZa0U3bhDxcRktwj2T
+	Lze+UVuHk/rTCuDlw1OXP/+EiKk3XQjXnpMT/KGt9ZP71emNkHlW9dhX5P3D1d1F
+	r5pCLMbQi3vxP4djavoTZyxCOf02qJR8tJxOGFmyHfn3NE4dk/ykFR1BxKEOJYU5
+	RgAlViTXOpDwKq/uQO9+3W/6jKjLL6zJlteBJzk+RHaELSgLQIMZH/aGl6heW5mM
+	aMEhD1IYLqmar40BzAojWG6H+Fx24NVtKCUZ2p+CbTyLNg+wHcXQcUIaP/nn4oMK
+	cF03K7AQWkiHVuzA1A+tJAse+2jEn/fhUQ+waz8J0RxN8g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tm1j7n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Jun 2025 22:43:52 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B127F40055;
+	Mon, 30 Jun 2025 22:42:56 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7F7A4B2BD0B;
+	Mon, 30 Jun 2025 22:42:26 +0200 (CEST)
+Received: from gnbcxd0016.gnb.st.com (10.130.77.119) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
+ 2025 22:42:26 +0200
+Date: Mon, 30 Jun 2025 22:42:20 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-cc: Kernel Janitors List <kernel-janitors@vger.kernel.org>, 
-    Lukas Bulwahn <lbulwahn@redhat.com>
-Subject: Re: First pass at janitorial kernel cleanup scripts
-In-Reply-To: <bc14c7e7-1188-4330-bc0b-cb0a60568cc1@suswa.mountain>
-Message-ID: <be53fc9d-529f-50c3-a3b1-f3caba54aad9@crashcourse.ca>
-References: <8c4e5d62-7980-bd16-df17-caf76862d4f5@crashcourse.ca> <bc14c7e7-1188-4330-bc0b-cb0a60568cc1@suswa.mountain>
+CC: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+        Mark
+ Brown <broonie@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH] spi: stm32: delete stray tabs in
+ stm32h7_spi_data_idleness()
+Message-ID: <20250630204220.GA522704@gnbcxd0016.gnb.st.com>
+References: <2033b9fa-7b0f-4617-b94e-7b0a51c5c4b1@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2033b9fa-7b0f-4617-b94e-7b0a51c5c4b1@sabinyo.mountain>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-30_04,2025-06-27_01,2025-03-28_01
 
-On Mon, 30 Jun 2025, Dan Carpenter wrote:
+Hi Dan,
 
-> On Mon, Jun 30, 2025 at 02:02:25PM -0400, Robert P. J. Day wrote:
-> >
-> >   As promised, I have the first small number of kernel cleanup scripts
-> > that should inspire some obvious janitorial work:
-> >
-> >   https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup
-> >
-> > There will be more scripts coming, and a lot of them will address some
-> > rather obvious cleanup that relates to identifying leftover cruft that
-> > was overlooked when something was removed from the kernel -- things
-> > like:
-> >
-> >   - are there things being #defined and never referenced?
->
-> Quite often people publish these deliberately.  They sort of function
-> as documentation.  At one company every time they expose anything
-> about the hardware interface it has to be approved by the legal dept
-> so they publish every single define that they can possibly think of
-> as early as possible so they don't have to go back and forth with
-> legal later on.
+Thanks for this patch. Indeed.
 
-  Ewwwwwwww ... I do not like that idea. I don't like stuff being
-"#define"d unless it's actually required by the proprocessor.
-Defining stuff as documentation is just ... ewwwwwwwwww.
->
-> >   - are there things defined in Kconfig files that are never used,
-> >     or vice versa?
->
-> Lukas Bulwahn does a lot of this work already.  It will be interesting
-> to see if there is anything his scripts miss.
+On Mon, Jun 30, 2025 at 02:35:25PM -0500, Dan Carpenter wrote:
+> These lines were indented one tab more than they should be.  Delete
+> the stray tabs.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/spi/spi-stm32.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+> index 3d20f09f1ae7..afb54198bde7 100644
+> --- a/drivers/spi/spi-stm32.c
+> +++ b/drivers/spi/spi-stm32.c
+> @@ -1895,8 +1895,8 @@ static void stm32h7_spi_data_idleness(struct stm32_spi *spi, struct spi_transfer
+>  		if (spi_delay_ns) {
+>  			dev_warn(spi->dev, "Overriding st,spi-midi-ns with word_delay_ns %d\n",
+>  				 spi_delay_ns);
+> -				spi->cur_midi = spi_delay_ns;
+> -			}
+> +			spi->cur_midi = spi_delay_ns;
+> +		}
+>  	} else {
+>  		spi->cur_midi = spi_delay_ns;
+>  	}
 
-  Is that the same L. Bulwahn of RISC-V fame? I might need to touch
-base.
->
-> >   - are there header files that are never included anymore?
->
-> That's a good idea.
+Acked-by: Alain Volmat <alain.volmat@foss.st.com>
 
-  I have a script that tracks down exactly that sort of thing. I'm
-just cleaning that up now. There seems to still be a fair bit of that.
-As a representative example, there is a header file in the kernel
-source tree:
+Regards,
+Alain
 
-  ./sound/soc/amd/include/acp_2_2_enum.h
-
-Does anything include it? Nope:
-
-  $ grep -r acp_2_2_enum.h *
-  $
-
-So my scripts still identify plenty of potential cleanup.
-
-More later.
-
-rday
+> -- 
+> 2.47.2
+> 
