@@ -1,49 +1,44 @@
 Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F03929C33C
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 17:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B1A2AD2F
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 18:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751304497; cv=none; b=jlPtxh6/5ZEC7r+zDSs9mrDwhIte8hz+40Vm4j66l6OwBNW2NdujfvCpHT+o+qZugOg8vFMNiqFIbvlJLUfCKT3x3h9L+MhQfdSQILnhhNmQly4PQS9l5D0OaEhQQL+Nln6QQJUPPTzOP78E/5DDfmXffpGCx7oLuAwy8zLhOUc=
+	t=1751306560; cv=none; b=gEyKQs6EYr3ED4Cz4w2TCs/iyAop4BSZNiDQiSteI3XJW26GxJawSrerS0GLnMsxE0BLpAEOyuyx/zlmAbZ4VttQ8t5nvDmpJ9+YP/y52ifVSLcPeqoQqxJY0Fp12SQxsgTd9vDt8SoIEvdH9jA6+Jv4VYh2I1su17ADC7orkQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751304497; c=relaxed/simple;
-	bh=3IC2WsSgkf0BL6wofGonrfPkrT49IP2HmJAISGvp640=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=nMKMKE3TSpiyBIfErJxGRPYRw13fYzW1oXfY/xMWe8ajp8dgl/ferNN/j0+wVlP/G0YI56gccU6zzFiFBue3Tg0wxHncm6dnnyisiM+y9ga2Ev6JNGLUqZsLCj4bQONkrfcWDJisY+y1fxSIFMPjXC9h6heWsgS53lgT8fACDpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=sbJjVy8X; arc=none smtp.client-ip=199.212.143.9
+	s=arc-20240116; t=1751306560; c=relaxed/simple;
+	bh=0+CLXGCgE8D0X+K9NXLM04h7NIiiYXozcCItdgkODOI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=sIUy++MBbafymqTeVMHagrcKn/8H41aQyYL4HxOKdbVW5oOM9KLjqeiORyRIqDxLtPJM/+suRx0DQK81HcZKDT6cWxgwbDcotBO3AUx7kGiZWIeDbGJfKHQTQTTnLi3lAUFSQVCGW7YwDDwr3OKF7ZjMZ5/XMMXWtnj1otK8fpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=HWoJjyYm; arc=none smtp.client-ip=199.212.143.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="sbJjVy8X"
+	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="HWoJjyYm"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
-	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1fJPLEA3g6dKIf7gewD7fV63AqgCsKhgtAoS0BTTOfo=; b=sbJjVy8XzwuzXhlFnAs2AMo09b
-	1TdsC3nioRc7HDU+Dp8O+bU2TvMVvLyu7Nln3b4tGKcakddDt9RcCYqkE1ve58j6Dur+OVYj9is2h
-	gQFcZh/2cqs7qHnwpMisQoeFhyPvWTEVn2g9OnkKG0GYmgft2CvoHy0Ja5mG8sA6VITQueghbZlTY
-	9kT0vQMAM9hYqPUCLsmYwgp9IJyXbG0So/kdLRO+WSmd1pm77DVyZ4th1Up2Cz64xfvvjfHcfzpJN
-	lN8ve7IAhmFI9QKv3c7XS3oBVhDcarkLs1bs5A3Qd0bL+U+u3VW1ZcMlu7PH8xp76ic9NYAV6SUMi
-	Sh87Zjog==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:51748 helo=asus)
+	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ppNkutg5I4QmUlZQ5OxY9Y75KfwEml8tT0Pa+9Rlvkk=; b=HWoJjyYmEtRz/b7ZpzcZ5KOAd0
+	uMWdhq5gbCA3Xq4atCMUj/DvVo6VfQ4q3sMe9+oxzWqBBDdwsIHtHrrIt2o4QFGgUL49Abljjlyy+
+	QZNIuQU57CBZujNb+PlEQowFitLp5oXRDh7LX0VwzDcI2iVRMGAkWqwZAp46cCZHgVbaAhjT/WfAY
+	8uQ7KqjqGVxjhQEXWUucQ13EtTiHO4q8+P+NDyPsk4/pGf5qlFJNj26/FP89ANy4YVbpG5WJAhryu
+	tpV4nvfr8ZFzh+eeyr6R6qnrmhMaRUOz0VnmxYlJGmggxYCYJG6xyomdeSim6153/x5ms1YvkDMF+
+	tzSpheBg==;
+Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:44910 helo=asus)
 	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uWIIc-00000003oha-0kfH;
-	Mon, 30 Jun 2025 13:28:12 -0400
-Date: Mon, 30 Jun 2025 13:27:48 -0400 (EDT)
+	id 1uWIpv-00000003ugS-1El2
+	for kernel-janitors@vger.kernel.org;
+	Mon, 30 Jun 2025 14:02:36 -0400
+Date: Mon, 30 Jun 2025 14:02:25 -0400 (EDT)
 From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Charalampos Mitrodimas <charmitro@posteo.net>
-cc: Ruben Wauters <rubenru09@aol.com>, 
-    Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: Re: I have a pile of potential janitorial work for interested
- parties
-In-Reply-To: <87sejhyz2f.fsf@posteo.net>
-Message-ID: <cc734039-f184-27fa-9bb4-9abc02c8ae7d@crashcourse.ca>
-References: <ebfb23a6-def8-24a8-8958-28213a3c0da5@crashcourse.ca> <62bf7393f9314ff875e5eebf6575b72997a6fd2e.camel@aol.com> <84115bf4-bb53-3ebc-4076-5dae087fa4be@crashcourse.ca> <87sejhyz2f.fsf@posteo.net>
+To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
+Subject: First pass at janitorial kernel cleanup scripts
+Message-ID: <8c4e5d62-7980-bd16-df17-caf76862d4f5@crashcourse.ca>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -62,51 +57,23 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-On Mon, 30 Jun 2025, Charalampos Mitrodimas wrote:
 
-> "Robert P. J. Day" <rpjday@crashcourse.ca> writes:
->
-> > On Mon, 30 Jun 2025, Ruben Wauters wrote:
-> >
-> > ... snip ...
-> >
-> >> Hello,
-> >>
-> >> Thank you for highlighting this, I believe this is a good target for
-> >> cleanup, and I would be interested in any other scripts you have
-> >> that provide similar information.
-> >>
-> >> I am fairly new to linux kernel development in general, not having a
-> >> large amount of patches to my name, however, opportunities for
-> >> cleanup and janitorial work, while often neglected by other
-> >> programmers for larger features, still are important in my opinion,
-> >> as it creates a more maintainable and cleaner codebase, as such I
-> >> would be very much interested in any cleanup opportunities.
-> >
-> > I started documenting these potential cleanups here:
-> >
-> > https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup
-> >
-> > so anyone who's interested can start processing whatever parts of the
-> > kernel source tree that interests them.
->
-> Hi Robert,
->
-> This is going to be very helpful to newcomers that are looking forward
-> to contributing to the Linux kernel.
->
-> Looking at your list, the tools are awesome and well-thought. But I
-> believe some guidelines can be put in-place for some, so folks can get
-> their patches upstream easily, and of course, have some confidence in
-> it.
->
-> One guideline that came to mind almost immediately is regarding the
-> tools "Calculating the length of an array" is that people should pick a
-> subsystem and send a patchset, i.e. do not send a massive change that
-> changes code under more than one Kernel subsystem.
->
-> This approach respects maintainer, and simplifies the review process.
+  As promised, I have the first small number of kernel cleanup scripts
+that should inspire some obvious janitorial work:
 
-  I added a note to that effect early on that page.
+  https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup
+
+There will be more scripts coming, and a lot of them will address some
+rather obvious cleanup that relates to identifying leftover cruft that
+was overlooked when something was removed from the kernel -- things
+like:
+
+  - are there things being #defined and never referenced?
+  - are there things defined in Kconfig files that are never used,
+    or vice versa?
+  - are there header files that are never included anymore?
+
+  You get the idea. Anyway, peruse what's at that wiki page now and
+drop me a note if you have any thoughts for improvement.
 
 rday
