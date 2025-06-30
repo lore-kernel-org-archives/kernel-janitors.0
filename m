@@ -1,72 +1,69 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F389A2144C7
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 19:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8201B87F0
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 20:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751312204; cv=none; b=CCDXfmzPm2Gmj8ohn53sdijm7s3uVKttIIQAFrlGHLKMWAvzHFuoSDlQLVw4zWSXnYmpXL4+ZRtFg/nSFQMHC9+QHcuksoxeE3p2yXHeP5x9e9jF6VmJAdi4eJW2lzYhgk+mwJrzoUDkFghIsX9Q05k+qw2Z7nKHaI7qSGFFuJA=
+	t=1751314781; cv=none; b=iBL1QWNIGsUS5HFmg39gtyxvbInHWAlQP1Cs/j+w9+DVL0io/Ns5/+WSTVdfkq+a1odFuIVvB/uP5yWrizgaltE2k19WDOPZcsWFbhwkPxLsFQACt1Y45rwW1EmRZWqoeyxhpKJr/lrYyvfoRHTV3g8vqv8hDRv0en8qStEfa5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751312204; c=relaxed/simple;
-	bh=PIZPJ7i63i8C0TC1GjtbhrzgGNXE4XRxULt5H9rtUVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PvzcUUYG7BlAlCI3ygnZTUKi2HOMl69q8ZubKHINWexqJiWgsPuzdzguwKBCvOEnDVXV27yLcXgfvyN677qJS+6q3YJ2ajl7il4fmNxWqMr50L4TfROwHZWA+bzWX/rZEiS3ISHqh/kJjbCMm5Y3cZVyGneTtKYoEcyLxHQ2YfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QaNZwgCd; arc=none smtp.client-ip=209.85.161.43
+	s=arc-20240116; t=1751314781; c=relaxed/simple;
+	bh=yxYAOdHuUjJ7OCPW8jO+iUuFfvd3q45XoamAHGfFMiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUNZj6NM2uo7TGYCKUZ7MkxhhFGwubzASIdeHXPABRB3CufgJM/MHfzGrFpTNCUQPrafs9SFBe/sBrmlO1uOKWJ+ZZV0FzUInfQUDN9Ysm+61SI6OGeBitbwXMx4YxQTfNn78WpeCqKR1XR41bLQSQuDi5LNke8wblvgAnztf9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IpIS4rv5; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QaNZwgCd"
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-6119b103132so3030783eaf.1
-        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 12:36:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IpIS4rv5"
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-72c09f8369cso1431426a34.3
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 13:19:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751312202; x=1751917002; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rFs3jWGVmRQiCPCz55IrWTyhhJse2uDEsntELmdGZSw=;
-        b=QaNZwgCd8LTUrRGOqXQg/AzG2jvyTlkvLpxZ+mvKqDxX62j4L9xJTbvtYLSkhGld0K
-         Pjj4/ECsMfArbItgVOIoTW6iIZBrJzSp+DVSNVKM6bO27ASyD4bkn9J49/bbxKTs622F
-         jegbtqUWdwJG8XdDuatbQnBbUSrjMClsx/5nEGRgBc81Pehz+ObYpe5u6gOhI+FVVEBP
-         TRx4jqecbqbQ5C8S4+RFMU7g5TftSyL2TPI7hJI5jO431XJaRQd6e/HXQxcbF+Vk7l39
-         EnZ22C8TogGRkyRxF196sflQOLXOM+6ONzJlBuHOlckX2MujDWfjIMgzmg+bISUj1nS+
-         nv0Q==
+        d=linaro.org; s=google; t=1751314777; x=1751919577; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eu9q9jAleEqjkU9aG17JxIXNZmKufj2Xt5hkop1caTI=;
+        b=IpIS4rv5A2v0h/7dIaM921u8H68RnoMBkrpEZtB8buzDo9uVbYrONB3umwY/psTVbY
+         54DK0roXlpXCDhriS/7KGTzhqUCkBitbuI+ewmcLZrTBPdHCUa+oj+rRQxAJb/Ze+eUU
+         8VwwX1PfWJrvfwVJImMsf3+fYh2Ju0oAEhgg0lExJyTWIBq9C0X1uA6zmTJR94iyvwyM
+         6eCgcg5oCvmU5oHoUvl4kFPGm79f0QL+/LV++3DBqltVtJ565GV0i3242vGeJtZDIC3a
+         puN20umTLFMRX57AJYoidBa4ez3iPqMrFXSTve6y1xmVdGlv5qNMsCMCwFA6wfdlgruV
+         72wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751312202; x=1751917002;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rFs3jWGVmRQiCPCz55IrWTyhhJse2uDEsntELmdGZSw=;
-        b=Jn28YSkdiBl63BrHGnLgvXG4kaXFREEc1hTsAYQPBXYLuaVjgHEs8wN+6/8DIgVJBd
-         JdR+nK5NVcru83GxnwkKrU1u2H1KnFvrjeOXvgZmyMTB5M6TlCK0Ms6v8FlAiPzPFwH1
-         aSQtVWzrMUMhA06wwyvKX3VtM60TbDepcvzb1gaLNFM0yjNzKW2s5nBAd1lIN5GCwian
-         QmOyEzA72fAvUcIM7Mf9IZyzCZxcMSVefkVIxeQTw4Xa9eEs71O1wMGfFALJshdRy4/Z
-         rTE45qjy+PDfuAOM3J00Px05Zm0SauHrv6nArkliZ8SnNc7ADqMgsHbmHO2fE6rIz2uf
-         KEpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlnhVm59zjl1z4kq5v1YpHPFIpcACeEGfl/JrB+1eBnP8dUhGXLFZk0BaSBrSIIAfYFUA23MhGTjAwaBeuaK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM4+dIASlM7izUJWSpGrrIeRthX2z5MpZdZ4au3rA/G/b4CSD6
-	tHraDvee5ZJ0cqx3ou1v18Qo2o1rauCuBVfQY6rrs9EdKJv6Iuy7XUenwbSCKFj7iHw=
-X-Gm-Gg: ASbGncsGRH4ynXtr+YYoZHicqBKuDL8+67Lik6gGyweIuBvANOCx2w6yz4cETnaRrHB
-	g0WfjpKVxPZBF7QO3h8YH6KvQ3KcYuCiX0W5UBQAny4+z/5aaOpeY/qMye6+hBWVNd7t49EYx/7
-	mA9/DXapC/9ehkVr1hYRTC/2+7cdapjDinPpuWudheSraJ7HnAezXnIO4OxZ+o4GHnXJfp/gtf2
-	1xB3e3vJFNMnQLElm3ryZSCyBSfBUZEweVIZkt9sPlGA6iJKXvzvPF+hLWPAnBH/0OuwGl2E0nT
-	T95q9E23InO4xgQlT6sggyoHKGUm4HBO67Lffi1FKJkGIo7MI2ABBkcoDepfwjcma/4QmGWQ9vn
-	/Rec=
-X-Google-Smtp-Source: AGHT+IHjOIaQTv70hTn6APt2/cC+UCDsl698/+NS7It4EICnrQ1NcFfOWmmAvQSJbsGHKSZ8d4JqzQ==
-X-Received: by 2002:a4a:ee04:0:b0:611:3e54:8d0a with SMTP id 006d021491bc7-611f389e302mr585444eaf.1.1751312202009;
-        Mon, 30 Jun 2025 12:36:42 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:49cc:1768:3819:b67])
-        by smtp.gmail.com with UTF8SMTPSA id 006d021491bc7-611b848d86bsm1176542eaf.13.2025.06.30.12.36.41
+        d=1e100.net; s=20230601; t=1751314777; x=1751919577;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eu9q9jAleEqjkU9aG17JxIXNZmKufj2Xt5hkop1caTI=;
+        b=n7JGlvzzx1wylIgdmgnnGaa1pMJth5fTbAOQBj4RMiU9IY/6+GPO0OyHF4NxGYbhzt
+         uqAJJo6TnzulFliwMiEyAap4IHVKTIi9I61J29nZqulTtgSfzANuGxYeg7dmu8qMQaNT
+         5O16CztQ0ZxVmJ9jRHrpkbYQaUiATqCeUp09KbuPMFixK/w2/Nm2Toemzou8eqjnWgxl
+         +pDGGGhBlKftY6AslDO/d3yo02tK3trDKOcTILQoOUqyq7ZedfCHWWfXqKbiL9Pac4IU
+         bRsy943RDqSrCHa2l9f309bsXtRPpdhVaEqqvbvvYGQxzyKyNkr78U6YAy9s1Mqhg0yT
+         m0nA==
+X-Gm-Message-State: AOJu0Yz5IRg6ePQ+EuNQlzoN8vx44HyZPcVWXBOPG7L4kYD+cTx079Qj
+	69Equz+2G28cLJ4p9V1vxIMQAnNq8wHO0eXF6j/dpbDYitobc6mxBFf8OYzMAOWJoc4kKtdYhgU
+	dOLkK5C4=
+X-Gm-Gg: ASbGncvW9fGizuM248cOfQQb7FCUyQX0cyUQovEN62D8YCGa1PMhlVcdv4dxrHSZoI1
+	PpyJAsic1uYHEry3OwLn+SxsBPdy2qLI0xAE0z2lUBlai+FUT4vmGIPDr2QxGz5HcWnMKyDGadb
+	rIC/jDse+gl7JEMQQRf+cpnegF2qrt0R244hmcdBvQEfS0G48sHd10uUcruKtiKLggWn4sc7YjI
+	QpPX9EIfgaxHTrgT3m6rGV8ChKrKlEXmN8mXf0vCrbGl6ijH2XQGRkvGIGdJAfg/3SpIroKhfP2
+	hvu3qIt8LbdyA4SdTFX88zqX4COkjmCodQsrOeFqtiijDZvMWUZEux1PetHayZbHcEGk
+X-Google-Smtp-Source: AGHT+IGfd+10/nApbZFV5xZuXb4dmIe44Yr6HsWu75OW0OPr2Dw6kD5QOnngBD3NgRLZgzelP8RLNA==
+X-Received: by 2002:a05:6830:b93:b0:72f:ff8b:e123 with SMTP id 46e09a7af769-73afc569535mr9555758a34.12.1751314776806;
+        Mon, 30 Jun 2025 13:19:36 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:fb67:363d:328:e253])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73afb0069f4sm1801371a34.19.2025.06.30.13.19.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 12:36:41 -0700 (PDT)
-Date: Mon, 30 Jun 2025 14:36:40 -0500
+        Mon, 30 Jun 2025 13:19:36 -0700 (PDT)
+Date: Mon, 30 Jun 2025 23:19:34 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jiri Pirko <jiri@resnulli.us>, Arnd Bergmann <arnd@arndb.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Ido Schimmel <idosch@mellanox.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net] lib: test_objagg: Set error message in
- check_expect_hints_stats()
-Message-ID: <8548f423-2e3b-4bb7-b816-5041de2762aa@sabinyo.mountain>
+To: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Cc: Kernel Janitors List <kernel-janitors@vger.kernel.org>,
+	Lukas Bulwahn <lbulwahn@redhat.com>
+Subject: Re: First pass at janitorial kernel cleanup scripts
+Message-ID: <bc14c7e7-1188-4330-bc0b-cb0a60568cc1@suswa.mountain>
+References: <8c4e5d62-7980-bd16-df17-caf76862d4f5@crashcourse.ca>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,41 +72,39 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <8c4e5d62-7980-bd16-df17-caf76862d4f5@crashcourse.ca>
 
-Smatch complains that the error message isn't set in the caller:
+On Mon, Jun 30, 2025 at 02:02:25PM -0400, Robert P. J. Day wrote:
+> 
+>   As promised, I have the first small number of kernel cleanup scripts
+> that should inspire some obvious janitorial work:
+> 
+>   https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup
+> 
+> There will be more scripts coming, and a lot of them will address some
+> rather obvious cleanup that relates to identifying leftover cruft that
+> was overlooked when something was removed from the kernel -- things
+> like:
+> 
+>   - are there things being #defined and never referenced?
 
-    lib/test_objagg.c:923 test_hints_case2()
-    error: uninitialized symbol 'errmsg'.
+Quite often people publish these deliberately.  They sort of function
+as documentation.  At one company every time they expose anything
+about the hardware interface it has to be approved by the legal dept
+so they publish every single define that they can possibly think of
+as early as possible so they don't have to go back and forth with
+legal later on.
 
-This static checker warning only showed up after a recent refactoring
-but the bug dates back to when the code was originally added.  This
-likely doesn't affect anything in real life.
+>   - are there things defined in Kconfig files that are never used,
+>     or vice versa?
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202506281403.DsuyHFTZ-lkp@intel.com/
-Fixes: 0a020d416d0a ("lib: introduce initial implementation of object aggregation manager")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- lib/test_objagg.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Lukas Bulwahn does a lot of this work already.  It will be interesting
+to see if there is anything his scripts miss.
 
-diff --git a/lib/test_objagg.c b/lib/test_objagg.c
-index a67b8ef5c5be..ce5c4c36a084 100644
---- a/lib/test_objagg.c
-+++ b/lib/test_objagg.c
-@@ -899,8 +899,10 @@ static int check_expect_hints_stats(struct objagg_hints *objagg_hints,
- 	int err;
- 
- 	stats = objagg_hints_stats_get(objagg_hints);
--	if (IS_ERR(stats))
-+	if (IS_ERR(stats)) {
-+		*errmsg = "objagg_hints_stats_get() failed.";
- 		return PTR_ERR(stats);
-+	}
- 	err = __check_expect_stats(stats, expect_stats, errmsg);
- 	objagg_stats_put(stats);
- 	return err;
--- 
-2.47.2
+>   - are there header files that are never included anymore?
+
+That's a good idea.
+
+regards,
+dan carpenter
 
