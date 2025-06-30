@@ -1,89 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF09A25F96D;
-	Mon, 30 Jun 2025 11:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE812701DF;
+	Mon, 30 Jun 2025 12:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751283586; cv=none; b=l5v8xMpnzNcZaz4j5NAf+L+BZU3O7ruzkOTLmZ/+CXXbKHvJ9Oer61CT8fJytBS/W6GQoH1v9AWHKaOrGFD6CtjRpAV6ZASjALfvmhXsYksaSb1/ftjvsasrmQbuxlJKv37YtFki/TqgU16vjJUMHRjNRepgWFBzGdF2QW+HKQw=
+	t=1751287916; cv=none; b=BkJueE9LG/XQLeWicpJtczXUNUPzcesKAV2s183ngxstmmU4GQVWgIcmdpi917ir9d3Sc8u6q5WHl43Mg837uRBUy02XJvlcGKiVN7fafWAQIfLxRvkY7wv9C28TAHD0B78DUucHcibALx80g3dcE+oYmwPg3JAYqKu05y+V0Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751283586; c=relaxed/simple;
-	bh=g00J8v4gyeoxiUOeUEh5TcENqOjHiixTY1cv2B+/Uqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZoTBhS+sXRXqw8RWOJfbkuOr4g90ABbJxomMB+iXn4Phxal+lmO8xNupvbwCyZ/cecsEGgYpMkPSa9zak8MiAmZYSDYX9+3ukhVZnyyuW+hVLive7H1ZvLc9MziH/1j+tr3fMfSuJ4WpDWKulPYgDer6wm1AnnfE5Vjllq7Tbfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRjOwJx+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751287916; c=relaxed/simple;
+	bh=1GZnzJ9gT2t7alHrMVtRMKxx2nwrgqs6HEQbRg1qdF8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gfDQYFznC5jvBmzw+2XmSXfT1Dr1pHjj/uJucxmonuqXMaav0nTwNbeeC4wmHtM3Lkk3VIGaRWMzW5TfJkCH4hANtZh2d9ZYnZAZ13wyB3z7C/pCXC7kAL3I3YOUuldnb+c6NV5XC/t3yr7BADT8xp2DdZ0usnYsDghXJvYGB44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0AxlP8t; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRjOwJx+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA8BC4CEE3;
-	Mon, 30 Jun 2025 11:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751283585;
-	bh=g00J8v4gyeoxiUOeUEh5TcENqOjHiixTY1cv2B+/Uqw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JRjOwJx+hZhuv+e867xmxOlJ1ongkF7wjsXd+A4LZ5xt0Snxdther9/cQ5bgNAles
-	 7zb4l3oRbknTqpmmlnc9hhIJPTs4oNgU3NjtwYaJNuO8hLpB2tgBfJsTFqbO7VSw+M
-	 WFoE6/XIQjex5EuOkiKm8kvDQjWPE2+3JWKukMvMhT9GuEo5T9e3EYBpO8WsotTVHc
-	 XewWNw4aFJ6YsWpvSpfZso9FscCksJH1b5+vNsXMPcFmMBUFxHgVyiA+HyKRfh3T/V
-	 1FpyCU487PgnMrwU1/PYiXm7fAMKO8kjefPN6Bg4DUECHjLWyn1Nh93PGmHN/r+3FN
-	 s7hg0hC8Iw1Yg==
-Date: Mon, 30 Jun 2025 19:39:37 +0800
-From: "Peter Chen (CIX)" <peter.chen@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-usb@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Chen Ni <nichen@iscas.ac.cn>,
-	Xu Yang <xu.yang_2@nxp.com>
-Subject: Re: [PATCH] usb: chipidea: udc: Use usb_endpoint_is_isoc_in() rather
- than duplicating its implementation
-Message-ID: <20250630113937.GA222582@nchen-desktop>
-References: <e9b363cb-1223-41fa-8613-73ff9a1d4a30@web.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0AxlP8t"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-451d7b50815so14538385e9.2;
+        Mon, 30 Jun 2025 05:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751287913; x=1751892713; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bGmFeyDMoBpTbQ19lKlxDLGZE93GOj2clGGn+vOYYyQ=;
+        b=f0AxlP8t7yn8JXZ7OZn3dsnq+CjcjBqSS1PENuXtaQXnElQRV25Zog2TAfqguqsVYl
+         0CV62KpRciG/Fkq4JNFnPz3uFqjwXmnIJ2w+qffRUkbp4ICGYbmWoAgT7HjDaimyySXh
+         0WBftJ5leow+rap06kBvPQ7kn8Vss+jPYYZxnNgXtCfCFze9Q0xaqpJcRlbAKA2o77h9
+         c5u0qX6mhl5BBWBw+2TUs/a2InEUhbpA8Vrg51wLoZ1OjEvkkT8c+wZXdw9etbSSJof5
+         Gljmtiou6L3YBGUmZUO66pbE9Y2yyDP2svonKMD31hlW0VpNWBmHyz5ISu/WVcCvjso3
+         Z1iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751287913; x=1751892713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bGmFeyDMoBpTbQ19lKlxDLGZE93GOj2clGGn+vOYYyQ=;
+        b=LDy/w+B4QLH9eGk80wzOH8Vk2N8NHp610brRdz5mPq2GK/lI+66mWwPBMAgKEm5IB+
+         H0qrWwI81RzMnuP/EAHGX2+zWsJGo88SHdO7NKsmvKOlcKyaYpCHBpzVOI9W5IHvu6iz
+         Pi/wtt/I3UGigG4D4nC/2BFv8CJLN++w9z3vSADI6ZTy+wjDqco8njLRpESKv3uoac5r
+         F4LObysBAotHq6HXJpqQq6sknX7PpjtiExe5elNhwq7lKhbNpg1m/VqbYgSfyBQymfzV
+         acOyeit1JrkB6G95A7/jtz4OdqjQaU/P+wp9OoF0ttq+luVZdqRfe84QlONJr1DmWqrP
+         xlIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUc8kUc7++jPGIL/jv1FVhN2+hFof2p2zkHxPHRqxmQqv3jkaaNPFYWZF/TL0/KVJWo81aMO/eYqkUV0vZiXaA/kw==@vger.kernel.org, AJvYcCXpqwgk0WyS3Gd5eJkMEqD6AN7quaXCC7zTJSLfuKoDAKmKDPVV7G+UDy3H2zmRG5wlDth3+8bn0wgPCos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMIbsLrMtBXAPWwyjMywzIosI9acLaqRXbEUWs8DPINgxOjquU
+	xDItGFz0B8EdCg6q/PSedj3xUNhJFSBim8e6AIuUDGBZYKpIG1LkRUF8
+X-Gm-Gg: ASbGnctFwgqxl2S+GtggX8GCEdhw4SRcxO1Tu5fNlbedHJi4CjpDYGljJpIFjjzrqI+
+	GzQSEl3RAUzbWESQWguPBKxlcPcdKXQUnAENilqoPrWGRWoQBQ0kWd0ZwXj4XEL9o/ZhLNZ39+G
+	Lqb2m66eOHphSqJBk/pvwObWnKt3YmrUDZ4jbUO9nMKZvbkRHzYBbt15lfrnKStSvbxUMAtYvsw
+	srkAvNHlQVotFDz/fCPHk9cIXsW9hyxVcdNKDvzGkAP4TFAqmgtSjt5tXF7qz9EvPyZhIvGqxYu
+	3sJQCmaGjWaMgq6jDl/j7q/MWcQkFEX1lS8Rt5ekhyDdVppaHOaSPlZ8W6+Y
+X-Google-Smtp-Source: AGHT+IEyE7HdVRfyChdQyAIYEvU7j+qS4oD7GW9tgHyuCTGXIQ3vI+csy6l0qNSfKih8u1T4PBULbg==
+X-Received: by 2002:a05:600c:1e12:b0:43b:ce36:7574 with SMTP id 5b1f17b1804b1-4538ee39aabmr119794565e9.11.1751287913250;
+        Mon, 30 Jun 2025 05:51:53 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4538a3a5599sm137326365e9.13.2025.06.30.05.51.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 05:51:52 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] perf drm_pmu: Fix spelling mistake "bufers" -> "buffers"
+Date: Mon, 30 Jun 2025 13:51:28 +0100
+Message-ID: <20250630125128.562895-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9b363cb-1223-41fa-8613-73ff9a1d4a30@web.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 25-06-24 17:40:17, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 24 Jun 2025 17:30:52 +0200
-> 
-> Reuse existing functionality from usb_endpoint_is_isoc_in() instead of
-> keeping duplicate source code.
-> 
-> The source code was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+There are spelling mistakes in some literal strings. Fix these.
 
-Acked-by: Peter Chen <peter.chen@kernel.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/perf/util/drm_pmu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Peter
-> ---
->  drivers/usb/chipidea/udc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/chipidea/udc.c b/drivers/usb/chipidea/udc.c
-> index 64a421ae0f05..75705089136c 100644
-> --- a/drivers/usb/chipidea/udc.c
-> +++ b/drivers/usb/chipidea/udc.c
-> @@ -1992,7 +1992,7 @@ static struct usb_ep *ci_udc_match_ep(struct usb_gadget *gadget,
->  	struct ci_hdrc *ci = container_of(gadget, struct ci_hdrc, gadget);
->  	struct usb_ep *ep;
->  
-> -	if (usb_endpoint_xfer_isoc(desc) && usb_endpoint_dir_in(desc)) {
-> +	if (usb_endpoint_is_isoc_in(desc)) {
->  		list_for_each_entry_reverse(ep, &ci->gadget.ep_list, ep_list) {
->  			if (ep->caps.dir_in && !ep->claimed)
->  				return ep;
-> -- 
-> 2.50.0
-> 
-
+diff --git a/tools/perf/util/drm_pmu.c b/tools/perf/util/drm_pmu.c
+index 17385a10005b..988890f37ba7 100644
+--- a/tools/perf/util/drm_pmu.c
++++ b/tools/perf/util/drm_pmu.c
+@@ -210,17 +210,17 @@ static int read_drm_pmus_cb(void *args, int fdinfo_dir_fd, const char *fd_name)
+ 		}
+ 		if (starts_with(line, "drm-purgeable-")) {
+ 			add_event(&events, &num_events, line, DRM_PMU_UNIT_BYTES,
+-				  "Size of resident and purgeable memory bufers");
++				  "Size of resident and purgeable memory buffers");
+ 			continue;
+ 		}
+ 		if (starts_with(line, "drm-resident-")) {
+ 			add_event(&events, &num_events, line, DRM_PMU_UNIT_BYTES,
+-				  "Size of resident memory bufers");
++				  "Size of resident memory buffers");
+ 			continue;
+ 		}
+ 		if (starts_with(line, "drm-shared-")) {
+ 			add_event(&events, &num_events, line, DRM_PMU_UNIT_BYTES,
+-				  "Size of shared memory bufers");
++				  "Size of shared memory buffers");
+ 			continue;
+ 		}
+ 		if (starts_with(line, "drm-total-cycles-")) {
 -- 
+2.50.0
 
-Best regards,
-Peter
