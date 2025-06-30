@@ -1,120 +1,122 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F33235074;
-	Mon, 30 Jun 2025 12:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA920285C90;
+	Mon, 30 Jun 2025 13:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751288156; cv=none; b=rreUh1K3pDYZ/ZrxzoHQxueMBDO7I7rS1u2N3aJsYrGuJVESx9m4sp6l14UsfLJRwjADViDTXkhwDHesGHnkbLoyypKLSONLh+r5rh+CfKLsEDcVSiqaTW7pQpG2Bcmrxre0eyjQAgpIdwYMKCY0zj+/+jRX18c7wIKkdr84t7c=
+	t=1751289918; cv=none; b=sutU3loZIZEe/X2FLT4kVxmDmy+fGzDJrWJ7RBKcKg52YXT4LZ+9QTVY5//VkR0c+HZa6Invzm8YXHT6JaJllPacXtAnVoS+qegsESvC98LMoM2//CsoFwhgc+60JDTF50h9v5x4gL0yDDwawQntsV+EWnzaHBREuvVvCQiAHcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751288156; c=relaxed/simple;
-	bh=bHZX5qUURlsW3IxRaCkLaJ2+tiqr+7lPA6WGkySRe1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r/WZuf5SI2TvObemHrRKe5uIMFz30haSdC0kMKg/i2FzQBgOaKboZdp9+e7WoUfOsuUVmFNZV10guzZuRBCYIrVEo5jqPqOqAbSL4zdgAzRXRLufTBKI9eu1THbezqpAvCu++FDOP7zB/QcluwzDSF42eLQDwIgO5lbJWvMNCaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtPNBY6w; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1751289918; c=relaxed/simple;
+	bh=TffP+w81DxB5niBeiLByBFsIvqBvxoimOPYobrDCqgU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KREOe3DE2RxgrExZaS87ZvxD+whci7fcrwxN8RkgEZEtWCtb4wMB/s6iIEAQYOmR2dKkwdDhl5NhoyLISq1qj2O9FIft1iksNO5s+11XgBp2/qPUufrR8FxI1v0fmmykAWKFEC8kjrxYzzjQTKyu5Lq6aUF6l2P/QAzo28Kn6Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cXTnc73z; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtPNBY6w"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45363645a8eso29984615e9.1;
-        Mon, 30 Jun 2025 05:55:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXTnc73z"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45310223677so14653385e9.0;
+        Mon, 30 Jun 2025 06:25:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751288153; x=1751892953; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gVSrYd0eHTox1L8UaY8v5yKbEudXIuXJECQmzXWMQ4w=;
-        b=MtPNBY6wZh3X7JBQ+ZR8fAuISndIfFUX320WymL6MvDJ6S8MDFR8iAkdffNLDJu+j0
-         811a9d+dm838CXs+AAsLoioIAQzcIrSHTPwQmNWXDefOSNcVn0t+KbbRcU8fXLO9HxEb
-         2wBIokHba/M7CQAyhHFnjE82fHlwLqETWJeMimYr+WitE2l1LOW54QuCdA1P4gFyGfQN
-         T/l+G5d90OITA5iDBs7GJdb8CWvkR7jE2Qepjpvn+SoDN4pCjC2VFoMnsvxxOMJQXA3D
-         cCeJljuvfq/zx52gCPv+aDLnQFDbxQYvEfXo530Y1wMjReetC0+j/+v8xkNZDklR7iaZ
-         njpg==
+        d=gmail.com; s=20230601; t=1751289914; x=1751894714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NWKZbXXt1MGNSGBpHIFvcLow+BMCD6HbMM0tW8Kxqq4=;
+        b=cXTnc73zEUp7SbfknkqjNg1cArKH0mFFZLJL5/teh+YjDhvNeFIc+CfdIWpQIv/ACS
+         9jiaHwKxEXufblMcs8SeeOJX6XJ2niEfMNz6jxJzmTOjobB4Pw1xLvaqu2bLN6bSTXZu
+         9lwRcOXPJSeJWgqWa2hFb2uWZiC1/urFrAF95dKeGZoaOlOVMqVoIsOFE6toFlz+7q/d
+         zcD0Dzw21M7A1PuGBn4f7dRGaAtOqzVei1otTTobPUNNFjmw0PBfAjCzpz4+ksfZBw7e
+         +GaPYNAw/5fcoIW3ZgVgOL2lnYlTVvF9qGbsvNH4fiwXmdG7nNo+1Eea5xgzGFKltkf8
+         egUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751288153; x=1751892953;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gVSrYd0eHTox1L8UaY8v5yKbEudXIuXJECQmzXWMQ4w=;
-        b=fauQK0scIYFBFAWXtzsRzJ+6JsoATw59phmdRDOxJ5etLloUT8mIVYsSkol3fetCBW
-         O2IHIboIbYqiY6hOkEhBNsb6QGpUgbbzQhX/p4DycWncMJnChMvZiLyqc6YS9AWZgz4l
-         7PNZpgQ3H1jxg8sTerC3OuiprEuhT39YXYQpc/1Halc7KvcREHFrsoFQxsJRaiE8/mYT
-         2+lJ7HLxroNEWqPl3w1z+xARagO8R/4hkLeAP9ZXQo2ZroFKuSgv2r3bQsp0Fb47ibLK
-         q2ceK0Lo2gJ7Pp+RBStf45n4We2SM8eSrH1DXX+rRMCz3AzwmqFv74c2Ve4mrHNi3wu0
-         LiDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmuTkJBK4U8SFZ9f3it6GF8+qhHaCiFVofkR8rR/pNPYnyjQ1OcgE0c6MlPsU2j2Xj/D6KAGXj5n9dpbRFlcvK@vger.kernel.org, AJvYcCXVy1Q2MAdh/LpLv+hSwy8qyiZA79UlanQwvnE6SgCT/JHmO7C/N8zBb5pcQYJenHhXQsA=@vger.kernel.org, AJvYcCXu+AVqLgK5Iqzo5fJvbIZbYN7FaMOi4OSJ71zM0rQjBCbVPeUpeTHqT4RqEMEeFRu7y9Y4SvRiSgYweY2N@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2YMHkE0nXLwbCkRVyyecikeLfxmYO33SUFweq1i+NiC5KFv0g
-	HelTPfFeMxzhgRPTv1r522OUdN49tpqU6ScuKDr7c0cVHpUOL8z1p4jj
-X-Gm-Gg: ASbGncu7WzQWc5sbOhuw+PeBxWj9GlCPnxGevAp+wr1UTSIz3Fp8IwhhIWYmViLFetu
-	oR3FNNLRzKeh/t8LHbrbuB2OkOfHo0zUg11gXpIQjQW4p8hoAOmgZ9G9eTd8jZcp3adfS2jNVAJ
-	TLbJ0l6lYKsEFjfL5dKgQp2TCbpbzKbZWTI4RtO4GMr1PdekfrxPT8Qul1raUbKkF0te1lkXRjQ
-	ykpoq5UpOxPHoaLQrin2iKP42DwMDqN1DHFw87WOGlPHjJuT/sNsNzjzH827w6r6R31QlupXV7y
-	MebqZXtob8foK9Z2kzONlJMj1A85GYmJBCQ6omW+WqGxodQM5MeSvExMpwoj
-X-Google-Smtp-Source: AGHT+IFaYxlSF3efqtSuCLhqTE4oLLoRUny0RrlBdQ3yughk2Xn2MJDUHgEguqJrqhJQ9gZGcEIebA==
-X-Received: by 2002:a05:600c:a11b:b0:453:5d8d:d1b8 with SMTP id 5b1f17b1804b1-4538ee712f5mr108494835e9.30.1751288152509;
-        Mon, 30 Jun 2025 05:55:52 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4538234b1b9sm162196265e9.11.2025.06.30.05.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Jun 2025 05:55:51 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/bpf: Fix spelling mistake "subtration" -> "subtraction"
-Date: Mon, 30 Jun 2025 13:55:28 +0100
-Message-ID: <20250630125528.563077-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1751289914; x=1751894714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NWKZbXXt1MGNSGBpHIFvcLow+BMCD6HbMM0tW8Kxqq4=;
+        b=a7wJu9XYy3v5kTVQuw0tyBRka5KvWG8iWs3PrwBDiqgwNITU1oxqPFgb/LSUMfVvcl
+         Mna+QyU3UYCqWSubPImcDll3bOF6xXQaitzaaGRDyUZJCzXdD1NOeoxQQf1NmpMCBAHe
+         V7V6U0eQPgskLFvCmO+Bsb4YZr9oGv/LJmH2WDtu7bv9gjIqwNXoLea9h82d4Xh/Jmmo
+         brpdA/BhKkX1ib4T0Az9c6bW0HlTPzeT1OfUWUkTDextO6NX1n85y1Ctn8aI07Ft3eA8
+         EFbzntazFJ2ZoHlBeKv9LfbdBVzsLthktQ3bmHhkYkIa9L7/Y+RGHpC9nE2PsmA65ifn
+         EvXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZakwrP2N6FLhVncOmdeA3RXmvx0CdccwbmayTIX5ICxMgbGBpAMG9d+EmSbHCTJl1Xj2uysPALP2c/UrKtHxMKKU=@vger.kernel.org, AJvYcCVbZCRNoSdFJoGa//A6VBb3pikOBlMfyJondfYVy6Gbhnt1pgLoYzyClwgBvxT19/rwQS78QoSos14jwiCcYi8=@vger.kernel.org, AJvYcCVoajACNJGkCmWnEoMZoB6uuyKxQ9l9woZyw/J0Pjce3t8GOUdrVzgppwFhJwP8Q24rV88x6QmP@vger.kernel.org, AJvYcCXtyko232lOrPG2V9IFIFw1y++6WzJQ48I2T7qkJmNT3xvgd2vQ3cmocA7veBBlVxeVCeLLOUXWJTHeICJF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJI56+BJC6QOhReVyu16VjjAdhaWMBYGdQGRChCIjhTJTXRfrg
+	kSYuJtjfReEnhZOkwbFHkPJze9VsHD9UJrTid233w1/EMDrRF1OA3uiOFJc6hjaqpBx9hhj0mNa
+	XZJz7LDfNpAgrA6MqpgU8nIVr+3HdXZ0=
+X-Gm-Gg: ASbGncsoAEVZ6aiI+9/0ndY/zWUjOhKfTChujRd1feUGFubf1w4n0oGqOljGLoovepM
+	QJq2N4I1oUHsUODM9xalOpvpsBpcVFE3PJ1KC5q2prXUXkQqhYAWwOyq63X22kesEReYCUxsAfe
+	4VAkndphLGkj2FUPQLmaALjdEdBAVXSAsPNGS6BrX6AICK51+I2SjQM1DFThTxHCWKYcGQGav0O
+	4ZM
+X-Google-Smtp-Source: AGHT+IFJhsc5t2uBwX2uCe+JjDOKXfz0Y3S1DAIOkSjxWGgWlR02wfCerykLJS95RwiAdJtKehs5JUx/meb8rEBNuUw=
+X-Received: by 2002:adf:9dce:0:b0:3a4:d6ed:8e00 with SMTP id
+ ffacd0b85a97d-3a8fdeffa19mr10860740f8f.33.1751289913849; Mon, 30 Jun 2025
+ 06:25:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250627134453.51780-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20250627134453.51780-1-lukas.bulwahn@redhat.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 30 Jun 2025 14:24:47 +0100
+X-Gm-Features: Ac12FXzV_qzYoXPqGOfI-Yhjot17NKU3UoJJ-NkU3K-yZ0MLwXM8JBMg1AWrCMo
+Message-ID: <CA+V-a8sD8CjQEatvo-3PRk6Z8Sw=Gig4J_HohmB7qXp6BaxTWA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry after renaming rzv2h-gbeth dtb
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are spelling mistakes in description text. Fix these.
+On Fri, Jun 27, 2025 at 2:45=E2=80=AFPM Lukas Bulwahn <lbulwahn@redhat.com>=
+ wrote:
+>
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>
+> Commit d53320aeef18 ("dt-bindings: net: Rename
+> renesas,r9a09g057-gbeth.yaml") renames the net devicetree binding
+> renesas,r9a09g057-gbeth.yaml to renesas,rzv2h-gbeth.yaml, but misses to
+> adjust the file entry in the RENESAS RZ/V2H(P) DWMAC GBETH GLUE LAYER
+> DRIVER section in MAINTAINERS.
+>
+> Adjust the file entry after this file renaming.
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/bpf/progs/verifier_bounds.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Cheers,
+Prabhakar
 
-diff --git a/tools/testing/selftests/bpf/progs/verifier_bounds.c b/tools/testing/selftests/bpf/progs/verifier_bounds.c
-index e52a24e15b34..6f986ae5085e 100644
---- a/tools/testing/selftests/bpf/progs/verifier_bounds.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_bounds.c
-@@ -1474,7 +1474,7 @@ __naked void sub64_full_overflow(void)
- }
- 
- SEC("socket")
--__description("64-bit subtration, partial overflow, result in unbounded reg")
-+__description("64-bit subtraction, partial overflow, result in unbounded reg")
- __success __log_level(2)
- __msg("3: (1f) r3 -= r2 {{.*}} R3_w=scalar()")
- __retval(0)
-@@ -1514,7 +1514,7 @@ __naked void sub32_full_overflow(void)
- }
- 
- SEC("socket")
--__description("32-bit subtration, partial overflow, result in unbounded u32 bounds")
-+__description("32-bit subtraction, partial overflow, result in unbounded u32 bounds")
- __success __log_level(2)
- __msg("3: (1c) w3 -= w2 {{.*}} R3_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))")
- __retval(0)
--- 
-2.50.0
-
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d635369a4f6c..bff9651a9a94 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21271,7 +21271,7 @@ M:      Lad Prabhakar <prabhakar.mahadev-lad.rj@b=
+p.renesas.com>
+>  L:     netdev@vger.kernel.org
+>  L:     linux-renesas-soc@vger.kernel.org
+>  S:     Maintained
+> -F:     Documentation/devicetree/bindings/net/renesas,r9a09g057-gbeth.yam=
+l
+> +F:     Documentation/devicetree/bindings/net/renesas,rzv2h-gbeth.yaml
+>  F:     drivers/net/ethernet/stmicro/stmmac/dwmac-renesas-gbeth.c
+>
+>  RENESAS RZ/V2H(P) USB2PHY PORT RESET DRIVER
+> --
+> 2.50.0
+>
+>
