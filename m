@@ -1,113 +1,106 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7471DB125;
-	Mon, 30 Jun 2025 20:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A559223DFD
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 21:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751316248; cv=none; b=heIprK2W8xNYoZOMunPocend7zkoT/shgtQdGAECj6p46MhLo5qrzGOsG+4SYw/cBLb3MeYlEAMV5B27WQZkmU45yKhXBNWyBf5BqMdzi1Ar61BewJOYr//sSpYEzSomLwB+tbg++cVVWBp1J3N68PvbXXgQhzRCyvVjcDn7APE=
+	t=1751317319; cv=none; b=qKYg7O48MRGCtg2vOwnzuzT1oOoOt68VdnjdEApqIm7T21g7DknC8Ht1R3FdRkzdwx8V84ZuYVNLnaMqVLEObv4nq5G+pY/Iy6ah+Gr0YgT4zuO4lNsTpgH6qsFecX4VVIqbfJY/b/CEBQbFXfcTQkZFIVenYZLVC2ffM68r3F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751316248; c=relaxed/simple;
-	bh=fJ9Omhbf3gY9igah+t3oj+rQpDdG4CzeMw7aL4HSHHY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ufd7Oxlfomj5wjWPJV+IoWJBcw7SbVfitqrTnk9g4pEqHtxlbVdX1TKB5uMN71JTwOHq51//ZH2rBX0QQbm+46DFShCo6EFdu5buO4rYXD6+QkXF97teofVJXPywS0AEV/7O7vV1jBEv6IR76iG8Vd93X7HR4iZBDyvWweJ2G9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=rlAa3eTM; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1751317319; c=relaxed/simple;
+	bh=owKTpdGWy/BM62JhQaU1xcUh1V2zGtOHCnSLni9e7Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jnp3WnQIyIO/ziDxXEo7zxGjCniPrw5SOtBQB+D1Txg0nDrny2FBxRENIu3MFkqV2x2nqZ0+IScpUoODzJnWQkbvTUZH4fkly6f4UR7TSlLIrzUgvXQdVqClZ7yCS5kN+dsXCw4cKuXQfl4rUjQwOmmLauSQuxxr2kOqyvaRGSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TOqinX38; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="rlAa3eTM"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55UIER08016451;
-	Mon, 30 Jun 2025 22:43:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=selector1; bh=AQKCJ04siddRBG+IxS9aOk0K
-	rq1ez5qBC2vqbCHaW2I=; b=rlAa3eTMj2MhjAVRNMno0xIZa0U3bhDxcRktwj2T
-	Lze+UVuHk/rTCuDlw1OXP/+EiKk3XQjXnpMT/KGt9ZP71emNkHlW9dhX5P3D1d1F
-	r5pCLMbQi3vxP4djavoTZyxCOf02qJR8tJxOGFmyHfn3NE4dk/ykFR1BxKEOJYU5
-	RgAlViTXOpDwKq/uQO9+3W/6jKjLL6zJlteBJzk+RHaELSgLQIMZH/aGl6heW5mM
-	aMEhD1IYLqmar40BzAojWG6H+Fx24NVtKCUZ2p+CbTyLNg+wHcXQcUIaP/nn4oMK
-	cF03K7AQWkiHVuzA1A+tJAse+2jEn/fhUQ+waz8J0RxN8g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47j5tm1j7n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Jun 2025 22:43:52 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B127F40055;
-	Mon, 30 Jun 2025 22:42:56 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7F7A4B2BD0B;
-	Mon, 30 Jun 2025 22:42:26 +0200 (CEST)
-Received: from gnbcxd0016.gnb.st.com (10.130.77.119) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Jun
- 2025 22:42:26 +0200
-Date: Mon, 30 Jun 2025 22:42:20 +0200
-From: Alain Volmat <alain.volmat@foss.st.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
-        Mark
- Brown <broonie@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] spi: stm32: delete stray tabs in
- stm32h7_spi_data_idleness()
-Message-ID: <20250630204220.GA522704@gnbcxd0016.gnb.st.com>
-References: <2033b9fa-7b0f-4617-b94e-7b0a51c5c4b1@sabinyo.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TOqinX38"
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7382ffcb373so2617011a34.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 14:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751317317; x=1751922117; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tr8kLcrZ02mzOFc6KZwH1AqdkxuW1grOlZ5WPPwFD6Y=;
+        b=TOqinX38Lw6zVRNkaHEBX4hqPkmEKh6wa48gsz/oTSO/Tw5R5SR/FnqV8dddMa5JQT
+         IHjlK/pS4kkeQKp+kK/q3eacdg/v5N866794EN54yZyeK0Xx4eVcafYWdb1J9lPZTApa
+         ES8o/c9HbEDUHSBmPixv+DMFtLirWBS05BMwEfCU8Lq0VRNeHc3QHTPceACwK2zGAKkv
+         Dmen8r4sdIZm4oDYdC+nA4uW65fSprRVlaEveO6eyaWbcvGa1m/Oww4RsFV3qIr2Tnm+
+         7UR+4RTGlfcexcQNT+uuawcB6g5msdluXEq8tLFxCSqEc18rKDoYpZKHHv2SxkUwLN5a
+         qbTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751317317; x=1751922117;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tr8kLcrZ02mzOFc6KZwH1AqdkxuW1grOlZ5WPPwFD6Y=;
+        b=p0spaunhLXEdWkrX3RC7lWhBeAU8Cj5xbILQ+d8ZMmrUJBT2f9pBwS1BGksND6y8p4
+         hGXDh8J3u7HkUQlxjNo24SpY/IXLJLnGhKmrc7l1skf30ATnEDKcxboJ0CZ65FX3Hf+P
+         vZQUV0MPTSYm25o2wgfSDa6kh8VqwWW/TOnm+GBZSa75CqgGuN5UH0tyoRx077F1Y9CM
+         0S7olSiR7TeVPjfZWeo/a7GSjaFjUFD4ttjDl87OkeaguwvWfE0z6+Mnd4GNx7B4of3F
+         t08gajTV1ZLv2CQdS6UL5CtH0S4A91tiXtkb/ssp68sgH9ly87Q6JR+PlLsycmn5b1DG
+         QDXg==
+X-Gm-Message-State: AOJu0YxqAPwYx6ZXwcB/DcFFM5oYF+9lLaQRlLfhxpJiRy8bjKrOucNn
+	+fWqBoxeEcJP3XiikHHrfVOX0nk4XBJzfs6BYd7ienT4q82ht9zh6FN66XY+i4E9Fw4=
+X-Gm-Gg: ASbGncvX9SEM0ZbeX0MME5Dzn5f5lF7hhWaewe+GR7qfUnFgrfDlEL78NSRy806hRmp
+	PoJof8xOeP/xRf9rhCCVvREWVpfz9Wm+hiV8wpSOHK0OpaqdOf0wrxNvOVGC66HKJ0NLlRvxWb8
+	hxxOqPc+++911ncxgpIYiW6PV3IYMYl+7Xa9/Pohx7/xEwVsHVXcZ0xwqkYCMtvJQtXsVDFlK+1
+	uaTH6JzOCzf3pZpmomrYZoMmwJk+m/AlCIRjwXHt+XPdvCh+Wj8Jbmz7LUVoHwCVXFM+/QFXae8
+	Zw0fi5lXUP5chinKZ0Qa9M31yHtmWlae1TA3yoEfrFAFT6xVRB6LckFGxpavEfCNdkEh
+X-Google-Smtp-Source: AGHT+IEm405H8d92bRIpWIdXichYQ9jzYsxApHl6nPtIawE1DTSaOn4VgBqiYsSvvGzErytd7sZgcw==
+X-Received: by 2002:a05:6830:8009:b0:727:3b06:112 with SMTP id 46e09a7af769-73afc61553fmr7086582a34.14.1751317316942;
+        Mon, 30 Jun 2025 14:01:56 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:fb67:363d:328:e253])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73afb0069f4sm1816740a34.19.2025.06.30.14.01.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 14:01:56 -0700 (PDT)
+Date: Tue, 1 Jul 2025 00:01:54 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: "Robert P. J. Day" <rpjday@crashcourse.ca>
+Cc: Kernel Janitors List <kernel-janitors@vger.kernel.org>,
+	Lukas Bulwahn <lbulwahn@redhat.com>
+Subject: Re: First pass at janitorial kernel cleanup scripts
+Message-ID: <f4f8cf3e-cbf3-4835-ba02-f5414f772a89@suswa.mountain>
+References: <8c4e5d62-7980-bd16-df17-caf76862d4f5@crashcourse.ca>
+ <bc14c7e7-1188-4330-bc0b-cb0a60568cc1@suswa.mountain>
+ <be53fc9d-529f-50c3-a3b1-f3caba54aad9@crashcourse.ca>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2033b9fa-7b0f-4617-b94e-7b0a51c5c4b1@sabinyo.mountain>
-X-Disclaimer: ce message est personnel / this message is private
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-06-30_04,2025-06-27_01,2025-03-28_01
+In-Reply-To: <be53fc9d-529f-50c3-a3b1-f3caba54aad9@crashcourse.ca>
 
-Hi Dan,
-
-Thanks for this patch. Indeed.
-
-On Mon, Jun 30, 2025 at 02:35:25PM -0500, Dan Carpenter wrote:
-> These lines were indented one tab more than they should be.  Delete
-> the stray tabs.
+On Mon, Jun 30, 2025 at 04:43:38PM -0400, Robert P. J. Day wrote:
+> > >   - are there header files that are never included anymore?
+> >
+> > That's a good idea.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/spi/spi-stm32.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>   I have a script that tracks down exactly that sort of thing. I'm
+> just cleaning that up now. There seems to still be a fair bit of that.
+> As a representative example, there is a header file in the kernel
+> source tree:
 > 
-> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-> index 3d20f09f1ae7..afb54198bde7 100644
-> --- a/drivers/spi/spi-stm32.c
-> +++ b/drivers/spi/spi-stm32.c
-> @@ -1895,8 +1895,8 @@ static void stm32h7_spi_data_idleness(struct stm32_spi *spi, struct spi_transfer
->  		if (spi_delay_ns) {
->  			dev_warn(spi->dev, "Overriding st,spi-midi-ns with word_delay_ns %d\n",
->  				 spi_delay_ns);
-> -				spi->cur_midi = spi_delay_ns;
-> -			}
-> +			spi->cur_midi = spi_delay_ns;
-> +		}
->  	} else {
->  		spi->cur_midi = spi_delay_ns;
->  	}
-
-Acked-by: Alain Volmat <alain.volmat@foss.st.com>
-
-Regards,
-Alain
-
-> -- 
-> 2.47.2
+>   ./sound/soc/amd/include/acp_2_2_enum.h
 > 
+> Does anything include it? Nope:
+> 
+>   $ grep -r acp_2_2_enum.h *
+>   $
+> 
+> So my scripts still identify plenty of potential cleanup.
+
+Yeah...  acp_2_2_enum.h was never used.  But AMD is the company I was
+thinking about which does some of these things to work around
+complications with legal.  There is a probably a reason for the header
+file to exist.
+
+I feel like we have to tie this with a commit the removed the last user.
+
+regards,
+dan carpenter
+
