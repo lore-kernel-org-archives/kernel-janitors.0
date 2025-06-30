@@ -1,79 +1,108 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B1A2AD2F
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 18:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8971D5ACE
+	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 19:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751306560; cv=none; b=gEyKQs6EYr3ED4Cz4w2TCs/iyAop4BSZNiDQiSteI3XJW26GxJawSrerS0GLnMsxE0BLpAEOyuyx/zlmAbZ4VttQ8t5nvDmpJ9+YP/y52ifVSLcPeqoQqxJY0Fp12SQxsgTd9vDt8SoIEvdH9jA6+Jv4VYh2I1su17ADC7orkQc=
+	t=1751312115; cv=none; b=U4TSnKZVkrpfRn7cNbc81Xa/U1L59BTtmou9FqoRx2D8M4EtZF7PDtRyxSCMHDZMKKhNN1dVv3EM4SXfdGj2D+/8tSrZBEwcp0/h6CVnuFPhE5Z8ix1hxU/dPUWmzQsUPOkOZ20Kw6xTHPiI53Vv+WnM80cY0n4xMB7XfN5bFlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751306560; c=relaxed/simple;
-	bh=0+CLXGCgE8D0X+K9NXLM04h7NIiiYXozcCItdgkODOI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=sIUy++MBbafymqTeVMHagrcKn/8H41aQyYL4HxOKdbVW5oOM9KLjqeiORyRIqDxLtPJM/+suRx0DQK81HcZKDT6cWxgwbDcotBO3AUx7kGiZWIeDbGJfKHQTQTTnLi3lAUFSQVCGW7YwDDwr3OKF7ZjMZ5/XMMXWtnj1otK8fpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=HWoJjyYm; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1751312115; c=relaxed/simple;
+	bh=qXtzQduWyG1nnENxyFhaOaAmJ0Qdb9v1mRc0A8dmTZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ry1H7PVXTWmyAe/BCIjg8PCMTD2j+grZSe4dbNQM2KasJQT5fetTkTQm/AlxZ48JXTMEG0WSgXD3djzz8LzcmdvGrU62YKS7BjX+XLXTSI4aeR+R90t31QwEwvNTw5JHCHhUtaIRecW0/qniAR5XaLJwIwUORv8546fdbHKDipg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ni09lOP9; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="HWoJjyYm"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ppNkutg5I4QmUlZQ5OxY9Y75KfwEml8tT0Pa+9Rlvkk=; b=HWoJjyYmEtRz/b7ZpzcZ5KOAd0
-	uMWdhq5gbCA3Xq4atCMUj/DvVo6VfQ4q3sMe9+oxzWqBBDdwsIHtHrrIt2o4QFGgUL49Abljjlyy+
-	QZNIuQU57CBZujNb+PlEQowFitLp5oXRDh7LX0VwzDcI2iVRMGAkWqwZAp46cCZHgVbaAhjT/WfAY
-	8uQ7KqjqGVxjhQEXWUucQ13EtTiHO4q8+P+NDyPsk4/pGf5qlFJNj26/FP89ANy4YVbpG5WJAhryu
-	tpV4nvfr8ZFzh+eeyr6R6qnrmhMaRUOz0VnmxYlJGmggxYCYJG6xyomdeSim6153/x5ms1YvkDMF+
-	tzSpheBg==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:44910 helo=asus)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uWIpv-00000003ugS-1El2
-	for kernel-janitors@vger.kernel.org;
-	Mon, 30 Jun 2025 14:02:36 -0400
-Date: Mon, 30 Jun 2025 14:02:25 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: First pass at janitorial kernel cleanup scripts
-Message-ID: <8c4e5d62-7980-bd16-df17-caf76862d4f5@crashcourse.ca>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ni09lOP9"
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2ea58f008e9so2125563fac.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 12:35:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751312112; x=1751916912; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CXsvGPzWyN5t9Z1gnvLwhC+mL0nu2lbnJlTwsulGJGU=;
+        b=ni09lOP9WqOG72I7EUutge3hqeAKr/ONT9wPjgPqDuFihxEcrVV+ByqoR6m8qgrFnY
+         mj6cEzq8EAmtUz5Sf0N8VaS0rbAHAdyJnnHZXS7bkzv4Gt52+9ll3PAiVJrwSdLX4/EU
+         uKvcpIE4HT2BKhfKehD9Xr6AaKxWaHwwaukJ+1Y6PeaFY7pbS6SMNM3k6plh1ljRD5/+
+         C0DgUXTb2f+229rNesHsfiylKNgKEtbrV4P1/KMeIzSYWioYlMgcMh0WqxdxpDvYlX3F
+         iMITN5o3dQPclBAssLJgywiRTAQJt6j9h+JnN/yd/C3XZfU05+xEDEUCb07eKPUuIx7+
+         NjUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751312112; x=1751916912;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CXsvGPzWyN5t9Z1gnvLwhC+mL0nu2lbnJlTwsulGJGU=;
+        b=A1pRzlFsPTbprJ6OwD0ya2WLoU3/uDQML3vjDHjwMvFxxGIzGet3YhA/rkU/rxQeGq
+         tGtu56hNOsUsDLyKVuE9KOKCBrOYNwwozJt7vQW8qUzJbeAoKmL3oM9cN6uq6kdhFlGi
+         Ynbst3ruMLTB6quvgbpVi5lGfv3GOX7XZmAI8vzFTsdMdwbgmtSBPOW3FXfd0VYMqVed
+         kOfsdA2SCho3Z8J7lrE5Iwv9NkyWCZ6B06/ePmYpjH5h+/biFYQol9CZTuk8WEjX52Gu
+         v/ufvtHXFIFLwMyN/Jc+Y7T/ChLlg0ijC1dBVNtQpB2FXYZQBRI9xML9ufh9U0oFMEpb
+         PSsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMzt2M77Zq2KQrahGxkIpGPv9ofsoP+57V/Y27MpnfmpXGrlTBedUmcRBL1gT6uhnR6zPJACqSIMUef2gv7pk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJmfXwBJhvOefoF7D1grggLRPlOumBEq7uIs5BEGvscl0FptRb
+	yfgF3YJ0Hy/esWKpY7fDYNdI8uTp/erOcvyq8BZWADY8AqFrpZJwOuB1ECLg1e0zV3A=
+X-Gm-Gg: ASbGnctHI5ffRUb3p5lL0go6cKInPeHhP9bW4BoFM+Cx8gaIG1s6K6UjM7pdH/PIoiY
+	bHIqdXw6z1hr+sVdJzAJQNCL/KPx2FEUPhya3e1rIww9vvXaDCJB3qi73vXeHFTitk2tAPGJlVH
+	KjREImECMJHzvN9Wav3WUzfMCgjHUMAXCg9hJqUutArxZEEr9r2l/9mikhJfXHTeJkbJc6SOrf1
+	049GJJwrnzmaVU5jhOVdDkeNMlk4q8ZQKUxHHmMDinXCdp648BedQMTM/o+a3dd/BEiiO5oXQmu
+	nKsgLx5wOr/Nz5ZePIJ0rFiGN00aNPDf1mIYmRF2aeu0Uag1ot7Be6hkUxfiT4+Dakuw
+X-Google-Smtp-Source: AGHT+IHBfKAmf1lqnS2UU9I7hvaUGYYEqpqLvNDpx99U9Z8tqVzOU3X1JHzaOOJJorbDRYRHSHPO0A==
+X-Received: by 2002:a05:6870:f721:b0:2c3:1651:ca78 with SMTP id 586e51a60fabf-2efed4b5be6mr11398659fac.14.1751312111789;
+        Mon, 30 Jun 2025 12:35:11 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:49cc:1768:3819:b67])
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2efd50b1b2fsm2876906fac.32.2025.06.30.12.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jun 2025 12:35:11 -0700 (PDT)
+Date: Mon, 30 Jun 2025 14:35:09 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] pinctrl: rp1: silence uninitialized variable warning
+Message-ID: <748d256a-dc9d-4f85-aaa4-d480b7c4fd22@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+This default path could probably can't be reached but Smatch can't
+verify it so it complains that "arg" isn't initialized on this path.
 
-  As promised, I have the first small number of kernel cleanup scripts
-that should inspire some obvious janitorial work:
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+I didn't add a Fixes tag because this likely isn't a real bug.  Plus this
+code is very new so it doesn't need to be backported anyway.
 
-  https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup
+Also checkpatch complains:
 
-There will be more scripts coming, and a lot of them will address some
-rather obvious cleanup that relates to identifying leftover cruft that
-was overlooked when something was removed from the kernel -- things
-like:
+	WARNING: ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
 
-  - are there things being #defined and never referenced?
-  - are there things defined in Kconfig files that are never used,
-    or vice versa?
-  - are there header files that are never included anymore?
+But I left it that way so it's consistent with the other return in
+the function.  Maybe we should change both?
 
-  You get the idea. Anyway, peruse what's at that wiki page now and
-drop me a note if you have any thoughts for improvement.
+ drivers/pinctrl/pinctrl-rp1.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-rday
+diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
+index d300f28c52cd..f9cc6b28994c 100644
+--- a/drivers/pinctrl/pinctrl-rp1.c
++++ b/drivers/pinctrl/pinctrl-rp1.c
+@@ -1524,6 +1524,8 @@ static int rp1_pinconf_get(struct pinctrl_dev *pctldev, unsigned int offset,
+ 		case RP1_PAD_DRIVE_12MA:
+ 			arg = 12;
+ 			break;
++		default:
++			return -ENOTSUPP;
+ 		}
+ 		break;
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-- 
+2.47.2
+
