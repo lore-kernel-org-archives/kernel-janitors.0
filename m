@@ -1,78 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC4113774D;
-	Tue,  1 Jul 2025 20:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541BB306DB4;
+	Tue,  1 Jul 2025 22:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751402382; cv=none; b=ahMHpiB5WgZatUY+gWN3u+9OOKqqKb8LNyG8QIkz/vf/f6PpvmGEnnLKOl2YKjDOi+Gbk9TyE/kCftL27yDW6xjTAfsVw8yGKPuVjKA2O/+IG9VRLgjBOVEJhLyPZPJqOJaLFiejeAw2GpiEHtrdI1mB/Uta8oNwqi/l80IxQRg=
+	t=1751408150; cv=none; b=bq7R9xvPMR9jWEGhuJvnvfJcTWZJe0wpWLPS/zIiAkX57wN5SUmlSUhqE3JcQvG/muJsmLfAXwdmAVu8dmi9VNORWAfY+EyeXhrxdXv+2rUHKzVSeX4vASZ9H32UwJcwyZ5Mklj5GgjABcBE1m6KHhSaQvPuPzhP3uJxNrbMy5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751402382; c=relaxed/simple;
-	bh=ML4ZxeAfrYr5UuQmjcfVS0wK0k0uBdoFhk3hWEcsz6k=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=TPEwe2ZfO3ArgNjzEIEE7CPEkJWygzJIqZsVoRLBHpLroCoZNY3x0HK2DmHTyC1fKimNwMtFP/b8jrFKxWUwWW5TLWZfJlVHeIjnUlauq7nkVSZbid/DCUmi30PmWSOpCT5oUaJIg1O847PmO9rf6MT1oq7F/w7B1/JGkZTZ9zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvSIZO0K; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751408150; c=relaxed/simple;
+	bh=iOpsCmM3i8hcc7OLeyBEa+jHDCW59AkA6x9tZbiAt8M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MIdHQfBzjsv3sXN/jH4qr3GjbNKbiSRVsA6sFq/XZX//k0XWY4xkmeS35zlzVkY1AJk+tCPFQhz3E7jxgTQKZXDROOG35PkfVJUj8GKEDwbqRsTzD+st2hLVZ7UesYa/jggWBJ84OTZx+HFk8ljOUtPQ92oA8zahRzcDZJ3JCsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seT1dNqR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvSIZO0K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CA6C4CEEB;
-	Tue,  1 Jul 2025 20:39:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seT1dNqR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1633AC4CEEE;
+	Tue,  1 Jul 2025 22:15:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751402381;
-	bh=ML4ZxeAfrYr5UuQmjcfVS0wK0k0uBdoFhk3hWEcsz6k=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=OvSIZO0KMXCFDOPeZDjdZTxILlOQzfiWLj3KI5BEwTeaIX6XIZDlp79bXrf9a0Njs
-	 9dxOUfMRSsIfQmdR4RSwUgZs/8652U0uNygcJ6gq92VN2GPZ7CXGVpmC8hmPqfTu91
-	 cqPYMvc4uJ74gG4EWah9ofCK11wQJoYi67wa7iV5Fyue7xCiAqIVszR1eoO/SsK4/W
-	 wxh6zfc5Mwifv22fbrVlM7PmljxNkPI17Oaa1Y8xy0Q5g8v4+S+n8tom8WjzVHliE8
-	 n6m/XPas6SFRtW4ZntPAWx/FvQmti/cgo6W3Jlf9KS5lsbZmGqjm5FZXSGtL1BMfI/
-	 R2m9omFDkLPiw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE54383B273;
-	Tue,  1 Jul 2025 20:40:07 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1751408149;
+	bh=iOpsCmM3i8hcc7OLeyBEa+jHDCW59AkA6x9tZbiAt8M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=seT1dNqR/7PMoij3HFmGGEQKos1aaO23CoQRISQ33RsrgWD+2cZKJL0uqmdjHcRCy
+	 iX6M4ToLx7QfCLXmKVRcyErYw5qJY8W47yUuOpnisYPXG/V3H6PxRGFC+0CABvjNlV
+	 HauyL3osB8xSqwQdkm0z8WDm4E0YTuwz0EwdgeehG0DzjM8tiNTNLA8HAg8lia0yAN
+	 o3+erFF0cdbwCgJ/AyZZaDJcIYTpwg7qjI4C8yMMR7QvpFXEtP4BCBENkurtfEmDeb
+	 rre1PVilqChDuNpnYRkLifBzKkqtlHqlREImet2ivmKZcHI72vfXUit+wTj5fQeJ33
+	 gB2tqfcLD5ICA==
+From: Mark Brown <broonie@kernel.org>
+To: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Alain Volmat <alain.volmat@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-spi@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <2033b9fa-7b0f-4617-b94e-7b0a51c5c4b1@sabinyo.mountain>
+References: <2033b9fa-7b0f-4617-b94e-7b0a51c5c4b1@sabinyo.mountain>
+Subject: Re: [PATCH] spi: stm32: delete stray tabs in
+ stm32h7_spi_data_idleness()
+Message-Id: <175140814783.710092.4550416995647009913.b4-ty@kernel.org>
+Date: Tue, 01 Jul 2025 23:15:47 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH][next] selftests/bpf: Fix spelling mistake "subtration" ->
- "subtraction"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175140240652.112233.4529950579954373113.git-patchwork-notify@kernel.org>
-Date: Tue, 01 Jul 2025 20:40:06 +0000
-References: <20250630125528.563077-1-colin.i.king@gmail.com>
-In-Reply-To: <20250630125528.563077-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Andrii Nakryiko <andrii@kernel.org>:
-
-On Mon, 30 Jun 2025 13:55:28 +0100 you wrote:
-> There are spelling mistakes in description text. Fix these.
+On Mon, 30 Jun 2025 14:35:25 -0500, Dan Carpenter wrote:
+> These lines were indented one tab more than they should be.  Delete
+> the stray tabs.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/bpf/progs/verifier_bounds.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Here is the summary with links:
-  - [next] selftests/bpf: Fix spelling mistake "subtration" -> "subtraction"
-    https://git.kernel.org/bpf/bpf-next/c/1230be820981
+Applied to
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
+Thanks!
+
+[1/1] spi: stm32: delete stray tabs in stm32h7_spi_data_idleness()
+      commit: 244bc18e5f1875401a4af87d2eae3f9376d9d720
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
