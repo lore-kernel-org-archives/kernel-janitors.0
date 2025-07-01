@@ -1,70 +1,71 @@
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E68E274B41
-	for <kernel-janitors@vger.kernel.org>; Tue,  1 Jul 2025 18:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D254C27FB0E
+	for <kernel-janitors@vger.kernel.org>; Tue,  1 Jul 2025 19:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751393327; cv=none; b=QWQ5F3pmZnLWQfbEHPjHieNH13ox6mIs2eGmrMTT6ZUIS5XBJMKsiLV9nNtCo0K/F+/UfW+N259V2ylseEZ5wPfoDj1/uYNkQE47P3/ZRHdUokGimBeUy1GK9UCT2ZZREuxvcS4G5ah49wmSf/sMC9Nz2a7SVlKySNRYRzlBMEo=
+	t=1751396655; cv=none; b=ke520XFz4SxrsAWOCGMn4Gx0OaVNvhrUxyfoXuN7u+8TbLTUdBETxh89U/PSEbe/J1uW0ACMcmfFpUWEKRoLI/CYuQZax+pgQslH4vKHBQtPJcxaPYpyRw2shhe6R5hZVtTXUzcbjrhdSe5CUqkRRBdW3Y9ouJxAPCn7T/QfUJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751393327; c=relaxed/simple;
-	bh=sqEYp+GJsr3c1ZoP5ucjimUiASFNFvNEkUK9S5l3ld8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S89uVHxbArHqZHz8c7sAlkT0J0xT7jUdc1fEXXcOu4LShPjbOwIat2ue2yQe8CVttcGUTpkl6dWY9VrG0n4MnakXk3HdxwcwnQeiauDtbwqPFxXd2pZ3o75jtk8RMzxbR9EE8cgoW8lxrDQmP6hBFJkvO24foLFyw5bS0UU0SPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rbsa18Jm; arc=none smtp.client-ip=209.85.160.46
+	s=arc-20240116; t=1751396655; c=relaxed/simple;
+	bh=tdMUAe5SXwK2+HqDWwEF+ff83QQq+x5NhkU7fbGpGLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GgMEjJoF5rIITsB4Yf4UGsU4WyE7a2V+fxD8JrkCBXuzZSXcDzJpYv8BVXcWjnsO9Nm2wT0neWOdEgkqOSONecr7syE8B7xEF29DDRhrvGhUTXoheR8SkqLxc1vd9Pgxn59J1Q1yAaySTsLFjbwMG4JHO/SdkWHLdKP3kzVDLUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wi4IbO0e; arc=none smtp.client-ip=209.85.160.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rbsa18Jm"
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2eb5cbe41e1so4218211fac.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 01 Jul 2025 11:08:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wi4IbO0e"
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2ea58f008e9so3051839fac.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 01 Jul 2025 12:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751393324; x=1751998124; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hmBWeUFsja8XgEI6sHaSHNOJGBLbPXCjjSjO2QYqYio=;
-        b=rbsa18JmMLVAQH6I2hhItZdAB37hiGg5WFfzohoehpDmRcH7khRaTH9SvhvDLv4d4x
-         FULA7sfNFgykjR410b14rBRTs5Rn8Oqf1uhpBmT+z/JbSxxqERgnOYbdZboln/sDR7vw
-         geoLwW8qyJqsbtww8t0xSyqFQw2FPboKiEx/wm0soH1xFTsqroAgp4gtRxtUoQzzIb8L
-         Sry/FxEY86oUUyC+C5+RUD4Wu+c43s3jsD7XDyNbss0FtfdFPv9K5d6HAtIUSt1NJFUg
-         X1v1uHXa3gP2z/IdR3P+jMwAh557n9zFyX0aPa3urOhSy2WY4sMh5z12edg15Vb9pfWq
-         MjYg==
+        d=linaro.org; s=google; t=1751396653; x=1752001453; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KEK3EncUVMtlip1R7eb2kLN0bNbNbxBTXXQymbbA6E8=;
+        b=Wi4IbO0eVmzFTdq6qgZqyLfx9Ac4KETYqVo7987Vy11SmbdhcJX675R9C+3to902gm
+         cdMJncn1FV1alw8ei9DWLUDlq5mdmThUhgcs7k5ufn24FjYuvjijDsNfw04jHW3/TQ9j
+         hTG+McyFBZs5S7EVGhRKR6CrI4Al0xdd+2aENXjnfIsANYF+LaJpJQW4IgG3bGAXDx8c
+         smjbOtNj9VfiqyVbXyJyaXq47yamzLMPjyVc9Yh9ZgQKPNTQf52eWjdLssR/BuQ2Wkx4
+         dHAKX9HONsow38l0z379caXDINRDfyutp6DxiMNBCMrXKQ56RLvgIs0bysBImNEPNt07
+         +VCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751393324; x=1751998124;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hmBWeUFsja8XgEI6sHaSHNOJGBLbPXCjjSjO2QYqYio=;
-        b=KiRym8O6GGgq466xJ0cVIViXl7UI0SEBxJCKEebAvALLPaTNq7gfiuHZn/He8VZmjf
-         H32thEpDJVaj2dTM+l9r+r4FwFE9/JYlrFBk9KVcWHWYgNp0Rnij/x9Jn4BCWtg41GBv
-         uPW5kYY0HKSZZaztXsjGI+h2/S13CjIWz2/U/HDdHwK+n9hPtQdeLEm7lSzZYLso9IoR
-         YvuDslfeg6HVLBzwroa+eYLTuzVEQiOi7fG93WFzyT8GCAhcq7jrxaL3xr/91HsB4XAE
-         ycEBEByQcmFXUtNmGufgJhEI6tKEEuyfNYzk4SEtrl/hQUul0IN39+FWLfmMTUXTpDEI
-         zzzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPJGV0Eb2k8BZ9Vi4gZ2/UgFu2QLeHC/yyvY11yomPLt+LiLkdv1BdrA0vMfrH2hXJsUtE4NgsWgTZgaEgEO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg5zdplOAhCoT9jXqQ3pAwH62OVdhOJquyO5FMon/OXjxmgEPn
-	6CyOYYRyMjWkG/nzTXY52Av6gIyVZ6HbYZPC2yfnQvyESELfdJSsA4LQ9Q61K11aLeQ=
-X-Gm-Gg: ASbGncvLkQ6Qs8bcOTa7FOC4ZODyGzm6aLtJDucks1QyY9hV/mJd2ni74+m4EGC212i
-	7jtx1OJ8EP65RyAzmDED31iZ52++mw9XI4pEnUw/HglbBFX92QuicATL+SDm4j4DWpeUO2RpF0j
-	3UgjclQaw+mmLTWLpnpHyVbp84AQR/mRBrHchBVKg3EC5PAfahXTDXdiwC+foqZogLWZlPguFj9
-	nlJhtG8hmaV21XyDqgNAhB1WaqAKhZCSfvuOZGbWtn1cnu32MLK2P/erq62FlKKubr4sYmI1NrH
-	xERhrSN1cwG9/U2vZdlUPNqJCIpJV8hqEUJ89VF3ZDkN9TTd4YIg4vGlKaOHIGhgsaGgrw==
-X-Google-Smtp-Source: AGHT+IFUgAn7ZgG0vftEAU4ScpIylq4sfDSaoAFlTtYAYDN+URoGNI2riucbgBsxkY19iHfA6fkTRw==
-X-Received: by 2002:a05:6870:479c:b0:2ef:3e4f:de9d with SMTP id 586e51a60fabf-2efed525468mr12436176fac.17.1751393324568;
-        Tue, 01 Jul 2025 11:08:44 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:d663:8de8:cafb:14e3])
-        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2efd512d709sm3388146fac.43.2025.07.01.11.08.43
+        d=1e100.net; s=20230601; t=1751396653; x=1752001453;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KEK3EncUVMtlip1R7eb2kLN0bNbNbxBTXXQymbbA6E8=;
+        b=Idpo11rUqfr5qLTeAhRy04JGkE8GvNQQFfL2qkKfqX9J+A2NlcOwJN55SO4fvc1GH5
+         XoDNpJuz4nH0786qX5hQYuIZjygwobLmfgpCNW2Df0/P0GcRpiFwzwVcoXp2lC1k4hpX
+         6ekpGPC0yTGtGXIzvUQP2k4jW49vWE9uIRnL2ymCmI2CigsjKpvJl7AOGHFb9CskAZoO
+         mpWdRGFUQ8mvZKjJgeHyV8ykQphGtvIbuOtCiojWHPrCL1e5WekLxzjNxiDfs1Yw9f4+
+         hFv7VptGhsqLqkhhHi/0/aTn4HM2MM9gm9tQHa7A+ZTWvRW3HlpArvkwDrEHJEHLxVuw
+         cdkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoYfDxI8IlwVw7F0C/OMsCsDNUFmVDw8aysTQYl/MF+4ULfelMCv3gFdOAw8jRfKhhSxeIBaYUjflmONNROEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ/hGUznRRz9kZLKdqKOM3sXwa0nUsJLemft8cfu1ih7CAFgXf
+	KKmst6gbC6x+kXelpUrAFBqfjnpkT2pwzDhWvjcXfUwT4PGwvc9iNZ/9BQSLPQT8mAwSBsXZqnO
+	TWkmW9jY=
+X-Gm-Gg: ASbGncvi9KkYSakbHFRG3CPfQ+FLXIzTf1cNwqGcEocKIds3tzskisLxv04IvE4Vbfn
+	qrh8ICtNrlbKOX0hjRo8RTQEiEAdCdlNAVT8M1tSlwSPC5P4BrQUtXXLDNdedBnMLqs+ubJ+mTH
+	GsN9sfP5ZbkdziRWgn7mjC9pc88YYjsYaFXzSHVIGt/tS4dFJtGHuFqbicOSHcRDLEkqcXIiGvJ
+	I1yFMi+deeC6O6o5nObtuUerl+OxA8ol7SliIm+fN+V+7r/t/e1gYZrQa1gXbLiAEuBwhizXXNb
+	qifhabr4RUozm3BnHDK1iKueZKsm0TT1GtCvo1AeWkkX4tQqc94mh/yQXU2J3n+ix0iwKA==
+X-Google-Smtp-Source: AGHT+IHDxUr1xC3O4B3KUwXveX27ECu3+OaL0Y+zUBHu9uWrNi0sz8Q+GhGn5hs1DTYqhbsigADOQg==
+X-Received: by 2002:a05:6870:8614:b0:2e9:e2e6:4a20 with SMTP id 586e51a60fabf-2efed4b8854mr12938843fac.16.1751396652741;
+        Tue, 01 Jul 2025 12:04:12 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:8ebc:82eb:65f7:565e])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2efd4ea5a35sm3456703fac.2.2025.07.01.12.04.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Jul 2025 11:08:43 -0700 (PDT)
-Date: Tue, 1 Jul 2025 13:08:42 -0500
+        Tue, 01 Jul 2025 12:04:12 -0700 (PDT)
+Date: Tue, 1 Jul 2025 22:04:10 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jiasheng Jiang <jiasheng@iscas.ac.cn>
-Cc: Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] wifi: iwlwifi: Fix error code in iwl_op_mode_dvm_start()
-Message-ID: <a7a1cd2c-ce01-461a-9afd-dbe535f8df01@sabinyo.mountain>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: rp1: silence uninitialized variable warning
+Message-ID: <496f817d-802a-4889-a7dd-155d51895d16@suswa.mountain>
+References: <748d256a-dc9d-4f85-aaa4-d480b7c4fd22@sabinyo.mountain>
+ <aGOqmd5cvCeBjWMI@apocalypse>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -73,33 +74,38 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <aGOqmd5cvCeBjWMI@apocalypse>
 
-Preserve the error code if iwl_setup_deferred_work() fails.  The current
-code returns ERR_PTR(0) (which is NULL) on this path.  I believe the
-missing error code potentially leads to a use after free involving
-debugfs.
+On Tue, Jul 01, 2025 at 11:30:01AM +0200, Andrea della Porta wrote:
+> We really can't get rid of that warning by replacing ENOTSUPP with
+> EOPNOTSUPP because the core pinctrl code still rely on the 'wrong'
+> define
 
-Fixes: 90a0d9f33996 ("iwlwifi: Add missing check for alloc_ordered_workqueue")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/wireless/intel/iwlwifi/dvm/main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Ah good.  Thanks for the explanation.  I'm glad I didn't try "fix" it
+then.  :)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/main.c b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
-index e015b83bb6e9..2b4dbebc71c2 100644
---- a/drivers/net/wireless/intel/iwlwifi/dvm/main.c
-+++ b/drivers/net/wireless/intel/iwlwifi/dvm/main.c
-@@ -1467,7 +1467,8 @@ static struct iwl_op_mode *iwl_op_mode_dvm_start(struct iwl_trans *trans,
- 	/********************
- 	 * 6. Setup services
- 	 ********************/
--	if (iwl_setup_deferred_work(priv))
-+	err = iwl_setup_deferred_work(priv);
-+	if (err)
- 		goto out_uninit_drv;
- 
- 	iwl_setup_rx_handlers(priv);
--- 
-2.47.2
+> like this excerpt from drivers/pinctrl/pinconf-generic.c:
+> 
+> ...
+> 	if (gname)
+> 		ret = pin_config_group_get(dev_name(pctldev->dev),
+> 					   gname, &config);
+> 	else
+> 		ret = pin_config_get_for_pin(pctldev, pin, &config);
+> 	/* These are legal errors */
+> 	if (ret == -EINVAL || ret == -ENOTSUPP)
+> 		continue;
+> ...
+> 
+> Also, many drivers still rely on ENOTSUPP. Maybe a patch that will
+> fix all of them at once (drivers and core code) is in order, I have
+> it in my todo list, indeed.
+> Besides that,
+> 
+> Reviewed-by: Andrea della Porta <andrea.porta@suse.com>
+
+Thanks!
+
+regards,
+dan carpenter
 
