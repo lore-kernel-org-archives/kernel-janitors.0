@@ -1,68 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E88C27FD5B;
-	Tue,  1 Jul 2025 19:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC4113774D;
+	Tue,  1 Jul 2025 20:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751399005; cv=none; b=dQhFCPGIZahqqFMNd71y4KTT4/OP2OryFvv2WUp5j3iZxTaaIheGq68Q768S/6vvsakHta3eqxv1n/83Mdk9394h8ZTvXLdqCy7n1q3jXuMzY5MnJL82cRiSiewgPccbLDLOu3Ow0koPrRtqR5G5Eg2roS7LzM91VcY6xq5fIgM=
+	t=1751402382; cv=none; b=ahMHpiB5WgZatUY+gWN3u+9OOKqqKb8LNyG8QIkz/vf/f6PpvmGEnnLKOl2YKjDOi+Gbk9TyE/kCftL27yDW6xjTAfsVw8yGKPuVjKA2O/+IG9VRLgjBOVEJhLyPZPJqOJaLFiejeAw2GpiEHtrdI1mB/Uta8oNwqi/l80IxQRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751399005; c=relaxed/simple;
-	bh=icZlz7R3vFdcA2pibeP+QCTT5PR2YOh1fqsef7gF+y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYwec1okWwQGY/4AfIOYxAwUhMraiGu3qcm6KuUyfK2x99JQp7nK4oQV9bIHWNgIIhrthbNDMkq5iIVBPCgQrH31iQOqGS3kYiOmTJHHWeulCRRrbEmXDgJm6saOGia47GQBPioqWw7V/YO+DexaBtCUh5t9a1nDGNUco9+OLQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJO3hgps; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1751402382; c=relaxed/simple;
+	bh=ML4ZxeAfrYr5UuQmjcfVS0wK0k0uBdoFhk3hWEcsz6k=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=TPEwe2ZfO3ArgNjzEIEE7CPEkJWygzJIqZsVoRLBHpLroCoZNY3x0HK2DmHTyC1fKimNwMtFP/b8jrFKxWUwWW5TLWZfJlVHeIjnUlauq7nkVSZbid/DCUmi30PmWSOpCT5oUaJIg1O847PmO9rf6MT1oq7F/w7B1/JGkZTZ9zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OvSIZO0K; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJO3hgps"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F3FC4CEEB;
-	Tue,  1 Jul 2025 19:43:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OvSIZO0K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4CA6C4CEEB;
+	Tue,  1 Jul 2025 20:39:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751399004;
-	bh=icZlz7R3vFdcA2pibeP+QCTT5PR2YOh1fqsef7gF+y4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AJO3hgps6FUm7R0t9OL9DPJi5Ez5Q93dfx8OdoJkNwHqI7BasTJ364lgeCqvlgwp6
-	 gfFbNHUdrsnbwspX0G2YIESwpVbouSN1GQHE+NmZh4v12mXE/EwT3WJNdpWPpj635X
-	 lzqyHCFzpuhgydcgQHaAc/QT2b+MUdo4h/zVuAbiqYNRrX1XFTeqRsJwj1FslIQDQa
-	 7cwb8JpoHw0yOMc91FbxCFm2ZU66jTOj92hPjE6gDSQKxOdp8Gl5VyQFKT/1c65IXk
-	 njyJbefEuBJbtO1cIqLY4Nv7KOOzPp2SDkrOnwfvBesdf4neC0OyCTybxRpP55q8XV
-	 UTsJde//14HSQ==
-Date: Tue, 1 Jul 2025 20:43:21 +0100
-From: Simon Horman <horms@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jiri Pirko <jiri@resnulli.us>, Arnd Bergmann <arnd@arndb.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ido Schimmel <idosch@mellanox.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] lib: test_objagg: Set error message in
- check_expect_hints_stats()
-Message-ID: <20250701194321.GB41770@horms.kernel.org>
-References: <8548f423-2e3b-4bb7-b816-5041de2762aa@sabinyo.mountain>
+	s=k20201202; t=1751402381;
+	bh=ML4ZxeAfrYr5UuQmjcfVS0wK0k0uBdoFhk3hWEcsz6k=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=OvSIZO0KMXCFDOPeZDjdZTxILlOQzfiWLj3KI5BEwTeaIX6XIZDlp79bXrf9a0Njs
+	 9dxOUfMRSsIfQmdR4RSwUgZs/8652U0uNygcJ6gq92VN2GPZ7CXGVpmC8hmPqfTu91
+	 cqPYMvc4uJ74gG4EWah9ofCK11wQJoYi67wa7iV5Fyue7xCiAqIVszR1eoO/SsK4/W
+	 wxh6zfc5Mwifv22fbrVlM7PmljxNkPI17Oaa1Y8xy0Q5g8v4+S+n8tom8WjzVHliE8
+	 n6m/XPas6SFRtW4ZntPAWx/FvQmti/cgo6W3Jlf9KS5lsbZmGqjm5FZXSGtL1BMfI/
+	 R2m9omFDkLPiw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE54383B273;
+	Tue,  1 Jul 2025 20:40:07 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8548f423-2e3b-4bb7-b816-5041de2762aa@sabinyo.mountain>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH][next] selftests/bpf: Fix spelling mistake "subtration" ->
+ "subtraction"
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175140240652.112233.4529950579954373113.git-patchwork-notify@kernel.org>
+Date: Tue, 01 Jul 2025 20:40:06 +0000
+References: <20250630125528.563077-1-colin.i.king@gmail.com>
+In-Reply-To: <20250630125528.563077-1-colin.i.king@gmail.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jun 30, 2025 at 02:36:40PM -0500, Dan Carpenter wrote:
-> Smatch complains that the error message isn't set in the caller:
-> 
->     lib/test_objagg.c:923 test_hints_case2()
->     error: uninitialized symbol 'errmsg'.
-> 
-> This static checker warning only showed up after a recent refactoring
-> but the bug dates back to when the code was originally added.  This
-> likely doesn't affect anything in real life.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/r/202506281403.DsuyHFTZ-lkp@intel.com/
-> Fixes: 0a020d416d0a ("lib: introduce initial implementation of object aggregation manager")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Hello:
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+This patch was applied to bpf/bpf-next.git (master)
+by Andrii Nakryiko <andrii@kernel.org>:
+
+On Mon, 30 Jun 2025 13:55:28 +0100 you wrote:
+> There are spelling mistakes in description text. Fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  tools/testing/selftests/bpf/progs/verifier_bounds.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Here is the summary with links:
+  - [next] selftests/bpf: Fix spelling mistake "subtration" -> "subtraction"
+    https://git.kernel.org/bpf/bpf-next/c/1230be820981
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
