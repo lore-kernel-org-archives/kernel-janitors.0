@@ -1,45 +1,44 @@
 Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0112C270EA4
-	for <kernel-janitors@vger.kernel.org>; Tue,  1 Jul 2025 12:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151D4280A5A
+	for <kernel-janitors@vger.kernel.org>; Tue,  1 Jul 2025 14:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751373372; cv=none; b=HcQwF3MkRyeB6Ux+CVJwaILNlpI2clnl2UQFpyzMidqV8pMKrv1uDGh4GvzsGxEnjBINg4jftkN/dLMp7s5ST9bTJRKKa8Nokfck0MP2r8OG76w9LTtu+wAuYL1Kr3WwxZBIfxzXwrGioAp9pLuWlv9AL/Fcs86MHtHQ9e9AM5U=
+	t=1751381685; cv=none; b=g+vOgU02my3+GxDsWRhjPXmBHS8i6+So/IUFbBGUu9b2wg9YTr8QI/O3JsOjG9Cv4mwM2MPPiYqIvOD97+ab//o/XXdLAFRpMwfmKePPkdbNqLlTiGGuLY0H2Z1+QK0nH3dYIvf4pvxozyGKL97kR8fMGjR7EU8bQFj6uc5qXW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751373372; c=relaxed/simple;
-	bh=KfFsAKc+8Bx9jBA5cLYCmFnUK3G6Hkmkujn/bwrxOlI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=VJODAbTwHdTXk1IMR2r++zhGtpD+vFiM5t8c/ozYptRySBQ/llG0GGfWjX9PmLNDfqixuSMipTHauJr7peacwUSlPBYZ5DAVJoWZb2XfZ9gU5WknKGlYasiQz9buY0cIXrur5WePfkqHN2BV/Z+CsCrXp7Va+hct6n+4ReJt4Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=MpmQ8dwt; arc=none smtp.client-ip=199.212.143.9
+	s=arc-20240116; t=1751381685; c=relaxed/simple;
+	bh=7/YHas7kiaE+5ug16qVJuuYmeclhEgE6W86pQfApqwo=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=gEGSZMzSxOw5Hk6QVMYV647Iykk8N6o+9La9blNxebRzj7uUNihw5nOft5uSnSnAjYu4h7VpBp3i1u43L5BUShgGU2lhZhwG6P7NqgdGZSTZXsZVo75yN9e07lkUQW5DqrEGVXyenUd0SQF7xUm289Rh7u4dHOrUQo0zjvwkBiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=L2gqew37; arc=none smtp.client-ip=199.212.143.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="MpmQ8dwt"
+	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="L2gqew37"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
 	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IhGWYDYDQSGa6gD7uFSPvArsddknjdnXzPmi9rwx7z0=; b=MpmQ8dwtyOYcHuDMcs+8THziaS
-	i8BS5+X/juOkiCNpvacxUQT7iRKs1DR7F3AJye5Lq2J3sxCkCRYkQxaIXnrSCVL/YN3GOoSUPTIyf
-	5q/jWg083TQ/vedR5OHcLOgmfOki6TvtMSxf0v/H1I6Y6+uVJJL4ERGKtQd7MbWyPhGI8urK9ALKt
-	AXo3KRXuaZiMzWmwtnBpDLtTfGl0BdGM8Iguw/u2stLd31SovKILtKAGx2dvOx1hW3+XKYaTbiAmA
-	coFO+wzCJL9VKKDalNrF62uoaIBoQcaieYh9mEmaKcaIqxF0HOIkx/qG4NTcQ8DWL/POcmBwjzhZp
-	JlBHpNrQ==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:32788 helo=asus)
+	bh=H3OAwT5+9QLTj88wluW0zSGiM65qlpJVL1NJ7QJy1Mo=; b=L2gqew37HFPuUwlZDFBfP6sfZk
+	gfEoKPBgeHQX63o3Itf5u5UlSy0K46gJuI8BNIBsl6a5vQ5RhP/hsRntofu1/FcRjG6lmNJ9hexme
+	BSLf9/VR53b1rvj4a5IjyAQA6vuMo9gY4ShVOlXNSOpe1yuCwM9rfRW9FW50Ml+YSz0p1+DPORBqb
+	qGhI1hqVHGxVmRxwpDXAN0G3MCZubVDZ9WGeyocWGs5UEw6chHOYfWBtNgWslCacOqfo63ksFwLjs
+	I1wCuzL8TpeOHfOYAz/JTYhojRUGHItUX6Em+mKi8JXOsV2Lti5jZMYJ1QtQRnj6udfYJ0dCw2+By
+	j1xKnAng==;
+Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:55744 helo=asus)
 	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.98.2)
 	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uWaDV-00000008c0Q-3dx6
+	id 1uWcNb-000000093jZ-2iAr
 	for kernel-janitors@vger.kernel.org;
-	Tue, 01 Jul 2025 08:36:07 -0400
-Date: Tue, 1 Jul 2025 08:36:01 -0400 (EDT)
+	Tue, 01 Jul 2025 10:54:40 -0400
+Date: Tue, 1 Jul 2025 10:54:33 -0400 (EDT)
 From: "Robert P. J. Day" <rpjday@crashcourse.ca>
 To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: Notes on janitorial "Identify #if testing on non-existent CONFIG
- symbols"
-Message-ID: <758e6146-0099-c62f-137f-224d25b46e97@crashcourse.ca>
+Subject: very small number of "make bad configs" in kernel source
+Message-ID: <9deedfb5-bd25-7f8b-ea1b-09781461cc6d@crashcourse.ca>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -59,71 +58,37 @@ X-Source-Args:
 X-Source-Dir: 
 
 
-  I was just about to add another janitorial check to my kernel
-janitors' page when I remembered that it is a bit trickier than I
-thought, so I'm open to feedback here. (And remember, none of my
-scripts are meant to be bulletproof; they are a *starting point* for
-cleanup, nothing more.)
+  (one more note before i head out for canada day).
 
-  I have a script called "find_badif_configs.sh", whose purpose is to
-identify alleged Kconfig symbols that are *tested* in kernel source or
-header files (with some variation of #if or #ifdef, that sort of
-thing), but do not appear to be *defined* in any Kconfig file. That
-means that while those tests are for the most part meaningless, they
-are perfectly valid. But they're clearly pointless.
+i have a script that identified references to undefined CONFIG_*
+variables in Makefiles, but the number of those is so tiny (three)
+that i'll just list them here:
 
-  Let me start with a simple example or two:
+===== IWLMVM_AX_SOFTAP_TESTMODE
+./drivers/net/wireless/intel/iwlwifi/mld/Makefile:iwlmld-$(CONFIG_IWLMVM_AX_SOFTAP_TESTMODE)
++= ax-softap-testmode.o
 
->>>>> ACORNSCSI_CONSTANTS
-drivers/scsi/arm/acornscsi.c:92:#undef CONFIG_ACORNSCSI_CONSTANTS
-drivers/scsi/arm/acornscsi.c:393:#ifdef CONFIG_ACORNSCSI_CONSTANTS
-drivers/scsi/arm/acornscsi.c:471:#ifdef CONFIG_ACORNSCSI_CONSTANTS
+===== IWL_VENDOR_CMDS
+./drivers/net/wireless/intel/iwlwifi/mld/Makefile:iwlmld-$(CONFIG_IWL_VENDOR_CMDS)
++= vendor-cmd.o
 
-  That's the first hit when I run my script on the drivers/
-direcxtory, and if I do a simple grep, I can see that the string
-"ACORNSCSI_CONSTANTS" occurs nowhere else in the source tree. So this
-would *seem* to be a good candidate for cleanup, after someone checks
-the Git log to see where that symbol went, and why, and fixes the
-surrounding code. You get the idea.
+===== SENSORS_SBRMI
+./drivers/hwmon/Makefile:obj-$(CONFIG_SENSORS_SBRMI)    += sbrmi.o
 
-  Here are a few more examples that could be candidates -- CONFIG_*
-symbols that are tested by the preprocessor but are not defined in any
-Kconfig file:
+  in the three Makefiles above, you can see references to "CONFIG_"
+variables that do not appear to be be defined anywhere in the kernel
+tree, so anyone interested is invited to examine what's happening in
+each case and how to clean it up.
 
+  for that last case, i checked the Git log and if you run:
 
->>>>> CRYPTO_DEV_ASPEED_HACE_CRYPTO_DEBUG
-drivers/crypto/aspeed/aspeed-hace-crypto.c:19:#ifdef CONFIG_CRYPTO_DEV_ASPEED_HACE_CRYPTO_DEBUG
->>>>> DRM_AMD_DC_DP2_0
-drivers/gpu/drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c:107:#if defined(CONFIG_DRM_AMD_DC_DP2_0)
->>>>> DRM_XE_LMTT_2L_128GB
-drivers/gpu/drm/xe/xe_lmtt_2l.c:57:#if IS_ENABLED(CONFIG_DRM_XE_LMTT_2L_128GB)
->>>>> FUSION_MAX_FC_SGE
-drivers/message/fusion/mptbase.h:180:#ifdef CONFIG_FUSION_MAX_FC_SGE
-drivers/message/fusion/mptbase.h:181:#if CONFIG_FUSION_MAX_FC_SGE  < 16
-drivers/message/fusion/mptbase.h:183:#elif CONFIG_FUSION_MAX_FC_SGE  > 256
-drivers/message/fusion/mptbase.h:186:#define MPT_SCSI_FC_SG_DEPTH CONFIG_FUSION_MAX_FC_SGE
+    $ git show e1565867640506166b6c4182dec9ee955492d003
 
+that's the commit that deletes the definition:
 
-And here's the tricky bit, since here's another symbol that initially
-was misidentified:
+  config SENSORS_SBRMI
 
->>>>> NCR53C8XX_PREFETCH
-drivers/scsi/ncr53c8xx.c:1779:#ifdef CONFIG_NCR53C8XX_PREFETCH
-drivers/scsi/Makefile:180:  := -DCONFIG_NCR53C8XX_PREFETCH -DSCSI_NCR_BIG_ENDIAN \
-
-Note how a "CONFIG_" prefixed macro is not defined in a Kconfig file,
-but is defined in the Makefile.
-
-Aaaargh.
-
-I remember from years back that there was a coding standard that the
-prefix of "CONFIG_" was to be reserved for Kconfig-defined variables,
-but there are definitely places like the above in the kernel that
-break that rule, so my script had to be extended to show just the
-above -- what *would* have been a potential cleanup except for that
-hacky setting in the Makefile.
-
-  Anyway, I'll post that script and people can poke around with it.
-Stay tuned.
+so you can do with that what you will; that's just an example of how
+stuff like that should be investigated.
 
 rday
