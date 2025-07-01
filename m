@@ -1,106 +1,80 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4877C4C6C
-	for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 21:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3073019CD13;
+	Tue,  1 Jul 2025 01:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751318270; cv=none; b=GJheMNCVMUqbo6DhX2fmUTxb2YJHJofv6Rm+OeVgnqUCLXnBBx5ky+xvQAGNjT2O7N8vffx8YLTZkuEjnQImldcXzg2Ap+Y9qPNOgWLXn/YySZxFZjhUZmV1bXZcppUnn2Yu8JWRAAogJpFaU5E320GRqpslyv876E4cgiXOC3M=
+	t=1751333986; cv=none; b=e8NEGlLy7P5bAcaPSg/r1xppqpkK7ARufJ4z/OqPx/sZ+M4Px0IvJD48fkyFzw47NACgzVFgtHeryga4bzWfX74W8bw+51hkqNfbys6A91rezuky4vq+bjP9Y2SqLbHdZOq/JYDdB8ivfLDr1GJptw7DPRqK4ymVW6e7DXoSYjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751318270; c=relaxed/simple;
-	bh=60wcfxVf75PjtycQCPIz5PCk2O2UWrU+Ub44Unwi5co=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=AgbO+PMRYbvSpzxxZ/+orVWfYyUqThwVNajkb+khIDWGwEDen+i9Vp3/s5tE7fcLo0EwGto9kJGWu2fnRKlgCWEDpbDRrTwVBrb+DR4UCy3QOKTHdTlgjOz9j/ZqAR41dFKVEBYV8kvsn80ugKfOrDUaJsg+uOLyP93pVLoXQAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=MBsSgmQA; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1751333986; c=relaxed/simple;
+	bh=hNW7Z/hU4G5S0IRXdCYnRXl5RwKhn/46t5ucRp82Imw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Bs2b675VuOh8EgQ3Np9wGT3s1CZxf2pHHSwIffLO4vzA6WH/hYT7Pt/5xZR902EN57uw/sGzpKZybQsWJaczIXyiCc8NRj3w2KTcyiaczNsEb5ppxlC4GlagL3RYQGZFmkvD1j36XkJViO1Xf8ld9jIe0xmEkzLhPKyw7vHFSO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJBzXRUy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="MBsSgmQA"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:References:
-	Message-ID:In-Reply-To:Subject:cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9XgV8bSyxrrETayoVKpqW32PCp4hEPZkhi7SW7FUmbg=; b=MBsSgmQAhRLnpUmYXMinzSoLkw
-	oHruzhnBe4r9VAOcrwKFBNJ8mUkSRMHzaB1QywDhJq1Ya88jhl24gAi6jtH1wHoTEtfNj+XohUQaL
-	6lo9eMy1jl6hiNkw2S8UeH0wyqTM2J1t9JVtx3vwsbbatD1poIFi5yTq3qYp0PqoQGC1t3tTUa8Bc
-	2WErC0O7XDRUNj4TYtTe8CCIcpDhaHMqtjzyzpZLtvYok7OUenjNchtMmlxhNg2QdCxRd6tbP6A21
-	V39EoYUD5rTsYWJm/AWSXaa8EJJENi+V+06MGsqLZNMn3qsJCB/9dy1UZgI9uydlV3MjJr11/95gq
-	IYvNUyrQ==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:52608 helo=asus)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uWLsm-00000004R9Q-2ph7;
-	Mon, 30 Jun 2025 17:17:46 -0400
-Date: Mon, 30 Jun 2025 17:17:37 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-    Kernel Janitors List <kernel-janitors@vger.kernel.org>, 
-    Lukas Bulwahn <lbulwahn@redhat.com>
-Subject: Re: [CRM114spam]: Re: First pass at janitorial kernel cleanup
- scripts
-In-Reply-To: <aGL95CqAgl90TLPe@gallifrey>
-Message-ID: <7901ac78-606d-0543-8e48-7e67a2211cdc@crashcourse.ca>
-References: <8c4e5d62-7980-bd16-df17-caf76862d4f5@crashcourse.ca> <bc14c7e7-1188-4330-bc0b-cb0a60568cc1@suswa.mountain> <be53fc9d-529f-50c3-a3b1-f3caba54aad9@crashcourse.ca> <aGL95CqAgl90TLPe@gallifrey>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJBzXRUy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B08D0C4CEF5;
+	Tue,  1 Jul 2025 01:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751333985;
+	bh=hNW7Z/hU4G5S0IRXdCYnRXl5RwKhn/46t5ucRp82Imw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oJBzXRUyDlh8xRMWoWy3U4atiU2VW45LGOeRpgVyJP6I+zATQq3dhjWCSY1BQS20l
+	 juWLbqtuJyb+sgAqX2DeQ91SeiEv6pkSbyzpNzH28IqRYlkGzFlWV1QMsjJjzSWQbn
+	 1tGKOVTPDs4cRUpTOLDrxGFIWzXF/lMt3xd7vSMEKVdkvrU1AdSl2JZ7wrYlWhuvPN
+	 NR7WaRErlYY3wzp4gMySSW08Of0gIseWJV1KzLUrSId2FbP3/GO9iyu2zOW6HUCMfc
+	 UkYzjhnuM6uk0qONBv2rE7rO5xK+j4jPDkpkvja767UWO6Bw7IJnvZyy/pIPL7o/US
+	 GKgO0Cuk1lxOw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAFB438111CE;
+	Tue,  1 Jul 2025 01:40:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry after renaming rzv2h-gbeth
+ dtb
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175133401075.3632945.11017105407045410659.git-patchwork-notify@kernel.org>
+Date: Tue, 01 Jul 2025 01:40:10 +0000
+References: <20250627134453.51780-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20250627134453.51780-1-lukas.bulwahn@redhat.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: geert+renesas@glider.be, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lukas.bulwahn@redhat.com
 
-On Mon, 30 Jun 2025, Dr. David Alan Gilbert wrote:
+Hello:
 
-> * Robert P. J. Day (rpjday@crashcourse.ca) wrote:
-> > On Mon, 30 Jun 2025, Dan Carpenter wrote:
-> >
-> > > On Mon, Jun 30, 2025 at 02:02:25PM -0400, Robert P. J. Day wrote:
-> > > >
-> > > >   As promised, I have the first small number of kernel cleanup scripts
-> > > > that should inspire some obvious janitorial work:
-> > > >
-> > > >   https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup
-> > > >
-> > > > There will be more scripts coming, and a lot of them will address some
-> > > > rather obvious cleanup that relates to identifying leftover cruft that
-> > > > was overlooked when something was removed from the kernel -- things
-> > > > like:
-> > > >
-> > > >   - are there things being #defined and never referenced?
-> > >
-> > > Quite often people publish these deliberately.  They sort of function
-> > > as documentation.  At one company every time they expose anything
-> > > about the hardware interface it has to be approved by the legal dept
-> > > so they publish every single define that they can possibly think of
-> > > as early as possible so they don't have to go back and forth with
-> > > legal later on.
-> >
-> >   Ewwwwwwww ... I do not like that idea. I don't like stuff being
-> > "#define"d unless it's actually required by the proprocessor.
-> > Defining stuff as documentation is just ... ewwwwwwwwww.
->
-> It's quite common; a set of #defines for every register/function/etc
-> in their chip, maybe also for every firmware call with a struct for
-> the interface layout.  Sometimes these are spat our semi
-> automatically from their hardware group who designed them. On the
-> plus side, they don't take up any space in the resulting binary,
-> unlike the zillions of unused wrapper functions some drivers have
-> for every firmware call/register, many of which aren't used.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-  Ah, good point, I had not thought of that. I stand corrected.
+On Fri, 27 Jun 2025 15:44:53 +0200 you wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit d53320aeef18 ("dt-bindings: net: Rename
+> renesas,r9a09g057-gbeth.yaml") renames the net devicetree binding
+> renesas,r9a09g057-gbeth.yaml to renesas,rzv2h-gbeth.yaml, but misses to
+> adjust the file entry in the RENESAS RZ/V2H(P) DWMAC GBETH GLUE LAYER
+> DRIVER section in MAINTAINERS.
+> 
+> [...]
 
-rday
+Here is the summary with links:
+  - MAINTAINERS: adjust file entry after renaming rzv2h-gbeth dtb
+    https://git.kernel.org/netdev/net/c/3b2c45cb1b50
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
