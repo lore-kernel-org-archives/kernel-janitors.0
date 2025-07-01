@@ -1,114 +1,140 @@
-Received: from sonic310-22.consmr.mail.gq1.yahoo.com (sonic310-22.consmr.mail.gq1.yahoo.com [98.137.69.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0854B1E7C38
-	for <kernel-janitors@vger.kernel.org>; Tue,  1 Jul 2025 03:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C891805A
+	for <kernel-janitors@vger.kernel.org>; Tue,  1 Jul 2025 04:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751339369; cv=none; b=bENqlum+VdHHdyWMs4kQpEdKGvryP+z+R110w34OcuhB4mB5uXptwFKeaJLuM6T6EJjoPnr/ljp5fgYVgs8nNdfu5Q6uOEhykmCILuAJQ28GNWk1VrkkP1choXy7AYnzwjZ82tpSTXVeMetPAWnVUWxHS+sRu9ViKTrvMNy4jWY=
+	t=1751343924; cv=none; b=FTUuPb4bqKlDWtd6OTkSf41Fih2HXNxoztTM0cermxIdXeB4wse6N2wu1UnVxTMCWw4AO+1DYkYsYpKiU6OkFcpNAmUtkGD26Pj1EOyLQ8zRSmA/HkkebdIH7eDLUksmwaQxzHpTLwQcnC/qx8WbexeoMWOWWIm7TcKVVLkImT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751339369; c=relaxed/simple;
-	bh=lpdN8XXKHzXH3rNSE3wnGoDvfvve7P9iuCjY0dP4r1k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Yhr7KRg2/gC7x3XlGMf0Z2T0qN4ePjXuA+5BNlgh4p0+wuO1U9Sye8haxkYVa2lAhyKdnG52n7EwO+xGPsy4E7Mcqy1dStv2fHkLg3oUWRAmTLxxEl/lPLe7oCFzC5wI2GYuacB8VlYI9L6gLSUnYdC9SWZ7rkcXAQCzcEv7x+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=R4K1Xz8F; arc=none smtp.client-ip=98.137.69.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+	s=arc-20240116; t=1751343924; c=relaxed/simple;
+	bh=xTlkawP+HrT86XAI/odIWysClFvPD3RipF39W4vJ9BU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oC26VIHxalDNC47WzTvVv2UJfHXKyiTJGw0MAiUAfToplR7Pfgc05g6uMAB8pjnCbOgIcFFYGhsmzjYL0P6y+q9PjHC30sUE+muo8PbE8spjmRbjTzuRFZblAUvJAOcszALbmEgVf4kqSy14G+jy5k8gdH19F5KcSUxyiYxA8xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JN0wvjj8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="R4K1Xz8F"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1751339366; bh=QncXrhBWoZyfStRoeWX86SBiHK4kerChKRWDNNe+cMM=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=R4K1Xz8FZEp7R3CsXDCjWsHJ8e5IhmgUzLXHlFqOcKPU3XKyhRdfUajk4J3qD/DZhu2Y294E6rVgpvv8cCt1OCMpK+5RMFZVd58s+bd6JxaOGh5U+sVGis5G2LZZXtRaSR0+0G1PTyib4KAyAICB1Pq1gpC9DJumLvyOLBU54wxnWkoQsC0hekkl8o+rPPc3FV1IVkE91QBEYeMsTVJ7Y1UoBg9ez5EjNwhsGK7ZxxeX2Q3PoSEaB74hAVX47jA6An507eQ8l6IueTYkR0ur1N7RuVhul/PftVul+F+Cj5OEROrrvw4vpD508Cb/TT6L6BkHF/CU7g9h10Pd4JE9lA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751339366; bh=gTEGFFeKoL2vidUUZVSYC4q7ccVfziZPn3z+wHuYs+r=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=JkrToL70XYiifEWks0s4SYQMOMbQa4noU8KFZAGy0F43fEbWvNHwXsbDhmyGMw3qzFMMiAHAHvOlbHUsLCFE2ANVW0nFwh6qWzib4FO6KNw5r4NaZ/GUD2OR1xZo1gG22UfC8T/2QRrcmYLlArWVqSfh1kxqI8I/rEimW6jSpHzBSo5AthYJZcaY9xc0vjyUoEfLgS+oeybVG9Cp2vMFYpCAS2ctPlBAe7wAQJqgbC0RtZhglqhrtKjNaynvecdwOZHP9gZfB1AzRbbk2a5fLpxwvv8ZmCsCeJHaQk4XTm7glMK0z8br2t81cKBEPpYXdY1+3hnuQdREMmWH3I3GYw==
-X-YMail-OSG: .rhQ3wwVM1nSODRfzIuPbiSSRXkg3P9APAsqYHw3SI4BTC87lZqnv7jB9ZT9GEx
- IpthOs_9mm3h8ldaLchxk0qFWNUUNpm3thIX45mwgHyRpBrYuifPMusyeuF3ccoS5bNYUt45lwdn
- 496qeVlw5WBWOAfTieUFvaxOm9H7zs85pVAqZ_QQqJeHlpxbL39jPRd52xKu92XyaMgHXY_HDnI.
- eZIMgnjNZzsUL9KM4F31QrNmtzPHxXovwTvL95Cen2xUQHs.tVMfNhyV_pindBTqGGABxJlgRGnu
- CTQE5yI_63yPJ8Mwe7KZBo3A_gRFTIIkCzEz1L05SWdrvAdI.xUcg.9zTR.PJqKK4AUpyGbvq1lJ
- cZT5NUvXu5fMEaYDbi0TgHWvDpr3fJSsEl4IUAMuhOunPnvRpnibVv9AMvdh3xU_kN.KitgX2dpm
- vjVFCgdLI_xWO_xW6Dn0.0N3h0yfn8Nq3tLDqElcu9FnMRbFETMtOhHrBFzR71JTxHlwVG_qQd2a
- wHgdJRwoRp1s6r4kNPvEC1o_DrEWfUn031PnFV6OXvuIhQnnY4wsz9lPUpNXPV10GSwp3x4iHmEL
- dCg4Kf1_IG7MwQBCRy9O8Kq4XtgYoyTnzSu64nlhWXUVtst8qHOm1mKuqNlv1h2nQ9eGVPHoEOb2
- iGr4Twt8x2ozDaTErbnWnniqWVF1uEfkEbhChfKE2KZ.XGEEYYiW1xmgiVgpHU08FbgfyXj0r8Yx
- 3ZRrSd3WU7POh1msKs3wPrzIxxeVQiTYmanWvqt2EazascREFFP3fbR3Sey4oJ3t6aySpBNCApQ4
- u7jCkfurZTiONqdtZE463erUtRs6NNdQAu45kRLDgE8gveg6gj87QTYnGWtGp4ZVVtE2sTXPif.n
- .cHXI_OzmWBaXazKY8fa8VS0unNRcU26mJw0fJoGCbee2Th0833MdzsLmaEzSMmaBexEF6Q0M1lc
- W19KTSAr89mpTpZx2d7uWILbe.P.XZzEPHsboNaPzAp9jYibk6gKrEg.HrwHyt0fBoC.xoiNOeYN
- Hd7exU_wzzrL5WeGJMUj5rUosQ3ORA.c0o_BtEx_sorohN0BRW8rWaNC5aCVEOxQroolVV9q85oZ
- KrEIbLwEvNs69AldUf.t.bpCY2LZyqmnrhOUawGTXDqe_SDiVc0VYVun9nnWR6VmFdRM8fH5oA.o
- CP.LJ1hryAD9NdcESTow_Pm8A.vGASAWbYFLr5Asl5IRloWgnBT7OEoxmyYXPhNooSKS5eqozYS3
- c6E7VT.d6ui_WtbeeFKKwrYzdvTln8MuWRj.It.2GWjIHs7BqK47wnbFlLSHTfMjXDGK_ZY9fbtt
- d20PERUOnjWxwkJqLjz4rQwpEkyjh.oDqPo8iY5I4WSAhvLXDqe9GlcjkvhPPlQQs3szbJHBKstT
- O_7ErSDm9gz2HISy_.9HVE_54CJ_Omn9ufHvtoRjRaFfW1O5.ZZDiFJdwRA7uUv4K6bVj_8fgC9N
- NFwUIMYfwAZqLBr2m3x1709eJFt541obQ8Vxj3b6GphjgIFdAMm1QqaBOGtNRYXJqa6S7y0BZN.m
- dUXkpZp9uj4OWtbtYbrMXF17PR2gGJYpn3AwCraxQn7EDhcxcH8Zf5MnkgZMlyb7Cgw7I7SAFC2I
- 2P9fanZfSSEkyyei0o4osTmUnMZbRDH7pIT4c4Fqos113bjsq95jscknc8x6x_wChj1Fb0Kd_iVE
- TR2ogcMx43th7xEmS0_tstKgIKfigjgFod4sPU05Gc7yPMckmBr_MRWq.HVZIlRGv5vSzm99iAqE
- cQ.qDzNyRdcXGZcSZoTQyJc1ujgkJX4neBMHlgSDzUs.oD6n0t9v7Akxq3uD1MjlOu2oH76I2N5R
- H5ud2ZPlxoznHhbCuozhXDyRmpRxIqnvx1GIAa05mwy1bv26Uzc3LQWNYpHvpic.a.gPVdCztVK3
- FCuFaYEOj9n0VIs4NC7pGZhrFRG410niIhGlKKXMLj35NVzbGGy6vXEypcVvKCDbNKRnfEmcZ4yg
- 18RXMjt4V4kJhCrsdEkH3WGNmGV8yHsKyxeDPfUzXfvoY0APjdiaMkz6DwKPc8L3fU9O6MH04ODO
- _6MxDbw5qrFfqsrlLEgg.3XcCBWFrBknBQTpC8NowpL6Irn5Ql5hYOSSc9Ud0xqCFJPD7vy2Q9VI
- JvSt9314e3Sv2SBEJkUMbgUTlgBpz357zBXsWaEW0pKTdZMzOkThlRca8DKfmqrxWYnRxWXaWfmF
- WeatraFYpV9qOcK2CIwTmzIr5CQPnQaB8h.Thl6l3xnpGYEb2qDakWGtJk2pLja4RHdWPOQ--
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: fb9aa69a-2d1e-4f1e-b6d9-b0d90b6f6c28
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.gq1.yahoo.com with HTTP; Tue, 1 Jul 2025 03:09:26 +0000
-Received: by hermes--production-ir2-858bd4ff7b-86wkp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6689a8ae3d4d560dea262125f11816eb;
-          Tue, 01 Jul 2025 02:59:14 +0000 (UTC)
-Message-ID: <270d7d993e7d16c7dedb7709274cbdb3c853bf09.camel@aol.com>
-Subject: Re: [PATCH] drm/i915: replace DRM_DEBUG_SELFTEST with DRM_KUNIT_TEST
-From: Ruben Wauters <rubenru09@aol.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen	
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Tue, 01 Jul 2025 03:59:12 +0100
-In-Reply-To: <20250701025426.262129-1-rubenru09@aol.com>
-References: <20250701025426.262129-1-rubenru09.ref@aol.com>
-	 <20250701025426.262129-1-rubenru09@aol.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.0-1 
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JN0wvjj8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1751343920;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lt5n5LVbk2ID+rT7ZU2EFy8ISr3xny14Ax772QH5whY=;
+	b=JN0wvjj8QrCO1H1lluvOLxBmTy31r7CI9k8g2yv2JUOG8ko6+Arq/Piwo25T6VVSw95Tdx
+	zAA3zMrgtkC38t9bR+9IvEYgGJ33oZ+AgouIjkuce7jyiUfQA+56KYjuGQ0WIOkENdDxBZ
+	XkGsdtqID3lc2oZIvvs8MmkcNxgc/yA=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-392-3NXO8kj3NyOgu1FnD0lOJg-1; Tue, 01 Jul 2025 00:25:19 -0400
+X-MC-Unique: 3NXO8kj3NyOgu1FnD0lOJg-1
+X-Mimecast-MFC-AGG-ID: 3NXO8kj3NyOgu1FnD0lOJg_1751343919
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-31332dc2b59so4532544a91.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 30 Jun 2025 21:25:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751343918; x=1751948718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lt5n5LVbk2ID+rT7ZU2EFy8ISr3xny14Ax772QH5whY=;
+        b=XMalEVwsp5GQ1zxiLJCFQ+GcNdQaE9hZHRratfBosXapgm/Cj0A+czFmbb4REEIsE3
+         3raoATL+HZjWzyVOgOaP3bxutk+6hZ1rC57MUqzVCSgz21ZuywCg9w5TvfSMArG0vHjK
+         tvtL3++qrzljfKb6aindjxou9sw0cDbTCqsSlOoWiT3FqHcdMcVc6r/XYH8m4H/WZbyx
+         eWu878UbCQcwA1AI2ptqB7NMs9god7pRBJ4ZqWY0wH/PG08bMV/ITh6aMWKa3SgcXepT
+         lGHjNxr5CMUr7vzAS9BbC3X+VhIfxeOHIL3wyJ6STP0cmvNGXMSdlslvr875ekfoyKD+
+         fpCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEH+n3/ViCkQRjqyx8zBLYbrOOp38e/BfteqOn2a6Q+uNtJGsnFTjUyQVP8AXFs6lN2bob+zsXXdMRLCIWoJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvOJwaXoEh5NlUJUqj/VQhsE2Q7VmVIr7qrNXqHMw4LLc2me27
+	RcJbmL//asj2AxduglX2vd5VNh7cJ8VhXQ3jyCsNinGKpcM21FFgEs/jXd/ZIGpL6OwvFEr3CRZ
+	uln8E7d+BChYmg/yaU7wwdbsaCjsOqP9D5lRFT1YU/AwoiFje5jDHX4SKbU+I6kEibveGQyPwcm
+	duCOATFPdGA9yTfq6DTMvByVY97Kqaq92rGWZo6TsYhH23
+X-Gm-Gg: ASbGncs1Wxvq+Cs0iIYBvZTiL7Eh7anb3ynhD9WmGgEnSRB8lVSGxAcpXZXMlsbaBG2
+	KUsKq1bLaDSwkOMAhhAMq7ZDnhr4NQd9PUnJK9rX94qe2N2plBaGkymsp/YTDuWzhpZzfx4SNzh
+	5k7KFZ4CkCaP9Y5Hm5XtIOW14PJxkrLpKWKOrU
+X-Received: by 2002:a17:90b:2b8f:b0:311:c970:c9bc with SMTP id 98e67ed59e1d1-318c93163femr22043035a91.30.1751343918369;
+        Mon, 30 Jun 2025 21:25:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxKlGG4WvUerf1hIySc5Q4e0hBA1I+MU4h86nJ5f+QmEoWisEZugXjnyRVoXPsHJjf2V8JJy2CrCJiYHhgCQA=
+X-Received: by 2002:a17:90b:2b8f:b0:311:c970:c9bc with SMTP id
+ 98e67ed59e1d1-318c93163femr22042996a91.30.1751343917793; Mon, 30 Jun 2025
+ 21:25:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: WebService/1.1.24099 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+References: <8c4e5d62-7980-bd16-df17-caf76862d4f5@crashcourse.ca> <bc14c7e7-1188-4330-bc0b-cb0a60568cc1@suswa.mountain>
+In-Reply-To: <bc14c7e7-1188-4330-bc0b-cb0a60568cc1@suswa.mountain>
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+Date: Tue, 1 Jul 2025 06:25:05 +0200
+X-Gm-Features: Ac12FXx0YPqImk2pHJoHlYsKvkQAmt3M_ggfe90dhOUWS-Ju8K63DftgHGRkUxU
+Message-ID: <CAOc5a3NJCtwHd+dd1fmGunMz90XCSAyFLaDmUuLJtufL0iZJtg@mail.gmail.com>
+Subject: Re: First pass at janitorial kernel cleanup scripts
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Robert P. J. Day" <rpjday@crashcourse.ca>, 
+	Kernel Janitors List <kernel-janitors@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-07-01 at 03:50 +0100, Ruben Wauters wrote:
-> DRM_DEBUG_SELFTEST was replaced with DRM_KUNIT_TEST.
->=20
-> This patch replaces the select in Kconfig.debug to use the
-> replacement.
->=20
-> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> ---
-> =C2=A0drivers/gpu/drm/i915/Kconfig.debug | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/i915/Kconfig.debug
-> b/drivers/gpu/drm/i915/Kconfig.debug
-> index 1852e0804942..b15b1cecb3aa 100644
-> --- a/drivers/gpu/drm/i915/Kconfig.debug
-> +++ b/drivers/gpu/drm/i915/Kconfig.debug
-> @@ -50,7 +50,7 @@ config DRM_I915_DEBUG
-> =C2=A0	select DRM_VGEM # used by igt/prime_vgem (dmabuf interop
-> checks)
-> =C2=A0	select DRM_DEBUG_MM if DRM=3Dy
-> =C2=A0	select DRM_EXPORT_FOR_TESTS if m
-> -	select DRM_DEBUG_SELFTEST
-> +	select DRM_KUNIT_TEST
-> =C2=A0	select DMABUF_SELFTESTS
-> =C2=A0	select SW_SYNC # signaling validation framework
-> (igt/syncobj*)
-> =C2=A0	select DRM_I915_WERROR
+On Mon, Jun 30, 2025 at 10:19=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> On Mon, Jun 30, 2025 at 02:02:25PM -0400, Robert P. J. Day wrote:
+> >
+> >   As promised, I have the first small number of kernel cleanup scripts
+> > that should inspire some obvious janitorial work:
+> >
+> >   https://crashcourse.ca/doku/doku.php?id=3Dlinux_kernel_cleanup
+> >
+> > There will be more scripts coming, and a lot of them will address some
+> > rather obvious cleanup that relates to identifying leftover cruft that
+> > was overlooked when something was removed from the kernel -- things
+> > like:
+> >
+> >   - are there things being #defined and never referenced?
+>
+> Quite often people publish these deliberately.  They sort of function
+> as documentation.  At one company every time they expose anything
+> about the hardware interface it has to be approved by the legal dept
+> so they publish every single define that they can possibly think of
+> as early as possible so they don't have to go back and forth with
+> legal later on.
+>
+> >   - are there things defined in Kconfig files that are never used,
+> >     or vice versa?
+>
+> Lukas Bulwahn does a lot of this work already.  It will be interesting
+> to see if there is anything his scripts miss.
+>
 
+The script I use is in the kernel repository at
+scripts/checkkconfigsymbol.py. I have not written the script, though.
 
-(apologies I appear to have mistyped an email, I am sending it via a
-reply with the correct email included, please let me know if you'd
-rather I resend it)
+I know its shortcomings, and I would have written it differently but I
+have not spent time improving anything in that script above.
 
-Ruben Wauters
+Instead, when I started, I used some kind of bash filtering on the
+output. Then, I also have a collected list of known false positives,
+as I sent out patches and got responses from developers and
+maintainers on the mailing list. And finally, I currently often only
+look at the diff between two runs on linux-next.
+
+On my short list concerning Kconfig clean-up:
+
+There are several directories named configs in arch/. They contain
+parts of config files, specific for some hardware, but these files
+seem to be not reduced to the essential content of relevance, though.
+Now, to make things worse, it seems that when changes to Kconfig
+symbols, nobody touches those files, and nobody really maintains them
+later on either. At the moment, this adds up to 55,000 LoC in the
+repository, and I am pretty sure---once it is understood---what each
+single file is really intended for, this can be reduced to probably
+around 1,000 LoC or even less.
+
+This may also be picked up by others if they are looking for work.
+
+Lukas
+
