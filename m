@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A581A26B;
-	Wed,  2 Jul 2025 00:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590211DE4C3;
+	Wed,  2 Jul 2025 02:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751416784; cv=none; b=hyLC6cl0Juouj9yw5lYesf2EgeJCYtJyZTqIlAFKaN4pL1Vql65qJXYXglxt8+CCQdCsBHirkUnM0SH9x+N+ipdud9dO04/RocCAXe4UbzLjr+EExPY7KMIi+yAo1g8dqY6kd3TvnfQFoV2yrhdAsmeokRLLBeBUMfLfnEUqQ6s=
+	t=1751424007; cv=none; b=q3k9tL2hExOkCqqI9kV+Nn3Jn/ToGUNOrp6/M6BdNdjHM5GKHR/iWn2ZwZuCAEMShJbtKKQNlFkYKMVkkd/tEf/vPjadmQvjm/wpFMERJlKT1tWBwlUEeukj1z/aZv7n6G8HngAsflhEdU49ngu41qrtVoU5rAG6xWi32dhtY8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751416784; c=relaxed/simple;
-	bh=o/xGom8IA8NsknYb8sIUXQnBpEJ2ngGA2mmaOOLrhoU=;
+	s=arc-20240116; t=1751424007; c=relaxed/simple;
+	bh=LuPMVmY1zoLKin7oIVHbMOu5aFAfMAO+fp+KQYR2PQ0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=o5ot8RzhQK8YxU+WNIyH9bw+D8TBrpRVIFoh2ugcYzi8dsi75HOrnUcLwFJv2pBKEhUnVA5VsUe4BTaqcJB+RnqvW4Z6wANgv+Ce9EKN3F5moXAMDrnzs0eip1SFcaxhmOoW/NjMgjTV5KPFdpj98QRaqXG/YR8ImOabiiUyk80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqxxekNo; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Vz/KaGfoljACU6NWCcRgtSzV3kRi7QxbyY0N3MNRD0RMSB1sKeXmc11r1hKU1a1Eh/dwDLYlpWJ13Bq5puo+4BYZwBFNYDK99AUiNhYVnRu1OkR25pdNG6f9dTVCYBVJOu+DTK2j4BIE0wtfpkhSuptumJFXc/PVrT9DeWyL4Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AlbIf09e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqxxekNo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA08CC4CEEB;
-	Wed,  2 Jul 2025 00:39:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AlbIf09e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 775B3C4CEF3;
+	Wed,  2 Jul 2025 02:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751416783;
-	bh=o/xGom8IA8NsknYb8sIUXQnBpEJ2ngGA2mmaOOLrhoU=;
+	s=k20201202; t=1751424005;
+	bh=LuPMVmY1zoLKin7oIVHbMOu5aFAfMAO+fp+KQYR2PQ0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=tqxxekNoRAV+Q1oe2ceSBD6gcIcr4TO/Q/aluYhP6nfJW4a7WT8k2vnk2rfBSPC70
-	 lanPYE3yiU0FkGqFXJi40Ax/CVUWa1THkMysI7Wyu91slGP5WfwHxz/Xl/wPrKHkKR
-	 IPDtUruqQpCatnGd2uAxDEC+D9XIq0cAjKfwFCdGR9WgYINqxjPooO0rHiJGDMsdsk
-	 d3+yZRRCguIinGB7GUI5EbYQNzUx2TcAVLO8AsVNrkq1FxfR/a6MPNd27npNJ/SxId
-	 53Z1hz8WXAzOtPzckGDDzLaVLlXzBf2oUYm+t9spa0kP+TWTq7BHvBcVu3J4wP2uVv
-	 YaGu/YDlrJwTw==
+	b=AlbIf09er5/8MJmIAjYyvz/vgwUkvclSBQoidMV4cy86SbVXnRIM+8LEWV+tmj452
+	 LhIqIHUyNoV2BZVfdCpQyAmHygJzKCFgInPwl715Txv+bd6wGYsCmW2+1/xrqSjur5
+	 4sQHHd3CbnTMSGcu8ScBrdpNfBYaMY47vNe82e+3zksxQ6f915ZBj73lEkYns3A5R8
+	 DTKrWseOXhDN4+GCJHAXSchepfqn5dJ/xH62vw1ALO7RlsFJG9y17VwJM8AvZ7IVrD
+	 M+ZNMvVCY8f7DbfbgxTpnIDhABKX7X6cpJC5dqPEE61jz5oLkzmgeDAJ+q/eGKIiG4
+	 l6BoAxRazgwlA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE14383BA06;
-	Wed,  2 Jul 2025 00:40:09 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EAF383BA06;
+	Wed,  2 Jul 2025 02:40:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -37,39 +37,41 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] lib: test_objagg: Set error message in
- check_expect_hints_stats()
+Subject: Re: [PATCH] net: dsa: hellcreek: Constify struct devlink_region_ops
+ and
+ struct hellcreek_fdb_entry
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175141680850.158782.14637527276749679466.git-patchwork-notify@kernel.org>
-Date: Wed, 02 Jul 2025 00:40:08 +0000
-References: <8548f423-2e3b-4bb7-b816-5041de2762aa@sabinyo.mountain>
-In-Reply-To: <8548f423-2e3b-4bb7-b816-5041de2762aa@sabinyo.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: jiri@resnulli.us, arnd@arndb.de, akpm@linux-foundation.org,
- idosch@mellanox.com, davem@davemloft.net, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+ <175142403000.183540.14644839018497989646.git-patchwork-notify@kernel.org>
+Date: Wed, 02 Jul 2025 02:40:30 +0000
+References: 
+ <2f7e8dc30db18bade94999ac7ce79f333342e979.1751231174.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: 
+ <2f7e8dc30db18bade94999ac7ce79f333342e979.1751231174.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: kurt@linutronix.de, andrew@lunn.ch, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ richardcochran@gmail.com, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, netdev@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon, 30 Jun 2025 14:36:40 -0500 you wrote:
-> Smatch complains that the error message isn't set in the caller:
+On Sun, 29 Jun 2025 23:06:38 +0200 you wrote:
+> 'struct devlink_region_ops' and 'struct hellcreek_fdb_entry' are not
+> modified in this driver.
 > 
->     lib/test_objagg.c:923 test_hints_case2()
->     error: uninitialized symbol 'errmsg'.
-> 
-> This static checker warning only showed up after a recent refactoring
-> but the bug dates back to when the code was originally added.  This
-> likely doesn't affect anything in real life.
+> Constifying these structures moves some data to a read-only section, so
+> increases overall security, especially when the structure holds some
+> function pointers.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net] lib: test_objagg: Set error message in check_expect_hints_stats()
-    https://git.kernel.org/netdev/net/c/e6ed134a4ef5
+  - net: dsa: hellcreek: Constify struct devlink_region_ops and struct hellcreek_fdb_entry
+    https://git.kernel.org/netdev/net-next/c/10c38949e0f5
 
 You are awesome, thank you!
 -- 
