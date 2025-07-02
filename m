@@ -1,248 +1,115 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic311-51.consmr.mail.gq1.yahoo.com (sonic311-51.consmr.mail.gq1.yahoo.com [98.137.65.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA937275850;
-	Wed,  2 Jul 2025 13:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751461784; cv=fail; b=nLfqOlMC4Tc29OOSU3IRcQIx6Ovbqk7SsVBcSKxL0RwA8HYPunlz93xmcqC4Wj3QyUNGX8sAkR3pX/DebHqCfGbqlySv7OaimoivWl3/9v0dRxiiAWM8FzzP4xcJNuqtZZFyfaxDjvU5YEDpGw3agCtsYIqz+lrHk4Ve/1GZHMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751461784; c=relaxed/simple;
-	bh=PY1EJ26qPoFgll/Xnadsrd1E1IYKtXFVoKt/44QMD2k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uvkVo1/CppMLSlBAeuHEabPigzJBoJLv/BtqoEK5lxVKBYOdFOInTn5gbyK8U7PjG3rt5DHD7jnrSsHuUuIuouikgODZSEKSrX8NEIQK3ZRbYmhS/0JoiQtyUynVHIiZ713jigvDWf3WAQuUZWaHLAIVdb4218cib51JHno2Je8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwOsIme3; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A811EFFB2
+	for <kernel-janitors@vger.kernel.org>; Wed,  2 Jul 2025 17:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751478369; cv=none; b=Y3lg7Wz/E+lTrEdO0iCKwOU0auxvWUrYe0Dn0h0mluJHMAcNxfblA/aeTyzr4vVUvZBWIFpEHbIRmkrqPJniJAWr+j0NgK5uFBmuT22PwXZ18RPSvUP0ZJfDgK1Hfzt3lUBnD5s76uORSgzEsliYNDe/qvwmIY64Hz+18lhxEH0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751478369; c=relaxed/simple;
+	bh=pqKWLjkwOcpnsgz3Fd1ouVbv1h6JuyjRHnbm0NrDD40=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version:
+	 References; b=BiHFQ0zjn/qSwfjnAEiKhGUSQ9nrgJxKW+a4ak6qw/fDJgm8AA3FhyjPIXo0tACI6DOps9dt5UfEkMlNxsFcvMZu1ESEPAs9zUSV+7raai7aaFLzOgsHSbMJE3YdnSooazMopr1A0v1H9Y5z6Y2utk9D99tJu1/avdpuqEyDKp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=Tt1lkMTZ; arc=none smtp.client-ip=98.137.65.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwOsIme3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751461783; x=1782997783;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=PY1EJ26qPoFgll/Xnadsrd1E1IYKtXFVoKt/44QMD2k=;
-  b=RwOsIme38G+u+yJ/j/epxjQAbn5wKkxpwc3mvO4uGq8PScjpc30njDfq
-   I/Mk5y6mYgB48LML+4j75H/4r4eHGHBhlp14a3yRBDi1WYkQcCdB7FsbR
-   24FAsZYFZ0RTaakVakwnPj6foB2BG+lMp51Svm49I2Hf5EwET8c5EnJzh
-   eUiIuXJOMInDMxSXyne+FwGFViglpE8JowdYHI7zKXuhdflHLthvVBOr8
-   wiri0fDiI5MOdZBp2kH8Y2/PRAT30U82EOvjzhTq7zPnZa71NDLBJiy2/
-   D0txOfuhSfGqsw1xIKgIqJy3eao1xfosG0ZM8LX/EYGzcIwXTFcP7h/Ib
-   Q==;
-X-CSE-ConnectionGUID: zrEgFqtRRSSmmEfEP/cGvw==
-X-CSE-MsgGUID: gzRkEIzFQqaSe/V5+DkJGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="57563551"
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="57563551"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 06:09:14 -0700
-X-CSE-ConnectionGUID: mJeA0g8YRiCyI0O3XenecQ==
-X-CSE-MsgGUID: VWhKlF/kQ6S9lSzzP6cTDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
-   d="scan'208";a="185016557"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 06:09:13 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Jul 2025 06:09:13 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Wed, 2 Jul 2025 06:09:13 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.77)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Jul 2025 06:09:12 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j9Yio+VG9n5Oq1pSDz/QEMJamJahEJQ4PafrumbVY0EVjx9nekxJVeEhXGaPxoj4d6NpcV80eG6ljGuDCbgpASsYvHX3cpidPOp/hK2n/SkpLQ7aySY44rcoa97cnZvdqa/byFqLg0UI0FG4ZgeK21gxSluBLaW9CJra9770oL0BRNKrD3KfRcuHp5vj84GESxWh1Q4fF34kitDJgxr/PrzUGJ/5NbzeMwX14mGRK/QCIHANYypzciDLiOMgzFXUNZ2i0mZAOOQO5pEX1gTCt1AteQwX/pSLKZaz4oDeFY6qPG2rivYEgHOTuvPQA1CYLRNB5Uk1s6YAuG/SLaPAOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nw3EBDuZN5M+9A8O60p/C6I7h1rsZzoP3zzG18Oh+Ho=;
- b=lwCtznkWKcmh7WsnfLuVDkqKvA5Xm+6V9J4ZC2FnrE/icGsPM7rFdGQ0tJoIJkjVrX/zF9wy98yII1hAwlx/VvP6HDaXXzi8LYF9Iq0eW3uvQfPxIMm1jxL4C0qX4dGwISmIG9XX8inLw5shIVpIIV258khm2NCC+KcTadlV8xEVruJm4khnoV3Aiqf96bOLzKaNPuxU8eiiOKRvxP2lYhPvIFP59l9bqHetso0mtiZZ7ii9X/8QG8R3BTtLmGJMofaq/VZB//gAb947PoitXAYKMHZOv6fvyyDwiRQ2aSv0UpvUDGsG8zRzzqkWfJkk+kXlL20CUWS2NeoUn4iLhg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
- (2603:10b6:f:fc00::f13) by CYYPR11MB8329.namprd11.prod.outlook.com
- (2603:10b6:930:c7::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.31; Wed, 2 Jul
- 2025 13:09:11 +0000
-Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
- ([fe80::9c2a:ba60:c5fe:6a64]) by DM3PPF208195D8D.namprd11.prod.outlook.com
- ([fe80::9c2a:ba60:c5fe:6a64%5]) with mapi id 15.20.8857.026; Wed, 2 Jul 2025
- 13:09:10 +0000
-From: "Kandpal, Suraj" <suraj.kandpal@intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>
-CC: Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
-	<tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, "Nikula, Jani" <jani.nikula@intel.com>, "Deak, Imre"
-	<imre.deak@intel.com>, "Murthy, Arun R" <arun.r.murthy@intel.com>, "Dmitry
- Baryshkov" <lumag@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, "Dave
- Airlie" <airlied@redhat.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
-	<kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH] drm/dp: Clean up white space in
- drm_edp_backlight_probe_state()
-Thread-Topic: [PATCH] drm/dp: Clean up white space in
- drm_edp_backlight_probe_state()
-Thread-Index: AQHb61CYyo10iQGAfkCqedIKzRgWr7QezizA
-Date: Wed, 2 Jul 2025 13:09:10 +0000
-Message-ID: <DM3PPF208195D8D423BDB8FC477429FCA3BE340A@DM3PPF208195D8D.namprd11.prod.outlook.com>
-References: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
-In-Reply-To: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM3PPF208195D8D:EE_|CYYPR11MB8329:EE_
-x-ms-office365-filtering-correlation-id: 69581193-4fa8-46ee-cda6-08ddb969a2ac
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?Sy2h5bP/h9SdjuY4dQeVViOcZ8VeXAdLdEAayt2TY+YSV1QGATj2Og3SyjY/?=
- =?us-ascii?Q?6FQA+m27ShVrWpUyPW0MbVnq4k05xOAivIiEeNNpTWmdJ3Cgm0WViNP6RWry?=
- =?us-ascii?Q?WHF0nhKwvcBtZgU9w7Kd5fnnKYm9bQh/lJGWN1+CnvLa6XRrHY0cqWN5EKFm?=
- =?us-ascii?Q?abA1+mbsEu8vuVfqKPW3q0O/ItyyaMAD+D7kVsDtLDrAeUOLI2oKVQAcItok?=
- =?us-ascii?Q?IpW55nOkrB4E3+G23VESQ+S7abj3+rQ3Ila/Dt2aTFPZAcsYd7gYecDoGaFf?=
- =?us-ascii?Q?f4EmYahzLMP/u+8TZ/mRUHUHg+w4q9mqv4LeArKIWmKGcaHhvoPG9NV5y7xd?=
- =?us-ascii?Q?jkkaw6zK5uCB2G+HlUATMPbTddXuq1rx8r8RAj34S63aUjKmUwb/CreB5yJO?=
- =?us-ascii?Q?1W+iolxz53td0bOjPq2YTu9F1JPKGI2uxa0gKMfoDfMN5uLAqpu5WwRDnKDX?=
- =?us-ascii?Q?akyLAxoG/QJXvOJObDMmXaorCOshKdsETBMkcc1wq4NW8FzfM9Iy9R5ZUHCY?=
- =?us-ascii?Q?u+nJnGbYU4OFtNt6lH+4fN1fuyLe1MSTh3rMER0FLjOvRzQZi/Bfpjo/PGNV?=
- =?us-ascii?Q?bvX0D60oK2Bskqka4qlZxEN9F7CvZ/34Tumh0BshapbFa65aZifndhEgrqEL?=
- =?us-ascii?Q?5lw4mRB3Zkstq8ybi1iNZJqh1DAUDtfOwtO3/6ipFUjTrogoG5to9nSZdcRD?=
- =?us-ascii?Q?vXdii0OU51vv7rLuVvHpyC4CYZgw1VZbc6XXk+xtexWDS0BOe1Q2uIQfU6dw?=
- =?us-ascii?Q?zJezPknHxFyHPayHirR+nfZtG0HDZFkz03cy/athqf8OG6vLOZGvKS/elCMe?=
- =?us-ascii?Q?7axongub1vNrfLb0ghM3nhjXxbapCvQYO/62IJHEQfcCH6FqtASbhoZO3fvn?=
- =?us-ascii?Q?QYGWfy32FQAuOS7EUsZOHkpFhrrMFPYwfLHaPUl1UNHQH0NI3O6IXTQ0i6sm?=
- =?us-ascii?Q?g4cX4uoHD6PKgpCBpM7s7k10ghfmNhitJWT1H/fGlRH7rWYIqMkdSTgfp4if?=
- =?us-ascii?Q?7CrVY63OnZq3MRex8G82dudrd2bQNQu2Djcm2BIgQXuoTD5Lz+pbT0uxYUXW?=
- =?us-ascii?Q?xiViGhKzxYoPXOc4unOC+BlQuNzwg5K0TA/V/Yu0+RtB7w+pN7eP6FAR4IaM?=
- =?us-ascii?Q?QfJ+TwryIzO2uPruCe3wRVbHvHLkcI6+2NF6hBz11baiT854ObgE+l7sE5vE?=
- =?us-ascii?Q?8gQyyWxyTZvwEACf2ZP/s+7N0JR79VhOx3lq/2wsZ/9WsUYfsTON7kTp60bk?=
- =?us-ascii?Q?xrrGngHHCPl9GD8O5j7jGbNkPDAdty4Thasn7RVKjQRM5hW8G7nwxzOcpq18?=
- =?us-ascii?Q?my51UG8Kxdvnv17t3ZYsYC29qWane7zPJTfXBq1Id265TamvxbL1F8e3rcIF?=
- =?us-ascii?Q?VdDEBEc4X9zhtr+V0Pv32zXCEpV/0DCLOPgEDXPpp2XWeZVdUbch35oEPRGF?=
- =?us-ascii?Q?BcwtNG8FJ98QGYgJpo8zf0LbBVohyV6RBB4wDjZlG7G5E+LxiEKUmQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PPF208195D8D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?KZSS5b+5WZRDYkwcbG9qRBjYMSNRjyGu0B2oi40ghS5M36neoSW4PMKgWK3z?=
- =?us-ascii?Q?7/LpLr186x45QwgTL7iP+F/iIT7fT5JpWHfEgg+spvCIEg5+FRqv/hEvQw4f?=
- =?us-ascii?Q?VX91s4xs7vTRtDrVbKoiGkKNhqTxecPSKal0fiIFTMyoJZcIg0NtY8QLKHld?=
- =?us-ascii?Q?8DTXPFcqe2XKfJoBOdLJyxE82b1xWGZMaieykY+7fxg7QCWrK6H8L/QhvfKw?=
- =?us-ascii?Q?uF7dRc1Sh4lfK8LRA4g2tZRrQGVxwzYLnvyckpldmwwCqP8OeFXfkYLBxf6n?=
- =?us-ascii?Q?weRkzoVqMVYMgJ+SgLpq150ExP1qVSfqqBbcbVHQADiPzJpqKPRbA2haNwAD?=
- =?us-ascii?Q?zCHK/RGVpnBMVGG9hlORZeInPN7mmTivFotIJbASWW4cjGxMjPj5p7MPUYD+?=
- =?us-ascii?Q?cCLg+nV2jn19wuIPs5LMVJ1kOuLVjvNV0zYHDmJfv91LpMDWIz7CgcrnlkEO?=
- =?us-ascii?Q?GjKY5wsvNVMDuNlDADw3R08UHexMRLU1yGkgJNwZRbIRSeuONIHXChVozskx?=
- =?us-ascii?Q?LX10VwxqR3ysm+1MDn0EmxGlzMLeWM+MhCriDfVzfTYrivuD/c0eGQmxbRFe?=
- =?us-ascii?Q?wzW8uxSMSV8eEtMREuNL6FFRkaOVMI+YkzdCKtfG8hWlQC252KWiys50fxNF?=
- =?us-ascii?Q?o/0TC2WeUHwvoaoP2tqrFyYrATH3Rco7jHYlgvGB7COGV61vzpyW3ILK6mt7?=
- =?us-ascii?Q?Fvlbv7B2tPo1WjQQVnUsgUT07UW7YdcOf/P6cl+hr4NdoT53y7my5Syze8jV?=
- =?us-ascii?Q?Swky8p8LgQBBE0VeOPlpFsEK/LZEBDvEk/qombE7Hib3jD+totUFoValxXu5?=
- =?us-ascii?Q?3NJE11n27bvpyduZS9wJQ2kdXeJF04Z8LR2QP5/R6EI4MsAsdZpeLBWbgO9D?=
- =?us-ascii?Q?BL6nmKCgaplHdiBuCL5TMHdPLx2gesPSwhgEp0CMLmy4zNwcyo2W3oONecZS?=
- =?us-ascii?Q?Mm2Xyvr4sBFrMNs6eKmtY9YLqYvzvK88neBXKC8NlCqnCgJryjxfpl3O7jPQ?=
- =?us-ascii?Q?wlf925IbBbVv6TRkqLZbV5OUuGZ4tZzjnme5fHrt/1wvhOAQUZ01QOCwEIV0?=
- =?us-ascii?Q?F4zuFAPq869rDRUwQ7B4GkZiXAk6mvNGFjuQm9JK5wvaY/nib3ll841gezOc?=
- =?us-ascii?Q?LLT2knT9BeF+7FCLrgycUDoagvXp5OA9NsFcl8waq1j4P11aeNvu0CwPqApG?=
- =?us-ascii?Q?Wg0aWMPGy68gjY4uRytwu6VYrjP2gxEZ/t79s5qW3Quxv9fpePsKRxpBE3pH?=
- =?us-ascii?Q?4rX0WfTIJwYE51mOCbM6g1jI0ftlhYP9kKx0uB7j3uEhxQbpHLKKrSouYA2/?=
- =?us-ascii?Q?Bmck36bzIfQXELrsrY/wRH4h0gJLMaDVFVtO6iGwSGT7d0yT7WPhP/IdR03b?=
- =?us-ascii?Q?6ZzVLuOoW9Jn76pivJabaxSgHrmWBnWcHbvFCYgci9I42e8xrWh/XkzhLqOX?=
- =?us-ascii?Q?LekY5KOIpebxRpbmnGFHphwuUzm/Ie8B3eKYYlmB9lgtadfi7VV7S4ox2K4A?=
- =?us-ascii?Q?0ROfeRKOjliawD7OQZ+aGO/GlQGwP2hQ9Mpk5nS9+pref/OwzHbhcl+NFc8a?=
- =?us-ascii?Q?EBAgErKlvGHvAu3/wqx1HyLFUdjfZPanaGs8XuP4?=
-Content-Type: text/plain; charset="us-ascii"
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Tt1lkMTZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1751478366; bh=pqKWLjkwOcpnsgz3Fd1ouVbv1h6JuyjRHnbm0NrDD40=; h=Subject:From:To:Cc:Date:References:From:Subject:Reply-To; b=Tt1lkMTZRYyQvKh/kwlXZreCPyu+1bcDcabs0nbBNMujHMPyk2cHCfvvCiMhL54GGmt8npmpFJuqXrEoHtfy7qu1tIWqwn6oBoCxYd05qIyzR6BJJmfINdYWIsgRuu/eXmSqOudf+0Ugo+0ZXfKU7GesYYtlr/wJ8moOLBtk2arLToydBP5Xcq0qZ6D9ZU+NaeEsSyorscl7i8lfOXPeqgmzuIXmWj1KJqF9T/Wt5hdNTZZDP4rt3PXZyMLNiuMDKqlWbfrHzpYOj0hC9QpqGdSLOoPDkp6FTCyfJfIRaSaeD+fOTZEkXZQr31SnjuOJ2TWgDLt6MhjXYa0WfB27iA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1751478366; bh=VWtqJ9NNAKWLmVh7sWLiSSjjN/pl47fDDl8RRjmvZow=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=IlIZ/WEncvKieoyDni3GOjBfN98w0ubTcZUwHBQH/TxRjsMTPC+7jVAIRBMZV5l1XsG3uWD1JFkM3JY25L8AbjL6lc3DPV6Y78OOGyCvCSPgf73Cr4+u49xv0dFokqJTqLioQLIXCrj6ufIj3c4Re/FjuRKrBlb/jpgCAaVZfNZ6bYeLtT0zGV+zct8XzPHc55c4ddLEVnt9otIBgjktbduPdwGH39N7x6cY5s2o20LFlMlDHnADhYTtDUAHS6xeELbGCWtYQpNl+mx7KLQCM2qK+DRJsJ2dIRQj2ATUsOhUbjpWCvDE5SNhAizBZarstaTFz1y6tVbasARxeOyE6A==
+X-YMail-OSG: Z0.9Cd0VM1mF_YCAKr_bY.RdvUYtatsNTqOvDmIgGitezh_MVhMr2FqVcAoyjIV
+ O5jcSeQPKY5KCsEQTaJyaZm1Q9XYH96d16FwNMaXbthO1eBiS9pOTcRePiac0iCCYDGiI.y.XY7u
+ vohmaVturd2emjX27Cf4SX7mRSdO_LfRqdW0hOvjUVh4kQm_SJLckCANcP7ewD5_IYXVkjFWPxt2
+ CvL20psARhjkZxM1Kx8Y9qqU0HS7prZdQtvCKcjlQQ_39NCS2NnD3kz4Q8H5F0hU5Q2Vd60l3XjY
+ e4IJqg6eJ_g57pt.QQ7QQCS5WPGcD4QxxUqT9r.bqxjKjzFO8wnt.R2DXzEZZatsjmXzwGWXig4g
+ t8LepCqpsQcL..0j4oKkLNkPmyaa5.4FA.Bv7j58EBE8vzopEmULYfVENm3.pxdI8wxR_1EHQyrs
+ xyEVrTSCtm2gpzjrhlART.8IGy53w34Al0fL8OAdnbXLtpHuWHi_K3oZoapCMnao5yK8MUhHAWpq
+ wDHkibBB.Lc0ft.5LhjOkTAlhge3QBphX7CKg5VzftpyoGCrs2thRQ2Z1JJozqoCm5KvTUPknkP0
+ NMEDGmdfcRrYHDBuOMPwwyI4XZMxWIwwjLbWdSm2.bLb2X2j3HpVl0UlQ01B5LzlcwTqPNd3xv.R
+ 6vp5xrEmkj1qDdL8eIyXxs7.MfVZSfYnuJGkYBxQPFNDNm6WHSnchysbcLap.p_WWnfze_9RQrPl
+ bZTmkbAhycqnDejwe7JqY5eQIYlbPS1HfihGQzCbg1KhGWFsSXfuaykxmFTMwqG41smboGkT03vF
+ YxuKuFEPh29XYHdBD8VcQ7bd46SR2WMU0VtEQ2_07V9MQW2MBf5PHApAZaP8bfrgtLkKAbt6Vav8
+ RrdqBhRLzHBfFu39JB85nd8mzvWcj.BujSOMbCU6Sp.NMQTAaTFNxr7n8FhJ9Id26SFvsuzqB8Ey
+ W518YSJDKyXl.wB2iD4A0YalJBiakaB9EAAsUmAQ.Vh82QarxMUJdtcoaFRXJaUQjazOfEIl8PM2
+ EpREAZ6GfOcXxgl0yV3w3B.Vjg37msijylSuhH8PxKaGa7Dsu0badOCqS.TKqD6UVOCQHo92O24b
+ OheIXMw0aP4NI23EgBoPVKTYIbTwMP77.e1nse7.AU2yFIFUQi0STjiKm8QHDWnPZRUBdBbD.pR1
+ U7j7kqQKKbN8aoR3rqg8.EcH_dq8O3PvWWsUlpGHiyjyEHIYBSPFHc5m1E5Sk2V9n_2G6k2ODqkA
+ zn96s7UpKyhizAcP84nnLhJiO8iPbO7D5QB_ON76gabO4C6PN9p1aAWDCNHpk2KR6NbAyvsMXyDz
+ Qvxz24emXOepozJUh3SuwHfkEtjum9ZHwQSqKcsgvFHbLObW5CR_zyR9yElg9IP2NL30QnP3SMM7
+ q124CK3RMZtjO_lG_2wpxnwBW1AZoOWmMqZho.ewm88QFOuC2ypU8XCtoUTjVaY06R5MYpUL63kW
+ gOMzracXFjqwSClelnJJwP.mNf8PXCxUeygnZE.AAOuEz0tBKjHlbK.5_oB.0FbfTJ4PH3vcZG7M
+ 31gEwLvGcKy2vUU0fMslY0DpsFjGnGCW951gU5OIyZRxwr9CeK2W1apcuW2XB8UGWqMLVd_N5A4.
+ oZ.ZiI3g2e6ROwgMwMHjusfHdT5Z_8L5_tP2lE5Gm5D7b8tI5aaqYBRTG.1Tmd_cFInZdSUzKe64
+ hgbyRUglKrkhhDzzrSNPei15d4QwEweTx.Jui6zx2LKluSOWtDl22X8hptH54pHnQ2c_iBTbwBlH
+ al2WL.J5pHDLElJ49PpuzuU4s3kUvjEb_ODnncD_SrY4NqBi8J4jn4n8desrUHrA_OHyr8_feVG.
+ W25_dKI9hTQwJheMBr.NDMyBnyetIFNtYT4q14xz3uYNIryPYUFMd58HnaSAlSjLytKt5n6RpcYz
+ 1ySq0s2UiRwdK1C_MqGOfqiPdlDGWCglFrvntiO19j6BmbeacaMhJAB_gDGFzdKked2IoFfPd9jq
+ 8jX3xtmGRhwxTodoEk_6KYNRPECBHY6ExuydfvZHyxvPO8OH65WWZt_HBKRstMGl_uMQRLX1.BZf
+ HxoV0jUJChXBDmD6.5.gqdL0SZE8brFzPM_lfX7sCWhdIjSzSN8U39jMV.Z0kg.oaaGBaYpCD22C
+ i0Wcy88xmoz4S61sD4pbL7fpHglC81dvemBFvFfTLN0a2q99ZbpGNwqZR9kgsskq8fcEklBpcqTB
+ wCRTDgrH6HU0appAi_abqcL_h.pZOmpUy3Ovo2rdcYFtV9gmIsw3ErnsLZpi6oAdPGzTzUUHB150
+ dsvX.nfMyFvsu6jWWzrVIuqptWNCz_dG0eWG8vamz1A--
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: 87a0e0e5-39ef-42e6-addf-e6e564a96775
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.gq1.yahoo.com with HTTP; Wed, 2 Jul 2025 17:46:06 +0000
+Received: by hermes--production-ir2-858bd4ff7b-vtq9f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ba2a3b16ae70ce75e58ae34e20a96680;
+          Wed, 02 Jul 2025 17:13:45 +0000 (UTC)
+Message-ID: <13d16a8095e0e0b0dd1ff8a0838aa3e9c743a487.camel@aol.com>
+Subject: Kernel Janitor resources/organisation
+From: Ruben Wauters <rubenru09@aol.com>
+To: kernel-janitors@vger.kernel.org
+Cc: "Robert P.J. Day" <rpjday@crashcourse.ca>
+Date: Wed, 02 Jul 2025 18:13:43 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0-1 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM3PPF208195D8D.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69581193-4fa8-46ee-cda6-08ddb969a2ac
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 13:09:10.8045
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ctIP4rmk9sHIm41ZA6WegNTguHAvhyhncErDPt2huOJLgXpMflOW432FPgLbyPYj7uB8aoLnE+L3ix3GzCewww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR11MB8329
-X-OriginatorOrg: intel.com
+References: <13d16a8095e0e0b0dd1ff8a0838aa3e9c743a487.camel.ref@aol.com>
+X-Mailer: WebService/1.1.24076 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
+Hello
 
+With the introduction of Robert P.J. Day's janitor scripts, the kernel
+janitor mailing list seems to be receiving more activity now.
 
-> -----Original Message-----
-> From: Dan Carpenter <dan.carpenter@linaro.org>
-> Sent: Wednesday, July 2, 2025 6:25 PM
-> To: Kandpal, Suraj <suraj.kandpal@intel.com>; Maarten Lankhorst
-> <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>; Thomas Zimmermann
-> <tzimmermann@suse.de>; David Airlie <airlied@gmail.com>; Simona Vetter
-> <simona@ffwll.ch>; Nikula, Jani <jani.nikula@intel.com>; Deak, Imre
-> <imre.deak@intel.com>; Murthy, Arun R <arun.r.murthy@intel.com>; Dmitry
-> Baryshkov <lumag@kernel.org>; Andy Yan <andy.yan@rock-chips.com>; Dave
-> Airlie <airlied@redhat.com>; dri-devel@lists.freedesktop.org; linux-
-> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
-> Subject: [PATCH] drm/dp: Clean up white space in
-> drm_edp_backlight_probe_state()
->=20
-> This code needs to be indented one more tab.
->=20
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+I wanted to ask about resources. I know there is a page for kernel
+janitors on the kernel newbies project page located here:
+https://kernelnewbies.org/KernelJanitors
+However, the above page appears to be quite out of date, and I'm unsure
+how relevant the listed todo items still are.
 
-LGTM,
-Reviewed-by: Suraj Kandpal <suraj.kandpal@intel.com>
+There also seems to be a google code page? Google code of course no
+longer exists, so I am unsure what the relevance of it is.
 
-> ---
->  drivers/gpu/drm/display/drm_dp_helper.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c
-> b/drivers/gpu/drm/display/drm_dp_helper.c
-> index db7896c7edb8..1c3920297906 100644
-> --- a/drivers/gpu/drm/display/drm_dp_helper.c
-> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
-> @@ -4245,14 +4245,14 @@ drm_edp_backlight_probe_state(struct
-> drm_dp_aux *aux, struct drm_edp_backlight_i
->  					    "%s: Failed to read backlight level:
-> %d\n",
->  					    aux->name, ret);
->  				return ret;
-> -		}
-> +			}
->=20
-> -		/*
-> -		 * Incase luminance is set we want to send the value back in
-> nits but since
-> -		 * DP_EDP_PANEL_TARGET_LUMINANCE stores values in
-> millinits we need to divide
-> -		 * by 1000.
-> -		 */
-> -		return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
-> +			/*
-> +			 * Incase luminance is set we want to send the value
-> back in nits but
-> +			 * since DP_EDP_PANEL_TARGET_LUMINANCE stores
-> values in millinits we
-> +			 * need to divide by 1000.
-> +			 */
-> +			return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
->  		} else {
->  			ret =3D drm_dp_dpcd_read_data(aux,
-> DP_EDP_BACKLIGHT_BRIGHTNESS_MSB,
->  						    buf, size);
-> --
-> 2.47.2
+Overall based on activity of the mailing list it doesn't seem like the
+kernel janitor project is pretty active. I personally think it is
+important however to keep the codebase maintainable, and I do also
+think that common resources, techniques etc should be documented
+*somewhere*.
 
+As such, I wanted to ask if there is a common point of documentation
+that I do not know of, or whether the newbies page is still the best
+resource for it.
+
+I do think the recent scripts (as well as any other relevant scripts)
+should be linked somewhere "official", as they seem incredibly useful
+(I've already sent a patch replacing a removed Kconfig option with the
+proper one that was missed when the original one was removed).
+
+I guess in a way I'm wondering as well on the organisation of the
+janitor's project. Is there a leader of the project? maintainers? It's
+not exactly a subsystem so it may not make sense, but it does also seem
+like it'd be good for newbies if there were people to flag what should
+be done or what might be worth investing time into.
+
+Sorry if this is a bit incoherent, it's a bunch of thoughts I had, I
+think for me the janitor project is probably worth a lot of my time so
+I wish to get involved a lot more.
+
+Ruben Wauters
