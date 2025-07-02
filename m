@@ -1,121 +1,248 @@
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405D225E824
-	for <kernel-janitors@vger.kernel.org>; Wed,  2 Jul 2025 12:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751460916; cv=none; b=kik8n5oeguz1PNQ8yQr0x394bNWK/CHKCN21bobLyyB0vWLuTusYNFLNGb6ydXHx+W9vBQszcQrIYemGk1F4jF9ZDnEL64GJ3+OViMAxNy/d7mtZb0zps/ViqJKBvJRWb8vbMVK6BakYNz5eDtuyVTryw0YQtwNsOwm13uAE3wg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751460916; c=relaxed/simple;
-	bh=mM64/l+BoAfrZDnKLhvKyOQO1tYBWKk29YEAVmVFW5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DnQv8yr7bZPqIfIISeR5alII/zMzEv9ze//m3Qiwynf0/+Cf8vq57D5m5EdW0zTbEdssDxPziSYXyltgvMXq9PZ6Mw6cBfuCCbCWgUZHcr2NMIdNvBNTgvyUHQu19L+8laaGIIaSYMYnIlOuvkEpINhj2cnoaNmPUK0W6TSa81I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bzU1HxKK; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA937275850;
+	Wed,  2 Jul 2025 13:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751461784; cv=fail; b=nLfqOlMC4Tc29OOSU3IRcQIx6Ovbqk7SsVBcSKxL0RwA8HYPunlz93xmcqC4Wj3QyUNGX8sAkR3pX/DebHqCfGbqlySv7OaimoivWl3/9v0dRxiiAWM8FzzP4xcJNuqtZZFyfaxDjvU5YEDpGw3agCtsYIqz+lrHk4Ve/1GZHMU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751461784; c=relaxed/simple;
+	bh=PY1EJ26qPoFgll/Xnadsrd1E1IYKtXFVoKt/44QMD2k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=uvkVo1/CppMLSlBAeuHEabPigzJBoJLv/BtqoEK5lxVKBYOdFOInTn5gbyK8U7PjG3rt5DHD7jnrSsHuUuIuouikgODZSEKSrX8NEIQK3ZRbYmhS/0JoiQtyUynVHIiZ713jigvDWf3WAQuUZWaHLAIVdb4218cib51JHno2Je8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwOsIme3; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bzU1HxKK"
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2ef8df09ce9so2171791fac.1
-        for <kernel-janitors@vger.kernel.org>; Wed, 02 Jul 2025 05:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1751460914; x=1752065714; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NmMXignAcgy9m6Sf/k76zsomjXcz7tyoG6UG//CdDIU=;
-        b=bzU1HxKKRVGr9UPj5EMkLH9JvDJxkUxJPexxVtxiEtPnauAC2V3e7bFSU/1YNkfoW4
-         dxtZUqTTjUVppnIFUz5IGijXCBEz92LLIVlYGqesZAdyay0H/9EO2cMx2OJDZuDO7cEY
-         8fByr9irjKSnnYvcwk9dwcCqpo3VkSebWTWpqhXBvFuEk03KYHUw0Yq76PXsarhmOpVV
-         EwBGfIAx3r7ehMIsUP6NqXWWLRip6MZgSSLzxoucocaSkjsDEeGmB4CJFYOldLs3CMvV
-         G72wQZ1+74ZR/ZuD63eiNvFAt7XZB3ws/ewOiCgTm0M2Tcbqzt6juon0M4nVit/GrKa9
-         qAkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751460914; x=1752065714;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmMXignAcgy9m6Sf/k76zsomjXcz7tyoG6UG//CdDIU=;
-        b=VV+BWFN1RIod4elE4F1Qs/DVczlbIgTbRCLeTgEvCJjFWtUUF+gw6vMmM+nfrQMuVx
-         yKZMhs4BqByrpcDvnpHLMyECiCsJ99RwAhBwbJi3LnREVitw9I68n2wLtTOwR8IYfz7P
-         BSEOa+5cgchaRNTMFx2u6YT/LqdW+kj4CuCcGwI6b7bstJ5jiOCNYb8BtI011lu5biU/
-         F04I9UU68mFXTyR9Igb1lIVo3rIIm6nkT/X28fFIOFsTGqwBSlGdvkOWgnbbWMr/1c1O
-         V74jMEkGKijTvhDYQEcQbYm8zbCw1qhN97698Jrk8/kZBrQZJb27172nn3ERg9i/E0bB
-         BkvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU29Qn5Vdq0r+X0jRxH2r+B9WHFHNuWq6hLqF4PCK2Yzt08A5mTyrshylvdP13pt4K/Q8bT7brR6aqJufHA5cc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfO5n+Aq4reSF43rjWXeoiv4wM8Mu6ynpfb/WxE+HqGRCu/ZMD
-	bOXzPWTlU2lbS7ZHfDiVwt2gjMXah5ut48UQQr7YNf2RKNmBlygu0Zb0LcJBiqO3HVU=
-X-Gm-Gg: ASbGncvBrlHDXLW0709gATVNX6FT32O8Ju6k8Sp+Hgsteu2PfxQaJdItIerOZ8oAvLI
-	JqhVWhmZVtJyO+go+2JZv0MXqzOdzhOa30cm3yXa3kmQbtDCQJmnsvo2AD83WkKVeBVZOdqVD0M
-	AlP/nWLv07fnQK0eSWmxK5HtuabEB9BAwuHyTpF24+PrbkmjLfOvH0stXymsC5KNUJTo3ZE00Ox
-	bCrNKA4g/Mr6wOqzSsrqEso9jJHJvcDz81Gljb5aaCSS48TpRG801Ltx3defwfdrtJAbtEPfIHK
-	1TMkw2QC4FeQd2Ie5B1tARYas9adhnA2ROMapiY/tsgBhLNj61/viU2jx04vy3Wr3FRYd2IOJiS
-	Uk0fX
-X-Google-Smtp-Source: AGHT+IGcYN9rPOHHdQ7PsgYM3Fqg0wPgCuGzQFBF1b+DB5bmZT4Xud99Stxy6A9dj5LlWMYjIyWJnw==
-X-Received: by 2002:a05:6870:3d92:b0:2c2:cd87:7521 with SMTP id 586e51a60fabf-2f58890100cmr1816505fac.4.1751460914344;
-        Wed, 02 Jul 2025 05:55:14 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:93a7:d85e:d088:8154])
-        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2efd5145967sm3792144fac.49.2025.07.02.05.55.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Jul 2025 05:55:13 -0700 (PDT)
-Date: Wed, 2 Jul 2025 07:55:10 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Suraj Kandpal <suraj.kandpal@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Imre Deak <imre.deak@intel.com>,
-	Arun R Murthy <arun.r.murthy@intel.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Dave Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] drm/dp: Clean up white space in
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwOsIme3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1751461783; x=1782997783;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PY1EJ26qPoFgll/Xnadsrd1E1IYKtXFVoKt/44QMD2k=;
+  b=RwOsIme38G+u+yJ/j/epxjQAbn5wKkxpwc3mvO4uGq8PScjpc30njDfq
+   I/Mk5y6mYgB48LML+4j75H/4r4eHGHBhlp14a3yRBDi1WYkQcCdB7FsbR
+   24FAsZYFZ0RTaakVakwnPj6foB2BG+lMp51Svm49I2Hf5EwET8c5EnJzh
+   eUiIuXJOMInDMxSXyne+FwGFViglpE8JowdYHI7zKXuhdflHLthvVBOr8
+   wiri0fDiI5MOdZBp2kH8Y2/PRAT30U82EOvjzhTq7zPnZa71NDLBJiy2/
+   D0txOfuhSfGqsw1xIKgIqJy3eao1xfosG0ZM8LX/EYGzcIwXTFcP7h/Ib
+   Q==;
+X-CSE-ConnectionGUID: zrEgFqtRRSSmmEfEP/cGvw==
+X-CSE-MsgGUID: gzRkEIzFQqaSe/V5+DkJGA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11482"; a="57563551"
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="57563551"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 06:09:14 -0700
+X-CSE-ConnectionGUID: mJeA0g8YRiCyI0O3XenecQ==
+X-CSE-MsgGUID: VWhKlF/kQ6S9lSzzP6cTDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,281,1744095600"; 
+   d="scan'208";a="185016557"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2025 06:09:13 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 2 Jul 2025 06:09:13 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Wed, 2 Jul 2025 06:09:13 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.77)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 2 Jul 2025 06:09:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j9Yio+VG9n5Oq1pSDz/QEMJamJahEJQ4PafrumbVY0EVjx9nekxJVeEhXGaPxoj4d6NpcV80eG6ljGuDCbgpASsYvHX3cpidPOp/hK2n/SkpLQ7aySY44rcoa97cnZvdqa/byFqLg0UI0FG4ZgeK21gxSluBLaW9CJra9770oL0BRNKrD3KfRcuHp5vj84GESxWh1Q4fF34kitDJgxr/PrzUGJ/5NbzeMwX14mGRK/QCIHANYypzciDLiOMgzFXUNZ2i0mZAOOQO5pEX1gTCt1AteQwX/pSLKZaz4oDeFY6qPG2rivYEgHOTuvPQA1CYLRNB5Uk1s6YAuG/SLaPAOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nw3EBDuZN5M+9A8O60p/C6I7h1rsZzoP3zzG18Oh+Ho=;
+ b=lwCtznkWKcmh7WsnfLuVDkqKvA5Xm+6V9J4ZC2FnrE/icGsPM7rFdGQ0tJoIJkjVrX/zF9wy98yII1hAwlx/VvP6HDaXXzi8LYF9Iq0eW3uvQfPxIMm1jxL4C0qX4dGwISmIG9XX8inLw5shIVpIIV258khm2NCC+KcTadlV8xEVruJm4khnoV3Aiqf96bOLzKaNPuxU8eiiOKRvxP2lYhPvIFP59l9bqHetso0mtiZZ7ii9X/8QG8R3BTtLmGJMofaq/VZB//gAb947PoitXAYKMHZOv6fvyyDwiRQ2aSv0UpvUDGsG8zRzzqkWfJkk+kXlL20CUWS2NeoUn4iLhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
+ (2603:10b6:f:fc00::f13) by CYYPR11MB8329.namprd11.prod.outlook.com
+ (2603:10b6:930:c7::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8880.31; Wed, 2 Jul
+ 2025 13:09:11 +0000
+Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
+ ([fe80::9c2a:ba60:c5fe:6a64]) by DM3PPF208195D8D.namprd11.prod.outlook.com
+ ([fe80::9c2a:ba60:c5fe:6a64%5]) with mapi id 15.20.8857.026; Wed, 2 Jul 2025
+ 13:09:10 +0000
+From: "Kandpal, Suraj" <suraj.kandpal@intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>
+CC: Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+	<tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, "Nikula, Jani" <jani.nikula@intel.com>, "Deak, Imre"
+	<imre.deak@intel.com>, "Murthy, Arun R" <arun.r.murthy@intel.com>, "Dmitry
+ Baryshkov" <lumag@kernel.org>, Andy Yan <andy.yan@rock-chips.com>, "Dave
+ Airlie" <airlied@redhat.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+	<kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] drm/dp: Clean up white space in
  drm_edp_backlight_probe_state()
-Message-ID: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
+Thread-Topic: [PATCH] drm/dp: Clean up white space in
+ drm_edp_backlight_probe_state()
+Thread-Index: AQHb61CYyo10iQGAfkCqedIKzRgWr7QezizA
+Date: Wed, 2 Jul 2025 13:09:10 +0000
+Message-ID: <DM3PPF208195D8D423BDB8FC477429FCA3BE340A@DM3PPF208195D8D.namprd11.prod.outlook.com>
+References: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
+In-Reply-To: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM3PPF208195D8D:EE_|CYYPR11MB8329:EE_
+x-ms-office365-filtering-correlation-id: 69581193-4fa8-46ee-cda6-08ddb969a2ac
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Sy2h5bP/h9SdjuY4dQeVViOcZ8VeXAdLdEAayt2TY+YSV1QGATj2Og3SyjY/?=
+ =?us-ascii?Q?6FQA+m27ShVrWpUyPW0MbVnq4k05xOAivIiEeNNpTWmdJ3Cgm0WViNP6RWry?=
+ =?us-ascii?Q?WHF0nhKwvcBtZgU9w7Kd5fnnKYm9bQh/lJGWN1+CnvLa6XRrHY0cqWN5EKFm?=
+ =?us-ascii?Q?abA1+mbsEu8vuVfqKPW3q0O/ItyyaMAD+D7kVsDtLDrAeUOLI2oKVQAcItok?=
+ =?us-ascii?Q?IpW55nOkrB4E3+G23VESQ+S7abj3+rQ3Ila/Dt2aTFPZAcsYd7gYecDoGaFf?=
+ =?us-ascii?Q?f4EmYahzLMP/u+8TZ/mRUHUHg+w4q9mqv4LeArKIWmKGcaHhvoPG9NV5y7xd?=
+ =?us-ascii?Q?jkkaw6zK5uCB2G+HlUATMPbTddXuq1rx8r8RAj34S63aUjKmUwb/CreB5yJO?=
+ =?us-ascii?Q?1W+iolxz53td0bOjPq2YTu9F1JPKGI2uxa0gKMfoDfMN5uLAqpu5WwRDnKDX?=
+ =?us-ascii?Q?akyLAxoG/QJXvOJObDMmXaorCOshKdsETBMkcc1wq4NW8FzfM9Iy9R5ZUHCY?=
+ =?us-ascii?Q?u+nJnGbYU4OFtNt6lH+4fN1fuyLe1MSTh3rMER0FLjOvRzQZi/Bfpjo/PGNV?=
+ =?us-ascii?Q?bvX0D60oK2Bskqka4qlZxEN9F7CvZ/34Tumh0BshapbFa65aZifndhEgrqEL?=
+ =?us-ascii?Q?5lw4mRB3Zkstq8ybi1iNZJqh1DAUDtfOwtO3/6ipFUjTrogoG5to9nSZdcRD?=
+ =?us-ascii?Q?vXdii0OU51vv7rLuVvHpyC4CYZgw1VZbc6XXk+xtexWDS0BOe1Q2uIQfU6dw?=
+ =?us-ascii?Q?zJezPknHxFyHPayHirR+nfZtG0HDZFkz03cy/athqf8OG6vLOZGvKS/elCMe?=
+ =?us-ascii?Q?7axongub1vNrfLb0ghM3nhjXxbapCvQYO/62IJHEQfcCH6FqtASbhoZO3fvn?=
+ =?us-ascii?Q?QYGWfy32FQAuOS7EUsZOHkpFhrrMFPYwfLHaPUl1UNHQH0NI3O6IXTQ0i6sm?=
+ =?us-ascii?Q?g4cX4uoHD6PKgpCBpM7s7k10ghfmNhitJWT1H/fGlRH7rWYIqMkdSTgfp4if?=
+ =?us-ascii?Q?7CrVY63OnZq3MRex8G82dudrd2bQNQu2Djcm2BIgQXuoTD5Lz+pbT0uxYUXW?=
+ =?us-ascii?Q?xiViGhKzxYoPXOc4unOC+BlQuNzwg5K0TA/V/Yu0+RtB7w+pN7eP6FAR4IaM?=
+ =?us-ascii?Q?QfJ+TwryIzO2uPruCe3wRVbHvHLkcI6+2NF6hBz11baiT854ObgE+l7sE5vE?=
+ =?us-ascii?Q?8gQyyWxyTZvwEACf2ZP/s+7N0JR79VhOx3lq/2wsZ/9WsUYfsTON7kTp60bk?=
+ =?us-ascii?Q?xrrGngHHCPl9GD8O5j7jGbNkPDAdty4Thasn7RVKjQRM5hW8G7nwxzOcpq18?=
+ =?us-ascii?Q?my51UG8Kxdvnv17t3ZYsYC29qWane7zPJTfXBq1Id265TamvxbL1F8e3rcIF?=
+ =?us-ascii?Q?VdDEBEc4X9zhtr+V0Pv32zXCEpV/0DCLOPgEDXPpp2XWeZVdUbch35oEPRGF?=
+ =?us-ascii?Q?BcwtNG8FJ98QGYgJpo8zf0LbBVohyV6RBB4wDjZlG7G5E+LxiEKUmQ=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PPF208195D8D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?KZSS5b+5WZRDYkwcbG9qRBjYMSNRjyGu0B2oi40ghS5M36neoSW4PMKgWK3z?=
+ =?us-ascii?Q?7/LpLr186x45QwgTL7iP+F/iIT7fT5JpWHfEgg+spvCIEg5+FRqv/hEvQw4f?=
+ =?us-ascii?Q?VX91s4xs7vTRtDrVbKoiGkKNhqTxecPSKal0fiIFTMyoJZcIg0NtY8QLKHld?=
+ =?us-ascii?Q?8DTXPFcqe2XKfJoBOdLJyxE82b1xWGZMaieykY+7fxg7QCWrK6H8L/QhvfKw?=
+ =?us-ascii?Q?uF7dRc1Sh4lfK8LRA4g2tZRrQGVxwzYLnvyckpldmwwCqP8OeFXfkYLBxf6n?=
+ =?us-ascii?Q?weRkzoVqMVYMgJ+SgLpq150ExP1qVSfqqBbcbVHQADiPzJpqKPRbA2haNwAD?=
+ =?us-ascii?Q?zCHK/RGVpnBMVGG9hlORZeInPN7mmTivFotIJbASWW4cjGxMjPj5p7MPUYD+?=
+ =?us-ascii?Q?cCLg+nV2jn19wuIPs5LMVJ1kOuLVjvNV0zYHDmJfv91LpMDWIz7CgcrnlkEO?=
+ =?us-ascii?Q?GjKY5wsvNVMDuNlDADw3R08UHexMRLU1yGkgJNwZRbIRSeuONIHXChVozskx?=
+ =?us-ascii?Q?LX10VwxqR3ysm+1MDn0EmxGlzMLeWM+MhCriDfVzfTYrivuD/c0eGQmxbRFe?=
+ =?us-ascii?Q?wzW8uxSMSV8eEtMREuNL6FFRkaOVMI+YkzdCKtfG8hWlQC252KWiys50fxNF?=
+ =?us-ascii?Q?o/0TC2WeUHwvoaoP2tqrFyYrATH3Rco7jHYlgvGB7COGV61vzpyW3ILK6mt7?=
+ =?us-ascii?Q?Fvlbv7B2tPo1WjQQVnUsgUT07UW7YdcOf/P6cl+hr4NdoT53y7my5Syze8jV?=
+ =?us-ascii?Q?Swky8p8LgQBBE0VeOPlpFsEK/LZEBDvEk/qombE7Hib3jD+totUFoValxXu5?=
+ =?us-ascii?Q?3NJE11n27bvpyduZS9wJQ2kdXeJF04Z8LR2QP5/R6EI4MsAsdZpeLBWbgO9D?=
+ =?us-ascii?Q?BL6nmKCgaplHdiBuCL5TMHdPLx2gesPSwhgEp0CMLmy4zNwcyo2W3oONecZS?=
+ =?us-ascii?Q?Mm2Xyvr4sBFrMNs6eKmtY9YLqYvzvK88neBXKC8NlCqnCgJryjxfpl3O7jPQ?=
+ =?us-ascii?Q?wlf925IbBbVv6TRkqLZbV5OUuGZ4tZzjnme5fHrt/1wvhOAQUZ01QOCwEIV0?=
+ =?us-ascii?Q?F4zuFAPq869rDRUwQ7B4GkZiXAk6mvNGFjuQm9JK5wvaY/nib3ll841gezOc?=
+ =?us-ascii?Q?LLT2knT9BeF+7FCLrgycUDoagvXp5OA9NsFcl8waq1j4P11aeNvu0CwPqApG?=
+ =?us-ascii?Q?Wg0aWMPGy68gjY4uRytwu6VYrjP2gxEZ/t79s5qW3Quxv9fpePsKRxpBE3pH?=
+ =?us-ascii?Q?4rX0WfTIJwYE51mOCbM6g1jI0ftlhYP9kKx0uB7j3uEhxQbpHLKKrSouYA2/?=
+ =?us-ascii?Q?Bmck36bzIfQXELrsrY/wRH4h0gJLMaDVFVtO6iGwSGT7d0yT7WPhP/IdR03b?=
+ =?us-ascii?Q?6ZzVLuOoW9Jn76pivJabaxSgHrmWBnWcHbvFCYgci9I42e8xrWh/XkzhLqOX?=
+ =?us-ascii?Q?LekY5KOIpebxRpbmnGFHphwuUzm/Ie8B3eKYYlmB9lgtadfi7VV7S4ox2K4A?=
+ =?us-ascii?Q?0ROfeRKOjliawD7OQZ+aGO/GlQGwP2hQ9Mpk5nS9+pref/OwzHbhcl+NFc8a?=
+ =?us-ascii?Q?EBAgErKlvGHvAu3/wqx1HyLFUdjfZPanaGs8XuP4?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM3PPF208195D8D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69581193-4fa8-46ee-cda6-08ddb969a2ac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2025 13:09:10.8045
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ctIP4rmk9sHIm41ZA6WegNTguHAvhyhncErDPt2huOJLgXpMflOW432FPgLbyPYj7uB8aoLnE+L3ix3GzCewww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR11MB8329
+X-OriginatorOrg: intel.com
 
-This code needs to be indented one more tab.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/display/drm_dp_helper.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
-index db7896c7edb8..1c3920297906 100644
---- a/drivers/gpu/drm/display/drm_dp_helper.c
-+++ b/drivers/gpu/drm/display/drm_dp_helper.c
-@@ -4245,14 +4245,14 @@ drm_edp_backlight_probe_state(struct drm_dp_aux *aux, struct drm_edp_backlight_i
- 					    "%s: Failed to read backlight level: %d\n",
- 					    aux->name, ret);
- 				return ret;
--		}
-+			}
- 
--		/*
--		 * Incase luminance is set we want to send the value back in nits but since
--		 * DP_EDP_PANEL_TARGET_LUMINANCE stores values in millinits we need to divide
--		 * by 1000.
--		 */
--		return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
-+			/*
-+			 * Incase luminance is set we want to send the value back in nits but
-+			 * since DP_EDP_PANEL_TARGET_LUMINANCE stores values in millinits we
-+			 * need to divide by 1000.
-+			 */
-+			return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
- 		} else {
- 			ret = drm_dp_dpcd_read_data(aux, DP_EDP_BACKLIGHT_BRIGHTNESS_MSB,
- 						    buf, size);
--- 
-2.47.2
+> -----Original Message-----
+> From: Dan Carpenter <dan.carpenter@linaro.org>
+> Sent: Wednesday, July 2, 2025 6:25 PM
+> To: Kandpal, Suraj <suraj.kandpal@intel.com>; Maarten Lankhorst
+> <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <mripard@kernel.org>; Thomas Zimmermann
+> <tzimmermann@suse.de>; David Airlie <airlied@gmail.com>; Simona Vetter
+> <simona@ffwll.ch>; Nikula, Jani <jani.nikula@intel.com>; Deak, Imre
+> <imre.deak@intel.com>; Murthy, Arun R <arun.r.murthy@intel.com>; Dmitry
+> Baryshkov <lumag@kernel.org>; Andy Yan <andy.yan@rock-chips.com>; Dave
+> Airlie <airlied@redhat.com>; dri-devel@lists.freedesktop.org; linux-
+> kernel@vger.kernel.org; kernel-janitors@vger.kernel.org
+> Subject: [PATCH] drm/dp: Clean up white space in
+> drm_edp_backlight_probe_state()
+>=20
+> This code needs to be indented one more tab.
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+LGTM,
+Reviewed-by: Suraj Kandpal <suraj.kandpal@intel.com>
+
+> ---
+>  drivers/gpu/drm/display/drm_dp_helper.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/display/drm_dp_helper.c
+> b/drivers/gpu/drm/display/drm_dp_helper.c
+> index db7896c7edb8..1c3920297906 100644
+> --- a/drivers/gpu/drm/display/drm_dp_helper.c
+> +++ b/drivers/gpu/drm/display/drm_dp_helper.c
+> @@ -4245,14 +4245,14 @@ drm_edp_backlight_probe_state(struct
+> drm_dp_aux *aux, struct drm_edp_backlight_i
+>  					    "%s: Failed to read backlight level:
+> %d\n",
+>  					    aux->name, ret);
+>  				return ret;
+> -		}
+> +			}
+>=20
+> -		/*
+> -		 * Incase luminance is set we want to send the value back in
+> nits but since
+> -		 * DP_EDP_PANEL_TARGET_LUMINANCE stores values in
+> millinits we need to divide
+> -		 * by 1000.
+> -		 */
+> -		return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
+> +			/*
+> +			 * Incase luminance is set we want to send the value
+> back in nits but
+> +			 * since DP_EDP_PANEL_TARGET_LUMINANCE stores
+> values in millinits we
+> +			 * need to divide by 1000.
+> +			 */
+> +			return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
+>  		} else {
+>  			ret =3D drm_dp_dpcd_read_data(aux,
+> DP_EDP_BACKLIGHT_BRIGHTNESS_MSB,
+>  						    buf, size);
+> --
+> 2.47.2
 
