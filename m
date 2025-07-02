@@ -1,168 +1,121 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A724414
-	for <kernel-janitors@vger.kernel.org>; Wed,  2 Jul 2025 12:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405D225E824
+	for <kernel-janitors@vger.kernel.org>; Wed,  2 Jul 2025 12:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751460399; cv=none; b=gmqbOX0d0DbnbulMfByQ7PKLG/pJ+znOGHow6Np9B/506Sxnc5uOELiX03d/ZSHZR4wZ+qlTJ58p8yNoII9iCcQL2dc+JrnjNETmcb4T4WkRpA9ni+JJcEShXKgb4BTSn8aU0ngASfm43Si2z8r56wYyy/7uQu6CZtab4Vt6Ysk=
+	t=1751460916; cv=none; b=kik8n5oeguz1PNQ8yQr0x394bNWK/CHKCN21bobLyyB0vWLuTusYNFLNGb6ydXHx+W9vBQszcQrIYemGk1F4jF9ZDnEL64GJ3+OViMAxNy/d7mtZb0zps/ViqJKBvJRWb8vbMVK6BakYNz5eDtuyVTryw0YQtwNsOwm13uAE3wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751460399; c=relaxed/simple;
-	bh=8vioJgo8jxOqEbwCsEbsbT0NeygNaljRceeKoaRMP2s=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=fR6kCFGwMOHTplcoD0vNEH/Z7OfD54Ei2b8yfRSZOSbjznsWp+3uhfRVHvqWYFskVagA3eP9YVi/SukptG4RqgAnvNc1208bnRGA8yfJatcEGYppmHKpzQgWVaPRZT6AApIEwTnqvsh6wrx07QVkbnTpU5Ba3DmDXIBZyHdiuXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=cKnjiuk7; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1751460916; c=relaxed/simple;
+	bh=mM64/l+BoAfrZDnKLhvKyOQO1tYBWKk29YEAVmVFW5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DnQv8yr7bZPqIfIISeR5alII/zMzEv9ze//m3Qiwynf0/+Cf8vq57D5m5EdW0zTbEdssDxPziSYXyltgvMXq9PZ6Mw6cBfuCCbCWgUZHcr2NMIdNvBNTgvyUHQu19L+8laaGIIaSYMYnIlOuvkEpINhj2cnoaNmPUK0W6TSa81I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bzU1HxKK; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="cKnjiuk7"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=aF0rrwUU+8hTPQqzTldXIlhyTYwJ0uhxq2rV6e7sngM=; b=cKnjiuk7YFluKjGqNLEtCHLsI3
-	NP1YGGxgKjefw8s++APQoIJAmisyfBrNInLOMbk8qX6kbrvhMYQcIcwLYeA0XT7ygtWM8CWvbiFs8
-	2Q75NzikhqmAIgUOPBwxAU2u8drIMEJH1PkT6lmMqJ8TnBCdL1aW36o4UbjAlsq6VZyg5oCivLnhc
-	l+0FF6dD6Rk+K2D6eTsjBWu+8fxnXymlJ8u45nn4HZs7/BrKBymR1QlSPAeVOkcoemaO7K4fy/p+f
-	fZpywQ6eO/5Ft0xjE5iNka1ysa+ST206zCZm3eOkRZf5jHUkjmI5TXfMLTPPiQUHPh1jmM876ka44
-	63zE6reA==;
-Received: from pool-174-114-102-5.cpe.net.cable.rogers.com ([174.114.102.5]:44254 helo=asus)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uWwrB-0000000Dcmk-0dMw
-	for kernel-janitors@vger.kernel.org;
-	Wed, 02 Jul 2025 08:46:35 -0400
-Date: Wed, 2 Jul 2025 08:46:29 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: More kernel janitorial work -- finding "unused" header files
-Message-ID: <4f9f3eb1-61d8-d5f8-9cd4-22add4e7a8b7@crashcourse.ca>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bzU1HxKK"
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2ef8df09ce9so2171791fac.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 02 Jul 2025 05:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1751460914; x=1752065714; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NmMXignAcgy9m6Sf/k76zsomjXcz7tyoG6UG//CdDIU=;
+        b=bzU1HxKKRVGr9UPj5EMkLH9JvDJxkUxJPexxVtxiEtPnauAC2V3e7bFSU/1YNkfoW4
+         dxtZUqTTjUVppnIFUz5IGijXCBEz92LLIVlYGqesZAdyay0H/9EO2cMx2OJDZuDO7cEY
+         8fByr9irjKSnnYvcwk9dwcCqpo3VkSebWTWpqhXBvFuEk03KYHUw0Yq76PXsarhmOpVV
+         EwBGfIAx3r7ehMIsUP6NqXWWLRip6MZgSSLzxoucocaSkjsDEeGmB4CJFYOldLs3CMvV
+         G72wQZ1+74ZR/ZuD63eiNvFAt7XZB3ws/ewOiCgTm0M2Tcbqzt6juon0M4nVit/GrKa9
+         qAkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751460914; x=1752065714;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NmMXignAcgy9m6Sf/k76zsomjXcz7tyoG6UG//CdDIU=;
+        b=VV+BWFN1RIod4elE4F1Qs/DVczlbIgTbRCLeTgEvCJjFWtUUF+gw6vMmM+nfrQMuVx
+         yKZMhs4BqByrpcDvnpHLMyECiCsJ99RwAhBwbJi3LnREVitw9I68n2wLtTOwR8IYfz7P
+         BSEOa+5cgchaRNTMFx2u6YT/LqdW+kj4CuCcGwI6b7bstJ5jiOCNYb8BtI011lu5biU/
+         F04I9UU68mFXTyR9Igb1lIVo3rIIm6nkT/X28fFIOFsTGqwBSlGdvkOWgnbbWMr/1c1O
+         V74jMEkGKijTvhDYQEcQbYm8zbCw1qhN97698Jrk8/kZBrQZJb27172nn3ERg9i/E0bB
+         BkvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU29Qn5Vdq0r+X0jRxH2r+B9WHFHNuWq6hLqF4PCK2Yzt08A5mTyrshylvdP13pt4K/Q8bT7brR6aqJufHA5cc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfO5n+Aq4reSF43rjWXeoiv4wM8Mu6ynpfb/WxE+HqGRCu/ZMD
+	bOXzPWTlU2lbS7ZHfDiVwt2gjMXah5ut48UQQr7YNf2RKNmBlygu0Zb0LcJBiqO3HVU=
+X-Gm-Gg: ASbGncvBrlHDXLW0709gATVNX6FT32O8Ju6k8Sp+Hgsteu2PfxQaJdItIerOZ8oAvLI
+	JqhVWhmZVtJyO+go+2JZv0MXqzOdzhOa30cm3yXa3kmQbtDCQJmnsvo2AD83WkKVeBVZOdqVD0M
+	AlP/nWLv07fnQK0eSWmxK5HtuabEB9BAwuHyTpF24+PrbkmjLfOvH0stXymsC5KNUJTo3ZE00Ox
+	bCrNKA4g/Mr6wOqzSsrqEso9jJHJvcDz81Gljb5aaCSS48TpRG801Ltx3defwfdrtJAbtEPfIHK
+	1TMkw2QC4FeQd2Ie5B1tARYas9adhnA2ROMapiY/tsgBhLNj61/viU2jx04vy3Wr3FRYd2IOJiS
+	Uk0fX
+X-Google-Smtp-Source: AGHT+IGcYN9rPOHHdQ7PsgYM3Fqg0wPgCuGzQFBF1b+DB5bmZT4Xud99Stxy6A9dj5LlWMYjIyWJnw==
+X-Received: by 2002:a05:6870:3d92:b0:2c2:cd87:7521 with SMTP id 586e51a60fabf-2f58890100cmr1816505fac.4.1751460914344;
+        Wed, 02 Jul 2025 05:55:14 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:93a7:d85e:d088:8154])
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2efd5145967sm3792144fac.49.2025.07.02.05.55.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Jul 2025 05:55:13 -0700 (PDT)
+Date: Wed, 2 Jul 2025 07:55:10 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Suraj Kandpal <suraj.kandpal@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Imre Deak <imre.deak@intel.com>,
+	Arun R Murthy <arun.r.murthy@intel.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Dave Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] drm/dp: Clean up white space in
+ drm_edp_backlight_probe_state()
+Message-ID: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+This code needs to be indented one more tab.
 
-  I'm still cleaning up my kernel "scanning" scripts, and documenting
-them one by one here:
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/display/drm_dp_helper.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-  https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup
-
-so that people looking for Linux kernel janitorial work can peruse the
-scripts (excuse the bland formatting for now), and can run them,
-analyze the output, and determine if there is cleanup work that can be
-submitted as patches.
-
-  (NOTE: I will add to my wiki page the guidance to not just blindly
-run the scripts and submit patches. Rather, the output is to be used
-as a first step to see if the output is meaningful, what it means,
-then to examine the Git log to understand the history of the output,
-then identify the maintainers/mailing lists who should receive any
-appropriate patches.)
-
-  In any event, one of the major scans I implemented all those many
-years ago was to find allegedly "unused" header files -- that is,
-header files in the kernel source tree that appeared to not be
-"#include"d from anywhere in the source. I'll document that script
-shortly at the wiki page but let me provide a sample run so people can
-appreciate what the output represents.
-
-  The current script accepts an optional argument as a subdirectory to
-scan (so you can focus on a small part of the source tree); what that
-does is collect all of the header files in that subdirectory, but
-still scans the *entire* kernel source to see if anything anywhere
-includes any of those header files.
-
-  I ran this script against the drivers/usb directory, and got the
-following output:
-
-  ===== phy-mv-usb.h =====
-  ./drivers/usb/phy/phy-mv-usb.h
-  ===== sisusb_tables.h =====
-  ./drivers/usb/misc/sisusbvga/sisusb_tables.h
-
-What this allegedly tells me is that there are two header files under
-drivers/usb/ that are not included from anywhere in the entire source
-tree (for whatever reason).
-
-  As a manual confirmation, I'll just grep for that header file name
-from the top of the source:
-
-  $ grep -r phy-mv-usb.h *
-  $
-
-So does that mean that header file has no value? Not necessarily, as
-it turns out that a lot of these types of files are lists of
-enums/macros and corresponding hex strings, so who knows when those
-values will suddenly become useful again?
-
-  Same thing with the second header file in that list:
-
-  $ grep -r sisusb_tables.h
-  $
-
-So nothing includes it but, again, it's chock-full of hex values so
-who knows who might suddenly need all that information?
-
-  Running the script on the directory drivers/gpu produces *way* more
-output (this is just partial output):
-
-===== beige_goby_ip_offset.h =====
-./drivers/gpu/drm/amd/include/beige_goby_ip_offset.h
-===== bif_5_0_enum.h =====
-./drivers/gpu/drm/amd/include/asic_reg/bif/bif_5_0_enum.h
-===== bif_5_1_enum.h =====
-./drivers/gpu/drm/amd/include/asic_reg/bif/bif_5_1_enum.h
-===== cl502d.h =====
-./drivers/gpu/drm/nouveau/include/nvhw/class/cl502d.h
-===== cl902d.h =====
-./drivers/gpu/drm/nouveau/include/nvhw/class/cl902d.h
-===== dce_11_2_enum.h =====
-./drivers/gpu/drm/amd/include/asic_reg/dce/dce_11_2_enum.h
-===== dce_8_0_enum.h =====
-./drivers/gpu/drm/amd/include/asic_reg/dce/dce_8_0_enum.h
-===== displayobject.h =====
-./drivers/gpu/drm/amd/include/displayobject.h
-===== dmub_trace_buffer.h =====
-./drivers/gpu/drm/amd/display/dmub/inc/dmub_trace_buffer.h
-===== gc_9_1_sh_mask.h =====
-./drivers/gpu/drm/amd/include/asic_reg/gc/gc_9_1_sh_mask.h
-===== gfx_8_1_d.h =====
-./drivers/gpu/drm/amd/include/asic_reg/gca/gfx_8_1_d.h
-===== gfx_8_1_enum.h =====
-./drivers/gpu/drm/amd/include/asic_reg/gca/gfx_8_1_enum.h
-===== gfx_8_1_sh_mask.h =====
-./drivers/gpu/drm/amd/include/asic_reg/gca/gfx_8_1_sh_mask.h
-===== gmc_8_1_enum.h =====
-./drivers/gpu/drm/amd/include/asic_reg/gmc/gmc_8_1_enum.h
-===== gmc_8_2_enum.h =====
-./drivers/gpu/drm/amd/include/asic_reg/gmc/gmc_8_2_enum.h
-===== hdp_4_4_2_offset.h =====
-./drivers/gpu/drm/amd/include/asic_reg/hdp/hdp_4_4_2_offset.h
-
-... snip ...
-
-Again, a lot of that looks like hex string definitions, but no one
-seems to be including it (or at least not including it in a standard
-way).
-
-  Thoughts?
-
-rday
-
+diff --git a/drivers/gpu/drm/display/drm_dp_helper.c b/drivers/gpu/drm/display/drm_dp_helper.c
+index db7896c7edb8..1c3920297906 100644
+--- a/drivers/gpu/drm/display/drm_dp_helper.c
++++ b/drivers/gpu/drm/display/drm_dp_helper.c
+@@ -4245,14 +4245,14 @@ drm_edp_backlight_probe_state(struct drm_dp_aux *aux, struct drm_edp_backlight_i
+ 					    "%s: Failed to read backlight level: %d\n",
+ 					    aux->name, ret);
+ 				return ret;
+-		}
++			}
+ 
+-		/*
+-		 * Incase luminance is set we want to send the value back in nits but since
+-		 * DP_EDP_PANEL_TARGET_LUMINANCE stores values in millinits we need to divide
+-		 * by 1000.
+-		 */
+-		return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
++			/*
++			 * Incase luminance is set we want to send the value back in nits but
++			 * since DP_EDP_PANEL_TARGET_LUMINANCE stores values in millinits we
++			 * need to divide by 1000.
++			 */
++			return (buf[0] | buf[1] << 8 | buf[2] << 16) / 1000;
+ 		} else {
+ 			ret = drm_dp_dpcd_read_data(aux, DP_EDP_BACKLIGHT_BRIGHTNESS_MSB,
+ 						    buf, size);
+-- 
+2.47.2
 
