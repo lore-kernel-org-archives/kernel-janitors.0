@@ -1,107 +1,108 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BC628DEFC;
-	Thu,  3 Jul 2025 07:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F1D1B95B;
+	Thu,  3 Jul 2025 10:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751526361; cv=none; b=Jfmiz2M1m2yDFXdkj/89hyFR8/dhPxBvJT8/pbX5oqJUBTtIuIOjdi46Ca4KmmP7yV4GrED0Ze1+Pps7d3R3dEuJbvoQonflRX6dms1uXUfUmdguiD8WERHxzfAFZB4vg5hmEluHz+GVsLUn8wA1+moN8q6S7IIOh8M8LCH2EdA=
+	t=1751538169; cv=none; b=RJDCvJEg2p7ggSPU7SwSGQONt+If8jg86pZ2YnZZjDPFAsd/PGJleZdALEidJgvoi5RCXl/AqiwyHaohTlaaa29jdRmc5bh6v6kXmFTJOKPDf2mPYLCdeikEUgGLOsUYHiIMDlihBq8vOiSp2d39RGRbNEigfPcfxzI+JRJEpzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751526361; c=relaxed/simple;
-	bh=tBX3Tg3ZfLvRGBRJcdXBb4meVKOpJNXtvcqZIoRXPkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uCWhZKzMJzQSZp1J4E7gz1GKJiZG/rJu2Ia9WiY8tjf0d7DCG0q5CldvqEEQAsyfSDiMyalLu4m5lN4Rl8TMVsfsiNwDPwKSy8OaNYtmWaZHgq7/Zu5ZqchkUfrb/Ev4b5NM3uMy8cpODQK5VyeclqZr1Hd/NfU/sZVgbjn8pN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AK+vrpSy; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1751538169; c=relaxed/simple;
+	bh=MIb4mxnyzw0FyX4juSZYNLVctI/6u3UOGdOyvRwMQBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R0iKKiS/IhSYOqY56Lk6H0Uoq4G82Xw5FkhUlRzcyOwErbqjSi9NzRQD45RdXepSrS8GkyAY0p3t6Pb487c1kNH4crEQgvcaTcdFeX7m7Tfu93FzqWSlAc3LfUGbMNSeIkzBGht8JQI6x8lf2oOuG8K3DQK+tBVW0Md1zU6SORo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRp0noeF; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AK+vrpSy"
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 562NgNEf014382;
-	Thu, 3 Jul 2025 07:05:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=corp-2025-04-25; bh=6fw1m2vaBWJlrtGVTkLjgbYrt5r6+
-	Vs0ITunB5NdSY8=; b=AK+vrpSyoVE59XyXPxwUSDqIsrfqcbWAtH0+WZIC0eWEP
-	ji/XiBXBTN4tEk3kv6ImXOglnuHQDPTXJoXpm5aUJooXHWWdsLRDYl8Nnt/Vm6sz
-	VPsYlh22Hd8z8mGJraXrLplyAko8uuXhVCUxySKQeNIZMfXClnoFDCLj+bKhwTCE
-	SEnndhpS0jPvW9ELIpwyB+cs3AdZhXaF/p7UncM9MlzDLNF93db543g0jqfH57LW
-	gg2/iRmW9VGDr3QGrpLABGXPZye/DxjutW9x2kkcg9ClwBIxI0yPPG+8rVUF+0fX
-	yPhiktaLXSI2EOBj7VKS5fYH4TJKBt3aVbDKdXNQg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47jum7yp74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 03 Jul 2025 07:05:49 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5635CCrB019238;
-	Thu, 3 Jul 2025 07:05:48 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47jy1h1b9t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 03 Jul 2025 07:05:48 +0000
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56372vVT013043;
-	Thu, 3 Jul 2025 07:05:47 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 47jy1h1b89-1;
-	Thu, 03 Jul 2025 07:05:47 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Dave Penkler <dpenkler@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Rubin <matchstick@neverthere.org>,
-        Gaston Gonzalez <gascoar@gmail.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?q?Paul=20Retourn=C3=A9?= <paul.retourne@orange.fr>,
-        linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, error27@gmail.com,
-        harshit.m.mogalapalli@oracle.com
-Subject: [PATCH] staging: gpib: lpvo_usb_gpib: Remove unreachable return statement
-Date: Thu,  3 Jul 2025 00:05:30 -0700
-Message-ID: <20250703070542.1957371-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.47.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRp0noeF"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a582e09144so3838511f8f.1;
+        Thu, 03 Jul 2025 03:22:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751538166; x=1752142966; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xVW/TWU56BTmNKF84fv0OAX16cBot7rYW8ArRsg5mkE=;
+        b=KRp0noeFUuI1QV2Sft8b4x4s2aCLLGOEaLkRbUd6OJSBWNqACY0slzH2VZ+L28vCpH
+         /9qusGMC2J28ztXhOzCYAp4MVFaup8gtY3967A+pgtPpsikaSnxdGOwZVztLJO2ZZWVs
+         QKkYEgP01iICpFlzaBgQiCQmO5KpC2uOn3Y5W6xlL7CGrwkYE11FZGFBEG+uYA7nTNof
+         18d+bsSOw1LBKmhGKTYDTqgcgCkWHQ8noq3PuIolgJrHZAyWbWcmbadAcCG7zGVLkXSf
+         P9xcz0WJWwjfrjfnN8Bp50zF3n4pA1/Bt2/v3jcIh85MHmTXuTnDL1azOLOmjg1ISP+t
+         g40A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751538166; x=1752142966;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xVW/TWU56BTmNKF84fv0OAX16cBot7rYW8ArRsg5mkE=;
+        b=nYhf2ugMt2Hhqk7WPBuIVH2fec0LPbqag8IzxiHxBttbOizQkN2WO8CVwaAI0SZrvy
+         M0SJ0eKtTaYOxOZr7KL9npCyJiEqJVT88EFvLl/UlqTDYFtSqIga6pyqkQhe3/lo2+Ub
+         Td3UlF9GuYrOFPUEbsqAAF5X10PK8k64tvTS4wAR+IXOV75KHW3erUis78ZirbC8+yex
+         zV2zPrW0HVzTlKaYlJmsA59823PAU2JQ7739Sv42p8M7mMPMS5yx+m/jL9c6CZwVzQBK
+         OBT5KkXhABJnq3ZILCJbNeTwP/c3em1M4YWtHyPHzYOEzS4R0bwNj6RyVySU/XwcZkkw
+         xMjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVndsh2TzlpRDgqwTN4MIpGPGmb472+JF/DNx2Y+6PGEzb5WD3NQLVpruh/CVclaMrMSVQCjb4BRg2/+Xo=@vger.kernel.org, AJvYcCXXJli20xyi6aTTDrgjEOSbPbE9/5qD65AUy1FEcuvTAHOIbMLrkcNCEx8H/ZcUStUZj4/7M110@vger.kernel.org, AJvYcCXdAPCqq+Rcj4rvA4EFvxajK/45dbOvNeY/24nbNkQuclMBINt0Mtuj5WkBB1XD+GeU70DtcHUECh16jw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHqpD1I9Gr24i/3gppp8EJ2cK8CQTPNfW3cXppKJjjhdysTnqP
+	BI1H4T225L+z21D/CdI8bOQe5F5JBpnetB6P8WUuqKqyK148F2yAJvpO
+X-Gm-Gg: ASbGnctU7ZyPRUpUERpDDYm0+QxDs4gmVbo2IBeYVAIh8u1CK8pTP5+zwasf/xT1WF6
+	qN3xugRkVbEacLeAhqICcq+KTXeyo64TQfKHvA7jIYDtd2VX6F09m0E+aQAmyT11f5Z0e2mpkb7
+	S+zz9JxtSiNzzth9SqZWQi3KEecdDyyMQZCz6uPSWnOwSAbaD7IO+4POmwngpFgFVAhDlGFQbwg
+	P3LtAZdxO+UbUwwn2XsSro9l0QqNETU+SFLopLVsnojECcylbf4mA6p1FKy4tbejSNuJs3k9Sez
+	wmjrZd9c2APuypykb5Q9XSXOn03isYMSHf+tGR6Rhv07SewQWePnGqIPohH3
+X-Google-Smtp-Source: AGHT+IHx9K8dEssVjiGHPZZBWT06I6nJjqhfdZoFmqrLy6ZGIu7Jpn6N6Q2DksWjUHr6xHIQrbgIzQ==
+X-Received: by 2002:a05:6000:4028:b0:3a4:d4e5:498a with SMTP id ffacd0b85a97d-3b201016931mr4974051f8f.42.1751538166292;
+        Thu, 03 Jul 2025 03:22:46 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a892e595d1sm18456831f8f.71.2025.07.03.03.22.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Jul 2025 03:22:45 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Mark Bloch <mbloch@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Cosmin Ratiu <cratiu@nvidia.com>,
+	Carolina Jubran <cjubran@nvidia.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net/mlx5: Fix spelling mistake "disabliing" -> "disabling"
+Date: Thu,  3 Jul 2025 11:22:19 +0100
+Message-ID: <20250703102219.1248399-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-03_01,2025-07-02_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
- bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507030055
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzAzMDA1NSBTYWx0ZWRfXwOYQtWWpo+eu /KaI0S0fl9Ax+HNsVMXygXKX/+xPZJaQktcOnfzhsnS+MbKPV+oenjKgwwPa6pCgFNIPeS4UDhq KZfkRmzLoJONVJdtyJfwiaEzrNGLmPK3dPkNZID/8QlRTWsIjotZFKxPqIDwgm1kalh9NZCXjrX
- vQt+ACHDJ0J+AoL2UoC81rPOsRG4UcbmoRVBjbSnOFTQoLa4y/x5lmNiyqCY9sY5l6WHVuPkzIV Ju5yi1/6Z63ZQk4zfKQxjaHcIOe3olF4qpUleTqPXiBntWlVkmzLWX/mfhv9ImMinQVaANDDxxq WoxNXhwCMZXdyL5K8cYEwW8+jmwiEFITaWLy9184eGSIzp741YZLKQj0k7AWPOIvBHRCzLxQ2Kb
- MuyFxHpsHh0nQJzT2IKZqkZs77WpYasB7MASovj0I9R3GcvuY9UnUDy8UtMB1HK4pahjBCIh
-X-Authority-Analysis: v=2.4 cv=MvBS63ae c=1 sm=1 tr=0 ts=68662bcd b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=Wb1JkmetP80A:10 a=yPCof4ZbAAAA:8 a=bvPFxI6Er8ueAQ2jocEA:9 cc=ntf awl=host:13216
-X-Proofpoint-ORIG-GUID: CLM-6_-k_sNdTvimqN80lWCX9AC06xOw
-X-Proofpoint-GUID: CLM-6_-k_sNdTvimqN80lWCX9AC06xOw
 
-usb_gpib_read() has a return statement after if else which is
-unreachable, clean this up.
+There is a spelling mistake in a NL_SET_ERR_MSG_MOD message. Fix it.
 
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-This is detected by Smatch
----
- drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-index 3cf5037c0cd2..dd68c4843490 100644
---- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-+++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-@@ -791,7 +791,6 @@ static int usb_gpib_read(struct gpib_board *board,
- 			return -EIO;
- 		else
- 			return -ETIME;
--		return 0;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+index 154bbb17ec0e..7ca6bba24001 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+@@ -1353,7 +1353,7 @@ static int esw_qos_switch_tc_arbiter_node_to_vports(
+ 					     &node->ix);
+ 	if (err) {
+ 		NL_SET_ERR_MSG_MOD(extack,
+-				   "Failed to create scheduling element for vports node when disabliing vports TC QoS");
++				   "Failed to create scheduling element for vports node when disabling vports TC QoS");
+ 		return err;
  	}
  
- 	/* allocate buffer for multibyte read */
 -- 
-2.39.3
+2.50.0
 
