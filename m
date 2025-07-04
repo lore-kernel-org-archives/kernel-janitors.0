@@ -1,86 +1,76 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB3F1DDA0C;
-	Thu,  3 Jul 2025 18:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59022DEA9D;
+	Fri,  4 Jul 2025 17:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751565779; cv=none; b=Z7EoK8l5MXouJA/QbgdRT3xzPkYzJnDMyR54ZQI5+yiB9EhXtAYherVZV1iKhKEkAak0qXGFsmLYrK38JA5iZihPP5v8DS3dEXosXvvCxTzhO0ZIYBSYBrGcr5ypwQngIjBuvuMYmIFgoUcxJRw/Crl8gizjKYtl/hCkMVj3qpw=
+	t=1751651076; cv=none; b=WliW7EhmOg6bKELv76NZ+Z7h3dRdJltsCrHUkao1roYYA4uYASevmFJdLndGMs76+4eK7CaE9Nf6oA0DRbdDkCgIaNvwALak9XDQpic+BhM/yijc/83aD2mKqTRsq0068Ta9I6m8Tp92ogh3PXA8akVd7KPxDAMWYwHAYUgRmyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751565779; c=relaxed/simple;
-	bh=v/I1dsSqNAw4VzACte/moRciziTu8q9oyU6gnYg2cn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpeJNyYJKCsHoQqlkMHgdRm4rLgau2DC6uPer2t7JRgtkVBTmFaV+uA4w+0QNPwOnkIuMVUpWDgG91DJJWPB/+AZHTelEtCwzI+VRfJIGABepLMnbOVjsp7hsEh+KfBKhDSi1111reseQJWE2vRtqFlPbZAmHDO32haYurYpkn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=f2fywMU4; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1751651076; c=relaxed/simple;
+	bh=v4HqrO/Loccpnm9IAZIiomMoOx53gCodU0/+eM3L62c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CCVZgd0RjZI9TZzbH4vaDlL2rnzXUQuV4vWsI82OtIfZOOD3IfqKcg4mPoDGUNTIzM6BUbHR7Am1eo9dusE0640263gxM/EfPy3eaMf5SH4NtGKmbYHXsvpFmO0BuVzUZyJ+2bf3051ext37+WIBh6aa3Cb7Ysxuq8aaVpT9J4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEi8pj/k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="f2fywMU4"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E251B6BE;
-	Thu,  3 Jul 2025 20:02:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1751565752;
-	bh=v/I1dsSqNAw4VzACte/moRciziTu8q9oyU6gnYg2cn8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f2fywMU4DxaOoTEgWphDg4lYFBbac0Ssp82ncoEWY/W3JdJcmm8LxZJHXBDS2g9bH
-	 lOCv8LSb0nbLoRSLfDdCc5PHKbZSm7j1I6WnP/d1aLC++oZAhNxKNO7nXwIZJJzu0t
-	 uUiYvF2kUgXEF5iwg48rMzd0jRtE91bPhscobw7o=
-Date: Thu, 3 Jul 2025 21:02:28 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Rui Miguel Silva <rmfrfs@gmail.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEi8pj/k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACA0EC4CEED;
+	Fri,  4 Jul 2025 17:44:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1751651076;
+	bh=v4HqrO/Loccpnm9IAZIiomMoOx53gCodU0/+eM3L62c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IEi8pj/kCMl95J2lMztV2IxkDV8mgs4XOj5do6SyB7RcJ2kfsBK4xKMnFKuHFMxwC
+	 7ZvMJy9KuGqDeHL0ZihnSDnxIEZvVlIRgTtK06oW9mB5aWdW/YPoVUF9bzYQgp/ibE
+	 7lsO6jb0mEzBe5/S286MAekCB5dooB3Av9pNnlUCDjDiBy7qLcwgyMSAz1M+lU7HEo
+	 zTk6cWB8Dgo2nmUD1kCJ+j6vMQzEfF9JExGzusMbiL20MHHlcjQPwKzYGegn6igtfU
+	 00JTL5PmJeoLZrojg/I0nqwt4jtwodMdWDZsFBpiyw7qlAmLalCww8CN9fYC8BWMmY
+	 wn/u5S88Z2dpw==
+From: Will Deacon <will@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>,
 	Shawn Guo <shawnguo@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: imx8mq-mipi-csi2: Fix error code in
- imx8mq_mipi_csi_parse_dt()
-Message-ID: <20250703180228.GA20240@pendragon.ideasonboard.com>
-References: <9b6c7925-c9c4-44bd-acd5-1ef0e698eb87@sabinyo.mountain>
- <20250626002053.GA12213@pendragon.ideasonboard.com>
- <473ad0ce-5180-40e9-b159-a6cfe77f792f@suswa.mountain>
- <20250626083018.GB8738@pendragon.ideasonboard.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	imx@lists.linux.dev,
+	Colin Ian King <colin.i.king@gmail.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf: imx9_perf: make the read-only array mask static const
+Date: Fri,  4 Jul 2025 18:44:12 +0100
+Message-Id: <175164874778.4003522.7716174042065513096.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250611133917.170888-1-colin.i.king@gmail.com>
+References: <20250611133917.170888-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250626083018.GB8738@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 26, 2025 at 11:30:18AM +0300, Laurent Pinchart wrote:
-> On Thu, Jun 26, 2025 at 03:32:50AM +0300, Dan Carpenter wrote:
-> > On Thu, Jun 26, 2025 at 03:20:53AM +0300, Laurent Pinchart wrote:
-> > > On Wed, Jun 25, 2025 at 10:22:32AM -0500, Dan Carpenter wrote:
-> > > > This was returning IS_ERR() where PTR_ERR() was intended.
-> > > > 
-> > > > Fixes: 642b70d526ab ("media: imx8mq-mipi-csi2: Add support for i.MX8QXP")
-> > > 
-> > > I'll add a
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > 
-> > > to obey the media subsystem CI rules.
-> > 
-> > Wait, what?  The original commit hasn't hit Linus's tree and it's
-> > not marked for stable either.
+On Wed, 11 Jun 2025 14:39:17 +0100, Colin Ian King wrote:
+> Don't populate the read-only array mask on the stack at run time,
+> instead make it static const.
 > 
-> I'm personally not in favour of adding Cc: stable on all patches that
-> have a Fixes: line. I'll let Mauro defend the rule, and I'm happy to
-> drop the Cc line and fix the CI.
+> 
 
-Mauro, could you please tell what would be your preference ?
+Applied to will (for-next/perf), thanks!
 
+[1/1] perf: imx9_perf: make the read-only array mask static const
+      https://git.kernel.org/will/c/b6e37b27bf68
+
+Cheers,
 -- 
-Regards,
+Will
 
-Laurent Pinchart
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
