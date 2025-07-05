@@ -1,102 +1,109 @@
-Received: from smtp.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
+Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C453523AD;
-	Sat,  5 Jul 2025 08:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942BA2E3708;
+	Sat,  5 Jul 2025 08:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751702460; cv=none; b=EtIClJOfPn+wlLOKoLT2LtRkD/uAqf7E7CqH2RX1Glt0D0UvxIdsgNnHGrJ3ykyX369e32jxIqkXN+rtSiRmB16+kPTdOmmxlVtJi3AbU+77XtWVi0Ukp2gdryLZePPI9Kj3gFGy1yJ3mycFKDN0wYoSQkE8yny/VLSmb4bpirI=
+	t=1751703222; cv=none; b=I31Tol6fTKowdoj1stAGCdYz2pN+XWnHcNynO8DaQqOTAaa4HvWysW60RRmm4bCIBEZEqKtNnwRAvrUPlXjZDHOyj8DPkcjMmt/GwYR/XL0RHnWzPzRI+i8Bm8Odt1jN2da15KXq7FSeaovzbxsyDXXoP5QbV7D1lVh5yMmHhhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751702460; c=relaxed/simple;
-	bh=nLXnE4ckhXW7r2TvzPlYVYNvU8slkEEja4KfJAhIrDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RTrR7/00VtLQrvRzWU/fbGnY9tr2yj0n4C+Jzf7yfT4D6dXJFchFKP4+WQXuxZWxiGk9YjKUb9/ZPUNMBNIOjWq9WBy1Hod6ivRCuxcgikHpkjPQvBEwHk8PsTui+NJrRhf9pwBnM9GSEG4ZtOa2HaBvWyNkO8tzvVDEBPiJQ3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=svByA4ek; arc=none smtp.client-ip=80.12.242.73
+	s=arc-20240116; t=1751703222; c=relaxed/simple;
+	bh=Diwz3sxzI9NChf/k2ekgjgSqB6LvFdPzKu2q9jD75Jk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfvUANrUNFQvRk5ce7/gki196eCq+TYHcbcf407nXkZh9ZCvhncxyN25FiH4RAYs40Z4157Uhuy12fV4xR6pLV6Le8R6Mf5ukoHInNn9wgKvqMaZXdQqtAm/W86lFbXPy64Afl8EmGWfFtzfja1PWmWqSM71GLToLvayz5JqOiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nJU+SYzM; arc=none smtp.client-ip=80.12.242.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="svByA4ek"
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nJU+SYzM"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id XxoKupp8kLcVHXxoKunRfA; Sat, 05 Jul 2025 09:59:50 +0200
+	id Xy0au5r9q2WitXy0buPMeJ; Sat, 05 Jul 2025 10:12:30 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751702390;
-	bh=VQ6hcra26V8uGbk7azLpB97C+ND9ORSpi7q1ylZ6L8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=svByA4ekc595xEi710+oiG+RSnomMhfBV2xbtnmT+gHC9lEfMk52wRfoClab7j0mN
-	 9e7xEpeGqybiKxI5Oy5rmNZ1GamSTl5IBjO0pf0+EoVndNgk82AmMOMb62QjWVDWAu
-	 0KLXgNHV8CJjJ1puFmH3/jxjirToYIb0FyBUS2+yXVNGAF/WYH7iTNLdL8Ey1ETurg
-	 tASO8oc05WkXdLqt23tnIxOXmMgea82K4KYwqCXbZl2r99LycqVKLSTyw3D6LMktQa
-	 c/UZeaZLnGtiJvwcANo57YQIX5Pj7M9U6HBZ19FWZAzuqu1TonlVoh6+j2C8BAZmrQ
-	 lr6zg7/rzP6fQ==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 05 Jul 2025 09:59:50 +0200
+	s=t20230301; t=1751703150;
+	bh=IDZp6l5xw/oHRf5S1uAFtP428wpChGCpPW/ucIcbiWs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=nJU+SYzM4HD/XrQLZ3iaT+Do+WWVzHyaksrtjIcFamUweVgAbklZsIJX29MUp+ZXG
+	 vSMj+/j1dL8JH4u2DbwValvwhKc2foovJqlgGhoMa2BxSY52K525AvoKuLO5L5jERR
+	 Wdvu39PWdIQ8eYL1FkrScaT7BRCcird9eAhogiYw7FkfYa3en7vekPN0ag448k54Pt
+	 mRP6x3xoh06OR7I2bGIhnjScyIR25AQfjsBEEA53ITsZa1cFA29RlaNm+VYe+dJVgl
+	 ndQboLgQ2CS3xzYjcr46ILayBI8fv1Y/KPkAOqmS8mxF/mowuddgUzoAOCzjxxeAIK
+	 1jjoEQfn/JbEw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 05 Jul 2025 10:12:30 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <068ce076-f317-4646-99d0-c500feb02450@wanadoo.fr>
-Date: Sat, 5 Jul 2025 09:59:47 +0200
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2] ASoC: qcom: qdsp6: Add an error handling path in q6usb_component_probe()
+Date: Sat,  5 Jul 2025 10:12:25 +0200
+Message-ID: <1a3bf0ee02f880919190944e581bef2b428ca864.1751703113.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c: omap: Fix an error handling path in omap_i2c_probe()
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>,
- Jayesh Choudhary <j-choudhary@ti.com>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-i2c@vger.kernel.org
-References: <998542981b6d2435c057dd8b9fe71743927babab.1749913149.git.christophe.jaillet@wanadoo.fr>
- <vhhxtsspywvuzkfgbn52hysghd6tdxhk32wv3wcnlqwhskto3f@h2bbhek3s4s3>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <vhhxtsspywvuzkfgbn52hysghd6tdxhk32wv3wcnlqwhskto3f@h2bbhek3s4s3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 26/06/2025 à 00:10, Andi Shyti a écrit :
-> Hi Christophe,
-> 
-> On Sat, Jun 14, 2025 at 04:59:26PM +0200, Christophe JAILLET wrote:
->> If an error occurs after calling mux_state_select(), mux_state_deselect()
->> should be called as already done in the remove function.
->>
->> Fixes: b6ef830c60b6 ("i2c: omap: Add support for setting mux")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> 
-> merged to i2c/i2c-host-fixes. Thanks!
-> 
->> ---
->> I'm not 100% sure of the error handling path.
->>
->> Should pm_runtime_dont_use_autosuspend() be called after the err_disable_pm
->> label? (to match the calling order)
-> 
-> Yes, I think you are right here.
-> 
->> Also, should errors from omap_i2c_init() be handled?
-> 
-> Yes, if it fails it should be handled.
-> 
-> Thanks for the two reports. Do you have time to fix them or
-> can I go ahead and do it?
+If an error occurs after a successful q6usb_dai_add_aux_device() call,
+some resources should be released as already done in the remove function.
 
-I've sent a patch for each issue.
+Add an error handling path in the probe and the missing clean-up.
 
-Feel free to take the lead if not correct. As said in the cover letter, 
-I'm not completely confident with them.
+Fixes: 72b0b8b29980 ("ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Changes in v2:
+  - Propagate the error code returned by snd_soc_usb_allocate_port()
+    instead of an explicit -ENOMEM.   [Dan Carpenter]
 
-CJ
+v1: https://lore.kernel.org/all/7338875b20cb41693f803c6b9673cf7f3e5f089a.1746781775.git.christophe.jaillet@wanadoo.fr/
+---
+ sound/soc/qcom/qdsp6/q6usb.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-> 
-> Thanks,
-> Andi
-> 
-> 
+diff --git a/sound/soc/qcom/qdsp6/q6usb.c b/sound/soc/qcom/qdsp6/q6usb.c
+index ebe0c2425927..0d998e872e82 100644
+--- a/sound/soc/qcom/qdsp6/q6usb.c
++++ b/sound/soc/qcom/qdsp6/q6usb.c
+@@ -327,8 +327,10 @@ static int q6usb_component_probe(struct snd_soc_component *component)
+ 		return ret;
+ 
+ 	usb = snd_soc_usb_allocate_port(component, &data->priv);
+-	if (IS_ERR(usb))
+-		return -ENOMEM;
++	if (IS_ERR(usb)) {
++		ret = PTR_ERR(usb);
++		goto free_aux_devices;
++	}
+ 
+ 	usb->connection_status_cb = q6usb_alsa_connection_cb;
+ 	usb->update_offload_route_info = q6usb_update_offload_route;
+@@ -337,6 +339,12 @@ static int q6usb_component_probe(struct snd_soc_component *component)
+ 	data->usb = usb;
+ 
+ 	return 0;
++
++free_aux_devices:
++	auxiliary_device_delete(&data->uauxdev);
++	auxiliary_device_uninit(&data->uauxdev);
++
++	return ret;
+ }
+ 
+ static void q6usb_component_remove(struct snd_soc_component *component)
+-- 
+2.50.0
 
