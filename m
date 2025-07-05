@@ -1,53 +1,54 @@
-Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
+Received: from smtp.smtpout.orange.fr (smtp-73.smtpout.orange.fr [80.12.242.73])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942BA2E3708;
-	Sat,  5 Jul 2025 08:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7846123AD;
+	Sat,  5 Jul 2025 08:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751703222; cv=none; b=I31Tol6fTKowdoj1stAGCdYz2pN+XWnHcNynO8DaQqOTAaa4HvWysW60RRmm4bCIBEZEqKtNnwRAvrUPlXjZDHOyj8DPkcjMmt/GwYR/XL0RHnWzPzRI+i8Bm8Odt1jN2da15KXq7FSeaovzbxsyDXXoP5QbV7D1lVh5yMmHhhM=
+	t=1751704565; cv=none; b=uD1w3XjAgqv5L4+P1SSsc/sysCcZN0T6bO2V2zTyS+bquUe7V50nQKQbQYQYR2BlJWbdQgyCmF6SEdTm1k317pR76do+uZ/YGbFYq8l/EMNFDFdgRtq8ThycQ43gYgrMTLXAy9HDs+Z02k6R1FzeGIpX6jmpZV9U9nx4l/f8Cko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751703222; c=relaxed/simple;
-	bh=Diwz3sxzI9NChf/k2ekgjgSqB6LvFdPzKu2q9jD75Jk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfvUANrUNFQvRk5ce7/gki196eCq+TYHcbcf407nXkZh9ZCvhncxyN25FiH4RAYs40Z4157Uhuy12fV4xR6pLV6Le8R6Mf5ukoHInNn9wgKvqMaZXdQqtAm/W86lFbXPy64Afl8EmGWfFtzfja1PWmWqSM71GLToLvayz5JqOiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=nJU+SYzM; arc=none smtp.client-ip=80.12.242.65
+	s=arc-20240116; t=1751704565; c=relaxed/simple;
+	bh=Cn0VWrYKwf8V6uYejsIP+/3mvamaPCvfi5zjmIbd94g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=esEzW6NyU3Um94cHsetKnqx450NvlKIXaM6SV0MSE19+Nv9537vup9JJZ+AYNNJbon/hZY9CJ/+DRoJWeHKhume+vUSmqy6qNqSRHL/7BeyNgInUwRCl8qVE2e7GWCVJzBuTUaQ793bWF+E0wBb7N7hdA8ZuM79fPNkvkofg0So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=cF0ow0Mk; arc=none smtp.client-ip=80.12.242.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="nJU+SYzM"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="cF0ow0Mk"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id Xy0au5r9q2WitXy0buPMeJ; Sat, 05 Jul 2025 10:12:30 +0200
+	id XyMCunIdc3HAMXyMCux85J; Sat, 05 Jul 2025 10:34:50 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1751703150;
-	bh=IDZp6l5xw/oHRf5S1uAFtP428wpChGCpPW/ucIcbiWs=;
+	s=t20230301; t=1751704491;
+	bh=bZ2e0OGLx3B1xnxgJsmUQMNOM9BBR0+6G+mi7LokNx8=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=nJU+SYzM4HD/XrQLZ3iaT+Do+WWVzHyaksrtjIcFamUweVgAbklZsIJX29MUp+ZXG
-	 vSMj+/j1dL8JH4u2DbwValvwhKc2foovJqlgGhoMa2BxSY52K525AvoKuLO5L5jERR
-	 Wdvu39PWdIQ8eYL1FkrScaT7BRCcird9eAhogiYw7FkfYa3en7vekPN0ag448k54Pt
-	 mRP6x3xoh06OR7I2bGIhnjScyIR25AQfjsBEEA53ITsZa1cFA29RlaNm+VYe+dJVgl
-	 ndQboLgQ2CS3xzYjcr46ILayBI8fv1Y/KPkAOqmS8mxF/mowuddgUzoAOCzjxxeAIK
-	 1jjoEQfn/JbEw==
+	b=cF0ow0Mk+vKo0i7MXgUtpEOsNiSg/EqNpyVO5xtB2DGhRDbSJb+yPRjQoa3h+IbIo
+	 Q5f7G2PnB/Uqq8/s1VsxYbEcVImyFXJmcSEivXu/6IvwWRfh8613zFQOtWm87ZDplo
+	 sUzYPZMf5TXsaatv+ywMe26H0XR+DSrXCdGaEFvfmmJedqFosv3F5CeQQxAKAgVa6q
+	 7HN3dvmIIjrFEHqqMWjgVYBOHGYY/e28mf3Hs31hPhZtKM6FXIegxEQNkoEf7eWm5C
+	 yLGQ3RQyLknnkAxvmNLP/s7pJosT1WsjYaHlSz8GxbpNrqbpHGFj8pt980/R6/V5PE
+	 j0d4uq3fe1J2w==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 05 Jul 2025 10:12:30 +0200
+X-ME-Date: Sat, 05 Jul 2025 10:34:51 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2] ASoC: qcom: qdsp6: Add an error handling path in q6usb_component_probe()
-Date: Sat,  5 Jul 2025 10:12:25 +0200
-Message-ID: <1a3bf0ee02f880919190944e581bef2b428ca864.1751703113.git.christophe.jaillet@wanadoo.fr>
+	Simon Horman <horms@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	netdev@vger.kernel.org
+Subject: [PATCH v4 net] net: airoha: Fix an error handling path in airoha_probe()
+Date: Sat,  5 Jul 2025 10:34:32 +0200
+Message-ID: <1c940851b4fa3c3ed2a142910c821493a136f121.1746715755.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -57,53 +58,52 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after a successful q6usb_dai_add_aux_device() call,
-some resources should be released as already done in the remove function.
+If an error occurs after a successful airoha_hw_init() call,
+airoha_ppe_deinit() needs to be called as already done in the remove
+function.
 
-Add an error handling path in the probe and the missing clean-up.
-
-Fixes: 72b0b8b29980 ("ASoC: qcom: qdsp6: Add USB backend ASoC driver for Q6")
+Fixes: 00a7678310fe ("net: airoha: Introduce flowtable offload support")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 ---
+Changes in v4:
+  - Add A-b and R-b tags
+  - Rebase against latest -next (because v3 now gets "Hunk #1 succeeded
+    at 2979 (offset -12 lines)")
+
+Changes in v3:
+  - call airoha_ppe_deinit() and not airoha_ppe_init()   [Lorenzo Bianconi]
+v3: https://lore.kernel.org/all/1b94b91345017429ed653e2f05d25620dc2823f9.1746715755.git.christophe.jaillet@wanadoo.fr/
+
 Changes in v2:
-  - Propagate the error code returned by snd_soc_usb_allocate_port()
-    instead of an explicit -ENOMEM.   [Dan Carpenter]
+  - Call airoha_ppe_init() at the right place in the error handling path
+    of the probe   [Lorenzo Bianconi]
+v2: https://lore.kernel.org/all/3791c95da3fa3c3bd2a942210e821d9301362128.1746715755.git.christophe.jaillet@wanadoo.fr/
 
-v1: https://lore.kernel.org/all/7338875b20cb41693f803c6b9673cf7f3e5f089a.1746781775.git.christophe.jaillet@wanadoo.fr/
+v1: https://lore.kernel.org/all/f4a420f3a8b4a6fe72798f9774ec9aff2291522d.1744977434.git.christophe.jaillet@wanadoo.fr/
+
+Compile tested only.
+
+In the previous iteration, this patch was part of a serie (was 2/4).
+But it should be related to 'net', while the rest of the serie was for
+'net-next'. So it is resent as a stand-alone patch, as a v4.
 ---
- sound/soc/qcom/qdsp6/q6usb.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/airoha/airoha_eth.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/qcom/qdsp6/q6usb.c b/sound/soc/qcom/qdsp6/q6usb.c
-index ebe0c2425927..0d998e872e82 100644
---- a/sound/soc/qcom/qdsp6/q6usb.c
-+++ b/sound/soc/qcom/qdsp6/q6usb.c
-@@ -327,8 +327,10 @@ static int q6usb_component_probe(struct snd_soc_component *component)
- 		return ret;
- 
- 	usb = snd_soc_usb_allocate_port(component, &data->priv);
--	if (IS_ERR(usb))
--		return -ENOMEM;
-+	if (IS_ERR(usb)) {
-+		ret = PTR_ERR(usb);
-+		goto free_aux_devices;
-+	}
- 
- 	usb->connection_status_cb = q6usb_alsa_connection_cb;
- 	usb->update_offload_route_info = q6usb_update_offload_route;
-@@ -337,6 +339,12 @@ static int q6usb_component_probe(struct snd_soc_component *component)
- 	data->usb = usb;
- 
- 	return 0;
-+
-+free_aux_devices:
-+	auxiliary_device_delete(&data->uauxdev);
-+	auxiliary_device_uninit(&data->uauxdev);
-+
-+	return ret;
- }
- 
- static void q6usb_component_remove(struct snd_soc_component *component)
+diff --git a/drivers/net/ethernet/airoha/airoha_eth.c b/drivers/net/ethernet/airoha/airoha_eth.c
+index af8c4015938c..d435179875df 100644
+--- a/drivers/net/ethernet/airoha/airoha_eth.c
++++ b/drivers/net/ethernet/airoha/airoha_eth.c
+@@ -2979,6 +2979,7 @@ static int airoha_probe(struct platform_device *pdev)
+ error_napi_stop:
+ 	for (i = 0; i < ARRAY_SIZE(eth->qdma); i++)
+ 		airoha_qdma_stop_napi(&eth->qdma[i]);
++	airoha_ppe_deinit(eth);
+ error_hw_cleanup:
+ 	for (i = 0; i < ARRAY_SIZE(eth->qdma); i++)
+ 		airoha_hw_cleanup(&eth->qdma[i]);
 -- 
-2.50.0
+2.49.0
 
