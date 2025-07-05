@@ -1,105 +1,122 @@
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB00C33987;
-	Sat,  5 Jul 2025 14:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712A81C5D59
+	for <kernel-janitors@vger.kernel.org>; Sat,  5 Jul 2025 18:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751725067; cv=none; b=OF1Hfo8nvxlGWBpXnGie5YtylM5Jd2fT1XaiCcQkWEP3sv6j97FtGjJo23YKsBCOR0cwA5tnlh0/vvlr5tYjyGdERxz7Sgqnv5Lc8afSmAqhwSnqhVSPLm8ZwUPnbQG63tKileGQk0i0XGs35AF6bD0L5oCAMALLoq7e+lvP1zM=
+	t=1751739065; cv=none; b=S7oeBQkW9Zofri1OakYP/S5hIMUI/VaMccUJcEifbycw2SI8uFHW1phSmd/d5vpsvc00nMB5XMzk0OqXdrEQ3nHqY93SH3DtRnpXEbJT0eqYiRrq9SXciax9wbI7dCi43Q9Yz8AaNEW2sjXnVGqYGtXNYpR1cPPV24fKaqFZLMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751725067; c=relaxed/simple;
-	bh=RFcVFRd+jB7yzjZEF15amP7MCa2Sg4A/zIVm0kIVtVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tdaKwhZXWDx2IpfnoEA6eLFjU2HZeiaYRJOujB2Inn6mlRitzAwqDBAmtzqzvjOSySYH9grXRvH0vLbgWUmfcRwAnRaRmkgKmI82CvpQEzzlQFweijCHvMNHkZ7JsGtCO6sniJP2B3HuZhU+/+Eky0Tfe7/FiOFuywWAyQ3YsVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VOeAwa/9; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1751739065; c=relaxed/simple;
+	bh=gInexjOdSgaoWzDCL+0nJbPHXYyeveDpubVk5hf3glU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=p5ANllM/Ml6/LOs6fZyDpsc1cHQbwbBHmJkfr9XZj5bwKUMtKXYkt+Fev9C0dEzYPX1DgnaYfLk/2QEKibUZSltva+d5yK0IG7q3FbBMl91DX0g4JhNJyiWSIIJYIqqBCga6hixuvdrpWSI4bzjysDp/uuzNkJd9ErS9LvNShds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=MWvhx6RV; arc=none smtp.client-ip=199.212.143.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VOeAwa/9"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A7C34313C;
-	Sat,  5 Jul 2025 14:17:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1751725061;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pS5IedIEzgY1pshAvlpXhjZDmSvEewXvev0cnX3lWPQ=;
-	b=VOeAwa/9AcN38Sa7bRO3kPWHIGn4rm+OQxuxnECEY+VKRQfydCb8cc+fNZ3dBwGRKINIDw
-	cT/Tu9DYMbiBm4IVMU53kqQGn/OMnBbfPq+5PcebA1Uhlx4BpgLfs1tChXvXwVsnQySKYc
-	zo3H45QdkCt8Xv2Shr9oWckGS++VfHaeD4xcVxrPyZseJgOTR0Z47f71z/CR5q1sBR2De4
-	CCgiO6S5sD/Tpobo/oTo5ZMYMrQ52soQaIY6xtoGCM4frODN5Qh+k+QjsrRS/PUYj5Jivp
-	L1r2wc+E/vpgJs8ZwtdkZUTI9JmdUSVwxZC6FKwXIR1NMMzh5WVxp2XFt/PPhA==
-Message-ID: <8f8130b2-fec1-48bc-944e-e676a1715c31@bootlin.com>
-Date: Sat, 5 Jul 2025 16:17:35 +0200
+	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="MWvhx6RV"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hzdWG7VOSmZ6fPGwPnw6pnPKimm7aMvUQB6fFoyWDHg=; b=MWvhx6RV5Ls8v+w/aex9Xn5ZFd
+	Z7T3LM83+Q7PV5ZY17TCUgfwuUxCraLNxTRjWGhehR27yRBnq+Fmvp3xJvPfzZomTlSN6HRmj2xRg
+	JGvdCPpq2Jy5Nd5fpXJsJMopKql4oxGl9MRUIBgkCJoJLwZaZ+FaxOj5dDj8GH5r/engM3C4s05Ue
+	+wjnWhjAfuU9swWHHtlVvDfGLy/UnJDsfBylgAKG8q5X/0BKVccDQ3UObnSKyOTxxSvZM8tmTxUcB
+	ea2yK+lhZtLgsrg0PxBSzDmBi9v0I8cfX5GLdKNBqsqSeBZsSetyLXt8dgfyH1h3394ExIxT5odn/
+	CA15jq0Q==;
+Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:45454 helo=asus)
+	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <rpjday@crashcourse.ca>)
+	id 1uY7Lb-00000008IMi-28Lz
+	for kernel-janitors@vger.kernel.org;
+	Sat, 05 Jul 2025 14:10:52 -0400
+Date: Sat, 5 Jul 2025 14:10:39 -0400 (EDT)
+From: "Robert P. J. Day" <rpjday@crashcourse.ca>
+To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
+Subject: revisiting some of my janitor scripts -- "arraysize"
+ simplification
+Message-ID: <4296a486-ee3f-6e79-b4c1-f944834f18b5@crashcourse.ca>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] staging: gpib: Fix error handling paths in
- cb_gpib_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Dave Penkler <dpenkler@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <bf89d6f2f8b8c680720d02061fc4ebdd805deca8.1751709098.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <bf89d6f2f8b8c680720d02061fc4ebdd805deca8.1751709098.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddviedviecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpefvhhhomhgrshcutfhitghhrghrugcuoehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudfhffeivedvfffhfeehveevteetveejueehtddtgfejjeejhfeufffgjedvieejnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeipdhhvghloheplgfkrfggieemvdgrtddumegtsgdugeemfhegtdemsghftddtmehftdehgeemtgeltgdvmedvudgtfeemudehieeingdpmhgrihhlfhhrohhmpehthhhomhgrshdrrhhitghhrghrugessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedprhgtphhtthhopegthhhrihhsthhophhhvgdrjhgrihhllhgvthesfigrnhgrughoohdrfhhrpdhrtghpthhto
- hepughpvghnkhhlvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdhjrghnihhtohhrshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsthgrghhinhhgsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepthhhohhmrghsrdhrihgthhgrrhgusegsohhothhlihhnrdgtohhm
+Content-Type: text/plain; charset=US-ASCII
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - crashcourse.ca
+X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hi Christophe,
 
-On 7/5/25 11:52 AM, Christophe JAILLET wrote:
-> If cb_gpib_config() fails, 'info' needs to be freed, as already done in the
-> remove function.
-> 
-> While at it, remove a pointless comment related to gpib_attach().
-> 
-> Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Changes in v2:
->   - Fix the Fixes tag   [Thomas Richard]
->   - Synch with latest -next
->   - no compile tested. I think, thanks to commit 79d2e1919a27
->     ("staging: gpib: fix Makefiles")
-> 
-> v1: https://lore.kernel.org/all/459c267de8c9bf48fcb555364930ae7e3cdc798b.1729940596.git.christophe.jaillet@wanadoo.fr/
-> 
-> Compile tested only.
-> ---
->  drivers/staging/gpib/cb7210/cb7210.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/gpib/cb7210/cb7210.c b/drivers/staging/gpib/cb7210/cb7210.c
-> index 298ed306189d..3e2397898a9b 100644
-> --- a/drivers/staging/gpib/cb7210/cb7210.c
-> +++ b/drivers/staging/gpib/cb7210/cb7210.c
-> @@ -1184,8 +1184,7 @@ struct local_info {
->  static int cb_gpib_probe(struct pcmcia_device *link)
->  {
->  	struct local_info *info;
-> -
-> -//	int ret, i;
-> +	int ret;
->  
->  	/* Allocate space for private device-specific data */
->  	info = kzalloc(sizeof(*info), GFP_KERNEL);
+  i'm still adding to my kernel janitors page here:
 
-You should use devm_kzalloc(). The memory will be automatically freed by
-the core. So no need to call kfree() in case of error during the probe.
-And you can remove the kfree() in cb_gpib_remove().
+  https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup
 
-Regards,
+and after poking around some more this weekend, it seems like there's
+still a pile of potential cleanup related to simplifying the
+calculation of the length of an array.
 
-Thomas
+  recall, this is the explanation of how to calculate the length of an
+array in C:
+
+ https://crashcourse.ca/doku/doku.php?id=linux_kernel_cleanup#calculating_the_length_of_an_array
+
+  recall that the script supplied there allows you to restrict your
+search to a subdirectory or subsystem, so i chose to focus on:
+
+  $ cd drivers/gpu/drm/amd/display/dc
+
+i ran my script:
+
+$ arraysize.sh
+./dce/dce_clock_source.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+./dpp/dcn401/dcn401_dpp_cm.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+./dpp/dcn401/dcn401_dpp_cm.c:	int arr_size = sizeof(dpp_input_csc_matrix) / sizeof(struct dpp_input_csc_matrix);
+./dpp/dcn30/dcn30_dpp.c:	int arr_size = sizeof(dpp_input_csc_matrix)/sizeof(struct dpp_input_csc_matrix);
+./dpp/dcn20/dcn20_dpp_cm.c:	int arr_size = sizeof(dpp_input_csc_matrix)/sizeof(struct dpp_input_csc_matrix);
+./dpp/dcn10/dcn10_dpp_cm.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+./dpp/dcn10/dcn10_dpp_cm.c:	int arr_size = sizeof(dpp_input_csc_matrix)/sizeof(struct dpp_input_csc_matrix);
+./core/dc_hw_sequencer.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+./dml/dcn20/dcn20_fpu.c:	for (k = 0; k < sizeof(wb_arb_params->cli_watermark)/sizeof(wb_arb_params->cli_watermark[0]); k++) {
+./dml/dsc/rc_calc_fpu.c:	table_size = sizeof(qp_table_##mode##_##bpc##bpc_##max)/sizeof(*qp_table_##mode##_##bpc##bpc_##max); \
+./dce110/dce110_opp_csc_v.c:	int arr_size = sizeof(input_csc_matrix)/sizeof(struct input_csc_matrix);
+./mpc/dcn30/dcn30_mpc.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+./mpc/dcn20/dcn20_mpc.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+
+
+  so what does the above tell us? first, there's obvious
+simplification, but don't stop there. note that some of those files
+define "NUM_ELEMENTS()", so that's a hint that that can be simplified,
+but let's go further and see how many of those files actually *use*
+the macro they just defined:
+
+$ grep -rw NUM_ELEMENTS *
+core/dc_hw_sequencer.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+core/dc_hw_sequencer.c:	int arr_size = NUM_ELEMENTS(output_csc_matrix);
+dce/dce_clock_source.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+dce/dce_clock_source.c:	for (i = 0; i < NUM_ELEMENTS(video_optimized_pixel_rates); i++) {
+dpp/dcn401/dcn401_dpp_cm.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+dpp/dcn10/dcn10_dpp_cm.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+mpc/dcn30/dcn30_mpc.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+mpc/dcn20/dcn20_mpc.c:#define NUM_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
+
+  so it seems that at least a couple of files define that macro
+without actually using it. this is the sort of analysis you should do.
+don't blindly submit patches; rather, take your time, and examine the
+files in their entirety in a subdirectory or subsystem, and check the
+Git log and/or run "git blame" to see why things are the way they are.
+
+  thoughts?
+
+rday
