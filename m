@@ -1,230 +1,133 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C374D1EF36B;
-	Sat,  5 Jul 2025 20:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F7B1ACEAC
+	for <kernel-janitors@vger.kernel.org>; Sun,  6 Jul 2025 11:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751745955; cv=none; b=POaQgCfX9JmFttCab7wket0v0dd0N7A6ww2EG5Y9TQlcFfP1Zb9a+PZqvcP3MYL4luQDaTBHxl60jxpC5bvZqiCStG5oJMQcNaQSLR2rqwhGe1TS5XNzbyrD39gfQe5mjxT4wD2ptw6NEmnI3T2uOgQtJNDgaAYHEA/QLoujSrU=
+	t=1751802607; cv=none; b=nGuN0/gle0A/oFpAB+pOvIAM3yFyg3F+wH0WL9vIlgrsrEXBryTozZanFjKTwMHuSOa/ev6WMrh3+YcGVNdWBvTjMAR3AlTUwv8qqECfHiy74sjEcdIzHrLSowEHIi0GzVdbiDhRgHUJYf0y0msU/dpO7qFsK/Kx1ZRyKyMvqRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751745955; c=relaxed/simple;
-	bh=H4Oih1xpGRRS9wYgIQJJeUKl4hM5++mqT3RUXcfQs18=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=nbpg1P17fNIQhVmzH7SxA6/vRn3u3gp4/IDtOi/EaXaLL5kAFI8OoftRtiRljNJc1Znkz2TxOxc6EDbnw+gJmvggYRrA8DF2o8dXSnLbGGBUJAYWDi1zjdTQ88mxeqVQ2CPiODtARByfnslSBVcVfKmOzCKpkJwtcp9ROS7EMsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lEpC6zLI; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1751802607; c=relaxed/simple;
+	bh=h1BsmiKChKnTyvXPWMsOwhS7bc/7uJacFkQzxL3fWk8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BKpIPF/ZndgfUB3v2RY8QiHiG6HIpWcxuItX4i4xPALtU6PHrOh0LyfsT0SHAfW0Sk2P+Iorz9O2hDWM2VUnqcFRwkawzuy9CDOj7lQ2D73J9IroGwM5tCtW4ZiCaMDSbk0msbsq6nKeJAKVf1UIsMAiI/jb4omzP8sPYkxJuj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Leacun/c; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lEpC6zLI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1751745945; x=1752350745; i=markus.elfring@web.de;
-	bh=9WI02iNbdApOyJWKma6F1fUQwFlmblibjncCeVHDD/U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lEpC6zLIorzRmz/9Y/sqcRYrkfzrMb/5Pti/LK4rg7PGovXMRAuu+sqgAeUQr+vD
-	 iH0mbF9uxiy2PBjfiSpbWob+npCX57PLWi8U3jR4SJYy5bQfuONZ1t2THgt0n5a6J
-	 3lfV9SfRKXA1ZITKytcm83OJ4fznxjCFUF0CekAyBVUhZ7SXu0znH+ZrjCpXDjrAg
-	 mmXXaqNUOewBJSdZPZWTK4ua6m3rjc3mdjnyqm32j4HxoJhhS/gf2NXlLWP+7gxx8
-	 UAg9Z0V/xu1SAdtNkkEDhpff6NBkSyC8Dy7tWtB+G+v9QgONMlzvbqRxV2qDsI1oI
-	 4U3lwiupHlNrHVhtqA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.242]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mty5u-1uoa3w3lXg-012Twu; Sat, 05
- Jul 2025 22:05:44 +0200
-Message-ID: <30a3a2b1-deef-4f3f-b7da-4164360190ed@web.de>
-Date: Sat, 5 Jul 2025 22:05:44 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Leacun/c"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5667URFh028284
+	for <kernel-janitors@vger.kernel.org>; Sun, 6 Jul 2025 11:50:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Q9HNInpFc8Sm98uBUx5T9Cx61YxOobfap1a952dfyZc=; b=Leacun/cxyO4anBW
+	d24A/fKZnr/yKL5yoR/0upUutLNvKKfe+EETlP7P9kQ7ng3gEy89PMxdI2cZUirm
+	ZFIWfbiYxJXGvY22Qh/MhrLuCLodKYktGAb8rwNksiOCVbJGjF66p6otzCIL9Fuv
+	kzoj2TKpfpzn4HiCrpv0HvS205AnZ7TR+htfQItZsetjbx7ZmvEZE9Za7j59rrnE
+	qAx513Z8fSzzYRSCwCwLNOVfkBD8xYKLoPb+Yvr3JsllAx69AowytAOUB6awal1F
+	+pZocxyFwGCqwxqPMvbOI1W1XiRrQzfH2ss1VtURH5CZaxrn+W5Ivzp2BrH2sMHK
+	gyoypQ==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 47psdqc4ur-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <kernel-janitors@vger.kernel.org>; Sun, 06 Jul 2025 11:50:04 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7d413a10b4cso347128585a.1
+        for <kernel-janitors@vger.kernel.org>; Sun, 06 Jul 2025 04:50:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751802604; x=1752407404;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q9HNInpFc8Sm98uBUx5T9Cx61YxOobfap1a952dfyZc=;
+        b=bUhTVmom20s2RRW1lmK7g6FZCF8J7ScoxMBn2nEwqDpCOYIG8vQ/mCRAG9s5TMRTnS
+         WAlvJOvoDhvhEGYqZEk9ILqH7a2dx0Im0sS388ajgTBaJDUym6B29x/75IuKetVw/4/r
+         QHhQzF7yK7sy5F6wC3g4m6Ap7ZbRjIjcp+df/aSQ0sSW1EzxeYghx+up9VLiGcQ1Dxrq
+         JKQUvB6obN+niie6F5jWt1pt4Vafd8O9mEGhVqissDK1SXan034VseOX9m/cVFhIjDo8
+         h1nsChkG/dQ3Dgn1oQvL9qvQ0A/fwt8g/y96z5TEqCmfmowoZnLDq290fG/suDL7PIET
+         TE5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWyBjlmR49qBsDjsoEYfzR+xXihkThVqf28T04r4HOV9cSC+7DxtReLF/k55zZ/3JecqrOdI3swlJM7ROkoYFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyBEQMUZmz1Mz5uyzF4dwo4fdi6YUfibjoq3LhCdjhG9EAEuv4
+	7WcgtbBEHuokOdWFrT4pkVFZMb8xC1eZ/ogoAWuqGnaw/rw9VctOZ1z4q5ebCOEK57Hu173IGOC
+	2ewmQ/QYGiTlJKik4RDhEkDzGXLaO/YSQ85LBQtnUecZV3VG/TzuntLz2N8RxiuIsLIJhTd8=
+X-Gm-Gg: ASbGncsrWntbjEfixvaTXcMOrANlVl5W4/JJPlAWLWhgW9Sbmsdf1fRc8PaKfWHIig7
+	rC+Gxd3PK9+RhJPBr4eubsFaw5iMrq4i5L555ctNpjkqmOZ26y/izLiHGoxFTecIOWU5Bn1SVDt
+	dzZlXmozHesc6jw3d1Z7/WDcy42lUlWTpITxyDjuZSWq96KxQnqz3hpU/MZHiMxpmsjvVU8fqOd
+	ayysVZqsHdIV4zD/T/T5JPWYp2GN9O1rByXakVITRY0Jo7wbns+3mIDBXgmIUWCEZ+IKPjVoqmA
+	R1q2BUyqnJzRP5V6MyD1MLsxx2JoybXMuzgF1Gt2VIgUUH5W35GdkXD1s738Tt6VrVFDvpBMgQB
+	BijuXeGmT1qcwzDoJFZdBGWm7ocGY6DMQtqA=
+X-Received: by 2002:a05:620a:4710:b0:7d4:4d55:98f9 with SMTP id af79cd13be357-7d5f2877ceemr597278585a.28.1751802603990;
+        Sun, 06 Jul 2025 04:50:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGb6W9CB14eZN8lAc1Ju+O/wZfg00R2RD3YvSB64DN3t3zQ6bM27TvwmM+CwZjrSQ0NktwoPQ==
+X-Received: by 2002:a05:620a:4710:b0:7d4:4d55:98f9 with SMTP id af79cd13be357-7d5f2877ceemr597275885a.28.1751802603572;
+        Sun, 06 Jul 2025 04:50:03 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-556383d8f2fsm940440e87.78.2025.07.06.04.50.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Jul 2025 04:50:02 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Suraj Kandpal <suraj.kandpal@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jani Nikula <jani.nikula@intel.com>, Imre Deak <imre.deak@intel.com>,
+        Arun R Murthy <arun.r.murthy@intel.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Andy Yan <andy.yan@rock-chips.com>, Dave Airlie <airlied@redhat.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/dp: Clean up white space in drm_edp_backlight_probe_state()
+Date: Sun,  6 Jul 2025 14:50:01 +0300
+Message-Id: <175180259610.2709906.15531384408565663524.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
+References: <30b896c2-ae71-4cf2-9511-2713da7e1632@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: cocci@inria.fr, kernel-janitors@vger.kernel.org,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: =?UTF-8?Q?=5BPATCH=5D_Coccinelle=3A_misc=3A_Add_SmPL_script_?=
- =?UTF-8?B?4oCcc2hvd19xdWVzdGlvbmFibGVfY291bnRfbGltaXRfY2hlY2tzLmNvY2Np4oCd?=
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:crTopZG3SyMDw0FZJSlk0C5CfAPMnmELcTzhVoKq+U98/o+GdF8
- IW+o4Fz0X2JsFnxY6wY1VdtvWhMvUmgEBtHWBdhxmo/DAFcdVl4vmAabPNFqOOobCld2FiD
- pXdGcxJIyE2CgI4O1rV+rMeak1ZbHzeJIedJjhPM6Pwh/ZtOAfLNbcTej1x+cx8IrImwkxo
- 9cR6PuiuaS//Cfu55aBKw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+HnbNdr0qPk=;WvG64qlPv0ZWYzmWY89vfj+J6Im
- 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
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=ffSty1QF c=1 sm=1 tr=0 ts=686a62ec cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Wb1JkmetP80A:10 a=bpLDS-e79snoD0d2c9UA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-ORIG-GUID: 7JFBHEDkb608Nfc2q-JwL-ou8Kb3UhRd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA2MDA3MyBTYWx0ZWRfX4a/ANYzc22ez
+ km9OdFJizXSKIplL02BCPy1S79G8Cin3I/PxNQSUyjFCrq/lDBszjK7lYP471MQMIcZVNn3+fuO
+ d1dsM4x1ME/Knd6ZsCqIIWSns1bKO4dJLb+SyT+jpeK4P/tIgJtV/+wZ2NBCRlc1ZbI9V4ZPYfD
+ tp+FRxXJgk7JzMI7Fyyj/PjpchNcPuBToqVXMzE32OtbqSbHkocvmcE7MmPbbU8YF4N8PfNughn
+ KZ/IkNModfM87oaq/MvlCxj2ZJZ0JP8us+IN2VIZfmRYRmLBZlxWSyPERDOR7/+nxyxjKtY27ZC
+ oM5GVynsc1br/BeTg7T5IuiSt7BO416a38tM1rHlbSSYFzSCwADattKPjq3EPJzit/ObLsGQaV1
+ RCD9cKCBoJUQHBpB0ZxqO9SboFkmOl0IpFNl3czgjz6jxG98USqHglDddebBIfpY65Nifqrb
+X-Proofpoint-GUID: 7JFBHEDkb608Nfc2q-JwL-ou8Kb3UhRd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_07,2025-07-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 priorityscore=1501
+ phishscore=0 clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ spamscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507060073
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 5 Jul 2025 21:46:23 +0200
+On Wed, 02 Jul 2025 07:55:10 -0500, Dan Carpenter wrote:
+> This code needs to be indented one more tab.
+> 
+> 
 
-Some known programming mistakes are repeated.
+Applied to drm-misc-next, thanks!
 
-See also:
-* https://lore.kernel.org/all/?q=3D%22Fix+off+by+one%22
+[1/1] drm/dp: Clean up white space in drm_edp_backlight_probe_state()
+      commit: e33f256dbc293a1a3a31f18d56f659e7a27a491a
 
-* https://wiki.sei.cmu.edu/confluence/display/c/ARR30-C.+Do+not+form+or+us=
-e+out-of-bounds+pointers+or+array+subscripts
-
-
-Thus provide design options for the adjustment of affected source code
-also by the means of the semantic patch language (Coccinelle software).
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-A parse check for the operation mode =E2=80=9Creport=E2=80=9D provides the=
- following hint.
-
-=E2=80=9C=E2=80=A6
-Grep query
-for
-=E2=80=A6=E2=80=9D
-
-It seems that such a key word tends to occur in a lot of source files.
-Thus this source code search pattern will probably trigger the demand for
-special computation resources.
-I became curious on corresponding collateral evolution.
-
-
- ...show_questionable_count_limit_checks.cocci | 72 +++++++++++++++++++
- 1 file changed, 72 insertions(+)
- create mode 100644 scripts/coccinelle/misc/show_questionable_count_limit_=
-checks.cocci
-
-diff --git a/scripts/coccinelle/misc/show_questionable_count_limit_checks.=
-cocci b/scripts/coccinelle/misc/show_questionable_count_limit_checks.cocci
-new file mode 100644
-index 000000000000..d565e306711f
-=2D-- /dev/null
-+++ b/scripts/coccinelle/misc/show_questionable_count_limit_checks.cocci
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/// Reconsider questionable count limit checks.
-+//
-+// Keywords: detection programming mistakes
-+// Confidence: Medium
-+// Options: --no-includes --include-headers
-+
-+virtual context, patch, report, org
-+
-+@depends on context@
-+expression limit;
-+identifier i;
-+statement s;
-+@@
-+ for (
-+      <+... i =3D 0 ...+> ;
-+*     i <=3D limit
-+      ;
-+      <+...
-+(     i++
-+|     ++i
-+)     ...+>
-+     )
-+ s
-+
-+@depends on patch disable gtr_lss_eq@
-+expression limit;
-+identifier i;
-+statement s;
-+@@
-+ for (
-+      <+... i =3D 0 ...+> ;
-+(
-+-     i <=3D limit
-++     i < limit
-+|
-+-     limit >=3D i
-++     limit > i
-+)     ;
-+      <+...
-+(     i++
-+|     ++i
-+)     ...+>
-+     )
-+ s
-+
-+@x depends on org || report@
-+expression limit;
-+identifier i;
-+position p;
-+statement s;
-+@@
-+ for (
-+      <+... i =3D 0 ...+> ;
-+      i <=3D limit
-+      ;@p
-+      <+...
-+(     i++
-+|     ++i
-+)     ...+>
-+     )
-+ s
-+
-+@script:python depends on org@
-+p << x.p;
-+@@
-+coccilib.org.print_todo(p[0], "WARNING: Reconsider questionable count lim=
-it check once more.")
-+
-+@script:python depends on report@
-+p << x.p;
-+@@
-+coccilib.report.print_report(p[0], "WARNING: Reconsider questionable coun=
-t limit check once more.")
-=2D-=20
-2.50.0
+Best regards,
+-- 
+With best wishes
+Dmitry
 
