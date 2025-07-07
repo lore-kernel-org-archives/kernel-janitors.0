@@ -1,194 +1,135 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2059.outbound.protection.outlook.com [40.107.236.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90D7220F2C;
-	Mon,  7 Jul 2025 08:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751876876; cv=fail; b=gT1GShKtVY65xAes6ngDFM3h/VFS6zukpcHm23+QeUKKBCwTu/lTNxKgG0Ae7uI5X8J0F3LXM5iGnnv1/iZtiM/7GdbA6ZI/K8vA95ZNtGOfVRS5Hh0cP8UNkTpnG74osJlJWvWgmiAN3fiKn1BG01Ne9TDftwvoAtDrld8J0mA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751876876; c=relaxed/simple;
-	bh=QA0uXe2hN8aGBSY9oOwD5hLxDEo+gz/ya3mA5TdPZ/A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MFGu34ctAI49V0oBNjHl4Y248/3LcwUXP+qkhkWVZFQx0jV2TEzeOGDd/wmREGj9hcgbBcv/0k4K0WqxE+VM/RJ87h+RxeOb25Y57a1cdoN3+PFaBhh1GWILiOaPSO0D9Z7KMaWXjsZ8b9m+4V3UYsfoCxAdrn0ctbUd5Anlg1M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Iy0d6Er0; arc=fail smtp.client-ip=40.107.236.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9519A288C2F;
+	Mon,  7 Jul 2025 13:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1751894650; cv=none; b=TIPwS8rsdJuCk3/jhZLHL+Uw63L1LTX76Me6mRkUmlhlsu/9G2ld0Jy//8N1eQIaUfNUVOG+vc045lJvY5dP3fLz4uYdKDM1/JIZ1SnG2GPma4vLJI+bCED8aViazqGxGtHh7CW3xP2Qk+1yaweOmgkx/zWQPXRSl3XlkWbIfWg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1751894650; c=relaxed/simple;
+	bh=8RjyTvSuow44Pogbmx4RVAaPQM0w6Xn4O6nez3/oVO8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bOOHwFJ+ZGC29n1KcgCprZ6CJNhEQZfAAUuRhlMFVhrOiFbvLcnCfMpq6OV9YcxBaSalMj5LtJ+hpBszS/+QReSi7Bx6ypc18nBqknXLqHKEMkMXZr7fe1f8MysXtVyg7bmhvrWX0bmVW8nuv3DQoL/cuSnpCS2Ocqaz8Z+WnSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5twk7yd; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Iy0d6Er0"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cMB4fcAwXF+UbVWu7IkRGOMC3iVXmqKEdhvwVlvony3GbMsSAqwtxyeU2xIYfaQrln3pRqdqTUl5rwRKL3z8AgsfXO7jEWYGiE4TdU3nV4LlwO8F8eKAP0FCDI9vL67fyN6lIlF+I3dJza+iJAGCVYtqfKPXuPH1ZMiULtsT1REFa1yEiYPN5os2khu4TBYNcOIfdC6PUdC473mxO+RjBT8NRfxWjUYqSWu0ZHJxzHpAU+cnWDlTU3Wb5L66o6UUSv1O7wqg7uo7cB0T6XwbmKgGnBHJoz2LX08Gklpr5Z2YTi+cSJA5cTPMIjpGY8Mq1dJXqRxaARXUTbgLzXOE3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P7xRy3UBMR+x2w/DRveIdEZMoNoHS552HU75IAkVITQ=;
- b=ER+uMrk8vzFo2irltqwblm+FofZXGJRBUfL+dDG7xREGX/ke3hLT2KGpO0avytDGEG8jEyJasvnmQgq2cDFxdbDyXGRMyak/v0t9w2HeKPs88BtlYSUG/WzRROhqJDMYmb4Z0NkKa4XGAhLiGoT9m3twtDQAGNWA2S4PsSZa0BqgmmxXTQVSBszISUdFtuO/WXL32LAWuxPC3TSaihcXoYk3RPVcWKvNeK8XmEo+HfzqLtS75cpliFSyPfjFmVoMg+9kS3x9uhk66DxWytww6ObQFR2v8HbYWt9MsTOTRfwjqyUakhv56m6UOTUQcY/bG1Jqm+Gh4/SFZH6HLtGtAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P7xRy3UBMR+x2w/DRveIdEZMoNoHS552HU75IAkVITQ=;
- b=Iy0d6Er0AB5jYWCzNFYuxEoSqbfGV4i+iMBgNU4vwA9+Xc4jQhwq3CrDrk6oSAFUHJTe24UfPc2OT4DRILHXaU1VONyE73AI7KaPe47yA6QN5PHSy9H7jCXUkI+4LxzeKdFaey+bZmRW0+4fBgMFpgywcc/uMvGIkCwAm0L4UHmcpXOiqv/qQhHFKfHONtlY/fXkSEhooTLc7ZyBRooZni/Kv1U1KVbBRoa3dIDl00P32ipqBS8YWhIyj/v4q9AEszWVzt5n+xWmsw885noJlISHGexSmnfSwHxpMdOkQKwD0IQ77/QGcO03MJI1/g30pNxKC9S2uMy8SDtHlOMggA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB7548.namprd12.prod.outlook.com (2603:10b6:610:144::12)
- by SA0PR12MB7463.namprd12.prod.outlook.com (2603:10b6:806:24b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.26; Mon, 7 Jul
- 2025 08:27:50 +0000
-Received: from CH3PR12MB7548.namprd12.prod.outlook.com
- ([fe80::e8c:e992:7287:cb06]) by CH3PR12MB7548.namprd12.prod.outlook.com
- ([fe80::e8c:e992:7287:cb06%3]) with mapi id 15.20.8857.026; Mon, 7 Jul 2025
- 08:27:49 +0000
-Message-ID: <f8ba8303-0ad8-4c93-b296-2bd96e1982fe@nvidia.com>
-Date: Mon, 7 Jul 2025 11:27:37 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] net/mlx5: Fix spelling mistake "disabliing" ->
- "disabling"
-To: Colin Ian King <colin.i.king@gmail.com>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Cosmin Ratiu <cratiu@nvidia.com>, Carolina Jubran <cjubran@nvidia.com>,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250703102219.1248399-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Mark Bloch <mbloch@nvidia.com>
-In-Reply-To: <20250703102219.1248399-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL2P290CA0001.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:2::19) To CH3PR12MB7548.namprd12.prod.outlook.com
- (2603:10b6:610:144::12)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5twk7yd"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a4f72cba73so2646120f8f.1;
+        Mon, 07 Jul 2025 06:24:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751894647; x=1752499447; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GHwATOF4+CjMS6IdiNe2EhFIMS0JQ1rdlybp9oGNmTE=;
+        b=B5twk7ydaKGsCAJZhjS9tq5YpaStwL+ejITJbB+VG6viur9W+Kpf5kKvuMCihl4rQ/
+         rdIODzt7DFyaQlg41TIU/p9Ntxc9CAIloz2PFW2sQgvyc2E4EQCC+bgNw/AfAD8XPa5V
+         yj9jPH2hthRXUI9GcJsMfRlBrQJNwX00qlMURMpxYZMX4CRfixdkt2zy9C+/tDPZy/6W
+         PI4sTaSiLAxD5HgXi11pabQXlFcbnrc9DCoYkvd4rXyJG7rnP9B/m2QaXRn8s9b543up
+         xVhVGWWZI5pHkOPqje4+pWa5kLIC7WMyjAN6UK6l1khHhAsnLHV4Cz6ZAwjpe1/ucd2I
+         TzTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751894647; x=1752499447;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GHwATOF4+CjMS6IdiNe2EhFIMS0JQ1rdlybp9oGNmTE=;
+        b=qmD/06EYoDRcZIWcBgtNXWQNVp245qpMFOfTIlFf6LZBrAulIJydFcoEBH8gMLg3i+
+         SNMqmCyhrlWQIYaFrA2368mGOWben0wQYPypSDFfilDoA+TPecSS4FwZGzO4GMo4fcLN
+         9zQTZyXYwEwwKD+Dh/51NxUvAKTi7CeIJGyRVbJFKp11qyuV7XqScvfWJztFJR0AS8TK
+         bW6Ii+YVT6xsSQjEqWumKdfFTN+L/eqlbMN+5mKepYTOcw44EqHD8AYsHWORSZTadFtg
+         kbudrC87LTuDegJ2OHiVYGEFadsmOcCndcVfmDo58FqCpd3z6WeiE1Tn8uyiHXvTPyNq
+         gDWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV82Ma/T4gl/Z3nS9+fY6vhbj90v2/d3gcZrRz74tGSmODCXrUMGfRaZVxWYqG1+6Yv8sDCt3kfkc0VfkJRTu8=@vger.kernel.org, AJvYcCX0mNQApTE4AqKN91NTDnqMbOy+kVmXerH249jaRCZnl7eq1AwzhUdNXYkUSIJ8518QGGnjNTQAqa3QOYFB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwngWvJfoX8DK2w5nQ/FFuXmzJhU3+DXIv7bUtmrFh0RXa5TQyR
+	f9vlWpRnq1nxj+fHTWGowecWzLeVS59myzWOd4tsj46+Ppq9EQYmPajy
+X-Gm-Gg: ASbGncsYlaYnByoj84u+8E5ufxd0E4riwozvzGCKA7SnZvjJkcYkQXpg3lOdbsMqE2F
+	tdpBcji0wfQIJkKD2wAfS96aGjb0ib2nXQu/HagHteN3tS6miIoX9/Bgr517E6YuH1h9k0jQ2FC
+	kj5V/XAGmgJKxmTPQSLeXqrA5YTzaTVVotvqMzLtkm8WXjBoVnwFZ/jk7YASTgoxa/+dbonrf9f
+	rxwM62Vckdbe8bAsxE+VsjkbfxLVR40jd0sfoKzso9TZW8ARzILX9CBzJzfAOMtnbGc+AaD2Lmu
+	4n58luBZHW/VoLPH8HM5OU7wrvDmn/4sClix3AiPzN0ZMyWAMMsxhkYJXRTp
+X-Google-Smtp-Source: AGHT+IGtt8GxutZ5uOUaaH2YD0KB42AdE6oIi6ARJQVqLaHmKYYqZ3ZDw7TY0JnpeUWDARtw9Y2XMA==
+X-Received: by 2002:a5d:6f02:0:b0:3a5:1241:afde with SMTP id ffacd0b85a97d-3b495b9446amr12338612f8f.9.1751894646658;
+        Mon, 07 Jul 2025 06:24:06 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b47225a720sm10198472f8f.77.2025.07.07.06.24.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Jul 2025 06:24:06 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Kees Cook <kees@kernel.org>,
+	linux-hardening@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] fortify: add branch hints on unlikely fortify_panic paths
+Date: Mon,  7 Jul 2025 14:23:40 +0100
+Message-ID: <20250707132340.1768807-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB7548:EE_|SA0PR12MB7463:EE_
-X-MS-Office365-Filtering-Correlation-Id: 743c6664-2e6c-442b-aa33-08ddbd3028af
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?clRZY2l2T0FKeGtBRFlBUlJJTTV6c3JDbEtUTm9QVmFzbXdJV1hmZGNycDhG?=
- =?utf-8?B?UWsybHpNZGk1K2M5ckloSzJEVFpYV2ZUOGlVMjZ3eENwazZnU1d3dUF4WVRo?=
- =?utf-8?B?TktWS0RVWjFyUEdNaFd3LzVha0N6VndvMDd6WVE4VVg0b3dYbDdnV2pONytj?=
- =?utf-8?B?ckVkdDF2eVlldGNMeFlTZXJnTlhRaXVPSXczdmVseUEvaThaRi9EM2t1RFVV?=
- =?utf-8?B?U1RieGJsME9ZWDlraTdxQnF5bEVTQ2FtWU9KNzR2L0ZGKy9YT3BhUStxWEM4?=
- =?utf-8?B?VzZXS0doNWRDSWt5MGh1YVBVTXBOUFF1RTBKc1M1eUdGRVFKYm9DblJtanBw?=
- =?utf-8?B?TWovN09jS01FdmFVQTNMaTRsMysvTDFGZzdodEFxQ1M2Z3RoZEdtQjBOM1RI?=
- =?utf-8?B?WmJhUVBQUHV4RnJLeldtWDVneU1tNjkxMTlxUVJLWm1pMlN0K3hSbllDb2xQ?=
- =?utf-8?B?eHhrZFIzTnVuRk0xLzFYd0VwMEYzc0grOEhSeXMxSms1ZER5S2VXbmtSMXNK?=
- =?utf-8?B?MjNpbm9PN0FUSUF6ZWMwWE0ybzBySzU2MkdLekYrNEpTSXZzQjcwQXBoMDRD?=
- =?utf-8?B?djlTajN2OE5lN3BreHlOR2RaSEdCV0Z4V0hyN2d5N0hxRFpTMU1vYklNbFE4?=
- =?utf-8?B?RE5yeHVYZmp3aG5rRWs5OGhydjhVS1k4MTZEMHUrRFRsb1dBcm1ydVlDR2dV?=
- =?utf-8?B?Mjgwc3hVM0hCc1ZoU01YK3dNbnpPS0ZucG9uTHN3dzFjNFhORFd5UG54QzVW?=
- =?utf-8?B?akpQSTlNdGgwUHFGUS9lbE9CRzdVeXhEVElabUZDdVRUYjhaVSt3YWVwVjlB?=
- =?utf-8?B?bmNxYmt5TFlpTC85Nmd1WVRkN0U4bmIzWDV1Yk82ZmJnd1h1dVFCazNGWHh6?=
- =?utf-8?B?MGo5clVTODM5NmpJbk5CN1Q5a3dZMjVTOTNtTEF1TkJjREVaYVRDNmliek53?=
- =?utf-8?B?UVdDN083SnZzTWpjcEZzVWdjKzdPVmRWL0Rkc0lGelRvTTRINm9jcGJPZ1ph?=
- =?utf-8?B?ejRzZHhYWEt2dW5sY2VZVTBid2xMWEhGMjFMUGY5K0N0ZHBJWGNWVW9wMFVt?=
- =?utf-8?B?VGx2WURpejdrUDhSRkdEMWhuYXBNeERHTzRLMzk5dmMvT0kwc09nREpKdFNH?=
- =?utf-8?B?Z25TVU9wdHdxUFVwemVMM0twdmxHTE4zNTljdGh3OGowTzYxelRPWlRzRU9t?=
- =?utf-8?B?dWkwaGxNOXN2UG80T3huTC9RSGI4RkplTjF2NTJvYWk5cFd3ZmJteXU5dm41?=
- =?utf-8?B?Y2QzK1AxcEVPUUg5NzhHT2NKbVVmU01jKy9zR05LdEZCdkhERjVUU2JIWTVP?=
- =?utf-8?B?SkozcVU2Z2JvOVl1TEhuRmwwVitoVzl0OXQ5dmVYVVhKOHNRRFlVc1dkcTRQ?=
- =?utf-8?B?OFozSXVtMzRLbzhSSFRka2ZWTDE4cGtFZDdkT3g1ajVnYUFnMUloTTlJRHNt?=
- =?utf-8?B?SytkZzlhRmY0Qi9WSlZtWUhBUWZjaEh4U1lkdFlNcy9CUnRHUk8xSjg5RGlP?=
- =?utf-8?B?eEt2anU5UFQyamhJSWZURDloZHZROERwSGc5YisvWXFYQ01GYTN1eUxnTnE3?=
- =?utf-8?B?alFubUs1aytDMTg5VDVJMGt4UmFLdEp1V2kyeWNMUlBuVzQ3LzczYVJsTWFR?=
- =?utf-8?B?dG9lVm1RQmEwbXZpMTdxMC9ZakErUHJaWFlyWmljTGtFWWVQVEJXRnVkRE9M?=
- =?utf-8?B?UFdLK0l1ZGlQVDAzNEJBY0poVGNUWXppcnRzT3oxVXpRLzE0MGExMzAzbE9Q?=
- =?utf-8?B?S1k0OWJ2QVBQUTdpaVdLYXF3K3didkhBWFBYcUxXYUpBK3ZzbS9Sa2l2cHNq?=
- =?utf-8?B?VzY4cHVpTXhIeEtuRDNRUnlrZkdmb0wvT0NrWHRWTlMvSk4rbk1wdVlRZllZ?=
- =?utf-8?B?aUp3SjREL2IxUnVEZVFsaWxST0hzbGJwUEVwT1ZvS2VPT3RjdElPdnM4WDRT?=
- =?utf-8?B?anFJaTI5azdrTy84WlZtNndkYnlQNHF0NThpbGFmR3k2VFJ4dU14WWpPMnlk?=
- =?utf-8?B?cnRXaWNzeUtBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB7548.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TEhDdXU3K3hhOFZZVzJrbzRudkNuOE00b1BncGd2dE5vcGZOTW1rQXFmL01t?=
- =?utf-8?B?WTY3eXhjOWkwTVFCMmFzc0tYMEJuZ0VrTlhkUHYvUklJaXRrWXJOMTBMM2o1?=
- =?utf-8?B?d0tMS3J1a0hMT1JZckx4SENqSkxrbGsvUDRPZzFDZzlkSU5tWjhKQkxXWGJ5?=
- =?utf-8?B?a1NWVVZBQWd5MGZYLzB6MmFDNVh1YVdXemlPdXJLc2JlK3hLaGQwT2dzUlpi?=
- =?utf-8?B?eEFzYXJFVDUydGtnbFJTMUFWdm5kRFh6T01qNGJ5SEVoQ1NlTk9jVnNLQzQ5?=
- =?utf-8?B?MGdFYkJZS1dlSmlaZENwZkhXaWIySFRIcXFqRCt6VkU1NFAyWGxpaEozd2dk?=
- =?utf-8?B?Rng1eG96Y3NZNm5sMDRVTEFMM3kyektPWUtEaUlmYUZORXFKWHRweDl4NzdV?=
- =?utf-8?B?U1pMNUlpTjByRTVhNEZBRjExUmVHbzkvbDdCUkZqSTNUTE5jV3VLdWp0UW1T?=
- =?utf-8?B?SHE4cTUwR2h3Z2dISG8wcHFDaUFhRlpVRTZOOUxhVnBOTUFSZmErOHNFamtC?=
- =?utf-8?B?Y2dsOTFMOHM0a2JaZ0RCRHpwam5HazBTdnFJZW5UL3ZScjFCRE5wZFlQWjEw?=
- =?utf-8?B?c1FIMnJMQ2JWQ2pqK1BXVjVaT3BJT1BiOVN1YzZIYzU0Mk1iOElzQzY3QjhO?=
- =?utf-8?B?STVOSmRQZmMycnlGS0hFdSt6VWhmQklxMmFRZzZBdThSd29VbElUMXpKaHUz?=
- =?utf-8?B?UGFkTFo1cXNqbnhRQ3UxZzBxbDNRQ0IvODlTOWd0MURrSk9pMmdqcDk0djYr?=
- =?utf-8?B?OHMwSmVXRVJHOXRVSURNTGRTUERWNXJKRHBqU0FhNGRoQUYzQTBSUkVaOWRX?=
- =?utf-8?B?MUZKNkp2WTE0OVdJQ0xOMFQvUGdYdHNPUTFKMyt0YXpTeXpHT3dvbGwxZTVz?=
- =?utf-8?B?V3duQUtsM2RBWlhEcVJlWENrQXUxZi9yMTh4UytCTEZFREowdE9BRno1M3dS?=
- =?utf-8?B?bENMME12am8zSnhYWExlL1cwKzBGb0xnaVNqYm5Sbks1eWtOYkdKZ1pGVWpi?=
- =?utf-8?B?RjVLV2VuUEw4NVVhRXJyVDJDT1JCNzFkS0dVMkFQVzhLSjJTMG9MTWh3bzN0?=
- =?utf-8?B?UjUvWTlsVjZzeU5saE5hL0R3M1FmRHI5bDNvaXhkSktyZFRlQm5pVnpWdXJY?=
- =?utf-8?B?SHdCZ3Z2VzZNMnRKYUo5V1BwVzNyVGRXQ2xLVUJ6cncwVXk3aHpNLzV5b3k4?=
- =?utf-8?B?amw0MU5oL1hUQ1lDb1pmbFNoWU1iU2U0UTZwM1dFWlRFdEJCTnVBMExtR2Zy?=
- =?utf-8?B?RmlGOHZlM3kyUWxYNWJSTWxzajJmc2R1ZEVTc2h3NXZoa2krWmZlaWpaRmQw?=
- =?utf-8?B?amxYZkEybDdyangyWmZ0cU9lU1BDRUZ1WHU5UGs5M05BT1d5UlBGa0tWbDZC?=
- =?utf-8?B?Q3U1bE9VNTJOUW04bEphcFkxK01iVHlGbjg1YkdLK0Q4enNNdzAxaUpJTXc2?=
- =?utf-8?B?WkljRTFZUVN5M0lTVTNnNUltZmkwY1lKeVorRVRPZjZpOVlyQndrSkNmV0dW?=
- =?utf-8?B?MHhLRU9xTjBPVHBkUmI5Vk1qZ0NtS2FGM080bGhrYlg4UThLUXVJZU8yS09v?=
- =?utf-8?B?cHNzKy85ZWNBYW9EdzcvVmZxMnhKQ3VQS24rVlE2RWxwR1oxMklSRGJMWitl?=
- =?utf-8?B?ZTVsS0JoSmxlT0FlS2UzclFXNUZJdXVkczNoMW5aYVdaZjFMVWpZSWRnMXdp?=
- =?utf-8?B?TUJlaG9zV1g3UWZQOWNHNWRqVjBEa0U0T3Q3MUdVcEtPa0YreExhMVpPemZB?=
- =?utf-8?B?ZUlEbWJaR2RiTVY5ckUwcWF1SnkySitObkd5a21qNkxYRVRoZ2ZVVU1JaHJi?=
- =?utf-8?B?NWNVck5BTEJJK0JFZ0xuRzFHSUhMK0VYNC9ITlRUQ2xjbXY0NWJmdVRQaDBC?=
- =?utf-8?B?OWFtL1lVQnU3UXRXeVVpelhSL2dCVitidEFXdXNpdEJkZVNGV0UwU3plM3A3?=
- =?utf-8?B?L0ppNDljcTRua1NpbnhGYWVYOEN5QktqM3pmMWpKaGhCYlM4Qi9uQ2VSNVUy?=
- =?utf-8?B?RnQ5ZHJlaWVBcmpOUk9VTGlUNHVFV0ZKNDJlREdORm95M0FyV2ZRTXBZd0gw?=
- =?utf-8?B?MlJsaHRvUHRMenRqZDNVNG90WmozQk12eTlHWFQzaXp1ZEpIL0ZvS1JHWXZy?=
- =?utf-8?Q?aZXSqk63KHMI1PfWheZBV6gue?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 743c6664-2e6c-442b-aa33-08ddbd3028af
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB7548.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2025 08:27:49.8617
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3+u50+zHXvnvZmpMGXjh0g/nxSCBQX1PwWr8KpDTOr+Eyd9J54FW1jItREGx7K1fMYjrbHt11OgzV1F+bSCbVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7463
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+Analysis with gcov while running the stress-ng urandom stressor
+shows that there are a couple of fortify panic paths that are highly
+unlikely to be executed for well-behaving code. Adding appropriate
+branch hints improves the stress-ng urandom stressor my a small
+but statistically measureable amount. Ran 100 x 1 minute tests and
+measured the stressor bogo-op rates on a Debian based Intel(R)
+Core(TM) Ultra 9 285K with a 6.15 kernel with turbo disabled to
+reduce jitter.
 
+Results based on a Geometic Mean of 100 tests:
 
-On 03/07/2025 13:22, Colin Ian King wrote:
-> There is a spelling mistake in a NL_SET_ERR_MSG_MOD message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
-> index 154bbb17ec0e..7ca6bba24001 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
-> @@ -1353,7 +1353,7 @@ static int esw_qos_switch_tc_arbiter_node_to_vports(
->  					     &node->ix);
->  	if (err) {
->  		NL_SET_ERR_MSG_MOD(extack,
-> -				   "Failed to create scheduling element for vports node when disabliing vports TC QoS");
-> +				   "Failed to create scheduling element for vports node when disabling vports TC QoS");
->  		return err;
->  	}
->  
+Without patch: 50512.95 bogo-ops/sec
+With patch:    50819.58 bogo-ops/sec
 
-Reviewed-by: Mark Bloch <mbloch@nvidia.com>
+%Std.Deviation of ~0.18%, so low jitter in results, improvement of ~0.6%
 
-Thanks for the fix.
+Branch hints can only be enabled if CONFIG_TRACE_BRANCH_PROFILING due
+to a static variable being declared in __branch_check__ when using
+trace branch profiling in the unlikely macro causing build issues.
+
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+V2: add fortify_unlikely macro wrapper for CONFIG_TRACE_BRANCH_PROFILING
+    build config.
+---
+ include/linux/fortify-string.h | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+index e4ce1cae03bf..c740114bcbf8 100644
+--- a/include/linux/fortify-string.h
++++ b/include/linux/fortify-string.h
+@@ -10,6 +10,12 @@
+ #define __FORTIFY_INLINE extern __always_inline __gnu_inline __overloadable
+ #define __RENAME(x) __asm__(#x)
+ 
++#if defined(CONFIG_TRACE_BRANCH_PROFILING)
++#define fortify_unlikely(x)		(x)
++#else
++#define fortify_unlikely(x)		unlikely(x)
++#endif
++
+ #define FORTIFY_REASON_DIR(r)		FIELD_GET(BIT(0), r)
+ #define FORTIFY_REASON_FUNC(r)		FIELD_GET(GENMASK(7, 1), r)
+ #define FORTIFY_REASON(func, write)	(FIELD_PREP(BIT(0), write) | \
+@@ -593,9 +599,9 @@ __FORTIFY_INLINE bool fortify_memcpy_chk(__kernel_size_t size,
+ 	 * (The SIZE_MAX test is to optimize away checks where the buffer
+ 	 * lengths are unknown.)
+ 	 */
+-	if (p_size != SIZE_MAX && p_size < size)
++	if (fortify_unlikely(p_size != SIZE_MAX && p_size < size))
+ 		fortify_panic(func, FORTIFY_WRITE, p_size, size, true);
+-	else if (q_size != SIZE_MAX && q_size < size)
++	else if (fortify_unlikely(q_size != SIZE_MAX && q_size < size))
+ 		fortify_panic(func, FORTIFY_READ, p_size, size, true);
+ 
+ 	/*
+-- 
+2.50.0
 
