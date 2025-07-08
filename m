@@ -1,70 +1,69 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE9D2DECB9;
-	Tue,  8 Jul 2025 13:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D23E21CFF7;
+	Tue,  8 Jul 2025 14:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751982858; cv=none; b=ZtBOUpWeVlekvzEgXSAHr2vc0aAYB39toQmXYNIqY4zMO36I2W9ZLS2tLsBt6qFOGdTa1oytUNWI0ZGEw0VQNT7ld+z8EXUevp93a0MPJETi21G1v9EIaTd9KYQC4isuKnIrdReeTx2LJIqMZl+YIvyMdl1SJk85HTSHC11ErQQ=
+	t=1751984794; cv=none; b=ZFp0wuVwryBuqHBPi+CUyobtZSB3bubAtB0XQTiefK/VF/aEkfftZVqUsnl5fmA+cKgCTTTJxFkFpw89kQC0n5IPmdzLS9pSskrjvJX1sxZ9sK5OVXvYRnRTbDqmDqQUPs24Sz5Euu4SzW/Gj1DFvXlLPou0wJh13aNnDtWY5Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751982858; c=relaxed/simple;
-	bh=mAhPPavXkKHrE0vcCRSBihqibbUJDweSpxPi7CdwSxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OISyOXGkulGBpoiX3QB1mdKhW4B2b7IQm2GOG2Q2wRjmA4ErOIXNefnTWWj4VM87n8AneR5qS6/95JWNiC8bYR40Azku2jfGU6+mIrg8buNCUHC7OpfpvG66KiHUg1B/zJsQiuE2MKak6/uSVTRCobtcl49noL1gww3WIw82Djk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K82Ucj3B; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1751984794; c=relaxed/simple;
+	bh=SlmE9KMizR/5TIBoJzx0htXEi74alQ3PydXCRLjpYO8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qnw32myoy3GQwhVZPyIf+VApDRixLknQzZT2714yQX7RjYFe6IWA55/9no7rhPK5U0Mp3XL+v3NaS+C/5FmjMwZVtyo+tSexss0hsfbzSv+RkG+DwvkHug+zf49dZ/85OsN9HGCTwxQvAiFX8x3SumDGq75anef8J53141r6hYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k8dTr3Ec; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K82Ucj3B"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-450ce3a2dd5so40480655e9.3;
-        Tue, 08 Jul 2025 06:54:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k8dTr3Ec"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-453749af004so22249365e9.1;
+        Tue, 08 Jul 2025 07:26:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751982855; x=1752587655; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751984791; x=1752589591; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vdAQxHLP+3o1vDkIgSOJJSKYu8Xg9Of88cKaUZYEM+4=;
-        b=K82Ucj3B2EbwWI1F7YHS3QmK/B0HyzRhpFJubPihSEooECnNpnr9+jfY67GqV/PntQ
-         qReAZfQF0hFp6YFog4urd5t7qZ0gtohVVNG3LBq36sxmsXEeF6J9vUoCCEe3S/p5Zq8i
-         ah62zwh44rgQ8sn2U6WS+VuRHPqR7RxkzHA7o8Yo5AUquCIGnY/fasMtnN0Oo++DvJhG
-         bad5SI5BWOifYSlQnoZvrh1Uc1oeLnBUk159ptC2n0hqfPaaHXmoWa+hwSayF4aeEJ3e
-         jwXJAGOXAjzaw5OxtFIuMRN2PACUIjrEC1ce+2E0KWtaNRxJeYmZR/3G2XLDhSTOoWRy
-         nRmg==
+        bh=7pSeC9jVspqw47GdWp89+6GQkr/XlaMhEpxYpolWUw4=;
+        b=k8dTr3Ecir7jv4OGciq7MhR3e9yKBdLE/LrF4c+HTP4ghzf2AgvWZ+9Nbw97PIe/iQ
+         cE55DWERYotrxLQrdhpt6bwPeuDvBG/82OuZHjsz6HcJ/Em/Rb+vDlwBXAjiNSPMVx96
+         SMb9u0Q3pyJIAzSHF0eD8P8nNh1bJpJouGD8opAOah5jxcbCJLcaXfb9e0xYjYsJnzby
+         FNWSfw9aqMAc9kju32TfeDCT2fzfYHXhLtxTEml/vPvlv9SHAYhCNKj3DbcP/c2ju7xo
+         Yc1G9yK3qwb+6ghxKVVcsz9C967WXCqit2q4qCeh3eKYsyaw4WyDvLcj3RkNdZMWkYnH
+         hr9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751982855; x=1752587655;
+        d=1e100.net; s=20230601; t=1751984791; x=1752589591;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vdAQxHLP+3o1vDkIgSOJJSKYu8Xg9Of88cKaUZYEM+4=;
-        b=U5sZUN7v+o2rLMbZDVGNW+xvQHH5DprZ+p/b9OV6TMQhoVHZ6H2lTRD/qzB7lpimtk
-         TymM7R798Pt4VBwjqm8sAs9Z4lrQUarJ6tW7fuB7luJsRCS/Qjl5jPy1Zh0vsX1adYJ0
-         AnWuIuNZq/UybNVbN0i7NRUociopaQtt6afnels5SM5RXZ8yms1YfA2IESj9NlC5wGae
-         TyTW8v6eZt9J1xu0XboB0TRcHtEzQAA0YddXtgw7hdjZM6Q4gNeqNWfrtxmK0uAb70bz
-         8ZSJEQKiQ/4ktcURdjVi/r1W7GNcNBAYMIzueoHIp1sj1dsYcYdixDz+uQTJkMeLiokI
-         IkXw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9hxdZnQqpIjsD7B+ROFYH36nvXGjHg9ve4ktlbWV1ldIVsOTwGzrbkVzoflddTkEODI5Pe4vsY5kg@vger.kernel.org, AJvYcCVI8QQ0VuJEour156pcccamdk2U78E66vmLAaWNOCAyTwvfADwoe76MtB5+wBpzaHHR432mbjDrM8WHZvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcdNN1bTHD4gfNLGH8CvdDV1LaEoQnjEMqWGtvRMHVvPY1JU0h
-	uWu07xRoNzdjzXj2WdnvDW7eQX3PEG40Ay0rECw49WS+zhOKYqoN2QO3
-X-Gm-Gg: ASbGncuHJkLFkywC+mEIfL0THk3GHgofQaqUnlYejL88w63AaurKzsE2L4jEoj9tW8l
-	91DzV093VpprUByY4/90dH5m5Z1lv+HKxNDhDE5UHMA6Uh8XUa40HbxTRbjnjn7zVXSZTHv1ScL
-	/oWpO71atJRYRwxVwtvY/vacpmOwg5TxFuijUdpNoDzZ5xk+CpMotxfpL8DK1jhlRkmE//MdHHg
-	4PAcVBP6kJhRXkYN6BXEDa0owJR3OhqTmCpprL7IQAJP8NbwJc165frWXZWpdUzHPtSo8XNxEYr
-	dRihTetgshODCPgR7AA5PPSxnLItimGjEfqaMBvnbEk0WzhZ/FES0PWX/+qb
-X-Google-Smtp-Source: AGHT+IHDlaTBiGQaI1Dnhp8EYZ9SUYXOQKxdp3obYZzKbXLiTVWC4HGItzXoxgc5NcWKLNQvrc+USg==
-X-Received: by 2002:a05:600c:a313:b0:453:6ca:16b1 with SMTP id 5b1f17b1804b1-454b5110ed2mr111006615e9.26.1751982855127;
-        Tue, 08 Jul 2025 06:54:15 -0700 (PDT)
+        bh=7pSeC9jVspqw47GdWp89+6GQkr/XlaMhEpxYpolWUw4=;
+        b=teQGQ7SCAKhYjZnE84eXwF2cnlS+Hr0KZD2+NNkKsZ9e0TIJXjCs9jaDc3q80QUDfN
+         DPzZF6/61nFh/fuJLWoZdzAuL1Iv0dICh5TJgib1/zpMtVSzdBJvvjpadmoua+PUiKwu
+         CFMet8YtKLf3O7HVR0zgB1VH4ad2qiVxWtdAIizOEF3FA3C+ycfG1muX48RsuNQ/Zdlb
+         qAxlleA0YIgDirRcyhnzt6CqffdVpZAg5x87+4YO2X1cBZnVxI4WNi9yUkx+Xh783yUB
+         /cCC9jYY22KUauQBAkyS7mjddyrXZIXImhuaKQ7QOhlMNVXKzyJ8ZMqGwrP6DlklTmTM
+         haUg==
+X-Forwarded-Encrypted: i=1; AJvYcCW84g9dBhVtOriYMcF8x4fjZ0EM5CkIZKQB8kgcxBuNCVxPqh/RBymGbQY+bnZ2URfRzOOvXx8NMcJb9SA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9V9tEXw5YU7Fuitw9aHly5RiOzwwe+Bocg//90qsDwsxMn0qk
+	9S5KK3wO6IjQ2V37sKW9q7+aZMZrTM6SgLzNwl52RaacjjkoFdFOiUEi
+X-Gm-Gg: ASbGncsdJKnb1eS90ASmVZ6gQRn1pEOmrEpOYkw81/oFeyEc3+OpNt8xsLvnGptOrQ/
+	ELTQqmE9BQRRL1e+eLnik6OY+XWDxhasuFiDg1OabNozKzGYl53JooOi32GLo9XuySdCl/jzFNq
+	njcvwWWcDPStaABkA7azw+dimzoI1mfaawIbhjqwpNl0szZJi4k/VRv13xRVdpsG51aoiwcoYjk
+	dsJ8FhlHw5VvnhHRDWuQ4QeRdrRjfdFmJjMuSmcWecj5ZctE5emunZhHWXpBsCNaGv5sFCsV4sv
+	dZwWmmxxkKDXB6EoEqjMMP/Th0UEuyX1/cNTBhDwFFt7rV9z8HfEcJoc+eW87ujJCMKIadw=
+X-Google-Smtp-Source: AGHT+IFaPz952mxGpMEJqQO6LRBbxoli0DFvjmuGmzMjRAP2BoVJHJhER5zRFYxrSlpZVbTJMm/ASQ==
+X-Received: by 2002:a05:600c:1da1:b0:453:58e8:a445 with SMTP id 5b1f17b1804b1-454cd4cbcf1mr28272035e9.11.1751984791274;
+        Tue, 08 Jul 2025 07:26:31 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454cd3d25e4sm22926675e9.26.2025.07.08.06.54.14
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454cd3dcdbasm23299065e9.37.2025.07.08.07.26.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jul 2025 06:54:14 -0700 (PDT)
+        Tue, 08 Jul 2025 07:26:30 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Binbin Zhou <zhoubinbin@loongson.cn>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	linux-mmc@vger.kernel.org
+To: Phillip Lougher <phillip@squashfs.org.uk>,
+	Chanho Min <chanho.min@lge.com>
 Cc: kernel-janitors@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mmc: loongson2: Fix comparison of unsigned integer with less than zero
-Date: Tue,  8 Jul 2025 14:53:48 +0100
-Message-ID: <20250708135348.1888817-1-colin.i.king@gmail.com>
+Subject: [PATCH] squashfs: Fix incorrect argument to sizeof in kmalloc_array call
+Date: Tue,  8 Jul 2025 15:26:04 +0100
+Message-ID: <20250708142604.1891156-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -75,33 +74,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Colin Ian King <colin.i.king@intel.com>
+The sizeof(void *) is the incorrect argument in the kmalloc_array call,
+it best to fix this by using sizeof(*folio) instead. Fortunately the
+sizes of void * and *folio happen to be the same, so this has not shown
+up as a run time issue.
 
-Currently the u32 variable ret is being assigned the return value from
-the call to regmap_read_poll_timeout and checking for a less than zero
-error return and this check is always false. Fix this by making ret a
-signed integer.
-
-Fixes: d0f8e961deae ("mmc: loongson2: Add Loongson-2K2000 SD/SDIO/eMMC controller driver")
-Signed-off-by: Colin Ian King <colin.i.king@intel.com>
+Fixes: 2e227ff5e272 ("squashfs: add optional full compressed block caching")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mmc/host/loongson2-mmc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/squashfs/block.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
-index 515ccf834f0a..ba6bb8fd5535 100644
---- a/drivers/mmc/host/loongson2-mmc.c
-+++ b/drivers/mmc/host/loongson2-mmc.c
-@@ -485,7 +485,8 @@ static irqreturn_t loongson2_mmc_irq(int irq, void *devid)
+diff --git a/fs/squashfs/block.c b/fs/squashfs/block.c
+index b3ae3b1cc0e5..00049b7b10c8 100644
+--- a/fs/squashfs/block.c
++++ b/fs/squashfs/block.c
+@@ -89,7 +89,7 @@ static int squashfs_bio_read_cached(struct bio *fullbio,
+ 	int err = 0;
+ #ifdef CONFIG_SQUASHFS_COMP_CACHE_FULL
+ 	struct folio **cache_folios = kmalloc_array(page_count,
+-			sizeof(void *), GFP_KERNEL | __GFP_ZERO);
++			sizeof(*folio), GFP_KERNEL | __GFP_ZERO);
+ #endif
  
- static void loongson2_mmc_dll_mode_init(struct loongson2_mmc_host *host)
- {
--	u32 val, pad_delay, delay, ret;
-+	u32 val, pad_delay, delay;
-+	int ret;
- 
- 	regmap_update_bits(host->regmap, LOONGSON2_MMC_REG_SEL,
- 			   LOONGSON2_MMC_SEL_DATA, LOONGSON2_MMC_SEL_DATA);
+ 	bio_for_each_folio_all(fi, fullbio) {
 -- 
 2.50.0
 
