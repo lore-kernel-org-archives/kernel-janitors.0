@@ -1,99 +1,125 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E176E17A586;
-	Wed,  9 Jul 2025 14:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CE838F9C;
+	Wed,  9 Jul 2025 17:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752071191; cv=none; b=qduOsGqk59wgrNhIeQ0GAHnT0p9IoznhYgWuljdjWpqT6opmxotb6FV5Bw39f3nV9IS8XpS+TPj+EV86RrWOsIh6CnaXQVhEbDBoZIsfqUip0VQ0f6p1+ZE8vG/aPaMJ8HroaLbEQeYCnYmAdlxgJKmJbhQNexU9y+Q1FkvE63s=
+	t=1752080641; cv=none; b=lFeAdhTa1j0J75iR4PrJgPX6YG5aKe7o0DWRxl0tDeoiwGJixZAb5onUN4tZ8BtsETahjQugJf/BkiGkpJj37IK3XqGhcHEUXXsCfajF8Epu0w1JuM6HbG3L2QTnjjxOzfvtp1Pj42hn2Mg4mhBhEEqYUZ64+ruNkTCDelhmU1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752071191; c=relaxed/simple;
-	bh=IJln6G3ZCu9vYhzKziG/cL2PCmTeVmdoUdECABOym3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HGAWlf9PtrX68pOBpFk+q7IigE97ctcX+2WS0+WDtBv42LfqJdKX2X0WtJfpMzlyrfp96uTvLwsdUWIzqf3ny9obO4agNZbhqRYNf20JfYFwsZ/ePpz4oNgaQ3g5NBs+psEv1MVTNZdW5X+fON1IECOUcIdzeJ7+04FC+dmtT2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Can1a5AL; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752080641; c=relaxed/simple;
+	bh=+QLS67LP3MAKEKzz3JJMVKPpv6Hxh0TQYFvpq7He7W4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BIhE/FIAcQ0ADeY4elqnxYNGEYQlKzj+YL8w9Z+0k2h/mB1jKGqgwTzOVXqvNhKV/RwHVuiO/wwR6iczXgVWrWOdya3hNI/956Y/tIgjJVjr3rnfwKUBMdup1RzM46MtG4JiNxUPOQ77YFYq4aEIgcko0P/YXbogCs8XBSzlFCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tD5mAcSV; arc=none smtp.client-ip=80.12.242.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Can1a5AL"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-450cfb79177so31878255e9.0;
-        Wed, 09 Jul 2025 07:26:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752071188; x=1752675988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jtytgNItlJgFy4oYQcn83LUARt7I0zsU6TFkZ3Z41Jc=;
-        b=Can1a5ALBnQJLaWpRt/XroWTUuCO7IdJ09DHEH93hnzgLO2xKVsKgecvGpxdyZQMg7
-         rSi20CWqj//ii03UWpVV1/DKzNK+NN+LZ/z1O1pgqGSI3y+QTr4kCPOOFdqWzyz3mf2v
-         zgVJosoGcw0jbISzwhBGChUT/i6TFoFdMhsyCHbhuyczoemlP7eT3J3/wqZN+uZ3dbo+
-         ckl1kYKL2AFmH7CA6taFk32vuYpD1pXcqQBEuBJ7lv6gLq3nVQHE6wGW0WmI/w8PaCZx
-         mUGrjZJBeCrh7zlVXuFSNKT3utnhpzTgVo4MfBOFVWbH9J/7ba2EG5WH0ccXa/RIMn5U
-         GCVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752071188; x=1752675988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jtytgNItlJgFy4oYQcn83LUARt7I0zsU6TFkZ3Z41Jc=;
-        b=wXXyORTix98EpPG4tdCaxP5vi8MDYEbpjUuiMHoy/TATIu14FTpnqkSsMam8J31fWT
-         6Wy3DnRJC32Jwi3+ifWNYuuP0WQgtMoE+My95g5c1aAGgCwfcM9derFDG6QcYT3Zqe/Y
-         tc5UVrCqeJGx5sL8a5uEFSaogs2mZKdSpVGjJgEOx/2WqawvvevfNzXU9LKqWpgBgcZP
-         986j6ac4VVqupspIxESB+VWAw2CxC80qwNEJNk0lrHsYcZQMeSCSfGCzWNP7dbTIzWrR
-         pbxosBFmjErymYDWIh17EUBuHNp9yPk1w2R522a5FCHK5uxboJEJSKNTCuFK34WFuhRo
-         Wj1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWx7qrO5l1OKwd8a0MHTo0szR+hQhm8/G8BeDG4usFcMl9tNnZ7aX/UYHFIDYEHieZWb/8pDeaVJH3KGsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOXjPuqMr0VcpkQ/LQBnjf+KSfZ6+Baw6CnDlDa2aVTsyVMLnd
-	XvqJvN+O6KokFKEFpQ9/GE5yPcpuqHFVu8LmCl+k0wNYlVDnr9O2kzpM
-X-Gm-Gg: ASbGncs8hF6bZCGbFC+OxA28MkGoWkaHqKg+vTTaNOTrS9a8KeeLTmFPf2NjaZ6DzwG
-	RDr+mEkzBzDe8EHPR8Taj7yZ0w0GXtYGFAWhqhak6BLUuz8O5WYygrjgDF/Ya4jvgSUE8FHqXfM
-	ccQL28jNI/e23PX3U3uaYWlpU+qSD5G5Z9BpNqXb+n+IJQkP8s3UFrXOfwWVugZWMf/aX3ZrL0m
-	UwxFdWTxU94qfDcRKs+RHMpXhv/mbMmFcqvkWZkNP05HF5TQy3pnfWKTMz3OE43cB6JjQ0ax0Bl
-	98/yDn9u452B9Oy/7gU1IjRF90a8so34DMTmrWz4MnVQnEZ0HTBOQFG7ki6D
-X-Google-Smtp-Source: AGHT+IFKMjL8yZjoTHKhlMwGjBnA9oWE7US7cP8cCvq33CCZA8+5Z7xIu2VBWIJ+Dut2TX5qYxxQ5A==
-X-Received: by 2002:a05:600c:4f11:b0:43d:9d5:474d with SMTP id 5b1f17b1804b1-454d522d0d0mr29893125e9.0.1752071187906;
-        Wed, 09 Jul 2025 07:26:27 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-454cdb31d21sm46723505e9.1.2025.07.09.07.26.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jul 2025 07:26:27 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Marc Zyngier <maz@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] irqchip/gic-v5: Fix spelling mistake "ouside" -> "outside"
-Date: Wed,  9 Jul 2025 15:25:59 +0100
-Message-ID: <20250709142559.2154255-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tD5mAcSV"
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id ZYD2uiFK70i5kZYD2uV8Mx; Wed, 09 Jul 2025 19:03:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1752080636;
+	bh=zun+I1R1xXyJz0HTUliO8x5fV8L46/pP1oYWwkaGDyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=tD5mAcSV17dDqivd0yuOdX396vyjLb9SPpJq1S1BRuBLPMHwTcBl8bCk3vF4KhkPw
+	 OK8IxCL8cbyTr3bvgOXKL+toR4ggJbJEHKEcVvqFDa092/Rn/YxTHLc3DDBbOxECQD
+	 WXYve3A5Mfdgmeb6914zViG/OBmyYgyTYrR+u51tqT/dBd7RsIDnFi54pjrIZRKfcs
+	 gCpKVZ6RtQWxPVZrBZZxqqxiHS+4vdCYwoCcAMGN0bffMcXV9LglKdF9SkkN2pF/So
+	 tcguz1UG4SuJober2Y+EUFsQKj/3ZQUjO9bpqr6em6c+uiov1WP6M+ieocdKqN2NOz
+	 N2qYgHK9wOjIw==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 09 Jul 2025 19:03:56 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <14040edb-5c27-42d2-a78b-f679bbc90ed8@wanadoo.fr>
+Date: Wed, 9 Jul 2025 19:03:52 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] squashfs: Fix incorrect argument to sizeof in
+ kmalloc_array call
+To: Andrew Morton <akpm@linux-foundation.org>,
+ kernel test robot <lkp@intel.com>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+ Phillip Lougher <phillip@squashfs.org.uk>, Chanho Min <chanho.min@lge.com>,
+ oe-kbuild-all@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ linux-kernel@vger.kernel.org
+References: <20250708142604.1891156-1-colin.i.king@gmail.com>
+ <aG3AVf8fbqHzk+OD@rli9-mobl>
+ <20250708195413.e990d63665144c28b0caa672@linux-foundation.org>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250708195413.e990d63665144c28b0caa672@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a pr_err error message. Fix it.
+Le 09/07/2025 à 04:54, Andrew Morton a écrit :
+> On Wed, 9 Jul 2025 09:05:25 +0800 kernel test robot <lkp@intel.com> wrote:
+> 
+>> Hi Colin,
+>>
+>> kernel test robot noticed the following build errors:
+>>
+>> [auto build test ERROR on akpm-mm/mm-everything]
+>> [also build test ERROR on next-20250708]
+>> [cannot apply to linus/master v6.16-rc5]
+>> [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> And when submitting patch, we suggest to use '--base' as documented in
+>> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>>
+>> url:    https://github.com/intel-lab-lkp/linux/commits/Colin-Ian-King/squashfs-Fix-incorrect-argument-to-sizeof-in-kmalloc_array-call/20250708-223017
+>> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+>> patch link:    https://lore.kernel.org/r/20250708142604.1891156-1-colin.i.king%40gmail.com
+>> patch subject: [PATCH] squashfs: Fix incorrect argument to sizeof in kmalloc_array call
+>> :::::: branch date: 10 hours ago
+>> :::::: commit date: 10 hours ago
+>> config: mips-randconfig-r071-20250709 (attached as .config)
+>> compiler: mips64-linux-gcc (GCC) 8.5.0
+>> reproduce (this is a W=1 build): (attached as reproduce)
+>>
+>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> the same patch/commit), kindly add following tags
+>> | Reported-by: kernel test robot <lkp@intel.com>
+>> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090822.QI1bMiUV-lkp@intel.com/
+>>
+>> All error/warnings (new ones prefixed by >>):
+>>
+>>     In file included from include/linux/percpu.h:5,
+>>                      from include/linux/percpu_counter.h:14,
+>>                      from include/linux/mm_types.h:21,
+>>                      from include/linux/mmzone.h:22,
+>>                      from include/linux/gfp.h:7,
+>>                      from include/linux/xarray.h:16,
+>>                      from include/linux/list_lru.h:14,
+>>                      from include/linux/fs.h:14,
+>>                      from include/linux/highmem.h:5,
+>>                      from include/linux/bvec.h:10,
+>>                      from include/linux/blk_types.h:10,
+>>                      from include/linux/blkdev.h:9,
+>>                      from fs/squashfs/block.c:16:
+>>     fs/squashfs/block.c: In function 'squashfs_bio_read_cached':
+>>>> fs/squashfs/block.c:92:12: error: 'folio' undeclared (first use in this function)
+>>         sizeof(*folio), GFP_KERNEL | __GFP_ZERO);
+>>                 ^~~~~
+> 
+> I made it
+> 
+> 	struct folio **cache_folios = kmalloc_array(page_count,
+> 			sizeof(*cache_folios), GFP_KERNEL | __GFP_ZERO);
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/irqchip/irq-gic-v5-its.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+WHy not kcalloc(), to be less verbose and remove the explicit __GFP_ZERO?
 
-diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
-index 340640fdbdf6..fd93796f1fce 100644
---- a/drivers/irqchip/irq-gic-v5-its.c
-+++ b/drivers/irqchip/irq-gic-v5-its.c
-@@ -902,7 +902,7 @@ static int gicv5_its_alloc_eventid(struct gicv5_its_dev *its_dev, msi_alloc_info
- 		event_id_base = info->hwirq;
- 
- 		if (event_id_base >= its_dev->num_events) {
--			pr_err("EventID ouside of ITT range; cannot allocate an ITT entry!\n");
-+			pr_err("EventID outside of ITT range; cannot allocate an ITT entry!\n");
- 
- 			return -EINVAL;
- 		}
--- 
-2.50.0
+CJ
+
+> 
+> 
 
