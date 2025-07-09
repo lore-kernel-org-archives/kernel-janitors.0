@@ -1,190 +1,154 @@
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5959628FFE2;
-	Wed,  9 Jul 2025 11:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC91D2D5C89
+	for <kernel-janitors@vger.kernel.org>; Wed,  9 Jul 2025 11:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059554; cv=none; b=KUVRbIMIon6dJdBW98gWb4paNy80M8ouPc+aT9Rd37YxdopXSOkEUMdpC3CQ++mqfHTtU0vL1X/3QKVhfe7MG9pl1kxEFhaKvkd1HsozmMdowaxJPoPLKaWXtoaEeMTrR4eno+2YUkZmCnjCPhfhyJji7BeWsXO8NYUZPnqKms8=
+	t=1752060688; cv=none; b=jRtufxGQ7nl7zSeZtKo2+0MMGb9GUF6OEkvP4JtceV2QX7CJQWPER5fkhHBskJTfqzAHGtMfu4jm0rMGO2Yi8+eQZRn+28R3/aZcYiVKRXNv4Wt+kMIQroInAuEAIEPhh+iiIBMoi51RzK2dAub+8Ez6sAVtmeHLvBT0/NABdhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059554; c=relaxed/simple;
-	bh=FpyirzTdaLgtCuAJF9iScqlLK+AL6PktYVBjK68z4E0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OVg7ouopfjpL8b5ZqHOCnBioSmFh1OkkTH9+spzgfCt4vQt8JfJgGr+5zPiEq5ri8TuoY8pa9qGwsBEYP3N8iTXIaKGy7kOG1tdwIl/C1eMghChPGU4Y9GDcbfJlCpNLR51Udg6v9MF/GuUySuME0uYmCi7f/rc6b9WdMmvedTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LTnspz95; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1752060688; c=relaxed/simple;
+	bh=N8QY2YLbLqwZxs7VhmrGcUAii95hVfhe2zG9GwU9b2U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JWijhTq5AGltnY2roQrgq3SA2D5WojV29JHcik5ieuA3rgsvPWwLuRZjwUt1fXyk4cEZMT+qEaXUJw55NTapwK87YHgoEoUnijpAN3o5WKeb8jTxiTRunmC3wRvqevujdq1Y+UJgu7bZIiponesPBpu8TXNiicNUX5r4gfSFtiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EN7jCNpm; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LTnspz95"
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569BCSE51457937;
-	Wed, 9 Jul 2025 06:12:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1752059548;
-	bh=EMf7dV5tYQz1nYxC1/9jcvjOLej6ZUrwzT/jNq3/gUg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=LTnspz95Ntn8ZzJsgBFxx2bzj2BXZu2fPOEBvNVN9YIkY7qdlsEvxZdOWwpEKJOQr
-	 fq4aWxN6nXDXYHmedkN+P/l86UOoWPjC6z+ffd6UfFp3ut5a4NCoUwPRimoyGKUFkl
-	 LcdBKU3omBzqSAFr4jailWiVo+Or8APYkqhpgPtc=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569BCSxr3293994
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 9 Jul 2025 06:12:28 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
- Jul 2025 06:12:27 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 9 Jul 2025 06:12:27 -0500
-Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569BCOEp3833403;
-	Wed, 9 Jul 2025 06:12:25 -0500
-Message-ID: <d8847732-2254-4719-8941-fdfd896b265b@ti.com>
-Date: Wed, 9 Jul 2025 16:42:24 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EN7jCNpm"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-70e767ce72eso50263297b3.1
+        for <kernel-janitors@vger.kernel.org>; Wed, 09 Jul 2025 04:31:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1752060685; x=1752665485; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CDvxz8anR+BJ4sHLfVXzhIbmkKQRFf6UUA1osiYchOg=;
+        b=EN7jCNpmkIWhW6NN7O6gwnZKkXTKemOAomy/L64yPJHPV3EnFX1yqI9KsR1XHxnawc
+         yra7yuFEYDnxRkZMcqzk8jnWcix/jf2MxDibQKNVy7CP1oR97d3Lmch6g/KpZQPLeL0M
+         2EGvqk0wHv64xqxcTHKQlRiZLt+0U7cI/e0JGTr9dkxBs6JwwYwregd0rWS+Go5QsVga
+         Gqa5fby62A1KAkPl2UhNE2wMJz2BQyOdHrdlxlwJK1jyyryjcylrKUSns//xIc8le4ET
+         6qYDzpo13i2DkeJJhp7/R2z9kU6vPNEu01PHCGdDbkFfIbVEtc2nySE/ri9k0udNFQSh
+         x5JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752060685; x=1752665485;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CDvxz8anR+BJ4sHLfVXzhIbmkKQRFf6UUA1osiYchOg=;
+        b=MppZKTgeWXU1Hz1sbMNLVxFH/X28yu44gyvh2pOxmKWuL9yeOq/UDUnO+E2jLpVOwc
+         IbKf48bAK/QqPiqaGEmW1trigbNlUN5FGNgS+3sAcy/c43QNd9U99KxdapefuHJrK5G3
+         K0uN6OF/Sz2EEb2ZBnULOY4iapFe6tPotV4B8fe8LaiailgZ4WVMSLk15wPTng0ivvyi
+         Qb5UpKry7REP0e4d8vgTCPp4wWCd/2yZVRsHSx1AhzTHJ0O/s35fkO9kOVnC73dbxCN9
+         50GdRfiWcBuk+TSdUtzbCs+Kivo1uv20rQLpB96a3ked9XtL6AeKifbtPHkS4qBQ5RcW
+         B0NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqScCcDAt8Jq2Nu70DI7je/17Kwl5V7Jl7lr2MY7p1CSGYfoDU4V0dyLcqS9t/SZ9A4diejUrHSPOsJxZWSv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHXL6LYpWMJP1nKl9xkgsFlWNOhCjLUSmWEaSLQRfXleeubo6c
+	cJ1OH3CaAFw89Z4uUyrvWj/jTKhv36yCqONyqw577B9V/GymWqHRD0Q+7gdXUiwzcMmKSL2z19l
+	akepTiUnrAtS2UZziZPKoSKceZ5CFPgroms60y1uK2g==
+X-Gm-Gg: ASbGnctLrEpVb6aNX5hPcJ0aC+5Sun8aY120PTca0B8bJu7WfFqVwFWUc6JnBL698wX
+	I0ELb4JchefYUaPrrOV+qYsA1AJF/zlG/5C5eyQUbkrkchrkhQNLt5rPw8j1kpj+oENJiE/P5VW
+	0eQ7IQbqKRMJ3xnUP/Q2H2R4NZTRNnLzsH+XpHF/tLrKFnP3EGAaYERgc=
+X-Google-Smtp-Source: AGHT+IGU+pji3u6/G/drrXD9f6hzZ57lAuY7UQylTxtmRHqJxsYBUBEDT5Y4GQThZIBDfvEDAxWsUuXsGoMFEvARnXI=
+X-Received: by 2002:a05:690c:6901:b0:70e:2c7f:2ed4 with SMTP id
+ 00721157ae682-717b13c163fmr32649447b3.0.1752060684637; Wed, 09 Jul 2025
+ 04:31:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] remoteproc: k3-dsp: Fix an error handling path in
- k3_dsp_rproc_probe()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>, <afd@ti.com>,
-        <hnagalla@ti.com>
-CC: Bjorn Andersson <andersson@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr>
- <aGavap5k0qir9x0f@p14s>
-Content-Language: en-US
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-In-Reply-To: <aGavap5k0qir9x0f@p14s>
+References: <e71abd8d75dd842690e5a11e38037bcf5feac189.1751816732.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e71abd8d75dd842690e5a11e38037bcf5feac189.1751816732.git.christophe.jaillet@wanadoo.fr>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 9 Jul 2025 13:30:48 +0200
+X-Gm-Features: Ac12FXwjFFHXtdaaUqyy9FfmUbPYblM-fvRv4hnhCWqr-KyPAgwmhH4mdvxEDsE
+Message-ID: <CAPDyKFr2VPbQRRx6hYp4e6by1O4LvpD=WwwP2gb2KCMTB8uQGQ@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: amlogic: Constify struct meson_secure_pwrc_domain_data
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-
-On 03/07/25 21:57, Mathieu Poirier wrote:
-> Andrew, Hari and Beleswar - please test this on your side and get back to me
-> with the results.
+On Sun, 6 Jul 2025 at 17:45, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> Thanks,
-> Mathieu
+> 'struct meson_secure_pwrc_domain_data' are not modified in these drivers.
 >
-> On Fri, Jun 27, 2025 at 11:42:33PM +0200, Christophe JAILLET wrote:
->> IF an error occurs after a successful k3_rproc_request_mbox() call,
->> mbox_free_channel() should be called to avoid a leak.
->>
->> Such a call is missing in the error handing path of k3_dsp_rproc_probe().
->> It is also missing both in the error handling path of k3_m4_rproc_probe()
->> and in (in-existent) corresponding remove function.
->>
->> Switch to managed resources to avoid these leaks and simplify the code.
->>
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Constifying these structures moves some data to a read-only section, so
+> increases overall security.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text    data     bss     dec     hex filename
+>    9248     408       0    9656    25b8 drivers/pmdomain/amlogic/meson-secure-pwrc.o
+>
+> After:
+> =====
+>    text    data     bss     dec     hex filename
+>    9344     304       0    9648    25b0 drivers/pmdomain/amlogic/meson-secure-pwrc.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Applied for next, thanks!
+
+Kind regards
+Uffe
 
 
-The subject line seems to be calling out changes only in dsp driver,
-however patch takes care of all DSP/M4/R5 drivers. Maybe
-something to update.
-
-With above addressed,
-
-Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
-Tested-by: Beleswar Padhi <b-padhi@ti.com>
-
-Tested IPC with Normal boot/Late Attach and in various core
-configurations: Lockstep/Split/Single CPU etc.
-
-Thanks,
-Beleswar
-
->> ---
->> Compile tested only.
->>
->> This is an update of [1].
->> The code has been heavily refactored recently with things moved to
->> ti_k3_common.c
->>
->> This new version also fixes a leak in k3_m4_rproc_probe(). In this file,
->> mbox_free_channel() was missing.
->>
->> Being very different from the v3, I've removed the previous review tags.
->>
->> [1]: https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
->> ---
->>  drivers/remoteproc/ti_k3_common.c         | 12 +++++++++++-
->>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
->>  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
->>  3 files changed, 11 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
->> index d4f20900f33b..7a9c3fb80fec 100644
->> --- a/drivers/remoteproc/ti_k3_common.c
->> +++ b/drivers/remoteproc/ti_k3_common.c
->> @@ -155,6 +155,13 @@ int k3_rproc_release(struct k3_rproc *kproc)
->>  }
->>  EXPORT_SYMBOL_GPL(k3_rproc_release);
->>  
->> +static void k3_rproc_free_channel(void *data)
->> +{
->> +	struct k3_rproc *kproc = data;
->> +
->> +	mbox_free_channel(kproc->mbox);
->> +}
->> +
->>  int k3_rproc_request_mbox(struct rproc *rproc)
->>  {
->>  	struct k3_rproc *kproc = rproc->priv;
->> @@ -173,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
->>  		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
->>  				     "mbox_request_channel failed\n");
->>  
->> +	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
->> +	if (ret)
->> +		return ret;
->> +
->>  	/*
->>  	 * Ping the remote processor, this is only for sanity-sake for now;
->>  	 * there is no functional effect whatsoever.
->> @@ -183,7 +194,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
->>  	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
->>  	if (ret < 0) {
->>  		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
->> -		mbox_free_channel(kproc->mbox);
->>  		return ret;
->>  	}
->>  
->> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->> index 7a72933bd403..d6ceea6dc920 100644
->> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
->> @@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
->>  		if (ret)
->>  			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
->>  	}
->> -
->> -	mbox_free_channel(kproc->mbox);
->>  }
->>  
->>  static const struct k3_rproc_mem_data c66_mems[] = {
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index ca5ff280d2dc..04f23295ffc1 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
->>  				return;
->>  			}
->>  		}
->> -
->> -		mbox_free_channel(kproc->mbox);
->>  	}
->>  }
->>  
->> -- 
->> 2.50.0
->>
+> ---
+> Compile tested only
+> ---
+>  drivers/pmdomain/amlogic/meson-secure-pwrc.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> index ff76ea36835e..e8bda60078c4 100644
+> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> @@ -342,32 +342,32 @@ static int meson_secure_pwrc_probe(struct platform_device *pdev)
+>         return of_genpd_add_provider_onecell(pdev->dev.of_node, &pwrc->xlate);
+>  }
+>
+> -static struct meson_secure_pwrc_domain_data meson_secure_a1_pwrc_data = {
+> +static const struct meson_secure_pwrc_domain_data meson_secure_a1_pwrc_data = {
+>         .domains = a1_pwrc_domains,
+>         .count = ARRAY_SIZE(a1_pwrc_domains),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_data amlogic_secure_a4_pwrc_data = {
+> +static const struct meson_secure_pwrc_domain_data amlogic_secure_a4_pwrc_data = {
+>         .domains = a4_pwrc_domains,
+>         .count = ARRAY_SIZE(a4_pwrc_domains),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_data amlogic_secure_a5_pwrc_data = {
+> +static const struct meson_secure_pwrc_domain_data amlogic_secure_a5_pwrc_data = {
+>         .domains = a5_pwrc_domains,
+>         .count = ARRAY_SIZE(a5_pwrc_domains),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_data amlogic_secure_c3_pwrc_data = {
+> +static const struct meson_secure_pwrc_domain_data amlogic_secure_c3_pwrc_data = {
+>         .domains = c3_pwrc_domains,
+>         .count = ARRAY_SIZE(c3_pwrc_domains),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_data meson_secure_s4_pwrc_data = {
+> +static const struct meson_secure_pwrc_domain_data meson_secure_s4_pwrc_data = {
+>         .domains = s4_pwrc_domains,
+>         .count = ARRAY_SIZE(s4_pwrc_domains),
+>  };
+>
+> -static struct meson_secure_pwrc_domain_data amlogic_secure_t7_pwrc_data = {
+> +static const struct meson_secure_pwrc_domain_data amlogic_secure_t7_pwrc_data = {
+>         .domains = t7_pwrc_domains,
+>         .count = ARRAY_SIZE(t7_pwrc_domains),
+>  };
+> --
+> 2.50.0
+>
