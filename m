@@ -1,86 +1,75 @@
-Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465051F63D9;
-	Wed,  9 Jul 2025 19:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767B823CEFF;
+	Wed,  9 Jul 2025 19:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752087785; cv=none; b=HcdP6zkAfxKo9f0oG0vKqKqAfQpq/3IIj3HdglVOvSZwx1+/Zeb9ttj12Thw6lqjX2N1y63ya6DxzY5KrRBKttkFtDmgrO7Y+JGnbCiFLq7pCQffdKgrwvOKCO0vwU2uLQWLxAKIJfoDgslOs7FgKp5CVn2m4S9dv+4o1rYoyIs=
+	t=1752087795; cv=none; b=UJDCSeu2UYbTX/clfO+SyG3HNklGf/VnZbnSq6Aaf0Y8EWc0U+VxQv5PgQVGY7IbJf0+J1rYYxyjcDotOr4E4JdXha2dFjjtv59qLWorVxtwtMu5eCS4SkpdYPmepO0iLM/AHDtc5xbq/4F7u4w7vohkRrlR7ldSt5UQW4dYQ3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752087785; c=relaxed/simple;
-	bh=G519BjdkDY1+Rfyc181KLiDG1zEMN5MlAxYWGwUIhis=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MAmzoU6eiIfj3EnPW5nwrL+0vS+X4Zn/XEiC5BL8Vg1pAyB7jjd+aP/+S47sMQZQmQ+kjIfDxTMpIxlMMyxN7ks4bDRu9d6tPubrsJTbkVGKoZhJ8JzuF8z+mMo8eL4GPQrszUUq9GbWinSxZNIL2qPEOtMleXfuBNXEAWypkXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Mlh2kdJx; arc=none smtp.client-ip=80.12.242.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1752087795; c=relaxed/simple;
+	bh=lSMeAZGO+rQcyXO17LJXWE7R5OHREkUaiHJQysbQyAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OLkk4RKR58lCUct1RJ8ZdSyzBKsGVsyc4BTRs8olQ+SDq1kxvq3t8/6Jk6fxmTkU7K1tnBwKRhxKs1OgQpciluuErxZRiEvO5PHAG0+xQD9jJIl5ZMoVkdhB0n5y/rsugDoEzmq6oNkVZ17PdV3ep5jFkIQFBCQAPPnM/9LG9q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCNwN7RE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Mlh2kdJx"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id Za4EuohZXIU3AZa4EuA5yn; Wed, 09 Jul 2025 21:02:55 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1752087775;
-	bh=DU9gqi8o4hCHl2YklDSYazmq20NfmNbWp6osbg8n6+8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Mlh2kdJxE+2erlXyzB/j9fcd3pgNavt+mSXgVyTlrnsdyBa8hroweuI5b02zmojTn
-	 EtE2Vo1N3KAOkVUhGsaYTo+pvW8n289lT5osOgU4qNReL2KwJvlPBzh+x3jCJmVvjK
-	 4n0igQnj4ahsFbXXCeVQUMFKN3jwAlqiPbrBpoLdvvUkspqsp/59NIZfZ7eUSGr8ni
-	 ZemDE8hf8A5LKzDbJ+8tZfJ8cWjwygSbh3ddibSPEgVmFfHFDIKt6fJEkPgY1Y1axe
-	 ZGvW0fbydjgZMsRaSahXv8w/1a0N/2HxWS7BeMbh+cmzebsqF77EJ79fpPW7/DpF47
-	 1PZQl8lLuWWlg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 09 Jul 2025 21:02:55 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Sunil Khatri <sunil.khatri@amd.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/amdgpu: Fix missing unlocking in an error path in amdgpu_userq_create()
-Date: Wed,  9 Jul 2025 21:02:51 +0200
-Message-ID: <366557fa7ca8173fd78c58336986ca56953369b9.1752087753.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCNwN7RE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69159C4CEEF;
+	Wed,  9 Jul 2025 19:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752087795;
+	bh=lSMeAZGO+rQcyXO17LJXWE7R5OHREkUaiHJQysbQyAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uCNwN7RE0zBLIznZQ4rO0vv2r6KKEzCUXW+lP5lOxzZmIRXBc7cjgAyerPJvMwj1L
+	 uAg0enabL2soT/Hr6W0nfHHGxizr5YyaoWqJfpzASrenDnnvv2LzrnXHkPV8S7R/tN
+	 ESyXzqb036DdvWfqou325nJDpUNJz7LHFcRtDCaS/NlBCrQdvQD4caLHg0qEt3eIY/
+	 kTHI5g+2cj+/1A7f9JXOZGaMmJv4PUdSJygyRy4pD8ybIitR6OpW6MoIMwXN9297sf
+	 BOpKQWEEWMlLhHb3KKRZP32Lxh7xn3+U6xM4sDL2mUmAq3y8w6I9uCOjNrpMOsSM0o
+	 J78G7CngDS4qQ==
+Date: Wed, 9 Jul 2025 21:03:10 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, vigneshr@ti.com, 
+	andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org, tony@atomide.com, 
+	jmkrzyszt@gmail.com, miaoqinglang@huawei.com, grygorii.strashko@ti.com, 
+	wsa@kernel.org, Jean Delvare <khali@linux-fr.org>, 
+	Komal Shah <komal_shah802003@yahoo.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-omap@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: omap: Handle omap_i2c_init() errors in
+ omap_i2c_probe()
+Message-ID: <joo6ibjqnsriouiw77fwc5kd2p2wd2junhlhe5nzivzot2jgac@q33qj637wt53>
+References: <cover.1751701715.git.christophe.jaillet@wanadoo.fr>
+ <565311abf9bafd7291ca82bcecb48c1fac1e727b.1751701715.git.christophe.jaillet@wanadoo.fr>
+ <aG60GJy60Jf3w8tZ@roadster.musicnaut.iki.fi>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aG60GJy60Jf3w8tZ@roadster.musicnaut.iki.fi>
 
-If kasprintf() fails, some mutex still need to be released to avoid locking
-issue, as already done in all other error handling path.
+Hi Aaro,
 
-Fixes: c03ea34cbf88 ("drm/amdgpu: add support of debugfs for mqd information")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+> > diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+> > index 8b01df3cc8e9..485313d872e5 100644
+> > --- a/drivers/i2c/busses/i2c-omap.c
+> > +++ b/drivers/i2c/busses/i2c-omap.c
+> > @@ -1472,7 +1472,11 @@ omap_i2c_probe(struct platform_device *pdev)
+> >  	}
+> >  
+> >  	/* reset ASAP, clearing any IRQs */
+> > -	omap_i2c_init(omap);
+> > +	r = omap_i2c_init(omap);
+> > +	if (r) {
+> > +		dev_err(omap->dev, "failure to initialize i2c: %d\n", r);
+> 
+> Error paths in omap_i2c_init already print a message and error code,
+> so this is log is redundant.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-index 513bbc543f40..bce97318965c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-@@ -520,8 +520,10 @@ amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
- 	}
- 
- 	queue_name = kasprintf(GFP_KERNEL, "queue-%d", qid);
--	if (!queue_name)
--		return -ENOMEM;
-+	if (!queue_name) {
-+		r = -ENOMEM;
-+		goto unlock;
-+	}
- 
- 	/* Queue dentry per client to hold MQD information   */
- 	queue->debugfs_queue = debugfs_create_dir(queue_name, filp->debugfs_client);
--- 
-2.50.0
+Good point! I will take care of it, no need to send a v2.
 
+Thanks,
+Andi
