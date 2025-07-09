@@ -1,125 +1,143 @@
-Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CE838F9C;
-	Wed,  9 Jul 2025 17:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752080641; cv=none; b=lFeAdhTa1j0J75iR4PrJgPX6YG5aKe7o0DWRxl0tDeoiwGJixZAb5onUN4tZ8BtsETahjQugJf/BkiGkpJj37IK3XqGhcHEUXXsCfajF8Epu0w1JuM6HbG3L2QTnjjxOzfvtp1Pj42hn2Mg4mhBhEEqYUZ64+ruNkTCDelhmU1U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752080641; c=relaxed/simple;
-	bh=+QLS67LP3MAKEKzz3JJMVKPpv6Hxh0TQYFvpq7He7W4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BIhE/FIAcQ0ADeY4elqnxYNGEYQlKzj+YL8w9Z+0k2h/mB1jKGqgwTzOVXqvNhKV/RwHVuiO/wwR6iczXgVWrWOdya3hNI/956Y/tIgjJVjr3rnfwKUBMdup1RzM46MtG4JiNxUPOQ77YFYq4aEIgcko0P/YXbogCs8XBSzlFCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tD5mAcSV; arc=none smtp.client-ip=80.12.242.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ECC8F40;
+	Wed,  9 Jul 2025 18:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1752085563; cv=pass; b=OW8/M+Nb1nUw/7aIIq3ENGV1/2Mf0xEFSt6azGvpYTZzUBKXjfCmjIFhS0EbFlEucG8zSuDvBNFzW3XRVu+JavbKqB2kxufMG1TijEriswOHaW0tatzfUh8KVq4wZN3AUBGClVAiSH1IYWyEd9W7h2J8s7w1oFovh+MrSrabjrs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1752085563; c=relaxed/simple;
+	bh=Abcsubps400Tmimi8x/85khLrrQGEef3bZBOcjjxcGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDqmjoydxvDurn+DPW9T6TX4rRsRxUYGOLZE58q4NWHSEombDA9UK+dqxITyiY1m7ZZk9UPCzppY0y5+gtQj30MsjmwGMKYSEJ8pmPOLHffprWnqNNl5eAxnSNX2S64i1Ceae80gqjFY7AbhoaRsIwssCSkUn4knmEfPwf4zpi4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Cd5eIaWN; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=j5vaIi+M; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tD5mAcSV"
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id ZYD2uiFK70i5kZYD2uV8Mx; Wed, 09 Jul 2025 19:03:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1752080636;
-	bh=zun+I1R1xXyJz0HTUliO8x5fV8L46/pP1oYWwkaGDyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=tD5mAcSV17dDqivd0yuOdX396vyjLb9SPpJq1S1BRuBLPMHwTcBl8bCk3vF4KhkPw
-	 OK8IxCL8cbyTr3bvgOXKL+toR4ggJbJEHKEcVvqFDa092/Rn/YxTHLc3DDBbOxECQD
-	 WXYve3A5Mfdgmeb6914zViG/OBmyYgyTYrR+u51tqT/dBd7RsIDnFi54pjrIZRKfcs
-	 gCpKVZ6RtQWxPVZrBZZxqqxiHS+4vdCYwoCcAMGN0bffMcXV9LglKdF9SkkN2pF/So
-	 tcguz1UG4SuJober2Y+EUFsQKj/3ZQUjO9bpqr6em6c+uiov1WP6M+ieocdKqN2NOz
-	 N2qYgHK9wOjIw==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Wed, 09 Jul 2025 19:03:56 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <14040edb-5c27-42d2-a78b-f679bbc90ed8@wanadoo.fr>
-Date: Wed, 9 Jul 2025 19:03:52 +0200
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Cd5eIaWN";
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="j5vaIi+M"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPS id 4bcmcs2hLQz49PyD;
+	Wed,  9 Jul 2025 21:25:49 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1752085549;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idK43d5pW+sDqqJyF1QryvhgswgryS6oV6QlfEsn3to=;
+	b=Cd5eIaWNVHAris92EJIj5pBSOCxO2SSeEx55YMAx1UH0F34D+WCLNhazFOX2jNd1XWSOKn
+	PBuDK+BxMkolX+WQibY7vkv0hy/3q+pxnOnN3RRWOc83PppuRtvFzjT3+WbOT+N0Rq2Yy3
+	riZdKvjYZE5ZROqPw8QPB5FMn/xqVcTBRkw/fbINW3dEOVDBEIjC+Tw8+OeIT7d7JsbxpW
+	DobqtgYrGeJZ8ScUd0YGsgHoxxRY2d09+g2YPy+F9Y2MKHHKLXVmXHB3pcQF6H9BP4Dzzg
+	tb1Fa1XF4bF2R5IUHun1x7SshcRsM0RuO528sTGLjD/ncDbIOV2BVQKh4/wUrA==
+Received: from roadster.musicnaut.iki.fi (85-76-14-75-nat.elisa-mobile.fi [85.76.14.75])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aaro.koskinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4bcmcW2pw0zyTV;
+	Wed,  9 Jul 2025 21:25:31 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1752085539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idK43d5pW+sDqqJyF1QryvhgswgryS6oV6QlfEsn3to=;
+	b=j5vaIi+MKE0K97FkMCCJSkf6NqB1iWzHr64fe76FUCCLFVDm7A3/c+peJxwaeLo0T0CSiU
+	MAGMXRNMz00c23w0I0f/W1kLQJnGgTVi/33b+khX6Ub/4GcGyggbIW/aHq8FM9Ybyx/71s
+	Z/q3EwX5M5W0klTxt39g5c9UZZc0wXk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1752085539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=idK43d5pW+sDqqJyF1QryvhgswgryS6oV6QlfEsn3to=;
+	b=aC9jN/sxtfI1P8h0up0XRe/mAbUDv9hEENcRN1bcxYHJtiKDySolJsLhJIft7rM5c1LgRj
+	u7rtB8QrT3xCTsiIDfO1BNP/B4eaesw2rTIBWR5Ag4d1LJLnb5EDr3LPI1BEb8ksIZfeyi
+	7mP0dDp9W6MPaxncT2k9hf5u4kuNVN8=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1752085539; a=rsa-sha256; cv=none;
+	b=gz2tdtmSexXg/gmdwhV70+VDtBZTb1fFyQFb0fnZOivnGsQhpNC8rA5wP/QPWRoNtTe2mO
+	SlsmZdBYUOxqasqNyUhXB3z6ffe5FggtAhM5RH4exvJTzJilQRxTUDfWln3dOWfdrtyfEL
+	ni8SKQmg6h4mbIox0/tdSJbp5T4Z+Bs=
+Date: Wed, 9 Jul 2025 21:25:28 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: vigneshr@ti.com, andreas@kemnade.info, khilman@baylibre.com,
+	rogerq@kernel.org, tony@atomide.com, jmkrzyszt@gmail.com,
+	andi.shyti@kernel.org, miaoqinglang@huawei.com,
+	grygorii.strashko@ti.com, wsa@kernel.org,
+	Jean Delvare <khali@linux-fr.org>,
+	Komal Shah <komal_shah802003@yahoo.com>,
+	Greg Kroah-Hartman <gregkh@suse.de>, linux-omap@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: omap: Handle omap_i2c_init() errors in
+ omap_i2c_probe()
+Message-ID: <aG60GJy60Jf3w8tZ@roadster.musicnaut.iki.fi>
+References: <cover.1751701715.git.christophe.jaillet@wanadoo.fr>
+ <565311abf9bafd7291ca82bcecb48c1fac1e727b.1751701715.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] squashfs: Fix incorrect argument to sizeof in
- kmalloc_array call
-To: Andrew Morton <akpm@linux-foundation.org>,
- kernel test robot <lkp@intel.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
- Phillip Lougher <phillip@squashfs.org.uk>, Chanho Min <chanho.min@lge.com>,
- oe-kbuild-all@lists.linux.dev, kernel-janitors@vger.kernel.org,
- Linux Memory Management List <linux-mm@kvack.org>,
- linux-kernel@vger.kernel.org
-References: <20250708142604.1891156-1-colin.i.king@gmail.com>
- <aG3AVf8fbqHzk+OD@rli9-mobl>
- <20250708195413.e990d63665144c28b0caa672@linux-foundation.org>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20250708195413.e990d63665144c28b0caa672@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <565311abf9bafd7291ca82bcecb48c1fac1e727b.1751701715.git.christophe.jaillet@wanadoo.fr>
 
-Le 09/07/2025 à 04:54, Andrew Morton a écrit :
-> On Wed, 9 Jul 2025 09:05:25 +0800 kernel test robot <lkp@intel.com> wrote:
-> 
->> Hi Colin,
->>
->> kernel test robot noticed the following build errors:
->>
->> [auto build test ERROR on akpm-mm/mm-everything]
->> [also build test ERROR on next-20250708]
->> [cannot apply to linus/master v6.16-rc5]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Colin-Ian-King/squashfs-Fix-incorrect-argument-to-sizeof-in-kmalloc_array-call/20250708-223017
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
->> patch link:    https://lore.kernel.org/r/20250708142604.1891156-1-colin.i.king%40gmail.com
->> patch subject: [PATCH] squashfs: Fix incorrect argument to sizeof in kmalloc_array call
->> :::::: branch date: 10 hours ago
->> :::::: commit date: 10 hours ago
->> config: mips-randconfig-r071-20250709 (attached as .config)
->> compiler: mips64-linux-gcc (GCC) 8.5.0
->> reproduce (this is a W=1 build): (attached as reproduce)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090822.QI1bMiUV-lkp@intel.com/
->>
->> All error/warnings (new ones prefixed by >>):
->>
->>     In file included from include/linux/percpu.h:5,
->>                      from include/linux/percpu_counter.h:14,
->>                      from include/linux/mm_types.h:21,
->>                      from include/linux/mmzone.h:22,
->>                      from include/linux/gfp.h:7,
->>                      from include/linux/xarray.h:16,
->>                      from include/linux/list_lru.h:14,
->>                      from include/linux/fs.h:14,
->>                      from include/linux/highmem.h:5,
->>                      from include/linux/bvec.h:10,
->>                      from include/linux/blk_types.h:10,
->>                      from include/linux/blkdev.h:9,
->>                      from fs/squashfs/block.c:16:
->>     fs/squashfs/block.c: In function 'squashfs_bio_read_cached':
->>>> fs/squashfs/block.c:92:12: error: 'folio' undeclared (first use in this function)
->>         sizeof(*folio), GFP_KERNEL | __GFP_ZERO);
->>                 ^~~~~
-> 
-> I made it
-> 
-> 	struct folio **cache_folios = kmalloc_array(page_count,
-> 			sizeof(*cache_folios), GFP_KERNEL | __GFP_ZERO);
-> 
+Hi,
 
-WHy not kcalloc(), to be less verbose and remove the explicit __GFP_ZERO?
+On Sat, Jul 05, 2025 at 09:57:37AM +0200, Christophe JAILLET wrote:
+> omap_i2c_init() can fail. Handle this error in omap_i2c_probe().
+> 
+> Fixes: 010d442c4a29 ("i2c: New bus driver for TI OMAP boards")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> ---
+>  drivers/i2c/busses/i2c-omap.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+> index 8b01df3cc8e9..485313d872e5 100644
+> --- a/drivers/i2c/busses/i2c-omap.c
+> +++ b/drivers/i2c/busses/i2c-omap.c
+> @@ -1472,7 +1472,11 @@ omap_i2c_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/* reset ASAP, clearing any IRQs */
+> -	omap_i2c_init(omap);
+> +	r = omap_i2c_init(omap);
+> +	if (r) {
+> +		dev_err(omap->dev, "failure to initialize i2c: %d\n", r);
 
-CJ
+Error paths in omap_i2c_init already print a message and error code,
+so this is log is redundant.
 
+A.
+
+> +		goto err_mux_state_deselect;
+> +	}
+>  
+>  	if (omap->rev < OMAP_I2C_OMAP1_REV_2)
+>  		r = devm_request_irq(&pdev->dev, omap->irq, omap_i2c_omap1_isr,
+> @@ -1515,6 +1519,7 @@ omap_i2c_probe(struct platform_device *pdev)
+>  
+>  err_unuse_clocks:
+>  	omap_i2c_write_reg(omap, OMAP_I2C_CON_REG, 0);
+> +err_mux_state_deselect:
+>  	if (omap->mux_state)
+>  		mux_state_deselect(omap->mux_state);
+>  err_put_pm:
+> -- 
+> 2.50.0
 > 
 > 
-
