@@ -1,101 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899E9198851;
-	Wed,  9 Jul 2025 02:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A56286892;
+	Wed,  9 Jul 2025 11:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752029654; cv=none; b=W/YHStcQsrCk/kdpok6+TCz+0SMqsjKr/0G8VH6oJoYBCvORd2gIS+hxwNt2EcUYT8yPAW7Gx2u0+wTzii36mKH2UOxWhVhv5AeBdHBRlHgqlikhR5LuMKQky4GHRkfs6RSilZFAW/ksvqFjM4yVwkSZwdbyCChZRqDnQkjgW3s=
+	t=1752059067; cv=none; b=XyTgD4sN96YbK1iQ1MQAgg+QDhHhWGBMGjUyvw+hN+wzrPlbap5FDOFiKx1LxCDmvIfsHU/6nPsny0LyGp5Ivuc0eqjURfXb+L9tHUsizrD1PdpM9a/RdG4/8YCD1COlJQK4aLV9oymox6haYBojSW2g9FTOmLA7PSBPtrSBYzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752029654; c=relaxed/simple;
-	bh=ufxoFfgAqXtjt7qZqYoRDR6akfPIzd5kq+OOk/XGK5Y=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=HczczOuXrfqeKaloGLFXl6iR9KLlZONWnlEvGfKIdgFbDjAZM9HDsdvQY5Sb7TzHeMhh4aLxqTzTcC89f1U0ti+lWJCd9rK9D7l0ihdr58Q1b4Zh3O7cxaRKkKPlPuWCwjfWDKDigmsNJt3MGVdwUIErOa0t1Pw8p8qZOpM6C9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JSV1q3SO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752059067; c=relaxed/simple;
+	bh=G9z/hxPCD8cUfyP4wAboIFpKkrFJ0muA+l4VWXBKGBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovlT+OFTKxEJCPrCZnhgBQQSyZtpAyfsjfjpuyBwAuHFI3XPu0T5jC7SxfMERMMvt3WYgieVY5HyCT43czZMEroB/R4xoIdLLHnJZ+mWs5ahy5f9gQCUydKWA3iHaOi08Blsz9d3pM+INs4naZKWpA6LCasRRmpwxgv8gGIdUsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jDky5j9f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JSV1q3SO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEFDC4CEF0;
-	Wed,  9 Jul 2025 02:54:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1752029654;
-	bh=ufxoFfgAqXtjt7qZqYoRDR6akfPIzd5kq+OOk/XGK5Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JSV1q3SOvgMO6tkUf8E2sjHfpQCXnrKJHIQYn4lWnr2gWWoy3BnhlG10Do+FVKohg
-	 xBsImfMHPjn6lQhXC//6fWNh8GyjkM+IjveX3ndJhpbNHmanLPp6PGlUSq3HE7WiVi
-	 D2T0UnkWkE2JqfdVJ8bSaJ6soMoXIbtTWxY4fXsM=
-Date: Tue, 8 Jul 2025 19:54:13 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>, Phillip Lougher
- <phillip@squashfs.org.uk>, Chanho Min <chanho.min@lge.com>,
- <oe-kbuild-all@lists.linux.dev>, <kernel-janitors@vger.kernel.org>, Linux
- Memory Management List <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] squashfs: Fix incorrect argument to sizeof in
- kmalloc_array call
-Message-Id: <20250708195413.e990d63665144c28b0caa672@linux-foundation.org>
-In-Reply-To: <aG3AVf8fbqHzk+OD@rli9-mobl>
-References: <20250708142604.1891156-1-colin.i.king@gmail.com>
-	<aG3AVf8fbqHzk+OD@rli9-mobl>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jDky5j9f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD3CC4CEEF;
+	Wed,  9 Jul 2025 11:04:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1752059066;
+	bh=G9z/hxPCD8cUfyP4wAboIFpKkrFJ0muA+l4VWXBKGBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jDky5j9fmCJBev2Gmm88KZP8/4w3PNlRZ6zKAZ2E8XmMoSG9oksxCOg2jLyOQ1U+/
+	 5wZ8gEWvy3nNWiiUbgDsqau0D7QEkO1vUjU2saYuL7IupJZVN5oTnv+sGhqbuUD+np
+	 Pe44+Tb2sJkpBv5OyeDFDQONykCQ0CSGs0VpZ9z8=
+Date: Wed, 9 Jul 2025 13:04:23 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dave Penkler <dpenkler@gmail.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2] staging: gpib: Fix error handling paths in
+ cb_gpib_probe()
+Message-ID: <2025070900-founder-boastful-66cf@gregkh>
+References: <bf89d6f2f8b8c680720d02061fc4ebdd805deca8.1751709098.git.christophe.jaillet@wanadoo.fr>
+ <8f8130b2-fec1-48bc-944e-e676a1715c31@bootlin.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f8130b2-fec1-48bc-944e-e676a1715c31@bootlin.com>
 
-On Wed, 9 Jul 2025 09:05:25 +0800 kernel test robot <lkp@intel.com> wrote:
+On Sat, Jul 05, 2025 at 04:17:35PM +0200, Thomas Richard wrote:
+> Hi Christophe,
+> 
+> On 7/5/25 11:52 AM, Christophe JAILLET wrote:
+> > If cb_gpib_config() fails, 'info' needs to be freed, as already done in the
+> > remove function.
+> > 
+> > While at it, remove a pointless comment related to gpib_attach().
+> > 
+> > Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > Changes in v2:
+> >   - Fix the Fixes tag   [Thomas Richard]
+> >   - Synch with latest -next
+> >   - no compile tested. I think, thanks to commit 79d2e1919a27
+> >     ("staging: gpib: fix Makefiles")
+> > 
+> > v1: https://lore.kernel.org/all/459c267de8c9bf48fcb555364930ae7e3cdc798b.1729940596.git.christophe.jaillet@wanadoo.fr/
+> > 
+> > Compile tested only.
+> > ---
+> >  drivers/staging/gpib/cb7210/cb7210.c | 15 +++++++++++----
+> >  1 file changed, 11 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/staging/gpib/cb7210/cb7210.c b/drivers/staging/gpib/cb7210/cb7210.c
+> > index 298ed306189d..3e2397898a9b 100644
+> > --- a/drivers/staging/gpib/cb7210/cb7210.c
+> > +++ b/drivers/staging/gpib/cb7210/cb7210.c
+> > @@ -1184,8 +1184,7 @@ struct local_info {
+> >  static int cb_gpib_probe(struct pcmcia_device *link)
+> >  {
+> >  	struct local_info *info;
+> > -
+> > -//	int ret, i;
+> > +	int ret;
+> >  
+> >  	/* Allocate space for private device-specific data */
+> >  	info = kzalloc(sizeof(*info), GFP_KERNEL);
+> 
+> You should use devm_kzalloc(). The memory will be automatically freed by
+> the core. So no need to call kfree() in case of error during the probe.
+> And you can remove the kfree() in cb_gpib_remove().
 
-> Hi Colin,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on akpm-mm/mm-everything]
-> [also build test ERROR on next-20250708]
-> [cannot apply to linus/master v6.16-rc5]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Colin-Ian-King/squashfs-Fix-incorrect-argument-to-sizeof-in-kmalloc_array-call/20250708-223017
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/20250708142604.1891156-1-colin.i.king%40gmail.com
-> patch subject: [PATCH] squashfs: Fix incorrect argument to sizeof in kmalloc_array call
-> :::::: branch date: 10 hours ago
-> :::::: commit date: 10 hours ago
-> config: mips-randconfig-r071-20250709 (attached as .config)
-> compiler: mips64-linux-gcc (GCC) 8.5.0
-> reproduce (this is a W=1 build): (attached as reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202507090822.QI1bMiUV-lkp@intel.com/
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->    In file included from include/linux/percpu.h:5,
->                     from include/linux/percpu_counter.h:14,
->                     from include/linux/mm_types.h:21,
->                     from include/linux/mmzone.h:22,
->                     from include/linux/gfp.h:7,
->                     from include/linux/xarray.h:16,
->                     from include/linux/list_lru.h:14,
->                     from include/linux/fs.h:14,
->                     from include/linux/highmem.h:5,
->                     from include/linux/bvec.h:10,
->                     from include/linux/blk_types.h:10,
->                     from include/linux/blkdev.h:9,
->                     from fs/squashfs/block.c:16:
->    fs/squashfs/block.c: In function 'squashfs_bio_read_cached':
-> >> fs/squashfs/block.c:92:12: error: 'folio' undeclared (first use in this function)
->        sizeof(*folio), GFP_KERNEL | __GFP_ZERO);
->                ^~~~~
+Some people, myself include, hate the devm_*() apis, so no need to force
+them on anyone please :)
 
-I made it
+thanks,
 
-	struct folio **cache_folios = kmalloc_array(page_count,
-			sizeof(*cache_folios), GFP_KERNEL | __GFP_ZERO);
-
+greg k-h
