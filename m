@@ -1,96 +1,190 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A56286892;
-	Wed,  9 Jul 2025 11:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5959628FFE2;
+	Wed,  9 Jul 2025 11:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752059067; cv=none; b=XyTgD4sN96YbK1iQ1MQAgg+QDhHhWGBMGjUyvw+hN+wzrPlbap5FDOFiKx1LxCDmvIfsHU/6nPsny0LyGp5Ivuc0eqjURfXb+L9tHUsizrD1PdpM9a/RdG4/8YCD1COlJQK4aLV9oymox6haYBojSW2g9FTOmLA7PSBPtrSBYzs=
+	t=1752059554; cv=none; b=KUVRbIMIon6dJdBW98gWb4paNy80M8ouPc+aT9Rd37YxdopXSOkEUMdpC3CQ++mqfHTtU0vL1X/3QKVhfe7MG9pl1kxEFhaKvkd1HsozmMdowaxJPoPLKaWXtoaEeMTrR4eno+2YUkZmCnjCPhfhyJji7BeWsXO8NYUZPnqKms8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752059067; c=relaxed/simple;
-	bh=G9z/hxPCD8cUfyP4wAboIFpKkrFJ0muA+l4VWXBKGBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovlT+OFTKxEJCPrCZnhgBQQSyZtpAyfsjfjpuyBwAuHFI3XPu0T5jC7SxfMERMMvt3WYgieVY5HyCT43czZMEroB/R4xoIdLLHnJZ+mWs5ahy5f9gQCUydKWA3iHaOi08Blsz9d3pM+INs4naZKWpA6LCasRRmpwxgv8gGIdUsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jDky5j9f; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752059554; c=relaxed/simple;
+	bh=FpyirzTdaLgtCuAJF9iScqlLK+AL6PktYVBjK68z4E0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OVg7ouopfjpL8b5ZqHOCnBioSmFh1OkkTH9+spzgfCt4vQt8JfJgGr+5zPiEq5ri8TuoY8pa9qGwsBEYP3N8iTXIaKGy7kOG1tdwIl/C1eMghChPGU4Y9GDcbfJlCpNLR51Udg6v9MF/GuUySuME0uYmCi7f/rc6b9WdMmvedTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LTnspz95; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jDky5j9f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AD3CC4CEEF;
-	Wed,  9 Jul 2025 11:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1752059066;
-	bh=G9z/hxPCD8cUfyP4wAboIFpKkrFJ0muA+l4VWXBKGBk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jDky5j9fmCJBev2Gmm88KZP8/4w3PNlRZ6zKAZ2E8XmMoSG9oksxCOg2jLyOQ1U+/
-	 5wZ8gEWvy3nNWiiUbgDsqau0D7QEkO1vUjU2saYuL7IupJZVN5oTnv+sGhqbuUD+np
-	 Pe44+Tb2sJkpBv5OyeDFDQONykCQ0CSGs0VpZ9z8=
-Date: Wed, 9 Jul 2025 13:04:23 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Dave Penkler <dpenkler@gmail.com>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2] staging: gpib: Fix error handling paths in
- cb_gpib_probe()
-Message-ID: <2025070900-founder-boastful-66cf@gregkh>
-References: <bf89d6f2f8b8c680720d02061fc4ebdd805deca8.1751709098.git.christophe.jaillet@wanadoo.fr>
- <8f8130b2-fec1-48bc-944e-e676a1715c31@bootlin.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LTnspz95"
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 569BCSE51457937;
+	Wed, 9 Jul 2025 06:12:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1752059548;
+	bh=EMf7dV5tYQz1nYxC1/9jcvjOLej6ZUrwzT/jNq3/gUg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=LTnspz95Ntn8ZzJsgBFxx2bzj2BXZu2fPOEBvNVN9YIkY7qdlsEvxZdOWwpEKJOQr
+	 fq4aWxN6nXDXYHmedkN+P/l86UOoWPjC6z+ffd6UfFp3ut5a4NCoUwPRimoyGKUFkl
+	 LcdBKU3omBzqSAFr4jailWiVo+Or8APYkqhpgPtc=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 569BCSxr3293994
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 9 Jul 2025 06:12:28 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 9
+ Jul 2025 06:12:27 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 9 Jul 2025 06:12:27 -0500
+Received: from [172.24.227.151] (uda0510294.dhcp.ti.com [172.24.227.151])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 569BCOEp3833403;
+	Wed, 9 Jul 2025 06:12:25 -0500
+Message-ID: <d8847732-2254-4719-8941-fdfd896b265b@ti.com>
+Date: Wed, 9 Jul 2025 16:42:24 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f8130b2-fec1-48bc-944e-e676a1715c31@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] remoteproc: k3-dsp: Fix an error handling path in
+ k3_dsp_rproc_probe()
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>, <afd@ti.com>,
+        <hnagalla@ti.com>
+CC: Bjorn Andersson <andersson@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr>
+ <aGavap5k0qir9x0f@p14s>
+Content-Language: en-US
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+In-Reply-To: <aGavap5k0qir9x0f@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sat, Jul 05, 2025 at 04:17:35PM +0200, Thomas Richard wrote:
-> Hi Christophe,
-> 
-> On 7/5/25 11:52 AM, Christophe JAILLET wrote:
-> > If cb_gpib_config() fails, 'info' needs to be freed, as already done in the
-> > remove function.
-> > 
-> > While at it, remove a pointless comment related to gpib_attach().
-> > 
-> > Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > Changes in v2:
-> >   - Fix the Fixes tag   [Thomas Richard]
-> >   - Synch with latest -next
-> >   - no compile tested. I think, thanks to commit 79d2e1919a27
-> >     ("staging: gpib: fix Makefiles")
-> > 
-> > v1: https://lore.kernel.org/all/459c267de8c9bf48fcb555364930ae7e3cdc798b.1729940596.git.christophe.jaillet@wanadoo.fr/
-> > 
-> > Compile tested only.
-> > ---
-> >  drivers/staging/gpib/cb7210/cb7210.c | 15 +++++++++++----
-> >  1 file changed, 11 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/staging/gpib/cb7210/cb7210.c b/drivers/staging/gpib/cb7210/cb7210.c
-> > index 298ed306189d..3e2397898a9b 100644
-> > --- a/drivers/staging/gpib/cb7210/cb7210.c
-> > +++ b/drivers/staging/gpib/cb7210/cb7210.c
-> > @@ -1184,8 +1184,7 @@ struct local_info {
-> >  static int cb_gpib_probe(struct pcmcia_device *link)
-> >  {
-> >  	struct local_info *info;
-> > -
-> > -//	int ret, i;
-> > +	int ret;
-> >  
-> >  	/* Allocate space for private device-specific data */
-> >  	info = kzalloc(sizeof(*info), GFP_KERNEL);
-> 
-> You should use devm_kzalloc(). The memory will be automatically freed by
-> the core. So no need to call kfree() in case of error during the probe.
-> And you can remove the kfree() in cb_gpib_remove().
 
-Some people, myself include, hate the devm_*() apis, so no need to force
-them on anyone please :)
+On 03/07/25 21:57, Mathieu Poirier wrote:
+> Andrew, Hari and Beleswar - please test this on your side and get back to me
+> with the results.
+>
+> Thanks,
+> Mathieu
+>
+> On Fri, Jun 27, 2025 at 11:42:33PM +0200, Christophe JAILLET wrote:
+>> IF an error occurs after a successful k3_rproc_request_mbox() call,
+>> mbox_free_channel() should be called to avoid a leak.
+>>
+>> Such a call is missing in the error handing path of k3_dsp_rproc_probe().
+>> It is also missing both in the error handling path of k3_m4_rproc_probe()
+>> and in (in-existent) corresponding remove function.
+>>
+>> Switch to managed resources to avoid these leaks and simplify the code.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-thanks,
 
-greg k-h
+The subject line seems to be calling out changes only in dsp driver,
+however patch takes care of all DSP/M4/R5 drivers. Maybe
+something to update.
+
+With above addressed,
+
+Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
+Tested-by: Beleswar Padhi <b-padhi@ti.com>
+
+Tested IPC with Normal boot/Late Attach and in various core
+configurations: Lockstep/Split/Single CPU etc.
+
+Thanks,
+Beleswar
+
+>> ---
+>> Compile tested only.
+>>
+>> This is an update of [1].
+>> The code has been heavily refactored recently with things moved to
+>> ti_k3_common.c
+>>
+>> This new version also fixes a leak in k3_m4_rproc_probe(). In this file,
+>> mbox_free_channel() was missing.
+>>
+>> Being very different from the v3, I've removed the previous review tags.
+>>
+>> [1]: https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
+>> ---
+>>  drivers/remoteproc/ti_k3_common.c         | 12 +++++++++++-
+>>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
+>>  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
+>>  3 files changed, 11 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+>> index d4f20900f33b..7a9c3fb80fec 100644
+>> --- a/drivers/remoteproc/ti_k3_common.c
+>> +++ b/drivers/remoteproc/ti_k3_common.c
+>> @@ -155,6 +155,13 @@ int k3_rproc_release(struct k3_rproc *kproc)
+>>  }
+>>  EXPORT_SYMBOL_GPL(k3_rproc_release);
+>>  
+>> +static void k3_rproc_free_channel(void *data)
+>> +{
+>> +	struct k3_rproc *kproc = data;
+>> +
+>> +	mbox_free_channel(kproc->mbox);
+>> +}
+>> +
+>>  int k3_rproc_request_mbox(struct rproc *rproc)
+>>  {
+>>  	struct k3_rproc *kproc = rproc->priv;
+>> @@ -173,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>>  		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+>>  				     "mbox_request_channel failed\n");
+>>  
+>> +	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>  	/*
+>>  	 * Ping the remote processor, this is only for sanity-sake for now;
+>>  	 * there is no functional effect whatsoever.
+>> @@ -183,7 +194,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>>  	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
+>>  	if (ret < 0) {
+>>  		dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
+>> -		mbox_free_channel(kproc->mbox);
+>>  		return ret;
+>>  	}
+>>  
+>> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+>> index 7a72933bd403..d6ceea6dc920 100644
+>> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+>> @@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+>>  		if (ret)
+>>  			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+>>  	}
+>> -
+>> -	mbox_free_channel(kproc->mbox);
+>>  }
+>>  
+>>  static const struct k3_rproc_mem_data c66_mems[] = {
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index ca5ff280d2dc..04f23295ffc1 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+>>  				return;
+>>  			}
+>>  		}
+>> -
+>> -		mbox_free_channel(kproc->mbox);
+>>  	}
+>>  }
+>>  
+>> -- 
+>> 2.50.0
+>>
