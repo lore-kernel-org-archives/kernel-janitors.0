@@ -1,46 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767B823CEFF;
-	Wed,  9 Jul 2025 19:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690F911CA0;
+	Thu, 10 Jul 2025 12:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752087795; cv=none; b=UJDCSeu2UYbTX/clfO+SyG3HNklGf/VnZbnSq6Aaf0Y8EWc0U+VxQv5PgQVGY7IbJf0+J1rYYxyjcDotOr4E4JdXha2dFjjtv59qLWorVxtwtMu5eCS4SkpdYPmepO0iLM/AHDtc5xbq/4F7u4w7vohkRrlR7ldSt5UQW4dYQ3M=
+	t=1752151834; cv=none; b=MtMzG7brV2rjLnFyXNw0KQkGbXQbpCqDKq5SeaHfJm3GdOYb6LnEaq57MLm7+ZRgZ6bn1uY3s6JMZ1pW1AzmbbnMgQKwjap/6NGY8imdmEc99SnKh9s82UchnPlJuK/5X385Z3fwdqIpP+EwCZ0IS6iTfo2apfXLTwziRsF3WFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752087795; c=relaxed/simple;
-	bh=lSMeAZGO+rQcyXO17LJXWE7R5OHREkUaiHJQysbQyAQ=;
+	s=arc-20240116; t=1752151834; c=relaxed/simple;
+	bh=2TDESeBmj8ZJ5qvbzYaQ20isU9G7kUENZ7AieXYlqvw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLkk4RKR58lCUct1RJ8ZdSyzBKsGVsyc4BTRs8olQ+SDq1kxvq3t8/6Jk6fxmTkU7K1tnBwKRhxKs1OgQpciluuErxZRiEvO5PHAG0+xQD9jJIl5ZMoVkdhB0n5y/rsugDoEzmq6oNkVZ17PdV3ep5jFkIQFBCQAPPnM/9LG9q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCNwN7RE; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0aMZCaQ2CEsH8Q0Ty+le+uvKOuUHS95mpNRwFByyK3Sd0AowwTBQI+MdQNEeS2g39Y3sbNXVgp1ABJkQvZY/BkYwIiLnjhs9q7pT+X5sVVAYW4dUc8+QVgKYUclXN/smOTQcXFFeVyCq3tDUumwADZIviprg8lG29YQ2RLKgbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYYeAb3P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCNwN7RE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69159C4CEEF;
-	Wed,  9 Jul 2025 19:03:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYYeAb3P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C015BC4CEE3;
+	Thu, 10 Jul 2025 12:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752087795;
-	bh=lSMeAZGO+rQcyXO17LJXWE7R5OHREkUaiHJQysbQyAQ=;
+	s=k20201202; t=1752151834;
+	bh=2TDESeBmj8ZJ5qvbzYaQ20isU9G7kUENZ7AieXYlqvw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uCNwN7RE0zBLIznZQ4rO0vv2r6KKEzCUXW+lP5lOxzZmIRXBc7cjgAyerPJvMwj1L
-	 uAg0enabL2soT/Hr6W0nfHHGxizr5YyaoWqJfpzASrenDnnvv2LzrnXHkPV8S7R/tN
-	 ESyXzqb036DdvWfqou325nJDpUNJz7LHFcRtDCaS/NlBCrQdvQD4caLHg0qEt3eIY/
-	 kTHI5g+2cj+/1A7f9JXOZGaMmJv4PUdSJygyRy4pD8ybIitR6OpW6MoIMwXN9297sf
-	 BOpKQWEEWMlLhHb3KKRZP32Lxh7xn3+U6xM4sDL2mUmAq3y8w6I9uCOjNrpMOsSM0o
-	 J78G7CngDS4qQ==
-Date: Wed, 9 Jul 2025 21:03:10 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, vigneshr@ti.com, 
-	andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org, tony@atomide.com, 
-	jmkrzyszt@gmail.com, miaoqinglang@huawei.com, grygorii.strashko@ti.com, 
-	wsa@kernel.org, Jean Delvare <khali@linux-fr.org>, 
-	Komal Shah <komal_shah802003@yahoo.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-omap@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] i2c: omap: Handle omap_i2c_init() errors in
- omap_i2c_probe()
-Message-ID: <joo6ibjqnsriouiw77fwc5kd2p2wd2junhlhe5nzivzot2jgac@q33qj637wt53>
-References: <cover.1751701715.git.christophe.jaillet@wanadoo.fr>
- <565311abf9bafd7291ca82bcecb48c1fac1e727b.1751701715.git.christophe.jaillet@wanadoo.fr>
- <aG60GJy60Jf3w8tZ@roadster.musicnaut.iki.fi>
+	b=WYYeAb3PTI26Tnh4UHHhxbsU7k/3a6bBKiWzRgxsqTtoslOXMJSXkqKQJtGc/bI/X
+	 uGwSzV5khuWRa9Apdg+sxJ9h5fxB+YUmlsZJwDnEalu4y5GpHTll5IufVH24Gnb3sZ
+	 TII31HM8Oo6ikI7315aUdT+rMgghvl1JWwJQx0pPtFnXXmYKWLT5Lt4+LMc+aGpStJ
+	 OuSH6Hc2wdYbJn6trhOsG0Qe09UxyuMs7X7tdxryiDrmoI9hUL0mp2HhJPYh1t+c4k
+	 Ex4+xllaLKXcsGrq3UQAygIPX/bwZ1raVfDd4KWCVnSDsdwrVdPZbvHrY73W07kr/S
+	 kn9JDWgTlONwA==
+Date: Thu, 10 Jul 2025 07:50:32 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	linux-kernel@vger.kernel.org, Mahesh Rao <mahesh.rao@intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in INTEL STRATIX10
+ FIRMWARE DRIVERS
+Message-ID: <175215181754.1888615.380537618920336438.robh@kernel.org>
+References: <20250512134332.36366-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,27 +45,25 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aG60GJy60Jf3w8tZ@roadster.musicnaut.iki.fi>
+In-Reply-To: <20250512134332.36366-1-lukas.bulwahn@redhat.com>
 
-Hi Aaro,
 
-> > diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
-> > index 8b01df3cc8e9..485313d872e5 100644
-> > --- a/drivers/i2c/busses/i2c-omap.c
-> > +++ b/drivers/i2c/busses/i2c-omap.c
-> > @@ -1472,7 +1472,11 @@ omap_i2c_probe(struct platform_device *pdev)
-> >  	}
-> >  
-> >  	/* reset ASAP, clearing any IRQs */
-> > -	omap_i2c_init(omap);
-> > +	r = omap_i2c_init(omap);
-> > +	if (r) {
-> > +		dev_err(omap->dev, "failure to initialize i2c: %d\n", r);
+On Mon, 12 May 2025 15:43:32 +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 > 
-> Error paths in omap_i2c_init already print a message and error code,
-> so this is log is redundant.
+> Commit fbfb64987062 ("dt-bindings: firmware: stratix10: Convert to
+> json-schema") renames intel,stratix10-svc.txt to intel,stratix10-svc.yaml
+> in Documentation/devicetree/bindings/firmware/ as part of this dt-binding
+> conversion, but misses to adjust the file entry in INTEL STRATIX10 FIRMWARE
+> DRIVERS.
+> 
+> Adjust the file entry after the conversion.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Good point! I will take care of it, no need to send a v2.
+Applied, thanks!
 
-Thanks,
-Andi
