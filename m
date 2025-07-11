@@ -1,88 +1,58 @@
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2098.outbound.protection.outlook.com [40.107.236.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CBE2E5B09;
-	Fri, 11 Jul 2025 14:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406081AF0AF;
+	Fri, 11 Jul 2025 17:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.98
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752243793; cv=fail; b=BRgq//xVjOi8Z81KLUfjXQI/khZlgJgg4AVVSdgC//mP/nIxZ6q5hk4f/Fx2tHwDQVbOrNGcO8rBZEOF5JcyxpA7u8YNH95bTnVGucr5r6wGfmC7PkQMB3eCRM0cwwpX2EpG99DTBaajC90LG8tAadOEPv1Cd0YbOmf5AnsB9LA=
+	t=1752254469; cv=fail; b=Za7LgZKIPqFEtIHVhp0xw9r4J4xWwiNt2hd0JOrLR7ubXqrHnq2mfEY/lCTTsmVt5kGcvoHWNEfopbvTILsM6R41Evf/kOw5OfPR1c7mEJ3GZaKruhluljofY/35GUCHRNxb4A0SY4wBKQWUI6HBVLXetCcWshbM3MjOgG0LrsA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752243793; c=relaxed/simple;
-	bh=/bBCvT6yT2KrYv6lDKjL8bdHmUfwFzwIeBSUGozpG5g=;
+	s=arc-20240116; t=1752254469; c=relaxed/simple;
+	bh=dfa8UV9KhX4MVvQ+KlGURAz1bcy20tUAOs02SPyJxrM=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mFJKFAgBue6IrXshIXtT5xy3Kla6JJTfvqfr0mS5wnvcMJn2Yhem0tqHEWpo+DKEDVytj6TFa3MjAVT+9oTjsi+ZNQ4+oIhS8+AZVCZeLBncvWY6BvwtqSzh8xjJy13/InrYxsbsDRrcwhb13Pr6ODAvM0xPDeeKXrb3xLbgZlU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Rvl5wuno; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=TUnR/4m9; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Rvl5wuno";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="TUnR/4m9"
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56BE6qtV007546;
-	Fri, 11 Jul 2025 14:23:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=VVYqdJQ+fM7CRBOHJrI4FsR1rybbl9BXg/fyC6SUhQM=; b=
-	Rvl5wunoKxkLuKxTvL/h/K+i9fB8q4Fo0AQFQtLV+FYs5QjSfcsILPnTFMjmBooj
-	eELE4OkofUYJM+GxbclZfFA1FIRi640axzptAEtGx8pFS7Y566iYfpu7KVCaVwZR
-	BZEUX/WAYpyhIZ8kXdqdR0QV6EWFqx9yJqHdNL69I+cLs41nWMS9PqwpM48tNLfS
-	P6AIFJmvn4G9QHrHr55o2Dtnt4jNsq1yT0cMlEHnT075n4AGUTyu94qHKE//a0PH
-	0WXiOSlwTxSe9D6LrleuudlymgSnd2M01d/cfm8BmHGcTtq1puK53XKXlggLPffP
-	E3+7/UjTWhQ5pkKOLJiElA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 47u438g15t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 14:23:02 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56BEL9J7026703;
-	Fri, 11 Jul 2025 14:23:02 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2043.outbound.protection.outlook.com [40.107.93.43])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 47ptgdm6sm-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Jul 2025 14:23:02 +0000
+	 Content-Type:MIME-Version; b=U3T1WgdToVPxSSiLLf+pmlBDZTYWa9Jhf3G6cEh8JBrjG/ZSC1/gu+8KBcyyFzWETeIlKfWeU+iTAT0qqfWqcSVJvw9CaALytFEj8RAxptoWcsxtjJf20tM8WZPVTt9oQTycYciRt1Zu/9XDx1y262fxvevRrkRQJ5HIqQm4Y/c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=40.107.236.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eTWzmCezXy5Qkrc4In3586oHTfEjeHqlcEC1ut3dim/8ZfFeKUdBGh4zHMCjhFnosT9oGwGwE4XZop4f71Yitw++d/WkMG5kz2FNDA7c4WzrlPvyj71mnB6/EyT22wBIgu/aTOfuUTe364MHTpatzpvAdD+iW+Mmi2PbBVfRaA9o38laSqDkIAwlD+sBDRbIF8xT2g4Ma9JHkIB5s5w56qaVaGMQWU/nlbAZ50NRA8em2n0pAszNJEHqW27+vBIvLJpUFB59Ovgt5IEUoAMP7l1DwFUwtPaDgXKrT6/PTU1Yd/DjvRkXdRoBelyuBVMHzwbZ3XdQF46cN3ovVebERw==
+ b=JJIm6Ee9v/r5xptdRbylQkoJunIStyXPgcKw8nn7wZ6j82xw0I78F4sInc0MDH0Um4jhFviwbp0R0dQaNv1T2VO3AeMrLLkFr/Llq7Yt8oSNhO1vOZwOtzoChwog1l1gnRaTrLhtJl8v2SEPERW441/kuG0TYt4Xi37o01c7tN4KRDySwF0Cw+Tz7R3Ib9ndxRwljdiS3jETjeWcc5MzvKxpCOp7A9z4ZmoiV7lbu2d/iFaZFlMFCwfYFSZw15SJePIXSzQ3H4BZjr8b2YcmLeX+m3aX+n8phZpb7eiqUmRk0DKLPmvxGR71LldEYZSNjYFXGIHr5wVMcHAziIhsdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VVYqdJQ+fM7CRBOHJrI4FsR1rybbl9BXg/fyC6SUhQM=;
- b=d9zfk10kGgMALsMSx8nRRA0tSjJ2dsodXWisppx6zpn6CMpkESD/OAvUAyifWc8kze+4rlCkUgsh8CrlAW+cDT3eGEz4mw3/YQRhLfsKC4zOJUVW9gVaO1WfswG30A3++5fK0BrPsO3leFoGFOVOide63dVswB8LgIMXyl4/hHJuHpTFgrcwyTTJaYA/CzCE7a3JmXtVQf/YG/CQ6nQmNvCLkyAXZowxY7fOyRi04c1wU3Xf2VVCWo5tfuVP0PJkrCxIrAxP1/tvpbGwcTosrYXdR872Ti4PbpfssSCY2Gh68Edxguk/Unck53g7I44GpVLgJHQk8PHKOnAifwIBgg==
+ bh=+bgUxSBcIyhnty6MLvCoUEXJTOjdh4kuKK+5TBOSFp4=;
+ b=tDkCvkfeosxcqq9wX4PcyBG07kBzdObkKFx8CCK7H285Q1Dn+blxmty33t3SJd6NXanrK+LFgjh/zqCyr2KSAfNl+w4+m7eq2sKR4uKt0/Tl7XLql0z4w1XeUXKvp7hzzsNqPd7LX4pbEW66vKKy/M/vGhT7HI0tvu6ggPmAhBvBXZ3hJ7OvIQ7k+HxWqxSG0kRNyeApGLJyEY9CBGs26at7jkA77odUJU3Rv6Cu/pdArW5YFYrPs+ZIXOphsi4M2Uksh3iq7pwUMz34aT1+CqNKvRqKYvgAPiqwjsprHkzMIB8SS19nEJyjr+9sKw1aZvJIZGV0A8ZJIRDIKK7loQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VVYqdJQ+fM7CRBOHJrI4FsR1rybbl9BXg/fyC6SUhQM=;
- b=TUnR/4m9PdV5sf14UEcIfZ6cuYoo19czrQAG0bkeqHoI2ch1kFlXmIz684x9UX6wOudHnstI4tJo6F2TObEoPfR0tMmifwc4SuMvye1r67zhbc0ujbMf4LP0b8UOCVJOQQ0Y2gIVJY9ctIOyjc7PrlZ3kgB7w0SnnV80znfvz30=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by CY8PR10MB7338.namprd10.prod.outlook.com (2603:10b6:930:7e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.28; Fri, 11 Jul
- 2025 14:22:59 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%5]) with mapi id 15.20.8901.021; Fri, 11 Jul 2025
- 14:22:59 +0000
-Message-ID: <39ef1522-9fad-45f8-9c73-ffba7b1f04d0@oracle.com>
-Date: Fri, 11 Jul 2025 10:22:56 -0400
+ smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
+ dkim=pass header.d=talpey.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=talpey.com;
+Received: from BL3PR01MB7099.prod.exchangelabs.com (2603:10b6:208:33a::10) by
+ DS4PR01MB9434.prod.exchangelabs.com (2603:10b6:8:29b::18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8922.25; Fri, 11 Jul 2025 17:21:02 +0000
+Received: from BL3PR01MB7099.prod.exchangelabs.com
+ ([fe80::e81a:4618:5784:7106]) by BL3PR01MB7099.prod.exchangelabs.com
+ ([fe80::e81a:4618:5784:7106%5]) with mapi id 15.20.8901.024; Fri, 11 Jul 2025
+ 17:21:02 +0000
+Message-ID: <ea472081-a522-4c5a-8658-909793f460c8@talpey.com>
+Date: Fri, 11 Jul 2025 13:20:56 -0400
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
-To: NeilBrown <neil@brown.name>
+To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>
 Cc: Su Hui <suhui@nfschina.com>, jlayton@kernel.org, okorniev@redhat.com,
-        Dai.Ngo@oracle.com, tom@talpey.com, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+ Dai.Ngo@oracle.com, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
 References: <> <cecf4793-d737-4501-a306-0c5a74daaf30@oracle.com>
  <175080335129.2280845.12285110458405652015@noble.neil.brown.name>
+ <39ef1522-9fad-45f8-9c73-ffba7b1f04d0@oracle.com>
 Content-Language: en-US
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <175080335129.2280845.12285110458405652015@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8
+From: Tom Talpey <tom@talpey.com>
+In-Reply-To: <39ef1522-9fad-45f8-9c73-ffba7b1f04d0@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN0P220CA0008.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:52e::7) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+X-ClientProxiedBy: BL0PR02CA0008.namprd02.prod.outlook.com
+ (2603:10b6:207:3c::21) To BL3PR01MB7099.prod.exchangelabs.com
+ (2603:10b6:208:33a::10)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -90,197 +60,188 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|CY8PR10MB7338:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b9c4ddb-9b23-486b-2885-08ddc0866f8c
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
+X-MS-TrafficTypeDiagnostic: BL3PR01MB7099:EE_|DS4PR01MB9434:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3bb45df9-4d69-466e-7c58-08ddc09f4f69
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|10070799003|1800799024|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
 X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?dFlpUkFTTjUwZjg4STdTa0ZCUmhMN1Rqc2srTTF0am5SWjh5NmJxcHdPc1FT?=
- =?utf-8?B?S0pwc2c3MzNVRWh2V2ZOZEI4dXZrSEdESm9hZ3B1UnZkeGFHNHVQOWlqKzBW?=
- =?utf-8?B?SzFaZml2anZ2NVpUMVFUQ2t4WG1zdVBPNEdPd01QWWZvTktZRkp1S1JzTHUv?=
- =?utf-8?B?dUJIU1J1M2E2TWU3YlFob0ZoOEtRUVlkdENxZDhrenJXTFpiSU1hdkR2Z1lN?=
- =?utf-8?B?OHYzLy8yRW5oUm9VU3J4Mk9kZnpJUzJRQ0dvSCtCTFFwcUxCZE5QY3lkK3FQ?=
- =?utf-8?B?Vml1T1JiZDVVNjV3SnpKbG04ckRtcTFhSlZ5TVp5T1VldlhOc2ZLd2JoNEZn?=
- =?utf-8?B?akh4ckJNZVVleEpDZUFGMTc5UW1sellJVDZJQ1dUZGJHbTRhZzhNU0RMYU9G?=
- =?utf-8?B?aUxreGpFelorN1ZRUXo5MnJkVXFqR0tBWktmREFUVlFaR3BjbGZyQjhLN2JE?=
- =?utf-8?B?ckxQb3UzdDZuWU5XcHVuL2N1eWYvd2llR1VyY2p0czl5MTgwUHgxTGRiTHpq?=
- =?utf-8?B?N2tncGp1OXIxWnhld2Q2b1g4RFdWdHE1aEM4aTdlZ1VQeVVmNXJ1YjFXVUlG?=
- =?utf-8?B?OXRZZ2oxWTN0b1pzQys1SHVxVnFFTFNNSnhFKy9iYjdNUkVmWkhCUG4wamZy?=
- =?utf-8?B?alRGWldPMGt3TUp0eDdlaytOWkpSRkFtWGlxdUZ4QXRYdi96UEt0YUJMc01D?=
- =?utf-8?B?MXlvbkMwNnlxZmVNamJ6K1pqajIvU3BkUHNCbW5sRjJFTjQwQmR4UEpENUhM?=
- =?utf-8?B?cElKLzFKcFFHbGJuM2J3QW9uVmY2U241K1hZTG1jblVUbkpKV284Y1k2dVhu?=
- =?utf-8?B?Wi9NOXczaFBXOVRDQS9zazBkWDluN1pyaUtsNjF6NUZJQjB6bXFFeFNzbFds?=
- =?utf-8?B?c3VJeWRrZTFXMWhnN2M5REZSSGsvTVlOSlc2ZktFUDkwSTZzOER2b1l0Mm9l?=
- =?utf-8?B?MTRVN1JadkpteWJOakF2NkUzbGZDZmE2b2wwcERGS3VaTFhRWVN0S0Nta0dl?=
- =?utf-8?B?M3VDNUJUdFpWUk1tZkJqdjBka1hxN1JsL2sxZ2d1cUZUOXN4SmNMaFZKSjFO?=
- =?utf-8?B?UE1DdzJRVlRGdE0xUnFOeXZsQlAvRHhuTmhreTVSakw4VVN3YUk1d0xTT0NO?=
- =?utf-8?B?OFBNN2dzTFQrUjl2V29HMWNTN3BIU0ZFbUdZbnJoV1Bzd3MwdytMOGRJeHc3?=
- =?utf-8?B?V1ZuVXE1QzhBRk9XK29WSWRiS1ZqZGJnemVhV2FaMFhzSkhLUkE0ZmwySVR1?=
- =?utf-8?B?SXE3REFLNnNaM1VrQUk2SGVpc3dRNHlWN0lrN3A4N1JmR1JvMEVFODdPYjlJ?=
- =?utf-8?B?Wit6Wkk4cWFJLzJWR0ZTZ2prZjNVWHE2aGNqOFdwUzdiejNHTjFKdFFZZHov?=
- =?utf-8?B?Q0k3WlU4Ly9FVHZVWVB4end6RjN1NWprWU51VS9SdFYyZGtmeHZrYzdPYnhs?=
- =?utf-8?B?enBPWHZqclpSVmJ3ZWhpU0NvNmdheE1ucGMvdTVZZFhwdVM5TEpXVEFVaW1i?=
- =?utf-8?B?RzE2MVRHb240TDlhSEdhSlZHOXplZWIwTGF4emt6bk1NeHVYWnBnUUNIVE5s?=
- =?utf-8?B?Si9PM25aU3BkV3ZrdXQ4dDN1MGZOWjUzMCthbmJsdERHcithWVB4NnUxWUhs?=
- =?utf-8?B?THcvcjN5TnFmSjZkN2dwbSs1bkNlK0krRS96MjkwcTQxOEQrb3I2d09vYWdM?=
- =?utf-8?B?R0wvYXQ1SFQwNElpeHdmdjBCOG04dmhXVDNzUzZDejZvVjdLRTZ3QUlpZjVE?=
- =?utf-8?B?OTV6c1RPaHdoWFRINlFPREkySHhkeWQ4bjNQdWhmdDdSbnYxTUsyRFV4ZU9F?=
- =?utf-8?B?OG42a3NQdkhobk1jLzFTeXJDTkJ6TG5iaXo2K2JacGtVTmM0Q085T0dvU3hU?=
- =?utf-8?B?RkhiZ1ppa3JubFpCN0FqRG03cnpReXRLYVBLYXFpUTRBT054UFVnWUlEY3Vk?=
- =?utf-8?Q?3HyxT81fhoU=3D?=
+	=?utf-8?B?MXgwb2Z2bnVadkh3Z05sakVQUmswQnoyc1RjWUJydUZoNkU4RmNIRURVdHFy?=
+ =?utf-8?B?STYxRGVyYVppMG1SZEs2b0FIRzd0bnpvQlJLL1RJWmFEaUR0a0FHTmhGOFFB?=
+ =?utf-8?B?aW5vRWo5M3M2b05WcmxIcU5yaksrbXM0dUhUYUI5RVFYOThvQ3VBZVZvcWEx?=
+ =?utf-8?B?T3lCTStuSGgraGVlZXZkcytCSFA4SjNESjA5NWlzS3c5ZmRCajIxeFRiS016?=
+ =?utf-8?B?TWZ1T2tKWGpPMDdXYmhhMTg4YTBxQnBIQnk3a3BwNE1jV3cwOHRBbjBsb2RF?=
+ =?utf-8?B?RGltaHRJTXdjV0tvT1U3ZGpWOHFVTW9WWjNJTGtyUjMrUmM1Ky9lZmtFTmx1?=
+ =?utf-8?B?dTJ1YzFmbHNDTlNKTU1uM1FzeU9udXVaQzJ0bnRYWHZueUoxc1U5aEMwMDZD?=
+ =?utf-8?B?QVdpaEpJT1dYaER3STgybFdkUlNMUC9rbTdPN0VnREkyV2hzcEZnUm1SOEgx?=
+ =?utf-8?B?YndrazB2Q1NuVHFJdDNsSGZ3VXZ3RWZLRy9ralhTdG9tb2NzbE9za1ZWSTAy?=
+ =?utf-8?B?UlFnVFVVdU42R0hCbnNJb1doR2JRMUlBTTZyNnhwQUlsMWdYUXJRL2ZQRXk3?=
+ =?utf-8?B?Q0RHdzRya2RQZnhHTXNQVURKRFc5cGR1Sk4zL0tad21pM2J3TlNmeEZaRkRt?=
+ =?utf-8?B?SU1oNHNsa1JhclJCYVAzYTNMQjNlaVlEaUVhWkhKSzc2dms0SVQvdUNBWjEv?=
+ =?utf-8?B?ZVNSZGIwNFNwcmpuR1cxRWl4WkZWSjJ2eHczVHVnSXQ3VTBud0tPSUdxZytj?=
+ =?utf-8?B?a3ZCVytmclNXa0lFUGtRc3Y1QjF4aUhuOXQ3SHZ1RkhzWm80R1lZc0ZZdDdh?=
+ =?utf-8?B?TGdILzhJMUtyVnNEWm5JZnFUd0FjYVA0THM5R2NVK3B6YllMWU4wamxkazNR?=
+ =?utf-8?B?aW9pbU4zdlg5Wkp2OXkwbVg1L1cvQ0o1TDdITWZSZ243S0o5ckcyZkpFZWxx?=
+ =?utf-8?B?dkVJNlgrRGVtRUNBZ2l0UXhuU2U2UFhYTGpDa1czQjlPUFRKUnhyYnpzTjho?=
+ =?utf-8?B?SUxLRHhaYkNVY0RvamxqU1ZnYTVKQlZjSlhac3pwNTg4d05ERmtEWVBrM29P?=
+ =?utf-8?B?TzEycVpqZWJpY1VMODk2SEd2bXdtSmdUcWxyUEY5Nk1DNlp0eXhlcUpzWklj?=
+ =?utf-8?B?S1pRdTF0NWJLNElHK2s4ekViQWRzdGd2RFA0UllUN0xZOUhDUmJBMk5EV1NM?=
+ =?utf-8?B?UXFGSklUWEtYWnpjSTQ3b3J3bkNVNDVFRm5WVHlPbVVWbU4wNGZ5TEhXTVFK?=
+ =?utf-8?B?L1kvNDBaS0VLU2tMZmxkSWprRUVYd25vR09WRDBFVTFDSndiUVloTUZrWmF1?=
+ =?utf-8?B?ZTRZcVJsU3NpSUw0bDNlQlVwa1ZHVnhTRjJxNXRsaE0yN0dtQTV4MXdiWm41?=
+ =?utf-8?B?ditQN2lpUE52Nkg3b0ROa3k2WG5rMTBUMFV5TXFqQUFuaHRFaFRFdFgyMWRE?=
+ =?utf-8?B?OW5IR0V4Z2t0aGdyWVExNG1DTFJrckJNbXBNQjZiTzB4Y0ZyYXppUm5pMkht?=
+ =?utf-8?B?VnpqVjBRWGs5bzdJTTV4cCtvUUljZzllMUk3LzQ3RTJwK3QrbW9ZNG4yZnFU?=
+ =?utf-8?B?OTd2QmhHeVg3WFIyYUdhOGcrZ1JQUGYvWHpmWWkzWWpYVloyUm5zMzBqNk1U?=
+ =?utf-8?B?NDBTeS9PcGZtREVBK0IrTTd6VDFBTU9kbXB5WDFWQ2dvb2xSM3JnVldpQVMz?=
+ =?utf-8?B?amo3K0UxQlhrTkJ5NE9xdHpDci96RWhUaFFUaHNWVGxMamw0QjhBSkNUZjZN?=
+ =?utf-8?B?ek9DNmxZcHlHcUt6dFFLRjRlUlBHSVluWDY4Nm5iVS82ME5ocmkvYkZYc2hm?=
+ =?utf-8?B?K0ZIVUs4eDdrckI4MjhhaXZLYXRyVkV0OG9KeU8wNmxpa0hiRE9BOHZncGw2?=
+ =?utf-8?B?aW52cXBpWFo5VHh3cXpFY2Z4b2tNZnlpbGVqMFFqTENIVlRzMDlkTXhDb05U?=
+ =?utf-8?Q?vNGU4RXvwl4=3D?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7099.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?UW4yNzR1TkllZ0kxd0tZWEhWM2JSQWxNUDNUV2NRaFFuUElRMmMyTlBnTVNN?=
- =?utf-8?B?c0F1YkJnbUcwL2NjRi9rZGNzQlFyNG5yaWlNdENjTzNmbEhuTGpLMys4RWtF?=
- =?utf-8?B?aXV5Q1o0cUFZaHA5L0dUSlJuYmd3U3dmcXlJL1lmamR4bitkTkUzMnFhNkxE?=
- =?utf-8?B?TnhVYkRTS2FIaGxlMDBUYllwMFl1THZsV2d2R0V4bWt6MmJsSEVLd0lWS1Nq?=
- =?utf-8?B?aEdhZUhIMUlINU5rZStXM000OFNVVWx2QXl1a3RNODNDM2RmWmZuSnR0TnpD?=
- =?utf-8?B?Vzk4dXZBc1doTjRnY3lPbUZjUm1NRFZzV2E5L0d3anlQd1ViMVVGNWFqRGdx?=
- =?utf-8?B?Z2lvSjdjNm93VGdENkxmNWVoaXIxV0RZelErb2JtTlVhK05wODVuZHVpRlVn?=
- =?utf-8?B?SlhRandGNUJUei9tU1RwTExYUUZZbWlsRjNmek1JeG83RDFKeTZMdDA5Ykdl?=
- =?utf-8?B?MmxPQlRDWjNwV3JEcG1nT0xUR2Y4VUFJUzl6aDA5NHBKNEdsRGpwL2pOWkE1?=
- =?utf-8?B?REdkTnNFWkJKQlA3eHVkeERZaHFXU0drUGxuR3R3Q2craEhRQ2xwRDVZZWho?=
- =?utf-8?B?eDhOOUxkRmNGdlo1ZXVKbkJsNEpJNGV2MGgwYUJNNGtOUXVtWkk5NTJiOFpH?=
- =?utf-8?B?eTVzWTNKUkYrb3hpWXV6SlgzbGczOWY3ekJKc0JndXhuSVlNODZoNGJUMGFW?=
- =?utf-8?B?Q0gvME9iazFSczVhakNxSVNjNlVOVXVleVBIQmExckpCTlkvWURoUUxReEg3?=
- =?utf-8?B?d3dCcm90UE9zajZ5T0VyQ2ZvRVNHRVlKdzdKNGJ3R0wxVmVabWk4aDR4aFNR?=
- =?utf-8?B?dVJZNGNjYWdjQUJtS3pWZzNHeDg4ZjI0bEt3cVhkZkYycnpQSXNnOW1XOVlP?=
- =?utf-8?B?ZDBEMWFlU2kxcTdOMWF4M2VFMU41UWRIb3h5bmRFYkNPV0ZNTGMxQzVyNGNt?=
- =?utf-8?B?MFdka1FLbzd5OHN4cWEwdkpQdllZMVVpdjJNdVRpYmxBemdERC9leVBiaWdQ?=
- =?utf-8?B?R21WODNiYTdzNDFxNW1TcXFvWjRta0R3NU1JYWJ5NGQ3N0d2SkhybzJ0MFRz?=
- =?utf-8?B?bDZ2TUxCdG5BK3VJWHRSa1R1NzFlRnhQT0FiaytWdGdBY2ZaWWs2UzlvRzcy?=
- =?utf-8?B?d053bDRQNTE3aTRQcHB5LzlMRzBxNWtuKzBJMmtFRmJrUlVhOTN2OWxGVTJH?=
- =?utf-8?B?ZDR3NWVJVVNDbzFJMzBzTlg1NVVWLzZKNVJVUWlaS25wWDcva2EyTnh1YjBL?=
- =?utf-8?B?cHlTbXBqRW8rVTJXRE1Td3ZpVjZpUHpkV2V3bWs4U29xc3pTN3IxSWxMUDlL?=
- =?utf-8?B?dGFxaml5N0pTaEpNdHNwNXhXeVFGRFRwZXZqR0ZBam90WXNGaGY4SCsyVDZ4?=
- =?utf-8?B?Qngwd3p1Vkk5Y2c2aGRhQ0JkcjJTTEpzRWVwakdEUmZZa090RVpxaDd2RG8x?=
- =?utf-8?B?bzNNZFdiNVRlN3J0ODRLRGxnZm1BUUowMnJ0YjY2ZnkwZ1pTY1pnZW04eG1G?=
- =?utf-8?B?Slo5Z0xCVE9NWURNRDJkdlJOWjluTEZ4c2tCRnNkcEREbnRTVWZ2YTM3OEVa?=
- =?utf-8?B?aERrbDI2QTczcUVtRkFRb0JLSDE5SUxLaGxQcFZlb1hkVE1ublg4VnVhanVK?=
- =?utf-8?B?QkRPYnMwQVd6KzNlSnlENzRTbTV3OU1BY20yVG5kL1E4ZmVObSs0UWhyL1c2?=
- =?utf-8?B?U0IxOVZqNHRWYmVsUGVEREtpeERqaGpzR1V5cDdLbzZVUS93eWt1ZFZGYzlU?=
- =?utf-8?B?MFRvYnJrUjRna29ySVgyL0UzTjIrTmJTQXpVWDlIS2tIR1JLZGlQeGhHZzhQ?=
- =?utf-8?B?T3JHTDE1dzZ0dk1nZ09uUDF1UWRyYU9zTHhLZW9Zbms5QXBhbjlSYlFYVHVz?=
- =?utf-8?B?cDJ5eWZPL2NibUlTTk9QNUJtVjVzV3ZJR3dZVUd4bTQwc25nN0E0VHZvaHNY?=
- =?utf-8?B?TVlsQW91d1ZwM01FUnpFUms5cE5jNmVNVmdGSlAreG5LaVgwOVFhdTNkVEQw?=
- =?utf-8?B?ZGFtY1NVQm1sV3hPb1dTVGRjQ3NHU0dpV05QbEpORTRxeVp0dm9jMVV6aGw5?=
- =?utf-8?B?Vy9FTU4xZ09Ed09QQ1AxZE4ySHU1Z0h0TUdoTHd6SmxLQVdhKzNSU3RLM25V?=
- =?utf-8?B?QTFKSUFlT2JadURZTE51UXhPNTJ6QXd3ZTFneFI0R1FwK0lVL2x3a1VuWHhZ?=
- =?utf-8?B?b2tiZlFobHYrQThFOWZnSVZpdUtiQ0tWOGdrSHYyUVlQVlhsOVd4WTZyaG4x?=
- =?utf-8?B?L0hSb3RqVUNma3dQYzNnbXJjQ2NnPT0=?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rehQkcKoBeEdL6pPA29fIodqqiRphXu79xzoyJU/s9a7lH2UBTtpeBmSNzBaWqqIMukitoPqreEIKGl+dHuK/rytusP7gFQ1QtFWEiNhGNelpq6jquCPIe5+GziwjbqwnSLNhxYjfcmVvju6F3Rvw8fYOUW6v1TXpxb49uKmKw8DlT6j45WBD/6T5SuzVJrJVbfMiMNW4gEtTEuxArugYDYG2gCJ+06EdEJs4jUkygmTVN2fYmrNaY8mnO3Nj7cSQdRQmQhLEEkLfWwBEYpeKA4/Y/iLT9RnKRrPZF7bcRelt/VEh8ZPAhn2Vg8HMQe3ADzWtTB40F/iKME7f83xebcFxPnWlYYb+v1d+lM4kGLEZzEbHpV0nvU/vcqDG6WNY2GM9ILvrAD7uttrPUX7QiDpJpvuTz1qPA2A3M2PSp8eC4HAwM2PfirXmtJUmuRBY9/m2qkBYctO1GgJI8cLxb3uqbIc5QglDvbzPq7v63M8f1T/a+hbGp/ZPywUv1igQq5lS+YgXani6LzWfK231M3Opkr8PWM3xh15ladYfRCjsqBXNZYyrStMSlmU5exZPC4kRm7s/Mm9cZ8/qkAgknAoPhejL+KmuO4zRU9Q8Zo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b9c4ddb-9b23-486b-2885-08ddc0866f8c
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+	=?utf-8?B?WmdndlYyRjJLUk96RUZTeHhZZVU2NXpWNDdFcEY4TGFqbDNZdUlHSEtSdVRs?=
+ =?utf-8?B?QUZXbkVEalBTczRlL2tzV0ZjV0ZBM2ZWemRHZXRjc1BFWDBYd3JtZFRXMWc0?=
+ =?utf-8?B?M0srVUMzbERkblBiWlpWakpuazNxS0J0cFMrdkpselZsSGE3bEVOS0dDRFU5?=
+ =?utf-8?B?cy8wUVFoaXAwakczT3JwSWpVMExTUGxrZmQzQi9zZDlnbkxXRU40YS9LekVC?=
+ =?utf-8?B?VzVvZmlQektTOWl6YnZKaGlmZ0Z1UVFWeUttNkRZa1BRbFpSY1pxT1FxMDNZ?=
+ =?utf-8?B?amUzbm8yUFUrNnhYRWM5bHkzU052T2x4WXEydFJ6NGhVYUxWZEhnZGFNcG85?=
+ =?utf-8?B?aWNlRzJjb29yT2lWY1dLMnQ1RzNKUGdtNGo5Z0Uxd2xKMnphR291Q1NVTi9r?=
+ =?utf-8?B?aFFqdmpZTndaM0FkVHJ1bDh1V3g4SzMzWXVzVytrbGNQYkR3N29tUzRyaXdF?=
+ =?utf-8?B?ZzJFTVpxVVRFbmx6RkdmZmlxZm4rZ1AySUdWdEJPS3F3TnppWEdGTkF5L05C?=
+ =?utf-8?B?c3o1SGM3WHoxdTdoNFdOaHMvcFVzMWpuODE5NjBnWElmYk95RFNyQ3F0NXgr?=
+ =?utf-8?B?b2QyT29yRlpLc3BBK1MvdHFJQlNmbkJqdUpQVjRVOVVUbEwwSVI0aHhJaXd2?=
+ =?utf-8?B?MTlNcUNYaFZJaW9Gc0VYYmNpTVpORDl5MzlHY1dsOTJ2VDZnMlBlLzVSVUZz?=
+ =?utf-8?B?bGxOeUszMnNZeTdMS0RFTnA3V0RSWUtIcDk3cUk0alptdGpqYlBNV1ZzcE5J?=
+ =?utf-8?B?MHQxRDNwZStsNUpaREVqQ0JLUmpKdWRhTWdjTk54VmorVUovQkpXYytvZS8r?=
+ =?utf-8?B?cmo0T2FOL0dkZEQ1WERSNXc2THZxOVV5SDROTFFGcitxTi9oQTRKVUdiYysy?=
+ =?utf-8?B?SGhZRjNxTERoV0xaSTlMUGh6V0hYV3ZXY2p4OGFaUHpGNWdLemV5YzdNYlg4?=
+ =?utf-8?B?RmJZOE1xWEI2Qks2U2Z0NysvRkxodStwbkNnSmJtS255YXdVZFcvQTcvVWRv?=
+ =?utf-8?B?WDhGaHJhNEtMcVRzNkp5cUtMM3VOQmpEbktzRFE3VFZFNmtrdWljTDFwZnVE?=
+ =?utf-8?B?TmtTdDZXNU1JVmFRV2dud0RxQW1DVERRVGJjcE84ajd0a2VHWVQyUXZuLzBB?=
+ =?utf-8?B?Yi9uSGQ2RFpoazlwYm40WmNmcXEyN1lyTVpGZnVhcjZPdWx0Q1AvekNmd0dJ?=
+ =?utf-8?B?aVd0bENMV1NNL0lEWTgvVlBBZHVHLzdVRG5VWW0vWFZzcFBkMm0zK3VDM2hK?=
+ =?utf-8?B?bnhrVkNteGF1cllBbGxQanNKaHdBL2JBNXpnRFJmUWFwbjltUFFPMVNFSDls?=
+ =?utf-8?B?T3lwSlN3OFRuN25zYld4WGVpTmNQQWtjdFFRUk55bWZ0YzZENitOQTJOZXll?=
+ =?utf-8?B?RFkybWhWVXlOaG5ZK2VTcXlGR2xjUjc3MWJMMzdMYmxPaU1EcERNNFRGeTRr?=
+ =?utf-8?B?bXk3eUpkNWlBREEwUnpZL05OOG9nQzQwN2M2WWJMWWFRVndiUmpER0dsVm0w?=
+ =?utf-8?B?Y1NjRzFLdy9HeC9pU0kwL0Q2MWlDdDlsL1NLQzBRWWh4bFhxaUJ2Nm1RU01r?=
+ =?utf-8?B?Y0o4V1lYbklRN1lkMGhoYmdHUXVQaGhodFBsZXBOMlJxV0ZMbTN6d2ZtaWoz?=
+ =?utf-8?B?a0Z1MW4vRlVmSUR3WmpzYTd6U3hRdDA4LzZ6QWdLSUVtcGJIMU5lTmlPQy81?=
+ =?utf-8?B?RE1hblorcFRoZUFPVW0xaWVvbkd5YnN1Y01nb0RQalNxRUZiVUExRndkQ0R5?=
+ =?utf-8?B?dkJZdUp0Z2I3b1M3RWJRUWhqQ0tsZlNXOGdPNGhtaWpodG1RcktNTUZTTm9W?=
+ =?utf-8?B?ZXVBc0xFTEhaU1BKV3hiZnJSb1JYZCsvQ2NJbENwTTJTUzc5RWRYRTZiSGMr?=
+ =?utf-8?B?dlpRWDgyY1lHQUszQUl1d1BwM0tCWHhzT3VHVVU0eUJMYno0M3FabzdzQWlU?=
+ =?utf-8?B?STMxcGVUN3JyU3IvUC9Bckg5NlF3WTg0bWE0WCsxYnJHMEg2WGUrblVMR1gv?=
+ =?utf-8?B?a251N3VGK1lRam5LdnlRcGFna3Z3bmFzS3dBdUtPSFBhZ05HV2VSUlNtakRV?=
+ =?utf-8?B?U1h6ZUtpeXhRYlVTbEJSLzBNUmM4N3l6Z0ZYR2w1MllYeXVhQXJwZnQrWXUr?=
+ =?utf-8?Q?ieZw3thI6rqXVJDs2EDzOaQf3?=
+X-OriginatorOrg: talpey.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bb45df9-4d69-466e-7c58-08ddc09f4f69
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7099.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 14:22:58.9738
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2025 17:21:02.2539
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h5Xk3VIk2rd1vJ5Gh4j3PIyiWVez1kqRySFxSz4Qy1VgKicDcfapMQnZZTfMBffpBpLPOH9JFDfeoV8WGhbZgg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB7338
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
- definitions=2025-07-11_04,2025-07-09_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
- suspectscore=0 phishscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507110101
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzExMDEwMiBTYWx0ZWRfX51oUG6KRm3yo Q9tPCGpuAnPW94TImB1WQMzlRbKJL1dccvjD+U0sxdnT+x0VZoEprT1W80QUctDbRySGuW0JQVu wvPzIoPFhWcIwWDTI10mGk4XHAqV/qt3WzjxfBHDjEYCFfThSBlpS1jPc1ZXBJq0hKVE7zB8tY/
- ok+jYtgDW0nIYnguuwHg7fWzn0NHVdPx4ZD038+s0zopw5lgRVEBgVjklv+ywyrQzammrbfPN6Y kWp9E0Nj1KQCfArmfcfTJPojX2VVqATLA6dWXLdWJC8J/dL2QBUppYUPGCvKtV2Wh+UcmCe7c3P 9e7BV1Nx2CqLUgVKGC9x0bIOo+gi1KdXmbZoVEe8QHXRRPtwMvn4Tl6gPyTW43AidQMWbk+Yv1M
- s8nmCaCssKh6yt0CkrQcg+45OSYKiZ3kC2wa7ZJXB0nboX2bVYWkMccH8u0Z1vc4QhLymQo7
-X-Proofpoint-GUID: dpdIKsA95FvEyrAgv5vKoxAENAuBxrAv
-X-Proofpoint-ORIG-GUID: dpdIKsA95FvEyrAgv5vKoxAENAuBxrAv
-X-Authority-Analysis: v=2.4 cv=AfmxH2XG c=1 sm=1 tr=0 ts=68711e47 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=lbz-eYdKExC120KwK1wA:9 a=QEXdDO2ut3YA:10 cc=ntf awl=host:12061
+X-MS-Exchange-CrossTenant-UserPrincipalName: R10RasaFaXx4bMpvCfeYtYPE2r5mzHK5xO8JrOhfLzE/y7UbJ5h3ooOyOOpKTQ8/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR01MB9434
 
-On 6/24/25 6:15 PM, NeilBrown wrote:
-> On Wed, 25 Jun 2025, Chuck Lever wrote:
-
->> What is more interesting to me is trying out more sophisticated abstract
->> data types for the DRC hashtable. rhashtable is one alternative; so is
->> Maple tree, which is supposed to handle lookups with more memory
->> bandwidth efficiency than walking a linked list.
->>
+On 7/11/2025 10:22 AM, Chuck Lever wrote:
+> On 6/24/25 6:15 PM, NeilBrown wrote:
+>> On Wed, 25 Jun 2025, Chuck Lever wrote:
 > 
-> While I generally like rhashtable there is an awkwardness.  It doesn't
-> guarantee that an insert will always succeed.  If you get lots of new
-> records that hash to the same value, it will start failing insert
-> requests until is hash re-hashed the table with a new seed.
+>>> What is more interesting to me is trying out more sophisticated abstract
+>>> data types for the DRC hashtable. rhashtable is one alternative; so is
+>>> Maple tree, which is supposed to handle lookups with more memory
+>>> bandwidth efficiency than walking a linked list.
+>>>
+>>
+>> While I generally like rhashtable there is an awkwardness.  It doesn't
+>> guarantee that an insert will always succeed.  If you get lots of new
+>> records that hash to the same value, it will start failing insert
+>> requests until is hash re-hashed the table with a new seed.
+> 
+> Hm. I hadn't thought of that.
+> 
+> 
+>> This is
+>> intended to defeat collision attacks.  That means we would need to drop
+>> requests sometimes.  Maybe that is OK.  The DRC could be the target of
+>> collision attacks so maybe we really do want to drop requests if
+>> rhashtable refuses to store them.
+> 
+> Well I can imagine, in a large cohort of clients, there is a pretty good
+> probability of non-malicious XID collisions due to the birthday paradox.
+> 
+> 
+>> I think the other area that could use improvement is pruning old entries.
+>> I would not include RC_INPROG entries in the lru at all - they are
+>> always ignored, and will be added when they are switched to RCU_DONE.
+> 
+> That sounds intriguing.
+> 
+> 
+>> I'd generally like to prune less often in larger batches, but removing
+>> each of the batch from the rbtree could hold the lock for longer than we
+>> would like.
+> 
+> Have a look at 8847ecc9274a ("NFSD: Optimize DRC bucket pruning").
+> Pruning frequently by small amounts seems to have the greatest benefit.
+> 
+> It certainly does keep request latency jitter down, since NFSD prunes
+> while the client is waiting. If we can move some management of the cache
+> until after the reply is sent, that might offer opportunities to prune
+> more aggressively without impacting server responsiveness.
+> 
+> 
+>> I wonder if we could have an 'old' and a 'new' rbtree and
+>> when the 'old' gets too old or the 'new' get too full, we extract 'old',
+>> move 'new' to 'old', and outside the spinlock we free all of the moved
+>> 'old'.
+> 
+> One observation I've had is that nearly every DRC lookup will fail to
+> find an entry that matches the XID, because when things are operating
+> smoothly, every incoming RPC contains an XID that hasn't been seen
+> before.
+> 
+> That means DRC lookups are walking the entire bucket in the common
+> case. Pointer chasing of any kind is a well-known ADT performance
+> killer. My experience with the kernel's r-b tree is that is does not
+> perform well due to the number of memory accesses needed for lookups.
+> 
+> This is why I suggested using rhashtable -- it makes an effort to keep
+> bucket sizes small by widening the table frequently. The downside is
+> that this will definitely introduce some latency when an insertion
+> triggers a table-size change.
+> 
+> What might be helpful is a per-bucket Bloom filter that would make
+> checking if an XID is in the hashed bucket an O(1) operation -- and
+> in particular, would require few, if any, pointer dereferences.
+> 
+> 
+>> But if we switched to rhashtable, we probably wouldn't need an lru -
+>> just walk the entire table occasionally - there would be little conflict
+>> with concurrent lookups.
+> When the DRC is at capacity, pruning needs to find something to evict
+> on every insertion. My thought is that a pruning walk would need to be
+> done quite frequently to ensure clients don't overrun the cache. Thus
+> attention needs to be paid to keep pruning efficient (although perhaps
+> an LRU isn't the only choice here).
 
-Hm. I hadn't thought of that.
+As a matter of fact, LRU is a *bad* choice for DRC eviction. It will
+evict the very entries that are most important! The newest ones are
+coming from clients that are working properly. The oldest ones were
+from the ones still attempting to retry.
 
+This is pretty subtle, and it may not be a simple thing to implement.
+But at a high level, evicting entries from a client that is regularly
+issuing new requests is a much safer strategy. Looking at the age of
+the requests themselves, without considering their source, is much more
+risky.
 
-> This is
-> intended to defeat collision attacks.  That means we would need to drop
-> requests sometimes.  Maybe that is OK.  The DRC could be the target of
-> collision attacks so maybe we really do want to drop requests if
-> rhashtable refuses to store them.
-
-Well I can imagine, in a large cohort of clients, there is a pretty good
-probability of non-malicious XID collisions due to the birthday paradox.
-
-
-> I think the other area that could use improvement is pruning old entries.
-> I would not include RC_INPROG entries in the lru at all - they are
-> always ignored, and will be added when they are switched to RCU_DONE.
-
-That sounds intriguing.
-
-
-> I'd generally like to prune less often in larger batches, but removing
-> each of the batch from the rbtree could hold the lock for longer than we
-> would like.
-
-Have a look at 8847ecc9274a ("NFSD: Optimize DRC bucket pruning").
-Pruning frequently by small amounts seems to have the greatest benefit.
-
-It certainly does keep request latency jitter down, since NFSD prunes
-while the client is waiting. If we can move some management of the cache
-until after the reply is sent, that might offer opportunities to prune
-more aggressively without impacting server responsiveness.
-
-
-> I wonder if we could have an 'old' and a 'new' rbtree and
-> when the 'old' gets too old or the 'new' get too full, we extract 'old',
-> move 'new' to 'old', and outside the spinlock we free all of the moved
-> 'old'.
-
-One observation I've had is that nearly every DRC lookup will fail to
-find an entry that matches the XID, because when things are operating
-smoothly, every incoming RPC contains an XID that hasn't been seen
-before.
-
-That means DRC lookups are walking the entire bucket in the common
-case. Pointer chasing of any kind is a well-known ADT performance
-killer. My experience with the kernel's r-b tree is that is does not
-perform well due to the number of memory accesses needed for lookups.
-
-This is why I suggested using rhashtable -- it makes an effort to keep
-bucket sizes small by widening the table frequently. The downside is
-that this will definitely introduce some latency when an insertion
-triggers a table-size change.
-
-What might be helpful is a per-bucket Bloom filter that would make
-checking if an XID is in the hashed bucket an O(1) operation -- and
-in particular, would require few, if any, pointer dereferences.
-
-
-> But if we switched to rhashtable, we probably wouldn't need an lru -
-> just walk the entire table occasionally - there would be little conflict
-> with concurrent lookups.
-When the DRC is at capacity, pruning needs to find something to evict
-on every insertion. My thought is that a pruning walk would need to be
-done quite frequently to ensure clients don't overrun the cache. Thus
-attention needs to be paid to keep pruning efficient (although perhaps
-an LRU isn't the only choice here).
-
--- 
-Chuck Lever
+Tom.
