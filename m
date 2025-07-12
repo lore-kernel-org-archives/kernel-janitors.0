@@ -1,109 +1,141 @@
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B581E18E25;
-	Sat, 12 Jul 2025 09:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E35320F;
+	Sat, 12 Jul 2025 11:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752314396; cv=none; b=TLAJwkta5LtD9cQedk1U1Deu0HW0U5YvPIlhWoekjKXWPO+gUGCHguhk3fB9hwuvjCMP77ZUg7Egy3y4BVaEv3IesKGA8FT9aHXAOlYkIQz1HrV+tEEm9IWGL38bpO/0blwbRez3UuYqdVsaaoZq6rzp8WRdcj4uOAIb3R9X5zI=
+	t=1752318175; cv=none; b=PbWjwMhRFtbsSLbcA+ppkOIcU6zC8bfhYIXRUFQ0RI5/9g/cvVuerLDJLc5dttTCkrKeQ5m/GdYjex/VXhjB3lBeO2CPS0FgIJ8xTbPlGelYMDcN9XXEXY4vvI/TobjplO1jjOzMV7Pl5AzdV/ajYbYgdQx7fubgTSVUhQnmgx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752314396; c=relaxed/simple;
-	bh=sdZjt0hnbzRR/HZ5/d69CQVdSgSCV06bK/CT9m4dYE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bu54oNPp/4trrzR+FDzIR7joiMBEu0wAj+pEoHLs4vufxnMTChTwuUUqrAKt/plU+09QR2kCxVMEfvSHm1xrf0g1qMjP2ntqZ4u2BG4/30KpSHNqEj4ojpFQuBDAjv2pCrfTZ6Y61ZIOOj47RUI9Jkga7APJiBdebp/a6OyIk54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VgJFNz+R; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1752318175; c=relaxed/simple;
+	bh=jzMQOv6iAdvYpHha5k/NLNgXonjVTEht8vlZgL3t88s=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MGOy5Kt6B87JSaEmFG41BH1ccowvRtG6jNa1Y16/HShFgISW6XUczc3SAbXpgcyQ0hLXgIUr1yZhm8LKSVe8VKLIY+mjOf2FLURdpwBGpbATMgWhqUppuD5ucTjXriIRAOKDw7qczQid4WkZSG4R/XKrXKawrYDNg9zGq8jYh/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcOB1mT7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VgJFNz+R"
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id aX07uAwtYRF46aX07ugsjT; Sat, 12 Jul 2025 11:58:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1752314319;
-	bh=xQzMwgCfXpTyf1wtWNBrErz9vPRbDl5e57j3qLO1Pqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=VgJFNz+RGbZ2n1SBwCe5aTpcGhugr2JpkJksiZS3iEx6hGiJNMez1hSOEOnb174VY
-	 DtRMg3T0ByHGJO0akeSx2NRjEgiyZxZfcXZb98whoVtvccQj2bC1hIpUZX6q27lp3x
-	 ROgki1ZmcV48O/e+Awtd06N9K15Kmt2y2xrZ2UN1a7RvuE/W1QB+28rBaSq0dzN5gI
-	 OLsfumb75D6kyx++NrB3QgIYBD5SRiji7Radb0TAOK+XJx/DhdAD4ERr1TC7jkOUaU
-	 x90aqw+4Rcf+s9t5PrWWYO7Dh+4UdI22a02P3frf+KaFrc54RQhNxsDTJKQcOmsu/x
-	 4T+GfdL0leIMg==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 12 Jul 2025 11:58:39 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <a0e9473f-81a4-4933-aa63-e66fbeaf0824@wanadoo.fr>
-Date: Sat, 12 Jul 2025 11:58:35 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcOB1mT7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4064C4CEEF;
+	Sat, 12 Jul 2025 11:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752318173;
+	bh=jzMQOv6iAdvYpHha5k/NLNgXonjVTEht8vlZgL3t88s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CcOB1mT7v+VIyTjxEWq0QBlFYvrwN8MSsuWw87TGYM0lqVdcqqq/QEM6ZW0FO7vGU
+	 kWnc0DgrKvkKAGQ7orW/8hnyMVS4QsbEsrEVphRBnfL+wj9FGZEToxM33UQ6SWCx4k
+	 H/Kn+seJcwGE87CrR9LpzRc0XiHz5/hMKuS4GG8EaRvWFgLQquSTq/LqmzGUefvWDM
+	 JF4+OOGcirhW8Ekfe9cOFhUSOhlvmmlYA9SqJB/jjgIHae6l7/x4oIqg/oNFzHsCWJ
+	 eoDRkrdWB76z1uno8/rozEwqtDE1pH/Kldqdup2r4D0vxlk8NI8wFTwfxUowhYeSbq
+	 fstC3/DkN8Pcg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uaY0J-00F6gZ-Cg;
+	Sat, 12 Jul 2025 12:02:51 +0100
+Date: Sat, 12 Jul 2025 12:02:51 +0100
+Message-ID: <864ivhacys.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Aisheng Dong <aisheng.dong@nxp.com>,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] irqchip/imx-irqsteer: Fix irq handling if an error occurs in imx_irqsteer_irq_handler()
+In-Reply-To: <a0e9473f-81a4-4933-aa63-e66fbeaf0824@wanadoo.fr>
+References: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
+	<a0e9473f-81a4-4933-aa63-e66fbeaf0824@wanadoo.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] irqchip/imx-irqsteer: Fix irq handling if an error occurs
- in imx_irqsteer_irq_handler()
-To: Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
- Marc Zyngier <maz@kernel.org>, Aisheng Dong <aisheng.dong@nxp.com>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: christophe.jaillet@wanadoo.fr, tglx@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, l.stach@pengutronix.de, aisheng.dong@nxp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Le 17/11/2024 à 12:21, Christophe JAILLET a écrit :
-> chained_irq_enter(() should be paired with a corresponding
-> chained_irq_exit().
-> 
-> Here, if (hwirq < 0), a early return occurs and chained_irq_exit() is not
-> called.
+On Sat, 12 Jul 2025 10:58:35 +0100,
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+>=20
+> Le 17/11/2024 =C3=A0 12:21, Christophe JAILLET a =C3=A9crit=C2=A0:
+> > chained_irq_enter(() should be paired with a corresponding
+> > chained_irq_exit().
+> >=20
+> > Here, if (hwirq < 0), a early return occurs and chained_irq_exit() is n=
+ot
+> > called.
+>=20
+> After several month without any feedback, this is a polite ping.
+> Is this patch correct?
 
-After several month without any feedback, this is a polite ping.
-Is this patch correct?
+An untested patch is unlikely to make a lot of forward progress, to
+be honest.
 
-CJ
+>=20
+> CJ
+>=20
+>=20
+> >=20
+> > Add a new label and a goto for fix it.
+> >=20
+> > Fixes: 28528fca4908 ("irqchip/imx-irqsteer: Add multi output interrupts=
+ support")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > Compile tested only.
+> >=20
+> > Review with care, irq handling is sometimes tricky...
+> > ---
+> >   drivers/irqchip/irq-imx-irqsteer.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-i=
+mx-irqsteer.c
+> > index 75a0e980ff35..59abe5a8beb8 100644
+> > --- a/drivers/irqchip/irq-imx-irqsteer.c
+> > +++ b/drivers/irqchip/irq-imx-irqsteer.c
+> > @@ -135,7 +135,7 @@ static void imx_irqsteer_irq_handler(struct irq_des=
+c *desc)
+> >   	if (hwirq < 0) {
+> >   		pr_warn("%s: unable to get hwirq base for irq %d\n",
+> >   			__func__, irq);
+> > -		return;
+> > +		goto out;
+> >   	}
+> >     	for (i =3D 0; i < 2; i++, hwirq +=3D 32) {
+> > @@ -153,6 +153,7 @@ static void imx_irqsteer_irq_handler(struct irq_des=
+c *desc)
+> >   			generic_handle_domain_irq(data->domain, pos + hwirq);
+> >   	}
+> >   +out:
+> >   	chained_irq_exit(irq_desc_get_chip(desc), desc);
+> >   }
 
+The real question is *how* do you end-up in this situation.
 
-> 
-> Add a new label and a goto for fix it.
-> 
-> Fixes: 28528fca4908 ("irqchip/imx-irqsteer: Add multi output interrupts support")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
-> 
-> Review with care, irq handling is sometimes tricky...
-> ---
->   drivers/irqchip/irq-imx-irqsteer.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
-> index 75a0e980ff35..59abe5a8beb8 100644
-> --- a/drivers/irqchip/irq-imx-irqsteer.c
-> +++ b/drivers/irqchip/irq-imx-irqsteer.c
-> @@ -135,7 +135,7 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
->   	if (hwirq < 0) {
->   		pr_warn("%s: unable to get hwirq base for irq %d\n",
->   			__func__, irq);
-> -		return;
-> +		goto out;
->   	}
->   
->   	for (i = 0; i < 2; i++, hwirq += 32) {
-> @@ -153,6 +153,7 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
->   			generic_handle_domain_irq(data->domain, pos + hwirq);
->   	}
->   
-> +out:
->   	chained_irq_exit(irq_desc_get_chip(desc), desc);
->   }
->   
+To trigger this case, you need a mux interrupt that is handled by
+imx_irqsteer_irq_handler(), but for which you haven't got a
+translation from DT the first place. Do you see the chicken and egg
+problem?
 
+In summary, this driver is checking for conditions that can't possibly
+happen, and this check should simply be deleted instead of being
+blindly "fixed".
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
