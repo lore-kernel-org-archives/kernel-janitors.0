@@ -1,122 +1,109 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284B07494;
-	Fri, 11 Jul 2025 21:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B581E18E25;
+	Sat, 12 Jul 2025 09:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752268273; cv=none; b=poUQnABalEut9b0oRFyISRyoFhqF9BpxdPhpmCvROdgv+ArJY9A4JLtQFplM33ADILYo+Ar17HMuR8IeVGoLMASmtk1vYmW6+2Ut9lMLzmnwiai9EAqH1gH6EfQB61Zcm9ylqgFa7L/wcGc5p56o7VoxGA60Z6QJy9jdeHHQt6Y=
+	t=1752314396; cv=none; b=TLAJwkta5LtD9cQedk1U1Deu0HW0U5YvPIlhWoekjKXWPO+gUGCHguhk3fB9hwuvjCMP77ZUg7Egy3y4BVaEv3IesKGA8FT9aHXAOlYkIQz1HrV+tEEm9IWGL38bpO/0blwbRez3UuYqdVsaaoZq6rzp8WRdcj4uOAIb3R9X5zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752268273; c=relaxed/simple;
-	bh=DRCNGoA6QS0bUBkiqJSdhXQNrcY5wxnYm5E39u7q/xQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L/lXynfjmeifVP6BxA5G9h8ruryp9Q02tBXRLcUfnaE2FYv9y8MzAul9mAe0q1HAQ6ujYEZg8BLoI2/9lE4wW11JT081RCF2axseKZozahU6Oly9gnxe0aymY3jTnKw8DOhwjhnH/PhP1j+YYj/KT0jbnDw1ioZ0uNCv4Hprvr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/hG+oqE; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752314396; c=relaxed/simple;
+	bh=sdZjt0hnbzRR/HZ5/d69CQVdSgSCV06bK/CT9m4dYE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bu54oNPp/4trrzR+FDzIR7joiMBEu0wAj+pEoHLs4vufxnMTChTwuUUqrAKt/plU+09QR2kCxVMEfvSHm1xrf0g1qMjP2ntqZ4u2BG4/30KpSHNqEj4ojpFQuBDAjv2pCrfTZ6Y61ZIOOj47RUI9Jkga7APJiBdebp/a6OyIk54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VgJFNz+R; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/hG+oqE"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-234eaea2e4eso3782645ad.0;
-        Fri, 11 Jul 2025 14:11:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752268271; x=1752873071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Id33Mh0yn//Z70R8X33hXzajTyy941nJMPZubqNqXg=;
-        b=K/hG+oqEZiyTaOx8rD409pnRR2RwM9by8Tn5rTnbhG00fTzu7eO7hezgQL3qCBfooe
-         8xhaSNPOZxouvoYTUnpWBHZ3TLl7n04UKJ4q9F4vOWE6j83dVxBqQpP8rfbgqhvM9Adm
-         yFaV86L4gUiKsPuyt/Q3AfML3amd8DlzXmWUIYxGyS2AVeUJ20THf7HeRey2fPZtEP0a
-         6gGaVZ/aG7RH+kq90DiFWe+oztix1qPi5cE7FfS+WhOzqTtmrhmrL/Z2Z/j06LCYrHL3
-         +7NGe14n6hSHtrUfglxfRr/KPeVpA8CbUK/YbO+2h8XXKfdRnBE+GXY66nnoUlTnlRnf
-         YVeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752268271; x=1752873071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Id33Mh0yn//Z70R8X33hXzajTyy941nJMPZubqNqXg=;
-        b=uN4Tz+Tr7uflb+nr7OKz3vM/giET2RYZCbU02AbZDf7icqJA+YiRevSC8cGMX91om9
-         ukMuOpykWCf21WzttSQgIXAY7G3Irmf+5rwqOjszl7NA5l6X7NmwJLU/8a7mhjN8LuG1
-         UsaMLx+EJwRBKcg3QTdzfoGTq1Uqq8/CxwcKBSCsmCUekChV2dc6xsRSmyge5opT1RC2
-         4KRwI45HmXys2iYh4EKRE4sLqiOT88Y39/gl/OCjG4ktWepL0T87kOL6wGBiVcUxhA5m
-         mud0wN49C1Und2Pd5DDJ+4LrJw/64YvIMCsM+jxvFORP+VkQ942lEnY/m3ZyqNxPQ727
-         dhNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWN4Th7UOqScgEYoAE3LgCCxW6fWAmpunIXu8bNlIknj39cqgZWTRYVd9LWn1Bl22vVhLKU4mNBby4Ci+2r@vger.kernel.org, AJvYcCWyd/Zn73yIR1Nqm/uBD6bWo4a1YRrl8Dp11/PXQBqMNlNy2qsdkwtqMOfNlzwJGHUztbruj1UV+Ldbeszx9NQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwVE4OQpc6m55mBU3UaGAu9xoTMeGEDSuTyeZs/DEwO3p/QDKw
-	EpUsKlQ+UdcAJqbvg128hBYKloxq/k0ig+r6dANVT7Uqx3/3df2FRae/+R5xpWzhoK0LLGpJYJT
-	7cbNEdwD3BVbCk3kU3mVtrjXiw4JCANJKBQ==
-X-Gm-Gg: ASbGncttWmMUS3NC/sLaYQqpLjLrKep1lKpori53hm1asQX/qWVAtHkbKxvbiN4CUkn
-	PBlUzeqquesARONKAOR5eNLJiDl4weZ0A3qxP/IPsbWdiAaIW/ZRNZX48x2GbA4bLWekS9ahizB
-	aLzY5jV/Z5vJKZvv9Nn2aHfk8lW8hpD5wByhmz5R7heUS0Httofn31DFKW49EE7gobIIoz5HFnR
-	v9Qe4bu
-X-Google-Smtp-Source: AGHT+IGpJSVp1KJC67mP9tYUlD7o9SFm9SGP4FrEtk5U5U6aBHi9jNnu7oPx4ia9y9djde5+J/vRTWXyDwi9eXTEhj0=
-X-Received: by 2002:a17:90a:e7d0:b0:311:c939:c842 with SMTP id
- 98e67ed59e1d1-31c4cd1cd40mr2250510a91.7.1752268271234; Fri, 11 Jul 2025
- 14:11:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VgJFNz+R"
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id aX07uAwtYRF46aX07ugsjT; Sat, 12 Jul 2025 11:58:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1752314319;
+	bh=xQzMwgCfXpTyf1wtWNBrErz9vPRbDl5e57j3qLO1Pqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=VgJFNz+RGbZ2n1SBwCe5aTpcGhugr2JpkJksiZS3iEx6hGiJNMez1hSOEOnb174VY
+	 DtRMg3T0ByHGJO0akeSx2NRjEgiyZxZfcXZb98whoVtvccQj2bC1hIpUZX6q27lp3x
+	 ROgki1ZmcV48O/e+Awtd06N9K15Kmt2y2xrZ2UN1a7RvuE/W1QB+28rBaSq0dzN5gI
+	 OLsfumb75D6kyx++NrB3QgIYBD5SRiji7Radb0TAOK+XJx/DhdAD4ERr1TC7jkOUaU
+	 x90aqw+4Rcf+s9t5PrWWYO7Dh+4UdI22a02P3frf+KaFrc54RQhNxsDTJKQcOmsu/x
+	 4T+GfdL0leIMg==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 12 Jul 2025 11:58:39 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <a0e9473f-81a4-4933-aa63-e66fbeaf0824@wanadoo.fr>
+Date: Sat, 12 Jul 2025 11:58:35 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <366557fa7ca8173fd78c58336986ca56953369b9.1752087753.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <366557fa7ca8173fd78c58336986ca56953369b9.1752087753.git.christophe.jaillet@wanadoo.fr>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 11 Jul 2025 17:10:59 -0400
-X-Gm-Features: Ac12FXwGI8TSVukgGWSUQp6H1YscPS-pE-fH7frUdLlnr1VDrWuzrJq-3B0vZ2Y
-Message-ID: <CADnq5_MX6jkkgKTTkZY=M9btZPdVmSSs9siEJ9E8b=tz21MCZw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Fix missing unlocking in an error path in amdgpu_userq_create()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sunil Khatri <sunil.khatri@amd.com>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] irqchip/imx-irqsteer: Fix irq handling if an error occurs
+ in imx_irqsteer_irq_handler()
+To: Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
+ Marc Zyngier <maz@kernel.org>, Aisheng Dong <aisheng.dong@nxp.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 9, 2025 at 3:28=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> If kasprintf() fails, some mutex still need to be released to avoid locki=
-ng
-> issue, as already done in all other error handling path.
->
-> Fixes: c03ea34cbf88 ("drm/amdgpu: add support of debugfs for mqd informat=
-ion")
+Le 17/11/2024 à 12:21, Christophe JAILLET a écrit :
+> chained_irq_enter(() should be paired with a corresponding
+> chained_irq_exit().
+> 
+> Here, if (hwirq < 0), a early return occurs and chained_irq_exit() is not
+> called.
+
+After several month without any feedback, this is a polite ping.
+Is this patch correct?
+
+CJ
+
+
+> 
+> Add a new label and a goto for fix it.
+> 
+> Fixes: 28528fca4908 ("irqchip/imx-irqsteer: Add multi output interrupts support")
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-@Christian Koenig @Sunil Khatri can you pick this up for drm-misc?
-
-Thanks,
-
-Alex
-
 > ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_userq.c
-> index 513bbc543f40..bce97318965c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-> @@ -520,8 +520,10 @@ amdgpu_userq_create(struct drm_file *filp, union drm=
-_amdgpu_userq *args)
->         }
->
->         queue_name =3D kasprintf(GFP_KERNEL, "queue-%d", qid);
-> -       if (!queue_name)
-> -               return -ENOMEM;
-> +       if (!queue_name) {
-> +               r =3D -ENOMEM;
-> +               goto unlock;
-> +       }
->
->         /* Queue dentry per client to hold MQD information   */
->         queue->debugfs_queue =3D debugfs_create_dir(queue_name, filp->deb=
-ugfs_client);
-> --
-> 2.50.0
->
+> Compile tested only.
+> 
+> Review with care, irq handling is sometimes tricky...
+> ---
+>   drivers/irqchip/irq-imx-irqsteer.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
+> index 75a0e980ff35..59abe5a8beb8 100644
+> --- a/drivers/irqchip/irq-imx-irqsteer.c
+> +++ b/drivers/irqchip/irq-imx-irqsteer.c
+> @@ -135,7 +135,7 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
+>   	if (hwirq < 0) {
+>   		pr_warn("%s: unable to get hwirq base for irq %d\n",
+>   			__func__, irq);
+> -		return;
+> +		goto out;
+>   	}
+>   
+>   	for (i = 0; i < 2; i++, hwirq += 32) {
+> @@ -153,6 +153,7 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
+>   			generic_handle_domain_irq(data->domain, pos + hwirq);
+>   	}
+>   
+> +out:
+>   	chained_irq_exit(irq_desc_get_chip(desc), desc);
+>   }
+>   
+
