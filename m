@@ -1,141 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic309-47.consmr.mail.gq1.yahoo.com (sonic309-47.consmr.mail.gq1.yahoo.com [98.137.65.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E35320F;
-	Sat, 12 Jul 2025 11:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE3419CD1B
+	for <kernel-janitors@vger.kernel.org>; Sun, 13 Jul 2025 13:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752318175; cv=none; b=PbWjwMhRFtbsSLbcA+ppkOIcU6zC8bfhYIXRUFQ0RI5/9g/cvVuerLDJLc5dttTCkrKeQ5m/GdYjex/VXhjB3lBeO2CPS0FgIJ8xTbPlGelYMDcN9XXEXY4vvI/TobjplO1jjOzMV7Pl5AzdV/ajYbYgdQx7fubgTSVUhQnmgx8=
+	t=1752413924; cv=none; b=ut4YpEZukzwfCI/B83r73Z6+VOElPT5njmQbIN/WzHo/ho4puFTa5K5bcIymvijLEUATh4mNAdmPKQ9JpyanM6yH57cu5HpKUUOj4e80DNy9yG23ACR3aKTBpK9uRE5eyFWm/kqVcHq2vT/w7ZTvY6NkNAylK1ojiS4YvO/GCjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752318175; c=relaxed/simple;
-	bh=jzMQOv6iAdvYpHha5k/NLNgXonjVTEht8vlZgL3t88s=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MGOy5Kt6B87JSaEmFG41BH1ccowvRtG6jNa1Y16/HShFgISW6XUczc3SAbXpgcyQ0hLXgIUr1yZhm8LKSVe8VKLIY+mjOf2FLURdpwBGpbATMgWhqUppuD5ucTjXriIRAOKDw7qczQid4WkZSG4R/XKrXKawrYDNg9zGq8jYh/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcOB1mT7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752413924; c=relaxed/simple;
+	bh=b5+k4CcPiOfmdikq/ISS0LQzkpAhBg8sAYUKHOoombc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=PKChnUfl2w+g8xVdW6eBfy/V21nX6V4ixYjufy4jFjNWtIgxsVEBF+jQkfhiP3k8s9VdsDLDdQdng1yX3sw9ZmDylPBPb69PLrT9Jq01TYtomgxqQCH5jOF+OGT+vn5iWvZ+2s2VIs8WnTMxLCkvA44Cy76Mqx41hLIA+3gG/4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=lw0HN45i; arc=none smtp.client-ip=98.137.65.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcOB1mT7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4064C4CEEF;
-	Sat, 12 Jul 2025 11:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752318173;
-	bh=jzMQOv6iAdvYpHha5k/NLNgXonjVTEht8vlZgL3t88s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CcOB1mT7v+VIyTjxEWq0QBlFYvrwN8MSsuWw87TGYM0lqVdcqqq/QEM6ZW0FO7vGU
-	 kWnc0DgrKvkKAGQ7orW/8hnyMVS4QsbEsrEVphRBnfL+wj9FGZEToxM33UQ6SWCx4k
-	 H/Kn+seJcwGE87CrR9LpzRc0XiHz5/hMKuS4GG8EaRvWFgLQquSTq/LqmzGUefvWDM
-	 JF4+OOGcirhW8Ekfe9cOFhUSOhlvmmlYA9SqJB/jjgIHae6l7/x4oIqg/oNFzHsCWJ
-	 eoDRkrdWB76z1uno8/rozEwqtDE1pH/Kldqdup2r4D0vxlk8NI8wFTwfxUowhYeSbq
-	 fstC3/DkN8Pcg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uaY0J-00F6gZ-Cg;
-	Sat, 12 Jul 2025 12:02:51 +0100
-Date: Sat, 12 Jul 2025 12:02:51 +0100
-Message-ID: <864ivhacys.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Aisheng Dong <aisheng.dong@nxp.com>,
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="lw0HN45i"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1752413916; bh=YVxrRfY0ZcMh2YBMkFdorjPbvq5RL7xja7NFFKKz8A0=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=lw0HN45iZCZEWYoNealOzjsuuxKH/nb66E+Nakrg4XcnGXkfvdhHf/vdl21MZnfzf4MkEng16TQnSg5VjmjYU0RjveJUhpZzmNlKnSah+UXQZ8vGfz7Eb41JaV+yEJxkSkqUrMI7vXbTHfA6IrfHlbHATKjI7xFAAPtvpIdSru+zS7004vhj9xMmDLR5qooEmHYYgzU6Wi74tIVt92AH7kf28Gkjtij2d/5IeGwc3i+g8u3yAftEDvoXr6ulEyJuNEaRCmE1KIvKJHS5G0Lh0k+tTxxLpFcJ+DuOImWQrkLGyhmKZkVrQ0uOqIn7mKCGRadf6P+wjYIdC4mkV8+Agw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1752413916; bh=6++2Zm1cEtqgv2s3TTxJRMx75WOH6TW6ncfb5OkthAD=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=dkvyspohtopcSHQ/XHuBToKbuNnDbaJlc2FerpNoAbRJBLEOSwrJUlskVenOVBdYGx+MWEhw83cHZKFcOHXU+G7KQU4ILbIOfLXA+v5DDkMK+MnnIHNqorNQ+Fkovis7CuZNOaaE//haePGC4JE5hDncID6wQ7/xU08XBzyXQPD2IlqsxdhgOuhojkbWxACXKZtAeYX3X+EajkmM4AW4E7kf0GCcDopjDZtQg8S4CP07KdQK34Yi1tO/Yv3DN3JTQErj4mL7jJonv20cG7Y7+X/ijE9r7c9nALWrVrauMJ46t3Ev0HOTdKHsVTc3hxbNfyzuoxCZVOgEWx40WzyVtg==
+X-YMail-OSG: nyDZomUVM1mhYgvJgAu31pmGwIQB4AKw5VEtaWWeekSlOH.GoKI.fYR1bd6I.DE
+ eNdB9BK5pljR5zfJ35FAWlaRbHhiUba2kTvyEz1.b_hLrXzf6an3sC4RmEbX1eqOxjx.NI1A3aDC
+ BS85gISm.Hd06HYcpRVXhT19BOVLak3SAgQkKeK.nYcnVSGhImN8Hrej9vmps8Rk1B3Ad6hXjc6E
+ f4uNfRETOh20.4QD1SERPNX.o86ePJlvbgkd7fFkVQhqnkBxzNMUMaSCbvtFb9oZVm9stBmMl2zT
+ 03MymC6iHIPUMTfKCT7EWImyH7hbaa7Sggg5HAg1FBzJlEi2d3VWUA4cJKYtUDcXHEk0A2ihZi7g
+ vo4iDEd7s4G7AmDl2NAUxKyKxt1i0JHoyl13ZtNDZw2ePEq9CdhTFTelRGAQVOJDjGV5WxQx_RDB
+ QoHf.dmOgzAkCtzZoENNKodIh1t_8yOlt4HVzOOvB0MjzF_RUYXHoA2D5NAppfuRho_ln0Lqr3on
+ liu_rvyQCSir6nZu1MDNywfbsIpf1VHjySoMKhKHmVE_4UXp5oaZRG6zR82aEwB2pDCKGfhIrWeo
+ ObFa7DLSbzX9Ab_oSvrKz3T2KO413I6yJ5to5XLwkuzBoouQl6bcLTX0j2kolygHS84yTl6dH6fU
+ gn5O32o2M4gzvFWJWU6GBHno1L7EyCj3fSmv4nmkO98XGn2Z_0kBFWBDNeA_CNJV18KpNamEiutQ
+ 79GKIiYx125EnOp3BOwXwGxXuhBEn8j2nuOurPTt6ZVoErEGzjZAwyaqQpHDyoTOgZoXPhFLUCsC
+ OpI3ROcFOT19BAvRS400ZP0xbOBpDQsmIYKhwrcrG_ag5KD4lnHKcpdq6ZstYZwAo3jNnTV8Bb93
+ ACydUYNfWMXos4qEJs2rs3cGO88XhCaJOzRtrwrdTNRUsMqmTGI9A886tmlRX3Bt08sDZWMnIBb7
+ M_HvvOjpKOA7QMaMF7OF5t83ZzWEBrzXJOBqLEnvE9pN_HxKw73EN3lwFDCL7YXQ7Y.VIcId_qPd
+ NP4qjm5Zx98Eb4zv.01Fo_9hPxMyMj2HQxeJfn6Jl9GTn9s4d7Hy2B5mDM28clsrFpwDwtD2VNgX
+ 1aAzfpyEcafaEMQqTdyWoFCQ_ZyF8hZHTitFbwDlM95ZsePBng87EJQvSZFPAufCq9NViJqlLt7R
+ 2tlJD2YaR3YIcb.EmOAygnwmHfpKKuEuaWFOeHx.ofkByDWvWmVJcwEZAqLKav0HoaBcskjpMEEQ
+ TeM5k9bpalOB2KOl6cfbsRIRl18uQBJmjU82NpxPLP6jq72WaSD3CA0dSe2RoNJlW6tqxwiz6.Ox
+ v6yGyM5MBtYMlVLXjt2Ik3PiME5V4blnr9XpqvijdX0Zu46e307gIPvUNZy1Ezm06z002LcE.uf9
+ by_2GAad_1qYnfde0PzwsJgaeYWKZwXe2FNGCB0e3erCogSIVASh36oDHkw7GvZnyjQ8mOOS90_k
+ IkgLxn0HeHVen20FcFXTRW0Ljpk3XlLY4LneWrp0kmpRJi6Jl0EU8lRHqERmRXd_mq020Cn0TUiX
+ TFWlOgYUrHRLInbCs0QQxo3JWx8w4aPM_FY5lqzHgxsptn5TLhBTvN6Xu2ae6XDZhNjLVGih7bTY
+ tK9sGC8ilEIeC32rSfIiGMAWKHIfAkP1J.5KocNI4ObUXikNFMg.ibzujKQYY3FoArVw.9OFtH0Z
+ MUjdlp_.jatdw2toMWqhX0sgN9lj30o7G4K.9bwswPzorNwyh9GUYOJWwE9qvgu_cwlKoF_0.UHR
+ e771v0A8ujzcVzavba14Z.nagRdeZDm47BLHrckwubW8DCtoO0N1rigRlhJgZkTfpLQnQvDmDNny
+ 37StcL9OGK4oebR3LJBv5wxEXJ3L429JiDkCjqulOz5AgjHe44qj0ncDCAbPL9tFChBkBZqsL_aA
+ Kn7LL7yYK9zSfWH_ViOAb36YevrYMRHAQHLLdk4mDJGRyN.6adR8moCEGRqb5_boqBhAeT2bln4y
+ treTHHJ3wBI807CkUE0RPGSKTCsF8EE9.Qyt4A5NC5Nu8pl5hgYj8p7VzSfBOgo_vxidagyHwGyF
+ YQI7FLurhnvbz.AbrCYUfwEMgtN0gehIfAdqtjJbLNI6Nini0bfZa.lSWLUCWS1Xpu2zW0yJUr1u
+ LZAMaA4e4Au2QES70jY6lRhekMKqK.8x1lbA.YSJs1NPwQMsZV3DqSvaQqLb008p77zSvOKcrfoy
+ ZDQ6SmyP33EeX6.xFSMbBa0XjeD5UDkRLnPlFy8.kDdmK97Xl6JK8i7bHoBcYp55_TQ005Maz.B8
+ SngIulXQ6Z9ZRwXWYMLzwvHyK8mcdN01ulbZHC.07
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: bb0f07d6-f911-40bf-b427-426bd7a2e1bb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Sun, 13 Jul 2025 13:38:36 +0000
+Received: by hermes--production-ir2-858bd4ff7b-mfhj2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2cb29ace9bc0ca72342193b636377030;
+          Sun, 13 Jul 2025 13:16:20 +0000 (UTC)
+From: Ruben Wauters <rubenru09@aol.com>
+To: Herbet Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Cc: Ruben Wauters <rubenru09@aol.com>,
+	linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] irqchip/imx-irqsteer: Fix irq handling if an error occurs in imx_irqsteer_irq_handler()
-In-Reply-To: <a0e9473f-81a4-4933-aa63-e66fbeaf0824@wanadoo.fr>
-References: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
-	<a0e9473f-81a4-4933-aa63-e66fbeaf0824@wanadoo.fr>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] crypto: jitter - replace ARRAY_SIZE definition with header include
+Date: Sun, 13 Jul 2025 14:13:50 +0100
+Message-ID: <20250713131608.38859-1-rubenru09@aol.com>
+X-Mailer: git-send-email 2.49.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: christophe.jaillet@wanadoo.fr, tglx@linutronix.de, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, l.stach@pengutronix.de, aisheng.dong@nxp.com, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+References: <20250713131608.38859-1-rubenru09.ref@aol.com>
 
-On Sat, 12 Jul 2025 10:58:35 +0100,
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
->=20
-> Le 17/11/2024 =C3=A0 12:21, Christophe JAILLET a =C3=A9crit=C2=A0:
-> > chained_irq_enter(() should be paired with a corresponding
-> > chained_irq_exit().
-> >=20
-> > Here, if (hwirq < 0), a early return occurs and chained_irq_exit() is n=
-ot
-> > called.
->=20
-> After several month without any feedback, this is a polite ping.
-> Is this patch correct?
+The ARRAY_SIZE macro is already defined in linux/array_size.h
 
-An untested patch is unlikely to make a lot of forward progress, to
-be honest.
+This patch replaces the ARRAY_SIZE definition in jitterentropy.c with
+an include, to make the code cleaner, and help reduce the number of
+duplicate ARRAY_SIZE definitions in the codebase.
 
->=20
-> CJ
->=20
->=20
-> >=20
-> > Add a new label and a goto for fix it.
-> >=20
-> > Fixes: 28528fca4908 ("irqchip/imx-irqsteer: Add multi output interrupts=
- support")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > Compile tested only.
-> >=20
-> > Review with care, irq handling is sometimes tricky...
-> > ---
-> >   drivers/irqchip/irq-imx-irqsteer.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-i=
-mx-irqsteer.c
-> > index 75a0e980ff35..59abe5a8beb8 100644
-> > --- a/drivers/irqchip/irq-imx-irqsteer.c
-> > +++ b/drivers/irqchip/irq-imx-irqsteer.c
-> > @@ -135,7 +135,7 @@ static void imx_irqsteer_irq_handler(struct irq_des=
-c *desc)
-> >   	if (hwirq < 0) {
-> >   		pr_warn("%s: unable to get hwirq base for irq %d\n",
-> >   			__func__, irq);
-> > -		return;
-> > +		goto out;
-> >   	}
-> >     	for (i =3D 0; i < 2; i++, hwirq +=3D 32) {
-> > @@ -153,6 +153,7 @@ static void imx_irqsteer_irq_handler(struct irq_des=
-c *desc)
-> >   			generic_handle_domain_irq(data->domain, pos + hwirq);
-> >   	}
-> >   +out:
-> >   	chained_irq_exit(irq_desc_get_chip(desc), desc);
-> >   }
+Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+---
+ crypto/jitterentropy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The real question is *how* do you end-up in this situation.
+diff --git a/crypto/jitterentropy.c b/crypto/jitterentropy.c
+index 3b390bd6c119..2920ecbf3f13 100644
+--- a/crypto/jitterentropy.c
++++ b/crypto/jitterentropy.c
+@@ -147,6 +147,7 @@ struct rand_data {
+ 
+ #include <linux/fips.h>
+ #include <linux/minmax.h>
++#include <linux/array_size.h>
+ #include "jitterentropy.h"
+ 
+ /***************************************************************************
+@@ -178,7 +179,6 @@ static const unsigned int jent_apt_cutoff_lookup[15] = {
+ static const unsigned int jent_apt_cutoff_permanent_lookup[15] = {
+ 	355, 447, 479, 494, 502, 507, 510, 512,
+ 	512, 512, 512, 512, 512, 512, 512 };
+-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+ 
+ static void jent_apt_init(struct rand_data *ec, unsigned int osr)
+ {
+-- 
+2.49.1
 
-To trigger this case, you need a mux interrupt that is handled by
-imx_irqsteer_irq_handler(), but for which you haven't got a
-translation from DT the first place. Do you see the chicken and egg
-problem?
-
-In summary, this driver is checking for conditions that can't possibly
-happen, and this check should simply be deleted instead of being
-blindly "fixed".
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
