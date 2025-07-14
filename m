@@ -1,70 +1,71 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49989246BBE;
-	Mon, 14 Jul 2025 15:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3E525BEF3;
+	Mon, 14 Jul 2025 16:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752508537; cv=none; b=geQp0uUDv37r/66kpzN29zVBs5+GQ4TxKTdeWxbslcT3eiT4Vg03utsm+yW8Vk4VL5C33L2DJST1qzuoSEbuIytL1kkpzELdZkBXeWm6jr8jNJU2KXNwm4O+3fECumv8MEtBcTiSC5ndT+9OL/a0WjgoQB/jP15GsQMkr+aF9zI=
+	t=1752509371; cv=none; b=eJnJXBaY2HS+Ex0U3WOnO6xKFEP7KDsfwdlMR7rNZlkW4WQN9tTDdQJO9SXmRMpzGkI7rs8Z49NsDQu3feDGnQTBy69meye591tCWIAHaSXFdGvZSoihHKEI62tvoWpc/+CC6kBwmXa4TIck/Abl6ryy8NNIxOHwklrewTeHEEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752508537; c=relaxed/simple;
-	bh=AtQGz9rkIFv6VA4C92j6yTOrX79tGL+3e2ekYE2zjgU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Tzg9+2GbHtRsI7b3MTwZ8ITBvdTxeD1dncbEsZU36gzJ0F+jTbezMHCDGLzbaa9xNN0jUiFopzm19iWQbA8WFu6dO2jfxyRMIOi/uuyRxnJ3azHjrhyaJCgGkPGMrcExxpzAOZ1VfmEFCoFdt2YebO7hMJzfiPSGQRe7YGST1kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBmvDpZ2; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1752509371; c=relaxed/simple;
+	bh=z0tuuVyIJcpo1TwGgRrUNAHG4ncruay5NpOEMetri6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dnV7Z+MGCZjr87o7047KBM+BwtBaxi9ac/eSrTqePUp4XptCB7eHiI3bt1FLa011XoWSIlScG5ALFiY/NvQrU58COdO6pNr4C3E+GCoFLlfEqY0m6s7YZ9c8b7EF7ehEvHWR+lrn/JrohlXy51rspvbn8tLvh4aDN2iIDUMQRJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwBqbJvG; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBmvDpZ2"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-451d7b50815so29881245e9.2;
-        Mon, 14 Jul 2025 08:55:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwBqbJvG"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a54700a46eso2748528f8f.1;
+        Mon, 14 Jul 2025 09:09:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752508534; x=1753113334; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1752509368; x=1753114168; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H2MRF6gj4+coDDTEj1rInWSJ6DwpZHRHQDrk1bbbl8M=;
-        b=MBmvDpZ2FbObVGsM0cUET7ZEBir69Ha27PD3YzwBQGYZrf3B/OpqT6FqGW6dnpmHOL
-         qdo9IeQau+umY4ofysB0eWWQiEFlTUFTTWSbB5no+YkAydekxoBYMNJVlOSjQojsHqof
-         yAXc9JoXuql3sGOcTJS1G6l6KYYgRYy71c1MvRZgrIVohxXM7tF4PO1PXQ1vTAyGk0V1
-         zzhtA3uPLzXkum9ZPRM8PRAwpjtMa+z93SYf5zKLioXuYYGJkqczIwO3iczBkmaXtNxi
-         cjup0F1ECch1391xxP9J+7/ddIHlgjWp/k0iD0byF0iGkUzlrv6VeRtKWRDlPNA1cGtO
-         fj/w==
+        bh=SSzZ8p6ICs4tmD0sDNFJUVt4Z8VQSMvhy1W9WuQOiZs=;
+        b=bwBqbJvGCNprL4502uUTcn6W2KUVrPnsuGfXsjHXr3R9eiaBb3cYReFzoSd2ol8Cn1
+         a6y9VEwvzOLkEca2GuUB84CQF3JR5PA2DCNty0PlYIniRAlo6VFQzvLwSBGncDuiQ8va
+         /zBRT8OIGuCmqA/P1oOps19w+MbOqYuQ9V5dn9RK5ssU3pZmPMWiCRhxCXbQ3xG/nLdx
+         1SftjyXnA5hpunsPrpHMnp9hKAWZYcdveKDkS9mdlctTk4A5lCff0iefJvUGUoyVlcum
+         0Cfb+iWGeLO9oa6C1zQIK2n2jHNNduQSEbkPyh6pYn2o8pcHOFLr1rqUkMisT0fb1H64
+         PUJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752508534; x=1753113334;
+        d=1e100.net; s=20230601; t=1752509368; x=1753114168;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=H2MRF6gj4+coDDTEj1rInWSJ6DwpZHRHQDrk1bbbl8M=;
-        b=tauhcgdKDfpBgEQmb1JGQGB+p+MGr8K9eITXRuA0yYvu0XFzMOhnsvUCO2lXwScV/3
-         U5F+3+Efh7AYlBDP8ZHjI9rhZGtzI4HjZ7LBhxmBDCD5dweErSf2Xw8K7vtBtuJa8VE3
-         sA1pIHZ1K4DsWlVMx3su9zfB+svInc5fODRDUwE5E6DzPUv0fURpxLjyKQ5KX9EsepqT
-         Bqyz92mhDxxBPFZsK2Zv3hoCaVQIrmekVOjT2ebapXSgnp6lsBzZriYXl8SPfFShwfFl
-         d1qw79QDoxT2ODU1gV6z4kRA1HgLOMbOOuv4xruUtHYxNGwjh9LqdvYGMzEV6OXg328A
-         tgog==
-X-Forwarded-Encrypted: i=1; AJvYcCVAVoNXU9WScZ7QTYh1h000w7v4N14XkEPZMI1heqGjiuzxeKy3urVLSsv9rNyjyXhq5ROomcMM6Fxv3X3f@vger.kernel.org, AJvYcCWSjz2MF60EOyU6L59MY6SwIqTZMvmPvH8ZWNbcLznt/OrWMVw4AigE//zcLZrdiHUoGoNo20k1cyQk/Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVpClZIDkRcHQ+1fY52xeOO9S5a/TSxDy0QU5dXPLpeLP5Q/l9
-	DCKnreh9ZTQ/OdQI+hERf+xpLWEBgqBgwUo536XVXbHStQyr/7NVVsQa
-X-Gm-Gg: ASbGncvKG3xeEVY03SJEZBpthDc9+KptiibhZQZWV1yQvnMWrBUv35O109kCgXNCLbM
-	DPp+Pe4wE4WJKrSqnFGVq488iDp+Y+Emt9k6CbNrMgI9C6M0hP8KbVNwbyw3eE4KNuDyDs08kFC
-	I8+L+vWVizAWvB3eg27qBfihL3WpAlTwqCLIVolOz36HtcHWxAC2tdAA/cXnlp6+Z6Zd3UdrXOd
-	lYG1cVh/xIu4Mebnw5x4lWx+isVbuBPlieNE6KnkGHvO1jtSZItO2TXnslGFVG1cN1RrziCYeBG
-	hAoOgnG7gVGHopIhmE+FV4p5AptmDOBJiuxCyWR3EGihCeHKLSGxKHcS22vfZqzxitaZ9tARw0L
-	hslhGd9n45toJQqm/9jMg
-X-Google-Smtp-Source: AGHT+IG55VkA7xaAD6VKWuP33bGEIBQ52KZ1Nx3084ejz+awO25J/pxMtjRv+GFd9FdkRR/D6Dp8Xg==
-X-Received: by 2002:a5d:59c1:0:b0:3a4:f00b:69b6 with SMTP id ffacd0b85a97d-3b5f18fa926mr12105471f8f.54.1752508534395;
-        Mon, 14 Jul 2025 08:55:34 -0700 (PDT)
+        bh=SSzZ8p6ICs4tmD0sDNFJUVt4Z8VQSMvhy1W9WuQOiZs=;
+        b=XLQzRh2QU4YK5z/zRDeoWFsTwqCuD0HlnHYxC5RIH2+7qll5LmbmQUQr/4Xzk9IWmA
+         1N5Hs6nknFvP8Xt2fKNC/6gDUgRRLexXdyNwdkttgTNS4WckShl/jyvxiuyGOuurkaY2
+         OnTfG2pwpuT4pHeTF1Z/zxSUinU5K7HkkDYvt7w4HCLOjdbo3Bco9VqUACN27Wgs/8wE
+         b4mkyFMO/E4d5mOxt35Rbl6qhuBo8OsVzjbKt54VVHfaMHgFGJaJLtR8hnMqyb2qkNWY
+         uJfBtm76J6h+W+osFOkdHZDzoy/qQ1aX6lH845ewD5qHPD72NrfH0RsmvOnw4twWfvUx
+         mpEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUie9ZtDSuRUWSP8UE4sAdCpC/MZNb7bVWQiYvC7l7ZgKI2wfM72wOyirMlVnDq06MtoHUT4y9DPJhzesw5NY7aBFBc@vger.kernel.org, AJvYcCWsilHbBPXqxH1IwoHL50jqmkjPS8sjZRTfZo5gnRT7pV8hZdDQoJ9qgwySStAxrcw1EiQaRhcrmbD7xpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWU0po6TTqR7mZBjg7yLo8+z72to4H2jN6iIKXEbpu58Q93E0C
+	ubS6NvqQrCagDrhjIrV/aEC0jMe/LbUXvhJcLD17OcNj3GLnAfwd9Elf
+X-Gm-Gg: ASbGncsycYKEWND5HAAB4Mn2AmwqfpbuHyT0OO2O3h+1A7tfZP7OSLDkgGrsGFdazTR
+	q7XA4kPu+4TKwzEgaH7a0VKb9IwtfZtjlo0lHlPwQM1ii2Y3nbuzqisQuix6lPPk3uWrwb9/ith
+	rU+T86Zm2llvTLOn+UsDHKZdMDWu9hOeQY5CpcOaxFH+/cGzsBGJhWfQ2OaW4n0+2Q4qxnHmNQq
+	LHrl26y2LNWG4Ng9mrnp5NUCtg/t2Ju0aqI/IrBFX1ebIyzvs0PnufPkrAPtyDsXuy7BhbEPCm/
+	IVBaxuoITV3oYlaxJJSTRqdiMjrGJwokpPbfnsnd9K5Ev1ANvP4Vt3aT1z7jmaH8AiCJNiSMl4v
+	bHBQx3dHi1achB3w65Voa
+X-Google-Smtp-Source: AGHT+IHQkWwwAJlutqADGT9UHvudQZQIiRedcZ8BLQYAcJLCc07J65qfmtK2g2rT3yv0EnrvyVv/ZA==
+X-Received: by 2002:a5d:5f52:0:b0:3a6:c923:bc5f with SMTP id ffacd0b85a97d-3b5f187ebaamr12549329f8f.17.1752509367510;
+        Mon, 14 Jul 2025 09:09:27 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b5e8e1e3bdsm12600011f8f.81.2025.07.14.08.55.33
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-455f222e4f4sm96666205e9.10.2025.07.14.09.09.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jul 2025 08:55:34 -0700 (PDT)
+        Mon, 14 Jul 2025 09:09:27 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	linux-hwmon@vger.kernel.org
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] hwmon: w83627ehf: make the read-only arrays 'bit' static const
-Date: Mon, 14 Jul 2025 16:55:05 +0100
-Message-ID: <20250714155505.1234012-1-colin.i.king@gmail.com>
+Subject: [PATCH] ring-buffer: make the const read-only 'type' static
+Date: Mon, 14 Jul 2025 17:08:58 +0100
+Message-ID: <20250714160858.1234719-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -75,48 +76,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only arrays 'bit' on the stack at run time,
-instead make them static const.
+Don't populate the read-only 'type' on the stack at run time,
+instead make it static.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hwmon/w83627ehf.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ kernel/trace/ring_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/w83627ehf.c b/drivers/hwmon/w83627ehf.c
-index 7d7d70afde65..a23edd35c19f 100644
---- a/drivers/hwmon/w83627ehf.c
-+++ b/drivers/hwmon/w83627ehf.c
-@@ -1448,7 +1448,8 @@ w83627ehf_do_read_temp(struct w83627ehf_data *data, u32 attr,
- 		return 0;
- 	case hwmon_temp_alarm:
- 		if (channel < 3) {
--			int bit[] = { 4, 5, 13 };
-+			static const int bit[] = { 4, 5, 13 };
-+
- 			*val = (data->alarms >> bit[channel]) & 1;
- 			return 0;
- 		}
-@@ -1479,7 +1480,8 @@ w83627ehf_do_read_in(struct w83627ehf_data *data, u32 attr,
- 		return 0;
- 	case hwmon_in_alarm:
- 		if (channel < 10) {
--			int bit[] = { 0, 1, 2, 3, 8, 21, 20, 16, 17, 19 };
-+			static const int bit[] = { 0, 1, 2, 3, 8, 21, 20, 16, 17, 19 };
-+
- 			*val = (data->alarms >> bit[channel]) & 1;
- 			return 0;
- 		}
-@@ -1507,7 +1509,8 @@ w83627ehf_do_read_fan(struct w83627ehf_data *data, u32 attr,
- 		return 0;
- 	case hwmon_fan_alarm:
- 		if (channel < 5) {
--			int bit[] = { 6, 7, 11, 10, 23 };
-+			static const int bit[] = { 6, 7, 11, 10, 23 };
-+
- 			*val = (data->alarms >> bit[channel]) & 1;
- 			return 0;
- 		}
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 00fc38d70e86..39aa1f50274f 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -4118,7 +4118,7 @@ EXPORT_SYMBOL_GPL(ring_buffer_unlock_commit);
+ 
+ static const char *show_irq_str(int bits)
+ {
+-	const char *type[] = {
++	static const char * type[] = {
+ 		".",	// 0
+ 		"s",	// 1
+ 		"h",	// 2
 -- 
 2.50.0
 
