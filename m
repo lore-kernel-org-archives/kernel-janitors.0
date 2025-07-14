@@ -1,174 +1,93 @@
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-72.smtpout.orange.fr [80.12.242.72])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03DC2046A9;
-	Sun, 13 Jul 2025 23:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB4E2356BA
+	for <kernel-janitors@vger.kernel.org>; Mon, 14 Jul 2025 08:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752449649; cv=none; b=WgeKAGwxvProddVmGFH/LRgyUQiX3nQAHzT52Lrev05L3RapW2+KxypDNpgP2qyhlcLDW52VYFoBSAFKd3YM5uAmQtGNxTI+j+yj/yM7iL5cMgpP9uwds70BEgvXr0AHZgI57KpoL7cPu5bo/SpcUDRrzQZYd3JT1QrNe1L/Pb8=
+	t=1752481078; cv=none; b=kkixNzrYZbjpOUzrq1kEBgatMzwTCyF1RLmoBnOdSWopAbJCbaidfGcL4WJ6lfv+E02Zo2bpdg4Bs+A0Ot+2he1sMkxvG0LEDWT7EA1DKUC+UU1xwGJcWP6elW85HI8ba0phiwlTEu7Q3TTO/9N5LuJC+U4piqnvXjlAwIDn7po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752449649; c=relaxed/simple;
-	bh=6DG8NAACMILXKaMlbU8GB8DRW2CNIB9FDBfmc0ujtLo=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=noWPr9txrY6J+ZbkCRQTA1KB2p39iMu1yTU0tW5vctUviyUeAgHvylnfQ7XpxM+3xHQPiCCvqBlH7TYVJfo240Gl8AHmb7N1kH/oGT1rDZPrYj/igLERRZX/j9cdZvI0IDRtYYihp+pfwxuoRj0VlAwpWtNwE8OcRrkAOl+6dg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1ub6Cf-001vVc-PP;
-	Sun, 13 Jul 2025 23:33:55 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1752481078; c=relaxed/simple;
+	bh=6eKbJRC0egYYk0hIoQ1KegYpV6rakAhDZIFaxng8+HM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HweVzf5ha+cnjT/8vCuvAgsEYhot6i6Qp6x3yBqEkbGToS3ZAEL2Cect/nT1u1g40pT+Jaal4SvqxN1SkthTEBxiHFaouocmBrlgvrioMU4YULdalFgVTLCe0DrHwMmyJrHyfBtZptd5yo4iR5BaXfb9b8fp+v6B30QHbVv5tBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Aaa8ezBu; arc=none smtp.client-ip=80.12.242.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Aaa8ezBu"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id bENfuHN2LILtwbENfuVI5i; Mon, 14 Jul 2025 10:17:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1752481069;
+	bh=4wZNbpRPzeGr+80jW4oHXMfPFK+sXJcG4wfEmFBYDPQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Aaa8ezBui2MyM1ToWtYkKEyRZNvJ0DJzCPXkp23ZPYw+jeYcsrQysBN+w6OVu7IK5
+	 gRstHYiSu5fcvhR1nV5fiJUsr9934vbmPWXmWuUdS3JhunfVQcxgdwvnlqWjLCkXS5
+	 RqUaB69YSNrrlCdpIoNjTKRq5tMRW9FvtOamf8Va57/MX4roAjA/R60c1PRNWHk68y
+	 5axep6sQLYfhMKLZCB31E3HRe8VcTYGdTElmo2KoD9oyDU82vUWRg/TFelHOqVT4C4
+	 Q/qvlOzq5sYc2kIMbJku1o/bdco8enBZqXoq6YWX0qxyYFS2dFtO1Csh2GpiMzwioo
+	 p59BtZ72eK9Kw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 14 Jul 2025 10:17:49 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: willy@infradead.org,
+	srini@kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH v3 0/3] ida: Remove the ida_simple_xxx() API
+Date: Mon, 14 Jul 2025 10:17:07 +0200
+Message-ID: <cover.1752480043.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Tom Talpey" <tom@talpey.com>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Su Hui" <suhui@nfschina.com>,
- jlayton@kernel.org, okorniev@redhat.com, Dai.Ngo@oracle.com,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Using guard() to simplify nfsd_cache_lookup()
-In-reply-to: <ea472081-a522-4c5a-8658-909793f460c8@talpey.com>
-References: <>, <ea472081-a522-4c5a-8658-909793f460c8@talpey.com>
-Date: Mon, 14 Jul 2025 09:33:54 +1000
-Message-id: <175244963489.2234665.13068379727765444902@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
 
-On Sat, 12 Jul 2025, Tom Talpey wrote:
-> On 7/11/2025 10:22 AM, Chuck Lever wrote:
-> > On 6/24/25 6:15 PM, NeilBrown wrote:
-> >> On Wed, 25 Jun 2025, Chuck Lever wrote:
-> > 
-> >>> What is more interesting to me is trying out more sophisticated abstract
-> >>> data types for the DRC hashtable. rhashtable is one alternative; so is
-> >>> Maple tree, which is supposed to handle lookups with more memory
-> >>> bandwidth efficiency than walking a linked list.
-> >>>
-> >>
-> >> While I generally like rhashtable there is an awkwardness.  It doesn't
-> >> guarantee that an insert will always succeed.  If you get lots of new
-> >> records that hash to the same value, it will start failing insert
-> >> requests until is hash re-hashed the table with a new seed.
-> > 
-> > Hm. I hadn't thought of that.
-> > 
-> > 
-> >> This is
-> >> intended to defeat collision attacks.  That means we would need to drop
-> >> requests sometimes.  Maybe that is OK.  The DRC could be the target of
-> >> collision attacks so maybe we really do want to drop requests if
-> >> rhashtable refuses to store them.
-> > 
-> > Well I can imagine, in a large cohort of clients, there is a pretty good
-> > probability of non-malicious XID collisions due to the birthday paradox.
-> > 
-> > 
-> >> I think the other area that could use improvement is pruning old entries.
-> >> I would not include RC_INPROG entries in the lru at all - they are
-> >> always ignored, and will be added when they are switched to RCU_DONE.
-> > 
-> > That sounds intriguing.
-> > 
-> > 
-> >> I'd generally like to prune less often in larger batches, but removing
-> >> each of the batch from the rbtree could hold the lock for longer than we
-> >> would like.
-> > 
-> > Have a look at 8847ecc9274a ("NFSD: Optimize DRC bucket pruning").
-> > Pruning frequently by small amounts seems to have the greatest benefit.
-> > 
-> > It certainly does keep request latency jitter down, since NFSD prunes
-> > while the client is waiting. If we can move some management of the cache
-> > until after the reply is sent, that might offer opportunities to prune
-> > more aggressively without impacting server responsiveness.
-> > 
-> > 
-> >> I wonder if we could have an 'old' and a 'new' rbtree and
-> >> when the 'old' gets too old or the 'new' get too full, we extract 'old',
-> >> move 'new' to 'old', and outside the spinlock we free all of the moved
-> >> 'old'.
-> > 
-> > One observation I've had is that nearly every DRC lookup will fail to
-> > find an entry that matches the XID, because when things are operating
-> > smoothly, every incoming RPC contains an XID that hasn't been seen
-> > before.
-> > 
-> > That means DRC lookups are walking the entire bucket in the common
-> > case. Pointer chasing of any kind is a well-known ADT performance
-> > killer. My experience with the kernel's r-b tree is that is does not
-> > perform well due to the number of memory accesses needed for lookups.
-> > 
-> > This is why I suggested using rhashtable -- it makes an effort to keep
-> > bucket sizes small by widening the table frequently. The downside is
-> > that this will definitely introduce some latency when an insertion
-> > triggers a table-size change.
-> > 
-> > What might be helpful is a per-bucket Bloom filter that would make
-> > checking if an XID is in the hashed bucket an O(1) operation -- and
-> > in particular, would require few, if any, pointer dereferences.
-> > 
-> > 
-> >> But if we switched to rhashtable, we probably wouldn't need an lru -
-> >> just walk the entire table occasionally - there would be little conflict
-> >> with concurrent lookups.
-> > When the DRC is at capacity, pruning needs to find something to evict
-> > on every insertion. My thought is that a pruning walk would need to be
-> > done quite frequently to ensure clients don't overrun the cache. Thus
-> > attention needs to be paid to keep pruning efficient (although perhaps
-> > an LRU isn't the only choice here).
-> 
-> As a matter of fact, LRU is a *bad* choice for DRC eviction. It will
-> evict the very entries that are most important! The newest ones are
-> coming from clients that are working properly. The oldest ones were
-> from the ones still attempting to retry.
+This is the final steps to remove the ida_simple_xxx() API.
 
-Isn't this just the standard complaint about LRU cache management?  We
-throw out the old ones, but they are mostly likely to be used soon..
+This serie was last proposed in August 2024. Since then, some users
+of the old API have be re-introduced and then removed.
 
-My understanding is that LRU cache management is a bit like democracy:
-it is the worst solution to the problem - except for all the others.
+A first time in drivers/misc/rpmb-core.c, added in commit 1e9046e3a154
+("rpmb: add Replay Protected Memory Block (RPMB) subsystem") (2024-08-26)
+and removed in commit dfc881abca42 ("rpmb: Remove usage of the
+deprecated ida_simple_xx() API") (2024-10-13).
 
-Without more concrete information about how the client is behaving (like
-the information that SEQUENCE gives us in 4.1) you cannot reliably do
-any better, and you can certainly do a lot worse.
+A second time in drivers/gpio/gpio-mpsse.c, added in commit c46a74ff05c0
+("gpio: add support for FTDI's MPSSE as GPIO") (2024-10-14) and removed
+in commit f57c08492866 (gpio: mpsse: Remove usage of the deprecated
+ida_simple_xx() API) (2024-11-22).
 
-I don't think there is any value in revising the basic approach we are
-taking to DRC cache management.  There might be value in optimising the
-code (removing unused assignments, changing data structures, moving some
-tasks to a different place in request processing to adjust latency)
-while keeping the core approach the same.
+Since then, I've not spotted any new usage.
 
-> 
-> This is pretty subtle, and it may not be a simple thing to implement.
-> But at a high level, evicting entries from a client that is regularly
-> issuing new requests is a much safer strategy. Looking at the age of
-> the requests themselves, without considering their source, is much more
-> risky.
-
-Past behaviour cannot usefully predict future behaviour when the
-particular behaviour that we care about (lost replies) it typically
-caused by a discontinuity.
-
-There might be value is using different tuning (and possibly separate
-data structures) for UDP vs TCP sessions as the expected failure mode is
-quite different.  With UDP loss of an individual reply would not be a
-surprise.  With TCP loss is much less likely, but when it happens it
-would be expected to affect all outstanding replies.  Of course the
-server doesn't know which are outstanding.
-
-Possibly a count per client, rather than a global count, might make
-sense.
-
-Thanks,
-NeilBrown
+So things being stable now, it's time to end this story once and for good.
 
 
-> 
-> Tom.
-> 
+Patch 1 updates the test suite. This is the last users of the API.
+
+Patch 2 removes the old API.
+
+Patch 3 is just a minor clean-up that still speak about the old API.
+
+Christophe JAILLET (3):
+  idr test suite: Remove usage of the deprecated ida_simple_xx() API
+  ida: Remove the ida_simple_xxx() API
+  nvmem: Update a comment related to struct nvmem_config
+
+ include/linux/idr.h                 |  8 --------
+ include/linux/nvmem-provider.h      |  2 +-
+ tools/testing/radix-tree/idr-test.c | 16 +++++++---------
+ 3 files changed, 8 insertions(+), 18 deletions(-)
+
+-- 
+2.50.1
 
