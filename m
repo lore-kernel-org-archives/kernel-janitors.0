@@ -1,78 +1,76 @@
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC18A2D0C7B
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048612BF3DB
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752620485; cv=none; b=pdSo/xnHv9WvY+/SY38PY1HPNCPW3gWzD0/4jynbYrkMkuiGUwm46HnNUBarolRuKf0A0AhfkIS4J/9F62CUU7T9pkcr/wCRGp8LrbZUmSYxQyobPllA4df6G7GtZoisOZR1t074U1FZLkhuKNPPzYnxIAruoB+5BcW1KBBg368=
+	t=1752620494; cv=none; b=Yycd6EVtNGhmeauzWtbp2msY7hMdmZoJc/hE1GndVFWySIRLj8TtxAd0fymXdwfGMgdvmsyvik5R5XQsJQsW22oNu1keCobo+btnsFQ7QLRSt2XBb1TzC8gLxj2iB+fhVM0wTJZA7C7SkLCTyF4Kf4rFkHQGqWRL5gTLu5zi0Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752620485; c=relaxed/simple;
-	bh=b/LA/fS6G1ALR75iCSwylRoGN9ZsUCbGZpu9YxrMRv0=;
+	s=arc-20240116; t=1752620494; c=relaxed/simple;
+	bh=C0yIBGjgQuUwh2cILUg4KfKwRH5Zo3VTXMZAiLB5IzM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PUPgSRiZLYRXkandfHON6CFN4QZN/STJ6wVdZBHaMRw2SYee3wgeIDZn+3pGGW7wekOpiTfQtZoh2ZeLfLa8No54Nb8UQTTR1Xf2xA8hS4rmTkWUeWQWaF9yNwSww2EYfts2Ug+ZlTYx+yTrSRfZymH72G9GcEFsSvzFpAk/2K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v9GXd4uu; arc=none smtp.client-ip=209.85.167.172
+	 Content-Disposition; b=Y37FgSlzqjkBUYLyc+Bq9oHdl7taZ9jG0AZ1khBEZQMydroaJ/kAaJmcTEH0s0pBswqGFHNWh86nByl9eocs3UiHoDiWBXaATYwdX6g0dRPsxTw9/bc5VrxX7wT/rFTqnM/An/YDymL0TaOH7pcD3D1WsK2p1LHtHlikxRcjB3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Aq0P36/V; arc=none smtp.client-ip=209.85.210.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v9GXd4uu"
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-41b6561d3e6so980460b6e.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:01:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aq0P36/V"
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-73e5f3b5067so476140a34.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:01:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752620483; x=1753225283; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752620492; x=1753225292; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=k0CRRO8Zw5SYMNCeis2H0ecNCwZ1xJBBe/YWgqbP+9k=;
-        b=v9GXd4uuanam7MiY9coe2hgWN/wJfqgjJcecYUy7JPw4f2lPJ3cupMj0zdQz76nUZS
-         8KND3N+WJDPM5aZZsQDdAQ1gk2QVoSHYiJlG9qFxZpifZ29ugoWfz4qoWZxTmj213yTA
-         N7kZHT0KUrBSRaObYepCZunlD16Ypncjjf1E+O4QhWV1v3LeXIc1LAHpuf0BTGCdXh0L
-         m5O9OkoaXk+Kz504c+lmzERyeRizZp9doePktFeDx74nvUhy6JvT/veAt1Xh1+lCSriq
-         u7EJJhGDkwwdAm912DlQs1PqMUZttsgPOYNZKQBwI0uL8pLaNm/eyQnt93I4lMF6lQHe
-         Sglg==
+        bh=B4SWITf8rdF2+7Tku3l2OCdj3WOMyrXJ2wvElW7xvwI=;
+        b=Aq0P36/Vw14ZTOSZP7VIoVXi0jFTCXxSroHDH9b1wV7v8QYZs64zqWi1W1JNVwADNZ
+         tzJKbkbCaG2wczXIw7esS3v9YoRn1c+XrXrH578lawGjfqxViYMUlqv8aTuVmctyw0pN
+         3hbX7LBqwQ2sXTiX3HiqKDQjOZIOS5I1q5+EgdKDizdV0HnM6Te5jiiw0ouhUAXT16bM
+         uJT0EUXj8I9LkO+6k6KTxe/2eo3WHRSloo37tZ7qUyVwzUmmPDR/ekiERhxn8nUF46BA
+         ix5d3m0XAx8s7bqczDZ/0AlMX9oe4NZxfO4ph1bRKC8GkeDPG6M1hXLP1ECisprPC/hP
+         xR4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752620483; x=1753225283;
+        d=1e100.net; s=20230601; t=1752620492; x=1753225292;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k0CRRO8Zw5SYMNCeis2H0ecNCwZ1xJBBe/YWgqbP+9k=;
-        b=Ij4NQAzh/SZogT28oxMnyg+nU3+ucg3lrSwUk3j4lt05OoCKRd0xbForlYDSWuiZa+
-         vdbozOnVw64eovQf6hp730cluKqhYrCj6NYRUcNjzeeVd3urDG660sdXNvXUbTOOOrk7
-         qaz45s263l8pvX/HDyRz0yUIbl2r3csfKfUMLgoyhR7lW5Qc1laNHhlE2aupojY68pIo
-         nXXxD1jImZsBLxRGSlGSTqiiPsugyRBbhieXamxNq32X3KcefP5YLZL7rwAcNlAMCbC6
-         Xorp/KFapX8Ydj9qF1EgGdBcgP/mw3Kes+j8W4hPr/cSTLlcJLUhzJBjBTE/fvs7Kt3/
-         ejrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN2IIMEBck6fqzV+lvChm/zDCivpmbj6ioQU7A41/2BmyZ5SH96bDHfJ/h1fGC+AofrFup6fgNA7ex5mjKZmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtCfJLD61vGVs/SCIWpAGPOfSeRbUY5OjCBY6mBGOp2YLLCVW7
-	bPVMCAeQN3C3JGmdlI2UI2eXJZ9rvqTxEBxTm/kATpZ/tUCtKqri49NfdSBeo67mAgU=
-X-Gm-Gg: ASbGncuFI3weKRxJuJWyNNWJohxlpvVfZZ23c4vXBU6e5syhdI9ErQjFX9ZTieUN8Y8
-	IZIG0QYKzIX3Gjl7StpSubGWFdWOzaNMzfr4JCFAaQUHzygzklhvu/S5l00QOuuaz/ELKz/TDxl
-	3eeob3hacQLtJACu21P09C3rpxYWEXiXNZf5+FUrmommijlrBCnMc7z2xL4c7XXHsQ5M4Kzn0eI
-	Jym+1xRjv0tGU0D1SClyS3j0yXoUrYxtD8D/Uqm96SNQe2KRKLX+J/Kfb5cBLxH8q4cog19frH+
-	HQN/VudZDnoMW7a2Pn4tfN0fZLB05TgEzxU6zMlCKdAr3T9bYYjCPF8Hedkq3ta3k1djbw55gYr
-	HzV590tNjyjDOZzl/811TMzU/zBAf
-X-Google-Smtp-Source: AGHT+IGQtllmBc9kuXNMSNrT8BdEoXm/J1sAHyCL8mClXy5PmdAT8mA8+MNoRfXMLo08tASsstG21g==
-X-Received: by 2002:a05:6808:199f:b0:41b:75ca:b104 with SMTP id 5614622812f47-41d05d37a1emr470408b6e.39.1752620482690;
-        Tue, 15 Jul 2025 16:01:22 -0700 (PDT)
+        bh=B4SWITf8rdF2+7Tku3l2OCdj3WOMyrXJ2wvElW7xvwI=;
+        b=D7o5ECBKm4dBcRuIUrDdrZ3KbRpaQSR7VJym8Rk3qSYUoXZq7mlz599q1SDqOBrtkI
+         CS2UOUzz4/p/uq8QsSksU5UUa51iip8De6GMQoVN8bhFwUwmaKVdxxBMs89adkl7KH72
+         87/Fl18RIfCixss2cXvE4aLVX2c8EL7aDC9uLozsC8gE4r9myxPo+nLGyIgGoThF0cu8
+         X+KZplz5LxHxNZdkywFzKlnK6oY3Yr+t2sGBx81O0ILvrbu+UjNls2u7N5HawLP0K8VZ
+         4nZTSuX6W9ZleTFEAGwJ/oGRT4fWjQMq+aRu+5REHYFG0D+aSwUJdrMzmsyd84uJHcHf
+         Vdcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmQkb8fE+qxFHnNJ2OiMYVUVpEJX0QQM4OZ8gIgX0murs4HZpRO35F9JYybATzZwywVhebw1U5MK0uTLJmpiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjPxAgW5H5uQDlBjngKJkum2nMyfVX3Fn8Si27GjrUtXyI26ut
+	KCflMHrywo37gLymEPazOCGZPuUPaQMt1UbSF+4a1w1hC+8PRGf8QELcuRM9WUR6mq0=
+X-Gm-Gg: ASbGncsSZy7NTFc6HlBbmRRUJ1Lu6UvXyg3QUMNnnHJmV1F3Tjpc2+xiOvNdtULnKVo
+	M0qr3vLp0dHmd2Y1ckT8YTEj4oCMO7JF4rurGTK2W3qXfvindZv+gkRp+DdooR8aC6VceflFFYQ
+	B8e4sYByJGkRWQEQHwDG6oLrGPv0FAkmxDIZEskvgHKSb8g+fRlVXdkWa7hatew2VDpjPq6J1TQ
+	Yu19Loq0canThRIdjbcVQSHkz8su50gWX2pPkU8hhk6d76OeL3WI69nWa+vt2VFeaVlVgZUJ2Rg
+	BETYISkc98ofmB0MEv9bSSqlL2GBtIMljkZwGC+BsV0RxaBioHMdvOny9C7pin/zygFkXqMZv+2
+	XrEWS0O+IyzgoxgwrZAkIg81Ym0tYewuon+E3iS8=
+X-Google-Smtp-Source: AGHT+IE8Nfeo8scY90CqHg5efo6nAkc64loFfqqe2YK8azM++ugsfehXsqpsTS6+ghhEcDe7uWrOaQ==
+X-Received: by 2002:a05:6808:3c49:b0:401:e721:8b48 with SMTP id 5614622812f47-41d031f1f01mr437628b6e.8.1752620492132;
+        Tue, 15 Jul 2025 16:01:32 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:9b4e:9dd8:875d:d59])
-        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-41418c0ae9bsm2349086b6e.6.2025.07.15.16.01.20
+        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-41c267defd7sm558510b6e.11.2025.07.15.16.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 16:01:22 -0700 (PDT)
-Date: Tue, 15 Jul 2025 18:01:19 -0500
+        Tue, 15 Jul 2025 16:01:31 -0700 (PDT)
+Date: Tue, 15 Jul 2025 18:01:30 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: ethernet: mtk_wed: Fix NULL vs IS_ERR() bug in
- mtk_wed_get_memory_region()
-Message-ID: <87c10dbd-df86-4971-b4f5-40ba02c076fb@sabinyo.mountain>
+	Cosmin Ratiu <cratiu@nvidia.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net/mlx5: Fix an IS_ERR() vs NULL bug in
+ esw_qos_move_node()
+Message-ID: <0ce4ec2a-2b5d-4652-9638-e715a99902a7@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -83,33 +81,32 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-We recently changed this from using devm_ioremap() to using
-devm_ioremap_resource() and unfortunately the former returns NULL while
-the latter returns error pointers.  The check for errors needs to be
-updated as well.
+The __esw_qos_alloc_node() function returns NULL on error.  It doesn't
+return error pointers.  Update the error checking to match.
 
-Fixes: e27dba1951ce ("net: Use of_reserved_mem_region_to_resource{_byname}() for "memory-region"")
+Fixes: 96619c485fa6 ("net/mlx5: Add support for setting tc-bw on nodes")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/mediatek/mtk_wed_mcu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_wed_mcu.c b/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
-index 8498b35ec7a6..fa6b21603416 100644
---- a/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
-+++ b/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
-@@ -247,8 +247,10 @@ mtk_wed_get_memory_region(struct mtk_wed_hw *hw, const char *name,
- 	region->phy_addr = res.start;
- 	region->size = resource_size(&res);
- 	region->addr = devm_ioremap_resource(hw->dev, &res);
-+	if (IS_ERR(region->addr))
-+		return PTR_ERR(region->addr);
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+index e1cef8dd3b4d..91d863c8c152 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+@@ -1405,9 +1405,10 @@ esw_qos_move_node(struct mlx5_esw_sched_node *curr_node)
  
--	return !region->addr ? -EINVAL : 0;
-+	return 0;
+ 	new_node = __esw_qos_alloc_node(curr_node->esw, curr_node->ix,
+ 					curr_node->type, NULL);
+-	if (!IS_ERR(new_node))
+-		esw_qos_nodes_set_parent(&curr_node->children, new_node);
++	if (!new_node)
++		return ERR_PTR(-ENOMEM);
+ 
++	esw_qos_nodes_set_parent(&curr_node->children, new_node);
+ 	return new_node;
  }
  
- static int
 -- 
 2.47.2
 
