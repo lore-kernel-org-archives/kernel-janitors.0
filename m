@@ -1,73 +1,70 @@
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810F32C08AB
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E76D1CAA79
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752620504; cv=none; b=oB/1fnUeFAN34DnA5UaKOOyXnlHsd5p3TImucXIsDPXbecygO6Y1Tyf25+grDuWuoLvW9mYPr1Q7Aa/JSI42VEMsns8E0vQj/QBd9Ffyy/Sp8YooDFPrEPua/X/w5O1ZF6IpCbn6qMDdEsEdA9FUeLw+xezJQu52guM8bARyaO0=
+	t=1752620603; cv=none; b=fbX2GrxJCDI9DUQBY3NIBJ0llN8WIVToNK7z/zTB4ctEV+AZezEQ79hiMB/yp/aJ3fyFLT2EGiZZTfnr8nYzgee2zJvEwNzoVZJFvhql6+QKceMjjzSDTAuor173W2UUG60KuWhMKGNf8/3JVcG+waKVFORNVuSbigX/KTbsKMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752620504; c=relaxed/simple;
-	bh=hQBUKhXoZhnrg3aw/tvNsOjzOzq2grhpIyy5kdu/2c0=;
+	s=arc-20240116; t=1752620603; c=relaxed/simple;
+	bh=ojsONraykAW73nHFhU3JR6gIK5F+2qzAE3NHVXM9K1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=L2GdjBpRjylK0tNRsozyQ/EUZA+TDoQHfGfvDpPX9TyC7BfdKUpPIpDYNJO/FlerbYGObAe0f5hA5Oh34O1sGuqVTI50Wax3a5AnJNou+mvqq9iGAhMipfXOuFr9MofrhyORAgfKlBjspFTh2wEJ6cHsZtLJ9RqcD4VurkuKEfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZlgdwIIJ; arc=none smtp.client-ip=209.85.210.50
+	 Content-Disposition; b=pkqr/2+JYUDqYKAWF8+90l1SAJKuNZ53wBCDdapGOb8/MnG5IZ6KW/8ALebDhJuTVUoTGQqSJk9G1gtLdOJs+vGwgf/itNPJiOKUnX0v+doRgPnAaB7ar1ac+n2sYVTXOPsWC2UC9XHognblJErESLBvd3pOsecP2cmr+gTq6TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PY12zLz7; arc=none smtp.client-ip=209.85.167.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZlgdwIIJ"
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-73e62d692fbso405465a34.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:01:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PY12zLz7"
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-41b7d12401bso879372b6e.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:03:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752620501; x=1753225301; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752620599; x=1753225399; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=46gEt3Bx0FBkn/nnSaRTnSsikfa6dw7cUtJIKu/AHuc=;
-        b=ZlgdwIIJ011E895kg2zptBdrs9U43kLvRAKy6PQKD1kWhY/iaGFFzEVUfrgwhUuApL
-         trsdjGVCzlThPDvGOid/rCR9SjvfM98yZLoBqsp8xmyYDh5BqRg2vJVM9rM1eTih6Fw5
-         PTNh7K9Z3L+Ir4n/cVXUXudf9KGJ4OtuBkB3suVO9/yoVbmVq0Qpp8za1ocHAYNtNs15
-         PPY7ZR9e9k6Fs0jIAcfnA1UZjCsUSGGpH2nnY2qb/TgGlo6ezjLF/WtprGJ2p0Y5KuqM
-         tB4c3O6XSHww39/wRLV0pskukIycGfh4kqQnhIWVqKwabYuXU23xw4bM3Skr57uu1pEi
-         MXyA==
+        bh=uVPOIdRXltuwUh+ovIsPk+9c5IV4XN6F0lzLlze081U=;
+        b=PY12zLz7XbgUIJ0jnzV4J+G4gATelRhx0W7ggppvUvzVRa88eAtija2wL2iDSfbdJF
+         1o1YV+yJjeV0w5XBK0GX8cHLgkZoriJbzlguNAk4VoJWJNoKWkixN34UoP4oO+pO5ETn
+         yB/lcEpOMwszSux5wXtPA4SqDwp84c4dGmYQ9QakeFu8m4xvkkxtmjQhSKvqJp1zb0x1
+         VDA4EhQAaZULUVk6ixmiv/MBvlWo1eNCWHVjLPCiVRcobpGhE/1cU7RWpj6KsatsRTe8
+         /O209DUhoxXARr7FS/HWif/XXIOqEobCTaDhpqHeOziX3iGHTBEZ1r5/tzdJxdwpnHsY
+         4xaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752620501; x=1753225301;
+        d=1e100.net; s=20230601; t=1752620599; x=1753225399;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=46gEt3Bx0FBkn/nnSaRTnSsikfa6dw7cUtJIKu/AHuc=;
-        b=LaPIKWFmgsdFmO6UT7T/eGcKhQoDEtzesVzop/4rVu2QuqnqyJ+RI/bZK1FZCd6CXk
-         RUCCfa5Je3HX69h5sdOI4UUXUKp/0zH0yNtjvtQK+dvtwG1P1U33LocsyKUinX92f9YO
-         SH7vtmLCDccnkKKpK+nwwBIvUq5VNon64VgsbxyCZOX6UMy5g3oyXF2Q7DpmLuoOryp5
-         IjYjXlrqivvGkWyq4R5HgxU5CtbfTUCJ1oe4Mgf08SAg1AqX4t59jgBMQfc5zJuV+lbY
-         Kyr25+GOh8VfnB/zZR+8yLRX9TTBHVo2gl7APRX7hg8K+07nlF2hY8fbhWUA/dde86mp
-         dbjA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0e69COo8mBXbvWzmQ/NZTGHLvUrJwYz2h5yGTjgAL8bsPQPQkr/hi7HCe/MDDzip27DyFtNYDcj7tOEbGCAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5X818QZ08yNrSwVgHCfn7yRnYCxFhjetSM7MAgtYQ9o1JLXql
-	euj1SFcQSW6CSgOb7qKRRCdAPhjfiHN4UjbvQxxB0hEYdNjF/iKhxAO6o9Zzj44oemI=
-X-Gm-Gg: ASbGncsxkqKEEWLipY9Qn2sVUr5jwc0sbyOwcMqoDLEjlmGNXfvb47bQSKNGWsfrWn/
-	FzjRNWN65HHuSlP3xeTDB8m12dvEa+mAH5BJSziu1a5UN3Oo1LHGYNzEYnUTBkNOfAPtzTl4pHb
-	xMJ84FF+e/YXTaZpKxrngdnJt15GZQGQ4HFoXXfBmpez1NgCVBs7562pwJOidgY3mPojVQU234n
-	UITwr+RVV+AzmEbGVUTv61cZ+Nmmr3BZ4mNTI5g/j7JWfMhGViDTyjhdnwa/r5MGl/wJeO7ITml
-	5sq22xE9tOy+c8C1FLeHN3MFICObtSovqmGGg/gfYhup56HyIbyBlQx5clfNyQf32ZVCks7akAq
-	xd5wEre8MedLhxjAWl+q8xGYHc2HYYb0anQXlapk=
-X-Google-Smtp-Source: AGHT+IFrIo3qo3Xq7DrVRugRg16jg4aCYHopevdB0f55AiC+g1RwMciM6Lgy4L9vDkABRNtjnbIHXQ==
-X-Received: by 2002:a05:6808:30a2:b0:409:f8e:7272 with SMTP id 5614622812f47-41cf0cb0f3cmr543563b6e.38.1752620501381;
-        Tue, 15 Jul 2025 16:01:41 -0700 (PDT)
+        bh=uVPOIdRXltuwUh+ovIsPk+9c5IV4XN6F0lzLlze081U=;
+        b=CAcFJ2IQcPzOh2r7wxfqUu9sYABS+TGYgQX7EN6V6NRGY09T8tILCRZFNghaov5MAa
+         P19mWXxmmzXx+lR+lg29OVXHRRNtADeCBws14cDUNo0ka7L7onFmetG9IAMA7ziJEwyI
+         OWfQuA7Ulxzupjxwkvnx5FYQcdUo4WhxXzwxbNqOrb4SUE5KlHBFMxx4QcXf1kx6luTX
+         BzDoalHiW82anb4pz135a8cB2eT+uMtuwxA17vkQfc7WfkOVrAnlkIBnbqTTTtvk8uHJ
+         BJ/opV1W4RKFT6NdDyzTvZYhtn4/WB/mH1p2A2b3l2mdxfisUJx3UduxuxPrFNm5ztbw
+         1YOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGu6zNVr9LJvaKjSI0KnOMW2A6Fq7ycM9u9Rwl0gv+JYowsrwml6CEwTK8rdie95nayOQU31CgnsvherbKsP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTWt/FNUCr0skXSkwcpH1pIyyLD7J1DhBmGX85xzAOtkxJQH1N
+	Wix1Dptuh5DtBuGw1CAslbSjW8yimhLq7uAaD5kXpNgbZfvnu38f5ZrO5pm+24oY+QQ=
+X-Gm-Gg: ASbGncsz0jHreLDe0jwhKC/sqN4AlMBP+hBYRgnpE/o1aHbSeLyt9ZtUKVOV5YF3Qkd
+	aGAisYKvZEyLJ7FC3gAv5XYyvKvwUuAULTTYaf3tNoWJUJc8ZZNhN9jXLoFvWThH3m3WvjXjAYn
+	C4WA3p0znXANZvE3+Ad82NTi2EriAVLugheCEAjZSSPIN7IWRzukcJflid/7Dmh3ls/ITzb4djL
+	JPSjwmAaDNHgaAC6Opbn2vFYLQe5s514apB9I04DJFpg7m63pp8RYAoKQWy5HDtSD1m2AvJvZBj
+	7djYzWY2oEDG561spE44b+NXqfuh9bGgYnGqtS/K4R6GXP7G0ZK2eaHgRfPPlYIbz6JKRU8Go9m
+	ApnCaw0QoPLbsQUICXraXQuS/chqA
+X-Google-Smtp-Source: AGHT+IFURZ/gT+RRgf6lI5IpEJOCthv+wsSYmy36S+x0hFRqDxCmnWN11VfQnBagXrYe5WyxizT1LQ==
+X-Received: by 2002:a05:6808:14c7:b0:3fe:af08:65b5 with SMTP id 5614622812f47-41cf0abe5admr693504b6e.37.1752620599527;
+        Tue, 15 Jul 2025 16:03:19 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:9b4e:9dd8:875d:d59])
-        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-41c73a25f04sm457282b6e.0.2025.07.15.16.01.40
+        by smtp.gmail.com with UTF8SMTPSA id 006d021491bc7-613d9f14472sm1859238eaf.29.2025.07.15.16.03.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 16:01:40 -0700 (PDT)
-Date: Tue, 15 Jul 2025 18:01:39 -0500
+        Tue, 15 Jul 2025 16:03:18 -0700 (PDT)
+Date: Tue, 15 Jul 2025 18:03:17 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] spi: stm32-ospi: Fix NULL vs IS_ERR() bug in
- stm32_ospi_get_resources()
-Message-ID: <fb2a26a2-119b-4b5a-8d44-b29e2c736081@sabinyo.mountain>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] fs: tighten a sanity check in file_attr_to_fileattr()
+Message-ID: <baf7b808-bcf2-4ac1-9313-882c91cc87b2@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,32 +75,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-This code was changed from using devm_ioremap() which returns NULL to
-using devm_ioremap_resource() which returns error pointers.  Update
-the error checking to match.
+The fattr->fa_xflags is a u64 that comes from the user.  This is a sanity
+check to ensure that the users are only setting allowed flags.  The
+problem is that it doesn't check the upper 32 bits.  It doesn't really
+affect anything but for more flexibility in the future, we want to enforce
+users zero out those bits.
 
-Fixes: defe01abfb7f ("spi: stm32-ospi: Use of_reserved_mem_region_to_resource() for "memory-region"")
+Fixes: be7efb2d20d6 ("fs: introduce file_getattr and file_setattr syscalls")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/spi/spi-stm32-ospi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/file_attr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-index 72baa402a2c3..f36fd36da269 100644
---- a/drivers/spi/spi-stm32-ospi.c
-+++ b/drivers/spi/spi-stm32-ospi.c
-@@ -823,9 +823,9 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
- 	if (!ret) {
- 		ospi->mm_size = resource_size(res);
- 		ospi->mm_base = devm_ioremap_resource(dev, res);
--		if (!ospi->mm_base) {
-+		if (IS_ERR(ospi->mm_base)) {
- 			dev_err(dev, "unable to map memory region: %pR\n", res);
--			ret = -ENOMEM;
-+			ret = PTR_ERR(ospi->mm_base);
- 			goto err_dma;
- 		}
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 17745c89e2be..12424d4945d0 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -136,7 +136,7 @@ EXPORT_SYMBOL(copy_fsxattr_to_user);
+ static int file_attr_to_fileattr(const struct file_attr *fattr,
+ 				 struct file_kattr *fa)
+ {
+-	__u32 mask = FS_XFLAGS_MASK;
++	__u64 mask = FS_XFLAGS_MASK;
  
+ 	if (fattr->fa_xflags & ~mask)
+ 		return -EINVAL;
 -- 
 2.47.2
 
