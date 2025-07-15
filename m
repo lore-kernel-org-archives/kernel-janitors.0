@@ -1,71 +1,75 @@
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52C22C324F
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 22:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CCC2D1920
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 22:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752620320; cv=none; b=H21y3Xc10TQqxJX4GCwwPhB74z7+d8BnRxGlSFWfO10PkPpK7XQ6RGnfLC05/aRHpzf6jVHr24JtLiIaDtl6sm2xeadAuD/oA8ViH2EOgFm7pVbgKGgFCriwzmUzReFfGoi9wUPMjp4cYslGO7rCEVSJnIQGkUJPQt+NOojKTLA=
+	t=1752620331; cv=none; b=CzzoKaVVGJokOC6QTPGym9UWCo0RntI1WwTDqDTyd1WfSJmcw/RenkS0R9gequ1OenD2tzRu0E1N209kFKHn9nG4Xqjo0VD3GUVRFW1Tx4GVuMNwm3mR82fGM8g1T3nUcCuQBwmONdJFN/Ej3tT4+DTcqZfa0CAgQp4W12lPcZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752620320; c=relaxed/simple;
-	bh=YfJndeDNNKb+DJXXBEqntPkbEm1wX2h/q+7NcWAA8fY=;
+	s=arc-20240116; t=1752620331; c=relaxed/simple;
+	bh=sxduJx+oAePAjNzvsNFqsRA6MRLgkNZm51fzqOFHbDM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Dkov5fVyXRzxrTHNdguF+HfQ3/FwwShTXG+BzER6XWmYezpPXOKXg2/EltcDCCFrh0DUohnbMl5Sr17im8HSqNjr1OEamlnZJUFWNJbJBsOZrlL6oJUhFARpM27wpI9VeMPqlF6/O2w0t9bcdbStclekF75gOW0MAcE8Lns2jes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HZl6S30+; arc=none smtp.client-ip=209.85.210.41
+	 Content-Disposition; b=tKaoGVjrX4hyujzoyA04Rx1D2luEzA2uRCx2XFI3y4asfYJyeDY2PaVElXraFfYneCGIa21h1zq7m4EKvhuFa+ciCerSRXVEKAh8Mv65lGlYbrqupX/355i3XP1KZHWL+arS5F0lqCOVvGlzRZhkyFvM94grqlWddE4RiwVD/pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ipjDcwAV; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HZl6S30+"
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-73e650f3c31so90703a34.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 15:58:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ipjDcwAV"
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-72c27166ab3so3760656a34.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 15:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752620316; x=1753225116; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752620329; x=1753225129; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=xd3z62QSYDNQGGQDCwZHy5uaazsJb4z6l10vr2/CFsY=;
-        b=HZl6S30+ktLwy15UZ9EzV2Zvc0ixJsGWZLmBbQQYDn96YEuFBmJ4wbNQhWmSdyEjuT
-         42ueNpfQ1LPvRmq8d6A/vd4XRr2vqEv7hNLC+0sJECUZ8R4GqG8GGsOkW0uD0TXtG74p
-         dH1RGc52zY3iy7awz8Y4IrFBM69f4dzc+5r+xfxcT1kLllY8FVUnlq4FxZTm5RCbZljX
-         My+UEo9FcwgBI/Cbp2Yxg9dwAvg/Nb9vI040lcwUKj8SDp4BpcpS+Bwa3jU/QVVALhCF
-         mbZiiYgh4iQW2a8WM8sZzvdem/vxYhlPTRh+NkrFjSdtfYpy9Ua+Cmefo9fTg/dA9TDQ
-         /tPA==
+        bh=dQdS/fnesxZHeRTbK+njettpxhb9T3PJtvTTlq4Hbyo=;
+        b=ipjDcwAVdEIBzQiDUqOZ7hog4rwKbPxvfQMoy0QhvYZEKaLbqsyegOO4OeOGg2DkPn
+         /k9Ead2Y7U9wF2KgjhKi5RMYs3D4RT9D3MNB4hSV96Cn1rPjrqJkfmRmpK3IjdeEwUSM
+         Mjyz9T78AbmxCtTLSBtiS8EsVT09R8LW4jv7pcgMgpkL+bqPcjZzR23rEeAieHeVOuBX
+         Aj/ATBAbUk0imeUobNcRh4RMGQroY7WLngnVkXTRu4rQEVsMrFr7tZ5esaM2Bt473XNa
+         xgm0fF18tbU4UBpYfEqy3MUijZkcpWnJ5O/7dXpKq2asHujt9OKan4hO6qRIAriwRRqg
+         BChA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752620316; x=1753225116;
+        d=1e100.net; s=20230601; t=1752620329; x=1753225129;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xd3z62QSYDNQGGQDCwZHy5uaazsJb4z6l10vr2/CFsY=;
-        b=wGs8f5XRrv+cD1GtN6c97fdj0+r2UsVI4Esn4XfR2dOvU6HNJfz81wjQz23B62BP9r
-         a//Z1BaBzsMw9wSt/G9LVqVWFbi+8Y/Rv7VlRz850egCNSqUl0kd0x88OSYdRW0vVFkr
-         NUyQxMLtBy5vwbPWl0h51NL1Jyk/F2k/6sgUxvLLxRuC3troIVlyr7LCmHBESnSDKSZb
-         4dbGOUgOYM1q+UObiOSJlvLbhBf2E79V3X0ABctL2VnQmChab9fvXL03tWJJPYZONaE4
-         74hFWzogKk83Sel63ZwOe3EY+fuvgcWgnVtJqChIrE01HmEndXL/251GtFLxCyVDuxU0
-         4D6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWi+hBnrAFURfjGVmAZb1+6L8XHK3iLD7xBbccEsumfY8GrdZ5w94bacPj2wgBGjRnFoxE+ERycsZ6nYgld0Lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0g1UxSGirKXPV20QRaBYJ7dh6d2e1pg1PG4BG4sNrmunqBwVA
-	gDCIRyfu2ePzCcF/k9FMRaVyUvOLnzVvha3mZQRbHC1ResRYzQS24ZmHHCf6UG7NTF6J6SNaRqx
-	bhD+u
-X-Gm-Gg: ASbGncuhMtBpWdM6zAVaHuqwENcUvqLJM9DTvd3zJ/cUU1CIsuDLGuTUCFcD3iDFNaU
-	L+L8GiAZ8QW6HHX9d1+cnIMqopgz15v9W2+bQfqahUW1oIpvUybXL1oPgv21bmMLGYo8rEKInWt
-	/dTrivmFcaje0FHDYTcFniwP2BfgEQMbruLol/oMW9uUjbNbjcs1hfINtrUmK8Bktyqe4O98yJj
-	2csC1rG2GR+hr3fDnrzrwR82+9wBx1cQNwk+BC6WTF+vikgGPxxevgiVyjUpLUq8Fu4TCXoThrw
-	y4k75KnxYeFyLOADUYGpWFIEklqQGEqfl+QkfaG7IMNE+aX/G0EjXV2E6nFcXqx2oBsclVfgoBM
-	Lvw0w6WbNpyEDQjMhAjd/Fb9+0JOOjh197ljErT8=
-X-Google-Smtp-Source: AGHT+IEcnMLBH8gdjj/v/BIDdQjlwnkJ7S/ATCiix0YyiZQNd6IC6FrB4fBrsEE6GWebz8GXYY4Ntg==
-X-Received: by 2002:a05:6830:6c88:b0:739:fcb4:db1e with SMTP id 46e09a7af769-73e64acf237mr791454a34.20.1752620316602;
-        Tue, 15 Jul 2025 15:58:36 -0700 (PDT)
+        bh=dQdS/fnesxZHeRTbK+njettpxhb9T3PJtvTTlq4Hbyo=;
+        b=bXYtmAbmDHqbgqdKlaXkMf5oZolJE6RXaR7JQAajqKoB5IV4w4+4TGwIfWb4oXs6iA
+         WzHo8/TIV/T4A/trbg8iehD5JqSsjCyk1EYxYuD6+ILawTQC0fpLBscUdzIp8qNErz6S
+         HOdnMa4UipZ5xNxhrL/pdOhIB0KSu54lXNq3RtJSt3h4wKuN+y2zChx0mHuC/nj5HU/L
+         NA+ZRQUnBm7iXDUBr6SUqqHBHjmRkIMsVpD7OxZukvMw0BeAMAJ7kn6tOaWFrYfPZRvs
+         Rg52lVaCmNixKttiYUZYhSqypQhrRhei7JuGsrt+3PHN54Xolhz5jb5tGuAQJJWRgakP
+         Ocxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUl9CBvB4s6zL8QNoRgTN9QJ3iReqw3I3LKrOZaOrBAS+e7KM8yWBznHfn8IQpApGXyh/vtYxmc/OJs3i7CjmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUKT70RUa0/Rr/xd12KAtvrCnGqHvWkUE/bW+DHMXO9dUqZ+cc
+	7tywEGFyOpzsC+26VUaiGpeZh/GZ8aB6xQ2MLBLt24xtvdIiB4+vNSlB8L+mC3tHwXsFtTqv2RL
+	WDUDK
+X-Gm-Gg: ASbGncv6Fl8gaLFhqvvKz3PjNleukCTjKxoUIS1apty05a+TnH3Oh4s290TO6e3tdtG
+	YZg5IvNiGqRqED/SwmhE+f1UR8oW85RJkx+QxYlyxPMe+29yhU+F/NLFku5hu79OvaUlYS0EdnJ
+	ImOMifDy5e3YRaG0OD7VdcH/pnFCSVxJoLfCvbazni0NKVa72EcwDis3OMaPFNlgx7XI/G1JhJA
+	OoFUexq6DZFz3oPVvOYyPXJq7SOhrZHqtHpVRT+VcJ94Ubl4s/8OqVp2cSz+8yznhiQQlKSXrDA
+	NhUpt9y5dLbpznNJSyp5Nx1OexlFQVHul3kiutJDGoCiXRTZf7HCGNwpX7CwhN0LZx0Zi3lALcx
+	/mrQob1b/Zgv+/T1c1xH3+NTqVD9T
+X-Google-Smtp-Source: AGHT+IF8MmVG4ypCu726fhwqLEetif2ChyidvWvdhwWbSrW4wyOjZnawR/MGOE0avl2B+dB2nPbJkg==
+X-Received: by 2002:a05:6830:2d86:b0:73b:2751:eee2 with SMTP id 46e09a7af769-73e66613225mr334520a34.23.1752620329043;
+        Tue, 15 Jul 2025 15:58:49 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:9b4e:9dd8:875d:d59])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73e63b94769sm368296a34.21.2025.07.15.15.58.35
+        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73cf10857b2sm2518429a34.16.2025.07.15.15.58.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 15:58:36 -0700 (PDT)
-Date: Tue, 15 Jul 2025 17:58:34 -0500
+        Tue, 15 Jul 2025 15:58:48 -0700 (PDT)
+Date: Tue, 15 Jul 2025 17:58:47 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+To: Sunil Khatri <sunil.khatri@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	Arvind Yadav <Arvind.Yadav@amd.com>,
+	Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] gpio: viperboard: Unlock on error in
- vprbrd_gpiob_direction_output()
-Message-ID: <9e72018c-e46e-4e55-83e4-503da4d022fc@sabinyo.mountain>
+Subject: [PATCH next] drm/amdgpu: unlock on error in amdgpu_userq_create()
+Message-ID: <ef53ff29-4d1e-4f07-a431-c0b91578f93b@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,35 +80,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Unlock before returning if vprbrd_gpiob_setdir() fails.
+We need to drop a couple locks before returning if the kasprintf() fails.
 
-Fixes: 55e2d1eec110 ("gpio: viperboard: use new GPIO line value setter callbacks")
+Fixes: c03ea34cbf88 ("drm/amdgpu: add support of debugfs for mqd information")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpio/gpio-viperboard.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-viperboard.c b/drivers/gpio/gpio-viperboard.c
-index 3eba77f981d3..e8e906b54d51 100644
---- a/drivers/gpio/gpio-viperboard.c
-+++ b/drivers/gpio/gpio-viperboard.c
-@@ -378,15 +378,13 @@ static int vprbrd_gpiob_direction_output(struct gpio_chip *chip,
- 	gpio->gpiob_out |= (1 << offset);
- 
- 	mutex_lock(&vb->lock);
--
- 	ret = vprbrd_gpiob_setdir(vb, offset, 1);
-+	mutex_unlock(&vb->lock);
- 	if (ret) {
- 		dev_err(chip->parent, "usb error setting pin to output\n");
- 		return ret;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
+index 492f1089316f..c3ace8030530 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
+@@ -521,8 +521,10 @@ amdgpu_userq_create(struct drm_file *filp, union drm_amdgpu_userq *args)
  	}
  
--	mutex_unlock(&vb->lock);
--
- 	return vprbrd_gpiob_set(chip, offset, value);
- }
+ 	queue_name = kasprintf(GFP_KERNEL, "queue-%d", qid);
+-	if (!queue_name)
+-		return -ENOMEM;
++	if (!queue_name) {
++		r = -ENOMEM;
++		goto unlock;
++	}
  
+ #if defined(CONFIG_DEBUG_FS)
+ 	/* Queue dentry per client to hold MQD information   */
 -- 
 2.47.2
 
