@@ -1,75 +1,78 @@
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AE2274B5A
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC18A2D0C7B
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752620476; cv=none; b=sQr7C8T+iHx097Oe7zlGEYEaMkg8w8AC2KGoZhX9qo0pK1dnMrUdULjvFe/lEhsSYbdt2dK+tvdmUQwmWA5DVA9k1lGPur3EynScrrymQoqfXuA5lvCzN7hQg1AkICsX89LtsTOkyKumnMiCMXa6VpLEF6v9sc4OQ7ZJhBFlL1M=
+	t=1752620485; cv=none; b=pdSo/xnHv9WvY+/SY38PY1HPNCPW3gWzD0/4jynbYrkMkuiGUwm46HnNUBarolRuKf0A0AhfkIS4J/9F62CUU7T9pkcr/wCRGp8LrbZUmSYxQyobPllA4df6G7GtZoisOZR1t074U1FZLkhuKNPPzYnxIAruoB+5BcW1KBBg368=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752620476; c=relaxed/simple;
-	bh=u3Mpdz2pmtyGUWJnzrCAlKzTsLeej4d/Sc2BmFxp/a0=;
+	s=arc-20240116; t=1752620485; c=relaxed/simple;
+	bh=b/LA/fS6G1ALR75iCSwylRoGN9ZsUCbGZpu9YxrMRv0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i4kxtpRaaiG0JdcyG9DkxJxZmQXn9ibMvQls9qiJcV0GTdgBIcgVnHpytbbl7rP0f9gJdt46jYtwBPDVmrKDVN9WcEgUPfAha4g45FmnJlpP4czklpxocLTx4qsN2JvykTJ91xWntvb3bqCCuSw9/g56zbbJpoPJ2+/SRKEdnEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NTcHzCPh; arc=none smtp.client-ip=209.85.160.43
+	 Content-Disposition; b=PUPgSRiZLYRXkandfHON6CFN4QZN/STJ6wVdZBHaMRw2SYee3wgeIDZn+3pGGW7wekOpiTfQtZoh2ZeLfLa8No54Nb8UQTTR1Xf2xA8hS4rmTkWUeWQWaF9yNwSww2EYfts2Ug+ZlTYx+yTrSRfZymH72G9GcEFsSvzFpAk/2K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v9GXd4uu; arc=none smtp.client-ip=209.85.167.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NTcHzCPh"
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2d09d495c6cso2203453fac.3
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:01:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v9GXd4uu"
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-41b6561d3e6so980460b6e.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:01:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752620473; x=1753225273; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752620483; x=1753225283; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HMxhWC+6DIUyTBowpY7tH1U7/VAQSY6aI1DyTbhk/6w=;
-        b=NTcHzCPh/zGWicsn0r5425ojf/BhrwXqmJXOTQC5BA6rcF+l1iCtyLhHpYBM78IQGJ
-         6Lndy/90f54PSSGAR17B+0sUcqtN8eiwTmUGEleJkVXGQv0Q/qDEiqcwyp1bziAhU4SD
-         icTLRbKr3SoouFIFb9lXpE7xnB1ADBv5IlgbJfYcQrCZLlrsfOGnJrYl9pudfGJJZwXV
-         6VP/POt7aClBHDBOaoQREtc9dVYqtyP7gTUzDGAdisl6ymeOkZo9raj0FRbTqZ9Nxdl4
-         ugN2FHzUOYX9zdo2YeeePFbHI2Uh31JDRjSc5nHgHOnsg77+TbSggJxXFnJH+4HG1Y5u
-         wq/A==
+        bh=k0CRRO8Zw5SYMNCeis2H0ecNCwZ1xJBBe/YWgqbP+9k=;
+        b=v9GXd4uuanam7MiY9coe2hgWN/wJfqgjJcecYUy7JPw4f2lPJ3cupMj0zdQz76nUZS
+         8KND3N+WJDPM5aZZsQDdAQ1gk2QVoSHYiJlG9qFxZpifZ29ugoWfz4qoWZxTmj213yTA
+         N7kZHT0KUrBSRaObYepCZunlD16Ypncjjf1E+O4QhWV1v3LeXIc1LAHpuf0BTGCdXh0L
+         m5O9OkoaXk+Kz504c+lmzERyeRizZp9doePktFeDx74nvUhy6JvT/veAt1Xh1+lCSriq
+         u7EJJhGDkwwdAm912DlQs1PqMUZttsgPOYNZKQBwI0uL8pLaNm/eyQnt93I4lMF6lQHe
+         Sglg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752620473; x=1753225273;
+        d=1e100.net; s=20230601; t=1752620483; x=1753225283;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HMxhWC+6DIUyTBowpY7tH1U7/VAQSY6aI1DyTbhk/6w=;
-        b=NNWKi0xe1yLsngN0YQV59BFkWJCV65WCv+ufrUc/b97jY/B8iYlMcV2Q1tJbLhkNzD
-         H6/CCFM3EP0HxZ3JPtDKcrRQ2aqP4SoIiN8feDJ5KodGIN+eRQRuYfVOW7gJVJXF42uj
-         rAQmXnMi4ESx9Tun6ypXQgyPv/te9qQUd9R1SCPZsSxkSbEG461XLHfwPFWOZKy6NRUD
-         a7se8dq3x7RdwJt+RvGyBLeF0OEjqdSkS+EcFupQB1aqyzRgO2RkUxg/6DfVOXWOnX6a
-         aghoOmB2VPTIKnxgLAQgP7b2N62fCULo6nkV1o38djFup6cOzfHOQRhTGX06eAUcM0CV
-         HEJA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/rUSsSVrUN91S8MlgsnhkDJVkfyq4pDmSDA+pBK9ayuwZneyOqiB7Q5Dhpa70oa8YTrNgTUjFzWR2vR9Yofc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjz1gqcgGUgLBGYicSzMrRK22DUPPjJJmokCvoC/+b/SasR3gQ
-	27wxk9MYQcgMosJhV0TCCWJZwgiFKgOo41PBIQY0DNecqZ6ir6mILrtam9BWfRpMRrw=
-X-Gm-Gg: ASbGncsebL3mEpZ92ilzhUnnJgbZiEh03vy0daUW0cysRUj4pTQO1ulY0ahp332Z+fE
-	8tImRDme5jWoAYtlK4mIgC09fd4gYpLQQQ6Gg0skDVqTtQe/tBBNPUiwpH0ZgeQGOjhq1pMiEEG
-	gRgmHBG2iGxTbqduzTNihPJu/2NMUK1tyL2t0WOYGNwHeis51IidhGDffiwBj1mP1SMJqsPmnEW
-	v/vX3xyaAmbOa5xfXE9xwkuTg/ZwHiMgSCtW3JymvjpXI8HpcwqwSj8epvEboR98WYUxB2OqRNX
-	nYEIS619OClBFN4Abq6xLl4UovRoUvieqqAmmOUc7F4DI2RrK/RdcUX95Qo7ged18NLdx1gWmj6
-	T8komYHJt88GFRygU4cRjE3ZLk9jO
-X-Google-Smtp-Source: AGHT+IEls5whNRzvN01o90WxbCX3ovBdPRxqs7+TUz1Rw8UbE0E1ggiOCz+d99TGSZRB8SxM8NuTEg==
-X-Received: by 2002:a05:6870:d0c2:b0:2e8:eccb:fe1c with SMTP id 586e51a60fabf-2ffb24ae8c1mr586050fac.31.1752620472817;
-        Tue, 15 Jul 2025 16:01:12 -0700 (PDT)
+        bh=k0CRRO8Zw5SYMNCeis2H0ecNCwZ1xJBBe/YWgqbP+9k=;
+        b=Ij4NQAzh/SZogT28oxMnyg+nU3+ucg3lrSwUk3j4lt05OoCKRd0xbForlYDSWuiZa+
+         vdbozOnVw64eovQf6hp730cluKqhYrCj6NYRUcNjzeeVd3urDG660sdXNvXUbTOOOrk7
+         qaz45s263l8pvX/HDyRz0yUIbl2r3csfKfUMLgoyhR7lW5Qc1laNHhlE2aupojY68pIo
+         nXXxD1jImZsBLxRGSlGSTqiiPsugyRBbhieXamxNq32X3KcefP5YLZL7rwAcNlAMCbC6
+         Xorp/KFapX8Ydj9qF1EgGdBcgP/mw3Kes+j8W4hPr/cSTLlcJLUhzJBjBTE/fvs7Kt3/
+         ejrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN2IIMEBck6fqzV+lvChm/zDCivpmbj6ioQU7A41/2BmyZ5SH96bDHfJ/h1fGC+AofrFup6fgNA7ex5mjKZmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtCfJLD61vGVs/SCIWpAGPOfSeRbUY5OjCBY6mBGOp2YLLCVW7
+	bPVMCAeQN3C3JGmdlI2UI2eXJZ9rvqTxEBxTm/kATpZ/tUCtKqri49NfdSBeo67mAgU=
+X-Gm-Gg: ASbGncuFI3weKRxJuJWyNNWJohxlpvVfZZ23c4vXBU6e5syhdI9ErQjFX9ZTieUN8Y8
+	IZIG0QYKzIX3Gjl7StpSubGWFdWOzaNMzfr4JCFAaQUHzygzklhvu/S5l00QOuuaz/ELKz/TDxl
+	3eeob3hacQLtJACu21P09C3rpxYWEXiXNZf5+FUrmommijlrBCnMc7z2xL4c7XXHsQ5M4Kzn0eI
+	Jym+1xRjv0tGU0D1SClyS3j0yXoUrYxtD8D/Uqm96SNQe2KRKLX+J/Kfb5cBLxH8q4cog19frH+
+	HQN/VudZDnoMW7a2Pn4tfN0fZLB05TgEzxU6zMlCKdAr3T9bYYjCPF8Hedkq3ta3k1djbw55gYr
+	HzV590tNjyjDOZzl/811TMzU/zBAf
+X-Google-Smtp-Source: AGHT+IGQtllmBc9kuXNMSNrT8BdEoXm/J1sAHyCL8mClXy5PmdAT8mA8+MNoRfXMLo08tASsstG21g==
+X-Received: by 2002:a05:6808:199f:b0:41b:75ca:b104 with SMTP id 5614622812f47-41d05d37a1emr470408b6e.39.1752620482690;
+        Tue, 15 Jul 2025 16:01:22 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:9b4e:9dd8:875d:d59])
-        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2ff11686cc3sm2964968fac.27.2025.07.15.16.01.11
+        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-41418c0ae9bsm2349086b6e.6.2025.07.15.16.01.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 16:01:11 -0700 (PDT)
-Date: Tue, 15 Jul 2025 18:01:10 -0500
+        Tue, 15 Jul 2025 16:01:22 -0700 (PDT)
+Date: Tue, 15 Jul 2025 18:01:19 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Rob Herring <robh@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] net: airoha: Fix a NULL vs IS_ERR() bug in
- airoha_npu_run_firmware()
-Message-ID: <fc6d194e-6bf5-49ca-bc77-3fdfda62c434@sabinyo.mountain>
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: ethernet: mtk_wed: Fix NULL vs IS_ERR() bug in
+ mtk_wed_get_memory_region()
+Message-ID: <87c10dbd-df86-4971-b4f5-40ba02c076fb@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,30 +83,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_ioremap_resource() function returns error pointers.  It never
-returns NULL.  Update the check to match.
+We recently changed this from using devm_ioremap() to using
+devm_ioremap_resource() and unfortunately the former returns NULL while
+the latter returns error pointers.  The check for errors needs to be
+updated as well.
 
 Fixes: e27dba1951ce ("net: Use of_reserved_mem_region_to_resource{_byname}() for "memory-region"")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/airoha/airoha_npu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mediatek/mtk_wed_mcu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/airoha/airoha_npu.c b/drivers/net/ethernet/airoha/airoha_npu.c
-index 4e8deb87f751..5b0f66e9cdae 100644
---- a/drivers/net/ethernet/airoha/airoha_npu.c
-+++ b/drivers/net/ethernet/airoha/airoha_npu.c
-@@ -179,8 +179,8 @@ static int airoha_npu_run_firmware(struct device *dev, void __iomem *base,
- 	}
+diff --git a/drivers/net/ethernet/mediatek/mtk_wed_mcu.c b/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
+index 8498b35ec7a6..fa6b21603416 100644
+--- a/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
++++ b/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
+@@ -247,8 +247,10 @@ mtk_wed_get_memory_region(struct mtk_wed_hw *hw, const char *name,
+ 	region->phy_addr = res.start;
+ 	region->size = resource_size(&res);
+ 	region->addr = devm_ioremap_resource(hw->dev, &res);
++	if (IS_ERR(region->addr))
++		return PTR_ERR(region->addr);
  
- 	addr = devm_ioremap_resource(dev, res);
--	if (!addr) {
--		ret = -ENOMEM;
-+	if (IS_ERR(addr)) {
-+		ret = PTR_ERR(addr);
- 		goto out;
- 	}
+-	return !region->addr ? -EINVAL : 0;
++	return 0;
+ }
  
+ static int
 -- 
 2.47.2
 
