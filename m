@@ -1,70 +1,75 @@
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0512BF3DB
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AE2274B5A
+	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752620462; cv=none; b=lhWTSqRVjIULhRv6cEbX1Io1w89yQ9vo4ROt+3ikxhS9o9DUc7QfNEKmk/5KsgpYFK+5AKPRSEKCO8npwH0r14t4OrqykvtAI+w9Txu4XVoAvBJOSQN+ZNLF4zT9EczJzGGwOxOrnm+oyU70OjPx07xdU/RY0eDV2VMK567KtzE=
+	t=1752620476; cv=none; b=sQr7C8T+iHx097Oe7zlGEYEaMkg8w8AC2KGoZhX9qo0pK1dnMrUdULjvFe/lEhsSYbdt2dK+tvdmUQwmWA5DVA9k1lGPur3EynScrrymQoqfXuA5lvCzN7hQg1AkICsX89LtsTOkyKumnMiCMXa6VpLEF6v9sc4OQ7ZJhBFlL1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752620462; c=relaxed/simple;
-	bh=M6ZlHU6FLX2CA9QPMHjn/+MEhADmPo6CNAXX8jHSGfo=;
+	s=arc-20240116; t=1752620476; c=relaxed/simple;
+	bh=u3Mpdz2pmtyGUWJnzrCAlKzTsLeej4d/Sc2BmFxp/a0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FOaws/aM8aQP6UCrMbritJ1a8H765aD+ejQynJk8b4xMzY1+By7YhNeUs1o5HFosKLwth/wOwRr8YVcMgCiGN30TKSPEPVxFs/4clh33bWtZk/YmZBBMPXG5gZUTqtlliya2LNLOO8kdfJPRz17nkLqWK/XpwwdYkjW1wyQoNt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hSxU2Ubu; arc=none smtp.client-ip=209.85.210.45
+	 Content-Disposition; b=i4kxtpRaaiG0JdcyG9DkxJxZmQXn9ibMvQls9qiJcV0GTdgBIcgVnHpytbbl7rP0f9gJdt46jYtwBPDVmrKDVN9WcEgUPfAha4g45FmnJlpP4czklpxocLTx4qsN2JvykTJ91xWntvb3bqCCuSw9/g56zbbJpoPJ2+/SRKEdnEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NTcHzCPh; arc=none smtp.client-ip=209.85.160.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hSxU2Ubu"
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-73e55e829fdso963074a34.2
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:01:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NTcHzCPh"
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2d09d495c6cso2203453fac.3
+        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752620460; x=1753225260; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752620473; x=1753225273; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HjmjRwrY70wx2CHWgUgdB7zU+MT5vMpT8bTQPJScVgc=;
-        b=hSxU2Ubu52wQfGMq/dXtCFEhU2rK+OssajI/TEODBmZYw1q5ezDslKFkrsaXzH30Mh
-         mGmFsQOxKlZ/B4u5RNJgSk0Sp5IqZ65MyojZqWXssuGMzfXJx7ksx+k3JHLw8Duy63XO
-         4+UoKOr2jIAhWQApbRE0SIRkanK7bSs4m3tad9ISd/K5cUmY8/43hwZQwy7Vx49I/Uvm
-         /DKN32a+XNl+xsT/ueUcu8Uq89UYGkJGtLwoDRXJJ7EiJoWxCZEcjZg9UOpXlfFskMAZ
-         XZS93TB7WgbOyWHidqz9rnVys44AIq254J+WIY4MjDmTT/JNAjGFsXR7YsjDGUzk42rT
-         cNzw==
+        bh=HMxhWC+6DIUyTBowpY7tH1U7/VAQSY6aI1DyTbhk/6w=;
+        b=NTcHzCPh/zGWicsn0r5425ojf/BhrwXqmJXOTQC5BA6rcF+l1iCtyLhHpYBM78IQGJ
+         6Lndy/90f54PSSGAR17B+0sUcqtN8eiwTmUGEleJkVXGQv0Q/qDEiqcwyp1bziAhU4SD
+         icTLRbKr3SoouFIFb9lXpE7xnB1ADBv5IlgbJfYcQrCZLlrsfOGnJrYl9pudfGJJZwXV
+         6VP/POt7aClBHDBOaoQREtc9dVYqtyP7gTUzDGAdisl6ymeOkZo9raj0FRbTqZ9Nxdl4
+         ugN2FHzUOYX9zdo2YeeePFbHI2Uh31JDRjSc5nHgHOnsg77+TbSggJxXFnJH+4HG1Y5u
+         wq/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752620460; x=1753225260;
+        d=1e100.net; s=20230601; t=1752620473; x=1753225273;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HjmjRwrY70wx2CHWgUgdB7zU+MT5vMpT8bTQPJScVgc=;
-        b=W9s+e49YDK9vShqJ8s2lo4+4tY46qqs5+4b86cEcPGA5Qp+tGY0Ymyr9tSoC4DGiR6
-         uJOSATHv4C6T6WUoBUa4SG0SVKe7nlqX5FdG1udzIfTc84utTf39A6QNAxYPMkjDY83a
-         frXc3Z9M2tyIPc1WwTMYcYhqThSNz/kkIigE+cm+cLRFbOU/TJVlC0Wi0P0GWbyVlcTl
-         k1t6XbXQJG6ZEb/NcEP3hMfyf3SO/5V+PdbuYWZu4xZoHOmAcUYKv4GUXpwBHJevLkez
-         V7vR2hofkGSkDeAijvBcDwMuFxnTa69l1bbHVirTQOBA1MlNcHm4CE7xJ+yL5Ujw7Lx2
-         RBig==
-X-Forwarded-Encrypted: i=1; AJvYcCXDfV/noI44joL/tfIUJo3CSNbZuZfFax56zHMTdTJcOmRxJjlNMsgG3poBlD8D9C6TXov/0d+iEETvkTWMlFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0MMobAaYUmBEzNBQwLK1feQQWq05ropInwc1c2IVOHoZbXjlX
-	m/KLqWFaoCES3K9QO6qllVoEXoR5f5Q9fgDJ1/wJ91/MRUXpRPgUw75RNf+IWPOtOao=
-X-Gm-Gg: ASbGnctsnh5qMBtOq2qn45G0T9WxUEgNWbebQSkpI5VuWa2I4i4F4y4P3k1C8rDZwfI
-	utD3JKwHD1cac30785alEZEZFGcmUSotiOvpfnJaEx0ABqlCV07CfI6X+wR03QF3f7lKH3PxC6H
-	KaAA2KWEeCwV/NoCGSFtl2SeTSnCxHsooQfQLTQ43atF+pykjoU7+247rTJNMNywwdUhSIWmemk
-	mqnAcHWlp2CVg4F+UV8I/Rf40/gc9usIBuF1Rn8QR+6P0ENYd5L8/pKKpj/Kaiey5YgLivHFG2u
-	m9TAkYp5julr/4DNjpMFYS8QbGjULp0pmzQKIjXI8j8AoHcjzyMtkc8B/CJeBRX50poW691hiyr
-	LPqEtxuVTgmjhEs2TzN4ahMgzRdju
-X-Google-Smtp-Source: AGHT+IFzTAUh/H2WsdNWY9R0rFIJq9Rr261iK4dEmF89rYSxkR/WcE1QAJcgUum3s7/cBaN7xF2qow==
-X-Received: by 2002:a05:6830:720e:b0:73c:e30d:c273 with SMTP id 46e09a7af769-73e65f2d943mr315168a34.0.1752620460253;
-        Tue, 15 Jul 2025 16:01:00 -0700 (PDT)
+        bh=HMxhWC+6DIUyTBowpY7tH1U7/VAQSY6aI1DyTbhk/6w=;
+        b=NNWKi0xe1yLsngN0YQV59BFkWJCV65WCv+ufrUc/b97jY/B8iYlMcV2Q1tJbLhkNzD
+         H6/CCFM3EP0HxZ3JPtDKcrRQ2aqP4SoIiN8feDJ5KodGIN+eRQRuYfVOW7gJVJXF42uj
+         rAQmXnMi4ESx9Tun6ypXQgyPv/te9qQUd9R1SCPZsSxkSbEG461XLHfwPFWOZKy6NRUD
+         a7se8dq3x7RdwJt+RvGyBLeF0OEjqdSkS+EcFupQB1aqyzRgO2RkUxg/6DfVOXWOnX6a
+         aghoOmB2VPTIKnxgLAQgP7b2N62fCULo6nkV1o38djFup6cOzfHOQRhTGX06eAUcM0CV
+         HEJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/rUSsSVrUN91S8MlgsnhkDJVkfyq4pDmSDA+pBK9ayuwZneyOqiB7Q5Dhpa70oa8YTrNgTUjFzWR2vR9Yofc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjz1gqcgGUgLBGYicSzMrRK22DUPPjJJmokCvoC/+b/SasR3gQ
+	27wxk9MYQcgMosJhV0TCCWJZwgiFKgOo41PBIQY0DNecqZ6ir6mILrtam9BWfRpMRrw=
+X-Gm-Gg: ASbGncsebL3mEpZ92ilzhUnnJgbZiEh03vy0daUW0cysRUj4pTQO1ulY0ahp332Z+fE
+	8tImRDme5jWoAYtlK4mIgC09fd4gYpLQQQ6Gg0skDVqTtQe/tBBNPUiwpH0ZgeQGOjhq1pMiEEG
+	gRgmHBG2iGxTbqduzTNihPJu/2NMUK1tyL2t0WOYGNwHeis51IidhGDffiwBj1mP1SMJqsPmnEW
+	v/vX3xyaAmbOa5xfXE9xwkuTg/ZwHiMgSCtW3JymvjpXI8HpcwqwSj8epvEboR98WYUxB2OqRNX
+	nYEIS619OClBFN4Abq6xLl4UovRoUvieqqAmmOUc7F4DI2RrK/RdcUX95Qo7ged18NLdx1gWmj6
+	T8komYHJt88GFRygU4cRjE3ZLk9jO
+X-Google-Smtp-Source: AGHT+IEls5whNRzvN01o90WxbCX3ovBdPRxqs7+TUz1Rw8UbE0E1ggiOCz+d99TGSZRB8SxM8NuTEg==
+X-Received: by 2002:a05:6870:d0c2:b0:2e8:eccb:fe1c with SMTP id 586e51a60fabf-2ffb24ae8c1mr586050fac.31.1752620472817;
+        Tue, 15 Jul 2025 16:01:12 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:9b4e:9dd8:875d:d59])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73e54ff7384sm1012741a34.35.2025.07.15.16.00.59
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2ff11686cc3sm2964968fac.27.2025.07.15.16.01.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 16:00:59 -0700 (PDT)
-Date: Tue, 15 Jul 2025 18:00:58 -0500
+        Tue, 15 Jul 2025 16:01:11 -0700 (PDT)
+Date: Tue, 15 Jul 2025 18:01:10 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Binbin Zhou <zhoubinbin@loongson.cn>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Huacai Chen <chenhuacai@kernel.org>, linux-mmc@vger.kernel.org,
+To: Rob Herring <robh@kernel.org>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] mmc: loongson2: Fix error code in
- loongson2_mmc_resource_request()
-Message-ID: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
+Subject: [PATCH net-next] net: airoha: Fix a NULL vs IS_ERR() bug in
+ airoha_npu_run_firmware()
+Message-ID: <fc6d194e-6bf5-49ca-bc77-3fdfda62c434@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -75,28 +80,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There is a cut and paste bug so we accidentally return the wrong
-variable.  It should be "ret" instead of PTR_ERR(host->clk).
+The devm_ioremap_resource() function returns error pointers.  It never
+returns NULL.  Update the check to match.
 
-Fixes: 2115772014bd ("mmc: loongson2: Add Loongson-2K SD/SDIO controller driver")
+Fixes: e27dba1951ce ("net: Use of_reserved_mem_region_to_resource{_byname}() for "memory-region"")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/mmc/host/loongson2-mmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/airoha/airoha_npu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
-index ba6bb8fd5535..63d01d2cd978 100644
---- a/drivers/mmc/host/loongson2-mmc.c
-+++ b/drivers/mmc/host/loongson2-mmc.c
-@@ -887,7 +887,7 @@ static int loongson2_mmc_resource_request(struct platform_device *pdev,
- 	if (host->clk) {
- 		ret = devm_clk_rate_exclusive_get(dev, host->clk);
- 		if (ret)
--			return PTR_ERR(host->clk);
-+			return ret;
+diff --git a/drivers/net/ethernet/airoha/airoha_npu.c b/drivers/net/ethernet/airoha/airoha_npu.c
+index 4e8deb87f751..5b0f66e9cdae 100644
+--- a/drivers/net/ethernet/airoha/airoha_npu.c
++++ b/drivers/net/ethernet/airoha/airoha_npu.c
+@@ -179,8 +179,8 @@ static int airoha_npu_run_firmware(struct device *dev, void __iomem *base,
+ 	}
  
- 		host->current_clk = clk_get_rate(host->clk);
- 	} else {
+ 	addr = devm_ioremap_resource(dev, res);
+-	if (!addr) {
+-		ret = -ENOMEM;
++	if (IS_ERR(addr)) {
++		ret = PTR_ERR(addr);
+ 		goto out;
+ 	}
+ 
 -- 
 2.47.2
 
