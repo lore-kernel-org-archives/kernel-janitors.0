@@ -1,43 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF7322DA1F;
-	Tue, 15 Jul 2025 15:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71361233148;
+	Tue, 15 Jul 2025 15:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752592720; cv=none; b=iWIRQgYJDPwKlXEPxc7U70Z6cZ0S8bJeVEeiLUNRFME5KY4AkIGnfWXWriSeui7mrKmllq/RKsVLND7sHfpQ8afSwbSfMz1ptLznzcpBUxuPg7N/7lefrjP5PY6cCAAOtY4pKCPVInRffiY6SBadJvY9bojS5Y3B8k8vJOYNctA=
+	t=1752592926; cv=none; b=aYzd606nsw6ohhUR2e9E0VCmyQIMmSbF6NxdTIOUq600wFuVAIPFwaz1J0UkL0rccEkDofjQ6BjXv7GBSK99pySrC3kEnOZMlQlDb4KXh6YYmc16KpqX15/gkpAhQaRUWQ8F5Ju51o5AXvm+LHYoynNY2ZYCZtp4xMb6dijM7s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752592720; c=relaxed/simple;
-	bh=q9VBgZoVnvlYmzkNOY4MseIlWIGaQ1fU9AXJh1oGUOA=;
+	s=arc-20240116; t=1752592926; c=relaxed/simple;
+	bh=6fs8/NfuMxahoFjmKXHZsImMOsOUhDYSnfFLmEvRh+s=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lVs0q4T+bGPH8ThVIv/DHn5j9ECLBNBTXtLMau6rF20S7BUB8mARgzUWRh8rJvNm9HCvjBVR9hDZCO1MPoSYpZG8nAyRTrSeEglBiOQmGBd2+KchjRHQD90zF9DryS+44jG5M2GUNOmvZ4nmNPS7VE+Yi3SUYqtDIbPUrpMnepw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOS/GGQl; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=hXdy10G+0RdtqCqr3EA1RcSnFruuBelNa9CWe35eR5Az0D8ozmXjtsprZ8OfV4PWF0CsaOdQuqlpSzNl60rzcOVoag89UCdcDyZh5DXIBBiz2CC/1S9ESKyUtiasSHN5oD/IYe2sCdVLyUKLW52/+LUj3c1rc7e/OLjuPFZ3HCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsjUeGT2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOS/GGQl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C258C4CEE3;
-	Tue, 15 Jul 2025 15:18:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsjUeGT2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 902D4C4CEF7;
+	Tue, 15 Jul 2025 15:22:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752592719;
-	bh=q9VBgZoVnvlYmzkNOY4MseIlWIGaQ1fU9AXJh1oGUOA=;
+	s=k20201202; t=1752592926;
+	bh=6fs8/NfuMxahoFjmKXHZsImMOsOUhDYSnfFLmEvRh+s=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=HOS/GGQlPyAUoJj8L470mRd2H5zQAJXW0edmGkkNbJMdPOLp5gh0pP1350jq0Jj5i
-	 7HoEF3kQtAJUnDMRpIW8GLNJh5nXNZoUKznaV9BAvQLtkykzLrB0M+Wydxzi3w9NdA
-	 ZoNvi/ywXtEFGnvQBuwUEOYc+k+BoPTeMJL6s5n/YwuHZN8sCHR9wtz+plaKC2FaN2
-	 9592FrqDGXpwjqS0vlJW28RD5cyL3vKj89Zj9lfYm31xCyoDL+zU5n76mT8eXZkzPL
-	 v8fvS1pZDHat338e2mhdHUWLdyejwpVEXFK+n1YVWGtcJRf7+7vpgNXXo9haH7amsr
-	 i9fb6JfJuw6MA==
+	b=HsjUeGT2YlZAlO1zIKd/qMl99dZbbW2JyTeAfNvDVEeH6DuOp8yW1zbd5nzZpQc5O
+	 I4B2f6u6FdLXjKL1KWfQYyVoeDV/Etby1/umlnh0g/9rWAM/JMMfly92IepbHlU8fr
+	 mgNRGQDyLvhICn1C6D6TB7n7Q1nhMD8bpGEyccXBu4wIBYRlYyVyMJmYLaEhmsPmaw
+	 qqheYTEk4E3EhVbRcvP56xHLb5rnnKvPEabjCohNIpu1vy/QSzk909JB9axahlI9YR
+	 RBAGwLJNFWv875lrwE2HrfqyL4E2tH0hlvaZf46hawCuW6fnAr38Fr4gjLs0MImglr
+	 3idRs7yMdH4GQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Abel Vesa <abel.vesa@linaro.org>, linux-phy@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
- error27@gmail.com
-In-Reply-To: <20250710172403.2593193-1-harshit.m.mogalapalli@oracle.com>
-References: <20250710172403.2593193-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH] phy: qcom: fix error code in snps_eusb2_hsphy_probe()
-Message-Id: <175259271714.535271.17010232009134065105.b4-ty@kernel.org>
-Date: Tue, 15 Jul 2025 20:48:37 +0530
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <b13c5225-7eff-448c-badc-a2c98e9bcaca@sabinyo.mountain>
+References: <b13c5225-7eff-448c-badc-a2c98e9bcaca@sabinyo.mountain>
+Subject: Re: [PATCH] dmaengine: nbpfaxi: Fix memory corruption in probe()
+Message-Id: <175259292421.543905.3175578919645729434.b4-ty@kernel.org>
+Date: Tue, 15 Jul 2025 20:52:04 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -49,16 +47,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Thu, 10 Jul 2025 10:24:02 -0700, Harshit Mogalapalli wrote:
-> When phy->ref_clk is NULL PTR_ERR(NULL) will be a success. Fix this by
-> using -ENOENT when phy->ref_clk is NULL instead.
+On Tue, 01 Jul 2025 17:31:40 -0500, Dan Carpenter wrote:
+> The nbpf->chan[] array is allocated earlier in the nbpf_probe() function
+> and it has "num_channels" elements.  These three loops iterate one
+> element farther than they should and corrupt memory.
 > 
+> The changes to the second loop are more involved.  In this case, we're
+> copying data from the irqbuf[] array into the nbpf->chan[] array.  If
+> the data in irqbuf[i] is the error IRQ then we skip it, so the iterators
+> are not in sync.  I added a check to ensure that we don't go beyond the
+> end of the irqbuf[] array.  I'm pretty sure this can't happen, but it
+> seemed harmless to add a check.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] phy: qcom: fix error code in snps_eusb2_hsphy_probe()
-      commit: b7acfeab8af9ee661c933522132f3d1d92ed12d6
+[1/1] dmaengine: nbpfaxi: Fix memory corruption in probe()
+      commit: 188c6ba1dd925849c5d94885c8bbdeb0b3dcf510
 
 Best regards,
 -- 
