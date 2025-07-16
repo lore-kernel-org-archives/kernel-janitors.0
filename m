@@ -1,105 +1,100 @@
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A944A3E;
-	Wed, 16 Jul 2025 08:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621DF2EFD9D
+	for <kernel-janitors@vger.kernel.org>; Wed, 16 Jul 2025 09:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752654686; cv=none; b=gXPObRzKzSlBvpbH9sX8xbwasa0xdkpbThATEZ2el2BCzazGZh2UWbzRyskMAmY3iIkhKEh2M+Lljlpp7NXFc76Tqr00nWL3UxXJSRO36nIwQlmWaTLzx+ZVUTSxfXoG3VN8FugWTH2z5pZ97dbolz8S8JYpuVnT5zirsx4p5JM=
+	t=1752656561; cv=none; b=Q2JJvlppJ8zSRcpwlW5t8D8zM4BOvPnb+pxp7pK9gOAQ0LV496zTFGw4KE1NpXJC0hso1dQGnm1XVe7S1aZW4O7LfU44y75PezwynJfUmafsQi+283xi5RQIomBORKz3rl4e+L2df6w9nmjobcR7rllOPx77erfiLu3F9n+HQbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752654686; c=relaxed/simple;
-	bh=DjLgu1Bu/PPHHPq+eEstZNCnbm8aC5/OtfCcX6LuJXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i6kFSH5670ta29LudrQXWghGgX2UXVn3ocWL9T1ySvCAeCznk40pWdFy1qjPQfVbQXPepalZNygmtVNehGat6DmsejKy/duWraO5188y0P9Ly4NJx3wY67Ahvdl3HrmP+py5eZs2PrX6bJqcrRV4zCMPd6Cpi4lHCRJUlWxN2gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IStlULGD; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1752656561; c=relaxed/simple;
+	bh=gWNSA5bMeT038SwG770NbaScl1hnC1g1Pzb74ptMoLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WYwRgar1gLs4vWmQa+v/GFGJM9tPenmu7GWE9THKPb1uzGUUKvYO49LtPyyUy7bgtjLKqM/rU/Vo1hes30Dt+YPZXD+VihOcsxThNRkx1YlunPcNwTkco7cp2SIve5Ex+6hZWZoK6bBgAjhJXFRsSXMm/LTRyYh+6DIArb3JVsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ghJ35+az; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IStlULGD"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id ED0171FD3A;
-	Wed, 16 Jul 2025 08:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1752654677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vhc5XXVzPBMiAxEHTDwHceDpsK/iOnBDxRP9eROs3iM=;
-	b=IStlULGD5+t389s2SOVgjgYNtuo5hkMYmw2w6F+aITGlTrBXakDtkSn2iiexi3dPVgZlPn
-	PHj8qhpHL92J5v88aH4+ot8Wq2rw9awRQLffDagp8xBekRSKRO2JYYAJbc7+9XG6uFa9ud
-	n/UGdrbLlMcgTMGtJ9TdrGhSyGc2iToIZH0HQQ7XL/9bDEcNQ4/dpe9O3Wt9VYdqyI2xCw
-	gWMvu9q6a7yN8nT+7BPUe3e86vLskVy5CZ4ukgR565KMPTsw7YLZfdcjr16Tl3KUA7vbhf
-	pYPhIVRBYG9of/jEjRLZty63Ip9Xszbu9EaTrb6tON1Gr/Eftv9iJtLlKr1xHQ==
-Date: Wed, 16 Jul 2025 10:31:13 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ghJ35+az"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-454f428038eso45455785e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Jul 2025 02:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1752656557; x=1753261357; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8DU+chVMZKPU+za4znspG/6bfzEqGboZ2pfvVasC68c=;
+        b=ghJ35+azm1Z5dGdCCPB5ZVertZMZVqK0Lqc/EWrbVQpx3G+Zo41/K0n9X2hk3edisZ
+         S9uTbkRQb2mUGMkPN45FtMwDvB4fk1Z1vQn83BINL8KmxtnC4TMhEILg+gYrFw4QHljO
+         HKfEW8O9Xr9ZXHak4F/ooJPOhcwXrZA5LCaKexZOv5kqImlpWD3QsywpyACL3stWDuwh
+         +6uh0Px4e0cwkzZ/q+/kpoqfw1bFPTaoVyh5hqutf4og53sJplxloVMK9+8OAYV2Z87G
+         MH8HFf8vlMAfZG542WEoCqn4vaQYhlderjOtDhLtrdFXfsaLwj4+HTVwe/WIB0mkFr2R
+         K4zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752656557; x=1753261357;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8DU+chVMZKPU+za4znspG/6bfzEqGboZ2pfvVasC68c=;
+        b=t5OcDvJURnb+qV2FSoYMUYBLn1Qt18KrkkG8ff3ckkVVmFL9mIswFXk8hVm2Ha+BnF
+         CK1z+t9Z1tdn3sq7ZJLr/bASIlrhuk2Hv22UlruV6QND9YgRP1x5LRDao5R55HFuYcTK
+         levrVInd9Kmqh2ZyAsbdP5DnTDoEJElbIPMfvGfk5mq6JuLYbMYhrzhBOum1EwlUPOWb
+         cMgSBiGpBu4NQYmJn6/mgiOIFIpOHKR1UuxL338l7n7bFoHqXd8vMUsph9n8KzpXn6T6
+         NKJNmGtGF2yvpkhcED/brghwn1y3ZbQfXbKJwvEre1CPRWm035qbtRWQ5kXVz5Z6LmZJ
+         7HYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcViWIoxPVB6RRFYKeYvcZhAwoQzd/+sXnGZZAeWZVsGf8k4ctUJH5ZfO9SBZK40Lx+yOGl3Sl0n8zIQn++rE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJUAUf6bZ2K/2XjTfC7n3O75mV4Et6aZnDeguzVBe4BWrJvVAo
+	j0eOoIbKIZaiy6xZosqLxKlD8Qgp2S1R3syZGCbpDir6LCzHYBT4M/epIZBgdj72BQJUtHK0xLq
+	f4QaLDSk=
+X-Gm-Gg: ASbGncvDslYNs56d6YHAws14w4/4hpPU8TNPFBpBIvrZDLlbX+ODPUtxWkHBzDoilXA
+	mxu0Ql3sIaS9etUJyM/BDgO5NEa7m5WGk0/jH7qXELhCnemmf+cCCYCFF/tqK+lOFZkG4waahnD
+	Q0I9xO8Y/liZ261Bw5ALyFuIdp4/vphPvxqxl90/G5WPwoOv8N1SD0oFFb1pXTCwm+OqxsMR+ba
+	T/Dp4QiHpzy32Kjz1/thgF5jaKqJu7soMewGSoXE/m7JmUd72ZD6P4LW7CBN9xM3Udox9nkXWrl
+	3MDwaYA5Fp6YhvIU1FAFL7ZgxJ2qir86OS/nnt7dERv8qYpQdHWO+1vkUxxkm3Dg6Ox4ca/a05f
+	GAUawfjf2wB61QXgdU8l+tFA=
+X-Google-Smtp-Source: AGHT+IFd1A5c1zO9GBABwQI2kHUsUg+7vssajggMaoc11A3BqmcR80bJTa/022VUfiROeI8C7pZWxw==
+X-Received: by 2002:a05:600c:3e12:b0:456:1bae:5478 with SMTP id 5b1f17b1804b1-4562e364789mr20439455e9.2.1752656556687;
+        Wed, 16 Jul 2025 02:02:36 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:e8b9:11d7:19c9:41b2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e7f33f0sm14574135e9.2.2025.07.16.02.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Jul 2025 02:02:36 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov
- <dmitry.baryshkov@oss.qualcomm.com>, Douglas Anderson
- <dianders@chromium.org>, Damon Ding <damon.ding@rock-chips.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/bridge: analogix_dp: Fix a NULL vs IS_ERR()
- bug
-Message-ID: <20250716103113.5b321b7e@booty>
-In-Reply-To: <d679e2f0-f449-41c4-83ed-c3e26e440a4a@sabinyo.mountain>
-References: <d679e2f0-f449-41c4-83ed-c3e26e440a4a@sabinyo.mountain>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] gpio: viperboard: Unlock on error in vprbrd_gpiob_direction_output()
+Date: Wed, 16 Jul 2025 11:02:35 +0200
+Message-ID: <175265653234.14840.942937667387824922.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <9e72018c-e46e-4e55-83e4-503da4d022fc@sabinyo.mountain>
+References: <9e72018c-e46e-4e55-83e4-503da4d022fc@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdehjedvfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopegurghnrdgtrghrphgvnhhtvghrsehlihhnrghrohdrohhrghdprhgtphhtthhopehmrdhsiiihphhrohifshhkihesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrs
- ehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello Dan,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Tue, 15 Jul 2025 17:59:06 -0500
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> The devm_drm_bridge_alloc() function returns error pointers on error.  It
-> never returns NULL.
+On Tue, 15 Jul 2025 17:58:34 -0500, Dan Carpenter wrote:
+> Unlock before returning if vprbrd_gpiob_setdir() fails.
 > 
-> Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> index ed35e567d117..4b9b444bd249 100644
-> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-> @@ -1474,8 +1474,8 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
->  
->  	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
->  				   &analogix_dp_bridge_funcs);
-> -	if (!dp)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (IS_ERR(dp))
-> +		return dp;
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Ah, of course. Applied, thanks for the catch.
 
-Thanks!
+[1/1] gpio: viperboard: Unlock on error in vprbrd_gpiob_direction_output()
+      https://git.kernel.org/brgl/linux/c/5103fbb7b59f7a078284a345d82bdab0f0ee6d08
 
-Luca
-
+Best regards,
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
