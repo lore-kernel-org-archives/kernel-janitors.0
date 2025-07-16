@@ -1,112 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D049E17B50A;
-	Wed, 16 Jul 2025 07:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41C72E9EC4;
+	Wed, 16 Jul 2025 08:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752650477; cv=none; b=ImymOgvxv7KSvTadov3ovtjpcLWlIKUBc/b04K0aAzRZ2nuWMu1/0kErqIthewfZolLCfMKCdgdpL2jvcA1wVvlz32MgCtDvXF6B8a1BRfA7nN0diXsUAE2qfASep++LYy6S127td7+IW5P0azVaWASMF41e7M1/KNL0tA26fBs=
+	t=1752654145; cv=none; b=eYF3Mii9WyfoX7AXu06zdj7yfEEaJDU9nUXl7wRpqHx6J9Y3XIorypYIcv0iUc0fPcgyGGE/TZLbvFAQNXbNcuIcJslq4Urjzwbu0p4UheSK/87wLHLZb41L0xWcETJxTU2dmtfM3cn7GsosONVefnKn0b4mDv9VxawjlO0bzPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752650477; c=relaxed/simple;
-	bh=wbYVLhPOCi1vaoM7sTYVmfW1ciprMAQ8sQlxUBmwWnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lU8DXPxm+T7F3fCE4P/aFSof+Uc17HzPWZwz/9EZvVBw5+KBXF85Ry2fZ+2Jygz4k8P2ubjBExpAT/065nTv5SeJh3OtEUE5WzMOAjLGzDQSjdZ5m8nj6QJP2fFZMqdqMuhi0AbMWwIaF2bscnrX3Yl3vfJUgeB1O2JmdK9GRLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+zQxyjG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752654145; c=relaxed/simple;
+	bh=Xz46mLhAokL1btXLkGGLKHAclMSjaOP7HOtiwCqK/Ug=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A7HE6sYgCSi7qL0gCOm05RC3oJarNxMfhfI6uWEWkoreqlQMH2mb9g8cHR+K4dIqIZ4Twx/UqvJ7ztbmeZe/PZHPQRgB2nomflreeRp4M2eiZmt/eOi+67/72y/EjT/ti4pKh/aSL4cBY3RrplELVGkvslCcLPgYLDK90v7FVaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6rTud16; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+zQxyjG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073B0C4CEF5;
-	Wed, 16 Jul 2025 07:21:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6rTud16"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24478C4CEF0;
+	Wed, 16 Jul 2025 08:22:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752650477;
-	bh=wbYVLhPOCi1vaoM7sTYVmfW1ciprMAQ8sQlxUBmwWnc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E+zQxyjGCDYcaP1LOQ4yvAGzfm9/yK0TZ8kv1G2i1KtEbA3F3mai3qoOO7djM14SK
-	 Y255zByLUqIafo43lTVWuEhoj1StgVueK8xQacfHVVdQkJhwZugnMbxTMlubf87dgj
-	 nJlN7EbS+iA7UMXdgLB/SQNnRdkiMNKo8UjIkGDs1l3T6II8Dx4sUtQ6sm4mivu9uc
-	 NFHoSV0aHED5FMkDePsKBa9qA0XnzxYITizl1Ls+sX3dovkAG1eQmHKhgXmizK3RmM
-	 PuUyONl+6kLCMsv4eDzWX2JeKaTT3dM2f/WEfIVX/prQZgLtIAa5XqVnaonLFVLn3t
-	 AXD6cgqjgZaAA==
-Date: Wed, 16 Jul 2025 09:21:14 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ethernet: mtk_wed: Fix NULL vs IS_ERR()
- bug in mtk_wed_get_memory_region()
-Message-ID: <aHdS6o8RNMWplCuT@lore-desk>
-References: <87c10dbd-df86-4971-b4f5-40ba02c076fb@sabinyo.mountain>
+	s=k20201202; t=1752654144;
+	bh=Xz46mLhAokL1btXLkGGLKHAclMSjaOP7HOtiwCqK/Ug=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=e6rTud16JkckzYWCCt0KclDXkbtntyGaCd9AAy3jw0Raa0FGEK0ASw6f6hpf7M/hQ
+	 V38jVUgRQpdqgYcJH4qRF3e5s2AfXDySX5EJehZOSDkyE+ZyuKL1qKYL8ZqmDLN2Oq
+	 jheb1BcSUNqRiYKWToyekml7paxC3GLSGAVzNePLCrEuPG3TtZCpl0yos1qoDmS/XR
+	 FXaR/jCbGGRGVDYbYt/MsYBW6t0kHyXBS8yrN+btxpV1apLmAVz94FwXsCaIE+8F75
+	 1DS+VjM+uhAmgknSmSRHvma+tACvW+IRSkbwCnqVpgK+UNQIPAQkQGmxucQlXzsaAD
+	 O6JrrDmC8jcGA==
+From: Christian Brauner <brauner@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] fs: tighten a sanity check in file_attr_to_fileattr()
+Date: Wed, 16 Jul 2025 10:22:15 +0200
+Message-ID: <20250716-abdecken-backpulver-576b9e593f38@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <baf7b808-bcf2-4ac1-9313-882c91cc87b2@sabinyo.mountain>
+References: <baf7b808-bcf2-4ac1-9313-882c91cc87b2@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6T5EAh89/vZOaNaz"
-Content-Disposition: inline
-In-Reply-To: <87c10dbd-df86-4971-b4f5-40ba02c076fb@sabinyo.mountain>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1197; i=brauner@kernel.org; h=from:subject:message-id; bh=Xz46mLhAokL1btXLkGGLKHAclMSjaOP7HOtiwCqK/Ug=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSUJ1qlHfyVn/Wqpq+SbUHBXItjnkJXGi9w69mqFIrZB ndN2aTQUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJGtNowMp5o2f12Weq/1jc2x 7QUiP/0S571kK45oWiAbLX/yWeHXIEaGbdH5668ee2vz2jQqk9up/yXXVKZsgSmFXHFOATsfndR kBgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Tue, 15 Jul 2025 18:03:17 -0500, Dan Carpenter wrote:
+> The fattr->fa_xflags is a u64 that comes from the user.  This is a sanity
+> check to ensure that the users are only setting allowed flags.  The
+> problem is that it doesn't check the upper 32 bits.  It doesn't really
+> affect anything but for more flexibility in the future, we want to enforce
+> users zero out those bits.
+> 
+> 
+> [...]
 
---6T5EAh89/vZOaNaz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to the vfs-6.17.fileattr branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.fileattr branch should appear in linux-next soon.
 
-> We recently changed this from using devm_ioremap() to using
-> devm_ioremap_resource() and unfortunately the former returns NULL while
-> the latter returns error pointers.  The check for errors needs to be
-> updated as well.
->=20
-> Fixes: e27dba1951ce ("net: Use of_reserved_mem_region_to_resource{_byname=
-}() for "memory-region"")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> ---
->  drivers/net/ethernet/mediatek/mtk_wed_mcu.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/ethernet/mediatek/mtk_wed_mcu.c b/drivers/net/et=
-hernet/mediatek/mtk_wed_mcu.c
-> index 8498b35ec7a6..fa6b21603416 100644
-> --- a/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
-> +++ b/drivers/net/ethernet/mediatek/mtk_wed_mcu.c
-> @@ -247,8 +247,10 @@ mtk_wed_get_memory_region(struct mtk_wed_hw *hw, con=
-st char *name,
->  	region->phy_addr =3D res.start;
->  	region->size =3D resource_size(&res);
->  	region->addr =3D devm_ioremap_resource(hw->dev, &res);
-> +	if (IS_ERR(region->addr))
-> +		return PTR_ERR(region->addr);
-> =20
-> -	return !region->addr ? -EINVAL : 0;
-> +	return 0;
->  }
-> =20
->  static int
-> --=20
-> 2.47.2
->=20
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
---6T5EAh89/vZOaNaz
-Content-Type: application/pgp-signature; name=signature.asc
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.fileattr
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaHdS6gAKCRA6cBh0uS2t
-rJY+AP9l/ZwTg4VNy3YmVDYG7Q6N4lpACY/dpdBptMwTbwVXRQD/VnVlpZVCHfGU
-giDlSZY55au/4/6aau9dTKjSxPxYzAE=
-=DYVE
------END PGP SIGNATURE-----
-
---6T5EAh89/vZOaNaz--
+[1/1] fs: tighten a sanity check in file_attr_to_fileattr()
+      https://git.kernel.org/vfs/vfs/c/e85931d1cd69
