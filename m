@@ -1,121 +1,70 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0410D274B2E;
-	Wed, 16 Jul 2025 19:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86CF2BCF4B;
+	Wed, 16 Jul 2025 19:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752695203; cv=none; b=neJwai/YAqcBqOvdt2b1FeTOw0i/6rH7MHMDMjaaH8fF4Wc6EoeZKL0kLsQx4we6frmOiLXmGqrwERX5S8tBZcmLuO5A8BVNsvFoF3qOaHfVXAdswtLXpQf9QbwdbKm12SKi1Bm8raJ5IjOLi2aISZC7eHZ6YJRiFt4GiPzquaw=
+	t=1752695924; cv=none; b=a/0V4IJnvRV/z/SR2gow7EMLLS7dGiOSnkCFfHNqO3abzzmMTUEPHRnwGUlnIMhKbI1vbvufTABn1koHhH96/pr2QhnRJV21jJmMz8NHBoXwveCcE90A1KHx5E/sUhU4XKex9nn0wb0u0VAVa11JOOz5wH3buIHFs5ztAxLFmhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752695203; c=relaxed/simple;
-	bh=yrZeZxZaL1oSZl0Ltht0EUolD+c2BK/hG/RGIeVPhWk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SBc80NT6tPrSkyfZJcaihT5FQ96Rk/z2zTfFsWgtCA+vlSInqSG314u7jwzmD1pUq1VWcgO6rjglmatReGJu7oMycoh14TzrB90uXaP8q7AJs6NZ/pjmtmfgU3hSBkyt+dCX4nOs4rKmd/mWE6OSjqJgE8aMz+xxzHj03XnPZts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XmgxYvT4; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752695924; c=relaxed/simple;
+	bh=7QuCx8a4UBg/PNj1N31M+C5I775KhJpXkjO9k+tR3GE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SN0ZuSE+KCvRZnEVwoZe9Fa1K1RAi/Ox79ItB4+Zf+MTbM7ePagnMyJ+t4iEPWj/wYEGG4nyRQU2MArYFsLpRGGH/kMFnAXFDzTbUvamni4ZXKwd47jXQqRdPI64m8VOfpggTRCFDTKMNK6k71j7mb3rB5Hl8fHGSwAVGwrIxw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DmnLuyDJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OHSSW3Uh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmgxYvT4"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-31384c8ba66so55229a91.1;
-        Wed, 16 Jul 2025 12:46:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752695201; x=1753300001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dERiphi8SN2qWU4cz5FSID1siLlWpDs3Gm8IHGd1cj4=;
-        b=XmgxYvT4sEQQeGG0R1qQrkZTwGiO129mU2wQOSNmPdjDWcejr+Q7grd96JGEFpyNw5
-         GpdnHuq9gu4cn2rmBHbnwm4rpKuyYkfFwsmw/TzewRZgWpTEku+0YxWVuEkumWGA13FU
-         CehexDkOozoowcJ4yLYHhxVkLcwivGNFiTSX564tzhp1IRQqqpDCSN0T2X86XAsrAl0w
-         AheRIKPpxP339Af8GKtYy9Mdq3TI9oBh9vBJ7IsGkiPXa8wKlAtIbknfkUundlXX+1bH
-         3gSQtoXhV4z30u3/ZfFHPG37lKHKKBCzVFuGN6cNRXb6zH2Zsz4e1xjfWOLuLFzd9+aX
-         pgHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752695201; x=1753300001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dERiphi8SN2qWU4cz5FSID1siLlWpDs3Gm8IHGd1cj4=;
-        b=lhcSu9p+9YeO14OInsDnQaxLKg2pIagmWDfUjpnAkrbotku2QQ3/APXkhW3hJ8Ka3O
-         M91PrESnZ7z8vHPUL4Hc65XR7ky8Ay5Uot317tghZj35bY0mR9FLzdNqj4393inXT6Iy
-         imu1nAlevoDZjFlIRaAmYiDbCtMbv3v4cQ8i74i0UXKXTBVZ2Cb10+KHrbfkvSOHZh8k
-         GrFwzxzthAc3qLRav6xHzjbxL4xp5yOTqFRgDO4yhZ+TBbWlE0JnhU6ReVon+JTRrWT7
-         DOBtV8aCrSoLDB6NwTZ4gR5+X9lURbLLAhwprbi+i1k9Zz4z/Xza4c09ClQAT+Dd+tkk
-         o+FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUg6yBQEbK8BUH49iMmi+MCYAjnFSdMLegqTI6fnMz9XmRxIXD2uyWq86CWknxlIE2q11zjl8jquld0ivomO24=@vger.kernel.org, AJvYcCWvkjLtgNcECTex/InWKUD9dyqLg+pbsnCcAfe+Y4Et9Wy+esN7M/DC2561UP2NSfyfO7fIlHin6GISV6k4@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWJn7udRbUSaeInSXqvx4WERq5SWeC0b3hqjHBvuzNWfnUCjoq
-	fLVvxkhEZ1WC9/mTqrBYI7M1/M5pQWf7Hr/vZNgsndQhsbRDxi348vLmQva4HM/xC8Us/wnDvBz
-	BLC9VQTSQleFhcQgDsfofDiprvPYyXj0=
-X-Gm-Gg: ASbGncvwNVZyAn1IMd1R3Y9KbeE9mi96GOCfpTAZSnwbyjuuTqy0n49h9wcvQlRC8Zz
-	maWBv20HwFlyTjbvfBcb/sLKVrlKox08+q259p11tpjHSxb/f4TW+10LQr2edifF9wB8f06kk5a
-	Wg43ahIBjBsnBeUDQP908B7ymVswdJgqICWsUBCb4qTkf7yQdk+6c3MNwFKUL+QYfXT7fa3CAJB
-	kx06KXa
-X-Google-Smtp-Source: AGHT+IG514k5VRiW+obbt6A+oNLgvRU+VAxB/IFQYU8x0hq4HIBflZqiyffcLx81uxBEMk6EHCx34UB1XvYWKTTziSE=
-X-Received: by 2002:a17:90b:4f8f:b0:30a:80bc:ad4 with SMTP id
- 98e67ed59e1d1-31c9e5fd68dmr2197726a91.0.1752695201128; Wed, 16 Jul 2025
- 12:46:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DmnLuyDJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OHSSW3Uh"
+Date: Wed, 16 Jul 2025 21:58:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1752695918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LPR48JgV4EPJQeAgOleKmQDcPYOkMtCBi4gLfMf18kI=;
+	b=DmnLuyDJUCQ0eQb2uoUbQIL+OeUNogHLAo+Ipjaumd8gdfBtdY0HUqvl5CRvyth0OOe4rP
+	C9aBeXk2RRMQuX4aSKQPkFS6F3sTxNFD9vjNVAVyDvs16Z2tLCCxkxMDpmjjEnYWuz8F3s
+	LrPHHk0Ll3CljFrgJ96DwAq+ATZYixt+j2+V528RlyvIprV6q0Q4KEBQjbiUw0HC/MgfX3
+	feEC/gtc9BZ2Pp0LBm0H/7zMpNFWsBEs6NoKpskt29i8axsZ6qLeDju1x8vZnWPuRw7fae
+	YaMaSALpvyB4Xq2Ao3cAcBjuDryZG6R4EFf95LzsoqK2MCjwjb3VHtqRJf5Ihg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1752695918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LPR48JgV4EPJQeAgOleKmQDcPYOkMtCBi4gLfMf18kI=;
+	b=OHSSW3Uh9KQIyREZ7aMdjpoWbsJgsIzrWja+ApNLJhg0qRXQIhNtuc2h41EJ5n4FSwmOsI
+	hk1mwwt1eu0WGdCA==
+From: Nam Cao <namcao@linutronix.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] irqchip/ls-scfg-msi: Fix NULL dereference in error
+ handling
+Message-ID: <20250716195835.W1ewP6iP@linutronix.de>
+References: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <366557fa7ca8173fd78c58336986ca56953369b9.1752087753.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <366557fa7ca8173fd78c58336986ca56953369b9.1752087753.git.christophe.jaillet@wanadoo.fr>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 16 Jul 2025 15:46:26 -0400
-X-Gm-Features: Ac12FXwIJeC3bTU_gBoJ6CtWloLxs-4aqxpxghGcmsfmdyFd7wbRIjGU8uyr99E
-Message-ID: <CADnq5_PZ-F=Ut=z05pqTJNs30as2hez-hq2kMariJS3E5N2AXQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Fix missing unlocking in an error path in amdgpu_userq_create()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sunil Khatri <sunil.khatri@amd.com>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
 
-On Wed, Jul 9, 2025 at 3:28=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> If kasprintf() fails, some mutex still need to be released to avoid locki=
-ng
-> issue, as already done in all other error handling path.
->
-> Fixes: c03ea34cbf88 ("drm/amdgpu: add support of debugfs for mqd informat=
-ion")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Wed, Jul 16, 2025 at 02:43:45PM -0500, Dan Carpenter wrote:
+> The call to irq_domain_remove(msi_data->parent); was accidentally left
+> behind during a code refactor.  It's not necessary to free
+> "msi_data->parent" because it is NULL and, in fact, trying to free it
+> will lead to a NULL pointer dereference.  Delete the unnecessary code.
+> 
+> Fixes: 94b59d5f567a ("irqchip/ls-scfg-msi: Switch to use msi_create_parent_irq_domain()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-and pushed out to drm-misc-next.
+Reviewed-by: Nam Cao <namcao@linutronix.de>
 
-Alex
-
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_userq.c
-> index 513bbc543f40..bce97318965c 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_userq.c
-> @@ -520,8 +520,10 @@ amdgpu_userq_create(struct drm_file *filp, union drm=
-_amdgpu_userq *args)
->         }
->
->         queue_name =3D kasprintf(GFP_KERNEL, "queue-%d", qid);
-> -       if (!queue_name)
-> -               return -ENOMEM;
-> +       if (!queue_name) {
-> +               r =3D -ENOMEM;
-> +               goto unlock;
-> +       }
->
->         /* Queue dentry per client to hold MQD information   */
->         queue->debugfs_queue =3D debugfs_create_dir(queue_name, filp->deb=
-ugfs_client);
-> --
-> 2.50.0
->
+Thanks for the fix!
+Nam
