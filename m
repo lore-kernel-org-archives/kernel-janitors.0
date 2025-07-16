@@ -1,25 +1,65 @@
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202592673BE;
-	Wed, 16 Jul 2025 01:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2FE2882C3;
+	Wed, 16 Jul 2025 06:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752630234; cv=none; b=MLe3JfVKphz6kuP+OZiGx9IEEvUwWWM8WmUnMIiSKBlDd8PdcR1VjaD1WYEkvgrw6h3QZDhBluVZnbGWH4v+QxGXNh2cnsOzE6EbLvDdnDNUarhL9a7EIOhanJz1Tgj/4BymBBQCvEDIE7GQHzvgryUGXEtFR4TxGHuf+ZzX/aQ=
+	t=1752647140; cv=none; b=oZiNqJA1Y//J9YzxejDdl0NdWi30FUrhhuvEPkHXBQpwW05y1r6usQ1KPkE2Ip5DIEOvv8aFVEEN/Mk9HDzfxicBm2VS+tchdmvaPWg0dp8rLPM4jtVC8arLV4E8cyRR8X5u/5p/yMp6PKem4m8NRmWpd4imjtxzVY+hWtBTR/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752630234; c=relaxed/simple;
-	bh=rF0MHVbq+F3cHd/MVDh6va+zZCfHXwW8Po+mxi2i4qE=;
+	s=arc-20240116; t=1752647140; c=relaxed/simple;
+	bh=CXZJNwcV9g4cCWofAPhw1/dzNXLMspHjTFDCbICIxf0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J7qytHTYAAXRn6nFNXiH9sIn8MjBniRDs259bM0Y2qUVWQBq+NW1cimBU7I0wF/iCpbWW0SZKjwGRldBDeJEvK9dyVh+krokVegWsTtSxIKNZxuiWQO20cPcQiV/Bnret8qri027TYqWhYhR6MaKCcaXYqSFuxdhU/XdU2gRa68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.193])
-	by gateway (Coremail) with SMTP id _____8DxzOLTA3doZs8qAQ--.22524S3;
-	Wed, 16 Jul 2025 09:43:47 +0800 (CST)
-Received: from [10.161.0.102] (unknown [223.64.68.193])
-	by front1 (Coremail) with SMTP id qMiowJAxz8PSA3do4y0ZAA--.16523S2;
-	Wed, 16 Jul 2025 09:43:47 +0800 (CST)
-Message-ID: <26b89619-63f8-4534-9f1c-12acc65502b4@loongson.cn>
-Date: Wed, 16 Jul 2025 09:43:46 +0800
+	 In-Reply-To:Content-Type; b=piZPnIDkDj8PZKwh5UGyFBIuTStcGK0d43XkONVogQema2HdglJ+UfQWE5WBQv6QH+FyNJLVMe/9Sa4Wc79Trw0hm7Ha7IcKrjKTvNLKGr17ErqqkcHbaKsB7RJZjuJslUdmC3St7I49pvzvQJOK8GywvjgC8xi1SR0YhD2qh74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JNz9sDPy; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JNz9sDPy"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45348bff79fso71349965e9.2;
+        Tue, 15 Jul 2025 23:25:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752647137; x=1753251937; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dRZBKbHE/70C7J1yRSTOwPBNDDrsyZ8B0bPbXOABTIY=;
+        b=JNz9sDPyTbgT1OASZxGWI8n7010i2v1Aw01lc85DcbT0/lNi41VA2SHV4cL6RriBo1
+         TIGUcYWklRnwdNXueHoScyuXm7X0q1DCfajvXTjQJ9MdqguPigQ7EuMeaaMhm1rz3SOX
+         KDBnr4oixU37hYFye46a6G5gsIFOi2FgBJrrvNL7C8pAmIe4spXZwvJyol1ZkJmcC9n0
+         5xVTPt0N69fHqNxZ0gul3ERQaEmRS1QSGi7H1jiZZkjXIMMB6oudDIFAN6RFXWyhJ2S+
+         BqTsEF/dgu0f++UwserjQ6JrWqY2oOF39UzhNl0cNv+V1aNb6lLbL56e0OYdoh2wqHY7
+         GnPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752647137; x=1753251937;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dRZBKbHE/70C7J1yRSTOwPBNDDrsyZ8B0bPbXOABTIY=;
+        b=DJ++NdXmPJyKNt/+QIKX6eNSkXwl3l0Tn+rKjUSb25tjpso6mEzYTqRjt3NZvSOUcw
+         yZW2WVbB4r1NIpUm+yrM5I8EeEVQdh9/WhLn/NMvBzH5Gq15/SIfrjCfmFCnvpDrmmZV
+         8xl5y04dSmj2JTno8pAbvvutquq7Ksi9FHVhWZFu15+/zHawrkpecG9DM2h8s1QmtTT0
+         8w3QhFt5OlWoUOuR0g7OZgtQFX4aYVlAiO0HLWv952l9WImx5jCYgu466i6v0v0P0UEk
+         1cRnkgQckaeSP7krB8NsVF1vUt38xr7dKNmvnAN7RzRvL6z1RZQzW3gFQCyipo0GYUq4
+         RRnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0RWIUqAvSjt4/O+iyZIPdDEiYt/k6oVqHb7+DvCarkIPjJJUhZ7mH+GCBnsRqok9L6m0nXG6N@vger.kernel.org, AJvYcCUfCHxBGqLhZkS2HCk5/RIuzDpzfu4NRwNSg+s11TUcRxZW0NGX96mirmzQhBjH9XGKZs3su72bvZqt26BWGWc=@vger.kernel.org, AJvYcCWOfxDA+MfLwyZ6cOe4FLbq6F28sL5fuGhXsYaRd5Le73Zw9R8W0hAR+TPoVPTirEsT+gQSniOpo5vYQaNO@vger.kernel.org, AJvYcCWtBKkc0ANdjPl8RYfFMuU6YeDney7Ra9ZMkK4VVGliPhI1ymnFgbvIYaPctEL895iUhYVmlp2YndZGfA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvldI3Thz9uQ94OgKRPjBkl7UJqDEhSq4drxzlKGJuXDydW6Ca
+	xL2dlf4Cut2vw+U6x2QsTla1bSwKokP34dvwBox/Nf+57MrqOgkQBN+3
+X-Gm-Gg: ASbGnctMfYUyYT8yNlFk+XbQKEeU2bcZHc/Idc8YR2Zs8cxGQJwCQkkwTZYvMMLSkLY
+	bdvo9aI2RFbIIwuwlktq3R9LJlKZs9Hx0eEWmLPxOcnSJWbKn90HFIJoKkKmWLAyZ5kmLHlTsMW
+	SS8RehiVatHlP6fnr5QNqhG5JFAmJHYJrN6XadiBGmhPPs8GAIeB+g5oUsY+XCYGi9E0lCdcR5+
+	JV11ZIx1BGDQHFq5I3/maFulNFMyZGfqJ5A8rhP+di1E0Lt3X+ZgksnuLkJbafsw62qGwZ8HgUx
+	cw5CxOYbY9GoZim5NF5fwAk04u6RCWmoxczBhv2hEQFYgHNGcow+KndB+vO3kEuILCqbWOrXGSq
+	MfcVpKcwk8/GbZVmS+knvZHeooA83nktgUC1URzPwF8tE/A==
+X-Google-Smtp-Source: AGHT+IErWcCruAU8JOeELAqiyXcJgxqfIC95um24KJrHPc0qCG5TlnBhgWNImkGOoPwXAmI0BFHIRQ==
+X-Received: by 2002:a05:600c:4ed3:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-4562e3cac86mr11875435e9.30.1752647136271;
+        Tue, 15 Jul 2025 23:25:36 -0700 (PDT)
+Received: from [10.80.16.197] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4562e8075d6sm10653015e9.16.2025.07.15.23.25.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Jul 2025 23:25:35 -0700 (PDT)
+Message-ID: <83adce36-0c4c-41c0-bcd6-bc4dc93b5667@gmail.com>
+Date: Wed, 16 Jul 2025 09:25:33 +0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -27,69 +67,55 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] mmc: loongson2: Fix error code in
- loongson2_mmc_resource_request()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Huacai Chen
- <chenhuacai@kernel.org>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-In-Reply-To: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
+Subject: Re: [PATCH net-next] net/mlx5: Fix an IS_ERR() vs NULL bug in
+ esw_qos_move_node()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Carolina Jubran <cjubran@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Cosmin Ratiu <cratiu@nvidia.com>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <0ce4ec2a-2b5d-4652-9638-e715a99902a7@sabinyo.mountain>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <0ce4ec2a-2b5d-4652-9638-e715a99902a7@sabinyo.mountain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxz8PSA3do4y0ZAA--.16523S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrKFWkWF1kXFy8Kw17AFy3KFX_yoWkGrb_ua
-	yjqrn7ur18Gr1Y9FyFqFy8ArWSqFWDW3Wrurs8t3yfuas5t3Z5t34vvrWDGFy3Xr1rCF95
-	uwn5A34xAw1rCosvyTuYvTs0mTUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1EksDUUUUU==
+Content-Transfer-Encoding: 7bit
 
-Hi Dan:
 
-Ah, sorry  for my cheap fault, and thanks for your patch.
 
-On 2025/7/16 07:00, Dan Carpenter wrote:
-> There is a cut and paste bug so we accidentally return the wrong
-> variable.  It should be "ret" instead of PTR_ERR(host->clk).
->
-> Fixes: 2115772014bd ("mmc: loongson2: Add Loongson-2K SD/SDIO controller driver")
+On 16/07/2025 2:01, Dan Carpenter wrote:
+> The __esw_qos_alloc_node() function returns NULL on error.  It doesn't
+> return error pointers.  Update the error checking to match.
+> 
+> Fixes: 96619c485fa6 ("net/mlx5: Add support for setting tc-bw on nodes")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-
-Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
-
 > ---
->   drivers/mmc/host/loongson2-mmc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
-> index ba6bb8fd5535..63d01d2cd978 100644
-> --- a/drivers/mmc/host/loongson2-mmc.c
-> +++ b/drivers/mmc/host/loongson2-mmc.c
-> @@ -887,7 +887,7 @@ static int loongson2_mmc_resource_request(struct platform_device *pdev,
->   	if (host->clk) {
->   		ret = devm_clk_rate_exclusive_get(dev, host->clk);
->   		if (ret)
-> -			return PTR_ERR(host->clk);
-> +			return ret;
+>   drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+> index e1cef8dd3b4d..91d863c8c152 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c
+> @@ -1405,9 +1405,10 @@ esw_qos_move_node(struct mlx5_esw_sched_node *curr_node)
 >   
->   		host->current_clk = clk_get_rate(host->clk);
->   	} else {
+>   	new_node = __esw_qos_alloc_node(curr_node->esw, curr_node->ix,
+>   					curr_node->type, NULL);
+> -	if (!IS_ERR(new_node))
+> -		esw_qos_nodes_set_parent(&curr_node->children, new_node);
+> +	if (!new_node)
+> +		return ERR_PTR(-ENOMEM);
+>   
+> +	esw_qos_nodes_set_parent(&curr_node->children, new_node);
+>   	return new_node;
+>   }
+>   
 
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
 
 Thanks.
-Binbin
-
