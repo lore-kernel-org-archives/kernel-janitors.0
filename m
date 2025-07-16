@@ -1,73 +1,69 @@
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3E92C17A3
-	for <kernel-janitors@vger.kernel.org>; Wed, 16 Jul 2025 19:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BA776026
+	for <kernel-janitors@vger.kernel.org>; Wed, 16 Jul 2025 19:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752694714; cv=none; b=Gq4b5m8xlSqDA6otAWLcYB9JYwaawwX4OECf6yuUn8JwqptvcBWZMC1g6N/kahFi3AksHuC+w/RaQUo4gFIf9KAnxc2Pnd7jE3/OynuJBO1fn3BU/jOIn92EUHfZHjkWDs1jDu+elkllIx5NODevlUlrtxou1WgFiQ/9QOKF5Bg=
+	t=1752695029; cv=none; b=nUkoVQcpl++9RETouX3TXOuexySXLzQ+7mRXGBnWcc6x/leVYkgShQ/SJxaR5TgT5Ms6dkXT/juajniqTir/imq46OKcXr5rak/TNgnFENijmMukPTz8x3k15D6x9SKZr/aWACSuwh22Qiu+Y1KIFYh6JcUTFixCLASQ5je2Xto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752694714; c=relaxed/simple;
-	bh=qBZKX2956ukvORxdELqOdgFCeXzBVdKSn4mzJh4Mluw=;
+	s=arc-20240116; t=1752695029; c=relaxed/simple;
+	bh=pXfjGryhHsXaEwigYLwe/P3+EpFLiYB6sbYadjHApPY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XdUAqKZvduxD253t7UDARso9VGPeisTTPZHwMB0kIii6YU/ohIGvrMsXHL3PIjteWHUTw7n26exL6cVtJlkmFw6U9Fxg1OGiZ4VBXIbSmTHp7Kvi4v2kKaV9O0LXzf8ozGuf3Ua2EEQ02Jfhgg8cJXoU1tsxBCE4GH2haU7MQW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ILw2fl73; arc=none smtp.client-ip=209.85.210.52
+	 Content-Disposition; b=TOMfQwKJX0oVkWmFhLSQT9KNv1ai8ztJDMko0kt2HK7gNVBZjWeAk3MiRtmdtDIOH+6EYba0NA2sm+ZYT0pN9+ZEa7zXACrNpeDITyV94CJCf5HDT3tmKhTX6iSSoWMdCXP+ELr+we7W9MRVNKYLvyvYFASOysQy4W2TYmrIMGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RGZqs069; arc=none smtp.client-ip=209.85.160.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ILw2fl73"
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-73e64e87d49so140377a34.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 16 Jul 2025 12:38:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RGZqs069"
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2e95ab2704fso192444fac.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 16 Jul 2025 12:43:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752694712; x=1753299512; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752695027; x=1753299827; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+FDBRSUyUWWqwGhcMioNN7CsL8+ZBOGwwYv007xVH3I=;
-        b=ILw2fl73KH6qgLrxDttggQz9vvHPxvSPvkWzGnlQc3c2tK83IMRvfjIi0Wa4rMmtRC
-         XvJjSTbIR1f/gydT7aOn4TYmSZAjSQ/0tMnGse1T1afFseztxjzdes99ZzEgPVrf34r/
-         5pLuMFgPdTWxNhBO+U8AKUUz8ogZtzo+Bp9+hyCMy+i49LapbUl0sKyc8VVzh5IlurmF
-         sRIHuuMlCmRUyZbMs1mXiaNV4NZRCQ8N124sHtxkQvG8DbZadG4vA+0Tfcot/yvRfazq
-         En8bn8WzLE0Ouo6A35v3kI0C5NcFU1h5sGTt9wdKt2Gt/Pn4MJXPtDnva4e0EN4+V/yC
-         mZwA==
+        bh=tmJZX6J1qRoq7AzSQMCUC8rTJXTuje9Df69FamNPBRM=;
+        b=RGZqs0692df34ugkghm93d1RCzV7NdjrQSOhfeM6oogPG5+7Ay9OprEHChizk16PPr
+         /tjnIM6T5sHHJVcO5QTQGCshX9zUtP76xPNJR2DD1ngtvaSSoLyhO8OJxPcOtfOOT2cy
+         H6/Kexs9yHN2qj35Nb9irIxsLrPGBsXrGUgOOoRyo895dJynKlJVKdQ8KzQuFBZ2z5pW
+         UJ+rI1XleO0Q13QTP+wg0BHU93gOmxlhxFT7KLQHg7bzuouC0vc2Rh5KukEmKH3ixfAt
+         165x5bg6G35PBwKlSXFg4hQ2RbNAxOBTJjRuFaFPyEmR/e12VG97QCA6byVfUllNIzkM
+         WpQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752694712; x=1753299512;
+        d=1e100.net; s=20230601; t=1752695027; x=1753299827;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+FDBRSUyUWWqwGhcMioNN7CsL8+ZBOGwwYv007xVH3I=;
-        b=mlVe3PSss9ykPTYdI+29yT+fL3/yDJK9Ufi8f7Xbs4QJr7MEXzkHx+XaJTZ+LX9lVe
-         RyDunBDvqaJD9Waulbe1uS/iqC507iU2soeSvjNFYE8Vluz5+nYMZNK9NR9bMWu6o990
-         RTVb3Qs288avNL/V2MwhUlrVu3t7rgUUoXFVnBVewK0tyw2oa52Gm4WrpQeyjFflIEeU
-         0DxDAweEAzvdbH+TRKdoNZY1dFv5Xbl5LmdJLuNryxnNU4Zh/eJmbTF7/IyGOt804k+Q
-         eLsDA0C5QQNhX3N/KQItKrZu1J9HmFMJ+abfaS+PiBTo7H2YRfUWIjbj29voEa/3IFA4
-         n2yA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6u15tsJ4E65tPLOUKIR7hxw/gPUQBHce5h7evHRfkvtQq/JFeWhgCA5WkGmYKAjhpGCd/mAK5/gSpTuGyUT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRmnHAgQnk07ZV3Hm2m2TquyFIrDI2YRfPk6HTHCHPeJLU2ctc
-	lQ9dTqsPHNwOgZ8Fz+JrZzOvZkGKmT8BF7l4tlMqus7In0jYAXW3VbFqVmHp02lYsXE=
-X-Gm-Gg: ASbGncvjwfiiv2BasEHDsqOwR3rPK7Ozj0jh7G+QNDA7ba5iqwo1qfHuwYKk3AoxlxT
-	YZHSTmNM/aeQb7/k10zDGsFecXTbBay0D6/IFoN0jQnnnMG8LSALkCeDNcs+hLng35QXDPeUlEO
-	ZAZlrWtZDMxyQf4q+gLL8dYKyOAonWyVzkjPbNptx0d3CG92v3rr+prCa4HYsguH4b1KmmeSwVI
-	MprcYo8QvQQZPB0OKK49WztkDI7R4DILad01g/vwU+xFpW+KchIAHtseFu2yTpgPphteGtQlRhl
-	++mexCwuw5N3NGQv+utXXv2zbN3nC4ZshdNwG69hNEkhVHYu8XQqMeCtTP+gGjCeeZPoAL+P1UA
-	HjNQC5FLizI74p9Uf7/fFHlclqSHVtLcqd6X3QT4o
-X-Google-Smtp-Source: AGHT+IFDI6CVXcKUhCo8LLXFkhb8W7llthuk++X+kRQ27Rn5k1+Mxpsptg2j4SfLdKCLpbJB6uge2w==
-X-Received: by 2002:a05:6830:3495:b0:727:3439:5bdf with SMTP id 46e09a7af769-73e665e298amr3267794a34.13.1752694712246;
-        Wed, 16 Jul 2025 12:38:32 -0700 (PDT)
+        bh=tmJZX6J1qRoq7AzSQMCUC8rTJXTuje9Df69FamNPBRM=;
+        b=Pmj28nPFhNinDp0NsTyfdTnmaU8WCuMUTpDNzoxnUYOolwPaQwZiWa9bs+ypZSJP3R
+         tsbgWFhtoC7cluJWm/yvPJ3bdMQV2+O+QA6+QDH/fhj4q3taHptBUMzL1lFi4G9aI03/
+         cPfPIb2nQtCtdmzPI6xDujJfDsmHW+alLZVslQmPWp7TY/r3wPQ+gURTnYwP8ElPFRwX
+         gCnHGtWCQpo923rnkPigz5FcdOJ+Q2DszWeiURpm2Si6spxoxLm1A4uX3quApDd3hntX
+         twh3Y5GFNw9LgkSaFYQjykAG73Hh9FCgpMu8Nu8id3kTL9+vdvnAVx73kAx+SkNDELfn
+         T1Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZtGd86OcyViQIc9tB7Ze3jH/RvuTm0HfFeilZkuSqbsq3KcpSa5wiccvs6N6qunI3ABGMg9MQI0Y5u91eoZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3AhCdoWzNCXVt4o0VcFQXct5JxEs+Zbf+dzq0yQpY4Vi+Vwmx
+	CWMGW8nKjUZZhSgnb373kE/Sn6a4X33OLaUxKNINdTWDuDZMVsJGJ6aez2SpAB5sf7I=
+X-Gm-Gg: ASbGncv+BncJOjOqM7wvlH6ukIvqQfP5mn2krkkNBU8Z4/G5Se/jQN9EIeUKCaqTqhW
+	fPR1aagj+mpdNSDypLGMZjyByob76bVYNHzFh+sIzno7mq7vzjoU7FanNHizPCbQv3nc2KRjye7
+	0zomGz0osFxKuN43eH4T/EnGxw1BiTDEhJ5d6lI4UsdzkMBvcDl22YOlk29ixqgnxPi6+5mXERn
+	fnYwVIBUX6yo7blhCRkJZ8YSWieacPX70YTourFt2NF+EDhI3W/o4ms/RuEv2Y2nLHrOKm38lQy
+	b3e012rRpft0m1y63h7MS2HnY2gmOwktjVaBrHOjUGd40hKSYWhnHq7exiQl8HVmNqxJXiTWaaM
+	NzH+y9vmNmD7myUBfiTc8CAeUCDzHL8QaVNZOfP8S
+X-Google-Smtp-Source: AGHT+IF8DC41wViyGCjPZEkIppmrGRXKouyjvgC2Rel1VCsq4higRnI+57N6atyy6zVPo8lzk9b3mQ==
+X-Received: by 2002:a05:6870:9f06:b0:2d5:ba2d:80dd with SMTP id 586e51a60fabf-2ffb22506aamr3182710fac.12.1752695027100;
+        Wed, 16 Jul 2025 12:43:47 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:3f28:4161:2162:7ea2])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73cf12a4bb8sm3235273a34.45.2025.07.16.12.38.31
+        by smtp.gmail.com with UTF8SMTPSA id 586e51a60fabf-2ff111c36b8sm3753163fac.10.2025.07.16.12.43.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jul 2025 12:38:31 -0700 (PDT)
-Date: Wed, 16 Jul 2025 14:38:30 -0500
+        Wed, 16 Jul 2025 12:43:46 -0700 (PDT)
+Date: Wed, 16 Jul 2025 14:43:45 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Leo Yan <leo.yan@arm.com>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+To: Nam Cao <namcao@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] coresight: Fix a NULL vs IS_ERR() bug in probe
-Message-ID: <7bd9fae8-a15f-412a-8800-ce47acf0b5ce@sabinyo.mountain>
+Subject: [PATCH next] irqchip/ls-scfg-msi: Fix NULL dereference in error
+ handling
+Message-ID: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,29 +74,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_ioremap_resource() function returns error pointers on error.
-It never returns NULL.  Update the error checking to match.
+The call to irq_domain_remove(msi_data->parent); was accidentally left
+behind during a code refactor.  It's not necessary to free
+"msi_data->parent" because it is NULL and, in fact, trying to free it
+will lead to a NULL pointer dereference.  Delete the unnecessary code.
 
-Fixes: 26e20622a8ae ("coresight: add coresight Trace Network On Chip driver")
+Fixes: 94b59d5f567a ("irqchip/ls-scfg-msi: Switch to use msi_create_parent_irq_domain()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hwtracing/coresight/coresight-tnoc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-ls-scfg-msi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tnoc.c b/drivers/hwtracing/coresight/coresight-tnoc.c
-index 0e4164707eea..d542df46ea39 100644
---- a/drivers/hwtracing/coresight/coresight-tnoc.c
-+++ b/drivers/hwtracing/coresight/coresight-tnoc.c
-@@ -183,8 +183,8 @@ static int trace_noc_probe(struct amba_device *adev, const struct amba_id *id)
- 	dev_set_drvdata(dev, drvdata);
- 
- 	drvdata->base = devm_ioremap_resource(dev, &adev->res);
--	if (!drvdata->base)
--		return -ENOMEM;
-+	if (IS_ERR(drvdata->base))
-+		return PTR_ERR(drvdata->base);
- 
- 	spin_lock_init(&drvdata->spinlock);
+diff --git a/drivers/irqchip/irq-ls-scfg-msi.c b/drivers/irqchip/irq-ls-scfg-msi.c
+index 7eca751d6548..4910f364e568 100644
+--- a/drivers/irqchip/irq-ls-scfg-msi.c
++++ b/drivers/irqchip/irq-ls-scfg-msi.c
+@@ -226,7 +226,6 @@ static int ls_scfg_msi_domains_init(struct ls_scfg_msi *msi_data)
+ 	msi_data->parent = msi_create_parent_irq_domain(&info, &ls_scfg_msi_parent_ops);
+ 	if (!msi_data->parent) {
+ 		dev_err(&msi_data->pdev->dev, "failed to create MSI domain\n");
+-		irq_domain_remove(msi_data->parent);
+ 		return -ENOMEM;
+ 	}
  
 -- 
 2.47.2
