@@ -1,105 +1,95 @@
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E76D1CAA79
-	for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 23:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202592673BE;
+	Wed, 16 Jul 2025 01:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752620603; cv=none; b=fbX2GrxJCDI9DUQBY3NIBJ0llN8WIVToNK7z/zTB4ctEV+AZezEQ79hiMB/yp/aJ3fyFLT2EGiZZTfnr8nYzgee2zJvEwNzoVZJFvhql6+QKceMjjzSDTAuor173W2UUG60KuWhMKGNf8/3JVcG+waKVFORNVuSbigX/KTbsKMY=
+	t=1752630234; cv=none; b=MLe3JfVKphz6kuP+OZiGx9IEEvUwWWM8WmUnMIiSKBlDd8PdcR1VjaD1WYEkvgrw6h3QZDhBluVZnbGWH4v+QxGXNh2cnsOzE6EbLvDdnDNUarhL9a7EIOhanJz1Tgj/4BymBBQCvEDIE7GQHzvgryUGXEtFR4TxGHuf+ZzX/aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752620603; c=relaxed/simple;
-	bh=ojsONraykAW73nHFhU3JR6gIK5F+2qzAE3NHVXM9K1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pkqr/2+JYUDqYKAWF8+90l1SAJKuNZ53wBCDdapGOb8/MnG5IZ6KW/8ALebDhJuTVUoTGQqSJk9G1gtLdOJs+vGwgf/itNPJiOKUnX0v+doRgPnAaB7ar1ac+n2sYVTXOPsWC2UC9XHognblJErESLBvd3pOsecP2cmr+gTq6TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PY12zLz7; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PY12zLz7"
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-41b7d12401bso879372b6e.1
-        for <kernel-janitors@vger.kernel.org>; Tue, 15 Jul 2025 16:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752620599; x=1753225399; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uVPOIdRXltuwUh+ovIsPk+9c5IV4XN6F0lzLlze081U=;
-        b=PY12zLz7XbgUIJ0jnzV4J+G4gATelRhx0W7ggppvUvzVRa88eAtija2wL2iDSfbdJF
-         1o1YV+yJjeV0w5XBK0GX8cHLgkZoriJbzlguNAk4VoJWJNoKWkixN34UoP4oO+pO5ETn
-         yB/lcEpOMwszSux5wXtPA4SqDwp84c4dGmYQ9QakeFu8m4xvkkxtmjQhSKvqJp1zb0x1
-         VDA4EhQAaZULUVk6ixmiv/MBvlWo1eNCWHVjLPCiVRcobpGhE/1cU7RWpj6KsatsRTe8
-         /O209DUhoxXARr7FS/HWif/XXIOqEobCTaDhpqHeOziX3iGHTBEZ1r5/tzdJxdwpnHsY
-         4xaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752620599; x=1753225399;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uVPOIdRXltuwUh+ovIsPk+9c5IV4XN6F0lzLlze081U=;
-        b=CAcFJ2IQcPzOh2r7wxfqUu9sYABS+TGYgQX7EN6V6NRGY09T8tILCRZFNghaov5MAa
-         P19mWXxmmzXx+lR+lg29OVXHRRNtADeCBws14cDUNo0ka7L7onFmetG9IAMA7ziJEwyI
-         OWfQuA7Ulxzupjxwkvnx5FYQcdUo4WhxXzwxbNqOrb4SUE5KlHBFMxx4QcXf1kx6luTX
-         BzDoalHiW82anb4pz135a8cB2eT+uMtuwxA17vkQfc7WfkOVrAnlkIBnbqTTTtvk8uHJ
-         BJ/opV1W4RKFT6NdDyzTvZYhtn4/WB/mH1p2A2b3l2mdxfisUJx3UduxuxPrFNm5ztbw
-         1YOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGu6zNVr9LJvaKjSI0KnOMW2A6Fq7ycM9u9Rwl0gv+JYowsrwml6CEwTK8rdie95nayOQU31CgnsvherbKsP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTWt/FNUCr0skXSkwcpH1pIyyLD7J1DhBmGX85xzAOtkxJQH1N
-	Wix1Dptuh5DtBuGw1CAslbSjW8yimhLq7uAaD5kXpNgbZfvnu38f5ZrO5pm+24oY+QQ=
-X-Gm-Gg: ASbGncsz0jHreLDe0jwhKC/sqN4AlMBP+hBYRgnpE/o1aHbSeLyt9ZtUKVOV5YF3Qkd
-	aGAisYKvZEyLJ7FC3gAv5XYyvKvwUuAULTTYaf3tNoWJUJc8ZZNhN9jXLoFvWThH3m3WvjXjAYn
-	C4WA3p0znXANZvE3+Ad82NTi2EriAVLugheCEAjZSSPIN7IWRzukcJflid/7Dmh3ls/ITzb4djL
-	JPSjwmAaDNHgaAC6Opbn2vFYLQe5s514apB9I04DJFpg7m63pp8RYAoKQWy5HDtSD1m2AvJvZBj
-	7djYzWY2oEDG561spE44b+NXqfuh9bGgYnGqtS/K4R6GXP7G0ZK2eaHgRfPPlYIbz6JKRU8Go9m
-	ApnCaw0QoPLbsQUICXraXQuS/chqA
-X-Google-Smtp-Source: AGHT+IFURZ/gT+RRgf6lI5IpEJOCthv+wsSYmy36S+x0hFRqDxCmnWN11VfQnBagXrYe5WyxizT1LQ==
-X-Received: by 2002:a05:6808:14c7:b0:3fe:af08:65b5 with SMTP id 5614622812f47-41cf0abe5admr693504b6e.37.1752620599527;
-        Tue, 15 Jul 2025 16:03:19 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:9b4e:9dd8:875d:d59])
-        by smtp.gmail.com with UTF8SMTPSA id 006d021491bc7-613d9f14472sm1859238eaf.29.2025.07.15.16.03.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Jul 2025 16:03:18 -0700 (PDT)
-Date: Tue, 15 Jul 2025 18:03:17 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] fs: tighten a sanity check in file_attr_to_fileattr()
-Message-ID: <baf7b808-bcf2-4ac1-9313-882c91cc87b2@sabinyo.mountain>
+	s=arc-20240116; t=1752630234; c=relaxed/simple;
+	bh=rF0MHVbq+F3cHd/MVDh6va+zZCfHXwW8Po+mxi2i4qE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J7qytHTYAAXRn6nFNXiH9sIn8MjBniRDs259bM0Y2qUVWQBq+NW1cimBU7I0wF/iCpbWW0SZKjwGRldBDeJEvK9dyVh+krokVegWsTtSxIKNZxuiWQO20cPcQiV/Bnret8qri027TYqWhYhR6MaKCcaXYqSFuxdhU/XdU2gRa68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.193])
+	by gateway (Coremail) with SMTP id _____8DxzOLTA3doZs8qAQ--.22524S3;
+	Wed, 16 Jul 2025 09:43:47 +0800 (CST)
+Received: from [10.161.0.102] (unknown [223.64.68.193])
+	by front1 (Coremail) with SMTP id qMiowJAxz8PSA3do4y0ZAA--.16523S2;
+	Wed, 16 Jul 2025 09:43:47 +0800 (CST)
+Message-ID: <26b89619-63f8-4534-9f1c-12acc65502b4@loongson.cn>
+Date: Wed, 16 Jul 2025 09:43:46 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] mmc: loongson2: Fix error code in
+ loongson2_mmc_resource_request()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Huacai Chen
+ <chenhuacai@kernel.org>, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+In-Reply-To: <847bf395-6d62-49c9-a39d-8e82c5b17bf7@sabinyo.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxz8PSA3do4y0ZAA--.16523S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoWrKFWkWF1kXFy8Kw17AFy3KFX_yoWkGrb_ua
+	yjqrn7ur18Gr1Y9FyFqFy8ArWSqFWDW3Wrurs8t3yfuas5t3Z5t34vvrWDGFy3Xr1rCF95
+	uwn5A34xAw1rCosvyTuYvTs0mTUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb78YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE
+	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1EksDUUUUU==
 
-The fattr->fa_xflags is a u64 that comes from the user.  This is a sanity
-check to ensure that the users are only setting allowed flags.  The
-problem is that it doesn't check the upper 32 bits.  It doesn't really
-affect anything but for more flexibility in the future, we want to enforce
-users zero out those bits.
+Hi Dan:
 
-Fixes: be7efb2d20d6 ("fs: introduce file_getattr and file_setattr syscalls")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/file_attr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ah, sorry  for my cheap fault, and thanks for your patch.
 
-diff --git a/fs/file_attr.c b/fs/file_attr.c
-index 17745c89e2be..12424d4945d0 100644
---- a/fs/file_attr.c
-+++ b/fs/file_attr.c
-@@ -136,7 +136,7 @@ EXPORT_SYMBOL(copy_fsxattr_to_user);
- static int file_attr_to_fileattr(const struct file_attr *fattr,
- 				 struct file_kattr *fa)
- {
--	__u32 mask = FS_XFLAGS_MASK;
-+	__u64 mask = FS_XFLAGS_MASK;
- 
- 	if (fattr->fa_xflags & ~mask)
- 		return -EINVAL;
--- 
-2.47.2
+On 2025/7/16 07:00, Dan Carpenter wrote:
+> There is a cut and paste bug so we accidentally return the wrong
+> variable.  It should be "ret" instead of PTR_ERR(host->clk).
+>
+> Fixes: 2115772014bd ("mmc: loongson2: Add Loongson-2K SD/SDIO controller driver")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+
+Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+
+> ---
+>   drivers/mmc/host/loongson2-mmc.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/loongson2-mmc.c b/drivers/mmc/host/loongson2-mmc.c
+> index ba6bb8fd5535..63d01d2cd978 100644
+> --- a/drivers/mmc/host/loongson2-mmc.c
+> +++ b/drivers/mmc/host/loongson2-mmc.c
+> @@ -887,7 +887,7 @@ static int loongson2_mmc_resource_request(struct platform_device *pdev,
+>   	if (host->clk) {
+>   		ret = devm_clk_rate_exclusive_get(dev, host->clk);
+>   		if (ret)
+> -			return PTR_ERR(host->clk);
+> +			return ret;
+>   
+>   		host->current_clk = clk_get_rate(host->clk);
+>   	} else {
+
+
+Thanks.
+Binbin
 
