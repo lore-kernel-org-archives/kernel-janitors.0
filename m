@@ -1,70 +1,104 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86CF2BCF4B;
-	Wed, 16 Jul 2025 19:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C0B29AAEF;
+	Thu, 17 Jul 2025 11:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752695924; cv=none; b=a/0V4IJnvRV/z/SR2gow7EMLLS7dGiOSnkCFfHNqO3abzzmMTUEPHRnwGUlnIMhKbI1vbvufTABn1koHhH96/pr2QhnRJV21jJmMz8NHBoXwveCcE90A1KHx5E/sUhU4XKex9nn0wb0u0VAVa11JOOz5wH3buIHFs5ztAxLFmhA=
+	t=1752751302; cv=none; b=JhtLwQZKoNBxuy4LFk3PjKu5icaEF4dR+BN3CupxkLPhSDSp3CF5+GSHY2vgw0FbhTpehPeYPCOgOeoPorHVtxtRmSoXGiBC2CMHDlm5vo9oVke3HSBC9hVz/iDrCLHivDAc9dB3zAwQ9CgEbWmJMi6AemcqDYc2id7oYwbmmJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752695924; c=relaxed/simple;
-	bh=7QuCx8a4UBg/PNj1N31M+C5I775KhJpXkjO9k+tR3GE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SN0ZuSE+KCvRZnEVwoZe9Fa1K1RAi/Ox79ItB4+Zf+MTbM7ePagnMyJ+t4iEPWj/wYEGG4nyRQU2MArYFsLpRGGH/kMFnAXFDzTbUvamni4ZXKwd47jXQqRdPI64m8VOfpggTRCFDTKMNK6k71j7mb3rB5Hl8fHGSwAVGwrIxw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DmnLuyDJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OHSSW3Uh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1752751302; c=relaxed/simple;
+	bh=uNNznCHaRYPa6z9ckg/J1qp4DmjrTdqGCQFEu2dpFEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KizQsyoXhjSy2AINLLus+qkxufGTJjsQWGOo6N1Ycba7tKzc5kGqa9sww6uPFUvbjcBGCfLeNPa0OdPk+jNzVMBT5pzj+TS61N2B1FEPcA4HHfvC5t9YGlXDGrqg6N+yjkwk46Voh+iSpyhzIiq+m+Rac3y+kaehNffGf6DLmAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKPTalwU; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DmnLuyDJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OHSSW3Uh"
-Date: Wed, 16 Jul 2025 21:58:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1752695918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPR48JgV4EPJQeAgOleKmQDcPYOkMtCBi4gLfMf18kI=;
-	b=DmnLuyDJUCQ0eQb2uoUbQIL+OeUNogHLAo+Ipjaumd8gdfBtdY0HUqvl5CRvyth0OOe4rP
-	C9aBeXk2RRMQuX4aSKQPkFS6F3sTxNFD9vjNVAVyDvs16Z2tLCCxkxMDpmjjEnYWuz8F3s
-	LrPHHk0Ll3CljFrgJ96DwAq+ATZYixt+j2+V528RlyvIprV6q0Q4KEBQjbiUw0HC/MgfX3
-	feEC/gtc9BZ2Pp0LBm0H/7zMpNFWsBEs6NoKpskt29i8axsZ6qLeDju1x8vZnWPuRw7fae
-	YaMaSALpvyB4Xq2Ao3cAcBjuDryZG6R4EFf95LzsoqK2MCjwjb3VHtqRJf5Ihg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1752695918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LPR48JgV4EPJQeAgOleKmQDcPYOkMtCBi4gLfMf18kI=;
-	b=OHSSW3Uh9KQIyREZ7aMdjpoWbsJgsIzrWja+ApNLJhg0qRXQIhNtuc2h41EJ5n4FSwmOsI
-	hk1mwwt1eu0WGdCA==
-From: Nam Cao <namcao@linutronix.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] irqchip/ls-scfg-msi: Fix NULL dereference in error
- handling
-Message-ID: <20250716195835.W1ewP6iP@linutronix.de>
-References: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKPTalwU"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45629703011so6162995e9.0;
+        Thu, 17 Jul 2025 04:21:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1752751299; x=1753356099; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6eoKHYqrCMjRD+TGXC5ab0tIcocXYRaE5P3oQBVLSeQ=;
+        b=MKPTalwUwaWUxVaBK2u+d6rvG9QnfBP72FAYiydZa0167O2AUJHnOh2nBOtJvFkbMM
+         DfYd0IBP7da3vVDs/mjaeL+P2tWnoI2/CfUy9gertdlLv5R82FFRBmFXcOOzWVkAgxUg
+         G5UZJkJ3va7Dx3jTxWfQnE1ikhG/KI596VXe5AAm4y6foRLgY1LH4NxwI+VT1LcKhpE7
+         V61+0eY/0gQJuZTYLpK6xw55su69GSDfcsSjapGz5EGlkE3uU3u06J3Nsw+UNZoXzmDq
+         yjJ/PH5f/r1dRi9ZAiVTM0efJ+1reB37c8W6SKABctU1fKvILGjzsscoX6O90HE/olA6
+         7WlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752751299; x=1753356099;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6eoKHYqrCMjRD+TGXC5ab0tIcocXYRaE5P3oQBVLSeQ=;
+        b=xPfIhbudJzSXGNNccXKdSPslxMsCTpWuXnqvY4fVurgmYtrKLaMhYC74yDqMKDKhQJ
+         FddjpOVQPlwqAMLhek4kYJlVCHSI6aEEi3gUb9anCNfdIuBgN+k7tLSdWhXRaN/AteLY
+         RSA5jZ3CdhQ9WThqiTgJmCDSQS3h6y4HI4ptqZ9qLBRUzxYfouFF/KHu3jMqhGB+3h92
+         c4GUSOL5n3Xk/CAEFrmsy+5Iwiuy6fvur8PrhlQD/tPQr4Z+hJI4I+m5t7WFuGHBlfJD
+         73MZGUerLMvNhLt4BH+EJbxdcOwhtrIty7hcDO4+ocYz8jt6lDTCXWw2D3I9E3bfELh3
+         5F+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWPvcOIkFLY9sNnn/GFDLpAT4VMzr3NiNuAY0TDW31XI+zawBIlxH4j0e5VNGvRGFtMCYYcbuSGh86c4A==@vger.kernel.org, AJvYcCXDrjq14egQGo2JjQISvGWj/rNr4Xa9qlLSsrCz8KfboqfntC644hSnmSma/+Cn8WbHTPmjTDEw7HCpb+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQhIBQgi9v53Qv506xsN+oIFA/+P85RKYU3lI50KsVGD2eFXQb
+	zHoef1CWxwKLeejE5fdpiB9rC1WWwFBMdRysud9kigJbLBF7wOfn7wEf
+X-Gm-Gg: ASbGncsnxdZQvQc2aJXXcTqQrhDOkdyAuSGPd6I/sFmWOErCabpbYVdDlMpi6uJkg3/
+	QEpnz4MkV7XYjrPGTaZjuPUMYYTg19cliBVArClfPjOskIL87kbJcVKH4hNzj61fmKWMG8nHoQV
+	+Do724ZkJcxCMI6DNCqHnZCsgNJA2+OMqpoflitBN21yXfFUJSbNDqniek7g4kotQozPMin7LH3
+	7u5p9YfUxEcVLSBrpro7uD+G2clqKXann3gZwQvIfAuXy+S/QVcb6AW5mSeEM7FzG0c+lR0sozS
+	3DxMV55ApNREkjv8PiGLdvJ6vqj0afxK9M2Ras8a9HcgvlT8OX31fGcAKbp+BRL+66M96txH2Cq
+	5Kev7SQvk63GbQ4jYk2GN
+X-Google-Smtp-Source: AGHT+IE6/9C532kVHj8pqjuvwRwAQMgHAT+7XlkS/1Ij8Hzgv32arrvQu6O8oEwkhIDBGucY9Cwngg==
+X-Received: by 2002:a05:600c:1d03:b0:442:f4a3:b5f2 with SMTP id 5b1f17b1804b1-4562f7c7596mr48583775e9.6.1752751298778;
+        Thu, 17 Jul 2025 04:21:38 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4562e886286sm48874615e9.26.2025.07.17.04.21.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Jul 2025 04:21:38 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] RDMA/mlx5: remove redundant check on err on return expression
+Date: Thu, 17 Jul 2025 12:21:08 +0100
+Message-ID: <20250717112108.4036171-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15059507-6422-4333-94ca-e8e8840bd289@sabinyo.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 16, 2025 at 02:43:45PM -0500, Dan Carpenter wrote:
-> The call to irq_domain_remove(msi_data->parent); was accidentally left
-> behind during a code refactor.  It's not necessary to free
-> "msi_data->parent" because it is NULL and, in fact, trying to free it
-> will lead to a NULL pointer dereference.  Delete the unnecessary code.
-> 
-> Fixes: 94b59d5f567a ("irqchip/ls-scfg-msi: Switch to use msi_create_parent_irq_domain()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Currently all paths that set err and then check it for an error
+perform immediate returns, hence err always zero at the end of
+the function _mlx5r_umr_zap_mkey.  The return expression
+err ? err : nblocks has a redundant check on the err since err
+is always zero, so just return nblocks instead.
 
-Reviewed-by: Nam Cao <namcao@linutronix.de>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/infiniband/hw/mlx5/umr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for the fix!
-Nam
+diff --git a/drivers/infiniband/hw/mlx5/umr.c b/drivers/infiniband/hw/mlx5/umr.c
+index b097d8839cad..fa5c4ea685b9 100644
+--- a/drivers/infiniband/hw/mlx5/umr.c
++++ b/drivers/infiniband/hw/mlx5/umr.c
+@@ -1050,7 +1050,7 @@ static int _mlx5r_umr_zap_mkey(struct mlx5_ib_mr *mr,
+ 		}
+ 	}
+ 
+-	return err ? err : nblocks;
++	return nblocks;
+ }
+ 
+ /**
+-- 
+2.50.0
+
