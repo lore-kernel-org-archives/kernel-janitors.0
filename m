@@ -1,75 +1,69 @@
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FAF21CC47
-	for <kernel-janitors@vger.kernel.org>; Fri, 18 Jul 2025 21:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173C021D3D9
+	for <kernel-janitors@vger.kernel.org>; Fri, 18 Jul 2025 21:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752873790; cv=none; b=U+vep3K+XTp/KbNhG4mzu399k+dNysFhxY2lQeukc4Sh7TQSqvDD3z9VQ0b9DCxpmEgKSrqNJpd52twyWwUiI7E689vKAGnGFbV1bk6IHRCY2LbPDlLoZMuUHJQGTAbTmnOIb1Pj6tAaSRboDCLxZlJ1yUdTGQ/SBSY42DC5sB8=
+	t=1752873855; cv=none; b=ftOkstUkH2RkrdNQ6/fLyPXYHdFSjCncw32WIkgTqimgXB1TWyprwwefERT8lBnrERpeTWZ9PbfhGdMflu9pxSSWuSUHkhxhgDSoTCiA1IcaDQpGVItz0IBy9noTk60jXQgvbD66hEImn1+avoLgbp0cntEjmAI9OLaiMx9O1Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752873790; c=relaxed/simple;
-	bh=DG9sa2v1F0UPXK2JNXm5sOExvIo23mu31aj3632NTWg=;
+	s=arc-20240116; t=1752873855; c=relaxed/simple;
+	bh=oIUJkdIPsltITYmnYkXF0c8cUazSTGDIqJj+KFFWPfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ebJaJkt2Q/SBom7Bca+3BbcYmYKxEeEc3wnp+QPdqNYBRaT11UNqnBQDduy2+gBlGkNHxg6P3OhHhUWIltbCYrM1uJog3lUaZfDP9sshfsEEbxPBHodRjSktlnmVOONitYK57dKsaYRyrX2cL+9fFPuEmJd9TxIcjscHL3ZUBAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nc7FoqsW; arc=none smtp.client-ip=209.85.210.54
+	 Content-Disposition; b=IHLx+sIuo+OWTZrXx5CEyCGnfFPRzR4d2ritjY/nlvRJY8iLqfrCwvuBIEywKidQozXYGoTcoQ3gDc6KBlcsweO3qXvDuUgR9qnYtLmwsipgDX9rhSqxfb8PsRTbrgLjOPZJ1hQNijOkTxlRf4d0W1otsgxXQNH8ZLdDz16NUt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JsofT7/6; arc=none smtp.client-ip=209.85.161.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nc7FoqsW"
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-73e88bc371cso494762a34.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Jul 2025 14:23:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JsofT7/6"
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61593d5f92bso1435556eaf.1
+        for <kernel-janitors@vger.kernel.org>; Fri, 18 Jul 2025 14:24:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752873788; x=1753478588; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752873853; x=1753478653; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tK+4glzE3WnB4vC6DvcGs4atxT+1n6gCTpv11Qz3u6E=;
-        b=nc7FoqsWukwv521uGwMoSFpApLqh6K3t6qB5jPJyTI3qDsdbyzWezP5VIHZi9E+frG
-         X2be89/k0vCAdjSh6zCMqoe5dZ2x9XS/PG7kuPSbdgYJp2E9j7lV438xOvR3DeG3kTLD
-         TwwUbbgoyDB7gq+1rb9/AMCnDwuGknlj1BKI8d8UJCyyctNwRA87cVp6jpo8tZjQne+3
-         D2h8V/bwAgiq4e/l2Nx2vc5RGpnqxuiLLTZqY7DZrgJe/EUxOXggSEMqRbBOBUEUf/YJ
-         p2nMyoj0NedIXC2l2ouHIzodTh8qIs3wru/3jwtt06kHYfyeQE0o4gPAMNmr6FN2DAOU
-         D+MQ==
+        bh=cNxBOflrGholZZGn6ETa6dtvAbfBYl8YJ2Uz1dv0uO8=;
+        b=JsofT7/6KmbnknXZmksJZxR0tfEYEhXIMjBMh4XWRHWW/3/0xcUVWPd4RjE2xy6Dq+
+         mA0a8Zj+lhSxJ55v5Y/aUeM9yaqyWtfsArK7Ua6o+FVRJYdDTOwcYJJTrA/Teo9iS82B
+         +R7b/F+KX4A4GiwfuuRhSBh5LXHC3ydwWMDgQ0S+x+K2udE61Co2QaDCFSt7v0L86Rt5
+         bExkDrlBeibSfd+9EwxQaiDdA0j0xu87weETvMwUg5CunjBgXzJIm2G6/+JLbuvdJxMe
+         TVNnSVWWIorLCjbrGmx0SuQel0elildilkRJcCLDRd8yDXRGOF4ETEBzk4YU3NTL7Cpg
+         Bv3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752873788; x=1753478588;
+        d=1e100.net; s=20230601; t=1752873853; x=1753478653;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tK+4glzE3WnB4vC6DvcGs4atxT+1n6gCTpv11Qz3u6E=;
-        b=wjgASuJ5y1TuuapTFsuHTNVHW6PTcI8LccNo5h+EHbmTYGTpgppb6g/hi73+7rrgzQ
-         lPPU8UvLMVDMAio28LcDZwxh9OW+ilJiOY5G8fh5LNdpK7Ky9yz3j0YXwaIoNxyZ4Rqf
-         nytdZaTiNyd3yPegA6Jv4Cn29zanj6TuecGULSOpcz7bVgaj+TSfu8RhcCwdB2zcrjZO
-         Hvev/s2SsTKZKWe9Tdp6d/J4XPQ0VLOEzpUVu+MYQcnyag38v3REZS0r0/FUAMmR1WTk
-         S4IjgoFFziOFCP2e3v0m1gaWHEaHpUuWpCAzw4C6UYodtBFVQz8DBk7ykqVDmrdplzZe
-         TiqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUn35GEQm6YXa6k2EsFyJ2+O51IbhQiiVxEC666vRzw2d4lDEZ31639sq+qpYtVXM28kC0p/0dxnrlGm2rqMJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZnVcMw5Knp1WmLc8maSWjA2KXjaG1yp9G4zzRvp0FMdw9fvpz
-	7M2fz+dd1lgq7ymLtCB18xK9wRrvVN+j5MMtGeRNs5839NmzZO0qAfXL8wifWV0zBkE=
-X-Gm-Gg: ASbGncvxzR68spVhG9ZdNSj/+BAHTdzNmzfvvPUihul7aRpzA9tbC91+kZWW8UUlwmy
-	HvGI2Q3IF/IM8mZ2iL+Xmdr+0npD126QIqb4Tse9vXKHm1O8Ef54mcvuEbKfJ4ukGz+rBC1h6K4
-	zuh/HdbmoYOMZqN5a/f/UPSViRPaHNATTrQJWw8fmWEF0A51QgmQj2TmF37U5bL4vQgY2CGzxQP
-	fdn6CH+9U/aSgpAUbKzp0c6LLMBF4ajEPjepI8e+xEzQxcGLHmEa94fYC7OSOAlBTRTJyuaQJ4v
-	943Vwa7urIR4w4BZea6XsmzB6dI2/7Jbd1VzfwEz5vEO9hge2FcoMAEQE0cu/UdZV+71n5rdf7O
-	8s6kyaXJoApA=
-X-Google-Smtp-Source: AGHT+IF9VLx8mE8trvjMG7+MlGusZoBXTEIHkS13K0W7mcIBsGRVkXXT81gfglD97zg1dabcDIqGHA==
-X-Received: by 2002:a05:6830:8008:b0:73c:fb75:cee5 with SMTP id 46e09a7af769-73e65f33953mr8211210a34.0.1752873787612;
-        Fri, 18 Jul 2025 14:23:07 -0700 (PDT)
+        bh=cNxBOflrGholZZGn6ETa6dtvAbfBYl8YJ2Uz1dv0uO8=;
+        b=ZcK1ITXZq3/SB62j9I3Enxt1JW32FByNRJ/5Q9tcGaQK1w62m5wAwSxLl9/VxP+PLu
+         nZKiiV+T4kFAgh48mFiN8ng5Ik6ed1w+tr0mEL6oQ8z+AVFQLlCpLOFqcWFa8gsqX5tw
+         iHUkCAxJANEVdkuwI4BajqM6J22sli8efs5x4Xzc4JOmCTUcCik7bzw9Vo7VWH2SfYyq
+         mUMz6cZz55KQBC6gYEyXklOz9O2B0SbjW5ZVdNl19Sju0IYPExtOMHf6MIZ2zSCEHm4+
+         +7VEWzsiXn3XqjIhYArCHLWadtg2cdZLZw4clhgZOltQISlVAm/AOtbh+AOzXxHpsWiy
+         x8aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVB3A2rdL8QKJKOnyJnySha43wwMrEQ87XuQduCBM8/2SzTKmfnMWtHckhpPyjNBzqYChC0bAAPQ4pm5eGkyW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQCq46T+sZ8143qeE693P6MPcG6wuLufjuZMF6a7iN8/Ov67Lx
+	ibUKY9B+2Lr48qBQHog0PIgdzzBTLLXhfAk83KMGesS35yAECgoaTrtnwwLKOKjYaWU=
+X-Gm-Gg: ASbGncs7IpfOz9kinkiuhVHfRbKEyN65jNOYfN/NvX0+nsnDpvQ+3y3T9rGa0MNQ4/w
+	mYoqA3BKw1U7pLlxKcxsFuzJu/U0/3aRTFay/5oX9nvgow+H8uYIvMLB9EC+uex28PaZfCLVclD
+	ZyzM/k+aCRXzXVE27po7snQYtBDwKfhqSWlW41UOnTKYrsFaqQKMC3KkqxBh9dFD2Ng4L32/6NU
+	xE/9dNkIfurafk2wTGhh8dsTEf9cZRRFg0NmK7H3GfUJW13Zv4v2+4FxkLc0CNHlj1lamwh6rL/
+	K1NwaRF26+1mxeLqnSjkZCP751HQCKvqi6Rz+KLdkfeguNDCHDxLif3PzFQX2U5wGGb3IgHpjK4
+	j0/PNdevjpdY=
+X-Google-Smtp-Source: AGHT+IEL3dk12rWlHef82D3RUYaodYoVvVhdwT5IY/zd+GI8cwXb6B+5Pe8H3kNTEx7MGpyhUioiyg==
+X-Received: by 2002:a05:6820:2e84:b0:611:5a9e:51c4 with SMTP id 006d021491bc7-615b81d8a6emr2878681eaf.4.1752873852935;
+        Fri, 18 Jul 2025 14:24:12 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700::1fec])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73e83560306sm949902a34.13.2025.07.18.14.23.06
+        by smtp.gmail.com with UTF8SMTPSA id 006d021491bc7-615bcda4dc6sm519931eaf.27.2025.07.18.14.24.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 14:23:07 -0700 (PDT)
-Date: Fri, 18 Jul 2025 16:23:05 -0500
+        Fri, 18 Jul 2025 14:24:12 -0700 (PDT)
+Date: Fri, 18 Jul 2025 16:24:11 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Piotr =?iso-8859-1?Q?Pi=F3rkowski?= <piotr.piorkowski@intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+To: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+Cc: Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>, devel@lists.orangefs.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/xe: Fix an IS_ERR() vs NULL bug in
- xe_tile_alloc_vram()
-Message-ID: <5449065e-9758-4711-b706-78771c0753c4@sabinyo.mountain>
+Subject: [PATCH next] fs/orangefs: Use scnprintf() instead of snprintf()
+Message-ID: <7c4eef67-7bbc-4a4d-ba10-ccf30c6afcdb@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,30 +74,36 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The xe_vram_region_alloc() function returns NULL on error.  It never
-returns error pointers.  Update the error checking to match.
+We recently changed this code from using sprintf() to using snprintf()
+as a kernel hardening measure.  However, that's still not ideal.  The
+snprintf() function returns the number of bytes which *would* have been
+copied if we had enough space while the snprintf() function returns the
+number of bytes which are *actually* copied.
 
-Fixes: 4b0a5f5ce784 ("drm/xe: Unify the initialization of VRAM regions")
+So if there were an overflow, the conversion to snprintf() would prevent
+memory corruption but it would still leave an information leak where we
+would read beyond the end of "buf".  Use scnprintf() to fix both the
+write overflow and the read overflow.
+
+Fixes: fc08e0b8f099 ("fs/orangefs: use snprintf() instead of sprintf()")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/xe/xe_tile.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/orangefs/orangefs-debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_tile.c b/drivers/gpu/drm/xe/xe_tile.c
-index 0be0a5c57ef4..d49ba3401963 100644
---- a/drivers/gpu/drm/xe/xe_tile.c
-+++ b/drivers/gpu/drm/xe/xe_tile.c
-@@ -120,8 +120,8 @@ int xe_tile_alloc_vram(struct xe_tile *tile)
- 		return 0;
+diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
+index a5fad515815e..e463d3c73533 100644
+--- a/fs/orangefs/orangefs-debugfs.c
++++ b/fs/orangefs/orangefs-debugfs.c
+@@ -396,7 +396,7 @@ static ssize_t orangefs_debug_read(struct file *file,
+ 		goto out;
  
- 	vram = xe_vram_region_alloc(xe, tile->id, XE_PL_VRAM0 + tile->id);
--	if (IS_ERR(vram))
--		return PTR_ERR(vram);
-+	if (!vram)
-+		return -ENOMEM;
- 	tile->mem.vram = vram;
+ 	mutex_lock(&orangefs_debug_lock);
+-	sprintf_ret = snprintf(buf, ORANGEFS_MAX_DEBUG_STRING_LEN, "%s", (char *)file->private_data);
++	sprintf_ret = scnprintf(buf, ORANGEFS_MAX_DEBUG_STRING_LEN, "%s", (char *)file->private_data);
+ 	mutex_unlock(&orangefs_debug_lock);
  
- 	return 0;
+ 	read_ret = simple_read_from_buffer(ubuf, count, ppos, buf, sprintf_ret);
 -- 
 2.47.2
 
