@@ -1,76 +1,75 @@
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF9C21D3E6
-	for <kernel-janitors@vger.kernel.org>; Fri, 18 Jul 2025 21:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FAF21CC47
+	for <kernel-janitors@vger.kernel.org>; Fri, 18 Jul 2025 21:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752873765; cv=none; b=LoyfMAew4rqVOzrB6iFbbsJPOszMxV8F6auU4XHrpU3DdhOTPIOc+Ev5ALP3iLnE4ZNM4BC/sbUeaeHvygRXuV2BjH+9iy6VtCQxmq49pUQv/Zdm4MDhckH8FlX5s7SvLcZ0gUqsscJjx3oA4M1eyGZaxVfh0jfcGOMf/S674o8=
+	t=1752873790; cv=none; b=U+vep3K+XTp/KbNhG4mzu399k+dNysFhxY2lQeukc4Sh7TQSqvDD3z9VQ0b9DCxpmEgKSrqNJpd52twyWwUiI7E689vKAGnGFbV1bk6IHRCY2LbPDlLoZMuUHJQGTAbTmnOIb1Pj6tAaSRboDCLxZlJ1yUdTGQ/SBSY42DC5sB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752873765; c=relaxed/simple;
-	bh=tSTrgPIpnpGNk9NG4NpmpQ1B9Z+0uOo8Jk7BbP98nVo=;
+	s=arc-20240116; t=1752873790; c=relaxed/simple;
+	bh=DG9sa2v1F0UPXK2JNXm5sOExvIo23mu31aj3632NTWg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mlc+8fvqRxVz+iGA4Xhvi8RqR5VYuCVoaJqcb/5xM7Xvo5tfNZSKqK736ETIX/avoWzDcAw8F1tOihjz/RdlIkrbUvfw5I/4SN/OyUFACzaBtVTQnuMX4OeLBVLucoiVcXDX2NBWgcEMh6DSWjybzhLpB+W7saW3+GUinJDyoss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqHNJFJn; arc=none smtp.client-ip=209.85.210.53
+	 Content-Disposition; b=ebJaJkt2Q/SBom7Bca+3BbcYmYKxEeEc3wnp+QPdqNYBRaT11UNqnBQDduy2+gBlGkNHxg6P3OhHhUWIltbCYrM1uJog3lUaZfDP9sshfsEEbxPBHodRjSktlnmVOONitYK57dKsaYRyrX2cL+9fFPuEmJd9TxIcjscHL3ZUBAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nc7FoqsW; arc=none smtp.client-ip=209.85.210.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqHNJFJn"
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-73e586fcc28so2060482a34.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 18 Jul 2025 14:22:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nc7FoqsW"
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-73e88bc371cso494762a34.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 18 Jul 2025 14:23:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1752873762; x=1753478562; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1752873788; x=1753478588; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LsvoKg06SgJJI9+VuR9QTODLjTqy09owpIVoI3UQeUs=;
-        b=lqHNJFJnIAE/xDx7uJU9Te8OTDiojxRoiHqh5sQqne6FMIGj9JT8bOX4dH2Z1vvYdI
-         GT/UVGi6zELgO9GJBP3+5XW8Jv08Z8hEWe0M5Lu4GPs/tKGRyGjraT2nGp48slJzRANA
-         yf1ygijYkx6MqPVSWeDzV3Lkel0ZImZSqDdw7Ins5DjAtLEC2o3oJkNPbl9t7X2DuKa/
-         B8ErO+Rv/uNw7/v1kiG4HgbwqQd94FejR6lwphwlJCkONVnd9yfo7RNSxzilxOIc/NWx
-         wUPL+9ZKWgSKXbs384qiIs1MOXL3lU79gTQkm5Cxana/lCbq6JcVp6iJGo1haPXPmjin
-         xz9g==
+        bh=tK+4glzE3WnB4vC6DvcGs4atxT+1n6gCTpv11Qz3u6E=;
+        b=nc7FoqsWukwv521uGwMoSFpApLqh6K3t6qB5jPJyTI3qDsdbyzWezP5VIHZi9E+frG
+         X2be89/k0vCAdjSh6zCMqoe5dZ2x9XS/PG7kuPSbdgYJp2E9j7lV438xOvR3DeG3kTLD
+         TwwUbbgoyDB7gq+1rb9/AMCnDwuGknlj1BKI8d8UJCyyctNwRA87cVp6jpo8tZjQne+3
+         D2h8V/bwAgiq4e/l2Nx2vc5RGpnqxuiLLTZqY7DZrgJe/EUxOXggSEMqRbBOBUEUf/YJ
+         p2nMyoj0NedIXC2l2ouHIzodTh8qIs3wru/3jwtt06kHYfyeQE0o4gPAMNmr6FN2DAOU
+         D+MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752873762; x=1753478562;
+        d=1e100.net; s=20230601; t=1752873788; x=1753478588;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LsvoKg06SgJJI9+VuR9QTODLjTqy09owpIVoI3UQeUs=;
-        b=oyM0rcNZPwT44+McIOOQ00Tmgpfq2MuWUEZyuFvjnB+GcefJ4+fKGYJ8hnTcDAWiuE
-         j32UcPRUEob6XbOWQkz9l8m+B2BKVCg5LNv/2FO9NaiJRgk3KPU5guYs8SDw3nSbC4FP
-         AWUvMe6Hg4rcWDEMdYCCZsnXbGnQcOrp7ei4ASyAAyuBuLN0RuK0h7XNMssUFn0HD8Br
-         5yDiZULVfpOVK/Jcr6IvoqNr/QMhz71ExmW1cpm+TnQefUFCOlz2tgpyXWPCodsGt7lM
-         e5euM3WS5u/jLM+616srXrStOVpU9VZtorKh7WpAOGPnX+IP2HswpbnZnkGzXAAIzcfl
-         /KKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVolg6N4UrKOp9B8GJah1uZ0T1EF7JX+5uf7gf+Cm3KiIVSkeIayU4/15xuDtORr7rDVWrCYXCvucLM8AKGHl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM4AFkt3APD8y8ZncMcTNHNBoGD0qH3ViJBDuX9Sdp4k596ait
-	/p3Dfn/G/iTLNwr3WwIXnf9eZF7QLi3Ca2uPL3ZFXr724sLwPlfj6v58DshHY1qCLe4=
-X-Gm-Gg: ASbGncsS9VzkQvLh+/WojZKPqRR4pEAR+5murGhd3WXUmcEybAO/LBNrTPaQtQvEl7V
-	NTfSTBdGnTtVfRG54Xh9FVNdFzaxlTf5/ZQKnB4aamtdWtwg+LXlIp14WsUq5XXy6E9oDCf+0xh
-	RR1MaF4FRj2DxO2Wq+eZBLzpcWNmq8HPe0BJrQST56VxnZhZi86z0ZVMqkuJJ9NvJW/Ua1Zij/Z
-	kJkyTWXopWrS6g2QQnoSklqhQo68V3MpASiMdcxP26Ux42WftW2Eis/KBouA014qCn0QgsTXh3Z
-	GBklRT8xVsIjYq1OsWXtntEIzj1nod5GhcU5hJ0jv4SKgNGWeldJ4DQ0/fpJs3iL+J1UeAGhGDL
-	N0/BDeZdGvgs=
-X-Google-Smtp-Source: AGHT+IGh7lU3JyUSFdh98iTvsA+uq1G9ywwnUkqJkNKmpyQmKR/YnU9/CQLlNROcG3cTeKKCoijI1Q==
-X-Received: by 2002:a05:6808:2388:b0:406:6aa1:38d9 with SMTP id 5614622812f47-41e2ee52148mr6250832b6e.13.1752873762342;
-        Fri, 18 Jul 2025 14:22:42 -0700 (PDT)
+        bh=tK+4glzE3WnB4vC6DvcGs4atxT+1n6gCTpv11Qz3u6E=;
+        b=wjgASuJ5y1TuuapTFsuHTNVHW6PTcI8LccNo5h+EHbmTYGTpgppb6g/hi73+7rrgzQ
+         lPPU8UvLMVDMAio28LcDZwxh9OW+ilJiOY5G8fh5LNdpK7Ky9yz3j0YXwaIoNxyZ4Rqf
+         nytdZaTiNyd3yPegA6Jv4Cn29zanj6TuecGULSOpcz7bVgaj+TSfu8RhcCwdB2zcrjZO
+         Hvev/s2SsTKZKWe9Tdp6d/J4XPQ0VLOEzpUVu+MYQcnyag38v3REZS0r0/FUAMmR1WTk
+         S4IjgoFFziOFCP2e3v0m1gaWHEaHpUuWpCAzw4C6UYodtBFVQz8DBk7ykqVDmrdplzZe
+         TiqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUn35GEQm6YXa6k2EsFyJ2+O51IbhQiiVxEC666vRzw2d4lDEZ31639sq+qpYtVXM28kC0p/0dxnrlGm2rqMJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZnVcMw5Knp1WmLc8maSWjA2KXjaG1yp9G4zzRvp0FMdw9fvpz
+	7M2fz+dd1lgq7ymLtCB18xK9wRrvVN+j5MMtGeRNs5839NmzZO0qAfXL8wifWV0zBkE=
+X-Gm-Gg: ASbGncvxzR68spVhG9ZdNSj/+BAHTdzNmzfvvPUihul7aRpzA9tbC91+kZWW8UUlwmy
+	HvGI2Q3IF/IM8mZ2iL+Xmdr+0npD126QIqb4Tse9vXKHm1O8Ef54mcvuEbKfJ4ukGz+rBC1h6K4
+	zuh/HdbmoYOMZqN5a/f/UPSViRPaHNATTrQJWw8fmWEF0A51QgmQj2TmF37U5bL4vQgY2CGzxQP
+	fdn6CH+9U/aSgpAUbKzp0c6LLMBF4ajEPjepI8e+xEzQxcGLHmEa94fYC7OSOAlBTRTJyuaQJ4v
+	943Vwa7urIR4w4BZea6XsmzB6dI2/7Jbd1VzfwEz5vEO9hge2FcoMAEQE0cu/UdZV+71n5rdf7O
+	8s6kyaXJoApA=
+X-Google-Smtp-Source: AGHT+IF9VLx8mE8trvjMG7+MlGusZoBXTEIHkS13K0W7mcIBsGRVkXXT81gfglD97zg1dabcDIqGHA==
+X-Received: by 2002:a05:6830:8008:b0:73c:fb75:cee5 with SMTP id 46e09a7af769-73e65f33953mr8211210a34.0.1752873787612;
+        Fri, 18 Jul 2025 14:23:07 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700::1fec])
-        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-41fd10c0ea6sm751747b6e.1.2025.07.18.14.22.41
+        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73e83560306sm949902a34.13.2025.07.18.14.23.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 14:22:41 -0700 (PDT)
-Date: Fri, 18 Jul 2025 16:22:40 -0500
+        Fri, 18 Jul 2025 14:23:07 -0700 (PDT)
+Date: Fri, 18 Jul 2025 16:23:05 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Robert Richter <rrichter@amd.com>, Li Ming <ming.li@zohomail.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-cxl@vger.kernel.org,
+To: Piotr =?iso-8859-1?Q?Pi=F3rkowski?= <piotr.piorkowski@intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] cxl/region: Fix an ERR_PTR() vs NULL bug
-Message-ID: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
+Subject: [PATCH next] drm/xe: Fix an IS_ERR() vs NULL bug in
+ xe_tile_alloc_vram()
+Message-ID: <5449065e-9758-4711-b706-78771c0753c4@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -81,30 +80,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The __cxl_decoder_detach() function is expected to return NULL on error
-but this error path accidentally returns an error pointer.  It could
-potentially lead to an error pointer dereference in the caller.  Change
-it to return NULL.
+The xe_vram_region_alloc() function returns NULL on error.  It never
+returns error pointers.  Update the error checking to match.
 
-Fixes: b3a88225519c ("cxl/region: Consolidate cxl_decoder_kill_region() and cxl_region_detach()")
+Fixes: 4b0a5f5ce784 ("drm/xe: Unify the initialization of VRAM regions")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/cxl/core/region.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/xe/xe_tile.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-index f0765a0af845..71cc42d05248 100644
---- a/drivers/cxl/core/region.c
-+++ b/drivers/cxl/core/region.c
-@@ -2108,7 +2108,7 @@ __cxl_decoder_detach(struct cxl_region *cxlr,
- 		if (pos >= p->interleave_ways) {
- 			dev_dbg(&cxlr->dev, "position %d out of range %d\n",
- 				pos, p->interleave_ways);
--			return ERR_PTR(-ENXIO);
-+			return NULL;
- 		}
+diff --git a/drivers/gpu/drm/xe/xe_tile.c b/drivers/gpu/drm/xe/xe_tile.c
+index 0be0a5c57ef4..d49ba3401963 100644
+--- a/drivers/gpu/drm/xe/xe_tile.c
++++ b/drivers/gpu/drm/xe/xe_tile.c
+@@ -120,8 +120,8 @@ int xe_tile_alloc_vram(struct xe_tile *tile)
+ 		return 0;
  
- 		if (!p->targets[pos])
+ 	vram = xe_vram_region_alloc(xe, tile->id, XE_PL_VRAM0 + tile->id);
+-	if (IS_ERR(vram))
+-		return PTR_ERR(vram);
++	if (!vram)
++		return -ENOMEM;
+ 	tile->mem.vram = vram;
+ 
+ 	return 0;
 -- 
 2.47.2
 
