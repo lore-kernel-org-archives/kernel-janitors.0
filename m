@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBC31A23B9;
-	Fri, 18 Jul 2025 02:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959AE1922C4;
+	Fri, 18 Jul 2025 02:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752804003; cv=none; b=JgWtjqjiZcK2jKkhj/Nj0DWVsg6Lise6oT8Ddt4Rm32uC+1EW+dipWTtvRQx2hJj5C4BAkZ6bdmTO1WioYwy5hvbWhfXJRMvZm0dvA7EHqLJKwOAIPysGOina4wTj9vDL+7ld0Sn4WYHIxX1rtkVURLW727f8vCv6QCoCFKz95s=
+	t=1752804014; cv=none; b=DVL7nMmgDTYoyHWKZfHm6lmQWxOr+Qae/yxXrl5ahXmYbwlT5huKegtkcNk9OVNUgkOopUDx0dtdjci9C8MdI5hF4ZSwmnHeZytJ2rtDY9rJpfRAO4nsIT0AAFCErF85gJEh97N5LfuGdy2LEnzO8HzFmbrCG+6Sk9wo6PVUdxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752804003; c=relaxed/simple;
-	bh=+7wiZuzj0yMoHnu/9si51sXowCgUOaXc6z20kcCoavo=;
+	s=arc-20240116; t=1752804014; c=relaxed/simple;
+	bh=JdglF8LKko74PJaUYYcu6QwtzNQ5YqDLg6ee62sCoaM=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=joPmLejwY9PfetMFxbmCblpwODdEZ/KI8HUuXApgl1VulKdsSj9A33PZwMteprIZrySskoL/CdNI+HyAm7XVWHNgQCIe7NwILhHQ+y0nET2WLky9aFS8chPLgh8tLfdULqFj+aSQEkk8VWHJsFsQYv4zOydqwVVnVvh0i92daho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=othhL9zl; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Dvy7kAzslTnLoUHY4rYTHS0nrUFa3bCHTr4ikHXkHisgnRQOISrBjq+HPhH95i7LKRJWEymy58CiBvsII8aH0MgYCEKxDXYD/dY23fqrg3L44LcTgAssMqcZHHMyCtYhB1RCXM+FzrQidEoIZJlvjFf7VkFcwhOwOvo6WfvWZ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3/1lhBQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="othhL9zl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5518CC4CEF4;
-	Fri, 18 Jul 2025 02:00:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3/1lhBQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C885C4CEF5;
+	Fri, 18 Jul 2025 02:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752804003;
-	bh=+7wiZuzj0yMoHnu/9si51sXowCgUOaXc6z20kcCoavo=;
+	s=k20201202; t=1752804014;
+	bh=JdglF8LKko74PJaUYYcu6QwtzNQ5YqDLg6ee62sCoaM=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=othhL9zlqDZKNANGMD5wqYAxXWHOnO+EJXicl0LkPogteFiw3lnKHL1nM0dtw2Ag/
-	 lzlvhFccU29AmSF7UpKMkW0x5BT1VofXb6kluoKea7xsZgBiVQc1oHyIDtNt3X+Kfd
-	 P5eiIMaGjRg53w2x38Z3B5SuIgQSV4ZEJYTKlryPnkIj3UnDn/4Sio0PMnLfcyNKFL
-	 joMRXq283+Ry97zN3CXiYK+7glguO2LVZ4GMf+mM0a694PGBGe/FGadtE2XYQmtQIz
-	 f3mDyoWidkWAi4oEgr/qB+BDxOYpmVW8eJfoeUEvFpxgPUn4tgfDFAyLAgI+jwbHt/
-	 t9Vo2GXXSZsnw==
+	b=Z3/1lhBQRRudT4IP3aVHDqpSallpSsq7NW2CDo9kPbs87Gt5CJt3zh0ySfxHKyuRT
+	 vYXnmmC2IH5IR5QFpI3RmXTuzFXnmVTyc+gtL6Exq1E8Tx79srEx+vRS8BiRegG4S3
+	 NKwQ7XDwNlLTA7lSbGgTIRR0m7NfEcCHUZ+jTEhj/GKqaFrEX4+ZJemAB7yZeRve8V
+	 3kNwCVzffTGX2ZLXtWifFTqxcXYZlPcukHRzXSRiAO8nTSQgS1tVh4UwoQGshj0i1z
+	 wOq9sqclMEWoLkPraITNyr7l0PR1fuGEh1rKvfbtPrHirX6sYbsqj6Srunwpnkjj4b
+	 XkYhVv21IKelg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BA2383BA3C;
-	Fri, 18 Jul 2025 02:00:24 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 339E3383BA3C;
+	Fri, 18 Jul 2025 02:00:35 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -37,39 +37,39 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: airoha: Fix a NULL vs IS_ERR() bug in
- airoha_npu_run_firmware()
+Subject: Re: [PATCH net-next] net/mlx5: Fix an IS_ERR() vs NULL bug in
+ esw_qos_move_node()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175280402326.2141855.15347450324403463630.git-patchwork-notify@kernel.org>
-Date: Fri, 18 Jul 2025 02:00:23 +0000
-References: <fc6d194e-6bf5-49ca-bc77-3fdfda62c434@sabinyo.mountain>
-In-Reply-To: <fc6d194e-6bf5-49ca-bc77-3fdfda62c434@sabinyo.mountain>
+ <175280403375.2141855.6021349856885843288.git-patchwork-notify@kernel.org>
+Date: Fri, 18 Jul 2025 02:00:33 +0000
+References: <0ce4ec2a-2b5d-4652-9638-e715a99902a7@sabinyo.mountain>
+In-Reply-To: <0ce4ec2a-2b5d-4652-9638-e715a99902a7@sabinyo.mountain>
 To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: robh@kernel.org, lorenzo@kernel.org, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
+Cc: cjubran@nvidia.com, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ mbloch@nvidia.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, cratiu@nvidia.com,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 15 Jul 2025 18:01:10 -0500 you wrote:
-> The devm_ioremap_resource() function returns error pointers.  It never
-> returns NULL.  Update the check to match.
+On Tue, 15 Jul 2025 18:01:30 -0500 you wrote:
+> The __esw_qos_alloc_node() function returns NULL on error.  It doesn't
+> return error pointers.  Update the error checking to match.
 > 
-> Fixes: e27dba1951ce ("net: Use of_reserved_mem_region_to_resource{_byname}() for "memory-region"")
+> Fixes: 96619c485fa6 ("net/mlx5: Add support for setting tc-bw on nodes")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/net/ethernet/airoha/airoha_npu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
 Here is the summary with links:
-  - [net-next] net: airoha: Fix a NULL vs IS_ERR() bug in airoha_npu_run_firmware()
-    https://git.kernel.org/netdev/net-next/c/1e5e40f2558c
+  - [net-next] net/mlx5: Fix an IS_ERR() vs NULL bug in esw_qos_move_node()
+    https://git.kernel.org/netdev/net-next/c/49be1e245ea3
 
 You are awesome, thank you!
 -- 
