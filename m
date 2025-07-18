@@ -1,112 +1,106 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0794621ABDB;
-	Fri, 18 Jul 2025 21:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEDE2253BA;
+	Fri, 18 Jul 2025 23:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752873893; cv=none; b=YSz1vBaUmR44utFjOFv7Erw8Plqa2eO3WXnacKyaasY8F3HyW2+7FsHR/Mohw8Vfqi9q4tEG226Aj3+czXx5+Avz3XWjMO0HqUdaYaryi/VEBqBTG64snzoo+4JtpS3/Tlxbhwd1AOPmrYR88lchkRJnXzLpYR7dLs6/2uVaNg8=
+	t=1752881245; cv=none; b=jLfViKFoZ6oS9Rg7x8jjjnfp+zTXQ/c6799TRF/NY69Yro447o7gwAO7gYf5gypo4csxrwcCpZNcWUxf3fOTBUNCMt9CnaUPuj3YVETFWjW7MEcH+CZeaU598eyUYy7sQNxZwEdb07d5bMxiNNIuvy1v3xf3KbbiCg1CI/Ysdqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752873893; c=relaxed/simple;
-	bh=im0LTQLxPAOeG/77Xo+4Zf+M8+BWkj92FwbmNijiq08=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IliCpP/RRBDRqmHy5bEzfLt+XHCXQjONU7XPQAhFlkGF5SKxEC9uCCqM2TNTLRM0Pa5rOpdYKzUC5PxqLPduKRtLGUOfpOl4wpnAmyJhEUNb5KraO0SeEnlKHwxD8tERznP4nopsLdwKYXruhrZK1VwGmXLFKyi7N5a/ONbiVkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlSLolAD; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1752881245; c=relaxed/simple;
+	bh=7pa18f3UjzDAJ1eYgUFLIzCYRlxRZIqaHJgl0gEnP9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o1rqx1esyVV94brru5Jb1y+y5vf4Tg7IMyOU0aUruY5uvWMbrz1A5MweZMBh2J3eTmNM+tO5KGW5zcuuBaxCJdFcyPL9tB5IfkHr47rwC3EoTfBOwTRxoVeKev7JckM+Au28lvrEFVBvTXFEIi9MqZ0bUeHbeW8yMmXBGnyDvXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UaNWn7dn; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlSLolAD"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a4f379662cso1863132f8f.0;
-        Fri, 18 Jul 2025 14:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1752873890; x=1753478690; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t7hWuC5RvJazo5XlM0dlOAfjH8Jrh55sZo4UkN4XHdM=;
-        b=XlSLolAD/CfbcXSIDd01xnSLNjupCjJUOaKh40sqFmQNm4ChOkgZuSrF1iq2a0qpMr
-         vD778I1MzufPlWz9y8sZW7ZtM1G1ipYdQZQyRfus5rfVaC7pZCvVFxYgRB6g43+OgvTl
-         ToS9GyFLknEFkmkPXKyXubNNiTfG5fVVLQ5BPxu3uEnXEu/nGMttmwflvZalCFwL2fYJ
-         dP4dge3f2kIsC+F9G7SRmpB71PS82USUR1YwaavavhHO4GM1KK2EtYwo0bicJA3sYqmF
-         x/hzxStKeW/0IqIF9GYTZyHFfda6FHHiJgVrzOMjOEWN6MwMzphbiFGigyVLRt7yo+tu
-         tm6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752873890; x=1753478690;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t7hWuC5RvJazo5XlM0dlOAfjH8Jrh55sZo4UkN4XHdM=;
-        b=eFkgUZzuXrILZdSrkYBS/ACxPOsajUacAVzF2EXLlpRAFx5BUNtL9lqCtsFuvOERWK
-         b77dtI8mm+g/1IMrJCcZfj/NDYNLXDnr2D8GNJS4HZo0D+pDWZyJ3dcPArqa111M2ygc
-         ogRXzeZ8M7sihFJV+zKNxQ02+URajqTX6MoKabERJs/rlSWHHKzhyqzuRf+P/jDIZB//
-         NfF7yytiZohF9h41VSa70ZK5cYf4k/1EzpORVHMC8uFrppdg8Dw2Nk/+45Gp3KjyRNhv
-         fPAh6dvUAXLN72uLKaNmmoI86xH3DUUD5ihoK+lHyEKH8+3zrptrEy/12S+AnMrepZEd
-         HgoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUacKEdYLhFX709QVcdLyFD51AbnUxFIKByGfFlbsAOzwr1j5VJTy3p5Qyz0kEsuOaHGO6MQf6CEwwnIa5ROJM=@vger.kernel.org, AJvYcCWNbwC6HMldE5ozx+02HjgpZGICNXyRCVb6mJk7RdTLz3lekiKdopuA6exZX3I4rZUxHcpCggpHhJzEg9ZaI0QgsYwa@vger.kernel.org, AJvYcCWzScDZo3PM6x6KOFBNRSj6748qikWX7gnd4u9avhzL5v0XEfDzPdv7MfyShk5TwU4H5BjymscIdSqw+F2Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDZI0cgw8Qp6yZK1Z1bxgT7ze/6eq2maStGqRk10rVlwY2ScGK
-	NBfpneIXddYWwDs35xR7K8nEAFi0+As8C3MEdQpjtYqVfpeLn3VnL2tL
-X-Gm-Gg: ASbGncuYdHQbwKdTT/lWPF/z9kLrwbxdZzCMl1W5rsX4IhUClv6UOmoRoYZLKGVbMcX
-	r+p/DKXswha3MBgeRlVjP2CJRp14cGNMBQ/208t83vOS7ygQSq4/lUi53JywmH/Ej82uipmCO+H
-	AD+0traRGxoPREhtmJOmMpHXvWi6UyCwlLayOID2i+K//pAcchQ9JvVcrfSyNaXyJgXrDqCXxP9
-	OvZOpqDK5CIcSH/fkdAdXBq9sB+mWmzhLKhzT0btWeFXr3jDq/FO7538B2RXUWQ/v3RUIu89EqZ
-	cb2xgTzv/9y/wiy1YRBqbOkS46bPAq25ZH9sdLM/1YL5UfTuvGuPYW/1dcc0lmVpDjQBAx34qp0
-	aoOXvA0ICdDWr6A0oLq1dgc9iSl7k1Z2AuCmtyAr+PY33zpP7mFDr9s158/a9
-X-Google-Smtp-Source: AGHT+IEmq7tvpzQGV1xWuIhLQqWelIwDGHeGg+CQxLmril0favWmgaefoWQjbU1qA85RWMATzxD8Bg==
-X-Received: by 2002:a05:6000:2285:b0:3a4:f7ae:77ca with SMTP id ffacd0b85a97d-3b60e4b8585mr10851424f8f.3.1752873889957;
-        Fri, 18 Jul 2025 14:24:49 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca4d786sm2928732f8f.72.2025.07.18.14.24.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Jul 2025 14:24:49 -0700 (PDT)
-Date: Fri, 18 Jul 2025 22:24:48 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ring-buffer: make the const read-only 'type' static
-Message-ID: <20250718222448.13162080@pumpkin>
-In-Reply-To: <20250714160858.1234719-1-colin.i.king@gmail.com>
-References: <20250714160858.1234719-1-colin.i.king@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UaNWn7dn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1752881243; x=1784417243;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7pa18f3UjzDAJ1eYgUFLIzCYRlxRZIqaHJgl0gEnP9M=;
+  b=UaNWn7dnLKIICOfEW9nnaR1f+TwiM6rByxICHEY4CZgIFrGXtx+TzcWN
+   Q6kWXcTbm/o9kE+NJhn6aXArmDwkQerAxPmRx0qJ9Mpa2jrKnuMeU5Y5N
+   hbKR4w94/4tmvWRhb+vOjS11HA9Vc0tWuTdDoBFyY/3bV2g4BPwfgxa+d
+   uoSl0zyNls8Kj2OBl66b/27S6YhDXQMJO5BlWeW5A1Az9CQKjB+YVTUvm
+   /Xefz4OxUKuC1kaICBbMdPmToysxjWPZEMRqBvyt7ZDyXq399AENx/9nF
+   /ulJIHwSzFzOFrTKlquOgjcz24XMgi9K41qFEIwDbjH2cE/OpKdwR9MqD
+   g==;
+X-CSE-ConnectionGUID: vDAeAotcSAanxN6I8OerVQ==
+X-CSE-MsgGUID: i1X2xw/DSJOHE3Eax3rFbA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="54393610"
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
+   d="scan'208";a="54393610"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 16:27:22 -0700
+X-CSE-ConnectionGUID: 4wHBjNFSS3K3XZGGri9akA==
+X-CSE-MsgGUID: emJLTxEXRtmjvnLA7WgpCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
+   d="scan'208";a="195398285"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.127]) ([10.247.118.127])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 16:27:16 -0700
+Message-ID: <7d9e6df5-5921-422e-9ef8-4cef3f89b555@intel.com>
+Date: Fri, 18 Jul 2025 16:27:08 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] cxl/region: Fix an ERR_PTR() vs NULL bug
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Dan Williams <dan.j.williams@intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Robert Richter <rrichter@amd.com>, Li Ming <ming.li@zohomail.com>,
+ Peter Zijlstra <peterz@infradead.org>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 14 Jul 2025 17:08:58 +0100
-Colin Ian King <colin.i.king@gmail.com> wrote:
 
-> Don't populate the read-only 'type' on the stack at run time,
-> instead make it static.
+
+On 7/18/25 2:22 PM, Dan Carpenter wrote:
+> The __cxl_decoder_detach() function is expected to return NULL on error
+> but this error path accidentally returns an error pointer.  It could
+> potentially lead to an error pointer dereference in the caller.  Change
+> it to return NULL.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Fixes: b3a88225519c ("cxl/region: Consolidate cxl_decoder_kill_region() and cxl_region_detach()")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Thanks Dan!
+
+Applied to cxl/next
+49d6e658e758e42aaff8ae5ecdd2d06b29abf53e
+
 > ---
->  kernel/trace/ring_buffer.c | 2 +-
+>  drivers/cxl/core/region.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 00fc38d70e86..39aa1f50274f 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -4118,7 +4118,7 @@ EXPORT_SYMBOL_GPL(ring_buffer_unlock_commit);
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index f0765a0af845..71cc42d05248 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -2108,7 +2108,7 @@ __cxl_decoder_detach(struct cxl_region *cxlr,
+>  		if (pos >= p->interleave_ways) {
+>  			dev_dbg(&cxlr->dev, "position %d out of range %d\n",
+>  				pos, p->interleave_ways);
+> -			return ERR_PTR(-ENXIO);
+> +			return NULL;
+>  		}
 >  
->  static const char *show_irq_str(int bits)
->  {
-> -	const char *type[] = {
-> +	static const char * type[] = {
-
-Better would be:
-	static const char type[][4] = {
-
-  David
-
->  		".",	// 0
->  		"s",	// 1
->  		"h",	// 2
+>  		if (!p->targets[pos])
 
