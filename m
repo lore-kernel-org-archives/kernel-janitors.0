@@ -1,68 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA1029ACF3;
-	Thu, 17 Jul 2025 12:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A27191F89;
+	Fri, 18 Jul 2025 02:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752754808; cv=none; b=qc34OGlD6sLmv+QEGR7BmRdfnV55cXQL03CvENxmpGugB1nsiLrXe9YomsLnqa4mqXPJIpNKlFcaw3vE1K3WV+khBv3BbLltbnccOub0inatqXzP4CinEHCifpwL3EDJm8xX8RKJO2EKLGFlJ8Qhx5oSfekAWbS3iw2Cba7dj08=
+	t=1752804002; cv=none; b=LMf0Ezh+hvFCVnFsULrEgWoaFsm6LxPGZE/ArweHA/cfuql2Ld425hC6zDE8Zcz0TUb3uEZJhvpuspYOUVqA7AFXWH3guhmwnYJ5qqT8GTcs2bMGbzaa9/AsUQAMgXB//VNBuAMoaYs/Kab1yCnV6Fl2ivUYS/jFnLQPIwXYcL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752754808; c=relaxed/simple;
-	bh=HqH5zSuEtRcYd+zTcAWz9KZZEXE9LB7c+ay5kz7OkbA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RDkNA4yPTqkAoyVBjJ6wKORy+kof2ndhNIT4kJcppHor6IULM3NynPmdfarkInIHobuNgMqYvx1VOs8gKwHNTnCFl1DBSpPq2S/K+L7FTxEITr/ewC7M0XWbWAGCAPkAcXEiq4+IZi0xfFlHAQnDY6g304LY23HOnxjp3LXlnx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5qqkJ4T; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1752804002; c=relaxed/simple;
+	bh=SetBbtHXbVjZbmiyk0fpeigIcr80OzEqkRC6pQfTTTo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=HvjTdFlcphGBDzHAnCd08QuMKDzipjKWvEZzShPzcukgOqZrODuq+PrT9tgLId0qGhXPmyXbKdCV2hSnJosjCNl0oS+ayPXPJR+4N7kn7FcYsYYo3p+SYSgIKxuA3KByto60ZrNppbzlmiUlwS8cA5wcLtDO2Vm+9DiXLEwHzy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H6Hp2NN0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5qqkJ4T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B702BC4CEEB;
-	Thu, 17 Jul 2025 12:20:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6Hp2NN0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53251C4CEE3;
+	Fri, 18 Jul 2025 02:00:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752754808;
-	bh=HqH5zSuEtRcYd+zTcAWz9KZZEXE9LB7c+ay5kz7OkbA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=P5qqkJ4TPb2ymD9Io8TUCZ7uIM5vwQpgMbCmNZKhxehl2YH26beE5axVrbY3JPaiw
-	 WGWovFovKZnv9cJWcRucqstZ6w+GUjLkIRmznPL557F43ZCfd96RepiqtMMdNe1V5i
-	 pauF29HJwwzhQq9Sekwx7eopQa8azzsdUp6qmWOiDV8yFGG30gI/84k3gf2eUHWkRd
-	 zKxNBbnsGi6k1ETwvt/0JFDIWZtOWmSIa8wio25Ti3OwgWRaPdCSqN7cDtyCdZ0uz/
-	 Li0+yxM/xvFy0NMUJXfkU0gZy0jnV2obsfwargb/BIzRZD15WDQihoG3piEEid+9E0
-	 LgE5cYoTMlAzg==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250717112108.4036171-1-colin.i.king@gmail.com>
-References: <20250717112108.4036171-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] RDMA/mlx5: remove redundant check on err on
- return expression
-Message-Id: <175275480530.658097.13704229214903648802.b4-ty@kernel.org>
-Date: Thu, 17 Jul 2025 08:20:05 -0400
+	s=k20201202; t=1752804002;
+	bh=SetBbtHXbVjZbmiyk0fpeigIcr80OzEqkRC6pQfTTTo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=H6Hp2NN0qSoS08Ezwyaaae0ALZyNHDflwHoRDeC3FJ4y1AIl5BV5CmV0stAEB9hgd
+	 nejk0vs+I0lriY3Ou2g9fgTHO15C68fXP6YW5vzaBHne8xH2rb9EFdJaAnpTmTYQVr
+	 1B9H9+YJkQcYTRNLbkTZUu/R5l89NllR4wHOho112EvSr+Hnf5Cmwp+1XvuYGualhn
+	 y4o8ZJlhKAS38T7LLZS7Lmjo6GEml6n1fv8UAFZ+omT3s/dy6NMcx1hK3lzEiPk51V
+	 REZT2929lolW4QtgNUgfFjvlGc5Yn+ub8xdXUvVf2p6QzMugj9vWgnr1T5OYRC1d1F
+	 euZUy2fhJYsEw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D1E383BA3C;
+	Fri, 18 Jul 2025 02:00:23 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: ethernet: mtk_wed: Fix NULL vs IS_ERR() bug
+ in
+ mtk_wed_get_memory_region()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175280402175.2141855.8758462175684517580.git-patchwork-notify@kernel.org>
+Date: Fri, 18 Jul 2025 02:00:21 +0000
+References: <87c10dbd-df86-4971-b4f5-40ba02c076fb@sabinyo.mountain>
+In-Reply-To: <87c10dbd-df86-4971-b4f5-40ba02c076fb@sabinyo.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: robh@kernel.org, nbd@nbd.name, sean.wang@mediatek.com, lorenzo@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
 
+Hello:
 
-On Thu, 17 Jul 2025 12:21:08 +0100, Colin Ian King wrote:
-> Currently all paths that set err and then check it for an error
-> perform immediate returns, hence err always zero at the end of
-> the function _mlx5r_umr_zap_mkey.  The return expression
-> err ? err : nblocks has a redundant check on the err since err
-> is always zero, so just return nblocks instead.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 15 Jul 2025 18:01:19 -0500 you wrote:
+> We recently changed this from using devm_ioremap() to using
+> devm_ioremap_resource() and unfortunately the former returns NULL while
+> the latter returns error pointers.  The check for errors needs to be
+> updated as well.
 > 
+> Fixes: e27dba1951ce ("net: Use of_reserved_mem_region_to_resource{_byname}() for "memory-region"")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > 
 > [...]
 
-Applied, thanks!
+Here is the summary with links:
+  - [net-next] net: ethernet: mtk_wed: Fix NULL vs IS_ERR() bug in mtk_wed_get_memory_region()
+    https://git.kernel.org/netdev/net-next/c/c2fe3b2a7c71
 
-[1/1] RDMA/mlx5: remove redundant check on err on return expression
-      https://git.kernel.org/rdma/rdma/c/aee80e6ffc5878
-
-Best regards,
+You are awesome, thank you!
 -- 
-Leon Romanovsky <leon@kernel.org>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
