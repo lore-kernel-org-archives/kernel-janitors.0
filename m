@@ -1,93 +1,95 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33652222B6;
-	Fri, 18 Jul 2025 08:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C80D1FBC90;
+	Fri, 18 Jul 2025 10:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752826989; cv=none; b=i8wmR9BJ3faCWgzDA21VJcEqh8cNpY3xV1k3eWa9CD++XSYBi3Ad6gdZI1/jrH7qJlK9WUPYQukvy+uIT9ir56R/IYkcYrpdpPMWdC+jIa11kXWU3VmvrJGpLC3/YNeMJI9gCojIwLZOUhtyogS8zplD0HW8ISwgUTcqEyGNFq8=
+	t=1752836278; cv=none; b=hFPRHXLJv80p9TMhBlLMWWuKqoyjbgQh8bAvKRw7gUMPeVx6eCKNbPjU8bxsajBF7aGjTQNKBKPzp+N0/UilHkDLEEybdA0yv2X2vtCK4YCiuITx5GFducCmi0cpWFDx/JzdTwDOxx09Fk9Hn7I5ERAhKdYGDZHVWFt9zjq5bUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752826989; c=relaxed/simple;
-	bh=SR1VOC9iktHSawfPj7HA4M42MrvCPWUQ5IFb4CNokCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VWUSB8OLF5QQQk/U18El4OhoQYpzTQyKVaibDeDj7U0usU3nU2IMtVQ2kMksS7HSwy6mmYVblawIu41/Vv/VhMe+rJO2sVn3MdlLNARhP+8+sCTfkE5rbhWkQbh0GoOjpXZO8/EwYhsIjaZZfI+GBpk+/CVY/szEaOTLTsgd1Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=nZPOQ6q0; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1752836278; c=relaxed/simple;
+	bh=9Sas/9RWDgjKPPg5Wakrc5PaU0az/U20Xx2jtfiJH/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKnxsMDaMAN54tslI7x6uXuZ8CJMK4aClyOpH8kuD0es+ppZClFsxrwTM0rOV+7r+1dhQZuScb+1pHdxj/wVGZXYTVABlahKwmHFMWzuF2eb1LTkSHOKykkvVeHWC0TxEJx8sb2y7AXVmnhmH92XWTGsQwPgiRU/ZGMtZ1rB0yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=jvkVwIk5; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="nZPOQ6q0"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=LyOg420EPYvHmbwkKD1VHuO05Tohp6tvVQsTHuJ+F4Y=; b=nZPOQ6q0nqcd3RYvSTj+zk7AYj
-	RCK4Jb47f9yUvjAovCC7mWepYxFvS+znpC7HgQCX4LHJDBoxtCXA0JslR9ywt1oFhFOF5XJmK7ciE
-	XoXB/A/MEIwHn6jFAnd6LkkUniXyAObDGYjwW3b4cobD9RvzAWaWOIHhuSFGlKzaBNwJA+NsetU+u
-	dHk5wvvWTbv0ZEiMuFBCY0i7yrhOEg9vB9gpvWf7MmD6JY9Qh588BMXbNw6+efZA7I1tgSwXYmyYj
-	mqfrqYevo5Fu1qvwJ5syYEkIehMbj9Ghh2J6AtfD1VdtobrDBTROeKxuaWdhLZIEk8kbV+y1tAmeE
-	kCl4OqKA==;
-Date: Fri, 18 Jul 2025 10:20:46 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, vigneshr@ti.com,
- khilman@baylibre.com, rogerq@kernel.org, tony@atomide.com,
- jmkrzyszt@gmail.com, andi.shyti@kernel.org, miaoqinglang@huawei.com,
- grygorii.strashko@ti.com, wsa@kernel.org, Jean Delvare
- <khali@linux-fr.org>, Komal Shah <komal_shah802003@yahoo.com>, Greg
- Kroah-Hartman <gregkh@suse.de>, linux-omap@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] i2c: omap: Handle omap_i2c_init() errors in
- omap_i2c_probe()
-Message-ID: <20250718102046.34f2b702@akair>
-In-Reply-To: <aG60GJy60Jf3w8tZ@roadster.musicnaut.iki.fi>
-References: <cover.1751701715.git.christophe.jaillet@wanadoo.fr>
-	<565311abf9bafd7291ca82bcecb48c1fac1e727b.1751701715.git.christophe.jaillet@wanadoo.fr>
-	<aG60GJy60Jf3w8tZ@roadster.musicnaut.iki.fi>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="jvkVwIk5"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=zYEm9n8Fg8OJrUS6PB50lr19hINVLQMjXj8flmJUffg=; b=jvkVwIk5Y/Mt+Q7VOqdM4YtjT1
+	uiLJcllJ8P4RXxH2EXmKPK14jUAn65pqfRFhZwp0a+dsJ8PYTlL7lqiY5jaMq7SyeT5ZMhJHa6Reg
+	SW52ADN7FEZi64J5Qt/6ZOPOt+hI08S3SvUlgPkwIWwHEXZNzKOTqr1F80uKul+cS3vo/j4jZEt0J
+	EpI3Rb73DJQoNGVMrKvntKGUmme57NOjRmfEvcWVQlYcPiahWByeFQpwlgqb6WeARD4VuJaj5lfbY
+	kx6FTDuccQCufFfCxLvsFbV4c6L3Zc5I9ThUzdf3gjd5en6eDDnRlvaXrrr/rjafX9niebfKY07i5
+	xyMGHdxQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1uciXJ-007yZH-0I;
+	Fri, 18 Jul 2025 18:57:50 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Jul 2025 20:57:49 +1000
+Date: Fri, 18 Jul 2025 20:57:49 +1000
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] crypto: caam - avoid option aliasing with the
+ CONFIG_CAAM_QI build option
+Message-ID: <aHoorRAImpjjvolm@gondor.apana.org.au>
+References: <20250701112045.18386-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250701112045.18386-1-lukas.bulwahn@redhat.com>
 
-Am Wed, 9 Jul 2025 21:25:28 +0300
-schrieb Aaro Koskinen <aaro.koskinen@iki.fi>:
+On Tue, Jul 01, 2025 at 01:20:45PM +0200, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> In the Makefile, the new build option CONFIG_CAAM_QI is defined conditioned
+> on the existence of the CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI, which is
+> properly defined in the Kconfig file. So, CONFIG_CAAM_QI is just a local
+> alias for CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI.
+> 
+> There is little benefit in the source code of having this slightly shorter
+> alias for this configuration, but it complicates further maintenance, as
+> searching for the impact of CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI
+> requires to grep once, and then identify the option introduced and continue
+> searching for that. Further, tools, such as cross referencers, and scripts
+> to check Kconfig definitions and their use simply do not handle this
+> situation. Given that this is the only incidence of such a config alias in
+> the whole kernel tree, just prefer to avoid this pattern of aliasing here.
+> 
+> Use CONFIG_CRYPTO_DEV_FSL_CAAM_CRYPTO_API_QI throughout the Freescale
+> CAAM-Multicore platform driver backend source code.
+> 
+> No functional change.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  drivers/crypto/caam/Makefile  | 4 ----
+>  drivers/crypto/caam/ctrl.c    | 6 +++---
+>  drivers/crypto/caam/debugfs.c | 2 +-
+>  drivers/crypto/caam/debugfs.h | 2 +-
+>  drivers/crypto/caam/intern.h  | 4 ++--
+>  5 files changed, 7 insertions(+), 11 deletions(-)
 
-> Hi,
-> 
-> On Sat, Jul 05, 2025 at 09:57:37AM +0200, Christophe JAILLET wrote:
-> > omap_i2c_init() can fail. Handle this error in omap_i2c_probe().
-> > 
-> > Fixes: 010d442c4a29 ("i2c: New bus driver for TI OMAP boards")
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> > Compile tested only.
-> > ---
-> >  drivers/i2c/busses/i2c-omap.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
-> > index 8b01df3cc8e9..485313d872e5 100644
-> > --- a/drivers/i2c/busses/i2c-omap.c
-> > +++ b/drivers/i2c/busses/i2c-omap.c
-> > @@ -1472,7 +1472,11 @@ omap_i2c_probe(struct platform_device *pdev)
-> >  	}
-> >  
-> >  	/* reset ASAP, clearing any IRQs */
-> > -	omap_i2c_init(omap);
-> > +	r = omap_i2c_init(omap);
-> > +	if (r) {
-> > +		dev_err(omap->dev, "failure to initialize i2c: %d\n", r);  
-> 
-> Error paths in omap_i2c_init already print a message and error code,
-> so this is log is redundant.
-> 
-And I have never seen these in normal operation, so adding that error
-check should be safe.
-
-Regards,
-Andreas
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
