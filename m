@@ -1,131 +1,129 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266D4270548
-	for <kernel-janitors@vger.kernel.org>; Sat, 19 Jul 2025 13:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E86170A37
+	for <kernel-janitors@vger.kernel.org>; Sat, 19 Jul 2025 14:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752931796; cv=none; b=Do1CIcl8dCU4hfm/x2MDIm2JU9opkRpn3IpzBvF4CLZgMz9WMFxyp6+//TV9FfMpR29cmSaG8ADD4ghr/PKF3P3GfBpH/CjrVU/XSMzojd3/6zjBgb5d4vM/lFYp6lhHa4qFcXKgMuYXunCGsYoN7gnenmvH+l+r82N8n5WfCSw=
+	t=1752934755; cv=none; b=uzKC9nxwPKJEJL7KAy/5X6riR6hbugfd1qd8vhHDAyG5PdrP961n30CT2qyWK2GSiSPZsqL4rL7pPH6HGPPPo0vp8EQOvYY3LVDGYGS7j6RhAfrhsFS2sapEoG8rngoMz8NeHglEmQikAU3/rNlLm4OECSkZCGHAfQvpf5+g510=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752931796; c=relaxed/simple;
-	bh=whJVn6VSMC2cD2DwHewKa7SpgnwQzzGtDP72KQTJahM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JqZKuGvEtvdHwROS1ENHcTDOUYXHziHXWFWLY4H4iP28EZN+xXe4LJgqV/Yr23U9CZIAHePFF6UkrSbhPacBTKzHEE1xdbGtqWuEPvTZsVN4oJPEcUR56cOu6LOItgLhguAlc1mn0OtTAsTEdHjt+UxCZDfZXc0OwLkZUkY/0Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=I7cnITWw; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
+	s=arc-20240116; t=1752934755; c=relaxed/simple;
+	bh=BZkhiLiNBaaHEpkcyxUOemT1nuyItl5ktC8ckt/5+cI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qNDzG07ry38j3e/5giirdyZrjn8QK61cHO4ikXI1Ch0tP9culWI++Nev1aVoQlEAGGQWnX9GhBn05SVH5//EhU0vVbu13b9Yos44O0QsURyloQGT89qMo9da5PdRHB5fXfATkTv3v0+Og0V8qlYoh4svMf1eYiyDW1uHCDCru2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NleAHXKJ; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="I7cnITWw"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b170c99aa49so2084568a12.1
-        for <kernel-janitors@vger.kernel.org>; Sat, 19 Jul 2025 06:29:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NleAHXKJ"
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-72c14138668so1197698a34.2
+        for <kernel-janitors@vger.kernel.org>; Sat, 19 Jul 2025 07:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1752931794; x=1753536594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qZOOflxBKdTH5b7sIlGbxa3QYBsytIH9IOezkOXa6OE=;
-        b=I7cnITWwD3XHvsOets6aUl0LdkqNK2GUJcSTFRuDUJ1uS3fx74Qx64dEyANyEwHfD8
-         AdtWde5dWb8tXSwxteV1Uz3z8zxlDdCmR5rTHk0nuVNYBuQwDb4DdOtrgGMyQLF22zKT
-         QDltqkliKID0aAbzckRzQeP7QnbcVtRArOdo24GXZbtPfRJRWdY4QdnquP0QZPN0UjXB
-         JVGFsXJexGzrSHpoxtiFVoadVR0Rfjb+LOU8240ihj2mxZkQ3JK5z0EOSyftQmz1JxW+
-         AkaelU+vBkX5qkYQxxZl88hYJCizHkz6eHIPkkZzISrH+lALhgjYhQlWQslUTs94jAD2
-         7RAw==
+        d=linaro.org; s=google; t=1752934752; x=1753539552; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0idHqKxmTJuhj0L2KEoP7cF5EgTKZubwwzAqdTlzNN8=;
+        b=NleAHXKJd56eWDOG0gO73cYhNQNwOsXGKtPh3S5hN/nz8tOgQzDTPzsI4JrLfChP1g
+         DUiUxffuhXm9cRq6bjuHGncTpjsIzX0IIQ1EnqNLbKzNWy9D+OW7k45Ndhde1Z1teLsi
+         GlKpa5sXMiy6MSC1nVuqMzQhxRzElUgAoC9TdCumOUD89R8CYqqrtfyK1+GTFZxdL8Mv
+         xAyQajzAxEgmNjj1Iw2dm3Hr3RVjIITW/+SJirJkuRrkdD0Lgqew0hBB8UXRwfzb65JU
+         XGUuKaYTQ2QanjxoIervpsxTT1YHvHEllq3vss/upaGrrUQN5qx6YTyGt5/hFtpHPDT0
+         2gJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752931794; x=1753536594;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qZOOflxBKdTH5b7sIlGbxa3QYBsytIH9IOezkOXa6OE=;
-        b=p3mfmAWzoXkqh9y9vtNwpuY99+UtGFHrPaom6joM/1c4w6EQ7q4n0GCuoKeE0rYwXv
-         PgI44F84/Yn6EjQJOTrw3i4pHM+oJfZnyNYCo2feevFok4Cp5tsqhRm6+o+NS3Z7kDf1
-         aBzG4Hs3UBnSujvcACEhqUsW6RHHWoVgfpedQnwhPhOuv+nskwu3Z6Z1XhEuX6umKMfc
-         vzRueXJ5E0UoaBt7FIsoJyqXVDNROLEQYx4hpRn8HmAoa09+L0NqLk8XBkZuLD2mw/bn
-         u+dhU+m6rkAMBiXOQ8qbSr74ZBk/4n82aAWJABLbX8wozjBgK4pBUkYDfUbUc+uDmjLs
-         wZmw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6p2puPjaCox+1IvOdjNSc7sCYAhZmO9AxOt+gp1n4x08lV43rFY1a6GK/HMqymgzkQbTxqqVVefL4JDNS9T8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXX0EBIOOgMy0w6H5bYAie9osJwuOFDfBvw7lmi08E2lS3c12L
-	4pQFLU8zmnxrb+4ft0atvCX8zjtfbSsUgd7NTNE/gpzZsM+Ol4lFyyGt98854hWGXRmST8A1Nfr
-	Xa3h3eRq+yateFcTZV6J8vyA2M/OC9pp/vwGOnlZv
-X-Gm-Gg: ASbGnct81OBVgx2mPVGsQACtW/YEmTDly1M6smwHN/YT/dGWkn78POdHG9NYnOuHzJH
-	W0XzrT9PJ7neFuzLL52Dmy7txanbNy/X0B/yjY1MP+vJ6Zh0QJINSBG+ZONtw2KdSROt+tRmCsF
-	+2u22L3i3w6nt0Aw4vGgCTrMBKRCRdGbrT30pE3ebxS3nM3QRN/K000wztJ4lDTUnS+g4bfj958
-	rlMJ1LbDBHOA+MRZfMF9+H8/JRL9Q==
-X-Google-Smtp-Source: AGHT+IGTMsKtP2G3Wisl71duPg2R8F8xhT5SbykvwIvTBfZDhFArqc4cu/N0+DDO+BgZ49g18kmBZYIKUOKMHB/tIAs=
-X-Received: by 2002:a17:90b:3d8c:b0:316:3972:b9d0 with SMTP id
- 98e67ed59e1d1-31c9e5fcacfmr22074724a91.0.1752931794326; Sat, 19 Jul 2025
- 06:29:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1752934752; x=1753539552;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0idHqKxmTJuhj0L2KEoP7cF5EgTKZubwwzAqdTlzNN8=;
+        b=R2lRETnI0n/4GzoQxac/ElCTJM60+6YMge24L6U/unSC8ZgK3MQl9oVlcAppU0CT+V
+         YSbzlcpbWMIvsDd26OQtpowvWh/s/b32LaDNgu0hs6kFl+zJU3NcpJTZ3ADAQxBoOkbd
+         tHPC+FuPLgtWt204gk9Wm0vih6+dd46hw0vk/jBBHTC87lQIEEFoHsovfFRpNwiaL8+o
+         WEDvHCKj80I5YC4n4lXazo+nQEfl14wqSIjn444W34sQa/cvOjYjGXQuOdjaevmjT++T
+         9nXRNp3M/62WHP0k3Fo+l7khVUG7qvLEFKDfRiAA7YRygLosu6UAtPWEFnAP21cV/2sA
+         bRdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjhRpm9apXOTHuBCWBL7o9W6R996u43pa9Tsq0SxGGGEqM/XLoOwLUM72tXVqENcmBxaOTJTR+NnPbFypgmOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGYRXm69QjydqHZJVznxpGFXMS7iSiApACObOEp8BCeHIx/CWU
+	P6WkRC6duPW9uJ0FlC5RLWiFmqYAK9dHwqXMyoNU4AozSdIW2bWcCkHOaZYKT3Aw150=
+X-Gm-Gg: ASbGnctwwYDVgwNMDTzaPx5hRMtIzlfZKRyjcmuxr32BQgDMouBeGmIJAfAAgOoNQOW
+	QOcyjivwNHQ0AwWmJv2+VTFOIPQSb0qVJWPSNARDhFnxF5/BGfMDMOVTDnNfKypDv9EoXx7eInj
+	JkqEBrwdVuftetup7dID9ojDM/8FAq5BGsCasnFTU7W8T9FVTeYXbRyEVJkAMv/2RUZyjlpvVEO
+	hFejIX6YNyWKMRHYKnt7AQl1Hnio5Q09rMavXoJe6AT0Ku7qw7ccm44XUNTxi/7OQ/heY7TtRoV
+	OkWABkTdHsqYwFoEi3jIslS9vf/zhSWq3s4bwzurfmoH9UseGct/21ORxTjfc5+lV9qKv6HSk0x
+	jK6HPw7siVBTTa+xylrR26Q==
+X-Google-Smtp-Source: AGHT+IEZOcpRl7U1aHBWudyyNCCkirYut88+0gEsK9gTfyQxPBTvvJ/MXoCvXLBTC94QwN8GQcEFEA==
+X-Received: by 2002:a05:6871:3582:b0:2d5:2955:aa6a with SMTP id 586e51a60fabf-300e8c77f14mr4390379fac.7.1752934752464;
+        Sat, 19 Jul 2025 07:19:12 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::1fec])
+        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73e83b0a51dsm1439995a34.36.2025.07.19.07.19.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 19 Jul 2025 07:19:11 -0700 (PDT)
+Date: Sat, 19 Jul 2025 09:19:10 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Martin Brandenburg <martin@omnibond.com>
+Cc: Mike Marshall <hubcap@omnibond.com>, devel@lists.orangefs.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] fs/orangefs: Allow 2 more characters in do_c_string()
+Message-ID: <842e7e14-bb93-4a2e-9ad9-2b4e11d2c441@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7c4eef67-7bbc-4a4d-ba10-ccf30c6afcdb@sabinyo.mountain>
-In-Reply-To: <7c4eef67-7bbc-4a4d-ba10-ccf30c6afcdb@sabinyo.mountain>
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Sat, 19 Jul 2025 09:29:43 -0400
-X-Gm-Features: Ac12FXwk323ZxD0gV07N4nak0N32Rmf-A61cgZKPwrhzUMCykchXRr8i91VBpZ4
-Message-ID: <CAOg9mSSnnLf_uoM1pQp4yMjd4e=q07PjBWw62ch3P+V1c--+Dw@mail.gmail.com>
-Subject: Re: [PATCH next] fs/orangefs: Use scnprintf() instead of snprintf()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Mike Marshall <hubcap@omnibond.com>
-Cc: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>, Martin Brandenburg <martin@omnibond.com>, 
-	devel@lists.orangefs.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Thanks. I noticed the "returns the number of bytes
-which *would* have been copied" issue when I read the
-snprintf man page while looking at the patch. I'll see
-about making this change in my "next" before the
-rc period is over...
+The do_k_string() and do_c_string() functions do essentially the same
+thing which is they add a string and a comma onto the end of an existing
+string.  At the end, the caller will overwrite the last comma with a
+newline.  Later, in orangefs_kernel_debug_init(), we add a newline to
+the string.
 
-Also, while looking at this patch, I made
-an xfstest that includes buffer overflow attempts
-and other bogus input. It would be, of course,
-an orangefs specific xfstest... I wonder if I
-should try to get it pulled into the main xfstests
-repo?
+The change to do_k_string() is just cosmetic.  I moved the "- 1" to
+the other side of the comparison and made it "+ 1".  This has no
+effect on runtime, I just wanted the functions to match each other
+and the rest of the file.
 
--Mike
+However in do_c_string(), I removed the "- 2" which allows us to print
+two extra characters.  I noticed this issue while reviewing the code
+and I doubt affects anything in real life.  My guess is that this was
+double counting the comma and the newline.  The "+ 1" accounts for
+the newline, and the caller will delete the final comma which ensures
+there is enough space for the newline.
 
-On Fri, Jul 18, 2025 at 5:24=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> We recently changed this code from using sprintf() to using snprintf()
-> as a kernel hardening measure.  However, that's still not ideal.  The
-> snprintf() function returns the number of bytes which *would* have been
-> copied if we had enough space while the snprintf() function returns the
-> number of bytes which are *actually* copied.
->
-> So if there were an overflow, the conversion to snprintf() would prevent
-> memory corruption but it would still leave an information leak where we
-> would read beyond the end of "buf".  Use scnprintf() to fix both the
-> write overflow and the read overflow.
->
-> Fixes: fc08e0b8f099 ("fs/orangefs: use snprintf() instead of sprintf()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  fs/orangefs/orangefs-debugfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugf=
-s.c
-> index a5fad515815e..e463d3c73533 100644
-> --- a/fs/orangefs/orangefs-debugfs.c
-> +++ b/fs/orangefs/orangefs-debugfs.c
-> @@ -396,7 +396,7 @@ static ssize_t orangefs_debug_read(struct file *file,
->                 goto out;
->
->         mutex_lock(&orangefs_debug_lock);
-> -       sprintf_ret =3D snprintf(buf, ORANGEFS_MAX_DEBUG_STRING_LEN, "%s"=
-, (char *)file->private_data);
-> +       sprintf_ret =3D scnprintf(buf, ORANGEFS_MAX_DEBUG_STRING_LEN, "%s=
-", (char *)file->private_data);
->         mutex_unlock(&orangefs_debug_lock);
->
->         read_ret =3D simple_read_from_buffer(ubuf, count, ppos, buf, spri=
-ntf_ret);
-> --
-> 2.47.2
->
+Removing the "- 2" lets us print 2 more characters, but mainly it makes
+the code more consistent and understandable for reviewers.
+
+Fixes: 44f4641073f1 ("orangefs: clean up debugfs globals")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/orangefs/orangefs-debugfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
+index e463d3c73533..802bbbbe9a79 100644
+--- a/fs/orangefs/orangefs-debugfs.c
++++ b/fs/orangefs/orangefs-debugfs.c
+@@ -769,8 +769,8 @@ static void do_k_string(void *k_mask, int index)
+ 
+ 	if (*mask & s_kmod_keyword_mask_map[index].mask_val) {
+ 		if ((strlen(kernel_debug_string) +
+-		     strlen(s_kmod_keyword_mask_map[index].keyword))
+-			< ORANGEFS_MAX_DEBUG_STRING_LEN - 1) {
++		     strlen(s_kmod_keyword_mask_map[index].keyword) + 1)
++			< ORANGEFS_MAX_DEBUG_STRING_LEN) {
+ 				strcat(kernel_debug_string,
+ 				       s_kmod_keyword_mask_map[index].keyword);
+ 				strcat(kernel_debug_string, ",");
+@@ -797,7 +797,7 @@ static void do_c_string(void *c_mask, int index)
+ 	    (mask->mask2 & cdm_array[index].mask2)) {
+ 		if ((strlen(client_debug_string) +
+ 		     strlen(cdm_array[index].keyword) + 1)
+-			< ORANGEFS_MAX_DEBUG_STRING_LEN - 2) {
++			< ORANGEFS_MAX_DEBUG_STRING_LEN) {
+ 				strcat(client_debug_string,
+ 				       cdm_array[index].keyword);
+ 				strcat(client_debug_string, ",");
+-- 
+2.47.2
+
