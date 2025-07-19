@@ -1,50 +1,41 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-74.smtpout.orange.fr [80.12.242.74])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEDE2253BA;
-	Fri, 18 Jul 2025 23:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C172C222577;
+	Sat, 19 Jul 2025 06:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752881245; cv=none; b=jLfViKFoZ6oS9Rg7x8jjjnfp+zTXQ/c6799TRF/NY69Yro447o7gwAO7gYf5gypo4csxrwcCpZNcWUxf3fOTBUNCMt9CnaUPuj3YVETFWjW7MEcH+CZeaU598eyUYy7sQNxZwEdb07d5bMxiNNIuvy1v3xf3KbbiCg1CI/Ysdqg=
+	t=1752907285; cv=none; b=a8NmaAHQlyvoxOhZc+MFIkRCk9NsFgZfCumF3RVf+uEr+eqBhE467zvDwnF3FrjRZxMJkg9bBIQ5ca4Zlc+ANjB4PltPHGVWw7Lk0R6Xa6qiYy1Hsm+Rf52t7QEd7Wc8XarwP4fyDvKntNpTi313J8zs47zON2J1A0EiH410mEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752881245; c=relaxed/simple;
-	bh=7pa18f3UjzDAJ1eYgUFLIzCYRlxRZIqaHJgl0gEnP9M=;
+	s=arc-20240116; t=1752907285; c=relaxed/simple;
+	bh=EmgutOIrazSy9MKspNhrUXhh1pDRYo7vKPSgKaMsDW4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o1rqx1esyVV94brru5Jb1y+y5vf4Tg7IMyOU0aUruY5uvWMbrz1A5MweZMBh2J3eTmNM+tO5KGW5zcuuBaxCJdFcyPL9tB5IfkHr47rwC3EoTfBOwTRxoVeKev7JckM+Au28lvrEFVBvTXFEIi9MqZ0bUeHbeW8yMmXBGnyDvXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UaNWn7dn; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 In-Reply-To:Content-Type; b=dH3V8VxxgFRwOnTFWpaopDW4lBnzvfELRYuZsy1poyCMNY4ih+8f2v+6xzxy34CNoqLAFdWY2hGq4l4z3KXRuv4T6MLNlDHpXsTZP+SesiyCSUlm0YNAUzBNLJAxIDQWyQxE2pL5g1fGtO8hWnmAuaCHMWLRng7z+cODk+OcwZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lMAs4Ikk; arc=none smtp.client-ip=80.12.242.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UaNWn7dn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1752881243; x=1784417243;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=7pa18f3UjzDAJ1eYgUFLIzCYRlxRZIqaHJgl0gEnP9M=;
-  b=UaNWn7dnLKIICOfEW9nnaR1f+TwiM6rByxICHEY4CZgIFrGXtx+TzcWN
-   Q6kWXcTbm/o9kE+NJhn6aXArmDwkQerAxPmRx0qJ9Mpa2jrKnuMeU5Y5N
-   hbKR4w94/4tmvWRhb+vOjS11HA9Vc0tWuTdDoBFyY/3bV2g4BPwfgxa+d
-   uoSl0zyNls8Kj2OBl66b/27S6YhDXQMJO5BlWeW5A1Az9CQKjB+YVTUvm
-   /Xefz4OxUKuC1kaICBbMdPmToysxjWPZEMRqBvyt7ZDyXq399AENx/9nF
-   /ulJIHwSzFzOFrTKlquOgjcz24XMgi9K41qFEIwDbjH2cE/OpKdwR9MqD
-   g==;
-X-CSE-ConnectionGUID: vDAeAotcSAanxN6I8OerVQ==
-X-CSE-MsgGUID: i1X2xw/DSJOHE3Eax3rFbA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11496"; a="54393610"
-X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
-   d="scan'208";a="54393610"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 16:27:22 -0700
-X-CSE-ConnectionGUID: 4wHBjNFSS3K3XZGGri9akA==
-X-CSE-MsgGUID: emJLTxEXRtmjvnLA7WgpCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,322,1744095600"; 
-   d="scan'208";a="195398285"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.118.127]) ([10.247.118.127])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jul 2025 16:27:16 -0700
-Message-ID: <7d9e6df5-5921-422e-9ef8-4cef3f89b555@intel.com>
-Date: Fri, 18 Jul 2025 16:27:08 -0700
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lMAs4Ikk"
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id d174uK4kHQ4Mmd174uBTbN; Sat, 19 Jul 2025 08:32:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1752906724;
+	bh=wT3d0Bk2O+o+XayP9x++VQxDYkqNyteMXScMP/f2Qok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=lMAs4IkkO3iYnSa4DZfaacXlYXSCBgUo2row+vlEHmSYR1cfJsXxpc+0brdCVnI8g
+	 uKvgTSYqhRlHM6z5u7iPZCVOz8c9M7yFO4alJkH/3PfPtpC0jPYyplI2Vg0FqQL2Sn
+	 xgBaB842sMK8040bbLqssruU+N+pAqEJWQCKdYDlEv4FwoH4vCyPfw51lZ3BMLjFpU
+	 Nmx0NKPebEZXgrvh65cDIKQKabzm/GZCfwYS1VoqAmdc+0Y5gIqTulJ3DVJVEInaMH
+	 gpP1+Oz162YRV7ZkH1QB2Jq14koayO/eUUzTq7YFGoQQUipjrnsDxxEKhRs7luaDN5
+	 vfCYPHKb+gE6g==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 19 Jul 2025 08:32:04 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <fab51e17-c1be-494d-8591-3eaf63e3e489@wanadoo.fr>
+Date: Sat, 19 Jul 2025 08:32:02 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,55 +43,45 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] cxl/region: Fix an ERR_PTR() vs NULL bug
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Dan Williams <dan.j.williams@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Robert Richter <rrichter@amd.com>, Li Ming <ming.li@zohomail.com>,
- Peter Zijlstra <peterz@infradead.org>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <7def7da0-326a-410d-8c92-718c8963c0a2@sabinyo.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ring-buffer: make the const read-only 'type' static
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+References: <20250714160858.1234719-1-colin.i.king@gmail.com>
+ <20250714121554.1365c93a@batman.local.home>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250714121554.1365c93a@batman.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 7/18/25 2:22 PM, Dan Carpenter wrote:
-> The __cxl_decoder_detach() function is expected to return NULL on error
-> but this error path accidentally returns an error pointer.  It could
-> potentially lead to an error pointer dereference in the caller.  Change
-> it to return NULL.
+Le 14/07/2025 à 18:15, Steven Rostedt a écrit :
+> On Mon, 14 Jul 2025 17:08:58 +0100
+> Colin Ian King <colin.i.king@gmail.com> wrote:
 > 
-> Fixes: b3a88225519c ("cxl/region: Consolidate cxl_decoder_kill_region() and cxl_region_detach()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Thanks Dan!
-
-Applied to cxl/next
-49d6e658e758e42aaff8ae5ecdd2d06b29abf53e
-
-> ---
->  drivers/cxl/core/region.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>> Don't populate the read-only 'type' on the stack at run time,
+>> instead make it static.
 > 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index f0765a0af845..71cc42d05248 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2108,7 +2108,7 @@ __cxl_decoder_detach(struct cxl_region *cxlr,
->  		if (pos >= p->interleave_ways) {
->  			dev_dbg(&cxlr->dev, "position %d out of range %d\n",
->  				pos, p->interleave_ways);
-> -			return ERR_PTR(-ENXIO);
-> +			return NULL;
->  		}
->  
->  		if (!p->targets[pos])
+> Hmm, why not?
+> 
+> -- Steve
+> 
+> 
 
+This is more efficient because there is no need to copy things on the 
+stack at run-time.
+
+It also makes binary slightly smaller.
+
+On my x86_64, with allmodconfig:
+Before:
+======
+  229194	 924492	  35104	1188790	 1223b6	kernel/trace/ring_buffer.o
+
+After:
+=====
+  228873	 924268	  35040	1188181	 122155	kernel/trace/ring_buffer.o
+
+CJ
