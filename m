@@ -1,72 +1,73 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDCF13C81B;
-	Mon, 21 Jul 2025 15:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E22119DF62;
+	Mon, 21 Jul 2025 15:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753110032; cv=none; b=IBrLxGc0jqDqKl7NzzlgI6ZFO+CRG86+8qSapho27otyf3MQ57d7A6UjMkJv4tz7X+yE3al1EBISDTSbVhHSh+bTE27AUdvcMIj+N/3JT+vF2kRoy/EwnDDJ8wqLmvc9Ott9Rpdy62mntdN0INWURtsRSkKi7bTnL0S0ah8XfGw=
+	t=1753110227; cv=none; b=Jb0YC44LqlVaQp8uDY5XgSYfziUa9BCXWhut8t+rpxNH10y0J2ivkC8BUp3h0k+Bf+ab69jk9xkXKr0a193bkakWTLi1tAGVE4gHYyx4I7nCkk3TcBa8nQWwwHUXna3at24LwFWhakLdatSlFP6HAnpZ9VZWyvf3ePq6e59BJU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753110032; c=relaxed/simple;
-	bh=1u26kY1ws9cxhBGjecBiZxykAFQE/6GBsWlroHxvc6Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S+ZC3BA1AYuSxLRudxhunMkArXYn9ZriWRJ1v3bpFHHm225C/IijcBlzVSuqhh1HkoMCkGiPsWhkNlc33On0m2u6onUxj7wppI6j2CkLxrB5tmZg54K6edFIOBwEZNL0XQKpem9zldTSE15M0lyrU3NJ61K4kF8Hom/rCHoq20E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtUiAtrt; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1753110227; c=relaxed/simple;
+	bh=sLQ0v+qSfqEceezMZuXx3FC96Rh9DQ+K7dTaxDzNaRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a27BypgJbJKQcDkywQb1SkaU/2nlISz9NEUxhodoDxeQ0rX9FiHWYGtMrCDRVXIF5n24a+IkbpYYFdUZdTYtVMAFKGLPa8Vim4dZVk4tE0Y9EyDLJbeS8hUjSbj22uuJIU+Q/dYoLOc82kDqRWsM89L8QtrJA7FvG2SjruvfKrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYkgTp0x; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtUiAtrt"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a531fcaa05so1994522f8f.3;
-        Mon, 21 Jul 2025 08:00:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYkgTp0x"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so722480066b.0;
+        Mon, 21 Jul 2025 08:03:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753110029; x=1753714829; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753110224; x=1753715024; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2PB0irW/PF5RfhguedJlSTXVHWilPTDJ158mA6czsCc=;
-        b=gtUiAtrteKyVTlB8t2xu64W+BzIrBelFx/mwl+jfI/duxwz6WFJI3cjUgGKCHauc31
-         1ZyjZZBhW5PW0rcOOBnHXx+2Rbx+oR1puUuT1LoDmvnr5hLKqj35QTVe2pUTvOvSB5sP
-         cIxsnjjMznSJ3VAGvZHA6U9hiXZn11GwvpO0hilSP7wWzi39M+s80HRhlMpA/NfDygOW
-         NKDyp/4EzIk8nPWkHD+vFIMJ71va/jTT4t+RwfH8ywEYq+d1wC6P5ksB0n9lKVoFdAOm
-         6mKQaCvIiRH1d7D/Ac8/u886SMM1LxIEGicKR6Y8CHDi8EJbqZrLxoSbq/p/31+QfiYA
-         X6ow==
+        bh=hYCIxA2fKKKIZVk28gAD9jEo3Ziv2IfX2lxXhfepHEc=;
+        b=PYkgTp0x3dO+nimQkPTWPOV23qAoMMCRaclxUTNfud6pW07pr+4+fjdiMWjybdGANo
+         StL6Q/Iz46kMu89cpKg4cGRCRQeKaBZrCi5zSg8G7Q4LsawAjENH1N7gpa7qQR/X+GRt
+         RPCGvHTs5CXCX2AlXE+6VJ9JDObVZsSyz0nLlvXfqOJmx/2kaDrFbVUnt+QwpTehVcuu
+         LQpE5yEymCrjvDAmVciynavba/+nEnD5lbzZnSJG+pf78zbp4aAZ1LENFg6swD/h5tVF
+         QyoWYgjJe6yzldv7eT/Xd7gVwxqrv8+VBFW21pMjUJTELxl8s8HCB9jWqYB5lFkl5UpW
+         hJAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753110029; x=1753714829;
+        d=1e100.net; s=20230601; t=1753110224; x=1753715024;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2PB0irW/PF5RfhguedJlSTXVHWilPTDJ158mA6czsCc=;
-        b=lhBt+vf3iYFbu8EdNYEhCqnUdizqPDla/jPDJLiQZGx6kkEv9NUP4gYXedsdqFfEb/
-         PymULiOKmeCUbHXgm5Tn2VBx4rJunAxnEluBBUGOkCW6d1MkJ8F2OnDiJBM/uxRZB2so
-         gmMXNnj82iQ5reP835F/QSkKe41tFRYB/FSzLMIUBzRby0Pxv25r6tYNxjdYOzJZHEu7
-         q9Uph+v3Yx2ObhVmKWwFRBfrPfTlogjierFwgsFqnMpup6vLkmyikhU7Ix/jOeaNoTwl
-         +LfrVGT9YzM+I3LWLUbrHRcQIs6w1zD790pyUgGLxYgDbCWJiZjK2anBtUT8AB2H+Y/4
-         RtSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFVlnsdX+r/52pZrFvn9x0eI7UUZpw4nDH6BibU73ojk2VYkN+ESiEVmd/ZJis1TczF2I531f+UY49@vger.kernel.org, AJvYcCVTWqcdcJVUimvBSK1OjATmlmBbGafDwcGloShudmdAA7KG0J0w1uRgXS5Dy8DE7MCaXmRj9wJGGB4KiHOD@vger.kernel.org, AJvYcCWkmfmM141bnfFrUFPzpTUbHCsr1agx+oKz/jxJd2VmfvC+qjH/KtWdxZfQyFFhKESXY4XRL+R1l4cB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4OkRVKJRgcyZbysDMAHtn4lKYZEWK7e1G1pDk3PxaUoVxlreK
-	XZtXYD29IbjU0NdzuaKk9u+iOz2Dx5g49ZaBnay/tK0Mimm831jOJ8ER2EpK1m/BnDQ=
-X-Gm-Gg: ASbGncs+FE2LmTYTS3sWoSp8yghMDEwowLpZF1jIxpIs+4M5vWBz5Ul7h20zcNsjBbn
-	7U4SgAiuNStKZP1zAq7iDtrfs9fjCXe33CiqMzdG3RE/ZdFxu2m2ajNeobiCHEhy4wxyAZJMZVx
-	sSMliwRcOFUywVjZPUdPBT8EtEsx/FFGcIIXcZFDzeijvhE5OSk4UoRDara+MgJn4iri3u+7Vgr
-	n2BAaaMHcGskVnRPiHf14iyZVEXgix5kLTN6znoUBgE3A/qBjUlpC9CuPG9yaVGW5YtwOlH5rIP
-	+U7YGhlsuz/PT2SqNw/Q7FOm95iLEkCnkgsrMmAqn9U7K3poMFlYQBsD4hloPhMfKWirUeLcFS2
-	eUGMoXUrk2wlz+BT5dsTM
-X-Google-Smtp-Source: AGHT+IEnm5Z2sHlscy3eq1RJ/Z17vAMa+liMVtNJyEdVCWAmNxBB9ZDteQYhEZsZXd+wtJZbuTe+Hw==
-X-Received: by 2002:a05:6000:40ca:b0:3a8:6262:e78 with SMTP id ffacd0b85a97d-3b60e513909mr14535725f8f.37.1753110028526;
-        Mon, 21 Jul 2025 08:00:28 -0700 (PDT)
+        bh=hYCIxA2fKKKIZVk28gAD9jEo3Ziv2IfX2lxXhfepHEc=;
+        b=FcgMJqx+rKBUSAtEkvs59ndO4hbtEEg8nftSS3S3GiVbosze17bn5UG63Y5nSB7Ww0
+         dplkuy4WOmuVXB4BuvYngsKH29stuyUCB0iSjftafSi8UYWCab/9jABh0R9HGoeVWa9t
+         ptyjqi4Ma1kBHOuV0+9hE67T7NjrCH2VWEDjgOjBBtRUsf4pUowhfHrT7074GOzkU8jp
+         Z+XKX3rpwdZZKJ6cIVWCPbJs0Q1LGJ0gnIKNHZ/dYUkRZsnHjTM2a4pa2GoE93HFtqsS
+         qULWPzhGG62ELVl/YVCK6BzQ7Zrrmp0EFAt7rDrOF6kjlPrFGLl5/49HYSpEqaoZwg4w
+         /NuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSlzs/qUcXOfrD90OpuJKQErGq1ix13B1WgsP3f8N7Cf9Gdb+CFCciXiKXQW1l0EvQx5m4dkIhzDUlgV7o@vger.kernel.org, AJvYcCUkUhPl/+n9rFTb136xUg5jTygoSG6a1uhO5rnrReCWT0L8TQWlbxLxXWArflBWwbUJzVFWsoxR7B8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVaGc9PmuotG8gS/keEaUKsthUiUb2M+083sohKmkAjG2KgyuJ
+	0pcLKYEmGtx4TipgqQxToalu3Cvz6KTk2GDbuCKgg9IWkOvSCL2/d35+
+X-Gm-Gg: ASbGncuZR/qaJ1zdCNaCPB9w7a2d4UDxgALYELwlpZ7t/YsbSGiy7LudnbL//wg77yS
+	wdxPGNf9UKmntwsH+jj69kcJDEJ9MmsSB/whK3wfqcHtOuc/I4osKrD0//Z57m2lyfniSFSKuwX
+	lIngf3/GLrrjZr4NEQmD9c+E7LnwnDVBGt9m6etrdX+uHZjbB0YbQ2m60h7OkKF7JuWG+2Kb/sD
+	RcRiW2JKBgY8JSNBcLp3YiTas0Zdt1W5S1U8Ft9KsByuIMvMBG0INCC/tppnF0Na1B0Y4NA3jc9
+	P0euGEe35idsc6MHQdrargupQZLnavcdtVXG7svigb5e9w1asefb6kxRqvVxqlS7k0vCGTqlLvm
+	joaMzkj1+f9coY+6/XoVJ
+X-Google-Smtp-Source: AGHT+IFwOAb07D2i/QIPv2fknIMkkE5elVRJuhetZPLIOd0ezgq6Y89BJdk3N8wV66TTzWvYNRBuNA==
+X-Received: by 2002:a17:907:1c89:b0:ae0:ba0f:85af with SMTP id a640c23a62f3a-ae9ce193a65mr1994716266b.51.1753110222765;
+        Mon, 21 Jul 2025 08:03:42 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b61ca25410sm10808671f8f.1.2025.07.21.08.00.23
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aec6ca2f1a7sm689398966b.91.2025.07.21.08.03.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 08:00:24 -0700 (PDT)
+        Mon, 21 Jul 2025 08:03:41 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Abhash Jha <abhashkumarjha123@gmail.com>,
+	linux-iio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ACPI: pci_link: Remove space before \n newline
-Date: Mon, 21 Jul 2025 15:59:52 +0100
-Message-ID: <20250721145952.2601422-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] iio: light: vl6180: remove space before \n newline
+Date: Mon, 21 Jul 2025 16:03:09 +0100
+Message-ID: <20250721150310.2601679-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -77,27 +78,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is an extraneous space before a newline in an acpi_handle_debug
-message.  Remove it.
+There is an extraneous space before a newline in a dev_err_probe message.
+Remove it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/acpi/pci_link.c | 2 +-
+ drivers/iio/light/vl6180.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
-index 08e10b6226dc..e4560b33b8ad 100644
---- a/drivers/acpi/pci_link.c
-+++ b/drivers/acpi/pci_link.c
-@@ -268,7 +268,7 @@ static int acpi_pci_link_get_current(struct acpi_pci_link *link)
+diff --git a/drivers/iio/light/vl6180.c b/drivers/iio/light/vl6180.c
+index cc4f2e5404aa..38706424089c 100644
+--- a/drivers/iio/light/vl6180.c
++++ b/drivers/iio/light/vl6180.c
+@@ -722,7 +722,7 @@ static int vl6180_probe(struct i2c_client *client)
+ 						IRQF_ONESHOT,
+ 						indio_dev->name, indio_dev);
+ 		if (ret)
+-			return dev_err_probe(&client->dev, ret, "devm_request_irq error \n");
++			return dev_err_probe(&client->dev, ret, "devm_request_irq error\n");
  
- 	link->irq.active = irq;
+ 		init_completion(&data->completion);
  
--	acpi_handle_debug(handle, "Link at IRQ %d \n", link->irq.active);
-+	acpi_handle_debug(handle, "Link at IRQ %d\n", link->irq.active);
- 
-       end:
- 	return result;
 -- 
 2.50.0
 
