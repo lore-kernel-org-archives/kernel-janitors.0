@@ -1,101 +1,103 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B532A1420DD;
-	Mon, 21 Jul 2025 13:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753105852; cv=none; b=C/TEtk1Tpn6bGzojMguHqMfznaQMbYXBA0XbGHXWDSzjoaeZF43ehCrVvrQ5Ndlidhco/ZPgkpUGFQPpUvs3GYRkKsY9igFnl5ry28n0P1rg78W6DFaEG9XlnfGp8xT4SahnAV5mo9qW8A7CeCznyeBJBieTDajfiZkpVuv9Mgg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753105852; c=relaxed/simple;
-	bh=513tMf7iicIdDU1soghAQ1q8hTKcIhjVMG50axlhca0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZZDJSeQZszvmQq9CrSi/eqyR/jr+FvRcUQObIYm9YFcS6fNNBQ1yVm5XBQXjQPkLn4zzf1ha7McMz03L3fB1oJgfjie6wLnCfejlqoExTCh7d2E9rCSU1Tv4AU3iHzpcaxayfagEjUuZrb1Rb8iSP996uaXOnXOjcu9DbCEFjIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VgpG5A/W; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD8A25760;
+	Mon, 21 Jul 2025 14:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753106917; cv=pass; b=I4wB6ks/FPFqbD7o7PSLuy55Kuyr2yTjS99edqj0L+QGSNNpqpPPAZ4BmM0ltE6z+MS9VGhuiemXorVyMiTJnSaGlz7iYysGz5JtYyYclnmATSJeXfrGDJyTMY9fGcXaVR/Eh3XiVHo6ypB6cwaUo4dvepjE86lJZgsjsqLpUxw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753106917; c=relaxed/simple;
+	bh=aPE9OP5n/nxXpSPei6MkovrRMZGc+nmT492+wys9qe4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bD0e/lO4c1OWuYqU9/leEOd+XygSR9AacyILnNYBaiwVVvDQlqg+SDMD/sF6zPQPW06YOxxVsAZPYKhVBCa7f9VZdZjOF52EY+OMEXZug+06X3kmhBIefaDdiGCuZRhySmUs3ezv0aSgB05I6cCALo82ti4ycSVjBBntfD/MxeA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=O1/OT2JS; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VgpG5A/W"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-454f428038eso36999125e9.2;
-        Mon, 21 Jul 2025 06:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753105849; x=1753710649; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMe6pRC005fOwaPOugF9qce8y2RRWdU1gEZZYXHHtOo=;
-        b=VgpG5A/WJDcIi5rShXyQaW0BAXwpJ6AwFkWJX27FS0V5cljEOEHCTYYy+leXIxmI8S
-         q2Tg7MZ/6kUy5NLaXxH7D8evTsIhuRZLjxvFWRW16WCCPgppXQoXSXIgiEpiOiPW4izC
-         VgkQP1FKzS034VRIIi2MOfBaFa4CA2uiTZ6IKJx8AmEFOTtZb/htd7hfJuRVdI0KG1EE
-         5pSWM+rim/4CZXaMSEHRslV3KRUWbqLLgxkAHnyee4UeqLzK4tS/xR/rWdOyWWi5IqXA
-         1Jd5ymXwFBdP36DuYR3KA4iSJYUKS5EWBZqYI8fO+leQ/083nO4giCEqupEpj3g8JuX5
-         K9bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753105849; x=1753710649;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EMe6pRC005fOwaPOugF9qce8y2RRWdU1gEZZYXHHtOo=;
-        b=E+NlzNPnbcnw/LqYijbEPJHjcXhsK6ruot5TfFaioZtsZqSqee7RkjzoCc2x6ywTbC
-         KcradQ11oaiPKmZOExct3inuHnbMH/dU35WFt0PWJfNtxBtzvVqGPBG5LQHHiGP/fvag
-         wQuboXqFo8it266rlycPHOsP8/JzCx+rRJwW60fpYnULK2B8I3c+ZWuzToYKCV8SqWKt
-         74ZxyBuYoSBh+fpBsgZx7TRBjQr8oZElWhEb0e8Onep/IIXpg9JmZFbHG5pyE6Pc01Ya
-         Mv7caZu92xwsHVMxT07c1tK1VWZeRVoK1cgMaZOTSAx0T0gVdTPDjg01HlfPZjUkMbmO
-         afMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyJsoKRUhCDlMaaMA0yS7p5PT674rl7aeihraTMRHkoEaGa9kmdUsTojXV/lzUiEazNEex9awNNddE++gR@vger.kernel.org, AJvYcCXw3xi/caENIelZhXtB2SnZ+D48lNZZ8/Ma+dm6NqmDmKkpsnQvonILLz6Mr5FioaWAIrYWk9cth6zF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvFC6khcCBk0DjH/LZdfbb/hup5PpqkONdQhgtkMeQT0y4MMKb
-	iloS5uL0hQVHqyMWyn56Iyn8x9dFHM5BQCqKg9LITT0WQRwqWjNdz34Z
-X-Gm-Gg: ASbGncuUk0pjbQ13mZkc6I/haCxG9d+y48MnJ2F65otCS+ZdLnxZLlG74eN3r0o7vci
-	eygrSoIA7s/jrBNJTghWVicxVYEaKZxuipTMNOs/ADfkTs4tNjgvdICUBzOFm0uQupGsTVADjVr
-	X659ZdgEGA6HfPZjUyAUUk4D6ory95wFl2m30xRNPxSpLumhO8yQZfEZI1Z/u9I53vvgKfy68mH
-	Ql5kps2wSEaILR4Vovk4enD7WvPbN8JuKD4yKGtrblbP77rAj58urhEhLU6GyBIqUyUrONabywd
-	NfNAWtJ6EVH+LhDLaFW1HFoXeOeGSmRfsWqtTFU4QVxtioFgE6Mya7OmPp4nS3XkX551B1W50MX
-	vHj3SckzQP2Mu95Tuyrhk
-X-Google-Smtp-Source: AGHT+IEWxz2ukH8WNYyFaAsNQWUH6XpTNFQRIupr3Lnn0/uerqUny1xGkgFJRyZGq+ChjwK9aMkYNQ==
-X-Received: by 2002:a05:600c:5486:b0:453:2066:4a26 with SMTP id 5b1f17b1804b1-4562e39b9a1mr210179265e9.16.1753105848730;
-        Mon, 21 Jul 2025 06:50:48 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4562e80731bsm159818925e9.15.2025.07.21.06.50.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 06:50:48 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ACPI: processor_throttling: Remove space before \n newline
-Date: Mon, 21 Jul 2025 14:50:16 +0100
-Message-ID: <20250721135016.2500117-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="O1/OT2JS"
+ARC-Seal: i=1; a=rsa-sha256; t=1753106889; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z59vGM/4C6HeCkGkpTGlXB/INooxTGTCbMXlVKrKnXCzYTgMLU1rufxW22HSGRc9v8c8iuDKMUfprp3da72GnPAku7gGTij3Bm5s6lPNLDmuwzw1DROb8sLE+WkP7v+awCypwBrSCPCNNxcqxm5tMK1eEYRxjI96zDnGf20o7is=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753106889; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iUwGYLVqI6Xet0Y6yYXId8OhAeexUPWui/BWydgtxjc=; 
+	b=XFMi09ggTPwIeka28tO2P/9v65WtMvNUHgWd6CrO28mYZ10fSUVAoceyZKJzy0RZ05Hl5DcJuf2tgv/lnb52ozIejBKm/DS0Fy6VgFHJT1Q6oMy/1/CH9BuxqumRG42c2Y/IY9eXEBz36denos92wRamjZZ/RTZQwJ+CTJ1eXok=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753106889;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=iUwGYLVqI6Xet0Y6yYXId8OhAeexUPWui/BWydgtxjc=;
+	b=O1/OT2JS33uLJgy6z/cS/tvpgWhtZPC+kVwWlYfZ3Q2P/tDCOTkJrKTdjeFcwFJX
+	Q0Az0saTpCz2ZbJ6YqiL4gfo42cNWX6fS6wE+FBuv58OqMpewlGvmPf3IGx95wZ3t4p
+	iwpd8EUhPHMOeOO9ZOkSVNKHzLo8DhR4ufMeL1nc=
+Received: by mx.zohomail.com with SMTPS id 1753106885694476.02518889834164;
+	Mon, 21 Jul 2025 07:08:05 -0700 (PDT)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: rkvdec: Fix a NULL vs IS_ERR() bug in probe()
+Date: Mon, 21 Jul 2025 10:08:03 -0400
+Message-ID: <6175873.lOV4Wx5bFT@trenzalore>
+In-Reply-To: <696219e9-a1c7-4c87-b15c-1ffd42c95d58@sabinyo.mountain>
+References: <696219e9-a1c7-4c87-b15c-1ffd42c95d58@sabinyo.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-There is a extraneous space before a newline in a pr_warn message.
-Remove it.
+Hi Dan,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/acpi/processor_throttling.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wednesday, 25 June 2025 11:23:10 EDT Dan Carpenter wrote:
+> The iommu_paging_domain_alloc() function doesn't return NULL on error it
+> returns error pointers.  Update the check and then set ->empty_domain to
+> NULL because the rest of the driver assumes it can be NULL.
+> 
+> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/staging/media/rkvdec/rkvdec.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/rkvdec/rkvdec.c
+> b/drivers/staging/media/rkvdec/rkvdec.c index d707088ec0dc..1b7f27e4d961
+> 100644
+> --- a/drivers/staging/media/rkvdec/rkvdec.c
+> +++ b/drivers/staging/media/rkvdec/rkvdec.c
+> @@ -1162,8 +1162,10 @@ static int rkvdec_probe(struct platform_device *pdev)
+> if (iommu_get_domain_for_dev(&pdev->dev)) {
+>  		rkvdec->empty_domain = 
+iommu_paging_domain_alloc(rkvdec->dev);
+> 
+> -		if (!rkvdec->empty_domain)
+> +		if (IS_ERR(rkvdec->empty_domain)) {
+> +			rkvdec->empty_domain = NULL;
+>  			dev_warn(rkvdec->dev, "cannot alloc new 
+empty domain\n");
+> +		}
+>  	}
+> 
+>  	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
 
-diff --git a/drivers/acpi/processor_throttling.c b/drivers/acpi/processor_throttling.c
-index d1541a386fbc..f9c2bc1d4a3a 100644
---- a/drivers/acpi/processor_throttling.c
-+++ b/drivers/acpi/processor_throttling.c
-@@ -235,7 +235,7 @@ static int acpi_processor_throttling_notifier(unsigned long event, void *data)
- 		if (pr->throttling_platform_limit > target_state)
- 			target_state = pr->throttling_platform_limit;
- 		if (target_state >= p_throttling->state_count) {
--			pr_warn("Exceed the limit of T-state \n");
-+			pr_warn("Exceed the limit of T-state\n");
- 			target_state = p_throttling->state_count - 1;
- 		}
- 		p_tstate->target_state = target_state;
--- 
-2.50.0
+Thank you for finding this one. I tested it on rock 5b and all is good. 
+
+Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
+
+Regards,
+Detlev.
+
 
