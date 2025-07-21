@@ -1,104 +1,130 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E22119DF62;
-	Mon, 21 Jul 2025 15:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19FE1D63C5;
+	Mon, 21 Jul 2025 21:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753110227; cv=none; b=Jb0YC44LqlVaQp8uDY5XgSYfziUa9BCXWhut8t+rpxNH10y0J2ivkC8BUp3h0k+Bf+ab69jk9xkXKr0a193bkakWTLi1tAGVE4gHYyx4I7nCkk3TcBa8nQWwwHUXna3at24LwFWhakLdatSlFP6HAnpZ9VZWyvf3ePq6e59BJU8=
+	t=1753134006; cv=none; b=WWeWXJxhWGIkDfCf6mpYJkUdQwdcxmRPTnMaEjpAFBXxcVzJ1qfGWVxCCKiw5RG/m41xR7YWzTRGsDE/Phla6946GTwKuUUhYOcCv2pPVLs7k7XvuydsoIe6cMI9nhUPsGEr6h7nGe2hUfGphbt8+s21rel33O0/a5Lu/7XiBJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753110227; c=relaxed/simple;
-	bh=sLQ0v+qSfqEceezMZuXx3FC96Rh9DQ+K7dTaxDzNaRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a27BypgJbJKQcDkywQb1SkaU/2nlISz9NEUxhodoDxeQ0rX9FiHWYGtMrCDRVXIF5n24a+IkbpYYFdUZdTYtVMAFKGLPa8Vim4dZVk4tE0Y9EyDLJbeS8hUjSbj22uuJIU+Q/dYoLOc82kDqRWsM89L8QtrJA7FvG2SjruvfKrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYkgTp0x; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753134006; c=relaxed/simple;
+	bh=ClyfYCr1u9jQfmH2abra/H4JduOhfim5mQuRYUsYzzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=k9PLvCCwKS4V3om72l08TwF0i6FHJXuyFVEG9YGJPGOhCB71z4p4CnhHlSCvDTt7HzahEUxhsbM84TUPwNpN71+oJVeAgWZgiCiAnSZa3FqrUbpXDI3w2FNMauab8r0h3rb2kyb95A/vnv5DsYHaQsJidXNK3XnXhnLdG/OxhU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbCgsvrI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYkgTp0x"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad56cbc7b07so722480066b.0;
-        Mon, 21 Jul 2025 08:03:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753110224; x=1753715024; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hYCIxA2fKKKIZVk28gAD9jEo3Ziv2IfX2lxXhfepHEc=;
-        b=PYkgTp0x3dO+nimQkPTWPOV23qAoMMCRaclxUTNfud6pW07pr+4+fjdiMWjybdGANo
-         StL6Q/Iz46kMu89cpKg4cGRCRQeKaBZrCi5zSg8G7Q4LsawAjENH1N7gpa7qQR/X+GRt
-         RPCGvHTs5CXCX2AlXE+6VJ9JDObVZsSyz0nLlvXfqOJmx/2kaDrFbVUnt+QwpTehVcuu
-         LQpE5yEymCrjvDAmVciynavba/+nEnD5lbzZnSJG+pf78zbp4aAZ1LENFg6swD/h5tVF
-         QyoWYgjJe6yzldv7eT/Xd7gVwxqrv8+VBFW21pMjUJTELxl8s8HCB9jWqYB5lFkl5UpW
-         hJAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753110224; x=1753715024;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hYCIxA2fKKKIZVk28gAD9jEo3Ziv2IfX2lxXhfepHEc=;
-        b=FcgMJqx+rKBUSAtEkvs59ndO4hbtEEg8nftSS3S3GiVbosze17bn5UG63Y5nSB7Ww0
-         dplkuy4WOmuVXB4BuvYngsKH29stuyUCB0iSjftafSi8UYWCab/9jABh0R9HGoeVWa9t
-         ptyjqi4Ma1kBHOuV0+9hE67T7NjrCH2VWEDjgOjBBtRUsf4pUowhfHrT7074GOzkU8jp
-         Z+XKX3rpwdZZKJ6cIVWCPbJs0Q1LGJ0gnIKNHZ/dYUkRZsnHjTM2a4pa2GoE93HFtqsS
-         qULWPzhGG62ELVl/YVCK6BzQ7Zrrmp0EFAt7rDrOF6kjlPrFGLl5/49HYSpEqaoZwg4w
-         /NuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSlzs/qUcXOfrD90OpuJKQErGq1ix13B1WgsP3f8N7Cf9Gdb+CFCciXiKXQW1l0EvQx5m4dkIhzDUlgV7o@vger.kernel.org, AJvYcCUkUhPl/+n9rFTb136xUg5jTygoSG6a1uhO5rnrReCWT0L8TQWlbxLxXWArflBWwbUJzVFWsoxR7B8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVaGc9PmuotG8gS/keEaUKsthUiUb2M+083sohKmkAjG2KgyuJ
-	0pcLKYEmGtx4TipgqQxToalu3Cvz6KTk2GDbuCKgg9IWkOvSCL2/d35+
-X-Gm-Gg: ASbGncuZR/qaJ1zdCNaCPB9w7a2d4UDxgALYELwlpZ7t/YsbSGiy7LudnbL//wg77yS
-	wdxPGNf9UKmntwsH+jj69kcJDEJ9MmsSB/whK3wfqcHtOuc/I4osKrD0//Z57m2lyfniSFSKuwX
-	lIngf3/GLrrjZr4NEQmD9c+E7LnwnDVBGt9m6etrdX+uHZjbB0YbQ2m60h7OkKF7JuWG+2Kb/sD
-	RcRiW2JKBgY8JSNBcLp3YiTas0Zdt1W5S1U8Ft9KsByuIMvMBG0INCC/tppnF0Na1B0Y4NA3jc9
-	P0euGEe35idsc6MHQdrargupQZLnavcdtVXG7svigb5e9w1asefb6kxRqvVxqlS7k0vCGTqlLvm
-	joaMzkj1+f9coY+6/XoVJ
-X-Google-Smtp-Source: AGHT+IFwOAb07D2i/QIPv2fknIMkkE5elVRJuhetZPLIOd0ezgq6Y89BJdk3N8wV66TTzWvYNRBuNA==
-X-Received: by 2002:a17:907:1c89:b0:ae0:ba0f:85af with SMTP id a640c23a62f3a-ae9ce193a65mr1994716266b.51.1753110222765;
-        Mon, 21 Jul 2025 08:03:42 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-aec6ca2f1a7sm689398966b.91.2025.07.21.08.03.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Jul 2025 08:03:41 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Abhash Jha <abhashkumarjha123@gmail.com>,
-	linux-iio@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbCgsvrI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D812C4CEED;
+	Mon, 21 Jul 2025 21:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753134006;
+	bh=ClyfYCr1u9jQfmH2abra/H4JduOhfim5mQuRYUsYzzQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=QbCgsvrI61SVfv3SiAF8AjqkuXjJadTNEWKg3yy7vo9KW0wK65sjO+y4RhPgg+vc2
+	 R7OHLZmwv1Gr35ADp+Rvf254UtfaiBpNJYlcoKjnxDmBTWCwlch4hcikeMzEg0OyV+
+	 PzMMHBPYyygXayguf5doyyPG7q0mNdN9+KJfADB/YUqGVBrWQctmWnX/7mgFqdQqjV
+	 1nN5P4njedGr5kDvRTiw+9xuK8Tr0VXUyMDatTpsHVMCjx8oZfPSLgGFXQt3hVRJAa
+	 RFgm74xv6mX9+qdsL/l7Ohzpr0Pu802Ntk4y75fE0tA1n5NAEijPU5ykMr3ChXQ2D/
+	 L1XqBN0Rig6Xg==
+Date: Mon, 21 Jul 2025 16:40:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] iio: light: vl6180: remove space before \n newline
-Date: Mon, 21 Jul 2025 16:03:09 +0100
-Message-ID: <20250721150310.2601679-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+Subject: Re: [PATCH][next] ACPI: pci_link: Remove space before \n newline
+Message-ID: <20250721214004.GA2756360@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250721145952.2601422-1-colin.i.king@gmail.com>
 
-There is an extraneous space before a newline in a dev_err_probe message.
-Remove it.
+On Mon, Jul 21, 2025 at 03:59:52PM +0100, Colin Ian King wrote:
+> There is an extraneous space before a newline in an acpi_handle_debug
+> message.  Remove it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/iio/light/vl6180.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FWIW,
 
-diff --git a/drivers/iio/light/vl6180.c b/drivers/iio/light/vl6180.c
-index cc4f2e5404aa..38706424089c 100644
---- a/drivers/iio/light/vl6180.c
-+++ b/drivers/iio/light/vl6180.c
-@@ -722,7 +722,7 @@ static int vl6180_probe(struct i2c_client *client)
- 						IRQF_ONESHOT,
- 						indio_dev->name, indio_dev);
- 		if (ret)
--			return dev_err_probe(&client->dev, ret, "devm_request_irq error \n");
-+			return dev_err_probe(&client->dev, ret, "devm_request_irq error\n");
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+Fixes for more ACPI-related typos below, feel free to squash or I can
+send separately.
+
+> ---
+>  drivers/acpi/pci_link.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
+> index 08e10b6226dc..e4560b33b8ad 100644
+> --- a/drivers/acpi/pci_link.c
+> +++ b/drivers/acpi/pci_link.c
+> @@ -268,7 +268,7 @@ static int acpi_pci_link_get_current(struct acpi_pci_link *link)
+>  
+>  	link->irq.active = irq;
+>  
+> -	acpi_handle_debug(handle, "Link at IRQ %d \n", link->irq.active);
+> +	acpi_handle_debug(handle, "Link at IRQ %d\n", link->irq.active);
+>  
+>        end:
+>  	return result;
+
+diff --git a/Documentation/ABI/testing/sysfs-firmware-acpi b/Documentation/ABI/testing/sysfs-firmware-acpi
+index f4de60c4134d..72e7c9161ce7 100644
+--- a/Documentation/ABI/testing/sysfs-firmware-acpi
++++ b/Documentation/ABI/testing/sysfs-firmware-acpi
+@@ -108,15 +108,15 @@ Description:
+ 		number of a "General Purpose Events" (GPE).
  
- 		init_completion(&data->completion);
+ 		A GPE vectors to a specified handler in AML, which
+-		can do a anything the BIOS writer wants from
++		can do anything the BIOS writer wants from
+ 		OS context.  GPE 0x12, for example, would vector
+ 		to a level or edge handler called _L12 or _E12.
+ 		The handler may do its business and return.
+-		Or the handler may send send a Notify event
++		Or the handler may send a Notify event
+ 		to a Linux device driver registered on an ACPI device,
+ 		such as a battery, or a processor.
  
--- 
-2.50.0
-
+-		To figure out where all the SCI's are coming from,
++		To figure out where all the SCIs are coming from,
+ 		/sys/firmware/acpi/interrupts contains a file listing
+ 		every possible source, and the count of how many
+ 		times it has triggered::
+diff --git a/Documentation/firmware-guide/acpi/gpio-properties.rst b/Documentation/firmware-guide/acpi/gpio-properties.rst
+index db0c0b1f3700..1e603189b5b1 100644
+--- a/Documentation/firmware-guide/acpi/gpio-properties.rst
++++ b/Documentation/firmware-guide/acpi/gpio-properties.rst
+@@ -92,8 +92,8 @@ and polarity settings. The table below shows the expectations:
+ |             | Low         | as low, assuming active                       |
+ +-------------+-------------+-----------------------------------------------+
+ 
+-That said, for our above example the both GPIOs, since the bias setting
+-is explicit and _DSD is present, will be treated as active with a high
++That said, for our above example, since the bias setting is explicit and
++_DSD is present, both GPIOs will be treated as active with a high
+ polarity and Linux will configure the pins in this state until a driver
+ reprograms them differently.
+ 
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index c2ab2783303f..a984ccd4a2a0 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -1406,7 +1406,7 @@ static int __init acpi_bus_init(void)
+ 		goto error1;
+ 
+ 	/*
+-	 * Register the for all standard device notifications.
++	 * Register for all standard device notifications.
+ 	 */
+ 	status =
+ 	    acpi_install_notify_handler(ACPI_ROOT_OBJECT, ACPI_SYSTEM_NOTIFY,
