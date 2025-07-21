@@ -1,130 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19FE1D63C5;
-	Mon, 21 Jul 2025 21:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B522E3716;
+	Mon, 21 Jul 2025 23:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753134006; cv=none; b=WWeWXJxhWGIkDfCf6mpYJkUdQwdcxmRPTnMaEjpAFBXxcVzJ1qfGWVxCCKiw5RG/m41xR7YWzTRGsDE/Phla6946GTwKuUUhYOcCv2pPVLs7k7XvuydsoIe6cMI9nhUPsGEr6h7nGe2hUfGphbt8+s21rel33O0/a5Lu/7XiBJU=
+	t=1753140937; cv=none; b=elPlcf7f0ub07huWSUQRYHKr5w2cpg9P5kpW5G1oaFEfJDSgj6CfphdLIjV7hEQwcNDYC1ocsoDLZWP4s3eXFgDFoCROQ5U4qKHaU0mo/ygOISRoKbQJV+XshRmsWeXBv7IrEeBCV5n0oxgu+q2ZqW6UupEzkgkd7SC0bAdoXJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753134006; c=relaxed/simple;
-	bh=ClyfYCr1u9jQfmH2abra/H4JduOhfim5mQuRYUsYzzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=k9PLvCCwKS4V3om72l08TwF0i6FHJXuyFVEG9YGJPGOhCB71z4p4CnhHlSCvDTt7HzahEUxhsbM84TUPwNpN71+oJVeAgWZgiCiAnSZa3FqrUbpXDI3w2FNMauab8r0h3rb2kyb95A/vnv5DsYHaQsJidXNK3XnXhnLdG/OxhU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbCgsvrI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753140937; c=relaxed/simple;
+	bh=lVQMxv1VxmMgBhdUyZLq7S3b/3eQArDg2bF6jiioln0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KGCSlhHebXcW4PHG8yfcK712R3abe0RrFdicUq45KOl6wVvoYetBiTAIdXXHMZ4kIDJ2cWWfAwlpczXHbmR58YG5f9SMTbQeif169gjsyj+QvmBgZ9BBs/kJD2QltzO/0M7RRjZfO38BChDg3NIIR6apwlOD5V53J0OmtqIozew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=r2zSzyHh; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbCgsvrI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D812C4CEED;
-	Mon, 21 Jul 2025 21:40:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753134006;
-	bh=ClyfYCr1u9jQfmH2abra/H4JduOhfim5mQuRYUsYzzQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=QbCgsvrI61SVfv3SiAF8AjqkuXjJadTNEWKg3yy7vo9KW0wK65sjO+y4RhPgg+vc2
-	 R7OHLZmwv1Gr35ADp+Rvf254UtfaiBpNJYlcoKjnxDmBTWCwlch4hcikeMzEg0OyV+
-	 PzMMHBPYyygXayguf5doyyPG7q0mNdN9+KJfADB/YUqGVBrWQctmWnX/7mgFqdQqjV
-	 1nN5P4njedGr5kDvRTiw+9xuK8Tr0VXUyMDatTpsHVMCjx8oZfPSLgGFXQt3hVRJAa
-	 RFgm74xv6mX9+qdsL/l7Ohzpr0Pu802Ntk4y75fE0tA1n5NAEijPU5ykMr3ChXQ2D/
-	 L1XqBN0Rig6Xg==
-Date: Mon, 21 Jul 2025 16:40:04 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ACPI: pci_link: Remove space before \n newline
-Message-ID: <20250721214004.GA2756360@bhelgaas>
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="r2zSzyHh"
+Message-ID: <ece307c3-7d65-440f-babd-88cf9705b908@packett.cool>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1753140932;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8/geEkB40JNZ1dVvddexIz+4X4JnuBeRGFU7+a1RO9k=;
+	b=r2zSzyHhGbPZmuNyqYl8gwbAIg2poImKw/459M7Lc4M7pwqg99VketHOk4h2tK28s2C/mZ
+	Joz+sBuPMaF8NrAGr7NlWNzpo52R0mgLyJ6xLA/kK5f1MQ0DEjMJ38Armm7n7peK0xkrG1
+	KSjXww3HOlMfpNS8hjRc6piH6HmbWs++CI/73xVkTaYWBtXlhzHrWcJAJ+d01vxBsf7+oi
+	L6TVrUJv1zbk6Ssb4Oh9BMeUAWXQLQ6liXO5sWJZnYRzUPJMH6NhjDo2T42WEKR4ZoSHc+
+	ga/5q1tNWdj3fbvKoCE0d1/Cj1ztf5SDlvKX5hyLE1MCShy6B0ltjlk11Tj+/A==
+Date: Mon, 21 Jul 2025 20:35:22 -0300
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250721145952.2601422-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] soc: qcom: mdt_loader: Fix error return values in
+ mdt_header_valid()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+In-Reply-To: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Jul 21, 2025 at 03:59:52PM +0100, Colin Ian King wrote:
-> There is an extraneous space before a newline in an acpi_handle_debug
-> message.  Remove it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Hi,
 
-FWIW,
+On 6/25/25 12:22 PM, Dan Carpenter wrote:
+> This function is supposed to return true for valid headers and false for
+> invalid.  In a couple places it returns -EINVAL instead which means the
+> invalid headers are counted as true.  Change it to return false.
+[..]
+>   	if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
+> -		return -EINVAL;
+> +		return false;
+>   
+>   	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
+>   	if (shend > fw->size)
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+this has broken all firmware loading on my x1e laptop (Dell Latitude 7455).
 
-Fixes for more ACPI-related typos below, feel free to squash or I can
-send separately.
+Apparently e_shentsize is always 0 in Qualcomm firmware files.
 
-> ---
->  drivers/acpi/pci_link.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
-> index 08e10b6226dc..e4560b33b8ad 100644
-> --- a/drivers/acpi/pci_link.c
-> +++ b/drivers/acpi/pci_link.c
-> @@ -268,7 +268,7 @@ static int acpi_pci_link_get_current(struct acpi_pci_link *link)
->  
->  	link->irq.active = irq;
->  
-> -	acpi_handle_debug(handle, "Link at IRQ %d \n", link->irq.active);
-> +	acpi_handle_debug(handle, "Link at IRQ %d\n", link->irq.active);
->  
->        end:
->  	return result;
+Confirmed externally with readelf:
 
-diff --git a/Documentation/ABI/testing/sysfs-firmware-acpi b/Documentation/ABI/testing/sysfs-firmware-acpi
-index f4de60c4134d..72e7c9161ce7 100644
---- a/Documentation/ABI/testing/sysfs-firmware-acpi
-+++ b/Documentation/ABI/testing/sysfs-firmware-acpi
-@@ -108,15 +108,15 @@ Description:
- 		number of a "General Purpose Events" (GPE).
- 
- 		A GPE vectors to a specified handler in AML, which
--		can do a anything the BIOS writer wants from
-+		can do anything the BIOS writer wants from
- 		OS context.  GPE 0x12, for example, would vector
- 		to a level or edge handler called _L12 or _E12.
- 		The handler may do its business and return.
--		Or the handler may send send a Notify event
-+		Or the handler may send a Notify event
- 		to a Linux device driver registered on an ACPI device,
- 		such as a battery, or a processor.
- 
--		To figure out where all the SCI's are coming from,
-+		To figure out where all the SCIs are coming from,
- 		/sys/firmware/acpi/interrupts contains a file listing
- 		every possible source, and the count of how many
- 		times it has triggered::
-diff --git a/Documentation/firmware-guide/acpi/gpio-properties.rst b/Documentation/firmware-guide/acpi/gpio-properties.rst
-index db0c0b1f3700..1e603189b5b1 100644
---- a/Documentation/firmware-guide/acpi/gpio-properties.rst
-+++ b/Documentation/firmware-guide/acpi/gpio-properties.rst
-@@ -92,8 +92,8 @@ and polarity settings. The table below shows the expectations:
- |             | Low         | as low, assuming active                       |
- +-------------+-------------+-----------------------------------------------+
- 
--That said, for our above example the both GPIOs, since the bias setting
--is explicit and _DSD is present, will be treated as active with a high
-+That said, for our above example, since the bias setting is explicit and
-+_DSD is present, both GPIOs will be treated as active with a high
- polarity and Linux will configure the pins in this state until a driver
- reprograms them differently.
- 
-diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
-index c2ab2783303f..a984ccd4a2a0 100644
---- a/drivers/acpi/bus.c
-+++ b/drivers/acpi/bus.c
-@@ -1406,7 +1406,7 @@ static int __init acpi_bus_init(void)
- 		goto error1;
- 
- 	/*
--	 * Register the for all standard device notifications.
-+	 * Register for all standard device notifications.
- 	 */
- 	status =
- 	    acpi_install_notify_handler(ACPI_ROOT_OBJECT, ACPI_SYSTEM_NOTIFY,
+% readelf --all 
+/lib/firmware/qcom/x1e80100/dell/latitude-7455/qcadsp8380.mbn
+[..]
+   Start of program headers:          52 (bytes into file)
+   Start of section headers:          0 (bytes into file)
+   Flags:                             0x73
+   Size of this header:               52 (bytes)
+   Size of program headers:           32 (bytes)
+   Number of program headers:         58
+   Size of section headers:           0 (bytes)
+   Number of section headers:         0
+   Section header string table index: 0
+
+There are no sections in this file.
+
+There are no section groups in this file.
+
+
+(Not just with my files, also readelf'd the Lenovo ones committed to 
+linux-firmware, same deal.)
+
+Thanks,
+~val
+
