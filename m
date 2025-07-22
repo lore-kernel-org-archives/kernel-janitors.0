@@ -1,165 +1,121 @@
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022106.outbound.protection.outlook.com [40.107.75.106])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5744D2E336B;
-	Tue, 22 Jul 2025 12:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.106
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186022; cv=fail; b=QwEZ7lb7h5Ohj39PMFEQHGjSxglabkZuOVPDPSBXi8trkijFUdTaiDWbKKTEeLdTU5fAHF4A4UwArRSZIrcKXfKpdk5IRKl4z7DaMtFtKysLM1wURM7bM61GQ100b8yn8UQoBeCfa1JxuIQrg4VLZoEL98G1P0QYpLM4XmjbsbU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186022; c=relaxed/simple;
-	bh=ddde09awFFaOZ5kMXQOBG6G/U9JOR5UoojhdVBhMm1s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hhjvJ0zmL2dCGyCPh6wryxEw0ih/GXJHphWUoylgJH04sI1ZrSgY7xL1i8JVCacP561/+L2J0jXI0YOP+PEnJXKx9mdl43k02l2CVr2/RwU3ReFyC05S+1iJtBmWOZGxEpjQo67fp5SDGOF/Ah91tNVpTV1C7JX0duOhG+NFRmg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jmkLqXEOLKqsH/j1H0pm4gFowAjhFW4A4GVnDTa+dtTZvgCbylyM3pW8m8+34kq3Dxre7yen5kBNnzvXN9b9BcaN/sMiIAsGEWG23DzBqyo/GhcYmmxFN72wAB8kYeZOzwZ4Ol6YtsuspHZi4q7BEbizZ8HKeRz+/9m+0vOTb/wufji2QXpMXE8gMVdtdsShKVap631zJmjLWToKxgirhnF8tW3OT/Sw+z/MKBkaWXY7TljOr4G0gUZ1JmFUJZ+A1jah07kfATJTrMul9cl/PjLUAynObno2r3xBvPjJ+uXkQbKoG1/pHB9nItiEeLz3M9fU5fMSEGnADq2LSqepFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LADhb2PuqbDwuUerz0inEybQtfmOp4apa5x8P6KI71k=;
- b=zDQwKcY9O4Wa+S2CCFCYaGhyWBKVat/ZLRtT/mGNaOQ9Pzz5VhhhtiVtVGGcph7lQVsw9ztrnFlA3viBEAAdabVMoI5TZ1SPcxHFk0xkx9COYADezmTiQcBvOgffWga9q+cPLwS4R65uW/94B3/1HO/8VjOS7Cn/kbue4h9pQ9ah5OLwYcHyRB+O2SrTxy/qfsGVpqozW4z3IT1zSiqjfOVGJ/jDSksl3mqFkXL45XcJYOoJVpaUe3e48etlgrYzDI6tNzsa32aG93pFG1pM6vG5KUUJEMJPTQEhGbUxjriDwuEvp6lIw5mJyrS9hFWo9reX/jPQLWg/8qV6e/VL6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from TYCP301CA0079.JPNP301.PROD.OUTLOOK.COM (2603:1096:405:7b::15)
- by KL1PR06MB6964.apcprd06.prod.outlook.com (2603:1096:820:121::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.30; Tue, 22 Jul
- 2025 12:06:52 +0000
-Received: from TY2PEPF0000AB87.apcprd03.prod.outlook.com
- (2603:1096:405:7b:cafe::1c) by TYCP301CA0079.outlook.office365.com
- (2603:1096:405:7b::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8943.29 via Frontend Transport; Tue,
- 22 Jul 2025 12:06:52 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB87.mail.protection.outlook.com (10.167.253.6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8964.20 via Frontend Transport; Tue, 22 Jul 2025 12:06:51 +0000
-Received: from [172.16.64.208] (unknown [172.16.64.208])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id B0E124115DE5;
-	Tue, 22 Jul 2025 20:06:49 +0800 (CST)
-Message-ID: <ed2b9167-2eb3-412e-9c1c-eba124560e3f@cixtech.com>
-Date: Tue, 22 Jul 2025 20:06:49 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AB8DDC3;
+	Tue, 22 Jul 2025 13:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753190815; cv=none; b=KQ2VzrJkjoJ8Ab3R7xAa1B+d9WfkROcJ2KCvCXpHX8FD9s2hjrGKWr2MtHm0XmqXjD2AFiTYEgRxYsU7vuyIJnvWkZPHaBbiSrXIR+UtIll7G9hL+/wRMYsT5McRV+PNhf1ZZjetqMJF1b+PlMWATOLgJtrJer4fZEgS8aKxbpo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753190815; c=relaxed/simple;
+	bh=920Ca2ouMMHxRdAAUWeWoX9aUz6BMIrpWi9RTdL86rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UUgDTG48aDDgOo9nAotIDfk6txHHoRdiSTax4inVnPe3UbjVnAfb4x7tCFZU+Ua78/wbBOnI0ZL0vGHqLhB5wA44xZXjwq/ebLpRFHHR/V4YJTc0aaqi29kXAVrg4I4Gm97+UdANCLsAbSrtJfYWlgtz5Uui5Vh3a2jV1cZZMks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qIMiSyOw; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIMiSyOw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1215C4CEF1;
+	Tue, 22 Jul 2025 13:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753190815;
+	bh=920Ca2ouMMHxRdAAUWeWoX9aUz6BMIrpWi9RTdL86rg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qIMiSyOweINPcFI7ATAonMAECBG/QwDPtxozhYz1HEi+KIZAJDrvbF0KrLP3my+ee
+	 Ufdvh4ab8i5uZeE3tYdElEhmzChIl0BR0kjxVHAjQaeajK2oalFBW0MrwM4XTjYxM5
+	 dhmYw00eJAomhQ6eAXBMOdko0Ox6xTZFMJl4WUjM+2cUYUrCJVLtN+0Ysardl5kU+v
+	 MAlN+2AhMP/FlkF1iLDeOm4KBj2oYQLRCUtWrQpd2dHQwaVvsmfGE+uXCWzlPeuRMa
+	 HcHn05cwyWvkhH5TPdcUm3eHhwhceKje9kz/TCEbCorYX1+oIDJUnzdFTWdT7Oiclx
+	 6neytYnhfE8Mg==
+Date: Tue, 22 Jul 2025 08:26:53 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Colin Ian King <colin.i.king@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] ACPI: pci_link: Remove space before \n newline
+Message-ID: <20250722132653.GA2781885@bhelgaas>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] mailbox: cix: Fix spelling mistake "overlow" ->
- "overflow"
-To: Colin Ian King <colin.i.king@gmail.com>,
- Peter Chen <peter.chen@cixtech.com>, Fugang Duan <fugang.duan@cixtech.com>,
- CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250722100214.3792075-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <20250722100214.3792075-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB87:EE_|KL1PR06MB6964:EE_
-X-MS-Office365-Filtering-Correlation-Id: e7844489-bd18-4af5-1037-08ddc9183e5b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MXh3N2ppK1VtNTJudnZUeG9sVWNnTXFhSGJDRXNHWFdrZmFKanR2MkduS0Nq?=
- =?utf-8?B?bnpxT1E1OVl1QkhlcDFITTdZKzRPTUtiSlgyb1dJMjRBa0xndFpZSG1WakpU?=
- =?utf-8?B?enJ5aDE0d0FOV3I0aVJRYVJacWs1ZU0va2ZCbWFPY3lvU1ZvakdTMER4Tm9h?=
- =?utf-8?B?VklUMmNIaG0xL1plb20yWWU5SHBsRWVFdG1vMkh0WHlteVJpZUNrV28vM28w?=
- =?utf-8?B?a1RkRytTeW0wZ3YwbktiNG1UNC9tb2hUQ0tpVU9XSmJoZjV6bEhRNENXcWRk?=
- =?utf-8?B?RmZtQ3IyUHA2eTlUTnNFN1JDRC81R2QrbVdra21YUTExVGpBK3p4d3hTN2Rs?=
- =?utf-8?B?b21lNmZyVjA5U2tTb1ppSmwyNmpQVTV5VlRSQUpzY2RJL1RzY2NkUVhWUjhI?=
- =?utf-8?B?b3U0SXZtU1FkOEFZSHZWWS9rTEVGUHpGTURJb2s1WTRzQnYyWTJEUTVvQWNL?=
- =?utf-8?B?dXZNakx3TTQ2Y3JUQlhVMzgzNGQ4Ly9ncSs1VWcycWFRMVdIbVFuUXNHWU5G?=
- =?utf-8?B?TjVRYUpOMTEzejFVMnZLZlhXNFV5STExMVFaQmJEQlB1N1VTZEVEL0hPVGZT?=
- =?utf-8?B?V3VHSk05LzM4Z0ZTTWVCS1ZURC9zMDNwMHBUZTJuRkxDNGl0V28vbFUvRnpR?=
- =?utf-8?B?eGJiSU10NUdjbGRYVkI0R1JIamNqZVFHMmxBTFNZd0NUOVVlUVhXY2taQVVH?=
- =?utf-8?B?OTVnRnBHODMveWtiejRYSm1NcktmcS9hb2s3NVRtb1VXU3ovQTFLME1RWGVJ?=
- =?utf-8?B?ejFjclRJc1RCWk1nOHJYenJDSE9nRmtQQnltQlFYdElVKzQ0VTM1NEVZQkRh?=
- =?utf-8?B?SXB4b3RVMll6bkZxTUZsaXN3U0RldlBrWU1IMjFWU203UktuNHdGc0cyc0hv?=
- =?utf-8?B?NmRlbmpDUHVlS3Q3eWd2TUFOOGErclZxZmQ2bjRUdlhBZzZ3OHhOYzYwN0xi?=
- =?utf-8?B?d3NKeVRRRE93Ymc2VlJ4UkY1dENXaUw3d0U4QVk3VCs2bE8rcnFHMVdnaHRK?=
- =?utf-8?B?aE05TGdTV3JkNlY3UkxnSkI4d1d4RnV2WWVTOVVscVVGRDBPOWxVNzBMU1o4?=
- =?utf-8?B?bFRBdDFsZEZSVndwZXJKVVhhM1JZMnlaTGdpK2FoNDBYWlU1MnlEbEJXRXB6?=
- =?utf-8?B?T2tDM3ZTK3hiVUhVaUx3Tjh3RjFVYjZXc0J3Unhpb1F0UFp6dHRFSUNta2hm?=
- =?utf-8?B?WVVaWkFMNXc4Z3JTM3I0WDdSK2REQlBtY0h6Mk53MWdWSUFBRmRFK0t2WWUw?=
- =?utf-8?B?VVZxWVhKcU55N0EyeHY5UktMeG9iRE96N1JCTWJLNWRLWnpqOUxZTlZRK1R4?=
- =?utf-8?B?WTJSOEtaTVI2eDNJRjFUV2xsVU5kUGhFMEQ1RkkxS0NlcFFBUHVkNzhjTmZ4?=
- =?utf-8?B?RGd5TSs0dENyRFI4Z21KaFRadmxzaHFuTHRWNDFERjZyRUxwOVQySTlubytw?=
- =?utf-8?B?WUJYcG9nS1hlVjZmZDN4QXFoYlBTR1VNRlM4cXhzQkkrb1hna25KT1FyTGtp?=
- =?utf-8?B?Yy81MDB3dzhMcHlFcFd6WWJIZ2ZNN2NTa1YvTm5Ud0dncU51NlVvcWVMdTlm?=
- =?utf-8?B?L2NLaFMzczl0Z2hqay9TbFpqekhYcHhFSnVaUTJOVEpTQnoyL3J6YUF2dTg4?=
- =?utf-8?B?SklEcnduYjA3UnlJTUREQy83N09TMnFmeGJORmJiRU0vT2NGUnlHcUN4SDZK?=
- =?utf-8?B?V0JWOFpuMHRHcVRYMjB6VEdlQjVKUmM1Yk5WUFZLT0VCRWI3OXF4QTVVeHE3?=
- =?utf-8?B?QkxCZmtGTElNV1liYThUSStod2E0M3ZDY1pBdVZ6YXBpbWZaT2ZoaVF1R3hZ?=
- =?utf-8?B?b1lGZW93TnMzODNQRzYvSzQ1emo0dHJQT01jWXkraDVSYkNmaTQyMTdaQWlu?=
- =?utf-8?B?MVRsb2hTMDVwUUpLdzk3YW5qYUJTZUtWYXg0NGRycFFza2QrSkNvSXh3Zytm?=
- =?utf-8?B?RFFNVFdmUkxsOG9UTmZMYkxUQmt0NTJESnBpREJxYlJVbW5kZnZaSExlSkJC?=
- =?utf-8?B?eWpCa0xTODhlQVo2Q3piQnJIeUl3Ry9wdjYrM1phZEE4d2xVTmhMM04xaUpl?=
- =?utf-8?Q?kS96TY?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7053199007);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2025 12:06:51.0558
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7844489-bd18-4af5-1037-08ddc9183e5b
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	TY2PEPF0000AB87.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6964
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0gT1X9zuoAfxGS5XP0s1TD1tyP2shbC_cbiRJPjDg4=jA@mail.gmail.com>
+
+On Tue, Jul 22, 2025 at 11:48:07AM +0200, Rafael J. Wysocki wrote:
+> On Mon, Jul 21, 2025 at 11:40 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> ...
+> >
+> > Fixes for more ACPI-related typos below, feel free to squash or I can
+> > send separately.
+> 
+> If I can assume your sign-off on this, no need to resend.
+
+Of course, sorry, my fault:
+
+commit 9cdbf361a40d ("ACPI: Fix typos")
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Mon Jul 21 16:37:14 2025 -0500
+
+    ACPI: Fix typos
+    
+    Fix typos in documentation and comments.
+    
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
 
-
-On 2025/7/22 18:02, Colin Ian King wrote:
-> [Some people who received this message don't often get email from colin.i.king@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> EXTERNAL EMAIL
-> 
-> There is a spelling mistake in a dev_err message. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/mailbox/cix-mailbox.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mailbox/cix-mailbox.c b/drivers/mailbox/cix-mailbox.c
-> index 5bb1416c26a5..443620e8ae37 100644
-> --- a/drivers/mailbox/cix-mailbox.c
-> +++ b/drivers/mailbox/cix-mailbox.c
-> @@ -346,7 +346,7 @@ static void cix_mbox_isr_fifo(struct mbox_chan *chan)
->                  /* FIFO overflow is generated */
->                  if (int_status & CIX_FIFO_OFLOW_INT) {
->                          status = cix_mbox_read(priv, CIX_FIFO_STAS);
-> -                       dev_err(priv->dev, "fifo overlow: int_stats %d\n", status);
-> +                       dev_err(priv->dev, "fifo overflow: int_stats %d\n", status);
->                          cix_mbox_write(priv, CIX_FIFO_OFLOW_INT, CIX_INT_CLEAR);
->                  }
->          }
-> --
-> 2.50.0
-> 
-
-Reviewed-by: Hans Zhang <hans.zhang@cixtech.com>
-
-Best regards,
-Hans
+diff --git a/Documentation/ABI/testing/sysfs-firmware-acpi b/Documentation/ABI/testing/sysfs-firmware-acpi
+index f4de60c4134d..72e7c9161ce7 100644
+--- a/Documentation/ABI/testing/sysfs-firmware-acpi
++++ b/Documentation/ABI/testing/sysfs-firmware-acpi
+@@ -108,15 +108,15 @@ Description:
+ 		number of a "General Purpose Events" (GPE).
+ 
+ 		A GPE vectors to a specified handler in AML, which
+-		can do a anything the BIOS writer wants from
++		can do anything the BIOS writer wants from
+ 		OS context.  GPE 0x12, for example, would vector
+ 		to a level or edge handler called _L12 or _E12.
+ 		The handler may do its business and return.
+-		Or the handler may send send a Notify event
++		Or the handler may send a Notify event
+ 		to a Linux device driver registered on an ACPI device,
+ 		such as a battery, or a processor.
+ 
+-		To figure out where all the SCI's are coming from,
++		To figure out where all the SCIs are coming from,
+ 		/sys/firmware/acpi/interrupts contains a file listing
+ 		every possible source, and the count of how many
+ 		times it has triggered::
+diff --git a/Documentation/firmware-guide/acpi/gpio-properties.rst b/Documentation/firmware-guide/acpi/gpio-properties.rst
+index db0c0b1f3700..1e603189b5b1 100644
+--- a/Documentation/firmware-guide/acpi/gpio-properties.rst
++++ b/Documentation/firmware-guide/acpi/gpio-properties.rst
+@@ -92,8 +92,8 @@ and polarity settings. The table below shows the expectations:
+ |             | Low         | as low, assuming active                       |
+ +-------------+-------------+-----------------------------------------------+
+ 
+-That said, for our above example the both GPIOs, since the bias setting
+-is explicit and _DSD is present, will be treated as active with a high
++That said, for our above example, since the bias setting is explicit and
++_DSD is present, both GPIOs will be treated as active with a high
+ polarity and Linux will configure the pins in this state until a driver
+ reprograms them differently.
+ 
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index c2ab2783303f..a984ccd4a2a0 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -1406,7 +1406,7 @@ static int __init acpi_bus_init(void)
+ 		goto error1;
+ 
+ 	/*
+-	 * Register the for all standard device notifications.
++	 * Register for all standard device notifications.
+ 	 */
+ 	status =
+ 	    acpi_install_notify_handler(ACPI_ROOT_OBJECT, ACPI_SYSTEM_NOTIFY,
