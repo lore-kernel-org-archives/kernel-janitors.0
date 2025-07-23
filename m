@@ -1,87 +1,85 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2735D8F0;
-	Wed, 23 Jul 2025 16:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CAC1FBCA7
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Jul 2025 17:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753288613; cv=none; b=rGAJQXhWiYqGKTlsyNKLsi195XKuQerXdBtbFHfC1/u1ZNLLRvS/Q3399yvho/LaSaBUmnwLk+K29NoBP99sEP0inb4otrVbnP4RsmrRyZCOKdO5imy2rkuNpCjFFfg6r2xM5HsW7uvndq61hyCz3wElHGX6OLCtFDoGWE8z2ek=
+	t=1753290054; cv=none; b=NUwtqAtK6Ku7xUpkoxeqtZelQpP72tJV7z2zroQcKfr4lTD1/62RF+52+oMuICLZ6B9opBx26JeNCK0unCbbQWQ7+59B6eSObDX/A1XKeoNVLI7KTfyhBMstLe5epZ1my1LNtbfCGCElN9y6hnQCAwexCEggc6zYrA65+VmVQjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753288613; c=relaxed/simple;
-	bh=1f8s1MMMrZUXY7HNFqhbV+FHixNlT6w7z3HtgLFiyKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pmh8VPhjGRgcC6+2x6pllUuBrnMqtRsm3Uhb7QIe7wpArxFR6EvmoBp8AYdK987a9s/pZAcI5/aensdQHqPxcAgIEG47aup0y/1DpRCuxb7G7l3gM0bU7rlDW7VKeU69cxBkK3RiYEdoMzOrWUmoEW5MYK9D3xNKM1IYrpGhUTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ul1xvIDl; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753290054; c=relaxed/simple;
+	bh=iRwGsir/WS19R8zzyQIzHgcHO3Kn/7CJJeeg7cROVuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MwDm44OgdACOKJpn879Jg688t3npTrxsv9C+xSeImDFzvSQ4nAyHJAAotG08jLvQkKkPDlxqXUuQPY3tIZ7oEU+IoQK6JbgQlz2ubWKFiBI3q7Ajmn4uTfz2EaxN3LrSpC2wx5tPtFoE8iSqmfwkDH/eBHgnpSIQr3HNpRNEWhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NHbXjZbD; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ul1xvIDl"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-234f17910d8so46145ad.3;
-        Wed, 23 Jul 2025 09:36:51 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NHbXjZbD"
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e182e4171bso9859785a.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Jul 2025 10:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753288611; x=1753893411; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fx+A7/q6ZUtKDHiMJp4IBXILWaz8CBy/vW0OU23aX7I=;
-        b=Ul1xvIDl4uQsaTIeC38ZOpgLApN5cQhlYMmC0VxO+1YbtuvnHe4yjpZQNLMpBdn8sf
-         Tal6nhw52GTlDveMfxrU1KkmN9cuIjPs2gl/jr9YCfiSpg273iPxag6nwmTCwDWNqYCL
-         UcCRBDjzYi4CB6U1SC/JVSSqZgKVMHMCcctF3zkzjhXm9YBYO5f6yTyQOAKklHU73Kaw
-         19ksiibtdpOQGTLZ/2CREiYYit+0CGHuFUynbn+Rp3lniWjzXB20zs1rcY/d+XiA2lFv
-         jnqndquCIHxDNZT/jEQak2/8u9LZW22+EvTi7PQYFqAJdbPEzspkQziDqH4gHLzDwpry
-         zMWw==
+        d=broadcom.com; s=google; t=1753290052; x=1753894852; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kAA4uKDvogNFqPIVx5Z2Wi5tvRUB0/yTR+8w1NV0hk0=;
+        b=NHbXjZbDGDUfBfHJbjVCCTEpctn4bQcs9A9Y46VsX/IE4tbyrOuL+fRKl3juS1PxK5
+         7OsSkdQLLmV1L1qgMtS0EnhHN7BXL55ahU8iRRYldn2XpKI8x1EigyfWfb2GtXGtiwsp
+         /c0Lba8Hh+XWnQmD+II/9kRB52+rpGR+FGUv4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753288611; x=1753893411;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fx+A7/q6ZUtKDHiMJp4IBXILWaz8CBy/vW0OU23aX7I=;
-        b=i+Ik+cijHSimowq+bMfBwxtRo9PT7dPdByPkZCm/9jiokaK3qA+qE/Owjed3jCskMY
-         UPCkBaz4fngdKpXDtMBm1AU+kLp0nRf6X+XTqzuwAg+5pb0t4t41YrY+Omguc1RLhoWL
-         dUt8v+ITZNwLkMKoSq5BolMaMnasDML+ei6sQessedaeQEhr4aoAARkRK4SfwLmZIYN5
-         L2nvqsxwpKvFiQ2F786eCx1qkCt2soX/j5TX8UlNpCDZvDv/wg+A7Zy9AZ/Hnn9NpUo7
-         SMRVULR4yF3ApYqfMvTFLHt5I9kCrMK+bPUU3OrOiYTfMjSSx4b8TOQHhqTI5kQvjXoH
-         iRjw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6GcX9mSbTz7p2xrcSot22SF72UAqKFZgp0b4Vo5tP1Mn6wue1FWfzugCCW5H5GZNFIZcyvH8aShY0HNmk@vger.kernel.org, AJvYcCVJdoC068d6NrHicbQNtETliFuXtfHNhNDxiL9RmGcDKP8u1sJvWt0/x6w5y3J1fsUD1i0UrHChuRRgTSi4c12N@vger.kernel.org, AJvYcCW5mZ5WmJHvCthnl7UwOmBAnZSPplvpopDLVtQyDUk49730HgvyFQNdyO185HOL4jcAzIBSQL24ggWkV2HRSUc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDjEaFx34PvhyU7i5zg8cq6pCUxt7JSzgm/vuSjanW6NSK3D41
-	Ho/D0WDvi/Ng6kNhpcgsilDk1Gl6i0bnVH4nt7BXRboYGZTxnYCocMxT
-X-Gm-Gg: ASbGncvFgrRHdHHt4x4TvLBCirNwJPNKk3z16JOAgWPbwUceJAQT66gcDo8IKCaw0+o
-	RdYxfhwwpqvFiFcpqXdU0hbrtF0NRFOsLB2NjFP471YO0dXhnlDg3cDYSStAlRc0Jzx8zQaYE+j
-	yeklX9veIWAH8Wl2qpBEVIHeE3Ol380ybEw8ZrVSquHN55eYxThWeDT0W5UxB2AFhdzBGwMqCgs
-	gUPlqxAOtCK9Qu5ZJ7elIavyGJA+bg9yrmZr7Gf7avtFKB4M9g9HRqd3T+LMrt5tcmNnosyp12R
-	DFvm5XUkiBTQmXK5l894Hhe+rtsZyJfPpNz48rK8Cqq1k+VMSVvpDoDEOWPsODO+OsUh79e0QOh
-	kTMLI9/dp3JAPC6Oso/dCf+/YdBKGgn7VJqfOQLh3CQcM2CX0cU2Qgw==
-X-Google-Smtp-Source: AGHT+IF+7PIFIwxHxFCd3fmVGl5Kwhq6RM7BuCanshOuUY/aXQHU0NqUgVTlYaxJn03calPDpIPI6w==
-X-Received: by 2002:a17:903:b87:b0:235:f45f:ed2b with SMTP id d9443c01a7336-23f981619c9mr51840655ad.1.1753288611270;
-        Wed, 23 Jul 2025 09:36:51 -0700 (PDT)
-Received: from fedora (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23e3b6f2306sm99985265ad.213.2025.07.23.09.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Jul 2025 09:36:50 -0700 (PDT)
-Date: Wed, 23 Jul 2025 09:36:47 -0700
-From: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] tools/testing/selftests: Fix spelling mistake
- "unnmap" -> "unmap"
-Message-ID: <aIEPn8O2z4sNB74l@fedora>
-References: <20250723095027.3999094-1-colin.i.king@gmail.com>
+        d=1e100.net; s=20230601; t=1753290052; x=1753894852;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kAA4uKDvogNFqPIVx5Z2Wi5tvRUB0/yTR+8w1NV0hk0=;
+        b=OGjKZn8Mnl/uxf3WE4pG1SmCRb20rNmWR4R5ZkS7jD3PnZExCZpisEj24wtbNyGTMn
+         2KzzetRo11gAdLfh0idZBzbF4AbuNdNyC55A5lXg/Tr+TRGegkE9uLMKovASUjVRkgLw
+         7EU/XEW5G9+MA0vjZqfF6h/C44hDBRp31n6sVQbjWvkLpIHgViketmMDGKInJRUspWli
+         AXT5UltKYl4JXkSd9YarkUV1UjtuaJvFtE/mbpYq7krWLikXY0pdW26Sho3xfsjsqbh5
+         YkA7F6i7Bz0C4v0p6pMUbLQgsBCd1dgMrRiZmbwxhK5VmXOd/dMU3XURzcYP25rFZ2WK
+         I5og==
+X-Gm-Message-State: AOJu0YwTOw2Wu5Lb0PrN1fniSZ+XRNH6e65MrcpLUHPyfeuf+4Nd0KFs
+	7FMY7Ur2Kd5rigE89DbhjIdyUtsYMhTcbKYKq8aCasA3fuvVTKp61DyryDQ33Sxr+g==
+X-Gm-Gg: ASbGncsEBIhQVtZJior4e9/1xKHvqkrBIvm9BFENJiliFTqXXRH5M8TNYnk2dVzfNdZ
+	Y47udfYQlB60pFOAX7nQm0Cq8NGlgxSdn7Ys+b1UrhP1Xyd7rsC4W62eXO6Bo3c0jEfIK09VghF
+	4oMJ9wRtTRy4G5A3wcyDV0MveeSFSOZKQLA4hIYOr/Xpj+kwU1ty9biQSvNrb1Ki9KgTK6WMjky
+	0HUyIDCL566y+yaKYfcJvjVRPFEf0GpwbUIvcAWuUc6dNFKi7lbNT09zXnWvSW7TEl1sTSWzLVb
+	wQk8VmYjtlWAWDKnaHpl0JXuci9KNimaOETyp0DOvDajiRFjMtVg7RRAphjMt8WG2zjcOD44P5B
+	O7WeQMC19GZ53J2u1w3LiV9Yf2iYqJVZX+Yjf3HHiH6f9Epi1IvWrShMMXQgEMJm/YTE=
+X-Google-Smtp-Source: AGHT+IHR/pIYFUXjIhcVQC11znP3yVLpRzPulMmcdzaK/tiosFIczetxhU6bAr+Fw0aFbrPOIY4giA==
+X-Received: by 2002:a05:620a:4546:b0:7e2:3a27:a120 with SMTP id af79cd13be357-7e62a1a7909mr526750785a.54.1753290047833;
+        Wed, 23 Jul 2025 10:00:47 -0700 (PDT)
+Received: from [10.69.65.106] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c77a1bsm687374785a.85.2025.07.23.10.00.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Jul 2025 10:00:47 -0700 (PDT)
+Message-ID: <80d282ef-aa14-4bcb-b118-fa8b237c1621@broadcom.com>
+Date: Wed, 23 Jul 2025 10:00:45 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250723095027.3999094-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] mailbox: bcm74110: Fix spelling mistake "braodcom"
+ -> "broadcom"
+To: Colin Ian King <colin.i.king@gmail.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250723095315.3999463-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Justin Chen <justin.chen@broadcom.com>
+In-Reply-To: <20250723095315.3999463-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 23, 2025 at 10:50:27AM +0100, Colin Ian King wrote:
-> There is a spelling mistake in ksft_test_result_fail messages. Fix them.
+
+
+On 7/23/25 2:53 AM, Colin Ian King wrote:
+> There is a spelling mistake in the author's email address. Fix it.
 > 
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
 
-Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Reviewed-by: Justin Chen <justin.chen@broadcom.com>
