@@ -1,68 +1,68 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6192E4277
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Jul 2025 14:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BAF143C69
+	for <kernel-janitors@vger.kernel.org>; Wed, 23 Jul 2025 15:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753282018; cv=none; b=KYiFpWSUQlhO5EHq1U1W16HuFberEmF/RxLQ5FQ99+7kqOD55a3EiY1r7vpIm0TW4SZqcHhXyXFuW1xiw5GRmUUkLjClJwFa/tnuxgm2XzQgrneSOXrM+xXA9cOTNvyMKig0niZuWfppxRf5FE2TganUVJ7lXpXeJ7AWeGLkTis=
+	t=1753285592; cv=none; b=pZzRRfJoesbTpBGYJKa354o5DwuySp5QCO27rZ9w0COstbPOO+1jt8lboQvvDh9gGjabMv0y26UjMcpSDmzdJMESkI0C9hfAO5pasunbbaLIqp0HRqtbk3BSsf1s3Vu0wSCORWWm3cRGzOSRkzHeIbzk7AqMJpMxW20wksIr+7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753282018; c=relaxed/simple;
-	bh=pNF5x/KnFiLldz0sKiX5Sar4huY0ieTZ2jOl0Mw64+M=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YvPGvG5hBKDYcFJsKXumJaDHHlliZvXtrRkPADiYHhHRwRgZ0mk+eAMJDitK8WejQNbXt5QyCASipdjPpJtE1UW7xI9eGfP9jzdYStlcvHgfbT/tHsHP+Kd8zElePBM13NmGVCyJCC/MFqMKBm75I4ufio9z5d8CgKvsIep5Gbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BSOfFOzl; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1753285592; c=relaxed/simple;
+	bh=ta/nnHN012LXj1+PlNtGr0OXiDJWbolzf2pyXA4jqnA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DmaEAWoFTFFKCuMe/JW/3ATZOgcF3IhBqUqkltJycJKEhj2YNoUGC+7JPPO1yZ9WG/8fX2Tvj5KOTMUV/jTjWwt2S3zbur10tTTi5eVE6VScyIdFJ/X+I+jnzesqhqAVymV+3lotsycoEzUrkuaqS1uu3nc0CoYX1RkEy/8nSP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P+zz5HVH; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BSOfFOzl"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3a528243636so4106574f8f.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Jul 2025 07:46:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P+zz5HVH"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a6d1369d4eso4154947f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 23 Jul 2025 08:46:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753282014; x=1753886814; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1753285589; x=1753890389; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :content-language:references:cc:to:from:subject:reply-to:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=L29h6EKArV20tELErS9C9+UIvpslfClXnLtlZ1Dwf+I=;
-        b=BSOfFOzlq+2WO54TbQOjDYZDr7MPIzj9p6ZS7aSkkkT/EDkGmELqR7n2G67oLmQ1H3
-         XUzJF71Q4hWLJh8FuXKODnkhsdZYQnr9/QvsV/At4BlrN+ZUq9Wthbvbb2Xrjl+JhiW7
-         wvV3kSg1aHWTJsiokrFRnsgOc1hTAO8ni/rFc2IV2ZbHdwKhST99qibzsVoBwjEDyPlA
-         TeWzSTiRo/DVifOm9JS40TIzv2uNtjntu69E/o/m/7s0A56nUGxQob/+8nrzmAf16Itf
-         pN8xGGScb/boW68QtzeMmWpHCWWBQb4uMfFKd5du+b6ZktCPHBNcjXkD1XGqgAKcB+Du
-         cQgA==
+        bh=wmZ5bRV1PUfqwheCn0hCcu15gX58d2eDTkGCH+uULiU=;
+        b=P+zz5HVHz84WH7Cc5Mb05ADRnoSJmdXntH5/wzYXMaDAA1vHAE6Qm0mzAhwbJjAGtR
+         6LqMW5MKMIyeXj0vX+gSm8sz6imQjgV2ODfwcl/zPZQW3NxkbhmAH24ab7KEvFh0ertu
+         KJZxRn0w6kCL4aB63tCCKrjoCL36Ry7d5FXX6vW/NfZytxyizLEOY4U22iwLu3ZE6YJZ
+         IWzKqXp5R/2Z6Rsh+aeANmKxipRpYrvvctIkigg8M0iN7nr2iPxlq1saS+RZlaNMWD4I
+         PpM38IrQsGWuXtZvHgk1zqWle7G7asfi4UigVJh7Z/u3kZYZ8ZCmW7Hu+F7sg8Zw0gur
+         bt5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753282014; x=1753886814;
+        d=1e100.net; s=20230601; t=1753285589; x=1753890389;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :content-language:references:cc:to:from:subject:reply-to:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=L29h6EKArV20tELErS9C9+UIvpslfClXnLtlZ1Dwf+I=;
-        b=kU2gypo+BnV5q2vUDAlwHB2VRIAt1bnU2UlicKXigNiHtXKfFDNgdLOvY5BZrhFGVM
-         xBFghhO4JePZ/x/OL8Sch2mWtpKgj0DCXu3NzloqfHefEmGJKbMqF4GjQa/NafMLWprL
-         e585llD5DYOGmOpaP40UOEBMhXwdt66H/LZMOBMkoMCn5D/RkNluDNKtHuulApOv5onE
-         iYMH/7hhINkAqeQR1NWn08LG+qDFGvO4SHuilUlbYHMwAwIobuDIzajLYvUOXsMY7N93
-         qVLcBDVNiRKl3oB+PAAJ046jcgMZ6vKwlsAalSZBzpqrKqf1Uc7LcIhLVbK/oVDewLw6
-         +wQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4GnpRhN4+n6y9zNDBd4/0/WraledH4vIDtp2Jrz1uUTmcTbpRUSAssaUZPyWa5I365/cNLoBu8tLh0TcKD2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl+4QWtYTxt2eD5TrCAcb4KeYyDfUJ6fE1eA1AtQT4mIMIxiDU
-	LSB+fjxEfZ2tq88bw5bim0IzmfibaufvY2iSGnI5qdynJkBZRh0zgpx79PKT6v8+gNU=
-X-Gm-Gg: ASbGncuMAkQxr4A98Pocp7foG6WYMak+l85UZO6B4yCW0gf8Aaw4eX0YZhdoOX0UzzF
-	ZxCwpBzq+73te9mTNOmiGNI0uzgrGRox4I8DVV5/4b4ZsHZ4EouCFd6uP9wVPXjaQEiDVrQRz/l
-	VOxkwrha2AVA3KR+dzluCvWKpQFxGlkbGrCEKXSJroiOo9BWbcrc2kWHd64kg7Bc0yhAQaGvWqX
-	sJClhnfnfZQqyKEEWxJGP5QW7PHxMZhg1pjrnWTjNqB3zC3SVKuMpH4dJ6WQzExm5a3bEVlDEHz
-	b6TSqCKRrmtdYN8VaHuNQhjEfXiPc7r8ALIRO2EIa/CRjCupDqdT9ZYFGjrQHypjnd9ZxRBoQX+
-	AxEZh3ivCXx1XCRX6PdTJdzm9TjZH3hnkQtEnH7tc+n0jeERpBaRJ3t5nm9oou9KwldeeKU4axw
-	njtw==
-X-Google-Smtp-Source: AGHT+IFfNwcscWk8yTXaSaqSwGrS5jaSAAkFnZ9U4aRsYEXlqsL1Eq4oLL6kohZIRvs7+CcnQw3YTQ==
-X-Received: by 2002:a05:6000:26cd:b0:3b6:c88:7b74 with SMTP id ffacd0b85a97d-3b768f2e446mr2720020f8f.59.1753282014234;
-        Wed, 23 Jul 2025 07:46:54 -0700 (PDT)
+        bh=wmZ5bRV1PUfqwheCn0hCcu15gX58d2eDTkGCH+uULiU=;
+        b=SlLkcNVGe//q7xCnkNnnDkl3VySASFxn5EBEkE3Uk2cNTNmCT40jfr04v50ZYgOoPh
+         7MqvD5sZO3vGTqUpk2vzPIxC1DU1pBjbjlehEXxPwsKxZ6mZgUeeZMPo8EL0bJRBxfzl
+         dgU/BdwsSnKG/3HrRwNlxKnlpHuUWz1jz4NdrxRd8FQnC5QRvwVKJ6qLSsnT/sI0h+yG
+         6PLcDx1hsuhhBzt9SMK+KdpkVnyKgd/tEyrAwr9nHtuL1tLB0Ka2g9WmTeW2GSlFZZBP
+         0Tvzf54rO2H4AOHDJYz590px9fo/KLmBX0mXZJh9RXoWwswAqS5kPK17Y5B3b+bWyfsT
+         IxhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVj44lTooe7mdIPN6gs8ciRmIyVdiUDhHiN1bOyWWuhITxV0jlnXLx+PShTyIwk65mdzy0Nu2pdj2X1RSkOXhs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/AipuiIRjiM2EObSaWOHHp4k05EPzkT/aDyNsVf99S8Y4Pb6s
+	BvsuBoZq2yVV2VkKodXugGMjJ5Xz898bHMdmS2ov3Z1XOdxSeu7t+mQDP0QmBEFEutI=
+X-Gm-Gg: ASbGncuptRot2+BeIZ3gb67kiFjYT9q0sFhHllvECXo4zYI0yhx0HWL6WNnoKESFiKv
+	BmkD1GpInWf7Nex6bX1GJWGRbTS7ySscngZOdU7/SexBqw7k8HB9Mjsxxiy8wDF4bUMrFMYSiju
+	FPcjQ0SXJTEMaVv9M9/k4fXmE2m2FUBYUTyVxSAa1GDiC9TFjxSnQogT6F8oT5AUTpQOSFo12zu
+	QxYWhKlxqFPkPcudsgu9TGnGykMjxv/Ue/qBjCzNn2XSkmCj8mh44/rNAiYkKI/bYwY9nGdOhYD
+	WGZdn3fTItJ4ZbCIgSB/ICo3bcrOca2LmNU9hdq5PuxUZ+rSHClQ3wD0nyBNe+zW4I1JqhS/A5N
+	j3S4u8/6wk3HMcezsehb5IBUeqxfw0byuzZi6cVgEZnR4jOWyeHeYDQZLKj39JjEe1BlT4zf+ff
+	+IXKcRP5m5BE23
+X-Google-Smtp-Source: AGHT+IHlgEnmQBXXUEyZi32pN5BCGwjGY8lZuXGj+tGjDArR+gc7x5W/LA/pSb/walkpnyfSxvl2nQ==
+X-Received: by 2002:a05:6000:2389:b0:3aa:34f4:d437 with SMTP id ffacd0b85a97d-3b768ef9577mr2721271f8f.37.1753285588768;
+        Wed, 23 Jul 2025 08:46:28 -0700 (PDT)
 Received: from ?IPV6:2a01:cb14:150f:cf00:b6af:e6a0:6569:3a1? ([2a01:cb14:150f:cf00:b6af:e6a0:6569:3a1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b61ca5c632sm16730245f8f.80.2025.07.23.07.46.53
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b75baa7072sm9616199f8f.2.2025.07.23.08.46.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 07:46:53 -0700 (PDT)
-Message-ID: <aec9cd03-6fc2-4dc8-b937-8b7cf7bf4128@linaro.org>
-Date: Wed, 23 Jul 2025 16:46:52 +0200
+        Wed, 23 Jul 2025 08:46:28 -0700 (PDT)
+Message-ID: <c052931d-9bbf-42d0-9ccf-4fdc62d408bb@linaro.org>
+Date: Wed, 23 Jul 2025 17:46:25 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -70,10 +70,10 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
 Subject: Re: [PATCH] soc: qcom: mdt_loader: Fix error return values in
  mdt_header_valid()
+From: Neil Armstrong <neil.armstrong@linaro.org>
 To: Dan Carpenter <dan.carpenter@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>
 Cc: Konrad Dybcio <konradybcio@kernel.org>,
@@ -81,6 +81,7 @@ Cc: Konrad Dybcio <konradybcio@kernel.org>,
  linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
  kernel-janitors@vger.kernel.org
 References: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
+ <aec9cd03-6fc2-4dc8-b937-8b7cf7bf4128@linaro.org>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -107,86 +108,90 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
+In-Reply-To: <aec9cd03-6fc2-4dc8-b937-8b7cf7bf4128@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
-
-On 25/06/2025 17:22, Dan Carpenter wrote:
-> This function is supposed to return true for valid headers and false for
-> invalid.  In a couple places it returns -EINVAL instead which means the
-> invalid headers are counted as true.  Change it to return false.
+On 23/07/2025 16:46, neil.armstrong@linaro.org wrote:
+> Hi,
 > 
-> Fixes: 9f9967fed9d0 ("soc: qcom: mdt_loader: Ensure we don't read past the ELF header")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/soc/qcom/mdt_loader.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> On 25/06/2025 17:22, Dan Carpenter wrote:
+>> This function is supposed to return true for valid headers and false for
+>> invalid.  In a couple places it returns -EINVAL instead which means the
+>> invalid headers are counted as true.  Change it to return false.
+>>
+>> Fixes: 9f9967fed9d0 ("soc: qcom: mdt_loader: Ensure we don't read past the ELF header")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> ---
+>>   drivers/soc/qcom/mdt_loader.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+>> index 1b4ebae458f3..0ca268bdf1f8 100644
+>> --- a/drivers/soc/qcom/mdt_loader.c
+>> +++ b/drivers/soc/qcom/mdt_loader.c
+>> @@ -33,14 +33,14 @@ static bool mdt_header_valid(const struct firmware *fw)
+>>           return false;
+>>       if (ehdr->e_phentsize != sizeof(struct elf32_phdr))
+>> -        return -EINVAL;
+>> +        return false;
+>>       phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
+>>       if (phend > fw->size)
+>>           return false;
+>>       if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
+>> -        return -EINVAL;
+>> +        return false;
+>>       shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
+>>       if (shend > fw->size)
 > 
-> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-> index 1b4ebae458f3..0ca268bdf1f8 100644
-> --- a/drivers/soc/qcom/mdt_loader.c
-> +++ b/drivers/soc/qcom/mdt_loader.c
-> @@ -33,14 +33,14 @@ static bool mdt_header_valid(const struct firmware *fw)
->   		return false;
->   
->   	if (ehdr->e_phentsize != sizeof(struct elf32_phdr))
-> -		return -EINVAL;
-> +		return false;
->   
->   	phend = size_add(size_mul(sizeof(struct elf32_phdr), ehdr->e_phnum), ehdr->e_phoff);
->   	if (phend > fw->size)
->   		return false;
->   
->   	if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
-> -		return -EINVAL;
-> +		return false;
->   
->   	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
->   	if (shend > fw->size)
+> This patch on linux-next breaks loading DSP firmwares on at least SM8550, SM8650, X1E8:
+> 
+> [    7.572665] remoteproc remoteproc1: Booting fw image qcom/sm8550/adsp.mbn, size 28342616
+> [    7.615176] remoteproc remoteproc1: Failed to load program segments: -22
 
-This patch on linux-next breaks loading DSP firmwares on at least SM8550, SM8650, X1E8:
-
-[    7.572665] remoteproc remoteproc1: Booting fw image qcom/sm8550/adsp.mbn, size 28342616
-[    7.615176] remoteproc remoteproc1: Failed to load program segments: -22
-
-CI runs:
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/248846#L1323
-https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/248850#L2037
-
-Bisect log:
-# bad: [a933d3dc1968fcfb0ab72879ec304b1971ed1b9a] Add linux-next specific files for 20250723
-# good: [89be9a83ccf1f88522317ce02f854f30d6115c41] Linux 6.16-rc7
-git bisect start 'a933d3dc1968fcfb0ab72879ec304b1971ed1b9a' 'v6.16-rc7'
-# bad: [a56f8f8967ad980d45049973561b89dcd9e37e5d] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-git bisect bad a56f8f8967ad980d45049973561b89dcd9e37e5d
-# bad: [f6a8dede4030970707e9bae5b3ae76f60df4b75a] Merge branch 'fs-next' of linux-next
-git bisect bad f6a8dede4030970707e9bae5b3ae76f60df4b75a
-# bad: [b863560c5a26fbcf164f5759c98bb5e72e26848d] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git
-git bisect bad b863560c5a26fbcf164f5759c98bb5e72e26848d
-# good: [6fe8797df6f2e3a7e3c736d5bd4862915a06a690] Merge branch 'for-next/core' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux
-git bisect good 6fe8797df6f2e3a7e3c736d5bd4862915a06a690
-# good: [c522d00e1b4b00c5224c2acb9c2738bcc9c04ff5] Merge tag 'ti-k3-dt-for-v6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux into soc/dt
-git bisect good c522d00e1b4b00c5224c2acb9c2738bcc9c04ff5
-# good: [6a323f22a8b925f3646c884e2f9c733c79393f1d] Merge branch 'soc/drivers' into for-next
-git bisect good 6a323f22a8b925f3646c884e2f9c733c79393f1d
-# good: [5d8b3562faac8030b5c26efc1cd739a41c4db722] Merge branch 'soc/dt' into for-next
-git bisect good 5d8b3562faac8030b5c26efc1cd739a41c4db722
-# bad: [b79c0d780e519d760c2529f0bf849111b9270192] Merge tag 'apple-soc-drivers-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/sven/linux into soc/drivers
-git bisect bad b79c0d780e519d760c2529f0bf849111b9270192
-# good: [9841d92754d0f3846977a39844c3395ee2463381] Merge tag 'memory-controller-drv-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl into soc/drivers
-git bisect good 9841d92754d0f3846977a39844c3395ee2463381
-# good: [64a026dd896e423a177fe87e11aa69bf5348c27b] soc: qcom: socinfo: Add support to retrieve TME build details
-git bisect good 64a026dd896e423a177fe87e11aa69bf5348c27b
-# good: [9cea10a4f5a39fde32bf7b8addfa5f9175174e0e] dt-bindings: sram: qcom,imem: Add a number of missing compatibles
-git bisect good 9cea10a4f5a39fde32bf7b8addfa5f9175174e0e
-# good: [0445eee835d6e59d635e242ba1d9273f168035fa] soc: apple: rtkit: Make shmem_destroy optional
-git bisect good 0445eee835d6e59d635e242ba1d9273f168035fa
-# bad: [5b8141596b06fba7313cdfbd5f589649d7fde662] Merge tag 'qcom-drivers-for-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/drivers
-git bisect bad 5b8141596b06fba7313cdfbd5f589649d7fde662
-# bad: [9f35ab0e53ccbea57bb9cbad8065e0406d516195] soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()
-git bisect bad 9f35ab0e53ccbea57bb9cbad8065e0406d516195
-# first bad commit: [9f35ab0e53ccbea57bb9cbad8065e0406d516195] soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()
+It also breaks GMU loading on the same platforms:
+[    7.418330] msm_dpu ae01000.display-controller: [drm:adreno_load_gpu [msm]] *ERROR* gpu hw init failed: -22
 
 Neil
+
+> 
+> CI runs:
+> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/248846#L1323
+> https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/jobs/248850#L2037
+> 
+> Bisect log:
+> # bad: [a933d3dc1968fcfb0ab72879ec304b1971ed1b9a] Add linux-next specific files for 20250723
+> # good: [89be9a83ccf1f88522317ce02f854f30d6115c41] Linux 6.16-rc7
+> git bisect start 'a933d3dc1968fcfb0ab72879ec304b1971ed1b9a' 'v6.16-rc7'
+> # bad: [a56f8f8967ad980d45049973561b89dcd9e37e5d] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+> git bisect bad a56f8f8967ad980d45049973561b89dcd9e37e5d
+> # bad: [f6a8dede4030970707e9bae5b3ae76f60df4b75a] Merge branch 'fs-next' of linux-next
+> git bisect bad f6a8dede4030970707e9bae5b3ae76f60df4b75a
+> # bad: [b863560c5a26fbcf164f5759c98bb5e72e26848d] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git
+> git bisect bad b863560c5a26fbcf164f5759c98bb5e72e26848d
+> # good: [6fe8797df6f2e3a7e3c736d5bd4862915a06a690] Merge branch 'for-next/core' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux
+> git bisect good 6fe8797df6f2e3a7e3c736d5bd4862915a06a690
+> # good: [c522d00e1b4b00c5224c2acb9c2738bcc9c04ff5] Merge tag 'ti-k3-dt-for-v6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux into soc/dt
+> git bisect good c522d00e1b4b00c5224c2acb9c2738bcc9c04ff5
+> # good: [6a323f22a8b925f3646c884e2f9c733c79393f1d] Merge branch 'soc/drivers' into for-next
+> git bisect good 6a323f22a8b925f3646c884e2f9c733c79393f1d
+> # good: [5d8b3562faac8030b5c26efc1cd739a41c4db722] Merge branch 'soc/dt' into for-next
+> git bisect good 5d8b3562faac8030b5c26efc1cd739a41c4db722
+> # bad: [b79c0d780e519d760c2529f0bf849111b9270192] Merge tag 'apple-soc-drivers-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/sven/linux into soc/drivers
+> git bisect bad b79c0d780e519d760c2529f0bf849111b9270192
+> # good: [9841d92754d0f3846977a39844c3395ee2463381] Merge tag 'memory-controller-drv-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl into soc/drivers
+> git bisect good 9841d92754d0f3846977a39844c3395ee2463381
+> # good: [64a026dd896e423a177fe87e11aa69bf5348c27b] soc: qcom: socinfo: Add support to retrieve TME build details
+> git bisect good 64a026dd896e423a177fe87e11aa69bf5348c27b
+> # good: [9cea10a4f5a39fde32bf7b8addfa5f9175174e0e] dt-bindings: sram: qcom,imem: Add a number of missing compatibles
+> git bisect good 9cea10a4f5a39fde32bf7b8addfa5f9175174e0e
+> # good: [0445eee835d6e59d635e242ba1d9273f168035fa] soc: apple: rtkit: Make shmem_destroy optional
+> git bisect good 0445eee835d6e59d635e242ba1d9273f168035fa
+> # bad: [5b8141596b06fba7313cdfbd5f589649d7fde662] Merge tag 'qcom-drivers-for-6.17' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/drivers
+> git bisect bad 5b8141596b06fba7313cdfbd5f589649d7fde662
+> # bad: [9f35ab0e53ccbea57bb9cbad8065e0406d516195] soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()
+> git bisect bad 9f35ab0e53ccbea57bb9cbad8065e0406d516195
+> # first bad commit: [9f35ab0e53ccbea57bb9cbad8065e0406d516195] soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()
+> 
+> Neil
+
