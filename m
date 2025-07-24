@@ -1,75 +1,70 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33D7270EAA;
-	Thu, 24 Jul 2025 11:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2E72727E4;
+	Thu, 24 Jul 2025 11:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753356274; cv=none; b=LHEEHvi6h/TWxL9dhh8tSl5MaPibRpJSBqt+CLNiz8z9KmV5PmRrfxZoDU/zWacoFK7mlyfNX6Hd/Lf2+422NmTf7tufX7M+1bmfmIWjYTl/5B7yiI4L9zhHqNHnRZoWiFvJlJwRuXexXeKeVHNc79gHVwnZbbIAaZYRqH5wTEc=
+	t=1753356533; cv=none; b=uDOgOkeDDUkgoFuGVP47zFsioYOZbzPfFM3PaxE4Bc8pAp96TfPsRd6Azjzem9IOcTaWQ0mdUK2UtPTsFuO+TY7osO0IKjm1Br+tPqX+1bo+rPObRDggYbDyyMs9B6MIMM2f5f8tQ/2xn+YBbJtjczrFtxcvDlg7XtY88jMeaGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753356274; c=relaxed/simple;
-	bh=nGT4jidtjk1a8V1xMpQRH51rg2i/WWZ3a0k2WsyOw3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sg9k8avM1x/7RmGjkeucYPqReHCDXiPyvH1ehf9czJnsw04+zW8aTdOgNSVG7yhm28HQoQEvk8isDC7pRlLmgzK2GY3sLPpa79F0jIfG3nRmLJ/HtwU3sffeRHdWmwJaDKMtGst2he0OkHEbMLySxCdGKSoqTj1+XI9qHfIeU4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lg6MhERP; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1753356533; c=relaxed/simple;
+	bh=0IaLIP2KkubPcx7b9qvtF9U4GI61/YekRlyAlo76kSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DyHyHuh1VXdLAXWS97EYud9lgYXJDcRxxgUknEQgPbOYffnTv6lWTvYSC6AmLuTsu833+YXCo5ah/Zh3n8oVIe1pZSa2zYa90hy++jAEhtbNvFzH+J/PTZQKjSi1pzGIVDihsMxIBSk7URpE91rPIBkqWjXT/YWflwYUfZLIIeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRP1rFf0; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lg6MhERP"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a53359dea5so442272f8f.0;
-        Thu, 24 Jul 2025 04:24:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRP1rFf0"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so8795355e9.3;
+        Thu, 24 Jul 2025 04:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753356271; x=1753961071; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753356530; x=1753961330; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/chaQOtrwAc8iUspacpGx3XlnJkksuOlQUkOi3ydoks=;
-        b=lg6MhERPRZOiSfkIVkPJ12vCWrICT4pj10CgRvIwqQfGuYelL1wz4s2oCFmXLT8xBh
-         kLxDhHWOMy1G+EfZngXA1lDXcCQk/onLKyfcbTx8UvJXMeE7Nkj06ohNQdYgPFpnwrge
-         TZiyr0pX86TAzyV15HreTgmk5Zi8dqGCN2mfbyEEb7M3Ay0WB+Z67vNU0h7Cg1njAG/s
-         fIkfE1OKoulNdjdaM3O3y9qkcgPE1SdPqMLkHKWb9/5FPn3xXXmXVvA4vkj1z828sdEC
-         jDQl5OD/7uXkN9YS84V3BfU+fQc4lwpoSyLBb60ENz9O5L+VtC+zK62xiAlB/JUB4r7i
-         bfyw==
+        bh=QPotOZ8Ga3dXelFzNNAZNVkNalbstbUanKtcLwNmZx0=;
+        b=RRP1rFf0xHGi0aKIjGKIHT+2KMUm+tmsJc12pT/LPAdiR08Z28ovD/LnWej32bvCyA
+         csN7wACbl3jWDw5y7hkM6XhbIuEE2yKomANyibTvUagThtaNRUCZMviLeza9qh2kOlW9
+         6LCiaDjRm9J626cWzGONSmImhLSoGkIXlstGrMBJf5eYAtzwk6funHD05MRjPsbdHqw2
+         blNpCt7H3P1COOsDWETyjTmsPZ1i7N7cdpHsOiWgY/Iv4CMb1Dk3UlXarfpWb9GBrNen
+         eIMqwNKDCrIqaTu8SauldzigidB9W7FZ4sQqeM1RG3BDmC2wbotWROccfKffcB7SczoS
+         GY6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753356271; x=1753961071;
+        d=1e100.net; s=20230601; t=1753356530; x=1753961330;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/chaQOtrwAc8iUspacpGx3XlnJkksuOlQUkOi3ydoks=;
-        b=o5o6Ply0vEgRlFVAU56Ush3LubiPjVODrPOVBJX+Wze6SQaeXVNOhjtC2amJuqCMgT
-         lzbak3Zr4GBBW/hGdbn+xG/GgDn2BbgTUYlKmWJKX51jy1c0aUSyZngX00zDrhKok6De
-         ZvMHdJrJSNtTI+Wi/umhFc89kqfUlQVqkUvH3hnQBcoBN4bMZbYJ/CTe4daag9ta7mu8
-         I5IxmCorrj9YXd6cQHF5/uwpf63NNgp0Xw2Z3opyTqpjyYJ+pkQ/6XjgvluxVA3AWJPq
-         EOyZ2CUN/dpPkRqlMOjC7uQiFPpkQ8v8My0Xsg4Dz8t+t83VUkBpfHCpxLI2gPcxOySa
-         WdAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVp7z9QSpQYBlULH7VP6OYT1q5YNGL7kSuPGdyJvBPTwxOIi6a5uA46HbrwpYLKWE6ZFXIlhbmllr7tU1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynlHU9FueHVKF2gZNqGggvnHm8WYZU8eUyJ1nXwpVRec49sEb9
-	siytyo74OoYlSiXVXOjPCdwSQ5wWTcVxjZDPfzaiLU729Fb3VTaxvMZi
-X-Gm-Gg: ASbGncsxRisHPNhKewgzWBpAxTMy6FYRl+zi9TSL/Vc3F+EsH90xNJ79Bce0Xg8k2FG
-	qfuKpDUqxCbEwTnVOaHphqL1cOqEWpNjwBE/Htmqccvaf9shC7ER9HAL7tn0N0RFSFt0iufR3D4
-	X64bRjVfIOKemc7K7hAMZZ1ddp3kgMBzgRXWlq9vXiq+oMpu5I/09Ubjg8FL54ildeEr3Zmkdz7
-	da9ofDosZjHAKClca2kx92avKXyynVid3NPA/BwJo9S8oMaKnNoDVljZMVNRThhj/YUegthc1z2
-	Wi72j3010Tgx4Qf3h64O99OcoahsmS193YHb2UAgqZVU38MtpmQiZcdbJeEgjl+5WhOIiCinfGB
-	BiUU9f6lcEJUv6lt+uNjT
-X-Google-Smtp-Source: AGHT+IGx6vY4OBDv0GI0qirOCTTfwNlLAd70BQpOL4ASVZfSa5T1qQYZyS8mCneRMwPLhBgww6T32g==
-X-Received: by 2002:a05:6000:240c:b0:3a5:2c18:b181 with SMTP id ffacd0b85a97d-3b768f12c24mr5451850f8f.53.1753356271195;
-        Thu, 24 Jul 2025 04:24:31 -0700 (PDT)
+        bh=QPotOZ8Ga3dXelFzNNAZNVkNalbstbUanKtcLwNmZx0=;
+        b=h4StS26yzxVH4cGspFI4egT7qnYhFUO1d4fV8th+HzSIH9VySpiu993eoExm2evaRh
+         ejyH80lVQf5z+f098XDveamJQ96NQiyDPzfEfYaue17kOYftkruR5U6f051TMgobm9Ne
+         58XsiH4IuN5qxVNd3UHzI/iYcTJ/9Fxxy58rHNZQZMszJgR5OYPa8oTPNSvGRtliUU6d
+         J6E7+pixiaHzP3N6LWfTwOm2NylgrSkA36mouKBGi1BNlgWo9AztpPUlUJ35mn4yMHVI
+         8RuPlIf7Dce/GYHajTeoGmt0+JZW42TgPEVn74Fg3QH6h+VXikSOh0CYS+QU1K8SwXB5
+         caLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVza0tbLteUqrCPGav2CO2wLLm37eTPxWYco8qXCQcR1eVYnIRywCJR+UpF2J3Tvk5tZTd+/4VqaLam@vger.kernel.org, AJvYcCWwqpZSsfHd6hxeoRHxkA1VL/THc4BeL2UE4UI3S7npf0DIyVeBqVrAkMgKbr0rGF1qrj75RTKOT+DBb3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSYOBhTDLSjgWl55aCGYHGCDVorss6usHxDtBN4SvxOrq4isoI
+	pE/g06J9QWFgBkE80j1KZO6s/DFKkVAQ+McQHETyTenlOISjMLiJmFrGvUeKyoQYqt8=
+X-Gm-Gg: ASbGnctj72k7NO/iUHf7j/IPgRIR/YUIqSJFCKY0xjoE6v8IKTE43YyxbBR102uAgeI
+	RMPgddn2o5frIEutZXcuNu8JL5bTP95CI7YDskZ0zSBOg7OCxHcZtf1tWCumtTX/ybwaGUey+yc
+	UrHyQtuW87VbHHBwQayphCV54JT7vdjBoR2v5FhgChJwV0XCHlPtJ4E4SF7KQQ+BXxOr5RTG4cd
+	hEXpCzM7v3BoucbkR/KiBCvPdUySpA6DTMP0BjNpeFUNUXtzINilM9IyiHLQ0F5vktFoZ+rfdhz
+	4m1qZkjKDMbDEKb0ylyPiEr5OWrgSilC3UiWX7Fh7kFFJOptbtLiaQ05JsSrmj5X/egEMJq6w7j
+	ufv7PTSkaAUwS0uG2BkVo
+X-Google-Smtp-Source: AGHT+IH1EhcurvPnQijuAxK51VLX1iOh6PM1RpmsVzMiEDdXmQ4OtxzDVBwoAGD/kvqdAI3D8wG/9g==
+X-Received: by 2002:a05:600c:46d2:b0:456:e39:ec1a with SMTP id 5b1f17b1804b1-45868c84329mr68770685e9.14.1753356530123;
+        Thu, 24 Jul 2025 04:28:50 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fcad22asm1904963f8f.53.2025.07.24.04.24.30
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705c4fcfsm16633565e9.29.2025.07.24.04.28.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:24:30 -0700 (PDT)
+        Thu, 24 Jul 2025 04:28:49 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-mmc@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/panel: Kconfig: Fix spelling mistake "pannel" -> "panel"
-Date: Thu, 24 Jul 2025 12:23:58 +0100
-Message-ID: <20250724112358.142351-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] mmc: Kconfig: Fix spelling mistake "referrered" -> "referred"
+Date: Thu, 24 Jul 2025 12:28:17 +0100
+Message-ID: <20250724112817.142784-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -80,26 +75,35 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in the LEDS_BD2606MVV config. Fix it.
+There are two spelling mistakes in the config. Fix them.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/panel/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 09b9f7ff9340..af90ca62e57d 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -971,7 +971,7 @@ config DRM_PANEL_STARTEK_KD070FHFID015
- 	depends on BACKLIGHT_CLASS_DEVICE
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 7232de1c0688..4afa0130779d 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -359,7 +359,7 @@ config MMC_SDHCI_S3C
+ 	depends on PLAT_SAMSUNG || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
  	help
- 	  Say Y here if you want to enable support for STARTEK KD070FHFID015 DSI panel
--	  based on RENESAS-R69429 controller. The pannel is a 7-inch TFT LCD display
-+	  based on RENESAS-R69429 controller. The panel is a 7-inch TFT LCD display
- 	  with a resolution of 1024 x 600 pixels. It provides a MIPI DSI interface to
- 	  the host, a built-in LED backlight and touch controller.
+ 	  This selects the Secure Digital Host Controller Interface (SDHCI)
+-	  often referrered to as the HSMMC block in some of the Samsung
++	  often referred to as the HSMMC block in some of the Samsung
+ 	  S3C6410, S5Pv210 and Exynos (Exynso4210, Exynos4412) SoCs.
  
+ 	  If you have a controller with this interface (thereforeyou build for
+@@ -401,7 +401,7 @@ config MMC_SDHCI_SPEAR
+ 	depends on OF
+ 	help
+ 	  This selects the Secure Digital Host Controller Interface (SDHCI)
+-	  often referrered to as the HSMMC block in some of the ST SPEAR range
++	  often referred to as the HSMMC block in some of the ST SPEAR range
+ 	  of SoC
+ 
+ 	  If you have a controller with this interface, say Y or M here.
 -- 
 2.50.0
 
