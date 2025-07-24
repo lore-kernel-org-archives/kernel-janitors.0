@@ -1,81 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7471F4C8E;
-	Thu, 24 Jul 2025 17:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F911FFC5E;
+	Thu, 24 Jul 2025 21:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753376672; cv=none; b=higyQCS5lxHFdT/UpaxMW1OufaMpN3jycWbUYndr7nUFkl+KcxWkEefJ+P/mm8Gj1UBJJVMYs9Ap4Mcc6w/hX04kV5bPYHoPgUinWEgtohmj9wgWvqXavZdYaClUryz2rsm+hEFBXX0UyosMjKcJY5fJt/eGYa0r2xuis+f1/W0=
+	t=1753391200; cv=none; b=rE+9SSC4nioCXSNI5OceIcxBn8WXNwafDr8mnFKO+NojvMkNQvGXXy+WV/VyFz+pvlAGrLUbDPDtRQX1aeNuhYJR1vZj8EsO72FgvZAyxPF8ur9MMKZ1Nay7Inn83eTez7nzVzntHLYXknLIyTDe2Pxka9/ctzcSZgWHPmt/O4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753376672; c=relaxed/simple;
-	bh=U+0rvQ84awdqFheOuteiFw5I2gmq5D+RPMO+eWRXsh0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BfqfrLIm8Wh7v62ghi0ogYNf1rKhiT+eGRzWNRMZI5pC5TXzxn8ocNtVx+dQBHDv6DaHXDenCZ+K/V+i4JVNMxFotQ2L+hPsFmrzVYHgDEvyQj/kJpLRNUlp9IuZBQ1sGkjKT9ZvEfGDWdNfvBrkDkAqPLkzoonBQx3lS6vkOdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itqFIX4x; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1753391200; c=relaxed/simple;
+	bh=QOwacRNEVeeeVrBxgCmz/psw2bKyWXzSMrsEjsiKuUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nodrkD58rZBIGv5j9VhEZC0LMhP4aq+UkAMPd1fvTLBo5ArkMTr8GbKrhEwfKYEvieNoupTAxIqA7tnVM3QtKCxd7xZagKUaSsc9qh3f/4wWemFKriAk3I5vOEk+cB8HYXvTO+UqcrR7aMY4t9FvMPeva2Bdn11gnBBpDxfZdpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ngv2evMu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itqFIX4x"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE9DC4CEED;
-	Thu, 24 Jul 2025 17:04:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ngv2evMu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2BCC4CEED;
+	Thu, 24 Jul 2025 21:06:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753376671;
-	bh=U+0rvQ84awdqFheOuteiFw5I2gmq5D+RPMO+eWRXsh0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=itqFIX4xyeQbvY0RocGmKZUH6o48Jv7V9vuVZEYex5sAV6HESn6hbQlvfJQw3TT+K
-	 /qvYaXHbl8y40VTe6qLiyuK6/z9wbcaBXgivrvNCWAAsXbn5lC73FBhMABwl9Eu3IC
-	 0atseEvjxoYsbNgqcb46a2QyOmFuk+XNiay2U3azwSHW7EhNY3mhaxZ1JGtsguCmQe
-	 qMg7CBpoxkL+NUILMczj9pgTCcZkf5WNMhhIu1eSWQxIanOravX7NWMZ3hBrZKmIqo
-	 jB7AsNZZHFfME/AjRc+SV3cGUJtz1uB75/+NFRx7skZ+h1GXGZoJZGMc7qT2IkmkRH
-	 B6lIxA0F1eqJQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250724113113.143009-1-colin.i.king@gmail.com>
-References: <20250724113113.143009-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] regulator: Kconfig: Fix spelling mistake
- "regualtor" -> "regulator"
-Message-Id: <175337667057.99258.13351649490095530063.b4-ty@kernel.org>
-Date: Thu, 24 Jul 2025 18:04:30 +0100
+	s=k20201202; t=1753391200;
+	bh=QOwacRNEVeeeVrBxgCmz/psw2bKyWXzSMrsEjsiKuUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ngv2evMu7+AANzGVRNQyPDx9E3xkL1Tk1epokwgyNCsP0stkNt4dlYiIfaZMbmqwa
+	 NKEVzodlMNVgyge1hTsRdSzjHwXK9QNMSHqyco991uvLMMIeuga6YrznroY89kgqzk
+	 5LOhzGsQfZryCxhftaBPTLKuAXa1zhEcXL1UnYBj0ziVKND0IfTBuSDZJiUQ7zEuM0
+	 nhjKuedFAjzxAMtXrvyd2ZLSloYbM1451DE0bnj74f+1txNUorUPE+dvkae3ZWzWvE
+	 F1rCXLvpEsx4E4UJHlOz1Xd5tzTUaF+FIAqDNupbC/L/4V3YUaYKOVGO2v7yKslnOS
+	 mXIJaLx60+VIA==
+Date: Thu, 24 Jul 2025 23:06:36 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: linux-pwm@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] pwm: Fix spelling mistake "Firwmware" -> "Firmware"
+Message-ID: <ykjehesx7ozh3w42hprewiip2g4uxyhs5c2qdzqhfc2b7z6mj6@foeuy5vgs7wf>
+References: <20250724104148.139559-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tbubr6jh3k2elbwf"
+Content-Disposition: inline
+In-Reply-To: <20250724104148.139559-1-colin.i.king@gmail.com>
 
-On Thu, 24 Jul 2025 12:31:12 +0100, Colin Ian King wrote:
-> There is a spelling mistake in the REGULATOR_RT4803 config. Fix it.
-> 
-> 
 
-Applied to
+--tbubr6jh3k2elbwf
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH][next] pwm: Fix spelling mistake "Firwmware" -> "Firmware"
+MIME-Version: 1.0
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Hello,
 
-Thanks!
+On Thu, Jul 24, 2025 at 11:41:48AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in the PWM_RASPBERRYPI_POE Kconfig,
+> fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-[1/1] regulator: Kconfig: Fix spelling mistake "regualtor" -> "regulator"
-      commit: 71d141edbfa3e0a213c537e979790835550270d6
+Thanks, applied to
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+=2E
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Best regards
+Uwe
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--tbubr6jh3k2elbwf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+-----BEGIN PGP SIGNATURE-----
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiCoFoACgkQj4D7WH0S
+/k4yXwf/Zz2ZVoaJ2aZ5srlwY+6rTK4Kgx3QRSjsS+9ivfeoixC8tBtaDyGiQSzM
+AFLgOAj3qaLcG6t4X37OWqjdFCv9SxtfIQ5keFXYmBYFICvwQ0HzL7Mj4pklFfAv
+76dkZddpnv+PpiWMw5sbCbLvsvnScGZbOpEaoyHIJBJivbb+jpFJV5Q2tH4tYjaN
+Qk4HINFTwt3oe0Tq6H/i5430M5lzNuuJEOmyqfosLL/XKRsCQOn9Oze6FbC+PAq7
+ZcYkcKr0WEMKy58qNxPvmVHeXl1AYIdKIpHYgNdxZ1Lx6q3MFYgQV6UbJCMM3Txl
+4UiHT4Lf9cF7b2+CHkoKMhEFJXuUPw==
+=el/X
+-----END PGP SIGNATURE-----
 
-Thanks,
-Mark
-
+--tbubr6jh3k2elbwf--
