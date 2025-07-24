@@ -1,69 +1,72 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BCA268C40;
-	Thu, 24 Jul 2025 10:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F75213E7B;
+	Thu, 24 Jul 2025 10:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753353744; cv=none; b=aqaKI2vBFyLRh+7sKzhu/53MREMBLi2wlI+I5byIiBm3p71CN+IwkdxR4X+ZPZvYLYm8bPZdLbUu3T2bBjB9vekOdA/9oLiQrK3pjENArP0+amKM5Pgtc0jEPKdO9cxqTCloJNO6jdmZEgAGDadc0NZYPN+duoVhbqgImAPz1e4=
+	t=1753354099; cv=none; b=XZkwU7j5YGRuZFTlFQgaNUTGw5a5IKT4Rz3limi3wOTNpNMpVDSWJ7Q2TfRCOWniiMTMJOuxXQrqhvFWrHzyTZ+9OhF+eHmAKmXjE+Sxlsop8boVwN2AbLp5ZqobFktIMnqNc20f3p3qMwmSg7Q2uIyvd/VmbV+G7jPUN07lE/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753353744; c=relaxed/simple;
-	bh=0GnIrdQuiuwk9twORjmOjMFrGFzq+9BtHPC//Q+r62c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lDm6qOHTIO9Y5zPraWEPpAYRfKbkLDzF5ShTTCspnh2kq3QonE8vBAJhH8cSBT/eJEIgrE0i2moX7adgaSFKd9Ynb+f9264nm1RqMBv8HjUoDHnvPR+XPd/2mJUdhrawNkUS6kAtlLGxmy9FNjuhC7ZFGdNo6TlW3HRkAfZdq40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqwGgk95; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1753354099; c=relaxed/simple;
+	bh=0r+c0H4Oa2YbTVXkH21anzADfU6e0RpmuRgOU1H3T2c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tubkJxdftsp7zmyRyiu0Nc3DWT5gYUMCSz5IIKnHqjmxAXvo1E9xte+KDmF2EQE7x/j+tV2bgMx6GDh2qRwN8oOCUQkchBXt5tmFX6FXWhKm0Zvv5NumNyEr7SVkUnG6V8N+w+nlpvgiy+n49qLhJ1RINq8MqtXRA7vOnnIR4Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3zlI7h5; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqwGgk95"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a50956e5d3so565441f8f.1;
-        Thu, 24 Jul 2025 03:42:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3zlI7h5"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a57c8e247cso749526f8f.1;
+        Thu, 24 Jul 2025 03:48:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753353741; x=1753958541; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753354096; x=1753958896; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LwEsZFOMTw79B2T0J76TXkguQ2wD82TQyZlu19uUWbk=;
-        b=fqwGgk95goqZaXK/FRCwqVn/zsJwBUDC0x6T148G2d+PWFAK3DsdxigUiWQ4bSZuiN
-         HIff8ra4HOsq2nrOu/zzI7C0nyOz/UC0Q37aQT66yEiH2Xt1PVat27XyNPs+ABzPuMGE
-         HYkjdAMbKIxMiWESMgE4lMBAjSKOTINOOkeQbqfeZuq9mioy1Q/aDBWhzXughucK2xuA
-         WRT1QAh8RdICxGjbT70R4XEVLpv+1nelW6tcMHL0ipSsy6vSmxLExFzd2Ib7AuliPRgE
-         2eYMTg0irZ466chgcjqrYTrzm1gocfRMrLlgkAqgX4+rl80gy+bcq0DRK2HlldYoW4te
-         csqQ==
+        bh=epKJDnncojFJAB4/ScTCie0+aqU1iYFXS7qoGiODn9g=;
+        b=R3zlI7h5epS8H+mQ/lpNJKw++EOlWH2ZLNdTDDniyFNwD4+eTVDOy/Z0BE8DubD3w8
+         GK66/bp3QMqi3cxlRPDBXwa94tl22/aq3hfo2aDgCHdCYO1INkjPPeIUdJwAroiMX2QP
+         aArZ/WGsQmTJbvdB0ShyZD0Y9LJaeZS5hJlRgstnfueOqBW3BKy56k8CsjbZeLmZ5/Pu
+         kJPwkPeoQUQnthaFfwKFl3UiTRUbZPP4D7wARe8SyoO9gDMd6Kqm9Os1IDe1lseWlCio
+         OKgN16F/0zgdJ3wBfQD0hQssxRCkkSGxVgNeBfNWdJwxUEZt1q/vgKJJCMkMLAEAzKyJ
+         4YKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753353741; x=1753958541;
+        d=1e100.net; s=20230601; t=1753354096; x=1753958896;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LwEsZFOMTw79B2T0J76TXkguQ2wD82TQyZlu19uUWbk=;
-        b=wQ765GZt+FSvbjlWCbpnT0uX0GRl9L0zFiIpII1usk2G8yf0V51N5E5IuqfW0SDqL0
-         ttMD7ZN+ZYRUxeU4bpBV39f3cze1c15O5tX0YSclWi/xGu9SPjgC4znUIUF3senKy8UT
-         dBApgso/65rB3gC7OD0+XWLWZ680mwVoxpTrJqxjEfi1UzYJwHPhn+ZWbct3EPCfTlZt
-         jIMyUu4ERP2JCQW0zJVwQEcB8FqwG03lod1S0pqZYmvxKkgwiTsgjR5PC0h8dvOzOTjV
-         C+9ggi01SwFqZBbO4oBtvTyvRMWcKBp8hk2F9JsUTBNp0irIdrZsQ18hbO6iYC6+xpqJ
-         Hs/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU1lwZ94w8pDRo1Z8cBJzjxycOfgPoc1b91inI2rxmWB6n24X82tG2FCYpZwIezQPgM9XTCd5mAuAjW@vger.kernel.org, AJvYcCWZKedRc3UCiS9SW5CMw5HUvkiP/Y+dBfwww6FuDvHjNgjqKVQ/l052feg/lb7/jxOohPaBvIZ9fDp0OA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwM9lYGjFUexSU0c66rWM6pqCXDjAJNabZLGLh4UCTu2XQn0LD
-	D97xgursV9O3GLG0W+jloa71CiS50KvFUmpWm9GRxxi/q0DfWsnlpQzj
-X-Gm-Gg: ASbGncuHPxmNBObkv+f9Wh5RIWHWhjMujLSTE89aqdv+QmNWJ7mGWGDoWzA3V37vWeH
-	+xUWo/3bYSUVgsZaC0jAda2TjzMvL1oiI+mzHcfV1glqZWNKcLSgfaO/ZZ41J/zABXaS8gNm5a0
-	y5BclIBkRPTjuEX5JSsDIganM9CA319nzZwX4/CGZgjq1IOska+J9zV1IGZzqKzydbWA2cAwhpQ
-	5Wz0BJ9RSwvf1ZzMAdKlUAC4DQ8zFo1eMQgZRxi3kIcK8WKW0T5+h8iXOYZF3Yz6/IV75tPmkTS
-	0AGZlIoga7pTslKMst4RdEi2DouHfaqhNb8chAPhcJo1hWlSmryLzX1qNaPGk9VMMX7v8Y8yzXD
-	Xz5u02yDuaHf4/uMwZRK4
-X-Google-Smtp-Source: AGHT+IHf3nO+l8p3t3jJ6EhFc37IiUngwM81Ph85vosyw4NmVeGOHyyAy8bPU+XlWIEPNHmM/awr/w==
-X-Received: by 2002:a05:6000:22c6:b0:3a4:f7af:db9c with SMTP id ffacd0b85a97d-3b768f16051mr4156342f8f.59.1753353740987;
-        Thu, 24 Jul 2025 03:42:20 -0700 (PDT)
+        bh=epKJDnncojFJAB4/ScTCie0+aqU1iYFXS7qoGiODn9g=;
+        b=npDtMrWrR1V7bMHxNafbgEDsQO+RTqHpRMa3BBIQwjkSnMD1+mbhFhyWeajKnP0S0y
+         kZMzFgvgmmaF6LfWG+R71rwWfEFLQVtcfUzy8Xhd4KlYGRMHkp63IkTYQLYmSDFNLyDf
+         sUgYb2MmA8E0eucshXp0u4siaK+/QO/4F0UJ+dyGrsjfzbv1o8/E79TKQrvcvIlzdNM/
+         Gz2VcNF8Ip9MUdV1QPs/2ChllFjSoaoJyqX8jmGWWxsy26y44uiZ70YUaSd9JelGyGEw
+         R0BhwhPvuHnwn007W8dLgx/O89WgziUq1pF1dp0wHHeewimNEwq8fOLPa1Qg9E0NT/8R
+         lMkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrHlXWWUMJjN/rCMR75YUbGuVQ6Z3VE1ZYXGO4gCMZKY7ISvjkq3dlFHhBPTfI1n5g8TU5OMOARQw=@vger.kernel.org, AJvYcCVJhSbxFmFNoKlcgQRgjp8hhI5YQe7O0XUfIQx4hre7wx+XbcEzYg2O+jFgNBow3yeQEqFajya8gBbuEsU9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3u0qTn1CyQAfFpk3DUHS+tNamkyZ4156nu1YeoUpg/eMDVuxf
+	5C+ifA7sGa+sDZ1sZbuySo5IaI7nRFWJqA2L+rOuQyWGeQd9SYkLBEQb
+X-Gm-Gg: ASbGnctlQPXUGNH2W0DrsSu/wi5VRK9e+0LVePzgLMbkmfD/Y4XinojAtNqPuSTD707
+	Ol2sm8p+oLH1PWo0EWBr4sxx+IUOjix1ULxp6Ll/bhDAZZo7aLsCifYaN2jH77XkCvJEEm05p9m
+	tOVqC7ofa8LHf9ZjowDjrRvxsOuiP6BoKFVKGWdGluWKS1idD0lJf2srPnOTSnHfumb8m/ypSX3
+	LXyFOUhCSvBRrybBHTkHwWRhCuOB+2fIjKtIJ3dMzl7qX67kRWe1motfq/02LhtTeZF6vGxo5vD
+	oAoYlyU6sCQRw9tyfl7jlDbs6LapQrfDNP5f+XSoNSLpf2ut/4Y3pfFpi65VLp+jZoQadzbBKBd
+	8kUHi/j4aZb6p/x/SjPbh
+X-Google-Smtp-Source: AGHT+IHkldGVGsG0ep8JlAtN9rxk5nIv0yCoIjsz2etjlXZP5GLYxklMv9H0B7ipr0Tyun6POO86Xg==
+X-Received: by 2002:a5d:584e:0:b0:3a5:57b7:cd7b with SMTP id ffacd0b85a97d-3b768eedf78mr4968159f8f.22.1753354095752;
+        Thu, 24 Jul 2025 03:48:15 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4587054f27dsm15463795e9.11.2025.07.24.03.42.20
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fcad29dsm1759726f8f.49.2025.07.24.03.48.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 03:42:20 -0700 (PDT)
+        Thu, 24 Jul 2025 03:48:15 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	linux-pwm@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-iio@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] pwm: Fix spelling mistake "Firwmware" -> "Firmware"
-Date: Thu, 24 Jul 2025 11:41:48 +0100
-Message-ID: <20250724104148.139559-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] iio: magnetometer: Fix spelling mistake "Magenetometer" -> "Magnetometer"
+Date: Thu, 24 Jul 2025 11:47:43 +0100
+Message-ID: <20250724104743.139892-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,27 +77,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in the PWM_RASPBERRYPI_POE Kconfig,
+There is a spelling mistake in the HID_SENSOR_MAGNETOMETER_3D Kconfig,
 fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/pwm/Kconfig | 2 +-
+ drivers/iio/magnetometer/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 3ef1757502eb..e84f7981df7c 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -535,7 +535,7 @@ config PWM_PXA
- 	  will be called pwm-pxa.
- 
- config PWM_RASPBERRYPI_POE
--	tristate "Raspberry Pi Firwmware PoE Hat PWM support"
-+	tristate "Raspberry Pi Firmware PoE Hat PWM support"
- 	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
- 	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
- 	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
+diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
+index 3debf1320ad1..c7809e5aa3a4 100644
+--- a/drivers/iio/magnetometer/Kconfig
++++ b/drivers/iio/magnetometer/Kconfig
+@@ -123,7 +123,7 @@ config HID_SENSOR_MAGNETOMETER_3D
+ 	select IIO_BUFFER
+ 	select HID_SENSOR_IIO_COMMON
+ 	select HID_SENSOR_IIO_TRIGGER
+-	tristate "HID Magenetometer 3D"
++	tristate "HID Magnetometer 3D"
+ 	help
+ 	  Say yes here to build support for the HID SENSOR
+ 	  Magnetometer 3D.
 -- 
 2.50.0
 
