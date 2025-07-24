@@ -1,69 +1,70 @@
 Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235D623FC54;
-	Thu, 24 Jul 2025 11:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4326C3A4;
+	Thu, 24 Jul 2025 11:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355034; cv=none; b=E4VCNPXAFygbUhUtX7hDnPFdPjUVyT0uTpNBWmyn5Nm6PD4Mqt6GSLYdGMt21XgiIG9avvRrycEddgS1ICpBEL0EE/ujDLC5wTkJ9pOfONqx6SAbPhJOZTUD4WS2PBuxmg/qJIKBAYSr2CFr4dauPtq3ob4bpaxfRb+/Fjpya0w=
+	t=1753355514; cv=none; b=DEBeKm9r8K1dfmVHLZftnrLq7Ar3Oct1mMD7I64s98n7ncWzLH+gl0igrtPJuQ+7xFNVC+orj8rDX6VBOPDxDP9yAUDhsuN87v/FrSNftJ2TK1wbIFV+aV2wJeknJEN6A4UBmNvzqaYjLy/s4WTh8R1BWjeqtfgR6RscGqpelXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355034; c=relaxed/simple;
-	bh=5WR3YyhrnUDnJVyMFMePoMQk+H2Y2gJczMHXovelp6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MqqkZavqdawhvwK2jJnk7vEK5gVzip4DgvJ+Nd3h80ZG4bea1tOkLkzOAYj4vkkcIyZI8xAO68IIROgVncuwt6XpwBUwIqK5sJWvNoHfQf0oNLJmxaixV69WLz3nXKz2fnkwd+WveZGHcQYiYY27fhvVgWlMexGl8vyCR9KQIC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RrMa5O3s; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1753355514; c=relaxed/simple;
+	bh=rW6eweYjEhNfddmRprGQiSK1Ka0W7aGE0mUZqAQYMHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OY7l8jgE5I3oADHMotF+pVxt+gyeCp9EZWlxsCMVvZ+qKCEgJGzg2+EGcsXnDRKjfTZ3hsUBznckmF3LIXJck1TQi1h0Ixm4FA5hDqCKhYiYvG+LQ88jYZHSPqnQ3RLpfo0Eb8H1qFvc5+wAjn1A/AsaXrmuNmMt4ie/s9W3jPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nZQRW4qh; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RrMa5O3s"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45629703011so5787715e9.0;
-        Thu, 24 Jul 2025 04:03:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZQRW4qh"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b00283a5so5258345e9.0;
+        Thu, 24 Jul 2025 04:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753355031; x=1753959831; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753355511; x=1753960311; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4BO0LugBH9HnRi2SesdTxjFzr6y+8KlqsNdWixdTRhk=;
-        b=RrMa5O3soRGmDUkw/x8mIdGGxRSFNTokPFMcFGASJDAP4S+jgEXRfpuHzyQpM16K01
-         EbDB8w5MK/p9h98xpN+BGS6mlcA48yHYr0qPC9gWmTFK9IC0wcW/CtmxHcY7yxPaAry9
-         4JvR8ZNBcY/gBf3f0CUg+bHMZmrWqHAH2lLR0g02WNlRMv+g/lyWrUKixqQNqiY4L18v
-         3Q4IjztJdfczLAqko+x40lMAaGU8rAvX8rTKhoEaQ1z2SO9GVEfpjt6K842BzhLYRCfI
-         +mIIX2EgMRtUUz/ASzm7BRlcoNnu+wflq6TekIxlvwhFY4AjvcoHyBfiilMZFWzCQ/dm
-         ep6A==
+        bh=dTYbV4nxDsvnMsaeWUhKOQ7nhv5G6Dj9og0zlTLu+bM=;
+        b=nZQRW4qhnSOMIOAN19ORRYMQUDmJnSw+IGVyQs7XoYfmJa61ZblGakL4QC5jNEnXvz
+         M6J7+DrKOhoLSTySQC+KZzxaoXTVmCsiz459aXmYkxF65frHLMJD4lKAO15dbiGAOeE0
+         NZ5NGqT+xRFmQn7X7x6b/g0t1W4wmn4Mc42W1pKAcEMQSdzVouN5SMYMORkOownsJVBN
+         5+4tS7nfpxFH9nx9KXxiGu+5Wnne2tvAhaKX7myiqGORACt/sKNxxFfxXQyFy5eSWkpF
+         zVvgnNhWuhx21gNMOr9HwxDIkEZydwUPIJ+HZXOPmCEhzP72BPIDUus4KL0M8pRsC5rj
+         UwNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355031; x=1753959831;
+        d=1e100.net; s=20230601; t=1753355511; x=1753960311;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4BO0LugBH9HnRi2SesdTxjFzr6y+8KlqsNdWixdTRhk=;
-        b=WP2AkDprmI3J9ksX8WL/QtFw/Bh3QCGAxciMmWfbHPGXg4P3dkW2WV9N68mfGy4sqR
-         pMe2b3hVt3AdiHTvpxIZdVs8PIrVB3UtHI94p0R0lHKh66MD/sqqXRUsy/D7s3/P2L+0
-         XpyJgK7iF4lWzBXQWsn2RfpjCBai5mcP5VXYj6OrjT9ElpeqKnuynoWH9DH6cN3X2vFo
-         L75JjqyVvTIakJwHrrmRInon9Qrl1BzBTdbakLq43xZmVmc7OOjcytfj32NAcjISMV76
-         tIuW79KZKyNX72WZsCBg3i2izmWirLM908xpVh3hCWa/JXve4H2Tlgcy3U+nU+d7GqsV
-         Xfwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzwxhx3Jp86eMtBcrCr3JagcNsr2PzXiOD31B1f2jO+eS/q9gC8rZmeb1CijQu9VfZTRbbTchTlZkmDRI=@vger.kernel.org, AJvYcCWWPYTxfm5ASORwZzSqFlu3/L2EUZgd5w+vo/A2+IRLFkChZ49GZe6A4bFSXA1kK1Ad04w3S0TuwGohNdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz26NNHK/SbBqvuXCJytb87id86NlsbTRXZIOU8sOxP08eVpHfO
-	m5lbjf/HVP873hbYzj6+d8666Ioj+J/LKAEpEw6Gi63TdHittfyjp/Ug
-X-Gm-Gg: ASbGnct8KxACZoIJg1Mr9kXiBRqFSI3EJPN9Wfekoml8FORHHsW01Ze/yR7VxvsYGkG
-	P9F8Qjmdx1EsNCNpkimHkQbiVKY8bj283HBGhIgYeU1CZQ1UsjW1CeLCbCOc0g5wWg7fl9aZLG4
-	5y7mcZUFAsE1SJUb0e8llh5AooJtp7JmCWmpq/BJOuLJl43UhuHukgVujEHHfxF/B3TMHZ2Y8+t
-	6SR4uL7r1AtCN775wk3QgGzrjMK/JvSX7ZYvO+D8q0c1SnCadN6BRrmpxUjXu3nlgLTSfxX07Tq
-	6UcXLks3LEC6pV2EHrvjLcO63AkqTlqF7PDsZlbIj+UeimSTR5uAdoE1gpgxw6TFc34ekj7a7Nk
-	D+54E7JaZQmJhgWBjw0It
-X-Google-Smtp-Source: AGHT+IHeIgYUhMAED1s/zSMayTQsBvAjmPpTfLT7EAOQtX4ff7O+VmXQ6PzHyT1cibrfeoGpSbvJDw==
-X-Received: by 2002:a05:600c:4e47:b0:456:1560:7c5f with SMTP id 5b1f17b1804b1-45868c9d3c0mr62970365e9.14.1753355031254;
-        Thu, 24 Jul 2025 04:03:51 -0700 (PDT)
+        bh=dTYbV4nxDsvnMsaeWUhKOQ7nhv5G6Dj9og0zlTLu+bM=;
+        b=qBhCeS1OokrH5nBqO/9cFKx1WbGIBSGXQ+9i94cfVP5SaVTMvT5p/cPtqAwDWm1uNi
+         Wp2uJTxSRNWxT6yN06xrhGg+gpsx3D9Ur5SmbtLeSodUV+cEMRMYgcqYs3aUtXr8TOjd
+         xnutSdJlPis9K0G7vNwAY8bI6qcmRNFGHhd4xTJfdgNn9Xrs4NhvohcphYIrZHJcbO8h
+         D0721HvZFINJgeN1F/mTJmzdUOcoQog74wtXf03p9JAeJOcDixcuwLHRcwoh8ikOWHVQ
+         P/4kK9+DIwpEMFfAQAdnyUX9cIgUAF/6luT1GEbv8lr9SPRd7XU391hEYzPRI7QnB6Ga
+         LtZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUazdnbHH48NvoNv8ReBX4d8PC2TJIvFhWbb3oMXKSdu05KKQ+IthaBuCz6SWxLO1Z6AqR+7zB6FuiCtQ==@vger.kernel.org, AJvYcCVdPW2m/Hkv32WoPX+5wG3uk+TE4zJHAng5zZ5p+r/WvC3nP8nFgnHGJX+DMKm5gRPi/nrK+6E/bnIEv7PQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJjjqok0dzJewCNpdysisfUMc682tD2RsIyDbOOEasEZrwSj/a
+	sfL88TIIpbssnO7WARZwk5DImeoxpJCGIeH4aD+s/48On4dXBU78/BXT
+X-Gm-Gg: ASbGncsEJJuJ6S3xLh8+d0JZ/SYY+NWDoZyAmput1peHPYxZAGHD7CzT23fsQJMj1gS
+	E4YLmdUofzReeFD/1X2M3da2FMbrQBWDhPOLoMU4Zc97UDHufXU1ZwLrtq1Sg+krfafupyACQs4
+	BYGm4nUpa4FmEhvLNGY5aAxlrI00bmT0zmxZBuxqozvxSwImIa1v6wnpVbF+jd91QC1IOv67y3z
+	dkw80Fb02Jz7R0DeSWTm21NUAqXNCfXkTShokdydFGUzMwHNz9636LIJY9JqX4VrKSxu0pn9i8D
+	CpJfpOJrk0e3rkPSLsky+BR5NhjWQr4SlYeaRcViONM5nevO5eHdphM6CNCUXKhKZfbI8opsoGm
+	eBLQsEbeOo0SzZeluMnkj
+X-Google-Smtp-Source: AGHT+IHMwXOEmt/B+iD3qWA3UbigtYtOjMkSnVDF9plV1h01nJZP8fGi99c3B5hKHH66bYOCZTFXBw==
+X-Received: by 2002:a05:600c:358c:b0:456:11db:2f1e with SMTP id 5b1f17b1804b1-45868ca7563mr60549065e9.15.1753355510864;
+        Thu, 24 Jul 2025 04:11:50 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45870532af4sm16463945e9.4.2025.07.24.04.03.50
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45870532b5asm16008315e9.5.2025.07.24.04.11.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:03:50 -0700 (PDT)
+        Thu, 24 Jul 2025 04:11:50 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: Kconfig: Fix spelling mistake "Tehnology" -> "Technology"
-Date: Thu, 24 Jul 2025 12:03:18 +0100
-Message-ID: <20250724110318.140684-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] HID: Kconfig: Fix spelling mistake "enthropy" -> "entropy"
+Date: Thu, 24 Jul 2025 12:11:18 +0100
+Message-ID: <20250724111118.141114-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,36 +75,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are spelling mistakes in the DVB_DS3000 and DVB_TS2020
-config. Fix them.
+There is a spelling mistake in the HID_U2FZERO description. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/media/dvb-frontends/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/hid/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/dvb-frontends/Kconfig b/drivers/media/dvb-frontends/Kconfig
-index 2ef2ff2a38ff..bcc97ca86ed5 100644
---- a/drivers/media/dvb-frontends/Kconfig
-+++ b/drivers/media/dvb-frontends/Kconfig
-@@ -163,7 +163,7 @@ config DVB_CX24123
- 	  A DVB-S tuner module. Say Y when you want to support this frontend.
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index a57901203aeb..79997553d8f9 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -1243,7 +1243,7 @@ config HID_U2FZERO
  
- config DVB_DS3000
--	tristate "Montage Tehnology DS3000 based"
-+	tristate "Montage Technology DS3000 based"
- 	depends on DVB_CORE && I2C
- 	default m if !MEDIA_SUBDRV_AUTOSELECT
- 	help
-@@ -270,7 +270,7 @@ config DVB_TDA826X
- 	  A DVB-S silicon tuner module. Say Y when you want to support this tuner.
+ 	  U2F Zero supports custom commands for blinking the LED
+ 	  and getting data from the internal hardware RNG.
+-	  The internal hardware can be used to feed the enthropy pool.
++	  The internal hardware can be used to feed the entropy pool.
  
- config DVB_TS2020
--	tristate "Montage Tehnology TS2020 based tuners"
-+	tristate "Montage Technology TS2020 based tuners"
- 	depends on DVB_CORE && I2C
- 	select REGMAP_I2C
- 	default m if !MEDIA_SUBDRV_AUTOSELECT
+ 	  U2F Zero only supports blinking its LED, so this driver doesn't
+ 	  allow setting the brightness to anything but 1, which will
 -- 
 2.50.0
 
