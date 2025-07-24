@@ -1,70 +1,74 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449D426A0B3;
-	Thu, 24 Jul 2025 10:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49301D7E4A;
+	Thu, 24 Jul 2025 10:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753354497; cv=none; b=emYa16BTPZhZNB/SB8GB1SERwaaT6QloEBMBpBv7Pgh1CaVElinkbO/fdR/W1L6TB3+99BURXL6IUN6a3bWY3+IX90eGCk00mQD7mNLnKxHkrPjAK+9GsgEgHdixgmX1PBUgP5ir6Lc+sqSl4tZRWgPxN9XcVu+RH6BxgkKzHv4=
+	t=1753354710; cv=none; b=SjyctXzJ7LssYAhg57g4hambSb7tlKdPgXnnb2QcoteAzy5D367V6nBI1+aONmmfIxdURh850wALV75RfqgZABdJNuxqdzHXt7AFAwBCMyLwijQumeVgTHJD4ZssnB1kWeEZZ29xLfWY4L+khRWUSyn6kqFEJXpwd55qlFBBals=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753354497; c=relaxed/simple;
-	bh=LgtVXJub3oQj1/eh39mXtQfGOk25rts9oyrtHoKK6Mo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SKD8LfaOvGYX5pt5EGMwymXt7DzwjkJvllXDyttosE1b863fzLdJRH4kKiqp/LnY96GA9A7WVylD0cf64XmsA2jC8AuWUGi7RSS7l7FPBCWFWxGftSgw1pM33HK3DT+6sfljZ4a0T4ZP04BxzfXNUK/3+ouc3BHyRHJmleq1mn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgE+izbS; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1753354710; c=relaxed/simple;
+	bh=wl+SOkF9O3gURIzsMwzVH/kEkZbhPgd5zO2cNyRnC2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LFoyTfoclox6vk9IBF6v9Pe152tcqQwAAlgNY1rcaLU8nK9ZOXxPjKpbnT/2PDc24nFUsYD+gAMsLaKLI/fxYAqcs89ZEPicfh9DSxzYWLYDNnIHBvdnEwUvJ7gCdsRgqzDSienqQfVH5thdAw4EN5CwGvMZAA6jCYlLq29e/XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z8rKGJMp; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgE+izbS"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a582e09144so392372f8f.1;
-        Thu, 24 Jul 2025 03:54:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z8rKGJMp"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-455b002833bso3620025e9.0;
+        Thu, 24 Jul 2025 03:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753354494; x=1753959294; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753354707; x=1753959507; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BsAhWIT62m4Gie5SVDdvUs0LMiYJ2YavCXOK78Oo8mI=;
-        b=FgE+izbSJP0q0Qke+3/fw2kTG47AXRNMyYudc+licfWYUGApEzqmF03gCiSpqnWFOe
-         fd9oVfbhoWeqFvo5ZIc+zqx57bv/VT838dG+DBOglnDi1CfLFDGQYMmkoawvQMGBr8QM
-         uDlI61rrqKwRxHlTpsZt3S+pHKfr0Is53OFGN1P42/mk9n95DjbxGvveS5s7pwe9Se8Q
-         WtycA4jKnuFxI7uLiYJ7WZeNB5qNhsxZGYMpUEAuZsmXuHGRmsehn/nOZE/7Cxik3DtG
-         2fJBxByy3+EKWWkAXs+MtM3EGukdXilF3BEf6LSy/jGwBeaZWlUyvUeFpkvyVTUOSJhR
-         m4LQ==
+        bh=RGecDSfQkRQwOHSUrTvJEbSVKAprJg4maVsG15+73gY=;
+        b=Z8rKGJMpwdy7AVJQ9sCquhdF0kPoQHzXI9PwEks1YogSQC9C0RWUl0IQcxd6lABZ+j
+         mf+NEL/ZvTxp9HlJcz4BMqWbM3IJlHRE90MunDzhWMpjg3RqzXS2ESnijjtkC1tk0PQv
+         1841zMMZHLYHMAPbJABPOwaUT67pYX/xyYI+NTW6nv9tG/QznI6hqIl8/78R4zoNHpJV
+         Xv87sIBeMc9o/Cjj8HQ3CWmhPuYv/Wy9VackRfj+PTLdI4wU1Ca++Q/nJ1bzAW2oN0Kl
+         M7KTi7CyTCJuB0/VvO+uvM302I7mUlVyqCukwj/CzdcLB+A+0yH80e5SglcIItmcFAwt
+         gzbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753354494; x=1753959294;
+        d=1e100.net; s=20230601; t=1753354707; x=1753959507;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BsAhWIT62m4Gie5SVDdvUs0LMiYJ2YavCXOK78Oo8mI=;
-        b=S59YB4IOzcJpqHxzQrTBO9est8UTIuftrISMcLbcx99EV95VkG9lPAISKnFAi4Pb+c
-         bifoaXu/qQOnpA95At4BjuJ8AhmoKWnqRtLlI2HpqzHrs5zvLsuEyulc3hRrPiiM6+Ue
-         EcbSbuUB59+deRy8KHKsMhD8fzzHDCZJfrDR9LtgwmI6zFN5IYBOrI/J6oaAYEowtrlu
-         Qoj3W+RMOcmTo8Gk0VpAvCvQRyMkZABn+WW9HeyLKtWr1L8ge/71xh3VN6+3j8SFGVx5
-         0o5Ec1XRPSCl0Pfg8nyAT81hUgY1YnI4m5nPDmF0lkAIEThpYGeHUPR1t88H2J+aZT6o
-         2r7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbixUzWzq/FAFS3tJsofIkxxEWXcchjdOlxfs0pSQ2m0RPOhNvfJGLebgc+hmluiyFZi0K6PPrYCVzcNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrpk+GlHRfDjAC6kU3H3PlUagt9agM3Rri2q7nEqe1iQ2RGdD4
-	qlzvM4/ts3/F0ziuiIxHxFAM/0rtHe22KnS5eBN6ug1ad/RdUu/voFqglDcgh7JFhRc=
-X-Gm-Gg: ASbGnctEOkBfpShL46fkVdepz9bPJjAiPikq3D7Z05ksTQDYwR11BAhzykHDkvjeC/1
-	e7xvzxFL/u6GcJp1B4ja4X9Ql78k0vDb5gHRKpyEurcB4Z/NLFGwYMhhdIvBPiCAxVHp3uHfqxm
-	tfnzCe/LNRAr6+fCNgi0zUuCGFaj+Oa9YGp2dgYh4Xiuw0HVnyv/QwlBktkC5GCQO+MCuG3toDU
-	hdlGZmVjETB5My9Cz3IuXGbnaxrRVFXwSfheVPtylwdiLg5yzklibvNSI2+Zka4xr4mA5m1JHVC
-	B9QsAYJ4YsuH/gdiBAHuPMzIHWJJRDlw17LJZLk9066a9BCdoe78fQYlu+FM7GoJ63lCeYn6dR1
-	EYKBkNRvYgKHos3KZe8Si
-X-Google-Smtp-Source: AGHT+IHSDxo61nyTvpjRTf6DS/I59nhZt2pmYCjOhFrbri/7mfYeSTABKdk5sQANAcITrGTQ3hLuXA==
-X-Received: by 2002:a05:6000:26c6:b0:3b5:e714:9c1e with SMTP id ffacd0b85a97d-3b768caa1d6mr5469579f8f.12.1753354494472;
-        Thu, 24 Jul 2025 03:54:54 -0700 (PDT)
+        bh=RGecDSfQkRQwOHSUrTvJEbSVKAprJg4maVsG15+73gY=;
+        b=IeMTLJfe2gZ58GbpztalT2fMw6Dd1iuQOIno3hW6JPy1eJFsQAEJXgwsLDE3GTb/xA
+         F0az0NvS5Zdj03qdS2rycyQkJDBE5xIvmUFswS4T6pDuNthN7yK2wbicRCJhYw1RXrBX
+         Jkp6V/qqGeSFtnjAvPYjifYfZGXkaRMDnuDlX2XI4JO31xJVvw+JOeXJOsf83S0y8mju
+         zHbDj6ArpFPmrTa6u8dnBAXaZqiLj9ZusGahsHGKQKs8Adj+9ueXunI7yK8xX6Zee94L
+         MunuileVBbv+mCu0+YmPgm6BLfB/MVnAL2YBCCE/8xRQBLVmgRLKLXpJM09w2knZqXXV
+         MBMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvVUu/jkwPxi7U//Wh64tzg1XbDfh27cY96y+Dtfly+wB0tW6NCDLO3GYpqS3RxQkkstZQ6RyEc3mdUqM=@vger.kernel.org, AJvYcCWJhB/kaVTmkZolO1TlRzkVPKwCm0N7T3gtwtAyn0B5Ik+dZSqFsG5aYvwuzEz0l3t+H54GAnFhYtBf4kPu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp6Z8qB4PS6kvIeDbjSoiz2MEa+TqPCqCxqlX9AJ+Wxdy6Or4e
+	B//xX7K2s6WiaYR74/5UWsTwdOmrAhL27ga8YINywvFRG97/FnXDSKya
+X-Gm-Gg: ASbGncuwOpquEBqH4hEv2hc58z/fwDfVBqYxw8pySb6O0rFDk2iu8c3+gC1nG41RENH
+	jvoD4jzHXAajLES1YFfYeSjljowjKuV2nhb+PcOaYCFAMu9DRktEq7mO0Lho811MUVd6JEvUVZI
+	Giio9ZiptCPUvSagh2Mj3lCWHbCEtga4gcDNw1bLF2uujmwMWocBzfCooGQ8WLozolciOdwPxfn
+	kPhpKAfMx6e3s5qCAeX1Jbds8eZcjktrcw+wsLqhgulz/KO37WCS/fv099EVxSX7sHJPGdSO/zJ
+	a7y3X4ojqy/Fr11BI0+VSiwV/boNgw7p1Y2Qb0s6BWVtifTD95dbZ/wiFOS8uu+WrHYN3d3VTl5
+	Rr1ss5/ZYTiNYECGymzs3
+X-Google-Smtp-Source: AGHT+IEec1gAogEhVNDlKxHHWHB5R0+lqM/g4ZlsnII2um+rpJwBJ/Nvy+vyPcI2BysN3G6ob2NnHw==
+X-Received: by 2002:a05:600c:3e83:b0:456:2000:2f3f with SMTP id 5b1f17b1804b1-45868d53693mr42892935e9.23.1753354706968;
+        Thu, 24 Jul 2025 03:58:26 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fc79f06sm1823832f8f.37.2025.07.24.03.54.53
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705ce781sm15812735e9.31.2025.07.24.03.58.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 03:54:54 -0700 (PDT)
+        Thu, 24 Jul 2025 03:58:26 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Eric Piel <eric.piel@tremplin-utc.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-crypto@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] misc: Fix spelling mistake "STMicroeletronics" -> "STMicroelectronics"
-Date: Thu, 24 Jul 2025 11:54:22 +0100
-Message-ID: <20250724105422.140186-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] crypto: stm32: Fix spelling mistake "STMicrolectronics" -> "STMicroelectronics"
+Date: Thu, 24 Jul 2025 11:57:54 +0100
+Message-ID: <20250724105754.140400-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -75,36 +79,24 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is are spelling mistakes in the SENSORS_LIS3_SPI and SENSORS_LIS3_I2C
-Kconfig. Fix them.
+There is a spelling mistake in the module description text. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/misc/lis3lv02d/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/stm32/stm32-cryp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/lis3lv02d/Kconfig b/drivers/misc/lis3lv02d/Kconfig
-index 56005243a230..9d546a42a563 100644
---- a/drivers/misc/lis3lv02d/Kconfig
-+++ b/drivers/misc/lis3lv02d/Kconfig
-@@ -4,7 +4,7 @@
- #
+diff --git a/drivers/crypto/stm32/stm32-cryp.c b/drivers/crypto/stm32/stm32-cryp.c
+index a89b4c5d62a0..5e82e8a1f71a 100644
+--- a/drivers/crypto/stm32/stm32-cryp.c
++++ b/drivers/crypto/stm32/stm32-cryp.c
+@@ -2781,5 +2781,5 @@ static struct platform_driver stm32_cryp_driver = {
+ module_platform_driver(stm32_cryp_driver);
  
- config SENSORS_LIS3_SPI
--	tristate "STMicroeletronics LIS3LV02Dx three-axis digital accelerometer (SPI)"
-+	tristate "STMicroelectronics LIS3LV02Dx three-axis digital accelerometer (SPI)"
- 	depends on !ACPI && SPI_MASTER && INPUT
- 	select SENSORS_LIS3LV02D
- 	help
-@@ -20,7 +20,7 @@ config SENSORS_LIS3_SPI
- 	  is called lis3lv02d_spi.
- 
- config SENSORS_LIS3_I2C
--	tristate "STMicroeletronics LIS3LV02Dx three-axis digital accelerometer (I2C)"
-+	tristate "STMicroelectronics LIS3LV02Dx three-axis digital accelerometer (I2C)"
- 	depends on I2C && INPUT
- 	select SENSORS_LIS3LV02D
- 	help
+ MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
+-MODULE_DESCRIPTION("STMicrolectronics STM32 CRYP hardware driver");
++MODULE_DESCRIPTION("STMicroelectronics STM32 CRYP hardware driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.50.0
 
