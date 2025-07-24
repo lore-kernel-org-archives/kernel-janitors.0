@@ -1,70 +1,68 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4326C3A4;
-	Thu, 24 Jul 2025 11:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E424B269823;
+	Thu, 24 Jul 2025 11:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355514; cv=none; b=DEBeKm9r8K1dfmVHLZftnrLq7Ar3Oct1mMD7I64s98n7ncWzLH+gl0igrtPJuQ+7xFNVC+orj8rDX6VBOPDxDP9yAUDhsuN87v/FrSNftJ2TK1wbIFV+aV2wJeknJEN6A4UBmNvzqaYjLy/s4WTh8R1BWjeqtfgR6RscGqpelXc=
+	t=1753355735; cv=none; b=bgY7o+x3EklVD4j09JtDbjBUubvDjyVmGbAw6esClp0PIG6xTv1vWyaXxOHRzqxkF85uGDMSr4N2JI4oO0NyoiW99ki2UH2nMUasrQ8WDhy4bid0RwzoEyp2YNv6nvEIe7F+XptdmNVD5e5N/+TODBkMJ4mYcIFVCLx89mf/vLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355514; c=relaxed/simple;
-	bh=rW6eweYjEhNfddmRprGQiSK1Ka0W7aGE0mUZqAQYMHo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OY7l8jgE5I3oADHMotF+pVxt+gyeCp9EZWlxsCMVvZ+qKCEgJGzg2+EGcsXnDRKjfTZ3hsUBznckmF3LIXJck1TQi1h0Ixm4FA5hDqCKhYiYvG+LQ88jYZHSPqnQ3RLpfo0Eb8H1qFvc5+wAjn1A/AsaXrmuNmMt4ie/s9W3jPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nZQRW4qh; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1753355735; c=relaxed/simple;
+	bh=zI6wznTCKI6qdSFZjO0Obfrjv1HDVl4f5YRC0ifu8j4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u0TPXFhZwPgJFmNCSeFLMtC7+o00e475lR3gYXNBf2F7LEAWzf4nQ6QwzTJFVaHi1GBGLg5XBRT+J8ZDm9v8PAQr4f+7F1jfBnxtWoosBkiNuau0fVqoy27H0txeib0WWehEmF7M5GtYNtyPt4MKpA6DC11YmPvjWZmkIX1fh8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEhtvHwX; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nZQRW4qh"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b00283a5so5258345e9.0;
-        Thu, 24 Jul 2025 04:11:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEhtvHwX"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so599036f8f.0;
+        Thu, 24 Jul 2025 04:15:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753355511; x=1753960311; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753355732; x=1753960532; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dTYbV4nxDsvnMsaeWUhKOQ7nhv5G6Dj9og0zlTLu+bM=;
-        b=nZQRW4qhnSOMIOAN19ORRYMQUDmJnSw+IGVyQs7XoYfmJa61ZblGakL4QC5jNEnXvz
-         M6J7+DrKOhoLSTySQC+KZzxaoXTVmCsiz459aXmYkxF65frHLMJD4lKAO15dbiGAOeE0
-         NZ5NGqT+xRFmQn7X7x6b/g0t1W4wmn4Mc42W1pKAcEMQSdzVouN5SMYMORkOownsJVBN
-         5+4tS7nfpxFH9nx9KXxiGu+5Wnne2tvAhaKX7myiqGORACt/sKNxxFfxXQyFy5eSWkpF
-         zVvgnNhWuhx21gNMOr9HwxDIkEZydwUPIJ+HZXOPmCEhzP72BPIDUus4KL0M8pRsC5rj
-         UwNw==
+        bh=akK877jV8P/jl94k5i6QYpdpJ+XCJw+iZLGZenw8WpQ=;
+        b=TEhtvHwXBWc5Rt30lwL/4sWZuzyBRnperE/Mxd0hrafV+CxhTcEtdDsB3zEmnGoHT4
+         go5DvV8L8NKGKRo+Qs1F9cAxXvEd4txCdyb8e/61XRNzr4OxcXF5mZ53wQvDTxq/b/p3
+         68FOHgvHVB9GFudEwxt2DUxD9JG+pj/c4YnwbeokqEZPCLWV4cZCN8sSMZG5ahwa6XYV
+         xJ26rZPUtC2JkhG617hUeT9zNOqMNR4SjFbz5C/bR775iRif/qcaKuo+mIr1NXr6Awbm
+         pWU6dOZSTKCcc/1WDY2gvxqAiSp1Xce+NgiA7An5JN8lL3wVa5ryJgWYJZifaMIcj4iy
+         B1YQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355511; x=1753960311;
+        d=1e100.net; s=20230601; t=1753355732; x=1753960532;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dTYbV4nxDsvnMsaeWUhKOQ7nhv5G6Dj9og0zlTLu+bM=;
-        b=qBhCeS1OokrH5nBqO/9cFKx1WbGIBSGXQ+9i94cfVP5SaVTMvT5p/cPtqAwDWm1uNi
-         Wp2uJTxSRNWxT6yN06xrhGg+gpsx3D9Ur5SmbtLeSodUV+cEMRMYgcqYs3aUtXr8TOjd
-         xnutSdJlPis9K0G7vNwAY8bI6qcmRNFGHhd4xTJfdgNn9Xrs4NhvohcphYIrZHJcbO8h
-         D0721HvZFINJgeN1F/mTJmzdUOcoQog74wtXf03p9JAeJOcDixcuwLHRcwoh8ikOWHVQ
-         P/4kK9+DIwpEMFfAQAdnyUX9cIgUAF/6luT1GEbv8lr9SPRd7XU391hEYzPRI7QnB6Ga
-         LtZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUazdnbHH48NvoNv8ReBX4d8PC2TJIvFhWbb3oMXKSdu05KKQ+IthaBuCz6SWxLO1Z6AqR+7zB6FuiCtQ==@vger.kernel.org, AJvYcCVdPW2m/Hkv32WoPX+5wG3uk+TE4zJHAng5zZ5p+r/WvC3nP8nFgnHGJX+DMKm5gRPi/nrK+6E/bnIEv7PQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJjjqok0dzJewCNpdysisfUMc682tD2RsIyDbOOEasEZrwSj/a
-	sfL88TIIpbssnO7WARZwk5DImeoxpJCGIeH4aD+s/48On4dXBU78/BXT
-X-Gm-Gg: ASbGncsEJJuJ6S3xLh8+d0JZ/SYY+NWDoZyAmput1peHPYxZAGHD7CzT23fsQJMj1gS
-	E4YLmdUofzReeFD/1X2M3da2FMbrQBWDhPOLoMU4Zc97UDHufXU1ZwLrtq1Sg+krfafupyACQs4
-	BYGm4nUpa4FmEhvLNGY5aAxlrI00bmT0zmxZBuxqozvxSwImIa1v6wnpVbF+jd91QC1IOv67y3z
-	dkw80Fb02Jz7R0DeSWTm21NUAqXNCfXkTShokdydFGUzMwHNz9636LIJY9JqX4VrKSxu0pn9i8D
-	CpJfpOJrk0e3rkPSLsky+BR5NhjWQr4SlYeaRcViONM5nevO5eHdphM6CNCUXKhKZfbI8opsoGm
-	eBLQsEbeOo0SzZeluMnkj
-X-Google-Smtp-Source: AGHT+IHMwXOEmt/B+iD3qWA3UbigtYtOjMkSnVDF9plV1h01nJZP8fGi99c3B5hKHH66bYOCZTFXBw==
-X-Received: by 2002:a05:600c:358c:b0:456:11db:2f1e with SMTP id 5b1f17b1804b1-45868ca7563mr60549065e9.15.1753355510864;
-        Thu, 24 Jul 2025 04:11:50 -0700 (PDT)
+        bh=akK877jV8P/jl94k5i6QYpdpJ+XCJw+iZLGZenw8WpQ=;
+        b=RVkByX6bv3wP3eTsguhYZV4MqHfO24LpCTagMZCjigGTz5PU2lm/MSi/y128LrobVn
+         jJTv0Z4HWiMkYCnkie6F27UJ4yCDgzpipHkKEIEn4tNoAI0vEV4bU95wk1CH/i/TY3wn
+         lKTLDsfJNAJIXAisJhIRQjn6ifLjN/QahynTqi4UldkbbuJyQH/LqwvWn8DR4sB6Yx15
+         1qnrLxxQQM25m8BpN1iBD/JhkOu0YUsQtXc1awHpjVPMNdgfLP61W3Fgq+Oofjj8A0x6
+         gHe58izcnkXnoI9scHX4bfxvdvKtZzcP5dGQGESXd0GkuaAlNHC73Efvur8JjC4aDxkc
+         cZoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQUXjPAl9aWMPomN93NQ8t/K9VTPVuqVS7uTVcEJl67NpbYIiWhVD2kskgrQthowTcdxTpxyY8NeyKdfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNt/cKjCMOUuQ6hwYJMw9oENPcVbFFq3e+GP99Zsi60Fc4L6xU
+	+FPMPe5H2+vHLpi2eFyx5HwNwFfWjvUKOj7dSXmMU77WErqynCSveZyr
+X-Gm-Gg: ASbGncsgux7m+0vU6Ae+v8oDCO1Mpj0bnIN5bnqlNh6RrGWIpwZA64xUZKNp3OUQbaM
+	+cZpkFm5B+KfDP7m8dJGsSCkUoeNFkC/2M18sZcgfX/fxOYF1s5ji1pEk0GTBlti9gGyGeiC6Hu
+	7qaEZ9yjdNdmqGG+okpy80PquOBDpmD4yfNPQ0Yz+Fh/ELHmA19UgbrYb7lPIEIRKR/N/5NlF+l
+	javQUFxH+kdUqCWvxRHMKYHacnez2rL0NSINAh4ok7/x4+xofjeaTNAUKbUZ3KlFujxZmW7TyMP
+	wG8MeTG/bkicehvED3vQx9flwuZvAvIl4KwEcSOZ5+SljZcgZ811VA2sNwXed/G8h+nlBQK4BVx
+	6pvhG/vxpdYXV3KN5nyOl
+X-Google-Smtp-Source: AGHT+IEQGNJvOEga9hz2pxNuvy/L70+Mo/J2VQnHERBtvV4F+J1eR/g0m7CC1aE7WWyByY79S+K08g==
+X-Received: by 2002:a05:6000:26c6:b0:3a5:8934:4959 with SMTP id ffacd0b85a97d-3b77137c0f0mr1391798f8f.27.1753355731944;
+        Thu, 24 Jul 2025 04:15:31 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45870532b5asm16008315e9.5.2025.07.24.04.11.50
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705c4f40sm16199745e9.27.2025.07.24.04.15.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:11:50 -0700 (PDT)
+        Thu, 24 Jul 2025 04:15:31 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org
+To: Lee Jones <lee@kernel.org>
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] HID: Kconfig: Fix spelling mistake "enthropy" -> "entropy"
-Date: Thu, 24 Jul 2025 12:11:18 +0100
-Message-ID: <20250724111118.141114-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] mfd: Kconfig: Fix spelling mistake "infontainment" -> "infotainment"
+Date: Thu, 24 Jul 2025 12:14:59 +0100
+Message-ID: <20250724111459.141633-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -75,26 +73,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in the HID_U2FZERO description. Fix it.
+There is a spelling mistake in the MFD_TIMBERDALE description. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/hid/Kconfig | 2 +-
+ drivers/mfd/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
-index a57901203aeb..79997553d8f9 100644
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -1243,7 +1243,7 @@ config HID_U2FZERO
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 0ea3a97bb93d..4fbf14d94385 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1921,7 +1921,7 @@ config MFD_TIMBERDALE
+ 	multifunction device which exposes numerous platform devices.
  
- 	  U2F Zero supports custom commands for blinking the LED
- 	  and getting data from the internal hardware RNG.
--	  The internal hardware can be used to feed the enthropy pool.
-+	  The internal hardware can be used to feed the entropy pool.
+ 	The timberdale FPGA can be found on the Intel Atom development board
+-	for in-vehicle infontainment, called Russellville.
++	for in-vehicle infotainment, called Russellville.
  
- 	  U2F Zero only supports blinking its LED, so this driver doesn't
- 	  allow setting the brightness to anything but 1, which will
+ config MFD_TC3589X
+ 	bool "Toshiba TC35892 and variants"
 -- 
 2.50.0
 
