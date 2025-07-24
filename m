@@ -1,85 +1,100 @@
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CAC1FBCA7
-	for <kernel-janitors@vger.kernel.org>; Wed, 23 Jul 2025 17:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BCA268C40;
+	Thu, 24 Jul 2025 10:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753290054; cv=none; b=NUwtqAtK6Ku7xUpkoxeqtZelQpP72tJV7z2zroQcKfr4lTD1/62RF+52+oMuICLZ6B9opBx26JeNCK0unCbbQWQ7+59B6eSObDX/A1XKeoNVLI7KTfyhBMstLe5epZ1my1LNtbfCGCElN9y6hnQCAwexCEggc6zYrA65+VmVQjY=
+	t=1753353744; cv=none; b=aqaKI2vBFyLRh+7sKzhu/53MREMBLi2wlI+I5byIiBm3p71CN+IwkdxR4X+ZPZvYLYm8bPZdLbUu3T2bBjB9vekOdA/9oLiQrK3pjENArP0+amKM5Pgtc0jEPKdO9cxqTCloJNO6jdmZEgAGDadc0NZYPN+duoVhbqgImAPz1e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753290054; c=relaxed/simple;
-	bh=iRwGsir/WS19R8zzyQIzHgcHO3Kn/7CJJeeg7cROVuk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MwDm44OgdACOKJpn879Jg688t3npTrxsv9C+xSeImDFzvSQ4nAyHJAAotG08jLvQkKkPDlxqXUuQPY3tIZ7oEU+IoQK6JbgQlz2ubWKFiBI3q7Ajmn4uTfz2EaxN3LrSpC2wx5tPtFoE8iSqmfwkDH/eBHgnpSIQr3HNpRNEWhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NHbXjZbD; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1753353744; c=relaxed/simple;
+	bh=0GnIrdQuiuwk9twORjmOjMFrGFzq+9BtHPC//Q+r62c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lDm6qOHTIO9Y5zPraWEPpAYRfKbkLDzF5ShTTCspnh2kq3QonE8vBAJhH8cSBT/eJEIgrE0i2moX7adgaSFKd9Ynb+f9264nm1RqMBv8HjUoDHnvPR+XPd/2mJUdhrawNkUS6kAtlLGxmy9FNjuhC7ZFGdNo6TlW3HRkAfZdq40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqwGgk95; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NHbXjZbD"
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e182e4171bso9859785a.3
-        for <kernel-janitors@vger.kernel.org>; Wed, 23 Jul 2025 10:00:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqwGgk95"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a50956e5d3so565441f8f.1;
+        Thu, 24 Jul 2025 03:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753290052; x=1753894852; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kAA4uKDvogNFqPIVx5Z2Wi5tvRUB0/yTR+8w1NV0hk0=;
-        b=NHbXjZbDGDUfBfHJbjVCCTEpctn4bQcs9A9Y46VsX/IE4tbyrOuL+fRKl3juS1PxK5
-         7OsSkdQLLmV1L1qgMtS0EnhHN7BXL55ahU8iRRYldn2XpKI8x1EigyfWfb2GtXGtiwsp
-         /c0Lba8Hh+XWnQmD+II/9kRB52+rpGR+FGUv4=
+        d=gmail.com; s=20230601; t=1753353741; x=1753958541; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LwEsZFOMTw79B2T0J76TXkguQ2wD82TQyZlu19uUWbk=;
+        b=fqwGgk95goqZaXK/FRCwqVn/zsJwBUDC0x6T148G2d+PWFAK3DsdxigUiWQ4bSZuiN
+         HIff8ra4HOsq2nrOu/zzI7C0nyOz/UC0Q37aQT66yEiH2Xt1PVat27XyNPs+ABzPuMGE
+         HYkjdAMbKIxMiWESMgE4lMBAjSKOTINOOkeQbqfeZuq9mioy1Q/aDBWhzXughucK2xuA
+         WRT1QAh8RdICxGjbT70R4XEVLpv+1nelW6tcMHL0ipSsy6vSmxLExFzd2Ib7AuliPRgE
+         2eYMTg0irZ466chgcjqrYTrzm1gocfRMrLlgkAqgX4+rl80gy+bcq0DRK2HlldYoW4te
+         csqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753290052; x=1753894852;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kAA4uKDvogNFqPIVx5Z2Wi5tvRUB0/yTR+8w1NV0hk0=;
-        b=OGjKZn8Mnl/uxf3WE4pG1SmCRb20rNmWR4R5ZkS7jD3PnZExCZpisEj24wtbNyGTMn
-         2KzzetRo11gAdLfh0idZBzbF4AbuNdNyC55A5lXg/Tr+TRGegkE9uLMKovASUjVRkgLw
-         7EU/XEW5G9+MA0vjZqfF6h/C44hDBRp31n6sVQbjWvkLpIHgViketmMDGKInJRUspWli
-         AXT5UltKYl4JXkSd9YarkUV1UjtuaJvFtE/mbpYq7krWLikXY0pdW26Sho3xfsjsqbh5
-         YkA7F6i7Bz0C4v0p6pMUbLQgsBCd1dgMrRiZmbwxhK5VmXOd/dMU3XURzcYP25rFZ2WK
-         I5og==
-X-Gm-Message-State: AOJu0YwTOw2Wu5Lb0PrN1fniSZ+XRNH6e65MrcpLUHPyfeuf+4Nd0KFs
-	7FMY7Ur2Kd5rigE89DbhjIdyUtsYMhTcbKYKq8aCasA3fuvVTKp61DyryDQ33Sxr+g==
-X-Gm-Gg: ASbGncsEBIhQVtZJior4e9/1xKHvqkrBIvm9BFENJiliFTqXXRH5M8TNYnk2dVzfNdZ
-	Y47udfYQlB60pFOAX7nQm0Cq8NGlgxSdn7Ys+b1UrhP1Xyd7rsC4W62eXO6Bo3c0jEfIK09VghF
-	4oMJ9wRtTRy4G5A3wcyDV0MveeSFSOZKQLA4hIYOr/Xpj+kwU1ty9biQSvNrb1Ki9KgTK6WMjky
-	0HUyIDCL566y+yaKYfcJvjVRPFEf0GpwbUIvcAWuUc6dNFKi7lbNT09zXnWvSW7TEl1sTSWzLVb
-	wQk8VmYjtlWAWDKnaHpl0JXuci9KNimaOETyp0DOvDajiRFjMtVg7RRAphjMt8WG2zjcOD44P5B
-	O7WeQMC19GZ53J2u1w3LiV9Yf2iYqJVZX+Yjf3HHiH6f9Epi1IvWrShMMXQgEMJm/YTE=
-X-Google-Smtp-Source: AGHT+IHR/pIYFUXjIhcVQC11znP3yVLpRzPulMmcdzaK/tiosFIczetxhU6bAr+Fw0aFbrPOIY4giA==
-X-Received: by 2002:a05:620a:4546:b0:7e2:3a27:a120 with SMTP id af79cd13be357-7e62a1a7909mr526750785a.54.1753290047833;
-        Wed, 23 Jul 2025 10:00:47 -0700 (PDT)
-Received: from [10.69.65.106] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e356c77a1bsm687374785a.85.2025.07.23.10.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jul 2025 10:00:47 -0700 (PDT)
-Message-ID: <80d282ef-aa14-4bcb-b118-fa8b237c1621@broadcom.com>
-Date: Wed, 23 Jul 2025 10:00:45 -0700
+        d=1e100.net; s=20230601; t=1753353741; x=1753958541;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LwEsZFOMTw79B2T0J76TXkguQ2wD82TQyZlu19uUWbk=;
+        b=wQ765GZt+FSvbjlWCbpnT0uX0GRl9L0zFiIpII1usk2G8yf0V51N5E5IuqfW0SDqL0
+         ttMD7ZN+ZYRUxeU4bpBV39f3cze1c15O5tX0YSclWi/xGu9SPjgC4znUIUF3senKy8UT
+         dBApgso/65rB3gC7OD0+XWLWZ680mwVoxpTrJqxjEfi1UzYJwHPhn+ZWbct3EPCfTlZt
+         jIMyUu4ERP2JCQW0zJVwQEcB8FqwG03lod1S0pqZYmvxKkgwiTsgjR5PC0h8dvOzOTjV
+         C+9ggi01SwFqZBbO4oBtvTyvRMWcKBp8hk2F9JsUTBNp0irIdrZsQ18hbO6iYC6+xpqJ
+         Hs/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU1lwZ94w8pDRo1Z8cBJzjxycOfgPoc1b91inI2rxmWB6n24X82tG2FCYpZwIezQPgM9XTCd5mAuAjW@vger.kernel.org, AJvYcCWZKedRc3UCiS9SW5CMw5HUvkiP/Y+dBfwww6FuDvHjNgjqKVQ/l052feg/lb7/jxOohPaBvIZ9fDp0OA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwM9lYGjFUexSU0c66rWM6pqCXDjAJNabZLGLh4UCTu2XQn0LD
+	D97xgursV9O3GLG0W+jloa71CiS50KvFUmpWm9GRxxi/q0DfWsnlpQzj
+X-Gm-Gg: ASbGncuHPxmNBObkv+f9Wh5RIWHWhjMujLSTE89aqdv+QmNWJ7mGWGDoWzA3V37vWeH
+	+xUWo/3bYSUVgsZaC0jAda2TjzMvL1oiI+mzHcfV1glqZWNKcLSgfaO/ZZ41J/zABXaS8gNm5a0
+	y5BclIBkRPTjuEX5JSsDIganM9CA319nzZwX4/CGZgjq1IOska+J9zV1IGZzqKzydbWA2cAwhpQ
+	5Wz0BJ9RSwvf1ZzMAdKlUAC4DQ8zFo1eMQgZRxi3kIcK8WKW0T5+h8iXOYZF3Yz6/IV75tPmkTS
+	0AGZlIoga7pTslKMst4RdEi2DouHfaqhNb8chAPhcJo1hWlSmryLzX1qNaPGk9VMMX7v8Y8yzXD
+	Xz5u02yDuaHf4/uMwZRK4
+X-Google-Smtp-Source: AGHT+IHf3nO+l8p3t3jJ6EhFc37IiUngwM81Ph85vosyw4NmVeGOHyyAy8bPU+XlWIEPNHmM/awr/w==
+X-Received: by 2002:a05:6000:22c6:b0:3a4:f7af:db9c with SMTP id ffacd0b85a97d-3b768f16051mr4156342f8f.59.1753353740987;
+        Thu, 24 Jul 2025 03:42:20 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4587054f27dsm15463795e9.11.2025.07.24.03.42.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jul 2025 03:42:20 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	linux-pwm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] pwm: Fix spelling mistake "Firwmware" -> "Firmware"
+Date: Thu, 24 Jul 2025 11:41:48 +0100
+Message-ID: <20250724104148.139559-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] mailbox: bcm74110: Fix spelling mistake "braodcom"
- -> "broadcom"
-To: Colin Ian King <colin.i.king@gmail.com>,
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250723095315.3999463-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Justin Chen <justin.chen@broadcom.com>
-In-Reply-To: <20250723095315.3999463-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+There is a spelling mistake in the PWM_RASPBERRYPI_POE Kconfig,
+fix it.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/pwm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 7/23/25 2:53 AM, Colin Ian King wrote:
-> There is a spelling mistake in the author's email address. Fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 3ef1757502eb..e84f7981df7c 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -535,7 +535,7 @@ config PWM_PXA
+ 	  will be called pwm-pxa.
+ 
+ config PWM_RASPBERRYPI_POE
+-	tristate "Raspberry Pi Firwmware PoE Hat PWM support"
++	tristate "Raspberry Pi Firmware PoE Hat PWM support"
+ 	# Make sure not 'y' when RASPBERRYPI_FIRMWARE is 'm'. This can only
+ 	# happen when COMPILE_TEST=y, hence the added !RASPBERRYPI_FIRMWARE.
+ 	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
+-- 
+2.50.0
 
-Reviewed-by: Justin Chen <justin.chen@broadcom.com>
