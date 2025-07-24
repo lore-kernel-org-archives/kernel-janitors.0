@@ -1,136 +1,81 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3A82E267C
-	for <kernel-janitors@vger.kernel.org>; Thu, 24 Jul 2025 14:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7471F4C8E;
+	Thu, 24 Jul 2025 17:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753366714; cv=none; b=iq7yC4apEfyIfBURKB37rpsQL5eFTGIcvGHsVSlWs1SPGoyF2QaX2dzi+IVQQdrievy5KHQ4b8b1usHamlk6YwEquzW+LXC1SMRhNe5tP4gys/4qzeC2IQ0Qme/Rhgpo3ufItMdDU4YJVz+Kp8jHdJhan26ErUq01i8GYaSPoR8=
+	t=1753376672; cv=none; b=higyQCS5lxHFdT/UpaxMW1OufaMpN3jycWbUYndr7nUFkl+KcxWkEefJ+P/mm8Gj1UBJJVMYs9Ap4Mcc6w/hX04kV5bPYHoPgUinWEgtohmj9wgWvqXavZdYaClUryz2rsm+hEFBXX0UyosMjKcJY5fJt/eGYa0r2xuis+f1/W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753366714; c=relaxed/simple;
-	bh=k6whfQL2DLxlf2DinYDRVK6VlVRAAM/sca1UZVpaTuo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Bo2JuSacv4CbN27iX04FvJTSK7xeN0mzn8za3F72v3yOy8mSAzqEn+HZXQlMQg+2Tf31ILEACx8gOI7CQPMev4gxv5TqImCZdjPv6yGaDTfB2O3vKciZOP9H9mWF0ZhJPrWz5/q4Ssy6iuw7rE51r4t03AyxTg2CoG4nPnEwf8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N/P4Yz5S; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753376672; c=relaxed/simple;
+	bh=U+0rvQ84awdqFheOuteiFw5I2gmq5D+RPMO+eWRXsh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BfqfrLIm8Wh7v62ghi0ogYNf1rKhiT+eGRzWNRMZI5pC5TXzxn8ocNtVx+dQBHDv6DaHXDenCZ+K/V+i4JVNMxFotQ2L+hPsFmrzVYHgDEvyQj/kJpLRNUlp9IuZBQ1sGkjKT9ZvEfGDWdNfvBrkDkAqPLkzoonBQx3lS6vkOdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itqFIX4x; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N/P4Yz5S"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a548a73ff2so982492f8f.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 24 Jul 2025 07:18:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753366711; x=1753971511; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lQ/MB2FO+4yMWNUQ+Y5yKNu4mLCulW5xaxB8WmNAsDo=;
-        b=N/P4Yz5SHKID1g+bKOSc9uOyfz/2uZbUXOx4d+y58WLSB/GIj29AiciNNs8wDVTqHD
-         Fw/Zx9okMGLN/78xHHU1zjCirlclOi12PPgNCUnd+wo7Cg9Z8kqwhfcH7Td9TFiMdmx6
-         3YKROUgclTkS/hDMAaHQXvzfBva6F0Py0sSaIboGn1GJQ5LcutUa2vsuXkBJIauYKpeq
-         yszBSmkWdKV0cIOImO4M0NJWExEp3JCrZLaXBqwAs58zy/JhcAcszhB5aq1kblNNsrqV
-         r7eZVRM1V1qPyUODRj1J/CJodFlqRsRs8YzzfgVrhdxnvPv/ZBg+F/4SKl5FOjaV9c5+
-         9trw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753366711; x=1753971511;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lQ/MB2FO+4yMWNUQ+Y5yKNu4mLCulW5xaxB8WmNAsDo=;
-        b=HI0kg6klK0IqJ6qq1+2TrmZ2cN6LDPxaBnpnTRXxtLYDI9SWF4Ts77bNYHBAR4fE5h
-         coTja/09z1D/tej9ERhibpOxYpqv8Ds4gQNE/C8tvLa2iDbJSTqsDlPAV3ICmbletfWP
-         Bkegv6D4svF+kpVImTQPQzUu2lSzcS93rgw7Q72IXUYJ1HDCoDco/SiGiD/KHb7mX1MT
-         W1Jd5wk9ah13Vp3wz84o3T0JyuuCk1gncEu0Jqw3rP0fxFRPtXsQ52XnaHFG9YSsS8mP
-         /PhSW3njnADyiFD3pM/hnUit5y6Y3mSVeEfvUYPAoHeQsChclOgyUZt8jwEiAd4kQKnN
-         hlDQ==
-X-Gm-Message-State: AOJu0YxtOSqSyVkS8gkJMSVZWmHFgSNpMQ1XVnhNmgP6sxcjy1DWgNvj
-	GNItmPtJ3C/pIbbKI4wZrSu0d8+2XCtZoCf4fRrsg9kh9o3gVTQ8oAGTOrJQER8SsCw=
-X-Gm-Gg: ASbGnct/JIgMHW4KVRxHq8nLPKZkLPSD//Ota6zdW+851r/xEQYpiriYaEOK0dB3hID
-	I+bSS36BZ9i6+y98HSXBJuyiSKTGbDtyhpxEXoVsnwLiMi/MCuSD5EdQYmE06e75XhoYhXg3GpN
-	Eg7wXFE6WwRG4fEtycL8v8Le00uedDmRDP/IkLw/Tq8BOTtXa8fTU5CMdO/jkt5u1bivp8RUN/B
-	GVM0PiFx55NUkRIdanU04D0n3C8Tmly4e3arPgkMo6W3xZnKbwVsx3yLbHNP3flua0W72EBz8Jb
-	XBBBmwBmrQXuNFD9iyl785HGjEND9pUF1ySJBRiTVYNQYHDUTydm4WDfKc3cU9ilqbMjsb83Rqk
-	wWHFKnUOzYa3BvNSWqHPe8NeqwYyH5VckowMlENyUo1o1dJiHpgNhqUbSMcVEFeHn8RctIXbaK0
-	o8u534RA07EQ==
-X-Google-Smtp-Source: AGHT+IFLUlbSd2mSrQRGoxUw7mtau3/gG9A7DGtu+3ENHPjDW/QeEUPPMGo49+vhbb8ipQI+kIijmQ==
-X-Received: by 2002:a05:6000:2912:b0:3a5:8abe:a264 with SMTP id ffacd0b85a97d-3b768ef73fcmr5620891f8f.37.1753366711097;
-        Thu, 24 Jul 2025 07:18:31 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:e2d3:d328:dc00:f187? ([2a01:e0a:cad:2140:e2d3:d328:dc00:f187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705e39b1sm20784965e9.34.2025.07.24.07.18.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Jul 2025 07:18:30 -0700 (PDT)
-Message-ID: <5f406084-6014-4f88-8dc2-74527a711e26@linaro.org>
-Date: Thu, 24 Jul 2025 16:18:28 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itqFIX4x"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE9DC4CEED;
+	Thu, 24 Jul 2025 17:04:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753376671;
+	bh=U+0rvQ84awdqFheOuteiFw5I2gmq5D+RPMO+eWRXsh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=itqFIX4xyeQbvY0RocGmKZUH6o48Jv7V9vuVZEYex5sAV6HESn6hbQlvfJQw3TT+K
+	 /qvYaXHbl8y40VTe6qLiyuK6/z9wbcaBXgivrvNCWAAsXbn5lC73FBhMABwl9Eu3IC
+	 0atseEvjxoYsbNgqcb46a2QyOmFuk+XNiay2U3azwSHW7EhNY3mhaxZ1JGtsguCmQe
+	 qMg7CBpoxkL+NUILMczj9pgTCcZkf5WNMhhIu1eSWQxIanOravX7NWMZ3hBrZKmIqo
+	 jB7AsNZZHFfME/AjRc+SV3cGUJtz1uB75/+NFRx7skZ+h1GXGZoJZGMc7qT2IkmkRH
+	 B6lIxA0F1eqJQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250724113113.143009-1-colin.i.king@gmail.com>
+References: <20250724113113.143009-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] regulator: Kconfig: Fix spelling mistake
+ "regualtor" -> "regulator"
+Message-Id: <175337667057.99258.13351649490095530063.b4-ty@kernel.org>
+Date: Thu, 24 Jul 2025 18:04:30 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH][next] drm/panel: Kconfig: Fix spelling mistake "pannel"
- -> "panel"
-To: Colin Ian King <colin.i.king@gmail.com>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250724112358.142351-1-colin.i.king@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250724112358.142351-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-On 24/07/2025 13:23, Colin Ian King wrote:
-> There is a spelling mistake in the LEDS_BD2606MVV config. Fix it.
+On Thu, 24 Jul 2025 12:31:12 +0100, Colin Ian King wrote:
+> There is a spelling mistake in the REGULATOR_RT4803 config. Fix it.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/gpu/drm/panel/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index 09b9f7ff9340..af90ca62e57d 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -971,7 +971,7 @@ config DRM_PANEL_STARTEK_KD070FHFID015
->   	depends on BACKLIGHT_CLASS_DEVICE
->   	help
->   	  Say Y here if you want to enable support for STARTEK KD070FHFID015 DSI panel
-> -	  based on RENESAS-R69429 controller. The pannel is a 7-inch TFT LCD display
-> +	  based on RENESAS-R69429 controller. The panel is a 7-inch TFT LCD display
->   	  with a resolution of 1024 x 600 pixels. It provides a MIPI DSI interface to
->   	  the host, a built-in LED backlight and touch controller.
->   
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: Kconfig: Fix spelling mistake "regualtor" -> "regulator"
+      commit: 71d141edbfa3e0a213c537e979790835550270d6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
