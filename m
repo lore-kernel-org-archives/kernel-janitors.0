@@ -1,68 +1,68 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E424B269823;
-	Thu, 24 Jul 2025 11:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021482E36FA;
+	Thu, 24 Jul 2025 11:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753355735; cv=none; b=bgY7o+x3EklVD4j09JtDbjBUubvDjyVmGbAw6esClp0PIG6xTv1vWyaXxOHRzqxkF85uGDMSr4N2JI4oO0NyoiW99ki2UH2nMUasrQ8WDhy4bid0RwzoEyp2YNv6nvEIe7F+XptdmNVD5e5N/+TODBkMJ4mYcIFVCLx89mf/vLA=
+	t=1753355871; cv=none; b=VrsP/PwQbXV4Dmk46Rr6ZsfeOXchq5h8A4/bVgVuKDG/2/XhHYt6RQVlgBSje8OEHzuw8QPvVcr2kU47iorsuQwCDe1/ko35NjAYDCgTq0wFrKVysgFs/Jy4JMaMrDTNCLF0H9zuektAiXKkkCCSjKVwAxKBzoO6Zvlty/Epfdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753355735; c=relaxed/simple;
-	bh=zI6wznTCKI6qdSFZjO0Obfrjv1HDVl4f5YRC0ifu8j4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u0TPXFhZwPgJFmNCSeFLMtC7+o00e475lR3gYXNBf2F7LEAWzf4nQ6QwzTJFVaHi1GBGLg5XBRT+J8ZDm9v8PAQr4f+7F1jfBnxtWoosBkiNuau0fVqoy27H0txeib0WWehEmF7M5GtYNtyPt4MKpA6DC11YmPvjWZmkIX1fh8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TEhtvHwX; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1753355871; c=relaxed/simple;
+	bh=zdYKkQU5vl5TMa9x0pjosTlLnSzhnbtBHscU8qg9EwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pEjShYJ9HfoHXQhnPVRKE0ufX9UXU8kiZ0hSsrMbPGIkCXi89qTEAmBqPzfBJuuQBpooTtdExG+zlecrkzsTr47nmIJUCT+TJRweouMm6tBwbV51VVbDPnSycqQi3UesnK3UqR3JavksJyrLjqG09z+TehI6+xA9mNLQkzqPql4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6P7hR8t; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEhtvHwX"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a4fd1ba177so599036f8f.0;
-        Thu, 24 Jul 2025 04:15:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6P7hR8t"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so8687465e9.3;
+        Thu, 24 Jul 2025 04:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753355732; x=1753960532; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753355868; x=1753960668; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=akK877jV8P/jl94k5i6QYpdpJ+XCJw+iZLGZenw8WpQ=;
-        b=TEhtvHwXBWc5Rt30lwL/4sWZuzyBRnperE/Mxd0hrafV+CxhTcEtdDsB3zEmnGoHT4
-         go5DvV8L8NKGKRo+Qs1F9cAxXvEd4txCdyb8e/61XRNzr4OxcXF5mZ53wQvDTxq/b/p3
-         68FOHgvHVB9GFudEwxt2DUxD9JG+pj/c4YnwbeokqEZPCLWV4cZCN8sSMZG5ahwa6XYV
-         xJ26rZPUtC2JkhG617hUeT9zNOqMNR4SjFbz5C/bR775iRif/qcaKuo+mIr1NXr6Awbm
-         pWU6dOZSTKCcc/1WDY2gvxqAiSp1Xce+NgiA7An5JN8lL3wVa5ryJgWYJZifaMIcj4iy
-         B1YQ==
+        bh=nRkq59B9tEhDiSKqsUIn5B4LQk35QuTRo9wZHWurgss=;
+        b=G6P7hR8tkoJyquzEvRXVNFsBBW2kOrHZ43UXAQJNbhwxOWEkhEoKW5zbZqe1UeXOpK
+         /8v1yhmK5GkcoLSCOeWeKiH6ZisxxxABIvj6jcBvFv1xbaah4BGOD9/iFSfF4HfT9uXb
+         uGkYsYjFiymKdduVOuyeClS54y+u73vMiT+Ecf+sQRXI/nsE39pvgaNxUyKf7EkOUIM1
+         PKWVS68PYWQKinvKkADdpMlKZl8bMLeRryBZ5E+/ay1DT6zjyoM4yA2JjBwzKNp771RN
+         Il9NORA5pbm0GsWd7HlkS3IGsrOMvXJuBZzO/4E2SBu6/8cpS03DJwUqT9ItkP53B7lW
+         IadQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753355732; x=1753960532;
+        d=1e100.net; s=20230601; t=1753355868; x=1753960668;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=akK877jV8P/jl94k5i6QYpdpJ+XCJw+iZLGZenw8WpQ=;
-        b=RVkByX6bv3wP3eTsguhYZV4MqHfO24LpCTagMZCjigGTz5PU2lm/MSi/y128LrobVn
-         jJTv0Z4HWiMkYCnkie6F27UJ4yCDgzpipHkKEIEn4tNoAI0vEV4bU95wk1CH/i/TY3wn
-         lKTLDsfJNAJIXAisJhIRQjn6ifLjN/QahynTqi4UldkbbuJyQH/LqwvWn8DR4sB6Yx15
-         1qnrLxxQQM25m8BpN1iBD/JhkOu0YUsQtXc1awHpjVPMNdgfLP61W3Fgq+Oofjj8A0x6
-         gHe58izcnkXnoI9scHX4bfxvdvKtZzcP5dGQGESXd0GkuaAlNHC73Efvur8JjC4aDxkc
-         cZoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQUXjPAl9aWMPomN93NQ8t/K9VTPVuqVS7uTVcEJl67NpbYIiWhVD2kskgrQthowTcdxTpxyY8NeyKdfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNt/cKjCMOUuQ6hwYJMw9oENPcVbFFq3e+GP99Zsi60Fc4L6xU
-	+FPMPe5H2+vHLpi2eFyx5HwNwFfWjvUKOj7dSXmMU77WErqynCSveZyr
-X-Gm-Gg: ASbGncsgux7m+0vU6Ae+v8oDCO1Mpj0bnIN5bnqlNh6RrGWIpwZA64xUZKNp3OUQbaM
-	+cZpkFm5B+KfDP7m8dJGsSCkUoeNFkC/2M18sZcgfX/fxOYF1s5ji1pEk0GTBlti9gGyGeiC6Hu
-	7qaEZ9yjdNdmqGG+okpy80PquOBDpmD4yfNPQ0Yz+Fh/ELHmA19UgbrYb7lPIEIRKR/N/5NlF+l
-	javQUFxH+kdUqCWvxRHMKYHacnez2rL0NSINAh4ok7/x4+xofjeaTNAUKbUZ3KlFujxZmW7TyMP
-	wG8MeTG/bkicehvED3vQx9flwuZvAvIl4KwEcSOZ5+SljZcgZ811VA2sNwXed/G8h+nlBQK4BVx
-	6pvhG/vxpdYXV3KN5nyOl
-X-Google-Smtp-Source: AGHT+IEQGNJvOEga9hz2pxNuvy/L70+Mo/J2VQnHERBtvV4F+J1eR/g0m7CC1aE7WWyByY79S+K08g==
-X-Received: by 2002:a05:6000:26c6:b0:3a5:8934:4959 with SMTP id ffacd0b85a97d-3b77137c0f0mr1391798f8f.27.1753355731944;
-        Thu, 24 Jul 2025 04:15:31 -0700 (PDT)
+        bh=nRkq59B9tEhDiSKqsUIn5B4LQk35QuTRo9wZHWurgss=;
+        b=WczfrqJGHc6iURqMZHY6I6iSS4pg/ukraKe4luNyIAtHbaJMKR/bKQ8Pjj4oLMEdQe
+         WSw+BbxbryKnnpbb2bT6qDb6ROObhhlej5eRWpt1gXgA+/6NUX1TdFearXWYSaPWWkTB
+         az46ZYBWoj+Pxu1E08Yu0mcqP8xEXmSZKw7sMfBvMd7fU6QfVb2rrivNVv8gPdyvEESr
+         UNqD/Va6qOfocUYmf6zOs5u+Mjm0toqQ7fbYmYHd6gOMizGQNP2rB6e9euxjx/ARcG6V
+         7CsUQMSD+9/sWz9Tww8MTo6qVKdb8S54iI/gXouIUYD/3nAeB+wJHry7i3GzsJ6eIr4K
+         AFlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgcXWJdn/tnXcJjEzUu98pMUREyQ6VjWwZZN3JpKrQGxdNmXilLvFR1XsNUdo4sHYT0otYVnm5nkMWeJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/KQoPxzqW5iGxZ+5+Rdk7dEW64MeFs/U1Scs/NSi9onVQJEmC
+	+fxbW8TirJO+FZW23C5Sf+K+zJKlnvWa1/iETU9y5kMimU5CzifLkHQj
+X-Gm-Gg: ASbGncs5v6N+195R9CMfNxB1sCyfAIjeaf7NLeJPdq0BIpx6WGNNLjKxX1mdC+MmBhs
+	X3Wd2q4c5kxhXEIT3CxfbFEKA8geQpU7q7KXuoAYPFfGrUQ0wpU2UtvxG4l5hCTtLyq5CdIgTWR
+	5tLCUNaDb9grNGtawI5sSnJ6YX3S+5u0tzs20NI0Ml+QJxtOyYkuW3m7zzlXFBmMz+s2rNKJw21
+	ASq3gp/hoWZsLJbveXL2RL5ruQAQKeedYoiIovDUIUehhflrG/4KcpGkBH9DCw34Wlmv45AqOTC
+	TiC9Q51PybuZroiNVfn8SNSQcwoo1hst5wVtHofsP3nfWIIAj5Bzy908VpbvzCZG6oMFijWc/qz
+	BNRjCsLvJ6ipqV2AzMDJSS3ZBIuHIeTQ=
+X-Google-Smtp-Source: AGHT+IFqYVFEtFdYzuAzSZtDXC2/WuGJGZhj3nj6BsxTlezVi1ODdAz5VQHu2zo5uCw6kexFMNw+0Q==
+X-Received: by 2002:a05:6000:2905:b0:3a5:21c8:af31 with SMTP id ffacd0b85a97d-3b768caff9amr5879531f8f.16.1753355867768;
+        Thu, 24 Jul 2025 04:17:47 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705c4f40sm16199745e9.27.2025.07.24.04.15.31
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b76fcb966bsm1819952f8f.64.2025.07.24.04.17.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Jul 2025 04:15:31 -0700 (PDT)
+        Thu, 24 Jul 2025 04:17:47 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Lee Jones <lee@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mfd: Kconfig: Fix spelling mistake "infontainment" -> "infotainment"
-Date: Thu, 24 Jul 2025 12:14:59 +0100
-Message-ID: <20250724111459.141633-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] samples: Kconfig: Fix spelling mistake "instancess" -> "instances"
+Date: Thu, 24 Jul 2025 12:17:15 +0100
+Message-ID: <20250724111715.141826-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,26 +73,26 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in the MFD_TIMBERDALE description. Fix it.
+There is a spelling mistake in the SAMPLE_TRACE_ARRAY config. Fix it.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mfd/Kconfig | 2 +-
+ samples/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 0ea3a97bb93d..4fbf14d94385 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1921,7 +1921,7 @@ config MFD_TIMBERDALE
- 	multifunction device which exposes numerous platform devices.
+diff --git a/samples/Kconfig b/samples/Kconfig
+index a8880c62d4c8..6e072a5f1ed8 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -54,7 +54,7 @@ config SAMPLE_FTRACE_OPS
+ 	  measures the time taken to invoke one function a number of times.
  
- 	The timberdale FPGA can be found on the Intel Atom development board
--	for in-vehicle infontainment, called Russellville.
-+	for in-vehicle infotainment, called Russellville.
- 
- config MFD_TC3589X
- 	bool "Toshiba TC35892 and variants"
+ config SAMPLE_TRACE_ARRAY
+-        tristate "Build sample module for kernel access to Ftrace instancess"
++        tristate "Build sample module for kernel access to Ftrace instances"
+ 	depends on EVENT_TRACING && m
+ 	help
+ 	 This builds a module that demonstrates the use of various APIs to
 -- 
 2.50.0
 
