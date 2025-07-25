@@ -1,71 +1,85 @@
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id D9AF127F19F;
-	Fri, 25 Jul 2025 06:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704061EDA1A;
+	Fri, 25 Jul 2025 08:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753423293; cv=none; b=K9Ry/MgJCNVwM3cFAtK75Ki0BwTiO8cHV3piH3dQC8ceSFyxmm6Lr+MnZKC8M/Tj1vLKgqAB0Z+Ri4SpB6TZL2YuQl8cugA9zJmmmHosqr7neukXBwKYyffFsXeK50MuAF3y5cm5hjpk14EWhtF9lBU9UNfNHtSVhJQV2jhl6Tc=
+	t=1753433453; cv=none; b=h5fCFHWxo4DlDys2Dm/9XD88DfflX5urMzhQJXPvsotC9r9684sjLjNr1vc46kFq1NR3C+n+jSLFp7yAiv8doiyHSD/HV864LiT21ZjODdOLABXpxHAemRwaiPDNN5g73ZsBsvRUaEhBV8dA2/8OLAnrZ264MiVukc5vD/b1Z30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753423293; c=relaxed/simple;
-	bh=sIZ0MbeFvICbFqZ06S1DiZL/3SGp4hFYp2eCTHKFdyI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version; b=GrJG371zl13nCL86wBy+fIMOuGq3QJESAauLkt6HvWGebCj8FL/Dob9SsweyT/eZaBZ6I8sbiheRytuXtNf3D0Ypg6n5djzZHS7WhgIxpjhTe350voPD01qU1FXPK2yNUoUZ/qwTl4T9ltNNOQjNzdbyidgReipwsG9M26H0f2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id AAC596018CCD3;
-	Fri, 25 Jul 2025 14:01:24 +0800 (CST)
-X-MD-Sfrom: suhui@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Su Hui <suhui@nfschina.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: Su Hui <suhui@nfschina.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] usb: xhci: print xhci->xhc_state when queue_command failed
-Date: Fri, 25 Jul 2025 14:01:18 +0800
-Message-Id: <20250725060117.1773770-1-suhui@nfschina.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20250725031308.1355371-1-suhui@nfschina.com>
+	s=arc-20240116; t=1753433453; c=relaxed/simple;
+	bh=oxC+6SjVjT1XPyW+gtPOfhw9G3Y4zcz3dl47prarPfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=infMPGRj/Gr9UcfK378eBpFesZkzl1OU9fwfssE+6i30xzxUGNuDjtIc6HgTJkf2F8Ovr+97Nc4sPJPgpKBuKPbAbJKLtzx6Kv9cIX9BfNrvDkKboyFoEXtpT9bGQIv4LEjBoaXtlDVCoEbUbRPpXVtLcWwUcRNpgGi6LlCHkUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GPkrcGXH; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GPkrcGXH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7931EC4CEE7;
+	Fri, 25 Jul 2025 08:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753433453;
+	bh=oxC+6SjVjT1XPyW+gtPOfhw9G3Y4zcz3dl47prarPfA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GPkrcGXHxPCuWHVqcqe76RFcS6ZOejqssNL5ZRTGX7tx5uvWAyoLEnlgK66Z2SYy6
+	 EwTkBCzc/3C1ErlqFwiK0SZE1r3OQXAX+LXFALHoibbAaSDBszBgkc+gXcXjyu7+oC
+	 e+v4leqGIyIgjkpPMxCK/8PE/S85lXLNfYa3B7k4=
+Date: Fri, 25 Jul 2025 10:50:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Su Hui <suhui@nfschina.com>
+Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] usb: xhci: print xhci->xhc_state when queue_command
+ failed
+Message-ID: <2025072506-earthen-gloater-83e1@gregkh>
+References: <20250725031308.1355371-1-suhui@nfschina.com>
+ <20250725060117.1773770-1-suhui@nfschina.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725060117.1773770-1-suhui@nfschina.com>
 
-When encounters some errors like these:
-xhci_hcd 0000:4a:00.2: xHCI dying or halted, can't queue_command
-xhci_hcd 0000:4a:00.2: FIXME: allocate a command ring segment
-usb usb5-port6: couldn't allocate usb_device
+On Fri, Jul 25, 2025 at 02:01:18PM +0800, Su Hui wrote:
+> When encounters some errors like these:
+> xhci_hcd 0000:4a:00.2: xHCI dying or halted, can't queue_command
+> xhci_hcd 0000:4a:00.2: FIXME: allocate a command ring segment
+> usb usb5-port6: couldn't allocate usb_device
+> 
+> It's hard to know whether xhc_state is dying or halted. So it's better
+> to print xhc_state's value which can help locate the resaon of the bug.
+> 
+> Signed-off-by: Su Hui <suhui@nfschina.com>
+> ---
+> v2:
+>  - Print xhci->xhc_state with hex style.
+> 
+>  drivers/usb/host/xhci-ring.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index 94c9c9271658..131e7530ec4a 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -4372,7 +4372,8 @@ static int queue_command(struct xhci_hcd *xhci, struct xhci_command *cmd,
+>  
+>  	if ((xhci->xhc_state & XHCI_STATE_DYING) ||
+>  		(xhci->xhc_state & XHCI_STATE_HALTED)) {
+> -		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command\n");
+> +		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command. state: 0x%x\n",
+> +			 xhci->xhc_state);
+>  		return -ESHUTDOWN;
+>  	}
+>  
+> -- 
+> 2.30.2
+> 
 
-It's hard to know whether xhc_state is dying or halted. So it's better
-to print xhc_state's value which can help locate the resaon of the bug.
+Simple enough, let me take this now as I want to close my tree...
 
-Signed-off-by: Su Hui <suhui@nfschina.com>
----
-v2:
- - Print xhci->xhc_state with hex style.
+thanks,
 
- drivers/usb/host/xhci-ring.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 94c9c9271658..131e7530ec4a 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -4372,7 +4372,8 @@ static int queue_command(struct xhci_hcd *xhci, struct xhci_command *cmd,
- 
- 	if ((xhci->xhc_state & XHCI_STATE_DYING) ||
- 		(xhci->xhc_state & XHCI_STATE_HALTED)) {
--		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command\n");
-+		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command. state: 0x%x\n",
-+			 xhci->xhc_state);
- 		return -ESHUTDOWN;
- 	}
- 
--- 
-2.30.2
-
+greg k-h
