@@ -1,85 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86F3233739;
-	Thu, 24 Jul 2025 22:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 2AA55EEAB;
+	Fri, 25 Jul 2025 03:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753396134; cv=none; b=fNqA6OnAGeZ0awNOYBqlHxQSp0SRJIlsD6fJ2sK36CcmgR9tilJi1CoZxQVLHy0ANw6XkdSBb/ZzUiJG9qZi+cPu6JWdBexX4jrxMSQSh0Yp/K4Gqriz8/UCrCH7QfjjEovZy+2xb/YSSRHF6L+LBCHXBV+b9IuX3ZDpqz8+gdo=
+	t=1753413206; cv=none; b=seg7a6tRNjv7CJ0ZTrP2q+zOXxSJbRlXKd42WOK8imDx7NXNBlK1WJBeo2HFNPvwy8DlvMsLlmBG6fWjEbgjArInp7nYXGq6g5Orqnm7jger6f0uouo25lhFQnk8YcJF2KTTygERzBqOkes3ES6+jHLFN9Vns+f3T4hKEZScsfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753396134; c=relaxed/simple;
-	bh=6UkftOwnWcxhW5u2uOEGRNPfwKgOe+LwjHtv4z8eR48=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iZN8ONJ9KVtYxt0Zj7AQvwFou6SJ9I4S5BSIa2cLmcGAED1GN9LQaA+Afo/gsBSbclJiCBSm+2QxW40YOSxbAiXhKGSNqEmiSzE4N+vAehd5hWEn7atw1F7xB2F4JtvHODEkLsXE3zx0WygJk4yXcMaZ1+FWfIyR3teowV8fWWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1Ek78Qf; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1Ek78Qf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD3C8C4CEED;
-	Thu, 24 Jul 2025 22:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753396134;
-	bh=6UkftOwnWcxhW5u2uOEGRNPfwKgOe+LwjHtv4z8eR48=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=b1Ek78QfqtZjdMROv13a3MI9lk2CQb/ZFCPsYltjPEztgLPfASrf3Xm8j7KCVtDFI
-	 EMFM3YJnc0GXsXo+fbfc7t8Ain1WcuUUDNgXu9Kvoso/OnGvEMRMo+mmkz7qIXP2iU
-	 k8RGxvNDx8PBNfsMvwFQMcyCIqKPonowa+stBQnBmX53chEsl0hu9oNTb3GDs1MMkI
-	 npTz7BPnFKg5vu2b5Wdz/wrS/4F2o5phZaHBb2eYDuRiFp44dvlPAiRRmXTnhdGyYW
-	 lkxfsoaD38OD7egR8udMRgbLPH0VlIOfkzGMc7EptWAHMuklKzvV2b4c0kOMB83iIi
-	 gqCesMrV9NcfQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250724114832.146718-1-colin.i.king@gmail.com>
-References: <20250724114832.146718-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] regulator: mt6370: Fix spelling mistake in
- mt6370_regualtor_register
-Message-Id: <175339613258.176873.9240561400072710018.b4-ty@kernel.org>
-Date: Thu, 24 Jul 2025 23:28:52 +0100
+	s=arc-20240116; t=1753413206; c=relaxed/simple;
+	bh=j2KdwwHHUr/380WtMp4FTDdN7eEHBRQzsk9LhD3LzdE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=geJAzJVrA4iBGoknVb3UD0HPeftAmUTevy6PnxesodnDpZnNxoAeJRPtyCDjoSxmu0YmsRd/Utf+zYN/oRd/rTaT/zQzMfp0/xBqMQ6Jqwwr4smZuPU3ly9s50DNPGf02r+WaoovhVc308IKqJ84V7/otl8cfoeE881upl9fXYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from longsh.shanghai.nfschina.local (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 8DE2060188238;
+	Fri, 25 Jul 2025 11:13:14 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: Su Hui <suhui@nfschina.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: xhci: print xhci->xhc_state when queue_command failed
+Date: Fri, 25 Jul 2025 11:13:09 +0800
+Message-Id: <20250725031308.1355371-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Transfer-Encoding: 8bit
 
-On Thu, 24 Jul 2025 12:48:32 +0100, Colin Ian King wrote:
-> The function name mt6370_regualtor_register contains a spelling mistake,
-> fix it.
-> 
-> 
+When encounters some errors like these:
+xhci_hcd 0000:4a:00.2: xHCI dying or halted, can't queue_command
+xhci_hcd 0000:4a:00.2: FIXME: allocate a command ring segment
+usb usb5-port6: couldn't allocate usb_device
 
-Applied to
+It's hard to know whether xhc_state is dying or halted. So it's better
+to print xhc_state's value which can help locate the resaon of the bug.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ drivers/usb/host/xhci-ring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks!
-
-[1/1] regulator: mt6370: Fix spelling mistake in mt6370_regualtor_register
-      commit: 0bd042ae771d61ef7ccd5882f7aeca59a25f71d9
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index 94c9c9271658..a1a628e849c0 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -4372,7 +4372,8 @@ static int queue_command(struct xhci_hcd *xhci, struct xhci_command *cmd,
+ 
+ 	if ((xhci->xhc_state & XHCI_STATE_DYING) ||
+ 		(xhci->xhc_state & XHCI_STATE_HALTED)) {
+-		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command\n");
++		xhci_dbg(xhci, "xHCI dying or halted, can't queue_command. state: %u\n",
++			 xhci->xhc_state);
+ 		return -ESHUTDOWN;
+ 	}
+ 
+-- 
+2.30.2
 
