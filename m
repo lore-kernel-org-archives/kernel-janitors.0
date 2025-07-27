@@ -1,63 +1,108 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1134B1DE894
-	for <kernel-janitors@vger.kernel.org>; Sat, 26 Jul 2025 19:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8291F7575;
+	Sun, 27 Jul 2025 10:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753557396; cv=none; b=D7GCE+IEB/lMSgUymdQ0KJE6PRh5Qar0SZTQyOt/xtBKukKmgfY1wdTNXk9uD5qfJwvRTz7sd1hciblaR46xWxfwq0jB/P5Ni23lN7eUxDrlNLuhjGce4a5C8jBK2dzNfZrC/gvc8vyaZ6ii1bOPzP2O0mAbT1st7ZcZaeTYMAE=
+	t=1753610631; cv=none; b=H3oafoxgUxeTuQOj316u5il1APW5CVXaE+GYyB22kXMhLGu7aCWdnxAueEameEgx1wlnPn6k4sE3ntMgUlq/Htj0Sgzh5agIJH29zyDbadFNNONiZDo43bEPRadYgImq2uZFjzTG8JHIPkVXPE5Wf8K4D8bLGAMM5fAaA85H0Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753557396; c=relaxed/simple;
-	bh=rEsPOP0bz2beN/uxeoDthmm3Zk3IoSmi0MZduKfhlfI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=L+VuX63Udiyjx3eGkok1bkjVcv71BwoQYkCl0YmKeaEFOvTCsxcM4FdYmyKLYgtlTrg6IcxNafQhZ9bOZrGDaLUbbiSHmQ0oWcU0HTmNWixDy1KDjClZi3wLw5jsaifXOS5vVEsgs+CwBi+yXK07rocPyCi6txgtS52I1RRTghw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=LKG11sVQ; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1753610631; c=relaxed/simple;
+	bh=nIyiASwoNikBaVQJ7F4QDZY0tQenudpt7x9V2nTwvh0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sErPqlzoNZPImrtEz6F5okgzPPQTGu3ThuoR9Jmz5lckAxvMR9uZwLNx8L9cTDayKNpPeaQHvLTGvGj8PTrb9U5c1MZCpXCouJm9sD3GKiUsqc+Y3tnriaqfujU4ED48tX3eGwG6G4Ac+gfhtSopkuzhBfivRyvBYsvNeDO0b64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lg1guOok; arc=none smtp.client-ip=80.12.242.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="LKG11sVQ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YKOta5fYaos4SzOrAb5fxxONfTlKes8xvs6bz+9ds+k=; b=LKG11sVQlmI1vJgWWYERXCEb1h
-	0UqmPi0iu4FKAvmtQS1ZsTb+6utnotyri1h1C+voiHoig+Sspr3UdX0klUCkthDx8eE3r/y2kSzLq
-	qZwNH0/0qDhZVIGagobtr85C3Z6wTUG3wjMJUs5Td7dbjRvSA3cYS0fpj0Gw6ztF2Hm4BYSDMzZkA
-	HRocj54CVpfpXBw7xZk6Xz0H5/SkCx9tUf9tLwCOL6AXITTrgxHSNN+pwanyav1PpFh4dJjj5WIh5
-	BsUzqQTiTNt81WLp02DoPuzq46qqFWZd0dtVgcWbNd8UtLKvaQzGR27n/ZEb2pbMEwJ1B41p/2Qoe
-	GAifkGrQ==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:58706 helo=asus)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1ufk2D-00000006Aqj-3wJt
-	for kernel-janitors@vger.kernel.org;
-	Sat, 26 Jul 2025 14:54:21 -0400
-Date: Sat, 26 Jul 2025 14:54:16 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: did people need more suggestions for janitorial work?
-Message-ID: <1834fafd-b392-3b3f-b2eb-85598ae9c748@crashcourse.ca>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lg1guOok"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id fyD9uBnh5hOKjfyD9uuogC; Sun, 27 Jul 2025 12:02:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1753610552;
+	bh=ycw+FwEwMNFwepsTT4M/3aAYYVR3er1gB6c9vBitnyw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lg1guOokmw5lhfHrRRpWCP0dJeZtL6mXaidGHd/V/nZamffVp842m+eWMZoh95c3w
+	 hs14scpjDjfaXy1sw5B1j61aojWkm0NpkQ1JpxWvYdZXBD+TklBedyxlXxHU8Y98Ll
+	 uunPw5SyFo+uBKaLmgJZIlwPvZ2jwUC/MvENklEdw0kYleHw5PL7N3ZhJ2lsSMT+CG
+	 EdYp5dJLOiBktvX1WextfW02JqoRp7vc4KHHJOS0H1jALq3gh5gmF+OZ7zzTIWfSIt
+	 NY7Y6FRdpYU9y34t4VDOkfrQ253gM42AZvCLAGHO0mcpZy3BuwGEESx/OgHqgmOmLi
+	 CbrpjNfY63IgA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 27 Jul 2025 12:02:32 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] media: rkvdec: Fix an error handling path in rkvdec_probe()
+Date: Sun, 27 Jul 2025 12:02:21 +0200
+Message-ID: <b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 
+If an error occurs after a successful iommu_paging_domain_alloc() call, it
+should be undone by a corresponding iommu_domain_free() call, as already
+done in the remove function.
 
-  i still have some scripts that can generate piles of cleanup work.
+Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-rday
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+index d707088ec0dc..eb0d41f85d89 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+@@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_device *pdev)
+ 	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0)
+-		return -ENXIO;
++	if (irq <= 0) {
++		ret = -ENXIO;
++		goto err_free_domain;
++	}
+ 
+ 	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+ 					rkvdec_irq_handler, IRQF_ONESHOT,
+ 					dev_name(&pdev->dev), rkvdec);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
+-		return ret;
++		goto err_free_domain;
+ 	}
+ 
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
+@@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device *pdev)
+ err_disable_runtime_pm:
+ 	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
++err_free_domain:
++	if (rkvdec->empty_domain)
++		iommu_domain_free(rkvdec->empty_domain);
+ 	return ret;
+ }
+ 
+-- 
+2.50.1
+
