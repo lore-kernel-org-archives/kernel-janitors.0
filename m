@@ -1,97 +1,186 @@
-Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180FD24DD17;
-	Tue, 29 Jul 2025 19:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4198324886F;
+	Tue, 29 Jul 2025 19:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753816601; cv=none; b=qhaB1RRYU1w+2XsuhM3Jgm1nTJn+wGECHiC0CbwHGzqQX2kaWzEmg1S2To5PF+3DBwyQt8rRBVWW/SsrKE5CQxH12W2GB8z8C1L+1xDskoaWKAEqN0VKuvEXId20Kxkcb/1azNgwlQzQVyp/giSZDPF4m5d5bimVv7AOI5vME4I=
+	t=1753817619; cv=none; b=BE1QNLD6tT1GkOYF63x3FpHalUYKXOzFqM/XdaJUVLBnqUgsRXWAySuK2FiheHsCxS7R1ocku9hDTCIKW7k2YO7Lkx9BHcinta7uwUkBYOF6VLZ+3LNwlKNhT/Uylp5bR9qP8mhlCLWDIZPN0uqmHnC+5+MdDoA6hVoRvXbz4Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753816601; c=relaxed/simple;
-	bh=aYlccOx39s/EsBQMr5e6VjgbBdDXQE78ML1Uk6UEMD8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i/S1PagJSJmki2FjRjQ6CwVylNPX/tNHl+of8qkzNmkZiwQUN6Cp8XPLf79z6OMiSGFV99dgHW/B61JgZ8AjRww6mXBHnPph4ucXxXeA1A4UqhCPrdsgpIoJx/SqVw4J9JUeoOfhcA/cjhjGlEv92yKYcHIyrx5FvqA2d9n491s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PYuldCYN; arc=none smtp.client-ip=80.12.242.82
+	s=arc-20240116; t=1753817619; c=relaxed/simple;
+	bh=Pn/4wU3FWzPANPeulCS77bi1iXkwqEjETvGQ2NElXbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U/rWCADIUdlOuAXZBu5PtZZCkz+jRLgjMSrao4V2B+wRsB9fEqf7LjSycBRfOga0rs6XHFROj418laqxAe1TJ2hCgoBYZXDxG5AQSk7nPSBu8xA65nGOl1h0PeLOVweUWFniJTHoozjH/ZfBZCm+JpvuvJkAS5T5ibk8h/O/Gho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p8PaVsrZ; arc=none smtp.client-ip=80.12.242.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PYuldCYN"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p8PaVsrZ"
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id gpnEuKAvXhl7agpnLuFsIM; Tue, 29 Jul 2025 21:15:27 +0200
+	id gq4ru80ArUD3Ugq4ru4oqm; Tue, 29 Jul 2025 21:33:34 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1753816527;
-	bh=Se0uhC0vl0Ybn7EgV4hvrXEBF1PwoqDdzFk0COuheJc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=PYuldCYNiaOM9Hi4emoxBXE83nGB2cZRq4w4ZH1B+7L27Rq9fK+C8lgQKB+ZiNwC3
-	 12YX6uttYz/Ng07xUTD0oViMvL4lI0tDe64v42MCU2rtQpNedaAhDsWNX3Xt3hZeB/
-	 Il6OCags9ImD52owIA2p/H2C3mAi3e7OLKn+TCpptePIVCmbuz3YW1fJx0hoBy/hA7
-	 R+jKo7smI3ujcBaJHQbuVYxCeCbyvkZkcOikPnbGv1t2efBCdMxwnzEochzpaN/LAV
-	 WPYbtwfFjkUBxuo/zrVHEIdLyk9/GM+jauDgd07BTVrPuBPPSl7gH0QQMjWLiGqCfx
-	 ptuPQVw6nbstw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 29 Jul 2025 21:15:27 +0200
+	s=t20230301; t=1753817614;
+	bh=z+SRRL3rRltS4sAuSdLWbFetbEgJEuFio4WE2T9Xyb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=p8PaVsrZqWeFVlslirJenx5xHw0FCGjNcLzugJozH3WTmqHGn5fi/qsz9EKnhlDK9
+	 8JnMXrCM24Qd8qHpbd0v82eiHrGWsWvz67yHCkwUIeW/kpFRRXZesPKDtGtsm0o9HR
+	 XPKiEtHRSaO5ZA/9LCOSS/bpEo60rz9OyhO5hbNKUR3Dw3vnDrf0x3hfIOjB5y66dj
+	 3uLSIJutYRHOBiP3Og5JMCsFgPFW7+jrjnxXIKOAiXhIwVrClRFn9ueI1gApEyuyfq
+	 bL9Nf8wuWKX293f2HmS2HmQAFpz10J0/bwqDv7uI1lCkcz61PMaOxB04RQek127Hfo
+	 ZsoBmEp7pBInA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 29 Jul 2025 21:33:34 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] firmware: arm_scmi: Constify struct scmi_transport_ops
-Date: Tue, 29 Jul 2025 21:15:04 +0200
-Message-ID: <881be6ad61037ed95d5e750a2565fd9840120a08.1753816459.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <2091660c072dd2d5599897243a5d69e89d46ed4d.1753816459.git.christophe.jaillet@wanadoo.fr>
-References: <2091660c072dd2d5599897243a5d69e89d46ed4d.1753816459.git.christophe.jaillet@wanadoo.fr>
+Message-ID: <884293c1-f6f4-48b3-a5d9-9b41fa8614a5@wanadoo.fr>
+Date: Tue, 29 Jul 2025 21:33:32 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: rkvdec: Fix an error handling path in
+ rkvdec_probe()
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Hans Verkuil <hverkuil@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
+ <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-'struct scmi_transport_ops' is not modified in this driver.
+Le 29/07/2025 à 00:50, Nicolas Dufresne a écrit :
+> Hi,
+> 
+> Le dimanche 27 juillet 2025 à 12:02 +0200, Christophe JAILLET a écrit :
+>> If an error occurs after a successful iommu_paging_domain_alloc() call, it
+>> should be undone by a corresponding iommu_domain_free() call, as already
+>> done in the remove function.
+>>
+>> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested only
+>> ---
+>>   drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++++++---
+>>   1 file changed, 8 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> index d707088ec0dc..eb0d41f85d89 100644
+>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> @@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_device *pdev)
+>>   	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+>>   
+>>   	irq = platform_get_irq(pdev, 0);
+>> -	if (irq <= 0)
+>> -		return -ENXIO;
+>> +	if (irq <= 0) {
+>> +		ret = -ENXIO;
+>> +		goto err_free_domain;
+>> +	}
+>>   
+>>   	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+>>   					rkvdec_irq_handler, IRQF_ONESHOT,
+>>   					dev_name(&pdev->dev), rkvdec);
+>>   	if (ret) {
+>>   		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
+>> -		return ret;
+>> +		goto err_free_domain;
+>>   	}
+>>   
+>>   	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
+> 
+> Have you considered moving the allocation of the domain right above the above
+> line instead ? The empty domain can't possibly be used unless the probe have
+> fully completed.
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security, especially when the structure holds some
-function pointers.
+That would not change things much. We still need to handle 
+rkvdec_v4l2_init() failure a few lines below.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   6907	    680	     48	   7635	   1dd3	drivers/firmware/arm_scmi/transports/optee.o
+If it is correct to move it at the very end of the function, after 
+rkvdec_v4l2_init(), then the patch would be simpler.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   6987	    576	     48	   7611	   1dbb	drivers/firmware/arm_scmi/transports/optee.o
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/firmware/arm_scmi/transports/optee.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Honestly, I'm not very confident with it. request_threaded_irq() 
+documentation states that "From the point this call is made your handler 
+function may be invoked."
+And rkvdec_irq_handler() may call rkvdec_iommu_restore() which uses 
+empty_domain.
 
-diff --git a/drivers/firmware/arm_scmi/transports/optee.c b/drivers/firmware/arm_scmi/transports/optee.c
-index 3949a877e17d..dc0f46340153 100644
---- a/drivers/firmware/arm_scmi/transports/optee.c
-+++ b/drivers/firmware/arm_scmi/transports/optee.c
-@@ -498,7 +498,7 @@ static void scmi_optee_mark_txdone(struct scmi_chan_info *cinfo, int ret,
- 	mutex_unlock(&channel->mu);
- }
- 
--static struct scmi_transport_ops scmi_optee_ops = {
-+static const struct scmi_transport_ops scmi_optee_ops = {
- 	.chan_available = scmi_optee_chan_available,
- 	.chan_setup = scmi_optee_chan_setup,
- 	.chan_free = scmi_optee_chan_free,
--- 
-2.50.1
+Not sure if I'm right and if this can happen, but the existing order 
+looks safer to me.
+
+
+That said, if it is fine for you, I can send a v2.
+
+
+This would be:
+
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c 
+b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+index d707088ec0dc..6eae10e16c73 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+@@ -1159,13 +1159,6 @@ static int rkvdec_probe(struct platform_device *pdev)
+                 return ret;
+         }
+
+-       if (iommu_get_domain_for_dev(&pdev->dev)) {
+-               rkvdec->empty_domain = 
+iommu_paging_domain_alloc(rkvdec->dev);
+-
+-               if (!rkvdec->empty_domain)
+-                       dev_warn(rkvdec->dev, "cannot alloc new empty 
+domain\n");
+-       }
+-
+         vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+
+         irq = platform_get_irq(pdev, 0);
+@@ -1188,6 +1181,13 @@ static int rkvdec_probe(struct platform_device *pdev)
+         if (ret)
+                 goto err_disable_runtime_pm;
+
++       if (iommu_get_domain_for_dev(&pdev->dev)) {
++               rkvdec->empty_domain = 
+iommu_paging_domain_alloc(rkvdec->dev);
++
++               if (!rkvdec->empty_domain)
++                       dev_warn(rkvdec->dev, "cannot alloc new empty 
+domain\n");
++       }
++
+         return 0;
+
+  err_disable_runtime_pm:
+
+
+CJ
+
+> 
+> Nicolas
+> 
+>> @@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device *pdev)
+>>   err_disable_runtime_pm:
+>>   	pm_runtime_dont_use_autosuspend(&pdev->dev);
+>>   	pm_runtime_disable(&pdev->dev);
+>> +err_free_domain:
+>> +	if (rkvdec->empty_domain)
+>> +		iommu_domain_free(rkvdec->empty_domain);
+>>   	return ret;
+>>   }
+>>   
 
