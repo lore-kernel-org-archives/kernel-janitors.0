@@ -1,123 +1,88 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCD41C2335;
-	Tue, 29 Jul 2025 14:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABDF13D8B1;
+	Tue, 29 Jul 2025 14:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753800142; cv=none; b=jnJ6bfDJ/77X9iVhE7z4q4yzKCT3FO9vAH5/JVJ1XRP222vn5nVOb1RTNCoPTbYbcQKwNzwcU1RhuNPN4IF7CPXLaZx7/OK8FiWD0+tDFNG4OLGutTGdiJF/wD1/rpHlR0ygyY9sX4ymSw8ttpsTNx9N6e6uN0JqyJdoxfvtwFI=
+	t=1753800318; cv=none; b=k2tUKzZL2Lpwu5aRSh4O0dLlo7rHQtwCITHauO5JdtpqHZ1d0F4qCzmrdJ1Af+RAHtHta3r/hbjt0JDYOdv7toqUfB2T+e29qQR1fONDHQP62NRlpsNFWShU0hhXj6DBJHXYMYL215aJLxfrsEaY1cYiQ3bvuD5vwB8iSO+lRlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753800142; c=relaxed/simple;
-	bh=IeqpUwDN+q4a6P3JINbsMLGyOaSDoAh+nGw1NYtnjCU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=UXwDx3TOA/U62I01FgopLsqF6NUWTn+AEuCPYtpbZkysR6rYcswugq3vefgkx8YUsPz6uVU37HkxWyE/Hvi2RlP0gAcwqQO/fwDb7DGRqol15nx4+tsr6dweF4tzTBO4XL/5rpuySp5Ak9V0Oh8lnOW1qITG6Fro7esDRlEfCB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DRQ/BZJt; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1753800318; c=relaxed/simple;
+	bh=SqKSXMyKE1pb1btB4u4HtX000tSuP3Xq7jg/MY0Ben8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EB17ffj/tW8k14492sNY+iM/ICt+/MtP9uIYImWPH5E8csvR6oiD9WHAeoAjdQlT420uvZK68gRUze7QaL268tddVWn1K5K8EivvQoVRSo7dXjbBJrozEXmNwdR5C95dCJOw+O/lOs9+JyejXEKPrVbDERUcla2GC/HxMTjxj00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CiHUMa30; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DRQ/BZJt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753800132; x=1754404932; i=markus.elfring@web.de;
-	bh=IeqpUwDN+q4a6P3JINbsMLGyOaSDoAh+nGw1NYtnjCU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=DRQ/BZJtnhfu8PVhcSq0LYVDjKIb9j3ijPKNxRzSals5nfuhJRRMHCrevbq9X4vy
-	 jluFAx7PkNiq9d6d3wVTZU/94gvqWDXR2sAuXSTa8Omiv0sE7gAuIxDqW0urkwARF
-	 O5M5g2u1C0YBKYEJazQAMj8kJf2PY6UttE7dt6p/y3zlJZiD+LZAKkHe4Y8SHFzxe
-	 NdDHWyabg9h1Mua7YLb2AlDxwd5z5noOGJ1i4HktDoR5iOIGhmKv+n/EefDf6HN6q
-	 6MbgxIjVr1S2Wlu7m3BVcAYe7dtUFXKBS+B5LPxQ0AYin6ulWU0zxk1WMN635y/k/
-	 51BEV4pxzg5/fIGopA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.201]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N1LsH-1uWPYe43Ol-00uFMV; Tue, 29
- Jul 2025 16:42:12 +0200
-Message-ID: <079be718-ae8f-408d-a789-05f4816e0bd4@web.de>
-Date: Tue, 29 Jul 2025 16:42:09 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CiHUMa30"
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-615e56591aeso3127863eaf.2;
+        Tue, 29 Jul 2025 07:45:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753800315; x=1754405115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SqKSXMyKE1pb1btB4u4HtX000tSuP3Xq7jg/MY0Ben8=;
+        b=CiHUMa30kn5VD03XP8lWtZunaptFr5GBrW41iJ1f++JFM4rG9/A09HSwo3ILaJt7V4
+         Q2hmCiUCFyrZCh8grAdlwh/mMSY5dyoB64vFfaId50H3ZiC38dFcMoTgRmr06ghrL3qv
+         eK6dS9GHBm+czCSum+2kSMbwr6hqlyiQ2GQQcv1DrDRQuys4iZ2Z/yp1arSzRxAGxnoo
+         OAAzthQBIht5qXKYvLvV9t1z6HjGVJBqKnjbC5qqX9oc0dSV7LsEbBK4w348z224gGqp
+         WFj8xCygNKaY40TbjI23T3LNdYkKq64U3uLj+vglRYvo24wPcto6cJkE+w9kPRs74mo5
+         JhSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753800315; x=1754405115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SqKSXMyKE1pb1btB4u4HtX000tSuP3Xq7jg/MY0Ben8=;
+        b=tuT0lWFF0aOU7l72a2bfMABDDvF6TBpSBWETPKKFj64zPlQGCPyemtpuCmfGWHttW+
+         vosWtct4pA/JPrarcgpFYOKnIP823Ytc37LYjh7fqixRDaoOxvidqzaXsbFzkhP+WVD4
+         5UulR7s3BF4zYcAUr5vHrs/RWkqkKcD6Q2RemI8901dPzSxnfVShz4pSN568SU1NX/Bq
+         WYA7aCGuZ+VwVm1fALsmKf6MtZovsmFkySg1DPFtHR/W3ScCQvn1xL7zo08dBGZKAq/L
+         8ZkYVYrtU7Vpwn5jmbGVBtco8RuoGjwN2dTxH8YEjAUDH2GYW1XVCIUDIicQvTBD7OPr
+         itqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUERVr6Er6GNu41Z1fg5ZrAMoD08uYKzkj7idNeYoTIoJK14Bs6bZRAMjoh14kfQ295ZDLpON2AYWhRslea79w=@vger.kernel.org, AJvYcCXGW+g0+bHTXWuzwCdUXkPwR0QTQe8CXImYyVp+Gx5CvmuDgzJO/kyoIBUah1FPP7lCK0B+xlU3sjS9If5Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YyipYDJ0K8bqeegxTwTdCweBpvqCUGpZEzRptrMhzY1n7PN4FBW
+	GkZaS/lfq2AqN6HU1OGpbyaLvph5KhjJJhlq266VWei4q6j0lGPZh7nP6sV7isFmkSdmrAWx2l/
+	0f6Uc40PWwOEhC42ebke6LXZJMYFU44M=
+X-Gm-Gg: ASbGncsWrIIpWOjZAKYGLm0jY/2Ww6FHe8ALNKnhSrNlE3oy4AKXJ8BITAd9YOYi7H4
+	3J4+HJ4dHKmXBt56WQFdUS+S5MuHz9MEYzy0svU9bvKDhxX23VwqNBK+E4ngsdZJwMwvUsChYcs
+	6Q3dMHaRpvDemcw65Lqz9oJOv8mIFKOXy8JapHyxuPvKC4x+YrzXmSyCu5KgGOkfumO/pFiQ1LT
+	KU4bSHZ
+X-Google-Smtp-Source: AGHT+IFHmgLm4QtA1gMM68QZkXVDwXCrzQje62zufxoahmmzdI/oX1Oj1iWO1COkXuVtE5Extl2/Y5qlaKrXIMvaQ4M=
+X-Received: by 2002:a4a:e906:0:b0:611:ffa0:3863 with SMTP id
+ 006d021491bc7-6195d29252cmr38156eaf.3.1753800315371; Tue, 29 Jul 2025
+ 07:45:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Suchit Karunakaran <suchitkarunakaran@gmail.com>,
- linux-kernel-mentees@lists.linux.dev, Andy Whitcroft <apw@canonical.com>,
- Dwaipayan Ray <dwaipayanray1@gmail.com>, Joe Perches <joe@perches.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250727125044.101779-1-suchitkarunakaran@gmail.com>
-Subject: Re: [PATCH v2] checkpatch: suppress strscpy warnings for userspace
- tools
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250727125044.101779-1-suchitkarunakaran@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20250727125044.101779-1-suchitkarunakaran@gmail.com> <079be718-ae8f-408d-a789-05f4816e0bd4@web.de>
+In-Reply-To: <079be718-ae8f-408d-a789-05f4816e0bd4@web.de>
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Date: Tue, 29 Jul 2025 20:15:03 +0530
+X-Gm-Features: Ac12FXxxh7hpT3FnQiBPNFL1EGOADL2JW_Lh4kOSk8OhVExH7PpSacHx4mz2er0
+Message-ID: <CAO9wTFiQdHA3JjXAbmXdxmeUHehVY+43+zg4BiYBxY7coSi+Ng@mail.gmail.com>
+Subject: Re: [PATCH v2] checkpatch: suppress strscpy warnings for userspace tools
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-kernel-mentees@lists.linux.dev, Andy Whitcroft <apw@canonical.com>, 
+	Dwaipayan Ray <dwaipayanray1@gmail.com>, Joe Perches <joe@perches.com>, 
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:STqGquKOFdB+qNZApJMXTkk6cyXlIH7JMiNrlTOpCBJ/0S2YMLs
- WjOcaGT4bSfgVoFbZ2E4af+a3eaFCxeL5HFWbLqE20NkNpokVCWoNdSaVZCQwDUGXq3OkqE
- rgZS9PGp4k2JSTvSpkhIKhhyoO+mf5QQsHUBiIH8YUJX/PL9KDNVSN+X75J7chONQDYmge7
- dy8oYZe5k+5l1vzVxO24g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:I0B5X8vIuRE=;lwMYvdrIKoBNVftRop+yrayztIs
- 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
- ORDfYjfrqEEG4wyzzbp8PSCCzmkOxAYA=
 
-=E2=80=A6
-> This patch suppresses =E2=80=A6
+On Tue, 29 Jul 2025 at 20:12, Markus Elfring <Markus.Elfring@web.de> wrote:
+>
+> =E2=80=A6
+> > This patch suppresses =E2=80=A6
+>
+> See also:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/submitting-patches.rst?h=3Dv6.16#n94
+>
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16#n94
-
-Regards,
-Markus
+Thanks for the suggestion. Will keep this in mind next time.
