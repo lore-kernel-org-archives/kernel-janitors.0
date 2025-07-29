@@ -1,69 +1,70 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5EC287244;
-	Tue, 29 Jul 2025 11:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E67D254841;
+	Tue, 29 Jul 2025 11:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753788141; cv=none; b=puvIkGyllqc4wvkh0BzAEfQwSWpqbbEOuHXelHuGEd2SASXv/aKTfKPHeeAYoKNsWCfFxh4zA9iWSS+yoHXvqiGrSz4RfXuGYcyAat/HaeZNc99uCdO5ygZwwh8qcJY7EmtteMJ7HQb88LVX0ITgMH1CHPdCmOo7cqJsUxZu7EE=
+	t=1753788745; cv=none; b=VnHDcrR1dksnBFmuD7gPnam2NsXxD/WH6ruoFqlHECoA9qf7WeVsOOwcA5btR6LgJn00Xw9bAZRL/aAtVhg4t6jwSAWtqBbXavTZvfd/Kk+bqS5KkHZm/MDfVYgQvObagVkjo2VXk6Pac/BRl2oti/20a0HETQIkTKxfPZlpBxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753788141; c=relaxed/simple;
-	bh=ETWABwZPKFTxPB2jUDWABbHxWBXST8dOhq35U7qveV8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j7wLMxJ69dbEuKjbAu7bKqXZSoIZuppizc4FN4fxzSygajmor6DitHinqMNwF1F3rJe1pKvN5cMzl1s6Xc3OtWLCt06FunaGLLFygcgyqAgbjDHD4BaKZTntvcWdObco2g5sDd1IHrsF9LbI5xpK1WSn02XkTFIJfJ4dRe+9D6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHIWqRNt; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1753788745; c=relaxed/simple;
+	bh=jAP66d+bFvajVfpxRmWAmBn6ZIQZfvgt/qSDxYS9R1s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qtUmB2/4+0V1YfHbpwAKDCY9CCunuA0Y9jzosbHvv48M45h29oI5vXVzJHq1pQdYBJ61aGPpq2ZtRpBUk+2avgY8/KCYBRSfFA61iQLgPep9YVNOlbXIH5uUSE9rbO+1lCcJcExGonnCGUaXUg+sYyqALlS5n7Ywix/RWR8wYRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MchwqjiZ; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHIWqRNt"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b792b0b829so324226f8f.3;
-        Tue, 29 Jul 2025 04:22:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MchwqjiZ"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b78315ff04so1966793f8f.0;
+        Tue, 29 Jul 2025 04:32:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753788136; x=1754392936; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753788742; x=1754393542; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mRhGn5hDYxClsYuz4YXSiUquXvIRn/M5Xg9R/3PUOEI=;
-        b=iHIWqRNtm+/TLbmlY8TOLxWuiYODBX4DNuPNqJwjVKN3SDHltHq0jRXL6q725marL2
-         EPmOwPpcmw458spzQaos6GJ9ogAfzUR8vyrPIWZ4QgQ0a8ZgaQGejwufi1BF8FN0zYmN
-         Jr0TsCtU5xFWMcgLiz1ZySJrF2rhSf1OVahq6DATNof6MHvQ0hT3O+i0a5NFAOA2ml3f
-         d1B3TqMua9G41IZFTYmbfFNLzXHbmxwFZ+0BbQHDbW1hPlBUBS3A57Dufb4NarUJ0k2U
-         akVKeOocQ5vtcZALxtiEz/Zzh0P5vWkxhafWJJjUoaBCW18RQ8NG0JxaR8S1lBjx6jBn
-         mmFw==
+        bh=I7lkZ8BtZL4dbxHeN6ZdjsvNo+WdudiW+KTRbnPFCrM=;
+        b=MchwqjiZ9rUwxo3p8jttEVuC3Ou2aM+zhulNTI7HzZyWktulgLcgNuWzckrJpDvOoW
+         uwFQ9XntWGeL+er/54XIxCOJ5bppgjau7hKfw6E0NCcMpIsIr7brwkzoMpPPJfvjb3bK
+         ahaHc+57Fy/VgcLaezdVWwtPFkrStz4XOxMzfYwtCU84/wOMQGj8el6Xs4cNjG4LsSNW
+         jSkaQhR1oqdnPWnLZK6mh95nzLklIbmtkF7gfxYgYzs7Z40lu+hzC+JNT1LwXgB+gzvE
+         xiJVN+1mzBGjyc0A8x0Sc0D1ExPgNbK4q9Ee9PueKSooEWu1jBCKLahyn3KC0jlqHIum
+         q1yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753788136; x=1754392936;
+        d=1e100.net; s=20230601; t=1753788742; x=1754393542;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mRhGn5hDYxClsYuz4YXSiUquXvIRn/M5Xg9R/3PUOEI=;
-        b=YTCWzt8oM9WrENctLCl7U2Fv6y6Dj/cJ2qC/iYjOmOLjOnbd2IZPvY1XOQwZ57+f/X
-         Ud6FESSQXcHzHn3YI1piZlvuhmaVUelCuZxW2VaK1VwNkTV1srPwNDY91XYzdOrliKiV
-         LH9zxyUqu8DoJuWw/97/rOpGcPV6ssU3+o0Lescj4C3Hx/L00tJeVftWhEHj7EvPL+ek
-         eGUriHAp9RcEjvTLMVJMAxCE7jTQ8S9x36Ac4hTz9hdlMLXwF4CZGb0QkDWgPb/utmq6
-         jdlr9Aol0hE6SdgeAOu1Ojr8Otdha11tFp93DPmtYUQw5KPHgsR6R/4KiWNlPAsMe0VH
-         mQfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwbYbBHgIiTope4TfAnYsTrJbMpzs4ODuQndtsK8bAFOTj5JqsHnsxCc1LAMtYk5hq9kd1VG6v2Ku080c=@vger.kernel.org, AJvYcCVPMr6aCJS2hCX3ZmAOCaCaXD3CDfuD0wRE/VRESh+p1qR8EcwXoWGvxJjdH3gcHwdOs9jb0rt6+fDpJg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIvytZRWBNDjoW1aE7Xzxvz6Vt6SAK1Gt4Umb7MwiS8G6puJfT
-	V7IVtaq2Oh8RHnBrnra0AVrTAdfW/iultFqWB+jEwCYENvgoFghgaYaw
-X-Gm-Gg: ASbGncvwktVk8FnZFULhCAZe50v+MfGcKrxbMnqcWNatRUQLjTUVgIPO0KmUb6mY3MM
-	nKlgbClpAuSORx+zRstO07+sUI13E88zLc4r1sadKoQGFjQfbMNd681yQagLPS7zlY96aTyynlk
-	pxPeEvxEGGGtyI1pWJmWJGovLcfZ8FrLuFXWFKxcMMsIm5sYqQkEukiKZtxme2HbPRy7J2/aRaz
-	Zzlg/UbveK5XEYAKWrwOoY1tLsvBa3JZ2X+xjwQW5pqyXJyXcbv7QPIpJ4f+ojrwa4iTnU+mYd0
-	CmczbTQzz3/oQ/Zpq09yhTbRSK9PlS4AoFJdYBFio3jqWTFotX7QC/hb5UP1mn7yWqrFzBNO/go
-	7jAz30oDknt7JO806imJcgumLEgFf3zc=
-X-Google-Smtp-Source: AGHT+IHg5Ykmb9OI8TVQEOdcut1VncLuIC+TBfNQ0EWFFIJMQXIDal6E7TwIRH+gmIF/v1F2SEcBng==
-X-Received: by 2002:a05:6000:2287:b0:3b7:8d3f:6669 with SMTP id ffacd0b85a97d-3b78d3f6aeemr2830893f8f.32.1753788136206;
-        Tue, 29 Jul 2025 04:22:16 -0700 (PDT)
+        bh=I7lkZ8BtZL4dbxHeN6ZdjsvNo+WdudiW+KTRbnPFCrM=;
+        b=LqFalNq/EqyTuhtil6ziKqndAicfaG4WT5HQAHaI0Q5AviNYX6fP3ziQy67MFH1ao4
+         Gyr0UQZP871pkOoK43c4cdyjEbmmc+Y1yxfRA4Gp+MRTqmt1pKvtmpc/EnsOH/784ASy
+         FVUOKVg2sE05VzitByOeu9PJt8LXXeMYZdeK9YXJCkM6PKfJPGWC0QLtXkT8C6aNEyeR
+         Jwzgw/NEXf+5CmFITq6312Gz8xolwXPELDZRZPSlYE3bR24jrgkwILE6v+S6vftyn6mU
+         qtPKmy2tOUoseDAM6w/PFDJEAVPnK/mB5e0CNUZ2nuI0gIgT1R7OgZqppJv/zmAz0/VW
+         Tb1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUlDRNHci3emoacO6bSWW+N2w9BVqGwfEt1LsIQzjvOiEPEZgsZi5Rs4U+3hFxyPUYw4g5Sws4so3cfGQ==@vger.kernel.org, AJvYcCVKZZ9YeCwjR8V6UB5HCBLpgXfqbP1d47+58/ZJ9HpH12MINAc4D4w+ShMHe9n43E+X6y5QPmCERs1CVzQw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdzliUBs8mq2pM5BCDPufvrkMeP6qXfuE/CmlryAWK/HRqxK/O
+	KBqXm9vrlm334K6Ql21GzAji+iLyOI9bbeMxE08eU6NKMToUBzQfoTPTishEyrBOOIg=
+X-Gm-Gg: ASbGncsdPHeIFHsDKtrj9sftjKSdkKeXznjAuW0cVyyb15o6OEIWkvxifpxZIGZj3ed
+	DXt/dlefltolJZf+dhnu0Axw5yDnKs/67xcStbBsvtCVHpjkKLn5/tFYGd1PT7A4gul7Se1gSTS
+	UO/LKTUdoSyil9/8D8Su2pPss231SjZe+WC++yOhIuUJ45IIGHC9wMttHdVeog8rexVGt7F3tIM
+	gFqN8qOcIy080EDt1Wjqouv/Soy6lhrkhTHpWuX5SpB2/HBFjCGw/AiQ7hSqj3a4l32bzRhIHCk
+	z/rnBvSRs7iswOU7TVMpCDnmsfNk0pSS/LFTsGfBVvs15KNxin76ti+ZgFHVzS2RCJvs2p15Nq+
+	iLgMXBkLw5Kt371MMPIwZZdk16P6Zzys=
+X-Google-Smtp-Source: AGHT+IGEPv6HfbmoI0tLk/cGrFzIyOEWrW2EH2KOPx6k3fp2+Mdx9BgB4IXFtDyTgUMZkZ2xVJS5rw==
+X-Received: by 2002:a05:6000:2289:b0:3b6:13a1:8861 with SMTP id ffacd0b85a97d-3b776777071mr11992020f8f.38.1753788741741;
+        Tue, 29 Jul 2025 04:32:21 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b793519ee5sm1006268f8f.62.2025.07.29.04.22.15
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4587272b405sm171162925e9.19.2025.07.29.04.32.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 04:22:15 -0700 (PDT)
+        Tue, 29 Jul 2025 04:32:21 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-input@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] mips/octeon/smp: Remove space before newline
-Date: Tue, 29 Jul 2025 12:21:41 +0100
-Message-ID: <20250729112141.1924206-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] Input: lm8323: Remove space before newline
+Date: Tue, 29 Jul 2025 12:31:47 +0100
+Message-ID: <20250729113147.1924862-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,27 +75,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is an extraneous space before a newline in a pr_info message.
-Remove it.
+There is an extraneous space before a newline in a dev_err message.
+Remove it
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- arch/mips/cavium-octeon/smp.c | 2 +-
+ drivers/input/keyboard/lm8323.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/mips/cavium-octeon/smp.c b/arch/mips/cavium-octeon/smp.c
-index 08ea2cde1eb5..054e331b3202 100644
---- a/arch/mips/cavium-octeon/smp.c
-+++ b/arch/mips/cavium-octeon/smp.c
-@@ -334,7 +334,7 @@ static void octeon_cpu_die(unsigned int cpu)
- 		new_mask = *p;
- 	}
+diff --git a/drivers/input/keyboard/lm8323.c b/drivers/input/keyboard/lm8323.c
+index e19442c6f80f..d9df10484755 100644
+--- a/drivers/input/keyboard/lm8323.c
++++ b/drivers/input/keyboard/lm8323.c
+@@ -259,7 +259,7 @@ static void process_keys(struct lm8323_chip *lm)
+ 	ret = lm8323_read(lm, LM8323_CMD_READ_FIFO, key_fifo, LM8323_FIFO_LEN);
  
--	pr_info("Reset core %d. Available Coremask = 0x%x \n", coreid, new_mask);
-+	pr_info("Reset core %d. Available Coremask = 0x%x\n", coreid, new_mask);
- 	mb();
- 	cvmx_write_csr(CVMX_CIU_PP_RST, 1 << coreid);
- 	cvmx_write_csr(CVMX_CIU_PP_RST, 0);
+ 	if (ret < 0) {
+-		dev_err(&lm->client->dev, "Failed reading fifo \n");
++		dev_err(&lm->client->dev, "Failed reading fifo\n");
+ 		return;
+ 	}
+ 	key_fifo[ret] = 0;
 -- 
 2.50.0
 
