@@ -1,70 +1,70 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111C426CE26;
-	Tue, 29 Jul 2025 06:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64486290F;
+	Tue, 29 Jul 2025 07:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753771809; cv=none; b=C6PLjk5fOxPMHKrhkvIprVPtfXnPOtIi06fDqnJ1YPK81pcTs94U4i9i7aT3LLc0obXGF43jU4X1QGwuyLCeaZiT4TxsCIz3TLna9djBc8IjQJZlKYmK8S771OCso5s0ZgpafMjZPfP4P8DtuTHVJ1MUtaUIjJ2zW+T823JUWXk=
+	t=1753772459; cv=none; b=Yc50de+nu+KsuhjhDtc8EkpypLCAguUQBeeF3NSTdmGgbbt1TbYjS6E7H016Lpu/mWy93HBAlCu2/bsFh/tjiSIVGmw524IbLVxXMpNeDo+jgmQT8+A8CRkxV7FR4OMIFuH0cAJgf40328Zpyq48Xkj7YMjAehV15k1PDIWoKqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753771809; c=relaxed/simple;
-	bh=8x6t2E3bvaUsqe85HBcgG0NsUSVA+YA+IiexRtuqtRY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RO1e1e3opPVZBhX/YZUdzqaFFyB1Hg3H01Maw8u61o3J6a5/ZTsg/KAbePkS9plkKQO2pPnKNYorK4VnybVeCbYAeo8Ieq8gg62CsMh6NTDU2PFD8fNi+Ius2kkpzYtt/1dwvKjF8TALZzqahkW7epApJcDP72UUQxBgOr5rsxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NblPqzHq; arc=none smtp.client-ip=209.85.221.41
+	s=arc-20240116; t=1753772459; c=relaxed/simple;
+	bh=4zir6EZFKxTAw5jAMxPZ3bM9r0SW/RrUbrbCmKXQq7k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NllnLQHhrG7zBEiyMPaEJhHk70AN0hHlizo4hRXfSEO1TkGM3ODYvx8Pvy2lO7DVMco03bn+c7iQugdaWLNK4vd08LF8gx/0ZKCTQBzo5HusBJJi9acg1ZnT+o56DtHxb484XyZtJX9j/Ydnays0djBTPH24s8qcn8yJyRMDh8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rn0SQqDd; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NblPqzHq"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b783d851e6so2303920f8f.0;
-        Mon, 28 Jul 2025 23:50:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rn0SQqDd"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so31535555e9.1;
+        Tue, 29 Jul 2025 00:00:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753771805; x=1754376605; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753772456; x=1754377256; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7haeLuJT5v3aQv8eOv4BBhTxNeYgMYlcDfN4H3p9Y4=;
-        b=NblPqzHq59a4jmx1B8cWyA1DiXAG784WaCDhCRqAAXHdDAZdPuisYFdtppS9h+3Lxy
-         kwTC9IcsxJ2U12LdDqKiJgXGegx5PrP5cCRfqexL1Wx8JY9p5qJ8gLtKKjC6+cKVh+Wp
-         Z8yR34REFY9kd5nRpRwVp03F7lj6yIPXx7bufmRiJBrJnaedXJDGYDS0PHBl5ZJZUH1o
-         hOFUWt0U7P8RphZ0HWbWKx4CI4jofztmyCBOl0EY9uNSZbiBYcJoOlKdODpatrJc7Zwq
-         94bE8L27hfxFuDlLvaxkKhtJgnwXlBqsh4MjiJtSB/3lFHYZMA+KmCs+RLkZlzu5GbP9
-         oO1Q==
+        bh=ttNeMXJ7C0/yz0Q1cFAKO+GXt2M48g6T6K0pnZ0/AhI=;
+        b=Rn0SQqDddBtHqCrF15Fjk/DqDsOqa2N+YRWWVbXOED2j5SGBGr5JKrG/CcoD1lbYsw
+         PEbUl2n3FrE7tX/J/qKazDykOFCczqCSCMhQGKFZTVNIXsSRUqzbOSORNyloF6a/FKr8
+         65N7S23zSqfcvIg638DvW0f83hi3m+CvxJl6cm5aNAoX5n40zbJ2rsHELHf3H9gtCt16
+         oeYik4jj75oXaTZk3K0+Q/ZTavGf0khwyI/KrGwx52R1wSNFbn79hhcWdI48qCtzwO/e
+         SpJUJDBw3eQ+qZcdRLMkAGHTQpRagAMD0wHf7RHz5iO/Mu6xDIM3IOgTBSBygQcePGWU
+         veCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753771805; x=1754376605;
+        d=1e100.net; s=20230601; t=1753772456; x=1754377256;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a7haeLuJT5v3aQv8eOv4BBhTxNeYgMYlcDfN4H3p9Y4=;
-        b=hLcu7I0DR6RFXXf7cwMQoMArp4wkWBE09HHvtPVlTE8vtuXSTgS8N70c/zRJjsRpL8
-         et8A3/i/qajsOafWxDAW7MBPqKROc/vhnl4YOe3FlbkXuwWwTg2Q8i/7qcayinmndZnM
-         QLfKQ7UYBIDfaX0jS5x7FbIfGoDZmpRHb/Znnbwp8AIWwxuTQLdumhzeqBNhqlAnzlV1
-         eL2xiB537lxApclqH0W2OYVzGhS/hx0Ls5+6DiJGK01dBTuKBR4kUjnez308oiUNYs33
-         hJgjvvNILJgMlRVUOU2D0gG23tPWK68UupNwC+T1x3Uj/7RfR+MJD9vbdM5gujK50RpM
-         I/2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWPUuyrJNGmR8L/UGoygWcRCKVJgs5fBLu30YNvPy+UYIfWOTqvxZXydg9LcPeFx6NfYXdrn+aqshiNvg==@vger.kernel.org, AJvYcCXmQEQ1PahTfVTVBhPOkK6Hs/TJU6TrP3N6LKa6e+LD+C7oi4IoG+FfYDDpy1laheeOVn5D82DqNSxyrww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7lIecoqKm8YguCAKSpoimdSYS9+6p3bvXbTwWZBG4Fbc2KHbj
-	IEAuzxTZGPjNoB/UuVOY8gD0HOPw5yYsCaa3lNMsTnTm2YVS+HkszNPr
-X-Gm-Gg: ASbGncsqyYnzQ896oGiC1jNbCB7FkHIzmd4pOXWPx5t+07UGRKoqSefLXkv7DRihBfR
-	5P5GOlxs3pg1RTg4+0pUe56eHIHJri/k7tmuskNGyj270Qnm3kOSScSwDA8D6y1FOYPdgTDtt+5
-	+va+4u+cYdz79Gyw5+hz6P9+ut+R6hvvPV6KK9iaf6TpHI8vqKFeFSVCdbO76K3ECqeM9NAIBmL
-	hVn0Ox+yVShFl3vAWLNzbcWNP1FVeY1KDvKHalwEuj3bkfKuMK8vS7YXVicrLh7oRVqMDsUVc/e
-	BR2qPyWslEx32j8KDzEOxnPz/STbMDtsH6jf/7RtaESnAnF3ekqUy7eiYpZe2EfJ4Uw0Oa/4zSc
-	W+jB+QYey+0j/4Gmm6ovQzmYwo0yhC84=
-X-Google-Smtp-Source: AGHT+IFAq6oFD9LEGvdnmvej5FK2oM8kVMdZdRvJvsrdRhsTT6J4H0UaalYv6DCU5UcaeQImu+me1w==
-X-Received: by 2002:a05:6000:4c8:b0:3b7:83c0:a9dc with SMTP id ffacd0b85a97d-3b783c0b070mr4778105f8f.48.1753771804972;
-        Mon, 28 Jul 2025 23:50:04 -0700 (PDT)
+        bh=ttNeMXJ7C0/yz0Q1cFAKO+GXt2M48g6T6K0pnZ0/AhI=;
+        b=YpEGpkXtInTB37mQ+OD1ocrsys9vd9w4M0F6u+uoRWgRvt+syMYOeP55I10+UoE0RC
+         yqQze93Coc8dx3pdqbK7VXRvRBO7NpEKEeKnhdrdx62/tAJC7hxx01KxlisXAcVbCaqI
+         m2j/QKQXB5BiNctaEVcMJAcOknePKr0wf3RIQZAOMwain9hdYlFr/f3PYET1aKF4kYA3
+         wPo8n+xF7iKrpPN1q0DHfTx444JueVZJBA6ZEeaQ+RdhKwLQePCHdA/UtU47ZDB0NkYt
+         Kxyw8lBhD1Ph5gfg/7dN3zWd54k3R5R0JWs+zQlSsAqylufYkHA5HOtSnR/WDgtINb9h
+         CU+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUS8AE8EGIy8d9ucQZ0vGGNStxWSw9Q3AvnMYFIx7pcrQTIJowx/b4IlS/03GMhCGYhWUFSGRSeaOs+1dM=@vger.kernel.org, AJvYcCUjdhzIWF11wapgR2V/8tWsnI7mWi9a4Ke1JtPMF3gRYuAP91UqCXz0m0JFxvYh+2EjcykypMFt+oGwllk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr7MsQReHdUIYaE9Sav4p+iYg+4t8krcuueQL31m4Sg9+4n059
+	dRYGLp4dj0rAq7mQeHctdK+alsR7kgxH5xQY+S2IZJla/0CahazWzbGT
+X-Gm-Gg: ASbGncshw3/vnUrOMelX5HUpxDdMpN3obdEmZyewOCMzQmMFxMhqnOPwGxBBrYi9jSg
+	TpQfi8NI2ioJOY3Z5N8oxZvmxGwQYisYgJc1oovnYTPwU4TnK9VkAyQzjz1WvC8ek3xWdBeJd0F
+	jGmI0H5rnqur7V3cHFdfN2d5lL5Q+dfSZ73H0ln2sFRikZA34q0pwS+rd94vZ6As/NaqOBMMJiJ
+	2JcGcC7IvuEkqAZuNcoD/00NkfLjnlVkXSy9VyNiCQkyEWtGYRlcAr7aa7/W1qkPARU+jQxxM2f
+	KCe0QJ6OA1l210dUtgatdg99zXde0t+SuXhGS3Yj0GfsnnU2QXtJXhJah5GviIhjasoTEfF6fMS
+	Ef6Sazrpzr57cq6XtaQ44
+X-Google-Smtp-Source: AGHT+IGF3754rBDu14/bYmKAnzfiy/mo2VV5nBc+fe9fTEAHSBar23LpWafsxPoAvG1Ah6venOuKlg==
+X-Received: by 2002:a05:600c:518d:b0:456:24aa:9586 with SMTP id 5b1f17b1804b1-45876449ee6mr91588465e9.21.1753772455275;
+        Tue, 29 Jul 2025 00:00:55 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4587054f27dsm182810505e9.11.2025.07.28.23.50.04
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778f034a6sm11271145f8f.47.2025.07.29.00.00.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 23:50:04 -0700 (PDT)
+        Tue, 29 Jul 2025 00:00:54 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] scsi: scsi_debug: make read-only arrays static const
-Date: Tue, 29 Jul 2025 07:49:30 +0100
-Message-ID: <20250729064930.1659007-1-colin.i.king@gmail.com>
+Subject: [PATCH] media: i2c: ov5648: make read-only arrays regs and values static const
+Date: Tue, 29 Jul 2025 08:00:21 +0100
+Message-ID: <20250729070021.1659848-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -75,203 +75,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only arrays on the stack at run time, instead
-make them static const. Also reduces overall size.
-
-before:
-   text	   data	    bss	    dec	    hex	filename
- 367439	  89582	   5952	 462973	  7107d	drivers/scsi/scsi_debug.o
-
-after:
-   text	   data	    bss	    dec	    hex	filename
- 365847	  90702	   5952	 462501	  70ea5	drivers/scsi/scsi_debug.o
-
-(gcc 14.2.0, x86-64)
+Don't populate the read-only arrays regs and values on the stack at run
+time, instead make them static const.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/scsi/scsi_debug.c | 91 ++++++++++++++++++++++++---------------
- 1 file changed, 57 insertions(+), 34 deletions(-)
+ drivers/media/i2c/ov5648.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 0847767d4d43..353cb60e1abe 100644
---- a/drivers/scsi/scsi_debug.c
-+++ b/drivers/scsi/scsi_debug.c
-@@ -2674,8 +2674,10 @@ static int resp_rsup_tmfs(struct scsi_cmnd *scp,
+diff --git a/drivers/media/i2c/ov5648.c b/drivers/media/i2c/ov5648.c
+index 4b86d2631bd1..02bfb948e2fb 100644
+--- a/drivers/media/i2c/ov5648.c
++++ b/drivers/media/i2c/ov5648.c
+@@ -1061,8 +1061,8 @@ static int ov5648_sw_standby(struct ov5648_sensor *sensor, int standby)
  
- static int resp_err_recov_pg(unsigned char *p, int pcontrol, int target)
- {	/* Read-Write Error Recovery page for mode_sense */
--	unsigned char err_recov_pg[] = {0x1, 0xa, 0xc0, 11, 240, 0, 0, 0,
--					5, 0, 0xff, 0xff};
-+	static const unsigned char err_recov_pg[] = {
-+		0x1, 0xa, 0xc0, 11, 240, 0, 0, 0,
-+		5, 0, 0xff, 0xff
-+	};
- 
- 	memcpy(p, err_recov_pg, sizeof(err_recov_pg));
- 	if (1 == pcontrol)
-@@ -2685,8 +2687,10 @@ static int resp_err_recov_pg(unsigned char *p, int pcontrol, int target)
- 
- static int resp_disconnect_pg(unsigned char *p, int pcontrol, int target)
- { 	/* Disconnect-Reconnect page for mode_sense */
--	unsigned char disconnect_pg[] = {0x2, 0xe, 128, 128, 0, 10, 0, 0,
--					 0, 0, 0, 0, 0, 0, 0, 0};
-+	static const unsigned char disconnect_pg[] = {
-+		0x2, 0xe, 128, 128, 0, 10, 0, 0,
-+		0, 0, 0, 0, 0, 0, 0, 0
-+	};
- 
- 	memcpy(p, disconnect_pg, sizeof(disconnect_pg));
- 	if (1 == pcontrol)
-@@ -2696,9 +2700,11 @@ static int resp_disconnect_pg(unsigned char *p, int pcontrol, int target)
- 
- static int resp_format_pg(unsigned char *p, int pcontrol, int target)
- {       /* Format device page for mode_sense */
--	unsigned char format_pg[] = {0x3, 0x16, 0, 0, 0, 0, 0, 0,
--				     0, 0, 0, 0, 0, 0, 0, 0,
--				     0, 0, 0, 0, 0x40, 0, 0, 0};
-+	static const unsigned char format_pg[] = {
-+		0x3, 0x16, 0, 0, 0, 0, 0, 0,
-+		0, 0, 0, 0, 0, 0, 0, 0,
-+		0, 0, 0, 0, 0x40, 0, 0, 0
-+	};
- 
- 	memcpy(p, format_pg, sizeof(format_pg));
- 	put_unaligned_be16(sdebug_sectors_per, p + 10);
-@@ -2716,10 +2722,14 @@ static unsigned char caching_pg[] = {0x8, 18, 0x14, 0, 0xff, 0xff, 0, 0,
- 
- static int resp_caching_pg(unsigned char *p, int pcontrol, int target)
- { 	/* Caching page for mode_sense */
--	unsigned char ch_caching_pg[] = {/* 0x8, 18, */ 0x4, 0, 0, 0, 0, 0,
--		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
--	unsigned char d_caching_pg[] = {0x8, 18, 0x14, 0, 0xff, 0xff, 0, 0,
--		0xff, 0xff, 0xff, 0xff, 0x80, 0x14, 0, 0,     0, 0, 0, 0};
-+	static const unsigned char ch_caching_pg[] = {
-+		/* 0x8, 18, */ 0x4, 0, 0, 0, 0, 0,
-+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-+	};
-+	static const unsigned char d_caching_pg[] = {
-+		0x8, 18, 0x14, 0, 0xff, 0xff, 0, 0,
-+		0xff, 0xff, 0xff, 0xff, 0x80, 0x14, 0, 0, 0, 0, 0, 0
-+	};
- 
- 	if (SDEBUG_OPT_N_WCE & sdebug_opts)
- 		caching_pg[2] &= ~0x4;	/* set WCE=0 (default WCE=1) */
-@@ -2738,8 +2748,10 @@ static int resp_ctrl_m_pg(unsigned char *p, int pcontrol, int target)
- { 	/* Control mode page for mode_sense */
- 	unsigned char ch_ctrl_m_pg[] = {/* 0xa, 10, */ 0x6, 0, 0, 0, 0, 0,
- 					0, 0, 0, 0};
--	unsigned char d_ctrl_m_pg[] = {0xa, 10, 2, 0, 0, 0, 0, 0,
--				     0, 0, 0x2, 0x4b};
-+	static const unsigned char d_ctrl_m_pg[] = {
-+		0xa, 10, 2, 0, 0, 0, 0, 0,
-+		0, 0, 0x2, 0x4b
-+	};
- 
- 	if (sdebug_dsense)
- 		ctrl_m_pg[2] |= 0x4;
-@@ -2794,10 +2806,14 @@ static int resp_grouping_m_pg(unsigned char *p, int pcontrol, int target)
- 
- static int resp_iec_m_pg(unsigned char *p, int pcontrol, int target)
- {	/* Informational Exceptions control mode page for mode_sense */
--	unsigned char ch_iec_m_pg[] = {/* 0x1c, 0xa, */ 0x4, 0xf, 0, 0, 0, 0,
--				       0, 0, 0x0, 0x0};
--	unsigned char d_iec_m_pg[] = {0x1c, 0xa, 0x08, 0, 0, 0, 0, 0,
--				      0, 0, 0x0, 0x0};
-+	static const unsigned char ch_iec_m_pg[] = {
-+		/* 0x1c, 0xa, */ 0x4, 0xf, 0, 0, 0, 0,
-+		0, 0, 0x0, 0x0
-+	};
-+	static const unsigned char d_iec_m_pg[] = {
-+		0x1c, 0xa, 0x08, 0, 0, 0, 0, 0,
-+		0, 0, 0x0, 0x0
-+	};
- 
- 	memcpy(p, iec_m_pg, sizeof(iec_m_pg));
- 	if (1 == pcontrol)
-@@ -2809,8 +2825,9 @@ static int resp_iec_m_pg(unsigned char *p, int pcontrol, int target)
- 
- static int resp_sas_sf_m_pg(unsigned char *p, int pcontrol, int target)
- {	/* SAS SSP mode page - short format for mode_sense */
--	unsigned char sas_sf_m_pg[] = {0x19, 0x6,
--		0x6, 0x0, 0x7, 0xd0, 0x0, 0x0};
-+	static const unsigned char sas_sf_m_pg[] = {
-+		0x19, 0x6, 0x6, 0x0, 0x7, 0xd0, 0x0, 0x0
-+	};
- 
- 	memcpy(p, sas_sf_m_pg, sizeof(sas_sf_m_pg));
- 	if (1 == pcontrol)
-@@ -2854,9 +2871,10 @@ static int resp_sas_pcd_m_spg(unsigned char *p, int pcontrol, int target,
- 
- static int resp_sas_sha_m_spg(unsigned char *p, int pcontrol)
- {	/* SAS SSP shared protocol specific port mode subpage */
--	unsigned char sas_sha_m_pg[] = {0x59, 0x2, 0, 0xc, 0, 0x6, 0x10, 0,
--		    0, 0, 0, 0, 0, 0, 0, 0,
--		};
-+	static const unsigned char sas_sha_m_pg[] = {
-+		0x59, 0x2, 0, 0xc, 0, 0x6, 0x10, 0,
-+		0, 0, 0, 0, 0, 0, 0, 0,
-+	};
- 
- 	memcpy(p, sas_sha_m_pg, sizeof(sas_sha_m_pg));
- 	if (1 == pcontrol)
-@@ -2923,8 +2941,10 @@ static int process_medium_part_m_pg(struct sdebug_dev_info *devip,
- static int resp_compression_m_pg(unsigned char *p, int pcontrol, int target,
- 	unsigned char dce)
- {	/* Compression page for mode_sense (tape) */
--	unsigned char compression_pg[] = {0x0f, 14, 0x40, 0, 0, 0, 0, 0,
--		0, 0, 0, 0, 00, 00};
-+	static const unsigned char compression_pg[] = {
-+		0x0f, 14, 0x40, 0, 0, 0, 0, 0,
-+		0, 0, 0, 0, 0, 0
-+	};
- 
- 	memcpy(p, compression_pg, sizeof(compression_pg));
- 	if (dce)
-@@ -3282,9 +3302,10 @@ static int resp_mode_select(struct scsi_cmnd *scp,
- 
- static int resp_temp_l_pg(unsigned char *arr)
+ static int ov5648_chip_id_check(struct ov5648_sensor *sensor)
  {
--	unsigned char temp_l_pg[] = {0x0, 0x0, 0x3, 0x2, 0x0, 38,
--				     0x0, 0x1, 0x3, 0x2, 0x0, 65,
--		};
-+	static const unsigned char temp_l_pg[] = {
-+		0x0, 0x0, 0x3, 0x2, 0x0, 38,
-+		0x0, 0x1, 0x3, 0x2, 0x0, 65,
-+	};
- 
- 	memcpy(arr, temp_l_pg, sizeof(temp_l_pg));
- 	return sizeof(temp_l_pg);
-@@ -3292,8 +3313,9 @@ static int resp_temp_l_pg(unsigned char *arr)
- 
- static int resp_ie_l_pg(unsigned char *arr)
- {
--	unsigned char ie_l_pg[] = {0x0, 0x0, 0x3, 0x3, 0x0, 0x0, 38,
--		};
-+	static const unsigned char ie_l_pg[] = {
-+		0x0, 0x0, 0x3, 0x3, 0x0, 0x0, 38,
-+	};
- 
- 	memcpy(arr, ie_l_pg, sizeof(ie_l_pg));
- 	if (iec_m_pg[2] & 0x4) {	/* TEST bit set */
-@@ -3305,11 +3327,12 @@ static int resp_ie_l_pg(unsigned char *arr)
- 
- static int resp_env_rep_l_spg(unsigned char *arr)
- {
--	unsigned char env_rep_l_spg[] = {0x0, 0x0, 0x23, 0x8,
--					 0x0, 40, 72, 0xff, 45, 18, 0, 0,
--					 0x1, 0x0, 0x23, 0x8,
--					 0x0, 55, 72, 35, 55, 45, 0, 0,
--		};
-+	static const unsigned char env_rep_l_spg[] = {
-+		0x0, 0x0, 0x23, 0x8,
-+		0x0, 40, 72, 0xff, 45, 18, 0, 0,
-+		0x1, 0x0, 0x23, 0x8,
-+		0x0, 55, 72, 35, 55, 45, 0, 0,
-+	};
- 
- 	memcpy(arr, env_rep_l_spg, sizeof(env_rep_l_spg));
- 	return sizeof(env_rep_l_spg);
+-	u16 regs[] = { OV5648_CHIP_ID_H_REG, OV5648_CHIP_ID_L_REG };
+-	u8 values[] = { OV5648_CHIP_ID_H_VALUE, OV5648_CHIP_ID_L_VALUE };
++	static const u16 regs[] = { OV5648_CHIP_ID_H_REG, OV5648_CHIP_ID_L_REG };
++	static const u8 values[] = { OV5648_CHIP_ID_H_VALUE, OV5648_CHIP_ID_L_VALUE };
+ 	unsigned int i;
+ 	u8 value;
+ 	int ret;
 -- 
 2.50.0
 
