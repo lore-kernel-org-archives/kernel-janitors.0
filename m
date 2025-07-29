@@ -1,90 +1,115 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACC31BDCF
-	for <kernel-janitors@vger.kernel.org>; Tue, 29 Jul 2025 13:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9212A8F54;
+	Tue, 29 Jul 2025 13:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753794754; cv=none; b=RbGqTpYbJU7NA55M/Ln7WWI2l4c4+5jyUrkgybU8VkBnxFzwKVnwvbqOsz8uoZHoHm8eVqLFeA7/DRhe4q+lnAcq+bJOensUoekTTB0WYxqDWUpBzH5Kzbi0NuaPVdfTX20DzemtqmtrQPtE9S1hVSDStou8TPxMNwdyTovQSjc=
+	t=1753796148; cv=none; b=G8j+rl/oFzppZj6FDXYTRpQeGflF6QHOCXCBGI8StJk9J0X+vcxZrV0rd8FsNrfBmnJsr1+gb8VdpWfpUWxQpqJV5QuD9dcsou1FWdJCm4TGO+o2sbEwAlcUc/tJffcdNEDIsC/THUE4BS6fsWjIIGh24rc/am3XXzckOuICICA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753794754; c=relaxed/simple;
-	bh=yGktK75e2PayS3m6dLJKhN+QyBnGs9rTpFNh5Uw1tH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L1k3Z4Do6/j0RqluDWJl/PzJ0HoGWw0AveFfcpyb8NH1qOv8R8Kpdxg8H4EDgjwWrljOIYjYcEgJ1KWVXC0ynd0fF3TwTH4bQG5zdsgiNutgsqHSz71Zh5lkB/VQ3TFBO9+0sH5pjAOU5Tg8bIjUMEKcUWmQwqEDvvTaMHYrxnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XE7qB4jH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1753796148; c=relaxed/simple;
+	bh=mXlo4P/Opfl5AHG129TMBtEeUm58/2c3wqIIOBMg0cE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A3p3xyae6nHSm4HhYYMZKVzQkYLe1rAJ2hrrF5F8Ya3vcd96aVfyxz7UzVmYlh3ZhXrNxn7Atc6aV1KuyWMo8/0whr+xZqMT7IlXqDfzPTdwx2p6oUHqL1KSQNfpZ8v5KPUB/e3ySzZ/fyMWSFd3E1K0uTGAaNSystkuI7e3I0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e1QjtIfG; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XE7qB4jH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753794751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yGktK75e2PayS3m6dLJKhN+QyBnGs9rTpFNh5Uw1tH4=;
-	b=XE7qB4jHrLlga2CFLQUStx8Gbhy74hlcLXlPpiRfK/5XGr71wuy2LPkibzqeQgnBAkU/HM
-	RapGPx77Q9rY1K/BvA7cpoTKqq1gT7+RG+VDceo8sCvTkVto12aTXd5cXlUQ9JQrixibCI
-	xS9rswX1mQ9nMLLlTT18nsEDVu4J8Tg=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-195-C8AZxX30PAOYf_pShKcixg-1; Tue, 29 Jul 2025 09:12:29 -0400
-X-MC-Unique: C8AZxX30PAOYf_pShKcixg-1
-X-Mimecast-MFC-AGG-ID: C8AZxX30PAOYf_pShKcixg_1753794749
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b31ff607527so4851788a12.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 29 Jul 2025 06:12:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1QjtIfG"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4561ca74829so58136225e9.0;
+        Tue, 29 Jul 2025 06:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753796145; x=1754400945; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XVjYN8k5tT8FBgII2f3KKZiqL7dspTHCb/x3jGyFDhc=;
+        b=e1QjtIfGD5aw9v8QlWpKg1I+5fCHNYw4judlXZHUDyxBiyTtRWQ2JFZqP8p6lUx8/O
+         Iz3Oipn2epnvexGicXF+2J/QfQxCoC7qxr5ur+eBzTv7DT8f8cdTcJFK1+hfkqpXxXkY
+         zdkSJtgafGFXFxWS3Rq60XIOeCrcHDNm320UCtfw1OvmYupURKgSmlY8d/eFnSrkHjSU
+         pzctx1oRUV4aHXB+me8VB0Bi+qa0nERpc8mx/I+0FoQxuqSUAmLfbzlfQr1L6I4cPA2N
+         M86GvW8aMfhkGE4P6YKYtDnRXgpeqzk606pTXEeC5ERnDTiclAt1VtuWxEpsP7k2Zdk6
+         wkjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753794749; x=1754399549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yGktK75e2PayS3m6dLJKhN+QyBnGs9rTpFNh5Uw1tH4=;
-        b=I+szezNVuTwbcH1TL9irpA6B1Ny6tEjP2jH+g+WZp+aUySO0mVB7zBi7f1rD6vTTVh
-         GEferh/WwtcjAEv7KhGMDhvbfPxlNF2mrdB/tINP1kGpod2VPLyCFJY5EvSYDA8/6Wux
-         r5kLSm04MeICwLIVZgOFmi8CRN+20pLRhbMNnPsYxhMQS8yYMmAGYmEi+OC7Lz4Q5TJW
-         6iysVA2r6ODLdqXaRodGYOvs9hZqkfl6J5FRLkzN7S0Pqq/EDjDpxpiLS0n5+JAOvtBP
-         tFc8ClGCMRXfJBsA8Us0aBt0leArDPO0VEoY4JVVnTfj8++0ejNJ6zmIxbBYlpU5eGyQ
-         zOeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrGo62mUtQWTzH5Fx8i/H+GjUBQvSv+HiKP3rjbRsWKDVdhHNol0LFpd/CaQ+N9jn8Ommse48qPbt3pvLLsuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjy5DHcv4lO5SzZvnWWQY7WF9eLAo9X5ZLWrl3tWqA/gZfEGqY
-	iKSAJqggh1TWd73GiQun9aizy1M7o8c5kXCGBVtNKutO+z71vhYhGMSuB95k0xQHsrPTMlHDOjj
-	hhtklh+6FYLEIn372THHdB2qgcSdN+EYV3tyPaF1uVWAvsk96BBNo4QfLv9QeH+CgxGvl9X1yD/
-	0IVpzUdQi7Kl10TdZUcZLaPsttp7tzwweLle/R8+pHWhRq
-X-Gm-Gg: ASbGncsyyCHb2vrWP5c7E8Td+z/rxOTXKGWa8NpgzaEmuLUcCyW7frQbrjnCvJdCrlO
-	aw20QL0HfeRr5Rd7hEYbtONP9SmMpoqwKnUEwERLYE5gzIrFeeI0FuzoHvMRrKPcIwprNsSlxWC
-	369WDokq957/ifZVrYafo=
-X-Received: by 2002:a17:903:320a:b0:23d:d2d2:b511 with SMTP id d9443c01a7336-23fb30cb6c3mr225672315ad.19.1753794748602;
-        Tue, 29 Jul 2025 06:12:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1psn3OcEesGJHe+B3xilmqfbqkCCVe1Iwh6GM5j1+Rv5K7pbahMYXP+auHAPPU4oiuTDereeklBYW5LyOIuI=
-X-Received: by 2002:a17:903:320a:b0:23d:d2d2:b511 with SMTP id
- d9443c01a7336-23fb30cb6c3mr225671825ad.19.1753794748111; Tue, 29 Jul 2025
- 06:12:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753796145; x=1754400945;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XVjYN8k5tT8FBgII2f3KKZiqL7dspTHCb/x3jGyFDhc=;
+        b=wFxUt4BfraIvQVHeEa+sTGyl6inwsdmCO/adU9VydMJULpSbMjjM712i/kxfNcGqWJ
+         T8P52JGPC3S3KU+HARP59eoZJNXeY4vLFkYyM673FaVLlZ+0qwPo0bg0GMKBxEzUcahT
+         cBgBk7rKEAe7I8RISY0lNjIKW9cCiNfWhDkb/Hj/VSsZmfqAwVXZAh2ZRFEZ5SNBmhVR
+         VYMqAVyRhqLPZqs7oaK3gMeYuH1YTABN129+1hQnfVAk3KV55RRP+Ek/2fGth8pRoOLW
+         r7mGaBuUPb+bdfsPr3TmO8DTOwy1MPCQ6M1ptSxSFcoepOB0HTH7zB73X6Oo5BVNPNZo
+         Kdlw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8uhXBIVEXg85NQj3XVpc6W93nkkvjBhZj5WwFzjPFOw+phwOGhawTZFk5lLjGyBeMgBVl9oEBwNfbcwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOQzPm0Om+mJ5ahByVmHVUwVXLzwsHbuc4Yxb5ZqPLnA++Q9vP
+	ptiS0cGHCTPwE/f4PTZ6u47Jqti508Uu/GD7ChRgP4KBekoADGluctER
+X-Gm-Gg: ASbGncusJLSMp8BeBJgebJyfll3mAO1sVJUMkTvJj5rSzVKkTq8Z8ZvX8kGyXUqSFzQ
+	uVM6ZHkZr3Cs6jtpGp1fyRsd1fzolVQouK+yATNH//sVAlziSAbG/xhGKbWtMF4aRJoeWZUQjRq
+	eBcMOSvVa9CPgpl8OqzgIezwboDOt9zuSKUq8Q36blA4b9sPBzUNoo2nkqUquldCg/BNmNr55Jw
+	KMh3RXx1RMnP7ThU3672adQtIe9GJtx2s8JFUWdiscCQg4ULR1wTCsKezenpFtd6I+7SyXKIUqY
+	awuSOyfalxheMdEc/jDxPY1Mur0nuOcQ4Ns0i7vUg+SqziYU47cOT3qOlRr/hLVsAhllNqu1HrW
+	Y/jctw9PhunmlAXRd7d/b
+X-Google-Smtp-Source: AGHT+IHX1SA/PEJXzQCtDohLcARQ+FKdp0aj3Rxt6VkK4mHam7dWUOKN4l3AyCbxq6ugirxVTrBVsg==
+X-Received: by 2002:a05:600c:3e0f:b0:456:f9f:657 with SMTP id 5b1f17b1804b1-4587ce6c8f2mr97488695e9.27.1753796144810;
+        Tue, 29 Jul 2025 06:35:44 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4588e5e6232sm26161555e9.32.2025.07.29.06.35.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 06:35:44 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Mike Marshall <hubcap@omnibond.com>,
+	Martin Brandenburg <martin@omnibond.com>,
+	devel@lists.orangefs.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] orangefs: Remove space before newline
+Date: Tue, 29 Jul 2025 14:35:10 +0100
+Message-ID: <20250729133510.1934993-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729113638.1925201-1-colin.i.king@gmail.com>
-In-Reply-To: <20250729113638.1925201-1-colin.i.king@gmail.com>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Tue, 29 Jul 2025 15:12:16 +0200
-X-Gm-Features: Ac12FXzgLBMRVsOJXcgqlJnJHj6Of1bbYEOVyc2J0oa2XadRWV0FlbBU2KJNSYU
-Message-ID: <CAHc6FU5eD+ROzxpe1tjP99EthOWKBrd8hWToPj5mPurki2JyZg@mail.gmail.com>
-Subject: Re: [PATCH][next] gfs2: Remove space before newline
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: gfs2@lists.linux.dev, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29, 2025 at 1:37=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
-> There is an extraneous space before a newline in a fs_err message.
-> Remove it
+There are a couple of instances of an extraneous space before a
+newline in gossip_* messages. Remove the spaces.
 
-Thanks.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/orangefs/inode.c            | 2 +-
+ fs/orangefs/orangefs-debugfs.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Andreas
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index a01400cd41fd..ac1469a0d663 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -246,7 +246,7 @@ static void orangefs_readahead(struct readahead_control *rac)
+ 			&offset, &iter, readahead_length(rac),
+ 			inode->i_size, NULL, NULL, rac->file)) < 0)
+ 		gossip_debug(GOSSIP_FILE_DEBUG,
+-			"%s: wait_for_direct_io failed. \n", __func__);
++			"%s: wait_for_direct_io failed.\n", __func__);
+ 	else
+ 		ret = 0;
+ 
+diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
+index 1c375fb65018..4582f53bb2d8 100644
+--- a/fs/orangefs/orangefs-debugfs.c
++++ b/fs/orangefs/orangefs-debugfs.c
+@@ -985,7 +985,7 @@ int orangefs_debugfs_new_client_string(void __user *arg)
+ 		/* Build a proper debug help string. */
+ 		ret = orangefs_prepare_debugfs_help_string(0);
+ 		if (ret) {
+-			gossip_err("%s: no debug help string \n",
++			gossip_err("%s: no debug help string\n",
+ 				   __func__);
+ 			return ret;
+ 		}
+-- 
+2.50.0
 
