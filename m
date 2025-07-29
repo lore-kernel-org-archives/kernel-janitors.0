@@ -1,107 +1,90 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4D279E1;
-	Tue, 29 Jul 2025 13:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACC31BDCF
+	for <kernel-janitors@vger.kernel.org>; Tue, 29 Jul 2025 13:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753794468; cv=none; b=QAAv1ImgL4PPaZ142ZzVm6q+MEyLWaCC5oWA2q1gkjyAJzuncPKhV7OALobUbNug80JCRVm0Qq2wOy0aX0ZRO80Ahn0N3KqErTAlRwxTxRJzrOMqlUBCwMT+Uz+1jMIWEDpxKOBdTYcNOCdcbb/kGPfgtnNbalqGL1QmsnnJLms=
+	t=1753794754; cv=none; b=RbGqTpYbJU7NA55M/Ln7WWI2l4c4+5jyUrkgybU8VkBnxFzwKVnwvbqOsz8uoZHoHm8eVqLFeA7/DRhe4q+lnAcq+bJOensUoekTTB0WYxqDWUpBzH5Kzbi0NuaPVdfTX20DzemtqmtrQPtE9S1hVSDStou8TPxMNwdyTovQSjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753794468; c=relaxed/simple;
-	bh=/5lq2THeasyHOCc2K9ZWG3M2zFHYPDXCTF5PbfIXrss=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KiIXQs0qsiEJthMlfgP6XTzXyV3FWxB7+TfM6rzYvJQ0PAjScbcUG+7793cfhxD6ttc65XYkOQTm++tRajxdcj/Qo3c0RgJDihMNFT8SqSKJa/vkOsyD3mEg/GQ5xKRHPpwtWa6qJBSLT/ujNkOVfSnG7hQrYaRTf9apQHhvlA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V1WzTPLj; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753794754; c=relaxed/simple;
+	bh=yGktK75e2PayS3m6dLJKhN+QyBnGs9rTpFNh5Uw1tH4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L1k3Z4Do6/j0RqluDWJl/PzJ0HoGWw0AveFfcpyb8NH1qOv8R8Kpdxg8H4EDgjwWrljOIYjYcEgJ1KWVXC0ynd0fF3TwTH4bQG5zdsgiNutgsqHSz71Zh5lkB/VQ3TFBO9+0sH5pjAOU5Tg8bIjUMEKcUWmQwqEDvvTaMHYrxnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XE7qB4jH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1WzTPLj"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b77b8750acso694184f8f.0;
-        Tue, 29 Jul 2025 06:07:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753794465; x=1754399265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EpVLcHS4Nm1t2biTb/caO1IN7OnTFd9yPWWzRn55f78=;
-        b=V1WzTPLjJV8bNuVzqywDIYl8y6z6hKYJAJZRA/IfcRPrpn1rU43vhhBaZsJFtSWr0C
-         J9noRMxCdyC/1Od+aslLMkrOEYRdqnrb68scm/ekcOUWer1H8LYyKP00u9TDhFEIbhK8
-         mtTZjQQ1JB7FGg9oxD3CX5PIfI6aAn/UWNBoMT34ZlRR0gbMcGu9DkrmrCWJpydBEkKJ
-         gbwZV2UPEm/+It0qJrpkMWUVjGqGAHPaFFWkTUq++HuEiSUDE/zFjpR+MeYTK4a096OM
-         7p4Cpa/iEx7p49CxG7Z99rB09MDdj/Kd5haAaCV7QSG3uu9Pl7OIMrT7Sw37etenKAGv
-         ZrZA==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XE7qB4jH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753794751;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yGktK75e2PayS3m6dLJKhN+QyBnGs9rTpFNh5Uw1tH4=;
+	b=XE7qB4jHrLlga2CFLQUStx8Gbhy74hlcLXlPpiRfK/5XGr71wuy2LPkibzqeQgnBAkU/HM
+	RapGPx77Q9rY1K/BvA7cpoTKqq1gT7+RG+VDceo8sCvTkVto12aTXd5cXlUQ9JQrixibCI
+	xS9rswX1mQ9nMLLlTT18nsEDVu4J8Tg=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-195-C8AZxX30PAOYf_pShKcixg-1; Tue, 29 Jul 2025 09:12:29 -0400
+X-MC-Unique: C8AZxX30PAOYf_pShKcixg-1
+X-Mimecast-MFC-AGG-ID: C8AZxX30PAOYf_pShKcixg_1753794749
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b31ff607527so4851788a12.0
+        for <kernel-janitors@vger.kernel.org>; Tue, 29 Jul 2025 06:12:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753794465; x=1754399265;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EpVLcHS4Nm1t2biTb/caO1IN7OnTFd9yPWWzRn55f78=;
-        b=gjvDjPkSRzzZWJaGEyGhFceoo8UNOVVkFgXmjFN+fB8bnpwuJ4dpEKW9HNfyrrOg/6
-         ql39GfLCdxVf2e0tsgAphEb5Qe3n9mH87b15acutlY8D25bUl7FTafsT4uZ/QJ5lJXVr
-         SvKYRiyQyq1NCBQ7N3+QFO9ClSg55LsVV5u92MxidlruCnmwnkX1o1mrzkmjFbpFMY9r
-         0KqZIVbYz7xOJ7pxkkBZcWrpwRTsotkbDK4GOKjGEXf+dLCQJeRS26hQ5EqAq+WoEM9D
-         iQyqKH2MkN2XvkL4+/Xgygm3LBaQDrrNG+MozqCKrA8VBPGZaOD49199owP15jUEbPlB
-         D5yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWonBOx7DLdljPKL7al9z9/8P3p6mEFUK1bULiuuWeeSh0hhS3h8KB+EckazUk5yGOXHqFlUwRVNsojTp8=@vger.kernel.org, AJvYcCXWR42vCEPP+3hf+pwh1hoNloGr47DKSXhY9JTOIEpttj0oWhqvSaY75H69uGUABZRfYSI4U1L6Q9+t@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZNFsicDiKYBlaOqVNHUMXdfHt+t15iaHiMCSX+rKarFrrZttQ
-	GYL3fWN7k364ihnS1/5mfyMzjSrhxDTZdPjAA3arwqPandp7Qszpve80
-X-Gm-Gg: ASbGncs5HoMrp9bS+pbx/xqRN8E1HArMgyqnfl5ZOSxvBx7MBC788BJB/lcffcqDUb3
-	gAH8HOfyqYXDn7rnOAqfivQjtwQWMYZh4/iC3XFhkA5H0guRy+IGpQhrMC7qXGx/49w5h4T9s5j
-	SxeiX0BoKdneY2uxOt2yaZjOrdfO4uyRX03ZrzeNFRZXycihgfw+psAZWWHBXYh7sJdD7pYglcN
-	w9Sl0BispxwnwxrloVLHpfkOFGX/p+2dKxz9vtPgLCe3cDee7N6A4dd1gLN71+oi7hZAbU/vGhT
-	YdXPGlFxlBznpB9z4MIEOZrXq1dYDKfzMcgxPFLdJAB+YP6nHuDIIBg5f0cs61daCsuwysWlyeY
-	R7iORvFI3HfRiM6/yEb9J
-X-Google-Smtp-Source: AGHT+IHEx5FwO4DXWDanHU3Y2+ONRatacPraDIuksMAXcs5g3kUlBrlE4dZCsrnykJphqMX68VBrmg==
-X-Received: by 2002:a05:6000:18ac:b0:3b7:775d:e923 with SMTP id ffacd0b85a97d-3b78e3d5a92mr1883541f8f.4.1753794464660;
-        Tue, 29 Jul 2025 06:07:44 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b78ba267e3sm4500678f8f.59.2025.07.29.06.07.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 06:07:44 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] lockd: Remove space before newline
-Date: Tue, 29 Jul 2025 14:07:09 +0100
-Message-ID: <20250729130709.1932507-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1753794749; x=1754399549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yGktK75e2PayS3m6dLJKhN+QyBnGs9rTpFNh5Uw1tH4=;
+        b=I+szezNVuTwbcH1TL9irpA6B1Ny6tEjP2jH+g+WZp+aUySO0mVB7zBi7f1rD6vTTVh
+         GEferh/WwtcjAEv7KhGMDhvbfPxlNF2mrdB/tINP1kGpod2VPLyCFJY5EvSYDA8/6Wux
+         r5kLSm04MeICwLIVZgOFmi8CRN+20pLRhbMNnPsYxhMQS8yYMmAGYmEi+OC7Lz4Q5TJW
+         6iysVA2r6ODLdqXaRodGYOvs9hZqkfl6J5FRLkzN7S0Pqq/EDjDpxpiLS0n5+JAOvtBP
+         tFc8ClGCMRXfJBsA8Us0aBt0leArDPO0VEoY4JVVnTfj8++0ejNJ6zmIxbBYlpU5eGyQ
+         zOeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrGo62mUtQWTzH5Fx8i/H+GjUBQvSv+HiKP3rjbRsWKDVdhHNol0LFpd/CaQ+N9jn8Ommse48qPbt3pvLLsuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjy5DHcv4lO5SzZvnWWQY7WF9eLAo9X5ZLWrl3tWqA/gZfEGqY
+	iKSAJqggh1TWd73GiQun9aizy1M7o8c5kXCGBVtNKutO+z71vhYhGMSuB95k0xQHsrPTMlHDOjj
+	hhtklh+6FYLEIn372THHdB2qgcSdN+EYV3tyPaF1uVWAvsk96BBNo4QfLv9QeH+CgxGvl9X1yD/
+	0IVpzUdQi7Kl10TdZUcZLaPsttp7tzwweLle/R8+pHWhRq
+X-Gm-Gg: ASbGncsyyCHb2vrWP5c7E8Td+z/rxOTXKGWa8NpgzaEmuLUcCyW7frQbrjnCvJdCrlO
+	aw20QL0HfeRr5Rd7hEYbtONP9SmMpoqwKnUEwERLYE5gzIrFeeI0FuzoHvMRrKPcIwprNsSlxWC
+	369WDokq957/ifZVrYafo=
+X-Received: by 2002:a17:903:320a:b0:23d:d2d2:b511 with SMTP id d9443c01a7336-23fb30cb6c3mr225672315ad.19.1753794748602;
+        Tue, 29 Jul 2025 06:12:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1psn3OcEesGJHe+B3xilmqfbqkCCVe1Iwh6GM5j1+Rv5K7pbahMYXP+auHAPPU4oiuTDereeklBYW5LyOIuI=
+X-Received: by 2002:a17:903:320a:b0:23d:d2d2:b511 with SMTP id
+ d9443c01a7336-23fb30cb6c3mr225671825ad.19.1753794748111; Tue, 29 Jul 2025
+ 06:12:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250729113638.1925201-1-colin.i.king@gmail.com>
+In-Reply-To: <20250729113638.1925201-1-colin.i.king@gmail.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Tue, 29 Jul 2025 15:12:16 +0200
+X-Gm-Features: Ac12FXzgLBMRVsOJXcgqlJnJHj6Of1bbYEOVyc2J0oa2XadRWV0FlbBU2KJNSYU
+Message-ID: <CAHc6FU5eD+ROzxpe1tjP99EthOWKBrd8hWToPj5mPurki2JyZg@mail.gmail.com>
+Subject: Re: [PATCH][next] gfs2: Remove space before newline
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: gfs2@lists.linux.dev, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is an extraneous space before a newline in a dprintk message.
-Remove the space.
+On Tue, Jul 29, 2025 at 1:37=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+> There is an extraneous space before a newline in a fs_err message.
+> Remove it
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/lockd/svclock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.
 
-diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
-index c1315df4b350..a31dc9588eb8 100644
---- a/fs/lockd/svclock.c
-+++ b/fs/lockd/svclock.c
-@@ -980,7 +980,7 @@ nlmsvc_grant_reply(struct nlm_cookie *cookie, __be32 status)
- 	struct file_lock	*fl;
- 	int			error;
- 
--	dprintk("grant_reply: looking for cookie %x, s=%d \n",
-+	dprintk("grant_reply: looking for cookie %x, s=%d\n",
- 		*(unsigned int *)(cookie->data), status);
- 	if (!(block = nlmsvc_find_block(cookie)))
- 		return;
--- 
-2.50.0
+Andreas
 
