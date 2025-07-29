@@ -1,167 +1,277 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6E82E3708;
-	Mon, 28 Jul 2025 22:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111C426CE26;
+	Tue, 29 Jul 2025 06:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753743044; cv=none; b=PYKYkR7tjJ18WMANyEUiR6rNCSgdl1rQowsMZZz6kue33tYT9sLI+8DlHRWaVyeYQPXXB23ER6N7m//mNgvDpEQWshrqx0Ui7uKdVEGGAlGHNBqdcM5VV7sAFoi0rEitB2CvIVESdQYsXVBOAHLLXep3WKP+6y0pXi5lK7ndC88=
+	t=1753771809; cv=none; b=C6PLjk5fOxPMHKrhkvIprVPtfXnPOtIi06fDqnJ1YPK81pcTs94U4i9i7aT3LLc0obXGF43jU4X1QGwuyLCeaZiT4TxsCIz3TLna9djBc8IjQJZlKYmK8S771OCso5s0ZgpafMjZPfP4P8DtuTHVJ1MUtaUIjJ2zW+T823JUWXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753743044; c=relaxed/simple;
-	bh=aUFYEhrBDCMb4rwh/p3Q8a9jltXCwz63SKfYeyEBQ9c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V374/Bd8lQWuTVZ6WVJhnR0+eRY1wtHYjBndG4Q0RCQ1GuojjI1HyEeIaqP9CczVTqfRiZgbfGQ0yHavIRkQphxorzafXLH+177R63GW/189RjPUkuz9U/g7BHi0fWtGI8Fhy2vGh/HLqjCBAQxs212IUxPgO5iZFvB9tzJAj9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jz3AhKYX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1753771809; c=relaxed/simple;
+	bh=8x6t2E3bvaUsqe85HBcgG0NsUSVA+YA+IiexRtuqtRY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RO1e1e3opPVZBhX/YZUdzqaFFyB1Hg3H01Maw8u61o3J6a5/ZTsg/KAbePkS9plkKQO2pPnKNYorK4VnybVeCbYAeo8Ieq8gg62CsMh6NTDU2PFD8fNi+Ius2kkpzYtt/1dwvKjF8TALZzqahkW7epApJcDP72UUQxBgOr5rsxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NblPqzHq; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jz3AhKYX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753743040;
-	bh=aUFYEhrBDCMb4rwh/p3Q8a9jltXCwz63SKfYeyEBQ9c=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=jz3AhKYXHiMcXAa5/TA6plvdh9o27whoXtIwBXldnVh6kY0wZbIFp7Bd0PdmUBkhV
-	 JrSb5Qui32vWAwBDerTapR7pJhoeT4wXj4fJJeWefITauKHpqg2AL5Yh1h1qhWqiA/
-	 wM7TRDt5Yt7gVJdy1ohMmrHfFyjdZgWcBbjnGzzVGZwIG/+Ov+oZSBVsGyGCGyH3bu
-	 LVjpw2IRptw6sFa87JZKElLRc5vpiGkiMDbSo/1tftTGTjrO/+3QLoLvRSDC63Va6a
-	 gr5bYx9CTVwRQujAPVn1n4NYndKo7cQ6lZHX3c40SKA2+yKYme+4aZV2jJWgWjJd18
-	 7NAzEwERFL0iQ==
-Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E982017E0FA8;
-	Tue, 29 Jul 2025 00:50:38 +0200 (CEST)
-Message-ID: <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
-Subject: Re: [PATCH] media: rkvdec: Fix an error handling path in
- rkvdec_probe()
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Detlev Casanova	
- <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Hans Verkuil
- <hverkuil@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 28 Jul 2025 18:50:36 -0400
-In-Reply-To: <b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
-References: 
-	<b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
- oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
- zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
- TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
- 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
- 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
- cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
- tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
- bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
- qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
- BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
- tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
- zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
- 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
- s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
- An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
- ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
- AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
- CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
- 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
- BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
- +E7ItOqZEHAs+xabBgknYZIFPU=
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-HBQA1dSSAY++JW3+CEB6"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NblPqzHq"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b783d851e6so2303920f8f.0;
+        Mon, 28 Jul 2025 23:50:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753771805; x=1754376605; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a7haeLuJT5v3aQv8eOv4BBhTxNeYgMYlcDfN4H3p9Y4=;
+        b=NblPqzHq59a4jmx1B8cWyA1DiXAG784WaCDhCRqAAXHdDAZdPuisYFdtppS9h+3Lxy
+         kwTC9IcsxJ2U12LdDqKiJgXGegx5PrP5cCRfqexL1Wx8JY9p5qJ8gLtKKjC6+cKVh+Wp
+         Z8yR34REFY9kd5nRpRwVp03F7lj6yIPXx7bufmRiJBrJnaedXJDGYDS0PHBl5ZJZUH1o
+         hOFUWt0U7P8RphZ0HWbWKx4CI4jofztmyCBOl0EY9uNSZbiBYcJoOlKdODpatrJc7Zwq
+         94bE8L27hfxFuDlLvaxkKhtJgnwXlBqsh4MjiJtSB/3lFHYZMA+KmCs+RLkZlzu5GbP9
+         oO1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753771805; x=1754376605;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a7haeLuJT5v3aQv8eOv4BBhTxNeYgMYlcDfN4H3p9Y4=;
+        b=hLcu7I0DR6RFXXf7cwMQoMArp4wkWBE09HHvtPVlTE8vtuXSTgS8N70c/zRJjsRpL8
+         et8A3/i/qajsOafWxDAW7MBPqKROc/vhnl4YOe3FlbkXuwWwTg2Q8i/7qcayinmndZnM
+         QLfKQ7UYBIDfaX0jS5x7FbIfGoDZmpRHb/Znnbwp8AIWwxuTQLdumhzeqBNhqlAnzlV1
+         eL2xiB537lxApclqH0W2OYVzGhS/hx0Ls5+6DiJGK01dBTuKBR4kUjnez308oiUNYs33
+         hJgjvvNILJgMlRVUOU2D0gG23tPWK68UupNwC+T1x3Uj/7RfR+MJD9vbdM5gujK50RpM
+         I/2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWPUuyrJNGmR8L/UGoygWcRCKVJgs5fBLu30YNvPy+UYIfWOTqvxZXydg9LcPeFx6NfYXdrn+aqshiNvg==@vger.kernel.org, AJvYcCXmQEQ1PahTfVTVBhPOkK6Hs/TJU6TrP3N6LKa6e+LD+C7oi4IoG+FfYDDpy1laheeOVn5D82DqNSxyrww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7lIecoqKm8YguCAKSpoimdSYS9+6p3bvXbTwWZBG4Fbc2KHbj
+	IEAuzxTZGPjNoB/UuVOY8gD0HOPw5yYsCaa3lNMsTnTm2YVS+HkszNPr
+X-Gm-Gg: ASbGncsqyYnzQ896oGiC1jNbCB7FkHIzmd4pOXWPx5t+07UGRKoqSefLXkv7DRihBfR
+	5P5GOlxs3pg1RTg4+0pUe56eHIHJri/k7tmuskNGyj270Qnm3kOSScSwDA8D6y1FOYPdgTDtt+5
+	+va+4u+cYdz79Gyw5+hz6P9+ut+R6hvvPV6KK9iaf6TpHI8vqKFeFSVCdbO76K3ECqeM9NAIBmL
+	hVn0Ox+yVShFl3vAWLNzbcWNP1FVeY1KDvKHalwEuj3bkfKuMK8vS7YXVicrLh7oRVqMDsUVc/e
+	BR2qPyWslEx32j8KDzEOxnPz/STbMDtsH6jf/7RtaESnAnF3ekqUy7eiYpZe2EfJ4Uw0Oa/4zSc
+	W+jB+QYey+0j/4Gmm6ovQzmYwo0yhC84=
+X-Google-Smtp-Source: AGHT+IFAq6oFD9LEGvdnmvej5FK2oM8kVMdZdRvJvsrdRhsTT6J4H0UaalYv6DCU5UcaeQImu+me1w==
+X-Received: by 2002:a05:6000:4c8:b0:3b7:83c0:a9dc with SMTP id ffacd0b85a97d-3b783c0b070mr4778105f8f.48.1753771804972;
+        Mon, 28 Jul 2025 23:50:04 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4587054f27dsm182810505e9.11.2025.07.28.23.50.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 23:50:04 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scsi: scsi_debug: make read-only arrays static const
+Date: Tue, 29 Jul 2025 07:49:30 +0100
+Message-ID: <20250729064930.1659007-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+Don't populate the read-only arrays on the stack at run time, instead
+make them static const. Also reduces overall size.
 
---=-HBQA1dSSAY++JW3+CEB6
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+before:
+   text	   data	    bss	    dec	    hex	filename
+ 367439	  89582	   5952	 462973	  7107d	drivers/scsi/scsi_debug.o
 
-Hi,
+after:
+   text	   data	    bss	    dec	    hex	filename
+ 365847	  90702	   5952	 462501	  70ea5	drivers/scsi/scsi_debug.o
 
-Le dimanche 27 juillet 2025 =C3=A0 12:02 +0200, Christophe JAILLET a =C3=A9=
-crit=C2=A0:
-> If an error occurs after a successful iommu_paging_domain_alloc() call, i=
-t
-> should be undone by a corresponding iommu_domain_free() call, as already
-> done in the remove function.
->=20
-> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
-> =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++++++---
-> =C2=A01 file changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> index d707088ec0dc..eb0d41f85d89 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_device *p=
-dev)
-> =C2=A0	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
-> =C2=A0
-> =C2=A0	irq =3D platform_get_irq(pdev, 0);
-> -	if (irq <=3D 0)
-> -		return -ENXIO;
-> +	if (irq <=3D 0) {
-> +		ret =3D -ENXIO;
-> +		goto err_free_domain;
-> +	}
-> =C2=A0
-> =C2=A0	ret =3D devm_request_threaded_irq(&pdev->dev, irq, NULL,
-> =C2=A0					rkvdec_irq_handler, IRQF_ONESHOT,
-> =C2=A0					dev_name(&pdev->dev), rkvdec);
-> =C2=A0	if (ret) {
-> =C2=A0		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
-> -		return ret;
-> +		goto err_free_domain;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
+(gcc 14.2.0, x86-64)
 
-Have you considered moving the allocation of the domain right above the abo=
-ve
-line instead ? The empty domain can't possibly be used unless the probe hav=
-e
-fully completed.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/scsi/scsi_debug.c | 91 ++++++++++++++++++++++++---------------
+ 1 file changed, 57 insertions(+), 34 deletions(-)
 
-Nicolas
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 0847767d4d43..353cb60e1abe 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -2674,8 +2674,10 @@ static int resp_rsup_tmfs(struct scsi_cmnd *scp,
+ 
+ static int resp_err_recov_pg(unsigned char *p, int pcontrol, int target)
+ {	/* Read-Write Error Recovery page for mode_sense */
+-	unsigned char err_recov_pg[] = {0x1, 0xa, 0xc0, 11, 240, 0, 0, 0,
+-					5, 0, 0xff, 0xff};
++	static const unsigned char err_recov_pg[] = {
++		0x1, 0xa, 0xc0, 11, 240, 0, 0, 0,
++		5, 0, 0xff, 0xff
++	};
+ 
+ 	memcpy(p, err_recov_pg, sizeof(err_recov_pg));
+ 	if (1 == pcontrol)
+@@ -2685,8 +2687,10 @@ static int resp_err_recov_pg(unsigned char *p, int pcontrol, int target)
+ 
+ static int resp_disconnect_pg(unsigned char *p, int pcontrol, int target)
+ { 	/* Disconnect-Reconnect page for mode_sense */
+-	unsigned char disconnect_pg[] = {0x2, 0xe, 128, 128, 0, 10, 0, 0,
+-					 0, 0, 0, 0, 0, 0, 0, 0};
++	static const unsigned char disconnect_pg[] = {
++		0x2, 0xe, 128, 128, 0, 10, 0, 0,
++		0, 0, 0, 0, 0, 0, 0, 0
++	};
+ 
+ 	memcpy(p, disconnect_pg, sizeof(disconnect_pg));
+ 	if (1 == pcontrol)
+@@ -2696,9 +2700,11 @@ static int resp_disconnect_pg(unsigned char *p, int pcontrol, int target)
+ 
+ static int resp_format_pg(unsigned char *p, int pcontrol, int target)
+ {       /* Format device page for mode_sense */
+-	unsigned char format_pg[] = {0x3, 0x16, 0, 0, 0, 0, 0, 0,
+-				     0, 0, 0, 0, 0, 0, 0, 0,
+-				     0, 0, 0, 0, 0x40, 0, 0, 0};
++	static const unsigned char format_pg[] = {
++		0x3, 0x16, 0, 0, 0, 0, 0, 0,
++		0, 0, 0, 0, 0, 0, 0, 0,
++		0, 0, 0, 0, 0x40, 0, 0, 0
++	};
+ 
+ 	memcpy(p, format_pg, sizeof(format_pg));
+ 	put_unaligned_be16(sdebug_sectors_per, p + 10);
+@@ -2716,10 +2722,14 @@ static unsigned char caching_pg[] = {0x8, 18, 0x14, 0, 0xff, 0xff, 0, 0,
+ 
+ static int resp_caching_pg(unsigned char *p, int pcontrol, int target)
+ { 	/* Caching page for mode_sense */
+-	unsigned char ch_caching_pg[] = {/* 0x8, 18, */ 0x4, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+-	unsigned char d_caching_pg[] = {0x8, 18, 0x14, 0, 0xff, 0xff, 0, 0,
+-		0xff, 0xff, 0xff, 0xff, 0x80, 0x14, 0, 0,     0, 0, 0, 0};
++	static const unsigned char ch_caching_pg[] = {
++		/* 0x8, 18, */ 0x4, 0, 0, 0, 0, 0,
++		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
++	};
++	static const unsigned char d_caching_pg[] = {
++		0x8, 18, 0x14, 0, 0xff, 0xff, 0, 0,
++		0xff, 0xff, 0xff, 0xff, 0x80, 0x14, 0, 0, 0, 0, 0, 0
++	};
+ 
+ 	if (SDEBUG_OPT_N_WCE & sdebug_opts)
+ 		caching_pg[2] &= ~0x4;	/* set WCE=0 (default WCE=1) */
+@@ -2738,8 +2748,10 @@ static int resp_ctrl_m_pg(unsigned char *p, int pcontrol, int target)
+ { 	/* Control mode page for mode_sense */
+ 	unsigned char ch_ctrl_m_pg[] = {/* 0xa, 10, */ 0x6, 0, 0, 0, 0, 0,
+ 					0, 0, 0, 0};
+-	unsigned char d_ctrl_m_pg[] = {0xa, 10, 2, 0, 0, 0, 0, 0,
+-				     0, 0, 0x2, 0x4b};
++	static const unsigned char d_ctrl_m_pg[] = {
++		0xa, 10, 2, 0, 0, 0, 0, 0,
++		0, 0, 0x2, 0x4b
++	};
+ 
+ 	if (sdebug_dsense)
+ 		ctrl_m_pg[2] |= 0x4;
+@@ -2794,10 +2806,14 @@ static int resp_grouping_m_pg(unsigned char *p, int pcontrol, int target)
+ 
+ static int resp_iec_m_pg(unsigned char *p, int pcontrol, int target)
+ {	/* Informational Exceptions control mode page for mode_sense */
+-	unsigned char ch_iec_m_pg[] = {/* 0x1c, 0xa, */ 0x4, 0xf, 0, 0, 0, 0,
+-				       0, 0, 0x0, 0x0};
+-	unsigned char d_iec_m_pg[] = {0x1c, 0xa, 0x08, 0, 0, 0, 0, 0,
+-				      0, 0, 0x0, 0x0};
++	static const unsigned char ch_iec_m_pg[] = {
++		/* 0x1c, 0xa, */ 0x4, 0xf, 0, 0, 0, 0,
++		0, 0, 0x0, 0x0
++	};
++	static const unsigned char d_iec_m_pg[] = {
++		0x1c, 0xa, 0x08, 0, 0, 0, 0, 0,
++		0, 0, 0x0, 0x0
++	};
+ 
+ 	memcpy(p, iec_m_pg, sizeof(iec_m_pg));
+ 	if (1 == pcontrol)
+@@ -2809,8 +2825,9 @@ static int resp_iec_m_pg(unsigned char *p, int pcontrol, int target)
+ 
+ static int resp_sas_sf_m_pg(unsigned char *p, int pcontrol, int target)
+ {	/* SAS SSP mode page - short format for mode_sense */
+-	unsigned char sas_sf_m_pg[] = {0x19, 0x6,
+-		0x6, 0x0, 0x7, 0xd0, 0x0, 0x0};
++	static const unsigned char sas_sf_m_pg[] = {
++		0x19, 0x6, 0x6, 0x0, 0x7, 0xd0, 0x0, 0x0
++	};
+ 
+ 	memcpy(p, sas_sf_m_pg, sizeof(sas_sf_m_pg));
+ 	if (1 == pcontrol)
+@@ -2854,9 +2871,10 @@ static int resp_sas_pcd_m_spg(unsigned char *p, int pcontrol, int target,
+ 
+ static int resp_sas_sha_m_spg(unsigned char *p, int pcontrol)
+ {	/* SAS SSP shared protocol specific port mode subpage */
+-	unsigned char sas_sha_m_pg[] = {0x59, 0x2, 0, 0xc, 0, 0x6, 0x10, 0,
+-		    0, 0, 0, 0, 0, 0, 0, 0,
+-		};
++	static const unsigned char sas_sha_m_pg[] = {
++		0x59, 0x2, 0, 0xc, 0, 0x6, 0x10, 0,
++		0, 0, 0, 0, 0, 0, 0, 0,
++	};
+ 
+ 	memcpy(p, sas_sha_m_pg, sizeof(sas_sha_m_pg));
+ 	if (1 == pcontrol)
+@@ -2923,8 +2941,10 @@ static int process_medium_part_m_pg(struct sdebug_dev_info *devip,
+ static int resp_compression_m_pg(unsigned char *p, int pcontrol, int target,
+ 	unsigned char dce)
+ {	/* Compression page for mode_sense (tape) */
+-	unsigned char compression_pg[] = {0x0f, 14, 0x40, 0, 0, 0, 0, 0,
+-		0, 0, 0, 0, 00, 00};
++	static const unsigned char compression_pg[] = {
++		0x0f, 14, 0x40, 0, 0, 0, 0, 0,
++		0, 0, 0, 0, 0, 0
++	};
+ 
+ 	memcpy(p, compression_pg, sizeof(compression_pg));
+ 	if (dce)
+@@ -3282,9 +3302,10 @@ static int resp_mode_select(struct scsi_cmnd *scp,
+ 
+ static int resp_temp_l_pg(unsigned char *arr)
+ {
+-	unsigned char temp_l_pg[] = {0x0, 0x0, 0x3, 0x2, 0x0, 38,
+-				     0x0, 0x1, 0x3, 0x2, 0x0, 65,
+-		};
++	static const unsigned char temp_l_pg[] = {
++		0x0, 0x0, 0x3, 0x2, 0x0, 38,
++		0x0, 0x1, 0x3, 0x2, 0x0, 65,
++	};
+ 
+ 	memcpy(arr, temp_l_pg, sizeof(temp_l_pg));
+ 	return sizeof(temp_l_pg);
+@@ -3292,8 +3313,9 @@ static int resp_temp_l_pg(unsigned char *arr)
+ 
+ static int resp_ie_l_pg(unsigned char *arr)
+ {
+-	unsigned char ie_l_pg[] = {0x0, 0x0, 0x3, 0x3, 0x0, 0x0, 38,
+-		};
++	static const unsigned char ie_l_pg[] = {
++		0x0, 0x0, 0x3, 0x3, 0x0, 0x0, 38,
++	};
+ 
+ 	memcpy(arr, ie_l_pg, sizeof(ie_l_pg));
+ 	if (iec_m_pg[2] & 0x4) {	/* TEST bit set */
+@@ -3305,11 +3327,12 @@ static int resp_ie_l_pg(unsigned char *arr)
+ 
+ static int resp_env_rep_l_spg(unsigned char *arr)
+ {
+-	unsigned char env_rep_l_spg[] = {0x0, 0x0, 0x23, 0x8,
+-					 0x0, 40, 72, 0xff, 45, 18, 0, 0,
+-					 0x1, 0x0, 0x23, 0x8,
+-					 0x0, 55, 72, 35, 55, 45, 0, 0,
+-		};
++	static const unsigned char env_rep_l_spg[] = {
++		0x0, 0x0, 0x23, 0x8,
++		0x0, 40, 72, 0xff, 45, 18, 0, 0,
++		0x1, 0x0, 0x23, 0x8,
++		0x0, 55, 72, 35, 55, 45, 0, 0,
++	};
+ 
+ 	memcpy(arr, env_rep_l_spg, sizeof(env_rep_l_spg));
+ 	return sizeof(env_rep_l_spg);
+-- 
+2.50.0
 
-> @@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device *pde=
-v)
-> =C2=A0err_disable_runtime_pm:
-> =C2=A0	pm_runtime_dont_use_autosuspend(&pdev->dev);
-> =C2=A0	pm_runtime_disable(&pdev->dev);
-> +err_free_domain:
-> +	if (rkvdec->empty_domain)
-> +		iommu_domain_free(rkvdec->empty_domain);
-> =C2=A0	return ret;
-> =C2=A0}
-> =C2=A0
-
---=-HBQA1dSSAY++JW3+CEB6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaIf+vAAKCRBxUwItrAao
-HIh7AJ9siqERzUwFpo03WB/ccY47zYm2BwCcDeERz+YrhGQaSfBNmTmJ7h2Kxgw=
-=gy7Q
------END PGP SIGNATURE-----
-
---=-HBQA1dSSAY++JW3+CEB6--
