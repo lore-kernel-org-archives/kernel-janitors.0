@@ -1,78 +1,69 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A6714F70;
-	Wed, 30 Jul 2025 14:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F8F1C7013;
+	Wed, 30 Jul 2025 16:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753885784; cv=none; b=AkcVHPE6WTTSNUYN6zokGT10FtjEiwc0KHrC3ldBaJpFuEp9S3WlgWpXeaG0OntcFvcWaJEW9o95X4UAlauOYG3rZS61IwFeMntiLYobvZACqh9tDI6/LZY8vK5latv27l3Bi8iQKaCyX6jwi2Ul00/zk8oYYv3VGzA3+r0UTXM=
+	t=1753892871; cv=none; b=cEjxy9Dx4ceiSn/8QbBmRkzu5apPWdSSoGJf5aQyjJITnhETs0Tz2WD6J/YjpYjnccfmvoTEfhgKE711BeZ0FpolsWC9/lNKkmsmTaObHThiAttJvxQNU1OnSG1TBs5W3ej9wqhCx0McTL5UiebZDBKOHkx+Uup2Y9GGFVtcHbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753885784; c=relaxed/simple;
-	bh=8ADkRjqjuN5vohfHGdPq/PNNlSy0iV6Gdob2XuiQer4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qe2WE5tDriiMMkY9yqkEDRL+wYraFJgEUhJr8wTE/w0j/MxyWbxeydcjRukrJn4AmIyHRJQp8LSaf2lQ3xrmXcf85KboV5LQCMqTZOiKLnX6s+5MU173fjTKt1Tvoa5y/NN3GyyDi3ylzlVao9E5V9hPjHUZmwaisGz0Xsjsrfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cUPWoHH4; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1753892871; c=relaxed/simple;
+	bh=IBd88+g75enem8ZFwiFE6FmfjZAFd6OhLTrZnh/J7ls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nsTh9KTc4u7ccZTP+nshNFgHtPiiTObnXyj1fXztya+p9ceWIlroHMODzfSj/9wr58ThhvbNsAhPY56bA9YLJuim3oVeMUe0s0Vfgdz0gdmUuJ6xzmNFscvn9DE+/6Pi+hH63h24KAMfeEnALZ2Qc9LaedH5irFuqATZBzcyX/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ep5n4pl3; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cUPWoHH4"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45896cf24ebso6012095e9.1;
-        Wed, 30 Jul 2025 07:29:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ep5n4pl3"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45892deb1dcso5704065e9.1;
+        Wed, 30 Jul 2025 09:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753885781; x=1754490581; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753892868; x=1754497668; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7AlJVmOGzAKicB8PmUMEgldR0Po2jcqiFiRrgkUSQyY=;
-        b=cUPWoHH4V15X4eM7j8XBIaYy0A4ACfAWSxIur9PXVqvEJzMeev/vXwvSbGZHWXuYtM
-         RC+MV2znPIgkPfZOvajolG/MVcOyO1rdE96j8vKN+CqsRBzykYooXLcIHGeiQ0Oa98bq
-         hDIFP0bEY8BtB9HCvxBMh6ucaQjJ5HDPHj3PKjGkNhQJY9kdtf4Efxl/Tu93qVbpbF0a
-         6FlqCEZ2nAD0ULcJA1vOhrVru4KO3drTksk6MFbneNgb0THhXbkm5ekdDbv8bQizIhel
-         kKs/IT5Lr7Tz6fBk+10ZwHmHylKL2Az8GS2eJhT2UVjvybHQS8HtgZbvvGWyGfGl3t/f
-         8atQ==
+        bh=6BqqfmK2qoQp6Ai7p0EgtaM5Od+R/trV0qF5iEdPoHE=;
+        b=ep5n4pl3Tm3pkjK2gf0ISUv1oB+pTLRKK3QIP8Gg7xrjsrEyf3IMyRmaU66DfxOlOM
+         07vO/UKkSlZMQkMp4FB5impVCh6aBGDmVAWaAtNNRURWhssyAnkO3FdIwa0vnwu7Us5s
+         S4hc7GYjnIOiw6Bj6oHv5HZU3FSI2N0NrysQFa8Q86ZhyUdRITFlhIUNKamTeGJjEFaw
+         3sbWdxMhle9h4KPTw9Mkojiz7dmAp5myBrIi2lZ1mzcyNjJ2jZzYOOCl/icmsffj4qvh
+         zxgkdYlS89OSPIYcJ7uTz3SFizAVDA4UXrVB+sds7qu8zTdc/9bCI4ax+9Jq5raDCd2v
+         /OtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753885781; x=1754490581;
+        d=1e100.net; s=20230601; t=1753892868; x=1754497668;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7AlJVmOGzAKicB8PmUMEgldR0Po2jcqiFiRrgkUSQyY=;
-        b=EQsHGyVWyaDw0uBjfgLsgNWggFjNq3smP1Y8wM+GkD06GzSm+RKNbf7/YLyFEb44sE
-         HcCFNzfaY/Etdin8PTzoBLM8ai4H5v62cSfvvYD44IkZ0Es7Pdzp6lDG92x/GfF5wvcj
-         NOJOqYxPvweCcHVuVQ0SMy0/Mbt9GsdpNzcQAQJQFNJHjypkfXJiLk+MDFg63IHhEVvr
-         kWbNZMdHJ/hfctThQ/sGbMUkb4K+SuYgE0dfl4WQh0/ELD5WjtdiiT0XmyIt9/Z4RlCE
-         jeWlCnMZ8lRj6z8c6ic71ckaOA2vRifqAltUCUCMxjdBqnRYSimsiWjSkBIbooBp6jpH
-         bIlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLZ/OiRmu0rZp2Oxo7vJiY62XYWGdjRc0MRxswDOPUblbrZVqvHAh5lMyyuezynOT3jRuBOsQO2GVxO7Mb@vger.kernel.org, AJvYcCVteddVi7upzRDvfMFxricET5uU5EQ/VDZykgjsIL5pZsA7UDPnAuPWJnZ1KpgOlGsVQGfJidLiCm0fGgPC@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj7Wo6h8ur+aIZIc8a6kKHdrqqj8dEud47ayGUH5EVpiLF1CAD
-	QRjhs3aHNIUedOiCnkSFjwA7M6eRrY1shzJwvGVSJ8enG2PoVX/u0dt3
-X-Gm-Gg: ASbGnctf0+y0J8utXcw5Kk2wVeoYbmBKJpy7LIhAkYM6QX9gbvs74nAq3nQdBg7woOA
-	ssem8CZUdP142VAwrcZBP9wW6y7YZqehg3iUXUcgYwo0SK+xDlLIidYXzlxdFy4oQ8pHK+OjE73
-	eXPJge8sCA9RvqNap2RVXC9J0kVbLuiI99vKWgs0pvD8cqfSpWm/Aqu/y+3tAI1qYcdWhdeTlX7
-	pRving/bNcN45/89Db3jCMzTrFS9uQiFJq1F/98jzUEX+dUSNBeBLeBDUS6JI+w+1UjaSKK05rq
-	Z6TKd/ydk3zaDLKrPi3mCyrbJAh/7j1/M3RMvvjrVBuCXA/pds2hYAxAP5YWXlCluOqU5zZsF4Z
-	IBfDcILvBcQ5P3KRNfAZq
-X-Google-Smtp-Source: AGHT+IF5QJ37jWg7fCnJbb/VaKNBhipzgn5fvN5Soc3F0FylcMx9EfIgS05bdT263onDGTvzEzsZGA==
-X-Received: by 2002:a05:600c:5391:b0:456:58:1114 with SMTP id 5b1f17b1804b1-45892b9d05cmr33734855e9.9.1753885780632;
-        Wed, 30 Jul 2025 07:29:40 -0700 (PDT)
+        bh=6BqqfmK2qoQp6Ai7p0EgtaM5Od+R/trV0qF5iEdPoHE=;
+        b=TQgpQnZk+Kh0f1k7xaCzCrBlaKvhM19DjJmPsXQKTDjeZbD5fAcdcu2mlZa3/z2W28
+         jCdzCWKM64LDpictZaLuCON2qEepJrcmKbJ1vIJKp1zqsa/SW3kCdZyitv4/W340tphW
+         /4wGHEAMvJnQwvlPMdEqeymHMi3kjiP6NhdpKCU6wxD6TR5VlHcvtFyjFtKIf0i/1wvb
+         v7G6Cukac6FM2Vo7DhlBnhpJrb+9QfTD4veyhR7LJkd/kBnj75VhWYZ6rZ6QPKvnsnWQ
+         G1JvK9kbu82PVFcivtioCn+Uyv5FgsYy+PRWqRDOd6si+QprxgLHB4uyzQ+D1vTJOTRq
+         vGng==
+X-Forwarded-Encrypted: i=1; AJvYcCVqWN7vQryBi35mo2FJdg2QYJ6C8dShoDO1/ChybBcSNT4i7JBzBVBt441emAsS0lFusHeGGJzVvdk=@vger.kernel.org, AJvYcCXzkgSHlWpRmoePtplQMPEl7xXo1PPJjYt/jG9MiC/j0XUwxssgXhWaoY32dQtTaUl+b0nG6G8ajZqKknnq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKB07QIJcpv5kiimMUYxpi2M6gaTl7vbkJPbGSpWGae9m6WkV5
+	uh+vBXzcSPDDU8+wqNiWHJDTkOX2mIzzBi9NxYbM7kMq30xpAmzLbdQW
+X-Gm-Gg: ASbGncsBs1JqGqk8MmIDlhC7maZzthRM5hIfDuHq8bGxUMIQRkX/XXHKKyZBO+1Q6ba
+	KedGS+90nzI+qI7tvMJ/Yp8YzHpifO94jyb778nIpUvX23rakQ5oN2J11xMQb7zJRiTJBmFsSCp
+	0HVKX0FAWNzqR/eEpy7a84L+hVSEnJxL8wK+Ca1L/dJ3MziXzw8pwdhO3bxy2EqL7uzUlbq3tZA
+	rk0Pc+tNPBNFzGEvddHy/+bkF1NrWU/1bWvjADV5pUeiQA7B6DXcw7Q6N23COvxkHMcnFAY4Yv4
+	/k7TZg0eOh/VQ2CF5NDqrxpvyFc3zZqsQrsrDA2USJWWW4kTyqKGjJ+8MNEpXpD6yojH3dsoR8K
+	9WXjvjeCloSJS+iNTF/6DYGxTFbYsbO0=
+X-Google-Smtp-Source: AGHT+IFNTEfL8MXUiyul7/qYy2OufuFwuC1wS29v9JYelkS5QR/IryALVLKRVISTNCURBmibZxI9Yg==
+X-Received: by 2002:a05:600c:3488:b0:456:2d06:618a with SMTP id 5b1f17b1804b1-4589c3650eamr18294605e9.18.1753892867826;
+        Wed, 30 Jul 2025 09:27:47 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4588dda59cfsm38833425e9.3.2025.07.30.07.29.39
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589536bc42sm33362385e9.7.2025.07.30.09.27.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 07:29:40 -0700 (PDT)
+        Wed, 30 Jul 2025 09:27:47 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org
+To: Vinod Koul <vkoul@kernel.org>,
+	dmaengine@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/msm: Fix dereference of pointer minor before null check
-Date: Wed, 30 Jul 2025 15:29:05 +0100
-Message-ID: <20250730142905.2080035-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] dmaengine: ppc4xx: Remove space before newline
+Date: Wed, 30 Jul 2025 17:27:12 +0100
+Message-ID: <20250730162712.2086439-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -83,54 +74,36 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Currently the pointer minor is being dereferenced before it is null
-checked, leading to a potential null pointer dereference issue. Fix this
-by dereferencing the pointer only after it has been null checked. Also
-Replace minor->dev with dev.
+There is a extraneous space before a newline in pr_err and dev_dbg
+messages. Remove the spaces.
 
-Fixes: 4f89cf40d01e ("drm/msm: bail out late_init_minor() if it is not a GPU device")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/msm/msm_debugfs.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/dma/ppc4xx/adma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
-index bbda865addae..97dc70876442 100644
---- a/drivers/gpu/drm/msm/msm_debugfs.c
-+++ b/drivers/gpu/drm/msm/msm_debugfs.c
-@@ -325,25 +325,28 @@ static struct drm_info_list msm_debugfs_list[] = {
- 
- static int late_init_minor(struct drm_minor *minor)
- {
--	struct drm_device *dev = minor->dev;
--	struct msm_drm_private *priv = dev->dev_private;
-+	struct drm_device *dev;
-+	struct msm_drm_private *priv;
- 	int ret;
- 
- 	if (!minor)
- 		return 0;
- 
-+	dev = minor->dev;
-+	priv = dev->dev_private;
-+
- 	if (!priv->gpu_pdev)
- 		return 0;
- 
- 	ret = msm_rd_debugfs_init(minor);
- 	if (ret) {
--		DRM_DEV_ERROR(minor->dev->dev, "could not install rd debugfs\n");
-+		DRM_DEV_ERROR(dev->dev, "could not install rd debugfs\n");
- 		return ret;
+diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
+index 9d2a5a967a99..61500ad7c850 100644
+--- a/drivers/dma/ppc4xx/adma.c
++++ b/drivers/dma/ppc4xx/adma.c
+@@ -874,7 +874,7 @@ static int ppc440spe_dma2_pq_slot_count(dma_addr_t *srcs,
+ 		pr_err("%s: src_cnt=%d, state=%d, addr_count=%d, order=%lld\n",
+ 			__func__, src_cnt, state, addr_count, order);
+ 		for (i = 0; i < src_cnt; i++)
+-			pr_err("\t[%d] 0x%llx \n", i, srcs[i]);
++			pr_err("\t[%d] 0x%llx\n", i, srcs[i]);
+ 		BUG();
  	}
  
- 	ret = msm_perf_debugfs_init(minor);
- 	if (ret) {
--		DRM_DEV_ERROR(minor->dev->dev, "could not install perf debugfs\n");
-+		DRM_DEV_ERROR(dev->dev, "could not install perf debugfs\n");
- 		return ret;
- 	}
+@@ -3636,7 +3636,7 @@ static void ppc440spe_adma_issue_pending(struct dma_chan *chan)
  
+ 	ppc440spe_chan = to_ppc440spe_adma_chan(chan);
+ 	dev_dbg(ppc440spe_chan->device->common.dev,
+-		"ppc440spe adma%d: %s %d \n", ppc440spe_chan->device->id,
++		"ppc440spe adma%d: %s %d\n", ppc440spe_chan->device->id,
+ 		__func__, ppc440spe_chan->pending);
+ 
+ 	if (ppc440spe_chan->pending) {
 -- 
 2.50.0
 
