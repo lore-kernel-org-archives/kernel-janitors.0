@@ -1,76 +1,50 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0C52D8DA6;
-	Wed, 30 Jul 2025 13:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE762D9482;
+	Wed, 30 Jul 2025 13:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883721; cv=none; b=SEv3YFY0zrM/TsVxxUd/9QfRWNrdFUXxyWJCLVpLIw55YtX+IgA1KSSfgRjjGSASJQu9Rw3UvKoKJn0WJYn2VQQGjjsVbiompCs5K8nH+j0GjOAzptKuCM/5gNx0ZOSewzbBAGy9BfoeE+mHv9y9VG2hVcORA1Fs6kgOPCkjt7o=
+	t=1753883859; cv=none; b=BLt5CzW4M79de08QFco0p2K42OdEVZhwJUGsTpcYqE2JwYVq/FhYh9aUjj7FFncDEJwAqvp/FSUwqgP6B7EAOSkxvbw1LPp9GiONZed2Arv4RWgCiz8Yi9+wjvJhj/kRMFy/hZygJ9pQGyYCivyqO5r2gkEnaO8hcMBnDU09Nic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883721; c=relaxed/simple;
-	bh=YU/dW/YfvlTH/hER2tJp/xqGvn1giFSqovo//0fzglE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C7LRqH1rWf/ASqN6UZiNgcwGLHQS/JSmysgKO8B754BoETJtWpwW6mn1Y/8wWJLQMFbHYZDAsIQotHTJjX3k0G5jq45la+B9I1K6Hl7/MGOgXRYR85Ac3HNEVWcTIoJab4PKpsaGggGjsltbdQZ53bDkunxZe6gF1omYBFmWhnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5Rawgom; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753883859; c=relaxed/simple;
+	bh=1LsoPXULwa19yD1hsUghgaJhhSgb4fsudezH6xVcUl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Aqxd60Q3DefsT9Q3kIhiEF3loIIhx73zJpLRoQ80aogAXhpB4FyqHF+hkTFePRj1PT7b5yHNhPQMPs+w+rfrCqHioYc2XKNWXBwM8OqNU6IY1/0ylESM0oyvmAhSERKwnwdynrFKdzCiOuQAKBuI0Mc0pM2hGkK/L0XkKKryFmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCnRjt9W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5Rawgom"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a54700a46eso3295887f8f.1;
-        Wed, 30 Jul 2025 06:55:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753883716; x=1754488516; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lDRUrR7jLFhjPK5l5cm5SkFUJ3UJ78G28JJkY+HeZyU=;
-        b=C5Rawgomg+cfd5gLvtMmmvQ9d8KxfV5VdfHvcvH6ZB6lhw5gOdKCBXFN44sp3/8y5J
-         IHgtskMXKvy9d668I4d0t3mJzDigl2vmrSJjJwNNRi5S/uwqphK4oDywR0Ce3tUBa4lZ
-         CxM4jY8dgCf998URg2H9AaUKFWUj5ESIIPnpX3hcdTYgzHLTmXoQOYQRI0YxbA96Io9X
-         X+pXOicMLLW/M9ZyhuoyNoLQR+LTh0MG7AlIhthn3Io8urJWBa3a+gl5MQ5RXdJ/ZUcS
-         MZTWaDoZP6D77DaL98oJqV6JZm0KzsPTEFBoq4EzHytwkSHqeOIA9hZ+7oEQ1aAr5/J2
-         yLrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753883716; x=1754488516;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lDRUrR7jLFhjPK5l5cm5SkFUJ3UJ78G28JJkY+HeZyU=;
-        b=jHHEwBVh9bk8WL8i63LTu6keeUpgGa5EsuPCYaaYrOIHitK9VzWWnnFhZIxsnoLAbZ
-         HITOLIGWurKjfvfOKY/hvNLo5ZaO8pWJyl6/jU+MFFp5O/iNZgXmftAcGaN1yQFmjxs0
-         /JVnK5lSvGR09VMpg3PYYVBsLKaQQomYXfr2vIUimIbyaKs53hNrJvRhMybwJcWoGaEH
-         OREyWUIuDpK1nRmN+XhpdngjxOwppOlYE7C9BPgOr6+7lRYFkxoGFGjiBWeCgwgWibkp
-         v6RuVxnUDPjRSsfbKjLs1X7A4diUFHYJ1dsiXubDyIBEjagwqpnPH8I7kBjE7dAJaXQJ
-         6xlw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/MjNvnhFkFOARVn6wN55hxAWBnR0lIDnZ2uhTWZLLpz/HBxf20q3eZFfEsms30wImwV6KrF/GZLHkxoU=@vger.kernel.org, AJvYcCV/Z2POQ2NQDY+BVprGrbTqhZar9ZVW558dtbaNzHfhJFYrh5X9GoRjZS87rUSoPYmOSASNLlKzxh5Gj1I=@vger.kernel.org, AJvYcCXIAR+9FlqLU1R+WfKSqVk4QfWTkCWp/OQldSj4+ew8MpG7AxHkJyu0ce0LAsX+pRRQJDFprfG2fRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvpajSpZYr0yK4aHLwInEWQFhQRPMBdsopfPXY35PX+m/tq9Qj
-	qLeLWOq1kiLcaGtY8Ee8uCfIeAodKcgf2LpUJ7iqkjydRkjhb9v9KihU
-X-Gm-Gg: ASbGncsCVFFI7oFyqdi93OgS/Cv0TiBB4iW5kkSCkJvi2DcrQPZ8uxTg+LhiyonySwA
-	gKghpYeoXZyyjJzvpZmltzHHJ9exYdhdrWa5+tD0FyjiL8g6EL0J4ZiXNgMKxZ/HNM932JVStDN
-	6b8iu94LQKf4Nk8T4XnDKmB3XHSx4VdRWxMuCo+wjnfQs2BZQHawTGhMYojgnsXP57zAWq7I+kF
-	+ZjVJyuRTg3LQvthAT8q7syLMdu/HZS9s3Aay8+1Plt3fe0hylMm+opjx2OX0YaJDtbc0LdwDN1
-	9/CHm+ypV7KoUR2rXcPKj5jJFLWLOefbQY81vlTOCQymmADqS6UHEzhhIhDti4MbyN6kPenowKn
-	ToV9viOL5HKPd8mL3DXaX
-X-Google-Smtp-Source: AGHT+IG84gA8NDQL60kl/IRMOVr/pEda4caIsf6Y3Ezh+Bzhl38QjVGbmdzGZ66AzfHUoXZVqkeigA==
-X-Received: by 2002:a05:6000:40df:b0:3b7:8228:7a35 with SMTP id ffacd0b85a97d-3b794ff8988mr2691890f8f.46.1753883716203;
-        Wed, 30 Jul 2025 06:55:16 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778eba147sm15966246f8f.27.2025.07.30.06.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 06:55:15 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCnRjt9W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD3AC4CEE3;
+	Wed, 30 Jul 2025 13:57:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753883858;
+	bh=1LsoPXULwa19yD1hsUghgaJhhSgb4fsudezH6xVcUl8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jCnRjt9WICdEy7fOXeBxQVXQHO1t+Q8YpV0bD55UmFW7rYn3oRY3UJQwJ8wxHjrmO
+	 w8i9u0wQKazmW5Ff0rOvXA0RZrCfoKXju9uGk11n8NCsbaqnEUUVN5/LW17ngrGKGh
+	 LAnA4P6/lhP2tT3oO97sxJYU3pXPXDN37GYe8r62VoHjq0pK+4YKCQWMe5XH1HT2Yr
+	 6eCdTH+3hpP6TlGTzknX8JkWxIYLQA9FHyKaSnhrlTYZs1CPZxjEQg6rOzU3l3O/gf
+	 V07LCKRCFyN3p9s7S0ddf+rqQW1pvvHBDJ04nJXF0ZDAjaAQ497Bm0sfmDhCDnQ+yc
+	 LQsgDlqtHo3Gg==
+From: Chuck Lever <cel@kernel.org>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org,
+	Colin Ian King <colin.i.king@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] thermal: tegra: Fix dereference of pointer tz before it is null checked
-Date: Wed, 30 Jul 2025 14:54:41 +0100
-Message-ID: <20250730135441.2078022-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] lockd: Remove space before newline
+Date: Wed, 30 Jul 2025 09:57:34 -0400
+Message-ID: <175388383179.79309.545309960517317887.b4-ty@oracle.com>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250729130709.1932507-1-colin.i.king@gmail.com>
+References: <20250729130709.1932507-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,45 +54,19 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Currently pointer tz is dereferenced before it is being null checked
-leading to a potential null pointer deferernce issue. Fix this by
-only defererencing it once it has been null checked.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Fixes: 6fc2e1a5f98f ("thermal/drivers/tegra: Switch to new of API")
+On Tue, 29 Jul 2025 14:07:09 +0100, Colin Ian King wrote:
+> There is an extraneous space before a newline in a dprintk message.
+> Remove the space.
+> 
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/thermal/tegra/soctherm.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Applied to nfsd-testing, thanks!
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index 53a5c649f4b1..53fa6099b67f 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -585,14 +585,19 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
- static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz,
- 					const struct thermal_trip *trip, int temp)
- {
--	struct tegra_thermctl_zone *zone = thermal_zone_device_priv(tz);
--	struct tegra_soctherm *ts = zone->ts;
--	const struct tegra_tsensor_group *sg = zone->sg;
--	struct device *dev = zone->dev;
-+	struct tegra_thermctl_zone *zone;
-+	struct tegra_soctherm *ts;
-+	const struct tegra_tsensor_group *sg;
-+	struct device *dev;
- 
- 	if (!tz)
- 		return -EINVAL;
- 
-+	zone = thermal_zone_device_priv(tz);
-+	ts = zone->ts;
-+	sg = zone->sg;
-+	dev = zone->dev;
-+
- 	if (trip->type == THERMAL_TRIP_CRITICAL) {
- 		/*
- 		 * If thermtrips property is set in DT,
--- 
-2.50.0
+[1/1] lockd: Remove space before newline
+      commit: fbdcd36f30cbf78f39c731a30337251d9f1e91a3
+
+--
+Chuck Lever
 
