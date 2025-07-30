@@ -1,279 +1,176 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012037.outbound.protection.outlook.com [52.101.126.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AFF1DDD1;
-	Tue, 29 Jul 2025 20:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753820937; cv=none; b=YpvuDJx9nwkLnduQAkN1yw/p+CtfYxtttmPZkE3jf6fSuCQvw77FO8F2QlzHLYldh1LSHn9saILvHyM4mJ9wdZoQXX2WMy1cQmuH3EselSXyNZfPeImKd1F3R2vXDli69Xins93D5HVrEm8M9DeaebWNF0JclNy7P9lI0kw0a88=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753820937; c=relaxed/simple;
-	bh=jZMrI5UUMbuZDiGnt8FkFQimvckPilm2MrcZRDKWVHc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TLLVyRcXToKfjbi8r2YnsuJvUKbU4787m+lQOFcpZf6ByJXIiBY9k7zgf1e3jTmCFLSaUU3BQTeWLoBBj/933wJ9CX8QqttjzsIzuBcvaPFX5t3aNaIo7jnhakhwBbgMy7CgN8sJ4s6y94AiYppAZZLm2aMHg1MlFv8Xgh7vUrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oEBbTxd3; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A42BA33;
+	Wed, 30 Jul 2025 06:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753855908; cv=fail; b=uyDtL4+I5UG/a91lViVslfW3YPC0TGfDeSXVfD29lLtdlMYLBQrfrqBZvqmay67s5TYFH5+xHBvQ3t7ZlyZcJSHeCtdryZpx/mfdoxXor+QNwcRz9W5TRfDWGZs39n6KV26H53v94clEN4YzhmHax0RmG3kTroHlWS55EybSaio=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753855908; c=relaxed/simple;
+	bh=IK/yTEnPGPygRB6JWsp6pDibwKdMbwMN4IiEOC27dXc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=o6BixsDXkKba2+a8DGdI/HOGDAWgt8tCPh5RmM07q+oEczTVeqAiUshL8Kj0nKDbWmEjVVaCjzzDWs9XljIFNmm5qw9agwxBxBPVRk4UcFXF4+1A+/5QqTZlqt8JEq5ORd29nwTmRAZ/ux2N+jvdjPcJfNkQPQuOHK4uooozRik=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=NR8aqcAw; arc=fail smtp.client-ip=52.101.126.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oEBbTxd3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753820933;
-	bh=jZMrI5UUMbuZDiGnt8FkFQimvckPilm2MrcZRDKWVHc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=oEBbTxd3KVDL4gP8qEqUcbEzbglIvu61cPRJma43SBVByqj19YVbfMq4GaSrlxzgl
-	 YVyAE/VV4kpMmv2P04eg/mDRALf2fX0X8o1szBF3Vf1XBhGvrs5IN07jymf/LCdNFK
-	 ifcTkLbhUAsMQVVHOgofnWErTrcXkDEwgeJkJuYExyu1vAZx1mATpR/Pzwmg11yjDP
-	 vXGQyXr796C/bsujGRrIwVUwih33Zsa9X9CtKfG4WcBEDXVjXhZ3EYZUzSEJfeQPj/
-	 zbrIlnJlWRRBfIbEu6ngEknbi3FCdm+vxeSj+HmAf1m8P8r5xI9bShZxy2BHGX/BOO
-	 REa+3g5DDqvbQ==
-Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0451317E1293;
-	Tue, 29 Jul 2025 22:28:51 +0200 (CEST)
-Message-ID: <75434480affd424f3be4885acc3f18e57423b72e.camel@collabora.com>
-Subject: Re: [PATCH] media: rkvdec: Fix an error handling path in
- rkvdec_probe()
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Detlev Casanova	
- <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Hans Verkuil
- <hverkuil@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Date: Tue, 29 Jul 2025 16:28:49 -0400
-In-Reply-To: <884293c1-f6f4-48b3-a5d9-9b41fa8614a5@wanadoo.fr>
-References: 
-	<b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
-	 <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
-	 <884293c1-f6f4-48b3-a5d9-9b41fa8614a5@wanadoo.fr>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
- oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
- zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
- TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
- 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
- 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
- cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
- tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
- bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
- qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
- BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
- tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
- zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
- 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
- s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
- An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
- ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
- AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
- CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
- 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
- BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
- +E7ItOqZEHAs+xabBgknYZIFPU=
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-05BjQuggd1guXcSOOvaz"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="NR8aqcAw"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aXiUrqB+5+/Oi5rOewPfhoVKHFjQk5xukghuxbTDVc6TueZcUDnXsNd9Gj2YnqtDkUpcuPi3DKPvhCTyFH7+BXfyEvlnR060l0rRGFs8gGvzCleE9fiTSDwB57KCQjQR+uoYW2rRg/3z/QQe3u4IG1Zu00aCf9W4cCnx0+xr05J9bVMJCGQdB/fQrPOso0LDuBIitMYSYFrGJfZL6FZAQKvilW6WL97HheCRzYIw20GnrN5fs50n6dB1RJ5RXRa5pQy7XhGEWsuxYIFsLqcTHi0H+LhXNN+gQ+zUSZL35ymURi88y53mmXBtC+y6L0gRnYt+lQ247TeshPQH9bCDgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OIovpqM3AEHEjFxzYyuCqqxpdBSSpkDaDtkgQP1r+CU=;
+ b=V/GBrGITaprj1zcoW8bPFnArHs+AITfDzwtazg5o20V/cRoxqBvgzOiAZzyRDkuMwwrCvvNGoEXZ08AtXDQZfFSZDHLcuf0iTT0PFEL46i7fIbp3dW52uD/gYKrwSTABfECYx9i1AIf3EW6m4VvDVbH3kJnv7x26xaQLsdIK4628f3AblzNYREY7nH/LplUOJfJz2wsK9lcYDNCDYQKMgLYaaB8ZO2N70FXPkHQ7GaUUq/HocsZeoV2cuD/Hb26vYODnvX/a0bSq98c3t+HhQuZaB/+tyE0SvZGrmsScmySHsGYcGM1Ua0xTUvAPVBpPRR5kE/RQ2KYEHuPggzO7wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OIovpqM3AEHEjFxzYyuCqqxpdBSSpkDaDtkgQP1r+CU=;
+ b=NR8aqcAw+BhHo2pERZQXUyr0zO4zcttZiSYbrSr5cwn857FPHzq9N/9E+rSWHT8SkAShgnwohpRjTHWJaQJ/fXIeScJYqw//CYjkdGrLmyX3c32FbRcN0c1yKHSrx7vWA4D1hoyBqK29o5zpVChr/OgC4PX9J9lMc2fZMaPp5SLqIHFQeW9Co72a/LGDQBNbDAxV6XN/cyDfUrP9Gx4vhRyfLByzwhrd9mRMiV6YUc25PktoV1QgiNWFcYJl5AXUVt2IzM+E3lzmwcT7JM88VG3glt1yKvvCp3IbyWaLR2AK3uULecCewOvcCAwEr+GOq+x82kCf1FXnoyO0ULEkJg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYPPR06MB8052.apcprd06.prod.outlook.com (2603:1096:405:31a::12)
+ by SEYPR06MB5765.apcprd06.prod.outlook.com (2603:1096:101:ba::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Wed, 30 Jul
+ 2025 06:11:39 +0000
+Received: from TYPPR06MB8052.apcprd06.prod.outlook.com
+ ([fe80::5cf4:4746:d56a:157c]) by TYPPR06MB8052.apcprd06.prod.outlook.com
+ ([fe80::5cf4:4746:d56a:157c%6]) with mapi id 15.20.8964.025; Wed, 30 Jul 2025
+ 06:11:39 +0000
+From: Pan Chuang <panchuang@vivo.com>
+To: Markus.Elfring@web.de
+Cc: kernel-janitors@vger.kernel.org,
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org,
+	miquel.raynal@bootlin.com,
+	Jonathan.Cameron@Huawei.com,
+	u.kleine-koenig@pengutronix.de,
+	angeg.delregno@collabora.com,
+	krzk@kernel.org,
+	a.fatoum@pengutronix.de,
+	frank.li@vivo.com
+Subject: Re: [PATCH v8 0/1] genirq/devres: Add dev_err_probe() in devm_request_threaded_irq() and devm_request_any_context_irq()
+Date: Wed, 30 Jul 2025 14:11:28 +0800
+Message-Id: <20250730061128.259744-1-panchuang@vivo.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <5c0837b5-b3d3-48c2-a028-97cfcd1ec4fe@web.de>
+References: <5c0837b5-b3d3-48c2-a028-97cfcd1ec4fe@web.de>
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR06CA0227.apcprd06.prod.outlook.com
+ (2603:1096:4:68::35) To TYPPR06MB8052.apcprd06.prod.outlook.com
+ (2603:1096:405:31a::12)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYPPR06MB8052:EE_|SEYPR06MB5765:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b35a5d2-439e-4e7c-2c18-08ddcf2ff229
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|366016|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ADyKRdD8YuSS8WcC4EamMWq/ZKtM3Dgu+sZJfC/AN8kXdzGPRwHn+0a4bSyx?=
+ =?us-ascii?Q?XI07sB/dFeNsl6qLKnaSggQuASzgYKSkobxuWJ51j0rXigu1asuXO4Sz9AQ9?=
+ =?us-ascii?Q?WmcXxdpktyve+xkrab669BeEbtvjyMHQKdjgz/LuOelz2Lq5PyYRelIat8LH?=
+ =?us-ascii?Q?Hl0nY3JkYBmg/T1Gr189DuaTZJicEN+SoOvvDqfquMBCxoF6TQ6tf3P1Rlfq?=
+ =?us-ascii?Q?eekweAFrYVQP9+nmBmXiUSFiZ1qJ9bIjnx3g0Lr392Kr7tK34WgvgLX6Ohdt?=
+ =?us-ascii?Q?tYav/jXliFtJKOQeFIkg50M4nOwGieXFVak2jH/7NdNsAkap0D10W8D6RZpI?=
+ =?us-ascii?Q?QkjlAvGyNTbp65z+tt/nAziCQbKo8/OlY7MpyDkQTPK+gstnSPqy6c7Ipaex?=
+ =?us-ascii?Q?eQ+ySDZ8NDRhS0lhI2gp6LnDxglbj73NaAFLG2sJSHq0c0D1zvx8iJlU6GpN?=
+ =?us-ascii?Q?G3Ud5BMUM2OyldluuOhVfRmqZN1T07uhrRSCJ4v4zO64agcPbEkiarfv02b8?=
+ =?us-ascii?Q?aMDWuonlYTyiYJvhQPijbT5D8osDl/8wNBSrmWLKr/uj2IajrgGGJGkeaiyj?=
+ =?us-ascii?Q?O+lWY7XczXdSer81Bw66F4eGj2P4+GxsikeLGMVgUknDfyfjsiXm8rBkaiic?=
+ =?us-ascii?Q?fhOFm8oySqU66+PBTH/cK+Bt5ykzblXfo9TiP5Zu204E+hyTTD83JLRUGGx1?=
+ =?us-ascii?Q?bBPUOlr5dekqVyOC6mR43f+UsWYzcqG7aETbuvl48fCMUXxh29S9Mw6IVVWx?=
+ =?us-ascii?Q?I6qe+XpS/ak/c0pJXXWo1xJaeg0OUwDGryrnAQ2BHqeKHkcPKxwH57eYd4Fw?=
+ =?us-ascii?Q?sxr4tZaPcowXQV0PZvnjsq7FvATTOOXV+WoTtD0gZjlwxffDaOKbZG0XR/1C?=
+ =?us-ascii?Q?XDp1SbnQcLobOiF67R4GTs5KqwlQvRjniEqzZXo59FEUmyo3StgrDbyDSPkX?=
+ =?us-ascii?Q?50bXxbiIieyEm3lJYxVZG+BPd37oj5/+g6DT6Eix9YxpE411IlA3yjDOlekq?=
+ =?us-ascii?Q?5gTe2K8b9ytbOVMHwr6kTI11Xm8SSSx+W+fkKJA28J6cnFw1Grbfmu/VbsUp?=
+ =?us-ascii?Q?Ok/wxkVp2g9LanSV8fLnwfm43k5480D5L0hrinE+23tSfTxh39/ha/p5pwOh?=
+ =?us-ascii?Q?RWRBEVGlwW/xg9EENP7ehUfvjao8oZYYjYjhWg2K8+Kw3G7S3uNO0aC5nlLP?=
+ =?us-ascii?Q?Fj/cQ+hllbTD1yupubNyV0f3GcKkLSC3vhPrrc61YQ3CAUJt/Jyxwgoe6Ruc?=
+ =?us-ascii?Q?Qy/kA0FvOKnDYONQsgNwLxqzlWIdvHPwAaUChxpez6ifLkY3QYJH8Bza5mkR?=
+ =?us-ascii?Q?RU1JEuYKifvQEBSWyj/2TFmZP8o7hW3WE8OurKtm/EnB8mA7Os7Ng+jyk8Z9?=
+ =?us-ascii?Q?cHnvS5MSHYZ4c9Qs3pfi2nEClUVRNNN92AXgFJ7VzvPQp+5oUpnjPus0tGp7?=
+ =?us-ascii?Q?J+B+czkJQtf+M6isprxCTwLjrAx4ZChM435HzRQOX0ac/PvueEbSsw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYPPR06MB8052.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(366016)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?c+BLj1aeU4i/HI6GGPyW6njIcoCYWgjxOuBa86m+5wICM8JVBgjcQGyPBBZS?=
+ =?us-ascii?Q?lPX/fNUXIauCte0phm0U3O8FPJT5Jj+pxQykh0LeuzqQLZ7k9hj0OFw4/AIO?=
+ =?us-ascii?Q?Y2/g5Hp7y+l00TBWkY10SXBL5f8V6Q9TUsKHqaiEj0mRxkmwv0tRLnsDb5nA?=
+ =?us-ascii?Q?3468TySvi6dKVGUpvHm3k0ESBB9hPG78NBaxE0dg+gU/C0jCx2HOKm/frSuH?=
+ =?us-ascii?Q?QNogMumjJMZhIDZyLE/TWo1s9HA9AkPddpt4xn/9Xx0QGxMJGQ/pfZbc0+4+?=
+ =?us-ascii?Q?29ZCPxwTznBmeMlnbXVbccDE1hf3UCJTFkqTDN0IXvYvj8yb4yV15nI9oqtZ?=
+ =?us-ascii?Q?WqmjN4hXvJC9U6SfYkXOs8MNnG9hgR/e27tz+X7HrMN3hibAh/uQWKccVhH9?=
+ =?us-ascii?Q?fFtQl7W0E3ZvMNc54byrTV13A9HiE5wMtHhl0TF+GbkEqrGW1XgnGDCX/4bV?=
+ =?us-ascii?Q?ytAWNAMFVGYm6bXjuCD663QtqoYgMKlCk2QdjB64TZ4MA5ye2peWvhB2RBLV?=
+ =?us-ascii?Q?ThRmAnVamwb974qqE4z5NkZMuJpkg5YBvdPBgzsFlgWxzukJA4UuGyedSGxa?=
+ =?us-ascii?Q?mDh3NlHCYDDujTMHVJc5nIvzcurDpNp1vAOUmYEwHMpXocoo/EcUppNkFg2E?=
+ =?us-ascii?Q?3wQ+Z6eqhG+EVVJ9+udMFI9JLzBL1/NFSUK6s48bhyW8K82+LvobP58MU1Hk?=
+ =?us-ascii?Q?ejSGxeG/4JJyrt45hzMVC176g5zAvBXVt4U5ryBJ6wsJbXoa7daRMFFBiND/?=
+ =?us-ascii?Q?5xSHXGfXaS3XIV2MRSoCR68QgPdGtP4cX84sMWWvXOJhQVkNFjMJPt9pPevy?=
+ =?us-ascii?Q?/7UqmaTPq6gfjZf54Q48LJdgQIFCNDunrnK+kuahaFn/jgapcA1SlWy+NpVh?=
+ =?us-ascii?Q?WkrR5eCJtFjktBhOL4Z3i1i4hAvMdk6FDx7A1EhenFI0i+hqlEyGL/H2Mq3o?=
+ =?us-ascii?Q?W8FfLepCja+OLI711Xa7kinQB/bjn13DtFNV7WotgwAPC0q4A4yD3vCcrp+V?=
+ =?us-ascii?Q?+Bi3pfSSFqztUfTh1IiOPMkrGCGmHe6dXwccfizsQjXhpLzTImKLqrQZK5YM?=
+ =?us-ascii?Q?fHM0sXiMKDe6gV6ZKq9ayk8WvCvof08KH0n7CnxQo99o37ej4clR68+n+pvM?=
+ =?us-ascii?Q?RxOkRmjVjMw+IW10c5tYJHgYzZiuJefM+DC3K1zk0PeZ2GOMSlDimDzZ4Qxs?=
+ =?us-ascii?Q?yG527T0G9FM35G1KKjD1SqBUk9E1qtJ4RnbIGh0EkZ7W7WxJLxpDpyz5YxMq?=
+ =?us-ascii?Q?Yu5yzq8A6O3a4+muFeCxqET+3UvVI9qXEFX3d6B4foM6uOVpB1qz0w7+hQzB?=
+ =?us-ascii?Q?KnFDNQ3uoPMFx9kf254IYrOAkPQ5y1jExwDZT/RHxtEeRBlL1jY3VEVloi92?=
+ =?us-ascii?Q?eARSANVd2WfnujRWwMCRDBY3O279qCvojUmQ145y7rVqN8I8DAzwa/1sSqwk?=
+ =?us-ascii?Q?Xw7M1oZ4HFp6iEXxI6yE75ldZxlvAzG9tR+Nq/Zuiiy7M5dY9Hq4BsBWCxaC?=
+ =?us-ascii?Q?r7eVV+kvC+rnuNNVVc1rxaX84XagWWFSnSYiygveU2CTwJjfhvT36n2mFm0m?=
+ =?us-ascii?Q?2/kM16+o1nrwNK7VoiOtvh6+rQ7x7JoPoDU9sNu7?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b35a5d2-439e-4e7c-2c18-08ddcf2ff229
+X-MS-Exchange-CrossTenant-AuthSource: TYPPR06MB8052.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 06:11:39.2392
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xEq8qY7+pU/dMlmgMf5mnTY436NJPZ8eEFWYMffaQ/QC2njm1KItgfgXEMZeFtB10BIPIXpl5tU7tVlYNq8yTg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5765
 
+Hi, Markus
+On Wed, Jul 30, 2025 at 2:35 AM, Markus Elfring wrote:
+> …
+>> This patch implements a standardized error reporting approach[1]:
+> …
+>
+> Would it become helpful to move any information from the cover letter
+> to the (single) patch?
+> How do you think about to avoid the presentation of duplicate data?
+Thank you for your suggestion.
 
---=-05BjQuggd1guXcSOOvaz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To ensure commit message conciseness, we only describe:
 
-Le mardi 29 juillet 2025 =C3=A0 21:33 +0200, Christophe JAILLET a =C3=A9cri=
-t=C2=A0:
-> Le 29/07/2025 =C3=A0 00:50, Nicolas Dufresne a =C3=A9crit=C2=A0:
-> > Hi,
-> >=20
-> > Le dimanche 27 juillet 2025 =C3=A0 12:02 +0200, Christophe JAILLET a =
-=C3=A9crit=C2=A0:
-> > > If an error occurs after a successful iommu_paging_domain_alloc() cal=
-l, it
-> > > should be undone by a corresponding iommu_domain_free() call, as alre=
-ady
-> > > done in the remove function.
-> > >=20
-> > > Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on error=
-s")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > > ---
-> > > Compile tested only
-> > > ---
-> > > =C2=A0=C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++=
-++++---
-> > > =C2=A0=C2=A01 file changed, 8 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> > > b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> > > index d707088ec0dc..eb0d41f85d89 100644
-> > > --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> > > +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> > > @@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_devic=
-e *pdev)
-> > > =C2=A0=C2=A0	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK=
-(32));
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	irq =3D platform_get_irq(pdev, 0);
-> > > -	if (irq <=3D 0)
-> > > -		return -ENXIO;
-> > > +	if (irq <=3D 0) {
-> > > +		ret =3D -ENXIO;
-> > > +		goto err_free_domain;
-> > > +	}
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	ret =3D devm_request_threaded_irq(&pdev->dev, irq, NULL,
-> > > =C2=A0=C2=A0					rkvdec_irq_handler, IRQF_ONESHOT,
-> > > =C2=A0=C2=A0					dev_name(&pdev->dev), rkvdec);
-> > > =C2=A0=C2=A0	if (ret) {
-> > > =C2=A0=C2=A0		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
-> > > -		return ret;
-> > > +		goto err_free_domain;
-> > > =C2=A0=C2=A0	}
-> > > =C2=A0=20
-> > > =C2=A0=C2=A0	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
-> >=20
-> > Have you considered moving the allocation of the domain right above the=
- above
-> > line instead ? The empty domain can't possibly be used unless the probe=
- have
-> > fully completed.
->=20
-> That would not change things much. We still need to handle=20
-> rkvdec_v4l2_init() failure a few lines below.
->=20
-> If it is correct to move it at the very end of the function, after=20
-> rkvdec_v4l2_init(), then the patch would be simpler.
->=20
->=20
-> Honestly, I'm not very confident with it. request_threaded_irq()=20
-> documentation states that "From the point this call is made your handler=
-=20
-> function may be invoked."
-> And rkvdec_irq_handler() may call rkvdec_iommu_restore() which uses=20
-> empty_domain.
+    The context and problem being addressed.
 
+    A brief summary of the solution.
 
-This is a supposition in the doc. If you get familiar with codec, they eith=
-er
-have a firmware that needs to be booted, or it is trigger based, meaning if=
- we
-don't trigger any work, there will not be any interrupt. This is not true f=
-or
-all kind of hardware though.
+Regarding duplicate error messages:
 
->=20
-> Not sure if I'm right and if this can happen, but the existing order=20
-> looks safer to me.
->=20
-> That said, if it is fine for you, I can send a v2.
->=20
->=20
-> This would be:
->=20
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c=20
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> index d707088ec0dc..6eae10e16c73 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -1159,13 +1159,6 @@ static int rkvdec_probe(struct platform_device *pd=
-ev)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (iommu_get_domain_for_dev(&pdev-=
->dev)) {
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 rkvdec->empty_domain =3D=20
-> iommu_paging_domain_alloc(rkvdec->dev);
-> -
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (!rkvdec->empty_domain)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_warn(rkvde=
-c->dev, "cannot alloc new empty=20
-> domain\n");
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> -
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vb2_dma_contig_set_max_s=
-eg_size(&pdev->dev, DMA_BIT_MASK(32));
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 irq =3D platform_get_irq=
-(pdev, 0);
-> @@ -1188,6 +1181,13 @@ static int rkvdec_probe(struct platform_device *pd=
-ev)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 goto err_disable_runtime_pm;
->=20
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (iommu_get_domain_for_dev(&pdev-=
->dev)) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 rkvdec->empty_domain =3D=20
-> iommu_paging_domain_alloc(rkvdec->dev);
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (!rkvdec->empty_domain)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_warn(rkvde=
-c->dev, "cannot alloc new empty=20
-> domain\n");
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+    The failure probability is low, so temporary duplication is acceptable for now.
 
-For me this looks cleaner, but as you stated its a matter of taste more the=
-n
-anything. A better answer lives in cleanup.h, but I'm not going to ask to p=
-ort
-drivers just yet.
+    We will remove the random printks from the drivers, once the core change 
+    has hit upstream.
 
-So let me know, it can go like this too.
+Thanks,
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+	PanChuang
 
-Nicolas
-
->=20
-> =C2=A0 err_disable_runtime_pm:
->=20
->=20
-> CJ
->=20
-> >=20
-> > Nicolas
-> >=20
-> > > @@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device =
-*pdev)
-> > > =C2=A0=C2=A0err_disable_runtime_pm:
-> > > =C2=A0=C2=A0	pm_runtime_dont_use_autosuspend(&pdev->dev);
-> > > =C2=A0=C2=A0	pm_runtime_disable(&pdev->dev);
-> > > +err_free_domain:
-> > > +	if (rkvdec->empty_domain)
-> > > +		iommu_domain_free(rkvdec->empty_domain);
-> > > =C2=A0=C2=A0	return ret;
-> > > =C2=A0=C2=A0}
-> > > =C2=A0=20
-
---=-05BjQuggd1guXcSOOvaz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaIkvAQAKCRBxUwItrAao
-HCNoAJ9ZUC8asKL6KZjVLXujVOUOEc8kLACaA03KI5fVnkU2EAe3rnQSnpDFQnk=
-=yQn/
------END PGP SIGNATURE-----
-
---=-05BjQuggd1guXcSOOvaz--
