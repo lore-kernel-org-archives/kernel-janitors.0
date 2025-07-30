@@ -1,52 +1,49 @@
-Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
+Received: from smtp.smtpout.orange.fr (smtp-70.smtpout.orange.fr [80.12.242.70])
 	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B3429A9F9;
-	Wed, 30 Jul 2025 18:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AE418E377;
+	Wed, 30 Jul 2025 19:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753900461; cv=none; b=iSuBP+NkoQTRV3itdRbbu435GWPw+2fv4yD4o9edsUKoF5JB3VehlyJ7rRei3ZkI+LN7WmUTRrsNO/Hmo7yHnCihOXjSAGJrNc+C8M33Jbb+037gEHD9wVGKatLhs476ZAGOykF1OXOGfvHBsjBpq+kggEFZwgJ7mEu68xtzxjo=
+	t=1753904304; cv=none; b=eOficCJyQ2uMxNz8hUF8OSpY7V/Mw2ZMWl17NI88z/I9XgSw+QBUVcgyAJu3K9iZ9rWP9S1/DRaX7vrrATsWoi7ds+BoTILlc7keUgKumzXxZ2ukvVWTJGbwOYDiYhhFXPPqrgSzLkHzgKUjigrpC6eROTpNiYp3mmIGCOvw3eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753900461; c=relaxed/simple;
-	bh=sZp0+q2msDXv7PtyHH+ek5wNvhUBQ1q8UFch023NJj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tkRsvZibdxsZfIYUf/QTZ3jDrTwzoIA9+UB1RsQhdc09FiaFiq4Z5m8oKksGZrPOs8k1K9u4wuJG/dxgx7FdaB9ZHP3VFrKQMCpHMB+0f/v0S2iV16OtdovyUkJjw3YhXpJNQi3uIPl3AlkDupeYa3r5N+skrpaYlnbLGnJIjwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SM8TWMmv; arc=none smtp.client-ip=80.12.242.78
+	s=arc-20240116; t=1753904304; c=relaxed/simple;
+	bh=1fsIa9hYSMs0i0hVB2ZUs2FIAuKGgxIfdoDFJTFGyS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LLfaHc5ztD4XZz8I0ZSrw2HnitS2+7vwYrvqAnJUD5xKm0Z++lq8+3anMlcMInWPoh8xGdIw7X2Em7j4BywB0Dkski5eS++l+lms3MjQ3KAiHCVyGVWMzJxwK+2DzvuRRwkvwOYBM/nPWL+EUhbfezLoUb8n/6fi7kQE+cTmsBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ms3j3oVx; arc=none smtp.client-ip=80.12.242.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SM8TWMmv"
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ms3j3oVx"
 Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
 	by smtp.orange.fr with ESMTPA
-	id hBU1uXDqxjmWBhBU1uNSd5; Wed, 30 Jul 2025 20:24:58 +0200
+	id hCctuZ6rY5DGfhCctu80HL; Wed, 30 Jul 2025 21:38:11 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1753899898;
-	bh=K4L6S9AIfcJmSktpYUDEepH8hgI/JaLBu8Gt3usbxsU=;
+	s=t20230301; t=1753904291;
+	bh=BJvoYC1UYY8TgOpqx/zKK7xR/lVwzTBfB5KA1myGC+Q=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=SM8TWMmvKS/4qkzNc44dLKl7l3TO+THTVs7zsKsSAV6n1jAeZk4X3jiDrlQecbk2d
-	 dIVqKLjbxjqYtRhKiZIIeaB2JOM3X1Z1yGFTOFn9p2Z0MaBsMkB9/d0ZfZlkCa+WTh
-	 wrb8IDi4uASeiAazw44XGtPOfzjpDpw9b0LXD0izdP4+THJDLBwcbZkf+wUHcyB+GJ
-	 hKXGgOnkPpn9lpDzoSokLTbkAnoBzdbpThTV572lBjBfXPYi5Fp13LgGZ+urmaoKC7
-	 BvNhOnBvcWSE2uMo6hsaK/C/8BJO7Jw7uWqBckVVN6QkC1iUOikNI0U7Bm7iS6lu5l
-	 LyJpKexqVM5SA==
+	b=Ms3j3oVxFcMWAorBI9nqfbYY/ScuKMWFZ8VtEMvVFvQbX80UD/Dk4lBVUj5+ifiAv
+	 ZFPmvTlrRmbapg/k1TJfF5Dz+TFe9Lf6bV+4nD6Ah6g7v5e2z4nM31vkv7Q46XAYGd
+	 STkCjqjMPCT6ys1FkaRf8wy3Rldca16lYxW3Ga0y6/NfG2XKSoBiB5bJsAfu4lCYFv
+	 S0lTIRr4VbMD0dCyK6aNBPI/1T/d3pzi2u4/85YZzAoKb03+2fenasnkUlWktR5IgX
+	 kXFrZaHOESHFR84F3o3nseTPcs4piSW3LQUKvyMLrmoIEToyUx2pby5mtSMzfaJ0Cm
+	 LwTcOSZqI57YQ==
 X-ME-Helo: fedora.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 30 Jul 2025 20:24:58 +0200
+X-ME-Date: Wed, 30 Jul 2025 21:38:11 +0200
 X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Detlev Casanova <detlev.casanova@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Peter Rosin <peda@axentia.se>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Farouk Bouabid <farouk.bouabid@cherry.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] media: rkvdec: Fix an error handling path in rkvdec_probe()
-Date: Wed, 30 Jul 2025 20:24:44 +0200
-Message-ID: <00b13063525c2aee6a60a7f6810f69c12bf2a866.1753899866.git.christophe.jaillet@wanadoo.fr>
+	linux-i2c@vger.kernel.org
+Subject: [PATCH] i2c: muxes: mule: Fix an error handling path in mule_i2c_mux_probe()
+Date: Wed, 30 Jul 2025 21:38:02 +0200
+Message-ID: <354bf00a245ec3bac9cdd197a06138dddda2f009.1753904271.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -56,60 +53,41 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If an error occurs after a successful iommu_paging_domain_alloc() call, it
-should be undone by a corresponding iommu_domain_free() call, as already
-done in the remove function.
+If an error occurs in the loop that creates the device adapters, then a
+reference to 'dev' still needs to be released.
 
-In order to fix the issue, move the corresponding call at the end of the
-function, because it is safe to allocate 'empty_domain' later.
+Use for_each_child_of_node_scoped() to both fix the issue and save one line
+of code.
 
-Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+Fixes: d0f8e97866bf ("i2c: muxes: add support for tsd,mule-i2c multiplexer")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 ---
-Compile tested only.
-
-Changes in v2:
-  - Move code instead of handling errors   [Nicolas Dufresne]
-  - Add R-b tag
-
-v1: https://lore.kernel.org/all/b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr/
+Compile tested only
 ---
- drivers/media/platform/rockchip/rkvdec/rkvdec.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/i2c/muxes/i2c-mux-mule.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-index d707088ec0dc..6eae10e16c73 100644
---- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-+++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-@@ -1159,13 +1159,6 @@ static int rkvdec_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+diff --git a/drivers/i2c/muxes/i2c-mux-mule.c b/drivers/i2c/muxes/i2c-mux-mule.c
+index 284ff4afeeac..d3b32b794172 100644
+--- a/drivers/i2c/muxes/i2c-mux-mule.c
++++ b/drivers/i2c/muxes/i2c-mux-mule.c
+@@ -47,7 +47,6 @@ static int mule_i2c_mux_probe(struct platform_device *pdev)
+ 	struct mule_i2c_reg_mux *priv;
+ 	struct i2c_client *client;
+ 	struct i2c_mux_core *muxc;
+-	struct device_node *dev;
+ 	unsigned int readback;
+ 	int ndev, ret;
+ 	bool old_fw;
+@@ -95,7 +94,7 @@ static int mule_i2c_mux_probe(struct platform_device *pdev)
+ 				     "Failed to register mux remove\n");
  
--	if (iommu_get_domain_for_dev(&pdev->dev)) {
--		rkvdec->empty_domain = iommu_paging_domain_alloc(rkvdec->dev);
--
--		if (!rkvdec->empty_domain)
--			dev_warn(rkvdec->dev, "cannot alloc new empty domain\n");
--	}
--
- 	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+ 	/* Create device adapters */
+-	for_each_child_of_node(mux_dev->of_node, dev) {
++	for_each_child_of_node_scoped(mux_dev->of_node, dev) {
+ 		u32 reg;
  
- 	irq = platform_get_irq(pdev, 0);
-@@ -1188,6 +1181,13 @@ static int rkvdec_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_disable_runtime_pm;
- 
-+	if (iommu_get_domain_for_dev(&pdev->dev)) {
-+		rkvdec->empty_domain = iommu_paging_domain_alloc(rkvdec->dev);
-+
-+		if (!rkvdec->empty_domain)
-+			dev_warn(rkvdec->dev, "cannot alloc new empty domain\n");
-+	}
-+
- 	return 0;
- 
- err_disable_runtime_pm:
+ 		ret = of_property_read_u32(dev, "reg", &reg);
 -- 
 2.50.1
 
