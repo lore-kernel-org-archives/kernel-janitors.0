@@ -1,109 +1,128 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F8F1C7013;
-	Wed, 30 Jul 2025 16:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227771D2F42;
+	Wed, 30 Jul 2025 16:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753892871; cv=none; b=cEjxy9Dx4ceiSn/8QbBmRkzu5apPWdSSoGJf5aQyjJITnhETs0Tz2WD6J/YjpYjnccfmvoTEfhgKE711BeZ0FpolsWC9/lNKkmsmTaObHThiAttJvxQNU1OnSG1TBs5W3ej9wqhCx0McTL5UiebZDBKOHkx+Uup2Y9GGFVtcHbg=
+	t=1753893024; cv=none; b=EK0Isf20oFPP9KNB+CTVVe3ApW6CEYaJR6EiMsj80/5Y/+jj1laGTgmZFeSkUta86iXKWbN+dEPUb39baxUoFak2jHii1eCSqTQMTC3JHSOeKLXG8Wd6fFiShCX54NJEN5oPUH5kRONaqw9w2H2C6Lmd9AAc1SNoO/M/lzOVFEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753892871; c=relaxed/simple;
-	bh=IBd88+g75enem8ZFwiFE6FmfjZAFd6OhLTrZnh/J7ls=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nsTh9KTc4u7ccZTP+nshNFgHtPiiTObnXyj1fXztya+p9ceWIlroHMODzfSj/9wr58ThhvbNsAhPY56bA9YLJuim3oVeMUe0s0Vfgdz0gdmUuJ6xzmNFscvn9DE+/6Pi+hH63h24KAMfeEnALZ2Qc9LaedH5irFuqATZBzcyX/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ep5n4pl3; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1753893024; c=relaxed/simple;
+	bh=lOMtUaYx3i8bMy9bYIr/qCsiAGICtIDD+fh3Mzcc04Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=AhaWKCufH5t0lWYpPRlavAndP3wsdDWxxv8pIx4hQj2kb4Oozdhg1p+y7qkhohO/WRzY4UH6dxG0mnZsk/rnA84YVPwKOx0bztr5C+8QYUakM31+q/I90QVsRC9aJ0rp3NN3KvqsfVQk1D8w1NvrRaBhGvcHp8qBFxQERDcei+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=quhF3/Ao; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ep5n4pl3"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45892deb1dcso5704065e9.1;
-        Wed, 30 Jul 2025 09:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753892868; x=1754497668; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6BqqfmK2qoQp6Ai7p0EgtaM5Od+R/trV0qF5iEdPoHE=;
-        b=ep5n4pl3Tm3pkjK2gf0ISUv1oB+pTLRKK3QIP8Gg7xrjsrEyf3IMyRmaU66DfxOlOM
-         07vO/UKkSlZMQkMp4FB5impVCh6aBGDmVAWaAtNNRURWhssyAnkO3FdIwa0vnwu7Us5s
-         S4hc7GYjnIOiw6Bj6oHv5HZU3FSI2N0NrysQFa8Q86ZhyUdRITFlhIUNKamTeGJjEFaw
-         3sbWdxMhle9h4KPTw9Mkojiz7dmAp5myBrIi2lZ1mzcyNjJ2jZzYOOCl/icmsffj4qvh
-         zxgkdYlS89OSPIYcJ7uTz3SFizAVDA4UXrVB+sds7qu8zTdc/9bCI4ax+9Jq5raDCd2v
-         /OtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753892868; x=1754497668;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6BqqfmK2qoQp6Ai7p0EgtaM5Od+R/trV0qF5iEdPoHE=;
-        b=TQgpQnZk+Kh0f1k7xaCzCrBlaKvhM19DjJmPsXQKTDjeZbD5fAcdcu2mlZa3/z2W28
-         jCdzCWKM64LDpictZaLuCON2qEepJrcmKbJ1vIJKp1zqsa/SW3kCdZyitv4/W340tphW
-         /4wGHEAMvJnQwvlPMdEqeymHMi3kjiP6NhdpKCU6wxD6TR5VlHcvtFyjFtKIf0i/1wvb
-         v7G6Cukac6FM2Vo7DhlBnhpJrb+9QfTD4veyhR7LJkd/kBnj75VhWYZ6rZ6QPKvnsnWQ
-         G1JvK9kbu82PVFcivtioCn+Uyv5FgsYy+PRWqRDOd6si+QprxgLHB4uyzQ+D1vTJOTRq
-         vGng==
-X-Forwarded-Encrypted: i=1; AJvYcCVqWN7vQryBi35mo2FJdg2QYJ6C8dShoDO1/ChybBcSNT4i7JBzBVBt441emAsS0lFusHeGGJzVvdk=@vger.kernel.org, AJvYcCXzkgSHlWpRmoePtplQMPEl7xXo1PPJjYt/jG9MiC/j0XUwxssgXhWaoY32dQtTaUl+b0nG6G8ajZqKknnq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKB07QIJcpv5kiimMUYxpi2M6gaTl7vbkJPbGSpWGae9m6WkV5
-	uh+vBXzcSPDDU8+wqNiWHJDTkOX2mIzzBi9NxYbM7kMq30xpAmzLbdQW
-X-Gm-Gg: ASbGncsBs1JqGqk8MmIDlhC7maZzthRM5hIfDuHq8bGxUMIQRkX/XXHKKyZBO+1Q6ba
-	KedGS+90nzI+qI7tvMJ/Yp8YzHpifO94jyb778nIpUvX23rakQ5oN2J11xMQb7zJRiTJBmFsSCp
-	0HVKX0FAWNzqR/eEpy7a84L+hVSEnJxL8wK+Ca1L/dJ3MziXzw8pwdhO3bxy2EqL7uzUlbq3tZA
-	rk0Pc+tNPBNFzGEvddHy/+bkF1NrWU/1bWvjADV5pUeiQA7B6DXcw7Q6N23COvxkHMcnFAY4Yv4
-	/k7TZg0eOh/VQ2CF5NDqrxpvyFc3zZqsQrsrDA2USJWWW4kTyqKGjJ+8MNEpXpD6yojH3dsoR8K
-	9WXjvjeCloSJS+iNTF/6DYGxTFbYsbO0=
-X-Google-Smtp-Source: AGHT+IFNTEfL8MXUiyul7/qYy2OufuFwuC1wS29v9JYelkS5QR/IryALVLKRVISTNCURBmibZxI9Yg==
-X-Received: by 2002:a05:600c:3488:b0:456:2d06:618a with SMTP id 5b1f17b1804b1-4589c3650eamr18294605e9.18.1753892867826;
-        Wed, 30 Jul 2025 09:27:47 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589536bc42sm33362385e9.7.2025.07.30.09.27.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 09:27:47 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	dmaengine@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] dmaengine: ppc4xx: Remove space before newline
-Date: Wed, 30 Jul 2025 17:27:12 +0100
-Message-ID: <20250730162712.2086439-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="quhF3/Ao"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753893013; x=1754497813; i=markus.elfring@web.de;
+	bh=lOMtUaYx3i8bMy9bYIr/qCsiAGICtIDD+fh3Mzcc04Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=quhF3/AoOkmBX/br0M11hZ5eg8gMFX/mcygzvlNwqMTL9xQ7yv5HlzIQnVx4WVkc
+	 WNeSSJAvgGNtbJV41pTEPUXw0yil3N1IyLQg5tQfOIAjZckFTt3aPvzyV88rgQh1I
+	 Ymh7p4CYQU4kArH9hI/cchLC4xkQ1dp5ZV9X0SKd/hGc5cTa3Q74KtCpgmTlAlgh8
+	 L6Nz7WRdn3DTKYwrRM9AuaSiYb7j31VB3TwpkXTWrrpB478V+jp3J4LPWJQzL0UOz
+	 /poKoHapug2iGyw0Ht19UjDWGDmmW+4dPwcy2tXEbGbLTKsiUQXHAXwdxN08nWihn
+	 nR5QV8+YNpUK0ArXog==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.238]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXXRF-1vAYoc0anH-00QKeu; Wed, 30
+ Jul 2025 18:30:13 +0200
+Message-ID: <20574d0a-0a8e-4b54-afe3-8a0744df9d09@web.de>
+Date: Wed, 30 Jul 2025 18:30:10 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Colin Ian King <colin.i.king@gmail.com>, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20250730142905.2080035-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] drm/msm: Fix dereference of pointer minor before null
+ check
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250730142905.2080035-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MYt42syjUbB2ixPRz8ILRnIR9ELZrqzsuVLn6eHJLa6anlgJgmV
+ nZbNwhXhaQsUDIHP3T+Q/3uRHlmvUntQku1SAxvO6m+4aytLlsPOuQBuxnH9Lenmoucrq55
+ zlNXLbrwq0Su/xLDO+yvbsNA27DLfJAUSI/q4hxk9ZfjDx2Fd6NbBxZ5SOLnjx4FE1MhDni
+ 1vSQZ7qVjSDwgrNU3oquQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oCDTdeEbe28=;2hv7EIh5M27uoZTJcjCnaOb1Mpo
+ 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
 
-There is a extraneous space before a newline in pr_err and dev_dbg
-messages. Remove the spaces.
+=E2=80=A6
+> by dereferencing the pointer only after it has been null checked. Also
+> Replace minor->dev with dev.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/dma/ppc4xx/adma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I suggest to separate desirable changes into another patch series.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16#n81
 
-diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
-index 9d2a5a967a99..61500ad7c850 100644
---- a/drivers/dma/ppc4xx/adma.c
-+++ b/drivers/dma/ppc4xx/adma.c
-@@ -874,7 +874,7 @@ static int ppc440spe_dma2_pq_slot_count(dma_addr_t *srcs,
- 		pr_err("%s: src_cnt=%d, state=%d, addr_count=%d, order=%lld\n",
- 			__func__, src_cnt, state, addr_count, order);
- 		for (i = 0; i < src_cnt; i++)
--			pr_err("\t[%d] 0x%llx \n", i, srcs[i]);
-+			pr_err("\t[%d] 0x%llx\n", i, srcs[i]);
- 		BUG();
- 	}
- 
-@@ -3636,7 +3636,7 @@ static void ppc440spe_adma_issue_pending(struct dma_chan *chan)
- 
- 	ppc440spe_chan = to_ppc440spe_adma_chan(chan);
- 	dev_dbg(ppc440spe_chan->device->common.dev,
--		"ppc440spe adma%d: %s %d \n", ppc440spe_chan->device->id,
-+		"ppc440spe adma%d: %s %d\n", ppc440spe_chan->device->id,
- 		__func__, ppc440spe_chan->pending);
- 
- 	if (ppc440spe_chan->pending) {
--- 
-2.50.0
-
+Regards,
+Markus
