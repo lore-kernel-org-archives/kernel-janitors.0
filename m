@@ -1,92 +1,124 @@
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0092D8DD0
-	for <kernel-janitors@vger.kernel.org>; Wed, 30 Jul 2025 13:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0C52D8DA6;
+	Wed, 30 Jul 2025 13:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883619; cv=none; b=WzI0NUyNlq/tHxrjBQ0EzCOAY8v1hUnYKW77ZiWCfKc71EYnUo+1axYH5eKalhgfKIGaCjQqYqBcTMovdrIMS8gCCt4Rfnnfa5TdLuduKOYHRcfh6JCV95Tiq/aZBV/leomBxxT+5kydnSaESKSOqtSOZGTI1MeXjUFcQ13pMs0=
+	t=1753883721; cv=none; b=SEv3YFY0zrM/TsVxxUd/9QfRWNrdFUXxyWJCLVpLIw55YtX+IgA1KSSfgRjjGSASJQu9Rw3UvKoKJn0WJYn2VQQGjjsVbiompCs5K8nH+j0GjOAzptKuCM/5gNx0ZOSewzbBAGy9BfoeE+mHv9y9VG2hVcORA1Fs6kgOPCkjt7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883619; c=relaxed/simple;
-	bh=vtgksuO6hykHnoNmq1iFn0TxRbhqfR0C34eckzuDpoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JQUVpWfoiToenyHfGQobzT83l4WTMuLnaBujE2VtG76rnybbxzXioMqlsqtFBz65rckzebsMzdUs6yxQLmZIiT1Z0LdTVxrgSUNBlLF29rR8Dn8uG5pXtF02CghJcFATP8Nu9PwHESmF+CR9laT1nqSAuHJqPu61Sl/FVm0GSJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=PMI/fwtv; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
+	s=arc-20240116; t=1753883721; c=relaxed/simple;
+	bh=YU/dW/YfvlTH/hER2tJp/xqGvn1giFSqovo//0fzglE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C7LRqH1rWf/ASqN6UZiNgcwGLHQS/JSmysgKO8B754BoETJtWpwW6mn1Y/8wWJLQMFbHYZDAsIQotHTJjX3k0G5jq45la+B9I1K6Hl7/MGOgXRYR85Ac3HNEVWcTIoJab4PKpsaGggGjsltbdQZ53bDkunxZe6gF1omYBFmWhnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5Rawgom; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="PMI/fwtv"
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4abd3627e7eso96893901cf.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 30 Jul 2025 06:53:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5Rawgom"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3a54700a46eso3295887f8f.1;
+        Wed, 30 Jul 2025 06:55:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1753883617; x=1754488417; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vtgksuO6hykHnoNmq1iFn0TxRbhqfR0C34eckzuDpoI=;
-        b=PMI/fwtvbH3i7SLxnA4ngBh6XNLnluSAZfq1D/LptTnS+7grL63Dqnt8kuyzWpg04g
-         AXhA8Z+3bgJA3Dg79hpPzK/lrkui9PbHOpa/gWqtgdMo+Je/j0Oh3KbL9oETJTj7ksn/
-         /tEZ6evCFVLQT0T1yop30yplcR30qok5lPRUZhf7CDgZITdOP+BN4dBzh0nINlQnkF0X
-         GstOfHR5HO2J1mX1hQ2PQXd7cJEbd95O2wO6Zg5TbiQNE8Lzw2biBA2UKU4afPq7j0tb
-         F7fYbetzQVex8GgMpB7oLLk2tHLK0sm6AZ6AX7yYy/zbtCsea9MMq2jRoW0mL3DAPGk9
-         gNXg==
+        d=gmail.com; s=20230601; t=1753883716; x=1754488516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lDRUrR7jLFhjPK5l5cm5SkFUJ3UJ78G28JJkY+HeZyU=;
+        b=C5Rawgomg+cfd5gLvtMmmvQ9d8KxfV5VdfHvcvH6ZB6lhw5gOdKCBXFN44sp3/8y5J
+         IHgtskMXKvy9d668I4d0t3mJzDigl2vmrSJjJwNNRi5S/uwqphK4oDywR0Ce3tUBa4lZ
+         CxM4jY8dgCf998URg2H9AaUKFWUj5ESIIPnpX3hcdTYgzHLTmXoQOYQRI0YxbA96Io9X
+         X+pXOicMLLW/M9ZyhuoyNoLQR+LTh0MG7AlIhthn3Io8urJWBa3a+gl5MQ5RXdJ/ZUcS
+         MZTWaDoZP6D77DaL98oJqV6JZm0KzsPTEFBoq4EzHytwkSHqeOIA9hZ+7oEQ1aAr5/J2
+         yLrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753883617; x=1754488417;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753883716; x=1754488516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vtgksuO6hykHnoNmq1iFn0TxRbhqfR0C34eckzuDpoI=;
-        b=lxTDq3sm1KoSWilpH4/cN6epJjMlqFxDL118ZOdP/1zbcZhZjGsfiLnB5hAgt9FDk9
-         +HT5tM8j0dJsUQrcVQvSt/VTcBCzDBNjkB7/doYZocLg/v+y46xDWz/+HK3YgQhKnTaR
-         gmFbzL+I0Pb+kbG3ZJ6ZIm1cMzwV9mXznPH29TVfO8Fubu3aWL4WKpuJc/EH7lng4ZFX
-         djPRvC1VCAjxln0m5QND5ZeMwzYK//jnQ4YXld18pKYloYnFY5GE+7nqgQvJ3CbWNY+p
-         RUvLtZc995tI3BJsQrjje8gF68qR/iOJ6wRAYW9vteP3MuYAaKxBlhZFRCa2ehsmpLLL
-         QjSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHMD6j7vg2jcjHmvLfwhgYJRsVTqGKdtPxoQo4fTQ6ud07A14ynRZ6qXxxFXfquwDqD1PpkwkNrSL+65FP6g4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSvzPWR+n0H2PvXv/C1mJI9h+/yA6FHwshIgCNDTdwJxPOkkE2
-	z2V0K2XwGSFE3WtlQnNcdnKMDCpkf6muBop4SBkz3JsT6+198FbJuPk+6ZBas3qSnGpiFKJesaY
-	afHUNbHsCC8ft1ydQ4aDByDwJd5IoXE5hAJoL8ogJbw==
-X-Gm-Gg: ASbGncuS5KKQSbr8p9EqrlqWcgjtATmPcBI2xMBlgClnWZ5elevExFjG/8pVN3oVthE
-	Ai1ISavX4qFhmgYLysicbGoA0I4Z48dOOwbFY5V9cjb0+yvxcGo1SQZKjoZiOI9E9+O5wvuVsaL
-	2IYcxBCOSw8QaB5Fod62k7dqOK04QD6vfVXNcMDTwWmRvvZuVPO8ia6aXhzotORqwcYDBIQ+ix7
-	k9lhdfZzfhILZc=
-X-Google-Smtp-Source: AGHT+IEIQhExdDr4IKQExvv0orhOVhkECA1aSs0d6odXMaL4dWzG19C7jkn8agUo/YEkRE1/ySb6/ndtjxxgYgLkvhg=
-X-Received: by 2002:a05:622a:342:b0:4ab:3a21:c08f with SMTP id
- d75a77b69052e-4aedbc826b7mr51999961cf.47.1753883616833; Wed, 30 Jul 2025
- 06:53:36 -0700 (PDT)
+        bh=lDRUrR7jLFhjPK5l5cm5SkFUJ3UJ78G28JJkY+HeZyU=;
+        b=jHHEwBVh9bk8WL8i63LTu6keeUpgGa5EsuPCYaaYrOIHitK9VzWWnnFhZIxsnoLAbZ
+         HITOLIGWurKjfvfOKY/hvNLo5ZaO8pWJyl6/jU+MFFp5O/iNZgXmftAcGaN1yQFmjxs0
+         /JVnK5lSvGR09VMpg3PYYVBsLKaQQomYXfr2vIUimIbyaKs53hNrJvRhMybwJcWoGaEH
+         OREyWUIuDpK1nRmN+XhpdngjxOwppOlYE7C9BPgOr6+7lRYFkxoGFGjiBWeCgwgWibkp
+         v6RuVxnUDPjRSsfbKjLs1X7A4diUFHYJ1dsiXubDyIBEjagwqpnPH8I7kBjE7dAJaXQJ
+         6xlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/MjNvnhFkFOARVn6wN55hxAWBnR0lIDnZ2uhTWZLLpz/HBxf20q3eZFfEsms30wImwV6KrF/GZLHkxoU=@vger.kernel.org, AJvYcCV/Z2POQ2NQDY+BVprGrbTqhZar9ZVW558dtbaNzHfhJFYrh5X9GoRjZS87rUSoPYmOSASNLlKzxh5Gj1I=@vger.kernel.org, AJvYcCXIAR+9FlqLU1R+WfKSqVk4QfWTkCWp/OQldSj4+ew8MpG7AxHkJyu0ce0LAsX+pRRQJDFprfG2fRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvpajSpZYr0yK4aHLwInEWQFhQRPMBdsopfPXY35PX+m/tq9Qj
+	qLeLWOq1kiLcaGtY8Ee8uCfIeAodKcgf2LpUJ7iqkjydRkjhb9v9KihU
+X-Gm-Gg: ASbGncsCVFFI7oFyqdi93OgS/Cv0TiBB4iW5kkSCkJvi2DcrQPZ8uxTg+LhiyonySwA
+	gKghpYeoXZyyjJzvpZmltzHHJ9exYdhdrWa5+tD0FyjiL8g6EL0J4ZiXNgMKxZ/HNM932JVStDN
+	6b8iu94LQKf4Nk8T4XnDKmB3XHSx4VdRWxMuCo+wjnfQs2BZQHawTGhMYojgnsXP57zAWq7I+kF
+	+ZjVJyuRTg3LQvthAT8q7syLMdu/HZS9s3Aay8+1Plt3fe0hylMm+opjx2OX0YaJDtbc0LdwDN1
+	9/CHm+ypV7KoUR2rXcPKj5jJFLWLOefbQY81vlTOCQymmADqS6UHEzhhIhDti4MbyN6kPenowKn
+	ToV9viOL5HKPd8mL3DXaX
+X-Google-Smtp-Source: AGHT+IG84gA8NDQL60kl/IRMOVr/pEda4caIsf6Y3Ezh+Bzhl38QjVGbmdzGZ66AzfHUoXZVqkeigA==
+X-Received: by 2002:a05:6000:40df:b0:3b7:8228:7a35 with SMTP id ffacd0b85a97d-3b794ff8988mr2691890f8f.46.1753883716203;
+        Wed, 30 Jul 2025 06:55:16 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778eba147sm15966246f8f.27.2025.07.30.06.55.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 06:55:15 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] thermal: tegra: Fix dereference of pointer tz before it is null checked
+Date: Wed, 30 Jul 2025 14:54:41 +0100
+Message-ID: <20250730135441.2078022-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730133457.2076784-1-colin.i.king@gmail.com>
-In-Reply-To: <20250730133457.2076784-1-colin.i.king@gmail.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 30 Jul 2025 14:53:25 +0100
-X-Gm-Features: Ac12FXx55sEzySCoos6kjkVRDMdpbePHcxwOGpuWags5QI6mVL28NlrpkS_nyF0
-Message-ID: <CAPj87rMcb-m_-ek3JqFiY19Xfwwym8mbn3V0tLog434Uc-Wc7Q@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/kmb: Fix dereference of pointer plane before a
- null check
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Edmund Dea <edmund.j.dea@intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Currently pointer tz is dereferenced before it is being null checked
+leading to a potential null pointer deferernce issue. Fix this by
+only defererencing it once it has been null checked.
 
-On Wed, 30 Jul 2025 at 14:35, Colin Ian King <colin.i.king@gmail.com> wrote:
-> Currently pointer plane is being dereferenced on the calls to
-> drm_atomic_get_old_plane_state and drm_atomic_get_new_plane_state
-> when assigning old_plane_state and new_plane_state, this could
-> lead to a null pointer dereference. Fix this by first performing
-> a null pointer check on plane, then assigning old_plane_state and
-> new_plance_state and then null pointer checking these.
+Fixes: 6fc2e1a5f98f ("thermal/drivers/tegra: Switch to new of API")
 
-plane cannot be NULL, so that check should just be deleted instead.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/thermal/tegra/soctherm.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Cheers,
-Daniel
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 53a5c649f4b1..53fa6099b67f 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -585,14 +585,19 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
+ static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz,
+ 					const struct thermal_trip *trip, int temp)
+ {
+-	struct tegra_thermctl_zone *zone = thermal_zone_device_priv(tz);
+-	struct tegra_soctherm *ts = zone->ts;
+-	const struct tegra_tsensor_group *sg = zone->sg;
+-	struct device *dev = zone->dev;
++	struct tegra_thermctl_zone *zone;
++	struct tegra_soctherm *ts;
++	const struct tegra_tsensor_group *sg;
++	struct device *dev;
+ 
+ 	if (!tz)
+ 		return -EINVAL;
+ 
++	zone = thermal_zone_device_priv(tz);
++	ts = zone->ts;
++	sg = zone->sg;
++	dev = zone->dev;
++
+ 	if (trip->type == THERMAL_TRIP_CRITICAL) {
+ 		/*
+ 		 * If thermtrips property is set in DT,
+-- 
+2.50.0
+
