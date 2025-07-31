@@ -1,70 +1,71 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CC881E;
-	Thu, 31 Jul 2025 09:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F68CEAF6;
+	Thu, 31 Jul 2025 09:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753954915; cv=none; b=keKrEF5Gfppa46nkT/9JUIruj8sad3qDA2ijEIUtXBz7FXscpv8vuGz7LFTkAXyf9ThJJISJ5NYK7R0yoJ/LFFnTbR+VumB4whmdvD6oW8d+R69u+Eag5BOvEiA9kQu6PYImiGe4BJClIPVSYkEAqBUkoMbkCuG9sC3nWDRFNbk=
+	t=1753955213; cv=none; b=V6qoaBOgGa2BnTVACyIQDBXHkEZLvAr6TgafpJj9VmAy+JYwX778JQWogkzpI4+gHIS+523I61bEcOHGBpa/4TQ/JzCGLKM3wx9EK9NGVakuIPnyZnZRUJQcfq3qnwH1SK2rNhUjaz7SdwbTg1MAO50MbiJT2VxkDPp29xBiHAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753954915; c=relaxed/simple;
-	bh=i2/nMy7FKYTyjoOb6CSTRUZssDpBCdS9RZdlFSAXfls=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SaoUQqPIelGT0gr986mOdR1pM9kMYzrSRmJOMnX9aPq6R2e5egztnvTJpKTEoY5fo9R4J8anx2zjOW9nnpNvwCe2P0Ah61vS20oYO3t1HU6TeqX5MrFczYSnUaiNxFE44csUUe3ZSwvd/9m/Tv9ViJSY8uGuP1WAp3GWGDDIAdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCYwW3NY; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1753955213; c=relaxed/simple;
+	bh=xXPpGX7ZBjJ1xdWVAl1wkJNiB3J4P2aSQW5HUTyyQh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=knd8m0+0hLTbNmeOEwG5IsvHDbYGyCw15ZLe2KXoV8e86Y96iHiUXGNO63iZUm4yQmLprmq5LjPjJS8QBSGnE5PI/PoLN9GlOhL+BcAW6ycRIpwabbgDfplky6gyc9hF/+SU7Zdob/1oxPGwJ5T9W+ln4v5CKWJin6PuXXmx9rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCQq51sO; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCYwW3NY"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00339c8so1773665e9.3;
-        Thu, 31 Jul 2025 02:41:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCQq51sO"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so4534015e9.1;
+        Thu, 31 Jul 2025 02:46:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753954912; x=1754559712; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753955210; x=1754560010; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ylc4ZxnLD2CbRkm680HNmR2pGWeedE4Tq4BAYLGyBVc=;
-        b=VCYwW3NYAZ0/cVfSaJh8PsHFc51hr5mYu5Eylzm0aem2n0obygz8fH+OF7lUR4XjTu
-         30SkYFa5p+xouMnrVg+beAOtvvTKwO2R0rEJjBOAqOJWlNDn83PcuboYz4KYX2t8ARB8
-         90ztcVSU8BbMUqBn027yU16fwsUNidwmMmc1xo3XdgRtu8ZkYk24kzTx4/y9JABjmecQ
-         k8mINmGnbl5AE4HUSjG/PEPjgOE3blpmNv04UgcGyJcHgc98vZwCQxPu59p8cuIBXbmo
-         GYydzZuaCHZ1/rrYrPt6u0kqngOTW2u+P4KP7SxsQHexc9Z1INDkug2LAbKOxu4BLgdW
-         SH2g==
+        bh=7FvYfWmJZ20gWyOT8n3+HXUa94Fj4Gkd8CfUCWJIkuY=;
+        b=UCQq51sOvkcNr4EkK+s9G4pGImwv+d7PHjJ4G9tdNt0e1/BM54u1P4wt8ugxqpPHhY
+         r78WrvNwiGB74Me911rzMWa+3+kOB5hJmgkViku/Q3Vw67yG4KNRFOo/mVNIoFfoyH82
+         p+vERXth4h5wREAUCIt0LJmaPxdCLDURlUw4N4Ny6cNH+eY1G+gWuvmGmrjQ8JHrAR7s
+         9YMhaJntZzquhlD21zvxCoT5nbMxt1HnrJziUygkDcEoK3VJLa7lj7gdsimPM8rRnSNw
+         6RIFmvVZJnBs8fFV3OMe45B9kkYUzsupjJUjfB1TcmY0T4bnEnNZIU9gecTZbO8F3b2t
+         pIhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753954912; x=1754559712;
+        d=1e100.net; s=20230601; t=1753955210; x=1754560010;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ylc4ZxnLD2CbRkm680HNmR2pGWeedE4Tq4BAYLGyBVc=;
-        b=MkjujIR2uis19Sl8+RWoLyZ4gEEIm0ARKcTQIH59y50ef2Yf8OzaRzxwPiMOmAdahv
-         DhzzcfiUO5/JMBDNovcSPQhFdvwaWe/t9qsRhl691FlCcbLMxkH+8rlH18aqUvNfdO3H
-         APhknwrkmzACtIOzYj6zxaMqtXbMELy54StX6iFpQ071DC7fXwD6oJyD3bU8HTM/xZTy
-         jylkQCyckOm7DIj8MeVUYijuX6j2RXNj3oYyvkObRxd9RtfFdRc4z/mDkU+TX1wsFBRX
-         +0pIL265/Zsfp90YoEzroWKNwStVbZ5c5zMgt+SgCv8PZxU+pPc13EGmsi4D13fouyS+
-         fCdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUETHwXudgQnU/Lbt2t8EaDrTNaa9Mq4aEAT1WYIOpiVo1hWvQw1lccKFl7EEoEe2c6s6MRUe4j4d14@vger.kernel.org, AJvYcCV6YCAC1nI5YJoTv9VXQxwW6i1/BK9/5paKPDNCJ02uvhaFtXigJosoVhdipXkwv9xt6xLmCrtJg5PIdnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyIVuKpGZiDI846C6/ghCBjdBxYhbJaTE6OfqQldfK+8EsUbR9
-	PMIe/3hws5QEsjzbzUcuBDLLiSi7HOd9oPtDw67ZIUbMaUth+AmML36V
-X-Gm-Gg: ASbGncuZaCMdte218h1dFkovkuLnK8rhLB1xgpJC+3fHKl5Fu0Ksd7c/OF8f7Eh1Jqg
-	+X1IAVcBZVDZqFl69IdK+hxsUM+IQbXJSRs3wExhjXzWgHz3CjqZ2xeZsFYe45Tw2MnMt4m5MHx
-	33FfXpolHlMi0RM3vvIo/GlWWOGtrLcgULMckCks+DS40WloTL47GYtinJZdDx4CuGHbNqhcBcZ
-	WHZVoatTzu4Z24FCcQj08eNZKIL2V0buD5y7JU07AZZ4ebF/lDxCGv9Gagw9jYtsLQ4lWXa+tiO
-	G5XFnLUtmniiAX7rTNWAL1afwIDfHtKjwQlo4SJWe8RlBPmM5RA+RbARw20FumgvXaJYLTNbOF7
-	OA/sNP7828sUdrRE+Icy9
-X-Google-Smtp-Source: AGHT+IGje8yg8iNAPGrk4uFHpWmJ4AyuhPlf+5JK0IMwP0mZvBIu+DXEedc841mCBEGmi3Fx/5xZWg==
-X-Received: by 2002:a05:600c:5185:b0:456:1846:6566 with SMTP id 5b1f17b1804b1-45892bee39cmr54428715e9.29.1753954911810;
-        Thu, 31 Jul 2025 02:41:51 -0700 (PDT)
+        bh=7FvYfWmJZ20gWyOT8n3+HXUa94Fj4Gkd8CfUCWJIkuY=;
+        b=IaWrqWw1GntzIVgNW4BLQpDyGJeoYPNdOmfxC0oGR7iYlwhqLcy8C1ajFmSjabsYkQ
+         ryMIpiVVkNgoAXYbUmKdTJ2vmgqnBK6GBMYYUZsuAO3EtWEe14V3u5c+jqy8IZYYo3tM
+         0WFDITAOoDVHzSDM2jjLFupBcSBxxTpxBFj0W/BYKa0u9UoO7XLyH3Q4mGiPLccIGljP
+         /0yALMqfi2cvXcf/RSidjWcFQLk5R3mN88djxzeDC0j7+5Q6sfNGjAOpj1TkGaet3HYi
+         yPVEGYNGVgOmKkMYSoeSYI8O8Lf0gwgTnhI+cx3C1ujwIf28Wygk61OnibAqicUzWD6q
+         iDjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHI3BQtVS6L9/HHEon6+AHE56SnLqodLiGgHxv0dBms6dLznPa5Sc9UAaxE1v55p00T9cCQw1ddpAkPew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYnHV5D6rnQYKB6S1HNEA66m+2BpGdrjnjIxkdUzBRKJ0JHByK
+	RxkgqrF088eqZYRmU906N6rxsFUu3ju/7S2yVo/WduUrDELaHDkJu0bB
+X-Gm-Gg: ASbGncsi99LWO7VI0K9ZVd21QD7FELvwItRMhUdtcPemKdeiVhEQ/gyIF4RD18S6hPO
+	r24E1IbGJEJJeWIUB0yA9Nlgbuh4/0UnbXoijIIx8UH28jOotiHeXOBW1/wf1zz4aSj3OGWwl72
+	aSXMIYHPtYhcOMU41RSVud/4R90ChOstND5A1cJCi/y0SoreQqDAli1yxuiez/TX0MqkH+VgLCs
+	Me+GnHNQasY9re+caQDxsnwIW2NCGDBBNjEEZPrv1KNFZi6Nu1yzmXIV2Z6BP5LAcRXJeZSa+67
+	pdFmIamALPxO4Mg4LYSH7JHJ+djzXKBLXwn4mxE+GOD7+WxeAULHZ97LbzC1AZWoorYVMnGVLTh
+	x48QMZ+VhmgZcIctecKSu/4if4jmUAjQ=
+X-Google-Smtp-Source: AGHT+IECIlKob6XVGKXqPkIouz4B7PwUNLICavEgKGFiyCNrN7e+75j3b8k5cwiFz9G2EqNmg5hHVw==
+X-Received: by 2002:a05:600c:8b81:b0:456:eb9:5236 with SMTP id 5b1f17b1804b1-45892ba3686mr67809105e9.15.1753955210391;
+        Thu, 31 Jul 2025 02:46:50 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458953787a8sm58153325e9.14.2025.07.31.02.41.51
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458981d0b06sm60091895e9.5.2025.07.31.02.46.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 02:41:51 -0700 (PDT)
+        Thu, 31 Jul 2025 02:46:49 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-mmc@vger.kernel.org
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mmc: davinci: Remove space before newline
-Date: Thu, 31 Jul 2025 10:41:16 +0100
-Message-ID: <20250731094116.2163061-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] mtd: jedec_probe: Remove space before newline
+Date: Thu, 31 Jul 2025 10:46:13 +0100
+Message-ID: <20250731094613.2164604-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -75,27 +76,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a extraneous space before a newline in a dev_err message.
-Remove the space.
+There is a extraneous space before a newline in a pr_debug message.
+Remove the space and remove a space after ( and before literal string
+to clean up checkpatch warning.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mmc/host/davinci_mmc.c | 2 +-
+ drivers/mtd/chips/jedec_probe.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
-index c691f1b60395..2a3c8058b0fb 100644
---- a/drivers/mmc/host/davinci_mmc.c
-+++ b/drivers/mmc/host/davinci_mmc.c
-@@ -588,7 +588,7 @@ static void mmc_davinci_request(struct mmc_host *mmc, struct mmc_request *req)
- 		cpu_relax();
- 	}
- 	if (mmcst1 & MMCST1_BUSY) {
--		dev_err(mmc_dev(host->mmc), "still BUSY? bad ... \n");
-+		dev_err(mmc_dev(host->mmc), "still BUSY? bad ...\n");
- 		req->cmd->error = -ETIMEDOUT;
- 		mmc_request_done(mmc, req);
- 		return;
+diff --git a/drivers/mtd/chips/jedec_probe.c b/drivers/mtd/chips/jedec_probe.c
+index 23c32fe584b7..6a583418788d 100644
+--- a/drivers/mtd/chips/jedec_probe.c
++++ b/drivers/mtd/chips/jedec_probe.c
+@@ -1953,7 +1953,7 @@ static void jedec_reset(u32 base, struct map_info *map, struct cfi_private *cfi)
+ 	 * as they will ignore the writes and don't care what address
+ 	 * the F0 is written to */
+ 	if (cfi->addr_unlock1) {
+-		pr_debug( "reset unlock called %x %x \n",
++		pr_debug("reset unlock called %x %x\n",
+ 		       cfi->addr_unlock1,cfi->addr_unlock2);
+ 		cfi_send_gen_cmd(0xaa, cfi->addr_unlock1, base, map, cfi, cfi->device_type, NULL);
+ 		cfi_send_gen_cmd(0x55, cfi->addr_unlock2, base, map, cfi, cfi->device_type, NULL);
 -- 
 2.50.0
 
