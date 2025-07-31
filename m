@@ -1,71 +1,69 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DE9F4FA;
-	Thu, 31 Jul 2025 09:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DF32A8C1;
+	Thu, 31 Jul 2025 10:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753955605; cv=none; b=Y1G77iuWAZLFDvRrTj1WALNVSGrKqvcc4zg75kCOmIZQ1BXI0GbyMbMOyThh1UaG3hScEPyAMxsDwJlpgg91+Aykh8OBqDuAt1xRk5DEnDwgZcf5VA+5iMiTjWXm04/PlPJn4X4lsr5vW/R5z4j2TVoagozbettsFBn6X8Yop2I=
+	t=1753956060; cv=none; b=ifEc3IPpoHPxQSjN9UWmn4HVVGFJllbYsfH6602lXfde9J3mD0wICcfqsHv2aInUUWfXBjoOxR2BVLSn5dv75wpA4KveZJ5gL4rt+vtANl6UOybjFr6vgf1fzbu0VCP4gTsou/oy/DKExpzLPbr6XgNJn7wLyZf70m73oZ78dvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753955605; c=relaxed/simple;
-	bh=/cp/miCCgnrS1CmGH3nRvWasypsDB5K3Zo2E+22xAXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RSLLrWK31EFn4l9wVVRyw8m0SYGduaVX9ENE7R5MDN+OB42cPICWPGn+dJcIi9crFhz5m6YuHYo6ZeKzdIOaONHjD8ILR2zarkt/dUu/5TxprMrIjEeLa3KDyFknyQ7e93xjrmI2SXt+H3vajrUV/ue2m8RG83ehSKvsgPwRoU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqEBXkP2; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1753956060; c=relaxed/simple;
+	bh=D/Pse1aDeleA703VwEsVnxO77p0exXY+NO8OrcIK420=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TgFnQ0qnQsUIQIqXM4ORwqO2c51zSM/rL7u/XSsxftkywrq3fFCu3YsSm8S7DpcgbEbsWgxw7GvizRNH01BCwb3IsiUpbVdssOoDpcexp6zsJEHZdNXoznkxKMPEPpQbQNyDqujFVFHcPdKw9SNhsfOq5Scvh4yO0y/kOjYnT0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuu/UYLE; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqEBXkP2"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso624245f8f.3;
-        Thu, 31 Jul 2025 02:53:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuu/UYLE"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00283a5so1364065e9.0;
+        Thu, 31 Jul 2025 03:00:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753955602; x=1754560402; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753956057; x=1754560857; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HsMG0i3+AqfjEpu+Gh56Ls+b7M6/eRJtSrOLqrmM+JY=;
-        b=fqEBXkP2isvtdEeavChZAa65xytK5Kf2cXROz+yyKAK+itVx7E/XqtQEKX6qkNqcnz
-         evq4iJJ6wDN6gC4ELzF/JjOR2Tly0D4YH2mLk6AT+3+f4W51Kqe0rvEYxN2drGlYLd8u
-         /LckwggSlJsqXjoZ9if6p81uuPaWXZrWSFTseoTVO4bz4Q3hUGn/4m7bOMxeMcuB3ExQ
-         lzX7DucuuBc3Zn/hRjrjPY6/aghvASACcADkSOipq2PpTxLFFlmHdRubGRQ0U4dJ+ejq
-         c+i183/SxGvy3Y9Ya4xX3HdS3waWWy4okZ72GbLdoBBrJh10Xvj26zZY+lze6oQRTCSI
-         0RAw==
+        bh=mW1dNUXjXlTN+wuB0WXe+6YyB6aJsubXCg360VY1fvU=;
+        b=kuu/UYLE41zw2nIy6KDobNHLbhC16/grwr75n1AetloyS3aFL6z/3CTn7sRrHfV+74
+         SPFP9AOw5qKeU5oA5eGMrUeaywAIK+pXPx2MtslMNgQ4CV2VlhnU6MoDzmvMQdix4RAG
+         OaauVmHqlXxJBPeOMXmnGit5u+KiqtqNCjGcOoXCdBGZisD74/5Wytm7t7+H9EgZoPMs
+         o1Gg1/e4MySgm6OIA03dPc0i8DEBrz0gqa2oHDCF9CSi+VP9H62I4BYAcb45smqaGLAr
+         4suFL6t61binL+nAelCY0D17e9Y8kpjweFrQo3IgFW4ZucvXDhYJKgmuujNwNTrVtn2F
+         LcvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753955602; x=1754560402;
+        d=1e100.net; s=20230601; t=1753956057; x=1754560857;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HsMG0i3+AqfjEpu+Gh56Ls+b7M6/eRJtSrOLqrmM+JY=;
-        b=HaYY7Pa6CcWjrufmSYlEM4No/AOVzJESyGzxmNPdUcqjs1R1YHg/h938wNL4q+T14t
-         l+IG+bHD3zv/aE2urdDVyaTIdQeMEis9D5n609tFhJpzrG3reVaxB9kqjLg0Jh40wNoy
-         yGBYQjuucT++3G36D0znf0MkRr7RK7lRVCSnrwMWZLV798izUym9OVB9oprIn9IeTu9T
-         7SQpLOdWPr+/6Kq4mVHjqAaF80+2UtiRRRhV0EfBVE3EJe8R765BC7kMH3L2sC3Jis52
-         LDOlF9U8veuk/WkBmg8qUD9bIWYwLnuihJXJVkgqToE7juOvQM+09BrrY8p/LH+Rr7B3
-         /7Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBvB23YUYOCIJ+hbxAOveZVUM9OlkhbF34zbE+ZPlIyxGMcE/4b/LWV4l+j+C0xyISmzb7xOTf2jPPYDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoH5qnal7LbLRg3+BYY8UuT/9sWBqbcA7qZyy/1oiphjt9JPcF
-	QwhRR2DckELlQflVKOLg9GXe0/3YWwLJWt5pF63a5TgZ1Rq7wUfyRFvw
-X-Gm-Gg: ASbGncs6xIIeeMh8Q/ubGrChQ4Wt/5VtHQ9NgPk5kDG6Ouze3K0JZqSP2VIeDYnpdEp
-	8zFlgFVWrNdRtnrwkfW3ltR1Wrg35DIXLTqmSH3GaRwjh/Wxx0Hlwl62ihTEkn5co5R3rK5yqiT
-	z3FHMckdVzS4knbmJHLP4tEkFMHC2dQcBsPE6xldFPp8zL+QeKAkgmv2WPoEWskjNMuorIRTmxL
-	mfUYptV67EVwg1yY7uFCGWW4c6NeGMkVgwvl0zMnka2PF/Lt9CI/Iywb+zHjJS6HVGgaQ1nFF8P
-	h44JTSo3G6GKpPqTac/SnEX4rjSUxCdGSn+I8jcgoRN9LuleeKrElOWztjR3d4hAuaRnxnXAhlb
-	jT0Zm9I+lWZfgWeMCLMVAM0VE3oGFgkY=
-X-Google-Smtp-Source: AGHT+IHS+Yna4XLdm1AXyYdne1Nc2qQhOZVR/XY/PwPIfRBT/zicTIWQPLhsl4HER3UQKSwd/WutEw==
-X-Received: by 2002:a05:6000:178f:b0:3b7:8473:31c3 with SMTP id ffacd0b85a97d-3b794fe4fa7mr5105901f8f.9.1753955602212;
-        Thu, 31 Jul 2025 02:53:22 -0700 (PDT)
+        bh=mW1dNUXjXlTN+wuB0WXe+6YyB6aJsubXCg360VY1fvU=;
+        b=iRtmzt5yU6qsLP8I9vcCSIK8NF5i5da9atGEt2dzKj+2W10ImTXcSsaRPSrJsaovok
+         mmz4Pe1MAu1yD5GmIamoUZyq+V2nGjfN0ZfioJLFUet8q8kskbA03N5QDtwVrmwv2T8k
+         PneFR2nP8U/mLauxx4qGIAzPGCdwJQu9o7LYqJHj7vbXYJW7oKlM+oNrKt4Av6p9kgqU
+         7oU8Am98KrsBl7imN6w5u9kNjSjso85WiXLl6CeI25i7LrSxCxnYxz0Tg25enat79JKH
+         e6FOVLFyhtVDJ+L1M+Rh+4uaBfKg7/Yea//vKzzQKqcaCyq2Ruigh+KsYagruRKlFu+V
+         z0VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUU4n48MOlurUP9l1663XaD5mBNMyoq6AhwL3+yFfhnrV0O86pI4qNuIkwFYfGMWaE6WnxPCxZqgFKo@vger.kernel.org, AJvYcCUof6NsrvQ94saLF2BXdLVN47yQyNROiVMwrfeXMHhVtxRn7KKysg7erzME14iCT/lk6s9dIdsuglpMpMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMdXOHghK2gyNK/tGlYDmdJefNKYgL+YcvmlwttSt1I61u1cZJ
+	zaeP8kxURcKaJ7FRm7uNwiouKfQVp1/P9GqsHTc/je+uhxmjbMlfav4Y
+X-Gm-Gg: ASbGncuj1Y8KqrmiA8DDYimCGz0aeJ+k1gU7Ta/v2zGTRVBsZEBK7NkzVBl4Ec/wpvN
+	CU6uVCssK71EpP0cs9RyspfQdkPSlcribl6ZerO8DDdcLhCSXMEWFvRmspGV4596Wm3oJP82Kot
+	FkmxEsdv3lJF+JipXcly3i/VcK+Sdf31y4fDHCu97+cvHt4uEXUCPmqkPTth7BNZsGOXyBRXeli
+	ZVGcV6U1chGPz1gZVBjXvcRa4O9VO7oCvsGkJBTzIx6Bv80DVvZs5wWjwBv1cQszC7H8RA/fLJa
+	kDNQ6Mfs8BtlSG+vsZboIgjc7c0FAe2AmlQwg7p+U1gxZOnKgOApmKYPAnLZ7Pt8PkgPCa8QlgY
+	L060NtO4Ibx1CVwsebNIiG00FOa51GtM=
+X-Google-Smtp-Source: AGHT+IGQ6Kbneqb9SOPvp5dN+lqGJxIqcX3WzO2XlOiE5Tmg6TBNCMzJE6qi21TOp0dkhT/vQt2CmQ==
+X-Received: by 2002:a05:600c:810a:b0:456:1d4e:c14f with SMTP id 5b1f17b1804b1-45892bd0a3cmr53266785e9.28.1753956057113;
+        Thu, 31 Jul 2025 03:00:57 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3bf956sm1918578f8f.24.2025.07.31.02.53.21
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589ee57922sm20566725e9.22.2025.07.31.03.00.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 02:53:21 -0700 (PDT)
+        Thu, 31 Jul 2025 03:00:52 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mtd: lpddr: Remove space before newline
-Date: Thu, 31 Jul 2025 10:52:47 +0100
-Message-ID: <20250731095247.2165158-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] PCI: ibmphp: Remove space before newline
+Date: Thu, 31 Jul 2025 11:00:17 +0100
+Message-ID: <20250731100017.2165781-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -76,86 +74,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is an extraneous space before a newline in a handful of printk
-messages. Remove the spaces.
+There is an extraneous space before a newline in a handful of
+debug_polling and err messages. Remove the spaces.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mtd/lpddr/lpddr_cmds.c  | 10 +++++-----
- drivers/mtd/lpddr/qinfo_probe.c |  4 ++--
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/pci/hotplug/ibmphp_hpc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/lpddr/lpddr_cmds.c b/drivers/mtd/lpddr/lpddr_cmds.c
-index 14e36ae71958..290fd0119e98 100644
---- a/drivers/mtd/lpddr/lpddr_cmds.c
-+++ b/drivers/mtd/lpddr/lpddr_cmds.c
-@@ -142,7 +142,7 @@ static int wait_for_ready(struct map_info *map, struct flchip *chip,
- 		if (dsr & DSR_READY_STATUS)
- 			break;
- 		if (!timeo) {
--			printk(KERN_ERR "%s: Flash timeout error state %d \n",
-+			printk(KERN_ERR "%s: Flash timeout error state %d\n",
- 							map->name, chip_state);
- 			ret = -ETIME;
- 			break;
-@@ -186,7 +186,7 @@ static int wait_for_ready(struct map_info *map, struct flchip *chip,
- 	if (dsr & DSR_ERR) {
- 		/* Clear DSR*/
- 		map_write(map, CMD(~(DSR_ERR)), map->pfow_base + PFOW_DSR);
--		printk(KERN_WARNING"%s: Bad status on wait: 0x%x \n",
-+		printk(KERN_WARNING"%s: Bad status on wait: 0x%x\n",
- 				map->name, dsr);
- 		print_drs_error(dsr);
- 		ret = -EIO;
-@@ -321,7 +321,7 @@ static int chip_ready(struct map_info *map, struct flchip *chip, int mode)
- 			/* Resume and pretend we weren't here.  */
- 			put_chip(map, chip);
- 			printk(KERN_ERR "%s: suspend operation failed."
--					"State may be wrong \n", map->name);
-+					"State may be wrong\n", map->name);
- 			return -EIO;
- 		}
- 		chip->erase_suspended = 1;
-@@ -468,7 +468,7 @@ static int do_write_buffer(struct map_info *map, struct flchip *chip,
- 	chip->state = FL_WRITING;
- 	ret = wait_for_ready(map, chip, (1<<lpddr->qinfo->ProgBufferTime));
- 	if (ret)	{
--		printk(KERN_WARNING"%s Buffer program error: %d at %lx; \n",
-+		printk(KERN_WARNING"%s Buffer program error: %d at %lx\n",
- 			map->name, ret, adr);
- 		goto out;
- 	}
-@@ -736,7 +736,7 @@ static int do_xxlock(struct mtd_info *mtd, loff_t adr, uint32_t len, int thunk)
+diff --git a/drivers/pci/hotplug/ibmphp_hpc.c b/drivers/pci/hotplug/ibmphp_hpc.c
+index a5720d12e573..2324167656a6 100644
+--- a/drivers/pci/hotplug/ibmphp_hpc.c
++++ b/drivers/pci/hotplug/ibmphp_hpc.c
+@@ -124,7 +124,7 @@ static u8 i2c_ctrl_read(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8 i
+ 	unsigned long ultemp;
+ 	unsigned long data;	// actual data HILO format
  
- 	ret = wait_for_ready(map, chip, 1);
- 	if (ret)	{
--		printk(KERN_ERR "%s: block unlock error status %d \n",
-+		printk(KERN_ERR "%s: block unlock error status %d\n",
- 				map->name, ret);
- 		goto out;
- 	}
-diff --git a/drivers/mtd/lpddr/qinfo_probe.c b/drivers/mtd/lpddr/qinfo_probe.c
-index 137ae5f0a19b..42281e460c62 100644
---- a/drivers/mtd/lpddr/qinfo_probe.c
-+++ b/drivers/mtd/lpddr/qinfo_probe.c
-@@ -55,7 +55,7 @@ static long lpddr_get_qinforec_pos(struct map_info *map, char *id_str)
- 			return minor | (major << bankwidth);
- 		}
- 	}
--	printk(KERN_ERR"%s qinfo id string is wrong! \n", map->name);
-+	printk(KERN_ERR"%s qinfo id string is wrong!\n", map->name);
- 	BUG();
- 	return -1;
- }
-@@ -112,7 +112,7 @@ static int lpddr_pfow_present(struct map_info *map, struct lpddr_private *lpddr)
+-	debug_polling("%s - Entry WPGBbar[%p] index[%x] \n", __func__, WPGBbar, index);
++	debug_polling("%s - Entry WPGBbar[%p] index[%x]\n", __func__, WPGBbar, index);
  
- 	return 1;	/* "PFOW" is found */
- out:
--	printk(KERN_WARNING"%s: PFOW string at 0x%lx is not found \n",
-+	printk(KERN_WARNING"%s: PFOW string at 0x%lx is not found\n",
- 					map->name, map->pfow_base);
- 	return 0;
- }
+ 	//--------------------------------------------------------------------
+ 	// READ - step 1
+@@ -147,7 +147,7 @@ static u8 i2c_ctrl_read(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8 i
+ 		ultemp = ultemp << 8;
+ 		data |= ultemp;
+ 	} else {
+-		err("this controller type is not supported \n");
++		err("this controller type is not supported\n");
+ 		return HPC_ERROR;
+ 	}
+ 
+@@ -258,7 +258,7 @@ static u8 i2c_ctrl_write(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8
+ 		ultemp = ultemp << 8;
+ 		data |= ultemp;
+ 	} else {
+-		err("this controller type is not supported \n");
++		err("this controller type is not supported\n");
+ 		return HPC_ERROR;
+ 	}
+ 
 -- 
 2.50.0
 
