@@ -1,98 +1,189 @@
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+Received: from sonic.asd.mail.yahoo.com (sonic311-24.consmr.mail.gq1.yahoo.com [98.137.65.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397A91B87F2
-	for <kernel-janitors@vger.kernel.org>; Thu, 31 Jul 2025 15:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9A31C07C3
+	for <kernel-janitors@vger.kernel.org>; Thu, 31 Jul 2025 17:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.65.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753977529; cv=none; b=jOHvJmDekip95j9QEVy/hlu8sBx6QNf61RlJDx1dvbh583S7XCfwxi8/twM7nJgDnhC13LztE5zA+1WQ7YF+d05Szlr71G9OvL9JryItIyZ89Vyb9QAk3OL09fPhsaSidJFmEbms9FnIIu7SYmUQkb6uctrohIMIgrfAjnVGcGs=
+	t=1753981834; cv=none; b=Oajv8Ejgk2e6mr1hfi+Nsu7O6+5q8nfWBlr+SQ+1O/fjHfuZVcpkpf1gdQSxTSur1b5e2FnZCVYVTAEdRiwM7DaLcKLcuYr5RlArgn5VmYWThe7H6jVzInBvM0TZgkzvnvj9QkH3Qi2L9ysq1ug8Aj7kLiPlxIe4PpO/tYU8TdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753977529; c=relaxed/simple;
-	bh=46dKdG+aZDW+qpAv1rqLDC/pwg2hGavXZ7hqkKz3nYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBYvxeG2m13/LcD26BriSIvaH3L6LhyaYXRzkpFL+r5I0GlWx+g+ph4oW1YLM/Se+NXWMOXC7vXPEwSncOtlXIYA0bAGo/6W8gRo+JPm6PoqyofBWLN4U/Ykn+fDmgKZy1CWWhhgO41k0WkFfepSJLLHWB106ZHkP8RFmiZ1IcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NOcWYbjw; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1753981834; c=relaxed/simple;
+	bh=iMnATmascgGeczYNNRglDU5ZHw3NEt2KENIz1qbn3Q8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OYI7u2N6KF5dzKIET6Wgby0xCRW5+8ZDhVJeaPfhsj0WxV9qlT9T5nbJ7RDIHwyU50kd0OXe3XZlIxX/6jX1VxPQUHeEJNGB0UxgJsF9gcjiHn5CGMrnWXq2AOxr6SdHGJ020RGcpFMhx8R1wZ7nZM3Ju5m4BZY8TyyYxTdjjuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=ULst3z1e; arc=none smtp.client-ip=98.137.65.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NOcWYbjw"
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4fc02633f5aso417743137.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 31 Jul 2025 08:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753977527; x=1754582327; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=awhIJS7cdjgUxEct8Phfjco6UcYl0OeJVp0tQ8Q8jkM=;
-        b=NOcWYbjw8sddr5gem9Za8F+fHETEneaiM7myBOErYUsyHEmHheA9LkrieQSLEJC3aP
-         frbU1wvE0U1fRPCETh9hAYdFO8Xx8ePHh+/5AiMy2D0aVnv4z0dLfJRcnAfKjRUa+Au5
-         qazPA2DdURR67OL7e/0m5/VSkHssEKi6Flc4cwREogWXuPUZS1G49lNW9A8sG+HgwX+e
-         +yms3262iOiWJlCDv756qjKRYVjlEZk1tcOHh26rNsDbJdC2MlzekOl7qfqn6R/2BZMe
-         cyw8p/tzuBEBPkS4TWx1JBS5GwGOf1MLJuDQFF8mn4GZGRq/3nCdNepiyLOcKWCknGFh
-         ivZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753977527; x=1754582327;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=awhIJS7cdjgUxEct8Phfjco6UcYl0OeJVp0tQ8Q8jkM=;
-        b=n/3On37wPUEQsvkBQN6/DiI9+8+ZiWvlKmy42YYCUJAT83SYQwDrMH/hD/3FjA/wnZ
-         1pn+iJ+gffm1zrrCQ0tiN8FJCkHOsd9VkvMrEb+RzDe7QbmSNVCwXBHond2PI5i+skp5
-         QbEzgobgfmcu0ewbjx0pwChm7i/TE1DaJya+KZNfpKcoa4UK6ZxpeXvNX7humGX5X/Ki
-         ytUR3qOW1QBxaDT0i0jmiqUxGilNOVgSmvhN8h/OQSFBauF/at17bQhsxDZcsvqMTRva
-         hymtMBJydWKa48mHFZx8/F2LHwdY+TEe1pbo1vtn/r9Z7M028mvO4xGd6YZNDjRJo4IR
-         a3Og==
-X-Forwarded-Encrypted: i=1; AJvYcCUF8EEk7mw2kbU67j/Mwm4h7UkvDBHoOMEQ6wO9w9TUzDDHIquC/mowByYUDoKh6d7fSGmKtXaZ8GV11bUTcGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtDHuQ6w+gAL5Ym7z+SaYU8kV2og3FnengHL0qzP3pj+5y+42j
-	2LW+sZJmZvdpSmM3855StOMaVCs4yEGdxuQOmTzoH816IdRfSDQHUhC0evXot9gB6G0=
-X-Gm-Gg: ASbGncv6/2pEIwZwHV1+RVTSGknd++V6/BWxUxoz17wOMakW+MmnGid9+h861MQ7GIw
-	zFYaWSGmyv4jANa6tUGCxgmmBSc+T6XNYSv/PE2BKBgcJlltWU1eJH8KvwHgut3F/tpJcE20G0T
-	kVg/ZDXO7wcIvCWmDe/L7m/pmU47EXjzqDPaPMHP7FaA4iD9EoizDWYwAwisWAK1o7K3t86YhXE
-	g/YBH2ujtc0gbd3jGd8X4UvYy2sNVTsHLiZni8zwi+5Wbj/7t1aZjvoYXAfeAR+k5YOuYPny4kx
-	JGU5/2dZv6685gEuCbuW10w26ePMHNwfnLYT3vziHspaiW/qMa1XtnR0z+k/O2hQNJGs6TJW778
-	mGjSn/92NwN/X7iffNSQd5XUAtDOswwQbm+FKWA==
-X-Google-Smtp-Source: AGHT+IFaTZ7Nhu+be4TDEAEfweuDLzckzke57mSUiLDaG292YOCBw+NN54Llzx5T9jpZDMDjLrT77w==
-X-Received: by 2002:a05:6102:b13:b0:4e6:fb90:1e21 with SMTP id ada2fe7eead31-4fbe7f1af52mr5076369137.2.1753977526996;
-        Thu, 31 Jul 2025 08:58:46 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d1c4b98sm376631137.3.2025.07.31.08.58.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 08:58:45 -0700 (PDT)
-Date: Thu, 31 Jul 2025 18:58:42 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] mtd: lpddr: Remove space before newline
-Message-ID: <d7f12483-4710-4c6d-bd9f-1abcdecc9b36@suswa.mountain>
-References: <20250731095247.2165158-1-colin.i.king@gmail.com>
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="ULst3z1e"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1753981832; bh=iMnATmascgGeczYNNRglDU5ZHw3NEt2KENIz1qbn3Q8=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=ULst3z1erjpmlTP0qev2FIHw1QusQG+jf9CovhhVAm3iFsUgfki+SXCgwPCMw9Yz/uEfjWjkyOGpS6XqmFsPcztkKbXJEDbCsH7WPN7JGxBaoqC8ssumZgVL47MQBXSm93TNLhSBpc6ckhxz0IuInJchaHpfICdPE1sfL7R7XcSjT/EDZ3E3wN+NQQB/iwRpTrN87MnN3+vLIffbBfTuaOwneCYWyzFeypcUj87O3dkG6SoMAHgL+Br7vRaGfu5tlabfY98o5kNrPkZnXVthNEw/hFEqkgIcceuE0d54sysuRYxdTzbTkwbW/cpBpDURFiPtq5HpKZm7CLer8ZmnJQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753981832; bh=DSWUjH634JQCW7sSP/1D5n3Ma83SZb74tjgECzzYjMG=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=jUJeQI42szBdjHSgoE9i3uDf/LXm7RcHFqGQf/c32iy5EXs/ynpN4MdbDVFPjicnccd/LAd4I2VBlS9yMMIsbT+adfNTKiVzjgTTKJ6M2/K5NUQvIlOUlsYE5kxHHTZFGUoi/IQbwZ425W5f7UWhMB0SNWith9mXEpwFGgIQVibktPwM7UovLdu/XXTxTrgdV0LqgI21rQQVk6Dc/U+O6WdNeIT4sW+Jf2BTMSDygagD68QAwuWO12w6hdm5ITrDuQApbaivemx76ws0HU77Xj6aDHqHyfzZXl5jFaXCymU5slPrm/yCsGewkSKqM14P/RfCeg+fJ5Up9W1DK52aLQ==
+X-YMail-OSG: kgh7gwoVM1mpHEWZyKNv4B1NlwMuyOdzYnZ_JwFzjWZSiMB17vhDp6mtFO8wFN6
+ WMTJUHOy_ff.JHpBVkJZVde2bEHN13vcHLVUQKJdT0TUYMHpcK3Hb7MTZAd0z6KcHN5p5UGUM0zL
+ Yjqn3yLr0hdjZde3DCJhvru8LcPWYuFHF6eQNaBkDTH2dKDMj_aiRgbNFDPFS2.NXBQluAnrmbcv
+ Q.M2p5lo0WnR3XRCibcpQRCTfs3MFwVM0_oUZqXUfB8qx0oiwXcZx4oDCzSFTGrYBZIpR_vldHog
+ t_jXoNXavHumW7hnzcqrT_85.4zi1w7VI4DeDJAd9fJB75z.1jpXDft6JyhTxsi.fqh6lAPD1GP6
+ 2wLfbQDY9u2.pHosAlWe5HxHgdtCbs__SkPzIrtDjRJfPm5TUaQpRkWRjCMnijx5sdE4wzzx.jb8
+ eWstmqXhK1lyxzBPGgkl9.CbhnnF_P12Tf0FuudSLgzPBzeNT7JFXV7rLY_qzYN7vAolo0CbCCns
+ rJ3cU5cADUS9UzwWiGY3QlvIdCBNJjYaqgubFQnV3wX.7rTgox0odb2BawxtGt5MN4X2j9sRU77w
+ MOg1eqVQgbdECT170xP.ADMqKuOF_pXOVCq2EJErTtiVKUvwzc28kfTkfkDO4su19QEQGrkbdTub
+ .FMap440sxalHO0un_aBw7rA0rjorJC6bNvJF0V24QLMZnGUNXRz0or.UtbKeI5DwcGyLMoaL_q6
+ Il0FoPboefWQOyqSUFH65wmndOinMcpU1J2oQFUv0_dl39sb8G0eWE5Kx6DrBUrbvQkTCcEMVfyf
+ jFaKKvkfCUCCsDvmiRWyTEEgqqegErDtLx84VEK5yvtqCDRqaZtkdoM_KauT0h2psunAk7T_LAlH
+ XLGEZIeFSprEEwSi4_i_vwjLAFwaCQFYdcI6AKRn92TrX.T1x5lSp8Q6UVtOnDEXkLE3UIdDecmM
+ n.gscNeUocgs3jwJhnEx3dHU8tccUaQ9Jg_ytKz2s0ONXGGe0MHtnuToIi2Wh7x5meyldQZ.f1ol
+ WYT17EP5fS4sZzXLz6Wb1lqPI9b31ZH2qKCj6UMU4mrA4KGYk5f6WBtj4ZO.C4bqpY8X22vFp852
+ E4XCFpBNPCZXbYwNR5bWT3VbQwO5JiZ_JSczhg3OPQTnOOJLTgL0fp.slr1r5zQhN4a5SchIdOK4
+ dSwKZu5Kldn8JPkJVLsR2EVgdB9iAEDn7yIQooXD3flAzszVGekAK_tqA8Myn.uUWEJdWrnKvVzv
+ nPVrKehQum9StSfi28EToAn1t6yg_SKteeIt91weRB0lb4mWo_CkK3UG2R3r1rfckZe9MidwO1gR
+ 0QbOwKqNXLEI9S8IQcwdlo8FnnrdYzGJ7j3jWfdYK.qXrLTiOOPgU5U.0zGK_qigBFyYeXNJOvl9
+ yHkivzncKKPCCbZpa2I4Lw1vyiO89fa.wIEhB76TJhRUSyutA4XBzts.qa8WpdXOdiDODYhccEZQ
+ q2E.3dXRzuS2IcY7CS8oyZdQMr8g4Aj87avPUPLAidieRTzVIYgRDMWv18BVotJhIP2dKSJaYSeP
+ 6UZ5iyNZ.azRdUruMKKYXYK4lNKXqLWUQ2ZLB7WPrzW_KBiY1ZrvHUQNsIsxh9pY6GjHz21aoftY
+ oNg6pS3.fUD0lClTGx9sT0bD4x81bz343nXw1XuwWvKxWXScr9xQv8_Q5.wLXzBXTHcL2h_Sfb3z
+ fenT67eAfbZoMwBXcAUGSzsJWoCIfoOo9mJ4EgKWCADtLgeNycidHpThuKpMMpwh6Pc8t.zo5_Sq
+ XLC5ZRA3Zax3rKLsnsrSUWK4CKDRDGt2hCm0IAjEiJbgX0EbTUvKXMhrZqdReWfppYbvr74oJXl0
+ AB52SWm5l3Mh9gONy0UCShJb2g3cMgoJ8P2NBnVH5GR8Xe0T4dZ9aE714SejPkKm872YjkOMc9Yv
+ GKFCFe_2ZK8ot.C_Qox6A7xYSBDiQPbK_QeBmSzxqtcpKAjGhIx6sOkZtSyuqLUOICvS8SAdz4cj
+ Rp3nwnlAdd03ovvagD.XDVsJXm2lDQ8mOq.mSiHzUK5RbgxHUmbn6Dd5VY0kNiteJ6wIRY0aDvvl
+ aDjMdmGElPFqtB713.rZjkEaRBgMbkcY58VriDskVAnzuIrZlxRvj3R0uH7iLN2cr6qXyBPIl8wz
+ K3q6JCMHRPRVrc69QMJSTtuqtduxzcNUKKMCzZeSikDhKbLeLmwfVabuihqOYedY9s5RnhOW8wIl
+ d_7kx6A--
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: a36ced8b-cb9a-42a8-bef4-8460bcebc97d
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.gq1.yahoo.com with HTTP; Thu, 31 Jul 2025 17:10:32 +0000
+Received: by hermes--production-ir2-858bd4ff7b-9r9sx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d00c2078b76ee3e43b9910e86da44ded;
+          Thu, 31 Jul 2025 16:40:07 +0000 (UTC)
+Message-ID: <8381a142d72f3cd0e92de4dac6acfc0241a87365.camel@aol.com>
+Subject: Re: [PATCH] powerpc/xmon: replace sizeof calculations with
+ ARRAY_SIZE macro
+From: Ruben Wauters <rubenru09@aol.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Madhavan Srinivasan	
+ <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin	 <npiggin@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Date: Thu, 31 Jul 2025 17:40:05 +0100
+In-Reply-To: <62aa5231-ed31-43e2-84b7-d6b6ec86e78d@csgroup.eu>
+References: <20250719225225.2132-2-rubenru09.ref@aol.com>
+	 <20250719225225.2132-2-rubenru09@aol.com>
+	 <62aa5231-ed31-43e2-84b7-d6b6ec86e78d@csgroup.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731095247.2165158-1-colin.i.king@gmail.com>
+X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On Thu, Jul 31, 2025 at 10:52:47AM +0100, Colin Ian King wrote:
-> @@ -321,7 +321,7 @@ static int chip_ready(struct map_info *map, struct flchip *chip, int mode)
->  			/* Resume and pretend we weren't here.  */
->  			put_chip(map, chip);
->  			printk(KERN_ERR "%s: suspend operation failed."
-> -					"State may be wrong \n", map->name);
-> +					"State may be wrong\n", map->name);
+On Wed, 2025-07-30 at 08:14 +0200, Christophe Leroy wrote:
+>=20
+>=20
+> Le 20/07/2025 =C3=A0 00:43, Ruben Wauters a =C3=A9crit=C2=A0:
+> > [Vous ne recevez pas souvent de courriers de rubenru09@aol.com.
+> > D=C3=A9couvrez pourquoi ceci est important =C3=A0
+> > https://aka.ms/LearnAboutSenderIdentification=C2=A0]
+> >=20
+> > The calculations for operand/opcode/macro numbers are done in an
+> > identical manner to the already existing ARRAY_SIZE macro in
+> > linux/array_size.h
+> >=20
+> > This patch replaces the sizeof calculations with the macro to make
+> > the
+> > code cleaner and more immediately obvious what it is doing.
+> >=20
+> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > ---
+> > =C2=A0 arch/powerpc/xmon/ppc-opc.c | 16 ++++++----------
+>=20
+> This file is mostly taken from binutils, refer commit 08d96e0b127e=20
+> ("powerpc/xmon: Apply binutils changes to upgrade disassembly").
+>=20
+> I think your change should be done in binutils then backported to the
+> kernel. The more we diverge from binutils the worse it is
 
-Not related to your patch, but ideally there would be a space after
-the period.
+While this is somewhat reasonable, the header (linux/array_size.h) is
+linux specific, and is included through kernel.h
 
-regards,
-dan carpenter
+I can probably see if binutils has a similar header, or if they would
+accept an equivalent header to make the file equivalent, but I'm unsure
+if they would
 
->  			return -EIO;
->  		}
->  		chip->erase_suspended = 1;
+Ruben
 
+> Christophe
+>=20
+>=20
+> > =C2=A0 1 file changed, 6 insertions(+), 10 deletions(-)
+> >=20
+> > diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-
+> > opc.c
+> > index 0774d711453e..de9b4236728c 100644
+> > --- a/arch/powerpc/xmon/ppc-opc.c
+> > +++ b/arch/powerpc/xmon/ppc-opc.c
+> > @@ -954,8 +954,7 @@ const struct powerpc_operand powerpc_operands[]
+> > =3D
+> > =C2=A0=C2=A0=C2=A0 { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
+> > =C2=A0 };
+> >=20
+> > -const unsigned int num_powerpc_operands =3D (sizeof
+> > (powerpc_operands)
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 / sizeof
+> > (powerpc_operands[0]));
+> > +const unsigned int num_powerpc_operands =3D
+> > ARRAY_SIZE(powerpc_operands);
+> >=20
+> > =C2=A0 /* The functions used to insert and extract complicated
+> > operands.=C2=A0 */
+> >=20
+> > @@ -6968,9 +6967,8 @@ const struct powerpc_opcode powerpc_opcodes[]
+> > =3D {
+> > =C2=A0 {"fcfidu.",=C2=A0=C2=A0=C2=A0 XRC(63,974,1),=C2=A0 XRA_MASK, POW=
+ER7|PPCA2,
+> > PPCVLE,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {FRT, FRB}},
+> > =C2=A0 };
+> >=20
+> > -const int powerpc_num_opcodes =3D
+> > -=C2=A0 sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
+> > -
+> > +const int powerpc_num_opcodes =3D ARRAY_SIZE(powerpc_opcodes);
+> > +
+> > =C2=A0 /* The VLE opcode table.
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0 The format of this opcode table is the same as=
+ the main opcode
+> > table.=C2=A0 */
+> > @@ -7207,9 +7205,8 @@ const struct powerpc_opcode vle_opcodes[] =3D {
+> > =C2=A0 {"se_bl",=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BD8(58,0,1),=C2=A0=C2=A0=
+=C2=A0 BD8_MASK,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PPCVLE,
+> > 0,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 {B8}},
+> > =C2=A0 };
+> >=20
+> > -const int vle_num_opcodes =3D
+> > -=C2=A0 sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
+> > -
+> > +const int vle_num_opcodes =3D ARRAY_SIZE(vle_opcodes);
+> > +
+> > =C2=A0 /* The macro table.=C2=A0 This is only used by the assembler.=C2=
+=A0 */
+> >=20
+> > =C2=A0 /* The expressions of the form (-x ! 31) & (x | 31) have the
+> > value 0
+> > @@ -7276,5 +7273,4 @@ const struct powerpc_macro powerpc_macros[] =3D
+> > {
+> > =C2=A0 {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-(%3)"},
+> > =C2=A0 };
+> >=20
+> > -const int powerpc_num_macros =3D
+> > -=C2=A0 sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
+> > +const int powerpc_num_macros =3D ARRAY_SIZE(powerpc_macros);
+> > --
+> > 2.49.1
+> >=20
