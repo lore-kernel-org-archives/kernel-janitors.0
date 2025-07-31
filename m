@@ -1,61 +1,61 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F68CEAF6;
-	Thu, 31 Jul 2025 09:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DE9F4FA;
+	Thu, 31 Jul 2025 09:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753955213; cv=none; b=V6qoaBOgGa2BnTVACyIQDBXHkEZLvAr6TgafpJj9VmAy+JYwX778JQWogkzpI4+gHIS+523I61bEcOHGBpa/4TQ/JzCGLKM3wx9EK9NGVakuIPnyZnZRUJQcfq3qnwH1SK2rNhUjaz7SdwbTg1MAO50MbiJT2VxkDPp29xBiHAI=
+	t=1753955605; cv=none; b=Y1G77iuWAZLFDvRrTj1WALNVSGrKqvcc4zg75kCOmIZQ1BXI0GbyMbMOyThh1UaG3hScEPyAMxsDwJlpgg91+Aykh8OBqDuAt1xRk5DEnDwgZcf5VA+5iMiTjWXm04/PlPJn4X4lsr5vW/R5z4j2TVoagozbettsFBn6X8Yop2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753955213; c=relaxed/simple;
-	bh=xXPpGX7ZBjJ1xdWVAl1wkJNiB3J4P2aSQW5HUTyyQh4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=knd8m0+0hLTbNmeOEwG5IsvHDbYGyCw15ZLe2KXoV8e86Y96iHiUXGNO63iZUm4yQmLprmq5LjPjJS8QBSGnE5PI/PoLN9GlOhL+BcAW6ycRIpwabbgDfplky6gyc9hF/+SU7Zdob/1oxPGwJ5T9W+ln4v5CKWJin6PuXXmx9rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCQq51sO; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1753955605; c=relaxed/simple;
+	bh=/cp/miCCgnrS1CmGH3nRvWasypsDB5K3Zo2E+22xAXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RSLLrWK31EFn4l9wVVRyw8m0SYGduaVX9ENE7R5MDN+OB42cPICWPGn+dJcIi9crFhz5m6YuHYo6ZeKzdIOaONHjD8ILR2zarkt/dUu/5TxprMrIjEeLa3KDyFknyQ7e93xjrmI2SXt+H3vajrUV/ue2m8RG83ehSKvsgPwRoU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqEBXkP2; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCQq51sO"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so4534015e9.1;
-        Thu, 31 Jul 2025 02:46:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqEBXkP2"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso624245f8f.3;
+        Thu, 31 Jul 2025 02:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753955210; x=1754560010; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753955602; x=1754560402; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7FvYfWmJZ20gWyOT8n3+HXUa94Fj4Gkd8CfUCWJIkuY=;
-        b=UCQq51sOvkcNr4EkK+s9G4pGImwv+d7PHjJ4G9tdNt0e1/BM54u1P4wt8ugxqpPHhY
-         r78WrvNwiGB74Me911rzMWa+3+kOB5hJmgkViku/Q3Vw67yG4KNRFOo/mVNIoFfoyH82
-         p+vERXth4h5wREAUCIt0LJmaPxdCLDURlUw4N4Ny6cNH+eY1G+gWuvmGmrjQ8JHrAR7s
-         9YMhaJntZzquhlD21zvxCoT5nbMxt1HnrJziUygkDcEoK3VJLa7lj7gdsimPM8rRnSNw
-         6RIFmvVZJnBs8fFV3OMe45B9kkYUzsupjJUjfB1TcmY0T4bnEnNZIU9gecTZbO8F3b2t
-         pIhQ==
+        bh=HsMG0i3+AqfjEpu+Gh56Ls+b7M6/eRJtSrOLqrmM+JY=;
+        b=fqEBXkP2isvtdEeavChZAa65xytK5Kf2cXROz+yyKAK+itVx7E/XqtQEKX6qkNqcnz
+         evq4iJJ6wDN6gC4ELzF/JjOR2Tly0D4YH2mLk6AT+3+f4W51Kqe0rvEYxN2drGlYLd8u
+         /LckwggSlJsqXjoZ9if6p81uuPaWXZrWSFTseoTVO4bz4Q3hUGn/4m7bOMxeMcuB3ExQ
+         lzX7DucuuBc3Zn/hRjrjPY6/aghvASACcADkSOipq2PpTxLFFlmHdRubGRQ0U4dJ+ejq
+         c+i183/SxGvy3Y9Ya4xX3HdS3waWWy4okZ72GbLdoBBrJh10Xvj26zZY+lze6oQRTCSI
+         0RAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753955210; x=1754560010;
+        d=1e100.net; s=20230601; t=1753955602; x=1754560402;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7FvYfWmJZ20gWyOT8n3+HXUa94Fj4Gkd8CfUCWJIkuY=;
-        b=IaWrqWw1GntzIVgNW4BLQpDyGJeoYPNdOmfxC0oGR7iYlwhqLcy8C1ajFmSjabsYkQ
-         ryMIpiVVkNgoAXYbUmKdTJ2vmgqnBK6GBMYYUZsuAO3EtWEe14V3u5c+jqy8IZYYo3tM
-         0WFDITAOoDVHzSDM2jjLFupBcSBxxTpxBFj0W/BYKa0u9UoO7XLyH3Q4mGiPLccIGljP
-         /0yALMqfi2cvXcf/RSidjWcFQLk5R3mN88djxzeDC0j7+5Q6sfNGjAOpj1TkGaet3HYi
-         yPVEGYNGVgOmKkMYSoeSYI8O8Lf0gwgTnhI+cx3C1ujwIf28Wygk61OnibAqicUzWD6q
-         iDjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHI3BQtVS6L9/HHEon6+AHE56SnLqodLiGgHxv0dBms6dLznPa5Sc9UAaxE1v55p00T9cCQw1ddpAkPew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYnHV5D6rnQYKB6S1HNEA66m+2BpGdrjnjIxkdUzBRKJ0JHByK
-	RxkgqrF088eqZYRmU906N6rxsFUu3ju/7S2yVo/WduUrDELaHDkJu0bB
-X-Gm-Gg: ASbGncsi99LWO7VI0K9ZVd21QD7FELvwItRMhUdtcPemKdeiVhEQ/gyIF4RD18S6hPO
-	r24E1IbGJEJJeWIUB0yA9Nlgbuh4/0UnbXoijIIx8UH28jOotiHeXOBW1/wf1zz4aSj3OGWwl72
-	aSXMIYHPtYhcOMU41RSVud/4R90ChOstND5A1cJCi/y0SoreQqDAli1yxuiez/TX0MqkH+VgLCs
-	Me+GnHNQasY9re+caQDxsnwIW2NCGDBBNjEEZPrv1KNFZi6Nu1yzmXIV2Z6BP5LAcRXJeZSa+67
-	pdFmIamALPxO4Mg4LYSH7JHJ+djzXKBLXwn4mxE+GOD7+WxeAULHZ97LbzC1AZWoorYVMnGVLTh
-	x48QMZ+VhmgZcIctecKSu/4if4jmUAjQ=
-X-Google-Smtp-Source: AGHT+IECIlKob6XVGKXqPkIouz4B7PwUNLICavEgKGFiyCNrN7e+75j3b8k5cwiFz9G2EqNmg5hHVw==
-X-Received: by 2002:a05:600c:8b81:b0:456:eb9:5236 with SMTP id 5b1f17b1804b1-45892ba3686mr67809105e9.15.1753955210391;
-        Thu, 31 Jul 2025 02:46:50 -0700 (PDT)
+        bh=HsMG0i3+AqfjEpu+Gh56Ls+b7M6/eRJtSrOLqrmM+JY=;
+        b=HaYY7Pa6CcWjrufmSYlEM4No/AOVzJESyGzxmNPdUcqjs1R1YHg/h938wNL4q+T14t
+         l+IG+bHD3zv/aE2urdDVyaTIdQeMEis9D5n609tFhJpzrG3reVaxB9kqjLg0Jh40wNoy
+         yGBYQjuucT++3G36D0znf0MkRr7RK7lRVCSnrwMWZLV798izUym9OVB9oprIn9IeTu9T
+         7SQpLOdWPr+/6Kq4mVHjqAaF80+2UtiRRRhV0EfBVE3EJe8R765BC7kMH3L2sC3Jis52
+         LDOlF9U8veuk/WkBmg8qUD9bIWYwLnuihJXJVkgqToE7juOvQM+09BrrY8p/LH+Rr7B3
+         /7Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBvB23YUYOCIJ+hbxAOveZVUM9OlkhbF34zbE+ZPlIyxGMcE/4b/LWV4l+j+C0xyISmzb7xOTf2jPPYDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoH5qnal7LbLRg3+BYY8UuT/9sWBqbcA7qZyy/1oiphjt9JPcF
+	QwhRR2DckELlQflVKOLg9GXe0/3YWwLJWt5pF63a5TgZ1Rq7wUfyRFvw
+X-Gm-Gg: ASbGncs6xIIeeMh8Q/ubGrChQ4Wt/5VtHQ9NgPk5kDG6Ouze3K0JZqSP2VIeDYnpdEp
+	8zFlgFVWrNdRtnrwkfW3ltR1Wrg35DIXLTqmSH3GaRwjh/Wxx0Hlwl62ihTEkn5co5R3rK5yqiT
+	z3FHMckdVzS4knbmJHLP4tEkFMHC2dQcBsPE6xldFPp8zL+QeKAkgmv2WPoEWskjNMuorIRTmxL
+	mfUYptV67EVwg1yY7uFCGWW4c6NeGMkVgwvl0zMnka2PF/Lt9CI/Iywb+zHjJS6HVGgaQ1nFF8P
+	h44JTSo3G6GKpPqTac/SnEX4rjSUxCdGSn+I8jcgoRN9LuleeKrElOWztjR3d4hAuaRnxnXAhlb
+	jT0Zm9I+lWZfgWeMCLMVAM0VE3oGFgkY=
+X-Google-Smtp-Source: AGHT+IHS+Yna4XLdm1AXyYdne1Nc2qQhOZVR/XY/PwPIfRBT/zicTIWQPLhsl4HER3UQKSwd/WutEw==
+X-Received: by 2002:a05:6000:178f:b0:3b7:8473:31c3 with SMTP id ffacd0b85a97d-3b794fe4fa7mr5105901f8f.9.1753955602212;
+        Thu, 31 Jul 2025 02:53:22 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458981d0b06sm60091895e9.5.2025.07.31.02.46.48
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3bf956sm1918578f8f.24.2025.07.31.02.53.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 02:46:49 -0700 (PDT)
+        Thu, 31 Jul 2025 02:53:21 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Richard Weinberger <richard@nod.at>,
@@ -63,9 +63,9 @@ To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	linux-mtd@lists.infradead.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mtd: jedec_probe: Remove space before newline
-Date: Thu, 31 Jul 2025 10:46:13 +0100
-Message-ID: <20250731094613.2164604-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] mtd: lpddr: Remove space before newline
+Date: Thu, 31 Jul 2025 10:52:47 +0100
+Message-ID: <20250731095247.2165158-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -76,28 +76,86 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a extraneous space before a newline in a pr_debug message.
-Remove the space and remove a space after ( and before literal string
-to clean up checkpatch warning.
+There is an extraneous space before a newline in a handful of printk
+messages. Remove the spaces.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mtd/chips/jedec_probe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/lpddr/lpddr_cmds.c  | 10 +++++-----
+ drivers/mtd/lpddr/qinfo_probe.c |  4 ++--
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mtd/chips/jedec_probe.c b/drivers/mtd/chips/jedec_probe.c
-index 23c32fe584b7..6a583418788d 100644
---- a/drivers/mtd/chips/jedec_probe.c
-+++ b/drivers/mtd/chips/jedec_probe.c
-@@ -1953,7 +1953,7 @@ static void jedec_reset(u32 base, struct map_info *map, struct cfi_private *cfi)
- 	 * as they will ignore the writes and don't care what address
- 	 * the F0 is written to */
- 	if (cfi->addr_unlock1) {
--		pr_debug( "reset unlock called %x %x \n",
-+		pr_debug("reset unlock called %x %x\n",
- 		       cfi->addr_unlock1,cfi->addr_unlock2);
- 		cfi_send_gen_cmd(0xaa, cfi->addr_unlock1, base, map, cfi, cfi->device_type, NULL);
- 		cfi_send_gen_cmd(0x55, cfi->addr_unlock2, base, map, cfi, cfi->device_type, NULL);
+diff --git a/drivers/mtd/lpddr/lpddr_cmds.c b/drivers/mtd/lpddr/lpddr_cmds.c
+index 14e36ae71958..290fd0119e98 100644
+--- a/drivers/mtd/lpddr/lpddr_cmds.c
++++ b/drivers/mtd/lpddr/lpddr_cmds.c
+@@ -142,7 +142,7 @@ static int wait_for_ready(struct map_info *map, struct flchip *chip,
+ 		if (dsr & DSR_READY_STATUS)
+ 			break;
+ 		if (!timeo) {
+-			printk(KERN_ERR "%s: Flash timeout error state %d \n",
++			printk(KERN_ERR "%s: Flash timeout error state %d\n",
+ 							map->name, chip_state);
+ 			ret = -ETIME;
+ 			break;
+@@ -186,7 +186,7 @@ static int wait_for_ready(struct map_info *map, struct flchip *chip,
+ 	if (dsr & DSR_ERR) {
+ 		/* Clear DSR*/
+ 		map_write(map, CMD(~(DSR_ERR)), map->pfow_base + PFOW_DSR);
+-		printk(KERN_WARNING"%s: Bad status on wait: 0x%x \n",
++		printk(KERN_WARNING"%s: Bad status on wait: 0x%x\n",
+ 				map->name, dsr);
+ 		print_drs_error(dsr);
+ 		ret = -EIO;
+@@ -321,7 +321,7 @@ static int chip_ready(struct map_info *map, struct flchip *chip, int mode)
+ 			/* Resume and pretend we weren't here.  */
+ 			put_chip(map, chip);
+ 			printk(KERN_ERR "%s: suspend operation failed."
+-					"State may be wrong \n", map->name);
++					"State may be wrong\n", map->name);
+ 			return -EIO;
+ 		}
+ 		chip->erase_suspended = 1;
+@@ -468,7 +468,7 @@ static int do_write_buffer(struct map_info *map, struct flchip *chip,
+ 	chip->state = FL_WRITING;
+ 	ret = wait_for_ready(map, chip, (1<<lpddr->qinfo->ProgBufferTime));
+ 	if (ret)	{
+-		printk(KERN_WARNING"%s Buffer program error: %d at %lx; \n",
++		printk(KERN_WARNING"%s Buffer program error: %d at %lx\n",
+ 			map->name, ret, adr);
+ 		goto out;
+ 	}
+@@ -736,7 +736,7 @@ static int do_xxlock(struct mtd_info *mtd, loff_t adr, uint32_t len, int thunk)
+ 
+ 	ret = wait_for_ready(map, chip, 1);
+ 	if (ret)	{
+-		printk(KERN_ERR "%s: block unlock error status %d \n",
++		printk(KERN_ERR "%s: block unlock error status %d\n",
+ 				map->name, ret);
+ 		goto out;
+ 	}
+diff --git a/drivers/mtd/lpddr/qinfo_probe.c b/drivers/mtd/lpddr/qinfo_probe.c
+index 137ae5f0a19b..42281e460c62 100644
+--- a/drivers/mtd/lpddr/qinfo_probe.c
++++ b/drivers/mtd/lpddr/qinfo_probe.c
+@@ -55,7 +55,7 @@ static long lpddr_get_qinforec_pos(struct map_info *map, char *id_str)
+ 			return minor | (major << bankwidth);
+ 		}
+ 	}
+-	printk(KERN_ERR"%s qinfo id string is wrong! \n", map->name);
++	printk(KERN_ERR"%s qinfo id string is wrong!\n", map->name);
+ 	BUG();
+ 	return -1;
+ }
+@@ -112,7 +112,7 @@ static int lpddr_pfow_present(struct map_info *map, struct lpddr_private *lpddr)
+ 
+ 	return 1;	/* "PFOW" is found */
+ out:
+-	printk(KERN_WARNING"%s: PFOW string at 0x%lx is not found \n",
++	printk(KERN_WARNING"%s: PFOW string at 0x%lx is not found\n",
+ 					map->name, map->pfow_base);
+ 	return 0;
+ }
 -- 
 2.50.0
 
