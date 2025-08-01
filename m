@@ -1,142 +1,114 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FFE273D94
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Aug 2025 15:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11B428B513;
+	Fri,  1 Aug 2025 16:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754062392; cv=none; b=Ck27I9h6imjgG/M+6uvy0lfesKor4MyDv/8/zBX/c5WMtiaABqJLj1yM10KwkKX4RTlGj5SVvc6de7cfEvzqQ6SGz8nelH2TwP8HRtK1WM3ZYWx8JyqeyqmlqiJKlifQCxPX5g/7fPzP75/L9B+2jnxpXlHmPIODoOLC660g5MY=
+	t=1754064062; cv=none; b=dTpLAlCrLgk64tuOxeiM0gjWwS1fSFd7O/hBEu8tPOcghvqAbjxrY+1XcijDclDFDZlLtjgA/bRTzhNIqJvdfh5wvvJ0inFzCXQxYCfhDgFe6tYkFGxIK+awwgjL2s2rcFrmLER+apCOZlP5c+cRaMYwo2omxkSaqUD7R8BjmIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754062392; c=relaxed/simple;
-	bh=G8XzIPRtm4xk5lge123mz0p0xgKBk3goA4ZlLuaJzb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqQrep3Prg3NObtvoYdigmF5X6H/br2SxHjCPMywbMgIUnWGinX/cllJiXYKbPi/5+wa1EWI9v0NKxnCv53nDSfnWgvuBsE6R/rYt8yr02WrsneKGXMhVfcM+MpwSEKqyWPsvOBuMlH2sRGI3bpAVxYpAmkgSjoDvrx2Sk6YNwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e6GskBDL; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1754064062; c=relaxed/simple;
+	bh=gxbyO/nRf/1euIk2zGL39AVfBifO9dw5pC4STJtJJe4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V7wBh+NcqH+PD4y30mUsM8wv5bAAMS5K3MYPfSc6jexl169LAMYGPD+96/f9GctJuKK5MyXNy/M9Z8G872HlvTBsxTBG0N4U6/t98sMpkCtzWPXaMAgidT2s7In1sGoHYPWEfYrsO/rKRTBuTiKNu4KKEE/XK2Po8uDMZ5vmX5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ADx08I9p; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e6GskBDL"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b783ea502eso1663254f8f.1
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Aug 2025 08:33:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ADx08I9p"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b00283a5so9949555e9.0;
+        Fri, 01 Aug 2025 09:01:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754062389; x=1754667189; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KMuhTiNgWdKprDSY7tl08r3yTLD5z9VbtaB9UQkibdQ=;
-        b=e6GskBDLWvI5xgp6IaOORg6iAFkwfJENMf8NQF6p3+G21pz+LDmuf0nIgUmD+9x4PY
-         sdRkmzzCnjyaLdsy98YzIdDN3gC39yXwdVyZlussTug7JGg/ugP1lwyX5ZAKSnJ6km0X
-         3KNgRMVPoOozd3ORBWQVYV+5qYCnKmUH0KRuii3wH+mNmguUe8KPfzk8PpvrpUn+V8vE
-         MoeCYQmr7NTeY9lazQ0WauhwgwmPi3mNvMTELfow+3+5QM7cOEjHnvTmNz5aBni/no0m
-         gLAUMBJxqr6XAHmYsH9MH/LIbaek8F0HijKEcGcBkOQPfVbvDH24U4odqozY2nJGFkMb
-         dZOA==
+        d=gmail.com; s=20230601; t=1754064059; x=1754668859; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u4xW5Buo0/4Bn0zJX3iGqHwSKxl50sPUyBxGezBYQu0=;
+        b=ADx08I9pKarnGT+WMkhfaQzgZ/XcbgtChjRvi0CJXU1tHrS40SCU0VzhCU13Dqd+Ho
+         +tp1/RLbmwv1WvSCAt4R1ESkVyj0fOMQH6O+0znkByjR7npmWxbJwTBSzd8wCBItSdpQ
+         WhS3AdW5VxgsIQEn+if+HDZy2FKTrqsY/4ezz1grXQNCMD0/JAk6bX7LdEaNxYe797E9
+         XY3Yh1U8EqXjKMqsr+mOywydscTMHhW/KhchLO9daDDiCaKQqwlhVA33N/u074s/WgrL
+         ONlcEnGdh5dGJeUobNzyxq7U6FT5s+yiOuHgV2IOlliwAYytDMMFAh7s/TouPPrNtw77
+         1Nug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754062389; x=1754667189;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KMuhTiNgWdKprDSY7tl08r3yTLD5z9VbtaB9UQkibdQ=;
-        b=oXEZd9NJTVJE+biDc3nBiEz5nVHwtDDIilB0+9ZZsNnEXUOUHI98Hahp5AwUypYzKv
-         FonvB6+o+2T5xMMokhDHhz+f4zhOpm3ZK/Uu9Uw7m4x5JVNHvVM9SH5gHNQj2PNWRTzs
-         Evgt1Zc7wlWB7uHhLYqMVS3lNJtbmFGAFMZSeGgDxk0suTdG8fvjdxQNaAk+Fd3ocny/
-         Ndmn8C0GlYb36wy1lqwLgo4NVdcXWYFHXN00xVJ8rGIDdRFJ5zoetVNY6D8L8B9qDpCr
-         H/wP4+CA+8gZOfui2iEwD3FsY+9aSvbEcIYVuXE4oWnvgVeOv8rX1fLWNyI9sJZ32lPa
-         aL0A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3zxlTNCYrjCQeeDPnO0VhVMIEdnWn+qhgEO6cmahIZZQldANVUaRxwzGaSo12G4oS0sewD81Mub2DodeVJVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+F7wy+7MhO5p2R1cJRlgAFIj9x2j2gBh8MWNWcE4btEJjxFTa
-	gGmGzj3dKYwMj24OSvEqKpcZIjLIUrUQzpvyUYDA2dOQEmgZhgVR85yQANSpmEP7tW0=
-X-Gm-Gg: ASbGncvxnhPH4JZ6gQsu+LyY1JgEbCA1Yu//R34rDG2Ft4MontF4qjAKK8TVt2ejvyg
-	lfSS7ruCpxAl4M+lU1EQwmHIjQ0bGhurjoDRTe0NcY+hHEotp93V2hcUmZd6WK/mrMRg8UHLFKC
-	6RrpDSmzbyyNWQ8C054WGSLeBhl/VI9zyqLSXsuNXkMeDYfTJR8lsY3Y22ZBEtxyS2hv5Tme7Tc
-	ZkA1IEwh4ffGrHR41+kShfUKVbh7KLeSwhCNdorl5PTJ3IFBAHeuPhq2EmMI1Wf/2DC3fH2k/Uw
-	3wo9YNWh0JKsGeGnK4l9+v01OH5q7zIWRJ/gOS75Cz5F4xvhzPwdPEEe15syFz7hEDLYKNPCqts
-	DgV3dvnu71Fv7qWGDaq2X/1QTNF0=
-X-Google-Smtp-Source: AGHT+IF9pkrPJ7jZbeEE0PxlWTyARsA424FL3piKfJ4GOT1hGtsLhG5zjtxmcgLX2NPTV/vFIv7f9w==
-X-Received: by 2002:a05:6000:2c0b:b0:3b7:9703:d98b with SMTP id ffacd0b85a97d-3b8d95aaff0mr48794f8f.28.1754062388815;
-        Fri, 01 Aug 2025 08:33:08 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4696c8sm6121767f8f.55.2025.08.01.08.33.07
+        d=1e100.net; s=20230601; t=1754064059; x=1754668859;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u4xW5Buo0/4Bn0zJX3iGqHwSKxl50sPUyBxGezBYQu0=;
+        b=YSuBKYXs4LEq43fxJ37/0GSq7hzCGL375h6xFnK/xMTcAs0PJ9ngZwyZWt3QnqVk9Q
+         QZNWK+flh1nV1s5/f6TldU59sBX6JAhk4mRJP65IU0HvFIkIlfiQyD1j/ZX0gA2FmLaE
+         5NyBjzmjjdEhSyL/LsvIKB4gxH3YxRBcmPrsaeqFK17VfE0NGqvZO9h3bLC2kgViTeEa
+         IjNsl/IXQ5BIhenkFHaxPJkNI1oIHy18GpP4+jtlaOajIT16w6IkxS/mUV2vxvCqIvxM
+         W8lj8RYO2DYycZLM4tkb+EkFCOPms2BKDDmprip3tNlWyuLAgtxTb2UucTGZz+lG6pEY
+         Ti4w==
+X-Forwarded-Encrypted: i=1; AJvYcCULWuEG//JgiN6Sfok5OXBc2QjZ+hqLCPqrHMh6g6oXjdPNZ3NVnWU1lYvDppnLYx5vRx0EGvCavSIPcyQ=@vger.kernel.org, AJvYcCXTYzTNx3j0tH5Xr5HaN76xemQEc4caV08l57FRyDnqxoDt9PfueoMEIFFAiFBFHObS26Rgn+WIV2HBnbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrb1z+/ug87Xc+dLcUdm/IMbjSOImPnjWFDX+Httgt6phxtVfW
+	IdEMURnHDeZUhjyfRPNx1rirCgnaIjq77YjFT+VJ1dbMzrdljdg9s0Ox
+X-Gm-Gg: ASbGnctVZWbgro9PrAXwxgRY//rTTCDaTkllVNqx/ZY5J9llNygGLcA0TnBCz/g/aRi
+	zjtzn2s0++3qxTgHOwM54C64cVpAM41db+o/1Pv7qpNWx0IhLg6m3dh2rqReQdsZQKjsdVBG0Ks
+	gtdzU4MBQnNqxv7gm3zfA89mPRAsgaKPWMPCywT8KybL8r/Yvxw7gxVrX2NpVOCCq3DRL/f2uYb
+	NBp5z+LO4AzBVFLtjwcvdoENmhWIQVny4ekHKFtirkbhtFXuq7bPwruJ2N+m73+E5R8P2jo7aFl
+	SaJ6H5UDdE+Ir0HJXiglDm740W+7NxYGr5/UkMgj0g59dagRADkNe932KAlOM0MNm+NsP9f83aL
+	skQWGtyQM3tXkoE4wUP9r
+X-Google-Smtp-Source: AGHT+IF9JwLpR1JPS1Ju0IJ8Bt8BrxT04aZO/d6OuQjLQr1C7i8RtgkGdUSbXUCIePYULDMObludzQ==
+X-Received: by 2002:a05:600c:8b63:b0:456:475b:7af6 with SMTP id 5b1f17b1804b1-45892b931ecmr101032855e9.7.1754064058758;
+        Fri, 01 Aug 2025 09:00:58 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4534b3sm6249748f8f.47.2025.08.01.09.00.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 08:33:08 -0700 (PDT)
-Date: Fri, 1 Aug 2025 18:33:05 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Konrad Dybcio <konradybcio@kernel.org>, kernel-janitors@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Julia Lawall <julia.lawall@lip6.fr>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH] scsi: ufs: qcom: Drop dead compile guard
-Message-ID: <d7093377-a34e-4488-97c6-3d2ffcd13620@suswa.mountain>
-References: <20250724-topic-ufs_compile_check-v1-1-5ba9e99dbd52@oss.qualcomm.com>
+        Fri, 01 Aug 2025 09:00:58 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andy Shevchenko <andy@kernel.org>,
+	Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: atomisp: Fix incorrect snprintf format specifiers for signed integers
+Date: Fri,  1 Aug 2025 17:00:23 +0100
+Message-ID: <20250801160023.2434130-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724-topic-ufs_compile_check-v1-1-5ba9e99dbd52@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-This patch removes some dead ifdeffed code because the KConfig has a
-select which ensures that CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND is set.
-Konrad was wondering if there are any tools to detect this sort of
-thing.  I don't think so.  I think the only thing we detect are
-non-existant configs.  But let me add a few more people to the CC who
-might know.
+There are incorrect %u format specifiers being used to for signed integers,
+fix this by using %d instead.
 
-regards,
-dan carpenter
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Thu, Jul 24, 2025 at 02:23:52PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> SCSI_UFSHCD already selects DEVFREQ_GOV_SIMPLE_ONDEMAND, drop the
-> check.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
-> Is this something that could be discovered by our existing static
-> checkers?
-> ---
->  drivers/ufs/host/ufs-qcom.c | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 4bbe4de1679b908c85e6a3d4035fc9dcafcc0d1a..76fc70503a62eb2e747b2d4cd18cc05b6f5526c7 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -1898,7 +1898,6 @@ static int ufs_qcom_device_reset(struct ufs_hba *hba)
->  	return 0;
->  }
->  
-> -#if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)
->  static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
->  					struct devfreq_dev_profile *p,
->  					struct devfreq_simple_ondemand_data *d)
-> @@ -1910,13 +1909,6 @@ static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
->  
->  	hba->clk_scaling.suspend_on_no_request = true;
->  }
-> -#else
-> -static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
-> -		struct devfreq_dev_profile *p,
-> -		struct devfreq_simple_ondemand_data *data)
-> -{
-> -}
-> -#endif
->  
->  /* Resources */
->  static const struct ufshcd_res_info ufs_res_info[RES_MAX] = {
-> 
-> ---
-> base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
-> change-id: 20250724-topic-ufs_compile_check-3378996f4221
-> 
-> Best regards,
-> -- 
-> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+diff --git a/drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c b/drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c
+index bda35614c862..0f0d16f4ce7c 100644
+--- a/drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c
++++ b/drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c
+@@ -497,7 +497,7 @@ void ia_css_bufq_dump_queue_info(void)
+ 	for (i = 0; i < SH_CSS_MAX_SP_THREADS; i++) {
+ 		for (j = 0; j < SH_CSS_MAX_NUM_QUEUES; j++) {
+ 			snprintf(prefix, BUFQ_DUMP_FILE_NAME_PREFIX_SIZE,
+-				 "host2sp_buffer_queue[%u][%u]", i, j);
++				 "host2sp_buffer_queue[%d][%d]", i, j);
+ 			bufq_dump_queue_info(prefix,
+ 					     &css_queues.host2sp_buffer_queue_handles[i][j]);
+ 		}
+@@ -505,7 +505,7 @@ void ia_css_bufq_dump_queue_info(void)
+ 
+ 	for (i = 0; i < SH_CSS_MAX_NUM_QUEUES; i++) {
+ 		snprintf(prefix, BUFQ_DUMP_FILE_NAME_PREFIX_SIZE,
+-			 "sp2host_buffer_queue[%u]", i);
++			 "sp2host_buffer_queue[%d]", i);
+ 		bufq_dump_queue_info(prefix,
+ 				     &css_queues.sp2host_buffer_queue_handles[i]);
+ 	}
+-- 
+2.50.0
+
