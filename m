@@ -1,74 +1,73 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B2221E0BA
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Aug 2025 13:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E03263F4A
+	for <kernel-janitors@vger.kernel.org>; Fri,  1 Aug 2025 13:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754055285; cv=none; b=PIoU+h3mDDWeHTbHiESCBIEuH3wRHTDq++rTbA/492AmD04qpXZXM6cRWjVGaq2UUxEyVus6foB2Eno/7UD5FBu06/kJx8o2wowshSrOHl4cn4PPrssgEgBfTCDaEr8NJg5BiNnbs0854TtuKu4fiRH5QaB8z1Abrl4H3Q5fKYY=
+	t=1754055292; cv=none; b=qiGvUuw0ataoC1Fc8WzWBk6PE6/Y4eBI2mFqynz6riGTM9qVX1Yw7azoupTx1lV/5OfaiJX4EcC5OkoTY0YziqVexW5OsrZv5B1GSDM0QyojmVrg/JZ0vbJrOwIRpmcRUqkYBhlhzOT6Tv15WN+Yg5jnVCze5gqrZGeSoHD3Tyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754055285; c=relaxed/simple;
-	bh=MPOvYXHyt1VUDDVRVybn8iaD9dzrXwNCpMsrhQkJ1g4=;
+	s=arc-20240116; t=1754055292; c=relaxed/simple;
+	bh=B6dkp/BBDmEeyjf+/PEcpn9dFT32NaecIIHFog8H+Fw=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EIbVsgN90FShBql7gWJzhuB6BGmq5C5vcIfAEqYC6BjJvnRywsdPzztNNhREHpkkDgJi92n6jbdjW9c+JoPWjR8fBg3Hp4FbpGK2Tcj0RE8iEnFktkCY5PlTClVunJuGMkmhWBxHxglXJ3nmza/YR1BgDDCfapbsbYHLQq/ieJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=COSBTcni; arc=none smtp.client-ip=209.85.128.49
+	 Content-Disposition; b=Qe6mOdWftyNz8nmMnOfoUUy/uUlmyZopF21keHIH9MVOIM10aodUhGaIxbUFSHq4iqZulqiqCKGtRD/F92Z3qJCjXqP1emtXRk1iyU5GK063uaZR0XkayluDa8qyRtqYEZtsNx2BM4JL0KEXEP9QkEbXvA0WVDhNkJNbwDfoHMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jGIq5nlO; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="COSBTcni"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso4329625e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Aug 2025 06:34:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jGIq5nlO"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4563cfac19cso21747075e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Aug 2025 06:34:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754055281; x=1754660081; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754055289; x=1754660089; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JXrCxZaMMaRtHFaNQGeH/9TtujLuny+WCwC4B5wtCMc=;
-        b=COSBTcniNu9VVI60cqSqkKlfElyVj0jBO0n9flH0K6iBDw3f0uS9vQzXNAMHMUJSd8
-         7YjZTXGg9fRoBsaPSQCSzFATGbH82yMuyfAA8LM1QTZTYTMds3AG1nmUGAjfT9BsBDp1
-         KENDwvqsQP5r2FTJeO5VQZgxjYny+5fnZJXutLdncgf9hlo86TosOsPYMx7TqGBC1EP+
-         jx9wNp3+2hcq+UnEvX942lVjMUXEY+vfvq/IPF74Axjuo3GH59sqbDmTi8iWd/EfY/YR
-         WP2KNQS6zpOK+jXLxRJKXsY8xxM8OuaR3Sl20xfiVnzFfm/5wsnVFbQrXbRpXi2qCcms
-         qhXg==
+        bh=91nE9pIukFXGqv89yf8nL8EO399drb1w4wsJvfUDGbI=;
+        b=jGIq5nlOTqTHOeTMmdnAdUm4MVBgOjeeSwxDrSwiJuuEnQw0SFXoWxSXZgLZ8YwVOh
+         Vtga69wUhbQly/+rJNXs+En0o40ERdPqLOdtIigc96ifZfsbh1Xc/GHquQJyCUGLhMYd
+         A/1PQzcw+T4axYTWoFfMyH349K6HcM92jFxqims74R2XzFo31NQ2R3PS/92VT0xgb4om
+         TNJMMddMSpVplI+ShJRS2B0c8WDz7ckA6fnppjZWCZX46Dv3a4YIKhN4a8x7H2e2WNfn
+         oIU1GE1aRxcHfxbc7xqB1vTM8ndW1lDWkXzjY1aMvj35NWPDeZVI/L1JIKEvVhAtYPh6
+         gwmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754055281; x=1754660081;
+        d=1e100.net; s=20230601; t=1754055289; x=1754660089;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JXrCxZaMMaRtHFaNQGeH/9TtujLuny+WCwC4B5wtCMc=;
-        b=AEnSjBRUo3lWWfWRnAmwdgO/PdbT2wkSiPePdvxuBBYQnOuVE97uIfIPSZVGx1RuHY
-         It2akalKw6HCFOUkMvXumVTBl9S2NWk1KFPY1kR6OiTHV+RdqefIH9IwMLXwmkglb9w7
-         O9me1WCZMvhHxgMA5/XMEKyEi1SDSBmecO7Dh3waxR5XhFGxU4z1NX+FaEyb2DN4yHzJ
-         9isA1Sg2IFMK1xY5ycL2wL6xw8uMnzDuT/uskTsC4KdWq5QbSYQdY6W9DPEy4jdQUl0S
-         DvYOhjyV0w+wAq3gGRM44HJP+6ODT6rAzL99mtKtSBKanVFtTJjDF/GAT1Qko90YIDKt
-         WBfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVeBz9jWzh8JNUoPK8ZY8Nc/ltmLWEFT3S05AZJthgVAakfxM+VNtJzKiunAHaodxQLLeL6Jg4glGFtgBC0a2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVohy1kpM0ZqCu1acIwkirwnZ+ulSKO4WCCYoXcDhclS7mzN8s
-	+qOJv2W95GymWbt1S+Rwn3p9/6wc0t4HCHeDyR1mJnzhNdnPA6pX51nK63lZ71JfHC4=
-X-Gm-Gg: ASbGncuViG8yowj8V5wS50BVxgf4rVS3B4u84HkN4rWsBUCttj22oOmjPoapLY4Cx9K
-	/RseIR8qM+mTiZc25IcGHeawyovU05cE68Oxu7gtpPp8sU7Dr8jX1meMYUzRilIr55Vw1fY/Xzv
-	xhMR3IOdsRGjn0TuHC6/e/Ab02GRswuJBKEr9MdDUAVMNvStFjxkucBkkluPB8NnMNDzrlhUZTE
-	C4UGMfjUqjf7+J/QxmeHmAuFSmsBDLmh4A5b0zfvFMLUEgWbPIkR/lYqoppeGW0XdedaMUE77sX
-	MQ8kM8vV1mzPrRdsDE8Rpqu1FrbpOL/ev/E9C9vOSD2tG9U4xpzM1jb9w/dT1dgRlNU6d5lshXi
-	EsJm0wIF1Y736TpMVQWPs5pmXIR6bmBJw3cEeCTu4acw=
-X-Google-Smtp-Source: AGHT+IEY4PzKF931Cl4hXP2ucH16DnQzD1sduXwZybAumiUjCHWrT+naQgUR/VvPTU7PmaLeiSG4OA==
-X-Received: by 2002:a05:600c:4445:b0:456:22f0:d9ca with SMTP id 5b1f17b1804b1-45892bd09b5mr98694275e9.26.1754055280691;
-        Fri, 01 Aug 2025 06:34:40 -0700 (PDT)
+        bh=91nE9pIukFXGqv89yf8nL8EO399drb1w4wsJvfUDGbI=;
+        b=JaZy8e/h49cnaB3s+GQnGAbb94W9LrzF1RCnVjQ39NSy8s3Tprp5+iV0whsYwCT1nq
+         q1boHY24Nt2TiXQ0b/PIlTF+yQ4o61PafZcZ+WpaEGuQOhBYhue1GVH7tAI53j0HJjjY
+         /Kpumb4e1C0MV6F3xwFF3jXeWTteYMO0uJP5yqUMI0mK/g9hpiKUQZgrZiFpD3OW/ogC
+         miuJTrBvqDVABorVLXea/t6Pc7y5cPa7Om33waezJ0j15xM5ldDQ2J7+uyMo1uiVg8w6
+         qA4R49v96cJFG7iPqlfaN3DZPp1rKHQ2m6x+ro5nLN7evPw4SmzKEFzjl9vUJ9Z4+Gqt
+         CJTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHhLVRRJElV6qPamENhS5CVFiG0k8Apabf4HJHwKUlSiFoZFdExUq/8WvVdrgr6EB8XKjFUoqdlZUZESRmIgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcNWSPoN3FhWCdo5MWYgQc4GIzssI3ZVKPJ3iWf169o/DpnSYB
+	8Bj/gioXu3gafF7/s7bpB1loJYi3e7ctA7iTh+MNF+FXYJ1j/7I3MtD7rx3xmV6N4f26Xo8Ik7u
+	vsG+I
+X-Gm-Gg: ASbGncvWE+eD0erKXCd6RjoeOrtGxoCiac2ez+dPY0PqfIQ+d73eOn1s8S5B2wwLUZu
+	Ab/Pw91ZnhtNvavFBvg+RFHTMmTtNZgtXF1lovkmiFd5mZGVUAvk0AoRQFVCLuyR8TaTjdOVIXe
+	wunlSSfGqi8EQzxd5lvPRqwEcfbUgPdj84uxmU6KPArZOeFL5B6Y4pLr0e1j+o5lIYZD6CfDnKP
+	ATjMl8UvH6osu/cZdexVb4HPKVCEBe6mIVHqG+uS/D5uuIjOHfkaQMIDKS7uGm+683bVo1iQL9H
+	lUDRc49ekxVIH7uNhPYUmFet4spBBcLJn3Is6QKJkITwfwHvzEf8xbORfC2OtKmXuW9+PUMppKW
+	SWcvCTQgX6cfEiLqn8zrBvo/jZJSWkVaCfYJWXA==
+X-Google-Smtp-Source: AGHT+IGINVe5hDq+30CQhj/n/29dWvuH5Attb1DwC+ibJDto9n7Mzc5Zl/21ZMrbaLLxn/fjg1KzyA==
+X-Received: by 2002:a05:600c:1388:b0:456:25e7:bed with SMTP id 5b1f17b1804b1-4589af5ba2fmr100886665e9.14.1754055289518;
+        Fri, 01 Aug 2025 06:34:49 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589edf5683sm66413925e9.7.2025.08.01.06.34.39
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458b4a6635asm1093675e9.29.2025.08.01.06.34.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 06:34:40 -0700 (PDT)
-Date: Fri, 1 Aug 2025 16:34:37 +0300
+        Fri, 01 Aug 2025 06:34:49 -0700 (PDT)
+Date: Fri, 1 Aug 2025 16:34:45 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Toan Le <toan@os.amperecomputing.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
 	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] PCI: xgene-msi: Return negative -EINVAL in
- xgene_msi_handler_setup()
-Message-ID: <aIzCbVd93ivPinne@stanley.mountain>
+Subject: [PATCH next] PCI: endpoint: pci-ep-msi: Fix NULL vs IS_ERR() check
+ in pci_epf_write_msi_msg()
+Message-ID: <aIzCdV8jyBeql-Oa@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,28 +78,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There is a typo so we accidentally return positive EINVAL instead of
-negative -EINVAL.  Add the missing '-' character.
+The pci_epc_get() function returns error pointers.  It never returns NULL.
+Update the check to match.
 
-Fixes: 6aceb36f17ab ("PCI: xgene-msi: Restructure handler setup/teardown")
+Fixes: 1c3b002c6bf6 ("PCI: endpoint: Add RC-to-EP doorbell support using platform MSI controller")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/pci/controller/pci-xgene-msi.c | 2 +-
+ drivers/pci/endpoint/pci-ep-msi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
-index 0a37a3f1809c..654639bccd10 100644
---- a/drivers/pci/controller/pci-xgene-msi.c
-+++ b/drivers/pci/controller/pci-xgene-msi.c
-@@ -311,7 +311,7 @@ static int xgene_msi_handler_setup(struct platform_device *pdev)
- 		msi_val = xgene_msi_int_read(xgene_msi, i);
- 		if (msi_val) {
- 			dev_err(&pdev->dev, "Failed to clear spurious IRQ\n");
--			return EINVAL;
-+			return -EINVAL;
- 		}
+diff --git a/drivers/pci/endpoint/pci-ep-msi.c b/drivers/pci/endpoint/pci-ep-msi.c
+index 9ca89cbfec15..1b58357b905f 100644
+--- a/drivers/pci/endpoint/pci-ep-msi.c
++++ b/drivers/pci/endpoint/pci-ep-msi.c
+@@ -24,7 +24,7 @@ static void pci_epf_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
+ 	struct pci_epf *epf;
  
- 		irq = platform_get_irq(pdev, i);
+ 	epc = pci_epc_get(dev_name(msi_desc_to_dev(desc)));
+-	if (!epc)
++	if (IS_ERR(epc))
+ 		return;
+ 
+ 	epf = list_first_entry_or_null(&epc->pci_epf, struct pci_epf, list);
 -- 
 2.47.2
 
