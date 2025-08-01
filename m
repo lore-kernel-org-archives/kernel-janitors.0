@@ -1,75 +1,74 @@
 Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2AC25C833
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Aug 2025 13:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0321C3F0C
+	for <kernel-janitors@vger.kernel.org>; Fri,  1 Aug 2025 13:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754055163; cv=none; b=XDZfP6uBJOQ1NmAAH0m6KHcwIEy1u0dAp6VToB2irDdkLLHB0h2ZKACoJu3guOXAb/wW3ai+NWh8Ea3IPU4AnmS2RqfiC0qL1DuUvbIPSzCtntF9srD5gCILedneb1HSO/aV31JyxIvuX+yDbNXahuopNunKpuf/ygxjnRZVo5Q=
+	t=1754055272; cv=none; b=bB48ZhRoHyxODW3ZcVDyxgVA1ODdfFGHewd+50ZyoQzWrMzi6x6f1HM9VAVNvsEmdcq+yqjAkyaWtyMN7CXroTkJXFW6spf+diecfaMSRO7yYsvWdRiBo32ZeI8IctP7AiC4WP5m7mIFfgHY7X9xzeR2R5mBiv/rxZo4W3xqiIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754055163; c=relaxed/simple;
-	bh=D+PtGGPfj6WwPCQkvS3KxNql2PwDRVzIf9jNqijot6Q=;
+	s=arc-20240116; t=1754055272; c=relaxed/simple;
+	bh=kRZxvVYrz7Hra0DaAuY0TwUpnxsMRb0GdYsC6KRGam0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fcLPn9GEyks5VX5eoKwPan+4NP3arEG52xuXAAyJ4UQaZl4frVVb2Lx9hhmO1XgEsVkdpp0PG0kw1iMLaspKD9Vw4xD00KBNLJzFmCYUW5v8Ts3DSfwoIzUI0yzzi3zwecUiJvAZ1pzQjuMcd5Clp8hDLcOYchqwRnSKbkHlX64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PR905xE/; arc=none smtp.client-ip=209.85.128.54
+	 Content-Disposition; b=OjFspf5OXovUCqBhjawtgNnEIG/sZReeZc1aRX4OxHwmv5A7F8MBX3ykR0XZ1OVMJtd7VxYCJkfvDhwfKrN/081GXcEKLAwi8pBleVnsAoevcrrTMeZCpfbBRo/kuhlFucCprv6r9n3v4GOLwF8I4OHZRt0ZUxZu9UFtpYwNHO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xh3/9Y1B; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PR905xE/"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45610582d07so14838695e9.0
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Aug 2025 06:32:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xh3/9Y1B"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-454f428038eso14885005e9.2
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Aug 2025 06:34:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754055160; x=1754659960; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754055269; x=1754660069; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2idx5QSV7SbSw8eO9muSjti0H6pMvCzwd4EGmVUbV4o=;
-        b=PR905xE/9YajnGFgMcpul6TkBibuo7B+Z1ptrMBga4iBqO/Ikp99TRcA5TdaESmLIP
-         9ocacALocWeyvW4PwplrCgtN+Nw/Ynz8wnrB0kfutrz9A4bjWqg4VETt66SA5JC8nLXb
-         O6KUUHftAmMiX+dSPHPy3BH5Zd92RmA5KlbQYM4eHowJ5E57ws8opBGdydcK6FGTpo9C
-         ENZx/ewvE/fK3KEO/ncAIxR4bFPdVrS//SwXJRcytmP6pfuMz7PTDPRal8SZdRJlDuY6
-         Plr0k53JsfDKIK1Prkeooz6e4GlTAtSLo5TNIjgptlghESE+VngXeGCxx3TgdB4ps7p+
-         BysQ==
+        bh=/ikwrGSjcBBLrvu9XsOAXM0jftfGyj555P1DWTA9Hp8=;
+        b=Xh3/9Y1BcoXy4gVMWOGSUfekHimMfbdwXykQLeZ+425zF/a+oqQlZovU42npsBKYsw
+         kiGrNEZ2e6u/AnAH1nrasyhmNUmPqLhz5wTrRlVa7nSgaPh06e/BFNBqBL/+w+isvsC9
+         o31tegrNe2+UpGnSogolYx+BkziUVj67GUvBBFz2Ynslmw1JoHajTmOwX7znySU2/1Jb
+         UzBRw+i4LFqcW/7Sa63FQ8VfWP9YIHqwhwY/5Qen48KQQk8ZW6KtWoS8HZd7FssXjx8y
+         Cv1Nh00gjHEE4D776DFuZKLiiW5c2NuiRIPXydDByWtphjgOjUAnVF7xOAixRGmE8use
+         AGtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754055160; x=1754659960;
+        d=1e100.net; s=20230601; t=1754055269; x=1754660069;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2idx5QSV7SbSw8eO9muSjti0H6pMvCzwd4EGmVUbV4o=;
-        b=J/U6VuiQQVB3oh5m3+zfeMEgwPup+l7vOHtTn5ShykMxrU0YNf1q7uXfWqW24hPiF/
-         /uX8w0wTVQ/lEjeIg66zThiZrN5ZEqqY6/KfeSX3OZKxC+dzvoeU3OOuXs6bicCtwqRH
-         TcHc8uGdbsZNWlYZZz+MFp2V4YGn6ig/z4ccypWu1yqxtjs4ZZmj9Cl46intTjVXH28S
-         mZ7KDpthlbOGGUMDsFH9WcMwq+qM2Jy/un5RQSlMc5Btc71bqGJ4aDjpqj9AwNjuOgWi
-         BiSm69UrDf9PoIFTx35RyaFYOLOZpRVDjgzFVmNoHfDqkworeEAkKPMjOurXt86Y5z1U
-         3wQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYeVy2ggkHkFbAzMCrgYW/+olDx8nyG1EI2+VhP/2euDQdwl1//+VtiwxIuTe9ZRUB/JTxpUqf4FXQpW0P+4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1d2i/JCxU7jXHw12etb85tgPBThqiQK11hvZpLu37/3Yp1jBJ
-	daWI/RXv2rO0zpViS3ppj3x5FdyZ/WILuhXLxVDg03J9LRrqW3xP525X9/WN6AzAOHA=
-X-Gm-Gg: ASbGncukDOTHntiy8QFomTpCVrTy8SjTdPcyG5UzyyVCTeo9sVH7ipfniagcWWe+5IA
-	tfhcAZgV29rpT+GPFL8zKmbH481SaFtNBOogXn/vf43wHhWaAsqLanD4LbH45XTp907AchprGrz
-	iARoA2nzQOvzvzdaTxWEUywHEbsX4Da6SDY0OQb/FtjHRIDzXVELA62UAmQYNiEgHR6hMdRIauK
-	0C0EDuEoOpCiYcrHoBgfXQhqob6/k0V9+JTkFMxs1FIz3bfTVEb0xJwvH0AnOZTUE2rLWl7JtWj
-	K+o0kml5QqifUk7K8W1r7ey/x+YRLoVoMgB0EhZb5rPeMg6N7D/LN9WXC7ypH5GTMJvURln5wnU
-	SZeyoKu842tyGeZbkiQX8VaDz824=
-X-Google-Smtp-Source: AGHT+IFIP925vY6Yo9eRXJ5b38/MY0xKS/0uwFqRgqNx/TMNMJnubKb87tJwBNeV97YGf7Vh3ES1Gw==
-X-Received: by 2002:a05:600c:810c:b0:453:6424:48a2 with SMTP id 5b1f17b1804b1-45892b9e335mr130336025e9.10.1754055159772;
-        Fri, 01 Aug 2025 06:32:39 -0700 (PDT)
+        bh=/ikwrGSjcBBLrvu9XsOAXM0jftfGyj555P1DWTA9Hp8=;
+        b=GoUIaKuckOOU8arta4YCMVYXQGniNT86j18Irs6lg6SLMeAM9KgHyfkxantY1BiIjk
+         XJVmgWwRP4mKcQRq2+nEZyp7yowmKPhEAvGUXRJpdeqskA+ay9hBGu+udYc9OYHZfEoi
+         ty1iFZBxVOIUttBKTGnTV2SgZoZRemjTaZS/UkkG+7d6JeqaiWK/ABofeRhF4UWSNrlG
+         luVQbytZi8w9tPPbm93eU9norYLH27tkX+kSvFgtyb5euDwvz21k+ro7V8d2WknWFozI
+         QqMcjToPay4061wA1PBbsocr5gdioC2/hSHGKPk4bF6O4LmlAfzoDlVtEhBhuyysNJHS
+         v5Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRxdo4rv4IfI3xXZ+qnDFgUm7rhm0sVeLgGg1igXT1mq33NNvThqkOUZEDPZziGXXI+uvHDn6MuCiwJ7kbP+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkjO91APgB16tianrwal+L6ddH923SDNUjiMwPBJ95rnDQ6Lg6
+	Gb/3/c1y2gT+J/tNk5ysjhzmIs+KY9Gy51aZsLL/F2DpyxvUnaQnLqEor6SFG3UTI8Q=
+X-Gm-Gg: ASbGncs+0eP81ZR1j2yz0yINzGNPF0TkzHaAcleWjlca2D79ogEnWWv4pCXgbt3Z0JL
+	l2MTMTxQZiHgCBM9Nm5tUPu33ypst96jS+veghcksRxcCKPC+Zd4b1ucex4zBYezFAdSG75n4yj
+	rEErbxawNdI42g/P8Es7GfYurJtX/hUapXZYYDnmqj6MkdL/Uz5HGsCpJGQIiq0un8PeoNQ0OBR
+	kW3HuS1/9nUuQGF8+wJIWo7uRDhxzl55ZI66hNeXJtd0VzogSNjEXPF5b2G5RhaBL/WmNCrUiPK
+	niT+IN9iUHW+MGJdwIlXV/nR/LqC/5jVv8Lnjg0f43jFOidXAVB6PymLhzwcXYxYVlrM4+BLiIc
+	q5Crfdl716hZ16wLc9vojIwaLmWjThJozI3EfzjgrJmI=
+X-Google-Smtp-Source: AGHT+IF+SIPd3jy2PLV5NH/C2c9z1GDxjjS04pa20jYwnWKoaqf9mFZGTto/hJb9geJcaBIO6yUqfg==
+X-Received: by 2002:a05:600c:3b01:b0:456:1006:5418 with SMTP id 5b1f17b1804b1-458aa325e47mr28237545e9.13.1754055268940;
+        Fri, 01 Aug 2025 06:34:28 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458a7dd8cdesm42494865e9.19.2025.08.01.06.32.38
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589edf56e0sm66135635e9.1.2025.08.01.06.34.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 06:32:39 -0700 (PDT)
-Date: Fri, 1 Aug 2025 16:32:35 +0300
+        Fri, 01 Aug 2025 06:34:28 -0700 (PDT)
+Date: Fri, 1 Aug 2025 16:34:25 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Piotr =?iso-8859-1?Q?Pi=F3rkowski?= <piotr.piorkowski@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/xe/vf: Fix IS_ERR() vs NULL check in
- xe_sriov_vf_ccs_init()
-Message-ID: <aIzB8-Y6wtZvfNQT@stanley.mountain>
+Subject: [PATCH next] misc: pci_endpoint_test: Fix array underflow in
+ pci_endpoint_test_ioctl()
+Message-ID: <aIzCYdH9dOMDag5i@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -80,30 +79,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The xe_migrate_alloc() function returns NULL on error.  It doesn't return
-error pointers.  Update the checking to match.
+We recently added NO_BAR (-1) to the pci_barno enum which, in practical
+terms, changes the enum from an unsigned int to a signed int.  If the
+user passes a negative number in pci_endpoint_test_ioctl() then it
+results in an array underflow in pci_endpoint_test_bar().
 
-Fixes: a843b9894705 ("drm/xe/vf: Fix VM crash during VF driver release")
+Fixes: eefb83790a0d ("misc: pci_endpoint_test: Add doorbell test case")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/xe/xe_sriov_vf_ccs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/misc/pci_endpoint_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c b/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
-index bf9fa1238462..e363240a3455 100644
---- a/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
-+++ b/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
-@@ -271,8 +271,8 @@ int xe_sriov_vf_ccs_init(struct xe_device *xe)
- 		ctx->ctx_id = ctx_id;
- 
- 		migrate = xe_migrate_alloc(tile);
--		if (IS_ERR(migrate)) {
--			err = PTR_ERR(migrate);
-+		if (!migrate) {
-+			err = -ENOMEM;
- 			goto err_ret;
- 		}
- 
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index 1c156a3f845e..f935175d8bf5 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -937,7 +937,7 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+ 	switch (cmd) {
+ 	case PCITEST_BAR:
+ 		bar = arg;
+-		if (bar > BAR_5)
++		if (bar <= NO_BAR || bar > BAR_5)
+ 			goto ret;
+ 		if (is_am654_pci_dev(pdev) && bar == BAR_0)
+ 			goto ret;
 -- 
 2.47.2
 
