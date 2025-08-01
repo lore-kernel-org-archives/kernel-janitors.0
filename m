@@ -1,113 +1,109 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EEF2F5E
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Aug 2025 12:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2AC25C833
+	for <kernel-janitors@vger.kernel.org>; Fri,  1 Aug 2025 13:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754050599; cv=none; b=Tsey6IqAjI7tKa6k8RAz91vT9Drqphoe/WEjsp/ji1lOHCuFscy/doFz8upeDNiT4bWPumRLEf23MvOivShYmuAYygfIWj0JWM9W4cewEX0Q9nksOrBjCxdd191HbvGyeTSIB2eE8/FrpacloWsRnV4TRNl4aa1SrXm4NQIN7bk=
+	t=1754055163; cv=none; b=XDZfP6uBJOQ1NmAAH0m6KHcwIEy1u0dAp6VToB2irDdkLLHB0h2ZKACoJu3guOXAb/wW3ai+NWh8Ea3IPU4AnmS2RqfiC0qL1DuUvbIPSzCtntF9srD5gCILedneb1HSO/aV31JyxIvuX+yDbNXahuopNunKpuf/ygxjnRZVo5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754050599; c=relaxed/simple;
-	bh=XLYzFNm/BPFmRL37oD6gLaSUWsABGNDOfYpodAsZlgI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=JrMp0DYU1AcHDFxr5Lssg5EkAkUArds79gND0Qgz1QoNwB6XFH2ttcarlTVkIoGexRg84Hz5GEL4hvPdf22z36950d9GbohKotzDVexlDcuv6/YvKK/T86SIE2BslhN5olh8r3C1SbMxpm0GuHmocZss0+8vJPyVU9CXgQG3EBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=KbzGogcR; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1754055163; c=relaxed/simple;
+	bh=D+PtGGPfj6WwPCQkvS3KxNql2PwDRVzIf9jNqijot6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fcLPn9GEyks5VX5eoKwPan+4NP3arEG52xuXAAyJ4UQaZl4frVVb2Lx9hhmO1XgEsVkdpp0PG0kw1iMLaspKD9Vw4xD00KBNLJzFmCYUW5v8Ts3DSfwoIzUI0yzzi3zwecUiJvAZ1pzQjuMcd5Clp8hDLcOYchqwRnSKbkHlX64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PR905xE/; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="KbzGogcR"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RorE3L/VOaVzx1Rqu2LSlTfDw2d3/gwcoJePMMno1J8=; b=KbzGogcRyNHtF0PwQ/OiOB68rR
-	lykopJtt8xE1ejTP+LYg+dWVLXxvg1x+ZyAr0KS8idS6+8KXnr32AbBy3FmBDtqmRf6Eyt7QpGNy7
-	vAisp7Aw5qrflhTsuIMTRnIJqALP1iGbhpqRxyjQ3dCixCpx7WoSuzbIxrJW3lqPSUo8N7XSO9gya
-	GG5gYwSTFzeqkbq8rGMR6SxNd9CYN+DGJN4jly90mET2GhyH02yg9vWHzK73OpIuj6w95O0OE8FNv
-	a13yYKi27YA/QyqZzjFZeabbjYP0cWFYrHJeUiyQLjCeSgyssUD+cw0PWjqeIs7/AzWinC3+ZEgVg
-	EGlqh/FQ==;
-Received: from pool-174-114-102-5.cpe.net.cable.rogers.com ([174.114.102.5]:48114 helo=asus)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uhogS-00000009lpY-2m0U
-	for kernel-janitors@vger.kernel.org;
-	Fri, 01 Aug 2025 08:16:28 -0400
-Date: Fri, 1 Aug 2025 08:16:14 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: more janitor work: simplifying Kconfig files
-Message-ID: <add0d124-3c3c-8715-1560-a78f30ddf403@crashcourse.ca>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PR905xE/"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45610582d07so14838695e9.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 01 Aug 2025 06:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754055160; x=1754659960; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2idx5QSV7SbSw8eO9muSjti0H6pMvCzwd4EGmVUbV4o=;
+        b=PR905xE/9YajnGFgMcpul6TkBibuo7B+Z1ptrMBga4iBqO/Ikp99TRcA5TdaESmLIP
+         9ocacALocWeyvW4PwplrCgtN+Nw/Ynz8wnrB0kfutrz9A4bjWqg4VETt66SA5JC8nLXb
+         O6KUUHftAmMiX+dSPHPy3BH5Zd92RmA5KlbQYM4eHowJ5E57ws8opBGdydcK6FGTpo9C
+         ENZx/ewvE/fK3KEO/ncAIxR4bFPdVrS//SwXJRcytmP6pfuMz7PTDPRal8SZdRJlDuY6
+         Plr0k53JsfDKIK1Prkeooz6e4GlTAtSLo5TNIjgptlghESE+VngXeGCxx3TgdB4ps7p+
+         BysQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754055160; x=1754659960;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2idx5QSV7SbSw8eO9muSjti0H6pMvCzwd4EGmVUbV4o=;
+        b=J/U6VuiQQVB3oh5m3+zfeMEgwPup+l7vOHtTn5ShykMxrU0YNf1q7uXfWqW24hPiF/
+         /uX8w0wTVQ/lEjeIg66zThiZrN5ZEqqY6/KfeSX3OZKxC+dzvoeU3OOuXs6bicCtwqRH
+         TcHc8uGdbsZNWlYZZz+MFp2V4YGn6ig/z4ccypWu1yqxtjs4ZZmj9Cl46intTjVXH28S
+         mZ7KDpthlbOGGUMDsFH9WcMwq+qM2Jy/un5RQSlMc5Btc71bqGJ4aDjpqj9AwNjuOgWi
+         BiSm69UrDf9PoIFTx35RyaFYOLOZpRVDjgzFVmNoHfDqkworeEAkKPMjOurXt86Y5z1U
+         3wQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUYeVy2ggkHkFbAzMCrgYW/+olDx8nyG1EI2+VhP/2euDQdwl1//+VtiwxIuTe9ZRUB/JTxpUqf4FXQpW0P+4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1d2i/JCxU7jXHw12etb85tgPBThqiQK11hvZpLu37/3Yp1jBJ
+	daWI/RXv2rO0zpViS3ppj3x5FdyZ/WILuhXLxVDg03J9LRrqW3xP525X9/WN6AzAOHA=
+X-Gm-Gg: ASbGncukDOTHntiy8QFomTpCVrTy8SjTdPcyG5UzyyVCTeo9sVH7ipfniagcWWe+5IA
+	tfhcAZgV29rpT+GPFL8zKmbH481SaFtNBOogXn/vf43wHhWaAsqLanD4LbH45XTp907AchprGrz
+	iARoA2nzQOvzvzdaTxWEUywHEbsX4Da6SDY0OQb/FtjHRIDzXVELA62UAmQYNiEgHR6hMdRIauK
+	0C0EDuEoOpCiYcrHoBgfXQhqob6/k0V9+JTkFMxs1FIz3bfTVEb0xJwvH0AnOZTUE2rLWl7JtWj
+	K+o0kml5QqifUk7K8W1r7ey/x+YRLoVoMgB0EhZb5rPeMg6N7D/LN9WXC7ypH5GTMJvURln5wnU
+	SZeyoKu842tyGeZbkiQX8VaDz824=
+X-Google-Smtp-Source: AGHT+IFIP925vY6Yo9eRXJ5b38/MY0xKS/0uwFqRgqNx/TMNMJnubKb87tJwBNeV97YGf7Vh3ES1Gw==
+X-Received: by 2002:a05:600c:810c:b0:453:6424:48a2 with SMTP id 5b1f17b1804b1-45892b9e335mr130336025e9.10.1754055159772;
+        Fri, 01 Aug 2025 06:32:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458a7dd8cdesm42494865e9.19.2025.08.01.06.32.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 06:32:39 -0700 (PDT)
+Date: Fri, 1 Aug 2025 16:32:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Piotr =?iso-8859-1?Q?Pi=F3rkowski?= <piotr.piorkowski@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/xe/vf: Fix IS_ERR() vs NULL check in
+ xe_sriov_vf_ccs_init()
+Message-ID: <aIzB8-Y6wtZvfNQT@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+The xe_migrate_alloc() function returns NULL on error.  It doesn't return
+error pointers.  Update the checking to match.
 
-  if people are still looking for straightforward janitorial work,
-here's something i worked on many years ago and for which there is
-*always* some cleanup work. consider this Kconfig file:
+Fixes: a843b9894705 ("drm/xe/vf: Fix VM crash during VF driver release")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/xe/xe_sriov_vf_ccs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-https://github.com/torvalds/linux/blob/master/drivers/ata/pata_parport/Kconfig
-
-notice the relentless duplication in each of those config stanzas, as
-many of them contain the dependency directive:
-
-  depends on PATA_PARPORT
-
-in cases where there is this much duplication of the same Kconfig
-dependency, you can frequently simplify this by wrapping all of those
-stanzas in the common test:
-
-  if PATA_PARPORT
-
-  ... the same stanzas with "depends on PATA_PARPORT" removed
-
-  endif
-
-if there are only a couple duplicate dependencies, it's probably not
-worth simplifying. on the other hand, there could be *numerous*
-duplicate dependencies, and if they're not consecutive, you might have
-to move them around to group them -- in cases like that, moving them
-around might actually make the Kconfig easier to read since you've
-collected some of the entries by commonality. (you would have to run
-that sort of change by the subsystem maintainer, who might be grateful
-that you're willing to clean up his or her Kconfig).
-
-  note there's no automated way to identify this sort of thing, it
-takes manual poking around as you're examining the kernel source to
-additionally check Kconfig files to see if there's something worth
-cleaning up. but there's a higher-level cleanup that is sometimes
-possible.
-
-  note that in the Kconfig example example, every single stanza in
-that Kconfig file depends on PATA_PARPORT. in cases like that, it
-makes more sense to put the conditional check in the higher-level
-Kconfig file to not source that lower-level file *at all*. notice:
-
-https://github.com/torvalds/linux/blob/master/drivers/acpi/Kconfig#L546
-
-that test will determine if there is even any point in sourcing that
-lower-level Kconfig file -- that appears to be the kind of
-simplification that can be done for the PATA_PARPORT example.
-
-  so there is clearly some cleanup that can be done along these lines.
-
-  thoughts?
-
-rday
+diff --git a/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c b/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
+index bf9fa1238462..e363240a3455 100644
+--- a/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
++++ b/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
+@@ -271,8 +271,8 @@ int xe_sriov_vf_ccs_init(struct xe_device *xe)
+ 		ctx->ctx_id = ctx_id;
+ 
+ 		migrate = xe_migrate_alloc(tile);
+-		if (IS_ERR(migrate)) {
+-			err = PTR_ERR(migrate);
++		if (!migrate) {
++			err = -ENOMEM;
+ 			goto err_ret;
+ 		}
+ 
+-- 
+2.47.2
 
