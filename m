@@ -1,105 +1,153 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E03263F4A
-	for <kernel-janitors@vger.kernel.org>; Fri,  1 Aug 2025 13:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6621E50E;
+	Fri,  1 Aug 2025 14:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754055292; cv=none; b=qiGvUuw0ataoC1Fc8WzWBk6PE6/Y4eBI2mFqynz6riGTM9qVX1Yw7azoupTx1lV/5OfaiJX4EcC5OkoTY0YziqVexW5OsrZv5B1GSDM0QyojmVrg/JZ0vbJrOwIRpmcRUqkYBhlhzOT6Tv15WN+Yg5jnVCze5gqrZGeSoHD3Tyk=
+	t=1754056821; cv=none; b=VC7PFSbOsH4LmHJm9Z0fEQ/yA0O0DNOLyhTKBUxz64GttD6zoFSduxpgGwGqQJupBLOam1sv5YJRBAweM6vTAtx6kSTDJRlCiYPrMvIWoLZdFhhxDcOtBvPQbQOrZg72pdiq9OXsNJ2vfUdY7D+ibhkyhVk7rRAAb1PBnxyYnhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754055292; c=relaxed/simple;
-	bh=B6dkp/BBDmEeyjf+/PEcpn9dFT32NaecIIHFog8H+Fw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Qe6mOdWftyNz8nmMnOfoUUy/uUlmyZopF21keHIH9MVOIM10aodUhGaIxbUFSHq4iqZulqiqCKGtRD/F92Z3qJCjXqP1emtXRk1iyU5GK063uaZR0XkayluDa8qyRtqYEZtsNx2BM4JL0KEXEP9QkEbXvA0WVDhNkJNbwDfoHMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jGIq5nlO; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1754056821; c=relaxed/simple;
+	bh=o1xQm3ex6rIpAJgljaZrp0uhiKxN9NvV05vWkM3szOw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ezYkRy0JkZfDykor1heF6BGclMiRNwyp13alsurMTLAE5Z8dYWZD7oYgJ5hTGF/wElx5ktUBjvAZAbgSaRHykU2Hw64nTXFcaGcwWjxJ4N75TEZ7lRMp91k2Vuy+tfodawNSMyix3kpNniqNfrHaN06AZ/PtCyGUO+3Fr0u6BUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Bv5ESVA6; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jGIq5nlO"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4563cfac19cso21747075e9.2
-        for <kernel-janitors@vger.kernel.org>; Fri, 01 Aug 2025 06:34:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754055289; x=1754660089; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=91nE9pIukFXGqv89yf8nL8EO399drb1w4wsJvfUDGbI=;
-        b=jGIq5nlOTqTHOeTMmdnAdUm4MVBgOjeeSwxDrSwiJuuEnQw0SFXoWxSXZgLZ8YwVOh
-         Vtga69wUhbQly/+rJNXs+En0o40ERdPqLOdtIigc96ifZfsbh1Xc/GHquQJyCUGLhMYd
-         A/1PQzcw+T4axYTWoFfMyH349K6HcM92jFxqims74R2XzFo31NQ2R3PS/92VT0xgb4om
-         TNJMMddMSpVplI+ShJRS2B0c8WDz7ckA6fnppjZWCZX46Dv3a4YIKhN4a8x7H2e2WNfn
-         oIU1GE1aRxcHfxbc7xqB1vTM8ndW1lDWkXzjY1aMvj35NWPDeZVI/L1JIKEvVhAtYPh6
-         gwmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754055289; x=1754660089;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=91nE9pIukFXGqv89yf8nL8EO399drb1w4wsJvfUDGbI=;
-        b=JaZy8e/h49cnaB3s+GQnGAbb94W9LrzF1RCnVjQ39NSy8s3Tprp5+iV0whsYwCT1nq
-         q1boHY24Nt2TiXQ0b/PIlTF+yQ4o61PafZcZ+WpaEGuQOhBYhue1GVH7tAI53j0HJjjY
-         /Kpumb4e1C0MV6F3xwFF3jXeWTteYMO0uJP5yqUMI0mK/g9hpiKUQZgrZiFpD3OW/ogC
-         miuJTrBvqDVABorVLXea/t6Pc7y5cPa7Om33waezJ0j15xM5ldDQ2J7+uyMo1uiVg8w6
-         qA4R49v96cJFG7iPqlfaN3DZPp1rKHQ2m6x+ro5nLN7evPw4SmzKEFzjl9vUJ9Z4+Gqt
-         CJTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHhLVRRJElV6qPamENhS5CVFiG0k8Apabf4HJHwKUlSiFoZFdExUq/8WvVdrgr6EB8XKjFUoqdlZUZESRmIgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcNWSPoN3FhWCdo5MWYgQc4GIzssI3ZVKPJ3iWf169o/DpnSYB
-	8Bj/gioXu3gafF7/s7bpB1loJYi3e7ctA7iTh+MNF+FXYJ1j/7I3MtD7rx3xmV6N4f26Xo8Ik7u
-	vsG+I
-X-Gm-Gg: ASbGncvWE+eD0erKXCd6RjoeOrtGxoCiac2ez+dPY0PqfIQ+d73eOn1s8S5B2wwLUZu
-	Ab/Pw91ZnhtNvavFBvg+RFHTMmTtNZgtXF1lovkmiFd5mZGVUAvk0AoRQFVCLuyR8TaTjdOVIXe
-	wunlSSfGqi8EQzxd5lvPRqwEcfbUgPdj84uxmU6KPArZOeFL5B6Y4pLr0e1j+o5lIYZD6CfDnKP
-	ATjMl8UvH6osu/cZdexVb4HPKVCEBe6mIVHqG+uS/D5uuIjOHfkaQMIDKS7uGm+683bVo1iQL9H
-	lUDRc49ekxVIH7uNhPYUmFet4spBBcLJn3Is6QKJkITwfwHvzEf8xbORfC2OtKmXuW9+PUMppKW
-	SWcvCTQgX6cfEiLqn8zrBvo/jZJSWkVaCfYJWXA==
-X-Google-Smtp-Source: AGHT+IGINVe5hDq+30CQhj/n/29dWvuH5Attb1DwC+ibJDto9n7Mzc5Zl/21ZMrbaLLxn/fjg1KzyA==
-X-Received: by 2002:a05:600c:1388:b0:456:25e7:bed with SMTP id 5b1f17b1804b1-4589af5ba2fmr100886665e9.14.1754055289518;
-        Fri, 01 Aug 2025 06:34:49 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458b4a6635asm1093675e9.29.2025.08.01.06.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 06:34:49 -0700 (PDT)
-Date: Fri, 1 Aug 2025 16:34:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] PCI: endpoint: pci-ep-msi: Fix NULL vs IS_ERR() check
- in pci_epf_write_msi_msg()
-Message-ID: <aIzCdV8jyBeql-Oa@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Bv5ESVA6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1754056810; x=1754661610; i=markus.elfring@web.de;
+	bh=4fMoVd+d8obHSmWvTNNQhMGi/D3hyc5ryNyxStfLR4M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Bv5ESVA6gzUbgnLX6EG6hdn+AGMcPXbBWSsU8dLy88ati5i+deZxKGjWateMRW4l
+	 WjqsEdwhml4UkCdgLOTEypX5MFs9Of8Ui9UUaLV5GwNmVMzKfgopu9mW6FDKqgxIF
+	 aDgB+04N2MiGEAAFddPNZeL7cR9wOOgxFdQu+x25ghVkqLYT20xzbbfl+yDvBlHCf
+	 b2WfU6GwVX6rlexYcSSgHVPSS9qu+18FDzhp1VvgyNe4+cD7hrnYP0ppePO6/z7SM
+	 uRJX6hvMZQzrGBkCjTydL5bt86BvquBTOgcBxl9JbN2O3GNIX7Ec+czWibNQA5nVJ
+	 lM2sdFTZGd1aeE+sgw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.221]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MbkSI-1u5kvc13dO-00nVQC; Fri, 01
+ Aug 2025 16:00:10 +0200
+Message-ID: <60a236c2-0b36-4a2d-b0f2-40371b8c9236@web.de>
+Date: Fri, 1 Aug 2025 16:00:09 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+To: Zhen Ni <zhen.ni@easystack.cn>, Thomas Gleixner <tglx@linutronix.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20250731062331.1041773-1-zhen.ni@easystack.cn>
+Subject: Re: [PATCH] clocksource: clps711x: Fix resource leaks in error paths
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250731062331.1041773-1-zhen.ni@easystack.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:L8nYjihPJrJegUq+HCfvP2F5XWp/oL6IkWilrur6nxv06YRfUGI
+ yRbm7n6mwgGQOzxk+pBLnLXxAli2MlpdDsaRcJT5hxfsqthF0sS/eUEmGXbx1lmD8aFNlNK
+ Qqg5dNs/Ykg3axp8OW1x8zCPorjwxiUiH5wVPZptDvbLfjd2hkoOpg3wZ3Cc6ZKXjvLREin
+ dqybxtPOfvmgKsLXi6qJw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3/Fip8MlB18=;3bPHX9ujK9s0EQ5Orc2N2RMVimm
+ 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
 
-The pci_epc_get() function returns error pointers.  It never returns NULL.
-Update the check to match.
+> The current implementation of clps711x_timer_init() has multiple error
+> paths that directly return without releasing the base I/O memory mapped
 
-Fixes: 1c3b002c6bf6 ("PCI: endpoint: Add RC-to-EP doorbell support using platform MSI controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pci/endpoint/pci-ep-msi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16#n145
 
-diff --git a/drivers/pci/endpoint/pci-ep-msi.c b/drivers/pci/endpoint/pci-ep-msi.c
-index 9ca89cbfec15..1b58357b905f 100644
---- a/drivers/pci/endpoint/pci-ep-msi.c
-+++ b/drivers/pci/endpoint/pci-ep-msi.c
-@@ -24,7 +24,7 @@ static void pci_epf_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
- 	struct pci_epf *epf;
- 
- 	epc = pci_epc_get(dev_name(msi_desc_to_dev(desc)));
--	if (!epc)
-+	if (IS_ERR(epc))
- 		return;
- 
- 	epf = list_first_entry_or_null(&epc->pci_epf, struct pci_epf, list);
--- 
-2.47.2
 
+> via of_iomap(). This leads to resource leaks when:
+
+Please reconsider the need for the presented enumeration once more.
+
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16#n94
+
+
+=E2=80=A6
+> +++ b/drivers/clocksource/clps711x-timer.c
+> @@ -78,24 +78,34 @@ static int __init clps711x_timer_init(struct device_=
+node *np)
+=E2=80=A6
+> -	return 0;
+> +out:
+> +	if (base)
+
+
+* I suggest to omit such a pointer check because it was performed already
+  directly after the of_iomap() call.
+
+* Would it be nicer to use the label =E2=80=9Cunmap_io=E2=80=9D?
+
+
+> +		iounmap(base);
+> +	return ret;
+>  }
+>  TIMER_OF_DECLARE(clps711x, "cirrus,ep7209-timer", clps711x_timer_init);
+=E2=80=A6
+
+Regards,
+Markus
