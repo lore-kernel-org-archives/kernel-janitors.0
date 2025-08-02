@@ -1,136 +1,123 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EC72E3701;
-	Sat,  2 Aug 2025 01:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA566ADD;
+	Sat,  2 Aug 2025 07:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754099845; cv=none; b=CybBk8oIFCMv5r0Wx5+E8zzqVw4lR3CRJvo6PxkbR2Q67XFygEf/36VkKiVvLJDIN8VfZ81dGGQcdz5LP7FXiYyzhGEu98AylwiAClGpv04FtE1ZoDAVMOOH5Mo2tvtoHJIFOeDcGNbHAzo/VTIvL1jlY+xw6WMZj7D2MMN+eBY=
+	t=1754119585; cv=none; b=L6TMY3trkxSSLbyd8ev8SNUONZSBcCb/rpxfWebqnwvFR4iN5D9jK+womyLtOGYzYZu2EAHZHERMCOIIB60qyZ9bm3Bs6hg0FkdIyg0NcM+9+oogigpOA2bwPtp8UuBW3S3d3dJJDTcbesfOEKyAUotDpcA6sczqeQtCer3y7y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754099845; c=relaxed/simple;
-	bh=AyvojaMUL5GFQ+RGadkxrq01+rU8vIQIordppxfHfyk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pCql5fGcpOWTRoqP0lUNvioUeLt6qWdxP3bvfqJj/CQTleDJgQgiqmR+SmvKjdpF5/lfWTara5ghB/ZJzVZHgox5oYdCPSZlTvQMy2VxoLxqVhxJ9DnGg8Wd57It0BKHzROfjheB2VbpgBcW8BJw1yX5a0OPDKrarQ7qeXLaDpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=KBKETv+3; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
+	s=arc-20240116; t=1754119585; c=relaxed/simple;
+	bh=NSREs7H+Yc0DM8zD9xre6BL+mYsrEFoz38UY/+fIWW4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oG1taXwPeT5FR936jN0bROpU5yTtRdcUm+kVJJA5alNvR8whRc7JVtA5nT7F/SZu7HcQgB4VWEvJPp2pR96zuKt0kORgomCfhsd9SKd/vPwhepN97aHpH8XPslCnRlGMQPyOn1V21/DcFJDdTKK+HxX2jmjxSVeIA31M3b/G+ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=C2qrsfiX; arc=none smtp.client-ip=80.12.242.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="KBKETv+3"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bv5NR3vbxz9sVv;
-	Sat,  2 Aug 2025 03:49:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1754099383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EzGrUiyur0PDjcm61AO5Pdz6n1eUAx7WVBcJE1M5ghA=;
-	b=KBKETv+3sEn4+XGT9mbrJOg0yaagruc0IT5vaeqTj2YVlqYcjzsH7KjETLEXJxPsy1hVwE
-	E45fIwXmyhixaxPPKTeL/DQL6bp5OLr4Azj6DhyMTT6rlJ3heU8qh5P79xERxT8TQe++YA
-	iNRExyn3f7fEvskBrg6iU+rm1Sx4sXFDCakS97jTyWMoHXDRDvGmgHBJ0LXlGx5/I2KlEZ
-	z6fPO09U5Q0SoOtwMUFi8zaPTVSb/ub8uslLDqgfep7DvRr/O7Uzn5vKDOmNWkXa5ff22F
-	Kz1yXvRpDxY/NEolfMIqimb/+YntgGVp3FXXpTGjDD8+lTvYk/asjxYXY+l9RQ==
-From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Date: Fri, 01 Aug 2025 21:49:26 -0400
-Subject: [PATCH] drm/nouveau/gsp: remove always true if check
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="C2qrsfiX"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id i6d9unmhFKxUMi6d9ue2xP; Sat, 02 Aug 2025 09:26:13 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1754119573;
+	bh=A6EO1oc43a46dugxnP2nqOm0PNJLUSOuHaQkhzSg+Ms=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=C2qrsfiXYEcVQDvyPH+qazkmDr3HariQnxrj0MmCVkSAj+Fpo6TMdLi7T8k6eBRD+
+	 W5JYTp8jDO4qK87ABKzVFHO7IjEB7sCBA2qxNgRntW86BwyJ7hwgjLih0gKTBN0b7X
+	 yWslMRjyTsg2lQfogFRuz5GPrHSCMmynM5n1E0fIgGF5E8jQCAlHXDzV60Jvj4PRyf
+	 OLnRu9jdoQNj8bSkNpKqPy+xrvIUKzbEHusHQzvN2bRyCpRDga3EHIwzeerR1UyfQ0
+	 D8YxQf6xdjwkwgvfFyt86oY+IX0JU6IMwFn5/tJ2vdsbIDYrUSE0qErhb7ooVjjIT+
+	 7lHwbT5SOmvrw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 02 Aug 2025 09:26:13 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Yu Kuai <yukuai3@huawei.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-block@vger.kernel.org
+Subject: [PATCH] block, bfq: Reorder struct bfq_iocq_bfqq_data
+Date: Sat,  2 Aug 2025 09:25:59 +0200
+Message-ID: <79394db1befaa658e8066b8e3348073ce27d9d26.1754119538.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-nouveau-fifo-v1-1-25b9db5283bc@ethancedwards.com>
-X-B4-Tracking: v=1; b=H4sIAKVujWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCwND3bz80rLUxFLdtMy0fF0zY9NkM+M0c/PkxFQloJaCotS0zAqwcdG
- xtbUAKUL4mV4AAAA=
-X-Change-ID: 20250801-nouveau-fifo-635c63f77cae
-To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- Ethan Carter Edwards <ethan@ethancedwards.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2182;
- i=ethan@ethancedwards.com; h=from:subject:message-id;
- bh=AyvojaMUL5GFQ+RGadkxrq01+rU8vIQIordppxfHfyk=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
- GhQcXlVeFpQVG1iZmtseEdmeHQ1Q0h3ZXllcWUyZFdjeHJsdmcvCkUrTFZ1dWprdGRyR3NvWHBW
- bjVIS1F1REdCZURySmdpeS84YzViU0htak1VZHY1MWFZS1p3OG9FTW9TQmkxTUEKSmhMNWlPRi9
- 4TzNMUW0vclp3Y0dpcC93RDNBU3FDdlU1UklxaUxHZGU5RFJZTWE4czB4bURQOXNWbjZ0MUZCTQ
- o3SlV1bmY1amJ1Q1U0SjZwRlp3TllsR1Jxcm9OT1FiL1ZaZ0JyYTlHV2c9PQo9a2RtRQotLS0tL
- UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
-X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
- fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
+Content-Transfer-Encoding: 8bit
 
-if (1) always evaluates to true. Remove the unneeded check.
+The size of struct bfq_iocq_bfqq_data can be reduced by moving a few fields
+around.
 
-Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+On a x86_64, with allmodconfig, this shrinks the size from 144 to 128
+bytes.
+The main benefit is to reduce the size of struct bfq_io_cq from 1360 to
+1232.
+
+This structure is stored in a dedicated slab cache. So reducing its size
+improves cache usage.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- .../gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c | 36 ++++++++++------------
- 1 file changed, 16 insertions(+), 20 deletions(-)
+Compile tested only.
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c
-index 1ac5628c5140e66d306a1aadce10c810886afad3..104c72ec359a07a318ac99f5c217f0b07db2b784 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c
-@@ -188,32 +188,28 @@ r535_chan_ramfc_write(struct nvkm_chan *chan, u64 offset, u64 length, u32 devm,
- 	if (ret)
- 		return ret;
- 
--	if (1) {
--		NVA06F_CTRL_GPFIFO_SCHEDULE_PARAMS *ctrl;
-+	NVA06F_CTRL_GPFIFO_SCHEDULE_PARAMS *ctrl;
- 
--		if (1) {
--			NVA06F_CTRL_BIND_PARAMS *ctrl;
-+	NVA06F_CTRL_BIND_PARAMS *ctrl;
- 
--			ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
--						    NVA06F_CTRL_CMD_BIND, sizeof(*ctrl));
--			if (WARN_ON(IS_ERR(ctrl)))
--				return PTR_ERR(ctrl);
-+	ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
-+						NVA06F_CTRL_CMD_BIND, sizeof(*ctrl));
-+	if (WARN_ON(IS_ERR(ctrl)))
-+		return PTR_ERR(ctrl);
- 
--			ctrl->engineType = eT;
-+	ctrl->engineType = eT;
- 
--			ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
--			if (ret)
--				return ret;
--		}
-+	ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
-+	if (ret)
-+		return ret;
- 
--		ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
--					    NVA06F_CTRL_CMD_GPFIFO_SCHEDULE, sizeof(*ctrl));
--		if (WARN_ON(IS_ERR(ctrl)))
--			return PTR_ERR(ctrl);
-+	ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
-+					NVA06F_CTRL_CMD_GPFIFO_SCHEDULE, sizeof(*ctrl));
-+	if (WARN_ON(IS_ERR(ctrl)))
-+		return PTR_ERR(ctrl);
- 
--		ctrl->bEnable = 1;
--		ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
--	}
-+	ctrl->bEnable = 1;
-+	ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
- 
- 	return ret;
- }
+On my system, struct bfq_io_cq are stored in 8 pages slab. Each of these
+slabs hold 24 entries.
 
+$ sudo cat /proc/slabinfo | grep bfq_io
+bfq_io_cq            378    384   1360   24    8 : tunables    0    0    0 : slabdata     16     16      0
+
+With the new layout, we should store 26 entries.
+(8 * 4096 / 1232 = 26.60)
 ---
-base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
-change-id: 20250801-nouveau-fifo-635c63f77cae
+ block/bfq-iosched.h | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Best regards,
+diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
+index 687a3a7ba784..0b4704932d72 100644
+--- a/block/bfq-iosched.h
++++ b/block/bfq-iosched.h
+@@ -427,9 +427,6 @@ struct bfq_iocq_bfqq_data {
+ 	 */
+ 	bool saved_IO_bound;
+ 
+-	u64 saved_io_start_time;
+-	u64 saved_tot_idle_time;
+-
+ 	/*
+ 	 * Same purpose as the previous fields for the values of the
+ 	 * field keeping the queue's belonging to a large burst
+@@ -450,6 +447,9 @@ struct bfq_iocq_bfqq_data {
+ 	 */
+ 	unsigned int saved_weight;
+ 
++	u64 saved_io_start_time;
++	u64 saved_tot_idle_time;
++
+ 	/*
+ 	 * Similar to previous fields: save wr information.
+ 	 */
+@@ -457,13 +457,13 @@ struct bfq_iocq_bfqq_data {
+ 	unsigned long saved_last_wr_start_finish;
+ 	unsigned long saved_service_from_wr;
+ 	unsigned long saved_wr_start_at_switch_to_srt;
+-	unsigned int saved_wr_cur_max_time;
+ 	struct bfq_ttime saved_ttime;
++	unsigned int saved_wr_cur_max_time;
+ 
+ 	/* Save also injection state */
+-	u64 saved_last_serv_time_ns;
+ 	unsigned int saved_inject_limit;
+ 	unsigned long saved_decrease_time_jif;
++	u64 saved_last_serv_time_ns;
+ 
+ 	/* candidate queue for a stable merge (due to close creation time) */
+ 	struct bfq_queue *stable_merge_bfqq;
 -- 
-Ethan Carter Edwards <ethan@ethancedwards.com>
+2.50.1
 
