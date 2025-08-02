@@ -1,93 +1,119 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9F420C00E;
-	Fri,  1 Aug 2025 21:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DFC139D;
+	Sat,  2 Aug 2025 01:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754085503; cv=none; b=FTe4CnRjYQv7bnfahc3Fe+7ir9JLW1LLW++6NDArI9aKr+UhzWnhzEJJyErAD0+mYaAwiXjBNfFtSwtnjvtcIddF2IhdDGPTIWptjm/BrBT9AzXnNxnnd4I+B7jZD6ltpKNIcZzJKiQGPooiBM8vpvgSNt3Hf9jKh6ILWR3CQLw=
+	t=1754098713; cv=none; b=PLqxQhnxMao0ihdk1DYsnMsA7O1BOVI1bcecXR/N6+6+QynI0LKH6BGunt9CVOIPxLQrkP6L3A5/hUnEpCeUp4mIiQcLY+EN8OonBX6K8D7dBUKIKc+oCZvkE71OJjER65YsdYx1NOmL87WoVvmS1PJbCWUZGHSZseoZ+qo9grw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754085503; c=relaxed/simple;
-	bh=9W9aLRKcskQT2G+1SL74xY98V8kvoY+yZ4RYwLfO4lQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rpq0iSgCwL1eVQrX1c9TbFHBwECkKYfTOGnJt93exnB4T4gpBQ4IFYvUQtNR0YC+ozyODkIwz5/Udg2vcb5aP1XU4zRpww0p5fkJkrWRGLNkINMhCt9kjuDwdMlxQoFrsYwkWggQo74Ey4EVbqNvDs0yAxnPsvXpWNeL2HSYl08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DI3rps9/; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754098713; c=relaxed/simple;
+	bh=xDkwf/R7sAObhLKaY0pjx6MvG2RHtOr1vU7eBDGzsac=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EHwG8y1bwpTBS+VhTWknkQiXNbISqoJE9NZSGVgaSVaCQJq7txF2gu7g9H8HsCDkOEYjE2PZ1z2K/UwDpDKhVgZKr4SNyHF9sUSZzkbOmErbWtJlFoExrONxthVbbkiZKFa6jvpVLOS8XC3f9RLWWasQTvH29JzpC4uowvtvyeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=2BUzz0mP; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DI3rps9/"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-af910372ab3so519741466b.1;
-        Fri, 01 Aug 2025 14:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754085500; x=1754690300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9W9aLRKcskQT2G+1SL74xY98V8kvoY+yZ4RYwLfO4lQ=;
-        b=DI3rps9/qk7TYFb2iUmxg9mEZQV12DpuZwyvRRSL/tjzjolpBHl5HOPr1KYq5Tilyr
-         vY/noGPlqi4qqCbwiwbEGjOe1xewNRCDHB+MhksyCorhcfG7RMJ71ctsD4w4gK5C1zz4
-         ++J/bZnMZj4cT1NChuXSb8hAo+bXiqeAwHPoArsxKYE1hD1pdfTFirox0TomqiG3e43Z
-         4kTc00ZQ9XN4s92Icoc7O5rTnfG9i06ffr9UIVRn37bsyfaa/rQ/3cQ75fCtwhKBRNEb
-         DAP3mrxaQl1GbmYyihGekPmfgQQ/Xz2BYyzkZ6ZR0asyLDyyoKqmrciYv8RmHScjwEUQ
-         Q9gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754085500; x=1754690300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9W9aLRKcskQT2G+1SL74xY98V8kvoY+yZ4RYwLfO4lQ=;
-        b=e3aVZgZZby4F6Ntez+/2BYg1nNtlOMoJHBZQjCfsKx/VpaxZZ6EYDxFGRY1Uq1JAHs
-         1ZIoaKznsm2VfrvoclnPqFMIjLVEsUTsgj0HQQZUqK45Mdzdbz0y/24/mGUEMKOM7z8g
-         srJ3ix4HwDRaNDQaAKp7ZpKFqPR4uFsAA8YZpldeG6QtmvBgYqjxGqaQUaur3AmJlEXN
-         a5gRmVFNBrp269MOkYJb3mf+HuMPZww2t46RdUlFf3Sz71cCK3wp52MDnD/pmf9glJDa
-         ZV5jH3B6uy0sYJhZx9/W5zK551llBjwqV4mO8861Frl/SUq/ogqTWOKgWz9ys0RJoRR5
-         JQ6g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Kb0dvNFX4YnWP9WNz5QH9slaLd02w69Vly2Mxt4kgdrmhr/9op5vfMPk6bGOeTrYwII99ra2QT0V0zQV@vger.kernel.org, AJvYcCWqWYQSinSd+cQG/nVwuL2iY3A5BYoGmo9suvYbKTQsqS61UWfOb/5pRdygB9KcBuAr9zpeFbrX8V8VtyQ=@vger.kernel.org, AJvYcCXVoqqWcuaO+WLkZOz43LQ7kcAZoKdgKOyVaFxTJZFR0g/4kMqN1chKj9Sa36nD1OAEoIekjagZKbjsjKOrjWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6PSJxCfSdCioqsosqrwBIU5bkUFcPVyxnSxiUVDpZ1xVHdgZG
-	f90OMHJCsQCXqGJAdFkm4eMBDYRYciy5UnPdW6Sjy5oa9qlUkvTqz77ZQgf+UOr3MaB6ri020q0
-	HhlPn1JqDeBBj8ohkz35tWHhF1zi6Mv0=
-X-Gm-Gg: ASbGnctNwiJVDX8Ue1j4+cYVnxzu3GxVUI+48r3jagDhFiHwgyNPJL51Zn8AeYw/2XL
-	j2CjrZBf7TqFjPxN0RvDsK4bUC8Q/6kuZaf2Xbu19/1sbAK+Dipxof7cEEBCgl+JwNhUry2dn9M
-	CkA8vsrrjglS5DQ4jdAisKe9aLx0wbw4I7xRpTdAkIYUWmkmprWYBLVnvLiP7MGawn9X6fAo5Yf
-	J8GMi1sDBpggaJko21m
-X-Google-Smtp-Source: AGHT+IGRVGVyVuPJT5g+alark4GxiU9Zv8r0lEr7ASyTvdvyElIxZVu7IYlNYR9NTTG/h/hIC6BKUMEQv7AJTLW61rY=
-X-Received: by 2002:a17:906:6a10:b0:af2:4690:9df3 with SMTP id
- a640c23a62f3a-af91beb7837mr862906366b.14.1754085499840; Fri, 01 Aug 2025
- 14:58:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="2BUzz0mP"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4bv57K4DLnz9sjY;
+	Sat,  2 Aug 2025 03:38:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
+	s=MBO0001; t=1754098701;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rfkrPveYvBWrUoTk+3x/Gm8/fAfhVxdSxnNmYta/3AU=;
+	b=2BUzz0mPfFRiv93fjREkLONE/LzphDg6i7cdTQJ1TfqY5dBgTlidYiCn0RUwkI9PKiJXSi
+	0yLtcy/IiblkuDSV3H8HiAcbQQGYv5eaiBkTdTQ/Ha+351EuUs0xgMzYJMunWAlSaCRr8O
+	sRMzt7yGtAaBOIfcbu0JEBcLoNNtyE2BV+h0kmCLdUmyXzBYAIr6Ym8BwyRFOUfcEk86Gv
+	EYh7HVmKUyBfNpc+kwV4wVf6gT3cYZeLetcQpX81EBS9toAOzSOAqrcH/f03+rdyqlWhjh
+	OlH/WWf+djA0dkZpY6gvk4o6W0oIbMjap8sRtc1j9ROrc8ULXue9TfAn6KE1lg==
+From: Ethan Carter Edwards <ethan@ethancedwards.com>
+Date: Fri, 01 Aug 2025 21:38:16 -0400
+Subject: [PATCH] drm/amdgpu/gfx9.4.3: remove redundant repeated null checks
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801160023.2434130-1-colin.i.king@gmail.com>
-In-Reply-To: <20250801160023.2434130-1-colin.i.king@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 1 Aug 2025 23:57:43 +0200
-X-Gm-Features: Ac12FXymuCoCTkN9AJAJa7gXREI0nQIfvbT-NIqpDvHhaI6WuM_cL9u36xBUzHw
-Message-ID: <CAHp75VeDt=1=9epJPQjzfyyph09bov9UWWwpaAXgu01Egf1hag@mail.gmail.com>
-Subject: Re: [PATCH][next] media: atomisp: Fix incorrect snprintf format
- specifiers for signed integers
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, 
-	linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250801-uartlite-redundant-v1-1-6141b97a3c7f@ethancedwards.com>
+X-B4-Tracking: v=1; b=H4sIAAdsjWgC/x3MTQqAIBBA4avErBMsyqSrRAt/xhoIi9EiiO6et
+ PwW7z2QkAkTjNUDjBcl2mNBU1fgVhMXFOSLoZVtL7VsxGk4b5RRMPozehOzcJ2zKujBWqWhhAd
+ joPufTvP7fpSTyuRkAAAA
+X-Change-ID: 20250801-uartlite-redundant-c4cb6f87bb68
+To: Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+ Ethan Carter Edwards <ethan@ethancedwards.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1960;
+ i=ethan@ethancedwards.com; h=from:subject:message-id;
+ bh=xDkwf/R7sAObhLKaY0pjx6MvG2RHtOr1vU7eBDGzsac=;
+ b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
+ GhQcXlVeFpQVG1jQmpWU2Mydlh2ajdoaFpIbTRVZTc4Nm02d2ZtClhxMTg4RnRsM3pSbW9kUHRY
+ dVVkcFN3TVlsd01zbUtLTFA5emxOTWVhczVRMlBuWHBRbG1EaXNUeUJBR0xrNEIKbU1pL013ei9
+ 2VUl1bUI1Y0ZtWEx3N2EyemtIajR2TFpsL2VWNXoxZy91ZitnaXM3K09kZkpVYUdiU3lOemFvYw
+ pCb3JiZ3hPRDUvTHNNZm44UXJBdjIreFIwTVBzYTg4WUhzcHhBd0R3cmt0QQo9VTJpcAotLS0tL
+ UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
+X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
+ fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
 
-On Fri, Aug 1, 2025 at 6:01=E2=80=AFPM Colin Ian King <colin.i.king@gmail.c=
-om> wrote:
->
-> There are incorrect %u format specifiers being used to for signed integer=
-s,
-> fix this by using %d instead.
+The repeated checks on grbm_soft_reset are unnecessary. Remove them.
 
-Both of them sound to me like the fix of the symptom and not the
-cause. Can we simply make types of the iterators to be unsigned
-instead?
+Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+---
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
---=20
-With Best Regards,
-Andy Shevchenko
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
+index 51babf5c78c86c20ef806e31e9d0a4185ffda5b8..8ba66d4dfe86e96073f63e259177ca0ca2416a6d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
+@@ -2461,19 +2461,17 @@ static int gfx_v9_4_3_soft_reset(struct amdgpu_ip_block *ip_block)
+ 		/* Disable MEC parsing/prefetching */
+ 		gfx_v9_4_3_xcc_cp_compute_enable(adev, false, 0);
+ 
+-		if (grbm_soft_reset) {
+-			tmp = RREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET);
+-			tmp |= grbm_soft_reset;
+-			dev_info(adev->dev, "GRBM_SOFT_RESET=0x%08X\n", tmp);
+-			WREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET, tmp);
+-			tmp = RREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET);
+-
+-			udelay(50);
+-
+-			tmp &= ~grbm_soft_reset;
+-			WREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET, tmp);
+-			tmp = RREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET);
+-		}
++		tmp = RREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET);
++		tmp |= grbm_soft_reset;
++		dev_info(adev->dev, "GRBM_SOFT_RESET=0x%08X\n", tmp);
++		WREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET, tmp);
++		tmp = RREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET);
++
++		udelay(50);
++
++		tmp &= ~grbm_soft_reset;
++		WREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET, tmp);
++		tmp = RREG32_SOC15(GC, GET_INST(GC, 0), regGRBM_SOFT_RESET);
+ 
+ 		/* Wait a little for things to settle down */
+ 		udelay(50);
+
+---
+base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
+change-id: 20250801-uartlite-redundant-c4cb6f87bb68
+
+Best regards,
+-- 
+Ethan Carter Edwards <ethan@ethancedwards.com>
+
