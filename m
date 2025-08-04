@@ -1,59 +1,59 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A9328A71D;
-	Mon,  4 Aug 2025 17:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2E54204E;
+	Mon,  4 Aug 2025 17:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754328336; cv=none; b=bxmALK8ZwrnBGE18fwLG/HSuyli5rl6Ng9fCHdUErsILlbL15iXiN/P4brb7jdA2YPPqdXWkFE6sNaplMD6lQu4E1E8lrSiFSFxy9hVhJuh9fStru6OLEza7mK6WSm1b9gf+W62A6sRifZKvAxFiL2QOmOL2+cqpV2Wb0c3peWs=
+	t=1754328625; cv=none; b=WzvbXhYWcL4fDB33Rb+JTVH0LoVblSMDThkUDSkJMVbZeYRw6zb8kfCH+LmwEs2+jIUUBM0OoKw7iN8AD8yGcwtB6xBp/KushBVXTZkXf8KyETXtMF84Z56fuJrTQO4fdM9qM0qEabw2m4S1Xs4+CrV+HzCLimeEc0qSrukAego=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754328336; c=relaxed/simple;
-	bh=7V9qc+lSDHqzl5x/p+toLHwpMFanml2MvTsoFwPK2Jg=;
+	s=arc-20240116; t=1754328625; c=relaxed/simple;
+	bh=nytwA9w2dECjtARvK2J+pUrQQ0jNCR99EtrRnpqR0CM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K5xCGDzALxMA9GaPn5Jk5AwPvKI2DKuw8pWJgLJLrf5DwSqUf6duDSBjqQ3AGyIwDQREWaXfc6LkMPEySbrzWiOd7vgZo112LdymBX+MJ56GWkWu8JYe5PI0Sk6Mevz94GzTj5BgzZC0lS0DHQee7MJQo/5Ex36MjOCFuSAgyTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tqs9UMqT; arc=none smtp.client-ip=209.85.215.182
+	 To:Cc:Content-Type; b=Up+oL252AWGiSAtcGtDhv8zIL1XOuYmsHMslsxH1/EcnyZnS/d5OMxHytmG6MOfPD/kWC67U2SzkC3uRa9r4U9ArE730+jMmGEBRK65riE/qlwbNFn3sioLZ6pB6VuG2Z9ItxF5x/cepD/s9ZRAxM19sr9VkLZs/vLeHzNFdJoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYvq+o5H; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tqs9UMqT"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b426d4c27d6so51664a12.3;
-        Mon, 04 Aug 2025 10:25:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYvq+o5H"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2420c9e3445so7177745ad.2;
+        Mon, 04 Aug 2025 10:30:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754328334; x=1754933134; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754328623; x=1754933423; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g690U9pQgSxTEWE6ATDJuvl7Gc0JomLmYetcHpxeY3M=;
-        b=Tqs9UMqT+bDIAKbzVAafzdY4Zm6yQTmn++i1EV9rI/o4CQlLR05AIFp9ss6w612KZA
-         uW7X92KTKoqdXA5qmkpdl8bzF+KEnQDFmO8564DraXgLWUTBxlMnYSkLM4T8pUXphC0Y
-         x6B9Kjrd109s7xK++QepVqXWX0s8VG8CteS0+i1FvtUDfzL4Wz6Sdju9DLXEemZ44v1i
-         SAzv1x0vDhXaFFkJrfGnyAMr7F45lmXviZp0kcrjOf31rzOfb3nVXEkzeILs4h5htU4U
-         xaypy9Z6G56iHUlx/YAM2iZdUlhcnr9vYcSqpXWAXiJaVOK+KiECczbFb6JTuMHFmssL
-         AT7Q==
+        bh=SLzSdAQKIpitpeuYQXseME87py2KuxJucUYdGOZhU5Q=;
+        b=JYvq+o5H1BsKZs+Ec+d1rkgmM8zOOOhGZKBLaEHQCFrf5culcrVwTP9chsa2wuQycF
+         agenj2x927Ub3Kh7scKNVbN7Yd0sP0VohO64T/CiyCmqPCrF+4LEJUqG+YQkO2oCTTlC
+         j1h99uZ9wBNpLXyINLjXEFSZi67wcFsWt03fWDEXLURSYsq3B3OxcS1b6JXAyPiK2GJa
+         HgxKEx253yLM3aKBx9ECNiuA0yGmtQZ9cKOX2DNFVbQxEBXa3Eg21UINvgcdJ5XqJ4n8
+         i1ink0fXLyUc3KnfZjjnovEF9yzPzFOAqOhfChG46QaIwOh3JBXgMrbOdjLT6BYBep1l
+         miIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754328334; x=1754933134;
+        d=1e100.net; s=20230601; t=1754328623; x=1754933423;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g690U9pQgSxTEWE6ATDJuvl7Gc0JomLmYetcHpxeY3M=;
-        b=N5z5dvik+xBKthKDJWQre0QhDdUhT5RU0njjkfxBMyrRMZ+fkOQsnTKMGlIdPb4GsL
-         Z9qo/1lhr2ace7Ieb0dbpn9WFejTck+p+bur8Yw+PjGAK4z3l1Nw3JRUGQjXS6Q+Ke2W
-         L801kye8izCDTMLmeR0MzDMVj2gT4kKrrPgXH1mA2ek5Xjw0mpo5dvtsaoyEOevYnD91
-         ZmP9zcncdZlUiuNYLhsIKu2u4D63JGHUI+bpKeuyfxpMxjpsL45dk+4MK0jtK+gYDsqc
-         y+OjDynlkzS8oBssyba7E1zRkBi7hFQ+E4DAK6y0n37YFuZs0dwOu0zKNjG4InMeGfeq
-         sxew==
-X-Forwarded-Encrypted: i=1; AJvYcCVBdmym59kHwTFv1w0HwbTTWfRUrbNBPz1qa0bLohPUcZKePvVQHbkRN5GugJ4VTBS4Yc+G62DwfTZkT9I9bMM=@vger.kernel.org, AJvYcCXScc/1vCO86gv51xblD7IVn70P24d0yk+Ki4kTsQhf5snPgaP7ZWVRU0xYrv8AulsAhXEhY5d8NGNX1GB8@vger.kernel.org
-X-Gm-Message-State: AOJu0YysP0RtKNYoOsoBJIdd2KBnamFb7ZXxy+gJOD7Zyo3k0nKX7bmS
-	w2Ts5BymgRVBPqILl60j5+GR+w0x89zNMkalss7LIAbNwBDRj6+PbOSATUYPaMbK3nmKRLxVhbV
-	tFd6oWWL1sZyjo06bSff4dix7rWkTvUw=
-X-Gm-Gg: ASbGncsPuoxOhBB56lSSjJroAoEBoUQGZ9jbyroI9sy1B6Tfl/sqDnno9iongiTJCFP
-	IdNZZRBcR29m9NkjChlEzE1TRZE+L0zqK7DOI5i5Na90XICo8joY1hPmoHVt7n8lQv7hx11awoy
-	2aBJaNYONJja5zOS4/kTEuXLRwbCYzClPWdpbEx8JuEOY/21kJbZo25tzE2HzOllJ73/GTQtP+C
-	0iE1ovOUJ8B3SkqAw4=
-X-Google-Smtp-Source: AGHT+IEajlMeD6NqO5b1/eXYB83OKLA2Za5F+Hq1oKtZSBKe86RBYLYjaIscUGuv7UBB/vwGN7icLu9m0Gh4yj7DzII=
-X-Received: by 2002:a17:90b:1d03:b0:31f:ea:ca84 with SMTP id
- 98e67ed59e1d1-321161e12c3mr6481614a91.2.1754328334511; Mon, 04 Aug 2025
- 10:25:34 -0700 (PDT)
+        bh=SLzSdAQKIpitpeuYQXseME87py2KuxJucUYdGOZhU5Q=;
+        b=vEOyGZnpck9+9m4sXr0QbzEI0ScysT2AFeodadHmdtbCGkk1g80qNEdXcGT+ICgIsA
+         rWBSRsEWwFWXtrOApZvR9B5fEmsilFGPptk5rH6PpHYVNTdk20s5ga2cHjpTONfOgTDt
+         HTs8thVqVZrUnAKyRht84o5iVSaKJDDBlmo11w8Uatlaz0pK52gEVpu2cDVGSP7vz5mY
+         Ask9zxUSpxzGt5rsh5MBNtDCQ9Z0RysmIAHFBBg4z8n7RKarDzSKOtKC6ZbFt2tsizXP
+         LHPMWx/qD6Ho3ztWO0RZ85OwKBLDrde67RVofGgtu4D8tFHKanXuImdHn4haX+NZuHeQ
+         gGmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyW25Yj7q+EjZThPDq6kUIJPGn2b+HWOx9zVfOm9dWAkM6IXL+pgAYsbbH2AdetEfFR8qZBXDl6+GeeoI/@vger.kernel.org, AJvYcCVIB3y4cxoiGrUeKqB5ZhMWlAFZtLVFmkgJ4sODCeAHo2NEk1I/M9iCVuqkiGd5SFidLBl1tpMymk8rcT7pA0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxoyegf2LYcWHQweZn/eaW/ZG/x3bbJlnnAPub682/HP/i7KyAR
+	h27/pAHWjFI5LTaVwuTqvXs8Bwn6KAR2XjCDsYTkBHqjOutFOWnv9OvGJgur6I41NoZVv8NsekM
+	OKYhkddUk7YYlVKr+nXmhR9njY1V5+/8=
+X-Gm-Gg: ASbGncvNi6AT00DZZYYxyMBbF67yBZ0WlJip+OsAJGJzjCAjRoaAMJdwzFBcQs31e79
+	lTuN2krYCRhWofu4y2nB7SkhKyAwKrGCTcwOwcpj4UPXWp/VqB+ge2ZrYjxy7OcGqR2k2rfRKuA
+	CKjzaZLE+RgvtJbkesewmLe+N0tS3e2QGDk+qHwIIPNOpxAqRqvn3+8oB82qCNAU2HUn4td5V4c
+	pjXHDkx
+X-Google-Smtp-Source: AGHT+IFZ20MgIBvuCvlifETgR+OlOWEtQA0X/jTfhalbOjDjtuNoHqO373XlhluQ8kwPZ5qeVUlUBHY2ymIKIu2w3O8=
+X-Received: by 2002:a17:902:dad0:b0:240:9dcd:94c0 with SMTP id
+ d9443c01a7336-24246f2d73bmr66352445ad.2.1754328623188; Mon, 04 Aug 2025
+ 10:30:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -63,12 +63,12 @@ MIME-Version: 1.0
 References: <20250801-amdgfx10-v1-1-e1dcbe18d84e@ethancedwards.com>
  <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
  <c82931b5-0de2-4e45-a80b-3a90b0cc98a2@suswa.mountain> <CADnq5_Mk3FO_tvxFo+fJgqskVc7qtGv74VM6EStx_BcVpahXEQ@mail.gmail.com>
- <fda8103d-cac8-4c00-a78e-6eb27141d9ea@suswa.mountain>
-In-Reply-To: <fda8103d-cac8-4c00-a78e-6eb27141d9ea@suswa.mountain>
+ <fda8103d-cac8-4c00-a78e-6eb27141d9ea@suswa.mountain> <CADnq5_PdgH7yPZ9UNw3iXvuQAAUmuKpMh-E8NLri_q5Zn8deWQ@mail.gmail.com>
+In-Reply-To: <CADnq5_PdgH7yPZ9UNw3iXvuQAAUmuKpMh-E8NLri_q5Zn8deWQ@mail.gmail.com>
 From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 4 Aug 2025 13:25:23 -0400
-X-Gm-Features: Ac12FXy5S9_TzHUM3Kpfu9ojzbDCloPuhMA2gBarDK5IhPP2L8syh5vot1HwA9Y
-Message-ID: <CADnq5_PdgH7yPZ9UNw3iXvuQAAUmuKpMh-E8NLri_q5Zn8deWQ@mail.gmail.com>
+Date: Mon, 4 Aug 2025 13:30:11 -0400
+X-Gm-Features: Ac12FXxD2PpS4lnNplG4DQJ0xJ3EfdL5wo8BVjrF54ogM83r4Sh11WcvrG_W1eo
+Message-ID: <CADnq5_NMdi2=H8JBO-R249UhOWPeQ-_+syCq99XECDbV8iDhFA@mail.gmail.com>
 Subject: Re: [PATCH] drm/amdgpu/gfx10: remove redundant repeated null checks
 To: Dan Carpenter <dan.carpenter@linaro.org>
 Cc: Ethan Carter Edwards <ethan@ethancedwards.com>, Alex Deucher <alexander.deucher@amd.com>, 
@@ -79,83 +79,93 @@ Cc: Ethan Carter Edwards <ethan@ethancedwards.com>, Alex Deucher <alexander.deuc
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 4, 2025 at 1:15=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> On Mon, Aug 04, 2025 at 11:08:57AM -0400, Alex Deucher wrote:
-> > On Mon, Aug 4, 2025 at 10:49=E2=80=AFAM Dan Carpenter <dan.carpenter@li=
-naro.org> wrote:
-> > >
-> > > On Mon, Aug 04, 2025 at 10:32:43AM -0400, Alex Deucher wrote:
-> > > > On Sat, Aug 2, 2025 at 4:22=E2=80=AFAM Ethan Carter Edwards
-> > > > <ethan@ethancedwards.com> wrote:
-> > > > >
-> > > > > The repeated checks on grbm_soft_reset are unnecessary. Remove th=
-em.
-> > > > >
-> > > >
-> > > > These are not NULL checks and they are necessary.  The code is
-> > > > checking if any bits are set in that register.  If not, then we can
-> > > > skip that code as there is nothing to do.
-> > > >
-> > >
-> > > It's not a null check, but it is a nested check and it's a local
-> > > variable so the patch is correct enough.  At this point we know that
-> > > grbm_soft_reset can't be zero.
-> >
-> > It can be 0 as far as I can see.  If none of the GRBM_STATUS bits are
-> > set, then we never set any of the bits in grbm_soft_reset.
-> >
->
-> You're missing the first check...
->
-> drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
->   7657          if (grbm_soft_reset) {
->                     ^^^^^^^^^^^^^^^
-> Checked.
->
->   7658                  /* stop the rlc */
->   7659                  gfx_v10_0_rlc_stop(adev);
->   7660
->   7661                  /* Disable GFX parsing/prefetching */
->   7662                  gfx_v10_0_cp_gfx_enable(adev, false);
->   7663
->   7664                  /* Disable MEC parsing/prefetching */
->   7665                  gfx_v10_0_cp_compute_enable(adev, false);
->   7666
->   7667                  if (grbm_soft_reset) {
->                             ^^^^^^^^^^^^^^^
-> Unnecessary.
-
-Yes, sorry, my brain processed this as the first check.
+Applied all three patches with a slight tweak to the commit messages
+to make it clearer what is changing.
 
 Alex
 
+On Mon, Aug 4, 2025 at 1:25=E2=80=AFPM Alex Deucher <alexdeucher@gmail.com>=
+ wrote:
 >
->   7668                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_R=
-ESET);
->   7669                          tmp |=3D grbm_soft_reset;
->   7670                          dev_info(adev->dev, "GRBM_SOFT_RESET=3D0x=
-%08X\n", tmp);
->   7671                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tm=
-p);
->   7672                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_R=
-ESET);
->   7673
->   7674                          udelay(50);
->   7675
->   7676                          tmp &=3D ~grbm_soft_reset;
->   7677                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tm=
-p);
->   7678                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_R=
-ESET);
->   7679                  }
->   7680
->   7681                  /* Wait a little for things to settle down */
->   7682                  udelay(50);
->   7683          }
->   7684          return 0;
+> On Mon, Aug 4, 2025 at 1:15=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+> >
+> > On Mon, Aug 04, 2025 at 11:08:57AM -0400, Alex Deucher wrote:
+> > > On Mon, Aug 4, 2025 at 10:49=E2=80=AFAM Dan Carpenter <dan.carpenter@=
+linaro.org> wrote:
+> > > >
+> > > > On Mon, Aug 04, 2025 at 10:32:43AM -0400, Alex Deucher wrote:
+> > > > > On Sat, Aug 2, 2025 at 4:22=E2=80=AFAM Ethan Carter Edwards
+> > > > > <ethan@ethancedwards.com> wrote:
+> > > > > >
+> > > > > > The repeated checks on grbm_soft_reset are unnecessary. Remove =
+them.
+> > > > > >
+> > > > >
+> > > > > These are not NULL checks and they are necessary.  The code is
+> > > > > checking if any bits are set in that register.  If not, then we c=
+an
+> > > > > skip that code as there is nothing to do.
+> > > > >
+> > > >
+> > > > It's not a null check, but it is a nested check and it's a local
+> > > > variable so the patch is correct enough.  At this point we know tha=
+t
+> > > > grbm_soft_reset can't be zero.
+> > >
+> > > It can be 0 as far as I can see.  If none of the GRBM_STATUS bits are
+> > > set, then we never set any of the bits in grbm_soft_reset.
+> > >
+> >
+> > You're missing the first check...
+> >
+> > drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+> >   7657          if (grbm_soft_reset) {
+> >                     ^^^^^^^^^^^^^^^
+> > Checked.
+> >
+> >   7658                  /* stop the rlc */
+> >   7659                  gfx_v10_0_rlc_stop(adev);
+> >   7660
+> >   7661                  /* Disable GFX parsing/prefetching */
+> >   7662                  gfx_v10_0_cp_gfx_enable(adev, false);
+> >   7663
+> >   7664                  /* Disable MEC parsing/prefetching */
+> >   7665                  gfx_v10_0_cp_compute_enable(adev, false);
+> >   7666
+> >   7667                  if (grbm_soft_reset) {
+> >                             ^^^^^^^^^^^^^^^
+> > Unnecessary.
 >
-> regards,
-> dan carpenter
+> Yes, sorry, my brain processed this as the first check.
 >
+> Alex
+>
+> >
+> >   7668                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT=
+_RESET);
+> >   7669                          tmp |=3D grbm_soft_reset;
+> >   7670                          dev_info(adev->dev, "GRBM_SOFT_RESET=3D=
+0x%08X\n", tmp);
+> >   7671                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, =
+tmp);
+> >   7672                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT=
+_RESET);
+> >   7673
+> >   7674                          udelay(50);
+> >   7675
+> >   7676                          tmp &=3D ~grbm_soft_reset;
+> >   7677                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, =
+tmp);
+> >   7678                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT=
+_RESET);
+> >   7679                  }
+> >   7680
+> >   7681                  /* Wait a little for things to settle down */
+> >   7682                  udelay(50);
+> >   7683          }
+> >   7684          return 0;
+> >
+> > regards,
+> > dan carpenter
+> >
