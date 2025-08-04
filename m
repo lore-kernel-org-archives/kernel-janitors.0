@@ -1,74 +1,143 @@
-Received: from cpanel10.indieserve.net (cpanel10.indieserve.net [199.212.143.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5D61B4F2C
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Aug 2025 12:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.212.143.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FDC3FC2;
+	Mon,  4 Aug 2025 14:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754309108; cv=none; b=Pyy8j69cq7QwrnpAbapNYy2mWQm/g2ktuzCKjujVyIx8dZFo09G0+UiW+ehEffLfrc66mhjBGFb7dLdH1tVYoiEjShIOZMr8NDQpd20evlCahkhhNUb8VZ+8Lcwt1pCwG7t8ThzvnScXPc6xEKSMuFjilALJjkSWGgDf/ZJxj60=
+	t=1754317976; cv=none; b=ZxpE9Y3hbSDZ6hOH7KESsbYHKxeixV/DuBjexE7WupnTFkU6UP786HvScsDIbbvbbHlS262OwNG1QKnJM59588xXcPoUdIoWhPB9pltki0fCqqlDfrMbY4EcLCkM9hIercNpN8VXzPVg2Nyh2CWanYfSuOT8NRtkPvQEVfeB+b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754309108; c=relaxed/simple;
-	bh=Vhv0edcHmDwmwelwuVOroh0Xqv6CGCD+9+io9Xcz5dk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=NlXnrQr/YQPy3rUUE2PKLMZJ8OoHci7ioEjy5KqTz95vkZ9isxYDVm9/e0FDk2AcNHH/o34SJbPDTP9zdm/K/SvzTGyUGHYNbWYq8PPUGnH9vdRHBaUVQJ6M05fyDV/A8QZrFx/SjasLwAYiS+2r9bMigKwp4YKIYJPWfVxc3DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca; spf=pass smtp.mailfrom=crashcourse.ca; dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b=ltLiPp+d; arc=none smtp.client-ip=199.212.143.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=crashcourse.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crashcourse.ca
+	s=arc-20240116; t=1754317976; c=relaxed/simple;
+	bh=/mwwvH02Bzvkl+c3RzLYTCTG4kQQGDYWXfehRlycaLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S10kFyLuko8nVk1340EJGLGpRMlESk1CkMHLZSNNQXrCoixudAYhJ9Nh2kcZ+rJMhiOw9fsNMJjUtbqq28jdIudgEZ78E4i3fvzQBg1FWOKaLrnScFtI9K0XyuRLvU9JTBi9jN9asLS8xAQJUQN6/wMhbp8+eGd6W0UNNWYPtTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cvuCcl7s; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crashcourse.ca header.i=@crashcourse.ca header.b="ltLiPp+d"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crashcourse.ca; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-	To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=mVoWy86z7OOVoJMe7pB/fNI+1nHlMzWkf7No1GxEcpo=; b=ltLiPp+dYX2c5bgfbGcYvHCL+9
-	+gI5/+hCBFFHNHDjVNOwFgr7jd3opQPVcrEiETc/zVfs0jDfCpCEAocbDVqt3Z1M8KcIdsdVmZEBR
-	pZiJd9Ci5Rc8EJII0XRABeiHgLtkedjWNOHnGM+ufJ6rMPZBBgqrtyrW9GkXxrEeobkPM/tDpeNBx
-	BL5ecMEX19ogOYhzPSz5dJpi5Nu1YKPDXr+ujpTZlCIXam2K94yoy9OgG4XcywG4VKVkMduOj9rVe
-	o0YdANsz/huramxdQaL4fpzSEQI8sgjaLgElNJYPjctxonVbIrgfqjaavGq4ikNBScgviN/1TEhFG
-	Rr2/6WVw==;
-Received: from pool-174-115-41-146.cpe.net.cable.rogers.com ([174.115.41.146]:56572 helo=asus)
-	by cpanel10.indieserve.net with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <rpjday@crashcourse.ca>)
-	id 1uitw1-00000003xb9-1ES3
-	for kernel-janitors@vger.kernel.org;
-	Mon, 04 Aug 2025 08:04:58 -0400
-Date: Mon, 4 Aug 2025 08:04:51 -0400 (EDT)
-From: "Robert P. J. Day" <rpjday@crashcourse.ca>
-To: Kernel Janitors List <kernel-janitors@vger.kernel.org>
-Subject: are people still looking for more KJ work?
-Message-ID: <df5ea26e-3bac-7c33-30b8-de5913ec5703@crashcourse.ca>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cvuCcl7s"
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b3badf1afc0so704182a12.3;
+        Mon, 04 Aug 2025 07:32:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754317974; x=1754922774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3VwQYHiITIJoPNIH3t9+T75Uq05OHfjWXaf+GOec9BM=;
+        b=cvuCcl7szBVJjMIuuTr/2SlZEDn0JAQvmrHxB5Yfx2DVVnMRg1yTKtoR+1/6BvWpA2
+         YrWbWprHWMABgi+3OT2bVQ1wvvYsf5Lm6a7UNot/8YaLiW4xXj+50FTqDrT/c95A+u8D
+         CMwN+ckTWtgpcAdV3KoeZTisH19RKzsbOFS05svnPVIszlmIBAV/F253Ax6r5Wr5VPha
+         Ncly7PN6o6SjsJbjgDsPsKte7FUflc+3uUCxJhBT8bKGZcmVR04UsHA6F83PYkHacUM0
+         dkP5c2bCF+FImxFB+zTf4Fb8Gv/yFuyZZ6zUR5dLh55oRhC6TTNjJtwQTVEXD7a85dMC
+         Qfdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754317974; x=1754922774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3VwQYHiITIJoPNIH3t9+T75Uq05OHfjWXaf+GOec9BM=;
+        b=APzwe6UBjcuDsm325cHXIc9yT3v0hBobd7Cp2mft9SoYjGFyU/SoFBR6FTDUkMsAHG
+         6L3PsVTvAnSrsz880+2mCoWVpNAf/8DWpny4a1IEmedb6DiWXWY0xwqiCM8+nKXlYbyK
+         jqTYyj3p/vGgTthYJXMZY7yjJbDGD4fIX22pQ1p8cCd31nRHzMLZ/e9mmikl2ZKs3Yau
+         ztJs9p/hIDCnwubCT+mwKPrRczNCbkNkE4HZ8eZeKNwzINHOCTIywEIHIc8hEeWthump
+         LQLbeZCqEyAmwe/yY1GkncFCQpM2NGlFs/ZRb+CHsX7++R6obdrZr73XxoMWOQE/f54L
+         CdGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG+z+utpKwBtfD2Zmy8jlSaqUC68KtY5mKU2KH1ceDqX7iBxpwoLoKvbWiNuYE1gfL5cN7uwJZONL5bkxl@vger.kernel.org, AJvYcCVN4xm5HZA+Nvfpes9HRZdZ8XohJSd4bC0YVn7ZUQtn8J4OJeJvwR1w7WRzTtx1k1oAqaxhBfuJeUD/+4tqbWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzF2HS3ToQv+pGR32dUe7Ii1B+NGqbol39/fNQUdGnSqGuPdJK
+	f9qipTmpEh1evc5Qx2a7h8iT5HzfPEWkDLXOeHqZBebKfmx3Q/0MF6zBy5xx47GwfeDQsl+4Ddo
+	WByitd6ovWYHwrhgmzLnBDSCoOfzS49I=
+X-Gm-Gg: ASbGncv1NtyTHb61bolp/4f80L8rwTGUbDVM15tCXIJ3BDKsYEHDa6DhOzNzB+Jxz+4
+	hM3D4g4iafFdIIZweo7mvcDymp1l6p8yTnLV3QH+g9lVjzKrpDnx6QaANob5Igasy1DIRGCEfPh
+	A+7T2mYCubrUU7DKw2CT7exVc9ECOEc60e/zvnaTvUh9ie0ukgIssbc1gydu+4RO9BqOldUZaXR
+	0ZjLHMQ
+X-Google-Smtp-Source: AGHT+IFU8SQn+t9P5YQiglKfiFVWoRrg0f+OYP5ZENWD+GqnAinpFBixGqrr/sdqrwCYurLyvZoUZ/+IOIbC+g9fHlg=
+X-Received: by 2002:a05:6a20:7289:b0:240:1a3a:d7d4 with SMTP id
+ adf61e73a8af0-2401a3adbd2mr720316637.2.1754317974392; Mon, 04 Aug 2025
+ 07:32:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel10.indieserve.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - crashcourse.ca
-X-Get-Message-Sender-Via: cpanel10.indieserve.net: authenticated_id: rpjday+crashcourse.ca/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: cpanel10.indieserve.net: rpjday@crashcourse.ca
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20250801-amdgfx10-v1-1-e1dcbe18d84e@ethancedwards.com>
+In-Reply-To: <20250801-amdgfx10-v1-1-e1dcbe18d84e@ethancedwards.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 4 Aug 2025 10:32:43 -0400
+X-Gm-Features: Ac12FXw4Ip0lDCJ5FVa-kIabSeRpvVdWcCZBk7u-5qBZ0hGaf7CXjMiAEelQ6SQ
+Message-ID: <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/gfx10: remove redundant repeated null checks
+To: Ethan Carter Edwards <ethan@ethancedwards.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Aug 2, 2025 at 4:22=E2=80=AFAM Ethan Carter Edwards
+<ethan@ethancedwards.com> wrote:
+>
+> The repeated checks on grbm_soft_reset are unnecessary. Remove them.
+>
 
-  so far, i've listed three areas that -- even after all these years
--- still need care and feeding; they were:
+These are not NULL checks and they are necessary.  The code is
+checking if any bits are set in that register.  If not, then we can
+skip that code as there is nothing to do.
 
-  1) replacing manual testing with the ARRAY_SIZE() macro
-  2) replacing "n & (n-1)" testing with "is_power_of_2(n)" call
-  3) simplifying Kconfig files by wrapping sections in
+Alex
 
-	if FUBAR
-	... lots of Kconfig stuff
-	endif
-
-is that enough to keep people busy who want to do some janitor stuff?
-
-rday
+> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c | 24 +++++++++++-------------
+>  1 file changed, 11 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c b/drivers/gpu/drm/amd=
+/amdgpu/gfx_v10_0.c
+> index 7bd506f06eb155de7f2edb2c1c9d5ed7232b16fc..264183ab24ec299425e6a6d05=
+39339ee69f60c24 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+> @@ -7668,19 +7668,17 @@ static int gfx_v10_0_soft_reset(struct amdgpu_ip_=
+block *ip_block)
+>                 /* Disable MEC parsing/prefetching */
+>                 gfx_v10_0_cp_compute_enable(adev, false);
+>
+> -               if (grbm_soft_reset) {
+> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> -                       tmp |=3D grbm_soft_reset;
+> -                       dev_info(adev->dev, "GRBM_SOFT_RESET=3D0x%08X\n",=
+ tmp);
+> -                       WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> -
+> -                       udelay(50);
+> -
+> -                       tmp &=3D ~grbm_soft_reset;
+> -                       WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> -               }
+> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> +               tmp |=3D grbm_soft_reset;
+> +               dev_info(adev->dev, "GRBM_SOFT_RESET=3D0x%08X\n", tmp);
+> +               WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+> +
+> +               udelay(50);
+> +
+> +               tmp &=3D ~grbm_soft_reset;
+> +               WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+>
+>                 /* Wait a little for things to settle down */
+>                 udelay(50);
+>
+> ---
+> base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
+> change-id: 20250801-amdgfx10-f96c43cb0c59
+>
+> Best regards,
+> --
+> Ethan Carter Edwards <ethan@ethancedwards.com>
+>
