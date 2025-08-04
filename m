@@ -1,97 +1,150 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850B821B184
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Aug 2025 15:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667161CDFAC
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Aug 2025 17:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754321583; cv=none; b=JKYAad9elhT0jh+CEbeQtUStQyrt21lUKW/H1WMj/B+9KK5Vd4TOa0FpzrQfdRe4dNd6M0/2I/TsO/p0UNZl4n//k8m1/d77kSBEcag4VpI1QMOaiihwChRnf4aUCafgh0dNwknSDCAaOvzbc+BAprCV2j7CE4/nKMRGY5Af1GI=
+	t=1754327737; cv=none; b=PY/T8voJqsP0Wm/zaRYGmZLnVIK4OqvIUKNY1+qiwQ0oS1A3QxcHb4IBxu35PB7qGzw4FUdPByZl7C6632qGebewugzelFW9iqZ2tVlpqiXhpG4RLstYoiXCb6shy1d20j0VlzsNt3f1M6g046DYTqkeEwjwhPbaz55uAcAktlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754321583; c=relaxed/simple;
-	bh=IEV3WI8iR3tWQrx4B8sCmIPKxn8VMU7PesW2t6hVe+s=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Jc481eYmAPx4Q4RtCwGo1vbskcJYldDI2TilbMJjdWfNiXzhiZfS9sbUMrokicPsiwkH5Kfp4pW3/q3wFT7p1/Mf17qR40qdXZBINLPy9xbl5AJmdKQ0UHLXNXyuNqAZACt3sdQeN6qFvBTrJXNWp0kCw6W+uLZ74Fhj7r0vrSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mDzUYLGi; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1754327737; c=relaxed/simple;
+	bh=SECVmWzh/lpnaSJsDkOaHPyjcg2dlaYHEw0Mowtnw4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SV6lHl73uy0PIZLA8LdbRQgefGgK4Ta8vJQIUSIlQCWZ1VtgcCi6MIAVpr0UK9tACC3pS9ORWQ/u3s5KSai3xuqmxTwXcZiayWF0NCvepKphlrI2VVMzS4qwd1OkL9XPtZ5hwzZQ3ZmmWKFOH0qY9yvmvflSL4KoEYGf2FI4p04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ICOctBeU; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mDzUYLGi"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-459ddf8acf1so5413275e9.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Aug 2025 08:33:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ICOctBeU"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-458baf449cbso21848375e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Aug 2025 10:15:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754321580; x=1754926380; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XY+MBRKRSJ9LhmXiUjg3J9ea4YavkXYPCieLQE+Ncn8=;
-        b=mDzUYLGiJ3CMCkfqNB22OuUuuuQUdHfVu6NQg50drkhbGVK9g4leRpUaJ1u/vAmA1A
-         IM6mteiH5FGfGpPDQILuEHwnvBtwjJkwjLr0/Hg6pg0cTvOHDS7nc1j/cpTcHinDzA3g
-         /o/2DJMaa05cPtHfAtdInvjzO9vS+7svyA5CvASzSXAZQIhc2adglx0EDHZAhC3lEfhu
-         WVvvTmJA35EneCB8Nipo0d7QOPJeHvbLkNWeL7K7J13DQdkvVa+ljUK7xJ/9YAYbixiN
-         adF2PtCiTso0Z8Tb9O4727lTAqjloH2/Nk6R/ycZ3sOIS6lmncHrqSW0OXQQHQYHSyqT
-         3ApA==
+        d=linaro.org; s=google; t=1754327733; x=1754932533; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NrTKl9K4+8vI5BzLuQ0RcuyJtwiyeqQNxpuwyBCjmjM=;
+        b=ICOctBeUWFabBVRTi3EVh83U8YAl0Jwq0cqoiFUFjVednWTnBD4yKyRHPdUvZlmWL8
+         +GDg5I9U4ctjd23Ea8aKECIIsP5xUiQ1Mw0+HvZuqb6NqwVxPlSJJwDuBclzIpnEf21Y
+         d9ag5c2Glr/Qz+JukaOMSQn+DQc+zeg+ztlbm1drcNZYDb9Nk6yKI9upQK0ZOMwriDIo
+         IqdYfgxrLjCUBYLQJhkW77vty1we6rqlEzdONWvP+EPFRjUS2ftxb1y7vJzy3X25OFFr
+         +CV354SMlbxrvPeXnbKEfByciNbqThT3uA8zhVHJDrnVmLb2c+FHL638FshK2w3hQLZD
+         eAyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754321580; x=1754926380;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XY+MBRKRSJ9LhmXiUjg3J9ea4YavkXYPCieLQE+Ncn8=;
-        b=gjD2ANje/JoyT0XhTGGUtiSc85XpchmU3p3FI3qBXTMLhjrjVxmFumzYITag8mUsKS
-         cQxTuKpA4dEFDPMd6XK+Pe2f59hucP4QzGUjTVrPM7f4bFpxfMo3QEbawbvoyeumhROT
-         6gIU7+8d0n7EWqrIu8N2l7mO7qDHZQGUKnWstimTlOON8OHmqso78a3wNHxF4KO/6pnV
-         p9yjRi6RgtLvMjsSMI7a5L+/3AIDCdbAAWQId7eE4MGdaR0c35zvD9VpivNNDF6fo4y0
-         FKD9d3ChbURwBGKOqL57q69pcGn0NPh8+ynU8wMEiKAweww6MaH909jTyD6UW5gqwJGF
-         TmhQ==
-X-Gm-Message-State: AOJu0YyX7D+QykTlhakYcYpvy7DOh5vQRtUXJaL+IzpKMIa6aqnOV+h1
-	OuPIEKMqxpnZ23MJMskkyIIZikJNnC6zW0g6AC4oZgP78QsxwxRcMgtdofHmZSFsEUM=
-X-Gm-Gg: ASbGncuDsMLqZbXWJnJSQzyR2ixvEieLONd6ER0rsFudq8y8CkDtsmROTRjcqzhcBmu
-	K9ugTAF9VX4lhVxtBizoFj4RYqCQ9P7JAPkt3NGOjloRvguGPlXj7aYvDaqLGmte01cuDdJEEYy
-	QsKc2sftsd+4Xpp6PIWZMaPtil8TSqWHSc0osMsRq98FlKcWZ0xZBX7VJxrOq0GL7z2Lmj4UBCQ
-	4vfvScKEdHVCOFzPvTGOtO6j36G94nDkqbqttLWv/MjQU1iE68SoGs3JGZqcEsp+85iMoFOt9qO
-	PBMEQN7AH8nw9Qhxtw8Dc45Ax4DsXUI+M3DxD/X5Oei/kd7WpZkdj+KaIhif7wx9lTb4kDgNOVs
-	nVctuaibMWcYtaptFCX3fjI30V6TInLHsz/MTHnTM2pM=
-X-Google-Smtp-Source: AGHT+IEQreC1eHGihD2HvGw2z4zkQ8JJctAymKDEGjS+hjYaXiioW7ASwN/QLFRl5DugavcTRyqUkg==
-X-Received: by 2002:a05:600c:1548:b0:456:1ab0:d567 with SMTP id 5b1f17b1804b1-458b69c6b97mr74959325e9.1.1754321579743;
-        Mon, 04 Aug 2025 08:32:59 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c47ca5fsm15664010f8f.63.2025.08.04.08.32.58
+        d=1e100.net; s=20230601; t=1754327733; x=1754932533;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NrTKl9K4+8vI5BzLuQ0RcuyJtwiyeqQNxpuwyBCjmjM=;
+        b=bFGJXTHily9NVvfgpTxSEVUXf1qjEyKUSyFvIGRkyov2fIwDJ5dhP9Aej1UQm3AQ0Y
+         n6UyTXtOyTPb75N5AqyBO7zaGpWyfVoF11cjKX8Rwj5AAsaglenlMYMLsWBrMZH0KAHn
+         47wWrWcFO2aScr0fjhHa1yA+s5izlLmIqXacXSxiNh1L9kce1H1tx/dK13z2ddzbHBwj
+         gKjtHcCsoboGvmWC3okExe+M1CjJAZjT821+IrPktCUfsclHXSfGKuhA1QmDQLVoXEi8
+         cmWxS0KcMhVhay4cKekznwbreBs6sinRWvTZ/nJSh4Mj+XKErk6tZso4szwAFLmoP4rg
+         d9JA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnYzJPzwyzJ/5sqhZKw6zcTXj1SMopN2Q8pYbbcgGCKyeO6nhKd95mB71+jTnDxudmgci+jX8QvLJ9txvoOhs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRgXjz71pwhbW6u+Ueod+2bdb/4SYa7YBitT5352BvEYbfBl1z
+	3zqpXWCI4D2MA9RGvJIIcsZYNaakERvQCkaz+chug2bH3JfArbxyvi56I2iFA/yQyQc=
+X-Gm-Gg: ASbGncuz6VVpiX15vUR+rW/eQb+Zhdk77drPYkxjOd1yQbFKXtaW62eU7VCLg95nJT6
+	GzB0mreiUbQQKxv1Llz+PkbxQlVMLN9c4Aw0S0WT857ukiQ9TfcHEz20vldirLkZhgm4I8hyHhF
+	r0GC4POFgjqvbzHG6vt91T2sxZaBcZUapHddjWXQYJHyOOelQK1IRw+phFqBazm4NUFi5nWMmb2
+	508nlUQyRAKcz+jimPnS1Pwv60ZWZI8Do96VJRf/07KVxWrna6qYsa9dM5kTPnWvDlLH1pk3diQ
+	KH1/yBD7vSt8Axyykjexll0Gc6Gnuon9bL1x2kSbdGKjx9I4JiP+ocxmYbVCbNOfFvNfGDg4sUO
+	GuEYjf37f9XmiAzGMDtevdhZN/SJcMa1EKrhnhg==
+X-Google-Smtp-Source: AGHT+IFGyZV3Lnqkd/Us0kr0C9bu01zWEPsZjgPddB7McgPHFiYC5RrBkxKNSmpQutG9nl15DFY5XA==
+X-Received: by 2002:a05:6000:1ac6:b0:3b7:8af8:b90f with SMTP id ffacd0b85a97d-3b8d94c3f5dmr6949009f8f.40.1754327732649;
+        Mon, 04 Aug 2025 10:15:32 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a6f62sm15897981f8f.73.2025.08.04.10.15.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 08:32:59 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- dri-devel@lists.freedesktop.org, Colin Ian King <colin.i.king@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250724112358.142351-1-colin.i.king@gmail.com>
-References: <20250724112358.142351-1-colin.i.king@gmail.com>
-Subject: Re: [PATCH][next] drm/panel: Kconfig: Fix spelling mistake
- "pannel" -> "panel"
-Message-Id: <175432157897.3671011.9847593575052354034.b4-ty@linaro.org>
-Date: Mon, 04 Aug 2025 17:32:58 +0200
+        Mon, 04 Aug 2025 10:15:32 -0700 (PDT)
+Date: Mon, 4 Aug 2025 20:15:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Ethan Carter Edwards <ethan@ethancedwards.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/amdgpu/gfx10: remove redundant repeated null checks
+Message-ID: <fda8103d-cac8-4c00-a78e-6eb27141d9ea@suswa.mountain>
+References: <20250801-amdgfx10-v1-1-e1dcbe18d84e@ethancedwards.com>
+ <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
+ <c82931b5-0de2-4e45-a80b-3a90b0cc98a2@suswa.mountain>
+ <CADnq5_Mk3FO_tvxFo+fJgqskVc7qtGv74VM6EStx_BcVpahXEQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADnq5_Mk3FO_tvxFo+fJgqskVc7qtGv74VM6EStx_BcVpahXEQ@mail.gmail.com>
 
-Hi,
-
-On Thu, 24 Jul 2025 12:23:58 +0100, Colin Ian King wrote:
-> There is a spelling mistake in the LEDS_BD2606MVV config. Fix it.
+On Mon, Aug 04, 2025 at 11:08:57AM -0400, Alex Deucher wrote:
+> On Mon, Aug 4, 2025 at 10:49 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > On Mon, Aug 04, 2025 at 10:32:43AM -0400, Alex Deucher wrote:
+> > > On Sat, Aug 2, 2025 at 4:22 AM Ethan Carter Edwards
+> > > <ethan@ethancedwards.com> wrote:
+> > > >
+> > > > The repeated checks on grbm_soft_reset are unnecessary. Remove them.
+> > > >
+> > >
+> > > These are not NULL checks and they are necessary.  The code is
+> > > checking if any bits are set in that register.  If not, then we can
+> > > skip that code as there is nothing to do.
+> > >
+> >
+> > It's not a null check, but it is a nested check and it's a local
+> > variable so the patch is correct enough.  At this point we know that
+> > grbm_soft_reset can't be zero.
 > 
+> It can be 0 as far as I can see.  If none of the GRBM_STATUS bits are
+> set, then we never set any of the bits in grbm_soft_reset.
 > 
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+You're missing the first check...
 
-[1/1] drm/panel: Kconfig: Fix spelling mistake "pannel" -> "panel"
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/368ea3f33f01b618bd645aa61b673f92e9aae767
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+  7657          if (grbm_soft_reset) {
+                    ^^^^^^^^^^^^^^^
+Checked.
 
--- 
-Neil
+  7658                  /* stop the rlc */
+  7659                  gfx_v10_0_rlc_stop(adev);
+  7660  
+  7661                  /* Disable GFX parsing/prefetching */
+  7662                  gfx_v10_0_cp_gfx_enable(adev, false);
+  7663  
+  7664                  /* Disable MEC parsing/prefetching */
+  7665                  gfx_v10_0_cp_compute_enable(adev, false);
+  7666  
+  7667                  if (grbm_soft_reset) {
+                            ^^^^^^^^^^^^^^^
+Unnecessary.
+
+  7668                          tmp = RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+  7669                          tmp |= grbm_soft_reset;
+  7670                          dev_info(adev->dev, "GRBM_SOFT_RESET=0x%08X\n", tmp);
+  7671                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+  7672                          tmp = RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+  7673  
+  7674                          udelay(50);
+  7675  
+  7676                          tmp &= ~grbm_soft_reset;
+  7677                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+  7678                          tmp = RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+  7679                  }
+  7680  
+  7681                  /* Wait a little for things to settle down */
+  7682                  udelay(50);
+  7683          }
+  7684          return 0;
+
+regards,
+dan carpenter
 
