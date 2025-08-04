@@ -1,74 +1,75 @@
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5759B1482E8
-	for <kernel-janitors@vger.kernel.org>; Mon,  4 Aug 2025 15:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850B821B184
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Aug 2025 15:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754321006; cv=none; b=C8UbkhXe6M5/6MF8WwDKfJ4Kd1AcdtRY57dkkwwXOi4AKmow03ZrU93XsUhQ/yOoL1fsMv9jBHwmCjGw8jF6WYQnDmEGB+Sg3uWtV3vjro11RUvOzAb9RBHOb9u3bCIGJ9Z/DEP/mcEobzMNIpocmTWEthazdm1imTENfwckNBA=
+	t=1754321583; cv=none; b=JKYAad9elhT0jh+CEbeQtUStQyrt21lUKW/H1WMj/B+9KK5Vd4TOa0FpzrQfdRe4dNd6M0/2I/TsO/p0UNZl4n//k8m1/d77kSBEcag4VpI1QMOaiihwChRnf4aUCafgh0dNwknSDCAaOvzbc+BAprCV2j7CE4/nKMRGY5Af1GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754321006; c=relaxed/simple;
-	bh=nFoSWOWXDMGmzTUxtwhpB70Bmfd3Anx6RywJYHcDP48=;
+	s=arc-20240116; t=1754321583; c=relaxed/simple;
+	bh=IEV3WI8iR3tWQrx4B8sCmIPKxn8VMU7PesW2t6hVe+s=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dD56y2CYX7PxPOaLNIkXXruqKLSAb/SmBuXlzGRbCMIp7ZNnlABOb3ZDS3eTsRb1+8G1nV896b6Sy4vihSnEyFo6JfGrj0Fv62MPZ81iJ+kyk3C8mmpCu/DxE+eM1tlYsfEVuxTlXewMrftya86u+eU40Fb7QjEEoTj0oMJHeXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Kntd5a7H; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+	 MIME-Version:Content-Type; b=Jc481eYmAPx4Q4RtCwGo1vbskcJYldDI2TilbMJjdWfNiXzhiZfS9sbUMrokicPsiwkH5Kfp4pW3/q3wFT7p1/Mf17qR40qdXZBINLPy9xbl5AJmdKQ0UHLXNXyuNqAZACt3sdQeN6qFvBTrJXNWp0kCw6W+uLZ74Fhj7r0vrSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mDzUYLGi; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Kntd5a7H"
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3da73df6c4eso34282515ab.0
-        for <kernel-janitors@vger.kernel.org>; Mon, 04 Aug 2025 08:23:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mDzUYLGi"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-459ddf8acf1so5413275e9.0
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Aug 2025 08:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754321003; x=1754925803; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754321580; x=1754926380; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qqdX9vSM7eNyAqBUevvRqDXoCJdSwPaqgVdWOxEJdM8=;
-        b=Kntd5a7HCZ60vQ6jKwe/HzSfHEUSH6Hqsgr/+yqEQeTb7GCwkCeEzLRUAFLFPswcXF
-         NXrpcquIAMfFBASjwo0qpvrMO/6MTvUBpg3KtWEWTiEzgoc3PxhLAx57pcNfAVzVoLer
-         8e3qTc76S3DOaeKyI8A/J9cEXvZP5BB+mMTgYMZuonBLsFdOgI2MCZ7kSOCvm6F2qrYU
-         2x12QJSQvnP87XD+TiJVEbVo5EhvfMHxQMeXWGHvX6vHoEXlV3R5qmM4dGYVecJT/e2D
-         4xx7zVCzAf0ijgboihfEAzlGJnYTO1ByygHksGrhjsWEF6ljT0+bOW/LRKG1X6rx4R8z
-         q8kA==
+        bh=XY+MBRKRSJ9LhmXiUjg3J9ea4YavkXYPCieLQE+Ncn8=;
+        b=mDzUYLGiJ3CMCkfqNB22OuUuuuQUdHfVu6NQg50drkhbGVK9g4leRpUaJ1u/vAmA1A
+         IM6mteiH5FGfGpPDQILuEHwnvBtwjJkwjLr0/Hg6pg0cTvOHDS7nc1j/cpTcHinDzA3g
+         /o/2DJMaa05cPtHfAtdInvjzO9vS+7svyA5CvASzSXAZQIhc2adglx0EDHZAhC3lEfhu
+         WVvvTmJA35EneCB8Nipo0d7QOPJeHvbLkNWeL7K7J13DQdkvVa+ljUK7xJ/9YAYbixiN
+         adF2PtCiTso0Z8Tb9O4727lTAqjloH2/Nk6R/ycZ3sOIS6lmncHrqSW0OXQQHQYHSyqT
+         3ApA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754321003; x=1754925803;
+        d=1e100.net; s=20230601; t=1754321580; x=1754926380;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qqdX9vSM7eNyAqBUevvRqDXoCJdSwPaqgVdWOxEJdM8=;
-        b=vG6zY1l7vIO+cTHjeWkGih/M+9OnsqVPZ9kXZ5ZGAOb4RFeibFAJ0gpNoPmAhuIVmo
-         epvG3+RaCz9JklPBzyohNbFSVZBOFuuZdZ8heHRN95yiLKgHD/gHkKMNXzGpfxQamVgk
-         MVC7e78AKBG4LmTlWpGrzAkRd7j/5yWcc1WMHVzQ/abPFviM5tjTEvX1lt9PoPP2tGbY
-         x9A31bh//lhCDcacyBieebYPzOhTcuJRKa7hq9RnKeHFVQoS6Yfsp179U1uFZpocsyAz
-         bYZaTe09bv6u56oJCOn8e8phJgrt2S5/5K/FxG77VA9fMleS7DkgA9I8WkwetyhnMlfd
-         lyPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEFBpiTELSU34Najc1wxiPoxPGi7rCSriLr8XrhVbiudXWpmQIBa45gYVaFBpL4P1YBmjEYfGBgRrjpkVFgQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw44m7S4i4Hvv3an48fhFW1M4zJqsQ7DaWik5fK8JmC2Pr0JdAW
-	oyLMSbTXEkBg+RzKGoX5K24MKZnKrSDF666A/vZxhZspDz1XRGG8Lfkcj1Lg3R858tCmu+RDl4H
-	v1d2H
-X-Gm-Gg: ASbGncu/8GAl3HEUlR8APnUeYXMIQ8WWtHc59CnjtmNI6ij87EBqXgEDoRLLYmXQ8w2
-	tX+lMIr4y7rP/RWbLtc5KmHquBL+GO2PzHA2zcg5dSTZS2bvJWZMfdRfvkVosARrxRvlkXkHikv
-	GJlOnyWnI8kUCdCxGc9Iq7NEuiljMSss7R7HrzB4q5BRCXoZbAVn0DT0DKlE7QryeGRJiwsCVfH
-	NWa850WL18Xk4Rloj2iwKAM9oQgvEb3TdYxS4Jz9t6NdQi3ZJ1bu+GmGjtVv3TlR5x38NdskWhZ
-	+n+cMsjVpcvgpbvazGdikHYTuL9IIHfWUGgz3kv2ibiybgvR7M+KIcfVZZybNjFsAQYIjvuNF16
-	I7inQCCWqftEKhZ8XP9gZGzlb
-X-Google-Smtp-Source: AGHT+IFO/lBsZcG6giK2HvXNUrdqdWnLNJxiI9UMe+z+3+FeG+OeKUvDv52bgS1CZJVtM4/52xm9Ww==
-X-Received: by 2002:a05:6e02:184f:b0:3e3:e732:aef6 with SMTP id e9e14a558f8ab-3e4161c8834mr200857775ab.18.1754321001188;
-        Mon, 04 Aug 2025 08:23:21 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e4029a1553sm43241475ab.14.2025.08.04.08.23.20
+        bh=XY+MBRKRSJ9LhmXiUjg3J9ea4YavkXYPCieLQE+Ncn8=;
+        b=gjD2ANje/JoyT0XhTGGUtiSc85XpchmU3p3FI3qBXTMLhjrjVxmFumzYITag8mUsKS
+         cQxTuKpA4dEFDPMd6XK+Pe2f59hucP4QzGUjTVrPM7f4bFpxfMo3QEbawbvoyeumhROT
+         6gIU7+8d0n7EWqrIu8N2l7mO7qDHZQGUKnWstimTlOON8OHmqso78a3wNHxF4KO/6pnV
+         p9yjRi6RgtLvMjsSMI7a5L+/3AIDCdbAAWQId7eE4MGdaR0c35zvD9VpivNNDF6fo4y0
+         FKD9d3ChbURwBGKOqL57q69pcGn0NPh8+ynU8wMEiKAweww6MaH909jTyD6UW5gqwJGF
+         TmhQ==
+X-Gm-Message-State: AOJu0YyX7D+QykTlhakYcYpvy7DOh5vQRtUXJaL+IzpKMIa6aqnOV+h1
+	OuPIEKMqxpnZ23MJMskkyIIZikJNnC6zW0g6AC4oZgP78QsxwxRcMgtdofHmZSFsEUM=
+X-Gm-Gg: ASbGncuDsMLqZbXWJnJSQzyR2ixvEieLONd6ER0rsFudq8y8CkDtsmROTRjcqzhcBmu
+	K9ugTAF9VX4lhVxtBizoFj4RYqCQ9P7JAPkt3NGOjloRvguGPlXj7aYvDaqLGmte01cuDdJEEYy
+	QsKc2sftsd+4Xpp6PIWZMaPtil8TSqWHSc0osMsRq98FlKcWZ0xZBX7VJxrOq0GL7z2Lmj4UBCQ
+	4vfvScKEdHVCOFzPvTGOtO6j36G94nDkqbqttLWv/MjQU1iE68SoGs3JGZqcEsp+85iMoFOt9qO
+	PBMEQN7AH8nw9Qhxtw8Dc45Ax4DsXUI+M3DxD/X5Oei/kd7WpZkdj+KaIhif7wx9lTb4kDgNOVs
+	nVctuaibMWcYtaptFCX3fjI30V6TInLHsz/MTHnTM2pM=
+X-Google-Smtp-Source: AGHT+IEQreC1eHGihD2HvGw2z4zkQ8JJctAymKDEGjS+hjYaXiioW7ASwN/QLFRl5DugavcTRyqUkg==
+X-Received: by 2002:a05:600c:1548:b0:456:1ab0:d567 with SMTP id 5b1f17b1804b1-458b69c6b97mr74959325e9.1.1754321579743;
+        Mon, 04 Aug 2025 08:32:59 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c47ca5fsm15664010f8f.63.2025.08.04.08.32.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 08:23:20 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Yu Kuai <yukuai3@huawei.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-block@vger.kernel.org
-In-Reply-To: <79394db1befaa658e8066b8e3348073ce27d9d26.1754119538.git.christophe.jaillet@wanadoo.fr>
-References: <79394db1befaa658e8066b8e3348073ce27d9d26.1754119538.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] block, bfq: Reorder struct bfq_iocq_bfqq_data
-Message-Id: <175432100029.20578.5554580525847774271.b4-ty@kernel.dk>
-Date: Mon, 04 Aug 2025 09:23:20 -0600
+        Mon, 04 Aug 2025 08:32:59 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ dri-devel@lists.freedesktop.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250724112358.142351-1-colin.i.king@gmail.com>
+References: <20250724112358.142351-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] drm/panel: Kconfig: Fix spelling mistake
+ "pannel" -> "panel"
+Message-Id: <175432157897.3671011.9847593575052354034.b4-ty@linaro.org>
+Date: Mon, 04 Aug 2025 17:32:58 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,28 +78,20 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+X-Mailer: b4 0.14.2
 
+Hi,
 
-On Sat, 02 Aug 2025 09:25:59 +0200, Christophe JAILLET wrote:
-> The size of struct bfq_iocq_bfqq_data can be reduced by moving a few fields
-> around.
+On Thu, 24 Jul 2025 12:23:58 +0100, Colin Ian King wrote:
+> There is a spelling mistake in the LEDS_BD2606MVV config. Fix it.
 > 
-> On a x86_64, with allmodconfig, this shrinks the size from 144 to 128
-> bytes.
-> The main benefit is to reduce the size of struct bfq_io_cq from 1360 to
-> 1232.
 > 
-> [...]
 
-Applied, thanks!
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-[1/1] block, bfq: Reorder struct bfq_iocq_bfqq_data
-      commit: 407728da41cd6450cec6a4277027015a75744d56
+[1/1] drm/panel: Kconfig: Fix spelling mistake "pannel" -> "panel"
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/368ea3f33f01b618bd645aa61b673f92e9aae767
 
-Best regards,
 -- 
-Jens Axboe
-
-
+Neil
 
