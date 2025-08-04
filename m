@@ -1,141 +1,104 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DF8271450;
-	Mon,  4 Aug 2025 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AF6367
+	for <kernel-janitors@vger.kernel.org>; Mon,  4 Aug 2025 14:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754318047; cv=none; b=pGnuV60TMGTEY3PWm7sqD6sfz8bx5+Bq9rgRDU9EqQ7lJHCMwemwrhgMAWWs40/a/TfTchQmWXS4R/oRubT2c27jvcXOZNDfL5DhjVye9Sgx0JbM4rS0SWMmUf2xrtudqziqt1nk0wyDjo4YurN0XxyoEwyAIjEcpbltk6IOMEk=
+	t=1754318965; cv=none; b=nqPVDnSB9WrdOf05ndGQPD49rd9bpmGTF+0iiwi1o6uQ7q49+HdXcEQd4DVSShc5ABtTxmY+b8+8ND1Ci7TMM14FuH5onzqRBVLhK7S5KkwwF05A1WcJZUF0DGMZC3Iha3/C7lpqPyqHANkynGYv+7VEWL9dbFBlypDsqeLCuWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754318047; c=relaxed/simple;
-	bh=QZTKp0AdmNxOZCCBvKATKlV+WF+E2k4VVUMWfpw3TsM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X16OuxLlVuoSM9XdsqqFaTnRruwgkEXDWc6Xm/cNuGGaNzxWOFnhtDk1HOXYnEgily1FbqvAmlkR6rwZ3lYHL48UXo2K5CwQkbQbMaL6cZtMGemynJmLprtcVsZrkqqESudgDlayERDitgSklwBkOvSJaEcbitvdgr88jeQDcQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zo+MYhK0; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754318965; c=relaxed/simple;
+	bh=VUlFsH8Z1SwZJTEqRqnj7yvZt19eBcmsv1QjxEHuuDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BzjAN8i0iTSVqUyj3fMaYyqIZJN9EOoRssCj10XeqhEKtt7gXOl8HEIgynFGbdJ7QaqMbubzXMadOFYSYki9J8pfwntFdBTNmqg/OfqA5+J7p7qhfB2jGy68fo7UlsmK+ZswdeJWMgHM4CrD8IIL2m9ioLNDf15EqVgEjykFVno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ahzPL6h9; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zo+MYhK0"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-32127d5f63eso154931a91.0;
-        Mon, 04 Aug 2025 07:34:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ahzPL6h9"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459e0a249d6so2735e9.2
+        for <kernel-janitors@vger.kernel.org>; Mon, 04 Aug 2025 07:49:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754318045; x=1754922845; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ThPz4EG6ZmgX+GG9SQyYVrMb+M6NgBy3ZDuWSe5fSmc=;
-        b=Zo+MYhK0Xny74u38HgDnumoCaefnQ+MQSZc8o1md+X21cUqOzb+c9tOKfspRGBN/7I
-         70hFFhAHOyBvzq3shFnVytO0OsOII79ld42k4qAJX1pSh+aWA6/oJj8zDEEhCql4LKGq
-         hYsk+PURlAFaeIFzhpNdnrb3FHNcR7QBtO21QHPa1DysaG4bnFGiqH30e6WnN0QJRRlZ
-         w/Yz9Fub6J6eukCd0qELU93qZ3JArz2ZYUKlBLuLuptRgmg34lpd7eTI7cxhnzuuRRXl
-         paUS9mAcKuEgwYZOvVO6RWwpXk9M0NXwiLzQe72PDEDMT/hbVh3BeupY2DPqNaPfdfwK
-         PY5g==
+        d=linaro.org; s=google; t=1754318962; x=1754923762; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5MAh85Y0saa+euoszKw3nA4pGBPwcX9w5nxBz0NKd0A=;
+        b=ahzPL6h9cD59BkDG0r+kCOHMNFnRsl6Xygb5ecwHoJl4dUeeKBwj5+maE5fpNK0Q6F
+         L7lKQ54YqE4q/WMuDUhy0jYPpg/raaub0fTgDG02WFV1aJh5aI0yI7xF23kaeMfvZhml
+         zg0XXJOPdkUcTVN0z756eAYOHvasfR47sdaXakOtLLtQadWJPUv/HZa5d5S2kJYbx0B6
+         j40Lvrh7I95vGO/rQVjMKNsw6JNmEIOQeIxFtiPwn+9z2Fgc3Qq5Ky1JvqZhn7gU7j4+
+         pKp7cqTwa4uq/VdP2CkZpqC4r9juCp+gKB5OJDqu+fQjLqzxDQAjiA5QPQt+2MQBRX8G
+         ozCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754318045; x=1754922845;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ThPz4EG6ZmgX+GG9SQyYVrMb+M6NgBy3ZDuWSe5fSmc=;
-        b=ZKG5m+vUsiRlmt0GbUMEju1b/2A5gMTRy8/N0ocUKwHvqYJTpk4VGh44AqdNRxaNad
-         uDr9cQ0qPGgSaFYXTx7wL4yaXWhhCe6OVAXyZjE2KiaO2LCFFjkKvvaWTC4Iy+bao+ub
-         0DfMHJsVlNSTBqf9tKz8oX3GBrn9SFKc4ZE2iZqEWzEwPx83Ab6RdA8mKhhDfQ69MEx6
-         1AGcMEOx61lSd/pjp3RSrmmLgY6vROpLnWbu7917LAEJgK5EXMCNsrJoVKfFt28DY/QS
-         JgErIYJb32U2jBXE4LpJz/fp1PBKqI3jD7/ifN4RCCVMvkSMI24z9ou/5DB0FNLqhQxl
-         U1VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwYl3Aznrc7i4LrDGdDCzhStpAWgE+6W9cZOVfovnmPTC8EHebvplK1tCzgaSmp70TfsPZi9BHLSI753CL@vger.kernel.org, AJvYcCXndGSVYarNpqkv98TUra8uwb9lGpE5/lPxITeREOeCLFa/kCYExtIVmEDsPFi58QG+PCSWOXeMrvmCqhfCIjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzYcIz55oNskPA+jOtHPRMmnguJ0fDP2DpUA5gPbMmJ0dIssvk
-	xdlE3I531Y628jaM1M2DGyaDp2Orn+N4CMVv0zqoV8jKwhR/8HOZzlo9vxki13HckgLK3EUktOu
-	BnRSjdVfCApWDfIfk7EXPe+Zk9u0KLYI=
-X-Gm-Gg: ASbGncsLQdMmuS5S20KIKmhXlS8Dz50DuLY/oijmrVBtTYEx1kyDkcbe8ez7M3VNgHG
-	dzJSX6NzzL3PJYvyrokeF9C5zGZLziTzSr2QkZ6sCdfKxWBbWbzMsgG9DFFM1HTtf69J2cBStw5
-	+4lwe71vD1UR9jG1Fgo3p6zUJsKRFsO2cbEXzk8Zoup8QydKlnBDo+AeOPKwvb/nT5B05l+zk/8
-	kOdHYW6
-X-Google-Smtp-Source: AGHT+IH2SjTWTgUng0xb8MVNI07treE0Rf1uZrlyLZS28ps1VWH5GeUrd451Qm6fRobbn3ai1A5EuPF9RQCs85dAYm4=
-X-Received: by 2002:a17:90b:1804:b0:31f:55a7:6504 with SMTP id
- 98e67ed59e1d1-321162c71c9mr6274051a91.5.1754318045294; Mon, 04 Aug 2025
- 07:34:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754318962; x=1754923762;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5MAh85Y0saa+euoszKw3nA4pGBPwcX9w5nxBz0NKd0A=;
+        b=wd5oUMupCwtZ1fC6B7QSJHvzfE5aBASPAEPNuiS5KYJTu4Cafx+duI7FGr7i6DyxTC
+         iwDagRxrXjfxKSCfyedtTAuYgACgKV5iWlkYmOtTK7F9MZjFSWqjOpieOvDXHj00tkcs
+         ESIjbI1Ut0LFW32hSTRdWztLeSbYNpV55sb0dX2e+199P+0h4y054f9zud9ya/tM5p31
+         rlrZXLKuMVL3LY6NqNXfI0QatDXV+dWShTib74Eru97fnomOLDPn5tds/p6SHh+xtbVD
+         vlZeFeplydaWI0c/5mTnhEg3y5F1fFWPMwIdaXL1oaQ4DvL06HcvFxtl5ATJWa9A5KOY
+         T5KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDICblEc67jScJVPrWcNGSeZRutB+UyPkzk9kRDmYIVRfdBVcbAH/kXNGR0UloQKBWniED4RJPZ2aHtHuXY2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9IG5LLKmn903GUMh6uTDQaSZub5mI1vLoN6LY6kNIZJc5vShk
+	X/5Hr6SS2U3lAKMv1mzUDr1F2Ln8NgdVzSxOxfnyzl2eZl6y/coZzYudr9HZIK/oEAjt06L8SLd
+	qeKEY
+X-Gm-Gg: ASbGncs8I5QFZRQafz4piNklgZAeI/dWnZFT7nze8zLYqXVoRL0Em+tvcgaGMrAzkXk
+	EYxia2wPr1cSrUmloHg9X7jrqpsbub4meiLWVK9ulm4qq5aLmL5kwD/pE4PcJEjZQ6t24DX2Vaz
+	ZJj9EBqytMGc3oevXEhBTnRHA0n4N86EumlHK49TbFUPX3v3dfSzYgEbnCkRPq2CyoRt+Niqr2l
+	BdJEX+sIE1DAcG+dntDzXAHqovxvC1+oKIzJGE7qF8GM3EfJRd+F4oVt355ynKJwirIZY85NjWO
+	vqZDqe4vRjj5lOQf3K3Gi0rVViyEUtLQ9031vVUeNn1+XNdceY16TIl4wCGwk9ehIAOuu8gJdQW
+	DV3tfmLdmH2ylPZCj4Tdneh9CAjPuTHTMKyywaQ==
+X-Google-Smtp-Source: AGHT+IExUksj+hCR+gj7NMUPXAk78VVx0bqD4AGsjGqehS5x2aQlIlZBpW0rJUPuZBL200EPhOnGsQ==
+X-Received: by 2002:a05:600c:3b9f:b0:458:bc3f:6a72 with SMTP id 5b1f17b1804b1-458bc3f6d41mr61463425e9.4.1754318962444;
+        Mon, 04 Aug 2025 07:49:22 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458a7c91c0esm150589255e9.11.2025.08.04.07.49.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 07:49:22 -0700 (PDT)
+Date: Mon, 4 Aug 2025 17:49:19 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Ethan Carter Edwards <ethan@ethancedwards.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/amdgpu/gfx10: remove redundant repeated null checks
+Message-ID: <c82931b5-0de2-4e45-a80b-3a90b0cc98a2@suswa.mountain>
+References: <20250801-amdgfx10-v1-1-e1dcbe18d84e@ethancedwards.com>
+ <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801-amdgfxv9-v1-1-0b9670ab5509@ethancedwards.com>
-In-Reply-To: <20250801-amdgfxv9-v1-1-0b9670ab5509@ethancedwards.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 4 Aug 2025 10:33:52 -0400
-X-Gm-Features: Ac12FXzEWmuF5wDSj54XY1blu563_2bdAIUexGomIzDirrtij04qOUL9B36nQoM
-Message-ID: <CADnq5_Nzia7kvqBYxVwnRASFHyWWDPPrA-qBsLH4OxP_S49L5Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu/gfx9: remove redundant repeated null checks
-To: Ethan Carter Edwards <ethan@ethancedwards.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
 
-On Sat, Aug 2, 2025 at 4:33=E2=80=AFAM Ethan Carter Edwards
-<ethan@ethancedwards.com> wrote:
->
-> The repeated checks on grbm_soft_reset are unnecessary. Remove them.
->
+On Mon, Aug 04, 2025 at 10:32:43AM -0400, Alex Deucher wrote:
+> On Sat, Aug 2, 2025 at 4:22 AM Ethan Carter Edwards
+> <ethan@ethancedwards.com> wrote:
+> >
+> > The repeated checks on grbm_soft_reset are unnecessary. Remove them.
+> >
+> 
+> These are not NULL checks and they are necessary.  The code is
+> checking if any bits are set in that register.  If not, then we can
+> skip that code as there is nothing to do.
+> 
 
-Same comment as the gfx10 patch.  These are necessary.
+It's not a null check, but it is a nested check and it's a local
+variable so the patch is correct enough.  At this point we know that
+grbm_soft_reset can't be zero.
 
-Alex
+regards,
+dan carpenter
 
-> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 24 +++++++++++-------------
->  1 file changed, 11 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/=
-amdgpu/gfx_v9_0.c
-> index 6a9cf3587cc6f0a0d00ab1c109fd599dd8aa2579..a6ff9a137a83a93cde0b0c9c9=
-e51db66374bcbee 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-> @@ -4175,19 +4175,17 @@ static int gfx_v9_0_soft_reset(struct amdgpu_ip_b=
-lock *ip_block)
->                 /* Disable MEC parsing/prefetching */
->                 gfx_v9_0_cp_compute_enable(adev, false);
->
-> -               if (grbm_soft_reset) {
-> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
-> -                       tmp |=3D grbm_soft_reset;
-> -                       dev_info(adev->dev, "GRBM_SOFT_RESET=3D0x%08X\n",=
- tmp);
-> -                       WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
-> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
-> -
-> -                       udelay(50);
-> -
-> -                       tmp &=3D ~grbm_soft_reset;
-> -                       WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
-> -                       tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
-> -               }
-> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
-> +               tmp |=3D grbm_soft_reset;
-> +               dev_info(adev->dev, "GRBM_SOFT_RESET=3D0x%08X\n", tmp);
-> +               WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
-> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
-> +
-> +               udelay(50);
-> +
-> +               tmp &=3D ~grbm_soft_reset;
-> +               WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
-> +               tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
->
->                 /* Wait a little for things to settle down */
->                 udelay(50);
->
-> ---
-> base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
-> change-id: 20250801-amdgfxv9-30357749717e
->
-> Best regards,
-> --
-> Ethan Carter Edwards <ethan@ethancedwards.com>
->
