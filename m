@@ -1,94 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16E8946C;
-	Tue,  5 Aug 2025 07:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D35224291C
+	for <kernel-janitors@vger.kernel.org>; Tue,  5 Aug 2025 09:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754380303; cv=none; b=oujEKI8NKG2VgRjGT6xljzLHBrEaBBKmy6eogqtc2XR8flvkuDnuqFOMr17PxZMuBK5pQlQm1tSaXh63nXvjdJz1kNovpQwGIrI42Pz5sFIc3QzB6csTbTeNVuJ6JWkhqWu55J1tvqe5rDErg6Bivbt2mD9clEF8txpNpe6oZKs=
+	t=1754386361; cv=none; b=LdGG2KGZz+21PdnyOpXtPWDdDuQ8xrp8Qb5eaokE+Z3QMCFp1eaJpdTgZ2e/wjthxOFDIrHizBVypZmwvOHtDQEK7BAeKpINQ4evf/3Xpf/ORZ++z7hCrb1jaH+PU2Z0noBiNUXdRq0OPJ/d+DhnxilCXsPqkU91R9s8S8MkVX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754380303; c=relaxed/simple;
-	bh=lm9nuCGGx4gMCOnD7VP8r/yEfF12fwCxH+nmwdEZo2Y=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FIbRrV+wZDR4c9KRtSibdprJWB07SA3p8wVaG+vDuQMUMb0/E/soHzC2NUi4rVI3rDEcE1roPB9SgLIflNdul9gFglakjbofcHR58d76kT6vzmydI1R19N9BQtXcpmAq9aZPY74AxTyt7uqgvyd59kbf7BasM2Xi3NgNSOMxRNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/wTo+7e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754386361; c=relaxed/simple;
+	bh=dmAqZKWXa9hepTM6uf0mvM6C0/XuJFbVnwcjNJRk3UA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/UUFUpfor29jLl3Nd/t1HaF4PoAGk6555DbPNLhLrw4zoUW8yZrOO9oZK3/ixh+U+yLgD/IcJWS7UeFXlofHgNSg//0RkCrS7TusNUpuydaTIWUV60EOnBXpJVYPAlGMok77IqCSgv4nfa0XqJmdGJdmS+Is0NAqPffrji5aeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tzrkp9C+; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/wTo+7e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD9CC4CEF4;
-	Tue,  5 Aug 2025 07:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754380303;
-	bh=lm9nuCGGx4gMCOnD7VP8r/yEfF12fwCxH+nmwdEZo2Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V/wTo+7eKfeslKF9rfcaUrhfVqZsjAmicnMmyfiquzuhnD5ABG0bsDEyWVsBVlp0k
-	 v3ilyTYzMw7AkqzrghRguerGHnfavIHs6gnZiwPEHMIScnoS2b6eiIMFCXhECNPAu/
-	 /ymxRWYBaFRvWE4rjVcxoLzjtFUWeFLaPd3NVqMAGqbqOtwPi2ZUfKodrYsuYJwgR1
-	 yXseT+oSL0yLj+T8tkIYWjr8AVO1lzoOmsCwXMYydxLM2jV0Tt7vD78GYY9TCOidw8
-	 cBQO9H5ZWlqpQy6n05qjzp7cQnqzXePMoljj1H5RMaimD3tI3u/SOsG0SF587MzREB
-	 np1WL2neozi8A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1ujCST-00437m-3a;
-	Tue, 05 Aug 2025 08:51:41 +0100
-Date: Tue, 05 Aug 2025 08:51:40 +0100
-Message-ID: <86ms8e6wab.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Toan Le <toan@os.amperecomputing.com>,	Lorenzo Pieralisi
- <lpieralisi@kernel.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
- <kwilczynski@kernel.org>,	Manivannan Sadhasivam <mani@kernel.org>,	Rob
- Herring <robh@kernel.org>,	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] PCI: xgene-msi: Return negative -EINVAL in xgene_msi_handler_setup()
-In-Reply-To: <aIzCbVd93ivPinne@stanley.mountain>
-References: <aIzCbVd93ivPinne@stanley.mountain>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tzrkp9C+"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459d4d7c745so21931315e9.1
+        for <kernel-janitors@vger.kernel.org>; Tue, 05 Aug 2025 02:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754386358; x=1754991158; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LRrw4vQc3pkEJCBEVdJPyweESFjqhx8L585Qv1xiSuk=;
+        b=tzrkp9C+zlCV8WtOYbuwRSgazOrP1uQpu0eLX/EBixE6lWBNQUP+lPxgESU52Yyqf9
+         Ku1/t2ofp1Un729MSI6TUY2qhMPgiYfGZsikrlWtzFMfH0fbmqngtTzBEAK8gv6Tl9W8
+         Fzf+On/AWjFiYGPK/d29m6+74XU38roxjYP96oTMYypQJHAvBIniAebevCXqQMI8zbvL
+         XFpd89N4eK7xh6C1qRFyHM/7aBc5la7yIXQWqZniA0dEm63oGhRxAWy91RgpHIh6TWRU
+         pKWkn0UqlmeADektdD8UMQtaZFuOKgkCSdJfxMZKcIZNzvA7tdh59vWLH5d3z6UCSIzh
+         FNSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754386358; x=1754991158;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LRrw4vQc3pkEJCBEVdJPyweESFjqhx8L585Qv1xiSuk=;
+        b=gSAlm3trZPNrZPoXaps9hjX4LYf8otEsI0Av8GSGj4wZk5FGZ/k1tWA/pOvqmQFYwT
+         LWTAKWQUJSDuPyLp0xUo6YHZ7SiGyMxxuF37RBvwYxUduOg2ZzkbvYoUbXAuGeVTtqLN
+         hNgU39KVjoE7oX9esQvXaV4S4db0ouOyHrdcuupFzHoXA2Btb8mYw766RPQ8PBwuhHym
+         atO1eC5pkuymEcWRA+v5fTx919iDERHjdjfE4f+NP4LasP6vR+UQQZK/FeDy0/lzc98w
+         5kzqNsbThBvhaJQTth24RYgi3Mx49QOTtreJ68aN+3ZwMFe+c8UVILG1fMNEOknTkwj5
+         N+Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCV+4JiYfrzrRUV6wOA4O3mIASeyd/cQazSxHP7LCop8716lWJeTjxZcndCQqQayR8GjxajCyXhgnlHziZqq7lw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUxc2Us2VkFPGWwp/Woghe3zQM92orfE9AQIpHmkQqanjBM2X7
+	AjgmAQgaezuyqWah2CpD78Jx+tYuLbS/JFZlbpuiTMo71Rkk1QBQBJVL4v1sMsOVsSQ=
+X-Gm-Gg: ASbGncvG/1GtETJrKdMSq2uZFrGeYBNGYK0UOqMeeozukUk8Y5Rw0O0tJeIF+7tWjYA
+	D9enyur3udW0BuXuL7suhL1C7yYUXT/tdlZ+D4EeuhEDdCw4eb4gadpZdwx4kLCtF1QPZbapHuF
+	IIw5no2gGsqcBLYq2Vm4bpMFo+5JuvN4gLPrhRe/Cy16vfG2B2aBtR7432/VYLohFJIPktpHr5U
+	ScFtJn0Kk9Yddy617dR6beMFNIUHSDocGjT/Lq3wcWJ16Lzp3BjRTLRhKpzdyjQgRy+YTVmiGuI
+	MvMGEarrB6gP97tdKkCGb3u5uPdPKBJ3IF1rdhmpVxNMfEFc77M4J3m/qONFwMIzQJj38ZuMvgG
+	xefLKkGEYJo4RNMzFI9dFaN+9oSZ0+gNtRGdd5h1gBOY=
+X-Google-Smtp-Source: AGHT+IEniVrm80SsjDo0ryDbz5HLZsIvXe7rO1POHjMJRmY7kr3VgBY3FFchceUynbFM5EdgsuEyUQ==
+X-Received: by 2002:a05:600c:4f89:b0:459:d9a2:e952 with SMTP id 5b1f17b1804b1-459d9a2ecf1mr54861285e9.1.1754386357820;
+        Tue, 05 Aug 2025 02:32:37 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453328sm19366833f8f.46.2025.08.05.02.32.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Aug 2025 02:32:37 -0700 (PDT)
+Date: Tue, 5 Aug 2025 12:32:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Val Packett <val@packett.cool>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] soc: qcom: mdt_loader: Fix error return values in
+ mdt_header_valid()
+Message-ID: <c00ae61c-83b9-4816-bd40-582be9e14137@suswa.mountain>
+References: <db57c01c-bdcc-4a0f-95db-b0f2784ea91f@sabinyo.mountain>
+ <ece307c3-7d65-440f-babd-88cf9705b908@packett.cool>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: dan.carpenter@linaro.org, toan@os.amperecomputing.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ece307c3-7d65-440f-babd-88cf9705b908@packett.cool>
 
-On Fri, 01 Aug 2025 14:34:37 +0100,
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On Mon, Jul 21, 2025 at 08:35:22PM -0300, Val Packett wrote:
+> Hi,
 > 
-> There is a typo so we accidentally return positive EINVAL instead of
-> negative -EINVAL.  Add the missing '-' character.
+> On 6/25/25 12:22 PM, Dan Carpenter wrote:
+> > This function is supposed to return true for valid headers and false for
+> > invalid.  In a couple places it returns -EINVAL instead which means the
+> > invalid headers are counted as true.  Change it to return false.
+> [..]
+> >   	if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
+> > -		return -EINVAL;
+> > +		return false;
+> >   	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
+> >   	if (shend > fw->size)
 > 
-> Fixes: 6aceb36f17ab ("PCI: xgene-msi: Restructure handler setup/teardown")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/pci/controller/pci-xgene-msi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> this has broken all firmware loading on my x1e laptop (Dell Latitude 7455).
 > 
-> diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
-> index 0a37a3f1809c..654639bccd10 100644
-> --- a/drivers/pci/controller/pci-xgene-msi.c
-> +++ b/drivers/pci/controller/pci-xgene-msi.c
-> @@ -311,7 +311,7 @@ static int xgene_msi_handler_setup(struct platform_device *pdev)
->  		msi_val = xgene_msi_int_read(xgene_msi, i);
->  		if (msi_val) {
->  			dev_err(&pdev->dev, "Failed to clear spurious IRQ\n");
-> -			return EINVAL;
-> +			return -EINVAL;
->  		}
->  
->  		irq = platform_get_irq(pdev, i);
+> Apparently e_shentsize is always 0 in Qualcomm firmware files.
+> 
+> Confirmed externally with readelf:
+> 
+> % readelf --all
+> /lib/firmware/qcom/x1e80100/dell/latitude-7455/qcadsp8380.mbn
+> [..]
+>   Start of program headers:          52 (bytes into file)
+>   Start of section headers:          0 (bytes into file)
+>   Flags:                             0x73
+>   Size of this header:               52 (bytes)
+>   Size of program headers:           32 (bytes)
+>   Number of program headers:         58
+>   Size of section headers:           0 (bytes)
+>   Number of section headers:         0
+>   Section header string table index: 0
+> 
+> There are no sections in this file.
+> 
+> There are no section groups in this file.
+> 
+> 
+> (Not just with my files, also readelf'd the Lenovo ones committed to
+> linux-firmware, same deal.)
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Thanks Val,
 
-	M.
+What a great bug report!  Could you please try the patch I just sent.
 
--- 
-Without deviation from the norm, progress is not possible.
+Neil, I forgot to CC you.  Sorry!
+https://lore.kernel.org/all/5d392867c81da4b667f61430d3aa7065f61b7096.1754385120.git.dan.carpenter@linaro.org/
+
+regards,
+dan carpenter
+
