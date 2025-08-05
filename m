@@ -1,152 +1,94 @@
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEB5211A05;
-	Tue,  5 Aug 2025 07:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16E8946C;
+	Tue,  5 Aug 2025 07:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754377464; cv=none; b=RK6c64CoBYdZXSoCAPStYRO6sXnY1P5Od8UtPVMdPt/Z3OX8w7kBCQM9WMV8+IN7CvwxYA94WP6mrYtSp3+YGcoZIGWUqTS2H57QevbiVb3jGqxRT3Hh1B4FhbjL03W1OUm5td2oFJRneLkcHGELjuKtgjh7yiHMv+c0/GtEl0A=
+	t=1754380303; cv=none; b=oujEKI8NKG2VgRjGT6xljzLHBrEaBBKmy6eogqtc2XR8flvkuDnuqFOMr17PxZMuBK5pQlQm1tSaXh63nXvjdJz1kNovpQwGIrI42Pz5sFIc3QzB6csTbTeNVuJ6JWkhqWu55J1tvqe5rDErg6Bivbt2mD9clEF8txpNpe6oZKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754377464; c=relaxed/simple;
-	bh=5uDYOUMZrTejftPlMZKgHiBGagrW9EPJArJrhS8uH0k=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UhJAsuNCxdn5pYgnHnsazFD6vD3ZUALfxphXepB078hdZB5LfZWn+mkHhzfuusziQuKpKtdGUcws1fshUX52mimphXdWtsUft672dwVvES7naPNsBmo6m/meeK0pWaCef3+tgzKywlTx+2qXZJQUbzp78UykT23obGsYRwZN+2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=CTJWqxy8; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1754380303; c=relaxed/simple;
+	bh=lm9nuCGGx4gMCOnD7VP8r/yEfF12fwCxH+nmwdEZo2Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FIbRrV+wZDR4c9KRtSibdprJWB07SA3p8wVaG+vDuQMUMb0/E/soHzC2NUi4rVI3rDEcE1roPB9SgLIflNdul9gFglakjbofcHR58d76kT6vzmydI1R19N9BQtXcpmAq9aZPY74AxTyt7uqgvyd59kbf7BasM2Xi3NgNSOMxRNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/wTo+7e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="CTJWqxy8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Im8AW2zssJUnDTA+iPhcytNyfBphTb1ooCqgE3qplAM=;
-  b=CTJWqxy8Anxwgp4CEIE3T2l+gUxFksfonVJgE8CXdZEoVv71tuAIVB9S
-   AN6aXPtwZQeMRFh5jyNnLpvIdp52UHbP6+TXdIAm7jOB7H+N0WDYrIU8T
-   heuidlRIU+kBQnH9YvN74weSQG5Xo5fBMR9TbsWTJ+P7JhlewDu2I4/zD
-   4=;
-X-CSE-ConnectionGUID: bqWHRGIASii8Y6YX9IbZww==
-X-CSE-MsgGUID: TH9HU7JESoaX4wctB4eEkA==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.17,265,1747692000"; 
-   d="scan'208";a="234188575"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2025 09:04:17 +0200
-Date: Tue, 5 Aug 2025 09:04:17 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Lukas Bulwahn <lukas.bulwahn@gmail.com>
-cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-    Konrad Dybcio <konradybcio@kernel.org>, kernel-janitors@vger.kernel.org, 
-    Manivannan Sadhasivam <mani@kernel.org>, 
-    "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-    "Martin K. Petersen" <martin.petersen@oracle.com>, 
-    Marijn Suijten <marijn.suijten@somainline.org>, 
-    linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, 
-    Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH] scsi: ufs: qcom: Drop dead compile guard
-In-Reply-To: <CAKXUXMzgABnN3bbV58xVwYNithcUg7fZgW0DxGCngJnNgNzrfw@mail.gmail.com>
-Message-ID: <e6e82d2-8ae3-d448-d28d-1e54ffabcdef@inria.fr>
-References: <20250724-topic-ufs_compile_check-v1-1-5ba9e99dbd52@oss.qualcomm.com> <d7093377-a34e-4488-97c6-3d2ffcd13620@suswa.mountain> <CAKXUXMzgABnN3bbV58xVwYNithcUg7fZgW0DxGCngJnNgNzrfw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/wTo+7e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD9CC4CEF4;
+	Tue,  5 Aug 2025 07:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754380303;
+	bh=lm9nuCGGx4gMCOnD7VP8r/yEfF12fwCxH+nmwdEZo2Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=V/wTo+7eKfeslKF9rfcaUrhfVqZsjAmicnMmyfiquzuhnD5ABG0bsDEyWVsBVlp0k
+	 v3ilyTYzMw7AkqzrghRguerGHnfavIHs6gnZiwPEHMIScnoS2b6eiIMFCXhECNPAu/
+	 /ymxRWYBaFRvWE4rjVcxoLzjtFUWeFLaPd3NVqMAGqbqOtwPi2ZUfKodrYsuYJwgR1
+	 yXseT+oSL0yLj+T8tkIYWjr8AVO1lzoOmsCwXMYydxLM2jV0Tt7vD78GYY9TCOidw8
+	 cBQO9H5ZWlqpQy6n05qjzp7cQnqzXePMoljj1H5RMaimD3tI3u/SOsG0SF587MzREB
+	 np1WL2neozi8A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1ujCST-00437m-3a;
+	Tue, 05 Aug 2025 08:51:41 +0100
+Date: Tue, 05 Aug 2025 08:51:40 +0100
+Message-ID: <86ms8e6wab.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Toan Le <toan@os.amperecomputing.com>,	Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,	Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kwilczynski@kernel.org>,	Manivannan Sadhasivam <mani@kernel.org>,	Rob
+ Herring <robh@kernel.org>,	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] PCI: xgene-msi: Return negative -EINVAL in xgene_msi_handler_setup()
+In-Reply-To: <aIzCbVd93ivPinne@stanley.mountain>
+References: <aIzCbVd93ivPinne@stanley.mountain>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1516920272-1754377457=:3539"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: dan.carpenter@linaro.org, toan@os.amperecomputing.com, lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, 01 Aug 2025 14:34:37 +0100,
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> 
+> There is a typo so we accidentally return positive EINVAL instead of
+> negative -EINVAL.  Add the missing '-' character.
+> 
+> Fixes: 6aceb36f17ab ("PCI: xgene-msi: Restructure handler setup/teardown")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/pci/controller/pci-xgene-msi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
+> index 0a37a3f1809c..654639bccd10 100644
+> --- a/drivers/pci/controller/pci-xgene-msi.c
+> +++ b/drivers/pci/controller/pci-xgene-msi.c
+> @@ -311,7 +311,7 @@ static int xgene_msi_handler_setup(struct platform_device *pdev)
+>  		msi_val = xgene_msi_int_read(xgene_msi, i);
+>  		if (msi_val) {
+>  			dev_err(&pdev->dev, "Failed to clear spurious IRQ\n");
+> -			return EINVAL;
+> +			return -EINVAL;
+>  		}
+>  
+>  		irq = platform_get_irq(pdev, i);
 
---8323329-1516920272-1754377457=:3539
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Acked-by: Marc Zyngier <maz@kernel.org>
 
+	M.
 
-
-On Tue, 5 Aug 2025, Lukas Bulwahn wrote:
-
-> On Fri, Aug 1, 2025 at 5:33 PM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >
-> > This patch removes some dead ifdeffed code because the KConfig has a
-> > select which ensures that CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND is set.
-> > Konrad was wondering if there are any tools to detect this sort of
-> > thing.  I don't think so.  I think the only thing we detect are
-> > non-existant configs.  But let me add a few more people to the CC who
-> > might know.
-> >
->
-> I also have a simple script to search for unused configs, but that is
-> just five lines of bash and then a lot of manual filtering.
->
-> If I would attempt to implement such already rather complex analysis,
-> I would start with looking at this tool:
->
-> https://github.com/paulgazz/kmax
->
-> Possibly, there is a good way to re-use some parts of it or extend it
-> to look for the pattern above.
-
-If there are ideas for improvement of kmax, I'm sure Paul would be happy
-to hear about them.
-
-julia
-
->
-> Lukas
->
-> > regards,
-> > dan carpenter
-> >
-> > On Thu, Jul 24, 2025 at 02:23:52PM +0200, Konrad Dybcio wrote:
-> > > From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > >
-> > > SCSI_UFSHCD already selects DEVFREQ_GOV_SIMPLE_ONDEMAND, drop the
-> > > check.
-> > >
-> > > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > > ---
-> > > Is this something that could be discovered by our existing static
-> > > checkers?
-> > > ---
-> > >  drivers/ufs/host/ufs-qcom.c | 8 --------
-> > >  1 file changed, 8 deletions(-)
-> > >
-> > > diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> > > index 4bbe4de1679b908c85e6a3d4035fc9dcafcc0d1a..76fc70503a62eb2e747b2d4cd18cc05b6f5526c7 100644
-> > > --- a/drivers/ufs/host/ufs-qcom.c
-> > > +++ b/drivers/ufs/host/ufs-qcom.c
-> > > @@ -1898,7 +1898,6 @@ static int ufs_qcom_device_reset(struct ufs_hba *hba)
-> > >       return 0;
-> > >  }
-> > >
-> > > -#if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)
-> > >  static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
-> > >                                       struct devfreq_dev_profile *p,
-> > >                                       struct devfreq_simple_ondemand_data *d)
-> > > @@ -1910,13 +1909,6 @@ static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
-> > >
-> > >       hba->clk_scaling.suspend_on_no_request = true;
-> > >  }
-> > > -#else
-> > > -static void ufs_qcom_config_scaling_param(struct ufs_hba *hba,
-> > > -             struct devfreq_dev_profile *p,
-> > > -             struct devfreq_simple_ondemand_data *data)
-> > > -{
-> > > -}
-> > > -#endif
-> > >
-> > >  /* Resources */
-> > >  static const struct ufshcd_res_info ufs_res_info[RES_MAX] = {
-> > >
-> > > ---
-> > > base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
-> > > change-id: 20250724-topic-ufs_compile_check-3378996f4221
-> > >
-> > > Best regards,
-> > > --
-> > > Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->
->
---8323329-1516920272-1754377457=:3539--
+-- 
+Without deviation from the norm, progress is not possible.
