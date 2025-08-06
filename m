@@ -1,72 +1,83 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7850028C01D
-	for <kernel-janitors@vger.kernel.org>; Wed,  6 Aug 2025 11:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD3B21E087
+	for <kernel-janitors@vger.kernel.org>; Wed,  6 Aug 2025 11:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754480721; cv=none; b=QP/vT/aFhqXv8evSerKR1zV1On/H1QqTNGrr/2p1ngWqI+q6GrkYpsZONsbkI1uvpQO5rBdymJQ0vhs8p6DuWms8J5HZmanTpLG4MC9pSwpqHpVp8Vjcpaegen3E0O2FxVdu/ktq3baNyUxZ+EAuwpMNfZ2A5yF98N8N1lOzN1Y=
+	t=1754480743; cv=none; b=StscFUbjXkzVh5jfh3rEHJkZD1XQxQOrbi0/dGxrFzU5qhtQgo4BpZizqn2NLzO4crtIL5mFj0pbcYi6wVQBwSsfd95J6+1yKFsIYGKAjDaGOce+vZe6tG58NSAZomWV2XCzhB9JME71KkWvpqzvMv89uCAew19T44PJ2Sq+IWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754480721; c=relaxed/simple;
-	bh=F5eRXrtsxffdegpuQ0f4xPChPgfV/JPNT5j2y0VgMrc=;
+	s=arc-20240116; t=1754480743; c=relaxed/simple;
+	bh=BwF/YJpQUxxPDXEnj+T63E/nd73tgHkdKkgilFUSKzY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RAX2ELpwKnl7djAGiGi9oPmvvweHFOnmssFRRyNLtapDoevXgArJ6CvDWViYBBQhfK6P6Hybd6fMM6rvdYBO9uBiRPqhQzT3woQX5ux25Bpq51UM7IUClBZp92adhYqlvuFdVqiInVVW+qDiomMPhy7vpEsHSqFz6sdCTg+FRZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mUsa2BFn; arc=none smtp.client-ip=209.85.221.45
+	 Content-Disposition; b=a2SmATJnPGxCo41n43cVmdQJbxm5aZAjXNM0+87633Jle7pi4spjkCATDC98n2h7QCOqtxBnej6+RlGBgYq2Pwc3Q2A+9E637vButINkbVToQQNo+1AB6JI+3aH52KM2PohoApfv5L+nUcqpe/by3QfP+sb8+U82ZE7qFZSAK84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OvJ0z8i+; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mUsa2BFn"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b7834f2e72so4069916f8f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 06 Aug 2025 04:45:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OvJ0z8i+"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-459e1338565so19129135e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 06 Aug 2025 04:45:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754480717; x=1755085517; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754480740; x=1755085540; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gzJczgeb2E2EatXdWgiOPTAxDTD2f2zBu8DeU1yQO2Q=;
-        b=mUsa2BFnbNPGG+KtAsxrAg4KKJUIQlbfDjU1ZVbwgHYBeSj445hqorARUFAaC6vuWd
-         f5k3SYTBxoBT6VMgKWJTOJixcf3TORX5ogXM978FTjlVRILTHjbuy8nDUxdKGoInt7CB
-         Swm+G4uiqyxJEx4OZggG1W14sq5DL9ciR5tpclVBY2vC1DEFrmrXZVLq6njvs8DhOwQg
-         zGM/RzPs8UT0SYu1q5K6pg52Jna+wF5hrWAicHiAeX1Bqwe3RI+lYyWSPlV+/430nkuF
-         w2UOtRNPvXYFMO1p5bGgWW12TEGO6kEk9wXqT+WHUkvkhAK92H5f4HpxLF8VsP1wQb8d
-         xzJA==
+        bh=9DepA2B68/EdYA4QL8eVRTLevm19pdHVt7YsUtnKFMQ=;
+        b=OvJ0z8i+V4iumD6/ciZSuunM/p2cKePK/Y1riG2Cbe6CWZMRzQ32PRG7Y3YyTtJ8l3
+         2WraPthW3xiZSMio7raZ8/+OkNNeRCXXvKcY+IwN1t4b5mU4TQY5wdgU5kghQH+1gLTW
+         QKigVNV7I9XZR7upIpZfcXKydf9cO0WnVkbXva7EkMaIZx4e2iovZ45HDfUPi243n0rN
+         pN56mZDOcHzKc/jqDjjZ33NPF1E21zO2ZNuamE+8K2T2QaYulDBJJX6NqcANTmlliGxV
+         eJtJFuYhPWbrZHCcyPwEWYrJ+I0S/wqVL2YSLtn6UMlVs2k2hM1ifn3CUmjyLuYAGe6d
+         7Gbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754480717; x=1755085517;
+        d=1e100.net; s=20230601; t=1754480740; x=1755085540;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gzJczgeb2E2EatXdWgiOPTAxDTD2f2zBu8DeU1yQO2Q=;
-        b=nYYFHP/5PWQWnbAWB/QzXbFX30gVbRPvfFd/Al85u82Zru3sGY3x/Y9x+E+A2Xk0hy
-         Nsn/14zsgRo4u0sZpEPa/syDBQI8StcpQYzHmjFZrkMEYfrgwpqZI43rGvEzRBjW4WGO
-         mLRy6nqKXT8Zgflafc0bN5/TuRX508BzV+f8Ok5iKGgJaA4oTg6q1Tk/Rho22W3YA6Jw
-         9b2SeVIYBbfnrJ5GTusdPtlI4YEL3sKFhmtIwe+VkE+A13hQJm3X7M5KY2VMy2SW1Bhg
-         l0RLNhaeq1ttXtFjunWt0VYllLxXeCzsigLCfgtub+wwIsBiTEVlokk1QEGMAWzXeWbJ
-         Cfgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXD4lFDuLyn+cJXnmmCQ8WH0Mq+zmmeE29F/uAywt6zZ9DzS4/uUAxhS+KFySxoE9bmSXvFKSGlCQICHv0/foQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0WfEBAdAZa0OwZ1zocqHuFfqqOR4OS0QMfYrILRN0SbGK06t3
-	qDTtWVu6yBPnYshJI2Sf5KDYIdT71IqM1/xlkL0olTpd82aDMnaN/Hkn1FA3a0gfYhU=
-X-Gm-Gg: ASbGncvfbGUkadqWIPNU0mQ9JsaRlQ51bpvF5jt2RYj22dCMucTDGXHp2ac9TOTDxN+
-	FXL1OriUT196cSAQtYbQCkytw5hzbFlCH/HpCnqop45wKD44grYP6G1fW6QQ1F4vAD8xYRRM4+e
-	Ty5D3cyrgLGn1AvLppR/YiFpWg09LK0fV6cRkQqqvPBgj+lDVdGZ3o4xBwKvNOEsNHWxJfgxW83
-	d7+RkYD6zMclnu7QuxqGG4jIEcaHGxjRG6ZffYM+cDy4ywXHFETBvKh7ji6R0G46bF4U4mMFlxl
-	jJIhQXdfaP7D5e86PGHX292TjD4QJpwC9vEQw4HDVMe49xsLpdET9eYx3yIQWY5u0l218J0ZmAf
-	iHsh0ft8OpbgYn9+ZdC7qv36RVP8=
-X-Google-Smtp-Source: AGHT+IErH+bIbW86Py9obhBfpJ7Ic4nUmflEhhhvraU68gExR0HV14Ll3Dg9SWn5Dg7piKiH/oo48g==
-X-Received: by 2002:a05:6000:2dca:b0:3b7:973b:39bc with SMTP id ffacd0b85a97d-3b8f41bea48mr2156278f8f.54.1754480716705;
-        Wed, 06 Aug 2025 04:45:16 -0700 (PDT)
+        bh=9DepA2B68/EdYA4QL8eVRTLevm19pdHVt7YsUtnKFMQ=;
+        b=Hhkg0h26rNvq6U+9coBz+Q+FJdP06t4eN8ftLV0Vvbcp2fsXFFNcdGgfxQmAKAT25+
+         1zX80cOD5I2fqoscUOaqjsHGa5kdTqXXFYTwII83VfmNy9kp13iCD58YtoK94xhdtcMo
+         +yM0gVN8MCS4Svy5e3ypu0EAjKxfRcqao2/i7XHXHWnJnLirZvSgaf9beCH/gSr4SBbG
+         krL73lOUz0mWP/qPobI5FRXI9OB6U4KrtXY2KNXMoC50vQ+KRpLsUnf/CA113cG6ijS4
+         epvlpbS5PWTMtL7D+x03NfGLivvNDnltnvF7jpc4dOcSoMToPOTCp8+0JFU/9H+1sfrm
+         ITUA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwx93TbU1Wuqp5HMiQAFWc2hrZ/6LI0M5zDomYMgWohS90cWqzCRnRVwLsVxIMljuFQpLEXe8yc2U+2aTvLxk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd7LQI+inbNnfSOiRVGeMzB/zBZLs6aTdmh6p8CdF4m09JrmKX
+	0dnL6JQa2SUiBwINE6996bS5NVu+vdeVkiSDOYyzIFtqoU9x7t61oHE/1X70IL4oacI=
+X-Gm-Gg: ASbGnctqWCZ04v94ouzZoofAbXkJ5IJC02QQ4HUDhJDV2OFDzB3JPZx2yh+uldGDCiz
+	dNCW3Dz4f3fYLnyqc3jLlJ5RVT4tscWqMiz11h91SlMzm/vPr6FE/Ea6iJU6ETIquun6FlXrX9E
+	eLjAtZMi7ZSscikmdsX0dd9Trac/aFm/NBEVfMbpRWL0honoQaU/7CyQQZot+iSPLeumWZ8+VtK
+	ifgK8J/fHKLDH7s5Wi5dnDxCDOikpTt8R1l/YzAno5CSXIelazn4Bl/0YSgtYNmIGa+y0MLL6jw
+	GtLJQrAg9JZ1yPydk+/yaYws0DPmO59ZAGnmgMhsA7RnJPeCAlKP1ZdSt37g2uHbSEWGf05F5de
+	pw6oyfW6S1YOX3xixRXXL8Ng+bt3AJKq8zUmeNw==
+X-Google-Smtp-Source: AGHT+IEE3g4jSi9GsUDwto+AdTCsAW5WpR+TQz9Q8Z7q9dZe8YHCctfVsvsgs8q3UFKvnWq1hWll/Q==
+X-Received: by 2002:a05:600c:1546:b0:458:a847:671e with SMTP id 5b1f17b1804b1-459e74a807cmr19125025e9.23.1754480739775;
+        Wed, 06 Aug 2025 04:45:39 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459c58ed07fsm142317845e9.22.2025.08.06.04.45.15
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4533e6sm23416702f8f.35.2025.08.06.04.45.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Aug 2025 04:45:16 -0700 (PDT)
-Date: Wed, 6 Aug 2025 14:45:13 +0300
+        Wed, 06 Aug 2025 04:45:39 -0700 (PDT)
+Date: Wed, 6 Aug 2025 14:45:36 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Stefan Metzmacher <metze@samba.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Damon Ding <damon.ding@rock-chips.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] smb: client: Fix use after free in send_done()
-Message-ID: <aJNASZzOWtg8aljM@stanley.mountain>
+Subject: [PATCH] drm/bridge: analogix_dp: Fix a NULL vs IS_ERR() check in
+ probe()
+Message-ID: <aJNAYCXKTaT1bjyL@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,30 +88,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The mempool_free() function frees "request".  Don't free the request
-until after smbd_disconnect_rdma_connection() to avoid a use after free
-bug.
+The devm_drm_bridge_alloc() function doesn't return NULL pointers, it
+returns error pointers.  Update the error checking to match.
 
-Fixes: 5e65668c75c0 ("smb: client: let send_done() cleanup before calling smbd_disconnect_rdma_connection()")
+Fixes: 48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc() API")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/smb/client/smbdirect.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/smb/client/smbdirect.c b/fs/smb/client/smbdirect.c
-index 58321e483a1a..162f8d1c548a 100644
---- a/fs/smb/client/smbdirect.c
-+++ b/fs/smb/client/smbdirect.c
-@@ -286,8 +286,8 @@ static void send_done(struct ib_cq *cq, struct ib_wc *wc)
- 	if (wc->status != IB_WC_SUCCESS || wc->opcode != IB_WC_SEND) {
- 		log_rdma_send(ERR, "wc->status=%d wc->opcode=%d\n",
- 			wc->status, wc->opcode);
--		mempool_free(request, request->info->request_mempool);
- 		smbd_disconnect_rdma_connection(request->info);
-+		mempool_free(request, request->info->request_mempool);
- 		return;
- 	}
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+index ed35e567d117..4b9b444bd249 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+@@ -1474,8 +1474,8 @@ analogix_dp_probe(struct device *dev, struct analogix_dp_plat_data *plat_data)
  
+ 	dp = devm_drm_bridge_alloc(dev, struct analogix_dp_device, bridge,
+ 				   &analogix_dp_bridge_funcs);
+-	if (!dp)
+-		return ERR_PTR(-ENOMEM);
++	if (IS_ERR(dp))
++		return dp;
+ 
+ 	dp->dev = &pdev->dev;
+ 	dp->dpms_mode = DRM_MODE_DPMS_OFF;
 -- 
 2.47.2
 
