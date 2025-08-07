@@ -1,67 +1,67 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BF42367BF
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 15:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A72237173
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 16:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582380; cv=none; b=FOQAGNbAJrJazfe/l2arl1X4weUWM7Bto36+0fVk0HmtUVXfyQxaWfURmQ/g6taiAYLmCBQSlkDg/1aGIpmDMfpmeiEQfsF0tx1hqRbSyI4Gks6hhq2cxIcrK8dGMxJx1rug1T12h+VFv9jSxMeamBCl94Fv1RlHcxInYsaRLNA=
+	t=1754582415; cv=none; b=tXdSydfXpx+hQBJhB8YTOdF50o4M6V3aajwdFf+k6wcKQi4WAHvXQagBHDRDtrmruYJZcKGqJCGM1/craRW6RTxWXsqj7ONyw9oYgn9KeBnhjoDcmmEOHv/VhdIPRMEQBeCGjUWlBCiIT/36My9eDT63Eg5e8FTY/a4yCWOBn8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582380; c=relaxed/simple;
-	bh=nWUX0UyCwqRhGr5Hn+kYWfr/sn4vqu9CdsNn/v8zOwE=;
+	s=arc-20240116; t=1754582415; c=relaxed/simple;
+	bh=RWSUFmutF5H1/FKjQyNBNp48243c4XWd/AIkBJw9FHo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jH48f72D3dvqRal436nynoZuxYnSeDpPLDqZ1Xt0xEPCsuTlXUC95unFAu3LVcn/ChbeHqoFQGh+Fy4Irke5kdt6AkZF4aYrFNYKJyk+mZHGEd1P3PT4iuCppDc7bdcbbDbSrZeOdpg0Ow4+bWaiIzIyDjagTr2O3YKLGljOliQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MmuNwCkS; arc=none smtp.client-ip=209.85.128.53
+	 Content-Disposition; b=D5xg/4WQi8bljJ0VLRkn/tVmrb1w5THqC4ElY/NpkqgX//C/qz1/GDuTknBp8iG1sudLMMFEDSY55tG7H34oZ4bjUMzzase082CS4rpopOWlL56m8myV7z8JnBpRfEajqufwoTnA0lbd+hmn3SiMPF0B+A0vMYVA/qrHaZJWzB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jd/wzFIB; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MmuNwCkS"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-459e72abdd2so7143615e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 08:59:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jd/wzFIB"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b78bca0890so567456f8f.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 09:00:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754582377; x=1755187177; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754582412; x=1755187212; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=a39QTXCsD28ECNRFaPvfyJpymvOnczjpcOMvhmntcwY=;
-        b=MmuNwCkS16qcIaggIoGL1LS5dcVJ5Rwok0SPSYxFaj/Luuo/6wzd8oGUCaz2svHK4N
-         uqHD4sxnINV2Q4pFEBC/0c37e+9qLsiVxT3nKlSloN904l22OGAGxyGlhrvLu64q+NCG
-         KVEH6dF+iBftJQmc/WfPTXCqVQCOmBmgUsB54gX+I0GRvnRXV1z/4fDeIwTVI38VJD5Y
-         BbC9NytvBk8wGvdmCe88tX/xVPGtllonhTG58+vCgv7xYlnBaZt9L1aqSxxHJtZDCG4F
-         0i7yvSu9j/r02oWZPSOnmQHRbeDrDUVLVNzO1v0Xt4fQETdEqYi8f6nAsJv4Vw1TR7GM
-         /m8A==
+        bh=XRVbxceSq1is4jn4wAx8DYPbwe+MFMCmmpw5YmLXyFc=;
+        b=jd/wzFIBIyiDQrAICEEFDuB5ED5mPFrxuLjMAqAuz9MXnmUlkn47rdQgBiuP0ZqabA
+         Z5l0NRIZBYDA5guoZCM2uA0QxH53FJdUpHbbBFfKXZtCGIJszun9irEyD7VYH8US39ZK
+         xugDx787JaCnqpW57lZkxd1nUYYlsxuM4ifc2hoR5lEbvwtOs/D8pHCt6tBkzgcG4RmU
+         uV1jwcriQuvhsmGja6E7sfqm2Q5NUU8N8LH5AWv7Pi3wsFxx7SKcu227czOfTMZk2xbZ
+         qSL63VuLMmhLVYl/6bNX/CvfK7zC6HxiF8UPyZNNH6gnT1vqQ4unVweRP+rhZnKtanB+
+         isFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754582377; x=1755187177;
+        d=1e100.net; s=20230601; t=1754582412; x=1755187212;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a39QTXCsD28ECNRFaPvfyJpymvOnczjpcOMvhmntcwY=;
-        b=AKdAbr81wB0n3C50jf1P1u6KqjjVKss856UReEL4m8jC+DkmAYdci2qHqw3gf7CCSv
-         f8Pw9Y3UjJ4WHJUGC48SB7L+7ZNH+KoyH5njLKvK+awAQ5T8nGjheuTaCj21+O2Wzd8U
-         O7Cq4atXkSZmyLhZ4ZEQcLmkg/qRpxicY+IoJE7ZjelmqUX0t2plljHfFBQ0NoZDNmNC
-         P0O6NYylJwYO52uuan6GxLo1itL0DbJ6Vs1gUr9inUbAjB4dGFIQenl7ZcQecUOiUVTg
-         QzXJVveR82Brcr7vJFcpD0mbiGFBB4sGW8HZ8cGSh5bxn/u9O5cu3ojBZzqbWNCG/sHB
-         RxYQ==
-X-Gm-Message-State: AOJu0YzFL+PfDBfqzaI39i6tD8K538Nom1KoQWeQk/cQaDzDHzPUU7do
-	Hllost01ZJNy2wZFgjkaXNNnAFmpkd7lXO1QuzahoECg4jEenA3lgmeXBMNwJXAN7yljajrf8CP
-	GTpCy
-X-Gm-Gg: ASbGncsNb3vZ1tkunFpbB/0drenGn2r7fMq5jYVC4rq53FmipGuCoe+7vmqi0tkYq1c
-	pYplG9OsjMm78GvOC9BYmpq4Rx5ProMgDwemoi49SeBcKX7Xx/0OsSfK2Trpiy0n68imuhZkknH
-	kfvC2hmGkqNBmD/uHTFooKsMPWq+iBeLs5GDjIb7Ivx2SFNZ1SV71MJ3JuOU86XU+Fc8GGIxTvw
-	NsAiRJshOhpfdLapgx0rfEX9iKBQWeP1oSQ5yolo0dhisinyyjuHvWUa5/x5MyGBo8j/2HyF2pT
-	6KmxcZUOzMbgP8kN+VX4xhdB1xkn2U4TcBzOHxipoJU1ctF/NxHj40z9/LAfzu7VjSjwdvqmJBH
-	1dkc1mjAlQUZ3zthD6kr4Sft1fOY=
-X-Google-Smtp-Source: AGHT+IGELoJvaT98UE80m6oyQH5wUutVpeAN53zbkSRuetevqiiGrmRr+KkvzVCx0Mk1T9o5Z4V2MA==
-X-Received: by 2002:a05:600c:6610:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-459f43a7b47mr1939255e9.16.1754582377109;
-        Thu, 07 Aug 2025 08:59:37 -0700 (PDT)
+        bh=XRVbxceSq1is4jn4wAx8DYPbwe+MFMCmmpw5YmLXyFc=;
+        b=I/KAX56TdVckGpTjeLPvXepyBZnukIhRHpOwqmN19oc0OUjYCKeAOvR6fzg38B52xm
+         RZR7AJy6LouD/zzQFp7WfWKz1MzXg7DMQe53F8lcNdR/95hlmO41oQueWIVYLwzYRAf+
+         o+7PvK4H83FyVWPIMWYtgV/UxPkVKlexn59LntrwlpbDVkN+HWTC1tXyprn9b+GuWzQn
+         d0Xc/f3dYjvD4Mwg2Z0mBSBkBQ/uK6khSqLuMXrOqVo69o4oI3qycOlFLUb6BAVgA5N5
+         GPPD44FVnYDdWC8h7T7c1Xj1cNgZIrik3DyTkK5B5/ve12vTiRpbDxFL1rweGXJmCyCh
+         Mdtw==
+X-Gm-Message-State: AOJu0Yz0C9IJAAmCCHqaxQUsyOg6mmrjwfuWTE603ft3+p7LysWBC/fj
+	YRxOtI1np4UcXxHoCnABRB8eACIhwCHFkXgKl7u2bq4TusGiOn7n9IYCaV05OH3LDlH+F+ltt2a
+	Km7sJ
+X-Gm-Gg: ASbGncviK4vgo3J+h3Df0hYAbbmxW6CTef6bvjDWx+GevadldLjmoU546KH8fp0U+4j
+	hwaGQHqfliGLimvRG3BdxW+55XntH3OCN8pNEyy/DY8wS/Ls9XGXD2VcYYavknJoTgC2M4AfK/Z
+	xI9WlhkQWlugvv2y899nRCcNssOgva53pWqko3fajNekyC0JaX3nGJavZt9832GDDVQJ4tLqtcy
+	c5z5aoYtSDV6T2Q0r1j1xWQ199F4uJpbgebvF+hZEZnOQb9/8tNpndPvrjgVyHfYZm75teoiQtT
+	J0UicvQmwfqaXcGLYiFzhfzY5h97orUZwIZ2PeOwUxktC/7/iYLkb7MlQHnfZ4RBcOUj4NFPvoW
+	S7s2nIbmdeWeBMu9LgGRECK2BPYQ=
+X-Google-Smtp-Source: AGHT+IEaz7bsBu/Iv74Glpb4rsHBLT5TI5TE3+FhvC4lsTHipEyTshLjeB0czUpcA0bGF+jsXXj1cA==
+X-Received: by 2002:a05:6000:26c8:b0:3b7:8c83:db1e with SMTP id ffacd0b85a97d-3b9000c3407mr152713f8f.33.1754582411618;
+        Thu, 07 Aug 2025 09:00:11 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458953eb7acsm338727045e9.28.2025.08.07.08.59.35
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3b9074sm26677573f8f.17.2025.08.07.09.00.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 08:59:36 -0700 (PDT)
-Date: Thu, 7 Aug 2025 18:59:33 +0300
+        Thu, 07 Aug 2025 09:00:10 -0700 (PDT)
+Date: Thu, 7 Aug 2025 19:00:07 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: kernel-janitors@vger.kernel.org
-Subject: [bug report] net: axienet: Introduce dmaengine support
-Message-ID: <aJTNZQBAuY83TN2h@stanley.mountain>
+To: Alejandro Lucero <alejandro.lucero-palau@amd.com>
+Cc: kernel-janitors@vger.kernel.org, linux-net-drivers@amd.com
+Subject: [bug report] sfc: add mport lookup based on driver's mport data
+Message-ID: <aJTNh2A3i7JazSet@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,50 +71,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello Radhey Shyam Pandey,
+Hello Alejandro Lucero,
 
-Commit 6a91b846af85 ("net: axienet: Introduce dmaengine support")
-from Nov 16, 2023 (linux-next), leads to the following Smatch static
-checker warning:
+Commit 5227adff37af ("sfc: add mport lookup based on driver's mport
+data") from Feb 15, 2023 (linux-next), leads to the following Smatch
+static checker warning:
 
-	drivers/net/ethernet/xilinx/xilinx_axienet_main.c:1171 axienet_dma_rx_cb()
-	error: 'app_metadata' dereferencing possible ERR_PTR()
+	drivers/net/ethernet/sfc/mae.c:1035 efx_mae_lookup_mport()
+	error: 'm' dereferencing possible ERR_PTR()
 
-drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-    1156 static void axienet_dma_rx_cb(void *data, const struct dmaengine_result *result)
-    1157 {
-    1158         struct skbuf_dma_descriptor *skbuf_dma;
-    1159         size_t meta_len, meta_max_len, rx_len;
-    1160         struct axienet_local *lp = data;
-    1161         struct sk_buff *skb;
-    1162         u32 *app_metadata;
-    1163 
-    1164         skbuf_dma = axienet_get_rx_desc(lp, lp->rx_ring_tail++);
-    1165         skb = skbuf_dma->skb;
-    1166         app_metadata = dmaengine_desc_get_metadata_ptr(skbuf_dma->desc, &meta_len,
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-No error checking.
+drivers/net/ethernet/sfc/mae.c
+    1024 int efx_mae_lookup_mport(struct efx_nic *efx, u32 vf_idx, u32 *id)
+    1025 {
+    1026         struct ef100_nic_data *nic_data = efx->nic_data;
+    1027         struct efx_mae *mae = efx->mae;
+    1028         struct rhashtable_iter walk;
+    1029         struct mae_mport_desc *m;
+    1030         int rc = -ENOENT;
+    1031 
+    1032         rhashtable_walk_enter(&mae->mports_ht, &walk);
+    1033         rhashtable_walk_start(&walk);
+    1034         while ((m = rhashtable_walk_next(&walk)) != NULL) {
 
-    1167                                                        &meta_max_len);
-    1168         dma_unmap_single(lp->dev, skbuf_dma->dma_address, lp->max_frm_size,
-    1169                          DMA_FROM_DEVICE);
-    1170         /* TODO: Derive app word index programmatically */
---> 1171         rx_len = (app_metadata[LEN_APP] & 0xFFFF);
-                           ^^^^^^^^^^^^
-Dereference.
+rhashtable_walk_next() returns NULL if we get to the end, but it
+returns ERR_PTR(-EAGAIN) if the hashtable was resized.  I don't know the
+code well enough to say if that's possible here.
 
-    1172         skb_put(skb, rx_len);
-    1173         skb->protocol = eth_type_trans(skb, lp->ndev);
-    1174         skb->ip_summed = CHECKSUM_NONE;
-    1175 
-    1176         __netif_rx(skb);
-    1177         u64_stats_update_begin(&lp->rx_stat_sync);
-    1178         u64_stats_add(&lp->rx_packets, 1);
-    1179         u64_stats_add(&lp->rx_bytes, rx_len);
-    1180         u64_stats_update_end(&lp->rx_stat_sync);
-    1181         axienet_rx_submit_desc(lp->ndev);
-    1182         dma_async_issue_pending(lp->rx_chan);
-    1183 }
+--> 1035                 if (m->mport_type == MAE_MPORT_DESC_MPORT_TYPE_VNIC &&
+    1036                     m->interface_idx == nic_data->local_mae_intf &&
+    1037                     m->pf_idx == 0 &&
+    1038                     m->vf_idx == vf_idx) {
+    1039                         *id = m->mport_id;
+    1040                         rc = 0;
+    1041                         break;
+    1042                 }
+    1043         }
+    1044         rhashtable_walk_stop(&walk);
+    1045         rhashtable_walk_exit(&walk);
+    1046         return rc;
+    1047 }
 
 regards,
 dan carpenter
