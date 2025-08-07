@@ -1,73 +1,67 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A1B2686A0
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 15:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BF42367BF
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 15:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582311; cv=none; b=SF5NbHniycBpRwYhhmCdlSfcbN/cjiTfVNqDDNsYcT013k1YCnNA/Xw4H9Rm+Bx11eMQIOOzrVytpEuCf6RE1eVrj6g+pMW5TDTfi3/4H/IhRDymlo1AUxpJqtUKapPpg4UtrsCZfL13WY9OBFL4YqYG0K123+M1+rSLSRJOS8Q=
+	t=1754582380; cv=none; b=FOQAGNbAJrJazfe/l2arl1X4weUWM7Bto36+0fVk0HmtUVXfyQxaWfURmQ/g6taiAYLmCBQSlkDg/1aGIpmDMfpmeiEQfsF0tx1hqRbSyI4Gks6hhq2cxIcrK8dGMxJx1rug1T12h+VFv9jSxMeamBCl94Fv1RlHcxInYsaRLNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582311; c=relaxed/simple;
-	bh=UebwSTgEBGX45jSwaqppv1MZDgNUsTmKmv0RDSYtYBM=;
+	s=arc-20240116; t=1754582380; c=relaxed/simple;
+	bh=nWUX0UyCwqRhGr5Hn+kYWfr/sn4vqu9CdsNn/v8zOwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oemQTXXwsMic4rXj0Vw2GpT9LJAeXmgcblxfs8Zxb8y8cW+qkJcYtE4sozUCaLI1oVjkRr0Wn0FDJk1JVKfe9zxIm47bxJVtiGuTxf4EhHXlJmKwjhFeFh6zbU9yjWRngQEFtP9Bviz5QOhgkBdNDcPmS/boH//O65RAajgdkx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I8canp1+; arc=none smtp.client-ip=209.85.128.45
+	 Content-Disposition; b=jH48f72D3dvqRal436nynoZuxYnSeDpPLDqZ1Xt0xEPCsuTlXUC95unFAu3LVcn/ChbeHqoFQGh+Fy4Irke5kdt6AkZF4aYrFNYKJyk+mZHGEd1P3PT4iuCppDc7bdcbbDbSrZeOdpg0Ow4+bWaiIzIyDjagTr2O3YKLGljOliQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MmuNwCkS; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I8canp1+"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-458bdde7dedso8867965e9.0
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 08:58:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MmuNwCkS"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-459e72abdd2so7143615e9.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 08:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754582308; x=1755187108; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754582377; x=1755187177; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ujGGaXLwvEaTDaelriMZ69/JBFsXGLBD07Z/REYyW1I=;
-        b=I8canp1+HIYdWbmOTJfwAl3ic72csHSF9VQgrOjEGHQ4l8y4evhhxJ4ABC9uKGqKDK
-         d3rGH4+lVZWpqlVguEXobU/mIpenQlinoV0jBumjFPSrcp6Sh2O414XnOrfwwY5pebp/
-         Ml3SA/ZrCBYl+E/TcqcDK7nXtxmZO1uPgT+/HESLH1XMkscvtaqOKjNZR4G62c3UXpH6
-         VPGlL0gkcaCFW8a2fAeUd/F4U8bhf/JWZoLlCv+A+E8d5UEXbLTGh5GNF0d7/Moi8tFr
-         N4e2VQQepTLAOG1WCzXVe7ZPhJc2gVjdKnRdw/FuYdJeas6d4AXmIKYam9mTFqXDbP//
-         Lbog==
+        bh=a39QTXCsD28ECNRFaPvfyJpymvOnczjpcOMvhmntcwY=;
+        b=MmuNwCkS16qcIaggIoGL1LS5dcVJ5Rwok0SPSYxFaj/Luuo/6wzd8oGUCaz2svHK4N
+         uqHD4sxnINV2Q4pFEBC/0c37e+9qLsiVxT3nKlSloN904l22OGAGxyGlhrvLu64q+NCG
+         KVEH6dF+iBftJQmc/WfPTXCqVQCOmBmgUsB54gX+I0GRvnRXV1z/4fDeIwTVI38VJD5Y
+         BbC9NytvBk8wGvdmCe88tX/xVPGtllonhTG58+vCgv7xYlnBaZt9L1aqSxxHJtZDCG4F
+         0i7yvSu9j/r02oWZPSOnmQHRbeDrDUVLVNzO1v0Xt4fQETdEqYi8f6nAsJv4Vw1TR7GM
+         /m8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754582308; x=1755187108;
+        d=1e100.net; s=20230601; t=1754582377; x=1755187177;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ujGGaXLwvEaTDaelriMZ69/JBFsXGLBD07Z/REYyW1I=;
-        b=vH9d9ZXCD2BIfQdF3ABgW0oKBgatxe36puWBoZQLkdBuf01x63dgClJ2pPX4JkAeB0
-         aIXTn8DMobMzGuWhEmx4L61NkzbMgxc7De2gyynXRkmpVDeZxxwRxymujw7mzx+Pj+Fj
-         w4fh3cgUQWnPbkdWSYA7qZLsE7sOCEC3PgmQwwy/FGTJpU8IOWflUf5mhL4V5z7A/BF9
-         Cy3H4xkUSwutBSFqLe9NDXtuKOpbttc++u42SYe3wYy+KcP0moZ/y3LaNpKP/LTHU0PS
-         35P3EqvxRi1Walw7PV1XpAQE5sado/7TgZ03clDxhaoLJse8hAANuQ4aoEmpFt2gMpp8
-         1ZGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqQjWv4r+MtxUHezezwcjVO46Ko1bbkTLDvMRYy8KWpct/kGab89bUnGQ8pvDc5VHHd9OY3275vIUUbEaTsJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx63qIqzgXoQCVoSCDgJN3bfORjFoLqIbdgltkUKVK/oWFRByQZ
-	tEn7BV/ryIw6pHgdnAW+kPlg+ha9l5ET70fgBfeOikIiQYs2ab3ffx9H7PiXn4ovff8=
-X-Gm-Gg: ASbGnctm70LFe8HPOIW6lHw9AasKllhiVcGGjWGj2t1yMtrAaaocZzVJIMmLywHDl/T
-	sfvm3FuEFWyYghdvff6/K6UVoqdAGtBcqr+XG12aN6hWsPvsGQESzQj/7UlV+ztr4Qn7CmE5KDd
-	63Y5NPvogMPAdBguOCsOB/tTrJzdKnyK0K7fyQsxcP8DKzzOKhxo4rKDcgXPkHukYdG4AYngBaB
-	Xk7fxyt+1JAO1BZdzVjSQq26shszqPeLtl3fXXHdL6r3OPXO/R1xhXtvme9uekYcgCZVVtHPyNJ
-	PK0w1Nn8L2E0dTmfz9RJK6ykda0TJtutx3sNamv7bQKdwc+nr5deO5jTKmkQrxEAK3XW8Jfrqnx
-	EyMKeJH8D8URXkQXhl3fvWIL6GAQ=
-X-Google-Smtp-Source: AGHT+IEQAtbjB5WuaftcfISb7loqx9lFVpOAzAnPzXuHW243UbLgIM9IVwryPWI9EYIwJTEBgNYAhA==
-X-Received: by 2002:a05:600c:154e:b0:456:1a69:94fd with SMTP id 5b1f17b1804b1-459f431f845mr2720525e9.0.1754582307874;
-        Thu, 07 Aug 2025 08:58:27 -0700 (PDT)
+        bh=a39QTXCsD28ECNRFaPvfyJpymvOnczjpcOMvhmntcwY=;
+        b=AKdAbr81wB0n3C50jf1P1u6KqjjVKss856UReEL4m8jC+DkmAYdci2qHqw3gf7CCSv
+         f8Pw9Y3UjJ4WHJUGC48SB7L+7ZNH+KoyH5njLKvK+awAQ5T8nGjheuTaCj21+O2Wzd8U
+         O7Cq4atXkSZmyLhZ4ZEQcLmkg/qRpxicY+IoJE7ZjelmqUX0t2plljHfFBQ0NoZDNmNC
+         P0O6NYylJwYO52uuan6GxLo1itL0DbJ6Vs1gUr9inUbAjB4dGFIQenl7ZcQecUOiUVTg
+         QzXJVveR82Brcr7vJFcpD0mbiGFBB4sGW8HZ8cGSh5bxn/u9O5cu3ojBZzqbWNCG/sHB
+         RxYQ==
+X-Gm-Message-State: AOJu0YzFL+PfDBfqzaI39i6tD8K538Nom1KoQWeQk/cQaDzDHzPUU7do
+	Hllost01ZJNy2wZFgjkaXNNnAFmpkd7lXO1QuzahoECg4jEenA3lgmeXBMNwJXAN7yljajrf8CP
+	GTpCy
+X-Gm-Gg: ASbGncsNb3vZ1tkunFpbB/0drenGn2r7fMq5jYVC4rq53FmipGuCoe+7vmqi0tkYq1c
+	pYplG9OsjMm78GvOC9BYmpq4Rx5ProMgDwemoi49SeBcKX7Xx/0OsSfK2Trpiy0n68imuhZkknH
+	kfvC2hmGkqNBmD/uHTFooKsMPWq+iBeLs5GDjIb7Ivx2SFNZ1SV71MJ3JuOU86XU+Fc8GGIxTvw
+	NsAiRJshOhpfdLapgx0rfEX9iKBQWeP1oSQ5yolo0dhisinyyjuHvWUa5/x5MyGBo8j/2HyF2pT
+	6KmxcZUOzMbgP8kN+VX4xhdB1xkn2U4TcBzOHxipoJU1ctF/NxHj40z9/LAfzu7VjSjwdvqmJBH
+	1dkc1mjAlQUZ3zthD6kr4Sft1fOY=
+X-Google-Smtp-Source: AGHT+IGELoJvaT98UE80m6oyQH5wUutVpeAN53zbkSRuetevqiiGrmRr+KkvzVCx0Mk1T9o5Z4V2MA==
+X-Received: by 2002:a05:600c:6610:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-459f43a7b47mr1939255e9.16.1754582377109;
+        Thu, 07 Aug 2025 08:59:37 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459e587e154sm108933495e9.27.2025.08.07.08.58.26
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458953eb7acsm338727045e9.28.2025.08.07.08.59.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 08:58:27 -0700 (PDT)
-Date: Thu, 7 Aug 2025 18:58:23 +0300
+        Thu, 07 Aug 2025 08:59:36 -0700 (PDT)
+Date: Thu, 7 Aug 2025 18:59:33 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] PM / devfreq: mtk-cci: Fix potential error pointer
- dereference in probe()
-Message-ID: <aJTNHz8kk8s6Q2os@stanley.mountain>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] net: axienet: Introduce dmaengine support
+Message-ID: <aJTNZQBAuY83TN2h@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -76,32 +70,51 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 
-The drv->sram_reg pointer could be set to ERR_PTR(-EPROBE_DEFER) which
-would lead to a error pointer dereference.  Use IS_ERR_OR_NULL() to check
-that the pointer is valid.
+Hello Radhey Shyam Pandey,
 
-Fixes: e09bd5757b52 ("PM / devfreq: mtk-cci: Handle sram regulator probe deferral")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/devfreq/mtk-cci-devfreq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Commit 6a91b846af85 ("net: axienet: Introduce dmaengine support")
+from Nov 16, 2023 (linux-next), leads to the following Smatch static
+checker warning:
 
-diff --git a/drivers/devfreq/mtk-cci-devfreq.c b/drivers/devfreq/mtk-cci-devfreq.c
-index 22fe9e631f8a..5730076846e1 100644
---- a/drivers/devfreq/mtk-cci-devfreq.c
-+++ b/drivers/devfreq/mtk-cci-devfreq.c
-@@ -386,7 +386,8 @@ static int mtk_ccifreq_probe(struct platform_device *pdev)
- out_free_resources:
- 	if (regulator_is_enabled(drv->proc_reg))
- 		regulator_disable(drv->proc_reg);
--	if (drv->sram_reg && regulator_is_enabled(drv->sram_reg))
-+	if (!IS_ERR_OR_NULL(drv->sram_reg) &&
-+	    regulator_is_enabled(drv->sram_reg))
- 		regulator_disable(drv->sram_reg);
- 
- 	return ret;
--- 
-2.47.2
+	drivers/net/ethernet/xilinx/xilinx_axienet_main.c:1171 axienet_dma_rx_cb()
+	error: 'app_metadata' dereferencing possible ERR_PTR()
 
+drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+    1156 static void axienet_dma_rx_cb(void *data, const struct dmaengine_result *result)
+    1157 {
+    1158         struct skbuf_dma_descriptor *skbuf_dma;
+    1159         size_t meta_len, meta_max_len, rx_len;
+    1160         struct axienet_local *lp = data;
+    1161         struct sk_buff *skb;
+    1162         u32 *app_metadata;
+    1163 
+    1164         skbuf_dma = axienet_get_rx_desc(lp, lp->rx_ring_tail++);
+    1165         skb = skbuf_dma->skb;
+    1166         app_metadata = dmaengine_desc_get_metadata_ptr(skbuf_dma->desc, &meta_len,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+No error checking.
+
+    1167                                                        &meta_max_len);
+    1168         dma_unmap_single(lp->dev, skbuf_dma->dma_address, lp->max_frm_size,
+    1169                          DMA_FROM_DEVICE);
+    1170         /* TODO: Derive app word index programmatically */
+--> 1171         rx_len = (app_metadata[LEN_APP] & 0xFFFF);
+                           ^^^^^^^^^^^^
+Dereference.
+
+    1172         skb_put(skb, rx_len);
+    1173         skb->protocol = eth_type_trans(skb, lp->ndev);
+    1174         skb->ip_summed = CHECKSUM_NONE;
+    1175 
+    1176         __netif_rx(skb);
+    1177         u64_stats_update_begin(&lp->rx_stat_sync);
+    1178         u64_stats_add(&lp->rx_packets, 1);
+    1179         u64_stats_add(&lp->rx_bytes, rx_len);
+    1180         u64_stats_update_end(&lp->rx_stat_sync);
+    1181         axienet_rx_submit_desc(lp->ndev);
+    1182         dma_async_issue_pending(lp->rx_chan);
+    1183 }
+
+regards,
+dan carpenter
