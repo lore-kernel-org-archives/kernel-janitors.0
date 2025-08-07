@@ -1,72 +1,72 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734B7264FB2
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 15:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6A1265298
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 15:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582086; cv=none; b=fwj2psaMFtXXA8Og8KqWw9aWgQLHfVFaYignasLrIiI7pZJeT0z42wn9K9RQpgUva7hFfDmx+odRql50jIrLjT/b+qYbrveuYFhs9Q+0LKFINXlNbVaTEUtdEO3WBUUHzYDNNg15xROAnQvM0vV8ZYRJUEdYpDI983CoSBRca9I=
+	t=1754582107; cv=none; b=FelPXB6xdRhAjih9fJTSh0O/FLk5b1D8gn85huaLLEu8LNAWgJZZh7tD8I34liPMTcVUSTLUhRmY264jLpWwQm+vYNk8Am2v7bae9v94ndAz+CGZlAVwWy/0uxMq8T2xP/pc8cL49+e1ajqAljiWrDWHZ6WJZChTJ3PaZGagfpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582086; c=relaxed/simple;
-	bh=dQnC/rev4tac0Ts401jwqrEOatxbEZjF8FGi4DM7cuE=;
+	s=arc-20240116; t=1754582107; c=relaxed/simple;
+	bh=SQqxK/HCej6ZDpPKgE3mF20MElkN0tQ4FKvSHtMcEcY=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZYfedWA1BJb/QtLSUQfG+LFjqBblQA+W2qvt4a7rSrL8ljJwWwXN4Olq9HGnGZzCDPIFE33ICF20NMYvEIwiaihwzdX1kQ9xL7UOSjLXp3r6aCSR8aqlgRzmTY69Mfe5sIxDDl3wqRjZI1thCq/uaCiDoNkO/CUaJMvfjDnwmig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pDhSkzzw; arc=none smtp.client-ip=209.85.128.42
+	 Content-Disposition; b=s4bOXUMQoIuUlatX2OR6ziSei+0zkp9nAVNMeULtk/rzGbEt0UK6sWrgDVV8li0HgGlKKe6f/NifuNk9zmr+lZKjTn4Fi9/UqRTC8RxysNTs6KfFc08pLC9fH6QJLIZuUUj9vNEG8AZWvZdPSI+uKiLiaxj9FHEznHjb5+Nx53k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VK9ocNyl; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pDhSkzzw"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-459e1338565so11255835e9.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 08:54:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VK9ocNyl"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b78d13bf10so1161431f8f.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 08:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754582082; x=1755186882; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754582104; x=1755186904; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ueKHvcoj//pcE68ugp7qzX4T0VIpPeXJwA1UBSmhQZM=;
-        b=pDhSkzzwsUQOUR01OauCzE+IMQQRfBYHOiGyhqD9G9K4zHjwihWk7kgvgNnp5AZb2f
-         mLbQ8hTSe1TN4ZoE+NdwzQ0U8roQeam3U5gTnv+yfdx+G27kNNMnkcWq/vB6viZ9H0WF
-         /I3eABW8I5UO8zswUYxbSFU0zo8d1hHIVJa5eGD3MfFM65lgYLJRXr85qbkfb/3UmgFn
-         86zKt8Ox/KFit+ZsShPaynooikEJEKjRAbwtxSxEtYRFeRptp7mhM0X4wECqpMaRfHYX
-         5j2l45ACw05K73vaKVn9KGeFb8CKQDD5ClGrEnL9gHvCSf1zQDPy2Sjx6iyWKkoRy+Xc
-         CjRg==
+        bh=VxONtqpEzsy4ybhTdJqv60dbpH7hpRv1LR4+l1PPyfE=;
+        b=VK9ocNylvoLr9S9lNJgu38/c0uAQXlbA1LxjW+qSghoeFw5XPtLFKvn28nISMj8OjJ
+         HWYXwAdK0mhBgLuLb2/NC2+/A8+/9hfd14ALmHefQJLTjUrocAOKnrnSBJD/98r7PzVg
+         4BEwf7emMvMCaTRt9/QUHEaAMHWeU31nSRWarBknfmKDu/fMHMaVroJdMl+HZsgleTbb
+         deXq1PVAzb0U7Aow2MdMSy2rnzGc3imL8hzrf1uztzkRxkDqCGppaJfyOzTvmReBYZE+
+         Hz0803TfF/05q+JC0h+eZIF+NNT4lSlgQGgh9IL2CjutG5i457Q17zcP69hSMWnHXx71
+         DUwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754582082; x=1755186882;
+        d=1e100.net; s=20230601; t=1754582104; x=1755186904;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ueKHvcoj//pcE68ugp7qzX4T0VIpPeXJwA1UBSmhQZM=;
-        b=fw3Wib6VfVJYrSlVWIe0aMBTwKFtqO1g0p7LMSqfmQIXExIQxn0pbnnEwsaGa18hcG
-         c7bvr86AC9wL1+FJH6qRVMC3gYOLRnyI6Zn5OxVh1nBOq3ZEeR9yAlJLAbqq+CmAzpyG
-         +Hkas306V73SF9ioTREYUoXqXkj5iQbXMSY/I+0ad8VQpRY6wjUjILHPv7+/dUqpWccI
-         N3EIwLmH6CPWimjVVu6e/6E4h+E1xZ4mWvPzaIsry55Vkg2SVcQZe/0lpUmOjewVnYeG
-         vf0CPa0q7HaCZ863WzdU93FlVd18SSzlqDPRCph17lHDOCKSs7RVstdKg9kJ4fZr44oS
-         QsSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTD/e0bp4A9/Dg/xhmf+e67RihClJeTsSbInIC8k65nKh9uBhahD2EATC0U2nsubmN59R8mqFIKUq9exuwGx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGg+sqGjx0dh3RvIXG2htWi334Gt5PCDIUDdGgGXRYXCHgXTHD
-	wCMLXLXoRBwxGQN1Cjg16he4zPjKwuRts2Cj8kj2jMGSWBxFcORE4EwEf0il8Zwut2s=
-X-Gm-Gg: ASbGncv4SXmCj/hdOjPSyCixigANKCnMkHtWcKLez57XQ0f+CIyjNno19kAHJ9Idf8S
-	B/YM5Qi2PeEhgS8vav2W36XsnMS/nNnVVUItu5l+juvH0JHjB8XVuHzuGn+9kDqM6QHVRg+npS9
-	TfGd1xjNEsvIP9tuOMtmWQM73kuRiFcJGloFBmTi95T3KaLJdD//6keX0bN5x2TateytDXcR06L
-	hYhfPknqN3Vcc41nl1PT0DuH2r/5xGcW3MmBZroYV/JUqp2KKVKEr2NGSPb9rZYVeoyREI9qF6o
-	Kl77+70UUPlS8uvovcIwZ1Ms94xjQu1IzzfT/VUU+5COQGPw79ZL89jQzdtgjIMDErRtdVhvH3g
-	nqdOHi/B07t+sPRXR62zgf9Vw2t0=
-X-Google-Smtp-Source: AGHT+IFZ7tU4QT0M69GUy2O5NIPrZtS9sVVhdfW1gHaibbjzTCtPYoGYDhegeuvn9CZmTQptWfLgtA==
-X-Received: by 2002:a05:600c:5254:b0:453:81a:2f3f with SMTP id 5b1f17b1804b1-459e74bc7a7mr74819405e9.30.1754582081709;
-        Thu, 07 Aug 2025 08:54:41 -0700 (PDT)
+        bh=VxONtqpEzsy4ybhTdJqv60dbpH7hpRv1LR4+l1PPyfE=;
+        b=tyFHXidcwlHjFW5tQb1nMGsiFhIJy671Xeze28MiOfpkezwGLQVlt/s2NpbpzA2JwN
+         jK2VfJuyLCcT48wQOlcUOQGodhPNP1N5lWCQ19j4ErauqVDPT3TevlrcsFePjfZds6E4
+         0ctql/JOV6qktkYDaoMzKg9wiTlwjM0zz287pETkx16TQPV5KWf9M1sJEFk/N1az7iaj
+         /XI5GOwUh529ODBZzelksXlLRNakuP57XbFVp03zcaLBC3Kv9crWrT51etYFfqAjJfme
+         cVyzu7vb08XUjKkCmi1dKHt/AIpTT00Wnvt3MfrmqBP8Oxg7E8a4cHEyu9yls74Yw8ca
+         AATA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkywCej0uSCbrVZKgOMcYjCgHb3gZXIVcalan8F3g+Rc85wEcQGWd10xqzfz01I/NfS9jvJkU1XgzATensEyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxwiMQJqdf1NrFQZsL7LAWnqjWOD6x0D9xa8eEgaX9DpUtMbRW
+	uxhLCa8HwVBvdw7Ii6DJA5iy+o2Le3s9JrXkygvs1ugRHQ7XHNFFn63IwmnGVuqdUhw=
+X-Gm-Gg: ASbGncuhLl4EcBox4FEr49NmVm4qDmYPF1DDMjRhmaj2rGyu0m/c8GQTq5zvotHbZpC
+	E/yWcOxSB3XvH20Q/0veC1qgErvs7pdn0qS0CqX6JcPri/DgolGgAUdo0uEUAWbGCG2PyjTDAYG
+	r6kTgaOggxm9nV4b40ft3dP0jFVPLgyX6TifB6hNTewCwuQmITq6YJ1j+EwcG9rWjjRdzXf1/7F
+	viPDlZN9ziqoooT17S3VjPhvnbod8SBncWOZv0lRclcXUGwgvKuwMyZck0iW1uNfEntORUG8NT9
+	y8nIoWVepWa3cpP+zo6ooDgF0i0bLpWvLAzon4lt+1b59qpTlmUF186nowZxic4iS/NEMK68tGf
+	t1NtPsddp4Y0JyUQQpxh7qUbFjdw=
+X-Google-Smtp-Source: AGHT+IFSsIoqsVrOVwk5VqvA/2SIH6BZKHjU96VbI5Tfhan7NUjhqokIhx4f7tecjAIif5yQbhliEw==
+X-Received: by 2002:a05:6000:25c5:b0:3b8:d22d:a8ad with SMTP id ffacd0b85a97d-3b8f415a367mr7225532f8f.3.1754582104349;
+        Thu, 07 Aug 2025 08:55:04 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459dc900606sm162804165e9.15.2025.08.07.08.54.40
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458bbf91b69sm124250855e9.3.2025.08.07.08.55.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 08:54:40 -0700 (PDT)
-Date: Thu, 7 Aug 2025 18:54:37 +0300
+        Thu, 07 Aug 2025 08:55:03 -0700 (PDT)
+Date: Thu, 7 Aug 2025 18:55:00 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Cosmin Tanislav <cosmin.tanislav@analog.com>
+To: David Mosberger-Tang <davidm@egauge.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Alexander Stein <alexander.stein@mailbox.org>,
+	Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] serial: max310x: Add error checking in probe()
-Message-ID: <aJTMPZiKqeXSE-KM@stanley.mountain>
+Subject: [PATCH] usb: host: max3421-hcd: Fix error pointer dereference in
+ probe cleanup
+Message-ID: <aJTMVAPtRe5H6jug@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,27 +77,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Check if devm_i2c_new_dummy_device() fails.
+The kthread_run() function returns error pointers so the
+max3421_hcd->spi_thread pointer can be either error pointers or NULL.
+Check for both before dereferencing it.
 
-Fixes: 2e1f2d9a9bdb ("serial: max310x: implement I2C support")
+Fixes: 05dfa5c9bc37 ("usb: host: max3421-hcd: fix "spi_rd8" uses dynamic stack allocation warning")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/tty/serial/max310x.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/host/max3421-hcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index 541c790c0109..2b42a4c21a9b 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -1644,6 +1644,8 @@ static int max310x_i2c_probe(struct i2c_client *client)
- 		port_client = devm_i2c_new_dummy_device(&client->dev,
- 							client->adapter,
- 							port_addr);
-+		if (IS_ERR(port_client))
-+			return PTR_ERR(port_client);
- 
- 		regcfg_i2c.name = max310x_regmap_name(i);
- 		regmaps[i] = devm_regmap_init_i2c(port_client, &regcfg_i2c);
+diff --git a/drivers/usb/host/max3421-hcd.c b/drivers/usb/host/max3421-hcd.c
+index dcf31a592f5d..4b5f03f683f7 100644
+--- a/drivers/usb/host/max3421-hcd.c
++++ b/drivers/usb/host/max3421-hcd.c
+@@ -1916,7 +1916,7 @@ max3421_probe(struct spi_device *spi)
+ 	if (hcd) {
+ 		kfree(max3421_hcd->tx);
+ 		kfree(max3421_hcd->rx);
+-		if (max3421_hcd->spi_thread)
++		if (!IS_ERR_OR_NULL(max3421_hcd->spi_thread))
+ 			kthread_stop(max3421_hcd->spi_thread);
+ 		usb_put_hcd(hcd);
+ 	}
 -- 
 2.47.2
 
