@@ -1,69 +1,76 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3CC253351;
-	Thu,  7 Aug 2025 12:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2146191F84;
+	Thu,  7 Aug 2025 13:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754568870; cv=none; b=Cpb+TvWk1zPV9hFjT4tBAU5nDuvJAHAzbGghAyBC0xJIJIJtzjgo8Q9PNlyLGF2etNOhcLgmTsN1xrPOGPF3KNkK/WtkjgXu0GLiuf5ij5Hr10rqelsFnCqsaBiXZa/7ZKeBzKfIwtJgApSLFAbduq2jPavkXMyho8LRiHfnAh8=
+	t=1754572545; cv=none; b=K4zOl+rr9x2TmGHJbt8QO1cgoxjx3Y1DxE0dIywFJIGF1XepYVcW6xI/dHWnAW5vzy5fl2KLy8eAIdccK+zrRs28PIpFa6+s1yzvWIEShN4qoTEcdKy7fGSAE2z31JqWBmyr9fmCaGvlcbc2zdTDDjzAgLL+vIh5RNKdduU0Fcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754568870; c=relaxed/simple;
-	bh=zEfKvxCGsksFx0cOWCeN3rSo3TD1UVcOgZ+kg33gJoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZB5/bUl2vDOSZnUT68Ve7Eq/OCdZox0rCSWJ2x1e4FbkVuDrfUCrL/uP6O1oF39mRH83py5nDZP7M4xBYBmMp+L+8AZ9+nuX3Pj97mQOt/gGd1Q1fzx6XVD7tcxupqhgSyL6sd4oJGFqRxMOgpgheuVemJwHylbv8lMXCGowlvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDY+A7XQ; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1754572545; c=relaxed/simple;
+	bh=PC1Qx3ySQrnwhSPp6gHnIParaisBxDPrG26FiRlnL0g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oh7y+s+tmVMB7xfElRJgkRH/OqUMIAfVouLdn4sb9Df/gbaFNGaaEJBfD5c0ziFNB/R8tNLB66TgEAhYXVBCiRVW78Jy6QKIC6EMpOXRR/SMNR6Gf9uXodYOm5fEpFZzx9ZQWJadJhLqZaktEVl7nZdf2rQa1sExfF4V3CARkoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+NQsCx2; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDY+A7XQ"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459e210bd2dso6934705e9.1;
-        Thu, 07 Aug 2025 05:14:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+NQsCx2"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-459d62184c9so6410405e9.1;
+        Thu, 07 Aug 2025 06:15:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754568867; x=1755173667; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754572542; x=1755177342; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HOvxPdhdkRmgXuqA5D4OZ0OGc0TX4IdKP6S9H5e+35E=;
-        b=GDY+A7XQRo9pNJE3B2Nwp/G82jvEZN6zBtu9rfWKKO0D+ylLcKQyZ0zGQjDHxN4z0y
-         g0jP4IowqgH3XdWKhosaryoIwHhQ0NQyiXyXmRdC1p5R+pShd+Bw64Uy3SfrP/EKSplM
-         7kMGG+TIojJBQ6Guy5bkZj8sMDKiNCpex4XCz0gDM35XRQSO3RcE/4yNuMajpoRDQ8OK
-         FbeatuWggaFDuAuEFZkVg+ND4O62mVcCkbR74P+V9dgvSZ24zr+oCM3eweGEeerRV98w
-         BMsGthiABPcvlRT53BcuRkeQf+HwQ+piW2zcnNA6PpI6xOn+a+SygqHnaaOvBFDkN4rg
-         hDHw==
+        bh=T/Elo2MUTB6Vn1PUhDPXwkwYqbWpk8OjBvFLAxfq4Wg=;
+        b=Q+NQsCx2tpiY8T5Lj8o2CkVDDRLeLjKdixsRgqq3PNc3RVoT7Qe0J54+nvGUGHDkf7
+         tp9YqoMNPnxv0qEPsKIzexZmCQ7EhQ8nzh0ZIIecajSB0ErG9DsLmCh6U6Ek7aB0WZPS
+         aPau0L92+/Ah5CNavlDQctIk92n8yA6TA4+ie8qy+ejzA0DYZOKCmL1wGyzy4c0FSB4K
+         wAz8br5EVxwr6KmPGSW9ypUZN7nbc5cvGvfYw6T/48RVRFEH7EqUT7Dm+46JR6b7x58L
+         1niKjjYD38BWBG+XxDFHScYnBwo4eLoevoAnK9bY5WJnMMc8w6b0mNYQE0lfEjz1qZaF
+         WqLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754568867; x=1755173667;
+        d=1e100.net; s=20230601; t=1754572542; x=1755177342;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HOvxPdhdkRmgXuqA5D4OZ0OGc0TX4IdKP6S9H5e+35E=;
-        b=ZQnBwZM9vMqzngjXVk3dA1dbETyOWMZZRrXd8qMImoX2JSD2f3Ztjj2pUIv5nYV2IU
-         vuApyN68MBLwwCQTre/jJILsXM8VNyM4mmL1uboyOPRxhx6BBvvM0stpVaaLcyS1kL8u
-         jzQh2oBBwk7yhYC36sTYKVCTP6rhVPPxZveyBeD6xp2iz5g6Pm2dQ7s8z2gPmuOm5Nyr
-         BHbS6sCefbc5eWb5lDiXvtf2DWZ4v8oryFSwXul42hZ5lhl3owGPWpPTHmCBH+mtwfaY
-         8DEWYhYTXMGIy518mzXmjf2tELdLcxrGwHjRmw/YOnzauTz1HM3ZQuakgwVq/5yaX0sc
-         Os3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV/wxz9+zjSMo7IV8nlEwJwwi5eUtGQGyP2tZ15HcEzhmSGoI471fSHOj55Y/TsLaiPmu99+dF6L7I=@vger.kernel.org, AJvYcCXw8lpiwArnYvpvB7Bn4kasqsUOQL3izLXgVxsQUAiYvhQje/f26/b0zXvGiU1dhM5poaQuTx0jJpo6z+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzguqSInZFUb72kTJYLaRTIu18UyAtJQp3MEjdSLmY0rLyztVze
-	5mwmokf8WAhYohOGLyPuyLpqWv70hi4Rzie82EJNcuN9pTq1ZSaHjLMVhCu3K8jXQTQ=
-X-Gm-Gg: ASbGncuZbdC6N0T9lEAguW/p3GXOgx3QRA1VcmYqm+wQd4E4yblgqjBcU0c4zZQHBWZ
-	xithf4jT678/6vrX0OE0eDr7JxqWixlq2fx48fCNFemIJxZH9yQw7DC6/sjxwZ0m1dnO1Dscb4p
-	xsgid6Xj6Gn4K/WSUjy+3sssxTDP175F7T/thQbOp/hY3tt03RvT0AZDDt0JCPKuYvMO1kXHMaX
-	fPkd4P0JRULKpfR7LcTtDxJ9HgFo+t2Ls1jSuqX2KeRan/rmpm4TFxeZk0wtZtTyVvqIdKr3hd0
-	KjMQUcODDf5hDjnIx8X6UxLLiGrqoEn0yVLdv2EnparpHJGHEhWGC7o1yKsi8ad4qNUaQ7JBqEm
-	7WmUOh+dTBHzzvhU9owYA
-X-Google-Smtp-Source: AGHT+IFTsPrkYUi4hoaFQ8iZd6m5pc/Quo2AQuS9Wt7r6JJPPCobmoHZ4FcuWwsU3o6X9A7AomJ/JA==
-X-Received: by 2002:a05:600c:4fc3:b0:456:ed3:a488 with SMTP id 5b1f17b1804b1-459f39c50bdmr2643125e9.1.1754568866537;
-        Thu, 07 Aug 2025 05:14:26 -0700 (PDT)
+        bh=T/Elo2MUTB6Vn1PUhDPXwkwYqbWpk8OjBvFLAxfq4Wg=;
+        b=DEWOB0MQ5pP1XGubzqpVYb7Clp7+eI4Rk3V3K10D5idswWxmcvnGyFFyKG34aG/GsM
+         I4qjeXz3bt788qQ+nKvD8OPzx+EIjmU36w1NwNAUM4Cyo+6cVTRD0OYPyIcHU6os2xaO
+         qwJi35bY3u5sP55+5mXQt4r6DnHyBRMopW72IS6abCxySlLQkK097ax5Y6u07cwmuSid
+         FmaeaW5LoQvzMx2t6fONX+BKCa7DGLtfFdSTzF19umWOtTS/NUjGYGcM0BLu5MkaZG1q
+         DTiNh2ycQzVhN7Ws4eNCs6L0+Yl+E7VCu9Bozg529iWYTGSNe07EQuhwv/huxPYI9LNc
+         bpyw==
+X-Forwarded-Encrypted: i=1; AJvYcCViu/CY8C9smQvyafzIT1mRHPOEwOmMhn0qldJ9qyeffh6gAnrOpPJma6cwDOngPMC0Yo08wEbdccXdS5c=@vger.kernel.org, AJvYcCWLbivOBithsbLlsL87p+t+H8913Jsr8AXhMlE5rgZLe/TxmwHs2haTmKW+VLj+AaEvUEz5tD68@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO2/4TDZZyWwPd9bxhxYPfK76xbenPh1m2HUafRmoiY835zwV2
+	HBprFRJJjATxt9lAx+jRXbiI37DFdph0snc6tfeV8vQttW6uqrW+yh7/bwH3r8ENl0jTyg==
+X-Gm-Gg: ASbGncsYQsM79f6iUQx/IKAIZJWFbNOXXg8zwW4S0aunGev4UK8lgSB2ZeIHdWm0hvl
+	OboSQrQQ0ej72tJuUDEQsScr+9RdYp2vvMx6C5F12hk3KEZqnPizjdug1JYUzpNKHr1fEyo+Jtu
+	TT0L27znsiypezCzOo8fvyZWosafAMl7+t0rIzMAxzWaG6/3Qy+gK6iuTzRR53AU2feDmZyOU4z
+	ozdNCM52o0QdCtYoJSCv5rPByikKHF8z4JgF20lO3qjDbT79CgmUo/NQ2bB2ClGobhYfjxW1e+l
+	BD4V4hb0HoSXV0pbs1Agzl+8+rR3urJ/xpcJWyBJjkdQ2ipaRvSYxcoXNo9fUEChnWgZSeHop2J
+	0r4Y9hTIrZQE8+arf0ZkBq3+qkRYA6hs=
+X-Google-Smtp-Source: AGHT+IHBZX8/gLxxU0sgoAYhuaC8Y6Xs0eg1d+9FmJDYjXwojNuHv2mfe+sV59j/bpFM8jIHAiU21w==
+X-Received: by 2002:a05:600c:4e8c:b0:459:d709:e5b0 with SMTP id 5b1f17b1804b1-459e707b412mr57851895e9.5.1754572541674;
+        Thu, 07 Aug 2025 06:15:41 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4530a8sm26578463f8f.38.2025.08.07.05.14.26
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c453aeasm27736616f8f.40.2025.08.07.06.15.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 05:14:26 -0700 (PDT)
+        Thu, 07 Aug 2025 06:15:41 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Sebastian Reichel <sre@kernel.org>,
-	linux-pm@vger.kernel.org
+To: Frank <Frank.Sae@motor-comm.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] power: supply: 88pm860x: make fsm_state array static const, simplify usage
-Date: Thu,  7 Aug 2025 13:13:49 +0100
-Message-ID: <20250807121349.460862-1-colin.i.king@gmail.com>
+Subject: [PATCH] net: phy: motorcomm: make const array mac_addr_reg static
+Date: Thu,  7 Aug 2025 14:15:04 +0100
+Message-ID: <20250807131504.463704-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -74,73 +81,46 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Don't populate the read-only array fsm_state on the stack at run time,
-instead make it static const, this reduces the object code size as
-the data is placed on the data segment and this removes the need to
-have code to set the array up on each call.
+Don't populate the const read-only arrays mac_addr_reg on the stack at
+run time, instead make them static, this reduces the object code size.
 
-Note that making the size of the strings to a more optimal 11 bytes long
-does not seem to reduce the overall size. Making the array an array of
-pointers to the strings increases the code size due to the dereferencing
-overhead.
-
-Simplify the array access with &fsm_state[info->state][0] with the simpler
-expression fsm_state[info->state] to clean up the code.
-
-Original:
-   text    data     bss     dec     hex filename
-  22884    8272      64   31220    79f4 drivers/power/supply/88pm860x_charger.o
-
-Patched:
+Size before:
    text	   data	    bss	    dec	    hex	filename
-  22695	   8368	     64	  31127	   7997	drivers/power/supply/88pm860x_charger.o
+  65066	  11352	      0	  76418	  12a82	drivers/net/phy/motorcomm.o
 
-Difference:
-   text	   data	    bss	    dec
-  -189     +96        0     -93
+Size after:
+   text	   data	    bss	    dec	    hex	filename
+  64761	  11512	      0	  76273	  129f1	drivers/net/phy/motorcomm.o
 
-Reduction of 93 bytes total.
-
-gcc version 14.2.0 (x86-64)
+Reducton of 145 bytes (gcc 14.2.0 x86-64)
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/power/supply/88pm860x_charger.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/phy/motorcomm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/88pm860x_charger.c b/drivers/power/supply/88pm860x_charger.c
-index 2b9fcb7e71d7..8d99c6ff72ed 100644
---- a/drivers/power/supply/88pm860x_charger.c
-+++ b/drivers/power/supply/88pm860x_charger.c
-@@ -284,8 +284,8 @@ static int set_charging_fsm(struct pm860x_charger_info *info)
+diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
+index 0e91f5d1a4fd..aeae7ec897c6 100644
+--- a/drivers/net/phy/motorcomm.c
++++ b/drivers/net/phy/motorcomm.c
+@@ -536,7 +536,7 @@ static void ytphy_get_wol(struct phy_device *phydev,
+ static int ytphy_set_wol(struct phy_device *phydev, struct ethtool_wolinfo *wol)
  {
- 	struct power_supply *psy;
- 	union power_supply_propval data;
--	unsigned char fsm_state[][16] = { "init", "discharge", "precharge",
--		"fastcharge",
-+	static const unsigned char fsm_state[][16] = {
-+		"init", "discharge", "precharge", "fastcharge",
- 	};
- 	int ret;
- 	int vbatt;
-@@ -313,7 +313,7 @@ static int set_charging_fsm(struct pm860x_charger_info *info)
- 
- 	dev_dbg(info->dev, "Entering FSM:%s, Charger:%s, Battery:%s, "
- 		"Allowed:%d\n",
--		&fsm_state[info->state][0],
-+		fsm_state[info->state],
- 		(info->online) ? "online" : "N/A",
- 		(info->present) ? "present" : "N/A", info->allowed);
- 	dev_dbg(info->dev, "set_charging_fsm:vbatt:%d(mV)\n", vbatt);
-@@ -385,7 +385,7 @@ static int set_charging_fsm(struct pm860x_charger_info *info)
- 	}
- 	dev_dbg(info->dev,
- 		"Out FSM:%s, Charger:%s, Battery:%s, Allowed:%d\n",
--		&fsm_state[info->state][0],
-+		fsm_state[info->state],
- 		(info->online) ? "online" : "N/A",
- 		(info->present) ? "present" : "N/A", info->allowed);
- 	mutex_unlock(&info->lock);
+ 	struct net_device *p_attached_dev;
+-	const u16 mac_addr_reg[] = {
++	static const u16 mac_addr_reg[] = {
+ 		YTPHY_WOL_MACADDR2_REG,
+ 		YTPHY_WOL_MACADDR1_REG,
+ 		YTPHY_WOL_MACADDR0_REG,
+@@ -608,7 +608,7 @@ static int ytphy_set_wol(struct phy_device *phydev, struct ethtool_wolinfo *wol)
+ static int yt8531_set_wol(struct phy_device *phydev,
+ 			  struct ethtool_wolinfo *wol)
+ {
+-	const u16 mac_addr_reg[] = {
++	static const u16 mac_addr_reg[] = {
+ 		YTPHY_WOL_MACADDR2_REG,
+ 		YTPHY_WOL_MACADDR1_REG,
+ 		YTPHY_WOL_MACADDR0_REG,
 -- 
 2.50.1
 
