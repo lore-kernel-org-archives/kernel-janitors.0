@@ -1,67 +1,68 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A72237173
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 16:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC75237173
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 16:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582415; cv=none; b=tXdSydfXpx+hQBJhB8YTOdF50o4M6V3aajwdFf+k6wcKQi4WAHvXQagBHDRDtrmruYJZcKGqJCGM1/craRW6RTxWXsqj7ONyw9oYgn9KeBnhjoDcmmEOHv/VhdIPRMEQBeCGjUWlBCiIT/36My9eDT63Eg5e8FTY/a4yCWOBn8o=
+	t=1754582426; cv=none; b=WgrdGm2BZoTDmypbQ8gT1P7OkOze2BU0Goz0xdYv4q2oDXM9EkKbfD4+59sxTpWjcPz/AVccHL+iwX6wG2FgAqGlsoPSZnGv0oQEeTGXnrZabQppiEHk1zHwK/DD6K+RnSvHbIzoBtFwf2E5msNvjKcKu1tzwhi3Z2qB1auOIRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582415; c=relaxed/simple;
-	bh=RWSUFmutF5H1/FKjQyNBNp48243c4XWd/AIkBJw9FHo=;
+	s=arc-20240116; t=1754582426; c=relaxed/simple;
+	bh=atGLXNNVAwYLHEuEIqrV4tqMuprs0GfN6c3OC62xH3A=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=D5xg/4WQi8bljJ0VLRkn/tVmrb1w5THqC4ElY/NpkqgX//C/qz1/GDuTknBp8iG1sudLMMFEDSY55tG7H34oZ4bjUMzzase082CS4rpopOWlL56m8myV7z8JnBpRfEajqufwoTnA0lbd+hmn3SiMPF0B+A0vMYVA/qrHaZJWzB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jd/wzFIB; arc=none smtp.client-ip=209.85.221.47
+	 Content-Disposition; b=BqKy4lRDcizZseafXfnsQ7pUZm0q2D5GiyUSl/o73y+6XFHM6Gk477peCKyl/QcXh9dJL+e4WXLgDNxOVRELtqKdSKhGxK7YvgPV9RFvpYx0ZhPBzSkgfkdmbLTr7Iw4UCHNZ2W+No8lZIORXTrXy3GGEj7o6p5W5RH1lsX4mdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D+Uq9gY+; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jd/wzFIB"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b78bca0890so567456f8f.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 09:00:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D+Uq9gY+"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459e794b331so7605025e9.3
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 09:00:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754582412; x=1755187212; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754582423; x=1755187223; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XRVbxceSq1is4jn4wAx8DYPbwe+MFMCmmpw5YmLXyFc=;
-        b=jd/wzFIBIyiDQrAICEEFDuB5ED5mPFrxuLjMAqAuz9MXnmUlkn47rdQgBiuP0ZqabA
-         Z5l0NRIZBYDA5guoZCM2uA0QxH53FJdUpHbbBFfKXZtCGIJszun9irEyD7VYH8US39ZK
-         xugDx787JaCnqpW57lZkxd1nUYYlsxuM4ifc2hoR5lEbvwtOs/D8pHCt6tBkzgcG4RmU
-         uV1jwcriQuvhsmGja6E7sfqm2Q5NUU8N8LH5AWv7Pi3wsFxx7SKcu227czOfTMZk2xbZ
-         qSL63VuLMmhLVYl/6bNX/CvfK7zC6HxiF8UPyZNNH6gnT1vqQ4unVweRP+rhZnKtanB+
-         isFQ==
+        bh=+JcGfa+iZR61r0t/o0c+i1LBtwdud21b4gpEsVnOtuc=;
+        b=D+Uq9gY+lobQnEX7FlGebVhVThPSKT7lE1g6t04zzfVI0Ly5XoULLDp66E+vTRmRvL
+         GUxZKYA7Lfu6KR8H+0g1ezw27ncrL9mU1c8SWZhrPwdjmuMuAmAo729xQBIztN9+Ka9p
+         VlQ1/XO0Pbu0Hbng0I/Df9sMGRyjilcDw+foHQ86hFmUBanvG1aU5f5wbOSR8zKBl13z
+         pQcwJzYVN2qzGczt/9D0ISQIUuZTVrABUOcGIvlomb4nKNO2CHf6BsNrsep924V/LDes
+         3OOEiRgUA4cKNMJUDubiHZosGxp5J+DjIA40fnJgvrEVkz/le+S6yZLZfu6B37WXHBw3
+         z+Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754582412; x=1755187212;
+        d=1e100.net; s=20230601; t=1754582423; x=1755187223;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XRVbxceSq1is4jn4wAx8DYPbwe+MFMCmmpw5YmLXyFc=;
-        b=I/KAX56TdVckGpTjeLPvXepyBZnukIhRHpOwqmN19oc0OUjYCKeAOvR6fzg38B52xm
-         RZR7AJy6LouD/zzQFp7WfWKz1MzXg7DMQe53F8lcNdR/95hlmO41oQueWIVYLwzYRAf+
-         o+7PvK4H83FyVWPIMWYtgV/UxPkVKlexn59LntrwlpbDVkN+HWTC1tXyprn9b+GuWzQn
-         d0Xc/f3dYjvD4Mwg2Z0mBSBkBQ/uK6khSqLuMXrOqVo69o4oI3qycOlFLUb6BAVgA5N5
-         GPPD44FVnYDdWC8h7T7c1Xj1cNgZIrik3DyTkK5B5/ve12vTiRpbDxFL1rweGXJmCyCh
-         Mdtw==
-X-Gm-Message-State: AOJu0Yz0C9IJAAmCCHqaxQUsyOg6mmrjwfuWTE603ft3+p7LysWBC/fj
-	YRxOtI1np4UcXxHoCnABRB8eACIhwCHFkXgKl7u2bq4TusGiOn7n9IYCaV05OH3LDlH+F+ltt2a
-	Km7sJ
-X-Gm-Gg: ASbGncviK4vgo3J+h3Df0hYAbbmxW6CTef6bvjDWx+GevadldLjmoU546KH8fp0U+4j
-	hwaGQHqfliGLimvRG3BdxW+55XntH3OCN8pNEyy/DY8wS/Ls9XGXD2VcYYavknJoTgC2M4AfK/Z
-	xI9WlhkQWlugvv2y899nRCcNssOgva53pWqko3fajNekyC0JaX3nGJavZt9832GDDVQJ4tLqtcy
-	c5z5aoYtSDV6T2Q0r1j1xWQ199F4uJpbgebvF+hZEZnOQb9/8tNpndPvrjgVyHfYZm75teoiQtT
-	J0UicvQmwfqaXcGLYiFzhfzY5h97orUZwIZ2PeOwUxktC/7/iYLkb7MlQHnfZ4RBcOUj4NFPvoW
-	S7s2nIbmdeWeBMu9LgGRECK2BPYQ=
-X-Google-Smtp-Source: AGHT+IEaz7bsBu/Iv74Glpb4rsHBLT5TI5TE3+FhvC4lsTHipEyTshLjeB0czUpcA0bGF+jsXXj1cA==
-X-Received: by 2002:a05:6000:26c8:b0:3b7:8c83:db1e with SMTP id ffacd0b85a97d-3b9000c3407mr152713f8f.33.1754582411618;
-        Thu, 07 Aug 2025 09:00:11 -0700 (PDT)
+        bh=+JcGfa+iZR61r0t/o0c+i1LBtwdud21b4gpEsVnOtuc=;
+        b=AmwTX9ezxVHcbfcY653BoJtf4ijzgVnvbNVoa+JbukeQnhcQWvtKZoKwkG0gNIlMoh
+         b6G7296/4CNXv8ITS3UmSoZtprXfhnh+v2R6JlnHfDiZuQmgZBJ8YWnVVk/pMzw8beO6
+         zJrHvoRFZIAqVARALFa6ar/fQcEP56fURjWbgTIE05QytwRd7O5HnGAXNjAFNKUAKptg
+         jzOGWmcPSG2hvb3Zdh4/XyDEvAlKJ7aRvE/gNDorG4d8PZCq8PkwDdX5FY357ExS0yEG
+         UistT98JRDcilo1AzQD3mSwpRfIsOrwVsNWhDMnpkprUSCMNT0DHLC3TosdoTyrGW+gv
+         cXbw==
+X-Gm-Message-State: AOJu0YxkYqRNXRSnLU3IwUDj73oNAIfF6ErI3CzNsJ2JuqkF3FgN+fI0
+	6nF3jXs3RFW3mS4FMenkxBOl5X5zFPMsTskP6dHbsGCIFdnsvHh719JrsRFSn44aPlPplqmaum/
+	rWzRs
+X-Gm-Gg: ASbGncu6FWI+t8zmGcMO8HrhZXgmYHS3Qb5olyjUWm6+WdB9yUKJqCg6kxg1LuheNb5
+	59ADlGM9tcPwi6z795RWPq8EP8C68PtVLKZpO+Ajkq/MkSqOCxWN2f+lvNOB4snS75yyYVY2qgI
+	O7JE7Rl5ZI0rnI/5GLzNG1kWqXWmrS0u+3KOQXiaUVWhQieXu8hb1HW7FZ1uemixk2gVdAwCTxy
+	HlUjjRvh0NcwP7xO4CcoqrwcRA4dafvkA4o8vQrbBAV56K9lZYYuzeTR68JsfjMEq41gOXmLWAG
+	BexcPNrDcu7G158aigGU3cWOveYvRoEZp1wv/dGWu+9ZTotqMg55bthiAKFKNyH5jUyPacKDWK6
+	jOCGkIVJ7Cao5QifpnMJqemgOcd2JHhid
+X-Google-Smtp-Source: AGHT+IHuq2MsXmiuXYo3HxEI3Rs3yJeaz7TDrZbqYvMeUuteV1ZfOlxYxnO6pziF3JOyU9waqi3k7g==
+X-Received: by 2002:a05:600c:4449:b0:458:affe:a5c1 with SMTP id 5b1f17b1804b1-459f40937ddmr3882455e9.5.1754582422633;
+        Thu, 07 Aug 2025 09:00:22 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3b9074sm26677573f8f.17.2025.08.07.09.00.10
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c47ae8esm27179830f8f.61.2025.08.07.09.00.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 09:00:10 -0700 (PDT)
-Date: Thu, 7 Aug 2025 19:00:07 +0300
+        Thu, 07 Aug 2025 09:00:21 -0700 (PDT)
+Date: Thu, 7 Aug 2025 19:00:18 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alejandro Lucero <alejandro.lucero-palau@amd.com>
-Cc: kernel-janitors@vger.kernel.org, linux-net-drivers@amd.com
-Subject: [bug report] sfc: add mport lookup based on driver's mport data
-Message-ID: <aJTNh2A3i7JazSet@stanley.mountain>
+To: Steen Hegelund <steen.hegelund@microchip.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] net: microchip: sparx5: Add KUNIT test of counters and
+ sorted rules
+Message-ID: <aJTNklKQ-yuxW0ck@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -71,45 +72,88 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello Alejandro Lucero,
+Hello Steen Hegelund,
 
-Commit 5227adff37af ("sfc: add mport lookup based on driver's mport
-data") from Feb 15, 2023 (linux-next), leads to the following Smatch
-static checker warning:
+Commit dccc30cc4906 ("net: microchip: sparx5: Add KUNIT test of
+counters and sorted rules") from Nov 11, 2022 (linux-next), leads to
+the following Smatch static checker warning:
 
-	drivers/net/ethernet/sfc/mae.c:1035 efx_mae_lookup_mport()
-	error: 'm' dereferencing possible ERR_PTR()
+drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:305 test_vcap_xn_rule_creator() error: 'rule' dereferencing possible ERR_PTR()
+drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:1422 vcap_api_encode_rule_test() error: 'rule' dereferencing possible ERR_PTR()
 
-drivers/net/ethernet/sfc/mae.c
-    1024 int efx_mae_lookup_mport(struct efx_nic *efx, u32 vf_idx, u32 *id)
-    1025 {
-    1026         struct ef100_nic_data *nic_data = efx->nic_data;
-    1027         struct efx_mae *mae = efx->mae;
-    1028         struct rhashtable_iter walk;
-    1029         struct mae_mport_desc *m;
-    1030         int rc = -ENOENT;
-    1031 
-    1032         rhashtable_walk_enter(&mae->mports_ht, &walk);
-    1033         rhashtable_walk_start(&walk);
-    1034         while ((m = rhashtable_walk_next(&walk)) != NULL) {
+drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+    246 static void test_vcap_xn_rule_creator(struct kunit *test, int cid,
+    247                                       enum vcap_user user, u16 priority,
+    248                                       int id, int size, int expected_addr)
+    249 {
+    250         struct vcap_rule *rule;
+    251         struct vcap_rule_internal *ri;
+    252         enum vcap_keyfield_set keyset = VCAP_KFS_NO_VALUE;
+    253         enum vcap_actionfield_set actionset = VCAP_AFS_NO_VALUE;
+    254         int ret;
+    255 
+    256         /* init before testing */
+    257         memset(test_updateaddr, 0, sizeof(test_updateaddr));
+    258         test_updateaddridx = 0;
+    259         test_move_addr = 0;
+    260         test_move_offset = 0;
+    261         test_move_count = 0;
+    262 
+    263         switch (size) {
+    264         case 2:
+    265                 keyset = VCAP_KFS_ETAG;
+    266                 actionset = VCAP_AFS_CLASS_REDUCED;
+    267                 break;
+    268         case 3:
+    269                 keyset = VCAP_KFS_PURE_5TUPLE_IP4;
+    270                 actionset = VCAP_AFS_CLASSIFICATION;
+    271                 break;
+    272         case 6:
+    273                 keyset = VCAP_KFS_NORMAL_5TUPLE_IP4;
+    274                 actionset = VCAP_AFS_CLASSIFICATION;
+    275                 break;
+    276         case 12:
+    277                 keyset = VCAP_KFS_NORMAL_7TUPLE;
+    278                 actionset = VCAP_AFS_FULL;
+    279                 break;
+    280         default:
+    281                 break;
+    282         }
+    283 
+    284         /* Check that a valid size was used */
+    285         KUNIT_ASSERT_NE(test, VCAP_KFS_NO_VALUE, keyset);
+    286 
+    287         /* Allocate the rule */
+    288         rule = vcap_alloc_rule(&test_vctrl, &test_netdev, cid, user, priority,
+    289                                id);
+    290         KUNIT_EXPECT_PTR_NE(test, NULL, rule);
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+vcap_alloc_rule() doesn't return NULL, it returns error pointers.
 
-rhashtable_walk_next() returns NULL if we get to the end, but it
-returns ERR_PTR(-EAGAIN) if the hashtable was resized.  I don't know the
-code well enough to say if that's possible here.
-
---> 1035                 if (m->mport_type == MAE_MPORT_DESC_MPORT_TYPE_VNIC &&
-    1036                     m->interface_idx == nic_data->local_mae_intf &&
-    1037                     m->pf_idx == 0 &&
-    1038                     m->vf_idx == vf_idx) {
-    1039                         *id = m->mport_id;
-    1040                         rc = 0;
-    1041                         break;
-    1042                 }
-    1043         }
-    1044         rhashtable_walk_stop(&walk);
-    1045         rhashtable_walk_exit(&walk);
-    1046         return rc;
-    1047 }
+    291 
+    292         ri = (struct vcap_rule_internal *)rule;
+    293 
+    294         /* Override rule keyset */
+    295         ret = vcap_set_rule_set_keyset(rule, keyset);
+    296 
+    297         /* Add rule actions : there must be at least one action */
+    298         ret = vcap_rule_add_action_u32(rule, VCAP_AF_ISDX_VAL, 0);
+    299 
+    300         /* Override rule actionset */
+    301         ret = vcap_set_rule_set_actionset(rule, actionset);
+    302 
+    303         ret = vcap_val_rule(rule, ETH_P_ALL);
+    304         KUNIT_EXPECT_EQ(test, 0, ret);
+--> 305         KUNIT_EXPECT_EQ(test, keyset, rule->keyset);
+    306         KUNIT_EXPECT_EQ(test, actionset, rule->actionset);
+    307         KUNIT_EXPECT_EQ(test, size, ri->size);
+    308 
+    309         /* Add rule with write callback */
+    310         ret = vcap_add_rule(rule);
+    311         KUNIT_EXPECT_EQ(test, 0, ret);
+    312         KUNIT_EXPECT_EQ(test, expected_addr, ri->addr);
+    313         vcap_free_rule(rule);
+    314 }
 
 regards,
 dan carpenter
