@@ -1,72 +1,73 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6A1265298
-	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 15:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A1B2686A0
+	for <kernel-janitors@vger.kernel.org>; Thu,  7 Aug 2025 15:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754582107; cv=none; b=FelPXB6xdRhAjih9fJTSh0O/FLk5b1D8gn85huaLLEu8LNAWgJZZh7tD8I34liPMTcVUSTLUhRmY264jLpWwQm+vYNk8Am2v7bae9v94ndAz+CGZlAVwWy/0uxMq8T2xP/pc8cL49+e1ajqAljiWrDWHZ6WJZChTJ3PaZGagfpQ=
+	t=1754582311; cv=none; b=SF5NbHniycBpRwYhhmCdlSfcbN/cjiTfVNqDDNsYcT013k1YCnNA/Xw4H9Rm+Bx11eMQIOOzrVytpEuCf6RE1eVrj6g+pMW5TDTfi3/4H/IhRDymlo1AUxpJqtUKapPpg4UtrsCZfL13WY9OBFL4YqYG0K123+M1+rSLSRJOS8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754582107; c=relaxed/simple;
-	bh=SQqxK/HCej6ZDpPKgE3mF20MElkN0tQ4FKvSHtMcEcY=;
+	s=arc-20240116; t=1754582311; c=relaxed/simple;
+	bh=UebwSTgEBGX45jSwaqppv1MZDgNUsTmKmv0RDSYtYBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s4bOXUMQoIuUlatX2OR6ziSei+0zkp9nAVNMeULtk/rzGbEt0UK6sWrgDVV8li0HgGlKKe6f/NifuNk9zmr+lZKjTn4Fi9/UqRTC8RxysNTs6KfFc08pLC9fH6QJLIZuUUj9vNEG8AZWvZdPSI+uKiLiaxj9FHEznHjb5+Nx53k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VK9ocNyl; arc=none smtp.client-ip=209.85.221.54
+	 Content-Disposition; b=oemQTXXwsMic4rXj0Vw2GpT9LJAeXmgcblxfs8Zxb8y8cW+qkJcYtE4sozUCaLI1oVjkRr0Wn0FDJk1JVKfe9zxIm47bxJVtiGuTxf4EhHXlJmKwjhFeFh6zbU9yjWRngQEFtP9Bviz5QOhgkBdNDcPmS/boH//O65RAajgdkx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I8canp1+; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VK9ocNyl"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b78d13bf10so1161431f8f.1
-        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 08:55:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I8canp1+"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-458bdde7dedso8867965e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 07 Aug 2025 08:58:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754582104; x=1755186904; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754582308; x=1755187108; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=VxONtqpEzsy4ybhTdJqv60dbpH7hpRv1LR4+l1PPyfE=;
-        b=VK9ocNylvoLr9S9lNJgu38/c0uAQXlbA1LxjW+qSghoeFw5XPtLFKvn28nISMj8OjJ
-         HWYXwAdK0mhBgLuLb2/NC2+/A8+/9hfd14ALmHefQJLTjUrocAOKnrnSBJD/98r7PzVg
-         4BEwf7emMvMCaTRt9/QUHEaAMHWeU31nSRWarBknfmKDu/fMHMaVroJdMl+HZsgleTbb
-         deXq1PVAzb0U7Aow2MdMSy2rnzGc3imL8hzrf1uztzkRxkDqCGppaJfyOzTvmReBYZE+
-         Hz0803TfF/05q+JC0h+eZIF+NNT4lSlgQGgh9IL2CjutG5i457Q17zcP69hSMWnHXx71
-         DUwQ==
+        bh=ujGGaXLwvEaTDaelriMZ69/JBFsXGLBD07Z/REYyW1I=;
+        b=I8canp1+HIYdWbmOTJfwAl3ic72csHSF9VQgrOjEGHQ4l8y4evhhxJ4ABC9uKGqKDK
+         d3rGH4+lVZWpqlVguEXobU/mIpenQlinoV0jBumjFPSrcp6Sh2O414XnOrfwwY5pebp/
+         Ml3SA/ZrCBYl+E/TcqcDK7nXtxmZO1uPgT+/HESLH1XMkscvtaqOKjNZR4G62c3UXpH6
+         VPGlL0gkcaCFW8a2fAeUd/F4U8bhf/JWZoLlCv+A+E8d5UEXbLTGh5GNF0d7/Moi8tFr
+         N4e2VQQepTLAOG1WCzXVe7ZPhJc2gVjdKnRdw/FuYdJeas6d4AXmIKYam9mTFqXDbP//
+         Lbog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754582104; x=1755186904;
+        d=1e100.net; s=20230601; t=1754582308; x=1755187108;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VxONtqpEzsy4ybhTdJqv60dbpH7hpRv1LR4+l1PPyfE=;
-        b=tyFHXidcwlHjFW5tQb1nMGsiFhIJy671Xeze28MiOfpkezwGLQVlt/s2NpbpzA2JwN
-         jK2VfJuyLCcT48wQOlcUOQGodhPNP1N5lWCQ19j4ErauqVDPT3TevlrcsFePjfZds6E4
-         0ctql/JOV6qktkYDaoMzKg9wiTlwjM0zz287pETkx16TQPV5KWf9M1sJEFk/N1az7iaj
-         /XI5GOwUh529ODBZzelksXlLRNakuP57XbFVp03zcaLBC3Kv9crWrT51etYFfqAjJfme
-         cVyzu7vb08XUjKkCmi1dKHt/AIpTT00Wnvt3MfrmqBP8Oxg7E8a4cHEyu9yls74Yw8ca
-         AATA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkywCej0uSCbrVZKgOMcYjCgHb3gZXIVcalan8F3g+Rc85wEcQGWd10xqzfz01I/NfS9jvJkU1XgzATensEyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxwiMQJqdf1NrFQZsL7LAWnqjWOD6x0D9xa8eEgaX9DpUtMbRW
-	uxhLCa8HwVBvdw7Ii6DJA5iy+o2Le3s9JrXkygvs1ugRHQ7XHNFFn63IwmnGVuqdUhw=
-X-Gm-Gg: ASbGncuhLl4EcBox4FEr49NmVm4qDmYPF1DDMjRhmaj2rGyu0m/c8GQTq5zvotHbZpC
-	E/yWcOxSB3XvH20Q/0veC1qgErvs7pdn0qS0CqX6JcPri/DgolGgAUdo0uEUAWbGCG2PyjTDAYG
-	r6kTgaOggxm9nV4b40ft3dP0jFVPLgyX6TifB6hNTewCwuQmITq6YJ1j+EwcG9rWjjRdzXf1/7F
-	viPDlZN9ziqoooT17S3VjPhvnbod8SBncWOZv0lRclcXUGwgvKuwMyZck0iW1uNfEntORUG8NT9
-	y8nIoWVepWa3cpP+zo6ooDgF0i0bLpWvLAzon4lt+1b59qpTlmUF186nowZxic4iS/NEMK68tGf
-	t1NtPsddp4Y0JyUQQpxh7qUbFjdw=
-X-Google-Smtp-Source: AGHT+IFSsIoqsVrOVwk5VqvA/2SIH6BZKHjU96VbI5Tfhan7NUjhqokIhx4f7tecjAIif5yQbhliEw==
-X-Received: by 2002:a05:6000:25c5:b0:3b8:d22d:a8ad with SMTP id ffacd0b85a97d-3b8f415a367mr7225532f8f.3.1754582104349;
-        Thu, 07 Aug 2025 08:55:04 -0700 (PDT)
+        bh=ujGGaXLwvEaTDaelriMZ69/JBFsXGLBD07Z/REYyW1I=;
+        b=vH9d9ZXCD2BIfQdF3ABgW0oKBgatxe36puWBoZQLkdBuf01x63dgClJ2pPX4JkAeB0
+         aIXTn8DMobMzGuWhEmx4L61NkzbMgxc7De2gyynXRkmpVDeZxxwRxymujw7mzx+Pj+Fj
+         w4fh3cgUQWnPbkdWSYA7qZLsE7sOCEC3PgmQwwy/FGTJpU8IOWflUf5mhL4V5z7A/BF9
+         Cy3H4xkUSwutBSFqLe9NDXtuKOpbttc++u42SYe3wYy+KcP0moZ/y3LaNpKP/LTHU0PS
+         35P3EqvxRi1Walw7PV1XpAQE5sado/7TgZ03clDxhaoLJse8hAANuQ4aoEmpFt2gMpp8
+         1ZGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqQjWv4r+MtxUHezezwcjVO46Ko1bbkTLDvMRYy8KWpct/kGab89bUnGQ8pvDc5VHHd9OY3275vIUUbEaTsJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx63qIqzgXoQCVoSCDgJN3bfORjFoLqIbdgltkUKVK/oWFRByQZ
+	tEn7BV/ryIw6pHgdnAW+kPlg+ha9l5ET70fgBfeOikIiQYs2ab3ffx9H7PiXn4ovff8=
+X-Gm-Gg: ASbGnctm70LFe8HPOIW6lHw9AasKllhiVcGGjWGj2t1yMtrAaaocZzVJIMmLywHDl/T
+	sfvm3FuEFWyYghdvff6/K6UVoqdAGtBcqr+XG12aN6hWsPvsGQESzQj/7UlV+ztr4Qn7CmE5KDd
+	63Y5NPvogMPAdBguOCsOB/tTrJzdKnyK0K7fyQsxcP8DKzzOKhxo4rKDcgXPkHukYdG4AYngBaB
+	Xk7fxyt+1JAO1BZdzVjSQq26shszqPeLtl3fXXHdL6r3OPXO/R1xhXtvme9uekYcgCZVVtHPyNJ
+	PK0w1Nn8L2E0dTmfz9RJK6ykda0TJtutx3sNamv7bQKdwc+nr5deO5jTKmkQrxEAK3XW8Jfrqnx
+	EyMKeJH8D8URXkQXhl3fvWIL6GAQ=
+X-Google-Smtp-Source: AGHT+IEQAtbjB5WuaftcfISb7loqx9lFVpOAzAnPzXuHW243UbLgIM9IVwryPWI9EYIwJTEBgNYAhA==
+X-Received: by 2002:a05:600c:154e:b0:456:1a69:94fd with SMTP id 5b1f17b1804b1-459f431f845mr2720525e9.0.1754582307874;
+        Thu, 07 Aug 2025 08:58:27 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458bbf91b69sm124250855e9.3.2025.08.07.08.55.02
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459e587e154sm108933495e9.27.2025.08.07.08.58.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Aug 2025 08:55:03 -0700 (PDT)
-Date: Thu, 7 Aug 2025 18:55:00 +0300
+        Thu, 07 Aug 2025 08:58:27 -0700 (PDT)
+Date: Thu, 7 Aug 2025 18:58:23 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: David Mosberger-Tang <davidm@egauge.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Stein <alexander.stein@mailbox.org>,
-	Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: host: max3421-hcd: Fix error pointer dereference in
- probe cleanup
-Message-ID: <aJTMVAPtRe5H6jug@stanley.mountain>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] PM / devfreq: mtk-cci: Fix potential error pointer
+ dereference in probe()
+Message-ID: <aJTNHz8kk8s6Q2os@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -77,29 +78,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The kthread_run() function returns error pointers so the
-max3421_hcd->spi_thread pointer can be either error pointers or NULL.
-Check for both before dereferencing it.
+The drv->sram_reg pointer could be set to ERR_PTR(-EPROBE_DEFER) which
+would lead to a error pointer dereference.  Use IS_ERR_OR_NULL() to check
+that the pointer is valid.
 
-Fixes: 05dfa5c9bc37 ("usb: host: max3421-hcd: fix "spi_rd8" uses dynamic stack allocation warning")
+Fixes: e09bd5757b52 ("PM / devfreq: mtk-cci: Handle sram regulator probe deferral")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/usb/host/max3421-hcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/devfreq/mtk-cci-devfreq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/max3421-hcd.c b/drivers/usb/host/max3421-hcd.c
-index dcf31a592f5d..4b5f03f683f7 100644
---- a/drivers/usb/host/max3421-hcd.c
-+++ b/drivers/usb/host/max3421-hcd.c
-@@ -1916,7 +1916,7 @@ max3421_probe(struct spi_device *spi)
- 	if (hcd) {
- 		kfree(max3421_hcd->tx);
- 		kfree(max3421_hcd->rx);
--		if (max3421_hcd->spi_thread)
-+		if (!IS_ERR_OR_NULL(max3421_hcd->spi_thread))
- 			kthread_stop(max3421_hcd->spi_thread);
- 		usb_put_hcd(hcd);
- 	}
+diff --git a/drivers/devfreq/mtk-cci-devfreq.c b/drivers/devfreq/mtk-cci-devfreq.c
+index 22fe9e631f8a..5730076846e1 100644
+--- a/drivers/devfreq/mtk-cci-devfreq.c
++++ b/drivers/devfreq/mtk-cci-devfreq.c
+@@ -386,7 +386,8 @@ static int mtk_ccifreq_probe(struct platform_device *pdev)
+ out_free_resources:
+ 	if (regulator_is_enabled(drv->proc_reg))
+ 		regulator_disable(drv->proc_reg);
+-	if (drv->sram_reg && regulator_is_enabled(drv->sram_reg))
++	if (!IS_ERR_OR_NULL(drv->sram_reg) &&
++	    regulator_is_enabled(drv->sram_reg))
+ 		regulator_disable(drv->sram_reg);
+ 
+ 	return ret;
 -- 
 2.47.2
 
