@@ -1,65 +1,63 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A5C2517B9;
-	Fri,  8 Aug 2025 10:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDC0227E95;
+	Fri,  8 Aug 2025 10:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754650225; cv=none; b=SknRe97FhwaefGNWjzKQ1kgKO3Icqd5+AWAuDyqhl/V4WICltjB3nHLH/+Ic//MhwUQCUQ8/aCPKRg/ne1XB0CcWLYhXtijGq4yviO6FSauvxf/kOgNvw7L9m2z2wOfI+xkOPT6Z6zSIY9Ifn+2REYZWoJSfaSaQzXKL0PcPIZQ=
+	t=1754650445; cv=none; b=jwtmtRPt/Ixj8evyJUvJ9pt7UYojXOptqv9qPXkv8tlWjfCNAQ4ZWQJZu14rNX5npfa9AJaYk5s/Yto4QOj7e08fV1MCF1IfPi5+S4xFMtTE+9yzkNaXPtlwIPvKHp7nOGQASsGEr46ccPskX4O7h2nzvDU2/j9uzi1fk3Tth3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754650225; c=relaxed/simple;
-	bh=EoN3kO7fVy3vEd4SHR4Fx9t2iMWtCk8xE+8jgDc+268=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WclWzx8q+F/AzyGLUaNCx3chxVX8aRX5+1VeMEJvipmRz+RIZUuHWKVlO0yQd8Y7qYUxq5/41iqB2tWq9sQyP/Tg8pZerWdfeSyPnNzqN5Su9XqgJsvlXTBvh0roEgxFU8DGpBFed4C9Q3O5NC1RRXseXKXxd/9mCO+Qr1HLEtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXEbIhIa; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1754650445; c=relaxed/simple;
+	bh=lnVlmRUuumBXjFDMqsZCaql8rzu778J/CcpHymusD+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gHFOLsGDFzwKKRjFQK1qYQmQEoNVYnN89O6DuMHV4+qRaX+ImBaAtACW6fj/xEtLPd1v9rkNKo215EB93VJdSQN7auj48VWvdJn/3JJNraUqzCFvf3Z7BsYj4tEKXYd+tSJ+TjSNZWmavZjbfaPQYqADagIXHuvHlQ8z1hm3D74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipXnzS27; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXEbIhIa"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-459ddf9019cso7172595e9.0;
-        Fri, 08 Aug 2025 03:50:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipXnzS27"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b7920354f9so1618615f8f.2;
+        Fri, 08 Aug 2025 03:54:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754650222; x=1755255022; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754650442; x=1755255242; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYNOgvNe5IUkFxn9KdzMZHHgW5dfYZKYrJHgIYaTBZY=;
-        b=eXEbIhIaNtnaoivfzleKStb4yRxmc6wvCbKCuBk8a/SgxfJhMbetZepfPh6zX/Y24Z
-         dUpdQrvHU6JotGHJVUNj0vAjfRH2OIUGaJMzUunVsvQjjULTC4tfYyw7Tu1/vMRenb5S
-         DDGyVegWccVM3N4g15PY+KLopIwqN3DHbTIdXgD5G0S2fuFzIFCe7qrHMgkRyqut2Mjv
-         vghr0elYgyhVBwDTETGlNFnuHbzklpKqQYdRxe1cZmtYh3WN0ycdBO+husbCX1YmMlZB
-         Nv4D6MpOgj7hJZksgiXTfIE6K3JmrxYlBy6QS7cXw0LIW24IDgnOwR9hIknVoR/JUpvk
-         SdPw==
+        bh=qMqIIfGgn6miB0zobtsFUkQvM4z3NfFxewv7fUWGHOg=;
+        b=ipXnzS27bQE5AQPa4Ac+bR+eyKxCqVCQ+iJfgR/fM1tvNiKsSHBUblvMBKOTxGeAL3
+         6WWEag7mcR/84Sf5ZW2QLjlCjlrI510Wt2UIOjw7z14BiXsAX8yzmoRDEjnrpsvDLMYp
+         E1uzLrZSF+/N7WUuebbelL7ns+O2polfAnkMQoZCoxW3V8vQjP3A/wXoX9iLKHQkznoA
+         p3y5vO/9uMUghc0zb7bAw3Kce8N75xBMBEtlx6szE+raPRnggZDbhh8h7GKQJXQh/7Y7
+         dV7TpAc9SDsMTbWmg9b6/irY1tn/jjKvYFXsoXLufvmnhAQwhe1cxVbO2sZ0PFkMbQ78
+         pm4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754650222; x=1755255022;
+        d=1e100.net; s=20230601; t=1754650442; x=1755255242;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PYNOgvNe5IUkFxn9KdzMZHHgW5dfYZKYrJHgIYaTBZY=;
-        b=WrZPxOryhZLg+49+wPj2RluAnT8JeOvOdi2KfKyH/gLfToHQNCL+UTKRGPl8Rey97u
-         58ArDv7R67Icv3R9wxZLOq3Y02CaduE8GN8VEahbMDGzOzZAIa0wQV3KFkpHE810541f
-         lKddhadtA3K/NDEyUhR9tPebFnksZ2dx7CnJTZQ6+5469dbwVWEYWmV0hcBzxdLccgwF
-         B7ZoS0TkWTVa0dbEctI+euXfnpoVl9dwQBIhPF3frHpLUGKMLx+hTLP+gj03LQ+E5W9I
-         DqpEMK2+hjTbD3OnXEKG8iq3WM33kBfrrB7PSsHJJDs7Q6rbDlzXlYkUyhw3GSZj/XhH
-         ZT6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUhDDYWa3LOWkMrtFShCSHKslTmsAuteJXjZ35jVMICP3WCiUlNKX8qsEzH036cFnsyXcLlz9T3qSRe5eQ=@vger.kernel.org, AJvYcCUiHcUfUiSXx7O6O8xeAus3ilnmJOPqA2QSacZ/cVl59ZXH+EuIkWvEMJeC2ZgwWtb+bSCQ+sEtwY2RQY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBQJjO+2PxHFC7pa7x6mrlLVbmMZZpwCUhDATW5miLhCB4v4DW
-	iM+PByF25w+LE043xq18KGcgG75kvmuUUNetFmyX0kA1Ghfrm9nXWTTV
-X-Gm-Gg: ASbGncumY823i1fsL7/izV6aUHSC2hGHW9HZ3RwzOHth8B/O2BH1ndU5WTwlIxdsMvO
-	Md7+4dktAyjdTjaVI4K3QXofM0mMu4QGydckBe2DmQP013RcRmSl/+1LEnfDQUOBNxc3goAC2me
-	DVeqn3li/LCw5Bu5PaVUpko8DXlHNFOntFwqDJd5Im/vtuTlt6KnAkqF9/AkwalaQsyzzQgluK7
-	pjxeu+cKvdiudJuBwCXTZdnYvtvpb2YRZxtJ7XmhW66ZvhXoyXqjZ63jJ1vva3UOfBjrHWhWY7k
-	hVuRcum/KA+k1PYs6JfgD2YQxaFKXI8kH2VokBdkXGm1Gp6NaobIpevuyVJ3wmgtCbXza1Zm/E2
-	wfZI8tC8kUJESKxfO8Tjv
-X-Google-Smtp-Source: AGHT+IFwRoGv1Ll/KfaPYKbADDMdH0G7m16y+moNJlRZirN3cYiwDmmegeTfTwl3GBg6z4JjhBEHdg==
-X-Received: by 2002:a05:600c:3111:b0:458:bfe1:4a8a with SMTP id 5b1f17b1804b1-459f4eb5d3amr24790665e9.14.1754650221362;
-        Fri, 08 Aug 2025 03:50:21 -0700 (PDT)
+        bh=qMqIIfGgn6miB0zobtsFUkQvM4z3NfFxewv7fUWGHOg=;
+        b=aVf1bodYbdrjqVaqCoZqGXnjsy3YeYHJ51EuLv197QplLGEPDHKc016YrtpquL3uTP
+         W5lWjTupJ3RCrNWpWs7xr0vsHqiNm4LKJU3aIQj575kw9Gz+GGr6FdE2csaxuU7xVvVa
+         K+Duu1NsHrsAN+rVpX+0qwsu7Vd8iLlca3BotGIBNMB5PP1c00jRrjQD5WPZJ727OZ7d
+         w7cRkZtPwuJet00f/bN+up0mak+L/Mmq+axCygvShURtIJpoAuzhQrBwHAjDeARS3HGi
+         RfPBxIJhKi1WIqakmB0ijSB0e803sJqoLpRMmawcK+QRz5hjma0MmycqQ+OdGKG395ND
+         TvVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQhfPhbG9GdbeeD7bZN6+wHPVFL/eJCeGZ9jUzVMdxv4XQs8+VC+s0hnDHrV4D9O9xgyw12/xuhoY9rFE=@vger.kernel.org, AJvYcCUk60ZaY9iwSfpyOsxl2Sc43wjj2StTUKhkL6qAdTn97UseJSmteXtWnMuRZ/bcsepPV0V5+NoRuoM1mTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi5zLEwnK3QbGpZA0JIbosrWdlXorzZzukd08m8F88kzJoTtLW
+	g9pajpG7jOD5TTFm1QNgZIOIe6M6NsboXZdNg6TBltK43Sv6MkavOiRTSPuWdIIvKKD+Gw==
+X-Gm-Gg: ASbGncs6tusJtgEvIRu5ZQpzmswqCTXXHMi++GqvJL28r8flMMhzsp93ypbJs45jjI2
+	7FS+XBSle0KVrj8myn6SCAL8605Ffs8x1WoxAGzDrvwTxWtTjxpbzomgghOBPk1fbYFDlv2WdT1
+	1j5qU0eZQpCBgNMmoaDTnwso3RLD4dCsBSh2OwJAGQUv4bpvz6/l/fuo/UZvRY77+KYyAw8CJjj
+	V4zp/cxgfhVNKmVv80duSHVd1VPAkUAaVfU4lvgoLUx1xuDquKtmsCA56f5bepy392aMKWsb9Cf
+	pUPmF+7vAWAvBdbqcblBScbc8bOypplWsyLQDjH93i9h2z1th/9dWJwcJ10M89jAz02b4KXrJqo
+	pte3Obypnj2ol6A6dyvHQ
+X-Google-Smtp-Source: AGHT+IG2qUBo7DwH1oxPokpOfFJVSUkPFi0bV2hgL3Hre/p0CbUqcKb4SWB8ggHg1jAKJzCAcNy5YA==
+X-Received: by 2002:a05:6000:1785:b0:3b8:d16a:a4a5 with SMTP id ffacd0b85a97d-3b900905a8amr2477013f8f.0.1754650442478;
+        Fri, 08 Aug 2025 03:54:02 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458b4f9e952sm270900175e9.9.2025.08.08.03.50.20
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3b95f4sm29760042f8f.23.2025.08.08.03.54.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 03:50:21 -0700 (PDT)
+        Fri, 08 Aug 2025 03:54:02 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
+To: Kiseok Jo <kiseok.jo@irondevice.com>,
 	Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
 	Jaroslav Kysela <perex@perex.cz>,
@@ -67,9 +65,9 @@ To: Shenghao Ding <shenghao-ding@ti.com>,
 	linux-sound@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ASoC: tas2781: Fix spelling mistake "dismatch" -> "mismatch"
-Date: Fri,  8 Aug 2025 11:49:43 +0100
-Message-ID: <20250808104943.829668-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] ASoC: codec: sma1307: replace spelling mistake with new error message
+Date: Fri,  8 Aug 2025 11:53:24 +0100
+Message-ID: <20250808105324.829883-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -80,27 +78,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake (or neologism of dis and match) in a
-dev_err message. Fix it.
+There is a spelling mistake in a failure message, replace the
+message with something a little more meaningful.
 
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- sound/soc/codecs/tas2781-i2c.c | 2 +-
+ sound/soc/codecs/sma1307.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index 9f4d965a1335..8e7e45c046b8 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -1480,7 +1480,7 @@ static ssize_t acoustic_ctl_write(struct file *file,
- 		return PTR_ERR(src);
+diff --git a/sound/soc/codecs/sma1307.c b/sound/soc/codecs/sma1307.c
+index b3d401ada176..6a601e7134ea 100644
+--- a/sound/soc/codecs/sma1307.c
++++ b/sound/soc/codecs/sma1307.c
+@@ -1749,7 +1749,7 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
+ 	       sma1307->set.header_size * sizeof(int));
  
- 	if (src[0] > max_pkg_len && src[0] != count) {
--		dev_err(priv->dev, "pkg(%u), max(%u), count(%u) dismatch.\n",
-+		dev_err(priv->dev, "pkg(%u), max(%u), count(%u) mismatch.\n",
- 			src[0], max_pkg_len, (unsigned int)count);
- 		ret = 0;
- 		goto exit;
+ 	if ((sma1307->set.checksum >> 8) != SMA1307_SETTING_CHECKSUM) {
+-		dev_err(sma1307->dev, "%s: failed by dismatch \"%s\"\n",
++		dev_err(sma1307->dev, "%s: checksum failed \"%s\"\n",
+ 			__func__, setting_file);
+ 		sma1307->set.status = false;
+ 		return;
 -- 
 2.50.1
 
