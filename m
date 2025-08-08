@@ -1,95 +1,104 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A871FDD;
-	Thu,  7 Aug 2025 21:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B016D5695;
+	Fri,  8 Aug 2025 10:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754602274; cv=none; b=A7IkVGtOtB21+CL9ON80BZucJKbFR9SoD7ITwatUQDqV1+QpOnMrjgbFYArazIifLkZ4hu0vxK6mFR2o8iLI3TEleV+a+dxOw8orjir4Zl0LXLvQRTSMs0+YlVoUfry4AQiEKUKr3TxnMc61QqLK032K6t5FWyr7D6FXWlCFTTU=
+	t=1754650023; cv=none; b=e/Idt7Zsjt7l04F8EJbwF0Vwein81EXjOeDiAMAY95ddJCbg1NjBqTA20yLsyiOaColNIYeNMCQeI0OiPaE+APdIy8kTKD8OaxjXCY77+jXYbasFbgzsuXWe/1qrJNt8kbCXPTvBGjCSM5iCwNVpoJVSIK1/wXIjhn4D8YoD6zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754602274; c=relaxed/simple;
-	bh=P7WK9QE7p5flsTIPnQzAvPVoV2lI06faOeXSYMAGWwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qoOEfr3mCkwezwVLXRKgn4bF+MopKWOEDXB044AL3Z2uu1Mh67P62rIKZQTdvfQUCvYu0g5WepDIOVwcsnlagl8zDu8dULYMG6MI8RnAwQeENlfyyYDr7200tMLGRgsRtfjoKDF64YQrHalbbtvIrGx/HSeeVSvIax7anGha0K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5vEf8hV; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1754650023; c=relaxed/simple;
+	bh=3ibipzUySSqHmtKXTWb4ha0TMTGI734ck1ABPHtXVpg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jo1b8+wE/djh13uav5wv4flcS+DoHJpiAmJsHgOADmplfmNxxp3zQHfbGPNvsu38G2uVBbAwfbp3r0pPNa0jMFjWtKfTO7Od0/rbcrTKvZyOwyaf9BiG6/BFleia3dSL4hlVerUTAbah57Q27RsTA2CJ5+Or5b06gAwp5CSwacI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qsb+8VRk; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5vEf8hV"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso2544675a12.1;
-        Thu, 07 Aug 2025 14:31:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qsb+8VRk"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b8de6f7556so1052541f8f.1;
+        Fri, 08 Aug 2025 03:47:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754602271; x=1755207071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wgfxSNLXY/uBMR5oXfd5TU83h05FDRu/Eprncb9W5vM=;
-        b=E5vEf8hV6CqiOSsoaDdUbgpM9QA0cved7UIccFayolC++gsVfaJzvxjHATP+8w13Rp
-         Kaou7LG28beaFIs8TVDSh7q0YkXwh6NJLNQLCXYF1VYJGJh4thsipvwiVNj4imJkFLjY
-         mcWtaFAB4Ldb1T2FD+k6/Ej8eyUk2Z1Ph9H+0jGvcJzkjm9x2pLC8AvONGPSKz+yTOZM
-         kAyDnCptgxKiiS+2zeowdqd6ag+fZc4bp6LLe5qNME7jCwBZ+Gp1fr4XWBXtTDomYeti
-         cInqOQ4bcQFj5HDdHJLo01hX6VQFZBdInvBJbqxs7q1q7mUmlEFESQ7sLR4zLqAK47GV
-         7WIQ==
+        d=gmail.com; s=20230601; t=1754650020; x=1755254820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9FTG6NMUrOc/WW0podSvrB6jKWxep/Y5whSGifB9nMY=;
+        b=Qsb+8VRkpCNf9AtoVkKdy1FK/V7E3opyx45Cdjbn/heWk+gPU4Hq+6qstNVrmKZFTu
+         cpOAzd+8nPK2Xb2+ek8cAA1u65KcwI2qotpwTlr8uuFy8ztVRdbCGUKbFS6rUg/rKNO7
+         CmBmhJWxLbafy0uBuXvC8QlfbzJmtO1jlDiLyi+B97d46R9OS7C5vtFyd9g9KsqYG3mL
+         rW8PRGR706Hxh+EjDhiXsytrQSUScNkTth3zheXKhJOhXSahxHnLxJm5lJ36oC0+2zYW
+         8hW7Fchxp/2qOdujjBINHbkMzgeZYgZviuUDCG3CJbqrDK2RMDzzLyBu7BR71HBzhBFr
+         cYIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754602271; x=1755207071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wgfxSNLXY/uBMR5oXfd5TU83h05FDRu/Eprncb9W5vM=;
-        b=UCky9s+qWuFGEH6XnEUES/KyAVehKXvPeSYsm5nHTXM7BSjjzfmfEHv0ssOMqoSVg5
-         cixHLju5oJdrdqyNHBBi0m7tDt7zyVTXKizINS5dcA0EzrlvWiNvGzB/3pgzo8sr07RX
-         paL26QNLkJSzO/EOXMaZJ4ZO+Oz90GimE76AWBg8LFDZJS4sabKcF9vWyC5xn/Q8+/HH
-         88QXuLfFy/et6/EpN0pBvm1OOq+46UueatGPSvfNg5rHq0qLeXSI330CoepPHlimp2CR
-         UJGtnsIMt6xYfC3Uen6HWxrt8t3MckZWAjhmXoIgPqUBNv56p1TGmfbhdQC9Vzzu9bl9
-         l/yw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGbWE7UWYIzwBG0J16wpX/a2Ydg+aTH3iQ6Zij2o+ANkdo+ixWJOF+CLrNohla9oDS8cMZiePylCBDaApCef8=@vger.kernel.org, AJvYcCWT3u+NzIZdqvHZPduxZnd5fU4qvByuO7RLYKfGYCO3fXiGq9yW5jlKUw4HM2Pvo/4pu/P0Ady/KkqKU2OC@vger.kernel.org, AJvYcCXZKt8/yAUCtA0esQ9rGoXJkGgs31/qtJR0vKQ50VuTwRG1Q+DDxD7myFr4T5/GppGUd1ByJVM26I/z8xN9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfVX0HAioPxDokGIlf7MYf+MMOSIgk0aSZ80sibM0TEDDSlqPF
-	T9ekVvRAZJPap4Pvko34+d5S0sO/XJBTz1wqnajg+Z1y9b80gngTnxaYZm2aG4aM6c7rJ0gfalZ
-	NABNup9Z0zvYLdUyN3VVeK646q1lmcx9CnODNJJQ=
-X-Gm-Gg: ASbGncuZ5ITbAMS4XWnLr2fkyuwJe81fy1BzrT/BDSBNge2SjThDYdKhb2f481TE47Q
-	Ozn06HXK2i1ZOrXcEGdO2YTjpuwkl9NApqDT+zZosOuw19nWdiRgmF4yhZuCDDXZdS+oRqZ9RFZ
-	rXK03JkZqDJD1Uk8GLKa1yqVhQEzkDQj+WIFt/eixAvZ67s20WPWMoYYLZJiJhOtJ0aBXyxpPYH
-	UcyFxaGFczqCIvnq4Ifc+1vtWSIj9OEAlqJ5V8ixi35baU/kL1F
-X-Google-Smtp-Source: AGHT+IH1OSj1D0U+HcwnAVYgXw1ssRAWe4/Kyi1Y+QVMHvDklmj5x/83T5iWCB/sL/xFR/od2I9UmItDgFszJEXNe1k=
-X-Received: by 2002:a17:907:7fa4:b0:aec:76c6:6ef6 with SMTP id
- a640c23a62f3a-af9c6525a10mr32605066b.50.1754602270577; Thu, 07 Aug 2025
- 14:31:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754650020; x=1755254820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9FTG6NMUrOc/WW0podSvrB6jKWxep/Y5whSGifB9nMY=;
+        b=uYxw4QfigttdQ5YZuwYtl1l8d9LFQjL6P3YNN7qJXoQdvEIMsF8x7DI/63Jm+ZSmrZ
+         XT1Sei4lQAR2Ia7IgBbvIo3jALW4UwzEvKADyNVEHw2q5HbigpYDOt8XrcvQxUTvDYpm
+         YU2yntoLk8ZvKoUi4XJD4ABs07xAYQtSgy3biXwO8JF7f9YBoaoaE+OywUoUapfdR4aV
+         g+8lHkO1aFGlZWLa1OYwGIp/QrKkKkjdgFbrasEpkKEMfEClyFISTR0rTe1ISTqRxOEd
+         2f+WbAac+vZ8SEkffhLit3FrmOU/HDpLBq8dkpjaGtJ48HSH2cZ9wTzwyzCG44FzMORZ
+         6Ecg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtnFWxFWnH93LyKUBrVA9snMLf7kpRmC5O1ZcDYI9Y1luGhyPYDvjfP7JvJvMDZRdBmQHInQ3Eu/ZU2Xw=@vger.kernel.org, AJvYcCWWjtlos3j1O0vRR8F4VAy5zX7Gmnv4M0sirp55NUzzcQ4KyipbnKNDnLWCZ2RuR4GiHaIb8gVmBlNIucM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwgqDAgHgE4TVYWNRScroSXdl1Hfkv1IF/a8hZOwDgE3kSc2qC
+	L2e1w4U8nATc8zKaecDg3SDOqKifOb422KSlb2c6NfNZ7OeJk0XXGKjmYzCK5m0wcDXWmw==
+X-Gm-Gg: ASbGncsrVZgcTb6HYQoSqTLAwGyGLY74EuL+MfN3XqbWaZBkvgDtOeXYqBcpALuJLrD
+	0am3sY5AunRLCTPls6aEe6qm+brz8V7RYAzlx2rSYwqDQ5WZHx2rVOObWLyoOboeNae/GdZQ0Wp
+	Pk87ZCzmK8Wc574O00FuahsULMgURaeJHdJxx+PfMHCMY7XujTTOTFMNMQmlto7ZsFpFw3UAdeb
+	MEOQIFAJeZ6m2pNeQE6NPtI963Nrzxu4sJA5z8x+QyeXIH21nHKPPQWjvyTT3ogE/Y9hQ83sV7U
+	t6YDtCENAwjZDhqJbSpjw/6DcWNB/lJmz/wn4hlPraoa4R2aNPMCMbZb0cwlxjdCKuGP5lQCGcT
+	LOHbaYaI7nBl4VX8I5ssT
+X-Google-Smtp-Source: AGHT+IEYUwqFOg/SdjZy3Bry6MSmnKWOEJY2K+fn9aIueqnuNBAKZ+hlmkh9LLEtXckFUPI6/qyInA==
+X-Received: by 2002:a05:6000:290a:b0:3b8:fa8c:f1b3 with SMTP id ffacd0b85a97d-3b900b55f36mr2067409f8f.53.1754650019887;
+        Fri, 08 Aug 2025 03:46:59 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c489e81sm30290727f8f.68.2025.08.08.03.46.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Aug 2025 03:46:59 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shenghao Ding <shenghao-ding@ti.com>,
+	Kevin Lu <kevin-lu@ti.com>,
+	Baojun Xu <baojun.xu@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ALSA: hda: Fix spelling mistake "dismatch" -> "mismatch"
+Date: Fri,  8 Aug 2025 11:46:21 +0100
+Message-ID: <20250808104621.829448-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aJTMPZiKqeXSE-KM@stanley.mountain>
-In-Reply-To: <aJTMPZiKqeXSE-KM@stanley.mountain>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 7 Aug 2025 23:30:34 +0200
-X-Gm-Features: Ac12FXwNfnuNMdq6_9-Y0wRL6ipI8DXi0g1PoohCNxW0ckNm3vyw9lpt_0qVtrA
-Message-ID: <CAHp75VcVA+yARTBvcOiKYdhgxtS_YQ82Xd-R4o98OTGp167ZQw@mail.gmail.com>
-Subject: Re: [PATCH] serial: max310x: Add error checking in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Cosmin Tanislav <cosmin.tanislav@analog.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 7, 2025 at 5:54=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> Check if devm_i2c_new_dummy_device() fails.
+There is a spelling mistake (or neologism of dis and match) in a
+dev_err message. Fix it.
 
-...
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->                 port_client =3D devm_i2c_new_dummy_device(&client->dev,
->                                                         client->adapter,
->                                                         port_addr);
-> +               if (IS_ERR(port_client))
-> +                       return PTR_ERR(port_client);
+diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+index 45ac5e41bd4f..e1d60da50897 100644
+--- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
++++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+@@ -356,7 +356,7 @@ static int tas2563_save_calibration(struct tas2781_hda *h)
+ 	}
+ 
+ 	if (cd->total_sz != offset) {
+-		dev_err(p->dev, "%s: tot_size(%lu) and offset(%u) dismatch\n",
++		dev_err(p->dev, "%s: tot_size(%lu) and offset(%u) mismatch\n",
+ 			__func__, cd->total_sz, offset);
+ 		return -EINVAL;
+ 	}
+-- 
+2.50.1
 
-I'm wondering if this is indeed a critical error in this case, but okay.
-
---=20
-With Best Regards,
-Andy Shevchenko
