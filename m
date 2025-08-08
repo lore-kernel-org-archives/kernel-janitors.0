@@ -1,68 +1,75 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A8823535A;
-	Fri,  8 Aug 2025 10:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03A5275873;
+	Fri,  8 Aug 2025 11:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754650713; cv=none; b=YSRFyu8TaDuAY3y4NIPfXLJOlAEUl4BBblHbx48U67SP/wNfRV6J3nPgct55SvN9wvtaC0Zow9OP9ZodPOOBgnjyLr94SxkDznvk6thioorKiAtyKe5nUiwbrcFakVGl8qgEVkizNThHFsAlQmiuwZPg6aNV+Lao8qC/E4Cb96o=
+	t=1754652341; cv=none; b=LeELd0HBdw0d3XH+lieB0TAT8ZWD/GvU25ULkLuaKs08peOcK0COUC9VPiUURLX/R6y74lR67G0UugXoFVevovWID2zZUvx+JVv7i2UYkZVdIXiZe2/n3BS+iItfKMrYMWTLNijmguQIsLy+smvx2Sn/3v2+POFNbmeCbhgIfAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754650713; c=relaxed/simple;
-	bh=YopiqIAAA3cabfm3Wt1fjyPny2SukpHchgZ3pD4S/64=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eFZr6KNN5UqFexOj10cB5Ds9YKuz023ed+JVet4vf78CMfGq12ecOWkz2d+vXrXfgjP+4jXB58WiEHBuXrUzWyss2s+kkV3jTLyW813kXNPh//+e59E0oAW7dmTUqjjMmH/51pejsEQAdr2O/070KVx78NbKVFFrqc51ji1eqLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kGZ+NVPb; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1754652341; c=relaxed/simple;
+	bh=jmY2d+TVbd58EY/lRBkBim9bE6y5cp6A+e45rmxMhE4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gLAW/mMkrvPex6cK5OYUlUOFLQh25t+LH/j2Me46tQTdLm2g5uTnyokBTb30GTINQqLq6qOXiu/A4zTfc7SmHHER0l7JDhVleqPBfuyW/+MwjoD3L1t0o/ShWTlEx5k44YGKxknwZGleCD50MAKFfqjx0rnx07ZCLGY8Vqc0Yys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iS+PFyCA; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGZ+NVPb"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-459ddf8acf1so17288895e9.0;
-        Fri, 08 Aug 2025 03:58:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iS+PFyCA"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b78b2c6ecfso1127037f8f.0;
+        Fri, 08 Aug 2025 04:25:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754650709; x=1755255509; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754652337; x=1755257137; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+d6t8XzLh8MzpLApjDXA2yMYEP8+HgsLVFO8WJw3LUE=;
-        b=kGZ+NVPbNQf2EJVIoDstF9JERKu0GYi2HxB4f6eTtd79Pf5Nz7Rmmd2Ua2FHhKH+nc
-         5XLcDcwwA/KWW8kPCOYQe/gNeMkqb19r9dkqzBwTxP6F4Fj0L+kCh75cex0tl4lp2A+1
-         /ofBWtT+HZlXAb6mojc4aTrUGmza96S/MLReQ+1EDZ4pXyv0asTVW9uggwUoCIDRcKeq
-         wKGqCHKWUAawuh7mg4v3pRDBNzy5JwWek4dN+nvdoX59JsdroG7hOEN+MT0AwCUDVvDt
-         l/61bK4yt1z9G94pYemMcWP60nmzFjBpBG/wq6gz20pC/Sf7IYV5bjRtTgD2Z0FRpr9s
-         EOCw==
+        bh=H/uZdIWNOl4/K2KiBu5RjAyid6lvEDY84VsOS2Ck1o4=;
+        b=iS+PFyCA2ScJIQMmrC9f1Fz86rROBfXVA+DoJPKTPaAP2qeZ2cCRIDMDLUrvYTa33G
+         CUnfYrWuEnmHiZxgT6Pghx3m9GY3qVuSjg+WwjdkbleBycvZgbGOgS0Q9Vp4pb9XcLZx
+         R9prGbEKOYU0uG2kGvqwqe0RoVRcb5R3UOrdOlO/4rSh7gV/JbyUEiOLs056ifISAPjm
+         g92SBrSH650mUznW5Ql1BJtLzxiutnG5ozNiTj1klXl5uV0BJSUQk1GCM6UQ3u4Jdln5
+         FbN7i+HLzD2HaMC+bzHc0AIF/X30F01Gq+NNabG9rande3y2XwCqQpwWAVdYHmK11I44
+         RWgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754650709; x=1755255509;
+        d=1e100.net; s=20230601; t=1754652337; x=1755257137;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+d6t8XzLh8MzpLApjDXA2yMYEP8+HgsLVFO8WJw3LUE=;
-        b=nnK5EYnMNq1go20pWQTe2EUvdCgoMe2aew/6RQZHfZCkjdCj3MBvSdR/RXhqtekZHN
-         7O7M7O0EnwVzWwu9aw5Tg+0l2ZpQgM2xCJTqIQYLvIb5Tmkx+zLY0ff1vqQFiqtKxEE0
-         G/y8kjBYO6Vn258aTt4rdR7uzveD4ePwfbbYNV6SyalF88jaXrhK3ym7BeEj4uSULKyU
-         R0UTjNx9cIv1HUozkcsYW95g4WX/yEsFA4yA0+HKIkuaUlRWKpgYihuoQptuv+J0eM66
-         V30Jg/uNhOOMo0vtb8K9hktLiK1xjmyUWswsjOWSsxF1xQ+4MqhjKv7xY/Ngz+L8yDLL
-         QHMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXs3xZFIL2Q3WTgC4O/4uQWshJwrjZAxUQd7u2M7ZDRyJPTfRPQrCWgqYmlMEmcEFgARV793FM9ExqA8Tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpkhtsDCC04pvuMSn1zb2KT2lL0o2kjAX9WAj8z9khqXDhlwsU
-	vI4cuIrSx6/zq0LjsPBkGr58hAwIEc+rRsxusnG67dNEGkVa9GKLnlPK
-X-Gm-Gg: ASbGncvfJefx113qT+Q7mlGrN2J7eAHs2fncDus/a/vR+smXZa0HNps1JGDHWMLs9/e
-	eI9GfxPKVYMcog+uSA3vq3YU9g3Gz9jVbQG9v9iXH8vxey5PyZ9pNlJPQ4yAXhQrnLwePAgX8RD
-	qyB/MugCPX8B/P4fSItDjQv1uuAcM6KIH/MoT0+uMcjk6eXRc7W4YX8dZnFwzSiggH6/AVWcyDK
-	4K2Qc3zKSEqD6F0dHnXyf/2Xysp+P8Bx7wXG/rQ6JzNrtMkWN5lsCw350FNyCE48rzukZ7l0x0r
-	f375c2FOCQsSHn7AZxn/Y3odzJoaIx4SrK6KEmsuMlVW1cagQrktLMBLU9QyybRJhEC46+ZBKPs
-	cbakzdiMTQfK8t18G9TJR
-X-Google-Smtp-Source: AGHT+IEzE4zbs8Y8E+efTkUJpNYIZAwXwchyLjYwCvGqsPN5J20IQiBX+gs9CsAXsQQxjE5abHkVjQ==
-X-Received: by 2002:a05:6000:2c01:b0:3b7:6828:5f71 with SMTP id ffacd0b85a97d-3b900b449dfmr2171522f8f.9.1754650709426;
-        Fri, 08 Aug 2025 03:58:29 -0700 (PDT)
+        bh=H/uZdIWNOl4/K2KiBu5RjAyid6lvEDY84VsOS2Ck1o4=;
+        b=IYmFONdTLeKj29XZHsiB+yWNaAPfKiLgv74+fJfiHKIRu9FmVJ17FsXCqS+lgXv8+6
+         AodeFa8EnhIDzCFyqgISNq46xlyLsc/rXxJEW/NuFdC05l95jSPcDQc6qkyJiH0Nx5T/
+         GukqZhfcGho72dvIzGSJAlWwLhq45ckhOfX9H+CxOKvZKayBIuvkF70pEyaGHd0XaP8n
+         0ier56a+Ij4znK2LQjGyBKc8spWWdHI5YObBYhH9yjL2+l+FaL5tMqCi5VfzqfhJLjNw
+         PR8xiFAJs4wa4PcHXtN4Hn3gJgRpwTr9ra4RUQCRf88/LO6GWp26SQZnhhZJTqdzJ61t
+         et5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWyc2f1EDeK898ugS0tiRJVl265UyB3Ot5Vew2cT7s3lIb2T70tQNC64cTu1hbkHsqrVW6YKeH/Yk/LW00=@vger.kernel.org, AJvYcCXmJo39Kx5Z9v1c7f6Y87X84xNnKBCsJNQ+rRR/hJTKf+KROstAZ0CmT2eFmQCaqs/8pdUKD9yFIm2gPg7fGh1S@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWpp1BMBYE+ezU4+1ufszeRXCotUC78bhJILoT1hvGRUg25nuj
+	hR976c0VvELXZjPqJJPSQMjPZA2C5Ei2lIfMV6AA8gS/ZcLfq9s1+elD
+X-Gm-Gg: ASbGncv6NdaPWX/PJzmCbf31ltlp79k0zY0SxqH1Qln/djFxEx5Ac+DgiNR7W22S/PZ
+	rc2yAK1GMbD+6K2PBvrfwuNk00WBaWkjlnbu28l8n2UX4XYYlzKb1a/zzUczd9lMpIQseBo6IK5
+	J08hoU5D+vMplEI3cmjJGdSofmdnImIiV/uZFvMwni5fR+q/l00O2Em4Qqoaoc/xfdTGnxm47fI
+	OIyCY47fXAb3QWZYEJBP+WEKuUdcmUAXEaXv9xZVT6mOw3R3yZIqUFQhsStDJxTd4AxJYJfhc+g
+	W0e+jDgxFuI+XqM69QtzVKr9mdyfVeyGhCuQmPkgxZAZ6m8ZZqXRnDkkQCO5phI1zelTpsq5LoD
+	H/cSBeh9WefzhMUryzsJR
+X-Google-Smtp-Source: AGHT+IERetu6m3PsFoXoBwGgw08hFG2wpn/20tS6HlTFkIlZpCvLwaIGhv4arG8j5wADrJYmK69CbA==
+X-Received: by 2002:a05:6000:2006:b0:3a3:63d3:369a with SMTP id ffacd0b85a97d-3b900b37afamr2314380f8f.25.1754652336884;
+        Fri, 08 Aug 2025 04:25:36 -0700 (PDT)
 Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459e5b84674sm141343945e9.30.2025.08.08.03.58.29
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459e5d0b1afsm127832045e9.26.2025.08.08.04.25.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Aug 2025 03:58:29 -0700 (PDT)
+        Fri, 08 Aug 2025 04:25:36 -0700 (PDT)
 From: Colin Ian King <colin.i.king@gmail.com>
-To: Huisong Li <lihuisong@huawei.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Shuah Khan <shuah@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-kselftest@vger.kernel.org
 Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: hisilicon: kunpeng_hccs: Fix spelling mistake "decrese" -> "decrease"
-Date: Fri,  8 Aug 2025 11:57:51 +0100
-Message-ID: <20250808105751.830113-1-colin.i.king@gmail.com>
+Subject: [PATCH][next] selftests/futex: Fix help test for option -g
+Date: Fri,  8 Aug 2025 12:24:58 +0100
+Message-ID: <20250808112458.831212-1-colin.i.king@gmail.com>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
@@ -73,26 +80,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There is a spelling mistake in a dev_err message. Fix it.
+Currently the help text for the -g option contains a spelling
+mistake, a space before a \n and is a little hard to comprehend.
+Fix it.
 
+Fixes: cda95faef7bc ("selftests/futex: Add futex_priv_hash")
 Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/soc/hisilicon/kunpeng_hccs.c | 2 +-
+ tools/testing/selftests/futex/functional/futex_priv_hash.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
-index 65ff45fdcac7..006fec47ea10 100644
---- a/drivers/soc/hisilicon/kunpeng_hccs.c
-+++ b/drivers/soc/hisilicon/kunpeng_hccs.c
-@@ -1464,7 +1464,7 @@ static ssize_t dec_lane_of_type_store(struct kobject *kobj, struct kobj_attribut
- 		goto out;
- 	if (!all_in_idle) {
- 		ret = -EBUSY;
--		dev_err(hdev->dev, "please don't decrese lanes on high load with %s, ret = %d.\n",
-+		dev_err(hdev->dev, "please don't decrease lanes on high load with %s, ret = %d.\n",
- 			hccs_port_type_to_name(hdev, port_type), ret);
- 		goto out;
- 	}
+diff --git a/tools/testing/selftests/futex/functional/futex_priv_hash.c b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+index aea001ac4946..93c636d6bf80 100644
+--- a/tools/testing/selftests/futex/functional/futex_priv_hash.c
++++ b/tools/testing/selftests/futex/functional/futex_priv_hash.c
+@@ -132,7 +132,7 @@ static void usage(char *prog)
+ {
+ 	printf("Usage: %s\n", prog);
+ 	printf("  -c    Use color\n");
+-	printf("  -g    Test global hash instead intead local immutable \n");
++	printf("  -g    Test global hash instead of private hash\n");
+ 	printf("  -h    Display this help message\n");
+ 	printf("  -v L  Verbosity level: %d=QUIET %d=CRITICAL %d=INFO\n",
+ 	       VQUIET, VCRITICAL, VINFO);
 -- 
 2.50.1
 
