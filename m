@@ -1,93 +1,212 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic316-33.consmr.mail.gq1.yahoo.com (sonic316-33.consmr.mail.gq1.yahoo.com [98.137.69.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB78B1E51E1;
-	Fri,  8 Aug 2025 12:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A42F4F1
+	for <kernel-janitors@vger.kernel.org>; Fri,  8 Aug 2025 14:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754655029; cv=none; b=rZFDkcC16bdC3VqKdhdrxUdoBC82CgLcE2Vk3v+c2oGf3yxPmVHaRN15gt/Ws8iIdEBVmn0l6ftozRGNA+VMQDPiN3HKwoiLbWtu6YvOeRFQS/dSx8b/Z2lyE22QWde3a+2hGLlOkJBVeF67Awj+62GuKA+sQreNi40vMp2nT38=
+	t=1754662628; cv=none; b=VfrpBj6FIgVGNcF0btTYBvB0owq6DZuB9VS7JFoxCxLnPuvqCb+JsTVwKNiqk6aeguKH2I9oRqQtyfeKBc3MulHB2Ka+SSjwhrdLcF2D1s2ZQ8bTaTP2jeVI0opJNXAF1RJnOL4dEl36q0tKancqYNoRi3A9iPI50PVl+ZR362M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754655029; c=relaxed/simple;
-	bh=hp4rqAiFCt5lwwd25Hgflr1TBa/scWIpW6Aj/Q47xZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQRwUL+E19z69QqnfT/KFe3CqHYC2ULOXGO8aMoYWdV9YM9E9eYJOBjYX4J2Eph34nsQBrXQO6dnHlLRNny+NNnbul4btLZt9bO0UFraNz4+L/lUG2tFc9mC2Ju9iRy5sfiYEwFHR6vHdXsnipWv++2ePIxBNQZwMVgf75cQW8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QW/bLZ98; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754662628; c=relaxed/simple;
+	bh=EooGbwPs+v+2bHAWjdJXN5r3lizWAhjM5/u1waLqsHs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ffYLihXRAJZSIzHRBpJHWK1hJeMVVSiCmjfhkHKUXEL/wk8PcOT7Lj0y3LgJDAzs/J6Bi+ir57SozFUxrjLAnQxLA8gD3xqXyKBmQjpck7WD4mMJbmi2FwNJR1fHEpdBxeC1K+vJzIslAMejgfX1HpmpFcVo7s3UiuMRteLC10I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=LxXeliVt; arc=none smtp.client-ip=98.137.69.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QW/bLZ98"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDDFC4CEED;
-	Fri,  8 Aug 2025 12:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754655029;
-	bh=hp4rqAiFCt5lwwd25Hgflr1TBa/scWIpW6Aj/Q47xZg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QW/bLZ98labLEvtZ64TZa4BtaafaQTPq0BAzENHzPEBRm8ib5q5ADzEWfHrd+WXIg
-	 knEO6UyrH7NrX1fXgotpITtFeOblo7y5JpfWUSGJBT8q7fs8wbfo19ly2iUAUnEjgI
-	 v57Zm2XygywYmDYL424Celb4Z+RCBAl5T/9Z3vIIE4kkjvwz7es6F7kOE5vnHEn1+1
-	 YFcL5OgZlAzlCvBSH0FHIAF32PHs4wZbwRq3LBmG24MYsljwg8rZiraYtbWd1iz8HD
-	 nfAH03xnV2nmj4jYbbyWtd7Hhcc47bdfdk2q6rSUy45Lmts+9az8dXDWToxiiaSxRy
-	 9H60uLKbRnOzg==
-Date: Fri, 8 Aug 2025 13:10:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Colin King (gmail)" <colin.i.king@gmail.com>
-Cc: Kiseok Jo <kiseok.jo@irondevice.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ASoC: codec: sma1307: replace spelling mistake
- with new error message
-Message-ID: <91c874a0-5897-4019-ac35-e34187382061@sirena.org.uk>
-References: <20250808105324.829883-1-colin.i.king@gmail.com>
- <f646f36e-7835-415d-8da7-fc632c57e4e2@sirena.org.uk>
- <bb06d3bf-684b-4479-8b86-72aed622e453@gmail.com>
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="LxXeliVt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1754662626; bh=EooGbwPs+v+2bHAWjdJXN5r3lizWAhjM5/u1waLqsHs=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=LxXeliVtSj2yssAVJOIbqnQQB78lMg4TCOfFmJf1zNzRW8LygJklIi6cMSlggIM4pvkQkplDScf2UQWvQbUb6zOLhZkyqK534mBloar+NSyZQbW4cyhCNR1JfAC6YUeAUh2PkzQZ5ZGIOlvSG1Cn6msQYiHJqBuHh2dDo8j+XYFmL43NynFT/H9brFp1sJcez9JMI6BDjIM5KwG1FX/IXvPch7p4Ic0p2UfhHDUbWLbXhM6Aih7P8BebrszGL0kvKpQVeploeEqKOteUmHF+n/vLODfvUI25Z3Pu5krYS7Qha8zoMYRrL9V4LZNcj/UeBrhR9Fli/GHMZhuWw+ZsuA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754662626; bh=3C/jfPSzAk8xbByaVjE5nCRGHCx8kfF6PpREMUHIgPb=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=kJECfqkm9cpKBgnFJKwuvO5CDd0Asvtwrm5TMPCp4nt35jUGL8GnI6+cFnk4DQN8RV7AOF9Db3Q0pRGoqWBYOjCz+FWOauDqQD7++a2uGsUMEJzvn/+UZFUVwLAlLX9AC1+V/WxtDmkXmCW/ELJhJS9fXpHZvhOPFYIgMhoSIfFhEayg2NqLkyilxjbn3dVQHkz+LOTZZc5E0FgkBdUfW4wZL+dis7G4AVWzujo/XvlI4+dOHafi9Q3BmWGuVR9bvcrWhlSp3TIblWna1Gm4wjCNaTXojxeytfJO9H5KSSt+IHw1zJkuHzveqabJn6se+CcATMsD+BUFW2qi6UMiTg==
+X-YMail-OSG: Nar9BHYVM1mgAR3RdcPkbl9hdOVAdZ9Nhrgz8rsVznhI9FhmhfQ6pyZ8nsC745o
+ Cb3wWMdIJeOJEnG4A2pFKvqsw6tNoHXKUfqCoplZUKgFEI5nlf14FRrtJL_l_zbJC0w_rnEyVFy_
+ 9a2rho4kF1NCsTkkTS64.peNg2S_U6T1h9OT7rAuP0A8xRbC6AlR295TXJL_THnfeXSgLxBUmtVt
+ 5tzWg4CXSBDVDePDpk4Jx71kuva6s5FCuHUAXygvW1aCAw29_aSZc63.tTtzHdPtfZ2.qPgJ3r.c
+ vNx8pcJ.S1B06BDGvm2LynSRV0ihpDgM4G8lTnQ4VMKMF.Z2oXqHd8zOeMaHn9dqa8.8vpx1_41k
+ qaDIb6HKMdAsXrks5yIoVrQuOrsCt6GMU9mcrEacTbqcxRbe99x6pJcTsjCzpFGWOy_VfBuyPbB7
+ Yr.xsl97h5MPiFFNY2MHVaU2nBXz_GbPTiMSQkJ_HMRXyAMhByk6_OrzL.3hakfnhwYx8Ksg2wlt
+ 1oN5J0Hbv.QAQADMA2khjKgrn7LXbAL8B96JmXYzkA7bnPrYlPDEPxciK8eFsF92MT6ggqqRfFQk
+ YMsE6BZqwNIQJCklrfk3SaQSkEzW8lQ.iAMvuVUyfT3aK4oOOMn8CmLX7uWJm4bMAjNMfan0nrMK
+ LagnsAk.B8jyj.LqaD7oNqcCMMvgpKj6bMq5AkmqP5vgwGst0jNv0qwj4P7xhNUzWSJm2Ledz88k
+ xAA028UNeT0CkOeOi1GrCNxFz0dNFHzgxYAHUHH4lwquxp6gB1x8d5xTHkuGmkgF3KIaBHgvFv7p
+ c419xzd8_Bw8FylAyCWxczOhqK4xD_wigxrFMc8JkTZ8dChigObwMuI3Ds4nxxnoQkmojO6l00DO
+ gXtnEW2V9uJZSj_O5lFvygYM9VkiCfVyb5NGg78i.A5EtiQwit2vPj4nxJnUTIER9w2ttD2Uxo7P
+ InNCo7BsqKWzD37yIFTy.Pgqi7gxlkFnShvhP3lC.amR10N44qe2F8gL537M81W4fujQNUE0e4Z1
+ W2CbJRxH5h..WC_vaaZc6RsO41pHc4qmIpjvGjgHOoAypTG22FJtGOcwUjGNnMjy0POuDGn8RNKr
+ M5CPWNe1aZiCeDyXyIGQ1_oI5wHeUlhplZaAgXKyC64Y6Cdg2WlZkc54vxI3913IwBvKgdH3kzjb
+ Vn.YIAhoBPHh44ZEfENRkasmdsW4WeCg6bq_4hJLv2Lwy3lG0LOkXk3.Ao19HRPRTYVLQK1wSWj0
+ dCEINsOw4g1gU.k.hxoiKbFs5hF9brGT24CyYQh4aIsHduSMNp0GbS4H.IX6WA9za0fsR.7LvlaW
+ av575ItzDn8qsRD4uXPnrJFjSE4Kd..pVlVU_wusT5xNv46521IKg423hoa1ie5KyjTH_2ShOn0C
+ dNI7sPTZ.x9LieyhaGlNT7igJo262uqFC_oZsMGgSVmLoiUcLwVnvG1c_AYeRmMNwRUmobEeQOAC
+ HCWhJIlb6Gzv5_5.iiBBfCvL5W6_5S1L0ztNsVwpnY.GqnmtwEpOuvSucJYhhsKprSR99z78zO5P
+ _l1hTYtYviMp6H8De3tlXi48J13DXALOdFiQplrFzu71jdPs8oh1N039zpTcd2v4MxnU6i2mYI0M
+ G79rLFaGam.Mw6o1yY98DIyBHqjD3df7l2aFBGEGpQ4B.OXgg0nfcvwp8zCDG97.2pICX3lWqAGS
+ wy_w0s7lYFgn3GiJrw51FQOKIP2XGwNCXCxwS_N8AD5qt_Arlxuxxc9nhDMzrVXWTewoh3XU.P2f
+ vd5G_rJ0v8P6UgiX6drz1e3JUrKJYteevHrCuxjMK2FyiBIL_loq8Beu_dEYg_JSqYEhS6l6bmaK
+ jxaFrepGV2qkn_3itt0hUgrpXTDIuSEuM5TYAPzsXFzu12_Kdixa2sejQkaAY_a4cBIdXNfaKP_B
+ KV7iiFld0gDT5HCCOUoEToR3W2PTVtThE2UazqAGpJU4UNzcYJ1rC5S5mj0n0hQaBXmQ24cNXdWs
+ cSOxr.bIsjbLCH1Q7pto_Qs24BPptQEBxd5UYNqYtxY4Z10v4DS7gz2bH8W0VZu_M_Bw0XcfPCLW
+ SW34tyBQatRhw27oEmc04aYubqlS0c.TJsxn1LTM86699Mb84itoWiMCfhW60MhEPtGl3guwStj2
+ 3HKT7IM1bOvHyvDKnpObmCIBSqCcO0lJ4bfacjLLKqbVgRb4JLqPGHXAx4DD079._GuE1hAdNysI
+ 2GJP4dtQbzSXPb1wfpvUxHwYbyVAlMD1lpa1T8IZpPmIO3Ova1uRh51BEwFfGewNMEr_xzPL61Ql
+ iovEAGE3GLl5doMB3QLJo
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: 8be475bf-9be6-4332-bdbe-567bf5fee304
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 8 Aug 2025 14:17:06 +0000
+Received: by hermes--production-ir2-858bd4ff7b-w59v5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ed84e5f4b215a994529c6b9786431bc1;
+          Fri, 08 Aug 2025 13:54:49 +0000 (UTC)
+Message-ID: <60ab8434533d214b53af15bb51d830e5f07d512f.camel@aol.com>
+Subject: Re: [PATCH] powerpc/xmon: replace sizeof calculations with
+ ARRAY_SIZE macro
+From: Ruben Wauters <rubenru09@aol.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Madhavan Srinivasan	
+ <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
+ Piggin	 <npiggin@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Date: Fri, 08 Aug 2025 14:54:45 +0100
+In-Reply-To: <8381a142d72f3cd0e92de4dac6acfc0241a87365.camel@aol.com>
+References: <20250719225225.2132-2-rubenru09.ref@aol.com>
+		 <20250719225225.2132-2-rubenru09@aol.com>
+		 <62aa5231-ed31-43e2-84b7-d6b6ec86e78d@csgroup.eu>
+	 <8381a142d72f3cd0e92de4dac6acfc0241a87365.camel@aol.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="FpBC8UcrkcOVUKr5"
-Content-Disposition: inline
-In-Reply-To: <bb06d3bf-684b-4479-8b86-72aed622e453@gmail.com>
-X-Cookie: What an artist dies with me!
+X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
+On Thu, 2025-07-31 at 17:40 +0100, Ruben Wauters wrote:
+> On Wed, 2025-07-30 at 08:14 +0200, Christophe Leroy wrote:
+> >=20
+> >=20
+> > Le 20/07/2025 =C3=A0 00:43, Ruben Wauters a =C3=A9crit=C2=A0:
+> > > [Vous ne recevez pas souvent de courriers de rubenru09@aol.com.
+> > > D=C3=A9couvrez pourquoi ceci est important =C3=A0
+> > > https://aka.ms/LearnAboutSenderIdentification=C2=A0]
+> > >=20
+> > > The calculations for operand/opcode/macro numbers are done in an
+> > > identical manner to the already existing ARRAY_SIZE macro in
+> > > linux/array_size.h
+> > >=20
+> > > This patch replaces the sizeof calculations with the macro to
+> > > make
+> > > the
+> > > code cleaner and more immediately obvious what it is doing.
+> > >=20
+> > > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > > ---
+> > > =C2=A0 arch/powerpc/xmon/ppc-opc.c | 16 ++++++----------
+> >=20
+> > This file is mostly taken from binutils, refer commit 08d96e0b127e=20
+> > ("powerpc/xmon: Apply binutils changes to upgrade disassembly").
+> >=20
+> > I think your change should be done in binutils then backported to
+> > the
+> > kernel. The more we diverge from binutils the worse it is
+>=20
+> While this is somewhat reasonable, the header (linux/array_size.h) is
+> linux specific, and is included through kernel.h
+>=20
+> I can probably see if binutils has a similar header, or if they would
+> accept an equivalent header to make the file equivalent, but I'm
+> unsure
+> if they would
+>=20
+Hello, I have checked the binutils source, and have noticed that
+binutils already uses the ARRAY_SIZE macro, and this patch actually
+brings the kernel more in line with the equivalent file in binutils
+(opcodes/ppc-opc.c)
 
---FpBC8UcrkcOVUKr5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+As such, I would like to request that the patch be applied as-is.
 
-On Fri, Aug 08, 2025 at 12:35:40PM +0100, Colin King (gmail) wrote:
-> On 08/08/2025 12:30, Mark Brown wrote:
-> > On Fri, Aug 08, 2025 at 11:53:24AM +0100, Colin Ian King wrote:
+Thank you
 
-> > > -		dev_err(sma1307->dev, "%s: failed by dismatch \"%s\"\n",
-> > > +		dev_err(sma1307->dev, "%s: checksum failed \"%s\"\n",
+Ruben
 
-> > It's definitely an unusual term and the reword makes sense but that does
-> > make sense to me as a word, I don't think it's a spelling error as such.
-
-> "Dismatch" is not a standard English word. It's likely a misspelling of
-> "mismatch" or a neologism formed by adding the prefix "dis-" to "match". I
-> understand it a niche term, I just think it is preferable not to use it for
-> folk who's first language isn't English.
-
-My comment was specifically that it doesn't look like a spelling
-mistake.
-
---FpBC8UcrkcOVUKr5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiV6TAACgkQJNaLcl1U
-h9ALFwf7BOQLzGyGmC7ql9p2Hv+cCvogsAj4/l63KRNHa6nBFzvVJUzZ/hOYyTFh
-PznPBbm3e23txYD/QhpcYcrE1ShiFxkWwNYuNGC9saqDl7rgUO5m58TPCWHPLmcS
-LxzY9PX4bvAKamrCdO/yF1iPc9L1q++ciBbvTP8mWmpn0hv1Pa8FPedoO2a6OUW3
-KfWfwmo1Mcb1fukV3xiJKfrqiCeKU5F2GjbWiaRELFZ1MkOqM6jrL5LqSkuaQG3y
-I67TyHJNsVqXbcB4b9WDM8bmwli10GHpbRHoiBXeQkM1npbjB2MeC8VLW3lzJZIA
-ZTRKqcmCp1oWJ8rTafO/EJ6JvYwIMQ==
-=+4nP
------END PGP SIGNATURE-----
-
---FpBC8UcrkcOVUKr5--
+> Ruben
+>=20
+> > Christophe
+> >=20
+> >=20
+> > > =C2=A0 1 file changed, 6 insertions(+), 10 deletions(-)
+> > >=20
+> > > diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-
+> > > opc.c
+> > > index 0774d711453e..de9b4236728c 100644
+> > > --- a/arch/powerpc/xmon/ppc-opc.c
+> > > +++ b/arch/powerpc/xmon/ppc-opc.c
+> > > @@ -954,8 +954,7 @@ const struct powerpc_operand
+> > > powerpc_operands[]
+> > > =3D
+> > > =C2=A0=C2=A0=C2=A0 { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
+> > > =C2=A0 };
+> > >=20
+> > > -const unsigned int num_powerpc_operands =3D (sizeof
+> > > (powerpc_operands)
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 / sizeof
+> > > (powerpc_operands[0]));
+> > > +const unsigned int num_powerpc_operands =3D
+> > > ARRAY_SIZE(powerpc_operands);
+> > >=20
+> > > =C2=A0 /* The functions used to insert and extract complicated
+> > > operands.=C2=A0 */
+> > >=20
+> > > @@ -6968,9 +6967,8 @@ const struct powerpc_opcode
+> > > powerpc_opcodes[]
+> > > =3D {
+> > > =C2=A0 {"fcfidu.",=C2=A0=C2=A0=C2=A0 XRC(63,974,1),=C2=A0 XRA_MASK, P=
+OWER7|PPCA2,
+> > > PPCVLE,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {FRT, FRB}},
+> > > =C2=A0 };
+> > >=20
+> > > -const int powerpc_num_opcodes =3D
+> > > -=C2=A0 sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
+> > > -
+> > > +const int powerpc_num_opcodes =3D ARRAY_SIZE(powerpc_opcodes);
+> > > +
+> > > =C2=A0 /* The VLE opcode table.
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0 The format of this opcode table is the same =
+as the main
+> > > opcode
+> > > table.=C2=A0 */
+> > > @@ -7207,9 +7205,8 @@ const struct powerpc_opcode vle_opcodes[] =3D
+> > > {
+> > > =C2=A0 {"se_bl",=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BD8(58,0,1),=C2=A0=C2=
+=A0=C2=A0 BD8_MASK,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PPCVLE,
+> > > 0,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 {B8}},
+> > > =C2=A0 };
+> > >=20
+> > > -const int vle_num_opcodes =3D
+> > > -=C2=A0 sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
+> > > -
+> > > +const int vle_num_opcodes =3D ARRAY_SIZE(vle_opcodes);
+> > > +
+> > > =C2=A0 /* The macro table.=C2=A0 This is only used by the assembler.=
+=C2=A0 */
+> > >=20
+> > > =C2=A0 /* The expressions of the form (-x ! 31) & (x | 31) have the
+> > > value 0
+> > > @@ -7276,5 +7273,4 @@ const struct powerpc_macro powerpc_macros[]
+> > > =3D
+> > > {
+> > > =C2=A0 {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-
+> > > (%3)"},
+> > > =C2=A0 };
+> > >=20
+> > > -const int powerpc_num_macros =3D
+> > > -=C2=A0 sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
+> > > +const int powerpc_num_macros =3D ARRAY_SIZE(powerpc_macros);
+> > > --
+> > > 2.49.1
+> > >=20
