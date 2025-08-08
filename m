@@ -1,212 +1,196 @@
-Received: from sonic316-33.consmr.mail.gq1.yahoo.com (sonic316-33.consmr.mail.gq1.yahoo.com [98.137.69.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A42F4F1
-	for <kernel-janitors@vger.kernel.org>; Fri,  8 Aug 2025 14:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.57
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0247916F8E9;
+	Fri,  8 Aug 2025 14:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754662628; cv=none; b=VfrpBj6FIgVGNcF0btTYBvB0owq6DZuB9VS7JFoxCxLnPuvqCb+JsTVwKNiqk6aeguKH2I9oRqQtyfeKBc3MulHB2Ka+SSjwhrdLcF2D1s2ZQ8bTaTP2jeVI0opJNXAF1RJnOL4dEl36q0tKancqYNoRi3A9iPI50PVl+ZR362M=
+	t=1754662846; cv=none; b=IDtVOgOa60KDmY4Ap6aVIMPrmGfpjgW45msqynX2nd9D/flgBe3xe3A5h6JxjRdKvqZ1EXXnp2c1IhJ7P3KBmtdJ2DUZj080tMQkXSsJwsyMYAYcn6RiucEOMfsJJsHw+U+oaGCBk2+aFVXra1PBSuLj9VRj+t0fD+UjDMf9xEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754662628; c=relaxed/simple;
-	bh=EooGbwPs+v+2bHAWjdJXN5r3lizWAhjM5/u1waLqsHs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ffYLihXRAJZSIzHRBpJHWK1hJeMVVSiCmjfhkHKUXEL/wk8PcOT7Lj0y3LgJDAzs/J6Bi+ir57SozFUxrjLAnQxLA8gD3xqXyKBmQjpck7WD4mMJbmi2FwNJR1fHEpdBxeC1K+vJzIslAMejgfX1HpmpFcVo7s3UiuMRteLC10I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=LxXeliVt; arc=none smtp.client-ip=98.137.69.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="LxXeliVt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1754662626; bh=EooGbwPs+v+2bHAWjdJXN5r3lizWAhjM5/u1waLqsHs=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=LxXeliVtSj2yssAVJOIbqnQQB78lMg4TCOfFmJf1zNzRW8LygJklIi6cMSlggIM4pvkQkplDScf2UQWvQbUb6zOLhZkyqK534mBloar+NSyZQbW4cyhCNR1JfAC6YUeAUh2PkzQZ5ZGIOlvSG1Cn6msQYiHJqBuHh2dDo8j+XYFmL43NynFT/H9brFp1sJcez9JMI6BDjIM5KwG1FX/IXvPch7p4Ic0p2UfhHDUbWLbXhM6Aih7P8BebrszGL0kvKpQVeploeEqKOteUmHF+n/vLODfvUI25Z3Pu5krYS7Qha8zoMYRrL9V4LZNcj/UeBrhR9Fli/GHMZhuWw+ZsuA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1754662626; bh=3C/jfPSzAk8xbByaVjE5nCRGHCx8kfF6PpREMUHIgPb=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=kJECfqkm9cpKBgnFJKwuvO5CDd0Asvtwrm5TMPCp4nt35jUGL8GnI6+cFnk4DQN8RV7AOF9Db3Q0pRGoqWBYOjCz+FWOauDqQD7++a2uGsUMEJzvn/+UZFUVwLAlLX9AC1+V/WxtDmkXmCW/ELJhJS9fXpHZvhOPFYIgMhoSIfFhEayg2NqLkyilxjbn3dVQHkz+LOTZZc5E0FgkBdUfW4wZL+dis7G4AVWzujo/XvlI4+dOHafi9Q3BmWGuVR9bvcrWhlSp3TIblWna1Gm4wjCNaTXojxeytfJO9H5KSSt+IHw1zJkuHzveqabJn6se+CcATMsD+BUFW2qi6UMiTg==
-X-YMail-OSG: Nar9BHYVM1mgAR3RdcPkbl9hdOVAdZ9Nhrgz8rsVznhI9FhmhfQ6pyZ8nsC745o
- Cb3wWMdIJeOJEnG4A2pFKvqsw6tNoHXKUfqCoplZUKgFEI5nlf14FRrtJL_l_zbJC0w_rnEyVFy_
- 9a2rho4kF1NCsTkkTS64.peNg2S_U6T1h9OT7rAuP0A8xRbC6AlR295TXJL_THnfeXSgLxBUmtVt
- 5tzWg4CXSBDVDePDpk4Jx71kuva6s5FCuHUAXygvW1aCAw29_aSZc63.tTtzHdPtfZ2.qPgJ3r.c
- vNx8pcJ.S1B06BDGvm2LynSRV0ihpDgM4G8lTnQ4VMKMF.Z2oXqHd8zOeMaHn9dqa8.8vpx1_41k
- qaDIb6HKMdAsXrks5yIoVrQuOrsCt6GMU9mcrEacTbqcxRbe99x6pJcTsjCzpFGWOy_VfBuyPbB7
- Yr.xsl97h5MPiFFNY2MHVaU2nBXz_GbPTiMSQkJ_HMRXyAMhByk6_OrzL.3hakfnhwYx8Ksg2wlt
- 1oN5J0Hbv.QAQADMA2khjKgrn7LXbAL8B96JmXYzkA7bnPrYlPDEPxciK8eFsF92MT6ggqqRfFQk
- YMsE6BZqwNIQJCklrfk3SaQSkEzW8lQ.iAMvuVUyfT3aK4oOOMn8CmLX7uWJm4bMAjNMfan0nrMK
- LagnsAk.B8jyj.LqaD7oNqcCMMvgpKj6bMq5AkmqP5vgwGst0jNv0qwj4P7xhNUzWSJm2Ledz88k
- xAA028UNeT0CkOeOi1GrCNxFz0dNFHzgxYAHUHH4lwquxp6gB1x8d5xTHkuGmkgF3KIaBHgvFv7p
- c419xzd8_Bw8FylAyCWxczOhqK4xD_wigxrFMc8JkTZ8dChigObwMuI3Ds4nxxnoQkmojO6l00DO
- gXtnEW2V9uJZSj_O5lFvygYM9VkiCfVyb5NGg78i.A5EtiQwit2vPj4nxJnUTIER9w2ttD2Uxo7P
- InNCo7BsqKWzD37yIFTy.Pgqi7gxlkFnShvhP3lC.amR10N44qe2F8gL537M81W4fujQNUE0e4Z1
- W2CbJRxH5h..WC_vaaZc6RsO41pHc4qmIpjvGjgHOoAypTG22FJtGOcwUjGNnMjy0POuDGn8RNKr
- M5CPWNe1aZiCeDyXyIGQ1_oI5wHeUlhplZaAgXKyC64Y6Cdg2WlZkc54vxI3913IwBvKgdH3kzjb
- Vn.YIAhoBPHh44ZEfENRkasmdsW4WeCg6bq_4hJLv2Lwy3lG0LOkXk3.Ao19HRPRTYVLQK1wSWj0
- dCEINsOw4g1gU.k.hxoiKbFs5hF9brGT24CyYQh4aIsHduSMNp0GbS4H.IX6WA9za0fsR.7LvlaW
- av575ItzDn8qsRD4uXPnrJFjSE4Kd..pVlVU_wusT5xNv46521IKg423hoa1ie5KyjTH_2ShOn0C
- dNI7sPTZ.x9LieyhaGlNT7igJo262uqFC_oZsMGgSVmLoiUcLwVnvG1c_AYeRmMNwRUmobEeQOAC
- HCWhJIlb6Gzv5_5.iiBBfCvL5W6_5S1L0ztNsVwpnY.GqnmtwEpOuvSucJYhhsKprSR99z78zO5P
- _l1hTYtYviMp6H8De3tlXi48J13DXALOdFiQplrFzu71jdPs8oh1N039zpTcd2v4MxnU6i2mYI0M
- G79rLFaGam.Mw6o1yY98DIyBHqjD3df7l2aFBGEGpQ4B.OXgg0nfcvwp8zCDG97.2pICX3lWqAGS
- wy_w0s7lYFgn3GiJrw51FQOKIP2XGwNCXCxwS_N8AD5qt_Arlxuxxc9nhDMzrVXWTewoh3XU.P2f
- vd5G_rJ0v8P6UgiX6drz1e3JUrKJYteevHrCuxjMK2FyiBIL_loq8Beu_dEYg_JSqYEhS6l6bmaK
- jxaFrepGV2qkn_3itt0hUgrpXTDIuSEuM5TYAPzsXFzu12_Kdixa2sejQkaAY_a4cBIdXNfaKP_B
- KV7iiFld0gDT5HCCOUoEToR3W2PTVtThE2UazqAGpJU4UNzcYJ1rC5S5mj0n0hQaBXmQ24cNXdWs
- cSOxr.bIsjbLCH1Q7pto_Qs24BPptQEBxd5UYNqYtxY4Z10v4DS7gz2bH8W0VZu_M_Bw0XcfPCLW
- SW34tyBQatRhw27oEmc04aYubqlS0c.TJsxn1LTM86699Mb84itoWiMCfhW60MhEPtGl3guwStj2
- 3HKT7IM1bOvHyvDKnpObmCIBSqCcO0lJ4bfacjLLKqbVgRb4JLqPGHXAx4DD079._GuE1hAdNysI
- 2GJP4dtQbzSXPb1wfpvUxHwYbyVAlMD1lpa1T8IZpPmIO3Ova1uRh51BEwFfGewNMEr_xzPL61Ql
- iovEAGE3GLl5doMB3QLJo
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: 8be475bf-9be6-4332-bdbe-567bf5fee304
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.gq1.yahoo.com with HTTP; Fri, 8 Aug 2025 14:17:06 +0000
-Received: by hermes--production-ir2-858bd4ff7b-w59v5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ed84e5f4b215a994529c6b9786431bc1;
-          Fri, 08 Aug 2025 13:54:49 +0000 (UTC)
-Message-ID: <60ab8434533d214b53af15bb51d830e5f07d512f.camel@aol.com>
-Subject: Re: [PATCH] powerpc/xmon: replace sizeof calculations with
- ARRAY_SIZE macro
-From: Ruben Wauters <rubenru09@aol.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Madhavan Srinivasan	
- <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin	 <npiggin@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Fri, 08 Aug 2025 14:54:45 +0100
-In-Reply-To: <8381a142d72f3cd0e92de4dac6acfc0241a87365.camel@aol.com>
-References: <20250719225225.2132-2-rubenru09.ref@aol.com>
-		 <20250719225225.2132-2-rubenru09@aol.com>
-		 <62aa5231-ed31-43e2-84b7-d6b6ec86e78d@csgroup.eu>
-	 <8381a142d72f3cd0e92de4dac6acfc0241a87365.camel@aol.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1754662846; c=relaxed/simple;
+	bh=XNZSPdcPiuGz7gpNMGzvlktxK9vrVq23BePGqaTFwCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MfB35YaaP/pUsgwNNLn4lRsFya+rj3FQysFW5tUVyHL3l1KFxS+tnjYrrdAWpe+VlsQBuG/b1yFKDm6RQD3ryJc3TuUWAReQHTR4qXxmEyFmnY0NMS4aHfmJmXmn8yJCUjuURSmCta+IdMli+RCrfzAwM+QIb1eHAP1+sv+Dg4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4bz5NL0nZBz9sRk;
+	Fri,  8 Aug 2025 16:03:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id iDjJjZTpeS3K; Fri,  8 Aug 2025 16:03:30 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4bz5NK6p5Cz9sRg;
+	Fri,  8 Aug 2025 16:03:29 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D0E838B770;
+	Fri,  8 Aug 2025 16:03:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id oAEqk_kshTPB; Fri,  8 Aug 2025 16:03:29 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5A35C8B763;
+	Fri,  8 Aug 2025 16:03:29 +0200 (CEST)
+Message-ID: <7e2c8777-d439-4661-89b6-41b5356cf236@csgroup.eu>
+Date: Fri, 8 Aug 2025 16:03:29 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] powerpc/xmon: replace sizeof calculations with ARRAY_SIZE
+ macro
+To: Ruben Wauters <rubenru09@aol.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20250719225225.2132-2-rubenru09.ref@aol.com>
+ <20250719225225.2132-2-rubenru09@aol.com>
+ <62aa5231-ed31-43e2-84b7-d6b6ec86e78d@csgroup.eu>
+ <8381a142d72f3cd0e92de4dac6acfc0241a87365.camel@aol.com>
+ <60ab8434533d214b53af15bb51d830e5f07d512f.camel@aol.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <60ab8434533d214b53af15bb51d830e5f07d512f.camel@aol.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-07-31 at 17:40 +0100, Ruben Wauters wrote:
-> On Wed, 2025-07-30 at 08:14 +0200, Christophe Leroy wrote:
-> >=20
-> >=20
-> > Le 20/07/2025 =C3=A0 00:43, Ruben Wauters a =C3=A9crit=C2=A0:
-> > > [Vous ne recevez pas souvent de courriers de rubenru09@aol.com.
-> > > D=C3=A9couvrez pourquoi ceci est important =C3=A0
-> > > https://aka.ms/LearnAboutSenderIdentification=C2=A0]
-> > >=20
-> > > The calculations for operand/opcode/macro numbers are done in an
-> > > identical manner to the already existing ARRAY_SIZE macro in
-> > > linux/array_size.h
-> > >=20
-> > > This patch replaces the sizeof calculations with the macro to
-> > > make
-> > > the
-> > > code cleaner and more immediately obvious what it is doing.
-> > >=20
-> > > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> > > ---
-> > > =C2=A0 arch/powerpc/xmon/ppc-opc.c | 16 ++++++----------
-> >=20
-> > This file is mostly taken from binutils, refer commit 08d96e0b127e=20
-> > ("powerpc/xmon: Apply binutils changes to upgrade disassembly").
-> >=20
-> > I think your change should be done in binutils then backported to
-> > the
-> > kernel. The more we diverge from binutils the worse it is
->=20
-> While this is somewhat reasonable, the header (linux/array_size.h) is
-> linux specific, and is included through kernel.h
->=20
-> I can probably see if binutils has a similar header, or if they would
-> accept an equivalent header to make the file equivalent, but I'm
-> unsure
-> if they would
->=20
-Hello, I have checked the binutils source, and have noticed that
-binutils already uses the ARRAY_SIZE macro, and this patch actually
-brings the kernel more in line with the equivalent file in binutils
-(opcodes/ppc-opc.c)
 
-As such, I would like to request that the patch be applied as-is.
 
-Thank you
+Le 08/08/2025 à 15:54, Ruben Wauters a écrit :
+> [Vous ne recevez pas souvent de courriers de rubenru09@aol.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> On Thu, 2025-07-31 at 17:40 +0100, Ruben Wauters wrote:
+>> On Wed, 2025-07-30 at 08:14 +0200, Christophe Leroy wrote:
+>>>
+>>>
+>>> Le 20/07/2025 à 00:43, Ruben Wauters a écrit :
+>>>> [Vous ne recevez pas souvent de courriers de rubenru09@aol.com.
+>>>> Découvrez pourquoi ceci est important à
+>>>> https://aka.ms/LearnAboutSenderIdentification ]
+>>>>
+>>>> The calculations for operand/opcode/macro numbers are done in an
+>>>> identical manner to the already existing ARRAY_SIZE macro in
+>>>> linux/array_size.h
+>>>>
+>>>> This patch replaces the sizeof calculations with the macro to
+>>>> make
+>>>> the
+>>>> code cleaner and more immediately obvious what it is doing.
+>>>>
+>>>> Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+>>>> ---
+>>>>    arch/powerpc/xmon/ppc-opc.c | 16 ++++++----------
+>>>
+>>> This file is mostly taken from binutils, refer commit 08d96e0b127e
+>>> ("powerpc/xmon: Apply binutils changes to upgrade disassembly").
+>>>
+>>> I think your change should be done in binutils then backported to
+>>> the
+>>> kernel. The more we diverge from binutils the worse it is
+>>
+>> While this is somewhat reasonable, the header (linux/array_size.h) is
+>> linux specific, and is included through kernel.h
+>>
+>> I can probably see if binutils has a similar header, or if they would
+>> accept an equivalent header to make the file equivalent, but I'm
+>> unsure
+>> if they would
+>>
+> Hello, I have checked the binutils source, and have noticed that
+> binutils already uses the ARRAY_SIZE macro, and this patch actually
+> brings the kernel more in line with the equivalent file in binutils
+> (opcodes/ppc-opc.c)
 
-Ruben
+Ok.
 
+
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+
+
+
+> 
+> As such, I would like to request that the patch be applied as-is.
+> 
+> Thank you
+> 
 > Ruben
->=20
-> > Christophe
-> >=20
-> >=20
-> > > =C2=A0 1 file changed, 6 insertions(+), 10 deletions(-)
-> > >=20
-> > > diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-
-> > > opc.c
-> > > index 0774d711453e..de9b4236728c 100644
-> > > --- a/arch/powerpc/xmon/ppc-opc.c
-> > > +++ b/arch/powerpc/xmon/ppc-opc.c
-> > > @@ -954,8 +954,7 @@ const struct powerpc_operand
-> > > powerpc_operands[]
-> > > =3D
-> > > =C2=A0=C2=A0=C2=A0 { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
-> > > =C2=A0 };
-> > >=20
-> > > -const unsigned int num_powerpc_operands =3D (sizeof
-> > > (powerpc_operands)
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 / sizeof
-> > > (powerpc_operands[0]));
-> > > +const unsigned int num_powerpc_operands =3D
-> > > ARRAY_SIZE(powerpc_operands);
-> > >=20
-> > > =C2=A0 /* The functions used to insert and extract complicated
-> > > operands.=C2=A0 */
-> > >=20
-> > > @@ -6968,9 +6967,8 @@ const struct powerpc_opcode
-> > > powerpc_opcodes[]
-> > > =3D {
-> > > =C2=A0 {"fcfidu.",=C2=A0=C2=A0=C2=A0 XRC(63,974,1),=C2=A0 XRA_MASK, P=
-OWER7|PPCA2,
-> > > PPCVLE,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {FRT, FRB}},
-> > > =C2=A0 };
-> > >=20
-> > > -const int powerpc_num_opcodes =3D
-> > > -=C2=A0 sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
-> > > -
-> > > +const int powerpc_num_opcodes =3D ARRAY_SIZE(powerpc_opcodes);
-> > > +
-> > > =C2=A0 /* The VLE opcode table.
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 The format of this opcode table is the same =
-as the main
-> > > opcode
-> > > table.=C2=A0 */
-> > > @@ -7207,9 +7205,8 @@ const struct powerpc_opcode vle_opcodes[] =3D
-> > > {
-> > > =C2=A0 {"se_bl",=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BD8(58,0,1),=C2=A0=C2=
-=A0=C2=A0 BD8_MASK,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PPCVLE,
-> > > 0,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 {B8}},
-> > > =C2=A0 };
-> > >=20
-> > > -const int vle_num_opcodes =3D
-> > > -=C2=A0 sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
-> > > -
-> > > +const int vle_num_opcodes =3D ARRAY_SIZE(vle_opcodes);
-> > > +
-> > > =C2=A0 /* The macro table.=C2=A0 This is only used by the assembler.=
-=C2=A0 */
-> > >=20
-> > > =C2=A0 /* The expressions of the form (-x ! 31) & (x | 31) have the
-> > > value 0
-> > > @@ -7276,5 +7273,4 @@ const struct powerpc_macro powerpc_macros[]
-> > > =3D
-> > > {
-> > > =C2=A0 {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-
-> > > (%3)"},
-> > > =C2=A0 };
-> > >=20
-> > > -const int powerpc_num_macros =3D
-> > > -=C2=A0 sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
-> > > +const int powerpc_num_macros =3D ARRAY_SIZE(powerpc_macros);
-> > > --
-> > > 2.49.1
-> > >=20
+> 
+>> Ruben
+>>
+>>> Christophe
+>>>
+>>>
+>>>>    1 file changed, 6 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-
+>>>> opc.c
+>>>> index 0774d711453e..de9b4236728c 100644
+>>>> --- a/arch/powerpc/xmon/ppc-opc.c
+>>>> +++ b/arch/powerpc/xmon/ppc-opc.c
+>>>> @@ -954,8 +954,7 @@ const struct powerpc_operand
+>>>> powerpc_operands[]
+>>>> =
+>>>>      { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
+>>>>    };
+>>>>
+>>>> -const unsigned int num_powerpc_operands = (sizeof
+>>>> (powerpc_operands)
+>>>> -                                          / sizeof
+>>>> (powerpc_operands[0]));
+>>>> +const unsigned int num_powerpc_operands =
+>>>> ARRAY_SIZE(powerpc_operands);
+>>>>
+>>>>    /* The functions used to insert and extract complicated
+>>>> operands.  */
+>>>>
+>>>> @@ -6968,9 +6967,8 @@ const struct powerpc_opcode
+>>>> powerpc_opcodes[]
+>>>> = {
+>>>>    {"fcfidu.",    XRC(63,974,1),  XRA_MASK, POWER7|PPCA2,
+>>>> PPCVLE,         {FRT, FRB}},
+>>>>    };
+>>>>
+>>>> -const int powerpc_num_opcodes =
+>>>> -  sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
+>>>> -
+>>>> +const int powerpc_num_opcodes = ARRAY_SIZE(powerpc_opcodes);
+>>>> +
+>>>>    /* The VLE opcode table.
+>>>>
+>>>>       The format of this opcode table is the same as the main
+>>>> opcode
+>>>> table.  */
+>>>> @@ -7207,9 +7205,8 @@ const struct powerpc_opcode vle_opcodes[] =
+>>>> {
+>>>>    {"se_bl",      BD8(58,0,1),    BD8_MASK,       PPCVLE,
+>>>> 0,              {B8}},
+>>>>    };
+>>>>
+>>>> -const int vle_num_opcodes =
+>>>> -  sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
+>>>> -
+>>>> +const int vle_num_opcodes = ARRAY_SIZE(vle_opcodes);
+>>>> +
+>>>>    /* The macro table.  This is only used by the assembler.  */
+>>>>
+>>>>    /* The expressions of the form (-x ! 31) & (x | 31) have the
+>>>> value 0
+>>>> @@ -7276,5 +7273,4 @@ const struct powerpc_macro powerpc_macros[]
+>>>> =
+>>>> {
+>>>>    {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-
+>>>> (%3)"},
+>>>>    };
+>>>>
+>>>> -const int powerpc_num_macros =
+>>>> -  sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
+>>>> +const int powerpc_num_macros = ARRAY_SIZE(powerpc_macros);
+>>>> --
+>>>> 2.49.1
+>>>>
+
