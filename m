@@ -1,61 +1,94 @@
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7F4274FD0;
-	Sat,  9 Aug 2025 01:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82321F8725;
+	Sat,  9 Aug 2025 21:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754702893; cv=none; b=SQaVSLu12L6Ggq7lNb4gvnKs+hHXLjZnlG2qT3CVoF/xCWYK8TyNgVSVRPBV9ix+alZSlc7FNVORHY7KcwigCa917WTUiNhlWTT4LF4GuAikIrkP1Du7wsv3JrqLz/N33BOkUU6Ttxd0VYELavbNdFYzn/xv2YP2Pkjt0Q4i6l8=
+	t=1754774552; cv=none; b=EJEi17iZ5eH07W1bWxs61a8u5rgIMz6T25pz0zEbazwLGZgYg2KFL6Obar06/dcTvViGr2qhB2oINcjC/maBd7qwUnGdGsUWPhyaTbAW8WKLuzN72Jkldk2QD/AsIJMI7sit2QyFIXZ9GFDc6W7ji1GkbmElUG7Xi17LZo5x0ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754702893; c=relaxed/simple;
-	bh=0tnJObmLVMaajEbPMCFklfyQV4KEKh7V4lU30FVW2B4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=etnHcbnD4+TThXbPh+6C40HJaCyLKZNJdjJHfhObgwyjvi/l2WBJCQL3eBPIUjgg9luf4yohjqtOH9561H1BTLp/9w1BfUIZ3iqOXr4r6XuUpWgQ448y++kpp78IKVSaCP7KP02E9lqm/J+DZKHQOB+Sv6RAwFna/cSbE30D9Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bzNT72THRz2CfsP;
-	Sat,  9 Aug 2025 09:23:39 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 04E2E1A0188;
-	Sat,  9 Aug 2025 09:27:57 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 9 Aug 2025 09:27:56 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 9 Aug
- 2025 09:27:10 +0800
-Message-ID: <8634445b-0462-4d86-9bfb-af10569566dc@huawei.com>
-Date: Sat, 9 Aug 2025 09:27:05 +0800
+	s=arc-20240116; t=1754774552; c=relaxed/simple;
+	bh=N/Zy4ZhhN7/C53cJBgF9R6NcMuB57XMuRSgaI/LWbUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Op+A+uTSX7KRkvcQ72LBq0ooeb+4KjCZg8q6n9rcByCN3DG1Qm5Qr19+1BwMkRSYkROZr92GWETAINEsly0daFIRsNzB/0S16eVlqfiZlhMFUWdttgqBARvVqmgAC1wO1RaUMkTxrVLnxq76D5GLqJ61lXBIfZIaLq2F+cewnEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=jG4NJyuM; arc=none smtp.client-ip=80.12.242.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="jG4NJyuM"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id kr08uPBBpkYfwkr09uKitS; Sat, 09 Aug 2025 23:21:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1754774479;
+	bh=7WPR2/VqKI/KR7A58QvvxXBj2GcycEeUKgOSBlK9y7c=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=jG4NJyuMu88kcVXlXIfEygsgCwYT/Ss4rV0HcITFwYiknL3F51cNFGmc2wmmyO0i6
+	 Ywn6bYsp3H3FPViQ6mR4HMlDB5OSDNXxGQMRMNhiQ5Q8NfhYf2cjLfCTUyq/HTpGYR
+	 3bwm9C5ProE0Zgk166e6aym6bJ0IHOF5fCvB6vVe4kD9cepnRskcfqE0y/US2M6JvV
+	 nkYWabp5mrnaYJDdRmwMZKSOZ7IhKzKNcRh4mGy5OLIV5EmEdJcyR3zciWXLsFH0gs
+	 DKQxCyaeOaZEOQ3T2m9Y5qWINHD/j4+N0evzg6ufjnLHJ3CsGH8SETlJ6wYeXIGYI6
+	 SmCHM05GvAYOQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 09 Aug 2025 23:21:19 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Russell King <linux@armlinux.org.uk>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] drm/armada: Constify struct drm_info_list
+Date: Sat,  9 Aug 2025 23:21:12 +0200
+Message-ID: <ec8b238d044de971ca99716ca94ddf66a82b018e.1754774445.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: hisilicon: kunpeng_hccs: Fix spelling mistake
- "decrese" -> "decrease"
-To: Colin Ian King <colin.i.king@gmail.com>
-CC: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "xuwei
- (O)" <xuwei5@huawei.com>, <lihuisong@huawei.com>
-References: <20250808105751.830113-1-colin.i.king@gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20250808105751.830113-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100009.china.huawei.com (7.202.194.112)
 
-+Wei Hisilicon SoC maintainer
+'struct drm_info_list' is not modified in this driver.
 
-在 2025/8/8 18:57, Colin Ian King 写道:
-> There is a spelling mistake in a dev_err message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
-Thanks,
-Reviewed-by: lihuisong@huawei.com
+Constifying this structure moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
+
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   1411	    320	      0	   1731	    6c3	drivers/gpu/drm/armada/armada_debugfs.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   1683	     48	      0	   1731	    6c3	drivers/gpu/drm/armada/armada_debugfs.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/gpu/drm/armada/armada_debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/armada/armada_debugfs.c b/drivers/gpu/drm/armada/armada_debugfs.c
+index 96aebd56272f..f15b2143279f 100644
+--- a/drivers/gpu/drm/armada/armada_debugfs.c
++++ b/drivers/gpu/drm/armada/armada_debugfs.c
+@@ -98,7 +98,7 @@ void armada_drm_crtc_debugfs_init(struct armada_crtc *dcrtc)
+ 			    dcrtc, &armada_debugfs_crtc_reg_fops);
+ }
+ 
+-static struct drm_info_list armada_debugfs_list[] = {
++static const struct drm_info_list armada_debugfs_list[] = {
+ 	{ "gem_linear", armada_debugfs_gem_linear_show, 0 },
+ };
+ #define ARMADA_DEBUGFS_ENTRIES ARRAY_SIZE(armada_debugfs_list)
+-- 
+2.50.1
+
