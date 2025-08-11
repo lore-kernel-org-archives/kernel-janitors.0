@@ -1,119 +1,132 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3DB3D76;
-	Mon, 11 Aug 2025 02:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C4813AD1C;
+	Mon, 11 Aug 2025 07:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754877902; cv=none; b=LKUht1SCSaE3gZOp26JlyxOef7jiipKKLnjJovhvR/kIAv1V+gjTpZBu59cx7fMQr20rEgUi0OgD6XSL1HIexbh9C1GA0ny5/DhgXrS9zIHl0Yd17KDc+dBm9+Q5CbNgPh5LQve5DQQH121ps4HLWUvSDXYho/5D5+5RTci9jkQ=
+	t=1754895793; cv=none; b=OuHbrR+dj9+IqRlFcPbpQtC7PCND2qMlGBjtgDL2EwBzjFaKb5hHKrSaFSWSzG5WVX5Vkw9g3vrO1O25jlRlaLsNvXXI6NJm4DJ0Y5yyikB1IpF24GbybDWVBjCzs4RBptLnoR53YAhjrv1f/mn6miO/NsdrjJSKujKNB0iRc1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754877902; c=relaxed/simple;
-	bh=PhaqC8NRCbyHOHCMDlkqXuH81lAXFTGjjTPohLIizI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rm8UHrZfrFRpn44LYkfT/BFMs+pkRobuxVE37vmvso3j5wViELRnrd39lKvs0vqTV60o8/vmhBEVw6Phm6MhEuquOUJLbilxvi9vJ8YL3F1rEuOHEuS5YL2DMOM5E//oa17w/DXrvK+uG+arLD6hZb3rbEzL7UZBy8VOcaeVaUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmKQoG4n; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1754895793; c=relaxed/simple;
+	bh=jFlr9UYK2kzOAFrXv0E7sxyc9yzgXyZM6ByvYepr6SI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=IuxiIRguSdzQIGXEg9y0zrf4lthCrYP8TAV+jAQTPWV7jARjsRQNiONOLMnTIacSvGGv8AAsErrBXDmGYHyF7ECnazf2Qfb7rtZY4o7N34kUC5N+UiUqQaJn/Buye4GHp75WtwHjbrH0KuHdwaxKqr+nK4P69KPAcoyEaUl15Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jMzLDgzw; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmKQoG4n"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2400f746440so32030575ad.2;
-        Sun, 10 Aug 2025 19:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754877900; x=1755482700; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u1WTy2isOE4fp7XWDsnEZonDGJ241/fId695HeJpYWE=;
-        b=CmKQoG4nv4TSDvswDqdIbzGZuJfXtjq/xQI7qoIMcoFyt8M7yejWDtBiAWp8raZOPx
-         WDnvCVgUnyb2sW8SzNk4fpC2bM0RZT0Q+JYKjvn9p/D+tkOCVCGcd1fFRmgp6jQEH/0L
-         S3MkYg60DP7A44eegwMbv/KhhxdcpF2QxiPU7gLp0YNSuTTVl3K5o+5vjcOZa9poZanW
-         t1mFthowb/petHLgBssmeDIbqoWRToD/guuae6RhYEdG36JZa8ECoTjfxO+DXSMYntcZ
-         o+ziP85tcIXOHITBjH9wJnlk56RJrKl+d6v4ESGUVHLf4R5blsW+CKtwy3aHU3welzfp
-         ahXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754877900; x=1755482700;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u1WTy2isOE4fp7XWDsnEZonDGJ241/fId695HeJpYWE=;
-        b=nqs0oFqeAf9yZsQwYY8kznKEj4b/iAJ3OerO35HKAFocECVu6aNQBreAY8bOoKFTg/
-         ZxRl577rMKR2pOfHlXKf1HqXtaieJRQnzZzl55L0MhL/1DhPFWvS/EqLFQNU55hvJuiL
-         1+mnH/U8AyG7BehK0sGR7F9u5ZxkAya5NaixHVYZAHmrGz13uHO8cawMyaHOn6cka3Kv
-         3RKsqQIc5JWf14rRNQBaPmFpMNgw94N2L071divGe2LZ40tJAObLnPmGkNk7nz2bgmWo
-         9P81I7duVRoTRpBbtUMP9AZ2omMzGuQa4tm4ly3xRTDhfWzJ1d082te6lEO3XOkK2U/T
-         7M8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUFL3uAEunkSpPtho8SqNGfU3n69y6pQsDXnZcur3q5+wcLI1WY7/03l85eOQsfGoR9os32BfWk0Ygasuj1GVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8m9/Wevz6/VP+PqNHrp3ji1AF3lrAfxm9u7mb5+s99NwnRkP6
-	NShJV3wJx2Roc4olamI4ua+pJKPzqEWRTi1EAh4AO4yo1XfEBoZTuTkBPMZaoa/C
-X-Gm-Gg: ASbGncuxd9+Qq3L+KlJ0shv1yrdeXS9n3Eymxbw99tzFv8/lSGDCVXOZzbvj78WyGjj
-	62SDBaHIjgi9p9ky8Eg41f4M9k//52sFKnPTTDz6tmgRENPo2POAwdWRKEJu4Zlkh+Cj2C9GerO
-	dHdyM3oXdg0vlJydRthpF+19sB7tzN3EdbMwBMw2NbSN3vAvvY8OWaMQmL+wuCWDBguVJqUj/qz
-	3yMR+mtOsfvD3DAG9Bn4dJqdXFs4te7M+tAac5ppi0Wu1HZLRXPlKSJwnEyPzSg9K2qtOW+QfFa
-	g3cOKAEZb7aZ5LpCfqVio84LjqezQN6eflnbojdgdqFuAnZ8/qQytRAZUSYr49d0ZSAicjYZFb3
-	PCFOAKAudsYskoI2y/CAryg==
-X-Google-Smtp-Source: AGHT+IH1ACr36yKambSpbyYhY36pgYGnTfK1eKS5IYigIEpCH+NtxISVLUAtiXfjfbDdMG+PJtXhXA==
-X-Received: by 2002:a17:903:22ce:b0:240:a8c8:5f6f with SMTP id d9443c01a7336-242c22a0c4dmr148173225ad.27.1754877900080;
-        Sun, 10 Aug 2025 19:05:00 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef67f3sm259759875ad.33.2025.08.10.19.04.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Aug 2025 19:04:59 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id AA775423F8CF; Mon, 11 Aug 2025 09:04:56 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Kernel Janitors <kernel-janitors@vger.kernel.org>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Yang Yingliang <yangyingliang@huawei.com>,
-	Lee Jones <lee@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Shaomin Deng <dengshaomin@cdjrlc.com>,
-	Jilin Yuan <yuanjilin@cdjrlc.com>,
-	Mao Zhu <zhumao001@208suo.com>
-Subject: [PATCH] pcmcia: ds: Emphasize "really" epizeuxis
-Date: Mon, 11 Aug 2025 09:04:37 +0700
-Message-ID: <20250811020436.13486-2-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jMzLDgzw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1754895783; x=1755500583; i=markus.elfring@web.de;
+	bh=+lfblwZgeFckk0X+2jPfkd8ETJunwzZBg9mF+DbP/3E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jMzLDgzwHTmjZQ1MFhKmyGjuQ/eWJiKXND9AS2FDwWtf61+MVgHMikKf9itdVK59
+	 oh1c2tJ15s3SnUlb8IqQRNI7RX5bfTQRWoG+Sm3Ruck+AvQ+JQtHQoYxQHavxX9wq
+	 z803NokUG3PU1mw+Av3C4BriZPuDUYUbzOWRhhl2xcqTGjXHPLAKiwzDZzCweax8W
+	 0+RBfI93SOR4Yc6jT3Z+h38l+0xVZ907qivlX6wFF3k7agMeM8KXN8ZGdzmfAbjRz
+	 hOnKS24nBV645NQ8mXYXL9u5juPO9GyuswuMGFRSgpvqNza/Wx4dRQmGt2pvMgD8E
+	 ShVWB4role4Y/tj86g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.213]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30dV-1ub9nH3ahB-00xvkz; Mon, 11
+ Aug 2025 09:03:02 +0200
+Message-ID: <24759bdb-b427-47a7-b9c3-724a11d0162e@web.de>
+Date: Mon, 11 Aug 2025 09:02:22 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1343; i=bagasdotme@gmail.com; h=from:subject; bh=PhaqC8NRCbyHOHCMDlkqXuH81lAXFTGjjTPohLIizI8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkz/bKb63Y/rpx5xks03OvxFK8CP9l90eYSLqc7DBYf+ yeiHuHXUcrCIMbFICumyDIpka/p9C4jkQvtax1h5rAygQxh4OIUgIlo1DL84V79p1C8lG9z+IcV Brcb1utm8O6PYtPMjJ7PvLCG9VPTLIbfLBf2iQtcs3W4WH9Cf89u+YcHa40Z8s+JOiqeZF8ZxXy JEwA=
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Scott Guo <scottzhguo@tencent.com>,
+ Phillip Lougher <phillip@squashfs.org.uk>
+Cc: scott_gzh@163.com, LKML <linux-kernel@vger.kernel.org>,
+ kernel-janitors@vger.kernel.org
+References: <20250811061921.3807353-1-scott_gzh@163.com>
+Subject: Re: [PATCH] squashfs: Avoid mem leak in squashfs_fill_super
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250811061921.3807353-1-scott_gzh@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BlYR/fb0hQpd3LWIh+Hw7ZY4mTFH7VTuMX+5obpoxfDkEb+bgUo
+ 2Skpkz4HNTur81Azn0jB4NZoeGH8ugXfTpW63qDOi0F7uSVOPOHLcr/Ibwvq/TDTLc7XTMI
+ Hqy+M4nZ8bfHFLYap7YNagxGe5Xh1r3ulUElK03xJ26kuVaxr7t8lQ4Jit6EO3qA+SaGowL
+ Wfc1Qb1I94z4xSer+L1fg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:55P1pmpdPu0=;6aKM4et1dUonXfr9ku8Y7FuTENQ
+ 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
 
-pcmcia_dev_present() comment writes about small timeframe where
-the function returns NULL (racy condition), in epizeuxis device. In the
-past, it tripped contributors who misunderstood it for "really"
-duplicate ([1], [2]).
+> If sb_min_blocksize returns 0, -EINVAL was returned without freeing
+> sb->s_fs_info, causing mem leak.
 
-Add comma between "really" words to emphasize the epizeuxis.
+                         memory?
 
-Link: https://lore.kernel.org/all/YxT1As38WRZcyH0%2F@shine.dominikbrodowski.net/ [1]
-Link: https://lore.kernel.org/all/20220831083623.GA25639@isilmar-4.linta.de/ [2]
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- drivers/pcmcia/ds.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pcmcia/ds.c b/drivers/pcmcia/ds.c
-index da6f66f357cc10..18f4eef28dbc5d 100644
---- a/drivers/pcmcia/ds.c
-+++ b/drivers/pcmcia/ds.c
-@@ -1308,7 +1308,7 @@ static int pcmcia_bus_early_resume(struct pcmcia_socket *skt)
-  * physically present, even if the call to this function returns
-  * non-NULL. Furthermore, the device driver most likely is unbound
-  * almost immediately, so the timeframe where pcmcia_dev_present
-- * returns NULL is probably really really small.
-+ * returns NULL is probably really, really small.
-  */
- struct pcmcia_device *pcmcia_dev_present(struct pcmcia_device *_p_dev)
- {
+How do you think about to append parentheses to the function name (in the =
+summary phrase)?
 
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
--- 
-An old man doll... just what I always wanted! - Clara
 
+> Fix it by goto failed_mount.
+
+By the way:
+I propose to refine the goto chain by using additional labels like =E2=80=
+=9Ce_inval=E2=80=9D and =E2=80=9Ce_nomem=E2=80=9D
+so that another bit of exception handling code can be shared at the end
+of this function implementation.
+https://elixir.bootlin.com/linux/v6.16/source/fs/squashfs/super.c#L434-L46=
+6
+
+Regards,
+Markus
