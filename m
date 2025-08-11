@@ -1,49 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88EAC23B610;
-	Mon, 11 Aug 2025 10:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E5E1F418D;
+	Mon, 11 Aug 2025 10:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754909854; cv=none; b=sOR0ZWpFEEtLPdRyDG4x3U9G+D7DkhrCCTTr2ZCf1fIqrLtzpQawDYpWHLHy2Rf/iLA2Nz8A2EhZJtkzCVZnP1stsTbJ76r0W3kt/dqyDPP2fFBdxIK+I1EAHA8zkiDZCCQmvnLy3MWQ+snK/OrYcqEAMU0hNvlm5GZN3KhST28=
+	t=1754909979; cv=none; b=eo5e0tfvAppCC6t3u6FCN2MEaY3DAkRji3TJ/vH39Ko1V3tCrQg1F8qaqi+SYc7IvMpLogl3HIijl5jaA8C6qthr0mS4Y3rlGloU3A9RzGYaz6Mhp+GxoWV+ImAmHNCigTJKnSWzKws+/wqsrU1VslrI56qcD8ofTx/Wrao7+Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754909854; c=relaxed/simple;
-	bh=1Q+vyX1nLRStwxxfy0pRgDpEcJp5TmEWYoaxp7OM3VU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MIg4kCkZ0zkR6veHYbujte39oss+yaLlAmiXYNGWeZPC9vn95KCBENVVLtoybm6ObKXPRMyw+RJGKDMgHJOEDdWJmq/XTw33V1miS/B6f4+nZ8NwDeJ6E9gitqC92o1yfTJfcWOF+I5fqZWgJ5T25Cya51lVDVFTM0l/SEjDbqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I6Iq44Eg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754909979; c=relaxed/simple;
+	bh=tZQ36z1Z6nxeJ9tWYrZFEmdfAxKzhVl+DzQyCGbp7mA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=akdqLCqTeS7R+pGr/1o8kvZ6y3bTGSNmuRXdT4Lv/9/wFl4uTaHI+hCqKV3A8WJYV1RzS7Kxr1scibg6l5th9OcoJnlboWMLKZAOMEEExUtGTHXdgXxiS0iJcoOMOKb0HX174cVE2d8EsJ0LM2ROHKCQohuGWB1zQ+ouARatF/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8xjHyMh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6Iq44Eg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5DA5C4CEED;
-	Mon, 11 Aug 2025 10:57:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8xjHyMh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 948F8C4CEED;
+	Mon, 11 Aug 2025 10:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754909854;
-	bh=1Q+vyX1nLRStwxxfy0pRgDpEcJp5TmEWYoaxp7OM3VU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I6Iq44EgaZlm+gd+IUExE7djzbUBb/OsX06TeAenutDVfRQXLhHSJa807LUET2y/y
-	 dcnqr+SgpfXenvQtxo0X7WL/wsfFxhRFSXhJdMSRF1KXpV4p/DJjsC8qmdQgdAapTU
-	 Fxn98x2XBTg2tCStCV0NGJ99H0OXXifc5JiMph6e5Hml2uR40/ry+vUbR7/WyogkbJ
-	 yRRyeKdiDw1OYhfh5w9QHLgn933n90GzC38eY4r2s5AlJUq9gRkR/h5AQWU+y8GkO1
-	 qfYmZjfIZmy7f26eTA7YBOoQB8kbnt7vSwIYoEP70IfESXE7c3QmA0+xKqyxiANM11
-	 CsxfpwNCzxebQ==
+	s=k20201202; t=1754909978;
+	bh=tZQ36z1Z6nxeJ9tWYrZFEmdfAxKzhVl+DzQyCGbp7mA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=k8xjHyMhWHh6LU2JNHedQBrhU9lznVihac65OTE1bUaucqXHmfdrz2z9KXhWzXWz2
+	 9DXRmR8E3MgCEmkbqeuwvrAqBJBZfQEdsQVUV1kfT1ir7Xj8T/c9bIlH0XdlHaJSBA
+	 D3T6d87gknynly+zFosxUkYofacDrl8euotqoj3LyFTfx8+GeikeCrglt/TWoh2Eya
+	 egwc1tbifqEDlY4VzUTZdwEjqa1k5r5+GqhPgN4IEj1SfrRM+ujVPuuFW+OLVzcacv
+	 XEe9zVjksnZEXF02AV4tbNr3Y8lehvtUU8Xl8xAdgV0awCGXbZRCMyzNQIqdmAtbtI
+	 vlpFGP26n1OVg==
 From: Manivannan Sadhasivam <mani@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 next] misc: pci_endpoint_test: Fix array underflow in pci_endpoint_test_ioctl()
-Date: Mon, 11 Aug 2025 16:27:24 +0530
-Message-ID: <175490983721.13838.10042092672738483937.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <aIzzZ4vc6ZrmM9rI@suswa>
-References: <aIzzZ4vc6ZrmM9rI@suswa>
+To: Frank Li <Frank.Li@nxp.com>, Dan Carpenter <dan.carpenter@linaro.org>
+Cc: =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aIzCdV8jyBeql-Oa@stanley.mountain>
+References: <aIzCdV8jyBeql-Oa@stanley.mountain>
+Subject: Re: [PATCH next] PCI: endpoint: pci-ep-msi: Fix NULL vs IS_ERR()
+ check in pci_epf_write_msi_msg()
+Message-Id: <175490997618.14083.4742096176826820783.b4-ty@kernel.org>
+Date: Mon, 11 Aug 2025 16:29:36 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -51,24 +45,22 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-On Fri, 01 Aug 2025 20:03:35 +0300, Dan Carpenter wrote:
-> Commit eefb83790a0d ("misc: pci_endpoint_test: Add doorbell test case")
-> added NO_BAR (-1) to the pci_barno enum which, in practical terms,
-> changes the enum from an unsigned int to a signed int.  If the user
-> passes a negative number in pci_endpoint_test_ioctl() then it results in
-> an array underflow in pci_endpoint_test_bar().
+On Fri, 01 Aug 2025 16:34:45 +0300, Dan Carpenter wrote:
+> The pci_epc_get() function returns error pointers.  It never returns NULL.
+> Update the check to match.
 > 
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] misc: pci_endpoint_test: Fix array underflow in pci_endpoint_test_ioctl()
-      (no commit info)
+[1/1] PCI: endpoint: pci-ep-msi: Fix NULL vs IS_ERR() check in pci_epf_write_msi_msg()
+      commit: 57a75fa9d56e310e883e4377205690e88c05781b
 
 Best regards,
 -- 
 Manivannan Sadhasivam <mani@kernel.org>
+
