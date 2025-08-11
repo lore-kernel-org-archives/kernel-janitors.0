@@ -1,45 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC38B2BE63F;
-	Mon, 11 Aug 2025 11:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6255623B627;
+	Mon, 11 Aug 2025 11:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754910134; cv=none; b=DCRhvogXt8Y2i4Oi9910dTOqkNyd4khHIu9EdjB/o7diOpHQQEft49ctrItycHcGKGzMjqQpsw7NY+xbNMBpgQLCn9BMeyv7xMVuDeR+fhoPsAAcOc2pjp3MVc7SOICTfpWMyn6U8iqhoFUDF0MBSGf+VF0L6aMpZ5F6pBR7snw=
+	t=1754910774; cv=none; b=NU4/G0EdK1Oq98ZlDDw8KCFbQt4yBBEOGpil0K3GJv0b0e/uMfBghNa6pVtxxJlAnXdtkdhSpwOQPvBlDswNSF7+2cg7HKdIW0QABOKTb7OGNcKkyYDWtZYs2ahdvlDuO46ZKRqDt2mW1ec1n71VdhkYjXKhBKRGhD5IKRyNIdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754910134; c=relaxed/simple;
-	bh=BPqTEIEi19uUvsZ3UKFemRzcPtUUh7NqCO5h9wS+W5w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ahsyVAas4laKi4Y7rbt2nUSGG+5qYvpwom1twuk9HYk75d15ZXGLatetQqT7Bxjb10K+hCEnLQgYB/JFtBDzGxFl1qGXfNZn7vICrpxgqirB/gL/Oqt0ddxMoMctKqCUFLwAT1PZ7TzQAX9HA6ONJ4ejGClNBgZfKGBd07fw0lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPx084Hy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1754910774; c=relaxed/simple;
+	bh=1RqIFn/aCaYbnX9ev6h5HB3n3Q7qvPW4lFjEXenhedc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G0WN+9P0NksnbBBhrw6Mi4R+bYFKrDZb4PcuMfBmkeYbQ3NYq60j6GPBnJRbT4wmpd/WZW0FPU/48y4M7p3SjtFJnZRty5SScK49bGG20ODu2uFYImmFDyWkP9lsnZPQPcxm8qyXzWNU12TnLrxB7B/xNxbowdkRobrZkrhwzS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZ9Yk98l; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPx084Hy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F93BC4CEED;
-	Mon, 11 Aug 2025 11:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754910134;
-	bh=BPqTEIEi19uUvsZ3UKFemRzcPtUUh7NqCO5h9wS+W5w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FPx084HykHkUTv35hbsedzLzIy1lQHXv9Mk0RLLFYL7OiL3h4HcXNECaOcOF9dyAs
-	 vnoL6c7cGmmK2yaDAFxiYoKfJKJ1KFuHGx3FXu956cIGY48yeUfQqi8Ly8k+lcZv3T
-	 Ibs8Ce30iF/f4ZUML5mWlyepL6aeYNq2j0zNSTtG9G7BVrOmAc/P3T0mfq5ACIZErR
-	 0OAs1gRJe3U960HL2B2ijS10kVeCwY3Nzah3idNxRyaNe4fSIGWh2C1+Twcm10Fedq
-	 qZczv4xfo610PcT0bpmpLY9kyYqaW/Ydq1shEmFmTfIIcNYoYD/waBGysbs8FwU9i0
-	 NYVTrU2PM2HTg==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Toan Le <toan@os.amperecomputing.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <aIzCbVd93ivPinne@stanley.mountain>
-References: <aIzCbVd93ivPinne@stanley.mountain>
-Subject: Re: [PATCH next] PCI: xgene-msi: Return negative -EINVAL in
- xgene_msi_handler_setup()
-Message-Id: <175491013091.15602.16180444795907652699.b4-ty@kernel.org>
-Date: Mon, 11 Aug 2025 16:32:10 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZ9Yk98l"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b783ea502eso2923297f8f.1;
+        Mon, 11 Aug 2025 04:12:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754910771; x=1755515571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZpFd1p985Zt2FE0ikX1FewH4hrglpUtZfkFtt2DZdFk=;
+        b=eZ9Yk98lzgHhcUoIzx5D3e3q3v+fRkWmUdclt94xqu7RDerdaZO1qby/pmtwxZjooM
+         HmuXYDPsCSzcYV4VjQuWradpwtbzLBPdItiSbWGfJp+Kag89Dm7KTGrIodeY7pola40x
+         pWhTGoYXt46Z6hwLxjnqcWigXefKa1pugVYNHZ5JGrGg9+hrB5GMYbx9A/G2KwWFHq+H
+         ZiiP16hDacpZXdQRKT5SVML/5Fea+SNUVcTiokq3oZ3vx6U7DRhzVV30TTAZ/Jqk8bt/
+         xbBAnYhbttBpRE40yWmgm/LqdaReluiipAABl3TMzaZlCnUuFp8EPvtJGqSuYSFdYUf3
+         Oj2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754910771; x=1755515571;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZpFd1p985Zt2FE0ikX1FewH4hrglpUtZfkFtt2DZdFk=;
+        b=GqCOnJgkL8+oHQB1X83hNwIKPpNiZAyyONHSXCttmcy47+n+yxilk+dFskG/k1uwEt
+         C31lfFTXh+4mEiQBk/QaA+PfjtcQ7Z3424ftmw3JWEcMaiqAl65z2+VJOboZ5icW1Ir9
+         3QiOOfcvnWCPnxDFiHUTxLMZGRVcImPeb6ueBYDy+YRRJJ3+abuDol+eCtxTUwWQi/i9
+         9GbItvTdYYb63taC9N0jaGkg8sd7xQLHGxwuzqhWaHvaYAVEDlM7HS1ZgY98EP6FQq4x
+         jDK+yX5VSI9DCLi0lGdK63Rde1x86d/PSCBQy9NKFBiya59GGjZzBiFD0I2CNlLjv3xm
+         06Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCURk2jK8NV3UTWcTZm26Ku8wACeTuCYsrXIjAezXTJyXQhHffM3ZewZyz5NOEn4eoscpkuSyViw@vger.kernel.org, AJvYcCX91HqXJUMZJwxLFUoNCY7wt56hz5pBVBTPoXYJxtX88TjHsUDVmNyUxZhcCwv89oxZaQjwlcoO7kp6cbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHrOKUDty61+O8PSlkxDJbuUT99TyRLNGuWHq1IpuGNuQ5bz48
+	XdGqpp7iokq8gKDwkIRVtE7aLqDfhMETnZZ+B3S9bxjV4A0TVbkPKAQt
+X-Gm-Gg: ASbGncv3OV4MCz1B5NAi/pGiCxrCB4IXjDjpKMCZi1VQmIw75uzaV1CgCtDBS4ZdUpN
+	P+R9LrcTkBIjfgawjZcPX2wkJ32EJGqZGE0QZorpewtHeDczQAknJSYVL8FzxVn9axrMBCNvlcN
+	F2QRyXUK+EEsA6jpjBEaOWe7dNFJq3/mCCEtH7O1boF7Y9joz/kGSorSuvLTeDlfcBnnZfFA7Ab
+	ODcd2JiiWSo5USHiyr2nphB13Pkt0wmy9Ep34xBJ4mSfrHRbadPi0NNXVQ01EctFpNPuXUzG3ck
+	WzmfTqJWmj9OL0OSucxYwwqdYP+1k9QEGqGM9nTKH7B48mr2h7OFMA/s0zn5C0f2KL5WtCIK242
+	UJHxUEViItud9VVwhoOAU
+X-Google-Smtp-Source: AGHT+IEgnc5QqrRg0lz9+OdndWHdvt/rKwyilSbik0M4f9+GbjXlUx7jAfvxAzW/AxvkKUcd3R5bIw==
+X-Received: by 2002:a05:6000:4308:b0:3b7:915c:5fa3 with SMTP id ffacd0b85a97d-3b900fe7e69mr12080048f8f.24.1754910770430;
+        Mon, 11 Aug 2025 04:12:50 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3abed3sm40116248f8f.10.2025.08.11.04.12.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Aug 2025 04:12:49 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: stmmac: make variable data a u32
+Date: Mon, 11 Aug 2025 12:12:11 +0100
+Message-ID: <20250811111211.1646600-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -47,22 +80,32 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
+Make data a u32 instead of an unsigned long, this way it is
+explicitly the same width as the operations performed on it
+and the same width as a writel store, and it cleans up sign
+extention warnings when 64 bit static analysis is performed
+on the code.
 
-On Fri, 01 Aug 2025 16:34:37 +0300, Dan Carpenter wrote:
-> There is a typo so we accidentally return positive EINVAL instead of
-> negative -EINVAL.  Add the missing '-' character.
-> 
-> 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied, thanks!
-
-[1/1] PCI: xgene-msi: Return negative -EINVAL in xgene_msi_handler_setup()
-      commit: b26fc701a25195134ff0327709a0421767c4c7b2
-
-Best regards,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c b/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
+index 4846bf49c576..467f1a05747e 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c
+@@ -251,7 +251,7 @@ void dwmac_dma_flush_tx_fifo(void __iomem *ioaddr)
+ void stmmac_set_mac_addr(void __iomem *ioaddr, const u8 addr[6],
+ 			 unsigned int high, unsigned int low)
+ {
+-	unsigned long data;
++	u32 data;
+ 
+ 	data = (addr[5] << 8) | addr[4];
+ 	/* For MAC Addr registers we have to set the Address Enable (AE)
 -- 
-Manivannan Sadhasivam <mani@kernel.org>
+2.50.1
 
