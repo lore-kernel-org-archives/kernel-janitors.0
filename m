@@ -1,178 +1,191 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF35F2441B4;
-	Mon, 11 Aug 2025 14:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ADC2E11B9;
+	Mon, 11 Aug 2025 15:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754922438; cv=none; b=Ut9yyBpSi/X1nBhs7C4vEOx7Azh+myfrxoLEUdfOTJ7fnVh89nvFsxKZOycd3WyjGA/kJhsHxIqZGFKvmr7rUhY5ccPdpVu8cUxtpMmr2Lt7ztdjCKIo5hPsT27iU+gchNzV6PT8tSCPtGHefT5jxotCPcD1Cor1QuJFWkMk0io=
+	t=1754927012; cv=none; b=Rtfjgr+gM0hMlEuWVuGPxEYVO7dyZPN++tK2AZuD3Bw42WIE4ktniAbel1W2llWy7FnYbOv5Kisw/sjHi4Lg9tEaqmA0jQ2HAcVNSvJb+9g1A69Ss4/gg8aKY+Smfsfq5YUDBUb1qr9x81yqF8TKDIjuyJFcTPEvR1TopcSDDBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754922438; c=relaxed/simple;
-	bh=ToD+V4Y6QuUockNI5WYMvlxRPFX6OLPNwxY8Q3Oq6ag=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eIq42dBFaQZO+GDeppTqpp1IHigZGIGsMDspiGcMhVPDH8eBWsiME5DMoK6p2zlG2/04QtHKyX3e4flJtKt5aiJ5DX+mCc4JMRPaFzKzAyvTai78w1xQ9I4pASL/umbIVQCWfnJsffhUabjT91EEtBeHHmtzLAwE1kTsepw+B5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=E6I0/nQs; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1754927012; c=relaxed/simple;
+	bh=zn5cZPHQng1+vLuHAuE53HdPsvAXlQnQCgdIZD5dKtA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DZ45iidAm6G+9wMT/hNZrb93f8Yw3ZehlzRey5ndsUWM8klPmVtEkDjLbyEle8MjYKtdvzzicvlf7ZDEBchaDlamcTAFhxGvZamQxATY/hhR79RBVGelIShTnVTAvYz9bpx9XMPw3lLudBxK2kXemEZBToV+UtFdn5A4XammzA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+NxTh1g; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="E6I0/nQs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754922433;
-	bh=ToD+V4Y6QuUockNI5WYMvlxRPFX6OLPNwxY8Q3Oq6ag=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=E6I0/nQsoSr5TDpWWEwo2yfzPByADNf07S4gkE5bY5v4XkVytrh8kcIBVoadWw3FP
-	 tSVwdqKz/ssqR0WPGPKOP+W3414PqwcIiVyxe/ot1b9iMEbkF/zXtPFP8IAdQ60dml
-	 PZMSAg6dz/LPAABoN2lvcODhsX2z7jao1JkazIxhbBc61X8ZNG9KwkDjCR4Boh0UkJ
-	 AsyIZbV1ChEYiuZj3pMP+JPNDdiDhsEPmF+ki03M81o/scNoLEPD8MWFE95Ibu9wVr
-	 xgQFXrY023mStztbAI9twO0eB5N7nMqDPR6zZmr6TfR5c3c3uSLSlhsSucaKjl7EnY
-	 wghU7U3FMrpIw==
-Received: from [IPv6:2606:6d00:11:5a76::c41] (unknown [IPv6:2606:6d00:11:5a76::c41])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E5B8817E00AC;
-	Mon, 11 Aug 2025 16:27:11 +0200 (CEST)
-Message-ID: <f904836c0bd78f71e0a85d8d924c7862415a3728.camel@collabora.com>
-Subject: Re: [PATCH v2] media: rkvdec: Fix an error handling path in
- rkvdec_probe()
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Detlev Casanova	
- <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Hans Verkuil
- <hverkuil@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 11 Aug 2025 10:27:10 -0400
-In-Reply-To: <00b13063525c2aee6a60a7f6810f69c12bf2a866.1753899866.git.christophe.jaillet@wanadoo.fr>
-References: 
-	<00b13063525c2aee6a60a7f6810f69c12bf2a866.1753899866.git.christophe.jaillet@wanadoo.fr>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
- oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
- zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
- TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
- 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
- 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
- cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
- tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
- bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
- qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
- BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
- tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
- zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
- 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
- s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
- An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
- ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
- AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
- CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
- 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
- BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
- +E7ItOqZEHAs+xabBgknYZIFPU=
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-19AGW8VvHYkhYtzMHXQj"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+NxTh1g"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754927011; x=1786463011;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zn5cZPHQng1+vLuHAuE53HdPsvAXlQnQCgdIZD5dKtA=;
+  b=V+NxTh1gTbyu6xoS6V1i1yaC56QI2I+Cyn7P35IZozS9Ui2trKNmW85R
+   p0tvFDHYe0sj3r3UhdR0HTZXl5AcoQxFBS9w0m9Wky603hjh+jtj9NXzi
+   DIycvDtfU17RrcuQF1FOxKmTQ0JHOj3PKAoTq2QaHYDMFwmOPzzKDX9pB
+   iMLrBesP7oGCNM2QhCqEKO8gF25a7b1u2PekmJEsmWt0kv9cXCtv+tLST
+   JWYbIrld1rMXuAfxAp/eEsbTw9ZA9FxhTP+7xhJ0Q+FApMiksv6TOfXSt
+   NnWURERhk4pwFoxTkEGfD8zv9CemSBXvZRRfH126Z1fdYUE2etbiupnDT
+   g==;
+X-CSE-ConnectionGUID: qRc3l+MNSy+PzjQd3r2o/Q==
+X-CSE-MsgGUID: lQeBHIipRpC0B0677qEYtg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68552730"
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="68552730"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:43:30 -0700
+X-CSE-ConnectionGUID: cI3IyOMDREil4zsmPROvqw==
+X-CSE-MsgGUID: ir+pQLLkSHq+DT8Jxm9fEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
+   d="scan'208";a="166301427"
+Received: from bvivekan-mobl2.gar.corp.intel.com (HELO [10.247.119.140]) ([10.247.119.140])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:43:24 -0700
+Message-ID: <5f44acad-0049-45d5-b1d9-1b4cd803c860@intel.com>
+Date: Mon, 11 Aug 2025 08:43:19 -0700
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-19AGW8VvHYkhYtzMHXQj
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Le mercredi 30 juillet 2025 =C3=A0 20:24 +0200, Christophe JAILLET a =C3=A9=
-crit=C2=A0:
-> If an error occurs after a successful iommu_paging_domain_alloc() call, i=
-t
-> should be undone by a corresponding iommu_domain_free() call, as already
-> done in the remove function.
->=20
-> In order to fix the issue, move the corresponding call at the end of the
-> function, because it is safe to allocate 'empty_domain' later.
->=20
-> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> ---
-> Compile tested only.
->=20
-> Changes in v2:
-> =C2=A0 - Move code instead of handling errors=C2=A0=C2=A0 [Nicolas Dufres=
-ne]
-> =C2=A0 - Add R-b tag
->=20
-> v1:
-> https://lore.kernel.org/all/b69c20783a7b6f7964ab636679d3da80fc48372e.1753=
-610517.git.christophe.jaillet@wanadoo.fr/
-> ---
-> =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c | 14 +++++++-------
-> =C2=A01 file changed, 7 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> index d707088ec0dc..6eae10e16c73 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -1159,13 +1159,6 @@ static int rkvdec_probe(struct platform_device *pd=
-ev)
-> =C2=A0		return ret;
-> =C2=A0	}
-> =C2=A0
-> -	if (iommu_get_domain_for_dev(&pdev->dev)) {
-> -		rkvdec->empty_domain =3D iommu_paging_domain_alloc(rkvdec-
-> >dev);
-> -
-> -		if (!rkvdec->empty_domain)
-> -			dev_warn(rkvdec->dev, "cannot alloc new empty
-> domain\n");
-> -	}
-
-I've re-applied including Dan's fixes, iommu_paging_domain_alloc() does not
-return NULL on error. No action required.
-
-Nicolas
-
-> -
-> =C2=A0	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
-> =C2=A0
-> =C2=A0	irq =3D platform_get_irq(pdev, 0);
-> @@ -1188,6 +1181,13 @@ static int rkvdec_probe(struct platform_device *pd=
-ev)
-> =C2=A0	if (ret)
-> =C2=A0		goto err_disable_runtime_pm;
-> =C2=A0
-> +	if (iommu_get_domain_for_dev(&pdev->dev)) {
-> +		rkvdec->empty_domain =3D iommu_paging_domain_alloc(rkvdec-
-> >dev);
-> +
-> +		if (!rkvdec->empty_domain)
-> +			dev_warn(rkvdec->dev, "cannot alloc new empty
-> domain\n");
-> +	}
-> +
-> =C2=A0	return 0;
-> =C2=A0
-> =C2=A0err_disable_runtime_pm:
-
---=-19AGW8VvHYkhYtzMHXQj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dmaengine: idxd: Fix double free in idxd_setup_wqs()
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Shuai Xue <xueshuai@linux.alibaba.com>,
+ Colin Ian King <colin.i.king@gmail.com>
+Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghuay@nvidia.com>,
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aJnJW3iYTDDCj9sk@stanley.mountain>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <aJnJW3iYTDDCj9sk@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaJn9vgAKCRBxUwItrAao
-HP14AKDeWTa5P0d9CA6ywPOUflta+mlh4ACfe9DEE0Ie16V482KxslENbG3kPoE=
-=t0j7
------END PGP SIGNATURE-----
 
---=-19AGW8VvHYkhYtzMHXQj--
+On 8/11/25 3:43 AM, Dan Carpenter wrote:
+> The clean up in idxd_setup_wqs() has had a couple bugs because the error
+> handling is a bit subtle.  It's simpler to just re-write it in a cleaner
+> way.  The issues here are:
+> 
+> 1) If "idxd->max_wqs" is <= 0 then we call put_device(conf_dev) when
+>    "conf_dev" hasn't been initialized.
+> 2) If kzalloc_node() fails then again "conf_dev" is invalid.  It's
+>    either uninitialized or it points to the "conf_dev" from the
+>    previous iteration so it leads to a double free.
+> 
+> It's better to free partial loop iterations within the loop and then
+> the unwinding at the end can handle whole loop iterations.  I also
+> renamed the labels to describe what the goto does and not where the goto
+> was located.
+> 
+> Fixes: 3fd2f4bc010c ("dmaengine: idxd: fix memory leak in error handling path of idxd_setup_wqs")
+> Reported-by: Colin Ian King <colin.i.king@gmail.com>
+> Closes: https://lore.kernel.org/all/20250811095836.1642093-1-colin.i.king@gmail.com/
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/dma/idxd/init.c | 33 +++++++++++++++++----------------
+>  1 file changed, 17 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+> index 35bdefd3728b..dda01a4398e1 100644
+> --- a/drivers/dma/idxd/init.c
+> +++ b/drivers/dma/idxd/init.c
+> @@ -189,27 +189,30 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>  	idxd->wq_enable_map = bitmap_zalloc_node(idxd->max_wqs, GFP_KERNEL, dev_to_node(dev));
+>  	if (!idxd->wq_enable_map) {
+>  		rc = -ENOMEM;
+> -		goto err_bitmap;
+> +		goto err_free_wqs;
+>  	}
+> 
+>  	for (i = 0; i < idxd->max_wqs; i++) {
+>  		wq = kzalloc_node(sizeof(*wq), GFP_KERNEL, dev_to_node(dev));
+>  		if (!wq) {
+>  			rc = -ENOMEM;
+> -			goto err;
+> +			goto err_unwind;
+>  		}
+> 
+>  		idxd_dev_set_type(&wq->idxd_dev, IDXD_DEV_WQ);
+>  		conf_dev = wq_confdev(wq);
+>  		wq->id = i;
+>  		wq->idxd = idxd;
+> -		device_initialize(wq_confdev(wq));
+> +		device_initialize(conf_dev);
+>  		conf_dev->parent = idxd_confdev(idxd);
+>  		conf_dev->bus = &dsa_bus_type;
+>  		conf_dev->type = &idxd_wq_device_type;
+>  		rc = dev_set_name(conf_dev, "wq%d.%d", idxd->id, wq->id);
+> -		if (rc < 0)
+> -			goto err;
+> +		if (rc < 0) {
+> +			put_device(conf_dev);
+> +			kfree(wq);
+> +			goto err_unwind;
+> +		}
+> 
+>  		mutex_init(&wq->wq_lock);
+>  		init_waitqueue_head(&wq->err_queue);
+> @@ -220,15 +223,20 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>  		wq->enqcmds_retries = IDXD_ENQCMDS_RETRIES;
+>  		wq->wqcfg = kzalloc_node(idxd->wqcfg_size, GFP_KERNEL, dev_to_node(dev));
+>  		if (!wq->wqcfg) {
+> +			put_device(conf_dev);
+> +			kfree(wq);
+>  			rc = -ENOMEM;
+> -			goto err;
+> +			goto err_unwind;
+>  		}
+> 
+>  		if (idxd->hw.wq_cap.op_config) {
+>  			wq->opcap_bmap = bitmap_zalloc(IDXD_MAX_OPCAP_BITS, GFP_KERNEL);
+>  			if (!wq->opcap_bmap) {
+> +				kfree(wq->wqcfg);
+> +				put_device(conf_dev);
+> +				kfree(wq);
+>  				rc = -ENOMEM;
+> -				goto err_opcap_bmap;
+> +				goto err_unwind;
+>  			}
+>  			bitmap_copy(wq->opcap_bmap, idxd->opcap_bmap, IDXD_MAX_OPCAP_BITS);
+>  		}
+> @@ -239,13 +247,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+> 
+>  	return 0;
+> 
+> -err_opcap_bmap:
+> -	kfree(wq->wqcfg);
+> -
+> -err:
+> -	put_device(conf_dev);
+> -	kfree(wq);
+> -
+> +err_unwind:
+>  	while (--i >= 0) {
+>  		wq = idxd->wqs[i];
+>  		if (idxd->hw.wq_cap.op_config)
+> @@ -254,11 +256,10 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
+>  		conf_dev = wq_confdev(wq);
+>  		put_device(conf_dev);
+>  		kfree(wq);
+> -
+>  	}
+>  	bitmap_free(idxd->wq_enable_map);
+> 
+> -err_bitmap:
+> +err_free_wqs:
+>  	kfree(idxd->wqs);
+> 
+>  	return rc;
+> --
+> 2.47.2
+
