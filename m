@@ -1,50 +1,30 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ADC2E11B9;
-	Mon, 11 Aug 2025 15:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458E928152A;
+	Tue, 12 Aug 2025 02:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754927012; cv=none; b=Rtfjgr+gM0hMlEuWVuGPxEYVO7dyZPN++tK2AZuD3Bw42WIE4ktniAbel1W2llWy7FnYbOv5Kisw/sjHi4Lg9tEaqmA0jQ2HAcVNSvJb+9g1A69Ss4/gg8aKY+Smfsfq5YUDBUb1qr9x81yqF8TKDIjuyJFcTPEvR1TopcSDDBI=
+	t=1754964693; cv=none; b=fN2dRZz0LSITwh9e+e0LKNB/pthgw/lsf6Vce0o9H+Woap9NcVBrXYURE+9IeyN28h961fm5jRWisTLjWo0E7X4R271AyTo9FEAoTqDwOBhR/ZMY7UE7MsWJOJ7zPXsog2n8gT1F39i9DLgiNDleRIVS2KlkNuuHVxPxDuTRdzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754927012; c=relaxed/simple;
-	bh=zn5cZPHQng1+vLuHAuE53HdPsvAXlQnQCgdIZD5dKtA=;
+	s=arc-20240116; t=1754964693; c=relaxed/simple;
+	bh=IBRHhpY/z0qyZ7Z+agm/NTnXbn4mdhK0ATRZmTFbvN4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DZ45iidAm6G+9wMT/hNZrb93f8Yw3ZehlzRey5ndsUWM8klPmVtEkDjLbyEle8MjYKtdvzzicvlf7ZDEBchaDlamcTAFhxGvZamQxATY/hhR79RBVGelIShTnVTAvYz9bpx9XMPw3lLudBxK2kXemEZBToV+UtFdn5A4XammzA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+NxTh1g; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 In-Reply-To:Content-Type; b=nrh9Te5hxJz/qrc6AH7MehPYJMkbO8giqXtYke6I22UZJI0Ceci0cQ48xRggLlEwzD79H646EAWRu7Q++TN5gvK7IDuXjpTenwZC9fPoL1fxukBnVUuNTEgwhayRxfOpIfIbXAj7HOMcyfBDwfXLUabPlL+uxddr0GC5AowNcA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=UcIVNugy; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+NxTh1g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754927011; x=1786463011;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zn5cZPHQng1+vLuHAuE53HdPsvAXlQnQCgdIZD5dKtA=;
-  b=V+NxTh1gTbyu6xoS6V1i1yaC56QI2I+Cyn7P35IZozS9Ui2trKNmW85R
-   p0tvFDHYe0sj3r3UhdR0HTZXl5AcoQxFBS9w0m9Wky603hjh+jtj9NXzi
-   DIycvDtfU17RrcuQF1FOxKmTQ0JHOj3PKAoTq2QaHYDMFwmOPzzKDX9pB
-   iMLrBesP7oGCNM2QhCqEKO8gF25a7b1u2PekmJEsmWt0kv9cXCtv+tLST
-   JWYbIrld1rMXuAfxAp/eEsbTw9ZA9FxhTP+7xhJ0Q+FApMiksv6TOfXSt
-   NnWURERhk4pwFoxTkEGfD8zv9CemSBXvZRRfH126Z1fdYUE2etbiupnDT
-   g==;
-X-CSE-ConnectionGUID: qRc3l+MNSy+PzjQd3r2o/Q==
-X-CSE-MsgGUID: lQeBHIipRpC0B0677qEYtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11518"; a="68552730"
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="68552730"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:43:30 -0700
-X-CSE-ConnectionGUID: cI3IyOMDREil4zsmPROvqw==
-X-CSE-MsgGUID: ir+pQLLkSHq+DT8Jxm9fEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,278,1747724400"; 
-   d="scan'208";a="166301427"
-Received: from bvivekan-mobl2.gar.corp.intel.com (HELO [10.247.119.140]) ([10.247.119.140])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2025 08:43:24 -0700
-Message-ID: <5f44acad-0049-45d5-b1d9-1b4cd803c860@intel.com>
-Date: Mon, 11 Aug 2025 08:43:19 -0700
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="UcIVNugy"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=iydQSy/gRoXca8M16f40kf1xXjFFM56KYb4MzSF+79o=;
+	b=UcIVNugyiTmmnPlRZp0z8PVfxSAsHmGrj1D1BzO6m8039bOSyjTKMI/iKDhMYd
+	eiDDUvdD/SMUUCdZXLyg6IwoDvbniXpSXhRZtxeP8+1SQSddGcb5ynEFN2nYGgFf
+	6g2ei0xh46O3c/J5MRXakQoVzxMKospXuHsbmBEBYYJfw=
+Received: from [127.0.0.1] (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDXH3bJoppoT9Z7BQ--.47419S2;
+	Tue, 12 Aug 2025 10:11:22 +0800 (CST)
+Message-ID: <461ae944-5fb9-4860-81c1-1ac48c3d888f@163.com>
+Date: Tue, 12 Aug 2025 10:11:21 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -52,140 +32,43 @@ List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: idxd: Fix double free in idxd_setup_wqs()
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Shuai Xue <xueshuai@linux.alibaba.com>,
- Colin Ian King <colin.i.king@gmail.com>
-Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghuay@nvidia.com>,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <aJnJW3iYTDDCj9sk@stanley.mountain>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <aJnJW3iYTDDCj9sk@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] squashfs: Avoid mem leak in squashfs_fill_super
+To: Markus Elfring <Markus.Elfring@web.de>, Scott Guo
+ <scottzhguo@tencent.com>, Phillip Lougher <phillip@squashfs.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20250811061921.3807353-1-scott_gzh@163.com>
+ <24759bdb-b427-47a7-b9c3-724a11d0162e@web.de>
+From: Scott Guo <scott_gzh@163.com>
+In-Reply-To: <24759bdb-b427-47a7-b9c3-724a11d0162e@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXH3bJoppoT9Z7BQ--.47419S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruF17Wr48ury7KFy8tFy8Grg_yoWxKwcEvF
+	93KrWkX3s7JryfZF45Cw4DtFZxWr4xXry5ZF1Fqw4S9390vwn8Grs8uF1DAw1rXFWrCFn5
+	Crn0v3s2v347ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUn92-UUUUUU==
+X-CM-SenderInfo: hvfr33hbj2xqqrwthudrp/1tbiOhGnnWianal14gABsB
 
+Hi Markus,
 
-
-On 8/11/25 3:43 AM, Dan Carpenter wrote:
-> The clean up in idxd_setup_wqs() has had a couple bugs because the error
-> handling is a bit subtle.  It's simpler to just re-write it in a cleaner
-> way.  The issues here are:
+在 2025/8/11 15:02, Markus Elfring 写道:
+>> If sb_min_blocksize returns 0, -EINVAL was returned without freeing
+>> sb->s_fs_info, causing mem leak.
 > 
-> 1) If "idxd->max_wqs" is <= 0 then we call put_device(conf_dev) when
->    "conf_dev" hasn't been initialized.
-> 2) If kzalloc_node() fails then again "conf_dev" is invalid.  It's
->    either uninitialized or it points to the "conf_dev" from the
->    previous iteration so it leads to a double free.
+>                           memory?
 > 
-> It's better to free partial loop iterations within the loop and then
-> the unwinding at the end can handle whole loop iterations.  I also
-> renamed the labels to describe what the goto does and not where the goto
-> was located.
 > 
-> Fixes: 3fd2f4bc010c ("dmaengine: idxd: fix memory leak in error handling path of idxd_setup_wqs")
-> Reported-by: Colin Ian King <colin.i.king@gmail.com>
-> Closes: https://lore.kernel.org/all/20250811095836.1642093-1-colin.i.king@gmail.com/
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/dma/idxd/init.c | 33 +++++++++++++++++----------------
->  1 file changed, 17 insertions(+), 16 deletions(-)
+> How do you think about to append parentheses to the function name (in the summary phrase)?
+Sure, will do that in V2.>
 > 
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index 35bdefd3728b..dda01a4398e1 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -189,27 +189,30 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->  	idxd->wq_enable_map = bitmap_zalloc_node(idxd->max_wqs, GFP_KERNEL, dev_to_node(dev));
->  	if (!idxd->wq_enable_map) {
->  		rc = -ENOMEM;
-> -		goto err_bitmap;
-> +		goto err_free_wqs;
->  	}
+>> Fix it by goto failed_mount.
 > 
->  	for (i = 0; i < idxd->max_wqs; i++) {
->  		wq = kzalloc_node(sizeof(*wq), GFP_KERNEL, dev_to_node(dev));
->  		if (!wq) {
->  			rc = -ENOMEM;
-> -			goto err;
-> +			goto err_unwind;
->  		}
-> 
->  		idxd_dev_set_type(&wq->idxd_dev, IDXD_DEV_WQ);
->  		conf_dev = wq_confdev(wq);
->  		wq->id = i;
->  		wq->idxd = idxd;
-> -		device_initialize(wq_confdev(wq));
-> +		device_initialize(conf_dev);
->  		conf_dev->parent = idxd_confdev(idxd);
->  		conf_dev->bus = &dsa_bus_type;
->  		conf_dev->type = &idxd_wq_device_type;
->  		rc = dev_set_name(conf_dev, "wq%d.%d", idxd->id, wq->id);
-> -		if (rc < 0)
-> -			goto err;
-> +		if (rc < 0) {
-> +			put_device(conf_dev);
-> +			kfree(wq);
-> +			goto err_unwind;
-> +		}
-> 
->  		mutex_init(&wq->wq_lock);
->  		init_waitqueue_head(&wq->err_queue);
-> @@ -220,15 +223,20 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->  		wq->enqcmds_retries = IDXD_ENQCMDS_RETRIES;
->  		wq->wqcfg = kzalloc_node(idxd->wqcfg_size, GFP_KERNEL, dev_to_node(dev));
->  		if (!wq->wqcfg) {
-> +			put_device(conf_dev);
-> +			kfree(wq);
->  			rc = -ENOMEM;
-> -			goto err;
-> +			goto err_unwind;
->  		}
-> 
->  		if (idxd->hw.wq_cap.op_config) {
->  			wq->opcap_bmap = bitmap_zalloc(IDXD_MAX_OPCAP_BITS, GFP_KERNEL);
->  			if (!wq->opcap_bmap) {
-> +				kfree(wq->wqcfg);
-> +				put_device(conf_dev);
-> +				kfree(wq);
->  				rc = -ENOMEM;
-> -				goto err_opcap_bmap;
-> +				goto err_unwind;
->  			}
->  			bitmap_copy(wq->opcap_bmap, idxd->opcap_bmap, IDXD_MAX_OPCAP_BITS);
->  		}
-> @@ -239,13 +247,7 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
-> 
->  	return 0;
-> 
-> -err_opcap_bmap:
-> -	kfree(wq->wqcfg);
-> -
-> -err:
-> -	put_device(conf_dev);
-> -	kfree(wq);
-> -
-> +err_unwind:
->  	while (--i >= 0) {
->  		wq = idxd->wqs[i];
->  		if (idxd->hw.wq_cap.op_config)
-> @@ -254,11 +256,10 @@ static int idxd_setup_wqs(struct idxd_device *idxd)
->  		conf_dev = wq_confdev(wq);
->  		put_device(conf_dev);
->  		kfree(wq);
-> -
->  	}
->  	bitmap_free(idxd->wq_enable_map);
-> 
-> -err_bitmap:
-> +err_free_wqs:
->  	kfree(idxd->wqs);
-> 
->  	return rc;
-> --
-> 2.47.2
+> By the way:
+> I propose to refine the goto chain by using additional labels like “e_inval” and “e_nomem”
+> so that another bit of exception handling code can be shared at the end
+> of this function implementation.
+> https://elixir.bootlin.com/linux/v6.16/source/fs/squashfs/super.c#L434-L466
+Will have a look into that, but maybe fix the current issue first.>
+> Regards,
+> Markus
 
