@@ -1,80 +1,79 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A633023D7E8
-	for <kernel-janitors@vger.kernel.org>; Wed, 13 Aug 2025 07:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A37283FE4;
+	Wed, 13 Aug 2025 08:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755069827; cv=none; b=nmr9vMC1AWFZY4k9gZKrYINyvXdn2/QaJJREWNs2NK2/+Ey+99Gu/57IgAjBLBzzM6qzocTwHJjnJ9ptvKEuxu2ehkDdTmrXuAaD8HvXhO9pq9YSniNOrTW4/Ub3Pe3qe4AlAqFhPv63HHgsg9GTLGYapbuwkZiXKaIC7ujCPio=
+	t=1755072159; cv=none; b=TApnEmdoej2MTa6dYpX06F+TRe1k2wTpO66jREJ3V/GsHOQ948opWBybrSjoV81IT+m//QbohL5sbPREtNp9O6ck+Bu7Ovs1h0bo0zFoaXWXUkKTtnG4r9SBtJ5Q/vbtUxR3Ml8hjirzSRv92e34uEZNEYImgNtyCzTfwNtwtA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755069827; c=relaxed/simple;
-	bh=bv6DYqjwN2D0DlDYGPWLKAAmU2xcLODMCxxOZH6IMlo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I8iusFrJO2apU7LpdlM2TB7k6ekdZaI4wJTIcit86lhHXvl/GsUqKK+aEL//mESIe05484fbO4+7figKcx8YJxbe6ru5C+Dk4XKiIq+d5pfNWLlDvepRjL43reRNlvA1gwcfUL9fEr3io1HWjiQXUB1nnwW8Cp6kU9CJtuKrZK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=K3RbWvwU; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1755072159; c=relaxed/simple;
+	bh=nQvMo01i5zzawzSDp3kh0vDqtAYbjljpoQbinuOFPq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n5iqwfa8b5znLE/jwUufIyEVn4SxwsiQRH5gIpIZkwxBS28sOgQMAp9LKacr8YR5tQgojJ4mwghAIYVRjZPp1rd0uXm1HIZhyVUw2aokiIW+GpHaV+tT6+c5maqk+JJEs5Teb5uFA1q/x0HMDcfH/neAGa4L0u4R0u0AAcBsThE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dX9KlHD2; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="K3RbWvwU"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b7920354f9so5102604f8f.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 13 Aug 2025 00:23:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dX9KlHD2"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b7825e2775so5705600f8f.2;
+        Wed, 13 Aug 2025 01:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755069824; x=1755674624; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0WATivFrievb3I0TcPTJrTrvyez6QlhkHAEe8TBXKLU=;
-        b=K3RbWvwUUe8d3b1jowxjvceKbI9g+dzxeqo1pC7qbUpHA6qKtbV4FW7akwL18hmOM2
-         37jgdCdruRysdghvmPBKViC6uPdiCGzXWEj+msMcodur8LpKGr4oUOjadb0tLzU7Ma/B
-         ur8mbLxBsb+mkmmaI00J6xTZrIFXQTEOpDKkP64A+lrsJs3fYwgWeIN5r11LhnASP4vn
-         LePMpDryDPHs4XR+hFAJ0gDVlyMxB7NA/yrTzAeJbuS0ZC/jkJ3AgoyNxE9tXg/5vZkN
-         z7GkkdQDv8MljgGPAQrv47nVOQly3HSl9oS4+FC1CqE0vDzh/ozDoHRQJIVtw4LhG07f
-         ESAQ==
+        d=gmail.com; s=20230601; t=1755072156; x=1755676956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XVe0idgYx1J+jUFo1Pbaqi+aQhg27OfKm5O0YenTYzE=;
+        b=dX9KlHD27fcm5mVtNCU5M4dTxgJ6o7wNfuazAw7SUUPAZu30PlOzFipywPTVfpMjFy
+         PRr5wWA97mzGjphskk6KsXQ9uhktenzS7wmRHkMp7E9m91XQj9PZpooYp0Rw4hLada4Q
+         cdROrpL9+DstpS3cLGK9+LhDZK7nR5vX6ftBAiezQLjsGXO7nbefoNUnTkBsVhsqjXe2
+         EVLwjgq17I60xiLg9zYA29TwxabocDie3K3tb43zJ6eS3dui5iqaSvDPjz7BXpbvZdfO
+         EGRBIjhfTHtBe93ha2So4OgZC9B5GWPYiDgsVtWLWWqGXcsa5ZgSvP32XRBoLJ7bHYU0
+         7JsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755069824; x=1755674624;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0WATivFrievb3I0TcPTJrTrvyez6QlhkHAEe8TBXKLU=;
-        b=NL0brMTQNEvFbj7d3xG8M+1UUjUe3jXHT+NerspDvTk7xzwB2y496erpvAHuQ7Xnhr
-         87Vb+n/IuhMyMrjkQbuJYcN5eCtvTjg7bTgsIsasGFpJEvzqgj7NPhwhVS4jCiJJ+1qq
-         b/ErkAPbHIyJseMKCp3HmL7FrSxxV17E3MmSKxXrQlMtfG6Sf/qhhajCkfn3t2OvJji4
-         CkLkti6CIXAhe9gbtQwCyTxMBYvM70gnDUAppcmTi/L6u8IivYu1wZWR52skq0ud41XR
-         jboBWMvZdWZPlsEngMnzYJCgUsb14RC1w/a186Xanr1sUlaFehAJ3SPL7buK9n54z+9T
-         arUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWFDJupvXfxNRlZfmV3lj876mb4Jg4HIEsA1iVO1INIyHoR0XJ6iiiFaHDlrAojDjV6DwFq4ghpqqtUN3AO8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyxjtphtMs1uB/macPEJqAKtpwOnMUiZhTsWHvvXO8T7L86WL/
-	hziQsBHHNSwIVKaOIOeWsQuYB6H2iIoXbLgpOo4yXsc6sUdthVvyLIA39nAqXJxyGDY=
-X-Gm-Gg: ASbGncvPHrRkEQQbIrWZ/jno2BaaSKEQYFXytmyLyV62Q16QGNh6ES9X9nR63Fcmwje
-	la60NEZc0+CyPvYtit6pU17/pr7pePu9KVn+aySQjAgE1IFwdCbJzwmvHGtzmLETXuZ/9y+RZFb
-	oiskJKnsDO84WoSMw7gZMde7IlzCYvIqbHy0iAFuvtnR+CgLfkB0F/tmzzVI9cm+H1zicQvtr41
-	hjO1msuY4sk6PMz2/uDjfHI6tdcU9Xs/sVeerMvFLK1WyJe2eoyz4Wwa+i+F8VeNKOc+wjsbBUU
-	yAafSIAW/yX0qy0gAQejTeKnxU09EyHM//wx1p4CVkMxx15keWg3Eml6j1+S2n0BPyl08Zh7EGs
-	LUOa9pTtslbKsTJTow0ENXxDd
-X-Google-Smtp-Source: AGHT+IF1MjcUvwgYnjulLvHKgyfmZ4E6I3kIjMN9y8mrIIK3WlP8h9WdbRGmZ0ZNF9dbobExy36HTA==
-X-Received: by 2002:a05:6000:238a:b0:3b7:76e8:ba1e with SMTP id ffacd0b85a97d-3b917d29ae3mr1458813f8f.11.1755069824008;
-        Wed, 13 Aug 2025 00:23:44 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:74d7:9082:2b54:5348])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac51asm47740936f8f.1.2025.08.13.00.23.43
+        d=1e100.net; s=20230601; t=1755072156; x=1755676956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XVe0idgYx1J+jUFo1Pbaqi+aQhg27OfKm5O0YenTYzE=;
+        b=Yf937yM8aJkAaespV6/mHwo7czcgfOJqwNQAFUz9Lw/4RF+rTZumOEfeOM7aARHDWB
+         LuDeTT1Pe0xOXtHInbBg5TjfT8DUqRgwfI8ifRD+NY/m3nJN+E6XgbKeiEe49TXtb1ao
+         z2xvbDcOii4R5FgiG/b7AJlLQQOWb5rwFz6IuOpEjAMnYiVpwbih9E12owmpRNoLFP5U
+         7FzAJKXm/rNEIA98ZBgstEzZJGlMKKXkkCXc4tZ9cFWRkjINkmfV49lOxJGLP5ZYBQfb
+         j3KuEOmT/5e4FhyD3Y5eMyckRgd91FXsjo5zd5zylORVZWaBSlUzIKOjM65lVWVduyiV
+         ASGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1aAp9S8W5WhyQVgMIgqi7lavkA/5GcfkE9JPvAhtKTaejASEiOzF5jdmaGV7kF+bc6nEnKyM7nWVnd8Q=@vger.kernel.org, AJvYcCXWOytSdEbu/T2uPZQjFLoKvkBoKQwNO82FMZaopWPF20KrCStmaL8hjd15XKLFBStw09Ly/KzbcDllla0/H5zh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX00nnq3CUnN6wmL6dPKafJSl2B3EwPFNQtuH7SnhoBPS1n1wI
+	68ypXNItSFzVNmck3hvfdNDV3CnKZJwBXc8V3uqVYv0tQzfXK+S0GP/2
+X-Gm-Gg: ASbGnctUPm39+XRyB5P879Glcy5da8cGiITGfmyBW9xwePm2lJAuy2eAxlnrKcLvkGs
+	XccG4XEpjtVWc/iOja3b5uLfwCwH1ZysecXaqniKZRkHLwhw14AD6lHylYnH2fSMpQzazT96v8A
+	pRvrt5wnQEtUMQiJMh0i9MLcOc42WPRB2vjdu1lYFkjuKn04Qk4n0haW2HljStMrPadue7EpN5+
+	BU4wAx7Zf9fyc+DBfvRlKWEzvcQE15bzB2l0aF3PnPZ8vxeNdfauZbEYCVv52nxSfSwUmMqYaKY
+	JYm5EnpDNlfaEE8thfXOe1+SCIZpOfAoM5cei5IyF8DFmSxtPn8nWHHjlQvuxaTILmPzF69xZ01
+	iIclINOskz27Q07fNMwih
+X-Google-Smtp-Source: AGHT+IF2JGABNVx7BZux6MpyAVD1R1nKdKMygCmpURXyXIjOojtcxVvm42vK3OiP0B8MvRjzDo8c+g==
+X-Received: by 2002:a05:6000:240c:b0:3b7:8af8:b91d with SMTP id ffacd0b85a97d-3b917eae69emr1631360f8f.35.1755072155716;
+        Wed, 13 Aug 2025 01:02:35 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a16de760fsm18991555e9.17.2025.08.13.01.02.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 00:23:43 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Thomas Richard <thomas.richard@bootlin.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
-Date: Wed, 13 Aug 2025 09:23:42 +0200
-Message-ID: <175506979055.8476.10658684000717777329.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <aJwk0yBSCccGCjX3@stanley.mountain>
-References: <aJwk0yBSCccGCjX3@stanley.mountain>
+        Wed, 13 Aug 2025 01:02:35 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/mm: Fix spelling mistake "mrmeap" -> "mremap"
+Date: Wed, 13 Aug 2025 09:01:56 +0100
+Message-ID: <20250813080156.1977375-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -84,24 +83,44 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+There are spelling mistakes in perror message. Fix these.
 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/mm/mremap_test.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Wed, 13 Aug 2025 08:38:27 +0300, Dan Carpenter wrote:
-> The "> chip->ngpio" comparison here needs to be ">= chip->ngpio",
-> otherwise it leads to an out of bounds access.  The fwd->valid_mask
-> bitmap only has chip->ngpio bits and the fwd->descs[] array has that
-> same number of elements.  These values are set in
-> devm_gpiochip_fwd_alloc().
-> 
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
-      https://git.kernel.org/brgl/linux/c/148547000cfc1ba8cec02857268333d08724b9cc
-
-Best regards,
+diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
+index 5bd52a951cbd..e289bb1112db 100644
+--- a/tools/testing/selftests/mm/mremap_test.c
++++ b/tools/testing/selftests/mm/mremap_test.c
+@@ -846,7 +846,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp,
+ 	}
+ 	if (err != EFAULT) {
+ 		errno = err;
+-		perror("mrmeap() unexpected error");
++		perror("mremap() unexpected error");
+ 		success = false;
+ 		goto out_unmap;
+ 	}
+@@ -899,7 +899,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp,
+ 	}
+ 	if (err != EFAULT) {
+ 		errno = err;
+-		perror("mrmeap() unexpected error");
++		perror("remapp() unexpected error");
+ 		success = false;
+ 		goto out_unmap;
+ 	}
+@@ -948,7 +948,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp,
+ 	}
+ 	if (err != EFAULT) {
+ 		errno = err;
+-		perror("mrmeap() unexpected error");
++		perror("remapp() unexpected error");
+ 		success = false;
+ 		goto out_unmap;
+ 	}
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.50.1
+
