@@ -1,111 +1,107 @@
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CCE2D0617;
-	Wed, 13 Aug 2025 06:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A633023D7E8
+	for <kernel-janitors@vger.kernel.org>; Wed, 13 Aug 2025 07:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755067858; cv=none; b=LE3zezq6vPPISmZ8IdZ7dclCdzl46usfanlHiE/TXxUEFgCcygHL0VWZcMLunhyqTNaAgMjpKso4usY1cl6SwOj5NHWIOuOJ7bpo4UJ+ORTPbi3lYo+FOWm1g1J0nQ8HZHb+NwF4kW8wuJGtz4o+WapqkrJ+AAufxM4YmgKsJ84=
+	t=1755069827; cv=none; b=nmr9vMC1AWFZY4k9gZKrYINyvXdn2/QaJJREWNs2NK2/+Ey+99Gu/57IgAjBLBzzM6qzocTwHJjnJ9ptvKEuxu2ehkDdTmrXuAaD8HvXhO9pq9YSniNOrTW4/Ub3Pe3qe4AlAqFhPv63HHgsg9GTLGYapbuwkZiXKaIC7ujCPio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755067858; c=relaxed/simple;
-	bh=xy7Cf6sce/SJOZuFqk8gE9CKdCJEm4kCAmDrzn9gaoE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k2Qvsepga7Vuzuo+bnW8rtC49WihyUTxgau4505MsOvQUBrM5LGZFEhRfgj9u9/IpcazeK4/2MqUZawXUv5TWRbuFZjM4yJvhYM2Ittc1FBXRucYxdWYfy0urvduOe1YdVt2Zf6+F1pRD8Jn5iKn4A1nXXM3YxDvEQkFI234DJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-88e373c07f8so908466241.1;
-        Tue, 12 Aug 2025 23:50:56 -0700 (PDT)
+	s=arc-20240116; t=1755069827; c=relaxed/simple;
+	bh=bv6DYqjwN2D0DlDYGPWLKAAmU2xcLODMCxxOZH6IMlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I8iusFrJO2apU7LpdlM2TB7k6ekdZaI4wJTIcit86lhHXvl/GsUqKK+aEL//mESIe05484fbO4+7figKcx8YJxbe6ru5C+Dk4XKiIq+d5pfNWLlDvepRjL43reRNlvA1gwcfUL9fEr3io1HWjiQXUB1nnwW8Cp6kU9CJtuKrZK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=K3RbWvwU; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="K3RbWvwU"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b7920354f9so5102604f8f.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Aug 2025 00:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755069824; x=1755674624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0WATivFrievb3I0TcPTJrTrvyez6QlhkHAEe8TBXKLU=;
+        b=K3RbWvwUUe8d3b1jowxjvceKbI9g+dzxeqo1pC7qbUpHA6qKtbV4FW7akwL18hmOM2
+         37jgdCdruRysdghvmPBKViC6uPdiCGzXWEj+msMcodur8LpKGr4oUOjadb0tLzU7Ma/B
+         ur8mbLxBsb+mkmmaI00J6xTZrIFXQTEOpDKkP64A+lrsJs3fYwgWeIN5r11LhnASP4vn
+         LePMpDryDPHs4XR+hFAJ0gDVlyMxB7NA/yrTzAeJbuS0ZC/jkJ3AgoyNxE9tXg/5vZkN
+         z7GkkdQDv8MljgGPAQrv47nVOQly3HSl9oS4+FC1CqE0vDzh/ozDoHRQJIVtw4LhG07f
+         ESAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755067855; x=1755672655;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8T63UKJO4oXLnVMeu5S8Bqcc+Hsdmb7ulwo/FczsGM0=;
-        b=X9WN+Vt8QQRaZMrY+8h544EId450/g69rnqeZrWiDpQ73380kSPcSziXLysdJip3kz
-         z3WtdIBSbcUp8ErialbPhAe1Ry8dKEg0QqyvrgRUwkF+uvpR7DCfOYb4xEN0Hhumeom7
-         F4BMr4n+5LfOHLnBJtQemuM/6V607mdv03kxQgnjLcLsxVfjRsUsfEn0sS4NMj2s2lw/
-         OJTeDDbaq+1/ojK0hsFn/lCZScfQLMzfO+7f1Hc2OiK/W+DdNCoSUmfcwrNG/597P+AU
-         nQjsgtsymm4pfRY5zJ3xPcYk5BYwuA6ZUIEDP/RRfmJdz7dAvvEYucR/KjLM5EFlBXY+
-         GKjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMEk5smuPK0vPtoqMYSUzm14llMl303YcwpTxR7SKDM8sKEOjTNfvEtBnri/M92TxT1QTrZi8rMJwUDg==@vger.kernel.org, AJvYcCW6hVfdIS0UM0p3IVPmz+IwJSmFwL4aPQGVKoBpbvWoMuhdzf9AkNhPBEbKnMo49y7y12o5O3y904UoseFs@vger.kernel.org, AJvYcCX9FURPUZhyZ3IC3u30ZUX9UmGAGpXJb76N37xJ/bU6aKuEVIxN0Z3S3Bz9jzpxdqdQGhLBu/R6apqf4sC49wc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT1hgjRFYDHI0VApoF67ybp2Da8QATTR2tQ/GKRnxJBSPdKwVG
-	TjCt0e+ybxogafblGe7I/Ew+U3TZWFIvaRtfmkeXaoNhZYCKocsexoYPL7p+EchF
-X-Gm-Gg: ASbGncsDQ2TmKYhXWwaJJ0JSbYfRselCxEpYeF6i+lAfKPKSA2obKmTolGM6/xlhRIf
-	zn9y8ZSH3IQrFecH9zfJUqx2G3JIEDMYl6vPO5/lKC2mfQfHPDauo4wdkd7xenDsp0e0+SFoW0X
-	qK3WdrqkQMzsaPkxix3emRAQ2/ohtcw9FAgrx1iOraD1dqiCAzZK3mmu0Sr1Lo+/WPQ4IWsYLIi
-	WUKB+PXPkhfYFXvWyacgYKgjXk6a4oHYr7oNWQPH907kumAqeBf3ZlpgEU/LJtU1ZFapEZ++WqL
-	rpz5Z7xJNXvSJCFFWNAFw4PkR3h/8aTOhJD1I/GZu5RiCIz6A1SEWqIm3ear8cV5AfhS54bjOAa
-	26jF3MPLr+BS+HzFEWgI+20SvnXfLWKhHKWc7SknXTjbwwTLy9Rr9zvdwcxAx
-X-Google-Smtp-Source: AGHT+IHw60PAj2clYFmI3u3fUoDc87dr7r2E7yd7BB0F8Jh567VLYd4IIE36LNZCqAWZtbg0LZldzQ==
-X-Received: by 2002:a05:6102:418f:b0:4e7:b728:e34b with SMTP id ada2fe7eead31-50e4ebbabbdmr702969137.3.1755067855065;
-        Tue, 12 Aug 2025 23:50:55 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88e0293141asm2721136241.17.2025.08.12.23.50.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 23:50:54 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-88c61c2843aso2381933241.2;
-        Tue, 12 Aug 2025 23:50:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBmGUJX9tLwXxqDCTR9fxF9ts/JHUGnkG+ELCCUHegFAjoXDLvSnPsuflTbB5rIJ5sdwFkwUsUOLYZ6Jrz@vger.kernel.org, AJvYcCUDz5x03/Pp+hy+NGqipavIoF81wrUusqJTdDf4K3/cnK4l8H/b5S5ipmWw7BQ+5rL34/3G3EzfVlP+zg==@vger.kernel.org, AJvYcCWKGS5ZEjn6TDtE3Wa/TY8bIyYr99lHTRerHgm8uEnX7tTCTKkDZmqpTTCPoiob+jr1Yln/sx3K5oIjz7Pp9K0=@vger.kernel.org
-X-Received: by 2002:a05:6102:f84:b0:4fb:372d:6d70 with SMTP id
- ada2fe7eead31-50e518c6a92mr655168137.26.1755067854201; Tue, 12 Aug 2025
- 23:50:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755069824; x=1755674624;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0WATivFrievb3I0TcPTJrTrvyez6QlhkHAEe8TBXKLU=;
+        b=NL0brMTQNEvFbj7d3xG8M+1UUjUe3jXHT+NerspDvTk7xzwB2y496erpvAHuQ7Xnhr
+         87Vb+n/IuhMyMrjkQbuJYcN5eCtvTjg7bTgsIsasGFpJEvzqgj7NPhwhVS4jCiJJ+1qq
+         b/ErkAPbHIyJseMKCp3HmL7FrSxxV17E3MmSKxXrQlMtfG6Sf/qhhajCkfn3t2OvJji4
+         CkLkti6CIXAhe9gbtQwCyTxMBYvM70gnDUAppcmTi/L6u8IivYu1wZWR52skq0ud41XR
+         jboBWMvZdWZPlsEngMnzYJCgUsb14RC1w/a186Xanr1sUlaFehAJ3SPL7buK9n54z+9T
+         arUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWFDJupvXfxNRlZfmV3lj876mb4Jg4HIEsA1iVO1INIyHoR0XJ6iiiFaHDlrAojDjV6DwFq4ghpqqtUN3AO8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyxjtphtMs1uB/macPEJqAKtpwOnMUiZhTsWHvvXO8T7L86WL/
+	hziQsBHHNSwIVKaOIOeWsQuYB6H2iIoXbLgpOo4yXsc6sUdthVvyLIA39nAqXJxyGDY=
+X-Gm-Gg: ASbGncvPHrRkEQQbIrWZ/jno2BaaSKEQYFXytmyLyV62Q16QGNh6ES9X9nR63Fcmwje
+	la60NEZc0+CyPvYtit6pU17/pr7pePu9KVn+aySQjAgE1IFwdCbJzwmvHGtzmLETXuZ/9y+RZFb
+	oiskJKnsDO84WoSMw7gZMde7IlzCYvIqbHy0iAFuvtnR+CgLfkB0F/tmzzVI9cm+H1zicQvtr41
+	hjO1msuY4sk6PMz2/uDjfHI6tdcU9Xs/sVeerMvFLK1WyJe2eoyz4Wwa+i+F8VeNKOc+wjsbBUU
+	yAafSIAW/yX0qy0gAQejTeKnxU09EyHM//wx1p4CVkMxx15keWg3Eml6j1+S2n0BPyl08Zh7EGs
+	LUOa9pTtslbKsTJTow0ENXxDd
+X-Google-Smtp-Source: AGHT+IF1MjcUvwgYnjulLvHKgyfmZ4E6I3kIjMN9y8mrIIK3WlP8h9WdbRGmZ0ZNF9dbobExy36HTA==
+X-Received: by 2002:a05:6000:238a:b0:3b7:76e8:ba1e with SMTP id ffacd0b85a97d-3b917d29ae3mr1458813f8f.11.1755069824008;
+        Wed, 13 Aug 2025 00:23:44 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:74d7:9082:2b54:5348])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac51asm47740936f8f.1.2025.08.13.00.23.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 00:23:43 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Thomas Richard <thomas.richard@bootlin.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
+Date: Wed, 13 Aug 2025 09:23:42 +0200
+Message-ID: <175506979055.8476.10658684000717777329.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <aJwk0yBSCccGCjX3@stanley.mountain>
+References: <aJwk0yBSCccGCjX3@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aJwk0yBSCccGCjX3@stanley.mountain>
-In-Reply-To: <aJwk0yBSCccGCjX3@stanley.mountain>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Aug 2025 08:50:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX+uYLDzQB9QerXApi+ZqT-a4L_moCdphpCbK7wdhHkUQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwwCiuvrq-uf9ENAk-IGjGOG7sjLGw_73QRhJq_3fPRx8yM1fm2JI7wL2Y
-Message-ID: <CAMuHMdX+uYLDzQB9QerXApi+ZqT-a4L_moCdphpCbK7wdhHkUQ@mail.gmail.com>
-Subject: Re: [PATCH next] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Thomas Richard <thomas.richard@bootlin.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 13 Aug 2025 at 07:38, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Wed, 13 Aug 2025 08:38:27 +0300, Dan Carpenter wrote:
 > The "> chip->ngpio" comparison here needs to be ">= chip->ngpio",
 > otherwise it leads to an out of bounds access.  The fwd->valid_mask
 > bitmap only has chip->ngpio bits and the fwd->descs[] array has that
 > same number of elements.  These values are set in
 > devm_gpiochip_fwd_alloc().
->
-> Fixes: c44ce91b8ada ("gpio: aggregator: refactor the code to add GPIO desc in the forwarder")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> 
+> [...]
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Applied, thanks!
 
-> --- a/drivers/gpio/gpio-aggregator.c
-> +++ b/drivers/gpio/gpio-aggregator.c
-> @@ -744,7 +744,7 @@ int gpiochip_fwd_desc_add(struct gpiochip_fwd *fwd, struct gpio_desc *desc,
->  {
->         struct gpio_chip *chip = &fwd->chip;
->
-> -       if (offset > chip->ngpio)
-> +       if (offset >= chip->ngpio)
->                 return -EINVAL;
->
->         if (test_and_set_bit(offset, fwd->valid_mask))
+[1/1] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
+      https://git.kernel.org/brgl/linux/c/148547000cfc1ba8cec02857268333d08724b9cc
 
-Looks like my similar comment in
-https://lore.kernel.org/all/CAMuHMdVLo2w609eFOKRkYAfEMb8XOTNB-XzzZn_89VM-YV_-kA@mail.gmail.com/
-was lost in the noise. I'll try to remember to make ">=" stand out more
-among all quoted code.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
