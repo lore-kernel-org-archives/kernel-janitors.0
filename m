@@ -1,107 +1,106 @@
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4986328469C
-	for <kernel-janitors@vger.kernel.org>; Wed, 13 Aug 2025 15:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CF5286D50
+	for <kernel-janitors@vger.kernel.org>; Wed, 13 Aug 2025 15:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099913; cv=none; b=K7yMt6UWN8H7nmWZTbPKMczdR51FWHMYb03Ow8J1N7oNWnHvM5ZvgWya65uP4SJqGLSFHtrsqCojSxifhOClFN+uiRJC/95qVlZ6gCVLCH0WIkcFurWdFfM5H4ViNzMa/LgU4lDPA9dQDbTwCPo29o2u6/wuqpYge0FuEQUiKn4=
+	t=1755100110; cv=none; b=ksM/tg83f/WH1f8w/l4MLI2b/dHFmJlCUr3OVNWMKGJl33OZewpTzFR7jgqu+17xzDnDe74jPkfo8pcEbqxVmSQ7D3Ny6Ee6HsuC9QbP77ltvbUil/gLp939C2/RICkUQ6EuaklJwkOauH3MliuxHFAoV0cupMvXt9dH3AAZGKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099913; c=relaxed/simple;
-	bh=zXcjEktKA15SKxWz4KLdm9/We2umEWG2uPkrn3xYUwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MM2/ww+0ryrIpmcAg1CkVsj1+fZ3LlQCWZMux1lsXS41//fI1Q/TarQ8ISLjCS7Fy2qWHqO3RuS8OG3nbuuVIUGNRKc4VFM/jVRUjIa6WcVT8jY2OXv+mELw6vQXz+o4GdL97Ur4OCkgDJUCNkI5mm6cRyeIjAs7iDwO84Bg1dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=JPIrzeN/; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1755100110; c=relaxed/simple;
+	bh=wjHKB6ug6QLTXYCJJQSW/nStYJh10pIv+On24g943d0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o59873SUcV9aZ1wm5MjXOPmdQQTjIHY+WfCRmUHJDtcqP+ZUr66tvA9jMRy4RpC+f6diU9eAmo5G9ZfU5OVnpL+jBGQaOV7JFW+XomzCWwlweOhjhd75eZ9JHOQ6osSLCT/aMQtDHZZUjAIvAOLCwBC7pjQMD11ZALBsQUf/wy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eXEORKjx; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="JPIrzeN/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755099910; bh=BENYpKLaFfD+ck6qgjlwozJC4rNd1ZZbsFSyjV7ojDQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=JPIrzeN/p5yNiU2+2nLnnGh3p98p09pO90FcO+uJqCZuoJ7AqhnL89u+h2YcPnA++yzXHwNiosQDKoK1Dh6fmztJ+b/Djqkcy0uz5bgRdh4WXSdej2iKwJAo0uX0Mf6sm819PqiyUhqCHwlrPCa3N1iitYG8IKagOSrpnvOubA7H99vR20n4YiygKUPWdtCri4dcG4oLT+2CR/IIfPMnybZxjz/C+sa5C1a91PHqtejAT5lVxawr+4p2naiAsQeukLBJdXcSQJHj8wRB8Y9+9bN9DoS1T4sjI4XuCrt/GQMyimnrHP14ozn31Y4ZqUURdFw9ppPuHxAR5QnKkZ8fUA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1755099910; bh=Et56T1uTV824lOWzZpnrUC+tsjAQqELyGSixLeB4EOU=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=QwQFicAwy8V7BimL/2TAaJjBIZhKHF049aP4HvuoLoXZPefcz8L9zyrQd9uZRb0+BysNfnOd1+fRvStknstKLR1gS5EO0xCdI/P4eX51yezBrMAUNCkJtx1xBtzojbWHQbwCBZUtxX6RdeK5dpTtfLsdkXauJVNzKCjYEu40RYrmbV1yVt9SJFsm6Slhp6jBtIsGnJTj0pQuig2LaWFP4Y7XTogMBF668JqZfIekWz6DSiAHL5DWfdVqlBRyqMmxg3sAb2yy3mbyHg/44k55MwBLNGLOmp3upFdZDjvmZs3e/sOwbWkJcZIk6dCpJHuMnJ3p4yypeMDLRrQqwNBzgw==
-X-YMail-OSG: USHvph0VM1k3lS5lMzhwDjgBPVNK1xFdwCepBI1Kf_xbV8Oywqx_MsdY2We7asG
- bZcfuMtqq_amG20RzKZ3egmGx_s4prfGjGyrMv3tMf5EcBSlb5yMSVOSY7rAmcc4q3_idpziLpD4
- urVh8sYybG_jPctp4_l_oXd7sX9L7FRH98M_Stvt2YkAvgyj8R_D.9k.G97aPLaqMUdOEZ.VL9v5
- JeL3pAtCCER6rZYQx82t1PrglrWgtx729sLGlE2q7ljVqy3q735ofkOhZRLorVF6nBUsXkjJ9ypd
- .pj3wvLLb3koD7XMYUNPvq2DIds3dq019b4sBLm149FbaV0J4jovxg0BrxX0BJvhfIa1vzxZ0oBw
- dROLUIEmtwSWwQJ3hQaunoqe7XB6J4hkRuc4dJc14Rjxh2x3Ch.k4pUWJzx1ZACQSY8FCDavArNp
- MelHQQ6Zx6pdlM3WLLB80hT6b3pQ7MsroGSyQA4lXmRrRulNZFBHPqDsmlOJfLxdxHt_Oyxk4iwB
- dIaOpDH9pZjq6BZQYlVun0.58g14Z63ovirjqFSB8U98.qZcJXgNu7QhvmoKbpYltjqNNLxtm20B
- qgGt0MpX41cOenXsQs5Ia5PImtTsedKl10Aqi.RLoJ3XY2.NyIJgH7HqZ.XjKWjcHrghi4E6uH67
- cDhtKShFqSebPmYkPo9RP1l4xrDEqYXFv.MFMOSViB6B54wnPkwTRHj0XzIe6.hSvt6M2ZDZrB_R
- DRiHY6n6ha7EQlyMcWgEU59lkIykjh5Y0JQiSRp8ekRM8uG22j6Mh1OvpyPRcjGrBEd11MoPhKqk
- L_e.tuT65n5TtR.NvCgiYnVQJI3Uo12k.PwYXgUxDMhpkcYywrpCrlOTdu5hn._cc1nrwmiLX6RB
- poy8M6T3CEBmJIJJxzbgWyVommG1iVSGU5RKwRBRYkg67dVVZXO_Z7XUQmbqsohvzPv_iQ2.Z_8l
- o_WBTgz2WaLJ_vz2viuUPAnYdB1vmOJJ0oVpgvGgXcYHalJ2EyjFAGdKZMHctQNfNCYeXlvAcm4_
- q1VUvMhsu5whUHPqweoy6unrETu4DidgN9ELruQgsYvny0mdawgKAZvciJ2M0FD.lxp6SZBO4dsz
- QkUFUnNkV5LmisXUlhDcRuO30l92qI6UkkzPZL4ClxY1JOiI1sKG9h8yJhXL2B8DrN3I7MR.RF4D
- 36WRcBh3VbMn_7EdK1tYUgeDVNyaDiummoGdPUsBxb9vLnx0XfPyevAByTweOp8RsOuT8xm91XTY
- YIlJXDFFs.zwSv1vctBDOl7j1EAhA90m.PsQRvhIm92eWve6o1fu.wlDR8ADees_FES1Q30W5xRR
- bGDDdVOZCYGrWkF3ya7kvJUdiL4EZqjlRZygbMYX57bJyYldF4NfVr3dv05iWgFz6XByyaCgArYF
- SQ18I26I1XpTkmFpj8TdNsYF1OsXdUHDBVzbbsXxAMkZr7LRbWnM1s5UzqxMGzOFZ4KYInQQaoNc
- bAYpeA3TMR8ay2Z9piJHGxR58h1o7poL2JoyDGlrxUnFcC42_1R_KLbjqWx.2FxalofPx6CEMVbg
- S8te7BqpefGDAuXO_PQ2yaoV5MNJmJdIXSjsyvrb8jeUbB04c6C.KTU7jxlv97ENkJNqUDkD2JDC
- _6lHGC4jTa1HuT_s5Ja6eUUrVbGTM8XtbFcDVTzg5yOg_kUHm_Mg5l0kWWUsr5OK1YI9IuqLTvWm
- sTKDP84XoizrtAYUXAAXGtz2INZM2PLDqpVKmF.NqiUonm5Xa7tln5BRKAE.pm71bZk_Ytcj7rDg
- CZ8FkAA0emZRDIA2LiJhgdQTu94ZB8eUhZuadeCEbEorX9N4bG8NLM4mAvBj.ftz_0zRwI6DWG3e
- s2fOB8rLq13uFpXXeTkQdfdoR1NtCG55Kn6SBfKxYRjVw5Nsd0p0KmHwO_Wo9nDlXDBp4lPFPTNF
- S38C6pOPHlReDQw12.tfxz_JlcrNUoAHXssEpRt8Srjeg2bkISiHCLRJ8UiZh8v7haC_zwJe1yh8
- 3hWHW236PW8CovMoeIZza.DzimjPXl3dD0NeFol40v.elPRrRUoW5tLYjoAmEbbojbou6PKz.nE_
- PB2xn_mCLHFYjxrhXSKwvlyjqqZTT_EgJnl5N.8llP_lQHgGJWD8WyPoxQ.Ku8fqD0hUCtGn15eI
- bM6ulVCYvn_mJ_bzMmh0zJT.OpadizdhrERjBbbKIq7ulfnVENe2mcvLhKrwp2MZeA7MlspwE3ko
- FPDK5tbNgJ5o2KsjErpQupHlfFV56fhuS8WTKrBa53jQXS92clrwQwgbFbhIDAw8eU7rjjC0SBn9
- 0JB5kqu7bM7c-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: fbe91f67-af20-4178-9641-b36eee29c4c1
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Aug 2025 15:45:10 +0000
-Received: by hermes--production-gq1-74d64bb7d7-khmfd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2c0ce53c687860a8975784e334adcce8;
-          Wed, 13 Aug 2025 15:45:07 +0000 (UTC)
-Message-ID: <f2f7f0e9-0466-420a-9761-42df5b8f0076@schaufler-ca.com>
-Date: Wed, 13 Aug 2025 08:45:06 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXEORKjx"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a11a138faso11536495e9.2
+        for <kernel-janitors@vger.kernel.org>; Wed, 13 Aug 2025 08:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755100107; x=1755704907; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RzS+q+xmuvVbEJJlZUoMjXta+/qBsEsWeg786ovz6b4=;
+        b=eXEORKjxzjh0rcvUdlHlUDV9tP169uh9U+99libqU8DNeFvsX7o0fjS5kLLC2RguFZ
+         szbdVX3rTZ6v7DFgtKuJVVUzkbFz6+9erzlGXh+k33ZKKSQFTjgaFmpErY6z5S6c+B31
+         EZJXjDOy/mVw8z7dxHrrNrGr8gpldlUCC1acK7Su8IeIZD+Ot8faK4jI9iiX8zpWlH1g
+         m39KJgwogUcrp6czEIGK/0Sd1CIZi2jaXbYVHAF3bAJc8SPtFtQIADw680b4KAA1lEfq
+         cFZ+BMPytzoVRh/81qXAaOcN3cmB1Ym11tIMziJqbzZryvInUd85wDHf6d5QosNKj/RZ
+         f59g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755100107; x=1755704907;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RzS+q+xmuvVbEJJlZUoMjXta+/qBsEsWeg786ovz6b4=;
+        b=oy0/tsVmOXSTqIfvc2CIz2Bhca7CNj7cIJKhcijrdsNiLJN+exvXNEB1EKAek4ma3A
+         rnoCIss6r6mH73WTqe+tS33vq7WTtBeb2YUUQnKPVX72Uhr3iYz/lBICtyBe0rvr8ksM
+         r9dRWN8UD0PhYvihYqI1B2L11dygbeDeSDhtZqtoZ8wc9x7AD/9B7mBa+jLRhJ0lxhaG
+         HuEu5vgaKTpoFRvJQJMLJE0Mj9Gxklr1/OpIx2qBkBoRIzu51hCUjutLPPxphPEjRHsv
+         h7cYOwPBXtei7BSlFY4RdPqWT/pIt10d5AV57EyBCF8JROX+gRD6bQu7jjgnVwJVjF/q
+         GXZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUc5RFnebdTlwV+KTmqBOBeaRM0tzrA8nyffVgijTewuogia7++z9pfcp4CR+KoWJ0M8nFKMElj1npQrewToPg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/CFb+SAnEJayZlLUFfpJ1PShI5zonKHmxUWcjOvkyhtk3N3MY
+	mOL/EqN0josvHw8s22XxiaF2dWLCfI2OFD9PGvfxk6bq7GtfB7MQvspnt/x4YUN5xes=
+X-Gm-Gg: ASbGncvVxyVGFSf3GorAF/fHLvbNsZ5XcPI5kR5wgIl11gTuxBhieZWHj0NeGxGeKg+
+	AW3GR6QN6GQwPIX2YLHhD+k+JGzCeKoKmV19sfnrRImXKZKJ9tKliNEKfeiSfa/RgFlhRURPlSu
+	H7MJ3bBn7wXmMFFajZc/OX+AJtB5aW6X1zOAAagLvX2ZsXW/1fVN4oDjZsK+gutJEUFfuJnkhQ7
+	tgWJuVLICa2QXfcqXqZJX8NhDhTTXqumWpNXG2lU3MC/vKd9NnxRQs5/0qkyoUJ21nMp/35k8lO
+	k2CFsUxe/b87d3HkIOecxqN4tyETx6QbNQd2L5V1U9l3fISJ3V2Z106L4TKhzjo9I0qiiIQQwvT
+	bOQy0B2dgNvyjHu7vcRLIhJvRznnThLB/KG9gIXXwXRc=
+X-Google-Smtp-Source: AGHT+IFj8ACft23R4r1/k5qKQgq7CaowimpyYgQ/Zx1sb7i2e+C5jJeIrm0zk9PVrrfu2DCBJTN1cA==
+X-Received: by 2002:a05:6000:2502:b0:3a4:d9fa:f1ed with SMTP id ffacd0b85a97d-3b917e36d09mr3177175f8f.13.1755100106753;
+        Wed, 13 Aug 2025 08:48:26 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1a53a5efsm7447925e9.23.2025.08.13.08.48.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 08:48:26 -0700 (PDT)
+Date: Wed, 13 Aug 2025 18:48:23 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+	audit@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] audit: add a missing tab
+Message-ID: <aJyzxx07nycUmDde@stanley.mountain>
+References: <aJwkwMRSxUAvI4dF@stanley.mountain>
+ <9ec4a351-de59-4b6b-b200-3a2fd6cbd9a9@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] audit: add a missing tab
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
- audit@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <aJwkwMRSxUAvI4dF@stanley.mountain>
- <9ec4a351-de59-4b6b-b200-3a2fd6cbd9a9@schaufler-ca.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <9ec4a351-de59-4b6b-b200-3a2fd6cbd9a9@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 8/13/2025 8:39 AM, Casey Schaufler wrote:
+On Wed, Aug 13, 2025 at 08:39:33AM -0700, Casey Schaufler wrote:
 > On 8/12/2025 10:38 PM, Dan Carpenter wrote:
->> Someone got a bit carried away deleting tabs.  Add it back.
+> > Someone got a bit carried away deleting tabs.  Add it back.
+> 
 > Of course, it should be the way you want it to be, but I don't
 > see the reasoning. Help me understand.
+> 
 
-OK, I see it. Looks like a rebase error.
+The "call_panic = 1;" has to be indent one tab more than the
+if (audit_log_pid_context()) check otherwise static checkers complain
+that the if statement isn't indented.
 
->
->> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->> ---
->>  kernel/auditsc.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
->> index 1c29541c8fb6..497bda0043fb 100644
->> --- a/kernel/auditsc.c
->> +++ b/kernel/auditsc.c
->> @@ -1778,7 +1778,7 @@ static void audit_log_exit(void)
->>  						  axs->target_sessionid[i],
->>  						  &axs->target_ref[i],
->>  						  axs->target_comm[i]))
->> -			call_panic = 1;
->> +				call_panic = 1;
->>  	}
->>  
->>  	if (context->target_pid &&
+  1771  ________for (aux = context->aux_pids; aux; aux = aux->next) {
+  1772  ________        struct audit_aux_data_pids *axs = (void *)aux;
+  1773  ________
+  1774  ________        for (i = 0; i < axs->pid_count; i++)
+  1775  ________        ________if (audit_log_pid_context(context, axs->target_pid[i],
+  1776  ________        ________                          axs->target_auid[i],
+  1777  ________        ________                          axs->target_uid[i],
+  1778  ________        ________                          axs->target_sessionid[i],
+  1779  ________        ________                          &axs->target_ref[i],
+  1780  ________        ________                          axs->target_comm[i]))
+  1781  ________        ________        call_panic = 1;
+  1782  ________}
+
+regards,
+dan carpenter
+
