@@ -1,110 +1,102 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E22D21ABCF;
-	Fri, 15 Aug 2025 03:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D2D287273
+	for <kernel-janitors@vger.kernel.org>; Fri, 15 Aug 2025 06:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755229114; cv=none; b=EbBa049+Nq/zHceZN6iUuCGp/QI4xTxBnkMXgYQdgv99U5fk4IWd+sf/Os6g4UdlhGZdr+Lqn+qAsPPkzA5ycPgRZfcqT6N3JItmaywgcW60QhM315i6zZ6nGMiOJDUORJ9h/ChjsbP3iDUWtdH+KuUMzEpVXOey1ANEtsjw9Wk=
+	t=1755240593; cv=none; b=US1YfxSSJlfefN3hL8zVHl22/nFC1I2JCcEBLZbKnZoloz05BlZDvWLVUDDkMvoPCFcp/udM970ZQENpX3ZzywwWOEqx3Z7wOGmOEpnZSG2lmsgETbdm7KKsQXW87aLkMPo2wwmrIGTqk72YCjJA4HKRBgEVWNbQAOrCV4OwOa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755229114; c=relaxed/simple;
-	bh=3UW87/kRuZkhV9K4Anr68lLz7oMu1cqh3YTb+r1FC94=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RA2sPOldcv2zvu/iSIs7SN8kRzQwSj+ngUHOMMSfZdSE6zin/Rs4ZEEj0G7Vtykq9Fdzk31YSzUC2IAHDxOz3kR7gYbwLfrpT79WPwptTlY5g2VEJI4sYpP4Vxaxkq6ENLxHqmbYZ8fHaRFst0V2JWtdvHDHd8hAFFyLcfpRirw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=mGCrtnNl; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1755240593; c=relaxed/simple;
+	bh=K0BHwWFqKTGMLEkMOxlrAMriYgYhyPgtOID8NF33Cos=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ks85+pX3wpCNbZZTNrqNqvazc+IEqIy/dnv7jRXefN3PckYufafQGj8AtBCfUE641ev/INr5anjTmiIU71HFdDVQGdMn7Uxw+5SG10bzxMiQmNgITT9EPJK0dfBjBvK91so0mhtbhLhWf/iEy2AX1995Sx6wddzy7Elp0jzEmqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T3fHIY9z; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mGCrtnNl"
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EHfrZ7001234;
-	Fri, 15 Aug 2025 03:38:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=BEJ5Hj5T/cTo/mpdxqKDVP49fhBINVQ0BdNE0EO3D4s=; b=
-	mGCrtnNlFGxTx1WBwmRaACg7gXivUCCYkJWnR8Fds9OiXXu7OyM98sKVo8v2s7x3
-	D2vOgzpVSgDpDK4oJpPlnLbMDVyzC8y0YBfnE9dtXaBzJHyZFFXPLd0Zmn+wFODk
-	bCajlW1WXGQlk32lK2sZl8SnhwP+zgU8lOS9JfVfMbA8uSY+aH3mhV+RvZDxgarp
-	QuyxeJo8jGb7aPPWrJ9q2hmrmu7+CTAZaXIGyr2aVe9AUeTaj0dToOJHWXzKIS6y
-	PJURfnTU4gLPuIbgLt4BMMUci32T8AEOap6x8RQIK6qdJgXbZ5MrUBCrMV5O3ker
-	kA9hUj7w298MO+z3d9VpWg==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48dw8ek9nf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Aug 2025 03:38:24 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57F2ihH2006535;
-	Fri, 15 Aug 2025 03:38:23 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 48dvsdcuwu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 15 Aug 2025 03:38:23 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57F3cMAi015669;
-	Fri, 15 Aug 2025 03:38:22 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 48dvsdcuwe-2;
-	Fri, 15 Aug 2025 03:38:22 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Mike Christie <michaelc@cs.wisc.edu>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Nilesh Javali <njavali@marvell.com>,
-        Manish Rangankar <mrangankar@marvell.com>,
-        GR-QLogic-Storage-Upstream@marvell.com,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        James Bottomley <JBottomley@parallels.com>,
-        Ravi Anand <ravi.anand@qlogic.com>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] scsi: qla4xxx: Prevent a potential error pointer dereference
-Date: Thu, 14 Aug 2025 23:38:16 -0400
-Message-ID: <175522907876.1556995.12357818221698958241.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <aJwnVKS9tHsw1tEu@stanley.mountain>
-References: <aJwnVKS9tHsw1tEu@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T3fHIY9z"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9d41cd38dso1122195f8f.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 14 Aug 2025 23:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755240590; x=1755845390; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ih8jyns5XfrAsfrJ/D/bA3PgscUwKaCWqo6J4z+BpH8=;
+        b=T3fHIY9zqW4G7fclg6FbxU0TVJ4RzBWyVgIwy0FMq9M8OGgHjmwrFIUjNutCHo237w
+         lsgKW+yMtXra8SCeXRazSOkUXMMbmSn/eymRl20hiuZKeNj4/lnoBQBVSg2Cpm+tm/p0
+         YngPdpzAC0yxcbyziJRhmmZ7FnYVSnK8f6VJ6Mv8+2QfooLbdh0uKj3G5jGk3XSxVMbT
+         RNSfRjes4oO7LaLqjIf5WqT2HGsgmwoHZwmAd0hV193CPM1Bw+Rn2P7dLF050JMerEVu
+         OZ9joAdvdmPKDbrw/esmgnmZFTEWyqnGPPZEcserN1Pw+TykBbB4zZ1uB/Xbf3gI3pvM
+         hRvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755240590; x=1755845390;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ih8jyns5XfrAsfrJ/D/bA3PgscUwKaCWqo6J4z+BpH8=;
+        b=Hkf6uyRVdcExg497b9ABi18FvWBDW6uIxTJMUFPDKAofM7udEstLzqHn4PDTWdC/F2
+         madYF8WzAYfIC0q5O4leEW2hx+HB7RWUIRGvkaafB+owLLzvDVc3orjc7ASWMzr5onQF
+         touHjZV1p38fsMGlKbkRwystBmyGi/ApFtsBxK4tnLZj4dypZCh1pEkcAFpkxabZMbjp
+         OIYh/PEmHYouxRrBY8SyYNBF5Jh3L1zlwvquG1tXYUIFMRweB0ZXhr8f+7QURAedrbiz
+         CYkl8Ebgf3/L1rObAmK5UWvrd0QYaOMY644VEHw6HOkIyrhGdT/YlxFpQbrbe1mUt9EX
+         Xu9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVmdAYSBbsUfrQVtTzsIXgRtcr9mMGecuHX8OEse/CdBINRCnWewgJcN86GS0ToOzb/6p+Td9Z9s1yxgu6oqd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww7dsl9+oRhmv/ekoZBbdaRqES5k+po4dz8WE7cp/WVGa5PLet
+	yhGGPlt+1X5mGFNCEDE+Y8Fgi9BkGv/1B1V6/xpIZ565n3V6JbIzJAkfyS9dGpV3moI=
+X-Gm-Gg: ASbGncs1unOEaYc8/qgCIx617kjImTMI9HE7VGltYOoMBw+KFkvcEE76fHa2zT0Rtrw
+	wa1wlP0EidH1c9QrbhgEPEt9XqFTqHwAjS6GO688K0Avs6ZhkjaoZWUjAWHlQBwRJsLNdB/gCA3
+	Zv7CULRLCVMomsag+DFDu1XVk/Z3bJZ9M9bSWJ0tlqAEMCxcbP3ctGPEygR7ipdsLS3xZuvF6K6
+	VF6zHjgLbedKYp+kX8FMCt4SWaMlJL43/UJawzIwprXUBGk3N/52lfBg7RcT3DL2rFW8O/ZUk7V
+	SIUfalohgKnsDuXMOlYY3lrwSADVdpk8bNh5vy1M5y2ArxzU4jXA/T+zCyt074qTNW4VNLBYvWM
+	cWU5BqS3sAIuiBb0pGh+sKIUqRKT7Rq9HObGZ/nQJt8Y=
+X-Google-Smtp-Source: AGHT+IH+DBG1OPf6MaEZOCGobGhY9B0ySgxmVlsCJLQpN6vJTZ2E7j3xNdPM/PtvVjUbEs2woGDf+w==
+X-Received: by 2002:a5d:5f88:0:b0:3b8:fa8c:f1b3 with SMTP id ffacd0b85a97d-3bb694adc61mr648544f8f.53.1755240590473;
+        Thu, 14 Aug 2025 23:49:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1c74876csm46766045e9.14.2025.08.14.23.49.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 23:49:50 -0700 (PDT)
+Date: Fri, 15 Aug 2025 09:49:46 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jeff Chang <jeff_chang@richtek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] regulator: rt5133: Fix IS_ERR() vs NULL bug in
+ rt5133_validate_vendor_info()
+Message-ID: <aJ7YivhlWlE6ifw1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-15_01,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 malwarescore=0
- spamscore=0 bulkscore=0 suspectscore=0 mlxlogscore=691 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2507300000
- definitions=main-2508150027
-X-Proofpoint-GUID: CFdC9KmtxA-togNm3NGqAA1db_IxdIJ1
-X-Proofpoint-ORIG-GUID: CFdC9KmtxA-togNm3NGqAA1db_IxdIJ1
-X-Authority-Analysis: v=2.4 cv=ePQTjGp1 c=1 sm=1 tr=0 ts=689eabb0 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=4zpkLbjWt7iokNEccsYA:9
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:13600
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE1MDAyNyBTYWx0ZWRfX9+QHt7Te489S
- qfGyehobkKnFKqaAqoSYHJUNPFYkJbhKl83bULXkVX/TtYW+tmMpa9nI8CNALqiKjr0C4GxiBD2
- kWP2N05MEHECSXAqObMEcLsNbkMKV+MLDhWS42eOCbXbLyqkX4YAeQYORGM/WUnhM8o61zTrwwh
- O06LuwbTeZhekqdyYwIgHtgkpg+Zwl0bnLKTNXFU30phf7po7d+570OQhE/+7BVykYo8sy2fZbm
- l7DiW1pit/GxextZ45IPOaLhprcDV0yqMjEisA9AzMREQHgXlskCR3J9EGPwH8Q9Lxk5HQIyhwi
- G+9/aq3kUgvP564Ew24Rho/SYt6jqIEKNfW3AKr4FcJHrKqQS/SCtjYe7vKzHf4PJxLVlG/VDiY
- 2Xi/olldJghnbt9HOPwEzTfHAm4vDeofBWpIxJqiEiBJ6pjFhK8ywSQ++UoZiAGsqTEg5Utt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Wed, 13 Aug 2025 08:49:08 +0300, Dan Carpenter wrote:
+The "priv->cdata" pointer isn't an error pointer, it should be a NULL
+check instead.  Otherwise it leads to a NULL pointer dereference in the
+caller, rt5133_probe().
 
-> The qla4xxx_get_ep_fwdb() function is supposed to return NULL on error,
-> but qla4xxx_ep_connect() returns error pointers.  Propagating the error
-> pointers will lead to an Oops in the caller, so change the error
-> pointers to NULL.
-> 
-> 
+Fixes: 714165e1c4b0 ("regulator: rt5133: Add RT5133 PMIC regulator Support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/regulator/rt5133-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to 6.17/scsi-fixes, thanks!
-
-[1/1] scsi: qla4xxx: Prevent a potential error pointer dereference
-      https://git.kernel.org/mkp/scsi/c/9dcf111dd3e7
-
+diff --git a/drivers/regulator/rt5133-regulator.c b/drivers/regulator/rt5133-regulator.c
+index d0f367381fbb..a83a595c0609 100644
+--- a/drivers/regulator/rt5133-regulator.c
++++ b/drivers/regulator/rt5133-regulator.c
+@@ -510,7 +510,7 @@ static int rt5133_validate_vendor_info(struct rt5133_priv *priv)
+ 			break;
+ 		}
+ 	}
+-	if (IS_ERR(priv->cdata)) {
++	if (!priv->cdata) {
+ 		dev_err(priv->dev, "Failed to find regualtor match version\n");
+ 		return -ENODEV;
+ 	}
 -- 
-Martin K. Petersen
+2.47.2
+
