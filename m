@@ -1,90 +1,72 @@
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEA95BAF0
-	for <kernel-janitors@vger.kernel.org>; Sat, 16 Aug 2025 04:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC462634;
+	Sat, 16 Aug 2025 09:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755319420; cv=none; b=EdFkwdJSSDS9HiIEzeSOPrq69k0ISz+MkFwn8yVWICaEkXgfAu6Kjpp1KXSUiHdCo/xJiFxhr/LMwVBrqkRhUpkx328f/09dfYtt8xyzArxe7fizdYAceHGRAILpCNQ+erI00h8mip2BAnZjhS2PipVXzsdoR9LTTEJw5l5Ruu0=
+	t=1755336649; cv=none; b=jSPfCnckmsucKRdrJUvIlRfLFaqpvvHsBlH8oV/D7PyyWUA3C2t6DmdE43H8bZrZvnsvX8qlDiOk0zcwYx/Nf9DMdSBTAE1Qq4X8KsBLVzYMnnq8Q4WHFnPi6rEHaHH5/Onc1EKiEWjAE8NgATy+6mwVo/fGmrHHAb5nYoV6lXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755319420; c=relaxed/simple;
-	bh=Pq4zY20r2hDlH7rMB0y0utkHPKa2ujCGHObqC8u8EA0=;
+	s=arc-20240116; t=1755336649; c=relaxed/simple;
+	bh=RnJPDQnRh52tMyoGfMVpXs355DI+8TqFwZY3Nsyg/hQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRfwokJ1ksImv5xNeEaXM392LgYwhSmyUv+ZaXCyJ5nCJg4fZAbcrDI70udEz/FPTJRwPGfCyMRZJscVmwucOVE0dUb41UzsGsfNe8vdZzUQPLeN0V5e6Rb/Na3YbB/TR9HqP8rofEr+lZz3idvkOCWw20iauBsKavtCAyQbj0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=jHTQ6IDA; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFBoxlrBkIKsx1kQcWSipfEji7plt/5auTJhE4qe0PEau79iIAR1iFR4AeP/i788kGgldtXaJigRAmtmhSWmBDjhjVn4j8GjYIDMzBulmWOvWWgZ0yszmCDV+D51Jd6YKI4mMv1iZUVNs80mIfYNqIyKXg0C76N1aI4E0CMG5lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Yvy91sGj; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="jHTQ6IDA"
-Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id E636A104D017
-	for <kernel-janitors@vger.kernel.org>; Sat, 16 Aug 2025 10:13:25 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in E636A104D017
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1755319405; bh=Pq4zY20r2hDlH7rMB0y0utkHPKa2ujCGHObqC8u8EA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jHTQ6IDAB1V95xXlq/+fYEANhQrUE02i+RtBXYzp8ElEP/NO/+NCIOTNJDjG1fOBL
-	 9irJFRQIjDnkGBm8Da72SY1+FTVU00tL9fR6mP3L74ps5X/iuemXcRAswgCDWojEWj
-	 VQk5VESMBt1iCAuZKe4c5hiQBEW4TeeKf3xybLVo=
-Received: (qmail 18167 invoked by uid 510); 16 Aug 2025 10:13:25 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 2.166873 secs; 16 Aug 2025 10:13:25 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
-  by ldns1.iitb.ac.in with SMTP; 16 Aug 2025 10:13:23 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns1.iitb.ac.in (Postfix) with ESMTP id 2D8A336003F;
-	Sat, 16 Aug 2025 10:13:23 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id EE6841E8134B;
-	Sat, 16 Aug 2025 10:13:22 +0530 (IST)
-Date: Sat, 16 Aug 2025 10:13:17 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: akhileshpatilvnit@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-	Itay Avraham <itayavr@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] fwctl: mlx5: fix memory alloc/free in mlx5ctl_fw_rpc()
-Message-ID: <aKAMZenB2iqSSfd3@bhairav-test.ee.iitb.ac.in>
-References: <aJjiRqLx9TEg2NFj@bhairav-test.ee.iitb.ac.in>
- <35e23690-a907-4606-a484-e3e342a14e7c@web.de>
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Yvy91sGj"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=4WiZ9ddpNrGSgA17pjQ7Do4+YzZaiUY0Hg+kDmv11gc=; b=Yvy91sGjFKWDa4QDCuhWNnVenx
+	rtefdrPoiAQWGr9MeAIc7RK82rncwbCMaZ9LzIPmlJbq0H0Jv6sGSoa2PCNlAYwvUMQX3Mrxj50Of
+	PSrKQn8GzeSayzurAzGZDOCITckNcrDPTkyAK2q3E81XLOs1G3Oq0O+Zh9AoSE1Nf27060FF1Yt0u
+	pzAGcFMJv7aS+01yltWJrJa08mkLyTKdUw6JZdeZSu5i4X8s+qAeD3SEVQe3EpBuLGHCowc1AoBvq
+	QgGn0AKP5mnr+zP08R+EtL8ctwoOiaEMaaheo2xpLeNv1mY/J7ux6RIEtVXq65vVTRnH72REkGMJy
+	0avR0ryQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1unCzl-00EmJl-2C;
+	Sat, 16 Aug 2025 17:30:35 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 16 Aug 2025 17:30:34 +0800
+Date: Sat, 16 Aug 2025 17:30:34 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-crypto@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] crypto: stm32: Fix spelling mistake
+ "STMicrolectronics" -> "STMicroelectronics"
+Message-ID: <aKBPutUbmQCp28YX@gondor.apana.org.au>
+References: <20250724105754.140400-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <35e23690-a907-4606-a484-e3e342a14e7c@web.de>
+In-Reply-To: <20250724105754.140400-1-colin.i.king@gmail.com>
 
-On Fri, Aug 15, 2025 at 04:40:10PM +0200, Markus Elfring wrote:
-> > Use kvfree() to free memory allocated by kvzalloc() instead of kfree().
-> > Avoid potential memory management issue by matching alloc/free routines.
+On Thu, Jul 24, 2025 at 11:57:54AM +0100, Colin Ian King wrote:
+> There is a spelling mistake in the module description text. Fix it.
 > 
-> Will another bit of background information become helpful
-> for an improved change description?
-> 
-> Test command example:
-> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> /usr/bin/spatch -D report scripts/coccinelle/api/kfree_mismatch.cocci drivers/fwctl/mlx5/main.c
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/crypto/stm32/stm32-cryp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sure, I will update the commit message to add this and push v2.
-Thanks Markus for the suggestion. 
-
-Regards,
-Akhilesh
-
-> …
-> 
-> Regards,
-> Markus
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
