@@ -1,134 +1,163 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3454D271A7C;
-	Mon, 18 Aug 2025 19:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA1C219301;
+	Mon, 18 Aug 2025 21:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755544064; cv=none; b=JpOFmmvHuAbZLjKbbYiD1I6vOIvSR5FW5szwxMilOoY8F3XDdnB1tpSEl3RF+BgpkKv3adV0MhW7Hr2fuMVyBc4lOolx0SzF7aRNX4MO4qd8OLKNJrXv2OEU5C6QvcZqdUzMfAJGTdahYmIXDDntMT2FhDBTLPNctAGUIMPaGBs=
+	t=1755553326; cv=none; b=lAwnAR/o8k3EEQpU7omds0UvM09i9YKbkwIfcp7J02IF0vZMnq6PiqRVcYVs6L7yEd0fqvc20AHo6Repe8V3J+NU1Fk5s/iID7RlyZ7hmSBxGSt9DNy2Zvo/w/25gGSLix1E5n35VNnt17LD8QqqLe7/fhXXFc5hmF46C99OGsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755544064; c=relaxed/simple;
-	bh=eZdxLW88zfkblEQbCdbcQcKLZ2GUQxwIeoARmBrCWf8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=B1d6UIfknE4J80vXaBhFgXg31Y8GFnCUre28mHjoVJ37LYb6SX12ey4+uHW59uhCqFBJkQBDeYDWa2+GWM8HsCXYzrwsADo6R5kL2zq02xwCRdrVMTo6P5jwvjK8hamvglSZIhVL/kfU3+X9y+R5ipPnIo9bieISuzLa0h2OwvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ThTocsCz; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1755553326; c=relaxed/simple;
+	bh=mwt0RsO9ZLR/VreoDtBPUWsIShYKP2N6Lwyc1rX0pu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BZZLNNiHANrKa8QtzfOhSh5tALJc4lSC+WLPoXMJ2T+BqJQNzfORSO25lfy+IvLINlN7hiKR2HLEc5r+cAHo05Z28uf/RMuJSk/xpFc+CXm/kJOqK4MzxAm0u0BqKXMWZNEaKwQyBsGdx/JzmunFiQfkZ7h2wqYeglgZ140DIgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HmIPp6QO; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ThTocsCz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755544060; x=1756148860; i=markus.elfring@web.de;
-	bh=eZdxLW88zfkblEQbCdbcQcKLZ2GUQxwIeoARmBrCWf8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ThTocsCzFExJMQCfM2OIy5w6S7MTt/KXYUn+cZuZj8ib0rh1JuiyXiAxeOqt/LbK
-	 Wkxofgo1miuKEQP0TWEXRAzHYMb0JnddREBx6vF6SM31jf6TFHbENYzgJLpIiPVGR
-	 kgKx8ewnY3InhulBC+73To1pkbo2RP0/uYqM4CpOYKOnSWw3t7HVT1Pi1Gzmhn0JE
-	 Hxj1IM6N4C2mxfe4PUro2aBeReFQrgjMvi310nK6mCWVUmB24jpJU4tkcKNLwfGCg
-	 9XUcn1NMokWF1O1Ys0EcEnKQlYoBzjQv5dr0Wjj4h39CLxBiFjJxkbSQKZmhHdt61
-	 2p70F3gFi1VHxzg7ZQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.231]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMpCg-1v6iW80VW8-00JR8m; Mon, 18
- Aug 2025 21:07:40 +0200
-Message-ID: <6b2496d7-02ee-47f2-8b7f-f30e351e9b2c@web.de>
-Date: Mon, 18 Aug 2025 21:07:37 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HmIPp6QO"
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e872c3a0d5so457887685a.2;
+        Mon, 18 Aug 2025 14:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755553324; x=1756158124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xVrApoP14f9caj21OlfYIfBa76LwsWl3k/rrsNeI8aU=;
+        b=HmIPp6QOB+50JYjYI15+DwQogP3mGqgGwYx2b1CLwwZvuanTN0qfxAxUy+IaJCz4pe
+         lG+YY98U8MD2n98DvaONY0ZjaqSVgxxsMj3Y+6G6CwuvR1rkJpTDuF8oP2eSNvniAICd
+         IRCI8KPSdbbn71AzYkuV6uZ5pAocQv/w3WbM4Squc9PvfJ0ynzXniylMZk324Svy11cS
+         qIjJT+gq079cQ4VpNqcVBVzk/e9uC64fSw3IbCuLRhfApajcC2AWHixAT8I2fK3CM5tu
+         Zyzs8KVSvC3+2d5FWxtCukNINv40C5htj+lUUv228y0qoTBUuXwoTexLQ3AkCWZZWTY+
+         K0Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755553324; x=1756158124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xVrApoP14f9caj21OlfYIfBa76LwsWl3k/rrsNeI8aU=;
+        b=Q91Mc4r4y1z3WmwFG4hQB+MMT+eL8KnMQww37cp7e88qYhUF7GTICz8fSOkZy1I6Tx
+         j4Mw9gAG0NAm51Q1C5IspdaJtWx2fivU6wSLFySDndOl6gV5H5He7b/Uj2WAykNCjcK/
+         qXp279giprwfd3qW2LeHafnDR6QfpjRG9EYtbHYAc3XKuTahYNe1ZDJm5NYJl94+l3+Y
+         OPW/i4E0K75A9FUKBtb4hPj8OEFpxL/jVO4wppGf67D3BWz1Vpn4ewgevN+g1L+6TTzB
+         FZG9kZp3S8nliGkSDlMCjuR8r47Ck3DI0JAOR1yUztsrKgk01C1/OYctoXOcALHrvMci
+         bD9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUPozVaz/3zUAf3QrfZMQYOCMbtch2s7Pr5DZgNudVYBHB0EmxI0qvsbTCS62tIyoosK6YKCcto58LRwpY93ak=@vger.kernel.org, AJvYcCV7D82IQHxlG21YEnqPpDpecHxc5cOd4RJcdsv0hKkAhE9RaMspVKHTTWaEOB8mtl44jdLdnYYbqGsEP9V9@vger.kernel.org, AJvYcCX8rAbt9CtWAMALYbZriA/m+/AiwoyvcLBHjBhhMRmU4P9MLSd/9u6kbFER7q/w1BpBhyRiSlg3xFH2gg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf12U8tZQD5ysVrwiF1djQxfrjdNO/znL6xiEmOwc1h6u9TLeP
+	OeqxmwQUvx2l/1TQM5SywVSgCz94RIQ0vB2IBcxIh19K1O6H8S/+ho16GmmdsKb2CP7aa8NAEF8
+	zGCUmJIuJKja94hhhwrBcyd551j/hwWY=
+X-Gm-Gg: ASbGncs1ZUv7GMLwJ8ZGsmJHqEq1VareLb3Pkptt/nKShBzHxX+7DVv1rjXB8+w2fw8
+	Acib6fJsupV0F3Vwg+MFe9sxaQK/pO6bd+3fzG1VttzED185JoAx7RL62pT+TISD74/TfuW7XHY
+	shepyazsikgKQl04YCHzVa6oUFA3NT4sHnWvIRiOdFQuWGoyg5CmsiSVC5widlEq5fOaij9wlp1
+	gNxYkjaxcya8cTArbcI5K9dxxg4UKoa7JYAR0D3b9c8e8u6tTC3CKoCLn3gRQ==
+X-Google-Smtp-Source: AGHT+IFjMAkT1mpPySflC+bP9ZHS64EiNo5JBjZgoMeWA3kK3ZsMgAjLbou5MIdDwNmOYm9WYdTpVGUD2Bs1b4gT8I0=
+X-Received: by 2002:a05:620a:4686:b0:7e6:9644:c993 with SMTP id
+ af79cd13be357-7e9f331f874mr67836285a.15.1755553323896; Mon, 18 Aug 2025
+ 14:42:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Liao Yuanhong <liaoyuanhong@vivo.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20250818140204.4762-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] extcon: Remove redundant 0 value initialization
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250818140204.4762-1-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:pc1Vy6JwUu9Xg5WcDKekYgON8SQQX0BKolYdeFX1800X8VpqA8a
- OXdLfNeZk8xBhq3cpd4/7Uy+1g335FU36SAoA63cw/32WdAqu0b+aOWmQsLTB0TPBAEMEZJ
- 6/z8jM86rITRMm9Lyi51/tOHkN6QfM5cXUF4nxd9xqCgOIHgHTUIBJCPINFAWW6tTroZbJN
- ckk/C4upaqhgTqJzQc6sw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:o0nCn/E9xtc=;+d9RYgKnmyG7fkopVPPrjvM9Zvb
- A/Gsz3acxyqEWCZM/eiw6dCIpFM+pRHDPXveId0d1D/W/dXfdUTWhtVtKTYwLfviBqkA9Fu4C
- hOZcvOTGjnxlI4LNFCF4vrMzZb22ZcmHXsrOniAf8Zv9PtKKfrkgEY/oZNhPGSrJCamYB0AY8
- rzQq+NF9wDCdQSDuBjb2KNr9oSHJ05xXQsmheP8j20xpnpWlD3wVU8FHLI9MaryMLYOTg9hQL
- 3biqcFd+bmXXTrQ9xfdHqxtn3+qHxpinUnrCE5krXVxmQhbTLitB3SZVpiB5bavVjVwdWNmuJ
- R0sKYzXi8YdTsm3PsZs07PTbnR3ohZ95+1TtdX1SHd69TMN/justnEYa9KcQLBde4IELcoQ1k
- VY6TG34GYlsS7avDR8hMQZF1sMEXk16A2HJRkg4I/v3DYsRhZ0LAFff+w6FLLBijXK1ld/zOL
- J3njneMTKKQf6vrInwvuewSR8TaLwl4pm5/Df9lhemq6wjwG28+27N9wrK45YLM4IV7RBiS/A
- D3FRxhOaUWPm1rtp/TnAgdLv0PGPp8cmOGkomoPcTuTA4CT21aD+VXMMX5XXMjkWutvAwl3vu
- SwV3q2MaSO4fb3C3IFJ+gBbAhCk2pbtktjIjwihXqumgqg3XszhlO3vCGiuvMqq5qTo/GRxFl
- xwKM2bO31UcZKPzLxda8kjI//6ji+NH1rkcpwAMtkkrN8+Eg8ltecKl1CRRu7ialWK4Dxg08s
- uISUkoVnpPXB+ENCDoHwaPvRol+i5XxiWq31f8jMZabM7Y6II+8oQ6xtuwe4x1m6dz6dAhQDw
- Q+hNgkR6l3gv9z4nXx5AJHalVn2RnyvMEcrtZMH/zEjrppv4aCQxbLkOdcl70R4nde7OFhV86
- +gTlsjauLGN7VCGhYmy/RFMMEleOsjy29GT9FrWGsfjlxPCEuJkANnUfUq/Q2M5sJurwz+Y5t
- RJpDYN/W5Q8OekAuZ20+XEViE7H3OQ8nMgoRe3hz+EFn6rMFzPeVuLzJ3dz6s9IHpAbM0Fup1
- KMFrXtU3Cu487ZnIX3mj8cCO4QJoioq/q5QIzxSEDCGdUaw/lBExIb6JJ0KolD18c/r9N+Wlz
- 2Aj+UivvKq4/xjdL13Euq1Gpv4s4vzYs6y1MgUJB20XdP/uJ8fQ0JdNxyNIe+bEOp9U/Pmyww
- AgVJ3ri1GrXugwSPiZI685yafWfA9FcUgaNTGL+hc6mlD0v52qgRRj3FLxAx06FZLgvApIMS0
- uBrgFQZbXOhqFA+A6yyZaC4mrkvM0xZkjfx4r+kQv4a5ofvdQq4zHHyTvPPLb0u+pyIIQYu7l
- 16YNfOOhyhN+/Ths44M1dUsVQequdrQFrq7oi+oAFBRyZhtEYzP6AY3FZJBZA8usMyOdsbFGh
- Ht3UkwOFYpuKUYxFUbL6mrPbIVKMLZgL/y5Xqfs7dQZZSs68nMdkbkdDORfGamfGg8DxGGOIb
- JIlRk3O77v2Ud22MuF8EHGiv49l449kht/Xnkkx43PN7VguuVWQG8NrS0rUFnrVO3Ya+/4VYL
- ixx3Eb2Y5Xcm8l/iStzgJiNMmJrmymZJ6TVRzYHf9enzlxno38je7lbDcr4Kha4ZY3RpRe9ny
- mRTbUyHyLBCxswRjMTXjuVCjILriBDxrnT6eBy6vcWg8EAKZLQXKMV4lMzoxr+dEusxmZ8dpv
- qsLlwVQ2Vi1mBAtXwN9tjwXP2kUJN7rQLQqd8VRmsn0q99I/r1XlqQtd3zjh9FXMCUWVPeFpJ
- rmOFjkCdBq0woXdM4gChtClsL/CH196Id5+85ba9GfIxsVyEU9o7cN5qZaeXvo22SjoS9y+IT
- rJjh1rql8s1UEUFVWOK/vUoxcZyn2p6/AsKzB3IJUD3RdkjXJuYV7OMgI1C46I0moQzuVaVwR
- rnmDGSncXJNvZg3rxYXntV+rzjZ1q6I0pjM1uVEgAo8xAo2Wrs9I21yTrkXnrN+45zsv/XH7C
- +1ZP0WOwKi1G3fw34Q1MXesyuaAzDRkLwm6HD/ejw2vbBgWemCLR5gzapFJVT1dPVl9h7SFFt
- L6yIJ5T0bWflswq7Iaj4q1+yWe0UvO+LkQpYKbtLnJ43FXFxt+yUiX8LL+ZmJRTx5u2cAhTpU
- Q7YAg/gqIsoX0noZozPfpUzzP/76yGQ2nFrZcIaJXKrYd442FvHlHosTsmPvYcACLuihCnnSE
- J5X6jD4nwqdznlx2gC8RsBJcrJ4+B6vcpBRvCDjokUE51kGfcgL+n+rE5Ff+JAYTid4HPBs1M
- g4xCNceFdQxAVNZp3r2a/cfCK/+2XTlgeS9U2TYMQFXVpPN2zYerwMJ9VByAHyxFbAaGgfpst
- hUikfl/Z+uVJqBTutW3MnBXemmjFdL91cJKdQZO0liuKyaIXDl+M91gluuvuTrs2yauqJYC8R
- uBCQTIuGfwdq1et8W56SZxoTo/6lJ17qu1FqebXRlWKzJll9ZuA/vuE4wJ4shgKCGs+gSPb6u
- DWdg2Mh37eO51XFi81mgsJM9UCFP39CfRQ9ka0XevHEXVHzHU1qQSWuYEGoWUa4ihL1Qus0Ph
- EV1p2z/dWm+L83JRYI/mkVmh/KC65b5muqpUhm0LRtayMg8H3Pmi5WC5GaJUWTP0K6tiBFpuw
- CRJdZx/QBNKLFuGcAOJqkYaHdhpnV/6sjQUcJc+PlGiKUkqD7ciZdtt4Cz3+HpyltVhLsthEJ
- 8O8ubKgeqOlStA0Sv05uO7HLkBELZ61P4lSPQd7Lh2wbY62vDuOvd0OjdFMb5HZ6bzkrhr1Vq
- Igoic9x85x7Q2d+7DDrvGHiyejfNECCLsUIALz5+7tQq4FdefFXzqKgjFnGK16x2NzY6I6Gfn
- 4idFs6BAsWrtYl8/UzY5GbmjT6O/3iRvy+y4LqTyhO0mjgFq1XiMAZ9iGHzguVVrutHigesHQ
- 1xvfD9VTottv0slKCZsyNKObNkj4z8qhxdTuZQPwzaE9pJRDETWfr7XjGHd6y9Nv3PvzhgBRp
- LIzDo5eoFZaN0k0xHf8IqCRYp/Yjbu8xOaj6siOtOnztArZN1Q3GnsWGV9EiKT/qx9OGonJ8s
- aVAwrw3XJ79DNeUbF6Dbpenvtb+IjXxEVFX/WCMi4TgKS2J01ACx7CM4otTI7iDgrPMOBeRYj
- oowP+HMlz4cvktwD7wy6GUOTH4u+7nizWeqBUaQGEqcekxDeLyzHGzI0Rp4Q6J3Gyh5howd5H
- GoK8/yp+WsG+eTa0xnU395PMoeuyiQP88QzlhMbG6qCnhbZSMNhfPeorveCbPpPmo6PU287vs
- kQ/wJgdndX/GtwyqjWtToEVmla3+jQuWA7fzW2KuMEMurWkPegt41rrnt/rH4lFycEoqfFeXP
- jBQv5iywOHgnK846V09RvKS02MeZ9RWFcpj6C2cxSdyFLvh+rGIKSiNyk0dMqgT4/ScyNV3gl
- ME2XBjjgCoOzYoggWviLYVL9PbkSebVjAatoSWVUyfMoJg5NIl9LMX3pcpJVhfmWzPOQLc9jO
- s0wOh576f7DUmxZDKxSCCMViNufFhY6tSLmK0OOinBKnxTCBj2qWVeQVQs/Qi1ldRLa+6GcoR
- c/SrNXSFhuemjY8rYQ7PwuO5OB7ZklLNo+RHK0A8FrABGugmTn6m2mJOHnbGhpfhfDVlVw2Hd
- 3JfvedhH0IbQMFSSuHD9nzYpRVN4AbIjNfX3VU8BzXK6DAgxSy74pEV5MA5j1oQcA6Gv5N8VV
- gkJbCF3X/8H6BfS/BBY9yxd2hTzDzDDrLfsZD+NOZvCJgRK0serhtZQCXacroq9kR/ucaZHdw
- fITK07udhV4pWpp8h1YtvZ8rmp6be2dzN/ymC3ZEqMcgXh0jdPFCFpJ/qIxRa/7gIptvfEjPP
- S7RL5dX1BKLM9EwoiQVl7PNPtM7Rc5RWIARYRm8GI45acbVoxv3VqUggFxeJMBB9pT+XeYA3t
- IPb3s4JODkzyu8kJwRliMoqgfVbzFKT8yqf/hvYNm1kEp6XjSznqG78DIC+nSmGe5/cHMZwP5
- 9wR/R8IRsqrCwgku4nhRFvXcYSRmrm58coPrLmSpLJaUql84roxNuxjW9cx/lZcTQbO5QeF4D
- s+zN57Fht+8ShfT550TaEL5qH8HVkDDLNuu6a4d1XfKlDDxa9xnmHWrf5yPZn7fe9erKrZcE1
- 8H7TYsdClVqwSw3jp7DnD+DNCZlu75DUt+E3vEaQ7cc6QJ/Rd25wVOfb8OYy9Yvwo6jka7nh2
- r11I2S3B2cx1zSevnmh3LCu4eaYHK43jlPMcR2Pc1LmA+3NXq3JoqQCrLbnRZLJRrdPqlBsHS
- SXfSvqwjuXOoE3txsHzfeB3qAK+BxA7iIeiF16/Wc9f8D9mjqi+yYGMo3mmj16V+7jsf/hO68
- Oxf27lKHXabOwfawqtsk8KYEVKxohxkogw9BhTGODaHKo36DpA+wzauzm6KyzNkDWYUE9dE7P
- Poa6+O+JTNFVjptVkorQS4R6/oZ5OM6uT5MkybSage/s7BArCVYxL7MUhLJo+w9W+dthRIHFU
- g1ClvmnZ+raulXFcHJoDl/zDY9MHQZ+WJrXqhXZljCaex4cNTgoZ03tvhMnFLtp6dEmjL43nu
- cVJIDr5n1GV4JlPFiWwSAHDuRNgz9sechowV/HwB+McgZN5tjBF1aYuZDWv0+/uKowXrryweU
- 6H4I5gAxQ7pzVgwE=
+References: <aKL5dUyf7UWcQNvW@stanley.mountain> <89a2023c-e383-4780-83e3-ba8f9e44c015@huaweicloud.com>
+In-Reply-To: <89a2023c-e383-4780-83e3-ba8f9e44c015@huaweicloud.com>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 18 Aug 2025 16:41:52 -0500
+X-Gm-Features: Ac12FXwxzyYRFXGH5ZrXXAIDEefWWgUFghEhiymRb0KWanoatFRoAiMK5AWyNkk
+Message-ID: <CAH2r5muVjS+Y_NFSWwYoisPGfynyTkmynjpQHi2_Kk6Z8AiG0w@mail.gmail.com>
+Subject: Re: [PATCH next] smb: client: Fix NULL vs ERR_PTR() returns in cifs_get_tcon_super()
+To: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> The extcon_dev struct is already zeroed by kzalloc(). It's redundant to
-> initialize edev->max_supported to 0.
+Since Paulo pointed out a problem with v4 of this patch, an obvious
+question is Dan's patch "independent enough" to take or would it make
+the v5 of your patch harder.  Let me know when there is a v5 of the
+patch so we can do more testing and review
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.17-rc2#n94
+On Mon, Aug 18, 2025 at 8:30=E2=80=AFAM Wang Zhaolong
+<wangzhaolong@huaweicloud.com> wrote:
+>
+>
+>
+> > The cifs_get_tcon_super() function returns NULL on error but the caller
+> > expect it to return error pointers instead.  Change it to return error
+> > pointers.  Otherwise it results in a NULL pointer dereference.
+> >
+> > Fixes: 0938b093b1ae ("smb: client: Fix mount deadlock by avoiding super=
+ block iteration in DFS reconnect")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+>
+> Hi Dan,
+>
+> Thank you for your patch and for taking the time to address this issue.
+>
+> I would like to mention that I have recently sent out the V4 version of
+> the patch series, which addresses the issues related to `cifs_get_tcon_su=
+per()`.
+> In the latest version, the issue of NULL pointer dereference has already
+> been resolved.
+>
+> https://lore.kernel.org/all/CAH2r5msLMNdqdo6EBuTvrQ0hwrqSRC-LSZuN2WpwV+Pk=
+DwsCOw@mail.gmail.com/
+>
+> I avoid null pointer dereferencing by performing a null pointer check on
+> the return value of cifs_get_dfs_tcon_super().
+>
+>
+> > ---
+> >   fs/smb/client/misc.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+> > index 3b6920a52daa..d73c36862e97 100644
+> > --- a/fs/smb/client/misc.c
+> > +++ b/fs/smb/client/misc.c
+> > @@ -1116,7 +1116,7 @@ static struct super_block *cifs_get_tcon_super(st=
+ruct cifs_tcon *tcon)
+> >       struct cifs_sb_info *cifs_sb;
+> >
+> >       if (!tcon)
+> > -             return NULL;
+> > +             return ERR_PTR(-EINVAL);
+> >
+> >       spin_lock(&tcon->sb_list_lock);
+> >       list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
+> > @@ -1141,7 +1141,7 @@ static struct super_block *cifs_get_tcon_super(st=
+ruct cifs_tcon *tcon)
+> >       }
+> >       spin_unlock(&tcon->sb_list_lock);
+> >
+> > -     return NULL;
+> > +     return ERR_PTR(-ENOENT);
+> >   }
+> >
+> >   struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon)
+>
+> Additionally, I think it somewhat peculiar that in the current
+> implementation, cifs_get_tcon_super() returns -EINVAL.
+>
+> I would greatly appreciate it if you could review my latest patch series =
+to
+> confirm if it resolves the concerns. If there are any additional improvem=
+ents, I
+> would be happy to collaborate further to ensure the best possible solutio=
+n.
+>
+> Best regards,
+> Wang Zhaolong
+>
+>
 
-Regards,
-Markus
+
+--=20
+Thanks,
+
+Steve
