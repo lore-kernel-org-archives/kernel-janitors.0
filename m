@@ -1,104 +1,128 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FC0185B67
-	for <kernel-janitors@vger.kernel.org>; Mon, 18 Aug 2025 12:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96DE31CA48;
+	Mon, 18 Aug 2025 13:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755520222; cv=none; b=O5ZksjQzzpgf/aH1sSDHhtsp7z/drQs1zJklL7+WMNcP5D1S+bCmjAhabL/XRGX2QDCEHdqqMM3FaNAoffsfjk3rk2oFx3yS1a6E1VdQ6Rtvsqq+b5PMXekylLnosN6FcCW+9VspSKmy3etQUY2fMnR+f6+MSrwkoSdwzsBgy9A=
+	t=1755522233; cv=none; b=DvVSTE/fNPvAgj1eRbD2AKxVDcKV+aUwO8zeqWuoyMQVpV6D32kRMEXLlnISWEK0QnqhXkB0cbL98keNlVLzQjW+cLeXWDVY7wjCum2EkNU3tX42J5nrkoB5hkHZ0cWsa/SgwuCo4bhKWQDDMSQO4R3br2AK8adI//BysZ8kvro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755520222; c=relaxed/simple;
-	bh=JlaSzZxFUUDEKFzH+GanUwNC9293wOpUa3UXPCil240=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GbfOOZpk3OMrYb2/dyVZrSLSf7oDYkXkttCD4DjXO4uFiXdRqTOJA8FFCH8MjJm1MYF7RZcM8msdNdsnD7JnjW6omofUfZzlWl9p4zR9q00DqdbG5psmf3zjeM+kXG+lDGja0cIk1FpP1p/nVCymRilg0w/fb+D/cefkcBl5ZiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wEXzxqwv; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wEXzxqwv"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45a1b0b6ac4so19461995e9.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Aug 2025 05:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755520219; x=1756125019; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9JnfrGseb6nwzv9RscumfuSdQYxOK2zLF1Z1VoJgRh0=;
-        b=wEXzxqwvJEl6kSqhaNKimR1iGEZmAXacel+z9x/BZYjG0+5ocOUOod9TIzV7zVOtXG
-         ImOuLHXK+vYwhmmLO9fEQbBzlD65CMfpVnRkLykOQRPsDOWsaWq+BwPdj/S49M2k70JM
-         UktvMaT1Q2CHm7lLBjsDJ6MI/mgO5+p3o31SLwTdSpK2cf8KC5/Zg5peRGbNnG05QXg7
-         jjOaXpA1Dn5UAYkgs+lOWE1mkUIVR5tTVtuHs3buf3LVCtvC9NFSO3u8YakC7SSPdre6
-         esi80xaq3ZJzFXn6viJGIKAlea4YwtlSZa9pApcwQWapr+xjrqMXJU/kBtkvgGJGcBSV
-         QwdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755520219; x=1756125019;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9JnfrGseb6nwzv9RscumfuSdQYxOK2zLF1Z1VoJgRh0=;
-        b=MqHhWBbbv3b9lhkhR/+rKNtSD4s+tyy/J+RnPE00z0FhHJ+Bp/4krmYs+HBW7kORWb
-         MqReDWrl4BgFuzMcZxr/fQLbN3eJw/WO/8AB3EhGeWNgGrZjd5/lszZ3ycT+EDVwVAEa
-         PT+izfGIzVNTXzEdoMcOgPCljzdDlCSPk8qmN766JV1n8S6qFbOMILFY43vncjTYDinq
-         fPlYAJRtDN9pn5Pt3H1qjdYQ+INPFX7uhVz8WC9YJKBm5mJy0a1AZx+HjdJXt9LYWJQL
-         ee+RQvE3ooPpJR4u/6oijcZEeOebsS0UlrFng1VOuTZxrTNRatyTVJPsI5UFRehd2Ldg
-         dzwA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5sv71RCs4aPKpgVHb6kQsNatrN9X8EzeV4inJgc9j4ar6v5VEb8cdwcEoStmYmXFmfaX5sAro9JlIPYpDpB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYHQc+nlh3xm3lJZt4PZLhQw8vNKt4bME28gE6tI+esIQDGRIc
-	u4FvroQ4OIHMKdfoWP/UWbissN1LCGq+7qqhGDif2i/HVbkPztj7R/qoDOVadzg3DFI=
-X-Gm-Gg: ASbGnct9SA7ZklFOOyv34wuLOfPJqZYT2MNMGJw8DW2kxFbzOruUpeL39AtaHruXPZI
-	KhpUQJjESUFdHHjVJiNECTok7zOJicPsYpQzNCDYMcj6hBmxwX2y1rd3z7CQ7XB1ftJSNmYGHVw
-	p6lYuke4GcOTnHsyPRUdyPji21AFaBq8ZOzOhoOXk4r03TimJMVXMIMkPOSrSyHsih5lmaHcMdh
-	Xo39gJ5rpbuDthvXs5zCD89PJV0+7NRKA2Ms6agySb3K0391gX2Fb4xyQegJC3Y18V+4ajTWxL5
-	MzCA4/5D0O+QpjEatNbwXSwD6svCxM7mMXzIE7KaxuimXIE3hdP1a/mhfdF9cgk9Ald/F9EEES0
-	IiJdwT9lstX84azU4570y/NnkpP++Qwyv/DKnIio409A=
-X-Google-Smtp-Source: AGHT+IHbHsTWwwaFVik9BbWGPWwZYPFU0j7xb33QVY4O0gkyyCAWkV0Jsoyi3ARB4eQMlZj+lbRkSg==
-X-Received: by 2002:a05:600c:630e:b0:43c:f8fc:f697 with SMTP id 5b1f17b1804b1-45b3e827f65mr32714475e9.9.1755520219188;
-        Mon, 18 Aug 2025 05:30:19 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3bb64e27843sm12680828f8f.19.2025.08.18.05.30.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 05:30:18 -0700 (PDT)
-Date: Mon, 18 Aug 2025 15:30:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jeff Chang <jeff_chang@richtek.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2 next] regulator: rt5133: Fix IS_ERR() vs NULL bug in
- rt5133_validate_vendor_info()
-Message-ID: <aKMc1oK-7yY4cD3K@stanley.mountain>
+	s=arc-20240116; t=1755522233; c=relaxed/simple;
+	bh=3eSzentkqOibXZaENmGblqSTCJYk6IoR9S8VOJLZgsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R8ToxDeH4+q+YBw3iI2E61Gh1q0d6pRPhtyCMjdOd6gaxnEIO3PI899aT7+nZSr7rO/n3IjYKGFgFlD3kNWsLJS/ceSnhepyBIMXEk8P5S1jvf6e6lGkYXI/YF4gL8h3a+5XccongXHgjDgUFbTkvSqDlbk0zAkycIOT9u5RdnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c5CZr3RglzKHMVL;
+	Mon, 18 Aug 2025 21:03:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D97FB1A0875;
+	Mon, 18 Aug 2025 21:03:47 +0800 (CST)
+Received: from [10.174.178.209] (unknown [10.174.178.209])
+	by APP4 (Coremail) with SMTP id gCh0CgDHjxCwJKNoY2JrEA--.45177S3;
+	Mon, 18 Aug 2025 21:03:46 +0800 (CST)
+Message-ID: <89a2023c-e383-4780-83e3-ba8f9e44c015@huaweicloud.com>
+Date: Mon, 18 Aug 2025 21:03:44 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] smb: client: Fix NULL vs ERR_PTR() returns in
+ cifs_get_tcon_super()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <aKL5dUyf7UWcQNvW@stanley.mountain>
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+In-Reply-To: <aKL5dUyf7UWcQNvW@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDHjxCwJKNoY2JrEA--.45177S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw1kXF1fJryxXr43WF4Uurg_yoW8tr4UpF
+	4Yk34UCFs8J3yDXw4xZFn5C3WF9w1DCFyDCrn5C3Wvvw45ZrWjqFyUK34jvF1SyrWUW348
+	WFsFyasIv3y8ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
-The "priv->cdata" pointer isn't an error pointer; this should be a NULL
-check instead.  Otherwise it leads to a NULL pointer dereference in the
-caller, rt5133_probe().
 
-Fixes: 714165e1c4b0 ("regulator: rt5133: Add RT5133 PMIC regulator Support")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: rebase
 
- drivers/regulator/rt5133-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The cifs_get_tcon_super() function returns NULL on error but the caller
+> expect it to return error pointers instead.  Change it to return error
+> pointers.  Otherwise it results in a NULL pointer dereference.
+> 
+> Fixes: 0938b093b1ae ("smb: client: Fix mount deadlock by avoiding super block iteration in DFS reconnect")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/drivers/regulator/rt5133-regulator.c b/drivers/regulator/rt5133-regulator.c
-index 39532618e73d..129b1f13c880 100644
---- a/drivers/regulator/rt5133-regulator.c
-+++ b/drivers/regulator/rt5133-regulator.c
-@@ -510,7 +510,7 @@ static int rt5133_validate_vendor_info(struct rt5133_priv *priv)
- 			break;
- 		}
- 	}
--	if (IS_ERR(priv->cdata)) {
-+	if (!priv->cdata) {
- 		dev_err(priv->dev, "Failed to find regulator match version\n");
- 		return -ENODEV;
- 	}
--- 
-2.47.2
+Hi Dan,
+
+Thank you for your patch and for taking the time to address this issue.
+
+I would like to mention that I have recently sent out the V4 version of
+the patch series, which addresses the issues related to `cifs_get_tcon_super()`.
+In the latest version, the issue of NULL pointer dereference has already
+been resolved.
+
+https://lore.kernel.org/all/CAH2r5msLMNdqdo6EBuTvrQ0hwrqSRC-LSZuN2WpwV+PkDwsCOw@mail.gmail.com/
+
+I avoid null pointer dereferencing by performing a null pointer check on
+the return value of cifs_get_dfs_tcon_super().
+
+
+> ---
+>   fs/smb/client/misc.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+> index 3b6920a52daa..d73c36862e97 100644
+> --- a/fs/smb/client/misc.c
+> +++ b/fs/smb/client/misc.c
+> @@ -1116,7 +1116,7 @@ static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
+>   	struct cifs_sb_info *cifs_sb;
+>   
+>   	if (!tcon)
+> -		return NULL;
+> +		return ERR_PTR(-EINVAL);
+>   
+>   	spin_lock(&tcon->sb_list_lock);
+>   	list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
+> @@ -1141,7 +1141,7 @@ static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
+>   	}
+>   	spin_unlock(&tcon->sb_list_lock);
+>   
+> -	return NULL;
+> +	return ERR_PTR(-ENOENT);
+>   }
+>   
+>   struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon)
+
+Additionally, I think it somewhat peculiar that in the current
+implementation, cifs_get_tcon_super() returns -EINVAL.
+
+I would greatly appreciate it if you could review my latest patch series to
+confirm if it resolves the concerns. If there are any additional improvements, I
+would be happy to collaborate further to ensure the best possible solution.
+
+Best regards,
+Wang Zhaolong
 
