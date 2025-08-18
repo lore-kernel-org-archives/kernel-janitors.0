@@ -1,106 +1,78 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EF23101B5
-	for <kernel-janitors@vger.kernel.org>; Mon, 18 Aug 2025 10:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AB427B320;
+	Mon, 18 Aug 2025 12:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755514517; cv=none; b=R4W1Jfl7UA4f7ZPSarm51TFjC9P4FjRtovamcID70Z58XFS4Wv6HIMydtiauL8uwWzWQuU5YNvLyCCqBQwlJOG0xf9zHl5Y7xu/xpJdLiyQLTGk0uQiT1Qks5/nYNHg0bA80AQWUSf3Yw5DUPgtXaGZlHiCG4sGT9cnx33DEHoc=
+	t=1755519132; cv=none; b=mrwKEe8TH/LzepQk9xobwIoQxJEMHcsaxcAZvC0RzLiBQ23etnvFCXuGJOKG7f3dG4QaODBbIVlyaiu0tL4zdc5QSuIK3Ab8p3bQ7qMjP6GO82B2AGtQADkRhOQT+vFsMYJlm9CDvIRDTJYkRIl9hDO5jFm9N8ud5vFr5l/uksQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755514517; c=relaxed/simple;
-	bh=FJ519jWH9KWAI2H67Tholf7HmFlB87+jCNjkI7Ma76k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H4qDQnoHEEAzCYEquAKoVvgmLtToepBYQOJAaXiKIWvgER7o15fg8huVGPeogxSHiCV6Mj5m+vafo1y4yJRvp1xj8xX8Lz9ZOv6Wu9jSAgk6w7OysjtRPkVbDg4P1D7CwNE8yg1oNFiPX53lRpQSPGI1EiwMy7W4oSe+YXY4VUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k48YcGtx; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1755519132; c=relaxed/simple;
+	bh=pFQiRNiAx2KA64iJllDiUG0KBdl/BAjnjqPi21Hk2yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0ojvTKEDur/OGZbdrDS21iq2lSTOYHsJz4y60joHreR01pDXCj2P49r6MTfw8z6gzIlgiMR7Rau4xI/geyJKSZ9Ydx0svQNkh0S35IaMxvAkwNaBsZcpZKy5b9Eex9KFUgsOFMOW1RNBs2RsCs7eiT8ZLoaGNKQhL4Q6ooJX3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMlllXjV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k48YcGtx"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71e6eb64991so18330157b3.3
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Aug 2025 03:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755514514; x=1756119314; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cRZb2JpwGfgK0Dvyni/lGLUSOMBzhH0cIWS+Rzvv3Hw=;
-        b=k48YcGtxlfSYR9PBWChf+LVHYtP4S/gAJLeQD4OajBYmJVId/6KgQ2x6S/zCULd3kn
-         evIja1kpFM1Jc90MXRQbREk4IArIA7ueaiQLJasEFdBbHgWUCoZXgbmCA8R8XBLJAknD
-         AXBI1ZxP5dCN99mlPqMc0TwBxzJ2X/l6mjGBJf0jZ0gE7gMHfe0mTlcKQ8C034cudVWf
-         56osERU3gA0G2nhJczJGGQIR5SgXpyT78JC+2u39W1gxUHCOBSz7NEd0q8byFZcY100o
-         IbgngaIyJAQ1O8BkFXivZrqjAatAyKSAp7SzGss0o1FdUuCEoTwshQilyi+giCJDbRgr
-         te0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755514514; x=1756119314;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cRZb2JpwGfgK0Dvyni/lGLUSOMBzhH0cIWS+Rzvv3Hw=;
-        b=e6OtaBQ3+KzWwM1hRA/qyYMGqnITcIj5SSDWfEpJJVPb8CYCfLmoRpVvuKfkJhvjSv
-         bk8xwqrp+QVEUYQHwS9WBQcNc2j7Ut638cM6H6uEIccsFk+qd3s+GeFQuqD0TTcUN7J8
-         oR62erCzPQC0aWLtZUhLL/mU6yoW859ZBVz5ynDZvxGezC46YiCQZaHYpDLkYakCYteB
-         Dcb8D246/sxrfukoiH9CnTlZT6GvzETxV31Hldad8SNPg8AIHUtSW2YmiXFvoKzMGVmb
-         7Lq/ur/ll24ZafstOsRbAmD+7Wr/cQGmEcgaZgmiiH7v9jVEgEuBnqUCh+sPVoHGsK4l
-         DSrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVT4X1zujm1YA7nk6mL7I+6MmKvbdRUNuzb4OuZ6xJTo0Nn88tbtdhRxNTDHgqJ8RD6QdKCNG2s9QbGcntc9QI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCfveDcn9D/IoILid/0T0tdVroaidbZ47Q5uTUwKFvb7gvFqwC
-	EMnlrgz1X2L1tk7NIdyYUQf1C5YrFc0c/+GFApS135v+JsXYyf663w0IYmtsDvmzzk2i9Sc9hDy
-	nduyyXQ4eaKKdN23qqzGQkE/6c8buDos6xV/X/RDFFwCE37uVwVzC
-X-Gm-Gg: ASbGncurxLw+TiOkJKY6G1KwTtw6IAxbqbBDZLAK6btQ5AtxwL13VfOwvnXxZOxN4bX
-	KrtFyz6fjgw6djz86EKoGT+CjjYJlVedh2U39CVW7requqMy6pIyYphkbsUZkCpjnxT7+X2XOjt
-	LHR7D26cr/nBxoIWL6SfuOeR8JkSHZEIiYbY7V0w2wPjwgyfVSxfhey9+SehFw0oyTu3iCG+2hX
-	l2xsvlV
-X-Google-Smtp-Source: AGHT+IESjdzn9W2JnsSauD18554Pkmz/p+/H6LoVzd2oHmARAOOT0+bzfJ7oITTTCicEmYqOeZmBCi19VjziTAWluD4=
-X-Received: by 2002:a05:690c:4b8b:b0:71c:1e93:272d with SMTP id
- 00721157ae682-71e77506f84mr94612597b3.31.1755514514246; Mon, 18 Aug 2025
- 03:55:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMlllXjV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED7F0C4CEF1;
+	Mon, 18 Aug 2025 12:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755519131;
+	bh=pFQiRNiAx2KA64iJllDiUG0KBdl/BAjnjqPi21Hk2yA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vMlllXjV23P9OaT8bW9Iciyq0kyfpVL6LjY+QkGkL2leuSqZhf+aFWDIMhvpiTjgD
+	 Md3NAn3piFo4BLPf4fKgmeawE0lcv8dboTgalyTXeNMYMQFhBXxl9xbahankS1mwkb
+	 483Ye6vpVAlCcmUDTVcipZlHpgsgQy9xpT0Lvcncy6r9ZBkkpwXt9w3Yp+DialouVe
+	 DB/WJmCl/CuuPQGrMxnXywC+8M0dJymdsZ5MqgCLrTeajKTYFTEGE8vfW1XPfVPijH
+	 f2TR++t2Zh+yEM3+EFKHS4MfcLAxSVNl/loLlXRoJr6AzpeBAU5KAS2IkWYparuTnY
+	 K9v6O2K+e5PsA==
+Date: Mon, 18 Aug 2025 13:12:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jeff Chang <jeff_chang@richtek.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] regulator: rt5133: Fix IS_ERR() vs NULL bug in
+ rt5133_validate_vendor_info()
+Message-ID: <50e34f5e-410e-4a5c-a1de-34becd9056da@sirena.org.uk>
+References: <aJ7YivhlWlE6ifw1@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731094116.2163061-1-colin.i.king@gmail.com>
-In-Reply-To: <20250731094116.2163061-1-colin.i.king@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 18 Aug 2025 12:54:38 +0200
-X-Gm-Features: Ac12FXwmA01YCEQ2jCJwvBR_wmGb3MGLVpLbRcdACzXEkQ4qTCrGPjPh1dPBI50
-Message-ID: <CAPDyKFrPhVezQprofCFyP5nbytyBCWsmxAu-ZbO_Bbx+d5aXrA@mail.gmail.com>
-Subject: Re: [PATCH][next] mmc: davinci: Remove space before newline
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-mmc@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-On Thu, 31 Jul 2025 at 11:41, Colin Ian King <colin.i.king@gmail.com> wrote:
->
-> There is a extraneous space before a newline in a dev_err message.
-> Remove the space.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WdoSpSVQ4oG3PH20"
+Content-Disposition: inline
+In-Reply-To: <aJ7YivhlWlE6ifw1@stanley.mountain>
+X-Cookie: A grammarian's life is always in tense.
 
 
-> ---
->  drivers/mmc/host/davinci_mmc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
-> index c691f1b60395..2a3c8058b0fb 100644
-> --- a/drivers/mmc/host/davinci_mmc.c
-> +++ b/drivers/mmc/host/davinci_mmc.c
-> @@ -588,7 +588,7 @@ static void mmc_davinci_request(struct mmc_host *mmc, struct mmc_request *req)
->                 cpu_relax();
->         }
->         if (mmcst1 & MMCST1_BUSY) {
-> -               dev_err(mmc_dev(host->mmc), "still BUSY? bad ... \n");
-> +               dev_err(mmc_dev(host->mmc), "still BUSY? bad ...\n");
->                 req->cmd->error = -ETIMEDOUT;
->                 mmc_request_done(mmc, req);
->                 return;
-> --
-> 2.50.0
->
+--WdoSpSVQ4oG3PH20
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Aug 15, 2025 at 09:49:46AM +0300, Dan Carpenter wrote:
+> The "priv->cdata" pointer isn't an error pointer, it should be a NULL
+> check instead.  Otherwise it leads to a NULL pointer dereference in the
+> caller, rt5133_probe().
+
+This doesn't apply against current code, please check and resend.
+
+--WdoSpSVQ4oG3PH20
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmijGJUACgkQJNaLcl1U
+h9BF9wf8CvCQTwSqdYdU48v5WRHGGLUFLpF5CBk1kLP8ebNuOwY2kGnQL3ew6V5L
+YByMNX5hjBvY3FKUGeP36qMr5A5aJyVe51rFYBiVtv5mtJfMElb5qJrpI4DnPpIw
+YPwAwRbmbsL3mZQVuuOL7C5iRi5DJYJ5jnoVqC7HmEdcWuH3hnSB1SM48Q+fG+3N
+EwbuTDCPHiZCy4pR2zh6sFSEqimXWOzbqNpXQ4nVbPZ3BYw6hxUyRTDMHZKumtIP
+IqkRUFnm3w3x4IWcyiJa09lu71w6TPq1LnPFRqXXsXZArC4DdBbeJoeVqh060fXd
+RkC6be0kmtNw+Qiu5FvWXby/xJSkeg==
+=6yU2
+-----END PGP SIGNATURE-----
+
+--WdoSpSVQ4oG3PH20--
