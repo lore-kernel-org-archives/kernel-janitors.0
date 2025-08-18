@@ -1,73 +1,70 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0D01E008B
-	for <kernel-janitors@vger.kernel.org>; Mon, 18 Aug 2025 09:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E958630F814
+	for <kernel-janitors@vger.kernel.org>; Mon, 18 Aug 2025 09:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755511164; cv=none; b=sv3hA64NDVHsiXcPlM9c18ASOAyEgE3l/zejLs5aZwtCPpvecarQY5rsv/UOpzexU8BrJbKxhCZvAn7hxSiamLFWqTpm6RSpaZCEm9D8+U3ncED5bOtMpc5udHz6Ztfo7nCRWMYcipdPGqhMpWhyk2rhPrF+mzBjhk5Qf5nSUNY=
+	t=1755511192; cv=none; b=VDry3YdJxuUDIB5DkjnXgvoeZ3SqT6lyWTGlqLodxYLDX2SCHctsFv/6X8udo62v/FYdLTvaO3cSX1wLJkGkihNcefzcJWiLMLyq2R4o2nmZqMahA5bS/xLD37+9JqzQEYoAYXyQFyoCLH+cnCXE074Rgq5GjGa2QNwHtdmfkHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755511164; c=relaxed/simple;
-	bh=/C9Csrxdh1sYcqWltONMtXTrt08x9QqeTMlZNgDLvCI=;
+	s=arc-20240116; t=1755511192; c=relaxed/simple;
+	bh=uXo2HfKIzXZcEAqe1+Cgkmi5au4JHjAcMP56tR1hXWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m/tgY7nBQYOtITt6xW2nZmguiz6a2P2/SeSf0B27FPZIh+kFXU5QNBL0wjDR0paAjzbOeF0TNdPi7iSg3JcKJFOnYB6BCSrOjpRfcOLu3SZP+N+yEg3AdBpPCUUghc5V+xYXiNlkVpQurVgtISoAP215v+BBa5k25+9je/9rw/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kuEHS/mf; arc=none smtp.client-ip=209.85.221.46
+	 Content-Disposition; b=u4oq+cLQAkijDevVvY/YVkXkFLz2DbltHjjlHdFuUrLIWNBhCDJIpZkrdi6btquhwwEw3HNibQwYPSUd6JD0bxQ80Ra0JUwLqJ+TzubaOkVMpXHUNCXwuBsyOYzKImGBezy+coD1OcGn4DZePtvy6BL8AyVJgAk7g3naWtUVpsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ysd5xhYD; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kuEHS/mf"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9e415a68fso3739229f8f.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 18 Aug 2025 02:59:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ysd5xhYD"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b05a59fso29478945e9.1
+        for <kernel-janitors@vger.kernel.org>; Mon, 18 Aug 2025 02:59:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755511161; x=1756115961; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755511189; x=1756115989; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=qZDLlNuYLU9UmeoCuzZO1+X4n+CJQR7oR8AjhafJt6M=;
-        b=kuEHS/mfIyAN3GAxIk1mSA1lt4VDPAKXPuOoZDzsOUvJgimm7zdIbPsix6fbyNMtZt
-         kEfQvqKia2oFQHzd4rOLd+gwM9DlKm0NrXVLZ3KOXKvTPtEoY/y4bbTvAu1qeU46Vg2H
-         mJNChdIixR2De/GddNzrHS+/ktE5suyDaulm96HyhgpdE8i1UjDk2oSIuegAvmDJGAjw
-         WtxG0X1O+dTVQHgR/K83bjTwq8dg1tlt2zOgAfcdWybu7HR9lPN/hnq22Hak9hxdQoyH
-         54FqEsRRakwPnoS5UYxTR68itfMc4INvkLOD0YYXtk3W+JgVvpeeKCQccmoDppARhaBB
-         wcjg==
+        bh=PAzYeYzFTOC96kJwyQ7IcW6iscdjbjDH2bcXfWJ1JYU=;
+        b=ysd5xhYDGXECGnAT/n2KyxCW/wbIFMGMBZy94OODzaLfyZxJmFXkzETADId29xJTa3
+         8TDcOFD6hTtRX6xc8l2liTlwmU+YCBh6Y9bcUq1BjRwJiW9HixocDe+C6p3xyDPYCM4i
+         g+R7QoiUaICNqfCPAUgnbkqV8R8UWWmdnRSnI/mhwflRIFFLZjfYPWVzJuuYABadpsC6
+         Re2ARFBEkoqRL3b9cwKUv0Bfm0kojG30PtEciz49yHJdzgKpvb7nEt4XFKHJl7abo44w
+         7olO/9qNdg+YINzyN8S5yTCDlk3WsXkmvcsmKkWoXKWivH3+CF2AiSqKINbk49jPqqsI
+         lLJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755511161; x=1756115961;
+        d=1e100.net; s=20230601; t=1755511189; x=1756115989;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qZDLlNuYLU9UmeoCuzZO1+X4n+CJQR7oR8AjhafJt6M=;
-        b=GPf1/VqgJbix2co+AL2n6TD63iXfgHYUUlBbOAf961dtgD680UK+n0HURZOqMRrgGd
-         tVpnQL8fSOyMcwbPzu0HAQmbHZlG4slPeGUMs0z9KxvzZddmDWFK0uVKXWrgZqCRik6y
-         S9zXeFEE6N/2qONHY3txJ54QWMSqni44M6u6uDXlZBlnKxa/vFmqXcxpgYC5WIjGkRLC
-         c4dsVvvyhimYza/SoAUqI8fC6olE61u+TvyTO97jA3uMwjXthYx0WOvvJSetaVPupIIQ
-         DbrpQNK8r2k/mRsP2otJBdqzKSSA4fUHA3vgPeXaEnB8dxAKNA4yG4V2/S9RpG/ZF8YG
-         IwVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIhHZnJMGlPeGr+t8skFW6ofEa17MLz5wXw5O56BMghEN3i/OTl39JlvN+7pcW425n9juKfoPaW0k40CUScw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLz7SAMj+otUNjYkngD6Ewi6Jx0fFswyXG7ce+XR4PhC4NaoM8
-	lsHl8erBn0tImComGd6zF5lDYPno6T5p0AIDHl6QQIZ5xSCf2Rl6xmGE5Y3FBh5KM+A=
-X-Gm-Gg: ASbGncsYWd/XYFmF37gFyN/eVfQBMrCPOQev9r/XdBpwQsLCCMm1uEP8mtyDRe8KwwJ
-	liQrImcnWa+4p6Ss1sCeMJmpQVGK+AttU8U2CuNUriYlUoCb01MCh7EAPk+5q9A5ILGx0xRLxZ+
-	LF9Y74lPq76yu/u+ojAKxEJwTeSpPq9+PllwMH/dNZCenWX74KgvbOGH4ZrU3pp/okqoevlWwKN
-	SOuKMU+h8AtrQECgJiG7ikbzxWh136p9ua1zA0Ew51b+KducGFnErN3D0/I9A4zxstZEY/XrB97
-	MsJXjy6cGb4l3wXuXCvskrbgQM6w1g4SpYzbR+SbCKzyKNsYiLOlCBfBkNXueCt+872h/5BXJ0v
-	N+1ukArPLVb5evZeJG8c1lU06fPG1VxKXGFSBWYihpMxKa4LIWxDqvQ==
-X-Google-Smtp-Source: AGHT+IEAVhk6tBtT8QiYf3c/clKbpVmq0dinSHoKmOjMnv18pQ2Ji8dtljdjZJFXIYwlEZU7sho8fA==
-X-Received: by 2002:a05:6000:24c2:b0:3b6:936:976c with SMTP id ffacd0b85a97d-3bb66f0f6f2mr7896857f8f.17.1755511160898;
-        Mon, 18 Aug 2025 02:59:20 -0700 (PDT)
+        bh=PAzYeYzFTOC96kJwyQ7IcW6iscdjbjDH2bcXfWJ1JYU=;
+        b=Zlj3Agrv6LmpJDF56jqwpGxYMZzBrD5yYJRGxSYi/nnjMzmNhcXLyV1J9lJZWqsHTN
+         yb8ZffDXhFDWsyCgKBoAJnXVPrko2vVZSwzGGaUUEu7QgCnMMbvTya4dBxUH9NBm9QmV
+         5Q3BhPPt2dNHTXjzJsB6IVpWSP0Cpj+N97mys6woiGpDM7BqJRKQJbphryDMrQfm2bQD
+         g6UApPBodKOdwgfrX57PKPbyIoCNXWyzk19+hKmkJ4a7diNuKunt7M/yk6r4mlWIojv9
+         hbGE8mMvrP+p3Bz7lXUc+DbbAvM/VQup/kiUO9zEutIrHcEMMcHYnvilPyYjksiX1fJ7
+         eS9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVApqIqHajNMX6QYGey/kcheUYyGA9XvTjvblvBrhmBX/MVToD+f0CdYVYQWHWmMY5FPLYteqEOqD9syQYlc7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN3RUPBiX8KI/dMwZMBorhDYG3rCDr7ENsFHT9Jb4lbfHa0x5P
+	Z4r8+d6DdpGQnA++mIm8O/ENhvhvsPufACmq/M4zb+/MFzLLkli9r0ijZd6HgovLzyM=
+X-Gm-Gg: ASbGncurlsJG6GWOsAg24RxoKvuVLHn5FHulfKOk72qRJebXQTkqmd+TFlqz6QC/HqM
+	JiRt06MkS8oI1woGEQsMZCDEZUUKJmDMQXq05LOYAl67pxPpJknFU5LjAYMEsC3sRqPdGH8JXQA
+	HSQaq/IHBfbJKR8j2JaHn4t1QGabiOYpgEwsXJiYOJDb0rI3cGOwL1SVxI0+QCtRlW1S1J5vJyx
+	3x+9aQjepKA0D4Y7L1/RovZmtwXHgZg2WccfYP3EEtlFaaIaxB+mQiT14nKvt5yeqK56DTqUuom
+	YGDXzpdLgBL/mehFCAMukrkcQjl6sA4Vtxx4ieQVGONWTn2cq2RTu4+HmVH11yKU9hRXzxZPn1q
+	yD6bF/06zDGreZ6z2BI1bVCswwCJn0L45JuHamdBCCmE=
+X-Google-Smtp-Source: AGHT+IESeM6A+8YV4kbdeq3Rgqzb28xUjkrQolArR+kWnKAsQ9pql4kCFEogW9+cFxcDvalPpojZnQ==
+X-Received: by 2002:a05:600c:444b:b0:459:db80:c2ce with SMTP id 5b1f17b1804b1-45a2748c3a4mr49153035e9.7.1755511189272;
+        Mon, 18 Aug 2025 02:59:49 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a22329b12sm126502615e9.24.2025.08.18.02.59.20
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1c78b410sm172408255e9.24.2025.08.18.02.59.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Aug 2025 02:59:20 -0700 (PDT)
-Date: Mon, 18 Aug 2025 12:59:17 +0300
+        Mon, 18 Aug 2025 02:59:49 -0700 (PDT)
+Date: Mon, 18 Aug 2025 12:59:45 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Wang Zhaolong <wangzhaolong@huaweicloud.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] smb: client: Fix NULL vs ERR_PTR() returns in
- cifs_get_tcon_super()
-Message-ID: <aKL5dUyf7UWcQNvW@stanley.mountain>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Karol Kosik <k.kosik@outlook.com>,
+	Youngjun Lee <yjjuny.lee@samsung.com>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ALSA: usb-audio: Fix size validation in convert_chmap_v3()
+Message-ID: <aKL5kftC1qGt6lpv@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -78,38 +75,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The cifs_get_tcon_super() function returns NULL on error but the caller
-expect it to return error pointers instead.  Change it to return error
-pointers.  Otherwise it results in a NULL pointer dereference.
+The "p" pointer is void so sizeof(*p) is 1.  The intent was to check
+sizeof(*cs_desc), which is 3, instead.
 
-Fixes: 0938b093b1ae ("smb: client: Fix mount deadlock by avoiding super block iteration in DFS reconnect")
+Fixes: ecfd41166b72 ("ALSA: usb-audio: Validate UAC3 cluster segment descriptors")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- fs/smb/client/misc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/usb/stream.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
-index 3b6920a52daa..d73c36862e97 100644
---- a/fs/smb/client/misc.c
-+++ b/fs/smb/client/misc.c
-@@ -1116,7 +1116,7 @@ static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
- 	struct cifs_sb_info *cifs_sb;
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index acf3dc2d79e0..5c235a5ba7e1 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -349,7 +349,7 @@ snd_pcm_chmap_elem *convert_chmap_v3(struct uac3_cluster_header_descriptor
+ 		u16 cs_len;
+ 		u8 cs_type;
  
- 	if (!tcon)
--		return NULL;
-+		return ERR_PTR(-EINVAL);
- 
- 	spin_lock(&tcon->sb_list_lock);
- 	list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
-@@ -1141,7 +1141,7 @@ static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
- 	}
- 	spin_unlock(&tcon->sb_list_lock);
- 
--	return NULL;
-+	return ERR_PTR(-ENOENT);
- }
- 
- struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon)
+-		if (len < sizeof(*p))
++		if (len < sizeof(*cs_desc))
+ 			break;
+ 		cs_len = le16_to_cpu(cs_desc->wLength);
+ 		if (len < cs_len)
 -- 
 2.47.2
 
