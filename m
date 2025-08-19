@@ -1,110 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3572206B8;
-	Tue, 19 Aug 2025 17:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728AF31E119;
+	Tue, 19 Aug 2025 18:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755625760; cv=none; b=HuZJTfjaLeslg9PQpwtAa6OzAWGk9RFaCMirxhZFGVWHLrpE8RJMYAUKimkWEo2SP0Rj8X84/WKpJ+DEMYkN60pdE360MGJaOa66YLKMUGIh55TlF78t7IkHq+nU01xfJ8o5uHXHBbZpRy1hOEznxLMN+XjX2z9vOVAjqxQiyfc=
+	t=1755629538; cv=none; b=pAiEf4Fzuq8RchM+Jo+mt6BHQLNp48ck7PuGy0AvUqC2ejUkCcISu+gQL3SpcQ5/p/Uc3I9ip2RsPQ4WJ94+l9kfmULP837SqzA7S3Ju4bQBVHLnRSgkIWyJBK1b03DocF1qc+wmjfeUWSxP3Z+YFjUDt37VcECNzfd44BB1xiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755625760; c=relaxed/simple;
-	bh=w1gebZhtcPh/rs7t+GaRcCMsH3OpcsQIB1iR3B6i4Ko=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qt2SrNXakFtbc/s6hc6RCyLTJPBC3vdTVYSD5H7JiwEwokVnjD9V8pmxWwdUuXBWehr1/SH3aV88gXF2jDSZnbS8vAlXP0RzZQQS8gszU4RF/9xOjikvgcBy1FPuN/f4BOAwpJwYp33aSqAJ8LeeevW5eXkgI1DBKM7+VS87zrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GDgHIzZE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755629538; c=relaxed/simple;
+	bh=Wkkw568iXoDJ0kw7A3ebaYw+w6YTHaGKsVwIET6hZh8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=npxyD3dU499kyCPnE2lQL67mKUU/RxpV8R9xBKxEFiQ89/BvkzNkyp65CCvXEZ/UWIMk49MBdT5oaYZH6dH7TlALkUhLoEOcoLZL8WrfaR+OPFrgYZfh/aSN/rwuuSOCBrT8GH2DmqtpNZ1oiZaNASkdZ9678q5ZgEx2kacOMSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZD+TihB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GDgHIzZE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3904DC113D0;
-	Tue, 19 Aug 2025 17:49:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZD+TihB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A20C4CEF4;
+	Tue, 19 Aug 2025 18:52:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755625758;
-	bh=w1gebZhtcPh/rs7t+GaRcCMsH3OpcsQIB1iR3B6i4Ko=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GDgHIzZE3+efgVVhAHR3c8usuZ9PRROcH+7FKK8uuKejWUc/2wx4xSgofrF0agtz5
-	 y/KitcOvPmhSb//6hU4xwuVFrLlbNxJ8PWwYptTjsGjKz5OR9wh5kWEs/q6abBqIE6
-	 WXo0KsKajkw9zb6tPbuOp6oADwOiLOmoteg8/E6WEU0JG5Td3fWA3XFcaS1314Znnn
-	 miTyjRgzlgSNxJopoDIA0mKrbaq/OQ9hlXuy8HSVGt/eHDb7eql4l0CEuyE/Q2F1DH
-	 EA+8WR0Owa7Wzm3kdR4AnU+lFGL4AFGiSnw3gER2GkyAoKk6xGRKVyy74nyMAKjJ2B
-	 AD4iyEjyVqeAw==
-Date: Tue, 19 Aug 2025 18:49:08 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Waqar Hameed <waqar.hameed@axis.com>, Song Qiang
- <songqiang1304521@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 next] iio: proximity: vl53l0x-i2c: Fix error code in
- probe()
-Message-ID: <20250819184908.324b0ca8@jic23-huawei>
-In-Reply-To: <aKSSHTdJf5QoYiRx@stanley.mountain>
-References: <aKSSHTdJf5QoYiRx@stanley.mountain>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1755629537;
+	bh=Wkkw568iXoDJ0kw7A3ebaYw+w6YTHaGKsVwIET6hZh8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MZD+TihBFKBHZojf+8U75eK+gvYUBDbcrGGGh4FJ5Y+CLSCBS7IG+Lrf40p0UeCeu
+	 e5Pi+wAy5Cg5uN0wbc4PDzJHg2a9urWwjFKFSJwOm2pOZNQi5yELEvtUQ3NcSt3n8+
+	 GDh3fR8nGRptmcOU3CfIaWp0mpA6hI0Ggv14wKw+p67bcPdomUPFXaOyKIY4GyXiD6
+	 mYxVL0M/amD+dGy6lmA+o199wdf8h7uZzbjxqtPcG9+C8SM/xw49pJL/3eua01n5le
+	 loPommBtJ+r7acsAx3oF8ST75wq+cuC9bnWS4Mv4yR10yIWml27OVqF3T9ChG75yYz
+	 Oyg2vubv6Tn5Q==
+From: Mark Brown <broonie@kernel.org>
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, linux-omap@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+In-Reply-To: <aKRGmVdbvT1HBvm8@stanley.mountain>
+References: <aKRGmVdbvT1HBvm8@stanley.mountain>
+Subject: Re: [PATCH] regulator: tps65219: regulator: tps65219: Fix error
+ codes in probe()
+Message-Id: <175562953472.246782.13325233916103955955.b4-ty@kernel.org>
+Date: Tue, 19 Aug 2025 19:52:14 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-On Tue, 19 Aug 2025 18:02:53 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-
-> Commit 65e8202f0322 ("iio: Remove error prints for
-> devm_add_action_or_reset()") accidentally introduced a bug where we
-> returned "ret" but the error code was stored in "error" if
-> devm_add_action_or_reset() failed.  Using two variables to store error
-> codes is unnecessary and confusing.  Delete the "error" variable and use
-> "ret" everywhere instead.
+On Tue, 19 Aug 2025 12:40:41 +0300, Dan Carpenter wrote:
+> There is a copy and paste error and we accidentally use "PTR_ERR(rdev)"
+> instead of "error".  The "rdev" pointer is valid at this point.
 > 
-> Fixes: 65e8202f0322 ("iio: Remove error prints for devm_add_action_or_reset()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-Applied to the togreg branch of iio.git (where that patch is)
-and very briefly pushed out as testing to get some build coverage for other
-stuff I'm queuing this evening.
-
-Thanks
-
-Jonathan
-
-> ---
-> v2: Fix typos.  Add Andy's r-b tag.
+> Also there is no need to print the error code in the error message
+> because dev_err_probe() already prints that.  So clean up the error
+> message a bit.
 > 
->  drivers/iio/proximity/vl53l0x-i2c.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iio/proximity/vl53l0x-i2c.c b/drivers/iio/proximity/vl53l0x-i2c.c
-> index 696340ec027a..ad3e46d47fa8 100644
-> --- a/drivers/iio/proximity/vl53l0x-i2c.c
-> +++ b/drivers/iio/proximity/vl53l0x-i2c.c
-> @@ -311,7 +311,6 @@ static int vl53l0x_probe(struct i2c_client *client)
->  {
->  	struct vl53l0x_data *data;
->  	struct iio_dev *indio_dev;
-> -	int error;
->  	int ret;
->  
->  	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-> @@ -344,13 +343,13 @@ static int vl53l0x_probe(struct i2c_client *client)
->  		return dev_err_probe(&client->dev, PTR_ERR(data->reset_gpio),
->  				     "Cannot get reset GPIO\n");
->  
-> -	error = vl53l0x_power_on(data);
-> -	if (error)
-> -		return dev_err_probe(&client->dev, error,
-> +	ret = vl53l0x_power_on(data);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
->  				     "Failed to power on the chip\n");
->  
-> -	error = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
-> -	if (error)
-> +	ret = devm_add_action_or_reset(&client->dev, vl53l0x_power_off, data);
-> +	if (ret)
->  		return ret;
->  
->  	indio_dev->name = "vl53l0x";
+> [...]
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: tps65219: regulator: tps65219: Fix error codes in probe()
+      commit: 11cd7a5c21db020b8001aedcae27bd3fa9e1e901
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
