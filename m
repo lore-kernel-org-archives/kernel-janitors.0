@@ -1,74 +1,69 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF1C270EC5
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Aug 2025 09:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA06311958
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Aug 2025 09:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755596454; cv=none; b=pvZCEAOT92lb0ywKrvTmgi7/ktkIqUtYIq+zjPucXKwhBPuRqCryuCrQ8X8fOtYalNOw1CxFLSxxvRg/wMm3oToPaZVqvEDjeMrxTLiwa4XCsO5XVkkvfMltE/C3VbWywRmr5jzJ3ohm5AnEKTQ0qy3PzjiCZ8i8c6hkEqT5v24=
+	t=1755596482; cv=none; b=nZ5dshRU4sSo/9R3UswqVM+Mu+5ynMp2yePAEtNesd23+1ewg9MM2WwmNUjsfqvKCGLESTSLnAhSGraxELd7Ep5ESJIGpeuRwYTigf2pLWCJ+TwIlUt706mrkFYtWpzKJeVDUH8KO1IFYXMn/f3l9fYsQG4sV0SGyecKqLgVwUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755596454; c=relaxed/simple;
-	bh=vDQ6sv4CI1XEeY6KKn5PmWXhWFLpuy/IbsCbzwNKGoM=;
+	s=arc-20240116; t=1755596482; c=relaxed/simple;
+	bh=8OzrB53Bn5TxGHC664tdW+P0TA2+NR/DwiZkzjNkzZg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YuWTgCE60auUO4H12X5bbquaFPVwQrhs25xniyzim0rOaTlOcVLgM7Y82OkOU0IF29b6JiMeG5VJeWIcvDT21OpO6RRD7pWuYl+omzxJRHo1aazW4sfpFk4WC8siECYefl3MCr/tN0I+yISBCWyOqaPNAKOrCIXOHiIJGMMOc3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jBLFkH2l; arc=none smtp.client-ip=209.85.128.54
+	 Content-Disposition; b=BI8KeM61nRCqqAE53piPGbeKsg9QDdk9mHOFLDZ0LJl6vqV7PuzmEyBQdixb7m0oLvcJo4P6s7KarrdLAmb+7Gb3eWxkTudlFK0oIMFSbMiGWHbmDYrOcKAfdBPA5mKe7X+hwO7nI+tDiiubRgKOMglp3aJpkbTVftjL2e8bkHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vECM7eRe; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jBLFkH2l"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45a1b00e4a1so34501725e9.0
-        for <kernel-janitors@vger.kernel.org>; Tue, 19 Aug 2025 02:40:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vECM7eRe"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9e415a68eso2503689f8f.2
+        for <kernel-janitors@vger.kernel.org>; Tue, 19 Aug 2025 02:41:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755596450; x=1756201250; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755596479; x=1756201279; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XYrVte0dUC6jFntJ2Z5yq1u0byPHu3c4Sgjim0w6WbU=;
-        b=jBLFkH2lncK0oYLdiz+zkvISWkebxbuxkA9l6O1B8gh032j0FX8EZ7WnQLXcGpQOFH
-         GDDSfv85MSSkcvRVabFi+VQ70740qn7me1T0jqDg/1lrPoLqgB6k7yDH4rJxHDVy2z0L
-         96iy+k6oc2AJzYmwwWvI4zqVY4NE+dMwmfUF06w0lioJTWPcVfx98oI2QxPu35/bPhu8
-         mgD48tlzcPfsnNxxINwE2ZLDA+MAOmQMD2lnsWPxfOs1RLGmgTRSjZycf/1Y59z6QGB3
-         6sNHpRFLhETmQZ9DcStGjeXShX1DZ8yLQj2UIiltR+WDbXCmSwKWznvSGI+Fq2hERDQC
-         3TUw==
+        bh=vKExw4rCJH6z3V+PveKbUj2X+7GksrW0bl8/wkUvABY=;
+        b=vECM7eRed+zPnhTQQ6tRAwVWn5fTpl368Jau591Wr2fZij3Yr7XyNaVxSrPIjzKD5w
+         U16QCwvxBZNdS3ZsHQ6cgPoyv9Bmlr3Ub4+W5BRNpGxEzumyL3Uj2nkzD51YcDGg0Lb7
+         FK3qHQLqJ7VyCygn+ttLObvv+YOmIls+svsyHnG0bvIaNds/2ezTKyvyu8HOeG2Zi60U
+         fuqEX/vstVyYMt+Qf0AfuqdeqwH7lyRoHhaZu3xtOiG0iVHqec9plpW5BLTs1IX3wXOD
+         NK8c7/I/WvA9O0TvVPR//s1nf4R8Mv1FkLHOF4deJ6PHn6Xf+w37CJR6hGO+Wiwb3frb
+         PJnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755596450; x=1756201250;
+        d=1e100.net; s=20230601; t=1755596479; x=1756201279;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XYrVte0dUC6jFntJ2Z5yq1u0byPHu3c4Sgjim0w6WbU=;
-        b=A1vwefDqYZeaYaF+1MabKLF1hhpcOg4Z3KeNdqoZAJPSzet8KB0iu5/cpdj7oj+r6P
-         UGzQ9oaD+aE7R5+1iWCXw7CtcjGZlLdAPEKTwA9dHZSNBlhawu8+gtOlhPDHYgJ2oNPH
-         f6TBJf6W1Fz//Ax5NFAQY9U2ABZxLe6p+pMd0tasQ/fVG8bGkCUjcKvBDnXQ1AKE0O1U
-         0e1tcvrjo1XjeklUQdyiYMygLfaB7tuBV8bumDXeXrf9VRLOxXfTYHWrPz6kpzpfC4+b
-         KUFOpSYRwy3oOjUoCib/NmGKtcKxaetdisL/JCtdb4SrQtRlhDuH8Hl95XRPlRIjG5Og
-         i/Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXo20MWbrGxhe2SGAXPs2XSBr5hIAO8oLjXBUp3yt5aVsbUHg0pmMdNbncfVquj/ZBrWQUI3q+I9l4mq3Tvtoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy56aBosk4+0GuPuGaogzivPFnzmRy4ugYvqzjRfhVtPDfj8OSj
-	YPzWKqQrkEbH/7GJS3eN4VcSfufj4Q/wMfdWxcQdux+jvldlsv79o+zm3d7tDtYhMTo=
-X-Gm-Gg: ASbGnctjJHNyqVJJuxiodntkg2ZtrUD25+gBdQlFnyG71ChHXQIIp+mdsiPqDx5mhzn
-	SOtQc4XAA9QH+GJrRW+IwT9H3o37j4R9qD/DcDT4CEEffLcIFlcJ792IMyUXrRNDDgAUGb/hYpu
-	Fa3vynbzdi/g8/mmKU4Hz6uNRc/ZlYuM/qakokTT+aVFIYOd7E0Ug8jT30jPwHgKcg3BL//hQDo
-	1AE9vP9GtoyzMVfd2r95WD7lVsSqwUxQYUl9CvJm1TMOUNmlLCDgYvmXqthH5hQ6SUBpsNwJtvD
-	xyhoF1QqveCboRaDZZ1MnUwFRT4mSTO0i6/e/HvMMDY8ujwFDWsCiwBhhPEa675KXQZnduT/tNQ
-	CZS4sGLoG1bg4ytCj0U9I/8TbJhI=
-X-Google-Smtp-Source: AGHT+IFeIOC78J3eSW8tZNbbpFmELZjsM5rbvzIym6l834NalJLewkysKiN5BeWd7Q9DHgnPdSL+tg==
-X-Received: by 2002:a05:600c:c0d2:20b0:459:dfde:3324 with SMTP id 5b1f17b1804b1-45b442bf27emr8207155e9.29.1755596445141;
-        Tue, 19 Aug 2025 02:40:45 -0700 (PDT)
+        bh=vKExw4rCJH6z3V+PveKbUj2X+7GksrW0bl8/wkUvABY=;
+        b=q32zb5LX2k7O0VrbogXnTJ4DNldSTUW4rF3a/S90UFUj1AG72P4CGGw2THHBSHLtEH
+         D02l3kNRjvu92SQpPK/ZG81DriDGrEnBWzwkto9QBuxEaiS2iuygPulgOrP1+5CKpkpZ
+         odmN34VujfDRgkvxhiX6ql1m9xbJa6IxdQK7VdCzcvd45B16P7PsgbrS1yf0S1bVTWrB
+         neud0h90T0a/zLzhzjuVJZi2bvuMTqTuCWYTMamzS/6YwDzdSbndi1ftKqhqa8dPP7lP
+         bwhycxuFiLCSQP/X51X6vrXY5Wrd44kbyltxJif6zxm2bp8IEYidjkYkoqVoc7druH+O
+         iw3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVzdECVrV8oDBOkkLrCUDsa+7YaoYn1bqhjGOJjC9T9N/cWSwjDabU0CwDUXQQ0ULlMo8x5Qla+uS+5AqKlI9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWV1/lmvEK+LYE8ikotWVVmEXyF81vMS2haFapZHqHyEHMzkng
+	OkyDcCBzCXFUvgEzBSZIClf2ajZIoWFOI6F0JyTfHHQYNHDoje6Pd3Pbb8RppfDxwM8=
+X-Gm-Gg: ASbGncsvkw4Hca0XYeDdSV/ZbplPjmba818x1jbdn8PaUqqyxepdpKhtv3Xo1xXSt7H
+	aSR2OIPxFVWRb+wyoD+psgbFovipMwT/8imv1rksrjaLvxyA8AmaTbIptzuMvuLs+S7UBHskH0+
+	8jsDjba/pMi/RHvDykEtoPTPu8OEgahyDZZ6Tjz2B+TtXgv3vyUSLb2Fi/sCENTu2jIsB9fdLFu
+	7iqfGJ/Dgq3avnhoGWdnKLoSE0wjA7TmIvdaSrZI1aJ2V8mi3bXXiEDxAtt6d4SeRuMIZRElW6D
+	pVG7ZYRxEOrD5UyPGxu0717X9lvrpOq7QliT7uriYypBNaecczOxXtyWO6TfWJxnQcGo8IWixId
+	lkBRxIAjWnX9SfUNzg+MJThb5f4o=
+X-Google-Smtp-Source: AGHT+IFPnGBxUMbzp7/ciRb/4QDD/AoPuRkeVnisBhwmTgmtd+TF2XWKrPM0uJzG+Ht4NJS9oAj7Vw==
+X-Received: by 2002:a05:6000:178b:b0:3b8:12a6:36b8 with SMTP id ffacd0b85a97d-3c0ec195bb7mr1400850f8f.46.1755596478926;
+        Tue, 19 Aug 2025 02:41:18 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a1c6c324fsm201653985e9.1.2025.08.19.02.40.44
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b42a97c02sm35092625e9.23.2025.08.19.02.41.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Aug 2025 02:40:44 -0700 (PDT)
-Date: Tue, 19 Aug 2025 12:40:41 +0300
+        Tue, 19 Aug 2025 02:41:18 -0700 (PDT)
+Date: Tue, 19 Aug 2025 12:41:15 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] regulator: tps65219: regulator: tps65219: Fix error codes in
- probe()
-Message-ID: <aKRGmVdbvT1HBvm8@stanley.mountain>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] coredump: Fix return value in coredump_parse()
+Message-ID: <aKRGu14w5vPSZLgv@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -79,52 +74,31 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-There is a copy and paste error and we accidentally use "PTR_ERR(rdev)"
-instead of "error".  The "rdev" pointer is valid at this point.
+The coredump_parse() function is bool type.  It should return true on
+success and false on failure.  The cn_printf() returns zero on success
+or negative error codes.  This mismatch means that when "return err;"
+here, it is treated as success instead of failure.  Change it to return
+false instead.
 
-Also there is no need to print the error code in the error message
-because dev_err_probe() already prints that.  So clean up the error
-message a bit.
-
-Fixes: 38c9f98db20a ("regulator: tps65219: Add support for TPS65215 Regulator IRQs")
+Fixes: a5715af549b2 ("coredump: make coredump_parse() return bool")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-This is a rebase of a patch I sent earlier:
-https://lore.kernel.org/all/aB3hiEM0CB8m_X8m@stanley.mountain/
----
- drivers/regulator/tps65219-regulator.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/coredump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/tps65219-regulator.c b/drivers/regulator/tps65219-regulator.c
-index 5e67fdc88f49..d77ca486879f 100644
---- a/drivers/regulator/tps65219-regulator.c
-+++ b/drivers/regulator/tps65219-regulator.c
-@@ -454,9 +454,9 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
- 						  irq_type->irq_name,
- 						  irq_data);
- 		if (error)
--			return dev_err_probe(tps->dev, PTR_ERR(rdev),
--					     "Failed to request %s IRQ %d: %d\n",
--					     irq_type->irq_name, irq, error);
-+			return dev_err_probe(tps->dev, error,
-+					     "Failed to request %s IRQ %d\n",
-+					     irq_type->irq_name, irq);
- 	}
- 
- 	for (i = 0; i < pmic->dev_irq_size; ++i) {
-@@ -477,9 +477,9 @@ static int tps65219_regulator_probe(struct platform_device *pdev)
- 						  irq_type->irq_name,
- 						  irq_data);
- 		if (error)
--			return dev_err_probe(tps->dev, PTR_ERR(rdev),
--					     "Failed to request %s IRQ %d: %d\n",
--					     irq_type->irq_name, irq, error);
-+			return dev_err_probe(tps->dev, error,
-+					     "Failed to request %s IRQ %d\n",
-+					     irq_type->irq_name, irq);
- 	}
- 
- 	return 0;
+diff --git a/fs/coredump.c b/fs/coredump.c
+index e5d9d6276990..f9d82ffc4b88 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -345,7 +345,7 @@ static bool coredump_parse(struct core_name *cn, struct coredump_params *cprm,
+ 				was_space = false;
+ 				err = cn_printf(cn, "%c", '\0');
+ 				if (err)
+-					return err;
++					return false;
+ 				(*argv)[(*argc)++] = cn->used;
+ 			}
+ 		}
 -- 
 2.47.2
 
