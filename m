@@ -1,80 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638331E5207;
-	Tue, 19 Aug 2025 10:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C999027933F;
+	Tue, 19 Aug 2025 10:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755598215; cv=none; b=dsEI12RHPe4Wa7WN8335tfMC3+Z/S9xVvFrANKDRWX++StbTnXulMhc+U5HpJDHNxizVyoX0YmNZ/whD4/VdRkqqmmGOwMIDnWmPfZUFV7c6C/kgxg5upnazJpApm6uvJ8URewXBrnlq0KebShrnfVVw9lFoHejjSp7Rkqgkcws=
+	t=1755598755; cv=none; b=ZAxd5XmpCtn2t7svNWyo+ndDzqV0/1WCROxlA06upmJK0U6HCSPEc7Zt6f8OsWHsarepL8ZhTUDbdHfPYY4DCMZQRb+R5FOxnIy50ILUDAF9xkQN7UJvGSifr1AkbgEXx/aJdNckhHho1uuF+d8iqzbfLpSwxCpmd5sRuqrgVEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755598215; c=relaxed/simple;
-	bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f04g9SN1s6iVX9JKl/F6dFYp0nC3mpHI/eGesegukd1hBxUwWrqp8fkRuxMTli6FbMglsqVeenFr9QZqFskAWtA+tay9eoTVurTwt5DJkGk0hCu+aXgW1sqHhcVqOyz7NmFIrsul5pshrKryXw0Ez1Uln8DvjSX5aOkIZnuRjy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWDEn94v; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755598755; c=relaxed/simple;
+	bh=0EjDE6u8MVcC/51W3+t4Ut7a8LrhsszVT2OFAaIuc5M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ns/VHB8F1+a6852K/R0/fdwplOvzRllpS5ESjihI7S2V7xHYHgyNjd35Zg47cGhrM625n1ilX21/Em+Qss/3RKQwEdWvjw5upR38aEHeMQQokyFEe8YThv8cK1Tcxa/zIQK380st1R79tu/iNQhQuQ9SB5SCyXhK3lLbtFIlb/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T8gl50rQ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWDEn94v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E919C4CEF1;
-	Tue, 19 Aug 2025 10:10:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755598214;
-	bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qWDEn94vaaKVggOeZwM2QSuAXcS8TzDp5OGpwkfbComxpu10jXwSrdSNYB55QUE5e
-	 sgHFMkpIzu2JxpN9k0QPxR7O9tfkw6LjqGUvathkz+ObfH37ErjhFeKFAZwrtkbMLU
-	 3ZacutnHIP5C73pXB2nf6XxPqrOBNDHpXPLY/Hbm1P/cDZxFNuWrRYvBw2xfEErPQ9
-	 StOegzuQvfSXQ1r4x1B1I+35TZ5jg+cHEKyLgPLddS2WaVtwcPo7qvR1NrDs5QuqCP
-	 Dp7kyTHC7z9Fp2I864ECd8Q22eOsjM/po6bx4Kxwm95A9T6ZXJuqFc8VR3jj0kKSGq
-	 QKoj+eghNYcog==
-From: Christian Brauner <brauner@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] coredump: Fix return value in coredump_parse()
-Date: Tue, 19 Aug 2025 12:10:09 +0200
-Message-ID: <20250819-vorweg-scherzen-e5449a0bb785@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <aKRGu14w5vPSZLgv@stanley.mountain>
-References: <aKRGu14w5vPSZLgv@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T8gl50rQ"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb78ead12so721834566b.1;
+        Tue, 19 Aug 2025 03:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755598752; x=1756203552; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o0F7HokeKW0p2jlg6RLl/yITsSEjXuBKt+Z8fZSpp4c=;
+        b=T8gl50rQnAB6Mz0ODtOcCm171wieVyWFuHfP3Rn3Qat45A1AECee/yyWmtyBL9G34M
+         EkJmyrrcAVrRLeF5uEl0T/bY5ZxuaHNIhzex/znnDHrXsiKGL2vtyFOHL9pxjnQ4HPXV
+         cNmb9EUg55yC7RjwJILB+E37KssvzY3M/yEkDf6Ph+CORe+yuGU0nVbVShEdL/DUC26K
+         mzooXENWTUSoxd1RMf7tRXsmlEIF8XNiqYhqabfolhTFO2cZuHqu1oXBp6K+r+x2/TUq
+         PtfcYOdcTBjJAp2iYSRH1MVBYTl5jQlZ+YUBthCW0A69KUSDE3bO5Z6c4P7qZvOVtQaT
+         aj5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755598752; x=1756203552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o0F7HokeKW0p2jlg6RLl/yITsSEjXuBKt+Z8fZSpp4c=;
+        b=dP6vfaVPmy9ZboYm0Xid8P6WTrkmOKDyBp/B6tpaZeXHbxU1KWmLvZ5eGcaqfhC4A3
+         c+dBfDEM2ndK1aaGZdKT1xVfv6l1inMB3z+xiVehADuSElPBGlVKw6qI3/eKNMbOk7RG
+         gQRj8v9IMBXMHToAG70ki4HnysvAklqzDHcirkQkkNWLWGzB9ZRw3MMyrUgN4caC7d8e
+         l/AtgDzWto6BEqNGQJEqcm3pUUbzA4Q4r1FqDu0ykuOvyaEcUPLXchmWj2ytcYYEG4lN
+         gdJj0AbpDRy6eyHIO1nIraiVcQqPkMLgud2LbWDi+nedBrg1+gfudR+jy9YLA0LlvCVs
+         cfTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG3RDozDtQGZ7AqmJwvJo9ESDxbOL3xD46o37L8mttt32+g3CZkdW19mJiLA8FowUfqxDJDwcISXi2m+As@vger.kernel.org, AJvYcCV1HJpciVZcaxu42VrCUPkLz8F5Xum0sw6s7ECct9AXh7+h+E0Sr7b0cLAd1PNkxjSNjGzUs3R2QgVJMGCyjMU=@vger.kernel.org, AJvYcCX0wtIbHxNP73mLFFZ8gnZ191c0rQp021FhdIhHOVTEeJsICbWLGjeiE5xx85J4iI5oPAY5zaGsQct3@vger.kernel.org
+X-Gm-Message-State: AOJu0YymDYFmgIV30w3yPblUGIf1ij7DDr9Cu2taMcBFrjHIMOpzWYJ4
+	zhdTfIUAhYEIPpYjYYmNqZ6LorS6XekGoHOKAt8LlbeeOtf4w3G78kjV9XpNStMpcPRUbUIADVJ
+	1K9NCqPDg17YIloXzJ0bemErBNT4Gcw0=
+X-Gm-Gg: ASbGncsZEFy7B194Hydaqh/XVoE9zapbehqmIds7chfUN3JZtipdwoN3SMKOIi0Psyx
+	KAi0/sXOtVqZuOqI1t6MgxLH9YZUHedQYNJO1bbz5xTStmhNvNsP1whhQLoi7bSFslRhgRZdbyb
+	3KL8Hhu8OvN14Z4sECXNsry+lTcIYR89PpfxzAJg7N7obXz/xKV0Kl7CU7y8nScC32SN1evDVVW
+	chsSoE=
+X-Google-Smtp-Source: AGHT+IGGjeNefxzAMSN1CP2wWZmnG+PIp5tfLgOlWlZMZo4Lw2zH/uXQicurb+A2YlzP5qYe5kKRv+n4rxgYXRICgnA=
+X-Received: by 2002:a17:906:fe45:b0:af6:3194:f024 with SMTP id
+ a640c23a62f3a-afddc959ba9mr199360266b.13.1755598752038; Tue, 19 Aug 2025
+ 03:19:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1149; i=brauner@kernel.org; h=from:subject:message-id; bh=Fl0SI0iL/x3g7XAYgUPV3q2YJFaf9uqWYJInRzelkcU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQs8W1Ke5M3PekE84G7Bct5vk698rri7PEHJeynF62e9 2snr82ego5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJTNrFyHB7v96SJR2iJ27M /KC5eEro7l9f2TqXnGSryS6uE7y2640Hw/+8AyuDl562nxjLMaeYqyeilOGNoOlOk4oFpy+U5f8 ++Y0BAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <aKRGXFJxf2bdQE-Q@stanley.mountain>
+In-Reply-To: <aKRGXFJxf2bdQE-Q@stanley.mountain>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 19 Aug 2025 13:18:35 +0300
+X-Gm-Features: Ac12FXzUxhxJrxVkC6RXjHkIPb6PsrC5d1P-S_yz7KtfF4UKmk75MM2N2qEHTsk
+Message-ID: <CAHp75VeTL7mJ-Ttgpkjd5A04DgHqkkPY90LtJriQjoaUZ0TbhQ@mail.gmail.com>
+Subject: Re: [PATCH next] io: proximity: vl53l0x-i2c: Fix error code in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Waqar Hameed <waqar.hameed@axis.com>, Song Qiang <songqiang1304521@gmail.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 19 Aug 2025 12:41:15 +0300, Dan Carpenter wrote:
-> The coredump_parse() function is bool type.  It should return true on
-> success and false on failure.  The cn_printf() returns zero on success
-> or negative error codes.  This mismatch means that when "return err;"
-> here, it is treated as success instead of failure.  Change it to return
-> false instead.
-> 
-> 
-> [...]
+On Tue, Aug 19, 2025 at 12:39=E2=80=AFPM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
+>
+> Commit 65e8202f0322 ("iio: Remove error prints for
+> devm_add_action_or_reset()") accidentally introduce a bug where we
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+introduced
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> returned "ret" but the error code was stored in "error" if
+> devm_add_action_or_reset() failed.  Using two variables to store error
+> codes is unnecessary and confusing.  Delete the "error" variable and use
+> "ret" everywhere instead.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Agree, this is a good catch!
+But please, fix the Subject to start with "iio:".
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+With the above comments being addressed
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
 
-[1/1] coredump: Fix return value in coredump_parse()
-      https://git.kernel.org/vfs/vfs/c/55f6e0b265d6
+--=20
+With Best Regards,
+Andy Shevchenko
