@@ -1,90 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728AF31E119;
-	Tue, 19 Aug 2025 18:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1CF258ECE
+	for <kernel-janitors@vger.kernel.org>; Tue, 19 Aug 2025 18:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755629538; cv=none; b=pAiEf4Fzuq8RchM+Jo+mt6BHQLNp48ck7PuGy0AvUqC2ejUkCcISu+gQL3SpcQ5/p/Uc3I9ip2RsPQ4WJ94+l9kfmULP837SqzA7S3Ju4bQBVHLnRSgkIWyJBK1b03DocF1qc+wmjfeUWSxP3Z+YFjUDt37VcECNzfd44BB1xiA=
+	t=1755629982; cv=none; b=ErThexmdJh5KBfgx+MQNNQry8bl6XkTadWxrZKZrZ0oAklRm2gZGyri3kTOHY2cUrCzdpNV6c3pCp0cfVuHds/1JzOvZLmVfuMl5ILI1Yin6Vu++OaKYC6XRJ/5NkCJEelGTx+exfwOoGTy+y3l9QBeoXncrdDSo909mS/P5OmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755629538; c=relaxed/simple;
-	bh=Wkkw568iXoDJ0kw7A3ebaYw+w6YTHaGKsVwIET6hZh8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=npxyD3dU499kyCPnE2lQL67mKUU/RxpV8R9xBKxEFiQ89/BvkzNkyp65CCvXEZ/UWIMk49MBdT5oaYZH6dH7TlALkUhLoEOcoLZL8WrfaR+OPFrgYZfh/aSN/rwuuSOCBrT8GH2DmqtpNZ1oiZaNASkdZ9678q5ZgEx2kacOMSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZD+TihB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755629982; c=relaxed/simple;
+	bh=GuFz78XnzwEhW/V7fBTyTrGnww3kA2QEKMPSAbrajM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WjTBRRwyIm5YI76SdTe71IlD8yB7Rmi6+03qZ9XjnEMQSfPjYkXgChfd7KOszv0EU6RataKZoaM+ItyoBDkhwS4UanFpwQTGIODYHwAQJUDs/ScrvjJsIudhq9cBRb1WHAqwEof/0pJHLjS355MVlcwQMwGuZeKIVrXg1C02sew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=E8v2S9Rl; arc=none smtp.client-ip=80.12.242.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZD+TihB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A20C4CEF4;
-	Tue, 19 Aug 2025 18:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755629537;
-	bh=Wkkw568iXoDJ0kw7A3ebaYw+w6YTHaGKsVwIET6hZh8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=MZD+TihBFKBHZojf+8U75eK+gvYUBDbcrGGGh4FJ5Y+CLSCBS7IG+Lrf40p0UeCeu
-	 e5Pi+wAy5Cg5uN0wbc4PDzJHg2a9urWwjFKFSJwOm2pOZNQi5yELEvtUQ3NcSt3n8+
-	 GDh3fR8nGRptmcOU3CfIaWp0mpA6hI0Ggv14wKw+p67bcPdomUPFXaOyKIY4GyXiD6
-	 mYxVL0M/amD+dGy6lmA+o199wdf8h7uZzbjxqtPcG9+C8SM/xw49pJL/3eua01n5le
-	 loPommBtJ+r7acsAx3oF8ST75wq+cuC9bnWS4Mv4yR10yIWml27OVqF3T9ChG75yYz
-	 Oyg2vubv6Tn5Q==
-From: Mark Brown <broonie@kernel.org>
-To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-omap@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-In-Reply-To: <aKRGmVdbvT1HBvm8@stanley.mountain>
-References: <aKRGmVdbvT1HBvm8@stanley.mountain>
-Subject: Re: [PATCH] regulator: tps65219: regulator: tps65219: Fix error
- codes in probe()
-Message-Id: <175562953472.246782.13325233916103955955.b4-ty@kernel.org>
-Date: Tue, 19 Aug 2025 19:52:14 +0100
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="E8v2S9Rl"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id oRXOup0HXu5eaoRXOuIxVH; Tue, 19 Aug 2025 20:58:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1755629907;
+	bh=jQMm5lX79hpkXoospWDhgP5wKUoifkftmnOqTB8QKSw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=E8v2S9RlavQgFVTDluft7ElzXpaJLSdbQmjCyOskKSmu9tuBLwTd1U2mUlBQyH3+K
+	 UvdfJ7QHLVHtwAV1byud5TOS7grfbTEUQjqN576OAAb4T/qps24LjFb//q5KUjxwX3
+	 LmCxRY6+Z+P30TOWabzRHGYnIlqY4Bu9SuTO2C1OQFd/HyNdOIX7RvowT6251FLmVq
+	 wlVDbKouBL2ueXBoG62+8d0hwcG6IkgW8lYduB7bIWGtXZou6p49guUOdHWPgwR5Qf
+	 ANYuLkV/8duukmgzl48XBpLThKEZKtz7pWf6uRGg1dCIA18xNMaL5dsEPXp8krZZEp
+	 Xp5CUMqPFI2fg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 19 Aug 2025 20:58:27 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] uio: Constify struct pci_device_id
+Date: Tue, 19 Aug 2025 20:58:17 +0200
+Message-ID: <114791f85f0f81531ca2169721eac4911dbe0865.1755629302.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Transfer-Encoding: 8bit
 
-On Tue, 19 Aug 2025 12:40:41 +0300, Dan Carpenter wrote:
-> There is a copy and paste error and we accidentally use "PTR_ERR(rdev)"
-> instead of "error".  The "rdev" pointer is valid at this point.
-> 
-> Also there is no need to print the error code in the error message
-> because dev_err_probe() already prints that.  So clean up the error
-> message a bit.
-> 
-> [...]
+'struct pci_device_id' is not modified in these drivers.
 
-Applied to
+Constifying this structure moves some data to a read-only section, so
+increases overall security.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   4073	   1336	      0	   5409	   1521	drivers/uio/uio_cif.o
 
-Thanks!
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   4233	   1176	      0	   5409	   1521	drivers/uio/uio_cif.o
 
-[1/1] regulator: tps65219: regulator: tps65219: Fix error codes in probe()
-      commit: 11cd7a5c21db020b8001aedcae27bd3fa9e1e901
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+checkpatch generates some errors, but checkpatch is wrong. It does not
+have enough context to see that the arrays do have a sentinel.
+---
+ drivers/uio/uio_aec.c     | 2 +-
+ drivers/uio/uio_cif.c     | 2 +-
+ drivers/uio/uio_netx.c    | 2 +-
+ drivers/uio/uio_sercos3.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+diff --git a/drivers/uio/uio_aec.c b/drivers/uio/uio_aec.c
+index 8c164e51ff9e..dafcc5f44f24 100644
+--- a/drivers/uio/uio_aec.c
++++ b/drivers/uio/uio_aec.c
+@@ -33,7 +33,7 @@
+ 
+ #define MAILBOX			0x0F
+ 
+-static struct pci_device_id ids[] = {
++static const struct pci_device_id ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AEC, PCI_DEVICE_ID_AEC_VITCLTC), },
+ 	{ 0, }
+ };
+diff --git a/drivers/uio/uio_cif.c b/drivers/uio/uio_cif.c
+index 1cc3b8b5a345..4e4b589ddef1 100644
+--- a/drivers/uio/uio_cif.c
++++ b/drivers/uio/uio_cif.c
+@@ -105,7 +105,7 @@ static void hilscher_pci_remove(struct pci_dev *dev)
+ 	iounmap(info->mem[0].internal_addr);
+ }
+ 
+-static struct pci_device_id hilscher_pci_ids[] = {
++static const struct pci_device_id hilscher_pci_ids[] = {
+ 	{
+ 		.vendor =	PCI_VENDOR_ID_PLX,
+ 		.device =	PCI_DEVICE_ID_PLX_9030,
+diff --git a/drivers/uio/uio_netx.c b/drivers/uio/uio_netx.c
+index a1a58802c793..18917b2ac04c 100644
+--- a/drivers/uio/uio_netx.c
++++ b/drivers/uio/uio_netx.c
+@@ -127,7 +127,7 @@ static void netx_pci_remove(struct pci_dev *dev)
+ 	iounmap(info->mem[0].internal_addr);
+ }
+ 
+-static struct pci_device_id netx_pci_ids[] = {
++static const struct pci_device_id netx_pci_ids[] = {
+ 	{
+ 		.vendor =	PCI_VENDOR_ID_HILSCHER,
+ 		.device =	PCI_DEVICE_ID_HILSCHER_NETX,
+diff --git a/drivers/uio/uio_sercos3.c b/drivers/uio/uio_sercos3.c
+index b93a5f8f4cba..12afc2fa1a0b 100644
+--- a/drivers/uio/uio_sercos3.c
++++ b/drivers/uio/uio_sercos3.c
+@@ -191,7 +191,7 @@ static void sercos3_pci_remove(struct pci_dev *dev)
+ 	}
+ }
+ 
+-static struct pci_device_id sercos3_pci_ids[] = {
++static const struct pci_device_id sercos3_pci_ids[] = {
+ 	{
+ 		.vendor =       PCI_VENDOR_ID_PLX,
+ 		.device =       PCI_DEVICE_ID_PLX_9030,
+-- 
+2.50.1
 
