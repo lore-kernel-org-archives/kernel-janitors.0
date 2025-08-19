@@ -1,135 +1,84 @@
-Received: from smtp.smtpout.orange.fr (smtp-81.smtpout.orange.fr [80.12.242.81])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1CF258ECE
-	for <kernel-janitors@vger.kernel.org>; Tue, 19 Aug 2025 18:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5178246761;
+	Tue, 19 Aug 2025 19:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755629982; cv=none; b=ErThexmdJh5KBfgx+MQNNQry8bl6XkTadWxrZKZrZ0oAklRm2gZGyri3kTOHY2cUrCzdpNV6c3pCp0cfVuHds/1JzOvZLmVfuMl5ILI1Yin6Vu++OaKYC6XRJ/5NkCJEelGTx+exfwOoGTy+y3l9QBeoXncrdDSo909mS/P5OmE=
+	t=1755632837; cv=none; b=gNVBbwpwDwB0MaJT7u9ju9AqlMJpSkNc6wlxza9mb5mGIzkHMmNSdwKQxA7uXUOaw1JVfKby2lqbGG9q5TvQSt0EAHSTadpiLivajVgPzejIq80CRzArGvlQ3u3/EMeCqSmSd4QuICFkMFC2t7p7XGxzCNfLp3WyGE7Vq1kX5zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755629982; c=relaxed/simple;
-	bh=GuFz78XnzwEhW/V7fBTyTrGnww3kA2QEKMPSAbrajM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WjTBRRwyIm5YI76SdTe71IlD8yB7Rmi6+03qZ9XjnEMQSfPjYkXgChfd7KOszv0EU6RataKZoaM+ItyoBDkhwS4UanFpwQTGIODYHwAQJUDs/ScrvjJsIudhq9cBRb1WHAqwEof/0pJHLjS355MVlcwQMwGuZeKIVrXg1C02sew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=E8v2S9Rl; arc=none smtp.client-ip=80.12.242.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1755632837; c=relaxed/simple;
+	bh=RiZoOTbNQTvUEdVGRrPrO9QAwy/KWTo+SLu1NdYq5AM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NoHJSkUEyqqrXGLBV5qlmHVeoPQ45sTBq3kAF0sGOi5d0na1wP8xH5uUgqO69Lpi2togaShe9+b8v6WIJ4LgUqie3GabttwqAnSPCMHQHJG1nSxlzwbtMXciAoTi+R9AOIjo1JC1+kmeHqmcW/SRw1gzl70+TW5v//oyJJK2PM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OUgPkTLU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="E8v2S9Rl"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id oRXOup0HXu5eaoRXOuIxVH; Tue, 19 Aug 2025 20:58:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1755629907;
-	bh=jQMm5lX79hpkXoospWDhgP5wKUoifkftmnOqTB8QKSw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=E8v2S9RlavQgFVTDluft7ElzXpaJLSdbQmjCyOskKSmu9tuBLwTd1U2mUlBQyH3+K
-	 UvdfJ7QHLVHtwAV1byud5TOS7grfbTEUQjqN576OAAb4T/qps24LjFb//q5KUjxwX3
-	 LmCxRY6+Z+P30TOWabzRHGYnIlqY4Bu9SuTO2C1OQFd/HyNdOIX7RvowT6251FLmVq
-	 wlVDbKouBL2ueXBoG62+8d0hwcG6IkgW8lYduB7bIWGtXZou6p49guUOdHWPgwR5Qf
-	 ANYuLkV/8duukmgzl48XBpLThKEZKtz7pWf6uRGg1dCIA18xNMaL5dsEPXp8krZZEp
-	 Xp5CUMqPFI2fg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Aug 2025 20:58:27 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] uio: Constify struct pci_device_id
-Date: Tue, 19 Aug 2025 20:58:17 +0200
-Message-ID: <114791f85f0f81531ca2169721eac4911dbe0865.1755629302.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OUgPkTLU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F601C4CEF1;
+	Tue, 19 Aug 2025 19:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755632835;
+	bh=RiZoOTbNQTvUEdVGRrPrO9QAwy/KWTo+SLu1NdYq5AM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=OUgPkTLUY8vxNNnfV7bBrenBJdVINXUkY5iZzsdvpBpE+/xI6Ml9/Sfghyi6Yi729
+	 APqToy0ysfMFFGYIHUybGVDgjQUvEU4pXWDxHGX4kXBFAQ9FTCiPTzRAXoEaOZXg7g
+	 TqaAWkXDBsJEdWUxQjIkVnPu5PlptgjAy6BWKAGLz9UENNt8rH6X9eFjLvyHpqLqjg
+	 Cy23EAvB+fc/DpA1joZXyn21Bg+5iYE7/bC022/wc/9tNo8wnmgPRsmi1fkkDb91+w
+	 uDV4s9gjwsBG3r8OPEhqZQdfbNvB3FplmpyXPzPjRghsp4Xx/xl/2Bu1Vm6KDbeB4b
+	 NiXJZ2gMsZpGg==
+From: Mark Brown <broonie@kernel.org>
+To: Jeff Chang <jeff_chang@richtek.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <aJ7YivhlWlE6ifw1@stanley.mountain>
+References: <aJ7YivhlWlE6ifw1@stanley.mountain>
+Subject: Re: [PATCH next] regulator: rt5133: Fix IS_ERR() vs NULL bug in
+ rt5133_validate_vendor_info()
+Message-Id: <175563283433.270234.3651916456363956419.b4-ty@kernel.org>
+Date: Tue, 19 Aug 2025 20:47:14 +0100
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cff91
 
-'struct pci_device_id' is not modified in these drivers.
+On Fri, 15 Aug 2025 09:49:46 +0300, Dan Carpenter wrote:
+> The "priv->cdata" pointer isn't an error pointer, it should be a NULL
+> check instead.  Otherwise it leads to a NULL pointer dereference in the
+> caller, rt5133_probe().
+> 
+> 
 
-Constifying this structure moves some data to a read-only section, so
-increases overall security.
+Applied to
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   4073	   1336	      0	   5409	   1521	drivers/uio/uio_cif.o
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   4233	   1176	      0	   5409	   1521	drivers/uio/uio_cif.o
+Thanks!
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
+[1/1] regulator: rt5133: Fix IS_ERR() vs NULL bug in rt5133_validate_vendor_info()
+      commit: f7f804633c91f0fbf03eefbae39eec2205191a82
 
-checkpatch generates some errors, but checkpatch is wrong. It does not
-have enough context to see that the arrays do have a sentinel.
----
- drivers/uio/uio_aec.c     | 2 +-
- drivers/uio/uio_cif.c     | 2 +-
- drivers/uio/uio_netx.c    | 2 +-
- drivers/uio/uio_sercos3.c | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-diff --git a/drivers/uio/uio_aec.c b/drivers/uio/uio_aec.c
-index 8c164e51ff9e..dafcc5f44f24 100644
---- a/drivers/uio/uio_aec.c
-+++ b/drivers/uio/uio_aec.c
-@@ -33,7 +33,7 @@
- 
- #define MAILBOX			0x0F
- 
--static struct pci_device_id ids[] = {
-+static const struct pci_device_id ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AEC, PCI_DEVICE_ID_AEC_VITCLTC), },
- 	{ 0, }
- };
-diff --git a/drivers/uio/uio_cif.c b/drivers/uio/uio_cif.c
-index 1cc3b8b5a345..4e4b589ddef1 100644
---- a/drivers/uio/uio_cif.c
-+++ b/drivers/uio/uio_cif.c
-@@ -105,7 +105,7 @@ static void hilscher_pci_remove(struct pci_dev *dev)
- 	iounmap(info->mem[0].internal_addr);
- }
- 
--static struct pci_device_id hilscher_pci_ids[] = {
-+static const struct pci_device_id hilscher_pci_ids[] = {
- 	{
- 		.vendor =	PCI_VENDOR_ID_PLX,
- 		.device =	PCI_DEVICE_ID_PLX_9030,
-diff --git a/drivers/uio/uio_netx.c b/drivers/uio/uio_netx.c
-index a1a58802c793..18917b2ac04c 100644
---- a/drivers/uio/uio_netx.c
-+++ b/drivers/uio/uio_netx.c
-@@ -127,7 +127,7 @@ static void netx_pci_remove(struct pci_dev *dev)
- 	iounmap(info->mem[0].internal_addr);
- }
- 
--static struct pci_device_id netx_pci_ids[] = {
-+static const struct pci_device_id netx_pci_ids[] = {
- 	{
- 		.vendor =	PCI_VENDOR_ID_HILSCHER,
- 		.device =	PCI_DEVICE_ID_HILSCHER_NETX,
-diff --git a/drivers/uio/uio_sercos3.c b/drivers/uio/uio_sercos3.c
-index b93a5f8f4cba..12afc2fa1a0b 100644
---- a/drivers/uio/uio_sercos3.c
-+++ b/drivers/uio/uio_sercos3.c
-@@ -191,7 +191,7 @@ static void sercos3_pci_remove(struct pci_dev *dev)
- 	}
- }
- 
--static struct pci_device_id sercos3_pci_ids[] = {
-+static const struct pci_device_id sercos3_pci_ids[] = {
- 	{
- 		.vendor =       PCI_VENDOR_ID_PLX,
- 		.device =       PCI_DEVICE_ID_PLX_9030,
--- 
-2.50.1
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
