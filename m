@@ -1,78 +1,75 @@
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820BD22D4C3;
-	Wed, 20 Aug 2025 05:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A146A247295;
+	Wed, 20 Aug 2025 17:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755668423; cv=none; b=P/14dfOHWDNQIcPHVdK4Rc6xTXj/5ENgisSlArOGPye+E6VHpRgFFJV8Y/bs0Qvsxa7ZcmuFxClTx+IOKzm+rKLq7NMRv/dQU9Ozi1kDyQDtFTSMEddxFttWtnsC72X3WxZ3HpCfLqPSFEU1JuBRQ/qlEgAlETV455EiVhYAkcI=
+	t=1755711560; cv=none; b=GZubX7gvj4K2YEekhUK5ayJjdHM+uOmJNb9zz7xPr0EilFDBDH3zxwY78MYdAUKO3Vswmj6YpDls1yqk66/Flk+kyAmsOmXroEHwxI2t6LUlL7S7976pcaUoOlNxfk2Dw8bgILNhoOHzOVlx8xghFoRrLe2X4lBAAgBDyABEimY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755668423; c=relaxed/simple;
-	bh=ILaNbJn5HNYKVnX5VFPhvmllfQaHUS+n+I/U4jSWibA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HFheiY6C1febQTV0lYFvVd5F4L7FXR/R9j0mvAk39Jz65pGx5xYYX46M+dWyy80DeUpWZbsCO96K96UuyeoRgHkEWh/xXPtL8jyPs95q/ew6ysGxRUaYEOJ9yc9s5a0G8uJat9eOUhx7Gta8PX7bf2akJpqvk4CQDfPxRG9EJYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XZGhbgJA; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1755711560; c=relaxed/simple;
+	bh=EAfJm25eGSujztbJn7BQ2M+SczHpmn8LPSfP0jK8Ep0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=swK2G3CgsgrsWbBek5/2opMJvneDSsamsgznssNMAb0olmwWfi0cKuJhZZoyCJuWSJ8aSrFbpwmjZfgGJ736xhmjCxTgD+qHpjNBcdBpOXj4cpPIDH97lZiKCr4vYUs89Gat8bW7qaEiJvBVUn1G85egLX8lDAnAY5yoJtk8nyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqooQauY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XZGhbgJA"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1755668418; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=G5p+r4JljAf2GgtlwI0TDUe77jYdbD2CY8bO7sSENRI=;
-	b=XZGhbgJAXAP3R9eOUKz8O52YOV95BKcEUhc16FJTdfN6AftoCQAREZBWcvBOdu3oHaWvCcCkc1zn5fjBzkgqtAM8GESSKJ4Q8MDV6WehQNSzPZGMEnfHVP6zZ6wMBD5v1awKeZJ8dyz61ad8iwxLACEmef72hAwrmvqzZ/2SLag=
-Received: from 30.221.144.123(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WmAN9rA_1755668098 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 20 Aug 2025 13:34:58 +0800
-Message-ID: <e1d33394-c6c9-4f0e-a180-af743772a1e3@linux.alibaba.com>
-Date: Wed, 20 Aug 2025 13:34:57 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqooQauY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20445C113D0;
+	Wed, 20 Aug 2025 17:39:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755711558;
+	bh=EAfJm25eGSujztbJn7BQ2M+SczHpmn8LPSfP0jK8Ep0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jqooQauYHYQZQa8pmYX6HGG2IGlx2gKYeq69wr2WEw9RqzAcgp52vCAuvMTuqsWBT
+	 11SBxhGWya0jhhNiiw1Xgw1uBPChDVW+A7EwkIbbWQUm6K+6lzOXAIzaWJtQBDZJEb
+	 eJDs8HBl1NHQvkA7T3H+Y1XsBJtlJVB+xqkYCWA+1fJBWNUSoLGqVjo1Tek1Vrw8qV
+	 zhrTltP/SfgW2nuswBDlX9kKCJDODlfi5+Cb6DtTm3pEXuE6s8O6mTfZmXEr/pBFSV
+	 mnCPu5h898pZjsGbWaWCWBuifRYELFowA5uvCudWi1hfv5Kru6dQBonfUZDaPx6Poo
+	 E0kCmCCgVzj8Q==
+From: Vinod Koul <vkoul@kernel.org>
+To: Shuai Xue <xueshuai@linux.alibaba.com>, 
+ Colin Ian King <colin.i.king@gmail.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Vinicius Costa Gomes <vinicius.gomes@intel.com>, 
+ Dave Jiang <dave.jiang@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, 
+ dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <aJnJW3iYTDDCj9sk@stanley.mountain>
+References: <aJnJW3iYTDDCj9sk@stanley.mountain>
+Subject: Re: [PATCH] dmaengine: idxd: Fix double free in idxd_setup_wqs()
+Message-Id: <175571155469.80631.13707540161368362564.b4-ty@kernel.org>
+Date: Wed, 20 Aug 2025 23:09:14 +0530
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ocfs2: remove unnecessary NULL check in
- ocfs2_grab_folios()
-To: Dan Carpenter <dan.carpenter@linaro.org>, Mark Fasheh <mark@fasheh.com>,
- akpm <akpm@linux-foundation.org>
-Cc: Joel Becker <jlbec@evilplan.org>, ocfs2-devel@lists.linux.dev,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <aKRG39hyvDJcN2G7@stanley.mountain>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <aKRG39hyvDJcN2G7@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
 
-
-On 2025/8/19 17:41, Dan Carpenter wrote:
-> Smatch complains that checking "folios" for NULL doesn't make sense
-> because it has already been dereferenced at this point.  Really passing a
-> NULL "folios" pointer to ocfs2_grab_folios() doesn't make sense, and
-> fortunately none of the callers do that.  Delete the unnecessary NULL
-> check.
+On Mon, 11 Aug 2025 13:43:39 +0300, Dan Carpenter wrote:
+> The clean up in idxd_setup_wqs() has had a couple bugs because the error
+> handling is a bit subtle.  It's simpler to just re-write it in a cleaner
+> way.  The issues here are:
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> ---
->  fs/ocfs2/alloc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> 1) If "idxd->max_wqs" is <= 0 then we call put_device(conf_dev) when
+>    "conf_dev" hasn't been initialized.
+> 2) If kzalloc_node() fails then again "conf_dev" is invalid.  It's
+>    either uninitialized or it points to the "conf_dev" from the
+>    previous iteration so it leads to a double free.
 > 
-> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-> index 821cb7874685..162711cc5b20 100644
-> --- a/fs/ocfs2/alloc.c
-> +++ b/fs/ocfs2/alloc.c
-> @@ -6928,8 +6928,7 @@ static int ocfs2_grab_folios(struct inode *inode, loff_t start, loff_t end,
->  
->  out:
->  	if (ret != 0) {
-> -		if (folios)
-> -			ocfs2_unlock_and_free_folios(folios, numfolios);
-> +		ocfs2_unlock_and_free_folios(folios, numfolios);
->  		numfolios = 0;
->  	}
->  
+> [...]
+
+Applied, thanks!
+
+[1/1] dmaengine: idxd: Fix double free in idxd_setup_wqs()
+      commit: 39aaa337449e71a41d4813be0226a722827ba606
+
+Best regards,
+-- 
+~Vinod
+
 
