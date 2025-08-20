@@ -1,84 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0833F2EB5DA;
-	Tue, 19 Aug 2025 19:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820BD22D4C3;
+	Wed, 20 Aug 2025 05:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755632837; cv=none; b=BQMm28R5gCSDs7IXxUDr19XKLNBkDVU1/gpAMMSXskIx1Wox/ev7mlA1gDZ+6r+ysv0jDaJhpTrqKhFlcbzTNoT/EPivPoGWY9zrcxCuY9jANQVoOcgfeGnAzEnY0JH8/zY9JOnvxXub5GpqJpuJyUrmqJ/wFy9mGoDCMZuZ/Mo=
+	t=1755668423; cv=none; b=P/14dfOHWDNQIcPHVdK4Rc6xTXj/5ENgisSlArOGPye+E6VHpRgFFJV8Y/bs0Qvsxa7ZcmuFxClTx+IOKzm+rKLq7NMRv/dQU9Ozi1kDyQDtFTSMEddxFttWtnsC72X3WxZ3HpCfLqPSFEU1JuBRQ/qlEgAlETV455EiVhYAkcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755632837; c=relaxed/simple;
-	bh=Z8qE2F3rmXbSXXoNfWP6xJI7G8PJwKKptIt9dhYBL2w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rR0dKz/L5VNi8lGzwoYbY/OYFzh/5VgZb7QvBVZLmEoPcL0yamnwLTva2PGWQ2zKZPm067Dd5atk0LCbgEWWhU5VJPRZ5+Wiu9oz6HT7bjALZC9CKtnjXpCfrIrgVJU1mB/rph77lzArwQtFj/TBP9/aUbHMGIC3qXfBdK4WAfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gu7qeIZd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1755668423; c=relaxed/simple;
+	bh=ILaNbJn5HNYKVnX5VFPhvmllfQaHUS+n+I/U4jSWibA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HFheiY6C1febQTV0lYFvVd5F4L7FXR/R9j0mvAk39Jz65pGx5xYYX46M+dWyy80DeUpWZbsCO96K96UuyeoRgHkEWh/xXPtL8jyPs95q/ew6ysGxRUaYEOJ9yc9s5a0G8uJat9eOUhx7Gta8PX7bf2akJpqvk4CQDfPxRG9EJYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XZGhbgJA; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gu7qeIZd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA5D0C116B1;
-	Tue, 19 Aug 2025 19:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755632836;
-	bh=Z8qE2F3rmXbSXXoNfWP6xJI7G8PJwKKptIt9dhYBL2w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Gu7qeIZdyru6IHiUiXz96K8UtZwUP3MQlMjeU+RMVvDbq1WUoZJQq63DE82H53SXd
-	 p25GePng99AR6iuQbeyC3cr740xS7RGPejCb3cj+NarIZZBtBAi/2JaVRjqPglLCPu
-	 r4Zw+o2oru6G+SOCzWT3Gmo+YcSZo1TFtC/fS/uahovTSMbcqCZRckwcf/2yZPCb2c
-	 Zc4hmdu7KIiM4QOI9GO3xeK7R9DIDHrD+t7Yd9ws/8mfPOgPKLkq9LqKQyq52zt9ZC
-	 RnoA+hgXDonz52yYwhg9G/TtuGqoX9qhOxdoHT4trrDHewYbgfZb13WQbt7cbe65Bs
-	 1Y8ngy/hXE4zA==
-From: Mark Brown <broonie@kernel.org>
-To: Jeff Chang <jeff_chang@richtek.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <aKMc1oK-7yY4cD3K@stanley.mountain>
-References: <aKMc1oK-7yY4cD3K@stanley.mountain>
-Subject: Re: [PATCH v2 next] regulator: rt5133: Fix IS_ERR() vs NULL bug in
- rt5133_validate_vendor_info()
-Message-Id: <175563283571.270234.2902521984259478827.b4-ty@kernel.org>
-Date: Tue, 19 Aug 2025 20:47:15 +0100
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XZGhbgJA"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1755668418; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=G5p+r4JljAf2GgtlwI0TDUe77jYdbD2CY8bO7sSENRI=;
+	b=XZGhbgJAXAP3R9eOUKz8O52YOV95BKcEUhc16FJTdfN6AftoCQAREZBWcvBOdu3oHaWvCcCkc1zn5fjBzkgqtAM8GESSKJ4Q8MDV6WehQNSzPZGMEnfHVP6zZ6wMBD5v1awKeZJ8dyz61ad8iwxLACEmef72hAwrmvqzZ/2SLag=
+Received: from 30.221.144.123(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WmAN9rA_1755668098 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 20 Aug 2025 13:34:58 +0800
+Message-ID: <e1d33394-c6c9-4f0e-a180-af743772a1e3@linux.alibaba.com>
+Date: Wed, 20 Aug 2025 13:34:57 +0800
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: remove unnecessary NULL check in
+ ocfs2_grab_folios()
+To: Dan Carpenter <dan.carpenter@linaro.org>, Mark Fasheh <mark@fasheh.com>,
+ akpm <akpm@linux-foundation.org>
+Cc: Joel Becker <jlbec@evilplan.org>, ocfs2-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <aKRG39hyvDJcN2G7@stanley.mountain>
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <aKRG39hyvDJcN2G7@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
 
-On Mon, 18 Aug 2025 15:30:14 +0300, Dan Carpenter wrote:
-> The "priv->cdata" pointer isn't an error pointer; this should be a NULL
-> check instead.  Otherwise it leads to a NULL pointer dereference in the
-> caller, rt5133_probe().
+
+
+On 2025/8/19 17:41, Dan Carpenter wrote:
+> Smatch complains that checking "folios" for NULL doesn't make sense
+> because it has already been dereferenced at this point.  Really passing a
+> NULL "folios" pointer to ocfs2_grab_folios() doesn't make sense, and
+> fortunately none of the callers do that.  Delete the unnecessary NULL
+> check.
 > 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+>  fs/ocfs2/alloc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/1] regulator: rt5133: Fix IS_ERR() vs NULL bug in rt5133_validate_vendor_info()
-      commit: f7f804633c91f0fbf03eefbae39eec2205191a82
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+> index 821cb7874685..162711cc5b20 100644
+> --- a/fs/ocfs2/alloc.c
+> +++ b/fs/ocfs2/alloc.c
+> @@ -6928,8 +6928,7 @@ static int ocfs2_grab_folios(struct inode *inode, loff_t start, loff_t end,
+>  
+>  out:
+>  	if (ret != 0) {
+> -		if (folios)
+> -			ocfs2_unlock_and_free_folios(folios, numfolios);
+> +		ocfs2_unlock_and_free_folios(folios, numfolios);
+>  		numfolios = 0;
+>  	}
+>  
 
