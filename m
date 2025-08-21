@@ -1,101 +1,105 @@
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B6F21B9CE
-	for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 10:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FDC12CD96
+	for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 12:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755771085; cv=none; b=pzF8oucf10ZqhfdS25bCltzu9lZ+YEqPVleBtQhBbLLYLMaEfC8Cg6IPO75Wl50BoXN536q0a4minHIueyIkyyJnNP/yZNqoOTZHZMlAYuD17X5DUpgXd4AHa9ZumNuRX0581B6/AEcd+9np3HfR+Z5YQGo3GvWcUbuQ18jn5/I=
+	t=1755779426; cv=none; b=KnPyHjZWXFkqqiKAX+BU8f1zYhztLDxCdmxfzrHCCVqw0a8eEG/eIy3hy4MJuKVII8TYvPXQE+BNz9IvHy5l2ZTOYX7pstp5HqbXUbYV3l7NEevexZI5MNkgncNHZmz+/35BnmTOzUUvxqNmdZ/zBFqA/WqsYIuo7yaU1sv2IMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755771085; c=relaxed/simple;
-	bh=RPMLvVMloA2cSqz77yb1IAXMPhYmiV5Dl1oHzNUQjHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Du56xFQGewwPxsX28XGI7JXFNxTg87w+YkSKgOih7uSe8TurxhTUqeKjfx7ZcFNT56UQ85V5h0rI5dC3Seh62IisSCUG183JWjB/v5bEHHjv8nbpYOu9L1FpofINMCW4btJpRs/fm6emWVuFfcvR5ppEqvgFqyQWALeoXT3wDyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bavapI4T; arc=none smtp.client-ip=80.12.242.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1755779426; c=relaxed/simple;
+	bh=uTIRabS6T2mGqxsTk0ErX3psVDv4gnaGVnSGbRpQFbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XC6YUYYPY87ysQoADDsO3V9oBK9BzXl5YtXCDfeLqNrsQQDVl54pDYPo6zBryRIVD+QHZ3Fo0oKsXPxmbsLMGmJEOp59XXt6DB/k2riO+uv2Z81nIN0DL+Hfaq4HcQqA8ALT9tzfxlAPkx57x6Vb8lBnKC+FsocBUL8LXJ3UMqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q8wA/ZZ9; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bavapI4T"
-Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id p27sunoTGn5mgp27tut2o3; Thu, 21 Aug 2025 12:02:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1755770553;
-	bh=8/C56F0xk36C5zHc0NI94zAJrdakfJt6Ccq8eLvFcJQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=bavapI4TTJrFLSrIHYHyUxYXF9/j/6DzRdFQkaVsJcJflqvoaQ27Z5JvZUBmtDwI2
-	 oseVuDTz6d4A3X88IV97bTsSi80w5qarUCyCRIKevPZiTOHsG995RRzyarSciIzcso
-	 45Pr9bg2KBEEgbGGhoEJj3XsGaah10vaT4EWVmJ0E4+gi53/w1VgtpKhay/FH/T6HA
-	 VWZo5stMxNE4LCNqo7oBATDs1bJ14+d24IFt2Zy2msnN4Ls+8mBFsXHbAmlN+wUsMs
-	 sKK5g7G9URF35iQfzZyutEZf2UdeV+aWox5h218Gsf6fh0SeGSmGwUxJ+vErFZdrLp
-	 K0qEz5fI3PVsQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 21 Aug 2025 12:02:33 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] w1: matrox: Remove some deadcode in matrox_w1_remove()
-Date: Thu, 21 Aug 2025 12:02:21 +0200
-Message-ID: <458641ad2d7a7adf30a03e70038304f0e6a81ff4.1755770484.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q8wA/ZZ9"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1ac7c066so5666585e9.1
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 05:30:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755779423; x=1756384223; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GFauEFqH4elwkI9ughIf+IrmIT0Pv7YSC5PWnrBVGQc=;
+        b=Q8wA/ZZ9TS8dwha2JNIFMZsqyoBMbJrZMGWPJ8qpgBLCuqJ2l/W64Q5u4Q9j7sqN8M
+         vkvbjhZNB1MQUg1yQhlPAsvjxpVhrmKgXKCH2qPIDxWibV5/NZe2dJnRbFACnTECL618
+         Sm4/HpiVhgwjS1MT5F0ej/4mNXTJFTOnKKtnEguP4x5R4Skcdnl/0u8HcrIjxSudcOxN
+         otW8pjpgU0h+DEMGLrglzZ4es4OS/4ToQeCEeV2/tlKJPFyHLqPB5JiEMli7pUAmrf3+
+         CMot1we+IzVFLrmZrArzG0aJ21KB04LTyqZtt3xEi4sw4x562+2YRU0U5ZC6DyqeQFNd
+         6Jpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755779423; x=1756384223;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GFauEFqH4elwkI9ughIf+IrmIT0Pv7YSC5PWnrBVGQc=;
+        b=kg+yfxDRM9omHOp4RdIAJwzKe2Oe4zJuxgxDp3rRMdwc09IUWQSzbaPW2OrdUDTj5t
+         oc8aYx9yUD4XA8DPog3xSdqJDnu0LgQcBqjFqx96bvUgCYOJvE69IgwiAs13GFAZbb7L
+         uq/YlrQCQXEZVF2cV8vMgFaTTmm3l6tZOxwuCvc7B/sdZpy5sD1MEXV/w6VLrBF6/AsC
+         HM7U/eAxDC2ANOy35d4dc/suTPCbM6AfNAPd1hDrLA/8Q9HcRIHF+W9yYkbmIn8g4rd+
+         +obSP0cCp8gzntC+jg4sQ8q4E2vP6d3qa+ce0Vzg/s8uHzTQhMGIQOtvBWddAoa0Pm7Z
+         UQ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXPcsCMhUNQHgC1ulU1VvNMDjuMHyBY9vBD6oeZDVIK3wQoyV5XHnIO7nmt4QSMxEfvbzSI6l9uf9W5OLZjUk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPXOLdjWCA4XnImfacro8XCES2plC+vo78ZvpoW7yn1tmIeCU5
+	z69VeuQixebr85BUs8loEdLeFXQHg/Mavm3oyOTmlp+lCe6MXO+qMQOZVOnNbO8YCC8=
+X-Gm-Gg: ASbGnctVKDG4ES0a4+MQtxLDjwBHGvb9fHnUbYvTHFLWL1xTAAp+PJBNjWz7vgTFbXE
+	yUB2Jv+vfmH4YbfuTQhD4J2+TSb0enGJ80OeWd6uOj/pN31GNiYej8smlQ/G0aZCwOyLJWlTx82
+	XdEFjJdGrl6MbM/NW9ige8zBPb41UQOXvORTXfJZz6PWTyqnXgF4BMO/+ymuJGA6YNsdtNWi3SF
+	XTrk+Se6EyupGpTD5WoPo6lpP28r1vohiLH/Q0p4EG+nlcG59SgZG5qrlyeEQ6Z77HY4Z3cy6s6
+	kwIKuQRtdY8x1/nYwneFIgBJmu3C1aQVbAMd9q18rtA6lJQD7uQGoRihe0aKwoUQ4qC/k87vluG
+	HED42WcAByzgG/E/eXzJ7TnrFwjGaUz45tq8FuQ==
+X-Google-Smtp-Source: AGHT+IEWBahCm/HEzs2ekfN68QoHcjk05inm/vBZ5gGcwgu+SVeuuRQ6tuDqkyo9Irqu2mxhLByrvA==
+X-Received: by 2002:a05:600c:3592:b0:453:6c45:ce14 with SMTP id 5b1f17b1804b1-45b4d8deab0mr21551295e9.4.1755779423385;
+        Thu, 21 Aug 2025 05:30:23 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b4db1b7b3sm29415745e9.4.2025.08.21.05.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Aug 2025 05:30:22 -0700 (PDT)
+Date: Thu, 21 Aug 2025 15:30:19 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Oded Gabbay <ogabbay@kernel.org>,
+	Jeff Hugo <jeff.hugo@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] accel/rocket: Fix some error checking in
+ rocket_core_init()
+Message-ID: <aKcRW6fsRP_o5C_y@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-The .remove function can only be called if the .probe() succeeds. So there
-is no need to keep track of a successful probe in 'found'.
+The problem is that pm_runtime_get_sync() can return 1 on success so
+checking for zero doesn't work.  Use the pm_runtime_resume_and_get()
+function instead.  The pm_runtime_resume_and_get() function does
+additional cleanup as well so that's a bonus as well.
 
-Simplify code accordingly.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 0810d5ad88a1 ("accel/rocket: Add job submission IOCTL")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Compile tested only
----
- drivers/w1/masters/matrox_w1.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/accel/rocket/rocket_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/w1/masters/matrox_w1.c b/drivers/w1/masters/matrox_w1.c
-index 2852cd2dc67c..146fa7c6e74e 100644
---- a/drivers/w1/masters/matrox_w1.c
-+++ b/drivers/w1/masters/matrox_w1.c
-@@ -47,7 +47,6 @@ struct matrox_device {
+diff --git a/drivers/accel/rocket/rocket_core.c b/drivers/accel/rocket/rocket_core.c
+index 72fb5e5798fa..abe7719c1db4 100644
+--- a/drivers/accel/rocket/rocket_core.c
++++ b/drivers/accel/rocket/rocket_core.c
+@@ -74,7 +74,7 @@ int rocket_core_init(struct rocket_core *core)
  
- 	unsigned long phys_addr;
- 	void __iomem *virt_addr;
--	unsigned long found;
+ 	pm_runtime_enable(dev);
  
- 	struct w1_bus_master *bus_master;
- };
-@@ -158,8 +157,6 @@ static int matrox_w1_probe(struct pci_dev *pdev, const struct pci_device_id *ent
- 
- 	pci_set_drvdata(pdev, dev);
- 
--	dev->found = 1;
--
- 	dev_info(&pdev->dev, "Matrox G400 GPIO transport layer for 1-wire.\n");
- 
- 	return 0;
-@@ -176,10 +173,9 @@ static void matrox_w1_remove(struct pci_dev *pdev)
- {
- 	struct matrox_device *dev = pci_get_drvdata(pdev);
- 
--	if (dev->found) {
--		w1_remove_master_device(dev->bus_master);
--		iounmap(dev->virt_addr);
--	}
-+	w1_remove_master_device(dev->bus_master);
-+	iounmap(dev->virt_addr);
-+
- 	kfree(dev);
- }
- 
+-	err = pm_runtime_get_sync(dev);
++	err = pm_runtime_resume_and_get(dev);
+ 	if (err) {
+ 		rocket_job_fini(core);
+ 		return err;
 -- 
-2.50.1
+2.47.2
 
