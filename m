@@ -1,112 +1,101 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009627145F;
-	Wed, 20 Aug 2025 21:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B6F21B9CE
+	for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 10:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755725521; cv=none; b=NahwMDPj4QfILKR2x4WQ3rlZGdhP5sAIqcn54icNAdeGexZ/vWb28enfcmmkMzz1fCi8cS0j+6lIehXjGngQ65N8sde2WOJCW+9CcrA2BavuxM2VbZhDXGN5YnSJu90wrmG7l3UCvY/ZUwO67dsY4zGs/Hmx3othTE+VV2ehji0=
+	t=1755771085; cv=none; b=pzF8oucf10ZqhfdS25bCltzu9lZ+YEqPVleBtQhBbLLYLMaEfC8Cg6IPO75Wl50BoXN536q0a4minHIueyIkyyJnNP/yZNqoOTZHZMlAYuD17X5DUpgXd4AHa9ZumNuRX0581B6/AEcd+9np3HfR+Z5YQGo3GvWcUbuQ18jn5/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755725521; c=relaxed/simple;
-	bh=KI3LaQ1fw0o6+rBDig54tr9HE7QIF3H1XxcVNFHc0Tw=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KX3DT/lRJX28JcAGvkGjJn4dCZ9G96SqqemUNgtC/e82VRNI0ojmKQK20Fl9bbBk6PGLBCpvetCNgMlqBx9jlc5GjFJOYdJq0TEnp7Py8qEPUZy9eMec0xMbbGiFw063QyLqyWcyiocPLeXwpJ9W5EYW8WJZNTx5Wf1bfK9ch3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpJP7hlJ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1755771085; c=relaxed/simple;
+	bh=RPMLvVMloA2cSqz77yb1IAXMPhYmiV5Dl1oHzNUQjHQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Du56xFQGewwPxsX28XGI7JXFNxTg87w+YkSKgOih7uSe8TurxhTUqeKjfx7ZcFNT56UQ85V5h0rI5dC3Seh62IisSCUG183JWjB/v5bEHHjv8nbpYOu9L1FpofINMCW4btJpRs/fm6emWVuFfcvR5ppEqvgFqyQWALeoXT3wDyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bavapI4T; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpJP7hlJ"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2445806d44fso2531475ad.1;
-        Wed, 20 Aug 2025 14:31:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755725519; x=1756330319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KI3LaQ1fw0o6+rBDig54tr9HE7QIF3H1XxcVNFHc0Tw=;
-        b=hpJP7hlJ55vGS5bIssWWxUtV2NU8ed88UVuFVw3sM1XIkbe3PugLRyi4p7UzbjuyRM
-         emR6IuD+794vfgk3aTnTQ1eFQ/QDoFyvJADoulO4uwxWvmQHKIWfSYp6cHQqDVRJlAkO
-         ru79xbCMLH2wJrAU3OZkl6CLITHtckrxuFK7MjbCeJTspnPut512moE3QK2fNpx/ZaKz
-         8wbmupJtgiDpQy33t0x/HH5SZ9vVMe9xdrDNRycuDCWV+O/zur/zGjndOCVHBOn9wQWm
-         /oOhDmOc03+k8XGF5rFms5VliJXItFpqbGwA96UCeW1cYN3hdbDeKjCa0aWFHUgBo7Yh
-         as2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755725519; x=1756330319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KI3LaQ1fw0o6+rBDig54tr9HE7QIF3H1XxcVNFHc0Tw=;
-        b=i7ExXqv8yaYfopT1ag0lGNpJlbD50/NlcIkmSVGP+mwcxxg2lqBfhluixuQlqKu29d
-         SuYq9HQg1ZI3VBiJu4j4DjS7onz8vWI5OgblwLJhFSjaL62dnm29vP/cr2/dJauRL1Pr
-         CCVbs7kNpURM2WCT6cBnPc2HUq43FwmZZad7CRgX8nTeLS4IBlHH1PTWZqmQxZDGZk/w
-         iYTpn5fEYRibfD6WrS8OvQYM5MYabZVdfBTu8/Kwt8U+yPlqvCSZtRedy9+BYoXo2NM1
-         xsBr29fJr7GULv4gWM8iD9kz+TILtxhdsW51osOc1ihOjvNoB5hRm7atUbgdW6Y5mTbx
-         JmAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxKlGQ399gHlDVjKZIoBstEXzjjSTnE02/skZchSqhaHqv9rnJRONMKiJ/3QXkEwpkH9GnLiE3Rcgv@vger.kernel.org, AJvYcCWhDEEZkRPdis+Hbh91Qlsa0928NfZbazOhqujzcCYJRaPlzF60Qo9+FxfD8rcLOfrpec1cVRQXRkRgOUESO0ui@vger.kernel.org, AJvYcCXc01nzVFU5WDXCzCy1NZBrZJt0k93nocQCBk1aTNLzJjdRZNlcC04gS6q1Qh9bMpz3SGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWJtG/h3arV9fi9tCT9Xwg39BU6k992H4B5/McbtFPk+FQbjVz
-	YVht2i94eNN+BCPqKuWhdEDs1gA5Dwk3xI+MSVqnTrOSTJ3qXPiNaoie
-X-Gm-Gg: ASbGncv7AuOckceL961IYoUVk/PZlI5Rc90QPdM7+vUm3hMljcsufC0DI4IR8Pv+tLt
-	ruLeq9kSDyXqT/vyHH3yWi52dUgmYKBlvPFTM8VnQ2jLxZ5ow6MJZvVrBf2Ilji2sKslNuJ2BYd
-	1M7dcrt330Sknol6s5ZUsNKepRiR1wKXr8GfGYKlxQsMtencPVEeIkuX5zFtEbaKrz0h3650dId
-	tTUratgtCDqooNAgFZsZtOgiedzxag06bqV7GI9ZPvVGJ7DGyZCuM8PMkbzlU3fKn/+vdlI21im
-	c19b1raTFq87Ynojc7eNC6QAJOEuUicNzFJuVqDMYwD0SYBsO3ouN1KcsaC0OQBD3Ry1icmtNF0
-	vtkVI1gpRsEzKAJ0rfR5/Vw==
-X-Google-Smtp-Source: AGHT+IHXnQkA6v146KKoCafbiFWO3366g7ibhUgcVzoSqTmRJ3fVK75TlT5LmFWMHbk3AuodFVDgyg==
-X-Received: by 2002:a17:902:e84d:b0:243:597:a2d6 with SMTP id d9443c01a7336-245febec9d1mr3977275ad.1.1755725519058;
-        Wed, 20 Aug 2025 14:31:59 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-245ed361422sm35848205ad.52.2025.08.20.14.31.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Aug 2025 14:31:57 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id C493D4207D14; Wed, 20 Aug 2025 21:11:30 +0700 (WIB)
-Date: Wed, 20 Aug 2025 21:11:30 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Askar Safin <safinaskar@zohomail.com>, git <git@vger.kernel.org>,
-	gitster <gitster@pobox.com>, helpdesk <helpdesk@kernel.org>,
-	kernelnewbies <kernelnewbies@kernelnewbies.org>,
-	kernel-janitors <kernel-janitors@vger.kernel.org>,
-	linux-doc <linux-doc@vger.kernel.org>
-Subject: Re: git: list of my complaints about future graft removal
-Message-ID: <aKXXkvAOhStlS2_m@archie.me>
-References: <198c29e9058.119e3a5c065010.5888624019176274871@zohomail.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bavapI4T"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id p27sunoTGn5mgp27tut2o3; Thu, 21 Aug 2025 12:02:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1755770553;
+	bh=8/C56F0xk36C5zHc0NI94zAJrdakfJt6Ccq8eLvFcJQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=bavapI4TTJrFLSrIHYHyUxYXF9/j/6DzRdFQkaVsJcJflqvoaQ27Z5JvZUBmtDwI2
+	 oseVuDTz6d4A3X88IV97bTsSi80w5qarUCyCRIKevPZiTOHsG995RRzyarSciIzcso
+	 45Pr9bg2KBEEgbGGhoEJj3XsGaah10vaT4EWVmJ0E4+gi53/w1VgtpKhay/FH/T6HA
+	 VWZo5stMxNE4LCNqo7oBATDs1bJ14+d24IFt2Zy2msnN4Ls+8mBFsXHbAmlN+wUsMs
+	 sKK5g7G9URF35iQfzZyutEZf2UdeV+aWox5h218Gsf6fh0SeGSmGwUxJ+vErFZdrLp
+	 K0qEz5fI3PVsQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 21 Aug 2025 12:02:33 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] w1: matrox: Remove some deadcode in matrox_w1_remove()
+Date: Thu, 21 Aug 2025 12:02:21 +0200
+Message-ID: <458641ad2d7a7adf30a03e70038304f0e6a81ff4.1755770484.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0n+dSVK2aIu7RrRW"
-Content-Disposition: inline
-In-Reply-To: <198c29e9058.119e3a5c065010.5888624019176274871@zohomail.com>
+Content-Transfer-Encoding: 8bit
 
+The .remove function can only be called if the .probe() succeeds. So there
+is no need to keep track of a successful probe in 'found'.
 
---0n+dSVK2aIu7RrRW
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Simplify code accordingly.
 
-On Tue, Aug 19, 2025 at 05:57:08PM +0400, Askar Safin wrote:
-> * As well as I understand, "git clone --depth=3D1" rely on grafts, too.
-> I hope "git clone --depth=3D1" will continue to work.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/w1/masters/matrox_w1.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-So shallow clones should use git-replace(1) under the hood (both on initial
-clone, deepening with --shallow-since and --unshallow), right?
+diff --git a/drivers/w1/masters/matrox_w1.c b/drivers/w1/masters/matrox_w1.c
+index 2852cd2dc67c..146fa7c6e74e 100644
+--- a/drivers/w1/masters/matrox_w1.c
++++ b/drivers/w1/masters/matrox_w1.c
+@@ -47,7 +47,6 @@ struct matrox_device {
+ 
+ 	unsigned long phys_addr;
+ 	void __iomem *virt_addr;
+-	unsigned long found;
+ 
+ 	struct w1_bus_master *bus_master;
+ };
+@@ -158,8 +157,6 @@ static int matrox_w1_probe(struct pci_dev *pdev, const struct pci_device_id *ent
+ 
+ 	pci_set_drvdata(pdev, dev);
+ 
+-	dev->found = 1;
+-
+ 	dev_info(&pdev->dev, "Matrox G400 GPIO transport layer for 1-wire.\n");
+ 
+ 	return 0;
+@@ -176,10 +173,9 @@ static void matrox_w1_remove(struct pci_dev *pdev)
+ {
+ 	struct matrox_device *dev = pci_get_drvdata(pdev);
+ 
+-	if (dev->found) {
+-		w1_remove_master_device(dev->bus_master);
+-		iounmap(dev->virt_addr);
+-	}
++	w1_remove_master_device(dev->bus_master);
++	iounmap(dev->virt_addr);
++
+ 	kfree(dev);
+ }
+ 
+-- 
+2.50.1
 
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---0n+dSVK2aIu7RrRW
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQZO/gRNchuWgPJR+Z7tWyQc2rTCAUCaKXXjAAKCRB7tWyQc2rT
-CP5vAQCVKbnTs4dGZkVn+48GVLHMgTTCrhBdAf5SGiuxFxCxqwD/RZwArnIcVMLF
-rewkM9vMJB/bzQxt81QyHh4mA+m8gwA=
-=mSTU
------END PGP SIGNATURE-----
-
---0n+dSVK2aIu7RrRW--
