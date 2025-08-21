@@ -1,79 +1,77 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1412F5E
-	for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 12:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9E919E83C
+	for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 12:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779438; cv=none; b=MlSfR1OzTtcGBQeR5rdAWT8vck3cs5H+c5ojUCtYBMlGkwamq4GAh14hop0a00jmLe98M0JmenG83W2Chi/RxUplczC7f3nB7+OEyg1qbW8FUA0UfIPausB72C88sD+86LOmaF851acJtqsth1SjfRxej+71mtXy7sFD+6GSg6g=
+	t=1755779461; cv=none; b=tbOtHM7coxJ1vgzIMA3zrBVuEbZhfPkAJGxCMaWSBC4qxX8D8hh/OCYXFz79uofosY2ufkKzw3lAJZp7lhqwdP6KVPc2wSbXYuMF0fwVEu+OP0YAYetAk2GkC9OiSOrsopP1gdp1DPi/7FB1o+ddU7T+HafLOtIY/6O4geIwFL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779438; c=relaxed/simple;
-	bh=1Zs0xoFLNF/NAdBxulvALY6NhTUH+VNltZfx4Sa1MQ4=;
+	s=arc-20240116; t=1755779461; c=relaxed/simple;
+	bh=5pkgB/5rQDps/saQ/w0q6u4l+URqfRYReC020bzEeak=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ogmnzt4s0Qc7ChWWQztNwYY8A94XxIqRSxMskjhXR5qIOTWGIbeoLlc1HuuR6GIwjwEb4MeY7zyuLO9N/0d6v6Q9lRFZZkDZtRcsld8HaGG1imZOuzEWs59a1bnpwLyi6x8wANlkkheOqXfJglB+qMnoUG530BH2DDoawiS2iGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rKm3RU9d; arc=none smtp.client-ip=209.85.221.47
+	 Content-Disposition; b=IunV8Fo9wDvvJmFGEfIswfisbMy1oIL8OsdSXd8Agrwz0cDXY3dwbr5CYnAkwQDZC+9Uv2LaT3i67pPE8bgL44CTyjUO1LWqjnI0qbMzYkOQTdYcTaOs1iICoTZV0q+sjwVirC3yzl6HjT37ggfTfV5y+U+26jSyZfS5KO8MFWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i5YIxm7Y; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rKm3RU9d"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9edf504e6so640927f8f.3
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 05:30:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i5YIxm7Y"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9e41669d6so756522f8f.2
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 05:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755779435; x=1756384235; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755779458; x=1756384258; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bt/Zd5DPOzcwiv9QP5TYavZsENkthIU6GtnKmDspSLI=;
-        b=rKm3RU9dZmrbjWJQBBFR0gBxG7FBMh+7gyrJHD3cxT2IuVT4D79s1YWGJ8fb64/d2W
-         7ZxWvuYDSOMejEGkqTPFxCeFrtj6TsG0cmWUeLcuxauP5BdcyW2EAjuRD4ppBUUhferK
-         uASHKS+H2bvEHY+zkv3W54hN5bZYh9NoLogACMVaEz1idxPFMS26/taw1NvvL5YsZ9vY
-         a1/1ApC6IT8C8voZ0y8Jtv9Gcu54flx2ihX4WLXucHQa9oKcWb0TGp+ltUMGq+TG1meS
-         qpH3ci71wdt8oTCTQ73NkK9+MX8c8MsoOw5YC95YTEThqQPZSOGmPaqhWac6pMRUfJCV
-         0iCQ==
+        bh=mxR/dg8k3HLUiS1lV7+VyCFpJVOb/C+SddN5AU6mmSY=;
+        b=i5YIxm7Yhbf0pJ/pSHLsoiV+YR+/Gfqhpy8DlahLMJo9ErD9FlcmAm0ixb8bMF/4ku
+         V2FCfOeYNPFf/LIohHLihnua2Ar5PNi2eHohJu6thDeY4yd327tV+L5IByDzQHm2/G8Y
+         VWSPHEptihfxqElZf+0HFuMrzeOAJD1HwA3pRJR5n8XTiiAaH6wJzrBvxFn3CWObfKuF
+         vqP9qHS+yREIH8U8pSRfCPKkSNPzyW+9W+Bwgxriti/wHiE3N5vM9QsCI3JrCxm4kGJP
+         WCFl0r7Yap9fRP2ebBKqvCUhUM3L/g+jQPB/vRoIb+9MNht96sHkS/wOteb/aZQY2WJ1
+         4q9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755779435; x=1756384235;
+        d=1e100.net; s=20230601; t=1755779458; x=1756384258;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bt/Zd5DPOzcwiv9QP5TYavZsENkthIU6GtnKmDspSLI=;
-        b=pd7zCQZ1pKAxeDjSmdpDFmHG8UGWfqLZs7T/9qGmaNiogomOtZ6zjW52SZ9unnYLuC
-         YdYHYpxhDNdyYH4KxHcxJQaRpaOC4ABdNzR8MG1oArA8kC5e7uWvOxgbtaG5dvhMX9V1
-         PwX9gWDOH5nQ0ZuNqzUv9aZv2RVoJroQE/KAOZhZ7heKF0A6j24imPaUg8g61Mjh1w9b
-         6eJuI54acp+1O2rtJK6j8vR3LrgB1k/5wGRxsBClMqee9Lt1biMsymKaA3LnK8vPI4yC
-         c6njt+Y1M7aFtaFN7gPncjC7bIOh1XoMYwhqyYp8jYSeWCxh9g/sz2pU+/QrGvs6qpdC
-         hPOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrFmIp1u6sc0G3Wmz7rKcrJpvPYXrinZySkqVvaFXJ9SOESxBPirE1xKMDftTZSaEcyW61EMcnWrUr2DGjRfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpzIl1cKcgFC5aTxTyvl9Ldv0GxrZ6DESlKVNRR93XpybY4PgS
-	7sUZOQCZ1ATNIZElBwsisO2zc5sdgS7rgAbaE/TnfpmZbkbdgeykun2fnFPahpcg9l4=
-X-Gm-Gg: ASbGnctVQVNCZdw9V21Gl2BwCdmjHm4LB1yZs6U03lcK4qARAiOmzr7+Cs8TyjJ13Sk
-	jbQbhuPPsowQ0d1nIFvaPYGV26xNamsn/sDqxxjkZhqdQi2TzqZHhr/QQyXMxOPIjxjzCqnRN7O
-	t1KSgANHQ2CNeGb/7IkdL9Dzb4eDjnVQzPAFdZMQ+ibpqiIienRVRPNWZPvn7ed4PS1ffaGCYj5
-	cSIzcMXpBgAHIcji58cyspg6/Lb9JyPVWtXQrm5Zh6eMIduQb90yrm4mVQ0zZomW/N7eStu5Oep
-	g0ljx1/UQs8WzPnWx8dNf7bmc/q6wuCUoEJHEsNU3uQxamXuFuW9bhh1ToWN9PPXu0keTxtq85V
-	NqkocXAvtHhXwRYgbp+BuHvN9bng=
-X-Google-Smtp-Source: AGHT+IHczsI0rrLUONRdJrdFfmVYfViMf6wrSC9S1N+ePao3CEYpjrXgB6Zm5NwMz2CppJHb6eEdYQ==
-X-Received: by 2002:a5d:5f4b:0:b0:3a0:b84d:60cc with SMTP id ffacd0b85a97d-3c494fc6fcemr1981289f8f.2.1755779434797;
-        Thu, 21 Aug 2025 05:30:34 -0700 (PDT)
+        bh=mxR/dg8k3HLUiS1lV7+VyCFpJVOb/C+SddN5AU6mmSY=;
+        b=LuEpnCzWHQKoOp8oKK2EjAHJXMUdEKpiRxtAiTlupdqsLQC2284X+3SE8WP8bcL/3Q
+         Sp6Ay2wiTvPIJnFOpzj0rGKqeaYtDJo+5/V8XE4HTs+K+27Ri72v/nZpxhfGedKb0/ph
+         ld/iOQiJBTgHfYJhuwhtknEkcD4DEOeM0eFFI83hxFhAlreT31evBh1THROUr51m8RFW
+         MEyIFMZMtr/6zChCB76XLi5JoXMGWKe5yNB9+qHSfWBkiIFd3OZEZvgLmppn8RVWAfej
+         HMxKujPHQtCUtGu1Nn6d9C3jzdzLgPzKBLjQVNy7RyKnEJ5nsbVK97IagR93QylJB3y1
+         3yjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVK0Om58tBxldRckCWY9+jL5k/PI8Z37ok7Q/j1v14iOuHhSRdft7Mj4dqosqTJOlAFnZVAV33f6sexjC2CLsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+JxNUEkzqaI1Exn19CFpgzeQ+4aDiZYFZNRK3tgCixiHUiZHA
+	s1uwbK4uzH5hTP2Q1GRqfVXvhcZwwoMF3s+IV8Q/9bNSULlxHnD0FmyWpGz2mQWMXIk=
+X-Gm-Gg: ASbGncuVv5WB4AUz5lH2Sjwd7yAU32he0eL8uBR9pcE1JhRqiS1XB+Srr4VZbiGW4AN
+	VZfojumI0X8imlKqOY54Ng81bb2ca/8neTdeHmgWD4Ouq7rGjo4Iv3jbfbbgRFCYob8QNfvCIe3
+	rN73J2SWYKrb8aS/wsJ6GOTT7/ZHa/2lM530YCnYjxRae1C02vnFhOoEc+XGVT5IdkhYaihzpwY
+	6hpPvmGsgcgAQVmv4XCgv+pt/fzAgw+xJ1XX0ySc4Ps3i6u9ZrxMx0GBm5VEbbvFv6ojcok1Yah
+	MhGX282NsnDNDrXsWzONlRu5jquTf8c4bEJF3Xn1Kp5LLBtO74ItERPUfkTmUOuFWUPV/hYZtYC
+	dcNU7NBTnyRm0gX99gES6wNcIWmAtDabuSm8PZA==
+X-Google-Smtp-Source: AGHT+IFuPjndS1sGpXpxAnUf6FSnfiNYp7Zpbio33Qd34o3QKqntyeIWA/EHXuRLsADAhCMT72Ozng==
+X-Received: by 2002:a05:6000:40df:b0:3b7:6828:5f71 with SMTP id ffacd0b85a97d-3c494ed18eemr1595254f8f.9.1755779458355;
+        Thu, 21 Aug 2025 05:30:58 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b4db6855bsm26892795e9.17.2025.08.21.05.30.33
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c3e673aaacsm4966796f8f.23.2025.08.21.05.30.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 05:30:34 -0700 (PDT)
-Date: Thu, 21 Aug 2025 15:30:30 +0300
+        Thu, 21 Aug 2025 05:30:57 -0700 (PDT)
+Date: Thu, 21 Aug 2025 15:30:54 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Joseph Guo <qijian.guo@nxp.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
+To: Brigham Campbell <me@brighamcampbell.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Douglas Anderson <dianders@chromium.org>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm: bridge: waveshare-dsi: Fix NULL vs IS_ERR() check
- in probe()
-Message-ID: <aKcRZo7BkfH1fD2c@stanley.mountain>
+Subject: [PATCH next] drm/panel: jdi-lpm102a188a: Fix error code in
+ jdi_panel_prepare()
+Message-ID: <aKcRfq8xBrFmhqmO@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -84,30 +82,32 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_drm_bridge_alloc() function returns error pointers, it never
-returns NULL.  Fix the checking to match.
+If the mipi_dsi_dual() macro fails, the error code is stored in
+dsi_ctx.accum_err.  Propagate that error back to the caller instead
+of returning success as the current code does.
 
-Fixes: dbdea37add13 ("drm: bridge: Add waveshare DSI2DPI unit driver")
+Fixes: a6adf47d30cc ("drm/panel: jdi-lpm102a188a: Fix bug and clean up driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/bridge/waveshare-dsi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/waveshare-dsi.c b/drivers/gpu/drm/bridge/waveshare-dsi.c
-index 01c70e7d3d3b..43f4e7412d72 100644
---- a/drivers/gpu/drm/bridge/waveshare-dsi.c
-+++ b/drivers/gpu/drm/bridge/waveshare-dsi.c
-@@ -147,8 +147,8 @@ static int ws_bridge_probe(struct i2c_client *i2c)
- 	int ret;
+diff --git a/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c b/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c
+index 83656bb4b0b2..23462065d726 100644
+--- a/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c
++++ b/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c
+@@ -233,8 +233,10 @@ static int jdi_panel_prepare(struct drm_panel *panel)
+ 	mipi_dsi_dual(mipi_dsi_dcs_set_display_on_multi,
+ 		      &dsi_ctx, jdi->link1, jdi->link2);
  
- 	ws = devm_drm_bridge_alloc(dev, struct ws_bridge, bridge, &ws_bridge_bridge_funcs);
--	if (!ws)
--		return -ENOMEM;
-+	if (IS_ERR(ws))
-+		return PTR_ERR(ws);
+-	if (dsi_ctx.accum_err < 0)
++	if (dsi_ctx.accum_err < 0) {
++		err = dsi_ctx.accum_err;
+ 		goto poweroff;
++	}
  
- 	ws->dev = dev;
- 
+ 	jdi->link1->mode_flags &= ~MIPI_DSI_MODE_LPM;
+ 	jdi->link2->mode_flags &= ~MIPI_DSI_MODE_LPM;
 -- 
 2.47.2
 
