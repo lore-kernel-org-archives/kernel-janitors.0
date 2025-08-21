@@ -1,77 +1,72 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9E919E83C
-	for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 12:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2830B13A41F
+	for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 12:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755779461; cv=none; b=tbOtHM7coxJ1vgzIMA3zrBVuEbZhfPkAJGxCMaWSBC4qxX8D8hh/OCYXFz79uofosY2ufkKzw3lAJZp7lhqwdP6KVPc2wSbXYuMF0fwVEu+OP0YAYetAk2GkC9OiSOrsopP1gdp1DPi/7FB1o+ddU7T+HafLOtIY/6O4geIwFL4=
+	t=1755779554; cv=none; b=NdcMzMgJ6PYMkI/VriJxdGXSAmzzpAWC4dA/umNZ42rEKo+j9GhhbkciRETg/1vV1via4+t8pswc+Y39W5Kp07Qr3/LtDkKpULvRRSUDGATgwx3eh0bcpojrROTQWVSp8CZV4NGtfz1rRKZJcQB8zdxa4Sgp5bbXq8RCtY7Sx2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755779461; c=relaxed/simple;
-	bh=5pkgB/5rQDps/saQ/w0q6u4l+URqfRYReC020bzEeak=;
+	s=arc-20240116; t=1755779554; c=relaxed/simple;
+	bh=i4ivNoJA/XYa4j8URBoVuQOwoj5jbAtHTh2CVRUNL98=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IunV8Fo9wDvvJmFGEfIswfisbMy1oIL8OsdSXd8Agrwz0cDXY3dwbr5CYnAkwQDZC+9Uv2LaT3i67pPE8bgL44CTyjUO1LWqjnI0qbMzYkOQTdYcTaOs1iICoTZV0q+sjwVirC3yzl6HjT37ggfTfV5y+U+26jSyZfS5KO8MFWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i5YIxm7Y; arc=none smtp.client-ip=209.85.221.52
+	 Content-Disposition; b=Txb7O+kTmTIYNdOiRjEJfFOC2XkHyWEo2eJaVw5C5MqdExDuWmML7pVtqqCvABk/MUiAsy4st3/GOZJ35LhUzR7Nh1Vqgu0zGu+drk1sGTv14xb3lDws3ueULriIboFnX+8fGkgcUh5adFapk+R4TM3fzennX3+NuAOuBawSIK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qSFNqRVz; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i5YIxm7Y"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9e41669d6so756522f8f.2
-        for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 05:30:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qSFNqRVz"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b00e4a1so8276375e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 21 Aug 2025 05:32:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755779458; x=1756384258; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755779550; x=1756384350; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mxR/dg8k3HLUiS1lV7+VyCFpJVOb/C+SddN5AU6mmSY=;
-        b=i5YIxm7Yhbf0pJ/pSHLsoiV+YR+/Gfqhpy8DlahLMJo9ErD9FlcmAm0ixb8bMF/4ku
-         V2FCfOeYNPFf/LIohHLihnua2Ar5PNi2eHohJu6thDeY4yd327tV+L5IByDzQHm2/G8Y
-         VWSPHEptihfxqElZf+0HFuMrzeOAJD1HwA3pRJR5n8XTiiAaH6wJzrBvxFn3CWObfKuF
-         vqP9qHS+yREIH8U8pSRfCPKkSNPzyW+9W+Bwgxriti/wHiE3N5vM9QsCI3JrCxm4kGJP
-         WCFl0r7Yap9fRP2ebBKqvCUhUM3L/g+jQPB/vRoIb+9MNht96sHkS/wOteb/aZQY2WJ1
-         4q9Q==
+        bh=3YxbukuAzSacGXrM6lqlSlHSwuWfZD3gHN6r3X8UJRE=;
+        b=qSFNqRVzxpYKMyE1QC6KxqSoQWvVw0pW04O36qfvu+Fv9AMM6y2I7o+EtEeroIKx5f
+         xn06yIk8ngZsSvaBbsEOFW4Ni4gVFrB7W0ev7J9CMdVKuWhNM1idSkFw2Ulpqjlyvvg6
+         lh9pAYC/CrukmwOamp4fbJUfPILgHsXPK9xYuVaQtXlN+09nzZcazkaPdt0e63RxHNiv
+         n3XmaGswzWoV/Dzp5zLdrjFmOmHvZVRKQdI1wC/RUL2LGpPHNTAb+gYDl8vGBeEFend3
+         lDu0UIiWhVOvURAxEtwdN/QgO2UOP7uuW0Ddz0M3kzHuYoFvjNfLn8KPb9+qpLk5lR2p
+         jmng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755779458; x=1756384258;
+        d=1e100.net; s=20230601; t=1755779550; x=1756384350;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mxR/dg8k3HLUiS1lV7+VyCFpJVOb/C+SddN5AU6mmSY=;
-        b=LuEpnCzWHQKoOp8oKK2EjAHJXMUdEKpiRxtAiTlupdqsLQC2284X+3SE8WP8bcL/3Q
-         Sp6Ay2wiTvPIJnFOpzj0rGKqeaYtDJo+5/V8XE4HTs+K+27Ri72v/nZpxhfGedKb0/ph
-         ld/iOQiJBTgHfYJhuwhtknEkcD4DEOeM0eFFI83hxFhAlreT31evBh1THROUr51m8RFW
-         MEyIFMZMtr/6zChCB76XLi5JoXMGWKe5yNB9+qHSfWBkiIFd3OZEZvgLmppn8RVWAfej
-         HMxKujPHQtCUtGu1Nn6d9C3jzdzLgPzKBLjQVNy7RyKnEJ5nsbVK97IagR93QylJB3y1
-         3yjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVK0Om58tBxldRckCWY9+jL5k/PI8Z37ok7Q/j1v14iOuHhSRdft7Mj4dqosqTJOlAFnZVAV33f6sexjC2CLsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+JxNUEkzqaI1Exn19CFpgzeQ+4aDiZYFZNRK3tgCixiHUiZHA
-	s1uwbK4uzH5hTP2Q1GRqfVXvhcZwwoMF3s+IV8Q/9bNSULlxHnD0FmyWpGz2mQWMXIk=
-X-Gm-Gg: ASbGncuVv5WB4AUz5lH2Sjwd7yAU32he0eL8uBR9pcE1JhRqiS1XB+Srr4VZbiGW4AN
-	VZfojumI0X8imlKqOY54Ng81bb2ca/8neTdeHmgWD4Ouq7rGjo4Iv3jbfbbgRFCYob8QNfvCIe3
-	rN73J2SWYKrb8aS/wsJ6GOTT7/ZHa/2lM530YCnYjxRae1C02vnFhOoEc+XGVT5IdkhYaihzpwY
-	6hpPvmGsgcgAQVmv4XCgv+pt/fzAgw+xJ1XX0ySc4Ps3i6u9ZrxMx0GBm5VEbbvFv6ojcok1Yah
-	MhGX282NsnDNDrXsWzONlRu5jquTf8c4bEJF3Xn1Kp5LLBtO74ItERPUfkTmUOuFWUPV/hYZtYC
-	dcNU7NBTnyRm0gX99gES6wNcIWmAtDabuSm8PZA==
-X-Google-Smtp-Source: AGHT+IFuPjndS1sGpXpxAnUf6FSnfiNYp7Zpbio33Qd34o3QKqntyeIWA/EHXuRLsADAhCMT72Ozng==
-X-Received: by 2002:a05:6000:40df:b0:3b7:6828:5f71 with SMTP id ffacd0b85a97d-3c494ed18eemr1595254f8f.9.1755779458355;
-        Thu, 21 Aug 2025 05:30:58 -0700 (PDT)
+        bh=3YxbukuAzSacGXrM6lqlSlHSwuWfZD3gHN6r3X8UJRE=;
+        b=FbQZdfPDn8xlO0wVl6X8qvlFHC4YKFbtqw4jc+FtmbUws+3BCTlUOJxDMs7NSwPADU
+         a9pLnj//GuVIhB1zr6Vqz1vRxyFbHj3XQQ5qFaVx5bLt9Yqxk8jntm/msclz+ZJ+q1CO
+         8IHX7812IgfLIPtN8oxPEJy8I9gDXwPNAkbzuVTpJOidSjXODxN1bpQPslFv8+JJmc0K
+         Uev92uHCitjTy4p1UvxCq6G+zurCARrdhuI4GhZ75/n5tZlTqokzOERZ6CYhjCHxJAj/
+         GDOVClqvb7P5Dw/+URCwTGeoE/oahkDhriFRP+enO3+PhqfcT43gkM277YT9p5cofT2E
+         tL5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUD1QNura1z562WJ9KoDp675Eupu5I303J0/gVtx8DIdA6inU/qSSoB/RaucjUfo/rlTLH4NMhb4rYYjlBrhbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywjG8aD7JNElqBus23YRsg8atx94HI8o9zbpqAQ+i8gXLyQibD
+	WQQqY28EkmTGrUzZnSr5ts5lr+5WopsSwzvKAxW0gf9jYIboHAhZMbzQBOoEg94xASpLL6Cm1aZ
+	Qz/Zu
+X-Gm-Gg: ASbGnctWlWb5Fu3ASnD6sXWOaoGeBXG8ym+KepSMNUyRywVHAYDXJK/yLE16EknX4xo
+	RFlayYKVKmCqUdAn0Q22QLXLqkt9kq1ljaHVL60Xv1GOZt3vMAj6E8GviQcbozMX4vXovoHqTjt
+	XiWWmTcjgUyuC79VNLeAaBGw0v7tk8qUg1PpANP4sxGy2tUohXA/xejcWty5n3LN+VQax8CxmaM
+	OdL4Wxdy8BAtJaex+LrKGkcXDE9ukCA0rCEmVZ1NyGhy0PYdPOL784n/fdPYBvB1HFlxvKSymVS
+	H8l9l48FToXKJfcxDbL4dDpdiCfYoy8P8CaeCxUb/w3fQJsDZwrrjyxSqRL0c+W+SSeJ0ZqOYgT
+	XdcL5FvDhACM9uCDU/4Pe5vfKowRHHkynq4l9Ng==
+X-Google-Smtp-Source: AGHT+IF4re4JMKqmwW7eC8Vyez+RBY3Ot24DyU7VwP7W6aNkCpKu4qpBngC8551+g/vQCfP2k/8E9w==
+X-Received: by 2002:a05:600c:458d:b0:459:e200:67e0 with SMTP id 5b1f17b1804b1-45b4d7dcc58mr19978705e9.10.1755779549700;
+        Thu, 21 Aug 2025 05:32:29 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3c3e673aaacsm4966796f8f.23.2025.08.21.05.30.57
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b4dc255f9sm29273285e9.21.2025.08.21.05.32.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Aug 2025 05:30:57 -0700 (PDT)
-Date: Thu, 21 Aug 2025 15:30:54 +0300
+        Thu, 21 Aug 2025 05:32:29 -0700 (PDT)
+Date: Thu, 21 Aug 2025 15:32:25 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Brigham Campbell <me@brighamcampbell.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Douglas Anderson <dianders@chromium.org>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/panel: jdi-lpm102a188a: Fix error code in
- jdi_panel_prepare()
-Message-ID: <aKcRfq8xBrFmhqmO@stanley.mountain>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Rex Chen <rex.chen_1@nxp.com>, Huacai Chen <chenhuacai@kernel.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>, linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] mmc: mmc_spi: remove unnecessary check in
+ mmc_spi_setup_data_message()
+Message-ID: <aKcR2ea747xkw_it@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -82,32 +77,28 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If the mipi_dsi_dual() macro fails, the error code is stored in
-dsi_ctx.accum_err.  Propagate that error back to the caller instead
-of returning success as the current code does.
+An earlier commit changed the outer if statement from
+"if (multiple || write) {" to "if (write) {" so now we know that "write"
+is true and no longer need to check.  Delete the unnecessary check.
 
-Fixes: a6adf47d30cc ("drm/panel: jdi-lpm102a188a: Fix bug and clean up driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/mmc/host/mmc_spi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c b/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c
-index 83656bb4b0b2..23462065d726 100644
---- a/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c
-+++ b/drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c
-@@ -233,8 +233,10 @@ static int jdi_panel_prepare(struct drm_panel *panel)
- 	mipi_dsi_dual(mipi_dsi_dcs_set_display_on_multi,
- 		      &dsi_ctx, jdi->link1, jdi->link2);
- 
--	if (dsi_ctx.accum_err < 0)
-+	if (dsi_ctx.accum_err < 0) {
-+		err = dsi_ctx.accum_err;
- 		goto poweroff;
-+	}
- 
- 	jdi->link1->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 	jdi->link2->mode_flags &= ~MIPI_DSI_MODE_LPM;
+diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
+index 95a32ff29ee1..42936e248c55 100644
+--- a/drivers/mmc/host/mmc_spi.c
++++ b/drivers/mmc/host/mmc_spi.c
+@@ -566,7 +566,7 @@ mmc_spi_setup_data_message(struct mmc_spi_host *host, bool multiple, bool write)
+ 	if (write) {
+ 		t = &host->early_status;
+ 		memset(t, 0, sizeof(*t));
+-		t->len = write ? sizeof(scratch->status) : 1;
++		t->len = sizeof(scratch->status);
+ 		t->tx_buf = host->ones;
+ 		t->rx_buf = scratch->status;
+ 		t->cs_change = 1;
 -- 
 2.47.2
 
