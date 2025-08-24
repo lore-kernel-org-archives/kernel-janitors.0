@@ -1,107 +1,150 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C0A1E7660
-	for <kernel-janitors@vger.kernel.org>; Sun, 24 Aug 2025 18:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95496227586;
+	Sun, 24 Aug 2025 20:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756061686; cv=none; b=F++iyBx4ZpBgBjxHqY7KzWhZaPlFSXYBkyaGXzGWOvnzeMFn7UP+Pr8F0pdoDqMRGD6MfHLbIflms12mN78psXygXm2ZCnZiD8ehDQCslj2Pjdzo/dAkrWOYKODt4xV/D+Z+krinbBai6Knoi9vEo09ZD/Oiqi+lQwQpMO4ZbnA=
+	t=1756065750; cv=none; b=hfyvy2HbvDZfIIqbsfN18MuhmdPF6UgwqLFxmeRVy+zN1HM0WvySDLtPfDVq3FpW9s9WTvYWWBE1AOnZ+7o7x5I/3m4DfuWCWEgHFq9JUwQadIZaJUL6ygwYTBvv+0TLkCDRvsoRkgzpv/pws1wCRHOu6ODl/qQQ35hqA1vVq10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756061686; c=relaxed/simple;
-	bh=Su9fVUmbbEoXA8/x3VGnp+xHkiw3aMwd14wBtFK2re4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Q4P9RZ4G/qShKb1JILUh0D6mOv3z2p4usyokeVrb/xsKpOFH4z0Z+QH7BpDxLWjPz46nNM+DyunNMzU+z3Qs3YysEyZDK9r5jWaAH1ddtWjqUlYmG0EAVAb2VnJ7UP/pw8KfhpslOf3kOnWXJ+FkcJE2UWaEuhCzEy/fNSHX3g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=KAnteFgP; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+	s=arc-20240116; t=1756065750; c=relaxed/simple;
+	bh=2KZo97Y3dKfB4kOtwK3564CJU05GkQdX8qPUaIWzL8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rq5V3V82gt4auDuFyOtLBrN75ZW8jc3obd2rh3sUIwnCb2IM69xKlhSCtZhnJZBf+CIhhGkcFn+RudH1lV6CPBS/UF9oklnCwWU2Rp7/m6vU/84Tb4ANLWlbiaCAgT/BmsXM3LXjxmtboqgDQZz4ygfvVNxHCraPf4tYI/sU6Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EN8Kqz8V; arc=none smtp.client-ip=80.12.242.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="KAnteFgP"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so3187615b3a.1
-        for <kernel-janitors@vger.kernel.org>; Sun, 24 Aug 2025 11:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1756061684; x=1756666484; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R4RBQN7ZcwLGgu6eJi1GMF63RINzrO56jY30XvA+HQE=;
-        b=KAnteFgPDSGTz26iIkVQw/jDko6d+xAfJu7Mz+i+00lfj7teIILln3TyuPzphcj74y
-         JIkTWogK4q7HkXdVZImvjIWHmE9AF1inJ412jgvbaG96Amp7dFl841ZxQeVE3A2gzz9u
-         jGSlmB3WoLSQ5RLVrWZ9X3XrfOlyfGBK6hoBuveoLuyPhhxbQUe8ooVfmT80fQoTyNjP
-         caNDC5oCt8Ms0podkMrCZa6BPS9oWV0SsNmuXLGoHoWODVMM8KbqABNqj9gmqmQSr47a
-         NlP8+bQH5jtMGaNAyBZhf3Xv+XUdobo/SfaPZgAIstVrygprHOIzD6XVM0Ab1Lun7k09
-         98gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756061684; x=1756666484;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=R4RBQN7ZcwLGgu6eJi1GMF63RINzrO56jY30XvA+HQE=;
-        b=S5wA82MI7MSLEqW0z1N3WmtC1DP6x/6TiYyjY9zbdFNURZUHVIabburNJxdSLSoHOh
-         Pg2B9leFUmT3tJBZD5r86rSNBDRK2Y9Zv2yPz14LHCpnG/m6r2wZdlUB2+R5IhmlUgcx
-         RYO/RX+l8v7bIqNK39fbOCbhrhxhmZIkT2coEDqYLpwbRGfK9pKSWK961zLXJ8V2U3el
-         eZiVdvY36U07MLdill37dBL1YyuylELzxfmC1nmGWr5MrVWrIhCbyRwGMkK/veF9YDR3
-         XhGx5/XMzSf94QZiwKx+cxcn5fcmCxeOGFahkCPrI+cc4vZLvqiYist5aZO6mXGMBWrv
-         2JjA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+v+dApNygmQQhlAVMQWJZmKXgoy0Wca0HQrGXqlxVSizkqjRlB4HWQkvkFVr5T4TNXU05rgCCneAYyq75p5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTzGG831rev9vm16+O1JTP6Vwdr5FkIi2R4UIu5+xWjndTl2h+
-	pLM4Y1O4+eoHbO26COUaPpFXbqIcoTZUMUO0AXCEDJ6mLeSWXEB2n7CVfZLDjh2Lx7M=
-X-Gm-Gg: ASbGnctHWUGcsUBPmirxtITOt9ML+Xw9z/nvzc+HqtQpJUgbR8UZOByrj/p5lMsgRig
-	0ZqGfiE+KyaP+JWp3+VeKSGrqj2wzVrS4AIr54P0Y3a8ecl4cKzrFE7g9ecoBL4qGN/t39ypEsP
-	msKf6OT/yX/1VcUooW0NfD/hS7MyjSUibcapLtTlFl3fs4D2Yx8FHZHdc8mjYLYVVvilxH84zu3
-	539zWYuUxQvbHlkxetHZAmH0GpSXdfmM9nhesezdwZv06q3+InNv1VGx6iQ90t7NcW+PiltGa9m
-	mrO+lg9oR+exiCM77mHAoBqEN4eMz9ZKT9vmgQr7s5UR+NTvpVPzJ1Bce99J6RJmgV7YiixZ1eq
-	iRA3orbmyi4P6vKk1mS0=
-X-Google-Smtp-Source: AGHT+IEDk7at3Bpgbpj+v0Eh4vjn2DF3yviRYYO1YRDu0NiWwlKlGxDy4FGz5GLe85FB4ML7qbBaOA==
-X-Received: by 2002:a05:6a20:430f:b0:220:898b:2ca1 with SMTP id adf61e73a8af0-24340ddec04mr12861606637.21.1756061683987;
-        Sun, 24 Aug 2025 11:54:43 -0700 (PDT)
-Received: from localhost ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-770401afde8sm5257723b3a.61.2025.08.24.11.54.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Aug 2025 11:54:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EN8Kqz8V"
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id qGm6uCsM5FvH0qGm6utKsV; Sun, 24 Aug 2025 21:53:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1756065191;
+	bh=h6KbBJ25vHeT4tnyRiFvChv89E8oXiVdW8qvo8bRqok=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=EN8Kqz8VLEM+1kuikWX4y7O0cGK00mGeDVQeRfEcYGEmujry0002f6D4QGofCYWag
+	 D//5jLjoDJXBcB/GfzbITnsQTmMza2dCYlKV9CahdeFQItYttQhbGY+bQPuKsBxrg8
+	 HO9E2FDoHPl5FCUySNfvbNUiQKhdJQnHFACEiRvpMNiT11jt+4kbFPn51pcm0aakQN
+	 l7Qmwf833++Lz0390iFm0QD6Kcs5Pxy0pLn19n1fcGsR3RltHw5sojv0v4T9pTtmkz
+	 PEHywLliY0mVrk7nxor+7xxYARWAge0+DxrfsDnWtykYS6nXUnlG1VCH0YRPUuaKzn
+	 lmZAm7bCvcHiQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 24 Aug 2025 21:53:11 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Beleswar Padhi <b-padhi@ti.com>,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH v5] remoteproc: k3: Correctly release some resources allocated in k3_rproc_request_mbox()
+Date: Sun, 24 Aug 2025 21:52:37 +0200
+Message-ID: <df853ede72e9972c464415990b196289680e6acb.1756065142.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 24 Aug 2025 12:54:41 -0600
-Message-Id: <DCAVWVJ990VS.255346CDNF1GK@brighamcampbell.com>
-Cc: "Neil Armstrong" <neil.armstrong@linaro.org>, "Jessica Zhang"
- <jessica.zhang@oss.qualcomm.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Douglas Anderson"
- <dianders@chromium.org>, "Diogo Ivo" <diogo.ivo@tecnico.ulisboa.pt>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <kernel-janitors@vger.kernel.org>, "dri-devel"
- <dri-devel-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH next] drm/panel: jdi-lpm102a188a: Fix error code in
- jdi_panel_prepare()
-From: "Brigham Campbell" <me@brighamcampbell.com>
-To: "Dan Carpenter" <dan.carpenter@linaro.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <aKcRfq8xBrFmhqmO@stanley.mountain>
-In-Reply-To: <aKcRfq8xBrFmhqmO@stanley.mountain>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu Aug 21, 2025 at 6:30 AM MDT, Dan Carpenter wrote:
-> If the mipi_dsi_dual() macro fails, the error code is stored in
-> dsi_ctx.accum_err.  Propagate that error back to the caller instead
-> of returning success as the current code does.
->
-> Fixes: a6adf47d30cc ("drm/panel: jdi-lpm102a188a: Fix bug and clean up dr=
-iver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/panel/panel-jdi-lpm102a188a.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+If an error occurs after a successful k3_rproc_request_mbox() call,
+mbox_free_channel() should be called to avoid a leak.
 
-Good catch, Dan! Thank you for the patch. I'll try to be mindful of this
-kind of logic error in the future. Please let me know if you have other
-suggestions.
+Such a call is missing in the error handling path of k3_dsp_rproc_probe().
+It is also missing both in the error handling path of k3_m4_rproc_probe()
+and in the (in-existent) corresponding remove function.
 
-Reviewed-by: Brigham Campbell <me@brighamcampbell.com>
+Switch to managed resources to avoid these leaks and simplify the code.
+Remove the now unneeded mbox_free_channel().
 
-Regards,
-Brigham
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
+Tested-by: Beleswar Padhi <b-padhi@ti.com>
+---
+Compile tested only.
+
+Changes in v5:
+  - Update subject line   [Beleswar Prasad Padhi]
+  - Add R-b and T-b tags
+  - Rebase with latest -next (especially, because of commit f9a4c582e508
+    ("remoteproc: k3: Remove remote processor mailbox ping))
+
+v4: https://lore.kernel.org/all/f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr/
+
+Previous versions:
+   https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/remoteproc/ti_k3_common.c         | 12 ++++++++++++
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+index 8266e11914af..56b71652e449 100644
+--- a/drivers/remoteproc/ti_k3_common.c
++++ b/drivers/remoteproc/ti_k3_common.c
+@@ -155,11 +155,19 @@ int k3_rproc_release(struct k3_rproc *kproc)
+ }
+ EXPORT_SYMBOL_GPL(k3_rproc_release);
+ 
++static void k3_rproc_free_channel(void *data)
++{
++	struct k3_rproc *kproc = data;
++
++	mbox_free_channel(kproc->mbox);
++}
++
+ int k3_rproc_request_mbox(struct rproc *rproc)
+ {
+ 	struct k3_rproc *kproc = rproc->priv;
+ 	struct mbox_client *client = &kproc->client;
+ 	struct device *dev = kproc->dev;
++	int ret;
+ 
+ 	client->dev = dev;
+ 	client->tx_done = NULL;
+@@ -172,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+ 		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+ 				     "mbox_request_channel failed\n");
+ 
++	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
++	if (ret)
++		return ret;
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index 7a72933bd403..d6ceea6dc920 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+ 		if (ret)
+ 			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+ 	}
+-
+-	mbox_free_channel(kproc->mbox);
+ }
+ 
+ static const struct k3_rproc_mem_data c66_mems[] = {
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index ca5ff280d2dc..04f23295ffc1 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+ 				return;
+ 			}
+ 		}
+-
+-		mbox_free_channel(kproc->mbox);
+ 	}
+ }
+ 
+-- 
+2.51.0
+
