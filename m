@@ -1,148 +1,92 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53D2292917;
-	Mon, 25 Aug 2025 07:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756107044; cv=none; b=fzBp2xKkRGl0weh5rUHmG5EUCRvnMDGw7Z8yH0WXyepZP6ID/z/hiMo2xFe1aCUo5X26F5bYwolzrE7YynmTA7Z2KUDsGrqMN2hyjTEjWQqvHZvkGcfTA4A1oe+UHjvHJjI2vD8/nf4EPT3biJBDu+Hfn1c3ghcM7S4/6azBcdk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756107044; c=relaxed/simple;
-	bh=RrKkzMhwHqnnYMjEL02yHKYN21NRLd2hI5l31R+mIYs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QrGp0jGQSpoO9hCliUrwabK2dVzG6wXL9KHhkKZnGGfUnju7wjHV0g6siEv6okTvxubM/x7P7I3wuJFpdL/zJ31nWJ+rBnTKiu7BIhNChNgO+e+27SGUt6CuhvdmCt3q5pLOu3KMr42VB6S0+HuyU1zPWd5rQPfQPIAEU9jOOf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Bf43Z7A+; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D4A22C355;
+	Mon, 25 Aug 2025 13:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1756129182; cv=pass; b=lKTZjlgCidOI6Ho7vWKsftpKZSdCtdC7i0IeIUFLUIPNkfv9sFVs08a1QVh/b1yu1D4OLGZlqZGluVdxYS+77ps89z5XpdJX513v95NfWBkFo3cfdiBuJ3gKvfOl8io4ZaJiBdC62l4JsIyP0C2JW26h6VWV1PuS6ml3B8Ac4Eg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1756129182; c=relaxed/simple;
+	bh=1th5xaXq+vxnxq7TV8vFCIuqpQijEUYAvV+e5m4TpJ8=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=n+KGsepAP+ttykZECWJeEqWgSGPJwGmB0qbi99KymCDtkw+xUh/t5sxMK/Ui/YM4N3CIPNY9n1ivDSNb9W717TijcrCsbTaeJWonaypxUDhEL3rYe1hArMSacqcR6royOW3Z2GC8vh+HI8hVIobb5wF+4uAg6YNJb8RawGeiCoI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b=Mp1DPvtF; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Bf43Z7A+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1756107038; x=1756711838; i=markus.elfring@web.de;
-	bh=x7b7KM6j1olmX7tk4Pi1MmXVIPo5kgG3MZLq5xyTLm4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Bf43Z7A+G6ojwANsnOwGvMsuX6uIyh3jMjJWDa55cVBpY601EcRaFE5yTHlIPAO1
-	 ITTylTFyLy+WljwwX5iyJ7rtDVxQO6VmizUjkCOT9sbI9c842CZOTRS+Qb3DJMJiF
-	 zmAtwkW9YpclqFdgrDZOUzXO4emgaf2RgZQHkU3ykuE3VVvNiv++NR0GqjZgdmS+Z
-	 WXpXkGI3+U2UW2z6OOqoUcxkWmrL5VHreU11GLF30nuIqG4Zsi9yJ+ic20WhMoY0i
-	 C9IeGk4usw0vHKMeJW1Ek2xkRSZuZhC9hBIm4kpLBmrtYGNQyDgyIuxoE5Am1zrcu
-	 gZSQukY3iefxiTbz+Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.250]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N8Vsr-1uUwdb2wXR-0127ni; Mon, 25
- Aug 2025 09:30:38 +0200
-Message-ID: <eb3e0445-39fa-4f4a-aeed-96eadc94657d@web.de>
-Date: Mon, 25 Aug 2025 09:30:24 +0200
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=safinaskar@zohomail.com header.b="Mp1DPvtF"
+ARC-Seal: i=1; a=rsa-sha256; t=1756129146; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=II1IkQEYmuGQ6H7C+JNARmw9QnafOmirdeVPPxUK6sON3Bnjtk0Nc91QZKJo3EORS/WL5sHXxhYJY1/HMF3cIO1QKFfE/b5cxb9CPVOKic7hEJ2ls81KVG9WUUVNiqzpj7wVPJOPzPQURfHiDDq5PYH+2XfBrLquxT6WWfbkQ5U=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1756129146; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=FKk8F91MjrhdBrsJmWWDVqLiiajDBMNfHH23S0mJDh8=; 
+	b=ash4lYSlIqWfCIqRN9ohKb/OQShYlRu6pvbZtAyucbQoC+FHM5dQlYdD60bilLOeYS22tR90Fvz6ROhEpz3kbd1VMGbzb5A9SbzRYgLzk3obCZ3WovZr9apZA1ZD7pfPiNC+q782Z2j+xhgTC1XtrSOZxvM2wYruRfeJf/afduU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=safinaskar@zohomail.com;
+	dmarc=pass header.from=<safinaskar@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1756129146;
+	s=zm2022; d=zohomail.com; i=safinaskar@zohomail.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=FKk8F91MjrhdBrsJmWWDVqLiiajDBMNfHH23S0mJDh8=;
+	b=Mp1DPvtF2z2av+wpSICYC3LAhaq2Z19UlVAoQapHyCcx2zqHqvVEbkM2UnsXo87C
+	3QgBKcVXVXQOzxYYfucypFh6r163OEkjh2rWgc56B6pZi8IESSLvJ5zhkGkuYjcd19T
+	tw3HFE5IHoyNMFuntQy7XGlp1Jz5I+n/o6Ng8lLc=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1756129144652968.7641905688138; Mon, 25 Aug 2025 06:39:04 -0700 (PDT)
+Received: from  [212.73.77.104] by mail.zoho.com
+	with HTTP;Mon, 25 Aug 2025 06:39:04 -0700 (PDT)
+Date: Mon, 25 Aug 2025 17:39:04 +0400
+From: Askar Safin <safinaskar@zohomail.com>
+To: "Bagas Sanjaya" <bagasdotme@gmail.com>
+Cc: "git" <git@vger.kernel.org>, "gitster" <gitster@pobox.com>,
+	"helpdesk" <helpdesk@kernel.org>,
+	"kernelnewbies" <kernelnewbies@kernelnewbies.org>,
+	"kernel-janitors" <kernel-janitors@vger.kernel.org>,
+	"linux-doc" <linux-doc@vger.kernel.org>
+Message-ID: <198e1742f3e.aebc766525693.2818180197972770618@zohomail.com>
+In-Reply-To: <aKXXkvAOhStlS2_m@archie.me>
+References: <198c29e9058.119e3a5c065010.5888624019176274871@zohomail.com> <aKXXkvAOhStlS2_m@archie.me>
+Subject: Re: git: list of my complaints about future graft removal
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IFtSRkNdIENob29zaW5nIOKAnHNlbWFudGljc+KAnSBiZXR0ZXIg?=
- =?UTF-8?Q?for_SmPL_script_parts=3F?=
-From: Markus Elfring <Markus.Elfring@web.de>
-To: cocci@inria.fr
-Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <574a6fa0-00a0-43c2-8e66-cc6443f5cfd4@web.de>
-Content-Language: en-GB, de-DE
-In-Reply-To: <574a6fa0-00a0-43c2-8e66-cc6443f5cfd4@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:sbUIoRHwyzbe1P8FCbNYmE/R/rNOv01LsPWd08M73Kg9f/teBny
- kFyxD6qmbqCLkGlK8f4OciGgZ0SteyAGrkz86UEj3tI0z4ij5PF8OSUZqBfxt2wa1om5wBF
- zBw3PgJfVfz4/CdANXksyh6UvM1+Pj6jYoqQvTP0X9cSwwZDZVWrbZYF/ahUMWZFIQZbxHE
- +vSI4f6h1wEDXNm4FcfQQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NGK5Ld/ho2c=;zDpl6giyDuvkyR5NakLjUaAa5PN
- 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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
+Feedback-ID: rr080112272b2ecadc91e7eb1f0213f51d000075eb1957450486ecf383d1297a28c160ebd501c828707584c0:zu08011227ccefabf497ec7dbb2a0ff8ca0000ca41c970bf781c00f3da03182ce302cb27329ea33b4e7f2e7f:rf0801122bee689ede9ccfa43a3d8725da0000593d27f1e1f1162442177f917251759c21633ed1c5aa6ef2baac6497b9:ZohoMail
 
-> A bit of information is provided about special =E2=80=9Csemantics=E2=80=
-=9D (also in the manual
-> for the semantic patch language).
+ ---- On Wed, 20 Aug 2025 18:11:30 +0400  Bagas Sanjaya <bagasdotme@gmail.com> wrote --- 
+ > So shallow clones should use git-replace(1) under the hood (both on initial
+ > clone, deepening with --shallow-since and --unshallow), right?
 
-The usage of the semantic match functionality influences which default sem=
-antics
-should be applied for the evaluation of an SmPL rule.
-I imagine that the corresponding data processing can become more interesti=
-ng
-when the needed semantics would actually be the opposite setting.
+You are asking me? I'm not git developer.
 
-* Do you tend to look for the existence of selected implementation details
-  more than that source code variants can occur on all executions paths
-  according to evolving control flows?
+What you mean? How git works currently or how it should work in 3.0?
 
-* Would you expect to use the source code search parameter =E2=80=9Cexists=
-=E2=80=9D more often
-  then =E2=80=9Cforall=E2=80=9D?
+I don't know how it works currently.
+
+And I don't know how it will work in the future.
+
+I just want "git clone --depth=1" to continue to work.
+I. e. git developers should somehow take measures to
+make sure "git clone --depth=1" will continue
+to work even if grafts will be removed.
+
+Currently "git clone --depth=1" seems to
+be implemented using grafts, i. e. I see word "grafted"
+in "git log" output if I use "git clone --depth=1"
+(I just tested this on git 2.47.2)
 
 
-Regards,
-Markus
+--
+Askar Safin
+https://types.pl/@safinaskar
+
