@@ -1,117 +1,148 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338684D599
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 Aug 2025 06:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7793D11713;
+	Tue, 26 Aug 2025 07:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756189985; cv=none; b=Q0iMrAVXnsreOgs4ez1PujgJpIc4EdiTacz8X4UPvVsj3aCH9clkLwRAAfWYt//I2kwHgaBlmkp+EuHdl7QQTpg09lcvf849gA4vOuFYVnhxwnHUEgfj2Yl8UYVLC4Kd3OHkIpCQdJx/nX8hoPul173zmadfDqwAWeta3xI7dD0=
+	t=1756193424; cv=none; b=hJqDxrKHYoXYPc8+O6/U1VwFS6eJguHPIOWzK/3Yzn8CNK/o2qDgWa1JOCj8Pe2zpe++LSYwKc1Mf7zcP+91cfU6WmjSejw9AeFrSTq1XgaIlTun3asSNy26YxlVESLyu8Asi1n7nAqYuAO0RmAf3D7FX29D3b2jwuMQUgwg0n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756189985; c=relaxed/simple;
-	bh=k1R700Z2+gqjiMvUOhAJnMVBUMz2mNDlbwad6gs5mnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ohAL9VbzKwSDROIiZUFdo1pAh1Mag/OUll4FiZG771hsudv/WSOes0IvSUpIcPi6MQj2cUAk6C7HwfNgT2iRw3tlcvoNa9z5KLHXhqeqi0AkGZpE8VTTsg3/2vJv4pti19yYMAxdCIyZVLi/Tl7tGRWTPMA6QIqRmmYjCXWfHvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F5K8jR+a; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1756193424; c=relaxed/simple;
+	bh=gUz2UNny8CRb9FjWqKSsSistC+xIL9A8tJaC39E5Afo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qQtU/6RrsVw5H/p7sUfFNt5lPaKjpxyfDNfquvrDfDYJ/jJqB9MbVioLIP15Ig0ywotHjmqLICkz0HMYoWwUt17xCoVVPLAO9qjMaILV2GHZ44CMfOODiwBc9mqF14corAE83cOUPKK3N6eqJ6j+mA2hfZtuZ4nQ774YbXLPJso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AzYzVGaa; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F5K8jR+a"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756189978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZbpsP0JVSHBALAr4RXTkvJiiQWMCbeHRvXA5B+Ppf8k=;
-	b=F5K8jR+ay/cwrAAQBP+VJ1qwu2kYwEXQN0es6vze43XI4sA2Seoj9QCHJ0dQrF14KRg8qt
-	0GH8HvfL6HL5cfHCoJyGyinvhj62hcwi89qq2W+v8i1xRC8dYJ/zVlNAsvo3P/HrUu7Peu
-	8HkYLv47vZvyTdGs1S22cOdyae2diII=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-674-gQKw1sS2MxaC_qZiehrqUA-1; Tue, 26 Aug 2025 02:32:56 -0400
-X-MC-Unique: gQKw1sS2MxaC_qZiehrqUA-1
-X-Mimecast-MFC-AGG-ID: gQKw1sS2MxaC_qZiehrqUA_1756189975
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-afcb7a5d28eso483053966b.2
-        for <kernel-janitors@vger.kernel.org>; Mon, 25 Aug 2025 23:32:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756189975; x=1756794775;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZbpsP0JVSHBALAr4RXTkvJiiQWMCbeHRvXA5B+Ppf8k=;
-        b=oRb7qZZnsQj9LihYN9jGTXRnD2JyrhoYpk/Qj3M5nocUxr+V01SP0SU1qAswRW+2ij
-         F87sL3ajY+jC+Ut5PZmwc8IzjFB7y9FyCwyUZ+C1f2TYYmlT1XysdlsiGdCfwEUMVZV0
-         euvlRI5uEzBo4ZntCIgyjGuBlOiTVkjRH8cva17devHh9DHsZoSCjfV3l9bC4TONO3g+
-         oMhXH+9lG2J/gvDhLk/0RAu2o5yeuRATPw8GxND3LryMEn0rV3jtFbofR1q0aJ1DI32g
-         cbZM8lY3bZAFWn2pAi2KdoUhPOt/Cm97qPWjzZ9IKuwT+VrI6LwAHlJvZRjHBWupqSR1
-         pAXg==
-X-Gm-Message-State: AOJu0YxqEvehYdMYLxys+1qUKVLQKP4QchJNu7yHYmbIwdzUSsU3xdD7
-	KllvAP3IcXl5+TpYQPVhfzg8kazafZ0HVMQIlwGkZLEAR+clUp2HQi716Af6Tv50gDCfZp11j7/
-	fvylzNDBcswkHie7pNlWnGAAEsuR5B42D50YV1XUo5cbawpEYcCidsqlC/QuLI4MPld1CTA==
-X-Gm-Gg: ASbGnctbjXE9GBiG1TzJ3VgClPuHgnZupY8KRMJ6I6LkRDrl8T//i4dJCVju9dOgUI0
-	9vtvNqKz7yuEcoh4Qz7V5k9yaJYu9hA6Pfc7Pv3FcGFwhGIWEywXlhg5fHbJ983yXW8Tr/JzGvT
-	X4VLnxchB+tg2dmWci4NZmj4mYn4Nn5zAAaoGAgrvVZgeNUyo0iaTE3TPc9rMMctlC79x6RZp+/
-	waasokzZmwdOI6Vd8CWQkWH+BtxGcf0ngG3InxtzaTTwbyhJXR3VmAgJ8IOBzRtvu8oKQL5QNTC
-	H389r5D1z5Iwvspxgr4FCUOYRd8YCFxwP+Q5mH8wyF11QP76IsgtkEAbmehyrRlOrQhFDvtDvfA
-	OXLPcggsWHQ==
-X-Received: by 2002:a17:907:86ab:b0:af4:11e1:f877 with SMTP id a640c23a62f3a-afe28f162a8mr1291526166b.21.1756189975116;
-        Mon, 25 Aug 2025 23:32:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFmSRbT/Wld10PpqjSUmNkXsFiZtdZslyiz4ToZl4XaqIzH5GqNA9prjgy3b7ugqVJ4b3iyig==
-X-Received: by 2002:a17:907:86ab:b0:af4:11e1:f877 with SMTP id a640c23a62f3a-afe28f162a8mr1291523966b.21.1756189974678;
-        Mon, 25 Aug 2025 23:32:54 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61c3174f806sm6346137a12.52.2025.08.25.23.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Aug 2025 23:32:53 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in DRM ACCEL DRIVER FOR ROCKCHIP NPU
-Date: Tue, 26 Aug 2025 08:32:48 +0200
-Message-ID: <20250826063248.32153-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AzYzVGaa"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1756193418; x=1756798218; i=markus.elfring@web.de;
+	bh=gUz2UNny8CRb9FjWqKSsSistC+xIL9A8tJaC39E5Afo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=AzYzVGaaEXw+WyKb3Wmg5UL2BQXmLalWHeiFT/myqlUBu+EAIduZ78lqjvP9fgIE
+	 yY/JtJ0qZ7BHixkVX5NzOYEf4Cww/GObKzEhmJToc6uBVktAS1FB3pzfYsvZop4C1
+	 nWwLWTucRZo606B8v8BgvHLOF1WL22ZfpzIQ6CyDMaXaPniLSOc2/0f7z8mZQSQRJ
+	 Aroe8ED7E87U4IFIXUuxCSeRqeSd7BhpuxItFgb+BFtchrdE29K/F0QGr0opgqo0U
+	 yMTBXYlAm5SXdXNP5jvk+CpYDxPgUnX6TOw7pUDodvAkEL9MpwoZh9CoCaVnnd8ea
+	 UtfScRbbNMf8NFaGCQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.219]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mi53D-1uLtEZ1djN-00mKI2; Tue, 26
+ Aug 2025 09:30:18 +0200
+Message-ID: <f24b6e34-a9ae-4bfa-97f3-95503a732a88@web.de>
+Date: Tue, 26 Aug 2025 09:30:17 +0200
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?B?UmU6IFtjb2NjaV0gW1JGQ10gQ2hvb3Npbmcg4oCcc2VtYW50aWNz4oCd?=
+ =?UTF-8?Q?_better_for_SmPL_script_parts=3F?=
+To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr
+Cc: kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <574a6fa0-00a0-43c2-8e66-cc6443f5cfd4@web.de>
+ <eb3e0445-39fa-4f4a-aeed-96eadc94657d@web.de>
+ <alpine.DEB.2.22.394.2508251521570.3563@hadrien>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <alpine.DEB.2.22.394.2508251521570.3563@hadrien>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uiTJj3M/UJOp3I+pqk4oCQE5TXqwBqOcS6PbYOsgP3NgBa/NZOh
+ oQFXlRrT2mGmo0L1JfgYP9rQZZ/qpCOmNaAYkY3vDyJjzFtFRDyzyournqjVtC6diVfUclS
+ Lxqr9Y5M9LwYDnlVUgsR7dNsw07Yc7eOOAqxVmDcITzkiwKboW6d1kP8UX8AQkxZAtHDr38
+ yML8IdGVNW7UdJm/HUPGg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8LYUcq8mQO4=;GBU0CG0fXpyUCGgV864gQlmkFVr
+ 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
+ HW/UaY24gWp5WYhQGQUTP4fEIqte
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> The default is exists for use with * and forall with transformation, wit=
+h
+> the reasoning for the latter being that when transformation occurs the
+> trasformed code should be consistent.
 
-Commit a7352c849492 ("dt-bindings: npu: rockchip,rknn: Add bindings") adds
-the device-tree binding rockchip,rk3588-rknn-core.yaml, whereas the commit
-ed98261b4168 ("accel/rocket: Add a new driver for Rockchip's NPU") adds the
-section DRM ACCEL DRIVER FOR ROCKCHIP NPU in MAINTAINERS with a file entry
-referring to rockchip,rknn-core.yaml. Note that the file entry is missing
-the part rk3588, compared to the added file above, which it intends to
-refer to.
+Will corresponding development concerns be reconsidered in more detail?
 
-Adjust the file entry to the intended file name.
+Would you understand the source code search parameter =E2=80=9Cforall=E2=
+=80=9D in the way
+that it expresses a stronger data processing requirement (than the setting
+alternative =E2=80=9Cexists=E2=80=9D)?
+https://en.wikipedia.org/wiki/Universal_quantification
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is it known if such a quantification difference would influence software
+run time characteristics in significant ways?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d4bddc462c07..a569828c9f3d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7542,7 +7542,7 @@ L:	dri-devel@lists.freedesktop.org
- S:	Supported
- T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	Documentation/accel/rocket/
--F:	Documentation/devicetree/bindings/npu/rockchip,rknn-core.yaml
-+F:	Documentation/devicetree/bindings/npu/rockchip,rk3588-rknn-core.yaml
- F:	drivers/accel/rocket/
- F:	include/uapi/drm/rocket_accel.h
- 
--- 
-2.50.1
-
+Regards,
+Markus
