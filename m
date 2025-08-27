@@ -1,120 +1,83 @@
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E08F350D41
-	for <kernel-janitors@vger.kernel.org>; Wed, 27 Aug 2025 13:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556F4298CDE;
+	Wed, 27 Aug 2025 14:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756302204; cv=none; b=tY6fSmsPQfViHjJ6W9b2Zujhb/oTUREnS33M5VDuI4TxEoND8qBHB8/R8cTgFUi9dP4SkrC5A17F26WW+pdF0LjYgKCpARHruBTzKI+qvI/XntOd68xPFhy2ot8swQHT8TAm5xh3bALXbws8K+VJhuxmTE7NOWZKiXRoQeH7eNQ=
+	t=1756303805; cv=none; b=K5eGdW1FHBlig8HgtyzAFb9hZwwX7lLxkw0fGnhvuEYuW579VptcwuD7F0OJlEee06tJmjHsQQjtsP3KNGuvgzFXCeu4ZhHG4Bs6PY21LkPKg1KQmDv0lLb+EAmesP89m0nOf9OLAMsNB3jBfgtocct/H4np20dZTR1uTe8DZRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756302204; c=relaxed/simple;
-	bh=ROC+BxYJvxo4Ra+SaImrJ8k/XraQYmEOGcoclXesz9k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s3U1sF9aWNxrqmxsbi3GK6Xj/P6cmMbWTbE+3lr7ALq5x+kAYJuIiushRrxRGdlua/xiVctB/ikDVWFihA80zEZlrOAqnw5vHRHnxMRduDdLwS18eE9njQuQ2FHjMRez9OLav8FsDGXUpCbf8cSsKjKvcWa0pVo487LA4A7iVZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HCL9JgtT; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1756303805; c=relaxed/simple;
+	bh=8/Si6s7pD0alaFUOivWul7qGPTzCS3umWpEZiCw7aVU=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=qPQbhIGuBidgjmHwpX5PR/jTJubOnZS7GiSKXnlU5bM0HL9r1nmJ7GbNFk/wp+TKkWh2eHIJhrQt1UZjlRgivWdwZmdZ7ed7YGBgDsDS2ArlHl4Jm6EqEZDyhAG8QP/F1ZWKdbTdEzXjluZTHGQZDW4kMBWddXL34L0yrcRaIOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CR+SKdFj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HCL9JgtT"
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-74381df387fso1862212a34.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Aug 2025 06:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756302201; x=1756907001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tOO5DJiHFR3uaAgcdyHCL1QPgCU//KGOS5fO6obbhFo=;
-        b=HCL9JgtTNHQfyCP2h1cHz7pMZqma08BRAAK2+mSUQVzTxiI30rAvL+8tHZTZoOJxsh
-         fIXrTLohDpP3ymWNnK7jvPbfV9godm63Gqgakqqi1qmPV00xbO1G8ZMQZVRSS/pF6Y3D
-         OPe/93TvkXwVSp4hSUocup6eE7cYMcLyclMYQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756302201; x=1756907001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tOO5DJiHFR3uaAgcdyHCL1QPgCU//KGOS5fO6obbhFo=;
-        b=EDuSGsMru0gTH8y9MZBY4DnBD87cAC/O7IILQXKek37lSx8C/2qYAw2fFn4HFVMY5f
-         VoLPzVnUWOTE5aE+Li45YIbqOZkFJPEwBzHI8QvD9YAViQbxNPkgqaYzx8VIy87XeAn0
-         DiJA7oELIVczyVRQRoQQjPnsb8PQEkwrbIlizLjqTxAimpTiqL7KIts2jRFfdbS9gx8B
-         5dxsfBUAo2xz/sGakf+xHDFP3l+oIhyDH6pves/FPDzGkdVxfHOxLnqkVryLh8GMWLNQ
-         pTO08VTuuXkwW5ab/9eiLtKcflSMrElnyhpA4p9ohSH+yn1gRZZT5LhC8dxmTwS2vVZ1
-         X4+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVSbGKB35N2ZuA78yXH7c6/nKTF+NeILSpq4o2N7rUkcziD0zfFUm2GVytXc+gIh0DA4KM86XMXhKWJnp2TucI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+mXxHqRrPB2MG3Gh41Rvt9b8oQ2E9KHzIl1Fe3k4YtClT6buG
-	tr+YZsQPK9fWrW6AftiuNsHwpWbYEKm0HhX/2PPFXlRgxuz/3cbK4M1FM5XQYen+FiSnqhAht8h
-	KtqFvfALp9kgdba4vAzzTrd4lqixExPGG87dSEO4f
-X-Gm-Gg: ASbGnctmTIle1tGKpFOte5VddCimT+uZc/zJhXD5JojfsMcj/KaQEmrHRyYotYszwal
-	y1ZbGNkoOILCz5VhOgAjOMmweHszsKIkml5IEBIZrM6D2DHjHCk2v/uMTk1LL/6RzqKipHYj2is
-	VYs+3oXWnIKv3J+n/vzpOQlbV+0CW3V+8tWFAgDZQXq52aL6UPBOIcrTrjymXnAvystMIIfvEej
-	fWXwJv+Hll9y9wSHkoHbFM3fdG35atJxWY=
-X-Google-Smtp-Source: AGHT+IFML09d6OTln5JwHTjKrkwtVYwzmCr1Bxp6r1uvPPk8T241FrUzKZ8dLpbh9eYjr9tFvagSaaECgl+Ih/FJIJg=
-X-Received: by 2002:a05:6830:d18:b0:742:fd7f:e105 with SMTP id
- 46e09a7af769-74500aafdb9mr10828847a34.19.1756302201636; Wed, 27 Aug 2025
- 06:43:21 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CR+SKdFj"
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:1331:996f:e361:948:c527])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7627D300E;
+	Wed, 27 Aug 2025 16:08:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1756303738;
+	bh=8/Si6s7pD0alaFUOivWul7qGPTzCS3umWpEZiCw7aVU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=CR+SKdFjPJdWsKZtpgyOrMOxnYNm0/ptxzF+AL5qPF1dQQEjmkUH6gW85nBy33aIu
+	 TAianavEca1x6vXvpnEGbjsQQytvtzn1avU2X8RfR7QdLBPG/LMb4E550l5HnpoeU1
+	 bWnjlIpJtUKvYXpDawYXvPspTZoyNiTbPRuiH7+I=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aK8Au3CgZSTvfEJ6@stanley.mountain>
-In-Reply-To: <aK8Au3CgZSTvfEJ6@stanley.mountain>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Wed, 27 Aug 2025 21:43:10 +0800
-X-Gm-Features: Ac12FXwM35V_oehyXQvReVca6XRrKSLZotqLpHmniBQa5j8YidPWQocMII9oIgU
-Message-ID: <CAEXTbpcpJsL0te+DA=5PEJjkawZ23Di3v20hdMqUj3SeB_Y82w@mail.gmail.com>
-Subject: Re: [PATCH next] HID: i2c-hid: Fix test in i2c_hid_core_register_panel_follower()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-	Douglas Anderson <dianders@chromium.org>, Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
-	Wentao Guan <guanwentao@uniontech.com>, 
-	=?UTF-8?Q?Bart=C5=82omiej_Mary=C5=84czak?= <marynczakbartlomiej@gmail.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kenny Levinsen <kl@kl.wtf>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aK8CATf4EdcYcTe-@stanley.mountain>
+References: <aK8CATf4EdcYcTe-@stanley.mountain>
+Subject: Re: [PATCH next] media: ti: j721e-csi2rx: Fix NULL vs IS_ERR() bug in ti_csi2rx_request_max_ppc()
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Jai Luthra <jai.luthra@linux.dev>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil+cisco@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Date: Wed, 27 Aug 2025 19:39:55 +0530
+Message-ID: <175630379558.1633224.13627427442522908758@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
 Hi Dan,
 
-On Wed, Aug 27, 2025 at 8:57=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Bitwise AND was intended instead of OR.  With the current code the
-> condition is always true.
->
-> Fixes: cbdd16b818ee ("HID: i2c-hid: Make elan touch controllers power on =
-after panel is enabled")
+Quoting Dan Carpenter (2025-08-27 18:32:57)
+> The media_entity_remote_source_pad_unique() function never returns NULL,
+> it returns error pointers.  Change this check from a NULL check to an
+> IS_ERR() check.
+>=20
+> Fixes: 31f91c5224cd ("media: ti: j721e-csi2rx: Support multiple pixels pe=
+r clock")
 > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  drivers/hid/i2c-hid/i2c-hid-core.c | 2 +-
+>  drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c=
--hid-core.c
-> index 99ce6386176c..30ebde1273be 100644
-> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
-> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-> @@ -1189,7 +1189,7 @@ static int i2c_hid_core_register_panel_follower(str=
-uct i2c_hid *ihid)
->         struct device *dev =3D &ihid->client->dev;
+>=20
+> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/driv=
+ers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> index 3992f8b754b7..b75aa363d1bf 100644
+> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> @@ -497,7 +497,7 @@ static void ti_csi2rx_request_max_ppc(struct ti_csi2r=
+x_dev *csi)
 >         int ret;
->
-> -       if (ihid->hid->initial_quirks | HID_QUIRK_POWER_ON_AFTER_BACKLIGH=
-T)
-> +       if (ihid->hid->initial_quirks & HID_QUIRK_POWER_ON_AFTER_BACKLIGH=
-T)
->                 ihid->panel_follower.funcs =3D &i2c_hid_core_panel_follow=
-er_enable_funcs;
->         else
->                 ihid->panel_follower.funcs =3D &i2c_hid_core_panel_follow=
-er_prepare_funcs;
-> --
+> =20
+>         pad =3D media_entity_remote_source_pad_unique(&csi->vdev.entity);
+> -       if (!pad)
+> +       if (IS_ERR(pad))
+
+Argh, my bad. Thanks for the quick fix.
+
+Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
+
+>                 return;
+> =20
+>         ret =3D cdns_csi2rx_negotiate_ppc(csi->source, pad->index, &ppc);
+> --=20
 > 2.47.2
 >
-
-Reviewed-by:  Pin-yen Lin <treapking@chromium.org>
-
-Thanks for catching this!
-
-Regards,
-Pin-yen
