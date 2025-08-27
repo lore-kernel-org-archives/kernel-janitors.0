@@ -1,140 +1,151 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657B1223DE5
-	for <kernel-janitors@vger.kernel.org>; Tue, 26 Aug 2025 13:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0A0343D83
+	for <kernel-janitors@vger.kernel.org>; Wed, 27 Aug 2025 09:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756213888; cv=none; b=k5bL7QoDvTAnRwH9cNXhani1eq200TJ2JxIswiqzerzut1MIKsNbKSP3YyH3kBfr2lXuML7XB/B2mrX8eYUKpNy3ayfMGLshkBLy9qaT4m8Whm20BqGjihxb9CRFw+VfcvHA3tHZmU0/BC/9MsYeQIoGF4f483kD17JNl6r9D0c=
+	t=1756285703; cv=none; b=R/sqaJnO8O9sWYaCZ1+CZLVqZRQDaFYjtmeNw6kdgpDwIgz3AnPpQj7DNrU1vmQdEWeJfexjmVgR95CyotaI9wc5gvzu8051dJ0SXz3/XLvy8i6jk6BuuA+V2OK/p5WhZ5CAoH3jyEpJHnfrYkWAjYjD948wUI5T/MayivcCl5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756213888; c=relaxed/simple;
-	bh=BAqP7X7PNCuyXBku8FqJkCVu6dEKYvlnXUqpclgUVzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wt1oY6ihf3gL6vA7oHRrCZAjVBTTD5ScJKrmosDNdWXE+GODc5n6JoWwFuZF9mC8L5LsEPQwRLlBd71YR3JlqbTlO9a7FgR5WrvxjYUcTEQJbI8yWIOQx0qZZGY5/TfB6w11vtVqlRJ0Kfv/kKS5aRsm0wKPDEJuxe3c4QSqX7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ukpuwkX3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5bD7Uo/p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ukpuwkX3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5bD7Uo/p; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1756285703; c=relaxed/simple;
+	bh=HSoyRRGbqwKrrPWn0b3Gxv3O7atFcfaJ2Ou+bHXSKWI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KYfQMBXWJ/0jSQbPW5kwMwiEX/KUMHCuULMQp7XyHqwR2Y3SsbBqcbpgCK09/FjEaXUvy4JLtlH6IQ0ubeovoXHQCYRlzkX0ST6Q38hp15SQ2+jxEqHFmpObqPy1w5XwZmPdF1y6MalRK89SbSD5kyqN8/lclXYOTmSD6ENF940=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hi6o7ZZA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ukpuwkX3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5bD7Uo/p";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ukpuwkX3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5bD7Uo/p"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 96256211FC;
-	Tue, 26 Aug 2025 13:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756213883;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VsK5/Tv+Gky5jivXNK3PJEjWTeh9Qjc7fIj2RjAjYQU=;
-	b=ukpuwkX3EEpFSc/ovhJvNmEwYvWX03k1rfdozog6HXO95N4z0ICnos5tqDhwimE1NOir67
-	GGfvGaimM+uIWy3otPLbhfd4O6mCs1XjMTo0XoKOXp7M12Bqw9OINPzC+GDWZEqmn4UsHp
-	jeqjX/ZcZap47MnAIfiRZtz0Emgrako=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756213883;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VsK5/Tv+Gky5jivXNK3PJEjWTeh9Qjc7fIj2RjAjYQU=;
-	b=5bD7Uo/pG/h8L1+2NHC1Pn+MdObxoB0tqvPIFVWLSpwEyMwPVgJkvdfBNFzN4gOl8QIprt
-	1EVaMN/SMDZ7eeDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1756213883;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VsK5/Tv+Gky5jivXNK3PJEjWTeh9Qjc7fIj2RjAjYQU=;
-	b=ukpuwkX3EEpFSc/ovhJvNmEwYvWX03k1rfdozog6HXO95N4z0ICnos5tqDhwimE1NOir67
-	GGfvGaimM+uIWy3otPLbhfd4O6mCs1XjMTo0XoKOXp7M12Bqw9OINPzC+GDWZEqmn4UsHp
-	jeqjX/ZcZap47MnAIfiRZtz0Emgrako=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1756213883;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VsK5/Tv+Gky5jivXNK3PJEjWTeh9Qjc7fIj2RjAjYQU=;
-	b=5bD7Uo/pG/h8L1+2NHC1Pn+MdObxoB0tqvPIFVWLSpwEyMwPVgJkvdfBNFzN4gOl8QIprt
-	1EVaMN/SMDZ7eeDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7BFDF13A31;
-	Tue, 26 Aug 2025 13:11:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HZQeHnuyrWgaLAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 26 Aug 2025 13:11:23 +0000
-Date: Tue, 26 Aug 2025 15:11:21 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, Leo Martins <loemra.dev@gmail.com>,
-	linux-btrfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hi6o7ZZA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756285700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=btmAfnbOXrpj/8xKgw2LcnKjNrejkITdGU2HjYixq9M=;
+	b=Hi6o7ZZAuMxbQuyKowH91qdDM/b/adER79TeDLNS6mMxmRtvovs8ZAAqSxB8x4EVt2g3+L
+	1UFaw4rQ+bUyHedyVUb5KBu0ZTybmoZXm5PQkkf1x0vYtgxlcPSh+Ypvz5yPkCQuW0zbXS
+	6xbtP4TXLQymcWaJeJaMgq7zSnLvitE=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-577-4e3cGyYfOwGGyP7rtf8OoQ-1; Wed, 27 Aug 2025 05:08:18 -0400
+X-MC-Unique: 4e3cGyYfOwGGyP7rtf8OoQ-1
+X-Mimecast-MFC-AGG-ID: 4e3cGyYfOwGGyP7rtf8OoQ_1756285698
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70d7c7e972eso143198136d6.3
+        for <kernel-janitors@vger.kernel.org>; Wed, 27 Aug 2025 02:08:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1756285698; x=1756890498;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=btmAfnbOXrpj/8xKgw2LcnKjNrejkITdGU2HjYixq9M=;
+        b=fh9EheJXtimM/b2yzuqi0303oBYO68FnxjQUYt8kAPmMq2/Vw8/ul7vPJuxcC3kXN3
+         3v6kQHfVzDovXDMT8svm54Iu41IuRGMrC71RsVRp4922Nf318PiwvIKW/SlMQ7J4y1D7
+         GId0SaMog8P4ACnz+KinBunxgsdcquHdWT/YbkbiquKfmNXZc7NiFi+FnP8ItovunuIT
+         T/ul0vw+dP4OsJ0DTmZIa1THil4VzQDdcjHjsvufH8wQ/XNrv/ZXYdfVD2G6J4o7OC1D
+         C1/Ew+cS3PNuDOS/Gn0ZUE5CQlgjRpK/JNpbH/EWxXeIJc3yl0e/k5p5iHTfuNJuZRTp
+         K0KA==
+X-Gm-Message-State: AOJu0Yy/Y2HQprAabwwXW3aVLIZdN1z5BbUbL8l+VyvssMliDR27jF8Y
+	f0Ob+xuaaV2JpK48vPkUbgimC834vxEMGclz8dE4ByeChe80pWkjvoJraPlxTbOechpFn9DepcT
+	mtMyG+f0G9AV3gfUm1hOaRmSKp7Pm0dqbWyedgQ/PDyvi/m0Zkv/F4fb8+kBtO20hCixz2Q==
+X-Gm-Gg: ASbGncu57FyH/nV0C3KKRp/gYzSBkYeobN3kdXsDmL498vzSYt3g4iW8xfjKfmu5u6+
+	dtkd0Ms7EZmbHFQesaGs3l5GmYrHhwHm7RZ0Smpm/KR746vMdI41a03cqoYhHzIinRErWXJkAAG
+	TLYwQ8gsQhDjgHUR+UbyXkS6uzpQYOvBryZqumvAJheadZjNTZbVxqgA4NNW3w2Asbh9mZZUurh
+	e747Rgojcrm2funyyWz91G7qdyzykPLOINTDIRDAMT2pYQvQwordBduFP4P/MA1PluDFYyGI32F
+	hstVSnCNisINbQRnRwAWFSIbZaKBfz1PHcMg9MUruG6/DcJji2JrfpnSg6JhemFXWIPfgUFfMr8
+	++U//KHH53g==
+X-Received: by 2002:a05:6214:f2f:b0:70d:ad2e:ced8 with SMTP id 6a1803df08f44-70dad2ed051mr7559326d6.54.1756285697878;
+        Wed, 27 Aug 2025 02:08:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGKnx0Sy0uoUmTwX2Z3OLZ81WV24S78smOZB6VPkrYeFf13KoSmBl+HyiIGutNgl+jaQogtkw==
+X-Received: by 2002:a05:6214:f2f:b0:70d:ad2e:ced8 with SMTP id 6a1803df08f44-70dad2ed051mr7559106d6.54.1756285697478;
+        Wed, 27 Aug 2025 02:08:17 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e01:ef00:b52:2ad9:f357:f709])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70da72b3c1csm81764646d6.58.2025.08.27.02.08.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Aug 2025 02:08:16 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] btrfs: move ref-verify of btrfs_init_data_ref under
- CONFIG_BTRFS_DEBUG
-Message-ID: <20250826131121.GB29826@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250826122901.49526-1-lukas.bulwahn@redhat.com>
+Subject: [PATCH] ext4: remove obsolete EXT3 config options
+Date: Wed, 27 Aug 2025 11:08:08 +0200
+Message-ID: <20250827090808.80287-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250826122901.49526-1-lukas.bulwahn@redhat.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-2.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[fb.com,toxicpanda.com,suse.com,gmail.com,vger.kernel.org,redhat.com];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.50
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 26, 2025 at 02:29:01PM +0200, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> 
-> Commit dc9025c1a4d8 ("btrfs: move ref-verify under CONFIG_BTRFS_DEBUG")
-> removes config BTRFS_FS_REF_VERIFY and adds its functionality under config
-> BTRFS_DEBUG. This change misses a reference to BTRFS_FS_REF_VERIFY in the
-> btrfs_init_data_ref() function, though.
-> 
-> Replace this reference to BTRFS_FS_REF_VERIFY in the btrfs_init_data_ref()
-> with BTRFS_DEBUG.
-> 
-> Fixes: dc9025c1a4d8 ("btrfs: move ref-verify under CONFIG_BTRFS_DEBUG")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Thanks, folded to the patch because it's in the development queue.
+In June 2015, commit c290ea01abb7 ("fs: Remove ext3 filesystem driver")
+removed the historic ext3 filesystem support as ext3 partitions are fully
+supported with the ext4 filesystem support. To simplify updating the kernel
+build configuration, which had only EXT3 support but not EXT4 support
+enabled, the three config options EXT3_{FS,FS_POSIX_ACL,FS_SECURITY} were
+kept, instead of immediately removing them. The three options just enable
+the corresponding EXT4 counterparts when configs from older kernel versions
+are used to build on later kernel versions. This ensures that the kernels
+from those kernel build configurations would then continue to have EXT4
+enabled for supporting booting from ext3 and ext4 file systems, to avoid
+potential unexpected surprises.
+
+Given that the kernel build configuration has no backwards-compatibility
+guarantee and this transition phase for such build configurations has been
+in place for a decade, we can reasonably expect all such users to have
+transitioned to use the EXT4 config options in their config files at this
+point in time. With that in mind, the three EXT3 config options are
+obsolete by now.
+
+Remove the obsolete EXT3 config options.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ fs/ext4/Kconfig | 27 ---------------------------
+ 1 file changed, 27 deletions(-)
+
+diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+index c9ca41d91a6c..01873c2a34ad 100644
+--- a/fs/ext4/Kconfig
++++ b/fs/ext4/Kconfig
+@@ -1,31 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+-# Ext3 configs are here for backward compatibility with old configs which may
+-# have EXT3_FS set but not EXT4_FS set and thus would result in non-bootable
+-# kernels after the removal of ext3 driver.
+-config EXT3_FS
+-	tristate "The Extended 3 (ext3) filesystem"
+-	select EXT4_FS
+-	help
+-	  This config option is here only for backward compatibility. ext3
+-	  filesystem is now handled by the ext4 driver.
+-
+-config EXT3_FS_POSIX_ACL
+-	bool "Ext3 POSIX Access Control Lists"
+-	depends on EXT3_FS
+-	select EXT4_FS_POSIX_ACL
+-	select FS_POSIX_ACL
+-	help
+-	  This config option is here only for backward compatibility. ext3
+-	  filesystem is now handled by the ext4 driver.
+-
+-config EXT3_FS_SECURITY
+-	bool "Ext3 Security Labels"
+-	depends on EXT3_FS
+-	select EXT4_FS_SECURITY
+-	help
+-	  This config option is here only for backward compatibility. ext3
+-	  filesystem is now handled by the ext4 driver.
+-
+ config EXT4_FS
+ 	tristate "The Extended 4 (ext4) filesystem"
+ 	select BUFFER_HEAD
+-- 
+2.50.1
+
