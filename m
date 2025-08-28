@@ -1,123 +1,196 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B805D30C637
-	for <kernel-janitors@vger.kernel.org>; Wed, 27 Aug 2025 23:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2C41373
+	for <kernel-janitors@vger.kernel.org>; Thu, 28 Aug 2025 09:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756337938; cv=none; b=J/wQ5xx0KuaA80qkrrgUKpDDSRNGs1wZwcYy5ui2mr34nYLyfAT3D8l3Qr3eWJNjWsptSD7cO6PajEACtxuELAGsagNmX4J0bgLZ8J6nuJBEgHareFulbeJDEB+PYZgjDnitJEYtV/ZMJ4iiHv5gfX7gcXEauOVy1kbdgLtD6YU=
+	t=1756372379; cv=none; b=Tf1TOnPjQmMSnAhPIwSOUOfy+IAQz/x9oQhMm9CNSIGLDMNY6IM9DoxH0s5EmajLR0EpE4mtfy0S3tji0MkxoqfNkQ+JP33wU3Ia31Man39w7uVfhh7/Ujy2f8Q6kMFw8XY/1F/RYGK/EvedUCOX2UXzBH7h6Ax7oMrjbcplUMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756337938; c=relaxed/simple;
-	bh=MNeQOS0pzr3dprcINe5o9nkq6nNaZGCx++2bS8YcTKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kL23wjFd6xWMd+3Ey2ARL8x0KJUV9RuAs8OEpmacmvSPTmwFS2DCP4hYjfJU9EXWQLGrjiYFww3NhJbF2bNJEZj1jRG6o/1PKipYJC8CnyhVzwCEuTPqQr8ef6VZu/isyT9UeaKIOUfED34vx/2caHQbAcoyNnnirAIpjMp+Ncw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aHuclbnn; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1756372379; c=relaxed/simple;
+	bh=fnqeH2S/ZooAjeV/GAmQPx2ZLjQQGkor23D7VbntDU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ew2J03YP331GrTbHHAoGbv8JuLBnVS5CtDdVypdRDrCejJa5ldIEBSZAQpvzxr2HfNTcXNZr9s7nlqZFFcm5NFf8IOPYOpLh2QnsBz9uZVw5tnNramuo4hGn8wTAJbRUoNsOIW/sD2R3h0wBK7S0pECxkPIh6cRsG1dqvF7uL5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NYswhJap; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aHuclbnn"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-771e4378263so356032b3a.0
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Aug 2025 16:38:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NYswhJap"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b00f23eso4204145e9.0
+        for <kernel-janitors@vger.kernel.org>; Thu, 28 Aug 2025 02:12:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1756337931; x=1756942731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4COsJov1R6T5+fEFFn1/lYQvnIbPTGcTpVNB4EmSuqU=;
-        b=aHuclbnn5a8gZebPt1zWX/2qqIQzQpnexgouymDJ1Nu6UamXjImIjaQXRi7/A3oIec
-         zoeTBu2Y/ZRWnLT5Nb/Nq3sag14pYhiOJiegFojNrnc6Rq7CEy7jrg3vvGzDBUyBBsOr
-         dijs+WlC5ODkeERJc8UVWyrNLhyN1s5Wrms6A=
+        d=linaro.org; s=google; t=1756372375; x=1756977175; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wyW2xbXiIG+NwpcX2N9e9mL2ILieuiGVvkRTNRcJIEw=;
+        b=NYswhJapU6BYexU23s3DSk+g7Q/UmEMTqOihP30VhugeUeAISCXyXJmM4BCS464qtt
+         5r/YPL5fjWEQaV1gQAg2mR+gHslxRdytL2Wcx/jDq8QfAb5jN5PhPjTOsQtYfoMcUGi0
+         5Y1Kr4aRc6WYwO5cnfeYA/03MM+Zr5s3zTF/DxPDyOpX50SZ7Skr/jRW5AOcD2VRfZ5L
+         xnWL3lqq/QWa7ioJ1AUmLs98L+5r12CYVn2PHORXXCg540q1Px790sxlWxKcv6XyIk01
+         k+GT8RC8YknfYjo00UYOhfbgCGnnGOfNr4tO8NfouzfPOwWUs5dfKGfqgna6hPJ0p26F
+         xSyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756337931; x=1756942731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4COsJov1R6T5+fEFFn1/lYQvnIbPTGcTpVNB4EmSuqU=;
-        b=QgfVtPmRy6Dvlgyl0BhlNeL7s3kYr7pf/gZHxU43h96T1Dlh6JKYOSb1y+ntVLpGpN
-         9MLYMLJMSMZllqNHqTAn0mywNO17pLFLXX9ardVa4J7Hf6Q7mk0TvWbUqXJ+vLKOmI6T
-         8Pcbky1wwi6VufUMrDjlToNpQbDVoKko61PMnFy8+m1XQZwHgt8qhv2I7/o54+rG5BIA
-         MfeG7fZq74MmitDh5EwDrSv9SUIWsxEioTnKu7rvodCqUj30w/lug5vpfC5qi/9I/k+t
-         r6uONY3jE6AUZ5ZcJTP7Y/iPr0D7CEvEH3Ix8bsMLibNOT7qA/yUbwGvnDuSrLpN4Yo6
-         fQAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnefanF1rPf0d82T+GYC1ycYwQda8SySZ/aegtPyG7Zwx1MntFu3QCrPDq2QloC696JiaYM7xGrdIW3TqPVNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzApV5oLhmKrlu4IUh4nLeqo/XckYXgZHcw3RNTGxIkZ9WfMqqO
-	ev2EAcxil4pP7dmxdZd3laDaKzzfDeIXnauTWM4reXWhEkLpVATZWNVzRMXYvWDqRuPga06focz
-	4NsE=
-X-Gm-Gg: ASbGncsr/0CywdXMqykJRNudXTa/Z4sxtBYu8mPjSvzJj0qJZizMYaYg0TXChA6krlV
-	Q55l40Zn2XWhJNqacqwE5T+pewwzIcjrWNfATozRqnf+q1fuPWxlWlyLsLxHIobpsorX+NWJ0vN
-	hhya7kCFY01WFNKQoO1lJkCCmJs1cmHPEzU7qlP+SdAKF16Y0RlytNtwA7ZWz5qRp/AwPNF94+V
-	LaIWlv/Wwe1l6eBKb51uYnIF+4lIP3QKMf1jKNTuUDHM3O24DO1wv5yvdrgwSlzjEh370kkOMl0
-	yT048Iw2vDUnXXsvkSdC0kNP0DmNyPpWJ4SnT9LleNX49XCGkp1l/nVfSk3ZuXCvkXsrhLCkD9b
-	kKtHl2aQibGnEIJIhQlIY6O2uPIjd2mMRnyt80nNN0wYnkp5FIijg8QGTDsqTpwZaew==
-X-Google-Smtp-Source: AGHT+IFQMIVdzseARBNuGmZsISDm2U6pNqbVVlEhVoQIIE0qtoTfnEyln7a4+1Vnz86LEnRiSUuLig==
-X-Received: by 2002:a05:6a00:b45:b0:770:556d:32e8 with SMTP id d2e1a72fcca58-770556d5e86mr18234913b3a.24.1756337930933;
-        Wed, 27 Aug 2025 16:38:50 -0700 (PDT)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com. [209.85.210.178])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7705708b42fsm11154914b3a.80.2025.08.27.16.38.49
-        for <kernel-janitors@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Aug 2025 16:38:49 -0700 (PDT)
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77057c4d88bso400952b3a.2
-        for <kernel-janitors@vger.kernel.org>; Wed, 27 Aug 2025 16:38:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXK7rlGuJIrOA8ZY8E++5rjclmtld8s0EvWWuG9kq/CcHwarnKKQQeXQqiD/gYRAeV1aOg3nK81nyewzzfCy9M=@vger.kernel.org
-X-Received: by 2002:a17:902:cec2:b0:245:fe27:fe80 with SMTP id
- d9443c01a7336-2462eeb004cmr295833995ad.26.1756337928476; Wed, 27 Aug 2025
- 16:38:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756372375; x=1756977175;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wyW2xbXiIG+NwpcX2N9e9mL2ILieuiGVvkRTNRcJIEw=;
+        b=VE8405CzpAcsn0F78ig8sHz+W8ZdW8Uv0COoMpvQkwSU+jG6QJSEfLvAoH2HDhiLNd
+         UDwrbMKp1TQQ4/FG9mn9zMTiQYIuGur/YwunSbt0pFPPeO5oDQocQtZUzkxexKIENP3v
+         QUpkHIJtlgoY4aWU6MytEbxKwGaBw5id+6E3RW5uUXlFCXXc3D2hgp0ArkDG7w2VfuTv
+         DOOkKb8fN7YkkYOtpPAB7DPOM8ry+noSftbogoZO6MmjI443CGjpmoIJCMtgMihCuYUt
+         /icoKcb0EKE8K0eAmhef8H/yslNkHQvLE+xX3vDpKJDQgtcNNDC8TjrriFrHObmoEc5T
+         0wzA==
+X-Gm-Message-State: AOJu0YxI0KtZxiqWrfSfOG6o8mMXlWKpRl0ANydMOaBa8yWXf++EaBc3
+	IAflS2dTCnReDNF2vC6mWDjXClmLZ81Lx1NCx5J2+/RgkLrid4w51m/4rI6qIIIirWOGmjUSKiX
+	eVyuj
+X-Gm-Gg: ASbGncvathQWYwhYOTtmM0zLCkjNyeub/dMFXg+aoD0/ugnCrH4q0ZKJuQf6r4Yn3aa
+	MS8HbI4Ba6moFY9Pu3M84pXMwm+txFfPjBTtiv+++SXxiK2EZBDNWP11ua3iYdTVPJDzDdG3Gtt
+	R3C15OripKT3O0sCGsc4HP9GrfNF7E7Nq9ZJg1aNtdy1Dk1HMxrxof6iDrSr1S3kgOldSK6yBdB
+	mlQrdUELPz4yz/N1zwUHU0PaUf6/Lnwq2bqgC+hZWvpXD9w27HH2RaSMWerF2tETppCqcXGneaz
+	i+6D0QNAy4xwzsgX7B7aURdmsjifHUcnHDWQ07jAEDWpM4xLhAMEIaAlZpUcET7+PjKrWgszEb7
+	K0LabH3MIL/XSTljLOB9wHh9pAE9/ofArepi9B+1rTp+VVzFr
+X-Google-Smtp-Source: AGHT+IE1N/GU9CWiFeuSlCA7lYQQE9corIW9G+VvXPDgedIFEeLnjeiHjx5/c6jF5seS8M1zwGBEFA==
+X-Received: by 2002:a05:600c:1e85:b0:456:1560:7c5f with SMTP id 5b1f17b1804b1-45b5179d004mr169053305e9.14.1756372375588;
+        Thu, 28 Aug 2025 02:12:55 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b797d1a67sm26010355e9.15.2025.08.28.02.12.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 02:12:55 -0700 (PDT)
+Date: Thu, 28 Aug 2025 12:12:52 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Hariprasad Kelam <hkelam@marvell.com>
+Cc: kernel-janitors@vger.kernel.org
+Subject: [bug report] Octeontx2-af: Fix NIX X2P calibration failures
+Message-ID: <aLAdlCg2_Yv7Y-3h@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
 List-Subscribe: <mailto:kernel-janitors+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aK8Au3CgZSTvfEJ6@stanley.mountain> <CAD=FV=WEQf=PX52Uv_bjzhnUipKwcNY+BBTOfDHucv=EkBTzgg@mail.gmail.com>
- <r6q738p1-53o9-273q-0198-327s56qpqn61@xreary.bet>
-In-Reply-To: <r6q738p1-53o9-273q-0198-327s56qpqn61@xreary.bet>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 27 Aug 2025 16:38:35 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Vqp7zDi=xGmy+gq+jSr1Tq=bRAUbkOVuVcz7C9zFbWXQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyRfmac0GCbxwA7Nta6zibOiKLyJotJFxyDjgBD9G3VZ9lGRLVwg_SFw9Q
-Message-ID: <CAD=FV=Vqp7zDi=xGmy+gq+jSr1Tq=bRAUbkOVuVcz7C9zFbWXQ@mail.gmail.com>
-Subject: Re: [PATCH next] HID: i2c-hid: Fix test in i2c_hid_core_register_panel_follower()
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Benjamin Tissoires <bentiss@kernel.org>, Aleksandrs Vinarskis <alex.vinarskis@gmail.com>, 
-	Wentao Guan <guanwentao@uniontech.com>, 
-	=?UTF-8?Q?Bart=C5=82omiej_Mary=C5=84czak?= <marynczakbartlomiej@gmail.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kenny Levinsen <kl@kl.wtf>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+Hello Hariprasad Kelam,
 
-On Wed, Aug 27, 2025 at 8:39=E2=80=AFAM Jiri Kosina <jikos@kernel.org> wrot=
-e:
->
-> On Wed, 27 Aug 2025, Doug Anderson wrote:
->
-> > > Bitwise AND was intended instead of OR.  With the current code the
-> > > condition is always true.
-> > >
-> > > Fixes: cbdd16b818ee ("HID: i2c-hid: Make elan touch controllers power=
- on after panel is enabled")
-> > > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > ---
-> > >  drivers/hid/i2c-hid/i2c-hid-core.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > Reviewed-by: Douglas Anderson <dianders@chromium.org
->
-> This seems to be missing closing bracket :)
+Commit d280233fc866 ("Octeontx2-af: Fix NIX X2P calibration
+failures") from Aug 22, 2025 (linux-next), leads to the following
+Smatch static checker warning:
 
-Fixed. The tools would probably have caught it, but better to be safe.
-...actually, "b4" fixed it for me. :-P
+	drivers/net/ethernet/marvell/octeontx2/af/cgx.c:1985 cgx_probe()
+	warn: missing error code 'err'
 
-> > Jiri / Benjamin: if one of you can give this a quick Ack then I'll
-> > throw it into drm-misc-next with the patch it's fixing.
->
-> Acked-by: Jiri Kosina <jkosina@suse.com>
+drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+    1933 static int cgx_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+    1934 {
+    1935         struct device *dev = &pdev->dev;
+    1936         struct cgx *cgx;
+    1937         int err, nvec;
+    1938 
+    1939         cgx = devm_kzalloc(dev, sizeof(*cgx), GFP_KERNEL);
+    1940         if (!cgx)
+    1941                 return -ENOMEM;
+    1942         cgx->pdev = pdev;
+    1943 
+    1944         pci_set_drvdata(pdev, cgx);
+    1945 
+    1946         /* Use mac_ops to get MAC specific features */
+    1947         if (is_dev_rpm(cgx))
+    1948                 cgx->mac_ops = rpm_get_mac_ops(cgx);
+    1949         else
+    1950                 cgx->mac_ops = &cgx_mac_ops;
+    1951 
+    1952         cgx->mac_ops->rxid_map_offset = cgx_get_rxid_mapoffset(cgx);
+    1953 
+    1954         err = pci_enable_device(pdev);
+    1955         if (err) {
+    1956                 dev_err(dev, "Failed to enable PCI device\n");
+    1957                 pci_set_drvdata(pdev, NULL);
+    1958                 return err;
+    1959         }
+    1960 
+    1961         err = pci_request_regions(pdev, DRV_NAME);
+    1962         if (err) {
+    1963                 dev_err(dev, "PCI request regions failed 0x%x\n", err);
+    1964                 goto err_disable_device;
+    1965         }
+    1966 
+    1967         err = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(48));
+    1968         if (err) {
+    1969                 dev_err(dev, "DMA mask config failed, abort\n");
+    1970                 goto err_release_regions;
+    1971         }
+    1972 
+    1973         /* MAP configuration registers */
+    1974         cgx->reg_base = pcim_iomap(pdev, PCI_CFG_REG_BAR_NUM, 0);
+    1975         if (!cgx->reg_base) {
+    1976                 dev_err(dev, "CGX: Cannot map CSR memory space, aborting\n");
+    1977                 err = -ENOMEM;
+    1978                 goto err_release_regions;
+    1979         }
+    1980 
+    1981         if (!is_cn20k(pdev) &&
+    1982             !is_cgx_mapped_to_nix(pdev->subsystem_device, cgx->cgx_id)) {
+    1983                 dev_notice(dev, "CGX %d not mapped to NIX, skipping probe\n",
+    1984                            cgx->cgx_id);
+--> 1985                 goto err_release_regions;
 
-Pushed to drm-misc-next.
+error code?
 
-[1/1] HID: i2c-hid: Fix test in i2c_hid_core_register_panel_follower()
-      commit: 5c76c794bf29399394ebacaa5af8436b8bed0d46
+    1986         }
+    1987 
+    1988         cgx->lmac_count = cgx->mac_ops->get_nr_lmacs(cgx);
+    1989         if (!cgx->lmac_count) {
+    1990                 dev_notice(dev, "CGX %d LMAC count is zero, skipping probe\n", cgx->cgx_id);
+    1991                 err = -EOPNOTSUPP;
+    1992                 goto err_release_regions;
+    1993         }
+    1994 
+    1995         nvec = pci_msix_vec_count(cgx->pdev);
+    1996         err = pci_alloc_irq_vectors(pdev, nvec, nvec, PCI_IRQ_MSIX);
+    1997         if (err < 0 || err != nvec) {
+    1998                 dev_err(dev, "Request for %d msix vectors failed, err %d\n",
+    1999                         nvec, err);
+    2000                 goto err_release_regions;
+    2001         }
+    2002 
+    2003         cgx->cgx_id = (pci_resource_start(pdev, PCI_CFG_REG_BAR_NUM) >> 24)
+    2004                 & CGX_ID_MASK;
+    2005 
+    2006         /* init wq for processing linkup requests */
+    2007         INIT_WORK(&cgx->cgx_cmd_work, cgx_lmac_linkup_work);
+    2008         cgx->cgx_cmd_workq = alloc_workqueue("cgx_cmd_workq", 0, 0);
+    2009         if (!cgx->cgx_cmd_workq) {
+    2010                 dev_err(dev, "alloc workqueue failed for cgx cmd");
+    2011                 err = -ENOMEM;
+    2012                 goto err_free_irq_vectors;
+    2013         }
+    2014 
+    2015         list_add(&cgx->cgx_list, &cgx_list);
+    2016 
+    2017 
+    2018         cgx_populate_features(cgx);
+    2019 
+    2020         mutex_init(&cgx->lock);
+    2021 
+    2022         err = cgx_lmac_init(cgx);
+    2023         if (err)
+    2024                 goto err_release_lmac;
+    2025 
+    2026         return 0;
+    2027 
+    2028 err_release_lmac:
+    2029         cgx_lmac_exit(cgx);
+    2030         list_del(&cgx->cgx_list);
+    2031 err_free_irq_vectors:
+    2032         pci_free_irq_vectors(pdev);
+    2033 err_release_regions:
+    2034         pci_release_regions(pdev);
+    2035 err_disable_device:
+    2036         pci_disable_device(pdev);
+    2037         pci_set_drvdata(pdev, NULL);
+    2038         return err;
+    2039 }
+
+regards,
+dan carpenter
