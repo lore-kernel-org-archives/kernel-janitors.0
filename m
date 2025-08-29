@@ -1,71 +1,74 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D191F317715
-	for <kernel-janitors@vger.kernel.org>; Fri, 29 Aug 2025 12:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488AA305046
+	for <kernel-janitors@vger.kernel.org>; Fri, 29 Aug 2025 16:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756472261; cv=none; b=EpeK1lUJGFHS7btI+SjMBhcjVMBfE12y0PzJdXb4jVWShVL947lx4i9dp8jirN62AIO8ihT43/mvW7NfKqm26QrtOdPxm8cMw7J9qZF/1hcNUHHoMqrJae7leJOEouVIsXpY4PuzCI7FqU6QOhbvD6W7OzGqyM70jUCYg0ySwnc=
+	t=1756483904; cv=none; b=fWLU+/C+ijsnNLfFFCQVLvA3uVOOsLZOADITym/qjJza/tCtfg9TH6OAyf7eHOfSzi4d2MS/a02AvbgfFnuyZHY656EqnqumOtPQ0G968eky6JwO/lo8X5mmTlZ+e8kqV+t8/gAW117jsokNOFzOMr+BG12/7Z/gLodaviIdBaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756472261; c=relaxed/simple;
-	bh=4DJ5TD3LPs+dlaSYUK9sPSDfziv2OnIO0PiD9AsLDxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PQVVyxGQgCbArsTE34IO1Nj6yB6jsx/JtZKc9J3wKryw8kT8hK6NCvaa9nBe2xsJCV/CSUgza37Wk292S4F8aXlsKSXqCXyZZKUkqT3TFyRxgwHprbYTNV3hv+jhyJI6srsTxhqPXXZMJQI6hKYtRaLQJDU9Vwg1BJx+95Tupio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jxge4PQR; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1756483904; c=relaxed/simple;
+	bh=tTY7r03wgO+Jv1B5lRquX6wrCUgO7uUzlezmCJKhxgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p8gHxogFoARFWjIgMYCUZXL/ZaDrAdiS+Py2vGwzSi26r0Af+fO2pMShNFf7lm7vAEca7x/HIywR7G5OpAn3bG5XiGey54jB+0+7UyeT/44zHS6ARU7rq/DNMx/2uYN8j1Et1yh6FSP46hg2MXeKU24pqdT8x3aziQK9xzMc/dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ucw/A11k; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jxge4PQR"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45b79ec2fbeso13238915e9.3
-        for <kernel-janitors@vger.kernel.org>; Fri, 29 Aug 2025 05:57:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ucw/A11k"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77033293ed8so2047859b3a.0
+        for <kernel-janitors@vger.kernel.org>; Fri, 29 Aug 2025 09:11:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1756472258; x=1757077058; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wpA/ewX5yJEUV+0C4r0oVn+iS4syCSTzFuXWGmDLoYo=;
-        b=Jxge4PQRM6ldn+kEndjUQsHwSfNENkYWtpTB761xF6t6jQWewME19cNo2vIXp4tom9
-         1yw0gaiyfsW7s9LFCKMXrmFZnZ8l3Av1yqv+m7C6xCD5zSUwxLYDTyhBpJ/nPRTHR+zy
-         cqsEewq9GnG6y12gQj1xYdR90v3+ZgYsWnsnAYO8a3Bc/fBbdZpORZBKjr5WfuuJ5swB
-         jUGGpnrclPmvYOmgwFmku0IGFzs57LY0klRS/GCsYa5EDSFZtH2VLDGrTj54MuCl+rZp
-         MBzQqycPPwm2Q4Q4guhZ1vP/uOtqUaInzCOx7Y7q/9GDvR+IBG2KTO3xVFVLTNc0hCNg
-         Vizg==
+        d=linaro.org; s=google; t=1756483902; x=1757088702; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GdG4ZBE60MQo9skvlcwc2CKeFpgl13LiTrzShDv9gcU=;
+        b=ucw/A11ksrS5Bo670qiQMnOJnukH+sukEvnAuamReEq9kWPwd6UKcH77wl9Z91jyKd
+         JU5174fT5Bo7eTce5vbraIhHg7PLPT0BTO8oo1PQMQ7KOlmdu1DFYdAZsuNRKSsz0a1k
+         C1CO2XwULkgtW6t0wBuKOkBcW32O7RjqrTwKXfzchK1+wS5VMkP8v9mpZjvH8KT1ks+F
+         kjKvqjolYib0VOVa+KbfwFUkNt1Y+UrOrVTprxftvWBzGT7F7vVNSvLo8FCkjSicGPmm
+         fm9o/9SC1F7hYLnQm3ZUllRr3j46kv4uQDoyzR093AOj8rJVh6EN3qwhuSH/a1cBIPrY
+         dy8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756472258; x=1757077058;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wpA/ewX5yJEUV+0C4r0oVn+iS4syCSTzFuXWGmDLoYo=;
-        b=FViQ7aNJG8pp1rin2aOPx2ziFHDxZD0Wj9Lxr0sO9NILJlMa4fQ1mn78rGinNqUJiA
-         2wKaxFyetWpRsfDJ9UdQ/MTnD9GtAg8ptsq0vENs431jxq2lAvNxDgccpkWkNgA/u+0b
-         zUXNU31PdsV4oVhPhUvieuxfc4TLoB4e0ky/IXMXjF65aWvwOyYHG/4Nt5bj4UOc9766
-         BX3VKY2BNbmwSjD+ehhdhZZSIDD7/zxFzcvNfFFGOsSIK03OWBQoJGYyeJhFtBs4G2f7
-         4jlzq2qnPs/5sPK7V6b+beIT2wQmKdr6NxfSnDC3689iou5094DXejIuWHXdLS7oQ41C
-         BxAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUF9hpIMUffdZjHlBEj9obpYZf/821SSb1QNP5zOSV9wsoOk98fQhY7fOJxdp9e8lcpwD3DAhBNsMwsuHteNKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzXGSy6EVnIUZDCslJvMC1d3KiGbogELJ8gzbIsELqNT5kE3aU
-	g6MhVrpl7MgmU09k4/7YwHQuDq0eIhxwLfb+e4JiO8SUQTekUs+s3HxBS9rUomi7U8c=
-X-Gm-Gg: ASbGnctJxfh+V+kPcJG+kDLkVOoFRE+dKu6Qqyw57uquURPt9PKB2SifEgpkVbF3o3C
-	5tz5PAbnmZn8kzwCbeFmdcIJNTeW6GD+cjmWdpt87hJLxxPMbJAbNysTpS0ylEZsNslwJHO8uGF
-	g+62mJMUsr33392fkqn0Aw5rfaJw5rCfEdlRi/nDHZ540dxxQ1jE63kUPFU5voGejoZl8YId6ho
-	FkHrsItGVe36W6Pz4u/xbnBNY6u0TZ8qUZxWSz3hSKZT2Rdh83gtC8H8KTpXXOgWIXkMK5I/K3H
-	kF3x/Rq8WjZNeY/q36jAKKkBBDi0/Rpq/BLGSZ11Cc4enHrY8phKgANJFbU673rsqU27ydi1dGI
-	TYWueXPNJ5bjr+BqM1SiyNnqgWp7BhvhnhtjJcU8enTfbr5L+
-X-Google-Smtp-Source: AGHT+IEk3X0SmDDJCM0kDCrUQkEzXw5unbHaqvpYBH8N1Kie2B/+aRAtHjZ8wJqalzmQyaEOC0bTTg==
-X-Received: by 2002:a05:600c:3596:b0:458:bd31:2c35 with SMTP id 5b1f17b1804b1-45b517cca56mr247842695e9.25.1756472258171;
-        Fri, 29 Aug 2025 05:57:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45b7e8ab832sm37195035e9.23.2025.08.29.05.57.37
+        d=1e100.net; s=20230601; t=1756483902; x=1757088702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GdG4ZBE60MQo9skvlcwc2CKeFpgl13LiTrzShDv9gcU=;
+        b=ht9Kg1kGh3HH37X3TrYi1W1cDvUmCcXhB/1+vX9T+tW6mTi8JOClhUR7od3U2Mv2lG
+         aTjJFYYGSPNH5CPed2n84psho1HQ6Peir3HkfOtc8PxcoKn9Dxlz58kVN8oia8M9/qT6
+         I9jQA+H5+NQirHV5vQd4datFwfHwjJJ602GVwmepkwR+XAP18J67x9cpia0mlAdijTwh
+         yLJuV5OHqrMHM4tuD5hvkc79f5CP8YrDvffXjeR8wyB42J/zRjh+9Yxpdf2IGjbBOZ7l
+         1lbgRaHwur8gChAwnnb/zXSyDuT9x0ZQZUH2zL5EjBYkgENxl1XWP+rJRtDOcGcIWS/M
+         PzZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/PeB6ObZVh5DO+d9JHUEtk7RNUgiA/JcxOWmNgYRpW+F78OPTc1L/Y/DFNX8yyW2Yaa9Xr3ffbEcxeTEg1eQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw71IXQ73SiexKwkN/ODG6ZvRquOu87ANiq9nOo2jRnWqLja4CV
+	LcdQktJoxZsggAyKHhajnfx+IOPrHpWDGBrRx5AWoEmMCyJWAoZmxlHjAZzkKT41+tEKFcx3gPw
+	4UzBt/oo=
+X-Gm-Gg: ASbGnctn5HjH3G6kcYXiG05oytwm8XH7rrgI26yYdY5TDCeqrIDihCq0iWfLg2YKmWw
+	FQFEdq26h9F12AwAXsgAp3btVytzuST1+d4dH77mFonrXxeraGkc1T/R+wQm3+XiVEfRQS1Dz7C
+	pu7TgqtxHwfYExRwFkVrYIbyc39mkWVMj5TmQa8jkqW16N4AxpJusOKkc7Oj4m0pgdyuOVLLidW
+	EsiBoHzT16U4b3cqtrZFjVLYWwi3zWuyDTZFRR6Nd8s3zu+1rvM/z4OLFuyJl3sf7r1r+fNoWjd
+	gGLnzUN9g1INRitLdA9vzkO5tB3CtRSdhEMBa7dxIXV2NWmhloDRKDqSi/HmtFB9ZlWa262VyfB
+	e8r23eHvFUsHUks/+FfpdEwp5Mv9q/k33TYEY5FG8gtWbk2ACdivehpFURN2Q00JSRTZi5Wy8r3
+	tqawTxJdkAQGkXqzNWdCp6wAKRrM2paR49b5Q=
+X-Google-Smtp-Source: AGHT+IG0BijOfS1syDO9r7bmXPHtEUUgTx65TwjuioQwopzbTILdFIw8bOkcRYbE5nIUD3sncpBFew==
+X-Received: by 2002:a05:6a00:a28:b0:772:2e00:831f with SMTP id d2e1a72fcca58-7722e00b9b5mr4167788b3a.4.1756483902507;
+        Fri, 29 Aug 2025 09:11:42 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:c8f8:92f5:116b:3068])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7722a26ae02sm2755442b3a.21.2025.08.29.09.11.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Aug 2025 05:57:37 -0700 (PDT)
-Date: Fri, 29 Aug 2025 15:57:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Kiseok Jo <kiseok.jo@irondevice.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ASoC: codec: sma1307: Fix memory corruption in
- sma1307_setting_loaded()
-Message-ID: <aLGjvjpueVstekXP@stanley.mountain>
+        Fri, 29 Aug 2025 09:11:42 -0700 (PDT)
+Date: Fri, 29 Aug 2025 10:11:39 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, Beleswar Padhi <b-padhi@ti.com>,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v5] remoteproc: k3: Correctly release some resources
+ allocated in k3_rproc_request_mbox()
+Message-ID: <aLHROzqMNZ6GdII4@p14s>
+References: <df853ede72e9972c464415990b196289680e6acb.1756065142.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: kernel-janitors@vger.kernel.org
 List-Id: <kernel-janitors.vger.kernel.org>
@@ -74,44 +77,108 @@ List-Unsubscribe: <mailto:kernel-janitors+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <df853ede72e9972c464415990b196289680e6acb.1756065142.git.christophe.jaillet@wanadoo.fr>
 
-The sma1307->set.header_size is how many integers are in the header
-(there are 8 of them) but instead of allocating space of 8 integers
-we allocate 8 bytes.  This leads to memory corruption when we copy data
-it on the next line:
+On Sun, Aug 24, 2025 at 09:52:37PM +0200, Christophe JAILLET wrote:
+> If an error occurs after a successful k3_rproc_request_mbox() call,
+> mbox_free_channel() should be called to avoid a leak.
+> 
+> Such a call is missing in the error handling path of k3_dsp_rproc_probe().
+> It is also missing both in the error handling path of k3_m4_rproc_probe()
+> and in the (in-existent) corresponding remove function.
+> 
+> Switch to managed resources to avoid these leaks and simplify the code.
+> Remove the now unneeded mbox_free_channel().
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Reviewed-by: Beleswar Padhi <b-padhi@ti.com>
+> Tested-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
 
-        memcpy(sma1307->set.header, data,
-               sma1307->set.header_size * sizeof(int));
+Appied.
 
-Also since we're immediately copying over the memory in ->set.header,
-there is no need to zero it in the allocator.  Use devm_kmalloc_array()
-to allocate the memory instead.
+Thanks,
+Mathieu
 
-Fixes: 576c57e6b4c1 ("ASoC: sma1307: Add driver for Iron Device SMA1307")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- sound/soc/codecs/sma1307.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/codecs/sma1307.c b/sound/soc/codecs/sma1307.c
-index 6a601e7134ea..b683e676640d 100644
---- a/sound/soc/codecs/sma1307.c
-+++ b/sound/soc/codecs/sma1307.c
-@@ -1737,9 +1737,10 @@ static void sma1307_setting_loaded(struct sma1307_priv *sma1307, const char *fil
- 	sma1307->set.checksum = data[sma1307->set.header_size - 2];
- 	sma1307->set.num_mode = data[sma1307->set.header_size - 1];
- 	num_mode = sma1307->set.num_mode;
--	sma1307->set.header = devm_kzalloc(sma1307->dev,
--					   sma1307->set.header_size,
--					   GFP_KERNEL);
-+	sma1307->set.header = devm_kmalloc_array(sma1307->dev,
-+						 sma1307->set.header_size,
-+						 sizeof(int),
-+						 GFP_KERNEL);
- 	if (!sma1307->set.header) {
- 		sma1307->set.status = false;
- 		return;
--- 
-2.47.2
-
+> Compile tested only.
+> 
+> Changes in v5:
+>   - Update subject line   [Beleswar Prasad Padhi]
+>   - Add R-b and T-b tags
+>   - Rebase with latest -next (especially, because of commit f9a4c582e508
+>     ("remoteproc: k3: Remove remote processor mailbox ping))
+> 
+> v4: https://lore.kernel.org/all/f96befca61e7a819c0e955e4ebe40dc8a481619d.1751060507.git.christophe.jaillet@wanadoo.fr/
+> 
+> Previous versions:
+>    https://lore.kernel.org/all/591e219df99da6f02c9d402f7854bc3ab23e76f9.1726328417.git.christophe.jaillet@wanadoo.fr/
+> ---
+>  drivers/remoteproc/ti_k3_common.c         | 12 ++++++++++++
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 --
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 --
+>  3 files changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+> index 8266e11914af..56b71652e449 100644
+> --- a/drivers/remoteproc/ti_k3_common.c
+> +++ b/drivers/remoteproc/ti_k3_common.c
+> @@ -155,11 +155,19 @@ int k3_rproc_release(struct k3_rproc *kproc)
+>  }
+>  EXPORT_SYMBOL_GPL(k3_rproc_release);
+>  
+> +static void k3_rproc_free_channel(void *data)
+> +{
+> +	struct k3_rproc *kproc = data;
+> +
+> +	mbox_free_channel(kproc->mbox);
+> +}
+> +
+>  int k3_rproc_request_mbox(struct rproc *rproc)
+>  {
+>  	struct k3_rproc *kproc = rproc->priv;
+>  	struct mbox_client *client = &kproc->client;
+>  	struct device *dev = kproc->dev;
+> +	int ret;
+>  
+>  	client->dev = dev;
+>  	client->tx_done = NULL;
+> @@ -172,6 +180,10 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>  		return dev_err_probe(dev, PTR_ERR(kproc->mbox),
+>  				     "mbox_request_channel failed\n");
+>  
+> +	ret = devm_add_action_or_reset(dev, k3_rproc_free_channel, kproc);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> index 7a72933bd403..d6ceea6dc920 100644
+> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> @@ -175,8 +175,6 @@ static void k3_dsp_rproc_remove(struct platform_device *pdev)
+>  		if (ret)
+>  			dev_err(dev, "failed to detach proc (%pe)\n", ERR_PTR(ret));
+>  	}
+> -
+> -	mbox_free_channel(kproc->mbox);
+>  }
+>  
+>  static const struct k3_rproc_mem_data c66_mems[] = {
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index ca5ff280d2dc..04f23295ffc1 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -1206,8 +1206,6 @@ static void k3_r5_cluster_rproc_exit(void *data)
+>  				return;
+>  			}
+>  		}
+> -
+> -		mbox_free_channel(kproc->mbox);
+>  	}
+>  }
+>  
+> -- 
+> 2.51.0
+> 
